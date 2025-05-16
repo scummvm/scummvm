@@ -29,52 +29,51 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define BACKPACK_SPEC	".\\art\\mlscroll.bmp"      // path for backpack's DIB on disk
-#define BACKPACK_DX				502
-#define BACKPACK_DY				395
-#define	BACKPACK_CURL_DX		500
-#define	BACKPACK_CURL_DY		50
-#define BACKPACK_BORDER_DX		60
-#define BACKPACK_BORDER_DY		60
+#define BACKPACK_SPEC   ".\\art\\mlscroll.bmp"      // path for backpack's DIB on disk
+#define BACKPACK_DX             502
+#define BACKPACK_DY             395
+#define BACKPACK_CURL_DX        500
+#define BACKPACK_CURL_DY        50
+#define BACKPACK_BORDER_DX      60
+#define BACKPACK_BORDER_DY      60
 
-#define BACKPACK_TITLEZONE_DX	100
-#define BACKPACK_TITLEZONE_DY	40
-#define BACKPACK_TITLEZONE_DDY	-5
+#define BACKPACK_TITLEZONE_DX   100
+#define BACKPACK_TITLEZONE_DY   40
+#define BACKPACK_TITLEZONE_DDY  -5
 
-#define BACKPACK_TEXTZONE_DX	75
-#define BACKPACK_TEXTZONE_DY	30
-#define BACKPACK_TEXTZONE_DDY	10
+#define BACKPACK_TEXTZONE_DX    75
+#define BACKPACK_TEXTZONE_DY    30
+#define BACKPACK_TEXTZONE_DDY   10
 
-#define BACKPACK_BITMAP_DX		59
-#define BACKPACK_BITMAP_DY		59
-#define BACKPACK_BITMAP_DDX		10
-#define BACKPACK_BITMAP_DDY		10
+#define BACKPACK_BITMAP_DX      59
+#define BACKPACK_BITMAP_DY      59
+#define BACKPACK_BITMAP_DDX     10
+#define BACKPACK_BITMAP_DDY     10
 
-#define IDD_BACKPACK_DIALOG	   910
-#define IDC_BACKPACK_OKAY	   910
+#define IDD_BACKPACK_DIALOG    910
+#define IDC_BACKPACK_OKAY      910
 
-#define	BACKPACK_FONT_SIZE		-14
-#define	BACKPACK_TEXT_COLOR		RGB(128,0,128)
-#define	BACKPACK_BLURB_COLOR	RGB(0,0,255)
-#define BACKPACK_MORE_COLOR		RGB(0,0,0)
+#define BACKPACK_FONT_SIZE      -14
+#define BACKPACK_TEXT_COLOR     RGB(128,0,128)
+#define BACKPACK_BLURB_COLOR    RGB(0,0,255)
+#define BACKPACK_MORE_COLOR     RGB(0,0,0)
 
 
-class CBackpack : public CDialog
-{
+class CBackpack : public CDialog {
 // Construction
 public:
 	CBackpack(CWnd* pParent, CPalette *pPalette, CInventory *pInventory);
 
 	int SelectedItem(CPoint point);
 
-static	void UpdateBackpack(CDC *pDC);
-static	void UpdateContent(CDC *pDC);
-static	void UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY);
-static	void UpdatePage(CDC *pDC);
-static	void ClearDialogImage(void);
-static	void RefreshBackground(void);
-static	void DoWaitCursor(void);
-static	void DoArrowCursor(void);
+	static  void UpdateBackpack(CDC *pDC);
+	static  void UpdateContent(CDC *pDC);
+	static  void UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY);
+	static  void UpdatePage(CDC *pDC);
+	static  void ClearDialogImage(void);
+	static  void RefreshBackground(void);
+	static  void DoWaitCursor(void);
+	static  void DoArrowCursor(void);
 
 private:
 	BOOL SetupKeyboardHook(void);
@@ -83,23 +82,23 @@ private:
 	BOOL CreateWorkAreas(CDC *pDC);
 
 private:
-	BOOL	m_bKeyboardHook;				// whether keyboard hook present
+	BOOL    m_bKeyboardHook;                // whether keyboard hook present
 
 // Dialog Data
 	//{{AFX_DATA(CBackpack)
 	enum { IDD = IDD_BACKPACK_DIALOG };
-		// NOTE: the ClassWizard will add data members here
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CBackpack)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog(void);
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK(void);
 	virtual void OnCancel(void);
 	afx_msg void OnDestroy(void);

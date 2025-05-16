@@ -28,10 +28,9 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define INVENT_MIN_ITEM_COUNT	2
+#define INVENT_MIN_ITEM_COUNT   2
 
-class CInventory : public CObject
-{
+class CInventory : public CObject {
 	DECLARE_DYNCREATE(CInventory)
 
 // Constructors
@@ -44,10 +43,12 @@ public:
 
 // Implementation
 public:
-	char * GetTitle(void)
-		{ return(m_lpsTitle); }
-	int	ItemCount(void)
-		{ return(m_nItemCount); }
+	char *GetTitle(void) {
+		return (m_lpsTitle);
+	}
+	int ItemCount(void) {
+		return (m_nItemCount);
+	}
 	void AddItem(CItem *pItem);
 	void AddItem(int nID, long nQuantity);
 	void RemoveItem(CItem *pItem);
@@ -55,21 +56,22 @@ public:
 	void DiscardItem(CItem *pItem, long nQuantity);
 	void DiscardItem(int nID);
 	void DiscardItem(int nID, long nQuantity);
-	CItem * FetchItem(int nIdx);
-	CItem * FindItem(int nID);
-	CItem * FirstItem(void)
-		{ return(m_pEquipment); }
+	CItem *FetchItem(int nIdx);
+	CItem *FindItem(int nID);
+	CItem *FirstItem(void) {
+		return (m_pEquipment);
+	}
 
 
 private:
-	char	*m_lpsTitle;		// title string for inventory
-	int		m_nItemCount;		// number of items in the inventory
-	CItem	*m_pEquipment;		// linked list of inventory items
+	char    *m_lpsTitle;        // title string for inventory
+	int     m_nItemCount;       // number of items in the inventory
+	CItem   *m_pEquipment;      // linked list of inventory items
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 

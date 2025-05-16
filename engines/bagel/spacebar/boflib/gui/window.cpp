@@ -141,7 +141,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
 	if (pParent != nullptr)
 		stRect.translate(pParent->getWindowRect().left,
-			pParent->getWindowRect().top);
+		                 pParent->getWindowRect().top);
 
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
@@ -599,7 +599,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		return;
 
 	CBofPoint mousePos(event.mouse.x - _cWindowRect.left,
-		event.mouse.y - _cWindowRect.top);
+	                   event.mouse.y - _cWindowRect.top);
 	for (auto parent = _parent; parent; parent = parent->_parent) {
 		mousePos.x -= parent->_cWindowRect.left;
 		mousePos.y -= parent->_cWindowRect.top;
@@ -610,13 +610,12 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-	{
+	case Common::EVENT_RBUTTONUP: {
 		// Check if the mouse is within the area of a child control
 		for (uint i = 0; i < _children.size(); ++i) {
 			auto &child = *_children[i];
 			if (child.isVisible() && child.isEnabled() &&
-				child.getWindowRect().ptInRect(mousePos)) {
+			        child.getWindowRect().ptInRect(mousePos)) {
 				child.handleEvent(event);
 				return;
 			}
@@ -674,7 +673,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		if (event.customType != KEYBIND_NONE)
 			onKeyHit((event.customType == KEYBIND_WAIT)
-				? BKEY_SPACE : BKEY_SCRL_LOCK, 0);
+			         ? BKEY_SPACE : BKEY_SCRL_LOCK, 0);
 		break;
 
 	case EVENT_USER:
@@ -696,33 +695,85 @@ uint32 CBofWindow::translateKey(const Common::Event &event) const {
 	uint32 nCode = BKEY_UNKNOWN;
 
 	switch (event.kbd.keycode) {
-	case Common::KEYCODE_F1: nCode = BKEY_F1; break;
-	case Common::KEYCODE_F2: nCode = BKEY_SAVE; break;
-	case Common::KEYCODE_F3: nCode = BKEY_RESTORE; break;
-	case Common::KEYCODE_F4: nCode = BKEY_F4; break;
-	case Common::KEYCODE_F5: nCode = BKEY_SAVE; break;
-	case Common::KEYCODE_F6: nCode = BKEY_F6; break;
-	case Common::KEYCODE_F7: nCode = BKEY_RESTORE; break;
-	case Common::KEYCODE_F8: nCode = BKEY_F8; break;
-	case Common::KEYCODE_F9: nCode = BKEY_F9; break;
-	case Common::KEYCODE_F10: nCode = BKEY_F10; break;
-	case Common::KEYCODE_F11: nCode = BKEY_F11; break;
-	case Common::KEYCODE_F12: nCode = BKEY_F12; break;
+	case Common::KEYCODE_F1:
+		nCode = BKEY_F1;
+		break;
+	case Common::KEYCODE_F2:
+		nCode = BKEY_SAVE;
+		break;
+	case Common::KEYCODE_F3:
+		nCode = BKEY_RESTORE;
+		break;
+	case Common::KEYCODE_F4:
+		nCode = BKEY_F4;
+		break;
+	case Common::KEYCODE_F5:
+		nCode = BKEY_SAVE;
+		break;
+	case Common::KEYCODE_F6:
+		nCode = BKEY_F6;
+		break;
+	case Common::KEYCODE_F7:
+		nCode = BKEY_RESTORE;
+		break;
+	case Common::KEYCODE_F8:
+		nCode = BKEY_F8;
+		break;
+	case Common::KEYCODE_F9:
+		nCode = BKEY_F9;
+		break;
+	case Common::KEYCODE_F10:
+		nCode = BKEY_F10;
+		break;
+	case Common::KEYCODE_F11:
+		nCode = BKEY_F11;
+		break;
+	case Common::KEYCODE_F12:
+		nCode = BKEY_F12;
+		break;
 
-	case Common::KEYCODE_END: nCode = BKEY_END; break;
-	case Common::KEYCODE_HOME: nCode = BKEY_HOME; break;
-	case Common::KEYCODE_LEFT: nCode = BKEY_LEFT; break;
-	case Common::KEYCODE_RIGHT: nCode = BKEY_RIGHT; break;
-	case Common::KEYCODE_UP: nCode = BKEY_UP; break;
-	case Common::KEYCODE_DOWN: nCode = BKEY_DOWN; break;
-	case Common::KEYCODE_RETURN: nCode = BKEY_ENTER; break;
-	case Common::KEYCODE_INSERT: nCode = BKEY_INS; break;
-	case Common::KEYCODE_BACKSPACE: nCode = BKEY_BACK; break;
-	case Common::KEYCODE_DELETE: nCode = BKEY_DEL; break;
-	case Common::KEYCODE_SCROLLOCK: nCode = BKEY_SCRL_LOCK; break;
-	case Common::KEYCODE_PAGEUP: nCode = BKEY_PAGEUP; break;
-	case Common::KEYCODE_PAGEDOWN: nCode = BKEY_PAGEDOWN; break;
-	case Common::KEYCODE_ESCAPE: nCode = BKEY_ESC; break;
+	case Common::KEYCODE_END:
+		nCode = BKEY_END;
+		break;
+	case Common::KEYCODE_HOME:
+		nCode = BKEY_HOME;
+		break;
+	case Common::KEYCODE_LEFT:
+		nCode = BKEY_LEFT;
+		break;
+	case Common::KEYCODE_RIGHT:
+		nCode = BKEY_RIGHT;
+		break;
+	case Common::KEYCODE_UP:
+		nCode = BKEY_UP;
+		break;
+	case Common::KEYCODE_DOWN:
+		nCode = BKEY_DOWN;
+		break;
+	case Common::KEYCODE_RETURN:
+		nCode = BKEY_ENTER;
+		break;
+	case Common::KEYCODE_INSERT:
+		nCode = BKEY_INS;
+		break;
+	case Common::KEYCODE_BACKSPACE:
+		nCode = BKEY_BACK;
+		break;
+	case Common::KEYCODE_DELETE:
+		nCode = BKEY_DEL;
+		break;
+	case Common::KEYCODE_SCROLLOCK:
+		nCode = BKEY_SCRL_LOCK;
+		break;
+	case Common::KEYCODE_PAGEUP:
+		nCode = BKEY_PAGEUP;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		nCode = BKEY_PAGEDOWN;
+		break;
+	case Common::KEYCODE_ESCAPE:
+		nCode = BKEY_ESC;
+		break;
 
 	default:
 		// No translation for this key

@@ -31,25 +31,24 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Beacon {
 
-static	CPalette *pSubOptionsPalette;
-static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
-static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
-static  CCheckButton *pAutoButton = NULL;					// Framed check box
-static  CCheckButton *pChangeButton = NULL;					// Framed check box
+static  CPalette *pSubOptionsPalette;
+static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
+static  CCheckButton *pAutoButton = NULL;                   // Framed check box
+static  CCheckButton *pChangeButton = NULL;                 // Framed check box
 
-CText	*m_pScoreText = NULL;
-CText	*m_pSweepsText = NULL;
-CText	*m_pSpeedText = NULL;
+CText   *m_pScoreText = NULL;
+CText   *m_pSweepsText = NULL;
+CText   *m_pSpeedText = NULL;
 
-int 	m_nSweepSettings[15] = 	{MIN_SWEEPS, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, MAX_SWEEPS};	// 14 factors
+int     m_nSweepSettings[15] =  {MIN_SWEEPS, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, MAX_SWEEPS};  // 14 factors
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
 
 
 COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
-		:CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP")
-{
+	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(COptnDlg)
 	m_bAutomatic = FALSE;
 	m_bChangeAtTwelve = FALSE;
@@ -60,20 +59,18 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 	//}}AFX_DATA_INIT
 }
 
-COptnDlg::~COptnDlg()
-{
-	if( m_pScoreText != NULL)
+COptnDlg::~COptnDlg() {
+	if (m_pScoreText != NULL)
 		delete m_pScoreText;
-	if( m_pSweepsText != NULL)
+	if (m_pSweepsText != NULL)
 		delete m_pSweepsText;
-	if( m_pSpeedText != NULL)
+	if (m_pSpeedText != NULL)
 		delete m_pSpeedText;
 
 	CBmpDialog::OnDestroy();
 }
 
-void COptnDlg::DoDataExchange(CDataExchange* pDX)
-{
+void COptnDlg::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptnDlg)
 	DDX_Control(pDX, IDC_NUMSWEEPS, m_ScrollSweeps);
@@ -89,7 +86,7 @@ BEGIN_MESSAGE_MAP(COptnDlg, CDialog)
 	ON_WM_PAINT()
 	ON_BN_CLICKED(IDC_AUTOMATIC, COptnDlg::OnAutomatic)
 	ON_BN_CLICKED(IDC_CHANGE, COptnDlg::OnChangeAtTwelve)
-    ON_WM_DESTROY()
+	ON_WM_DESTROY()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -97,21 +94,19 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg message handlers
 
-int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
+int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	if (CBmpDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
- 	return 0;
+	return 0;
 }
 
-BOOL COptnDlg::OnInitDialog()
-{
+BOOL COptnDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
-	CDC		*pDC;
-	CRect	statRect;
-	int		i;
+	CDC     *pDC;
+	CRect   statRect;
+	int     i;
 
 	pDC = GetDC();
 
@@ -122,151 +117,147 @@ BOOL COptnDlg::OnInitDialog()
 	mSpeedTable[1] =  "Dinghy";
 	mSpeedTable[2] =  "Hovercraft";
 
-	statRect.SetRect( LEFT_SIDE, 35, LEFT_SIDE + 185, 50 );
+	statRect.SetRect(LEFT_SIDE, 35, LEFT_SIDE + 185, 50);
 	if ((m_pScoreText = new CText()) != NULL) {
 		(*m_pScoreText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
-	statRect.SetRect( LEFT_SIDE, 20, LEFT_SIDE + 185, 35 );
+	statRect.SetRect(LEFT_SIDE, 20, LEFT_SIDE + 185, 35);
 	if ((m_pSweepsText = new CText()) != NULL) {
 		(*m_pSweepsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
-	m_ScrollSweeps.SetScrollRange( 0, nSweepSets - 1, 0 );
+	m_ScrollSweeps.SetScrollRange(0, nSweepSets - 1, 0);
 	for (i = 0; i < (int)nSweepSets; i++) {
 		if (m_nSweepSettings[i] == (int)m_nSweeps)
-			m_ScrollSweeps.SetScrollPos( i, TRUE );
+			m_ScrollSweeps.SetScrollPos(i, TRUE);
 	}
 
-	statRect.SetRect( LEFT_SIDE, 70, LEFT_SIDE + 115, 88 );
+	statRect.SetRect(LEFT_SIDE, 70, LEFT_SIDE + 115, 88);
 	if ((m_pSpeedText = new CText()) != NULL) {
 		(*m_pSpeedText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
-	m_ScrollSpeed.SetScrollRange( MIN_SPEED, MAX_SPEED, 0 );
-	m_ScrollSpeed.SetScrollPos( m_nSpeed, TRUE );
+	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, 0);
+	m_ScrollSpeed.SetScrollPos(m_nSpeed, TRUE);
 
-	if ((pOKButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(pSubOptionsPalette);						// set the palette to use
-		(*pOKButton).SetControl(IDOK,this);				// tie to the dialog control
+	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
+		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(pSubOptionsPalette);						// set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL,this);				// tie to the dialog control
+	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
+		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
-	if ((pAutoButton = new CCheckButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pAutoButton).SetPalette(pSubOptionsPalette);						// set the palette to use
-		(*pAutoButton).SetControl(IDC_AUTOMATIC,this);				// tie to the dialog control
+	if ((pAutoButton = new CCheckButton) != NULL) {                 // build a color QUIT button to let us exit
+		(*pAutoButton).SetPalette(pSubOptionsPalette);                      // set the palette to use
+		(*pAutoButton).SetControl(IDC_AUTOMATIC, this);             // tie to the dialog control
 	}
-	((CWnd *)this)->CheckDlgButton( IDC_AUTOMATIC, m_bAutomatic );		// Set the Auto option box
+	((CWnd *)this)->CheckDlgButton(IDC_AUTOMATIC, m_bAutomatic);         // Set the Auto option box
 
-	if ((pChangeButton = new CCheckButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pChangeButton).SetPalette(pSubOptionsPalette);						// set the palette to use
-		(*pChangeButton).SetControl(IDC_CHANGE,this);				// tie to the dialog control
+	if ((pChangeButton = new CCheckButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pChangeButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
+		(*pChangeButton).SetControl(IDC_CHANGE, this);              // tie to the dialog control
 	}
-	((CWnd *)this)->CheckDlgButton( IDC_CHANGE, m_bChangeAtTwelve );		// Set the Auto option box
+	((CWnd *)this)->CheckDlgButton(IDC_CHANGE, m_bChangeAtTwelve);       // Set the Auto option box
 
-	ReleaseDC( pDC );
+	ReleaseDC(pDC);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 
-BOOL COptnDlg::OnEraseBkgnd(CDC *pDC)
-{
-	return(TRUE);
+BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
+	return (TRUE);
 }
 
 
-void COptnDlg::OnDestroy(void)
-{
-    CBmpDialog::OnDestroy();
+void COptnDlg::OnDestroy(void) {
+	CBmpDialog::OnDestroy();
 }
 
 
-BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam)
-{
+BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
-	if ( HIWORD( lParam ) == BN_CLICKED ) {
+	if (HIWORD(lParam) == BN_CLICKED) {
 
 		switch (wParam) {
 
-			case IDC_AUTOMATIC:
-				m_bAutomatic = !m_bAutomatic;
-				((CWnd *)this)->CheckDlgButton( IDC_AUTOMATIC, m_bAutomatic );
-				break;
+		case IDC_AUTOMATIC:
+			m_bAutomatic = !m_bAutomatic;
+			((CWnd *)this)->CheckDlgButton(IDC_AUTOMATIC, m_bAutomatic);
+			break;
 
-			case IDC_CHANGE:
-				m_bChangeAtTwelve = !m_bChangeAtTwelve;
-				((CWnd *)this)->CheckDlgButton( IDC_CHANGE, m_bChangeAtTwelve );
-				break;
+		case IDC_CHANGE:
+			m_bChangeAtTwelve = !m_bChangeAtTwelve;
+			((CWnd *)this)->CheckDlgButton(IDC_CHANGE, m_bChangeAtTwelve);
+			break;
 
-			case IDOK:
-				ClearDialogImage();
-				EndDialog( IDOK );
-            	break;
+		case IDOK:
+			ClearDialogImage();
+			EndDialog(IDOK);
+			break;
 
-            case IDCANCEL:
-				ClearDialogImage();
-				EndDialog( 0 );
-				break;
+		case IDCANCEL:
+			ClearDialogImage();
+			EndDialog(0);
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		} // end switch
 	} // end if
 
-	return(TRUE);
+	return (TRUE);
 
 } // end OnCommand
 
 
-void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
+void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 	int pMin,
-		pMax;
+	    pMax;
 	int OldPos = pScrollBar->GetScrollPos();
 	int NewPos = OldPos;
 
-	pScrollBar->GetScrollRange( &pMin, &pMax );
+	pScrollBar->GetScrollRange(&pMin, &pMax);
 
 	switch (nSBCode) {
-		case SB_LINERIGHT:
-			NewPos++;
-			break;
-		case SB_PAGERIGHT:
-			NewPos += NUM_BUTTONS;
-			break;
-		case SB_RIGHT:
-			NewPos = pMax;
-			break;
-		case SB_LINELEFT:
-			NewPos--;
-			break;
-		case SB_PAGELEFT:
-			NewPos -= NUM_BUTTONS;
-			break;
-		case SB_LEFT:
-			NewPos = pMin;
-			break;
-		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK:
-			NewPos = nPos;
-			break;
-		}
+	case SB_LINERIGHT:
+		NewPos++;
+		break;
+	case SB_PAGERIGHT:
+		NewPos += NUM_BUTTONS;
+		break;
+	case SB_RIGHT:
+		NewPos = pMax;
+		break;
+	case SB_LINELEFT:
+		NewPos--;
+		break;
+	case SB_PAGELEFT:
+		NewPos -= NUM_BUTTONS;
+		break;
+	case SB_LEFT:
+		NewPos = pMin;
+		break;
+	case SB_THUMBPOSITION:
+	case SB_THUMBTRACK:
+		NewPos = nPos;
+		break;
+	}
 
-	if ( NewPos < pMin ) NewPos = pMin;
-	if ( NewPos > pMax ) NewPos = pMax;
+	if (NewPos < pMin) NewPos = pMin;
+	if (NewPos > pMax) NewPos = pMax;
 
-	if ( NewPos != OldPos ) {							//To prevent "flicker"
-		(*pScrollBar).SetScrollPos( NewPos, TRUE );		//...only update when
+	if (NewPos != OldPos) {                              //To prevent "flicker"
+		(*pScrollBar).SetScrollPos(NewPos, TRUE);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();
 
-	CDialog::OnHScroll( nSBCode, NewPos, pScrollBar );
+	CDialog::OnHScroll(nSBCode, NewPos, pScrollBar);
 }
 
 
@@ -284,113 +275,106 @@ void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
- *      CScrollbar	pScrollTime, pScrollColumns, pScrollRows
+ *      CScrollbar  pScrollTime, pScrollColumns, pScrollRows
  *
  *  IMPLICIT OUTPUT PARAMETERS:
  *
- *      int	m_nTime, m_nNumParts, m_nColumns, m_nRows
+ *      int m_nTime, m_nNumParts, m_nColumns, m_nRows
  *
  *  RETURN VALUE:
  *
  *      void
  *
  ****************************************************************/
-void COptnDlg::UpdateScrollbars()
-{
-	UINT	OldValue;
-	CDC 	*pDC;
-	char	msg[64];
+void COptnDlg::UpdateScrollbars() {
+	UINT    OldValue;
+	CDC     *pDC;
+	char    msg[64];
 
-    pDC = GetDC();
+	pDC = GetDC();
 
 	OldValue = m_nSweeps;
 	m_nSweeps = m_nSweepSettings[m_ScrollSweeps.GetScrollPos()];
-	if ( OldValue != m_nSweeps ){
-		if ( m_nSweeps == MAX_SWEEPS )
-			Common::sprintf_s( msg, "Number of Sweeps: Unlimited" );
+	if (OldValue != m_nSweeps) {
+		if (m_nSweeps == MAX_SWEEPS)
+			Common::sprintf_s(msg, "Number of Sweeps: Unlimited");
 		else
-			Common::sprintf_s( msg, "Number of Sweeps: %d", m_nSweeps );
-		(*m_pSweepsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+			Common::sprintf_s(msg, "Number of Sweeps: %d", m_nSweeps);
+		(*m_pSweepsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	OldValue = m_nSpeed;
 	m_nSpeed = m_ScrollSpeed.GetScrollPos();
-	if ( OldValue != m_nSpeed ){
-		Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
-		(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	if (OldValue != m_nSpeed) {
+		Common::sprintf_s(msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
+		(*m_pSpeedText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
-	ReleaseDC( pDC );
+	ReleaseDC(pDC);
 }
 
 
-void COptnDlg::OnAutomatic()
-{
+void COptnDlg::OnAutomatic() {
 	m_bAutomatic = !m_bAutomatic;
-	((CWnd *)this)->CheckDlgButton( IDC_AUTOMATIC, m_bAutomatic );
+	((CWnd *)this)->CheckDlgButton(IDC_AUTOMATIC, m_bAutomatic);
 }
 
-void COptnDlg::OnChangeAtTwelve()
-{
+void COptnDlg::OnChangeAtTwelve() {
 	m_bChangeAtTwelve = !m_bChangeAtTwelve;
-	((CWnd *)this)->CheckDlgButton( IDC_CHANGE, m_bChangeAtTwelve );
+	((CWnd *)this)->CheckDlgButton(IDC_CHANGE, m_bChangeAtTwelve);
 }
 
-void COptnDlg::OnOK()
-{
+void COptnDlg::OnOK() {
 	ClearDialogImage();
-	EndDialog( IDOK );
+	EndDialog(IDOK);
 }
 
-void COptnDlg::OnCancel()
-{
+void COptnDlg::OnCancel() {
 	ClearDialogImage();
-	EndDialog( 0 );
+	EndDialog(0);
 }
 
-void COptnDlg::OnPaint()
-{
-	CDC 	*pDC;
-	char	msg[64];
+void COptnDlg::OnPaint() {
+	CDC     *pDC;
+	char    msg[64];
 
 	CBmpDialog::OnPaint();
 
-    pDC = GetDC();
+	pDC = GetDC();
 
-	Common::sprintf_s( msg, "(Effective on New Game)" );
-	(*m_pScoreText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	Common::sprintf_s(msg, "(Effective on New Game)");
+	(*m_pScoreText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	if ( m_nSweeps == MAX_SWEEPS )
-		Common::sprintf_s( msg, "Number of Sweeps: Unlimited" );
+	if (m_nSweeps == MAX_SWEEPS)
+		Common::sprintf_s(msg, "Number of Sweeps: Unlimited");
 	else
-		Common::sprintf_s( msg, "Number of Sweeps: %d", m_nSweeps );
-	(*m_pSweepsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+		Common::sprintf_s(msg, "Number of Sweeps: %d", m_nSweeps);
+	(*m_pSweepsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	Common::sprintf_s( msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str() );
-	(*m_pSpeedText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	Common::sprintf_s(msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
+	(*m_pSpeedText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	ReleaseDC( pDC );
+	ReleaseDC(pDC);
 
 }
 
-void COptnDlg::ClearDialogImage(void)
-{
+void COptnDlg::ClearDialogImage(void) {
 	if (pOKButton != NULL) {                          // release the button
 		delete pOKButton;
 		pOKButton = NULL;
 	}
 
-	if (pCancelButton != NULL) {                     	// release the button
+	if (pCancelButton != NULL) {                        // release the button
 		delete pCancelButton;
 		pCancelButton = NULL;
 	}
 
-	if (pAutoButton != NULL) {                     	// release the button
+	if (pAutoButton != NULL) {                      // release the button
 		delete pAutoButton;
 		pAutoButton = NULL;
 	}
 
-	if (pChangeButton != NULL) {                     	// release the button
+	if (pChangeButton != NULL) {                        // release the button
 		delete pChangeButton;
 		pChangeButton = NULL;
 	}

@@ -139,9 +139,8 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	switch (lKey) {
 
-		// Start a new game
-	case BKEY_ENTER:
-	{
+	// Start a new game
+	case BKEY_ENTER: {
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
@@ -195,16 +194,14 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 
 	switch (pButton->getControlID()) {
 
-		// Cancel
-	case CANCEL_BTN:
-	{
+	// Cancel
+	case CANCEL_BTN: {
 		close();
 		break;
 	}
 
 	// Restart a new game
-	case RESTART_BTN:
-	{
+	case RESTART_BTN: {
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();

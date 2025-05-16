@@ -216,8 +216,8 @@ void CBagHelp::onKeyHit(uint32 keyCode, uint32 repCount) {
 	case BKEY_ESC:
 	case BKEY_ENTER:
 		close();
-		// FIXME: missing break?
-		// fallthrough
+	// FIXME: missing break?
+	// fallthrough
 
 	default:
 		CBofDialog::onKeyHit(keyCode, repCount);

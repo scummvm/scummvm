@@ -29,16 +29,15 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define ITEM_BUFFER_LENGTH		132
+#define ITEM_BUFFER_LENGTH      132
 
 // action codes
-#define ITEM_ACTION_NONE		0
-#define ITEM_ACTION_NOTEBOOK	1
-#define ITEM_ACTION_SOUND		2
+#define ITEM_ACTION_NONE        0
+#define ITEM_ACTION_NOTEBOOK    1
+#define ITEM_ACTION_SOUND       2
 
 
-class CItem : public CObject
-{
+class CItem : public CObject {
 	DECLARE_DYNCREATE(CItem)
 
 // Constructors
@@ -51,70 +50,82 @@ public:
 
 // Implementation
 public:
-	int GetID(void)
-		{ return(m_nID); }
-	
-	long GetQuantity(void)
-		{ return(m_nQuantity); }
-	void SetQuantity(long nQuantity)
-		{ m_nQuantity = nQuantity; }
-		
-#ifndef FRAME_EXE
-	char * GetDescription(void)
-		{ return(GetDescription(m_nID, m_nQuantity)); }
-#endif
-	int GetActionCode(void)
-		{ return(m_nActionCode); }
-	void SetActionCode(int nActionCode)
-		{ m_nActionCode = nActionCode; }
+	int GetID(void) {
+		return (m_nID);
+	}
 
-#ifndef FRAME_EXE
-	const char * GetArtSpec(void)
-		{ return(m_pItemBitmapPath[m_nID - MG_OBJ_BASE]); }
-	const char * GetSoundSpec(void)
-		{ return(m_pItemSoundPath[m_nID - MG_OBJ_BASE]); }
-	
-	int	GetValue(void)
-		{ return(m_nValue[m_nID - MG_OBJ_BASE]); }
-#endif
+	long GetQuantity(void) {
+		return (m_nQuantity);
+	}
+	void SetQuantity(long nQuantity) {
+		m_nQuantity = nQuantity;
+	}
+
+	#ifndef FRAME_EXE
+	char *GetDescription(void) {
+		return (GetDescription(m_nID, m_nQuantity));
+	}
+	#endif
+	int GetActionCode(void) {
+		return (m_nActionCode);
+	}
+	void SetActionCode(int nActionCode) {
+		m_nActionCode = nActionCode;
+	}
+
+	#ifndef FRAME_EXE
+	const char *GetArtSpec(void) {
+		return (m_pItemBitmapPath[m_nID - MG_OBJ_BASE]);
+	}
+	const char *GetSoundSpec(void) {
+		return (m_pItemSoundPath[m_nID - MG_OBJ_BASE]);
+	}
+
+	int GetValue(void) {
+		return (m_nValue[m_nID - MG_OBJ_BASE]);
+	}
+	#endif
 
 	BOOL AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace);
-    BOOL AddNote(CNote *pNote);
-	CNote * GetFirstNote(void)
-		{ return(m_pNotes); }
-	
-	CItem *	GetNext(void)
-		{ return(m_pNext); }
-	CItem * GetPrev(void)
-		{ return(m_pPrev); }
+	BOOL AddNote(CNote *pNote);
+	CNote *GetFirstNote(void) {
+		return (m_pNotes);
+	}
+
+	CItem  *GetNext(void) {
+		return (m_pNext);
+	}
+	CItem *GetPrev(void) {
+		return (m_pPrev);
+	}
 
 
-static char * GetDescription(int nID, long nQuantity);
+	static char *GetDescription(int nID, long nQuantity);
 
-		  
+
 public:
-	int		m_nID;					// item identifier code
-	long	m_nQuantity;			// number of units of the item
-	int		m_nActionCode;			// action code for mouse click
-	CNote	*m_pNotes;				// pointer to notes for noteboook item
-	CItem	*m_pNext;				// pointer to next item in the list
-	CItem	*m_pPrev;				// pointer to previous item in the list
+	int     m_nID;                  // item identifier code
+	long    m_nQuantity;            // number of units of the item
+	int     m_nActionCode;          // action code for mouse click
+	CNote   *m_pNotes;              // pointer to notes for noteboook item
+	CItem   *m_pNext;               // pointer to next item in the list
+	CItem   *m_pPrev;               // pointer to previous item in the list
 
 private:
 
-#ifndef FRAME_EXE
-static const char *m_pItemText[MG_OBJ_COUNT];	// descriptive text for each item
-static const char *m_pItemPluralText[MG_OBJ_COUNT];	// pluralized descriptive text for each item
-static const char *m_pItemBitmapPath[MG_OBJ_COUNT];	// disk files specification for each item
-static const char *m_pItemSoundPath[MG_OBJ_COUNT];	// disk files specification for each item
-static int  m_nValue[MG_OBJ_COUNT];             // value of each item
-#endif
-static char	m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];		// place to construct item names
+	#ifndef FRAME_EXE
+	static const char *m_pItemText[MG_OBJ_COUNT];   // descriptive text for each item
+	static const char *m_pItemPluralText[MG_OBJ_COUNT]; // pluralized descriptive text for each item
+	static const char *m_pItemBitmapPath[MG_OBJ_COUNT]; // disk files specification for each item
+	static const char *m_pItemSoundPath[MG_OBJ_COUNT];  // disk files specification for each item
+	static int  m_nValue[MG_OBJ_COUNT];             // value of each item
+	#endif
+	static char m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];     // place to construct item names
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 

@@ -1018,7 +1018,7 @@ ErrorCode CBofBitmap::curtain(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 	return _errCode;
 }
 
-ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd,int nSpeed, int nMaskColor) {
+ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 	assert(isValidObject(this));
 	assert(pWnd != nullptr);
 	assert(nSpeed != 0);

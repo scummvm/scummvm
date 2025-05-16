@@ -64,21 +64,21 @@ HCURSOR                 hGameCursor;
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunLife( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
-        // create a my poker window and show it
-        gMainWnd = new CMainWindow( hParentWnd, lpGameInfo );
-        gMainWnd->ShowWindow( SW_SHOWNORMAL );
+HWND FAR PASCAL RunLife(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
+	// create a my poker window and show it
+	gMainWnd = new CMainWindow(hParentWnd, lpGameInfo);
+	gMainWnd->ShowWindow(SW_SHOWNORMAL);
 
-        gMainWnd->SplashScreen();   // Force immediate display to minimize repaint delay
-        gMainWnd->DisplayStats();       // Initializes the stats
+	gMainWnd->SplashScreen();   // Force immediate display to minimize repaint delay
+	gMainWnd->DisplayStats();       // Initializes the stats
 
-        gMainWnd->UpdateWindow();
-        gMainWnd->SetActiveWindow();
+	gMainWnd->UpdateWindow();
+	gMainWnd->SetActiveWindow();
 // return the handle to this window
-        hDLLInst = (HINSTANCE)GetWindowWord( gMainWnd->m_hWnd, GWW_HINSTANCE);
-        hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
+	hDLLInst = (HINSTANCE)GetWindowWord(gMainWnd->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 //        MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_COMMAND, BN_CLICKED );
-        return gMainWnd->m_hWnd;
+	return gMainWnd->m_hWnd;
 }
 
 } // namespace Life

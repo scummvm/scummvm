@@ -43,7 +43,7 @@ void SBZoomPda::initialize() {
 
 SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevWnd(),
-	SBBasePda(pParent, xRect, bActivated) {
+	  SBBasePda(pParent, xRect, bActivated) {
 	_xSDevType = SDEV_ZOOMPDA;
 }
 

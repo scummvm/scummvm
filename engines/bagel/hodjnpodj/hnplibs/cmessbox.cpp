@@ -31,33 +31,31 @@ namespace HodjNPodj {
 
 
 #ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
+	#undef THIS_FILE
+	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
 
-static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
+static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
 
 CMessageBox::CMessageBox(CWnd* pParent, CPalette *pPalette, const char *msg1, const char *msg2, const int dx, const int dy)
-         : CBmpDialog(pParent, pPalette, IDD_GAMEOVER, ".\\ART\\SSCROLL.BMP", dx, dy)
-{
-    // Initialize all members
-    //
-    m_pPalette = pPalette;
-    m_pMessage1 = msg1;
-    m_pMessage2 = msg2;
+	: CBmpDialog(pParent, pPalette, IDD_GAMEOVER, ".\\ART\\SSCROLL.BMP", dx, dy) {
+	// Initialize all members
+	//
+	m_pPalette = pPalette;
+	m_pMessage1 = msg1;
+	m_pMessage2 = msg2;
 
-    m_cTextMessage1 = NULL;
-    m_cTextMessage2 = NULL;
+	m_cTextMessage1 = NULL;
+	m_cTextMessage2 = NULL;
 
-    DoModal();
+	DoModal();
 
-    //{{AFX_DATA_INIT(CMessageBox)
-        // NOTE: the ClassWizard will add member initialization here
-    //}}AFX_DATA_INIT
+	//{{AFX_DATA_INIT(CMessageBox)
+	// NOTE: the ClassWizard will add member initialization here
+	//}}AFX_DATA_INIT
 }
 
-void CMessageBox::ClearDialogImage()
-{
+void CMessageBox::ClearDialogImage() {
 	if (pOKButton != NULL) {                          // release the button
 		delete pOKButton;
 		pOKButton = NULL;
@@ -66,140 +64,133 @@ void CMessageBox::ClearDialogImage()
 	ValidateRect(NULL);
 }
 
-void CMessageBox::OnDestroy()
-{
-    if (m_cTextMessage1 != NULL) {
-        delete m_cTextMessage1;
-        m_cTextMessage1 = NULL;
-    }
+void CMessageBox::OnDestroy() {
+	if (m_cTextMessage1 != NULL) {
+		delete m_cTextMessage1;
+		m_cTextMessage1 = NULL;
+	}
 
-    if (m_cTextMessage2 != NULL) {
-        delete m_cTextMessage2;
-        m_cTextMessage2 = NULL;
-    }
+	if (m_cTextMessage2 != NULL) {
+		delete m_cTextMessage2;
+		m_cTextMessage2 = NULL;
+	}
 
 	if (pOKButton != NULL) {                          // release the button
 		delete pOKButton;
 		pOKButton = NULL;
 	}
 
-    CBmpDialog::OnDestroy();
+	CBmpDialog::OnDestroy();
 }
 
-void CMessageBox::DoDataExchange(CDataExchange* pDX)
-{
-    CDialog::DoDataExchange(pDX);
-    //{{AFX_DATA_MAP(CMessageBox)
-        // NOTE: the ClassWizard will add DDX and DDV calls here
-    //}}AFX_DATA_MAP
+void CMessageBox::DoDataExchange(CDataExchange* pDX) {
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CMessageBox)
+	// NOTE: the ClassWizard will add DDX and DDV calls here
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CMessageBox, CDialog)
-    //{{AFX_MSG_MAP(CMessageBox)
-    ON_WM_PAINT()
-    ON_WM_ERASEBKGND()
-    ON_WM_DESTROY()
-    //}}AFX_MSG_MAP
+	//{{AFX_MSG_MAP(CMessageBox)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
+	ON_WM_DESTROY()
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
 /////////////////////////////////////////////////////////////////////////////
 // CMessageBox message handlers
 
-BOOL CMessageBox::OnInitDialog()
-{
-    CRect   statsRect;                  // game stats displays
-    int     nStat_col_offset;           // game stats placement
-    int     nStat_row_offset;
-    int     nStatWidth, nStatHeight;
-    BOOL    bAssertCheck;
-    CDC     *pDC;
+BOOL CMessageBox::OnInitDialog() {
+	CRect   statsRect;                  // game stats displays
+	int     nStat_col_offset;           // game stats placement
+	int     nStat_row_offset;
+	int     nStatWidth, nStatHeight;
+	BOOL    bAssertCheck;
+	CDC     *pDC;
 
-    CBmpDialog::OnInitDialog();
+	CBmpDialog::OnInitDialog();
 
-    // TODO: Add extra initialization here
+	// TODO: Add extra initialization here
 
-    pDC = GetDC();
-    // setup the Starting Villages stat display box
-    nStat_col_offset    = MESSAGE_COL;
-    nStat_row_offset    = MESSAGE_ROW;
-    nStatWidth          = MESSAGE_WIDTH;
-    nStatHeight         = MESSAGE_HEIGHT;
-    statsRect.SetRect   (
-                         nStat_col_offset,
-                         nStat_row_offset,
-                         nStat_col_offset + nStatWidth,
-                         nStat_row_offset + nStatHeight
-                        );
+	pDC = GetDC();
+	// setup the Starting Villages stat display box
+	nStat_col_offset    = MESSAGE_COL;
+	nStat_row_offset    = MESSAGE_ROW;
+	nStatWidth          = MESSAGE_WIDTH;
+	nStatHeight         = MESSAGE_HEIGHT;
+	statsRect.SetRect(
+	    nStat_col_offset,
+	    nStat_row_offset,
+	    nStat_col_offset + nStatWidth,
+	    nStat_row_offset + nStatHeight
+	);
 
-    if ((m_cTextMessage1 = new CText()) != NULL) {
-        bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
-        ASSERT(bAssertCheck);   // initialize the text objext
-    }
-
-    nStat_row_offset += MESSAGE2_ROW_OFFSET;
-    statsRect.SetRect(
-                         nStat_col_offset,
-                         nStat_row_offset,
-                         nStat_col_offset + nStatWidth,
-                         nStat_row_offset + nStatHeight
-                     );
-
-    if ((m_cTextMessage2 = new CText()) != NULL) {
-        bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
-        ASSERT(bAssertCheck);   // initialize the text objext
-    }
-
-    ReleaseDC(pDC);
-
-	if ((pOKButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(m_pPalette);						// set the palette to use
-		(*pOKButton).SetControl(IDOK,this);				// tie to the dialog control
+	if ((m_cTextMessage1 = new CText()) != NULL) {
+		bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		ASSERT(bAssertCheck);   // initialize the text objext
 	}
-	
-    return TRUE;  // return TRUE  unless you set the focus to a control
+
+	nStat_row_offset += MESSAGE2_ROW_OFFSET;
+	statsRect.SetRect(
+	    nStat_col_offset,
+	    nStat_row_offset,
+	    nStat_col_offset + nStatWidth,
+	    nStat_row_offset + nStatHeight
+	);
+
+	if ((m_cTextMessage2 = new CText()) != NULL) {
+		bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		ASSERT(bAssertCheck);   // initialize the text objext
+	}
+
+	ReleaseDC(pDC);
+
+	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
+		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+	}
+
+	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CMessageBox::OnPaint()
-{
-    // TODO: Add your message handler code here
-    CDC     *pDC;
-    BOOL    bAssertCheck;
+void CMessageBox::OnPaint() {
+	// TODO: Add your message handler code here
+	CDC     *pDC;
+	BOOL    bAssertCheck;
 
-    CBmpDialog::OnPaint();
-    // Do not call CDialog::OnPaint() for painting messages
+	CBmpDialog::OnPaint();
+	// Do not call CDialog::OnPaint() for painting messages
 
-    pDC = GetDC();
+	pDC = GetDC();
 
-    if ( m_pMessage1 != NULL ) {
-        bAssertCheck = (*m_cTextMessage1).DisplayString(pDC,m_pMessage1,21,FW_BOLD,TEXT_COLOR);
-        ASSERT(bAssertCheck);
-    }
+	if (m_pMessage1 != NULL) {
+		bAssertCheck = (*m_cTextMessage1).DisplayString(pDC, m_pMessage1, 21, FW_BOLD, TEXT_COLOR);
+		ASSERT(bAssertCheck);
+	}
 
-    if ( m_pMessage2 != NULL ) {
-        bAssertCheck = (*m_cTextMessage2).DisplayString(pDC,m_pMessage2,21,FW_BOLD,TEXT_COLOR);
-        ASSERT(bAssertCheck);
-    }
+	if (m_pMessage2 != NULL) {
+		bAssertCheck = (*m_cTextMessage2).DisplayString(pDC, m_pMessage2, 21, FW_BOLD, TEXT_COLOR);
+		ASSERT(bAssertCheck);
+	}
 
-    ReleaseDC(pDC);
+	ReleaseDC(pDC);
 }
 
-void CMessageBox::OnOK()
-{
+void CMessageBox::OnOK() {
 	ClearDialogImage();
-    EndDialog(IDOK);
+	EndDialog(IDOK);
 }
 
-void CMessageBox::OnCancel()
-{
+void CMessageBox::OnCancel() {
 	ClearDialogImage();
-    EndDialog(IDCANCEL);
+	EndDialog(IDCANCEL);
 }
 
-BOOL CMessageBox::OnEraseBkgnd(CDC *pDC)
-{
-    // Prevents refreshing of background
-    return(TRUE);
+BOOL CMessageBox::OnEraseBkgnd(CDC *pDC) {
+	// Prevents refreshing of background
+	return (TRUE);
 }
 
 } // namespace HodjNPodj

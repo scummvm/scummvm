@@ -45,73 +45,71 @@ extern LPGAMESTRUCT pGameParams;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
- 
-HWND FAR PASCAL RunArch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
-    CMainWindow *pMainWnd;
 
-    pGameParams = lpGameInfo;
+HWND FAR PASCAL RunArch(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
+	CMainWindow *pMainWnd;
 
-    // invoke you game here by creating a pGame for your main window
-    // look at the InitInstance for your game for this
+	pGameParams = lpGameInfo;
 
-    ghParentWnd = hParentWnd;
+	// invoke you game here by creating a pGame for your main window
+	// look at the InitInstance for your game for this
 
-    if ((pMainWnd = new CMainWindow) != NULL) {
+	ghParentWnd = hParentWnd;
 
-        pMainWnd->ShowWindow(SW_SHOWNORMAL);
+	if ((pMainWnd = new CMainWindow) != NULL) {
 
-        pMainWnd->UpdateWindow();
+		pMainWnd->ShowWindow(SW_SHOWNORMAL);
 
-        pMainWnd->SetActiveWindow();
+		pMainWnd->UpdateWindow();
 
-        if (pGameParams->bPlayingMetagame)
-            pMainWnd->PlayGame();
-    }
+		pMainWnd->SetActiveWindow();
 
-    // these must be set in this function
-    hDLLInst = (HINSTANCE)GetWindowWord( pMainWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
+		if (pGameParams->bPlayingMetagame)
+			pMainWnd->PlayGame();
+	}
 
-    return pMainWnd->m_hWnd;   // return the m_hWnd of your main game window
+	// these must be set in this function
+	hDLLInst = (HINSTANCE)GetWindowWord(pMainWnd->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+
+	return pMainWnd->m_hWnd;   // return the m_hWnd of your main game window
 }
 
 BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg) {
-    TRY
-    {
-        return AfxGetApp()->PreTranslateMessage(lpMsg);
-    }
-    END_TRY
-    return FALSE;
+	TRY {
+		return AfxGetApp()->PreTranslateMessage(lpMsg);
+	}
+	END_TRY
+	return FALSE;
 }
 
 void FAR PASCAL ProcessDllIdle() {
-    TRY
-    {
-        // flush it all at once
-        long lCount = 0;
-        while (AfxGetApp()->OnIdle(lCount))
-            lCount++;
-    }
-    END_TRY
+	TRY {
+		// flush it all at once
+		long lCount = 0;
+		while (AfxGetApp()->OnIdle(lCount))
+			lCount++;
+	}
+	END_TRY
 }
 
 } // namespace Archeroids

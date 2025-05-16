@@ -75,24 +75,24 @@ public:
 
 	/**
 	 * Creates the dialog
-	 * @param pszName		Dialog name
-	 * @param x				Top-left X position
-	 * @param y				Top-left Y position
-	 * @param nWidth		Width
-	 * @param nHeight		Height
-	 * @param pParent		Parent window
-	 * @param nControlID	Control Id
-	 * @return				Error return code
+	 * @param pszName       Dialog name
+	 * @param x             Top-left X position
+	 * @param y             Top-left Y position
+	 * @param nWidth        Width
+	 * @param nHeight       Height
+	 * @param pParent       Parent window
+	 * @param nControlID    Control Id
+	 * @return              Error return code
 	 */
 	ErrorCode create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID = 0) override;
 
 	/**
 	 * Creates the dialog
-	 * @param pszName		Dialog name
-	 * @param pRect			Dialog bounds
-	 * @param pParent		Parent window
-	 * @param nControlID	Control Id
-	 * @return				Error return code
+	 * @param pszName       Dialog name
+	 * @param pRect         Dialog bounds
+	 * @param pParent       Parent window
+	 * @param nControlID    Control Id
+	 * @return              Error return code
 	 */
 	ErrorCode create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID = 0) override;
 

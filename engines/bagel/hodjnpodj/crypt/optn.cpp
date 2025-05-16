@@ -28,19 +28,19 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
-static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
+static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
 /////////////////////////////////////////////////////////////////////////////
 // COptn dialog
 
 
 COptn::COptn(
-			CWnd* pParent /*=NULL*/,
-			CPalette *pPalette /*=NULL*/,
-			int nLttrsSlvd /*LSLVD_DEFAULT*/,
-			int nTime /*TIME_DEFAULT*/
-			)
-		:CBmpDialog(pParent, pPalette, IDD_USER_OPTIONS, ".\\ART\\SSCROLL.BMP")
+    CWnd* pParent /*=NULL*/,
+    CPalette *pPalette /*=NULL*/,
+    int nLttrsSlvd /*LSLVD_DEFAULT*/,
+    int nTime /*TIME_DEFAULT*/
+)
+	: CBmpDialog(pParent, pPalette, IDD_USER_OPTIONS, ".\\ART\\SSCROLL.BMP")
 
 {
 	//{{AFX_DATA_INIT(COptn)
@@ -74,14 +74,13 @@ COptn::COptn(
 	//}}AFX_DATA_INIT
 }
 
-COptn::~COptn()
-{
-	if ( m_pLttrsSlvd != NULL ) {
+COptn::~COptn() {
+	if (m_pLttrsSlvd != NULL) {
 		delete m_pLttrsSlvd;
 		m_pLttrsSlvd = NULL;
 	}
 
-	if ( m_pTime != NULL ) {
+	if (m_pTime != NULL) {
 		delete m_pTime;
 		m_pLttrsSlvd = NULL;
 	}
@@ -89,8 +88,7 @@ COptn::~COptn()
 	CBmpDialog::OnDestroy();
 }
 
-int COptn::TimeToIndex(int nTime)
-{
+int COptn::TimeToIndex(int nTime) {
 	int nLow;
 
 	#ifdef REVEAL
@@ -99,23 +97,23 @@ int COptn::TimeToIndex(int nTime)
 	/****************************************
 	* Seaches ordered array in log(n) time. *
 	****************************************/
-	for ( nMid = (int) (TIME_TABLE / 2) + ((TIME_TABLE / 2) % 2), nLow = 0; TRUE ; ) {
-		if ( m_nTimeIndex[nMid] == nTime )
+	for (nMid = (int)(TIME_TABLE / 2) + ((TIME_TABLE / 2) % 2), nLow = 0; TRUE ;) {
+		if (m_nTimeIndex[nMid] == nTime)
 			return ((int) nMid);
-		if ( m_nTimeIndex[nMid] > nTime ) {
-			nMid -= (int) ((nMid - nLow) / 2) + ((nMid - nLow) % 2);
+		if (m_nTimeIndex[nMid] > nTime) {
+			nMid -= (int)((nMid - nLow) / 2) + ((nMid - nLow) % 2);
 		} else {
 			nTmp = nLow;
 			nLow = nMid;
-			nMid += (int) ((nMid - nTmp) / 2) + ((nMid - nLow) % 2);
+			nMid += (int)((nMid - nTmp) / 2) + ((nMid - nLow) % 2);
 		}
 	}
 	#else
 	/***********************************
 	* Seaches ordered array in n time. *
 	***********************************/
-	for ( nLow = 0; nLow < TIME_TABLE ; nLow++) {
-		if ( m_nTimeIndex[nLow] == nTime )
+	for (nLow = 0; nLow < TIME_TABLE ; nLow++) {
+		if (m_nTimeIndex[nLow] == nTime)
 			return ((int) nLow);
 	}
 
@@ -123,8 +121,7 @@ int COptn::TimeToIndex(int nTime)
 	#endif
 }
 
-void COptn::DoDataExchange(CDataExchange* pDX)
-{
+void COptn::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptn)
 	DDX_Control(pDX, IDC_LTTRSSLVD, m_LttrsSlvd);
@@ -137,7 +134,7 @@ BEGIN_MESSAGE_MAP(COptn, CDialog)
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_HSCROLL()
-    ON_WM_DESTROY()
+	ON_WM_DESTROY()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -145,14 +142,13 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COptn message handlers
 
-BOOL COptn::OnInitDialog()
-{
-	CRect	statsRect;						// game stats displays
-	int 	nStat_col_offset;	  			// game stats placement
-	int		nStat_row_offset;
-	int 	nStatWidth, nStatHeight;
-	BOOL	bAssertCheck;
-	CDC		*pDC;
+BOOL COptn::OnInitDialog() {
+	CRect   statsRect;                      // game stats displays
+	int     nStat_col_offset;               // game stats placement
+	int     nStat_row_offset;
+	int     nStatWidth, nStatHeight;
+	BOOL    bAssertCheck;
+	CDC     *pDC;
 
 	CBmpDialog::OnInitDialog();
 
@@ -179,148 +175,146 @@ BOOL COptn::OnInitDialog()
 
 	pDC = GetDC();
 
-	nStat_col_offset	= STAT_BOX_COL;		// setup the Letters Solved
-	nStat_row_offset	= STAT_BOX_ROW;		//  stat display box
-	nStatWidth			= STAT_BOX_WIDTH;
-	nStatHeight			= STAT_BOX_HEIGHT;
-	statsRect.SetRect	(
-						 nStat_col_offset,
-						 nStat_row_offset,
-						 nStat_col_offset + nStatWidth,
-						 nStat_row_offset + nStatHeight
-						);
+	nStat_col_offset    = STAT_BOX_COL;     // setup the Letters Solved
+	nStat_row_offset    = STAT_BOX_ROW;     //  stat display box
+	nStatWidth          = STAT_BOX_WIDTH;
+	nStatHeight         = STAT_BOX_HEIGHT;
+	statsRect.SetRect(
+	    nStat_col_offset,
+	    nStat_row_offset,
+	    nStat_col_offset + nStatWidth,
+	    nStat_row_offset + nStatHeight
+	);
 
 	if ((m_pLttrsSlvd = new CText()) != NULL) {
 		bAssertCheck = (*m_pLttrsSlvd).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
-		ASSERT(bAssertCheck);   			// initialize the text objext
+		ASSERT(bAssertCheck);               // initialize the text objext
 	}
-	m_LttrsSlvd.SetScrollRange(MIN_LTTRSSLVD, MAX_LTTRSSLVD, FALSE);	// setup Letters Solved defaults
+	m_LttrsSlvd.SetScrollRange(MIN_LTTRSSLVD, MAX_LTTRSSLVD, FALSE);    // setup Letters Solved defaults
 	m_LttrsSlvd.SetScrollPos(m_nLttrsSlvd, TRUE);
 
-	nStat_row_offset += BOX_ROW_OFFSET;		// Time stat display box
+	nStat_row_offset += BOX_ROW_OFFSET;     // Time stat display box
 	statsRect.SetRect(
-						 nStat_col_offset,
-						 nStat_row_offset,
-						 nStat_col_offset + nStatWidth,
-						 nStat_row_offset + nStatHeight
-					 );
+	    nStat_col_offset,
+	    nStat_row_offset,
+	    nStat_col_offset + nStatWidth,
+	    nStat_row_offset + nStatHeight
+	);
 
 	if ((m_pTime = new CText()) != NULL) {
 		bAssertCheck = (*m_pTime).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
-		ASSERT(bAssertCheck);   			// initialize the text objext
+		ASSERT(bAssertCheck);               // initialize the text objext
 	}
 
- 	m_Time.SetScrollRange(MIN_INDEX_TIME, MAX_INDEX_TIME, FALSE);				// Time scroll bar defaults
+	m_Time.SetScrollRange(MIN_INDEX_TIME, MAX_INDEX_TIME, FALSE);               // Time scroll bar defaults
 	m_Time.SetScrollPos(m_nTime, TRUE);
 
-	if ((pOKButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(pGamePalette);						// set the palette to use
-		(*pOKButton).SetControl(IDOK,this);				// tie to the dialog control
+	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pOKButton).SetPalette(pGamePalette);                      // set the palette to use
+		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
-	
-	if ((pCancelButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(pGamePalette);						// set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL,this);				// tie to the dialog control
+
+	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pCancelButton).SetPalette(pGamePalette);                      // set the palette to use
+		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
-	
+
 	ReleaseDC(pDC);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void COptn::OnDestroy(void)
-{
-    CBmpDialog::OnDestroy();
+void COptn::OnDestroy(void) {
+	CBmpDialog::OnDestroy();
 }
 
 
-void COptn::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
+void COptn::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 	// TODO: Add your message handler code here and/or call default
-	CDC		*pDC;
-	BOOL	bAssertCheck;
-	char 	msg[64];
+	CDC     *pDC;
+	BOOL    bAssertCheck;
+	char    msg[64];
 
 	pDC = GetDC();
 
 	if (pScrollBar->GetDlgCtrlID() == IDC_LTTRSSLVD) {
 		switch (nSBCode) {
 
-			case SB_LINERIGHT:
-				m_nLttrsSlvd++;
-				break;
+		case SB_LINERIGHT:
+			m_nLttrsSlvd++;
+			break;
 
-			case SB_PAGERIGHT:
-				m_nLttrsSlvd += (int) MAX_LTTRSSLVD/5; // magic # 5 = five divisions
-				break;
+		case SB_PAGERIGHT:
+			m_nLttrsSlvd += (int) MAX_LTTRSSLVD / 5; // magic # 5 = five divisions
+			break;
 
-			case SB_RIGHT:
-				m_nLttrsSlvd = MAX_LTTRSSLVD;
-				break;
+		case SB_RIGHT:
+			m_nLttrsSlvd = MAX_LTTRSSLVD;
+			break;
 
-			case SB_LINELEFT:
-				m_nLttrsSlvd--;
-				break;
+		case SB_LINELEFT:
+			m_nLttrsSlvd--;
+			break;
 
-			case SB_PAGELEFT:
-				m_nLttrsSlvd -= (int) MAX_LTTRSSLVD/5; // magic # 5 = five divisions
-				break;
+		case SB_PAGELEFT:
+			m_nLttrsSlvd -= (int) MAX_LTTRSSLVD / 5; // magic # 5 = five divisions
+			break;
 
-			case SB_LEFT:
-				m_nLttrsSlvd = MIN_LTTRSSLVD;
-				break;
+		case SB_LEFT:
+			m_nLttrsSlvd = MIN_LTTRSSLVD;
+			break;
 
-			case SB_THUMBPOSITION:
-			case SB_THUMBTRACK:
-				m_nLttrsSlvd = (int) nPos;
-				break;
+		case SB_THUMBPOSITION:
+		case SB_THUMBTRACK:
+			m_nLttrsSlvd = (int) nPos;
+			break;
 
 		} // end switch
 
-		if ( m_nLttrsSlvd < MIN_LTTRSSLVD )
+		if (m_nLttrsSlvd < MIN_LTTRSSLVD)
 			m_nLttrsSlvd = MIN_LTTRSSLVD;
-		if ( m_nLttrsSlvd > MAX_LTTRSSLVD )
+		if (m_nLttrsSlvd > MAX_LTTRSSLVD)
 			m_nLttrsSlvd = MAX_LTTRSSLVD;
 
 		Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd);
-		bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+		bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);
 		pScrollBar->SetScrollPos(m_nLttrsSlvd, TRUE);
 
-	} else if (pScrollBar->GetDlgCtrlID()==IDC_TIME) {
+	} else if (pScrollBar->GetDlgCtrlID() == IDC_TIME) {
 		switch (nSBCode) {
 
-			case SB_LINERIGHT:
-				m_nTime++;
-				break;
-			case SB_PAGERIGHT:
-				m_nTime += MAX_INDEX_TIME/5;  // want 5 pagerights end to end
-				break;
-			case SB_RIGHT:
-				m_nTime = MAX_INDEX_TIME;
-				break;
-			case SB_LINELEFT:
-				m_nTime--;
-				break;
-			case SB_PAGELEFT:
-				m_nTime -= MAX_INDEX_TIME/5;  // want 5 pagerights end to end
-				break;
-			case SB_LEFT:
-				m_nTime = 0;
-				break;
-			case SB_THUMBPOSITION:
-			case SB_THUMBTRACK:
-				m_nTime = (int) nPos;
-				break;
+		case SB_LINERIGHT:
+			m_nTime++;
+			break;
+		case SB_PAGERIGHT:
+			m_nTime += MAX_INDEX_TIME / 5; // want 5 pagerights end to end
+			break;
+		case SB_RIGHT:
+			m_nTime = MAX_INDEX_TIME;
+			break;
+		case SB_LINELEFT:
+			m_nTime--;
+			break;
+		case SB_PAGELEFT:
+			m_nTime -= MAX_INDEX_TIME / 5; // want 5 pagerights end to end
+			break;
+		case SB_LEFT:
+			m_nTime = 0;
+			break;
+		case SB_THUMBPOSITION:
+		case SB_THUMBTRACK:
+			m_nTime = (int) nPos;
+			break;
 		} // end switch
 
-		if ( m_nTime < MIN_INDEX_TIME )
+		if (m_nTime < MIN_INDEX_TIME)
 			m_nTime = MIN_INDEX_TIME;
-		if ( m_nTime > MAX_INDEX_TIME )
+		if (m_nTime > MAX_INDEX_TIME)
 			m_nTime = MAX_INDEX_TIME;
 
 		Common::sprintf_s(msg, "Time Limit: %s", m_chTime[m_nTime].c_str());
 
-		bAssertCheck = (*m_pTime).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+		bAssertCheck = (*m_pTime).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
 		pScrollBar->SetScrollPos(m_nTime, TRUE);
@@ -331,55 +325,50 @@ void COptn::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 }
 
 
-void COptn::OnPaint()
-{
-	CDC		*pDC;
-	BOOL	bAssertCheck;
-	char	msg[64];
+void COptn::OnPaint() {
+	CDC     *pDC;
+	BOOL    bAssertCheck;
+	char    msg[64];
 
 	CBmpDialog::OnPaint();
 	// Do not call CDialog::OnPaint() for painting messages
 
 	pDC = GetDC();
 
-	Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd);	// Display Letters Solved stats
-	bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+	Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd); // Display Letters Solved stats
+	bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
-	Common::sprintf_s(msg, "Time: %s", m_chTime[m_nTime].c_str());		// Display Time stats
-	bAssertCheck = (*m_pTime).DisplayString(pDC,msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+	Common::sprintf_s(msg, "Time: %s", m_chTime[m_nTime].c_str());      // Display Time stats
+	bAssertCheck = (*m_pTime).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
 	ReleaseDC(pDC);
 }
 
-BOOL COptn::OnEraseBkgnd(CDC *pDC)
-{
-	return(TRUE);
+BOOL COptn::OnEraseBkgnd(CDC *pDC) {
+	return (TRUE);
 }
 
-void COptn::OnOK()
-{
+void COptn::OnOK() {
 	m_nTime = m_nTimeIndex[m_nTime];
 	ClearDialogImage();
-	EndDialog( IDOK );
+	EndDialog(IDOK);
 //		CDialog::OnOK();
 }
 
-void COptn::OnCancel()
-{
+void COptn::OnCancel() {
 	ClearDialogImage();
-	EndDialog( 0 );
+	EndDialog(0);
 }
 
-void COptn::ClearDialogImage(void)
-{
+void COptn::ClearDialogImage(void) {
 	if (pOKButton != NULL) {                          // release the button
 		delete pOKButton;
 		pOKButton = NULL;
 	}
 
-	if (pCancelButton != NULL) {                     	// release the button
+	if (pCancelButton != NULL) {                        // release the button
 		delete pCancelButton;
 		pCancelButton = NULL;
 	}

@@ -34,18 +34,18 @@ namespace GrandTour {
 //#error This source file must be compiled with _DEBUG defined
 //#endif
 
-HINSTANCE	hDLLInst;
-HINSTANCE 	hExeInst;
-HWND		ghwndParent;
+HINSTANCE   hDLLInst;
+HINSTANCE   hExeInst;
+HWND        ghwndParent;
 
-//CMainDFAWindow	*pMainGameWnd = NULL;	// pointer to the poker's main window 
-CPalette		*pTestPalette = NULL;
-HCURSOR			hGameCursor;
-extern  CGtlFrame		*pMainWindow;
-LPGAMESTRUCT 	pGameInfo = NULL;
-HWND			hThisWind;
-CBfcMgr 		*lpMetaGameStruct = NULL;
-BOOL			bJustReturned = FALSE;
+//CMainDFAWindow    *pMainGameWnd = NULL;   // pointer to the poker's main window
+CPalette        *pTestPalette = NULL;
+HCURSOR         hGameCursor;
+extern  CGtlFrame       *pMainWindow;
+LPGAMESTRUCT    pGameInfo = NULL;
+HWND            hThisWind;
+CBfcMgr         *lpMetaGameStruct = NULL;
+BOOL            bJustReturned = FALSE;
 
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
@@ -56,99 +56,95 @@ BOOL			bJustReturned = FALSE;
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *			This is the API function for the DLL. It is what the calling app
- *			calls to invoke poker 
- *   
+ *          This is the API function for the DLL. It is what the calling app
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 extern "C"
-HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded)
-{
-    ghwndParent = hParentWnd;
-    lpMetaGameStruct = lpBfcMgr;
+HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
+	ghwndParent = hParentWnd;
+	lpMetaGameStruct = lpBfcMgr;
 
-#if RETAIN_META_DLL
+	#if RETAIN_META_DLL
 	if (bMetaLoaded) {
-        CGtlView    *xpGtlFocusView, *xpGtlMouseView;
-        CGtlDoc     *xpGtlDoc = NULL;
+		CGtlView    *xpGtlFocusView, *xpGtlMouseView;
+		CGtlDoc     *xpGtlDoc = NULL;
 
-	    pMainWindow->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
-        xpGtlDoc->m_xpGtlData->m_xpGtlView->SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, NULL);
-        if ( lpBfcMgr->m_bRestart == FALSE ) {
+		pMainWindow->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
+		xpGtlDoc->m_xpGtlData->m_xpGtlView->SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, NULL);
+		if (lpBfcMgr->m_bRestart == FALSE) {
 			xpGtlDoc->m_xpGtlData->m_xpXodjChain = NULL;
 			xpGtlDoc->m_xpGtlData->m_xpCurXodj = NULL;
 			xpGtlDoc->m_xpGtlData->m_iMishMoshLoc = 0;
-	        pMainWindow->m_lpBfcMgr = NULL;
-	        pMainWindow->m_lpBfcMgr = lpBfcMgr;
-	        xpGtlDoc->m_xpGtlData->m_bGameOver = FALSE;
-        }
+			pMainWindow->m_lpBfcMgr = NULL;
+			pMainWindow->m_lpBfcMgr = lpBfcMgr;
+			xpGtlDoc->m_xpGtlData->m_bGameOver = FALSE;
+		}
 		pMainWindow->ShowWindow(SW_SHOWNORMAL);
-        // if restoring a saved game
-        //
-        bJustReturned = TRUE;
-        if (lpBfcMgr->m_bRestoredGame) {
+		// if restoring a saved game
+		//
+		bJustReturned = TRUE;
+		if (lpBfcMgr->m_bRestoredGame) {
 
-            // Re-init the game using the restored info (i.e. lpBfcMgr)
-            //
-            xpGtlDoc->m_xpGtlData->m_bInitMetaGame = TRUE;
-            xpGtlDoc->m_xpGtlData->InitMetaGame(xpGtlDoc->m_xpGtlData->m_xpGtlView, TRUE);
+			// Re-init the game using the restored info (i.e. lpBfcMgr)
+			//
+			xpGtlDoc->m_xpGtlData->m_bInitMetaGame = TRUE;
+			xpGtlDoc->m_xpGtlData->InitMetaGame(xpGtlDoc->m_xpGtlData->m_xpGtlView, TRUE);
 
-        } else if (lpBfcMgr->m_iFunctionCode) {
+		} else if (lpBfcMgr->m_iFunctionCode) {
 
-            xpGtlDoc->m_xpGtlData->ReturnFromInterface();
-            xpGtlDoc->m_xpGtlData->ProcessMove();
-        }
-	}
-	else
-		SetupWindow( lpBfcMgr );
-#else
-    bJustReturned = lpBfcMgr->m_bRestart;
-	SetupWindow( lpBfcMgr );
-#endif    
-	
-	sndPlaySound(NULL,0);				// clear all rogue sounds
+			xpGtlDoc->m_xpGtlData->ReturnFromInterface();
+			xpGtlDoc->m_xpGtlData->ProcessMove();
+		}
+	} else
+		SetupWindow(lpBfcMgr);
+	#else
+	bJustReturned = lpBfcMgr->m_bRestart;
+	SetupWindow(lpBfcMgr);
+	#endif
+
+	sndPlaySound(NULL, 0);              // clear all rogue sounds
 
 	return pMainWindow->m_hWnd;
 }
 
 
-void SetupWindow(CBfcMgr *)
-{
-    CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
+void SetupWindow(CBfcMgr *) {
+	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 
 	SetupCursor();
 
 	xpGtlApp->CreateInstance();
-	
-	hDLLInst = (HINSTANCE)::GetWindowWord( pMainWindow->m_hWnd, GWW_HINSTANCE);
-	hExeInst = (HINSTANCE)::GetWindowWord( ghwndParent, GWW_HINSTANCE);  
+
+	hDLLInst = (HINSTANCE)::GetWindowWord(pMainWindow->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)::GetWindowWord(ghwndParent, GWW_HINSTANCE);
 
 }
 
 
-void SetupCursor(void)
-{
-    CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-	HCURSOR	hNewCursor = NULL;
+void SetupCursor(void) {
+	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
+	HCURSOR hNewCursor = NULL;
 
 	hNewCursor = xpGtlApp->LoadStandardCursor(IDC_ARROW);
 	if (hNewCursor != NULL);
-		::SetCursor(hNewCursor);
+	::SetCursor(hNewCursor);
 }
 
 

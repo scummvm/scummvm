@@ -144,10 +144,10 @@ void StBagelSave::clear() {
 
 CBagSaveGameFile::CBagSaveGameFile(bool isSaving) {
 	setFile("spacebar.sav",
-		isSaving ?
-		(CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE | CDF_SAVEFILE) :
-		(CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_SAVEFILE)
-	);
+	        isSaving ?
+	        (CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE | CDF_SAVEFILE) :
+	        (CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_SAVEFILE)
+	       );
 }
 
 ErrorCode CBagSaveGameFile::writeSavedGame() {
@@ -201,7 +201,7 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 			Common::Serializer s(&stream, nullptr);
 			StSavegameHeader header;
 			header.synchronize(s);
-			s.skip(4);		// Skip save data structure size
+			s.skip(4);      // Skip save data structure size
 			StBagelSave *saveData = new StBagelSave();
 			saveData->synchronize(s);
 
@@ -248,7 +248,7 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, StSavegameHeader *pSavedGame)
 		reportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, _szFileName);
 	}
 
-	return(_errCode);
+	return (_errCode);
 }
 
 ErrorCode CBagSaveGameFile::readTitleOnly(int32 lSlot, char *pGameTitle) {
@@ -291,7 +291,7 @@ int32 CBagSaveGameFile::getActualNumSaves() {
 		}
 	}
 
-	return(lNumSaves);
+	return (lNumSaves);
 }
 
 bool CBagSaveGameFile::anySavedGames() {

@@ -29,7 +29,7 @@ namespace HodjNPodj {
 namespace Mankala {
 
 HINSTANCE   hDLLInst;
-HINSTANCE hExeInst;                                               
+HINSTANCE hExeInst;
 
 extern LPGAMESTRUCT pGameParams;
 
@@ -46,66 +46,66 @@ HWND ghParentWnd;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
- 
+
 HWND FAR PASCAL RunMank(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
-    CMnkWindow *pMain;
+	CMnkWindow *pMain;
 
-    pGameParams = lpGameInfo;
+	pGameParams = lpGameInfo;
 
-    // invoke your game here by creating a pGame for your main window
-    // look at the InitInstance for your game for this
+	// invoke your game here by creating a pGame for your main window
+	// look at the InitInstance for your game for this
 
-    ghParentWnd = hParentWnd;
-    
+	ghParentWnd = hParentWnd;
+
 #undef _MEM_LEAK_TEST
-#ifndef _MEM_LEAK_TEST    
-    if ((pMain = new CMnkWindow) != NULL) {
+	#ifndef _MEM_LEAK_TEST
+	if ((pMain = new CMnkWindow) != NULL) {
 
-        pMain->ShowWindow(SW_SHOWNORMAL);
+		pMain->ShowWindow(SW_SHOWNORMAL);
 
-        pMain->UpdateWindow();  
-        pMain->Setm_bJustStarted(FALSE);
+		pMain->UpdateWindow();
+		pMain->Setm_bJustStarted(FALSE);
 
-        pMain->SetActiveWindow();                              
-        
-        if (!pGameParams->bPlayingMetagame){
-          	MFC::PostMessage( pMain->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED);		// Activate the Options dialog
-        }else{			//kick in game by posting mouse messages  in the new-game-button area.
-        	 MFC::PostMessage(pMain->m_hWnd,WM_LBUTTONDOWN,0X00, MAKELPARAM(NEWGAME_LOCATION_X+NEWGAME_WIDTH/2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT/2));
-        	 MFC::PostMessage(pMain->m_hWnd,WM_LBUTTONUP,0X00, MAKELPARAM(NEWGAME_LOCATION_X+NEWGAME_WIDTH/2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT /2));
-        }
-    }
+		pMain->SetActiveWindow();
 
-    // these must be set in this function
-    hDLLInst = (HINSTANCE)GetWindowWord( pMain->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
+		if (!pGameParams->bPlayingMetagame) {
+			MFC::PostMessage(pMain->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED);         // Activate the Options dialog
+		} else {         //kick in game by posting mouse messages  in the new-game-button area.
+			MFC::PostMessage(pMain->m_hWnd, WM_LBUTTONDOWN, 0X00, MAKELPARAM(NEWGAME_LOCATION_X + NEWGAME_WIDTH / 2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT / 2));
+			MFC::PostMessage(pMain->m_hWnd, WM_LBUTTONUP, 0X00, MAKELPARAM(NEWGAME_LOCATION_X + NEWGAME_WIDTH / 2, NEWGAME_LOCATION_Y + NEWGAME_HEIGHT / 2));
+		}
+	}
 
-    return pMain->m_hWnd;   // return the m_hWnd of your main game window
-#else
-	hDLLInst=NULL;
-	hExeInst=(HINSTANCE)GetWindowWord(hParentWnd,GWW_HINSTANCE);
-	
-	return( (HWND)NULL);
-#endif	
+	// these must be set in this function
+	hDLLInst = (HINSTANCE)GetWindowWord(pMain->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+
+	return pMain->m_hWnd;   // return the m_hWnd of your main game window
+	#else
+	hDLLInst = NULL;
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+
+	return ((HWND)NULL);
+	#endif
 }
 
 } // namespace Mankala

@@ -42,28 +42,28 @@ namespace PDQ {
 *
 */
 typedef struct {
-    CHAR   text[MAX_PLENGTH_S + 1];
-    UBYTE  order[MAX_PLENGTH];
+	CHAR   text[MAX_PLENGTH_S + 1];
+	UBYTE  order[MAX_PLENGTH];
 } PHRASES;
 
 typedef struct {
-    UINT     gameSpeed;             // 1 to 5 = 2.5 to .5 seconds
-    UINT     nShown;                // 1 to 9 	as of 9/9/94 0 to 6
-    BOOLEAN  bRandomLetters;         // TRUE if letter ordering shall be random
-    BOOLEAN  bShowNames;            // TRUE if we are to display category names
+	UINT     gameSpeed;             // 1 to 5 = 2.5 to .5 seconds
+	UINT     nShown;                // 1 to 9   as of 9/9/94 0 to 6
+	BOOLEAN  bRandomLetters;         // TRUE if letter ordering shall be random
+	BOOLEAN  bShowNames;            // TRUE if we are to display category names
 } USERCFG;
 
 typedef struct {
-    CSprite *sprite;
-    BOOLEAN bUsed;
+	CSprite *sprite;
+	BOOLEAN bUsed;
 } SPRITE_LIST;
 
 
 STATIC const CHAR *pszCategorySounds[N_CATEGORIES] = {
-    ".\\SOUND\\TGG5.WAV",
-    ".\\SOUND\\TGG6.WAV",
-    ".\\SOUND\\TGG7.WAV",
-    ".\\SOUND\\TGG8.WAV"
+	".\\SOUND\\TGG5.WAV",
+	".\\SOUND\\TGG6.WAV",
+	".\\SOUND\\TGG7.WAV",
+	".\\SOUND\\TGG8.WAV"
 };
 
 
@@ -89,7 +89,7 @@ INT         NumLinkedSprites(VOID);
 
 #ifdef DEBUG
 VOID        ValidateParser(VOID);
-static PHRASES testPhrase[] = {"the therapist", {4,7,8,12,5,11,6,1,2,9,10,3}};
+static PHRASES testPhrase[] = {"the therapist", {4, 7, 8, 12, 5, 11, 6, 1, 2, 9, 10, 3}};
 #endif
 
 #define TIMER_ID        50
@@ -143,101 +143,100 @@ INT         nPhrasePixelLength;
 *  returns   errCode - Error return code
 *
 **/
-ERROR_CODE LoadNewPhrase(VOID)
-{
-    STATIC int nLast;
-    CHAR *p, buf[MAX_PLENGTH_S + 2];
-    INT i, n, nType;
-    ERROR_CODE errCode;
+ERROR_CODE LoadNewPhrase(VOID) {
+	STATIC int nLast;
+	CHAR *p, buf[MAX_PLENGTH_S + 2];
+	INT i, n, nType;
+	ERROR_CODE errCode;
 
-    /* assume no error */
-    errCode = ERR_NONE;
+	/* assume no error */
+	errCode = ERR_NONE;
 
-    /* reset letter index */
-    iNextLetter = 0;
+	/* reset letter index */
+	iNextLetter = 0;
 
-    curPhrase = &gPhrase;
+	curPhrase = &gPhrase;
 
-    /*
-    * Load a new randomly selected phrase from the data store.
-    */
+	/*
+	* Load a new randomly selected phrase from the data store.
+	*/
 
-    /* determine the number of phrases in the data store */
-    n = (INT)(FileLength(DATA_FILE) / sizeof(PHRASES));
+	/* determine the number of phrases in the data store */
+	n = (INT)(FileLength(DATA_FILE) / sizeof(PHRASES));
 
-    if (n > 0) {
+	if (n > 0) {
 
-        /*
-        * pick one at random, but not same one twice in a row
-        */
-        do {
-            i = brand() % n;
-        } while (i == nLast);
-        nLast = i;
+		/*
+		* pick one at random, but not same one twice in a row
+		*/
+		do {
+			i = brand() % n;
+		} while (i == nLast);
+		nLast = i;
 
-        nType = 0;
-        if (i >= START_TITLE && i < START_PERSON) {
-            nType = TYPE_TITLE;
+		nType = 0;
+		if (i >= START_TITLE && i < START_PERSON) {
+			nType = TYPE_TITLE;
 
-        } else if (i >= START_PERSON && i < START_PHRASE) {
-            nType = TYPE_PERSON;
+		} else if (i >= START_PERSON && i < START_PHRASE) {
+			nType = TYPE_PERSON;
 
-        } else if (i >= START_PHRASE && i < START_PLACE) {
-            nType = TYPE_PHRASE;
+		} else if (i >= START_PHRASE && i < START_PLACE) {
+			nType = TYPE_PHRASE;
 
-        } else if (i >= START_PLACE) {
-            nType = TYPE_PLACE;
-        }
+		} else if (i >= START_PLACE) {
+			nType = TYPE_PLACE;
+		}
 
-        // Are we supposed to show the category names?
-        //
-        if (gGameCfg.bShowNames) {
+		// Are we supposed to show the category names?
+		//
+		if (gGameCfg.bShowNames) {
 
-            // display category
-            gMain->PaintCategory(nType);
+			// display category
+			gMain->PaintCategory(nType);
 
-            // play category narration
-            sndPlaySound(pszCategorySounds[nType], SND_ASYNC);
-        }
+			// play category narration
+			sndPlaySound(pszCategorySounds[nType], SND_ASYNC);
+		}
 
-        ifstream inFile;
-        inFile.open(DATA_FILE, ios::binary);                // open the data store
+		ifstream inFile;
+		inFile.open(DATA_FILE, ios::binary);                // open the data store
 
-        inFile.seekg(i * sizeof(PHRASES));                  // seek to the phrase we want
+		inFile.seekg(i * sizeof(PHRASES));                  // seek to the phrase we want
 
-        inFile.read((CHAR *)curPhrase, sizeof(PHRASES));    // load that phrase
-        if (inFile.gcount() != sizeof(PHRASES))
-            errCode = ERR_FREAD;
-        inFile.close();                                     // close the data store
+		inFile.read((CHAR *)curPhrase, sizeof(PHRASES));    // load that phrase
+		if (inFile.gcount() != sizeof(PHRASES))
+			errCode = ERR_FREAD;
+		inFile.close();                                     // close the data store
 
-        if (!errCode) {
+		if (!errCode) {
 
-            if ((errCode = ValidatePhrase(curPhrase)) == ERR_NONE) {
+			if ((errCode = ValidatePhrase(curPhrase)) == ERR_NONE) {
 
-                /*
-                * convert all instances of "the", "an", and "a" to upper case
-                */
-                Common::sprintf_s(p = buf, MAX_PLENGTH_S + 2, " %s",
-					strLower(curPhrase->text));
+				/*
+				* convert all instances of "the", "an", and "a" to upper case
+				*/
+				Common::sprintf_s(p = buf, MAX_PLENGTH_S + 2, " %s",
+				                  strLower(curPhrase->text));
 
-                StrUprStr(p, " the ");
-                StrUprStr(p, " an ");
-                StrUprStr(p, " a ");
-                p++;
-                Common::strcpy_s(curPhrase->text, p);
+				StrUprStr(p, " the ");
+				StrUprStr(p, " an ");
+				StrUprStr(p, " a ");
+				p++;
+				Common::strcpy_s(curPhrase->text, p);
 
-                /*
-                * if user wants a random ordering
-                */
-                if (gGameCfg.bRandomLetters)
-                    BuildRandomPhraseOrder();
-            }
-        }
-    } else {
-        errCode = ERR_FFIND;
-    }
+				/*
+				* if user wants a random ordering
+				*/
+				if (gGameCfg.bRandomLetters)
+					BuildRandomPhraseOrder();
+			}
+		}
+	} else {
+		errCode = ERR_FFIND;
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -255,40 +254,39 @@ ERROR_CODE LoadNewPhrase(VOID)
 *  returns   Nothing
 *
 **/
-VOID BuildRandomPhraseOrder()
-{
-    UBYTE *curPhraseOrder;
-    INT i, j, n, newIndex;
-    BOOLEAN use;
+VOID BuildRandomPhraseOrder() {
+	UBYTE *curPhraseOrder;
+	INT i, j, n, newIndex;
+	BOOLEAN use;
 
-    /*
-    * if there is a current active game
-    */
-    if (curPhrase != NULL) {
+	/*
+	* if there is a current active game
+	*/
+	if (curPhrase != NULL) {
 
-        curPhraseOrder = curPhrase->order;
+		curPhraseOrder = curPhrase->order;
 
-        memset(curPhraseOrder, 0, MAX_PLENGTH * sizeof(UBYTE));
+		memset(curPhraseOrder, 0, MAX_PLENGTH * sizeof(UBYTE));
 
-        /*
-        * each entry must be a unique index into the spriteList
-        */
-        n = StrLenNoSpaces(curPhrase->text);
-        for (i = 0; i < n; i++) {
-            do {
-                use = TRUE;
-                newIndex = brand() % n + 1;
-                for (j = 0; j < i; j++) {
-                    if (curPhraseOrder[j] == newIndex) {
-                        use = FALSE;
-                        break;
-                    }
-                }
-            } while (!use);
+		/*
+		* each entry must be a unique index into the spriteList
+		*/
+		n = StrLenNoSpaces(curPhrase->text);
+		for (i = 0; i < n; i++) {
+			do {
+				use = TRUE;
+				newIndex = brand() % n + 1;
+				for (j = 0; j < i; j++) {
+					if (curPhraseOrder[j] == newIndex) {
+						use = FALSE;
+						break;
+					}
+				}
+			} while (!use);
 
-            curPhraseOrder[i] = (UBYTE)newIndex;
-        }
-    }
+			curPhraseOrder[i] = (UBYTE)newIndex;
+		}
+	}
 }
 
 
@@ -305,84 +303,83 @@ VOID BuildRandomPhraseOrder()
 *  returns   errCode = Error return code
 *
 **/
-ERROR_CODE BuildSpriteList(CDC *pDC)
-{
-    CSprite *pNewSprite;
-    CHAR *pText;
-    INT i;
-    ERROR_CODE errCode;
+ERROR_CODE BuildSpriteList(CDC *pDC) {
+	CSprite *pNewSprite;
+	CHAR *pText;
+	INT i;
+	ERROR_CODE errCode;
 
-    /* can't access null pointers */
-    assert(pDC != NULL);
+	/* can't access null pointers */
+	assert(pDC != NULL);
 
-    /* assume no error */
-    errCode = ERR_NONE;
+	/* assume no error */
+	errCode = ERR_NONE;
 
-    /*
-    * if there is a game currently active
-    */
-    if (curPhrase != NULL) {
+	/*
+	* if there is a game currently active
+	*/
+	if (curPhrase != NULL) {
 
-        if (pDC == NULL) {
-            errCode = ERR_UNKNOWN;
+		if (pDC == NULL) {
+			errCode = ERR_UNKNOWN;
 
-        } else {
+		} else {
 
-            /* use local pointer to this global object */
-            pText = curPhrase->text;
+			/* use local pointer to this global object */
+			pText = curPhrase->text;
 
-            memset(spriteList, 0, sizeof(SPRITE_LIST) * MAX_PLENGTH);
+			memset(spriteList, 0, sizeof(SPRITE_LIST) * MAX_PLENGTH);
 
-            /*
-            * build a sprite list for this phrase
-            */
-            i = 0;
-            while (*pText != '\0') {
+			/*
+			* build a sprite list for this phrase
+			*/
+			i = 0;
+			while (*pText != '\0') {
 
-                /*
-                * don't include spaces
-                */
-                 if (*pText != ' ') {
+				/*
+				* don't include spaces
+				*/
+				if (*pText != ' ') {
 
-                    /*
-                    * create a new sprite for this letter
-                    */
-                    if ((spriteList[i].sprite = pNewSprite = new CSprite) == NULL) {
-                        errCode = ERR_MEMORY;
-                        break;
+					/*
+					* create a new sprite for this letter
+					*/
+					if ((spriteList[i].sprite = pNewSprite = new CSprite) == NULL) {
+						errCode = ERR_MEMORY;
+						break;
 
-                    } else {
+					} else {
 
-                        spriteList[i].bUsed = FALSE;
+						spriteList[i].bUsed = FALSE;
 
-                        /*
-                        * load this letter's bitmap into the sprite
-                        */
-                        if (pNewSprite->LoadResourceSprite(pDC, toupper(*pText)+36) == FALSE) {
-                            errCode = ERR_UNKNOWN;
-                            break;
+						/*
+						* load this letter's bitmap into the sprite
+						*/
+						if (pNewSprite->LoadResourceSprite(pDC, toupper(*pText) +36) == FALSE) {
+							errCode = ERR_UNKNOWN;
+							break;
 
-                        } else {
+						} else {
 
-                            if (pNewSprite->SharePalette(pMyGamePalette) == FALSE) {
-                                errCode = ERR_UNKNOWN;
-                                break;
+							if (pNewSprite->SharePalette(pMyGamePalette) == FALSE) {
+								errCode = ERR_UNKNOWN;
+								break;
 
-                            } else {
+							} else {
 
-                                pNewSprite->SetMasked(TRUE);
-                                pNewSprite->SetMobile(TRUE);
-                                i++;
-                            }
-                        }
-                    }
-                }
-                pText++;
-            }
-        }
-    }
+								pNewSprite->SetMasked(TRUE);
+								pNewSprite->SetMobile(TRUE);
+								i++;
+							}
+						}
+					}
+				}
+				pText++;
+			}
+		}
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -399,24 +396,23 @@ ERROR_CODE BuildSpriteList(CDC *pDC)
 *  returns   Nothing
 *
 **/
-VOID KillCurPhrase()
-{
-    INT i, n;
+VOID KillCurPhrase() {
+	INT i, n;
 
-    if (curPhrase != NULL) {
+	if (curPhrase != NULL) {
 
-        /*
-        * delete each of the remaining letters that have not yet been revealed
-        */
-        n = StrLenNoSpaces(curPhrase->text);
-        for (i = 0; i < n; i++) {
-            if ((spriteList[i].sprite != NULL) && !spriteList[i].bUsed) {
-                delete spriteList[i].sprite;
-                spriteList[i].sprite = NULL;
-            }
-        }
-        curPhrase =  NULL;
-    }
+		/*
+		* delete each of the remaining letters that have not yet been revealed
+		*/
+		n = StrLenNoSpaces(curPhrase->text);
+		for (i = 0; i < n; i++) {
+			if ((spriteList[i].sprite != NULL) && !spriteList[i].bUsed) {
+				delete spriteList[i].sprite;
+				spriteList[i].sprite = NULL;
+			}
+		}
+		curPhrase =  NULL;
+	}
 }
 
 
@@ -432,38 +428,37 @@ VOID KillCurPhrase()
 *  returns   FALSE if this was the last letter to be revealed, else TRUE
 *
 **/
-BOOLEAN RevealNextLetter()
-{
-    CSize size;
-    INT index;
-    BOOLEAN lastLetter;
+BOOLEAN RevealNextLetter() {
+	CSize size;
+	INT index;
+	BOOLEAN lastLetter;
 
-    lastLetter = FALSE;
-    if (curPhrase != NULL) {
+	lastLetter = FALSE;
+	if (curPhrase != NULL) {
 
-        /* get next valid letter to reveal */
-        index = curPhrase->order[iNextLetter++] - 1;
+		/* get next valid letter to reveal */
+		index = curPhrase->order[iNextLetter++] - 1;
 
-        /* validate the index */
-        assert((index >= 0) && (index < MAX_PLENGTH));
+		/* validate the index */
+		assert((index >= 0) && (index < MAX_PLENGTH));
 
-        /* validate this sprite */
-        assert(spriteList[index].sprite != NULL);
-        assert(spriteList[index].bUsed != TRUE);
+		/* validate this sprite */
+		assert(spriteList[index].sprite != NULL);
+		assert(spriteList[index].bUsed != TRUE);
 
-        /*
-        * add this letter to the list
-        */
-        spriteList[index].sprite->LinkSprite();
-        spriteList[index].bUsed = TRUE;
-        size = spriteList[index].sprite->GetSize();
-        nPhrasePixelLength += size.cx + LETTER_SPACING;
+		/*
+		* add this letter to the list
+		*/
+		spriteList[index].sprite->LinkSprite();
+		spriteList[index].bUsed = TRUE;
+		size = spriteList[index].sprite->GetSize();
+		nPhrasePixelLength += size.cx + LETTER_SPACING;
 
-        if (iNextLetter >= StrLenNoSpaces(curPhrase->text))
-            lastLetter = TRUE;
-    }
+		if (iNextLetter >= StrLenNoSpaces(curPhrase->text))
+			lastLetter = TRUE;
+	}
 
-    return(lastLetter);
+	return (lastLetter);
 }
 
 
@@ -479,103 +474,100 @@ BOOLEAN RevealNextLetter()
 *  returns   errCode = Error return code
 *
 **/
-ERROR_CODE RecalcDisplay(CDC *pDC)
-{
-    CSize size;
-    INT i, gap, last, n;
-    ERROR_CODE errCode;
+ERROR_CODE RecalcDisplay(CDC *pDC) {
+	CSize size;
+	INT i, gap, last, n;
+	ERROR_CODE errCode;
 
-    /* can't use a null pointer */
-    assert(pDC != NULL);
+	/* can't use a null pointer */
+	assert(pDC != NULL);
 
-    /* assume no error */
-    errCode = ERR_NONE;
+	/* assume no error */
+	errCode = ERR_NONE;
 
-    /*
-    * as long as there is a currently active unpaused game, we can paint some letters
-    */
-    if (bInGame) {
+	/*
+	* as long as there is a currently active unpaused game, we can paint some letters
+	*/
+	if (bInGame) {
 
-        if (pDC == NULL) {
-            errCode = ERR_UNKNOWN;
-        } else {
+		if (pDC == NULL) {
+			errCode = ERR_UNKNOWN;
+		} else {
 
-            assert(nPhrasePixelLength > 0);
+			assert(nPhrasePixelLength > 0);
 
-            if (nPhrasePixelLength > 0) {
+			if (nPhrasePixelLength > 0) {
 
-                /* clean up the screan so we can re-paint the sprites */
-                CSprite::EraseSprites(pDC);
+				/* clean up the screan so we can re-paint the sprites */
+				CSprite::EraseSprites(pDC);
 
-                n = NumLinkedSprites();
+				n = NumLinkedSprites();
 
-                gap = (SIGN_LENGTH - nPhrasePixelLength)/2;
-                last = SIGN_START_X + gap;
-                for (i = 0; i < MAX_PLENGTH; i++) {
-                    if (spriteList[i].bUsed) {
-                        assert(spriteList[i].sprite != NULL);
-                        spriteList[i].sprite->PaintSprite(pDC, last, LETTER_START_Y);
-                        size = spriteList[i].sprite->GetSize();
+				gap = (SIGN_LENGTH - nPhrasePixelLength) / 2;
+				last = SIGN_START_X + gap;
+				for (i = 0; i < MAX_PLENGTH; i++) {
+					if (spriteList[i].bUsed) {
+						assert(spriteList[i].sprite != NULL);
+						spriteList[i].sprite->PaintSprite(pDC, last, LETTER_START_Y);
+						size = spriteList[i].sprite->GetSize();
 
-                        // letter spacing is greater when there are less letters
-                        last += size.cx + (LETTER_SPACING + 5 - (n+4)/5);
-                    }
-                }
-            }
-        }
-    }
+						// letter spacing is greater when there are less letters
+						last += size.cx + (LETTER_SPACING + 5 - (n + 4) / 5);
+					}
+				}
+			}
+		}
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
-ERROR_CODE RepaintSpriteList(CDC *pDC)
-{
-    CSprite *pSprite;
-    ERROR_CODE errCode;
+ERROR_CODE RepaintSpriteList(CDC *pDC) {
+	CSprite *pSprite;
+	ERROR_CODE errCode;
 
-    /* can't use a null pointer */
-    assert(pDC != NULL);
+	/* can't use a null pointer */
+	assert(pDC != NULL);
 
-    /* assume no error */
-    errCode = ERR_NONE;
+	/* assume no error */
+	errCode = ERR_NONE;
 
-    if (pDC == NULL) {
-        errCode = ERR_UNKNOWN;
-    } else {
+	if (pDC == NULL) {
+		errCode = ERR_UNKNOWN;
+	} else {
 
-        /*
-        * Paint each sprite
-        */
-        pSprite = CSprite::GetSpriteChain();
-        while (pSprite) {
+		/*
+		* Paint each sprite
+		*/
+		pSprite = CSprite::GetSpriteChain();
+		while (pSprite) {
 
-            pSprite->ClearBackground();
-            pSprite->RefreshSprite(pDC);
+			pSprite->ClearBackground();
+			pSprite->RefreshSprite(pDC);
 
-            pSprite = pSprite->GetNextSprite();
-        }
-    }
-    return(errCode);
+			pSprite = pSprite->GetNextSprite();
+		}
+	}
+	return (errCode);
 }
 
-INT GetIndex(CSprite *pSprite)
-{
-    INT i;
+INT GetIndex(CSprite *pSprite) {
+	INT i;
 
-    assert(pSprite != NULL);
+	assert(pSprite != NULL);
 
-    for (i = 0; i < MAX_PLENGTH; i++) {
-        if (pSprite == spriteList[i].sprite) {
-            break;
-        }
-    }
+	for (i = 0; i < MAX_PLENGTH; i++) {
+		if (pSprite == spriteList[i].sprite) {
+			break;
+		}
+	}
 
-    assert(i >= 0 && i< MAX_PLENGTH);
+	assert(i >= 0 && i < MAX_PLENGTH);
 
-    if (i >= MAX_PLENGTH)
-        i = -1;
+	if (i >= MAX_PLENGTH)
+		i = -1;
 
-    return(i);
+	return (i);
 }
 
 
@@ -592,55 +584,54 @@ INT GetIndex(CSprite *pSprite)
 *  returns   errCode = Error return code
 *
 **/
-ERROR_CODE InitGame(HWND hWnd, CDC *pDC)
-{
-    INT i;
-    ERROR_CODE errCode;
+ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
+	INT i;
+	ERROR_CODE errCode;
 
-    assert(pDC != NULL);
+	assert(pDC != NULL);
 
-    /* assume no error */
-    errCode = ERR_NONE;
+	/* assume no error */
+	errCode = ERR_NONE;
 
-    /* keep a copy of this game's window handle */
-    gGameWnd = hWnd;
+	/* keep a copy of this game's window handle */
+	gGameWnd = hWnd;
 
-    if (pDC == NULL) {
-        errCode = ERR_UNKNOWN;
+	if (pDC == NULL) {
+		errCode = ERR_UNKNOWN;
 
-    } else {
+	} else {
 
-        /* clear the screen of any previous games */
-        EndGame(pDC);
+		/* clear the screen of any previous games */
+		EndGame(pDC);
 
-        /* load INI settings */
-        LoadGameCfg();
+		/* load INI settings */
+		LoadGameCfg();
 
-        /*
-        * load a new randomly selected phrase as the current phrase
-        */
-        if ((errCode = LoadNewPhrase()) == ERR_NONE) {
+		/*
+		* load a new randomly selected phrase as the current phrase
+		*/
+		if ((errCode = LoadNewPhrase()) == ERR_NONE) {
 
-            if ((errCode = BuildSpriteList(pDC)) == ERR_NONE) {
+			if ((errCode = BuildSpriteList(pDC)) == ERR_NONE) {
 
-#ifdef DEBUG
-                ValidateParser();
-#endif
+				#ifdef DEBUG
+				ValidateParser();
+				#endif
 
-                // remove category name from screen
-                //
-                if (gGameCfg.bShowNames)
-                    gMain->EraseCategory();
+				// remove category name from screen
+				//
+				if (gGameCfg.bShowNames)
+					gMain->EraseCategory();
 
-                /* reveal 1st 3 letters */
-                for (i = 0; i < (INT)gGameCfg.nShown; i++) {
-                    RevealNextLetter();
-                }
-            }
-        }
-    }
+				/* reveal 1st 3 letters */
+				for (i = 0; i < (INT)gGameCfg.nShown; i++) {
+					RevealNextLetter();
+				}
+			}
+		}
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -656,25 +647,24 @@ ERROR_CODE InitGame(HWND hWnd, CDC *pDC)
 *  returns   errCode = Error return code
 *
 **/
-ERROR_CODE CleanScreen(CDC *pDC)
-{
-    ERROR_CODE errCode;
+ERROR_CODE CleanScreen(CDC *pDC) {
+	ERROR_CODE errCode;
 
-    assert(pDC != NULL);
+	assert(pDC != NULL);
 
-    /* assume no error */
-    errCode = ERR_NONE;
+	/* assume no error */
+	errCode = ERR_NONE;
 
-    if (pDC == NULL) {
-        errCode  = ERR_UNKNOWN;
-    } else {
+	if (pDC == NULL) {
+		errCode  = ERR_UNKNOWN;
+	} else {
 
-        KillCurPhrase();
-        CSprite::EraseSprites(pDC);
-        CSprite::FlushSpriteChain();
-    }
+		KillCurPhrase();
+		CSprite::EraseSprites(pDC);
+		CSprite::FlushSpriteChain();
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -695,67 +685,66 @@ ERROR_CODE CleanScreen(CDC *pDC)
 *
 **/
 VOID CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, DWORD) {
-    CDC *pDC;
-    HDC hDC;
-    BOOL done;
-    UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+	CDC *pDC;
+	HDC hDC;
+	BOOL done;
+	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
 
-    assert(nEventID == TIMER_ID);
+	assert(nEventID == TIMER_ID);
 
-    if (bInGame && !bPause) {
+	if (bInGame && !bPause) {
 
-        hDC = GetDC(hWnd);
+		hDC = GetDC(hWnd);
 
-        pDC = CDC::FromHandle(hDC);
+		pDC = CDC::FromHandle(hDC);
 
-        /* beep once for each new letter revealed */
-        if (pGameParams->bSoundEffectsEnabled)
-            sndPlaySound(WAV_REVEAL, SND_ASYNC);
+		/* beep once for each new letter revealed */
+		if (pGameParams->bSoundEffectsEnabled)
+			sndPlaySound(WAV_REVEAL, SND_ASYNC);
 
-        /* reveal another letter */
-        done = RevealNextLetter();
+		/* reveal another letter */
+		done = RevealNextLetter();
 
-        /* re-calculate letter positions */
+		/* re-calculate letter positions */
 
-        /* refresh screen by displaying all letters/sprites in list */
-        RecalcDisplay(pDC);
+		/* refresh screen by displaying all letters/sprites in list */
+		RecalcDisplay(pDC);
 
-        GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
-        UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
+		GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
+		UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
 
-        /*
-        * if this was the last letter to be revealed, then user has lost the game
-        */
-        if (done) {
-            gTotalAvg += StrLenNoSpaces(curPhrase->text);
+		/*
+		* if this was the last letter to be revealed, then user has lost the game
+		*/
+		if (done) {
+			gTotalAvg += StrLenNoSpaces(curPhrase->text);
 
-            GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
-            UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
+			GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
+			UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
 
-            bInGame = FALSE;
-            GameStopTimer();
-            if (pGameParams->bSoundEffectsEnabled)
-                sndPlaySound(WAV_GAMEOVER, SND_ASYNC);
+			bInGame = FALSE;
+			GameStopTimer();
+			if (pGameParams->bSoundEffectsEnabled)
+				sndPlaySound(WAV_GAMEOVER, SND_ASYNC);
 
-            CMessageBox dlgGameOver((CWnd *)gMain, pMyGamePalette, "Game over.", "You have lost.");
-            gMain->SetFocus();
+			CMessageBox dlgGameOver((CWnd *)gMain, pMyGamePalette, "Game over.", "You have lost.");
+			gMain->SetFocus();
 
-            CleanScreen(pDC);
+			CleanScreen(pDC);
 
-            pGameParams->lScore += (100 * nLeft) / nTotal;
+			pGameParams->lScore += (100 * nLeft) / nTotal;
 
-            // if in metagame then quit dll when game is over
-            //
-            if ((pGameParams->bPlayingMetagame) && (gMain->m_nTurnCount == MAX_TURNS)) {
-                PostMessage(hWnd, WM_CLOSE, 0, 0);
-            }
-            else {
-            	gMain->PlayGame();
-            }
-        }
+			// if in metagame then quit dll when game is over
+			//
+			if ((pGameParams->bPlayingMetagame) && (gMain->m_nTurnCount == MAX_TURNS)) {
+				PostMessage(hWnd, WM_CLOSE, 0, 0);
+			} else {
+				gMain->PlayGame();
+			}
+		}
 
-        ReleaseDC(hWnd, hDC);
-    }
+		ReleaseDC(hWnd, hDC);
+	}
 }
 
 
@@ -770,32 +759,28 @@ VOID CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, DWORD) {
 *  returns   Nothing
 *
 **/
-VOID GameStopTimer()
-{
-    KillTimer(gGameWnd, TIMER_ID);
+VOID GameStopTimer() {
+	KillTimer(gGameWnd, TIMER_ID);
 }
 
 
-ERROR_CODE GameStartTimer()
-{
-    ERROR_CODE errCode = ERR_NONE;
+ERROR_CODE GameStartTimer() {
+	ERROR_CODE errCode = ERR_NONE;
 
-    if (curPhrase != NULL) {
-        if (SetTimer(gGameWnd, TIMER_ID, timerInterval, GameTimerHook) != TIMER_ID)
-            errCode = ERR_UNKNOWN;
-    }
+	if (curPhrase != NULL) {
+		if (SetTimer(gGameWnd, TIMER_ID, timerInterval, GameTimerHook) != TIMER_ID)
+			errCode = ERR_UNKNOWN;
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
-VOID GamePauseTimer()
-{
-    bPause = TRUE;
+VOID GamePauseTimer() {
+	bPause = TRUE;
 }
 
-VOID GameResumeTimer()
-{
-    bPause = FALSE;
+VOID GameResumeTimer() {
+	bPause = FALSE;
 }
 
 
@@ -812,22 +797,21 @@ VOID GameResumeTimer()
 *  returns   errCode = Error return code
 *
 **/
-ERROR_CODE StartGame(CDC *pDC)
-{
-    ERROR_CODE errCode;
+ERROR_CODE StartGame(CDC *pDC) {
+	ERROR_CODE errCode;
 
-    assert(pDC != NULL);
+	assert(pDC != NULL);
 
-    /*
-    * start the timer
-    */
-    if ((errCode = GameStartTimer()) == ERR_NONE) {
+	/*
+	* start the timer
+	*/
+	if ((errCode = GameStartTimer()) == ERR_NONE) {
 
-        /* show the first 3 letters */
-        RecalcDisplay(pDC);
-    }
+		/* show the first 3 letters */
+		RecalcDisplay(pDC);
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -843,40 +827,38 @@ ERROR_CODE StartGame(CDC *pDC)
 *  returns   errCode = Error return code
 *
 **/
-ERROR_CODE EndGame(CDC *pDC)
-{
-    ERROR_CODE errCode;
+ERROR_CODE EndGame(CDC *pDC) {
+	ERROR_CODE errCode;
 
-    assert(pDC != NULL);
+	assert(pDC != NULL);
 
-    /* assume no error */
-    errCode = ERR_NONE;
+	/* assume no error */
+	errCode = ERR_NONE;
 
-    if (pDC == NULL) {
-        errCode = ERR_UNKNOWN;
-    } else {
+	if (pDC == NULL) {
+		errCode = ERR_UNKNOWN;
+	} else {
 
-        /* reset phrase length in pixels */
-        nPhrasePixelLength = 0;
+		/* reset phrase length in pixels */
+		nPhrasePixelLength = 0;
 
-        /* stop timer */
-        GameStopTimer();
+		/* stop timer */
+		GameStopTimer();
 
-        /* clean up the screen */
-        CleanScreen(pDC);
-    }
+		/* clean up the screen */
+		CleanScreen(pDC);
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
-VOID WinGame()
-{
-    UINT n;
+VOID WinGame() {
+	UINT n;
 
-    // update the final score
-    //
-    gTotalAvg += (n = StrLenNoSpaces(curPhrase->text));
-    gLeftAvg += n - iNextLetter;
+	// update the final score
+	//
+	gTotalAvg += (n = StrLenNoSpaces(curPhrase->text));
+	gLeftAvg += n - iNextLetter;
 }
 
 
@@ -892,14 +874,13 @@ VOID WinGame()
 *  returns   Nothing
 *
 **/
-VOID CALLBACK GetGameParams(CWnd *pParentWnd)
-{
-    /*
-    * Our user preference dialog box is self contained in this object
-    */
-    CUserCfgDlg dlgUserCfg(pParentWnd, pMyGamePalette, IDD_USERCFG);
+VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+	/*
+	* Our user preference dialog box is self contained in this object
+	*/
+	CUserCfgDlg dlgUserCfg(pParentWnd, pMyGamePalette, IDD_USERCFG);
 
-    //dlgUserCfg.DoModal();
+	//dlgUserCfg.DoModal();
 }
 
 
@@ -915,76 +896,75 @@ VOID CALLBACK GetGameParams(CWnd *pParentWnd)
 *  returns   Nothing
 *
 **/
-VOID LoadGameCfg()
-{
-    CHAR buf[10];
-    INT n;
+VOID LoadGameCfg() {
+	CHAR buf[10];
+	INT n;
 
-    if (pGameParams->bPlayingMetagame) {
+	if (pGameParams->bPlayingMetagame) {
 
-        // set defaults
-        //
-        gGameCfg.bRandomLetters = FALSE;
-        gGameCfg.nShown = SHOWN_DEF;
-        gGameCfg.bShowNames = TRUE;
+		// set defaults
+		//
+		gGameCfg.bRandomLetters = FALSE;
+		gGameCfg.nShown = SHOWN_DEF;
+		gGameCfg.bShowNames = TRUE;
 
-        switch (pGameParams->nSkillLevel) {
+		switch (pGameParams->nSkillLevel) {
 
-            case SKILLLEVEL_LOW:
-                gGameCfg.gameSpeed = 3; //2;
-                break;
+		case SKILLLEVEL_LOW:
+			gGameCfg.gameSpeed = 3; //2;
+			break;
 
-            case SKILLLEVEL_MEDIUM:
-                gGameCfg.gameSpeed = 6; //5;
-                break;
+		case SKILLLEVEL_MEDIUM:
+			gGameCfg.gameSpeed = 6; //5;
+			break;
 
-            case SKILLLEVEL_HIGH:
-                gGameCfg.gameSpeed = 9; //8;
-                break;
+		case SKILLLEVEL_HIGH:
+			gGameCfg.gameSpeed = 9; //8;
+			break;
 
-            default:
-                assert(0);
-                break;
-        }
+		default:
+			assert(0);
+			break;
+		}
 
-    } else {
+	} else {
 
-        /*
-        * User can specify if he/she wants the letters to appear in a random order
-        * or in the predefined fixed order set by the MetaGame
-        */
-        GetPrivateProfileString(INI_SECTION, "RandomLetters", "No", buf, 10, INI_FILENAME);
-        assert(strlen(buf) < 10);
-        gGameCfg.bRandomLetters = FALSE;
-        if (!scumm_stricmp(buf, "Yes"))
-            gGameCfg.bRandomLetters = TRUE;
+		/*
+		* User can specify if he/she wants the letters to appear in a random order
+		* or in the predefined fixed order set by the MetaGame
+		*/
+		GetPrivateProfileString(INI_SECTION, "RandomLetters", "No", buf, 10, INI_FILENAME);
+		assert(strlen(buf) < 10);
+		gGameCfg.bRandomLetters = FALSE;
+		if (!scumm_stricmp(buf, "Yes"))
+			gGameCfg.bRandomLetters = TRUE;
 
-        /*
-        * get the number of letters that are intially displayed (default is SHOWN_DEF = 3)
-        */
-        n = gGameCfg.nShown = GetPrivateProfileInt(INI_SECTION, "NumStartingLetters", SHOWN_DEF, INI_FILENAME);
+		/*
+		* get the number of letters that are intially displayed (default is SHOWN_DEF = 3)
+		*/
+		n = gGameCfg.nShown = GetPrivateProfileInt(INI_SECTION, "NumStartingLetters", SHOWN_DEF, INI_FILENAME);
 
-        /* validate this setting */
-        if ((n < SHOWN_MIN) || (n > SHOWN_MAX))
-            gGameCfg.nShown = SHOWN_DEF;
+		/* validate this setting */
+		if ((n < SHOWN_MIN) || (n > SHOWN_MAX))
+			gGameCfg.nShown = SHOWN_DEF;
 
-        /*
-        * Get the game speed (1..10) (default is SPEED_DEF = 8)
-        */
-        n = gGameCfg.gameSpeed = GetPrivateProfileInt(INI_SECTION, "GameSpeed", SPEED_DEF, INI_FILENAME);
+		/*
+		* Get the game speed (1..10) (default is SPEED_DEF = 8)
+		*/
+		n = gGameCfg.gameSpeed = GetPrivateProfileInt(INI_SECTION, "GameSpeed", SPEED_DEF, INI_FILENAME);
 
-        /* validate this setting */
-        if ((n < SPEED_MIN) || (n > SPEED_MAX))
-            gGameCfg.gameSpeed = SPEED_DEF;
+		/* validate this setting */
+		if ((n < SPEED_MIN) || (n > SPEED_MAX))
+			gGameCfg.gameSpeed = SPEED_DEF;
 
-        GetPrivateProfileString(INI_SECTION, "ShowCategoryNames", "Yes", buf, 10, INI_FILENAME);
-        assert(strlen(buf) < 10);
-        gGameCfg.bShowNames = FALSE;
-        if (!scumm_stricmp(buf, "Yes"))
-            gGameCfg.bShowNames = TRUE;
-    }
+		GetPrivateProfileString(INI_SECTION, "ShowCategoryNames", "Yes", buf, 10, INI_FILENAME);
+		assert(strlen(buf) < 10);
+		gGameCfg.bShowNames = FALSE;
+		if (!scumm_stricmp(buf, "Yes"))
+			gGameCfg.bShowNames = TRUE;
+	}
 
-    timerInterval = (10 - gGameCfg.gameSpeed)*500 + 500;
+	timerInterval = (10 - gGameCfg.gameSpeed) * 500 + 500;
 }
 
 
@@ -1000,19 +980,18 @@ VOID LoadGameCfg()
 *  returns   Nothing
 *
 **/
-VOID SaveGameCfg()
-{
-    WritePrivateProfileString(INI_SECTION, "RandomLetters",
-		gGameCfg.bRandomLetters ? "Yes" : "No", INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "NumStartingLetters",
-		Common::String::format("%d", gGameCfg.nShown).c_str(),
-		INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "GameSpeed",
-		Common::String::format("%d", gGameCfg.gameSpeed).c_str(),
-		INI_FILENAME);
-    WritePrivateProfileString(INI_SECTION, "ShowCategoryNames",
-		gGameCfg.bShowNames ? "Yes" : "No",
-		INI_FILENAME);
+VOID SaveGameCfg() {
+	WritePrivateProfileString(INI_SECTION, "RandomLetters",
+	                          gGameCfg.bRandomLetters ? "Yes" : "No", INI_FILENAME);
+	WritePrivateProfileString(INI_SECTION, "NumStartingLetters",
+	                          Common::String::format("%d", gGameCfg.nShown).c_str(),
+	                          INI_FILENAME);
+	WritePrivateProfileString(INI_SECTION, "GameSpeed",
+	                          Common::String::format("%d", gGameCfg.gameSpeed).c_str(),
+	                          INI_FILENAME);
+	WritePrivateProfileString(INI_SECTION, "ShowCategoryNames",
+	                          gGameCfg.bShowNames ? "Yes" : "No",
+	                          INI_FILENAME);
 }
 
 
@@ -1029,112 +1008,109 @@ VOID SaveGameCfg()
 *
 **/
 #if 0
-BOOLEAN CheckUserGuess(const CHAR *guess)
-{
-    CHAR *p, *r, tmpPhrase[MAX_PLENGTH_S + 1];
-    CHAR *s, tmpGuess[MAX_PLENGTH_S + 1];
-    INT i, n, inc;
-    BOOLEAN winStatus;
+BOOLEAN CheckUserGuess(const CHAR *guess) {
+	CHAR *p, *r, tmpPhrase[MAX_PLENGTH_S + 1];
+	CHAR *s, tmpGuess[MAX_PLENGTH_S + 1];
+	INT i, n, inc;
+	BOOLEAN winStatus;
 
-    winStatus = FALSE;
+	winStatus = FALSE;
 
-    if (curPhrase != NULL) {
+	if (curPhrase != NULL) {
 
-        /* can't access null pointers */
-        assert(guess != NULL);
+		/* can't access null pointers */
+		assert(guess != NULL);
 
-        /* make sure that we are not going to blow the stack */
-        assert(strlen(curPhrase->text) < (MAX_PLENGTH_S + 1));
+		/* make sure that we are not going to blow the stack */
+		assert(strlen(curPhrase->text) < (MAX_PLENGTH_S + 1));
 
-        memset(tmpPhrase, 0, MAX_PLENGTH_S + 1);
-        memset(tmpGuess, 0, MAX_PLENGTH_S + 1);
+		memset(tmpPhrase, 0, MAX_PLENGTH_S + 1);
+		memset(tmpGuess, 0, MAX_PLENGTH_S + 1);
 
-#if 0
-        /* for debugging only */
-        GameStopTimer();
-#endif
+		#if 0
+		/* for debugging only */
+		GameStopTimer();
+		#endif
 
-        if (*guess && (strlen(guess) < MAX_PLENGTH_S + 1)) {
+		if (*guess && (strlen(guess) < MAX_PLENGTH_S + 1)) {
 
-            assert(strlen(guess) < (MAX_PLENGTH_S + 1));
+			assert(strlen(guess) < (MAX_PLENGTH_S + 1));
 
-            /*
-            * strip out spaces and store results into local buffers
-            */
-            StrCpyStripChar(r = p = tmpPhrase, curPhrase->text, ' ');
-            StrCpyStripChar(s = tmpGuess, guess, ' ');
+			/*
+			* strip out spaces and store results into local buffers
+			*/
+			StrCpyStripChar(r = p = tmpPhrase, curPhrase->text, ' ');
+			StrCpyStripChar(s = tmpGuess, guess, ' ');
 
-            StrStripChar(s, 39);            // strip out any apostrophes
+			StrStripChar(s, 39);            // strip out any apostrophes
 
-            strcat(p, "   ");
-            strcat(s, "   ");
+			strcat(p, "   ");
+			strcat(s, "   ");
 
-            /*
-            * compare the 2 strings, if we get a "THE", "A", or "AN" (case sensative)
-            * then do a special compare
-            */
-            n = strlen(p);
+			/*
+			* compare the 2 strings, if we get a "THE", "A", or "AN" (case sensative)
+			* then do a special compare
+			*/
+			n = strlen(p);
 
-            winStatus = TRUE;
+			winStatus = TRUE;
 
-            i = 0;
-            while (i++ < n) {
+			i = 0;
+			while (i++ < n) {
 
-                if ((*p == 'T') || (*p == 'A')) {
-                    inc = 3;
-                    if (*p == 'A') {
-                        inc = 1;
-                        if (*(p+1) == 'N') {
-                            inc = 2;
-                        }
-                    }
-                    r = p;
+				if ((*p == 'T') || (*p == 'A')) {
+					inc = 3;
+					if (*p == 'A') {
+						inc = 1;
+						if (*(p + 1) == 'N') {
+							inc = 2;
+						}
+					}
+					r = p;
 
-                    if (toupper(*p) != toupper(*s)) {
-                        p += inc;
-                        i += inc;
-                    } else {
-                        r = p + inc;
-                        i += inc;
-                    }
-                }
+					if (toupper(*p) != toupper(*s)) {
+						p += inc;
+						i += inc;
+					} else {
+						r = p + inc;
+						i += inc;
+					}
+				}
 
-                if ((toupper(*p) != toupper(*s)) && (toupper(*r) != toupper(*s))) {
-                    winStatus = FALSE;
-                    break;
-                }
-                p++;
-                s++;
-                r++;
-            }
-        }
-    }
+				if ((toupper(*p) != toupper(*s)) && (toupper(*r) != toupper(*s))) {
+					winStatus = FALSE;
+					break;
+				}
+				p++;
+				s++;
+				r++;
+			}
+		}
+	}
 
-    return(winStatus);
+	return (winStatus);
 }
 #else
-BOOLEAN CheckUserGuess(const CHAR *guess)
-{
-    return(StrCompare(curPhrase->text, guess, MAX_PLENGTH_S + 1));
+BOOLEAN CheckUserGuess(const CHAR *guess) {
+	return (StrCompare(curPhrase->text, guess, MAX_PLENGTH_S + 1));
 }
 #endif
 
 #ifdef DEBUG
-VOID ValidateParser()
-{
-#if 0
-    if (!CheckUserGuess("THE THERAPIST"))
-        MessageBox(NULL, "THE THERAPIST", "Failed", MB_OK);
+VOID ValidateParser() {
+	#if 0
+	if (!CheckUserGuess("THE THERAPIST"))
+		MessageBox(NULL, "THE THERAPIST", "Failed", MB_OK);
 
-    if (!CheckUserGuess("THETHERAPIST"))
-        MessageBox(NULL, "THETHERAPIST", "Failed", MB_OK);
+	if (!CheckUserGuess("THETHERAPIST"))
+		MessageBox(NULL, "THETHERAPIST", "Failed", MB_OK);
 
-    if (!CheckUserGuess("THERAPIST"))
-        MessageBox(NULL, "THERAPIST", "Failed", MB_OK);
+	if (!CheckUserGuess("THERAPIST"))
+		MessageBox(NULL, "THERAPIST", "Failed", MB_OK);
 
-    if (CheckUserGuess("THERAPISTER"))
-        MessageBox(NULL, "THERAPISTER", "Worked", MB_OK);
-#endif
+	if (CheckUserGuess("THERAPISTER"))
+		MessageBox(NULL, "THERAPISTER", "Worked", MB_OK);
+	#endif
 }
 #endif
 
@@ -1152,113 +1128,110 @@ VOID ValidateParser()
 *  returns   len = length of string without spaces
 *
 **/
-INT StrLenNoSpaces(const CHAR *str)
-{
-    INT len;
+INT StrLenNoSpaces(const CHAR *str) {
+	INT len;
 
-    /* can't access a null pointer */
-    assert(str != NULL);
+	/* can't access a null pointer */
+	assert(str != NULL);
 
-    len = 0;
-    while (*str) {
-        if (*str++ != ' ') {
-            len++;
-        }
-    }
-    return(len);
+	len = 0;
+	while (*str) {
+		if (*str++ != ' ') {
+			len++;
+		}
+	}
+	return (len);
 }
 
 
-ERROR_CODE ValidatePhrase(PHRASES *phrase)
-{
-    BOOLEAN bList[MAX_PLENGTH];
-    INT i, n, order;
-    CHAR c;
-    ERROR_CODE errCode;
+ERROR_CODE ValidatePhrase(PHRASES *phrase) {
+	BOOLEAN bList[MAX_PLENGTH];
+	INT i, n, order;
+	CHAR c;
+	ERROR_CODE errCode;
 
-    assert(phrase != NULL);
+	assert(phrase != NULL);
 
-    /* set all entries to FALSE */
-    memset(bList, 0, sizeof(BOOLEAN)*MAX_PLENGTH);
+	/* set all entries to FALSE */
+	memset(bList, 0, sizeof(BOOLEAN)*MAX_PLENGTH);
 
-    /* assume no error */
-    errCode  = ERR_NONE;
+	/* assume no error */
+	errCode  = ERR_NONE;
 
-    if ((n = strlen(phrase->text)) > MAX_PLENGTH_S) {
-        #ifdef DEBUG
-        ErrorLog("DEBUG.LOG", "Phrase too Long: strlen(%s)=%d > %d", phrase->text, n, MAX_PLENGTH_S);
-        #endif
-        errCode = ERR_FTYPE;
-    } else {
+	if ((n = strlen(phrase->text)) > MAX_PLENGTH_S) {
+		#ifdef DEBUG
+		ErrorLog("DEBUG.LOG", "Phrase too Long: strlen(%s)=%d > %d", phrase->text, n, MAX_PLENGTH_S);
+		#endif
+		errCode = ERR_FTYPE;
+	} else {
 
-        for (i = 0; i< n; i++) {
+		for (i = 0; i < n; i++) {
 
-            c = phrase->text[i];
+			c = phrase->text[i];
 
-            /*
-            * verify that all characters in this phrase are valid.
-            * valid chars are are '\0', ' ' or a letter
-            */
-            if ((c != 0) && (c != 32) && !Common::isAlpha(c)) {
-                #ifdef DEBUG
-                ErrorLog("DEBUG.LOG", "Invalid Char in (%s) %c", phrase->text, c);
-                #endif
-                errCode = ERR_FTYPE;
-                break;
-            }
-        }
+			/*
+			* verify that all characters in this phrase are valid.
+			* valid chars are are '\0', ' ' or a letter
+			*/
+			if ((c != 0) && (c != 32) && !Common::isAlpha(c)) {
+				#ifdef DEBUG
+				ErrorLog("DEBUG.LOG", "Invalid Char in (%s) %c", phrase->text, c);
+				#endif
+				errCode = ERR_FTYPE;
+				break;
+			}
+		}
 
-        /*
-        * continues as long as there was no error
-        */
-        if (errCode == ERR_NONE) {
+		/*
+		* continues as long as there was no error
+		*/
+		if (errCode == ERR_NONE) {
 
-            if ((n = StrLenNoSpaces(phrase->text)) > MAX_PLENGTH) {
-                #ifdef DEBUG
-                ErrorLog("DEBUG.LOG", "StrLenNoSpace(%s)=%d > %d", phrase->text, n, MAX_PLENGTH);
-                #endif
-                errCode = ERR_FTYPE;
-            } else {
+			if ((n = StrLenNoSpaces(phrase->text)) > MAX_PLENGTH) {
+				#ifdef DEBUG
+				ErrorLog("DEBUG.LOG", "StrLenNoSpace(%s)=%d > %d", phrase->text, n, MAX_PLENGTH);
+				#endif
+				errCode = ERR_FTYPE;
+			} else {
 
-                /*
-                * check to make sure that the indexing order values are valid
-                */
-                for (i = 0; i< n; i++) {
-                    order = (INT)phrase->order[i] - 1;
+				/*
+				* check to make sure that the indexing order values are valid
+				*/
+				for (i = 0; i < n; i++) {
+					order = (INT)phrase->order[i] - 1;
 
-                    if ((order >= n) || (order < 0) || bList[order]) {
-                        #ifdef DEBUG
-                        ErrorLog("DEBUG.LOG", "Invalid Indexing in %s: %d", phrase->text, order);
-                        #endif
-                        errCode = ERR_FTYPE;
-                        break;
-                    }
-                    bList[order] = TRUE;
-                }
-            }
-        }
-    }
+					if ((order >= n) || (order < 0) || bList[order]) {
+						#ifdef DEBUG
+						ErrorLog("DEBUG.LOG", "Invalid Indexing in %s: %d", phrase->text, order);
+						#endif
+						errCode = ERR_FTYPE;
+						break;
+					}
+					bList[order] = TRUE;
+				}
+			}
+		}
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
-VOID GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg)
-{
-    /* can't write to null pointers */
-    assert(nLeft != NULL);
-    assert(nTotal != NULL);
-    assert(nLeftAvg != NULL);
-    assert(nTotalAvg != NULL);
+VOID GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg) {
+	/* can't write to null pointers */
+	assert(nLeft != NULL);
+	assert(nTotal != NULL);
+	assert(nLeftAvg != NULL);
+	assert(nTotalAvg != NULL);
 
-    *nLeft = *nTotal = 0;
-    if (bInGame) {
+	*nLeft = *nTotal = 0;
+	if (bInGame) {
 
-        *nTotal = StrLenNoSpaces(curPhrase->text);
-        *nLeft = *nTotal - iNextLetter;
-    }
-    *nLeftAvg = gLeftAvg;
-    *nTotalAvg = gTotalAvg;
+		*nTotal = StrLenNoSpaces(curPhrase->text);
+		*nLeft = *nTotal - iNextLetter;
+	}
+	*nLeftAvg = gLeftAvg;
+	*nTotalAvg = gTotalAvg;
 }
 
 /**
@@ -1274,48 +1247,46 @@ VOID GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg)
 *  returns   nSprites = number of sprites in linked list
 *
 **/
-INT NumLinkedSprites(VOID)
-{
-    CSprite *pSprite;
-    INT i = 0;
+INT NumLinkedSprites(VOID) {
+	CSprite *pSprite;
+	INT i = 0;
 
-    pSprite = CSprite::GetSpriteChain();
-    while (pSprite) {
-        pSprite = pSprite->GetNextSprite();
-        i++;
-    }
+	pSprite = CSprite::GetSpriteChain();
+	while (pSprite) {
+		pSprite = pSprite->GetNextSprite();
+		i++;
+	}
 
-    return(i);
+	return (i);
 }
 
 #ifdef _DEBUG
-VOID SelfTest(VOID)
-{
-    PHRASES cPhrase;
-    INT i, n;
-    ERROR_CODE errCode;
+VOID SelfTest(VOID) {
+	PHRASES cPhrase;
+	INT i, n;
+	ERROR_CODE errCode;
 
-    ErrorLog("DEBUG.LOG", "SelfTest...");
+	ErrorLog("DEBUG.LOG", "SelfTest...");
 
-    n = (INT)(FileLength(DATA_FILE) / sizeof(PHRASES));
+	n = (INT)(FileLength(DATA_FILE) / sizeof(PHRASES));
 
-    for (i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 
-        ifstream inFile;
-        inFile.open(DATA_FILE, ios::binary);                // open the data store
+		ifstream inFile;
+		inFile.open(DATA_FILE, ios::binary);                // open the data store
 
-        inFile.seekg(i * sizeof(PHRASES));                  // seek to the phrase we want
+		inFile.seekg(i * sizeof(PHRASES));                  // seek to the phrase we want
 
-        inFile.read((CHAR *)&cPhrase, sizeof(PHRASES));    // load that phrase
-        if (inFile.gcount() != sizeof(PHRASES))
-            errCode = ERR_FREAD;
-        inFile.close();                                     // close the data store
+		inFile.read((CHAR *)&cPhrase, sizeof(PHRASES));    // load that phrase
+		if (inFile.gcount() != sizeof(PHRASES))
+			errCode = ERR_FREAD;
+		inFile.close();                                     // close the data store
 
-        ErrorLog("DEBUG.LOG", "Testing Phrase %d", i);
-        if ((errCode = ValidatePhrase(&cPhrase)) != ERR_NONE) {
-            ErrorLog("DEBUG.LOG", "Phrase %d has problems", i);
-        }
-    }
+		ErrorLog("DEBUG.LOG", "Testing Phrase %d", i);
+		if ((errCode = ValidatePhrase(&cPhrase)) != ERR_NONE) {
+			ErrorLog("DEBUG.LOG", "Phrase %d has problems", i);
+		}
+	}
 }
 #endif
 

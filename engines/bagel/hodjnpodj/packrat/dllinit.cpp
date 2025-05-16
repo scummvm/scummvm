@@ -21,7 +21,7 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/packrat/resource.h"
-#include "bagel/hodjnpodj/packrat/packrat.h" 
+#include "bagel/hodjnpodj/packrat/packrat.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -30,7 +30,7 @@ namespace Packrat {
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
-CMainPackRatWindow  *pcwndPackRat = NULL;   // pointer to the poker's main window 
+CMainPackRatWindow  *pcwndPackRat = NULL;   // pointer to the poker's main window
 CPalette            *pTestPalette = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -43,45 +43,44 @@ CPalette            *pTestPalette = NULL;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunPackRat( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
+HWND FAR PASCAL RunPackRat(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 // if the pointer has garbage in it, the clean it out
-    if ( pcwndPackRat != NULL ) {
-        pcwndPackRat = NULL;
-    }
-    
+	if (pcwndPackRat != NULL) {
+		pcwndPackRat = NULL;
+	}
+
 // create a my poker window and show it
-    pcwndPackRat = new CMainPackRatWindow( hParentWnd, lpGameInfo );
+	pcwndPackRat = new CMainPackRatWindow(hParentWnd, lpGameInfo);
 //  pcwndPackRat->ShowWindow( SW_SHOWNORMAL );
 //  pcwndPackRat->UpdateWindow();
-    pcwndPackRat->SetActiveWindow(); 
+	pcwndPackRat->SetActiveWindow();
 // return the handle to this window
-    hDLLInst = (HINSTANCE)GetWindowWord( pcwndPackRat->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
-    if (lpGameInfo->bPlayingMetagame == FALSE)
-        MFC::PostMessage( pcwndPackRat->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
-    return pcwndPackRat->m_hWnd;
+	hDLLInst = (HINSTANCE)GetWindowWord(pcwndPackRat->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+	if (lpGameInfo->bPlayingMetagame == FALSE)
+		MFC::PostMessage(pcwndPackRat->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED);
+	return pcwndPackRat->m_hWnd;
 }
 
 } // namespace Packrat

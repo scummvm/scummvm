@@ -316,8 +316,7 @@ void *SBBasePda::pdaButtonHandler(int refId, void *info) {
 		curPda->zoom();
 		break;
 
-	case PDA_SYSTEM:
-	{
+	case PDA_SYSTEM: {
 		CBagel *curApp = CBagel::getBagApp();
 		if (curApp != nullptr) {
 			CBagMasterWin *curWnd = curApp->getMasterWnd();

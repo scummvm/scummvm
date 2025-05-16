@@ -28,14 +28,14 @@ namespace Bagel {
 namespace SpaceBar {
 
 CBofEditText::CBofEditText(const char *pszName, int x, int y, int nWidth,
-	int nHeight, CBofWindow *pParent)
+                           int nHeight, CBofWindow *pParent)
 	: CBofWindow(pszName, x, y, nWidth, nHeight, pParent) {
 	create(pszName, x, y, nWidth, nHeight, pParent);
 }
 
 
 ErrorCode CBofEditText::create(const char *pszName, CBofRect *pRect,
-	CBofWindow *pParent, uint32 nControlID) {
+                               CBofWindow *pParent, uint32 nControlID) {
 	assert(isValidObject(this));
 	assert(pszName != nullptr);
 
@@ -59,7 +59,7 @@ ErrorCode CBofEditText::create(const char *pszName, CBofRect *pRect,
 
 
 ErrorCode CBofEditText::create(const char *pszName, int x, int y,
-	int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
+                               int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	assert(isValidObject(this));
 	assert(pszName != nullptr);
 
@@ -107,9 +107,9 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 		CBofString tmp = _text + "|";
 
 		paintText(this, &_cRect, tmp.getBuffer(),
-			12, 0, CTEXT_COLOR,
-			JUSTIFY_LEFT,
-			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
+		          12, 0, CTEXT_COLOR,
+		          JUSTIFY_LEFT,
+		          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
 	}
 
 }

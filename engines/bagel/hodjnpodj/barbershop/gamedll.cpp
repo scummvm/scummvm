@@ -45,50 +45,49 @@ HWND ghParentWnd;
  *
  *          This is the API function for the DLL. It is what the calling app
  *          calls to invoke Barbershop Quintet.
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunBarb( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
-    CMainWindow *pMain;
+HWND FAR PASCAL RunBarb(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
+	CMainWindow *pMain;
 
-    pGameParams = lpGameInfo;
+	pGameParams = lpGameInfo;
 
-    // invoke your game here by creating a pGame for your main window
-    // look at the InitInstance for your game for this
+	// invoke your game here by creating a pGame for your main window
+	// look at the InitInstance for your game for this
 
-    ghParentWnd = hParentWnd;
+	ghParentWnd = hParentWnd;
 
-    if ((pMain = new CMainWindow) != NULL) {
+	if ((pMain = new CMainWindow) != NULL) {
 
-        pMain->ShowWindow(SW_SHOWNORMAL);
+		pMain->ShowWindow(SW_SHOWNORMAL);
 
-        pMain->UpdateWindow();
+		pMain->UpdateWindow();
 
-        pMain->SetActiveWindow();
-    }
+		pMain->SetActiveWindow();
+	}
 
-    // these must be set in this function
-    hDLLInst = (HINSTANCE)GetWindowWord( pMain->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
+	// these must be set in this function
+	hDLLInst = (HINSTANCE)GetWindowWord(pMain->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
-    return pMain->m_hWnd;   // return the m_hWnd of your main game window
+	return pMain->m_hWnd;   // return the m_hWnd of your main game window
 }
 
 } // namespace Barbershop

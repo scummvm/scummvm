@@ -28,11 +28,10 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define NOTE_REPEAT_MAX	8
+#define NOTE_REPEAT_MAX 8
 
 
-class CNote : public CObject
-{
+class CNote : public CObject {
 	DECLARE_DYNCREATE(CNote)
 
 // Constructors
@@ -45,113 +44,125 @@ public:
 
 // Implementation
 public:
-	int GetID(void)
-		{ return(m_nID); }
-	void SetID(int nID)
-		{ m_nID = nID; }
+	int GetID(void) {
+		return (m_nID);
+	}
+	void SetID(int nID) {
+		m_nID = nID;
+	}
 
-	int GetClueID(void)
-		{ return(m_nClueID); }
-	void SetClueID(int nClue)
-		{ m_nClueID = nClue; }
+	int GetClueID(void) {
+		return (m_nClueID);
+	}
+	void SetClueID(int nClue) {
+		m_nClueID = nClue;
+	}
 
-	int GetRepeatCount(void)
-		{ return(m_nRepeatCount); }
- 	void SetRepeatCount(int nRepeat)
-		{ m_nRepeatCount = nRepeat; }
+	int GetRepeatCount(void) {
+		return (m_nRepeatCount);
+	}
+	void SetRepeatCount(int nRepeat) {
+		m_nRepeatCount = nRepeat;
+	}
 
-	int GetPersonID(void)
-		{ return(m_nPersonID); }
-	void SetPersonID(int nPerson)
-		{ m_nPersonID = nPerson; }
+	int GetPersonID(void) {
+		return (m_nPersonID);
+	}
+	void SetPersonID(int nPerson) {
+		m_nPersonID = nPerson;
+	}
 
-	int GetPlaceID(void)
-		{ return(m_nPlaceID); }
-	void SetPlaceID(int nPlace)
-		{ m_nPlaceID = nPlace; }
+	int GetPlaceID(void) {
+		return (m_nPlaceID);
+	}
+	void SetPlaceID(int nPlace) {
+		m_nPlaceID = nPlace;
+	}
 
-#ifndef FRAME_EXE
-	char * GetClueArtSpec(void)
-		{ if ((m_nClueID >= NOTE_ICON_BASE) &&
-			  (m_nClueID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
-			  return(m_pNoteBitmapPath[m_nClueID]);
-		  else
-		      return(NULL);
-		}
+	#ifndef FRAME_EXE
+	char *GetClueArtSpec(void) {
+		if ((m_nClueID >= NOTE_ICON_BASE) &&
+		        (m_nClueID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
+			return (m_pNoteBitmapPath[m_nClueID]);
+		else
+			return (NULL);
+	}
 
-	char * GetPersonArtSpec(void)
-		{ if ((m_nPersonID >= NOTE_ICON_BASE) &&
-			  (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
-			  return(m_pNoteBitmapPath[m_nPersonID]);
-		  else
-		      return(NULL);
-		}
+	char *GetPersonArtSpec(void) {
+		if ((m_nPersonID >= NOTE_ICON_BASE) &&
+		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
+			return (m_pNoteBitmapPath[m_nPersonID]);
+		else
+			return (NULL);
+	}
 
-	char * GetPlaceArtSpec(void)
-		{ if ((m_nPlaceID >= NOTE_ICON_BASE) &&
-			  (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
-			  return(m_pNoteBitmapPath[m_nPlaceID]);
-		  else
-		      return(NULL);
-		}
-		
-	char * GetDescription(void)
-		{ if ((m_nID >= 0) &&
-			  (m_nID < NOTE_COUNT))
-			  return(m_pNoteText[m_nID]);
-		  else
-		      return(NULL);
-		}
-	
-	char * GetPersonSoundSpec(void)
-		{ if ((m_nPersonID >= NOTE_ICON_BASE) &&
-			  (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
-			  return(m_pNoteSoundPath[m_nPersonID]);
-		  else
-		      return(NULL);
-		}
+	char *GetPlaceArtSpec(void) {
+		if ((m_nPlaceID >= NOTE_ICON_BASE) &&
+		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
+			return (m_pNoteBitmapPath[m_nPlaceID]);
+		else
+			return (NULL);
+	}
 
-	char * GetPlaceSoundSpec(void)
-		{ if ((m_nPlaceID >= NOTE_ICON_BASE) &&
-			  (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
-			  return(m_pNoteSoundPath[m_nPlaceID]);
-		  else
-		      return(NULL);
-		}
-#endif
+	char *GetDescription(void) {
+		if ((m_nID >= 0) &&
+		        (m_nID < NOTE_COUNT))
+			return (m_pNoteText[m_nID]);
+		else
+			return (NULL);
+	}
 
-	CNote *	GetNext(void)
-		{ return(m_pNext); }
-	CNote * GetPrev(void)
-		{ return(m_pPrev); }
+	char *GetPersonSoundSpec(void) {
+		if ((m_nPersonID >= NOTE_ICON_BASE) &&
+		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
+			return (m_pNoteSoundPath[m_nPersonID]);
+		else
+			return (NULL);
+	}
+
+	char *GetPlaceSoundSpec(void) {
+		if ((m_nPlaceID >= NOTE_ICON_BASE) &&
+		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
+			return (m_pNoteSoundPath[m_nPlaceID]);
+		else
+			return (NULL);
+	}
+	#endif
+
+	CNote  *GetNext(void) {
+		return (m_pNext);
+	}
+	CNote *GetPrev(void) {
+		return (m_pPrev);
+	}
 
 
-static char * GetDescription(int nID, int nQuantity);
+	static char *GetDescription(int nID, int nQuantity);
 
-		  
+
 private:
-	int		m_nID;					// note identifier code
-	int		m_nPersonID;			// identifier of person giving note 
-	int		m_nPlaceID;				// identifier for place note given
-	int		m_nClueID;				// identifier for clue book entry
-	int		m_nRepeatCount;			// number of times to repeat clue image
+	int     m_nID;                  // note identifier code
+	int     m_nPersonID;            // identifier of person giving note
+	int     m_nPlaceID;             // identifier for place note given
+	int     m_nClueID;              // identifier for clue book entry
+	int     m_nRepeatCount;         // number of times to repeat clue image
 
 public:
-	CNote	*m_pNext;				// pointer to next note in the list
-	CNote	*m_pPrev;				// pointer to previous note in the list
+	CNote   *m_pNext;               // pointer to next note in the list
+	CNote   *m_pPrev;               // pointer to previous note in the list
 
 private:
 
-#ifndef FRAME_EXE
-static char	*m_pNoteText[NOTE_COUNT];	// descriptive text for each note
-static char	*m_pNoteSoundPath[NOTE_ICON_COUNT];	// sound file specifications for each note
-static char	*m_pNoteBitmapPath[NOTE_ICON_COUNT];// bitmap file specifications for each note
-#endif
+	#ifndef FRAME_EXE
+	static char *m_pNoteText[NOTE_COUNT];   // descriptive text for each note
+	static char *m_pNoteSoundPath[NOTE_ICON_COUNT]; // sound file specifications for each note
+	static char *m_pNoteBitmapPath[NOTE_ICON_COUNT];// bitmap file specifications for each note
+	#endif
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 

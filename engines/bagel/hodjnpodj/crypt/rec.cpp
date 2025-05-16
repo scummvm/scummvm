@@ -26,46 +26,44 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-CCryptRecord::CCryptRecord()
-{
+CCryptRecord::CCryptRecord() {
 }
 
-CCryptRecord::~CCryptRecord()
-{
+CCryptRecord::~CCryptRecord() {
 }
 
 
 BOOL CCryptRecord::GetRecord(int nID) {
-#ifdef TODO
+	#ifdef TODO
 	OFSTRUCT    ofstFileStat;
-	char 		chBuf;
-	int 		i;
+	char        chBuf;
+	int         i;
 
-	if ( (m_hfCryptFile = LZOpenFile(CRYPT_TXT_FILE, &ofstFileStat, OF_READ)) == -1 )
+	if ((m_hfCryptFile = LZOpenFile(CRYPT_TXT_FILE, &ofstFileStat, OF_READ)) == -1)
 		return FALSE;
 
 	m_nID = 0;
-	for ( m_nID = 0; m_nID < nID; m_nID++ ) {			// Locate record
+	for (m_nID = 0; m_nID < nID; m_nID++) {              // Locate record
 		LZSeek(
-			m_hfCryptFile,
-			RECORD_LEN * sizeof(char),
-			1
-			);											// Advance past initial quote mark
+		    m_hfCryptFile,
+		    RECORD_LEN * sizeof(char),
+		    1
+		);                                          // Advance past initial quote mark
 	}
 
-	LZSeek(m_hfCryptFile, sizeof(char), 1); 			// Advance past initial quote mark
+	LZSeek(m_hfCryptFile, sizeof(char), 1);             // Advance past initial quote mark
 
-	for ( i = 0; ; i++ ) {								// Grab cryptogram
-		if ( i >= MAX_GRAM_LEN )
+	for (i = 0; ; i++) {                                 // Grab cryptogram
+		if (i >= MAX_GRAM_LEN)
 			return FALSE;
 
 		LZRead(m_hfCryptFile, &chBuf, sizeof(char));
-		if ( chBuf == '\\' ) {
+		if (chBuf == '\\') {
 			LZRead(m_hfCryptFile, &chBuf, sizeof(char));
 
 			m_lpszGram[i] = chBuf;
 			i++;
-		} else if ( chBuf == '\"' ) {
+		} else if (chBuf == '\"') {
 			m_lpszGram[i] = '\0';
 			break;
 		}
@@ -74,17 +72,17 @@ BOOL CCryptRecord::GetRecord(int nID) {
 	}
 
 	_fstrupr(m_lpszGram);
-	LZSeek(m_hfCryptFile, 2 * sizeof(char), 1);			// Advance past dilimiting comma and initial quote mark
+	LZSeek(m_hfCryptFile, 2 * sizeof(char), 1);         // Advance past dilimiting comma and initial quote mark
 
-	for ( i = 0; ; i++ ) {			// Grab source
-		if ( i >= MAX_SOURCE_LEN )
+	for (i = 0; ; i++) {             // Grab source
+		if (i >= MAX_SOURCE_LEN)
 			return FALSE;
 
-		 LZRead(m_hfCryptFile, &chBuf, sizeof(char));
-		if ( chBuf == '\\' ) {
+		LZRead(m_hfCryptFile, &chBuf, sizeof(char));
+		if (chBuf == '\\') {
 			LZRead(m_hfCryptFile, &chBuf, sizeof(char));
 			m_lpszSource[i] = chBuf;
-		} else if ( chBuf == '\"' ) {
+		} else if (chBuf == '\"') {
 			m_lpszSource[i] = '\0';
 			break;
 		}
@@ -95,9 +93,9 @@ BOOL CCryptRecord::GetRecord(int nID) {
 	_fstrupr(m_lpszSource);
 	LZClose(m_hfCryptFile);
 	return TRUE;
-#else
+	#else
 	error("TODO: CCryptRecord::GetRecord");
-#endif
+	#endif
 }
 
 } // namespace Crypt

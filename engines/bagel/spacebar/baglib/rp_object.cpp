@@ -357,7 +357,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 				// complain violently.
 				if (_pVarObj == nullptr) {
 					reportError(ERR_UNKNOWN, "Invalid Residue Print Variable=%s",
-								sStr.getBuffer());
+					            sStr.getBuffer());
 					return UNKNOWN_TOKEN;
 				}
 			} else {
@@ -1348,7 +1348,7 @@ void CBagRPObject::hideResiduePrintedReview() {
 
 		if (!pRPObj)
 			error("hideResiduePrintedReview() - Unexpected null pRPObj");
-		
+
 		// If the object txt var is not found yet, then get it.
 		if (pRPObj->_pObjectName == nullptr) {
 			if (!pLogWld)
@@ -1379,7 +1379,7 @@ void CBagRPObject::showResiduePrintedReview() {
 		warning("showResiduePrintedReview() - Unexpected null logWld");
 		return;
 	}
-	
+
 	// Count items in this queue.
 	int nCount = pLogWld->getObjectCount();
 

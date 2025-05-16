@@ -34,47 +34,46 @@ namespace Metagame {
 #define CBUTTON1 IDOK
 #define CBUTTON2 IDCANCEL
 
-class C2ButtonDialog : public CBmpDialog
-{
-    public:
+class C2ButtonDialog : public CBmpDialog {
+public:
 
-        // standard constructor
-        C2ButtonDialog(CWnd *, CPalette *, char *, char *, char *, char *pszText2 = NULL, char *pszText3 = NULL);
+	// standard constructor
+	C2ButtonDialog(CWnd *, CPalette *, char *, char *, char *, char *pszText2 = NULL, char *pszText3 = NULL);
 
-    private:
-        void ClearDialogImage(void);
+private:
+	void ClearDialogImage(void);
 
-        // Dialog Data
-        //{{AFX_DATA(C2ButtonDialog)
-            // NOTE: the ClassWizard will add data members here
-        //}}AFX_DATA
+	// Dialog Data
+	//{{AFX_DATA(C2ButtonDialog)
+	// NOTE: the ClassWizard will add data members here
+	//}}AFX_DATA
 
-    // Implementation
-    protected:
-        virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	// Implementation
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-        // Generated message map functions
-        //{{AFX_MSG(C2ButtonDialog)
-        afx_msg void OnPaint();
-        virtual void OnOK();
-        virtual void OnCancel();
-        virtual BOOL OnInitDialog();
-        afx_msg void OnDestroy();
-        afx_msg BOOL OnEraseBkgnd(CDC *);
-        //}}AFX_MSG
-        DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(C2ButtonDialog)
+	afx_msg void OnPaint();
+	virtual void OnOK();
+	virtual void OnCancel();
+	virtual BOOL OnInitDialog();
+	afx_msg void OnDestroy();
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
-    private:
-        CText        *m_cTextMessage1;
-        CText        *m_cTextMessage2;
-        CText        *m_cTextMessage3;
-        char         *m_pszMessage1;
-        char         *m_pszMessage2;
-        char         *m_pszMessage3;
-        char         *m_pszButton1Text;
-        char         *m_pszButton2Text;
-        CColorButton *m_pButton1;
-        CColorButton *m_pButton2;
+private:
+	CText        *m_cTextMessage1;
+	CText        *m_cTextMessage2;
+	CText        *m_cTextMessage3;
+	char         *m_pszMessage1;
+	char         *m_pszMessage2;
+	char         *m_pszMessage3;
+	char         *m_pszButton1Text;
+	char         *m_pszButton2Text;
+	CColorButton *m_pButton1;
+	CColorButton *m_pButton2;
 };
 
 } // namespace Metagame

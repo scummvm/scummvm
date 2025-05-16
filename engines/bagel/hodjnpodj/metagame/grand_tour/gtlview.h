@@ -32,56 +32,55 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#define SCROLLVIEW 0	/* 0=CView, 1=CScrollView */
-#define VK_H	0x0048
-#define VK_I	0x0049
-#define VK_M	0x004D
-#define VK_P	0x0050
+#define SCROLLVIEW 0    /* 0=CView, 1=CScrollView */
+#define VK_H    0x0048
+#define VK_I    0x0049
+#define VK_M    0x004D
+#define VK_P    0x0050
 
 #if SCROLLVIEW
-#define MFC_VIEW CScrollView
+	#define MFC_VIEW CScrollView
 #else
-#define MFC_VIEW CView
+	#define MFC_VIEW CView
 #endif
 
-class CGtlView : public MFC_VIEW
-{
-    friend class CGtlData ;
+class CGtlView : public MFC_VIEW {
+	friend class CGtlData ;
 protected: // create from serialization only
 	CGtlView();
 	DECLARE_DYNCREATE(CGtlView)
 
 // Attributes
 public:
-    CBsuSet m_cViewBsuSet ;	// boffo scroll bar set for windows
+	CBsuSet m_cViewBsuSet ; // boffo scroll bar set for windows
 
-    char m_cStartData ;
-    CPoint m_cCurrentPosition ;	// current mouse position
-    BOOL m_bBsuInit ;
-    class CGtlFrame * m_xpFrame ;	// pointer to frame window
-    char m_cEndData ;
+	char m_cStartData ;
+	CPoint m_cCurrentPosition ; // current mouse position
+	BOOL m_bBsuInit ;
+	class CGtlFrame *m_xpFrame ;    // pointer to frame window
+	char m_cEndData ;
 
 // Operations
 public:
-    class CGtlDoc* GetDocument();
-    void CGtlView::UpdateDialogs(void) ;
-    void OnSoundNotify(CSound *);
+	class CGtlDoc *GetDocument();
+	void CGtlView::UpdateDialogs(void) ;
+	void OnSoundNotify(CSound *);
 
 //- CGtlView::OnUpdate -- called when document changes to update view
-    virtual void OnUpdate(CView * xpSender, LPARAM lHint, CObject * xpHint) ;
+	virtual void OnUpdate(CView * xpSender, LPARAM lHint, CObject * xpHint) ;
 //- CGtlView::OnDraw -- draw current view
 	virtual void OnDraw(CDC* xpDc) ;
 
 private:
-//- CGtlView::OnInitialUpdate -- 
+//- CGtlView::OnInitialUpdate --
 	void OnInitialUpdate(void) ;
 
-#ifdef NODEEDIT
+	#ifdef NODEEDIT
 //- CGtlView::CheckSize -- check window size, adjust if necessary
 	BOOL CheckSize(void) ;
-#endif
-    
-protected: 
+	#endif
+
+protected:
 //- CGtlView::PreCreateWindow -- change view window style
 	BOOL PreCreateWindow(CREATESTRUCT& cCs) ;
 
@@ -89,19 +88,20 @@ protected:
 public:
 	virtual ~CGtlView();
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
-public: void CGtlView::FlushInputEvents(void);
+public:
+	void CGtlView::FlushInputEvents(void);
 
 
 // Generated message map functions
 protected:
 	//{{AFX_MSG(CGtlView)
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -118,17 +118,18 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnDestroy();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-    afx_msg long OnMCINotify(WPARAM, LPARAM);
-    afx_msg long OnMMIONotify(WPARAM, LPARAM);
-    afx_msg void OnTimer(UINT);
+	afx_msg long OnMCINotify(WPARAM, LPARAM);
+	afx_msg long OnMMIONotify(WPARAM, LPARAM);
+	afx_msg void OnTimer(UINT);
 	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
 #ifndef _DEBUG  // debug version in gtlview.cpp
-inline CGtlDoc* CGtlView::GetDocument()
-   { return (CGtlDoc*)m_pDocument; }
+inline CGtlDoc *CGtlView::GetDocument() {
+	return (CGtlDoc*)m_pDocument;
+}
 #endif
 
 } // namespace GrandTour

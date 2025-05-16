@@ -770,11 +770,11 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 // Energy detector objects, this should be pretty straightforward.
 
 CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
-	setFont(FONT_MONO);				// Correct for spacing
-	setColor(7);					// Make it white
-	setFloating();					// Is definitely floating
-	setHighlight();					// Is highlight
-	setTitle();						// As title
+	setFont(FONT_MONO);             // Correct for spacing
+	setColor(7);                    // Make it white
+	setFloating();                  // Is definitely floating
+	setHighlight();                 // Is highlight
+	setTitle();                     // As title
 	_textInitializedFl = false;     // Not initialized yet
 }
 

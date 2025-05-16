@@ -133,7 +133,7 @@ bool CBagMovieObject::runObject() {
 				nMovFileType = MovieFileType::NONE;
 				break;
 
-				// We should never get here
+			// We should never get here
 			case MovieFileType::NONE:
 			default:
 				logError(buildString("Movie does not have a correct file name: %s.", sFileName.getBuffer()));
@@ -373,11 +373,10 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		const char ch = (char)istr.peek();
 		switch (ch) {
-			//
-			//  AS  - n number of slides in sprite
-			//
-		case 'A':
-		{
+		//
+		//  AS  - n number of slides in sprite
+		//
+		case 'A': {
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("AS")) {
@@ -407,8 +406,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		// Don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
-		case 'D':
-		{
+		case 'D': {
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("DONTQUEUE")) {
@@ -429,8 +427,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		// Don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
-		case 'P':
-		{
+		case 'P': {
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("PLAYIMMEDIATE")) {
@@ -446,8 +443,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 		// mac version... give the option of playing the movie on a black
 		// background.  this solves the problem of palette shifts on examine
 		// movies.
-		case 'O':
-		{
+		case 'O': {
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("ONBLACK")) {
@@ -461,8 +457,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 
 		// Associate a sound file with this movie (primarily for examine
 		// movies).
-		case 'S':
-		{
+		case 'S': {
 			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("SND")) {
 				nObjectUpdated = true;
@@ -480,8 +475,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 		//
 		//  No match return from function
 		//
-		default:
-		{
+		default: {
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
@@ -530,9 +524,9 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 
 	if (pPDA && pPDAz) {
 		if (pPDAz->getZoomed() ||              // We're zoomed
-			(pMainWin->isCIC() && !isDontOverride()) || // We're in a character closeup
-			CBofSound::soundsPlayingNotOver() ||        // A sound is playing
-			pPDA->getPdaMode() == PDA_MOO_MODE) {            // An asynch movie is already playing
+		        (pMainWin->isCIC() && !isDontOverride()) || // We're in a character closeup
+		        CBofSound::soundsPlayingNotOver() ||        // A sound is playing
+		        pPDA->getPdaMode() == PDA_MOO_MODE) {            // An asynch movie is already playing
 			bCanPlay = false;
 		}
 	}

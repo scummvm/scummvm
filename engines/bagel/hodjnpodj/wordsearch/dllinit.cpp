@@ -21,7 +21,7 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/wordsearch/resource.h"
-#include "bagel/hodjnpodj/wordsearch/wordsearch.h" 
+#include "bagel/hodjnpodj/wordsearch/wordsearch.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -30,7 +30,7 @@ namespace WordSearch {
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
-CMainWSWindow   *pMainGameWnd = NULL;   // pointer to the poker's main window 
+CMainWSWindow   *pMainGameWnd = NULL;   // pointer to the poker's main window
 CPalette        *pTestPalette = NULL;
 HCURSOR         hGameCursor;
 /////////////////////////////////////////////////////////////////////////////
@@ -43,44 +43,44 @@ HCURSOR         hGameCursor;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunWordSearch( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
+HWND FAR PASCAL RunWordSearch(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 // if the pointer has garbage in it, the clean it out
-    if ( pMainGameWnd != NULL ) {
-        pMainGameWnd = NULL;
-    }
-    
+	if (pMainGameWnd != NULL) {
+		pMainGameWnd = NULL;
+	}
+
 // create a my poker window and show it
-    pMainGameWnd = new CMainWSWindow( hParentWnd, lpGameInfo );
-    pMainGameWnd->ShowWindow( SW_SHOWNORMAL );
-    pMainGameWnd->UpdateWindow();
-    pMainGameWnd->SetActiveWindow(); 
+	pMainGameWnd = new CMainWSWindow(hParentWnd, lpGameInfo);
+	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
+	pMainGameWnd->UpdateWindow();
+	pMainGameWnd->SetActiveWindow();
 // return the handle to this window
-    hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
-    if (lpGameInfo->bPlayingMetagame == FALSE)  
-        MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
-    return pMainGameWnd->m_hWnd;
+	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+	if (lpGameInfo->bPlayingMetagame == FALSE)
+		MFC::PostMessage(pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED);
+	return pMainGameWnd->m_hWnd;
 }
 
 } // namespace WordSearch

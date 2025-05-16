@@ -46,54 +46,53 @@ HWND ghParentWnd;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 //extern "C"
-HWND FAR PASCAL RunFuge(HWND hParentWnd, LPGAMESTRUCT lpGameInfo)
-{
-    CFugeWindow *pMain;
+HWND FAR PASCAL RunFuge(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
+	CFugeWindow *pMain;
 
-    pGameParams = lpGameInfo;
+	pGameParams = lpGameInfo;
 
-    // invoke your game here by creating a pGame for your main window
-    // look at the InitInstance for your game for this
+	// invoke your game here by creating a pGame for your main window
+	// look at the InitInstance for your game for this
 
-    ghParentWnd = hParentWnd;
+	ghParentWnd = hParentWnd;
 
-    if ((pMain = new CFugeWindow) != NULL) {
+	if ((pMain = new CFugeWindow) != NULL) {
 
-        pMain->ShowWindow(SW_SHOWNORMAL);
+		pMain->ShowWindow(SW_SHOWNORMAL);
 
-        pMain->UpdateWindow();
+		pMain->UpdateWindow();
 
-        pMain->SetActiveWindow();
+		pMain->SetActiveWindow();
 
-        // these are used by Rules
-        hDLLInst = (HINSTANCE)GetWindowWord(pMain->m_hWnd, GWW_HINSTANCE);
-        hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+		// these are used by Rules
+		hDLLInst = (HINSTANCE)GetWindowWord(pMain->m_hWnd, GWW_HINSTANCE);
+		hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
-        if (pGameParams->bPlayingMetagame)
-            pMain->PlayGame();
-    }
+		if (pGameParams->bPlayingMetagame)
+			pMain->PlayGame();
+	}
 
-    return pMain->m_hWnd;   // return the m_hWnd of your main game window
+	return pMain->m_hWnd;   // return the m_hWnd of your main game window
 }
 
 } // namespace Fuge

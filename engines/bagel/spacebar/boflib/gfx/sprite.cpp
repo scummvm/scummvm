@@ -116,8 +116,7 @@ void CBofSprite::linkSprite() {
 				_pSpriteChain = this;
 				break;
 
-			default:
-			{
+			default: {
 				CBofSprite *pSprite;
 				CBofSprite *pLastSprite = pSprite = _pSpriteChain;
 				while (pSprite != nullptr && pSprite->_nZOrder > _nZOrder) {
@@ -212,7 +211,7 @@ void CBofSprite::duplicateSprite(CBofSprite *pSprite) {
 	pSprite->_bAnimated = _bAnimated;
 	pSprite->_nMaskColor = _nMaskColor;
 
-	pSprite->_bDuplicated = true;		// Mark it as a sprite with shared resources
+	pSprite->_bDuplicated = true;       // Mark it as a sprite with shared resources
 }
 
 
@@ -234,9 +233,9 @@ bool CBofSprite::loadSprite(CBofBitmap *pBitmap, int nCels) {
 	assert(pBitmap != nullptr);
 	assert(nCels >= 1);
 
-	clearImage();			// Clear out any/all existing bitmaps, palettes,
+	clearImage();           // Clear out any/all existing bitmaps, palettes,
 
-	_pImage = pBitmap;		// Save pointer to bitmap
+	_pImage = pBitmap;      // Save pointer to bitmap
 
 	pBitmap->setReadOnly(_bReadOnly);
 
@@ -254,7 +253,7 @@ bool CBofSprite::loadSprite(CBofBitmap *pBitmap, int nCels) {
 		_bAnimated = true;
 	}
 
-	return true;			// Return success
+	return true;            // Return success
 }
 
 
@@ -596,14 +595,14 @@ CBofSprite *CBofSprite::interception(CBofRect *pNewRect, CBofSprite *pTestSprite
 CBofSprite *CBofSprite::interception(CBofSprite *pTestSprite) {
 	assert(isValidObject(this));
 
-	CBofSprite *pSprite = pTestSprite;				// Get first sprite to be tested
+	CBofSprite *pSprite = pTestSprite;              // Get first sprite to be tested
 
-	while (pSprite != nullptr) {		// Thumb through the entire sprite collection
+	while (pSprite != nullptr) {        // Thumb through the entire sprite collection
 
-		if (testInterception(pSprite, nullptr))		// ... testing against each sprite in turn
-			return pSprite;							// found an interception
+		if (testInterception(pSprite, nullptr))     // ... testing against each sprite in turn
+			return pSprite;                         // found an interception
 
-		pSprite = (CBofSprite *)pSprite->_pNext;	// fetch next sprite in chain for testing
+		pSprite = (CBofSprite *)pSprite->_pNext;    // fetch next sprite in chain for testing
 	}
 
 	return nullptr;

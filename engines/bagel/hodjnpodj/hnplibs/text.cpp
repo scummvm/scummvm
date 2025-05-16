@@ -46,7 +46,7 @@ IMPLEMENT_DYNCREATE(CText, CObject)
  *
  ************************************************************************/
 
-	CText::CText() {
+CText::CText() {
 	InitializeFields();                         // initialize stuff
 }
 
@@ -189,18 +189,18 @@ BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 
 	m_pWork = new CBitmap();                    // create a bitmap to serve as our
 	if ((m_pWork == NULL) ||                    // ... work area as we output text
-		!(*m_pWork).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
-		return(FALSE);
+	        !(*m_pWork).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
+		return (FALSE);
 
 	m_pBackground = new CBitmap();              // create a bitmap to hold the
 	if ((m_pBackground == NULL) ||              // ... background we overwrite
-		!(*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
-		return(FALSE);
+	        !(*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
+		return (FALSE);
 
 	if (m_pPalette != NULL)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return(TRUE);                               // return status
+	return (TRUE);                              // return status
 }
 
 
@@ -230,23 +230,23 @@ BOOL CText::RestoreBackground(CDC *pDC) {
 	}
 
 	if ((m_pBackground != NULL) &&
-		SetupContexts(pDC)) {
+	        SetupContexts(pDC)) {
 		bSuccess = (*pDC).BitBlt(                   // simply splat the background art
-			m_cRect.left,           // ... back where it came from
-			m_cRect.top,
-			m_cSize.cx,
-			m_cSize.cy,
-			m_pBackgroundDC,
-			0,
-			0,
-			SRCCOPY);
+		               m_cRect.left,           // ... back where it came from
+		               m_cRect.top,
+		               m_cSize.cx,
+		               m_cSize.cy,
+		               m_pBackgroundDC,
+		               0,
+		               0,
+		               SRCCOPY);
 		ReleaseContexts();
 	}
 
 	if (m_pPalette != NULL)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return(bSuccess);
+	return (bSuccess);
 }
 
 
@@ -275,7 +275,7 @@ BOOL CText::DisplayString(CDC *pDC, const char *pszText, const int nSize, const 
 
 	m_cTextColor = crColor;
 	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, FALSE);
-	return(bSuccess);
+	return (bSuccess);
 }
 
 
@@ -308,7 +308,7 @@ BOOL CText::DisplayShadowedString(CDC *pDC, const char *pszText, const int nSize
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
 	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, TRUE);
-	return(bSuccess);
+	return (bSuccess);
 }
 
 
@@ -346,18 +346,18 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	}
 
 	if (!SetupContexts(pDC))                        // setup the device contexts and map in
-		return(FALSE);                              // ... the various bitmaps
+		return (FALSE);                             // ... the various bitmaps
 
 	if (!m_bHaveBackground) {
 		(void)(*m_pBackgroundDC).BitBlt(           // grab what the background looks like
-			0,                      // ... putting it in the work area
-			0,
-			m_cSize.cx,
-			m_cSize.cy,
-			pDC,
-			m_cRect.left,
-			m_cRect.top,
-			SRCCOPY);
+		    0,                      // ... putting it in the work area
+		    0,
+		    m_cSize.cx,
+		    m_cSize.cy,
+		    pDC,
+		    m_cRect.left,
+		    m_cRect.top,
+		    SRCCOPY);
 		m_bHaveBackground = TRUE;
 	}
 
@@ -371,14 +371,14 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	textInfo = (*m_pWorkDC).GetTextExtent(pszText, strlen(pszText));  // get the area spanned by the text
 
 	(void)(*m_pWorkDC).BitBlt(                     // copy the saved background to the work area
-		0,
-		0,
-		m_cSize.cx,
-		m_cSize.cy,
-		m_pBackgroundDC,
-		0,
-		0,
-		SRCCOPY);
+	    0,
+	    0,
+	    m_cSize.cx,
+	    m_cSize.cy,
+	    m_pBackgroundDC,
+	    0,
+	    0,
+	    SRCCOPY);
 
 	m_cPosition.y = (m_cSize.cy - textInfo.cy) >> 1;
 	switch (m_nJustify) {
@@ -395,20 +395,20 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	if (bShadowed) {
 		(*m_pWorkDC).SetTextColor(m_cShadowColor);      // set the color of the shadow
 		(*m_pWorkDC).TabbedTextOut(                     // zap the shadow to the work area
-			m_cPosition.x + m_nShadow_DX,
-			m_cPosition.y + m_nShadow_DY,
-			(LPCSTR)pszText,
-			strlen(pszText),
-			1, &m_nTabStop, 0);
+		    m_cPosition.x + m_nShadow_DX,
+		    m_cPosition.y + m_nShadow_DY,
+		    (LPCSTR)pszText,
+		    strlen(pszText),
+		    1, &m_nTabStop, 0);
 	}
 
 	(*m_pWorkDC).SetTextColor(m_cTextColor);            // set the color of the text
 	(*m_pWorkDC).TabbedTextOut(                         // zap the text to the work area
-		m_cPosition.x,
-		m_cPosition.y,
-		(LPCSTR)pszText,
-		strlen(pszText),
-		1, &m_nTabStop, 0);
+	    m_cPosition.x,
+	    m_cPosition.y,
+	    (LPCSTR)pszText,
+	    strlen(pszText),
+	    1, &m_nTabStop, 0);
 
 	(void)(*m_pWorkDC).SelectObject(pFontOld);         // map out the font
 
@@ -416,21 +416,21 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	m_pFont = NULL;
 
 	(void)(*pDC).BitBlt(                               // copy the result to the destination context
-		m_cRect.left,
-		m_cRect.top,
-		m_cSize.cx,
-		m_cSize.cy,
-		m_pWorkDC,
-		0,
-		0,
-		SRCCOPY);
+	    m_cRect.left,
+	    m_cRect.top,
+	    m_cSize.cx,
+	    m_cSize.cy,
+	    m_pWorkDC,
+	    0,
+	    0,
+	    SRCCOPY);
 
 	ReleaseContexts();
 
 	if (m_pPalette != NULL)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return(TRUE);
+	return (TRUE);
 }
 
 
@@ -455,32 +455,32 @@ BOOL CText::SetupContexts(CDC *pDC) {
 	if (m_pWorkDC == NULL) {
 		m_pWorkDC = new CDC();
 		if ((m_pWorkDC == NULL) ||
-			!(*m_pWorkDC).CreateCompatibleDC(pDC))
-			return(FALSE);
+		        !(*m_pWorkDC).CreateCompatibleDC(pDC))
+			return (FALSE);
 		if (m_pPalette != NULL) {
 			m_pPalWorkOld = (*m_pWorkDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pWorkDC).RealizePalette();
 		}
 		m_pWorkOld = (*m_pWorkDC).SelectObject(m_pWork);
 		if (m_pWorkOld == NULL)
-			return(FALSE);
+			return (FALSE);
 	}
 
 	if (m_pBackgroundDC == NULL) {
 		m_pBackgroundDC = new CDC();
 		if ((m_pBackgroundDC == NULL) ||
-			!(*m_pBackgroundDC).CreateCompatibleDC(pDC))
-			return(FALSE);
+		        !(*m_pBackgroundDC).CreateCompatibleDC(pDC))
+			return (FALSE);
 		if (m_pPalette != NULL) {
 			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pBackgroundDC).RealizePalette();
 		}
 		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
 		if (m_pBackgroundOld == NULL)
-			return(FALSE);
+			return (FALSE);
 	}
 
-	return(TRUE);
+	return (TRUE);
 }
 
 

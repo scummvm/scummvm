@@ -54,47 +54,46 @@ LPGAMESTRUCT    pGameInfo;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunPeggle( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
-    pGameInfo = lpGameInfo;
-    
+HWND FAR PASCAL RunPeggle(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
+	pGameInfo = lpGameInfo;
+
 //#ifdef _DEBUG
-//  (*pGameInfo).bPlayingMetagame = TRUE;                                     
+//  (*pGameInfo).bPlayingMetagame = TRUE;
 //#endif
-                                    
+
 // if the pointer has garbage in it, the clean it out
-  if ( pcwndPeggle != NULL ) {
-          pcwndPeggle = NULL;
-  }
+	if (pcwndPeggle != NULL) {
+		pcwndPeggle = NULL;
+	}
 // create a my window and show it
-  pcwndPeggle = new CMainWindow( hParentWnd );
-  pcwndPeggle->ShowWindow( SW_SHOWNORMAL );
-  pcwndPeggle->UpdateWindow();
-  pcwndPeggle->SetActiveWindow(); 
+	pcwndPeggle = new CMainWindow(hParentWnd);
+	pcwndPeggle->ShowWindow(SW_SHOWNORMAL);
+	pcwndPeggle->UpdateWindow();
+	pcwndPeggle->SetActiveWindow();
 // return the handle to this window
-  hDLLInst = (HINSTANCE)GetWindowWord( pcwndPeggle->m_hWnd, GWW_HINSTANCE);
-  hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
-  return pcwndPeggle->m_hWnd;
+	hDLLInst = (HINSTANCE)GetWindowWord(pcwndPeggle->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+	return pcwndPeggle->m_hWnd;
 }
 
 } // namespace Peggle

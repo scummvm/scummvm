@@ -372,7 +372,7 @@ public:
 
 	/**
 	 * Handles a pending ScummVM event
-	 * @param event		Event to process
+	 * @param event     Event to process
 	 */
 	virtual void handleEvent(const Common::Event &event);
 
@@ -414,8 +414,8 @@ public:
 
 
 protected:
-	CBofWindow *_parent = nullptr;	// Pointer to parent window
-	Array<CBofWindow *> _children;	// Child element pointers
+	CBofWindow *_parent = nullptr;  // Pointer to parent window
+	Array<CBofWindow *> _children;  // Child element pointers
 
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -436,11 +436,11 @@ protected:
 	virtual void onDeActivate();
 
 	// Window Data
-	char _szTitle[MAX_TITLE] = { 0 };	// Title of window
-	CBofRect _cWindowRect;				// Screen based area of this window
-	CBofRect _cRect;					// Window-based area of this window
+	char _szTitle[MAX_TITLE] = { 0 };   // Title of window
+	CBofRect _cWindowRect;              // Screen based area of this window
+	CBofRect _cRect;                    // Window-based area of this window
 	CBofBitmap *_pBackdrop = nullptr;  // Backdrop bitmap
-	uint32 _nID = 0;						// ID of this window
+	uint32 _nID = 0;                        // ID of this window
 
 	COLORREF _cBkColor = RGB(255, 255, 255);
 	COLORREF _cFgColor = RGB(0, 0, 0);

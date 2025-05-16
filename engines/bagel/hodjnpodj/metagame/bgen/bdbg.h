@@ -32,11 +32,11 @@ namespace Metagame {
 
 #define TRACECONSTRUCTOR(name) \
 	AfxGetApp()->DoMessageBox("~~C" #name, \
-		LOWORD((LPVOID)this), HIWORD((LPVOID)this)) ;
+	                          LOWORD((LPVOID)this), HIWORD((LPVOID)this)) ;
 
 #define TRACEDESTRUCTOR(name) \
 	AfxGetApp()->DoMessageBox("~~D" #name, \
-		LOWORD((LPVOID)this), HIWORD((LPVOID)this)) ;
+	                          LOWORD((LPVOID)this), HIWORD((LPVOID)this)) ;
 #else
 
 #define TRACECONSTRUCTOR(name) ;
@@ -48,66 +48,82 @@ namespace Metagame {
 // CBdbgMgr -- boffo games debugging manager
 class CBdbgMgr {
 public:
-    static CBdbgMgr FAR * lpBdbgMgr ;	// pointer to this block
-    char m_cStartData ;
-    char m_szIniFilename[100] ;	// .INI file name
-    char m_szIniSectionname[15] ;	// .INI file section name
-    BOOL m_bDebug ;		// flag -- debugging mode
-    BOOL m_bDebugMessages ;	// debugging messages
-    BOOL m_bTimeMessage ;	// time stamp message
-    BOOL m_bTrack, m_bTrace ;	// debugging -- track/trace flags
-    BOOL m_bTraceError ;	// debugging -- trace error exits
-    int  m_iConstructorMsgLevel ; // level of constructor messages
-    BOOL m_bVerifyDc ;		// verify device context is ok
-    int  m_iDebugValues[100] ;	// misc debugging values
-    int  m_iTraceObjectCount ;	// max # objects to trace
-    LPVOID * m_lpTraceObjects ;	// trace object array
-    int  m_iTraceObjectCurrent ;	// # of array elements in use
-    int  m_iErrorCount ;	// number of errors encountered
-    char m_cEndData ;
+	static CBdbgMgr FAR *lpBdbgMgr ;    // pointer to this block
+	char m_cStartData ;
+	char m_szIniFilename[100] ; // .INI file name
+	char m_szIniSectionname[15] ;   // .INI file section name
+	BOOL m_bDebug ;     // flag -- debugging mode
+	BOOL m_bDebugMessages ; // debugging messages
+	BOOL m_bTimeMessage ;   // time stamp message
+	BOOL m_bTrack, m_bTrace ;   // debugging -- track/trace flags
+	BOOL m_bTraceError ;    // debugging -- trace error exits
+	int  m_iConstructorMsgLevel ; // level of constructor messages
+	BOOL m_bVerifyDc ;      // verify device context is ok
+	int  m_iDebugValues[100] ;  // misc debugging values
+	int  m_iTraceObjectCount ;  // max # objects to trace
+	LPVOID *m_lpTraceObjects ;  // trace object array
+	int  m_iTraceObjectCurrent ;    // # of array elements in use
+	int  m_iErrorCount ;    // number of errors encountered
+	char m_cEndData ;
 
 // methods
-    static CBdbgMgr FAR * GetPointer(void) { return(lpBdbgMgr) ; }
+	static CBdbgMgr FAR *GetPointer(void) {
+		return (lpBdbgMgr) ;
+	}
 
 
 
 // bdbg.cpp -- Boffo debugging for meta game
 
 //- CBdbgMgr -- constructor
-public: CBdbgMgr(void) ;
+public:
+	CBdbgMgr(void) ;
 //- ~CBdbgMgr -- destructor
-public: ~CBdbgMgr(void) ;
+public:
+	~CBdbgMgr(void) ;
 //- DebugInit -- Initialize
-public: BOOL DebugInit(LPSTR lpszIniFilename,
-			LPSTR lpszIniSectionname) ;
+public:
+	BOOL DebugInit(LPSTR lpszIniFilename,
+	               LPSTR lpszIniSectionname) ;
 //- GetDebugInt -- get debugging integer
-public: int GetDebugInt(LPSTR lpszOption,
-			int iDefault PDFT(0)) ;
-//- GetDebugString -- 
-public: BOOL GetDebugString(LPCSTR lpszOption,
-    	LPSTR lpszTarget, int iTargetSize,
-		LPSTR lpszDefault PDFT(NULL)) ;
+public:
+	int GetDebugInt(LPSTR lpszOption,
+	                int iDefault PDFT(0)) ;
+//- GetDebugString --
+public:
+	BOOL GetDebugString(LPCSTR lpszOption,
+	                    LPSTR lpszTarget, int iTargetSize,
+	                    LPSTR lpszDefault PDFT(NULL)) ;
 //- TraceConstructor -- trace object constructor, if optioned
-public: BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
+public:
+	BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
 //- TraceDestructor -- trace object destructor, if optioned
-public: BOOL TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
-//- DebugMessageBox -- 
-public: BOOL DebugMessageBox(LPCSTR lpszPrompt,
-	UINT nType, UINT nIDPrompt) ;
+public:
+	BOOL TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
+//- DebugMessageBox --
+public:
+	BOOL DebugMessageBox(LPCSTR lpszPrompt,
+	                     UINT nType, UINT nIDPrompt) ;
 //- AddTraceObject -- add object to trace list
-public: BOOL AddTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-//- TestTraceObject -- test 
-public: BOOL TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
-    			BOOL bMissing PDFT(FALSE)) ;
+public:
+	BOOL AddTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
+//- TestTraceObject -- test
+public:
+	BOOL TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
+	                     BOOL bMissing PDFT(FALSE)) ;
 //- RemoveTraceObject -- add object to trace list
-public: BOOL RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
+public:
+	BOOL RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
 //- ReportTraceObjects -- final report at program end
-public: BOOL ReportTraceObjects(void) ;
+public:
+	BOOL ReportTraceObjects(void) ;
 //- OutputWithTime -- output debugging string with time
-public: STATIC BOOL OutputWithTime(LPSTR lpszPattern) ;
+public:
+	STATIC BOOL OutputWithTime(LPSTR lpszPattern) ;
 //- OutputWithWordWrap -- output debugging string with time
-public: STATIC BOOL OutputWithWordWrap(LPSTR lpStr1,
-			LPSTR lpStr2, int iIndent) ;
+public:
+	STATIC BOOL OutputWithWordWrap(LPSTR lpStr1,
+	                               LPSTR lpStr2, int iIndent) ;
 
 
 
@@ -117,15 +133,15 @@ public: STATIC BOOL OutputWithWordWrap(LPSTR lpStr1,
 } ;
 
 #ifndef JXENTER
-#ifdef JX_DEBUG
-#define JXENTER(name) dbgntr(#name)
-#define JXLEAVE(name) dbgxit(#name,0)
-#define JXELEAVE(name) dbgxit(#name, iError)
-#else
-#define JXENTER(name)
-#define JXLEAVE(name)
-#define JXELEAVE(name)
-#endif /* ifdef JX_DEBUG */
+	#ifdef JX_DEBUG
+		#define JXENTER(name) dbgntr(#name)
+		#define JXLEAVE(name) dbgxit(#name,0)
+		#define JXELEAVE(name) dbgxit(#name, iError)
+	#else
+		#define JXENTER(name)
+		#define JXLEAVE(name)
+		#define JXELEAVE(name)
+	#endif /* ifdef JX_DEBUG */
 #endif /* ifndef JXENTER */
 #define RETURN(x) return(x)
 #define RETURN_VOID return
@@ -134,7 +150,7 @@ public: STATIC BOOL OutputWithWordWrap(LPSTR lpStr1,
 
 #ifdef __cplusplus
 extern "C" {            /* Assume C declarations for C++ */
-#endif	/* __cplusplus */
+#endif  /* __cplusplus */
 
 #define JXOutputDebugString ifcwst
 
@@ -187,7 +203,7 @@ void ifcprf(char * cs, ...) ;
 //- ifcspf -- sprintf replacement
 int ifcspf(char * ds, char * cs, ...) ;
 //- ifcfmt -- formatting routine
-char * ifcfmt(char * cs, char * ds, void * pparg, int * flen) ;
+char *ifcfmt(char * cs, char * ds, void * pparg, int * flen) ;
 //- ifcwst -- write character string to screen
 void ifcwst(XPSTR xpStr) ;
 //- ifcwtt -- write character to screen
@@ -209,7 +225,7 @@ VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb) ;
 
 #ifdef __cplusplus
 }  /* extern "C" */
-#endif	/* __cplusplus */
+#endif  /* __cplusplus */
 
 #else
 #define JXOutputDebugString TRACE

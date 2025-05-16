@@ -28,98 +28,97 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define NOTEBOOK_SPEC	".\\art\\mlscroll.bmp"      // path for notebook's DIB on disk
-#define NOTEBOOK_DX				502
-#define NOTEBOOK_DY				395
-#define	NOTEBOOK_CURL_DX		500
-#define	NOTEBOOK_CURL_DY		50
-#define NOTEBOOK_BORDER_DX		60
-#define NOTEBOOK_BORDER_DY		60
+#define NOTEBOOK_SPEC   ".\\art\\mlscroll.bmp"      // path for notebook's DIB on disk
+#define NOTEBOOK_DX             502
+#define NOTEBOOK_DY             395
+#define NOTEBOOK_CURL_DX        500
+#define NOTEBOOK_CURL_DY        50
+#define NOTEBOOK_BORDER_DX      60
+#define NOTEBOOK_BORDER_DY      60
 
 /*
-#define NOTEBOOK_TITLEZONE_DX	75	// 100
-#define NOTEBOOK_TITLEZONE_DY	30	// 40
-#define NOTEBOOK_TITLEZONE_DDY	-5
+#define NOTEBOOK_TITLEZONE_DX   75  // 100
+#define NOTEBOOK_TITLEZONE_DY   30  // 40
+#define NOTEBOOK_TITLEZONE_DDY  -5
 
-#define NOTEBOOK_TEXTZONE_DX	75	// 100
-#define NOTEBOOK_TEXTZONE_DY	22	// 30
-#define NOTEBOOK_TEXTZONE_DDY	10
+#define NOTEBOOK_TEXTZONE_DX    75  // 100
+#define NOTEBOOK_TEXTZONE_DY    22  // 30
+#define NOTEBOOK_TEXTZONE_DDY   10
 */
 
-#define NOTE_BITMAPS_PER_LINE	6
-#define NOTE_BITMAP_DX			59
-#define NOTE_BITMAP_DY			59
-#define NOTE_BITMAP_DDX			25
-#define NOTE_BITMAP_DDY			10
-#define NOTE_SMALL_BITMAP_DX	50
-#define NOTE_SMALL_BITMAP_DY	50
+#define NOTE_BITMAPS_PER_LINE   6
+#define NOTE_BITMAP_DX          59
+#define NOTE_BITMAP_DY          59
+#define NOTE_BITMAP_DDX         25
+#define NOTE_BITMAP_DDY         10
+#define NOTE_SMALL_BITMAP_DX    50
+#define NOTE_SMALL_BITMAP_DY    50
 
-#define IDD_NOTEBOOK_DIALOG	    920
-#define IDC_NOTEBOOK_OKAY	    920
+#define IDD_NOTEBOOK_DIALOG     920
+#define IDC_NOTEBOOK_OKAY       920
 
-#define	IDC_NOTEBOOK_BOOK	    921
-#define	IDC_NOTEBOOK_SOUND	    922
+#define IDC_NOTEBOOK_BOOK       921
+#define IDC_NOTEBOOK_SOUND      922
 
-#define	NOTE_FONT_SIZE			-16
-#define	NOTE_TEXT_COLOR			RGB(128,0,128)
-#define NOTE_MORE_COLOR			RGB(0,0,0)
+#define NOTE_FONT_SIZE          -16
+#define NOTE_TEXT_COLOR         RGB(128,0,128)
+#define NOTE_MORE_COLOR         RGB(0,0,0)
 
-#define NOTE_PERSON_DX			NOTEBOOK_BORDER_DX
-#define NOTE_PERSON_DY			NOTEBOOK_BORDER_DY - 2
-#define NOTE_PLACE_DX			NOTEBOOK_DX - NOTEBOOK_BORDER_DX - NOTE_BITMAP_DX - 5			
-#define NOTE_PLACE_DY			NOTEBOOK_BORDER_DY - 2
-#define NOTE_ICON_DY			NOTEBOOK_DY - NOTEBOOK_BORDER_DY - NOTE_BITMAP_DY + 2
-#define NOTE_ICON_DDX			50
+#define NOTE_PERSON_DX          NOTEBOOK_BORDER_DX
+#define NOTE_PERSON_DY          NOTEBOOK_BORDER_DY - 2
+#define NOTE_PLACE_DX           NOTEBOOK_DX - NOTEBOOK_BORDER_DX - NOTE_BITMAP_DX - 5
+#define NOTE_PLACE_DY           NOTEBOOK_BORDER_DY - 2
+#define NOTE_ICON_DY            NOTEBOOK_DY - NOTEBOOK_BORDER_DY - NOTE_BITMAP_DY + 2
+#define NOTE_ICON_DDX           50
 
-#define NOTE_TEXT_DX			NOTEBOOK_BORDER_DX
-#define NOTE_TEXT_DY			NOTEBOOK_BORDER_DY + NOTE_BITMAP_DY + NOTE_BITMAP_DDY - 4
-#define NOTE_TEXT_DDX			NOTEBOOK_DX - (NOTEBOOK_BORDER_DX << 1)
-#define NOTE_TEXT_DDY			NOTEBOOK_DY - (NOTEBOOK_BORDER_DY << 1) - (NOTE_BITMAP_DY << 1) - NOTE_BITMAP_DDY + 4
-#define	NOTE_TEXT_CHARSPERLINE	30
+#define NOTE_TEXT_DX            NOTEBOOK_BORDER_DX
+#define NOTE_TEXT_DY            NOTEBOOK_BORDER_DY + NOTE_BITMAP_DY + NOTE_BITMAP_DDY - 4
+#define NOTE_TEXT_DDX           NOTEBOOK_DX - (NOTEBOOK_BORDER_DX << 1)
+#define NOTE_TEXT_DDY           NOTEBOOK_DY - (NOTEBOOK_BORDER_DY << 1) - (NOTE_BITMAP_DY << 1) - NOTE_BITMAP_DDY + 4
+#define NOTE_TEXT_CHARSPERLINE  30
 
-#define NOTE_BUTTON_DY			15
+#define NOTE_BUTTON_DY          15
 
 
-class CNotebook : public CDialog
-{
+class CNotebook : public CDialog {
 // Construction
 public:
 	CNotebook(CWnd* pParent, CPalette *pPalette, CNote *pNoteList, CNote *pNote);
 
-static	void UpdateNotebook(CDC *pDC);
-static	void UpdateContent(CDC *pDC);
-static	void UpdateNote(CDC *pDC);
-static	void ClearDialogImage(void);
-static	void RefreshBackground(void);
-static	void DoWaitCursor(void);
-static	void DoArrowCursor(void);
+	static  void UpdateNotebook(CDC *pDC);
+	static  void UpdateContent(CDC *pDC);
+	static  void UpdateNote(CDC *pDC);
+	static  void ClearDialogImage(void);
+	static  void RefreshBackground(void);
+	static  void DoWaitCursor(void);
+	static  void DoArrowCursor(void);
 
 private:
-static	void ShowClue(CNote *pNote);
-	
+	static  void ShowClue(CNote *pNote);
+
 	BOOL SetupKeyboardHook(void);
 	void RemoveKeyboardHook(void);
 
 	BOOL CreateWorkAreas(CDC *pDC);
 
 private:
-	BOOL	m_bKeyboardHook;				// whether keyboard hook present
+	BOOL    m_bKeyboardHook;                // whether keyboard hook present
 
 // Dialog Data
 	//{{AFX_DATA(CNotebook)
 	enum { IDD = IDD_NOTEBOOK_DIALOG };
-		// NOTE: the ClassWizard will add data members here
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CNotebook)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog(void);
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK(void);
 	virtual void OnCancel(void);
 	afx_msg void OnDestroy(void);

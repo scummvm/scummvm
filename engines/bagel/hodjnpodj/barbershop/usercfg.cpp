@@ -41,60 +41,56 @@ namespace Barbershop {
 //
 //
 extern const char *INI_SECTION;
-extern CPalette		*pGamePalette;
+extern CPalette     *pGamePalette;
 extern LPGAMESTRUCT pGameParams;
-extern int 			g_nCardBack;
+extern int          g_nCardBack;
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
-        : CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP")
-{
-	m_cRectCardBack1	= CRect(CBCK_RECT1_LEFT - DELTA, CBCK_RECT1_TOP - DELTA, CBCK_RECT1_RIG + DELTA, CBCK_RECT1_BOT + DELTA);
-	m_cRectCardBack2	= CRect(CBCK_RECT2_LEFT - DELTA, CBCK_RECT2_TOP - DELTA, CBCK_RECT2_RIG + DELTA, CBCK_RECT2_BOT + DELTA);
-	m_nCardBack			= g_nCardBack;
+	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	m_cRectCardBack1    = CRect(CBCK_RECT1_LEFT - DELTA, CBCK_RECT1_TOP - DELTA, CBCK_RECT1_RIG + DELTA, CBCK_RECT1_BOT + DELTA);
+	m_cRectCardBack2    = CRect(CBCK_RECT2_LEFT - DELTA, CBCK_RECT2_TOP - DELTA, CBCK_RECT2_RIG + DELTA, CBCK_RECT2_BOT + DELTA);
+	m_nCardBack         = g_nCardBack;
 	DoModal();
 }
 
-void CUserCfgDlg::DoDataExchange(CDataExchange *pDX)
-{
-    CDialog::DoDataExchange(pDX);
+void CUserCfgDlg::DoDataExchange(CDataExchange *pDX) {
+	CDialog::DoDataExchange(pDX);
 }
 
-BOOL CUserCfgDlg::OnInitDialog(void)
-{
-	CDC 	*pDC = GetDC();
-	CRect	tmpRect;
+BOOL CUserCfgDlg::OnInitDialog(void) {
+	CDC     *pDC = GetDC();
+	CRect   tmpRect;
 
-    CBmpDialog::OnInitDialog();
-    m_bSave = FALSE;
+	CBmpDialog::OnInitDialog();
+	m_bSave = FALSE;
 
-	if ( (m_ctextBox = new CText) != NULL ) {
-		BOOL	bAssertCheck;
+	if ((m_ctextBox = new CText) != NULL) {
+		BOOL    bAssertCheck;
 
 		tmpRect.SetRect(TEXT_LEFT, TEXT_TOP, TEXT_RIG, TEXT_BOT);
 		bAssertCheck = (*m_ctextBox).SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
 
-	if ((m_pOKButton = new CColorButton) != NULL) {		// build a color OK button
-		(*m_pOKButton).SetPalette(pGamePalette);		// set the palette to use
-		(*m_pOKButton).SetControl(IDOK, this);			// tie to the dialog control
+	if ((m_pOKButton = new CColorButton) != NULL) {     // build a color OK button
+		(*m_pOKButton).SetPalette(pGamePalette);        // set the palette to use
+		(*m_pOKButton).SetControl(IDOK, this);          // tie to the dialog control
 	} // end if
 
 	ReleaseDC(pDC);
-	return(TRUE);
+	return (TRUE);
 }
 
-void CUserCfgDlg::OnPaint(void)
-{
-	CDC		*pDC = NULL;
-	char	msg[64];
-	BOOL	bAssertCheck;
+void CUserCfgDlg::OnPaint(void) {
+	CDC     *pDC = NULL;
+	char    msg[64];
+	BOOL    bAssertCheck;
 
-    CBmpDialog::OnPaint();
+	CBmpDialog::OnPaint();
 
 	pDC = GetDC();
 
-	if ( m_nCardBack == CARD_BACK1 ) { 		// card back painting
+	if (m_nCardBack == CARD_BACK1) {         // card back painting
 		PaintMaskedDIB(pDC, pGamePalette, CARD_BACK1B_BMP, CBCK_RECT1_LEFT, CBCK_RECT1_TOP, CBCK_RECT1_RIG - CBCK_RECT1_LEFT, CBCK_RECT1_BOT - CBCK_RECT1_TOP);
 		PaintMaskedDIB(pDC, pGamePalette, CARD_BACK2A_BMP, CBCK_RECT2_LEFT, CBCK_RECT2_TOP, CBCK_RECT2_RIG - CBCK_RECT2_LEFT, CBCK_RECT2_BOT - CBCK_RECT2_TOP);
 	} else {
@@ -102,21 +98,20 @@ void CUserCfgDlg::OnPaint(void)
 		PaintMaskedDIB(pDC, pGamePalette, CARD_BACK2B_BMP, CBCK_RECT2_LEFT, CBCK_RECT2_TOP, CBCK_RECT2_RIG - CBCK_RECT2_LEFT, CBCK_RECT2_BOT - CBCK_RECT2_TOP);
 	} // end if
 
-	Common::sprintf_s(msg, "Select a card back");	// top message
-	bAssertCheck = (*m_ctextBox).DisplayString(pDC,msg,FONT_SIZE,FW_BOLD,RGBCOLOR_BLACK);
+	Common::sprintf_s(msg, "Select a card back");   // top message
+	bAssertCheck = (*m_ctextBox).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, RGBCOLOR_BLACK);
 	ASSERT(bAssertCheck);
 
 	ReleaseDC(pDC);
 }
 
-void CUserCfgDlg::OnLButtonUp(UINT nFlags,CPoint point)
-{
-	CDC		*pDC = GetDC();
+void CUserCfgDlg::OnLButtonUp(UINT nFlags, CPoint point) {
+	CDC     *pDC = GetDC();
 
 	if (
-		m_cRectCardBack1.PtInRect(point) == TRUE &&
-		m_nCardBack != CARD_BACK1
-		) {
+	    m_cRectCardBack1.PtInRect(point) == TRUE &&
+	    m_nCardBack != CARD_BACK1
+	) {
 		// update visual image
 		//
 		PaintMaskedDIB(pDC, pGamePalette, CARD_BACK1B_BMP, CBCK_RECT1_LEFT, CBCK_RECT1_TOP, CBCK_RECT1_RIG - CBCK_RECT1_LEFT, CBCK_RECT1_BOT - CBCK_RECT1_TOP);
@@ -124,9 +119,9 @@ void CUserCfgDlg::OnLButtonUp(UINT nFlags,CPoint point)
 
 		m_nCardBack = CARD_BACK1;
 	} else if (
-		m_cRectCardBack2.PtInRect(point) == TRUE &&
-		m_nCardBack != CARD_BACK2
-		) {
+	    m_cRectCardBack2.PtInRect(point) == TRUE &&
+	    m_nCardBack != CARD_BACK2
+	) {
 		// update visual image
 		//
 		PaintMaskedDIB(pDC, pGamePalette, CARD_BACK1A_BMP, CBCK_RECT1_LEFT, CBCK_RECT1_TOP, CBCK_RECT1_RIG - CBCK_RECT1_LEFT, CBCK_RECT1_BOT - CBCK_RECT1_TOP);
@@ -138,28 +133,25 @@ void CUserCfgDlg::OnLButtonUp(UINT nFlags,CPoint point)
 	ReleaseDC(pDC);
 }
 
-void CUserCfgDlg::OnOK()
-{
+void CUserCfgDlg::OnOK() {
 	ValidateRect(NULL);
 	g_nCardBack = m_nCardBack;
 	EndDialog(IDOK);
 }
 
-void CUserCfgDlg::OnCancel()
-{
+void CUserCfgDlg::OnCancel() {
 	ValidateRect(NULL);
 	EndDialog(IDCANCEL);
 }
 
-void CUserCfgDlg::OnClose()
-{
+void CUserCfgDlg::OnClose() {
 	ValidateRect(NULL);
-	if (m_pOKButton != NULL) {		// release button
+	if (m_pOKButton != NULL) {      // release button
 		delete m_pOKButton;
 		m_pOKButton = NULL;
 	}
 
-	if ( m_ctextBox != NULL ) {
+	if (m_ctextBox != NULL) {
 		delete m_ctextBox;
 		m_ctextBox = NULL;
 	} // end if
@@ -168,7 +160,7 @@ void CUserCfgDlg::OnClose()
 BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
 	ON_WM_LBUTTONUP()
 	ON_WM_CLOSE()
-    ON_WM_PAINT()
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 /*****************************************************************
@@ -178,12 +170,12 @@ END_MESSAGE_MAP()
  *  FUNCTIONAL DESCRIPTION:
  *
  *      Draws a rectangle which inverts the current pixels,
- *			thereby delineating the current area of focus.
+ *          thereby delineating the current area of focus.
  *
  *  FORMAL PARAMETERS:
  *
- *      CDC *pDC	The Device context in which the FocusRect is to be drawn
- *		CRect rect	The CRect object holding the location of the FocusRect
+ *      CDC *pDC    The Device context in which the FocusRect is to be drawn
+ *      CRect rect  The CRect object holding the location of the FocusRect
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -198,43 +190,42 @@ END_MESSAGE_MAP()
  *      void
  *
  ****************************************************************/
-void CUserCfgDlg::MyFocusRect( CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbColor )
-{
-	CBrush		*pMyBrush = NULL;					// New Brush
-	CBrush 		*pOldBrush = NULL;                  // Pointer to old brush
-	CPen		*pMyPen = NULL;						// New Pen
-	CPen 		*pOldPen = NULL;                    // Pointer to old pen
-	CPalette	*pPalOld = NULL;					// Pointer to old palette
-	int			OldDrawMode;						// Holder for old draw mode
+void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbColor) {
+	CBrush      *pMyBrush = NULL;                   // New Brush
+	CBrush      *pOldBrush = NULL;                  // Pointer to old brush
+	CPen        *pMyPen = NULL;                     // New Pen
+	CPen        *pOldPen = NULL;                    // Pointer to old pen
+	CPalette    *pPalOld = NULL;                    // Pointer to old palette
+	int         OldDrawMode;                        // Holder for old draw mode
 
-	pMyBrush = new CBrush();						// Construct new brush
-	pMyPen = new CPen();							// Construct new pen
+	pMyBrush = new CBrush();                        // Construct new brush
+	pMyPen = new CPen();                            // Construct new pen
 
-	LOGBRUSH lb;									// log brush type
-	lb.lbStyle = BS_HOLLOW;							// Don't fill in area
-	pMyBrush->CreateBrushIndirect( &lb );			// Create a new brush
-	pMyPen->CreatePen(PS_INSIDEFRAME, DELTA, rgbColor);	// Create a new pen
+	LOGBRUSH lb;                                    // log brush type
+	lb.lbStyle = BS_HOLLOW;                         // Don't fill in area
+	pMyBrush->CreateBrushIndirect(&lb);              // Create a new brush
+	pMyPen->CreatePen(PS_INSIDEFRAME, DELTA, rgbColor); // Create a new pen
 
-	pPalOld = (*pDC).SelectPalette( pGamePalette, FALSE );	// Select in game palette
-	(*pDC).RealizePalette();								// Use it
+	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);     // Select in game palette
+	(*pDC).RealizePalette();                                // Use it
 
-	pOldPen = pDC->SelectObject( pMyPen );      	// Select the new pen & save old
-	pOldBrush = pDC->SelectObject( pMyBrush );  	// Select the new brush & save old
-	OldDrawMode = pDC->SetROP2( nDrawMode );		// Set pen mode, saving old state
+	pOldPen = pDC->SelectObject(pMyPen);         // Select the new pen & save old
+	pOldBrush = pDC->SelectObject(pMyBrush);     // Select the new brush & save old
+	OldDrawMode = pDC->SetROP2(nDrawMode);       // Set pen mode, saving old state
 
-	pDC->Rectangle( rect );                     	// Draw the Rectangle to the DC
+	pDC->Rectangle(rect);                        // Draw the Rectangle to the DC
 
-	pDC->SelectObject( pOldPen );               	// Select the old pen
-	pDC->SelectObject( pOldBrush );             	// Select the old brush
-	pDC->SetROP2( OldDrawMode );					// Set pen mode back to old state
-	(*pDC).SelectPalette( pPalOld, FALSE );         // Select back the old palette
+	pDC->SelectObject(pOldPen);                  // Select the old pen
+	pDC->SelectObject(pOldBrush);                // Select the old brush
+	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
+	(*pDC).SelectPalette(pPalOld, FALSE);           // Select back the old palette
 
-	if (pMyBrush != NULL ) {						// If the brush was constructed, delete it
+	if (pMyBrush != NULL) {                         // If the brush was constructed, delete it
 		pMyBrush->DeleteObject();
 		delete pMyBrush;
 	}
 
-	if (pMyPen != NULL ) {							// If the pen was constructed, delete it
+	if (pMyPen != NULL) {                           // If the pen was constructed, delete it
 		pMyPen->DeleteObject();
 		delete pMyPen;
 	}

@@ -23,7 +23,7 @@
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/artparts/globals.h"
 #include "bagel/hodjnpodj/artparts/resource.h"
-#include "bagel/hodjnpodj/artparts/artparts.h" 
+#include "bagel/hodjnpodj/artparts/artparts.h"
 #include "bagel/hodjnpodj/artparts/optndlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 
@@ -31,32 +31,31 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace ArtParts {
 
-static	CPalette *pSubOptionsPalette;
-static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
-static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
-static  CCheckButton *pFramedButton = NULL;					// Framed check box
+static  CPalette *pSubOptionsPalette;
+static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
+static  CCheckButton *pFramedButton = NULL;                 // Framed check box
 
 
-CText	*m_pPartsText = NULL;
-CText	*m_pColumnText = NULL;
-CText	*m_pRowText = NULL;
-CText	*m_pTimerText = NULL;
+CText   *m_pPartsText = NULL;
+CText   *m_pColumnText = NULL;
+CText   *m_pRowText = NULL;
+CText   *m_pTimerText = NULL;
 
-int m_nColumnFactors[14] = 	{1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 25, 30};	// 14 factors
-int m_nRowFactors[11] = 	{1, 2, 3, 4, 6, 8, 9, 12, 16, 18, 24};  			// 11 factors
-int m_nTimeScale[12] =	{15, 30, 45, 60, 75, 90, 120, 180, 240, 300, 600, 700};
-	
+int m_nColumnFactors[14] =  {1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 25, 30};  // 14 factors
+int m_nRowFactors[11] =     {1, 2, 3, 4, 6, 8, 9, 12, 16, 18, 24};              // 11 factors
+int m_nTimeScale[12] =  {15, 30, 45, 60, 75, 90, 120, 180, 240, 300, 600, 700};
+
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
 
 
 COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
-		:CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP")
-{                                                         
+	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(COptnDlg)
 	m_nTime = MIN_TIME;
 	m_nColumns = MIN_COLUMNS;
-	m_nRows	= MIN_ROWS;
+	m_nRows = MIN_ROWS;
 	m_nNumParts = m_nColumns * m_nRows;
 	nCFacs = 14;
 	nRFacs = 11;
@@ -65,15 +64,14 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 	//}}AFX_DATA_INIT
 }
 
-COptnDlg::~COptnDlg()
-{
-	if( m_pPartsText != NULL )
+COptnDlg::~COptnDlg() {
+	if (m_pPartsText != NULL)
 		delete m_pPartsText;
-	if( m_pColumnText != NULL )
+	if (m_pColumnText != NULL)
 		delete m_pColumnText;
-	if( m_pRowText != NULL )
+	if (m_pRowText != NULL)
 		delete m_pRowText;
-	if( m_pTimerText != NULL )
+	if (m_pTimerText != NULL)
 		delete m_pTimerText;
 //	if( m_pFramedText != NULL )
 //		delete m_pFramedText;
@@ -81,8 +79,7 @@ COptnDlg::~COptnDlg()
 	CBmpDialog::OnDestroy();
 }
 
-void COptnDlg::DoDataExchange(CDataExchange* pDX)
-{
+void COptnDlg::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptnDlg)
 	DDX_Control(pDX, IDC_NUMCOLUMNS, m_ScrollColumns);
@@ -98,7 +95,7 @@ BEGIN_MESSAGE_MAP(COptnDlg, CDialog)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_BN_CLICKED(IDC_FRAMED, COptnDlg::OnFramed)
-    ON_WM_DESTROY()
+	ON_WM_DESTROY()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -106,142 +103,137 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg message handlers
 
-int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
+int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	if (CBmpDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
- 	return 0;
+	return 0;
 }
 
-BOOL COptnDlg::OnInitDialog()
-{
+BOOL COptnDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
-    int i;
+	int i;
 
-	CDC		*pDC;
-	CRect	statRect;
-	
+	CDC     *pDC;
+	CRect   statRect;
+
 	pDC = GetDC();
 
-	statRect.SetRect( LEFT_SIDE, 45, LEFT_SIDE + 100, 60 );
+	statRect.SetRect(LEFT_SIDE, 45, LEFT_SIDE + 100, 60);
 	if ((m_pPartsText = new CText()) != NULL) {
 		(*m_pPartsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
-	
-	statRect.SetRect( LEFT_SIDE, 65, LEFT_SIDE + 100, 80 );
+
+	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 100, 80);
 	if ((m_pColumnText = new CText()) != NULL) {
 		(*m_pColumnText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
-	
-	m_ScrollColumns.SetScrollRange( 0, nCFacs - 1, 0 ); // Array starts at zero, so 
+
+	m_ScrollColumns.SetScrollRange(0, nCFacs - 1, 0);   // Array starts at zero, so
 	for (i = 0; i < nCFacs; i++) {
 		if (m_nColumnFactors[i] == m_nColumns)
-			m_ScrollColumns.SetScrollPos( i, TRUE );
+			m_ScrollColumns.SetScrollPos(i, TRUE);
 	}
-	
-	statRect.SetRect( LEFT_SIDE, 99, LEFT_SIDE + 100, 114 );
+
+	statRect.SetRect(LEFT_SIDE, 99, LEFT_SIDE + 100, 114);
 	if ((m_pRowText = new CText()) != NULL) {
 		(*m_pRowText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
-	
-	m_ScrollRows.SetScrollRange( 0, nRFacs - 1, 0 );     //...last element is Max - 1
+
+	m_ScrollRows.SetScrollRange(0, nRFacs - 1, 0);       //...last element is Max - 1
 	for (i = 0; i < nRFacs; i++) {
 		if (m_nRowFactors[i] == m_nRows)
-			m_ScrollRows.SetScrollPos( i, TRUE );
+			m_ScrollRows.SetScrollPos(i, TRUE);
 	}
-	
+
 	m_nNumParts = m_nColumns * m_nRows;
 
-	statRect.SetRect( LEFT_SIDE, 132, LEFT_SIDE + 100, 146 );
+	statRect.SetRect(LEFT_SIDE, 132, LEFT_SIDE + 100, 146);
 	if ((m_pTimerText = new CText()) != NULL) {
 		(*m_pTimerText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
-	
-	m_ScrollTime.SetScrollRange( TIMER_START, TIMER_MAX - 1, 0 );
+
+	m_ScrollTime.SetScrollRange(TIMER_START, TIMER_MAX - 1, 0);
 	if (m_nTime == 0) m_nTime = m_nTimeScale[TIMER_MAX - 1];
 	for (i = 0; i < TIMER_MAX; i++) {
 		if (m_nTimeScale[i] == m_nTime)
-			m_ScrollTime.SetScrollPos( i, TRUE );
-	}
-	
-	ReleaseDC( pDC );
-	
-	statRect.SetRect( 155, 45, 205, 60 );
-	
-	if ((pOKButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(pSubOptionsPalette);						// set the palette to use
-		(*pOKButton).SetControl(IDOK,this);				// tie to the dialog control
-	}
-	
-	if ((pCancelButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(pSubOptionsPalette);						// set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL,this);				// tie to the dialog control
+			m_ScrollTime.SetScrollPos(i, TRUE);
 	}
 
-	if ((pFramedButton = new CCheckButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pFramedButton).SetPalette(pSubOptionsPalette);						// set the palette to use
-		(*pFramedButton).SetControl(IDC_FRAMED,this);				// tie to the dialog control
+	ReleaseDC(pDC);
+
+	statRect.SetRect(155, 45, 205, 60);
+
+	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
+		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
-	((CWnd *)this)->CheckDlgButton( IDC_FRAMED, m_bFramed );			// Set the frame option box
+
+	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
+		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+	}
+
+	if ((pFramedButton = new CCheckButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pFramedButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
+		(*pFramedButton).SetControl(IDC_FRAMED, this);              // tie to the dialog control
+	}
+	((CWnd *)this)->CheckDlgButton(IDC_FRAMED, m_bFramed);           // Set the frame option box
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 
-BOOL COptnDlg::OnEraseBkgnd(CDC *pDC)
-{
-	return(TRUE);
+BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
+	return (TRUE);
 }
 
-void COptnDlg::OnDestroy(void)
-{
-    CBmpDialog::OnDestroy();
+void COptnDlg::OnDestroy(void) {
+	CBmpDialog::OnDestroy();
 }
 
 
-void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{       
-	int pMin, 
-		pMax;
+void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+	int pMin,
+	    pMax;
 	int OldPos = pScrollBar->GetScrollPos();
 	int NewPos = OldPos;
-	
-	pScrollBar->GetScrollRange( &pMin, &pMax );
-		
+
+	pScrollBar->GetScrollRange(&pMin, &pMax);
+
 	switch (nSBCode) {
-		case SB_LINERIGHT:
-		case SB_PAGERIGHT:
-			NewPos ++;
-			break;
-		case SB_RIGHT:
-			NewPos = pMax;
-			break;
-		case SB_LINELEFT:
-		case SB_PAGELEFT:
-			NewPos--;
-			break;
-		case SB_LEFT:
-			NewPos = pMin;
-			break;
-		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK:
-			NewPos = nPos; 
-			break;
-		}
-		  
-	if ( NewPos < pMin ) NewPos = pMin;
-	if ( NewPos > pMax ) NewPos = pMax;
-	
-	if ( NewPos != OldPos ) {							//To prevent "flicker"  
-		(*pScrollBar).SetScrollPos( NewPos, TRUE );		//...only update when
+	case SB_LINERIGHT:
+	case SB_PAGERIGHT:
+		NewPos ++;
+		break;
+	case SB_RIGHT:
+		NewPos = pMax;
+		break;
+	case SB_LINELEFT:
+	case SB_PAGELEFT:
+		NewPos--;
+		break;
+	case SB_LEFT:
+		NewPos = pMin;
+		break;
+	case SB_THUMBPOSITION:
+	case SB_THUMBTRACK:
+		NewPos = nPos;
+		break;
+	}
+
+	if (NewPos < pMin) NewPos = pMin;
+	if (NewPos > pMax) NewPos = pMax;
+
+	if (NewPos != OldPos) {                              //To prevent "flicker"
+		(*pScrollBar).SetScrollPos(NewPos, TRUE);        //...only update when
 	}                                                   //...changed
-	
+
 	UpdateScrollbars();
-	
-	CDialog::OnHScroll( nSBCode, NewPos, pScrollBar );
+
+	CDialog::OnHScroll(nSBCode, NewPos, pScrollBar);
 }
- 
+
 
 /*****************************************************************
  *
@@ -250,136 +242,130 @@ void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
  *  FUNCTIONAL DESCRIPTION:
  *
  *      Updates data adjusted with scrollbars
- *   
+ *
  *  FORMAL PARAMETERS:
  *
  *      none
  *
  *  IMPLICIT INPUT PARAMETERS:
- *  
- *      CScrollbar	pScrollTime, pScrollColumns, pScrollRows
- *   
+ *
+ *      CScrollbar  pScrollTime, pScrollColumns, pScrollRows
+ *
  *  IMPLICIT OUTPUT PARAMETERS:
- *   
- *      int	m_nTime, m_nNumParts, m_nColumns, m_nRows
- *   
+ *
+ *      int m_nTime, m_nNumParts, m_nColumns, m_nRows
+ *
  *  RETURN VALUE:
  *
  *      void
  *
  ****************************************************************/
-void COptnDlg::UpdateScrollbars()
-{
+void COptnDlg::UpdateScrollbars() {
 	int OldValue;
-	CDC 	*pDC;
-	char	msg[64];
-	int		nMins, nSecs;
-		
-    pDC = GetDC();
+	CDC     *pDC;
+	char    msg[64];
+	int     nMins, nSecs;
+
+	pDC = GetDC();
 
 	OldValue = m_nTime;
 	m_nTime = m_nTimeScale[m_ScrollTime.GetScrollPos()];
-	if ( OldValue != m_nTime ){
-		if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
-			Common::sprintf_s( msg, "Time Limit: None" );
-		else {  
+	if (OldValue != m_nTime) {
+		if (m_nTime == m_nTimeScale[TIMER_MAX - 1])
+			Common::sprintf_s(msg, "Time Limit: None");
+		else {
 			nMins = m_nTime / 60;
-	    	nSecs = m_nTime % 60;
+			nSecs = m_nTime % 60;
 
-			Common::sprintf_s( msg, "Time Limit: %02d:%02d", nMins, nSecs );
+			Common::sprintf_s(msg, "Time Limit: %02d:%02d", nMins, nSecs);
 		}
-		(*m_pTimerText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
-	} 
+		(*m_pTimerText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	}
 
 	OldValue = m_nColumns;
 	m_nColumns = m_nColumnFactors[m_ScrollColumns.GetScrollPos()];
-	if ( OldValue != m_nColumns ) {
-		Common::sprintf_s( msg, "Columns: %d", m_nColumns );
-		(*m_pColumnText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
-    }
+	if (OldValue != m_nColumns) {
+		Common::sprintf_s(msg, "Columns: %d", m_nColumns);
+		(*m_pColumnText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	}
 
 	OldValue = m_nRows;
-	m_nRows = m_nRowFactors[m_ScrollRows.GetScrollPos()];	
-	if ( OldValue != m_nRows ) {
-		Common::sprintf_s( msg, "Rows: %d", m_nRows );
-		(*m_pRowText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_nRows = m_nRowFactors[m_ScrollRows.GetScrollPos()];
+	if (OldValue != m_nRows) {
+		Common::sprintf_s(msg, "Rows: %d", m_nRows);
+		(*m_pRowText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	OldValue = m_nNumParts;
 	m_nNumParts = m_nColumns * m_nRows;
-	if ( OldValue != m_nNumParts ) {
-		Common::sprintf_s( msg, "Parts: %d", m_nNumParts );
-		(*m_pPartsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
-	} 
-	
-	ReleaseDC( pDC );
+	if (OldValue != m_nNumParts) {
+		Common::sprintf_s(msg, "Parts: %d", m_nNumParts);
+		(*m_pPartsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	}
+
+	ReleaseDC(pDC);
 }
 
 
-void COptnDlg::OnFramed()
-{
+void COptnDlg::OnFramed() {
 	m_bFramed = !m_bFramed;
-	((CWnd *)this)->CheckDlgButton( IDC_FRAMED, m_bFramed );
+	((CWnd *)this)->CheckDlgButton(IDC_FRAMED, m_bFramed);
 }
-   
-void COptnDlg::OnOK()
-{
+
+void COptnDlg::OnOK() {
 	if (m_nTime > MAX_TIME) m_nTime = MIN_TIME;
 	ClearDialogImage();
-	EndDialog( IDOK );
+	EndDialog(IDOK);
 }
 
-void COptnDlg::OnCancel()
-{
+void COptnDlg::OnCancel() {
 	ClearDialogImage();
-	EndDialog( 0 );
+	EndDialog(0);
 }
 
-void COptnDlg::OnPaint()
-{
-	CDC 	*pDC;
-	char	msg[64];
-	int		nMins, nSecs;
-		
+void COptnDlg::OnPaint() {
+	CDC     *pDC;
+	char    msg[64];
+	int     nMins, nSecs;
+
 	CBmpDialog::OnPaint();
-    
-    pDC = GetDC();
-    
-	Common::sprintf_s( msg, "Parts: %d", m_nNumParts );
-	(*m_pPartsText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	Common::sprintf_s( msg, "Columns: %d", m_nColumns );
-	(*m_pColumnText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	pDC = GetDC();
 
-	Common::sprintf_s( msg, "Rows: %d", m_nRows );
-	(*m_pRowText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	Common::sprintf_s(msg, "Parts: %d", m_nNumParts);
+	(*m_pPartsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	if ( m_nTime == m_nTimeScale[TIMER_MAX - 1] ) 
-		Common::sprintf_s( msg, "Time Limit: None" );
-	else {  
+	Common::sprintf_s(msg, "Columns: %d", m_nColumns);
+	(*m_pColumnText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+
+	Common::sprintf_s(msg, "Rows: %d", m_nRows);
+	(*m_pRowText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+
+	if (m_nTime == m_nTimeScale[TIMER_MAX - 1])
+		Common::sprintf_s(msg, "Time Limit: None");
+	else {
 		nMins = m_nTime / 60;
-    	nSecs = m_nTime % 60;
-		Common::sprintf_s( msg, "Time Limit: %02d:%02d", nMins, nSecs );
+		nSecs = m_nTime % 60;
+		Common::sprintf_s(msg, "Time Limit: %02d:%02d", nMins, nSecs);
 	}
-	(*m_pTimerText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
-	
-	ReleaseDC( pDC );
+	(*m_pTimerText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+
+	ReleaseDC(pDC);
 
 }
 
-void COptnDlg::ClearDialogImage(void)
-{
+void COptnDlg::ClearDialogImage(void) {
 	if (pOKButton != NULL) {                          // release the button
 		delete pOKButton;
 		pOKButton = NULL;
 	}
 
-	if (pCancelButton != NULL) {                     	// release the button
+	if (pCancelButton != NULL) {                        // release the button
 		delete pCancelButton;
 		pCancelButton = NULL;
 	}
 
-	if (pFramedButton != NULL) {                     	// release the button
+	if (pFramedButton != NULL) {                        // release the button
 		delete pFramedButton;
 		pFramedButton = NULL;
 	}

@@ -29,25 +29,24 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-class CGtlDoc : public CDocument
-{
+class CGtlDoc : public CDocument {
 protected: // create from serialization only
 	CGtlDoc();
 	DECLARE_DYNCREATE(CGtlDoc)
 
 // Attributes
 public:
-    char m_cStartData ;
-    class CGtlData * m_xpGtlData ;	// data pointer
-    class CInfDlg * m_xpcInfDlg ;	// modeless information dialog
-    class CCtlDlg * m_xpcCtlDlg ;	// modeless control dialog
-    class CNodeDlg * m_xpcNodeDlg ;	// modeless node dialog
-    class CMenuDlg * m_xpcMenuDlg ;	// modeless menu dialog
-    class CGtlView * m_xpcLastFocusView ;	// last view with focus
-    class CGtlView * m_xpcLastMouseView ;	// last view touched by mouse
+	char m_cStartData ;
+	class CGtlData *m_xpGtlData ;   // data pointer
+	class CInfDlg *m_xpcInfDlg ;    // modeless information dialog
+	class CCtlDlg *m_xpcCtlDlg ;    // modeless control dialog
+	class CNodeDlg *m_xpcNodeDlg ;  // modeless node dialog
+	class CMenuDlg *m_xpcMenuDlg ;  // modeless menu dialog
+	class CGtlView *m_xpcLastFocusView ;    // last view with focus
+	class CGtlView *m_xpcLastMouseView ;    // last view touched by mouse
 
-    class CGtlFrame * m_xpGtlFrame ;	// ptr to frame window
-    char m_cEndData ;
+	class CGtlFrame *m_xpGtlFrame ;     // ptr to frame window
+	char m_cEndData ;
 
 
 // Operations
@@ -57,10 +56,10 @@ public:
 public:
 	virtual ~CGtlDoc();
 	virtual void Serialize(CArchive& ar);   // overridden for document i/o
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 protected:
 	virtual BOOL OnNewDocument();
@@ -68,8 +67,8 @@ protected:
 // Generated message map functions
 protected:
 	//{{AFX_MSG(CGtlDoc)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -77,20 +76,25 @@ protected:
 // gtldoc.cpp -- implementation of the CGtlDoc class
 
 //- CGtlDoc::DeleteContents() --
-public: void CGtlDoc::DeleteContents() ;
+public:
+	void CGtlDoc::DeleteContents() ;
 //- CGtlDoc::InitDocument -- initialize document to specified file
-protected: void CGtlDoc::InitDocument(const char * xpszPathName) ;
+protected:
+	void CGtlDoc::InitDocument(const char * xpszPathName) ;
 //- CGtlDoc::OnOpenDocument --
-virtual BOOL CGtlDoc::OnOpenDocument(const char* xpszPathName) ;
+	virtual BOOL CGtlDoc::OnOpenDocument(const char* xpszPathName) ;
 //- CGtlDoc::OnSaveDocument --
-virtual BOOL CGtlDoc::OnSaveDocument(const char* xpszPathName) ;
-//- CGtlDoc::DoOnFileSaveAs -- 
-public: virtual BOOL CGtlDoc::DoOnFileSaveAs(void) ;
+	virtual BOOL CGtlDoc::OnSaveDocument(const char* xpszPathName) ;
+//- CGtlDoc::DoOnFileSaveAs --
+public:
+	virtual BOOL CGtlDoc::DoOnFileSaveAs(void) ;
 //- CGtlDoc::OnChangedViewList -- called by MFC when a view is
 //		added or deleted
-private: virtual VOID CGtlDoc::OnChangedViewList(void) ;
+private:
+	virtual VOID CGtlDoc::OnChangedViewList(void) ;
 //- CGtlDoc::FixChecks -- fix dialog box check marks
-public: BOOL CGtlDoc::FixChecks(void);
+public:
+	BOOL CGtlDoc::FixChecks(void);
 
 };
 

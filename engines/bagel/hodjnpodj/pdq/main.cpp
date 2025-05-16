@@ -51,10 +51,10 @@ namespace PDQ {
 #define WAV_NARRATION   ".\\SOUND\\TGG.WAV"
 
 STATIC const CHAR *pszCategoryBitmaps[N_CATEGORIES] = {
-    ".\\ART\\PERSON.BMP",
-    ".\\ART\\PLACE.BMP",
-    ".\\ART\\PHRASE.BMP",
-    ".\\ART\\TITLE.BMP"
+	".\\ART\\PERSON.BMP",
+	".\\ART\\PLACE.BMP",
+	".\\ART\\PHRASE.BMP",
+	".\\ART\\TITLE.BMP"
 };
 
 
@@ -83,248 +83,242 @@ CText        *txtScore, *txtTotalScore, *txtTitle;
 LPGAMESTRUCT  pGameParams;
 
 #ifdef _USRDLL
-extern HWND ghParentWnd;
+	extern HWND ghParentWnd;
 #endif
 
-CMainWindow::CMainWindow()
-{
-    CString  WndClass;
-    CRect    tmpRect;
-    CDC     *pDC;
-    CDibDoc *pDibDoc;
-    ERROR_CODE errCode;
-    BOOLEAN bSuccess;
-                                
-    // the game structure must be valid
-    assert(pGameParams != NULL);
+CMainWindow::CMainWindow() {
+	CString  WndClass;
+	CRect    tmpRect;
+	CDC     *pDC;
+	CDibDoc *pDibDoc;
+	ERROR_CODE errCode;
+	BOOLEAN bSuccess;
 
-    // assume no error
-    errCode = ERR_NONE;
+	// the game structure must be valid
+	assert(pGameParams != NULL);
 
-    // Inits
-    //
-    pMyGamePalette = NULL;
-    m_pScrollSprite = NULL;
-    m_pSoundTrack = NULL;
-    m_bInGuess = FALSE;
-    m_bInMenu = FALSE; 
-    m_iLastType = -1;
-    gMain = this;
-    pGameParams->lScore = 0;
+	// assume no error
+	errCode = ERR_NONE;
 
-    // Set the coordinates for the "Start New Game" button
-    //
-    m_rNewGameButton.SetRect(15, 4, 233, 20);
+	// Inits
+	//
+	pMyGamePalette = NULL;
+	m_pScrollSprite = NULL;
+	m_pSoundTrack = NULL;
+	m_bInGuess = FALSE;
+	m_bInMenu = FALSE;
+	m_iLastType = -1;
+	gMain = this;
+	pGameParams->lScore = 0;
 
-    // Define a special window class which traps double-clicks, is byte aligned
-    // to maximize BITBLT performance, and creates "owned" DCs rather than sharing
-    // the five system defined DCs which are not guaranteed to be available;
-    // this adds a bit to our app size but avoids hangs/freezes/lockups.
-    WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+	// Set the coordinates for the "Start New Game" button
+	//
+	m_rNewGameButton.SetRect(15, 4, 233, 20);
 
-    // Acquire the shared palette for our game from the splash screen art
-    if ((pDibDoc = new CDibDoc()) != NULL) {
-        if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
-            pMyGamePalette = pDibDoc->DetachPalette();
-        else
-            errCode = ERR_FFIND;
-        delete pDibDoc;
-    } else {
-        errCode = ERR_MEMORY;
-    }
+	// Define a special window class which traps double-clicks, is byte aligned
+	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
+	// the five system defined DCs which are not guaranteed to be available;
+	// this adds a bit to our app size but avoids hangs/freezes/lockups.
+	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
 
-    // Center our window on the screen
-    //
-    tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-#ifndef DEBUG
-    if ((pDC = GetDC()) != NULL) {
-        tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
-        tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
-        tmpRect.right = tmpRect.left + GAME_WIDTH;
-        tmpRect.bottom = tmpRect.top + GAME_HEIGHT;
-        ReleaseDC(pDC);
-    }
-#endif
+	// Acquire the shared palette for our game from the splash screen art
+	if ((pDibDoc = new CDibDoc()) != NULL) {
+		if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
+			pMyGamePalette = pDibDoc->DetachPalette();
+		else
+			errCode = ERR_FFIND;
+		delete pDibDoc;
+	} else {
+		errCode = ERR_MEMORY;
+	}
 
-    // Create the window as a POPUP so no boarders, title, or menu are present;
-    // this is because the game's background art will fill the entire 640x480 area.
-    Create( WndClass, "Boffo Games -- ThGesngGme", WS_POPUP, tmpRect, NULL, NULL );
+	// Center our window on the screen
+	//
+	tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+	#ifndef DEBUG
+	if ((pDC = GetDC()) != NULL) {
+		tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
+		tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
+		tmpRect.right = tmpRect.left + GAME_WIDTH;
+		tmpRect.bottom = tmpRect.top + GAME_HEIGHT;
+		ReleaseDC(pDC);
+	}
+	#endif
 
-    BeginWaitCursor();
-    ShowWindow(SW_SHOWNORMAL);
-    PaintScreen();
-    EndWaitCursor();
+	// Create the window as a POPUP so no boarders, title, or menu are present;
+	// this is because the game's background art will fill the entire 640x480 area.
+	Create(WndClass, "Boffo Games -- ThGesngGme", WS_POPUP, tmpRect, NULL, NULL);
 
-    if ((pDC = GetDC()) != NULL) {
-        //
-        // build our main menu button
-        //
-        if ((m_pScrollSprite = new CSprite) != NULL) {
-            m_pScrollSprite->SharePalette(pMyGamePalette);
-            bSuccess = m_pScrollSprite->LoadResourceSprite(pDC, IDB_SCROLBTN);
-            assert(bSuccess);
-            m_pScrollSprite->SetMasked(TRUE);
-            m_pScrollSprite->SetMobile(TRUE);
-        }
+	BeginWaitCursor();
+	ShowWindow(SW_SHOWNORMAL);
+	PaintScreen();
+	EndWaitCursor();
 
-        //
-        // set up the score controls
-        //
-        tmpRect.SetRect(401, 145, 585, 160);
-        if ((txtTitle = new CText) != NULL)
-            txtTitle->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_LEFT);
+	if ((pDC = GetDC()) != NULL) {
+		//
+		// build our main menu button
+		//
+		if ((m_pScrollSprite = new CSprite) != NULL) {
+			m_pScrollSprite->SharePalette(pMyGamePalette);
+			bSuccess = m_pScrollSprite->LoadResourceSprite(pDC, IDB_SCROLBTN);
+			assert(bSuccess);
+			m_pScrollSprite->SetMasked(TRUE);
+			m_pScrollSprite->SetMobile(TRUE);
+		}
 
-        tmpRect.SetRect(383, 162, 493, 187);
-        if ((txtScore = new CText) != NULL)
-            txtScore->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_CENTER);
+		//
+		// set up the score controls
+		//
+		tmpRect.SetRect(401, 145, 585, 160);
+		if ((txtTitle = new CText) != NULL)
+			txtTitle->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_LEFT);
 
-        tmpRect.SetRect(515, 162, 555, 187);
-        if ((txtTotalScore = new CText) != NULL)
-            txtTotalScore->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_CENTER);
+		tmpRect.SetRect(383, 162, 493, 187);
+		if ((txtScore = new CText) != NULL)
+			txtScore->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_CENTER);
 
-        if ((m_pDlgGuess = new CGuessDlg(this, pMyGamePalette)) == NULL) {
-            errCode = ERR_MEMORY;
-        }
+		tmpRect.SetRect(515, 162, 555, 187);
+		if ((txtTotalScore = new CText) != NULL)
+			txtTotalScore->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_CENTER);
 
-        ReleaseDC(pDC);
-    } else {
-        errCode = ERR_MEMORY;
-    }
+		if ((m_pDlgGuess = new CGuessDlg(this, pMyGamePalette)) == NULL) {
+			errCode = ERR_MEMORY;
+		}
 
-    BeginWaitCursor();
+		ReleaseDC(pDC);
+	} else {
+		errCode = ERR_MEMORY;
+	}
 
-    if (pGameParams->bMusicEnabled) {
-        if ((m_pSoundTrack = new CSound) != NULL) {
-            m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-            m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
-        }
-    } // end if m_pSoundTrack
+	BeginWaitCursor();
 
-    LoadCategoryNames();
+	if (pGameParams->bMusicEnabled) {
+		if ((m_pSoundTrack = new CSound) != NULL) {
+			m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+			m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
+		}
+	} // end if m_pSoundTrack
 
-    // seed the random number generator
-    //srand((unsigned)time(NULL));
+	LoadCategoryNames();
 
-    EndWaitCursor();
+	// seed the random number generator
+	//srand((unsigned)time(NULL));
 
-    SetFocus();
+	EndWaitCursor();
 
-    // if we are not playing from the metagame
-    //
-    if (!pGameParams->bPlayingMetagame) {
+	SetFocus();
 
-        // Automatically bring up the main menu
-        //
-        PostMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
+	// if we are not playing from the metagame
+	//
+	if (!pGameParams->bPlayingMetagame) {
 
-    } else {
-    	m_nTurnCount = 0;								// Count up to three turns in meta-game mode
-    }
+		// Automatically bring up the main menu
+		//
+		PostMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
 
-    HandleError(errCode);
+	} else {
+		m_nTurnCount = 0;                               // Count up to three turns in meta-game mode
+	}
+
+	HandleError(errCode);
 }
 
 
-ERROR_CODE CMainWindow::LoadCategoryNames(VOID)
-{
-    CDC *pDC;
-    INT i;
-    ERROR_CODE errCode;
+ERROR_CODE CMainWindow::LoadCategoryNames(VOID) {
+	CDC *pDC;
+	INT i;
+	ERROR_CODE errCode;
 
-    // assume no error
-    errCode = ERR_NONE;
+	// assume no error
+	errCode = ERR_NONE;
 
-    if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != NULL) {
 
-        for (i = 0; i < N_CATEGORIES; i++) {
+		for (i = 0; i < N_CATEGORIES; i++) {
 
-            if ((m_pCategories[i] = new CSprite) != NULL) {
-                if (m_pCategories[i]->LoadSprite(pDC, pszCategoryBitmaps[i]) != FALSE) {
+			if ((m_pCategories[i] = new CSprite) != NULL) {
+				if (m_pCategories[i]->LoadSprite(pDC, pszCategoryBitmaps[i]) != FALSE) {
 
-                    m_pCategories[i]->SharePalette(pMyGamePalette);
-                    m_pCategories[i]->SetMasked(TRUE);
-                    m_pCategories[i]->SetMobile(TRUE);
+					m_pCategories[i]->SharePalette(pMyGamePalette);
+					m_pCategories[i]->SetMasked(TRUE);
+					m_pCategories[i]->SetMobile(TRUE);
 
-                } else {
-                    errCode = ERR_UNKNOWN;
-                }
+				} else {
+					errCode = ERR_UNKNOWN;
+				}
 
-            } else {
-                errCode = ERR_MEMORY;
-            }
-        }
+			} else {
+				errCode = ERR_MEMORY;
+			}
+		}
 
-    } else {
-        errCode = ERR_MEMORY;
-    }
+	} else {
+		errCode = ERR_MEMORY;
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
-VOID CMainWindow::ReleaseCategoryNames(VOID)
-{
-    INT i;
+VOID CMainWindow::ReleaseCategoryNames(VOID) {
+	INT i;
 
-    for (i = N_CATEGORIES - 1; i >= 0; i--) {
-        if (m_pCategories[i] != NULL) {
-            delete m_pCategories[i];
-            m_pCategories[i] = NULL;
-        }
-    }
-}
-
-
-VOID CMainWindow::PaintCategory(INT iType)
-{
-    CDC *pDC;
-
-    assert((iType >= 0) && (iType < N_CATEGORIES));
-
-    // save this ID for later (EraseCategory)
-    m_iLastType = iType;
-
-    m_pCategories[iType]->LinkSprite();
-
-    pDC = GetDC();
-    m_pCategories[iType]->PaintSprite(pDC, (GAME_WIDTH - m_pCategories[iType]->GetSize().cx) / 2, 76);
-    ReleaseDC(pDC);
+	for (i = N_CATEGORIES - 1; i >= 0; i--) {
+		if (m_pCategories[i] != NULL) {
+			delete m_pCategories[i];
+			m_pCategories[i] = NULL;
+		}
+	}
 }
 
 
-VOID CMainWindow::EraseCategory(VOID)
-{
-    CDC *pDC;
+VOID CMainWindow::PaintCategory(INT iType) {
+	CDC *pDC;
 
-    assert((m_iLastType >= 0) && (m_iLastType < N_CATEGORIES));
+	assert((iType >= 0) && (iType < N_CATEGORIES));
 
-    pDC = GetDC();
-    m_pCategories[m_iLastType]->EraseSprite(pDC);
-    ReleaseDC(pDC);
+	// save this ID for later (EraseCategory)
+	m_iLastType = iType;
 
-    m_pCategories[m_iLastType]->UnlinkSprite();
-    m_iLastType = -1;
+	m_pCategories[iType]->LinkSprite();
+
+	pDC = GetDC();
+	m_pCategories[iType]->PaintSprite(pDC, (GAME_WIDTH - m_pCategories[iType]->GetSize().cx) / 2, 76);
+	ReleaseDC(pDC);
 }
 
 
-VOID CMainWindow::HandleError(ERROR_CODE errCode)
-{
-    //
-    // Exit this application on fatal errors
-    //
-    if (errCode != ERR_NONE) {
+VOID CMainWindow::EraseCategory(VOID) {
+	CDC *pDC;
 
-        // pause the current game (if any)
-        GamePauseTimer();
+	assert((m_iLastType >= 0) && (m_iLastType < N_CATEGORIES));
 
-        // Display Error Message to the user
-        MessageBox(errList[errCode], "Fatal Error!", MB_OK | MB_ICONSTOP);
+	pDC = GetDC();
+	m_pCategories[m_iLastType]->EraseSprite(pDC);
+	ReleaseDC(pDC);
 
-        // Force this application to terminate
-        PostMessage(WM_CLOSE, 0, 0);
+	m_pCategories[m_iLastType]->UnlinkSprite();
+	m_iLastType = -1;
+}
 
-        // Don't allow a repaint (remove all WM_PAINT messages)
-        ValidateRect(NULL);
-    }
+
+VOID CMainWindow::HandleError(ERROR_CODE errCode) {
+	//
+	// Exit this application on fatal errors
+	//
+	if (errCode != ERR_NONE) {
+
+		// pause the current game (if any)
+		GamePauseTimer();
+
+		// Display Error Message to the user
+		MessageBox(errList[errCode], "Fatal Error!", MB_OK | MB_ICONSTOP);
+
+		// Force this application to terminate
+		PostMessage(WM_CLOSE, 0, 0);
+
+		// Don't allow a repaint (remove all WM_PAINT messages)
+		ValidateRect(NULL);
+	}
 }
 
 
@@ -334,60 +328,58 @@ VOID CMainWindow::HandleError(ERROR_CODE errCode)
 // an EndPaint call is done when it is destroyed at the end of this
 // function.  CPaintDC's constructor needs the window (this).
 //
-void CMainWindow::OnPaint()
-{
-    PAINTSTRUCT lpPaint;
+void CMainWindow::OnPaint() {
+	PAINTSTRUCT lpPaint;
 
-    Invalidate(FALSE);
-    BeginPaint(&lpPaint);
-    PaintScreen();
-    EndPaint(&lpPaint);
+	Invalidate(FALSE);
+	BeginPaint(&lpPaint);
+	PaintScreen();
+	EndPaint(&lpPaint);
 }
 
 
 // Paint the background art and upadate any sprites
 // called by OnPaint
-void CMainWindow::PaintScreen()
-{
-    CRect   rcDest;
-    CRect   rcDIB;
-    CDC     *pDC;
-    CDibDoc myDoc;
-    HDIB    hDIB;
-    UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
-    BOOL bSuccess;
+void CMainWindow::PaintScreen() {
+	CRect   rcDest;
+	CRect   rcDIB;
+	CDC     *pDC;
+	CDibDoc myDoc;
+	HDIB    hDIB;
+	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+	BOOL bSuccess;
 
-    myDoc.OpenDocument(MINI_GAME_MAP);
-    hDIB = myDoc.GetHDIB();
+	myDoc.OpenDocument(MINI_GAME_MAP);
+	hDIB = myDoc.GetHDIB();
 
-    pDC = GetDC();
-    if (pDC && hDIB) {
-        GetClientRect( rcDest );
-        LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-        rcDIB.top = rcDIB.left = 0;
-        rcDIB.right = (int) DIBWidth(lpDIB);
-        rcDIB.bottom = (int) DIBHeight(lpDIB);
-        GlobalUnlock((HGLOBAL) hDIB);
-        PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pMyGamePalette);
-    }
+	pDC = GetDC();
+	if (pDC && hDIB) {
+		GetClientRect(rcDest);
+		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+		rcDIB.top = rcDIB.left = 0;
+		rcDIB.right = (int) DIBWidth(lpDIB);
+		rcDIB.bottom = (int) DIBHeight(lpDIB);
+		GlobalUnlock((HGLOBAL) hDIB);
+		PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pMyGamePalette);
+	}
 
-    if (!m_bInMenu) {
-        if (m_pScrollSprite != NULL) {
-            bSuccess = m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
-            assert(bSuccess);
-        }
-    }
+	if (!m_bInMenu) {
+		if (m_pScrollSprite != NULL) {
+			bSuccess = m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
+			assert(bSuccess);
+		}
+	}
 
-    /* update the on-screen sprites */
-    RepaintSpriteList(pDC);
+	/* update the on-screen sprites */
+	RepaintSpriteList(pDC);
 
-    if (txtTitle != NULL)
-        txtTitle->DisplayString(pDC, "Score       Total Score", 21, FW_BOLD, RGB( 0, 0, 0));
+	if (txtTitle != NULL)
+		txtTitle->DisplayString(pDC, "Score       Total Score", 21, FW_BOLD, RGB(0, 0, 0));
 
-    GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
-    UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
+	GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
+	UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
 
-    ReleaseDC(pDC);
+	ReleaseDC(pDC);
 }
 
 
@@ -395,616 +387,600 @@ void CMainWindow::PaintScreen()
 // This function is called when a WM_COMMAND message is issued,
 // typically in order to process control related activities.
 //
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
-{
-    CMainMenu COptionsWind((CWnd *)this,
-    			pMyGamePalette,
-    			(pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (bInGame ? 0 : NO_RETURN),
-    			GetGameParams, "tggrules.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL),pGameParams);
-    CDC *pDC;
-    BOOLEAN bSuccess;
+BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+	CMainMenu COptionsWind((CWnd *)this,
+	                       pMyGamePalette,
+	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (bInGame ? 0 : NO_RETURN),
+	                       GetGameParams, "tggrules.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL), pGameParams);
+	CDC *pDC;
+	BOOLEAN bSuccess;
 
-    if (HIWORD(lParam) == BN_CLICKED) {
-        switch(wParam) {
+	if (HIWORD(lParam) == BN_CLICKED) {
+		switch (wParam) {
 
-            /*
-            * must bring up our menu of controls
-            */
-            case IDC_MENU:
+		/*
+		* must bring up our menu of controls
+		*/
+		case IDC_MENU:
 
-                GamePauseTimer();
+			GamePauseTimer();
 
-                // indicate a state of being in the command menu
-                m_bInMenu = TRUE;
+			// indicate a state of being in the command menu
+			m_bInMenu = TRUE;
 
-                pDC = GetDC();
-                assert(m_pScrollSprite != NULL);
-                if (m_pScrollSprite != NULL) {
-                    bSuccess = m_pScrollSprite->EraseSprite(pDC);
-                    assert(bSuccess);
-                }
-                //PaintScreen();
-    
-                CSound::waitWaveSounds();
+			pDC = GetDC();
+			assert(m_pScrollSprite != NULL);
+			if (m_pScrollSprite != NULL) {
+				bSuccess = m_pScrollSprite->EraseSprite(pDC);
+				assert(bSuccess);
+			}
+			//PaintScreen();
 
-                switch (COptionsWind.DoModal()) {
+			CSound::waitWaveSounds();
 
-                    case IDC_OPTIONS_NEWGAME:
-                        PlayGame();
-                        break;
+			switch (COptionsWind.DoModal()) {
 
-                    case IDC_OPTIONS_QUIT:
-                        pGameParams->lScore = 0;
-                        PostMessage(WM_CLOSE, 0, 0);
-                        break;
+			case IDC_OPTIONS_NEWGAME:
+				PlayGame();
+				break;
 
-                    default:
-                        break;
-                }
+			case IDC_OPTIONS_QUIT:
+				pGameParams->lScore = 0;
+				PostMessage(WM_CLOSE, 0, 0);
+				break;
+
+			default:
+				break;
+			}
 
 
-                assert(m_pScrollSprite != NULL);
-                if (m_pScrollSprite != NULL) {
-                    bSuccess = m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
-                    assert(bSuccess);
-                }
-                ReleaseDC(pDC);
-                SetFocus();
+			assert(m_pScrollSprite != NULL);
+			if (m_pScrollSprite != NULL) {
+				bSuccess = m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
+				assert(bSuccess);
+			}
+			ReleaseDC(pDC);
+			SetFocus();
 
-                // not in command menu any more
-                m_bInMenu = FALSE;
+			// not in command menu any more
+			m_bInMenu = FALSE;
 
-                if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
+			if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
 
-                    m_pSoundTrack->stop();
-                    delete m_pSoundTrack;
-                    m_pSoundTrack = NULL;
+				m_pSoundTrack->stop();
+				delete m_pSoundTrack;
+				m_pSoundTrack = NULL;
 
-                } else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
+			} else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
 
-                    if ((m_pSoundTrack = new CSound) != NULL) {
-                        m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-                        m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
-                    }
-                }
+				if ((m_pSoundTrack = new CSound) != NULL) {
+					m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+					m_pSoundTrack->midiLoopPlaySegment(1580, 32600, 0, FMT_MILLISEC);
+				}
+			}
 
-                GameResumeTimer();
+			GameResumeTimer();
 
-                return(TRUE);
-        }
-    }
+			return (TRUE);
+		}
+	}
 
-    return(FALSE);
+	return (FALSE);
 }
 
- void CMainWindow::PlayGame()
-{
-    CDC *pDC;
-    UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
-    ERROR_CODE errCode;
+void CMainWindow::PlayGame() {
+	CDC *pDC;
+	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+	ERROR_CODE errCode;
 
-    pDC = GetDC();
+	pDC = GetDC();
 
-    bInGame = FALSE;
-    if ((errCode = InitGame(m_hWnd, pDC)) == ERR_NONE) {
-        bInGame = TRUE;
-	    if (pGameParams->bPlayingMetagame)
-	    	m_nTurnCount++;
+	bInGame = FALSE;
+	if ((errCode = InitGame(m_hWnd, pDC)) == ERR_NONE) {
+		bInGame = TRUE;
+		if (pGameParams->bPlayingMetagame)
+			m_nTurnCount++;
 
-        /* erase current score */
-        GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
-        UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
+		/* erase current score */
+		GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
+		UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
 
-        if ((errCode = StartGame(pDC)) != ERR_NONE) {
+		if ((errCode = StartGame(pDC)) != ERR_NONE) {
 
-            /* cleanup on error */
-            EndGame(pDC);
-            bInGame = FALSE;
-        }
-    }
+			/* cleanup on error */
+			EndGame(pDC);
+			bInGame = FALSE;
+		}
+	}
 
-    HandleError(errCode);
+	HandleError(errCode);
 
-    ReleaseDC(pDC);
+	ReleaseDC(pDC);
 }
 
-void CMainWindow::OnMouseMove(UINT, CPoint)
-{
-    SetCursor(LoadCursor(NULL, IDC_ARROW));
+void CMainWindow::OnMouseMove(UINT, CPoint) {
+	SetCursor(LoadCursor(NULL, IDC_ARROW));
 }
 
 //
 // Hooked when we get a WM_QUIT (or WM_CLOSE ?) message
 //
-void CMainWindow::OnClose()
-{
-    CBrush myBrush;
-    CRect myRect;
-    CDC *pDC;
+void CMainWindow::OnClose() {
+	CBrush myBrush;
+	CRect myRect;
+	CDC *pDC;
 
-    ReleaseCategoryNames();
+	ReleaseCategoryNames();
 
-    // delete the game theme song
-    //
-    if (m_pSoundTrack != NULL) {
-        assert(pGameParams->bMusicEnabled);
-        delete m_pSoundTrack;
-        m_pSoundTrack = NULL;
-    }
-    
-    CSound::clearSounds();
+	// delete the game theme song
+	//
+	if (m_pSoundTrack != NULL) {
+		assert(pGameParams->bMusicEnabled);
+		delete m_pSoundTrack;
+		m_pSoundTrack = NULL;
+	}
 
-    if ((pDC = GetDC()) != NULL) {
+	CSound::clearSounds();
 
-        if (bInGame) {
-            EndGame(pDC);
-            bInGame = FALSE;
-        }
-        ReleaseDC(pDC);
-    }
+	if ((pDC = GetDC()) != NULL) {
 
-    assert(m_pDlgGuess != NULL);
-    if (m_pDlgGuess != NULL) {
-        delete m_pDlgGuess;
-        m_pDlgGuess = NULL;
-    }
+		if (bInGame) {
+			EndGame(pDC);
+			bInGame = FALSE;
+		}
+		ReleaseDC(pDC);
+	}
 
-    assert(txtTotalScore != NULL);
-    if (txtTotalScore != NULL) {
-        delete txtTotalScore;
-        txtTotalScore = NULL;
-    }
+	assert(m_pDlgGuess != NULL);
+	if (m_pDlgGuess != NULL) {
+		delete m_pDlgGuess;
+		m_pDlgGuess = NULL;
+	}
 
-    assert(txtScore != NULL);
-    if (txtScore != NULL) {
-        delete txtScore;
-        txtScore = NULL;
-    }
+	assert(txtTotalScore != NULL);
+	if (txtTotalScore != NULL) {
+		delete txtTotalScore;
+		txtTotalScore = NULL;
+	}
 
-    assert(txtTitle != NULL);
-    if (txtTitle != NULL) {
-        delete txtTitle;
-        txtTitle = NULL;
-    }
+	assert(txtScore != NULL);
+	if (txtScore != NULL) {
+		delete txtScore;
+		txtScore = NULL;
+	}
 
-    //
-    // de-allocate any controls that we used
-    //
-    assert(m_pScrollSprite != NULL);
-    if (m_pScrollSprite != NULL) {
-        delete m_pScrollSprite;
-        m_pScrollSprite = NULL;
-    }
+	assert(txtTitle != NULL);
+	if (txtTitle != NULL) {
+		delete txtTitle;
+		txtTitle = NULL;
+	}
 
-    //
-    // need to de-allocate the game palette
-    //
-    assert(pMyGamePalette != NULL);
-    if (pMyGamePalette != NULL) {
-        pMyGamePalette->DeleteObject();
-        delete pMyGamePalette;
-        pMyGamePalette = NULL;
-    }
+	//
+	// de-allocate any controls that we used
+	//
+	assert(m_pScrollSprite != NULL);
+	if (m_pScrollSprite != NULL) {
+		delete m_pScrollSprite;
+		m_pScrollSprite = NULL;
+	}
 
-    if ((pDC = GetDC()) != NULL) {              // paint black
+	//
+	// need to de-allocate the game palette
+	//
+	assert(pMyGamePalette != NULL);
+	if (pMyGamePalette != NULL) {
+		pMyGamePalette->DeleteObject();
+		delete pMyGamePalette;
+		pMyGamePalette = NULL;
+	}
 
-        myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        myBrush.CreateStockObject(BLACK_BRUSH);
-        pDC->FillRect(&myRect, &myBrush);
-        ReleaseDC(pDC);
-    }
+	if ((pDC = GetDC()) != NULL) {              // paint black
 
-    CFrameWnd::OnClose();
+		myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+		myBrush.CreateStockObject(BLACK_BRUSH);
+		pDC->FillRect(&myRect, &myBrush);
+		ReleaseDC(pDC);
+	}
 
-#ifdef _USRDLL
-    MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-#endif
+	CFrameWnd::OnClose();
+
+	#ifdef _USRDLL
+	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
+	#endif
 }
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-    // terminate app on ALT_Q
-    //
-    if ((nChar == 'q') && (nFlags & 0x2000)) {
+void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	// terminate app on ALT_Q
+	//
+	if ((nChar == 'q') && (nFlags & 0x2000)) {
 
-        pGameParams->lScore = 0;
-        PostMessage(WM_CLOSE, 0, 0);
+		pGameParams->lScore = 0;
+		PostMessage(WM_CLOSE, 0, 0);
 
-    } else {
+	} else {
 
-        // default action
-        CFrameWnd ::OnSysChar(nChar, nRepCnt, nFlags);
-    }
+		// default action
+		CFrameWnd ::OnSysChar(nChar, nRepCnt, nFlags);
+	}
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-    switch (nChar) {
+void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	switch (nChar) {
 
-        // User has hit ALT_F4 so close down this App
-        //
-        case VK_F4:
-            pGameParams->lScore = 0;
-            PostMessage(WM_CLOSE, 0, 0);
-            break;
+	// User has hit ALT_F4 so close down this App
+	//
+	case VK_F4:
+		pGameParams->lScore = 0;
+		PostMessage(WM_CLOSE, 0, 0);
+		break;
 
-        default:
-            CFrameWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);
-            break;
-    }
+	default:
+		CFrameWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);
+		break;
+	}
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-    CDC *pDC;
-    UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	CDC *pDC;
+	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
 
-    // Handle keyboard input
-    //
-    switch (nChar) {
+	// Handle keyboard input
+	//
+	switch (nChar) {
 
-        //
-        // Bring up the Rules
-        //
-        case VK_F1: {
-            GamePauseTimer();
-            CSound::waitWaveSounds();
-            CRules  RulesDlg(this, "tggrules.txt", pMyGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
-            RulesDlg.DoModal();
-            SetFocus();
+	//
+	// Bring up the Rules
+	//
+	case VK_F1: {
+		GamePauseTimer();
+		CSound::waitWaveSounds();
+		CRules  RulesDlg(this, "tggrules.txt", pMyGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
+		RulesDlg.DoModal();
+		SetFocus();
 
-            GameResumeTimer();
-        }
-        break;
+		GameResumeTimer();
+	}
+	break;
 
-        //
-        // Bring up the options menu
-        //
-        case VK_F2:
-            SendMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
-            break;
+	//
+	// Bring up the options menu
+	//
+	case VK_F2:
+		SendMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
+		break;
 
-        default:
+	default:
 
-            if (bInGame && ((nChar == KEY_ENTER) || (toupper(nChar) >= 'A' && toupper(nChar) <= 'Z'))) {
+		if (bInGame && ((nChar == KEY_ENTER) || (toupper(nChar) >= 'A' && toupper(nChar) <= 'Z'))) {
 
-                GamePauseTimer();
+			GamePauseTimer();
 
-                assert(m_pDlgGuess != NULL);
+			assert(m_pDlgGuess != NULL);
 
-                m_pDlgGuess->text = "";
-				if (nChar != KEY_ENTER)
-					m_pDlgGuess->text = CString((char)nChar);
+			m_pDlgGuess->text = "";
+			if (nChar != KEY_ENTER)
+				m_pDlgGuess->text = CString((char)nChar);
 
-                m_bInGuess = TRUE;
-                m_pDlgGuess->DoModal();
-                m_bInGuess = FALSE;
-                SetFocus();
+			m_bInGuess = TRUE;
+			m_pDlgGuess->DoModal();
+			m_bInGuess = FALSE;
+			SetFocus();
 
-                /*
-                * Check user's guess with the actual phrase
-                */
-                if (CheckUserGuess(m_pDlgGuess->text)) {
+			/*
+			* Check user's guess with the actual phrase
+			*/
+			if (CheckUserGuess(m_pDlgGuess->text)) {
 
-                    /*
-                    * User WON - now we need to shut off the timer
-                    */
-                    GameStopTimer();
+				/*
+				* User WON - now we need to shut off the timer
+				*/
+				GameStopTimer();
 
-                    WinGame();
+				WinGame();
 
-                    /*
-                    * Calculate score
-                    */
-                    GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
-                    UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
+				/*
+				* Calculate score
+				*/
+				GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
+				UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
 
-                    if (pGameParams->bSoundEffectsEnabled)
-                        sndPlaySound(WAV_YOUWIN, SND_ASYNC);
+				if (pGameParams->bSoundEffectsEnabled)
+					sndPlaySound(WAV_YOUWIN, SND_ASYNC);
 
-                    CMessageBox dlgYouWin((CWnd *)this, pMyGamePalette, "You are correct!", "You have won.");
-                    SetFocus();
+				CMessageBox dlgYouWin((CWnd *)this, pMyGamePalette, "You are correct!", "You have won.");
+				SetFocus();
 
-                    pDC = gMain->GetDC();
-                    EndGame(pDC);
-                    gMain->ReleaseDC(pDC);
-                    bInGame = FALSE;
+				pDC = gMain->GetDC();
+				EndGame(pDC);
+				gMain->ReleaseDC(pDC);
+				bInGame = FALSE;
 
-                    pGameParams->lScore += (100 * nLeft) / nTotal;
+				pGameParams->lScore += (100 * nLeft) / nTotal;
 
-                    // if in metagame then close dll when game is ended
-                    //
-                    if ((pGameParams->bPlayingMetagame) && (m_nTurnCount == MAX_TURNS)) {
-                        PostMessage(WM_CLOSE, 0, 0);
-                    }
-			        else {
-			            // start a new game instantly
-			            PlayGame();
-			        }
-                } else {
-                    if (pGameParams->bSoundEffectsEnabled)
-                        sndPlaySound(WAV_BADGUESS, SND_ASYNC);
-                }
-                GameResumeTimer();
+				// if in metagame then close dll when game is ended
+				//
+				if ((pGameParams->bPlayingMetagame) && (m_nTurnCount == MAX_TURNS)) {
+					PostMessage(WM_CLOSE, 0, 0);
+				} else {
+					// start a new game instantly
+					PlayGame();
+				}
+			} else {
+				if (pGameParams->bSoundEffectsEnabled)
+					sndPlaySound(WAV_BADGUESS, SND_ASYNC);
+			}
+			GameResumeTimer();
 
-            } else {
+		} else {
 
-                CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);
-            }
-            break;
-    }
+			CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		}
+		break;
+	}
 }
 
 
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-    CWnd::OnChar(nChar, nRepCnt, nFlags);
+void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	CWnd::OnChar(nChar, nRepCnt, nFlags);
 }
 
-VOID UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg)
-{
-    char buf[40];
-    CDC *pDC;
+VOID UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg) {
+	char buf[40];
+	CDC *pDC;
 
-    if ((pDC = gMain->GetDC()) != NULL) {
+	if ((pDC = gMain->GetDC()) != NULL) {
 
-        if ((txtScore != NULL) && (txtTotalScore != NULL)) {
+		if ((txtScore != NULL) && (txtTotalScore != NULL)) {
 
-            /*
-            * update the current score
-            */
-            if (nTotal == 0)
-                Common::sprintf_s(buf, "%d/%d = %d%%", nLeft, nTotal, 0);
-            else
-                Common::sprintf_s(buf, "%d/%d = %d%%", nLeft, nTotal, (100*nLeft)/nTotal);
+			/*
+			* update the current score
+			*/
+			if (nTotal == 0)
+				Common::sprintf_s(buf, "%d/%d = %d%%", nLeft, nTotal, 0);
+			else
+				Common::sprintf_s(buf, "%d/%d = %d%%", nLeft, nTotal, (100 * nLeft) / nTotal);
 
-            txtScore->DisplayString(pDC, buf, 21, FW_BOLD, RGB( 0, 0, 0));
+			txtScore->DisplayString(pDC, buf, 21, FW_BOLD, RGB(0, 0, 0));
 
-            /*
-            * update the cumulative score
-            */
-            if (nTotalAvg == 0)
-                Common::sprintf_s(buf, "0%%");
-            else
-                Common::sprintf_s(buf, "%d%%", (100 * nLeftAvg) / nTotalAvg);
-            txtTotalScore->DisplayString(pDC, buf, 21, FW_BOLD, RGB( 0, 0, 0));
-        }
-        gMain->ReleaseDC(pDC);
-    }
+			/*
+			* update the cumulative score
+			*/
+			if (nTotalAvg == 0)
+				Common::sprintf_s(buf, "0%%");
+			else
+				Common::sprintf_s(buf, "%d%%", (100 * nLeftAvg) / nTotalAvg);
+			txtTotalScore->DisplayString(pDC, buf, 21, FW_BOLD, RGB(0, 0, 0));
+		}
+		gMain->ReleaseDC(pDC);
+	}
 }
 
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
-{
-    CDC     *pDC;
-    CSprite *pSprite = NULL;
-    CSound  *pEffect = NULL;
-    CRect   tmpRect,
-            birdRect,
-            horse1Rect,
-            horse2Rect,
-            flowerRect;
-    BOOL    bSuccess;
-    int     i;
+void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+	CDC     *pDC;
+	CSprite *pSprite = NULL;
+	CSound  *pEffect = NULL;
+	CRect   tmpRect,
+	        birdRect,
+	        horse1Rect,
+	        horse2Rect,
+	        flowerRect;
+	BOOL    bSuccess;
+	int     i;
 
-    birdRect.SetRect(BIRD_X, BIRD_Y, BIRD_X + BIRD_DX, BIRD_Y + BIRD_DY);
-    horse1Rect.SetRect(HORSE1_X, HORSE1_Y, HORSE1_X + HORSE1_DX, HORSE1_Y + HORSE1_DY);
-    horse2Rect.SetRect(HORSE2_X, HORSE2_Y, HORSE2_X + HORSE2_DX, HORSE2_Y + HORSE2_DY);
-    flowerRect.SetRect(FLOWER_X, FLOWER_Y, FLOWER_X + FLOWER_DX, FLOWER_Y + FLOWER_DY);
+	birdRect.SetRect(BIRD_X, BIRD_Y, BIRD_X + BIRD_DX, BIRD_Y + BIRD_DY);
+	horse1Rect.SetRect(HORSE1_X, HORSE1_Y, HORSE1_X + HORSE1_DX, HORSE1_Y + HORSE1_DY);
+	horse2Rect.SetRect(HORSE2_X, HORSE2_Y, HORSE2_X + HORSE2_DX, HORSE2_Y + HORSE2_DY);
+	flowerRect.SetRect(FLOWER_X, FLOWER_Y, FLOWER_X + FLOWER_DX, FLOWER_Y + FLOWER_DY);
 
-    tmpRect = m_pScrollSprite->GetRect();
+	tmpRect = m_pScrollSprite->GetRect();
 
-    CSound::waitWaveSounds();
+	CSound::waitWaveSounds();
 
-    if (tmpRect.PtInRect(point)) {
+	if (tmpRect.PtInRect(point)) {
 
-        PostMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
+		PostMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
 
-    // User clicked on the Title - NewGame button
-    //
-    } else if (m_rNewGameButton.PtInRect(point)) {
+		// User clicked on the Title - NewGame button
+		//
+	} else if (m_rNewGameButton.PtInRect(point)) {
 
-        // if we are not playing from the metagame
-        //
-        if (!pGameParams->bPlayingMetagame) {
+		// if we are not playing from the metagame
+		//
+		if (!pGameParams->bPlayingMetagame) {
 
-            // start a new game
-            PlayGame();
-        }
+			// start a new game
+			PlayGame();
+		}
 
-    } else if (birdRect.PtInRect(point)) {
-        pDC = GetDC();
-        pSprite = new CSprite;
-        (*pSprite).SharePalette(pMyGamePalette);
-        bSuccess = (*pSprite).LoadCels( pDC, BIRD_ANIM, NUM_BIRD_CELS );
-        if (!bSuccess) {
-            delete pSprite;
-            ReleaseDC(pDC);
-            return;
-        }
-        (*pSprite).SetMasked(FALSE);
-        (*pSprite).SetMobile(FALSE); 
-    
-        if ((*pGameParams).bSoundEffectsEnabled) {
-            if ((pEffect = new CSound( (CWnd *)this, WAV_BIRD, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->play();
-            }
-        }                                   
-        (*pSprite).SetCel( NUM_BIRD_CELS );
-        for( i = 0; i < NUM_BIRD_CELS; i++ ) {
-            (*pSprite).PaintSprite( pDC, BIRD_X, BIRD_Y );
-            CSound::handleMessages();
-            Sleep( BIRD_SLEEP );
-        }
-        if (pSprite != NULL)
-            delete pSprite; 
-        
-        ReleaseDC(pDC);
-        
-    } else if (horse1Rect.PtInRect(point)) {
-        pDC = GetDC();
-        pSprite = new CSprite;
-        (*pSprite).SharePalette(pMyGamePalette);
-        bSuccess = (*pSprite).LoadCels( pDC, HORSE1_ANIM, NUM_HORSE1_CELS );
-        if (!bSuccess) {
-            delete pSprite;
-            ReleaseDC(pDC);
-            return;
-        }
-        (*pSprite).SetMasked(FALSE);
-        (*pSprite).SetMobile(FALSE); 
-    
-        if ((*pGameParams).bSoundEffectsEnabled) {
-            if ((pEffect = new CSound( (CWnd *)this, WAV_HORSE1, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->play();
-            }
-        }                                   
-        (*pSprite).SetCel( NUM_HORSE1_CELS );
-        for( i = 0; i < NUM_HORSE1_CELS; i++ ) {
-            (*pSprite).PaintSprite( pDC, HORSE1_X, HORSE1_Y );
-            CSound::handleMessages();
-            Sleep( HORSE1_SLEEP );
-        }
-        if (pSprite != NULL)
-            delete pSprite; 
-        
-        ReleaseDC(pDC);
-        
-    } else if (horse2Rect.PtInRect(point)) {
-        pDC = GetDC();
-        pSprite = new CSprite;
-        (*pSprite).SharePalette(pMyGamePalette);
-        bSuccess = (*pSprite).LoadCels( pDC, HORSE2_ANIM, NUM_HORSE2_CELS );
-        if (!bSuccess) {
-            delete pSprite;
-            ReleaseDC(pDC);
-            return;
-        }
-        (*pSprite).SetMasked(FALSE);
-        (*pSprite).SetMobile(FALSE); 
-    
-        if ((*pGameParams).bSoundEffectsEnabled) {
-            if ((pEffect = new CSound( (CWnd *)this, WAV_HORSE2, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->play();
-            }
-        }                                   
-        (*pSprite).SetCel( NUM_HORSE2_CELS );
-        for( i = 0; i < NUM_HORSE2_CELS; i++ ) {
-            (*pSprite).PaintSprite( pDC, HORSE2_X, HORSE2_Y );
-            CSound::handleMessages();
-            Sleep( HORSE2_SLEEP );
-        }
-        if (pSprite != NULL)
-            delete pSprite; 
-        
-        ReleaseDC(pDC);
-        
-    } else if (flowerRect.PtInRect(point)) {
-        pDC = GetDC();
-        pSprite = new CSprite;
-        (*pSprite).SharePalette(pMyGamePalette);
-        bSuccess = (*pSprite).LoadCels( pDC, FLOWER_ANIM, NUM_FLOWER_CELS );
-        if (!bSuccess) {
-            delete pSprite;
-            ReleaseDC(pDC);
-            return;
-        }
-        (*pSprite).SetMasked(FALSE);
-        (*pSprite).SetMobile(FALSE); 
-    
-        if ((*pGameParams).bSoundEffectsEnabled) {
-            if ((pEffect = new CSound( (CWnd *)this, WAV_FLOWER, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
-                pEffect->play();
-            }
-        }                                   
-        (*pSprite).SetCel( NUM_FLOWER_CELS );
-        for( i = 0; i < NUM_FLOWER_CELS; i++ ) {
-            (*pSprite).PaintSprite( pDC, FLOWER_X, FLOWER_Y );
-            CSound::handleMessages();
-            Sleep( FLOWER_SLEEP );
-        }
-        if (pSprite != NULL)
-            delete pSprite; 
-        
-        ReleaseDC(pDC);
+	} else if (birdRect.PtInRect(point)) {
+		pDC = GetDC();
+		pSprite = new CSprite;
+		(*pSprite).SharePalette(pMyGamePalette);
+		bSuccess = (*pSprite).LoadCels(pDC, BIRD_ANIM, NUM_BIRD_CELS);
+		if (!bSuccess) {
+			delete pSprite;
+			ReleaseDC(pDC);
+			return;
+		}
+		(*pSprite).SetMasked(FALSE);
+		(*pSprite).SetMobile(FALSE);
 
-    } else {
+		if ((*pGameParams).bSoundEffectsEnabled) {
+			if ((pEffect = new CSound((CWnd *)this, WAV_BIRD, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
+				pEffect->play();
+			}
+		}
+		(*pSprite).SetCel(NUM_BIRD_CELS);
+		for (i = 0; i < NUM_BIRD_CELS; i++) {
+			(*pSprite).PaintSprite(pDC, BIRD_X, BIRD_Y);
+			CSound::handleMessages();
+			Sleep(BIRD_SLEEP);
+		}
+		if (pSprite != NULL)
+			delete pSprite;
 
-        CFrameWnd::OnLButtonDown(nFlags, point);
-    }
+		ReleaseDC(pDC);
+
+	} else if (horse1Rect.PtInRect(point)) {
+		pDC = GetDC();
+		pSprite = new CSprite;
+		(*pSprite).SharePalette(pMyGamePalette);
+		bSuccess = (*pSprite).LoadCels(pDC, HORSE1_ANIM, NUM_HORSE1_CELS);
+		if (!bSuccess) {
+			delete pSprite;
+			ReleaseDC(pDC);
+			return;
+		}
+		(*pSprite).SetMasked(FALSE);
+		(*pSprite).SetMobile(FALSE);
+
+		if ((*pGameParams).bSoundEffectsEnabled) {
+			if ((pEffect = new CSound((CWnd *)this, WAV_HORSE1, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
+				pEffect->play();
+			}
+		}
+		(*pSprite).SetCel(NUM_HORSE1_CELS);
+		for (i = 0; i < NUM_HORSE1_CELS; i++) {
+			(*pSprite).PaintSprite(pDC, HORSE1_X, HORSE1_Y);
+			CSound::handleMessages();
+			Sleep(HORSE1_SLEEP);
+		}
+		if (pSprite != NULL)
+			delete pSprite;
+
+		ReleaseDC(pDC);
+
+	} else if (horse2Rect.PtInRect(point)) {
+		pDC = GetDC();
+		pSprite = new CSprite;
+		(*pSprite).SharePalette(pMyGamePalette);
+		bSuccess = (*pSprite).LoadCels(pDC, HORSE2_ANIM, NUM_HORSE2_CELS);
+		if (!bSuccess) {
+			delete pSprite;
+			ReleaseDC(pDC);
+			return;
+		}
+		(*pSprite).SetMasked(FALSE);
+		(*pSprite).SetMobile(FALSE);
+
+		if ((*pGameParams).bSoundEffectsEnabled) {
+			if ((pEffect = new CSound((CWnd *)this, WAV_HORSE2, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
+				pEffect->play();
+			}
+		}
+		(*pSprite).SetCel(NUM_HORSE2_CELS);
+		for (i = 0; i < NUM_HORSE2_CELS; i++) {
+			(*pSprite).PaintSprite(pDC, HORSE2_X, HORSE2_Y);
+			CSound::handleMessages();
+			Sleep(HORSE2_SLEEP);
+		}
+		if (pSprite != NULL)
+			delete pSprite;
+
+		ReleaseDC(pDC);
+
+	} else if (flowerRect.PtInRect(point)) {
+		pDC = GetDC();
+		pSprite = new CSprite;
+		(*pSprite).SharePalette(pMyGamePalette);
+		bSuccess = (*pSprite).LoadCels(pDC, FLOWER_ANIM, NUM_FLOWER_CELS);
+		if (!bSuccess) {
+			delete pSprite;
+			ReleaseDC(pDC);
+			return;
+		}
+		(*pSprite).SetMasked(FALSE);
+		(*pSprite).SetMobile(FALSE);
+
+		if ((*pGameParams).bSoundEffectsEnabled) {
+			if ((pEffect = new CSound((CWnd *)this, WAV_FLOWER, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != NULL) {
+				pEffect->play();
+			}
+		}
+		(*pSprite).SetCel(NUM_FLOWER_CELS);
+		for (i = 0; i < NUM_FLOWER_CELS; i++) {
+			(*pSprite).PaintSprite(pDC, FLOWER_X, FLOWER_Y);
+			CSound::handleMessages();
+			Sleep(FLOWER_SLEEP);
+		}
+		if (pSprite != NULL)
+			delete pSprite;
+
+		ReleaseDC(pDC);
+
+	} else {
+
+		CFrameWnd::OnLButtonDown(nFlags, point);
+	}
 }
 
-void CMainWindow::OnSetFocus(CWnd *)
-{
-    if (m_bInGuess)
-        m_pDlgGuess->SetFocus();
-    else {
-        SetFocus();
-    }
+void CMainWindow::OnSetFocus(CWnd *) {
+	if (m_bInGuess)
+		m_pDlgGuess->SetFocus();
+	else {
+		SetFocus();
+	}
 }
 
-void CMainWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized)
-{
-    if (!bMinimized) {
-        switch (nState) {
-            case WA_ACTIVE:
-            case WA_CLICKACTIVE:
-                //InvalidateRect(NULL, FALSE);
-                break;
+void CMainWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
+	if (!bMinimized) {
+		switch (nState) {
+		case WA_ACTIVE:
+		case WA_CLICKACTIVE:
+			//InvalidateRect(NULL, FALSE);
+			break;
 
-            default:
-                break;
-        }
-    }
+		default:
+			break;
+		}
+	}
 }
 
 //////////// Additional Sound Notify routines //////////////
 
-long CMainWindow::OnMCINotify( WPARAM wParam, LPARAM lParam)
-{
-CSound  *pSound;
-    
-    pSound = CSound::OnMCIStopped(wParam,lParam);
-    if (pSound != NULL)
-        OnSoundNotify(pSound);
-    return(0L);  
+long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+	CSound  *pSound;
+
+	pSound = CSound::OnMCIStopped(wParam, lParam);
+	if (pSound != NULL)
+		OnSoundNotify(pSound);
+	return (0L);
 }
 
-    
-long CMainWindow::OnMMIONotify( WPARAM wParam, LPARAM lParam)
-{
-CSound  *pSound;
-    
-    pSound = CSound::OnMMIOStopped(wParam,lParam);
-    if (pSound != NULL)
-        OnSoundNotify(pSound);
-    return(0L);  
+
+long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+	CSound  *pSound;
+
+	pSound = CSound::OnMMIOStopped(wParam, lParam);
+	if (pSound != NULL)
+		OnSoundNotify(pSound);
+	return (0L);
 }
 
-void CMainWindow::OnSoundNotify(CSound *)
-{
-    //
-    // Add your code to process explicit notification of a sound "done" event here.
-    // pSound is a pointer to a CSound object for which you requested SOUND_NOTIFY.
-    //
+void CMainWindow::OnSoundNotify(CSound *) {
+	//
+	// Add your code to process explicit notification of a sound "done" event here.
+	// pSound is a pointer to a CSound object for which you requested SOUND_NOTIFY.
+	//
 }
 
 //
 // CMainWindow message map:
 // Associate messages with member functions.
 //
-BEGIN_MESSAGE_MAP( CMainWindow, CFrameWnd )
-    ON_WM_PAINT()
-    ON_WM_CHAR()
-    ON_WM_SYSCHAR()
-    ON_WM_KEYDOWN()
-    ON_WM_SYSKEYDOWN()
-    ON_WM_CLOSE()
-    ON_WM_MOUSEMOVE()
-    ON_WM_SETFOCUS()
-    ON_WM_LBUTTONDOWN()
-    ON_WM_ACTIVATE()
-    ON_MESSAGE(MM_MCINOTIFY, OnMCINotify)
-    ON_MESSAGE(MM_WOM_DONE, OnMMIONotify)
+BEGIN_MESSAGE_MAP(CMainWindow, CFrameWnd)
+	ON_WM_PAINT()
+	ON_WM_CHAR()
+	ON_WM_SYSCHAR()
+	ON_WM_KEYDOWN()
+	ON_WM_SYSKEYDOWN()
+	ON_WM_CLOSE()
+	ON_WM_MOUSEMOVE()
+	ON_WM_SETFOCUS()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_ACTIVATE()
+	ON_MESSAGE(MM_MCINOTIFY, OnMCINotify)
+	ON_MESSAGE(MM_WOM_DONE, OnMMIONotify)
 END_MESSAGE_MAP()
 
 } // namespace PDQ

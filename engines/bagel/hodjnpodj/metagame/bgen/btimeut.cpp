@@ -33,7 +33,7 @@ namespace Metagame {
 BOOL bTimeDelayPassed = TRUE ;
 
 void CALLBACK EXPORT DelayMsCallback(HWND /* hWnd */,
-	UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
+                                     UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
 
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
@@ -41,78 +41,76 @@ BOOL CTimeUtil::DelayMs(UINT uMs)
 // uMs -- number of milliseconds to delay
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CTimeUtil::DelayMs) ;
-    int iError = 0 ;		// error code
-    UINT uTimerId ;		// timer id returned by SetTimer
+	JXENTER(CTimeUtil::DelayMs) ;
+	int iError = 0 ;        // error code
+	UINT uTimerId ;     // timer id returned by SetTimer
 
-    // set timer, and test for success
-    if ((uTimerId = SetTimer(NULL, 0, uMs, ::DelayMsCallback)) == 0) {
-        iError = 100 ;      // SetTimer failed
-        goto cleanup ;
-    }
+	// set timer, and test for success
+	if ((uTimerId = SetTimer(NULL, 0, uMs, ::DelayMsCallback)) == 0) {
+		iError = 100 ;      // SetTimer failed
+		goto cleanup ;
+	}
 
-    bTimeDelayPassed = FALSE ;	// time hasn't passed yet
-    while (!bTimeDelayPassed)	// loop until flag gets set again
-        DoPendingEvents() ;
+	bTimeDelayPassed = FALSE ;  // time hasn't passed yet
+	while (!bTimeDelayPassed)   // loop until flag gets set again
+		DoPendingEvents() ;
 
-    // kill timer and test success
-    if (!KillTimer(NULL, uTimerId)) {
-        iError = 101 ;      // KillTimer failed
-        goto cleanup ;
-    }
+	// kill timer and test success
+	if (!KillTimer(NULL, uTimerId)) {
+		iError = 101 ;      // KillTimer failed
+		goto cleanup ;
+	}
 
 cleanup:
 
-    JXELEAVE(CTimeUtil::DelayMs) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CTimeUtil::DelayMs) ;
+	RETURN(iError != 0) ;
 }
 
 ///* ::DelayMsCallback -- SetTimer callback routine for DelayMs
 void CALLBACK EXPORT ::DelayMsCallback(HWND /* hWnd */,
-		UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */)
+                                       UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */)
 // hWnd -- handle of window (always NULL in this case)
 // uMsg -- WM_TIMER message
 // uTimerId -- timer identifier
 // dwTime -- current system time
 // returns: void
 {
-    JXENTER(::DelayMsCallback) ;
-    int iError = 0 ;		// error code
-    bTimeDelayPassed = TRUE ;	// elapsed time passed
+	JXENTER(::DelayMsCallback) ;
+	int iError = 0 ;        // error code
+	bTimeDelayPassed = TRUE ;   // elapsed time passed
 
-    JXELEAVE(::DelayMsCallback) ;
+	JXELEAVE(::DelayMsCallback) ;
 }
 
 extern "C" {
-void DoPendingEvents()
-{
-   MSG  msg;
+	void DoPendingEvents() {
+		MSG  msg;
 
-   while ( PeekMessage(&msg, NULL,0,0,PM_REMOVE) ) {
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-   }
-}
-}	/* extern "C" */
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+}   /* extern "C" */
 
 #if 0
 
 ////* CMnkWindow::FlushInputEvents --
-void CMnkWindow::FlushInputEvents(void)
-{
-    MSG msg ;
+void CMnkWindow::FlushInputEvents(void) {
+	MSG msg ;
 
-    // find and remove all keyboard events
-    while(TRUE) {
-        if (!PeekMessage(&msg,NULL,WM_KEYFIRST,WM_KEYLAST,PM_REMOVE))
-            break ;
-    }
+	// find and remove all keyboard events
+	while (TRUE) {
+		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+			break ;
+	}
 
-    while(TRUE) {
-        // find and remove all mouse events
-        if (!PeekMessage(&msg,NULL,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE))
-            break ;
-    }
+	while (TRUE) {
+		// find and remove all mouse events
+		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+			break ;
+	}
 }
 
 #endif

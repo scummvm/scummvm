@@ -63,8 +63,8 @@ CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToL
 
 CBagVar::~CBagVar() {
 	if (CBagel::getBagApp() &&
-		CBagel::getBagApp()->getMasterWnd() &&
-		CBagel::getBagApp()->getMasterWnd()->getVariableManager())
+	        CBagel::getBagApp()->getMasterWnd() &&
+	        CBagel::getBagApp()->getMasterWnd()->getVariableManager())
 		g_VarManager->unRegisterVariable(this);
 }
 

@@ -164,11 +164,10 @@ ParseCodes CBagTimeObject::setInfo(CBagIfstream &istr) {
 
 		char ch = (char)istr.peek();
 		switch (ch) {
-			//
-			//  +n  - n number of slides in sprite
-			//
-		case '+':
-		{
+		//
+		//  +n  - n number of slides in sprite
+		//
+		case '+': {
 			int cels;
 			istr.getCh();
 			getIntFromStream(istr, cels);
@@ -177,8 +176,7 @@ ParseCodes CBagTimeObject::setInfo(CBagIfstream &istr) {
 			break;
 		}
 
-		case 'V':
-		{
+		case 'V': {
 			char szLocalBuff[256];
 			szLocalBuff[0] = '\0';
 			CBofString sStr(szLocalBuff, 256);
@@ -202,8 +200,7 @@ ParseCodes CBagTimeObject::setInfo(CBagIfstream &istr) {
 		}
 
 		// No match return from function
-		default:
-		{
+		default: {
 			ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;

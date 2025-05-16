@@ -35,74 +35,74 @@ namespace GrandTour {
 #include "pawn.h"
 
 #ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
+	#undef THIS_FILE
+	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
 
-#define TEXT_MORE_DX		120						// offset of "more" indicator from right margin
-#define TEXT_MORE_DY		5                       // offset of "more" indicator bottom of scroll
-#define MORE_TEXT_BLURB		"[ More ]"				// actual text to display for "more" indicator
-#define MORE_TEXT_LENGTH	8                       // # characters in "more" indicator string
+#define TEXT_MORE_DX        120                     // offset of "more" indicator from right margin
+#define TEXT_MORE_DY        5                       // offset of "more" indicator bottom of scroll
+#define MORE_TEXT_BLURB     "[ More ]"              // actual text to display for "more" indicator
+#define MORE_TEXT_LENGTH    8                       // # characters in "more" indicator string
 
-#define BUTTON_DY			15						// offset for Okay button from pawn base
+#define BUTTON_DY           15                      // offset for Okay button from pawn base
 
 
 extern CBfcMgr      *lpMetaGameStruct;
 
 
 extern "C" {
-LRESULT FAR PASCAL PawnHookProc(int,WORD,LONG);	// keyboard hook procedure definition
+	LRESULT FAR PASCAL PawnHookProc(int, WORD, LONG); // keyboard hook procedure definition
 }
 
-extern 	HINSTANCE	hDLLInst;
-extern  HINSTANCE 	hExeInst;
+extern  HINSTANCE   hDLLInst;
+extern  HINSTANCE   hExeInst;
 
-typedef LRESULT (FAR PASCAL *FPPAWNHOOKPROC) ( int, WORD, LONG );
+typedef LRESULT(FAR PASCAL *FPPAWNHOOKPROC)(int, WORD, LONG);
 
-static	FPPAWNHOOKPROC 	lpfnKbdHook = NULL;			// pointer to hook procedure
+static  FPPAWNHOOKPROC  lpfnKbdHook = NULL;         // pointer to hook procedure
 
-static	HHOOK		hKbdHook = NULL;                // handle for hook procedure
+static  HHOOK       hKbdHook = NULL;                // handle for hook procedure
 
-static	CPawnShop	*pPawnDialog = NULL;		// pointer to our pawn dialog box
-static	CWnd		*pParentWnd = NULL;				// parent window for this dialog
+static  CPawnShop   *pPawnDialog = NULL;        // pointer to our pawn dialog box
+static  CWnd        *pParentWnd = NULL;             // parent window for this dialog
 
-static	CColorButton *pOKButton = NULL;				// OKAY button on scroll
-static	CRect		OkayRect;						// rectangle bounding the OKAY button
+static  CColorButton *pOKButton = NULL;             // OKAY button on scroll
+static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
-static	CInventory	*pInventory = NULL;				// inventory to be displayed
-static	CInventory	*pGeneralStore = NULL;			// general store's inventory
+static  CInventory  *pInventory = NULL;             // inventory to be displayed
+static  CInventory  *pGeneralStore = NULL;          // general store's inventory
 
-static	CRect		PawnRect;						// x/y (left/right) and dx/dy (right/bottom) for the pawn window
-static	CRect		ScrollTopRect,					// area spanned by upper scroll curl
-					ScrollBotRect;                  // area spanned by lower scroll curl
-					
-static	CDC			*pPawnDC = NULL;				// device context for the pawn bitmap
-static	CBitmap		*pPawnBitmap = NULL,			// bitmap for an entirely blank pawn
-					*pPawnBitmapOld = NULL;     	// bitmap previously mapped to the pawn context
+static  CRect       PawnRect;                       // x/y (left/right) and dx/dy (right/bottom) for the pawn window
+static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
+        ScrollBotRect;                  // area spanned by lower scroll curl
 
-static	CBitmap		*pBackgroundBitmap = NULL;
-static	CPalette	*pBackgroundPalette = NULL;
+static  CDC         *pPawnDC = NULL;                // device context for the pawn bitmap
+static  CBitmap     *pPawnBitmap = NULL,            // bitmap for an entirely blank pawn
+                     *pPawnBitmapOld = NULL;         // bitmap previously mapped to the pawn context
 
-static	CDC			*pWorkDC = NULL;				// context and resources for the offscreen
-static	CBitmap		*pWork = NULL,                  // ... work area (only if memory permits)
-					*pWorkOld = NULL;
-static	CPalette	*pWorkPalOld = NULL;
+static  CBitmap     *pBackgroundBitmap = NULL;
+static  CPalette    *pBackgroundPalette = NULL;
 
-static	CText		*pItemText = NULL;				// item information field
-static	CText		*pItemCost = NULL;				// item cost field
-static	CText		*pTitleText = NULL;				// title information field
+static  CDC         *pWorkDC = NULL;                // context and resources for the offscreen
+static  CBitmap     *pWork = NULL,                  // ... work area (only if memory permits)
+                     *pWorkOld = NULL;
+static  CPalette    *pWorkPalOld = NULL;
 
-static	CFont		*pFont = NULL;					// font to use for displaying pawn text
-static	char		chPathName[128];                // buffer to hold path name of the pawn file
+static  CText       *pItemText = NULL;              // item information field
+static  CText       *pItemCost = NULL;              // item cost field
+static  CText       *pTitleText = NULL;             // title information field
 
-static	BOOL		bActiveWindow = FALSE;			// whether our window is active
-static	BOOL		bFirstTime = TRUE;				// flag for first time information is displayed
-static	int			nPawn_DX, nPawn_DY;				// size of useable pawn background
-static	int			nItem_DDX, nItem_DDY;           // space separation between inventory items
-static	int			nItemsPerColumn, nItemsPerRow;	// span of items that fit on the background
-static	int			nFirstSlot = 0;					// first item in current inventory page
+static  CFont       *pFont = NULL;                  // font to use for displaying pawn text
+static  char        chPathName[128];                // buffer to hold path name of the pawn file
 
-static	BOOL		bPlayingHodj = TRUE;			// whether playing Hodj or Podj
+static  BOOL        bActiveWindow = FALSE;          // whether our window is active
+static  BOOL        bFirstTime = TRUE;              // flag for first time information is displayed
+static  int         nPawn_DX, nPawn_DY;             // size of useable pawn background
+static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
+static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
+static  int         nFirstSlot = 0;                 // first item in current inventory page
+
+static  BOOL        bPlayingHodj = TRUE;            // whether playing Hodj or Podj
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -110,26 +110,24 @@ static	BOOL		bPlayingHodj = TRUE;			// whether playing Hodj or Podj
 
 
 
-BOOL CPawnShop::SetupKeyboardHook(void)
-{
-	pPawnDialog = this;							// retain pointer to our dialog box
+BOOL CPawnShop::SetupKeyboardHook(void) {
+	pPawnDialog = this;                         // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPPAWNHOOKPROC)::GetProcAddress( hDLLInst, "PawnHookProc");
+	lpfnKbdHook = (FPPAWNHOOKPROC)::GetProcAddress(hDLLInst, "PawnHookProc");
 	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
-		return(FALSE);
-	
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD,(HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
+		return (FALSE);
+
+	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
 	if (hKbdHook == NULL)                           // plug in our keyboard hook
-		return(FALSE);
-	
-	return(TRUE);
+		return (FALSE);
+
+	return (TRUE);
 }
 
 
-void CPawnShop::RemoveKeyboardHook(void)
-{
+void CPawnShop::RemoveKeyboardHook(void) {
 	if (m_bKeyboardHook)
-		UnhookWindowsHookEx(hKbdHook);					// unhook our keyboard procedure
+		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 
 	pPawnDialog = NULL;
 	lpfnKbdHook = NULL;
@@ -138,79 +136,76 @@ void CPawnShop::RemoveKeyboardHook(void)
 }
 
 
-extern "C" 
-LRESULT FAR PASCAL PawnHookProc(int code, WORD wParam, LONG lParam)
-{
-CDC	*pDC = NULL;
+extern "C"
+LRESULT FAR PASCAL PawnHookProc(int code, WORD wParam, LONG lParam) {
+	CDC *pDC = NULL;
 
-	if (code < 0)										// required to punt to next hook
-		return(CallNextHookEx((HHOOK) lpfnKbdHook,code,wParam,lParam));
-	
-	if (lParam & 0xA0000000)							// ignore ALT and key release
-		return(FALSE);
+	if (code < 0)                                       // required to punt to next hook
+		return (CallNextHookEx((HHOOK) lpfnKbdHook, code, wParam, lParam));
+
+	if (lParam & 0xA0000000)                            // ignore ALT and key release
+		return (FALSE);
 
 	if (bActiveWindow)
-		switch(wParam) {								// process only the keys we are looking for
-			case VK_UP:                                 // ... letting the default dialog procedure
-			case VK_NUMPAD8:                            // ... deal with all the rest
-			case VK_PRIOR:                              // go to previous page of text
-				if (nFirstSlot > 0) {                   // ... scroll up if not at first item
-					nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
-					if (nFirstSlot < 0)
-						nFirstSlot = 0;
-					pDC = (*pPawnDialog).GetDC();
-				}
-				break;
-			case VK_DOWN:								// go to next page of text
-			case VK_NUMPAD2:
-			case VK_NEXT:
-				if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount()) {
-					nFirstSlot += (nItemsPerRow * nItemsPerColumn);
-					pDC = (*pPawnDialog).GetDC();
-				}
-				break;
-			case VK_HOME:								// go to first page of text
-				if (nFirstSlot != 0) {
-					nFirstSlot = 0;
-					pDC = (*pPawnDialog).GetDC();
-				}
-				break;
-			case VK_END:								// go to last page of text
-				nFirstSlot = (*pInventory).ItemCount() - (nItemsPerRow * nItemsPerColumn);
+		switch (wParam) {                               // process only the keys we are looking for
+		case VK_UP:                                 // ... letting the default dialog procedure
+		case VK_NUMPAD8:                            // ... deal with all the rest
+		case VK_PRIOR:                              // go to previous page of text
+			if (nFirstSlot > 0) {                   // ... scroll up if not at first item
+				nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
 				if (nFirstSlot < 0)
 					nFirstSlot = 0;
 				pDC = (*pPawnDialog).GetDC();
+			}
+			break;
+		case VK_DOWN:                               // go to next page of text
+		case VK_NUMPAD2:
+		case VK_NEXT:
+			if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount()) {
+				nFirstSlot += (nItemsPerRow * nItemsPerColumn);
+				pDC = (*pPawnDialog).GetDC();
+			}
+			break;
+		case VK_HOME:                               // go to first page of text
+			if (nFirstSlot != 0) {
+				nFirstSlot = 0;
+				pDC = (*pPawnDialog).GetDC();
+			}
+			break;
+		case VK_END:                                // go to last page of text
+			nFirstSlot = (*pInventory).ItemCount() - (nItemsPerRow * nItemsPerColumn);
+			if (nFirstSlot < 0)
+				nFirstSlot = 0;
+			pDC = (*pPawnDialog).GetDC();
 		}
 
-	if (pDC != NULL) {                              	// update the inventory page if required
+	if (pDC != NULL) {                                  // update the inventory page if required
 		CPawnShop::UpdatePage(pDC);
 		(*pPawnDialog).ReleaseDC(pDC);
-		return(TRUE);
+		return (TRUE);
 	}
-	
-	return(FALSE);
+
+	return (FALSE);
 }
 
 
-CPawnShop::CPawnShop(CWnd* pParent,CPalette *pPalette, CInventory *pStore, CInventory *pInvent)
-	: CDialog(CPawnShop::IDD, pParent)
-{
+CPawnShop::CPawnShop(CWnd* pParent, CPalette *pPalette, CInventory *pStore, CInventory *pInvent)
+	: CDialog(CPawnShop::IDD, pParent) {
 	pBackgroundPalette = pPalette;                      // retain palette to be used
-	pGeneralStore = pStore;								// retain pawn inventory
+	pGeneralStore = pStore;                             // retain pawn inventory
 	pInventory = pInvent;                               // retain inventory to be displayed
 	pParentWnd = pParent;                               // retain pointer to parent window
-	
+
 	//{{AFX_DATA_INIT(CPawnShop)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
 
-void CPawnShop::DoDataExchange(CDataExchange* pDX)
-{
+void CPawnShop::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CPawnShop)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
@@ -225,7 +220,7 @@ BEGIN_MESSAGE_MAP(CPawnShop, CDialog)
 	ON_WM_SETCURSOR()
 	ON_WM_NCMOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
-    ON_WM_DESTROY()
+	ON_WM_DESTROY()
 	ON_WM_ACTIVATE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -234,39 +229,36 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPawnShop message handlers
 
-void CPawnShop::OnOK()
-{
+void CPawnShop::OnOK() {
 	ClearDialogImage();
 	CDialog::EndDialog(IDC_PAWN_OKAY);
 }
 
 
-void CPawnShop::OnCancel(void)
-{
+void CPawnShop::OnCancel(void) {
 	ClearDialogImage();
-    CDialog::OnCancel();
+	CDialog::OnCancel();
 }
 
 
-void CPawnShop::OnDestroy()
-{
-BOOL	bUpdateNeeded;
+void CPawnShop::OnDestroy() {
+	BOOL    bUpdateNeeded;
 
 	if (pFont != NULL)
-		delete pFont;								// release the font file
+		delete pFont;                               // release the font file
 
 	if (pOKButton != NULL)                          // release the button
 		delete pOKButton;
 
-	if (m_bKeyboardHook)								// remove keyboard hook, if present
+	if (m_bKeyboardHook)                                // remove keyboard hook, if present
 		RemoveKeyboardHook();
 
 	if (pWorkOld != NULL) {
-		(void) (*pWorkDC).SelectObject(pWorkOld);
+		(void)(*pWorkDC).SelectObject(pWorkOld);
 		pWorkOld = NULL;
 	}
 	if (pWorkPalOld != NULL) {
-		(void) (*pWorkDC).SelectPalette(pWorkPalOld,FALSE);
+		(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
 		pWorkPalOld = NULL;
 	}
 	if (pWork != NULL) {
@@ -277,20 +269,20 @@ BOOL	bUpdateNeeded;
 		delete pWorkDC;
 		pWorkDC = NULL;
 	}
-	
+
 	if (pPawnBitmap != NULL) {
 		delete pPawnBitmap;
 		pPawnBitmap = NULL;
 	}
-	
+
 	if (pBackgroundBitmap != NULL) {
 		delete pBackgroundBitmap;
 		pBackgroundBitmap = NULL;
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(NULL,FALSE);
+		bUpdateNeeded = (*pParentWnd).GetUpdateRect(NULL, FALSE);
 		if (bUpdateNeeded)
-	    	(*pParentWnd).ValidateRect(NULL);
+			(*pParentWnd).ValidateRect(NULL);
 	}
-	
+
 	if (pItemText != NULL) {
 		delete pItemText;
 		pItemText = NULL;
@@ -303,192 +295,185 @@ BOOL	bUpdateNeeded;
 		delete pTitleText;
 		pTitleText = NULL;
 	}
-	
-    CDialog::OnDestroy();
+
+	CDialog::OnDestroy();
 }
 
 
-BOOL CPawnShop::OnInitDialog()
-{
-BOOL	bSuccess;
-CWnd	*pButton;												// pointer to the OKAY button
-CRect	myRect;                                    				// rectangle that holds the button location
-int		x, y, dx, dy;                              				// used for calculating positioning info
+BOOL CPawnShop::OnInitDialog() {
+	BOOL    bSuccess;
+	CWnd    *pButton;                                               // pointer to the OKAY button
+	CRect   myRect;                                                 // rectangle that holds the button location
+	int     x, y, dx, dy;                                           // used for calculating positioning info
 
-	CDialog::OnInitDialog();									// do basic dialog initialization
+	CDialog::OnInitDialog();                                    // do basic dialog initialization
 
-	if (m_pParentWnd == NULL)									// get our parent window
-		m_pParentWnd = ((CWnd *) this)->GetParent();			// ... as passed to us or inquired about
-		
+	if (m_pParentWnd == NULL)                                   // get our parent window
+		m_pParentWnd = ((CWnd *) this)->GetParent();            // ... as passed to us or inquired about
+
 	(*m_pParentWnd).GetWindowRect(&myRect);
 	x = myRect.left + (((myRect.right - myRect.left) - PAWN_DX) >> 1);
 	y = myRect.top + (((myRect.bottom - myRect.top) - PAWN_DY) >> 1);
-	PawnRect.SetRect(0,0,PAWN_DX,PAWN_DY);
-	MoveWindow(x,y,PAWN_DX,PAWN_DY);							// center the dialog box on the parent
-	
-	pButton = GetDlgItem((int) GetDefID());						// get the window for the okay button
-	ASSERT(pButton != NULL);                        			// ... and verify we have it
-	(*pButton).GetWindowRect(&myRect);              			// get the button's position and size
+	PawnRect.SetRect(0, 0, PAWN_DX, PAWN_DY);
+	MoveWindow(x, y, PAWN_DX, PAWN_DY);                         // center the dialog box on the parent
 
-	dx = myRect.right - myRect.left;	            			// calculate where to place the button
-	x = (PawnRect.right - dx) >> 1;               				// ... centered at the bottom edge
+	pButton = GetDlgItem((int) GetDefID());                     // get the window for the okay button
+	ASSERT(pButton != NULL);                                    // ... and verify we have it
+	(*pButton).GetWindowRect(&myRect);                          // get the button's position and size
+
+	dx = myRect.right - myRect.left;                            // calculate where to place the button
+	x = (PawnRect.right - dx) >> 1;                             // ... centered at the bottom edge
 	dy = myRect.bottom - myRect.top;
 	y = PawnRect.bottom - dy - BUTTON_DY;
-	
-	(*pButton).MoveWindow(x,y,dx,dy);               			// reposition the button
-	OkayRect.SetRect(x,y,x + dx,y + dy);
 
-	pOKButton = new CColorButton;								// build a color OKAY button to let us exit
+	(*pButton).MoveWindow(x, y, dx, dy);                        // reposition the button
+	OkayRect.SetRect(x, y, x + dx, y + dy);
+
+	pOKButton = new CColorButton;                               // build a color OKAY button to let us exit
 	ASSERT(pOKButton != NULL);
-	(*pOKButton).SetPalette(pBackgroundPalette);				// set the palette to use
-	bSuccess = (*pOKButton).SetControl((int) GetDefID(),this);	// tie to the dialog control
-    ASSERT(bSuccess);
+	(*pOKButton).SetPalette(pBackgroundPalette);                // set the palette to use
+	bSuccess = (*pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
+	ASSERT(bSuccess);
 
-	ScrollTopRect.SetRect(0,0,PAWN_DX,PAWN_CURL_DY);	// setup rectangles for scrolling areas
-	ScrollBotRect.SetRect(0,PAWN_DY - PAWN_CURL_DY,PAWN_DX,PAWN_DY);
+	ScrollTopRect.SetRect(0, 0, PAWN_DX, PAWN_CURL_DY); // setup rectangles for scrolling areas
+	ScrollBotRect.SetRect(0, PAWN_DY - PAWN_CURL_DY, PAWN_DX, PAWN_DY);
 
-	m_bKeyboardHook = SetupKeyboardHook();			// establish keyboard hook
+	m_bKeyboardHook = SetupKeyboardHook();          // establish keyboard hook
 
 	bFirstTime = TRUE;
-    nFirstSlot = 0;
-    
-	if ((*pInventory).FindItem(MG_OBJ_HODJ_NOTEBOOK) != NULL)	// see who is playing
+	nFirstSlot = 0;
+
+	if ((*pInventory).FindItem(MG_OBJ_HODJ_NOTEBOOK) != NULL)   // see who is playing
 		bPlayingHodj = TRUE;
 	else
 		bPlayingHodj = FALSE;
-			
-	return(TRUE);  												// return TRUE  unless focused on a control
+
+	return (TRUE);                                              // return TRUE  unless focused on a control
 }
 
 
-void CPawnShop::OnActivate(UINT nState, CWnd *, BOOL /*bMinimized*/)
-{
-BOOL	bUpdateNeeded;
+void CPawnShop::OnActivate(UINT nState, CWnd *, BOOL /*bMinimized*/) {
+	BOOL    bUpdateNeeded;
 
-switch(nState) {
+	switch (nState) {
 	case WA_INACTIVE:
 		bActiveWindow = FALSE;
 		break;
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
 		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(NULL,FALSE);
+		bUpdateNeeded = GetUpdateRect(NULL, FALSE);
 		if (bUpdateNeeded)
-			InvalidateRect(NULL,FALSE);
+			InvalidateRect(NULL, FALSE);
 	}
 }
 
 
-void CPawnShop::OnPaint()
-{
-BOOL		bSuccess;
-CPaintDC	dc(this); 											// device context for painting
+void CPawnShop::OnPaint() {
+	BOOL        bSuccess;
+	CPaintDC    dc(this);                                           // device context for painting
 
-	if (bFirstTime) {											// acquire resources and if first time
-		bFirstTime = FALSE;                         		
+	if (bFirstTime) {                                           // acquire resources and if first time
+		bFirstTime = FALSE;
 		bSuccess = CreateWorkAreas(&dc);
 		if (!bSuccess)
 			CDialog::OnCancel();
-	 	}
-	
+	}
+
 	UpdatePawn(&dc);
 }
 
 
-void CPawnShop::UpdatePawn(CDC *pDC)
-{
-CPalette	*pPalOld;
+void CPawnShop::UpdatePawn(CDC *pDC) {
+	CPalette    *pPalOld;
 
-	DoWaitCursor();												// put up the hourglass cursor
-		
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette,FALSE);		// setup the proper palette
+	DoWaitCursor();                                             // put up the hourglass cursor
+
+	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);      // setup the proper palette
 	(*pDC).RealizePalette();
 
 	if (pWorkDC == NULL) {                                      // if we don't have a work area
 		RefreshBackground();                                    // ... then update the screen directly
-		PaintMaskedBitmap(pDC,pBackgroundPalette,pPawnBitmap,0,0,PAWN_DX,PAWN_DY);
+		PaintMaskedBitmap(pDC, pBackgroundPalette, pPawnBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		UpdateContent(pDC);
 		if (pTitleText != NULL)
 			(*pTitleText).DisplayString(pDC, "Pawn Shop", 32, TEXT_HEAVY, PAWN_TEXT_COLOR);
-	}
-	else {
+	} else {
 		if (pBackgroundBitmap != NULL)                                                      // ... otherwise revise work area
-			PaintBitmap(pWorkDC,pBackgroundPalette,pBackgroundBitmap,0,0,PAWN_DX,PAWN_DY);
-		PaintMaskedBitmap(pWorkDC,pBackgroundPalette,pPawnBitmap,0,0,PAWN_DX,PAWN_DY);
+			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, PAWN_DX, PAWN_DY);
+		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pPawnBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		UpdateContent(pWorkDC);                                 // ... then zap it to the screen
 		if (pTitleText != NULL)
 			(*pTitleText).DisplayString(pWorkDC, "Pawn Shop", 32, TEXT_HEAVY, PAWN_TEXT_COLOR);
-		(*pDC).BitBlt(0,0,PAWN_DX,PAWN_DY,pWorkDC,0,0,SRCCOPY);
+		(*pDC).BitBlt(0, 0, PAWN_DX, PAWN_DY, pWorkDC, 0, 0, SRCCOPY);
 	}
 
-	(*pDC).SelectPalette(pPalOld,FALSE);                        // reset the palette
-	
-	DoArrowCursor();											// return to an arrow cursor
+	(*pDC).SelectPalette(pPalOld, FALSE);                       // reset the palette
+
+	DoArrowCursor();                                            // return to an arrow cursor
 }
 
 
-void CPawnShop::UpdatePage(CDC *pDC)
-{
-CPalette	*pPalOld;
+void CPawnShop::UpdatePage(CDC *pDC) {
+	CPalette    *pPalOld;
 
-	if (pWorkDC == NULL) 										// update everything if no work area
-		(*pPawnDialog).InvalidateRect(NULL,FALSE);
+	if (pWorkDC == NULL)                                        // update everything if no work area
+		(*pPawnDialog).InvalidateRect(NULL, FALSE);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();											// put up the hourglass cursor
-		pPalOld = (*pDC).SelectPalette(pBackgroundPalette,FALSE);// setup the proper palette
+		DoWaitCursor();                                         // put up the hourglass cursor
+		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE); // setup the proper palette
 		(*pDC).RealizePalette();
 		if (pBackgroundBitmap != NULL)
-			PaintBitmap(pWorkDC,pBackgroundPalette,pBackgroundBitmap,0,0,PAWN_DX,PAWN_DY);
-		PaintMaskedBitmap(pWorkDC,pBackgroundPalette,pPawnBitmap,0,0,PAWN_DX,PAWN_DY);
+			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, PAWN_DX, PAWN_DY);
+		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pPawnBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		UpdateContent(pWorkDC);                                 // zap it to the screen
 		(*pDC).BitBlt(
-					0,
-					PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
-					PAWN_DX,
-					PAWN_DY - (PAWN_BORDER_DY << 1) - PAWN_TITLEZONE_DY - PAWN_TEXTZONE_DY,
-					pWorkDC,
-					0,
-					PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
-					SRCCOPY);
+		    0,
+		    PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
+		    PAWN_DX,
+		    PAWN_DY - (PAWN_BORDER_DY << 1) - PAWN_TITLEZONE_DY - PAWN_TEXTZONE_DY,
+		    pWorkDC,
+		    0,
+		    PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
+		    SRCCOPY);
 		(*pDC).BitBlt(
-					PAWN_DX - TEXT_MORE_DX,
-					PAWN_DY - PAWN_CURL_DY,
-					TEXT_MORE_DX,
-					PAWN_CURL_DY,
-					pWorkDC,
-					PAWN_DX - TEXT_MORE_DX,
-					PAWN_DY - PAWN_CURL_DY,
-					SRCCOPY);
-		(*pDC).SelectPalette(pPalOld,FALSE);                    // reset the palette
+		    PAWN_DX - TEXT_MORE_DX,
+		    PAWN_DY - PAWN_CURL_DY,
+		    TEXT_MORE_DX,
+		    PAWN_CURL_DY,
+		    pWorkDC,
+		    PAWN_DX - TEXT_MORE_DX,
+		    PAWN_DY - PAWN_CURL_DY,
+		    SRCCOPY);
+		(*pDC).SelectPalette(pPalOld, FALSE);                   // reset the palette
 		DoArrowCursor();
-	}															// return to an arrow cursor
+	}                                                           // return to an arrow cursor
 }
 
 
-void CPawnShop::UpdateContent(CDC *pDC)
-{
-CRect	myRect;
-CItem	*pItem;
-int		i, x, y, dx, dy;
-CFont	*pFontOld;
-CSize   textInfo;                       						// font info about the text to be displayed
-TEXTMETRIC	fontMetrics;
+void CPawnShop::UpdateContent(CDC *pDC) {
+	CRect   myRect;
+	CItem   *pItem;
+	int     i, x, y, dx, dy;
+	CFont   *pFontOld;
+	CSize   textInfo;                                               // font info about the text to be displayed
+	TEXTMETRIC  fontMetrics;
 
 	if ((*pInventory).ItemCount() <= 0)
 		return;
-		
-	nPawn_DX = PAWN_DX - (PAWN_BORDER_DX << 1);				// calculate the horizontal space we have available
+
+	nPawn_DX = PAWN_DX - (PAWN_BORDER_DX << 1);             // calculate the horizontal space we have available
 	nItemsPerRow = nPawn_DX / PAWN_BITMAP_DX;               // estimate number of items that will fit
-	while(TRUE) {
-		nItem_DDX = (nPawn_DX - (nItemsPerRow * PAWN_BITMAP_DX)) / (nItemsPerRow - 1);	// now evaluate the distance that would occur between
+	while (TRUE) {
+		nItem_DDX = (nPawn_DX - (nItemsPerRow * PAWN_BITMAP_DX)) / (nItemsPerRow - 1);  // now evaluate the distance that would occur between
 		if (nItem_DDX >= PAWN_BITMAP_DDX)                       // ... items, and if is less than the minimum allowed
 			break;                                              // ... then reduce the count of items per row
 		nItemsPerRow -= 1;
 	}
-	
-	nPawn_DY = PAWN_DY - PAWN_TEXTZONE_DY - (PAWN_BORDER_DY << 1) - PAWN_TITLEZONE_DY;	// calculate the vertical space we have available
+
+	nPawn_DY = PAWN_DY - PAWN_TEXTZONE_DY - (PAWN_BORDER_DY << 1) - PAWN_TITLEZONE_DY;  // calculate the vertical space we have available
 	nItemsPerColumn = nPawn_DY / PAWN_BITMAP_DY;            // estimate number of items that will fit
-	while(TRUE) {
+	while (TRUE) {
 		nItem_DDY = (nPawn_DY - (nItemsPerColumn * PAWN_BITMAP_DY)) / (nItemsPerColumn - 1);    // now evaluate the distance that would occur between
 		if (nItem_DDY >= PAWN_BITMAP_DDY)                       // ... items, and if is less than the minimum allowed
 			break;                                              // ... then reduce the count of items per column
@@ -496,95 +481,89 @@ TEXTMETRIC	fontMetrics;
 	}
 
 	pItem = (*pInventory).FetchItem(nFirstSlot);                // get first item on this page
-	for (i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != NULL); i++) {							// will thumb through all of them
+	for (i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != NULL); i++) {                           // will thumb through all of them
 		x = (i % nItemsPerRow);                                 // calculate its horizontal position
 		x *= (PAWN_BITMAP_DX + nItem_DDX);                      // ... allowing proper spacing between items
 		y = (i / nItemsPerRow);                                 // calculate its vertical position
 		y *= (PAWN_BITMAP_DY + nItem_DDY);                      // ... allowing proper spacing between items
-		UpdateItem(pDC,pItem,x + PAWN_BORDER_DX,y + PAWN_BORDER_DY + PAWN_TITLEZONE_DY);		// now show the item
+		UpdateItem(pDC, pItem, x + PAWN_BORDER_DX, y + PAWN_BORDER_DY + PAWN_TITLEZONE_DY);     // now show the item
 		pItem = (*pItem).GetNext();
 	}
 
 	if (pPawnBitmap != NULL) {
-		pFontOld = (*pDC).SelectObject(pFont);  				// select it into our context
-		(*pDC).SetBkMode(TRANSPARENT);            					// make the text overlay transparently
-		(*pDC).GetTextMetrics(&fontMetrics);						// show whether there are more notes
-		x = PAWN_DX - TEXT_MORE_DX;	                            // ... that can be scrolled through
+		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
+		(*pDC).SetBkMode(TRANSPARENT);                              // make the text overlay transparently
+		(*pDC).GetTextMetrics(&fontMetrics);                        // show whether there are more notes
+		x = PAWN_DX - TEXT_MORE_DX;                             // ... that can be scrolled through
 		y = PAWN_DY -
-			PAWN_CURL_DY +
-			((PAWN_CURL_DY - fontMetrics.tmHeight) >> 1) -
-			TEXT_MORE_DY;
-		textInfo = (*pDC).GetTextExtent(MORE_TEXT_BLURB,MORE_TEXT_LENGTH);
+		    PAWN_CURL_DY +
+		    ((PAWN_CURL_DY - fontMetrics.tmHeight) >> 1) -
+		    TEXT_MORE_DY;
+		textInfo = (*pDC).GetTextExtent(MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		dx = textInfo.cx;
-	    dy = fontMetrics.tmHeight;
-	
+		dy = fontMetrics.tmHeight;
+
 		if (pItem == NULL) {
-			myRect.SetRect(x,y,x + dx,y + dy);
+			myRect.SetRect(x, y, x + dx, y + dy);
 			BltBitmap(pDC, pBackgroundPalette, pPawnBitmap, &myRect, &myRect, SRCCOPY);
+		} else {
+			(*pDC).SetTextColor(PAWN_MORE_COLOR);
+			(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		}
-		else {
-		    (*pDC).SetTextColor(PAWN_MORE_COLOR);
-			(*pDC).TextOut(x,y,MORE_TEXT_BLURB,MORE_TEXT_LENGTH);
-		}
-		(void) (*pDC).SelectObject(pFontOld);         					// map out the font
+		(void)(*pDC).SelectObject(pFontOld);                            // map out the font
 	}
 }
 
 
-void CPawnShop::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY)
-{
-CFont   *pFontOld = NULL;               // font that was mapped to the context
-char	chBuffer[32];
+void CPawnShop::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
+	CFont   *pFontOld = NULL;               // font that was mapped to the context
+	char    chBuffer[32];
 
-	PaintMaskedDIB(pDC,pBackgroundPalette,(*pItem).GetArtSpec(),nX,nY,PAWN_BITMAP_DX,PAWN_BITMAP_DY);
-    
-    if (((*pItem).m_nQuantity == 0) ||
-    	((*pItem).m_nQuantity > 1)) {
-    	sprintf(chBuffer,"%ld",(*pItem).m_nQuantity);
-		pFontOld = (*pDC).SelectObject(pFont);  				// select it into our context
-		(*pDC).SetBkMode(TRANSPARENT);            				// make the text overlay transparently
-		(*pDC).SetTextColor(PAWN_BLURB_COLOR);            			// set the color of the text
-		(*pDC).TextOut(                         				// zap the text to the work area
-		            nX,
-		            nY,
-		            (LPCSTR) chBuffer,
-		            strlen(chBuffer));
-		(void) (*pDC).SelectObject(pFontOld);        			 // map out the font
-    }
+	PaintMaskedDIB(pDC, pBackgroundPalette, (*pItem).GetArtSpec(), nX, nY, PAWN_BITMAP_DX, PAWN_BITMAP_DY);
+
+	if (((*pItem).m_nQuantity == 0) ||
+	        ((*pItem).m_nQuantity > 1)) {
+		sprintf(chBuffer, "%ld", (*pItem).m_nQuantity);
+		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
+		(*pDC).SetBkMode(TRANSPARENT);                          // make the text overlay transparently
+		(*pDC).SetTextColor(PAWN_BLURB_COLOR);                      // set the color of the text
+		(*pDC).TextOut(                             // zap the text to the work area
+		    nX,
+		    nY,
+		    (LPCSTR) chBuffer,
+		    strlen(chBuffer));
+		(void)(*pDC).SelectObject(pFontOld);                     // map out the font
+	}
 }
 
 
-void CPawnShop::UpdateCrowns(CDC *pDC)
-{
-CItem	*pItem;
-char	chBuffer[128];
+void CPawnShop::UpdateCrowns(CDC *pDC) {
+	CItem   *pItem;
+	char    chBuffer[128];
 
 	pItem = (*pInventory).FindItem(MG_OBJ_CROWN);
 	if ((pItem == NULL) ||
-		((*pItem).GetQuantity() < 1)) {
+	        ((*pItem).GetQuantity() < 1)) {
 		if (bPlayingHodj)
-			strcpy(chBuffer,"Hodj has no Crowns");
+			strcpy(chBuffer, "Hodj has no Crowns");
 		else
-			strcpy(chBuffer,"Podj has no Crowns");
-		}
-	else {
+			strcpy(chBuffer, "Podj has no Crowns");
+	} else {
 		if (bPlayingHodj)
-			sprintf(chBuffer,"Hodj has %ld Crowns",(*pItem).GetQuantity());
+			sprintf(chBuffer, "Hodj has %ld Crowns", (*pItem).GetQuantity());
 		else
-			sprintf(chBuffer,"Podj has %ld Crowns",(*pItem).GetQuantity());
+			sprintf(chBuffer, "Podj has %ld Crowns", (*pItem).GetQuantity());
 	}
 	(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, PAWN_TEXT_COLOR);
 }
 
 
-BOOL CPawnShop::OnEraseBkgnd(CDC *)
-{
-return(TRUE);													// do not automatically erase background to white
+BOOL CPawnShop::OnEraseBkgnd(CDC *) {
+	return (TRUE);                                                  // do not automatically erase background to white
 }
 
 
-void CPawnShop::ClearDialogImage(void)
-{
+void CPawnShop::ClearDialogImage(void) {
 	if (pBackgroundBitmap != NULL) {
 		delete pOKButton;
 		pOKButton = NULL;
@@ -594,44 +573,40 @@ void CPawnShop::ClearDialogImage(void)
 }
 
 
-void CPawnShop::RefreshBackground(void)
-{
-CDC	*pDC;
+void CPawnShop::RefreshBackground(void) {
+	CDC *pDC;
 
 	if (pBackgroundBitmap != NULL) {
-		pDC = (*pPawnDialog).GetDC();						// get a context for our window
-		PaintBitmap(pDC,pBackgroundPalette,pBackgroundBitmap,0,0,PAWN_DX,PAWN_DY);
-		(*pPawnDialog).ReleaseDC(pDC);						// release the context
+		pDC = (*pPawnDialog).GetDC();                       // get a context for our window
+		PaintBitmap(pDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, PAWN_DX, PAWN_DY);
+		(*pPawnDialog).ReleaseDC(pDC);                      // release the context
 	}
 }
 
 
-void CPawnShop::OnShowWindow(BOOL bShow, UINT nStatus)
-{
+void CPawnShop::OnShowWindow(BOOL bShow, UINT nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
 
-void CPawnShop::OnSize(UINT nType, int cx, int cy)
-{
+void CPawnShop::OnSize(UINT nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
 
-int CPawnShop::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-BOOL	bSuccess;
-	
+int CPawnShop::OnCreate(LPCREATESTRUCT lpCreateStruct) {
+	BOOL    bSuccess;
+
 	::AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != NULL);
-	bSuccess = (*pFont).CreateFont(-14,0,0,0,FW_BOLD,0,0,0,0,OUT_RASTER_PRECIS,0,PROOF_QUALITY,FF_ROMAN,"MS Sans Serif");
+	bSuccess = (*pFont).CreateFont(-14, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 	ASSERT(bSuccess);
 
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
@@ -641,41 +616,39 @@ BOOL	bSuccess;
 }
 
 
-BOOL CPawnShop::CreateWorkAreas(CDC *pDC)
-{
-BOOL		bSuccess = FALSE;
-CPalette	*pPalOld;
-CRect		myRect;
+BOOL CPawnShop::CreateWorkAreas(CDC *pDC) {
+	BOOL        bSuccess = FALSE;
+	CPalette    *pPalOld;
+	CRect       myRect;
 
-	pPawnBitmap = FetchBitmap(pDC,NULL,PAWN_SPEC);
+	pPawnBitmap = FetchBitmap(pDC, NULL, PAWN_SPEC);
 	if (pPawnBitmap == NULL)
-		return(FALSE);
+		return (FALSE);
 
 	if ((GetFreeSpace(0) >= (unsigned long) 500000) &&
-    	(GlobalCompact((unsigned long) 500000) >= (unsigned long) 400000))
-		pBackgroundBitmap = FetchScreenBitmap(pDC,pBackgroundPalette,0,0,PAWN_DX,PAWN_DY);
+	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 400000))
+		pBackgroundBitmap = FetchScreenBitmap(pDC, pBackgroundPalette, 0, 0, PAWN_DX, PAWN_DY);
 	else
 		pBackgroundBitmap = NULL;
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette,FALSE);		
-	(void) (*pDC).RealizePalette();
+	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);
+	(void)(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&
-    	(GlobalCompact((unsigned long) 500000) >= (unsigned long) 450000)) {
+	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 450000)) {
 		pWork = new CBitmap();
-		if ((*pWork).CreateCompatibleBitmap(pDC,PAWN_DX,PAWN_DY)) {
+		if ((*pWork).CreateCompatibleBitmap(pDC, PAWN_DX, PAWN_DY)) {
 			pWorkDC = new CDC();
 			if ((pWorkDC != NULL) &&
-				(*pWorkDC).CreateCompatibleDC(pDC)) {
-				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette,FALSE);
-				(void) (*pWorkDC).RealizePalette();
+			        (*pWorkDC).CreateCompatibleDC(pDC)) {
+				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, FALSE);
+				(void)(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
 				if (pWorkOld != NULL)
 					bSuccess = TRUE;
 			}
 		}
-	}
-	else {
+	} else {
 		pWork = NULL;
 		pWorkDC = NULL;
 		bSuccess = TRUE;
@@ -683,7 +656,7 @@ CRect		myRect;
 
 	if (!bSuccess) {
 		if (pWorkPalOld != NULL) {
-			(void) (*pWorkDC).SelectPalette(pWorkPalOld,FALSE);
+			(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
 			pWorkPalOld = NULL;
 		}
 		if (pWork != NULL) {
@@ -695,86 +668,79 @@ CRect		myRect;
 		bSuccess = TRUE;
 	}
 
-	(void) (*pDC).SelectPalette(pWorkPalOld,FALSE);
+	(void)(*pDC).SelectPalette(pWorkPalOld, FALSE);
 
 	myRect.SetRect(PAWN_TEXTZONE_DX,
-					 PAWN_BORDER_DY + PAWN_TITLEZONE_DDY,
-					 PAWN_DX - PAWN_TEXTZONE_DX,
-					 PAWN_BORDER_DY + PAWN_TITLEZONE_DDY + PAWN_TITLEZONE_DY);
+	               PAWN_BORDER_DY + PAWN_TITLEZONE_DDY,
+	               PAWN_DX - PAWN_TEXTZONE_DX,
+	               PAWN_BORDER_DY + PAWN_TITLEZONE_DDY + PAWN_TITLEZONE_DY);
 	pTitleText = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
 
 	myRect.SetRect(PAWN_TEXTZONE_DX,
-					 PAWN_DY - PAWN_BORDER_DY - PAWN_TEXTZONE_DY + PAWN_TEXTZONE_DDDY,
-					 PAWN_DX - PAWN_TEXTZONE_DX,
-					 PAWN_DY - PAWN_BORDER_DY - PAWN_TEXTZONE_DY + PAWN_TEXTZONE_DDY + PAWN_TEXTZONE_DDDY);
+	               PAWN_DY - PAWN_BORDER_DY - PAWN_TEXTZONE_DY + PAWN_TEXTZONE_DDDY,
+	               PAWN_DX - PAWN_TEXTZONE_DX,
+	               PAWN_DY - PAWN_BORDER_DY - PAWN_TEXTZONE_DY + PAWN_TEXTZONE_DDY + PAWN_TEXTZONE_DDDY);
 	pItemText = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
 	myRect.SetRect(PAWN_COSTZONE_DX,
-					 PAWN_DY - PAWN_BORDER_DY - PAWN_COSTZONE_DY + PAWN_COSTZONE_DDDY,
-					 PAWN_DX - PAWN_COSTZONE_DX,
-					 PAWN_DY - PAWN_BORDER_DY - PAWN_COSTZONE_DY + PAWN_COSTZONE_DDY + PAWN_COSTZONE_DDDY);
+	               PAWN_DY - PAWN_BORDER_DY - PAWN_COSTZONE_DY + PAWN_COSTZONE_DDDY,
+	               PAWN_DX - PAWN_COSTZONE_DX,
+	               PAWN_DY - PAWN_BORDER_DY - PAWN_COSTZONE_DY + PAWN_COSTZONE_DDY + PAWN_COSTZONE_DDDY);
 	pItemCost = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
-	
-	return(TRUE);
+
+	return (TRUE);
 }
 
 
-void CPawnShop::OnMouseMove(UINT nFlags, CPoint point)
-{
-HCURSOR	hNewCursor = NULL;
-CWinApp	*pMyApp = NULL;
-CRect	testRect;
-int		i;
-CItem	*pItem;
-int		nPrice;
-CDC		*pDC;
-char	chBuffer[128];
+void CPawnShop::OnMouseMove(UINT nFlags, CPoint point) {
+	HCURSOR hNewCursor = NULL;
+	CWinApp *pMyApp = NULL;
+	CRect   testRect;
+	int     i;
+	CItem   *pItem;
+	int     nPrice;
+	CDC     *pDC;
+	char    chBuffer[128];
 
-	if (!bActiveWindow)								// punt if window not active
+	if (!bActiveWindow)                             // punt if window not active
 		return;
-		
+
 	pMyApp = AfxGetApp();
 
-	if (OkayRect.PtInRect(point))					// use standard arrow in buttons
+	if (OkayRect.PtInRect(point))                   // use standard arrow in buttons
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
-	else
-	if (ScrollTopRect.PtInRect(point)) {            // set cursor to scolling up okay or invalid
-		if (nFirstSlot == 0)                        // ... depending on current slot for page 
+	else if (ScrollTopRect.PtInRect(point)) {           // set cursor to scolling up okay or invalid
+		if (nFirstSlot == 0)                        // ... depending on current slot for page
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
 		else
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWUP);
-	}
-	else
-	if (ScrollBotRect.PtInRect(point)) {			// set cursor to scrolling down okay or invalid
+	} else if (ScrollBotRect.PtInRect(point)) {         // set cursor to scrolling down okay or invalid
 		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) >= (*pInventory).ItemCount())
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
 		else
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWDN);
-	}
-	else {											// see if cursor is on an inventory item
+	} else {                                        // see if cursor is on an inventory item
 		i = SelectedItem(point);                    // ... and if so, then show the text blurb
 		if ((i >= 0) &&                             // ... for it at the base of the scroll
-			((i + nFirstSlot) < (*pInventory).ItemCount())) {
+		        ((i + nFirstSlot) < (*pInventory).ItemCount())) {
 			pItem = (*pInventory).FetchItem(i + nFirstSlot);
 			if (pItem != NULL) {
 				hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 				pDC = GetDC();
 				nPrice = (*pItem).GetValue();
 				if (nPrice == 0)
-					strcpy(chBuffer,"That can't be sold here");
+					strcpy(chBuffer, "That can't be sold here");
 				else {
 					if ((*pItem).GetQuantity() == 1) {
 						if (nPrice == 1)
-							strcpy(chBuffer,"It can be sold for 1 Crown");
+							strcpy(chBuffer, "It can be sold for 1 Crown");
 						else
-							sprintf(chBuffer,"It can be sold for %d Crowns",nPrice);
-					}
+							sprintf(chBuffer, "It can be sold for %d Crowns", nPrice);
+					} else if (nPrice == 1)
+						sprintf(chBuffer, "One can be sold for 1 Crown", nPrice);
 					else
-					if (nPrice == 1)
-						sprintf(chBuffer,"One can be sold for 1 Crown",nPrice);
-					else
-						sprintf(chBuffer,"One can be sold for %d Crowns",nPrice);
+						sprintf(chBuffer, "One can be sold for %d Crowns", nPrice);
 					hNewCursor = (*pMyApp).LoadCursor(IDC_PAWN_DOLLAR);
-					}
+				}
 				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), 18, TEXT_BOLD, PAWN_TEXT_COLOR);
 				(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, PAWN_TEXT_COLOR);
 				ReleaseDC(pDC);
@@ -782,7 +748,7 @@ char	chBuffer[128];
 		}
 	}
 
-	if (hNewCursor == NULL) {						// use default cursor if not specified
+	if (hNewCursor == NULL) {                       // use default cursor if not specified
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 		pDC = GetDC();
 		(*pItemText).DisplayString(pDC, "", 18, TEXT_BOLD, PAWN_TEXT_COLOR);
@@ -790,64 +756,60 @@ char	chBuffer[128];
 		ReleaseDC(pDC);
 	}
 
-	ASSERT(hNewCursor != NULL);						// force the cursor change
+	ASSERT(hNewCursor != NULL);                     // force the cursor change
 	::SetCursor(hNewCursor);
-	
+
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }
 
 
-void CPawnShop::OnLButtonDown(UINT nFlags, CPoint point)
-{
-int		i;
-CDC		*pDC = NULL;
-CItem	*pItem;
-CSound	*pSound;
-BOOL	bNeedsUpdate = FALSE;
+void CPawnShop::OnLButtonDown(UINT nFlags, CPoint point) {
+	int     i;
+	CDC     *pDC = NULL;
+	CItem   *pItem;
+	CSound  *pSound;
+	BOOL    bNeedsUpdate = FALSE;
 
-	if (!bActiveWindow)								// punt if window not active
+	if (!bActiveWindow)                             // punt if window not active
 		return;
 
-	if (ScrollTopRect.PtInRect(point) &&			// if click is in upper curl, then
-		(nFirstSlot > 0)) {                         // ... scroll up if not at first item
+	if (ScrollTopRect.PtInRect(point) &&            // if click is in upper curl, then
+	        (nFirstSlot > 0)) {                         // ... scroll up if not at first item
 		nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
 		if (nFirstSlot < 0)
 			nFirstSlot = 0;
 		bNeedsUpdate = TRUE;
-	}
-	else                                            // if click is in lower curl, then
-	if (ScrollBotRect.PtInRect(point) &&            // ... scroll down if not show last item
-		(nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount())) {
-		nFirstSlot += (nItemsPerRow * nItemsPerColumn);
-		bNeedsUpdate = TRUE;
-	}
-	else {											// see if cursor is on an inventory item
-		i = SelectedItem(point);                    // ... and if so, then show then dispatch
-		if ((i >= 0) &&                             // ... on its action code
-			((i + nFirstSlot) < (*pInventory).ItemCount())) {
-			pItem = (*pInventory).FetchItem(i + nFirstSlot);
-			if ((pItem != NULL) &&
-				((*pItem).GetValue() > 0)) {
-				pSound = new CSound(this,(bPlayingHodj ? ".\\sound\\gsps7.wav" : ".\\sound\\gsps8.wav"),SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-				(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-				(*pSound).Play();
-				pDC = GetDC();
-				(*pInventory).AddItem(MG_OBJ_CROWN,(*pItem).GetValue());
-				if ((*pItem).GetQuantity() > 1) {
-					(*pInventory).DiscardItem(pItem,1);
-					(*pGeneralStore).AddItem((*pItem).GetID(),1);
+	} else                                          // if click is in lower curl, then
+		if (ScrollBotRect.PtInRect(point) &&            // ... scroll down if not show last item
+		        (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount())) {
+			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
+			bNeedsUpdate = TRUE;
+		} else {                                        // see if cursor is on an inventory item
+			i = SelectedItem(point);                    // ... and if so, then show then dispatch
+			if ((i >= 0) &&                             // ... on its action code
+			        ((i + nFirstSlot) < (*pInventory).ItemCount())) {
+				pItem = (*pInventory).FetchItem(i + nFirstSlot);
+				if ((pItem != NULL) &&
+				        ((*pItem).GetValue() > 0)) {
+					pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps7.wav" : ".\\sound\\gsps8.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+					(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
+					(*pSound).Play();
+					pDC = GetDC();
+					(*pInventory).AddItem(MG_OBJ_CROWN, (*pItem).GetValue());
+					if ((*pItem).GetQuantity() > 1) {
+						(*pInventory).DiscardItem(pItem, 1);
+						(*pGeneralStore).AddItem((*pItem).GetID(), 1);
+					} else {
+						(*pInventory).RemoveItem(pItem);
+						(*pGeneralStore).AddItem(pItem);
+					}
+					(*pItemText).DisplayString(pDC, "Thank you!!!", 18, TEXT_BOLD, PAWN_BLURB_COLOR);
+					(*pItemCost).RestoreBackground(pDC);
+					ReleaseDC(pDC);
+					bNeedsUpdate = TRUE;
 				}
-				else {
-					(*pInventory).RemoveItem(pItem);
-					(*pGeneralStore).AddItem(pItem);
-				}
-				(*pItemText).DisplayString(pDC, "Thank you!!!", 18, TEXT_BOLD, PAWN_BLURB_COLOR);
-				(*pItemCost).RestoreBackground(pDC);
-				ReleaseDC(pDC);
-				bNeedsUpdate = TRUE;
 			}
 		}
-	}
 
 	if (bNeedsUpdate) {                              // update the inventory page if required
 		pDC = GetDC();
@@ -855,62 +817,58 @@ BOOL	bNeedsUpdate = FALSE;
 		ReleaseDC(pDC);
 	}
 
-	OnMouseMove(nFlags,point);                      // do standard mouse movement
-	
+	OnMouseMove(nFlags, point);                     // do standard mouse movement
+
 	CDialog::OnLButtonDown(nFlags, point);          // do standard mouse clicking
 }
 
 
-int CPawnShop::SelectedItem(CPoint point)
-{
-int		i = -1,
-		x, y, col, row;
-CRect	testRect;
+int CPawnShop::SelectedItem(CPoint point) {
+	int     i = -1,
+	        x, y, col, row;
+	CRect   testRect;
 
 	testRect.SetRect(PAWN_BORDER_DX,
-					 PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
-					 PAWN_DX - PAWN_BORDER_DX,
-					 PAWN_DY - PAWN_TEXTZONE_DY - PAWN_BORDER_DY);
+	                 PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
+	                 PAWN_DX - PAWN_BORDER_DX,
+	                 PAWN_DY - PAWN_TEXTZONE_DY - PAWN_BORDER_DY);
 	if (testRect.PtInRect(point)) {
 		col = (point.x - PAWN_BORDER_DX) / (PAWN_BITMAP_DX + nItem_DDX);
 		row = (point.y - PAWN_BORDER_DY - PAWN_TITLEZONE_DY) / (PAWN_BITMAP_DY + nItem_DDY);
 		x = col * (PAWN_BITMAP_DX + nItem_DDX) + PAWN_BITMAP_DX + PAWN_BORDER_DX;
 		y = row * (PAWN_BITMAP_DY + nItem_DDY) + PAWN_BITMAP_DX + PAWN_BORDER_DY + PAWN_TITLEZONE_DY;
 		if ((point.x < x) &&
-			(point.y < y))
+		        (point.y < y))
 			i = (row * nItemsPerRow) + col;
 	}
-	
-	return(i);
+
+	return (i);
 }
 
 
-BOOL CPawnShop::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/)
-{
+BOOL CPawnShop::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return(TRUE);
+		return (TRUE);
 	else
-		return(FALSE);
+		return (FALSE);
 }
 
 
-void CPawnShop::DoWaitCursor(void)
-{
-CWinApp	*pMyApp;
+void CPawnShop::DoWaitCursor(void) {
+	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void) (*pMyApp).BeginWaitCursor();
+	(void)(*pMyApp).BeginWaitCursor();
 }
 
 
-void CPawnShop::DoArrowCursor(void)
-{
-CWinApp	*pMyApp;
+void CPawnShop::DoArrowCursor(void) {
+	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void) (*pMyApp).EndWaitCursor();
+	(void)(*pMyApp).EndWaitCursor();
 }
 
 } // namespace GrandTour

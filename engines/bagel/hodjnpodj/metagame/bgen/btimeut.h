@@ -33,25 +33,27 @@ extern void DoPendingEvents();
 // class CTimeUtil -- general utilities
 class CTimeUtil {
 
-    char m_cStartData ;
-    BOOL m_bTimeDelayPassed ;	// flag: DelayMs function time expired
+	char m_cStartData ;
+	BOOL m_bTimeDelayPassed ;   // flag: DelayMs function time expired
 
 
-    char m_cEndData ;
+	char m_cEndData ;
 
 public:
 
-    // constructor zeroes out all fields
-    CTimeUtil() {memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;}
+	// constructor zeroes out all fields
+	CTimeUtil() {
+		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
+	}
 
 
 // btimeut.cpp -- Boffo Games time utilities -- class CTimeUtil
 
 //- DelayMs -- delay for specified # of milliseconds
-BOOL DelayMs(UINT uMs) ;
+	BOOL DelayMs(UINT uMs) ;
 //- DelayMsCallback -- SetTimer callback routine for DelayMs
-void FAR PASCAL DelayMsCallback(HWND /* hWnd */,
-		UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
+	void FAR PASCAL DelayMsCallback(HWND /* hWnd */,
+	                                UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
 
 
 

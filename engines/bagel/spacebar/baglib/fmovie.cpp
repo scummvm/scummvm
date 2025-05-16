@@ -353,7 +353,7 @@ uint32 CBagFMovie::getFrame() {
 		return _smk->getCurFrame();
 	}
 
-	return (uint32)-1;
+	return (uint32) -1;
 }
 
 bool CBagFMovie::setFrame(uint32 frameNum) {

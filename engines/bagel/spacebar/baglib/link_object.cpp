@@ -59,11 +59,10 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 	while (!doneFl && !istr.eof()) {
 		const char ch = (char)istr.peek();
 		switch (ch) {
-			//
-			//  @[x,y]  - destination of a flythru.  start point in next world
-			//
-		case '@':
-		{
+		//
+		//  @[x,y]  - destination of a flythru.  start point in next world
+		//
+		case '@': {
 			CBofRect r;
 			istr.getCh();
 			getRectFromStream(istr, r);
@@ -75,8 +74,7 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//
 		//  #[x,y]  - start location of a flythru.  start point in this world
 		//
-		case '#':
-		{
+		case '#': {
 			CBofRect r;
 			istr.getCh();
 			getRectFromStream(istr, r);
@@ -88,8 +86,7 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//
 		//  AS [LINK|CLOSEUP]  - how to run the link
 		//
-		case 'A':
-		{
+		case 'A': {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curString(localBuffer, 256);
@@ -118,8 +115,7 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//
 		//  FADE n
 		//
-		case 'F':
-		{
+		case 'F': {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curString(localBuffer, 256);
@@ -138,8 +134,7 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//
 		//  No match return from function
 		//
-		default:
-		{
+		default: {
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
 
 			if (parseCode == PARSING_DONE) {

@@ -29,7 +29,7 @@
 namespace Bagel {
 namespace SpaceBar {
 
-CBagVar *CBagExpression::_tempVar;	// Used as a default param
+CBagVar *CBagExpression::_tempVar;  // Used as a default param
 
 void CBagExpression::initialize() {
 	// used as a default param
@@ -571,8 +571,7 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 		istr.eatWhite();
 		int ch = istr.peek();
 		switch (ch) {
-		case '(':
-		{
+		case '(': {
 			istr.getCh();
 			istr.eatWhite();
 
@@ -642,8 +641,8 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				break;
 			}
-			// FIXME: Is this intentional?
-			// fallthrough
+		// FIXME: Is this intentional?
+		// fallthrough
 		default:
 			parseCode = UNKNOWN_TOKEN;
 			break;

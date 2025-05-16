@@ -106,7 +106,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 		return _errCode;
 
 	if ((lFlags & CBF_CREATE) && ((lFlags & CBF_SAVEFILE) ||
-		!fileExists(pszFileName))) {
+	                              !fileExists(pszFileName))) {
 		create(pszFileName, lFlags);
 
 	} else {

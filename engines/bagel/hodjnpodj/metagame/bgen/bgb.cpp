@@ -35,12 +35,12 @@ namespace Metagame {
 #define CONTROL_PHYSICAL_MEMORY     TRUE
 
 
-typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO) (void);
-FPGETFREEMEMINFO	lpfnGetFreeMemInfo;
-BOOL	CheckLowMemory(DWORD);
-DWORD	GetPhysicalMemory(void);
+typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO)(void);
+FPGETFREEMEMINFO    lpfnGetFreeMemInfo;
+BOOL    CheckLowMemory(DWORD);
+DWORD   GetPhysicalMemory(void);
 
-extern	CBfcMgr	*lpMetaGameStruct;
+extern  CBfcMgr *lpMetaGameStruct;
 
 // age
 ULONG glOldest = 0xFFFFFFFF;
@@ -61,15 +61,14 @@ CBgbMgr *gpBgbMgr;
 *  RETURNS:  Constructors have no return type
 *
 *****************************************************************************/
-CBgbMgr::CBgbMgr(void)
-{
-    // Initialize all member variables to 0
-    memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
+CBgbMgr::CBgbMgr(void) {
+	// Initialize all member variables to 0
+	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 
-    gpBgbMgr = this;
-    m_bAnimationsPaused = TRUE;
+	gpBgbMgr = this;
+	m_bAnimationsPaused = TRUE;
 
-    //ErrorLog("DEBUG.LOG", "Free Space: %ld", GetFreeSpace(0));
+	//ErrorLog("DEBUG.LOG", "Free Space: %ld", GetFreeSpace(0));
 }
 
 
@@ -86,18 +85,17 @@ CBgbMgr::CBgbMgr(void)
 *  RETURNS:  Destructors have no return type
 *
 *****************************************************************************/
-CBgbMgr::~CBgbMgr(void)
-{
-    ReleaseResources();
+CBgbMgr::~CBgbMgr(void) {
+	ReleaseResources();
 
-    // Release the Palette
-    //
-    assert(m_xpGamePalette != NULL);
-    if (m_xpGamePalette != NULL) {
-        m_xpGamePalette->DeleteObject();
-        delete m_xpGamePalette;
-        m_xpGamePalette = NULL;
-    }
+	// Release the Palette
+	//
+	assert(m_xpGamePalette != NULL);
+	if (m_xpGamePalette != NULL) {
+		m_xpGamePalette->DeleteObject();
+		delete m_xpGamePalette;
+		m_xpGamePalette = NULL;
+	}
 }
 
 
@@ -117,106 +115,105 @@ CBgbMgr::~CBgbMgr(void)
 *                   FALSE on success.
 *
 *****************************************************************************/
-BOOL CBgbMgr::InitBitmapObject(CBgbObject *pBgbObject, XPSTR pszFileName)
-{
-    CLList *pList;
+BOOL CBgbMgr::InitBitmapObject(CBgbObject *pBgbObject, XPSTR pszFileName) {
+	CLList *pList;
 
-    // can't access a null pointer
-    assert(pBgbObject != NULL);
+	// can't access a null pointer
+	assert(pBgbObject != NULL);
 
-    // why would this object already be initialized?
-    assert(pBgbObject->m_bInit == FALSE);
+	// why would this object already be initialized?
+	assert(pBgbObject->m_bInit == FALSE);
 
-    // if this object has not already been initialized
-    //
-    if (!pBgbObject->m_bInit) {
+	// if this object has not already been initialized
+	//
+	if (!pBgbObject->m_bInit) {
 
-        // if not yet on chain to be freed
-        //
-        if (!pBgbObject->m_bChained) {
-            pBgbObject->m_xpcNext = m_lpBgbChain;
-            pBgbObject->m_xpcPrev = NULL;
+		// if not yet on chain to be freed
+		//
+		if (!pBgbObject->m_bChained) {
+			pBgbObject->m_xpcNext = m_lpBgbChain;
+			pBgbObject->m_xpcPrev = NULL;
 
-            if (m_lpBgbChain != NULL)
-                m_lpBgbChain->m_xpcPrev = pBgbObject;
+			if (m_lpBgbChain != NULL)
+				m_lpBgbChain->m_xpcPrev = pBgbObject;
 
-            m_lpBgbChain = pBgbObject;
-            pBgbObject->m_bChained = TRUE;
-        }
+			m_lpBgbChain = pBgbObject;
+			pBgbObject->m_bChained = TRUE;
+		}
 
-        // don't overwrite the filename buffer
-        assert(strlen(pszFileName) < MAX_FNAME_LENGTH);
+		// don't overwrite the filename buffer
+		assert(strlen(pszFileName) < MAX_FNAME_LENGTH);
 
-        // init this objects bitmap filename (must be done before cache)
-        strcpy(pBgbObject->m_szFileName, pszFileName);
+		// init this objects bitmap filename (must be done before cache)
+		strcpy(pBgbObject->m_szFileName, pszFileName);
 
-        // object must be Initialized before any Caching
-        pBgbObject->m_bInit = TRUE;
+		// object must be Initialized before any Caching
+		pBgbObject->m_bInit = TRUE;
 
-        // don't yet need a ClearBackground()
-        pBgbObject->m_bCleared = TRUE;
+		// don't yet need a ClearBackground()
+		pBgbObject->m_bCleared = TRUE;
 
-        switch (pBgbObject->m_iBgbType) {
+		switch (pBgbObject->m_iBgbType) {
 
-            // object is a CSprite
-            //
-            case BGBT_SPRITE:
+		// object is a CSprite
+		//
+		case BGBT_SPRITE:
 
-                // if this is a special animation
-                //
-                if (pBgbObject->m_bAnimated && pBgbObject->m_bSpecial) {
+			// if this is a special animation
+			//
+			if (pBgbObject->m_bAnimated && pBgbObject->m_bSpecial) {
 
-                    // calculate how many paints are required for this
-                    // animation sequence.
-                    //
-                    assert(pBgbObject->m_nCels > 0);
-                    pBgbObject->m_nRepeat *= (UINT)pBgbObject->m_nCels;
-                    pBgbObject->m_nFreqCount = pBgbObject->m_nFreq - 1;
+				// calculate how many paints are required for this
+				// animation sequence.
+				//
+				assert(pBgbObject->m_nCels > 0);
+				pBgbObject->m_nRepeat *= (UINT)pBgbObject->m_nCels;
+				pBgbObject->m_nFreqCount = pBgbObject->m_nFreq - 1;
 
-                    if ((pList = new CLList((CObject *)pBgbObject)) != NULL) {
+				if ((pList = new CLList((CObject *)pBgbObject)) != NULL) {
 
-                        // add to special effects list
-                        if (m_pFXList == NULL) {
-                            
-                            m_pFXList = pList;
-                            m_bAnimationsPaused = FALSE;
+					// add to special effects list
+					if (m_pFXList == NULL) {
 
-                        } else {
-                            m_pFXList->Insert(pList);
-                        }
-                    }
-                    assert(pList != NULL);
+						m_pFXList = pList;
+						m_bAnimationsPaused = FALSE;
 
-                } else {
-                    pBgbObject->m_bLocked = TRUE;
-                }
+					} else {
+						m_pFXList->Insert(pList);
+					}
+				}
+				assert(pList != NULL);
 
-                break;
+			} else {
+				pBgbObject->m_bLocked = TRUE;
+			}
 
-            // object is a CBitmap
-            //
-            case BGBT_DIB:
+			break;
 
-                //
-                // Nothing else to initialize if this object is a CBitmap
-                //
-                break;
+		// object is a CBitmap
+		//
+		case BGBT_DIB:
 
-            // Invalid ID
-            //
-            default:
-                assert(0);
-                break;
-        }
+			//
+			// Nothing else to initialize if this object is a CBitmap
+			//
+			break;
 
-        // Let 1st object init the game palette
-        //
-        if (m_xpGamePalette == NULL) {
-            CacheLoadObject(pBgbObject);
-        }
-    }
+		// Invalid ID
+		//
+		default:
+			assert(0);
+			break;
+		}
 
-    return(FALSE);
+		// Let 1st object init the game palette
+		//
+		if (m_xpGamePalette == NULL) {
+			CacheLoadObject(pBgbObject);
+		}
+	}
+
+	return (FALSE);
 }
 
 
@@ -232,137 +229,135 @@ BOOL CBgbMgr::InitBitmapObject(CBgbObject *pBgbObject, XPSTR pszFileName)
 *
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheLoadObject(CBgbObject *pBgbObject)
-{
-    CSprite *pSprite;
-    BOOL	bSuccess;
+VOID CBgbMgr::CacheLoadObject(CBgbObject *pBgbObject) {
+	CSprite *pSprite;
+	BOOL    bSuccess;
 
-    // can't access a null pointer
-    assert(pBgbObject != NULL);
+	// can't access a null pointer
+	assert(pBgbObject != NULL);
 
-    // object must have already been Initialized
-    assert(pBgbObject->m_bInit);
+	// object must have already been Initialized
+	assert(pBgbObject->m_bInit);
 
-    // assign age to this object every time it's accessed
-    pBgbObject->m_lAge = glAge--;
+	// assign age to this object every time it's accessed
+	pBgbObject->m_lAge = glAge--;
 
-    // if it's not already loaded
-    //
-    if (pBgbObject->m_bLoaded) {
+	// if it's not already loaded
+	//
+	if (pBgbObject->m_bLoaded) {
 
-    	if (pBgbObject->m_bLocked)
-    		CacheOptimize(0);
-    	else {	
-    		pBgbObject->m_bLocked = TRUE;	
-    		CacheOptimize(0);
-    		pBgbObject->m_bLocked = FALSE;
-    	}
-    }
-    else {
+		if (pBgbObject->m_bLocked)
+			CacheOptimize(0);
+		else {
+			pBgbObject->m_bLocked = TRUE;
+			CacheOptimize(0);
+			pBgbObject->m_bLocked = FALSE;
+		}
+	} else {
 
-	    // maintain default free
-	    CacheOptimize(0);
+		// maintain default free
+		CacheOptimize(0);
 
-        //ErrorLog("DEBUG.LOG", "Loading %s with %ld bytes free", pBgbObject->m_szFileName, GetFreeSpace(0));
+		//ErrorLog("DEBUG.LOG", "Loading %s with %ld bytes free", pBgbObject->m_szFileName, GetFreeSpace(0));
 
-        // make sure this file-bitmap exists
-        assert(FileExists(pBgbObject->m_szFileName));
+		// make sure this file-bitmap exists
+		assert(FileExists(pBgbObject->m_szFileName));
 
-        // object must start empty
-        assert(pBgbObject->m_pObject == NULL);
+		// object must start empty
+		assert(pBgbObject->m_pObject == NULL);
 
-        // get a DC if we don't already have one
-        //
-        if (m_xpDc == NULL) {
-            ReInitDc();
-        }
-        assert(m_xpDc != NULL);
+		// get a DC if we don't already have one
+		//
+		if (m_xpDc == NULL) {
+			ReInitDc();
+		}
+		assert(m_xpDc != NULL);
 
-        // 1st bitmap loaded installs m_pGamePalette
-        //
-        if (m_xpGamePalette == NULL) {
-            CBitmap *pBmp;
+		// 1st bitmap loaded installs m_pGamePalette
+		//
+		if (m_xpGamePalette == NULL) {
+			CBitmap *pBmp;
 
-            pBmp = FetchBitmap(m_xpDc, &m_xpGamePalette, pBgbObject->m_szFileName);
-            delete pBmp;
-        }
+			pBmp = FetchBitmap(m_xpDc, &m_xpGamePalette, pBgbObject->m_szFileName);
+			delete pBmp;
+		}
 
-        // which object type
-        //
-        switch (pBgbObject->m_iBgbType) {
+		// which object type
+		//
+		switch (pBgbObject->m_iBgbType) {
 
-            // Object is a Sprite
-            //
-            case BGBT_SPRITE:
+		// Object is a Sprite
+		//
+		case BGBT_SPRITE:
 
-                // palette must be valid
-                assert(m_xpGamePalette != NULL);
+			// palette must be valid
+			assert(m_xpGamePalette != NULL);
 
-                // alloc sprite and test
-                if ((pSprite = new CSprite) != NULL) {
+			// alloc sprite and test
+			if ((pSprite = new CSprite) != NULL) {
 
-                    // set its palette to be the same as the game's
-                    //
-                    pSprite->SharePalette(m_xpGamePalette);
+				// set its palette to be the same as the game's
+				//
+				pSprite->SharePalette(m_xpGamePalette);
 
-                    if (pBgbObject->m_bAnimated) {
-                        bSuccess = pSprite->LoadCels(m_xpDc, pBgbObject->m_szFileName, pBgbObject->m_nCels);
-                        if (!pBgbObject->m_bSpecial)
-                            pSprite->SetAnimated(FALSE);
+				if (pBgbObject->m_bAnimated) {
+					bSuccess = pSprite->LoadCels(m_xpDc, pBgbObject->m_szFileName, pBgbObject->m_nCels);
+					if (!pBgbObject->m_bSpecial)
+						pSprite->SetAnimated(FALSE);
 
-                    } else {
-                        bSuccess = pSprite->LoadSprite(m_xpDc, pBgbObject->m_szFileName);
-                    }
-                    
-                    assert(bSuccess);
-                    if (!bSuccess) {
-                    	delete pSprite;
-                    	pBgbObject->m_pObject = NULL;
-                    	break;
-                    }
-                    
-                    // it is a masked image (white/transparent background)
-                    // keep its bitmap inside a device context
-                    pSprite->SetMasked(pBgbObject->m_bMasked);
+				} else {
+					bSuccess = pSprite->LoadSprite(m_xpDc, pBgbObject->m_szFileName);
+				}
 
-                    pSprite->SetZOrder(pBgbObject->m_nZOrder);
+				assert(bSuccess);
+				if (!bSuccess) {
+					delete pSprite;
+					pBgbObject->m_pObject = NULL;
+					break;
+				}
 
-                    // it will move around the screen
-                    pSprite->SetMobile(TRUE);
+				// it is a masked image (white/transparent background)
+				// keep its bitmap inside a device context
+				pSprite->SetMasked(pBgbObject->m_bMasked);
 
-                    // link into sprite chain
-                    pSprite->LinkSprite();
-                }
+				pSprite->SetZOrder(pBgbObject->m_nZOrder);
 
-                pBgbObject->m_pObject = (CObject *)pSprite;
+				// it will move around the screen
+				pSprite->SetMobile(TRUE);
 
-                break;
+				// link into sprite chain
+				pSprite->LinkSprite();
+			}
+
+			pBgbObject->m_pObject = (CObject *)pSprite;
+
+			break;
 
 
-            // Object is a bitmap
-            //
-            case BGBT_DIB:
+		// Object is a bitmap
+		//
+		case BGBT_DIB:
 
-                pBgbObject->m_pObject = (CObject *)FetchBitmap(m_xpDc, (m_xpGamePalette == NULL ? &m_xpGamePalette : NULL), pBgbObject->m_szFileName);
-                assert(pBgbObject->m_pObject != NULL);
-                break;
+			pBgbObject->m_pObject = (CObject *)FetchBitmap(m_xpDc, (m_xpGamePalette == NULL ? &m_xpGamePalette : NULL), pBgbObject->m_szFileName);
+			assert(pBgbObject->m_pObject != NULL);
+			break;
 
 
-            // Invalid ID
-            //
-            default:
-                assert(0);
-                break;
-        }
+		// Invalid ID
+		//
+		default:
+			assert(0);
+			break;
+		}
 
-        // make sure we were able to load this object
-        assert(pBgbObject->m_pObject != NULL);
-        
-        if (pBgbObject->m_pObject == NULL)
-        	pBgbObject->m_bLoaded = FALSE;
-        else
-        	pBgbObject->m_bLoaded = TRUE;
-    }
+		// make sure we were able to load this object
+		assert(pBgbObject->m_pObject != NULL);
+
+		if (pBgbObject->m_pObject == NULL)
+			pBgbObject->m_bLoaded = FALSE;
+		else
+			pBgbObject->m_bLoaded = TRUE;
+	}
 }
 
 /*****************************************************************************
@@ -378,62 +373,61 @@ VOID CBgbMgr::CacheLoadObject(CBgbObject *pBgbObject)
 *
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject)
-{
-    // can't access a null pointer
-    assert(pBgbObject != NULL);
+VOID CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
+	// can't access a null pointer
+	assert(pBgbObject != NULL);
 
-    // object must have already been Initialized
-    assert(pBgbObject->m_bInit);
+	// object must have already been Initialized
+	assert(pBgbObject->m_bInit);
 
-    if (pBgbObject->m_bLoaded && !pBgbObject->m_bLocked) {
+	if (pBgbObject->m_bLoaded && !pBgbObject->m_bLocked) {
 
-        // make sure the object is valid
-        assert(pBgbObject->m_pObject != NULL);
+		// make sure the object is valid
+		assert(pBgbObject->m_pObject != NULL);
 
-        //ErrorLog("DEBUG.LOG", "Releasing %s", pBgbObject->m_szFileName);
+		//ErrorLog("DEBUG.LOG", "Releasing %s", pBgbObject->m_szFileName);
 
-        switch (pBgbObject->m_iBgbType) {
+		switch (pBgbObject->m_iBgbType) {
 
-            // Object is a sprite
-            //
-            case BGBT_SPRITE:
+		// Object is a sprite
+		//
+		case BGBT_SPRITE:
 
-                if (pBgbObject->m_pObject != NULL) {
+			if (pBgbObject->m_pObject != NULL) {
 
-                    // remove from sprite chain
-                    ((CSprite *)pBgbObject->m_pObject)->UnlinkSprite();
+				// remove from sprite chain
+				((CSprite *)pBgbObject->m_pObject)->UnlinkSprite();
 
-                    // free it
-                    delete (CSprite *)pBgbObject->m_pObject;
+				// free it
+				delete (CSprite *)pBgbObject->m_pObject;
 
-                    // no more pointer
-                    pBgbObject->m_pObject = NULL;
-                }
+				// no more pointer
+				pBgbObject->m_pObject = NULL;
+			}
 
-                break;
+			break;
 
-            // Object is a bitmap
-            //
-            case BGBT_DIB:
+		// Object is a bitmap
+		//
+		case BGBT_DIB:
 
-                if (pBgbObject->m_pObject != NULL) {
-                    delete (CBitmap *)pBgbObject->m_pObject;
-                    pBgbObject->m_pObject = NULL;
-                }
+			if (pBgbObject->m_pObject != NULL) {
+				delete (CBitmap *)pBgbObject->m_pObject;
+				pBgbObject->m_pObject = NULL;
+			}
 
-                break;
+			break;
 
-            // Invalid ID
-            //
-            default:
-                assert(0);
-                break;
-        }
+		// Invalid ID
+		//
+		default:
+			assert(0);
+			break;
+		}
 
-        // this object is now loaded
-        pBgbObject->m_bLoaded = FALSE;
-    }
+		// this object is now loaded
+		pBgbObject->m_bLoaded = FALSE;
+	}
 }
 
 
@@ -449,57 +443,56 @@ VOID CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject)
 *  ULONG lReqSpace;                     Ammount of requested free space
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheOptimize(ULONG lReqSpace)
-{
-    CBgbObject 	*pBgbObject;
-    ULONG 		lAvgAge;
-    INT 		nObjects;
-	ULONG		lSpace;
+VOID CBgbMgr::CacheOptimize(ULONG lReqSpace) {
+	CBgbObject  *pBgbObject;
+	ULONG       lAvgAge;
+	INT         nObjects;
+	ULONG       lSpace;
 
-    // There are no objects to flush
-    //
-    assert(m_lpBgbChain != NULL);
+	// There are no objects to flush
+	//
+	assert(m_lpBgbChain != NULL);
 
-    //ErrorLog("DEBUG.LOG", "CacheOptimize");
-		
+	//ErrorLog("DEBUG.LOG", "CacheOptimize");
+
 	if (lReqSpace < lpMetaGameStruct->m_dwFreeSpaceMargin)
 		lSpace = lpMetaGameStruct->m_dwFreeSpaceMargin;
 	else
 		lSpace = lReqSpace;
 
 	while (CheckLowMemory(lSpace)) {
-	
+
 		GlobalCompact(lSpace);
 		LocalCompact(4000);
-		
-    	nObjects = 0;
 
-        lAvgAge = ((glOldest - glAge) / 2) + glAge;
-        glOldest = lAvgAge;
+		nObjects = 0;
 
-        pBgbObject = m_lpBgbChain;
-        while (pBgbObject != NULL) {
+		lAvgAge = ((glOldest - glAge) / 2) + glAge;
+		glOldest = lAvgAge;
 
-            //
-            // remove objects that are too old
-            //
-            if (pBgbObject->m_bLoaded && !pBgbObject->m_bLocked) {
+		pBgbObject = m_lpBgbChain;
+		while (pBgbObject != NULL) {
 
-                nObjects++;
-                if (pBgbObject->m_lAge >= lAvgAge) {
-                    CacheReleaseObject(pBgbObject);
-                }
-            }
+			//
+			// remove objects that are too old
+			//
+			if (pBgbObject->m_bLoaded && !pBgbObject->m_bLocked) {
 
-            pBgbObject = pBgbObject->m_xpcNext;
-        }
+				nObjects++;
+				if (pBgbObject->m_lAge >= lAvgAge) {
+					CacheReleaseObject(pBgbObject);
+				}
+			}
 
-        // if there are no objects loaded then we really are out of memory
-        //
-        if (nObjects == 0)
-            break;
-    }
-    //ErrorLog("DEBUG.LOG", "CacheOptimize: exit");
+			pBgbObject = pBgbObject->m_xpcNext;
+		}
+
+		// if there are no objects loaded then we really are out of memory
+		//
+		if (nObjects == 0)
+			break;
+	}
+	//ErrorLog("DEBUG.LOG", "CacheOptimize: exit");
 }
 
 
@@ -513,22 +506,21 @@ VOID CBgbMgr::CacheOptimize(ULONG lReqSpace)
 *  SAMPLE USAGE:    CacheFlush();
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheFlush(VOID)
-{
-    CBgbObject *pBgbObject;
+VOID CBgbMgr::CacheFlush(VOID) {
+	CBgbObject *pBgbObject;
 
-    //ErrorLog("DEBUG.LOG", "CBgbMgr::CacheFlush");
+	//ErrorLog("DEBUG.LOG", "CBgbMgr::CacheFlush");
 
-    // walk thru object chain
-    //
-    pBgbObject = m_lpBgbChain;
-    while (pBgbObject != NULL) {
+	// walk thru object chain
+	//
+	pBgbObject = m_lpBgbChain;
+	while (pBgbObject != NULL) {
 
-        // flush each object from the cache
-        //
-        CacheReleaseObject(pBgbObject);
-        pBgbObject = pBgbObject->m_xpcNext;
-    }
+		// flush each object from the cache
+		//
+		CacheReleaseObject(pBgbObject);
+		pBgbObject = pBgbObject->m_xpcNext;
+	}
 }
 
 
@@ -547,14 +539,13 @@ VOID CBgbMgr::CacheFlush(VOID)
 *  RETURNS:  BOOL = TRUE on error, FALSE on success
 *
 *****************************************************************************/
-BOOL CBgbMgr::SetPosition(CBgbObject *pBgbObject, CRPoint crPosition)
-{
-    // can't access a null pointer
-    assert(pBgbObject != NULL);
+BOOL CBgbMgr::SetPosition(CBgbObject *pBgbObject, CRPoint crPosition) {
+	// can't access a null pointer
+	assert(pBgbObject != NULL);
 
-    pBgbObject->m_crPosition = crPosition;
+	pBgbObject->m_crPosition = crPosition;
 
-    return(FALSE);
+	return (FALSE);
 }
 
 
@@ -575,160 +566,158 @@ BOOL CBgbMgr::SetPosition(CBgbObject *pBgbObject, CRPoint crPosition)
 *                   FALSE on success.
 *
 *****************************************************************************/
-BOOL CBgbMgr::PaintBitmapObject(CBgbObject *pBgbObject, BOOL bPaint, CRect *pClipRect)
-{
-    CRect cBmpRect;         // bitmap rectangle
-    CRRect crDestRect;      // relocatable destination rectangle
-    BOOL bVisible, bEdge;
-    BOOL bOkToPaint;
+BOOL CBgbMgr::PaintBitmapObject(CBgbObject *pBgbObject, BOOL bPaint, CRect *pClipRect) {
+	CRect cBmpRect;         // bitmap rectangle
+	CRRect crDestRect;      // relocatable destination rectangle
+	BOOL bVisible, bEdge;
+	BOOL bOkToPaint;
 
-    // can't access a null pointer
-    assert(pBgbObject != NULL);
+	// can't access a null pointer
+	assert(pBgbObject != NULL);
 
-    // load this BMP if not already loaded
-    if (pBgbObject->m_bInit) {
+	// load this BMP if not already loaded
+	if (pBgbObject->m_bInit) {
 
-        if (m_xpDc == NULL) {
-            ReInitDc();
-        }
+		if (m_xpDc == NULL) {
+			ReInitDc();
+		}
 
-        m_xpBsuSet->PrepareDc(m_xpDc, pBgbObject->IfRelocatable());
+		m_xpBsuSet->PrepareDc(m_xpDc, pBgbObject->IfRelocatable());
 
-        cBmpRect = CRect(CPoint(0,0), pBgbObject->m_cSize);
-        crDestRect = pBgbObject->GetRect();
+		cBmpRect = CRect(CPoint(0, 0), pBgbObject->m_cSize);
+		crDestRect = pBgbObject->GetRect();
 
-        m_xpBsuSet->TestRect(crDestRect, bVisible, bEdge);
-        pBgbObject->m_bVisible = bVisible;
+		m_xpBsuSet->TestRect(crDestRect, bVisible, bEdge);
+		pBgbObject->m_bVisible = bVisible;
 
-        if (pBgbObject->m_iBgbType == BGBT_SPRITE) {
+		if (pBgbObject->m_iBgbType == BGBT_SPRITE) {
 
-            // if sprite is not visible or we are forcing a repaint
-            //
-            if ((!pBgbObject->m_bVisible && !pBgbObject->m_bCleared) || bPaint) {
+			// if sprite is not visible or we are forcing a repaint
+			//
+			if ((!pBgbObject->m_bVisible && !pBgbObject->m_bCleared) || bPaint) {
 
-                // make sure this object is in memory
-                CacheLoadObject(pBgbObject);
+				// make sure this object is in memory
+				CacheLoadObject(pBgbObject);
 
-                if (!pBgbObject->m_bLoaded)
-                    return(TRUE);
+				if (!pBgbObject->m_bLoaded)
+					return (TRUE);
 
-                // then clear it's background
-                ((CSprite *)pBgbObject->m_pObject)->ClearBackground();
+				// then clear it's background
+				((CSprite *)pBgbObject->m_pObject)->ClearBackground();
 
-                // don't need another ClearBackground()
-                pBgbObject->m_bCleared = TRUE;
-            }
+				// don't need another ClearBackground()
+				pBgbObject->m_bCleared = TRUE;
+			}
 
-            // if sprite is visible on screen
-            //
-            if (pBgbObject->m_bVisible) {
+			// if sprite is visible on screen
+			//
+			if (pBgbObject->m_bVisible) {
 
-                bOkToPaint = TRUE;
-                if (pBgbObject->m_bAnimated && pBgbObject->m_bSpecial) {
+				bOkToPaint = TRUE;
+				if (pBgbObject->m_bAnimated && pBgbObject->m_bSpecial) {
 
-                    // if it is not time to paint this animation
-                    //
-                    pBgbObject->m_nFreqCount++;
-                    if (pBgbObject->m_nFreqCount < pBgbObject->m_nFreq) {
+					// if it is not time to paint this animation
+					//
+					pBgbObject->m_nFreqCount++;
+					if (pBgbObject->m_nFreqCount < pBgbObject->m_nFreq) {
 
-                        bOkToPaint = FALSE;
+						bOkToPaint = FALSE;
 
-                    } else if (pBgbObject->m_nFreqCount >= pBgbObject->m_nFreq + pBgbObject->m_nRepeat) {
+					} else if (pBgbObject->m_nFreqCount >= pBgbObject->m_nFreq + pBgbObject->m_nRepeat) {
 
-                        // stop painting till next time
-                        //
-                        bOkToPaint = FALSE;
-                        pBgbObject->m_nFreqCount = 0;
-                    }
-                }
+						// stop painting till next time
+						//
+						bOkToPaint = FALSE;
+						pBgbObject->m_nFreqCount = 0;
+					}
+				}
 
-                if (bOkToPaint) {
+				if (bOkToPaint) {
 
-                    // make sure this object is in memory
-                    CacheLoadObject(pBgbObject);
+					// make sure this object is in memory
+					CacheLoadObject(pBgbObject);
 
-                    if (!pBgbObject->m_bLoaded)
-                        return(TRUE);
+					if (!pBgbObject->m_bLoaded)
+						return (TRUE);
 
-                    // paint it
-                    ((CSprite *)pBgbObject->m_pObject)->PaintSprite(m_xpDc, pBgbObject->m_crPosition.x, pBgbObject->m_crPosition.y);
+					// paint it
+					((CSprite *)pBgbObject->m_pObject)->PaintSprite(m_xpDc, pBgbObject->m_crPosition.x, pBgbObject->m_crPosition.y);
 
-                    // might need a ClearBackground()
-                    pBgbObject->m_bCleared = FALSE;
-                }
-            }
+					// might need a ClearBackground()
+					pBgbObject->m_bCleared = FALSE;
+				}
+			}
 
-        } else if (pBgbObject->m_bVisible) {
+		} else if (pBgbObject->m_bVisible) {
 
-            // make sure this object is in memory
-            CacheLoadObject(pBgbObject);
-    
-		    if (!pBgbObject->m_bLoaded)
-		    	return(TRUE);
+			// make sure this object is in memory
+			CacheLoadObject(pBgbObject);
 
-            if (pBgbObject->m_bMasked) {
+			if (!pBgbObject->m_bLoaded)
+				return (TRUE);
 
-                CRect rect(pBgbObject->m_crPosition.x, pBgbObject->m_crPosition.y, pBgbObject->m_crPosition.x + pBgbObject->m_cSize.cx -1 , pBgbObject->m_crPosition.y + pBgbObject->m_cSize.cy - 1);
+			if (pBgbObject->m_bMasked) {
 
-                BltMaskedBitmap(m_xpDc, m_xpGamePalette, (CBitmap *)pBgbObject->m_pObject, &rect, pBgbObject->m_crPosition.x, pBgbObject->m_crPosition.y);
+				CRect rect(pBgbObject->m_crPosition.x, pBgbObject->m_crPosition.y, pBgbObject->m_crPosition.x + pBgbObject->m_cSize.cx - 1, pBgbObject->m_crPosition.y + pBgbObject->m_cSize.cy - 1);
 
-            // there's a DIB
-            //
-            } else {
+				BltMaskedBitmap(m_xpDc, m_xpGamePalette, (CBitmap *)pBgbObject->m_pObject, &rect, pBgbObject->m_crPosition.x, pBgbObject->m_crPosition.y);
 
-                if (1 && pClipRect != NULL) {
-                    // transfer the bitmap to the screen
-                    int x, y;
+				// there's a DIB
+				//
+			} else {
 
-                    crDestRect = *pClipRect;
-                    m_xpDc->DPtoLP(&crDestRect);
-                    cBmpRect = pBgbObject->GetRect();
-                    x = cBmpRect.left;
-                    y = cBmpRect.top;
-                    cBmpRect.left = crDestRect.left - x;
-                    cBmpRect.top = crDestRect.top - y;
-                    cBmpRect.right = crDestRect.right - x;
-                    cBmpRect.bottom = crDestRect.bottom - y;
-                }
+				if (1 && pClipRect != NULL) {
+					// transfer the bitmap to the screen
+					int x, y;
 
-                BltBitmap(m_xpDc, m_xpGamePalette, (CBitmap *)pBgbObject->m_pObject, &cBmpRect, &crDestRect, SRCCOPY);
-            }
-        }
-    }
+					crDestRect = *pClipRect;
+					m_xpDc->DPtoLP(&crDestRect);
+					cBmpRect = pBgbObject->GetRect();
+					x = cBmpRect.left;
+					y = cBmpRect.top;
+					cBmpRect.left = crDestRect.left - x;
+					cBmpRect.top = crDestRect.top - y;
+					cBmpRect.right = crDestRect.right - x;
+					cBmpRect.bottom = crDestRect.bottom - y;
+				}
 
-    return(FALSE);
+				BltBitmap(m_xpDc, m_xpGamePalette, (CBitmap *)pBgbObject->m_pObject, &cBmpRect, &crDestRect, SRCCOPY);
+			}
+		}
+	}
+
+	return (FALSE);
 }
 
 
-ULONG Sqrt(ULONG x)
-{
-    ULONG num, lHigh, lLow, lSqr;
+ULONG Sqrt(ULONG x) {
+	ULONG num, lHigh, lLow, lSqr;
 
-    lHigh = x;
-    lLow = 0;
-    while (TRUE) {
-        num = (lHigh + lLow) / 2;
-        lSqr = num * num;
+	lHigh = x;
+	lLow = 0;
+	while (TRUE) {
+		num = (lHigh + lLow) / 2;
+		lSqr = num * num;
 
-        // if n squared is smaller then n, then we have overflowed
-        assert(lSqr >= num);
+		// if n squared is smaller then n, then we have overflowed
+		assert(lSqr >= num);
 
-        if (lSqr > x) {
+		if (lSqr > x) {
 
-            lHigh = num;
+			lHigh = num;
 
-        } else if (lSqr < x) {
+		} else if (lSqr < x) {
 
-            lLow = num;
+			lLow = num;
 
-        } else {
-            break;
-        }
-        if (abs((LONG)(lHigh - lLow)) <= 2)
-            break;
-    }
+		} else {
+			break;
+		}
+		if (abs((LONG)(lHigh - lLow)) <= 2)
+			break;
+	}
 
-    return(num);
+	return (num);
 }
 
 
@@ -749,62 +738,61 @@ ULONG Sqrt(ULONG x)
 *                   FALSE on success.
 *
 *****************************************************************************/
-BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint cNewPosition)
-{
-    CPoint cCurrentPosition = cOldPosition;
-    int iK ;                // loop variable
-    int iSegments ;         // # of segments
-    int x, y;
+BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint cNewPosition) {
+	CPoint cCurrentPosition = cOldPosition;
+	int iK ;                // loop variable
+	int iSegments ;         // # of segments
+	int x, y;
 
-    // make sure this object is available in memory
-    CacheLoadObject(pBgbSprite);
-    
-    if (!pBgbSprite->m_bLoaded)
-    	return(TRUE);
+	// make sure this object is available in memory
+	CacheLoadObject(pBgbSprite);
 
-    // turn on animation for this sprite
-    ((CSprite *)pBgbSprite->m_pObject)->SetAnimated(TRUE);
+	if (!pBgbSprite->m_bLoaded)
+		return (TRUE);
 
-    x = cNewPosition.x - cOldPosition.x;
-    y = cNewPosition.y - cOldPosition.y;
+	// turn on animation for this sprite
+	((CSprite *)pBgbSprite->m_pObject)->SetAnimated(TRUE);
 
-    iSegments = (int)(Sqrt((ULONG)x * x + (ULONG)y * y) / 10 + 1);
+	x = cNewPosition.x - cOldPosition.x;
+	y = cNewPosition.y - cOldPosition.y;
 
-    for (iK = 1; iK <= iSegments; ++iK) {
-    
-    	CSound::HandleMessages();
+	iSegments = (int)(Sqrt((ULONG)x * x + (ULONG)y * y) / 10 + 1);
 
-        if (m_xpDc == NULL) {
-            ReInitDc();
-        }
+	for (iK = 1; iK <= iSegments; ++iK) {
 
-        m_xpBsuSet->PrepareDc(m_xpDc, pBgbSprite->IfRelocatable());
+		CSound::HandleMessages();
 
-        assert(m_xpBsuSet != NULL);
+		if (m_xpDc == NULL) {
+			ReInitDc();
+		}
 
-        // set new location
-        pBgbSprite->m_crPosition = CRPoint( cOldPosition.x + (x * iK / iSegments), cOldPosition.y + (y * iK / iSegments), TRUE);
+		m_xpBsuSet->PrepareDc(m_xpDc, pBgbSprite->IfRelocatable());
 
-        if (!lpMetaGameStruct->m_bScrolling) {
-            ((CSprite *)pBgbSprite->m_pObject)->PaintSprite(m_xpDc, pBgbSprite->m_crPosition.x, pBgbSprite->m_crPosition.y);
-        }
+		assert(m_xpBsuSet != NULL);
 
-        // save new current position (logical coordinates)
-        cCurrentPosition = pBgbSprite->m_crPosition;
+		// set new location
+		pBgbSprite->m_crPosition = CRPoint(cOldPosition.x + (x * iK / iSegments), cOldPosition.y + (y * iK / iSegments), TRUE);
 
-        cCurrentPosition.Offset(((CSprite *)pBgbSprite->m_pObject)->GetHotspot());
+		if (!lpMetaGameStruct->m_bScrolling) {
+			((CSprite *)pBgbSprite->m_pObject)->PaintSprite(m_xpDc, pBgbSprite->m_crPosition.x, pBgbSprite->m_crPosition.y);
+		}
 
-        m_xpBsuSet->EdgeToCenter(pBgbSprite->m_crPosition, lpMetaGameStruct->m_bScrolling);
+		// save new current position (logical coordinates)
+		cCurrentPosition = pBgbSprite->m_crPosition;
 
-        // delay 30 ms
-        if (!lpMetaGameStruct->m_bScrolling)
-            Sleep(30);
-    }
+		cCurrentPosition.Offset(((CSprite *)pBgbSprite->m_pObject)->GetHotspot());
 
-    // turn off animation for this sprite
-    ((CSprite *)pBgbSprite->m_pObject)->SetAnimated(FALSE);
+		m_xpBsuSet->EdgeToCenter(pBgbSprite->m_crPosition, lpMetaGameStruct->m_bScrolling);
 
-    return(FALSE);
+		// delay 30 ms
+		if (!lpMetaGameStruct->m_bScrolling)
+			Sleep(30);
+	}
+
+	// turn off animation for this sprite
+	((CSprite *)pBgbSprite->m_pObject)->SetAnimated(FALSE);
+
+	return (FALSE);
 }
 
 
@@ -815,58 +803,58 @@ BOOL CBgbMgr::InitDc(CView *xpView, CBsuSet *xpBsuSet, CDC *xpDc)
 // xpDc -- pointer to device context, if already allocated
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CBgbMgr::InitDc);
-    int iError = 0 ;        // error code
+	JXENTER(CBgbMgr::InitDc);
+	int iError = 0 ;        // error code
 
-    if (m_iLockCount <= 0) {
-        ReleaseDc();   // release Dc, if one already allocated
+	if (m_iLockCount <= 0) {
+		ReleaseDc();   // release Dc, if one already allocated
 
-        m_xpcView = xpView;
-        m_xpBsuSet = xpBsuSet;
-        m_bReleaseDc = !xpDc;
+		m_xpcView = xpView;
+		m_xpBsuSet = xpBsuSet;
+		m_bReleaseDc = !xpDc;
 
-        if (((m_xpDc = xpDc) == NULL) && ((m_xpDc = m_xpcView->GetDC()) == NULL)) {
-            iError = 101;   // device context allocation failure
-            goto cleanup;
-        }
+		if (((m_xpDc = xpDc) == NULL) && ((m_xpDc = m_xpcView->GetDC()) == NULL)) {
+			iError = 101;   // device context allocation failure
+			goto cleanup;
+		}
 
-        CBdbgMgr::GetPointer()->TraceConstructor("CDC", m_xpDc);
+		CBdbgMgr::GetPointer()->TraceConstructor("CDC", m_xpDc);
 
-        if (m_xpGamePalette != NULL) {
+		if (m_xpGamePalette != NULL) {
 
-            CBdbgMgr::GetPointer()->TestTraceObject("Palette", m_xpGamePalette);
-            m_xpOldPalette = m_xpDc->SelectPalette(m_xpGamePalette, FALSE);
-            m_xpDc->RealizePalette();
-        }
-    }
+			CBdbgMgr::GetPointer()->TestTraceObject("Palette", m_xpGamePalette);
+			m_xpOldPalette = m_xpDc->SelectPalette(m_xpGamePalette, FALSE);
+			m_xpDc->RealizePalette();
+		}
+	}
 
 cleanup:
 
-    JXELEAVE(CBgbMgr::InitDc) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CBgbMgr::InitDc) ;
+	RETURN(iError != 0) ;
 }
 
 //* CBgbMgr::ReInitDc -- do InitDc with existing view and BsuSet
 BOOL CBgbMgr::ReInitDc(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    InitDc(m_xpcView, m_xpBsuSet);
+	InitDc(m_xpcView, m_xpBsuSet);
 
-    return(FALSE);
+	return (FALSE);
 }
 
-//* CBgbMgr::AdjustLockCount -- 
+//* CBgbMgr::AdjustLockCount --
 BOOL CBgbMgr::AdjustLockCount(int iIncr)
 // iIncr -- if <0 or >0, add to lock count; if =0, zero lock count
 //// int PASCAL CBgbMgr::AdjustLockCount(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    if (iIncr != 0)
-        m_iLockCount += iIncr;
-    else
-        m_iLockCount = 0;
+	if (iIncr != 0)
+		m_iLockCount += iIncr;
+	else
+		m_iLockCount = 0;
 
-    return(FALSE);
+	return (FALSE);
 }
 
 //* CBgbMgr::SetBrush -- set brush attributes in current device context
@@ -875,39 +863,39 @@ BOOL CBgbMgr::SetBrush(COLORREF cBrushColor, int iBrushStyle)
 // iBrushStyle -- BS_SOLID or BS_NULL (=BS_HOLLOW)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CBgbMgr::SetBrush) ;
-    int iError = 0 ;        // error code
+	JXENTER(CBgbMgr::SetBrush) ;
+	int iError = 0 ;        // error code
 
-    if (!m_bCreateBrush || (cBrushColor != m_cBrushColor) || (iBrushStyle != m_iBrushStyle)) {
+	if (!m_bCreateBrush || (cBrushColor != m_cBrushColor) || (iBrushStyle != m_iBrushStyle)) {
 
-        if (m_bCreateBrush) {
-            m_xpDc->SelectObject(m_xpOldBrush);
-            m_xpOldBrush = NULL;
-            m_cBrush.DeleteObject();
-            m_bCreateBrush = FALSE;
-        }
+		if (m_bCreateBrush) {
+			m_xpDc->SelectObject(m_xpOldBrush);
+			m_xpOldBrush = NULL;
+			m_cBrush.DeleteObject();
+			m_bCreateBrush = FALSE;
+		}
 
-        m_cBrushColor = cBrushColor;
-        m_iBrushStyle = iBrushStyle;
+		m_cBrushColor = cBrushColor;
+		m_iBrushStyle = iBrushStyle;
 
-        if (m_iBrushStyle == BS_NULL) {
-            m_cBrush.CreateStockObject(NULL_BRUSH);
-            m_bCreateBrush = TRUE;
+		if (m_iBrushStyle == BS_NULL) {
+			m_cBrush.CreateStockObject(NULL_BRUSH);
+			m_bCreateBrush = TRUE;
 
-        // BS_SOLID or illegal value
-        //
-        } else {
-            m_cBrush.CreateSolidBrush(m_cBrushColor);
-            m_bCreateBrush = TRUE;
-        }
+			// BS_SOLID or illegal value
+			//
+		} else {
+			m_cBrush.CreateSolidBrush(m_cBrushColor);
+			m_bCreateBrush = TRUE;
+		}
 
-        m_xpOldBrush = m_xpDc->SelectObject(&m_cBrush);
-    }
+		m_xpOldBrush = m_xpDc->SelectObject(&m_cBrush);
+	}
 
 // cleanup:
 
-    JXELEAVE(CBgbMgr::SetBrush) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CBgbMgr::SetBrush) ;
+	RETURN(iError != 0) ;
 }
 
 //* CBgbMgr::SetPen -- set pen attributes in current device context
@@ -916,74 +904,74 @@ BOOL CBgbMgr::SetPen(COLORREF cPenColor, int iPenWidth)
 // iPenWidth -- pen width
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CBgbMgr::SetPen);
-    int iError = 0 ;        // error code
+	JXENTER(CBgbMgr::SetPen);
+	int iError = 0 ;        // error code
 
-    if (!m_bCreatePen || cPenColor != m_cPenColor || iPenWidth != m_iPenWidth) {
+	if (!m_bCreatePen || cPenColor != m_cPenColor || iPenWidth != m_iPenWidth) {
 
-        if (m_bCreatePen) {
-            m_xpDc->SelectObject(m_xpOldPen);
-            m_xpOldPen = NULL;
-            m_cPen.DeleteObject();
-            m_bCreatePen = FALSE;
-        }
+		if (m_bCreatePen) {
+			m_xpDc->SelectObject(m_xpOldPen);
+			m_xpOldPen = NULL;
+			m_cPen.DeleteObject();
+			m_bCreatePen = FALSE;
+		}
 
-        m_cPenColor = cPenColor;
-        m_iPenWidth = iPenWidth;
+		m_cPenColor = cPenColor;
+		m_iPenWidth = iPenWidth;
 
-        m_cPen.CreatePen(PS_SOLID, m_iPenWidth, m_cPenColor);
-        m_bCreatePen = TRUE;
+		m_cPen.CreatePen(PS_SOLID, m_iPenWidth, m_cPenColor);
+		m_bCreatePen = TRUE;
 
-        m_xpOldPen = m_xpDc->SelectObject(&m_cPen);
-    }
+		m_xpOldPen = m_xpDc->SelectObject(&m_cPen);
+	}
 
 // cleanup:
 
-    JXELEAVE(CBgbMgr::SetPen);
-    RETURN(iError != 0);
+	JXELEAVE(CBgbMgr::SetPen);
+	RETURN(iError != 0);
 }
 
 //* CBgbMgr::ReleaseDc -- release Dc, if one has been gotten
 BOOL CBgbMgr::ReleaseDc(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CBgbMgr::ReleaseDc) ;
-    int iError = 0 ;        // error code
+	JXENTER(CBgbMgr::ReleaseDc) ;
+	int iError = 0 ;        // error code
 
-    if (m_iLockCount <= 0 && m_xpDc) {
+	if (m_iLockCount <= 0 && m_xpDc) {
 
-        if (m_xpOldPalette) {
-            m_xpDc->SelectPalette(m_xpOldPalette, FALSE) ;
-            m_xpOldPalette = NULL ;
-        }
+		if (m_xpOldPalette) {
+			m_xpDc->SelectPalette(m_xpOldPalette, FALSE) ;
+			m_xpOldPalette = NULL ;
+		}
 
-        if (m_bCreatePen) {
-            m_xpDc->SelectObject(m_xpOldPen);
-            m_xpOldPen = NULL;
-            m_cPen.DeleteObject();
-            m_bCreatePen = FALSE;
-        }
+		if (m_bCreatePen) {
+			m_xpDc->SelectObject(m_xpOldPen);
+			m_xpOldPen = NULL;
+			m_cPen.DeleteObject();
+			m_bCreatePen = FALSE;
+		}
 
-        if (m_bCreateBrush) {
-            m_xpDc->SelectObject(m_xpOldBrush);
-            m_xpOldBrush = NULL;
-            m_cBrush.DeleteObject();
-            m_bCreateBrush = FALSE;
-        }
+		if (m_bCreateBrush) {
+			m_xpDc->SelectObject(m_xpOldBrush);
+			m_xpOldBrush = NULL;
+			m_cBrush.DeleteObject();
+			m_bCreateBrush = FALSE;
+		}
 
-        CBdbgMgr::GetPointer()->TraceDestructor("CDC", m_xpDc);
+		CBdbgMgr::GetPointer()->TraceDestructor("CDC", m_xpDc);
 
-        // release the window's context
-        if (m_xpcView && m_bReleaseDc)
-            m_xpcView->ReleaseDC(m_xpDc);
+		// release the window's context
+		if (m_xpcView && m_bReleaseDc)
+			m_xpcView->ReleaseDC(m_xpDc);
 
-        m_xpDc = NULL;
-    }
+		m_xpDc = NULL;
+	}
 
 // cleanup:
 
-    JXELEAVE(CBgbMgr::ReleaseDc);
-    RETURN(iError != 0);
+	JXELEAVE(CBgbMgr::ReleaseDc);
+	RETURN(iError != 0);
 }
 
 /*****************************************************************************
@@ -1002,47 +990,46 @@ BOOL CBgbMgr::ReleaseDc(void)
 *                   FALSE on success.
 *
 *****************************************************************************/
-BOOL CBgbMgr::ClearBitmapObject(CBgbObject *pBgbObject)
-{
-    pBgbObject->m_bLocked = FALSE;
-    CacheReleaseObject(pBgbObject);
+BOOL CBgbMgr::ClearBitmapObject(CBgbObject *pBgbObject) {
+	pBgbObject->m_bLocked = FALSE;
+	CacheReleaseObject(pBgbObject);
 
-    // object no longer initialized
-    pBgbObject->m_bInit = FALSE;
+	// object no longer initialized
+	pBgbObject->m_bInit = FALSE;
 
-    return(FALSE);
+	return (FALSE);
 }
 
 //* CBgbMgr::ReleaseResources -- release all resources at termination
 BOOL CBgbMgr::ReleaseResources(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CBgbMgr::ReleaseResources) ;
-    int iError = 0 ;                // error code
-    CBgbObject *pBgbObject ;      // objects to be freed
+	JXENTER(CBgbMgr::ReleaseResources) ;
+	int iError = 0 ;                // error code
+	CBgbObject *pBgbObject ;      // objects to be freed
 
-    // stop all animations
-    m_bAnimationsPaused = TRUE;
+	// stop all animations
+	m_bAnimationsPaused = TRUE;
 
-    // flush the special effects list
-    m_pFXList->FlushList();
-    delete m_pFXList;
-    m_pFXList = NULL;
+	// flush the special effects list
+	m_pFXList->FlushList();
+	delete m_pFXList;
+	m_pFXList = NULL;
 
-    while ((pBgbObject = m_lpBgbChain) != NULL) {
+	while ((pBgbObject = m_lpBgbChain) != NULL) {
 
-        m_lpBgbChain = pBgbObject->m_xpcNext;
-        pBgbObject->m_xpcNext = NULL;     // out of habit
-        ClearBitmapObject(pBgbObject);    // free resources
+		m_lpBgbChain = pBgbObject->m_xpcNext;
+		pBgbObject->m_xpcNext = NULL;     // out of habit
+		ClearBitmapObject(pBgbObject);    // free resources
 
-        if (!pBgbObject->m_bNoDelete)     // if on the heap
-            delete pBgbObject;
-    }
+		if (!pBgbObject->m_bNoDelete)     // if on the heap
+			delete pBgbObject;
+	}
 
 // cleanup:
 
-    JXELEAVE(CBgbMgr::ReleaseResources);
-    RETURN(iError != 0) ;
+	JXELEAVE(CBgbMgr::ReleaseResources);
+	RETURN(iError != 0) ;
 }
 
 
@@ -1057,71 +1044,68 @@ BOOL CBgbMgr::ReleaseResources(void)
 *  DoAnimations();
 *
 *****************************************************************************/
-void CBgbMgr::DoAnimations(void)
-{
-    CBgbObject *pBgbObject;
-    CLList *pList;
+void CBgbMgr::DoAnimations(void) {
+	CBgbObject *pBgbObject;
+	CLList *pList;
 
-#ifdef NODEEDIT
-    return;
-#endif
+	#ifdef NODEEDIT
+	return;
+	#endif
 
-    // if animations are ON and not paused
-    //
-    if (lpMetaGameStruct->m_bAnimations && !m_bAnimationsPaused) {
+	// if animations are ON and not paused
+	//
+	if (lpMetaGameStruct->m_bAnimations && !m_bAnimationsPaused) {
 
-        //
-        // Handle special effects (Animation)
-        //
-        pList = m_pFXList;
-        while (pList != NULL) {
+		//
+		// Handle special effects (Animation)
+		//
+		pList = m_pFXList;
+		while (pList != NULL) {
 
-            pBgbObject = (CBgbObject *)pList->GetData();
+			pBgbObject = (CBgbObject *)pList->GetData();
 
-            assert(pBgbObject != NULL);
+			assert(pBgbObject != NULL);
 
-            // this must be a sprite
-            assert(pBgbObject->m_iBgbType == BGBT_SPRITE);
+			// this must be a sprite
+			assert(pBgbObject->m_iBgbType == BGBT_SPRITE);
 
-            //
-            // Paint this object only if it is visible on the screen
-            //
-            PaintBitmapObject(pBgbObject);
+			//
+			// Paint this object only if it is visible on the screen
+			//
+			PaintBitmapObject(pBgbObject);
 
-            pList = pList->GetNext();
-        }
-    }
+			pList = pList->GetNext();
+		}
+	}
 }
 
 
-BOOL CheckLowMemory(DWORD dwSpace)
-{
-BOOL	bMemoryProblem;
-DWORD	dwFreeSpace;
-DWORD	dwFreeMemory;
+BOOL CheckLowMemory(DWORD dwSpace) {
+	BOOL    bMemoryProblem;
+	DWORD   dwFreeSpace;
+	DWORD   dwFreeMemory;
 
 	bMemoryProblem = FALSE;
 
 	dwFreeSpace = ::GetFreeSpace(0);
 	if (dwFreeSpace < dwSpace)
 		bMemoryProblem = TRUE;
-#if CONTROL_PHYSICAL_MEMORY
-    else {
+	#if CONTROL_PHYSICAL_MEMORY
+	else {
 		dwFreeMemory = GetPhysicalMemory();
 		if (dwFreeMemory < lpMetaGameStruct->m_dwFreePhysicalMargin)
 			bMemoryProblem = TRUE;
 	}
-#endif
-	
-	return(bMemoryProblem);	
+	#endif
+
+	return (bMemoryProblem);
 }
 
 
-DWORD GetPhysicalMemory(void)
-{
-DWORD	dwInfo;
-WORD	wFreePages;
-DWORD	lFreeBytes;
+DWORD GetPhysicalMemory(void) {
+	DWORD   dwInfo;
+	WORD    wFreePages;
+	DWORD   lFreeBytes;
 
 	lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)::GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
 	if (lpfnGetFreeMemInfo != NULL) {
@@ -1129,14 +1113,12 @@ DWORD	lFreeBytes;
 		if (dwInfo != -1L) {
 			wFreePages = HIWORD(dwInfo);
 			lFreeBytes = (DWORD) wFreePages * 4096L;
-		} 
-		else
+		} else
 			lFreeBytes = GetFreeSpace(0);
-	}
-	else
+	} else
 		lFreeBytes = GetFreeSpace(0);
-	
-	return(lFreeBytes);	
+
+	return (lFreeBytes);
 }
 
 } // namespace Metagame

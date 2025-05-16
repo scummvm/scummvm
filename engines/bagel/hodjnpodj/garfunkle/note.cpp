@@ -26,8 +26,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Garkfunkle {
 
-CNote	*CNote::m_pNoteHead = NULL;            // pointer to list of linked notes
-CNote	*CNote::m_pNoteTail = NULL;            // pointer to tail of list of linked notes
+CNote   *CNote::m_pNoteHead = NULL;            // pointer to list of linked notes
+CNote   *CNote::m_pNoteTail = NULL;            // pointer to tail of list of linked notes
 
 IMPLEMENT_DYNCREATE(CNote, CObject)
 
@@ -35,19 +35,18 @@ IMPLEMENT_DYNCREATE(CNote, CObject)
  *
  * CNote()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Constructor for note class.
+ * Description:     Constructor for note class.
  *
  ************************************************************************/
 
-CNote::CNote()
-{ 
-m_nValue = 1;
-m_pNext = NULL;										// it is not yet in the sprite chain and
-m_pPrev = NULL;                                     // ... thus has no links to other sprites
+CNote::CNote() {
+	m_nValue = 1;
+	m_pNext = NULL;                                     // it is not yet in the sprite chain and
+	m_pPrev = NULL;                                     // ... thus has no links to other sprites
 }
 
 
@@ -55,16 +54,15 @@ m_pPrev = NULL;                                     // ... thus has no links to 
  *
  * ~CNote()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Destructor for note class.
+ * Description:     Destructor for note class.
  *
  ************************************************************************/
 
-CNote::~CNote()
-{
+CNote::~CNote() {
 }
 
 
@@ -73,37 +71,35 @@ CNote::~CNote()
  * SetValue()
  *
  * Parameters:
- *	int	nValue		value which identifies the button associated with the note
+ *  int nValue      value which identifies the button associated with the note
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Identify the button to be played at this point in the sequence
+ * Description:     Identify the button to be played at this point in the sequence
  *
  ************************************************************************/
 
-void CNote::SetValue(int nValue)
-{
-	m_nValue = nValue;					// identify the button to be played
+void CNote::SetValue(int nValue) {
+	m_nValue = nValue;                  // identify the button to be played
 }
 
 /*************************************************************************
  *
  * LinkNote()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Link this note into the list by placing it at the
- *					the tail of the list
+ * Description:     Link this note into the list by placing it at the
+ *                  the tail of the list
  *
  ************************************************************************/
 
-void CNote::LinkNote(void)
-{
-	m_pNext = NULL;					// link note onto tail of list
+void CNote::LinkNote(void) {
+	m_pNext = NULL;                 // link note onto tail of list
 	m_pPrev = m_pNoteTail;          //... by pointing it back at the current
-                                    //... tail, making it the tail, and
+	//... tail, making it the tail, and
 	if (m_pNoteTail)                //... pointing it at NULL (the list terminator)
 		(*m_pNoteTail).m_pNext = this;
 	else
@@ -115,27 +111,26 @@ void CNote::LinkNote(void)
  *
  * UnLinkNote()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Remove this sprite from the sprite chain and point its
- *					neighbors at each other to fill the gap
+ * Description:     Remove this sprite from the sprite chain and point its
+ *                  neighbors at each other to fill the gap
  *
  ************************************************************************/
 
-void CNote::UnLinkNote(void)
-{
-	if (m_pPrev)							// disconnect us from the note chain
+void CNote::UnLinkNote(void) {
+	if (m_pPrev)                            // disconnect us from the note chain
 		(*m_pPrev).m_pNext = m_pNext;       // ... by pointing the one before us, and
 	else                                    // ... the one after us, at each other
-		m_pNoteHead = m_pNext;              // special case the instances where the 
-                                            // ... note to be removed is the first
+		m_pNoteHead = m_pNext;              // special case the instances where the
+	// ... note to be removed is the first
 	if (m_pNext)                            // ...  or the last in the list, update
-		(*m_pNext).m_pPrev = m_pPrev;       // ... the head of chain pointer 
+		(*m_pNext).m_pPrev = m_pPrev;       // ... the head of chain pointer
 	else
 		m_pNoteTail = m_pPrev;
-    
+
 	m_pNext = m_pPrev = NULL;
 }
 
@@ -143,18 +138,17 @@ void CNote::UnLinkNote(void)
  *
  * FlushNoteList()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Remove all notes from the chain and delete them via
- *					the standard destructor
+ * Description:     Remove all notes from the chain and delete them via
+ *                  the standard destructor
  *
  ************************************************************************/
 
-void CNote::FlushNoteList(void)
-{
-	CNote	*pNote;
+void CNote::FlushNoteList(void) {
+	CNote   *pNote;
 
 	while (pNote = CNote::GetNoteHead()) {
 		(*pNote).UnLinkNote();
@@ -167,13 +161,11 @@ void CNote::FlushNoteList(void)
 // CNote diagnostics
 
 #ifdef _DEBUG
-void CNote::AssertValid() const
-{
+void CNote::AssertValid() const {
 	CObject::AssertValid();
 }
 
-void CNote::Dump(CDumpContext& dc) const
-{
+void CNote::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 

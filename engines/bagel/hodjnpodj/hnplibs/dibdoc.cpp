@@ -45,25 +45,21 @@ CDibDoc::CDibDoc() {
 }
 
 CDibDoc::~CDibDoc() {
-	if (m_hDIB != NULL)
-	{
+	if (m_hDIB != NULL) {
 		GlobalFree((HGLOBAL)m_hDIB);
 	}
-	if (m_palDIB != NULL)
-	{
+	if (m_palDIB != NULL) {
 		(*m_palDIB).DeleteObject();
 		delete m_palDIB;
 	}
 }
 
 void CDibDoc::InitDIBData() {
-	if (m_palDIB != NULL)
-	{
+	if (m_palDIB != NULL) {
 		delete m_palDIB;
 		m_palDIB = NULL;
 	}
-	if (m_hDIB == NULL)
-	{
+	if (m_hDIB == NULL) {
 		return;
 	}
 	// Set up document size
@@ -81,8 +77,7 @@ void CDibDoc::InitDIBData() {
 	GlobalUnlock((HGLOBAL)m_hDIB);
 	// Create copy of palette
 	m_palDIB = new CPalette;
-	if (m_palDIB == NULL)
-	{
+	if (m_palDIB == NULL) {
 		// we must be really low on memory
 		GlobalFree((HGLOBAL)m_hDIB);
 		m_hDIB = NULL;
@@ -101,7 +96,7 @@ void CDibDoc::InitDIBData() {
 
 
 BOOL CDibDoc::OpenResourceDocument(const int nResID) {
-	char	chResID[8];
+	char    chResID[8];
 
 	DeleteContents();
 
@@ -110,9 +105,8 @@ BOOL CDibDoc::OpenResourceDocument(const int nResID) {
 	if (m_hDIB != NULL)
 		InitDIBData();
 
-	if (m_hDIB == NULL)
-	{
-		char	buf[128];
+	if (m_hDIB == NULL) {
+		char    buf[128];
 
 		Common::sprintf_s(buf, "Unable to load artwork resource: %s", chResID);
 		ShowMemoryInfo(buf, "Internal Problem");
@@ -131,9 +125,8 @@ BOOL CDibDoc::OpenResourceDocument(const char *pszPathName) {
 	if (m_hDIB != NULL)
 		InitDIBData();
 
-	if (m_hDIB == NULL)
-	{
-		char	buf[128];
+	if (m_hDIB == NULL) {
+		char    buf[128];
 
 		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
 		ShowMemoryInfo(buf, "Internal Problem");
@@ -151,7 +144,7 @@ CPalette *CDibDoc::DetachPalette() {
 
 	pMyPalette = m_palDIB;
 	m_palDIB = NULL;
-	return(pMyPalette);
+	return (pMyPalette);
 }
 
 
@@ -166,41 +159,39 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 		ShowMemoryInfo(buf, "Internal Problem");
 
 		ReportSaveLoadException(pszPathName, &fe,
-			FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
+		                        FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
 		return FALSE;
 	}
 
 	DeleteContents();
-	//	BeginWaitCursor();
+	//  BeginWaitCursor();
 
-		// replace calls to Serialize with ReadDIBFile function
-	TRY
-	{
+	// replace calls to Serialize with ReadDIBFile function
+	TRY {
 		m_hDIB = ReadDIBFile(file);
 
 		if (m_hDIB == NULL) {
-			char	buf[128];
+			char    buf[128];
 
-			Common::sprintf_s(buf,"Unable to load artwork file: %s",pszPathName);
+			Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
 			ShowMemoryInfo(buf, "Internal Problem");
 		}
 	}
-		CATCH(CFileException, eLoad) {
+	CATCH(CFileException, eLoad) {
 		file.Abort(); // will not throw an exception
-		//		EndWaitCursor();
+		//      EndWaitCursor();
 		ReportSaveLoadException(pszPathName, eLoad,
-			FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
+		                        FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
 		m_hDIB = NULL;
 		return FALSE;
 	}
 	END_CATCH
 
-		InitDIBData();
-	//	EndWaitCursor();
+	InitDIBData();
+	//  EndWaitCursor();
 
-	if (m_hDIB == NULL)
-	{
-		char	buf[128];
+	if (m_hDIB == NULL) {
+		char    buf[128];
 
 		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
 		ShowMemoryInfo(buf, "Internal Problem");
@@ -218,39 +209,36 @@ BOOL CDibDoc::SaveDocument(const char *pszPathName) {
 	CFileException fe;
 
 	if (!file.Open(pszPathName, CFile::modeCreate |
-		CFile::modeReadWrite | CFile::shareExclusive, &fe))
-	{
+	               CFile::modeReadWrite | CFile::shareExclusive, &fe)) {
 		ReportSaveLoadException(pszPathName, &fe,
-			TRUE, AFX_IDP_INVALID_FILENAME);
+		                        TRUE, AFX_IDP_INVALID_FILENAME);
 		return FALSE;
 	}
 
 	// replace calls to Serialize with SaveDIB function
 	BOOL bSuccess = FALSE;
-	TRY
-	{
-		//		BeginWaitCursor();
-				bSuccess = SaveDIB(m_hDIB, file);
-				file.Close();
+	TRY {
+		//      BeginWaitCursor();
+		bSuccess = SaveDIB(m_hDIB, file);
+		file.Close();
 	}
-		CATCH(CException, eSave) {
+	CATCH(CException, eSave) {
 		file.Abort(); // will not throw an exception
-		//		EndWaitCursor();
+		//      EndWaitCursor();
 		ReportSaveLoadException(pszPathName, eSave,
-			TRUE, AFX_IDP_FAILED_TO_SAVE_DOC);
+		                        TRUE, AFX_IDP_FAILED_TO_SAVE_DOC);
 		return FALSE;
 	}
 	END_CATCH
 
-		//	EndWaitCursor();
-		SetModifiedFlag(FALSE);     // back to unmodified
+	//  EndWaitCursor();
+	SetModifiedFlag(FALSE);     // back to unmodified
 
 	return bSuccess;
 }
 
 void CDibDoc::ReplaceHDIB(HDIB hDIB) {
-	if (m_hDIB != NULL)
-	{
+	if (m_hDIB != NULL) {
 		GlobalFree((HGLOBAL)m_hDIB);
 	}
 	m_hDIB = hDIB;

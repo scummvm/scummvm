@@ -45,7 +45,7 @@ CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, const char *p
 	m_bSaveBackground = bSaveBackground;
 
 	//{{AFX_DATA_INIT(CBmpDialog)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -68,7 +68,7 @@ CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, int nBmpID, c
 	m_bSaveBackground = bSaveBackground;
 
 	//{{AFX_DATA_INIT(CBmpDialog)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -76,7 +76,7 @@ CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, int nBmpID, c
 void CBmpDialog::DoDataExchange(CDataExchange *pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CBmpDialog)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
@@ -91,7 +91,7 @@ void CBmpDialog::EndDialog(int nResult) {
 
 
 void CBmpDialog::OnDestroy() {
-	BOOL	bUpdateNeeded;
+	BOOL    bUpdateNeeded;
 
 	//
 	// delete the bitmap created with FetchScreenBitmap
@@ -121,46 +121,46 @@ BOOL CBmpDialog::OnInitDialog() {
 
 	// get the button's position and size
 
-	(*m_pParentWnd).GetWindowRect(&cWindRect);  		// get pos/size of parent
-	((CWnd *)this)->GetWindowRect(&cDlgRect);  			// get pos/size of dialog
+	(*m_pParentWnd).GetWindowRect(&cWindRect);          // get pos/size of parent
+	((CWnd *)this)->GetWindowRect(&cDlgRect);           // get pos/size of dialog
 
 	pDC = GetDC();
 	assert(pDC != NULL);
 
-	if (m_pBmpFileName == NULL)							// try to fetch the bitmap
+	if (m_pBmpFileName == NULL)                         // try to fetch the bitmap
 		pBitmap = FetchResourceBitmap(pDC, NULL, m_nBmpID);
 	else
 		pBitmap = FetchBitmap(pDC, NULL, m_pBmpFileName);
 	if (pBitmap == NULL) {                              // no luck, so use what we know
-		iDlgWidth = cDlgRect.right - cDlgRect.left;   	// dlg box width
-		iDlgHeight = cDlgRect.bottom - cDlgRect.top;  	// dlg box height
+		iDlgWidth = cDlgRect.right - cDlgRect.left;     // dlg box width
+		iDlgHeight = cDlgRect.bottom - cDlgRect.top;    // dlg box height
 	} else {
-		cSize = GetBitmapSize(pBitmap);				  	// actual width and height from bitmap
+		cSize = GetBitmapSize(pBitmap);                 // actual width and height from bitmap
 		iDlgWidth = cSize.cx;
 		iDlgHeight = cSize.cy;
 		delete pBitmap;
 	}
 
 	// modify code below to center dialog box based on GAME_WIDTH and GAME_HEIGHT
-	// center the dialog box on the screen 
+	// center the dialog box on the screen
 
-	if (m_nDx == -1) {									// no horizontal location, so center 
+	if (m_nDx == -1) {                                  // no horizontal location, so center
 		//...the dialog box horizontally
 		cDlgRect.left = cWindRect.left + (cWindRect.right - cWindRect.left - iDlgWidth) / 2;
-	} else {												// want it in a specific horiz.loc.
+	} else {                                                // want it in a specific horiz.loc.
 		cDlgRect.left = cWindRect.left + m_nDx;
 	}
-	cDlgRect.right = cDlgRect.left + iDlgWidth;			// set the right side
+	cDlgRect.right = cDlgRect.left + iDlgWidth;         // set the right side
 
-	if (m_nDy == -1) {									// no vertical location, so center
+	if (m_nDy == -1) {                                  // no vertical location, so center
 		//...the dialog box vertically
 		cDlgRect.top = cWindRect.top + (cWindRect.bottom - cWindRect.top - iDlgHeight) / 2;
-	} else {												// want it in a specific vertical loc.
+	} else {                                                // want it in a specific vertical loc.
 		cDlgRect.top = cWindRect.top + m_nDy;
 	}
 	cDlgRect.bottom = cDlgRect.top + iDlgHeight;
 
-	MoveWindow(&cDlgRect, FALSE); 						// position window, don't repaint
+	MoveWindow(&cDlgRect, FALSE);                       // position window, don't repaint
 
 	// if we are saving the background
 	//
@@ -172,12 +172,12 @@ BOOL CBmpDialog::OnInitDialog() {
 
 	ReleaseDC(pDC);
 
-	return(TRUE);   // return TRUE  unless focused on a control
+	return (TRUE);  // return TRUE  unless focused on a control
 }
 
 
 BOOL CBmpDialog::OnEraseBkgnd(CDC *pDC) {
-	return(TRUE);
+	return (TRUE);
 }
 
 

@@ -74,112 +74,111 @@ VOID       ConvertToSGI(CBfcMgr *, SAVEGAME_INFO *);
 *  RETURNS:  BOOL = TRUE if the game was saved successfully
 *
 *****************************************************************************/
-BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode)
-{
-    CWinApp *pMyApp;
-    HCURSOR hCursor;
-    INT iGameNum, n;
-    BOOL bSaved;
-    ERROR_CODE errCode;
+BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+	CWinApp *pMyApp;
+	HCURSOR hCursor;
+	INT iGameNum, n;
+	BOOL bSaved;
+	ERROR_CODE errCode;
 
-    // validate input
-    assert(pszFileName != NULL);
-    assert(pBfcMgr != NULL);
-    assert(pWnd != NULL);
-    assert(pPalette != NULL);
+	// validate input
+	assert(pszFileName != NULL);
+	assert(pBfcMgr != NULL);
+	assert(pWnd != NULL);
+	assert(pPalette != NULL);
 
-    // if not keeping track of errors externally
-    if (pErrCode == NULL)
-        pErrCode = &errCode;
+	// if not keeping track of errors externally
+	if (pErrCode == NULL)
+		pErrCode = &errCode;
 
-    // assume no error
-    *pErrCode = ERR_NONE;
+	// assume no error
+	*pErrCode = ERR_NONE;
 
-    // assume the save will work
-    bSaved = TRUE;
+	// assume the save will work
+	bSaved = TRUE;
 
-    // keep track of the .SAV file name
-    //
-    strcpy(gszSaveGameFileName, pBfcMgr->m_chHomePath);
-    n = strlen(gszSaveGameFileName);
-    if (gszSaveGameFileName[n - 1] != '\\')
-        strcat(gszSaveGameFileName, "\\");
-    strcat(gszSaveGameFileName, pszFileName);
+	// keep track of the .SAV file name
+	//
+	strcpy(gszSaveGameFileName, pBfcMgr->m_chHomePath);
+	n = strlen(gszSaveGameFileName);
+	if (gszSaveGameFileName[n - 1] != '\\')
+		strcat(gszSaveGameFileName, "\\");
+	strcat(gszSaveGameFileName, pszFileName);
 
-    // if .SAV file does not exist
-    //
-    if (!FileExists(gszSaveGameFileName)) {
+	// if .SAV file does not exist
+	//
+	if (!FileExists(gszSaveGameFileName)) {
 
-        // then create an empty save game file
-        //
-        *pErrCode = InitSaveGameFile();
-    }
+		// then create an empty save game file
+		//
+		*pErrCode = InitSaveGameFile();
+	}
 
-    if (*pErrCode == ERR_NONE) {
+	if (*pErrCode == ERR_NONE) {
 
-        if ((*pErrCode = GetSaveGameDescriptions()) == ERR_NONE) {
+		if ((*pErrCode = GetSaveGameDescriptions()) == ERR_NONE) {
 
-            //
-            // open the Save Game dialog box
-            //
-            CSaveDlg dlgSave(pszDesc, pWnd, pPalette);
+			//
+			// open the Save Game dialog box
+			//
+			CSaveDlg dlgSave(pszDesc, pWnd, pPalette);
 
-            if ((iGameNum = dlgSave.DoModal()) != -1) {
+			if ((iGameNum = dlgSave.DoModal()) != -1) {
 
-                // save users description of this saved game
-                strcpy(szDescriptions[iGameNum], szDescBuf);
+				// save users description of this saved game
+				strcpy(szDescriptions[iGameNum], szDescBuf);
 
-                // change cursor to a disk to indicate saving
-                //
-                pMyApp = AfxGetApp();
-                hCursor = pMyApp->LoadCursor(IDC_SAVE_BUSY);
-                assert(hCursor != NULL);
-                ::SetCursor(hCursor);
+				// change cursor to a disk to indicate saving
+				//
+				pMyApp = AfxGetApp();
+				hCursor = pMyApp->LoadCursor(IDC_SAVE_BUSY);
+				assert(hCursor != NULL);
+				::SetCursor(hCursor);
 
-                // pause for a 2 seconds to make it look good
-                Sleep(2000);
+				// pause for a 2 seconds to make it look good
+				Sleep(2000);
 
-                // do the actual save
-                *pErrCode = SaveSlot(iGameNum, pBfcMgr);
+				// do the actual save
+				*pErrCode = SaveSlot(iGameNum, pBfcMgr);
 
-                // change cursor back to arrow
-                //
-                hCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
-                assert(hCursor != NULL);
-                ::SetCursor(hCursor);
+				// change cursor back to arrow
+				//
+				hCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
+				assert(hCursor != NULL);
+				::SetCursor(hCursor);
 
-            } else {
-                bSaved = FALSE;
-            }
-        }
-    }
+			} else {
+				bSaved = FALSE;
+			}
+		}
+	}
 
-    if (*pErrCode != ERR_NONE) {
+	if (*pErrCode != ERR_NONE) {
 
-        bSaved = FALSE;
-        C1ButtonDialog dlgOk(pWnd, pPalette, "&OK", "An error occured", "while saving.");
-        dlgOk.DoModal();
-    }
+		bSaved = FALSE;
+		C1ButtonDialog dlgOk(pWnd, pPalette, "&OK", "An error occured", "while saving.");
+		dlgOk.DoModal();
+	}
 
-    if (bSaved) {
+	if (bSaved) {
 
-        pBfcMgr->m_bChanged = FALSE;
+		pBfcMgr->m_bChanged = FALSE;
 
-        // Show this dialog box 10% of the time
-        //
-        if (ProbableTrue(10)) {
-            C1ButtonDialog dlgOk(pWnd, pPalette, "&Yes", "Don't you wish", "saving Mish and Mosh", "was that easy?");
-            dlgOk.DoModal();
-        }
-    }
+		// Show this dialog box 10% of the time
+		//
+		if (ProbableTrue(10)) {
+			C1ButtonDialog dlgOk(pWnd, pPalette, "&Yes", "Don't you wish", "saving Mish and Mosh", "was that easy?");
+			dlgOk.DoModal();
+		}
+	}
 
 //#ifdef _DEBUG
-    if (*pErrCode != ERR_NONE) {
-        ErrorLog("ERROR.LOG", "errCode = %d in %s at line %d", *pErrCode, __FILE__, __LINE__);
-    }
+	if (*pErrCode != ERR_NONE) {
+		ErrorLog("ERROR.LOG", "errCode = %d in %s at line %d", *pErrCode, __FILE__, __LINE__);
+	}
 //#endif
 
-    return(bSaved);
+	return (bSaved);
 }
 
 
@@ -196,58 +195,57 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 *  RETURNS:  ERROR_CODE = error return code.
 *
 *****************************************************************************/
-ERROR_CODE GetSaveGameDescriptions(VOID)
-{
-    SAVEGAME_INFO *pSaveGameInfo;
-    FILE *pFile;
-    INT i;
-    ERROR_CODE errCode;
+ERROR_CODE GetSaveGameDescriptions(VOID) {
+	SAVEGAME_INFO *pSaveGameInfo;
+	FILE *pFile;
+	INT i;
+	ERROR_CODE errCode;
 
-    // assume no error
-    errCode = ERR_NONE;
+	// assume no error
+	errCode = ERR_NONE;
 
-    // can't restore a game unless the .SAV file exists
-    //
-    if (FileExists(gszSaveGameFileName)) {
+	// can't restore a game unless the .SAV file exists
+	//
+	if (FileExists(gszSaveGameFileName)) {
 
-        if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+		if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
 
-            // open the .SAV file
-            //
-            if ((pFile = fopen(gszSaveGameFileName, "rb")) != NULL) {
+			// open the .SAV file
+			//
+			if ((pFile = fopen(gszSaveGameFileName, "rb")) != NULL) {
 
-                for (i = 0; i < MAX_SAVEGAMES; i++) {
+				for (i = 0; i < MAX_SAVEGAMES; i++) {
 
-                    if ((errCode = ReadSavedGame(pFile, i, pSaveGameInfo)) == ERR_NONE) {
+					if ((errCode = ReadSavedGame(pFile, i, pSaveGameInfo)) == ERR_NONE) {
 
-                        assert(strlen(pSaveGameInfo->m_szSaveGameDescription) < 40);
-                        strcpy(pszDesc[i] = szDescriptions[i], pSaveGameInfo->m_szSaveGameDescription);
+						assert(strlen(pSaveGameInfo->m_szSaveGameDescription) < 40);
+						strcpy(pszDesc[i] = szDescriptions[i], pSaveGameInfo->m_szSaveGameDescription);
 
-                        if (!pSaveGameInfo->m_bUsed) {
-                            szDescriptions[i][0] = '\0';
-                            pszDesc[i] = NULL;
-                        }
+						if (!pSaveGameInfo->m_bUsed) {
+							szDescriptions[i][0] = '\0';
+							pszDesc[i] = NULL;
+						}
 
-                    } else {
-                        break;
-                    }
-                }
-                fclose(pFile);
-            } else {
-                errCode = ERR_FOPEN;
-            }
+					} else {
+						break;
+					}
+				}
+				fclose(pFile);
+			} else {
+				errCode = ERR_FOPEN;
+			}
 
-            free(pSaveGameInfo);
-        } else {
-            errCode = ERR_MEMORY;
-        }
+			free(pSaveGameInfo);
+		} else {
+			errCode = ERR_MEMORY;
+		}
 
-    } else {
-        errCode = ERR_FFIND;
-        ErrorLog("ERROR.LOG", "%s not found.  Can't restore game.", gszSaveGameFileName);
-    }
+	} else {
+		errCode = ERR_FFIND;
+		ErrorLog("ERROR.LOG", "%s not found.  Can't restore game.", gszSaveGameFileName);
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -266,55 +264,54 @@ ERROR_CODE GetSaveGameDescriptions(VOID)
 *  RETURNS:  ERROR_CODE = Error return code.
 *
 *****************************************************************************/
-ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr)
-{
-    SAVEGAME_INFO *pSaveGameInfo;
-    FILE *pFile;
-    ERROR_CODE errCode;
+ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
+	SAVEGAME_INFO *pSaveGameInfo;
+	FILE *pFile;
+	ERROR_CODE errCode;
 
-    // assume no error
-    errCode = ERR_NONE;
+	// assume no error
+	errCode = ERR_NONE;
 
-    assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-    assert(pBfcMgr != NULL);
+	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
+	assert(pBfcMgr != NULL);
 
-    // if the save game file does not already exist then create one with
-    // 10 empty slots
-    //
-    if (!FileExists(gszSaveGameFileName)) {
+	// if the save game file does not already exist then create one with
+	// 10 empty slots
+	//
+	if (!FileExists(gszSaveGameFileName)) {
 
-        errCode = InitSaveGameFile();
-    }
+		errCode = InitSaveGameFile();
+	}
 
-    // allocate 1 SGI record
-    if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+	// allocate 1 SGI record
+	if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
 
-        ConvertToSGI(pBfcMgr, pSaveGameInfo);
+		ConvertToSGI(pBfcMgr, pSaveGameInfo);
 
-        // copy user's description of this saved game
-        strcpy(pSaveGameInfo->m_szSaveGameDescription, szDescriptions[iGameNum]);
+		// copy user's description of this saved game
+		strcpy(pSaveGameInfo->m_szSaveGameDescription, szDescriptions[iGameNum]);
 
-        if ((pFile = fopen(gszSaveGameFileName, "r+b")) != NULL) {
+		if ((pFile = fopen(gszSaveGameFileName, "r+b")) != NULL) {
 
-            errCode = WriteSavedGame(pFile, iGameNum, pSaveGameInfo);
+			errCode = WriteSavedGame(pFile, iGameNum, pSaveGameInfo);
 
-            fclose(pFile);
-        } else {
-            errCode = ERR_FOPEN;
-        }
+			fclose(pFile);
+		} else {
+			errCode = ERR_FOPEN;
+		}
 
-       free(pSaveGameInfo);
-    } else {
-        errCode = ERR_MEMORY;
-    }
+		free(pSaveGameInfo);
+	} else {
+		errCode = ERR_MEMORY;
+	}
 
 //#ifdef _DEBUG
-    if (errCode != ERR_NONE) {
-        ErrorLog("ERROR.LOG", "errCode = %d in %s at line %d", errCode, __FILE__, __LINE__);
-    }
+	if (errCode != ERR_NONE) {
+		ErrorLog("ERROR.LOG", "errCode = %d in %s at line %d", errCode, __FILE__, __LINE__);
+	}
 //#endif
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -330,49 +327,48 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr)
 *  RETURNS:  ERROR_CODE = error return code.
 *
 *****************************************************************************/
-ERROR_CODE InitSaveGameFile(VOID)
-{
-    SAVEGAME_INFO *pNewInfo;
-    FILE *pFile;
-    ERROR_CODE errCode;
-    INT i;
+ERROR_CODE InitSaveGameFile(VOID) {
+	SAVEGAME_INFO *pNewInfo;
+	FILE *pFile;
+	ERROR_CODE errCode;
+	INT i;
 
-    // assume no error
-    errCode = ERR_NONE;
+	// assume no error
+	errCode = ERR_NONE;
 
-    // we don't want to overwrite a good .SAV file
-    assert(!FileExists(gszSaveGameFileName));
+	// we don't want to overwrite a good .SAV file
+	assert(!FileExists(gszSaveGameFileName));
 
-    // allocate one save game record
-    //
-    if ((pNewInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+	// allocate one save game record
+	//
+	if ((pNewInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
 
-        memset(pNewInfo, 0, sizeof(SAVEGAME_INFO));
+		memset(pNewInfo, 0, sizeof(SAVEGAME_INFO));
 
-        pNewInfo->m_lBoffoGameID = BOFFO_GAME_ID;
-        pNewInfo->m_nFixedRecordSize = sizeof(SAVEGAME_INFO);
+		pNewInfo->m_lBoffoGameID = BOFFO_GAME_ID;
+		pNewInfo->m_nFixedRecordSize = sizeof(SAVEGAME_INFO);
 
-        // this slot is not used
-        pNewInfo->m_bUsed = FALSE;
+		// this slot is not used
+		pNewInfo->m_bUsed = FALSE;
 
-        if ((pFile = fopen(gszSaveGameFileName, "w+b")) != NULL) {
+		if ((pFile = fopen(gszSaveGameFileName, "w+b")) != NULL) {
 
-            for (i = 0; i < MAX_SAVEGAMES; i++) {
-                if ((errCode = WriteSavedGame(pFile, i, pNewInfo)) != ERR_NONE)
-                    break;
-            }
+			for (i = 0; i < MAX_SAVEGAMES; i++) {
+				if ((errCode = WriteSavedGame(pFile, i, pNewInfo)) != ERR_NONE)
+					break;
+			}
 
-            fclose(pFile);
-        } else {
-            errCode = ERR_FOPEN;
-        }
+			fclose(pFile);
+		} else {
+			errCode = ERR_FOPEN;
+		}
 
-       free(pNewInfo);
-    } else {
-        errCode = ERR_MEMORY;
-    }
+		free(pNewInfo);
+	} else {
+		errCode = ERR_MEMORY;
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -381,7 +377,7 @@ ERROR_CODE InitSaveGameFile(VOID)
 *  WriteSavedGame   - Writes one save game record to the .SAV file
 *
 *  DESCRIPTION:
-*                   
+*
 *
 *  SAMPLE USAGE:
 *  errCode = WriteSaveGame(pFile, iGameNum, pSaveGameInfo);
@@ -392,37 +388,36 @@ ERROR_CODE InitSaveGameFile(VOID)
 *  RETURNS:  ERROR_CODE = error return code.
 *
 *****************************************************************************/
-ERROR_CODE WriteSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo)
-{
-    ERROR_CODE errCode;
+ERROR_CODE WriteSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
+	ERROR_CODE errCode;
 
-    // asume no error
-    errCode = ERR_NONE;
+	// asume no error
+	errCode = ERR_NONE;
 
-    // validate explicit input
-    assert(pFile != NULL);
-    assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-    assert(pSaveGameInfo != NULL);
+	// validate explicit input
+	assert(pFile != NULL);
+	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
+	assert(pSaveGameInfo != NULL);
 
-    Encrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
+	Encrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
 
-    // seek to correct save game number (slot)
-    //
-    if (fseek(pFile, iGameNum * sizeof(SAVEGAME_INFO), SEEK_SET) == 0) {
+	// seek to correct save game number (slot)
+	//
+	if (fseek(pFile, iGameNum * sizeof(SAVEGAME_INFO), SEEK_SET) == 0) {
 
-        // write the save game to that slot
-        //
-        if (fwrite(pSaveGameInfo, sizeof(SAVEGAME_INFO), 1, pFile) != 1) {
-            errCode = ERR_FWRITE;
-        }
+		// write the save game to that slot
+		//
+		if (fwrite(pSaveGameInfo, sizeof(SAVEGAME_INFO), 1, pFile) != 1) {
+			errCode = ERR_FWRITE;
+		}
 
-    } else {
-        errCode = ERR_FSEEK;
-    }
+	} else {
+		errCode = ERR_FSEEK;
+	}
 
-    Decrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
+	Decrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -431,7 +426,7 @@ ERROR_CODE WriteSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInf
 *  ReadSavedGame    - Reads one save game record from the .SAV file
 *
 *  DESCRIPTION:
-*                   
+*
 *
 *  SAMPLE USAGE:
 *  errCode = ReadSaveGame(pFile, iGameNum, pSaveGameInfo);
@@ -442,43 +437,42 @@ ERROR_CODE WriteSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInf
 *  RETURNS:  ERROR_CODE = error return code.
 *
 *****************************************************************************/
-ERROR_CODE ReadSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo)
-{
-    ERROR_CODE errCode;
+ERROR_CODE ReadSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
+	ERROR_CODE errCode;
 
-    // asume no error
-    errCode = ERR_NONE;
+	// asume no error
+	errCode = ERR_NONE;
 
-    // validate explicit input
-    assert(pFile != NULL);
-    assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-    assert(pSaveGameInfo != NULL);
+	// validate explicit input
+	assert(pFile != NULL);
+	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
+	assert(pSaveGameInfo != NULL);
 
-    // seek to correct save game number (slot)
-    //
-    if (fseek(pFile, iGameNum * sizeof(SAVEGAME_INFO), SEEK_SET) == 0) {
+	// seek to correct save game number (slot)
+	//
+	if (fseek(pFile, iGameNum * sizeof(SAVEGAME_INFO), SEEK_SET) == 0) {
 
-        // write the save game to that slot
-        //
-        if (fread(pSaveGameInfo, sizeof(SAVEGAME_INFO), 1, pFile) == 1) {
+		// write the save game to that slot
+		//
+		if (fread(pSaveGameInfo, sizeof(SAVEGAME_INFO), 1, pFile) == 1) {
 
-            Decrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
+			Decrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
 
-            // if this fails, then we are trying to restore an old saved game file
-            // and the SAVEGAME_INFO structure has changed. (i.e. the .SAV file is
-            // incompatable with this version of the game)
-            //
-            assert(pSaveGameInfo->m_nFixedRecordSize == sizeof(SAVEGAME_INFO));
+			// if this fails, then we are trying to restore an old saved game file
+			// and the SAVEGAME_INFO structure has changed. (i.e. the .SAV file is
+			// incompatable with this version of the game)
+			//
+			assert(pSaveGameInfo->m_nFixedRecordSize == sizeof(SAVEGAME_INFO));
 
-        } else {
-            errCode = ERR_FREAD;
-        }
+		} else {
+			errCode = ERR_FREAD;
+		}
 
-    } else {
-        errCode = ERR_FSEEK;
-    }
+	} else {
+		errCode = ERR_FSEEK;
+	}
 
-    return(errCode);
+	return (errCode);
 }
 
 
@@ -487,7 +481,7 @@ ERROR_CODE ReadSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo
 *  ConvertToSGI     - Converts a CBfcMgr to a SAVEGAME_INFO
 *
 *  DESCRIPTION:
-*                   
+*
 *
 *  SAMPLE USAGE:
 *  ConvertToSGI(pBfcMgr, pSaveGameInfo);
@@ -497,138 +491,137 @@ ERROR_CODE ReadSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo
 *  RETURNS:  ERROR_CODE = error return code.
 *
 *****************************************************************************/
-VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo)
-{
-    CHodjPodj *pPlayer;
-    CInventory *pInv;
-    CItem *pItem;
-    PLAYER_INFO *pSavePlayer;
-    INVENTORY *pSaveInv;
-    INT i, j, k;
+VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
+	CHodjPodj *pPlayer;
+	CInventory *pInv;
+	CItem *pItem;
+	PLAYER_INFO *pSavePlayer;
+	INVENTORY *pSaveInv;
+	INT i, j, k;
 
-    assert(pBfcMgr != NULL);
-    assert(pSaveGameInfo != NULL);
+	assert(pBfcMgr != NULL);
+	assert(pSaveGameInfo != NULL);
 
-    // reset entire info structure
-    memset(pSaveGameInfo, 0, sizeof(SAVEGAME_INFO));
+	// reset entire info structure
+	memset(pSaveGameInfo, 0, sizeof(SAVEGAME_INFO));
 
-    pSaveGameInfo->m_lBoffoGameID = BOFFO_GAME_ID;
-    pSaveGameInfo->m_nFixedRecordSize = sizeof(SAVEGAME_INFO);
-    pSaveGameInfo->m_bUsed = TRUE;
+	pSaveGameInfo->m_lBoffoGameID = BOFFO_GAME_ID;
+	pSaveGameInfo->m_nFixedRecordSize = sizeof(SAVEGAME_INFO);
+	pSaveGameInfo->m_bUsed = TRUE;
 
-    pSaveGameInfo->m_iGameTime = pBfcMgr->m_iGameTime;
-    pSaveGameInfo->m_iMishMoshLoc = pBfcMgr->m_iMishMoshLoc;
+	pSaveGameInfo->m_iGameTime = pBfcMgr->m_iGameTime;
+	pSaveGameInfo->m_iMishMoshLoc = pBfcMgr->m_iMishMoshLoc;
 
-    memcpy(&pSaveGameInfo->m_bTraps, &pBfcMgr->m_bTraps, sizeof(BOOL) * 240);
+	memcpy(&pSaveGameInfo->m_bTraps, &pBfcMgr->m_bTraps, sizeof(BOOL) * 240);
 
-    pSaveGameInfo->m_bSoundEffectsEnabled = pBfcMgr->m_stGameStruct.bSoundEffectsEnabled;
-    pSaveGameInfo->m_bMusicEnabled = pBfcMgr->m_stGameStruct.bMusicEnabled;
-    pSaveGameInfo->m_bScrolling = pBfcMgr->m_bScrolling;
+	pSaveGameInfo->m_bSoundEffectsEnabled = pBfcMgr->m_stGameStruct.bSoundEffectsEnabled;
+	pSaveGameInfo->m_bMusicEnabled = pBfcMgr->m_stGameStruct.bMusicEnabled;
+	pSaveGameInfo->m_bScrolling = pBfcMgr->m_bScrolling;
 
-    pSaveGameInfo->m_bNewMishMosh = (pBfcMgr->m_pMishItem != NULL);
+	pSaveGameInfo->m_bNewMishMosh = (pBfcMgr->m_pMishItem != NULL);
 
-    pPlayer = &pBfcMgr->m_cHodj;
-    for (i = 0; i < MAX_PLAYERS; i++) {
+	pPlayer = &pBfcMgr->m_cHodj;
+	for (i = 0; i < MAX_PLAYERS; i++) {
 
-        if (i == 1) {
-            pPlayer = &pBfcMgr->m_cPodj;
-        }
-        pSavePlayer = &pSaveGameInfo->m_stPlayerInfo[i];
+		if (i == 1) {
+			pPlayer = &pBfcMgr->m_cPodj;
+		}
+		pSavePlayer = &pSaveGameInfo->m_stPlayerInfo[i];
 
-        pSavePlayer->m_bMoving = pPlayer->m_bMoving;
-        pSavePlayer->m_bComputer = pPlayer->m_bComputer;
-        pSavePlayer->m_bHaveMishMosh = pPlayer->m_bHaveMishMosh;
+		pSavePlayer->m_bMoving = pPlayer->m_bMoving;
+		pSavePlayer->m_bComputer = pPlayer->m_bComputer;
+		pSavePlayer->m_bHaveMishMosh = pPlayer->m_bHaveMishMosh;
 
-        pSavePlayer->m_iSectorCode = pPlayer->m_iSectorCode;
-        pSavePlayer->m_iNode = pPlayer->m_iNode;
-        pSavePlayer->m_iSkillLevel = pPlayer->m_iSkillLevel;
+		pSavePlayer->m_iSectorCode = pPlayer->m_iSectorCode;
+		pSavePlayer->m_iNode = pPlayer->m_iNode;
+		pSavePlayer->m_iSkillLevel = pPlayer->m_iSkillLevel;
 
-        pSavePlayer->m_iWinInfoWon = pPlayer->m_iWinInfoWon;
-        pSavePlayer->m_iWinInfoNeed = pPlayer->m_iWinInfoNeed;
+		pSavePlayer->m_iWinInfoWon = pPlayer->m_iWinInfoWon;
+		pSavePlayer->m_iWinInfoNeed = pPlayer->m_iWinInfoNeed;
 
-        memcpy(&pSavePlayer->m_iWinInfoTable, &pPlayer->m_iWinInfoTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iWinInfoTable, &pPlayer->m_iWinInfoTable, sizeof(INT) * MAX_GAME_TABLE);
 
-        pSavePlayer->m_iSecondaryInfoWon = pPlayer->m_iSecondaryInfoWon;
-        pSavePlayer->m_iSecondaryInfoNeed = pPlayer->m_iSecondaryInfoNeed;
+		pSavePlayer->m_iSecondaryInfoWon = pPlayer->m_iSecondaryInfoWon;
+		pSavePlayer->m_iSecondaryInfoNeed = pPlayer->m_iSecondaryInfoNeed;
 
-        memcpy(&pSavePlayer->m_iSecondaryInfoTable, &pPlayer->m_iSecondaryInfoTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iSecondaryInfoTable, &pPlayer->m_iSecondaryInfoTable, sizeof(INT) * MAX_GAME_TABLE);
 
-        pSavePlayer->m_iRequiredObjectsCount = pPlayer->m_iRequiredObjectsCount;
+		pSavePlayer->m_iRequiredObjectsCount = pPlayer->m_iRequiredObjectsCount;
 
-        memcpy(&pSavePlayer->m_iRequiredObjectsTable, &pPlayer->m_iRequiredObjectsTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iRequiredObjectsTable, &pPlayer->m_iRequiredObjectsTable, sizeof(INT) * MAX_GAME_TABLE);
 
-        pSavePlayer->m_iRequiredMoney = pPlayer->m_iRequiredMoney;
+		pSavePlayer->m_iRequiredMoney = pPlayer->m_iRequiredMoney;
 
-        memcpy(&pSavePlayer->m_iSecondaryLoc, &pPlayer->m_iSecondaryLoc, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iSecondaryLoc, &pPlayer->m_iSecondaryLoc, sizeof(INT) * MAX_GAME_TABLE);
 
-        memcpy(&pSavePlayer->m_iGameHistory, &pPlayer->m_iGameHistory, sizeof(INT) * 20);
+		memcpy(&pSavePlayer->m_iGameHistory, &pPlayer->m_iGameHistory, sizeof(INT) * 20);
 
-        pSavePlayer->m_iTargetLocation = pPlayer->m_iTargetLocation;
-        pSavePlayer->m_iSpecialTravelCode = pPlayer->m_iSpecialTravelCode;
-        pSavePlayer->m_iNumberBoatTries = pPlayer->m_iNumberBoatTries;
-        pSavePlayer->m_iFurlongs = pPlayer->m_iFurlongs;
-        pSavePlayer->m_nTurns = pPlayer->m_nTurns;
+		pSavePlayer->m_iTargetLocation = pPlayer->m_iTargetLocation;
+		pSavePlayer->m_iSpecialTravelCode = pPlayer->m_iSpecialTravelCode;
+		pSavePlayer->m_iNumberBoatTries = pPlayer->m_iNumberBoatTries;
+		pSavePlayer->m_iFurlongs = pPlayer->m_iFurlongs;
+		pSavePlayer->m_nTurns = pPlayer->m_nTurns;
 
-        assert(pPlayer->m_pInventory != NULL);
+		assert(pPlayer->m_pInventory != NULL);
 
-        pSavePlayer->m_lCrowns = pPlayer->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity();
+		pSavePlayer->m_lCrowns = pPlayer->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity();
 
-        // make sure player's crown inventory item is valid
-        assert(pSavePlayer->m_lCrowns >= 0);
+		// make sure player's crown inventory item is valid
+		assert(pSavePlayer->m_lCrowns >= 0);
 
-        for (j = 0; j < 4; j++) {
+		for (j = 0; j < 4; j++) {
 
-            switch(j) {
+			switch (j) {
 
-                case 0:
-                    pInv = pPlayer->m_pInventory;
-                    pSaveInv = &pSavePlayer->m_stInventory;
-                    break;
+			case 0:
+				pInv = pPlayer->m_pInventory;
+				pSaveInv = &pSavePlayer->m_stInventory;
+				break;
 
-                case 1:
-                    pInv = pPlayer->m_pGenStore;
-                    pSaveInv = &pSavePlayer->m_stGenStore;
-                    break;
+			case 1:
+				pInv = pPlayer->m_pGenStore;
+				pSaveInv = &pSavePlayer->m_stGenStore;
+				break;
 
-                case 2:
-                    pInv = pPlayer->m_pBlackMarket;
-                    pSaveInv = &pSavePlayer->m_stBlackMarket;
-                    break;
+			case 2:
+				pInv = pPlayer->m_pBlackMarket;
+				pSaveInv = &pSavePlayer->m_stBlackMarket;
+				break;
 
-                default:
-                    assert(j == 3);
-                    pInv = pPlayer->m_pTradingPost;
-                    pSaveInv = &pSavePlayer->m_stTradingPost;
-                    break;
-            }
+			default:
+				assert(j == 3);
+				pInv = pPlayer->m_pTradingPost;
+				pSaveInv = &pSavePlayer->m_stTradingPost;
+				break;
+			}
 
-            if (pInv != NULL) {
+			if (pInv != NULL) {
 
-                strcpy(pSaveInv->m_szTitle, pInv->GetTitle());
+				strcpy(pSaveInv->m_szTitle, pInv->GetTitle());
 
-                k = 0;
-                pItem = pInv->FirstItem();
-                while (pItem != NULL) {
-                    pSaveInv->m_aItemList[k] = pItem->GetID();
+				k = 0;
+				pItem = pInv->FirstItem();
+				while (pItem != NULL) {
+					pSaveInv->m_aItemList[k] = pItem->GetID();
 
-                    assert(pSaveInv->m_aItemList[k] >= MG_OBJ_BASE && pSaveInv->m_aItemList[k] <= MG_OBJ_MAX);
+					assert(pSaveInv->m_aItemList[k] >= MG_OBJ_BASE && pSaveInv->m_aItemList[k] <= MG_OBJ_MAX);
 
-                    k++;
-                    pItem = pItem->GetNext();
-                }
-                assert(k == pInv->ItemCount());
+					k++;
+					pItem = pItem->GetNext();
+				}
+				assert(k == pInv->ItemCount());
 
-                pSaveInv->m_nItems = k;
-            }
-        }
+				pSaveInv->m_nItems = k;
+			}
+		}
 
-        for (j = 0; j < NUMBER_OF_CLUES; j++) {
-            pSavePlayer->m_bClueArray[j].bUsed = pPlayer->m_aClueArray[j].bUsed;
-            pSavePlayer->m_bClueArray[j].iNoteID = pPlayer->m_aClueArray[j].pNote->GetID();
-            pSavePlayer->m_bClueArray[j].iPersonID = pPlayer->m_aClueArray[j].pNote->GetPersonID();
-            pSavePlayer->m_bClueArray[j].iPlaceID = pPlayer->m_aClueArray[j].pNote->GetPlaceID();
-        }
-    }
+		for (j = 0; j < NUMBER_OF_CLUES; j++) {
+			pSavePlayer->m_bClueArray[j].bUsed = pPlayer->m_aClueArray[j].bUsed;
+			pSavePlayer->m_bClueArray[j].iNoteID = pPlayer->m_aClueArray[j].pNote->GetID();
+			pSavePlayer->m_bClueArray[j].iPersonID = pPlayer->m_aClueArray[j].pNote->GetPersonID();
+			pSavePlayer->m_bClueArray[j].iPlaceID = pPlayer->m_aClueArray[j].pNote->GetPlaceID();
+		}
+	}
 }
 
 } // namespace GrandTour

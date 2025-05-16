@@ -32,7 +32,7 @@ namespace GrandTour {
 #include "spinner.h"
 
 // ordered table of spinner values (will be shuffled)
-static	int	SpinnerValues[SPINNER_COUNT] = {
+static  int SpinnerValues[SPINNER_COUNT] = {
 	6,
 	7,
 	7,
@@ -97,7 +97,7 @@ static	int	SpinnerValues[SPINNER_COUNT] = {
 	19,
 	19,
 	20
-	};
+};
 
 
 IMPLEMENT_DYNCREATE(CSpinner, CObject)
@@ -106,19 +106,18 @@ IMPLEMENT_DYNCREATE(CSpinner, CObject)
  *
  * CSpinner()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Constructor for animation class.  Initialize all fields
- *					to logical NULL.  A call should then be made to the
- *					Initialize routine to setup the spinner sprite.
+ * Description:     Constructor for animation class.  Initialize all fields
+ *                  to logical NULL.  A call should then be made to the
+ *                  Initialize routine to setup the spinner sprite.
  *
  ************************************************************************/
 
-CSpinner::CSpinner()
-{
-	m_nValue = -1;									// no defined value
+CSpinner::CSpinner() {
+	m_nValue = -1;                                  // no defined value
 	m_bVisible = FALSE;                             // not yet visible
 	m_pSprite = NULL;                               // no loaded sprite
 	m_nX = m_nY = 0;                                // upper left hand corner
@@ -130,22 +129,21 @@ CSpinner::CSpinner()
  *
  * CSpinner()
  *
- * Parameters:		
- *	CWnd * pWnd		window for messages
- *  CDC * pDC		context for display
- *	int nX, nY		upper lefthand corner position for spinner
+ * Parameters:
+ *  CWnd * pWnd     window for messages
+ *  CDC * pDC       context for display
+ *  int nX, nY      upper lefthand corner position for spinner
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Constructor for animation class.  Initialize all fields
- *					and load spinner spite.  Calls should then be made to the
- *					Show / Spin / Hide routines.
+ * Description:     Constructor for animation class.  Initialize all fields
+ *                  and load spinner spite.  Calls should then be made to the
+ *                  Show / Spin / Hide routines.
  *
  ************************************************************************/
 
-CSpinner::CSpinner(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj)
-{
-	Initialize(pWnd,pDC,nX,nY,bHodj);			// go initialize things
+CSpinner::CSpinner(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
+	Initialize(pWnd, pDC, nX, nY, bHodj);       // go initialize things
 	SetupSpinner();                                 // shuffle spinner values
 }
 
@@ -154,25 +152,24 @@ CSpinner::CSpinner(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj)
  *
  * Initialize()
  *
- * Parameters:		
- *	CWnd * pWnd		window for messages
- *  CDC * pDC		context for display
- *	int nX, nY		upper lefthand corner position for spinner
+ * Parameters:
+ *  CWnd * pWnd     window for messages
+ *  CDC * pDC       context for display
+ *  int nX, nY      upper lefthand corner position for spinner
  *
- * Return Value:	
- *	BOOL			success / failure
+ * Return Value:
+ *  BOOL            success / failure
  *
- * Description:		Initialize all fields and load spinner spite.
+ * Description:     Initialize all fields and load spinner spite.
  *
  ************************************************************************/
 
-CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj)
-{
-BOOL	bSuccess = FALSE;
+CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
+	BOOL    bSuccess = FALSE;
 
-	m_pWnd = pWnd;									// window for messages
-	m_pDC = pDC;									// context for display
-	m_nValue = -1;									// no initial value
+	m_pWnd = pWnd;                                  // window for messages
+	m_pDC = pDC;                                    // context for display
+	m_nValue = -1;                                  // no initial value
 	m_bVisible = FALSE;                             // not yet visible
 	m_nX = nX;                                      // set the position
 	m_nY = nY;
@@ -180,17 +177,17 @@ BOOL	bSuccess = FALSE;
 
 	m_pSprite = new CSprite();                      // load the sprite image
 	if ((m_pDC != NULL) &&
-		(m_pSprite != NULL)) {
-		bSuccess = (*m_pSprite).LoadSprite(m_pDC,SPINNER_SPEC);
+	        (m_pSprite != NULL)) {
+		bSuccess = (*m_pSprite).LoadSprite(m_pDC, SPINNER_SPEC);
 		if (bSuccess)
 			(*m_pSprite).SetMasked(TRUE);
 		else {
-			delete m_pSprite;						// failed so release it
+			delete m_pSprite;                       // failed so release it
 			m_pSprite = NULL;
 		}
 	}
-	
-	return(bSuccess);
+
+	return (bSuccess);
 }
 
 
@@ -198,18 +195,17 @@ BOOL	bSuccess = FALSE;
  *
  * ~CSpinner()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Destructor for spinner class.  The spinner sprite is
- *					purged.
+ * Description:     Destructor for spinner class.  The spinner sprite is
+ *                  purged.
  *
  ************************************************************************/
 
-CSpinner::~CSpinner()
-{
-	if (m_pSprite != NULL)							// delete the sprite
+CSpinner::~CSpinner() {
+	if (m_pSprite != NULL)                          // delete the sprite
 		delete m_pSprite;
 }
 
@@ -218,39 +214,38 @@ CSpinner::~CSpinner()
  *
  * SetupSpinner()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		double-shuffle spinner values to help ensure randomness.
+ * Description:     double-shuffle spinner values to help ensure randomness.
  *
  ************************************************************************/
 
-void CSpinner::SetupSpinner(void)
-{
-int	i, j, n;
-int	Values[SPINNER_COUNT];
+void CSpinner::SetupSpinner(void) {
+	int i, j, n;
+	int Values[SPINNER_COUNT];
 
-	for (j = 0; j < 10; j++) {						// randomly place spinner values
+	for (j = 0; j < 10; j++) {                      // randomly place spinner values
 		for (i = 0; i < SPINNER_COUNT; i++)         // ... into the buffer, skipping
 			Values[i] = 0;                          // ... ahead for an empty spot as needed
-		
+
 		for (i = 0; i < SPINNER_COUNT; i++) {
 			n = rand() % SPINNER_COUNT;
-			while(Values[n] != 0) {
+			while (Values[n] != 0) {
 				n += 1;
 				if (n >= SPINNER_COUNT)
 					n = 0;
 			}
 			Values[n] = SpinnerValues[i];
 		}
-	
-		for (i = 0; i < SPINNER_COUNT; i++)			// now similarly randomly place them
+
+		for (i = 0; i < SPINNER_COUNT; i++)         // now similarly randomly place them
 			SpinnerValues[i] = 0;                   // ... back where they came from, thus
-		                                            // ... double-shuffling the entries
+		// ... double-shuffling the entries
 		for (i = 0; i < SPINNER_COUNT; i++) {
 			n = rand() % SPINNER_COUNT;
-			while(SpinnerValues[n] != 0) {
+			while (SpinnerValues[n] != 0) {
 				n += 1;
 				if (n >= SPINNER_COUNT)
 					n = 0;
@@ -266,40 +261,39 @@ int	Values[SPINNER_COUNT];
  *
  * Animate()
  *
- * Parameters:		
- *	int nX, nY		upper left hand position for spinner
+ * Parameters:
+ *  int nX, nY      upper left hand position for spinner
  *
  * Return Value:
- *	int				spinner value
+ *  int             spinner value
  *
- * Description:		reveal, animate, and hide the spinner sprite.
+ * Description:     reveal, animate, and hide the spinner sprite.
  *
  ************************************************************************/
 
-int CSpinner::Animate(int nX,int nY)
-{
-int		nValue = -1;
-DWORD	goal;
-BOOL	bSuccess = FALSE;
+int CSpinner::Animate(int nX, int nY) {
+	int     nValue = -1;
+	DWORD   goal;
+	BOOL    bSuccess = FALSE;
 
-	m_nX = nX;										// establish position
+	m_nX = nX;                                      // establish position
 	m_nY = nY;
-	
+
 	AfxGetApp()->DoWaitCursor(1);
 
 	nValue = Spin();                               // spin it and get a result
 	if (nValue > 0) {                              // pause for a moment
 		goal = GetTickCount() + SPINNER_WAIT * 1000L;
-		while(goal > GetTickCount()) {				// handle non-input messages
-			if (HandleMessages())					// ... and terminate loop if urgent
+		while (goal > GetTickCount()) {             // handle non-input messages
+			if (HandleMessages())                   // ... and terminate loop if urgent
 				break;
 		}
-		(void) Hide();								// hide the spinner
-    }
-	
+		(void) Hide();                              // hide the spinner
+	}
+
 	AfxGetApp()->DoWaitCursor(-1);
 
-	return(nValue);
+	return (nValue);
 }
 
 
@@ -307,31 +301,30 @@ BOOL	bSuccess = FALSE;
  *
  * Show()
  *
- * Parameters:		
- *	int nX, nY		upper left hand position for spinner
+ * Parameters:
+ *  int nX, nY      upper left hand position for spinner
  *
  * Return Value:
- *	BOOL			success /failure
+ *  BOOL            success /failure
  *
- * Description:		reveal the spinner sprite, without any digits.
+ * Description:     reveal the spinner sprite, without any digits.
  *
  ************************************************************************/
 
-BOOL CSpinner::Show(int nX,int nY)
-{
-BOOL	bSuccess = FALSE;
+BOOL CSpinner::Show(int nX, int nY) {
+	BOOL    bSuccess = FALSE;
 
-	if (m_pSprite == NULL)								// punt if no spinner sprite
-		return(FALSE);
+	if (m_pSprite == NULL)                              // punt if no spinner sprite
+		return (FALSE);
 
 	m_nX = nX;
 	m_nY = nY;
 
-	bSuccess = (*m_pSprite).PaintSprite(m_pDC,nX,nY);
-	
+	bSuccess = (*m_pSprite).PaintSprite(m_pDC, nX, nY);
+
 	if (bSuccess)
 		m_bVisible = TRUE;
-	return(bSuccess);
+	return (bSuccess);
 }
 
 
@@ -339,31 +332,29 @@ BOOL	bSuccess = FALSE;
  *
  * Hide()
  *
- * Parameters:		none		
+ * Parameters:      none
  *
  * Return Value:
- *	BOOL			success /failure
+ *  BOOL            success /failure
  *
- * Description:		hide the spinner sprite.
+ * Description:     hide the spinner sprite.
  *
  ************************************************************************/
 
-BOOL CSpinner::Hide(void)
-{
-BOOL	bSuccess = FALSE;
+BOOL CSpinner::Hide(void) {
+	BOOL    bSuccess = FALSE;
 
-	if (m_pSprite == NULL)								// punt if no spinner sprite
-		return(FALSE);
+	if (m_pSprite == NULL)                              // punt if no spinner sprite
+		return (FALSE);
 
-	if (m_bVisible) {									// if visible ...
-		bSuccess = (*m_pSprite).EraseSprite(m_pDC);   	// ... just erase the sprite
+	if (m_bVisible) {                                   // if visible ...
+		bSuccess = (*m_pSprite).EraseSprite(m_pDC);     // ... just erase the sprite
 		if (bSuccess)
-			m_bVisible = FALSE;                     	// ... and mark spinner as invisible
-	}
-	else
+			m_bVisible = FALSE;                         // ... and mark spinner as invisible
+	} else
 		bSuccess = TRUE;
-		
-	return(bSuccess);
+
+	return (bSuccess);
 }
 
 
@@ -371,95 +362,94 @@ BOOL	bSuccess = FALSE;
  *
  * Spin()
  *
- * Parameters:		none
+ * Parameters:      none
  *
  * Return Value:
- *	int				spinner value (-1 for error)
+ *  int             spinner value (-1 for error)
  *
- * Description:		animate the spinner and return a value.
+ * Description:     animate the spinner and return a value.
  *
  ************************************************************************/
 
-int CSpinner::Spin(void)
-{
-int			n, i, j, nIdx;
-CBitmap		*pBitmap = NULL;
-CPalette	*pPalette = NULL;
-CRect		srcRect, dstARect, dstBRect;
-WORD		wFlags;
-int         nValue = -1;
-CSound		*pSound;
-BOOL		bSuccess = FALSE;
+int CSpinner::Spin(void) {
+	int         n, i, j, nIdx;
+	CBitmap     *pBitmap = NULL;
+	CPalette    *pPalette = NULL;
+	CRect       srcRect, dstARect, dstBRect;
+	WORD        wFlags;
+	int         nValue = -1;
+	CSound      *pSound;
+	BOOL        bSuccess = FALSE;
 
-	if (m_pSprite == NULL)								// punt if no spinner sprite
-		return(-1);
+	if (m_pSprite == NULL)                              // punt if no spinner sprite
+		return (-1);
 
 	CSound::WaitWaveSounds();
 
-	pSound = new CSound();								// create the spinner sound
+	pSound = new CSound();                              // create the spinner sound
 	(*pSound).Initialize(m_pWnd, SPINNER_SOUND, SOUND_WAVE | SOUND_QUEUE | SOUND_BUFFERED | SOUND_ASYNCH | SOUND_NOTIFY | SOUND_LOOP);
 
-	if (!m_bVisible) {									// make it visible
-		bSuccess = Show(m_nX,m_nY);
+	if (!m_bVisible) {                                  // make it visible
+		bSuccess = Show(m_nX, m_nY);
 		if (!bSuccess)
 			goto punt;
 	}
 
-	nIdx = rand() % SPINNER_COUNT;						// generate a spinner value
+	nIdx = rand() % SPINNER_COUNT;                      // generate a spinner value
 	nValue = SpinnerValues[nIdx];
-    
-    dstARect.SetRect(m_nX + SPINNER_SLOTA_DX,			// calculate rectangles for digits
-    				 m_nY + SPINNER_SLOTA_DY,
-    				 m_nX + SPINNER_SLOTA_DX + SPINNER_SLOT_DDX,
-    				 m_nY + SPINNER_SLOTA_DY + SPINNER_SLOT_DDY);
-    dstBRect.SetRect(m_nX + SPINNER_SLOTB_DX,
-    				 m_nY + SPINNER_SLOTB_DY,
-    				 m_nX + SPINNER_SLOTB_DX + SPINNER_SLOT_DDX,
-    				 m_nY + SPINNER_SLOTB_DY + SPINNER_SLOT_DDY);
-                                                        // "spin" the spinner digits
-	pBitmap = FetchBitmap(m_pDC,&pPalette,(m_bHodj ? HODJ_SPINNER_NUMBERS_SPEC : PODJ_SPINNER_NUMBERS_SPEC));
 
-	(*pSound).Play();									// start the spinner sound
+	dstARect.SetRect(m_nX + SPINNER_SLOTA_DX,           // calculate rectangles for digits
+	                 m_nY + SPINNER_SLOTA_DY,
+	                 m_nX + SPINNER_SLOTA_DX + SPINNER_SLOT_DDX,
+	                 m_nY + SPINNER_SLOTA_DY + SPINNER_SLOT_DDY);
+	dstBRect.SetRect(m_nX + SPINNER_SLOTB_DX,
+	                 m_nY + SPINNER_SLOTB_DY,
+	                 m_nX + SPINNER_SLOTB_DX + SPINNER_SLOT_DDX,
+	                 m_nY + SPINNER_SLOTB_DY + SPINNER_SLOT_DDY);
+	// "spin" the spinner digits
+	pBitmap = FetchBitmap(m_pDC, &pPalette, (m_bHodj ? HODJ_SPINNER_NUMBERS_SPEC : PODJ_SPINNER_NUMBERS_SPEC));
+
+	(*pSound).Play();                                   // start the spinner sound
 	if (pBitmap != NULL)
-		for (n = 0; n < SPINNER_CYCLE; n++)	
+		for (n = 0; n < SPINNER_CYCLE; n++)
 			for (i = 0; i < 2; i++) {
 				srcRect.SetRect(i * SPINNER_SLOT_DDX, 0, (i + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-				bSuccess = BltBitmap(m_pDC,pPalette,pBitmap,&srcRect,&dstARect,(DWORD) SRCCOPY);
+				bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstARect, (DWORD) SRCCOPY);
 				if (!bSuccess)
 					goto punt;
 				for (j = 0; j < 10; j++) {
-					if (HandleMessages())				// terminate if urgent message pending
+					if (HandleMessages())               // terminate if urgent message pending
 						goto punt;
 					srcRect.SetRect(j * SPINNER_SLOT_DDX, 0, (j + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-					bSuccess = BltBitmap(m_pDC,pPalette,pBitmap,&srcRect,&dstBRect,(DWORD) SRCCOPY);
+					bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstBRect, (DWORD) SRCCOPY);
 					if (!bSuccess)
 						goto punt;
 				}
 			}
 
-    i = nValue / 10;                                    // update spinner with actual value
+	i = nValue / 10;                                    // update spinner with actual value
 	srcRect.SetRect(i * SPINNER_SLOT_DDX, 0, (i + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-	bSuccess = BltBitmap(m_pDC,pPalette,pBitmap,&srcRect,&dstARect,(DWORD) SRCCOPY);
+	bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstARect, (DWORD) SRCCOPY);
 	if (bSuccess) {
 		j = nValue % 10;
 		srcRect.SetRect(j * SPINNER_SLOT_DDX, 0, (j + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-		bSuccess = BltBitmap(m_pDC,pPalette,pBitmap,&srcRect,&dstBRect,(DWORD) SRCCOPY);
+		bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstBRect, (DWORD) SRCCOPY);
 	}
 
-	if (pSound != NULL) {								// terminate the sound gracefully
-/*
-		wFlags = (*pSound).GetFlags();                  // ... by canceling looping and
-		wFlags |= SOUND_AUTODELETE;
-		wFlags ^= SOUND_LOOP;                           // ... then causing an auto delete
-		(*pSound).SetFlags(wFlags);
-*/
+	if (pSound != NULL) {                               // terminate the sound gracefully
+		/*
+		        wFlags = (*pSound).GetFlags();                  // ... by canceling looping and
+		        wFlags |= SOUND_AUTODELETE;
+		        wFlags ^= SOUND_LOOP;                           // ... then causing an auto delete
+		        (*pSound).SetFlags(wFlags);
+		*/
 		(*pSound).Stop();
 		delete pSound;
 		pSound = NULL;
 	}
 
-punt:			
-	if (pBitmap != NULL)								// release the resources we used
+punt:
+	if (pBitmap != NULL)                                // release the resources we used
 		delete pBitmap;
 	if (pPalette != NULL)
 		delete pPalette;
@@ -468,9 +458,9 @@ punt:
 		delete pSound;
 
 	if (bSuccess)                                      // return value if all went well
-		return(nValue);
+		return (nValue);
 
-	return(-1);
+	return (-1);
 }
 
 
@@ -478,39 +468,38 @@ punt:
  *
  * HandleMessages()
  *
- * Parameters:		none
+ * Parameters:      none
  *
  * Return Value:
- *	BOOL			whether an urgent message is pending
+ *  BOOL            whether an urgent message is pending
  *
- * Description:		process pending non-keyboard/mouse messages.
+ * Description:     process pending non-keyboard/mouse messages.
  *
  ************************************************************************/
 
-BOOL CSpinner::HandleMessages(void)
-{
-MSG 	msg;
+BOOL CSpinner::HandleMessages(void) {
+	MSG     msg;
 
-    if (PeekMessage(&msg, NULL, 0, WM_KEYFIRST - 1 , PM_REMOVE)) {
-        if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-            return(TRUE);
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    if (PeekMessage(&msg, NULL, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
-        if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-            return(TRUE);
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    if (PeekMessage(&msg, NULL, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
-        if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-            return(TRUE);
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    
-    return(FALSE);
+	if (PeekMessage(&msg, NULL, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
+		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
+			return (TRUE);
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	if (PeekMessage(&msg, NULL, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
+		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
+			return (TRUE);
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	if (PeekMessage(&msg, NULL, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
+		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
+			return (TRUE);
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return (FALSE);
 }
 
 
@@ -518,13 +507,11 @@ MSG 	msg;
 // CSpinner diagnostics
 
 #ifdef _DEBUG
-void CSpinner::AssertValid() const
-{
+void CSpinner::AssertValid() const {
 	CObject::AssertValid();
 }
 
-void CSpinner::Dump(CDumpContext& dc) const
-{
+void CSpinner::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 

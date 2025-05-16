@@ -136,8 +136,8 @@ public:
 	 * Build primary data objects and work areas; text will be displayed
 	 * centered within the defined rectangular area, hence it is up to
 	 * the caller to ensure that the text fits (excess is cropped).
-	 * @param pRect			Rectangular area encompassed by the text object
-	 * @param nJustify		Alignment of text in the rectangle
+	 * @param pRect         Rectangular area encompassed by the text object
+	 * @param nJustify      Alignment of text in the rectangle
 	 * @param nFormatFlags  Format flag
 	 */
 	ErrorCode setupText(const CBofRect *pRect, int nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
@@ -179,72 +179,72 @@ public:
 
 	/**
 	 * Restores the background behind current text on screen
-	 * @param pWnd		Window to erase text from
-	 * @return			Error return Code
+	 * @param pWnd      Window to erase text from
+	 * @return          Error return Code
 	 */
 	ErrorCode erase(CBofWindow *pWnd);
 
 	/**
 	 * Restores the background behind current text offscreen
-	 * @param pBmp		Offscreen bitmap to erase text from
-	 * @return			Error return Code
+	 * @param pBmp      Offscreen bitmap to erase text from
+	 * @return          Error return Code
 	 */
 	ErrorCode erase(CBofBitmap *pBmp);
 
 	/**
 	 * Re-displays current text, formatted with current attribs
-	 * @param pWnd		Window to paint into
-	 * @return			Error return Code
+	 * @param pWnd      Window to paint into
+	 * @return          Error return Code
 	 */
 	ErrorCode display(CBofWindow *pWnd);
 
 	/**
 	 * Re-displays current text, formatted with current attribs
-	 * @param pBmp		Bitmap to paint into
-	 * @return			Error return Code
+	 * @param pBmp      Bitmap to paint into
+	 * @return          Error return Code
 	 */
 	ErrorCode display(CBofBitmap *pBmp);
 
 	/**
 	 * Display a text string, formatted in the current text area
-	 * @param pWnd			Window to paint into
-	 * @param pszText		Point to text string to be displayed
-	 * @param nSize			Point size of the text to be used
-	 * @param nWeight		Weighting of the font (FW_ identifier)
-	 * @param cColor		Color that the text will be
+	 * @param pWnd          Window to paint into
+	 * @param pszText       Point to text string to be displayed
+	 * @param nSize         Point size of the text to be used
+	 * @param nWeight       Weighting of the font (FW_ identifier)
+	 * @param cColor        Color that the text will be
 	 * @param nFont         Font used (default or mono)
-	 * @return				Error return Code
+	 * @return              Error return Code
 	 */
 	ErrorCode display(CBofWindow *pWnd, const char *pszText, int nSize, int nWeight, COLORREF cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a text string, formatted in the current text area
-	 * @param pBmp			Bitmap to paint into
-	 * @param pszText		Point to text string to be displayed
-	 * @param nSize			Point size of the text to be used
-	 * @param nWeight		Weighting of the font (FW_ identifier)
-	 * @param cColor		Color that the text will be
+	 * @param pBmp          Bitmap to paint into
+	 * @param pszText       Point to text string to be displayed
+	 * @param nSize         Point size of the text to be used
+	 * @param nWeight       Weighting of the font (FW_ identifier)
+	 * @param cColor        Color that the text will be
 	 * @param nFont         Font used (default or mono)
-	 * @return				Error return Code
+	 * @return              Error return Code
 	 */
 	ErrorCode display(CBofBitmap *pBmp, const char *pszText, int nSize, int nWeight, COLORREF cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a shadowed text string into the current text area
-	 * @param pWnd			Window to paint into
-	 * @param pszText		Point to text string to be displayed
-	 * @param nSize			Point size of the text to be used
-	 * @param nWeight		Weighting of the font (FW_ identifier)
-	 * @param cColor		Color that the text will be
-	 * @param cShadow		Color that the text's shadow will be
+	 * @param pWnd          Window to paint into
+	 * @param pszText       Point to text string to be displayed
+	 * @param nSize         Point size of the text to be used
+	 * @param nWeight       Weighting of the font (FW_ identifier)
+	 * @param cColor        Color that the text will be
+	 * @param cShadow       Color that the text's shadow will be
 	 * @param nDX           Shadow DX
 	 * @param nDY           Shadow DY
 	 * @param nFont         Font used (default or mono)
-	 * @return				Error return Code
+	 * @return              Error return Code
 	 */
 	ErrorCode displayShadowed(CBofWindow *pWnd, const char *pszText, int nSize,
-		int nWeight, COLORREF cColor, COLORREF cShadow = CTEXT_SHADOW_COLOR,
-		int nDX = CTEXT_SHADOW_DX, int nDY = CTEXT_SHADOW_DY, int nFont = FONT_DEFAULT);
+	                          int nWeight, COLORREF cColor, COLORREF cShadow = CTEXT_SHADOW_COLOR,
+	                          int nDX = CTEXT_SHADOW_DX, int nDY = CTEXT_SHADOW_DY, int nFont = FONT_DEFAULT);
 
 
 	void flushBackground() {
@@ -256,14 +256,14 @@ public:
 
 	/**
 	 * Displays specified text onto specified bitmap
-	 * @param pBmp			Bitmap to paint text onto
-	 * @param pszText		Pointer to text string to be displayed
-	 * @param pRect			Area to paint text to
-	 * @param nSize			Point size of the text to be used
-	 * @param nWeight		Weighting of the font (FW_ identifier)
-	 * @param bShadowed		Whether the text is shadowed
+	 * @param pBmp          Bitmap to paint text onto
+	 * @param pszText       Pointer to text string to be displayed
+	 * @param pRect         Area to paint text to
+	 * @param nSize         Point size of the text to be used
+	 * @param nWeight       Weighting of the font (FW_ identifier)
+	 * @param bShadowed     Whether the text is shadowed
 	 * @param nFont         Font used (default or mono)
-	 * @return				Error return Code
+	 * @return              Error return Code
 	 */
 	ErrorCode displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, int nSize, int nWeight, bool bShadowed, int nFont = FONT_DEFAULT);
 
@@ -277,20 +277,20 @@ private:
 
 	/**
 	 * Displays specified text onto specified bitmap
-	 * @param pWnd			Window to paint text onto
-	 * @param pszText		Pointer to text string to be displayed
-	 * @param pRect			Area to paint text to
-	 * @param nSize			Point size of the text to be used
-	 * @param nWeight		Weighting of the font (FW_ identifier)
-	 * @param bShadowed		Whether the text is shadowed
+	 * @param pWnd          Window to paint text onto
+	 * @param pszText       Pointer to text string to be displayed
+	 * @param pRect         Area to paint text to
+	 * @param nSize         Point size of the text to be used
+	 * @param nWeight       Weighting of the font (FW_ identifier)
+	 * @param bShadowed     Whether the text is shadowed
 	 * @param nFont         Font used (default or mono)
-	 * @return				Error return Code
+	 * @return              Error return Code
 	 */
 	ErrorCode displayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, int nSize, int nWeight, bool bShadowed, int nFont = FONT_DEFAULT);
 	ErrorCode displayText(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, int nSize, int nWeight, bool bShadowed, int nFont = FONT_DEFAULT);
 
 	void displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface, const Common::U32String &line,
-		int left, int top, int width, int color, Graphics::TextAlign align);
+	                 int left, int top, int width, int color, Graphics::TextAlign align);
 
 protected:
 	CBofString  _cCurString;       // text to be displayed

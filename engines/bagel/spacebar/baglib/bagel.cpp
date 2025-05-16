@@ -237,7 +237,7 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 		pBmp = SpaceBar::loadBitmap(buildSysDir("DISK3.BMP"), pPal);
 		break;
 
-		// Shouldn't ever get here
+	// Shouldn't ever get here
 	default:
 		assert(false);
 		break;

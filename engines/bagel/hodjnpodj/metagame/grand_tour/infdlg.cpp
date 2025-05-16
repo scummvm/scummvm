@@ -37,19 +37,18 @@ namespace GrandTour {
 ///DEFS infdlg.h
 
 #ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
+	#undef THIS_FILE
+	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CInfDlg dialog
 
 CInfDlg::CInfDlg(CWnd *pParent /*=NULL*/)
-	: CDialog(CInfDlg::IDD, pParent)
-{
-    TRACECONSTRUCTOR(CInfDlg) ;
-    // note: parent is same as frame, but GetParentFrame returns NULL.
-    m_xpFrameWnd = (CGtlFrame *)pParent ;
+	: CDialog(CInfDlg::IDD, pParent) {
+	TRACECONSTRUCTOR(CInfDlg) ;
+	// note: parent is same as frame, but GetParentFrame returns NULL.
+	m_xpFrameWnd = (CGtlFrame *)pParent ;
 
 	//{{AFX_DATA_INIT(CInfDlg)
 	m_iXCoord = 0;
@@ -66,8 +65,7 @@ CInfDlg::CInfDlg(CWnd *pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-void CInfDlg::DoDataExchange(CDataExchange* pDX)
-{
+void CInfDlg::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CInfDlg)
 	DDX_Text(pDX, IDC_EDIT_XCOORD, m_iXCoord);
@@ -93,64 +91,56 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CInfDlg message handlers
 
-void CInfDlg::OnSetFocus(CWnd *)
-{
+void CInfDlg::OnSetFocus(CWnd *) {
 }
 
 
-BOOL CInfDlg::OnInitDialog()
-{
+BOOL CInfDlg::OnInitDialog() {
 	CDialog::OnInitDialog();
 
-    m_bClose = FALSE ;
+	m_bClose = FALSE ;
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 
-void CInfDlg::OnClose()
-{
-    DestroyWindow() ;
+void CInfDlg::OnClose() {
+	DestroyWindow() ;
 }
 
-void CInfDlg::OnCancel()
-{
-    DestroyWindow() ;
+void CInfDlg::OnCancel() {
+	DestroyWindow() ;
 }
 
-void CInfDlg::OnDestroy()
-{
-    CDialog::OnDestroy();
+void CInfDlg::OnDestroy() {
+	CDialog::OnDestroy();
 }
 
-void CInfDlg::PostNcDestroy()
-{
-    if (!m_bClose) {
-        m_bClose = TRUE ;   // set flag to close dialog box
-        m_xpGtlData->UpdateDialogs(TRUE) ;  // handle close
-    }
-    if (m_xpDocument)
-        m_xpDocument->m_xpcInfDlg = NULL ;
-    delete this;
+void CInfDlg::PostNcDestroy() {
+	if (!m_bClose) {
+		m_bClose = TRUE ;   // set flag to close dialog box
+		m_xpGtlData->UpdateDialogs(TRUE) ;  // handle close
+	}
+	if (m_xpDocument)
+		m_xpDocument->m_xpcInfDlg = NULL ;
+	delete this;
 }
 
 #ifdef OLD_CODE
 
-void CInfDlg::OnClose()
-{
+void CInfDlg::OnClose() {
 	// TODO: Add your message handler code here and/or call default
-    CDialog::OnClose();
+	CDialog::OnClose();
 
 //    DestroyWindow();
 }
 
-void CInfDlg::PostNcDestroy()
-{
-    if (m_xpFrameWnd && m_xpFrameWnd->GetMenu())
-	m_xpFrameWnd->GetMenu()->CheckMenuItem(ID_VIEW_INFO_DLG,
-				MF_UNCHECKED) ;
-			// uncheck menu item in frame window
-    m_xpDocument->m_xpcInfDlg = NULL ;
-    delete this;
+void CInfDlg::PostNcDestroy() {
+	if (m_xpFrameWnd && m_xpFrameWnd->GetMenu())
+		m_xpFrameWnd->GetMenu()->CheckMenuItem(ID_VIEW_INFO_DLG,
+		                                       MF_UNCHECKED) ;
+	// uncheck menu item in frame window
+	m_xpDocument->m_xpcInfDlg = NULL ;
+	delete this;
 }
 #endif
 
@@ -161,11 +151,10 @@ void CInfDlg::PostNcDestroy()
 // CCtlDlg dialog
 
 CCtlDlg::CCtlDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CCtlDlg::IDD, pParent)
-{
-    TRACECONSTRUCTOR(CCtlDlg) ;
-    // note: parent is same as frame, but GetParentFrame returns NULL.
-    m_xpFrameWnd = (CGtlFrame *)pParent ;
+	: CDialog(CCtlDlg::IDD, pParent) {
+	TRACECONSTRUCTOR(CCtlDlg) ;
+	// note: parent is same as frame, but GetParentFrame returns NULL.
+	m_xpFrameWnd = (CGtlFrame *)pParent ;
 //    m_xpFrameWnd = (CGtlFrame *)GetParentFrame() ;
 
 
@@ -177,8 +166,7 @@ CCtlDlg::CCtlDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-void CCtlDlg::DoDataExchange(CDataExchange* pDX)
-{
+void CCtlDlg::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CCtlDlg)
 	DDX_Check(pDX, IDC_CTL_PAINTBKG, m_bPaintBackground);
@@ -205,134 +193,122 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CCtlDlg message handlers
 
-BOOL CCtlDlg::OnInitDialog()
-{
-    CDialog::OnInitDialog();
+BOOL CCtlDlg::OnInitDialog() {
+	CDialog::OnInitDialog();
 
-    if (m_xpGtlData && m_xpDocument && ((m_xpView = m_xpDocument->m_xpcLastFocusView) != NULL)) {
-        m_cDlgBsuSet.InitDlgBsuSet(this, &m_xpView->m_cViewBsuSet) ;
-        m_cDlgBsuSet.AddBarToSet(IDC_CTL_HSCROLL, SB_HORZ) ;
-        m_cDlgBsuSet.AddBarToSet(IDC_CTL_VSCROLL, SB_VERT) ;
-        m_cDlgBsuSet.LinkWndBsuSet() ;
-    }
+	if (m_xpGtlData && m_xpDocument && ((m_xpView = m_xpDocument->m_xpcLastFocusView) != NULL)) {
+		m_cDlgBsuSet.InitDlgBsuSet(this, &m_xpView->m_cViewBsuSet) ;
+		m_cDlgBsuSet.AddBarToSet(IDC_CTL_HSCROLL, SB_HORZ) ;
+		m_cDlgBsuSet.AddBarToSet(IDC_CTL_VSCROLL, SB_VERT) ;
+		m_cDlgBsuSet.LinkWndBsuSet() ;
+	}
 
-    m_bClose = FALSE ;
+	m_bClose = FALSE ;
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CCtlDlg::OnClickedCtlPaintBkg()
-{
+void CCtlDlg::OnClickedCtlPaintBkg() {
 	// TODO: Add your control notification handler code here
 //  ::dbgWindowDump(NULL) ;
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CCtlDlg::OnClickedCtlShowNodes()
-{
+void CCtlDlg::OnClickedCtlShowNodes() {
 	// TODO: Add your control notification handler code here
-	
-    EffectControl() ;
+
+	EffectControl() ;
 }
 
-void CCtlDlg::OnClickedCtlShowSensitivity()
-{
+void CCtlDlg::OnClickedCtlShowSensitivity() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CCtlDlg::OnClickedCtlMetaGame()
-{
+void CCtlDlg::OnClickedCtlMetaGame() {
 	// TODO: Add your control notification handler code here
-	
-    EffectControl() ;
+
+	EffectControl() ;
 }
 
-void CCtlDlg::OnCtlDump()
-{
+void CCtlDlg::OnCtlDump() {
 	// TODO: Add your control notification handler code here
-    ::dbgWindowDump(NULL) ;
+	::dbgWindowDump(NULL) ;
 }
 
-void CCtlDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar)
-{
-    // TODO: Add your message handler code here and/or call default
-    
+void CCtlDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {
+	// TODO: Add your message handler code here and/or call default
+
 	m_cDlgBsuSet.OnScroll(nSBCode, nPos, xpScrollBar, BSCT_HORZ) ;
 }
 
-void CCtlDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar)
-{
-    // TODO: Add your message handler code here and/or call default
-    
+void CCtlDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {
+	// TODO: Add your message handler code here and/or call default
+
 	m_cDlgBsuSet.OnScroll(nSBCode, nPos, xpScrollBar, BSCT_VERT) ;
 }
 
-void CCtlDlg::OnClose()
-{
+void CCtlDlg::OnClose() {
 	// TODO: Add your message handler code here and/or call default
 //	CDialog::OnClose();
-    DestroyWindow() ;
+	DestroyWindow() ;
 }
 
-void CCtlDlg::OnCancel()
-{
-    DestroyWindow() ;
+void CCtlDlg::OnCancel() {
+	DestroyWindow() ;
 }
 
-void CCtlDlg::OnDestroy()
-{
-    EffectControl() ;
+void CCtlDlg::OnDestroy() {
+	EffectControl() ;
 	CDialog::OnDestroy();
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
-void CCtlDlg::PostNcDestroy()
-{
-    if (!m_bClose) {
-        m_bClose = TRUE ;   // set flag to close dialog box
-        EffectControl(FALSE) ;
-    }
+void CCtlDlg::PostNcDestroy() {
+	if (!m_bClose) {
+		m_bClose = TRUE ;   // set flag to close dialog box
+		EffectControl(FALSE) ;
+	}
 
-    if (m_xpDocument)
-        m_xpDocument->m_xpcCtlDlg = NULL ;
-    delete this;
+	if (m_xpDocument)
+		m_xpDocument->m_xpcCtlDlg = NULL ;
+	delete this;
 }
 
 //* CCtlDlg::EffectControl -- effect control command on document
 BOOL CCtlDlg::EffectControl(BOOL bUpdate)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CCtlDlg::EffectControl) ;
-    int iError = 0 ;		// error code
+	JXENTER(CCtlDlg::EffectControl) ;
+	int iError = 0 ;        // error code
 
-    if (bUpdate)
-        UpdateData(TRUE) ;  // update variables from dialog box
+	if (bUpdate)
+		UpdateData(TRUE) ;  // update variables from dialog box
 
-    m_xpGtlData->UpdateDialogs(TRUE) ;	// copy data from
-			// dialog box back to document
+	m_xpGtlData->UpdateDialogs(TRUE) ;  // copy data from
+	// dialog box back to document
 
 // cleanup:
 
-    JXELEAVE(CCtlDlg::EffectControl) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CCtlDlg::EffectControl) ;
+	RETURN(iError != 0) ;
 }
 
 //* CCtlDlg::InitDialogBox -- set scroll bars
 BOOL CCtlDlg::InitDialogBox(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CCtlDlg::InitDialogBox) ;
-    int iError = 0 ;		// error code
+	JXENTER(CCtlDlg::InitDialogBox) ;
+	int iError = 0 ;        // error code
 
 
 // cleanup:
 
-    JXELEAVE(CCtlDlg::InitDialogBox) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CCtlDlg::InitDialogBox) ;
+	RETURN(iError != 0) ;
 }
 
 
@@ -341,11 +317,10 @@ BOOL CCtlDlg::InitDialogBox(void)
 // CNodeDlg dialog
 
 CNodeDlg::CNodeDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CNodeDlg::IDD, pParent)
-{
-    TRACECONSTRUCTOR(CNodeDlg) ;
-    // note: parent is same as frame, but GetParentFrame returns NULL.
-    m_xpFrameWnd = (CGtlFrame *)pParent ;
+	: CDialog(CNodeDlg::IDD, pParent) {
+	TRACECONSTRUCTOR(CNodeDlg) ;
+	// note: parent is same as frame, but GetParentFrame returns NULL.
+	m_xpFrameWnd = (CGtlFrame *)pParent ;
 
 	//{{AFX_DATA_INIT(CNodeDlg)
 	m_stSector = "";
@@ -362,8 +337,7 @@ CNodeDlg::CNodeDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-void CNodeDlg::DoDataExchange(CDataExchange* pDX)
-{
+void CNodeDlg::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CNodeDlg)
 	DDX_Text(pDX, IDC_NODE_SECTOR, m_stSector);
@@ -396,130 +370,115 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CNodeDlg message handlers
 
-BOOL CNodeDlg::OnInitDialog()
-{
+BOOL CNodeDlg::OnInitDialog() {
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
-    m_bApply = FALSE ;
-    m_bClose = FALSE ;
-	
+	m_bApply = FALSE ;
+	m_bClose = FALSE ;
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 #if OLDCODE
 
-void CNodeDlg::OnKillfocusNodeName()
-{
+void CNodeDlg::OnKillfocusNodeName() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CNodeDlg::OnKillfocusNodeSector()
-{
+void CNodeDlg::OnKillfocusNodeSector() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
+	EffectControl() ;
 }
 
-void CNodeDlg::OnKillfocusNodeIndex()
-{
+void CNodeDlg::OnKillfocusNodeIndex() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CNodeDlg::OnKillfocusNodeLoc()
-{
+void CNodeDlg::OnKillfocusNodeLoc() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CNodeDlg::OnKillfocusNodeX()
-{
+void CNodeDlg::OnKillfocusNodeX() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CNodeDlg::OnKillfocusNodeY()
-{
+void CNodeDlg::OnKillfocusNodeY() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CNodeDlg::OnNodePassThru()
-{
+void CNodeDlg::OnNodePassThru() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CNodeDlg::OnNodeReloc()
-{
+void CNodeDlg::OnNodeReloc() {
 	// TODO: Add your control notification handler code here
-	
+
 }
 
 #endif /* OLDCODE */
 
-void CNodeDlg::OnNodeReset()
-{
+void CNodeDlg::OnNodeReset() {
 	// TODO: Add your control notification handler code here
-    m_bApply = FALSE ;	// don't apply changes
-    m_xpGtlData->UpdateDialogs(FALSE) ;	// copy data from document
-    			// back to dialog box
-    UpdateData(FALSE) ;	// update dialog box from variables
-	
+	m_bApply = FALSE ;  // don't apply changes
+	m_xpGtlData->UpdateDialogs(FALSE) ; // copy data from document
+	// back to dialog box
+	UpdateData(FALSE) ; // update dialog box from variables
+
 }
 
-void CNodeDlg::OnNodeApply()
-{
+void CNodeDlg::OnNodeApply() {
 	// TODO: Add your control notification handler code here
 
-    UpdateData(TRUE) ;	// update variables from dialog box
-    m_bApply = TRUE ;	// apply button pressed
-    m_xpGtlData->UpdateDialogs(TRUE) ;	// copy data from
-			// dialog box back to document
+	UpdateData(TRUE) ;  // update variables from dialog box
+	m_bApply = TRUE ;   // apply button pressed
+	m_xpGtlData->UpdateDialogs(TRUE) ;  // copy data from
+	// dialog box back to document
 }
 
-void CNodeDlg::OnClose()
-{
+void CNodeDlg::OnClose() {
 	// TODO: Add your message handler code here and/or call default
-	
+
 	CDialog::OnClose();
 }
 
-void CNodeDlg::OnCancel()
-{
-    DestroyWindow() ;
+void CNodeDlg::OnCancel() {
+	DestroyWindow() ;
 }
 
-void CNodeDlg::OnDestroy()
-{
+void CNodeDlg::OnDestroy() {
 //  EffectControl() ;
 	CDialog::OnDestroy();
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
 
-void CNodeDlg::PostNcDestroy()
-{
+void CNodeDlg::PostNcDestroy() {
 
-    if (!m_bClose) {
-        m_bApply = FALSE ;  // don't apply changes
-        m_bClose = TRUE ;   // set flag to close dialog box
-        if (m_xpGtlData)
-            m_xpGtlData->UpdateDialogs(TRUE) ;  // process close
-    }
+	if (!m_bClose) {
+		m_bApply = FALSE ;  // don't apply changes
+		m_bClose = TRUE ;   // set flag to close dialog box
+		if (m_xpGtlData)
+			m_xpGtlData->UpdateDialogs(TRUE) ;  // process close
+	}
 
-    if (m_xpDocument)
-        m_xpDocument->m_xpcNodeDlg = NULL ;
-    delete this;
+	if (m_xpDocument)
+		m_xpDocument->m_xpcNodeDlg = NULL ;
+	delete this;
 }
 
 #if OLD_CODE
@@ -528,19 +487,19 @@ void CNodeDlg::PostNcDestroy()
 BOOL CNodeDlg::EffectControl(BOOL bUpdate)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CNodeDlg::EffectControl) ;
-    int iError = 0 ;		// error code
+	JXENTER(CNodeDlg::EffectControl) ;
+	int iError = 0 ;        // error code
 
-    if (bUpdate)
-        UpdateData(TRUE) ;  // update variables from dialog box
+	if (bUpdate)
+		UpdateData(TRUE) ;  // update variables from dialog box
 
-    m_xpGtlData->UpdateDialogs(TRUE) ;	// copy data from
-			// dialog box back to document
+	m_xpGtlData->UpdateDialogs(TRUE) ;  // copy data from
+	// dialog box back to document
 
 // cleanup:
 
-    JXELEAVE(CNodeDlg::EffectControl) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CNodeDlg::EffectControl) ;
+	RETURN(iError != 0) ;
 }
 #endif /* OLD_CODE */
 
@@ -549,17 +508,15 @@ BOOL CNodeDlg::EffectControl(BOOL bUpdate)
 
 
 CActDlg::CActDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CActDlg::IDD, pParent)
-{
-    TRACECONSTRUCTOR(CActDlg) ;
+	: CDialog(CActDlg::IDD, pParent) {
+	TRACECONSTRUCTOR(CActDlg) ;
 	//{{AFX_DATA_INIT(CActDlg)
 	m_stGame = "";
 	m_iMoney = 0;
 	//}}AFX_DATA_INIT
 }
 
-void CActDlg::DoDataExchange(CDataExchange* pDX)
-{
+void CActDlg::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CActDlg)
 	DDX_Text(pDX, IDC_ACTION_GAME, m_stGame);
@@ -569,7 +526,7 @@ void CActDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CActDlg, CDialog)
 	//{{AFX_MSG_MAP(CActDlg)
-		// NOTE: the ClassWizard will add message map macros here
+	// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -583,21 +540,19 @@ END_MESSAGE_MAP()
 
 
 CMenuDlg::CMenuDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CMenuDlg::IDD, pParent)
-{
-    TRACECONSTRUCTOR(CMenuDlg) ;
-    // note: parent is same as frame, but GetParentFrame returns NULL.
-    m_xpFrameWnd = (CGtlFrame *)pParent ;
+	: CDialog(CMenuDlg::IDD, pParent) {
+	TRACECONSTRUCTOR(CMenuDlg) ;
+	// note: parent is same as frame, but GetParentFrame returns NULL.
+	m_xpFrameWnd = (CGtlFrame *)pParent ;
 
-    //{{AFX_DATA_INIT(CMenuDlg)
-    m_bCtlDlg = FALSE;
-    m_bInfoDlg = FALSE;
-    m_bNodeDlg = FALSE;
-    //}}AFX_DATA_INIT
+	//{{AFX_DATA_INIT(CMenuDlg)
+	m_bCtlDlg = FALSE;
+	m_bInfoDlg = FALSE;
+	m_bNodeDlg = FALSE;
+	//}}AFX_DATA_INIT
 }
 
-void CMenuDlg::DoDataExchange(CDataExchange* pDX)
-{
+void CMenuDlg::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMenuDlg)
 	DDX_Check(pDX, IDC_MENU_CTL, m_bCtlDlg);
@@ -623,106 +578,95 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMenuDlg message handlers
 
-BOOL CMenuDlg::OnInitDialog()
-{
+BOOL CMenuDlg::OnInitDialog() {
 
-    m_bNew = m_bOpen = m_bSave = FALSE ;
-    m_bClose = FALSE ;
+	m_bNew = m_bOpen = m_bSave = FALSE ;
+	m_bClose = FALSE ;
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
-	
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CMenuDlg::OnMenuCtl()
-{
+void CMenuDlg::OnMenuCtl() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
-	
+	EffectControl() ;
+
 }
 
-void CMenuDlg::OnMenuInfo()
-{
+void CMenuDlg::OnMenuInfo() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
+	EffectControl() ;
 }
 
-void CMenuDlg::OnMenuNode()
-{
+void CMenuDlg::OnMenuNode() {
 	// TODO: Add your control notification handler code here
-    EffectControl() ;
+	EffectControl() ;
 }
 
-void CMenuDlg::OnMenuNew()
-{
-    m_xpFrameWnd->PostMessage(WM_COMMAND, ID_CALL_NEW) ;
+void CMenuDlg::OnMenuNew() {
+	m_xpFrameWnd->PostMessage(WM_COMMAND, ID_CALL_NEW) ;
 }
 
-void CMenuDlg::OnMenuOpen()
-{
-    m_xpFrameWnd->PostMessage(WM_COMMAND, ID_CALL_OPEN) ;
+void CMenuDlg::OnMenuOpen() {
+	m_xpFrameWnd->PostMessage(WM_COMMAND, ID_CALL_OPEN) ;
 }
 
-void CMenuDlg::OnMenuSave()
-{
-    if (m_xpDocument)
-        m_xpDocument->DoOnFileSaveAs();
+void CMenuDlg::OnMenuSave() {
+	if (m_xpDocument)
+		m_xpDocument->DoOnFileSaveAs();
 }
 
-void CMenuDlg::OnCancel()
-{
+void CMenuDlg::OnCancel() {
 	// TODO: Add extra cleanup here
-	DestroyWindow() ;	
+	DestroyWindow() ;
 //	CDialog::OnCancel();
 }
 
-void CMenuDlg::OnClose()
-{
+void CMenuDlg::OnClose() {
 	// TODO: Add your message handler code here and/or call default
-	DestroyWindow() ;	
-	
+	DestroyWindow() ;
+
 //	CDialog::OnClose();
 }
 
-void CMenuDlg::OnDestroy()
-{
+void CMenuDlg::OnDestroy() {
 	CDialog::OnDestroy();
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
-void CMenuDlg::PostNcDestroy()
-{
+void CMenuDlg::PostNcDestroy() {
 
-    if (!m_bClose) {
-        m_bClose = TRUE ;   // set flag to close dialog box
-        EffectControl(FALSE) ;
-    }
+	if (!m_bClose) {
+		m_bClose = TRUE ;   // set flag to close dialog box
+		EffectControl(FALSE) ;
+	}
 
-    if (m_xpDocument)
-        m_xpDocument->m_xpcMenuDlg = NULL ;
-    delete this;
+	if (m_xpDocument)
+		m_xpDocument->m_xpcMenuDlg = NULL ;
+	delete this;
 }
 
 ////* CMenuDlg::EffectControl -- effect control command on document
 BOOL CMenuDlg::EffectControl(BOOL bUpdate)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CMenuDlg::EffectControl) ;
-    int iError = 0 ;		// error code
+	JXENTER(CMenuDlg::EffectControl) ;
+	int iError = 0 ;        // error code
 
-    if (bUpdate)
-        UpdateData(TRUE) ;  // update variables from dialog box
+	if (bUpdate)
+		UpdateData(TRUE) ;  // update variables from dialog box
 
-    m_xpGtlData->UpdateDialogs(TRUE) ;	// copy data from
-			// dialog box back to document
+	m_xpGtlData->UpdateDialogs(TRUE) ;  // copy data from
+	// dialog box back to document
 
 // cleanup:
 
-    JXELEAVE(CMenuDlg::EffectControl) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CMenuDlg::EffectControl) ;
+	RETURN(iError != 0) ;
 }
 #endif
 

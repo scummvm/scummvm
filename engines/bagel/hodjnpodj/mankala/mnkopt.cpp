@@ -22,26 +22,25 @@
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/mankala/mnk.h"
-#include "bagel/hodjnpodj/mankala/mnkopt.h"  
+#include "bagel/hodjnpodj/mankala/mnkopt.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-static	CColorButton *pOKButton = NULL;						// OKAY button on scroll
-static	CColorButton *pCancelButton = NULL;					// Cancel button on scroll
+static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
 
 
-CText	*m_pShellText = NULL;
-CText	*m_pStrengthText = NULL;
+CText   *m_pShellText = NULL;
+CText   *m_pStrengthText = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMnkOpt dialog
 
 CMnkOpt::CMnkOpt(CWnd* pParent /*=NULL*/)
-	: CDialog(CMnkOpt::IDD, pParent)
-{
+	: CDialog(CMnkOpt::IDD, pParent) {
 	//{{AFX_DATA_INIT(CMnkOpt)
 	m_iLevel0 = -1;
 	m_iLevel1 = -1;
@@ -60,13 +59,11 @@ CMnkOpt::CMnkOpt(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-CMnkOpt::~CMnkOpt()
-{
+CMnkOpt::~CMnkOpt() {
 }
 
 
-void CMnkOpt::DoDataExchange(CDataExchange* pDX)
-{
+void CMnkOpt::DoDataExchange(CDataExchange* pDX) {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMnkOpt)
 	DDX_Radio(pDX, IDC_ALG_0, m_iLevel0);
@@ -94,7 +91,7 @@ void CMnkOpt::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CMnkOpt, CDialog)
 	//{{AFX_MSG_MAP(CMnkOpt)
-		// NOTE: the ClassWizard will add message map macros here
+	// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -107,27 +104,24 @@ END_MESSAGE_MAP()
 // CMnkUsr dialog
 
 CMnkUsr::CMnkUsr(CWnd *xpParent, CPalette *xpPalette, UINT nID)
-		:  CBmpDialog(xpParent, xpPalette, nID, ".\\ART\\SSCROLL.BMP")
-{
-    //{{AFX_DATA_INIT(CMnkUsr)
-    m_iUShells = 0;
-    m_iUStrength = 0;
-    //}}AFX_DATA_INIT
+	:  CBmpDialog(xpParent, xpPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	//{{AFX_DATA_INIT(CMnkUsr)
+	m_iUShells = 0;
+	m_iUStrength = 0;
+	//}}AFX_DATA_INIT
 
-    m_xpGamePalette = xpPalette;
+	m_xpGamePalette = xpPalette;
 //    DoModal();
 }
 
-CMnkUsr::~CMnkUsr()
-{
-	if( m_pShellText != NULL)
+CMnkUsr::~CMnkUsr() {
+	if (m_pShellText != NULL)
 		delete m_pShellText;
-	if( m_pStrengthText != NULL)
-		delete m_pStrengthText;      
+	if (m_pStrengthText != NULL)
+		delete m_pStrengthText;
 }
 
-void CMnkUsr::DoDataExchange(CDataExchange* pDX)
-{
+void CMnkUsr::DoDataExchange(CDataExchange* pDX) {
 	CBmpDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMnkUsr)
 //	DDX_Text(pDX, IDC_USHELLS, m_iUShells);
@@ -149,61 +143,59 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMnkUsr message handlers
 
-BOOL CMnkUsr::OnInitDialog()
-{
-    CBmpDialog::OnInitDialog();
+BOOL CMnkUsr::OnInitDialog() {
+	CBmpDialog::OnInitDialog();
 
-	CDC		*pDC;
-	CRect	statRect;
-	
+	CDC     *pDC;
+	CRect   statRect;
+
 	pDC = GetDC();
 
 	mLevelTable[0] =  "CrabCakes";
-	mLevelTable[1] =  "Soft-shell"; 
-	mLevelTable[2] =  "Tough'n'Chewy"; 
-	mLevelTable[3] =  "King Crab"; 
-    mLevelTable[4] =  "Invincible";         /*nish added 08/04/94*/
-	statRect.SetRect( LEFT_SIDE, 25, LEFT_SIDE + 100, 40 );
+	mLevelTable[1] =  "Soft-shell";
+	mLevelTable[2] =  "Tough'n'Chewy";
+	mLevelTable[3] =  "King Crab";
+	mLevelTable[4] =  "Invincible";         /*nish added 08/04/94*/
+	statRect.SetRect(LEFT_SIDE, 25, LEFT_SIDE + 100, 40);
 	if ((m_pShellText = new CText()) != NULL) {
 		(*m_pShellText).SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
 	}
-	
-	statRect.SetRect( LEFT_SIDE, 65, LEFT_SIDE + 185, 80 );
+
+	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 185, 80);
 	if ((m_pStrengthText = new CText()) != NULL) {
 		(*m_pStrengthText).SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
-    m_xpUScrShell = (CScrollBar *)GetDlgItem(IDC_USCRSHELL) ;
-    m_xpUScrShell->SetScrollRange(MINSTONES, MAXSTONES, TRUE) ;
-    m_xpUScrShell->SetScrollPos(m_iUShells) ;
+	m_xpUScrShell = (CScrollBar *)GetDlgItem(IDC_USCRSHELL) ;
+	m_xpUScrShell->SetScrollRange(MINSTONES, MAXSTONES, TRUE) ;
+	m_xpUScrShell->SetScrollPos(m_iUShells) ;
 
-    m_xpUScrStrength = (CScrollBar *)GetDlgItem(IDC_USCRSTRENGTH) ;
-    m_xpUScrStrength->SetScrollRange(MINSTRENGTH, MAXSTRENGTH, TRUE) ;
-    m_xpUScrStrength->SetScrollPos(m_iUStrength) ;
-    
-    if ((pOKButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(m_pPalette);						// set the palette to use
-		(*pOKButton).SetControl(IDOK,this);				// tie to the dialog control
-	}
-	                                                                                                         
-	if ((pCancelButton = new CColorButton) != NULL) {					// build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(m_pPalette);						// set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL,this);				// tie to the dialog control
-	}
-	
-                                                                                                                            
-	ReleaseDC( pDC );
-    return TRUE;  // return TRUE  unless you set the focus to a control
-}                                                                                                 
+	m_xpUScrStrength = (CScrollBar *)GetDlgItem(IDC_USCRSTRENGTH) ;
+	m_xpUScrStrength->SetScrollRange(MINSTRENGTH, MAXSTRENGTH, TRUE) ;
+	m_xpUScrStrength->SetScrollPos(m_iUStrength) ;
 
-void CMnkUsr::ClearDialogImage(void)
-{
+	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
+		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+	}
+
+	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+		(*pCancelButton).SetPalette(m_pPalette);                        // set the palette to use
+		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+	}
+
+
+	ReleaseDC(pDC);
+	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CMnkUsr::ClearDialogImage(void) {
 	if (pOKButton != NULL) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;                                                                                  
+		pOKButton = NULL;
 	}
 
-	if (pCancelButton != NULL) {                     	// release the button
+	if (pCancelButton != NULL) {                        // release the button
 		delete pCancelButton;
 		pCancelButton = NULL;
 	}
@@ -211,95 +203,92 @@ void CMnkUsr::ClearDialogImage(void)
 	ValidateRect(NULL);
 }
 
-BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam)
-{
-    /*
-    * respond to user
-    */
-    if (HIWORD(lParam) == BN_CLICKED) {
+BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
+	/*
+	* respond to user
+	*/
+	if (HIWORD(lParam) == BN_CLICKED) {
 
-        switch (wParam) {
+		switch (wParam) {
 
-            case IDOK:
-                ClearDialogImage();
-                EndDialog(IDOK);
-                return(FALSE);
+		case IDOK:
+			ClearDialogImage();
+			EndDialog(IDOK);
+			return (FALSE);
 
-            case IDCANCEL:
-                ClearDialogImage();
-                EndDialog(IDCANCEL);
-                return(FALSE);
+		case IDCANCEL:
+			ClearDialogImage();
+			EndDialog(IDCANCEL);
+			return (FALSE);
 
-            default:
-                break;
-        }
-    }
+		default:
+			break;
+		}
+	}
 
-    return(CBmpDialog::OnCommand(wParam, lParam));
+	return (CBmpDialog::OnCommand(wParam, lParam));
 }
 
-void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar)
-{
-//    int iId = xpScrollBar->GetDlgCtrlID() ;	// get id of control bar
-    int iValMin, iValMax, iValCur ;	// min, max, current values
+void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {
+//    int iId = xpScrollBar->GetDlgCtrlID() ;   // get id of control bar
+	int iValMin, iValMax, iValCur ; // min, max, current values
 
-    xpScrollBar->GetScrollRange(&iValMin, &iValMax) ;
-    iValCur = xpScrollBar->GetScrollPos() ;
+	xpScrollBar->GetScrollRange(&iValMin, &iValMax) ;
+	iValCur = xpScrollBar->GetScrollPos() ;
 
 //    int * xpiVariable = (iId == IDC_USCRSHELL) ? &m_iUShells
 //		: (iId == IDC_USCRSTRENGTH) ? &m_iUStrength : NULL ;
 
-    switch (nSBCode)
-    {
-        case SB_LEFT:
-	    iValCur = iValMin ;
-            break;
+	switch (nSBCode) {
+	case SB_LEFT:
+		iValCur = iValMin ;
+		break;
 
-        case SB_PAGELEFT:
-	    iValCur -= (iValMax - iValMin) / 3 ;
-            break;
+	case SB_PAGELEFT:
+		iValCur -= (iValMax - iValMin) / 3 ;
+		break;
 
-        case SB_LINELEFT:
-	    iValCur-- ;
-            break;
+	case SB_LINELEFT:
+		iValCur-- ;
+		break;
 
-        case SB_RIGHT:
-	    iValCur = iValMax ;
-            break;
+	case SB_RIGHT:
+		iValCur = iValMax ;
+		break;
 
-        case SB_PAGERIGHT:
-	    iValCur += (iValMax - iValMin) / 3 ;
-            break;
+	case SB_PAGERIGHT:
+		iValCur += (iValMax - iValMin) / 3 ;
+		break;
 
-        case SB_LINERIGHT:
-	    iValCur++ ;
-            break;
+	case SB_LINERIGHT:
+		iValCur++ ;
+		break;
 
-        case SB_THUMBPOSITION:
-        case SB_THUMBTRACK:
-            iValCur = nPos;
-            break;
+	case SB_THUMBPOSITION:
+	case SB_THUMBTRACK:
+		iValCur = nPos;
+		break;
 
-        default:
-            break;
-    }
+	default:
+		break;
+	}
 
-    if (iValCur < iValMin)
-	iValCur = iValMin ;
+	if (iValCur < iValMin)
+		iValCur = iValMin ;
 
-    if (iValCur > iValMax)
-	iValCur = iValMax ;
+	if (iValCur > iValMax)
+		iValCur = iValMax ;
 
-    xpScrollBar->SetScrollPos(iValCur);
+	xpScrollBar->SetScrollPos(iValCur);
 
 //    if (xpiVariable)
 //	*xpiVariable = iValCur ;
 
-    //UpdateData(FALSE) ;
+	//UpdateData(FALSE) ;
 
 	UpdateScrollbars();
-	
-    CBmpDialog::OnHScroll(nSBCode, nPos, xpScrollBar);
+
+	CBmpDialog::OnHScroll(nSBCode, nPos, xpScrollBar);
 }
 
 /*****************************************************************
@@ -309,67 +298,65 @@ void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar)
  *  FUNCTIONAL DESCRIPTION:
  *
  *      Updates data adjusted with scrollbars
- *   
+ *
  *  FORMAL PARAMETERS:
  *
  *      none
  *
  *  IMPLICIT INPUT PARAMETERS:
- *  
- *      CScrollbar	pScrollShells, pScrollStrength
- *   
+ *
+ *      CScrollbar  pScrollShells, pScrollStrength
+ *
  *  IMPLICIT OUTPUT PARAMETERS:
- *   
- *      int	m_nTime, m_nNumParts, m_nColumns, m_nRows
- *   
+ *
+ *      int m_nTime, m_nNumParts, m_nColumns, m_nRows
+ *
  *  RETURN VALUE:
  *
  *      void
  *
  ****************************************************************/
-void CMnkUsr::UpdateScrollbars()
-{
-	int		OldValue;
-	CDC 	*pDC;
-	char	msg[64];
-		
-    pDC = GetDC();
+void CMnkUsr::UpdateScrollbars() {
+	int     OldValue;
+	CDC     *pDC;
+	char    msg[64];
+
+	pDC = GetDC();
 
 	OldValue = m_iUShells;
 	m_iUShells = m_xpUScrShell->GetScrollPos();
-	if ( OldValue != m_iUShells ){
-		Common::sprintf_s( msg, "Shells per Pit: %d", m_iUShells );
-		(*m_pShellText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
-	} 
+	if (OldValue != m_iUShells) {
+		Common::sprintf_s(msg, "Shells per Pit: %d", m_iUShells);
+		(*m_pShellText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	}
 
 	OldValue = m_iUStrength;
 	m_iUStrength = m_xpUScrStrength->GetScrollPos();
-	if ( OldValue != m_iUStrength ){
-		Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str() );
-		(*m_pStrengthText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
-	} 
+	if (OldValue != m_iUStrength) {
+		Common::sprintf_s(msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str());
+		(*m_pStrengthText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	}
 
-	ReleaseDC( pDC );
-}                                                             
+	ReleaseDC(pDC);
+}
 
 
 
-void CMnkUsr::OnPaint()
-{
-	CDC 	*pDC;
-	char	msg[64];
-		
+void CMnkUsr::OnPaint() {
+	CDC     *pDC;
+	char    msg[64];
+
 	CBmpDialog::OnPaint();
-    
-    pDC = GetDC();
-    
-	Common::sprintf_s( msg, "Shells per Pit: %d", m_iUShells );
-	(*m_pShellText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR); 
-	
-	Common::sprintf_s( msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str() );
-	(*m_pStrengthText).DisplayString( pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	ReleaseDC( pDC );
+	pDC = GetDC();
+
+	Common::sprintf_s(msg, "Shells per Pit: %d", m_iUShells);
+	(*m_pShellText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+
+	Common::sprintf_s(msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str());
+	(*m_pStrengthText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+
+	ReleaseDC(pDC);
 
 }
 

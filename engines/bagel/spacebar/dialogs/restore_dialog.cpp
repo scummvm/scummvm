@@ -311,14 +311,14 @@ void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 		}
 		break;
 
-		// Save into current slot, and exit
+	// Save into current slot, and exit
 	case BKEY_ENTER:
 		if (_nSelectedItem != -1)
 			RestoreAndclose();
 		break;
 
 
-		// Cancel without saving
+	// Cancel without saving
 	case BKEY_ESC:
 		close();
 		break;
@@ -340,12 +340,12 @@ void CBagRestoreDialog::onBofButton(CBofObject *pObject, int nFlags) {
 
 	switch (pButton->getControlID()) {
 
-		// Do actual save
+	// Do actual save
 	case RESTORE_BTN:
 		RestoreAndclose();
 		break;
 
-		// Cancel without saving
+	// Cancel without saving
 	case CANCEL_BTN:
 		close();
 		break;

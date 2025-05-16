@@ -32,10 +32,14 @@ namespace Metagame {
 
 // define scroll bar types (should not conflict with IDC_xxxx codes
 //	from resource.h)
-#define BSCT_GEN 1		/* general (no special type) */
-#define BSCT_HORZ 2		/* horizontal scroll bar for window */
-#define BSCT_VERT 3		/* vertical scroll bar for window */
-#define BSCT_EDIT 4		/* tied to numeric value in edit box */
+#define BSCT_GEN 1      
+/* general (no special type) */
+#define BSCT_HORZ 2     
+/* horizontal scroll bar for window */
+#define BSCT_VERT 3     
+/* vertical scroll bar for window */
+#define BSCT_EDIT 4     
+/* tied to numeric value in edit box */
 
 // window regions defined according to the following diagram:
 //		123
@@ -67,172 +71,209 @@ class CRRect ;
 // CBsuSet -- boffo scroll utility set
 class CBsuSet {
 public:
-    char m_cStartData ;
-    class CBsuBar * m_xpBarChain ;  // chain of scroll bar objects
-    BOOL m_bInUpdateBars ;	// prevent UpdateBars recursion
-    CDialog * m_xpDlg ;		// dialog to be updated
-    CWnd * m_xpWnd ;	// window to be scrolled
-#ifdef NODEEDIT
-    int m_iScrollCount ;	// # of times scrolled
-#endif
-    BOOL m_bDebugMessages ;
-    BOOL m_bPrimary ;	// primary in linked sets
-    BOOL m_bScrollView ;	// window uses CScrollView
-    BOOL m_bScrollBars ;	// window to have windows scroll bars
-    CBsuSet * m_xpSetLink ;	// one alternate set of scroll bars
-    char m_cEndData ;
+	char m_cStartData ;
+	class CBsuBar *m_xpBarChain ;   // chain of scroll bar objects
+	BOOL m_bInUpdateBars ;  // prevent UpdateBars recursion
+	CDialog *m_xpDlg ;      // dialog to be updated
+	CWnd *m_xpWnd ;     // window to be scrolled
+	#ifdef NODEEDIT
+	int m_iScrollCount ;    // # of times scrolled
+	#endif
+	BOOL m_bDebugMessages ;
+	BOOL m_bPrimary ;   // primary in linked sets
+	BOOL m_bScrollView ;    // window uses CScrollView
+	BOOL m_bScrollBars ;    // window to have windows scroll bars
+	CBsuSet *m_xpSetLink ;  // one alternate set of scroll bars
+	char m_cEndData ;
 
 // methods
 public:
-    CBsuSet::CBsuSet() { TRACECONSTRUCTOR(CBsuSet) ;
-	    memset(&m_cStartData, 0,
-				&m_cEndData - &m_cStartData) ;}
-#ifdef NODEEDIT
-    int GetScrollCount(void) {return(m_iScrollCount) ;}
-#endif
+	CBsuSet::CBsuSet() {
+		TRACECONSTRUCTOR(CBsuSet) ;
+		memset(&m_cStartData, 0,
+		       &m_cEndData - &m_cStartData) ;
+	}
+	#ifdef NODEEDIT
+	int GetScrollCount(void) {
+		return (m_iScrollCount) ;
+	}
+	#endif
 
 // bsutl.cpp : Boffo scroll bar utilities
 
 //- CBsuSet::~CBsuSet -- destructor
-public: CBsuSet::~CBsuSet(void) ;
+public:
+	CBsuSet::~CBsuSet(void) ;
 //- CBsuSet::InitWndBsuSet -- initialize bsu set for a window
-public: BOOL CBsuSet::InitWndBsuSet(CWnd * xpWnd,
-	BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
-	CBsuSet * xpLinkSet PDFT(NULL)) ;
+public:
+	BOOL CBsuSet::InitWndBsuSet(CWnd * xpWnd,
+	                            BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
+	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
 //- CBsuSet::InitDlgBsuSet -- initialize bsu set for dialog box
-public: BOOL CBsuSet::InitDlgBsuSet(CDialog * xpDlg,
-	CBsuSet * xpLinkSet PDFT(NULL)) ;
+public:
+	BOOL CBsuSet::InitDlgBsuSet(CDialog * xpDlg,
+	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
 //- CBsuSet::AddBarToSet -- add scroll bar to scroll bar set
-public: BOOL CBsuSet::AddBarToSet(int iId, int iWndScrollCode,
-			int iBarType PDFT(0)) ;
+public:
+	BOOL CBsuSet::AddBarToSet(int iId, int iWndScrollCode,
+	                          int iBarType PDFT(0)) ;
 //- CBsuSet::PrepareWndBsuSet -- prepare window scroll bar set
 //		by filling in the device fields
-public: BOOL CBsuSet::PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
+public:
+	BOOL CBsuSet::PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
 //- CBsuSet::UpdateWndDeviceExtents -- update window devices coordinates
-private: BOOL CBsuSet::UpdateWndDeviceExtents(void) ;
+private:
+	BOOL CBsuSet::UpdateWndDeviceExtents(void) ;
 //- CBsuSet::LinkWndBsuSet -- link window/dialog bsu sets
-public: BOOL CBsuSet::LinkWndBsuSet(void) ;
+public:
+	BOOL CBsuSet::LinkWndBsuSet(void) ;
 //- CBsuSet::PrepareDc -- replace OnPrepareDC -- set the viewport and
 //	the clip rectangle to the specified region
-public: BOOL CBsuSet::PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
+public:
+	BOOL CBsuSet::PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
 //- CBsuSet::OnScroll -- handle OnHScroll and OnVScroll messages
-public: BOOL CBsuSet::OnScroll(UINT nSBCode, UINT nPos,
-		CScrollBar* xpScrollBar, int iBarType PDFT(0)) ;
+public:
+	BOOL CBsuSet::OnScroll(UINT nSBCode, UINT nPos,
+	                       CScrollBar* xpScrollBar, int iBarType PDFT(0)) ;
 //- CBsuSet::GetBar -- get bsu scroll bar object
-private: CBsuBar * CBsuSet::GetBar(int iBarType) ;
+private:
+	CBsuBar *CBsuSet::GetBar(int iBarType) ;
 //- CBsuSet::ScrollWindowToPoint -- scroll window to spec point
-public: BOOL CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition,
-		BOOL bScrollWindow PDFT(TRUE)) ;
+public:
+	BOOL CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition,
+	                                  BOOL bScrollWindow PDFT(TRUE)) ;
 //- CBsuSet::EdgeToCenter -- if point is on edge, scroll it to center
-public: BOOL CBsuSet::EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
+public:
+	BOOL CBsuSet::EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
 //- CBsuSet::SetSubWindowRect -- set rectangle to portion of window
 //		(logical coordinates)
-public: BOOL CBsuSet::SetSubWindowRect(LPRECT lpRect, int iBsRegion);
+public:
+	BOOL CBsuSet::SetSubWindowRect(LPRECT lpRect, int iBsRegion);
 //- CBsuSet::TestRect -- test whether rectangle is in window
-public: BOOL CBsuSet::TestRect(CRRect crTestRect,
-       			BOOL & bPhysical, BOOL & bEdge) ;
+public:
+	BOOL CBsuSet::TestRect(CRRect crTestRect,
+	                       BOOL & bPhysical, BOOL & bEdge) ;
 //- CBsuSet::GetWindowBars -- set rectangle to portion of window
 //		(device coordinates)
-public: BOOL CBsuSet::GetWindowBars(CBsuBar *& xpHBar,
-		CBsuBar *& xpVBar, BOOL bErrorRtn PDFT(TRUE)) ;
+public:
+	BOOL CBsuSet::GetWindowBars(CBsuBar * &xpHBar,
+	                            CBsuBar *&xpVBar, BOOL bErrorRtn PDFT(TRUE)) ;
 //- CBsuSet::PointLogical -- convert device point to logical coords
-public: CRPoint CBsuSet::PointLogical(CPoint cPoint) ;
+public:
+	CRPoint CBsuSet::PointLogical(CPoint cPoint) ;
 //- CBsuSet::GetInfo -- get information about scroll set
-public: BOOL CBsuSet::GetInfo(CBsuInfo * xpBsuInfo) ;
+public:
+	BOOL CBsuSet::GetInfo(CBsuInfo * xpBsuInfo) ;
 //- CBsuSet::DumpInfo -- dump information about scroll set
-public: BOOL CBsuSet::DumpInfo(LPSTR lpStart PDFT(NULL)) ;
+public:
+	BOOL CBsuSet::DumpInfo(LPSTR lpStart PDFT(NULL)) ;
 
 } ;
 
 
 // CBsuBar -- scroll bar
 class CBsuBar {
-    friend class CBsuSet ;
+	friend class CBsuSet ;
 
-    char m_cStartData ;
-    CBsuBar * m_xpNextBar ;	// next bar for this set
-    int m_iBarType ;		// BSCT_xxxx -- scroll bar type
-    int m_iWndScrollCode ;	// windows scroll code --
-			// SB_HORZ (=0) or SB_VERT (=1)
-    int m_iId ;			// control id
-//  CScrollBar * m_xpScrollBar ;	// MFC scroll bar object
-    int m_iMin, m_iMax, m_iPosition ;	// scroll bar values
-//  int m_iDevPosition ;	// position in device units
-    LPINT m_lpiVariable ;	// ptr to integer variable
-    int m_iDocSize ;		// document size (logical units)
-//  int m_iDevDocSize ;		// ditto (device units)
-    int m_iDevWndSize ;		// window size (device units)
-    int m_iWndSize ;		// window size (logical units)
-    int m_iMargin1, m_iMargin2 ;	// left/top and right/bottom
-				// scroll margins (logical units)
-    int m_iDevMargin1, m_iDevMargin2 ;	// ditto (device units)
+	char m_cStartData ;
+	CBsuBar *m_xpNextBar ;  // next bar for this set
+	int m_iBarType ;        // BSCT_xxxx -- scroll bar type
+	int m_iWndScrollCode ;  // windows scroll code --
+	// SB_HORZ (=0) or SB_VERT (=1)
+	int m_iId ;         // control id
+//  CScrollBar * m_xpScrollBar ;    // MFC scroll bar object
+	int m_iMin, m_iMax, m_iPosition ;   // scroll bar values
+//  int m_iDevPosition ;    // position in device units
+	LPINT m_lpiVariable ;   // ptr to integer variable
+	int m_iDocSize ;        // document size (logical units)
+//  int m_iDevDocSize ;     // ditto (device units)
+	int m_iDevWndSize ;     // window size (device units)
+	int m_iWndSize ;        // window size (logical units)
+	int m_iMargin1, m_iMargin2 ;    // left/top and right/bottom
+	// scroll margins (logical units)
+	int m_iDevMargin1, m_iDevMargin2 ;  // ditto (device units)
 
-    char m_cEndData ;
+	char m_cEndData ;
 
 // methods
 public:
-    CBsuBar::CBsuBar() {memset(&m_cStartData, 0,
-				&m_cEndData - &m_cStartData) ;}
+	CBsuBar::CBsuBar() {
+		memset(&m_cStartData, 0,
+		       &m_cEndData - &m_cStartData) ;
+	}
 } ;
 
 // CBsuInfo -- information returned by GetInfo
 class CBsuInfo {
 public:
-    char m_cStartData ;
-    CSize m_cWndSize, m_cTotalSize ;
-    CSize m_cDevWndSize, cDevTotalSize ;
-    CRect m_cScrollRangeRect ;
-    CPoint m_cScrollPosition ;
-#ifdef NODEEDIT
-    int m_iScrollCount ;
-#endif
-    char m_cEndData ;
+	char m_cStartData ;
+	CSize m_cWndSize, m_cTotalSize ;
+	CSize m_cDevWndSize, cDevTotalSize ;
+	CRect m_cScrollRangeRect ;
+	CPoint m_cScrollPosition ;
+	#ifdef NODEEDIT
+	int m_iScrollCount ;
+	#endif
+	char m_cEndData ;
 } ;
 
 // CRPoint -- relocatable point
 class CRPoint : public CPoint {
 public:
-    BOOL m_bRelocatable ;
+	BOOL m_bRelocatable ;
 
-    CRPoint(BOOL bRelocatable = TRUE)
-	{m_bRelocatable = (bRelocatable != 0) ;}
+	CRPoint(BOOL bRelocatable = TRUE) {
+		m_bRelocatable = (bRelocatable != 0) ;
+	}
 
-    CRPoint(CPoint cPt, BOOL bRelocatable = TRUE) : CPoint(cPt)
-	{m_bRelocatable = (bRelocatable != 0) ;}
+	CRPoint(CPoint cPt, BOOL bRelocatable = TRUE) : CPoint(cPt) {
+		m_bRelocatable = (bRelocatable != 0) ;
+	}
 
-    CRPoint(int iX, int iY, BOOL bRelocatable = TRUE) : CPoint(iX, iY)
-	{m_bRelocatable = (bRelocatable != 0) ;}
+	CRPoint(int iX, int iY, BOOL bRelocatable = TRUE) : CPoint(iX, iY) {
+		m_bRelocatable = (bRelocatable != 0) ;
+	}
 
-    BOOL IfRelocatable(void) {return(m_bRelocatable != 0) ; }
+	BOOL IfRelocatable(void) {
+		return (m_bRelocatable != 0) ;
+	}
 
-    CRPoint Offset(CPoint cPt) {
-	return(CRPoint(x+cPt.x, y+cPt.y, m_bRelocatable)) ;}
+	CRPoint Offset(CPoint cPt) {
+		return (CRPoint(x + cPt.x, y + cPt.y, m_bRelocatable)) ;
+	}
 
 } ;
 
 // CRRect -- relocatable rectangle
 class CRRect : public CRect {
 public:
-    BOOL m_bRelocatable ;
+	BOOL m_bRelocatable ;
 
-    CRRect(BOOL bRelocatable = TRUE)
-	{m_bRelocatable = (bRelocatable != 0) ;}
+	CRRect(BOOL bRelocatable = TRUE) {
+		m_bRelocatable = (bRelocatable != 0) ;
+	}
 
-    CRRect(CRect cRc, BOOL bRelocatable = TRUE) : CRect(cRc)
-	{m_bRelocatable = (bRelocatable != 0) ;}
+	CRRect(CRect cRc, BOOL bRelocatable = TRUE) : CRect(cRc) {
+		m_bRelocatable = (bRelocatable != 0) ;
+	}
 
-    CRRect(CRPoint cPt, CSize cSz) : CRect(cPt, cSz)
-	{m_bRelocatable = (cPt.m_bRelocatable != 0) ;}
+	CRRect(CRPoint cPt, CSize cSz) : CRect(cPt, cSz) {
+		m_bRelocatable = (cPt.m_bRelocatable != 0) ;
+	}
 
-    CRRect(int iL, int iT, int iR, int iB,
-		BOOL bRelocatable = TRUE) : CRect(iL, iT, iR, iB)
-	{m_bRelocatable = (bRelocatable != 0) ;}
+	CRRect(int iL, int iT, int iR, int iB,
+	       BOOL bRelocatable = TRUE) : CRect(iL, iT, iR, iB) {
+		m_bRelocatable = (bRelocatable != 0) ;
+	}
 
-    BOOL IfRelocatable(void) {return(m_bRelocatable != 0) ; }
+	BOOL IfRelocatable(void) {
+		return (m_bRelocatable != 0) ;
+	}
 
-    BOOL PtInRect(CRPoint crPoint) {
-		return(EQV(m_bRelocatable, crPoint.m_bRelocatable)
-			&& CRect::PtInRect(crPoint)) ; }
+	BOOL PtInRect(CRPoint crPoint) {
+		return (EQV(m_bRelocatable, crPoint.m_bRelocatable)
+		        && CRect::PtInRect(crPoint)) ;
+	}
 } ;
 
 #define HINT_UPDATE_RECT 1
@@ -245,14 +286,16 @@ public:
 //		to CView::OnUpdate
 class CGtlHint : public CObject {
 public:
-    char m_cStartData ;
-//    BOOL m_bFull ;	// full screen invalidate
-    BOOL m_bWmPaint ;	// update with WM_PAINT message
-    CRect cHintRect ;
-    char m_cEndData ;
+	char m_cStartData ;
+//    BOOL m_bFull ;    // full screen invalidate
+	BOOL m_bWmPaint ;   // update with WM_PAINT message
+	CRect cHintRect ;
+	char m_cEndData ;
 
-    CGtlHint::CGtlHint(void) {memset(&m_cStartData,
-			0, &m_cEndData - &m_cStartData) ;}
+	CGtlHint::CGtlHint(void) {
+		memset(&m_cStartData,
+		       0, &m_cEndData - &m_cStartData) ;
+	}
 //    DECLARE_SERIAL(CGtlHint) ;
 } ;
 

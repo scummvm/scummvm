@@ -409,11 +409,10 @@ ParseCodes CBagCommandObject::setInfo(CBagIfstream &istr) {
 
 		const char ch = (char)istr.peek();
 		switch (ch) {
-			//
-			//  OBJECT
-			//
-		case 'O':
-		{
+		//
+		//  OBJECT
+		//
+		case 'O': {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curStr(localBuffer, 256);
@@ -431,8 +430,7 @@ ParseCodes CBagCommandObject::setInfo(CBagIfstream &istr) {
 		//
 		//  FROM
 		//
-		case 'F':
-		{
+		case 'F': {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curStr(localBuffer, 256);
@@ -450,8 +448,7 @@ ParseCodes CBagCommandObject::setInfo(CBagIfstream &istr) {
 		//
 		//  TO
 		//
-		case 'T':
-		{
+		case 'T': {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curStr(localBuffer, 256);
@@ -470,8 +467,7 @@ ParseCodes CBagCommandObject::setInfo(CBagIfstream &istr) {
 		//
 		//  No match return from function
 		//
-		default:
-		{
+		default: {
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;

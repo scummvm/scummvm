@@ -21,7 +21,7 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/dfa/resource.h"
-#include "bagel/hodjnpodj/dfa/dfa.h" 
+#include "bagel/hodjnpodj/dfa/dfa.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -30,7 +30,7 @@ namespace DFA {
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
-CMainDFAWindow  *pMainGameWnd = NULL;   // pointer to the poker's main window 
+CMainDFAWindow  *pMainGameWnd = NULL;   // pointer to the poker's main window
 CPalette        *pTestPalette = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -43,49 +43,48 @@ CPalette        *pTestPalette = NULL;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke 
- *   
+ *          calls to invoke
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-HWND FAR PASCAL RunDFA( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
+HWND FAR PASCAL RunDFA(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 // if the pointer has garbage in it, the clean it out
-    if ( pMainGameWnd != NULL ) {
-        pMainGameWnd = NULL;
-    }
-#ifdef _DEBUG
+	if (pMainGameWnd != NULL) {
+		pMainGameWnd = NULL;
+	}
+	#ifdef _DEBUG
 //  lpGameInfo->bPlayingMetagame = TRUE;
 //  lpGameInfo->bMusicEnabled = FALSE;
 //  lpGameInfo->nSkillLevel = SKILLLEVEL_LOW;
-#endif
-    
+	#endif
+
 // create a my poker window and show it
-    pMainGameWnd = new CMainDFAWindow( hParentWnd, lpGameInfo );
-    pMainGameWnd->ShowWindow( SW_SHOWNORMAL );
-    pMainGameWnd->UpdateWindow();
-    pMainGameWnd->SetActiveWindow(); 
+	pMainGameWnd = new CMainDFAWindow(hParentWnd, lpGameInfo);
+	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
+	pMainGameWnd->UpdateWindow();
+	pMainGameWnd->SetActiveWindow();
 // return the handle to this window
-    hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
-    if (!lpGameInfo->bPlayingMetagame)  
-        MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
-    return pMainGameWnd->m_hWnd;
+	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+	if (!lpGameInfo->bPlayingMetagame)
+		MFC::PostMessage(pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED);
+	return pMainGameWnd->m_hWnd;
 }
 
 } // namespace DFA

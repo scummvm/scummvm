@@ -39,31 +39,30 @@ CColorButton    *pMsgOKButton = NULL;
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *      Constructor sends the input to the CBmpDialog constructor and 
- *      the intializes the private members 
- *   
+ *      Constructor sends the input to the CBmpDialog constructor and
+ *      the intializes the private members
+ *
  * FORMAL PARAMETERS:
  *
- *      Those needed to contruct a CBmpDialog dialog: pParent,pPalette, nID 
+ *      Those needed to contruct a CBmpDialog dialog: pParent,pPalette, nID
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      private member m_nCurrenLEVEL
- *  globals     rectDisplayAmount and pSeLEVELPalette           
- *   
+ *  globals     rectDisplayAmount and pSeLEVELPalette
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-CMsgDlg::CMsgDlg(CWnd *pParent, CPalette *pPalette, UINT nID) :  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP" )
-{
-    pPackRatOptPalette = pPalette;
-    m_nWhichMsg = 1;
+CMsgDlg::CMsgDlg(CWnd *pParent, CPalette *pPalette, UINT nID) :  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	pPackRatOptPalette = pPalette;
+	m_nWhichMsg = 1;
 	m_lCurrentScore = 0L;
 }
 
@@ -73,69 +72,65 @@ CMsgDlg::CMsgDlg(CWnd *pParent, CPalette *pPalette, UINT nID) :  CBmpDialog(pPar
  *
  * FUNCTIONAL DESCRIPTION:
  *
- * Process the "Set" and "Cancel" buttons 
+ * Process the "Set" and "Cancel" buttons
  *
  * This function is called when a WM_COMMAND message is issued,
  * typically in order to process control related activities.
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      wParam          identifier for the button to be processed
  *      lParam          type of message to be processed
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-BOOL CMsgDlg::OnCommand(WPARAM wParam, LPARAM lParam)
-{
+BOOL CMsgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
-			case IDOK:       
-				ClearDialogImage();
-				EndDialog( 0 );
-				return 1;
+		case IDOK:
+			ClearDialogImage();
+			EndDialog(0);
+			return 1;
 		}
 	}
-	return(CDialog::OnCommand(wParam, lParam));
+	return (CDialog::OnCommand(wParam, lParam));
 }
 
-void CMsgDlg::OnCancel(void)
-{
-    ClearDialogImage();
-    EndDialog( 0 );
-    return;
+void CMsgDlg::OnCancel(void) {
+	ClearDialogImage();
+	EndDialog(0);
+	return;
 }
 
-void CMsgDlg::OnOK(void)
-{
-    ClearDialogImage();
-    EndDialog( 0 );
-    return;
+void CMsgDlg::OnOK(void) {
+	ClearDialogImage();
+	EndDialog(0);
+	return;
 }
 
-void CMsgDlg::ClearDialogImage(void)
-{
+void CMsgDlg::ClearDialogImage(void) {
 
-    if ( pMsgOKButton != NULL ) {
-        delete pMsgOKButton;
-        pMsgOKButton = NULL;
-    }
+	if (pMsgOKButton != NULL) {
+		delete pMsgOKButton;
+		pMsgOKButton = NULL;
+	}
 
-    ValidateRect(NULL);
+	ValidateRect(NULL);
 
-    return;
+	return;
 }
 /*****************************************************************
  *
@@ -143,46 +138,44 @@ void CMsgDlg::ClearDialogImage(void)
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *      This sets the privates to the inputted values 
+ *      This sets the privates to the inputted values
  *
  * FORMAL PARAMETERS:
  *
- *      lCurrenLEVEL = the current amount the user has  
+ *      lCurrenLEVEL = the current amount the user has
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      m_nCurrenLEVEL = (int)min( AMOUNTMAX, lCurrenLEVEL)
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *
  ****************************************************************/
-void CMsgDlg::SetInitialOptions( int nWhichMsg, long lScore, int nLevel )
-{        
-    m_nWhichMsg = nWhichMsg;
+void CMsgDlg::SetInitialOptions(int nWhichMsg, long lScore, int nLevel) {
+	m_nWhichMsg = nWhichMsg;
 	m_lCurrentScore = lScore;
 	m_nLevel = nLevel;
 	return;
-}  
+}
 
 
-BOOL CMsgDlg::OnInitDialog()
-{
-BOOL    bSuccess;
+BOOL CMsgDlg::OnInitDialog() {
+	BOOL    bSuccess;
 
-    CBmpDialog::OnInitDialog();
+	CBmpDialog::OnInitDialog();
 
-    pMsgOKButton = new CColorButton();
-    ASSERT( pMsgOKButton != NULL );
-    pMsgOKButton->SetPalette( pPackRatOptPalette );
-    bSuccess = pMsgOKButton->SetControl( IDOK, this );
-    ASSERT( bSuccess );
-    
-    return(TRUE);
+	pMsgOKButton = new CColorButton();
+	ASSERT(pMsgOKButton != NULL);
+	pMsgOKButton->SetPalette(pPackRatOptPalette);
+	bSuccess = pMsgOKButton->SetControl(IDOK, this);
+	ASSERT(bSuccess);
+
+	return (TRUE);
 }
 
 /*****************************************************************
@@ -202,92 +195,89 @@ BOOL    bSuccess;
  * Note that creating a CPaintDC automatically does a BeginPaint and
  * an EndPaint call is done when it is destroyed at the end of this
  * function.  CPaintDC's constructor needs the window (this).
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-void CMsgDlg::OnPaint(void)
-{
+void CMsgDlg::OnPaint(void) {
 //      call CBmpDialog onpaint, to paint the background
-    CBmpDialog::OnPaint();
+	CBmpDialog::OnPaint();
 
-CDC		*pDC = GetDC();
-// 	CText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
-// 	BOOL DisplayString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);
+	CDC     *pDC = GetDC();
+//  CText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
+//  BOOL DisplayString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);
 
-CRect	rRect1( 20, 40, 200, 60 ); 
-CRect	rRect2( 20, 70, 200, 90 ); 
-CRect	rRect3( 20, 100, 200, 120 ); 
-CText	txtLine1( pDC, pPackRatOptPalette, &rRect1 );
-CText	txtLine2( pDC, pPackRatOptPalette, &rRect2 );
-CText	txtLine3( pDC, pPackRatOptPalette, &rRect3 );
-char	cDisplay[30];
+	CRect   rRect1(20, 40, 200, 60);
+	CRect   rRect2(20, 70, 200, 90);
+	CRect   rRect3(20, 100, 200, 120);
+	CText   txtLine1(pDC, pPackRatOptPalette, &rRect1);
+	CText   txtLine2(pDC, pPackRatOptPalette, &rRect2);
+	CText   txtLine3(pDC, pPackRatOptPalette, &rRect3);
+	char    cDisplay[30];
 
-	switch ( m_nWhichMsg ) {
-	    case 1:
-	    	Common::sprintf_s( cDisplay, "Level %i Cleared!", m_nLevel );
-	    	txtLine1.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-	    	Common::sprintf_s( cDisplay, "Current Score: %li", m_lCurrentScore );
-	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-			break;
-	    case 2:
-	    	Common::sprintf_s( cDisplay, "Final Score: %li", m_lCurrentScore );
-	    	txtLine1.DisplayString( pDC, "Congratulations!", 21, FW_BOLD ); 
-	    	txtLine2.DisplayString( pDC, "All Levels Cleared.", 21, FW_BOLD ); 
-	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-			break;
-	    case 3:
-	    	txtLine1.DisplayString( pDC, "You Died!", 21, FW_BOLD ); 
-			if ( m_nLevel == 1 ) {
-		    	Common::sprintf_s( cDisplay, "You have %i life left.", m_nLevel );
-			}
-			else {
-		    	Common::sprintf_s( cDisplay, "You have %i lives left.", m_nLevel );
-			}
-	    	txtLine2.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-	    	Common::sprintf_s( cDisplay, "Current Score: %li", m_lCurrentScore );
-	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-			break;
-	    case 4:
-	    	Common::sprintf_s( cDisplay, "Final Score: %li", m_lCurrentScore );
-	    	txtLine1.DisplayString( pDC, "Game over.", 21, FW_BOLD ); 
-	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-			break;
-	    case 5:
-	    	Common::sprintf_s( cDisplay, "Level Cleared!", m_nLevel );
-	    	txtLine1.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-	    	Common::sprintf_s( cDisplay, "Final Score: %li", m_lCurrentScore );
-	    	txtLine3.DisplayString( pDC, cDisplay, 21, FW_BOLD ); 
-			break;
+	switch (m_nWhichMsg) {
+	case 1:
+		Common::sprintf_s(cDisplay, "Level %i Cleared!", m_nLevel);
+		txtLine1.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		Common::sprintf_s(cDisplay, "Current Score: %li", m_lCurrentScore);
+		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		break;
+	case 2:
+		Common::sprintf_s(cDisplay, "Final Score: %li", m_lCurrentScore);
+		txtLine1.DisplayString(pDC, "Congratulations!", 21, FW_BOLD);
+		txtLine2.DisplayString(pDC, "All Levels Cleared.", 21, FW_BOLD);
+		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		break;
+	case 3:
+		txtLine1.DisplayString(pDC, "You Died!", 21, FW_BOLD);
+		if (m_nLevel == 1) {
+			Common::sprintf_s(cDisplay, "You have %i life left.", m_nLevel);
+		} else {
+			Common::sprintf_s(cDisplay, "You have %i lives left.", m_nLevel);
+		}
+		txtLine2.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		Common::sprintf_s(cDisplay, "Current Score: %li", m_lCurrentScore);
+		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		break;
+	case 4:
+		Common::sprintf_s(cDisplay, "Final Score: %li", m_lCurrentScore);
+		txtLine1.DisplayString(pDC, "Game over.", 21, FW_BOLD);
+		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		break;
+	case 5:
+		Common::sprintf_s(cDisplay, "Level Cleared!", m_nLevel);
+		txtLine1.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		Common::sprintf_s(cDisplay, "Final Score: %li", m_lCurrentScore);
+		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);
+		break;
 	}
-	ReleaseDC( pDC );
-    return;
+	ReleaseDC(pDC);
+	return;
 }
 
-void CMsgDlg::OnDestroy()
-{
+void CMsgDlg::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
-    if ( pMsgOKButton != NULL ) {
-        delete pMsgOKButton;
-        pMsgOKButton = NULL;
-    }
+	if (pMsgOKButton != NULL) {
+		delete pMsgOKButton;
+		pMsgOKButton = NULL;
+	}
 
 	CBmpDialog::OnDestroy();
-} 
+}
 
 // Message Map
 BEGIN_MESSAGE_MAP(CMsgDlg, CBmpDialog)

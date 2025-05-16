@@ -217,8 +217,8 @@ ErrorCode CBofDataFile::readHeader() {
 
 				// Make sure header contains valid info
 				if ((_lHeaderStart >= HeadInfo::size()) &&
-					(_lHeaderStart <= lfileLength) && (_lHeaderLength >= 0) &&
-					(_lHeaderLength < lfileLength)) {
+				        (_lHeaderStart <= lfileLength) && (_lHeaderLength >= 0) &&
+				        (_lHeaderLength < lfileLength)) {
 
 					// Force Encrypted, and Compress if existing file has them
 					_lFlags |= stHeaderInfo._lFlags & CDF_ENCRYPT;
@@ -791,7 +791,7 @@ uint32 CreateHashCode(const byte *pKey) {
 	// validate input
 	assert(pKey != nullptr);
 
-	uint32 lCode = ((uint32)*pKey << 24) | ((uint32) * (pKey + 1) << 16) | ((uint32) * (pKey + 2) << 8) | *(pKey + 3);
+	uint32 lCode = ((uint32) * pKey << 24) | ((uint32) * (pKey + 1) << 16) | ((uint32) * (pKey + 2) << 8) | *(pKey + 3);
 
 	return lCode;
 }

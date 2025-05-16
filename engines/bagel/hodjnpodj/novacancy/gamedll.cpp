@@ -44,57 +44,56 @@ HWND ghParentWnd;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
- 
-HWND FAR PASCAL RunNoVa( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
-    CMainWindow *pMain;
 
-    pGameParams = lpGameInfo;                    
+HWND FAR PASCAL RunNoVa(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
+	CMainWindow *pMain;
 
-    // invoke your game here by creating a pGame for your main window
-    // look at the InitInstance for your game for this
+	pGameParams = lpGameInfo;
 
-    ghParentWnd = hParentWnd;
+	// invoke your game here by creating a pGame for your main window
+	// look at the InitInstance for your game for this
 
-#ifdef _DEBUG
+	ghParentWnd = hParentWnd;
+
+	#ifdef _DEBUG
 //    pGameParams->bPlayingMetagame = TRUE;        //meta_game simulation
-#endif 
-    
-    if ((pMain = new CMainWindow) != NULL) {
+	#endif
 
-        pMain->ShowWindow(SW_SHOWNORMAL);
+	if ((pMain = new CMainWindow) != NULL) {
 
-        pMain->UpdateWindow();
+		pMain->ShowWindow(SW_SHOWNORMAL);
 
-        pMain->SetActiveWindow();                              
-        
-        if (pGameParams->bPlayingMetagame)   pMain->PlayGame();
-    }
+		pMain->UpdateWindow();
 
-    // these must be set in this function
-    hDLLInst = (HINSTANCE)GetWindowWord( pMain->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);
+		pMain->SetActiveWindow();
 
-    return pMain->m_hWnd;   // return the m_hWnd of your main game window
+		if (pGameParams->bPlayingMetagame)   pMain->PlayGame();
+	}
+
+	// these must be set in this function
+	hDLLInst = (HINSTANCE)GetWindowWord(pMain->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
+
+	return pMain->m_hWnd;   // return the m_hWnd of your main game window
 }
 
 } // namespace NoVacancy

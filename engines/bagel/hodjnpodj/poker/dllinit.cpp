@@ -21,7 +21,7 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/poker/resource.h"
-#include "bagel/hodjnpodj/poker/poker.h" 
+#include "bagel/hodjnpodj/poker/poker.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -30,7 +30,7 @@ namespace Poker {
 HINSTANCE   hDLLInst;
 HINSTANCE hExeInst;
 
-CMainPokerWindow  *pcwndPoker = NULL;   // pointer to the poker's main window 
+CMainPokerWindow  *pcwndPoker = NULL;   // pointer to the poker's main window
 CPalette          *pTestPalette = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -43,45 +43,45 @@ CPalette          *pTestPalette = NULL;
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker 
- *   
+ *          calls to invoke poker
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunPoker( HWND hParentWnd, LPGAMESTRUCT lpGameInfo ) {
+HWND FAR PASCAL RunPoker(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	// if the pointer has garbage in it, the clean it out
-    if ( pcwndPoker != NULL ) {
-        pcwndPoker = NULL;
-    }
-    
+	if (pcwndPoker != NULL) {
+		pcwndPoker = NULL;
+	}
+
 	// create a my poker window and show it
-    pcwndPoker = new CMainPokerWindow( hParentWnd, lpGameInfo );
-    pcwndPoker->SetActiveWindow(); 
-    pcwndPoker->ResetGame(); 
+	pcwndPoker = new CMainPokerWindow(hParentWnd, lpGameInfo);
+	pcwndPoker->SetActiveWindow();
+	pcwndPoker->ResetGame();
 
 	// return the handle to this window
-    hDLLInst = (HINSTANCE)GetWindowWord( pcwndPoker->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+	hDLLInst = (HINSTANCE)GetWindowWord(pcwndPoker->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
-	if ( lpGameInfo->bPlayingMetagame == FALSE ) {
-        pcwndPoker->UpdateWindow();
-        MFC::PostMessage( pcwndPoker->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED );
-    }
+	if (lpGameInfo->bPlayingMetagame == FALSE) {
+		pcwndPoker->UpdateWindow();
+		MFC::PostMessage(pcwndPoker->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED);
+	}
 
 	return pcwndPoker->m_hWnd;
 }

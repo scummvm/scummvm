@@ -37,70 +37,69 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Beacon {
 
-void CALLBACK GetSubOptions( CWnd* pParentWind );
-void CALLBACK StepAlongLine( int xpos, int ypos, LPSTR lphdc );
-BOOL InArtRegion( CPoint point );
-void MyFocusRect( CDC *pDC, CRect rect, BOOL bPressed );
+void CALLBACK GetSubOptions(CWnd* pParentWind);
+void CALLBACK StepAlongLine(int xpos, int ypos, LPSTR lphdc);
+BOOL InArtRegion(CPoint point);
+void MyFocusRect(CDC *pDC, CRect rect, BOOL bPressed);
 
-CBmpButton	*m_pScrollButton;				// Scroll button
+CBmpButton  *m_pScrollButton;               // Scroll button
 
-CBitmap		*pScrollUp = NULL,
-			*pScrollDown = NULL;
+CBitmap     *pScrollUp = NULL,
+             *pScrollDown = NULL;
 
-CPalette	*pOldPal1 = NULL,
-			*pOldPal2 = NULL,
-			*pGamePalette = NULL;			// Palette of current artwork
+CPalette    *pOldPal1 = NULL,
+             *pOldPal2 = NULL,
+              *pGamePalette = NULL;           // Palette of current artwork
 
-CBitmap		*pBeaconBitmap = NULL,			// Lighthouse bitmap
-			*pBackBitmap = NULL,			// Offscreen bitmap of border, pie wedges and lighthouse
-			*pOldBmp1 = NULL,
-			*pArtBitmap	= NULL,				// Holds the latest piece of art
-			*pOldBmp2 = NULL;
+CBitmap     *pBeaconBitmap = NULL,          // Lighthouse bitmap
+             *pBackBitmap = NULL,            // Offscreen bitmap of border, pie wedges and lighthouse
+              *pOldBmp1 = NULL,
+               *pArtBitmap = NULL,             // Holds the latest piece of art
+                *pOldBmp2 = NULL;
 
-CDC			*pArtDC = NULL,
-			*pBackDC = NULL;
+CDC         *pArtDC = NULL,
+             *pBackDC = NULL;
 
-CText		*m_pScoreTxt = NULL;
-CText		*m_pSweepTxt = NULL;
+CText       *m_pScoreTxt = NULL;
+CText       *m_pSweepTxt = NULL;
 
-BOOL		bSuccess;
-BOOL		m_bIgnoreScrollClick;
-BOOL		bChanged;
-BOOL		bPlaying = FALSE;
-BOOL		bNewGame = FALSE;							// Not playing a game right now
+BOOL        bSuccess;
+BOOL        m_bIgnoreScrollClick;
+BOOL        bChanged;
+BOOL        bPlaying = FALSE;
+BOOL        bNewGame = FALSE;                           // Not playing a game right now
 
-UINT		nCurrentIndex = BUTTON_ENTRY;				// The current beacon color index
-UINT		nNextIndex = BUTTON_ENTRY;					// The next beacon color index
+UINT        nCurrentIndex = BUTTON_ENTRY;               // The current beacon color index
+UINT        nNextIndex = BUTTON_ENTRY;                  // The next beacon color index
 
-UINT		nSlice = START_ENTRY;
-int			nLastPick = 0;
+UINT        nSlice = START_ENTRY;
+int         nLastPick = 0;
 
-int			m_nSweepCount = 0;
-int			m_nTotalSquares = (NUM_COLUMNS * NUM_ROWS) -
-								((START_WIDTH/GRID_WIDTH) * (START_HEIGHT/GRID_HEIGHT));
-int			m_nRemoved = 0;								// Count blocks removed
-UINT		m_nSweeps = MAX_SWEEPS;
-UINT		m_nSpeed = MAX_SPEED;
-UINT		tempSweeps = 100;							// default sweeps = 100
-UINT		tempSpeed = MAX_SPEED;						// default speed = Hovercraft
-BOOL		m_bAutomatic = FALSE;
-BOOL		m_bChangeAtTwelve = FALSE;
-float		m_Score = 0;
+int         m_nSweepCount = 0;
+int         m_nTotalSquares = (NUM_COLUMNS * NUM_ROWS) -
+                              ((START_WIDTH / GRID_WIDTH) * (START_HEIGHT / GRID_HEIGHT));
+int         m_nRemoved = 0;                             // Count blocks removed
+UINT        m_nSweeps = MAX_SWEEPS;
+UINT        m_nSpeed = MAX_SPEED;
+UINT        tempSweeps = 100;                           // default sweeps = 100
+UINT        tempSpeed = MAX_SPEED;                      // default speed = Hovercraft
+BOOL        m_bAutomatic = FALSE;
+BOOL        m_bChangeAtTwelve = FALSE;
+float       m_Score = 0;
 
-BOOL		PictureGrid[NUM_COLUMNS][NUM_ROWS];
+BOOL        PictureGrid[NUM_COLUMNS][NUM_ROWS];
 
-struct BLOCK
-{
-	CRect	rLocation;
-	UINT	nColorIndex;
+struct BLOCK {
+	CRect   rLocation;
+	UINT    nColorIndex;
 } colorBlock[NUM_BUTTONS];
 
-static CSound	*pGameSound = NULL;								// Game theme song
+static CSound   *pGameSound = NULL;                             // Game theme song
 
-extern	LPGAMESTRUCT pGameInfo;
-#ifdef	_USRDLL
+extern  LPGAMESTRUCT pGameInfo;
+#ifdef  _USRDLL
 	extern HWND ghParentWnd;
-#endif	// _USRDLL
+#endif  // _USRDLL
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -111,16 +110,15 @@ extern	LPGAMESTRUCT pGameInfo;
 // it will be later revealed by CTheApp::InitInstance().  Then
 // create our splash screen object by opening and loading its DIB.
 //
-CMainWindow::CMainWindow()
-{
-	CDC		*pDC;
+CMainWindow::CMainWindow() {
+	CDC     *pDC;
 	CPalette *pOldPal;
-	CBitmap	*pBeamBitmap = NULL,			// Beam bitmap
-			*pBorderBitmap = NULL;			// Border bitmap
-	CString	WndClass;
-	CRect	MainRect, ScrollRect, statRect;
-	CBrush	*pMyBrush = NULL;
-	int		i;
+	CBitmap *pBeamBitmap = NULL,            // Beam bitmap
+	         *pBorderBitmap = NULL;          // Border bitmap
+	CString WndClass;
+	CRect   MainRect, ScrollRect, statRect;
+	CBrush  *pMyBrush = NULL;
+	int     i;
 
 	BeginWaitCursor();
 
@@ -128,10 +126,10 @@ CMainWindow::CMainWindow()
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
-	WndClass = AfxRegisterWndClass(	CS_BYTEALIGNWINDOW | CS_OWNDC,
-									NULL,
-									NULL,
-									NULL);
+	WndClass = AfxRegisterWndClass(CS_BYTEALIGNWINDOW | CS_OWNDC,
+	                               NULL,
+	                               NULL,
+	                               NULL);
 
 	// Center our window on the screen
 	pDC = GetDC();
@@ -141,134 +139,133 @@ CMainWindow::CMainWindow()
 	MainRect.right = MainRect.left + GAME_WIDTH;
 	MainRect.bottom = MainRect.top + GAME_HEIGHT;
 
-	ReleaseDC( pDC );
+	ReleaseDC(pDC);
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
-	Create( WndClass, "Boffo Games -- Beacon", WS_POPUP, MainRect, NULL, NULL );
+	Create(WndClass, "Boffo Games -- Beacon", WS_POPUP, MainRect, NULL, NULL);
 
 	pDC = GetDC();
- 	pBorderBitmap = FetchBitmap( pDC, &pGamePalette, MAINSCREEN );
+	pBorderBitmap = FetchBitmap(pDC, &pGamePalette, MAINSCREEN);
 
-	pOldPal = pDC->SelectPalette( pGamePalette, FALSE );// select the game palette
-	pDC->RealizePalette();								//...and realize it
+	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);  // select the game palette
+	pDC->RealizePalette();                              //...and realize it
 
 //	SetBeamEntries( pDC );
 
 	// Build Scroll Command button
 
-	pScrollUp = FetchResourceBitmap( pDC, NULL, SCROLLUP );			// Get the up scroll button
-	pScrollDown = FetchResourceBitmap( pDC, NULL, SCROLLDOWN );		// Get the dowm scroll button
+	pScrollUp = FetchResourceBitmap(pDC, NULL, SCROLLUP);            // Get the up scroll button
+	pScrollDown = FetchResourceBitmap(pDC, NULL, SCROLLDOWN);        // Get the dowm scroll button
 
 	m_pScrollButton = new CBmpButton;
-	ASSERT( m_pScrollButton != NULL);
-	ScrollRect.SetRect( SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
-					SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
-					SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
-	bSuccess = ( *m_pScrollButton).Create( NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScrollRect, this, IDC_SCROLL );
-	ASSERT( bSuccess );
-	bSuccess = (*m_pScrollButton).LoadBitmaps( pGamePalette, pScrollUp, pScrollDown, NULL, NULL );
+	ASSERT(m_pScrollButton != NULL);
+	ScrollRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
+	                   SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
+	                   SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
+	bSuccess = (*m_pScrollButton).Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScrollRect, this, IDC_SCROLL);
+	ASSERT(bSuccess);
+	bSuccess = (*m_pScrollButton).LoadBitmaps(pGamePalette, pScrollUp, pScrollDown, NULL, NULL);
 
-	ASSERT( bSuccess );
+	ASSERT(bSuccess);
 	m_bIgnoreScrollClick = FALSE;
 
-	ShowWindow( SW_SHOWNORMAL );
-	PaintBitmap( pDC, pGamePalette, pBorderBitmap, 0, 0 );
-	PaintMaskedBitmap( pDC, pGamePalette, pScrollUp, SCROLL_BUTTON_X, SCROLL_BUTTON_Y );
+	ShowWindow(SW_SHOWNORMAL);
+	PaintBitmap(pDC, pGamePalette, pBorderBitmap, 0, 0);
+	PaintMaskedBitmap(pDC, pGamePalette, pScrollUp, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 
 	pBackBitmap = new CBitmap();
 	pBackDC = new CDC();
 
-	pBackBitmap->CreateCompatibleBitmap( pDC, GAME_WIDTH, GAME_HEIGHT );
-	pBackDC->CreateCompatibleDC( pDC );
-	pOldBmp1 = pBackDC->SelectObject( pBackBitmap );
-	pOldPal1 = pBackDC->SelectPalette( pGamePalette, FALSE );
+	pBackBitmap->CreateCompatibleBitmap(pDC, GAME_WIDTH, GAME_HEIGHT);
+	pBackDC->CreateCompatibleDC(pDC);
+	pOldBmp1 = pBackDC->SelectObject(pBackBitmap);
+	pOldPal1 = pBackDC->SelectPalette(pGamePalette, FALSE);
 	pBackDC->RealizePalette();
 
 	pArtBitmap = new CBitmap();
 	pArtDC = new CDC();
 
-	pArtBitmap->CreateCompatibleBitmap( pDC, GAME_WIDTH, GAME_HEIGHT );
-	pArtDC->CreateCompatibleDC( pDC );
-	pOldBmp2 = pArtDC->SelectObject( pArtBitmap );
-	pOldPal2 = pArtDC->SelectPalette( pGamePalette, FALSE );
+	pArtBitmap->CreateCompatibleBitmap(pDC, GAME_WIDTH, GAME_HEIGHT);
+	pArtDC->CreateCompatibleDC(pDC);
+	pOldBmp2 = pArtDC->SelectObject(pArtBitmap);
+	pOldPal2 = pArtDC->SelectPalette(pGamePalette, FALSE);
 	pArtDC->RealizePalette();
 
 
 //BUTTON WAS HERE
-#ifdef	BACKDROP
-	PaintBitmap( pBackDC, pGamePalette, pBorderBitmap, 0, 0 );	//SplashScreen to back
-	DrawBeams( pBackDC );										//DrawBeams to back
-#endif
+	#ifdef  BACKDROP
+	PaintBitmap(pBackDC, pGamePalette, pBorderBitmap, 0, 0);     //SplashScreen to back
+	DrawBeams(pBackDC);                                          //DrawBeams to back
+	#endif
 
-	PaintBitmap( pArtDC, pGamePalette, pBorderBitmap, 0, 0 );	//SplashScreen to art bitmap
+	PaintBitmap(pArtDC, pGamePalette, pBorderBitmap, 0, 0);      //SplashScreen to art bitmap
 	pBorderBitmap->DeleteObject();
 	delete pBorderBitmap;
 
-#ifndef BACKDROP
- 	pBeamBitmap = FetchBitmap( pDC, NULL, BEAMSCREEN );
-	PaintBitmap( pBackDC, pGamePalette, pBeamBitmap, 0, 0 );	//SplashScreen to back
+	#ifndef BACKDROP
+	pBeamBitmap = FetchBitmap(pDC, NULL, BEAMSCREEN);
+	PaintBitmap(pBackDC, pGamePalette, pBeamBitmap, 0, 0);   //SplashScreen to back
 	pBeamBitmap->DeleteObject();
-#endif
+	#endif
 	delete pBeamBitmap;
 
-	for (i = 0; i < NUM_BUTTONS; i++ ) {
+	for (i = 0; i < NUM_BUTTONS; i++) {
 		int level = i / 2;
-		colorBlock[i].rLocation.SetRect( BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i+2)%2)),
-											BLOCK_OFFSET_Y + ((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level),
-											BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i+2)%2)) + BLOCK_WIDTH,
-											BLOCK_OFFSET_Y +
-												((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level) + BLOCK_HEIGHT );
+		colorBlock[i].rLocation.SetRect(BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i + 2) % 2)),
+		                                BLOCK_OFFSET_Y + ((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level),
+		                                BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i + 2) % 2)) + BLOCK_WIDTH,
+		                                BLOCK_OFFSET_Y +
+		                                ((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level) + BLOCK_HEIGHT);
 		colorBlock[i].nColorIndex = BUTTON_ENTRY + i;
 
-		pMyBrush = new CBrush();						// Construct new brush
-		(*pMyBrush).CreateSolidBrush( PALETTEINDEX( (WORD) (colorBlock[i].nColorIndex) ) );
+		pMyBrush = new CBrush();                        // Construct new brush
+		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((WORD)(colorBlock[i].nColorIndex)));
 
-		(*pArtDC).FillRect( colorBlock[i].rLocation, pMyBrush );
+		(*pArtDC).FillRect(colorBlock[i].rLocation, pMyBrush);
 
-		MyFocusRect( pArtDC, colorBlock[i].rLocation, FALSE);	// standard highlight on button
+		MyFocusRect(pArtDC, colorBlock[i].rLocation, FALSE);     // standard highlight on button
 
-		if (pMyBrush != NULL ) {						// If the brush was constructed, delete it
+		if (pMyBrush != NULL) {                         // If the brush was constructed, delete it
 			pMyBrush->DeleteObject();
 			delete pMyBrush;
 			pMyBrush = NULL;
 		}
 	}
 
-	statRect.SetRect( SIDE_BORDER + ART_WIDTH, TOP_BORDER,
-						GAME_WIDTH - SIDE_BORDER, GAME_HEIGHT - BOTTOM_BORDER );
-	MyFocusRect( pArtDC, statRect, FALSE);				// highlight button area
+	statRect.SetRect(SIDE_BORDER + ART_WIDTH, TOP_BORDER,
+	                 GAME_WIDTH - SIDE_BORDER, GAME_HEIGHT - BOTTOM_BORDER);
+	MyFocusRect(pArtDC, statRect, FALSE);                // highlight button area
 
-	statRect.SetRect( BLOCK_OFFSET_X + 5, TOP_BORDER + 5, GAME_WIDTH - SIDE_BORDER, TOP_BORDER + 25 );
+	statRect.SetRect(BLOCK_OFFSET_X + 5, TOP_BORDER + 5, GAME_WIDTH - SIDE_BORDER, TOP_BORDER + 25);
 	if ((m_pScoreTxt = new CText()) != NULL) {
 		(*m_pScoreTxt).SetupText(pDC, pGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
-	statRect.SetRect( BLOCK_OFFSET_X + 5, TOP_BORDER + 25, GAME_WIDTH - SIDE_BORDER, TOP_BORDER + 45 );
+	statRect.SetRect(BLOCK_OFFSET_X + 5, TOP_BORDER + 25, GAME_WIDTH - SIDE_BORDER, TOP_BORDER + 45);
 	if ((m_pSweepTxt = new CText()) != NULL) {
 		(*m_pSweepTxt).SetupText(pDC, pGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
-	(*pDC).SelectPalette( pOldPal, FALSE );         // Select back the old palette
-	ReleaseDC( pDC );
+	(*pDC).SelectPalette(pOldPal, FALSE);           // Select back the old palette
+	ReleaseDC(pDC);
 
-	//srand((unsigned) time(NULL));			// seed the random number generator
+	//srand((unsigned) time(NULL));         // seed the random number generator
 	NewGame();
 
-	if( pGameInfo->bMusicEnabled ) {
-		pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
+	if (pGameInfo->bMusicEnabled) {
+		pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != NULL) {
-			(*pGameSound).midiLoopPlaySegment( 1300, 36500, 0, FMT_MILLISEC );
+			(*pGameSound).midiLoopPlaySegment(1300, 36500, 0, FMT_MILLISEC);
 		} // end if pGameSound
 	}
 
 	EndWaitCursor();
 
 	if (pGameInfo->bPlayingMetagame) {
-		bNewGame = TRUE;										// in meta start out in a game
-		pGameInfo->lScore = 0L;									// Make sure if they bail out it's 0
-	}
-	else
-		PostMessage( WM_COMMAND, IDC_SCROLL, BN_CLICKED);		// Activate the Options dialog
+		bNewGame = TRUE;                                        // in meta start out in a game
+		pGameInfo->lScore = 0L;                                 // Make sure if they bail out it's 0
+	} else
+		PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);         // Activate the Options dialog
 
 } //End of CMainWindow
 
@@ -279,147 +276,145 @@ CMainWindow::CMainWindow()
 // an EndPaint call is done when it is destroyed at the end of this
 // function.  CPaintDC's constructor needs the window (this).
 //
-void CMainWindow::OnPaint()
-{
-	CDC	*pDC;
+void CMainWindow::OnPaint() {
+	CDC *pDC;
 	CPalette *pOldPal = NULL;
-	PAINTSTRUCT		lpPaint;
-	char	msg[64];
+	PAINTSTRUCT     lpPaint;
+	char    msg[64];
 
 	pDC = GetDC();
-	pOldPal = (*pDC).SelectPalette( pGamePalette, FALSE );
+	pOldPal = (*pDC).SelectPalette(pGamePalette, FALSE);
 	(*pDC).RealizePalette();
 
-	InvalidateRect(NULL,FALSE);				// invalidate the entire window
+	InvalidateRect(NULL, FALSE);            // invalidate the entire window
 	BeginPaint(&lpPaint);
 
-	pBeaconBitmap = FetchResourceBitmap( pArtDC, NULL, IDB_BEACON_BMP );
+	pBeaconBitmap = FetchResourceBitmap(pArtDC, NULL, IDB_BEACON_BMP);
 
-	PaintMaskedBitmap( pArtDC, pGamePalette, pBeaconBitmap,
-						SIDE_BORDER + (ART_WIDTH/2) - LTHOUSE_OFFSET_X,
-						TOP_BORDER + (ART_HEIGHT/2) - LTHOUSE_OFFSET_Y);
+	PaintMaskedBitmap(pArtDC, pGamePalette, pBeaconBitmap,
+	                  SIDE_BORDER + (ART_WIDTH / 2) - LTHOUSE_OFFSET_X,
+	                  TOP_BORDER + (ART_HEIGHT / 2) - LTHOUSE_OFFSET_Y);
 
 
-	pDC->BitBlt( 0, 0, GAME_WIDTH, GAME_HEIGHT, pArtDC, 0, 0, SRCCOPY );
+	pDC->BitBlt(0, 0, GAME_WIDTH, GAME_HEIGHT, pArtDC, 0, 0, SRCCOPY);
 
-/* OLD VERSION:
-	pBeaconBitmap = FetchResourceBitmap( pDC, NULL, IDB_BEACON_BMP );
+	/* OLD VERSION:
+	    pBeaconBitmap = FetchResourceBitmap( pDC, NULL, IDB_BEACON_BMP );
 
-	PaintMaskedBitmap( pDC, pGamePalette, pBeaconBitmap,
-						SIDE_BORDER + (ART_WIDTH/2) - LTHOUSE_OFFSET_X,
-						TOP_BORDER + (ART_HEIGHT/2) - LTHOUSE_OFFSET_Y);
-*/
-#ifdef	BACKDROP
-	pDC->BitBlt( 0, 0, GAME_WIDTH, GAME_HEIGHT, pBackDC, 0, 0, SRCCOPY );
-#endif
+	    PaintMaskedBitmap( pDC, pGamePalette, pBeaconBitmap,
+	                        SIDE_BORDER + (ART_WIDTH/2) - LTHOUSE_OFFSET_X,
+	                        TOP_BORDER + (ART_HEIGHT/2) - LTHOUSE_OFFSET_Y);
+	*/
+	#ifdef  BACKDROP
+	pDC->BitBlt(0, 0, GAME_WIDTH, GAME_HEIGHT, pBackDC, 0, 0, SRCCOPY);
+	#endif
 
-	Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
-	(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+	Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
+	(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
-	if ( (m_nSweeps < MAX_SWEEPS) && bPlaying )
-		Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
+	if ((m_nSweeps < MAX_SWEEPS) && bPlaying)
+		Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount - 1);                     // Update text on screen
 	else
-		Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
-	(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+		Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
+	(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 	EndPaint(&lpPaint);
 
-	(*pDC).SelectPalette( pOldPal, FALSE );
-	ReleaseDC( pDC );
+	(*pDC).SelectPalette(pOldPal, FALSE);
+	ReleaseDC(pDC);
 }
 
-void CMainWindow::DrawBeams( CDC *pDC )
-{
-	CDC			*pBigDC = NULL;
-	CBitmap		*pBigBmp = NULL,
-				*pBigBmpOld = NULL;
-	CBrush		*pMyBrush = NULL;					// New Brush
-	CBrush 		*pOldBrush = NULL;                  // Pointer to old brush
-	CPen		*pMyPen = NULL;						// New Brush
-	CPen 		*pOldPen = NULL;                  	// Pointer to old brush
-	CPalette	*pPalOld = NULL,					// Pointer to old palette
-				*pBigPalOld = NULL;
-	CRect		rect;
-	CPoint		Start, End, Center;
-	UINT	i;
-	int		radius;
-	float	degrees, x, y, radians, rads;
+void CMainWindow::DrawBeams(CDC *pDC) {
+	CDC         *pBigDC = NULL;
+	CBitmap     *pBigBmp = NULL,
+	             *pBigBmpOld = NULL;
+	CBrush      *pMyBrush = NULL;                   // New Brush
+	CBrush      *pOldBrush = NULL;                  // Pointer to old brush
+	CPen        *pMyPen = NULL;                     // New Brush
+	CPen        *pOldPen = NULL;                    // Pointer to old brush
+	CPalette    *pPalOld = NULL,                    // Pointer to old palette
+	             *pBigPalOld = NULL;
+	CRect       rect;
+	CPoint      Start, End, Center;
+	UINT    i;
+	int     radius;
+	float   degrees, x, y, radians, rads;
 
-	pPalOld = (*pDC).SelectPalette( pGamePalette, FALSE );	// Select in game palette
-	(*pDC).RealizePalette();								// Use it
+	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);     // Select in game palette
+	(*pDC).RealizePalette();                                // Use it
 
 	pBigBmp = new CBitmap();
 	pBigDC = new CDC();
 
-	bSuccess = pBigBmp->CreateCompatibleBitmap( pDC, ART_WIDTH * 2, ART_HEIGHT * 2);
-	ASSERT( bSuccess );
-	bSuccess = pBigDC->CreateCompatibleDC( pDC );
-	ASSERT( bSuccess );
-	pBigBmpOld = pBigDC->SelectObject( pBigBmp );
-	ASSERT( pBigBmpOld != NULL );
-	pBigPalOld = pBigDC->SelectPalette( pGamePalette, FALSE );
+	bSuccess = pBigBmp->CreateCompatibleBitmap(pDC, ART_WIDTH * 2, ART_HEIGHT * 2);
+	ASSERT(bSuccess);
+	bSuccess = pBigDC->CreateCompatibleDC(pDC);
+	ASSERT(bSuccess);
+	pBigBmpOld = pBigDC->SelectObject(pBigBmp);
+	ASSERT(pBigBmpOld != NULL);
+	pBigPalOld = pBigDC->SelectPalette(pGamePalette, FALSE);
 	pBigDC->RealizePalette();
 
 	Center.x = ART_WIDTH;
 	Center.y = ART_HEIGHT;
 
-	rect.SetRect( 0, 0, ART_WIDTH * 2, ART_HEIGHT * 2 );
+	rect.SetRect(0, 0, ART_WIDTH * 2, ART_HEIGHT * 2);
 	radius = ART_WIDTH;
 
 	x = (float)cos(0.0);
 	y = (float)sin(0.0);
 
-	Start.x = Center.x + (int)(x * radius);		// + radius
-	Start.y = Center.y  + (int)(y * radius);	//- radius;
+	Start.x = Center.x + (int)(x * radius);     // + radius
+	Start.y = Center.y  + (int)(y * radius);    //- radius;
 
-	for( i = 0; i < NUM_BEAMS; i++) {
+	for (i = 0; i < NUM_BEAMS; i++) {
 		degrees = ((float)(i + 1)) * (float)(360 / NUM_BEAMS);
 
-        radians = degrees * (float)0.017453292;
-        rads = (degrees + 0.5F) * (float)0.017453292;
+		radians = degrees * (float)0.017453292;
+		rads = (degrees + 0.5F) * (float)0.017453292;
 
-        x = (float)cos(rads);
-        y = (float)sin(rads);
+		x = (float)cos(rads);
+		y = (float)sin(rads);
 
-        End.x = Center.x + (int)(x * radius);
-        End.y = Center.y + (int)(y * radius);
+		End.x = Center.x + (int)(x * radius);
+		End.y = Center.y + (int)(y * radius);
 
-		pMyPen = new CPen();							// Construct new pen
-		(*pMyPen).CreatePen( PS_SOLID, 1, PALETTEINDEX( (WORD) (i + START_ENTRY) ) );
-		pOldPen = (*pBigDC).SelectObject( pMyPen );
-		pMyBrush = new CBrush();						// Construct new brush
-		(*pMyBrush).CreateSolidBrush( PALETTEINDEX( (WORD) (i + START_ENTRY) ) );
-		pOldBrush = (*pBigDC).SelectObject( pMyBrush );
+		pMyPen = new CPen();                            // Construct new pen
+		(*pMyPen).CreatePen(PS_SOLID, 1, PALETTEINDEX((WORD)(i + START_ENTRY)));
+		pOldPen = (*pBigDC).SelectObject(pMyPen);
+		pMyBrush = new CBrush();                        // Construct new brush
+		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((WORD)(i + START_ENTRY)));
+		pOldBrush = (*pBigDC).SelectObject(pMyBrush);
 
-		(*pBigDC).Pie( &rect, End, Start );
+		(*pBigDC).Pie(&rect, End, Start);
 
-		(*pBigDC).SelectObject( pOldPen );
-		if (pMyPen != NULL ) {							// If the brush was constructed, delete it
+		(*pBigDC).SelectObject(pOldPen);
+		if (pMyPen != NULL) {                           // If the brush was constructed, delete it
 			pMyPen->DeleteObject();
 			delete pMyPen;
 			pMyPen = NULL;
 		}
-		(*pBigDC).SelectObject( pOldBrush );
-		if (pMyBrush != NULL ) {						// If the brush was constructed, delete it
+		(*pBigDC).SelectObject(pOldBrush);
+		if (pMyBrush != NULL) {                         // If the brush was constructed, delete it
 			pMyBrush->DeleteObject();
 			delete pMyBrush;
 			pMyBrush = NULL;
 		}
 
-        x = (float)cos(radians);
-        y = (float)sin(radians);
+		x = (float)cos(radians);
+		y = (float)sin(radians);
 
-        Start.x = Center.x + (int)(x * radius);
-        Start.y = Center.y + (int)(y * radius);
+		Start.x = Center.x + (int)(x * radius);
+		Start.y = Center.y + (int)(y * radius);
 	}
 
-	(*pDC).BitBlt( SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pBigDC, ART_WIDTH/2, ART_HEIGHT/2, SRCCOPY );
-	(*pDC).SelectPalette( pPalOld, FALSE );         // Select back the old palette
+	(*pDC).BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pBigDC, ART_WIDTH / 2, ART_HEIGHT / 2, SRCCOPY);
+	(*pDC).SelectPalette(pPalOld, FALSE);           // Select back the old palette
 
-	if (pBigBmpOld != NULL)               			// Get rid of Big stuff
-		pBigDC->SelectObject( pBigBmpOld );
+	if (pBigBmpOld != NULL)                         // Get rid of Big stuff
+		pBigDC->SelectObject(pBigBmpOld);
 	if (pBigPalOld != NULL)
-		pBigDC->SelectPalette( pBigPalOld, FALSE );
+		pBigDC->SelectPalette(pBigPalOld, FALSE);
 	if (pBigDC->m_hDC != NULL) {
 		pBigDC->DeleteDC();
 		delete pBigDC;
@@ -440,102 +435,100 @@ void CMainWindow::DrawBeams( CDC *pDC )
 // typically in order to process control related activities.
 //
 
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
-{
-	CDC	*pDC = nullptr;
+BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+	CDC *pDC = nullptr;
 
-	if ( HIWORD( lParam ) == BN_CLICKED ) {
+	if (HIWORD(lParam) == BN_CLICKED) {
 
 		pDC = GetDC();
-		CRules	RulesDlg( (CWnd *)this, RULES_TEXT, pGamePalette, pGameInfo->bSoundEffectsEnabled ? RULES_WAV : NULL );				// Construct Rules dialog
+		CRules  RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette, pGameInfo->bSoundEffectsEnabled ? RULES_WAV : NULL);                // Construct Rules dialog
 		CMainMenu COptionsWind((CWnd *)this, pGamePalette,
-								pGameInfo->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
-								GetSubOptions, RULES_TEXT, pGameInfo->bSoundEffectsEnabled ? RULES_WAV : NULL, pGameInfo ) ;		// Construct Option dialog
-		KillTimer( BEACON_TIMER );
+		                       pGameInfo->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
+		                       GetSubOptions, RULES_TEXT, pGameInfo->bSoundEffectsEnabled ? RULES_WAV : NULL, pGameInfo) ;         // Construct Option dialog
+		KillTimer(BEACON_TIMER);
 
 		switch (wParam) {
 
-			case IDC_RULES:
-				CSound::waitWaveSounds();
+		case IDC_RULES:
+			CSound::waitWaveSounds();
 
-				m_bIgnoreScrollClick = TRUE;
-				(*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
+			m_bIgnoreScrollClick = TRUE;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
 
-				(void) RulesDlg.DoModal();
+			(void) RulesDlg.DoModal();
+			m_bIgnoreScrollClick = FALSE;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+
+			if (bPlaying) SetTimer(BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL);
+			SetBeamEntries(pDC);
+			break;
+
+		case IDC_SCROLL:
+			if (m_bIgnoreScrollClick) {
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+				break;
+			}
+
+			m_bIgnoreScrollClick = TRUE;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, TRUE, 0L);
+
+			switch (COptionsWind.DoModal()) {
+
+			case IDC_OPTIONS_NEWGAME:                           // Selected New Game
+				bPlaying = FALSE;
+				MyFocusRect(pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);    // erase highlight on nNextIndex
+				NewGame();
+				char        msg[64];
+				Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
+				(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+
+				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
+				(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
 				m_bIgnoreScrollClick = FALSE;
-				(*m_pScrollButton).SendMessage( BM_SETSTATE, FALSE, 0L );
-
-				if ( bPlaying ) SetTimer( BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL );
-				SetBeamEntries( pDC );
 				break;
 
-			case IDC_SCROLL:
-				if (m_bIgnoreScrollClick) {
-					(*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
-					break;
+			case IDC_OPTIONS_RETURN:
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+				m_bIgnoreScrollClick = FALSE;
+				if (bPlaying)
+					SetTimer(BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL);
+				break;
+
+			case IDC_OPTIONS_QUIT:                      // Quit button was clicked
+				PostMessage(WM_CLOSE, 0, 0);         // Post a program exit
+				ReleaseDC(pDC);
+				return (FALSE);
+
+			} //end switch(ComDlg.DoModal())
+
+			SetBeamEntries(pDC);                             // Make sure the palette is black
+
+			//
+			// Check to see if the music state was changed and adjust to match it
+			//
+			if ((pGameInfo->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
+				if (pGameSound->playing())
+					pGameSound->stop();
+			} else if (pGameInfo->bMusicEnabled) {
+				if (pGameSound == NULL) {
+					pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
+				if (pGameSound != NULL) {
+					if (!pGameSound->playing())
+						(*pGameSound).midiLoopPlaySegment(1300, 36500, 0, FMT_MILLISEC);
+				} // end if pGameSound
+			} // end else..musicenabled check
 
-				m_bIgnoreScrollClick = TRUE;
-				(*m_pScrollButton).SendMessage( BM_SETSTATE, TRUE, 0L );
-				SendDlgItemMessage( IDC_SCROLL, BM_SETSTATE, TRUE, 0L );
+		} //end switch(wParam)
 
-				switch ( COptionsWind.DoModal() ) {
+	} // end if
 
-					case IDC_OPTIONS_NEWGAME:							// Selected New Game
-						bPlaying = FALSE;
-						MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
-						NewGame();
-						char		msg[64];
-						Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
-						(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
-
-						Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
-						(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
-
-						(*m_pScrollButton).SendMessage( BM_SETSTATE, FALSE, 0L );
-						m_bIgnoreScrollClick = FALSE;
-						break;
-
-					case IDC_OPTIONS_RETURN:
-						(*m_pScrollButton).SendMessage( BM_SETSTATE, FALSE, 0L );
-						m_bIgnoreScrollClick = FALSE;
-						if ( bPlaying )
-							SetTimer( BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL );
-						break;
-
-					case IDC_OPTIONS_QUIT:						// Quit button was clicked
-						PostMessage( WM_CLOSE,0,0 );			// Post a program exit
-						ReleaseDC( pDC );
-						return( FALSE );
-
-				} //end switch(ComDlg.DoModal())
-
-				SetBeamEntries( pDC );							// Make sure the palette is black
-
-				//
-				// Check to see if the music state was changed and adjust to match it
-				//
-			   	if((pGameInfo->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
-			   		if (pGameSound->playing())
-			   			pGameSound->stop();
-			   	}
-			   	else if( pGameInfo->bMusicEnabled ) {
-			   		if (pGameSound == NULL) {
-						pGameSound = new CSound( this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-					}
-					if (pGameSound != NULL) {
-						if ( !pGameSound->playing() )
-							(*pGameSound).midiLoopPlaySegment( 1300, 36500, 0, FMT_MILLISEC );
-					} // end if pGameSound
-				} // end else..musicenabled check
-
-		 	} //end switch(wParam)
-
-		 } // end if
-
-	ReleaseDC( pDC );
-	(*this).SetFocus();						// Reset focus back to the main window
-	return(TRUE);
+	ReleaseDC(pDC);
+	(*this).SetFocus();                     // Reset focus back to the main window
+	return (TRUE);
 }
 
 
@@ -549,8 +542,8 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags		Virtual key info
- *		CPoint point    Location of cursor
+ *      UINT nFlags     Virtual key info
+ *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -565,33 +558,32 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	CDC		*pDC;
-	CRect	rectTitle;
+void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+	CDC     *pDC;
+	CRect   rectTitle;
 
 	pDC = GetDC();
 
-	rectTitle.SetRect( NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
-						NEWGAME_LOCATION_X + NEWGAME_WIDTH,
-						NEWGAME_LOCATION_Y + NEWGAME_HEIGHT );
+	rectTitle.SetRect(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
+	                  NEWGAME_LOCATION_X + NEWGAME_WIDTH,
+	                  NEWGAME_LOCATION_Y + NEWGAME_HEIGHT);
 
-	if ( rectTitle.PtInRect( point ) && (pGameInfo->bPlayingMetagame == FALSE) ) {
-		KillTimer( BEACON_TIMER );
-		bPlaying = FALSE;					// Want to get a new piece of artwork
-		bNewGame = FALSE;					// Will be reset to TRUE in NewGame()
-		MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);		// erase highlight on nNextIndex
-		NewGame();							// Activate New Game
-		char		msg[64];
-		Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
-		(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+	if (rectTitle.PtInRect(point) && (pGameInfo->bPlayingMetagame == FALSE)) {
+		KillTimer(BEACON_TIMER);
+		bPlaying = FALSE;                   // Want to get a new piece of artwork
+		bNewGame = FALSE;                   // Will be reset to TRUE in NewGame()
+		MyFocusRect(pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);        // erase highlight on nNextIndex
+		NewGame();                          // Activate New Game
+		char        msg[64];
+		Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
+		(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
-		if (m_nSweepCount < 0)	m_nSweepCount = 0;							// Make sure it doesn't go neg
-		Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
-		(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+		if (m_nSweepCount < 0)  m_nSweepCount = 0;                          // Make sure it doesn't go neg
+		Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
+		(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 	}
 
-	ReleaseDC( pDC );
+	ReleaseDC(pDC);
 
 	CFrameWnd ::OnLButtonDown(nFlags, point);
 }
@@ -606,8 +598,8 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags		Virtual key info
- *		CPoint point    Location of cursor
+ *      UINT nFlags     Virtual key info
+ *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -622,46 +614,45 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point)
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	CDC 	*pDC;
-	int 	i;
-	BOOL	bHit = FALSE;
-	char	msg[64];
+void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+	CDC     *pDC;
+	int     i;
+	BOOL    bHit = FALSE;
+	char    msg[64];
 
 	pDC = GetDC();
 
 	if (!m_bAutomatic && bNewGame) {
 		for (i = 0; i < NUM_BUTTONS; i++) {
-			if ( colorBlock[i].rLocation.PtInRect( point ) ) {
+			if (colorBlock[i].rLocation.PtInRect(point)) {
 				bHit = TRUE;
 				if (pGameInfo->bSoundEffectsEnabled)
-					sndPlaySound( PICK_SOUND, SND_ASYNC  );									// Make a noise
-				MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
-				MyFocusRect( pArtDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
-				nNextIndex = colorBlock[i].nColorIndex;										// make this the next beam color
-				MyFocusRect( pDC, colorBlock[i].rLocation, TRUE );							// draw hightlight on nNextIndex
-				MyFocusRect( pArtDC, colorBlock[i].rLocation, TRUE );						// draw hightlight on nNextIndex
+					sndPlaySound(PICK_SOUND, SND_ASYNC);                                     // Make a noise
+				MyFocusRect(pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);    // erase highlight on nNextIndex
+				MyFocusRect(pArtDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);     // erase highlight on nNextIndex
+				nNextIndex = colorBlock[i].nColorIndex;                                     // make this the next beam color
+				MyFocusRect(pDC, colorBlock[i].rLocation, TRUE);                             // draw hightlight on nNextIndex
+				MyFocusRect(pArtDC, colorBlock[i].rLocation, TRUE);                          // draw hightlight on nNextIndex
 //bar
 // SWITCH ON DEMAND:
-//bar				if ( m_bChangeAtTwelve == FALSE )
-//bar					nCurrentIndex = nNextIndex;												//...switch to the new beacon color
+//bar               if ( m_bChangeAtTwelve == FALSE )
+//bar                   nCurrentIndex = nNextIndex;                                             //...switch to the new beacon color
 			}
 		} // end for
 
-		if ( !bPlaying && bHit) { 												// first time
+		if (!bPlaying && bHit) {                                                 // first time
 			bPlaying = TRUE;
 			nCurrentIndex = nNextIndex;
-			SetTimer( BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL );
+			SetTimer(BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL);
 			if (m_nSweeps < MAX_SWEEPS)
-				Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
+				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount - 1);                     // Update text on screen
 			else
-				Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );						// Update text on screen
-			(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);                         // Update text on screen
+			(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 		}
 	}
 
-    ReleaseDC( pDC );
+	ReleaseDC(pDC);
 
 	CFrameWnd ::OnLButtonUp(nFlags, point);
 }
@@ -676,8 +667,8 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point)
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags		Virtual key info
- *		CPoint point    Location of cursor
+ *      UINT nFlags     Virtual key info
+ *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -692,9 +683,8 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point)
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point)
-{
-	SetCursor( LoadCursor( NULL, IDC_ARROW ) );		// Refresh cursor object
+void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+	SetCursor(LoadCursor(NULL, IDC_ARROW));           // Refresh cursor object
 
 	CFrameWnd ::OnMouseMove(nFlags, point);
 }
@@ -709,9 +699,9 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point)
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nChar		Virtual key info
- *      UINT nRepCnt	Virtual key info
- *      UINT nFlags		Virtual key info
+ *      UINT nChar      Virtual key info
+ *      UINT nRepCnt    Virtual key info
+ *      UINT nFlags     Virtual key info
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -726,26 +716,22 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point)
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	CFrameWnd ::OnChar(nChar, nRepCnt, nFlags);		// default action
+void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	CFrameWnd ::OnChar(nChar, nRepCnt, nFlags);     // default action
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	if ((nChar == VK_F4) && (nFlags & 0x2000))		// terminate app on ALT-F4
-		PostMessage(WM_CLOSE,0,0);
+void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	if ((nChar == VK_F4) && (nFlags & 0x2000))      // terminate app on ALT-F4
+		PostMessage(WM_CLOSE, 0, 0);
 	else
-		CFrameWnd::OnChar(nChar, nRepCnt, nFlags);	// default action
+		CFrameWnd::OnChar(nChar, nRepCnt, nFlags);  // default action
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	if ( (nChar == VK_F1) ) {								// F1 key is hit
-		SendMessage( WM_COMMAND, IDC_RULES, BN_CLICKED);		// Activate the Rules dialog
-	}
-	else if ( nChar == VK_F2 ) {							// F2 key is hit
-		SendMessage( WM_COMMAND, IDC_SCROLL, BN_CLICKED);		// Activate the Options dialog
+void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	if ((nChar == VK_F1)) {                                  // F1 key is hit
+		SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);      // Activate the Rules dialog
+	} else if (nChar == VK_F2) {                         // F2 key is hit
+		SendMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);         // Activate the Options dialog
 	}
 }
 
@@ -760,7 +746,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nIDEvent	The ID of the timer event activated
+ *      UINT nIDEvent   The ID of the timer event activated
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -775,95 +761,93 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT nIDEvent)
-{
-	CDC	*pDC;
-	char	msg[64];
+void CMainWindow::OnTimer(UINT nIDEvent) {
+	CDC *pDC;
+	char    msg[64];
 
 	pDC = GetDC();
 
-	switch ( nIDEvent ) {
+	switch (nIDEvent) {
 
-		case BEACON_TIMER:
-			CheckUnderBeam();
-			MoveBeam();
-			if ( nSlice == CHANGE_BEAM ) {							// At the turnover point,
-				if (pGameInfo->bSoundEffectsEnabled)
-					sndPlaySound( MID_SOUND, SND_ASYNC  );		// Make a "you lost" noise
+	case BEACON_TIMER:
+		CheckUnderBeam();
+		MoveBeam();
+		if (nSlice == CHANGE_BEAM) {                             // At the turnover point,
+			if (pGameInfo->bSoundEffectsEnabled)
+				sndPlaySound(MID_SOUND, SND_ASYNC);          // Make a "you lost" noise
 
-				if (m_nSweeps < MAX_SWEEPS) m_nSweepCount--;		// If limited sweeps, count down
-				else	m_nSweepCount++;							//...or for unlimited, count up
+			if (m_nSweeps < MAX_SWEEPS) m_nSweepCount--;        // If limited sweeps, count down
+			else    m_nSweepCount++;                            //...or for unlimited, count up
 
-				if ( (m_nSweeps < MAX_SWEEPS) && (m_nSweepCount != 0) )
-					Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount - 1 );					// Update text on screen
-				else
-					Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );						// Update text on screen
-				(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+			if ((m_nSweeps < MAX_SWEEPS) && (m_nSweepCount != 0))
+				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount - 1);                     // Update text on screen
+			else
+				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);                         // Update text on screen
+			(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
-				m_Score = ((float) m_nRemoved / (float) m_nTotalSquares) * 100;			// Score is the percentage
-				if ( (m_Score > 99.00) && (m_nRemoved < m_nTotalSquares))
-					Common::sprintf_s( msg, "Score: 99%%" );
-				else
-					Common::sprintf_s( msg, "Score: %.0f %%", m_Score );							// Update score on screen
-				(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+			m_Score = ((float) m_nRemoved / (float) m_nTotalSquares) * 100;         // Score is the percentage
+			if ((m_Score > 99.00) && (m_nRemoved < m_nTotalSquares))
+				Common::sprintf_s(msg, "Score: 99%%");
+			else
+				Common::sprintf_s(msg, "Score: %.0f %%", m_Score);                           // Update score on screen
+			(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
-				if ( m_bAutomatic ) {													// Game plays by itself
-					if( ++nNextIndex >= (BUTTON_ENTRY + NUM_BUTTONS) )					// Step through colors
-						nNextIndex = BUTTON_ENTRY;
-					MyFocusRect( pDC, colorBlock[nCurrentIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
-					MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, TRUE );		// draw hightlight on nNextIndex
-					MyFocusRect( pArtDC, colorBlock[nCurrentIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
-					MyFocusRect( pArtDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, TRUE );		// draw hightlight on nNextIndex
-					nCurrentIndex = nNextIndex;							//...switch to the new beacon color
-				}
+			if (m_bAutomatic) {                                                      // Game plays by itself
+				if (++nNextIndex >= (BUTTON_ENTRY + NUM_BUTTONS))                    // Step through colors
+					nNextIndex = BUTTON_ENTRY;
+				MyFocusRect(pDC, colorBlock[nCurrentIndex - BUTTON_ENTRY].rLocation, FALSE);     // erase highlight on nNextIndex
+				MyFocusRect(pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, TRUE);         // draw hightlight on nNextIndex
+				MyFocusRect(pArtDC, colorBlock[nCurrentIndex - BUTTON_ENTRY].rLocation, FALSE);  // erase highlight on nNextIndex
+				MyFocusRect(pArtDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, TRUE);          // draw hightlight on nNextIndex
+				nCurrentIndex = nNextIndex;                         //...switch to the new beacon color
+			}
 
-				if ( m_bChangeAtTwelve )
-					nCurrentIndex = nNextIndex;							//...switch to the new beacon color
+			if (m_bChangeAtTwelve)
+				nCurrentIndex = nNextIndex;                         //...switch to the new beacon color
 
-				if ( m_nRemoved >= m_nTotalSquares ) {
-					KillTimer( BEACON_TIMER );
-					bPlaying = FALSE;								// Want to get a new piece of artwork
-					bNewGame = FALSE;							// Will be set to TRUE in NewGame()
-					if ( m_bAutomatic ) {
-						MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);	// erase highlight on nNextIndex
-						NewGame();
+			if (m_nRemoved >= m_nTotalSquares) {
+				KillTimer(BEACON_TIMER);
+				bPlaying = FALSE;                               // Want to get a new piece of artwork
+				bNewGame = FALSE;                           // Will be set to TRUE in NewGame()
+				if (m_bAutomatic) {
+					MyFocusRect(pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, FALSE);    // erase highlight on nNextIndex
+					NewGame();
 
-						Common::sprintf_s( msg, "Score: %.0f %%", m_Score );
-						(*m_pScoreTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+					Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
+					(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
-						Common::sprintf_s( msg, "Sweeps: %d", m_nSweepCount );
-						(*m_pSweepTxt).DisplayString( pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
-					}
-					else {
-						if (pGameInfo->bSoundEffectsEnabled)
-							sndPlaySound( WIN_SOUND, SND_ASYNC  );			// Make a "you won" noise
-						CMessageBox GameOverDlg((CWnd *)this, pGamePalette,
-													"Whooooopeeee!", "You removed them all!" );
-						if (pGameInfo->bPlayingMetagame) {
-							PostMessage( WM_CLOSE,0,0 );			// and post a program exit
-						}
-					}
-				}
-				if ( m_nSweepCount == 0 ) {
-					KillTimer( BEACON_TIMER );
-					bPlaying = FALSE;
-					bNewGame = FALSE;							// Will be set to TRUE in NewGame()
+					Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
+					(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+				} else {
 					if (pGameInfo->bSoundEffectsEnabled)
-						sndPlaySound( LOSE_SOUND, SND_ASYNC  );				// Make a "you lost" noise
-					CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.", "Out of sweeps." );
+						sndPlaySound(WIN_SOUND, SND_ASYNC);              // Make a "you won" noise
+					CMessageBox GameOverDlg((CWnd *)this, pGamePalette,
+					                        "Whooooopeeee!", "You removed them all!");
 					if (pGameInfo->bPlayingMetagame) {
-						PostMessage( WM_CLOSE,0,0 );			// and post a program exit
+						PostMessage(WM_CLOSE, 0, 0);         // and post a program exit
 					}
 				}
 			}
-			break;
+			if (m_nSweepCount == 0) {
+				KillTimer(BEACON_TIMER);
+				bPlaying = FALSE;
+				bNewGame = FALSE;                           // Will be set to TRUE in NewGame()
+				if (pGameInfo->bSoundEffectsEnabled)
+					sndPlaySound(LOSE_SOUND, SND_ASYNC);                 // Make a "you lost" noise
+				CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over.", "Out of sweeps.");
+				if (pGameInfo->bPlayingMetagame) {
+					PostMessage(WM_CLOSE, 0, 0);         // and post a program exit
+				}
+			}
+		}
+		break;
 
-		default:
-	    	CFrameWnd ::OnTimer( nIDEvent );
-			break;
+	default:
+		CFrameWnd ::OnTimer(nIDEvent);
+		break;
 	}
 
-	ReleaseDC( pDC );
+	ReleaseDC(pDC);
 
 }
 
@@ -895,37 +879,35 @@ Other functions:
  *      void
  *
  ****************************************************************/
-void CMainWindow::MoveBeam()
-{
-	CDC				*pDC;
-	CPalette		*pOldPal = NULL;						// Pointer to old palette
-	PALETTEENTRY	tempent[2];
+void CMainWindow::MoveBeam() {
+	CDC             *pDC;
+	CPalette        *pOldPal = NULL;                        // Pointer to old palette
+	PALETTEENTRY    tempent[2];
 
 	pDC = GetDC();
-	pOldPal = (*pDC).SelectPalette( pGamePalette, FALSE );	// Select in game palette
+	pOldPal = (*pDC).SelectPalette(pGamePalette, FALSE);     // Select in game palette
 
-	tempent[1].peRed = 255;									// Make entry [1] white
+	tempent[1].peRed = 255;                                 // Make entry [1] white
 	tempent[1].peGreen = 255;
 	tempent[1].peBlue = 254;
-	tempent[1].peFlags = PC_RESERVED;						// Assign it the "changeable" flag
+	tempent[1].peFlags = PC_RESERVED;                       // Assign it the "changeable" flag
 
-	(*pGamePalette).GetPaletteEntries( nCurrentIndex, 1, (LPPALETTEENTRY)&tempent[0] );	// Entry [0] is the chosen
-	tempent[0].peFlags = PC_RESERVED;													//...color & changeable
+	(*pGamePalette).GetPaletteEntries(nCurrentIndex, 1, (LPPALETTEENTRY)&tempent[0]);    // Entry [0] is the chosen
+	tempent[0].peFlags = PC_RESERVED;                                                   //...color & changeable
 
-	if ( nSlice == START_ENTRY ) {
-		(*pGamePalette).AnimatePalette( nSlice, 1, (LPPALETTEENTRY)&tempent[1] );
-		(*pGamePalette).AnimatePalette( NUM_BEAMS + START_ENTRY - 1, 1,
-										(LPPALETTEENTRY)&tempent[0] );
-	}
-	else
-		(*pGamePalette).AnimatePalette( nSlice - 1, 2, (LPPALETTEENTRY)tempent );
+	if (nSlice == START_ENTRY) {
+		(*pGamePalette).AnimatePalette(nSlice, 1, (LPPALETTEENTRY)&tempent[1]);
+		(*pGamePalette).AnimatePalette(NUM_BEAMS + START_ENTRY - 1, 1,
+		                               (LPPALETTEENTRY)&tempent[0]);
+	} else
+		(*pGamePalette).AnimatePalette(nSlice - 1, 2, (LPPALETTEENTRY)tempent);
 
 	if (++nSlice >= (NUM_BEAMS + START_ENTRY)) {
 		nSlice = START_ENTRY;
 	}
 
-	(*pDC).SelectPalette( pOldPal, FALSE );         // Select back the old palette
-	ReleaseDC( pDC );
+	(*pDC).SelectPalette(pOldPal, FALSE);           // Select back the old palette
+	ReleaseDC(pDC);
 
 } // end MoveBeam
 
@@ -943,7 +925,7 @@ void CMainWindow::MoveBeam()
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
- *      int nSlice		Which pie-slice is currently 'lit' by the beam
+ *      int nSlice      Which pie-slice is currently 'lit' by the beam
  *
  *  IMPLICIT OUTPUT PARAMETERS:
  *
@@ -953,33 +935,31 @@ void CMainWindow::MoveBeam()
  *
  *      void
 
- 	0 deg is at 3 o'clock, and the slices are in order going clockwise
+    0 deg is at 3 o'clock, and the slices are in order going clockwise
  *
  ****************************************************************/
-void CMainWindow::CheckUnderBeam()
-{
-	CDC 	*pDC;
-	CPoint	Start, End;
-	int		radius;
-	float	degrees, x, y, radians, endAngle;
+void CMainWindow::CheckUnderBeam() {
+	CDC     *pDC;
+	CPoint  Start, End;
+	int     radius;
+	float   degrees, x, y, radians, endAngle;
 
 	pDC = GetDC();
 
-	Start.x = SIDE_BORDER + ART_WIDTH/2;								// Start at the center
-	Start.y = TOP_BORDER + ART_HEIGHT/2;
+	Start.x = SIDE_BORDER + ART_WIDTH / 2;                              // Start at the center
+	Start.y = TOP_BORDER + ART_HEIGHT / 2;
 
 	radius = 330; //SQRT(ART_HEIGHT^2 + ART_WIDTH^2)
-	if ( nSlice == START_ENTRY ) {
+	if (nSlice == START_ENTRY) {
 		degrees = (float)(NUM_BEAMS - 1) * (float)(360 / NUM_BEAMS);
 		endAngle = (float)(NUM_BEAMS) * (float)(360 / NUM_BEAMS);
-	}
-	else {
-  		degrees = ((float)(nSlice - START_ENTRY - 1)) * (float)(360 / NUM_BEAMS);		// Get degrees cc-wise from 3 o'clock
+	} else {
+		degrees = ((float)(nSlice - START_ENTRY - 1)) * (float)(360 / NUM_BEAMS);       // Get degrees cc-wise from 3 o'clock
 		endAngle = ((float)(nSlice - START_ENTRY)) * (float)(360 / NUM_BEAMS);
 	}
 
-	while( degrees < endAngle ) {
-		radians = degrees * (float)0.017453292;						// Convert to radians
+	while (degrees < endAngle) {
+		radians = degrees * (float)0.017453292;                     // Convert to radians
 
 		x = (float)cos(radians);
 		y = (float)sin(radians);
@@ -988,30 +968,29 @@ void CMainWindow::CheckUnderBeam()
 		End.y = Start.y + (int)(y * radius);
 
 		bChanged = TRUE;
-		LineDDA( Start.x, Start.y, End.x, End.y, (LINEDDAPROC)StepAlongLine, (long)pDC );
+		LineDDA(Start.x, Start.y, End.x, End.y, (LINEDDAPROC)StepAlongLine, (long)pDC);
 
 		degrees += 1.0F;
 	} // end while
 
-	if ((!m_bChangeAtTwelve) && (nCurrentIndex != nNextIndex))	// If we're changing colors on the fly
-		nCurrentIndex = nNextIndex;								//...switch to the new beacon color
-																//...only at the end of a beam traversal
-	ReleaseDC( pDC );
+	if ((!m_bChangeAtTwelve) && (nCurrentIndex != nNextIndex))  // If we're changing colors on the fly
+		nCurrentIndex = nNextIndex;                             //...switch to the new beacon color
+	//...only at the end of a beam traversal
+	ReleaseDC(pDC);
 } // end CheckUnderBeam
 
-void CALLBACK StepAlongLine( int xpos, int ypos, LPSTR lphdc )
-{
-	CDC		*pDC;
+void CALLBACK StepAlongLine(int xpos, int ypos, LPSTR lphdc) {
+	CDC     *pDC;
 	CPoint point;
 
- 	pDC = (CDC *)lphdc;
+	pDC = (CDC *)lphdc;
 
- 	if ( bChanged ) {
+	if (bChanged) {
 		point.x = xpos;
 		point.y = ypos;
-		if (InArtRegion( point ) && ( (CMainWindow::UnderLighthouse( point ) == FALSE) &&
-				CMainWindow::InPictureSquare( point ) )) {
-			bChanged = CMainWindow::CompareColors( pDC, point );
+		if (InArtRegion(point) && ((CMainWindow::UnderLighthouse(point) == FALSE) &&
+		                           CMainWindow::InPictureSquare(point))) {
+			bChanged = CMainWindow::CompareColors(pDC, point);
 		}
 	}
 }
@@ -1036,49 +1015,48 @@ void CALLBACK StepAlongLine( int xpos, int ypos, LPSTR lphdc )
  *
  *  RETURN VALUE:
  *
- *      BOOL	True if a grid space matched and was modified,
- *				False if the space did not match
+ *      BOOL    True if a grid space matched and was modified,
+ *              False if the space did not match
  *
  ****************************************************************/
-BOOL CMainWindow::CompareColors( CDC *pDC, CPoint point )
-{
-	CPoint		square;
-	COLORREF	test;
-	BYTE 		ar, ag, ab, br, bg, bb;
-	PALETTEENTRY	tempent[1];
-	UINT		index;
+BOOL CMainWindow::CompareColors(CDC *pDC, CPoint point) {
+	CPoint      square;
+	COLORREF    test;
+	BYTE        ar, ag, ab, br, bg, bb;
+	PALETTEENTRY    tempent[1];
+	UINT        index;
 
-  	test = (*pDC).GetPixel( point );
+	test = (*pDC).GetPixel(point);
 
-  	ar = GetRValue( test );
-  	ag = GetGValue( test );
-  	ab = GetBValue( test );
+	ar = GetRValue(test);
+	ag = GetGValue(test);
+	ab = GetBValue(test);
 
-	(*pGamePalette).GetPaletteEntries( nCurrentIndex, 1, (LPPALETTEENTRY)tempent );
+	(*pGamePalette).GetPaletteEntries(nCurrentIndex, 1, (LPPALETTEENTRY)tempent);
 
-  	br = tempent[0].peRed;
-  	bg = tempent[0].peGreen;
-  	bb = tempent[0].peBlue;
+	br = tempent[0].peRed;
+	bg = tempent[0].peGreen;
+	bb = tempent[0].peBlue;
 
-	if( (ar == br) && ((ag == bg) && (ab == bb)) ) {			// Matches the beam
-		square = PointToGrid( point );
+	if ((ar == br) && ((ag == bg) && (ab == bb))) {          // Matches the beam
+		square = PointToGrid(point);
 		square.x = (square.x * GRID_WIDTH) + SIDE_BORDER;
 		square.y = (square.y * GRID_HEIGHT) + TOP_BORDER;
 
-  		DrawPart( pDC, square, square, GRID_WIDTH, GRID_HEIGHT );
-  		DrawPart( pArtDC, square, square, GRID_WIDTH, GRID_HEIGHT );
+		DrawPart(pDC, square, square, GRID_WIDTH, GRID_HEIGHT);
+		DrawPart(pArtDC, square, square, GRID_WIDTH, GRID_HEIGHT);
 		m_nRemoved++;
-		square = PointToGrid( point );
+		square = PointToGrid(point);
 		PictureGrid[square.x][square.y] = FALSE;
-  		return( TRUE );
-  	}
+		return (TRUE);
+	}
 
-	index = (*pGamePalette).GetNearestPaletteIndex( test );		// get the nearest index of test color
-  	if ( ((index < BUTTON_ENTRY) && (index >= START_ENTRY))		// if it's in the beam area
-  			&& (index != nSlice) ) 								// and doesn't match the beam's index
-  		return( FALSE );	//TRUE );											//
+	index = (*pGamePalette).GetNearestPaletteIndex(test);        // get the nearest index of test color
+	if (((index < BUTTON_ENTRY) && (index >= START_ENTRY))       // if it's in the beam area
+	        && (index != nSlice))                               // and doesn't match the beam's index
+		return (FALSE);  //TRUE );                                           //
 
-	return( FALSE );
+	return (FALSE);
 } // end CompareColors
 
 
@@ -1092,7 +1070,7 @@ BOOL CMainWindow::CompareColors( CDC *pDC, CPoint point )
  *
  *  FORMAL PARAMETERS:
  *
- *		CPoint point	point to check
+ *      CPoint point    point to check
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -1103,20 +1081,19 @@ BOOL CMainWindow::CompareColors( CDC *pDC, CPoint point )
  *
  *  RETURN VALUE:
  *
- *      BOOL	True if point lies under the lighthouse area,
- *				False if the point isn't
+ *      BOOL    True if point lies under the lighthouse area,
+ *              False if the point isn't
  *
  ****************************************************************/
-BOOL CMainWindow::UnderLighthouse( CPoint point )
-{
-	if ( (point.x >= (SIDE_BORDER + ART_WIDTH/2 - START_OFFSET_X)) &&
-			(point.x <= (SIDE_BORDER + ART_WIDTH/2 + START_OFFSET_X)) ) {
-		if ( (point.y >= (TOP_BORDER + ART_HEIGHT/2 - START_OFFSET_Y)) &&
-				(point.y <= (TOP_BORDER + ART_HEIGHT/2 + (START_HEIGHT - START_OFFSET_Y) )) ) {
-			return( TRUE );
+BOOL CMainWindow::UnderLighthouse(CPoint point) {
+	if ((point.x >= (SIDE_BORDER + ART_WIDTH / 2 - START_OFFSET_X)) &&
+	        (point.x <= (SIDE_BORDER + ART_WIDTH / 2 + START_OFFSET_X))) {
+		if ((point.y >= (TOP_BORDER + ART_HEIGHT / 2 - START_OFFSET_Y)) &&
+		        (point.y <= (TOP_BORDER + ART_HEIGHT / 2 + (START_HEIGHT - START_OFFSET_Y)))) {
+			return (TRUE);
 		}
 	}
-	return( FALSE );
+	return (FALSE);
 } // end CompareColors
 
 
@@ -1130,7 +1107,7 @@ BOOL CMainWindow::UnderLighthouse( CPoint point )
  *
  *  FORMAL PARAMETERS:
  *
- *		CPoint point	point to check
+ *      CPoint point    point to check
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -1141,17 +1118,16 @@ BOOL CMainWindow::UnderLighthouse( CPoint point )
  *
  *  RETURN VALUE:
  *
- *      BOOL	True if point lies in a picture-filled grid space,
- *				False if the point doesn't
+ *      BOOL    True if point lies in a picture-filled grid space,
+ *              False if the point doesn't
  *
  ****************************************************************/
-BOOL CMainWindow::InPictureSquare( CPoint point )
-{
-	CPoint	Grid;
+BOOL CMainWindow::InPictureSquare(CPoint point) {
+	CPoint  Grid;
 
-	Grid = PointToGrid( point );
+	Grid = PointToGrid(point);
 
-	return( PictureGrid[Grid.x][Grid.y] );
+	return (PictureGrid[Grid.x][Grid.y]);
 
 } // end CompareColors
 
@@ -1166,7 +1142,7 @@ BOOL CMainWindow::InPictureSquare( CPoint point )
  *
  *  FORMAL PARAMETERS:
  *
- *		CPoint point	point to check
+ *      CPoint point    point to check
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -1177,20 +1153,19 @@ BOOL CMainWindow::InPictureSquare( CPoint point )
  *
  *  RETURN VALUE:
  *
- *		CPoint	NewPoint	The grid coords for the given point
+ *      CPoint  NewPoint    The grid coords for the given point
  *
  ****************************************************************/
-CPoint CMainWindow::PointToGrid( CPoint point )
-{
-	CPoint	New;
+CPoint CMainWindow::PointToGrid(CPoint point) {
+	CPoint  New;
 
-	New.x = point.x - SIDE_BORDER;			// Put point into Art Space
+	New.x = point.x - SIDE_BORDER;          // Put point into Art Space
 	New.y = point.y - TOP_BORDER;
 
-	New.x = (int) New.x / GRID_WIDTH;		// Get the grid space coord's
+	New.x = (int) New.x / GRID_WIDTH;       // Get the grid space coord's
 	New.y = (int) New.y / GRID_HEIGHT;
 
-	return( New );							// Return the coord's
+	return (New);                            // Return the coord's
 
 } // end CompareColors
 
@@ -1220,128 +1195,125 @@ CPoint CMainWindow::PointToGrid( CPoint point )
  *      none
  *
  ****************************************************************/
-BOOL CMainWindow::LoadArtWork( CDC *pDC )
-{
-//	CBitmap		*pNextArt = NULL;
-	CPalette	*pTempPalette = NULL,
-				*pPalOld = NULL;
-	CPoint		Src;
-	CRect		rcDest;												// Art work - frame bitmap dims
-	CRect		rcDIB;												// Source area for Art Work bmp
-	HDIB		hDIB;
-	char		ArtName[MAX_FILE_LENGTH];
+BOOL CMainWindow::LoadArtWork(CDC *pDC) {
+//	CBitmap      *pNextArt = NULL;
+	CPalette    *pTempPalette = NULL,
+	             *pPalOld = NULL;
+	CPoint      Src;
+	CRect       rcDest;                                             // Art work - frame bitmap dims
+	CRect       rcDIB;                                              // Source area for Art Work bmp
+	HDIB        hDIB;
+	char        ArtName[MAX_FILE_LENGTH];
 
 	int  nNumEntries;
 	char chNumEntries[5];
 	int i, pick = 1;
 
 	ifstream inFile;
-	inFile.open( DATA_FILE );                     			// open the data store
-	if ( inFile.fail() ) {
-		return( FALSE );
+	inFile.open(DATA_FILE);                                  // open the data store
+	if (inFile.fail()) {
+		return (FALSE);
 	}
-	inFile.getline( chNumEntries, sizeof( chNumEntries ) ); // read number of names in file
-	nNumEntries = atoi( chNumEntries );
+	inFile.getline(chNumEntries, sizeof(chNumEntries));     // read number of names in file
+	nNumEntries = atoi(chNumEntries);
 	pick = nLastPick;
-	while ( pick == nLastPick ) {
+	while (pick == nLastPick) {
 		pick = (brand() % nNumEntries) + 1;
 	}
-	for ( i = 0; i < pick; i++ ) {
-		if( !inFile.eof() )
-			inFile.getline( ArtName, sizeof( ArtName) );    // load a name
+	for (i = 0; i < pick; i++) {
+		if (!inFile.eof())
+			inFile.getline(ArtName, sizeof(ArtName));       // load a name
 	}
-	inFile.close();                                 		// close the data store
+	inFile.close();                                         // close the data store
 	nLastPick = pick;
 
-	CDibDoc 	*pSourceDoc;
+	CDibDoc     *pSourceDoc;
 
 	pSourceDoc = new CDibDoc();
-	ASSERT( pSourceDoc != NULL );
-	if ( pSourceDoc == NULL ) {
-		return( FALSE );
+	ASSERT(pSourceDoc != NULL);
+	if (pSourceDoc == NULL) {
+		return (FALSE);
 	}
 
 	char bufName[MAX_FILE_LENGTH + 10];
-	Common::sprintf_s( bufName, ".\\ART\\%s", ArtName );
+	Common::sprintf_s(bufName, ".\\ART\\%s", ArtName);
 
-	(*pSourceDoc).OpenDocument( bufName );
+	(*pSourceDoc).OpenDocument(bufName);
 
-	ASSERT( pTempPalette == NULL );
-	pTempPalette = (*pSourceDoc).DetachPalette();		// Acquire the shared palette for our game from the art
+	ASSERT(pTempPalette == NULL);
+	pTempPalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art
 
 	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);                            // Select Game Palette
 	(*pDC).RealizePalette();                                                        // Use it
 
 	// Transfer the button colors to Game Palette
-	LPPALETTEENTRY	ButtonEntry[NUM_BUTTONS];
+	LPPALETTEENTRY  ButtonEntry[NUM_BUTTONS];
 
-	(*pTempPalette).GetPaletteEntries( BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry );
-	(*pGamePalette).SetPaletteEntries( BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry );
+	(*pTempPalette).GetPaletteEntries(BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry);
+	(*pGamePalette).SetPaletteEntries(BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry);
 	(*pDC).RealizePalette();
 
 	hDIB = (*pSourceDoc).GetHDIB();
 
-	if ( hDIB ) {
-		rcDest.SetRect( SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER );
+	if (hDIB) {
+		rcDest.SetRect(SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER);
 
 		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
 		int cxDIB = (int) DIBWidth(lpDIB);
 		int cyDIB = (int) DIBHeight(lpDIB);
 		GlobalUnlock((HGLOBAL) hDIB);
 
-		if ( cxDIB > ART_WIDTH ) {					// Center and crop
-			rcDIB.left = (cxDIB - ART_WIDTH) / 2;	//...too wide art
+		if (cxDIB > ART_WIDTH) {                     // Center and crop
+			rcDIB.left = (cxDIB - ART_WIDTH) / 2;   //...too wide art
 			while (rcDIB.left % 5 != 0) {
 				rcDIB.left++;
 			}
 			rcDIB.right = rcDIB.left + ART_WIDTH;
-		}
-		else {                                      // Stretch too thin art
+		} else {                                    // Stretch too thin art
 			rcDIB.left = 0;
-			rcDIB.right = ART_WIDTH;	//cxDIB;
+			rcDIB.right = ART_WIDTH;    //cxDIB;
 		}
 
-		if ( cyDIB > ART_HEIGHT ) {                	// Center and crop
+		if (cyDIB > ART_HEIGHT) {                    // Center and crop
 			rcDIB.top = (cyDIB - ART_HEIGHT) / 2;   //...too long art
 			while (rcDIB.top % 5 != 0) {
 				rcDIB.top++;
 			}
 			rcDIB.bottom = rcDIB.top + ART_HEIGHT;
-		}
-		else {            							// Stretch too short art
+		} else {                                    // Stretch too short art
 			rcDIB.top = 0;
-			rcDIB.bottom = ART_HEIGHT;	//cyDIB;
+			rcDIB.bottom = ART_HEIGHT;  //cyDIB;
 		}
 
 		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 
 	}
 
-	Src.x = SIDE_BORDER + (ART_WIDTH/2) - START_OFFSET_X;
-	Src.y = TOP_BORDER + (ART_HEIGHT/2) - START_OFFSET_Y;
-	DrawPart( pDC, Src, Src, START_WIDTH, START_HEIGHT );
+	Src.x = SIDE_BORDER + (ART_WIDTH / 2) - START_OFFSET_X;
+	Src.y = TOP_BORDER + (ART_HEIGHT / 2) - START_OFFSET_Y;
+	DrawPart(pDC, Src, Src, START_WIDTH, START_HEIGHT);
 
-	for (i = 0; i < NUM_BUTTONS; i++ ) {
-		CBrush	*pMyBrush = NULL;
-		pMyBrush = new CBrush();								// Construct new brush
-		(*pMyBrush).CreateSolidBrush( PALETTEINDEX( (WORD) (colorBlock[i].nColorIndex) ) );
+	for (i = 0; i < NUM_BUTTONS; i++) {
+		CBrush  *pMyBrush = NULL;
+		pMyBrush = new CBrush();                                // Construct new brush
+		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((WORD)(colorBlock[i].nColorIndex)));
 
-		(*pArtDC).FillRect( colorBlock[i].rLocation, pMyBrush );
+		(*pArtDC).FillRect(colorBlock[i].rLocation, pMyBrush);
 
-		MyFocusRect( pArtDC, colorBlock[i].rLocation, FALSE);	// standard highlight on button
+		MyFocusRect(pArtDC, colorBlock[i].rLocation, FALSE);     // standard highlight on button
 
-		if (pMyBrush != NULL ) {								// If the brush was constructed, delete it
+		if (pMyBrush != NULL) {                                 // If the brush was constructed, delete it
 			pMyBrush->DeleteObject();
 			delete pMyBrush;
 			pMyBrush = NULL;
 		}
 	}
 
-	pBeaconBitmap = FetchResourceBitmap( pDC, NULL, IDB_BEACON_BMP );		// Add the lighthouse
+	pBeaconBitmap = FetchResourceBitmap(pDC, NULL, IDB_BEACON_BMP);          // Add the lighthouse
 
-	(*pDC).SelectPalette( pPalOld, FALSE );
+	(*pDC).SelectPalette(pPalOld, FALSE);
 
-	if (pTempPalette != NULL ) {
+	if (pTempPalette != NULL) {
 		pTempPalette->DeleteObject();
 		delete pTempPalette;
 	}
@@ -1349,7 +1321,7 @@ BOOL CMainWindow::LoadArtWork( CDC *pDC )
 	delete pSourceDoc;
 	pSourceDoc = NULL;
 
-	return( TRUE );
+	return (TRUE);
 
 } // end LoadArtWork()
 
@@ -1363,8 +1335,8 @@ BOOL CMainWindow::LoadArtWork( CDC *pDC )
  *
  *  FORMAL PARAMETERS:
  *
- *      CPoint Src		Location of source area
- *		CPoint Dst		Location of destination area
+ *      CPoint Src      Location of source area
+ *      CPoint Dst      Location of destination area
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -1379,10 +1351,9 @@ BOOL CMainWindow::LoadArtWork( CDC *pDC )
  *      void
  *
  ****************************************************************/
-void CMainWindow::DrawPart( CDC *pDC, CPoint Src, CPoint Dst, int nWidth, int nHeight)
-{
+void CMainWindow::DrawPart(CDC *pDC, CPoint Src, CPoint Dst, int nWidth, int nHeight) {
 
-	pDC->BitBlt( Dst.x, Dst.y, nWidth, nHeight, pBackDC, Src.x, Src.y, SRCCOPY );
+	pDC->BitBlt(Dst.x, Dst.y, nWidth, nHeight, pBackDC, Src.x, Src.y, SRCCOPY);
 
 } //End DrawPart();
 
@@ -1396,7 +1367,7 @@ void CMainWindow::DrawPart( CDC *pDC, CPoint Src, CPoint Dst, int nWidth, int nH
  *
  *  FORMAL PARAMETERS:
  *
- *      CPoint point	The point to check
+ *      CPoint point    The point to check
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -1408,14 +1379,13 @@ void CMainWindow::DrawPart( CDC *pDC, CPoint Src, CPoint Dst, int nWidth, int nH
  *
  *  RETURN VALUE:
  *
- *      BOOL:	TRUE if point is within the Art Region,
- *				FALSE if point is outside the Art Region
+ *      BOOL:   TRUE if point is within the Art Region,
+ *              FALSE if point is outside the Art Region
  *
  ****************************************************************/
-BOOL InArtRegion( CPoint point )
-{
-	if ( ( point.x > SIDE_BORDER && point.x < (ART_WIDTH + SIDE_BORDER) ) &&		// See if point lies within
-		( point.y > TOP_BORDER && point.y < (ART_HEIGHT + TOP_BORDER) ) )     //...ArtWork area
+BOOL InArtRegion(CPoint point) {
+	if ((point.x > SIDE_BORDER && point.x < (ART_WIDTH + SIDE_BORDER)) &&         // See if point lies within
+	        (point.y > TOP_BORDER && point.y < (ART_HEIGHT + TOP_BORDER)))        //...ArtWork area
 		return TRUE;                                                            // Return true if it's inside
 	else return FALSE;                                                          //...and false if not
 }
@@ -1427,12 +1397,12 @@ BOOL InArtRegion( CPoint point )
  *  FUNCTIONAL DESCRIPTION:
  *
  *      Draws a rectangle which inverts the current pixels,
- *			thereby delineating the current area of focus.
+ *          thereby delineating the current area of focus.
  *
  *  FORMAL PARAMETERS:
  *
- *      CDC *pDC	The Device context in which the FocusRect is to be drawn
- *		CRect rect	The CRect object holding the location of the FocusRect
+ *      CDC *pDC    The Device context in which the FocusRect is to be drawn
+ *      CRect rect  The CRect object holding the location of the FocusRect
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -1447,68 +1417,67 @@ BOOL InArtRegion( CPoint point )
  *      void
  *
  ****************************************************************/
-void MyFocusRect( CDC *pDC, CRect rect, BOOL nPressed )
-{
-	CBrush		*pMyBrush = NULL;					// New Brush
-	CBrush 		*pOldBrush = NULL;                  // Pointer to old brush
-	CPen		*pLitePen = NULL;						// New Pen
-	CPen		*pDarkPen = NULL;					// Dark Pen
-	CPen 		*pOldPen = NULL;                    // Pointer to old pen
-	CPalette	*pPalOld = NULL;					// Pointer to old palette
+void MyFocusRect(CDC *pDC, CRect rect, BOOL nPressed) {
+	CBrush      *pMyBrush = NULL;                   // New Brush
+	CBrush      *pOldBrush = NULL;                  // Pointer to old brush
+	CPen        *pLitePen = NULL;                       // New Pen
+	CPen        *pDarkPen = NULL;                   // Dark Pen
+	CPen        *pOldPen = NULL;                    // Pointer to old pen
+	CPalette    *pPalOld = NULL;                    // Pointer to old palette
 
-	LOGBRUSH lb;									// log brush type
-	lb.lbStyle = BS_HOLLOW;							// Don't fill in area
+	LOGBRUSH lb;                                    // log brush type
+	lb.lbStyle = BS_HOLLOW;                         // Don't fill in area
 
-	pMyBrush = new CBrush();						// Construct new brush
-	pMyBrush->CreateBrushIndirect( &lb );			// Create a new brush
+	pMyBrush = new CBrush();                        // Construct new brush
+	pMyBrush->CreateBrushIndirect(&lb);              // Create a new brush
 
-	pDarkPen = new CPen();							// Construct new pen
-	pLitePen = new CPen();							// Construct new pen
-	pLitePen->CreatePen( PS_INSIDEFRAME, HILITE_BORDER,
-						PALETTEINDEX( (WORD) (LITE_TRIM) ) );	// Create a new pen
+	pDarkPen = new CPen();                          // Construct new pen
+	pLitePen = new CPen();                          // Construct new pen
+	pLitePen->CreatePen(PS_INSIDEFRAME, HILITE_BORDER,
+	                    PALETTEINDEX((WORD)(LITE_TRIM)));        // Create a new pen
 
-	pDarkPen->CreatePen( PS_INSIDEFRAME, HILITE_BORDER,
-						PALETTEINDEX( (WORD) (DARK_TRIM) ) );	// Create a new pen
+	pDarkPen->CreatePen(PS_INSIDEFRAME, HILITE_BORDER,
+	                    PALETTEINDEX((WORD)(DARK_TRIM)));        // Create a new pen
 
-	pPalOld = (*pDC).SelectPalette( pGamePalette, FALSE );	// Select in game palette
-	(*pDC).RealizePalette();								// Use it
-	pOldBrush = pDC->SelectObject( pMyBrush );  	// Select the new brush & save old
+	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);     // Select in game palette
+	(*pDC).RealizePalette();                                // Use it
+	pOldBrush = pDC->SelectObject(pMyBrush);     // Select the new brush & save old
 
-	if ( nPressed )
-		pOldPen = pDC->SelectObject( pDarkPen );	// Select the new pen & save old
+	if (nPressed)
+		pOldPen = pDC->SelectObject(pDarkPen);   // Select the new pen & save old
 	else
-		pOldPen = pDC->SelectObject( pLitePen );	// Select the new pen & save old
+		pOldPen = pDC->SelectObject(pLitePen);   // Select the new pen & save old
 
-	pDC->MoveTo( rect.TopLeft().x + HILITE_BORDER/2, rect.BottomRight().y - HILITE_BORDER/2 );
-	pDC->LineTo( rect.TopLeft().x + HILITE_BORDER/2, rect.TopLeft().y + HILITE_BORDER/2 );
-	pDC->LineTo( rect.BottomRight().x - HILITE_BORDER/2, rect.TopLeft().y + HILITE_BORDER/2 );
+	pDC->MoveTo(rect.TopLeft().x + HILITE_BORDER / 2, rect.BottomRight().y - HILITE_BORDER / 2);
+	pDC->LineTo(rect.TopLeft().x + HILITE_BORDER / 2, rect.TopLeft().y + HILITE_BORDER / 2);
+	pDC->LineTo(rect.BottomRight().x - HILITE_BORDER / 2, rect.TopLeft().y + HILITE_BORDER / 2);
 
-	if ( nPressed )
-		pDC->SelectObject( pLitePen );      		// Select the new pen & save old
+	if (nPressed)
+		pDC->SelectObject(pLitePen);             // Select the new pen & save old
 	else
-		pDC->SelectObject( pDarkPen );      		// Select the new pen & save old
+		pDC->SelectObject(pDarkPen);             // Select the new pen & save old
 
-	pDC->LineTo( rect.BottomRight().x - HILITE_BORDER/2, rect.BottomRight().y - HILITE_BORDER/2 );
-	pDC->LineTo( rect.TopLeft().x + HILITE_BORDER/2, rect.BottomRight().y - HILITE_BORDER/2 );
+	pDC->LineTo(rect.BottomRight().x - HILITE_BORDER / 2, rect.BottomRight().y - HILITE_BORDER / 2);
+	pDC->LineTo(rect.TopLeft().x + HILITE_BORDER / 2, rect.BottomRight().y - HILITE_BORDER / 2);
 
-	pDC->SelectObject( pOldPen );               	// Select the old pen
-	pDC->SelectObject( pOldBrush );             	// Select the old brush
+	pDC->SelectObject(pOldPen);                  // Select the old pen
+	pDC->SelectObject(pOldBrush);                // Select the old brush
 
-	(*pDC).SelectPalette( pPalOld, FALSE );         // Select back the old palette
+	(*pDC).SelectPalette(pPalOld, FALSE);           // Select back the old palette
 
-	if (pMyBrush != NULL ) {						// If the brush was constructed, delete it
+	if (pMyBrush != NULL) {                         // If the brush was constructed, delete it
 		pMyBrush->DeleteObject();
 		delete pMyBrush;
 		pMyBrush = NULL;
 	}
 
-	if (pLitePen != NULL ) {							// If the pen was constructed, delete it
+	if (pLitePen != NULL) {                             // If the pen was constructed, delete it
 		pLitePen->DeleteObject();
 		delete pLitePen;
 		pLitePen = NULL;
 	}
 
-	if (pDarkPen != NULL ) {							// If the pen was constructed, delete it
+	if (pDarkPen != NULL) {                             // If the pen was constructed, delete it
 		pDarkPen->DeleteObject();
 		delete pDarkPen;
 		pDarkPen = NULL;
@@ -1542,75 +1511,73 @@ void MyFocusRect( CDC *pDC, CRect rect, BOOL nPressed )
  *
  ****************************************************************/
 
-void CMainWindow::NewGame()
-{
-	CDC			*pDC;
-	CPalette	*pOldPal = NULL;
-	CBrush		*pBrushNew = NULL,
-				*pBrushOld = NULL;
-	int			i, j;
+void CMainWindow::NewGame() {
+	CDC         *pDC;
+	CPalette    *pOldPal = NULL;
+	CBrush      *pBrushNew = NULL,
+	             *pBrushOld = NULL;
+	int         i, j;
 
-	for( i = 0; i < NUM_COLUMNS; i++ ) {
-		for( j = 0; j < NUM_ROWS; j++ ) {
-			PictureGrid[i][j] = TRUE;								// Assume they all start with picture in 'em
+	for (i = 0; i < NUM_COLUMNS; i++) {
+		for (j = 0; j < NUM_ROWS; j++) {
+			PictureGrid[i][j] = TRUE;                               // Assume they all start with picture in 'em
 		}
 	}
 
 	pDC = GetDC();
-	pOldPal = pDC->SelectPalette( pGamePalette, FALSE );			// select the game palette
-	pDC->RealizePalette();											//...and realize it
+	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);           // select the game palette
+	pDC->RealizePalette();                                          //...and realize it
 
-	pBrushNew = new CBrush();										// Construct a new brush object
-	if( pBrushNew != NULL ) {										// If the constructor was successful:
-		pBrushNew->CreateSolidBrush( PALETTERGB( 0, 0, 0) );		// Create my backdrop color brush
-		pBrushOld = (*pDC).SelectObject( pBrushNew );				// Select into the DC my new brush
-		(*pDC).Rectangle( SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER);
-		(*pDC).SelectObject( pBrushOld );                       	// Select in the old brush
-		(*pDC).SelectPalette( pOldPal, FALSE );						// Select in the old palette
-		delete pBrushNew;											// Delete the new brush
+	pBrushNew = new CBrush();                                       // Construct a new brush object
+	if (pBrushNew != NULL) {                                         // If the constructor was successful:
+		pBrushNew->CreateSolidBrush(PALETTERGB(0, 0, 0));         // Create my backdrop color brush
+		pBrushOld = (*pDC).SelectObject(pBrushNew);                  // Select into the DC my new brush
+		(*pDC).Rectangle(SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER);
+		(*pDC).SelectObject(pBrushOld);                          // Select in the old brush
+		(*pDC).SelectPalette(pOldPal, FALSE);                        // Select in the old palette
+		delete pBrushNew;                                           // Delete the new brush
 	}
 
-	LoadArtWork( pArtDC );													// Get a new picture
+	LoadArtWork(pArtDC);                                                     // Get a new picture
 
-	SetBeamEntries( pDC );
+	SetBeamEntries(pDC);
 
-	pOldPal = pDC->SelectPalette( pGamePalette, FALSE );					// select the game palette
-	pDC->RealizePalette();													//...and realize it
+	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);                   // select the game palette
+	pDC->RealizePalette();                                                  //...and realize it
 
-	pDC->BitBlt(  SIDE_BORDER, TOP_BORDER, GAME_WIDTH - (2*SIDE_BORDER), GAME_HEIGHT - (2*BOTTOM_BORDER),
-					pArtDC, SIDE_BORDER, TOP_BORDER, SRCCOPY );				// Put it on-screen
+	pDC->BitBlt(SIDE_BORDER, TOP_BORDER, GAME_WIDTH - (2 * SIDE_BORDER), GAME_HEIGHT - (2 * BOTTOM_BORDER),
+	            pArtDC, SIDE_BORDER, TOP_BORDER, SRCCOPY);              // Put it on-screen
 
-	PaintMaskedBitmap( pDC, pGamePalette, pBeaconBitmap,
-						SIDE_BORDER + (ART_WIDTH/2) - LTHOUSE_OFFSET_X,
-						TOP_BORDER + (ART_HEIGHT/2) - LTHOUSE_OFFSET_Y);
+	PaintMaskedBitmap(pDC, pGamePalette, pBeaconBitmap,
+	                  SIDE_BORDER + (ART_WIDTH / 2) - LTHOUSE_OFFSET_X,
+	                  TOP_BORDER + (ART_HEIGHT / 2) - LTHOUSE_OFFSET_Y);
 
-	nSlice = CHANGE_BEAM;													// Start at 12 o'clock
+	nSlice = CHANGE_BEAM;                                                   // Start at 12 o'clock
 	m_nRemoved = 0;
 	m_Score = 0;
 
 	if (pGameInfo->bPlayingMetagame) {
 		switch (pGameInfo->nSkillLevel) {
-			case SKILLLEVEL_LOW:
-				m_nSweeps = 20;
-				m_nSpeed = MIN_SPEED + 1;						// middle speed = 1
-				break;
-			case SKILLLEVEL_MEDIUM:
-				m_nSweeps = 18;
-				m_nSpeed = MAX_SPEED;
-				break;
-			case SKILLLEVEL_HIGH:
-			default:
-				m_nSweeps = 15;
-				m_nSpeed = MAX_SPEED;
-				break;
+		case SKILLLEVEL_LOW:
+			m_nSweeps = 20;
+			m_nSpeed = MIN_SPEED + 1;                       // middle speed = 1
+			break;
+		case SKILLLEVEL_MEDIUM:
+			m_nSweeps = 18;
+			m_nSpeed = MAX_SPEED;
+			break;
+		case SKILLLEVEL_HIGH:
+		default:
+			m_nSweeps = 15;
+			m_nSpeed = MAX_SPEED;
+			break;
 		} //end switch
-	}
-	else {
+	} else {
 		m_nSweeps = tempSweeps;
 		m_nSpeed = tempSpeed;
 	}
 
-	if ( m_nSweeps == MAX_SWEEPS )
+	if (m_nSweeps == MAX_SWEEPS)
 		m_nSweepCount = 0;
 	else
 		m_nSweepCount = m_nSweeps;
@@ -1618,67 +1585,65 @@ void CMainWindow::NewGame()
 	if (m_bAutomatic) {
 		nCurrentIndex = BUTTON_ENTRY;
 		nNextIndex = BUTTON_ENTRY;
-		SetTimer( BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL );
-		MyFocusRect( pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, TRUE );	// draw hightlight on nNextIndex
+		SetTimer(BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), NULL);
+		MyFocusRect(pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, TRUE);     // draw hightlight on nNextIndex
 	}
 
-	(*pDC).SelectPalette( pOldPal, FALSE );
-	ReleaseDC( pDC );
+	(*pDC).SelectPalette(pOldPal, FALSE);
+	ReleaseDC(pDC);
 
 	bNewGame = TRUE;
 
 } // End NewGame()
 
 
-void CMainWindow::SetBeamEntries( CDC *pDC )
-{
-	PALETTEENTRY 	entry[NUM_BEAMS];
+void CMainWindow::SetBeamEntries(CDC *pDC) {
+	PALETTEENTRY    entry[NUM_BEAMS];
 	int i;
 
-	pDC->SelectPalette( pGamePalette, FALSE );			// select the game palette
-	pDC->RealizePalette();								//...and realize it
+	pDC->SelectPalette(pGamePalette, FALSE);             // select the game palette
+	pDC->RealizePalette();                              //...and realize it
 
-	for( i = 0; i < (NUM_BEAMS); i++) {					// Set palette area to animate for beacon  + NUM_BUTTONS
-		entry[i].peRed = 0;//i*2;						//...light and button colors to black, and
-		entry[i].peGreen = 0;							//...make peFlags Reserved, so they can
-		entry[i].peBlue = 1;//i*2;						//...be changed later
+	for (i = 0; i < (NUM_BEAMS); i++) {                  // Set palette area to animate for beacon  + NUM_BUTTONS
+		entry[i].peRed = 0;//i*2;                       //...light and button colors to black, and
+		entry[i].peGreen = 0;                           //...make peFlags Reserved, so they can
+		entry[i].peBlue = 1;//i*2;                      //...be changed later
 		entry[i].peFlags = PC_RESERVED;
 	}
 
-	(*pGamePalette).SetPaletteEntries( START_ENTRY, NUM_BEAMS, (LPPALETTEENTRY)entry );
-	pDC->RealizePalette();								//...and realize it
+	(*pGamePalette).SetPaletteEntries(START_ENTRY, NUM_BEAMS, (LPPALETTEENTRY)entry);
+	pDC->RealizePalette();                              //...and realize it
 
 } // End SetBeamEntries
 
 
-void CMainWindow::OnClose()
-{
-	CDC		*pDC;
-	CBrush	myBrush;
-	CRect	myRect;
+void CMainWindow::OnClose() {
+	CDC     *pDC;
+	CBrush  myBrush;
+	CRect   myRect;
 
-	KillTimer( BEACON_TIMER );
+	KillTimer(BEACON_TIMER);
 
 	pDC = GetDC();
-	myRect.SetRect( 0, 0, GAME_WIDTH, GAME_HEIGHT );
-	myBrush.CreateStockObject( BLACK_BRUSH );
-	(*pDC).FillRect( &myRect, &myBrush );
-	ReleaseDC( pDC );
+	myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+	myBrush.CreateStockObject(BLACK_BRUSH);
+	(*pDC).FillRect(&myRect, &myBrush);
+	ReleaseDC(pDC);
 
-	sndPlaySound( NULL, SND_ASYNC );									// kill any wav that's playing
+	sndPlaySound(NULL, SND_ASYNC);                                   // kill any wav that's playing
 
-	m_Score = ((float) m_nRemoved / (float) m_nTotalSquares) * 100;		// Score is the percentage
+	m_Score = ((float) m_nRemoved / (float) m_nTotalSquares) * 100;     // Score is the percentage
 	if (pGameInfo->bPlayingMetagame)
-		pGameInfo->lScore = (long) (m_Score + 0.5);
+		pGameInfo->lScore = (long)(m_Score + 0.5);
 
 	if (pGameSound != NULL) {
 		delete pGameSound;
 		pGameSound = NULL;
 	}
 
-	if( m_pScoreTxt != NULL)
+	if (m_pScoreTxt != NULL)
 		delete m_pScoreTxt;
-	if( m_pSweepTxt != NULL)
+	if (m_pSweepTxt != NULL)
 		delete m_pSweepTxt;
 
 	if (pScrollUp != NULL) {
@@ -1691,7 +1656,7 @@ void CMainWindow::OnClose()
 		pScrollDown = NULL;
 	}
 
- 	if (m_pScrollButton != NULL)
+	if (m_pScrollButton != NULL)
 		delete m_pScrollButton;
 
 	if (pBeaconBitmap != NULL) {
@@ -1699,10 +1664,10 @@ void CMainWindow::OnClose()
 		delete pBeaconBitmap;
 	}
 
-	if (pOldBmp1 != NULL)               			// Get rid of Source
-		pBackDC->SelectObject( pOldBmp1 );
+	if (pOldBmp1 != NULL)                           // Get rid of Source
+		pBackDC->SelectObject(pOldBmp1);
 	if (pOldPal1 != NULL)
-		pBackDC->SelectPalette( pOldPal1, FALSE );
+		pBackDC->SelectPalette(pOldPal1, FALSE);
 	if (pBackDC->m_hDC != NULL) {
 		pBackDC->DeleteDC();
 		delete pBackDC;
@@ -1711,10 +1676,10 @@ void CMainWindow::OnClose()
 	pBackBitmap->DeleteObject();
 	delete pBackBitmap;
 
-	if (pOldBmp2 != NULL)               			// Get rid of Source
-		pArtDC->SelectObject( pOldBmp2 );
+	if (pOldBmp2 != NULL)                           // Get rid of Source
+		pArtDC->SelectObject(pOldBmp2);
 	if (pOldPal2 != NULL)
-		pArtDC->SelectPalette( pOldPal2, FALSE );
+		pArtDC->SelectPalette(pOldPal2, FALSE);
 	if (pArtDC->m_hDC != NULL) {
 		pArtDC->DeleteDC();
 		delete pArtDC;
@@ -1723,20 +1688,19 @@ void CMainWindow::OnClose()
 	pArtBitmap->DeleteObject();
 	delete pArtBitmap;
 
-	if (pGamePalette != NULL ) {
+	if (pGamePalette != NULL) {
 		pGamePalette->DeleteObject();
 		delete pGamePalette;
 	}
 
- 	CFrameWnd::OnClose();
-#ifdef	_USRDLL
-    MFC::PostMessage( ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-#endif	//_USRDLL
+	CFrameWnd::OnClose();
+	#ifdef  _USRDLL
+	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
+	#endif  //_USRDLL
 }
 
-void CALLBACK GetSubOptions( CWnd* pParentWind )
-{
-	COptnDlg OptionsDlg( pParentWind, pGamePalette );	// Call Specific Game
+void CALLBACK GetSubOptions(CWnd* pParentWind) {
+	COptnDlg OptionsDlg(pParentWind, pGamePalette);      // Call Specific Game
 
 	m_Score = ((float) m_nRemoved / (float) m_nTotalSquares) * 100;
 	OptionsDlg.m_nSweeps = m_nSweeps;
@@ -1744,40 +1708,37 @@ void CALLBACK GetSubOptions( CWnd* pParentWind )
 	OptionsDlg.m_bChangeAtTwelve = m_bChangeAtTwelve;
 	OptionsDlg.m_nSpeed = m_nSpeed;
 
-	if ( OptionsDlg.DoModal() == IDOK ) {					// save values set in dialog box
-		tempSweeps = OptionsDlg.m_nSweeps;					// sweeps takes effect on new game
+	if (OptionsDlg.DoModal() == IDOK) {                      // save values set in dialog box
+		tempSweeps = OptionsDlg.m_nSweeps;                  // sweeps takes effect on new game
 		m_bAutomatic = OptionsDlg.m_bAutomatic;
-		m_bChangeAtTwelve = OptionsDlg.m_bChangeAtTwelve;	// change point takes effect immediately
+		m_bChangeAtTwelve = OptionsDlg.m_bChangeAtTwelve;   // change point takes effect immediately
 		tempSpeed = OptionsDlg.m_nSpeed;
-		m_nSpeed = tempSpeed;								// speed takes effect immediately
+		m_nSpeed = tempSpeed;                               // speed takes effect immediately
 	}
 }
 
 //////////// Additional Sound Notify routines //////////////
 
-long CMainWindow::OnMCINotify( WPARAM wParam, LPARAM lParam)
-{
-CSound	*pSound;
+long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+	CSound  *pSound;
 
-	pSound = CSound::OnMCIStopped(wParam,lParam);
+	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != NULL)
 		OnSoundNotify(pSound);
-    return(0L);
+	return (0L);
 }
 
 
-long CMainWindow::OnMMIONotify( WPARAM wParam, LPARAM lParam)
-{
-CSound	*pSound;
+long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+	CSound  *pSound;
 
-	pSound = CSound::OnMMIOStopped(wParam,lParam);
+	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != NULL)
 		OnSoundNotify(pSound);
-    return(0L);
+	return (0L);
 }
 
-void CMainWindow::OnSoundNotify(CSound *pSound)
-{
+void CMainWindow::OnSoundNotify(CSound *pSound) {
 	//
 	// Add your code to process explicit notification of a sound "done" event here.
 	// pSound is a pointer to a CSound object for which you requested SOUND_NOTIFY.
@@ -1788,7 +1749,7 @@ void CMainWindow::OnSoundNotify(CSound *pSound)
 // CMainWindow message map:
 // Associate messages with member functions.
 //
-BEGIN_MESSAGE_MAP( CMainWindow, CFrameWnd )
+BEGIN_MESSAGE_MAP(CMainWindow, CFrameWnd)
 	//{{AFX_MSG_MAP( CMainWindow )
 	ON_WM_PAINT()
 	ON_WM_CHAR()
@@ -1800,8 +1761,8 @@ BEGIN_MESSAGE_MAP( CMainWindow, CFrameWnd )
 	ON_WM_MOUSEMOVE()
 	ON_WM_DESTROY()
 	ON_WM_CLOSE()
-    ON_MESSAGE(MM_MCINOTIFY, CMainWindow::OnMCINotify)
-    ON_MESSAGE(MM_WOM_DONE, CMainWindow::OnMMIONotify)
+	ON_MESSAGE(MM_MCINOTIFY, CMainWindow::OnMCINotify)
+	ON_MESSAGE(MM_WOM_DONE, CMainWindow::OnMMIONotify)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 

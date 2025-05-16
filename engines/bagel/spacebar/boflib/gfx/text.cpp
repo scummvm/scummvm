@@ -40,11 +40,11 @@ Graphics::Font *CBofText::_fixedFonts[NUM_POINT_SIZES];
 
 ErrorCode CBofText::initialize() {
 	_initialized = true;
-	_tabStop = 20;		// tabstops every 20 pixels
+	_tabStop = 20;      // tabstops every 20 pixels
 	Common::fill(_defaultFonts, _defaultFonts + NUM_POINT_SIZES,
-		(Graphics::Font *)nullptr);
+	             (Graphics::Font *)nullptr);
 	Common::fill(_fixedFonts, _fixedFonts + NUM_POINT_SIZES,
-		(Graphics::Font *)nullptr);
+	             (Graphics::Font *)nullptr);
 
 	return ERR_NONE;
 }
@@ -61,7 +61,7 @@ ErrorCode CBofText::shutdown() {
 }
 
 CBofText::CBofText() {
-	initializeFields();		// Initialize stuff
+	initializeFields();     // Initialize stuff
 }
 
 CBofText::CBofText(const CBofRect *pRect, int nJustify, uint32 nFormatFlags) {
@@ -368,12 +368,12 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		if (bShadowed) {
 			color = CBofApp::getApp()->getPalette()->getNearestIndex(_cShadowColor);
 			displayLine(font, surface, line, shadowRect.left, shadowRect.top,
-				shadowRect.width(), color, align);
+			            shadowRect.width(), color, align);
 		}
 
 		color = CBofApp::getApp()->getPalette()->getNearestIndex(_cTextColor);
 		displayLine(font, surface, line, newRect.left, newRect.top,
-			newRect.width(), color, align);
+		            newRect.width(), color, align);
 
 		newRect.top += font->getFontHeight();
 		shadowRect.top += font->getFontHeight();
@@ -383,7 +383,7 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 }
 
 void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface,
-	const Common::U32String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
+                           const Common::U32String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
 	if (!line.contains('\t')) {
 		font->drawString(&surface, line, left, top, width, color, align);
 

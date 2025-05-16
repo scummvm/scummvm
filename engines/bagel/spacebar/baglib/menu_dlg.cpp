@@ -655,13 +655,13 @@ void CBagMenuDlg::onTimer(uint32 nID) {
 	assert(isValidObject(this));
 
 	switch (nID) {
-		// Auto close for text-Captions
+	// Auto close for text-Captions
 	case TIMER_CLOSE_ID:
 		killTimer(nID);
 		close();
 		break;
 
-		// Can now allow user input
+	// Can now allow user input
 	case TIMER_HACK_ID:
 		killTimer(nID);
 		_bAcceptInput = true;

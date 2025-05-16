@@ -29,64 +29,60 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Barbershop {
 
-CDeck::CDeck()
-{
+CDeck::CDeck() {
 	int i;
 
-	for ( i = 0; i < DECK; i++ )
-		m_cDeck[i] = CCard(i);			// Reset deck
+	for (i = 0; i < DECK; i++)
+		m_cDeck[i] = CCard(i);          // Reset deck
 
-	//srand((unsigned) time(NULL));		// seed the random number generator
+	//srand((unsigned) time(NULL));     // seed the random number generator
 }
 
-CDeck::~CDeck()
-{
+CDeck::~CDeck() {
 }
 
-void CDeck::Shuffle()
-{
-	int 	nNewDeck[DECK];
-	int 	nCard;
-	int		i;
+void CDeck::Shuffle() {
+	int     nNewDeck[DECK];
+	int     nCard;
+	int     i;
 
-	for ( i = 0; i < DECK; i++ )
+	for (i = 0; i < DECK; i++)
 		nNewDeck[i] = NOT_USED;
 
 	/******************************
 	* Find an unused encrypt map. *
 	******************************/
-	for ( i = 0; i < DECK; i++) {
+	for (i = 0; i < DECK; i++) {
 
-		#ifndef REVEAL  						// change ifndef to ifdef for debugging purposes
+		#ifndef REVEAL                          // change ifndef to ifdef for debugging purposes
 		do {
 			nCard = brand() % DECK;
-		} while ( nNewDeck[nCard] == USED );	// find unshuffled card
+		} while (nNewDeck[nCard] == USED);   // find unshuffled card
 
-		nNewDeck[nCard] = USED;					// mark card as shuffled
+		nNewDeck[nCard] = USED;                 // mark card as shuffled
 
 		#else
 		nCard = i % 2;
-		if ( nCard == 1 )
+		if (nCard == 1)
 			nCard = CUST_CARD;
 		#endif
 
-		m_cDeck[i] = CCard(nCard);				// put card into it's new location
+		m_cDeck[i] = CCard(nCard);              // put card into it's new location
 	}
 }
 
-void CDeck::Deal(CBoard *pBoard)
-{
-	int 	nStack, nCard, i;
+void CDeck::Deal(CBoard *pBoard) {
+	int     nStack, nCard, i;
 
-	for ( nStack = fnd; nStack <= used; nStack++)
+	for (nStack = fnd; nStack <= used; nStack++)
 		pBoard->GetStack((loc) nStack)->Reset();
 
 
-	for ( nStack = tab, i = 1, nCard = 0; nStack < stock; nStack++, i++ )
-		for (; nCard < (i * (TAB_STACK)); nCard++ )
+	for (nStack = tab, i = 1, nCard = 0; nStack < stock; nStack++, i++)
+		for (; nCard < (i * (TAB_STACK)); nCard++)
 			pBoard->GetStack((loc) nStack)->Push(&m_cDeck[nCard]);
 
-	for ( ; nCard < (STOCK + TABLEAU); nCard++ )
+	for (; nCard < (STOCK + TABLEAU); nCard++)
 		pBoard->GetStack(stock)->Push(&m_cDeck[nCard]);
 }
 

@@ -316,7 +316,7 @@ uint32 CBofMovie::getFrame() {
 		return _pSmk->getCurFrame();
 	}
 
-	return (uint32)-1;
+	return (uint32) -1;
 }
 
 

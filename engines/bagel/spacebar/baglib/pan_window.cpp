@@ -158,7 +158,7 @@ CBagPanWindow::~CBagPanWindow() {
 		_pViewPortBitmap = nullptr;
 	}
 
-	CBofSprite::closeLibrary();		// Free the off screen bitmap
+	CBofSprite::closeLibrary();     // Free the off screen bitmap
 
 	delete _pFGObjectList;
 }
@@ -166,7 +166,7 @@ CBagPanWindow::~CBagPanWindow() {
 void CBagPanWindow::onClose() {
 	CBagStorageDevWnd::onClose();
 
-	destroyWindow();				// Destruct the main window
+	destroyWindow();                // Destruct the main window
 }
 
 ErrorCode CBagPanWindow::runModal(CBagObject *pObj) {
@@ -321,10 +321,10 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 							if (pCharObj->getNumberOfLoops() == 1) {
 								setPreFilterPan(true);
 							} else if (pObj->isAttached() &&                       // don't care if it's not running...
-								(pCharObj->isStationary() == false) &&
-								(pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
-								((pObj->getRect().width() != 480) &&
-									(pObj->getRect().height() != 360))) {
+							           (pCharObj->isStationary() == false) &&
+							           (pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
+							           ((pObj->getRect().width() != 480) &&
+							            (pObj->getRect().height() != 360))) {
 
 								// Redraw everything inside of the closeup... but not the PDA...
 								// only want to redraw the closeup, not everything else.
@@ -595,8 +595,8 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagObject *pActObj = getLActiveObject();
 
 	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
-		(pActObj->getType() == BUTTON_OBJ) &&
-		(((CBagButtonObject *)pActObj)->getButtonType() == CBagButtonObject::BTN_SLIDER)) {
+	        (pActObj->getType() == BUTTON_OBJ) &&
+	        (((CBagButtonObject *)pActObj)->getButtonType() == CBagButtonObject::BTN_SLIDER)) {
 		pActObj->onLButtonUp(nFlags, xPoint, this);
 
 		// We are not dragging a slider anymore

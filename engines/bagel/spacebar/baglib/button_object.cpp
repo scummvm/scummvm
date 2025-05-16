@@ -125,7 +125,7 @@ void CBagButtonObject::onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *
 	} else if (_buttonType == BTN_HLEVER || _buttonType == BTN_VLEVER) {
 		if (!_activeDown && !_activeUp) {
 			if ((_buttonType == BTN_HLEVER && point->x > _midPoint.x) || // right of midpoint
-				(_buttonType == BTN_VLEVER && point->y > _midPoint.y)) { // below midpoint
+			        (_buttonType == BTN_VLEVER && point->y > _midPoint.y)) { // below midpoint
 				_activeDown = true;
 			} else {
 				_activeUp = true;
@@ -345,11 +345,10 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 	while (!istr.eof()) {
 		const char ch = (char)istr.peek();
 		switch (ch) {
-			//
-			//  +n  - n number of slides in sprite
-			//
-		case '+':
-		{
+		//
+		//  +n  - n number of slides in sprite
+		//
+		case '+': {
 			int cels;
 			istr.getCh();
 			getIntFromStream(istr, cels);
@@ -363,8 +362,7 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 		}
 
 		// Handle a maximum framerate...
-		case 'F':
-		{
+		case 'F': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -390,8 +388,7 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 		//
 		//  AS [LINK|CLOSEUP]  - how to run the link
 		//
-		case 'A':
-		{
+		case 'A': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -431,8 +428,7 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 		//
 		// No match return from function
 		//
-		default:
-		{
+		default: {
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;

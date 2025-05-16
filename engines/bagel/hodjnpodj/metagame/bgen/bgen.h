@@ -30,7 +30,7 @@ namespace HodjNPodj {
 namespace Metagame {
 
 #ifdef _DEBUG
-#define JX_DEBUG
+	#define JX_DEBUG
 #endif
 
 // the following are machine-independent definitions of the
@@ -49,15 +49,15 @@ namespace Metagame {
 // #define LOWORD(lParm) ((unsigned int)lParm )
 
 typedef int BOOL ;
-typedef char * XPSTR ;
-typedef char * LPSTR ;
-typedef LPSTR * LPLPSTR ;
-typedef int * XPINT ;
-typedef int * LPINT ;
-typedef char * XPCHAR ;
+typedef char *XPSTR ;
+typedef char *LPSTR ;
+typedef LPSTR *LPLPSTR ;
+typedef int *XPINT ;
+typedef int *LPINT ;
+typedef char *XPCHAR ;
 #define VOID void
-typedef void * XPVOID ;
-typedef void * LPVOID ;
+typedef void *XPVOID ;
+typedef void *LPVOID ;
 //typedef unsigned int WORD ;
 //typedef WORD * XPWORD ;
 //typedef WORD * LPWORD ;
@@ -66,18 +66,18 @@ typedef void * LPVOID ;
 typedef unsigned long ULONG ;
 
 // RGB colors
-#define RGBCOLOR_RED		RGB(255,   0,   0)
-#define RGBCOLOR_GREEN		RGB(  0, 255,   0)
-#define RGBCOLOR_BLUE		RGB(  0,   0, 255)
-#define RGBCOLOR_YELLOW		RGB(255, 255,   0)
-#define RGBCOLOR_MAGENTA	RGB(255,   0, 255)
-#define RGBCOLOR_CYAN		RGB(  0, 255, 255)
-#define RGBCOLOR_BLACK		RGB(  0,   0,   0)
-#define RGBCOLOR_GREY		RGB(128, 128, 128)
-#define RGBCOLOR_BROWN		RGB(128, 128,   0)
-#define RGBCOLOR_PURPLE		RGB(128,   0, 128)
-#define RGBCOLOR_AQUA		RGB(  0, 128, 128)
-#define RGBCOLOR_WHITE		RGB(255, 255, 255)
+#define RGBCOLOR_RED        RGB(255,   0,   0)
+#define RGBCOLOR_GREEN      RGB(  0, 255,   0)
+#define RGBCOLOR_BLUE       RGB(  0,   0, 255)
+#define RGBCOLOR_YELLOW     RGB(255, 255,   0)
+#define RGBCOLOR_MAGENTA    RGB(255,   0, 255)
+#define RGBCOLOR_CYAN       RGB(  0, 255, 255)
+#define RGBCOLOR_BLACK      RGB(  0,   0,   0)
+#define RGBCOLOR_GREY       RGB(128, 128, 128)
+#define RGBCOLOR_BROWN      RGB(128, 128,   0)
+#define RGBCOLOR_PURPLE     RGB(128,   0, 128)
+#define RGBCOLOR_AQUA       RGB(  0, 128, 128)
+#define RGBCOLOR_WHITE      RGB(255, 255, 255)
 
 // mouse button click types
 #define CLICK_UMOVE 1
@@ -91,39 +91,39 @@ typedef unsigned long ULONG ;
 #define CLICK_RDOUBLE 9
 
 // ASCII characters
-#define CCHBOF 1		/* beginning of file char (control A) */
-#define CCHBKS 8		/* backspace */
-#define CCHTAB 9		/* tab */
-#define CCHLF 10		/* line feed - '\n' - newline */
-#define CCHFF 12		/* form feed */
-#define CCHCR 13		/* carriage return */
-#define CCHLF 10		/* line feed */
-#define CCHEOF 26		/* end of file char (control Z) */
-#define CCHESC 27		/* escape */
-#define CCHBL 32		/* blank */
-#define CCHDIG(n) 48+n /* 48-57 */	/* digits 0-9 */
-#define CCHTXL 32		/* first text character */
-#define CCHTXH 127		/* last text character */
+#define CCHBOF 1        /* beginning of file char (control A) */
+#define CCHBKS 8        /* backspace */
+#define CCHTAB 9        /* tab */
+#define CCHLF 10        /* line feed - '\n' - newline */
+#define CCHFF 12        /* form feed */
+#define CCHCR 13        /* carriage return */
+#define CCHLF 10        /* line feed */
+#define CCHEOF 26       /* end of file char (control Z) */
+#define CCHESC 27       /* escape */
+#define CCHBL 32        /* blank */
+#define CCHDIG(n) 48+n /* 48-57 */  /* digits 0-9 */
+#define CCHTXL 32       /* first text character */
+#define CCHTXH 127      /* last text character */
 
-#define CCHUND 95		/* underline */
-#define CCHLPR '('		/* left paren */
-#define CCHRPR ')'		/* right paren */
-#define CCHQUO '"'		/* quote */
-#define CCHAPO '\''		/* apostrophe (single quote) */
-#define CCHLCB '{'		/* left curly bracket */
-#define CCHRCB '}'		/* right curly bracket */
+#define CCHUND 95       /* underline */
+#define CCHLPR '('      /* left paren */
+#define CCHRPR ')'      /* right paren */
+#define CCHQUO '"'      /* quote */
+#define CCHAPO '\''     /* apostrophe (single quote) */
+#define CCHLCB '{'      /* left curly bracket */
+#define CCHRCB '}'      /* right curly bracket */
 #define CCHCOL ':'
 #define CCHDOT '.'
 
-#define CCHCTL(let) (let-'A'+1)	/* control chars: A-Z */
+#define CCHCTL(let) (let-'A'+1) /* control chars: A-Z */
 
 /* old scan codes -- add 1000 to scan code from IBM PC keyboard */
-#define SCANMIN 1000		/* minimum scan code */
+#define SCANMIN 1000        /* minimum scan code */
 
-#define SCANF(dig) (1058+dig)	/* function keys: 1059-1068 */
-#define SCANSF(dig) (1083+dig)	/* shift function keys: 1084-1093 */
-#define SCANCF(dig) (1093+dig)	/* control function keys: 1094-1103 */
-#define SCANAF(dig) (1103+dig)	/* alt function keys: 1104-1113 */
+#define SCANF(dig) (1058+dig)   /* function keys: 1059-1068 */
+#define SCANSF(dig) (1083+dig)  /* shift function keys: 1084-1093 */
+#define SCANCF(dig) (1093+dig)  /* control function keys: 1094-1103 */
+#define SCANAF(dig) (1103+dig)  /* alt function keys: 1104-1113 */
 
 // code to be used with Windows virtual key codes
 #define CCH_ALTKEY 0x100
@@ -135,9 +135,10 @@ typedef unsigned long ULONG ;
 
 
 #ifdef __cplusplus
-inline BOOL EQV(BOOL b1, BOOL b2)
-	{ return((b1 != 0) == (b2 != 0)) ; }
-#endif	/* __cplusplus */
+inline BOOL EQV(BOOL b1, BOOL b2) {
+	return ((b1 != 0) == (b2 != 0)) ;
+}
+#endif  /* __cplusplus */
 
 } // namespace Metagame
 } // namespace HodjNPodj

@@ -32,21 +32,23 @@ namespace Metagame {
 // class CGenUtil -- general utilities
 class CGenUtil {
 
-    char m_cStartData ;
-    BOOL m_bRandomInit ;          // random number seed initialized
-    char m_cEndData ;
+	char m_cStartData ;
+	BOOL m_bRandomInit ;          // random number seed initialized
+	char m_cEndData ;
 
 public:
 
-    // constructor zeroes out all fields
-    CGenUtil() {memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;}
+	// constructor zeroes out all fields
+	CGenUtil() {
+		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
+	}
 
-    // bgenut.cpp -- Boffo Games general utilities
+	// bgenut.cpp -- Boffo Games general utilities
 
-    int RandomInteger(int iLow, int iHigh) ;
-    void RandomPermutation(int iNum, int iSize, int *xpIntOut);
-    STATIC BOOL PASCAL NormalizeCRect(CRect& cRect) ;
-    BOOL RandomSelection(int *xpiArray, int iNum, int iSize);
+	int RandomInteger(int iLow, int iHigh) ;
+	void RandomPermutation(int iNum, int iSize, int *xpIntOut);
+	STATIC BOOL PASCAL NormalizeCRect(CRect& cRect) ;
+	BOOL RandomSelection(int *xpiArray, int iNum, int iSize);
 } ;
 
 } // namespace Metagame

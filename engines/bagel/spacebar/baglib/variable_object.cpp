@@ -69,11 +69,10 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 		char ch = (char)istr.peek();
 		switch (ch) {
-			//
-			// SIZE n - n point size of the txt
-			//
-		case 'S':
-		{
+		//
+		// SIZE n - n point size of the txt
+		//
+		case 'S': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -93,8 +92,7 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 		//
 		// COLOR n - n color index
 		//
-		case 'C':
-		{
+		case 'C': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
@@ -106,14 +104,30 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				getIntFromStream(istr, nColor);
 				switch (nColor) {
-				case 0:	_nFGColor = RGB(0, 0, 0); break;							// black
-				case 1:	_nFGColor = RGB(255, 0, 0); break;
-				case 2:	_nFGColor = CTEXT_YELLOW; break;
-				case 3:	_nFGColor = RGB(0, 255, 0); break;
-				case 4:	_nFGColor = RGB(0, 255, 255); break;
-				case 5:	_nFGColor = RGB(0, 0, 255); break;
-				case 6:	_nFGColor = RGB(255, 0, 255); break;
-				case 7:	_nFGColor = CTEXT_WHITE; break;
+				case 0:
+					_nFGColor = RGB(0, 0, 0);
+					break;                            // black
+				case 1:
+					_nFGColor = RGB(255, 0, 0);
+					break;
+				case 2:
+					_nFGColor = CTEXT_YELLOW;
+					break;
+				case 3:
+					_nFGColor = RGB(0, 255, 0);
+					break;
+				case 4:
+					_nFGColor = RGB(0, 255, 255);
+					break;
+				case 5:
+					_nFGColor = RGB(0, 0, 255);
+					break;
+				case 6:
+					_nFGColor = RGB(255, 0, 255);
+					break;
+				case 7:
+					_nFGColor = CTEXT_WHITE;
+					break;
 				default:
 					break;
 				}

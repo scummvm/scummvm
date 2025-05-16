@@ -63,7 +63,7 @@ namespace Metagame {
 #define MG_GAME_TRIVIA          133 /* R. Trivia */
 #define MG_GAME_VIDEOPOKER      134 /* K. Video Poker */
 #define MG_GAME_WORDSEARCH      135 /* P. Word Search */
-#define MG_GAME_CHALLENGE		136 /* P. Word Search */
+#define MG_GAME_CHALLENGE       136 /* P. Word Search */
 
 #define MG_GAME_MAX             136 /* max */
 #define MG_GAME_COUNT   (MG_GAME_MAX - MG_GAME_BASE + 1) /* Count */
@@ -108,7 +108,7 @@ namespace Metagame {
 
 #define MG_OBJ_MAX              233  /* max */
 #define MG_OBJ_COUNT    (MG_OBJ_MAX - MG_OBJ_BASE + 1)
-                                /* total number of defined objects */
+/* total number of defined objects */
 
 // Locations
 
@@ -161,7 +161,7 @@ namespace Metagame {
 #define MG_LOC_CAR1             344
 #define MG_LOC_SECRET1          345
 #define MG_LOC_SECRET2          346
-#define MG_LOC_HODJ				347
+#define MG_LOC_HODJ             347
 
 #define MG_LOC_HERRING          348 /* Red herring location */
 
@@ -200,9 +200,9 @@ namespace Metagame {
 // location visit codes -- actions you can take at a location where
 // there's no game defined
 #define MG_VISIT_NONE           400
-#define MG_VISIT_MISHMOSH       401 
-#define MG_VISIT_CASTLE         402 
-#define MG_VISIT_INFO           403 
+#define MG_VISIT_MISHMOSH       401
+#define MG_VISIT_CASTLE         402
+#define MG_VISIT_INFO           403
 #define MG_VISIT_GENERALSTR     404     /* general store: buy objects */
 #define MG_VISIT_TRADINGPOST    405     /* trading post exch money/objs */
 #define MG_VISIT_BLACKMARKET    406     /* buy objects */
@@ -252,7 +252,7 @@ namespace Metagame {
 #define MG_ACT_GO               503 /* go to sector */
 #define MG_ACT_GO2              504 /* go to either of two sectors */
 #define MG_ACT_GOCOND           505 /* go to either of two sectors where */
-                /* opponent isn't */
+/* opponent isn't */
 
 // DLL exit codes
 #define MG_DLLX_BASE            550
@@ -278,13 +278,13 @@ namespace Metagame {
 
 // game win codes
 #define MG_WIN_MONEY            600
-#define MG_WIN_OBJECT           601 
-#define MG_WIN_INFO             602 
-#define MG_WIN_MISHMOSH			603
+#define MG_WIN_OBJECT           601
+#define MG_WIN_INFO             602
+#define MG_WIN_MISHMOSH         603
 
 // game length codes
 #define MG_LENGTH_SHORT         620
-#define MG_LENGTH_MEDIUM        621 
+#define MG_LENGTH_MEDIUM        621
 #define MG_LENGTH_LONG          622
 
 // sound file IDs
@@ -360,7 +360,7 @@ namespace Metagame {
 #define MG_SOUND_LF2            768
 #define MG_SOUND_EU1            769     // everything under the sun
 #define MG_SOUND_EU2            770
-#define MG_SOUND_OLN1			771
+#define MG_SOUND_OLN1           771
 #define MG_SOUND_OLN2           772
 #define MG_SOUND_OLN3           773
 #define MG_SOUND_OLN4           774
@@ -369,7 +369,7 @@ namespace Metagame {
 #define MG_SOUND_OLN7           777
 #define MG_SOUND_OLN8           778
 #define MG_SOUND_OLN9           779
-#define MG_SOUND_GSPS1			780
+#define MG_SOUND_GSPS1          780
 #define MG_SOUND_GSPS2          781
 #define MG_SOUND_GSPS3          782
 #define MG_SOUND_GSPS4          783
@@ -377,7 +377,7 @@ namespace Metagame {
 #define MG_SOUND_GSPS6          785
 #define MG_SOUND_GSPS7          786
 #define MG_SOUND_GSPS8          787
-#define MG_SOUND_UTP1			788
+#define MG_SOUND_UTP1           788
 #define MG_SOUND_UTP2           789
 #define MG_SOUND_UTP3           790
 #define MG_SOUND_UTP4           791
@@ -438,97 +438,97 @@ namespace Metagame {
 // CLocTable
 class CLocTable {
 public:
-    int m_iLocCode ;            // MG_LOC_xxxx
-    int m_iFunctionCode ;       // MG_GAME_xxxx or MG_VISIT_xxxx
-    int m_iCost ;               // Amount of money for MG_VISIT_INFO
-    LPSTR m_lpszLabel ;         // node label for location
-    LPSTR m_lpszName ;          // full name of location
+	int m_iLocCode ;            // MG_LOC_xxxx
+	int m_iFunctionCode ;       // MG_GAME_xxxx or MG_VISIT_xxxx
+	int m_iCost ;               // Amount of money for MG_VISIT_INFO
+	LPSTR m_lpszLabel ;         // node label for location
+	LPSTR m_lpszName ;          // full name of location
 } ;
 
 // CSectorTable
 class CSectorTable {
 public:
-    int m_iSectorCode ;         // MG_SECTOR_xxxx
-    LPSTR m_lpszLabel ;         // node label for sector
-    LPSTR m_lpszName ;          // full name of sector
+	int m_iSectorCode ;         // MG_SECTOR_xxxx
+	LPSTR m_lpszLabel ;         // node label for sector
+	LPSTR m_lpszName ;          // full name of sector
 } ;
 
 // CGameTable
 class CGameTable {
 public:
-    int m_iGameCode ;           // MG_GAME_xxxx
-    int m_iWinCode ;            // MG_WIN_xxxx (win money, object, info)
-    LPSTR m_lpszGameName ;      // full name of game
-    LPSTR m_lpszDllPath ;       // path of DLL
-    LPSTR m_lpszDllName ;       // name of DLL
-    LPSTR m_lpszApiName ;       // entry point of DLL
-	BOOL m_bLocalDLL;			// whether an updated game DLL is in the Meta directory
+	int m_iGameCode ;           // MG_GAME_xxxx
+	int m_iWinCode ;            // MG_WIN_xxxx (win money, object, info)
+	LPSTR m_lpszGameName ;      // full name of game
+	LPSTR m_lpszDllPath ;       // path of DLL
+	LPSTR m_lpszDllName ;       // name of DLL
+	LPSTR m_lpszApiName ;       // entry point of DLL
+	BOOL m_bLocalDLL;           // whether an updated game DLL is in the Meta directory
 } ;
 
 // CNoteTable
 class CNoteTable {
 public:
-    int m_iCode ;       // game or location code
-    int m_iCost ;       // cost of information
-    LPSTR m_lpszWavFile ;  // sound file
-    LPSTR m_lpszText ; // text of message
+	int m_iCode ;       // game or location code
+	int m_iCost ;       // cost of information
+	LPSTR m_lpszWavFile ;  // sound file
+	LPSTR m_lpszText ; // text of message
 } ;
 
 // CClueTable
 class CClueTable {
 public:
-    int m_iCluePicCode ;        // MG_CLUEPIC_xxxx, specifying the
-                        // picture (ant, bat, fish, etc) for clue
-    int m_iCluePicCount ;       // count of # of pictures
-    int m_iClueCode ;           // MG_CLUE_xxxx -- type of clue -- (info
-                                // mishmosh location, etc)
-    int m_iArgument ;           // MG_OBJ_xxxx or MG_LOC_xxxx -- argument
-                                // to clue code
+	int m_iCluePicCode ;        // MG_CLUEPIC_xxxx, specifying the
+	// picture (ant, bat, fish, etc) for clue
+	int m_iCluePicCount ;       // count of # of pictures
+	int m_iClueCode ;           // MG_CLUE_xxxx -- type of clue -- (info
+	// mishmosh location, etc)
+	int m_iArgument ;           // MG_OBJ_xxxx or MG_LOC_xxxx -- argument
+	// to clue code
 };
 
 // CLengthTable
 class CLengthTable {
 public:
-    int m_iLengthCode ;         // MG_LENGTH_xxxx : length argument
-    int m_iNumObjects ;         // number of objects required
-    int m_iNumInfo ;            // # pieces of information required
-    BOOL m_bMoneyRequired ;     // if TRUE, one object must be money
+	int m_iLengthCode ;         // MG_LENGTH_xxxx : length argument
+	int m_iNumObjects ;         // number of objects required
+	int m_iNumInfo ;            // # pieces of information required
+	BOOL m_bMoneyRequired ;     // if TRUE, one object must be money
 } ;
 
 #define FINDS(tab, idx) { C##tab FAR * lpTab ; \
-    for (lpTab = c##tab ;; ++lpTab) \
-        if (!lpTab->m_##idx) return(NULL) ; \
-        else if (lpTab->m_##idx == idx) return(lpTab) ;}
+		for (lpTab = c##tab ;; ++lpTab) \
+			if (!lpTab->m_##idx) return(NULL) ; \
+			else if (lpTab->m_##idx == idx) return(lpTab) ;}
 
 
 #define FINDI(nm, tab, idx) { \
-        if (idx >= MG_##nm##_BASE && idx <= MG_##nm##_MAX) \
-            return(c##tab+(idx-MG_##nm##_BASE)) ; \
-            else return(NULL) ; }
+		if (idx >= MG_##nm##_BASE && idx <= MG_##nm##_MAX) \
+			return(c##tab+(idx-MG_##nm##_BASE)) ; \
+		else return(NULL) ; }
 
 // CMgStatic -- meta game static class
 class CMgStatic {
 public:
-#ifndef FRAME_EXE
-    static CLocTable FAR cLocTable[] ; // location to game/action
-    static CSectorTable FAR cSectorTable[] ; // sector table
-    static CLengthTable FAR cLengthTable[] ; // level to # objects
-#endif
-    static CGameTable FAR cGameTable[] ; // game to win result
-    static CClueTable FAR cHodjClueTable[] ; // Hodj clue booklet
-    static CClueTable FAR cPodjClueTable[] ; // Podj clue booklet
+	#ifndef FRAME_EXE
+	static CLocTable FAR cLocTable[] ; // location to game/action
+	static CSectorTable FAR cSectorTable[] ; // sector table
+	static CLengthTable FAR cLengthTable[] ; // level to # objects
+	#endif
+	static CGameTable FAR cGameTable[] ; // game to win result
+	static CClueTable FAR cHodjClueTable[] ; // Hodj clue booklet
+	static CClueTable FAR cPodjClueTable[] ; // Podj clue booklet
 
-static CGameTable * FindGame(int iGameCode) FINDS(GameTable, iGameCode)
+	static CGameTable *FindGame(int iGameCode) FINDS(GameTable, iGameCode)
 
-#ifndef FRAME_EXE
-static CLocTable * FindLoc(int iLocCode) FINDS(LocTable, iLocCode)
-static CSectorTable * FindSector(int iSectorCode) FINDS(SectorTable, iSectorCode)
-#endif
+	#ifndef FRAME_EXE
+	static CLocTable *FindLoc(int iLocCode) FINDS(LocTable, iLocCode)
+	static CSectorTable *FindSector(int iSectorCode) FINDS(SectorTable, iSectorCode)
+	#endif
 
 // mgstat.cpp -- meta game static tables
 
 //- MgStatic::FindClue -- find Hodj/Podj clue
-static CClueTable * CMgStatic::FindClue(BOOL bPodj, int iClue) ;
+	static CClueTable *CMgStatic::FindClue(BOOL bPodj, int iClue) ;
 
 };
 

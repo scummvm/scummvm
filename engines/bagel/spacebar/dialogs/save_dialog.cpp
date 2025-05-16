@@ -176,7 +176,7 @@ ErrorCode CBagSaveDialog::attach() {
 	// Fill the list box with save game entries
 	for (int i = 0; i < MAX_SAVED_GAMES; i++) {
 		char title[MAX_SAVE_TITLE];
-		Common::strcpy_s(title, "Empty");		// Default empty string
+		Common::strcpy_s(title, "Empty");       // Default empty string
 
 		for (const auto &entry : _savesList) {
 			if (entry.getSaveSlot() == (i + 1)) {
@@ -268,7 +268,7 @@ void CBagSaveDialog::saveAndClose() {
 
 		// Save the game
 		g_engine->saveGameState(_nSelectedItem + 1,
-			_pEditText->getText().getBuffer());
+		                        _pEditText->getText().getBuffer());
 
 		close();
 		setReturnValue(SAVE_BTN);
@@ -304,12 +304,12 @@ void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 		}
 		break;
 
-		// Save into current slot, and exit
+	// Save into current slot, and exit
 	case BKEY_ENTER:
 		saveAndClose();
 		break;
 
-		// Cancel without saving
+	// Cancel without saving
 	case BKEY_ESC:
 		setReturnValue(CANCEL_BTN);
 		close();
@@ -332,13 +332,13 @@ void CBagSaveDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
 	switch (pButton->getControlID()) {
-		// Do actual save
+	// Do actual save
 	case SAVE_BTN:
 		setReturnValue(SAVE_BTN);
 		saveAndClose();
 		break;
 
-		// Cancel without saving
+	// Cancel without saving
 	case CANCEL_BTN:
 		setReturnValue(CANCEL_BTN);
 		close();

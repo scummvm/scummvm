@@ -216,11 +216,10 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		istr.eatWhite();
 		const char ch = (char)istr.getCh();
 		switch (ch) {
-			//
-			//  =filename.ext
-			//
-		case '=':
-		{
+		//
+		//  =filename.ext
+		//
+		case '=': {
 			parseCode = UPDATED_OBJECT;
 			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
@@ -233,8 +232,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  { menu objects .... }  - Add menu items
 		//
-		case '{':
-		{
+		case '{': {
 			parseCode = UPDATED_OBJECT;
 			if (!_pMenu) {
 				_pMenu = new CBagMenu;
@@ -257,8 +255,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  ^id;  - Set id
 		//
-		case '^':
-		{
+		case '^': {
 			parseCode = UPDATED_OBJECT;
 			const char c = (char)istr.peek();
 			if (Common::isDigit(c)) {
@@ -277,8 +274,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  *state;  - Set state
 		//
-		case '*':
-		{
+		case '*': {
 			parseCode = UPDATED_OBJECT;
 			int nState;
 			getIntFromStream(istr, nState);
@@ -288,8 +284,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  %cursor;  - Set cursor
 		//
-		case '%':
-		{
+		case '%': {
 			parseCode = UPDATED_OBJECT;
 			int nCursor;
 			getIntFromStream(istr, nCursor);
@@ -299,8 +294,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  [left,top,right,bottom]  - Set position
 		//
-		case '[':
-		{
+		case '[': {
 			parseCode = UPDATED_OBJECT;
 			CBofRect r;
 			istr.putBack();
@@ -313,8 +307,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		//  IS [NOT] [MOVABLE|MODAL|VISIBLE|STRETCHABLE|HIGHLIGHT|ACTIVE|TRANSPARENT|HIDE_ON_CLICK|IMMEDIATE_RUN|LOCAL|CONSTANT_UPDATE|PRELOAD|FOREGROUND]
 		//
-		case 'I':
-		{
+		case 'I': {
 			if (istr.peek() != 'S') {
 				istr.putBack();
 
@@ -380,9 +373,9 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		case ';':
 			return PARSING_DONE;
 
-			//
-			//  no match return from function
-			//
+		//
+		//  no match return from function
+		//
 		default:
 			istr.putBack();
 			return parseCode;

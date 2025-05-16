@@ -393,14 +393,14 @@ ErrorCode CBofListBox::repaintAll() {
 					if ((i + _n1stVisible == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 						// display text highlighted
 						paintText(_pWork,
-							&cRect,
-							*(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
-							_nTextSize,
-							_nTextWeight,
-							_cHighColor,
-							JUSTIFY_LEFT,
-							FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-							getFont());
+						          &cRect,
+						          *(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
+						          _nTextSize,
+						          _nTextWeight,
+						          _cHighColor,
+						          JUSTIFY_LEFT,
+						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+						          getFont());
 					} else {
 						// Display text
 						// Allow list items of different colors.
@@ -410,14 +410,14 @@ ErrorCode CBofListBox::repaintAll() {
 						}
 
 						paintText(_pWork,
-							&cRect,
-							*(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
-							_nTextSize,
-							_nTextWeight,
-							rgbTextColor,
-							JUSTIFY_LEFT,
-							FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-							getFont());
+						          &cRect,
+						          *(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
+						          _nTextSize,
+						          _nTextWeight,
+						          rgbTextColor,
+						          JUSTIFY_LEFT,
+						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+						          getFont());
 					}
 
 					CBofPoint bl(cRect.bottomLeft()), br(cRect.bottomRight());
@@ -468,14 +468,14 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			if ((nIndex == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 				// Display text highlighted
 				paintText(_pWork,
-					&cRect,
-					*(_cTextItems.getNodeItem(nIndex)._pTextStr),
-					_nTextSize,
-					_nTextWeight,
-					_cHighColor,
-					JUSTIFY_LEFT,
-					FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-					getFont());
+				          &cRect,
+				          *(_cTextItems.getNodeItem(nIndex)._pTextStr),
+				          _nTextSize,
+				          _nTextWeight,
+				          _cHighColor,
+				          JUSTIFY_LEFT,
+				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+				          getFont());
 
 			} else {
 				// Display text
@@ -485,14 +485,14 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 					rgbTextColor = _cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor;
 				}
 				paintText(_pWork,
-					&cRect,
-					*(_cTextItems.getNodeItem(nIndex)._pTextStr),
-					_nTextSize,
-					_nTextWeight,
-					rgbTextColor,
-					JUSTIFY_LEFT,
-					FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-					getFont());
+				          &cRect,
+				          *(_cTextItems.getNodeItem(nIndex)._pTextStr),
+				          _nTextSize,
+				          _nTextWeight,
+				          rgbTextColor,
+				          JUSTIFY_LEFT,
+				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
+				          getFont());
 			}
 			CBofPoint bl(cRect.bottomLeft()), br(cRect.bottomRight());
 			_pWork->line(&bl, &br, (byte)nIndexedColor);

@@ -41,7 +41,7 @@ namespace Crypt {
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
-CMainWindow     *pMainGameWnd = NULL;   // pointer to the poker's main window 
+CMainWindow     *pMainGameWnd = NULL;   // pointer to the poker's main window
 CPalette        *pTestPalette = NULL;
 HCURSOR         hGameCursor;
 
@@ -56,52 +56,51 @@ HCURSOR         hGameCursor;
  *
  *          This is the API function for the DLL. It is what the calling app
  *          calls to invoke
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      hParentWnd, lpGameInfo
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunCrypt( HWND hParentWnd, LPGAMESTRUCT lpGameInfo )
-{
+HWND FAR PASCAL RunCrypt(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 //  lpGameInfo->bPlayingMetagame = TRUE;
 // if the pointer has garbage in it, the clean it out
-    if ( pMainGameWnd != NULL ) {
-        pMainGameWnd = NULL;
-    }
+	if (pMainGameWnd != NULL) {
+		pMainGameWnd = NULL;
+	}
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 //  lpGameInfo->bPlayingMetagame = FALSE;
 //  lpGameInfo->nSkillLevel = SKILLLEVEL_LOW;
-#endif
+	#endif
 
 // create a my poker window and show it
-    pMainGameWnd = new CMainWindow( hParentWnd, lpGameInfo );
-    pMainGameWnd->ShowWindow( SW_SHOWNORMAL );
+	pMainGameWnd = new CMainWindow(hParentWnd, lpGameInfo);
+	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
 
-    pMainGameWnd->SplashScreen();   // Force immediate display to minimize repaint delay
+	pMainGameWnd->SplashScreen();   // Force immediate display to minimize repaint delay
 
-    pMainGameWnd->UpdateWindow();
-    pMainGameWnd->SetActiveWindow(); 
+	pMainGameWnd->UpdateWindow();
+	pMainGameWnd->SetActiveWindow();
 // return the handle to this window
-    hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-    hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 //  MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED );
-    return pMainGameWnd->m_hWnd;
+	return pMainGameWnd->m_hWnd;
 }
 
 } // namespace Crypt

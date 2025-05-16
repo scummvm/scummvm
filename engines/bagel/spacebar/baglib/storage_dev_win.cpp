@@ -170,8 +170,8 @@ void CBagStorageDev::setPosition(const CBofPoint &pos) {
 	CBofRect OrigRect = getRect();                  // Get the destination (screen) rect
 
 	_cDestRect.setRect(pos.x, pos.y,
-	                    pos.x + OrigRect.width() - 1,
-	                    pos.y + OrigRect.height() - 1);
+	                   pos.x + OrigRect.width() - 1,
+	                   pos.y + OrigRect.height() - 1);
 }
 
 
@@ -306,7 +306,7 @@ CBofPoint CBagStorageDev::arrangeFloater(CBofPoint &nPos, CBagObject *pObj) {
 
 ErrorCode CBagStorageDev::attachActiveObjects() {
 	ErrorCode errorCode = ERR_NONE;
-	CBofPoint nArrangePos(0, 0);	// Removed 5,5 padding
+	CBofPoint nArrangePos(0, 0);    // Removed 5,5 padding
 
 	CBagLog::initArrangePages();
 
@@ -1746,7 +1746,7 @@ void CBagStorageDevDlg::onClose() {
 
 	CBofDialog::onClose();
 
-	destroy();		// Destruct the main window
+	destroy();      // Destruct the main window
 
 	// Our dlog may have dirtied our backdrop, make sure it is redrawn.
 	if (g_lastWindow != nullptr) {

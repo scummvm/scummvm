@@ -31,25 +31,25 @@ namespace HodjNPodj {
 #define DIB_HEADER_MARKER   ((WORD) ('M' << 8) | 'B')
 
 
- /*************************************************************************
-  *
-  * SaveDIB()
-  *
-  * Saves the specified DIB into the specified CFile.  The CFile
-  * is opened and closed by the caller.
-  *
-  * Parameters:
-  *
-  * HDIB hDib - Handle to the dib to save
-  *
-  * CFile& file - open CFile used to save DIB
-  *
-  * Return value: TRUE if successful, else FALSE or CFileException
-  *
-  *************************************************************************/
+/*************************************************************************
+ *
+ * SaveDIB()
+ *
+ * Saves the specified DIB into the specified CFile.  The CFile
+ * is opened and closed by the caller.
+ *
+ * Parameters:
+ *
+ * HDIB hDib - Handle to the dib to save
+ *
+ * CFile& file - open CFile used to save DIB
+ *
+ * Return value: TRUE if successful, else FALSE or CFileException
+ *
+ *************************************************************************/
 
 BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
-#ifdef TODO
+	#ifdef TODO
 	BITMAPFILEHEADER bmfHdr; // Header for Bitmap file
 	LPBITMAPINFOHEADER lpBI;   // Pointer to DIB info structure
 	DWORD dwDIBSize;
@@ -65,8 +65,7 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	if (lpBI == NULL)
 		return FALSE;
 
-	if (!IS_WIN30_DIB(lpBI))
-	{
+	if (!IS_WIN30_DIB(lpBI)) {
 		GlobalUnlock((HGLOBAL)hDib);
 		return FALSE;       // It's an other-style DIB (save not supported)
 	}
@@ -75,7 +74,7 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	 * Fill in the fields of the file header
 	 */
 
-	 /* Fill in file type (first 2 bytes must be "BM" for a bitmap) */
+	/* Fill in file type (first 2 bytes must be "BM" for a bitmap) */
 	bmfHdr.bfType = DIB_HEADER_MARKER;  // "BM"
 
 	// Calculating the size of the DIB is a bit tricky (if we want to
@@ -94,14 +93,12 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 
 	// Now calculate the size of the image
 
-	if ((lpBI->biCompression == BI_RLE8) || (lpBI->biCompression == BI_RLE4))
-	{
+	if ((lpBI->biCompression == BI_RLE8) || (lpBI->biCompression == BI_RLE4)) {
 		// It's an RLE bitmap, we can't calculate size, so trust the
 		// biSizeImage field
 
 		dwDIBSize += lpBI->biSizeImage;
-	} else
-	{
+	} else {
 		DWORD dwBmBitsSize;  // Size of Bitmap Bits only
 
 		// It's not RLE, so size is Width (DWORD aligned) * Height
@@ -130,28 +127,27 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	 * plus the size of the color table.
 	 */
 	bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + lpBI->biSize
-		+ PaletteSize((LPSTR)lpBI);
+	                   + PaletteSize((LPSTR)lpBI);
 
-	TRY
-	{
+	TRY {
 		// Write the file header
 		file.Write((LPSTR)&bmfHdr, sizeof(BITMAPFILEHEADER));
-	//
-	// Write the DIB header and the bits
-	//
-	file.WriteHuge(lpBI, dwDIBSize);
+		//
+		// Write the DIB header and the bits
+		//
+		file.WriteHuge(lpBI, dwDIBSize);
 	}
-		CATCH(CFileException, e) {
+	CATCH(CFileException, e) {
 		GlobalUnlock((HGLOBAL)hDib);
 		THROW_LAST();
 	}
 	END_CATCH
 
-		GlobalUnlock((HGLOBAL)hDib);
+	GlobalUnlock((HGLOBAL)hDib);
 	return TRUE;
-#else
+	#else
 	error("TODO: SaveDIB");
-#endif
+	#endif
 }
 
 
@@ -160,20 +156,20 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
   Function:  ReadDIBFile (CFile&)
 
    Purpose:  Reads in the specified DIB file into a global chunk of
-			 memory.
+             memory.
 
    Returns:  A handle to a dib (hDIB) if successful.
-			 NULL if an error occurs.
+             NULL if an error occurs.
 
   Comments:  BITMAPFILEHEADER is stripped off of the DIB.  Everything
-			 from the end of the BITMAPFILEHEADER structure on is
-			 returned in the global memory handle.
+             from the end of the BITMAPFILEHEADER structure on is
+             returned in the global memory handle.
 
 *************************************************************************/
 
 
 HDIB WINAPI ReadDIBFile(CFile &file) {
-#ifdef TODO
+	#ifdef TODO
 	BITMAPFILEHEADER bmfHeader;
 	DWORD dwBitsSize;
 	HDIB hDIB = NULL;
@@ -192,16 +188,14 @@ try_again:
 	 * Go read the DIB file header and check if it's valid.
 	 */
 	if ((file.Read((LPSTR)&bmfHeader, sizeof(bmfHeader)) !=
-		sizeof(bmfHeader)) || (bmfHeader.bfType != DIB_HEADER_MARKER))
-	{
+	        sizeof(bmfHeader)) || (bmfHeader.bfType != DIB_HEADER_MARKER)) {
 		goto done;
 	}
 	/*
 	 * Allocate memory for DIB
 	 */
 	hDIB = (HDIB) ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwBitsSize);
-	if (hDIB == NULL)
-	{
+	if (hDIB == NULL) {
 		goto done;
 	}
 	pDIB = (LPSTR) GlobalLock((HGLOBAL)hDIB);
@@ -210,8 +204,7 @@ try_again:
 	 * Go read the bits.
 	 */
 	if (file.ReadHuge(pDIB, dwBitsSize - sizeof(BITMAPFILEHEADER)) !=
-		dwBitsSize - sizeof(BITMAPFILEHEADER))
-	{
+	        dwBitsSize - sizeof(BITMAPFILEHEADER)) {
 		GlobalUnlock((HGLOBAL)hDIB);
 		::GlobalFree((HGLOBAL)hDIB);
 		hDIB = NULL;
@@ -229,9 +222,9 @@ done:
 
 
 	return hDIB;
-#else
+	#else
 	error("TODO: ReadDIBFile");
-#endif
+	#endif
 }
 
 
@@ -240,28 +233,28 @@ done:
   Function:  ReadDIBResource (CFile&)
 
    Purpose:  Reads in the specified DIB file into a global chunk of
-			 memory.
+             memory.
 
    Returns:  A handle to a dib (hDIB) if successful.
-			 NULL if an error occurs.
+             NULL if an error occurs.
 
   Comments:  BITMAPFILEHEADER is stripped off of the DIB.  Everything
-			 from the end of the BITMAPFILEHEADER structure on is
-			 returned in the global memory handle.
+             from the end of the BITMAPFILEHEADER structure on is
+             returned in the global memory handle.
 
 *************************************************************************/
 
 
 HDIB WINAPI ReadDIBResource(const char *pszName) {
-#ifdef TODO
-	HRSRC		hRsc = NULL;
-	HINSTANCE	hInst = NULL;
-	HGLOBAL		hGbl = NULL;
+	#ifdef TODO
+	HRSRC       hRsc = NULL;
+	HINSTANCE   hInst = NULL;
+	HGLOBAL     hGbl = NULL;
 	char *pData = NULL;
-	size_t		dwBytes;
-	HDIB 		hDIB = NULL;
-	LPSTR 		pDIB = NULL;
-	BOOL		bRetry = FALSE;
+	size_t      dwBytes;
+	HDIB        hDIB = NULL;
+	LPSTR       pDIB = NULL;
+	BOOL        bRetry = FALSE;
 
 	hInst = AfxGetInstanceHandle();
 
@@ -272,7 +265,7 @@ try_again:
 		dwBytes = (size_t)SizeofResource(hInst, hRsc);
 		hGbl = LoadResource(hInst, hRsc);
 		if ((dwBytes != 0) &&
-			(hGbl != NULL)) {
+		        (hGbl != NULL)) {
 			pData = (char *)LockResource(hGbl);
 			hDIB = (HDIB) ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwBytes);
 			if (hDIB != NULL) {
@@ -281,7 +274,7 @@ try_again:
 				GlobalUnlock((HGLOBAL)hDIB);
 				UnlockResource(hGbl);
 				FreeResource(hGbl);
-				return(hDIB);
+				return (hDIB);
 			}
 			UnlockResource(hGbl);
 		}
@@ -296,10 +289,10 @@ try_again:
 		goto try_again;
 	}
 
-	return(NULL);
-#else
+	return (NULL);
+	#else
 	error("TODO: ReadDIBResource");
-#endif
+	#endif
 }
 
 } // namespace HodjNPodj

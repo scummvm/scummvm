@@ -37,214 +37,205 @@ namespace WordSearch {
 #define MESSAGE_HEIGHT      20
 
 #define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )  // Row offset from first 
-                                                    // message box
+// message box
 
 #define IDD_1BTNDLG 321
 
-extern	CString	astrGameList[WORDSPERLIST];
-extern	CString	astrGameListDisplay[WORDSPERLIST];
-extern	CText	atxtDisplayWord[WORDSPERLIST];
-extern	int		anWordIndex[NUMBEROFLISTS][WORDSPERLIST];		// Key to alphabetical order of words
-extern	int		nWordList;										// Which is the current list index
+extern  CString astrGameList[WORDSPERLIST];
+extern  CString astrGameListDisplay[WORDSPERLIST];
+extern  CText   atxtDisplayWord[WORDSPERLIST];
+extern  int     anWordIndex[NUMBEROFLISTS][WORDSPERLIST];       // Key to alphabetical order of words
+extern  int     nWordList;                                      // Which is the current list index
 
 
 
 CLongDialog::CLongDialog(CWnd *pParent, CPalette *pPalette,
-		const char *pszButton1Text, const char *pszText1,
-		const char *pszText2)
-		: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, ".\\ART\\WLSTSCRL.BMP", 16, 25) {
-    assert(pParent != NULL);
-    assert(pPalette != NULL);
-    assert(pszText1 != NULL);
-    assert(pszButton1Text != NULL);
+                         const char *pszButton1Text, const char *pszText1,
+                         const char *pszText2)
+	: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, ".\\ART\\WLSTSCRL.BMP", 16, 25) {
+	assert(pParent != NULL);
+	assert(pPalette != NULL);
+	assert(pszText1 != NULL);
+	assert(pszButton1Text != NULL);
 
-    // Initialize all members
-    //
-    m_pPalette = pPalette;
-    m_pszMessage1 = pszText1;
-    m_pszMessage2 = pszText2;
-    m_pszButton1Text = pszButton1Text;
+	// Initialize all members
+	//
+	m_pPalette = pPalette;
+	m_pszMessage1 = pszText1;
+	m_pszMessage2 = pszText2;
+	m_pszButton1Text = pszButton1Text;
 
-    m_cTextMessage1 = NULL;
-    m_cTextMessage2 = NULL;
+	m_cTextMessage1 = NULL;
+	m_cTextMessage2 = NULL;
 
-    //{{AFX_DATA_INIT(CLongDialog)
-        // NOTE: the ClassWizard will add member initialization here
-    //}}AFX_DATA_INIT
+	//{{AFX_DATA_INIT(CLongDialog)
+	// NOTE: the ClassWizard will add member initialization here
+	//}}AFX_DATA_INIT
 }
 
-void CLongDialog::ClearDialogImage()
-{
-    if (m_pButton1 != NULL) {                          // release the 1st button
-        delete m_pButton1;
-        m_pButton1 = NULL;
-    }
+void CLongDialog::ClearDialogImage() {
+	if (m_pButton1 != NULL) {                          // release the 1st button
+		delete m_pButton1;
+		m_pButton1 = NULL;
+	}
 
-    ValidateRect(NULL);
+	ValidateRect(NULL);
 }
 
-void CLongDialog::OnDestroy()
-{
-	int	i;
-	
-	for (i = 0; i < WORDSPERLIST; i++ ) {
+void CLongDialog::OnDestroy() {
+	int i;
+
+	for (i = 0; i < WORDSPERLIST; i++) {
 		delete m_cWordList[i];
 		m_cWordList[i] = NULL;
 	}
-	
-    if (m_cTextMessage1 != NULL) {
-        delete m_cTextMessage1;
-        m_cTextMessage1 = NULL;
-    }
 
-    if (m_cTextMessage2 != NULL) {
-        delete m_cTextMessage2;
-        m_cTextMessage2 = NULL;
-    }    
+	if (m_cTextMessage1 != NULL) {
+		delete m_cTextMessage1;
+		m_cTextMessage1 = NULL;
+	}
 
-    CBmpDialog::OnDestroy();
+	if (m_cTextMessage2 != NULL) {
+		delete m_cTextMessage2;
+		m_cTextMessage2 = NULL;
+	}
+
+	CBmpDialog::OnDestroy();
 }
 
-void CLongDialog::DoDataExchange(CDataExchange* pDX)
-{
-    CBmpDialog::DoDataExchange(pDX);
-    //{{AFX_DATA_MAP(CLongDialog)
-        // NOTE: the ClassWizard will add DDX and DDV calls here
-    //}}AFX_DATA_MAP
+void CLongDialog::DoDataExchange(CDataExchange* pDX) {
+	CBmpDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CLongDialog)
+	// NOTE: the ClassWizard will add DDX and DDV calls here
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CLongDialog, CBmpDialog)
-    //{{AFX_MSG_MAP(CLongDialog)
-    ON_WM_PAINT()
-    ON_WM_ERASEBKGND()
-    ON_WM_DESTROY()
-    //}}AFX_MSG_MAP
+	//{{AFX_MSG_MAP(CLongDialog)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
+	ON_WM_DESTROY()
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
 /////////////////////////////////////////////////////////////////////////////
 // CLongDialog message handlers
 
-BOOL CLongDialog::OnInitDialog()
-{
-    CRect   statsRect;                  // game stats displays
-    int     nStat_col_offset;           // game stats placement
-    int     nStat_row_offset;
-    int     nStatWidth, nStatHeight;
-    BOOL    bAssertCheck;
-    CDC     *pDC;
-    int		i;
+BOOL CLongDialog::OnInitDialog() {
+	CRect   statsRect;                  // game stats displays
+	int     nStat_col_offset;           // game stats placement
+	int     nStat_row_offset;
+	int     nStatWidth, nStatHeight;
+	BOOL    bAssertCheck;
+	CDC     *pDC;
+	int     i;
 
-    CBmpDialog::OnInitDialog();
+	CBmpDialog::OnInitDialog();
 
-    pDC = GetDC();
+	pDC = GetDC();
 
-    nStat_col_offset    = MESSAGE_COL;
-    nStat_row_offset    = MESSAGE_ROW;
-    nStatWidth          = MESSAGE_WIDTH;
-    nStatHeight         = MESSAGE_HEIGHT;
-    statsRect.SetRect   (
-                         nStat_col_offset,
-                         nStat_row_offset,
-                         nStat_col_offset + nStatWidth,
-                         nStat_row_offset + nStatHeight
-                        );
+	nStat_col_offset    = MESSAGE_COL;
+	nStat_row_offset    = MESSAGE_ROW;
+	nStatWidth          = MESSAGE_WIDTH;
+	nStatHeight         = MESSAGE_HEIGHT;
+	statsRect.SetRect(
+	    nStat_col_offset,
+	    nStat_row_offset,
+	    nStat_col_offset + nStatWidth,
+	    nStat_row_offset + nStatHeight
+	);
 
-    if ((m_cTextMessage1 = new CText()) != NULL) {
-        bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
-        ASSERT(bAssertCheck);   // initialize the text objext
-    }
+	if ((m_cTextMessage1 = new CText()) != NULL) {
+		bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		ASSERT(bAssertCheck);   // initialize the text objext
+	}
 
-    nStat_row_offset += MESSAGE2_ROW_OFFSET;
-    statsRect.SetRect(
-                         nStat_col_offset,
-                         nStat_row_offset,
-                         nStat_col_offset + nStatWidth,
-                         nStat_row_offset + nStatHeight
-                     );
+	nStat_row_offset += MESSAGE2_ROW_OFFSET;
+	statsRect.SetRect(
+	    nStat_col_offset,
+	    nStat_row_offset,
+	    nStat_col_offset + nStatWidth,
+	    nStat_row_offset + nStatHeight
+	);
 
-    if ((m_cTextMessage2 = new CText()) != NULL) {
-        bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
-        ASSERT(bAssertCheck);   // initialize the text objext
-    }
+	if ((m_cTextMessage2 = new CText()) != NULL) {
+		bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		ASSERT(bAssertCheck);   // initialize the text objext
+	}
 
 	nStat_col_offset = 0;
-	nStat_row_offset = 30;    
-    for (i=0; i < WORDSPERLIST; i++ ) {
-	    statsRect.SetRect(
-	                         nStat_col_offset,
-	                         nStat_row_offset + (12 * i),
-	                         nStat_col_offset + nStatWidth,
-	                         nStat_row_offset + (12 * i) + nStatHeight
-	                     );
-	    if ((m_cWordList[i] = new CText()) != NULL) {
-	        bAssertCheck = (*m_cWordList[i]).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
-	        ASSERT(bAssertCheck);   // initialize the text objext
-	    }
-	}    	
+	nStat_row_offset = 30;
+	for (i = 0; i < WORDSPERLIST; i++) {
+		statsRect.SetRect(
+		    nStat_col_offset,
+		    nStat_row_offset + (12 * i),
+		    nStat_col_offset + nStatWidth,
+		    nStat_row_offset + (12 * i) + nStatHeight
+		);
+		if ((m_cWordList[i] = new CText()) != NULL) {
+			bAssertCheck = (*m_cWordList[i]).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+			ASSERT(bAssertCheck);   // initialize the text objext
+		}
+	}
 
-    ReleaseDC(pDC);
+	ReleaseDC(pDC);
 
-    if ((m_pButton1 = new CColorButton) != NULL) {            // build the first color button
-        (*m_pButton1).SetPalette(m_pPalette);                 // set the palette to use
-        (*m_pButton1).SetControl(IDOK, this);                 // tie to the dialog control
-        (*m_pButton1).SetWindowText(m_pszButton1Text);
-    }
-    
-    return TRUE;  // return TRUE  unless you set the focus to a control
+	if ((m_pButton1 = new CColorButton) != NULL) {            // build the first color button
+		(*m_pButton1).SetPalette(m_pPalette);                 // set the palette to use
+		(*m_pButton1).SetControl(IDOK, this);                 // tie to the dialog control
+		(*m_pButton1).SetWindowText(m_pszButton1Text);
+	}
+
+	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CLongDialog::OnPaint()
-{
-    CDC     *pDC;
-    int		nWordIndex,
-    	nCurrent,
-    	nDisplayWord = 0;
-    int		i;
-    char	buf[30];
+void CLongDialog::OnPaint() {
+	CDC     *pDC;
+	int     nWordIndex,
+	        nCurrent,
+	        nDisplayWord = 0;
+	int     i;
+	char    buf[30];
 
-    CBmpDialog::OnPaint();
-    // Do not call CDialog::OnPaint() for painting messages
+	CBmpDialog::OnPaint();
+	// Do not call CDialog::OnPaint() for painting messages
 
-    pDC = GetDC();
+	pDC = GetDC();
 
-	for ( i = 0; i < WORDSPERLIST; i++ ) {
-		for( nCurrent = 0; nCurrent < WORDSPERLIST; nCurrent++ ) {		// Go thru the wordlist 
-			nWordIndex = anWordIndex[nWordList][nCurrent];				// Get the word's order index
-			if (nWordIndex == i) {										// if this is the i-th entry
+	for (i = 0; i < WORDSPERLIST; i++) {
+		for (nCurrent = 0; nCurrent < WORDSPERLIST; nCurrent++) {        // Go thru the wordlist
+			nWordIndex = anWordIndex[nWordList][nCurrent];              // Get the word's order index
+			if (nWordIndex == i) {                                      // if this is the i-th entry
 				nDisplayWord = nCurrent;
-				break;													//...display it!
+				break;                                                  //...display it!
 			}
 		}
-		if ( astrGameList[nDisplayWord].IsEmpty() ) {
-			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord].c_str() );
-			m_cWordList[i]->DisplayString( pDC,  buf, 12, FW_BOLD, TEXT_COLOR );
-		}
-		else {
-			Common::sprintf_s( buf, "%s", astrGameListDisplay[nDisplayWord].c_str() );
-			m_cWordList[i]->DisplayString( pDC,  buf, 12, FW_BOLD, RED_TEXT );
+		if (astrGameList[nDisplayWord].IsEmpty()) {
+			Common::sprintf_s(buf, "%s", astrGameListDisplay[nDisplayWord].c_str());
+			m_cWordList[i]->DisplayString(pDC,  buf, 12, FW_BOLD, TEXT_COLOR);
+		} else {
+			Common::sprintf_s(buf, "%s", astrGameListDisplay[nDisplayWord].c_str());
+			m_cWordList[i]->DisplayString(pDC,  buf, 12, FW_BOLD, RED_TEXT);
 		}                          //Shadowed
 	}
 
-    ReleaseDC(pDC);
+	ReleaseDC(pDC);
 }
 
-void CLongDialog::OnOK()
-{
-    ClearDialogImage();
-    EndDialog(IDOK);
+void CLongDialog::OnOK() {
+	ClearDialogImage();
+	EndDialog(IDOK);
 }
 
-void CLongDialog::OnCancel()
-{
-    ClearDialogImage();
-    EndDialog(IDOK);
+void CLongDialog::OnCancel() {
+	ClearDialogImage();
+	EndDialog(IDOK);
 }
 
-BOOL CLongDialog::OnEraseBkgnd(CDC *)
-{
-    // Prevents refreshing of background
-    return(TRUE);
+BOOL CLongDialog::OnEraseBkgnd(CDC *) {
+	// Prevents refreshing of background
+	return (TRUE);
 }
 
 } // namespace WordSearch

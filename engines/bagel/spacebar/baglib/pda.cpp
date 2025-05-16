@@ -47,7 +47,7 @@ void CBagPDA::initialize() {
 
 CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevBmp(pParent, xRect),
-	SBBasePda(pParent, xRect, bActivated) {
+	  SBBasePda(pParent, xRect, bActivated) {
 	_xSDevType = SDEV_PDA;
 
 	_activeHeight = 0;
@@ -287,8 +287,8 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 	bool bMoviePlaying = false;
 
 	if ((!isActivated()) &&                             // Must be down
-		((_pdaMode == PDA_MAP_MODE) ||
-			(bIsMovieWaiting && _pdaMode != PDA_MOO_MODE))) {
+	        ((_pdaMode == PDA_MAP_MODE) ||
+	         (bIsMovieWaiting && _pdaMode != PDA_MOO_MODE))) {
 
 		// Reset to reflect we know it happened
 		setPreFiltered(false);

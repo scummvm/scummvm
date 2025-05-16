@@ -37,47 +37,46 @@ namespace GrandTour {
 /////////////////////////////////////////////////////////////////////////////
 // CInfDlg dialog
 
-class CInfDlg : public CDialog
-{
+class CInfDlg : public CDialog {
 public:
-	//    CWnd * m_xpParentWnd ;		// parent window = frame window
-	CGtlFrame *m_xpFrameWnd;	// parent window = frame window
+	//    CWnd * m_xpParentWnd ;        // parent window = frame window
+	CGtlFrame *m_xpFrameWnd;    // parent window = frame window
 	class CGtlDoc *m_xpDocument;
 	class CGtlData *m_xpGtlData;
-	BOOL m_bClose;		// close window flag
+	BOOL m_bClose;      // close window flag
 
 	// Construction
 public:
-	CInfDlg(CWnd *pParent = NULL);	// standard constructor
+	CInfDlg(CWnd *pParent = NULL);  // standard constructor
 	void Create(void) {
 		CDialog::Create(CInfDlg::IDD,
-			(CWnd *)m_xpFrameWnd);
+		                (CWnd *)m_xpFrameWnd);
 	}
 	~CInfDlg(void) {
 		TRACEDESTRUCTOR(CInfDlg);
 	}
 
 	// Dialog Data
-		//{{AFX_DATA(CInfDlg)
+	//{{AFX_DATA(CInfDlg)
 	enum {
 		IDD = IDD_INFO_DLG
 	};
-	int		m_iXCoord;
-	int		m_iYCoord;
-	int		m_iLogScrollPosX;
-	int		m_iLogScrollPosY;
-	int		m_iTotalSizeX;
-	int		m_iTotalSizeY;
-	int		m_iScrollRangeX;
-	int		m_iViewSizeX;
-	int		m_iScrollRangeY;
-	int		m_iViewSizeY;
-	int		m_iScrollCount;
+	int     m_iXCoord;
+	int     m_iYCoord;
+	int     m_iLogScrollPosX;
+	int     m_iLogScrollPosY;
+	int     m_iTotalSizeX;
+	int     m_iTotalSizeY;
+	int     m_iScrollRangeX;
+	int     m_iViewSizeX;
+	int     m_iScrollRangeY;
+	int     m_iViewSizeY;
+	int     m_iScrollCount;
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
 	virtual void CInfDlg::PostNcDestroy();
 	virtual void CInfDlg::OnCancel();
 
@@ -96,47 +95,46 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CCtlDlg dialog
 
-class CCtlDlg : public CDialog
-{
+class CCtlDlg : public CDialog {
 public:
-	//  CWnd * m_xpParentWnd ;		// parent window
-	CGtlFrame *m_xpFrameWnd;	// parent window = frame window
-	//    class CGtlFrame * m_xpFrameWnd ;		// frame window
+	//  CWnd * m_xpParentWnd ;      // parent window
+	CGtlFrame *m_xpFrameWnd;    // parent window = frame window
+	//    class CGtlFrame * m_xpFrameWnd ;      // frame window
 	class CGtlDoc *m_xpDocument;
 	class CGtlData *m_xpGtlData;
-	class CGtlView *m_xpView;	// view that this box controls
-	class CBsuSet m_cDlgBsuSet;	// scroll bar set for dialog box
+	class CGtlView *m_xpView;   // view that this box controls
+	class CBsuSet m_cDlgBsuSet; // scroll bar set for dialog box
 
-	CScrollBar *m_xpVScrholl, *m_xpHScroll;	// scroll bars
+	CScrollBar *m_xpVScrholl, *m_xpHScroll; // scroll bars
 	int m_iHScrollMin, m_iHScrollMax, m_iHScrollCurrent;
 	int m_iVScrollMin, m_iVScrollMax, m_iVScrollCurrent;
-	BOOL m_bClose;		// close window flag
+	BOOL m_bClose;      // close window flag
 
 	// Construction
 public:
-	CCtlDlg(CWnd *pParent = NULL);	// standard constructor
+	CCtlDlg(CWnd *pParent = NULL);  // standard constructor
 	void Create(void) {
 		CDialog::Create(CCtlDlg::IDD,
-			(CWnd *)m_xpFrameWnd);
+		                (CWnd *)m_xpFrameWnd);
 	}
 	~CCtlDlg(void) {
 		TRACEDESTRUCTOR(CCtlDlg);
 	}
 
 	// Dialog Data
-		//{{AFX_DATA(CCtlDlg)
+	//{{AFX_DATA(CCtlDlg)
 	enum {
 		IDD = IDD_CTL_DLG
 	};
-	BOOL	m_bPaintBackground;
-	BOOL	m_bShowNodes;
-	BOOL	m_bMetaGame;
-	BOOL	m_bShowSensitivity;
+	BOOL    m_bPaintBackground;
+	BOOL    m_bShowNodes;
+	BOOL    m_bMetaGame;
+	BOOL    m_bShowSensitivity;
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
 	virtual void PostNcDestroy(void);
 	virtual void CCtlDlg::OnCancel();
 
@@ -158,51 +156,52 @@ protected:
 	// infdlg.cpp : implementation file
 
 	//- CCtlDlg::EffectControl -- effect control command on document
-private: BOOL CCtlDlg::EffectControl(BOOL bUpdate PDFT(TRUE));
-	   //- CCtlDlg::InitDialogBox -- set scroll bars
-public: BOOL CCtlDlg::InitDialogBox(void);
+private:
+	BOOL CCtlDlg::EffectControl(BOOL bUpdate PDFT(TRUE));
+	//- CCtlDlg::InitDialogBox -- set scroll bars
+public:
+	BOOL CCtlDlg::InitDialogBox(void);
 };
 
 
 /////////////////////////////////////////////////////////////////////////////
 // CNodeDlg dialog
 
-class CNodeDlg : public CDialog
-{
+class CNodeDlg : public CDialog {
 public:
-	CGtlFrame *m_xpFrameWnd;	// parent window = frame window
-	//  CWnd * m_xpParentWnd ;		// parent window
-	//    class CGtlFrame * m_xpFrameWnd ;		// frame window
+	CGtlFrame *m_xpFrameWnd;    // parent window = frame window
+	//  CWnd * m_xpParentWnd ;      // parent window
+	//    class CGtlFrame * m_xpFrameWnd ;      // frame window
 	class CGtlDoc *m_xpDocument;
 	class CGtlData *m_xpGtlData;
-	class CGtlView *m_xpView;	// view that this box controls
-	BOOL m_bApply;		// apply button pressed
-	BOOL m_bClose;		// close window flag
+	class CGtlView *m_xpView;   // view that this box controls
+	BOOL m_bApply;      // apply button pressed
+	BOOL m_bClose;      // close window flag
 
 	// Dialog Data
-		//{{AFX_DATA(CNodeDlg)
+	//{{AFX_DATA(CNodeDlg)
 	enum {
 		IDD = IDD_NODE_DLG
 	};
-	CString	m_stSector;
-	CString	m_stLoc;
-	CString	m_stName;
-	int		m_iX;
-	int		m_iY;
-	int		m_iNodeIndex;
-	BOOL	m_bRelocatable;
-	int		m_iWeight;
-	int		m_iSensitivity;
-	//	int		m_iSector;
-	int		m_iSectorButton;
+	CString m_stSector;
+	CString m_stLoc;
+	CString m_stName;
+	int     m_iX;
+	int     m_iY;
+	int     m_iNodeIndex;
+	BOOL    m_bRelocatable;
+	int     m_iWeight;
+	int     m_iSensitivity;
+	//  int     m_iSector;
+	int     m_iSectorButton;
 	//}}AFX_DATA
 
 // Construction
 public:
-	CNodeDlg(CWnd *pParent = NULL);	// standard constructor
+	CNodeDlg(CWnd *pParent = NULL); // standard constructor
 	void Create(void) {
 		CDialog::Create(CNodeDlg::IDD,
-			(CWnd *)m_xpFrameWnd);
+		                (CWnd *)m_xpFrameWnd);
 	}
 	~CNodeDlg(void) {
 		TRACEDESTRUCTOR(CNodeDlg);
@@ -210,17 +209,17 @@ public:
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
 	virtual void PostNcDestroy(void);
 	virtual void OnCancel();
-	//	BOOL EffectControl(BOOL bUpdate PDFT(TRUE)) ;
+	//  BOOL EffectControl(BOOL bUpdate PDFT(TRUE)) ;
 
-		// Generated message map functions
-		//{{AFX_MSG(CNodeDlg)
+	// Generated message map functions
+	//{{AFX_MSG(CNodeDlg)
 	afx_msg void OnClose();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnDestroy();
-	//	afx_msg void OnNodeReloc();
+	//  afx_msg void OnNodeReloc();
 	afx_msg void OnNodeReset();
 	afx_msg void OnNodeApply();
 	//}}AFX_MSG
@@ -230,31 +229,30 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CActDlg dialog
 
-class CActDlg : public CDialog
-{
+class CActDlg : public CDialog {
 	// Construction
 public:
-	CActDlg(CWnd *pParent = NULL);	// standard constructor
+	CActDlg(CWnd *pParent = NULL);  // standard constructor
 	~CActDlg(void) {
 		TRACEDESTRUCTOR(CActDlg);
 	}
 
 	// Dialog Data
-		//{{AFX_DATA(CActDlg)
+	//{{AFX_DATA(CActDlg)
 	enum {
 		IDD = IDD_ACTION_DLG
 	};
-	CString	m_stGame;
-	int		m_iMoney;
+	CString m_stGame;
+	int     m_iMoney;
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CActDlg)
-		// NOTE: the ClassWizard will add member functions here
+	// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
@@ -263,41 +261,40 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CMenuDlg dialog
 
-class CMenuDlg : public CDialog
-{
+class CMenuDlg : public CDialog {
 public:
 
-	CGtlFrame *m_xpFrameWnd;	// parent window = frame window
-	//  CWnd * m_xpParentWnd ;		// parent window = frame
+	CGtlFrame *m_xpFrameWnd;    // parent window = frame window
+	//  CWnd * m_xpParentWnd ;      // parent window = frame
 	class CGtlDoc *m_xpDocument;
 	class CGtlData *m_xpGtlData;
-	class CGtlView *m_xpView;	// view that this box controls
+	class CGtlView *m_xpView;   // view that this box controls
 
-	BOOL m_bNew;		// new file
-	BOOL m_bOpen;		// open file
-	BOOL m_bSave;		// save file
-	BOOL m_bClose;		// close window flag
+	BOOL m_bNew;        // new file
+	BOOL m_bOpen;       // open file
+	BOOL m_bSave;       // save file
+	BOOL m_bClose;      // close window flag
 
 
 	// Construction
 public:
-	CMenuDlg(CWnd *pParent = NULL);	// standard constructor
+	CMenuDlg(CWnd *pParent = NULL); // standard constructor
 	void Create(void) {
 		CDialog::Create(CMenuDlg::IDD,
-			(CWnd *)m_xpFrameWnd);
+		                (CWnd *)m_xpFrameWnd);
 	}
 	~CMenuDlg(void) {
 		TRACEDESTRUCTOR(CMenuDlg);
 	}
 
 	// Dialog Data
-		//{{AFX_DATA(CMenuDlg)
+	//{{AFX_DATA(CMenuDlg)
 	enum {
 		IDD = IDD_MENU_DLG
 	};
-	BOOL	m_bCtlDlg;
-	BOOL	m_bInfoDlg;
-	BOOL	m_bNodeDlg;
+	BOOL    m_bCtlDlg;
+	BOOL    m_bInfoDlg;
+	BOOL    m_bNodeDlg;
 	//}}AFX_DATA
 
 // Implementation
@@ -307,22 +304,23 @@ protected:
 
 	virtual void PostNcDestroy(void);
 	////- CMenuDlg::EffectControl -- effect control command on document
-private: BOOL CMenuDlg::EffectControl(BOOL bUpdate PDFT(TRUE));
+private:
+	BOOL CMenuDlg::EffectControl(BOOL bUpdate PDFT(TRUE));
 
-	   // Generated message map functions
-	   //{{AFX_MSG(CMenuDlg)
-	   afx_msg void OnMenuCtl();
-	   afx_msg void OnMenuInfo();
-	   afx_msg void OnMenuNew();
-	   afx_msg void OnMenuNode();
-	   afx_msg void OnMenuOpen();
-	   afx_msg void OnMenuSave();
-	   virtual void OnCancel();
-	   afx_msg void OnClose();
-	   afx_msg void OnDestroy();
-	   virtual BOOL OnInitDialog();
-	   //}}AFX_MSG
-	   DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(CMenuDlg)
+	afx_msg void OnMenuCtl();
+	afx_msg void OnMenuInfo();
+	afx_msg void OnMenuNew();
+	afx_msg void OnMenuNode();
+	afx_msg void OnMenuOpen();
+	afx_msg void OnMenuSave();
+	virtual void OnCancel();
+	afx_msg void OnClose();
+	afx_msg void OnDestroy();
+	virtual BOOL OnInitDialog();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 } // namespace GrandTour

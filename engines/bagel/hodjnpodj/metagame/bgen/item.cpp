@@ -33,7 +33,7 @@ IMPLEMENT_DYNCREATE(CItem, CObject)
 
 #ifndef FRAME_EXE
 // descriptive text for each item
-const char *CItem::m_pItemText[MG_OBJ_COUNT] = {	
+const char *CItem::m_pItemText[MG_OBJ_COUNT] = {
 	"a Radio-Controlled Flying Anvil",
 	"a Beret of Invisibilty",
 	"a Broomstick",
@@ -54,7 +54,7 @@ const char *CItem::m_pItemText[MG_OBJ_COUNT] = {
 	"a Pot of Honey",
 	"an Enchanted Kumquat",
 	"a Mirror of Deflection",
-	"Mish",	
+	"Mish",
 	"Mosh",
 	"a Kayak Paddle",
 	"a Bundt Pan",
@@ -68,10 +68,10 @@ const char *CItem::m_pItemText[MG_OBJ_COUNT] = {
 	"a Killer Cotton Swab",
 	"a Flyswatter of Death",
 	"a General Admission Ticket"
-	};
+};
 
 // pluralized descriptive text for each item
-const char *CItem::m_pItemPluralText[MG_OBJ_COUNT] = {	
+const char *CItem::m_pItemPluralText[MG_OBJ_COUNT] = {
 	"Radio-Controlled Flying Anvils",
 	"Berets of Invisibilty",
 	"Broomsticks",
@@ -92,7 +92,7 @@ const char *CItem::m_pItemPluralText[MG_OBJ_COUNT] = {
 	"Pots of Honey",
 	"Enchanted Kumquats",
 	"Mirrors of Deflection",
-	"Mish",	
+	"Mish",
 	"Mosh",
 	"Kayak Paddles",
 	"Bundt Pans",
@@ -106,13 +106,13 @@ const char *CItem::m_pItemPluralText[MG_OBJ_COUNT] = {
 	"Killer Cotton Swabs",
 	"Flyswatters of Death",
 	"General Admission Tickets"
-	};
+};
 
 // place to construct item names
-char	CItem::m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];	
+char    CItem::m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];
 
 // disk path specifications for item bitmaps
-const char *CItem::m_pItemBitmapPath[MG_OBJ_COUNT] = {	
+const char *CItem::m_pItemBitmapPath[MG_OBJ_COUNT] = {
 	".\\art\\anvil.bmp",
 	".\\art\\beret.bmp",
 	".\\art\\broom.bmp",
@@ -147,7 +147,7 @@ const char *CItem::m_pItemBitmapPath[MG_OBJ_COUNT] = {
 	".\\art\\swab.bmp",
 	".\\art\\swatter.bmp",
 	".\\art\\ticket.bmp"
-	};
+};
 
 // disk path specifications for item sounds
 const char *CItem::m_pItemSoundPath[MG_OBJ_COUNT] = {
@@ -185,10 +185,10 @@ const char *CItem::m_pItemSoundPath[MG_OBJ_COUNT] = {
 	".\\sound\\obj28.wav",
 	".\\sound\\obj09.wav",
 	".\\sound\\obj07.wav"
-	};
+};
 
 // value for each item if sold
-int	CItem::m_nValue[MG_OBJ_COUNT] = {	
+int CItem::m_nValue[MG_OBJ_COUNT] = {
 	49,
 	50,
 	32,
@@ -223,7 +223,7 @@ int	CItem::m_nValue[MG_OBJ_COUNT] = {
 	26,
 	40,
 	30
-	};
+};
 #endif
 
 /*************************************************************************
@@ -231,17 +231,16 @@ int	CItem::m_nValue[MG_OBJ_COUNT] = {
  * CItem()
  *
  * Parameters:
- *	int nID			item identifier
+ *  int nID         item identifier
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Constructor for item class.  Initialize all fields
- *					to reflect a single instance of the item.
+ * Description:     Constructor for item class.  Initialize all fields
+ *                  to reflect a single instance of the item.
  *
  ************************************************************************/
 
-CItem::CItem(int nID)
-{
+CItem::CItem(int nID) {
 	m_nID = nID;
 	m_nQuantity = 1;
 	m_nActionCode = ITEM_ACTION_NONE;
@@ -255,20 +254,19 @@ CItem::CItem(int nID)
  *
  * ~CItem()
  *
- * Parameters:		none
+ * Parameters:      none
  *
- * Return Value:	none
+ * Return Value:    none
  *
- * Description:		Destructor for item class.  Item item objects
- *					are automatically purged from the equipment list.
+ * Description:     Destructor for item class.  Item item objects
+ *                  are automatically purged from the equipment list.
  *
  ************************************************************************/
 
-CItem::~CItem()
-{
-CNote	*pNote;
+CItem::~CItem() {
+	CNote   *pNote;
 
-	while(m_pNotes != NULL) {						// remove all associated notes
+	while (m_pNotes != NULL) {                      // remove all associated notes
 		pNote = m_pNotes;
 		m_pNotes = (*pNote).m_pNext;
 		delete pNote;
@@ -281,32 +279,30 @@ CNote	*pNote;
  * GetDescription()
  *
  * Parameters:
- *	int nID;		item identifier
+ *  int nID;        item identifier
  *
  * Return Value:
- *	LPSTR			pointer to item's descriptive text
+ *  LPSTR           pointer to item's descriptive text
  *
- * Description:		return a pointer to the descriptive text for an item.
+ * Description:     return a pointer to the descriptive text for an item.
  *
  ************************************************************************/
 #ifndef FRAME_EXE
-char * CItem::GetDescription(int nID, long nQuantity)
-{
+char *CItem::GetDescription(int nID, long nQuantity) {
 	if ((nID < MG_OBJ_BASE) ||
-		(nID >= MG_OBJ_BASE + MG_OBJ_COUNT))			// return NULL if invalid identifier
+	        (nID >= MG_OBJ_BASE + MG_OBJ_COUNT))            // return NULL if invalid identifier
 		m_chTextBuffer[0] = '\0';
 	else {
 		if (nQuantity > 1)                              // create blurb for multiple
-			sprintf(m_chTextBuffer,"%ld %s",nQuantity,m_pItemPluralText[nID - MG_OBJ_BASE]);
+			sprintf(m_chTextBuffer, "%ld %s", nQuantity, m_pItemPluralText[nID - MG_OBJ_BASE]);
+		else if ((nID == MG_OBJ_CROWN) &&                   // special case having no crowns
+		         (nQuantity == 0))
+			sprintf(m_chTextBuffer, "%s %s", "You have no", m_pItemPluralText[nID - MG_OBJ_BASE]);
 		else
-		if ((nID == MG_OBJ_CROWN) &&					// special case having no crowns
-			(nQuantity == 0))
-			sprintf(m_chTextBuffer,"%s %s","You have no",m_pItemPluralText[nID - MG_OBJ_BASE]);
-		else
-			strcpy(m_chTextBuffer,m_pItemText[nID - MG_OBJ_BASE]);    // get the text for the item
+			strcpy(m_chTextBuffer, m_pItemText[nID - MG_OBJ_BASE]);   // get the text for the item
 	}
-	
-	return(m_chTextBuffer);
+
+	return (m_chTextBuffer);
 }
 #endif
 
@@ -315,36 +311,35 @@ char * CItem::GetDescription(int nID, long nQuantity)
  * AddNote()
  *
  * Parameters:
- *	int nID;		note identifier
- *	int nPerson		identifier of note giver
- *	int nPlace		identifier of note location
+ *  int nID;        note identifier
+ *  int nPerson     identifier of note giver
+ *  int nPlace      identifier of note location
  *
  * Return Value:
- *	BOOL			success / failure
+ *  BOOL            success / failure
  *
- * Description:		add a note entry to the notebook object.
+ * Description:     add a note entry to the notebook object.
  *
  ************************************************************************/
 
-BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace)
-{
-BOOL	bSuccess = FALSE;
-CNote	*pNote;
+BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
+	BOOL    bSuccess = FALSE;
+	CNote   *pNote;
 
-	if ((GetID() != MG_OBJ_HODJ_NOTEBOOK) &&			// punt if not using notebook
-		(GetID() != MG_OBJ_PODJ_NOTEBOOK))
-		return(FALSE);
+	if ((GetID() != MG_OBJ_HODJ_NOTEBOOK) &&            // punt if not using notebook
+	        (GetID() != MG_OBJ_PODJ_NOTEBOOK))
+		return (FALSE);
 
-	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);	// create the note object
-	if (pNote != NULL) {							// ... and add it to the list
-		(*pNote).m_pNext = m_pNotes;				// make head of list follow us
+	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);    // create the note object
+	if (pNote != NULL) {                            // ... and add it to the list
+		(*pNote).m_pNext = m_pNotes;                // make head of list follow us
 		if (m_pNotes != NULL)                       // have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
-		m_pNotes = pNote;							// make us be new head of list
+		m_pNotes = pNote;                           // make us be new head of list
 		bSuccess = TRUE;
 	}
 
-	return(bSuccess);
+	return (bSuccess);
 }
 
 
@@ -356,38 +351,35 @@ CNote	*pNote;
  *  CNote *pNote    note pointer
  *
  * Return Value:
- *	BOOL			success / failure
+ *  BOOL            success / failure
  *
- * Description:		add a note entry to the notebook object.
+ * Description:     add a note entry to the notebook object.
  *
  ************************************************************************/
 
-BOOL CItem::AddNote(CNote *pNote)
-{
-BOOL	bSuccess = FALSE;
+BOOL CItem::AddNote(CNote *pNote) {
+	BOOL    bSuccess = FALSE;
 
-	if (pNote != NULL) {							// ... and add it to the list
-		(*pNote).m_pNext = m_pNotes;				// make head of list follow us
+	if (pNote != NULL) {                            // ... and add it to the list
+		(*pNote).m_pNext = m_pNotes;                // make head of list follow us
 		if (m_pNotes != NULL)                       // have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
-		m_pNotes = pNote;							// make us be new head of list
+		m_pNotes = pNote;                           // make us be new head of list
 		bSuccess = TRUE;
 	}
 
-	return(bSuccess);
+	return (bSuccess);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // CItem diagnostics
 
 #ifdef _DEBUG
-void CItem::AssertValid() const
-{
+void CItem::AssertValid() const {
 	CObject::AssertValid();
 }
 
-void CItem::Dump(CDumpContext& dc) const
-{
+void CItem::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 

@@ -26,77 +26,70 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Barbershop {
 
-OSpr::OSpr() :CSprite()
-{
+OSpr::OSpr() : CSprite() {
 	m_cCard = NULL;
 }
 
-CCard::CCard()
-{
-	m_enSuit	= (suit) suit_none;
-	m_nPip		= 0;
+CCard::CCard() {
+	m_enSuit    = (suit) suit_none;
+	m_nPip      = 0;
 	m_pPrevCard = NULL;
 	m_pNextCard = NULL;
-	m_pSprite	= NULL;
-	m_pStack	= NULL;
-	m_bIsBack	= FALSE;
-	m_cOrigin	= CPoint(0,0);
+	m_pSprite   = NULL;
+	m_pStack    = NULL;
+	m_bIsBack   = FALSE;
+	m_cOrigin   = CPoint(0, 0);
 }
 
-CCard::CCard(int nValue)
-{
-	if ( nValue >= SUITS * PIPS ) {					// Is this a joker card?
-		m_enSuit	= manicurist;					// Yes - assign joker suit
-		m_nPip		= MANI_CARD;					//  and joker pip
+CCard::CCard(int nValue) {
+	if (nValue >= SUITS * PIPS) {                    // Is this a joker card?
+		m_enSuit    = manicurist;                   // Yes - assign joker suit
+		m_nPip      = MANI_CARD;                    //  and joker pip
 	} else {
-		m_enSuit = (suit) (nValue % SUITS);			// No - assign usual suit
-		m_nPip		= nValue % PIPS;
+		m_enSuit = (suit)(nValue % SUITS);          // No - assign usual suit
+		m_nPip      = nValue % PIPS;
 	}
 
 	m_pPrevCard = NULL;
 	m_pNextCard = NULL;
-	m_pSprite	= NULL;
-	m_pStack	= NULL;
-	m_bIsBack	= FALSE;
-	m_cOrigin	= CPoint(0,0);
+	m_pSprite   = NULL;
+	m_pStack    = NULL;
+	m_bIsBack   = FALSE;
+	m_cOrigin   = CPoint(0, 0);
 }
 
-CCard::CCard(suit enSuit, int nPip)
-{
-	m_enSuit 	= enSuit;
-	m_nPip 		= nPip;
+CCard::CCard(suit enSuit, int nPip) {
+	m_enSuit    = enSuit;
+	m_nPip      = nPip;
 	m_pPrevCard = NULL;
 	m_pNextCard = NULL;
-	m_pSprite	= NULL;
-	m_pStack	= NULL;
-	m_bIsBack	= FALSE;
-	m_cOrigin	= CPoint(0,0);
+	m_pSprite   = NULL;
+	m_pStack    = NULL;
+	m_bIsBack   = FALSE;
+	m_cOrigin   = CPoint(0, 0);
 }
 
-CCard::~CCard()
-{
+CCard::~CCard() {
 }
 
-int CCard::GetValue() 
-{ 
-	if ( m_enSuit == manicurist ) {	// Is Joker suit?
-		return m_nPip;				// return it's special pip
+int CCard::GetValue() {
+	if (m_enSuit == manicurist) {    // Is Joker suit?
+		return m_nPip;              // return it's special pip
 	} else {
-		return (m_nPip + (m_enSuit * PIPS)); 
+		return (m_nPip + (m_enSuit * PIPS));
 	}
 }
 
-CCard& CCard::operator=(const CCard& cCard)
-{
-	m_enSuit	= cCard.m_enSuit;		// Private members
-	m_nPip		= cCard.m_nPip;
+CCard &CCard::operator=(const CCard& cCard) {
+	m_enSuit    = cCard.m_enSuit;       // Private members
+	m_nPip      = cCard.m_nPip;
 
-	m_pPrevCard = cCard.m_pPrevCard;	// Public members
+	m_pPrevCard = cCard.m_pPrevCard;    // Public members
 	m_pNextCard = cCard.m_pNextCard;
-	m_pStack	= cCard.m_pStack;
-	m_bIsBack	= cCard.m_bIsBack;
-	m_pSprite	= cCard.m_pSprite;
-	m_cOrigin	= cCard.m_cOrigin;
+	m_pStack    = cCard.m_pStack;
+	m_bIsBack   = cCard.m_bIsBack;
+	m_pSprite   = cCard.m_pSprite;
+	m_cOrigin   = cCard.m_cOrigin;
 
 	return (*this);
 }

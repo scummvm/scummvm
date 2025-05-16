@@ -39,201 +39,196 @@ namespace Crypt {
 #include <stdio.h>
 
 #ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
+	#undef THIS_FILE
+	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
 
 ///DEFS gtl.h
 
 extern CGtlFrame        *pMainWindow;
 
-static CSingleDocTemplate* pSdiDocTemplate = NULL;
+static CSingleDocTemplate *pSdiDocTemplate = NULL;
 
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlApp
 
 BEGIN_MESSAGE_MAP(CGtlApp, CWinApp)
-        //{{AFX_MSG_MAP(CGtlApp)
-        ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-                // NOTE - the ClassWizard will add and remove mapping macros here.
-                //    DO NOT EDIT what you see in these blocks of generated code!
-        //}}AFX_MSG_MAP
-        // Standard file based document commands
-        ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
-        ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
-        // Standard print setup command
-        ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+	//{{AFX_MSG_MAP(CGtlApp)
+	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+	// NOTE - the ClassWizard will add and remove mapping macros here.
+	//    DO NOT EDIT what you see in these blocks of generated code!
+	//}}AFX_MSG_MAP
+	// Standard file based document commands
+	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+	ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+	// Standard print setup command
+	ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlApp construction
 
-CGtlApp::CGtlApp()
-{
-    // Place all significant initialization in InitInstance
-    memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
+CGtlApp::CGtlApp() {
+	// Place all significant initialization in InitInstance
+	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 }
 
-CGtlApp::~CGtlApp()
-{
-#ifdef _DEBUG
-    m_cBdbgMgr.ReportTraceObjects() ;
-#endif
+CGtlApp::~CGtlApp() {
+	#ifdef _DEBUG
+	m_cBdbgMgr.ReportTraceObjects() ;
+	#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CGtlApp object
 
 #if !GTLDLL
-CGtlApp NEAR theApp;
+	CGtlApp NEAR theApp;
 #endif /* GTLDLL */
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlApp initialization
 
-BOOL CGtlApp::InitInstance()
-{
+BOOL CGtlApp::InitInstance() {
 
-    // Standard initialization
-    // If you are not using these features and wish to reduce the size
-    //  of your final executable, you should remove from the following
-    //  the specific initialization routines you do not need.
+	// Standard initialization
+	// If you are not using these features and wish to reduce the size
+	//  of your final executable, you should remove from the following
+	//  the specific initialization routines you do not need.
 
-    SetDialogBkColor();        // Set dialog background color to gray
+	SetDialogBkColor();        // Set dialog background color to gray
 
-    // Initialize
-    //
-    m_iWidth = GetSystemMetrics(SM_CXSCREEN);
-    m_iHeight = GetSystemMetrics(SM_CYSCREEN);
+	// Initialize
+	//
+	m_iWidth = GetSystemMetrics(SM_CXSCREEN);
+	m_iHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    m_iX = 0;
-    m_iY = 0;
+	m_iX = 0;
+	m_iY = 0;
 
-    // If we ever change Hodj 'n' Podj to live in entire screen
-    // then delete these next 4 lines of code
-    //
-    m_iWidth = GAME_WIDTH;
-    m_iHeight = GAME_HEIGHT;
-    m_iX = (GetSystemMetrics(SM_CXSCREEN) - m_iWidth) / 2 ;
-    m_iY = (GetSystemMetrics(SM_CYSCREEN)- m_iHeight) / 2 ;
+	// If we ever change Hodj 'n' Podj to live in entire screen
+	// then delete these next 4 lines of code
+	//
+	m_iWidth = GAME_WIDTH;
+	m_iHeight = GAME_HEIGHT;
+	m_iX = (GetSystemMetrics(SM_CXSCREEN) - m_iWidth) / 2 ;
+	m_iY = (GetSystemMetrics(SM_CYSCREEN) - m_iHeight) / 2 ;
 
-    strcpy(m_szFilename, "META.GTL");
+	strcpy(m_szFilename, "META.GTL");
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 
-    XPSTR xpszFile = "jxdebug.ini", xpszSect = "meta";
+	XPSTR xpszFile = "jxdebug.ini", xpszSect = "meta";
 
-    m_cBdbgMgr.DebugInit(xpszFile, xpszSect) ;
+	m_cBdbgMgr.DebugInit(xpszFile, xpszSect) ;
 
-    m_bTitle = m_cBdbgMgr.GetDebugInt("title") ;
-    m_iHeight = m_cBdbgMgr.GetDebugInt("height", GAME_HEIGHT) ;
-    m_iWidth = m_cBdbgMgr.GetDebugInt("width", GAME_WIDTH) ;
+	m_bTitle = m_cBdbgMgr.GetDebugInt("title") ;
+	m_iHeight = m_cBdbgMgr.GetDebugInt("height", GAME_HEIGHT) ;
+	m_iWidth = m_cBdbgMgr.GetDebugInt("width", GAME_WIDTH) ;
 
-    m_iX = (GetSystemMetrics(SM_CXSCREEN) - m_iWidth) / 2 ;
-    m_iY = (GetSystemMetrics(SM_CYSCREEN)- m_iHeight) / 2 ;
+	m_iX = (GetSystemMetrics(SM_CXSCREEN) - m_iWidth) / 2 ;
+	m_iY = (GetSystemMetrics(SM_CYSCREEN) - m_iHeight) / 2 ;
 
-    m_iX = m_cBdbgMgr.GetDebugInt("x", m_iX) ;
-    m_iY = m_cBdbgMgr.GetDebugInt("y", m_iY) ;
+	m_iX = m_cBdbgMgr.GetDebugInt("x", m_iX) ;
+	m_iY = m_cBdbgMgr.GetDebugInt("y", m_iY) ;
 
-    m_bShowNodes = m_cBdbgMgr.GetDebugInt("shownodes") ;
-    m_bDumpGamePlay = m_cBdbgMgr.GetDebugInt("dumpgameplay") ;
-    m_bPaintBackground = m_cBdbgMgr.GetDebugInt("paintbackground") ;
-    m_bStartMetaGame = m_cBdbgMgr.GetDebugInt("startmetagame", 1) ; // dft on
+	m_bShowNodes = m_cBdbgMgr.GetDebugInt("shownodes") ;
+	m_bDumpGamePlay = m_cBdbgMgr.GetDebugInt("dumpgameplay") ;
+	m_bPaintBackground = m_cBdbgMgr.GetDebugInt("paintbackground") ;
+	m_bStartMetaGame = m_cBdbgMgr.GetDebugInt("startmetagame", 1) ; // dft on
 
-    m_cBdbgMgr.GetDebugString("filename", m_szFilename, sizeof(m_szFilename), "meta.gtl") ;
-#endif
+	m_cBdbgMgr.GetDebugString("filename", m_szFilename, sizeof(m_szFilename), "meta.gtl") ;
+	#endif
 
-#ifdef NODEEDIT
-    m_bControlDialog = m_cBdbgMgr.GetDebugInt("controldialog") ;
-    m_bMenuDialog = m_cBdbgMgr.GetDebugInt("menudialog") ;
-    m_bNodeDialog = m_cBdbgMgr.GetDebugInt("nodedialog") ;
-    m_bInfoDialog = m_cBdbgMgr.GetDebugInt("infodialog") ;
-    //m_bStartMetaGame = FALSE;
-#endif
-    
-    m_iNumOpens = 0;
+	#ifdef NODEEDIT
+	m_bControlDialog = m_cBdbgMgr.GetDebugInt("controldialog") ;
+	m_bMenuDialog = m_cBdbgMgr.GetDebugInt("menudialog") ;
+	m_bNodeDialog = m_cBdbgMgr.GetDebugInt("nodedialog") ;
+	m_bInfoDialog = m_cBdbgMgr.GetDebugInt("infodialog") ;
+	//m_bStartMetaGame = FALSE;
+	#endif
 
-    return TRUE;
+	m_iNumOpens = 0;
+
+	return TRUE;
 }
 
 
-void CGtlApp::CreateInstance( void )
-{
-    pSdiDocTemplate = new CSingleDocTemplate(
-        IDR_GTLTYPE,
-        RUNTIME_CLASS(CGtlDoc),
-        RUNTIME_CLASS(CGtlFrame),     // main SDI frame window
-        RUNTIME_CLASS(CGtlView));
-    AddDocTemplate(pSdiDocTemplate);
-        
-    m_nCmdShow = SW_SHOWNORMAL;
-        
-    OnFileNew();
+void CGtlApp::CreateInstance(void) {
+	pSdiDocTemplate = new CSingleDocTemplate(
+	    IDR_GTLTYPE,
+	    RUNTIME_CLASS(CGtlDoc),
+	    RUNTIME_CLASS(CGtlFrame),     // main SDI frame window
+	    RUNTIME_CLASS(CGtlView));
+	AddDocTemplate(pSdiDocTemplate);
+
+	m_nCmdShow = SW_SHOWNORMAL;
+
+	OnFileNew();
 }
 
 #if GTLDLL
 
-int CGtlApp::ExitInstance()
-{
-/*
-    if (pSdiDocTemplate != NULL) {
-        pSdiDocTemplate->CloseAllDocuments(TRUE);
-        pSdiDocTemplate = NULL;
-    }
-    if ( pMainWindow != NULL )
-        pMainWindow->DestroyWindow();
-*/    
-    // Don't call CWinApp::ExitInstance(); Because we would get the recent
-    // file list in HNPMETA.INI
-    return(0);
+int CGtlApp::ExitInstance() {
+	/*
+	    if (pSdiDocTemplate != NULL) {
+	        pSdiDocTemplate->CloseAllDocuments(TRUE);
+	        pSdiDocTemplate = NULL;
+	    }
+	    if ( pMainWindow != NULL )
+	        pMainWindow->DestroyWindow();
+	*/
+	// Don't call CWinApp::ExitInstance(); Because we would get the recent
+	// file list in HNPMETA.INI
+	return (0);
 }
 #endif /* GTLDLL */
 
-//* CGtlApp::CallOnFileNew -- 
+//* CGtlApp::CallOnFileNew --
 BOOL CGtlApp::CallOnFileNew(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CGtlApp::CallOnFileNew) ;
-    int iError = 0 ;            // error code
+	JXENTER(CGtlApp::CallOnFileNew) ;
+	int iError = 0 ;            // error code
 
-    OnFileNew() ;       // makes protected function public
+	OnFileNew() ;       // makes protected function public
 
 //cleanup:
 
-    JXELEAVE(CGtlApp::CallOnFileNew) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CGtlApp::CallOnFileNew) ;
+	RETURN(iError != 0) ;
 }
 
-//* CGtlApp::CallOnFileOpen -- 
+//* CGtlApp::CallOnFileOpen --
 BOOL CGtlApp::CallOnFileOpen(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CGtlApp::CallOnFileOpen) ;
-    int iError = 0 ;            // error code
+	JXENTER(CGtlApp::CallOnFileOpen) ;
+	int iError = 0 ;            // error code
 
-    OnFileOpen() ;      // makes protected function public
+	OnFileOpen() ;      // makes protected function public
 
 //cleanup:
 
-    JXELEAVE(CGtlApp::CallOnFileOpen) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CGtlApp::CallOnFileOpen) ;
+	RETURN(iError != 0) ;
 }
 
-//* CGtlApp::CallOnFileSave -- 
+//* CGtlApp::CallOnFileSave --
 BOOL CGtlApp::CallOnFileSave(void)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CGtlApp::CallOnFileSave) ;
-    int iError = 0 ;            // error code
+	JXENTER(CGtlApp::CallOnFileSave) ;
+	int iError = 0 ;            // error code
 
 //    OnFileSave() ;    // makes protected function public
-    SaveAllModified() ;
+	SaveAllModified() ;
 
 //cleanup:
 
-    JXELEAVE(CGtlApp::CallOnFileSave) ;
-    RETURN(iError != 0) ;
+	JXELEAVE(CGtlApp::CallOnFileSave) ;
+	RETURN(iError != 0) ;
 }
 
 //* CGtlApp::DoMessageBox -- override of CWinApp function to
@@ -241,22 +236,22 @@ BOOL CGtlApp::CallOnFileSave(void)
 int CGtlApp::DoMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 // returns: TRUE if error, FALSE otherwise
 {
-    JXENTER(CGtlApp::DoMessageBox) ;
-    int iError = 0 ;            // error code
-    int iRetval = IDOK ;                // return value
+	JXENTER(CGtlApp::DoMessageBox) ;
+	int iError = 0 ;            // error code
+	int iRetval = IDOK ;                // return value
 
-#ifdef _DEBUG
-    if (lpszPrompt && lpszPrompt[0] == '~')
-        m_cBdbgMgr.DebugMessageBox(lpszPrompt, nType, nIDPrompt) ;
+	#ifdef _DEBUG
+	if (lpszPrompt && lpszPrompt[0] == '~')
+		m_cBdbgMgr.DebugMessageBox(lpszPrompt, nType, nIDPrompt) ;
 
-    else
-        iRetval = CWinApp::DoMessageBox(lpszPrompt, nType, nIDPrompt) ;
+	else
+		iRetval = CWinApp::DoMessageBox(lpszPrompt, nType, nIDPrompt) ;
 
 // cleanup:
-#endif
+	#endif
 
-    JXELEAVE(CGtlApp::DoMessageBox) ;
-    RETURN(iRetval) ;
+	JXELEAVE(CGtlApp::DoMessageBox) ;
+	RETURN(iRetval) ;
 }
 
 
@@ -264,49 +259,45 @@ int CGtlApp::DoMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
 
-class CAboutDlg : public CDialog
-{
+class CAboutDlg : public CDialog {
 public:
-        CAboutDlg();
+	CAboutDlg();
 
 // Dialog Data
-        //{{AFX_DATA(CAboutDlg)
-        enum { IDD = IDD_ABOUTBOX };
-        //}}AFX_DATA
+	//{{AFX_DATA(CAboutDlg)
+	enum { IDD = IDD_ABOUTBOX };
+	//}}AFX_DATA
 
 // Implementation
 protected:
-        virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-        //{{AFX_MSG(CAboutDlg)
-                // No message handlers
-        //}}AFX_MSG
-        DECLARE_MESSAGE_MAP()
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	//{{AFX_MSG(CAboutDlg)
+	// No message handlers
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
-{
-        //{{AFX_DATA_INIT(CAboutDlg)
-        //}}AFX_DATA_INIT
+CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD) {
+	//{{AFX_DATA_INIT(CAboutDlg)
+	//}}AFX_DATA_INIT
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-        CDialog::DoDataExchange(pDX);
-        //{{AFX_DATA_MAP(CAboutDlg)
-        //}}AFX_DATA_MAP
+void CAboutDlg::DoDataExchange(CDataExchange* pDX) {
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CAboutDlg)
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-        //{{AFX_MSG_MAP(CAboutDlg)
-                // No message handlers
-        //}}AFX_MSG_MAP
+	//{{AFX_MSG_MAP(CAboutDlg)
+	// No message handlers
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 // App command to run the dialog
-void CGtlApp::OnAppAbout()
-{
-        CAboutDlg aboutDlg;
-        aboutDlg.DoModal();
+void CGtlApp::OnAppAbout() {
+	CAboutDlg aboutDlg;
+	aboutDlg.DoModal();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -326,15 +317,14 @@ void CGtlApp::OnAppAbout()
 
 IMPLEMENT_DYNAMIC(CGtlMDIChildWnd, CMDIChildWnd)
 
-BOOL CGtlMDIChildWnd::PreCreateWindow(CREATESTRUCT& cs)
-{
-        // By turning off the default MFC-defined FWS_ADDTOTITLE style,
-        // the framework will use first string in the document template
-        // STRINGTABLE resource instead of the document name.
+BOOL CGtlMDIChildWnd::PreCreateWindow(CREATESTRUCT& cs) {
+	// By turning off the default MFC-defined FWS_ADDTOTITLE style,
+	// the framework will use first string in the document template
+	// STRINGTABLE resource instead of the document name.
 
 //      cs.style &= ~(LONG)FWS_ADDTOTITLE;
 //      cs.style = WS_POPUP ;
-        return CMDIChildWnd::PreCreateWindow(cs);
+	return CMDIChildWnd::PreCreateWindow(cs);
 }
 #endif
 
