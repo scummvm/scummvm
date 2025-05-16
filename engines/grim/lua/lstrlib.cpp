@@ -29,7 +29,8 @@ static void addnchar(const char *s, int32 n) {
 #endif
 
 static void addstr(const char *s) {
-	addnchar(s, strlen(s));
+	if (*s)
+		addnchar(s, strlen(s));
 }
 
 static void str_len() {
