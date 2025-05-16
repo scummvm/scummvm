@@ -64,7 +64,7 @@ boolean teleencendida,
 	trampa_puesta,
 	peteractivo;
 
-boolean dentro_del_juego;
+boolean inGame;
 
 boolean hechaprimeravez;
 
@@ -104,7 +104,7 @@ byte movidapaleta;
 
 byte rejillaquetoca;
 
-byte parte_del_juego;
+byte gamePart;
 byte encripcod1;
 
 byte secondaryAnimationFrameCount;
@@ -823,7 +823,7 @@ void resetGameState() {
 	completadalista2 = false;
 
 	movidapaleta = 0;
-	parte_del_juego = 1;
+	gamePart = 1;
 
 	vasijapuesta = false;
 	guadagna = false;
@@ -1147,7 +1147,7 @@ void initPlayAnim() {
 	contadorpc2 = 0;
 	continuarpartida = true;
 	hechaprimeravez = false;
-	dentro_del_juego = false;
+	inGame = false;
 }
 
 } // End of namespace Tot

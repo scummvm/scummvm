@@ -302,7 +302,7 @@ bool TotEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 bool TotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return dentro_del_juego;
+	return inGame;
 }
 
 } // End of namespace Tot
