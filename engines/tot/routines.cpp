@@ -3398,7 +3398,6 @@ void useScreenObject() {
 					currentRoomData->indexadoobjetos[16]->objectName = "CARBON";
 					currentRoomData->indexadoobjetos[1]->indicefichero = 347;
 					currentRoomData->indexadoobjetos[1]->objectName = "BOMBILLA";
-					debug("Enabled bombilla!");
 					stopVoc();
 					autoPlayVoc("CALDERA", 6433, 15386);
 				} break;
@@ -4994,8 +4993,7 @@ void loadTalkAnimations() {
 			loadAnimationForDirection(&fichcani, 0);
 		}
 		fichcani.close();
-	} else
-		estadovoc = 1;
+	}
 }
 
 void unloadTalkAnimations() {
@@ -5030,8 +5028,7 @@ void unloadTalkAnimations() {
 			loadAnimationForDirection(&fichcani, 0);
 		}
 		fichcani.close();
-	} else
-		estadovoc = 0;
+	}
 }
 
 regismht readVerbRegister(uint numRegister) {
