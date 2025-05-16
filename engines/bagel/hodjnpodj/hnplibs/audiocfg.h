@@ -31,44 +31,43 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-#define PAGE_SIZE	  2
+#define PAGE_SIZE     2
 #define LEVEL_MIN     1
 #define LEVEL_DEF     ((VOLUME_INDEX_MAX * 3) >> 2)
 #define LEVEL_MAX     VOLUME_INDEX_MAX
 
-class CAudioCfgDlg : public CBmpDialog
-{
-    public:
-        CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, UINT);
+class CAudioCfgDlg : public CBmpDialog {
+public:
+	CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, UINT);
 
-    protected:
+protected:
 
-        virtual VOID DoDataExchange(CDataExchange *);
-        virtual BOOL OnCommand(WPARAM, LPARAM);
-        virtual BOOL OnInitDialog(VOID);
-        VOID PutDlgData(VOID);
-        VOID GetDlgData(VOID);
-        VOID LoadIniSettings(VOID);
-        VOID SaveIniSettings(VOID);
-        VOID UpdateOptions(VOID);
-        VOID ClearDialogImage(VOID);                               
-                               
-        afx_msg BOOL OnEraseBkgnd(CDC *);
-        VOID OnHScroll(UINT, UINT, CScrollBar *);
-        VOID OnClose();
-        VOID OnDestroy();
-        VOID OnPaint();
-        DECLARE_MESSAGE_MAP()
+	virtual VOID DoDataExchange(CDataExchange *);
+	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual BOOL OnInitDialog(VOID);
+	VOID PutDlgData(VOID);
+	VOID GetDlgData(VOID);
+	VOID LoadIniSettings(VOID);
+	VOID SaveIniSettings(VOID);
+	VOID UpdateOptions(VOID);
+	VOID ClearDialogImage(VOID);
 
-        CScrollBar   *m_pScrollBar1;
-        CCheckButton *m_pMusicButton;
-        CCheckButton *m_pSoundButton;
-        
-        CText		 *m_pTxtVolume;
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	VOID OnHScroll(UINT, UINT, CScrollBar *);
+	VOID OnClose();
+	VOID OnDestroy();
+	VOID OnPaint();
+	DECLARE_MESSAGE_MAP()
 
-        INT          m_nVolume;
-        BOOL         m_bMusic;
-        BOOL         m_bSound;
+	CScrollBar   *m_pScrollBar1;
+	CCheckButton *m_pMusicButton;
+	CCheckButton *m_pSoundButton;
+
+	CText        *m_pTxtVolume;
+
+	INT          m_nVolume;
+	BOOL         m_bMusic;
+	BOOL         m_bSound;
 };
 
 } // namespace HodjNPodj

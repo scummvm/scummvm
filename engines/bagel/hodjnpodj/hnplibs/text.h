@@ -29,35 +29,35 @@ namespace HodjNPodj {
 
 // text color and offset definitions
 
-#define CTEXT_COLOR			RGB(0,0,0)
-#define CTEXT_SHADOW_COLOR	RGB(0,0,0)
-#define	CTEXT_SHADOW_DX		2
-#define	CTEXT_SHADOW_DY		2
+#define CTEXT_COLOR         RGB(0,0,0)
+#define CTEXT_SHADOW_COLOR  RGB(0,0,0)
+#define CTEXT_SHADOW_DX     2
+#define CTEXT_SHADOW_DY     2
 
 // text justification definitions
 enum {
-	JUSTIFY_CENTER		= 0,
-	JUSTIFY_LEFT		= 1,
-	JUSTIFY_RIGHT		= 2
+	JUSTIFY_CENTER      = 0,
+	JUSTIFY_LEFT        = 1,
+	JUSTIFY_RIGHT       = 2
 };
 
 // text weight definitions
 
-#define TEXT_DONTCARE		0
-#define TEXT_THIN			FW_THIN
-#define TEXT_EXTRALIGHT		FW_EXTRALIGHT
-#define TEXT_ULTRALIGHT		FW_ULTRALIGHT
-#define TEXT_LIGHT			FW_LIGHT
-#define TEXT_NORMAL			FW_NORMAL
-#define TEXT_REGULAR		FW_REGULAR
-#define TEXT_MEDIUM			FW_MEDIUM
-#define TEXT_SEMIBOLD		FW_SEMIBOLD
-#define TEXT_DEMIBOLD		FW_DEMIBOLD
-#define TEXT_BOLD			FW_BOLD
-#define TEXT_EXTRABOLD		FW_EXTRABOLD
-#define TEXT_ULTRABOLD		FW_ULTRABOLD
-#define TEXT_BLACK			FW_BLACK
-#define TEXT_HEAVY			FW_HEAVY
+#define TEXT_DONTCARE       0
+#define TEXT_THIN           FW_THIN
+#define TEXT_EXTRALIGHT     FW_EXTRALIGHT
+#define TEXT_ULTRALIGHT     FW_ULTRALIGHT
+#define TEXT_LIGHT          FW_LIGHT
+#define TEXT_NORMAL         FW_NORMAL
+#define TEXT_REGULAR        FW_REGULAR
+#define TEXT_MEDIUM         FW_MEDIUM
+#define TEXT_SEMIBOLD       FW_SEMIBOLD
+#define TEXT_DEMIBOLD       FW_DEMIBOLD
+#define TEXT_BOLD           FW_BOLD
+#define TEXT_EXTRABOLD      FW_EXTRABOLD
+#define TEXT_ULTRABOLD      FW_ULTRABOLD
+#define TEXT_BLACK          FW_BLACK
+#define TEXT_HEAVY          FW_HEAVY
 
 class CText : public CObject {
 	DECLARE_DYNCREATE(CText)
@@ -85,34 +85,34 @@ private:
 	BOOL DisplayText(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const BOOL bShadowed);
 
 private:
-    CDC 		*m_pBackgroundDC;	// offscreen bitmap device context for background
-    CBitmap		*m_pBackground;		// bitmap for the text's background
-	CBitmap		*m_pBackgroundOld;	// previous bitmap mapped in the DC
-    CDC 		*m_pWorkDC;			// offscreen bitmap device context for work area
-    CBitmap		*m_pWork;			// bitmap for the work area
-	CBitmap		*m_pWorkOld;		// previous bitmap mapped in the DC
-	CPalette	*m_pPalette;		// color palette for the text
-	CPalette	*m_pPalBackOld;		// previous palette mapped to background DC 
-	CPalette	*m_pPalWorkOld;		// previous palette mapped to work area DC 
-	CPoint		m_cPosition;		// upper left corner of text displayed
-	CSize		m_cSize;			// dx/dy size of the text bitmap
-	CRect		m_cRect;			// bounding rectangle of text area
-	CFont		*m_pFont;           // font to use for the text
-	int			m_nJustify;			// positioning within the rectangle
-	BOOL		m_bBounded;			// bounded versus free-form text output
-	BOOL		m_bHaveBackground;	// whether the background has been saved
-	COLORREF	m_cTextColor;		// color to use for the text itself
-	COLORREF	m_cShadowColor;		// color to use for the text's shadow
-	int			m_nShadow_DX;		// horizontal offset for shadow
-	int			m_nShadow_DY;		// vertical offset for shadow
+	CDC         *m_pBackgroundDC;   // offscreen bitmap device context for background
+	CBitmap     *m_pBackground;     // bitmap for the text's background
+	CBitmap     *m_pBackgroundOld;  // previous bitmap mapped in the DC
+	CDC         *m_pWorkDC;         // offscreen bitmap device context for work area
+	CBitmap     *m_pWork;           // bitmap for the work area
+	CBitmap     *m_pWorkOld;        // previous bitmap mapped in the DC
+	CPalette    *m_pPalette;        // color palette for the text
+	CPalette    *m_pPalBackOld;     // previous palette mapped to background DC
+	CPalette    *m_pPalWorkOld;     // previous palette mapped to work area DC
+	CPoint      m_cPosition;        // upper left corner of text displayed
+	CSize       m_cSize;            // dx/dy size of the text bitmap
+	CRect       m_cRect;            // bounding rectangle of text area
+	CFont       *m_pFont;           // font to use for the text
+	int         m_nJustify;         // positioning within the rectangle
+	BOOL        m_bBounded;         // bounded versus free-form text output
+	BOOL        m_bHaveBackground;  // whether the background has been saved
+	COLORREF    m_cTextColor;       // color to use for the text itself
+	COLORREF    m_cShadowColor;     // color to use for the text's shadow
+	int         m_nShadow_DX;       // horizontal offset for shadow
+	int         m_nShadow_DY;       // vertical offset for shadow
 
-static	int		m_nTabStop;			// tabstop table
-static	BOOL	m_bFontLoaded;      // font loaded flag
-	
-#ifdef _DEBUG
+	static  int     m_nTabStop;         // tabstop table
+	static  BOOL    m_bFontLoaded;      // font loaded flag
+
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 };
 
 } // namespace HodjNPodj

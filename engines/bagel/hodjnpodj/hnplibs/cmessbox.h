@@ -29,16 +29,16 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-#define	TEXT_COLOR			RGB(0, 0, 0)	// displayed text color
+#define TEXT_COLOR          RGB(0, 0, 0)    // displayed text color
 
-#define	MESSAGE_COL			16				// first message box positioning
-#define	MESSAGE_ROW     	60
+#define MESSAGE_COL         16              // first message box positioning
+#define MESSAGE_ROW         60
 
-#define	MESSAGE_WIDTH		186				// standard message box dims
-#define	MESSAGE_HEIGHT		20
+#define MESSAGE_WIDTH       186             // standard message box dims
+#define MESSAGE_HEIGHT      20
 
-#define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )	// Row offset from first 
-													// message box
+#define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )  // Row offset from first 
+// message box
 
 #define IDD_GAMEOVER 201
 
@@ -48,29 +48,29 @@ private:
 	const char *m_pMessage1, *m_pMessage2;
 
 public:
-    // standard constructor
-    CMessageBox(CWnd *pParent, CPalette *pPalette, const char *msg1, const char *msg2 = NULL, const int dx = -1, const int dy = -1);
+	// standard constructor
+	CMessageBox(CWnd *pParent, CPalette *pPalette, const char *msg1, const char *msg2 = NULL, const int dx = -1, const int dy = -1);
 
 	void ClearDialogImage(void);
 
 	// Dialog Data
-    //{{AFX_DATA(CMessageBox)
+	//{{AFX_DATA(CMessageBox)
 	enum { IDD = IDD_GAMEOVER };
-		// NOTE: the ClassWizard will add data members here
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 protected:
 	// Implementation
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
-    //{{AFX_MSG(CMessageBox)
+	//{{AFX_MSG(CMessageBox)
 	afx_msg void OnPaint();
 	virtual void OnOK();
 	virtual void OnCancel();
 	virtual BOOL OnInitDialog();
-    afx_msg void OnDestroy();
-    afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg void OnDestroy();
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -42,9 +42,9 @@ namespace Life {
 //#define IDC_OPTIONS                     1005
 //#define IDC_QUIT                        1007
 
-#define IDD_USERCFG						110		// user config dialog id
-#define IDC_STARTVILLAGES               1010	// scroll bar 
-#define IDC_EVOLVESPEED                 1011	// scroll bar
+#define IDD_USERCFG                     110     // user config dialog id
+#define IDC_STARTVILLAGES               1010    // scroll bar 
+#define IDC_EVOLVESPEED                 1011    // scroll bar
 #define IDC_SCORE                       1013
 #define IDC_YEAR                        1014
 #define IDC_COL_LEFT                    1015
@@ -57,7 +57,7 @@ namespace Life {
 #define IDC_EVOLVEROUNDS                1019
 #define IDC_RETURN_LIFE                 1020
 #define IDC_ROUNDS                      1025
-#define	IDC_PREPLACE					1027
+#define IDC_PREPLACE                    1027
 
 } // namespace Life
 } // namespace HodjNPodj

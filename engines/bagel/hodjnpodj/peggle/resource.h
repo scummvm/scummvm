@@ -29,14 +29,14 @@ namespace Peggle {
 
 #define IDD_SUBOPTIONS                  115
 
-#define IDD_AUDIOCFG					463
+#define IDD_AUDIOCFG                    463
 
-#define IDC_RULES						1000
-#define IDC_SCROLL						1001
+#define IDC_RULES                       1000
+#define IDC_SCROLL                      1001
 #define IDC_NEWGAME                     1002
 #define IDC_RETURN                      1003
 #define IDC_QUIT                        1004
-#define IDC_RESTART						1005
+#define IDC_RESTART                     1005
 
 #define HAND                            105
 #define RESTARTDISABLED                 110
@@ -51,7 +51,7 @@ namespace Peggle {
 #define IDC_SUBBUTTON3                  2002
 #define IDC_SUBOK                       2002
 #define IDC_SUBCANCEL                   2003
-#define	IDC_RANDOM						2005
+#define IDC_RANDOM                      2005
 
 } // namespace Peggle
 } // namespace HodjNPodj

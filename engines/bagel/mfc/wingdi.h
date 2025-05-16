@@ -88,11 +88,11 @@ namespace MFC {
 // Display driver specific
 
 #define VREFRESH        116  /* Current vertical refresh rate of the    */
-							 /* display device (for displays only) in Hz*/
+/* display device (for displays only) in Hz*/
 #define DESKTOPVERTRES  117  /* Horizontal width of entire desktop in   */
-							 /* pixels                                  */
+/* pixels                                  */
 #define DESKTOPHORZRES  118  /* Vertical height of entire desktop in    */
-							 /* pixels                                  */
+/* pixels                                  */
 #define BLTALIGNMENT    119  /* Preferred blt alignment                 */
 #define SHADEBLENDCAPS  120  /* Shading and blending caps               */
 #define COLORMGMTCAPS   121  /* Color Management caps                   */
@@ -175,11 +175,11 @@ namespace MFC {
 /* Font Families */
 #define FF_DONTCARE         (0<<4)  /* Don't care or don't know. */
 #define FF_ROMAN            (1<<4)  /* Variable stroke width, serifed. */
-									/* Times Roman, Century Schoolbook, etc. */
+/* Times Roman, Century Schoolbook, etc. */
 #define FF_SWISS            (2<<4)  /* Variable stroke width, sans-serifed. */
-									/* Helvetica, Swiss, etc. */
+/* Helvetica, Swiss, etc. */
 #define FF_MODERN           (3<<4)  /* Constant stroke width, serifed or sans-serifed. */
-									/* Pica, Elite, Courier, etc. */
+/* Pica, Elite, Courier, etc. */
 #define FF_SCRIPT           (4<<4)  /* Cursive, etc. */
 #define FF_DECORATIVE       (5<<4)  /* Old English, etc. */
 
@@ -263,7 +263,7 @@ enum FontWeight {
  * Standard Cursor IDs
  */
 #define MAKEINTRESOURCE(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
-#define IDC_NONE			0
+#define IDC_NONE            0
 
 #define IDC_ARROW           MAKEINTRESOURCE(32512)
 #define IDC_IBEAM           MAKEINTRESOURCE(32513)
@@ -283,9 +283,9 @@ enum FontWeight {
 #define IDC_HELP            MAKEINTRESOURCE(32651)
 
 
- /*
-  * Owner draw state
-  */
+/*
+ * Owner draw state
+ */
 enum {
 	ODS_SELECTED = 0x0001,
 	ODS_GRAYED = 0x0002,
@@ -347,17 +347,17 @@ enum {
 #define BM_SETIMAGE        0x00F7
 #define BM_SETDONTCLICK    0x00F8
 
- /*
-  * Owner draw actions
-  */
+/*
+ * Owner draw actions
+ */
 #define ODA_DRAWENTIRE  0x0001
 #define ODA_SELECT      0x0002
 #define ODA_FOCUS       0x0004
 
 
-  /*
-   * Color Types
-   */
+/*
+ * Color Types
+ */
 #define CTLCOLOR_MSGBOX         0
 #define CTLCOLOR_EDIT           1
 #define CTLCOLOR_LISTBOX        2
@@ -465,7 +465,7 @@ typedef struct tagBITMAPINFOHEADER {
 	DWORD      biClrUsed;
 	DWORD      biClrImportant;
 } BITMAPINFOHEADER, FAR *LPBITMAPINFOHEADER,
-	*PBITMAPINFOHEADER;
+*PBITMAPINFOHEADER;
 
 typedef struct tagRGBQUAD {
 	BYTE    rgbBlue;
@@ -551,8 +551,7 @@ typedef struct tagDRAWITEMSTRUCT {
 } DRAWITEMSTRUCT, NEAR *PDRAWITEMSTRUCT, FAR *LPDRAWITEMSTRUCT;
 
 /* Logical Brush (or Pattern) */
-typedef struct tagLOGBRUSH
-{
+typedef struct tagLOGBRUSH {
 	UINT        lbStyle;
 	COLORREF    lbColor;
 	ULONG_PTR   lbHatch;
@@ -570,36 +569,36 @@ extern HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
 
 extern INT_PTR DialogBoxParam(HINSTANCE hInstance,
-	LPCTSTR lpTemplateName, HWND hWndParent,
-	DLGPROC lpDialogFunc, LPARAM dwInitParam);
+                              LPCTSTR lpTemplateName, HWND hWndParent,
+                              DLGPROC lpDialogFunc, LPARAM dwInitParam);
 extern BOOL IsWindow(HWND hWnd);
 extern BOOL SetWindowText(HWND hWnd, LPCSTR lpszString);
 extern int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount);
 extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
-	DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
+                       DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
 extern int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
-	LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage);
+                     LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage);
 
 extern HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h);
 extern HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd);
 extern UINT RealizePalette(HDC hdc);
 extern BOOL BitBlt(HDC hdc, int x, int y, int cx, int cy,
-	HDC hdcSrc, int x1, int y1, DWORD rop);
+                   HDC hdcSrc, int x1, int y1, DWORD rop);
 extern BOOL StretchBlt(HDC hdcDest, int xDest, int yDest,
-	int wDest, int hDest, HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop);
+                       int wDest, int hDest, HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop);
 extern int SetStretchBltMode(HDC hdc, int mode);
 extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
-	int xSrc, int ySrc, int SrcWidth, int SrcHeight,
-	CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop);
+                         int xSrc, int ySrc, int SrcWidth, int SrcHeight,
+                         CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop);
 
 extern WORD GetWindowWord(HWND hWnd, int nIndex);
 extern int WINAPI AddFontResource(LPCSTR fontName);
 extern int SetScrollPos(HWND hWnd, int nBar,
-	int nPos, BOOL bRedraw);
+                        int nPos, BOOL bRedraw);
 extern BOOL SetScrollRange(HWND hWnd, int nBar,
-	int nMinPos, int nMaxPos, BOOL bRedraw);
+                           int nMinPos, int nMaxPos, BOOL bRedraw);
 
 extern BOOL ClipCursor(const RECT *lpRect);
 extern BOOL GetCursorPos(LPPOINT lpPoint);
@@ -607,14 +606,14 @@ extern BOOL SetCursorPos(int x, int y);
 extern BOOL SetCapture();
 extern BOOL ReleaseCapture();
 extern HCURSOR LoadCursor(HINSTANCE hInstance,
-	LPCSTR lpCursorName);
+                          LPCSTR lpCursorName);
 extern HCURSOR SetCursor(HCURSOR hCursor);
 extern int ShowCursor(BOOL bShow);
 
 typedef FARPROC LINEDDAPROC;
 extern BOOL LineDDA(int nXStart, int nYStart,
-	int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
-	LPARAM lpData);
+                    int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
+                    LPARAM lpData);
 
 extern BYTE GetRValue(COLORREF color);
 extern BYTE GetGValue(COLORREF color);
@@ -623,9 +622,9 @@ extern BYTE GetBValue(COLORREF color);
 extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
 extern BOOL EndDialog(HWND hDlg, INT_PTR nResult);
 extern BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
-	UINT uValue, BOOL bSigned);
+                          UINT uValue, BOOL bSigned);
 extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
-	int nIDLastButton, int nIDCheckButton);
+                             int nIDLastButton, int nIDCheckButton);
 
 extern DWORD GetSysColor(int nIndex);
 

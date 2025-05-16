@@ -35,54 +35,54 @@ namespace Packrat {
 #define LIVESMIN       1
 
 //////////////////////////////////////////////////////////////////////////////
-////////	Options Specific to Pack Rat
+////////    Options Specific to Pack Rat
 //////////////////////////////////////////////////////////////////////////////
 class CPackRatOptDlg : public CBmpDialog {
 private:
-	int 	m_nLives;
-	int 	m_nLevel;
+	int     m_nLives;
+	int     m_nLevel;
 
 public:
-	CPackRatOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MINIOPTIONS_DIALOG );
-	void SetInitialOptions( int =1, int =1 );	// Sets the private members
-    void ClearDialogImage();
+	CPackRatOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MINIOPTIONS_DIALOG);
+	void SetInitialOptions(int = 1, int = 1);    // Sets the private members
+	void ClearDialogImage();
 	BOOL OnInitDialog();
-        
+
 protected:
-    //{{AFX_MSG(COptions)
-    virtual void OnCancel(void);
-    virtual void OnOK(void);
+	//{{AFX_MSG(COptions)
+	virtual void OnCancel(void);
+	virtual void OnOK(void);
 	virtual BOOL OnCommand(WPARAM, LPARAM);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-    //}}AFX_MSG
+	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
 //////////////////////////////////////////////////////////////////////////////
-////////	Pack Rat Message Box
+////////    Pack Rat Message Box
 //////////////////////////////////////////////////////////////////////////////
 class CMsgDlg : public CBmpDialog {
 private:
-    int 	m_nWhichMsg;
-	long	m_lCurrentScore;
-	int 	m_nLevel;
-	
+	int     m_nWhichMsg;
+	long    m_lCurrentScore;
+	int     m_nLevel;
+
 public:
-	CMsgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MESSAGEBOX );
-	void SetInitialOptions( int, long, int =0 );	// Sets the private members
-    void ClearDialogImage();
+	CMsgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MESSAGEBOX);
+	void SetInitialOptions(int, long, int = 0);  // Sets the private members
+	void ClearDialogImage();
 	BOOL OnInitDialog();
-        
+
 protected:
-    //{{AFX_MSG(COptions)
-    virtual void OnCancel(void);
-    virtual void OnOK(void);
+	//{{AFX_MSG(COptions)
+	virtual void OnCancel(void);
+	virtual void OnOK(void);
 	virtual BOOL OnCommand(WPARAM, LPARAM);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-    //}}AFX_MSG
+	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 

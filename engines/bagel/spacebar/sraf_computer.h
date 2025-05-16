@@ -289,14 +289,14 @@ protected:
 	enum SrafCompModeC {
 		SC_ON, SC_OFF, SC_DONE
 	} _eMode;
-	
+
 	enum SrafCurScreen {
 		SC_MAIN, SC_DEAL, SC_BIDS, SC_BACKGROUND_DATA,
 		SC_SELLER_BIOS, SC_OTHER_BIOS, SC_STAFF_BIOS,
 		SC_DISPATCH, SC_EMAIL, SC_AUDIO, SC_ORDER,
 		SC_CHECK_TEAMS, SC_CODE_WORDS
 	} _eCurScreen;
-	
+
 	CBofBmpButton *_pButtons[NUM_SRAFCOMPBUTT];
 	COLORREF _cTextColor;
 	COLORREF _cTextHiliteColor;

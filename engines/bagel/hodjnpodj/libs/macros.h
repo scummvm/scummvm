@@ -22,14 +22,14 @@
 #ifndef BAGEL_HODJNPODJ_LIBS_MACROS_H
 #define BAGEL_HODJNPODJ_LIBS_MACROS_H
 
-#define EM(X)	ErrorLog(".\\msg.log",(X));     
-#define EMCR()	ErrorLog(".\\msg.log","\n");      
-#define	EMTime(t)	ErrorLog(".\\msg.log","%s",_strtime(t));   
-#define EMLoc(i)	ErrorLog(".\\msg.log","Locals Dump #%d",(i));
-									          
-#define DMint(X)	ErrorLog(".\\msg.log",#X"=%d",(X));     
-#define DMstr(X)	ErrorLog(".\\msg.log",#X"=%s",(X));     
-#define  DMaddr(X)	{\
-		(X)? ErrorLog(".\\msg.log",#X"=%p",(void _far*)(X)) : ErrorLog(".\\msg.log",#X"is NULL");	}    
+#define EM(X)   ErrorLog(".\\msg.log",(X));
+#define EMCR()  ErrorLog(".\\msg.log","\n");
+#define EMTime(t)   ErrorLog(".\\msg.log","%s",_strtime(t));
+#define EMLoc(i)    ErrorLog(".\\msg.log","Locals Dump #%d",(i));
 
-#endif										
+#define DMint(X)    ErrorLog(".\\msg.log",#X"=%d",(X));
+#define DMstr(X)    ErrorLog(".\\msg.log",#X"=%s",(X));
+#define  DMaddr(X)  {\
+		(X)? ErrorLog(".\\msg.log",#X"=%p",(void _far*)(X)) : ErrorLog(".\\msg.log",#X"is NULL");   }
+
+#endif

@@ -30,7 +30,7 @@ namespace Crypt {
 // App Studio generated include file.
 // Used by CRYPT.RC
 //
-#define IDI_ICON                       	143
+#define IDI_ICON                        143
 #define IDD_USER_OPTIONS                865
 #define IDC_LTTRSSLVD                   870
 #define IDC_TIME                        875

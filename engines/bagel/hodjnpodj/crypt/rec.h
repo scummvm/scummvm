@@ -29,30 +29,36 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-#define CRYPT_TXT_FILE		"Crypt.lz"
-#define CRYPT_RECS			200
+#define CRYPT_TXT_FILE      "Crypt.lz"
+#define CRYPT_RECS          200
 
-#define MAX_GRAM_LEN		512
-#define MAX_SOURCE_LEN		128
-#define RECORD_LEN			392
+#define MAX_GRAM_LEN        512
+#define MAX_SOURCE_LEN      128
+#define RECORD_LEN          392
 
 
 class CCryptRecord {
 private:
 	Common::File m_hfCryptFile;
-	int 	m_nID;
-	char 	m_lpszGram[MAX_GRAM_LEN];
-	char 	m_lpszSource[MAX_SOURCE_LEN];
+	int     m_nID;
+	char    m_lpszGram[MAX_GRAM_LEN];
+	char    m_lpszSource[MAX_SOURCE_LEN];
 
 public:
 
-	CCryptRecord();		// constructor
+	CCryptRecord();     // constructor
 	~CCryptRecord();    // destructor
 
-	BOOL 	GetRecord(int nID);
-	int 	GetID() { return m_nID; };
-	char*	GetGram()	{ return m_lpszGram; };
-	char* 	GetSource() { return m_lpszSource; };
+	BOOL    GetRecord(int nID);
+	int     GetID() {
+		return m_nID;
+	};
+	char   *GetGram()   {
+		return m_lpszGram;
+	};
+	char   *GetSource() {
+		return m_lpszSource;
+	};
 };
 
 } // namespace Crypt

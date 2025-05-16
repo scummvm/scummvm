@@ -86,11 +86,11 @@ typedef uint32 COLORREF;
 #define PAL_EXPLICIT 0x0002
 
 #ifndef FALSE
-#define FALSE               0
+	#define FALSE               0
 #endif
 
 #ifndef TRUE
-#define TRUE                1
+	#define TRUE                1
 #endif
 
 //
@@ -185,82 +185,82 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
                                    FILE_EXECUTE             |\
                                    SYNCHRONIZE)
 
-#define FILE_SHARE_READ                 0x00000001  
-#define FILE_SHARE_WRITE                0x00000002  
-#define FILE_SHARE_DELETE               0x00000004  
-#define FILE_ATTRIBUTE_READONLY             0x00000001  
-#define FILE_ATTRIBUTE_HIDDEN               0x00000002  
-#define FILE_ATTRIBUTE_SYSTEM               0x00000004  
-#define FILE_ATTRIBUTE_DIRECTORY            0x00000010  
-#define FILE_ATTRIBUTE_ARCHIVE              0x00000020  
-#define FILE_ATTRIBUTE_DEVICE               0x00000040  
-#define FILE_ATTRIBUTE_NORMAL               0x00000080  
-#define FILE_ATTRIBUTE_TEMPORARY            0x00000100  
-#define FILE_ATTRIBUTE_SPARSE_FILE          0x00000200  
-#define FILE_ATTRIBUTE_REPARSE_POINT        0x00000400  
-#define FILE_ATTRIBUTE_COMPRESSED           0x00000800  
-#define FILE_ATTRIBUTE_OFFLINE              0x00001000  
-#define FILE_ATTRIBUTE_NOT_CONTENT_INDEXED  0x00002000  
-#define FILE_ATTRIBUTE_ENCRYPTED            0x00004000  
-#define FILE_ATTRIBUTE_INTEGRITY_STREAM     0x00008000  
-#define FILE_ATTRIBUTE_VIRTUAL              0x00010000  
-#define FILE_ATTRIBUTE_NO_SCRUB_DATA        0x00020000  
-#define FILE_ATTRIBUTE_EA                   0x00040000  
-#define FILE_ATTRIBUTE_PINNED               0x00080000  
-#define FILE_ATTRIBUTE_UNPINNED             0x00100000  
-#define FILE_ATTRIBUTE_RECALL_ON_OPEN       0x00040000  
-#define FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS 0x00400000 
-#define TREE_CONNECT_ATTRIBUTE_PRIVACY      0x00004000  
-#define TREE_CONNECT_ATTRIBUTE_INTEGRITY    0x00008000  
-#define TREE_CONNECT_ATTRIBUTE_GLOBAL       0x00000004  
-#define TREE_CONNECT_ATTRIBUTE_PINNED       0x00000002  
-#define FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL  0x20000000  
-#define FILE_NOTIFY_CHANGE_FILE_NAME    0x00000001   
-#define FILE_NOTIFY_CHANGE_DIR_NAME     0x00000002   
-#define FILE_NOTIFY_CHANGE_ATTRIBUTES   0x00000004   
-#define FILE_NOTIFY_CHANGE_SIZE         0x00000008   
-#define FILE_NOTIFY_CHANGE_LAST_WRITE   0x00000010   
-#define FILE_NOTIFY_CHANGE_LAST_ACCESS  0x00000020   
-#define FILE_NOTIFY_CHANGE_CREATION     0x00000040   
-#define FILE_NOTIFY_CHANGE_SECURITY     0x00000100   
-#define FILE_ACTION_ADDED                   0x00000001   
-#define FILE_ACTION_REMOVED                 0x00000002   
-#define FILE_ACTION_MODIFIED                0x00000003   
-#define FILE_ACTION_RENAMED_OLD_NAME        0x00000004   
-#define FILE_ACTION_RENAMED_NEW_NAME        0x00000005   
-#define MAILSLOT_NO_MESSAGE             ((DWORD)-1) 
-#define MAILSLOT_WAIT_FOREVER           ((DWORD)-1) 
-#define FILE_CASE_SENSITIVE_SEARCH          0x00000001  
-#define FILE_CASE_PRESERVED_NAMES           0x00000002  
-#define FILE_UNICODE_ON_DISK                0x00000004  
-#define FILE_PERSISTENT_ACLS                0x00000008  
-#define FILE_FILE_COMPRESSION               0x00000010  
-#define FILE_VOLUME_QUOTAS                  0x00000020  
-#define FILE_SUPPORTS_SPARSE_FILES          0x00000040  
-#define FILE_SUPPORTS_REPARSE_POINTS        0x00000080  
-#define FILE_SUPPORTS_REMOTE_STORAGE        0x00000100  
-#define FILE_RETURNS_CLEANUP_RESULT_INFO    0x00000200  
-#define FILE_SUPPORTS_POSIX_UNLINK_RENAME   0x00000400  
-#define FILE_SUPPORTS_BYPASS_IO             0x00000800  
-#define FILE_SUPPORTS_STREAM_SNAPSHOTS      0x00001000  
-#define FILE_SUPPORTS_CASE_SENSITIVE_DIRS   0x00002000  
+#define FILE_SHARE_READ                 0x00000001
+#define FILE_SHARE_WRITE                0x00000002
+#define FILE_SHARE_DELETE               0x00000004
+#define FILE_ATTRIBUTE_READONLY             0x00000001
+#define FILE_ATTRIBUTE_HIDDEN               0x00000002
+#define FILE_ATTRIBUTE_SYSTEM               0x00000004
+#define FILE_ATTRIBUTE_DIRECTORY            0x00000010
+#define FILE_ATTRIBUTE_ARCHIVE              0x00000020
+#define FILE_ATTRIBUTE_DEVICE               0x00000040
+#define FILE_ATTRIBUTE_NORMAL               0x00000080
+#define FILE_ATTRIBUTE_TEMPORARY            0x00000100
+#define FILE_ATTRIBUTE_SPARSE_FILE          0x00000200
+#define FILE_ATTRIBUTE_REPARSE_POINT        0x00000400
+#define FILE_ATTRIBUTE_COMPRESSED           0x00000800
+#define FILE_ATTRIBUTE_OFFLINE              0x00001000
+#define FILE_ATTRIBUTE_NOT_CONTENT_INDEXED  0x00002000
+#define FILE_ATTRIBUTE_ENCRYPTED            0x00004000
+#define FILE_ATTRIBUTE_INTEGRITY_STREAM     0x00008000
+#define FILE_ATTRIBUTE_VIRTUAL              0x00010000
+#define FILE_ATTRIBUTE_NO_SCRUB_DATA        0x00020000
+#define FILE_ATTRIBUTE_EA                   0x00040000
+#define FILE_ATTRIBUTE_PINNED               0x00080000
+#define FILE_ATTRIBUTE_UNPINNED             0x00100000
+#define FILE_ATTRIBUTE_RECALL_ON_OPEN       0x00040000
+#define FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS 0x00400000
+#define TREE_CONNECT_ATTRIBUTE_PRIVACY      0x00004000
+#define TREE_CONNECT_ATTRIBUTE_INTEGRITY    0x00008000
+#define TREE_CONNECT_ATTRIBUTE_GLOBAL       0x00000004
+#define TREE_CONNECT_ATTRIBUTE_PINNED       0x00000002
+#define FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL  0x20000000
+#define FILE_NOTIFY_CHANGE_FILE_NAME    0x00000001
+#define FILE_NOTIFY_CHANGE_DIR_NAME     0x00000002
+#define FILE_NOTIFY_CHANGE_ATTRIBUTES   0x00000004
+#define FILE_NOTIFY_CHANGE_SIZE         0x00000008
+#define FILE_NOTIFY_CHANGE_LAST_WRITE   0x00000010
+#define FILE_NOTIFY_CHANGE_LAST_ACCESS  0x00000020
+#define FILE_NOTIFY_CHANGE_CREATION     0x00000040
+#define FILE_NOTIFY_CHANGE_SECURITY     0x00000100
+#define FILE_ACTION_ADDED                   0x00000001
+#define FILE_ACTION_REMOVED                 0x00000002
+#define FILE_ACTION_MODIFIED                0x00000003
+#define FILE_ACTION_RENAMED_OLD_NAME        0x00000004
+#define FILE_ACTION_RENAMED_NEW_NAME        0x00000005
+#define MAILSLOT_NO_MESSAGE             ((DWORD)-1)
+#define MAILSLOT_WAIT_FOREVER           ((DWORD)-1)
+#define FILE_CASE_SENSITIVE_SEARCH          0x00000001
+#define FILE_CASE_PRESERVED_NAMES           0x00000002
+#define FILE_UNICODE_ON_DISK                0x00000004
+#define FILE_PERSISTENT_ACLS                0x00000008
+#define FILE_FILE_COMPRESSION               0x00000010
+#define FILE_VOLUME_QUOTAS                  0x00000020
+#define FILE_SUPPORTS_SPARSE_FILES          0x00000040
+#define FILE_SUPPORTS_REPARSE_POINTS        0x00000080
+#define FILE_SUPPORTS_REMOTE_STORAGE        0x00000100
+#define FILE_RETURNS_CLEANUP_RESULT_INFO    0x00000200
+#define FILE_SUPPORTS_POSIX_UNLINK_RENAME   0x00000400
+#define FILE_SUPPORTS_BYPASS_IO             0x00000800
+#define FILE_SUPPORTS_STREAM_SNAPSHOTS      0x00001000
+#define FILE_SUPPORTS_CASE_SENSITIVE_DIRS   0x00002000
 
-#define FILE_VOLUME_IS_COMPRESSED           0x00008000  
-#define FILE_SUPPORTS_OBJECT_IDS            0x00010000  
-#define FILE_SUPPORTS_ENCRYPTION            0x00020000  
-#define FILE_NAMED_STREAMS                  0x00040000  
-#define FILE_READ_ONLY_VOLUME               0x00080000  
-#define FILE_SEQUENTIAL_WRITE_ONCE          0x00100000  
-#define FILE_SUPPORTS_TRANSACTIONS          0x00200000  
-#define FILE_SUPPORTS_HARD_LINKS            0x00400000  
-#define FILE_SUPPORTS_EXTENDED_ATTRIBUTES   0x00800000  
-#define FILE_SUPPORTS_OPEN_BY_FILE_ID       0x01000000  
-#define FILE_SUPPORTS_USN_JOURNAL           0x02000000  
-#define FILE_SUPPORTS_INTEGRITY_STREAMS     0x04000000  
-#define FILE_SUPPORTS_BLOCK_REFCOUNTING     0x08000000  
-#define FILE_SUPPORTS_SPARSE_VDL            0x10000000  
-#define FILE_DAX_VOLUME                     0x20000000  
-#define FILE_SUPPORTS_GHOSTING              0x40000000  
+#define FILE_VOLUME_IS_COMPRESSED           0x00008000
+#define FILE_SUPPORTS_OBJECT_IDS            0x00010000
+#define FILE_SUPPORTS_ENCRYPTION            0x00020000
+#define FILE_NAMED_STREAMS                  0x00040000
+#define FILE_READ_ONLY_VOLUME               0x00080000
+#define FILE_SEQUENTIAL_WRITE_ONCE          0x00100000
+#define FILE_SUPPORTS_TRANSACTIONS          0x00200000
+#define FILE_SUPPORTS_HARD_LINKS            0x00400000
+#define FILE_SUPPORTS_EXTENDED_ATTRIBUTES   0x00800000
+#define FILE_SUPPORTS_OPEN_BY_FILE_ID       0x01000000
+#define FILE_SUPPORTS_USN_JOURNAL           0x02000000
+#define FILE_SUPPORTS_INTEGRITY_STREAMS     0x04000000
+#define FILE_SUPPORTS_BLOCK_REFCOUNTING     0x08000000
+#define FILE_SUPPORTS_SPARSE_VDL            0x10000000
+#define FILE_DAX_VOLUME                     0x20000000
+#define FILE_SUPPORTS_GHOSTING              0x40000000
 
 /*
  * RedrawWindow() flags
@@ -283,9 +283,9 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define RDW_NOFRAME             0x0800
 
 
- /*
-  * EnableScrollBar() flags
-  */
+/*
+ * EnableScrollBar() flags
+ */
 #define ESB_ENABLE_BOTH     0x0000
 #define ESB_DISABLE_BOTH    0x0003
 
@@ -305,9 +305,9 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define SIF_TRACKPOS        0x0010
 #define SIF_ALL             (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS)
 
-  /*
-   * GetWindow() Constants
-   */
+/*
+ * GetWindow() Constants
+ */
 #define GW_HWNDFIRST        0
 #define GW_HWNDLAST         1
 #define GW_HWNDNEXT         2
@@ -315,16 +315,16 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define GW_OWNER            4
 #define GW_CHILD            5
 #if(WINVER <= 0x0400)
-#define GW_MAX              5
+	#define GW_MAX              5
 #else
-#define GW_ENABLEDPOPUP     6
-#define GW_MAX              6
+	#define GW_ENABLEDPOPUP     6
+	#define GW_MAX              6
 #endif
 
 
-   /*
-	* MessageBox() Flags
-	*/
+/*
+* MessageBox() Flags
+*/
 #define MB_OK                       0x00000000L
 #define MB_OKCANCEL                 0x00000001L
 #define MB_ABORTRETRYIGNORE         0x00000002L
@@ -340,9 +340,9 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define SB_CTL              2
 #define SB_BOTH             3
 
- /*
-  * Scroll Bar Commands
-  */
+/*
+ * Scroll Bar Commands
+ */
 #define SB_LINEUP           0
 #define SB_LINELEFT         0
 #define SB_LINEDOWN         1
@@ -394,9 +394,9 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define IDCONTINUE         11
 #define IDTIMEOUT       32000
 
- /*
-  * User Button Notification Codes
-  */
+/*
+ * User Button Notification Codes
+ */
 #define BN_CLICKED          0
 #define BN_PAINT            1
 #define BN_HILITE           2
@@ -437,9 +437,9 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define WS_SIZEBOX          WS_THICKFRAME
 #define WS_TILEDWINDOW      WS_OVERLAPPEDWINDOW
 
- /*
-  * Edit Control Styles
-  */
+/*
+ * Edit Control Styles
+ */
 #define ES_LEFT             0x0000L
 #define ES_CENTER           0x0001L
 #define ES_RIGHT            0x0002L
@@ -455,9 +455,9 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define ES_WANTRETURN       0x1000L
 #define ES_NUMBER           0x2000L
 
- /*
-  * SetWindowsHook() codes
-  */
+/*
+ * SetWindowsHook() codes
+ */
 #define WH_MIN              (-1)
 #define WH_MSGFILTER        (-1)
 #define WH_JOURNALRECORD    0
@@ -470,9 +470,9 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define WH_MOUSE            7
 
 
-  /*
-   * Key State Masks for Mouse Messages
-   */
+/*
+ * Key State Masks for Mouse Messages
+ */
 #define MK_LBUTTON          0x0001
 #define MK_RBUTTON          0x0002
 #define MK_SHIFT            0x0004

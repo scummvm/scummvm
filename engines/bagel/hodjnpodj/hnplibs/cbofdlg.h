@@ -32,42 +32,42 @@ class CBmpDialog : public CDialog {
 public:
 	// Construction
 	CBmpDialog(CWnd *, CPalette *, int, const char *, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
-    CBmpDialog(CWnd *, CPalette *, int, int, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
+	CBmpDialog(CWnd *, CPalette *, int, int, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
 
 	void RefreshBackground(CDC *pDC = NULL);
 
 private:
 	// Dialog Data
-    //{{AFX_DATA(CBmpDialog)
-        // NOTE: the ClassWizard will add data members here
-    //}}AFX_DATA
+	//{{AFX_DATA(CBmpDialog)
+	// NOTE: the ClassWizard will add data members here
+	//}}AFX_DATA
 
 protected:
 	// Implementation
 	void EndDialog(int);
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-    // Generated message map functions
-    //{{AFX_MSG(CBmpDialog)
-    afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-    virtual BOOL OnInitDialog();
-    afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-    afx_msg void OnPaint();
-    afx_msg void OnDestroy();
-    afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-    afx_msg void OnSize(UINT nType, int cx, int cy);
-    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-    //}}AFX_MSG
-    DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(CBmpDialog)
+	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
+	virtual BOOL OnInitDialog();
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg void OnPaint();
+	afx_msg void OnDestroy();
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
-    CBitmap    *m_pDlgBackground;
-    CPalette   *m_pPalette;
-    const char *m_pBmpFileName;
-    int         m_nBmpID;
-    int			m_nDx;
-    int			m_nDy;
-    BOOL        m_bSaveBackground;
+	CBitmap    *m_pDlgBackground;
+	CPalette   *m_pPalette;
+	const char *m_pBmpFileName;
+	int         m_nBmpID;
+	int         m_nDx;
+	int         m_nDy;
+	BOOL        m_bSaveBackground;
 };
 
 } // namespace HodjNPodj

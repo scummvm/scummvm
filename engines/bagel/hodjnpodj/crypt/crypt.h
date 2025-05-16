@@ -30,42 +30,42 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-#define SPLASHSPEC		".\\art\\crypt.BMP"	// bitmap file for the splash screen
+#define SPLASHSPEC      ".\\art\\crypt.BMP" // bitmap file for the splash screen
 
-#define NOT_USED		-1
-#define	MAP				2
-#define	DECRYPT_MAP		0
-#define	ENCRYPT_MAP		1
+#define NOT_USED        -1
+#define MAP             2
+#define DECRYPT_MAP     0
+#define ENCRYPT_MAP     1
 
 class CCryptogram {
 private:
-	CCryptRecord	*m_cRecordGram;
-	int				m_nCryptMap[MAP][ALPHABET];
+	CCryptRecord    *m_cRecordGram;
+	int             m_nCryptMap[MAP][ALPHABET];
 
 public:
 	CCryptogram(CDC *pDC);
 	~CCryptogram();
 
-	BOOL		DrawGram(CDC *pDC);
-	BOOL		HandleUserUpdate(CDC *pDC, CPoint cpointClicked);
-	BOOL		HandleUserUpdate(CDC *pDC, UINT nChar);
-	void		Encrypt();
-	void		CreateCryptMap(int nLettersSolved);
-	int			UpdateCryptMap(int nOldType, int nNewType);
-	BOOL		IsSolved();
-	int			LettersSolved();
-	void		MarkSolvedLetters(CDC *pDC);
-	void		SolveCryptogram(CDC *pDC);
-	void		DrawSource(CDC *pDC);
+	BOOL        DrawGram(CDC *pDC);
+	BOOL        HandleUserUpdate(CDC *pDC, CPoint cpointClicked);
+	BOOL        HandleUserUpdate(CDC *pDC, UINT nChar);
+	void        Encrypt();
+	void        CreateCryptMap(int nLettersSolved);
+	int         UpdateCryptMap(int nOldType, int nNewType);
+	BOOL        IsSolved();
+	int         LettersSolved();
+	void        MarkSolvedLetters(CDC *pDC);
+	void        SolveCryptogram(CDC *pDC);
+	void        DrawSource(CDC *pDC);
 
-	char	 	m_chEncryptGram[MAX_GRAM_LEN];
-	CPaintGram	*m_cPaintGram;
-	CStats		*m_cStats;
-	BOOL 		bIsGameOver;
+	char        m_chEncryptGram[MAX_GRAM_LEN];
+	CPaintGram  *m_cPaintGram;
+	CStats      *m_cStats;
+	BOOL        bIsGameOver;
 };
 
 // Globals!
-extern CPalette		*pGamePalette;
+extern CPalette     *pGamePalette;
 
 } // namespace Crypt
 } // namespace HodjNPodj

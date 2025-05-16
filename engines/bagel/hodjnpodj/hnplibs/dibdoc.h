@@ -30,19 +30,22 @@ namespace HodjNPodj {
 class CDibDoc : public CDocument {
 	DECLARE_DYNCREATE(CDibDoc)
 	friend class CSprite;
-	
+
 public:
 	CDibDoc();
 
 // Attributes
 public:
-	HDIB GetHDIB() const
-		{ return m_hDIB; }
-	CPalette* GetDocPalette(void) const
-		{ return m_palDIB; }
-	CPalette * DetachPalette(void);
-	CSize GetDocSize() const
-		{ return m_sizeDoc; }
+	HDIB GetHDIB() const {
+		return m_hDIB;
+	}
+	CPalette *GetDocPalette(void) const {
+		return m_palDIB;
+	}
+	CPalette *DetachPalette(void);
+	CSize GetDocSize() const {
+		return m_sizeDoc;
+	}
 
 // Operations
 public:
@@ -59,13 +62,13 @@ public:
 
 private:
 	HDIB m_hDIB;
-	CPalette* m_palDIB;
+	CPalette *m_palDIB;
 	CSize m_sizeDoc;
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext &dc) const override;
-#endif
+	#endif
 
 protected:
 	//{{AFX_MSG(CDibDoc)

@@ -38,9 +38,9 @@ namespace MFC {
 #define WM_SIZE                         0x0005
 
 #define WM_ACTIVATE                     0x0006
- /*
-  * WM_ACTIVATE state values
-  */
+/*
+ * WM_ACTIVATE state values
+ */
 #define     WA_INACTIVE     0
 #define     WA_ACTIVE       1
 #define     WA_CLICKACTIVE  2
@@ -55,9 +55,9 @@ namespace MFC {
 #define WM_PAINT                        0x000F
 #define WM_CLOSE                        0x0010
 #ifndef _WIN32_WCE
-#define WM_QUERYENDSESSION              0x0011
-#define WM_QUERYOPEN                    0x0013
-#define WM_ENDSESSION                   0x0016
+	#define WM_QUERYENDSESSION              0x0011
+	#define WM_QUERYOPEN                    0x0013
+	#define WM_ENDSESSION                   0x0016
 #endif
 #define WM_QUIT                         0x0012
 #define WM_ERASEBKGND                   0x0014
@@ -126,7 +126,7 @@ namespace MFC {
 #define WM_NCACTIVATE                   0x0086
 #define WM_GETDLGCODE                   0x0087
 #ifndef _WIN32_WCE
-#define WM_SYNCPAINT                    0x0088
+	#define WM_SYNCPAINT                    0x0088
 #endif
 #define WM_NCMOUSEMOVE                  0x00A0
 #define WM_NCLBUTTONDOWN                0x00A1
@@ -195,65 +195,65 @@ namespace MFC {
 #define ON_COMMAND(id, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)id, AfxSigCmd_v, \
 		static_cast<AFX_PMSG> (memberFxn) },
-		// ON_COMMAND(id, OnBar) is the same as
-		//   ON_CONTROL(0, id, OnBar) or ON_BN_CLICKED(0, id, OnBar)
+// ON_COMMAND(id, OnBar) is the same as
+//   ON_CONTROL(0, id, OnBar) or ON_BN_CLICKED(0, id, OnBar)
 
 #define ON_COMMAND_RANGE(id, idLast, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)idLast, AfxSigCmd_RANGE, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
-		(memberFxn)) },
-		// ON_COMMAND_RANGE(id, idLast, OnBar) is the same as
-		//   ON_CONTROL_RANGE(0, id, idLast, OnBar)
+		 (memberFxn)) },
+// ON_COMMAND_RANGE(id, idLast, OnBar) is the same as
+//   ON_CONTROL_RANGE(0, id, idLast, OnBar)
 
 #define ON_COMMAND_EX(id, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)id, AfxSigCmd_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_COMMAND_EX_RANGE(id, idLast, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)idLast, AfxSigCmd_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 // update ui's are listed as WM_COMMAND's so they get routed like commands
 #define ON_UPDATE_COMMAND_UI(id, memberFxn) \
 	{ WM_COMMAND, CN_UPDATE_COMMAND_UI, (WORD)id, (WORD)id, AfxSigCmdUI, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(CCmdUI*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_UPDATE_COMMAND_UI_RANGE(id, idLast, memberFxn) \
 	{ WM_COMMAND, CN_UPDATE_COMMAND_UI, (WORD)id, (WORD)idLast, AfxSigCmdUI, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(CCmdUI*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_NOTIFY(wNotifyCode, id, memberFxn) \
 	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)id, AfxSigNotify_v, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(NMHDR*, LRESULT*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_NOTIFY_RANGE(wNotifyCode, id, idLast, memberFxn) \
 	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)idLast, AfxSigNotify_RANGE, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_NOTIFY_EX(wNotifyCode, id, memberFxn) \
 	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)id, AfxSigNotify_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_NOTIFY_EX_RANGE(wNotifyCode, id, idLast, memberFxn) \
 	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)idLast, AfxSigNotify_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 // for general controls
 #define ON_CONTROL(wNotifyCode, id, memberFxn) \
@@ -281,19 +281,19 @@ namespace MFC {
 	{ WM_NOTIFY+WM_REFLECT_BASE, (WORD)(int)wNotifyCode, 0, 0, AfxSigNotify_v, \
 		(AFX_PMSG) \
 		(static_cast<void (AFX_MSG_CALL CCmdTarget::*)(NMHDR*, LRESULT*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_NOTIFY_REFLECT_EX(wNotifyCode, memberFxn) \
 	{ WM_NOTIFY+WM_REFLECT_BASE, (WORD)(int)wNotifyCode, 0, 0, AfxSigNotify_b, \
 		(AFX_PMSG) \
 		(static_cast<BOOL (AFX_MSG_CALL CCmdTarget::*)(NMHDR*, LRESULT*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 #define ON_UPDATE_COMMAND_UI_REFLECT(memberFxn) \
 	{ WM_COMMAND+WM_REFLECT_BASE, (WORD)CN_UPDATE_COMMAND_UI, 0, 0, AfxSigCmdUI, \
 		(AFX_PMSG) \
 		(static_cast<void (AFX_MSG_CALL CCmdTarget::*)(CCmdUI*) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 /////////////////////////////////////////////////////////////////////////////
 // Message map tables for Windows messages
@@ -380,8 +380,8 @@ namespace MFC {
 
 #define ON_WM_PRINTCLIENT() \
 	{ WM_PRINTCLIENT, 0, 0, 0, AfxSig_l_D_u, \
-	(AFX_PMSG)(AFX_PMSGW) \
-	(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(CDC*, UINT) > ( &ThisClass::OnPrintClient)) },
+		(AFX_PMSG)(AFX_PMSGW) \
+		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(CDC*, UINT) > ( &ThisClass::OnPrintClient)) },
 
 #define ON_WM_SYSCOLORCHANGE() \
 	{ WM_SYSCOLORCHANGE, 0, 0, 0, AfxSig_vv, \
@@ -395,93 +395,93 @@ namespace MFC {
 
 #define ON_WM_SETTEXT() \
 	{ WM_SETTEXT, 0, 0, 0, AfxSig_i_v_S, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< int (AFX_MSG_CALL CWnd::*)(LPCTSTR) > ( &ThisClass::OnSetText)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(LPCTSTR) > ( &ThisClass::OnSetText)) },
 
 #define ON_WM_GETTEXT() \
 	{ WM_GETTEXT, 0, 0, 0, AfxSig_i_i_s, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< int (AFX_MSG_CALL CWnd::*)(int, LPTSTR) > ( &ThisClass::OnGetText)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(int, LPTSTR) > ( &ThisClass::OnGetText)) },
 
 #define ON_WM_GETTEXTLENGTH() \
 	{ WM_GETTEXTLENGTH, 0, 0, 0, AfxSig_u_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< UINT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetTextLength)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetTextLength)) },
 
 #define ON_WM_SETFONT() \
 	{ WM_SETFONT, 0, 0, 0, AfxSig_v_F_b, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(CFont*, BOOL) > ( &ThisClass::OnSetFont)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CFont*, BOOL) > ( &ThisClass::OnSetFont)) },
 
 #define ON_WM_GETFONT() \
 	{ WM_GETFONT, 0, 0, 0, AfxSig_h_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< HFONT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetFont)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< HFONT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetFont)) },
 
 #define ON_WM_SETICON() \
 	{ WM_SETICON, 0, 0, 0, AfxSig_h_b_h, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< HICON (AFX_MSG_CALL CWnd::*)(BOOL, HICON) > ( &ThisClass::OnSetIcon)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< HICON (AFX_MSG_CALL CWnd::*)(BOOL, HICON) > ( &ThisClass::OnSetIcon)) },
 
 #define ON_WM_MDISETMENU() \
 	{ WM_MDISETMENU, 0, 0, 0, AfxSig_h_h_h, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< HMENU (AFX_MSG_CALL CWnd::*)(HMENU, HMENU) > ( &ThisClass::OnMDISetMenu)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< HMENU (AFX_MSG_CALL CWnd::*)(HMENU, HMENU) > ( &ThisClass::OnMDISetMenu)) },
 
 #define  ON_WM_MDIREFRESHMENU() \
 	{ WM_MDIREFRESHMENU, 0, 0, 0, AfxSig_h_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< HMENU (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnMDIRefreshMenu)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< HMENU (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnMDIRefreshMenu)) },
 
 #define  ON_WM_MDIDESTROY() \
 	{ WM_MDIDESTROY, 0, 0, 0, AfxSig_v_W_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*) > ( &ThisClass::OnMDIDestroy)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*) > ( &ThisClass::OnMDIDestroy)) },
 
 #define  ON_WM_MDINEXT() \
 	{ WM_MDINEXT, 0, 0, 0, AfxSig_MDINext, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, BOOL) > ( &ThisClass::OnMDINext)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, BOOL) > ( &ThisClass::OnMDINext)) },
 
 #define  ON_WM_CUT() \
 	{ WM_CUT, 0, 0, 0, AfxSig_v_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnCut)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnCut)) },
 
 #define  ON_WM_COPY() \
 	{ WM_COPY, 0, 0, 0, AfxSig_v_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnCopy)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnCopy)) },
 
 #define  ON_WM_PASTE() \
 	{ WM_PASTE, 0, 0, 0, AfxSig_v_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnPaste)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnPaste)) },
 
 #define  ON_WM_CLEAR() \
 	{ WM_CLEAR, 0, 0, 0, AfxSig_v_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnClear)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnClear)) },
 
 #define  ON_WM_DISPLAYCHANGE() \
 	{ WM_DISPLAYCHANGE, 0, 0, 0, AfxSig_v_u_ii, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, int, int) > ( &ThisClass::OnDisplayChange)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, int, int) > ( &ThisClass::OnDisplayChange)) },
 
 #define  ON_WM_DDE_INITIATE() \
 	{ WM_DDE_INITIATE, 0, 0, 0, AfxSig_v_W_uu, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT) > ( &ThisClass::OnDDEInitiate)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT) > ( &ThisClass::OnDDEInitiate)) },
 
 #define  ON_WM_DDE_EXECUTE() \
 	{ WM_DDE_EXECUTE, 0, 0, 0, AfxSig_v_W_h, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, HANDLE) > ( &ThisClass::OnDDEExecute)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, HANDLE) > ( &ThisClass::OnDDEExecute)) },
 
 #define  ON_WM_DDE_TERMINATE() \
 	{ WM_DDE_TERMINATE, 0, 0, 0, AfxSig_v_W_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*) > ( &ThisClass::OnDDETerminate)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*) > ( &ThisClass::OnDDETerminate)) },
 
 #define ON_WM_WTSSESSION_CHANGE() \
 	{ WM_WTSSESSION_CHANGE, 0, 0, 0, AfxSig_vww, \
@@ -1205,13 +1205,13 @@ namespace MFC {
 
 #define ON_WM_DWMSENDICONICTHUMBNAIL() \
 	{ WM_DWMSENDICONICTHUMBNAIL, 0, 0, 0, AfxSig_b_v_ii, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(int, int) > ( &ThisClass::OnSendIconicThumbnail)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(int, int) > ( &ThisClass::OnSendIconicThumbnail)) },
 
 #define ON_WM_DWMSENDICONICLIVEPREVIEWBITMAP() \
 	{ WM_DWMSENDICONICLIVEPREVIEWBITMAP, 0, 0, 0, AfxSig_b_v_v, \
-	(AFX_PMSG) (AFX_PMSGW) \
-	(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnSendIconicLivePreviewBitmap)) },
+		(AFX_PMSG) (AFX_PMSGW) \
+		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnSendIconicLivePreviewBitmap)) },
 
 /////////////////////////////////////////////////////////////////////////////
 // Message map tables for Control Notification messages
@@ -1335,7 +1335,7 @@ namespace MFC {
 	{ message, 0, 0, 0, AfxSig_lwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
 		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(WPARAM, LPARAM) > \
-		(&memberFxn)) },
+		 (&memberFxn)) },
 
 // for Registered Windows messages
 #define ON_REGISTERED_MESSAGE(nMessageVariable, memberFxn) \
@@ -1343,14 +1343,14 @@ namespace MFC {
 		/*implied 'AfxSig_lwl'*/ \
 		(AFX_PMSG)(AFX_PMSGW) \
 		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(WPARAM, LPARAM) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 // for Thread messages
 #define ON_THREAD_MESSAGE(message, memberFxn) \
 	{ message, 0, 0, 0, AfxSig_vwl, \
 		(AFX_PMSG)(AFX_PMSGT) \
 		(static_cast< void (AFX_MSG_CALL CWinThread::*)(WPARAM, LPARAM) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 // for Registered Windows messages
 #define ON_REGISTERED_THREAD_MESSAGE(nMessageVariable, memberFxn) \
@@ -1358,7 +1358,7 @@ namespace MFC {
 		/*implied 'AfxSig_vwl'*/ \
 		(AFX_PMSG)(AFX_PMSGT) \
 		(static_cast< void (AFX_MSG_CALL CWinThread::*)(WPARAM, LPARAM) > \
-		(memberFxn)) },
+		 (memberFxn)) },
 
 } // namespace MFC
 } // namespace Bagel

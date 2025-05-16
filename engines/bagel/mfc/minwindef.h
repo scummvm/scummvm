@@ -36,7 +36,7 @@ namespace MFC {
 #define FAR
 #define NEAR
 #ifndef CONST
-#define CONST const
+	#define CONST const
 #endif
 
 #define CALLBACK
@@ -56,16 +56,16 @@ namespace MFC {
 #define CVIRTUAL
 
 #ifndef _In_
-#define _In_
+	#define _In_
 #endif
 #ifndef _Out_
-#define _Out_
+	#define _Out_
 #endif
 #ifndef _In_z_
-#define _In_z_
+	#define _In_z_
 #endif
 #ifndef _Inout_
-#define _Inout_
+	#define _Inout_
 #endif
 
 // Dummy try/catch implementation
@@ -107,11 +107,11 @@ typedef INT_PTR(WINAPI *PROC)();
 typedef INT_PTR(CALLBACK *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
 
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+	#define max(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+	#define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
 #define MAKEWORD(a, b)      ((WORD)(((BYTE)(((DWORD_PTR)(a)) & 0xff)) | ((WORD)((BYTE)(((DWORD_PTR)(b)) & 0xff))) << 8))
@@ -160,20 +160,17 @@ typedef struct tagRECT {
 
 typedef const RECT FAR *LPCRECT;
 
-typedef struct tagPOINT
-{
+typedef struct tagPOINT {
 	LONG  x;
 	LONG  y;
 } POINT, *PPOINT, NEAR *NPPOINT, FAR *LPPOINT;
 
-typedef struct _POINTL      /* ptl  */
-{
+typedef struct _POINTL {    /* ptl  */
 	LONG  x;
 	LONG  y;
 } POINTL, *PPOINTL;
 
-typedef struct tagSIZE
-{
+typedef struct tagSIZE {
 	LONG        cx;
 	LONG        cy;
 } SIZE, *PSIZE, *LPSIZE;
@@ -181,15 +178,14 @@ typedef struct tagSIZE
 typedef SIZE               SIZEL;
 typedef SIZE *PSIZEL, *LPSIZEL;
 
-typedef struct tagPOINTS
-{
-#ifndef _MAC
+typedef struct tagPOINTS {
+	#ifndef _MAC
 	SHORT   x;
 	SHORT   y;
-#else
+	#else
 	SHORT   y;
 	SHORT   x;
-#endif
+	#endif
 } POINTS, *PPOINTS, *LPPOINTS;
 
 typedef struct _FILETIME {

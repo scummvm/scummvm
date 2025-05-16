@@ -26,7 +26,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace DFA {
 
-#define IDI_DFA		                    2
+#define IDI_DFA                         2
 #define IDC_OPTIONS                     202
 #define IDC_RULES                       230
 #define IDC_CANCEL                      250

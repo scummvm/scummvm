@@ -111,7 +111,7 @@ ErrorCode CMainWindow::attach() {
 	rView.setRect(_cLastLoc.x, _cLastLoc.y, _cLastLoc.x - 1, _cLastLoc.y - 1);
 	if (g_engine->g_bUseInitLoc) {
 		rView.setRect(g_engine->g_cInitLoc.x, g_engine->g_cInitLoc.y,
-			g_engine->g_cInitLoc.x - 1, g_engine->g_cInitLoc.y - 1);
+		              g_engine->g_cInitLoc.x - 1, g_engine->g_cInitLoc.y - 1);
 		g_engine->g_bUseInitLoc = false;
 	}
 

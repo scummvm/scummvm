@@ -439,7 +439,7 @@ public:
 
 	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
 	virtual ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
+	                               CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 
 	virtual CBofRect getLocation() {
 		return getWindowRect();
@@ -493,7 +493,7 @@ public:
 
 	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
+	                       CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return paintObjects(list, pBmp, emptyRect);

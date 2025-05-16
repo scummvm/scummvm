@@ -32,7 +32,7 @@ CDC *CDC::FromHandle(HDC hDC) {
 }
 
 BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
-	LPCSTR lpszOutput, const void *lpInitData) {
+                   LPCSTR lpszOutput, const void *lpInitData) {
 	error("TODO: CDC::CreateDC");
 }
 
@@ -65,12 +65,12 @@ int CDC::SetROP2(int nDrawMode) {
 }
 
 BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-		int xSrc, int ySrc, DWORD dwRop) {
+                 int xSrc, int ySrc, DWORD dwRop) {
 	error("TODO: CDC::BitBlt");
 }
 
 BOOL CDC::StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-		int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
+                     int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
 	error("TODO: CDC::StretchBlt");
 }
 
@@ -95,7 +95,7 @@ BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {
 }
 
 BOOL CDC::FloodFill(int x, int y, COLORREF crColor,
-		UINT nFillType) {
+                    UINT nFillType) {
 	error("TODO: CDC::FloodFill");
 }
 
@@ -108,7 +108,7 @@ void CDC::Rectangle(int x1, int y1, int x2, int y2) {
 }
 
 BOOL CDC::Pie(int x1, int y1, int x2, int y2,
-		int x3, int y3, int x4, int y4) {
+              int x3, int y3, int x4, int y4) {
 	error("TODO: CDC::Pie");
 }
 
@@ -117,7 +117,7 @@ BOOL CDC::Pie(LPCRECT lpRect, const POINT &ptStart, const POINT &ptEnd) {
 }
 
 BOOL CDC::FrameRgn(CRgn *pRgn, CBrush *pBrush,
-		int nWidth, int nHeight) {
+                   int nWidth, int nHeight) {
 	error("TODO: CDC::FrameRgn");
 }
 
@@ -202,22 +202,22 @@ BOOL CDC::TextOut(int x, int y, const CString &str) {
 }
 
 BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
+                     LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
 	error("TODO: CDC::ExtTextOut");
 }
 
 BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		const CString &str, LPINT lpDxWidths) {
+                     const CString &str, LPINT lpDxWidths) {
 	error("TODO: CDC::ExtTextOut");
 }
 
 CSize CDC::TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+                         int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
 	error("TODO: CDC::TabbedTextOut");
 }
 
 CSize CDC::TabbedTextOut(int x, int y, const CString &str,
-		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+                         int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
 	error("TODO: CDC::TabbedTextOut");
 }
 
@@ -238,28 +238,28 @@ CSize CDC::GetOutputTextExtent(const CString &str) const {
 }
 
 CSize CDC::GetTabbedTextExtent(LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions) const {
+                               int nTabPositions, LPINT lpnTabStopPositions) const {
 	error("TODO: CDC::GetTabbedTextExtent");
 }
 
 CSize CDC::GetTabbedTextExtent(const CString &str,
-		int nTabPositions, LPINT lpnTabStopPositions) const {
+                               int nTabPositions, LPINT lpnTabStopPositions) const {
 	error("TODO: CDC::GetTabbedTextExtent");
 }
 
 CSize CDC::GetOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions) const {
+                                     int nTabPositions, LPINT lpnTabStopPositions) const {
 	error("TODO: CDC::GetOutputTabbedTextExtent");
 }
 
 CSize CDC::GetOutputTabbedTextExtent(const CString &str,
-		int nTabPositions, LPINT lpnTabStopPositions) const {
+                                     int nTabPositions, LPINT lpnTabStopPositions) const {
 	error("TODO: CDC::GetOutputTabbedTextExtent");
 }
 
 BOOL CDC::GrayString(CBrush *pBrush,
-		BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
-		int nCount, int x, int y, int nWidth, int nHeight) {
+                     BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+                     int nCount, int x, int y, int nWidth, int nHeight) {
 	error("TODO: CDC::GrayString");
 }
 

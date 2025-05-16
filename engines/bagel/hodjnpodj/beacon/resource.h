@@ -29,13 +29,13 @@ namespace Battlefish {
 
 #define IDD_SUBOPTIONS                  115
 
-#define IDB_BEACON_BMP					301
+#define IDB_BEACON_BMP                  301
 
-#define IDC_RULES						1002
+#define IDC_RULES                       1002
 
-#define IDC_NUMSWEEPS                  	1021
-#define IDC_SPEED						1023
-#define IDC_CHANGE						1024
+#define IDC_NUMSWEEPS                   1021
+#define IDC_SPEED                       1023
+#define IDC_CHANGE                      1024
 #define IDC_AUTOMATIC                   1025
 
 } // namespace Beacon

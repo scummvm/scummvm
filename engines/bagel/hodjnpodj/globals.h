@@ -32,7 +32,7 @@ namespace HodjNPodj {
  */
 #define INI_FILENAME    "HODJPODJ.INI"
 
-#define PATHSPECSIZE				256
+#define PATHSPECSIZE                256
 
 /*
 * Main Window positioning constants
@@ -45,20 +45,20 @@ namespace HodjNPodj {
 #define GAME_RIGHT_BORDER_WIDTH      16
 
 // Scroll button size and positioning information
-#define SCROLL_BUTTON_X		250
-#define SCROLL_BUTTON_Y		0
-#define SCROLL_BUTTON_DX	140
-#define SCROLL_BUTTON_DY	23
-#define SCROLLUP_BMP		"ART/SCROLLUP.BMP"
-#define SCROLLDOWN_BMP		"ART/SCROLLDN.BMP"
-#define SCROLLUP			461
-#define SCROLLDOWN			462
+#define SCROLL_BUTTON_X     250
+#define SCROLL_BUTTON_Y     0
+#define SCROLL_BUTTON_DX    140
+#define SCROLL_BUTTON_DY    23
+#define SCROLLUP_BMP        "ART/SCROLLUP.BMP"
+#define SCROLLDOWN_BMP      "ART/SCROLLDN.BMP"
+#define SCROLLUP            461
+#define SCROLLDOWN          462
 
 // New Game button area
-#define	NEWGAME_LOCATION_X	 15
-#define	NEWGAME_LOCATION_Y	  0
-#define	NEWGAME_WIDTH		217
-#define NEWGAME_HEIGHT		 20
+#define NEWGAME_LOCATION_X   15
+#define NEWGAME_LOCATION_Y    0
+#define NEWGAME_WIDTH       217
+#define NEWGAME_HEIGHT       20
 
 } // namespace HodjNPodj
 } // namespace Bagel

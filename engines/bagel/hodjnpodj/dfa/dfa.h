@@ -40,69 +40,69 @@ namespace HodjNPodj {
 namespace DFA {
 
 // Button Identifier codes (BIDs)
-#define	IDC_OPTION			100  
-#define IDC_LETTERBUTTON	200	// to 480
-#define	IDC_JUNK			999
+#define IDC_OPTION          100
+#define IDC_LETTERBUTTON    200 // to 480
+#define IDC_JUNK            999
 
 // Border width & height
-#define	SIDE_BORDER			16
-#define	TOP_BORDER			20
+#define SIDE_BORDER         16
+#define TOP_BORDER          20
 
 // Rules File Identifiers
-#define RULESFILE					"DFA.TXT"
-#define	RULES_WAV					".\\SOUND\\DAMFUR.WAV"
+#define RULESFILE                   "DFA.TXT"
+#define RULES_WAV                   ".\\SOUND\\DAMFUR.WAV"
 
 // Sound files:
-#define	GAME_THEME			".\\SOUND\\DAMFUR.MID"
-#define	HIT_1_WAV			".\\SOUND\\OW1.WAV"
-#define	HIT_2_WAV			".\\SOUND\\OW2.WAV"
-#define	HIT_3_WAV			".\\SOUND\\OW3.WAV"
-#define	HIT_4_WAV			".\\SOUND\\OW4.WAV"
-#define	HIT_5_WAV			".\\SOUND\\OW5.WAV"
-#define	HIT_6_WAV			".\\SOUND\\OW6.WAV"
-#define	HIT_7_WAV			".\\SOUND\\OW7.WAV"
-#define	HIT_8_WAV			".\\SOUND\\OW8.WAV"
-#define	HIT_9_WAV			".\\SOUND\\OW9.WAV"
-#define	HIT_10_WAV			".\\SOUND\\OW10.WAV"
-#define	HIT_11_WAV			".\\SOUND\\OW11.WAV"
-#define	MISS_1_WAV			".\\SOUND\\HAHA.WAV"
-#define	MISS_2_WAV			".\\SOUND\\MISSED.WAV"
-#define	MISS_3_WAV			".\\SOUND\\MISSEDME.WAV"
-#define	TICK_WAV			".\\SOUND\\TICK.WAV"
-#define	TIME_WAV			".\\SOUND\\BUZZER.WAV"
-#define	LAKE_WAV			".\\SOUND\\LAKE.WAV"
-#define	MOUNT_WAV			".\\SOUND\\YODEL.WAV"
-#define	BEE_WAV				".\\SOUND\\BEE.WAV"
-#define	WATCH_WAV			".\\SOUND\\CUCKOO.WAV" 
-                                                    
-#define	NUM_HIT_SOUNDS		11		// Number of sounds available for a hit                                                    
-#define	NUM_MISS_SOUNDS		3		// Number of sounds available for a missed hit
-#define	NUM_BEAVERS			7		// Number of beavers to hit
+#define GAME_THEME          ".\\SOUND\\DAMFUR.MID"
+#define HIT_1_WAV           ".\\SOUND\\OW1.WAV"
+#define HIT_2_WAV           ".\\SOUND\\OW2.WAV"
+#define HIT_3_WAV           ".\\SOUND\\OW3.WAV"
+#define HIT_4_WAV           ".\\SOUND\\OW4.WAV"
+#define HIT_5_WAV           ".\\SOUND\\OW5.WAV"
+#define HIT_6_WAV           ".\\SOUND\\OW6.WAV"
+#define HIT_7_WAV           ".\\SOUND\\OW7.WAV"
+#define HIT_8_WAV           ".\\SOUND\\OW8.WAV"
+#define HIT_9_WAV           ".\\SOUND\\OW9.WAV"
+#define HIT_10_WAV          ".\\SOUND\\OW10.WAV"
+#define HIT_11_WAV          ".\\SOUND\\OW11.WAV"
+#define MISS_1_WAV          ".\\SOUND\\HAHA.WAV"
+#define MISS_2_WAV          ".\\SOUND\\MISSED.WAV"
+#define MISS_3_WAV          ".\\SOUND\\MISSEDME.WAV"
+#define TICK_WAV            ".\\SOUND\\TICK.WAV"
+#define TIME_WAV            ".\\SOUND\\BUZZER.WAV"
+#define LAKE_WAV            ".\\SOUND\\LAKE.WAV"
+#define MOUNT_WAV           ".\\SOUND\\YODEL.WAV"
+#define BEE_WAV             ".\\SOUND\\BEE.WAV"
+#define WATCH_WAV           ".\\SOUND\\CUCKOO.WAV"
+
+#define NUM_HIT_SOUNDS      11      // Number of sounds available for a hit                                                    
+#define NUM_MISS_SOUNDS     3       // Number of sounds available for a missed hit
+#define NUM_BEAVERS         7       // Number of beavers to hit
 
 // Audio EasterEgg area constants
-#define	LAKE_X 			178
-#define	LAKE_Y			152
-#define	LAKE_DX			283
-#define	LAKE_DY			38
+#define LAKE_X          178
+#define LAKE_Y          152
+#define LAKE_DX         283
+#define LAKE_DY         38
 
-#define	MOUNT_X 		40
-#define	MOUNT_Y			40
-#define	MOUNT_DX		510
-#define	MOUNT_DY        80
+#define MOUNT_X         40
+#define MOUNT_Y         40
+#define MOUNT_DX        510
+#define MOUNT_DY        80
 
-#define	FLOWERS_X 		540
-#define	FLOWERS_Y		325
-#define	FLOWERS_DX		82
-#define	FLOWERS_DY		136
+#define FLOWERS_X       540
+#define FLOWERS_Y       325
+#define FLOWERS_DX      82
+#define FLOWERS_DY      136
 
-#define	WATCH_X 		437			// 436				
-#define	WATCH_Y			401			// 401
-#define	WATCH_DX		70
-#define	WATCH_DY		60
+#define WATCH_X         437         // 436              
+#define WATCH_Y         401         // 401
+#define WATCH_DX        70
+#define WATCH_DY        60
 
 // Bitmap Identifiers
-#define OPTSCROLL			"ART\\SSCROLL.BMP"
-#define BEAVER1			    "ART\\BEAVER1.BMP"
+#define OPTSCROLL           "ART\\SSCROLL.BMP"
+#define BEAVER1             "ART\\BEAVER1.BMP"
 #define BEAVER2             "ART\\BEAVER2.BMP"
 #define BEAVER3             "ART\\BEAVER3.BMP"
 #define BEAVER4             "ART\\BEAVER4.BMP"
@@ -111,76 +111,75 @@ namespace DFA {
 #define BEAVER7             "ART\\BEAVER7.BMP"
 
 // Button positioning constants
-#define OPTION_WIDTH				146
-#define OPTION_HEIGHT				23
-#define OPTION_LEFT					246
-#define OPTION_TOP					0
+#define OPTION_WIDTH                146
+#define OPTION_HEIGHT               23
+#define OPTION_LEFT                 246
+#define OPTION_TOP                  0
 
-#define		NUMBEROFCOLS	20
-#define		NUMBEROFROWS	14
+#define     NUMBEROFCOLS    20
+#define     NUMBEROFROWS    14
 
 /////////////////////////////////////////////////////////////////////////////
 
 // CMainPackRatWindow:
 // See game.cpp for the code to the member functions and the message map.
-//              
+//
 
-class CMainDFAWindow : public CFrameWnd
-{
+class CMainDFAWindow : public CFrameWnd {
 public:
-UINT			m_nTimeForGame;
-int				m_nBeaverDuration;
+	UINT            m_nTimeForGame;
+	int             m_nBeaverDuration;
 
 private:
-BOOL			m_bPlaySounds;            // bool for am I playing a certain # of rounds
-HWND			m_hCallAppWnd;
-LPGAMESTRUCT	m_lpGameStruct;
-BOOL			m_bMouseCaptured;
-long			m_lScore;
+	BOOL            m_bPlaySounds;            // bool for am I playing a certain # of rounds
+	HWND            m_hCallAppWnd;
+	LPGAMESTRUCT    m_lpGameStruct;
+	BOOL            m_bMouseCaptured;
+	long            m_lScore;
 
 public:
-	CMainDFAWindow( HWND, LPGAMESTRUCT );
+	CMainDFAWindow(HWND, LPGAMESTRUCT);
 
 	void SplashScreen();
 
-static	void ReleaseResources(void);
-static	void FlushInputEvents(void);
-		void MainLoop();
-		void ResetGame();
-		void ClearGrid();
-		void LoadNewGrid( int =1 );
-		void CreateNewGrid();
+	static  void ReleaseResources(void);
+	static  void FlushInputEvents(void);
+	void MainLoop();
+	void ResetGame();
+	void ClearGrid();
+	void LoadNewGrid(int = 1);
+	void CreateNewGrid();
 
 private:
-		void OnSoundNotify(CSound *pSound);
+	void OnSoundNotify(CSound *pSound);
 
 protected:
-virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-		BOOL LoadBeaverSounds();
-		void ReleaseBeaverSounds(void);
-        //
-        // Sound as resource dudes:
-        //
-        LPSTR		m_pHitSound[NUM_HIT_SOUNDS];
-        HANDLE		m_hHitRes[NUM_HIT_SOUNDS];
-        LPSTR		m_pMissSound[NUM_MISS_SOUNDS];
-        HANDLE		m_hMissRes[NUM_MISS_SOUNDS];
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	BOOL LoadBeaverSounds();
+	void ReleaseBeaverSounds(void);
+	//
+	// Sound as resource dudes:
+	//
+	LPSTR       m_pHitSound[NUM_HIT_SOUNDS];
+	HANDLE      m_hHitRes[NUM_HIT_SOUNDS];
+	LPSTR       m_pMissSound[NUM_MISS_SOUNDS];
+	HANDLE      m_hMissRes[NUM_MISS_SOUNDS];
 
 	//{{AFX_MSG( CMainPackRatWindow )
 	afx_msg void OnPaint();
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnTimer( UINT );
-  	afx_msg void OnRButtonDown( UINT, CPoint );
-  	afx_msg void OnLButtonDown( UINT, CPoint );
-  	afx_msg void OnLButtonUp( UINT, CPoint );
-	afx_msg void OnMouseMove( UINT, CPoint );
-	afx_msg void OnSysKeyDown( UINT, UINT, UINT);
-	afx_msg void OnKeyDown( UINT, UINT, UINT);
-	afx_msg BOOL OnEraseBkgnd( CDC * );
-	afx_msg void OnActivate(UINT nState, CWnd	*pWndOther, BOOL bMinimized);
-	afx_msg	long OnMCINotify( WPARAM, LPARAM);
-	afx_msg	long OnMMIONotify( WPARAM, LPARAM);
+	afx_msg void OnTimer(UINT);
+	afx_msg void OnRButtonDown(UINT, CPoint);
+	afx_msg void OnLButtonDown(UINT, CPoint);
+	afx_msg void OnLButtonUp(UINT, CPoint);
+	afx_msg void OnMouseMove(UINT, CPoint);
+	afx_msg void OnSysKeyDown(UINT, UINT, UINT);
+	afx_msg void OnKeyDown(UINT, UINT, UINT);
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized);
+	afx_msg long OnMCINotify(WPARAM, LPARAM);
+	afx_msg long OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

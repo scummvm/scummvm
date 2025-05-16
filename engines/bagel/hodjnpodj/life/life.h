@@ -31,23 +31,23 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Life {
 
-#define	VILLAGES		5	// Constants
-#define	MONTHS			12
-#define	FASTEST			0	// Changing this doesn't effectly change it
-							// everywhere.  speed of evolution.
-#define	LARGE		32468 	//= 2^15 - 300
-							//	when to reset counter increments
+#define VILLAGES        5   // Constants
+#define MONTHS          12
+#define FASTEST         0   // Changing this doesn't effectly change it
+// everywhere.  speed of evolution.
+#define LARGE       32468   //= 2^15 - 300
+//  when to reset counter increments
 
-#define	WAV_EVOLVE		".\\sound\\sound178.wav"	// Wave sounds
-#define WAV_GAMEOVER	".\\sound\\sound283.wav"
-#define WAV_NEWVILLAGE	".\\sound\\colony.wav"
-#define WAV_DEATH		".\\sound\\sound259.wav"
-#define	WAV_CANTDO		".\\sound\\sorry.wav"
+#define WAV_EVOLVE      ".\\sound\\sound178.wav"    // Wave sounds
+#define WAV_GAMEOVER    ".\\sound\\sound283.wav"
+#define WAV_NEWVILLAGE  ".\\sound\\colony.wav"
+#define WAV_DEATH       ".\\sound\\sound259.wav"
+#define WAV_CANTDO      ".\\sound\\sorry.wav"
 
 class CCalendar {
 public:
-	CSprite	*pMonthSprite[MONTHS];
-	BOOL	bIsOn[MONTHS];
+	CSprite *pMonthSprite[MONTHS];
+	BOOL    bIsOn[MONTHS];
 };
 
 class CLife {
@@ -56,27 +56,29 @@ public:
 	CLife(CDC *pDC);
 	// Destructor
 	~CLife();
-	void	change_board(UINT, CPoint, CDC*, BOOL);
-	void	evolution(CDC *pDC);
-	void	NewGame(CDC *pDC);
-	void	DisplayMonth(int nMonth, CDC *pDC);
-	void	ResetMonths(CDC *pDC);
-	int		ColonyPlaced() { return (*pColony).m_nColony_count; }
+	void    change_board(UINT, CPoint, CDC*, BOOL);
+	void    evolution(CDC *pDC);
+	void    NewGame(CDC *pDC);
+	void    DisplayMonth(int nMonth, CDC *pDC);
+	void    ResetMonths(CDC *pDC);
+	int     ColonyPlaced() {
+		return (*pColony).m_nColony_count;
+	}
 
 public:
-	colony 		*pColony;
-	double		m_dScore;
-	int			m_nCumLife;
-	int			m_nYears;
-	BOOL		m_bIsEvolving;
-	BOOL		m_bPrePlace;
+	colony      *pColony;
+	double      m_dScore;
+	int         m_nCumLife;
+	int         m_nYears;
+	BOOL        m_bIsEvolving;
+	BOOL        m_bPrePlace;
 
-	CText		*pYears, *pYearsText1, *pYearsText2,
-				*pColonyStat, *pColonyStatText1,
-				*pScore, *pColonyPlaced, *pTime;
+	CText       *pYears, *pYearsText1, *pYearsText2,
+	            *pColonyStat, *pColonyStatText1,
+	            *pScore, *pColonyPlaced, *pTime;
 
-	CSprite		*pBaseSprite[VILLAGES];
-	CCalendar	m_cCalendar;
+	CSprite     *pBaseSprite[VILLAGES];
+	CCalendar   m_cCalendar;
 };
 
 } // namespace Life

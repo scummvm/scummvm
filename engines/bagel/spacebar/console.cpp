@@ -72,7 +72,7 @@ bool Console::cmdVars(int argc, const char **argv) {
 		CBagVar *pVar = g_VarManager->getVariable(i);
 		if (pVar != nullptr) {
 			debugPrintf("VAR[%d]: %s = %s\n", i, (const char *)pVar->getName(),
-				(const char *)pVar->getValue());
+			            (const char *)pVar->getValue());
 		}
 	}
 
@@ -85,9 +85,9 @@ bool Console::cmdJammer(int argc, const char **argv) {
 	bool isDone = g_VarManager->getVariable("HFJAM_DONE")->getNumValue() != 0;
 
 	debugPrintf("Frequency is %s.%s, jammer is %s\n",
-		inner.getBuffer(), outer.getBuffer(),
-		isDone ? "correctly set" : "incorrectly set"
-	);
+	            inner.getBuffer(), outer.getBuffer(),
+	            isDone ? "correctly set" : "incorrectly set"
+	           );
 	return true;
 }
 
@@ -100,7 +100,7 @@ bool Console::cmdMegawave(int argc, const char **argv) {
 
 bool Console::cmdLoad(int argc, const char **argv) {
 	Common::SeekableReadStream *saveFile =
-		g_system->getSavefileManager()->openForLoading("spacebar.sav");
+	    g_system->getSavefileManager()->openForLoading("spacebar.sav");
 
 	if (!saveFile) {
 		debugPrintf("Could not locate original spacebar.sav in saves folder\n");

@@ -114,7 +114,7 @@ public:
 	void disable() override;
 
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewOffsetRect,
-		CBofList<CBofRect> * = nullptr, bool tempVar = true) override;
+	                       CBofList<CBofRect> * = nullptr, bool tempVar = true) override;
 
 	const CBofPoint devPtToViewPort(const CBofPoint &xPoint) override;
 	const CBofPoint viewPortToDevPt(const CBofPoint &xPoint) override;

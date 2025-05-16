@@ -73,13 +73,13 @@ struct WindowPos {
 #define SWAPLONG(x) MAKE_LONG(SWAPWORD(HIWORD(x)), SWAPWORD(LOWORD(x)))
 
 #ifndef MAX_FNAME
-#define MAX_FNAME 256
+	#define MAX_FNAME 256
 #endif
 
 #define MAX_DIRPATH 256
 
 #ifndef PDFT
-#define PDFT(VALUE) = VALUE
+	#define PDFT(VALUE) = VALUE
 #endif
 
 /*

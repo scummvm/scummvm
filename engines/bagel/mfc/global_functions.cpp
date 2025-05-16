@@ -52,7 +52,7 @@ SIZE_T GlobalCompact(DWORD dwMinFree) {
 }
 
 int MessageBox(HWND hWnd, LPCSTR lpText,
-		LPCSTR lpCaption, UINT uType) {
+               LPCSTR lpCaption, UINT uType) {
 	error("%s %s", lpText, lpCaption);
 	return 0;
 }
@@ -68,20 +68,20 @@ int MessageBox(LPCSTR lpText) {
 }
 
 UINT GetPrivateProfileInt(LPCSTR lpAppName,
-		LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName) {
+                          LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName) {
 	error("TODO: GetPrivateProfileInt");
 }
 
 extern DWORD GetPrivateProfileString(LPCSTR lpAppName,
-		LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
-		DWORD  nSize, LPCSTR lpFileName) {
+                                     LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
+                                     DWORD  nSize, LPCSTR lpFileName) {
 	error("TODO: GetPrivateProfileString");
 }
 
 
 BOOL WritePrivateProfileString(
-		LPCSTR lpAppName, LPCSTR lpKeyName,
-		LPCSTR lpString, LPCSTR lpFileName) {
+    LPCSTR lpAppName, LPCSTR lpKeyName,
+    LPCSTR lpString, LPCSTR lpFileName) {
 	error("TODO: WritePrivateProfileString");
 }
 
@@ -98,7 +98,7 @@ void FreeProcInstance(FARPROC lpProc) {
 }
 
 HHOOK SetWindowsHookEx(int idHook,
-		HOOKPROC lpfn, HINSTANCE hmod, HTASK dwThreadId) {
+                       HOOKPROC lpfn, HINSTANCE hmod, HTASK dwThreadId) {
 	error("TODO: SetWindowsHookEx");
 }
 
@@ -107,12 +107,12 @@ BOOL UnhookWindowsHookEx(HHOOK hhk) {
 }
 
 LRESULT CallNextHookEx(HHOOK hhk, int nCode,
-	WPARAM wParam, LPARAM lParam) {
+                       WPARAM wParam, LPARAM lParam) {
 	error("TODO: CallNextHookEx");
 }
 
 UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
 	error("TODO: SetTimer");
 }
 
@@ -138,8 +138,8 @@ long FileLength(const char *filename) {
 }
 
 BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
-	UINT wMsgFilterMin, UINT wMsgFilterMax,
-	UINT wRemoveMsg) {
+                 UINT wMsgFilterMin, UINT wMsgFilterMax,
+                 UINT wRemoveMsg) {
 	error("TODO: PeekMessage");
 }
 
@@ -152,17 +152,17 @@ void DispatchMessage(LPMSG lpMsg) {
 }
 
 BOOL PostMessage(HWND hWnd, UINT Msg,
-		WPARAM wParam, LPARAM lParam) {
+                 WPARAM wParam, LPARAM lParam) {
 	error("TODO: PostMessage");
 }
 
 LRESULT SendMessage(HWND hWnd, UINT Msg,
-		WPARAM wParam, LPARAM lParam) {
+                    WPARAM wParam, LPARAM lParam) {
 	error("TODO: SendMessage");
 }
 
 HRSRC FindResource(HMODULE hModule,
-		LPCSTR lpName, LPCSTR lpType) {
+                   LPCSTR lpName, LPCSTR lpType) {
 	error("TODO: FindResource");
 }
 

@@ -29,7 +29,7 @@ namespace MFC {
 
 enum {
 	VK_UP = Common::KEYCODE_UP,
-	VK_DOWN = Common::KEYCODE_DOWN,								// go to next page of text
+	VK_DOWN = Common::KEYCODE_DOWN,                             // go to next page of text
 	VK_LEFT = Common::KEYCODE_LEFT,
 	VK_RIGHT = Common::KEYCODE_RIGHT,
 	VK_NUMPAD1 = Common::KEYCODE_KP1,

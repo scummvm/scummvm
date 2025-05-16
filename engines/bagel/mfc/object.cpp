@@ -26,8 +26,8 @@ namespace MFC {
 
 const CRuntimeClass CObject::classCObject = {
 	"CObject", sizeof(CObject), 0xFFFF, // class name, size, schema
-	nullptr,							// (null if DECLARE_DYNAMIC only)
-	nullptr,							// pointer to base class's CRuntimeClass
+	nullptr,                            // (null if DECLARE_DYNAMIC only)
+	nullptr,                            // pointer to base class's CRuntimeClass
 	nullptr
 };
 

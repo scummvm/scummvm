@@ -530,7 +530,7 @@ void CNavWindow::refreshData() {
 		};
 		i++;
 	};
-	cRect.left -= 10;		// Un-indent
+	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;

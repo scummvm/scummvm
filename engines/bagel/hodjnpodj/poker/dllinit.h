@@ -29,7 +29,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Poker {
 
-HWND FAR PASCAL RunPoker( HWND, LPGAMESTRUCT );
+HWND FAR PASCAL RunPoker(HWND, LPGAMESTRUCT);
 
 BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
 void FAR PASCAL ProcessDllIdle();

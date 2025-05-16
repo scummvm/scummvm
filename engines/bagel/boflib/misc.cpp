@@ -217,7 +217,7 @@ INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
 	}
 
 	/* returning a 0 or 1 means that the strings are almost identical */
-	return(divergence);
+	return (divergence);
 }
 
 
@@ -335,7 +335,7 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2, UINT nSize) {
 		p++;
 	}
 
-	return(bMatch);
+	return (bMatch);
 }
 
 
@@ -366,7 +366,7 @@ INT StrCharCount(const CHAR *str, CHAR c) {
 			n++;
 	}
 
-	return(n);
+	return (n);
 }
 
 
@@ -412,7 +412,7 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 		p = (char *)s1 + (p - str1);
 	}
 
-	return(p);
+	return (p);
 }
 
 VOID StrUprStr(CHAR *s1, const CHAR *s2) {
@@ -481,7 +481,7 @@ CHAR *StrStripChar(CHAR *str, CHAR c) {
 		}
 		p++;
 	}
-	return(str);
+	return (str);
 }
 
 
@@ -500,7 +500,7 @@ CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
 		}
 		p++;
 	}
-	return(str);
+	return (str);
 }
 
 } // namespace Bagel

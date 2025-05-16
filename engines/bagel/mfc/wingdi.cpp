@@ -63,8 +63,8 @@ BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
 }
 
 INT_PTR DialogBoxParam(HINSTANCE hInstance,
-		LPCTSTR lpTemplateName, HWND hWndParent,
-		DLGPROC lpDialogFunc, LPARAM dwInitParam) {
+                       LPCTSTR lpTemplateName, HWND hWndParent,
+                       DLGPROC lpDialogFunc, LPARAM dwInitParam) {
 	error("TODO: DialogBoxParam");
 }
 
@@ -98,22 +98,22 @@ UINT RealizePalette(HDC hdc) {
 }
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
-		DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
+                       DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
 	error("TODO: CreateDIBitmap");
 }
 
 int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
-	LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage) {
+              LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage) {
 	error("TODO: GetDIBits");
 }
 
 BOOL BitBlt(HDC hdc, int x, int y, int cx, int cy,
-		HDC hdcSrc, int x1, int y1, DWORD rop) {
+            HDC hdcSrc, int x1, int y1, DWORD rop) {
 	error("TODO: BitBlt");
 }
 
 BOOL StretchBlt(HDC hdcDest, int xDest, int yDest, int wDest, int hDest,
-		HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop) {
+                HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop) {
 	error("TODO: StretchBlt");
 }
 
@@ -122,8 +122,8 @@ int SetStretchBltMode(HDC hdc, int mode) {
 }
 
 int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
-		int xSrc, int ySrc, int SrcWidth, int SrcHeight,
-		CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop) {
+                  int xSrc, int ySrc, int SrcWidth, int SrcHeight,
+                  CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop) {
 	error("TODO: StretchDIBits");
 }
 
@@ -136,12 +136,12 @@ int WINAPI AddFontResource(LPCSTR fontName) {
 }
 
 int SetScrollPos(HWND hWnd, int nBar,
-		int nPos, BOOL bRedraw) {
+                 int nPos, BOOL bRedraw) {
 	error("TODO: SetScrollPos");
 }
 
 BOOL SetScrollRange(HWND hWnd, int nBar,
-		int nMinPos, int nMaxPos, BOOL bRedraw) {
+                    int nMinPos, int nMaxPos, BOOL bRedraw) {
 	error("TODO: SetScrollRange");
 }
 
@@ -167,7 +167,7 @@ BOOL ReleaseCapture() {
 }
 
 HCURSOR LoadCursor(HINSTANCE hInstance,
-	LPCSTR lpCursorName) {
+                   LPCSTR lpCursorName) {
 	error("TODO: LoadCursor");
 }
 
@@ -180,8 +180,8 @@ int ShowCursor(BOOL bShow) {
 }
 
 BOOL LineDDA(int nXStart, int nYStart,
-		int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
-		LPARAM lpData) {
+             int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
+             LPARAM lpData) {
 	error("TODO: LineDDA");
 }
 
@@ -206,12 +206,12 @@ BOOL EndDialog(HWND hDlg, INT_PTR nResult) {
 }
 
 BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
-		UINT uValue, BOOL bSigned) {
+                   UINT uValue, BOOL bSigned) {
 	error("TODO: SetDlgItemInt");
 }
 
 BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
-	int nIDLastButton, int nIDCheckButton) {
+                      int nIDLastButton, int nIDCheckButton) {
 	error("TODO: CheckRadioButton");
 }
 

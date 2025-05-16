@@ -90,9 +90,9 @@ static const BagelReg SPACEBAR_REG = {
 SpaceBarEngine *g_engine;
 
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
-		SBarBibOddsWnd::initialize();
-		CMainWindow::initialize();
+	BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
+	SBarBibOddsWnd::initialize();
+	CMainWindow::initialize();
 
 	g_engine = this;
 
@@ -158,7 +158,7 @@ ErrorCode SpaceBarEngine::initialize() {
 		bool bShowLogo = true;
 
 		_masterWin = new CSBarMasterWin();
-		
+
 		// This is the primary game window
 		setMainWindow(_masterWin);
 
@@ -329,21 +329,21 @@ bool SpaceBarEngine::canSaveLoadFromWindow(bool save) const {
 
 	// Don't allow saves when capture/focus is active
 	if (CBofApp::getApp()->getCaptureControl() != nullptr ||
-		CBofApp::getApp()->getFocusControl() != nullptr ||
-		win == nullptr)
+	        CBofApp::getApp()->getFocusControl() != nullptr ||
+	        win == nullptr)
 		return false;
 
 	// These two dialogs need to allow save/load for the ScummVM
 	// dialogs to work from them when original save/load is disabled
 	if ((dynamic_cast<CBagStartDialog *>(win) != nullptr && !save) ||
-		dynamic_cast<CBagOptWindow *>(win) != nullptr)
+	        dynamic_cast<CBagOptWindow *>(win) != nullptr)
 		return true;
 
 	// Otherwise, allow save/load if it's not a dialog, and it's
 	// not a special view that shows the system cursor, like the
 	// Nav Window minigame or Drink Mixer
 	return dynamic_cast<CBofDialog *>(win) == nullptr &&
-		!CBagCursor::isSystemCursorVisible();
+	       !CBagCursor::isSystemCursorVisible();
 }
 
 bool SpaceBarEngine::canLoadGameStateCurrently(Common::U32String *msg) {
@@ -361,7 +361,7 @@ Common::Error SpaceBarEngine::saveGameState(int slot, const Common::String &desc
 }
 
 Common::Error SpaceBarEngine::saveGameState(int slot, const Common::String &desc,
-	bool isAutosave, StBagelSave &saveData) {
+        bool isAutosave, StBagelSave &saveData) {
 	_saveData = saveData;
 	return Engine::saveGameState(slot, desc, isAutosave);
 }

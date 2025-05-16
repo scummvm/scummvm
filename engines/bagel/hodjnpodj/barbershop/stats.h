@@ -28,27 +28,27 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Barbershop {
 
-#define	STATS_COLOR			RGB(255,255,255)
+#define STATS_COLOR         RGB(255,255,255)
 
-#define SCORE_FACTOR		2
-#define	SCORE_JACKPOT		100
+#define SCORE_FACTOR        2
+#define SCORE_JACKPOT       100
 
 class CStats {
 public:
 	CStats();
 	~CStats();
 
-	void 	SaveStats(int nLttrsSlvd, int nTime);
-	int		ResetGame();
+	void    SaveStats(int nLttrsSlvd, int nTime);
+	int     ResetGame();
 
-	CText	*m_pScore;
-	CText	*m_pTime;
+	CText   *m_pScore;
+	CText   *m_pTime;
 
-	int		m_nLettersSolved;
-	int		m_nScore;
-	int		m_nTime;
-	int		m_nCountDown;
-	char	m_nIsUsedGram;
+	int     m_nLettersSolved;
+	int     m_nScore;
+	int     m_nTime;
+	int     m_nCountDown;
+	char    m_nIsUsedGram;
 };
 
 } // namespace Barbershop

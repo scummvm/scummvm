@@ -30,56 +30,54 @@ namespace HodjNPodj {
 namespace WordSearch {
 
 //////////////////////////////////////////////////////////////////////////////
-////////	Options Specific to Word Search
+////////    Options Specific to Word Search
 //////////////////////////////////////////////////////////////////////////////
-class CWSOptDlg : public CBmpDialog
-{
+class CWSOptDlg : public CBmpDialog {
 private:
-	int 	m_nGameTime;
-	BOOL	m_bShowWord;
-	BOOL	m_bWordForwardOnly;
+	int     m_nGameTime;
+	BOOL    m_bShowWord;
+	BOOL    m_bWordForwardOnly;
 
 public:
-	CWSOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MINIOPTIONS_DIALOG );
-	void SetInitialOptions( int =0, BOOL =TRUE, BOOL =FALSE );	// Sets the private members
+	CWSOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MINIOPTIONS_DIALOG);
+	void SetInitialOptions(int = 0, BOOL = TRUE, BOOL = FALSE);  // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();
-        
+
 protected:
-    //{{AFX_MSG(COptions)
-    virtual void OnCancel(void);
-    virtual void OnOK(void);
+	//{{AFX_MSG(COptions)
+	virtual void OnCancel(void);
+	virtual void OnOK(void);
 	virtual BOOL OnCommand(WPARAM, LPARAM);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-    //}}AFX_MSG
+	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
 //////////////////////////////////////////////////////////////////////////////
-////////	Pack Rat Message Box
+////////    Pack Rat Message Box
 //////////////////////////////////////////////////////////////////////////////
-class CMsgDlg : public CBmpDialog
-{
+class CMsgDlg : public CBmpDialog {
 private:
-    int 	m_nWhichMsg;
-	long	m_nWordsLeft;
-	
+	int     m_nWhichMsg;
+	long    m_nWordsLeft;
+
 public:
-	CMsgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MESSAGEBOX );
-	void SetInitialOptions( int, int );	// Sets the private members
+	CMsgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MESSAGEBOX);
+	void SetInitialOptions(int, int);    // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();
-        
+
 protected:
-    //{{AFX_MSG(COptions)
-    virtual void OnCancel(void);
-    virtual void OnOK(void);
+	//{{AFX_MSG(COptions)
+	virtual void OnCancel(void);
+	virtual void OnOK(void);
 	virtual BOOL OnCommand(WPARAM, LPARAM);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-    //}}AFX_MSG
+	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 

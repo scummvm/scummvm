@@ -28,25 +28,25 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Barbershop {
 
-#define	DECK		62
-#define	STOCK		27
+#define DECK        62
+#define STOCK       27
 
-#define NOT_USED	-1
-#define USED		0
+#define NOT_USED    -1
+#define USED        0
 
 class CBoard;
 
 class CDeck {
-public:	// func
+public: // func
 
-	CDeck();		// constructor
-	~CDeck();		// destructor
+	CDeck();        // constructor
+	~CDeck();       // destructor
 
-	void	Shuffle();
-	void	Deal(CBoard*);
+	void    Shuffle();
+	void    Deal(CBoard*);
 
-public:	// vars
-	CCard	m_cDeck[DECK];
+public: // vars
+	CCard   m_cDeck[DECK];
 };
 
 } // namespace Barbershop

@@ -32,9 +32,9 @@ namespace ArtParts {
 //
 #define IDD_SUBOPTIONS                  115
 
-//#define IDB_LOCALE_BMP					301
+//#define IDB_LOCALE_BMP                    301
 
-#define IDC_RULES						1002
+#define IDC_RULES                       1002
 #define IDC_NUMCOLUMNS                  1021
 #define IDC_NUMROWS                     1022
 #define IDC_TIMELIMIT                   1023

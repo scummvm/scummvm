@@ -28,20 +28,20 @@ namespace Barbershop {
 
 #define HILITE_BORDER       3
 
-#define INI_SECTION			"Barbershop"
-#define	INI_LETTERSSOLVED	"LettersSolved"
+#define INI_SECTION         "Barbershop"
+#define INI_LETTERSSOLVED   "LettersSolved"
 
-#define	LSLVD_DEFAULT		6
-#define MIN_LSLVD			0
-#define MAX_LSLVD			20
+#define LSLVD_DEFAULT       6
+#define MIN_LSLVD           0
+#define MAX_LSLVD           20
 
-#define	INI_TIME			"Time"
-#define TIME_DEFAULT		180
-#define MIN_TIME			15
-#define MAX_TIME			601
+#define INI_TIME            "Time"
+#define TIME_DEFAULT        180
+#define MIN_TIME            15
+#define MAX_TIME            601
 
-#define INI_REC				"Record"
-#define REC_DEFAULT			0
+#define INI_REC             "Record"
+#define REC_DEFAULT         0
 #define CRYPT_RECS          200
 
 //{{NO_DEPENDENCIES}}

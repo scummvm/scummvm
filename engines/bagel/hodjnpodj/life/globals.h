@@ -28,14 +28,14 @@ namespace Life {
 
 // Main Window positioning constants
 
-#define GAME_WIDTH	640
-#define GAME_HEIGHT	480
+#define GAME_WIDTH  640
+#define GAME_HEIGHT 480
 
 // Scroll button size and positioning information
-#define SCROLL_BUTTON_X		250
-#define SCROLL_BUTTON_Y		0
-#define SCROLL_BUTTON_DX	140
-#define SCROLL_BUTTON_DY	23
+#define SCROLL_BUTTON_X     250
+#define SCROLL_BUTTON_Y     0
+#define SCROLL_BUTTON_DX    140
+#define SCROLL_BUTTON_DY    23
 
 } // namespace Life
 } // namespace HodjNPodj

@@ -39,40 +39,39 @@ namespace PDQ {
 #define SHOWN_DEF     3
 #define SHOWN_MAX     9
 
-class CUserCfgDlg : public CBmpDialog
-{
-    public:
-        CUserCfgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_USERCFG);
+class CUserCfgDlg : public CBmpDialog {
+public:
+	CUserCfgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_USERCFG);
 
-    protected:
+protected:
 
-        virtual void DoDataExchange(CDataExchange*);
-        virtual BOOL OnCommand(WPARAM, LPARAM);
-        virtual BOOL OnInitDialog(void);
-        void PutDlgData(void);
-        void GetDlgData(void);
-        void DispSpeed(void);
-        void DispShown(void);
-		void ClearDialogImage(void);
+	virtual void DoDataExchange(CDataExchange*);
+	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual BOOL OnInitDialog(void);
+	void PutDlgData(void);
+	void GetDlgData(void);
+	void DispSpeed(void);
+	void DispShown(void);
+	void ClearDialogImage(void);
 
 
-        void OnHScroll(UINT, UINT, CScrollBar *);
-        void OnPaint();
-        void OnDestroy();
-        DECLARE_MESSAGE_MAP()
+	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnPaint();
+	void OnDestroy();
+	DECLARE_MESSAGE_MAP()
 
-        CScrollBar   *m_pSpeedScroll;
-        CScrollBar   *m_pShownScroll;
-        CCheckButton *m_pNamesButton;
+	CScrollBar   *m_pSpeedScroll;
+	CScrollBar   *m_pShownScroll;
+	CCheckButton *m_pNamesButton;
 
-        /*
-        * user preference data
-        */
-        UINT        m_nShown;               // initial number of letters to be revealed
-        UINT        m_nGameSpeed;           // game speed 1..5 (1 = fast, 5 = slow)
-        BOOL        m_bRandomLetters;       // TRUE if letters to be revealed in random order
-        BOOL        m_bShowNames;           // TRUE if we shouldm show category names
-        BOOL        m_bShouldSave;          // TRUE if we should save theses values
+	/*
+	* user preference data
+	*/
+	UINT        m_nShown;               // initial number of letters to be revealed
+	UINT        m_nGameSpeed;           // game speed 1..5 (1 = fast, 5 = slow)
+	BOOL        m_bRandomLetters;       // TRUE if letters to be revealed in random order
+	BOOL        m_bShowNames;           // TRUE if we shouldm show category names
+	BOOL        m_bShouldSave;          // TRUE if we should save theses values
 };
 
 } // namespace PDQ

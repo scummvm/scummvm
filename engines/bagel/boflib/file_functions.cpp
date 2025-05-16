@@ -67,7 +67,7 @@ void fixPathName(CBofString &s) {
 
 	// Replace any backslashes with forward slashes
 	while ((p = strchr(s.getBuffer(), '\\')) != nullptr)
-		*p = '/';
+		* p = '/';
 }
 
 const char *formPath(const char *dir, const char *pszFile) {

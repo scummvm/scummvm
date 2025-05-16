@@ -33,11 +33,11 @@ class BoldFont : public Graphics::Font {
 private:
 	Graphics::Font *_font;
 	DisposeAfterUse::Flag _disposeAfterUse =
-		DisposeAfterUse::YES;
+	    DisposeAfterUse::YES;
 
 public:
 	BoldFont(Graphics::Font *font, DisposeAfterUse::Flag
-		disposeAfterUse = DisposeAfterUse::YES) :
+	         disposeAfterUse = DisposeAfterUse::YES) :
 		_font(font), _disposeAfterUse(disposeAfterUse) {
 	}
 	~BoldFont() override;

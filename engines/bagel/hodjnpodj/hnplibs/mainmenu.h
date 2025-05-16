@@ -43,37 +43,37 @@ typedef void (CALLBACK *FPFUNC)(CWnd *);
 
 class CMainMenu : public CBmpDialog {
 public:
-    CMainMenu(CWnd *, CPalette *, UINT, FPFUNC,
-		const char *, const char *pWavFileName = NULL,
-		LPGAMESTRUCT pGameParams = NULL);
+	CMainMenu(CWnd *, CPalette *, UINT, FPFUNC,
+	          const char *, const char *pWavFileName = NULL,
+	          LPGAMESTRUCT pGameParams = NULL);
 	void ClearDialogImage();
 
 // Implementation
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-    // Generated message map functions
-    //{{AFX_MSG(CMainMenu)
-    virtual BOOL OnInitDialog();
-    virtual void OnOK();
-    virtual void OnCancel();
-    afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-    afx_msg void OnPaint();
-    afx_msg void OnDestroy();
-    afx_msg void OnClickedRules() ;
-    afx_msg void OnClickedNewgame() ;
-    afx_msg void OnClickedOptions() ;
-    afx_msg void OnClickedAudio() ;
-    afx_msg void OnClickedReturn();
-    afx_msg void OnClickedQuit();
-    //}}AFX_MSG
-    DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(CMainMenu)
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual void OnCancel();
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg void OnPaint();
+	afx_msg void OnDestroy();
+	afx_msg void OnClickedRules() ;
+	afx_msg void OnClickedNewgame() ;
+	afx_msg void OnClickedOptions() ;
+	afx_msg void OnClickedAudio() ;
+	afx_msg void OnClickedReturn();
+	afx_msg void OnClickedQuit();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
-    FPFUNC      	m_pOptionsFunction = nullptr;
-    const char     *m_pRulesFileName = nullptr;
+	FPFUNC          m_pOptionsFunction = nullptr;
+	const char     *m_pRulesFileName = nullptr;
 	const char     *m_pWavFileName = nullptr;
-    int         	m_nFlags = 0;
-    LPGAMESTRUCT	m_pGameParams = nullptr;
+	int             m_nFlags = 0;
+	LPGAMESTRUCT    m_pGameParams = nullptr;
 
 private:
 	// Dialog Data

@@ -41,7 +41,7 @@ class CSize : public tagSIZE {
 public:
 
 	// Constructors
-		// construct an uninitialized size
+	// construct an uninitialized size
 	CSize();
 	// create from two integers
 	CSize(int initCX, int initCY);
@@ -80,12 +80,12 @@ class CPoint : public tagPOINT {
 public:
 	// Constructors
 
-		// create an uninitialized point
+	// create an uninitialized point
 	CPoint();
 	// create from two integers
 	CPoint(
-		int initX,
-		int initY);
+	    int initX,
+	    int initY);
 	// create from another point
 	CPoint(POINT initPt);
 	// create from a size
@@ -98,8 +98,8 @@ public:
 
 	// translate the point
 	void Offset(
-		int xOffset,
-		int yOffset);
+	    int xOffset,
+	    int yOffset);
 	void Offset(POINT point);
 	void Offset(SIZE size);
 	void SetPoint(int X, int Y);
@@ -134,10 +134,10 @@ public:
 	CRect();
 	// from left, top, right, and bottom
 	CRect(
-		int l,
-		int t,
-		int r,
-		int b);
+	    int l,
+	    int t,
+	    int r,
+	    int b);
 	// copy constructor
 	CRect(const RECT &srcRect);
 
@@ -150,7 +150,7 @@ public:
 
 	// Attributes (in addition to RECT members)
 
-		// retrieves the width
+	// retrieves the width
 	int Width() const;
 	// returns the height
 	int Height() const;
@@ -175,15 +175,15 @@ public:
 
 	// Operations
 
-		// set rectangle from left, top, right, and bottom
+	// set rectangle from left, top, right, and bottom
 	void SetRect(
-		int x1,
-		int y1,
-		int x2,
-		int y2);
+	    int x1,
+	    int y1,
+	    int x2,
+	    int y2);
 	void SetRect(
-		POINT topLeft,
-		POINT bottomRight);
+	    POINT topLeft,
+	    POINT bottomRight);
 	// empty the rectangle
 	void SetRectEmpty();
 	// copy from another rectangle
@@ -195,8 +195,8 @@ public:
 	// x units to the left and right ends of the rectangle
 	// and y units to the top and bottom.
 	void InflateRect(
-		int x,
-		int y);
+	    int x,
+	    int y);
 	// Inflate rectangle's width and height by
 	// size.cx units to the left and right ends of the rectangle
 	// and size.cy units to the top and bottom.
@@ -206,28 +206,28 @@ public:
 	// top is moved up and bottom is moved down.
 	void InflateRect(LPCRECT lpRect);
 	void InflateRect(
-		int l,
-		int t,
-		int r,
-		int b);
+	    int l,
+	    int t,
+	    int r,
+	    int b);
 
 	// deflate the rectangle's width and height without
 	// moving its top or left
 	void DeflateRect(
-		int x,
-		int y);
+	    int x,
+	    int y);
 	void DeflateRect(SIZE size);
 	void DeflateRect(LPCRECT lpRect);
 	void DeflateRect(
-		int l,
-		int t,
-		int r,
-		int b);
+	    int l,
+	    int t,
+	    int r,
+	    int b);
 
 	// translate the rectangle by moving its top and left
 	void OffsetRect(
-		int x,
-		int y);
+	    int x,
+	    int y);
 	void OffsetRect(SIZE size);
 	void OffsetRect(POINT point);
 	void NormalizeRect();
@@ -236,24 +236,24 @@ public:
 	void MoveToY(int y);
 	void MoveToX(int x);
 	void MoveToXY(
-		int x,
-		int y);
+	    int x,
+	    int y);
 	void MoveToXY(POINT point);
 
 	// set this rectangle to intersection of two others
 	BOOL IntersectRect(
-		LPCRECT lpRect1,
-		LPCRECT lpRect2);
+	    LPCRECT lpRect1,
+	    LPCRECT lpRect2);
 
 	// set this rectangle to bounding union of two others
 	BOOL UnionRect(
-		LPCRECT lpRect1,
-		LPCRECT lpRect2);
+	    LPCRECT lpRect1,
+	    LPCRECT lpRect2);
 
 	// set this rectangle to minimum of two others
 	BOOL SubtractRect(
-		LPCRECT lpRectSrc1,
-		LPCRECT lpRectSrc2);
+	    LPCRECT lpRectSrc1,
+	    LPCRECT lpRectSrc2);
 
 	// Additional Operations
 	void operator=(const RECT &srcRect);
@@ -278,8 +278,8 @@ public:
 	CRect operator&(const RECT &rect2) const;
 	CRect operator|(const RECT &rect2) const;
 	CRect MulDiv(
-		int nMultiplier,
-		int nDivisor) const;
+	    int nMultiplier,
+	    int nDivisor) const;
 
 	CPoint &TopLeft() {
 		return *((CPoint *)this);
@@ -296,8 +296,8 @@ inline CSize::CSize() {
 }
 
 inline CSize::CSize(
-	int initCX,
-	int initCY) {
+    int initCX,
+    int initCY) {
 	cx = initCX;
 	cy = initCY;
 }
@@ -334,8 +334,8 @@ inline void CSize::operator-=(SIZE size) {
 }
 
 inline void CSize::SetSize(
-	int CX,
-	int CY) {
+    int CX,
+    int CY) {
 	cx = CX;
 	cy = CY;
 }
@@ -375,8 +375,8 @@ inline CPoint::CPoint() {
 }
 
 inline CPoint::CPoint(
-	int initX,
-	int initY) {
+    int initX,
+    int initY) {
 	x = initX;
 	y = initY;
 }
@@ -395,8 +395,8 @@ inline CPoint::CPoint(LPARAM dwPoint) {
 }
 
 inline void CPoint::Offset(
-	int xOffset,
-	int yOffset) {
+    int xOffset,
+    int yOffset) {
 	x += xOffset;
 	y += yOffset;
 }
@@ -412,8 +412,8 @@ inline void CPoint::Offset(SIZE size) {
 }
 
 inline void CPoint::SetPoint(
-	int X,
-	int Y) {
+    int X,
+    int Y) {
 	x = X;
 	y = Y;
 }
@@ -483,10 +483,10 @@ inline CRect::CRect() {
 }
 
 inline CRect::CRect(
-	int l,
-	int t,
-	int r,
-	int b) {
+    int l,
+    int t,
+    int r,
+    int b) {
 	left = l;
 	top = t;
 	right = r;
@@ -557,20 +557,24 @@ inline BOOL CRect::IsRectNull() const {
 
 inline BOOL CRect::PtInRect(POINT point) const {
 	return (point.x >= left) && (point.x < right) &&
-		(point.y >= top) && (point.y < bottom);
+	       (point.y >= top) && (point.y < bottom);
 }
 
 inline void CRect::SetRect(int x1, int y1,
-		int x2, int y2) {
-	left = x1; top = y1;
-	right = x2; bottom = y2;
+                           int x2, int y2) {
+	left = x1;
+	top = y1;
+	right = x2;
+	bottom = y2;
 }
 
 inline void CRect::SetRect(
-		POINT topLeft,
-		POINT bottomRight) {
-	left = topLeft.x; top = topLeft.y;
-	right = bottomRight.x; bottom = bottomRight.y;
+    POINT topLeft,
+    POINT bottomRight) {
+	left = topLeft.x;
+	top = topLeft.y;
+	right = bottomRight.x;
+	bottom = bottomRight.y;
 }
 
 inline void CRect::SetRectEmpty() {
@@ -583,13 +587,13 @@ inline void CRect::CopyRect(LPCRECT lpSrcRect) {
 
 inline BOOL CRect::EqualRect(LPCRECT lpRect) const {
 	return left == lpRect->left &&
-		top == lpRect->top &&
-		right == lpRect->right &&
-		bottom == lpRect->bottom;
+	       top == lpRect->top &&
+	       right == lpRect->right &&
+	       bottom == lpRect->bottom;
 }
 
 inline void CRect::InflateRect(
-		int x, int y) {
+    int x, int y) {
 	left -= x;
 	top -= y;
 	right += x;
@@ -604,7 +608,7 @@ inline void CRect::InflateRect(SIZE size) {
 }
 
 inline void CRect::DeflateRect(
-		int x, int y) {
+    int x, int y) {
 	InflateRect(-x, -y);
 }
 
@@ -613,7 +617,7 @@ inline void CRect::DeflateRect(SIZE size) {
 }
 
 inline void CRect::OffsetRect(
-		int x, int y) {
+    int x, int y) {
 	left += x;
 	top += y;
 	right += x;
@@ -642,8 +646,8 @@ inline void CRect::MoveToX(int x) {
 }
 
 inline void CRect::MoveToXY(
-	int x,
-	int y) {
+    int x,
+    int y) {
 	MoveToX(x);
 	MoveToY(y);
 }
@@ -654,19 +658,19 @@ inline void CRect::MoveToXY(POINT pt) {
 }
 
 inline BOOL CRect::IntersectRect(
-		LPCRECT lpRect1, LPCRECT lpRect2) {
+    LPCRECT lpRect1, LPCRECT lpRect2) {
 	return (lpRect1->left < lpRect2->right) &&
-		(lpRect2->left < lpRect1->right) &&
-		(lpRect1->top < lpRect2->bottom) &&
-		(lpRect2->top < lpRect1->bottom);
+	       (lpRect2->left < lpRect1->right) &&
+	       (lpRect1->top < lpRect2->bottom) &&
+	       (lpRect2->top < lpRect1->bottom);
 }
 
 inline BOOL CRect::UnionRect(
-		LPCRECT lpRect1, LPCRECT lpRect2) {
+    LPCRECT lpRect1, LPCRECT lpRect2) {
 	if (lpRect1->right < lpRect2->left ||
-		lpRect1->left > lpRect2->right ||
-		lpRect1->bottom < lpRect2->top ||
-		lpRect2->top > lpRect2->bottom) {
+	        lpRect1->left > lpRect2->right ||
+	        lpRect1->bottom < lpRect2->top ||
+	        lpRect2->top > lpRect2->bottom) {
 		left = top = right = bottom = 0;
 		return false;
 	} else {
@@ -771,19 +775,17 @@ inline CRect CRect::operator|(const RECT &rect2) const {
 }
 
 inline BOOL CRect::SubtractRect(
-		LPCRECT lpRectSrc1, LPCRECT lpRectSrc2) {
+    LPCRECT lpRectSrc1, LPCRECT lpRectSrc2) {
 	// Calculate the intersection of the two rectangles
 	CRect intersect;
-	if (!intersect.IntersectRect(lpRectSrc1, lpRectSrc2))
-	{
+	if (!intersect.IntersectRect(lpRectSrc1, lpRectSrc2)) {
 		// No overlap - return full original
 		*this = *lpRectSrc1;
 		return TRUE;
 	}
 
 	// If lpRectSrc2 fully covers lpRectSrc1, result is empty
-	if (intersect == *lpRectSrc1)
-	{
+	if (intersect == *lpRectSrc1) {
 		SetRectEmpty();
 		return FALSE;
 	}
@@ -792,41 +794,37 @@ inline BOOL CRect::SubtractRect(
 
 	// Top strip
 	if (intersect.top > lpRectSrc1->top &&
-		intersect.left <= lpRectSrc1->left &&
-		intersect.right >= lpRectSrc1->right)
-	{
+	        intersect.left <= lpRectSrc1->left &&
+	        intersect.right >= lpRectSrc1->right) {
 		SetRect(lpRectSrc1->left, lpRectSrc1->top,
-			lpRectSrc1->right, intersect.top);
+		        lpRectSrc1->right, intersect.top);
 		return TRUE;
 	}
 
 	// Bottom strip
 	if (intersect.bottom < lpRectSrc1->bottom &&
-		intersect.left <= lpRectSrc1->left &&
-		intersect.right >= lpRectSrc1->right)
-	{
+	        intersect.left <= lpRectSrc1->left &&
+	        intersect.right >= lpRectSrc1->right) {
 		SetRect(lpRectSrc1->left, intersect.bottom,
-			lpRectSrc1->right, lpRectSrc1->bottom);
+		        lpRectSrc1->right, lpRectSrc1->bottom);
 		return TRUE;
 	}
 
 	// Left strip
 	if (intersect.left > lpRectSrc1->left &&
-		intersect.top <= lpRectSrc1->top &&
-		intersect.bottom >= lpRectSrc1->bottom)
-	{
+	        intersect.top <= lpRectSrc1->top &&
+	        intersect.bottom >= lpRectSrc1->bottom) {
 		SetRect(lpRectSrc1->left, lpRectSrc1->top,
-			intersect.left, lpRectSrc1->bottom);
+		        intersect.left, lpRectSrc1->bottom);
 		return TRUE;
 	}
 
 	// Right strip
 	if (intersect.right < lpRectSrc1->right &&
-		intersect.top <= lpRectSrc1->top &&
-		intersect.bottom >= lpRectSrc1->bottom)
-	{
+	        intersect.top <= lpRectSrc1->top &&
+	        intersect.bottom >= lpRectSrc1->bottom) {
 		SetRect(intersect.right, lpRectSrc1->top,
-			lpRectSrc1->right, lpRectSrc1->bottom);
+		        lpRectSrc1->right, lpRectSrc1->bottom);
 		return TRUE;
 	}
 
@@ -838,14 +836,12 @@ inline BOOL CRect::SubtractRect(
 
 inline void CRect::NormalizeRect() {
 	int nTemp;
-	if (left > right)
-	{
+	if (left > right) {
 		nTemp = left;
 		left = right;
 		right = nTemp;
 	}
-	if (top > bottom)
-	{
+	if (top > bottom) {
 		nTemp = top;
 		top = bottom;
 		bottom = nTemp;
@@ -860,10 +856,10 @@ inline void CRect::InflateRect(LPCRECT lpRect) {
 }
 
 inline void CRect::InflateRect(
-	int l,
-	int t,
-	int r,
-	int b) {
+    int l,
+    int t,
+    int r,
+    int b) {
 	left -= l;
 	top -= t;
 	right += r;
@@ -878,10 +874,10 @@ inline void CRect::DeflateRect(LPCRECT lpRect) {
 }
 
 inline void CRect::DeflateRect(
-	int l,
-	int t,
-	int r,
-	int b) {
+    int l,
+    int t,
+    int r,
+    int b) {
 	left += l;
 	top += t;
 	right -= r;
@@ -903,13 +899,13 @@ inline int SafeMulDiv(int a, int b, int c) {
 }
 
 inline CRect CRect::MulDiv(
-	int nMultiplier,
-	int nDivisor) const {
+    int nMultiplier,
+    int nDivisor) const {
 	return CRect(
-		SafeMulDiv(left, nMultiplier, nDivisor),
-		SafeMulDiv(top, nMultiplier, nDivisor),
-		SafeMulDiv(right, nMultiplier, nDivisor),
-		SafeMulDiv(bottom, nMultiplier, nDivisor));
+	           SafeMulDiv(left, nMultiplier, nDivisor),
+	           SafeMulDiv(top, nMultiplier, nDivisor),
+	           SafeMulDiv(right, nMultiplier, nDivisor),
+	           SafeMulDiv(bottom, nMultiplier, nDivisor));
 }
 
 } // namespace MFC

@@ -48,36 +48,35 @@ namespace Archeroids {
 #define BADGUYS_MIN     1
 #define BADGUYS_MAX    16
 
-class CUserCfgDlg : public CBmpDialog
-{
-    public:
+class CUserCfgDlg : public CBmpDialog {
+public:
 
-        CUserCfgDlg(CWnd *, CPalette *, UINT);
+	CUserCfgDlg(CWnd *, CPalette *, UINT);
 
-    protected:
+protected:
 
-        virtual BOOL OnCommand(WPARAM, LPARAM);
-        virtual BOOL OnInitDialog(void);
-        void PutDlgData(void);
-		void ClearDialogImage(void);
+	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual BOOL OnInitDialog(void);
+	void PutDlgData(void);
+	void ClearDialogImage(void);
 
-        void OnDestroy();
-        void OnHScroll(UINT, UINT, CScrollBar *);
-        void OnPaint();
-        DECLARE_MESSAGE_MAP()
+	void OnDestroy();
+	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnPaint();
+	DECLARE_MESSAGE_MAP()
 
-        //
-        // user preference data
-        //
-        CText       *m_pTxtSpeed;
-        CText       *m_pTxtSpeedSetting;
-        CText       *m_pTxtLevel;
-        CText       *m_pTxtLives;
-        INT          m_nInitGameSpeed;
-        INT          m_nInitArcherLevel;
-        INT          m_nInitNumLives;
-        INT          m_nInitNumBadGuys;
-        BOOL         m_bShouldSave;           // True if we should save theses settings
+	//
+	// user preference data
+	//
+	CText       *m_pTxtSpeed;
+	CText       *m_pTxtSpeedSetting;
+	CText       *m_pTxtLevel;
+	CText       *m_pTxtLives;
+	INT          m_nInitGameSpeed;
+	INT          m_nInitArcherLevel;
+	INT          m_nInitNumLives;
+	INT          m_nInitNumBadGuys;
+	BOOL         m_bShouldSave;           // True if we should save theses settings
 };
 
 } // namespace Archeroids

@@ -28,112 +28,111 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace ArtParts {
 
-// Border info              
-#define SIDE_BORDER 	 20
-#define TOP_BORDER		 28	//32
-#define BOTTOM_BORDER	 20	//16
-#define HILITE_BORDER	  3
+// Border info
+#define SIDE_BORDER      20
+#define TOP_BORDER       28 //32
+#define BOTTOM_BORDER    20 //16
+#define HILITE_BORDER     3
 
 // Art Parts constants
-#define ART_WIDTH	600
-#define ART_HEIGHT	432
+#define ART_WIDTH   600
+#define ART_HEIGHT  432
 
 // For the "frame" of correct pieces around the artwork:
-#define FRAME_WIDTH		  4
-#define FRAME_HEIGHT	  4
+#define FRAME_WIDTH       4
+#define FRAME_HEIGHT      4
 
 // Starting value defaults
-#define MAX_COLUMNS		 30
-#define MIN_COLUMNS		  1
+#define MAX_COLUMNS      30
+#define MIN_COLUMNS       1
 
-#define MAX_ROWS		 24     
-#define MIN_ROWS		  1 
-    
-#define START_COLUMNS		4
-#define START_ROWS			4
+#define MAX_ROWS         24
+#define MIN_ROWS          1
 
-// Timer constants         
-#define MIN_TIME			  0						//  15 Seconds
-#define MAX_TIME			600						// 180 Seconds = 3 minute max
-#define TIMER_START			  0						// Increment scrollbar in steps of 15 Secs
-#define TIMER_MAX			 12	// if Time > MAX_TIME, No Time Limit
-         
-#define DISPLAY_TIMER			1
-#define	SHOW_TIMER				2
-#define MS_SCALE			 1000		// Scale seconds to milliseconds
+#define START_COLUMNS       4
+#define START_ROWS          4
 
-#define CLICK_TIME			 1000		// Every Second, update timer clock 
-#define PAUSE_TIME			 3000		// Wait three seconds before erasing hint screen 
+// Timer constants
+#define MIN_TIME              0                     //  15 Seconds
+#define MAX_TIME            600                     // 180 Seconds = 3 minute max
+#define TIMER_START           0                     // Increment scrollbar in steps of 15 Secs
+#define TIMER_MAX            12 // if Time > MAX_TIME, No Time Limit
 
-// Sound files                          
-#define PICK_SOUND		".\\sound\\pickart.wav"
-#define SWITCH_SOUND	".\\sound\\moveart.wav"
-#define WIN_SOUND	  	".\\sound\\sound146.wav"
-#define UNDO_SOUND	  	".\\sound\\sound355.wav"
-#define LOSE_SOUND	   	".\\sound\\buzzer.wav"
-#define	RULES_WAV		".\\sound\\artparts.wav"
+#define DISPLAY_TIMER           1
+#define SHOW_TIMER              2
+#define MS_SCALE             1000       // Scale seconds to milliseconds
 
-#define GAME_THEME		".\\sound\\artparts.mid"
+#define CLICK_TIME           1000       // Every Second, update timer clock 
+#define PAUSE_TIME           3000       // Wait three seconds before erasing hint screen 
+
+// Sound files
+#define PICK_SOUND      ".\\sound\\pickart.wav"
+#define SWITCH_SOUND    ".\\sound\\moveart.wav"
+#define WIN_SOUND       ".\\sound\\sound146.wav"
+#define UNDO_SOUND      ".\\sound\\sound355.wav"
+#define LOSE_SOUND      ".\\sound\\buzzer.wav"
+#define RULES_WAV       ".\\sound\\artparts.wav"
+
+#define GAME_THEME      ".\\sound\\artparts.mid"
 
 // Backdrop bitmaps
-#define MAINSCREEN		".\\ART\\ARTPART1.BMP"
-#define FRAMESCREEN		".\\ART\\ARTPART1.BMP"
-#define TEXTSCREEN		".\\ART\\ARTTEMP.BMP"
+#define MAINSCREEN      ".\\ART\\ARTPART1.BMP"
+#define FRAMESCREEN     ".\\ART\\ARTPART1.BMP"
+#define TEXTSCREEN      ".\\ART\\ARTTEMP.BMP"
 
-#define DATA_FILE	  	"artfiles.dat"
-#define MAX_FILE_LENGTH			 20		// Longest Art file name length allowed
+#define DATA_FILE       "artfiles.dat"
+#define MAX_FILE_LENGTH          20     // Longest Art file name length allowed
 
 // New Game button area
-#define	NEWGAME_LOCATION_X	 70
-#define	NEWGAME_LOCATION_Y	  5
-#define	NEWGAME_WIDTH		113
-#define NEWGAME_HEIGHT		 13
+#define NEWGAME_LOCATION_X   70
+#define NEWGAME_LOCATION_Y    5
+#define NEWGAME_WIDTH       113
+#define NEWGAME_HEIGHT       13
 
 // Time Display area
-#define	TIME_LOCATION_X	457
-#define	TIME_LOCATION_Y	  4
-#define	TIME_WIDTH		117
-#define TIME_HEIGHT		 16
+#define TIME_LOCATION_X 457
+#define TIME_LOCATION_Y   4
+#define TIME_WIDTH      117
+#define TIME_HEIGHT      16
 /////////////////////////////////////////////////////////////////////////////
 
 // CMainWindow:
 // See game.cpp for the code to the member functions and the message map.
 //
-class CMainWindow : public CFrameWnd
-{
+class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
 	BOOL LoadArtWork();
-	void DrawPart( CPoint Src, CPoint Dst, int nWidth, int nHeight );
-	void SwitchAreas( CRect Src, CRect Dst );
-	void InitValues(); 
+	void DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight);
+	void SwitchAreas(CRect Src, CRect Dst);
+	void InitValues();
 	void NewGame();
-    void CheckForWin();
+	void CheckForWin();
 	void ShowOutOfPlace();
 
 //added data members:
-	BOOL m_bPlaying;			// Flag True if playing, False if setting options
+	BOOL m_bPlaying;            // Flag True if playing, False if setting options
 	BOOL m_bNewGame;            // Flag to check if a new game is being played
 	BOOL m_bFirst;              // Flag to check if the first area is being selected
 	CPoint First;
 	CPoint Second;
 	CPoint Center;
 	CPoint UpLeft;
-	CRect BaseRect;				// The part that is the base of the select area
+	CRect BaseRect;             // The part that is the base of the select area
 	CRect OldRect;              // The last area highlighted
 	CRect HiLiteRect;           // The new area to highlight
 	CRect SrcRect;              // The area to be moved
 	CRect DstRect;              // The destination of the moving area
 
-virtual void SplashScreen();
-virtual void SplashScratch();
-virtual void SplashScratchPaint();
+	virtual void SplashScreen();
+	virtual void SplashScratch();
+	virtual void SplashScratchPaint();
 
 private:
-   	VOID 		OnSoundNotify(CSound *pSound);
+	VOID        OnSoundNotify(CSound *pSound);
 
 protected:
-virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
@@ -145,10 +144,10 @@ virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags );
-	afx_msg	void OnClose();
-    afx_msg	long OnMCINotify( WPARAM, LPARAM);
-    afx_msg	long OnMMIONotify( WPARAM, LPARAM);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnClose();
+	afx_msg long OnMCINotify(WPARAM, LPARAM);
+	afx_msg long OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

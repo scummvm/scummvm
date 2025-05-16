@@ -35,10 +35,10 @@ public:
 	CTimeSpan();
 	CTimeSpan(int64 time);
 	CTimeSpan(
-		LONG lDays,
-		int nHours,
-		int nMins,
-		int nSecs);
+	    LONG lDays,
+	    int nHours,
+	    int nMins,
+	    int nSecs);
 
 	LONGLONG GetDays() const;
 	LONGLONG GetTotalHours() const;
@@ -77,23 +77,23 @@ public:
 	CTime();
 	CTime(int64 time);
 	CTime(
-		int nYear,
-		int nMonth,
-		int nDay,
-		int nHour,
-		int nMin,
-		int nSec,
-		int nDST = -1);
+	    int nYear,
+	    int nMonth,
+	    int nDay,
+	    int nHour,
+	    int nMin,
+	    int nSec,
+	    int nDST = -1);
 	CTime(
-		WORD wDosDate,
-		WORD wDosTime,
-		int nDST = -1);
+	    WORD wDosDate,
+	    WORD wDosTime,
+	    int nDST = -1);
 	CTime(
-		const SYSTEMTIME &st,
-		int nDST = -1);
+	    const SYSTEMTIME &st,
+	    int nDST = -1);
 	CTime(
-		const FILETIME &ft,
-		int nDST = -1);
+	    const FILETIME &ft,
+	    int nDST = -1);
 
 	CTime &operator=(int64 time);
 

@@ -28,7 +28,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace DFA {
 
-HWND FAR PASCAL RunDFA( HWND, LPGAMESTRUCT );
+HWND FAR PASCAL RunDFA(HWND, LPGAMESTRUCT);
 
 BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
 void FAR PASCAL ProcessDllIdle();

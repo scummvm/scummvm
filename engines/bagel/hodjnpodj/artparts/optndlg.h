@@ -22,15 +22,15 @@
 #ifndef HODJNPODJ_ARTPARTS_OPTNDLG_H
 #define HODJNPODJ_ARTPARTS_OPTNDLG_H
 
-#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace ArtParts {
 
-#define LEFT_SIDE		 30 
-#define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
+#define LEFT_SIDE        30
+#define OPTIONS_COLOR   RGB(0, 0, 0)    // Color of the stats info CText
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
@@ -38,22 +38,22 @@ namespace ArtParts {
 class COptnDlg : public CBmpDialog {
 // Construction
 public:
-	COptnDlg(CWnd* pParent = NULL,CPalette *pPalette = NULL);	// standard constructor
-	~COptnDlg();		// destructor
+	COptnDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL);  // standard constructor
+	~COptnDlg();        // destructor
 	void UpdateScrollbars();
 	void ClearDialogImage(void);
-	
-	int	m_nTime;
+
+	int m_nTime;
 	int m_nRows;
 	int m_nColumns;
 	int m_nMins;
-	int	m_nSecs;
-	float	m_nScore;
-	BOOL	m_bFramed;
+	int m_nSecs;
+	float   m_nScore;
+	BOOL    m_bFramed;
 	int m_nNumParts;
 
 	int nCFacs;
-	int	nRFacs;
+	int nRFacs;
 
 // Dialog Data
 	//{{AFX_DATA(COptnDlg)
@@ -65,14 +65,14 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK();
 	virtual void OnCancel();
 	afx_msg void OnPaint();

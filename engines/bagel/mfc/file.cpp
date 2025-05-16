@@ -56,15 +56,15 @@ void CFile::Abort() {
 }
 
 Common::SeekableReadStream *CFile::readStream() const {
-	Common::SeekableReadStream *rs = dynamic_cast<
-		Common::SeekableReadStream *>(_stream);
+	Common::SeekableReadStream *rs = dynamic_cast <
+	                                 Common::SeekableReadStream * > (_stream);
 	assert(rs);
 	return rs;
 }
 
 Common::WriteStream *CFile::writeStream() const {
-	Common::WriteStream *ws = dynamic_cast<
-		Common::WriteStream *>(_stream);
+	Common::WriteStream *ws = dynamic_cast <
+	                          Common::WriteStream * > (_stream);
 	assert(ws);
 	return ws;
 }

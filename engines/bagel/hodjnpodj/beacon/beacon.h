@@ -28,130 +28,129 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Beacon {
 
-#define ABS(a)		( (a > 0) ? (a) : (-a) )
+#define ABS(a)      ( (a > 0) ? (a) : (-a) )
 
-// Border info              
-#define TOP_BORDER		 24	//25	 
-#define BOTTOM_BORDER	 16	 
-#define SIDE_BORDER 	 16 
+// Border info
+#define TOP_BORDER       24 //25     
+#define BOTTOM_BORDER    16
+#define SIDE_BORDER      16
 
-#define	BEACON_TIMER	  1
-#define MIN_SPEED		  0
-#define MAX_SPEED		  2
-#define SPEED_BASE		 70
-#define SPEED_STEP		 10
+#define BEACON_TIMER      1
+#define MIN_SPEED         0
+#define MAX_SPEED         2
+#define SPEED_BASE       70
+#define SPEED_STEP       10
 
-#define NUM_BEAMS		120
-#define CHANGE_BEAM		144
-#define START_ENTRY		 55		// Starting entry of available palette slots
-#define BUTTON_ENTRY	176		// First entry of the Button palette slots
+#define NUM_BEAMS       120
+#define CHANGE_BEAM     144
+#define START_ENTRY      55     // Starting entry of available palette slots
+#define BUTTON_ENTRY    176     // First entry of the Button palette slots
 
-#define GRID_WIDTH		  8		//5		// Number of pixels
-#define GRID_HEIGHT		  8		//5 
+#define GRID_WIDTH        8     //5     // Number of pixels
+#define GRID_HEIGHT       8     //5 
 
 // Game playing area
-#define ART_WIDTH		488
-#define ART_HEIGHT		440
+#define ART_WIDTH       488
+#define ART_HEIGHT      440
 
-#define NUM_BUTTONS		 16		// Number of buttons
-#define NUM_COLUMNS		 (ART_WIDTH / GRID_WIDTH)
-#define NUM_ROWS		 (ART_HEIGHT / GRID_HEIGHT)
+#define NUM_BUTTONS      16     // Number of buttons
+#define NUM_COLUMNS      (ART_WIDTH / GRID_WIDTH)
+#define NUM_ROWS         (ART_HEIGHT / GRID_HEIGHT)
 
 // Lighthouse bitmap placement
-#define LTHOUSE_OFFSET_X	20
-#define LTHOUSE_OFFSET_Y	15
-#define LTHOUSE_WIDTH		50
-#define	LTHOUSE_HEIGHT		70
+#define LTHOUSE_OFFSET_X    20
+#define LTHOUSE_OFFSET_Y    15
+#define LTHOUSE_WIDTH       50
+#define LTHOUSE_HEIGHT      70
 
 // Start area
-#define	START_OFFSET_X		36		// GRID_WIDTH * 4.5
-#define	START_OFFSET_Y		28		// GRID_HEIGHT * 3.5	
-#define	START_WIDTH			72		// GRID_WIDTH * 9
-#define START_HEIGHT		88		// GRID_HEIGHT * 11
+#define START_OFFSET_X      36      // GRID_WIDTH * 4.5
+#define START_OFFSET_Y      28      // GRID_HEIGHT * 3.5    
+#define START_WIDTH         72      // GRID_WIDTH * 9
+#define START_HEIGHT        88      // GRID_HEIGHT * 11
 
 // Color Button placement
-#define BLOCK_SPACE_X		  6
-#define BLOCK_SPACE_Y		  6
-#define BLOCK_OFFSET_X		(ART_WIDTH + SIDE_BORDER + BLOCK_SPACE_X)
-#define BLOCK_OFFSET_Y		 74			// TOP_BORDER + 50 
-#define BLOCK_WIDTH			 50
-#define	BLOCK_HEIGHT		 40 
+#define BLOCK_SPACE_X         6
+#define BLOCK_SPACE_Y         6
+#define BLOCK_OFFSET_X      (ART_WIDTH + SIDE_BORDER + BLOCK_SPACE_X)
+#define BLOCK_OFFSET_Y       74         // TOP_BORDER + 50 
+#define BLOCK_WIDTH          50
+#define BLOCK_HEIGHT         40
 
-#define SELECT_COLOR		  0			// Always use Black for highlighting selected beacon color
-#define HILITE_BORDER		  4			// The highlighting frame is three pixels wide
-#define XTRALITE_TRIM		 42			// Color Index of lightest trim color
-#define LITE_TRIM			 30			// Color Index of light trim color
-#define MEDIUM_TRIM			 45			// Color Index of medium trim color
-#define DARK_TRIM			 46			// Color Index of dark trim color
+#define SELECT_COLOR          0         // Always use Black for highlighting selected beacon color
+#define HILITE_BORDER         4         // The highlighting frame is three pixels wide
+#define XTRALITE_TRIM        42         // Color Index of lightest trim color
+#define LITE_TRIM            30         // Color Index of light trim color
+#define MEDIUM_TRIM          45         // Color Index of medium trim color
+#define DARK_TRIM            46         // Color Index of dark trim color
 
 // Starting value defaults
-#define MAX_SWEEPS			300
-#define MIN_SWEEPS			  5
+#define MAX_SWEEPS          300
+#define MIN_SWEEPS            5
 
 // Sound files
-#define MID_SOUND	".\\sound\\bong.wav"                          
-#define PICK_SOUND	".\\sound\\pick.wav"
-#define LOSE_SOUND	".\\sound\\buzzer.wav"
-#define WIN_SOUND	".\\SOUND\\SOUNDWON.WAV"
+#define MID_SOUND   ".\\sound\\bong.wav"
+#define PICK_SOUND  ".\\sound\\pick.wav"
+#define LOSE_SOUND  ".\\sound\\buzzer.wav"
+#define WIN_SOUND   ".\\SOUND\\SOUNDWON.WAV"
 
-#define GAME_THEME	".\\sound\\beacon.mid"
-#define RULES_WAV	".\\SOUND\\BEACON.WAV"
-#define RULES_TEXT	"BEACON.TXT"
+#define GAME_THEME  ".\\sound\\beacon.mid"
+#define RULES_WAV   ".\\SOUND\\BEACON.WAV"
+#define RULES_TEXT  "BEACON.TXT"
 
 // Backdrop bitmaps
-#define MAINSCREEN	".\\ART\\BEACBRDR.BMP"
-#define BEAMSCREEN	".\\ART\\BEAMS3.BMP"
+#define MAINSCREEN  ".\\ART\\BEACBRDR.BMP"
+#define BEAMSCREEN  ".\\ART\\BEAMS3.BMP"
 
 // Artwork data file constants
-#define DATA_FILE	".\\BEACON.DAT"
-#define MAX_FILE_LENGTH		 20
+#define DATA_FILE   ".\\BEACON.DAT"
+#define MAX_FILE_LENGTH      20
 
 // New Game button area
-#define	NEWGAME_LOCATION_X	 15
-#define	NEWGAME_LOCATION_Y	  0
-#define	NEWGAME_WIDTH		217
-#define NEWGAME_HEIGHT		 20
+#define NEWGAME_LOCATION_X   15
+#define NEWGAME_LOCATION_Y    0
+#define NEWGAME_WIDTH       217
+#define NEWGAME_HEIGHT       20
 
 /////////////////////////////////////////////////////////////////////////////
 
 // CMainWindow:
 // See game.cpp for the code to the member functions and the message map.
 //
-class CMainWindow : public CFrameWnd
-{
+class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
 	void NewGame();
-	void DrawBeams( CDC *pDC );
+	void DrawBeams(CDC *pDC);
 	void MoveBeam();
 	void CheckUnderBeam();
-	void SetBeamEntries( CDC *pDC );
-	static void DrawPart( CDC *pDC, CPoint Src, CPoint Dst, int nWidth, int nHeight);	
-	static BOOL CompareColors( CDC *pDC, CPoint point );
-	static BOOL UnderLighthouse( CPoint point );
-	static BOOL InPictureSquare( CPoint point );
-	static CPoint PointToGrid( CPoint point );
-	BOOL LoadArtWork( CDC *pDC );
+	void SetBeamEntries(CDC *pDC);
+	static void DrawPart(CDC *pDC, CPoint Src, CPoint Dst, int nWidth, int nHeight);
+	static BOOL CompareColors(CDC *pDC, CPoint point);
+	static BOOL UnderLighthouse(CPoint point);
+	static BOOL InPictureSquare(CPoint point);
+	static CPoint PointToGrid(CPoint point);
+	BOOL LoadArtWork(CDC *pDC);
 
 //added data members:
 private:
-   	void OnSoundNotify(CSound *pSound);
+	void OnSoundNotify(CSound *pSound);
 
 protected:
-virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags );
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg	void OnClose();
-    afx_msg	long OnMCINotify( WPARAM, LPARAM);
-    afx_msg	long OnMMIONotify( WPARAM, LPARAM);
+	afx_msg void OnClose();
+	afx_msg long OnMCINotify(WPARAM, LPARAM);
+	afx_msg long OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

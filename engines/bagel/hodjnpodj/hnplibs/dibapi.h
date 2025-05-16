@@ -36,14 +36,14 @@ DECLARE_HANDLE(HDIB);
 /* DIB Macros*/
 
 #ifdef _DEBUG
-#define IS_WIN30_DIB(lpbi)		((*(LPDWORD)(lpbi)) == sizeof(BITMAPINFOHEADER))
+	#define IS_WIN30_DIB(lpbi)      ((*(LPDWORD)(lpbi)) == sizeof(BITMAPINFOHEADER))
 #else
-#define IS_WIN30_DIB(lpbi)		( TRUE )
+	#define IS_WIN30_DIB(lpbi)      ( TRUE )
 #endif
 
-#define RECTWIDTH(lpRect)		((lpRect)->right - (lpRect)->left)
-#define RECTHEIGHT(lpRect)		((lpRect)->bottom - (lpRect)->top)
-#define	DeleteBitmap(hbm)		DeleteObject((HGDIOBJ)(HBITMAP)(hbm))
+#define RECTWIDTH(lpRect)       ((lpRect)->right - (lpRect)->left)
+#define RECTHEIGHT(lpRect)      ((lpRect)->bottom - (lpRect)->top)
+#define DeleteBitmap(hbm)       DeleteObject((HGDIOBJ)(HBITMAP)(hbm))
 #define SelectBitmap(hdc, hbm)  ((HBITMAP)SelectObject((hdc),(HGDIOBJ)(HBITMAP)(hbm)))
 
 // WIDTHBYTES performs DWORD-aligning of DIB scanlines.  The "bits"
@@ -68,15 +68,15 @@ CBitmap *WINAPI  ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal);
 
 BOOL      WINAPI  SaveDIB(HDIB hDib, CFile &file);
 HDIB      WINAPI  ReadDIBFile(CFile &file);
-HDIB 	  WINAPI  ReadDIBResource(const char *pszPathName);
+HDIB      WINAPI  ReadDIBResource(const char *pszPathName);
 
 HANDLE    WINAPI  BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal);
 void      WINAPI  InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
-	DWORD dwWidth,
-	DWORD dwHeight,
-	int nBPP);
+                                       DWORD dwWidth,
+                                       DWORD dwHeight,
+                                       int nBPP);
 
-void	  WINAPI  ShowMemoryInfo(const char *chMessage, const char *chTitle);
+void      WINAPI  ShowMemoryInfo(const char *chMessage, const char *chTitle);
 
 CPalette *DuplicatePalette(CPalette *pPal);
 

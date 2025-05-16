@@ -23,35 +23,34 @@
 #define HODJNPODJ_GARFUNKLE_OPTNDLG_H
 
 #include "bagel/hodjnpodj/garfunkle/resource.h"
-#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Garkfunkle {
 
-#define LEFT_SIDE		26 
-#define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
-#define NUM_SPEEDS		12
+#define LEFT_SIDE       26
+#define OPTIONS_COLOR   RGB(0, 0, 0)    // Color of the stats info CText
+#define NUM_SPEEDS      12
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
 
-class COptnDlg : public CBmpDialog
-{
+class COptnDlg : public CBmpDialog {
 // Construction
 public:
-	COptnDlg(CWnd* pParent = NULL,CPalette *pPalette = NULL);	// standard constructor
-	~COptnDlg();		// destructor
+	COptnDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL);  // standard constructor
+	~COptnDlg();        // destructor
 	void UpdateScrollbars();
 	void ClearDialogImage(void);
 
 // Dialog Data
 	//{{AFX_DATA(COptnDlg)
 	enum { IDD = IDD_SUBOPTIONS };
-	CScrollBar 	m_ScrollButtons;
-	CScrollBar 	m_ScrollSpeed;
-	BOOL 		m_bPlayGame;
+	CScrollBar  m_ScrollButtons;
+	CScrollBar  m_ScrollSpeed;
+	BOOL        m_bPlayGame;
 	int m_nNumButtons;
 	int m_nSpeed;
 	CString mSpeedTable [NUM_SPEEDS];
@@ -59,7 +58,7 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
@@ -67,7 +66,7 @@ protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK();
 	virtual void OnCancel();
 	afx_msg void OnPaint();

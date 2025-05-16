@@ -48,11 +48,11 @@ namespace SpaceBar {
 //
 class CMainWindow : public CBagPanWindow {
 public:
-	static SBarThud *_pThudBmp;	// Pointer to the THUD object
+	static SBarThud *_pThudBmp; // Pointer to the THUD object
 
 private:
-	static int _nInstances;		// Number of space bar windows
-	static bool _bZzazzlVision;	// If Zzazzl vision is on/off
+	static int _nInstances;     // Number of space bar windows
+	static bool _bZzazzlVision; // If Zzazzl vision is on/off
 
 	CBagMenu *_pMenu;
 	CBofPalette *_pGamePalette;

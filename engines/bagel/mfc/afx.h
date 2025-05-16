@@ -34,7 +34,7 @@ class CException;
 class CFileException;
 
 #define DECLARE_DYNAMIC(class_name) \
-public: \
+	public: \
 	static const CRuntimeClass class##class_name; \
 	virtual const CRuntimeClass *GetRuntimeClass() const override; \
 
@@ -46,16 +46,16 @@ public: \
 		#class_name, sizeof(class class_name), wSchema, pfnNew, \
 			RUNTIME_CLASS(base_class_name), NULL }; \
 	const CRuntimeClass* class_name::GetRuntimeClass() const \
-		{ return RUNTIME_CLASS(class_name); }
+	{ return RUNTIME_CLASS(class_name); }
 
 #define IMPLEMENT_DYNAMIC(class_name, base_class_name) \
 	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, nullptr)
 
 #define IMPLEMENT_DYNCREATE(class_name, base_class_name) \
 	CObject *class_name::CreateObject() \
-		{ return new class_name; } \
+	{ return new class_name; } \
 	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, \
-		class_name::CreateObject)
+	                       class_name::CreateObject)
 
 struct CRuntimeClass {
 	// Attributes
@@ -69,8 +69,8 @@ struct CRuntimeClass {
 	const CRuntimeClass *m_pNextClass = nullptr;       // linked list of registered classes
 
 	CRuntimeClass(const char *m_lpszClassName_, int m_nObjectSize_, UINT m_wSchema_,
-			CObject *(*m_pfnCreateObject_)(), const CRuntimeClass *m_pBaseClass_,
-			const CRuntimeClass *m_pNextClass_) {
+	              CObject * (*m_pfnCreateObject_)(), const CRuntimeClass *m_pBaseClass_,
+	              const CRuntimeClass *m_pNextClass_) {
 		m_lpszClassName = m_lpszClassName_;
 		m_nObjectSize = m_nObjectSize_;
 		m_wSchema = m_wSchema_;
@@ -110,9 +110,9 @@ public:
 		shareDenyRead = (int)0x00030,
 		shareDenyNone = (int)0x00040,
 		modeNoInherit = (int)0x00080,
-#ifdef _UNICODE
+		#ifdef _UNICODE
 		typeUnicode = (int)0x00400, // used in derived classes (e.g. CStdioFile) only
-#endif
+		#endif
 		modeCreate = (int)0x01000,
 		modeNoTruncate = (int)0x02000,
 		typeText = (int)0x04000, // used in derived classes (e.g. CStdioFile) only

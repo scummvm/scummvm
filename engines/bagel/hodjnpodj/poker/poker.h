@@ -213,84 +213,83 @@ namespace Poker {
 #define BET_BMP_GRID_TOP3   88
 
 
-void PlayEasterEgg( CDC *, CWnd *, CPalette *, const char *,
-	const char *, int, int, int, int, BOOL );
+void PlayEasterEgg(CDC *, CWnd *, CPalette *, const char *,
+                   const char *, int, int, int, int, BOOL);
 
 /////////////////////////////////////////////////////////////////////////////
 
 // CMainPokerWindow:
 // See game.cpp for the code to the member functions and the message map.
-//              
+//
 
-class CMainPokerWindow : public CFrameWnd
-{
+class CMainPokerWindow : public CFrameWnd {
 public:
-    BOOL            m_bPlaySounds;          // bool for should I play sounds
-    BOOL            m_bMiddleOfHand;        // bool for am I in the middle of a hand
-    BOOL            m_bPlayRounds;          // bool for am I playing a certain # of rounds
-    long            m_lUserAmount;
-    long            m_lStartingAmount;
+	BOOL            m_bPlaySounds;          // bool for should I play sounds
+	BOOL            m_bMiddleOfHand;        // bool for am I in the middle of a hand
+	BOOL            m_bPlayRounds;          // bool for am I playing a certain # of rounds
+	long            m_lUserAmount;
+	long            m_lStartingAmount;
 
 private:
-    BOOL            abHoldArray[5];         // contains the state of the hold buttons
-    int             aDealtArray[10][2];     // contains the list of cards already dealt
-                                                                            // the second element is 1 if the card is shown
-    long            m_lUserBet;             // the amount of money the player currently has
-    int             m_nRound;               // the amount of the current bet
-    int             m_nPayOffRoyalFlush;    // the pay off ratios
-    int             m_nPayOffStraightFlush;   
-    int             m_nPayOffFourofaKind;     
-    int             m_nPayOffStraight;        
-    int             m_nPayOffFullHouse;       
-    int             m_nPayOffFlush;
-    int             m_nPayOffThreeofaKind;
-    int             m_nPayOffTwoPair;
-    int             m_nPayOffPairJackorHigher;
-    int             m_nPayOffPair;
-    HWND            m_hCallAppWnd;
-    LPGAMESTRUCT    m_lpGameStruct;
-    BOOL            m_bMouseCaptured;
-    BOOL            m_bEndHand;
+	BOOL            abHoldArray[5];         // contains the state of the hold buttons
+	int             aDealtArray[10][2];     // contains the list of cards already dealt
+	// the second element is 1 if the card is shown
+	long            m_lUserBet;             // the amount of money the player currently has
+	int             m_nRound;               // the amount of the current bet
+	int             m_nPayOffRoyalFlush;    // the pay off ratios
+	int             m_nPayOffStraightFlush;
+	int             m_nPayOffFourofaKind;
+	int             m_nPayOffStraight;
+	int             m_nPayOffFullHouse;
+	int             m_nPayOffFlush;
+	int             m_nPayOffThreeofaKind;
+	int             m_nPayOffTwoPair;
+	int             m_nPayOffPairJackorHigher;
+	int             m_nPayOffPair;
+	HWND            m_hCallAppWnd;
+	LPGAMESTRUCT    m_lpGameStruct;
+	BOOL            m_bMouseCaptured;
+	BOOL            m_bEndHand;
 
 public:
-    CMainPokerWindow( HWND, LPGAMESTRUCT );
+	CMainPokerWindow(HWND, LPGAMESTRUCT);
 
-    void    SplashScreen();
-    void    SetPayOffs( int );
-    void    ResetGame( long = 0L );
-    void    SetBet( long );
+	void    SplashScreen();
+	void    SetPayOffs(int);
+	void    ResetGame(long = 0L);
+	void    SetBet(long);
 
-static  void ReleaseResources(void);
-static  void FlushInputEvents(void);
+	static  void ReleaseResources(void);
+	static  void FlushInputEvents(void);
 
 private:
-    int     DealNewCard();
-    void    ShowNewCard( int, int );
-    void    SetHoldList( int );
-    void    EnableBets();
-    void    CheckWinningHand();
-    int     Mod(int, int);
-    void    OnSoundNotify(CSound *pSound);
+	int     DealNewCard();
+	void    ShowNewCard(int, int);
+	void    SetHoldList(int);
+	void    EnableBets();
+	void    CheckWinningHand();
+	int     Mod(int, int);
+	void    OnSoundNotify(CSound *pSound);
 
 protected:
-virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-    //{{AFX_MSG( CMainPokerWindow )
-    afx_msg void OnPaint();
-    afx_msg void OnClose();
-    afx_msg void OnDestroy();
-    afx_msg void OnLButtonDown( UINT, CPoint );
-    afx_msg void OnRButtonDown( UINT, CPoint );
-    afx_msg void OnLButtonUp( UINT, CPoint );
-    afx_msg void OnKeyDown( UINT, UINT, UINT);
-    afx_msg void OnDrawItem( int, LPDRAWITEMSTRUCT );
-    afx_msg BOOL OnEraseBkgnd( CDC * );
-    afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized);
-    afx_msg long OnMCINotify( WPARAM, LPARAM);
-    afx_msg long OnMMIONotify( WPARAM, LPARAM);
-    //}}AFX_MSG
+	//{{AFX_MSG( CMainPokerWindow )
+	afx_msg void OnPaint();
+	afx_msg void OnClose();
+	afx_msg void OnDestroy();
+	afx_msg void OnLButtonDown(UINT, CPoint);
+	afx_msg void OnRButtonDown(UINT, CPoint);
+	afx_msg void OnLButtonUp(UINT, CPoint);
+	afx_msg void OnKeyDown(UINT, UINT, UINT);
+	afx_msg void OnDrawItem(int, LPDRAWITEMSTRUCT);
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized);
+	afx_msg long OnMCINotify(WPARAM, LPARAM);
+	afx_msg long OnMMIONotify(WPARAM, LPARAM);
+	//}}AFX_MSG
 
-    DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -298,11 +297,10 @@ virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 // CTheApp:
 // See game.cpp for the code to the InitInstance member function.
 //
-class CTheApp : public CWinApp
-{
+class CTheApp : public CWinApp {
 public:
-    BOOL InitInstance();
-    int ExitInstance();
+	BOOL InitInstance();
+	int ExitInstance();
 };
 
 } // namespace Poker

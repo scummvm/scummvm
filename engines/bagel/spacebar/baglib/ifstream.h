@@ -52,10 +52,18 @@ public:
 	int getCh(char *ch, int count, char delimiter = '\n');
 	bool eatWhite();
 
-	bool eof() const { return (_currPtr == _eof); }
-	int getLineNumber() const { return _lineNumber; }
-	int getSize() const { return _length; }
-	const CBofString &getLineString() const { return _lineString; }
+	bool eof() const {
+		return (_currPtr == _eof);
+	}
+	int getLineNumber() const {
+		return _lineNumber;
+	}
+	int getSize() const {
+		return _length;
+	}
+	const CBofString &getLineString() const {
+		return _lineString;
+	}
 };
 
 } // namespace SpaceBar

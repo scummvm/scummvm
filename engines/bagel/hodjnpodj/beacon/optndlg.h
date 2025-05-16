@@ -23,26 +23,25 @@
 #define HODJNPODJ_BEACON_OPTNDLG_H
 
 #include "bagel/hodjnpodj/beacon/resource.h"
-#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Beacon {
 
-#define LEFT_SIDE		 30 
-#define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
-#define NUM_SPEEDS		3	
-                    
+#define LEFT_SIDE        30
+#define OPTIONS_COLOR   RGB(0, 0, 0)    // Color of the stats info CText
+#define NUM_SPEEDS      3
+
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
 
-class COptnDlg : public CBmpDialog
-{
+class COptnDlg : public CBmpDialog {
 // Construction
 public:
-	COptnDlg(CWnd* pParent = NULL,CPalette *pPalette = NULL);	// standard constructor
-	~COptnDlg();		// destructor
+	COptnDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL);  // standard constructor
+	~COptnDlg();        // destructor
 	void UpdateScrollbars();
 	void ClearDialogImage(void);
 
@@ -51,17 +50,17 @@ public:
 	enum { IDD = IDD_SUBOPTIONS };
 	CScrollBar m_ScrollSweeps;
 	CScrollBar m_ScrollSpeed;
-	BOOL	m_bAutomatic;
-	BOOL	m_bChangeAtTwelve;
-	UINT	m_nSweeps;
-	UINT	m_nSpeed;
-	UINT	nSweepSets;
+	BOOL    m_bAutomatic;
+	BOOL    m_bChangeAtTwelve;
+	UINT    m_nSweeps;
+	UINT    m_nSpeed;
+	UINT    nSweepSets;
 	CString mSpeedTable [NUM_SPEEDS];
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
@@ -69,7 +68,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK();
 	virtual void OnCancel();
 	afx_msg void OnPaint();

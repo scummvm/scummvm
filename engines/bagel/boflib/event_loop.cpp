@@ -27,7 +27,7 @@
 namespace Bagel {
 
 EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60, false),
-_mode(mode) {
+	_mode(mode) {
 }
 
 bool EventLoop::frame() {
@@ -36,7 +36,7 @@ bool EventLoop::frame() {
 	// Handle pending events
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (g_engine->shouldQuit() || (e.type == Common::EVENT_LBUTTONDOWN) ||
-			(e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE))
+		        (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE))
 			return true;
 	}
 

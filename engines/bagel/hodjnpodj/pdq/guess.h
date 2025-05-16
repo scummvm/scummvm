@@ -34,24 +34,23 @@ namespace PDQ {
 /////////////////////////////////////////////////////////////////////////////
 // CGuessDlg dialog
 
-class CGuessDlg : public CBmpDialog
-{
-    public:
+class CGuessDlg : public CBmpDialog {
+public:
 
-        CGuessDlg(CWnd *, CPalette *);    // standard constructor
+	CGuessDlg(CWnd *, CPalette *);    // standard constructor
 
-        CString text;
+	CString text;
 
-    protected:
-        virtual void DoDataExchange(CDataExchange*);    // DDX/DDV support
-        BOOL OnInitDialog(void);
-        void OnTimer(UINT);
-        void OnPaint(VOID);
-        void OnSetFocus(CWnd *);
-        void OnActivate(UINT, CWnd *, BOOL);
-        BOOL OnEraseBkgnd(CDC *);
+protected:
+	virtual void DoDataExchange(CDataExchange*);    // DDX/DDV support
+	BOOL OnInitDialog(void);
+	void OnTimer(UINT);
+	void OnPaint(VOID);
+	void OnSetFocus(CWnd *);
+	void OnActivate(UINT, CWnd *, BOOL);
+	BOOL OnEraseBkgnd(CDC *);
 
-        DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 };
 
 } // namespace PDQ

@@ -102,7 +102,7 @@ public:
 	 * @param blackOutWindow
 	 */
 	CBagFMovie(CBofWindow *parent = nullptr, const char *filename = nullptr,
-		CBofRect *bounds = nullptr, bool useNewPalette = true, bool blackOutWindow = false);
+	           CBofRect *bounds = nullptr, bool useNewPalette = true, bool blackOutWindow = false);
 
 	/**
 	 * Destructor

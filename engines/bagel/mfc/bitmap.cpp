@@ -38,7 +38,7 @@ BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 }
 
 BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
-		UINT nBitcount, const void *lpBits) {
+                           UINT nBitcount, const void *lpBits) {
 	error("TODO: CBitmap::CreateBitmap");
 }
 

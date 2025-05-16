@@ -72,7 +72,7 @@ public:
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave,
-		SpaceBar::StBagelSave &saveData);
+	                            SpaceBar::StBagelSave &saveData);
 
 	/**
 	 * Load a game state

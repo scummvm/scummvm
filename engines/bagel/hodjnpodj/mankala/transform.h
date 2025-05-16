@@ -28,12 +28,12 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-typedef struct polar_tag{
+typedef struct polar_tag {
 	double mag;
 	double angle;
-} polar;                                
+} polar;
 
-// CONSTANTS (borrowed from BORLANDC math.h include file 
+// CONSTANTS (borrowed from BORLANDC math.h include file
 
 /* Constants rounded for 21 decimals. */
 #define M_E         2.71828182845904523536
@@ -52,8 +52,8 @@ typedef struct polar_tag{
 #define M_SQRT_2    0.707106781186547524401
 
 
-#define MAG(z)	(sqrt(((z).x)*((z).x)+((z).y)*((z).y)))		//note z is of type complex
-#define ANG(z)	(atan((z).y/(z).x))
+#define MAG(z)  (sqrt(((z).x)*((z).x)+((z).y)*((z).y)))     //note z is of type complex
+#define ANG(z)  (atan((z).y/(z).x))
 
 BOOL dft(double* output, const int* input, int Length);
 BOOL graph(HWND hWndParent, HGLOBAL hglbX, HGLOBAL hglbY, int len);

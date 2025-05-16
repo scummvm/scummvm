@@ -93,9 +93,9 @@ protected:
 	bool _bAutoDecrement;
 	CBofBitmap *_bFixBmp;
 	CBofBitmap *_pLoseBmp;
-	CBofSound *_pBkgSnd;			// Casino background sounds
+	CBofSound *_pBkgSnd;            // Casino background sounds
 	CBofSound *_pSlotSound;
-	CBofSound *_pWinSound;			// Allow all ambient noise to continue playing
+	CBofSound *_pWinSound;          // Allow all ambient noise to continue playing
 	bool _bLose;
 
 public:
@@ -104,8 +104,8 @@ public:
 	virtual void onBofButton(CBofObject *pButton, int nState);
 	virtual void onMainLoop();
 
-	virtual ErrorCode attach();	// This function attaches the background and necessary bitmaps
-	virtual ErrorCode detach();	// This function detaches the background and necessary bitmaps
+	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
+	virtual ErrorCode detach(); // This function detaches the background and necessary bitmaps
 
 	void addBet(int nBetVal);
 	void betAll();

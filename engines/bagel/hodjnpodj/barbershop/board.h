@@ -30,18 +30,18 @@ namespace HodjNPodj {
 namespace Barbershop {
 
 class CBoard {
-public:		// functions
+public:     // functions
 	CBoard(CPaint*);
 	~CBoard();
 
-	CStack* GetStack(loc);
-	BOOL	IsTabStack(int);
+	CStack *GetStack(loc);
+	BOOL    IsTabStack(int);
 
-public:		// vars
-	CStack	*m_pFound;
-	CStack	*m_pTab[TAB_COUNT];
-	CStack	*m_pStock;
-	CStack	*m_pUsed;
+public:     // vars
+	CStack  *m_pFound;
+	CStack  *m_pTab[TAB_COUNT];
+	CStack  *m_pStock;
+	CStack  *m_pUsed;
 };
 
 } // namespace Barbershop

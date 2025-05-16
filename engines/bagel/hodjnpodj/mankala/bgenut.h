@@ -31,33 +31,37 @@ namespace Mankala {
 
 // class CGenUtil -- general utilities
 class CGenUtil {
-    char m_cStartData ;
-    BOOL m_bRandomInit ;	  // random number seed initialized
-    char m_cEndData ;
+	char m_cStartData ;
+	BOOL m_bRandomInit ;      // random number seed initialized
+	char m_cEndData ;
 
 public:
-    // constructor zeroes out all fields
-    CGenUtil() {
+	// constructor zeroes out all fields
+	CGenUtil() {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 	}
 
 // bgenut.cpp -- Boffo Games general utilities
 
 //- RandomInteger -- find random integer in specified range
-public: int RandomInteger(int iLow, int iHigh) ;
+public:
+	int RandomInteger(int iLow, int iHigh) ;
 //- RandomEvent -- return TRUE with specified probability
-public: BOOL RandomEvent(int iNum, int iDenom) ;
+public:
+	BOOL RandomEvent(int iNum, int iDenom) ;
 //- RandomPermutation -- generate a random permutation
 //	Generates a permutation of size iSize of the
 //	integers from 0 to (iNum-1)
-public: void RandomPermutation(int iNum,
-			int iSize, int * xpIntOut) ;
-//- NormalizeCRect -- 
 public:
-	 BOOL PASCAL NormalizeCRect(CRect& cRect) ;
+	void RandomPermutation(int iNum,
+	                       int iSize, int *xpIntOut) ;
+//- NormalizeCRect --
+public:
+	BOOL PASCAL NormalizeCRect(CRect& cRect) ;
 //- RandomSelection -- random selection of integer array
-public: void RandomSelection(int * xpiArray, int iNum,
-			int iSize) ;
+public:
+	void RandomSelection(int * xpiArray, int iNum,
+	                     int iSize) ;
 
 
 } ;

@@ -33,14 +33,14 @@ namespace Peggle {
 class COptions : public CDialog {
 // Construction
 public:
-	COptions(CWnd* pParent,CPalette *pPalette, int iDlgId);
-	
+	COptions(CWnd* pParent, CPalette *pPalette, int iDlgId);
+
 	void ClearDialogImage(void);
 	void RefreshBackground(void);
-	
-	int 	m_iDlgId ;	// dialog id
-	CWnd	*m_pDlgParentWnd;
-	CBitmap	*m_pDlgBackground;
+
+	int     m_iDlgId ;  // dialog id
+	CWnd    *m_pDlgParentWnd;
+	CBitmap *m_pDlgBackground;
 
 private:
 
@@ -48,18 +48,18 @@ private:
 // Dialog Data
 	//{{AFX_DATA(COptions)
 	enum { IDD = IDD_OPTIONS_DIALOG };
-		// NOTE: the ClassWizard will add data members here
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(COptions)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog();
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK();
 	afx_msg void OnPaint();
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);

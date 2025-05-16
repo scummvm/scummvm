@@ -35,7 +35,7 @@ public:
 		friend class Settings;
 	private:
 		typedef Common::HashMap<Common::String, Common::String,
-			Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Values;
+		        Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Values;
 		Settings *_settings = nullptr;
 		Values _values;
 		bool _modified = false;
@@ -60,7 +60,7 @@ public:
 		}
 		bool getBool(const Common::String &key, bool defaultValue = false) const {
 			return !hasKey(key) || _values[key].empty() ? false :
-				tolower(_values[key][0]) == 't';
+			       tolower(_values[key][0]) == 't';
 		}
 		Common::String getString(const Common::String &key, const char *defaultValue = nullptr) const {
 			return hasKey(key) ? _values[key] : defaultValue;
@@ -125,7 +125,7 @@ public:
 
 private:
 	typedef Common::HashMap<Common::String, Domain,
-		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Domains;
+	        Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Domains;
 	Domains _domains;
 };
 

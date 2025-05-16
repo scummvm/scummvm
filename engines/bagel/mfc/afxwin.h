@@ -49,100 +49,100 @@ class CBitmap;
 enum AfxSig {
 	AfxSig_end = 0,     // [marks end of message map]
 
-	AfxSig_b_D_v,				// BOOL (CDC*)
-	AfxSig_b_b_v,				// BOOL (BOOL)
-	AfxSig_b_u_v,				// BOOL (UINT)
-	AfxSig_b_h_v,				// BOOL (HANDLE)
-	AfxSig_b_W_uu,				// BOOL (CWnd*, UINT, UINT)
-	AfxSig_b_W_COPYDATASTRUCT,				// BOOL (CWnd*, COPYDATASTRUCT*)
-	AfxSig_b_v_HELPINFO,		// BOOL (LPHELPINFO);
-	AfxSig_CTLCOLOR,			// HBRUSH (CDC*, CWnd*, UINT)
-	AfxSig_CTLCOLOR_REFLECT,	// HBRUSH (CDC*, UINT)
-	AfxSig_i_u_W_u,				// int (UINT, CWnd*, UINT)  // ?TOITEM
-	AfxSig_i_uu_v,				// int (UINT, UINT)
-	AfxSig_i_W_uu,				// int (CWnd*, UINT, UINT)
-	AfxSig_i_v_s,				// int (LPTSTR)
-	AfxSig_l_w_l,				// LRESULT (WPARAM, LPARAM)
-	AfxSig_l_uu_M,				// LRESULT (UINT, UINT, CMenu*)
-	AfxSig_v_b_h,				// void (BOOL, HANDLE)
-	AfxSig_v_h_v,				// void (HANDLE)
-	AfxSig_v_h_h,				// void (HANDLE, HANDLE)
-	AfxSig_v_v_v,				// void ()
-	AfxSig_v_u_v,				// void (UINT)
-	AfxSig_v_up_v,				// void (UINT_PTR)
-	AfxSig_v_u_u,				// void (UINT, UINT)
-	AfxSig_v_uu_v,				// void (UINT, UINT)
-	AfxSig_v_v_ii,				// void (int, int)
-	AfxSig_v_u_uu,				// void (UINT, UINT, UINT)
-	AfxSig_v_u_ii,				// void (UINT, int, int)
-	AfxSig_v_u_W,				// void (UINT, CWnd*)
-	AfxSig_i_u_v,				// int (UINT)
-	AfxSig_u_u_v,				// UINT (UINT)
-	AfxSig_b_v_v,				// BOOL ()
-	AfxSig_v_w_l,				// void (WPARAM, LPARAM)
-	AfxSig_MDIACTIVATE,			// void (BOOL, CWnd*, CWnd*)
-	AfxSig_v_D_v,				// void (CDC*)
-	AfxSig_v_M_v,				// void (CMenu*)
-	AfxSig_v_M_ub,				// void (CMenu*, UINT, BOOL)
-	AfxSig_v_W_v,				// void (CWnd*)
-	AfxSig_v_v_W,				// void (CWnd*)
-	AfxSig_v_W_uu,				// void (CWnd*, UINT, UINT)
-	AfxSig_v_W_p,				// void (CWnd*, CPoint)
-	AfxSig_v_W_h,				// void (CWnd*, HANDLE)
-	AfxSig_C_v_v,				// HCURSOR ()
-	AfxSig_ACTIVATE,			// void (UINT, CWnd*, BOOL)
-	AfxSig_SCROLL,				// void (UINT, UINT, CWnd*)
-	AfxSig_SCROLL_REFLECT,		// void (UINT, UINT)
-	AfxSig_v_v_s,				// void (LPTSTR)
-	AfxSig_v_u_cs,				// void (UINT, LPCTSTR)
-	AfxSig_OWNERDRAW,			// void (int, LPTSTR) force return TRUE
-	AfxSig_i_i_s,				// int (int, LPTSTR)
-	AfxSig_u_v_p,				// UINT (CPoint)
-	AfxSig_u_v_v,				// UINT ()
-	AfxSig_v_b_NCCALCSIZEPARAMS,		// void (BOOL, NCCALCSIZE_PARAMS*)
-	AfxSig_v_v_WINDOWPOS,			// void (WINDOWPOS*)
-	AfxSig_v_uu_M,				// void (UINT, UINT, HMENU)
-	AfxSig_v_u_p,				// void (UINT, CPoint)
-	AfxSig_SIZING,				// void (UINT, LPRECT)
-	AfxSig_MOUSEWHEEL,			// BOOL (UINT, short, CPoint)
-	AfxSig_MOUSEHWHEEL,			// void (UINT, short, CPoint)
-	AfxSigCmd_v,				// void ()
-	AfxSigCmd_b,				// BOOL ()
-	AfxSigCmd_RANGE,			// void (UINT)
-	AfxSigCmd_EX,				// BOOL (UINT)
-	AfxSigNotify_v,				// void (NMHDR*, LRESULT*)
-	AfxSigNotify_b,				// BOOL (NMHDR*, LRESULT*)
-	AfxSigNotify_RANGE,			// void (UINT, NMHDR*, LRESULT*)
-	AfxSigNotify_EX,			// BOOL (UINT, NMHDR*, LRESULT*)
-	AfxSigCmdUI,				// void (CCmdUI*)
-	AfxSigCmdUI_RANGE,			// void (CCmdUI*, UINT)
-	AfxSigCmd_v_pv,				// void (void*)
-	AfxSigCmd_b_pv,				// BOOL (void*)
-	AfxSig_l,				// LRESULT ()
-	AfxSig_l_p,				// LRESULT (CPOINT)	
-	AfxSig_u_W_u,				// UINT (CWnd*, UINT)
-	AfxSig_v_u_M,				// void (UINT, CMenu* )
-	AfxSig_u_u_M,				// UINT (UINT, CMenu* )
-	AfxSig_u_v_MENUGETOBJECTINFO,		// UINT (MENUGETOBJECTINFO*)
-	AfxSig_v_M_u,				// void (CMenu*, UINT)
-	AfxSig_v_u_LPMDINEXTMENU,		// void (UINT, LPMDINEXTMENU)
-	AfxSig_APPCOMMAND,			// void (CWnd*, UINT, UINT, UINT)
-	AfxSig_RAWINPUT,			// void (UINT, HRAWINPUT)
-	AfxSig_u_u_u,				// UINT (UINT, UINT)
-	AfxSig_MOUSE_XBUTTON,			// void (UINT, UINT, CPoint)
-	AfxSig_MOUSE_NCXBUTTON,			// void (short, UINT, CPoint)
-	AfxSig_INPUTLANGCHANGE,			// void (UINT, UINT)
-	AfxSig_v_u_hkl,					// void (UINT, HKL)
-	AfxSig_INPUTDEVICECHANGE,		// void (unsigned short, HANDLE)
-	AfxSig_l_D_u,					// LRESULT (CDC*, UINT)
-	AfxSig_i_v_S,				// int (LPCTSTR)
-	AfxSig_v_F_b,				// void (CFont*, BOOL)
-	AfxSig_h_v_v,				// HANDLE ()
-	AfxSig_h_b_h,				// HANDLE (BOOL, HANDLE)
-	AfxSig_b_v_ii,				// BOOL (int, int)
-	AfxSig_h_h_h,				// HANDLE (HANDLE, HANDLE)
-	AfxSig_MDINext,				// void (CWnd*, BOOL)
-	AfxSig_u_u_l,				// UINT (UINT, LPARAM)
+	AfxSig_b_D_v,               // BOOL (CDC*)
+	AfxSig_b_b_v,               // BOOL (BOOL)
+	AfxSig_b_u_v,               // BOOL (UINT)
+	AfxSig_b_h_v,               // BOOL (HANDLE)
+	AfxSig_b_W_uu,              // BOOL (CWnd*, UINT, UINT)
+	AfxSig_b_W_COPYDATASTRUCT,              // BOOL (CWnd*, COPYDATASTRUCT*)
+	AfxSig_b_v_HELPINFO,        // BOOL (LPHELPINFO);
+	AfxSig_CTLCOLOR,            // HBRUSH (CDC*, CWnd*, UINT)
+	AfxSig_CTLCOLOR_REFLECT,    // HBRUSH (CDC*, UINT)
+	AfxSig_i_u_W_u,             // int (UINT, CWnd*, UINT)  // ?TOITEM
+	AfxSig_i_uu_v,              // int (UINT, UINT)
+	AfxSig_i_W_uu,              // int (CWnd*, UINT, UINT)
+	AfxSig_i_v_s,               // int (LPTSTR)
+	AfxSig_l_w_l,               // LRESULT (WPARAM, LPARAM)
+	AfxSig_l_uu_M,              // LRESULT (UINT, UINT, CMenu*)
+	AfxSig_v_b_h,               // void (BOOL, HANDLE)
+	AfxSig_v_h_v,               // void (HANDLE)
+	AfxSig_v_h_h,               // void (HANDLE, HANDLE)
+	AfxSig_v_v_v,               // void ()
+	AfxSig_v_u_v,               // void (UINT)
+	AfxSig_v_up_v,              // void (UINT_PTR)
+	AfxSig_v_u_u,               // void (UINT, UINT)
+	AfxSig_v_uu_v,              // void (UINT, UINT)
+	AfxSig_v_v_ii,              // void (int, int)
+	AfxSig_v_u_uu,              // void (UINT, UINT, UINT)
+	AfxSig_v_u_ii,              // void (UINT, int, int)
+	AfxSig_v_u_W,               // void (UINT, CWnd*)
+	AfxSig_i_u_v,               // int (UINT)
+	AfxSig_u_u_v,               // UINT (UINT)
+	AfxSig_b_v_v,               // BOOL ()
+	AfxSig_v_w_l,               // void (WPARAM, LPARAM)
+	AfxSig_MDIACTIVATE,         // void (BOOL, CWnd*, CWnd*)
+	AfxSig_v_D_v,               // void (CDC*)
+	AfxSig_v_M_v,               // void (CMenu*)
+	AfxSig_v_M_ub,              // void (CMenu*, UINT, BOOL)
+	AfxSig_v_W_v,               // void (CWnd*)
+	AfxSig_v_v_W,               // void (CWnd*)
+	AfxSig_v_W_uu,              // void (CWnd*, UINT, UINT)
+	AfxSig_v_W_p,               // void (CWnd*, CPoint)
+	AfxSig_v_W_h,               // void (CWnd*, HANDLE)
+	AfxSig_C_v_v,               // HCURSOR ()
+	AfxSig_ACTIVATE,            // void (UINT, CWnd*, BOOL)
+	AfxSig_SCROLL,              // void (UINT, UINT, CWnd*)
+	AfxSig_SCROLL_REFLECT,      // void (UINT, UINT)
+	AfxSig_v_v_s,               // void (LPTSTR)
+	AfxSig_v_u_cs,              // void (UINT, LPCTSTR)
+	AfxSig_OWNERDRAW,           // void (int, LPTSTR) force return TRUE
+	AfxSig_i_i_s,               // int (int, LPTSTR)
+	AfxSig_u_v_p,               // UINT (CPoint)
+	AfxSig_u_v_v,               // UINT ()
+	AfxSig_v_b_NCCALCSIZEPARAMS,        // void (BOOL, NCCALCSIZE_PARAMS*)
+	AfxSig_v_v_WINDOWPOS,           // void (WINDOWPOS*)
+	AfxSig_v_uu_M,              // void (UINT, UINT, HMENU)
+	AfxSig_v_u_p,               // void (UINT, CPoint)
+	AfxSig_SIZING,              // void (UINT, LPRECT)
+	AfxSig_MOUSEWHEEL,          // BOOL (UINT, short, CPoint)
+	AfxSig_MOUSEHWHEEL,         // void (UINT, short, CPoint)
+	AfxSigCmd_v,                // void ()
+	AfxSigCmd_b,                // BOOL ()
+	AfxSigCmd_RANGE,            // void (UINT)
+	AfxSigCmd_EX,               // BOOL (UINT)
+	AfxSigNotify_v,             // void (NMHDR*, LRESULT*)
+	AfxSigNotify_b,             // BOOL (NMHDR*, LRESULT*)
+	AfxSigNotify_RANGE,         // void (UINT, NMHDR*, LRESULT*)
+	AfxSigNotify_EX,            // BOOL (UINT, NMHDR*, LRESULT*)
+	AfxSigCmdUI,                // void (CCmdUI*)
+	AfxSigCmdUI_RANGE,          // void (CCmdUI*, UINT)
+	AfxSigCmd_v_pv,             // void (void*)
+	AfxSigCmd_b_pv,             // BOOL (void*)
+	AfxSig_l,               // LRESULT ()
+	AfxSig_l_p,             // LRESULT (CPOINT)
+	AfxSig_u_W_u,               // UINT (CWnd*, UINT)
+	AfxSig_v_u_M,               // void (UINT, CMenu* )
+	AfxSig_u_u_M,               // UINT (UINT, CMenu* )
+	AfxSig_u_v_MENUGETOBJECTINFO,       // UINT (MENUGETOBJECTINFO*)
+	AfxSig_v_M_u,               // void (CMenu*, UINT)
+	AfxSig_v_u_LPMDINEXTMENU,       // void (UINT, LPMDINEXTMENU)
+	AfxSig_APPCOMMAND,          // void (CWnd*, UINT, UINT, UINT)
+	AfxSig_RAWINPUT,            // void (UINT, HRAWINPUT)
+	AfxSig_u_u_u,               // UINT (UINT, UINT)
+	AfxSig_MOUSE_XBUTTON,           // void (UINT, UINT, CPoint)
+	AfxSig_MOUSE_NCXBUTTON,         // void (short, UINT, CPoint)
+	AfxSig_INPUTLANGCHANGE,         // void (UINT, UINT)
+	AfxSig_v_u_hkl,                 // void (UINT, HKL)
+	AfxSig_INPUTDEVICECHANGE,       // void (unsigned short, HANDLE)
+	AfxSig_l_D_u,                   // LRESULT (CDC*, UINT)
+	AfxSig_i_v_S,               // int (LPCTSTR)
+	AfxSig_v_F_b,               // void (CFont*, BOOL)
+	AfxSig_h_v_v,               // HANDLE ()
+	AfxSig_h_b_h,               // HANDLE (BOOL, HANDLE)
+	AfxSig_b_v_ii,              // BOOL (int, int)
+	AfxSig_h_h_h,               // HANDLE (HANDLE, HANDLE)
+	AfxSig_MDINext,             // void (CWnd*, BOOL)
+	AfxSig_u_u_l,               // UINT (UINT, LPARAM)
 
 	// Old
 	AfxSig_bD = AfxSig_b_D_v,      // BOOL (CDC*)
@@ -260,42 +260,42 @@ struct AFX_MSGMAP {
 #define afx_msg
 
 #ifndef AFX_MSG_CALL
-#define AFX_MSG_CALL
+	#define AFX_MSG_CALL
 #endif
 typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)(void);
 
 #define DECLARE_MESSAGE_MAP() \
-protected: \
+	protected: \
 	static const AFX_MSGMAP *GetThisMessageMap(); \
 	const AFX_MSGMAP *GetMessageMap() const override; \
 
-#define BEGIN_TEMPLATE_MESSAGE_MAP(theClass, type_name, baseClass)			\
-	template < typename type_name >											\
-	const AFX_MSGMAP *theClass< type_name >::GetMessageMap() const			\
-		{ return GetThisMessageMap(); }										\
-	template < typename type_name >											\
-	const AFX_MSGMAP *theClass< type_name >::GetThisMessageMap() {		\
-		typedef theClass< type_name > ThisClass;							\
-		typedef baseClass TheBaseClass;										\
-		static const AFX_MSGMAP_ENTRY _messageEntries[] =					\
+#define BEGIN_TEMPLATE_MESSAGE_MAP(theClass, type_name, baseClass)          \
+	template < typename type_name >                                         \
+	const AFX_MSGMAP *theClass< type_name >::GetMessageMap() const          \
+	{ return GetThisMessageMap(); }                                     \
+	template < typename type_name >                                         \
+	const AFX_MSGMAP *theClass< type_name >::GetThisMessageMap() {      \
+		typedef theClass< type_name > ThisClass;                            \
+		typedef baseClass TheBaseClass;                                     \
+		static const AFX_MSGMAP_ENTRY _messageEntries[] =                   \
 		{
 
 #define BEGIN_MESSAGE_MAP(theClass, baseClass) \
-	const AFX_MSGMAP *theClass::GetMessageMap() const \
+		const AFX_MSGMAP *theClass::GetMessageMap() const \
 		{ return GetThisMessageMap(); } \
-	const AFX_MSGMAP *theClass::GetThisMessageMap() { \
-		typedef theClass ThisClass;						   \
-		typedef baseClass TheBaseClass;					   \
-		static const AFX_MSGMAP_ENTRY _messageEntries[] =  \
-		{
+		const AFX_MSGMAP *theClass::GetThisMessageMap() { \
+			typedef theClass ThisClass;                        \
+			typedef baseClass TheBaseClass;                    \
+			static const AFX_MSGMAP_ENTRY _messageEntries[] =  \
+			{
 
 #define END_MESSAGE_MAP() \
-		{ 0, 0, 0, 0, AfxSig_end, (AFX_PMSG)nullptr } \
+	{ 0, 0, 0, 0, AfxSig_end, (AFX_PMSG)nullptr } \
 	}; \
-		static const AFX_MSGMAP messageMap = \
-		{ &TheBaseClass::GetThisMessageMap, &_messageEntries[0] }; \
-		return &messageMap; \
-	}								  \
+	static const AFX_MSGMAP messageMap = \
+	{ &TheBaseClass::GetThisMessageMap, &_messageEntries[0] }; \
+	return &messageMap; \
+	}                                 \
 
 #define DECLARE_DYNCREATE(class_name) \
 	DECLARE_DYNAMIC(class_name) \
@@ -307,7 +307,7 @@ class CDataExchange {
 /*============================================================================*/
 
 struct CCreateContext   // Creation information structure
-	// All fields are optional and may be NULL
+// All fields are optional and may be NULL
 {
 	// for creating new views
 	CRuntimeClass *m_pNewViewClass; // runtime class of view to create or NULL
@@ -365,10 +365,10 @@ public:
 	}
 
 	BOOL CreateFont(int nHeight, int nWidth, int nEscapement,
-		int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
-		BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
-		BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
-		LPCSTR lpszFacename);
+	                int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
+	                BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
+	                BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
+	                LPCSTR lpszFacename);
 };
 
 class CBitmap : public CGdiObject {
@@ -380,7 +380,7 @@ public:
 	HGDIOBJ Detach();
 	BOOL CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
 	BOOL CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
-		UINT nBitcount, const void *lpBits);
+	                  UINT nBitcount, const void *lpBits);
 	int GetObject(int nCount, LPVOID lpObject) const;
 	LONG GetBitmapBits(LONG dwCount, LPVOID lpBits) const;
 };
@@ -396,11 +396,11 @@ public:
 	BOOL CreatePalette(LPLOGPALETTE lpLogPalette);
 	int GetObject(int nCount, LPVOID lpObject) const;
 	UINT GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
-		LPPALETTEENTRY lpPaletteColors) const;
+	                       LPPALETTEENTRY lpPaletteColors) const;
 	UINT SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
-		LPPALETTEENTRY lpPaletteColors);
+	                       LPPALETTEENTRY lpPaletteColors);
 	BOOL AnimatePalette(UINT nStartIndex, UINT nNumEntries,
-		const PALETTEENTRY *lpPaletteColors);
+	                    const PALETTEENTRY *lpPaletteColors);
 	UINT GetNearestPaletteIndex(COLORREF crColor);
 };
 
@@ -410,9 +410,9 @@ public:
 	}
 
 	BOOL CreatePolygonRgn(
-		const POINT *lpPoints,
-		int nCount,
-		int nPolyFillMode
+	    const POINT *lpPoints,
+	    int nCount,
+	    int nPolyFillMode
 	);
 };
 
@@ -428,7 +428,7 @@ public:
 	}
 
 	BOOL CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
-		LPCSTR lpszOutput, const void *lpInitData);
+	              LPCSTR lpszOutput, const void *lpInitData);
 	BOOL CreateCompatibleDC(CDC *pDC);
 	BOOL DeleteDC();
 	void Attach(HDC hDC);
@@ -438,31 +438,31 @@ public:
 	int SetROP2(int nDrawMode);
 
 	BOOL BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-		int xSrc, int ySrc, DWORD dwRop);
+	            int xSrc, int ySrc, DWORD dwRop);
 	BOOL StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-		int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
+	                int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
 	void Ellipse(LPCRECT lpRect);
 	void Ellipse(int x1, int y1, int x2, int y2);
 	void FrameRect(LPCRECT lpRect, CBrush *pBrush);
 	void FillRect(LPCRECT lpRect, CBrush *pBrush);
 	BOOL FloodFill(int x, int y, COLORREF crColor);
 	BOOL FloodFill(int x, int y, COLORREF crColor,
-		UINT nFillType);
+	               UINT nFillType);
 	void Rectangle(LPCRECT lpRect);
 	void Rectangle(int x1, int y1, int x2, int y2);
 	BOOL Pie(
-		int x1, int y1,     // Upper-left corner of bounding rectangle
-		int x2, int y2,     // Lower-right corner of bounding rectangle
-		int x3, int y3,     // Starting point of the arc (on the ellipse)
-		int x4, int y4      // Ending point of the arc (on the ellipse)
+	    int x1, int y1,     // Upper-left corner of bounding rectangle
+	    int x2, int y2,     // Lower-right corner of bounding rectangle
+	    int x3, int y3,     // Starting point of the arc (on the ellipse)
+	    int x4, int y4      // Ending point of the arc (on the ellipse)
 	);
 	BOOL Pie(
-		LPCRECT lpRect,			// Pointer to bounding rectangle
-		const POINT &ptStart,	// Start point of arc
-		const POINT &ptEnd		// End point of arc
+	    LPCRECT lpRect,         // Pointer to bounding rectangle
+	    const POINT &ptStart,   // Start point of arc
+	    const POINT &ptEnd      // End point of arc
 	);
 	BOOL FrameRgn(CRgn *pRgn, CBrush *pBrush,
-		int nWidth, int nHeight);
+	              int nWidth, int nHeight);
 
 	void MoveTo(int x, int y);
 	void LineTo(int x, int y);
@@ -489,29 +489,29 @@ public:
 	virtual BOOL TextOut(int x, int y, LPCSTR lpszString, int nCount);
 	BOOL TextOut(int x, int y, const CString &str);
 	virtual BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		LPCSTR lpszString, UINT nCount, LPINT lpDxWidths);
+	                        LPCSTR lpszString, UINT nCount, LPINT lpDxWidths);
 	BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		const CString &str, LPINT lpDxWidths);
+	                const CString &str, LPINT lpDxWidths);
 	virtual CSize TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+	                            int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
 	CSize TabbedTextOut(int x, int y, const CString &str,
-		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+	                    int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
 
 	CSize GetTextExtent(LPCSTR lpszString, int nCount) const;
 	CSize GetTextExtent(const CString &str) const;
 	CSize GetOutputTextExtent(LPCSTR lpszString, int nCount) const;
 	CSize GetOutputTextExtent(const CString &str) const;
 	CSize GetTabbedTextExtent(LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions) const;
+	                          int nTabPositions, LPINT lpnTabStopPositions) const;
 	CSize GetTabbedTextExtent(const CString &str,
-		int nTabPositions, LPINT lpnTabStopPositions) const;
+	                          int nTabPositions, LPINT lpnTabStopPositions) const;
 	CSize GetOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions) const;
+	                                int nTabPositions, LPINT lpnTabStopPositions) const;
 	CSize GetOutputTabbedTextExtent(const CString &str,
-		int nTabPositions, LPINT lpnTabStopPositions) const;
+	                                int nTabPositions, LPINT lpnTabStopPositions) const;
 	virtual BOOL GrayString(CBrush *pBrush,
-		BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
-		int nCount, int x, int y, int nWidth, int nHeight);
+	                        BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+	                        int nCount, int x, int y, int nWidth, int nHeight);
 	UINT GetTextAlign() const;
 	UINT SetTextAlign(UINT nFlags);
 	BOOL GetTextMetrics(LPTEXTMETRIC lpMetrics) const;
@@ -566,7 +566,7 @@ public:
 	virtual BOOL IsModified();
 	virtual void SetModifiedFlag(BOOL bModified = TRUE);
 	virtual void ReportSaveLoadException(LPCSTR lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault);
+	                                     CException *e, BOOL bSaving, UINT nIDPDefault);
 
 	// delete doc items etc
 	virtual void DeleteContents();
@@ -733,8 +733,8 @@ public:
 	~CWnd() override {
 	}
 	CVIRTUAL BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-		DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
-		CCreateContext *pContext = nullptr);
+	                     DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+	                     CCreateContext *pContext = nullptr);
 
 	CWnd *GetParent() const;
 	HWND GetSafeHwnd() const;
@@ -742,9 +742,9 @@ public:
 	BOOL EnableWindow(BOOL bEnable = TRUE);
 	void UpdateWindow();
 	BOOL RedrawWindow(
-		LPCRECT lpRectUpdate = nullptr,
-		CRgn *prgnUpdate = nullptr,
-		UINT flags = RDW_INVALIDATE | RDW_UPDATENOW
+	    LPCRECT lpRectUpdate = nullptr,
+	    CRgn *prgnUpdate = nullptr,
+	    UINT flags = RDW_INVALIDATE | RDW_UPDATENOW
 	);
 	void SetActiveWindow();
 	void SetFocus();
@@ -769,7 +769,7 @@ public:
 	BOOL GetClientRect(LPRECT lpRect) const;
 	void MoveWindow(LPCRECT lpRect, BOOL bRepaint = true);
 	void MoveWindow(int x, int y, int nWidth, int nHeight,
-		BOOL bRepaint = TRUE);
+	                BOOL bRepaint = TRUE);
 	HDC BeginPaint(LPPAINTSTRUCT lpPaint);
 	BOOL EndPaint(const PAINTSTRUCT *lpPaint);
 
@@ -781,10 +781,10 @@ public:
 	int GetDlgCtrlID() const;
 	void CheckDlgButton(int nIDButton, UINT nCheck);
 	LRESULT SendDlgItemMessage(int nID, UINT message,
-		WPARAM wParam = 0, LPARAM lParam = 0) const;
+	                           WPARAM wParam = 0, LPARAM lParam = 0) const;
 
 	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
+	                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
 	BOOL KillTimer(UINT_PTR nIDEvent);
 };
 
@@ -810,9 +810,9 @@ protected:
 public:
 	CDialog();
 	explicit CDialog(LPCSTR lpszTemplateName,
-		CWnd *pParentWnd = NULL);
+	                 CWnd *pParentWnd = NULL);
 	explicit CDialog(UINT nIDTemplate,
-		CWnd *pParentWnd = NULL);
+	                 CWnd *pParentWnd = NULL);
 
 	~CDialog() override {
 	}
@@ -824,17 +824,17 @@ public:
 	void SetDefID(UINT nID);
 	void AFXAPI DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl);
 	void AFXAPI DDX_Radio(CDataExchange *pDX,
-		int nIDCButton1, int &value);
+	                      int nIDCButton1, int &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX,
-		int nIDC, int &value);
+	                     int nIDC, int &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, CString &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, UINT &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, long &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, double &value);
 	void AFXAPI DDX_Check(CDataExchange *pDX,
-		int nIDC, int &value);
+	                      int nIDC, int &value);
 	void AFXAPI DDV_MinMaxInt(CDataExchange *pDX,
-		int value, int nMin, int nMax);
+	                          int value, int nMin, int nMax);
 
 	// termination
 	void EndDialog(int nResult);
@@ -857,7 +857,7 @@ public:
 	~CButton() override {
 	}
 	CVIRTUAL BOOL Create(LPCTSTR lpszCaption, DWORD dwStyle,
-		const RECT &rect, CWnd *pParentWnd, UINT nID);
+	                     const RECT &rect, CWnd *pParentWnd, UINT nID);
 
 	int GetCheck() const;
 	void SetCheck(int nCheck);

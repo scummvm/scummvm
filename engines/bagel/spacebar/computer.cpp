@@ -72,7 +72,7 @@ static const ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
 static const char *BuildBarcDir(const char *pszFile);
 
 SBarComputer::SBarComputer() : CBagStorageDevWnd(),
-		_compDisplay(165, 36, 430, 220), _compTextWindow(0, 0, 639, 21) {
+	_compDisplay(165, 36, 430, 220), _compTextWindow(0, 0, 639, 21) {
 	_pDrinkBuff = nullptr;
 	_pIngBuff = nullptr;
 	_pDrinkBox = nullptr;
@@ -384,7 +384,7 @@ ErrorCode SBarComputer::createDrinksListBox() {
 
 	if (_pDrinkBox != nullptr)
 		return errorCode;
-	
+
 	// We need to create one
 	_pDrinkBox = new CBofListBox();
 	errorCode = _pDrinkBox->create("ListBox", &_compDisplay, this);
@@ -808,8 +808,8 @@ void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
 				pWin->onHelp(BuildBarcDir("BARCOMP.TXT"));
 			}
 		}
-		}
-		break;
+	}
+	break;
 
 	default:
 		logWarning(buildString("Clicked Unknown Button with ID %d", pButton->getControlID()));

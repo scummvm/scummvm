@@ -367,7 +367,7 @@ inline bool CBofRect::operator==(const CBofRect &rect) {
 	assert(isValidObject(this));
 
 	return (left == rect.left && right == rect.right &&
-		top == rect.top && bottom == rect.bottom);
+	        top == rect.top && bottom == rect.bottom);
 }
 
 inline bool CBofRect::operator!=(const CBofRect &rect) {
@@ -375,7 +375,7 @@ inline bool CBofRect::operator!=(const CBofRect &rect) {
 	assert(isValidObject(this));
 
 	return (left != rect.left || right != rect.right ||
-		top != rect.top || bottom != rect.bottom);
+	        top != rect.top || bottom != rect.bottom);
 }
 
 inline void CBofRect::operator+=(const CBofPoint &point) {

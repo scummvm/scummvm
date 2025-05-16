@@ -34,9 +34,9 @@ namespace HodjNPodj {
 * Accept Microsofts new debug macro
 */
 #ifdef _DEBUG
-#ifndef DEBUG
-#define DEBUG 1
-#endif
+	#ifndef DEBUG
+		#define DEBUG 1
+	#endif
 #endif
 
 /*
@@ -45,13 +45,13 @@ namespace HodjNPodj {
 #define isodd(x) ((x)&1)                    /* Returns 1 if number is odd  */
 #define iseven(x) !((x)&1)                  /* Returns 1 if number is even */
 #ifndef min
-#define min(x,y) (x<y?x:y)                  /* returns the min of x and y */
+	#define min(x,y) (x<y?x:y)                  /* returns the min of x and y */
 #endif
 #ifndef max
-#define max(x,y) (x>y?x:y)                  /* returns the max of x and y */
+	#define max(x,y) (x>y?x:y)                  /* returns the max of x and y */
 #endif
 #ifndef abs
-#define abs(x) ((x)<0?-(x):(x))             /* returns the absolute value of x */
+	#define abs(x) ((x)<0?-(x):(x))             /* returns the absolute value of x */
 #endif
 
 /*
@@ -59,11 +59,11 @@ namespace HodjNPodj {
 */
 #define VIRTUAL virtual
 #define STATIC static
-#define CDECL 
+#define CDECL
 #define INLINE inline
 //define ASM __asm
 #ifndef FAR
-#define FAR
+	#define FAR
 #endif
 #define CHAR char
 typedef unsigned char UCHAR;
@@ -91,7 +91,7 @@ enum {
 #define FALSE 0
 
 #ifndef MAX_FNAME
-#define MAX_FNAME 256
+	#define MAX_FNAME 256
 #endif
 
 #define MAX_DIRPATH 256
@@ -107,7 +107,9 @@ enum {
 #define WF_STANDARD 16
 #define WF_ENHANCED 32
 
-inline UINT GetWinFlags() { return 0; }
+inline UINT GetWinFlags() {
+	return 0;
+}
 
 } // namespace HodjNPodj
 } // namespace Bagel

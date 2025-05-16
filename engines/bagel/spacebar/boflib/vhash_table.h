@@ -65,7 +65,7 @@ private:
 //
 template<class T, int S>
 CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : _nHashTableSize(S),
-_pHashFunction(hashFun), _bisEmpty(true) {
+	_pHashFunction(hashFun), _bisEmpty(true) {
 }
 
 // CBofVHashTable::~CBofVHashTable - class destructor.

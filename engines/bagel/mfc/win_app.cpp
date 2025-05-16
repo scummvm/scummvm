@@ -72,12 +72,12 @@ HINSTANCE AfxGetResourceHandle() {
 }
 
 int LoadString(HINSTANCE hInstance,
-		UINT uID, LPSTR lpBuffer, int cchBufferMax) {
+               UINT uID, LPSTR lpBuffer, int cchBufferMax) {
 	error("TODO: LoadString");
 }
 
 LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
-	HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
+                                  HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
 	error("TODO: AfxRegisterWndClass");
 }
 

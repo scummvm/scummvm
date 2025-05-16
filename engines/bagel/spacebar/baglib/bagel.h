@@ -58,15 +58,15 @@ class CBagMasterWin;
  * Initialization structure fot CBagel app
  */
 struct BagelReg {
-	const char *_gameName;		// Game Name. Ex: "The Space Bar"
-	const char *_gamePath;		// Relative path for the CD: "\\SPACEBAR"
-	const char *_optionFile;	// This game's INI file name
-	const char *_saveGameFile;	// Name of save game Index file.
-	uint32 _ramRequired;		// Amount of free RAM needed to play game
-	int32 _numberOfCDs;			// # of CDs used by this game
-	int _requiredDepth;			// Required bits per pixel to play game
-	int _requiredWidth;			// Minimum screen width for game
-	int _requiredHeight;		// Minimum screen height for game
+	const char *_gameName;      // Game Name. Ex: "The Space Bar"
+	const char *_gamePath;      // Relative path for the CD: "\\SPACEBAR"
+	const char *_optionFile;    // This game's INI file name
+	const char *_saveGameFile;  // Name of save game Index file.
+	uint32 _ramRequired;        // Amount of free RAM needed to play game
+	int32 _numberOfCDs;         // # of CDs used by this game
+	int _requiredDepth;         // Required bits per pixel to play game
+	int _requiredWidth;         // Minimum screen width for game
+	int _requiredHeight;        // Minimum screen height for game
 };
 
 class CBagel : public CBofOptions, public CBofApp {
@@ -167,8 +167,8 @@ public:
 
 	/**
 	 * Checks to make sure the Game CD is in the drive
-	 * @param diskId		Disk number
-	 * @param waveFile		Filename
+	 * @param diskId        Disk number
+	 * @param waveFile      Filename
 	 * @return              Error return code
 	 */
 	ErrorCode verifyCDInDrive(int diskId, const char *waveFile);

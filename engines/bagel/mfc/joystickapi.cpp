@@ -26,7 +26,7 @@ namespace Bagel {
 namespace MFC {
 
 MMRESULT joySetCapture(HWND hwnd,
-	UINT uJoyID, UINT uPeriod, BOOL fChanged) {
+                       UINT uJoyID, UINT uPeriod, BOOL fChanged) {
 	error("TODO: joySetCapture");
 }
 

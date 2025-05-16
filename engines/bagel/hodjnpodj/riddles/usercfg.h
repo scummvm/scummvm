@@ -40,8 +40,7 @@ namespace Riddles {
 #define LEVEL_MAX            3
 #define LEVEL_DEF            1
 
-class CUserCfgDlg : public CBmpDialog
-{
+class CUserCfgDlg : public CBmpDialog {
 public:
 	CUserCfgDlg(CWnd *pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_USERCFG);
 	void ClearDialogImage(void);

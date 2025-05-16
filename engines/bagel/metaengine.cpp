@@ -52,7 +52,7 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 namespace HodjNPodj {
 
 static const KeybindingRecord MINIMAL_KEYS[] = {
-#ifdef TODO
+	#ifdef TODO
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "RETURN", "JOY_A" },
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr, "JOY_B" },
 	{ KEYBIND_UP, "UP", _s("Up"), "UP", nullptr, "JOY_UP"},
@@ -63,7 +63,7 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_PAGEDOWN, "PAGEDOWN", _s("Page Down"), "PAGEDOWN", "KP3", "JOY_RIGHT"},
 	{ KEYBIND_HOME, "HOME", _s("Home"), "HOME", "KP7", "JOY_RIGHT"},
 	{ KEYBIND_END, "END", _s("End"), "END", "KP2", "JOY_RIGHT"},
-#endif
+	#endif
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -116,8 +116,8 @@ Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = domain->getVal("gameid");
 
 	const Bagel::KeybindingRecord *keys = (gameId == "spacebar") ?
-		Bagel::SpaceBar::MINIMAL_KEYS :
-		Bagel::HodjNPodj::MINIMAL_KEYS;
+	                                      Bagel::SpaceBar::MINIMAL_KEYS :
+	                                      Bagel::HodjNPodj::MINIMAL_KEYS;
 
 	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "bagel", _s("General Keys"));
 	keymapArray.push_back(keyMap);
@@ -132,7 +132,7 @@ Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
 			act->addDefaultInputMapping(r->_joy);
 
 		if (r->_action == Bagel::KEYBIND_UP || r->_action == Bagel::KEYBIND_DOWN ||
-				r->_action == Bagel::KEYBIND_LEFT || r->_action == Bagel::KEYBIND_RIGHT)
+		        r->_action == Bagel::KEYBIND_LEFT || r->_action == Bagel::KEYBIND_RIGHT)
 			act->allowKbdRepeats();
 
 		keyMap->addAction(act);
@@ -142,7 +142,7 @@ Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BAGEL)
-REGISTER_PLUGIN_DYNAMIC(BAGEL, PLUGIN_TYPE_ENGINE, BagelMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(BAGEL, PLUGIN_TYPE_ENGINE, BagelMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(BAGEL, PLUGIN_TYPE_ENGINE, BagelMetaEngine);
+	REGISTER_PLUGIN_STATIC(BAGEL, PLUGIN_TYPE_ENGINE, BagelMetaEngine);
 #endif

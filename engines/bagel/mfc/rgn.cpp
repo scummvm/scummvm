@@ -26,7 +26,7 @@ namespace Bagel {
 namespace MFC {
 
 BOOL CRgn::CreatePolygonRgn(const POINT *lpPoints,
-		int nCount, int nPolyFillMode) {
+                            int nCount, int nPolyFillMode) {
 	error("TODO: CRgn::CreatePolygonRgn");
 }
 

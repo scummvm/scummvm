@@ -38,7 +38,7 @@ void CDialog::OnCancel() {
 }
 
 CDialog::CDialog(LPCSTR lpszTemplateName,
-		CWnd *pParentWnd) {
+                 CWnd *pParentWnd) {
 }
 
 CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
@@ -65,7 +65,7 @@ void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
 }
 
 void CDialog::DDX_Radio(CDataExchange *pDX,
-		int nIDCButton1, int &value) {
+                        int nIDCButton1, int &value) {
 	error("TODO: CDialog::DDX_Radio");
 }
 
@@ -86,12 +86,12 @@ void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, double &value) {
 }
 
 void CDialog::DDX_Check(CDataExchange *pDX,
-		int nIDC, int &value) {
+                        int nIDC, int &value) {
 	error("CDialog::DDX_Check");
 }
 
 void CDialog::DDV_MinMaxInt(CDataExchange *pDX,
-		int value, int nMin, int nMax) {
+                            int value, int nMin, int nMax) {
 	error("TODO: CDialog::DDV_MinMaxInt");
 }
 

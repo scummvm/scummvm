@@ -52,47 +52,46 @@ namespace Fuge {
 #define GFORCE_DEF     0
 #define GFORCE_MAX     20
 
-class CUserCfgDlg : public CBmpDialog
-{
-    public:
-        CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT);
+class CUserCfgDlg : public CBmpDialog {
+public:
+	CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT);
 
-    protected:
+protected:
 
-        virtual VOID DoDataExchange(CDataExchange *);
-        virtual BOOL OnCommand(WPARAM, LPARAM);
-        virtual BOOL OnInitDialog(VOID);
-        VOID PutDlgData(VOID);
-        VOID GetDlgData(VOID);
-        VOID LoadIniSettings(VOID);
-        VOID SaveIniSettings(VOID);
-        VOID UpdateOptions(VOID);
-        VOID ClearDialogImage(VOID);                               
-                               
-        afx_msg BOOL OnEraseBkgnd(CDC *);
-        VOID OnHScroll(UINT, UINT, CScrollBar *);
-        VOID OnClose();
-        VOID OnDestroy();
-        VOID OnPaint();
-        DECLARE_MESSAGE_MAP()
+	virtual VOID DoDataExchange(CDataExchange *);
+	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual BOOL OnInitDialog(VOID);
+	VOID PutDlgData(VOID);
+	VOID GetDlgData(VOID);
+	VOID LoadIniSettings(VOID);
+	VOID SaveIniSettings(VOID);
+	VOID UpdateOptions(VOID);
+	VOID ClearDialogImage(VOID);
 
-        CText        *m_pTxtNumBalls;
-        CText        *m_pTxtStartLevel;
-        CText        *m_pTxtBallSpeed;
-        CText        *m_pTxtPaddleSize;
-        CScrollBar   *m_pScrollBar1;
-        CScrollBar   *m_pScrollBar2;
-        CScrollBar   *m_pScrollBar3;
-        CScrollBar   *m_pScrollBar4;
-        CCheckButton *m_pWallButton;
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	VOID OnHScroll(UINT, UINT, CScrollBar *);
+	VOID OnClose();
+	VOID OnDestroy();
+	VOID OnPaint();
+	DECLARE_MESSAGE_MAP()
 
-        INT           m_nNumBalls;
-        INT           m_nStartLevel;
-        INT           m_nBallSpeed;
-        INT           m_nPaddleSize;
-        BOOL          m_bOutterWall;
+	CText        *m_pTxtNumBalls;
+	CText        *m_pTxtStartLevel;
+	CText        *m_pTxtBallSpeed;
+	CText        *m_pTxtPaddleSize;
+	CScrollBar   *m_pScrollBar1;
+	CScrollBar   *m_pScrollBar2;
+	CScrollBar   *m_pScrollBar3;
+	CScrollBar   *m_pScrollBar4;
+	CCheckButton *m_pWallButton;
 
-        BOOL        m_bSave;                    // True if should save theses values
+	INT           m_nNumBalls;
+	INT           m_nStartLevel;
+	INT           m_nBallSpeed;
+	INT           m_nPaddleSize;
+	BOOL          m_bOutterWall;
+
+	BOOL        m_bSave;                    // True if should save theses values
 };
 
 } // namespace Fuge

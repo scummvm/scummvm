@@ -34,17 +34,17 @@ int CPalette::GetObject(int nCount, LPVOID lpObject) const {
 }
 
 UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
-		LPPALETTEENTRY lpPaletteColors) const {
+                                 LPPALETTEENTRY lpPaletteColors) const {
 	error("TODO: CPalette::GetPaletteEntries");
 }
 
 UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
-		LPPALETTEENTRY lpPaletteColors) {
+                                 LPPALETTEENTRY lpPaletteColors) {
 	error("TODO: CPalette::SetPaletteEntries");
 }
 
 BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
-		const PALETTEENTRY *lpPaletteColors) {
+                              const PALETTEENTRY *lpPaletteColors) {
 	error("TODO: CPalette::AnimatePalette");
 }
 

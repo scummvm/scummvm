@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_MAZEDOOM_OPTNDLG_H
 #define HODJNPODJ_MAZEDOOM_OPTNDLG_H
 
-#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"                    
+#include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/mazedoom/mod.h"
 #include "bagel/hodjnpodj/mazedoom/resource.h"
@@ -31,8 +31,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace MazeDoom {
 
-#define LEFT_SIDE		 30 
-#define	OPTIONS_COLOR	RGB(0, 0, 0)	// Color of the stats info CText
+#define LEFT_SIDE        30
+#define OPTIONS_COLOR   RGB(0, 0, 0)    // Color of the stats info CText
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
@@ -58,14 +58,14 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK();
 	virtual void OnCancel();
 	afx_msg void OnPaint();

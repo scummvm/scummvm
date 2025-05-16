@@ -371,15 +371,15 @@ bool CBofSound::pause() {
 bool CBofSound::resumeSounds() {
 	bool bSuccess = true;
 
-	CBofSound *pSound = _pSoundChain;					// Thumb through all the sounds
+	CBofSound *pSound = _pSoundChain;                   // Thumb through all the sounds
 	while (pSound != nullptr) {
 		if (pSound->_bPaused) {
 			// If one is paused
-			bool bStatus = pSound->resume();		// ... try to get it going again
+			bool bStatus = pSound->resume();        // ... try to get it going again
 			if (bStatus)
-				pSound->_bPaused = false;	// success
+				pSound->_bPaused = false;   // success
 			else
-				bSuccess = false;			// failure
+				bSuccess = false;           // failure
 		}
 
 		pSound = (CBofSound *)pSound->getNext();
@@ -411,11 +411,11 @@ bool CBofSound::resume() {
 
 
 void CBofSound::stopSounds() {
-	CBofSound *pSound = _pSoundChain;	// Thumb through all the sounds
+	CBofSound *pSound = _pSoundChain;   // Thumb through all the sounds
 	while (pSound != nullptr) {
-		if (pSound->playing()) {		// If one is playing
-			pSound->_bPaused = false;	// ... its no longer paused
-			pSound->stop();	// Stop it
+		if (pSound->playing()) {        // If one is playing
+			pSound->_bPaused = false;   // ... its no longer paused
+			pSound->stop(); // Stop it
 		}
 
 		pSound = (CBofSound *)pSound->getNext();
@@ -424,7 +424,7 @@ void CBofSound::stopSounds() {
 
 
 void CBofSound::stopWaveSounds() {
-	CBofSound *pSound = _pSoundChain;			// Find this Sound is the queue
+	CBofSound *pSound = _pSoundChain;           // Find this Sound is the queue
 	while (pSound != nullptr) {
 		CBofSound *pNextSound = (CBofSound *)pSound->getNext();
 
@@ -440,7 +440,7 @@ void CBofSound::stopWaveSounds() {
 
 
 void CBofSound::stopMidiSounds() {
-	CBofSound *pSound = _pSoundChain;			// Find this Sound is the queue
+	CBofSound *pSound = _pSoundChain;           // Find this Sound is the queue
 	while (pSound != nullptr) {
 		CBofSound *pNextSound = (CBofSound *)pSound->getNext();
 
@@ -747,8 +747,8 @@ bool CBofSound::soundsPlayingNotOver() {
 	CBofSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() &&
-			(pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX) &&
-			!(pSound->_wFlags & SOUND_OVEROK)) {
+		        (pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX) &&
+		        !(pSound->_wFlags & SOUND_OVEROK)) {
 			bPlaying = true;
 			break;
 		}

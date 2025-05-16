@@ -30,36 +30,36 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-#define BUTTON_EDGE_WIDTH		3
-#define	FOCUS_RECT_DX			2
-#define FOCUS_RECT_DY			1
-#define SELECTED_TEXT_DX		1
-#define SELECTED_TEXT_DY		1
-#define CHECK_BOX_SIZE			13
-#define CHECK_BOX_DX			4
-#define CHECK_TEXT_DX			22
-#define RADIO_BOX_SIZE			13
-#define RADIO_BOX_DX			4
-#define RADIO_TEXT_DX			22
+#define BUTTON_EDGE_WIDTH       3
+#define FOCUS_RECT_DX           2
+#define FOCUS_RECT_DY           1
+#define SELECTED_TEXT_DX        1
+#define SELECTED_TEXT_DY        1
+#define CHECK_BOX_SIZE          13
+#define CHECK_BOX_DX            4
+#define CHECK_TEXT_DX           22
+#define RADIO_BOX_SIZE          13
+#define RADIO_BOX_DX            4
+#define RADIO_TEXT_DX           22
 
-#define	RGB_BUTTON_FACE         PALETTERGB(199,167,139) // PALETTERGB(207,159,115)
-#define	RGB_BUTTON_HIGHLIGHT	PALETTERGB(223,199,175)
-#define	RGB_BUTTON_SHADOW       PALETTERGB(155,123,95)
-#define	RGB_BUTTON_TEXT         PALETTERGB(51,31,19) // PALETTERGB(83,59,1)
+#define RGB_BUTTON_FACE         PALETTERGB(199,167,139) // PALETTERGB(207,159,115)
+#define RGB_BUTTON_HIGHLIGHT    PALETTERGB(223,199,175)
+#define RGB_BUTTON_SHADOW       PALETTERGB(155,123,95)
+#define RGB_BUTTON_TEXT         PALETTERGB(51,31,19) // PALETTERGB(83,59,1)
 #define RGB_BUTTON_TEXT_DISABLE PALETTERGB(155,139,123)
-#define	RGB_BUTTON_OUTLINE      PALETTERGB(83,59,51) // PALETTERGB(83,59,1)
+#define RGB_BUTTON_OUTLINE      PALETTERGB(83,59,51) // PALETTERGB(83,59,1)
 
-#define	RGB_CHECK_FACE         	PALETTERGB(199,167,139) // PALETTERGB(207,159,115)
-#define	RGB_CHECK_CONTROL      	PALETTERGB(99,15,7)
-#define	RGB_CHECK_TEXT         	PALETTERGB(51,31,19) // PALETTERGB(83,59,1)
-#define RGB_CHECK_TEXT_DISABLE 	PALETTERGB(155,139,123)
-#define	RGB_CHECK_OUTLINE      	PALETTERGB(83,59,51) // PALETTERGB(207,159,115)
+#define RGB_CHECK_FACE          PALETTERGB(199,167,139) // PALETTERGB(207,159,115)
+#define RGB_CHECK_CONTROL       PALETTERGB(99,15,7)
+#define RGB_CHECK_TEXT          PALETTERGB(51,31,19) // PALETTERGB(83,59,1)
+#define RGB_CHECK_TEXT_DISABLE  PALETTERGB(155,139,123)
+#define RGB_CHECK_OUTLINE       PALETTERGB(83,59,51) // PALETTERGB(207,159,115)
 
-#define	RGB_RADIO_FACE         	PALETTERGB(199,167,139) // PALETTERGB(207,159,115)
-#define	RGB_RADIO_CONTROL      	PALETTERGB(99,15,7)
-#define	RGB_RADIO_TEXT         	PALETTERGB(51,31,19) // PALETTERGB(83,59,1)
-#define RGB_RADIO_TEXT_DISABLE 	PALETTERGB(155,139,123)
-#define	RGB_RADIO_OUTLINE      	PALETTERGB(83,59,51) // PALETTERGB(207,159,115)
+#define RGB_RADIO_FACE          PALETTERGB(199,167,139) // PALETTERGB(207,159,115)
+#define RGB_RADIO_CONTROL       PALETTERGB(99,15,7)
+#define RGB_RADIO_TEXT          PALETTERGB(51,31,19) // PALETTERGB(83,59,1)
+#define RGB_RADIO_TEXT_DISABLE  PALETTERGB(155,139,123)
+#define RGB_RADIO_OUTLINE       PALETTERGB(83,59,51) // PALETTERGB(207,159,115)
 
 
 class CBmpButton : public CBitmapButton {
@@ -67,7 +67,7 @@ class CBmpButton : public CBitmapButton {
 
 // Constructors
 public:
-	CBmpButton();	// use "new" operator to create buttons, then LoadButton
+	CBmpButton();   // use "new" operator to create buttons, then LoadButton
 
 // Destructors
 public:
@@ -84,35 +84,34 @@ public:
 	BOOL LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected = NULL, LPCSTR lpszFocus = NULL, LPCSTR lpszDisabled = NULL);
 
 private:
-	CPalette	*m_pPalette;
-	BOOL		m_bSharedPalette;
+	CPalette    *m_pPalette;
+	BOOL        m_bSharedPalette;
 
 private:
 
-virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	//{{AFX_MSG( CBmpButton )
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CMaskedButton : public CBmpButton
-{
+class CMaskedButton : public CBmpButton {
 	DECLARE_DYNCREATE(CMaskedButton)
 
 // Constructors
 public:
-	CMaskedButton();	// use "new" operator to create buttons, then LoadButton
+	CMaskedButton();    // use "new" operator to create buttons, then LoadButton
 
 // Destructors
 public:
@@ -122,35 +121,34 @@ public:
 public:
 
 private:
-	CPalette	*m_pPalette;
-	CBitmap		*m_pBackground;
+	CPalette    *m_pPalette;
+	CBitmap     *m_pBackground;
 
 private:
 
-virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	//{{AFX_MSG( CMaskedButton )
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CColorButton : public CButton
-{
+class CColorButton : public CButton {
 	DECLARE_DYNCREATE(CColorButton)
 
 // Constructors
 public:
-	CColorButton();	// use "new" operator to create buttons, then LoadButton
+	CColorButton(); // use "new" operator to create buttons, then LoadButton
 
 // Destructors
 public:
@@ -163,40 +161,39 @@ public:
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cHighlight, COLORREF cShadow, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
 private:
-	CPalette	*m_pPalette;
-	COLORREF	m_cButtonFace;
-	COLORREF	m_cButtonHighlight;
-	COLORREF	m_cButtonShadow;
-	COLORREF	m_cButtonText;
-	COLORREF	m_cButtonTextDisabled;
-	COLORREF	m_cButtonOutline;
+	CPalette    *m_pPalette;
+	COLORREF    m_cButtonFace;
+	COLORREF    m_cButtonHighlight;
+	COLORREF    m_cButtonShadow;
+	COLORREF    m_cButtonText;
+	COLORREF    m_cButtonTextDisabled;
+	COLORREF    m_cButtonOutline;
 
 private:
 
-virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	//{{AFX_MSG( CColorButton )
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CCheckButton : public CButton
-{
+class CCheckButton : public CButton {
 	DECLARE_DYNCREATE(CCheckButton)
 
 // Constructors
 public:
-	CCheckButton();	// use "new" operator to create buttons, then LoadButton
+	CCheckButton(); // use "new" operator to create buttons, then LoadButton
 
 // Destructors
 public:
@@ -209,42 +206,41 @@ public:
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cControl, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
 private:
-	BOOL		m_bCheckState;
-	CPalette	*m_pPalette;
-	COLORREF	m_cButtonFace;
-	COLORREF	m_cButtonControl;
-	COLORREF	m_cButtonText;
-	COLORREF	m_cButtonTextDisabled;
-	COLORREF	m_cButtonOutline;
+	BOOL        m_bCheckState;
+	CPalette    *m_pPalette;
+	COLORREF    m_cButtonFace;
+	COLORREF    m_cButtonControl;
+	COLORREF    m_cButtonText;
+	COLORREF    m_cButtonTextDisabled;
+	COLORREF    m_cButtonOutline;
 
 private:
 
-virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	//{{AFX_MSG( CCheckButton )
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
-    afx_msg long OnSetCheck( WPARAM, LPARAM);
-    afx_msg long OnGetCheck( WPARAM, LPARAM);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg long OnSetCheck(WPARAM, LPARAM);
+	afx_msg long OnGetCheck(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CRadioButton : public CButton
-{
+class CRadioButton : public CButton {
 	DECLARE_DYNCREATE(CRadioButton)
 
 // Constructors
 public:
-	CRadioButton();	// use "new" operator to create buttons, then LoadButton
+	CRadioButton(); // use "new" operator to create buttons, then LoadButton
 
 // Destructors
 public:
@@ -257,30 +253,30 @@ public:
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cControl, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
 private:
-	BOOL		m_bCheckState;
-	CPalette	*m_pPalette;
-	COLORREF	m_cButtonFace;
-	COLORREF	m_cButtonControl;
-	COLORREF	m_cButtonText;
-	COLORREF	m_cButtonTextDisabled;
-	COLORREF	m_cButtonOutline;
+	BOOL        m_bCheckState;
+	CPalette    *m_pPalette;
+	COLORREF    m_cButtonFace;
+	COLORREF    m_cButtonControl;
+	COLORREF    m_cButtonText;
+	COLORREF    m_cButtonTextDisabled;
+	COLORREF    m_cButtonOutline;
 
 private:
 
-virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	//{{AFX_MSG( CRadioButton )
-	afx_msg	BOOL OnEraseBkgnd(CDC *pDC);
-    afx_msg long OnSetCheck( WPARAM, LPARAM);
-    afx_msg long OnGetCheck( WPARAM, LPARAM);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg long OnSetCheck(WPARAM, LPARAM);
+	afx_msg long OnGetCheck(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 };
 

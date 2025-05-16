@@ -26,10 +26,10 @@ namespace Bagel {
 namespace MFC {
 
 BOOL CFont::CreateFont(int nHeight, int nWidth, int nEscapement,
-		int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
-		BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
-		BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
-		LPCSTR lpszFacename) {
+                       int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
+                       BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
+                       BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
+                       LPCSTR lpszFacename) {
 	error("TODO: CFont::CreateFont");
 }
 
