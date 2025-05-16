@@ -930,8 +930,10 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA/GIE07_16.pho", kSaveModeSave, nullptr, "app progress" },
 
 	{"APPLIS/appli_05.ini", kSaveModeSave, nullptr, "app info" },
+	{"APPLIS/appli_06.ini", kSaveModeSave, nullptr, "app info" },
+	{"APPLIS/appli_07.ini", kSaveModeSave, nullptr, "app info" },
 
-    // Adi 4 / Addy 4 Base
+	// Adi 4 / Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
 	{"statev00.inf", kSaveModeSave, nullptr, nullptr        },
 	// Adi 4 / Addy 4 Grundschule
@@ -1367,13 +1369,21 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 
 	for (uint32 i = 0; i < kChildrenCount; i++) {
 		_saveFiles[index++].handler = _adibou2MemoHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("memo%02d", i + 1));
+	}
+
+	for (uint32 i = 0; i < kChildrenCount; i++) {
 		_saveFiles[index++].handler = _adibou2DiploHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("diplo%02d", i + 1));
 	}
 
-
 	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
 		_saveFiles[index++].handler = _adibou2AppliHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("appli%02d", i + 1));
+	}
+
+	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
 		_saveFiles[index++].handler = _adibou2CriteHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("crite%02d", i + 1));
+	}
+
+	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
 		_saveFiles[index++].handler = _adibou2ExoHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("exo%02d", i + 1));
 	}
 
@@ -1383,14 +1393,17 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 
 	const Common::Array<int> applisOffsets = {0, 4, 8, 12, 16, 20};
 	_saveFiles[index++].handler = _adibou2ApplicationsInfoHandler = new GameFileHandler(_vm, targetName, "applis");
-	_saveFiles[index++].handler = _adibou2RetourHandler = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _adibou2LanceHandler = new FakeFileHandler(_vm);
+	_saveFiles[index++].handler = _adibou2RetourHandler = new FakeFileHandler(_vm);
 
 	for (uint32 i = 0; i < kChildrenCount; i++) {
 		for (uint32 j = 0; j < kAdibou2NbrOfSavedDrawings; j++) {
 			_saveFiles[index++].handler = _adibou2DrawingHandler[i][j] = new SpriteHandler(_vm,
 																						   targetName,
 																						   Common::String::format("draw%02d_%02d", i + 1, j + 1));
+		}
+
+		for (uint32 j = 0; j < kAdibou2NbrOfSavedDrawings; j++) {
 			_saveFiles[index++].handler = _adibou2DrawingThumbnailHandler[i][j] = new SpriteHandler(_vm,
 																									targetName,
 																									Common::String::format("draw_thumbnail_%02d_%02d", i + 1, j + 1));
@@ -1447,13 +1460,15 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[index++].handler = _adibou2RelanceHandler = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _adibou2MemHandler = new FakeFileHandler(_vm);
 
-	for (uint32 i = 4; i < kAdibou2NbrOfApplications; i++) {
-		for (uint32 j = 0; j < kChildrenCount; j++) {
+	for (uint32 j = 0; j < kChildrenCount; j++) {
+		for (uint32 i = 4; i < kAdibou2NbrOfApplications; i++) {
 			_saveFiles[index++].handler = _adibou2AppProgressExtHandler[i - 4][j] = new GameFileHandler(_vm,
 																										targetName,
 																										Common::String::format("gie_%02d_%02d_pho", i + 1, j + 1));
 		}
+	}
 
+	for (uint32 i = 4; i < kAdibou2NbrOfApplications; i++) {
 		_saveFiles[index++].handler = _adibou2AppliIniHandler[i - 4] = new GameFileHandler(_vm,
 																						   targetName,
 																						   Common::String::format("appli_%02d_ini", i + 1));
