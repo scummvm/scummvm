@@ -48,7 +48,7 @@ void redFadeIn(palette palette);
 void partialFadeIn(byte numCol);
 void updatePalette(byte paletteIndex);
 void changePalette(palette fromPalette, palette toPalette);
-void changeRGBBlock(byte initialColor, uint numColors, void *rgb);
+void changeRGBBlock(byte initialColor, uint numColors, byte *rgb);
 void processingActive();
 void rectangle(int x1, int y1, int x2, int y2, byte color);
 void rectangle(uint x1, uint y1, uint x2, uint y2, byte color);

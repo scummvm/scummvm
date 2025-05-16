@@ -2944,7 +2944,7 @@ void useScreenObject() {
 			case 583: {
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-				drawFlc(140, 34, 2124896, 0, 9, 24, false, false, false, basurillalog);
+				drawFlc(140, 34, 2124896, 0, 9, 24, false, false, true, basurillalog);
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
 				currentRoomData->indexadoobjetos[7]->indicefichero = 716;
@@ -2984,7 +2984,6 @@ void useScreenObject() {
 				}
 				readBitmap(1243652, screenObjects[5], 2718, 319);
 				handPantallaToBackground();
-				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,  (sizepantalla - int32(4)));
 				assembleScreen();
 				drawScreen(background);
 			} break;
@@ -3041,7 +3040,7 @@ void useScreenObject() {
 				playVoc("PUFF", 191183, 18001);
 				//Animate to scythe
 				debug("Start anim!");
-				drawFlc(180, 60, 2216848, 0, 9, 0, false, false, false, basurillalog);
+				drawFlc(180, 60, 2216848, 0, 9, 0, false, false, true, basurillalog);
 				debug("End Anim!");
 				//load Scythe
 				currentRoomData->bitmapasociados[2].puntbitmap = 1545820;
@@ -3100,7 +3099,7 @@ void useScreenObject() {
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 10);
 				g_engine->_mouseManager->hide();
 				playVoc("PUFF", 191183, 18001);
-				drawFlc(0, 47, 2209158, 0, 9, 0, false, false, false, basurillalog);
+				drawFlc(0, 47, 2209158, 0, 9, 0, false, false, true, basurillalog);
 
 				currentRoomData->bitmapasociados[3].puntbitmap = 1591272;
 				currentRoomData->bitmapasociados[3].tambitmap = 92;
@@ -3152,7 +3151,7 @@ void useScreenObject() {
 				g_engine->_mouseManager->hide();
 				updateInventory(indicemochila);
 				drawBackpack();
-				drawFlc(133, 0, 2076280, 0, 9, 22, false, false, false, basurillalog);
+				drawFlc(133, 0, 2076280, 0, 9, 22, false, false, true, basurillalog);
 				{
 					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
 
@@ -3180,7 +3179,7 @@ void useScreenObject() {
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 3);
 				g_engine->_mouseManager->hide();
 				playVoc("AFILAR", 0, 6433);
-				drawFlc(160, 15, 2441804, 0, 9, 23, false, false, false, basurillalog);
+				drawFlc(160, 15, 2441804, 0, 9, 23, false, false, true, basurillalog);
 				replaceBackpack(indicemochila, 715);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -3209,7 +3208,7 @@ void useScreenObject() {
 				pulsay = 133 - 7;
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 9);
 				g_engine->_mouseManager->hide();
-				drawFlc(110, 79, 2361800, 0, 9, 0, false, false, false, basurillalog);
+				drawFlc(110, 79, 2361800, 0, 9, 0, false, false, true, basurillalog);
 				replaceBackpack(indicemochila, 701);
 				drawBackpack();
 				handPantallaToBackground();
@@ -3227,7 +3226,7 @@ void useScreenObject() {
 				pulsay = 91 - 7;
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 7);
 				g_engine->_mouseManager->hide();
-				drawFlc(208, 0, 2382552, 0, 9, 21, false, false, false, basurillalog);
+				drawFlc(208, 0, 2382552, 0, 9, 21, false, false, true, basurillalog);
 				currentRoomData->bitmapasociados[0].puntbitmap = 0;
 				currentRoomData->bitmapasociados[0].tambitmap = 0;
 				currentRoomData->bitmapasociados[0].coordx = 0;
@@ -3288,7 +3287,7 @@ void useScreenObject() {
 					g_engine->_sound->waitForSoundEnd();
 					playVoc("PUFF", 191183, 18001);
 					animateOpen2(0, 1);
-					drawFlc(180, 50, 2464240, 0, 9, 22, false, false, false, basurillalog);
+					drawFlc(180, 50, 2464240, 0, 9, 22, false, false, true, basurillalog);
 					salirdeljuego = true;
 				} else
 					drawText(Random(11) + 1022);
@@ -3410,7 +3409,7 @@ void useScreenObject() {
 					animateOpen2(0, 1);
 					playVoc("FUEGO", 72598, 9789);
 					if (vasijapuesta) {
-						drawFlc(108, 0, 2296092, 0, 9, 0, false, false, false, basurillalog);
+						drawFlc(108, 0, 2296092, 0, 9, 0, false, false, true, basurillalog);
 						{
 							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
 
@@ -3424,7 +3423,7 @@ void useScreenObject() {
 							for (indmoch = 10; indmoch <= 13; indmoch++)
 								currentRoomData->mouseGrid[indlista][indmoch] = 12;
 					} else
-						drawFlc(108, 0, 2231140, 0, 9, 0, false, false, false, basurillalog);
+						drawFlc(108, 0, 2231140, 0, 9, 0, false, false, true, basurillalog);
 					g_engine->_mouseManager->show();
 				} break;
 				}

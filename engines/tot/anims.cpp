@@ -43,8 +43,6 @@ byte *punterofondofrase = (byte *)malloc(sizefrase);
 byte framecontador;
 boolean primeravuelta;
 
-palette palpasoflic;
-
 void drawText(uint xfrase, uint yfrase, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte colorfrase, byte colorborde) {
 
 	outtextxy(xfrase, (yfrase + 3), str1, colorborde);
@@ -735,9 +733,18 @@ static void loadFlc(
 						palette[2] = 0;
 						if (palcompleta) {
 							changePalette(g_engine->_graphics->getPalette(), palette);
+							// copyPalette(palette, pal);
+						} else if (doscientos) {
+							debug("Doscientos!!");
+							g_engine->_graphics->setPalette(palette, 200);
+							for (int i = 0; i <= 200; i ++) {
+								pal[i * 3 + 0] = palette[i * 3 + 0];
+								pal[i * 3 + 1] = palette[i * 3 + 1];
+								pal[i * 3 + 2] = palette[i * 3 + 2];
+							}
 						} else {
-							int limit = doscientos ? 200 : 256;
-							g_engine->_graphics->setPalette(palette, limit);
+							g_engine->_graphics->setPalette(palette);
+							copyPalette(palette, pal);
 						}
 					}
 					tocapintar = false;
@@ -747,6 +754,7 @@ static void loadFlc(
 			}
 			g_system->delayMillis(10);
 		} while (!flic.endOfVideo() && !g_engine->shouldQuit());
+
 
 		if (flic.endOfVideo()) {
 			if (flic.isRewindable()) {

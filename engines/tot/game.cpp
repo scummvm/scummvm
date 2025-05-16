@@ -307,12 +307,12 @@ int engine_start() {
 		desactivagrabar = false;
 	}
 
-	// boolean enforceSecondPart = true;
-	// if(enforceSecondPart) { //DEBUG
-	// 	completadalista1 = true;
-	// 	completadalista2 = true;
-	// 	gamePart = 1;
-	// }
+	boolean enforceSecondPart = true;
+	if(enforceSecondPart) { //DEBUG
+		completadalista1 = true;
+		completadalista2 = true;
+		gamePart = 1;
+	}
 
 	return startGame();
 }
@@ -700,7 +700,7 @@ int startGame() {
 					restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 					if (contadorpc2 > 43)
 						_exit(274);
-					sacrificeScene();
+					// sacrificeScene();
 					clear();
 					loadObjects();
 					loadPalette("SEGUNDA");

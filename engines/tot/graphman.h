@@ -37,11 +37,10 @@ public:
 
 	void printPalette();
 
-	void fixPalette(byte palette[768], uint num = 768);
+	void fixPalette(byte *palette, uint num = 768);
 	void getPalette(byte *palette);
 	byte *getPalette();
 	void setPalette(byte palette[768], uint num = 256);
-	byte *loadPalette(Common::String fileName);
 
 	void restoreBackground(uint x, uint y, uint x2, uint y2);
 	void littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign  align = Graphics::kTextAlignLeft, bool alignCenterY = false);
