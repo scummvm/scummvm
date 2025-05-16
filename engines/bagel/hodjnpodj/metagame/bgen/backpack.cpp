@@ -67,7 +67,7 @@ static	CInventory	*pInventory = NULL;			// inventory to be displayed
 static	CRect		BackpackRect;					// x/y (left/right) and dx/dy (right/bottom) for the backpack window
 static	CRect		ScrollTopRect,					// area spanned by upper scroll curl
 					ScrollBotRect;                  // area spanned by lower scroll curl
-					
+
 static	CDC			*pBackpackDC = NULL;			// device context for the backpack bitmap
 static	CBitmap		*pBackpackBitmap = NULL,		// bitmap for an entirely blank backpack
 					*pBackpackBitmapOld = NULL;     // bitmap previously mapped to the backpack context
@@ -106,11 +106,11 @@ BOOL CBackpack::SetupKeyboardHook(void)
 	lpfnKbdHook = (FPPACKHOOKPROC)::GetProcAddress( hDLLInst, "BackpackHookProc");
 	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
 		return(FALSE);
-	
+
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD,(HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
 	if (hKbdHook == NULL)                           // plug in our keyboard hook
 		return(FALSE);
-	
+
 	return(TRUE);
 }
 
@@ -127,14 +127,14 @@ void CBackpack::RemoveKeyboardHook(void)
 }
 
 
-extern "C" 
+extern "C"
 LRESULT FAR PASCAL BackpackHookProc(int code, WORD wParam, LONG lParam)
 {
 CDC	*pDC = NULL;
 
 	if (code < 0)										// required to punt to next hook
 		return(CallNextHookEx((HHOOK) lpfnKbdHook,code,wParam,lParam));
-	
+
 	if (lParam & 0xA0000000)							// ignore ALT and key release
 		return(FALSE);
 
@@ -176,7 +176,7 @@ CDC	*pDC = NULL;
 		(*pBackpackDialog).ReleaseDC(pDC);
 		return(TRUE);
 	}
-	
+
 	return(FALSE);
 }
 
@@ -187,7 +187,7 @@ CBackpack::CBackpack(CWnd* pParent,CPalette *pPalette, CInventory *pInvent)
 	pBackgroundPalette = pPalette;                      // retain palette to be used
 	pInventory = pInvent;                               // retain inventory to be displayed
 	pParentWnd = pParent;                               // retain pointer to parent window
-	
+
 	//{{AFX_DATA_INIT(CBackpack)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -265,12 +265,12 @@ BOOL	bUpdateNeeded;
 		delete pWorkDC;
 		pWorkDC = NULL;
 	}
-	
+
 	if (pBackpackBitmap != NULL) {
 		delete pBackpackBitmap;
 		pBackpackBitmap = NULL;
 	}
-	
+
 	if (pBackgroundBitmap != NULL) {
 		delete pBackgroundBitmap;
 		pBackgroundBitmap = NULL;
@@ -278,7 +278,7 @@ BOOL	bUpdateNeeded;
 		if (bUpdateNeeded)
 	    	(*pParentWnd).ValidateRect(NULL);
 	}
-	
+
 	if (pTitleText != NULL) {
 		delete pTitleText;
 		pTitleText = NULL;
@@ -287,7 +287,7 @@ BOOL	bUpdateNeeded;
 		delete pItemText;
 		pItemText = NULL;
 	}
-	
+
     CDialog::OnDestroy();
 }
 
@@ -303,13 +303,13 @@ int		x, y, dx, dy;                              				// used for calculating posi
 
 	if (m_pParentWnd == NULL)									// get our parent window
 		m_pParentWnd = ((CWnd *) this)->GetParent();			// ... as passed to us or inquired about
-		
+
 	(*m_pParentWnd).GetWindowRect(&myRect);
 	x = myRect.left + (((myRect.right - myRect.left) - BACKPACK_DX) >> 1);
 	y = myRect.top + (((myRect.bottom - myRect.top) - BACKPACK_DY) >> 1);
 	BackpackRect.SetRect(0,0,BACKPACK_DX,BACKPACK_DY);
 	MoveWindow(x,y,BACKPACK_DX,BACKPACK_DY);			// center the dialog box on the parent
-	
+
 	pButton = GetDlgItem((int) GetDefID());						// get the window for the okay button
 	ASSERT(pButton != NULL);                        			// ... and verify we have it
 	(*pButton).GetWindowRect(&myRect);              			// get the button's position and size
@@ -318,7 +318,7 @@ int		x, y, dx, dy;                              				// used for calculating posi
 	x = (BackpackRect.right - dx) >> 1;               			// ... centered at the bottom edge
 	dy = myRect.bottom - myRect.top;
 	y = BackpackRect.bottom - dy - BUTTON_DY;
-	
+
 	(*pButton).MoveWindow(x,y,dx,dy);               			// reposition the button
 	OkayRect.SetRect(x,y,x + dx,y + dy);
 
@@ -335,7 +335,7 @@ int		x, y, dx, dy;                              				// used for calculating posi
 
 	bFirstTime = TRUE;
 	nFirstSlot = 0;
-			
+
 	return(TRUE);  												// return TRUE  unless focused on a control
 }
 
@@ -364,12 +364,12 @@ BOOL		bSuccess;
 CPaintDC	dc(this); 											// device context for painting
 
 	if (bFirstTime) {											// acquire resources and if first time
-		bFirstTime = FALSE;                         		
+		bFirstTime = FALSE;
 		bSuccess = CreateWorkAreas(&dc);
 		if (!bSuccess)
 			CDialog::OnCancel();
 	 	}
-	
+
 	UpdateBackpack(&dc);
 }
 
@@ -379,7 +379,7 @@ void CBackpack::UpdateBackpack(CDC *pDC)
 CPalette	*pPalOld;
 
 	DoWaitCursor();												// put up the hourglass cursor
-		
+
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette,FALSE);		// setup the proper palette
 	(*pDC).RealizePalette();
 
@@ -401,7 +401,7 @@ CPalette	*pPalOld;
 	}
 
 	(*pDC).SelectPalette(pPalOld,FALSE);                        // reset the palette
-	
+
 	DoArrowCursor();											// return to an arrow cursor
 }
 
@@ -453,7 +453,7 @@ int		i, x, y, dx, dy;
 
 	if ((*pInventory).ItemCount() <= 0)
 		return;
-		
+
 	nBackpack_DX = BACKPACK_DX - (BACKPACK_BORDER_DX << 1);		// calculate the horizontal space we have available
 	nItemsPerRow = nBackpack_DX / BACKPACK_BITMAP_DX;           // estimate number of items that will fit
 	while(TRUE) {
@@ -463,7 +463,7 @@ int		i, x, y, dx, dy;
 			break;                                              // ... then reduce the count of items per row
 		nItemsPerRow -= 1;
 	}
-	
+
 	nBackpack_DY = BACKPACK_DY - BACKPACK_TEXTZONE_DY - (BACKPACK_BORDER_DY << 1) - BACKPACK_TITLEZONE_DY;	// calculate the vertical space we have available
 	nItemsPerColumn = nBackpack_DY / BACKPACK_BITMAP_DY;        // estimate number of items that will fit
 	while(TRUE) {
@@ -515,7 +515,7 @@ CFont   *pFontOld = NULL;               // font that was mapped to the context
 char	chBuffer[32];
 
 	PaintMaskedDIB(pDC,pBackgroundPalette,(*pItem).GetArtSpec(),nX,nY,BACKPACK_BITMAP_DX,BACKPACK_BITMAP_DY);
-    
+
     if (((*pItem).m_nQuantity == 0) ||
     	((*pItem).m_nQuantity > 1)) {
     	sprintf(chBuffer,"%ld",(*pItem).m_nQuantity);
@@ -564,25 +564,25 @@ CDC	*pDC;
 void CBackpack::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
 
 void CBackpack::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
 
 int CBackpack::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 BOOL	bSuccess;
-	
+
 	::AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != NULL);
@@ -612,7 +612,7 @@ CRect		myRect;
 	else
 		pBackgroundBitmap = NULL;
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette,FALSE);		
+	pPalOld = (*pDC).SelectPalette(pBackgroundPalette,FALSE);
 	(void) (*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&
@@ -657,7 +657,7 @@ CRect		myRect;
 					 BACKPACK_DX - BACKPACK_TEXTZONE_DX,
 					 BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DDY + BACKPACK_TITLEZONE_DY);
 	pTitleText = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
-	
+
 	return(TRUE);
 }
 
@@ -673,14 +673,14 @@ CDC		*pDC;
 
 	if (!bActiveWindow)								// punt if window not active
 		return;
-		
+
 	pMyApp = AfxGetApp();
 
 	if (OkayRect.PtInRect(point))					// use standard arrow in buttons
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 	else
 	if (ScrollTopRect.PtInRect(point)) {            // set cursor to scolling up okay or invalid
-		if (nFirstSlot == 0)                        // ... depending on current slot for page 
+		if (nFirstSlot == 0)                        // ... depending on current slot for page
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
 		else
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWUP);
@@ -735,7 +735,7 @@ CDC		*pDC;
 
 	ASSERT(hNewCursor != NULL);						// force the cursor change
 	::SetCursor(hNewCursor);
-	
+
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }
 
@@ -804,7 +804,7 @@ CWnd		*pControl;
 	}
 
 	OnMouseMove(nFlags,point);                      // do standard mouse movement
-	
+
 	CDialog::OnLButtonDown(nFlags, point);          // do standard mouse clicking
 }
 
@@ -828,7 +828,7 @@ CRect	testRect;
 			(point.y < y))
 			i = (row * nItemsPerRow) + col;
 	}
-	
+
 	return(i);
 }
 
