@@ -300,9 +300,11 @@ int BitmapFont::getKernedStringLength(const Common::String &text) const {
 
 int BitmapFont::getBitmapStringLength(const Common::String &text) const {
 	int result = 0;
-	for (uint32 i = 0; i < text.size(); ) {
-		uint32 ch = getNextChar(text, i);
-		result += getCharKernedWidth(ch) + getCharStartingCol(ch);
+	const uint size = text.size();
+	for (uint32 i = 0; i < size; ) {
+		const uint32 ch = getNextChar(text, i);
+		result += getCharStartingCol(ch);
+		result += (i >= size) ? getCharBitmapWidth(ch) : getCharKernedWidth(ch);
 	}
 	return result;
 }
