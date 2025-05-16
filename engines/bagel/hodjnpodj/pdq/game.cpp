@@ -1002,8 +1002,6 @@ VOID LoadGameCfg()
 **/
 VOID SaveGameCfg()
 {
-    CHAR tmpBuf[8];
-
     WritePrivateProfileString(INI_SECTION, "RandomLetters",
 		gGameCfg.bRandomLetters ? "Yes" : "No", INI_FILENAME);
     WritePrivateProfileString(INI_SECTION, "NumStartingLetters",

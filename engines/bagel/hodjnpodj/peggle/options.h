@@ -1,45 +1,36 @@
-// options.h -- definition of COptions class
-// Written by John J. Xenakis for Boffo Games Inc., 1994
-
-// Note to programmers:
-
-//	Please do not modify this file.  Modify your copy of
-//	"options.inc" if desired to add fields to the COptions class.
-
-
-
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  options.h
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  Copyright (c) 1994 by Ledge Multimedia, All Rights Reserved
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.0      04/19/94     EDS     refer to options.cpp for details
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  MODULE DESCRIPTION:
- *
- *      Class definitions for COptions.
- *   
- *  RELEVANT DOCUMENTATION:
- *
- *      n/a
- *   
- ****************************************************************/
+ */
 
+#ifndef HODJNPODJ_PEGGLE_OPTIONS_H
+#define HODJNPODJ_PEGGLE_OPTIONS_H
 
-#ifndef _INC_OPTIONS
-#define _INC_OPTIONS
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/peggle/optres.h"
 
-#include <time.h>
-#include "dibdoc.h"
-#include "globals.h"
+namespace Bagel {
+namespace HodjNPodj {
+namespace Peggle {
 
-#include "optres.h"
-
-class COptions : public CDialog
-{
+class COptions : public CDialog {
 // Construction
 public:
 	COptions(CWnd* pParent,CPalette *pPalette, int iDlgId);
@@ -87,9 +78,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#endif //!_INC_OPTIONS
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel
 
-
-
-
-
+#endif

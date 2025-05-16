@@ -1,19 +1,36 @@
-// optndlg.cpp : implementation file
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include "globals.h"
-#include "resource.h"
-#include "options.h"
-#include "optndlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
-#include "game2.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/peggle/resource.h"
+#include "bagel/hodjnpodj/peggle/options.h"
+#include "bagel/hodjnpodj/peggle/optndlg.h"
+#include "bagel/hodjnpodj/peggle/game2.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace Peggle {
 
 CPalette 	*pSubOptionsPalette;
 CBmpButton	*m_pTriButton = NULL;
@@ -291,3 +308,7 @@ void COptnDlg::OnClickedTrianglePlus()
 
 	(*m_pTriPButton).SendMessage( BM_SETSTATE, TRUE, 0L );
 }
+
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel

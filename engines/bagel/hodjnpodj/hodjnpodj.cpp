@@ -31,7 +31,7 @@
 #include "bagel/hodjnpodj/console.h"
 #include "bagel/hodjnpodj/gfx/bold_font.h"
 #include "bagel/music.h"
-#include "bagel/hodjnpodj/pdq/gamedll.h"
+#include "bagel/hodjnpodj/peggle/dllinit.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -80,7 +80,7 @@ Common::Error HodjNPodjEngine::run() {
 
 	// Run the game
 	//runGame();
-	PDQ::RunTGG(nullptr, &_gameInfo);
+	Peggle::RunPeggle(nullptr, &_gameInfo);
 
 	for (int size = 8; size <= 14; size += 2)
 		delete _fonts[size];

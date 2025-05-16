@@ -521,7 +521,7 @@ namespace MFC {
 #define ON_WM_ACTIVATEAPP() \
 	{ WM_ACTIVATEAPP, 0, 0, 0, AfxSig_vww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(BOOL, DWORD) > ( &ThisClass::OnActivateApp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(BOOL, HTASK) > ( &ThisClass::OnActivateApp)) },
 
 #define ON_WM_FONTCHANGE() \
 	{ WM_FONTCHANGE, 0, 0, 0, AfxSig_vv, \

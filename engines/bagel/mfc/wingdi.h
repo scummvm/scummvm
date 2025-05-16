@@ -627,6 +627,8 @@ extern BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
 extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
 	int nIDLastButton, int nIDCheckButton);
 
+extern DWORD GetSysColor(int nIndex);
+
 } // namespace MFC
 } // namespace Bagel
 

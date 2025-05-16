@@ -218,6 +218,12 @@ MODULE_OBJS = \
 	hodjnpodj/pdq/guess.o \
 	hodjnpodj/pdq/main.o \
 	hodjnpodj/pdq/usercfg.o \
+	hodjnpodj/peggle/dllinit.o \
+	hodjnpodj/peggle/game.o \
+	hodjnpodj/peggle/gameinit.o \
+	hodjnpodj/peggle/options.o \
+	hodjnpodj/peggle/optndlg.o \
+	hodjnpodj/peggle/optsub.o \
 	hodjnpodj/riddles/gamedll.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o

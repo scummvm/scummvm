@@ -1,5 +1,33 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
+#include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/hodjnpodj/peggle/game.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Peggle {
+
+#define SYSCOLORS   19
 
 BOOL	bHasPalette = TRUE;				// whether the display is palette driven
 int		nColorDepth = 8;				// display's bits per pixel
@@ -269,8 +297,6 @@ myLOGPALETTE myPalette = {0x300, 256, {
 #endif
 
 
-#define SYSCOLORS   4
-
 // Windows color parameters that can be modified
 int 	syscolorelements[SYSCOLORS] = {
 	COLOR_BTNFACE,
@@ -302,8 +328,6 @@ DWORD   syscolorvalues_moby[SYSCOLORS] = {
 
 
 #ifdef HIDE
-
-#define SYSCOLORS   19
 
 // Windows color parameters that can be modified
 int     syscolorelements[SYSCOLORS] = {
@@ -406,21 +430,25 @@ HDC 	hDC;
 	for (i = 0; i < SYSCOLORS; i++) {
 		oldsyscolorvalues[i] = GetSysColor(syscolorelements[i]);}
 
+#if 0
+	// This uses an unknown function GetSysColors
+	// in the original. Is gameinit.cpp not used at all?
 	if (bHasPalette && (nColorDepth >= 8))
 		SetSysColors(SYSCOLORS,syscolorelements,syscolorvalues_8bit);
 	else
 	if (nColorDepth > 8)
 		SetSysColors(SYSCOLORS,syscolorelements,syscolorvalues_moby);
-
+#endif
 }	
 
 
 // Reset the default Windows control colors
 void WINAPI	WindowsCleanup(void)
 {
+#if 0
 	SetSysColors(SYSCOLORS,syscolorelements,oldsyscolorvalues);
-}	
-
+#endif
+}
 
 #ifdef HIDE
 void CreatePalette(void)
@@ -458,3 +486,7 @@ if (!myPalette) {
 return(true);
 }
 #endif
+
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel

@@ -215,5 +215,9 @@ BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
 	error("TODO: CheckRadioButton");
 }
 
+DWORD GetSysColor(int nIndex) {
+	error("TODO: GetSysColor");
+}
+
 } // namespace MFC
 } // namespace Bagel

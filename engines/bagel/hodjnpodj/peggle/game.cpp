@@ -1,100 +1,46 @@
-// game.cpp : Defines the class behaviors for the application.
-//           Game is a simple skeleton program which consists of a main
-//           window, which contains background artwork from a .BMP file,
-//			 and a Quit button.  Stub routines are present for mouse related
-//			 activities and keyboard input; edit the stubs as required.
-//
-//
-//
-//
-/****************************************************
- *                                                  *
- *                P E G G L E B O Z                 *
- *                                                  *
- *              By:  Christopher Lee                *
- *                                                  *
- *             Coding started: 3/3/94               *
- *                                                  *
- ****************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- * v.1.0:  3/16/94 - Peggleboz works!
- *                   Functions like Hi-Q game; move logic
- *					 in the form of click and drag
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * v.1.1:  3/17/94 - Added Undo Move Button:  takes back
- *					 last move (until the beginning)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * v.1.2:  3/18/94 - Added Restart Button:  reloads board
- *					 and restart from the beginning
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * v.1.3:  3/21/94 - Added end of game sequences, scoring,
- *					 "No Moves Left" Message, Yes/No button
- *                   for play again which restarts/quits.
- *                 - Also added neighbor checks (forgot previously)
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * v.1.4:  3/22/94 - Diagonal moves on CROSS and CROSS PLUS cases
- *					 taken out (not supposed to be legal moves)
- *                   Triangle and Triangle Plus transformations
- *					 (display and move validation) completed.
- *
- * v.1.5:  3/23/94 - Click and Drag changed to click and click
- *
- * v.1.6:  3/24/94 - Fixed up some bugs and displays
- *
- * v.1.7:  3/25/94 - Bitmap "cursors" completed.  All warnings
- *					 taken out.  0 errors, 0 warnings.
- *
- * v.1.8:  3/28/94 - No total refresh, local refresh only, but a
- *					 bit buggy, can't figure out the right sequence.
- *
- * v.1.9:  3/30/94 - Added Dialog box (no commands yet)
- *
- * v.1.10: 3/31/94 - Fixed bugs with normal move sequence
- *					 As well, if you jump weirdly (wrongly),
- *					 the peg is replaced.  Undo bug removed.
- *
- * v.2.0:  4/3/94 -  All bugs removed.  Dialog box now
- *                   selects game type.
- *
- * v.3.0   5/1/94	Modularized all components, added rules and scrolls
- *
- * v.3.1   5/1/94	added scroll dialog boxes and wider hole sprite
- *
- * v.3.2   5/4/94	corrected "you won" determination; special case 1 point scores
- *
- * v.3.3   5/4/94	corrected "you won" determination one last time ...
- *
- * v.3.4   5/10/94	reset input focus to options dialog after mini-options dialog
- *
- * v.3.5   5/11/94  set input focus to Return to Game after Options/Rules
- *
- * v.3.6   5/16/94	convert art from disk based to resource based
- *
- * v.3.7   6/16/94	refresh dialog backgrounds upon dialog exits
- *
- * v.3.8   7/06/94	remove superflous sprite creation in SetupBoard
  */
+
+#include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/peggle/resource.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/peggle/game.h"
+#include "bagel/hodjnpodj/peggle/game2.h"
+#include "bagel/hodjnpodj/peggle/options.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Peggle {
 
 #define SHOW_CURSOR	TRUE
 
-#include "bagel/hodjnpodj/hnplibs/stdafx.h"
-#include <time.h>
-
-#include "bagel/hodjnpodj/hnplibs/cmessbox.h"
-#include "misc.h"
-#include "resource.h"
-#include "gamedll.h"
-#include "game.h"
-#include "dibdoc.h"
-#include "bagel/hodjnpodj/hnplibs/sprite.h"
-#include "globals.h"
-#include "game2.h"
-#include "options.h"
-#include "time.h"
-//#include "gameover.h"
-#include "bagel/hodjnpodj/hnplibs/rules.h"
-#include "bagel/hodjnpodj/hnplibs/button.h"
-#include "sound.h"
 
 extern	LPGAMESTRUCT 	pGameInfo;
 
@@ -118,7 +64,13 @@ static char MaxPegs[4][2] =
 	{CROSS,	CROSS_PLUS, TRIANGLE, 	TRIANGLE_PLUS,
 	 32,	36,			14,		    20} ;
 char fState [GRID_SIZE][GRID_SIZE];
-char *BoardSpec[BOARD_COUNT] = {".\\ART\\CROSS.BMP",".\\ART\\CROSSX.BMP",".\\ART\\TRIANGLE.BMP",".\\ART\\TRIANGLX.BMP"};
+const char *BoardSpec[BOARD_COUNT] = {
+	".\\ART\\CROSS.BMP",
+	".\\ART\\CROSSX.BMP",
+	".\\ART\\TRIANGLE.BMP",
+	".\\ART\\TRIANGLX.BMP"
+};
+
 char Moves [70][2]; // i.e. 2 pairs of coordinates (old, new) per
 					// move, and 1 peg can be removed per move.
 
@@ -133,11 +85,11 @@ int pegz = (((BoardSelected == TRIANGLE) * 15) +
 			   ((BoardSelected == CROSS) * 49) +
 			   ((BoardSelected == CROSS_PLUS) * 49));
 
-static	nBoard_DX = TRI_BOARD_DX,
-		nBoard_DY = TRI_BOARD_DY;
+static int nBoard_DX = TRI_BOARD_DX,
+	nBoard_DY = TRI_BOARD_DY;
 
-static	bIgnoreScroll = FALSE;
-static	bPegMoving = FALSE;
+static BOOL bIgnoreScroll = FALSE;
+static BOOL bPegMoving = FALSE;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -592,7 +544,7 @@ int num_left ;
 int moves_left = 0;
 int i, j;
 char score_string[40];
-char *score_blurb;
+const char *score_blurb;
 CDC     *pDC;
 CPoint  sprite_loc;
 CPoint  grid_loc;
@@ -1453,4 +1405,6 @@ CWinApp	*pMyApp;
 	(void) (*pMyApp).EndWaitCursor();
 }
 
-   
+} // namespace Peggle
+} // namespace HodjNPodj
+} // namespace Bagel
