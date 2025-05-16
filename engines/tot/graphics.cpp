@@ -913,8 +913,8 @@ void initGraph() {
 			datosfundido[i][j] = i / (j + 1);
 }
 
-void handPantallaToFondo() {
-	Common::copy(handpantalla + 4, handpantalla + sizepantalla, fondo + 4);
+void handPantallaToBackground() {
+	Common::copy(handpantalla + 4, handpantalla + sizepantalla, background + 4);
 }
 
 void copyPalette(palette from, palette to) {

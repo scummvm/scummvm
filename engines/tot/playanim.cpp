@@ -212,15 +212,15 @@ byte iframe, iframe2;
 
 long sizepantalla;
 
-datosobj profundidad[numobjetosconv];
+datosobj depthMap[numobjetosconv];
 
-byte *objetos[numobjetosconv];
+byte *screenObjects[numobjetosconv];
 
 byte *pasoframe;
 
 byte *pasoanimado;
 
-byte *fondo;
+byte *background;
 
 byte *characterDirtyRect;
 
@@ -1123,7 +1123,7 @@ void initPlayAnim() {
     // encriptado[253] = '\63';
 	tocapintar = false;
 	for (int i = 0; i < numobjetosconv; i++) {
-		objetos[i] = NULL;
+		screenObjects[i] = NULL;
 	}
 	xraton = 160;
 	yraton = 100;
