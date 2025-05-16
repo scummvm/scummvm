@@ -149,10 +149,13 @@ int Words::loadExtendedDictionary(const char *sierraFname) {
 		Common::String word = fp.readString();
 		uint16 id = atoi(fp.readString('\n').c_str());
 		if (!word.empty()) {
-			WordEntry *newWord = new WordEntry();
-			newWord->word = word;
-			newWord->id = id;
-			_dictionaryWords[(byte)newWord->word[0] - 'a'].push_back(newWord);
+			byte index = (byte)word[0] - 'a';
+			if (index < ARRAYSIZE(_dictionaryWords)) {
+				WordEntry *newWord = new WordEntry();
+				newWord->word = word;
+				newWord->id = id;
+				_dictionaryWords[index].push_back(newWord);
+			}
 		}
 	}
 
