@@ -1,0 +1,157 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "resource.h"
+#include "gtl.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "dllinit.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
+
+//#ifndef _DEBUG
+//#error This source file must be compiled with _DEBUG defined
+//#endif
+
+HINSTANCE	hDLLInst;
+HINSTANCE 	hExeInst;
+HWND		ghwndParent;
+
+//CMainDFAWindow	*pMainGameWnd = NULL;	// pointer to the poker's main window 
+CPalette		*pTestPalette = NULL;
+HCURSOR			hGameCursor;
+extern  CGtlFrame		*pMainWindow;
+LPGAMESTRUCT 	pGameInfo = NULL;
+HWND			hThisWind;
+CBfcMgr 		*lpMetaGameStruct = NULL;
+BOOL			bJustReturned = FALSE;
+
+/////////////////////////////////////////////////////////////////////////////
+// Public C interface
+
+/*****************************************************************
+ *
+ * RunPoker
+ *
+ * FUNCTIONAL DESCRIPTION:
+ *
+ *			This is the API function for the DLL. It is what the calling app
+ *			calls to invoke poker 
+ *   
+ * FORMAL PARAMETERS:
+ *
+ *      hParentWnd, lpGameInfo
+ *
+ * IMPLICIT INPUT PARAMETERS:
+ *  
+ *      n/a
+ *   
+ * IMPLICIT OUTPUT PARAMETERS:
+ *   
+ *      n/a
+ *   
+ * RETURN VALUE:
+ *
+ *      n/a
+ *
+ ****************************************************************/
+extern "C"
+HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded)
+{
+    ghwndParent = hParentWnd;
+    lpMetaGameStruct = lpBfcMgr;
+
+#if RETAIN_META_DLL
+	if (bMetaLoaded) {
+        CGtlView    *xpGtlFocusView, *xpGtlMouseView;
+        CGtlDoc     *xpGtlDoc = NULL;
+
+	    pMainWindow->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
+        xpGtlDoc->m_xpGtlData->m_xpGtlView->SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, NULL);
+        if ( lpBfcMgr->m_bRestart == FALSE ) {
+			xpGtlDoc->m_xpGtlData->m_xpXodjChain = NULL;
+			xpGtlDoc->m_xpGtlData->m_xpCurXodj = NULL;
+			xpGtlDoc->m_xpGtlData->m_iMishMoshLoc = 0;
+	        pMainWindow->m_lpBfcMgr = NULL;
+	        pMainWindow->m_lpBfcMgr = lpBfcMgr;
+	        xpGtlDoc->m_xpGtlData->m_bGameOver = FALSE;
+        }
+		pMainWindow->ShowWindow(SW_SHOWNORMAL);
+        // if restoring a saved game
+        //
+        bJustReturned = TRUE;
+        if (lpBfcMgr->m_bRestoredGame) {
+
+            // Re-init the game using the restored info (i.e. lpBfcMgr)
+            //
+            xpGtlDoc->m_xpGtlData->m_bInitMetaGame = TRUE;
+            xpGtlDoc->m_xpGtlData->InitMetaGame(xpGtlDoc->m_xpGtlData->m_xpGtlView, TRUE);
+
+        } else if (lpBfcMgr->m_iFunctionCode) {
+
+            xpGtlDoc->m_xpGtlData->ReturnFromInterface();
+            xpGtlDoc->m_xpGtlData->ProcessMove();
+        }
+	}
+	else
+		SetupWindow( lpBfcMgr );
+#else
+    bJustReturned = lpBfcMgr->m_bRestart;
+	SetupWindow( lpBfcMgr );
+#endif    
+	
+	sndPlaySound(NULL,0);				// clear all rogue sounds
+
+	return pMainWindow->m_hWnd;
+}
+
+
+void SetupWindow(CBfcMgr *)
+{
+    CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
+
+	SetupCursor();
+
+	xpGtlApp->CreateInstance();
+	
+	hDLLInst = (HINSTANCE)::GetWindowWord( pMainWindow->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)::GetWindowWord( ghwndParent, GWW_HINSTANCE);  
+
+}
+
+
+void SetupCursor(void)
+{
+    CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
+	HCURSOR	hNewCursor = NULL;
+
+	hNewCursor = xpGtlApp->LoadStandardCursor(IDC_ARROW);
+	if (hNewCursor != NULL);
+		::SetCursor(hNewCursor);
+}
+
+
+CGtlApp NEAR theApp;
+
+/////////////////////////////////////////////////////////////////////////////

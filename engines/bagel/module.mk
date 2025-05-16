@@ -148,6 +148,47 @@ MODULE_OBJS = \
 	hodjnpodj/hnplibs/text.o \
 	hodjnpodj/libs/settings.o \
 	hodjnpodj/libs/vector.o \
+	hodjnpodj/metagame/bgen/backpack.o \
+	hodjnpodj/metagame/bgen/bbt.o \
+	hodjnpodj/metagame/bgen/bdbg.o \
+	hodjnpodj/metagame/bgen/bdbgc.o \
+	hodjnpodj/metagame/bgen/bgb.o \
+	hodjnpodj/metagame/bgen/bgenut.o \
+	hodjnpodj/metagame/bgen/bsutl.o \
+	hodjnpodj/metagame/bgen/btimeut.o \
+	hodjnpodj/metagame/bgen/c1btndlg.o \
+	hodjnpodj/metagame/bgen/c2btndlg.o \
+	hodjnpodj/metagame/bgen/invent.o \
+	hodjnpodj/metagame/bgen/item.o \
+	hodjnpodj/metagame/bgen/mgstat.o \
+	hodjnpodj/metagame/bgen/note.o \
+	hodjnpodj/metagame/bgen/notebook.o \
+	hodjnpodj/metagame/grand_tour/citemdlg.o \
+	hodjnpodj/metagame/grand_tour/cmapdlg.o \
+	hodjnpodj/metagame/grand_tour/cturndlg.o \
+	hodjnpodj/metagame/grand_tour/dllinit.o \
+	hodjnpodj/metagame/grand_tour/encount.o \
+	hodjnpodj/metagame/grand_tour/gtl.o \
+	hodjnpodj/metagame/grand_tour/gtlcmp.o \
+	hodjnpodj/metagame/grand_tour/gtlcpl.o \
+	hodjnpodj/metagame/grand_tour/gtldcp.o \
+	hodjnpodj/metagame/grand_tour/gtldoc.o \
+	hodjnpodj/metagame/grand_tour/gtlfrm.o \
+	hodjnpodj/metagame/grand_tour/gtllex.o \
+	hodjnpodj/metagame/grand_tour/gtlmanp.o \
+	hodjnpodj/metagame/grand_tour/gtlmgm.o \
+	hodjnpodj/metagame/grand_tour/gtlmve.o \
+	hodjnpodj/metagame/grand_tour/gtlui.o \
+	hodjnpodj/metagame/grand_tour/gtlview.o \
+	hodjnpodj/metagame/grand_tour/infdlg.o \
+	hodjnpodj/metagame/grand_tour/optdlg.o \
+	hodjnpodj/metagame/grand_tour/pawn.o \
+	hodjnpodj/metagame/grand_tour/rules.o \
+	hodjnpodj/metagame/grand_tour/savedlg.o \
+	hodjnpodj/metagame/grand_tour/savegame.o \
+	hodjnpodj/metagame/grand_tour/sound.o \
+	hodjnpodj/metagame/grand_tour/spinner.o \
+	hodjnpodj/metagame/grand_tour/store.o \
 	hodjnpodj/archeroids/dllinit.o \
 	hodjnpodj/archeroids/main.o \
 	hodjnpodj/artparts/gamedll.o \
