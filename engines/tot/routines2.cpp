@@ -2240,10 +2240,8 @@ void soundControls() {
 	getImg(86, 31, 234, 44, fondoslade1);
 	getImg(86, 76, 234, 89, fondoslade2);
 
-	// volumenfx = round(((volumenfxderecho + volumenfxizquierdo) / 2) * 20);
-	// volumenmelodia = round(((volumenmelodiaderecho + volumenmelodiaizquierdo) / 2) * 20);
-	volumenfx = 0;
-	volumenmelodia = 0;
+	volumenfx = round(((volumenfxderecho + volumenfxizquierdo) / 2) * 20);
+	volumenmelodia = round(((volumenmelodiaderecho + volumenmelodiaizquierdo) / 2) * 20);
 	putImg(volumenfx + 86, 31, slade);
 	putImg(volumenmelodia + 86, 76, slade);
 
@@ -2297,9 +2295,12 @@ void soundControls() {
 					if (oldxfade != xfade) {
 						putImg(86, 31, fondoslade1);
 						putImg(xfade, 31, slade);
+						//This yields a volume between 0 and 140
 						volumenfx = xfade - 86;
-						// volumenfxderecho = round_((real)(volumenfx) / 20);
-						// volumenfxizquierdo = round_((real)(volumenfx) / 20);
+
+						debug("volumefx=%d", volumenfx);
+						volumenfxderecho = round((float)volumenfx / 20);
+						volumenfxizquierdo = round((float)volumenfx / 20);
 						setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 					}
 					g_engine->_screen->update();
@@ -2329,10 +2330,9 @@ void soundControls() {
 						putImg(86, 76, fondoslade2);
 						putImg(xfade, 76, slade);
 						volumenmelodia = xfade - 86;
-						// 		volumenmelodiaderecho = round_((real)(volumenmelodia) / 20);
-						// 		volumenmelodiaizquierdo = round_((real)(volumenmelodia) / 20);
+						volumenmelodiaderecho = round((float)(volumenmelodia) / 20);
+						volumenmelodiaizquierdo = round((float)(volumenmelodia) / 20);
 						setMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-						setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 					}
 					g_engine->_screen->update();
 				} while (!mouseReleased);

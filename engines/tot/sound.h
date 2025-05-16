@@ -25,8 +25,6 @@
 
 namespace Tot {
 
-extern uint estadovoc, midestatus;
-
 void initSound();
 void setSfxVolume(byte voll, byte volr);
 void setMidiVolume(byte voll, byte volr);
@@ -34,14 +32,12 @@ void lowerMidiVolume(byte voll, byte volr);
 void restoreMidiVolume(byte voll, byte volr);
 void setMasterVolume(byte voll, byte volr);
 void loadVoc(Common::String vocFile, int32 startPos, uint vocSize);
-void autoPlayVoc(Common::String  vocFile, int32 startPos,
-				 uint vocSize);
+void autoPlayVoc(Common::String  vocFile, int32 startPos, uint vocSize);
 void pitavocmem();
 void playVoc(Common::String vocFile, int32 startPos, uint vocSize);
 void stopVoc();
 void playMidiFile(Common::String nomfich, boolean loop);
 void pitamidmem();
-boolean disponiblemid();
 void loopactivo(boolean mid_loop);
 
 } // End of namespace Tot

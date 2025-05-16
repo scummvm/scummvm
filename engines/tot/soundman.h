@@ -66,6 +66,9 @@ public:
 	void toggleMusic();
 	void beep(int32 frequency, int32 ms);
 	void waitForSoundEnd();
+	void setSfxVolume(int volume);
+	void setMusicVolume(int volume);
+	void setSfxBalance(bool left, bool right);
 
 private:
 	Audio::SoundHandle _soundHandle;

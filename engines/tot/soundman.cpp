@@ -25,6 +25,7 @@
 #include "audio/midiplayer.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
+#include "common/config-manager.h"
 #include "common/substream.h"
 
 #include "tot/soundman.h"
@@ -36,6 +37,8 @@ namespace Tot {
 SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 
 	_musicPlayer = new MusicPlayer();
+
+	g_engine->syncSoundSettings();
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, 100);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 100);
@@ -109,14 +112,42 @@ void SoundManager::beep(int32 frequency, int32 ms) {
 	speaker->setVolume(255);
 	speaker->play(Audio::PCSpeaker::kWaveFormSine, frequency, ms);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-		speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+		speaker,
+		-1,
+		Audio::Mixer::kMaxChannelVolume,
+		0,
+	    DisposeAfterUse::NO,
+		true
+	);
 }
 
+void SoundManager::setSfxVolume(int volume) {
+	debug("Setting sfx volume to =%d", volume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+	ConfMan.setInt("sfx_volume", volume);
+	ConfMan.flushToDisk();
+}
+
+void SoundManager::setSfxBalance(bool left, bool right) {
+	int balance = left? -127: 127;
+	_mixer->setChannelBalance(_soundHandle, balance);
+	// _mixer->setChannelBalance();
+}
+
+void SoundManager::setMusicVolume(int volume) {
+
+	debug("Setting music volume to =%d", volume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	ConfMan.setInt("music_volume", volume);
+	ConfMan.flushToDisk();
+
+	_musicPlayer->syncVolume();
+}
 
 MusicPlayer::MusicPlayer() {
 	_data = nullptr;
 
-	MidiPlayer::createDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	MidiPlayer::createDriver(MDT_MIDI | MDT_ADLIB);
 
 	int ret = _driver->open();
 	if (ret == 0) {
