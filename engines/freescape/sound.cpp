@@ -29,6 +29,7 @@
 namespace Freescape {
 
 void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData) {
+	debugC(1, kFreescapeDebugParser, "Reading sound table for ZX");
 	int numberSounds = 25;
 
 	if (isDark())
@@ -231,6 +232,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 }
 
 void FreescapeEngine::loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetTable) {
+	debugC(1, kFreescapeDebugParser, "Reading PC speaker sound table for DOS");
 	for (int i = 1; i < 20; i++) {
 		debugC(1, kFreescapeDebugParser, "Reading sound table entry: %d ", i);
 		int soundIdx = (i - 1) * 4;

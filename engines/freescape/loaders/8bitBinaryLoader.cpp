@@ -1100,6 +1100,7 @@ void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file,
 }
 
 void FreescapeEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size) {
+	debugC(1, kFreescapeDebugParser, "Loading global objects");
 	assert(!_areaMap.contains(255));
 	ObjectMap *globalObjectsByID = new ObjectMap;
 	file->seek(offset);

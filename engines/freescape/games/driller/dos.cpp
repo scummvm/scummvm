@@ -245,8 +245,8 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 
 		loadFonts(&file, 0x07a4a);
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
-		load8bitBinary(&file, 0x7bb0, 4);
 		loadGlobalObjects(&file, 0x1fa2, 8);
+		load8bitBinary(&file, 0x7bb0, 4);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 		swapPalette(1);
@@ -301,8 +301,8 @@ void DrillerEngine::loadAssetsDOSDemo() {
 
 	loadFonts(&file, 0x4eb0);
 	loadMessagesFixedSize(&file, 0x636, 14, 20);
-	load8bitBinary(&file, 0x55b0, 4);
 	loadGlobalObjects(&file, 0x53, 8);
+	load8bitBinary(&file, 0x55b0, 4);
 	_border = load8bitDemoImage(&file, 0x6220);
 	_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 

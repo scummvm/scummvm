@@ -101,14 +101,6 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 	loadDemoData(&file, 0, 0x1000);
 
 	file.close();
-	file.open("data");
-	if (!file.isOpen())
-		error("Failed to open 'data' file");
-
-	load8bitBinary(&file, 0x442, 16);
-	loadPalettes(&file, 0x0);
-
-	file.close();
 	file.open("driller");
 	if (!file.isOpen())
 		error("Failed to open 'driller' file");
@@ -123,6 +115,14 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 		loadMessagesFixedSize(&file, 0x3960, 14, 20);
 		loadGlobalObjects(&file, 0x3716, 8);
 	}
+
+	file.close();
+	file.open("data");
+	if (!file.isOpen())
+		error("Failed to open 'data' file");
+
+	load8bitBinary(&file, 0x442, 16);
+	loadPalettes(&file, 0x0);
 
 	file.close();
 	file.open("soundfx");

@@ -45,10 +45,10 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		file.open("driller.c64.data");
 
 		if (_variant) {
-			loadFonts(&file, 0x402);
-			load8bitBinary(&file, 0x8b04, 16);
 			loadMessagesFixedSize(&file, 0x167a, 14, 20);
 			loadGlobalObjects(&file, 0x1855, 8);
+			loadFonts(&file, 0x402);
+			load8bitBinary(&file, 0x8b04, 16);
 		/*} else if (_variant & GF_C64_BUDGET) {
 			//loadFonts(&file, 0x402);
 			load8bitBinary(&file, 0x7df7, 16);

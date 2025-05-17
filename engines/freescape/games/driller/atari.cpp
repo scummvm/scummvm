@@ -135,15 +135,6 @@ void DrillerEngine::loadAssetsAtariDemo() {
 	loadDemoData(&file, 0, 0x1000);
 
 	file.close();
-	file.open("data");
-
-	if (!file.isOpen())
-		error("Failed to open 'data' file");
-
-	load8bitBinary(&file, 0x442, 16);
-	loadPalettes(&file, 0x0);
-
-	file.close();
 	if (_variant & GF_ATARI_MAGAZINE_DEMO) {
 		file.open("auto_x.prg");
 		if (!file.isOpen())
@@ -164,6 +155,15 @@ void DrillerEngine::loadAssetsAtariDemo() {
 		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
 		loadGlobalObjects(&file, 0x3946, 8);
 	}
+
+	file.close();
+	file.open("data");
+
+	if (!file.isOpen())
+		error("Failed to open 'data' file");
+
+	load8bitBinary(&file, 0x442, 16);
+	loadPalettes(&file, 0x0);
 
 	file.close();
 	file.open("soundfx");
