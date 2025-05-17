@@ -39,6 +39,14 @@ private:
 
 	int _screenSaveLevel = 0;
 
+#if ENABLE_SCUMM_7_8
+	// V7 games don't honor the music_mute and sfx_mute settings, so we
+	// have to set the volume directly.
+
+	int _oldMusicVolume = -1;
+	int _oldSfxVolume = -1;
+#endif
+
 public:
 	MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacV6Gui();

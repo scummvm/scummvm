@@ -162,6 +162,22 @@ void MacV6Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY
 void MacV6Gui::updateMenus() {
 	MacGuiImpl::updateMenus();
 
+#if ENABLE_SCUMM_7_8
+	// Remember the old music and sfx volume so that we can toggle back and
+	// forth between that and 0. If we don't have an old volume, use the
+	// default value. We could save it to the config file, but... Nah.
+
+	if (_vm->_imuseDigital && _oldMusicVolume == -1 && _oldSfxVolume == -1) {
+		_oldMusicVolume = _vm->_imuseDigital->diMUSEGetMusicGroupVol();
+		if (_oldMusicVolume == 0)
+			_oldMusicVolume = 81;
+
+		_oldSfxVolume = _vm->_imuseDigital->diMUSEGetSFXGroupVol();
+		if (_oldSfxVolume == 0)
+			_oldSfxVolume = 81;
+	}
+#endif
+
 	Graphics::MacMenu *menu = _windowManager->getMenu();
 	Graphics::MacMenuItem *videoMenu = menu->getMenuItem(3);
 
@@ -172,8 +188,19 @@ void MacV6Gui::updateMenus() {
 
 	Graphics::MacMenuItem *soundMenu = menu->getMenuItem(4);
 
-	menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
-	menu->getSubMenuItem(soundMenu, 1)->checked = (_vm->_soundEnabled & 1); // Effects
+#if ENABLE_SCUMM_7_8
+	if (_vm->_game.version >= 7) {
+		if (_vm->_imuseDigital) {
+			menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_imuseDigital->diMUSEGetMusicGroupVol() > 0);
+			menu->getSubMenuItem(soundMenu, 1)->checked = (_vm->_imuseDigital->diMUSEGetSFXGroupVol() > 0);
+		}
+	} else
+#endif
+	{
+		menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
+		menu->getSubMenuItem(soundMenu, 1)->checked = (_vm->_soundEnabled & 1); // Effects
+	}
+
 	menu->getSubMenuItem(soundMenu, 5)->checked = false; // Text Only
 	menu->getSubMenuItem(soundMenu, 6)->checked = false; // Voice Only
 	menu->getSubMenuItem(soundMenu, 7)->checked = false; // Text & Voice
@@ -268,16 +295,46 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 500:	// Music
-		_vm->_soundEnabled = (_vm->_soundEnabled & ~8) ^ 2;
-		ConfMan.setBool("music_mute", !(_vm->_soundEnabled & 2));
-		ConfMan.setBool("mute", (_vm->_soundEnabled == 0 && _vm->_voiceMode == 2));
+#if ENABLE_SCUMM_7_8
+		if (_vm->_game.version >= 7) {
+			int musicVolume = _vm->_imuseDigital->diMUSEGetMusicGroupVol();
+			if (musicVolume == 0) {
+				musicVolume = _oldMusicVolume;
+			} else {
+				_oldMusicVolume = musicVolume;
+				musicVolume = 0;
+			}
+
+			setVolume(0, musicVolume / 8);
+		} else
+#endif
+		{
+			_vm->_soundEnabled = (_vm->_soundEnabled & ~8) ^ 2;
+			ConfMan.setBool("music_mute", !(_vm->_soundEnabled & 2));
+			ConfMan.setBool("mute", (_vm->_soundEnabled == 0 && _vm->_voiceMode == 2));
+		}
 		syncSoundSettings = true;
 		break;
 
 	case 501:	// Effects
-		_vm->_soundEnabled = (_vm->_soundEnabled & ~8) ^ 1;
-		ConfMan.setBool("sfx_mute", !(_vm->_soundEnabled & 1));
-		ConfMan.setBool("mute", (_vm->_soundEnabled == 0 && _vm->_voiceMode == 2));
+#if ENABLE_SCUMM_7_8
+		if (_vm->_game.version >= 7) {
+			int sfxVolume = _vm->_imuseDigital->diMUSEGetSFXGroupVol();
+			if (sfxVolume == 0) {
+				sfxVolume = _oldSfxVolume;
+			} else {
+				_oldSfxVolume = sfxVolume;
+				sfxVolume = 0;
+			}
+
+			setVolume(1, sfxVolume / 8);
+		} else
+#endif
+		{
+			_vm->_soundEnabled = (_vm->_soundEnabled & ~8) ^ 1;
+			ConfMan.setBool("sfx_mute", !(_vm->_soundEnabled & 1));
+			ConfMan.setBool("mute", (_vm->_soundEnabled == 0 && _vm->_voiceMode == 2));
+		}
 		syncSoundSettings = true;
 		break;
 
@@ -865,8 +922,8 @@ void MacV6Gui::setVolume(int type, int volume) {
 
 	int mixerVolume = CLIP(16 * volume, 0, 256);
 
-	if (_vm->_game.version >= 7) {
 #ifdef ENABLE_SCUMM_7_8
+	if (_vm->_game.version >= 7) {
 		int dimuseVolume = CLIP(8 * volume, 0, 127);
 
 		switch (type) {
@@ -880,8 +937,9 @@ void MacV6Gui::setVolume(int type, int volume) {
 			_vm->_imuseDigital->diMUSESetVoiceGroupVol(dimuseVolume);
 			break;
 		}
+	} else
 #endif
-	} else {
+	{
 		_vm->_mixer->setVolumeForSoundType(soundTypes[type], mixerVolume);
 	}
 
