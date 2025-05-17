@@ -52,7 +52,6 @@
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #endif
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #include "graphics/opengl/context.h"
 #endif
 #if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
@@ -219,9 +218,9 @@ bool OSystem_SDL::hasFeature(Feature f) {
 		return _eventSource->isJoystickConnected();
 	}
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-	/* Even if we are using the 2D graphics manager,
+	/* Even if we are using the SDL graphics manager,
 	 * we are at one initGraphics3d call of supporting OpenGL */
-	if (f == kFeatureOpenGLForGame) return true;
+	if (f == kFeatureOpenGLForGame) return _oglType != OpenGL::kContextNone && OpenGLContext.type != OpenGL::kContextGLES;
 	if (f == kFeatureShadersForGame) return _supportsShaders;
 #endif
 #if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)

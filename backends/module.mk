@@ -231,11 +231,7 @@ endif
 
 ifdef USE_OPENGL
 MODULE_OBJS += \
-	graphics/openglsdl/openglsdl-graphics.o \
-	graphics3d/opengl/framebuffer.o \
-	graphics3d/opengl/surfacerenderer.o \
-	graphics3d/opengl/tiledsurface.o \
-	graphics3d/openglsdl/openglsdl-graphics3d.o
+	graphics/openglsdl/openglsdl-graphics.o
 endif
 
 ifdef USE_DISCORD
