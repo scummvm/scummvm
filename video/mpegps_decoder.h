@@ -98,6 +98,9 @@ private:
 		Common::Queue<Packet> _audioQueue;
 		// If we come across a non-packetized elementary stream
 		bool _isESStream;
+
+		uint32 _firstAudioPacketPts = 0xFFFFFFFF;
+		uint32 _firstVideoPacketPts = 0xFFFFFFFF;
 	};
 
 	// Base class for handling MPEG streams
