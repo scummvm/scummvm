@@ -443,7 +443,7 @@ public class BackupManager {
 		// This version check is only to make Android Studio linter happy
 		if (pr == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
 			// This is a standard filesystem path
-			if (!folder.mkdirs()) {
+			if (!folder.isDirectory() && !folder.mkdirs()) {
 				return false;
 			}
 
