@@ -257,22 +257,38 @@ struct TeamMonster {
 	void init();
 };
 
+// Lists of custom key actions within the EFH game engine itself.
 enum EFHAction {
 	kActionNone,
-	kActionExit,
+	kActionQuit,
 	kActionSave,
 	kActionLoad,
+	kActionReset,
 	kActionMoveUp,
-	kActionMoveDown,
-	kActionMoveLeft,
-	kActionMoveRight,
 	kActionMoveUpLeft,
 	kActionMoveUpRight,
+	kActionMoveDown,
 	kActionMoveDownLeft,
 	kActionMoveDownRight,
-	kActionCharacter1Status,
-	kActionCharacter2Status,
-	kActionCharacter3Status
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionShowCharacterPortraitsOne,
+	kActionShowCharacterPortraitsTwo,
+	kActionShowCharacterPortraitsThree,
+	kActionA,
+	kActionH,
+	kActionD,
+	kActionE,
+	kActionS,
+	kActionR,
+	kActionU,
+	kActionT,
+	kActionL,
+	kActionG,
+	kActionI,
+	kActionP,
+	kActionQ,
+	kActionEscape
 };
 
 class EfhEngine : public Engine {
