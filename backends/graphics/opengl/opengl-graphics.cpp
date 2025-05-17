@@ -1374,11 +1374,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 		error("Can't initialize any pipeline");
 	}
 
-	// Disable 3D properties.
-	GL_CALL(glDisable(GL_CULL_FACE));
-	GL_CALL(glDisable(GL_DEPTH_TEST));
-	GL_CALL(glDisable(GL_DITHER));
-
 	_pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Setup backbuffer state.
