@@ -456,10 +456,6 @@ There is a few features that have been disabled or changed and are not possible
 Known issues
 ------------
 
-- adding a game in TOS and loading it in FreeMiNT (and vice versa) generates
-  incompatible paths. Either use only one system or edit scummvm.ini and set
-  there only relative paths (mintlib bug/limitation).
-
 - when run on TT, screen contains horizontal black lines. That is due to the
   fact that TT offers only 320x480 in 256 colours. Possibly fixable by a Timer B
   interrupt.
@@ -507,8 +503,6 @@ Known issues
 
 Future plans
 ------------
-
-- unified file paths in scummvm.ini
 
 - DSP-based sample mixer (WAV, FLAC, MP2)
 
