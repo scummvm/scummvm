@@ -34,7 +34,7 @@ extern bool tocapintar, tocapintar2, tocapintareffect;
 const int kFrameMs = 30;
 // const int kFrameMs = 50;
 const int kDoubleFrameMultiplier = 3;
-const int kFrameEffectMs = 5;
+const int kFrameEffectMs = 10;
 
 class ChronoManager {
 private:
@@ -42,13 +42,14 @@ private:
 	uint32 _lastTickEffect = 0;
 	uint32 _lastDoubleTick = 0;
 	byte tocapintarTick = 0;
+	uint32 _lastEffectRender = 0;
 
 public:
 	ChronoManager(/* args */);
 	~ChronoManager();
 	void updateChrono();
 	void delay(int ms);
-	bool shouldPaintEffect();
+	bool shouldPaintEffect(int speed);
 	byte _speedMultiplier = 1;
 };
 

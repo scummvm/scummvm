@@ -54,23 +54,16 @@ void ChronoManager::updateChrono() {
 		tocapintar = false;
 	}
 
-	if ((currentTime - _lastTickEffect) >= kFrameEffectMs) {
-		tocapintareffect = true;
-		_lastTickEffect = currentTime;
-	}
-	else {
-		tocapintareffect = false;
-	}
 }
 
-bool ChronoManager::shouldPaintEffect(){
-	uint32 currentTime = g_system->getMillis();
-	uint32 diff = (currentTime - _lastTickEffect);
-	if (diff >= kFrameEffectMs){
-		_lastTickEffect = currentTime;
+bool ChronoManager::shouldPaintEffect(int speed){
+	uint32 curTime = g_system->getMillis();
+	// _lastEffectRender += g_system->getMillis();
+	if((curTime - _lastEffectRender) >= kFrameEffectMs * speed) {
+		_lastEffectRender = curTime;
 		return true;
 	}
-	return false;
+	else return false;
 }
 
 void Tot::ChronoManager::delay(int ms) {
