@@ -21,8 +21,8 @@
 
 #include "backends/base-backend.h"
 #include <graphics/surface.h>
-#include <graphics/paletteman.h>
 #include <ronin/soundcommon.h>
+#include "backends/graphics/default-palette.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
@@ -68,7 +68,7 @@ public:
 	void stop() override;
 };
 
-class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public PaletteManager, public FilesystemFactory
+class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public DefaultPaletteManager, public FilesystemFactory
 #ifdef DYNAMIC_MODULES
   , public FilePluginProvider
 #endif
@@ -88,12 +88,11 @@ class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public P
   // Query the state of the specified feature.
   bool getFeatureState(Feature f);
 
-  // Set colors of the palette
-  PaletteManager *getPaletteManager() { return this; }
+  PaletteManager *getPaletteManager() override { return this; }
 protected:
-	// PaletteManager API
-  void setPalette(const byte *colors, uint start, uint num);
-  void grabPalette(byte *colors, uint start, uint num) const;
+  // DefaultPaletteManager API
+  void setPaletteIntern(const byte *colors, uint start, uint num) override;
+  void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
 
 public:
 
@@ -127,9 +126,6 @@ public:
 
   // Set the bitmap that's used when drawing the cursor.
   void setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask);
-
-  // Replace the specified range of cursor the palette with new colors.
-  void setCursorPalette(const byte *colors, uint start, uint num);
 
   // Shaking is used in SCUMM. Set current shake position.
   void setShakePos(int shake_x_pos, int shake_y_pos);

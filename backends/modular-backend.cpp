@@ -166,7 +166,7 @@ int16 ModularGraphicsBackend::getWidth() {
 }
 
 PaletteManager *ModularGraphicsBackend::getPaletteManager() {
-	return _graphicsManager;
+	return _graphicsManager->getPaletteManager();
 }
 
 void ModularGraphicsBackend::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
@@ -278,10 +278,6 @@ void ModularGraphicsBackend::warpMouse(int x, int y) {
 
 void ModularGraphicsBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
-}
-
-void ModularGraphicsBackend::setCursorPalette(const byte *colors, uint start, uint num) {
-	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
 void ModularGraphicsBackend::displayMessageOnOSD(const Common::U32String &msg) {

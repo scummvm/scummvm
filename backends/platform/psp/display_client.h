@@ -88,7 +88,6 @@ public:
 	uint32 getSizeInBytes() const { return _pixelFormat.pixelsToBytes(_numOfEntries); }
 	void set(byte *values) { setPartial(values, 0, _numOfEntries); }
 	void setPartial(const byte *colors, uint start, uint num, bool supportsAlpha = false);
-	void getPartial(byte *colors, uint start, uint num) const;
 	uint32 getRawColorAt(uint32 position) const;
 	uint32 getRGBAColorAt(uint32 position) const;
 	void setSingleColorRGBA(uint32 num, byte r, byte g, byte b, byte a);

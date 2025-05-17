@@ -668,12 +668,7 @@ int16 AndroidGraphics3dManager::getWidth() const {
 		return _overlay_texture->width();
 }
 
-void AndroidGraphics3dManager::setPalette(const byte *colors, uint start, uint num) {
-	// We should never end up here in 3D
-	assert(false);
-}
-
-void AndroidGraphics3dManager::grabPalette(byte *colors, uint start, uint num) const {
+void AndroidGraphics3dManager::setPaletteIntern(const byte *colors, uint start, uint num) {
 	// We should never end up here in 3D
 	assert(false);
 }
@@ -915,7 +910,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 	updateCursorScaling();
 }
 
-void AndroidGraphics3dManager::setCursorPalette(const byte *colors,
+void AndroidGraphics3dManager::setCursorPaletteIntern(const byte *colors,
         uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 

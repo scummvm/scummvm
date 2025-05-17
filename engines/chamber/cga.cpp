@@ -142,7 +142,7 @@ void cga_ColorSelect(byte csel) {
 		pal = PALETTE_CGA2;
 
 	g_system->getPaletteManager()->setPalette(pal, 0, 4);
-	g_system->setCursorPalette(pal, 0, 4);
+	g_system->getPaletteManager()->setCursorPalette(pal, 0, 4);
 }
 
 void cga_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {

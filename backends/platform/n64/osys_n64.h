@@ -26,11 +26,11 @@
 #include "common/config-manager.h"
 
 #include "backends/base-backend.h"
+#include "backends/graphics/default-palette.h"
 
 #include "base/main.h"
 
 #include "graphics/surface.h"
-#include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
 
 #include "audio/mixer_intern.h"
@@ -69,7 +69,7 @@ enum GraphicModeID {
 	OVERS_MPAL_340X240
 };
 
-class OSystem_N64 : public EventsBaseBackend, public PaletteManager {
+class OSystem_N64 : public EventsBaseBackend, public DefaultPaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
 
@@ -82,10 +82,6 @@ protected:
 	uint16 *_overlayBuffer; // Offscreen for the overlay (16 bit)
 
 	uint16 *_screenPalette; // Array for palette entries (256 colors max)
-
-#ifndef N64_EXTREME_MEMORY_SAVING
-	uint8 *_screenExactPalette; // Array for palette entries, as received by setPalette(), no precision loss
-#endif
 	uint16 _cursorPalette[256]; // Palette entries for the cursor
 
 	int _graphicMode; // Graphic mode
@@ -152,11 +148,11 @@ public:
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
-	virtual PaletteManager *getPaletteManager() { return this; }
+	PaletteManager *getPaletteManager() override { return this; }
 protected:
-	// PaletteManager API
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num) const;
+	// DefaultPaletteManager API
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
 
 public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
@@ -181,7 +177,6 @@ public:
 
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask);
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);
