@@ -214,7 +214,9 @@ private:
 	Common::Array<uint8> _textureData;
 
 	bool _textureGenerated;
+#if defined(USE_TINYGL)
 	uint _texture[4];
+#endif
 
 	bool _modelIdle;
 
