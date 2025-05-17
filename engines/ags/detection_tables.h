@@ -626,6 +626,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "annielondonberry", "Annie Londonderry" },
 	{ "annoyingquest", "Annoying Quest" },  // aka Uhhr
 	{ "anoffer", "An offer you cannot refuse" },
+	{ "anomalyresolution", "Anomaly Resolution" },
 	{ "anophtos", "ANOPHTOS" },
 	{ "anotherheaven", "Another Heaven" },
 	{ "anotherhero", "Another Hero" },
@@ -4572,6 +4573,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462),
 	GAME_ENTRY_EN_STEAM("feriadarles", "ac2game.dat", "6a3291595263debd129e1e2064baeea5", 275640157), // Mac
 	GAME_ENTRY_EN("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275659086),
+	GAME_ENTRY_EN_STEAM("flayedman", "The Flayed Man.ags", "de3e68762fc933cd375e6a3ae0d08848", 217993306),  // Steam
 	GAME_ENTRY_STEAM("footballgame", "Football Game.exe", "76703ac67835bdbfde5b378a147c8ba2", 164951859),  // En-Fr-De-Es
 	GAME_ENTRY("footballgame", "football game.exe", "76703ac67835bdbfde5b378a147c8ba2", 164951859),
 	GAME_ENTRY("footballgame", "football game.exe", "8283bcdb6ec07ec4a4040ef34215ec96", 164960522),
@@ -4743,10 +4745,13 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477371093, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.8
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477372648, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.9
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477379620, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.9a
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477379762, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 2.0
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477364851, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 1.2
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477370512, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 1.8
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477372422, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 1.9
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477379620, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 1.9a
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477379762, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 2.0
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477379829, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.9a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467845009, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "agsgame.dat", "ca8414acc5dc5687891db2d8ac5a0e76", 465662744, 0), // Linux
@@ -5976,6 +5981,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("annielondonberry", "ng14.ags", "39da8acddd4bb49982c3939ebbfce4d3", 172562551),  // itch.io client
 	GAME_ENTRY_EN("annoyingquest", "uhhr.exe", "0b7529a76f38283d6e850b8d56526fc1", 571857),
 	GAME_ENTRY_EN("anoffer", "An offer you cannot refuse.exe", "17009da9820f5aa86d0588023d497db8", 217468062),
+	GAME_ENTRY_EN("anomalyresolution", "Anomaly Resolution.ags", "83ab599648519bdcadafe15f0962b882", 5002766),  // itch.io client
 	GAME_ENTRY_LANG("anoffer", "Ponuka ktora sa neodmieta.exe", "17009da9820f5aa86d0588023d497db8", 217460167, Common::SK_SVK),  //Slovak
 	GAME_ENTRY_EN("anophtos", "anophtos.ags", "635417bd0481d8a410bf4055807cc959", 85743735),
 	GAME_ENTRY_EN("anotherheaven", "anotherheaven.exe", "1b9f13d430bb15bf30d0fd044358db68", 7144273),  // Win
