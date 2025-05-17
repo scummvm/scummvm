@@ -180,9 +180,11 @@ void loadPalette(Common::String paletteName) {
 	g_engine->_graphics->setPalette(pal);
 }
 
-void updateSceneArea() {
-	g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-	g_engine->_screen->update();
+void updateSceneAreaIfNeeded(int speed = 1) {
+	if(g_engine->_chrono->shouldPaintEffect(speed)) {
+		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
+		g_engine->_screen->update();
+	}
 }
 void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 
@@ -190,6 +192,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 	// bool enabled = false;
 	bool enabled = true;
 
+	// numeroefecto = 13;
 	byte * screenBuf = (byte *)g_engine->_screen->getPixels();
 	// Disable effects for now
 	if (!enabled) {
@@ -207,28 +210,24 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 			case 1: {
 				for (i1 = 0; i1 <= 69; i1++) {
 					line(0, (i1 * 2), 319, (i1 * 2), 0);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 					delay(5);
 				}
 				for (i1 = 70; i1 >= 1; i1--) {
 					line(0, (i1 * 2 - 1), 319, (i1 * 2 - 1), 0);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 					delay(5);
 				}
 			} break;
 			case 2: {
 				for (i1 = 70; i1 >= 1; i1--) {
 					line(0, (i1 * 2 - 1), 319, (i1 * 2 - 1), 0);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 					delay(5);
 				}
 				for (i1 = 0; i1 <= 69; i1++) {
 					line(0, (i1 * 2), 319, (i1 * 2), 0);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 					delay(5);
 				}
 			} break;
@@ -239,18 +238,15 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						j1 = 10;
 						do {
 							bar((i1 - i2), (j1 - i2), (i1 + i2), (j1 + i2), 0);
-							if(j1 % 40 == 0) {
-								g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-								g_engine->_screen->update();
-							}
+							// updateSceneAreaIfNeeded();
 							j1 += 20;
 						} while (j1 != 150);
 						i1 += 20;
+						updateSceneAreaIfNeeded();
 					} while (i1 != 330);
 				}
 				bar(0, 0, 319, 139, 0);
-				g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-				g_engine->_screen->update();
+				updateSceneAreaIfNeeded();
 			} break;
 			case 4: {
 				for (i2 = 1; i2 <= 22; i2++) {
@@ -258,8 +254,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						for (j1 = 1; j1 <= 7; j1++) {
 							if ((i1 + j1) == (i2 + 1)) {
 								bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-								g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-								g_engine->_screen->update();
+								updateSceneAreaIfNeeded();
 								delay(8);
 							}
 						}
@@ -268,66 +263,46 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 			case 5: {
 				for (j1 = 0; j1 <= 139; j1++) {
 					line(0, j1, 319, (139 - j1), 0);
-					if(j1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 				for (j1 = 318; j1 >= 1; j1--) {
 					line(j1, 0, (319 - j1), 139, 0);
-					if(j1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 6: {
 				for (i1 = 0; i1 < 70; i1++) {
 					rectangle(i1, i1, (319 - i1), (139 - i1), 0);
 					delay(5);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 7: {
 				for (i1 = 69; i1 >= 0; i1--) {
 					rectangle(i1, i1, (319 - i1), (139 - i1), 0);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 8: {
 
 				for (i1 = 0; i1 <= 319; i1++) {
 					line(0, 139, i1, 0, 0);
-					if(i1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 				for (i1 = 1; i1 <= 139; i1++) {
 					line(0, 139, 319, i1, 0);
-					if(i1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 9: {
 
 				for (i1 = 319; i1 >= 0; i1--) {
 					line(319, 139, i1, 0, 0);
-					if(i1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 				for (i1 = 1; i1 <= 139; i1++) {
 					line(319, 139, 0, i1, 0);
-					if(i1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 10: {
@@ -335,15 +310,13 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 					if ((j1 % 2) == 0)
 						for (i1 = 1; i1 <= 16; i1++) {
 							bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-							g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-							g_engine->_screen->update();
+							updateSceneAreaIfNeeded();
 							delay(8);
 						}
 					else
 						for (i1 = 16; i1 >= 1; i1--) {
 							bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-							g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-							g_engine->_screen->update();
+							updateSceneAreaIfNeeded();
 							delay(8);
 						}
 				}
@@ -353,21 +326,25 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 					j1 = 1 + i2;
 					for (i1 = (1 + i2); i1 <= (16 - i2); i1++) {
 						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 					i1--;
 					for (j1 = (2 + i2); j1 <= (7 - i2); j1++) {
 						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 					j1--;
 					for (i1 = (16 - i2); i1 >= (1 + i2); i1--) {
 						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 					i1++;
 					for (j1 = (6 - i2); j1 >= (2 + i2); j1--) {
 						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 				}
@@ -378,52 +355,38 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 					j2 = Random(138);
 					bar(i2, j2, (i2 + 2), (j2 + 2), 0);
 					putpixel(Random(320), Random(139), 0);
-					if(i1 % 100 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded(5);
 				}
 				bar(0, 0, 319, 139, 0);
-				g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-				g_engine->_screen->update();
+				updateSceneAreaIfNeeded();
 			} break;
 			case 13: {
 				for (i1 = 319; i1 >= 0; i1--) {
 					line(i1, 0, i1, 139, 0);
-					if(i1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 14: {
 				for (i1 = 0; i1 <= 319; i1++) {
 					line(i1, 0, i1, 139, 0);
-					if(i1 % 5 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 15: {
 
 				for (j1 = 0; j1 <= 70; j1++) {
 					Common::copy(screenBuf + (j1 * 320), screenBuf + (j1 * 320) + 320, screenBuf + ((j1 + 1) *320));
-					// move(ptr(0xa000, (j1 * 320)), ptr(0xa000, ((j1 + 1) * 320)), 320);
 					line(0, j1, 319, j1, 0);
 					Common::copy(screenBuf + ((139 - j1) * 320), screenBuf + ((139 - j1) * 320) + 320, screenBuf + ((138 - j1) * 320));
-					// move(ptr(0xa000, ((139 - j1) * 320)), ptr(0xa000, ((138 - j1) * 320)), 320);
 					line(0, (139 - j1), 319, (139 - j1), 0);
 					delay(2);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 				}
 				delay(5);
 				for (j1 = 0; j1 <= 160; j1++) {
 					line(0, 68, j1, 68, 0);
 					line(319, 68, (319 - j1), 68, 0);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			}
@@ -433,20 +396,15 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 				for (i1 = 0; i1 <= 69; i1++) {
 					byte *src = pantalla2 + (i1 * 640) + 4;
 					Common::copy(src, src + 320, screenBuf + (i1 * 640));
-					// move(ptr(seg(pantalla2), (ofs(pantalla2) + (i1 * 640) + 4)), ptr(0xa000, (i1 * 640)), 320);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+
+					updateSceneAreaIfNeeded();
 					delay(5);
 				}
 				for (i1 = 70; i1 >= 1; i1--) {
 					byte *src = pantalla2 + (i1 * 640) - 320 + 4;
 					Common::copy(src, src + 320, screenBuf + (i1 * 640) - 320);
-					// move(ptr(seg(pantalla2), (ofs(pantalla2) + ((i1 * 640) - 320) + 4)), ptr(0xa000, ((i1 * 640) - 320)), 320);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 					delay(5);
-
-					// delay(5);
 				}
 			} break;
 			case 2:
@@ -456,17 +414,13 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 				for (i1 = 70; i1 >= 1; i1--) {
 					byte *src = pantalla2 + ((i1 * 640) - 320) + 4;
 					Common::copy(src, src + 320, screenBuf + (i1 * 640) - 320);
-					// move(ptr(seg(pantalla2), (ofs(pantalla2) + ((i1 * 640) - 320) + 4)), ptr(0xa000, ((i1 * 640) - 320)), 320);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 					delay(5);
 				}
 				for (i1 = 0; i1 <= 69; i1++) {
 					byte *src = pantalla2 + (i1 * 640) + 4;
 					Common::copy(src, src + 320, screenBuf + (i1 * 640));
-					// move(ptr(seg(pantalla2), (ofs(pantalla2) + (i1 * 640) + 4)), ptr(0xa000, (i1 * 640)), 320);
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 					delay(5);
 				}
 			} break;
@@ -480,14 +434,10 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 							for (i3 = (j1 - i2); i3 <= (j1 + i2); i3++) {
 								byte *src = pantalla2 + + 4 + (i3 * 320) +  + (i1 - i2);
 								Common::copy(src, src + (i2 * 2), screenBuf + (i3 * 320) + (i1 - i2));
-								// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + (i3 * 320) + (i1 - i2))), ptr(0xa000, ((i3 * 320) + (i1 - i2))), (i2 * 2));
 							}
 							j1 += 20;
 						} while (j1 != 150);
-						if(i1 % 40 == 0) {
-							g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-							g_engine->_screen->update();
-						}
+						updateSceneAreaIfNeeded();
 						i1 += 20;
 					} while (i1 != 330);
 				}
@@ -501,11 +451,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 								for (i3 = ((j1 - 1) * 20); i3 <= ((j1 - 1) * 20 + 19); i3++) {
 									byte *src = pantalla2 + + 4 + (i3 * 320) +  ((i1 - 1) * 20);
 									Common::copy(src, src + 20, screenBuf + (i3 * 320) + ((i1 - 1) * 20));
-									// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + (i3 * 320) +  ((i1 - 1) * 20))),	 ptr(0xa000, ((i3 * 320) + ((i1 - 1) * 20))), 20);
-									if(i3 % 4 == 0) {
-										g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-										g_engine->_screen->update();
-									}
+									updateSceneAreaIfNeeded();
 								}
 								delay(8);
 							}
@@ -517,10 +463,8 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 					for (j1 = i1; j1 <= (139 - i1); j1++) {
 						byte *src = pantalla2 + 4 + (j1 * 320) + i1;
 						Common::copy(src, src + 319 - (i1 * 2), screenBuf + (j1 * 320) + i1);
-						// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + (j1 * 320) + i1)),  ptr(0xa000, ((j1 * 320) + i1)), (319 - (i1 * 2)));
 					}
-					g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-					g_engine->_screen->update();
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 10: {
@@ -531,12 +475,8 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 								byte *src = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) *20);
 
 								Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
-								// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + (j3 * 320) + ((i1 - 1) * 20))), ptr(0xa000, ((j3 * 320) + ((i1 - 1) * 20))), 20);
 							}
-							// if(i1 % 300 == 0) {
-								g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-								g_engine->_screen->update();
-							// }
+							updateSceneAreaIfNeeded();
 							delay(8);
 						}
 					else
@@ -545,24 +485,23 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 								byte *src = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) *20);
 								Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
 							}
-							g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-							g_engine->_screen->update();
+							updateSceneAreaIfNeeded();
 							delay(8);
 						}
 				}
 			} break;
 			case 11: {
 				g_engine->_screen->drawLine(0, 141, 320, 141, 220);
-
+				long lastRender = 0;
+				long rendertime = 10;
 				for (i2 = 0; i2 <= 3; i2 ++) {
 					j1 = 1 + i2;
 					for (i1 = (1 + i2); i1 <= (16 - i2); i1 ++) {
 						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-							// move(ptr(seg(pantalla2), (ofs(pantalla2) +4 + (j3 * 320) + ((i1 - 1) * 20))), ptr(0xa000, ((j3 * 320) + ((i1 - 1) * 20))), 20);
 						}
-						updateSceneArea();
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 					i1--;
@@ -570,9 +509,8 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-							// move(ptr(seg(pantalla2), (ofs(pantalla2) +4 + (j3 * 320) + ((i1 - 1) * 20))), ptr(0xa000, ((j3 * 320) + ((i1 - 1) * 20))), 20);
 						}
-						updateSceneArea();
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 					j1--;
@@ -580,20 +518,17 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-							// move(ptr(seg(pantalla2), (ofs(pantalla2) +4 + (j3 * 320) + ((i1 - 1) * 20))), ptr(0xa000, ((j3 * 320) + ((i1 - 1) * 20))), 20);
 						}
-						updateSceneArea();
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 					i1++;
 					for (j1 = (6 - i2); j1 >= (2 + i2); j1 --) {
 						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
-
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-							// move(ptr(seg(pantalla2), (ofs(pantalla2) +4 + (j3 * 320) + ((i1 - 1) * 20))), ptr(0xa000, ((j3 * 320) + ((i1 - 1) * 20))), 20);
 						}
-						updateSceneArea();
+						updateSceneAreaIfNeeded();
 						delay(8);
 					}
 				}
@@ -616,29 +551,20 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 					byte *src3 = pantalla2 + 4 + (j2 * 320) + i2;
 					Common::copy(src3, src3 + 1, screenBuf + (j2 * 320) + i2);
 
-					if(i1 % 300 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 					// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + (j2 * 320) + i2)),  ptr(0xa000, ((j2 * 320) + i2)), 1);
 				}
 				drawScreen(pantalla2);
 			} break;
 			case 13: {
 				debug("case 13!");
-
 				for (i1 = 0; i1 <= 319; i1++) {
 					for (j1 = 0; j1 <= 139; j1++) {
 						int color = pantalla2[4 + (j1 * 320) + i1];
 						*((byte *)g_engine->_screen->getBasePtr(i1, j1)) = color;
-
-
 					}
-					// if (g_engine->_chrono->shouldPaintEffect()) {
-					if(i1 % 10 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					delay(2);
+					updateSceneAreaIfNeeded(3);
 				}
 			} break;
 			case 14: {
@@ -647,31 +573,22 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						int color = pantalla2[4 + (j1 * 320) + i1];
 						*((byte *)g_engine->_screen->getBasePtr(i1, j1)) = color;
 					}
-					if(i1 % 10 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 15: {
 				for (j1 = 160; j1 > 0; j1--) {
 					line(j1, 69, (319 - j1), 69, 255);
-					if(j1 % 4 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
-				// delay(5);
+				delay(5);
 				for (j1 = 70; j1 > 0; j1--) {
 					byte *src1 = pantalla2 + 4 + j1 * 320;
 					byte *src2 = pantalla2  + 4 + (139 - j1) * 320;
 					Common::copy(src1, src1 + 320, screenBuf + j1 * 320);
 
 					Common::copy(src2, src2 + 320, screenBuf + (139 - j1) * 320);
-					if(j1 % 2 == 0) {
-						g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-						g_engine->_screen->update();
-					}
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			}
