@@ -27,71 +27,31 @@
 
 #include "backends/platform/android/touchcontrols.h"
 
-class AndroidCommonGraphics {
-public:
-	virtual ~AndroidCommonGraphics() {}
-
-	virtual void initSurface() = 0;
-	virtual void deinitSurface() = 0;
-	virtual void resizeSurface() = 0;
-
-	virtual Common::Point getMousePosition() = 0;
-	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
-
-	virtual void syncVirtkeyboardState(bool virtkeybd_on) = 0;
-	virtual void applyTouchSettings() const = 0;
-
-	/**
-	 * A (subset) of the graphic manager's state. This is used when switching
-	 * between different Android graphic managers at runtime.
-	 */
-	struct State {
-		int screenWidth, screenHeight;
-		bool aspectRatio;
-		bool fullscreen;
-		bool cursorPalette;
-
-#ifdef USE_RGB_COLOR
-		Graphics::PixelFormat pixelFormat;
-#endif
-	};
-
-	/**
-	 * Gets the current state of the graphics manager.
-	 */
-	virtual State getState() const = 0;
-
-	/**
-	 * Sets up a basic state of the graphics manager.
-	 */
-	virtual bool setState(const State &state) = 0;
-};
-
 class AndroidGraphicsManager :
-	public OpenGL::OpenGLGraphicsManager, public AndroidCommonGraphics, public TouchControlsDrawer {
+	public OpenGL::OpenGLGraphicsManager, public TouchControlsDrawer {
 public:
 	AndroidGraphicsManager();
 	virtual ~AndroidGraphicsManager();
 
-	virtual void initSurface() override;
-	virtual void deinitSurface() override;
-	virtual void resizeSurface() override;
-
-	virtual AndroidCommonGraphics::State getState() const override;
-	virtual bool setState(const AndroidCommonGraphics::State &state) override;
+	void initSurface();
+	void deinitSurface();
+	void resizeSurface();
 
 	void updateScreen() override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
 
-	virtual bool notifyMousePosition(Common::Point &mouse) override;
-	virtual Common::Point getMousePosition() override { return Common::Point(_cursorX, _cursorY); }
+	bool notifyMousePosition(Common::Point &mouse);
+	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }
 
 	float getHiDPIScreenFactor() const override;
 
 	void touchControlInitSurface(const Graphics::ManagedSurface &surf) override;
 	void touchControlNotifyChanged() override;
 	void touchControlDraw(uint8 alpha, int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) override;
+
+	void syncVirtkeyboardState(bool virtkeybd_on);
+	void applyTouchSettings() const;
 
 protected:
 	void recalculateDisplayAreas() override;
@@ -104,9 +64,6 @@ protected:
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) override;
 
 	void refreshScreen() override;
-
-	void syncVirtkeyboardState(bool virtkeybd_on) override;
-	void applyTouchSettings() const override;
 
 private:
 	OpenGL::Surface *_touchcontrols;
