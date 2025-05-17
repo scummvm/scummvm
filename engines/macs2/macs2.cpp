@@ -1276,15 +1276,13 @@ int Macs2Engine::MeasureStrings(Common::StringArray sa) {
 
 Common::StringArray Macs2Engine::DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
 	Common::StringArray result(numStrings);
+	debug("String decoding: Inner loop started");
+	DumpStream(stream, 64);
 	stream->seek(offset);
 
 	byte x;
 	byte y;
 	byte r;
-
-	debug("String decoding: Inner loop started");
-	DumpStream(stream, 64);
-	
 	
 	for (int i = 0; i < numStrings; i++) {
 		Common::String currentLine;
