@@ -2256,7 +2256,14 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// Scene initialization run
 		// TODO: Need to better encapsulate this down the road
 		// TODO: Not sure which order is really right, need to check in SIS logs
-		_executingScriptObjectID = 0;
+		if (_state != ExecutorState::WaitingForCallback) {
+			// TODO: Not sure if this is the right place and condition to reset this
+			// variable. Context here is that we might have an object that triggers several
+			// description strings in a row, and we would disable the executing object
+			// if we always reset this object
+			// TODO: Watch out for issues caused by this
+			_executingScriptObjectID = 0;
+		}
 		IsRepeatRun = false;
 		IsSceneInitRun = firstRun;
 		_state = ExecutorState::Executing;
