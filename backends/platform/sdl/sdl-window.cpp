@@ -163,6 +163,12 @@ void SdlWindow::setWindowCaption(const Common::String &caption) {
 }
 
 void SdlWindow::setResizable(bool resizable) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// Don't allow switching state if the window is not meant to be resized
+	if ((_lastFlags & SDL_WINDOW_RESIZABLE) == 0) {
+		return;
+	}
+#endif
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	if (_window) {
 		SDL_SetWindowResizable(_window, resizable);
@@ -428,6 +434,7 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	bool allowResize = flags & SDL_WINDOW_RESIZABLE;
 	if (!_resizable) {
 		flags &= ~SDL_WINDOW_RESIZABLE;
 	}
@@ -550,6 +557,12 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	SDL_SetWindowResizable(_window, (flags & SDL_WINDOW_RESIZABLE) != 0);
 #elif SDL_VERSION_ATLEAST(2, 0, 5)
 	SDL_SetWindowResizable(_window, (flags & SDL_WINDOW_RESIZABLE) ? SDL_TRUE : SDL_FALSE);
+#endif
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// Restore the flag to allow switching resize state later
+	if (allowResize) {
+		flags |= SDL_WINDOW_RESIZABLE;
+	}
 #endif
 
 #if defined(MACOSX)
