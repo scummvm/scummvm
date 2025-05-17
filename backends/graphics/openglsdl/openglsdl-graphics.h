@@ -67,6 +67,8 @@ protected:
 private:
 	bool setupMode(uint width, uint height);
 
+	void deinitOpenGLContext();
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	int _glContextProfileMask, _glContextMajor, _glContextMinor;
 
