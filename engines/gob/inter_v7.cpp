@@ -108,7 +108,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xC0, o7_seekHtmlFile);
 	OPCODEDRAW(0xC1, o7_nextKeywordHtmlFile);
 	OPCODEDRAW(0xC3, o7_draw0xC3);
-	OPCODEDRAW(0xC4, o7_openTranlsationDB);
+	OPCODEDRAW(0xC4, o7_openTranslationDB);
 	OPCODEDRAW(0xC5, o7_closeTranslationDB);
 	OPCODEDRAW(0xC6, o7_getDBString);
 	OPCODEDRAW(0xCC, o7_draw0xCC);
@@ -1331,7 +1331,7 @@ void Inter_v7::o7_draw0xC3() {
 	warning("STUB: o7_draw0xC3 (Adibou/Musique)");
 }
 
-void Inter_v7::o7_openTranlsationDB() {
+void Inter_v7::o7_openTranslationDB() {
 	Common::String dbFile = getFile(_vm->_game->_script->evalString());
 	Common::String id     = _vm->_game->_script->evalString();
 

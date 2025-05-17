@@ -747,7 +747,7 @@ protected:
 	void o7_seekHtmlFile();
 	void o7_nextKeywordHtmlFile();
 	void o7_draw0xC3();
-	void o7_openTranlsationDB();
+	void o7_openTranslationDB();
 	void o7_closeTranslationDB();
 	void o7_getDBString();
 	void o7_draw0xCC();
