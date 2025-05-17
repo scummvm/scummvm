@@ -240,6 +240,7 @@ ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &
 }
 
 void ActionManager::processActionRecords() {
+	bool activeRecordsThisFrame = false;
 	_activatedRecordsThisFrame.clear();
 
 	for (auto record : _records) {
@@ -259,6 +260,7 @@ void ActionManager::processActionRecords() {
 
 			record->execute();
 			_recordsWereExecuted = true;
+			activeRecordsThisFrame = true;
 		}
 
 		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState._state == State::Scene::kLoad) {
@@ -266,6 +268,17 @@ void ActionManager::processActionRecords() {
 			// Both old and new behavior is needed (nancy3 intro narration, nancy4 garden gate)
 			return;
 		}
+	}
+
+	if (!activeRecordsThisFrame) {
+		// No active records were found for this frame.
+		// This will lead to an infinite loop without
+		// anything happening, so we reset the
+		// _recordsWereExecuted flag, to fall back to
+		// the kDefaultAR dependency. This is needed for
+		// some scenes in Nancy 8, where SetVolume() is
+		// called, but no other action records are active.
+		_recordsWereExecuted = false;
 	}
 
 	synchronizeMovieWithSound();
