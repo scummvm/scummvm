@@ -679,6 +679,15 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 	{
+		"totaleclipse2", // Commodore Format #18
+		"",
+		AD_ENTRY1s("TOTALECLIPSE2.C64.DATA", "6d0ce2c971f7f1fee36bf0851f19721b", 63490),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSUPPORTED | GF_C64_DISC,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+	{
 		"totaleclipse",
 		"",
 		{
