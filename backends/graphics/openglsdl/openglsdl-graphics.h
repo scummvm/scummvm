@@ -56,7 +56,7 @@ public:
 #endif
 
 protected:
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) override;
 
 	void refreshScreen() override;
 
@@ -92,6 +92,9 @@ private:
 #endif
 
 	OpenGL::ContextType _glContextType;
+	bool _resizable;
+	int _requestedAntialiasing;
+	int _effectiveAntialiasing;
 
 	uint _forceFrameUpdate = 0;
 	uint _lastRequestedWidth;

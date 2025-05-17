@@ -426,11 +426,11 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 
 		if (!loadVideoMode(requestedWidth, requestedHeight,
 #ifdef USE_RGB_COLOR
-		                   _currentState.gameFormat
+		                   _currentState.gameFormat,
 #else
-		                   Graphics::PixelFormat::createFormatCLUT8()
+		                   Graphics::PixelFormat::createFormatCLUT8(),
 #endif
-		                  )
+				  true, 0)
 			|| !(shaderOK = loadShader(_currentState.shader))
 		   // HACK: This is really nasty but we don't have any guarantees of
 		   // a context existing before, which means we don't know the maximum

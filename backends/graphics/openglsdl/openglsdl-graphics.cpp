@@ -72,6 +72,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 	  _lastVideoModeLoad(0),
 #endif
 	  _graphicsScale(2), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
+	  _effectiveAntialiasing(-1), _requestedAntialiasing(0), _resizable(true),
 	  _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
 
 	// Set up proper SDL OpenGL context creation.
@@ -234,6 +235,7 @@ void OpenGLSdlGraphicsManager::deinitOpenGLContext() {
 	sdlGLDestroyContext(_glContext);
 
 	_glContext = nullptr;
+	_effectiveAntialiasing = -1;
 #else // SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_hwScreen) {
 		notifyContextDestroy();
@@ -438,7 +440,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 #endif
 }
 
-bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
+bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) {
 	// This function should never be called from notifyResize thus we know
 	// that the requested size came from somewhere else.
 	_gotResize = false;
@@ -479,14 +481,12 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		if (requestedHeight == 0)
 			requestedHeight = 100; // Add at least some sane value instead of dividing by zero
 	}
-
 #else
-		// Set the basic window size based on the desktop resolution
-		// since we cannot reliably determine the current window state
-		// on SDL1.
-		requestedWidth  = MAX<uint>(desktopRes.width() / 2, 640);
-		requestedHeight = requestedWidth * 3 / 4;
-
+	// Set the basic window size based on the desktop resolution
+	// since we cannot reliably determine the current window state
+	// on SDL1.
+	requestedWidth  = MAX<uint>(desktopRes.width() / 2, 640);
+	requestedHeight = requestedWidth * 3 / 4;
 #endif
 
 	// In order to prevent any unnecessary downscaling (e.g. when launching
@@ -514,6 +514,15 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		requestedHeight = maxAllowedHeight;
 		requestedWidth  = requestedHeight * ratio;
 	}
+
+	// Force the requested size if not resizable
+	if (!resizable) {
+		requestedWidth = _lastRequestedWidth;
+		requestedHeight = _lastRequestedHeight;
+	}
+
+	_requestedAntialiasing = antialiasing;
+	_resizable = resizable;
 
 	// Set up the mode
 	return setupMode(requestedWidth, requestedHeight);
@@ -555,6 +564,21 @@ bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::Path &filename) cons
 }
 
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	const bool supportsAntialiasing = g_system->getSupportedAntiAliasingLevels().size() > 0;
+#else
+	const bool supportsAntialiasing = false;
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// If current antialiasing is not what's expected, destroy the context and the window
+	// This will force to recreate it
+	if (supportsAntialiasing && _effectiveAntialiasing != _requestedAntialiasing && _glContext) {
+		deinitOpenGLContext();
+		_window->destroyWindow();
+	}
+#endif
+
 	// Destroy OpenGL context before messing with the window
 	deinitOpenGLContext();
 
@@ -619,10 +643,15 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		};
 	}
 
+	int antialiasing = supportsAntialiasing ? _requestedAntialiasing : 0;
 	for (Common::Array<Graphics::PixelFormat>::const_iterator it = formats.begin(); ; it += 2) {
 		if (it == formats.end()) {
-			// We failed to get a proper window
-			return false;
+			if (antialiasing == 0) {
+				// We failed to get a proper window
+				return false;
+			}
+			antialiasing = 0;
+			it = formats.begin();
 		}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -640,8 +669,10 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		}
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+		if (supportsAntialiasing) {
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, antialiasing > 0);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, antialiasing);
+		}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		// Request a OpenGL (ES) context we can use.
@@ -651,10 +682,13 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-		uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+		uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY;
 #else
-		uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+		uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI;
 #endif
+		if (_resizable) {
+			flags |= SDL_WINDOW_RESIZABLE;
+		}
 
 		if (_wantsFullScreen) {
 			// On Linux/X11, when toggling to fullscreen, the window manager saves
@@ -701,6 +735,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			// Try the next pixel format
 			continue;
 		}
+
+		// Now that we have a context, the AA is really effective
+		_effectiveAntialiasing = antialiasing;
 
 		if (!sdlSetSwapInterval(_vsync ? 1 : 0)) {
 			warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
@@ -751,7 +788,10 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			width  = _desiredFullscreenWidth;
 			height = _desiredFullscreenHeight;
 			flags |= SDL_FULLSCREEN;
-		} else {
+		}
+		if (_resizable) {
+			// In SDL1.2, resizing the window may invalidate the context
+			// This would kill all the engine objects
 			flags |= SDL_RESIZABLE;
 		}
 
@@ -772,6 +812,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			continue;
 		}
 
+		// Now that we have a screen, the AA is really effective
+		_effectiveAntialiasing = antialiasing;
+
 		// Part of the WORKAROUND mentioned above.
 		_lastVideoModeLoad = SDL_GetTicks();
 
@@ -786,10 +829,14 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 #endif
 		// Display a warning if the effective pixel format is not the preferred one
-		if (it != formats.begin()) {
-			warning("Couldn't create a %d-bit visual, using to %d-bit instead",
+		const bool wantsAA = _requestedAntialiasing > 0;
+		const bool gotAA = antialiasing > 0;
+		if (it != formats.begin() || (wantsAA && !gotAA)) {
+			warning("Couldn't create a %d-bit visual%s, using to %d-bit%s instead",
 				formats.front().bpp(),
-				it->bpp());
+				wantsAA && !gotAA ? " with AA" : "",
+				it->bpp(),
+				wantsAA && !gotAA ? " without AA" : "");
 		}
 
 		return true;
