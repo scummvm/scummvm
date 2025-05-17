@@ -411,11 +411,7 @@ ifdef IPHONE
 MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o \
 	graphics/ios/ios-graphics.o \
-	graphics/ios/renderbuffer.o \
-	graphics3d/ios/ios-graphics3d.o \
-	graphics3d/opengl/framebuffer.o \
-	graphics3d/opengl/surfacerenderer.o \
-	graphics3d/opengl/tiledsurface.o
+	graphics/ios/renderbuffer.o
 endif
 
 ifeq ($(BACKEND),maemo)

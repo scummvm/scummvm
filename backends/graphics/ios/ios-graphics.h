@@ -27,66 +27,19 @@
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 
-class iOSCommonGraphics {
-public:
-	virtual ~iOSCommonGraphics() {}
-
-	virtual void initSurface() = 0;
-	virtual void deinitSurface() = 0;
-
-	/**
-	 * Notify the graphics manager about a resize event. This happens on
-	 * iDevices when switching to portrait mode or landscape mode.
-	 */
-	virtual void notifyResize(const int width, const int height) = 0;
-
-	virtual Common::Point getMousePosition() = 0;
-	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
-
-	/**
-	 * A (subset) of the graphic manager's state. This is used when switching
-	 * between 2D and 3D graphic managers at runtime.
-	 */
-	struct State {
-		int screenWidth, screenHeight;
-		bool aspectRatio;
-		bool cursorPalette;
-
-#ifdef USE_RGB_COLOR
-		Graphics::PixelFormat pixelFormat;
-#endif
-	};
-
-	/**
-	 * Gets the current state of the graphics manager.
-	 */
-	virtual State getState() const = 0;
-
-	/**
-	 * Sets up a basic state of the graphics manager.
-	 */
-	virtual bool setState(const State &state) = 0;
-
-protected:
-	int _old_touch_mode;
-};
-
 class iOSGraphicsManager :
-  public OpenGL::OpenGLGraphicsManager, public iOSCommonGraphics {
+  public OpenGL::OpenGLGraphicsManager {
 public:
 	iOSGraphicsManager();
 	virtual ~iOSGraphicsManager();
 
-	void initSurface() override;
-	void deinitSurface() override;
+	void initSurface();
+	void deinitSurface();
 
-	void notifyResize(const int width, const int height) override;
+	void notifyResize(const int width, const int height);
 
-	virtual iOSCommonGraphics::State getState() const override;
-	virtual bool setState(const iOSCommonGraphics::State &state) override;
-
-	bool notifyMousePosition(Common::Point &mouse) override;
-	Common::Point getMousePosition() override { return Common::Point(_cursorX, _cursorY); }
+	bool notifyMousePosition(Common::Point &mouse);
+	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }
 
 	float getHiDPIScreenFactor() const override;
 
@@ -98,6 +51,8 @@ protected:
 	void hideOverlay() override;
 
 	void refreshScreen() override;
+
+	int _old_touch_mode;
 };
 
 #endif

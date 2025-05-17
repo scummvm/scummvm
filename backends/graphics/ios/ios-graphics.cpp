@@ -60,34 +60,6 @@ void iOSGraphicsManager::notifyResize(const int width, const int height) {
 	handleResize(width, height);
 }
 
-iOSCommonGraphics::State iOSGraphicsManager::getState() const {
-	State state;
-
-	state.screenWidth   = getWidth();
-	state.screenHeight  = getHeight();
-	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
-	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
-#ifdef USE_RGB_COLOR
-	state.pixelFormat   = getScreenFormat();
-#endif
-	return state;
-}
-
-bool iOSGraphicsManager::setState(const iOSCommonGraphics::State &state) {
-	beginGFXTransaction();
-
-#ifdef USE_RGB_COLOR
-	initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
-#else
-	initSize(state.screenWidth, state.screenHeight, nullptr);
-#endif
-	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
-	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
-
-	return endGFXTransaction() == OSystem::kTransactionSuccess;
-}
-
-
 bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) {
 	// As GLES2 provides FBO, OpenGL graphics manager must ask us for a resizable surface
 	assert(resizable);
