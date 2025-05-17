@@ -62,7 +62,6 @@
 #include "backends/fs/posix/posix-iostream.h"
 
 #include "backends/graphics/android/android-graphics.h"
-#include "backends/graphics3d/android/android-graphics3d.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/events/default/default-events.h"
@@ -719,11 +718,6 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureTouchscreen) {
 		return true;
 	}
-	/* Even if we are using the 2D graphics manager,
-	 * we are at one initGraphics3d call of supporting GLES2 */
-	if (f == kFeatureOpenGLForGame) return true;
-	/* GLES2 always supports shaders */
-	if (f == kFeatureShadersForGame) return true;
 
 	if (f == kFeatureCpuNEON) {
 #if defined(__aarch64__)
@@ -1004,97 +998,6 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	int len = __system_property_get(name, value);
 
 	return Common::String(value, len);
-}
-
-const OSystem::GraphicsMode *OSystem_Android::getSupportedGraphicsModes() const {
-	// We only support one mode
-	static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-		{ "default", "Default", 0 },
-		{ 0, 0, 0 },
-	};
-
-	return s_supportedGraphicsModes;
-}
-
-int OSystem_Android::getDefaultGraphicsMode() const {
-	// We only support one mode
-	return 0;
-}
-
-bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
-	bool render3d = flags & OSystem::kGfxModeRender3d;
-
-	// Very hacky way to set up the old graphics manager state, in case we
-	// switch from SDL->OpenGL or OpenGL->SDL.
-	//
-	// This is a probably temporary workaround to fix bugs like #5799
-	// "SDL/OpenGL: Crash when switching renderer backend".
-	//
-	// It's also used to restore state from 3D to 2D GFX manager
-	AndroidCommonGraphics *androidGraphicsManager = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager);
-	AndroidCommonGraphics::State gfxManagerState = androidGraphicsManager->getState();
-	bool supports3D = _graphicsManager->hasFeature(kFeatureOpenGLForGame);
-
-	bool switchedManager = false;
-
-	// If the new mode and the current mode are not from the same graphics
-	// manager, delete and create the new mode graphics manager
-	debug(5, "requesting 3D: %d, supporting 3D: %d", render3d, supports3D);
-	if (render3d && !supports3D) {
-		debug(5, "switching to 3D graphics");
-		delete _graphicsManager;
-		_graphicsManager = nullptr;
-		AndroidGraphics3dManager *manager = new AndroidGraphics3dManager();
-		_graphicsManager = manager;
-		androidGraphicsManager = manager;
-		switchedManager = true;
-	} else if (!render3d && supports3D) {
-		debug(5, "switching to 2D graphics");
-		delete _graphicsManager;
-		_graphicsManager = nullptr;
-		AndroidGraphicsManager *manager = new AndroidGraphicsManager();
-		_graphicsManager = manager;
-		androidGraphicsManager = manager;
-		switchedManager = true;
-	}
-
-	androidGraphicsManager->syncVirtkeyboardState(_virtkeybd_on);
-
-	if (switchedManager) {
-		// Setup the graphics mode and size first
-		// This is needed so that we can check the supported pixel formats when
-		// restoring the state.
-		_graphicsManager->beginGFXTransaction();
-		if (!_graphicsManager->setGraphicsMode(mode, flags))
-			return false;
-		_graphicsManager->initSize(gfxManagerState.screenWidth, gfxManagerState.screenHeight);
-		_graphicsManager->endGFXTransaction();
-
-		// This failing will probably have bad consequences...
-		if (!androidGraphicsManager->setState(gfxManagerState)) {
-			return false;
-		}
-
-		// Next setup the cursor again
-		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
-		CursorMan.popCursor();
-
-		// Next setup cursor palette if needed
-		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
-			CursorMan.pushCursorPalette(0, 0, 0);
-			CursorMan.popCursorPalette();
-		}
-
-		_graphicsManager->beginGFXTransaction();
-		return true;
-	} else {
-		return _graphicsManager->setGraphicsMode(mode, flags);
-	}
-}
-
-int OSystem_Android::getGraphicsMode() const {
-	// We only support one mode
-	return 0;
 }
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
