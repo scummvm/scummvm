@@ -520,12 +520,12 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 	if (_antialiasing > 0 && !renderToFramebuffer) {
 		// Don't enable screen level multisampling when rendering to a framebuffer
 		pixelFormats.push_back(OpenGLPixelFormat(32, 8, 8, 8, 8, _antialiasing));
-		pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, _antialiasing));
 		pixelFormats.push_back(OpenGLPixelFormat(16, 5, 6, 5, 0, _antialiasing));
+		pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, _antialiasing));
 	}
 	pixelFormats.push_back(OpenGLPixelFormat(32, 8, 8, 8, 8, 0));
-	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, 0));
 	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 6, 5, 0, 0));
+	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, 0));
 
 	bool clear = false;
 
