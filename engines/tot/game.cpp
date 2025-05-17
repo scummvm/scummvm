@@ -41,196 +41,7 @@ bool showGameGrid = false;
 bool drawObjectAreas = false;
 
 void loadTemporaryGame() {
-	// uint indiaux, indiaux2;
-
-	// assign(partida, "GAME07.SAV");
-
-	// if (ioresult != 0)
-	// 	error("engine_start(): ioresult (322)");
-	// partida >> regpartida;
-	// drawMouseBackground(xraton, yraton);
-	// longtray = regpartida.longtray;
-	// indicetray = regpartida.indicetray;
-	// codigoobjmochila = regpartida.codigoobjmochila;
-	// volumenfxderecho = regpartida.volumenfxderecho;
-	// volumenfxizquierdo = regpartida.volumenfxizquierdo;
-	// volumenmelodiaderecho = regpartida.volumenmelodiaderecho;
-	// volumenmelodiaizquierdo = regpartida.volumenmelodiaizquierdo;
-	// oldxrejilla = regpartida.oldxrejilla;
-	// oldyrejilla = regpartida.oldyrejilla;
-	// animado.profundidad = regpartida.animadoprofundidad;
-	// animado.dir = regpartida.animadodir;
-	// animado.posx = regpartida.animadoposx;
-	// animado.posy = regpartida.animadoposy;
-	// iframe2 = regpartida.animadoiframe2;
-	// zonaactual = regpartida.zonaactual;
-	// zonadestino = regpartida.zonadestino;
-	// oldzonadestino = regpartida.oldzonadestino;
-	// posicioninv = regpartida.posicioninv;
-	// numeroaccion = regpartida.numeroaccion;
-	// oldnumeroacc = regpartida.oldnumeroacc;
-	// pasos = regpartida.pasos;
-	// indicepuertas = regpartida.indicepuertas;
-	// direccionmovimiento = regpartida.direccionmovimiento;
-	// iframe = regpartida.iframe;
-	// if (regpartida.parte_del_juego != parte_del_juego) {
-	// 	parte_del_juego = regpartida.parte_del_juego;
-	// 	freeInventory();
-	// 	loadObjects();
-	// }
-	// sello_quitado = regpartida.sello_quitado;
-	// lista1 = regpartida.lista1;
-	// lista2 = regpartida.lista2;
-	// completadalista1 = regpartida.completadalista1;
-	// completadalista2 = regpartida.completadalista2;
-	// vasijapuesta = regpartida.vasijapuesta;
-	// guadagna = regpartida.guadagna;
-	// tridente = regpartida.tridente;
-	// torno = regpartida.torno;
-	// barro = regpartida.barro;
-	// diablillo_verde = regpartida.diablillo_verde;
-	// rojo_capturado = regpartida.rojo_capturado;
-	// manual_torno = regpartida.manual_torno;
-	// alacena_abierta = regpartida.alacena_abierta;
-	// baul_abierto = regpartida.baul_abierto;
-	// teleencendida = regpartida.teleencendida;
-	// trampa_puesta = regpartida.trampa_puesta;
-	// for (indiaux = 0; indiaux < inventoryIconCount; indiaux++) {
-	// 	mobj[indiaux].bitmapIndex = regpartida.mobj[indiaux].bitmapIndex;
-	// 	mobj[indiaux].codigo = regpartida.mobj[indiaux].codigo;
-	// 	mobj[indiaux].nombreobj = regpartida.mobj[indiaux].nombreobj;
-	// }
-	// elemento1 = regpartida.elemento1;
-	// elemento2 = regpartida.elemento2;
-	// characterPosX = regpartida.xframe;
-	// characterPosY = regpartida.yframe;
-	// xframe2 = regpartida.xframe2;
-	// yframe2 = regpartida.yframe2;
-	// oldobjmochila = regpartida.oldobjmochila;
-	// objetomochila = regpartida.objetomochila;
-	// nombrepersonaje = regpartida.nombrepersonaje;
-	// for(int i = 0; i < routePointCount; i++) {
-	// 	regpartida.mainRoute[i].x = mainRoute[i].x;
-	// 	regpartida.mainRoute[i].y = mainRoute[i].y;
-	// }
-	// for (indiaux = 0; indiaux < 300; indiaux++) {
-	// 	trayec[indiaux].x = regpartida.trayec[indiaux].x;
-	// 	trayec[indiaux].y = regpartida.trayec[indiaux].y;
-	// }
-	// for (indiaux = 0; indiaux < maxpersonajes; indiaux++) {
-	// 	primera[indiaux] = regpartida.primera[indiaux];
-	// 	lprimera[indiaux] = regpartida.lprimera[indiaux];
-	// 	cprimera[indiaux] = regpartida.cprimera[indiaux];
-	// 	libro[indiaux] = regpartida.libro[indiaux];
-	// 	caramelos[indiaux] = regpartida.caramelos[indiaux];
-	// }
-
-	// for (indiaux = 0; indiaux < 5; indiaux++) {
-	// 	cavernas[indiaux] = regpartida.cavernas[indiaux];
-	// 	firstList[indiaux] = regpartida.firstList[indiaux];
-	// 	secondList[indiaux] = regpartida.secondList[indiaux];
-	// }
-	// for (indiaux = 0; indiaux < 4; indiaux++) {
-	// 	hornacina[0][indiaux] = regpartida.hornacina[0][indiaux];
-	// 	hornacina[1][indiaux] = regpartida.hornacina[1][indiaux];
-	// }
-	// close(partida);
-	// totalFadeOut(0);
-	// clear();
-	// loadPalette("DEFAULT");
-	// loadScreenData(regpartida.numeropantalla);
-	// switch (roomData->codigo) {
-	// case 2: {
-	// 	if (teleencendida)
-	// 		autoPlayVoc("PARASITO", 355778, 20129);
-	// 	else
-	// 		cargatele();
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// } break;
-	// case 4: {
-	// 	loadVoc("GOTA", 140972, 1029);
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// } break;
-	// case 5: {
-	// 	setSfxVolume(volumenfxizquierdo, 0);
-	// 	autoPlayVoc("CALDERA", 6433, 15386);
-	// } break;
-	// case 6: {
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// 	autoPlayVoc("CALDERA", 6433, 15386);
-	// } break;
-	// case 17: {
-	// 	if ((libro[0] == true) && (roomData->banderamovimiento == true))
-	// 		disableSecondAnimation();
-	// } break;
-	// case 20: {
-	// 	switch (hornacina[0][hornacina[0][3]]) {
-	// 	case 0:
-	// 		roomData->indexadoobjetos[9]->objectName = "HORNACINA";
-	// 		break;
-	// 	case 561:
-	// 		roomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
-	// 		break;
-	// 	case 563:
-	// 		roomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
-	// 		break;
-	// 	case 615:
-	// 		roomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
-	// 		break;
-	// 	}
-	// } break;
-	// case 23: {
-	// 	autoPlayVoc("FUENTE", 0, 0);
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// } break;
-	// case 24: {
-	// 	switch (hornacina[1][hornacina[1][3]]) {
-	// 	case 0:
-	// 		roomData->indexadoobjetos[8]->objectName = "HORNACINA";
-	// 		break;
-	// 	case 561:
-	// 		roomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
-	// 		break;
-	// 	case 615:
-	// 		roomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
-	// 		break;
-	// 	case 622:
-	// 		roomData->indexadoobjetos[8]->objectName = "PARED";
-	// 		break;
-	// 	case 623:
-	// 		roomData->indexadoobjetos[8]->objectName = "TORNO";
-	// 		break;
-	// 	}
-	// 	if (trampa_puesta) {
-	// 		roomData->banderamovimiento = true;
-	// 		loadAnimation(roomData->nombremovto);
-	// 		iframe2 = 1;
-	// 		indicetray2 = 1;
-	// 		animado.dir = roomData->dir2[indicetray2];
-	// 		roomData->tray2[indicetray2 - 1].x = 214 - 15;
-	// 		roomData->tray2[indicetray2 - 1].y = 115 - 42;
-	// 		animado.posx = roomData->tray2[indicetray2 - 1].x;
-	// 		animado.posy = roomData->tray2[indicetray2 - 1].y;
-	// 		animado.profundidad = 15;
-	// 		for (indiaux = 1; indiaux <= maxrejax; indiaux++)
-	// 			for (indiaux2 = 1; indiaux2 <= maxrejay; indiaux2++)
-	// 				if (rejamascararaton[indiaux][indiaux2] > 0)
-
-	// 					roomData->mouseGrid[oldposx + indiaux - 1][oldposy + indiaux2 - 1] = rejamascararaton[indiaux][indiaux2];
-	// 	}
-	// 	assembleScreen();
-	// } break;
-	// }
-	// effect(13, false, fondo);
-	// contadorpc = contadorpc2;
-	// mask();
-	// posicioninv = 0;
-	// drawBackpack();
-	// if ((rojo_capturado == false) && (roomData->codigo == 24) &&
-	// 	(trampa_puesta == false))
-	// 	runaroundRed();
-	// drawMouseMask(iraton, xraton, yraton);
-	// completadalista2 = true;
+	g_engine->loadGameState(g_engine->getMetaEngine()->getAutosaveSlot());
 }
 
 int startGame();
@@ -300,7 +111,7 @@ int engine_start() {
 	if (partidanueva && !g_engine->shouldQuit()) {
 		newGame();
 	} else if (continuarpartida && !g_engine->shouldQuit()) {
-		g_engine->loadGameState(g_engine->getMetaEngine()->getAutosaveSlot());
+		loadTemporaryGame();
 	} else {
 		desactivagrabar = true;
 		g_engine->openMainMenuDialog();
@@ -659,14 +470,13 @@ int startGame() {
 				initialMenu(true);
 				verifyCopyProtection2();
 
-				if (partidanueva) {
+				if (partidanueva && !g_engine->shouldQuit()) {
 					newGame();
-				} else if (continuarpartida)
+				} else if (continuarpartida && !g_engine->shouldQuit())
 					loadTemporaryGame();
 				else {
 					desactivagrabar = true;
 					g_engine->openMainMenuDialog();
-					// saveLoad();
 					contadorpc = contadorpc2;
 					desactivagrabar = false;
 				}
