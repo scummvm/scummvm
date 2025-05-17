@@ -543,8 +543,6 @@ void talk(byte person) {
 	fixTree(step);
 	saveConversations(conversationData, ar, person - 1);
 
-	// Make sure to autosave
-	g_engine->saveAutosaveIfEnabled();
 	verb.close();
 	if (g_engine->shouldQuit()) {
 		return;

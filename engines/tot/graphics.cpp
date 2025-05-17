@@ -189,10 +189,9 @@ void updateSceneAreaIfNeeded(int speed = 1) {
 void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 
 	int i1, i2, i3, j1, j2, j3;
-	// bool enabled = false;
-	bool enabled = true;
+	bool enabled = false;
+	// bool enabled = true;
 
-	// numeroefecto = 13;
 	byte *screenBuf = (byte *)g_engine->_screen->getPixels();
 	// Disable effects for now
 	if (!enabled) {

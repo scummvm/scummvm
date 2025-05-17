@@ -510,7 +510,7 @@ int startGame() {
 				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 				if (contadorpc2 > 43)
 					showError(274);
-				// sacrificeScene();
+				sacrificeScene();
 				clear();
 				loadObjects();
 				loadPalette("SEGUNDA");
@@ -539,7 +539,7 @@ int startGame() {
 
 		// Debug graphics
 		{
-			g_engine->_graphics->euroText(Common::String::format("Room: %d", currentRoomNumber), 0, 0, 220, Graphics::kTextAlignLeft);
+			// g_engine->_graphics->euroText(Common::String::format("Room: %d", currentRoomNumber), 0, 0, 220, Graphics::kTextAlignLeft);
 			// g_engine->_mouseManager->printPos(xraton, yraton, 220, 0);
 			// printPos(characterPosX, characterPosY, 220, 10, "CharPos");
 			if (showMouseGrid) {
@@ -567,8 +567,8 @@ int startGame() {
 					}
 				}
 			}
-			g_engine->_screen->markAllDirty();
-			g_engine->_screen->update();
+			// g_engine->_screen->markAllDirty();
+			// g_engine->_screen->update();
 		}
 
 		g_engine->_screen->update();

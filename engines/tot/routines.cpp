@@ -5038,8 +5038,6 @@ void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStr
 void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream) {
 	rooms->seek(room->codigo * roomRegSize, SEEK_SET);
 	saveRoom(room, stream);
-	// Make sure to autosave
-	g_engine->saveAutosaveIfEnabled();
 }
 
 /**
