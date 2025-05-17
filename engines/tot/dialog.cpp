@@ -542,6 +542,8 @@ void talk(byte person) {
 	step = ar;
 	fixTree(step);
 	saveConversations(conversationData, ar, person - 1);
+	// Make sure to autosave
+	g_engine->saveAutosaveIfEnabled();
 
 	verb.close();
 	delete ar;

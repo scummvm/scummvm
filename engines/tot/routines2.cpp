@@ -439,7 +439,8 @@ void updateItem(uint itemPosition) {
 	regobj.usar[0] = 9;
 	invItemData->seek(itemPosition);
 	saveItemRegister(regobj, invItemData);
-	debug("saved item %s", regobj.name.c_str());
+	// Make sure to autosave
+	g_engine->saveAutosaveIfEnabled();
 }
 
 void readItemRegister(Common::SeekableReadStream *stream, uint itemPos, InvItemRegister &thisRegObj) {
