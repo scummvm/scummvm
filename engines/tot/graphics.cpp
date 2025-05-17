@@ -491,7 +491,6 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 				}
 			} break;
 			case 11: {
-				g_engine->_screen->drawLine(0, 141, 320, 141, 220);
 				long lastRender = 0;
 				long rendertime = 10;
 				for (i2 = 0; i2 <= 3; i2 ++) {
