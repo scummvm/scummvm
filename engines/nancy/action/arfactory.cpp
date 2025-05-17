@@ -32,12 +32,16 @@
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
 
+#include "engines/nancy/action/puzzle/angletosspuzzle.h"
+#include "engines/nancy/action/puzzle/arcadepuzzle.h"
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
 #include "engines/nancy/action/puzzle/bballpuzzle.h"
 #include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
+#include "engines/nancy/action/puzzle/cuttingpuzzle.h"
+#include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
@@ -46,6 +50,7 @@
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
 #include "engines/nancy/action/puzzle/peepholepuzzle.h"
+#include "engines/nancy/action/puzzle/quizpuzzle.h"
 #include "engines/nancy/action/puzzle/raycastpuzzle.h"
 #include "engines/nancy/action/puzzle/riddlepuzzle.h"
 #include "engines/nancy/action/puzzle/rippedletterpuzzle.h"
@@ -360,8 +365,18 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new OrderingPuzzle(OrderingPuzzle::kKeypadTerse);
 	case 225:
 		return new SpigotPuzzle();
+	case 226:
+		return new CuttingPuzzle();
+	case 228:
+		return new MatchPuzzle();
+	case 229:
+		return new ArcadePuzzle();
 	case 230:
 		return new Telephone(true);
+	case 231:
+		return new QuizPuzzle();
+	case 232:
+		return new AngleTossPuzzle();
 	default:
 		warning("Unknown action record type %d", type);
 		return nullptr;

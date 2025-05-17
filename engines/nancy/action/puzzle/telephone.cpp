@@ -463,6 +463,7 @@ void Telephone::handleInput(NancyInput &input) {
 					_drawSurface.fillRect(_destRects[_dirButtonID], _drawSurface.getTransparentColor());
 				}
 
+				_animIsStopped = true;
 				return;
 			} else if (_upDirButtonID != -1 && buttonNr == _upDirButtonID) {
 				if (!_isShowingDirectory) {
@@ -471,6 +472,7 @@ void Telephone::handleInput(NancyInput &input) {
 					++_displayedDirectory;
 					changeDirectoryEntry = true;
 				}
+				_animIsStopped = true;
 			} else if (_downDirButtonID != -1 && buttonNr == _downDirButtonID) {
 				if (!_isShowingDirectory) {
 					directorySwitch = true;
@@ -479,10 +481,12 @@ void Telephone::handleInput(NancyInput &input) {
 					dirEntryDelta = -1;
 					changeDirectoryEntry = true;
 				}
+				_animIsStopped = true;
 			} else if (_dirButtonID != -1 && buttonNr == _dirButtonID) {
 				if (!_isShowingDirectory) {
 					directorySwitch = true;
 				}
+				_animIsStopped = true;
 			} else {
 				if (_isShowingDirectory || !_calledNumber.size()) {
 					_isShowingDirectory = false;
