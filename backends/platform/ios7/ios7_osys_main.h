@@ -96,8 +96,6 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 
-	bool setGraphicsMode(int mode, uint flags) override;
-
 	TouchMode getCurrentTouchMode() const { return _currentTouchMode; };
 	void setCurrentTouchMode(TouchMode mode) { _currentTouchMode = mode; };
 
