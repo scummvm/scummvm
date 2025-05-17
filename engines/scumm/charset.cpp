@@ -1056,6 +1056,13 @@ void CharsetRenderer::saveLoadWithSerializer(Common::Serializer &ser) {
 	ser.syncAsByte(_color, VER(73));
 
 	if (ser.isLoading()) {
+		// Some old v0.13.x saves have bogus values, for some reason (see
+		// bug #15931). When detecting such weird values made before the
+		// v1.0.0 release (VER(80)) that followed it, reinitialize the id
+		// using a, hopefully, sane value.
+		if (ser.getVersion() < VER(80) && _curId > _vm->_numCharsets - 1)
+			_curId = _vm->_string[0]._default.charset;
+
 		setCurID(_curId);
 		setColor(_color);
 	}
@@ -1687,7 +1694,7 @@ CharsetRendererMac::~CharsetRendererMac() {
 }
 
 void CharsetRendererMac::setCurID(int32 id) {
-	if  (id == -1)
+	if (id == -1)
 		return;
 
 	// This should only happen, if it happens at all, with older savegames.
