@@ -248,9 +248,10 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
     Common::Error result;
 
     if(s.isLoading()){
+		debug("Loading game!!");
         regispartida loadedGame;
 		// Means we are loading from before the game has started
-		if(rooms == nullptr) {
+		// if(rooms == nullptr) {
 			clear();
 			processingActive();
 
@@ -266,7 +267,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 			initializeScreenFile();
 			initializeObjectFile();
 			readConversationFile(Common::String("CONVERSA.TRE"));
-		}
+		// }
         result = syncSaveData(s, loadedGame);
         loadGame(loadedGame);
     } else {
