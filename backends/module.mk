@@ -327,11 +327,6 @@ MODULE_OBJS += \
 	fs/android/android-posix-fs.o \
 	fs/android/android-saf-fs.o \
 	graphics/android/android-graphics.o \
-	graphics3d/android/android-graphics3d.o \
-	graphics3d/android/texture.o \
-	graphics3d/opengl/framebuffer.o \
-	graphics3d/opengl/surfacerenderer.o \
-	graphics3d/opengl/tiledsurface.o \
 	mutex/pthread/pthread-mutex.o
 endif
 
