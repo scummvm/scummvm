@@ -52,6 +52,11 @@ ShaderPipeline::~ShaderPipeline() {
 void ShaderPipeline::activateInternal() {
 	Pipeline::activateInternal();
 
+	// Disable 3D properties.
+	GL_CALL(glDisable(GL_CULL_FACE));
+	GL_CALL(glDisable(GL_DEPTH_TEST));
+	GL_CALL(glDisable(GL_DITHER));
+
 	if (OpenGLContext.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
