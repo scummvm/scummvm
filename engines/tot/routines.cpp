@@ -5053,7 +5053,7 @@ void hypertext(
 	/** Whether the text being said is part of a conversation or just descriptions */
 	boolean banderaconversa
 ) {
-
+	debug("hypertext");
 	regismht regmht;
 
 	byte insertarnombre, iht, iteracionesht, lineaht, anchoht;
@@ -5458,6 +5458,8 @@ void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStr
 void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream) {
 	rooms->seek(room->codigo * roomRegSize, SEEK_SET);
 	saveRoom(room, stream);
+	// Make sure to autosave
+	g_engine->saveAutosaveIfEnabled();
 }
 
 /**

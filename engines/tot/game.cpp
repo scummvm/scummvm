@@ -785,10 +785,7 @@ void sceneChange() {
 	contadorpc = contadorpc2;
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 	saveRoomData(currentRoomData, rooms);
-
 	// verifyCopyProtection();
-	// fichpanta << datospantalla;
-	// close(fichpanta);
 	// setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 
 	switch (currentRoomData->doors[indicepuertas].pantallaquecarga) {
