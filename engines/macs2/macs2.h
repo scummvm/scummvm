@@ -306,6 +306,8 @@ public:
 
 	void SetCursorMode(Script::MouseMode newMode);
 
+	void DumpStream(Common::MemoryReadStream *s, uint16 len);
+
 	// Offset 5023h of current scene data
 	// TODO: Consider moving somewhere else
 	Common::Array<uint8> array5023;
