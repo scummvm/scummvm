@@ -2842,6 +2842,8 @@ void ScummEngine_v5::o5_startSound() {
 	if (VAR_MUSIC_TIMER != 0xFF)
 		VAR(VAR_MUSIC_TIMER) = 0;
 	_sound->startSound(sound);
+
+	workaroundIndy3TownsMissingLightningCastle(sound);
 }
 
 void ScummEngine_v5::o5_stopMusic() {
@@ -3762,6 +3764,61 @@ void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr
 	}
 
 	printString(textSlot, (const byte *)msg);
+}
+
+void ScummEngine_v5::workaroundIndy3TownsMissingLightningCastle(int sound) {
+	// WORKAROUND: In Indy3 TOWNS, one can hear the thunder sound when arriving
+	// at Castle Brunwald, but the lightning effect on the Castle is missing --
+	// but that's only the case in the _English_ FM-TOWNS release, as the
+	// Japanese release on the same CD does show it (it also has some other
+	// script/resource fixes over the English one). Backport this script fix.
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _language != Common::JA_JPN &&
+		_currentRoom == 12 && _currentScript != 0xFF && vm.slot[_currentScript].number == 132 &&
+		enhancementEnabled(kEnhVisualChanges)) {
+		// Thunder sound
+		const int expectedSoundId = 58;
+		// Castle Brunwald image
+		const int castleObj = 947;
+		// '0': castle in the dark; '1': castle illuminated by lightning
+		int castleObjState;
+
+		if (sound != expectedSoundId)
+			return;
+
+		// (No reason for this to be missing here, but better safe than sorry)
+		if (whereIsObject(castleObj) != WIO_ROOM)
+			return;
+
+		// Script 12-132 from the Japanese release did it this way:
+		//
+		// setState(947,1);
+		// breakHere();
+		// setState(947,0);
+		// breakHere();
+		//
+		// ...but we can't properly simulate this with breakHere() calls,
+		// here. So, do it a bit differently, by switching the current
+		// state each time a thunder sound is played.
+
+		castleObjState = !getState(castleObj);
+
+		// Since we do things a bit differently, we have to take care not
+		// to stop on an "eternal lightning" effect, once all the thunder
+		// rolls are done. This is controlled by the following variables
+		// in the script, a bit after the current script pointer:
+		//
+		// Local[12]++;
+		// unless (Local[12] > Local[0]) ...
+		if (castleObjState == 1 && vm.localvar[_currentScript][12] + 1 > vm.localvar[_currentScript][0])
+			return;
+
+		// Simulate the full o5_setState() call
+		putState(castleObj, castleObjState);
+		markObjectRectAsDirty(castleObj);
+		if (_bgNeedsRedraw)
+			clearDrawObjectQueue();
+	}
+
 }
 
 void ScummEngine_v5::workaroundLoomHetchelDoubleHead(Actor *a, int act) {

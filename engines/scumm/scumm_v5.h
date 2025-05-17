@@ -93,6 +93,7 @@ protected:
 
 	void injectMISESpeech();
 
+	void workaroundIndy3TownsMissingLightningCastle(int sound);
 	void workaroundLoomHetchelDoubleHead(Actor *a, int act);
 	bool workaroundMonkey1JollyRoger(byte callerOpcode, int arg);
 
