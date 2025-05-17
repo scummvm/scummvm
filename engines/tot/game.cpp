@@ -307,7 +307,7 @@ int engine_start() {
 		desactivagrabar = false;
 	}
 
-	boolean enforceSecondPart = true;
+	boolean enforceSecondPart = false;
 	if(enforceSecondPart) { //DEBUG
 		completadalista1 = true;
 		completadalista2 = true;
