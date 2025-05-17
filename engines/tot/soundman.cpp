@@ -28,9 +28,10 @@
 #include "common/config-manager.h"
 #include "common/substream.h"
 
+#include "soundman.h"
 #include "tot/soundman.h"
 #include "tot/tot.h"
-#include "soundman.h"
+#include "tot/util.h"
 
 namespace Tot {
 
@@ -55,7 +56,7 @@ void SoundManager::loadVoc(Common::String fileName, long offset, int16 size) {
 
 	if (size == 0) {
 		if (!vocResource.open(Common::Path(fileName + ".VOC"))) {
-			_exit(266);
+			showError(266);
 		}
 
 		_lastSrcStream = vocResource.readStream((uint32)vocResource.size());
@@ -63,13 +64,12 @@ void SoundManager::loadVoc(Common::String fileName, long offset, int16 size) {
 	} else {
 		Common::File vocResource;
 		if (!vocResource.open("EFECTOS.DAT")) {
-			_exit(266);
+			showError(266);
 		}
 		vocResource.seek(offset);
 		_lastSrcStream = vocResource.readStream((uint32)size);
 	}
 	_audioStream = Audio::makeVOCStream(_lastSrcStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-
 }
 void SoundManager::autoPlayVoc() {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, Audio::makeLoopingAudioStream(_audioStream, 0), kSfxId, 255U, 0, DisposeAfterUse::NO);
@@ -112,13 +112,12 @@ void SoundManager::beep(int32 frequency, int32 ms) {
 	speaker->setVolume(255);
 	speaker->play(Audio::PCSpeaker::kWaveFormSine, frequency, ms);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-		speaker,
-		-1,
-		Audio::Mixer::kMaxChannelVolume,
-		0,
-	    DisposeAfterUse::NO,
-		true
-	);
+					   speaker,
+					   -1,
+					   Audio::Mixer::kMaxChannelVolume,
+					   0,
+					   DisposeAfterUse::NO,
+					   true);
 }
 
 void SoundManager::setSfxVolume(int volume) {
@@ -129,7 +128,7 @@ void SoundManager::setSfxVolume(int volume) {
 }
 
 void SoundManager::setSfxBalance(bool left, bool right) {
-	int balance = left? -127: 127;
+	int balance = left ? -127 : 127;
 	_mixer->setChannelBalance(_soundHandle, balance);
 	// _mixer->setChannelBalance();
 }
@@ -182,7 +181,7 @@ void MusicPlayer::playMidi(const char *fileName, bool loop) {
 	debug("Opening music file %s", fileName);
 	musicFile.open(fileName);
 	if (!musicFile.isOpen()) {
-		_exit(267);
+		showError(267);
 		return;
 	}
 	byte *data = (byte *)malloc(musicFile.size());
