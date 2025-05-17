@@ -21,8 +21,8 @@
 #ifndef TOT_MOUSEMAN_H
 #define TOT_MOUSEMAN_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 
 #include "tot/chrono.h"
 
@@ -46,6 +46,7 @@ public:
 	void setMouseArea(Common::Rect rect);
 	void setMousePos(Common::Point p);
 	void printPos(int x, int y, int screenPosX, int screenPosY);
+
 private:
 	Common::Rect _mouseArea;
 	int _currentMouseMask = 0;

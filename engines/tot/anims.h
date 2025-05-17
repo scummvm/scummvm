@@ -28,32 +28,32 @@
 namespace Tot {
 
 void drawFlc(uint flicx, uint flicy, int32 posicionfli, uint loop,
-			  byte veloc, byte numevento, boolean palcompleta, boolean permitesalida,
-			  boolean doscientos, boolean& salidaflis);
+			 byte veloc, byte numevento, boolean palcompleta, boolean permitesalida,
+			 boolean doscientos, boolean &salidaflis);
 
 /**
  * Header of an Autodesk Animator FLIC file.
  */
 struct fliheader {
-	int32       size;			// file size
-	uint 	    magic, 			// format id
-				frames, 		// number of animation frames
-				width,  		// anim width
-				heigth, 		// anim height
-				depth,			// 8 bits per pixel
-				flags;
-	int32       speed;			// time delay between frames
-	uint 	    reserved1;		// all set to zero
-	int32       created;		// creation date in DOS format
-	byte 		creator[3];		// serial of creator program
-	int32       updated;		// update date in DOS format
-	byte 		updator[3];		// serial of updating program
-	uint 	    aspectx,		// aspect ratio
-		 		aspecty;		// aspect ratio
-	uint 	    reserved2[19]; 	// all zeroes
-	int32       ofsframe1,		// Offset to frame 1 (FLC only)
-				ofsframe2;		// Offset to frame 2 (FLC only)
-	uint 	    reserved3[20]; 	// All zeroes
+	int32 size; // file size
+	uint magic, // format id
+		frames, // number of animation frames
+		width,  // anim width
+		heigth, // anim height
+		depth,  // 8 bits per pixel
+		flags;
+	int32 speed;        // time delay between frames
+	uint reserved1;     // all set to zero
+	int32 created;      // creation date in DOS format
+	byte creator[3];    // serial of creator program
+	int32 updated;      // update date in DOS format
+	byte updator[3];    // serial of updating program
+	uint aspectx,       // aspect ratio
+		aspecty;        // aspect ratio
+	uint reserved2[19]; // all zeroes
+	int32 ofsframe1,    // Offset to frame 1 (FLC only)
+		ofsframe2;      // Offset to frame 2 (FLC only)
+	uint reserved3[20]; // All zeroes
 };
 
 } // End of namespace Tot

@@ -121,7 +121,6 @@ void updateMovementCells() {
 				currentRoomData->mouseGrid[oldposx + i1arm][oldposy + i2arm] = rejafondoraton[i1arm][i2arm];
 			}
 
-
 		for (i1arm = 0; i1arm < maxrejax; i1arm++)
 			for (i2arm = 0; i2arm < maxrejay; i2arm++) {
 				rejafondomovto[i1arm][i2arm] = currentRoomData->rejapantalla[j1arm + i1arm][j2arm + i2arm];
@@ -151,7 +150,7 @@ static uint posfondox,
 /**
  * Calculated using the position of the character + dimension
  */
-static uint posfondox2,	posfondoy2;
+static uint posfondox2, posfondoy2;
 
 static void assembleBackground() {
 	uint posabs;
@@ -238,8 +237,7 @@ static void overlayObject() {
 			(depthMap[indice].posx <= posfondox2) &&
 			(depthMap[indice].posx2 > posfondox) &&
 			(depthMap[indice].posy < posfondoy2) &&
-			(depthMap[indice].posy2 > posfondoy)
-		) {
+			(depthMap[indice].posy2 > posfondoy)) {
 			assembleImage(screenObjects[indice], depthMap[indice].posx, depthMap[indice].posy);
 		}
 	}
@@ -333,14 +331,14 @@ void sprites(boolean pintapersonaje) {
 			if ((pasoframeH + characterPosY) > (animado.posy + pasoanimadoH)) {
 				patchH = pasoframeH + 6 + abs(characterPosY - animado.posy);
 			} else {
-				patchH = pasoanimadoH + 6 + abs(characterPosY -  animado.posy);
+				patchH = pasoanimadoH + 6 + abs(characterPosY - animado.posy);
 			}
 
-			if(posfondoy + patchH > 140) {
+			if (posfondoy + patchH > 140) {
 				patchH -= (posfondoy + patchH) - 140 + 1;
 			}
 
-			if(posfondox + patchW > 320) {
+			if (posfondox + patchW > 320) {
 				patchW -= (posfondox + patchW) - 320 + 1;
 			}
 
@@ -351,7 +349,7 @@ void sprites(boolean pintapersonaje) {
 
 			assembleBackground(); // {Montar el Sprite Total}
 			indice = 0;
-			while (indice != nivelesdeprof){
+			while (indice != nivelesdeprof) {
 				overlayObject();
 				if (animado.profundidad == indice)
 					assembleImage(pasoanimado, animado.posx, animado.posy);
@@ -372,11 +370,11 @@ void sprites(boolean pintapersonaje) {
 			pasoanimadoW = READ_LE_UINT16(pasoanimado) + 6;
 			pasoanimadoH = READ_LE_UINT16(pasoanimado + 2) + 6;
 
-			if(posfondoy + pasoanimadoH > 140) {
+			if (posfondoy + pasoanimadoH > 140) {
 				pasoanimadoH -= (posfondoy + pasoanimadoH) - 140 + 1;
 			}
 
-			if(posfondox + pasoanimadoW > 320) {
+			if (posfondox + pasoanimadoW > 320) {
 				pasoanimadoW -= (posfondox + pasoanimadoW) - 320 + 1;
 			}
 
@@ -468,7 +466,7 @@ void animatedSequence(uint numSequence) {
 		guadaxframe = characterPosX;
 		characterPosX = 3;
 		if (!animationFile.open("POZO01.DAT")) {
-			error("277");
+			showError(277);
 		}
 		animx = 127;
 		animy = 70;
@@ -508,7 +506,7 @@ void animatedSequence(uint numSequence) {
 	} break;
 	case 2: {
 		if (!animationFile.open("POZOATR.DAT")) {
-			error("277");
+			showError(277);
 		}
 		animx = 127;
 		guadaxframe = characterPosX;
@@ -555,7 +553,7 @@ void animatedSequence(uint numSequence) {
 		guadaxframe = characterPosX;
 		characterPosX = 3;
 		if (!animationFile.open("POZO02.DAT")) {
-			error("277");
+			showError(277);
 		}
 		animx = 127;
 		animy = 70;
@@ -598,7 +596,7 @@ void animatedSequence(uint numSequence) {
 	case 4: {
 		adjustKey();
 		if (!animationFile.open("TIOLLAVE.DAT")) {
-			error("277");
+			showError(277);
 		}
 		animx = 85;
 		animy = 15;
@@ -659,7 +657,7 @@ void animatedSequence(uint numSequence) {
 	} break;
 	case 5: {
 		if (!animationFile.open("TIOSACO.DAT")) {
-			error("277");
+			showError(277);
 		}
 		animx = 204;
 		animy = 44;
@@ -707,7 +705,7 @@ void animatedSequence(uint numSequence) {
 	case 6: {
 		currentRoomData->banderamovimiento = false;
 		if (!animationFile.open("AZCCOG.DAT")) {
-			error("277");
+			showError(277);
 		}
 		tamsecani = animationFile.readUint16LE();
 		numframessec = animationFile.readByte();
@@ -787,8 +785,8 @@ RoomObjectListEntry *readRegIndexadoObjetos(Common::SeekableReadStream *screenDa
 	return objectMetadata;
 }
 
-RoomFileRegister* readScreenDataFile(Common::SeekableReadStream *screenDataFile) {
-	RoomFileRegister* screenData = new RoomFileRegister();
+RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile) {
+	RoomFileRegister *screenData = new RoomFileRegister();
 	screenData->codigo = screenDataFile->readUint16LE();
 	screenData->puntimagenpantalla = screenDataFile->readUint32LE();
 	screenData->tamimagenpantalla = screenDataFile->readUint16LE();
@@ -1093,19 +1091,19 @@ void calculateRoute(byte zona1, byte zona2, boolean extraCorrection, boolean zon
 		}
 	} else {
 		if ((mainRoute[pasos].y + rectificaciony) == 9999) {
-		pasos -= 1;
+			pasos -= 1;
 		}
-		if(extraCorrection) {
+		if (extraCorrection) {
 			switch (currentRoomData->codigo) {
-				case 5:
-					if (zona2 == 27)
-						pasos += 1;
-					break;
-				case 6:
-					if (zona2 == 21)
-						pasos += 1;
-					break;
-				}
+			case 5:
+				if (zona2 == 27)
+					pasos += 1;
+				break;
+			case 6:
+				if (zona2 == 21)
+					pasos += 1;
+				break;
+			}
 		}
 	}
 	if (extraCorrection && zonavedada) {
@@ -1125,7 +1123,7 @@ void goToObject(byte zona1, byte zona2) {
 
 	contadorpc2 = contadorpc;
 
-	for(int indicepaso = 0; indicepaso < 5; indicepaso++) {
+	for (int indicepaso = 0; indicepaso < 5; indicepaso++) {
 		if (currentRoomData->doors[indicepaso].codigopuerta == zona2) {
 			zonavedada = true;
 			break;
@@ -1234,7 +1232,7 @@ void advanceAnimations(boolean zonavedada, boolean animateMouse) {
 			if (iframe2 >= secondaryAnimationFrameCount - 1)
 				iframe2 = 0;
 			else
-				iframe2 ++;
+				iframe2++;
 			animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
 			animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
 			animado.dir = currentRoomData->dir2[indicetray2 - 1];
@@ -1645,9 +1643,9 @@ void pickupScreenObject() {
 		} break;
 		}
 		switch (regobj.altura) {
-		case 0: { //Pick up above
+		case 0: { // Pick up above
 			switch (regobj.code) {
-			case 590: { //Ectoplasm
+			case 590: { // Ectoplasm
 				animatePickup1(3, 0);
 				animatePickup2(3, 0);
 			} break;
@@ -1677,7 +1675,7 @@ void pickupScreenObject() {
 				animatePickup1(0, 1);
 				animatePickup2(0, 1);
 			} break;
-			case 402: { //Kitchen table
+			case 402: { // Kitchen table
 				animatePickup1(0, 1);
 				updateVideo();
 				animatePickup2(0, 1);
@@ -1721,9 +1719,9 @@ void pickupScreenObject() {
 			} break;
 			case 562: { // alcove
 				switch (currentRoomData->codigo) {
-				case 20: { //First scene with alcove
+				case 20: { // First scene with alcove
 					if (hornacina[0][hornacina[0][3]] > 0) {
-						//Possibly
+						// Possibly
 						if (hornacina[0][3] == 2 || hornacina[0][hornacina[0][3]] == 563) {
 							readItemRegister(hornacina[0][hornacina[0][3]]);
 							hornacina[0][hornacina[0][3]] = 0;
@@ -1789,7 +1787,7 @@ void pickupScreenObject() {
 						return;
 					}
 				} break;
-				case 24: { //Second scene with alcove
+				case 24: { // Second scene with alcove
 					if (hornacina[1][hornacina[1][3]] > 0 && hornacina[1][3] != 1) {
 						if (hornacina[1][3] == 2) {
 							readItemRegister(hornacina[1][2]);
@@ -1889,12 +1887,12 @@ void pickupScreenObject() {
 			}
 			}
 		} break;
-		case 2: { //Pick up feet level
+		case 2: { // Pick up feet level
 			switch (regobj.code) {
 			case 216: { // chisel
 				animatePickup1(0, 2);
 				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid
-												  [mouseX][mouseY]]
+													 [mouseX][mouseY]]
 					->indicefichero = regobj.reemplazarpor;
 				updateVideo();
 				animatePickup2(0, 2);
@@ -1902,7 +1900,7 @@ void pickupScreenObject() {
 			case 295: { // candles
 				animatePickup1(3, 2);
 				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid
-												  [mouseX][mouseY]]
+													 [mouseX][mouseY]]
 					->indicefichero = regobj.reemplazarpor;
 				updateVideo();
 				animatePickup2(3, 2);
@@ -2002,7 +2000,7 @@ void pickupScreenObject() {
 		} break;
 		case 308:; // mistletoe
 			break;
-		case 362:;// charcoal
+		case 362:; // charcoal
 			break;
 		case 402: {
 			currentRoomData->bitmapasociados[5].puntbitmap = 68130;
@@ -2044,11 +2042,11 @@ void pickupScreenObject() {
 	}
 	indicemochila = 0;
 
-	while (mobj[indicemochila].code != 0){
+	while (mobj[indicemochila].code != 0) {
 		indicemochila += 1;
 	}
 
-	mobj[indicemochila].bitmapIndex =regobj.objectIconBitmap;
+	mobj[indicemochila].bitmapIndex = regobj.objectIconBitmap;
 	mobj[indicemochila].code = regobj.code;
 	mobj[indicemochila].objectName = regobj.name;
 	g_engine->_mouseManager->hide();
@@ -2076,7 +2074,7 @@ void dropObjectInScreen(InvItemRegister regobjsustituto) {
 	if (regobjsustituto.tambitmap > 0) {
 		indicepaso = 0;
 		while (!(currentRoomData->bitmapasociados[indicepaso].tambitmap == 0) || indicepaso == 15) {
-			indicepaso ++;
+			indicepaso++;
 		}
 		if (currentRoomData->bitmapasociados[indicepaso].tambitmap == 0) {
 			{
@@ -2095,7 +2093,7 @@ void dropObjectInScreen(InvItemRegister regobjsustituto) {
 					currentRoomData->mouseGrid[indicex][indicey] = regobjsustituto.parcherejaraton[indicex - regobjsustituto.xrej1][indicey - regobjsustituto.yrej1];
 				}
 		} else
-			_exit(264);
+			showError(264);
 	}
 }
 
@@ -2118,8 +2116,7 @@ void useScreenObject() {
 
 		goToObject(
 			currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-			currentRoomData->rejapantalla[mouseX][mouseY]
-		);
+			currentRoomData->rejapantalla[mouseX][mouseY]);
 
 		if (regobj.usarcon == screenObject && screenObject > 0 && regobj.usar[0] == 5) {
 			switch (regobj.usarcon) {
@@ -2659,16 +2656,10 @@ void useScreenObject() {
 					indicemochila += 1;
 				}
 
-				// Common::File fichobj;
-				// if (!fichobj.open("OBJETOS.DAT")) {
-				// 	error("261");
-				// }
-
 				invItemData->seek(regobj.code);
-				// TODO:Save!
-				//  fichobj << regobj;
+
+				saveItem(regobj, invItemData);
 				readItemRegister(invItemData, 221, regobj);
-				// fichobj.close();
 				mobj[indicemochila].bitmapIndex = regobj.objectIconBitmap;
 				mobj[indicemochila].code = regobj.code;
 				mobj[indicemochila].objectName = regobj.name;
@@ -3026,7 +3017,7 @@ void useScreenObject() {
 				g_engine->_mouseManager->hide();
 				animateGive(direccionmovimiento, 1);
 
-				//Show feather on pedestal
+				// Show feather on pedestal
 				loadItem(187, 70, 104, 1545820, 8);
 				handPantallaToBackground();
 				assembleScreen();
@@ -3038,11 +3029,11 @@ void useScreenObject() {
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 14);
 				g_engine->_mouseManager->hide();
 				playVoc("PUFF", 191183, 18001);
-				//Animate to scythe
+				// Animate to scythe
 				debug("Start anim!");
 				drawFlc(180, 60, 2216848, 0, 9, 0, false, false, true, basurillalog);
 				debug("End Anim!");
-				//load Scythe
+				// load Scythe
 				currentRoomData->bitmapasociados[2].puntbitmap = 1545820;
 				currentRoomData->bitmapasociados[2].tambitmap = 104;
 				currentRoomData->bitmapasociados[2].coordx = 277;
@@ -3142,7 +3133,7 @@ void useScreenObject() {
 				if (guadagna)
 					cavernas[3] = true;
 			} break;
-			case 643: { //Urn with altar
+			case 643: { // Urn with altar
 				if (currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory] != 5)
 					drawText(regobj.useTextRef);
 				pulsax = 149 - 7;
@@ -3172,7 +3163,7 @@ void useScreenObject() {
 				cavernas[4] = false;
 				g_engine->_mouseManager->show();
 			} break;
-			case 657: { //sharpen scythe
+			case 657: { // sharpen scythe
 				drawText(regobj.useTextRef);
 				pulsax = 178 - 7;
 				pulsay = 71 - 7;
@@ -3202,7 +3193,7 @@ void useScreenObject() {
 						currentRoomData->mouseGrid[indlista][indmoch] = 13;
 				g_engine->_mouseManager->show();
 			} break;
-			case 689: { //rope
+			case 689: { // rope
 				drawText(regobj.useTextRef);
 				pulsax = 124 - 7;
 				pulsay = 133 - 7;
@@ -3220,7 +3211,7 @@ void useScreenObject() {
 				for (indlista = 17; indlista <= 21; indlista++)
 					currentRoomData->mouseGrid[indlista][27] = 10;
 			} break;
-			case 700: { //Trident
+			case 700: { // Trident
 				drawText(regobj.useTextRef);
 				pulsax = 224 - 7;
 				pulsay = 91 - 7;
@@ -3479,7 +3470,7 @@ void openScreenObject() {
 				screenObjects[regobj.profundidad - 1] = NULL;
 				indicey = 0;
 				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 15) {
-					indicey ++;
+					indicey++;
 				}
 				debug("changing bitmap at %d, with depth = %d", indicey, currentRoomData->bitmapasociados[indicey].profund);
 				currentRoomData->bitmapasociados[indicey].puntbitmap = 0;
@@ -3515,7 +3506,7 @@ void openScreenObject() {
 				screenObjects[regobj.profundidad - 1] = NULL;
 				indicey = 0;
 				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 14) {
-					indicey ++;
+					indicey++;
 				}
 				currentRoomData->bitmapasociados[indicey].puntbitmap = 0;
 				currentRoomData->bitmapasociados[indicey].tambitmap = 0;
@@ -3708,7 +3699,7 @@ void handleAction(byte posinv) {
 		drawText((Random(10) + 1039));
 		numeroaccion = 0;
 		if (contadorpc > 130)
-			_exit(274);
+			showError(274);
 		oldxrejilla = 0;
 		oldyrejilla = 0;
 		checkMouseGrid();
@@ -3717,7 +3708,7 @@ void handleAction(byte posinv) {
 		g_engine->_mouseManager->hide();
 		actionLineText(Common::String("COGER ") + mobj[posinv].objectName);
 		if (contadorpc2 > 13)
-			_exit(274);
+			showError(274);
 		g_engine->_mouseManager->show();
 		drawText((Random(10) + 1049));
 		numeroaccion = 0;
@@ -3746,7 +3737,7 @@ void handleAction(byte posinv) {
 
 			numeroaccion = 0;
 			if (contadorpc > 25)
-				_exit(274);
+				showError(274);
 			useInventoryObjectWithInventoryObject(codigoobjmochila, mobj[posinv].code);
 			oldxrejilla = 0;
 			oldyrejilla = 0;
@@ -3770,7 +3761,7 @@ void handleAction(byte posinv) {
 		drawText(Random(10) + 1068);
 		numeroaccion = 0;
 		if (contadorpc2 > 35)
-			_exit(274);
+			showError(274);
 		oldxrejilla = 0;
 		oldyrejilla = 0;
 		checkMouseGrid();
@@ -3791,13 +3782,13 @@ void loadObjects() {
 	}
 
 	if (!ficheroobj.isOpen())
-		error("Error opening object file! 312");
+		showError(312);
 	for (int i = 0; i < inventoryIconCount; i++) {
 		mochilaxms.bitmap[i] = (byte *)malloc(sizeicono);
 		ficheroobj.read(mochilaxms.bitmap[i], sizeicono);
 	}
 	if (contadorpc > 65)
-		error("Error contadorpc 274");
+		showError(274);
 	for (int i = 0; i < inventoryIconCount; i++) {
 		mobj[i].bitmapIndex = 34;
 		mobj[i].code = 0;
@@ -4021,170 +4012,6 @@ void loadScrollData(uint numpantalla, boolean scrollder, uint poshor, int correc
 	trayec[indicetray].y = characterPosY;
 }
 
-
-void saveGame(byte numeropartida) {
-	// varying_string<1> numpartidastr;
-	// uint numeropantallaaux, indiaux;
-	// byte zonasitio, iiii1, iiii2;
-
-	// processingActive();
-	// str(numeropartida, numpartidastr);
-	// assign(partida, string("GAME") + numpartidastr + ".SAV");
-	// rewrite(partida);
-	// regpartida.indicetray = indicetray;
-	// zonasitio = roomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)];
-	// if (zonasitio > 9) {
-	// 	do {
-	// 		indicetray -= 1;
-	// 		characterPosX = trayec[indicetray].x;
-	// 		characterPosY = trayec[indicetray].y;
-	// 		zonasitio = roomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)];
-	// 	} while (!((indicetray == 1) || (zonasitio < 10)));
-	// }
-	// if (zonasitio < 10) {
-	// 	regpartida.xframe = characterPosX;
-	// 	regpartida.yframe = characterPosY;
-	// } else {
-	// 	indicetray = regpartida.indicetray;
-	// 	do {
-	// 		indicetray += 1;
-	// 		characterPosX = trayec[indicetray].x;
-	// 		characterPosY = trayec[indicetray].y;
-	// 		zonasitio = roomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)];
-	// 	} while (!((zonasitio < 10) || (indicetray == longtray)));
-	// 	if (zonasitio < 10) {
-	// 		regpartida.xframe = characterPosX;
-	// 		regpartida.yframe = characterPosY;
-	// 	} else
-	// 		_exit(275);
-	// }
-	// if (contadorpc2 > 65)
-	// 	_exit(274);
-	// regpartida.numeropantalla = roomData->codigo;
-	// regpartida.longtray = longtray;
-	// regpartida.indicetray = indicetray;
-	// regpartida.codigoobjmochila = codigoobjmochila;
-	// regpartida.volumenfxderecho = volumenfxderecho;
-	// regpartida.volumenfxizquierdo = volumenfxizquierdo;
-	// regpartida.volumenmelodiaderecho = volumenmelodiaderecho;
-	// regpartida.volumenmelodiaizquierdo = volumenmelodiaizquierdo;
-	// regpartida.oldxrejilla = oldxrejilla;
-	// regpartida.oldyrejilla = oldyrejilla;
-	// regpartida.animadoprofundidad = animado.profundidad;
-	// regpartida.animadodir = animado.dir;
-	// regpartida.animadoposx = animado.posx;
-	// regpartida.animadoposy = animado.posy;
-	// regpartida.animadoiframe2 = iframe2;
-	// regpartida.zonaactual = zonaactual;
-	// regpartida.zonadestino = zonadestino;
-	// regpartida.oldzonadestino = oldzonadestino;
-	// regpartida.posicioninv = posicioninv;
-	// regpartida.numeroaccion = numeroaccion;
-	// regpartida.oldnumeroacc = oldnumeroacc;
-	// regpartida.pasos = pasos;
-	// regpartida.indicepuertas = indicepuertas;
-	// regpartida.direccionmovimiento = direccionmovimiento;
-	// regpartida.iframe = iframe;
-	// regpartida.parte_del_juego = parte_del_juego;
-	// regpartida.sello_quitado = sello_quitado;
-	// regpartida.lista1 = lista1;
-	// regpartida.lista2 = lista2;
-	// regpartida.completadalista1 = completadalista1;
-	// regpartida.completadalista2 = completadalista2;
-	// regpartida.vasijapuesta = vasijapuesta;
-	// regpartida.guadagna = guadagna;
-	// regpartida.tridente = tridente;
-	// regpartida.torno = torno;
-	// regpartida.barro = barro;
-	// regpartida.diablillo_verde = diablillo_verde;
-	// regpartida.rojo_capturado = rojo_capturado;
-	// regpartida.manual_torno = manual_torno;
-	// regpartida.alacena_abierta = alacena_abierta;
-	// regpartida.baul_abierto = baul_abierto;
-	// regpartida.teleencendida = teleencendida;
-	// regpartida.trampa_puesta = trampa_puesta;
-	// for (indiaux = 0; indiaux < inventoryIconCount; indiaux++) {
-	// 	regpartida.mobj[indiaux].bitmapIndex = mobj[indiaux].bitmapIndex;
-	// 	regpartida.mobj[indiaux].code = mobj[indiaux].code;
-	// 	regpartida.mobj[indiaux].objectName = mobj[indiaux].objectName;
-	// }
-	// regpartida.elemento1 = elemento1;
-	// regpartida.elemento2 = elemento2;
-	// regpartida.xframe = characterPosX;
-	// regpartida.yframe = characterPosY;
-	// regpartida.xframe2 = xframe2;
-	// regpartida.yframe2 = yframe2;
-	// regpartida.oldobjmochila = oldobjmochila;
-	// regpartida.objetomochila = objetomochila;
-	// regpartida.nombrepersonaje = nombrepersonaje;
-	// for(int i = 0; i < routePointCount; i++) {
-	// 	regpartida.mainRoute[i].x = mainRoute[i].x;
-	// 	regpartida.mainRoute[i].y = mainRoute[i].y;
-	// }
-
-	// for (indiaux = 0; indiaux < 300; indiaux++) {
-	// 	regpartida.trayec[indiaux].x = trayec[indiaux].x;
-	// 	regpartida.trayec[indiaux].y = trayec[indiaux].y;
-	// }
-	// for (indiaux = 0; indiaux < maxpersonajes; indiaux++) {
-	// 	regpartida.primera[indiaux] = primera[indiaux];
-	// 	regpartida.lprimera[indiaux] = lprimera[indiaux];
-	// 	regpartida.cprimera[indiaux] = cprimera[indiaux];
-	// 	regpartida.libro[indiaux] = libro[indiaux];
-	// 	regpartida.caramelos[indiaux] = caramelos[indiaux];
-	// }
-
-	// for (indiaux = 0; indiaux < 5; indiaux++) {
-	// 	regpartida.cavernas[indiaux] = cavernas[indiaux];
-	// 	regpartida.firstList[indiaux] = firstList[indiaux];
-	// 	regpartida.secondList[indiaux] = secondList[indiaux];
-	// }
-	// for (indiaux = 0; indiaux < 4; indiaux++) {
-	// 	regpartida.hornacina[0][indiaux] = hornacina[0][indiaux];
-	// 	regpartida.hornacina[1][indiaux] = hornacina[1][indiaux];
-	// }
-	// partida << regpartida;
-	// close(partida);
-	// // assign(fichobj, "OBJETOS.DAT");
-
-	// // if (ioresult != 0)
-	// // 	_exit(261);
-	// // do {
-	// // 	clearObj();
-	// // 	fichobj >> regobj;
-	// // 	if (regobj.usar[numeropartida] != regobj.usar[0]) {
-	// // 		regobj.usar[numeropartida] = regobj.usar[0];
-	// // 		seek(fichobj, (filepos(fichobj) - 1));
-	// // 		fichobj << regobj;
-	// // 	}
-	// // } while (!(eof(fichobj)));
-	// close(fichobj);
-	// numeropantallaaux = ((roomData->codigo * 8) + 7);
-	// setRoomTrajectories(altoanimado, anchoanimado, true);
-
-	// assign(fichpanta, "PANTALLA.DAT");
-
-	// if (ioresult != 0)
-	// 	_exit(320);
-	// seek(fichpanta, ((roomData->codigo * 8) + 7));
-	// // fichpanta << roomData;
-	// seek(fichpanta, 7);
-	// do {
-	// 	clearScreenData();
-	// 	// fichpanta >> roomData;
-	// 	seek(fichpanta, (filepos(fichpanta) - (8 - numeropartida)));
-	// 	// fichpanta << roomData;
-	// 	seek(fichpanta, (filepos(fichpanta) + 7 + (7 - numeropartida)));
-	// } while (!(eof(fichpanta)));
-	// seek(fichpanta, numeropantallaaux);
-	// clearScreenData();
-	// // fichpanta >> roomData;
-	// close(fichpanta);
-	// // movefile(diractual, diractual, "CONVERSA.007", (string("00") + numpartidastr));
-	// setRoomTrajectories(altoanimado, anchoanimado, false);
-}
-
-
 void saveGameToRegister() {
 	uint indiaux;
 	regpartida.numeropantalla = currentRoomData->codigo;
@@ -4202,7 +4029,6 @@ void saveGameToRegister() {
 	regpartida.animadoposx = animado.posx;
 	regpartida.animadoposy = animado.posy;
 	regpartida.animadoiframe2 = iframe2;
-
 
 	regpartida.zonaactual = zonaactual;
 	regpartida.zonadestino = zonadestino;
@@ -4251,7 +4077,7 @@ void saveGameToRegister() {
 	regpartida.objetomochila = objetomochila;
 	regpartida.nombrepersonaje = nombrepersonaje;
 
-	for(int i = 0; i < routePointCount; i++) {
+	for (int i = 0; i < routePointCount; i++) {
 		regpartida.mainRoute[i].x = mainRoute[i].x;
 		regpartida.mainRoute[i].y = mainRoute[i].y;
 	}
@@ -4278,7 +4104,6 @@ void saveGameToRegister() {
 		regpartida.hornacina[1][indiaux] = hornacina[1][indiaux];
 	}
 }
-
 
 void loadGame(regispartida game) {
 	freeAnimation();
@@ -4313,7 +4138,7 @@ void loadGame(regispartida game) {
 	iframe = game.iframe;
 	if (game.parte_del_juego != gamePart) {
 		gamePart = game.parte_del_juego;
-		for(int i = 0; i < inventoryIconCount; i++) {
+		for (int i = 0; i < inventoryIconCount; i++) {
 			free(mochilaxms.bitmap[i]);
 		}
 		loadObjects();
@@ -4326,7 +4151,7 @@ void loadGame(regispartida game) {
 	vasijapuesta = game.vasijapuesta;
 	guadagna = game.guadagna;
 	if (contadorpc > 24)
-		_exit(274);
+		showError(274);
 	tridente = game.tridente;
 	torno = game.torno;
 	barro = game.barro;
@@ -4351,7 +4176,7 @@ void loadGame(regispartida game) {
 	oldobjmochila = game.oldobjmochila;
 	objetomochila = game.objetomochila;
 	nombrepersonaje = game.nombrepersonaje;
-	for(int i = 0; i < routePointCount; i++) {
+	for (int i = 0; i < routePointCount; i++) {
 		mainRoute[i].x = game.mainRoute[i].x;
 		mainRoute[i].y = game.mainRoute[i].y;
 	}
@@ -4475,232 +4300,6 @@ void loadGame(regispartida game) {
 	effect(tipoefectofundido, false, background);
 }
 
-void loadGame(byte numeropartida) {
-	// varying_string<1> numpartidastr;
-	// uint indiaux, indiaux2;
-
-	// processingActive();
-	// str(numeropartida, numpartidastr);
-	// assign(partida, string("GAME") + numpartidastr + ".SAV");
-
-	// if (ioresult != 0)
-	// 	_exit(322);
-	// partida >> regpartida;
-	// tipoefectofundido = Random(15) + 1;
-	// longtray = regpartida.longtray;
-	// indicetray = regpartida.indicetray;
-	// codigoobjmochila = regpartida.codigoobjmochila;
-	// volumenfxderecho = regpartida.volumenfxderecho;
-	// volumenfxizquierdo = regpartida.volumenfxizquierdo;
-	// volumenmelodiaderecho = regpartida.volumenmelodiaderecho;
-	// volumenmelodiaizquierdo = regpartida.volumenmelodiaizquierdo;
-	// oldxrejilla = regpartida.oldxrejilla;
-	// oldyrejilla = regpartida.oldyrejilla;
-	// animado.profundidad = regpartida.animadoprofundidad;
-	// animado.dir = regpartida.animadodir;
-	// animado.posx = regpartida.animadoposx;
-	// animado.posy = regpartida.animadoposy;
-	// iframe2 = regpartida.animadoiframe2;
-	// zonaactual = regpartida.zonaactual;
-	// zonadestino = regpartida.zonadestino;
-	// oldzonadestino = regpartida.oldzonadestino;
-	// posicioninv = regpartida.posicioninv;
-	// numeroaccion = regpartida.numeroaccion;
-	// oldnumeroacc = regpartida.oldnumeroacc;
-	// pasos = regpartida.pasos;
-	// indicepuertas = regpartida.indicepuertas;
-	// direccionmovimiento = regpartida.direccionmovimiento;
-	// iframe = regpartida.iframe;
-	// if (regpartida.parte_del_juego != parte_del_juego) {
-	// 	parte_del_juego = regpartida.parte_del_juego;
-	// 	for(int i = 1; i <= numeroiconos; i++) {
-	// 		free(mochilaxms.dib[i]);
-	// 	}
-	// 	loadObjects();
-	// }
-	// sello_quitado = regpartida.sello_quitado;
-	// lista1 = regpartida.lista1;
-	// lista2 = regpartida.lista2;
-	// completadalista1 = regpartida.completadalista1;
-	// completadalista2 = regpartida.completadalista2;
-	// vasijapuesta = regpartida.vasijapuesta;
-	// guadagna = regpartida.guadagna;
-	// if (contadorpc > 24)
-	// 	_exit(274);
-	// tridente = regpartida.tridente;
-	// torno = regpartida.torno;
-	// barro = regpartida.barro;
-	// diablillo_verde = regpartida.diablillo_verde;
-	// rojo_capturado = regpartida.rojo_capturado;
-	// manual_torno = regpartida.manual_torno;
-	// alacena_abierta = regpartida.alacena_abierta;
-	// baul_abierto = regpartida.baul_abierto;
-	// teleencendida = regpartida.teleencendida;
-	// trampa_puesta = regpartida.trampa_puesta;
-	// for (indiaux = 1; indiaux <= numeroiconos; indiaux++) {
-	// 	mobj[indiaux].dibu = regpartida.mobj[indiaux].dibu;
-	// 	mobj[indiaux].codigo = regpartida.mobj[indiaux].codigo;
-	// 	mobj[indiaux].nombreobj = regpartida.mobj[indiaux].nombreobj;
-	// }
-	// elemento1 = regpartida.elemento1;
-	// elemento2 = regpartida.elemento2;
-	// characterPosX = regpartida.xframe;
-	// characterPosY = regpartida.yframe;
-	// xframe2 = regpartida.xframe2;
-	// yframe2 = regpartida.yframe2;
-	// oldobjmochila = regpartida.oldobjmochila;
-	// objetomochila = regpartida.objetomochila;
-	// nombrepersonaje = regpartida.nombrepersonaje;
-	// rutaprincipal = regpartida.rutaprincipal;
-	// for (indiaux = 1; indiaux <= 300; indiaux++) {
-	// 	trayec[indiaux][1] = regpartida.trayec[indiaux][1];
-	// 	trayec[indiaux][2] = regpartida.trayec[indiaux][2];
-	// }
-	// for (indiaux = 1; indiaux <= maxpersonajes; indiaux++) {
-	// 	primera[indiaux] = regpartida.primera[indiaux];
-	// 	lprimera[indiaux] = regpartida.lprimera[indiaux];
-	// 	cprimera[indiaux] = regpartida.cprimera[indiaux];
-	// 	libro[indiaux] = regpartida.libro[indiaux];
-	// 	caramelos[indiaux] = regpartida.caramelos[indiaux];
-	// }
-	// for (indiaux = 1; indiaux <= 5; indiaux++) {
-	// 	cavernas[indiaux] = regpartida.cavernas[indiaux];
-	// 	listauno[indiaux] = regpartida.listauno[indiaux];
-	// 	listados[indiaux] = regpartida.listados[indiaux];
-	// }
-	// for (indiaux = 1; indiaux <= 4; indiaux++) {
-	// 	hornacina[1][indiaux] = regpartida.hornacina[1][indiaux];
-	// 	hornacina[2][indiaux] = regpartida.hornacina[2][indiaux];
-	// }
-	// close(partida);
-	// assign(fichobj, "OBJETOS.DAT");
-
-	// if (ioresult != 0)
-	// 	_exit(261);
-	// do {
-	// 	limpiaregobj();
-	// 	fichobj >> regobj;
-	// 	if (regobj.usar[0] != regobj.usar[numeropartida]) {
-	// 		regobj.usar[0] = regobj.usar[numeropartida];
-	// 		seek(fichobj, (filepos(fichobj) - 1));
-	// 		fichobj << regobj;
-	// 	}
-	// } while (!(eof(fichobj)));
-	// close(fichobj);
-	// assign(fichpanta, "PANTALLA.DAT");
-
-	// if (ioresult != 0)
-	// 	_exit(320);
-	// seek(fichpanta, numeropartida);
-	// do {
-	// 	clearScreenData();
-	// 	fichpanta >> datospantalla;
-	// 	seek(fichpanta, (filepos(fichpanta) + (6 - numeropartida)));
-	// 	fichpanta << datospantalla;
-	// 	seek(fichpanta, (filepos(fichpanta) + numeropartida));
-	// } while (!(eof(fichpanta)));
-	// close(fichpanta);
-	// movefile(diractual, diractual, string("CONVERSA.00") + numpartidastr, "007");
-	// totalFadeOut(0);
-	// cleardevice();
-	// loadPalette("DEFAULT");
-	// loadScreenData(regpartida.numeropantalla);
-	// switch (datospantalla.codigo) {
-	// case 2: {
-	// 	if (teleencendida)
-	// 		autoPlayVoc("PARASITO", 355778, 20129);
-	// 	else
-	// 		cargatele();
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// } break;
-	// case 4: {
-	// 	loadVoc("GOTA", 140972, 1029);
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// } break;
-	// case 5: {
-	// 	setSfxVolume(volumenfxizquierdo, 0);
-	// 	autoPlayVoc("CALDERA", 6433, 15386);
-	// } break;
-	// case 6: {
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// 	autoPlayVoc("CALDERA", 6433, 15386);
-	// } break;
-	// case 17: {
-	// 	if ((libro[1] == true) && (datospantalla.banderamovimiento == true))
-	// 		disableSecondAnimation();
-	// } break;
-	// case 20: {
-	// 	switch (hornacina[1][hornacina[1][4]]) {
-	// 	case 0:
-	// 		datospantalla.indexadoobjetos[9]->objectName = "HORNACINA";
-	// 		break;
-	// 	case 561:
-	// 		datospantalla.indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
-	// 		break;
-	// 	case 563:
-	// 		datospantalla.indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
-	// 		break;
-	// 	case 615:
-	// 		datospantalla.indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
-	// 		break;
-	// 	}
-	// } break;
-	// case 23: {
-	// 	autoPlayVoc("Fuente", 0, 0);
-	// 	setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-	// } break;
-	// case 24: {
-	// 	switch (hornacina[2][hornacina[2][4]]) {
-	// 	case 0:
-	// 		datospantalla.indexadoobjetos[8]->objectName = "HORNACINA";
-	// 		break;
-	// 	case 561:
-	// 		datospantalla.indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
-	// 		break;
-	// 	case 615:
-	// 		datospantalla.indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
-	// 		break;
-	// 	case 622:
-	// 		datospantalla.indexadoobjetos[8]->objectName = "PARED";
-	// 		break;
-	// 	case 623:
-	// 		datospantalla.indexadoobjetos[8]->objectName = "TORNO";
-	// 		break;
-	// 	}
-	// 	if (trampa_puesta) {
-	// 		datospantalla.banderamovimiento = true;
-	// 		loadAnimation(datospantalla.nombremovto);
-	// 		iframe2 = 1;
-	// 		indicetray2 = 1;
-	// 		datospantalla.tray2[indicetray2].x = 214 - 15;
-	// 		datospantalla.tray2[indicetray2].y = 115 - 42;
-	// 		animado.dir = datospantalla.dir2[indicetray2];
-	// 		animado.posx = datospantalla.tray2[indicetray2].x;
-	// 		animado.posy = datospantalla.tray2[indicetray2].y;
-	// 		animado.profundidad = 15;
-	// 		for (indiaux = 1; indiaux <= maxrejax; indiaux++)
-	// 			for (indiaux2 = 1; indiaux2 <= maxrejay; indiaux2++) {
-	// 				if (rejamascaramovto[indiaux][indiaux2] > 0)
-
-	// 					datospantalla.rejapantalla[(oldposx + indiaux - 1)][(oldposy + indiaux2 - 1)] = rejamascaramovto[indiaux][indiaux2];
-	// 				if (rejamascararaton[indiaux][indiaux2] > 0)
-
-	// 					datospantalla.rejaraton[(oldposx + indiaux - 1)][(oldposy + indiaux2 - 1)] = rejamascararaton[indiaux][indiaux2];
-	// 			}
-	// 	}
-	// 	assembleScreen();
-	// } break;
-	// }
-	// mask();
-	// posicioninv = 1;
-	// drawBackpack();
-	// if ((rojo_capturado == false) && (datospantalla.codigo == 24) &&
-	// 	(trampa_puesta == false))
-	// 	runaroundRed();
-	// effect(tipoefectofundido, false, fondo);
-}
-
-
 struct indicepart {
 	byte ultimapartida;
 	Common::String listapartidas[6];
@@ -4708,7 +4307,7 @@ struct indicepart {
 
 void seleccionaPartida(indicepart regindfich, int numSeleccion) {
 	g_engine->_mouseManager->hide();
-	for(int i = 0; i < 6; i++){
+	for (int i = 0; i < 6; i++) {
 		int color = i == numSeleccion ? 255 : 253;
 		outtextxy(65, 29, regindfich.listapartidas[i], color);
 	}
@@ -4727,17 +4326,16 @@ void saveLoad() {
 	indicepart regindfich;
 
 	Common::File fichindice;
-	if(fichindice.open("PARTIDAS.INX")){
+	if (fichindice.open("PARTIDAS.INX")) {
 		regindfich.ultimapartida = fichindice.readByte();
-		for(int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) {
 			int nameSize = fichindice.readByte();
 			char *name = (char *)malloc(nameSize);
 			fichindice.read(name, nameSize);
 			fichindice.skip(255 - nameSize);
 			regindfich.listapartidas[i] = Common::String(name, name + nameSize);
 		}
-	}
-	else {
+	} else {
 		regindfich.ultimapartida = 1;
 		for (int i = 0; i < 6; i++) {
 			regindfich.listapartidas[i] = Common::String().format("DISPONIBLE %d", i);
@@ -4769,7 +4367,7 @@ void saveLoad() {
 	outtextxy(65, 89, regindfich.listapartidas[4], 253);
 	outtextxy(65, 104, regindfich.listapartidas[5], 253);
 	if (contadorpc2 > 17)
-		error("274");
+		showError(274);
 	xraton = 150;
 	yraton = 60;
 	// iraton = 1;
@@ -4798,29 +4396,20 @@ void saveLoad() {
 					mouseClicked = true;
 					pulsax = e.mouse.x;
 					pulsay = e.mouse.y;
-				}
-				else if (e.type == Common::EVENT_KEYUP){
+				} else if (e.type == Common::EVENT_KEYUP) {
 					keyPressed = true;
 				}
 			}
-
 
 			g_engine->_screen->update();
 			g_system->delayMillis(10);
 		} while (!keyPressed && !mouseClicked && !g_engine->shouldQuit());
 
-		if(mouseClicked) {
-			if(pulsay >= 13 && pulsay <= 16){
-				if(pulsax >= 54 && pulsax <=124){
+		if (mouseClicked) {
+			if (pulsay >= 13 && pulsay <= 16) {
+				if (pulsax >= 54 && pulsax <= 124) {
 					if (partidaselecc > 0 && !desactivagrabar && (nombrepartida != Common::String("DISPONIBLE ") + (char)(partidaselecc + 48)) && (nombrepartida != "")) {
 						saveGame(partidaselecc);
-						// rewrite(fichindice);
-						// regindfich.ultimapartida = partidaselecc;
-						// if (modificada)
-							// regindfich.listapartidas[partidaselecc] =
-								// nombrepartida;
-						// fichindice << regindfich;
-						// close(fichindice);
 						fichindice.close();
 						putImg(50, 10, puntfondmenu);
 						salirmenufunciones = true;
@@ -4828,8 +4417,7 @@ void saveLoad() {
 					} else {
 						sound(100, 300);
 					}
-				}
-				else if (pulsax >= 130 && pulsax <= 194){
+				} else if (pulsax >= 130 && pulsax <= 194) {
 					if ((partidaselecc > 0) && !((modificada))) {
 
 						if (regindfich.listapartidas[partidaselecc] != (Common::String("DISPONIBLE ") + (char)(partidaselecc + 48))) {
@@ -4869,8 +4457,7 @@ void saveLoad() {
 						outtextxy(65, 104, regindfich.listapartidas[6], 253);
 						g_engine->_mouseManager->show();
 					}
-				}
-				else if (pulsax >= 200 && pulsax <= 250) {
+				} else if (pulsax >= 200 && pulsax <= 250) {
 					if (inGame && !desactivagrabar) {
 						putImg(50, 10, puntfondmenu);
 						salirmenufunciones = true;
@@ -4879,43 +4466,37 @@ void saveLoad() {
 						sound(100, 300);
 					}
 				}
-			}
-			else if (pulsay >= 24 && pulsay <= 32) {
+			} else if (pulsay >= 24 && pulsay <= 32) {
 				partidaselecc = 0;
 				modificada = false;
 				ytext = 29;
 				seleccionaPartida(regindfich, 0);
 				nombrepartida = regindfich.listapartidas[0];
-			}
-			else if (pulsay >= 39 && pulsay <= 47) {
+			} else if (pulsay >= 39 && pulsay <= 47) {
 				partidaselecc = 1;
 				modificada = false;
 				ytext = 44;
 				seleccionaPartida(regindfich, 1);
 				nombrepartida = regindfich.listapartidas[1];
-			}
-			else if (pulsay >= 54 && pulsay <= 62) {
+			} else if (pulsay >= 54 && pulsay <= 62) {
 				partidaselecc = 2;
 				modificada = false;
 				ytext = 59;
 				seleccionaPartida(regindfich, 2);
 				nombrepartida = regindfich.listapartidas[2];
-			}
-			else if (pulsay >= 69 && pulsay <= 77) {
+			} else if (pulsay >= 69 && pulsay <= 77) {
 				partidaselecc = 3;
 				modificada = false;
 				ytext = 74;
 				seleccionaPartida(regindfich, 3);
 				nombrepartida = regindfich.listapartidas[3];
-			}
-			else if (pulsay >= 84 && pulsay <= 92) {
+			} else if (pulsay >= 84 && pulsay <= 92) {
 				partidaselecc = 4;
 				modificada = false;
 				ytext = 89;
 				seleccionaPartida(regindfich, 4);
 				nombrepartida = regindfich.listapartidas[4];
-			}
-			else if (pulsay >= 99 && pulsay <= 107) {
+			} else if (pulsay >= 99 && pulsay <= 107) {
 				partidaselecc = 5;
 				modificada = false;
 				ytext = 0;
@@ -4945,7 +4526,7 @@ void loadTalkAnimations() {
 	Common::File fichcani;
 
 	if (!fichcani.open("TIOHABLA.SEC")) {
-		error("Error opening file animation (265)");
+		showError(265);
 	}
 	int32 posfilehabla;
 
@@ -4977,7 +4558,7 @@ void loadTalkAnimations() {
 		}
 
 		if (!result)
-			error("Could not open secondary animation file! 265");
+			showError(265);
 		sizeanimado = fichcani.readUint16LE();
 		secondaryAnimationFrameCount = fichcani.readByte();
 		numerodir = fichcani.readByte();
@@ -4999,7 +4580,7 @@ void unloadTalkAnimations() {
 
 	Common::File fichcani;
 	if (!fichcani.open("PERSONAJ.SPT")) {
-		error("Error loading character sprite! 265");
+		showError(265);
 	}
 	sizeframe = fichcani.readUint16LE();
 
@@ -5011,7 +4592,7 @@ void unloadTalkAnimations() {
 
 	if ((currentRoomData->nombremovto != "PETER") && (currentRoomData->nombremovto != "ARZCAEL")) {
 		if (!fichcani.open(Common::Path(currentRoomData->nombremovto + ".DAT"))) {
-			error("loading secondary animation after talk (265)");
+			showError(265);
 		}
 		sizeanimado = fichcani.readUint16LE();
 		secondaryAnimationFrameCount = fichcani.readByte();
@@ -5051,8 +4632,7 @@ void hypertext(
 	byte colorsombraht,
 	uint &numresp,
 	/** Whether the text being said is part of a conversation or just descriptions */
-	boolean banderaconversa
-) {
+	boolean banderaconversa) {
 	debug("hypertext");
 	regismht regmht;
 
@@ -5354,7 +4934,7 @@ void readConversationFile(Common::String f) {
 	Common::File conversationFile;
 	debug("Filename = %s", f.c_str());
 	if (!conversationFile.open(Common::Path(f))) {
-		error("error opening conversation file (314)");
+		showError(314);
 	}
 	int64 fileSize = conversationFile.size();
 	// TODO: Will this be freed automatically by the `MemorySeekableReadWriteStream`?
@@ -5468,7 +5048,7 @@ void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream) {
 void initializeObjectFile() {
 	Common::File objFile;
 	if (!objFile.open(Common::Path("OBJETOS.DAT"))) {
-		error("initializeObjectFile(): ioresult (261)");
+		showError(261);
 	}
 	delete (invItemData);
 	byte *objectData = (byte *)malloc(objFile.size());
@@ -5537,27 +5117,10 @@ void saveItemRegister(InvItemRegister object, Common::SeekableWriteStream *strea
 
 void printHornacinas() {
 	debug("|   | %03d | %03d | %03d | %03d |", 0, 1, 2, 3);
-	debug("| 0 | %03d | %03d | %03d | %03d |", hornacina[0][0],hornacina[0][1],hornacina[0][2],hornacina[0][3]);
-	debug("| 1 | %03d | %03d | %03d | %03d |", hornacina[1][0],hornacina[1][1],hornacina[1][2],hornacina[1][3]);
+	debug("| 0 | %03d | %03d | %03d | %03d |", hornacina[0][0], hornacina[0][1], hornacina[0][2], hornacina[0][3]);
+	debug("| 1 | %03d | %03d | %03d | %03d |", hornacina[1][0], hornacina[1][1], hornacina[1][2], hornacina[1][3]);
 	debug("hornacina[0][hornacina[0][3]] = %d", hornacina[0][hornacina[0][3]]);
 	debug("hornacina[1][hornacina[1][3]] = %d", hornacina[1][hornacina[1][3]]);
-}
-
-void dumpRoomFile(Common::String name) {
-
-	Common::DumpFile fich;
-	fich.open(Common::Path("TEST/" + name), true);
-	if (!fich.isOpen()) {
-		error("Could not open output file!");
-	}
-	rooms->seek(0, 0);
-	byte *buf = (byte *)malloc(rooms->size());
-	rooms->read(buf, rooms->size());
-	fich.write(buf, rooms->size());
-	fich.finalize();
-	fich.close();
-	free(buf);
-	debug("Written %s", name.c_str());
 }
 
 } // End of namespace Tot

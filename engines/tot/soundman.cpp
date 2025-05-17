@@ -55,7 +55,7 @@ void SoundManager::loadVoc(Common::String fileName, long offset, int16 size) {
 
 	if (size == 0) {
 		if (!vocResource.open(Common::Path(fileName + ".VOC"))) {
-			error("Error loading file %s", fileName.c_str());
+			_exit(266);
 		}
 
 		_lastSrcStream = vocResource.readStream((uint32)vocResource.size());
@@ -63,7 +63,7 @@ void SoundManager::loadVoc(Common::String fileName, long offset, int16 size) {
 	} else {
 		Common::File vocResource;
 		if (!vocResource.open("EFECTOS.DAT")) {
-			error("loadVoc(): could not open SFX file! (266)");
+			_exit(266);
 		}
 		vocResource.seek(offset);
 		_lastSrcStream = vocResource.readStream((uint32)size);
@@ -182,7 +182,7 @@ void MusicPlayer::playMidi(const char *fileName, bool loop) {
 	debug("Opening music file %s", fileName);
 	musicFile.open(fileName);
 	if (!musicFile.isOpen()) {
-		error("Cannot open music file %s", fileName);
+		_exit(267);
 		return;
 	}
 	byte *data = (byte *)malloc(musicFile.size());

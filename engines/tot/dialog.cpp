@@ -40,7 +40,6 @@ Tree ar, auxTree, step;
 
 boolean endOfConversation;
 
-
 Common::String decrypt(Common::String tEncriptado) {
 	for (int i = 0; i < tEncriptado.size(); i++) {
 		tEncriptado.setChar(decryptionKey[i] ^ (char)tEncriptado[i], i);
@@ -547,7 +546,7 @@ void talk(byte person) {
 	// Make sure to autosave
 	g_engine->saveAutosaveIfEnabled();
 	verb.close();
-	if(g_engine->shouldQuit()) {
+	if (g_engine->shouldQuit()) {
 		return;
 	}
 	delete ar;
@@ -586,15 +585,13 @@ void talkScreenObject() {
 
 	if (regobj.habla > 0) {
 		talk(regobj.habla);
-	}
-	else {
+	} else {
 		assignText();
 		hypertext((Random(10) + 1039), 255, 0, kaka, false);
 		verb.close();
 		if (contadorpc > 198)
-			error("Error contadorpc = 274");
+			showError(274);
 	}
 }
 
 } // End of namespace Tot
-

@@ -50,7 +50,7 @@ void newGame() {
 	g_engine->_mouseManager->hide();
 	obtainName(nombrepersonaje);
 
-	if(!g_engine->shouldQuit()){
+	if (!g_engine->shouldQuit()) {
 		totalFadeOut(0);
 		clear();
 		processingActive();
@@ -119,7 +119,7 @@ int engine_start() {
 	}
 
 	boolean enforceSecondPart = false;
-	if(enforceSecondPart) { //DEBUG
+	if (enforceSecondPart) { // DEBUG
 		completadalista1 = true;
 		completadalista2 = true;
 		gamePart = 1;
@@ -131,297 +131,184 @@ int engine_start() {
 int startGame() {
 	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	switch (gamePart) {
-		case 1:
-			playMidiFile("PRIMERA", true);
-			break;
-		case 2:
-			playMidiFile("SEGUNDA", true);
-			break;
-		}
-		contadorpc2 = contadorpc;
-		restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-		inGame = true;
+	case 1:
+		playMidiFile("PRIMERA", true);
+		break;
+	case 2:
+		playMidiFile("SEGUNDA", true);
+		break;
+	}
+	contadorpc2 = contadorpc;
+	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	inGame = true;
 
-		Common::Event e;
-		while (!salirdeljuego && !g_engine->shouldQuit()) {
-			bool escapePressed = false;
-			g_engine->_chrono->updateChrono();
-			g_engine->_mouseManager->animateMouseIfNeeded();
-			// debug
-			while (g_system->getEventManager()->pollEvent(e)) {
-				if (isMouseEvent(e)) {
-					g_engine->_mouseManager->setMousePos(e.mouse);
-					xraton = e.mouse.x;
-					yraton = e.mouse.y;
-				}
-				if (e.type == Common::EVENT_KEYUP) {
-					changeGameSpeed(e);
+	Common::Event e;
+	while (!salirdeljuego && !g_engine->shouldQuit()) {
+		bool escapePressed = false;
+		g_engine->_chrono->updateChrono();
+		g_engine->_mouseManager->animateMouseIfNeeded();
+		// debug
+		while (g_system->getEventManager()->pollEvent(e)) {
+			if (isMouseEvent(e)) {
+				g_engine->_mouseManager->setMousePos(e.mouse);
+				xraton = e.mouse.x;
+				yraton = e.mouse.y;
+			}
+			if (e.type == Common::EVENT_KEYUP) {
+				changeGameSpeed(e);
 
-					switch (e.kbd.keycode) {
-					case Common::KEYCODE_ESCAPE:
-						escapePressed = true;
+				switch (e.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					escapePressed = true;
+					break;
+				case Common::KEYCODE_F1:
+					soundControls();
+					break;
+				case Common::KEYCODE_F2:
+					g_engine->openMainMenuDialog();
+					// saveLoad();
+					break;
+					/* Debug */
+					{
+					case Common::KEYCODE_5:
+						showMouseGrid = !showMouseGrid;
 						break;
-					case Common::KEYCODE_F1:
-						soundControls();
+					case Common::KEYCODE_6:
+						showScreenGrid = !showScreenGrid;
 						break;
-					case Common::KEYCODE_F2:
-						g_engine->openMainMenuDialog();
-						// saveLoad();
+					case Common::KEYCODE_7:
+						showGameGrid = !showGameGrid;
 						break;
-						/* Debug */
-						{
-						case Common::KEYCODE_5:
-							showMouseGrid = !showMouseGrid;
-							break;
-						case Common::KEYCODE_6:
-							showScreenGrid = !showScreenGrid;
-							break;
-						case Common::KEYCODE_7:
-							showGameGrid = !showGameGrid;
-							break;
-						case Common::KEYCODE_0:
-							effect(13, false, background);
-							break;
-						case Common::KEYCODE_8:
-							drawObjectAreas = !drawObjectAreas;
-							break;
-						case Common::KEYCODE_1:
-							setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
-							break;
-						case Common::KEYCODE_2:
-							setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);
-							break;
-						}
-					/* End debug */
-					case Common::KEYCODE_a: // open
-						numeroaccion = 5;
-						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+					case Common::KEYCODE_0:
+						effect(13, false, background);
 						break;
-					case Common::KEYCODE_e: // close
-						numeroaccion = 6;
-						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+					case Common::KEYCODE_8:
+						drawObjectAreas = !drawObjectAreas;
 						break;
-					case Common::KEYCODE_c: // pickup
-						numeroaccion = 2;
-						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+					case Common::KEYCODE_1:
+						setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 						break;
-					case Common::KEYCODE_h: // talk
-						numeroaccion = 1;
-						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+					case Common::KEYCODE_2:
+						setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);
 						break;
-					case Common::KEYCODE_m: // look
-						numeroaccion = 3;
-						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
-						break;
-					case Common::KEYCODE_u: // use
-						numeroaccion = 4;
-						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
-						break;
-					default:
-						numeroaccion = 0; // go to
 					}
-				} else if (e.type == Common::EVENT_LBUTTONUP) {
-					pulsax = e.mouse.x;
-					pulsay = e.mouse.y;
-					if (pulsay > 0 && pulsay < 131) {
-						switch (numeroaccion) {
-						case 0: // go to
-							contadorpc2 = contadorpc;
-							// gets the area where the character is now standing. Area is calculated using xframe,yframe plus some adjustments to get the center of the feet
-							zonaactual = currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
-							if (zonaactual < 10) {
-								xframe2 = pulsax + 7;
-								yframe2 = pulsay + 7;
-								// obtains the target area from the clicked coordinates
-								zonadestino = currentRoomData->rejapantalla[xframe2 / factorx][yframe2 / factory];
-								if (currentRoomData->codigo == 21 && currentRoomData->banderamovimiento) {
-									if ((zonadestino >= 1 && zonadestino <= 5) ||
-										(zonadestino >= 9 && zonadestino <= 13) ||
-										(zonadestino >= 18 && zonadestino <= 21) ||
-										zonadestino == 24 || zonadestino == 25) {
+				/* End debug */
+				case Common::KEYCODE_a: // open
+					numeroaccion = 5;
+					action();
+					oldxrejilla = 0;
+					oldyrejilla = 0;
+					break;
+				case Common::KEYCODE_e: // close
+					numeroaccion = 6;
+					action();
+					oldxrejilla = 0;
+					oldyrejilla = 0;
+					break;
+				case Common::KEYCODE_c: // pickup
+					numeroaccion = 2;
+					action();
+					oldxrejilla = 0;
+					oldyrejilla = 0;
+					break;
+				case Common::KEYCODE_h: // talk
+					numeroaccion = 1;
+					action();
+					oldxrejilla = 0;
+					oldyrejilla = 0;
+					break;
+				case Common::KEYCODE_m: // look
+					numeroaccion = 3;
+					action();
+					oldxrejilla = 0;
+					oldyrejilla = 0;
+					break;
+				case Common::KEYCODE_u: // use
+					numeroaccion = 4;
+					action();
+					oldxrejilla = 0;
+					oldyrejilla = 0;
+					break;
+				default:
+					numeroaccion = 0; // go to
+				}
+			} else if (e.type == Common::EVENT_LBUTTONUP) {
+				pulsax = e.mouse.x;
+				pulsay = e.mouse.y;
+				if (pulsay > 0 && pulsay < 131) {
+					switch (numeroaccion) {
+					case 0: // go to
+						contadorpc2 = contadorpc;
+						// gets the area where the character is now standing. Area is calculated using xframe,yframe plus some adjustments to get the center of the feet
+						zonaactual = currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
+						if (zonaactual < 10) {
+							xframe2 = pulsax + 7;
+							yframe2 = pulsay + 7;
+							// obtains the target area from the clicked coordinates
+							zonadestino = currentRoomData->rejapantalla[xframe2 / factorx][yframe2 / factory];
+							if (currentRoomData->codigo == 21 && currentRoomData->banderamovimiento) {
+								if ((zonadestino >= 1 && zonadestino <= 5) ||
+									(zonadestino >= 9 && zonadestino <= 13) ||
+									(zonadestino >= 18 && zonadestino <= 21) ||
+									zonadestino == 24 || zonadestino == 25) {
 
-										zonadestino = 7;
-										pulsax = 232;
-										pulsay = 75;
+									zonadestino = 7;
+									pulsax = 232;
+									pulsay = 75;
 
-										xframe2 = pulsax + 7;
-										yframe2 = pulsay + 7;
-									}
+									xframe2 = pulsax + 7;
+									yframe2 = pulsay + 7;
 								}
+							}
 
-								if (oldzonadestino != zonadestino || zonadestino < 10) {
-									oldzonadestino = zonadestino;
-									// Resets the entire route
-									calculateRoute(zonaactual, zonadestino);
+							if (oldzonadestino != zonadestino || zonadestino < 10) {
+								oldzonadestino = zonadestino;
+								// Resets the entire route
+								calculateRoute(zonaactual, zonadestino);
 
-									indicepuertas = 0;
-									cambiopantalla = false;
+								indicepuertas = 0;
+								cambiopantalla = false;
 
-									for(indicepuertas = 0; indicepuertas < 5; indicepuertas++) {
-										if (currentRoomData->doors[indicepuertas].codigopuerta == zonadestino) {
+								for (indicepuertas = 0; indicepuertas < 5; indicepuertas++) {
+									if (currentRoomData->doors[indicepuertas].codigopuerta == zonadestino) {
 
-											if (currentRoomData->doors[indicepuertas].abiertacerrada == 1) {
-												cambiopantalla = true;
-												break;
-											} else if ((currentRoomData->codigo == 5 && zonadestino == 27) || (currentRoomData->codigo == 6 && zonadestino == 21)) {
-												;
-											} else {
-												pasos -= 1;
-											}
+										if (currentRoomData->doors[indicepuertas].abiertacerrada == 1) {
+											cambiopantalla = true;
+											break;
+										} else if ((currentRoomData->codigo == 5 && zonadestino == 27) || (currentRoomData->codigo == 6 && zonadestino == 21)) {
+											;
+										} else {
+											pasos -= 1;
 										}
 									}
-									// Sets xframe2 again due to the substraction when closed doors
-									xframe2 = pasos;
-								} else
-									xframe2 = 0;
-							}
-							break;
-						case 1: // talk
-							cambiopantalla = false;
-							numeroaccion = 0;
-							talkScreenObject();
-							contadorpc2 = contadorpc;
-							break;
-						case 2: // pick up
-							cambiopantalla = false;
-							numeroaccion = 0;
-							pickupScreenObject();
-							contadorpc = contadorpc2;
-							break;
-						case 3: // look at
-							cambiopantalla = false;
-							destinox_paso = (pulsax + 7) / factorx;
-							destinoy_paso = (pulsay + 7) / factory;
-							if (currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->indicefichero > 0) {
-								goToObject(
-									currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-									currentRoomData->rejapantalla[destinox_paso][destinoy_paso]);
-								if (currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->indicefichero == 562)
-
-									switch (currentRoomData->codigo) {
-									case 20:
-										if (hornacina[0][hornacina[0][3]] > 0)
-											readItemRegister(hornacina[0][hornacina[0][3]]);
-										else
-											readItemRegister(562);
-										break;
-									case 24:
-										if (hornacina[1][hornacina[1][3]] > 0)
-											readItemRegister(hornacina[1][hornacina[1][3]]);
-										else
-											readItemRegister(562);
-										break;
-									}
-								else
-									readItemRegister(currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->indicefichero);
-								if (regobj.lookAtTextRef > 0)
-									drawText(regobj.lookAtTextRef);
-								numeroaccion = 0;
-							}
-							break;
-						case 4: //use
-							cambiopantalla = false;
-							numeroaccion = 0;
-							useScreenObject();
-							contadorpc = contadorpc2;
-							break;
-						case 5: // open
-							cambiopantalla = false;
-							numeroaccion = 0;
-							openScreenObject();
-							break;
-						case 6: { // close
-							cambiopantalla = false;
-							numeroaccion = 0;
-							closeScreenObject();
-							contadorpc = contadorpc2;
-						} break;
+								}
+								// Sets xframe2 again due to the substraction when closed doors
+								xframe2 = pasos;
+							} else
+								xframe2 = 0;
 						}
-					} else if (pulsay > 148 && pulsay < 158) {
-						if (pulsax >= 3 && pulsax <= 53) {
-							numeroaccion = 1;
-							action();
-							break;
-						} else if (pulsax >= 58 && pulsax <= 103) {
-							numeroaccion = 2;
-							action();
-							break;
-						} else if (pulsax >= 108 && pulsax <= 153) {
-							numeroaccion = 3;
-							action();
-							break;
-						} else if (pulsax >= 158 && pulsax <= 198) {
-							numeroaccion = 4;
-							action();
-							break;
-						} else if (pulsax >= 203 && pulsax <= 248) {
-							numeroaccion = 5;
-							action();
-							break;
-						} else if (pulsax >= 253 && pulsax <= 311) {
-							numeroaccion = 6;
-							action();
-							break;
-						} else {
-							numeroaccion = 0;
-							action();
-							contadorpc2 = contadorpc;
-						}
-					} else if (pulsay > 166 && pulsay < 199) {
-						if (pulsax >= 3 && pulsax <= 19) {
-							inventory(0, 33);
-							break;
-						} else if (pulsax >= 26 && pulsax <= 65) {
-							handleAction(posicioninv);
-							break;
-						} else if (pulsax >= 70 && pulsax <= 108) {
-							handleAction(posicioninv + 1);
-							break;
-						} else if (pulsax >= 113 && pulsax <= 151) {
-							handleAction(posicioninv + 2);
-							break;
-						} else if (pulsax >= 156 && pulsax <= 194) {
-							handleAction(posicioninv + 3);
-							break;
-						} else if (pulsax >= 199 && pulsax <= 237) {
-							handleAction(posicioninv + 4);
-							break;
-						} else if (pulsax >= 242 && pulsax <= 280) {
-							handleAction(posicioninv + 5);
-							break;
-						} else if (pulsax >= 290 && pulsax <= 311) {
-							inventory(1, 33);
-							break;
-						} else {
-							numeroaccion = 0;
-							action();
-						}
-					}
-				} else if (e.type == Common::EVENT_RBUTTONUP) {
-					pulsax = e.mouse.x;
-					pulsay = e.mouse.y;
-					destinox_paso = (pulsax + 7) / factorx;
-					destinoy_paso = (pulsay + 7) / factory;
-					contadorpc2 = contadorpc;
-					if (destinoy_paso < 28) {
-						RoomObjectListEntry obj = *currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]];
-						if (obj.indicefichero > 0) {
-
-							drawLookAtItem(obj);
-							goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], currentRoomData->rejapantalla[destinox_paso][destinoy_paso]);
-							if (obj.indicefichero == 562)
+						break;
+					case 1: // talk
+						cambiopantalla = false;
+						numeroaccion = 0;
+						talkScreenObject();
+						contadorpc2 = contadorpc;
+						break;
+					case 2: // pick up
+						cambiopantalla = false;
+						numeroaccion = 0;
+						pickupScreenObject();
+						contadorpc = contadorpc2;
+						break;
+					case 3: // look at
+						cambiopantalla = false;
+						destinox_paso = (pulsax + 7) / factorx;
+						destinoy_paso = (pulsay + 7) / factory;
+						if (currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->indicefichero > 0) {
+							goToObject(
+								currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
+								currentRoomData->rejapantalla[destinox_paso][destinoy_paso]);
+							if (currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->indicefichero == 562)
 
 								switch (currentRoomData->codigo) {
 								case 20:
@@ -438,156 +325,269 @@ int startGame() {
 									break;
 								}
 							else
-								readItemRegister(obj.indicefichero);
+								readItemRegister(currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->indicefichero);
 							if (regobj.lookAtTextRef > 0)
 								drawText(regobj.lookAtTextRef);
 							numeroaccion = 0;
 						}
+						break;
+					case 4: // use
+						cambiopantalla = false;
+						numeroaccion = 0;
+						useScreenObject();
+						contadorpc = contadorpc2;
+						break;
+					case 5: // open
+						cambiopantalla = false;
+						numeroaccion = 0;
+						openScreenObject();
+						break;
+					case 6: { // close
+						cambiopantalla = false;
+						numeroaccion = 0;
+						closeScreenObject();
+						contadorpc = contadorpc2;
+					} break;
+					}
+				} else if (pulsay > 148 && pulsay < 158) {
+					if (pulsax >= 3 && pulsax <= 53) {
+						numeroaccion = 1;
+						action();
+						break;
+					} else if (pulsax >= 58 && pulsax <= 103) {
+						numeroaccion = 2;
+						action();
+						break;
+					} else if (pulsax >= 108 && pulsax <= 153) {
+						numeroaccion = 3;
+						action();
+						break;
+					} else if (pulsax >= 158 && pulsax <= 198) {
+						numeroaccion = 4;
+						action();
+						break;
+					} else if (pulsax >= 203 && pulsax <= 248) {
+						numeroaccion = 5;
+						action();
+						break;
+					} else if (pulsax >= 253 && pulsax <= 311) {
+						numeroaccion = 6;
+						action();
+						break;
+					} else {
+						numeroaccion = 0;
+						action();
+						contadorpc2 = contadorpc;
+					}
+				} else if (pulsay > 166 && pulsay < 199) {
+					if (pulsax >= 3 && pulsax <= 19) {
+						inventory(0, 33);
+						break;
+					} else if (pulsax >= 26 && pulsax <= 65) {
+						handleAction(posicioninv);
+						break;
+					} else if (pulsax >= 70 && pulsax <= 108) {
+						handleAction(posicioninv + 1);
+						break;
+					} else if (pulsax >= 113 && pulsax <= 151) {
+						handleAction(posicioninv + 2);
+						break;
+					} else if (pulsax >= 156 && pulsax <= 194) {
+						handleAction(posicioninv + 3);
+						break;
+					} else if (pulsax >= 199 && pulsax <= 237) {
+						handleAction(posicioninv + 4);
+						break;
+					} else if (pulsax >= 242 && pulsax <= 280) {
+						handleAction(posicioninv + 5);
+						break;
+					} else if (pulsax >= 290 && pulsax <= 311) {
+						inventory(1, 33);
+						break;
+					} else {
+						numeroaccion = 0;
+						action();
+					}
+				}
+			} else if (e.type == Common::EVENT_RBUTTONUP) {
+				pulsax = e.mouse.x;
+				pulsay = e.mouse.y;
+				destinox_paso = (pulsax + 7) / factorx;
+				destinoy_paso = (pulsay + 7) / factory;
+				contadorpc2 = contadorpc;
+				if (destinoy_paso < 28) {
+					RoomObjectListEntry obj = *currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]];
+					if (obj.indicefichero > 0) {
+
+						drawLookAtItem(obj);
+						goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], currentRoomData->rejapantalla[destinox_paso][destinoy_paso]);
+						if (obj.indicefichero == 562)
+
+							switch (currentRoomData->codigo) {
+							case 20:
+								if (hornacina[0][hornacina[0][3]] > 0)
+									readItemRegister(hornacina[0][hornacina[0][3]]);
+								else
+									readItemRegister(562);
+								break;
+							case 24:
+								if (hornacina[1][hornacina[1][3]] > 0)
+									readItemRegister(hornacina[1][hornacina[1][3]]);
+								else
+									readItemRegister(562);
+								break;
+							}
+						else
+							readItemRegister(obj.indicefichero);
+						if (regobj.lookAtTextRef > 0)
+							drawText(regobj.lookAtTextRef);
+						numeroaccion = 0;
 					}
 				}
 			}
+		}
 
-			checkMouseGrid();
-			advanceAnimations(false, true);
+		checkMouseGrid();
+		advanceAnimations(false, true);
 
-			// Scene changes
-			if (xframe2 == 0 && cambiopantalla) {
-				sceneChange();
+		// Scene changes
+		if (xframe2 == 0 && cambiopantalla) {
+			sceneChange();
+		}
+
+		if (escapePressed && xframe2 == 0) {
+			freeAnimation();
+			freeScreenObjects();
+			contadorpc2 = contadorpc;
+			partidanueva = false;
+			continuarpartida = false;
+			g_engine->saveAutosaveIfEnabled();
+			totalFadeOut(0);
+			lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			clear();
+			playMidiFile("INTRODUC", true);
+			restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			initialMenu(true);
+			verifyCopyProtection2();
+
+			if (partidanueva && !g_engine->shouldQuit()) {
+				newGame();
+			} else if (continuarpartida && !g_engine->shouldQuit())
+				loadTemporaryGame();
+			else {
+				desactivagrabar = true;
+				g_engine->openMainMenuDialog();
+				contadorpc = contadorpc2;
+				desactivagrabar = false;
 			}
-
-			if (escapePressed && xframe2 == 0) {
-				freeAnimation();
-				freeScreenObjects();
-				contadorpc2 = contadorpc;
-				partidanueva = false;
-				continuarpartida = false;
-				g_engine->saveAutosaveIfEnabled();
-				totalFadeOut(0);
-				lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-				clear();
-				playMidiFile("INTRODUC", true);
-				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-				initialMenu(true);
-				verifyCopyProtection2();
-
-				if (partidanueva && !g_engine->shouldQuit()) {
-					newGame();
-				} else if (continuarpartida && !g_engine->shouldQuit())
-					loadTemporaryGame();
-				else {
-					desactivagrabar = true;
-					g_engine->openMainMenuDialog();
-					contadorpc = contadorpc2;
-					desactivagrabar = false;
-				}
-				lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-				switch (gamePart) {
-				case 1:
-					playMidiFile("PRIMERA", true);
-					break;
-				case 2:
-					playMidiFile("SEGUNDA", true);
-					break;
-				}
-				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-			}
-
+			lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 			switch (gamePart) {
 			case 1:
-				if (completadalista1 && completadalista2) {
-					completadalista1 = false;
-					completadalista2 = false;
-					contadorpc = contadorpc2;
-					gamePart = 2;
-					iframe = 0;
-					freeInventory();
-					freeAnimation();
-					freeScreenObjects();
-					g_engine->_mouseManager->hide();
-					partialFadeOut(234);
-					lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-					playMidiFile("CREDITOS", true);
-					restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-					if (contadorpc2 > 43)
-						_exit(274);
-					// sacrificeScene();
-					clear();
-					loadObjects();
-					loadPalette("SEGUNDA");
-					indicetray = 0;
-					characterPosX = 160;
-					characterPosY = 60;
-					trayec[indicetray].x = characterPosX;
-					trayec[indicetray].y = characterPosY;
-					loadScreenData(20);
-					lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-					playMidiFile("SEGUNDA", true);
-					restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-					effect(1, false, background);
-					mask();
-					posicioninv = 0;
-					drawBackpack();
-					g_engine->_mouseManager->show();
-
-					primera[8] = true;
-					oldxrejilla = 0;
-					oldyrejilla = 0;
-					checkMouseGrid();
-				}
+				playMidiFile("PRIMERA", true);
+				break;
+			case 2:
+				playMidiFile("SEGUNDA", true);
 				break;
 			}
+			restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+		}
 
-			// Debug graphics
-			{
-				g_engine->_graphics->euroText(Common::String::format("Room: %d", currentRoomNumber), 0, 0, 220, Graphics::kTextAlignLeft);
-				// g_engine->_mouseManager->printPos(xraton, yraton, 220, 0);
-				// printPos(characterPosX, characterPosY, 220, 10, "CharPos");
-				if (showMouseGrid) {
-					drawMouseGrid(currentRoomData);
-				}
-				if (showScreenGrid) {
-					drawScreenGrid(currentRoomData);
-				}
-				if (showGameGrid) {
-					drawGrid();
-				}
+		switch (gamePart) {
+		case 1:
+			if (completadalista1 && completadalista2) {
+				completadalista1 = false;
+				completadalista2 = false;
+				contadorpc = contadorpc2;
+				gamePart = 2;
+				iframe = 0;
+				freeInventory();
+				freeAnimation();
+				freeScreenObjects();
+				g_engine->_mouseManager->hide();
+				partialFadeOut(234);
+				lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				playMidiFile("CREDITOS", true);
+				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				if (contadorpc2 > 43)
+					showError(274);
+				// sacrificeScene();
+				clear();
+				loadObjects();
+				loadPalette("SEGUNDA");
+				indicetray = 0;
+				characterPosX = 160;
+				characterPosY = 60;
+				trayec[indicetray].x = characterPosX;
+				trayec[indicetray].y = characterPosY;
+				loadScreenData(20);
+				lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				playMidiFile("SEGUNDA", true);
+				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				effect(1, false, background);
+				mask();
+				posicioninv = 0;
+				drawBackpack();
+				g_engine->_mouseManager->show();
 
-				if (drawObjectAreas) {
-					for (int indice = 0; indice < nivelesdeprof; indice++) {
-						if (screenObjects[indice] != NULL) {
-							if (true) {
-								// debug
-								uint16 w = READ_LE_UINT16(screenObjects[indice]);
-								uint16 h = READ_LE_UINT16(screenObjects[indice] + 2);
-								Common::Rect r = Common::Rect(depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
-								drawRect(180, depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
+				primera[8] = true;
+				oldxrejilla = 0;
+				oldyrejilla = 0;
+				checkMouseGrid();
+			}
+			break;
+		}
 
-								outtextxy(r.left, r.top, Common::String().format("%d", indice), 0);
-							}
+		// Debug graphics
+		{
+			g_engine->_graphics->euroText(Common::String::format("Room: %d", currentRoomNumber), 0, 0, 220, Graphics::kTextAlignLeft);
+			// g_engine->_mouseManager->printPos(xraton, yraton, 220, 0);
+			// printPos(characterPosX, characterPosY, 220, 10, "CharPos");
+			if (showMouseGrid) {
+				drawMouseGrid(currentRoomData);
+			}
+			if (showScreenGrid) {
+				drawScreenGrid(currentRoomData);
+			}
+			if (showGameGrid) {
+				drawGrid();
+			}
+
+			if (drawObjectAreas) {
+				for (int indice = 0; indice < nivelesdeprof; indice++) {
+					if (screenObjects[indice] != NULL) {
+						if (true) {
+							// debug
+							uint16 w = READ_LE_UINT16(screenObjects[indice]);
+							uint16 h = READ_LE_UINT16(screenObjects[indice] + 2);
+							Common::Rect r = Common::Rect(depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
+							drawRect(180, depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
+
+							outtextxy(r.left, r.top, Common::String().format("%d", indice), 0);
 						}
 					}
 				}
-				g_engine->_screen->markAllDirty();
-				g_engine->_screen->update();
 			}
-
+			g_engine->_screen->markAllDirty();
 			g_engine->_screen->update();
-			g_system->delayMillis(10);
 		}
-		g_engine->_mouseManager->hide();
-		if(!g_engine->shouldQuit()){
-			ending();
-		}
-		if(!g_engine->shouldQuit()){
-			obtainName(nombreficherofoto);
-		}
-		if(!g_engine->shouldQuit()){
-			generateDiploma(nombreficherofoto);
-		}
-		if(!g_engine->shouldQuit()){
-			credits();
-		}
-		return EXIT_SUCCESS;
+
+		g_engine->_screen->update();
+		g_system->delayMillis(10);
+	}
+	g_engine->_mouseManager->hide();
+	if (!g_engine->shouldQuit()) {
+		ending();
+	}
+	if (!g_engine->shouldQuit()) {
+		obtainName(nombreficherofoto);
+	}
+	if (!g_engine->shouldQuit()) {
+		generateDiploma(nombreficherofoto);
+	}
+	if (!g_engine->shouldQuit()) {
+		credits();
+	}
+	return EXIT_SUCCESS;
 }
 
 void sceneChange() {
@@ -615,7 +615,7 @@ void sceneChange() {
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (contadorpc > 89)
-			error("engine_start(): contadorpc (274)");
+			showError(274);
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 		if (teleencendida)
 			autoPlayVoc("PARASITO", 355778, 20129);
@@ -810,7 +810,7 @@ void sceneChange() {
 		if (libro[0] == true && currentRoomData->banderamovimiento == true)
 			disableSecondAnimation();
 		if (contadorpc > 89)
-			error("engine_start(): contadorpc (274)");
+			showError(274);
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 		effect(tipoefectofundido, false, background);
 		contadorpc = contadorpc2;
@@ -914,7 +914,7 @@ void sceneChange() {
 			break;
 		}
 		if (contadorpc > 89)
-			error("engine_start(): contadorpc (274)");
+			showError(274);
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 		if (currentRoomData->codigo == 4)
 			loadVoc("GOTA", 140972, 1029);
@@ -957,7 +957,7 @@ void sceneChange() {
 			break;
 		}
 		if (contadorpc > 89)
-			error("engine_start(): contadorpc (274)");
+			showError(274);
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 		if (trampa_puesta) {
 			currentRoomData->banderamovimiento = true;
@@ -973,7 +973,7 @@ void sceneChange() {
 
 			for (iaux = 0; iaux < maxrejax; iaux++)
 				for (iaux2 = 0; iaux2 < maxrejay; iaux2++) {
-					if (rejamascaramovto[iaux][iaux2] > 0){
+					if (rejamascaramovto[iaux][iaux2] > 0) {
 						currentRoomData->rejapantalla[oldposx + iaux][oldposy + iaux2] = rejamascaramovto[iaux][iaux2];
 					}
 					if (rejamascararaton[iaux][iaux2] > 0)
@@ -1008,7 +1008,7 @@ void sceneChange() {
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (contadorpc > 89)
-			error("engine_start(): contadorpc (274)");
+			showError(274);
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 		switch (currentRoomData->codigo) {
 		case 4:

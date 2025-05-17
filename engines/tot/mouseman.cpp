@@ -53,7 +53,6 @@ void MouseManager::animateMouseIfNeeded() {
 	}
 }
 
-
 void MouseManager::hide() {
 	CursorMan.showMouse(false);
 }
@@ -86,7 +85,7 @@ void MouseManager::warpMouse(int mask, int x, int y) {
 void MouseManager::loadMasks() {
 	Common::File mouseMaskFile;
 	if (!mouseMaskFile.open(Common::Path("RATON.ACA")))
-		error("loadMouseMask(): ioresult! (317)");
+		_exit(317);
 
 	int numMouseMasks = mouseMaskFile.readByte();
 	int mouseMaskSize = mouseMaskFile.readUint16LE();

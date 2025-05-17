@@ -135,7 +135,7 @@ void copyFromScreen(byte *&screen) {
 }
 
 void drawScreen(byte *screen, boolean offsetSize) {
-	int offset = offsetSize ? 4:0;
+	int offset = offsetSize ? 4 : 0;
 	for (int i1 = 0; i1 < 320; i1++) {
 		for (int j1 = 0; j1 < 140; j1++) {
 			((byte *)g_engine->_screen->getPixels())[j1 * 320 + i1] = ((byte *)screen)[offset + j1 * 320 + i1];
@@ -172,7 +172,7 @@ void loadPalette(Common::String paletteName) {
 	Common::File fichero;
 
 	if (!fichero.open(Common::Path(paletteName + ".PAL")))
-		error("unable to load palette %s (310)", paletteName.c_str());
+		showError(310);
 	fichero.read(pal, 768);
 	fichero.close();
 
@@ -181,7 +181,7 @@ void loadPalette(Common::String paletteName) {
 }
 
 void updateSceneAreaIfNeeded(int speed = 1) {
-	if(g_engine->_chrono->shouldPaintEffect(speed)) {
+	if (g_engine->_chrono->shouldPaintEffect(speed)) {
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
 	}
@@ -193,7 +193,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 	bool enabled = true;
 
 	// numeroefecto = 13;
-	byte * screenBuf = (byte *)g_engine->_screen->getPixels();
+	byte *screenBuf = (byte *)g_engine->_screen->getPixels();
 	// Disable effects for now
 	if (!enabled) {
 		debug("Effects disabled! requested effect is %d, with fadeToBlack =%d", numeroefecto, pasaranegro);
@@ -203,7 +203,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 	} else {
 		contadorpc2 = contadorpc;
 		if (contadorpc > 145)
-			error("effect(): contadorpc (274)");
+			showError(274);
 		debug("Effect %d, pasaraanegro=%d", numeroefecto, pasaranegro);
 		if (pasaranegro)
 			switch (numeroefecto) {
@@ -375,7 +375,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 			case 15: {
 
 				for (j1 = 0; j1 <= 70; j1++) {
-					Common::copy(screenBuf + (j1 * 320), screenBuf + (j1 * 320) + 320, screenBuf + ((j1 + 1) *320));
+					Common::copy(screenBuf + (j1 * 320), screenBuf + (j1 * 320) + 320, screenBuf + ((j1 + 1) * 320));
 					line(0, j1, 319, j1, 0);
 					Common::copy(screenBuf + ((139 - j1) * 320), screenBuf + ((139 - j1) * 320) + 320, screenBuf + ((138 - j1) * 320));
 					line(0, (139 - j1), 319, (139 - j1), 0);
@@ -432,7 +432,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						j1 = 10;
 						do {
 							for (i3 = (j1 - i2); i3 <= (j1 + i2); i3++) {
-								byte *src = pantalla2 + + 4 + (i3 * 320) +  + (i1 - i2);
+								byte *src = pantalla2 + +4 + (i3 * 320) + +(i1 - i2);
 								Common::copy(src, src + (i2 * 2), screenBuf + (i3 * 320) + (i1 - i2));
 							}
 							j1 += 20;
@@ -449,7 +449,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						for (j1 = 1; j1 <= 7; j1++) {
 							if ((i1 + j1) == (i2 + 1)) {
 								for (i3 = ((j1 - 1) * 20); i3 <= ((j1 - 1) * 20 + 19); i3++) {
-									byte *src = pantalla2 + + 4 + (i3 * 320) +  ((i1 - 1) * 20);
+									byte *src = pantalla2 + +4 + (i3 * 320) + ((i1 - 1) * 20);
 									Common::copy(src, src + 20, screenBuf + (i3 * 320) + ((i1 - 1) * 20));
 									updateSceneAreaIfNeeded();
 								}
@@ -472,7 +472,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 					if ((j1 % 2) == 0)
 						for (i1 = 1; i1 <= 16; i1++) {
 							for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-								byte *src = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) *20);
+								byte *src = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 
 								Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
 							}
@@ -482,7 +482,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 					else
 						for (i1 = 16; i1 >= 1; i1--) {
 							for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-								byte *src = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) *20);
+								byte *src = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 								Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
 							}
 							updateSceneAreaIfNeeded();
@@ -493,10 +493,10 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 			case 11: {
 				long lastRender = 0;
 				long rendertime = 10;
-				for (i2 = 0; i2 <= 3; i2 ++) {
+				for (i2 = 0; i2 <= 3; i2++) {
 					j1 = 1 + i2;
-					for (i1 = (1 + i2); i1 <= (16 - i2); i1 ++) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
+					for (i1 = (1 + i2); i1 <= (16 - i2); i1++) {
+						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
 						}
@@ -504,8 +504,8 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						delay(8);
 					}
 					i1--;
-					for (j1 = (2 + i2); j1 <= (7 - i2); j1 ++) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
+					for (j1 = (2 + i2); j1 <= (7 - i2); j1++) {
+						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
 						}
@@ -513,8 +513,8 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						delay(8);
 					}
 					j1--;
-					for (i1 = (16 - i2); i1 >= (1 + i2); i1 --) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
+					for (i1 = (16 - i2); i1 >= (1 + i2); i1--) {
+						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
 						}
@@ -522,8 +522,8 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 						delay(8);
 					}
 					i1++;
-					for (j1 = (6 - i2); j1 >= (2 + i2); j1 --) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3 ++) {
+					for (j1 = (6 - i2); j1 >= (2 + i2); j1--) {
+						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
 							byte *buf = pantalla2 + 4 + (j3 * 320) + ((i1 - 1) * 20);
 							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
 						}
@@ -583,7 +583,7 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 				delay(5);
 				for (j1 = 70; j1 > 0; j1--) {
 					byte *src1 = pantalla2 + 4 + j1 * 320;
-					byte *src2 = pantalla2  + 4 + (139 - j1) * 320;
+					byte *src2 = pantalla2 + 4 + (139 - j1) * 320;
 					Common::copy(src1, src1 + 320, screenBuf + j1 * 320);
 
 					Common::copy(src2, src2 + 320, screenBuf + (139 - j1) * 320);
@@ -634,7 +634,7 @@ void turnLightOn() {
 	palette palpaso;
 
 	if (!paletteFile.open("PALETAS.DAT")) {
-		error("turnLightOn(): ioresult (311)");
+		showError(311);
 	}
 	paletteFile.seek(1536);
 	paletteFile.read(palpaso, 768);
@@ -644,7 +644,7 @@ void turnLightOn() {
 			palpaso[3 * i + 0] = pal[3 * i + 0];
 			palpaso[3 * i + 1] = pal[3 * i + 1];
 			palpaso[3 * i + 2] = pal[3 * i + 2];
-		// }
+			// }
 		} else {
 			palpaso[3 * i + 0] = palpaso[3 * i + 0] << 2;
 			palpaso[3 * i + 1] = palpaso[3 * i + 1] << 2;
@@ -705,13 +705,13 @@ void totalFadeIn(uint numeropaleta, Common::String nombrepaleta) {
 	Common::File fichpaleta;
 	if (numeropaleta > 0) {
 		if (!fichpaleta.open("PALETAS.DAT"))
-			error("totalFadeIn(): ioresult (311)");
+			showError(311);
 		fichpaleta.seek(numeropaleta);
 		fichpaleta.read(palpaso, 768);
 		fichpaleta.close();
 	} else {
 		if (!fichpaleta.open(Common::Path(Common::String(nombrepaleta + ".PAL")))) {
-			error("totalFadeIn(): ioresult (311)");
+			showError(311);
 		}
 		fichpaleta.read(palpaso, 768);
 		fichpaleta.close();

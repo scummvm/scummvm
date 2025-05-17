@@ -37,7 +37,7 @@ void drawText(uint number);
 void runaroundRed();
 void sprites(boolean drawCharacter);
 void loadScreenData(uint screenNumber);
-RoomFileRegister* readScreenDataFile(Common::SeekableReadStream *screenDataFile);
+RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile);
 void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream);
 void calculateTrajectory(uint finalx, uint finaly);
 void lookInventoryObject(byte objectNumber);
@@ -71,7 +71,6 @@ regismht readVerbRegister();
 
 void readConversationFile(Common::String f);
 void printHornacinas();
-void dumpRoomFile(Common::String name);
 
 } // End of namespace Tot
 

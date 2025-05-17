@@ -27,8 +27,8 @@
 #include "common/textconsole.h"
 #include "graphics/paletteman.h"
 
-#include "tot/decoder/TotFlicDecoder.h"
 #include "tot/anims.h"
+#include "tot/decoder/TotFlicDecoder.h"
 #include "tot/graphics.h"
 #include "tot/playanim.h"
 #include "tot/tot.h"
@@ -95,7 +95,7 @@ void handleFlcEvent(byte numero_del_evento) {
 	switch (numero_del_evento) {
 	case 0:
 		if (contadorpc > 103)
-			error("handleFlcEvent(): ioresult! (274)");
+			showError(274);
 		break;
 	case 1:
 		if (framecontador == 3)
@@ -128,7 +128,8 @@ void handleFlcEvent(byte numero_del_evento) {
 			case 36:
 				drawText(2, 100, "\xAD\xADPor un tornillo!!...",
 						 "Por un m\xA1sero y simple",
-						 "tornillo  del  tr\xA1""fugo",
+						 "tornillo  del  tr\xA1"
+						 "fugo",
 						 "del trapecio...", "", 255, 0);
 				break;
 			case 47:
@@ -136,7 +137,8 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 48:
 				drawText(2, 100, "Si lo hubiese apretado",
-						 "bien, no estar\xA1""a ahora",
+						 "bien, no estar\xA1"
+						 "a ahora",
 						 "sin trabajo...", "", "", 255, 0);
 				break;
 			case 59:
@@ -168,7 +170,9 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 90:
 				drawText(2, 100, "Y  para  animarme  m\xA0s",
-						 "todav\xAD""a, ma\xA4""ana  noche",
+						 "todav\xAD"
+						 "a, ma\xA4"
+						 "ana  noche",
 						 "es HALLOWEEN...", "",
 						 "Es que tengo la negra.", 255, 0);
 				break;
@@ -190,7 +194,8 @@ void handleFlcEvent(byte numero_del_evento) {
 						 "contra ese inconsciente...", "", "", "", 253, 0);
 				break;
 			case 125:
-				drawText(2, 100, "\xAD""Dios mio!... hasta en",
+				drawText(2, 100, "\xAD"
+								 "Dios mio!... hasta en",
 						 "la televisi\xA2n...",
 						 "Seguro  que  hasta  mi",
 						 "perro  encuentra curro",
@@ -216,8 +221,11 @@ void handleFlcEvent(byte numero_del_evento) {
 			break;
 		case 58: {
 			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100, "\xA8""Oficina de empleo?...",
-					 "\xA8""y para m\xA1?...", "",
+			drawText(2, 100, "\xA8"
+							 "Oficina de empleo?...",
+					 "\xA8"
+					 "y para m\xA1?...",
+					 "",
 					 "\xADSe habr\xA0n equivocado!", "", 255, 0);
 		} break;
 		case 74: {
@@ -236,7 +244,8 @@ void handleFlcEvent(byte numero_del_evento) {
 					 "de acuerdo con sus aptitudes...", 253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
-			drawText(80, 0, "Deber\xA0 presentarse  ma\xA4""ana, dia",
+			drawText(80, 0, "Deber\xA0 presentarse  ma\xA4"
+							"ana, dia",
 					 "31  de  Octubre en la direcci\xA2n",
 					 "abajo indicada,  para ocupar el",
 					 "puesto de ENCARGADO GENERAL.", "", 253, 0);
@@ -307,7 +316,9 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 7:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Lo siento, no sab\xA1""a a que hora deb\xA1""a presentarme, en",
+			drawText(5, 1, "Lo siento, no sab\xA1"
+						   "a a que hora deb\xA1"
+						   "a presentarme, en",
 					 "la oficina de empleo no me lo dijeron.",
 					 "", "", "", 255, 0);
 		}
@@ -328,7 +339,8 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 10:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Vaya... 200 caballos... elevalunas el\x82""ctricos... ",
+			drawText(5, 1, "Vaya... 200 caballos... elevalunas el\x82"
+						   "ctricos... ",
 					 "inyecci\xA2n electr\xA2nica, llantas de aleaci\xA2n...",
 					 "", "", "", 255, 249);
 		}
@@ -388,7 +400,8 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 18:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "\xA8Gracias?... \xA8qu\x82?... \xAD""espera!... ese es mi coche...",
+			drawText(5, 1, "\xA8Gracias?... \xA8qu\x82?... \xAD"
+						   "espera!... ese es mi coche...",
 					 "", "", "", "", 255, 0);
 		}
 		break;
@@ -405,7 +418,8 @@ void handleFlcEvent(byte numero_del_evento) {
 				getImg(0, 0, 319, 29, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "\xA8""Donde estoy? ... \xA8Qu\x82 me ha pasado?",
+				drawText(15, 1, "\xA8"
+								"Donde estoy? ... \xA8Qu\x82 me ha pasado?",
 						 "", "", "", "", 255, 0);
 				break;
 			}
@@ -656,7 +670,7 @@ static fliheader readHeader(Common::File *file) {
 	return headerfile;
 }
 
- void blit(const Graphics::Surface *src, Common::Rect bounds) {
+void blit(const Graphics::Surface *src, Common::Rect bounds) {
 	int16 height = bounds.bottom - bounds.top;
 	int16 width = bounds.right - bounds.left;
 	Graphics::Surface dest = g_engine->_screen->getSubArea(bounds);
@@ -692,7 +706,7 @@ static void loadFlc(
 		fileName = "FILMS.DAT";
 
 	if (!animationsFile.open(Common::Path(fileName))) {
-		error("readFlcXms(): ioresult! (272)");
+		showError(272);
 	}
 	animationsFile.seek(posflicfile, SEEK_SET);
 	// Need to read header to get the total size of the FLIC file.
@@ -717,7 +731,7 @@ static void loadFlc(
 				debug("Salidaflis!");
 				goto Lsalir_proc;
 			}
-			if (tocapintar){
+			if (tocapintar) {
 				framecontador++;
 				handleFlcEvent(numevento);
 				const Graphics::Surface *frame = flic.decodeNextFrame();
@@ -737,7 +751,7 @@ static void loadFlc(
 						} else if (doscientos) {
 							debug("Doscientos!!");
 							g_engine->_graphics->setPalette(palette, 200);
-							for (int i = 0; i <= 200; i ++) {
+							for (int i = 0; i <= 200; i++) {
 								pal[i * 3 + 0] = palette[i * 3 + 0];
 								pal[i * 3 + 1] = palette[i * 3 + 1];
 								pal[i * 3 + 2] = palette[i * 3 + 2];
@@ -754,7 +768,6 @@ static void loadFlc(
 			}
 			g_system->delayMillis(10);
 		} while (!flic.endOfVideo() && !g_engine->shouldQuit());
-
 
 		if (flic.endOfVideo()) {
 			if (flic.isRewindable()) {

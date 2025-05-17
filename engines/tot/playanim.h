@@ -21,9 +21,9 @@
 #ifndef TOT_PLAYANIM_H
 #define TOT_PLAYANIM_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 
 #include "tot/util.h"
 
@@ -130,7 +130,7 @@ struct inventoryBitmaps {
 struct regismht {
 	Common::String cadenatext; // string
 	boolean encadenado;        // true if the next entry is a continuation of this one
-	uint16 respuesta;            // entry number of reply
+	uint16 respuesta;          // entry number of reply
 	int32 punteronil;
 };
 
@@ -139,13 +139,13 @@ struct InvItemRegister {
 	 * registry number
 	 */
 	uint16 code;
-	byte altura; /* 0 top 1 middle 2 bottom*/
-	Common::String name;   /*name for mouseover*/
-	uint16 lookAtTextRef;  /* Registro al mirar el objeto en pantalla */
+	byte altura;             /* 0 top 1 middle 2 bottom*/
+	Common::String name;     /*name for mouseover*/
+	uint16 lookAtTextRef;    /* Registro al mirar el objeto en pantalla */
 	uint16 beforeUseTextRef; /* Registro antes de usar el objeto en mochila */
-	uint16 afterUseTextRef; /* Registro despues de usar el objeto en mochila */
-	uint16 pickTextRef; /* Registro al coger el objeto */
-	uint16 useTextRef; /* Registro al usar el objeto */
+	uint16 afterUseTextRef;  /* Registro despues de usar el objeto en mochila */
+	uint16 pickTextRef;      /* Registro al coger el objeto */
+	uint16 useTextRef;       /* Registro al usar el objeto */
 	byte habla;              /* number of character to respond */
 	boolean abrir;           /* true if it can be opened */
 	boolean cerrar;          /* true if it can be closed*/
@@ -281,10 +281,10 @@ struct regispartida {
 	uint16 firstList[5], secondList[5];
 	Common::Point trayec[300];
 	boolean primera[maxpersonajes],
-			lprimera[maxpersonajes],
-			cprimera[maxpersonajes],
-			libro[maxpersonajes],
-			caramelos[maxpersonajes];
+		lprimera[maxpersonajes],
+		cprimera[maxpersonajes],
+		libro[maxpersonajes],
+		caramelos[maxpersonajes];
 
 	boolean cavernas[5];
 	uint hornacina[2][4];
@@ -567,19 +567,18 @@ extern boolean completadalista1,
 	lista1, // whether we've been given list 1
 	lista2; // whether we've been given list 2
 
+extern boolean primera[maxpersonajes],
+	lprimera[maxpersonajes],
+	cprimera[maxpersonajes],
+	libro[maxpersonajes],
+	caramelos[maxpersonajes];
 
-extern boolean  primera[maxpersonajes],
-				lprimera[maxpersonajes],
-				cprimera[maxpersonajes],
-				libro[maxpersonajes],
-				caramelos[maxpersonajes];
-
-extern boolean  cavernas[5];
+extern boolean cavernas[5];
 /**
  * First and second lists of objects to retrieve in the game
  */
-extern uint16   firstList[5],
-				secondList[5];
+extern uint16 firstList[5],
+	secondList[5];
 /**
  * Animation sequence
  */

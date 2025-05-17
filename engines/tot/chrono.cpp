@@ -42,32 +42,30 @@ void ChronoManager::updateChrono() {
 	if ((currentTime - _lastTick) >= kFrameMs / _speedMultiplier) {
 		tocapintar = true;
 		tocapintarTick++;
-		if(tocapintarTick == kDoubleFrameMultiplier){
+		if (tocapintarTick == kDoubleFrameMultiplier) {
 			tocapintarTick = 0;
 			tocapintar2 = true;
-		}
-		else {
+		} else {
 			tocapintar2 = false;
 		}
 		_lastTick = currentTime;
 	} else {
 		tocapintar = false;
 	}
-
 }
 
-bool ChronoManager::shouldPaintEffect(int speed){
+bool ChronoManager::shouldPaintEffect(int speed) {
 	uint32 curTime = g_system->getMillis();
 	// _lastEffectRender += g_system->getMillis();
-	if((curTime - _lastEffectRender) >= kFrameEffectMs * speed) {
+	if ((curTime - _lastEffectRender) >= kFrameEffectMs * speed) {
 		_lastEffectRender = curTime;
 		return true;
-	}
-	else return false;
+	} else
+		return false;
 }
 
 void Tot::ChronoManager::delay(int ms) {
-	if(ms > 10) {
+	if (ms > 10) {
 		debug("Starting delay of %d", ms);
 	}
 	uint32 delayStart = g_system->getMillis();
@@ -76,7 +74,7 @@ void Tot::ChronoManager::delay(int ms) {
 	while ((g_system->getMillis() - delayStart) < ms && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
-		if(ms > 10) {
+		if (ms > 10) {
 			g_system->delayMillis(10);
 		}
 		g_engine->_screen->update();
