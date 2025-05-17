@@ -5292,7 +5292,7 @@ void hypertext(
 		free(fondotextht);
 
 		g_system->delayMillis(10);
-	} while (regmht.encadenado);
+	} while (regmht.encadenado && !g_engine->shouldQuit());
 	numresp = regmht.respuesta;
 	g_engine->_mouseManager->show();
 }

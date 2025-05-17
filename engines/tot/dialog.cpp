@@ -498,7 +498,7 @@ void talk(byte person) {
 				matrizconversa[conversationIndex].insertString(" ...", auxilcadena);
 			}
 			l1 = l1->siguiente;
-		} while ((l1->siguiente != NULL) && (l1 != NULL));
+		} while ((l1->siguiente != NULL) && (l1 != NULL) && !g_engine->shouldQuit());
 		l1 = l;
 		showDialogLine(matrizconversa, nuevonodo);
 		delete l;
@@ -506,7 +506,7 @@ void talk(byte person) {
 		auxilcadena = 0;
 		modifyTree(nuevonodo);
 		// 	verifyCopyProtection();
-		while (pasorespuesta > 0) {
+		while (pasorespuesta > 0 && !g_engine->shouldQuit()) {
 			nuevonodo = pasorespuesta;
 			auxilcadena += 1;
 			if (odd(auxilcadena))
@@ -538,14 +538,18 @@ void talk(byte person) {
 		}
 		g_system->delayMillis(10);
 	} while (!endOfConversation && !g_engine->shouldQuit());
+
 	unloadTalkAnimations();
 	step = ar;
 	fixTree(step);
 	saveConversations(conversationData, ar, person - 1);
+
 	// Make sure to autosave
 	g_engine->saveAutosaveIfEnabled();
-
 	verb.close();
+	if(g_engine->shouldQuit()) {
+		return;
+	}
 	delete ar;
 	l1 = NULL;
 	g_engine->_mouseManager->hide();
