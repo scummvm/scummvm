@@ -145,7 +145,7 @@ BOOL CBgbMgr::InitBitmapObject(CBgbObject *pBgbObject, XPSTR pszFileName) {
 		assert(strlen(pszFileName) < MAX_FNAME_LENGTH);
 
 		// init this objects bitmap filename (must be done before cache)
-		strcpy(pBgbObject->m_szFileName, pszFileName);
+		Common::strcpy_s(pBgbObject->m_szFileName, pszFileName);
 
 		// object must be Initialized before any Caching
 		pBgbObject->m_bInit = TRUE;
@@ -760,7 +760,7 @@ BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint 
 
 	for (iK = 1; iK <= iSegments; ++iK) {
 
-		CSound::HandleMessages();
+		CSound::handleMessages();
 
 		if (m_xpDc == NULL) {
 			ReInitDc();
@@ -1062,7 +1062,7 @@ void CBgbMgr::DoAnimations(void) {
 		pList = m_pFXList;
 		while (pList != NULL) {
 
-			pBgbObject = (CBgbObject *)pList->GetData();
+			pBgbObject = (CBgbObject *)pList->getData();
 
 			assert(pBgbObject != NULL);
 
@@ -1074,7 +1074,7 @@ void CBgbMgr::DoAnimations(void) {
 			//
 			PaintBitmapObject(pBgbObject);
 
-			pList = pList->GetNext();
+			pList = pList->getNext();
 		}
 	}
 }
@@ -1087,7 +1087,7 @@ BOOL CheckLowMemory(DWORD dwSpace) {
 
 	bMemoryProblem = FALSE;
 
-	dwFreeSpace = ::GetFreeSpace(0);
+	dwFreeSpace = GetFreeSpace(0);
 	if (dwFreeSpace < dwSpace)
 		bMemoryProblem = TRUE;
 	#if CONTROL_PHYSICAL_MEMORY
@@ -1107,7 +1107,7 @@ DWORD GetPhysicalMemory(void) {
 	WORD    wFreePages;
 	DWORD   lFreeBytes;
 
-	lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)::GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
+	lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
 	if (lpfnGetFreeMemInfo != NULL) {
 		dwInfo = lpfnGetFreeMemInfo();
 		if (dwInfo != -1L) {

@@ -3181,7 +3181,7 @@ void CSprite::ReleaseBackdropDC(void) {
 /////////////////////////////////////////////////////////////////////////////
 // CSprite diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CSprite::AssertValid() const {
 	CObject::AssertValid();
 }

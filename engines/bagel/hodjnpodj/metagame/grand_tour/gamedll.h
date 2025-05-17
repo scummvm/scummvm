@@ -22,6 +22,8 @@
 #ifndef BAGEL_METAGAME_GTL_GAMEDLL_H
 #define BAGEL_METAGAME_GTL_GAMEDLL_H
 
+#include "bagel/afxwin.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {

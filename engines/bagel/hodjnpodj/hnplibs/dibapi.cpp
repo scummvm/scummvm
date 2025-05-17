@@ -825,7 +825,7 @@ HANDLE WINAPI CopyHandle(HANDLE h) {
 
 
 void WINAPI ShowMemoryInfo(const char *chMessage, const char *chTitle) {
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	char    buf[256];
 
 	MessageBox(NULL, chMessage, chTitle, MB_ICONEXCLAMATION);

@@ -315,7 +315,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 
 	ShowWindow(SW_SHOWNORMAL);
 	UpdateWindow();
-//#ifndef _DEBUG
+//#ifndef BAGEL_DEBUG
 //SetWindowPos( &wndTopMost, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
 //#endif
 // create buttons

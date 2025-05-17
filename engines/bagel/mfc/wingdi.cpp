@@ -219,5 +219,9 @@ DWORD GetSysColor(int nIndex) {
 	error("TODO: GetSysColor");
 }
 
+BOOL DestroyMenu(HMENU hMenu) {
+	error("TODO: DestroyMenu");
+}
+
 } // namespace MFC
 } // namespace Bagel

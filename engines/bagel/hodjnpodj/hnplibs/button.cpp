@@ -28,7 +28,7 @@ namespace HodjNPodj {
 extern  CPalette    *pGamePalette;
 
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	#undef THIS_FILE
 	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
@@ -549,7 +549,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CBmpButton diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CBmpButton::AssertValid() const {
 	CBitmapButton::AssertValid();
 }
@@ -558,7 +558,7 @@ void CBmpButton::Dump(CDumpContext& dc) const {
 	CBitmapButton::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -710,7 +710,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMaskedButton diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CMaskedButton::AssertValid() const {
 	CBmpButton::AssertValid();
 }
@@ -719,7 +719,7 @@ void CMaskedButton::Dump(CDumpContext& dc) const {
 	CBmpButton::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1016,7 +1016,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CColorButton diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CColorButton::AssertValid() const {
 	CButton::AssertValid();
 }
@@ -1025,7 +1025,7 @@ void CColorButton::Dump(CDumpContext& dc) const {
 	CButton::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1376,7 +1376,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CCheckButton diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CCheckButton::AssertValid() const {
 	CButton::AssertValid();
 }
@@ -1385,7 +1385,7 @@ void CCheckButton::Dump(CDumpContext& dc) const {
 	CButton::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1753,7 +1753,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CRadioButton diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CRadioButton::AssertValid() const {
 	CButton::AssertValid();
 }

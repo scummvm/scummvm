@@ -29,13 +29,9 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-HWND FAR PASCAL RunPoker(HWND, LPGAMESTRUCT);
-
-BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
-void FAR PASCAL ProcessDllIdle();
-
-void SetupCursor(void);
-void SetupWindow(CBfcMgr *);
+extern HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded);
+extern void SetupCursor(void);
+extern void SetupWindow(CBfcMgr *);
 
 } // namespace GrandTour
 } // namespace Metagame

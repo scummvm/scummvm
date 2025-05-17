@@ -61,6 +61,9 @@ extern HINSTANCE AfxGetInstanceHandle();
 extern HINSTANCE AfxGetResourceHandle();
 extern int LoadString(HINSTANCE hInstance,
                       UINT uID, LPSTR lpBuffer, int cchBufferMax);
+extern FARPROC GetProcAddress(HMODULE hModule,
+	LPCSTR  lpProcName);
+extern HMODULE GetModuleHandle(LPCSTR lpModuleName);
 
 extern LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
         HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
@@ -76,6 +79,7 @@ extern SIZE_T GlobalCompact(DWORD dwMinFree);
 #define LocalLock           GlobalLock
 #define LocalUnlock         GlobalUnlock
 #define LocalFree           GlobalFree
+#define LocalCompact		GlobalCompact
 #define GetFreeSpace(w)     (0x100000L)
 
 extern int MessageBox(HWND hWnd, LPCSTR lpText,

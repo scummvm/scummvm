@@ -19,29 +19,16 @@
  *
  */
 
-#ifndef HODJNPODJ_CRYPT_DLLINIT_H
-#define HODJNPODJ_CRYPT_DLLINIT_H
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace Crypt {
-
-#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include "gtl.h"
-
-#include "copyrite.h"   // mandatory internal copyright notice
-
-#include "gtlfrm.h"
-#include "gtldoc.h"
-#include "gtlview.h"
-
-#include <time.h>
-#include <stdio.h>
-
-#ifdef _DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Metagame {
+namespace GrandTour {
 
 ///DEFS gtl.h
 
@@ -55,7 +42,7 @@ static CSingleDocTemplate *pSdiDocTemplate = NULL;
 
 BEGIN_MESSAGE_MAP(CGtlApp, CWinApp)
 	//{{AFX_MSG_MAP(CGtlApp)
-	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+	ON_COMMAND(ID_APP_ABOUT, CGtlApp::OnAppAbout)
 	// NOTE - the ClassWizard will add and remove mapping macros here.
 	//    DO NOT EDIT what you see in these blocks of generated code!
 	//}}AFX_MSG_MAP
@@ -75,7 +62,7 @@ CGtlApp::CGtlApp() {
 }
 
 CGtlApp::~CGtlApp() {
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	m_cBdbgMgr.ReportTraceObjects() ;
 	#endif
 }
@@ -115,9 +102,9 @@ BOOL CGtlApp::InitInstance() {
 	m_iX = (GetSystemMetrics(SM_CXSCREEN) - m_iWidth) / 2 ;
 	m_iY = (GetSystemMetrics(SM_CYSCREEN) - m_iHeight) / 2 ;
 
-	strcpy(m_szFilename, "META.GTL");
+	Common::strcpy_s(m_szFilename, "META.GTL");
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 
 	XPSTR xpszFile = "jxdebug.ini", xpszSect = "meta";
 
@@ -237,10 +224,9 @@ int CGtlApp::DoMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlApp::DoMessageBox) ;
-	int iError = 0 ;            // error code
 	int iRetval = IDOK ;                // return value
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	if (lpszPrompt && lpszPrompt[0] == '~')
 		m_cBdbgMgr.DebugMessageBox(lpszPrompt, nType, nIDPrompt) ;
 

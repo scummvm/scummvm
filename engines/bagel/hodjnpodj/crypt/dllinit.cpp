@@ -34,8 +34,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-//#ifndef _DEBUG
-//#error This source file must be compiled with _DEBUG defined
+//#ifndef BAGEL_DEBUG
+//#error This source file must be compiled with BAGEL_DEBUG defined
 //#endif
 
 HINSTANCE   hDLLInst;
@@ -83,7 +83,7 @@ HWND FAR PASCAL RunCrypt(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 		pMainGameWnd = NULL;
 	}
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 //  lpGameInfo->bPlayingMetagame = FALSE;
 //  lpGameInfo->nSkillLevel = SKILLLEVEL_LOW;
 	#endif

@@ -23,10 +23,10 @@
 #define BAGEL_METAGAME_GTL_INFDLG_H
 
 #include "bagel/afxwin.h"
-#include "gtl.h"
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/bsutl.h"
 
 namespace Bagel {
@@ -49,8 +49,8 @@ public:
 public:
 	CInfDlg(CWnd *pParent = NULL);  // standard constructor
 	void Create(void) {
-		CDialog::Create(CInfDlg::IDD,
-		                (CWnd *)m_xpFrameWnd);
+		CDialog::Create(IDD,
+			(CWnd *)m_xpFrameWnd);
 	}
 	~CInfDlg(void) {
 		TRACEDESTRUCTOR(CInfDlg);
@@ -77,8 +77,8 @@ public:
 // Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
-	virtual void CInfDlg::PostNcDestroy();
-	virtual void CInfDlg::OnCancel();
+	virtual void PostNcDestroy();
+	virtual void OnCancel();
 
 	// Generated message map functions
 	//{{AFX_MSG(CInfDlg)
@@ -114,7 +114,7 @@ public:
 public:
 	CCtlDlg(CWnd *pParent = NULL);  // standard constructor
 	void Create(void) {
-		CDialog::Create(CCtlDlg::IDD,
+		CDialog::Create(IDD,
 		                (CWnd *)m_xpFrameWnd);
 	}
 	~CCtlDlg(void) {
@@ -136,7 +136,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
 	virtual void PostNcDestroy(void);
-	virtual void CCtlDlg::OnCancel();
+	virtual void OnCancel();
 
 	// Generated message map functions
 	//{{AFX_MSG(CCtlDlg)
@@ -155,12 +155,12 @@ protected:
 
 	// infdlg.cpp : implementation file
 
-	//- CCtlDlg::EffectControl -- effect control command on document
+	//- EffectControl -- effect control command on document
 private:
-	BOOL CCtlDlg::EffectControl(BOOL bUpdate PDFT(TRUE));
-	//- CCtlDlg::InitDialogBox -- set scroll bars
+	BOOL EffectControl(BOOL bUpdate PDFT(TRUE));
+	//- InitDialogBox -- set scroll bars
 public:
-	BOOL CCtlDlg::InitDialogBox(void);
+	BOOL InitDialogBox(void);
 };
 
 
@@ -305,7 +305,7 @@ protected:
 	virtual void PostNcDestroy(void);
 	////- CMenuDlg::EffectControl -- effect control command on document
 private:
-	BOOL CMenuDlg::EffectControl(BOOL bUpdate PDFT(TRUE));
+	BOOL EffectControl(BOOL bUpdate PDFT(TRUE));
 
 	// Generated message map functions
 	//{{AFX_MSG(CMenuDlg)

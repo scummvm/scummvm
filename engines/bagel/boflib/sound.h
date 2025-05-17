@@ -85,7 +85,7 @@ public:
 		initialize(nullptr, pszPathName, wFlags);
 	}
 	void initialize(void *pWnd, const char *pszPathName, WORD wFlags);
-
+	void setDrivePath(LPCSTR path) {}
 	bool midiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
 	bool play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
 	bool pause();

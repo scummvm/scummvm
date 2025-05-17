@@ -19,29 +19,21 @@
  *
  */
 
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/dibapi.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/infdlg.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include <assert.h>
-#include <dibapi.h>
-#include "gtl.h"
-
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
-#include "infdlg.h"
-#include "bagel/hodjnpodj/hnplibs/rules.h"
-
 ///DEFS gtlview.h
-
-#ifdef _DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
 
 extern HWND     ghwndParent;
 extern CBfcMgr  *lpMetaGameStruct;
@@ -111,7 +103,6 @@ CGtlView::~CGtlView() {
 
 int CGtlView::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	JXENTER(CGtlView::OnCreate) ;
-	int iError = 0 ;        // error code
 	int iRetval = 0 ;       // return value
 
 	CWnd * xpWnd = this ;
@@ -141,7 +132,6 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 //    dbgtrc = TRUE ;   // debugging code
 
 	JXENTER(CGtlView::OnUpdate) ;
-	int iError = 0 ;        // error code
 	CGtlHint * xpcGtlHint = (CGtlHint *)xpHint ;
 	BOOL bDone = FALSE ;    // TRUE when hint is fully identified
 
@@ -321,8 +311,7 @@ cleanup:
 //* CGtlView::OnInitialUpdate --
 void CGtlView::OnInitialUpdate(void) {
 	JXENTER(CGtlView::OnInitialUpdate) ;
-	int iError = 0 ;        // error code
-	CGtlDoc* xpDoc = GetDocument() ;
+	CGtlDoc *xpDoc = GetDocument() ;
 
 	#if NEWSCROLL
 //  m_cViewBsuSet.InitWndBsuSet(this, TRUE) ;
@@ -353,7 +342,6 @@ void CGtlView::OnDestroy() {
 	int iReturnValue = -1 ;
 
 	JXENTER(CGtlView::OnDestroy) ;
-	int iError = 0 ;
 
 	MFC_VIEW::OnDestroy();
 
@@ -363,7 +351,7 @@ void CGtlView::OnDestroy() {
 	}
 
 	m_xpFrame = NULL ;
-	::PostMessage(ghwndParent, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM) iReturnValue);
+	MFC::PostMessage(ghwndParent, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM) iReturnValue);
 	#endif
 
 	JXELEAVE(CGtlView::OnDestroy) ;
@@ -375,7 +363,6 @@ BOOL CGtlView::PreCreateWindow(CREATESTRUCT& cCs)
 // returns: value returned by base class function
 {
 	JXENTER(CGtlView::PreCreateWindow) ;
-	int iError = 0 ;        // error code
 	BOOL bRetval ;      // return value
 	static CString stWndClass("") ;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
@@ -414,10 +401,9 @@ BOOL CGtlView::PreCreateWindow(CREATESTRUCT& cCs)
 //* CGtlView::OnDraw -- draw current view
 void CGtlView::OnDraw(CDC *xpDc) {
 	JXENTER(CGtlView::OnDraw) ;
-	int iError = 0 ;        // error code
 	CGtlDoc* xpDoc = GetDocument();
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	if (xpDoc == NULL)
 		MessageBox("No Document!!!");
 	#endif
@@ -442,7 +428,7 @@ void CGtlView::OnDraw(CDC *xpDc) {
 /////////////////////////////////////////////////////////////////////////////
 // CGtlView diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CGtlView::AssertValid() const {
 	JXENTER(CGtlView::AssertValid) ;
 	int iError = 0 ;
@@ -467,7 +453,7 @@ CGtlDoc *CGtlView::GetDocument() { // non-debug version is inline
 	JXELEAVE(CGtlView::GetDocument) ;
 	return (CGtlDoc*)m_pDocument;
 }
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 
 #ifdef NODEEDIT
@@ -532,7 +518,6 @@ void CGtlView::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 void CGtlView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	JXENTER(CGtlView::OnKeyDown) ;
-	int iError = 0 ;
 	CGtlDoc *xpDoc = GetDocument() ;
 	BOOL    bJunk, bAnimations;
 	CPoint  ptEdge(0, 0);
@@ -616,7 +601,7 @@ void CGtlView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		m_cViewBsuSet.EdgeToCenter(ptAdjustedEdge);
 		break;
 
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 	case VK_F9:
 		xpDoc->m_xpGtlData->GainRandomItem(xpDoc->m_xpGtlData->m_xpCurXodj);
 		break;

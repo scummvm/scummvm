@@ -78,7 +78,7 @@ static int gnLDieLeftFinal,    // final positions of dice.
 	extern HWND ghParentWnd;
 #endif
 /*
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
     static int gSleepTime;          //dice animation sync variable.
 #endif
 */
@@ -98,7 +98,7 @@ CMainWindow::CMainWindow(VOID) {
 	#endif
 
 	/*
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	gSleepTime=GetPrivateProfileInt("Sleep","Doze",20,"animate.ini");
 	#endif
 	*/
@@ -163,23 +163,7 @@ CMainWindow::CMainWindow(VOID) {
 	}
 
 	// Center our window on the screen in the RELEASE mode.
-	#ifdef _DEBUG
 	m_rectGameArea.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-	#else
-	if ((pDC = GetDC()) != NULL) {
-		m_rectGameArea.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
-		m_rectGameArea.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
-		m_rectGameArea.right = m_rectGameArea.left + GAME_WIDTH;
-		m_rectGameArea.bottom = m_rectGameArea.top + GAME_HEIGHT;
-		ReleaseDC(pDC);
-		pDC = NULL;
-	} else {
-		errCode = ERR_UNKNOWN;
-		MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));
-		HandleError(errCode);
-		return;
-	}
-	#endif
 
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.

@@ -21,6 +21,7 @@
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgenut.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -28,26 +29,24 @@ namespace Metagame {
 
 ///DEFS bgenut.h
 
-
 //* CGenUtil::RandomInteger -- find random integer in specified range
 int CGenUtil::RandomInteger(int iLow, int iHigh)
 // iLow, iHigh -- range
 // returns: integer which is ge iLow and le iHigh.
 {
 	JXENTER(CGenUtil::RandomInteger) ;
-	int iError = 0 ;
-	int iRetval ;               // integer return value
-	time_t tTime ;              // time -- for initializing random # gen
+	int iRetval = 0;            // integer return value
+//	time_t tTime ;              // time -- for initializing random # gen
 
 	// for first call, initialize the random number generator
 	if (!m_bRandomInit)
 		//srand((unsigned) time(&tTime)), m_bRandomInit = TRUE ;
 
-		// Note: since rand() returns a value uniform in [0, 2^15-1], the
+		// Note: since brand() returns a value uniform in [0, 2^15-1], the
 		// following method, though simple, gives a slight preference
 		// to lower numbers.  Might be worth fixing sometime.
 		if (iLow < iHigh)           // if there's a valid range
-			iRetval = iLow + (rand() % (iHigh - iLow + 1)) ;  // compute value
+			iRetval = iLow + (brand() % (iHigh - iLow + 1)) ;  // compute value
 		else                // invalid args
 			iRetval = iLow ;
 
@@ -65,7 +64,6 @@ void CGenUtil::RandomPermutation(int iNum,
 // iSize -- size of output array
 // xpIntOut -- pointer to output array (size is iSize)
 {
-	int iError = 0 ;
 	int *xpInt ;        // array pointer variable
 	int iI, iJ, iK ;    // loop variables
 	int iRanVal ;       // random value to make a choice

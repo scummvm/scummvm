@@ -20,19 +20,15 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-
-#include <string.h>
-#include <assert.h>
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
-
-#include "gtl.h"
-
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/hodjnpodj/metagame/bgen/c1btndlg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -50,14 +46,14 @@ extern char *szGameSounds[MG_SOUND_COUNT];
 #define MAX_SPECIAL_LINKS 14
 
 struct SPECIAL_TRAVEL {
-	char *pszLink[MAX_SPECIAL_LINKS];
-	char *pszFinalNode;
-	char *pszFileName;
+	const char *pszLink[MAX_SPECIAL_LINKS];
+	const char *pszFinalNode;
+	const char *pszFileName;
 	int   iHodjArrivalSoundID;
 	int   iPodjArrivalSoundID;
 };
 
-static struct SPECIAL_TRAVEL aTravelArray[MG_SPECIAL_VISIT_COUNT] = {
+static const SPECIAL_TRAVEL aTravelArray[MG_SPECIAL_VISIT_COUNT] = {
 	{{"st35", "st36", "st37", "st38", "st39", "st40", NULL}, "Boat2", ".\\ART\\?0BOAT.BMP", 0, 0},
 	{{"st40", "st39", "st38", "st37", "st36", "st35", NULL}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
 	{{"st30", "st31", "st32", "st33", "st34", "st35", NULL}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
@@ -78,7 +74,6 @@ BOOL CGtlData::SetMetaGame(BOOL bOn)
 {
 	JXENTER(CGtlData::SetMetaGame);
 	int iError = 0 ;            // error code
-	BOOL bFound = FALSE ;               // node position found
 	CPoint cLocation ;
 
 	// turn meta game on
@@ -285,7 +280,7 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 
 	// no current char sprite
 	if ((m_xpCurXodj == NULL) || ((lpChar = m_xpCurXodj->m_lpcCharSprite) == NULL)) {
-		::MessageBox(NULL, "No current char sprite.", NULL, MB_OK);
+		MessageBox(NULL, "No current char sprite.", NULL, MB_OK);
 		iError = 100 ;
 		goto cleanup ;
 	}
@@ -407,12 +402,12 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 	}
 
 	// save old filename
-	strcpy(szOldFileName, pCurPlayer->m_szFileName);
+	Common::strcpy_s(szOldFileName, pCurPlayer->m_szFileName);
 
 	// load the appropriate cel strip (new filename)
 	//
 	chPlayerChar = pCurPlayer->m_szFileName[6];
-	strcpy(pCurPlayer->m_szFileName, aTravelArray[iSpecialIndex].pszFileName);
+	Common::strcpy_s(pCurPlayer->m_szFileName, aTravelArray[iSpecialIndex].pszFileName);
 	pCurPlayer->m_szFileName[6] = chPlayerChar;
 
 	// erase old image
@@ -448,10 +443,10 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 		// handle special instance when we want player to get out of mining
 		// car and walk the rest of the way to the Aerie
 		//
-		if (stricmp(aTravelArray[iSpecialIndex].pszLink[i + 1], "Aerie") == 0) {
+		if (scumm_stricmp(aTravelArray[iSpecialIndex].pszLink[i + 1], "Aerie") == 0) {
 
 			// put back old filename
-			strcpy(pCurPlayer->m_szFileName, szOldFileName);
+			Common::strcpy_s(pCurPlayer->m_szFileName, szOldFileName);
 			assert(FileExists(pCurPlayer->m_szFileName));
 
 			// set direction index to a bogus number so a new BMP is loaded
@@ -484,7 +479,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 		//
 		case MG_VISIT_CAR1:
 
-			switch (rand() % 5) {
+			switch (brand() % 5) {
 			case 0:
 				nId = FindNodeId("AerieBT1");
 				break;
@@ -511,7 +506,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 		// Oasis Transport
 		//
 		case MG_VISIT_OASIS:
-			switch (rand() % 8) {
+			switch (brand() % 8) {
 
 			case 0:
 				nId = FindNodeId("OasisBT1");
@@ -572,9 +567,9 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 			pSoundFile = szGameSounds[iHodjSound - MG_SOUND_BASE];
 
 		pSound = new CSound(m_xpcGtlDoc->m_xpcLastFocusView, pSoundFile, SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
-		pSound->SetDrivePath(lpMetaGameStruct->m_chCDPath);
-		pSound->Play();
-		CSound::WaitWaveSounds();
+		pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
+		pSound->play();
+		CSound::waitWaveSounds();
 	}
 
 	// if there is no DC, then get one
@@ -590,7 +585,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 	}
 
 	// put back old filename
-	strcpy(pCurPlayer->m_szFileName, szOldFileName);
+	Common::strcpy_s(pCurPlayer->m_szFileName, szOldFileName);
 	assert(FileExists(pCurPlayer->m_szFileName));
 
 	if (bDoTransport) {
@@ -616,7 +611,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 }
 
 
-int CGtlData::FindNodeId(char *pszLabel) {
+int CGtlData::FindNodeId(const char *pszLabel) {
 	CNode *pNode;
 	int i, iNodeID;
 
@@ -628,7 +623,7 @@ int CGtlData::FindNodeId(char *pszLabel) {
 
 		if (!pNode->m_bDeleted) {
 
-			if (stricmp(pNode->m_szLabel, pszLabel) == 0) {
+			if (scumm_stricmp(pNode->m_szLabel, pszLabel) == 0) {
 				iNodeID = i;
 				break;
 			}
@@ -886,9 +881,9 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	CPoint      cStartPoint, cTargetPoint, cThisPoint;
 	CRect       cBoundingRect;
 	int iDistanceDX, iDistanceDY;
-	struct _timeb stStartTime, stEndTime ;   // current time
+	uint32 stStartTime, stEndTime ;   // current time
 	long lTimeDiff ;            // time difference
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	char szMsg[150] ;
 	#endif
 
@@ -897,10 +892,10 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	cStartPoint = NodeToPoint(lpNode1, NULL) ;
 	cTargetPoint = NodeToPoint(lpNode2, NULL) ;
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	// if debug5 is 1, then FindShortestPath dumps debugging information
 	if (CBdbgMgr::GetPointer()->m_iDebugValues[5]) {
-		sprintf(szMsg, "Finding shortest path from node #%d "
+		Common::sprintf_s(szMsg, "Finding shortest path from node #%d "
 		        "(%d,%d) to node #%d (%d,%d).\n",
 		        iStartNode, iTargetNode,
 		        cStartPoint.x, cStartPoint.y,
@@ -909,7 +904,7 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	}
 	#endif
 
-	_ftime(&stStartTime) ;                // save current time
+	stStartTime = g_system->getMillis();	// save current time
 
 	iDistanceDX = abs(cStartPoint.x - cTargetPoint.x);
 	iDistanceDY = abs(cStartPoint.y - cTargetPoint.y);
@@ -1042,11 +1037,10 @@ done:
 
 	lpiPath[0] += 1;
 
-	_ftime(&stEndTime) ;                // get ending time
-	lTimeDiff = 1000L * (stEndTime.time - stStartTime.time)
-	            + stEndTime.millitm - stEndTime.millitm ;
+	stEndTime = g_system->getMillis();	// get ending time
+	lTimeDiff = stEndTime - stStartTime;
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	// if debug5 is 1, then FindShortestPath dumps debugging information
 	if (CBdbgMgr::GetPointer()->m_iDebugValues[5]) {
 		_snprintf(szMsg, sizeof(szMsg),
@@ -1062,10 +1056,10 @@ done:
 				szMsg[0] = 0 ;
 
 			else if (iK % 12)
-				strcpy(szMsg, ", ") ;
+				Common::strcpy_s(szMsg, ", ") ;
 
 			else
-				strcpy(szMsg, ",\n            ") ;
+				Common::strcpy_s(szMsg, ",\n            ") ;
 
 			itoa(lpiPath[iK], szMsg + strlen(szMsg), 10) ;
 			JXOutputDebugString(szMsg) ;
@@ -1087,7 +1081,7 @@ done:
 	        iK = 0 ;
 	    }
 	*/
-	#endif  // _DEBUG
+	#endif  // BAGEL_DEBUG
 
 cleanup:
 
@@ -1154,7 +1148,7 @@ BOOL CGtlData::PositionACharacter(CXodj * xpXodj, int iShift)
 {
 	JXENTER(CGtlData::PositionACharacter) ;
 	int iError = 0 ;            // error code
-	CNode FAR * lpNode ;
+	CNode FAR * lpNode = nullptr;
 	BOOL bNodeFound = FALSE ;
 	int iN ;            // loop variable
 	CSize * lpSize ;    // size of character
@@ -1165,7 +1159,7 @@ BOOL CGtlData::PositionACharacter(CXodj * xpXodj, int iShift)
 			bNodeFound = TRUE ;
 
 		for (iN = 0 ; !bNodeFound && iN < m_iNodes ; iN++)
-			if (!(lpNode = m_lpNodes + iN)->m_bDeleted && !_fstricmp(lpNode->m_szLabel, "castle"))
+			if (!(lpNode = m_lpNodes + iN)->m_bDeleted && !scumm_stricmp(lpNode->m_szLabel, "castle"))
 				xpXodj->m_iCharNode = iN, bNodeFound = TRUE ;
 
 		for (iN = 0 ; !bNodeFound && iN < m_iNodes ; iN++)
@@ -1193,7 +1187,6 @@ CNode FAR *CGtlData::LocationToNode(int iLocationCode)
 // returns: pointer to node, or NULL if not found
 {
 	JXENTER(CGtlData::LocationToNode) ;
-	int iError = 0 ;            // error code
 	int iN ;            // loop variable
 	CNode FAR *lpNode = NULL ; // return value
 

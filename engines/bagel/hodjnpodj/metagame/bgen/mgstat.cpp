@@ -32,8 +32,7 @@ namespace Metagame {
 
 // location to game (or other action) table
 #ifndef FRAME_EXE
-CLocTable CMgStatic::cLocTable[] = {
-
+const CLocTable CMgStatic::cLocTable[] = {
 	{
 		MG_LOC_AERIE, MG_VISIT_MISHMOSH, 0,
 		"Aerie", "Aerie"
@@ -231,7 +230,7 @@ CLocTable CMgStatic::cLocTable[] = {
 
 // Game table
 
-CGameTable CMgStatic::cGameTable[] = {
+const CGameTable CMgStatic::cGameTable[] = {
 	{
 		MG_GAME_ANAGRAMS, 0,
 		"Anagrams", NULL, NULL, NULL, FALSE
@@ -355,7 +354,7 @@ CGameTable CMgStatic::cGameTable[] = {
 
 
 #ifndef FRAME_EXE
-CLengthTable CMgStatic::cLengthTable[] =  {
+const CLengthTable CMgStatic::cLengthTable[] =  {
 	{MG_LENGTH_SHORT, 1, 2, 0},
 	{MG_LENGTH_MEDIUM, 2, 5, 0},
 	{MG_LENGTH_LONG, 3, 8, 0},
@@ -367,8 +366,7 @@ CLengthTable CMgStatic::cLengthTable[] =  {
 
 // Clue tables (Hodj and Podj)
 
-CClueTable CMgStatic::cHodjClueTable[] = {
-
+const CClueTable CMgStatic::cHodjClueTable[] = {
 	{
 		MG_CLUEPIC_BAT, 1,
 		MG_CLUE_NEED, MG_OBJ_PADDLE
@@ -694,8 +692,7 @@ CClueTable CMgStatic::cHodjClueTable[] = {
 
 
 
-CClueTable CMgStatic::cPodjClueTable[] = {
-
+const CClueTable CMgStatic::cPodjClueTable[] = {
 	{
 		MG_CLUEPIC_BAT, 1,
 		MG_CLUE_NEED, MG_OBJ_HONEY
@@ -1021,13 +1018,13 @@ CClueTable CMgStatic::cPodjClueTable[] = {
 
 #ifndef FRAME_EXE
 //* CMgStatic::FindClue -- find Hodj/Podj clue
-CClueTable *CMgStatic::FindClue(BOOL bHodj, int iClue)
+const CClueTable *CMgStatic::FindClue(BOOL bHodj, int iClue)
 // bPodj -- Hodj if FALSE, Podj if TRUE
 // returns: pointer to clue table entry
 {
 	int iError = 0 ;            // error code
-	CClueTable * xpClueTable = bHodj ? cHodjClueTable : cPodjClueTable ;
-	CClueTable * xpClueEntry = NULL ;   // return value
+	const CClueTable * xpClueTable = bHodj ? cHodjClueTable : cPodjClueTable ;
+	const CClueTable * xpClueEntry = NULL ;   // return value
 	int iK ;    // loop variable
 
 	// this loop verifies that index is not out of range
@@ -1048,7 +1045,7 @@ cleanup:
 #endif
 
 #ifndef FRAME_EXE
-CSectorTable CMgStatic::cSectorTable[] = {
+const CSectorTable CMgStatic::cSectorTable[] = {
 	{MG_SECTOR_BRIDGE, "Bridge", "Bridge"},
 	{MG_SECTOR_CHUCKLE, "Chuckle", "Cape Chuckle"},
 	{MG_SECTOR_DESERT, "Desert", "Desert"},

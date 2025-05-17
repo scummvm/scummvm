@@ -30,19 +30,7 @@ namespace Metagame {
 
 
 //* CBbtMgr::~CBbtMgr -- destructor
-CBbtMgr::~CBbtMgr(void)
-// returns: VOID
-{
-	JXENTER(CBbtMgr::~CBbtMgr) ;
-	int iError = 0 ;        // error code
-//  CBbutton FAR * xpBbutton ;
-
-//    .... delete button chain
-
-// cleanup:
-
-	JXELEAVE(CBbtMgr::~CBbtMgr) ;
-	RETURN_VOID ;
+CBbtMgr::~CBbtMgr() {
 }
 
 
@@ -80,7 +68,6 @@ int CBbtMgr::AcceptClick(CRPoint crPoint, int iClickType)
 // returns: id of affected button, 0 otherwise
 {
 	JXENTER(CBbtMgr::AcceptClick) ;
-	int iError = 0 ;        // error code
 	int iId = 0 ;   // return value
 	CBbutton FAR * lpPtBbt = NULL, FAR * lpBbt ;
 	BOOL bButtonUp = FALSE, bButtonDown = FALSE ;
@@ -160,7 +147,6 @@ CBgbObject FAR *CBbtMgr::GetCurrentBitmap(CBbutton * xpBbt)
 // returns: pointer to Boffo bitmap object
 {
 	JXENTER(CBbtMgr::GetCurrentBitmap) ;
-	int iError = 0 ;        // error code
 	CBgbObject FAR * lpcBgbObject = NULL ;  // return value
 
 	if (xpBbt) {

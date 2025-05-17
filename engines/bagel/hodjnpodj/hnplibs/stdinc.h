@@ -33,7 +33,7 @@ namespace HodjNPodj {
 /*
 * Accept Microsofts new debug macro
 */
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	#ifndef DEBUG
 		#define DEBUG 1
 	#endif

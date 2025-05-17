@@ -112,7 +112,7 @@ LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 }
 
 UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT, DWORD)) {
 	error("TODO: SetTimer");
 }
 

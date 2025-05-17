@@ -29,5 +29,19 @@ IMPLEMENT_DYNAMIC(CFrameWnd, CWnd)
 BEGIN_MESSAGE_MAP(CFrameWnd, CWnd)
 END_MESSAGE_MAP()
 
+HMENU CFrameWnd::GetMenu() const {
+	error("TODO: CFrameWnd::GetMenu");
+}
+
+void CFrameWnd::RecalcLayout(BOOL bNotify) {
+	error("TODO: CFrameWnd::RecalcLayout");
+}
+
+BOOL CFrameWnd::RepositionBars(UINT nIDFirst, UINT nIDLast,
+	UINT nIDLeftOver, UINT nFlag, LPRECT lpRectParam,
+	LPCRECT lpRectClient, BOOL bStretch) {
+	error("TODO: CFrameWnd::RepositionBars");
+}
+
 } // namespace MFC
 } // namespace Bagel

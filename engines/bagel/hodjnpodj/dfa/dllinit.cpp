@@ -68,7 +68,7 @@ HWND FAR PASCAL RunDFA(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	if (pMainGameWnd != NULL) {
 		pMainGameWnd = NULL;
 	}
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 //  lpGameInfo->bPlayingMetagame = TRUE;
 //  lpGameInfo->bMusicEnabled = FALSE;
 //  lpGameInfo->nSkillLevel = SKILLLEVEL_LOW;

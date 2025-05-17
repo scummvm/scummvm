@@ -35,7 +35,7 @@ DECLARE_HANDLE(HDIB);
 
 /* DIB Macros*/
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	#define IS_WIN30_DIB(lpbi)      ((*(LPDWORD)(lpbi)) == sizeof(BITMAPINFOHEADER))
 #else
 	#define IS_WIN30_DIB(lpbi)      ( TRUE )

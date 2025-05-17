@@ -20,19 +20,8 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-
-#include <fcntl.h>
-#include <sys\types.h>
-#include <sys\stat.h>
-#include <io.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <sys\timeb.h>
-
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
-#include "gtldat.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -41,12 +30,12 @@ namespace GrandTour {
 
 ///DEFS gtldat.h
 
-static char st_szIdentChars[] =
+static const char st_szIdentChars[] =
     "abcdefghijklmnopqrstuvwxyz"
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "0123456789_." ;
 
-static CKeyTab st_cKytbs[] = {
+static const CKeyTab st_cKytbs[] = {
 	{KT_BMP, "BITMAP"},
 	{KT_NODE, "NODE"},
 	{KT_LINK, "LINK"},
@@ -79,12 +68,11 @@ static CKeyTab st_cKytbs[] = {
 } ;
 
 //* CGtlData::FindKeyword -- find keyword, given tree node type
-XPSTR CGtlData::FindKeyword(int iType)
+LPCSTR CGtlData::FindKeyword(int iType)
 // iType -- KT_xxxx -- tree node type
 // returns: string pointer to keyword, or to "????"
 {
-	int iError = 0 ;        // error code
-	CKeyTab * xpKytb ;  // ptr to keyword table entry
+	const CKeyTab * xpKytb ;  // ptr to keyword table entry
 
 	JXENTER(CGtlData::FindKeyword) ;
 	for (xpKytb = &st_cKytbs[0] ; xpKytb->m_iKeyValue &&
@@ -100,14 +88,14 @@ BOOL CGtlData::ReadLine(void)
 // returns: TRUE if error, FALSE otherwise
 {
 	int iError = 0 ;        // error code
-	char szLine[512] ;      // input line
-	XPSTR xpStart ;       // ptr to first char of element
+	char szLine[512];		// input line
+	char *xpStart ;       // ptr to first char of element
 	int iElementLength ;    // length of current lexical element
 	int iStringListPos = 0 ;    // current position in string list
 	int iNumLxels = 0 ;     // number of lexical elements so far
-	XPSTR xpStr ;       // string pointer
-	XPSTR xpszIdent ;       // identifier string pointer
-	CKeyTab * xpKytb ;      // pointer to keyword table
+	char *xpStr ;       // string pointer
+	char *xpszIdent;       // identifier string pointer
+	const CKeyTab * xpKytb ;      // pointer to keyword table
 	CLexElement * xpLxel, *xpLastLxel = NULL ;  // last lexical element on line
 	BOOL bDone ;    // loop variable
 
@@ -120,21 +108,24 @@ BOOL CGtlData::ReadLine(void)
 	while (!bDone) {
 
 		// read line and test for EOF
-		if (!fgets(szLine, sizeof(szLine), m_xpGtlFile)) {
+		Common::strcpy_s(szLine, m_xpGtlFile->readLine().c_str());
+		if (m_xpGtlFile->eos()) {
 			bDone = TRUE ;  // last loop iteration
 			iError = 100 ;
 			m_bEof = TRUE ; // end of file
-			szLine[0] = 0 ; // process null line
+			szLine[0] = '\0';
 		}
 
 		++m_iLineNumber ;   // increment line number
 
-		if (m_xpListFile)       // if there's a listing file
-			fputs(szLine, m_xpListFile) ;   // list input
+		if (m_xpListFile) {
+			// There's a listing file
+			m_xpListFile->writeString(szLine);
+			m_xpListFile->writeByte('\n');
+		}
 
 		xpStart = szLine;
-		for (xpStr = szLine ; *xpStr ;) {
-
+		for (xpStr = szLine; *xpStr ;) {
 			xpLxel = &m_cLexElts[iNumLxels] ;   // point to current lexical block
 			xpLxel->m_iLineNumber = m_iLineNumber ;
 			xpLxel->m_iColumn = xpStr - xpStart;
@@ -176,7 +167,7 @@ BOOL CGtlData::ReadLine(void)
 				m_szStringList[iStringListPos++] = 0 ;
 
 				for (xpKytb = &st_cKytbs[0] ; xpKytb->m_iKeyValue &&
-				        stricmp(xpKytb->m_xpszKeyString, xpszIdent)
+				        scumm_stricmp(xpKytb->m_xpszKeyString, xpszIdent)
 				        != 0 ;  ++xpKytb)
 					;   // null loop body
 
@@ -257,7 +248,7 @@ cleanup:
 
 
 //* CGtlData::ErrorMsg -- publish error message
-BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, XPSTR szMessage)
+BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, LPCSTR szMessage)
 // returns: TRUE if error, FALSE otherwise
 {
 	int iError = 0 ;        // error code
@@ -265,16 +256,18 @@ BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, XPSTR szMessage)
 	char szTitle[40] ;      // message box title
 
 	JXENTER(CGtlData::ErrorMsg) ;
-	sprintf(szLine, "Error: %s.", szMessage) ;
+	Common::sprintf_s(szLine, "Error: %s.", szMessage) ;
 	//printf(szLine) ;
 
 	if (xpLxel) {
-		sprintf(szTitle, "Error in line %i, column %i.",
+		Common::sprintf_s(szTitle, "Error in line %i, column %i.",
 		        xpLxel->m_iLineNumber, xpLxel->m_iColumn) ;
 		// printf(szLine) ;
-	} else
-		strcpy(szTitle, "Error message") ;
-	::MessageBox(NULL, szLine, szTitle, MB_OK) ;
+	} else {
+		Common::strcpy_s(szTitle, "Error message") ;
+	}
+
+	MessageBox(NULL, szLine, szTitle, MB_OK) ;
 
 // cleanup:
 

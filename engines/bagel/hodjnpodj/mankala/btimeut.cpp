@@ -27,15 +27,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-///DEFS btimeut.h
-
-// extern "C" void WaitEvent(void) ;
-
 BOOL bTimeDelayPassed = TRUE ;
-
-void CALLBACK DelayMsCallback(HWND /* hWnd */,
-                              UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
-
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
 BOOL CTimeUtil::DelayMs(UINT uMs)
@@ -49,7 +41,7 @@ BOOL CTimeUtil::DelayMs(UINT uMs)
 
 //    RETURN(FALSE) ;   // ***************
 
-	if (!(uTimerId = SetTimer(NULL, 0, uMs, Mankala::DelayMsCallback)))
+	if (!(uTimerId = SetTimer(NULL, 0, uMs, DelayMsCallback)))
 		// set timer, and test for success
 	{
 		iError = 100 ;      // SetTimer failed
@@ -72,15 +64,8 @@ cleanup:
 	RETURN(iError != 0) ;
 }
 
-///* ::DelayMsCallback -- SetTimer callback routine for DelayMs
-void DelayMsCallback(HWND /* hWnd */,
-                     UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */)
-// hWnd -- handle of window (always NULL in this case)
-// uMsg -- WM_TIMER message
-// uTimerId -- timer identifier
-// dwTime -- current system time
-// returns: void
-{
+void CTimeUtil::DelayMsCallback(HWND hWnd, UINT uMsg,
+	UINT uTimerId, DWORD dwTime) {
 	JXENTER(::DelayMsCallback) ;
 	//int iError = 0 ;      // error code
 	bTimeDelayPassed = TRUE ;   // elapsed time passed

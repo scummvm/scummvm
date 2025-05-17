@@ -503,4 +503,21 @@ CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
 	return (str);
 }
 
+/**
+*  name      ProbableTrue
+*  synopsis  - return a true / false based on the probability given
+*            int nProbability          the probability of returning a true
+*
+*  purpose   to return a TRUE <nProbability> of the tine
+*
+*
+*  returns   BOOL
+*
+**/
+bool ProbableTrue(int nProbability) {
+	int nRand = brand() % 100;
+
+	return (nRand < nProbability);
+}
+
 } // namespace Bagel

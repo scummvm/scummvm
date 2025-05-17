@@ -23,7 +23,6 @@
 #define BAGEL_METAGAME_GTL_CTURNDLG_H
 
 #include "bagel/afxwin.h"
-
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"

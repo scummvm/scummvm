@@ -408,9 +408,9 @@ CBFishWindow::CBFishWindow(VOID) {
 		//
 		if (errCode == ERR_NONE) {
 
-			#ifdef  _DEBUG
+			#ifdef  BAGEL_DEBUG
 			pGameParams->bMusicEnabled = TRUE;
-			#endif  //_DEBUG
+			#endif  //BAGEL_DEBUG
 
 			// Start the BFish soundtrack
 			//

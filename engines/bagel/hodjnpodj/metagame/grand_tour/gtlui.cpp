@@ -20,14 +20,13 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include <assert.h>
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
-#include "gtl.h"
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
-#include "gtldat.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -80,7 +79,6 @@ CNode::CNode(void) {
 //      arrays, and set colors
 CGtlData::CGtlData(void) {
 	JXENTER(CGtlData::CGtlData) ;
-	int iError = 0 ;            // error code
 
 	TRACECONSTRUCTOR(CGtlData) ;
 	ClearData() ;
@@ -105,7 +103,6 @@ CGtlData::CGtlData(void) {
 //* CGtlData::~CGtlData -- destructor
 CGtlData::~CGtlData(void) {
 	JXENTER(CGtlData::~CGtlData) ;
-	int iError = 0 ;            // error code
 	CXodj *xpXodj, *xpXodjNext ;
 
 	DeleteOffScreenBmp();
@@ -270,7 +267,6 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 {
 	JXENTER(CGtlData::Draw) ;
 	int iError = 0 ;            // error code
-	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 	CRPoint crPoint1, crPoint2 ;        // link points
 	CRPoint crPosition ;                // position within window
 	BOOL bPaint = (xpDc != NULL) ;      // test for WM_PAINT
@@ -548,7 +544,7 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 	for (iK = 0 ; iK < m_iMaps ; ++iK) {
 
 		if ((iK & 0x17) == 0)
-			CSound::HandleMessages();
+			CSound::handleMessages();
 
 		lpMap = m_lpMaps + iK ;
 
@@ -647,7 +643,6 @@ CRPoint CGtlData::NodeToPoint(CNode *lpNode, CSize FAR *lpcSize)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlData::NodeToPoint) ;
-	int iError = 0 ;            // error code
 	CRPoint crPosition ;                // output: position
 	CMap * lpMap ;              // pointer to relative bitmap
 
@@ -1005,7 +1000,7 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 
 			for (xpSectorEntry = xpSectorTable ;
 			        xpSectorEntry->m_iSectorCode
-			        && stricmp(lpSelectedNode->m_szSector,
+			        && scumm_stricmp(lpSelectedNode->m_szSector,
 			                   xpSectorEntry->m_lpszLabel) ;
 			        ++xpSectorEntry)
 				;   // null loop body
@@ -1061,12 +1056,12 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 
 		if (xpNodeDlg->m_bApply && lpSelectedNode
 		        && lpSelectedNode->m_szLabel != xpNodeDlg->m_stName)
-			_fstrncpy(lpSelectedNode->m_szLabel, xpNodeDlg->m_stName,
+			strncpy(lpSelectedNode->m_szLabel, xpNodeDlg->m_stName,
 			          MAX_LABEL_LENGTH - 1) ;
 
 //      if (xpNodeDlg->m_bApply && lpSelectedNode
 //              && lpSelectedNode->m_szAction != xpNodeDlg->m_stAction)
-//          _fstrncpy(lpSelectedNode->m_szAction,
+//          strncpy(lpSelectedNode->m_szAction,
 //                      xpNodeDlg->m_stAction , MAX_LABEL_LENGTH - 1) ;
 
 		if (xpNodeDlg->m_bApply && lpSelectedNode
@@ -1163,7 +1158,7 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 
 		if (xpNodeDlg->m_bApply && lpSelectedNode
 		        && lpSelectedNode->m_szSector != lpszSector)
-			_fstrncpy(lpSelectedNode->m_szSector, lpszSector,
+			strncpy(lpSelectedNode->m_szSector, lpszSector,
 			          MAX_LABEL_LENGTH - 1) ;
 
 //      if (xpNodeDlg->m_bApply && lpSelectedNode
@@ -1222,9 +1217,9 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 	char szPath[200];
 	CMap *lpMap;
 	CNode *lpNode;
-	int iK, iL = 0 ;            // loop variables
+	int iK;
 	BOOL bNewBitmap = FALSE;
-	CLocTable *xpLocTable = CMgStatic::cLocTable, *xpLocEntry;
+	const CLocTable *xpLocTable = CMgStatic::cLocTable, *xpLocEntry;
 
 	for (iK = 0 ; iK < m_iMaps ; ++iK) {
 
@@ -1245,8 +1240,8 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 				lpcBgbObject->m_crPosition.m_bRelocatable = (lpMap->m_bRelocatable != 0) ;
 
 				// next load in the bitmap segment and test
-				strcpy(szPath, m_szBmpDirectory) ;
-				_fstrcat(szPath, lpMap->m_szFilename) ;
+				Common::strcpy_s(szPath, m_szBmpDirectory) ;
+				Common::strcat_s(szPath, lpMap->m_szFilename) ;
 
 				m_cBgbMgr.InitBitmapObject(lpcBgbObject, szPath);
 			}
@@ -1266,7 +1261,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 	for (iK = 0 ; iK < m_iNodes ; ++iK) {
 		if (!(lpNode = m_lpNodes + iK)->m_bDeleted) {
 
-			if (_fstricmp(lpNode->m_szLabel, "menu") == 0)
+			if (scumm_stricmp(lpNode->m_szLabel, "menu") == 0)
 				lpNode->m_bMenu = TRUE;
 			#if 0
 			// find this nodes sector
@@ -1274,14 +1269,14 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 			lpNode->m_iSector = MG_SECTOR_ANY;
 			pSectorEntry = CMgStatic::cSectorTable;
 			while (pSectorEntry->m_iSectorCode != 0) {
-				if (stricmp(pSectorEntry->m_lpszLabel, lpNode->m_szSector) == 0) {
+				if (scumm_stricmp(pSectorEntry->m_lpszLabel, lpNode->m_szSector) == 0) {
 					lpNode->m_iSector = pSectorEntry->m_iSectorCode;
 					break;
 				}
 				pSectorEntry++;
 			}
 			#endif
-			for (xpLocEntry = xpLocTable ; xpLocEntry->m_iLocCode && stricmp(lpNode->m_szLabel, xpLocEntry->m_lpszLabel) ; ++xpLocEntry)
+			for (xpLocEntry = xpLocTable ; xpLocEntry->m_iLocCode && scumm_stricmp(lpNode->m_szLabel, xpLocEntry->m_lpszLabel) ; ++xpLocEntry)
 				;       // null loop body
 
 			// if this location is in table
@@ -1316,7 +1311,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 			}
 
 
-			if (stricmp(lpMap->m_szLabel, "f00") >= 0 && stricmp(lpMap->m_szLabel, "f24") <= 0) {
+			if (scumm_stricmp(lpMap->m_szLabel, "f00") >= 0 && scumm_stricmp(lpMap->m_szLabel, "f24") <= 0) {
 
 				int iFurlong = 10 * lpMap->m_szLabel[1] + lpMap->m_szLabel[2] - 11 * '0' ;
 
@@ -1325,41 +1320,41 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 
 				lpMap->m_bSpecialPaint = TRUE ;
 
-			} else if (stricmp(lpMap->m_szLabel, "Hodj") == 0 || stricmp(lpMap->m_szLabel, "Podj") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "Hodj") == 0 || scumm_stricmp(lpMap->m_szLabel, "Podj") == 0) {
 
 				InitOverlay(lpMap) ;    // initialize sprite
 
-			} else if (stricmp(lpMap->m_szLabel, "Minib1") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "Minib1") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
 				m_cBbtMgr.LinkButton(&m_cMiniButton, lpcBgbObject, NULL) ;
 
-			} else if (stricmp(lpMap->m_szLabel, "Minib2") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "Minib2") == 0) {
 				lpMap->m_bSpecialPaint = TRUE;
 				m_cBbtMgr.LinkButton(&m_cMiniButton, NULL, lpcBgbObject);
 
-			} else if (stricmp(lpMap->m_szLabel, "Invb1") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "Invb1") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
 				m_cBbtMgr.LinkButton(&m_cInvButton, lpcBgbObject, NULL) ;
 
-			} else if (stricmp(lpMap->m_szLabel, "Invb2") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "Invb2") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
 				m_cBbtMgr.LinkButton(&m_cInvButton, NULL, lpcBgbObject) ;
 
-			} else if (stricmp(lpMap->m_szLabel, "Scrob1") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "Scrob1") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
 				m_cBbtMgr.LinkButton(&m_cScrollButton, lpcBgbObject, NULL) ;
 
-			} else if (stricmp(lpMap->m_szLabel, "Scrob2") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "Scrob2") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
 				m_cBbtMgr.LinkButton(&m_cScrollButton, NULL, lpcBgbObject) ;
 
 				#ifndef NODEEDIT
-			} else if (stricmp(lpMap->m_szLabel, "podjb1") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "podjb1") == 0) {
 
 				assert(m_xpXodjChain != NULL);
 				m_xpXodjChain->m_lpcIcon = lpcBgbObject;
 
-			} else if (stricmp(lpMap->m_szLabel, "hodjb1") == 0) {
+			} else if (scumm_stricmp(lpMap->m_szLabel, "hodjb1") == 0) {
 
 				assert(m_xpXodjChain != NULL);
 				assert(m_xpXodjChain->m_xpXodjNext != NULL);
@@ -1393,7 +1388,7 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 	int iError = 0 ;            // error code
 	CXodj * xpXodj = NULL ;
 
-	for (xpXodj = m_xpXodjChain ; xpXodj && _fstricmp(lpMap->m_szLabel, xpXodj->m_szName); xpXodj = xpXodj->m_xpXodjNext)
+	for (xpXodj = m_xpXodjChain ; xpXodj && scumm_stricmp(lpMap->m_szLabel, xpXodj->m_szName); xpXodj = xpXodj->m_xpXodjNext)
 		;       // null loop body
 
 	if (!xpXodj) {              // existing character not found
@@ -1406,7 +1401,7 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 		// put in front of chain
 		m_xpXodjChain = xpXodj ;
 
-		_fstrncpy(xpXodj->m_szName, lpMap->m_szLabel, sizeof(xpXodj->m_szName) - 1);
+		strncpy(xpXodj->m_szName, lpMap->m_szLabel, sizeof(xpXodj->m_szName) - 1);
 		xpXodj->m_szName[0] = (char)toupper(xpXodj->m_szName[0]);
 
 		xpXodj->m_lpcCharSprite = lpMap->m_lpcBgbObject ;
@@ -1418,7 +1413,7 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 		CNode   *pNode = m_lpNodes;
 		int     nTemp = 0;
 		do {
-			if (lstrcmp(pNode->m_szLabel, STARTING_LOCATION) == 0) {
+			if (strcmp(pNode->m_szLabel, STARTING_LOCATION) == 0) {
 				pNode = NULL;
 				break;
 			} else {
@@ -1434,7 +1429,7 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 //        xpXodj->m_iCharNode = -(lpMap - m_lpMaps) - 1 ;
 		// kludge forces char to start
 		// at castle
-		xpXodj->m_bHodj = (_fstricmp(lpMap->m_szLabel, "Hodj") == 0) ;
+		xpXodj->m_bHodj = (scumm_stricmp(lpMap->m_szLabel, "Hodj") == 0) ;
 
 		// initialize theme music info
 		//

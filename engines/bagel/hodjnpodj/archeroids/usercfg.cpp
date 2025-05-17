@@ -86,9 +86,9 @@ void CUserCfgDlg::PutDlgData() {
 
 	ReleaseDC(pDC);
 
-	SetScrollPos(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, m_nInitGameSpeed, TRUE);
-	SetScrollPos(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, m_nInitNumLives, TRUE);
-	SetScrollPos(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, m_nInitArcherLevel, TRUE);
+	MFC::SetScrollPos(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, m_nInitGameSpeed, TRUE);
+	MFC::SetScrollPos(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, m_nInitNumLives, TRUE);
+	MFC::SetScrollPos(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, m_nInitArcherLevel, TRUE);
 }
 
 

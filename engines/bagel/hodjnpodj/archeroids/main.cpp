@@ -426,7 +426,7 @@ CMainWindow::CMainWindow() {
 
 
 
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 		pGameParams->bSoundEffectsEnabled = TRUE;
 		pGameParams->bMusicEnabled = TRUE;
 		#endif

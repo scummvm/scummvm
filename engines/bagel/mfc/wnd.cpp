@@ -363,5 +363,18 @@ BOOL CWnd::KillTimer(UINT_PTR nIDEvent) {
 	error("TODO: CWnd::KillTimer");
 }
 
+BOOL CWnd::GetScrollRange(int nBar,
+	LPINT lpMinPos, LPINT lpMaxPos) const {
+	error("TODO: CWnd::GetScrollRange");
+}
+
+INT CWnd::GetScrollPosition() const {
+	error("TODO: CWnd::GetScrollPosition");
+}
+
+int CWnd::SetScrollPos(int nBar, int nPos, BOOL bRedraw) {
+	error("TODO: CWnd::SetScrollPos");
+}
+
 } // namespace MFC
 } // namespace Bagel

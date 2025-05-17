@@ -49,56 +49,56 @@ namespace Metagame {
 
 #ifdef JX_DEBUG
 
-static  char    dbgxx1[6] = "DBGXX1" ;
+static const char    dbgxx1[7] = "DBGXX1" ;
 
-static  char    dbgxx2[4] = "TRC." ;
+static const char    dbgxx2[5] = "TRC." ;
 int dbgtrc = 0 ;        /* %trace -- trace calls */
 
-static  char    dbgxx3[4] = "TRK." ;
+static const char    dbgxx3[5] = "TRK." ;
 int dbgtrk = TRACE_ERRORS ; /* %track -- track calls */
 
-static  char    dbgxx4[4] = "MSG." ;
+static const char    dbgxx4[5] = "MSG." ;
 int dbgmsg = 0 ;        /* %msg */
 
-static  char    dbgxx5[4] = "MTK." ;
+static const char    dbgxx5[5] = "MTK." ;
 int dbgmtk = 0 ;        /* %memtrk -- track memory */
 
-static  char    dbgxx6[4] = "DP1." ;
+static const char    dbgxx6[5] = "DP1." ;
 int dbgdp1 = 0 ;        /* %dump1 */
 
-static  char    dbgxx7[4] = "DP2." ;
+static const char    dbgxx7[5] = "DP2." ;
 int dbgdp2 = 0 ;        /* %dump2 */
 
-static  char    dbgxx8[4] = "FOC." ;
+static const char    dbgxx8[5] = "FOC." ;
 int dbgfoc = 0 ;        /* %filoc -- file open/close */
 
-static  char    dbgxx9[4] = "FRW." ;
+static const char    dbgxx9[5] = "FRW." ;
 int dbgfrw = 0 ;        /* %filrw -- file read/write */
 
-static  char    dbgxxa[4] = "MTC." ;
+static const char    dbgxxa[5] = "MTC." ;
 int dbgmtc = 0 ;        /* %memtrc -- trace memory */
 
-static  char    dbgxxb[4] = "MFC." ;
+static const char    dbgxxb[5] = "MFC." ;
 int dbgmfc = 0 ;        /* %mfc -- trace msg interface */
 
-static  char    dbgxxc[4] = "SWI." ;
+static const char    dbgxxc[5] = "SWI." ;
 int dbgswi = 0 ;        /* %swi -- trace msg interface */
 
-static  char    dbgxxd[4] = "CKN." ; /* %cknull -- check null ptr */
+static const char    dbgxxd[5] = "CKN." ; /* %cknull -- check null ptr */
 int dbgckn = 0 ;
 
-static  char    dbgxxe[4] = "CKF." ;
+static const char    dbgxxe[5] = "CKF." ;
 int dbgckf = 0 ;        /* %cknull:arg -- check # words
                         following first 4 */
 
-static  char    dbgxxf[4] = "TRR." ;
+static const char    dbgxxf[5] = "TRR." ;
 int dbgtrr = TRACE_ERRORS ; /* %trcerr -- trace errors */
 
-static  char    dbgxxg[4] = "FIL." ;
+static const char    dbgxxg[5] = "FIL." ;
 int dbgreopen = MAXPOSINT ; /* reopen size */
 char    dbgfile[DBGFILESIZE] = "" ; /* output file */
 
-static  char    dbgxxz[6] = "DBGXXX" ;
+static const char    dbgxxz[7] = "DBGXXX" ;
 
 
 #define NAMEL 40    /* max name length, including terminating null */
@@ -116,17 +116,17 @@ char dbgabt = 0 ;   /* abort flag -- set to 1 to abort */
 LPVOID dbgptr = NULL ;
 int dbgptrlen = 4 ;
 // long dbgvalue = 0 ;
-char dbgvalue[4] = "h.bm" ;
+char dbgvalue[5] = "h.bm" ;
 
 //* dbgntr -- enter a subroutine
-void dbgntr(char * name)
+void dbgntr(const char * name)
 // char *name ;     /* name of subroutine */
 {
 	char *p ;       /* string pointer */
 	int i ;     /* character counter */
 
 	if (dbgabt)     /* test abort flag */
-		abort() ; //_exit(1) ;      /* exit if on */
+		error("Abort"); //_exit(1) ;      /* exit if on */
 	if (dbgtrc || dbgtrk) { /* if tracing or tracking enabled */
 		if (dbgptr) {
 			if (*(long *)dbgptr != *(long *)&dbgvalue[0])
@@ -153,7 +153,7 @@ void dbgntr(char * name)
 			dbgtyp("\nToo much recursion.\n>", TRUE) ;
 			/* type list of names */
 			if (dbgdep > MAXRECURSION + 10)
-				abort() ; //_exit(1) ;      /* exit if on */
+				error("Abort"); //_exit(1) ;      /* exit if on */
 //		DebugBreak() ;
 		} else if (dbgtrc) { /* if tracing enabled */
 //	    ifcprf(">"); /* indicate enter */
@@ -165,7 +165,7 @@ void dbgntr(char * name)
 }
 
 //* dbgxit -- exit a subroutine
-void dbgxit(char * name, int iError)
+void dbgxit(const char * name, int iError)
 // char *name ;     /* name of subroutine */
 {
 	int i ;     /* loop index */
@@ -173,7 +173,7 @@ void dbgxit(char * name, int iError)
 	int depth ;     /* depth level */
 
 	if (dbgabt)     /* test abort flag */
-		abort() ; //_exit(1) ;      /* exit if on */
+		error("Abort") ; //_exit(1) ;      /* exit if on */
 	if (iError && dbgtrr) { /* if tracing errors */
 		ifcprf("\nError %d in function %s.\n", iError, name) ;
 		dbganc = -1 ;   // force dump of entire call list
@@ -218,7 +218,7 @@ void dbgxit(char * name, int iError)
 }
 
 //* dbgtyp -- type status line
-void dbgtyp(char * ps, BOOL bReset) {
+void dbgtyp(const char * ps, BOOL bReset) {
 	int k ;         /* name index */
 	int len ;           /* line length */
 
@@ -255,14 +255,14 @@ void dbgtyp(char * ps, BOOL bReset) {
 }
 
 //* dbgntu -- enter a subroutine -- unconditional message
-void dbgntu(char * name)
+void dbgntu(const char * name)
 // char *name ;     /* name of subroutine */
 {
 	ifcprf("Entering %s\n", name);
 }
 
 //* dbgxiu -- exit a subroutine -- unconditional message
-void dbgxiu(char * name)
+void dbgxiu(const char * name)
 // char *name ;     /* name of subroutine */
 {
 	ifcprf("Leaving %s\n", name);
@@ -293,7 +293,7 @@ void dbgcnp(char * caller, char * name)
 	if (*pint++ || *pint++ || *pint++ || *pint) {
 		ifcprf("%s %s -- null pointer storage clobbered.", caller, name) ;
 		dbgtyp(NULL, TRUE) ;
-		abort() ; //_exit(1) ;      /* exit if on */
+		error("Abort") ; //_exit(1) ;      /* exit if on */
 	}
 
 	if (dbgckf > 0) { /* if we want to check more words */
@@ -309,7 +309,7 @@ void dbgcnp(char * caller, char * name)
 					ifcprf("%s %s -- word # %d + 4 clobbered.",
 					       caller, name, i) ;
 					dbgtyp(NULL, TRUE) ;
-					abort() ; //_exit(1) ;      /* exit if on */
+					error("Abort") ; //_exit(1) ;      /* exit if on */
 				}
 	}
 }
@@ -352,7 +352,7 @@ void kybupq(void) {
 		/* get char, add to end of queue, and test for control-c */
 		if ((*(kybqnd++) = kybord()) == CWCBRK) {
 			if (++kybccc >= 5)  /* if five consecutive breaks */
-				abort() ; //_exit(1) ;      /* exit */
+				error("Abort") ; //_exit(1) ;      /* exit */
 		} else kybccc = 0 ; /* else reset cc count */
 		kybqsz++;       /* increment queue size */
 		if (kybqnd >= kybque + QSIZE) /* if ptr past end of queue */
@@ -422,7 +422,7 @@ int kybnlt(void) {
 #endif /* JX_DEBUG */
 
 
-/* ifc2.c -- replacement for "printf" and "sprintf" functions */
+/* ifc2.c -- replacement for "printf" and "Common::sprintf_s" functions */
 /* Copyright (C) 1984 by John J. Xenakis Company */
 
 /** ifcprf -- formatted write to stdout **/
@@ -490,7 +490,7 @@ void ifcprf(char * cs, ...)
 * returns      n = number of characters placed in "ds"
 **/
 
-//* ifcspf -- sprintf replacement
+//* ifcspf -- Common::sprintf_s replacement
 int ifcspf(char * ds, char * cs, ...)
 // void ifcspf(char * ds, char * cs, char * args)
 // char *ds;
@@ -786,7 +786,7 @@ dec:
 
 
 //* ifcwst -- write character string to screen
-void ifcwst(XPSTR xpStr) {
+void ifcwst(LPCSTR xpStr) {
 	char ch;
 	if (dbgfile[0]) {
 		while ((ch = *xpStr++) != '\0')

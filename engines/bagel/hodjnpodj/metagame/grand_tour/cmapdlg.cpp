@@ -1,50 +1,34 @@
-/*****************************************************************
-*
-*  cmapdlg.cpp
-*
-*  HISTORY
-*
-*       1.00      07/26/94     BAR     Initial Design
-*
-*  MODULE DESCRIPTION:
-*
-*       Dialog box showing Hodj and Podj on the zoom map, built off of CBmpDialog
-*
-*  CONSTRUCTORS:
-*
-*       cmapdlg
-*
-*  PUBLIC:
-*
-*
-*
-*  PUBLIC GLOBAL:
-*
-*
-*
-*  PROTECTED:
-*
-*
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
 #include "bagel/hodjnpodj/hnplibs/text.h"
-#include "cmapdlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/cmapdlg.h"
 
-#ifdef _DEBUG
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
+
+#ifdef BAGEL_DEBUG
 	#undef THIS_FILE
 	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
@@ -146,7 +130,7 @@ void CMapDialog::OnPaint() {
 
 	pDC = GetDC();
 
-	sprintf(buf, "");
+	Common::sprintf_s(buf, "");
 	bSuccess = (*m_pTextMessage).DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
 	ASSERT(bSuccess);
 
@@ -190,3 +174,8 @@ BOOL CMapDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
 	return (TRUE);
 }
+
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

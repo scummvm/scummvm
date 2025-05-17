@@ -42,6 +42,27 @@ class CScrollBar;
 class CListBox;
 class CBitmap;
 
+
+/*============================================================================*/
+// CMenu
+
+class CMenu : public CObject {
+public:
+	// Constructors
+	CMenu();
+
+	BOOL CreateMenu();
+	BOOL CreatePopupMenu();
+	BOOL LoadMenu(LPCTSTR lpszResourceName);
+	BOOL LoadMenu(UINT nIDResource);
+	BOOL LoadMenuIndirect(const void *lpMenuTemplate);
+	BOOL DestroyMenu();
+
+	static CMenu *FromHandle(HMENU hMenu);
+
+	UINT CheckMenuItem(UINT nIDCheckItem, UINT nCheck);
+};
+
 /*============================================================================*/
 // Window message map handling
 
@@ -306,9 +327,21 @@ class CDataExchange {
 
 /*============================================================================*/
 
-struct CCreateContext   // Creation information structure
+class CArchive {
+public:
+	bool IsStoring() const {
+		return false;
+	}
+};
+
+class CCmdUI {
+};
+
+/*============================================================================*/
+
+// Creation information structure
 // All fields are optional and may be NULL
-{
+struct CCreateContext {
 	// for creating new views
 	CRuntimeClass *m_pNewViewClass; // runtime class of view to create or NULL
 	CDocument *m_pCurrentDoc;
@@ -435,8 +468,35 @@ public:
 	void Detach();
 	int SetStretchBltMode(int nStretchMode);
 	int GetDeviceCaps(int nIndex) const;
-	int SetROP2(int nDrawMode);
 
+	// Mapping Functions
+	int GetMapMode() const;
+	CPoint GetViewportOrg() const;
+	virtual int SetMapMode(int nMapMode);
+	// Viewport Origin
+	virtual CPoint SetViewportOrg(int x, int y);
+	CPoint SetViewportOrg(POINT point);
+	virtual CPoint OffsetViewportOrg(int nWidth, int nHeight);
+
+	// Clipping Functions
+	virtual int GetClipBox(LPRECT lpRect) const;
+	virtual BOOL PtVisible(int x, int y) const;
+	BOOL PtVisible(POINT point) const;
+	virtual BOOL RectVisible(LPCRECT lpRect) const;
+	int SelectClipRgn(CRgn *pRgn);
+	int ExcludeClipRect(int x1, int y1, int x2, int y2);
+	int ExcludeClipRect(LPCRECT lpRect);
+	int ExcludeUpdateRgn(CWnd *pWnd);
+	int IntersectClipRect(int x1, int y1, int x2, int y2);
+	int IntersectClipRect(LPCRECT lpRect);
+	int OffsetClipRgn(int x, int y);
+	int OffsetClipRgn(SIZE size);
+	int SelectClipRgn(CRgn *pRgn, int nMode);
+
+	int SetROP2(int nDrawMode);
+	BOOL DPtoLP(LPPOINT lpPoints, int nCount = 1);
+	BOOL DPtoLP(RECT *lpRect);
+	BOOL LPtoDP(RECT *lpRect);
 	BOOL BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	            int xSrc, int ySrc, DWORD dwRop);
 	BOOL StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
@@ -496,6 +556,10 @@ public:
 	                            int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
 	CSize TabbedTextOut(int x, int y, const CString &str,
 	                    int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+	int DrawText(LPCSTR lpszString, int nCount,
+		LPRECT lpRect, UINT nFormat);
+	int DrawText(const CString &str, LPRECT lpRect, UINT nFormat);
+
 
 	CSize GetTextExtent(LPCSTR lpszString, int nCount) const;
 	CSize GetTextExtent(const CString &str) const;
@@ -554,8 +618,12 @@ private:
 	CString _unusedPathName;
 
 public:
-	~CDocument() override {
-	}
+	~CDocument() override {}
+
+	void UpdateAllViews(CView *pSender, LPARAM lHint = 0,
+		CObject *pHint = nullptr);
+	POSITION GetFirstViewPosition() const;
+	CView *GetNextView(POSITION &rPosition) const;
 
 	const CString &GetTitle() const;
 	virtual void SetTitle(LPCSTR lpszTitle);
@@ -570,6 +638,14 @@ public:
 
 	// delete doc items etc
 	virtual void DeleteContents();
+
+	virtual BOOL OnNewDocument() {
+		return true;
+	}
+	virtual BOOL OnOpenDocument(LPCSTR lpszPathName) {
+		return true;
+	}
+	virtual void OnFileSaveAs() {}
 
 	DECLARE_MESSAGE_MAP()
 };
@@ -786,17 +862,42 @@ public:
 	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
 	                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
 	BOOL KillTimer(UINT_PTR nIDEvent);
+
+	BOOL GetScrollRange(int nBar,
+		LPINT lpMinPos, LPINT lpMaxPos) const;
+	INT GetScrollPosition() const;
+	int SetScrollPos(int nBar, int nPos, BOOL bRedraw = TRUE);
 };
 
 class CFrameWnd : public CWnd {
 	DECLARE_DYNCREATE(CFrameWnd)
 
 protected:
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) {
+		return true;
+	}
+
+	enum RepositionFlags {
+		reposDefault = 0, reposQuery = 1, reposExtra = 2, reposNoPosLeftOver = 0x8000
+	};
+	BOOL RepositionBars(
+		UINT nIDFirst,
+		UINT nIDLast,
+		UINT nIDLeftOver,
+		UINT nFlag = reposDefault,
+		LPRECT lpRectParam = NULL,
+		LPCRECT lpRectClient = NULL,
+		BOOL bStretch = TRUE
+	);
+
 	DECLARE_MESSAGE_MAP()
 
 public:
 	~CFrameWnd() override {
 	}
+
+	HMENU GetMenu() const;
+	void RecalcLayout(BOOL bNotify = TRUE);
 };
 
 class CDialog : public CWnd {
@@ -813,9 +914,11 @@ public:
 	                 CWnd *pParentWnd = NULL);
 	explicit CDialog(UINT nIDTemplate,
 	                 CWnd *pParentWnd = NULL);
-
-	~CDialog() override {
-	}
+	~CDialog() override {}
+	BOOL Create(LPCSTR lpszTemplateName,
+		CWnd *pParentWnd = nullptr);
+	BOOL Create(UINT nIDTemplate,
+		CWnd *pParentWnd = nullptr);
 
 	int DoModal();
 	virtual BOOL OnInitDialog();
@@ -838,6 +941,8 @@ public:
 
 	// termination
 	void EndDialog(int nResult);
+
+	BOOL UpdateData(BOOL bSaveAndValidate = TRUE);
 };
 
 class CStatic : public CWnd {
@@ -913,6 +1018,12 @@ class CView : public CWnd {
 	DECLARE_DYNAMIC(CView)
 
 protected:
+	CView *m_pDocument = nullptr;
+
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) {
+		return true;
+	}
+
 	DECLARE_MESSAGE_MAP()
 
 public:
@@ -923,13 +1034,55 @@ public:
 class CScrollView : public CView {
 	DECLARE_DYNAMIC(CScrollView)
 
+private:
+	static const SIZE sizeNull;
+
 protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
 	~CScrollView() override {
 	}
+
+	void SetScrollSizes(
+		int nMapMode,
+		SIZE sizeTotal,
+		const SIZE &sizePage = sizeNull,
+		const SIZE &sizeLine = sizeNull
+	);
 };
+
+/*============================================================================*/
+// class CDocTemplate creates documents
+
+class CDocTemplate : public CCmdTarget {
+	DECLARE_DYNAMIC(CDocTemplate)
+
+protected:
+	CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
+		const CRuntimeClass *pFrameClass, const CRuntimeClass *pViewClass);
+
+public:
+	DECLARE_MESSAGE_MAP()
+};
+
+class CSingleDocTemplate : public CDocTemplate {
+	DECLARE_DYNAMIC(CSingleDocTemplate)
+
+public:
+	CSingleDocTemplate(
+		UINT nIDResource,
+		const CRuntimeClass *pDocClass,
+		const CRuntimeClass *pFrameClass,
+		const CRuntimeClass *pViewClass
+	) : CDocTemplate(nIDResource, pDocClass,
+		pFrameClass, pViewClass) {
+	}
+
+	DECLARE_MESSAGE_MAP()
+};
+
+/*============================================================================*/
 
 class CWinThread : public CCmdTarget {
 	DECLARE_DYNAMIC(CWinThread)
@@ -942,8 +1095,12 @@ public:
 
 class CWinApp : public CWinThread {
 	DECLARE_DYNAMIC(CWinApp)
+
 public:
-	CWinApp(const char *appName);
+	int m_nCmdShow = SW_SHOWNORMAL;
+
+public:
+	CWinApp(const char *appName = nullptr);
 	~CWinApp() override {
 	}
 
@@ -954,6 +1111,14 @@ public:
 	HCURSOR LoadCursor(UINT nIDResource) const;
 	void BeginWaitCursor();
 	void EndWaitCursor();
+	void DoWaitCursor(int nCode);
+	void AddDocTemplate(CDocTemplate *pTemplate);
+	BOOL SaveAllModified();
+	void CloseAllDocuments(BOOL bEndSession);
+
+	virtual void OnFileNew() {}
+	virtual void OnFileOpen() {}
+	virtual void OnFilePrintSetup() {}
 };
 
 extern CWinApp *AfxGetApp();

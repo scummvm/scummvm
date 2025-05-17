@@ -42,19 +42,17 @@ class CTimeUtil {
 	char m_cEndData ;
 
 public:
-
 	// constructor zeroes out all fields
 	CTimeUtil() {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 	}
 
-	// btimeut.cpp -- Boffo Games time utilities -- class CTimeUtil
-
+private:
 	//- DelayMs -- delay for specified # of milliseconds
 	BOOL DelayMs(UINT uMs) ;
-	//- DelayMsCallback -- SetTimer callback routine for DelayMs
-	void FAR PASCAL DelayMsCallback(HWND /* hWnd */,
-	                                UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
+
+	static void DelayMsCallback(HWND /* hWnd */,
+		UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
 };
 
 

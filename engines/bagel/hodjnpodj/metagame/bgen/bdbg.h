@@ -23,10 +23,13 @@
 #define BAGEL_METAGAME_BGEN_BDBG_H
 
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
+
+#define DBGFILESIZE 50
 
 #ifdef JX_DEBUG
 
@@ -83,17 +86,17 @@ public:
 	~CBdbgMgr(void) ;
 //- DebugInit -- Initialize
 public:
-	BOOL DebugInit(LPSTR lpszIniFilename,
-	               LPSTR lpszIniSectionname) ;
+	BOOL DebugInit(LPCSTR lpszIniFilename,
+	               LPCSTR lpszIniSectionname) ;
 //- GetDebugInt -- get debugging integer
 public:
-	int GetDebugInt(LPSTR lpszOption,
+	int GetDebugInt(LPCSTR lpszOption,
 	                int iDefault PDFT(0)) ;
 //- GetDebugString --
 public:
 	BOOL GetDebugString(LPCSTR lpszOption,
 	                    LPSTR lpszTarget, int iTargetSize,
-	                    LPSTR lpszDefault PDFT(NULL)) ;
+	                    LPCSTR lpszDefault PDFT(NULL)) ;
 //- TraceConstructor -- trace object constructor, if optioned
 public:
 	BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
@@ -119,11 +122,11 @@ public:
 	BOOL ReportTraceObjects(void) ;
 //- OutputWithTime -- output debugging string with time
 public:
-	STATIC BOOL OutputWithTime(LPSTR lpszPattern) ;
+	STATIC BOOL OutputWithTime(LPCSTR lpszPattern) ;
 //- OutputWithWordWrap -- output debugging string with time
 public:
-	STATIC BOOL OutputWithWordWrap(LPSTR lpStr1,
-	                               LPSTR lpStr2, int iIndent) ;
+	STATIC BOOL OutputWithWordWrap(LPCSTR lpStr1,
+	                               LPCSTR lpStr2, int iIndent) ;
 
 
 
@@ -148,17 +151,13 @@ public:
 
 #ifdef JX_DEBUG
 
-#ifdef __cplusplus
-extern "C" {            /* Assume C declarations for C++ */
-#endif  /* __cplusplus */
-
 #define JXOutputDebugString ifcwst
 
 extern LPVOID dbgptr ;
 extern int dbgtrk ;
 extern int dbgtrc ;
 extern int dbgtrr ;
-#define DBGFILESIZE 50
+
 extern int dbgreopen ;
 extern char dbgfile[DBGFILESIZE] ;
 
@@ -167,15 +166,15 @@ extern char dbgfile[DBGFILESIZE] ;
 //- dbgarg -- handle debugging arguments
 void dbgarg(int argc, char * argv[]) ;
 //- dbgntr -- enter a subroutine
-void dbgntr(char * name) ;
+void dbgntr(const char * name) ;
 //- dbgxit -- exit a subroutine
-void dbgxit(char * name, int iError) ;
+void dbgxit(const char * name, int iError) ;
 //- dbgtyp -- type status line
-void dbgtyp(char * ps, BOOL bReset) ;
+void dbgtyp(const char * ps, BOOL bReset) ;
 //- dbgntu -- enter a subroutine -- unconditional message
-void dbgntu(char * name) ;
+void dbgntu(const char * name) ;
 //- dbgxiu -- exit a subroutine -- unconditional message
-void dbgxiu(char * name) ;
+void dbgxiu(const char * name) ;
 //- dbgttg -- keyboard trace toggle hit
 void dbgttg(void) ;
 //- dbggsd -- get current stack depth
@@ -200,12 +199,12 @@ int kybtst(void) ;
 int kybnlt(void) ;
 //- ifcprf -- printf replacement
 void ifcprf(char * cs, ...) ;
-//- ifcspf -- sprintf replacement
+//- ifcspf -- Common::sprintf_s replacement
 int ifcspf(char * ds, char * cs, ...) ;
 //- ifcfmt -- formatting routine
 char *ifcfmt(char * cs, char * ds, void * pparg, int * flen) ;
 //- ifcwst -- write character string to screen
-void ifcwst(XPSTR xpStr) ;
+void ifcwst(LPCSTR xpStr) ;
 //- ifcwtt -- write character to screen
 void ifcwtt(char ch) ;
 //- ifcwnl -- write newline
@@ -220,12 +219,6 @@ VOID FAR PASCAL dbgWindowDump(HWND hStartWnd) ;
 BOOL FAR PASCAL dbgDumpEnumProc(HWND hWnd, DWORD dwlpWddb) ;
 //- dbgDumpWindowInfo - dump info on one window
 VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb) ;
-
-
-
-#ifdef __cplusplus
-}  /* extern "C" */
-#endif  /* __cplusplus */
 
 #else
 #define JXOutputDebugString TRACE

@@ -1,30 +1,34 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  pawn.h
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  Copyright (c) 1994 by Ledge Multimedia, All Rights Reserved
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.0      06/15/94     EDS     refer to pawn.cpp for details
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  MODULE DESCRIPTION:
- *
- *      Class definitions for CPawnShop.
- *
- *  RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- ****************************************************************/
+ */
 
+#ifndef BAGEL_METAGAME_GTL_PAWN_H
+#define BAGEL_METAGAME_GTL_PAWN_H
 
-#ifndef _INC_PAWN
-#define _INC_PAWN
-
-#include <time.h>
 #include "bagel/hodjnpodj/metagame/bgen/invent.h"
 #include "bagel/hodjnpodj/metagame/bgen/item.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
 
 #define PAWN_SPEC   ".\\art\\mlscroll.bmp"      // path for pawn's DIB on disk
 #define PAWN_DX         502
@@ -117,4 +121,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#endif //!_INC_PAWN
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

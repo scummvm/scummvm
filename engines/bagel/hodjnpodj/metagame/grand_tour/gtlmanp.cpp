@@ -20,20 +20,12 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-
-#include <sys\types.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <sys\timeb.h>
-
-#include "gtl.h"
-
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
-
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
-#include "gtldat.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -57,7 +49,7 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 	int iButtonId = 0 ;         // handle button
 	CRPoint crClickPoint ;      // relocatable click position
 
-	struct _timeb stNowTime ;   // current time
+	uint32 stNowTime ;   // current time
 	long lTimeDiff ;            // time difference
 	BOOL bExitDll = FALSE;
 
@@ -67,20 +59,18 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 	CNode FAR * lpSelectedNode = GetSelectedNode() ;
 	#endif
 
-	_ftime(&stNowTime) ;        // save current time
+	// Save current time
+	stNowTime = g_system->getMillis();
 
-	if (m_stAcceptClickActive.time || m_stAcceptClickActive.millitm) {
+	// test for recursive call
 
-		// test for recursive call
+	lTimeDiff = stNowTime - m_stAcceptClickActive;
 
-		lTimeDiff = 1000L * (stNowTime.time - m_stAcceptClickActive.time) + stNowTime.millitm - m_stAcceptClickActive.millitm;
+	// if recursion lockout lasts more than 3 seconds, then just clear it
+	if (lTimeDiff < 3000)
+		goto exit ; // exit -- recursive call
 
-		// if recursion lockout lasts more than 3 seconds, then just clear it
-		if (lTimeDiff < 3000L)
-			goto exit ; // exit -- recursive call
-	}
-
-	m_stAcceptClickActive = stNowTime ;
+	m_stAcceptClickActive = stNowTime;
 
 	// convert device point to relocatable point
 	crClickPoint = xpGtlView->m_cViewBsuSet.PointLogical(cClickPoint) ;
@@ -168,7 +158,7 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 				iButtonId = m_cBbtMgr.AcceptClick(crClickPoint, iClickType);
 		break ;
 
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 	case CLICK_LDOUBLE:
 		break ;
 
@@ -250,7 +240,7 @@ cleanup:
 	UpdateDialogs() ;
 	#endif
 
-	m_stAcceptClickActive.time = m_stAcceptClickActive.millitm = 0 ;
+	m_stAcceptClickActive = 0 ;
 
 exit:
 
@@ -305,7 +295,6 @@ CNode FAR *CGtlData::PointToNode(CRPoint crPoint)
 // returns: node nearest to point, or NULL if none close enough
 {
 	JXENTER(CGtlData::PointToNode) ;
-	int iError = 0 ;            // error code
 	long lSqDistance ;
 	long lSqSensitivity ;
 	long lSqMinDistance = MAXPOSLONG ;

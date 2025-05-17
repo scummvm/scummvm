@@ -22,11 +22,15 @@
 #ifndef BAGEL_METAGAME_GTL_GTL_H
 #define BAGEL_METAGAME_GTL_GTL_H
 
-#include "resource.h"       // main symbols
-#include "gtlfrm.h"
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtldat.h"
+#define GTLMDI 0        /* 0=single document ifc; 1=multiple */
+
+#define GTLDLL 1    /* 0 = EXE, 1 = DLL */
+
+#include "bagel/hodjnpodj/metagame/grand_tour/resource.h"       // main symbols
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
@@ -34,10 +38,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
-
-#define GTLMDI 0        /* 0=single document ifc; 1=multiple */
-
-#define GTLDLL 1    /* 0 = EXE, 1 = DLL */
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlApp:
@@ -86,19 +86,19 @@ public:
 public:
 	void CreateInstance(void);
 
-//- CGtlApp::CallOnFileNew --
+//- CallOnFileNew --
 public:
-	BOOL CGtlApp::CallOnFileNew(void) ;
-//- CGtlApp::CallOnFileOpen --
+	BOOL CallOnFileNew(void) ;
+//- CallOnFileOpen --
 public:
-	BOOL CGtlApp::CallOnFileOpen(void) ;
-//- CGtlApp::CallOnFileSave --
+	BOOL CallOnFileOpen(void) ;
+//- CallOnFileSave --
 public:
-	BOOL CGtlApp::CallOnFileSave(void) ;
-//- CGtlApp::DoMessageBox -- override of CWinApp function to
+	BOOL CallOnFileSave(void) ;
+//- DoMessageBox -- override of CWinApp function to
 //              display message box messages
 public:
-	virtual int CGtlApp::DoMessageBox(LPCSTR lpszPrompt,
+	virtual int DoMessageBox(LPCSTR lpszPrompt,
 	                                  UINT nType, UINT nIDPrompt) ;
 
 

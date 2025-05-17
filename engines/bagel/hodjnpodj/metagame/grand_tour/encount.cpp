@@ -19,17 +19,15 @@
  *
  */
 
-#include <stdafx.h>
-#include <limits.h>
-#include <assert.h>
 #include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
-#include "gtlfrm.h"
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "encount.h"
-#include "citemdlg.h"
-#include "cturndlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/encount.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/citemdlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/cturndlg.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -45,8 +43,7 @@ int  FindEncounter(BOOL, int, long, int, int, int, int, BOOL *);
 BOOL EligibleEncounter(int, BOOL, int, long);
 
 
-static CEncounterTable Encounters[MG_ENC_COUNT] = {
-
+static const CEncounterTable Encounters[MG_ENC_COUNT] = {
 	{
 		MG_SECTOR_ANY, ".\\SOUND\\BB41.WAV",
 		{MG_ACT_CROWNS, -14, 0}, ""
@@ -594,11 +591,9 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 	int     nPick,                              // Holder for random number to choose Pawn or General
 	        nRandFactor,                        // No. within given range of crowns to add or to remove
 	        nChangeAmount;                      // Amount of change to inventory item, turns, etc.
-	int     nTrapsLeft = MG_TRAP_COUNT,
-	        nNarrsLeft = MG_NARR_COUNT,
+	int     nNarrsLeft = MG_NARR_COUNT,
 	        nTestProb;
 	int     RetVal = ENC_DO_NOTHING;
-	BOOL    bEncReady = FALSE;                  // flag to check if it's time for and encounter
 	BOOL    bDone;                              // flag to check if an appropriate object was found
 	BOOL    bFoundTrap = FALSE;
 	int     nRandom = 0;
@@ -613,7 +608,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 
 		if (bFoundTrap) {                                           // If there are TRAPS LEFT
 			nTestProb = TRAP_PROB;                                  // Get probability, scaled by ten
-			nRandom = rand() % RAND_FACTOR;
+			nRandom = brand() % RAND_FACTOR;
 			if (nTestProb >= nRandom) {                                        // If we are in the probability percentage...
 				// check ItemCount(void), set Item flag
 				pItem = (*pInventory).FindItem(MG_OBJ_MISH);                    // See if they have mish or mosh
@@ -639,7 +634,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 							RetVal = Encounters[nID].m_Actions[i + 1];      // Return the new location
 							i++;                                            // skip the one we just read in
 						} else if (Encounters[nID].m_Actions[i] == MG_ACT_GO2) {    // Go to one of 2 locations
-							RetVal = Encounters[nID].m_Actions[i + (rand() % 2) + 1];   // Randomly pick one
+							RetVal = Encounters[nID].m_Actions[i + (brand() % 2) + 1];   // Randomly pick one
 							i += 2;                                                   // skip the two we just read in
 						} else if (Encounters[nID].m_Actions[i] == MG_ACT_GOCOND) { // Go where the opponent isn't
 							RetVal = Encounters[nID].m_Actions[i + 1];              // Get the first
@@ -656,10 +651,10 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 
 								nRandFactor = -(int)min((long)abs(nRandFactor), lCrowns);// can't remove more gold than the player has
 
-								nChangeAmount = rand() % nRandFactor + 1;           //...subtract from 1 to nRandFactor
+								nChangeAmount = brand() % nRandFactor + 1;           //...subtract from 1 to nRandFactor
 								lCrowns -= nChangeAmount;
 							} else {
-								nChangeAmount = rand() % nRandFactor + 1;           // Add from 1 to nRandFactor
+								nChangeAmount = brand() % nRandFactor + 1;           // Add from 1 to nRandFactor
 								lCrowns += nChangeAmount;
 							}
 							// our logic was wrong if we end up negative
@@ -675,7 +670,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 							i++;                                                    // skip the one we just read in
 						} else if (Encounters[nID].m_Actions[i] == MG_ACT_OBJECT) { // Trap effects the inventory
 							if (Encounters[nID].m_Actions[i + 1] > 0) {             // If we are to add an item
-								nPick = rand() % 2;                                 // Randomly select one
+								nPick = brand() % 2;                                 // Randomly select one
 								if (nPick == 0) {                                   //...of the two Sources
 									pTryOne = pGeneral;
 									pTryTwo = pPawn;
@@ -685,11 +680,11 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 								}
 								if ((*pTryOne).ItemCount() > 0) {                   // If the first one has items
 									nItems = (*pTryOne).ItemCount();                // How many items
-									pItem = (*pTryOne).FetchItem(rand() % nItems);  // Get one and
+									pItem = (*pTryOne).FetchItem(brand() % nItems);  // Get one and
 									(*pTryOne).RemoveItem(pItem);                   //...remove it to pItem
 								} else {                                            // Otherwise, get the first
 									nItems = (*pTryTwo).ItemCount();                // How many items
-									pItem = (*pTryTwo).FetchItem(rand() % nItems);  // Get one and
+									pItem = (*pTryTwo).FetchItem(brand() % nItems);  // Get one and
 									(*pTryTwo).RemoveItem(pItem);                   //...and remove _it_ to pItem
 								}
 								(*pInventory).AddItem(pItem);                       // And put pItem in the player's
@@ -700,13 +695,13 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 								bDone = FALSE;
 								while (!bDone) {
 									assert(nItems != 0);
-									pItem = (*pInventory).FetchItem(INVENT_MIN_ITEM_COUNT + rand() % nItems);   // Get one
+									pItem = (*pInventory).FetchItem(INVENT_MIN_ITEM_COUNT + brand() % nItems);   // Get one
 									if ((pItem != NULL) &&                          //...make sure it's valid
 									        ((pItem->GetID() != MG_OBJ_MISH) &&
 									         (pItem->GetID() != MG_OBJ_MOSH))) {
 
 										(*pInventory).RemoveItem(pItem);            // Remove it from the backpack
-										nPick = rand() % 2;                         //...get a random destination
+										nPick = brand() % 2;                         //...get a random destination
 										if (nPick == 0)
 											(*pGeneral).AddItem(pItem);             //...and put it there
 										else
@@ -743,7 +738,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 
 		if (nNarrsLeft != 0) {                                              // NARR'S LEFT
 			nTestProb = nNumSteps * NARR_PROB;                              // Get probability, scaled by ten
-			nRandom = (rand() % RAND_FACTOR);
+			nRandom = (brand() % RAND_FACTOR);
 			if (nTestProb >= nRandom) {                                    // If we are in the probability percentage...
 				nID = FindEncounter(bHodj, nPSector, 0, 0, MG_TRAP_COUNT, MG_NARR_COUNT, NARR_PER_SECTOR, pArray);
 				if (nID >= MG_TRAP_COUNT) {                                 // if it's a valid NARRATION ID
@@ -790,7 +785,7 @@ int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
 
 		nID = nFirstEnc;                                                                // Go to where that sector is in the table
 		assert(nEncPerSector != 0);
-		nStart = rand() % nEncPerSector;                                                // Start at a random point
+		nStart = brand() % nEncPerSector;                                                // Start at a random point
 		nID += nStart;                                                                  //...in that sector's range
 		for (i = 0; i < nEncPerSector; i++) {                                           // Step thru sector-spec encs
 
@@ -818,7 +813,7 @@ int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
 
 	nGeneral = nNumEncounters - (MG_SECTOR_COUNT * nEncPerSector);                  // no. of general encounters
 	assert(nGeneral != 0);
-	nID = nStartEncounter + (MG_SECTOR_COUNT * nEncPerSector) + (rand() % nGeneral);// Get random start spot
+	nID = nStartEncounter + (MG_SECTOR_COUNT * nEncPerSector) + (brand() % nGeneral);// Get random start spot
 	for (i = 0; i < nGeneral; i++) {                                                // Go thru all the general ones
 
 		// if not already used
@@ -877,10 +872,10 @@ BOOL PlayEncounter(CWnd *pWnd, int nID) {
 	if (pNarration == NULL)
 		return (FALSE);
 
-	(*pNarration).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-	(*pNarration).Play();                                           //...play the narration
+	(*pNarration).setDrivePath(lpMetaGameStruct->m_chCDPath);
+	(*pNarration).play();                                           //...play the narration
 	if (nID < MG_TRAP_COUNT)                                            // For Booby Traps:
-		CSound::WaitWaveSounds();
+		CSound::waitWaveSounds();
 
 	return (TRUE);
 }

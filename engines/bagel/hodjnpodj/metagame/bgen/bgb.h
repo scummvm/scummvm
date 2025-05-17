@@ -75,8 +75,8 @@ private:
 
 	// methods
 public:
-	CBgbMgr::CBgbMgr(void);
-	~CBgbMgr(void);
+	CBgbMgr();
+	~CBgbMgr();
 
 	// bgb.cpp -- Boffo Game Objects handling routines
 	//
@@ -120,17 +120,17 @@ public:
 	int         m_iBgbType;             // BGBT_xxxx -- object type
 	CBgbObject *m_xpcNext;              // pointer to next in chain
 	CBgbObject *m_xpcPrev;              // pointer to Previous in chain
-	BOOL        m_bChained: 1;          // on m_xBgbChain
-	BOOL        m_bNoDelete: 1;         // not allocated with "new"
-	BOOL        m_bMasked: 1;           // mask white areas of bitmap
-	BOOL        m_bInit: 1;             // TRUE if object is initialized
-	BOOL        m_bCleared: 1;          // FALSE if need a ClearBackground()
-	BOOL        m_bVisible: 1;          // bitmap is at least visible
-	BOOL        m_bEdge: 1;             // bitmap is on edge of phys wnd
-	BOOL        m_bLoaded: 1;           // TRUE if currently in cache
-	BOOL        m_bAnimated: 1;         // TRUE if this sprite is animated
-	BOOL        m_bSpecial: 1;          // TRUE if Special Animation
-	BOOL        m_bLocked: 1;           // TRUE if object is locked in cache
+	bool        m_bChained: 1;          // on m_xBgbChain
+	bool        m_bNoDelete: 1;         // not allocated with "new"
+	bool        m_bMasked: 1;           // mask white areas of bitmap
+	bool        m_bInit: 1;             // TRUE if object is initialized
+	bool        m_bCleared: 1;          // FALSE if need a ClearBackground()
+	bool        m_bVisible: 1;          // bitmap is at least visible
+	bool        m_bEdge: 1;             // bitmap is on edge of phys wnd
+	bool        m_bLoaded: 1;           // TRUE if currently in cache
+	bool        m_bAnimated: 1;         // TRUE if this sprite is animated
+	bool        m_bSpecial: 1;          // TRUE if Special Animation
+	bool        m_bLocked: 1;           // TRUE if object is locked in cache
 	// (i.e. Cannot be released)
 
 	int         m_nCels;                // number of cels in this cel strip

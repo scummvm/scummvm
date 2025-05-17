@@ -51,13 +51,28 @@ HCURSOR CWinApp::LoadCursor(UINT nIDResource) const {
 }
 
 void CWinApp::BeginWaitCursor() {
-	error("TODO: BeginWaitCursor");
+	error("TODO: CWinApp::BeginWaitCursor");
 }
 
 void CWinApp::EndWaitCursor() {
-	error("TODO: EndWaitCursor");
+	error("TODO: CWinApp::EndWaitCursor");
 }
 
+void CWinApp::DoWaitCursor(int nCode) {
+	error("TODO: CWinApp::DoWaitCursor");
+}
+
+void CWinApp::AddDocTemplate(CDocTemplate *pTemplate) {
+	error("TODO: CWinApp::AddDocTemplate");
+}
+
+BOOL CWinApp::SaveAllModified() {
+	error("TODO: CWinApp::SaveAllModified");
+}
+
+void CWinApp::CloseAllDocuments(BOOL bEndSession) {
+	error("TODO: CWinApp::CloseAllDocuments");
+}
 
 CWinApp *AfxGetApp() {
 	error("TODO: AfxGetApp");
@@ -75,6 +90,16 @@ int LoadString(HINSTANCE hInstance,
                UINT uID, LPSTR lpBuffer, int cchBufferMax) {
 	error("TODO: LoadString");
 }
+
+FARPROC GetProcAddress(HMODULE hModule,
+		LPCSTR lpProcName) {
+	error("TODO: GetProcAddress");
+}
+
+HMODULE GetModuleHandle(LPCSTR lpModuleName) {
+	error("TODO: GetModuleHandle");
+}
+
 
 LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
                                   HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {

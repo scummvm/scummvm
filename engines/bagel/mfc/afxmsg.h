@@ -194,7 +194,7 @@ namespace MFC {
 
 #define ON_COMMAND(id, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)id, AfxSigCmd_v, \
-		static_cast<AFX_PMSG> (memberFxn) },
+		static_cast<AFX_PMSG> (&memberFxn) },
 // ON_COMMAND(id, OnBar) is the same as
 //   ON_CONTROL(0, id, OnBar) or ON_BN_CLICKED(0, id, OnBar)
 

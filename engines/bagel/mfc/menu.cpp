@@ -19,22 +19,30 @@
  *
  */
 
-#ifndef BAGEL_MFC_MFC_H
-#define BAGEL_MFC_MFC_H
-
-#include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/winnt.h"
-#include "bagel/mfc/wingdi.h"
-#include "bagel/mfc/atltime.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/afx.h"
+#include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/afxmsg.h"
-#include "bagel/mfc/afxext.h"
-#include "bagel/mfc/afxres.h"
-#include "bagel/mfc/global_functions.h"
-#include "bagel/mfc/ifstream.h"
-#include "bagel/mfc/joystickapi.h"
-#include "bagel/mfc/keyboard.h"
 
-#endif
+namespace Bagel {
+namespace MFC {
+
+CMenu::CMenu() {
+}
+
+BOOL CMenu::CreateMenu() { error("TODO: CMenu::CreateMenu"); }
+BOOL CMenu::CreatePopupMenu() { error("TODO: CMenu::CreatePopupMenu"); }
+BOOL CMenu::LoadMenu(LPCTSTR lpszResourceName) { error("TODO: CMenu::LoadMenu"); }
+BOOL CMenu::LoadMenu(UINT nIDResource) { error("TODO: CMenu::LoadMenu"); }
+BOOL CMenu::LoadMenuIndirect(const void *lpMenuTemplate) { error("TODO: CMenu::LoadMenuIndirect"); }
+BOOL CMenu::DestroyMenu() { error("TODO: CMenu::DestroyMenu"); }
+
+CMenu *CMenu::FromHandle(HMENU hMenu) {
+	error("TODO: CMenu::FromHandle");
+}
+
+UINT CMenu::CheckMenuItem(UINT nIDCheckItem, UINT nCheck) {
+	error("TODO: CMenu::CheckMenuItem");
+}
+
+
+} // namespace MFC
+} // namespace Bagel

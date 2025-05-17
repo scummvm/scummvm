@@ -44,7 +44,7 @@ public:
 
 // methods
 public:
-	CBbtMgr::CBbtMgr(CBgbMgr FAR * lpBgbMgr = NULL) {
+	CBbtMgr(CBgbMgr FAR * lpBgbMgr = NULL) {
 		memset(&m_cStartData, 0,
 		       &m_cEndData - &m_cStartData) ;
 		m_lpBgbMgr = lpBgbMgr ;
@@ -53,23 +53,23 @@ public:
 
 // bbt.cpp -- Boffo button handling
 
-//- CBbtMgr::~CBbtMgr -- destructor
+//- ~CBbtMgr -- destructor
 public:
-	CBbtMgr::~CBbtMgr(void) ;
-//- CBbtMgr::LinkButton -- link button into button manager
+	~CBbtMgr() ;
+//- LinkButton -- link button into button manager
 public:
-	BOOL CBbtMgr::LinkButton(CBbutton FAR * lpBbt,
+	BOOL LinkButton(CBbutton FAR * lpBbt,
 	                         CBgbObject FAR * lpcBgbObject1,
 	                         CBgbObject FAR * lpcBgbObject2) ;
-//- CBbtMgr::AcceptClick -- process mouse click or mouse move
+//- AcceptClick -- process mouse click or mouse move
 public:
-	int CBbtMgr::AcceptClick(CRPoint crPoint, int iClickType) ;
-//- CBbtMgr::MoveDown -- move button down
+	int AcceptClick(CRPoint crPoint, int iClickType) ;
+//- MoveDown -- move button down
 private:
-	BOOL CBbtMgr::MoveDown(CBbutton FAR * lpDownBbt PDFT(NULL)) ;
-//- CBbtMgr::GetCurrentBitmap -- get current bitmap for button
+	BOOL MoveDown(CBbutton FAR * lpDownBbt PDFT(NULL)) ;
+//- GetCurrentBitmap -- get current bitmap for button
 public:
-	CBgbObject FAR *CBbtMgr::GetCurrentBitmap(CBbutton * xpBbt) ;
+	CBgbObject FAR *GetCurrentBitmap(CBbutton * xpBbt) ;
 } ;
 
 
@@ -80,19 +80,19 @@ public:
 	char m_cStartData ;
 	int m_iBbtId ;      // button id
 	CBbutton FAR *m_lpBbtNext ;     // pointer to next in chain
-	BOOL m_bChained: 1 ;    // on m_xBbtChain
-	BOOL m_bNoDelete ;      // not allocated with "new"
-	BOOL m_bDummy: 1 ;      // dummy object -- no bitmap
-	BOOL m_bInit: 1 ;       // flag: object is initialized
+	bool m_bChained: 1 ;    // on m_xBbtChain
+	bool m_bNoDelete ;      // not allocated with "new"
+	bool m_bDummy: 1 ;      // dummy object -- no bitmap
+	bool m_bInit: 1 ;       // flag: object is initialized
 	CBgbObject FAR *m_lpcBgbObject1, FAR *m_lpcBgbObject2 ;
 	// graphics objects for on/off
 	char m_cEndData ;
 
 public:
 	CBbutton(int iId = 0) {
-		_fmemset(&m_cStartData, 0,
+		memset(&m_cStartData, 0,
 		         &m_cEndData - &m_cStartData) ;
-		m_iBbtId = iId ;
+		m_iBbtId = iId;
 	}
 	BOOL PtInButton(CRPoint crPoint) {
 		return (m_lpcBgbObject1 ?

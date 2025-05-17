@@ -137,7 +137,7 @@ CMainWindow::CMainWindow(VOID) {
 	// Center our window on the screen
 	//
 	tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-	#ifndef _DEBUG
+	#ifndef BAGEL_DEBUG
 	if ((pDC = GetDC()) != NULL) {
 		tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
 		tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;

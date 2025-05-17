@@ -33,7 +33,6 @@ CBdbgMgr FAR *CBdbgMgr::lpBdbgMgr = NULL ;
 //* CBdbgMgr::CBdbgMgr -- constructor
 CBdbgMgr::CBdbgMgr(void) {
 	JXENTER(CBdbgMgr::CBdbgMgr) ;
-	int iError = 0 ;        // error code
 
 	// zero out all data
 	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
@@ -50,7 +49,6 @@ CBdbgMgr::~CBdbgMgr(void)
 // returns: VOID
 {
 	JXENTER(CBdbgMgr::~CBdbgMgr) ;
-	int iError = 0 ;        // error code
 
 	if (m_lpTraceObjects)
 		delete [] m_lpTraceObjects ;
@@ -67,7 +65,7 @@ CBdbgMgr::~CBdbgMgr(void)
 
 
 //* CBdbgMgr::DebugInit -- Initialize
-BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename, LPSTR lpszIniSectionname)
+BOOL CBdbgMgr::DebugInit(LPCSTR lpszIniFilename, LPCSTR lpszIniSectionname)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CBdbgMgr::DebugInit) ;
@@ -76,9 +74,9 @@ BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename, LPSTR lpszIniSectionname)
 	int iK ;        // loop variable
 	char szStr[100] ;
 
-	_fstrncpy(m_szIniFilename, lpszIniFilename,
+	strncpy(m_szIniFilename, lpszIniFilename,
 	          sizeof(m_szIniFilename)) ;
-	_fstrncpy(m_szIniSectionname, lpszIniSectionname,
+	strncpy(m_szIniSectionname, lpszIniSectionname,
 	          sizeof(m_szIniSectionname)) ;
 
 	m_bDebug = GetDebugInt("debug") ;
@@ -98,7 +96,7 @@ BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename, LPSTR lpszIniSectionname)
 	dbgreopen = GetDebugInt("reopen", MAXPOSINT) ;
 
 	for (iK = 0 ; iK < DIMENSION(m_iDebugValues) ; ++iK) {
-		_snprintf(szStr, sizeof(szStr) -1, "debug%d", iK) ;
+		Common::sprintf_s(szStr, sizeof(szStr) -1, "debug%d", iK) ;
 		m_iDebugValues[iK] = GetDebugInt(szStr) ;
 	}
 
@@ -121,16 +119,15 @@ BOOL CBdbgMgr::DebugInit(LPSTR lpszIniFilename, LPSTR lpszIniSectionname)
 }
 
 //* CBdbgMgr::GetDebugInt -- get debugging integer
-int CBdbgMgr::GetDebugInt(LPSTR lpszOption, int iDefault)
+int CBdbgMgr::GetDebugInt(LPCSTR lpszOption, int iDefault)
 // lpszOption -- option name string
 // iDefault -- default value
 // returns: debugging integer value
 {
 	JXENTER(CBdbgMgr::GetDebugInt) ;
-	int iError = 0 ;        // error code
 	int iRetval = iDefault;
 	#ifdef JX_DEBUG
-	iRetval = ::GetPrivateProfileInt(m_szIniSectionname, lpszOption, iDefault, m_szIniFilename) ;
+	iRetval = GetPrivateProfileInt(m_szIniSectionname, lpszOption, iDefault, m_szIniFilename) ;
 
 // cleanup:
 	#endif
@@ -141,7 +138,7 @@ int CBdbgMgr::GetDebugInt(LPSTR lpszOption, int iDefault)
 
 
 //* CBdbgMgr::GetDebugString --
-BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSize, LPSTR lpszDefault)
+BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSize, LPCSTR lpszDefault)
 // lpszOption -- option name string
 // lpszDefault -- default value; if NULL, then default is null string
 // returns: TRUE if error, FALSE otherwise
@@ -153,9 +150,9 @@ BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSi
 	if (!lpszDefault)
 		lpszDefault = "";
 
-	::GetPrivateProfileString(m_szIniSectionname,
-	                          lpszOption, lpszDefault, lpszTarget, iTargetSize,
-	                          m_szIniFilename) ;
+	GetPrivateProfileString(m_szIniSectionname,
+	    lpszOption, lpszDefault, lpszTarget, iTargetSize,
+	    m_szIniFilename) ;
 
 // cleanup:
 	#endif
@@ -175,7 +172,7 @@ BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, LPVOID lpLoc)
 	char szStr[100] ;
 
 	if (m_iConstructorMsgLevel) {
-		_snprintf(szStr, sizeof(szStr) - 1, "Constructing %Fs at %#04x:%#04x.\n",
+		Common::sprintf_s(szStr, sizeof(szStr) - 1, "Constructing %Fs at %#04x:%#04x.\n",
 		          lpszName, HIWORD(lpLoc), LOWORD(lpLoc)) ;
 		JXOutputDebugString(szStr) ;
 	}
@@ -201,7 +198,7 @@ BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, LPVOID lpLoc)
 	char szStr[100] ;
 
 	if (m_iConstructorMsgLevel) {
-		_snprintf(szStr, sizeof(szStr) -1, "Destructing %Fs at %#04x:%#04x.\n",
+		Common::sprintf_s(szStr, sizeof(szStr) -1, "Destructing %Fs at %#04x:%#04x.\n",
 		          lpszName, HIWORD(lpLoc), LOWORD(lpLoc)) ;
 		JXOutputDebugString(szStr) ;
 	}
@@ -217,7 +214,7 @@ BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, LPVOID lpLoc)
 //* CBdbgMgr::DebugMessageBox --
 BOOL CBdbgMgr::DebugMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 // lpszPrompt -- message string, starting with '~'
-// nType, nIDPrompt -- integer sprintf substitutions
+// nType, nIDPrompt -- integer Common::sprintf_s substitutions
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CBdbgMgr::DebugMessageBox) ;
@@ -244,7 +241,7 @@ BOOL CBdbgMgr::DebugMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 
 
 	if (!bDone) {
-		_snprintf(szStr, sizeof(szStr) -1, lpszPrompt + 1, nType, nIDPrompt);
+		Common::sprintf_s(szStr, sizeof(szStr) -1, lpszPrompt + 1, nType, nIDPrompt);
 		JXOutputDebugString(szStr) ;
 	}
 
@@ -268,7 +265,7 @@ BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 	char szStr[100] ;
 
 	if (!lpPtr) {
-		_snprintf(szStr, sizeof(szStr) - 1,
+		Common::sprintf_s(szStr, sizeof(szStr) - 1,
 		          "AddTraceObject error: %Fs %#04x:%#04x "
 		          "invalid pointer.\n", lpszName,
 		          HIWORD(lpPtr), LOWORD(lpPtr)) ;
@@ -284,7 +281,7 @@ BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 				iPosition = iK ;
 
 			else if (m_lpTraceObjects[iK] == lpPtr) {
-				_snprintf(szStr, sizeof(szStr) - 1,
+				Common::sprintf_s(szStr, sizeof(szStr) - 1,
 				          "AddTraceObject error: %Fs %#04x:%#04x "
 				          "already in array.\n", lpszName,
 				          HIWORD(lpPtr), LOWORD(lpPtr)) ;
@@ -330,7 +327,7 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
 	char szStr[100] ;
 
 	if (!lpPtr) {
-		_snprintf(szStr, sizeof(szStr) - 1,
+		Common::sprintf_s(szStr, sizeof(szStr) - 1,
 		          "TestTraceObject error: %Fs %#04x:%#04x "
 		          "invalid pointer.\n", lpszName,
 		          HIWORD(lpPtr), LOWORD(lpPtr)) ;
@@ -347,7 +344,7 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
 				iPosition = iK ;
 
 		if (bMissing && iPosition >= 0) {
-			_snprintf(szStr, sizeof(szStr) - 1,
+			Common::sprintf_s(szStr, sizeof(szStr) - 1,
 			          "TestTraceObject error: %Fs %#04x:%#04x "
 			          "already in array.\n", lpszName,
 			          HIWORD(lpPtr), LOWORD(lpPtr)) ;
@@ -359,7 +356,7 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
 
 		if (!bMissing && iPosition < 0
 		        && m_iTraceObjectCurrent < m_iTraceObjectCount - 1) {
-			_snprintf(szStr, sizeof(szStr) - 1,
+			Common::sprintf_s(szStr, sizeof(szStr) - 1,
 			          "TestTraceObject error: %Fs %#04x:%#04x "
 			          "is not in array.\n", lpszName,
 			          HIWORD(lpPtr), LOWORD(lpPtr)) ;
@@ -390,7 +387,7 @@ BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 	char szStr[100] ;
 
 	if (!lpPtr) {
-		_snprintf(szStr, sizeof(szStr) - 1,
+		Common::sprintf_s(szStr, sizeof(szStr) - 1,
 		          "RemoveTraceObject error: %Fs %#04x:%#04x "
 		          "invalid pointer.\n", lpszName,
 		          HIWORD(lpPtr), LOWORD(lpPtr)) ;
@@ -410,7 +407,7 @@ BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 			m_lpTraceObjects[iPosition] = NULL ;
 
 		else if (m_iTraceObjectCurrent < m_iTraceObjectCount - 1) {
-			_snprintf(szStr, sizeof(szStr) - 1,
+			Common::sprintf_s(szStr, sizeof(szStr) - 1,
 			          "RemoveTraceObject error: %Fs %#04x:%#04x "
 			          "is not in array.\n", lpszName,
 			          HIWORD(lpPtr), LOWORD(lpPtr)) ;
@@ -446,20 +443,20 @@ BOOL CBdbgMgr::ReportTraceObjects(void)
 		JXOutputDebugString("\nCBdbgMgr final report:\n") ;
 
 		if (m_iErrorCount) {
-			_snprintf(szStr, sizeof(szStr) - 1, "   Previous errors: %d\n", m_iErrorCount) ;
+			Common::sprintf_s(szStr, sizeof(szStr) - 1, "   Previous errors: %d\n", m_iErrorCount) ;
 			JXOutputDebugString(szStr) ;
 		}
 
 		for (iK = 0 ; iK < m_iTraceObjectCurrent ; ++iK)
 			if ((lpPtr = m_lpTraceObjects[iK]) != NULL) {
-				_snprintf(szStr, sizeof(szStr) - 1, "    Unfreed object: %#04x:%#04x.\n",
+				Common::sprintf_s(szStr, sizeof(szStr) - 1, "    Unfreed object: %#04x:%#04x.\n",
 				          HIWORD(lpPtr), LOWORD(lpPtr)) ;
 				JXOutputDebugString(szStr) ;
 				++iUnfreed ;
 			}
 
 		if (iUnfreed) {
-			_snprintf(szStr, sizeof(szStr) - 1, "    Total unfreed objects: %d.\n", iUnfreed);
+			Common::sprintf_s(szStr, sizeof(szStr) - 1, "    Total unfreed objects: %d.\n", iUnfreed);
 			JXOutputDebugString(szStr) ;
 		}
 
@@ -475,25 +472,27 @@ BOOL CBdbgMgr::ReportTraceObjects(void)
 
 
 //* CBdbgMgr::OutputWithTime -- output debugging string with time
-BOOL CBdbgMgr::OutputWithTime(LPSTR lpszPattern)
-// lpszPattern -- sprintf string containing %s for time substitution
+// lpszPattern -- Common::sprintf_s string containing %s for time substitution
 // returns: TRUE if error, FALSE otherwise
-{
+BOOL CBdbgMgr::OutputWithTime(LPCSTR lpszPattern) {
 	JXENTER(CBdbgMgr::OutputWithTime) ;
 	int iError = 0 ;        // error code
+	#if 0
 	#ifdef JX_DEBUG
 	char szMsg[100] ;
 
+	TimeDat
 	struct tm *newtime;
 	time_t aclock;
 
 	time(&aclock);                   /* Get time in seconds */
 	newtime = localtime(&aclock);
 
-	_snprintf(szMsg, sizeof(szMsg) -1, lpszPattern, asctime(newtime)) ;
+	Common::sprintf_s(szMsg, sizeof(szMsg) -1, lpszPattern, asctime(newtime)) ;
 	JXOutputDebugString(szMsg) ;
 
 // cleanup:
+	#endif
 	#endif
 	JXELEAVE(CBdbgMgr::OutputWithTime) ;
 	RETURN(iError != 0) ;
@@ -501,7 +500,7 @@ BOOL CBdbgMgr::OutputWithTime(LPSTR lpszPattern)
 
 
 //* CBdbgMgr::OutputWithWordWrap -- output debugging string with time
-BOOL CBdbgMgr::OutputWithWordWrap(LPSTR lpStr1, LPSTR lpStr2, int iIndent)
+BOOL CBdbgMgr::OutputWithWordWrap(LPCSTR lpStr1, LPCSTR lpStr2, int iIndent)
 // lpStr1, lpStr2 -- strings to be concatenated and outputted, with
 //		the second one (only) processed for word wrap
 // iIndent -- # blanks to indent after first line
@@ -512,9 +511,8 @@ BOOL CBdbgMgr::OutputWithWordWrap(LPSTR lpStr1, LPSTR lpStr2, int iIndent)
 	#ifdef JX_DEBUG
 	char szMsg[100] ;
 	BOOL bSecond = FALSE ;
-	int iK = 0, iBlank ;        // index variables
-	XPSTR xpMsg = szMsg ;
-	LPSTR lpStr = lpStr1, lpBlank = NULL ;
+	int iK = 0, iBlank = 0;        // index variables
+	LPCSTR lpStr = lpStr1, lpBlank = NULL;
 	char cChar ;
 
 	while (((cChar = *lpStr++) != '\0') || !bSecond) {

@@ -19,22 +19,16 @@
  *
  */
 
-namespace Bagel {
-namespace HodjNPodj {
-namespace Metagame {
-namespace GrandTour {
-
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include <mmsystem.h>
-#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/rules.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/boflib/sound.h"
 
-#ifdef _DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
 
 #ifdef _WINDLL
 	#define BUILD_FOR_DLL       TRUE
@@ -69,9 +63,8 @@ namespace GrandTour {
 
 #if BUILD_FOR_DLL
 
-extern "C" {
-	LRESULT FAR PASCAL KeyboardHookProc(int, WORD, LONG);   // keyboard hook procedure definition
-}
+LRESULT FAR PASCAL KeyboardHookProc(int, WORD, LONG);   // keyboard hook procedure definition
+
 typedef LRESULT(FAR PASCAL *FPKBDHOOKPROC)(int, WORD, LONG);
 extern  HINSTANCE   hDLLInst;
 extern  HINSTANCE   hExeInst;
@@ -92,30 +85,30 @@ static  CWnd        *pParentWnd = NULL;             // parent window pointer
 static  CColorButton *pOKButton = NULL;             // OKAY button on scroll
 static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
-static  CDibDoc     *pScrollTopDIB = NULL,          // DIB for scroll top section
-                     *pScrollMidDIB = NULL,          // DIB for scroll mid section
-                      *pScrollBotDIB = NULL;          // DIB for scroll bottom section
+static  CDibDoc *pScrollTopDIB = NULL,          // DIB for scroll top section
+	*pScrollMidDIB = NULL,          // DIB for scroll mid section
+	*pScrollBotDIB = NULL;          // DIB for scroll bottom section
 
 static  CBitmap     *pScrollTopBitmap = NULL,       // bitmap for scroll top section
-                     *pScrollTopBitmapOld = NULL,    // bitmap previously mapped to top section context
-                      *pScrollMidBitmap = NULL,       // bitmap for scroll mid section
-                       *pScrollMidBitmapOld = NULL,    // bitmap previously mapped to mid section context
-                        *pScrollBotBitmap = NULL,       // bitmap for scroll bottom section
-                         *pScrollBotBitmapOld = NULL;    // bitmap previously mapped to bottom section context
+	*pScrollTopBitmapOld = NULL,    // bitmap previously mapped to top section context
+	*pScrollMidBitmap = NULL,       // bitmap for scroll mid section
+	*pScrollMidBitmapOld = NULL,    // bitmap previously mapped to mid section context
+	*pScrollBotBitmap = NULL,       // bitmap for scroll bottom section
+	*pScrollBotBitmapOld = NULL;    // bitmap previously mapped to bottom section context
 
-static  CBitmap     *pScrollTopMask = NULL,         // mask for scroll top section bitmap
-                     *pScrollTopMaskOld = NULL,      // bitmap previously mapped to top mask context
-                      *pScrollMidMask = NULL,         // mask for scroll mid section bitmap
-                       *pScrollMidMaskOld = NULL,      // bitmap previously mapped to mid mask context
-                        *pScrollBotMask = NULL,         // mask for scroll bottom section bitmap
-                         *pScrollBotMaskOld = NULL;      // bitmap previously mapped to bottom mask context
+static  CBitmap *pScrollTopMask = NULL,         // mask for scroll top section bitmap
+	*pScrollTopMaskOld = NULL,      // bitmap previously mapped to top mask context
+	*pScrollMidMask = NULL,         // mask for scroll mid section bitmap
+	*pScrollMidMaskOld = NULL,      // bitmap previously mapped to mid mask context
+	*pScrollBotMask = NULL,         // mask for scroll bottom section bitmap
+	*pScrollBotMaskOld = NULL;      // bitmap previously mapped to bottom mask context
 
-static  CBitmap     *pScrollBitmap = NULL,          // bitmap for an entirely blank scroll
-                     *pScrollBitmapOld = NULL,       // bitmap previously mapped to the scroll context
-                      *pBackgroundBitmap = NULL,      // bitmap containing the background for the scroll
-                       *pBackgroundBitmapOld = NULL,   // bitmap previously mapped to the background context
-                        *pWorkBitmap = NULL,            // bitmap containing the work area for the scroll
-                         *pWorkBitmapOld = NULL;         // bitmap previously mapped to the work area context
+static  CBitmap *pScrollBitmap = NULL,          // bitmap for an entirely blank scroll
+	*pScrollBitmapOld = NULL,       // bitmap previously mapped to the scroll context
+	*pBackgroundBitmap = NULL,      // bitmap containing the background for the scroll
+	*pBackgroundBitmapOld = NULL,   // bitmap previously mapped to the background context
+	*pWorkBitmap = NULL,            // bitmap containing the work area for the scroll
+	*pWorkBitmapOld = NULL;         // bitmap previously mapped to the work area context
 
 static  CRect       ScrollRect,                     // x/y (left/right) and dx/dy (right/bottom) for the scroll window
         ScrollTopRect,                  // rectangle bounding the scroll top section
@@ -125,26 +118,26 @@ static  CRect       ScrollRect,                     // x/y (left/right) and dx/d
 static  CRect       ScrollTopCurlRect,              // current location of top curl for mouse clicks
         ScrollBotCurlRect;              // current location of bottom curl for mouse clicks
 
-static  CPalette    *pScrollPalette = NULL,         // palette used for the scroll
-                     *pScrollPalOld = NULL,          // previous palette mapped to scroll context
-                      *pBackgroundPalOld = NULL,      // previous palette mapped to background context
-                       *pScrollTopPalOld = NULL,       // previous palette mapped to top context
-                        *pScrollMidPalOld = NULL,       // previous palette mapped to middle context
-                         *pScrollBotPalOld = NULL,       // previous palette mapped to bottom context
-                          *pScrollTopMaskPalOld = NULL,   // previous palette mapped to top mask context
-                           *pScrollMidMaskPalOld = NULL,   // previous palette mapped to middle mask context
-                            *pScrollBotMaskPalOld = NULL,   // previous palette mapped to bottom mask context
-                             *pWorkPalOld = NULL;            // previous palette mapped to work area context
+static  CPalette *pScrollPalette = NULL,         // palette used for the scroll
+	*pScrollPalOld = NULL,          // previous palette mapped to scroll context
+	*pBackgroundPalOld = NULL,      // previous palette mapped to background context
+	*pScrollTopPalOld = NULL,       // previous palette mapped to top context
+	*pScrollMidPalOld = NULL,       // previous palette mapped to middle context
+	*pScrollBotPalOld = NULL,       // previous palette mapped to bottom context
+	*pScrollTopMaskPalOld = NULL,   // previous palette mapped to top mask context
+	*pScrollMidMaskPalOld = NULL,   // previous palette mapped to middle mask context
+	*pScrollBotMaskPalOld = NULL,   // previous palette mapped to bottom mask context
+	*pWorkPalOld = NULL;            // previous palette mapped to work area context
 
-static  CDC         *pScrollDC = NULL,              // device context for the scroll bitmap
-                     *pBackgroundDC = NULL,          // device context for the background bitmap
-                      *pScrollTopDC = NULL,           // device context for the top section bitmap
-                       *pScrollMidDC = NULL,           // device context for the middle section bitmap
-                        *pScrollBotDC = NULL,           // device context for the bottom section bitmap
-                         *pScrollTopMaskDC = NULL,       // device context for the top mask bitmap
-                          *pScrollMidMaskDC = NULL,       // device context for the middle section bitmap
-                           *pScrollBotMaskDC = NULL,       // device context for the bottom section bitmap
-                            *pWorkDC = NULL;                // device context for the work area bitmap
+static  CDC *pScrollDC = NULL,              // device context for the scroll bitmap
+	*pBackgroundDC = NULL,          // device context for the background bitmap
+	*pScrollTopDC = NULL,           // device context for the top section bitmap
+	*pScrollMidDC = NULL,           // device context for the middle section bitmap
+	*pScrollBotDC = NULL,           // device context for the bottom section bitmap
+	*pScrollTopMaskDC = NULL,       // device context for the top mask bitmap
+	*pScrollMidMaskDC = NULL,       // device context for the middle section bitmap
+	*pScrollBotMaskDC = NULL,       // device context for the bottom section bitmap
+	*pWorkDC = NULL;                // device context for the work area bitmap
 
 static  CFont       *pFont = NULL;                  // font to use for displaying rules text
 static  char        chPathName[128];                // buffer to hold path name of the rules file
@@ -169,11 +162,11 @@ static  BOOL        bBruteForce = FALSE;            // whether we can be clever
 
 
 
-BOOL CRules::SetupKeyboardHook(void) {
+BOOL CRules::SetupKeyboardHook() {
 	#if BUILD_FOR_DLL
 	pRulesDialog = this;                            // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPKBDHOOKPROC)::GetProcAddress(hDLLInst, "KeyboardHookProc");
+	lpfnKbdHook = (FPKBDHOOKPROC)GetProcAddress(hDLLInst, "KeyboardHookProc");
 	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
 		return (FALSE);
 
@@ -265,7 +258,7 @@ LRESULT FAR PASCAL PrefHookProc(int code, WORD wParam, LONG lParam) {
 
 CRules::CRules(CWnd* pParent, char *pszPathName, CPalette *pPalette, char *pszSoundPath)
 	: CDialog(CRules::IDD, pParent) {
-	strcpy(chPathName, pszPathName);                // retain path to rules file on disk
+	Common::strcpy_s(chPathName, pszPathName);                // retain path to rules file on disk
 	pScrollPalette = pPalette;                      // retain palette to be used
 	pParentWnd = pParent;                           // retain parent window pointer
 	pSoundPath = pszSoundPath;              // retain path to sound file on disk
@@ -322,8 +315,8 @@ void CRules::OnDestroy() {
 
 	pMyApp = AfxGetApp();
 	hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
-	if (hNewCursor != NULL);
-	::SetCursor(hNewCursor);
+	//if (hNewCursor != NULL);
+	MFC::SetCursor(hNewCursor);
 
 	if (pNarrative != NULL)                         // end the narration
 		delete pNarrative;
@@ -441,7 +434,7 @@ void CRules::OnPaint() {
 		ReleaseCompatibleContext(pScrollTopMaskDC, pScrollTopMask, pScrollTopMaskOld, pScrollTopMaskPalOld);
 		ReleaseCompatibleContext(pScrollBotMaskDC, pScrollBotMask, pScrollBotMaskOld, pScrollBotMaskPalOld);
 		if (pNarrative != NULL)
-			(*pNarrative).Play();                   // play the narration
+			(*pNarrative).play();                   // play the narration
 	} else if (bBruteForce) {                           // need to paint directly to screen
 		pDibDoc = LoadScrollDIB(SCROLL_SPEC, NULL);
 		if (pDibDoc != NULL) {
@@ -1167,7 +1160,7 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		return (-1);
 	nHelpFileSize = (*pHelpFile).GetLength();
 
-	::AddFontResource("msserif.fon");
+	AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != NULL);
 	bSuccess = (*pFont).CreateFont(16, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
@@ -1371,14 +1364,12 @@ void CRules::ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pB
 }
 
 
-CDibDoc *CRules::LoadScrollDIB(char *pszPathName, CRect *pRect) {
+CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 	BOOL        bSuccess;
 	HDIB        hDIB;
 	LPSTR       lpDIB;
 	int         dxDIB, dyDIB;
 	CDibDoc     *pDibDoc = NULL;
-	CPalette    *pPalette = NULL;
-	CBitmap     *pBitmap = NULL;
 
 	pDibDoc = new CDibDoc();
 	ASSERT(pDibDoc != NULL);
@@ -1387,10 +1378,10 @@ CDibDoc *CRules::LoadScrollDIB(char *pszPathName, CRect *pRect) {
 	ASSERT(bSuccess);
 	hDIB = (*pDibDoc).GetHDIB();
 	ASSERT(hDIB != NULL);
-	lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-	dxDIB = (int) ::DIBWidth(lpDIB);
-	dyDIB = (int) ::DIBHeight(lpDIB);
-	::GlobalUnlock((HGLOBAL) hDIB);
+	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+	dxDIB = (int) DIBWidth(lpDIB);
+	dyDIB = (int) DIBHeight(lpDIB);
+	GlobalUnlock((HGLOBAL) hDIB);
 
 	if (pRect != NULL)
 		(*pRect).SetRect(0, 0, dxDIB, dyDIB);
@@ -1408,14 +1399,14 @@ BOOL CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
 
 	hDIB = (*pDibDoc).GetHDIB();
 	ASSERT(hDIB != NULL);
-	lpDIB = (LPSTR) ::GlobalLock((HGLOBAL) hDIB);
-	dxDIB = (int) ::DIBWidth(lpDIB);
-	dyDIB = (int) ::DIBHeight(lpDIB);
-	::GlobalUnlock((HGLOBAL) hDIB);
+	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
+	dxDIB = (int) DIBWidth(lpDIB);
+	dyDIB = (int) DIBHeight(lpDIB);
+	GlobalUnlock((HGLOBAL) hDIB);
 
 	myRect.SetRect(0, 0, dxDIB, dyDIB);
 
-	bSuccess = ::PaintDIB((*pDC).m_hDC, myRect, hDIB, myRect, pScrollPalette);
+	bSuccess = PaintDIB((*pDC).m_hDC, myRect, hDIB, myRect, pScrollPalette);
 
 	return (bSuccess);
 }
@@ -1473,8 +1464,8 @@ void CRules::OnMouseMove(UINT nFlags, CPoint point) {
 	} else
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
-	if (hNewCursor != NULL);
-	::SetCursor(hNewCursor);
+	//if (hNewCursor != NULL);
+	MFC::SetCursor(hNewCursor);
 
 	CDialog::OnMouseMove(nFlags, point);
 }

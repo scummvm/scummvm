@@ -270,10 +270,10 @@ CMainWindow::CMainWindow() {
 	_playing = TRUE;
 	SetTimer(GAME_TIMER, CLICK_TIME, NULL);     // Reset ticker
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	//pGameInfo->bMusicEnabled = TRUE;
 	//pGameInfo->bPlayingMetagame = TRUE;
-	#endif //_DEBUG
+	#endif //BAGEL_DEBUG
 
 	if (pGameInfo->bMusicEnabled) {
 		_gameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);

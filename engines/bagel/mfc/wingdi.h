@@ -452,6 +452,53 @@ enum {
 #define PC_EXPLICIT     0x02    /* palette index is explicit to device */
 #define PC_NOCOLLAPSE   0x04    /* do not match color to system palette */
 
+/*
+ * DrawText() Format Flags
+ */
+#define DT_TOP                      0x00000000
+#define DT_LEFT                     0x00000000
+#define DT_CENTER                   0x00000001
+#define DT_RIGHT                    0x00000002
+#define DT_VCENTER                  0x00000004
+#define DT_BOTTOM                   0x00000008
+#define DT_WORDBREAK                0x00000010
+#define DT_SINGLELINE               0x00000020
+#define DT_EXPANDTABS               0x00000040
+#define DT_TABSTOP                  0x00000080
+#define DT_NOCLIP                   0x00000100
+#define DT_EXTERNALLEADING          0x00000200
+#define DT_CALCRECT                 0x00000400
+#define DT_NOPREFIX                 0x00000800
+#define DT_INTERNAL                 0x00001000
+
+ /*
+  * Menu flags for Add/Check/EnableMenuItem()
+  */
+#define MF_INSERT           0x00000000L
+#define MF_CHANGE           0x00000080L
+#define MF_APPEND           0x00000100L
+#define MF_DELETE           0x00000200L
+#define MF_REMOVE           0x00001000L
+
+#define MF_BYCOMMAND        0x00000000L
+#define MF_BYPOSITION       0x00000400L
+#define MF_SEPARATOR        0x00000800L
+#define MF_ENABLED          0x00000000L
+#define MF_GRAYED           0x00000001L
+#define MF_DISABLED         0x00000002L
+#define MF_UNCHECKED        0x00000000L
+#define MF_CHECKED          0x00000008L
+#define MF_USECHECKBITMAPS  0x00000200L
+#define MF_STRING           0x00000000L
+#define MF_BITMAP           0x00000004L
+#define MF_OWNERDRAW        0x00000100L
+#define MF_POPUP            0x00000010L
+#define MF_MENUBARBREAK     0x00000020L
+#define MF_MENUBREAK        0x00000040L
+#define MF_UNHILITE         0x00000000L
+#define MF_HILITE           0x00000080L
+
+
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;
 	LONG       biWidth;
@@ -627,6 +674,7 @@ extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
                              int nIDLastButton, int nIDCheckButton);
 
 extern DWORD GetSysColor(int nIndex);
+extern BOOL DestroyMenu(HMENU hMenu);
 
 } // namespace MFC
 } // namespace Bagel

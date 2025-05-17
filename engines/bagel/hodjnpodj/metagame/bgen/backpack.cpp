@@ -102,7 +102,7 @@ static  int         nFirstSlot = 0;                 // first item in current inv
 BOOL CBackpack::SetupKeyboardHook(void) {
 	pBackpackDialog = this;                         // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPPACKHOOKPROC)::GetProcAddress(hDLLInst, "BackpackHookProc");
+	lpfnKbdHook = (FPPACKHOOKPROC)GetProcAddress(hDLLInst, "BackpackHookProc");
 	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
 		return (FALSE);
 
@@ -125,7 +125,6 @@ void CBackpack::RemoveKeyboardHook(void) {
 }
 
 
-extern "C"
 LRESULT FAR PASCAL BackpackHookProc(int code, WORD wParam, LONG lParam) {
 	CDC *pDC = NULL;
 
@@ -501,7 +500,7 @@ void CBackpack::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 
 	if (((*pItem).m_nQuantity == 0) ||
 	        ((*pItem).m_nQuantity > 1)) {
-		sprintf(chBuffer, "%ld", (*pItem).m_nQuantity);
+		Common::sprintf_s(chBuffer, "%ld", (*pItem).m_nQuantity);
 		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
 		(*pDC).SetBkMode(TRANSPARENT);                          // make the text overlay transparently
 		(*pDC).SetTextColor(BACKPACK_BLURB_COLOR);              // set the color of the text
@@ -560,7 +559,7 @@ void CBackpack::OnSize(UINT nType, int cx, int cy) {
 int CBackpack::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	BOOL    bSuccess;
 
-	::AddFontResource("msserif.fon");
+	AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != NULL);
 	bSuccess = (*pFont).CreateFont(BACKPACK_FONT_SIZE, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
@@ -702,7 +701,7 @@ void CBackpack::OnMouseMove(UINT nFlags, CPoint point) {
 	}
 
 	ASSERT(hNewCursor != NULL);                     // force the cursor change
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }
@@ -755,8 +754,8 @@ void CBackpack::OnLButtonDown(UINT nFlags, CPoint point) {
 						break;
 					case ITEM_ACTION_SOUND:
 						pSound = new CSound(this, (*pItem).GetSoundSpec(), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-						(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-						(*pSound).Play();
+						(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+						(*pSound).play();
 						break;
 					}
 				}

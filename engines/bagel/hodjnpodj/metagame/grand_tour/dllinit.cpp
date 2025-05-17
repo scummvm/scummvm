@@ -20,19 +20,18 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include "resource.h"
-#include "gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/resource.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
-#include "dllinit.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/dllinit.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-//#ifndef _DEBUG
-//#error This source file must be compiled with _DEBUG defined
-//#endif
+CGtlApp NEAR theApp;
 
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
@@ -41,7 +40,7 @@ HWND        ghwndParent;
 //CMainDFAWindow    *pMainGameWnd = NULL;   // pointer to the poker's main window
 CPalette        *pTestPalette = NULL;
 HCURSOR         hGameCursor;
-extern  CGtlFrame       *pMainWindow;
+extern CGtlFrame       *pMainWindow;
 LPGAMESTRUCT    pGameInfo = NULL;
 HWND            hThisWind;
 CBfcMgr         *lpMetaGameStruct = NULL;
@@ -52,12 +51,12 @@ BOOL            bJustReturned = FALSE;
 
 /*****************************************************************
  *
- * RunPoker
+ * RunMeta
  *
  * FUNCTIONAL DESCRIPTION:
  *
  *          This is the API function for the DLL. It is what the calling app
- *          calls to invoke poker
+ *          calls to invoke the grand tour
  *
  * FORMAL PARAMETERS:
  *
@@ -76,7 +75,7 @@ BOOL            bJustReturned = FALSE;
  *      n/a
  *
  ****************************************************************/
-extern "C"
+
 HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	ghwndParent = hParentWnd;
 	lpMetaGameStruct = lpBfcMgr;
@@ -132,22 +131,22 @@ void SetupWindow(CBfcMgr *) {
 
 	xpGtlApp->CreateInstance();
 
-	hDLLInst = (HINSTANCE)::GetWindowWord(pMainWindow->m_hWnd, GWW_HINSTANCE);
-	hExeInst = (HINSTANCE)::GetWindowWord(ghwndParent, GWW_HINSTANCE);
+	hDLLInst = (HINSTANCE)MFC::GetWindowWord(pMainWindow->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)MFC::GetWindowWord(ghwndParent, GWW_HINSTANCE);
 
 }
 
 
-void SetupCursor(void) {
+void SetupCursor() {
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 	HCURSOR hNewCursor = NULL;
 
 	hNewCursor = xpGtlApp->LoadStandardCursor(IDC_ARROW);
-	if (hNewCursor != NULL);
-	::SetCursor(hNewCursor);
+	//if (hNewCursor != NULL);
+	MFC::SetCursor(hNewCursor);
 }
 
-
-CGtlApp NEAR theApp;
-
-/////////////////////////////////////////////////////////////////////////////
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

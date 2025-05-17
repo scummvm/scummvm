@@ -20,21 +20,13 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include "gtl.h"
-
-#include "gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
-
-///DEFS gtldoc.h
-
-#ifdef _DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlDoc
@@ -122,7 +114,7 @@ void CGtlDoc::InitDocument(const char *xpszPathName)
 	if (xpszPathName && *xpszPathName)
 		m_xpGtlData->Compile(xpszPathName) ;
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	if (CBdbgMgr::GetPointer()->m_iDebugValues[1])
 		dbgtrc = TRUE ; // turn on tracing
 	#endif
@@ -181,7 +173,7 @@ void CGtlDoc::Serialize(CArchive& ar) {
 /////////////////////////////////////////////////////////////////////////////
 // CGtlDoc diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CGtlDoc::AssertValid() const {
 	CDocument::AssertValid();
 }
@@ -189,7 +181,7 @@ void CGtlDoc::AssertValid() const {
 void CGtlDoc::Dump(CDumpContext& dc) const {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlDoc commands
@@ -202,7 +194,6 @@ VOID CGtlDoc::OnChangedViewList(void)
 // returns: VOID
 {
 	JXENTER(CGtlDoc::OnChangedViewList) ;
-	int iError = 0 ;        // error code
 	POSITION nViewPosition = GetFirstViewPosition() ;
 	CGtlView *xpGtlView ;
 
@@ -246,10 +237,11 @@ BOOL CGtlDoc::FixChecks(void)
 
 	if (m_xpGtlFrame && m_xpGtlFrame->GetMenu()) {
 
-		m_xpGtlFrame->GetMenu()->CheckMenuItem(ID_VIEW_INFO_DLG, m_xpcInfDlg ? MF_CHECKED : MF_UNCHECKED);
-		m_xpGtlFrame->GetMenu()->CheckMenuItem(ID_VIEW_CTL_DLG, m_xpcCtlDlg ? MF_CHECKED : MF_UNCHECKED);
-		m_xpGtlFrame->GetMenu()->CheckMenuItem(ID_VIEW_NODE_DLG, m_xpcNodeDlg ? MF_CHECKED : MF_UNCHECKED);
-		m_xpGtlFrame->GetMenu()->CheckMenuItem(ID_VIEW_MENU_DLG, m_xpcMenuDlg ? MF_CHECKED : MF_UNCHECKED);
+		CMenu *menu = CMenu::FromHandle(m_xpGtlFrame->GetMenu());
+		menu->CheckMenuItem(ID_VIEW_INFO_DLG, m_xpcInfDlg ? MF_CHECKED : MF_UNCHECKED);
+		menu->CheckMenuItem(ID_VIEW_CTL_DLG, m_xpcCtlDlg ? MF_CHECKED : MF_UNCHECKED);
+		menu->CheckMenuItem(ID_VIEW_NODE_DLG, m_xpcNodeDlg ? MF_CHECKED : MF_UNCHECKED);
+		menu->CheckMenuItem(ID_VIEW_MENU_DLG, m_xpcMenuDlg ? MF_CHECKED : MF_UNCHECKED);
 	}
 
 // cleanup:

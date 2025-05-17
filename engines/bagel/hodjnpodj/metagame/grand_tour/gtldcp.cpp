@@ -27,12 +27,8 @@ namespace Metagame {
 namespace GrandTour {
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-
-#include <string.h>
-#include <stdio.h>
-
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
-#include "gtldat.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 
 
 //* CGtlData::Decompile -- output data to .GTL file
@@ -56,21 +52,21 @@ int CGtlData::Decompile(const char * xpszPathName)
 
 	if ((m_xpGtlFile = fopen(m_szGtlFile, "w")) == NULL) {
 
-		sprintf(szOut, "\n\nCan't open output file %s.\n\n", m_szGtlFile);
+		Common::sprintf_s(szOut, "\n\nCan't open output file %s.\n\n", m_szGtlFile);
 		goto cleanup ;
 	}
 
-	sprintf(szOut, "// %s\n", m_szGtlFile) ;
+	Common::sprintf_s(szOut, "// %s\n", m_szGtlFile) ;
 	AsciiOutput(0, szOut) ;
 
 	if (m_szBmpDirectory[0]) {      // if there's a bitmap directory
-		strcpy(szOut, "\tDIRECTORY\t\"") ;
+		Common::strcpy_s(szOut, "\tDIRECTORY\t\"") ;
 		xpIn = m_szBmpDirectory, xpOut = szOut + strlen(szOut) ;
 		while ((*xpOut = *xpIn++) != '\0')
 			if (*xpOut++ == '\\')
 				* xpOut++ = '\\';
 		strcat(szOut, "\"\t// Bitmap directory\n") ;
-//	sprintf(szOut, "\tDIRECTORY\t%s  // Bitmap directory\n",
+//	Common::sprintf_s(szOut, "\tDIRECTORY\t%s  // Bitmap directory\n",
 //		m_szBmpDirectory) ;
 		AsciiOutput(0, szOut) ;
 	}
@@ -82,9 +78,9 @@ int CGtlData::Decompile(const char * xpszPathName)
 		szOut[0] = 0 ;      // initialize output string
 
 		if (lpMap->m_szLabel[0])    // if there's a label
-			sprintf(szOut, "%Fs:", (LPSTR)lpMap->m_szLabel) ;
+			Common::sprintf_s(szOut, "%Fs:", (LPSTR)lpMap->m_szLabel) ;
 
-		sprintf(szOut + strlen(szOut), "\tBITMAP\t\"%Fs\"",
+		Common::sprintf_s(szOut + strlen(szOut), "\tBITMAP\t\"%Fs\"",
 		        (LPSTR)lpMap->m_szFilename) ;
 
 		if (lpMap->m_iRelationType) {
@@ -122,14 +118,14 @@ int CGtlData::Decompile(const char * xpszPathName)
 
 		// BCW: added SIZE(x,y) to .GTL format
 		//
-		sprintf(szOut + strlen(szOut), " SIZE(%d,%d)", lpMap->m_lpcBgbObject->m_cSize.cx, lpMap->m_lpcBgbObject->m_cSize.cy);
+		Common::sprintf_s(szOut + strlen(szOut), " SIZE(%d,%d)", lpMap->m_lpcBgbObject->m_cSize.cx, lpMap->m_lpcBgbObject->m_cSize.cy);
 
 		if (lpMap->m_bPositionDetermined) {
 
 			strcat(szOut, "\t") ;
 			if (!lpMap->m_bPositionSpecified)
 				strcat(szOut, "// ") ;
-			sprintf(szOut + strlen(szOut), "POSITION(%d,%d,%d,%d)",
+			Common::sprintf_s(szOut + strlen(szOut), "POSITION(%d,%d,%d,%d)",
 			        lpMap->m_lpcBgbObject->m_crPosition.x,
 			        lpMap->m_lpcBgbObject->m_crPosition.y,
 			        lpMap->m_lpcBgbObject->m_cSize.cx,
@@ -166,23 +162,23 @@ int CGtlData::Decompile(const char * xpszPathName)
 			// if there's a forward link
 			if (!lpNode->m_szLabel[0] && bForwardLink) {
 
-				//sprintf(szLabel, ".%d", m_iNumGenLabels++);
-				sprintf(szLabel, ".n%d", iK) ;
+				//Common::sprintf_s(szLabel, ".%d", m_iNumGenLabels++);
+				Common::sprintf_s(szLabel, ".n%d", iK) ;
 				// generate a new label
-				_fstrcpy(lpNode->m_szLabel, szLabel) ;
+				COmmon::strcpy_s(lpNode->m_szLabel, szLabel) ;
 			}
 
 			szOut[0] = 0 ;      // init output string
 			if (lpNode->m_szLabel[0])   // if there's a label
-				sprintf(szOut, "%Fs:", (LPSTR)lpNode->m_szLabel) ;
+				Common::sprintf_s(szOut, "%Fs:", (LPSTR)lpNode->m_szLabel) ;
 			strcat(szOut, "\tNODE\t") ;
 
 			if (lpNode->m_bRelative)
-				sprintf(szOut + strlen(szOut), "BITMAP %Fs", (LPSTR)m_lpMaps[lpNode->m_iBitmap].m_szLabel) ;
+				Common::sprintf_s(szOut + strlen(szOut), "BITMAP %Fs", (LPSTR)m_lpMaps[lpNode->m_iBitmap].m_szLabel) ;
 			else
 				strcat(szOut, "POSITION") ;
 
-			sprintf(szOut + strlen(szOut), " (%d,%d)", lpNode->m_iX, lpNode->m_iY);
+			Common::sprintf_s(szOut + strlen(szOut), " (%d,%d)", lpNode->m_iX, lpNode->m_iY);
 
 			if (bPrevLink)  // if linked to previous node
 				strcat(szOut, " LINKPREV") ;
@@ -194,19 +190,19 @@ int CGtlData::Decompile(const char * xpszPathName)
 				if (lpNode->m_iWeight == 0)
 					strcat(szOut, " PASSTHRU") ;
 				else
-					sprintf(szOut + strlen(szOut), " WEIGHT %d", lpNode->m_iWeight) ;
+					Common::sprintf_s(szOut + strlen(szOut), " WEIGHT %d", lpNode->m_iWeight) ;
 			}
 
 //	    if (lpNode->m_iSector)
-//		sprintf(szOut + strlen(szOut), " SECTOR %d",
+//		Common::sprintf_s(szOut + strlen(szOut), " SECTOR %d",
 //				lpNode->m_iSector) ;
 
 			if (lpNode->m_bSenSpec)
-				sprintf(szOut + strlen(szOut), " SENSITIVITY %d",
+				Common::sprintf_s(szOut + strlen(szOut), " SENSITIVITY %d",
 				        lpNode->m_iSensitivity) ;
 
 			if (lpNode->m_szSector[0])  // if there's an action
-				sprintf(szOut + strlen(szOut),
+				Common::sprintf_s(szOut + strlen(szOut),
 				        " SECTOR %Fs", (LPSTR)lpNode->m_szSector) ;
 
 			AsciiOutput(0, szOut) ;
@@ -216,7 +212,7 @@ int CGtlData::Decompile(const char * xpszPathName)
 				for (iL = 0 ; iL < lpNode->m_iNumLinks ; ++iL)
 					if ((iLink = lpNode->m_iLinks[iL]) >= 0
 					        && iLink < iK - 1) {
-						sprintf(szOut, "\tLINK\t%Fs",
+						Common::sprintf_s(szOut, "\tLINK\t%Fs",
 						        (LPSTR)m_lpNodes[iLink].m_szLabel) ;
 						AsciiOutput(0, szOut) ;
 					}

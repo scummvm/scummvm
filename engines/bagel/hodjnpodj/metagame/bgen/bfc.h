@@ -100,10 +100,9 @@ public:
 	char m_cEndData ;
 
 	// constructor
-	CHodjPodj::CHodjPodj(void) {
+	CHodjPodj(void) {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 	}
-
 } ;
 
 // CBfcMgr -- boffo games interface manager class
@@ -168,7 +167,7 @@ public:
 	char m_cEndData ;
 
 	// constructor
-	CBfcMgr::CBfcMgr(void) {
+	CBfcMgr(void) {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 	}
 };

@@ -74,7 +74,7 @@ HWND FAR PASCAL RunNoVa(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	ghParentWnd = hParentWnd;
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 //    pGameParams->bPlayingMetagame = TRUE;        //meta_game simulation
 	#endif
 

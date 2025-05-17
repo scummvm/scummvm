@@ -29,7 +29,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	#define JX_DEBUG
 #endif
 
@@ -50,6 +50,7 @@ namespace Metagame {
 
 typedef int BOOL ;
 typedef char *XPSTR ;
+typedef char *XPSTR;
 typedef char *LPSTR ;
 typedef LPSTR *LPLPSTR ;
 typedef int *XPINT ;

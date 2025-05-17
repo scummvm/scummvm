@@ -1,30 +1,33 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  rules.h
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  Copyright (c) 1994 by Ledge Multimedia, All Rights Reserved
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      2.0      09/13/94     EDS     refer to rules.cpp for details
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  MODULE DESCRIPTION:
- *
- *      Class definitions for CRules.
- *
- *  RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- ****************************************************************/
+ */
 
+#ifndef BAGEL_METAGAME_GTL_RULES_H
+#define BAGEL_METAGAME_GTL_RULES_H
 
-#ifndef _INC_RULES
-#define _INC_RULES
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 
-#include <time.h>
-#include "dibdoc.h"
-
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
 
 #define IDD_RULES_DIALOG    900
 #define IDC_RULES_OKAY      900
@@ -48,7 +51,7 @@ private:
 	BOOL SetupKeyboardHook(void);
 	void RemoveKeyboardHook(void);
 
-	static  CDibDoc *LoadScrollDIB(char *pSpec, CRect *pRect);
+	static  CDibDoc *LoadScrollDIB(const char *pSpec, CRect *pRect);
 	static  BOOL PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc);
 	static  CBitmap *CreateScrollBitmap(CDC *pDC, CDibDoc *pDibDoc, CPalette *pPalette);
 	static  CDC *SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap * &pMaskOld, CRect *pRect);
@@ -95,4 +98,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#endif //!_INC_RULES
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
+
+#endif

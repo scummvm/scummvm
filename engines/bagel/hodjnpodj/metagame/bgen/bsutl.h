@@ -88,7 +88,7 @@ public:
 
 // methods
 public:
-	CBsuSet::CBsuSet() {
+	CBsuSet() {
 		TRACECONSTRUCTOR(CBsuSet) ;
 		memset(&m_cStartData, 0,
 		       &m_cEndData - &m_cStartData) ;
@@ -101,72 +101,72 @@ public:
 
 // bsutl.cpp : Boffo scroll bar utilities
 
-//- CBsuSet::~CBsuSet -- destructor
+//- ~CBsuSet -- destructor
 public:
-	CBsuSet::~CBsuSet(void) ;
-//- CBsuSet::InitWndBsuSet -- initialize bsu set for a window
+	~CBsuSet(void) ;
+//- InitWndBsuSet -- initialize bsu set for a window
 public:
-	BOOL CBsuSet::InitWndBsuSet(CWnd * xpWnd,
+	BOOL InitWndBsuSet(CWnd * xpWnd,
 	                            BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
 	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
-//- CBsuSet::InitDlgBsuSet -- initialize bsu set for dialog box
+//- InitDlgBsuSet -- initialize bsu set for dialog box
 public:
-	BOOL CBsuSet::InitDlgBsuSet(CDialog * xpDlg,
+	BOOL InitDlgBsuSet(CDialog * xpDlg,
 	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
-//- CBsuSet::AddBarToSet -- add scroll bar to scroll bar set
+//- AddBarToSet -- add scroll bar to scroll bar set
 public:
-	BOOL CBsuSet::AddBarToSet(int iId, int iWndScrollCode,
+	BOOL AddBarToSet(int iId, int iWndScrollCode,
 	                          int iBarType PDFT(0)) ;
-//- CBsuSet::PrepareWndBsuSet -- prepare window scroll bar set
+//- PrepareWndBsuSet -- prepare window scroll bar set
 //		by filling in the device fields
 public:
-	BOOL CBsuSet::PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
-//- CBsuSet::UpdateWndDeviceExtents -- update window devices coordinates
+	BOOL PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
+//- UpdateWndDeviceExtents -- update window devices coordinates
 private:
-	BOOL CBsuSet::UpdateWndDeviceExtents(void) ;
-//- CBsuSet::LinkWndBsuSet -- link window/dialog bsu sets
+	BOOL UpdateWndDeviceExtents(void) ;
+//- LinkWndBsuSet -- link window/dialog bsu sets
 public:
-	BOOL CBsuSet::LinkWndBsuSet(void) ;
-//- CBsuSet::PrepareDc -- replace OnPrepareDC -- set the viewport and
+	BOOL LinkWndBsuSet(void) ;
+//- PrepareDc -- replace OnPrepareDC -- set the viewport and
 //	the clip rectangle to the specified region
 public:
-	BOOL CBsuSet::PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
-//- CBsuSet::OnScroll -- handle OnHScroll and OnVScroll messages
+	BOOL PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
+//- OnScroll -- handle OnHScroll and OnVScroll messages
 public:
-	BOOL CBsuSet::OnScroll(UINT nSBCode, UINT nPos,
+	BOOL OnScroll(UINT nSBCode, UINT nPos,
 	                       CScrollBar* xpScrollBar, int iBarType PDFT(0)) ;
-//- CBsuSet::GetBar -- get bsu scroll bar object
+//- GetBar -- get bsu scroll bar object
 private:
-	CBsuBar *CBsuSet::GetBar(int iBarType) ;
-//- CBsuSet::ScrollWindowToPoint -- scroll window to spec point
+	CBsuBar *GetBar(int iBarType) ;
+//- ScrollWindowToPoint -- scroll window to spec point
 public:
-	BOOL CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition,
+	BOOL ScrollWindowToPoint(CPoint cScrollPosition,
 	                                  BOOL bScrollWindow PDFT(TRUE)) ;
-//- CBsuSet::EdgeToCenter -- if point is on edge, scroll it to center
+//- EdgeToCenter -- if point is on edge, scroll it to center
 public:
-	BOOL CBsuSet::EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
-//- CBsuSet::SetSubWindowRect -- set rectangle to portion of window
+	BOOL EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
+//- SetSubWindowRect -- set rectangle to portion of window
 //		(logical coordinates)
 public:
-	BOOL CBsuSet::SetSubWindowRect(LPRECT lpRect, int iBsRegion);
-//- CBsuSet::TestRect -- test whether rectangle is in window
+	BOOL SetSubWindowRect(LPRECT lpRect, int iBsRegion);
+//- TestRect -- test whether rectangle is in window
 public:
-	BOOL CBsuSet::TestRect(CRRect crTestRect,
+	BOOL TestRect(CRRect crTestRect,
 	                       BOOL & bPhysical, BOOL & bEdge) ;
-//- CBsuSet::GetWindowBars -- set rectangle to portion of window
+//- GetWindowBars -- set rectangle to portion of window
 //		(device coordinates)
 public:
-	BOOL CBsuSet::GetWindowBars(CBsuBar * &xpHBar,
+	BOOL GetWindowBars(CBsuBar * &xpHBar,
 	                            CBsuBar *&xpVBar, BOOL bErrorRtn PDFT(TRUE)) ;
-//- CBsuSet::PointLogical -- convert device point to logical coords
+//- PointLogical -- convert device point to logical coords
 public:
-	CRPoint CBsuSet::PointLogical(CPoint cPoint) ;
-//- CBsuSet::GetInfo -- get information about scroll set
+	CRPoint PointLogical(CPoint cPoint) ;
+//- GetInfo -- get information about scroll set
 public:
-	BOOL CBsuSet::GetInfo(CBsuInfo * xpBsuInfo) ;
-//- CBsuSet::DumpInfo -- dump information about scroll set
+	BOOL GetInfo(CBsuInfo * xpBsuInfo) ;
+//- DumpInfo -- dump information about scroll set
 public:
-	BOOL CBsuSet::DumpInfo(LPSTR lpStart PDFT(NULL)) ;
+	BOOL DumpInfo(LPSTR lpStart PDFT(NULL)) ;
 
 } ;
 
@@ -197,11 +197,11 @@ class CBsuBar {
 
 // methods
 public:
-	CBsuBar::CBsuBar() {
+	CBsuBar() {
 		memset(&m_cStartData, 0,
 		       &m_cEndData - &m_cStartData) ;
 	}
-} ;
+};
 
 // CBsuInfo -- information returned by GetInfo
 class CBsuInfo {
@@ -292,7 +292,7 @@ public:
 	CRect cHintRect ;
 	char m_cEndData ;
 
-	CGtlHint::CGtlHint(void) {
+	CGtlHint() {
 		memset(&m_cStartData,
 		       0, &m_cEndData - &m_cStartData) ;
 	}

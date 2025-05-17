@@ -39,7 +39,6 @@ CBsuSet::~CBsuSet(void)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CBsuSet::~CBsuSet) ;
-	int iError = 0 ;        // error code
 	CBsuBar * xpBar ;
 
 	TRACEDESTRUCTOR(CBsuSet) ;
@@ -71,7 +70,6 @@ BOOL CBsuSet::InitWndBsuSet(CWnd *xpWnd, BOOL bScrollView, BOOL bScrollBars, CBs
 {
 	JXENTER(CBsuSet::InitWndBsuSet) ;
 	int iError = 0 ;        // error code
-	BOOL bAllocDc = FALSE ; // flag: device context allocated
 	CBsuBar * xpHBar = NULL, *xpVBar = NULL ;
 
 	GetWindowBars(xpHBar, xpVBar, FALSE) ;  // try to get existing
@@ -547,7 +545,6 @@ CBsuBar *CBsuSet::GetBar(int iBarType)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CBsuSet::GetBar) ;
-	int iError = 0 ;        // error code
 	CBsuBar * xpBar, *xpBarFound = NULL ;   // return value
 	CScrollBar * xpScrollBar ;
 
@@ -688,7 +685,7 @@ BOOL CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition, BOOL bScrollWindow)
 	}
 
 	for (iCount = 0, xpSet = this; iCount++ < 2 && xpSet; xpSet = m_xpSetLink) {
-		CBsuBar * xpHBar, *xpVBar ;
+		//CBsuBar * xpHBar, *xpVBar ;
 		int iInCount, iNewVal ;
 
 		if (xpSet->GetWindowBars(xpHBar, xpVBar))

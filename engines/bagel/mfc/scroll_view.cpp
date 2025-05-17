@@ -19,22 +19,22 @@
  *
  */
 
-#ifndef BAGEL_MFC_MFC_H
-#define BAGEL_MFC_MFC_H
-
-#include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/winnt.h"
-#include "bagel/mfc/wingdi.h"
-#include "bagel/mfc/atltime.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/afx.h"
+#include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/afxmsg.h"
-#include "bagel/mfc/afxext.h"
-#include "bagel/mfc/afxres.h"
-#include "bagel/mfc/global_functions.h"
-#include "bagel/mfc/ifstream.h"
-#include "bagel/mfc/joystickapi.h"
-#include "bagel/mfc/keyboard.h"
 
-#endif
+namespace Bagel {
+namespace MFC {
+
+IMPLEMENT_DYNAMIC(CScrollView, CView)
+BEGIN_MESSAGE_MAP(CScrollView, CView)
+END_MESSAGE_MAP()
+
+const SIZE CScrollView::sizeNull = { 0, 0 };
+
+void CScrollView::SetScrollSizes(int nMapMode, SIZE sizeTotal,
+		const SIZE &sizePage, const SIZE &sizeLine) {
+	error("TODO: CScrollView::SetScrollSizes");
+}
+
+} // namespace MFC
+} // namespace Bagel

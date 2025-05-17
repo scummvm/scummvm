@@ -60,8 +60,96 @@ int CDC::GetDeviceCaps(int nIndex) const {
 	error("TODO: CDC::GetDeviceCaps");
 }
 
+int CDC::GetMapMode() const {
+	error("TODO: CDC::GetMapMode");
+}
+
+CPoint CDC::GetViewportOrg() const {
+	error("TODO: CDC::GetViewportOrg");
+}
+
+int CDC::SetMapMode(int nMapMode) {
+	error("TODO: CDC::SetMapMode");
+}
+
+CPoint CDC::SetViewportOrg(int x, int y) {
+	error("TODO: CDC::SetViewportOrg");
+}
+
+CPoint CDC::SetViewportOrg(POINT point) {
+	error("TODO: CDC::SetViewportOrg");
+}
+
+CPoint CDC::OffsetViewportOrg(int nWidth, int nHeight) {
+	error("TODO: CDC::OffsetViewportOrg");
+}
+
+int CDC::GetClipBox(LPRECT lpRect) const {
+	error("TODO: CDC::GetClipBox");
+}
+
+BOOL CDC::PtVisible(int x, int y) const {
+	error("TODO: CDC::PtVisible");
+}
+
+BOOL CDC::PtVisible(POINT point) const {
+	error("TODO: CDC::PtVisible");
+}
+
+BOOL CDC::RectVisible(LPCRECT lpRect) const {
+	error("TODO: CDC::RectVisible");
+}
+
+int CDC::SelectClipRgn(CRgn *pRgn) {
+	error("TODO: CDC::SelectClipRgn");
+}
+
+int CDC::ExcludeClipRect(int x1, int y1, int x2, int y2) {
+	error("TODO: CDC::ExcludeClipRect");
+}
+
+int CDC::ExcludeClipRect(LPCRECT lpRect) {
+	error("TODO: CDC::ExcludeClipRect");
+}
+
+int CDC::ExcludeUpdateRgn(CWnd *pWnd) {
+	error("TODO: CDC::ExcludeUpdateRgn");
+}
+
+int CDC::IntersectClipRect(int x1, int y1, int x2, int y2) {
+	error("TODO: CDC::IntersectClipRect");
+}
+
+int CDC::IntersectClipRect(LPCRECT lpRect) {
+	error("TODO: CDC::IntersectClipRect");
+}
+
+int CDC::OffsetClipRgn(int x, int y) {
+	error("TODO: CDC::OffsetClipRgn");
+}
+
+int CDC::OffsetClipRgn(SIZE size) {
+	error("TODO: CDC::OffsetClipRgn");
+}
+
+int CDC::SelectClipRgn(CRgn *pRgn, int nMode) {
+	error("TODO: CDC::SelectClipRgn");
+}
+
 int CDC::SetROP2(int nDrawMode) {
 	error("TODO: CDC::SetROP2");
+}
+
+BOOL CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
+	error("TODO: CDC::DPtoLP");
+}
+
+BOOL CDC::DPtoLP(RECT *lpRect) {
+	error("TODO: CDC::DPtoLP");
+}
+
+BOOL CDC::LPtoDP(RECT *lpRect) {
+	error("TODO: CDC::LPtoDP");
 }
 
 BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
@@ -219,6 +307,15 @@ CSize CDC::TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
 CSize CDC::TabbedTextOut(int x, int y, const CString &str,
                          int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
 	error("TODO: CDC::TabbedTextOut");
+}
+
+int CDC::DrawText(LPCSTR lpszString, int nCount,
+	LPRECT lpRect, UINT nFormat) {
+	error("TODO: CDC::DrawText");
+}
+
+int CDC::DrawText(const CString &str, LPRECT lpRect, UINT nFormat) {
+	error("TODO: CDC::DrawText");
 }
 
 CSize CDC::GetTextExtent(LPCSTR lpszString, int nCount) const {

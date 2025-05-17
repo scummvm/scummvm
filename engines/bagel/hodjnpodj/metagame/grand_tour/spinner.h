@@ -1,27 +1,33 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  spinner.h
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  Copyright (c) 1994 by Ledge Multimedia, All Rights Reserved
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      1.1     07/27/94     EDS     refer to spinner.cpp for details
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  MODULE DESCRIPTION:
- *
- *      Class definitions for CSpinner.
- *
- *  RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- ****************************************************************/
+ */
 
-#ifndef _INC_SPINNER
-#define _INC_SPINNER
+#ifndef BAGEL_METAGAME_GTL_SPINNER_H
+#define BAGEL_METAGAME_GTL_SPINNER_H
 
-#include "sprite.h"
+#include "bagel/hodjnpodj/hnplibs/sprite.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
 
 #define SPINNER_SPEC                ".\\art\\spinner.bmp"
 #define HODJ_SPINNER_NUMBERS_SPEC   ".\\art\\spinblue.bmp"
@@ -85,12 +91,16 @@ private:
 	BOOL    m_bVisible;         // whether spinner is visible
 	BOOL    m_bHodj;            // which character is active
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
 
 };
 
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif //!_INC_SPINNER
+#endif

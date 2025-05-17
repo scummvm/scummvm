@@ -19,17 +19,14 @@
  *
  */
 
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/savedlg.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
-
-#include "bagel/afxwin.h"
-
-#include <assert.h>
-#include "bagel/hodjnpodj/hnplibs/stdinc.h"
-
-#include "savedlg.h"
 
 #define IDC_SLOT1 2001
 #define IDC_SLOT2 2002
@@ -146,7 +143,7 @@ VOID CSaveDlg::EditDescription(INT nNewSlot) {
 	//
 	szBuf[0] = '\0';
 	if (m_pszDescriptions[nNewSlot] != NULL) {
-		strcpy(szBuf, m_pszDescriptions[nNewSlot]);
+		Common::strcpy_s(szBuf, m_pszDescriptions[nNewSlot]);
 		assert(strlen(szBuf) < MAX_BUTTON_TEXT);
 	}
 	m_pSlotText[nNewSlot]->SetWindowText(szBuf);

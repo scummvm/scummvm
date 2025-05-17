@@ -97,7 +97,7 @@ private:
 
 	DECLARE_MESSAGE_MAP()
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
@@ -134,7 +134,7 @@ private:
 
 	DECLARE_MESSAGE_MAP()
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
@@ -179,7 +179,7 @@ private:
 
 	DECLARE_MESSAGE_MAP()
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
@@ -226,7 +226,7 @@ private:
 
 	DECLARE_MESSAGE_MAP()
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
@@ -273,7 +273,7 @@ private:
 
 	DECLARE_MESSAGE_MAP()
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif

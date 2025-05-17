@@ -33,11 +33,13 @@ MODULE_OBJS = \
 	mfc/global_functions.o \
 	mfc/ifstream.o \
 	mfc/joystickapi.o \
+	mfc/menu.o \
 	mfc/object.o \
 	mfc/paint_dc.o \
 	mfc/palette.o \
 	mfc/pen.o \
 	mfc/rgn.o \
+	mfc/scroll_view.o \
 	mfc/scrollbar.o \
 	mfc/win_app.o \
 	mfc/win_thread.o \
@@ -151,7 +153,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/backpack.o \
 	hodjnpodj/metagame/bgen/bbt.o \
 	hodjnpodj/metagame/bgen/bdbg.o \
-	hodjnpodj/metagame/bgen/bdbgc.o \
 	hodjnpodj/metagame/bgen/bgb.o \
 	hodjnpodj/metagame/bgen/bgenut.o \
 	hodjnpodj/metagame/bgen/bsutl.o \
@@ -186,7 +187,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/grand_tour/rules.o \
 	hodjnpodj/metagame/grand_tour/savedlg.o \
 	hodjnpodj/metagame/grand_tour/savegame.o \
-	hodjnpodj/metagame/grand_tour/sound.o \
 	hodjnpodj/metagame/grand_tour/spinner.o \
 	hodjnpodj/metagame/grand_tour/store.o \
 	hodjnpodj/archeroids/dllinit.o \

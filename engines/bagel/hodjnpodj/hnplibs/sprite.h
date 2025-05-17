@@ -345,7 +345,7 @@ private:
 	static CPalette *m_pBackdropPalette;// palette mapped to backdrop context
 	static CPalette *m_pBackdropPalOld; // palette previously mapped to backdrop context
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif

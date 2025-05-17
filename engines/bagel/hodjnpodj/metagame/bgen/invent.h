@@ -35,7 +35,7 @@ class CInventory : public CObject {
 
 // Constructors
 public:
-	CInventory(char *lpsTitle = NULL);
+	CInventory(const char *lpsTitle = NULL);
 
 // Destructors
 public:
@@ -43,11 +43,11 @@ public:
 
 // Implementation
 public:
-	char *GetTitle(void) {
-		return (m_lpsTitle);
+	const char *GetTitle() const {
+		return m_lpsTitle;
 	}
-	int ItemCount(void) {
-		return (m_nItemCount);
+	int ItemCount() const {
+		return m_nItemCount;
 	}
 	void AddItem(CItem *pItem);
 	void AddItem(int nID, long nQuantity);
@@ -58,21 +58,19 @@ public:
 	void DiscardItem(int nID, long nQuantity);
 	CItem *FetchItem(int nIdx);
 	CItem *FindItem(int nID);
-	CItem *FirstItem(void) {
-		return (m_pEquipment);
+	CItem *FirstItem() const {
+		return m_pEquipment;
 	}
 
-
 private:
-	char    *m_lpsTitle;        // title string for inventory
-	int     m_nItemCount;       // number of items in the inventory
-	CItem   *m_pEquipment;      // linked list of inventory items
+	const char *m_lpsTitle;	// title string for inventory
+	int m_nItemCount;		// number of items in the inventory
+	CItem *m_pEquipment;	// linked list of inventory items
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
-
 };
 
 } // namespace Metagame

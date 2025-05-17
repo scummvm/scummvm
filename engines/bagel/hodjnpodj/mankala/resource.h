@@ -67,7 +67,7 @@ namespace Mankala {
 #define IDC_USTRENGTH                   1026
 #define IDC_USCRSHELL                   1027
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 
 	#define IDC_EDIT_HUMAN0                 1028
 	#define IDC_EDIT_HUMAN1                 1029

@@ -43,7 +43,7 @@ IMPLEMENT_DYNCREATE(CInventory, CObject)
  *
  ************************************************************************/
 
-CInventory::CInventory(char *lpsTitle) {
+CInventory::CInventory(const char *lpsTitle) {
 	m_lpsTitle = lpsTitle;
 	m_nItemCount = 0;
 	m_pEquipment = NULL;
@@ -340,7 +340,7 @@ CItem *CInventory::FindItem(int nID) {
 ////////////////////////////////////////////////////////////////////////////
 // CInventory diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CInventory::AssertValid() const {
 	CObject::AssertValid();
 }
@@ -349,7 +349,7 @@ void CInventory::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 } // namespace Metagame
 } // namespace HodjNPodj

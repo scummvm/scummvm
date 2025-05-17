@@ -64,10 +64,9 @@ namespace GrandTour {
 class CEncounterTable {
 public:
 	int     m_iSectorCode ;         // MG_SECTOR_xxxx: sector code
-	char    *m_lpszWavEFile;        // name of 8-bit sound file (*m_pItemSoundPath)
-//    char  *m_lpszWavSFile;        // name of 16-bit sound file
+	const char *m_lpszWavEFile;        // name of 8-bit sound file (*m_pItemSoundPath)
 	int     m_Actions[MAX_ACTIONS]; // string of action codes, set to NULL for Colour Narrations
-	char    *m_lpszText ;           // text of booby trap
+	const char *m_lpszText ;           // text of booby trap
 } ;
 
 

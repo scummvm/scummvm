@@ -1,28 +1,34 @@
-/*****************************************************************
+/* ScummVM - Graphic Adventure Engine
  *
- *  sound.h
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- *  Copyright (c) 1994 by Ledge Multimedia, All Rights Reserved
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  HISTORY
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *      3.0     09/29/94     EDS     refer to sound.cpp for details
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  MODULE DESCRIPTION:
- *
- *      Class definitions for CSound.
- *
- *  RELEVANT DOCUMENTATION:
- *
- *      n/a
- *
- ****************************************************************/
+ */
 
-#ifndef _INC_SOUND
-#define _INC_SOUND
+#ifndef BAGEL_METAGAME_GTL_SOUND_H
+#define BAGEL_METAGAME_GTL_SOUND_H
 
 #include <limits.h>
 #include <mmsystem.h>
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
 
 #define VOLUME_INDEX_MIN        1
 #define VOLUME_INDEX_MAX        10
@@ -83,7 +89,7 @@ public:
 	}
 
 	void SetDrivePath(char *pszDrivePath) {
-		strcpy(m_chDrivePath, pszDrivePath);
+		Common::strcpy_s(m_chDrivePath, pszDrivePath);
 	}
 
 	BOOL MidiLoopPlaySegment(DWORD LoopBegin, DWORD LoopEnd = 0L, DWORD FirstPassBegin = 0L, DWORD TimeFmt = FMT_MILLISEC);
@@ -188,12 +194,16 @@ private:
 	static  BOOL    m_bMidiVolume;  // whether midi volume can be set
 	static  CWnd    *m_pMainWnd;    // window for message processing
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
 
 };
 
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel
 
-#endif //!_INC_SOUND
+#endif

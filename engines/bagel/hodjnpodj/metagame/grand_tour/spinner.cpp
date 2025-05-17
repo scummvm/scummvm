@@ -19,20 +19,19 @@
  *
  */
 
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/spinner.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include <stdlib.h>
-#include <limits.h>
-#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-#include "bagel/boflib/sound.h"
-#include "spinner.h"
-
 // ordered table of spinner values (will be shuffled)
-static  int SpinnerValues[SPINNER_COUNT] = {
+static int8 SpinnerValues[SPINNER_COUNT] = {
 	6,
 	7,
 	7,
@@ -164,7 +163,7 @@ CSpinner::CSpinner(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
  *
  ************************************************************************/
 
-CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
+BOOL CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
 	BOOL    bSuccess = FALSE;
 
 	m_pWnd = pWnd;                                  // window for messages
@@ -231,7 +230,7 @@ void CSpinner::SetupSpinner(void) {
 			Values[i] = 0;                          // ... ahead for an empty spot as needed
 
 		for (i = 0; i < SPINNER_COUNT; i++) {
-			n = rand() % SPINNER_COUNT;
+			n = brand() % SPINNER_COUNT;
 			while (Values[n] != 0) {
 				n += 1;
 				if (n >= SPINNER_COUNT)
@@ -244,7 +243,7 @@ void CSpinner::SetupSpinner(void) {
 			SpinnerValues[i] = 0;                   // ... back where they came from, thus
 		// ... double-shuffling the entries
 		for (i = 0; i < SPINNER_COUNT; i++) {
-			n = rand() % SPINNER_COUNT;
+			n = brand() % SPINNER_COUNT;
 			while (SpinnerValues[n] != 0) {
 				n += 1;
 				if (n >= SPINNER_COUNT)
@@ -274,7 +273,6 @@ void CSpinner::SetupSpinner(void) {
 int CSpinner::Animate(int nX, int nY) {
 	int     nValue = -1;
 	DWORD   goal;
-	BOOL    bSuccess = FALSE;
 
 	m_nX = nX;                                      // establish position
 	m_nY = nY;
@@ -376,7 +374,6 @@ int CSpinner::Spin(void) {
 	CBitmap     *pBitmap = NULL;
 	CPalette    *pPalette = NULL;
 	CRect       srcRect, dstARect, dstBRect;
-	WORD        wFlags;
 	int         nValue = -1;
 	CSound      *pSound;
 	BOOL        bSuccess = FALSE;
@@ -384,10 +381,10 @@ int CSpinner::Spin(void) {
 	if (m_pSprite == NULL)                              // punt if no spinner sprite
 		return (-1);
 
-	CSound::WaitWaveSounds();
+	CSound::waitWaveSounds();
 
 	pSound = new CSound();                              // create the spinner sound
-	(*pSound).Initialize(m_pWnd, SPINNER_SOUND, SOUND_WAVE | SOUND_QUEUE | SOUND_BUFFERED | SOUND_ASYNCH | SOUND_NOTIFY | SOUND_LOOP);
+	(*pSound).initialize(m_pWnd, SPINNER_SOUND, SOUND_WAVE | SOUND_QUEUE | SOUND_BUFFERED | SOUND_ASYNCH | SOUND_NOTIFY | SOUND_LOOP);
 
 	if (!m_bVisible) {                                  // make it visible
 		bSuccess = Show(m_nX, m_nY);
@@ -395,7 +392,7 @@ int CSpinner::Spin(void) {
 			goto punt;
 	}
 
-	nIdx = rand() % SPINNER_COUNT;                      // generate a spinner value
+	nIdx = brand() % SPINNER_COUNT;                      // generate a spinner value
 	nValue = SpinnerValues[nIdx];
 
 	dstARect.SetRect(m_nX + SPINNER_SLOTA_DX,           // calculate rectangles for digits
@@ -409,7 +406,7 @@ int CSpinner::Spin(void) {
 	// "spin" the spinner digits
 	pBitmap = FetchBitmap(m_pDC, &pPalette, (m_bHodj ? HODJ_SPINNER_NUMBERS_SPEC : PODJ_SPINNER_NUMBERS_SPEC));
 
-	(*pSound).Play();                                   // start the spinner sound
+	(*pSound).play();                                   // start the spinner sound
 	if (pBitmap != NULL)
 		for (n = 0; n < SPINNER_CYCLE; n++)
 			for (i = 0; i < 2; i++) {
@@ -437,13 +434,7 @@ int CSpinner::Spin(void) {
 	}
 
 	if (pSound != NULL) {                               // terminate the sound gracefully
-		/*
-		        wFlags = (*pSound).GetFlags();                  // ... by canceling looping and
-		        wFlags |= SOUND_AUTODELETE;
-		        wFlags ^= SOUND_LOOP;                           // ... then causing an auto delete
-		        (*pSound).SetFlags(wFlags);
-		*/
-		(*pSound).Stop();
+		(*pSound).stop();
 		delete pSound;
 		pSound = NULL;
 	}
@@ -506,7 +497,7 @@ BOOL CSpinner::HandleMessages(void) {
 /////////////////////////////////////////////////////////////////////////////
 // CSpinner diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CSpinner::AssertValid() const {
 	CObject::AssertValid();
 }
@@ -515,7 +506,7 @@ void CSpinner::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 } // namespace GrandTour
 } // namespace Metagame

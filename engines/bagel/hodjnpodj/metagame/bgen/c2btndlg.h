@@ -38,7 +38,10 @@ class C2ButtonDialog : public CBmpDialog {
 public:
 
 	// standard constructor
-	C2ButtonDialog(CWnd *, CPalette *, char *, char *, char *, char *pszText2 = NULL, char *pszText3 = NULL);
+	C2ButtonDialog(CWnd *pParent, CPalette *pPalette,
+		const char *pszButton1Text, const char *pszButton2Text,
+		const char *pszText1, const char *pszText2 = nullptr,
+		const char *pszText3 = nullptr);
 
 private:
 	void ClearDialogImage(void);
@@ -67,11 +70,11 @@ private:
 	CText        *m_cTextMessage1;
 	CText        *m_cTextMessage2;
 	CText        *m_cTextMessage3;
-	char         *m_pszMessage1;
-	char         *m_pszMessage2;
-	char         *m_pszMessage3;
-	char         *m_pszButton1Text;
-	char         *m_pszButton2Text;
+	const char   *m_pszMessage1;
+	const char   *m_pszMessage2;
+	const char   *m_pszMessage3;
+	const char   *m_pszButton1Text;
+	const char   *m_pszButton2Text;
 	CColorButton *m_pButton1;
 	CColorButton *m_pButton2;
 };

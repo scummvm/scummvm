@@ -19,11 +19,6 @@
  *
  */
 
-namespace Bagel {
-namespace HodjNPodj {
-namespace Metagame {
-namespace GrandTour {
-
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
@@ -32,9 +27,14 @@ namespace GrandTour {
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/boflib/sound.h"
-#include "pawn.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/pawn.h"
 
-#ifdef _DEBUG
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
+
+#ifdef BAGEL_DEBUG
 	#undef THIS_FILE
 	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
@@ -113,7 +113,7 @@ static  BOOL        bPlayingHodj = TRUE;            // whether playing Hodj or P
 BOOL CPawnShop::SetupKeyboardHook(void) {
 	pPawnDialog = this;                         // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPPAWNHOOKPROC)::GetProcAddress(hDLLInst, "PawnHookProc");
+	lpfnKbdHook = (FPPAWNHOOKPROC)GetProcAddress(hDLLInst, "PawnHookProc");
 	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
 		return (FALSE);
 
@@ -523,7 +523,7 @@ void CPawnShop::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 
 	if (((*pItem).m_nQuantity == 0) ||
 	        ((*pItem).m_nQuantity > 1)) {
-		sprintf(chBuffer, "%ld", (*pItem).m_nQuantity);
+		Common::sprintf_s(chBuffer, "%ld", (*pItem).m_nQuantity);
 		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
 		(*pDC).SetBkMode(TRANSPARENT);                          // make the text overlay transparently
 		(*pDC).SetTextColor(PAWN_BLURB_COLOR);                      // set the color of the text
@@ -545,14 +545,14 @@ void CPawnShop::UpdateCrowns(CDC *pDC) {
 	if ((pItem == NULL) ||
 	        ((*pItem).GetQuantity() < 1)) {
 		if (bPlayingHodj)
-			strcpy(chBuffer, "Hodj has no Crowns");
+			Common::strcpy_s(chBuffer, "Hodj has no Crowns");
 		else
-			strcpy(chBuffer, "Podj has no Crowns");
+			Common::strcpy_s(chBuffer, "Podj has no Crowns");
 	} else {
 		if (bPlayingHodj)
-			sprintf(chBuffer, "Hodj has %ld Crowns", (*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer, "Hodj has %ld Crowns", (*pItem).GetQuantity());
 		else
-			sprintf(chBuffer, "Podj has %ld Crowns", (*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer, "Podj has %ld Crowns", (*pItem).GetQuantity());
 	}
 	(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, PAWN_TEXT_COLOR);
 }
@@ -603,7 +603,7 @@ void CPawnShop::OnSize(UINT nType, int cx, int cy) {
 int CPawnShop::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	BOOL    bSuccess;
 
-	::AddFontResource("msserif.fon");
+	AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != NULL);
 	bSuccess = (*pFont).CreateFont(-14, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
@@ -728,17 +728,17 @@ void CPawnShop::OnMouseMove(UINT nFlags, CPoint point) {
 				pDC = GetDC();
 				nPrice = (*pItem).GetValue();
 				if (nPrice == 0)
-					strcpy(chBuffer, "That can't be sold here");
+					Common::strcpy_s(chBuffer, "That can't be sold here");
 				else {
 					if ((*pItem).GetQuantity() == 1) {
 						if (nPrice == 1)
-							strcpy(chBuffer, "It can be sold for 1 Crown");
+							Common::strcpy_s(chBuffer, "It can be sold for 1 Crown");
 						else
-							sprintf(chBuffer, "It can be sold for %d Crowns", nPrice);
+							Common::sprintf_s(chBuffer, "It can be sold for %d Crowns", nPrice);
 					} else if (nPrice == 1)
-						sprintf(chBuffer, "One can be sold for 1 Crown", nPrice);
+						Common::sprintf_s(chBuffer, "One can be sold for 1 Crown", nPrice);
 					else
-						sprintf(chBuffer, "One can be sold for %d Crowns", nPrice);
+						Common::sprintf_s(chBuffer, "One can be sold for %d Crowns", nPrice);
 					hNewCursor = (*pMyApp).LoadCursor(IDC_PAWN_DOLLAR);
 				}
 				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), 18, TEXT_BOLD, PAWN_TEXT_COLOR);
@@ -757,7 +757,7 @@ void CPawnShop::OnMouseMove(UINT nFlags, CPoint point) {
 	}
 
 	ASSERT(hNewCursor != NULL);                     // force the cursor change
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }
@@ -792,8 +792,8 @@ void CPawnShop::OnLButtonDown(UINT nFlags, CPoint point) {
 				if ((pItem != NULL) &&
 				        ((*pItem).GetValue() > 0)) {
 					pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps7.wav" : ".\\sound\\gsps8.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-					(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-					(*pSound).Play();
+					(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+					(*pSound).play();
 					pDC = GetDC();
 					(*pInventory).AddItem(MG_OBJ_CROWN, (*pItem).GetValue());
 					if ((*pItem).GetQuantity() > 1) {

@@ -62,7 +62,8 @@ namespace Metagame {
 class CBackpack : public CDialog {
 // Construction
 public:
-	CBackpack(CWnd* pParent, CPalette *pPalette, CInventory *pInventory);
+	CBackpack(CWnd *pParent, CPalette *pPalette,
+		CInventory *pInventory);
 
 	int SelectedItem(CPoint point);
 

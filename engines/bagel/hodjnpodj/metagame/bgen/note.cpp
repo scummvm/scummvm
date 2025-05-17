@@ -31,7 +31,7 @@ IMPLEMENT_DYNCREATE(CNote, CObject)
 
 #ifndef FRAME_EXE
 // descriptive text for each note
-char    *CNote::m_pNoteText[NOTE_COUNT] = {
+const char *CNote::m_pNoteText[NOTE_COUNT] = {
 //mankala
 	"You've done well, young human!  I'll pass along some scuttlebutt"
 	" that I've heard among my fellow bottom crawlers.  You'll find"
@@ -93,21 +93,21 @@ char    *CNote::m_pNoteText[NOTE_COUNT] = {
 
 
 // disk path specifications for note sounds
-char    *CNote::m_pNoteSoundPath[NOTE_ICON_COUNT] = {
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+const char *CNote::m_pNoteSoundPath[NOTE_ICON_COUNT] = {
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
 	".\\sound\\mk6.wav",
 	".\\sound\\ar2.wav",
 	".\\sound\\nv3.wav",
 	".\\sound\\ap2.wav",
 	".\\sound\\lf2.wav",
-	NULL,
+	nullptr,
 	".\\sound\\fm2.wav",
 	".\\sound\\ac2.wav",
 	".\\sound\\wc2.wav",
@@ -125,7 +125,7 @@ char    *CNote::m_pNoteSoundPath[NOTE_ICON_COUNT] = {
 	".\\sound\\bhouse.wav",
 	".\\sound\\acottage.wav",
 	".\\sound\\temple.wav",
-	NULL,
+	nullptr,
 	".\\sound\\farmhous.wav",
 	".\\sound\\mansion.wav",
 	".\\sound\\wcottage.wav",
@@ -134,7 +134,7 @@ char    *CNote::m_pNoteSoundPath[NOTE_ICON_COUNT] = {
 };
 
 // disk path specifications for note bitmaps
-char    *CNote::m_pNoteBitmapPath[NOTE_ICON_COUNT] = {
+const char *CNote::m_pNoteBitmapPath[NOTE_ICON_COUNT] = {
 	".\\art\\bat.bmp",
 	".\\art\\buterfly.bmp",
 	".\\art\\turtle.bmp",
@@ -221,8 +221,8 @@ CNote::CNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 	else
 		m_nPlaceID = nPlace;
 
-	m_pNext = NULL;
-	m_pPrev = NULL;
+	m_pNext = nullptr;
+	m_pPrev = nullptr;
 }
 
 
@@ -246,7 +246,7 @@ CNote::~CNote() {
 /////////////////////////////////////////////////////////////////////////////
 // CNote diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CNote::AssertValid() const {
 	CObject::AssertValid();
 }
@@ -255,7 +255,7 @@ void CNote::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 } // namespace Metagame
 } // namespace HodjNPodj

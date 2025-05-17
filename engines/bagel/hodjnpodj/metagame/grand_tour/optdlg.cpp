@@ -19,21 +19,21 @@
  *
  */
 
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/audiocfg.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/menures.h"
+#include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/resource.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/optdlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/savegame.h"
+#include "bagel/hodjnpodj/metagame/bgen/c2btndlg.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
-
-#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include "bagel/hodjnpodj/hnplibs/button.h"
-#include "resource.h"
-#include "menures.h"
-#include "bagel/hodjnpodj/hnplibs/text.h"
-#include "optdlg.h"
-#include "savegame.h"
-#include "audiocfg.h"
-#include "bagel/hodjnpodj/metagame/bgen/c2btndlg.h"
-#include "bagel/hodjnpodj/hnplibs/rules.h"
 
 extern HWND     ghwndParent;
 
@@ -107,8 +107,6 @@ CMetaOptDlg::CMetaOptDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParen
  *
  ****************************************************************/
 BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
-	CButton     *pTmpButton = NULL;
-
 	// What ever button is clicked, end the dialog and send the ID of the button
 	// clicked as the return from the dialog
 

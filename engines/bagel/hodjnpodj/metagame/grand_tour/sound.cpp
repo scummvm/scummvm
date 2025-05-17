@@ -19,22 +19,21 @@
  *
  */
 
+#define BUILD_FOR_META_DLL TRUE
+
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/boflib/sound.h"
+
+#if BUILD_FOR_META_DLL
+#include "bagel/hodjnpodj/metagame/bgen/bgb.h"
+#endif
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#define BUILD_FOR_META_DLL TRUE
-
-#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include "bagel/boflib/sound.h"
-#include "toolhelp.h"
-
-#if BUILD_FOR_META_DLL
-	#include "bagel/hodjnpodj/metagame/bgen/bgb.h"
-#endif
-
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	#undef THIS_FILE
 	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
@@ -385,7 +384,7 @@ try_again:
 	bSuccess = PlayMCISound(dwBeginHere, TimeFormatFlag);                           // play an .MID file or buffered .WAV
 
 	if (!bSuccess) {
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 		char    chErrorMessage[132];
 		#endif
 		if (!bRetry) {
@@ -398,21 +397,21 @@ try_again:
 			#endif
 			goto try_again;
 		}
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 		if (m_dwErrorCode == MCIERR_OUT_OF_MEMORY) {
-			sprintf(chErrorMessage, "Unable to play sound file %s", m_pszPathName);
+			Common::sprintf_s(chErrorMessage, "Unable to play sound file %s", m_pszPathName);
 			(*m_pWnd).MessageBox(chErrorMessage, "Insufficient System Resources", MB_ICONEXCLAMATION);
 		} else if (m_chType == SOUND_TYPE_MCI) {
-			sprintf(chErrorMessage, "Unable to play sound file %s\nMCI error code %ld occurred", m_pszPathName, m_dwErrorCode);
+			Common::sprintf_s(chErrorMessage, "Unable to play sound file %s\nMCI error code %ld occurred", m_pszPathName, m_dwErrorCode);
 			(*m_pWnd).MessageBox(chErrorMessage, "Internal Problem", MB_ICONEXCLAMATION);
 		} else if (m_chType == SOUND_TYPE_MMIO) {
-			sprintf(chErrorMessage, "Unable to play sound file %s\nMMIO error code %ld occurred", m_pszPathName, m_dwErrorCode);
+			Common::sprintf_s(chErrorMessage, "Unable to play sound file %s\nMMIO error code %ld occurred", m_pszPathName, m_dwErrorCode);
 			(*m_pWnd).MessageBox(chErrorMessage, "Internal Problem", MB_ICONEXCLAMATION);
 		} else if (m_chType == SOUND_TYPE_SND) {
-			sprintf(chErrorMessage, "Unable to play sound file %s\nsndPlaySound Routine failure %ld occurred", m_pszPathName, m_dwErrorCode);
+			Common::sprintf_s(chErrorMessage, "Unable to play sound file %s\nsndPlaySound Routine failure %ld occurred", m_pszPathName, m_dwErrorCode);
 			(*m_pWnd).MessageBox(chErrorMessage, "Internal Problem", MB_ICONEXCLAMATION);
 		} else {
-			sprintf(chErrorMessage, "Unable to play sound file %s\nFailure code %ld occurred", m_pszPathName, m_dwErrorCode);
+			Common::sprintf_s(chErrorMessage, "Unable to play sound file %s\nFailure code %ld occurred", m_pszPathName, m_dwErrorCode);
 			(*m_pWnd).MessageBox(chErrorMessage, "Internal Problem", MB_ICONEXCLAMATION);
 		}
 		#endif
@@ -446,9 +445,9 @@ BOOL CSound::PlaySndSound(void) {
 	char    chFilePath[256];
 
 	if (m_chDrivePath[0] == '\0')
-		strcpy(chFilePath, m_pszPathName);
+		Common::strcpy_s(chFilePath, m_pszPathName);
 	else {
-		strcpy(chFilePath, m_chDrivePath);
+		Common::strcpy_s(chFilePath, m_chDrivePath);
 		if (m_pszPathName[0] == '.')
 			strcat(chFilePath, &m_pszPathName[1]);
 		else
@@ -512,9 +511,9 @@ BOOL CSound::PlayMMIOSound(void) {
 	char        chFilePath[256];
 
 	if (m_chDrivePath[0] == '\0')
-		strcpy(chFilePath, m_pszPathName);
+		Common::strcpy_s(chFilePath, m_pszPathName);
 	else {
-		strcpy(chFilePath, m_chDrivePath);
+		Common::strcpy_s(chFilePath, m_chDrivePath);
 		if (m_pszPathName[0] == '.')
 			strcat(chFilePath, &m_pszPathName[1]);
 		else
@@ -819,9 +818,9 @@ BOOL CSound::PlayMCISound(DWORD dwStartOfPlay, DWORD TimeFlag) {
 	char                chFilePath[256];
 
 	if (m_chDrivePath[0] == '\0')
-		strcpy(chFilePath, m_pszPathName);
+		Common::strcpy_s(chFilePath, m_pszPathName);
 	else {
-		strcpy(chFilePath, m_chDrivePath);
+		Common::strcpy_s(chFilePath, m_chDrivePath);
 		if (m_pszPathName[0] == '.')
 			strcat(chFilePath, &m_pszPathName[1]);
 		else
@@ -1120,7 +1119,7 @@ DWORD CSound::SetMCITimeFormat(UINT wDeviceID, DWORD formatFlag) {
 		mciSetParms.dwTimeFormat = MCI_FORMAT_MILLISECONDS;
 		break;
 	default:
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 		::MessageBox(NULL, "Invalid MCI time format", "Debug Info", MB_OK);
 		#endif
 		mciSetParms.dwTimeFormat = MCI_FORMAT_MILLISECONDS;
@@ -1719,7 +1718,7 @@ void CSound::WaitWaveSounds(void) {
 		if (dwTickCount == 0)
 			dwTickCount = ::GetTickCount() + 60000L;
 		if (::GetTickCount() > dwTickCount) {
-			#ifdef _DEBUG
+			#ifdef BAGEL_DEBUG
 			::MessageBox(NULL, "Sound messages may have been lost...", "Possible Internal Problem", MB_ICONEXCLAMATION);
 			#endif
 			(*pSound).Stop();
@@ -1775,7 +1774,7 @@ void CSound::WaitMidiSounds(void) {
 		if (dwTickCount == 0)
 			dwTickCount = ::GetTickCount() + 60000L;
 		if (::GetTickCount() > dwTickCount) {
-			#ifdef _DEBUG
+			#ifdef BAGEL_DEBUG
 			::MessageBox(NULL, "Sound messages may have been lost...", "Possible Internal Problem", MB_ICONEXCLAMATION);
 			#endif
 			(*pSound).Stop();
@@ -1839,7 +1838,7 @@ DWORD GetPhysicalMemory(void) {
 	WORD    wFreePages;
 	DWORD   lFreeBytes = 0;
 
-	lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)::GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
+	lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
 	if (lpfnGetFreeMemInfo != NULL) {
 		dwInfo = lpfnGetFreeMemInfo();
 		if (dwInfo != -1L) {
@@ -1948,7 +1947,7 @@ BOOL MaybePageUnlock(LPGLOBALENTRY lpge, HGLOBAL hObject) {
 /////////////////////////////////////////////////////////////////////////////
 // CSound diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CSound::AssertValid() const {
 	CObject::AssertValid();
 }
@@ -1957,7 +1956,7 @@ void CSound::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 } // namespace GrandTour
 } // namespace Metagame

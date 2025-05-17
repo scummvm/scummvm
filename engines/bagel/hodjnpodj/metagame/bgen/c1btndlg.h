@@ -38,7 +38,8 @@ class C1ButtonDialog : public CBmpDialog {
 public:
 
 	// standard constructor
-	C1ButtonDialog(CWnd *, CPalette *, char *, char *, char *pszText2 = NULL, char *pszText3 = NULL);
+	C1ButtonDialog(CWnd *, CPalette *, const char *, const char *,
+		const char *pszText2 = NULL, const char *pszText3 = NULL);
 
 private:
 	void ClearDialogImage(void);
@@ -67,10 +68,10 @@ private:
 	CText        *m_cTextMessage1;
 	CText        *m_cTextMessage2;
 	CText        *m_cTextMessage3;
-	char         *m_pszMessage1;
-	char         *m_pszMessage2;
-	char         *m_pszMessage3;
-	char         *m_pszButton1Text;
+	const char   *m_pszMessage1;
+	const char   *m_pszMessage2;
+	const char   *m_pszMessage3;
+	const char   *m_pszButton1Text;
 	CColorButton *m_pButton1;
 };
 

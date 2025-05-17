@@ -531,7 +531,7 @@ void CText::ReleaseContexts(void) {
 /////////////////////////////////////////////////////////////////////////////
 // CText diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CText::AssertValid() const {
 	CObject::AssertValid();
 }

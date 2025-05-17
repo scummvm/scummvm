@@ -43,7 +43,10 @@ namespace Metagame {
 #define IDD_2BTNDLG 208
 
 
-C2ButtonDialog::C2ButtonDialog(CWnd *pParent, CPalette *pPalette, char *pszButton1Text, char *pszButton2Text, char *pszText1, char *pszText2, char *pszText3)
+C2ButtonDialog::C2ButtonDialog(CWnd *pParent, CPalette *pPalette,
+		const char *pszButton1Text, const char *pszButton2Text,
+		const char *pszText1, const char *pszText2,
+		const char *pszText3)
 	: CBmpDialog(pParent, pPalette, IDD_2BTNDLG, ".\\ART\\MSSCROLL.BMP") {
 	assert(pParent != NULL);
 	assert(pPalette != NULL);

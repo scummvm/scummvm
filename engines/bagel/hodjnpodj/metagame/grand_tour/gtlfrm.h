@@ -22,9 +22,9 @@
 #ifndef BAGEL_METAGAME_GTL_GTLFRM_H
 #define BAGEL_METAGAME_GTL_GTLFRM_H
 
-#include "gtl.h"
-#include "infdlg.h"
-#include "gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/infdlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
 #include "bagel/hodjnpodj/metagame/bgen/note.h"
 
 namespace Bagel {
@@ -46,10 +46,7 @@ class CGtlFrame : public MFC_FRAME {
 	#endif
 
 public:
-//      CGtlFrame::CGtlFrame(class CBfcMgr *lpBfcMgr = NULL);
-//      void NewFrame();
-	CGtlFrame::CGtlFrame();
-//      void NewFrame(class CBfcMgr *lpBfcMgr = NULL);
+	CGtlFrame();
 
 private:
 	void ProcessMiniGameReturn();
@@ -75,7 +72,7 @@ public:
 // Implementation
 public:
 	virtual ~CGtlFrame();
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
@@ -106,31 +103,31 @@ protected:
 
 // gtlfrm.cpp : implementation of the CGtlFrame class
 
-//- CGtlFrame::NewFrame -- set pointer to interface manager in frame
+//- NewFrame -- set pointer to interface manager in frame
 public:
-	BOOL CGtlFrame::NewFrame(CBfcMgr * lpBfcMgr PDFT(NULL)) ;
-//- CGtlFrame::ShowControlDialog --
+	BOOL NewFrame(CBfcMgr * lpBfcMgr PDFT(NULL)) ;
+//- ShowControlDialog --
 public:
-	BOOL CGtlFrame::ShowControlDialog(void) ;
-//- CGtlFrame::ShowNodeDialog --
+	BOOL ShowControlDialog(void) ;
+//- ShowNodeDialog --
 public:
-	BOOL CGtlFrame::ShowNodeDialog(void) ;
-//- CGtlFrame::ShowInfoDialog --
+	BOOL ShowNodeDialog(void) ;
+//- ShowInfoDialog --
 public:
-	BOOL CGtlFrame::ShowInfoDialog(void) ;
-//- CGtlFrame::ShowMenuDialog --
+	BOOL ShowInfoDialog(void) ;
+//- ShowMenuDialog --
 public:
-	BOOL CGtlFrame::ShowMenuDialog(void) ;
-//- CGtlFrame::GetCurrentDocAndView -- get last focused doc/view
+	BOOL ShowMenuDialog(void) ;
+//- GetCurrentDocAndView -- get last focused doc/view
 public:
-	BOOL CGtlFrame::GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
+	BOOL GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
 	                                     CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView) ;
-//- CGtlFrame::PreCreateWindow -- change frame window style
+//- PreCreateWindow -- change frame window style
 protected:
-	BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs) ;
-//- CGtlFrame::RecalcLayout -- override CFrameWnd::RecalcLayout
+	BOOL PreCreateWindow(CREATESTRUCT &cCs) override;
+//- RecalcLayout -- override CFrameWnd::RecalcLayout
 public:
-	virtual void CGtlFrame::RecalcLayout(BOOL bNotify PDFT(TRUE)) ;
+	virtual void RecalcLayout(BOOL bNotify PDFT(TRUE)) ;
 };
 
 } // namespace GrandTour

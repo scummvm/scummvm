@@ -166,7 +166,7 @@ BOOL CRules::SetupKeyboardHook(void) {
 	#if BUILD_FOR_DLL
 	pRulesDialog = this;                            // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPKBDHOOKPROC)::GetProcAddress(hDLLInst, "KeyboardHookProc");
+	lpfnKbdHook = (FPKBDHOOKPROC)GetProcAddress(hDLLInst, "KeyboardHookProc");
 	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
 		return (FALSE);
 

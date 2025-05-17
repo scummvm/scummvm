@@ -160,7 +160,7 @@ void CNote::FlushNoteList(void) {
 /////////////////////////////////////////////////////////////////////////////
 // CNote diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CNote::AssertValid() const {
 	CObject::AssertValid();
 }
@@ -169,7 +169,7 @@ void CNote::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 } // namespace Garfunkle
 } // namespace HodjNPodj

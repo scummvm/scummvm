@@ -1,50 +1,34 @@
-/*****************************************************************
-*
-*  CTurnDialog.cpp
-*
-*  HISTORY
-*
-*       1.00      07/25/94     BAR     Initial Design
-*
-*  MODULE DESCRIPTION:
-*
-*       Message box for turn gain/loss information, built off of CBmpDialog
-*
-*  CONSTRUCTORS:
-*
-*       turndialog
-*
-*  PUBLIC:
-*
-*
-*
-*  PUBLIC GLOBAL:
-*
-*
-*
-*  PROTECTED:
-*
-*
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
 #include "bagel/hodjnpodj/hnplibs/text.h"
-#include "cturndlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/cturndlg.h"
 
-#ifdef _DEBUG
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
+
+#ifdef BAGEL_DEBUG
 	#undef THIS_FILE
 	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
@@ -149,11 +133,11 @@ void CTurnDialog::OnPaint() {
 	pDC = GetDC();
 
 	if (m_bTurn) {
-		sprintf(msgBuf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "gains a turn." : "loses a turn.");
-		sprintf(artBuf, "%s", m_bGain ? ".\\art\\freeturn.bmp" : ".\\art\\loseturn.bmp");
+		Common::sprintf_s(msgBuf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "gains a turn." : "loses a turn.");
+		Common::sprintf_s(artBuf, "%s", m_bGain ? ".\\art\\freeturn.bmp" : ".\\art\\loseturn.bmp");
 	} else {
-		sprintf(msgBuf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "wins the game!" : "loses the game.");
-		sprintf(artBuf, "%s", m_bGain ? ".\\art\\wingame.bmp" : ".\\art\\losegame.bmp");
+		Common::sprintf_s(msgBuf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "wins the game!" : "loses the game.");
+		Common::sprintf_s(artBuf, "%s", m_bGain ? ".\\art\\wingame.bmp" : ".\\art\\losegame.bmp");
 	}
 
 	bSuccess = (*m_pTextMessage).DisplayString(pDC, msgBuf, 20, FW_BOLD, TEXT_COLOR);
@@ -194,3 +178,8 @@ void CTurnDialog::ClearDialogImage(void) {
 
 	ValidateRect(NULL);
 }
+
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

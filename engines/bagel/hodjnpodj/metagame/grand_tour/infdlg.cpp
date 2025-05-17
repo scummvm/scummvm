@@ -19,24 +19,24 @@
  *
  */
 
+#ifdef NODEEDIT
+
+#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/infdlg.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#ifdef NODEEDIT
-
-#include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include "gtl.h"
-
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
-#include "infdlg.h"
-
 ///DEFS infdlg.h
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	#undef THIS_FILE
 	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
@@ -668,9 +668,10 @@ BOOL CMenuDlg::EffectControl(BOOL bUpdate)
 	JXELEAVE(CMenuDlg::EffectControl) ;
 	RETURN(iError != 0) ;
 }
-#endif
 
 } // namespace GrandTour
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
+
+#endif

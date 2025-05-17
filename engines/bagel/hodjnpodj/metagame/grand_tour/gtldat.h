@@ -22,16 +22,15 @@
 #ifndef BAGEL_METAGAME_GTL_GTLDAT_H
 #define BAGEL_METAGAME_GTL_GTLDAT_H
 
-#include <sys\timeb.h>
+#include "common/stream.h"
+#include "common/system.h"
 #include "bagel/boflib/sound.h"
-
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgenut.h"
 #include "bagel/hodjnpodj/metagame/bgen/bsutl.h"
-#include "gtlview.h"
-
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
 #include "bagel/hodjnpodj/globals.h"
-#include "resource.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/resource.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgb.h"
 #include "bagel/hodjnpodj/metagame/bgen/bbt.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
@@ -163,25 +162,25 @@ class CLexElement {
 class CKeyTab {
 public:
 	int m_iKeyValue ;   // keyword value
-	XPSTR m_xpszKeyString ;     // string
+	LPCSTR m_xpszKeyString ;     // string
 } ;
 
 // CMap -- bit map
-class FAR CMap {
+class CMap {
 	friend class CGtlData ;
 
 	char m_cStartData ;
 	char m_szLabel[MAX_LABEL_LENGTH] ;  // bitmap label
 	char m_szFilename[MAX_FILENAME_LENGTH] ;    // file name of BMP file
-	BOOL m_bPositionDetermined: 1 ;
-	BOOL m_bSprite : 1 ;
-	BOOL m_bPalette : 1 ;               // game palette from this bitmap
-	BOOL m_bOverlay : 1 ;               // overlay onto background map
-	BOOL m_bMasked : 1 ;                // bitmap is masked
-	BOOL m_bMetaGame : 1 ;              // show bitmap only in metagame
-	BOOL m_bRelocatable : 1 ;           // relocatable
-	BOOL m_bPositionSpecified : 1 ;     // position specified on input
-	BOOL m_bSpecialPaint: 1 ;           // don't automatically paint
+	bool m_bPositionDetermined: 1 ;
+	bool m_bSprite : 1 ;
+	bool m_bPalette : 1 ;               // game palette from this bitmap
+	bool m_bOverlay : 1 ;               // overlay onto background map
+	bool m_bMasked : 1 ;                // bitmap is masked
+	bool m_bMetaGame : 1 ;              // show bitmap only in metagame
+	bool m_bRelocatable : 1 ;           // relocatable
+	bool m_bPositionSpecified : 1 ;     // position specified on input
+	bool m_bSpecialPaint: 1 ;           // don't automatically paint
 	CBgbObject FAR *m_lpcBgbObject ;    // Boffo game object for bitmap file
 
 	int m_iRelationType ;       // KT_ABOVE, KT_BELOW, KT_LEFT, KT_RIGHT,
@@ -189,9 +188,9 @@ class FAR CMap {
 	int m_iRelation ;           // index of relation bitmap or node
 	char m_cEndData ;
 
-	CMap::CMap(void) {
-		_fmemset(&m_cStartData,
-		         0, &m_cEndData - &m_cStartData) ;
+	CMap() {
+		memset(&m_cStartData,
+		    0, &m_cEndData - &m_cStartData);
 	}
 } ;
 
@@ -209,13 +208,13 @@ public:
 	int m_iBitmap ;                     // index of related bitmap
 	int m_iX, m_iY ;                    // position
 	int m_iNumLinks ;                   // number of links
-	BOOL m_bDeleted : 1 ;               // deleted node
-	BOOL m_bSelected : 1 ;              // this is selected node
-	BOOL m_bRelative : 1 ;              // relative to bitmap
-	BOOL m_bRelocatable : 1 ;           // relocatable node
-	BOOL m_bWgtSpec : 1 ;               // weight specified
-	BOOL m_bSenSpec : 1 ;               // sensitivity specified
-	BOOL m_bMenu : 1;                   // TRUE if menu
+	bool m_bDeleted : 1 ;               // deleted node
+	bool m_bSelected : 1 ;              // this is selected node
+	bool m_bRelative : 1 ;              // relative to bitmap
+	bool m_bRelocatable : 1 ;           // relocatable node
+	bool m_bWgtSpec : 1 ;               // weight specified
+	bool m_bSenSpec : 1 ;               // sensitivity specified
+	bool m_bMenu : 1;                   // TRUE if menu
 	UBYTE m_iWeight ;                   // node weight
 	UBYTE m_iSensitivity ;              // distance to accept clickb
 
@@ -334,10 +333,10 @@ public:
 
 	char m_cEndData ;
 
-	CXodj(void) {
-		_fmemset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
+	CXodj() {
+		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 	}
-	~CXodj(void);
+	~CXodj();
 } ;
 
 // CGtlData -- data class for graphics utility
@@ -361,8 +360,8 @@ private:
 	char m_szBmpDirectory[MAX_FILENAME_LENGTH] ; // bitmap file director
 	char m_szGtlFile[MAX_FILENAME_LENGTH] ; // gtl file name
 	char m_szListFile[MAX_FILENAME_LENGTH] ; // List file name
-	FILE *m_xpGtlFile ;         // ptr to file structure for .GTL file
-	FILE *m_xpListFile ;        // ptr to file structure for .LST file
+	Common::SeekableReadStream *m_xpGtlFile = nullptr;         // ptr to file structure for .GTL file
+	Common::WriteStream *m_xpListFile = nullptr;        // ptr to file structure for .LST file
 	BOOL m_bListing ;           // listing file flag
 	int m_iIndent ;             // current indent (decompile only)
 	int m_iLineNumber ;         // line number in input file
@@ -375,8 +374,8 @@ private:
 	char m_szStringList[MAX_STRINGLIST] ;     // compiler input string
 	BOOL m_bSelectedLink ;      // flag: a link is selected
 	int m_iSelLinkPt1, m_iSelLinkPt2 ;  // indexes of selected link pts
-	struct _timeb m_stAcceptClickActive ;       // prevent recursion
-	struct _timeb m_stLDownTime ;       // time of left button down
+	uint32 m_stAcceptClickActive = 0;       // prevent recursion
+	uint32 m_stLDownTime = 0;       // time of left button down
 	CNode FAR *m_lpFoundNode ;  // node clicked on
 	CNode FAR *m_lpLastSelectedNode ;   // selected on click down
 
@@ -489,13 +488,13 @@ private:
 
 //- FindKeyword -- find keyword, given tree node type
 private:
-	XPSTR FindKeyword(int iType) ;
+	LPCSTR FindKeyword(int iType) ;
 //- ReadLine -- read input line
 private:
 	BOOL ReadLine(void) ;
 //- ErrorMsg -- publish error message
 private:
-	BOOL ErrorMsg(CLexElement * xpLxel, XPSTR szMessage) ;
+	BOOL ErrorMsg(CLexElement * xpLxel, LPCSTR szMessage) ;
 
 
 
@@ -676,7 +675,7 @@ private:
 private:
 	CNode FAR *LocationToNode(int iLocationCode) ;
 public:
-	int FindNodeId(char *pszLabel);
+	int FindNodeId(const char *pszLabel);
 
 
 // gtlmve.cpp -- meta game move processing

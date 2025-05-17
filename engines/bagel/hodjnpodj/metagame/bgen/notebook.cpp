@@ -50,15 +50,15 @@ extern  HINSTANCE   hExeInst;
 
 typedef LRESULT(FAR PASCAL *FPNOTEHOOKPROC)(int, WORD, LONG);
 
-static  FPNOTEHOOKPROC  lpfnKbdHook = NULL;         // pointer to hook procedure
+static  FPNOTEHOOKPROC  lpfnKbdHook = nullptr;         // pointer to hook procedure
 
-static  HHOOK       hKbdHook = NULL;                // handle for hook procedure
+static  HHOOK       hKbdHook = nullptr;                // handle for hook procedure
 
-static  CWnd        *pParentWnd = NULL;             // parent window pointer
+static  CWnd        *pParentWnd = nullptr;             // parent window pointer
 
-static  CNotebook   *pNotebookDialog = NULL;        // pointer to our notebook dialog box
+static  CNotebook   *pNotebookDialog = nullptr;        // pointer to our notebook dialog box
 
-static  CColorButton *pOKButton = NULL;             // OKAY button on scroll
+static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
 static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
 static  CRect       NotebookRect;                   // x/y (left/right) and dx/dy (right/bottom) for the notebook window
@@ -67,29 +67,29 @@ static  CRect       PersonRect,                     // bounding rectangle for pe
 static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
         ScrollBotRect;                  // area spanned by lower scroll curl
 
-static  CDC         *pNotebookDC = NULL;            // device context for the notebook bitmap
-static  CBitmap     *pNotebookBitmap = NULL,        // bitmap for an entirely blank notebook
-                     *pNotebookBitmapOld = NULL;     // bitmap previously mapped to the notebook context
+static  CDC         *pNotebookDC = nullptr;            // device context for the notebook bitmap
+static  CBitmap     *pNotebookBitmap = nullptr,        // bitmap for an entirely blank notebook
+                     *pNotebookBitmapOld = nullptr;     // bitmap previously mapped to the notebook context
 
-static  CBitmap     *pBackgroundBitmap = NULL;
-static  CPalette    *pBackgroundPalette = NULL;
+static  CBitmap     *pBackgroundBitmap = nullptr;
+static  CPalette    *pBackgroundPalette = nullptr;
 
-static  CDC         *pWorkDC = NULL;                // context and resources for the offscreen
-static  CBitmap     *pWork = NULL,                  // ... work area (only if memory permits)
-                     *pWorkOld = NULL;
-static  CPalette    *pWorkPalOld = NULL;
+static  CDC         *pWorkDC = nullptr;                // context and resources for the offscreen
+static  CBitmap     *pWork = nullptr,                  // ... work area (only if memory permits)
+                     *pWorkOld = nullptr;
+static  CPalette    *pWorkPalOld = nullptr;
 
 /*
-static  CText       *pItemText = NULL;              // item information field
-static  CText       *pTitleText = NULL;             // title information field
+static  CText       *pItemText = nullptr;              // item information field
+static  CText       *pTitleText = nullptr;             // title information field
 */
 
-static  char        *lpsPersonSoundSpec = NULL;     // spec for person sound file
-static  char        *lpsPlaceSoundSpec = NULL;      // spec for place sound file
+static  const char  *lpsPersonSoundSpec = nullptr;     // spec for person sound file
+static  const char  *lpsPlaceSoundSpec = nullptr;      // spec for place sound file
 
-static  CFont       *pNoteFont = NULL;              // font to use for displaying notebook text
+static  CFont       *pNoteFont = nullptr;              // font to use for displaying notebook text
 static  char        chPathName[128];                // buffer to hold path name of the notebook file
-static  CFile       *pInfoFile = NULL;              // the notebook file
+static  CFile       *pInfoFile = nullptr;              // the notebook file
 static  DWORD       nInfoFileSize = 0;              // size of notebook file
 static  BOOL        bInfoEOF = FALSE;               // whether end-of-file has been reached
 
@@ -100,8 +100,8 @@ static  int         nItem_DDX, nItem_DDY;           // space separation between 
 static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
 static  int         nFirstSlot = 0;                 // first item in current inventory page
 
-static  CNote       *pNoteList = NULL;              // pointer to notebook note list
-static  CNote       *pKeyNote = NULL;               // single note to be shown
+static  CNote       *pNoteList = nullptr;              // pointer to notebook note list
+static  CNote       *pKeyNote = nullptr;               // single note to be shown
 
 /////////////////////////////////////////////////////////////////////////////
 // CNotebook dialog
@@ -111,12 +111,12 @@ static  CNote       *pKeyNote = NULL;               // single note to be shown
 BOOL CNotebook::SetupKeyboardHook(void) {
 	pNotebookDialog = this;                         // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPNOTEHOOKPROC)::GetProcAddress(hDLLInst, "NotebookHookProc");
-	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
+	lpfnKbdHook = (FPNOTEHOOKPROC)GetProcAddress(hDLLInst, "NotebookHookProc");
+	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
 		return (FALSE);
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
-	if (hKbdHook == NULL)                           // plug in our keyboard hook
+	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return (FALSE);
 
 	return (TRUE);
@@ -127,16 +127,16 @@ void CNotebook::RemoveKeyboardHook(void) {
 	if (m_bKeyboardHook)
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 
-	pNotebookDialog = NULL;
-	lpfnKbdHook = NULL;
-	hKbdHook = NULL;
+	pNotebookDialog = nullptr;
+	lpfnKbdHook = nullptr;
+	hKbdHook = nullptr;
 	m_bKeyboardHook = FALSE;
 }
 
 
 extern "C"
 LRESULT FAR PASCAL NotebookHookProc(int code, WORD wParam, LONG lParam) {
-	CDC *pDC = NULL;
+	CDC *pDC = nullptr;
 
 	if (code < 0)                                       // required to punt to next hook
 		return (CallNextHookEx((HHOOK) lpfnKbdHook, code, wParam, lParam));
@@ -149,9 +149,9 @@ LRESULT FAR PASCAL NotebookHookProc(int code, WORD wParam, LONG lParam) {
 		case VK_UP:                                 // ... letting the default dialog procedure
 		case VK_NUMPAD8:                            // ... deal with all the rest
 		case VK_PRIOR:                              // go to previous note
-			if ((pKeyNote == NULL) &&
-			        (pNoteList != NULL) &&
-			        ((*pNoteList).m_pPrev != NULL)) {   // ... scroll up if not at first item
+			if ((pKeyNote == nullptr) &&
+			        (pNoteList != nullptr) &&
+			        ((*pNoteList).m_pPrev != nullptr)) {   // ... scroll up if not at first item
 				pNoteList = (*pNoteList).m_pPrev;
 				pDC = (*pNotebookDialog).GetDC();
 			}
@@ -159,33 +159,33 @@ LRESULT FAR PASCAL NotebookHookProc(int code, WORD wParam, LONG lParam) {
 		case VK_DOWN:                               // go to next note
 		case VK_NUMPAD2:
 		case VK_NEXT:
-			if ((pKeyNote == NULL) &&
-			        (pNoteList != NULL) &&
-			        ((*pNoteList).m_pNext != NULL)) {
+			if ((pKeyNote == nullptr) &&
+			        (pNoteList != nullptr) &&
+			        ((*pNoteList).m_pNext != nullptr)) {
 				pNoteList = (*pNoteList).m_pNext;
 				pDC = (*pNotebookDialog).GetDC();
 			}
 			break;
 		case VK_HOME:                               // go to first note
-			if ((pKeyNote == NULL) &&
-			        (pNoteList != NULL) &&
-			        ((*pNoteList).m_pPrev != NULL)) {   // ... scroll up if not at first item
-				while ((*pNoteList).m_pPrev != NULL)
+			if ((pKeyNote == nullptr) &&
+			        (pNoteList != nullptr) &&
+			        ((*pNoteList).m_pPrev != nullptr)) {   // ... scroll up if not at first item
+				while ((*pNoteList).m_pPrev != nullptr)
 					pNoteList = (*pNoteList).m_pPrev;
 				pDC = (*pNotebookDialog).GetDC();
 			}
 			break;
 		case VK_END:                                // go to last note
-			if ((pKeyNote == NULL) &&
-			        (pNoteList != NULL) &&
-			        ((*pNoteList).m_pNext != NULL)) {
-				while ((*pNoteList).m_pNext != NULL)
+			if ((pKeyNote == nullptr) &&
+			        (pNoteList != nullptr) &&
+			        ((*pNoteList).m_pNext != nullptr)) {
+				while ((*pNoteList).m_pNext != nullptr)
 					pNoteList = (*pNoteList).m_pNext;
 				pDC = (*pNotebookDialog).GetDC();
 			}
 		}
 
-	if (pDC != NULL) {                                  // update the inventory page if required
+	if (pDC != nullptr) {                                  // update the inventory page if required
 		CNotebook::UpdateNote(pDC);
 		(*pNotebookDialog).ReleaseDC(pDC);
 		return (TRUE);
@@ -250,10 +250,10 @@ void CNotebook::OnCancel(void) {
 void CNotebook::OnDestroy() {
 	BOOL    bUpdateNeeded;
 
-	if (pNoteFont != NULL)
+	if (pNoteFont != nullptr)
 		delete pNoteFont;                           // release the font file
 
-	if (pOKButton != NULL)                          // release the button if not gone already
+	if (pOKButton != nullptr)                          // release the button if not gone already
 		delete pOKButton;
 
 //	(*pInfoFile).Close();                           // close and release the notebook file
@@ -262,44 +262,44 @@ void CNotebook::OnDestroy() {
 	if (m_bKeyboardHook)                                // remove keyboard hook, if present
 		RemoveKeyboardHook();
 
-	if (pWorkOld != NULL) {                         // release the various contexts, palettes
+	if (pWorkOld != nullptr) {                         // release the various contexts, palettes
 		(void)(*pWorkDC).SelectObject(pWorkOld);    // ... and bitmaps that we used
-		pWorkOld = NULL;
+		pWorkOld = nullptr;
 	}
-	if (pWorkPalOld != NULL) {
+	if (pWorkPalOld != nullptr) {
 		(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
-		pWorkPalOld = NULL;
+		pWorkPalOld = nullptr;
 	}
-	if (pWork != NULL) {
+	if (pWork != nullptr) {
 		delete pWork;
-		pWork = NULL;
+		pWork = nullptr;
 	}
-	if (pWorkDC != NULL) {
+	if (pWorkDC != nullptr) {
 		delete pWorkDC;
-		pWorkDC = NULL;
+		pWorkDC = nullptr;
 	}
 
-	if (pNotebookBitmap != NULL) {
+	if (pNotebookBitmap != nullptr) {
 		delete pNotebookBitmap;
-		pNotebookBitmap = NULL;
+		pNotebookBitmap = nullptr;
 	}
 
-	if (pBackgroundBitmap != NULL) {                // if we had a background to refresh
+	if (pBackgroundBitmap != nullptr) {                // if we had a background to refresh
 		delete pBackgroundBitmap;                   // ... then validate the parent window
-		pBackgroundBitmap = NULL;
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(NULL, FALSE);
+		pBackgroundBitmap = nullptr;
+		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			(*pParentWnd).ValidateRect(NULL);
+			(*pParentWnd).ValidateRect(nullptr);
 	}
 
 	/*
-	    if (pTitleText != NULL) {
+	    if (pTitleText != nullptr) {
 	        delete pTitleText;
-	        pTitleText = NULL;
+	        pTitleText = nullptr;
 	    }
-	    if (pItemText != NULL) {
+	    if (pItemText != nullptr) {
 	        delete pItemText;
-	        pItemText = NULL;
+	        pItemText = nullptr;
 	    }
 	*/
 
@@ -315,7 +315,7 @@ BOOL CNotebook::OnInitDialog() {
 
 	CDialog::OnInitDialog();                                    // do basic dialog initialization
 
-	if (pParentWnd == NULL)                                     // get our parent window
+	if (pParentWnd == nullptr)                                     // get our parent window
 		pParentWnd = ((CWnd *) this)->GetParent();              // ... as passed to us or inquired about
 
 	(*pParentWnd).GetWindowRect(&myRect);
@@ -327,7 +327,7 @@ BOOL CNotebook::OnInitDialog() {
 	MoveWindow(x, y, NOTEBOOK_DX, NOTEBOOK_DY);                 // center the dialog box on the parent
 
 	pButton = GetDlgItem((int) GetDefID());                     // get the window for the okay button
-	ASSERT(pButton != NULL);                                    // ... and verify we have it
+	ASSERT(pButton != nullptr);                                    // ... and verify we have it
 	(*pButton).GetWindowRect(&myRect);                          // get the button's position and size
 
 	dx = myRect.right - myRect.left;                            // calculate where to place the button
@@ -339,7 +339,7 @@ BOOL CNotebook::OnInitDialog() {
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
 	pOKButton = new CColorButton;                               // build a color OKAY button to let us exit
-	ASSERT(pOKButton != NULL);
+	ASSERT(pOKButton != nullptr);
 	(*pOKButton).SetPalette(pBackgroundPalette);                // set the palette to use
 	bSuccess = (*pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
@@ -368,9 +368,9 @@ void CNotebook::OnActivate(UINT nState, CWnd *, BOOL /*bMinimized*/) {
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
 		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(NULL, FALSE);
+		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 	}
 }
 
@@ -398,18 +398,18 @@ void CNotebook::UpdateNotebook(CDC *pDC) {
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);  // setup the proper palette
 	(*pDC).RealizePalette();
 
-	if (pWorkDC == NULL) {                                      // if we don't have a work area
+	if (pWorkDC == nullptr) {                                      // if we don't have a work area
 		RefreshBackground();                                    // ... then update the screen directly
 		PaintMaskedBitmap(pDC, pBackgroundPalette, pNotebookBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		UpdateContent(pDC);
-//		if (pTitleText != NULL)
+//		if (pTitleText != nullptr)
 //			(*pTitleText).DisplayString(pDC, "Log Entries", 32, TEXT_HEAVY, RGB(128,0,128));
 	} else {
-		if (pBackgroundBitmap != NULL)                                                      // ... otherwise revise work area
+		if (pBackgroundBitmap != nullptr)                                                      // ... otherwise revise work area
 			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pNotebookBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		UpdateContent(pWorkDC);                                 // ... then zap it to the screen
-//		if (pTitleText != NULL)
+//		if (pTitleText != nullptr)
 //			(*pTitleText).DisplayString(pWorkDC, "Log Entries", 32, TEXT_HEAVY, RGB(128,0,128));
 		(*pDC).BitBlt(0, 0, NOTEBOOK_DX, NOTEBOOK_DY, pWorkDC, 0, 0, SRCCOPY);
 	}
@@ -423,8 +423,8 @@ void CNotebook::UpdateNotebook(CDC *pDC) {
 void CNotebook::UpdateNote(CDC *pDC) {
 	CPalette    *pPalOld;
 
-	if (pWorkDC == NULL)                                        // update everything if no work area
-		(*pNotebookDialog).InvalidateRect(NULL, FALSE);
+	if (pWorkDC == nullptr)                                        // update everything if no work area
+		(*pNotebookDialog).InvalidateRect(nullptr, FALSE);
 	else {                                                      // otherwise just update central area
 		DoWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE); // setup the proper palette
@@ -457,7 +457,7 @@ void CNotebook::UpdateNote(CDC *pDC) {
 
 void CNotebook::UpdateContent(CDC *pDC) {
 	int     i, x, y, dx, dy;
-	char    *pFileSpec;
+	const char *pFileSpec;
 	CFont   *pFontOld;
 	CNote   *pNote;
 	CRect   myRect;
@@ -466,8 +466,8 @@ void CNotebook::UpdateContent(CDC *pDC) {
 	TEXTMETRIC  fontMetrics;
 	int     nDeltaX, nDeltaY;
 
-	if (pNoteList == NULL) {                                    // empty notebook
-		if (pKeyNote == NULL) {                                 // ... so just say so and leave
+	if (pNoteList == nullptr) {                                    // empty notebook
+		if (pKeyNote == nullptr) {                                 // ... so just say so and leave
 			pText = new CText();
 			myRect.SetRect(NOTE_TEXT_DX,                        // calculate where to put it
 			               NOTE_TEXT_DY,
@@ -486,25 +486,25 @@ void CNotebook::UpdateContent(CDC *pDC) {
 	lpsPlaceSoundSpec = (*pNote).GetPlaceSoundSpec();
 
 	pFileSpec = (*pNote).GetPersonArtSpec();
-	if (pFileSpec != NULL)
+	if (pFileSpec != nullptr)
 		PaintMaskedDIB(pDC, pBackgroundPalette, pFileSpec,
 		               NOTE_PERSON_DX, NOTE_PERSON_DY, NOTE_BITMAP_DX, NOTE_BITMAP_DY);
 	else {
-		::MessageBox(NULL, "Missing Person Artwork", "Internal Problem", MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Missing Person Artwork", "Internal Problem", MB_ICONEXCLAMATION);
 		ShowClue(pNote);
 	}
 
 	pFileSpec = (*pNote).GetPlaceArtSpec();
-	if (pFileSpec != NULL)
+	if (pFileSpec != nullptr)
 		PaintMaskedDIB(pDC, pBackgroundPalette, pFileSpec,
 		               NOTE_PLACE_DX, NOTE_PLACE_DY, NOTE_BITMAP_DX, NOTE_BITMAP_DY);
 	else {
-		::MessageBox(NULL, "Missing Place Artwork", "Internal Problem", MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Missing Place Artwork", "Internal Problem", MB_ICONEXCLAMATION);
 		ShowClue(pNote);
 	}
 
 	pFileSpec = (*pNote).GetClueArtSpec();
-	if (pFileSpec != NULL) {
+	if (pFileSpec != nullptr) {
 		if ((*pNote).GetRepeatCount() <= NOTE_BITMAPS_PER_LINE) {   // shrink the bitmaps a little if
 			nDeltaX = NOTE_BITMAP_DX;                               // ... the number of repetitions
 			nDeltaY = NOTE_BITMAP_DY;                               // ... would force them off the page
@@ -521,7 +521,7 @@ void CNotebook::UpdateContent(CDC *pDC) {
 			               nDeltaX,
 			               nDeltaY);
 	} else {
-		::MessageBox(NULL, "Missing Clue Artwork", "Internal Problem", MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Missing Clue Artwork", "Internal Problem", MB_ICONEXCLAMATION);
 		ShowClue(pNote);
 	}
 
@@ -529,7 +529,7 @@ void CNotebook::UpdateContent(CDC *pDC) {
 	(*pDC).SetBkMode(TRANSPARENT);                              // make the text overlay transparently
 	(*pDC).SetTextColor(NOTE_TEXT_COLOR);                       // set the color of the text
 
-	if ((*pNote).GetDescription() != NULL) {
+	if ((*pNote).GetDescription() != nullptr) {
 		textInfo = (*pDC).GetTextExtent((*pNote).GetDescription(), strlen((*pNote).GetDescription())); // get the area spanned by the text
 		dy = textInfo.cy * (strlen((*pNote).GetDescription()) / NOTE_TEXT_CHARSPERLINE);
 		if (dy < NOTE_TEXT_DDY)                                     // use the estimated number of lines
@@ -548,11 +548,11 @@ void CNotebook::UpdateContent(CDC *pDC) {
 		    &myRect,
 		    DT_CENTER | DT_WORDBREAK);
 	} else {
-		::MessageBox(NULL, "Missing Clue Description", "Internal Problem", MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Missing Clue Description", "Internal Problem", MB_ICONEXCLAMATION);
 		ShowClue(pNote);
 	}
 
-	if (pNotebookBitmap != NULL) {
+	if (pNotebookBitmap != nullptr) {
 		(*pDC).GetTextMetrics(&fontMetrics);                        // show whether there are more notes
 		x = NOTEBOOK_DX - TEXT_MORE_DX;                             // ... that can be scrolled through
 		y = NOTEBOOK_DY -
@@ -563,7 +563,7 @@ void CNotebook::UpdateContent(CDC *pDC) {
 		dx = textInfo.cx;
 		dy = fontMetrics.tmHeight;
 
-		if ((*pNote).m_pNext == NULL) {
+		if ((*pNote).m_pNext == nullptr) {
 			myRect.SetRect(x, y, x + dx, y + dy);
 			BltBitmap(pDC, pBackgroundPalette, pNotebookBitmap, &myRect, &myRect, SRCCOPY);
 		} else {
@@ -579,8 +579,8 @@ void CNotebook::UpdateContent(CDC *pDC) {
 void CNotebook::ShowClue(CNote *pNote) {
 	char    blurb[128];
 
-	sprintf(blurb, "Id=%d  Clue=%d  Person=%d  Place=%d", (*pNote).GetID(), (*pNote).GetClueID(), (*pNote).GetPersonID(), (*pNote).GetPlaceID());
-	::MessageBox(NULL, blurb, "Internal Problem", MB_ICONINFORMATION);
+	Common::sprintf_s(blurb, "Id=%d  Clue=%d  Person=%d  Place=%d", (*pNote).GetID(), (*pNote).GetClueID(), (*pNote).GetPersonID(), (*pNote).GetPlaceID());
+	MessageBox(nullptr, blurb, "Internal Problem", MB_ICONINFORMATION);
 }
 
 
@@ -590,10 +590,10 @@ BOOL CNotebook::OnEraseBkgnd(CDC *) {
 
 
 void CNotebook::ClearDialogImage(void) {
-	if (pBackgroundBitmap != NULL) {                            // release the dialog button
+	if (pBackgroundBitmap != nullptr) {                            // release the dialog button
 		delete pOKButton;                                       // ... validate our window to avoid refresh
-		pOKButton = NULL;                                       // ... and restore the background
-		(*pNotebookDialog).ValidateRect(NULL);
+		pOKButton = nullptr;                                       // ... and restore the background
+		(*pNotebookDialog).ValidateRect(nullptr);
 		RefreshBackground();
 	}
 }
@@ -602,7 +602,7 @@ void CNotebook::ClearDialogImage(void) {
 void CNotebook::RefreshBackground(void) {
 	CDC *pDC;
 
-	if (pBackgroundBitmap != NULL) {
+	if (pBackgroundBitmap != nullptr) {
 		pDC = (*pNotebookDialog).GetDC();                       // get a context for our window
 		PaintBitmap(pDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		(*pNotebookDialog).ReleaseDC(pDC);                      // release the context
@@ -629,9 +629,9 @@ void CNotebook::OnSize(UINT nType, int cx, int cy) {
 int CNotebook::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	BOOL    bSuccess;
 
-	::AddFontResource("msserif.fon");                       // create the text font we'll use
+	AddFontResource("msserif.fon");                       // create the text font we'll use
 	pNoteFont = new CFont();
-	ASSERT(pNoteFont != NULL);
+	ASSERT(pNoteFont != nullptr);
 	bSuccess = (*pNoteFont).CreateFont(NOTE_FONT_SIZE, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 	ASSERT(bSuccess);
 
@@ -647,15 +647,15 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 	CPalette    *pPalOld;
 	CRect       myRect;
 
-	pNotebookBitmap = FetchBitmap(pDC, NULL, NOTEBOOK_SPEC); // fetch the notebook's bitmap
-	if (pNotebookBitmap == NULL)                            // ... and punt if not successful
+	pNotebookBitmap = FetchBitmap(pDC, nullptr, NOTEBOOK_SPEC); // fetch the notebook's bitmap
+	if (pNotebookBitmap == nullptr)                            // ... and punt if not successful
 		return (FALSE);
 	// get the background bitmap
 	if ((GetFreeSpace(0) >= (unsigned long) 500000) &&
 	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 400000))
 		pBackgroundBitmap = FetchScreenBitmap(pDC, pBackgroundPalette, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 	else
-		pBackgroundBitmap = NULL;
+		pBackgroundBitmap = nullptr;
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE); // create an offscreen bitmap that
 	(void)(*pDC).RealizePalette();                           // ... we can use to construct note
@@ -665,34 +665,34 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 		pWork = new CBitmap();                                   // will paint directly if not successful
 		if ((*pWork).CreateCompatibleBitmap(pDC, NOTEBOOK_DX, NOTEBOOK_DY)) {
 			pWorkDC = new CDC();
-			if ((pWorkDC != NULL) &&
+			if ((pWorkDC != nullptr) &&
 			        (*pWorkDC).CreateCompatibleDC(pDC)) {
 				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, FALSE);
 				(void)(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
-				if (pWorkOld != NULL)
+				if (pWorkOld != nullptr)
 					bSuccess = TRUE;
 			}
 		}
 	} else {
-		pWork = NULL;
-		pWorkDC = NULL;
+		pWork = nullptr;
+		pWorkDC = nullptr;
 		bSuccess = TRUE;
 	}
 
 	(void)(*pDC).SelectPalette(pWorkPalOld, FALSE);
 
 	if (!bSuccess) {                                        // not successful, so tear down
-		if (pWorkPalOld != NULL) {                          // ... the work area
+		if (pWorkPalOld != nullptr) {                          // ... the work area
 			(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
-			pWorkPalOld = NULL;
+			pWorkPalOld = nullptr;
 		}
-		if (pWork != NULL) {
+		if (pWork != nullptr) {
 			delete pWork;
-			pWork = NULL;
+			pWork = nullptr;
 		}
 		delete pWorkDC;
-		pWorkDC = NULL;
+		pWorkDC = nullptr;
 	}
 
 	/*
@@ -708,8 +708,8 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 
 
 void CNotebook::OnMouseMove(UINT nFlags, CPoint point) {
-	HCURSOR hNewCursor = NULL;
-	CWinApp *pMyApp = NULL;
+	HCURSOR hNewCursor = nullptr;
+	CWinApp *pMyApp = nullptr;
 
 	if (!bActiveWindow)                             // punt if window not active
 		return;
@@ -719,72 +719,72 @@ void CNotebook::OnMouseMove(UINT nFlags, CPoint point) {
 	if (OkayRect.PtInRect(point))                   // use standard arrow in buttons
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 	else if (ScrollTopRect.PtInRect(point)) {           // set cursor to scolling up okay or invalid
-		if ((pKeyNote != NULL) ||                   // ... depending on note status
-		        ((pNoteList != NULL) &&
-		         ((*pNoteList).m_pPrev == NULL)))
+		if ((pKeyNote != nullptr) ||                   // ... depending on note status
+		        ((pNoteList != nullptr) &&
+		         ((*pNoteList).m_pPrev == nullptr)))
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
 		else
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWUP);
 	} else if (ScrollBotRect.PtInRect(point)) {         // set cursor to scrolling down okay or invalid
-		if ((pKeyNote != NULL) ||                   // ... depending on note status
-		        ((pNoteList != NULL) &&
-		         ((*pNoteList).m_pNext == NULL)))
+		if ((pKeyNote != nullptr) ||                   // ... depending on note status
+		        ((pNoteList != nullptr) &&
+		         ((*pNoteList).m_pNext == nullptr)))
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
 		else
 			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWDN);
 	} else if (PersonRect.PtInRect(point) &&
-	           (lpsPersonSoundSpec != NULL))
+	           (lpsPersonSoundSpec != nullptr))
 		hNewCursor = (*pMyApp).LoadCursor(IDC_NOTEBOOK_SOUND);
 	else if (PlaceRect.PtInRect(point) &&
-	         (lpsPlaceSoundSpec != NULL))
+	         (lpsPlaceSoundSpec != nullptr))
 		hNewCursor = (*pMyApp).LoadCursor(IDC_NOTEBOOK_SOUND);
 
-	if (hNewCursor == NULL)                         // use default cursor if not specified
+	if (hNewCursor == nullptr)                         // use default cursor if not specified
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
-	ASSERT(hNewCursor != NULL);                     // force the cursor change
-	::SetCursor(hNewCursor);
+	ASSERT(hNewCursor != nullptr);                     // force the cursor change
+	MFC::SetCursor(hNewCursor);
 
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }
 
 
 void CNotebook::OnLButtonDown(UINT nFlags, CPoint point) {
-	CDC     *pDC = NULL;
+	CDC     *pDC = nullptr;
 	CSound  *pSound;
 
 	if (!bActiveWindow)                             // punt if window not active
 		return;
 
 	if (ScrollTopRect.PtInRect(point) &&            // if click is in upper curl, then
-	        (pKeyNote == NULL) &&
-	        (pNoteList != NULL) &&
-	        ((*pNoteList).m_pPrev != NULL)) {            // ... scroll up if not at first item
+	        (pKeyNote == nullptr) &&
+	        (pNoteList != nullptr) &&
+	        ((*pNoteList).m_pPrev != nullptr)) {            // ... scroll up if not at first item
 		pNoteList = (*pNoteList).m_pPrev;
 		pDC = GetDC();
 	} else                                          // if click is in lower curl, then
 		if (ScrollBotRect.PtInRect(point) &&            // ... scroll down if not show last item
-		        (pKeyNote == NULL) &&
-		        (pNoteList != NULL) &&
-		        ((*pNoteList).m_pNext != NULL)) {
+		        (pKeyNote == nullptr) &&
+		        (pNoteList != nullptr) &&
+		        ((*pNoteList).m_pNext != nullptr)) {
 			pNoteList = (*pNoteList).m_pNext;
 			pDC = GetDC();
 		} else if (PersonRect.PtInRect(point)) {            // play the person sound file
-			if (lpsPersonSoundSpec != NULL) {
+			if (lpsPersonSoundSpec != nullptr) {
 				pSound = new CSound(this, lpsPersonSoundSpec, SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-				(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-				(*pSound).Play();
+				(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+				(*pSound).play();
 			}
 		} else if (PlaceRect.PtInRect(point)) {             // play the place sound file
-			if (lpsPlaceSoundSpec != NULL) {
+			if (lpsPlaceSoundSpec != nullptr) {
 				pSound = new CSound(this, lpsPlaceSoundSpec, SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-				(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-				(*pSound).Play();
+				(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+				(*pSound).play();
 			}
 		}
 
 
-	if (pDC != NULL) {                              // update the noteboook entry if required
+	if (pDC != nullptr) {                              // update the noteboook entry if required
 		UpdateNote(pDC);
 		ReleaseDC(pDC);
 	}

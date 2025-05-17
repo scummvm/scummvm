@@ -109,7 +109,7 @@ private:
 	static  int     m_nTabStop;         // tabstop table
 	static  BOOL    m_bFontLoaded;      // font loaded flag
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif

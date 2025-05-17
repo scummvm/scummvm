@@ -19,11 +19,6 @@
  *
  */
 
-namespace Bagel {
-namespace HodjNPodj {
-namespace Metagame {
-namespace GrandTour {
-
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
@@ -32,7 +27,13 @@ namespace GrandTour {
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/boflib/sound.h"
-#include "store.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/store.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
 
 #define TEXT_MORE_DX        120                     // offset of "more" indicator from right margin
 #define TEXT_MORE_DY        5                       // offset of "more" indicator bottom of scroll
@@ -107,7 +108,7 @@ static  BOOL        bPlayingHodj = TRUE;            // whether playing Hodj or P
 BOOL CGeneralStore::SetupKeyboardHook(void) {
 	pStoreDialog = this;                            // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPSTOREHOOKPROC)::GetProcAddress(hDLLInst, "StoreHookProc");
+	lpfnKbdHook = (FPSTOREHOOKPROC)GetProcAddress(hDLLInst, "StoreHookProc");
 	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
 		return (FALSE);
 
@@ -510,8 +511,8 @@ void CGeneralStore::UpdateContent(CDC *pDC) {
 
 
 void CGeneralStore::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
-	BOOL    bSuccess = TRUE;
-	char    *pArtSpec;
+	BOOL bSuccess = TRUE;
+	const char *pArtSpec;
 
 	pArtSpec = (*pItem).GetArtSpec();
 	if (pArtSpec != NULL)
@@ -527,14 +528,14 @@ void CGeneralStore::UpdateCrowns(CDC *pDC) {
 	if ((pItem == NULL) ||
 	        ((*pItem).GetQuantity() < 1)) {
 		if (bPlayingHodj)
-			strcpy(chBuffer, "Podj has no Crowns");
+			Common::strcpy_s(chBuffer, "Podj has no Crowns");
 		else
-			strcpy(chBuffer, "Podj has no Crowns");
+			Common::strcpy_s(chBuffer, "Podj has no Crowns");
 	} else {
 		if (bPlayingHodj)
-			sprintf(chBuffer, "Hodj has %ld Crowns", (*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer, "Hodj has %ld Crowns", (*pItem).GetQuantity());
 		else
-			sprintf(chBuffer, "Podj has %ld Crowns", (*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer, "Podj has %ld Crowns", (*pItem).GetQuantity());
 	}
 	(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, STORE_TEXT_COLOR);
 }
@@ -585,7 +586,7 @@ void CGeneralStore::OnSize(UINT nType, int cx, int cy) {
 int CGeneralStore::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	BOOL    bSuccess;
 
-	::AddFontResource("msserif.fon");
+	AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != NULL);
 	bSuccess = (*pFont).CreateFont(-14, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
@@ -711,13 +712,13 @@ void CGeneralStore::OnMouseMove(UINT nFlags, CPoint point) {
 				nPrice = (*pItem).GetValue();
 				if ((*pItem).GetQuantity() == 1) {
 					if (nPrice == 1)
-						strcpy(chBuffer, "It can be bought for 1 Crown");
+						Common::strcpy_s(chBuffer, "It can be bought for 1 Crown");
 					else
-						sprintf(chBuffer, "It can be bought for %d Crowns", nPrice);
+						Common::sprintf_s(chBuffer, "It can be bought for %d Crowns", nPrice);
 				} else if (nPrice == 1)
-					strcpy(chBuffer, "One can be bought for 1 Crown");
+					Common::strcpy_s(chBuffer, "One can be bought for 1 Crown");
 				else
-					sprintf(chBuffer, "One can be bought for %d Crowns", nPrice);
+					Common::sprintf_s(chBuffer, "One can be bought for %d Crowns", nPrice);
 				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), 18, TEXT_BOLD, STORE_TEXT_COLOR);
 				(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, STORE_TEXT_COLOR);
 				ReleaseDC(pDC);
@@ -736,7 +737,7 @@ void CGeneralStore::OnMouseMove(UINT nFlags, CPoint point) {
 	}
 
 	ASSERT(hNewCursor != NULL);                     // force the cursor change
-	::SetCursor(hNewCursor);
+	MFC::SetCursor(hNewCursor);
 
 	CDialog::OnMouseMove(nFlags, point);            // do standard mouse move behavior
 }
@@ -778,16 +779,16 @@ void CGeneralStore::OnLButtonDown(UINT nFlags, CPoint point) {
 					        ((*pCrowns).GetQuantity() < nPrice)) {
 						(*pItemText).DisplayString(pDC, "Not have enough crowns to buy that!", 18, TEXT_BOLD, STORE_BLURB_COLOR);
 						pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps5.wav" : ".\\sound\\gsps6.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-						(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-						(*pSound).Play();
+						(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+						(*pSound).play();
 					} else {
 						(*pItemText).DisplayString(pDC, "Thanks for the purchase!", 18, TEXT_BOLD, STORE_BLURB_COLOR);
-						if (rand() & 1)
+						if (brand() & 1)
 							pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps1.wav" : ".\\sound\\gsps2.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 						else
 							pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps3.wav" : ".\\sound\\gsps4.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-						(*pSound).SetDrivePath(lpMetaGameStruct->m_chCDPath);
-						(*pSound).Play();
+						(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+						(*pSound).play();
 						(*pInventory).DiscardItem(pCrowns, nPrice);
 						if ((*pItem).GetQuantity() > 1) {
 							(*pGeneralStore).DiscardItem(pItem, 1);

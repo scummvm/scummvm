@@ -19,23 +19,21 @@
  *
  */
 
+#include "common/system.h"
+#include "common/savefile.h"
+#include "bagel/afxwin.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "bagel/hodjnpodj/metagame/bgen/c1btndlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/savegame.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/savedlg.h"
+
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
-
-#include "bagel/afxwin.h"
-
-#include <stdio.h>
-#include <assert.h>
-#include "bagel/hodjnpodj/hnplibs/stdinc.h"
-#include "bagel/boflib/misc.h"
-#include <errors.h>
-
-#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
-#include "bagel/hodjnpodj/metagame/bgen/c1btndlg.h"
-#include "savegame.h"
-#include "savedlg.h"
 
 #define IDC_SAVE_BUSY 2030
 
@@ -51,8 +49,8 @@ CHAR szDescBuf[40];
 ERROR_CODE GetSaveGameDescriptions(VOID);
 ERROR_CODE SaveSlot(INT, CBfcMgr *);
 ERROR_CODE InitSaveGameFile(VOID);
-ERROR_CODE WriteSavedGame(FILE *, INT, SAVEGAME_INFO *);
-ERROR_CODE ReadSavedGame(FILE *, INT, SAVEGAME_INFO *);
+ERROR_CODE WriteSavedGame(void *, INT, SAVEGAME_INFO *);
+ERROR_CODE ReadSavedGame(void *, INT, SAVEGAME_INFO *);
 VOID       ConvertToSGI(CBfcMgr *, SAVEGAME_INFO *);
 
 
@@ -99,11 +97,11 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 
 	// keep track of the .SAV file name
 	//
-	strcpy(gszSaveGameFileName, pBfcMgr->m_chHomePath);
+	Common::strcpy_s(gszSaveGameFileName, pBfcMgr->m_chHomePath);
 	n = strlen(gszSaveGameFileName);
 	if (gszSaveGameFileName[n - 1] != '\\')
-		strcat(gszSaveGameFileName, "\\");
-	strcat(gszSaveGameFileName, pszFileName);
+		Common::strcat_s(gszSaveGameFileName, "\\");
+	Common::strcat_s(gszSaveGameFileName, pszFileName);
 
 	// if .SAV file does not exist
 	//
@@ -126,14 +124,14 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 			if ((iGameNum = dlgSave.DoModal()) != -1) {
 
 				// save users description of this saved game
-				strcpy(szDescriptions[iGameNum], szDescBuf);
+				Common::strcpy_s(szDescriptions[iGameNum], szDescBuf);
 
 				// change cursor to a disk to indicate saving
 				//
 				pMyApp = AfxGetApp();
 				hCursor = pMyApp->LoadCursor(IDC_SAVE_BUSY);
 				assert(hCursor != NULL);
-				::SetCursor(hCursor);
+				MFC::SetCursor(hCursor);
 
 				// pause for a 2 seconds to make it look good
 				Sleep(2000);
@@ -145,7 +143,7 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 				//
 				hCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 				assert(hCursor != NULL);
-				::SetCursor(hCursor);
+				MFC::SetCursor(hCursor);
 
 			} else {
 				bSaved = FALSE;
@@ -172,7 +170,7 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 		}
 	}
 
-//#ifdef _DEBUG
+//#ifdef BAGEL_DEBUG
 	if (*pErrCode != ERR_NONE) {
 		ErrorLog("ERROR.LOG", "errCode = %d in %s at line %d", *pErrCode, __FILE__, __LINE__);
 	}
@@ -196,13 +194,14 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 *
 *****************************************************************************/
 ERROR_CODE GetSaveGameDescriptions(VOID) {
-	SAVEGAME_INFO *pSaveGameInfo;
-	FILE *pFile;
-	INT i;
-	ERROR_CODE errCode;
+	ERROR_CODE errCode = ERR_NONE;
 
-	// assume no error
-	errCode = ERR_NONE;
+#ifndef TODO
+	error("TODO: Load savegame");
+#else
+	SAVEGAME_INFO *pSaveGameInfo;
+	Common::InSaveFile *pFile;
+	INT i;
 
 	// can't restore a game unless the .SAV file exists
 	//
@@ -219,7 +218,7 @@ ERROR_CODE GetSaveGameDescriptions(VOID) {
 					if ((errCode = ReadSavedGame(pFile, i, pSaveGameInfo)) == ERR_NONE) {
 
 						assert(strlen(pSaveGameInfo->m_szSaveGameDescription) < 40);
-						strcpy(pszDesc[i] = szDescriptions[i], pSaveGameInfo->m_szSaveGameDescription);
+						Common::strcpy_s(pszDesc[i] = szDescriptions[i], pSaveGameInfo->m_szSaveGameDescription);
 
 						if (!pSaveGameInfo->m_bUsed) {
 							szDescriptions[i][0] = '\0';
@@ -244,8 +243,8 @@ ERROR_CODE GetSaveGameDescriptions(VOID) {
 		errCode = ERR_FFIND;
 		ErrorLog("ERROR.LOG", "%s not found.  Can't restore game.", gszSaveGameFileName);
 	}
-
-	return (errCode);
+#endif
+	return errCode;
 }
 
 
@@ -265,9 +264,13 @@ ERROR_CODE GetSaveGameDescriptions(VOID) {
 *
 *****************************************************************************/
 ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
+	ERROR_CODE errCode = ERR_NONE;
+
+#ifndef TODO
+	error("TODO: Load savegame");
+#else
 	SAVEGAME_INFO *pSaveGameInfo;
-	FILE *pFile;
-	ERROR_CODE errCode;
+	Common::OutSaveFile *pFile;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -289,7 +292,7 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 		ConvertToSGI(pBfcMgr, pSaveGameInfo);
 
 		// copy user's description of this saved game
-		strcpy(pSaveGameInfo->m_szSaveGameDescription, szDescriptions[iGameNum]);
+		Common::strcpy_s(pSaveGameInfo->m_szSaveGameDescription, szDescriptions[iGameNum]);
 
 		if ((pFile = fopen(gszSaveGameFileName, "r+b")) != NULL) {
 
@@ -305,13 +308,13 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 		errCode = ERR_MEMORY;
 	}
 
-//#ifdef _DEBUG
+//#ifdef BAGEL_DEBUG
 	if (errCode != ERR_NONE) {
 		ErrorLog("ERROR.LOG", "errCode = %d in %s at line %d", errCode, __FILE__, __LINE__);
 	}
 //#endif
-
-	return (errCode);
+#endif
+	return errCode;
 }
 
 
@@ -328,13 +331,14 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 *
 *****************************************************************************/
 ERROR_CODE InitSaveGameFile(VOID) {
+	ERROR_CODE errCode = ERR_NONE;
+
+#ifndef TODO
+	error("TODO: Init savegame");
+#else
 	SAVEGAME_INFO *pNewInfo;
 	FILE *pFile;
-	ERROR_CODE errCode;
 	INT i;
-
-	// assume no error
-	errCode = ERR_NONE;
 
 	// we don't want to overwrite a good .SAV file
 	assert(!FileExists(gszSaveGameFileName));
@@ -367,8 +371,8 @@ ERROR_CODE InitSaveGameFile(VOID) {
 	} else {
 		errCode = ERR_MEMORY;
 	}
-
-	return (errCode);
+#endif
+	return errCode;
 }
 
 
@@ -388,12 +392,9 @@ ERROR_CODE InitSaveGameFile(VOID) {
 *  RETURNS:  ERROR_CODE = error return code.
 *
 *****************************************************************************/
-ERROR_CODE WriteSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
-	ERROR_CODE errCode;
-
-	// asume no error
-	errCode = ERR_NONE;
-
+ERROR_CODE WriteSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
+	ERROR_CODE errCode = ERR_NONE;
+#ifdef TODO
 	// validate explicit input
 	assert(pFile != NULL);
 	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
@@ -416,8 +417,8 @@ ERROR_CODE WriteSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInf
 	}
 
 	Decrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
-
-	return (errCode);
+#endif
+	return errCode;
 }
 
 
@@ -437,12 +438,10 @@ ERROR_CODE WriteSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInf
 *  RETURNS:  ERROR_CODE = error return code.
 *
 *****************************************************************************/
-ERROR_CODE ReadSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
-	ERROR_CODE errCode;
+ERROR_CODE ReadSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
+	ERROR_CODE errCode = ERR_NONE;
 
-	// asume no error
-	errCode = ERR_NONE;
-
+#ifdef TODO
 	// validate explicit input
 	assert(pFile != NULL);
 	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
@@ -471,8 +470,8 @@ ERROR_CODE ReadSavedGame(FILE *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo
 	} else {
 		errCode = ERR_FSEEK;
 	}
-
-	return (errCode);
+#endif
+	return errCode;
 }
 
 
@@ -597,7 +596,7 @@ VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 
 			if (pInv != NULL) {
 
-				strcpy(pSaveInv->m_szTitle, pInv->GetTitle());
+				Common::strcpy_s(pSaveInv->m_szTitle, pInv->GetTitle());
 
 				k = 0;
 				pItem = pInv->FirstItem();

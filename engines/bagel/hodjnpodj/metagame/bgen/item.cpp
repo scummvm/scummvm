@@ -294,12 +294,12 @@ char *CItem::GetDescription(int nID, long nQuantity) {
 		m_chTextBuffer[0] = '\0';
 	else {
 		if (nQuantity > 1)                              // create blurb for multiple
-			sprintf(m_chTextBuffer, "%ld %s", nQuantity, m_pItemPluralText[nID - MG_OBJ_BASE]);
+			Common::sprintf_s(m_chTextBuffer, "%ld %s", nQuantity, m_pItemPluralText[nID - MG_OBJ_BASE]);
 		else if ((nID == MG_OBJ_CROWN) &&                   // special case having no crowns
 		         (nQuantity == 0))
-			sprintf(m_chTextBuffer, "%s %s", "You have no", m_pItemPluralText[nID - MG_OBJ_BASE]);
+			Common::sprintf_s(m_chTextBuffer, "%s %s", "You have no", m_pItemPluralText[nID - MG_OBJ_BASE]);
 		else
-			strcpy(m_chTextBuffer, m_pItemText[nID - MG_OBJ_BASE]);   // get the text for the item
+			Common::strcpy_s(m_chTextBuffer, m_pItemText[nID - MG_OBJ_BASE]);   // get the text for the item
 	}
 
 	return (m_chTextBuffer);
@@ -374,7 +374,7 @@ BOOL CItem::AddNote(CNote *pNote) {
 /////////////////////////////////////////////////////////////////////////////
 // CItem diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CItem::AssertValid() const {
 	CObject::AssertValid();
 }
@@ -383,7 +383,7 @@ void CItem::Dump(CDumpContext& dc) const {
 	CObject::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 } // namespace Metagame
 } // namespace HodjNPodj

@@ -1,54 +1,32 @@
-/*****************************************************************
-*
-*  itemmsg.cpp
-*
-*  HISTORY
-*
-*       1.00      07/25/94     BAR     Initial Design
-*
-*  MODULE DESCRIPTION:
-*
-*       Message box for item gain/loss information, built off of CBmpDialog
-*
-*  CONSTRUCTORS:
-*
-*       itemmsg
-*
-*  PUBLIC:
-*
-*
-*
-*  PUBLIC GLOBAL:
-*
-*
-*
-*  PROTECTED:
-*
-*
-*
-*  PRIVATE:
-*
-*
-*
-*  MEMBERS:
-*
-*
-*
-*  RELEVANT DOCUMENTATION:
-*
-*
-*
-****************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bagel/afxwin.h"
-
 #include "bagel/hodjnpodj/hnplibs/text.h"
-#include "citemdlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/citemdlg.h"
 
-#ifdef _DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace GrandTour {
 
 CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, BOOL bHodj, BOOL bGain, long lAmount)
 	: CBmpDialog(pParent, pPalette, IDD_ITEMMOVE, ".\\art\\msscroll.bmp") {
@@ -169,7 +147,6 @@ BOOL CItemDialog::OnInitDialog() {
 void CItemDialog::OnPaint() {
 	CDC     *pDC;
 	BOOL    bSuccess;
-	CFont   *pFontOld = NULL;               // font that was mapped to the context
 	char    buf[64];
 	int     i = 0;
 
@@ -178,11 +155,11 @@ void CItemDialog::OnPaint() {
 
 	pDC = GetDC();
 
-	sprintf(buf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "gains" : "loses");
+	Common::sprintf_s(buf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "gains" : "loses");
 	bSuccess = (*m_pTextMessage).DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
 	ASSERT(bSuccess);
 
-	sprintf(buf, (*m_pItem).GetDescription((*m_pItem).GetID(), m_lAmount));
+	Common::sprintf_s(buf, (*m_pItem).GetDescription((*m_pItem).GetID(), m_lAmount));
 	while (buf[i] != NULL) i++;
 	if (i > 20)
 		bSuccess = (*m_pTextDescription).DisplayString(pDC, buf, 13, FW_BOLD, ITEMDLG_TEXT_COLOR);
@@ -211,3 +188,8 @@ BOOL CItemDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
 	return (TRUE);
 }
+
+} // namespace GrandTour
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

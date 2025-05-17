@@ -161,8 +161,8 @@ typedef struct tagRECT {
 typedef const RECT FAR *LPCRECT;
 
 typedef struct tagPOINT {
-	LONG  x;
-	LONG  y;
+	int  x;
+	int  y;
 } POINT, *PPOINT, NEAR *NPPOINT, FAR *LPPOINT;
 
 typedef struct _POINTL {    /* ptl  */
@@ -171,8 +171,8 @@ typedef struct _POINTL {    /* ptl  */
 } POINTL, *PPOINTL;
 
 typedef struct tagSIZE {
-	LONG        cx;
-	LONG        cy;
+	int        cx;
+	int        cy;
 } SIZE, *PSIZE, *LPSIZE;
 
 typedef SIZE               SIZEL;

@@ -20,12 +20,11 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-
-#include "gtl.h"
-
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -102,7 +101,7 @@ cleanup:
 	if (xpGtlApp->m_bDumpGamePlay) {
 		DumpBestMoveData(xpXodj) ;
 		if (iError) {
-			sprintf(szMsg, "    Error %d in computing best move.\n",
+			Common::sprintf_s(szMsg, "    Error %d in computing best move.\n",
 			        iError) ;
 			JXOutputDebugString(szMsg) ;
 		}
@@ -125,7 +124,7 @@ BOOL CGtlData::GatherInformation(CXodj * xpXodj)
 	int iK ;                // loop variables
 	CStrategyInfo * xpStrategyInfo = xpXodj->m_xpStrategyInfo ;
 	CStratLocInfo * xpStratLocInfo ;
-	CGameTable * xpGameEntry ;  // pointer to game table entry
+	const CGameTable * xpGameEntry ;  // pointer to game table entry
 //  int iWinCode ;              // MG_WIN_xxxx (win money, object, info)
 	int iObjectCode ;
 
@@ -203,7 +202,6 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 	BOOL    bNeedObject = FALSE;
 	BOOL    bNeedMoney;
 	BOOL    bCanBuyObject;
-	CNode FAR * lpNode = NULL;
 	CItem   *pItem = NULL;
 	BOOL    bObjInGenStore;
 	BOOL    bCanSellObject;
@@ -558,7 +556,6 @@ BOOL CGtlData::DetermineDistances(CXodj * xpXodj)
 	int iK ;            // loop variable
 	CStrategyInfo * xpStrategyInfo = xpXodj->m_xpStrategyInfo ;
 	CStratLocInfo * xpStratLocInfo ;
-	LPINT lpiShortPath = NULL ;
 	CNode FAR * lpNode, FAR * lpTargetNode ;
 
 	lpNode = m_lpNodes + xpXodj->m_iCharNode ;
@@ -669,7 +666,7 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 	}
 
 
-	i = rand() % 10;
+	i = brand() % 10;
 
 	if (xpStratTemp[0]->m_iValueCode == MG_VISIT_MISHMOSH) {
 		i = 9;
@@ -685,18 +682,18 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 		}
 	}
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	{
 		char    cTemp[128];
 
-		lstrcpy(cTemp, xpStratTemp[0]->m_lpNode->m_szLabel);
-		lstrcat(cTemp, " : ");
-		lstrcat(cTemp, xpStratTemp[1]->m_lpNode->m_szLabel);
-		lstrcat(cTemp, " : ");
-		lstrcat(cTemp, xpStratTemp[2]->m_lpNode->m_szLabel);
+		Common::strcpy_s(cTemp, xpStratTemp[0]->m_lpNode->m_szLabel);
+		Common::strcat_s(cTemp, " : ");
+		Common::strcat_s(cTemp, xpStratTemp[1]->m_lpNode->m_szLabel);
+		Common::strcat_s(cTemp, " : ");
+		Common::strcat_s(cTemp, xpStratTemp[2]->m_lpNode->m_szLabel);
 
 //	wsprintf( cTemp, "%s : %s : %s", xpStratTemp[0].m_lpNode->m_szLabel, xpStratTemp[1].m_lpNode->m_szLabel, xpStratTemp[2].m_lpNode->m_szLabel);
-		::MessageBox(NULL, cTemp, xpStrategyInfo->xpTargetLocInfo->m_lpNode->m_szLabel, MB_OK);
+		MessageBox(NULL, cTemp, xpStrategyInfo->xpTargetLocInfo->m_lpNode->m_szLabel, MB_OK);
 	}
 	#endif
 
@@ -715,17 +712,17 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
 {
 	JXENTER(CGtlData::DumpBestMoveData) ;
 	int iError = 0 ;            // error code
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	int iK ;            // loop variable
 	CStrategyInfo * xpStrategyInfo = xpXodj->m_xpStrategyInfo ;
 	CStratLocInfo * xpStratLocInfo ;
-	CLocTable * xpLoc ; // pointer to location table entry
+	const CLocTable * xpLoc ; // pointer to location table entry
 	char szMsg[150] ;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 
 	if (xpGtlApp->m_bDumpGamePlay) {
 
-		sprintf(szMsg, "\n  %s strategy tables:\n", xpXodj->m_szName) ;
+		Common::sprintf_s(szMsg, "\n  %s strategy tables:\n", xpXodj->m_szName) ;
 		JXOutputDebugString(szMsg) ;
 
 		// For each eligible location, adjust weight by distance
@@ -753,7 +750,7 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
 			}
 		}
 
-		sprintf(szMsg, "%d locations close to max adjusted "
+		Common::sprintf_s(szMsg, "%d locations close to max adjusted "
 		               " weight of %d:\n",
 		        xpStrategyInfo->m_iTopLocCount,
 		        xpStrategyInfo->m_iMaxAdjustedWeight) ;
@@ -781,7 +778,7 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
 				           == xpXodj->m_iTargetLocation)
 				          ? " (Selected target)" : "") ;
 			} else
-				sprintf(szMsg, "Invalid location code %d.\n",
+				Common::sprintf_s(szMsg, "Invalid location code %d.\n",
 				        xpStratLocInfo->m_iLocCode) ;
 
 			JXOutputDebugString(szMsg) ;

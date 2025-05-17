@@ -76,6 +76,7 @@ typedef long LONG_PTR, *PLONG_PTR;
 typedef unsigned long ULONG_PTR, *PULONG_PTR;
 typedef ULONG_PTR DWORD_PTR;
 typedef uint32 COLORREF;
+typedef void *POSITION;
 
 #define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
 #define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
@@ -587,6 +588,46 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define SM_CONVERTIBLESLATEMODE   0x2003
 #define SM_SYSTEMDOCKED           0x2004
 
+/* Mapping Modes */
+#define MM_TEXT             1
+#define MM_LOMETRIC         2
+#define MM_HIMETRIC         3
+#define MM_LOENGLISH        4
+#define MM_HIENGLISH        5
+#define MM_TWIPS            6
+#define MM_ISOTROPIC        7
+#define MM_ANISOTROPIC      8
+
+/* Min and Max Mapping Mode values */
+#define MM_MIN              MM_TEXT
+#define MM_MAX              MM_ANISOTROPIC
+#define MM_MAX_FIXEDSCALE   MM_TWIPS
+
+/*
+ * System Menu Command Values
+ */
+#define SC_SIZE         0xF000
+#define SC_MOVE         0xF010
+#define SC_MINIMIZE     0xF020
+#define SC_MAXIMIZE     0xF030
+#define SC_NEXTWINDOW   0xF040
+#define SC_PREVWINDOW   0xF050
+#define SC_CLOSE        0xF060
+#define SC_VSCROLL      0xF070
+#define SC_HSCROLL      0xF080
+#define SC_MOUSEMENU    0xF090
+#define SC_KEYMENU      0xF100
+#define SC_ARRANGE      0xF110
+#define SC_RESTORE      0xF120
+#define SC_TASKLIST     0xF130
+#define SC_SCREENSAVE   0xF140
+#define SC_HOTKEY       0xF150
+#define SC_DEFAULT      0xF160
+#define SC_MONITORPOWER 0xF170
+#define SC_CONTEXTHELP  0xF180
+#define SC_SEPARATOR    0xF00F
+
+
 typedef struct _GUID {
 	unsigned long  Data1;
 	unsigned short Data2;
@@ -599,6 +640,14 @@ typedef struct _GUID {
 #define ALTERNATE                    1
 #define WINDING                      2
 #define POLYFILL_LAST                2
+
+/* Region Flags */
+#define ERROR               0
+#define NULLREGION          1
+#define SIMPLEREGION        2
+#define COMPLEXREGION       3
+#define RGN_ERROR ERROR
+
 
 typedef struct tagTEXTMETRICA {
 	LONG        tmHeight = 0;

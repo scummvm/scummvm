@@ -77,7 +77,7 @@ LPGAMESTRUCT    pGameInfo;
 HWND FAR PASCAL RunPeggle(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	pGameInfo = lpGameInfo;
 
-//#ifdef _DEBUG
+//#ifdef BAGEL_DEBUG
 //  (*pGameInfo).bPlayingMetagame = TRUE;
 //#endif
 

@@ -67,7 +67,7 @@ private:
 	static CNote    *m_pNoteHead;   // pointer to linked chain of notes
 	static CNote    *m_pNoteTail;   // pointer to tail of list of notes
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif

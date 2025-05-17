@@ -20,13 +20,8 @@
  */
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-
-#include <string.h>
-#include <stdio.h>
-#include <assert.h>
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
-
-#include "gtldat.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgb.h"
 #include "bagel/hodjnpodj/metagame/bgen/bgen.h"
 
@@ -54,18 +49,20 @@ int CGtlData::Compile(const char *xpszPathName)
 
 	strncpy(m_szGtlFile, xpszPathName, sizeof(m_szGtlFile) -1) ;
 
-	if ((m_xpGtlFile = fopen(m_szGtlFile, "r")) == NULL) {
+	Common::File *f = new Common::File();
+	if (!f->open(m_szGtlFile)) {
+		delete f;
 		iError = 100;
 		goto cleanup;
 	}
 
+	m_xpGtlFile = f;
 	bDone = FALSE ;     // not done yet
 
 	while (!bDone) {
 
 		if (!CGtlData::ReadLine())  // read line, check for error
-			if (!CGtlData::ParseLine()) // parse, check for error
-				;       // null if body
+			(void)CGtlData::ParseLine();
 
 		if (m_bEof)     // if end of file
 			bDone = TRUE ;
@@ -77,10 +74,10 @@ int CGtlData::Compile(const char *xpszPathName)
 cleanup:
 
 	if (m_xpGtlFile)              // if there's an open input file
-		fclose(m_xpGtlFile) ;     // close it
+		delete m_xpGtlFile;       // close it
 
 	if (iError) {
-		sprintf(szOut, "CGtlData::Compile -- Error code %i", iError);
+		Common::sprintf_s(szOut, "CGtlData::Compile -- Error code %i", iError);
 		CGtlData::ErrorMsg(NULL, szOut) ;
 	}
 
@@ -98,7 +95,7 @@ BOOL CGtlData::ParseLine(void)
 	CLexElement * xpLxel ;      // lexical element block
 	CNode FAR * lpNode, FAR * lpLinkNode ;  // ptrs to node objects
 	CMap FAR * lpMap ;  // bitmap pointer
-	CSectorTable *pSectorEntry;
+	const CSectorTable *pSectorEntry;
 	XPSTR xpStr ;
 	int iLink ;     // index of link node
 	int iTmp;
@@ -167,7 +164,7 @@ BOOL CGtlData::ParseLine(void)
 		if (m_xpLexLabel) {
 
 			// copy label
-			_fstrncpy(lpMap->m_szLabel, &m_szStringList[m_xpLexLabel->m_iStringListPos], MAX_LABEL_LENGTH - 1);
+			strncpy(lpMap->m_szLabel, &m_szStringList[m_xpLexLabel->m_iStringListPos], MAX_LABEL_LENGTH - 1);
 		}
 
 		xpLxel = ParseString(xpLxel, LXT_IDENT, lpMap->m_szFilename, NULL) ;
@@ -313,7 +310,7 @@ BOOL CGtlData::ParseLine(void)
 		if (m_xpLexLabel) {
 
 			// copy label
-			_fstrncpy(lpNode->m_szLabel, &m_szStringList[m_xpLexLabel ->m_iStringListPos], MAX_LABEL_LENGTH - 1);
+			strncpy(lpNode->m_szLabel, &m_szStringList[m_xpLexLabel ->m_iStringListPos], MAX_LABEL_LENGTH - 1);
 		}
 
 		++xpLxel ;
@@ -391,7 +388,7 @@ BOOL CGtlData::ParseLine(void)
 				lpNode->m_iSector = MG_SECTOR_ANY;
 				pSectorEntry = CMgStatic::cSectorTable;
 				while (pSectorEntry->m_iSectorCode != 0) {
-					if (stricmp(pSectorEntry->m_lpszLabel, szBuf) == 0) {
+					if (scumm_stricmp(pSectorEntry->m_lpszLabel, szBuf) == 0) {
 						lpNode->m_iSector = pSectorEntry->m_iSectorCode;
 						break;
 					}
@@ -454,7 +451,7 @@ cleanup:
 
 	if (iError) {
 		char szMsg[100] ;   // error message text
-		sprintf(szMsg, "CGtlData::ParseLine -- Error code %i.", iError) ;
+		Common::sprintf_s(szMsg, "CGtlData::ParseLine -- Error code %i.", iError) ;
 		CGtlData::ErrorMsg(xpLxel, szMsg) ;
 	}
 
@@ -470,7 +467,6 @@ CLexElement *CGtlData::ParseInteger(CLexElement * xpLxel, int iPrevType, int FAR
 // returns: pointer to next lexeme
 {
 	JXENTER(CGtlData::ParseInteger) ;
-	int iError = 0 ;        // error code
 	int iSign = +1 ;        // plus (+1) or minus (-1) sign
 
 	if (xpLxel->m_iType == iPrevType) {
@@ -497,7 +493,6 @@ CLexElement *CGtlData::ParseString(CLexElement * xpLxel, int iPrevType, LPSTR lp
 // xpiValue -- where to store keyword value, or NULL if not stored
 // returns: pointer to next lexeme
 {
-	int iError = 0 ;        // error code
 	JXENTER(CGtlData::ParseString) ;
 	if (xpiValue)
 		*xpiValue = 0 ;     // default -- zero keyword value
@@ -506,7 +501,7 @@ CLexElement *CGtlData::ParseString(CLexElement * xpLxel, int iPrevType, LPSTR lp
 
 		// copy over the text string
 		if (lpszValue)
-			_fstrcpy(lpszValue, &m_szStringList[xpLxel->m_iStringListPos]) ;
+			Common::strcpy_s(lpszValue, 256, &m_szStringList[xpLxel->m_iStringListPos]) ;
 
 		if (xpiValue)
 			*xpiValue = xpLxel->m_iVal ;
@@ -562,7 +557,7 @@ BOOL CGtlData::GetLabel(LPSTR lpszLabel, BOOL bNode, int FAR& iIndex)
 	if (bNode) {
 
 		// loop through nodes, searching for label
-		for (iIndex = 0 ; iIndex < m_iNodes && (_fstrcmp(m_lpNodes[iIndex].m_szLabel, lpszLabel) || m_lpNodes[iIndex].m_bDeleted); ++iIndex)
+		for (iIndex = 0 ; iIndex < m_iNodes && (strcmp(m_lpNodes[iIndex].m_szLabel, lpszLabel) || m_lpNodes[iIndex].m_bDeleted); ++iIndex)
 			;   // null loop body
 
 		if (iIndex >= m_iNodes) {
@@ -575,7 +570,7 @@ BOOL CGtlData::GetLabel(LPSTR lpszLabel, BOOL bNode, int FAR& iIndex)
 	} else {
 
 		// loop through bitmaps, searching for label
-		for (iIndex = 0 ; iIndex < m_iMaps && _fstrcmp(m_lpMaps[iIndex].m_szLabel, lpszLabel); ++iIndex)
+		for (iIndex = 0 ; iIndex < m_iMaps && strcmp(m_lpMaps[iIndex].m_szLabel, lpszLabel); ++iIndex)
 			;   // null loop body
 
 		if (iIndex >= m_iMaps) {

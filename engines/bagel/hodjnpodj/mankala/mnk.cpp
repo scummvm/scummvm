@@ -27,7 +27,7 @@
 #include "bagel/hodjnpodj/mankala/mnk.h"
 #include "bagel/hodjnpodj/mankala/resource.h"
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	#include "bagel/hodjnpodj/mankala/transform.h"
 #endif
 
@@ -42,7 +42,7 @@ namespace Mankala {
 LPGAMESTRUCT pGameParams;
 extern HWND ghParentWnd;
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 	BOOL ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);
 	inline void FlushMouseMessages(HWND);
 
@@ -183,7 +183,7 @@ CMnkWindow::CMnkWindow(void) {
 		m_cMainRect.SetRect(300, 300, 300 + GAME_WIDTH, 300 + GAME_HEIGHT);
 		#endif
 
-		#ifndef _DEBUG
+		#ifndef BAGEL_DEBUG
 		m_cMainRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1 ;
 		m_cMainRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1 ;
 		m_cMainRect.right = m_cMainRect.left + GAME_WIDTH ;
@@ -201,7 +201,7 @@ CMnkWindow::CMnkWindow(void) {
 		ReleaseDC(pDC);
 		pDC = NULL ;        // zero out context pointer
 	} else {
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 		MFC::MessageBox(NULL, "Cannot acquire device context. Abnormal Program Termination", "Error", MB_ICONSTOP) ;
 		#endif
 		return;
@@ -461,7 +461,7 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	    WritePrivateProfileString("Mankala","MuteCrab",gbTurnSoundsOff?"1":"0",INI_FILENAME);
 	}*/
 	else if (nChar == VK_F8) {
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 		HWND hWnd;
 		HINSTANCE hInst;
 		int u,
@@ -490,7 +490,7 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 		#endif  //_debug
 	}/*else if(nChar==VK_F9){
-        #ifdef _DEBUG
+        #ifdef BAGEL_DEBUG
         double* v, *J;
         HGLOBAL hglbV=GlobalAlloc(GHND,sizeof(double)* NUMPITS);
         HGLOBAL hglbJ=GlobalAlloc(GHND,sizeof(double)* NUMPITS);
@@ -555,7 +555,7 @@ void CMnkWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	// terminate game on ALT-Q
 	if ((nChar == 'q') && (nFlags & 0x2000))
 		PostMessage(WM_CLOSE, 0, 0) ; // same as clicking QUIT button
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	else if ((nChar == 'd') && (nFlags & 0x2000)) {
 		BOOL bStartGame = m_bStartGame ;
 
@@ -1102,9 +1102,9 @@ void CMnkWindow::OnClose() {
 		MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, MAKELPARAM(m_hWnd, 0));
 //      MFC::PostMessage( ghParentWnd, WM_PAINT, 0, 0L);
 	} else {
-		#ifdef _DEBUG
+		#ifdef BAGEL_DEBUG
 		MessageBox("ghParentWnd not a Window", "Debug Message");
-		#endif //_DEBUG
+		#endif //BAGEL_DEBUG
 	}
 	#endif // _USRDLL
 
@@ -1213,7 +1213,7 @@ BEGIN_MESSAGE_MAP(CMnkWindow, CFrameWnd)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 BOOL ResetPitsDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	static long lTotalStones;

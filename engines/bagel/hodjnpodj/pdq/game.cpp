@@ -1260,7 +1260,7 @@ INT NumLinkedSprites(VOID) {
 	return (i);
 }
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 VOID SelfTest(VOID) {
 	PHRASES cPhrase;
 	INT i, n;

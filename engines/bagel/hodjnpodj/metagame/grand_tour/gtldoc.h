@@ -22,7 +22,7 @@
 #ifndef BAGEL_METAGAME_GTL_GTLDOC_H
 #define BAGEL_METAGAME_GTL_GTLDOC_H
 
-#include "gtldat.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -55,10 +55,10 @@ public:
 // Implementation
 public:
 	virtual ~CGtlDoc();
-	virtual void Serialize(CArchive& ar);   // overridden for document i/o
-	#ifdef _DEBUG
+	virtual void Serialize(CArchive &ar);   // overridden for document i/o
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 	#endif
 
 protected:
@@ -75,26 +75,26 @@ protected:
 
 // gtldoc.cpp -- implementation of the CGtlDoc class
 
-//- CGtlDoc::DeleteContents() --
+//- DeleteContents() --
 public:
-	void CGtlDoc::DeleteContents() ;
-//- CGtlDoc::InitDocument -- initialize document to specified file
+	void DeleteContents() ;
+//- InitDocument -- initialize document to specified file
 protected:
-	void CGtlDoc::InitDocument(const char * xpszPathName) ;
-//- CGtlDoc::OnOpenDocument --
-	virtual BOOL CGtlDoc::OnOpenDocument(const char* xpszPathName) ;
-//- CGtlDoc::OnSaveDocument --
-	virtual BOOL CGtlDoc::OnSaveDocument(const char* xpszPathName) ;
-//- CGtlDoc::DoOnFileSaveAs --
+	void InitDocument(const char * xpszPathName) ;
+//- OnOpenDocument --
+	virtual BOOL OnOpenDocument(const char* xpszPathName) ;
+//- OnSaveDocument --
+	virtual BOOL OnSaveDocument(const char* xpszPathName) ;
+//- DoOnFileSaveAs --
 public:
-	virtual BOOL CGtlDoc::DoOnFileSaveAs(void) ;
-//- CGtlDoc::OnChangedViewList -- called by MFC when a view is
+	virtual BOOL DoOnFileSaveAs(void) ;
+//- OnChangedViewList -- called by MFC when a view is
 //		added or deleted
 private:
-	virtual VOID CGtlDoc::OnChangedViewList(void) ;
-//- CGtlDoc::FixChecks -- fix dialog box check marks
+	virtual VOID OnChangedViewList(void) ;
+//- FixChecks -- fix dialog box check marks
 public:
-	BOOL CGtlDoc::FixChecks(void);
+	BOOL FixChecks(void);
 
 };
 

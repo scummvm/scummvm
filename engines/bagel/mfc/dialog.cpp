@@ -44,6 +44,16 @@ CDialog::CDialog(LPCSTR lpszTemplateName,
 CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
 }
 
+BOOL CDialog::Create(LPCSTR lpszTemplateName,
+		CWnd *pParentWnd) {
+	error("TODO: CDialog::Create");
+}
+BOOL CDialog::Create(UINT nIDTemplate,
+		CWnd *pParentWnd) {
+	error("TODO: CDialog::Create");
+}
+
+
 int CDialog::DoModal() {
 	error("TODO: CDialog::DoModal");
 }
@@ -98,6 +108,11 @@ void CDialog::DDV_MinMaxInt(CDataExchange *pDX,
 void CDialog::EndDialog(int nResult) {
 	error("TODO: CDialog::EndDialog");
 }
+
+BOOL CDialog::UpdateData(BOOL bSaveAndValidate) {
+	error("TODO: CDialog::UpdateData");
+}
+
 
 } // namespace MFC
 } // namespace Bagel

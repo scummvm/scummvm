@@ -80,7 +80,7 @@ public:
 	}
 
 	#ifndef FRAME_EXE
-	char *GetClueArtSpec(void) {
+	const char *GetClueArtSpec(void) {
 		if ((m_nClueID >= NOTE_ICON_BASE) &&
 		        (m_nClueID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nClueID]);
@@ -88,7 +88,7 @@ public:
 			return (NULL);
 	}
 
-	char *GetPersonArtSpec(void) {
+	const char *GetPersonArtSpec(void) {
 		if ((m_nPersonID >= NOTE_ICON_BASE) &&
 		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nPersonID]);
@@ -96,7 +96,7 @@ public:
 			return (NULL);
 	}
 
-	char *GetPlaceArtSpec(void) {
+	const char *GetPlaceArtSpec(void) {
 		if ((m_nPlaceID >= NOTE_ICON_BASE) &&
 		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nPlaceID]);
@@ -104,7 +104,7 @@ public:
 			return (NULL);
 	}
 
-	char *GetDescription(void) {
+	const char *GetDescription(void) {
 		if ((m_nID >= 0) &&
 		        (m_nID < NOTE_COUNT))
 			return (m_pNoteText[m_nID]);
@@ -112,7 +112,7 @@ public:
 			return (NULL);
 	}
 
-	char *GetPersonSoundSpec(void) {
+	const char *GetPersonSoundSpec(void) {
 		if ((m_nPersonID >= NOTE_ICON_BASE) &&
 		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteSoundPath[m_nPersonID]);
@@ -120,7 +120,7 @@ public:
 			return (NULL);
 	}
 
-	char *GetPlaceSoundSpec(void) {
+	const char *GetPlaceSoundSpec(void) {
 		if ((m_nPlaceID >= NOTE_ICON_BASE) &&
 		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteSoundPath[m_nPlaceID]);
@@ -154,12 +154,12 @@ public:
 private:
 
 	#ifndef FRAME_EXE
-	static char *m_pNoteText[NOTE_COUNT];   // descriptive text for each note
-	static char *m_pNoteSoundPath[NOTE_ICON_COUNT]; // sound file specifications for each note
-	static char *m_pNoteBitmapPath[NOTE_ICON_COUNT];// bitmap file specifications for each note
+	static const char *m_pNoteText[NOTE_COUNT];   // descriptive text for each note
+	static const char *m_pNoteSoundPath[NOTE_ICON_COUNT]; // sound file specifications for each note
+	static const char *m_pNoteBitmapPath[NOTE_ICON_COUNT];// bitmap file specifications for each note
 	#endif
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif

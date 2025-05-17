@@ -22,9 +22,9 @@
 #ifndef BAGEL_METAGAME_GTL_GTLVIEW_H
 #define BAGEL_METAGAME_GTL_GTLVIEW_H
 
-#include "gtl.h"
-#include "gtldoc.h"
-#include "gtldat.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldat.h"
 #include "bagel/boflib/sound.h"
 
 namespace Bagel {
@@ -63,38 +63,38 @@ public:
 // Operations
 public:
 	class CGtlDoc *GetDocument();
-	void CGtlView::UpdateDialogs(void) ;
+	void UpdateDialogs(void) ;
 	void OnSoundNotify(CSound *);
 
-//- CGtlView::OnUpdate -- called when document changes to update view
+//- OnUpdate -- called when document changes to update view
 	virtual void OnUpdate(CView * xpSender, LPARAM lHint, CObject * xpHint) ;
-//- CGtlView::OnDraw -- draw current view
+//- OnDraw -- draw current view
 	virtual void OnDraw(CDC* xpDc) ;
 
 private:
-//- CGtlView::OnInitialUpdate --
+//- OnInitialUpdate --
 	void OnInitialUpdate(void) ;
 
 	#ifdef NODEEDIT
-//- CGtlView::CheckSize -- check window size, adjust if necessary
+//- CheckSize -- check window size, adjust if necessary
 	BOOL CheckSize(void) ;
 	#endif
 
 protected:
-//- CGtlView::PreCreateWindow -- change view window style
+//- PreCreateWindow -- change view window style
 	BOOL PreCreateWindow(CREATESTRUCT& cCs) ;
 
 // Implementation
 public:
 	virtual ~CGtlView();
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 	#endif
 
 public:
-	void CGtlView::FlushInputEvents(void);
+	void FlushInputEvents(void);
 
 
 // Generated message map functions
@@ -126,7 +126,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // debug version in gtlview.cpp
+#ifndef BAGEL_DEBUG  // debug version in gtlview.cpp
 inline CGtlDoc *CGtlView::GetDocument() {
 	return (CGtlDoc*)m_pDocument;
 }

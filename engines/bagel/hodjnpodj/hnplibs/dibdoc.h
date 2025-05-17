@@ -65,7 +65,7 @@ private:
 	CPalette *m_palDIB;
 	CSize m_sizeDoc;
 
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext &dc) const override;
 	#endif

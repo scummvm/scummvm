@@ -63,6 +63,18 @@ void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
 	error("Save/load error");
 }
 
+void CDocument::UpdateAllViews(CView *pSender, LPARAM lHint,
+		CObject *pHint) {
+	error("TODO: CDocument::UpdateAllViews");
+}
+
+POSITION CDocument::GetFirstViewPosition() const {
+	error("TODO: CDocument::GetFirstViewPosition");
+}
+
+CView *CDocument::GetNextView(POSITION &rPosition) const {
+	error("TODO: CDocument::GetNextView");
+}
 
 } // namespace MFC
 } // namespace Bagel

@@ -19,32 +19,24 @@
  *
  */
 
+#include "bagel/hodjnpodj/metagame/grand_tour/gtl.h"
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include <assert.h>
-#include "gtl.h"
-#include "dllinit.h"
-#include "gtldoc.h"
-#include "gtlview.h"
-#include "gtlfrm.h"
-
+#include "bagel/hodjnpodj/metagame/grand_tour/dllinit.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtldoc.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlview.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/backpack.h"
-#include "optdlg.h"
-#include "pawn.h"
-#include "store.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/optdlg.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/pawn.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/store.h"
 #include "bagel/hodjnpodj/metagame/bgen/notebook.h"
 #include "bagel/hodjnpodj/metagame/bgen/note.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
-
-///DEFS gtlfrm.h
-
-#ifdef _DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
 
 extern BOOL     bExitMetaDLL;
 extern BOOL     st_bExitDll;
@@ -151,9 +143,6 @@ BOOL CGtlFrame::NewFrame(CBfcMgr *lpBfcMgr)
 #if GTLDLL
 void CGtlFrame::OnDestroy() {
 	int iReturnValue = -1 ;
-	LPARAM lJunk = (LPARAM)m_nReturnCode;
-	HWND    hWnd = m_hWnd;
-
 
 	if (m_lpBfcMgr && m_lpBfcMgr->m_iFunctionCode > 0
 	        && m_lpBfcMgr->m_iFunctionCode != MG_DLLX_QUIT)
@@ -179,7 +168,7 @@ int CGtlFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 /////////////////////////////////////////////////////////////////////////////
 // CGtlFrame diagnostics
 
-#ifdef _DEBUG
+#ifdef BAGEL_DEBUG
 void CGtlFrame::AssertValid() const {
 	MFC_FRAME::AssertValid();
 }
@@ -188,7 +177,7 @@ void CGtlFrame::Dump(CDumpContext& dc) const {
 	MFC_FRAME::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlFrame message handlers
@@ -465,7 +454,6 @@ BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
 // returns: value returned by base class function
 {
 	JXENTER(CGtlFrame::PreCreateWindow) ;
-	int iError = 0 ;        // error code
 	BOOL bRetval ;      // return value
 	static CString stWndClass("") ;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
@@ -493,7 +481,7 @@ BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
 		if (!(cCs.style & WS_CHILD)) {
 			cCs.style = WS_POPUP | WS_VISIBLE ;
 			if (cCs.hMenu != NULL)
-				::DestroyMenu(cCs.hMenu);
+				MFC::DestroyMenu(cCs.hMenu);
 			cCs.hMenu = 0 ;
 		}
 	}
@@ -512,7 +500,6 @@ void CGtlFrame::RecalcLayout(BOOL bNotify)
 // returns: VOID
 {
 	JXENTER(CGtlFrame::RecalcLayout) ;
-	int iError = 0 ;        // error code
 	CRect cParamRect, cClientRect(0, 0, 200, 200) ;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 
@@ -611,7 +598,7 @@ void CGtlFrame::ShowInventory(CPalette *pPalette, int nWhichDlg) {
 	}
 
 	case 3: {   // pawn shop
-		CPawnShop cPawnnShopDlg((CWnd *)this, pPalette, ((rand() & 1)  == 1 ? pPlayer->m_pGenStore : pPlayer->m_pBlackMarket), pPlayer->m_pInventory);
+		CPawnShop cPawnnShopDlg((CWnd *)this, pPalette, ((brand() & 1)  == 1 ? pPlayer->m_pGenStore : pPlayer->m_pBlackMarket), pPlayer->m_pInventory);
 		cPawnnShopDlg.DoModal();
 		break;
 	}
@@ -636,7 +623,6 @@ void CGtlFrame::ShowInventory(CPalette *pPalette, int nWhichDlg) {
 void CGtlFrame::OnCallNew() {
 	// TODO: Add your command handler code here
 	JXENTER(CGtlFrame::OnCallNew) ;
-	int iError = 0 ;        // error code
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 
 	xpGtlApp->CallOnFileNew() ;
@@ -648,110 +634,9 @@ void CGtlFrame::OnCallNew() {
 
 }
 
-#if !GTLDLL
-void CGtlFrame::CreateInventories(void) {
-	CItem                   *pItem = NULL;
-	int                             i, j;
-
-	if (lpMetaGameStruct != NULL) {
-		delete lpMetaGameStruct;
-		lpMetaGameStruct = NULL;
-	}
-	lpMetaGameStruct = new CBfcMgr();
-
-	lpMetaGameStruct->m_cPodj.m_iSkillLevel = SKILLLEVEL_LOW;
-	lpMetaGameStruct->m_cHodj.m_iSkillLevel = SKILLLEVEL_LOW;
-
-	lpMetaGameStruct->m_cPodj.m_bComputer = FALSE;
-	lpMetaGameStruct->m_cHodj.m_bComputer = FALSE;
-
-	lpMetaGameStruct->m_cPodj.m_pBlackMarket = NULL;
-	lpMetaGameStruct->m_cHodj.m_pBlackMarket = NULL;
-	lpMetaGameStruct->m_cPodj.m_pGenStore = NULL;
-	lpMetaGameStruct->m_cHodj.m_pGenStore = NULL;
-	lpMetaGameStruct->m_cPodj.m_pInventory = NULL;
-	lpMetaGameStruct->m_cHodj.m_pInventory = NULL;
-
-	if (lpMetaGameStruct->m_cHodj.m_pInventory == NULL) {
-		lpMetaGameStruct->m_cHodj.m_pInventory = new CInventory("Hodj's Stuff");
-		lpMetaGameStruct->m_cHodj.m_pInventory->AddItem(MG_OBJ_HODJ_NOTEBOOK, 1);
-		lpMetaGameStruct->m_cHodj.m_pInventory->AddItem(MG_OBJ_CROWN, 1000);
-
-		lpMetaGameStruct->m_cHodj.m_pGenStore = new CInventory("General Store");
-		for (i = MG_OBJ_BASE; i <= MG_OBJ_MAX; i++) {
-			switch (i) {
-			case MG_OBJ_HERRING:
-			case MG_OBJ_MISH:
-			case MG_OBJ_MOSH:
-			case MG_OBJ_HODJ_NOTEBOOK:
-			case MG_OBJ_PODJ_NOTEBOOK:
-			case MG_OBJ_CROWN:
-				break;
-			default:
-				lpMetaGameStruct->m_cHodj.m_pGenStore->AddItem(i, 1);
-				break;
-			}
-		}
-
-		lpMetaGameStruct->m_cHodj.m_pBlackMarket = new CInventory("Black Market");
-		for (i = 0; i < ITEMS_IN_PAWN_SHOP; i ++) {
-			j = rand() % lpMetaGameStruct->m_cHodj.m_pGenStore->ItemCount();
-			pItem = lpMetaGameStruct->m_cHodj.m_pGenStore->FetchItem(j);
-			lpMetaGameStruct->m_cHodj.m_pGenStore->RemoveItem(pItem);
-
-			lpMetaGameStruct->m_cHodj.m_pBlackMarket->AddItem(pItem);
-		}
-
-	}
-
-	if (lpMetaGameStruct->m_cPodj.m_pInventory == NULL) {
-		lpMetaGameStruct->m_cPodj.m_pInventory = new CInventory("Podj's Stuff");
-		lpMetaGameStruct->m_cPodj.m_pInventory->AddItem(MG_OBJ_PODJ_NOTEBOOK, 1);
-		lpMetaGameStruct->m_cPodj.m_pInventory->AddItem(MG_OBJ_CROWN, 1000);
-
-		lpMetaGameStruct->m_cPodj.m_pGenStore = new CInventory("General Store");
-		for (i = MG_OBJ_BASE; i <= MG_OBJ_MAX; i++) {
-			switch (i) {
-			case MG_OBJ_HERRING:
-			case MG_OBJ_MISH:
-			case MG_OBJ_MOSH:
-			case MG_OBJ_HODJ_NOTEBOOK:
-			case MG_OBJ_PODJ_NOTEBOOK:
-			case MG_OBJ_CROWN:
-				break;
-			default:
-				lpMetaGameStruct->m_cPodj.m_pGenStore->AddItem(i, 1);
-				break;
-			}
-		}
-
-		lpMetaGameStruct->m_cPodj.m_pBlackMarket = new CInventory("Black Market");
-		for (i = 0; i < ITEMS_IN_PAWN_SHOP; i ++) {
-			j = rand() % lpMetaGameStruct->m_cPodj.m_pGenStore->ItemCount();
-			pItem = lpMetaGameStruct->m_cPodj.m_pGenStore->FetchItem(j);
-			lpMetaGameStruct->m_cPodj.m_pGenStore->RemoveItem(pItem);
-
-			lpMetaGameStruct->m_cPodj.m_pBlackMarket->AddItem(pItem);
-		}
-
-	}
-	lpMetaGameStruct->m_bInventories = TRUE;
-	lpMetaGameStruct->m_stGameStruct.lCrowns = 1000;
-	lpMetaGameStruct->m_stGameStruct.lScore = 0;
-	lpMetaGameStruct->m_stGameStruct.nSkillLevel = SKILLLEVEL_MEDIUM;
-	lpMetaGameStruct->m_stGameStruct.bSoundEffectsEnabled = TRUE;
-	lpMetaGameStruct->m_stGameStruct.bMusicEnabled = TRUE;
-	lpMetaGameStruct->m_stGameStruct.bPlayingHodj = TRUE;
-	lpMetaGameStruct->m_bRestart = FALSE;
-	lpMetaGameStruct->m_stGameStruct.bPlayingMetagame = TRUE;
-	lpMetaGameStruct->m_iGameTime = SHORT_GAME;
-}
-#endif
-
 void CGtlFrame::OnCallOpen() {
 	// TODO: Add your command handler code here
 	JXENTER(CGtlFrame::OnCallOpen) ;
-	int iError = 0 ;        // error code
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 
 	xpGtlApp->CallOnFileOpen() ;

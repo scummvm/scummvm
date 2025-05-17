@@ -441,16 +441,16 @@ public:
 	int m_iLocCode ;            // MG_LOC_xxxx
 	int m_iFunctionCode ;       // MG_GAME_xxxx or MG_VISIT_xxxx
 	int m_iCost ;               // Amount of money for MG_VISIT_INFO
-	LPSTR m_lpszLabel ;         // node label for location
-	LPSTR m_lpszName ;          // full name of location
+	LPCSTR m_lpszLabel ;         // node label for location
+	LPCSTR m_lpszName ;          // full name of location
 } ;
 
 // CSectorTable
 class CSectorTable {
 public:
 	int m_iSectorCode ;         // MG_SECTOR_xxxx
-	LPSTR m_lpszLabel ;         // node label for sector
-	LPSTR m_lpszName ;          // full name of sector
+	LPCSTR m_lpszLabel ;         // node label for sector
+	LPCSTR m_lpszName ;          // full name of sector
 } ;
 
 // CGameTable
@@ -458,10 +458,10 @@ class CGameTable {
 public:
 	int m_iGameCode ;           // MG_GAME_xxxx
 	int m_iWinCode ;            // MG_WIN_xxxx (win money, object, info)
-	LPSTR m_lpszGameName ;      // full name of game
-	LPSTR m_lpszDllPath ;       // path of DLL
-	LPSTR m_lpszDllName ;       // name of DLL
-	LPSTR m_lpszApiName ;       // entry point of DLL
+	LPCSTR m_lpszGameName ;      // full name of game
+	LPCSTR m_lpszDllPath ;       // path of DLL
+	LPCSTR m_lpszDllName ;       // name of DLL
+	LPCSTR m_lpszApiName ;       // entry point of DLL
 	BOOL m_bLocalDLL;           // whether an updated game DLL is in the Meta directory
 } ;
 
@@ -495,7 +495,7 @@ public:
 	BOOL m_bMoneyRequired ;     // if TRUE, one object must be money
 } ;
 
-#define FINDS(tab, idx) { C##tab FAR * lpTab ; \
+#define FINDS(tab, idx) { const C##tab *lpTab ; \
 		for (lpTab = c##tab ;; ++lpTab) \
 			if (!lpTab->m_##idx) return(NULL) ; \
 			else if (lpTab->m_##idx == idx) return(lpTab) ;}
@@ -510,25 +510,25 @@ public:
 class CMgStatic {
 public:
 	#ifndef FRAME_EXE
-	static CLocTable FAR cLocTable[] ; // location to game/action
-	static CSectorTable FAR cSectorTable[] ; // sector table
-	static CLengthTable FAR cLengthTable[] ; // level to # objects
+	static const CLocTable FAR cLocTable[] ; // location to game/action
+	static const CSectorTable FAR cSectorTable[] ; // sector table
+	static const CLengthTable FAR cLengthTable[] ; // level to # objects
 	#endif
-	static CGameTable FAR cGameTable[] ; // game to win result
-	static CClueTable FAR cHodjClueTable[] ; // Hodj clue booklet
-	static CClueTable FAR cPodjClueTable[] ; // Podj clue booklet
+	static const CGameTable FAR cGameTable[] ; // game to win result
+	static const CClueTable FAR cHodjClueTable[] ; // Hodj clue booklet
+	static const CClueTable FAR cPodjClueTable[] ; // Podj clue booklet
 
-	static CGameTable *FindGame(int iGameCode) FINDS(GameTable, iGameCode)
+	static const CGameTable *FindGame(int iGameCode) FINDS(GameTable, iGameCode)
 
 	#ifndef FRAME_EXE
-	static CLocTable *FindLoc(int iLocCode) FINDS(LocTable, iLocCode)
-	static CSectorTable *FindSector(int iSectorCode) FINDS(SectorTable, iSectorCode)
+	static const CLocTable *FindLoc(int iLocCode) FINDS(LocTable, iLocCode)
+	static const CSectorTable *FindSector(int iSectorCode) FINDS(SectorTable, iSectorCode)
 	#endif
 
 // mgstat.cpp -- meta game static tables
 
 //- MgStatic::FindClue -- find Hodj/Podj clue
-	static CClueTable *CMgStatic::FindClue(BOOL bPodj, int iClue) ;
+	static const CClueTable *FindClue(BOOL bPodj, int iClue) ;
 
 };
 

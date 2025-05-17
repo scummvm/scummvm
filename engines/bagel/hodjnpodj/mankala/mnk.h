@@ -215,7 +215,7 @@ public:
 	CMove() {
 		Zero();    // constructor
 	}
-	#ifdef _DEBUG
+	#ifdef BAGEL_DEBUG
 	BOOL SetBackToOriginal(HWND);       //this is public:
 	void RearrangeConfiguration(HWND, int, long, BOOL); //THIS IS public:
 	void ReConfig(HWND,  long); //THIS IS public:

@@ -32,32 +32,32 @@ extern void DoPendingEvents();
 
 // class CTimeUtil -- general utilities
 class CTimeUtil {
-
+public:
 	char m_cStartData ;
 	BOOL m_bTimeDelayPassed ;   // flag: DelayMs function time expired
-
 
 	char m_cEndData ;
 
 public:
-
 	// constructor zeroes out all fields
 	CTimeUtil() {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 	}
 
-
-// btimeut.cpp -- Boffo Games time utilities -- class CTimeUtil
-
 //- DelayMs -- delay for specified # of milliseconds
 	BOOL DelayMs(UINT uMs) ;
-//- DelayMsCallback -- SetTimer callback routine for DelayMs
-	void FAR PASCAL DelayMsCallback(HWND /* hWnd */,
-	                                UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */) ;
 
-
-
-} ;
+private:
+	/**
+	 * SetTimer callback routine for DelayMs
+	 * @param hWnd		handle of window (always NULL in this case)
+	 * @param uMsg		WM_TIMER message
+	 * @param uTimerId	timer identifier
+	 * @param dwTime	current system time
+	 */
+	static void DelayMsCallback(HWND hWnd, UINT uMsg,
+		UINT uTimerId, DWORD dwTime);
+};
 
 } // namespace Metagame
 } // namespace HodjNPodj
