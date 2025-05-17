@@ -1273,6 +1273,7 @@ Common::Error ScummEngine::init() {
 			{ GID_INDY4,    "Indy 12-15-92"            },
 			{ GID_INDY4,    "Fate of Atlantis v1.5"    },
 			{ GID_INDY4,    "Fate of Atlantis v.1.5"   },
+			{ GID_INDY4,    "Fate of Atlantis PowerPC" },
 			{ GID_INDY4,    "Indy Demo"                },
 			{ GID_MONKEY2,  "LeChuck's Revenge"        },
 			{ GID_TENTACLE, "Day of the Tentacle"      },
