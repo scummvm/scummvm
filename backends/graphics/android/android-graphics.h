@@ -101,7 +101,7 @@ protected:
 	void hideOverlay() override;
 
 
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) override;
 
 	void refreshScreen() override;
 

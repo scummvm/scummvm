@@ -88,7 +88,13 @@ bool iOSGraphicsManager::setState(const iOSCommonGraphics::State &state) {
 }
 
 
-bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
+bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) {
+	// As GLES2 provides FBO, OpenGL graphics manager must ask us for a resizable surface
+	assert(resizable);
+	if (antialiasing != 0) {
+		warning("Requesting antialiased video mode while not available");
+	}
+
 	/* The iOS and tvOS video modes are always full screen */
 	return true;
 }
