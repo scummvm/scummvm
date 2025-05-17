@@ -789,7 +789,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			height = _desiredFullscreenHeight;
 			flags |= SDL_FULLSCREEN;
 		}
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+		if (_resizable && !_renderer3d) {
+#else
 		if (_resizable) {
+#endif
 			// In SDL1.2, resizing the window may invalidate the context
 			// This would kill all the engine objects
 			flags |= SDL_RESIZABLE;

@@ -49,6 +49,9 @@ class Pipeline;
 #if !USE_FORCED_GLES
 class LibRetroPipeline;
 #endif
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+class Renderer3D;
+#endif
 
 enum {
 	GFX_OPENGL = 0
@@ -115,6 +118,8 @@ public:
 
 	int16 getOverlayWidth() const override;
 	int16 getOverlayHeight() const override;
+	void showOverlay(bool inGUI) override;
+	void hideOverlay() override;
 
 	Graphics::PixelFormat getOverlayFormat() const override;
 
@@ -196,6 +201,7 @@ protected:
 #endif
 		bool aspectRatioCorrection;
 		int graphicsMode;
+		uint flags;
 		bool filtering;
 
 		uint scalerIndex;
@@ -353,6 +359,13 @@ protected:
 	 * The rendering surface for the virtual game screen.
 	 */
 	Surface *_gameScreen;
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	/**
+	 * The rendering helper for 3D games.
+	 */
+	Renderer3D *_renderer3d;
+#endif
 
 	/**
 	 * The game palette if in CLUT8 mode.

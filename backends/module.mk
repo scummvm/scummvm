@@ -176,6 +176,7 @@ ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/opengl/framebuffer.o \
 	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/renderer3d.o \
 	graphics/opengl/shader.o \
 	graphics/opengl/texture.o \
 	graphics/opengl/pipelines/clut8.o \
