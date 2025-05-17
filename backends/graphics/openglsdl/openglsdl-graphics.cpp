@@ -224,7 +224,14 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+	deinitOpenGLContext();
+}
+
+void OpenGLSdlGraphicsManager::deinitOpenGLContext() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (!_glContext) {
+		return;
+	}
 
 #ifdef USE_IMGUI
 	destroyImGui();
@@ -232,10 +239,13 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 
 	notifyContextDestroy();
 	sdlGLDestroyContext(_glContext);
-#else
+
+	_glContext = nullptr;
+#else // SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_hwScreen) {
 		notifyContextDestroy();
 	}
+	_hwScreen = nullptr;
 #endif
 }
 
@@ -552,6 +562,9 @@ bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::Path &filename) cons
 }
 
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
+	// Destroy OpenGL context before messing with the window
+	deinitOpenGLContext();
+
 	// In case we request a fullscreen mode we will use the mode the user
 	// has chosen last time or the biggest mode available.
 	if (_wantsFullScreen) {
@@ -599,17 +612,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	const Graphics::PixelFormat rgba8888 = OpenGL::Texture::getRGBAPixelFormat();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_glContext) {
-		notifyContextDestroy();
-
-#ifdef USE_IMGUI
-		destroyImGui();
-#endif
-
-		sdlGLDestroyContext(_glContext);
-		_glContext = nullptr;
-	}
-
 	// Request a OpenGL (ES) context we can use.
 	// This must be done before any window creation
 	SDL_GL_ResetAttributes();
@@ -718,14 +720,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		flags |= SDL_FULLSCREEN;
 	} else {
 		flags |= SDL_RESIZABLE;
-	}
-
-	if (_hwScreen) {
-		// When a video mode has been setup already we notify the manager that
-		// the context is about to be destroyed.
-		// We do this because on Windows SDL_SetVideoMode can destroy and
-		// recreate the OpenGL context.
-		notifyContextDestroy();
 	}
 
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, _vsync ? 1 : 0);
