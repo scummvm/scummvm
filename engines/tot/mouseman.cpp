@@ -26,6 +26,7 @@
 
 #include "tot/mouseman.h"
 #include "tot/tot.h"
+#include "tot/util.h"
 
 namespace Tot {
 
@@ -85,7 +86,7 @@ void MouseManager::warpMouse(int mask, int x, int y) {
 void MouseManager::loadMasks() {
 	Common::File mouseMaskFile;
 	if (!mouseMaskFile.open(Common::Path("RATON.ACA")))
-		_exit(317);
+		showError(317);
 
 	int numMouseMasks = mouseMaskFile.readByte();
 	int mouseMaskSize = mouseMaskFile.readUint16LE();

@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 
 #include "tot/sound.h"
 #include "tot/tot.h"
@@ -35,30 +35,28 @@ void stopVoc() {
 
 void setSfxVolume(byte voll, byte volr) {
 
-	if(voll == volr) {
-		int volume = (voll)/(float)7 * 255;
+	if (voll == volr) {
+		int volume = (voll) / (float)7 * 255;
 		g_engine->_sound->setSfxVolume(volume);
 		g_engine->_sound->setSfxBalance(true, true);
-	}
-	else {
-		if(voll == 0) {
+	} else {
+		if (voll == 0) {
 			g_engine->_sound->setSfxBalance(false, true);
-		}
-		else {
+		} else {
 			g_engine->_sound->setSfxBalance(true, false);
 		}
 	}
 }
 
 void setMidiVolume(byte voll, byte volr) {
-	int volume = (voll)/(float)7 * 255;
+	int volume = (voll) / (float)7 * 255;
 	g_engine->_sound->setMusicVolume(volume);
 }
 
 void lowerMidiVolume(byte voll, byte volr) {
 
 	byte volpaso = (voll + volr) / 2;
-	for (int ivol = volpaso; ivol >= 0; ivol --) {
+	for (int ivol = volpaso; ivol >= 0; ivol--) {
 		setMidiVolume(ivol, ivol);
 		delay(10);
 	}
@@ -68,7 +66,7 @@ void restoreMidiVolume(byte voll, byte volr) {
 	byte ivol, volpaso;
 
 	volpaso = (voll + volr) / 2;
-	for (ivol = 0; ivol <= volpaso; ivol ++) {
+	for (ivol = 0; ivol <= volpaso; ivol++) {
 		setMidiVolume(ivol, ivol);
 		delay(10);
 	}
@@ -98,7 +96,7 @@ void playVoc(Common::String vocfile, int32 posinicio, uint tamvocleer) {
 void playMidiFile(Common::String nomfich, boolean loop) {
 
 	Common::File ficheromus;
-	if(!ficheromus.open(Common::Path(nomfich + ".MUS"))){
+	if (!ficheromus.open(Common::Path(nomfich + ".MUS"))) {
 		showError(267);
 	}
 	midmusica = (byte *)malloc(ficheromus.size());
@@ -107,7 +105,6 @@ void playMidiFile(Common::String nomfich, boolean loop) {
 	g_engine->_sound->playMidi(midmusica, ficheromus.size(), true);
 	ficheromus.close();
 }
-
 
 void initSound() {
 	setMidiVolume(3, 3);

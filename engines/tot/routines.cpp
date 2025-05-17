@@ -4409,7 +4409,7 @@ void saveLoad() {
 			if (pulsay >= 13 && pulsay <= 16) {
 				if (pulsax >= 54 && pulsax <= 124) {
 					if (partidaselecc > 0 && !desactivagrabar && (nombrepartida != Common::String("DISPONIBLE ") + (char)(partidaselecc + 48)) && (nombrepartida != "")) {
-						saveGame(partidaselecc);
+						// saveGame(partidaselecc);
 						fichindice.close();
 						putImg(50, 10, puntfondmenu);
 						salirmenufunciones = true;
@@ -4428,7 +4428,7 @@ void saveLoad() {
 								freeAnimation();
 								freeScreenObjects();
 							}
-							loadGame(partidaselecc);
+							// loadGame(partidaselecc);
 							xraton = oldxraton;
 							yraton = oldyraton;
 

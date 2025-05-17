@@ -65,6 +65,7 @@ void updateSecondaryAnimationDepth();
 void updateMainCharacterDepth();
 void actionLineText(Common::String actionLine);
 void initializeObjectFile();
+void saveItem(InvItemRegister object, Common::SeekableWriteStream *objectDataStream);
 
 regismht readVerbRegister(uint numRegister);
 regismht readVerbRegister();
