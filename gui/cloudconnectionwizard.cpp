@@ -77,7 +77,11 @@ CloudConnectionWizard::CloudConnectionWizard() :
 	_manualModeButton = nullptr;
 	_codeBox = nullptr;
 
+#ifdef USE_SDL_NET
 	showStep(Step::MODE_SELECT);
+#else 
+	showStep(Step::MANUAL_MODE_STEP_1);
+#endif
 
 	_callback = new Common::Callback<CloudConnectionWizard, const Networking::ErrorResponse &>(this, &CloudConnectionWizard::storageConnectionCallback);
 }
@@ -316,7 +320,9 @@ void CloudConnectionWizard::hideStepQuickModeSuccess() {
 void CloudConnectionWizard::showStepManualMode1() {
 	_headlineLabel->setLabel(_("Manual Mode: Step 1"));
 	showContainer("ConnectionWizard_ManualModeStep1");
+#ifdef USE_SDL_NET
 	showBackButton();
+#endif
 	showNextButton();
 
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line1", _("Open this link in your browser:"));
@@ -574,6 +580,11 @@ void CloudConnectionWizard::manualModeStorageConnectionCallback(const Networking
 
 // public
 
+int CloudConnectionWizard::runModal(uint32 selectedStorageIndex) {
+	_selectedStorageIndex = selectedStorageIndex;
+	return Dialog::runModal();
+}
+
 void CloudConnectionWizard::open() {
 	Dialog::open();
 #ifdef USE_SDL_NET
@@ -610,12 +621,31 @@ void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uin
 #endif // USE_SDL_NET
 		break;
 
-	case kCloudConnectionWizardOpenUrlStorageCmd:
-		if (!g_system->openUrl("https://cloud.scummvm.org/")) {
+	case kCloudConnectionWizardOpenUrlStorageCmd: {
+		Common::String url = "https://cloud.scummvm.org/";
+		switch (_selectedStorageIndex) {
+		case Cloud::kStorageDropboxId:
+			url += "dropbox/271?refresh_token=true";
+			break;
+		case Cloud::kStorageOneDriveId:
+			url += "onedrive/271";
+			break;
+		case Cloud::kStorageGoogleDriveId:
+			url += "gdrive/271";
+			break;
+		case Cloud::kStorageBoxId:
+			url += "box/271";
+			break;
+		default:
+			break;
+		}
+
+		if (!g_system->openUrl(url)) {
 			MessageDialog alert(_("Failed to open URL!\nPlease navigate to this page manually."));
 			alert.runModal();
 		}
 		break;
+	}
 
 	case kCloudConnectionWizardPasteCodeCmd:
 		if (g_system->hasTextInClipboard()) {

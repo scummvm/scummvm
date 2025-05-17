@@ -34,6 +34,7 @@ class ButtonWidget;
 class EditTextWidget;
 
 class CloudConnectionWizard : public Dialog {
+    using Dialog::runModal;
 	enum class Step {
 		NONE,
 		MODE_SELECT,
@@ -55,6 +56,7 @@ class CloudConnectionWizard : public Dialog {
 	Networking::ErrorCallback _callback;
 	bool _connecting;
 	Common::U32String _errorMessage;
+	uint32 _selectedStorageIndex;
 
 	// common and generic widgets
 	StaticTextWidget *_headlineLabel;
@@ -127,6 +129,7 @@ public:
 	CloudConnectionWizard();
 	~CloudConnectionWizard() override;
 
+	int runModal(uint32 selectedStorageIndex);
 	void open() override;
 	void close() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;

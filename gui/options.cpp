@@ -139,7 +139,6 @@ enum {
 	kServerPortClearCmd = 'spcl',
 	kChooseRootDirCmd = 'chrp',
 	kRootPathClearCmd = 'clrp',
-	kOpenUrlStorageCmd = 'OpUr',
 	kDisconnectStorageCmd = 'DcSt',
 	kEnableStorageCmd = 'EnSt'
 };
@@ -3468,7 +3467,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kOpenCloudConnectionWizardCmd: {
 		CloudConnectionWizard wizard;
-		wizard.runModal();
+		wizard.runModal(_selectedStorageIndex);
 		setupCloudTab();
 		reflowLayout();
 		break;
@@ -3494,31 +3493,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kDownloadStorageCmd: {
 		DownloadDialog dialog(_selectedStorageIndex, _launcher);
 		dialog.runModal();
-		break;
-	}
-	case kOpenUrlStorageCmd: {
-		Common::String url = "https://cloud.scummvm.org/";
-		switch (_selectedStorageIndex) {
-		case Cloud::kStorageDropboxId:
-			url += "dropbox?refresh_token=true";
-			break;
-		case Cloud::kStorageOneDriveId:
-			url += "onedrive";
-			break;
-		case Cloud::kStorageGoogleDriveId:
-			url += "gdrive";
-			break;
-		case Cloud::kStorageBoxId:
-			url += "box";
-			break;
-		default:
-			break;
-		}
-
-		if (!g_system->openUrl(url)) {
-			MessageDialog alert(_("Failed to open URL!\nPlease navigate to this page manually."));
-			alert.runModal();
-		}
 		break;
 	}
 	case kDisconnectStorageCmd: {
