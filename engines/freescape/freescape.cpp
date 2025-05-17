@@ -747,8 +747,13 @@ Common::Error FreescapeEngine::run() {
 	initGameState();
 	loadColorPalette();
 
-	g_system->showMouse(true);
-	g_system->lockMouse(false);
+	if (g_system->getFeatureState(OSystem::kFeatureTouchscreen)) {
+		g_system->showMouse(true);
+		g_system->lockMouse(false);
+	} else {
+		g_system->showMouse(false);
+		g_system->lockMouse(true);
+	}
 
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
