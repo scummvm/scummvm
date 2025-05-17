@@ -32,7 +32,7 @@ void lowerMidiVolume(byte voll, byte volr);
 void restoreMidiVolume(byte voll, byte volr);
 void setMasterVolume(byte voll, byte volr);
 void loadVoc(Common::String vocFile, int32 startPos, uint vocSize);
-void autoPlayVoc(Common::String  vocFile, int32 startPos, uint vocSize);
+void autoPlayVoc(Common::String vocFile, int32 startPos, uint vocSize);
 void pitavocmem();
 void playVoc(Common::String vocFile, int32 startPos, uint vocSize);
 void stopVoc();

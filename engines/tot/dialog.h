@@ -28,7 +28,6 @@
 
 namespace Tot {
 
-
 typedef struct lista *plista;
 
 struct lista {
@@ -40,7 +39,6 @@ extern byte conversationIndex;
 extern plista l1, l;
 extern Tree ar, auxTree, step;
 extern boolean endOfConversation;
-
 
 void talkScreenObject();
 

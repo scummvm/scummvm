@@ -99,7 +99,7 @@ void playMidiFile(Common::String nomfich, boolean loop) {
 
 	Common::File ficheromus;
 	if(!ficheromus.open(Common::Path(nomfich + ".MUS"))){
-		error("pitamidfich(): ioresult! (267)");
+		showError(267);
 	}
 	midmusica = (byte *)malloc(ficheromus.size());
 	ficheromus.read(midmusica, ficheromus.size());

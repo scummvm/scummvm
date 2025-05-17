@@ -57,7 +57,7 @@ void loadAnimation(Common::String animacion) {
 
 	animacion2 = true;
 	if (!fichcani.open(Common::Path(animacion + ".DAT"))) {
-		error("loadAnimation(): ioresult (265)");
+		showError(265);
 	}
 
 	sizeanimado = fichcani.readUint16LE();
@@ -67,7 +67,7 @@ void loadAnimation(Common::String animacion) {
 	if (numerodir != 0) {
 
 		secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
-		for (int i = 0; i <= 3; i++){
+		for (int i = 0; i <= 3; i++) {
 			loadAnimationForDirection(&fichcani, i);
 		}
 	} else {
@@ -108,7 +108,7 @@ void loadAnimation(Common::String animacion) {
 
 void assignText() {
 	if (!verb.open("CONVERSA.TXT")) {
-		error("assignText(): ioresult (313)");
+		showError(313);
 	}
 }
 
@@ -120,11 +120,10 @@ void updateAltScreen(byte otherScreenNumber) {
 
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 
-	//Save current room
+	// Save current room
 	saveRoomData(currentRoomData, rooms);
 
-
-	//Load other screen
+	// Load other screen
 	rooms->seek(otherScreenNumber * roomRegSize, SEEK_SET);
 	currentRoomData = readScreenDataFile(rooms);
 
@@ -200,7 +199,6 @@ void updateAltScreen(byte otherScreenNumber) {
 	// Save other screen
 	saveRoomData(currentRoomData, rooms);
 
-
 	// Restore current room again
 	rooms->seek(currentScreen * roomRegSize, SEEK_SET);
 	currentRoomData = readScreenDataFile(rooms);
@@ -255,7 +253,7 @@ void cargatele() {
 
 	Common::File fichct;
 	if (!fichct.open("PALETAS.DAT")) {
-		error("cargatele(): ioresult (310)");
+		showError(310);
 	}
 	fichct.seek(currentRoomData->puntpaleta + 603);
 	fichct.read(movimientopal, 144);
@@ -284,7 +282,7 @@ void loadScreen() {
 	switch (gamePart) {
 	case 1: {
 		if (!fichcp.open("PALETAS.DAT")) {
-				error("loadScreen(): ioresult (310)");
+			showError(310);
 		}
 		fichcp.seek(currentRoomData->puntpaleta);
 		fichcp.read(palcp, 603);
@@ -315,7 +313,7 @@ void loadCharAnimation() {
 	Common::File characterFile;
 	contadorpc = contadorpc2;
 	if (!characterFile.open("PERSONAJ.SPT"))
-		error("loadCharAnimation(): ioresult (265)");
+		showError(265);
 
 	sizeframe = characterFile.readUint16LE();
 
@@ -358,7 +356,7 @@ void freeAnimation() {
 }
 
 void freeInventory() {
-	for(int i = 0; i < inventoryIconCount; i++) {
+	for (int i = 0; i < inventoryIconCount; i++) {
 		free(mochilaxms.bitmap[i]);
 	}
 }
@@ -427,7 +425,7 @@ void updateInventory(byte indicador) {
 void readBitmap(int32 posbm, byte *puntbm, uint tambm, uint errorbm) {
 	Common::File fichbitmap;
 	if (!fichbitmap.open("BITMAPS.DAT")) {
-		error("readBitmap(): ioresult! (%d)", errorbm);
+		showError(errorbm);
 	}
 	fichbitmap.seek(posbm);
 	fichbitmap.read(puntbm, tambm);
@@ -497,7 +495,7 @@ void drawLookAtItem(RoomObjectListEntry obj) {
 }
 
 void putIcon(uint posiconx, uint posicony, uint numicon) {
-	//substract 1 to account for 1-based indices
+	// substract 1 to account for 1-based indices
 	putImg(posiconx, posicony, mochilaxms.bitmap[mobj[numicon].bitmapIndex - 1]);
 }
 
@@ -564,7 +562,7 @@ void inventory(byte direccion, byte tope) {
 		turnOffRight();
 	g_engine->_mouseManager->show();
 	if (contadorpc > 145)
-		error("drawMouseBackground(): contadorpc (274)");
+		showError(274);
 }
 
 void mask() {
@@ -592,7 +590,7 @@ void drawMenu(byte nummenu) {
 
 	Common::File menuFile;
 	if (!menuFile.open("MENUS.DAT")) {
-		error("Could not read menu file! (258)");
+		showError(258);
 	}
 
 	switch (nummenu) {
@@ -616,7 +614,7 @@ void drawMenu(byte nummenu) {
 	} break;
 	case 4: {
 		if (contadorpc2 > 20)
-			error("drawMenu(): contadorpc (274)");
+			showError(274);
 		tampunteromenu = 26745;
 		posicionmenu = 65074;
 		xmenu = 50;
@@ -624,7 +622,7 @@ void drawMenu(byte nummenu) {
 	} break;
 	case 5: {
 		if (contadorpc > 23)
-			error("drawMenu(): contadorpc (274)");
+			showError(274);
 		tampunteromenu = 16004;
 		posicionmenu = 91819;
 		xmenu = 0;
@@ -668,7 +666,7 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 
 	Common::File fich;
 	if (!fich.open("DIPLOMA.PAN")) {
-		error("loadDiploma(): ioresult (318)");
+		showError(318);
 	}
 
 	fich.read(palauxlocal, 768);
@@ -678,7 +676,7 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 	fich.close();
 
 	if (!fich.open(Common::Path("DIPLOMA/SELLO.BMP")))
-		error("loadDiploma(): ioresult (271)");
+		showError(271);
 	sello = (byte *)malloc(2054);
 	fich.read(sello, 2054);
 	fich.close();
@@ -801,8 +799,8 @@ void checkMouseGrid() {
 	uint xrejilla, yrejilla;
 	Common::String objmochila;
 	if (contadorpc2 > 120)
-		error("checkMouseGrid(): ioresult (274)");
-	if(yraton >= 0 && yraton <= 131) {
+		showError(274);
+	if (yraton >= 0 && yraton <= 131) {
 		xrejilla = (xraton + 7) / factorx;
 		yrejilla = (yraton + 7) / factory;
 		if (currentRoomData->mouseGrid[xrejilla][yrejilla] != currentRoomData->mouseGrid[oldxrejilla][oldyrejilla] || oldobjmochila != "") {
@@ -843,8 +841,7 @@ void checkMouseGrid() {
 		}
 		oldnumeroacc = 253;
 		oldobjmochila = "";
-	}
-	else if (yraton >= 132 && yraton <= 165) {
+	} else if (yraton >= 132 && yraton <= 165) {
 		if (numeroaccion != oldnumeroacc) {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
@@ -881,27 +878,20 @@ void checkMouseGrid() {
 			oldxrejilla = 0;
 			oldyrejilla = 0;
 		}
-	}
-	else if (yraton >= 166 && yraton <= 199) {
-		if(xraton >= 26 && xraton <= 65) {
+	} else if (yraton >= 166 && yraton <= 199) {
+		if (xraton >= 26 && xraton <= 65) {
 			objmochila = mobj[posicioninv].objectName;
-		}
-		else if(xraton >= 70 && xraton <= 108) {
+		} else if (xraton >= 70 && xraton <= 108) {
 			objmochila = mobj[posicioninv + 1].objectName;
-		}
-		else if(xraton >= 113 && xraton <= 151) {
+		} else if (xraton >= 113 && xraton <= 151) {
 			objmochila = mobj[posicioninv + 2].objectName;
-		}
-		else if(xraton >= 156 && xraton <= 194) {
+		} else if (xraton >= 156 && xraton <= 194) {
 			objmochila = mobj[posicioninv + 3].objectName;
-		}
-		else if(xraton >= 199 && xraton <= 237) {
+		} else if (xraton >= 199 && xraton <= 237) {
 			objmochila = mobj[posicioninv + 4].objectName;
-		}
-		else if(xraton >= 242 && xraton <= 280) {
+		} else if (xraton >= 242 && xraton <= 280) {
 			objmochila = mobj[posicioninv + 5].objectName;
-		}
-		else {
+		} else {
 			objmochila = ' ';
 		}
 
@@ -1451,15 +1441,12 @@ void drawCreditsScreen(byte *&fondopp, uint &sizefondo2, byte *&fondo2) {
 	Common::File fichpp;
 
 	if (!fichpp.open("DIPLOMA.PAN")) {
-		error("drawCreditsScreen(): ioresult! (315)");
+		showError(315);
 	}
 	fondopp = (byte *)malloc(64000);
 	fichpp.read(palpaso, 768);
 	fichpp.read(fondopp, 64000);
 	fichpp.close();
-
-	// uint16 sizehor2 = READ_LE_UINT16(fondopp);
-	// uint16 sizever2 = READ_LE_UINT16(fondopp + 2);
 
 	drawFullScreen(fondopp);
 
@@ -1482,7 +1469,7 @@ void drawCreditsScreen(byte *&fondopp, uint &sizefondo2, byte *&fondo2) {
 	changePalette(palnegro, palpaso);
 	copyPalette(palpaso, pal);
 	if (contadorpc2 > 9)
-		error("drawCreditsScreen(): contadorpc2! (274)");
+		showError(274);
 }
 
 void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, boolean direct) {
@@ -1518,10 +1505,9 @@ void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, boolean direct)
 		kaka = kk + y;
 		for (int jj = 0; jj <= wImagen1; jj++) {
 			incremento = incremento2 + jj;
-			if((direct && imagen1[incremento] > 0) || (imagen1[incremento] > 16 && kaka >= 66 && kaka <= 192)) {
+			if ((direct && imagen1[incremento] > 0) || (imagen1[incremento] > 16 && kaka >= 66 && kaka <= 192)) {
 				paso[incremento] = imagen1[incremento];
-			}
-			else if (imagen1[incremento] > 16) {
+			} else if (imagen1[incremento] > 16) {
 				switch (kaka) {
 				case 59:
 				case 199:
@@ -1580,11 +1566,10 @@ void scrollCredit(
 	boolean &salirpitando,
 	int minHeight,
 	boolean withFade,
-	boolean refresh
-) {
+	boolean refresh) {
 	Common::File fich;
 	if (!fich.open("CREDITOS.DAT")) {
-		error("scrollcredit1(): ioresult! (270)");
+		showError(270);
 	}
 	fich.seek(posicion);
 	fich.read(background, tam);
@@ -1623,7 +1608,7 @@ void scrollCredit(
 		if (g_engine->shouldQuit())
 			break;
 	}
-	if(refresh) {
+	if (refresh) {
 		copyFromScreen(fondopp);
 	}
 }
@@ -1633,8 +1618,7 @@ void scrollSingleCredit(
 	uint tam,
 	palette &pal2,
 	byte *&fondopp,
-	boolean &salirpitando
-) {
+	boolean &salirpitando) {
 	scrollCredit(
 		posicion,
 		tam,
@@ -1643,8 +1627,7 @@ void scrollSingleCredit(
 		salirpitando,
 		8,
 		true,
-		false
-	);
+		false);
 }
 
 void removeTitle(byte *&fondo2) {
@@ -1791,7 +1774,7 @@ void introduction() {
 	totalFadeOut(0);
 
 	if (contadorpc > 6)
-		error("introduction(): contadorpc! (270)");
+		showError(270);
 	cleardevice();
 	drawFlc(136, 53, 888366, 136, 9, 1, true, true, false, pulsada_salida);
 	if (pulsada_salida)
@@ -1932,7 +1915,7 @@ void initialMenu(boolean fundido) {
 	else
 		drawFlc(0, 0, 837602, 0, 9, 0, false, false, false, kklogica);
 	if (contadorpc2 > 10)
-		error("initialMenu(): contadorpc! (274)");
+		showError(274);
 	xraton = 160;
 	yraton = 95;
 	iraton = 1;
@@ -2120,7 +2103,7 @@ void saveTemporaryGame() {
 
 void exitGame() {
 	g_system->quit();
-	//Should do cleanup here!
+	// Should do cleanup here!
 	free(conversationData);
 }
 
@@ -2162,7 +2145,7 @@ void exitToDOS() {
 				} else if (e.kbd.keycode == Common::KEYCODE_s) {
 					debug("would exit game now");
 					free(puntfondcontroles);
-					//CLEAR MEMORY!!
+					// CLEAR MEMORY!!
 					exitGame();
 					// exit game
 				} else if (e.kbd.keycode == Common::KEYCODE_n) {
@@ -2296,7 +2279,7 @@ void soundControls() {
 					if (oldxfade != xfade) {
 						putImg(86, 31, fondoslade1);
 						putImg(xfade, 31, slade);
-						//This yields a volume between 0 and 140
+						// This yields a volume between 0 and 140
 						volumenfx = xfade - 86;
 
 						debug("volumefx=%d", volumenfx);
@@ -2359,7 +2342,7 @@ void soundControls() {
 	free(fondoslade2);
 
 	if (contadorpc > 7)
-		error("controls(): contadorpc! (274)");
+		showError(274);
 
 	setMouseArea(0, 0, 305, 185);
 }
@@ -2384,8 +2367,8 @@ void sacrificeScene() {
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
 	delay(10000);
-	if(g_engine->shouldQuit())
-	 	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	for (int i = 28; i >= 0; i--)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2400,8 +2383,8 @@ void sacrificeScene() {
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 	delay(10000);
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	for (int i = 28; i >= 0; i--)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2415,16 +2398,16 @@ void sacrificeScene() {
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 	delay(10000);
-	if(g_engine->shouldQuit())
-	 	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	for (int i = 28; i >= 0; i--)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 	bar(10, 10, 300, 120, 0);
 
 	Common::File fich;
-	if(!fich.open("SALONREC.PAN")){
-		error("sacrifice(): ioresult! (318)");
+	if (!fich.open("SALONREC.PAN")) {
+		showError(318);
 	}
 	fich.read(palaux, 768);
 	fich.read(background, 44800);
@@ -2439,20 +2422,20 @@ void sacrificeScene() {
 		pal[i * 3 + 3] = palaux[i * 3 + 3] << 2;
 	}
 
-	//We dont have the width and height here in the byte buffer
+	// We dont have the width and height here in the byte buffer
 	drawScreen(background, false);
 	partialFadeIn(234);
 	stopVoc();
 
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	drawFlc(0, 0, 1712400, 0, 9, 19, false, false, true, pulsada_salida);
 	totalFadeOut(128);
 	stopVoc();
 	delay(1000);
-	if(g_engine->shouldQuit())
-	 	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	playMidiFile("SACRIFIC", true);
@@ -2482,7 +2465,7 @@ void sacrificeScene() {
 	}
 
 	delay(10000);
-	if(g_engine->shouldQuit())
+	if (g_engine->shouldQuit())
 		return;
 
 	for (int i = 32; i > 0; i--) {
@@ -2491,12 +2474,12 @@ void sacrificeScene() {
 	}
 	delay(2000);
 
-	if(!fich.open("SACRIFIC.PAN")){
-		error("sacrifice(): ioresult! (318)");
+	if (!fich.open("SACRIFIC.PAN")) {
+		showError(318);
 	}
 	fich.read(palaux, 768);
 
-	for(int i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		palaux[i * 3 + 0] = palaux[i * 3 + 0] << 2;
 		palaux[i * 3 + 1] = palaux[i * 3 + 1] << 2;
 		palaux[i * 3 + 2] = palaux[i * 3 + 2] << 2;
@@ -2514,13 +2497,13 @@ void sacrificeScene() {
 
 	drawFlc(112, 57, 1783054, 33, 9, 20, true, false, true, pulsada_salida);
 	autoPlayVoc("REZOS", 0, 0);
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	drawFlc(42, 30, 1806212, 0, 9, 27, false, false, false, pulsada_salida);
 
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	totalFadeOut(128);
 	stopVoc();
@@ -2567,53 +2550,83 @@ void sacrificeScene() {
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
 	delay(16000);
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	for (int i = 31; i >= 0; i--) {
 		setRGBPalette(255, 63 - (32 - i), i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
 	delay(2000);
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	clear();
 	outtextxy(10, 21, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
 	outtextxy(10, 19, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
 	outtextxy(11, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
 	outtextxy(9, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
-	outtextxy(10, 41, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
-	outtextxy(10, 39, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
-	outtextxy(11, 40, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
-	outtextxy(9, 40, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 254);
+	outtextxy(10, 41, "   cuerpo se  debilita  y tu  alma podr\xA1"
+					  "a  quedar",
+			  254);
+	outtextxy(10, 39, "   cuerpo se  debilita  y tu  alma podr\xA1"
+					  "a  quedar",
+			  254);
+	outtextxy(11, 40, "   cuerpo se  debilita  y tu  alma podr\xA1"
+					  "a  quedar",
+			  254);
+	outtextxy(9, 40, "   cuerpo se  debilita  y tu  alma podr\xA1"
+					 "a  quedar",
+			  254);
 	outtextxy(10, 61, "   atrapada para siempre en las Cavernas Eternas.", 254);
 	outtextxy(10, 59, "   atrapada para siempre en las Cavernas Eternas.", 254);
 	outtextxy(11, 60, "   atrapada para siempre en las Cavernas Eternas.", 254);
 	outtextxy(9, 60, "   atrapada para siempre en las Cavernas Eternas.", 254);
-	outtextxy(10, 81, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
-	outtextxy(10, 79, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
-	outtextxy(11, 80, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
-	outtextxy(9, 80, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 254);
+	outtextxy(10, 81, "   Si necesitaras  m\xA0s  energ\xA1"
+					  "a de la que tienes, ",
+			  254);
+	outtextxy(10, 79, "   Si necesitaras  m\xA0s  energ\xA1"
+					  "a de la que tienes, ",
+			  254);
+	outtextxy(11, 80, "   Si necesitaras  m\xA0s  energ\xA1"
+					  "a de la que tienes, ",
+			  254);
+	outtextxy(9, 80, "   Si necesitaras  m\xA0s  energ\xA1"
+					 "a de la que tienes, ",
+			  254);
 	outtextxy(10, 101, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
 	outtextxy(10, 99, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
 	outtextxy(11, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
 	outtextxy(9, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
-	outtextxy(10, 121, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
-	outtextxy(10, 119, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
-	outtextxy(11, 120, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
-	outtextxy(9, 120, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 254);
+	outtextxy(10, 121, "   m\xA0s energ\xA1"
+					   "a que un alma al contrario que en el",
+			  254);
+	outtextxy(10, 119, "   m\xA0s energ\xA1"
+					   "a que un alma al contrario que en el",
+			  254);
+	outtextxy(11, 120, "   m\xA0s energ\xA1"
+					   "a que un alma al contrario que en el",
+			  254);
+	outtextxy(9, 120, "   m\xA0s energ\xA1"
+					  "a que un alma al contrario que en el",
+			  254);
 	outtextxy(10, 141, "   mundo f\xA1sico.", 254);
 	outtextxy(10, 139, "   mundo f\xA1sico.", 254);
 	outtextxy(11, 140, "   mundo f\xA1sico.", 254);
 	outtextxy(9, 140, "   mundo f\xA1sico.", 254);
 
 	outtextxy(10, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 255);
-	outtextxy(10, 40, "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar", 255);
+	outtextxy(10, 40, "   cuerpo se  debilita  y tu  alma podr\xA1"
+					  "a  quedar",
+			  255);
 	outtextxy(10, 60, "   atrapada para siempre en las Cavernas Eternas.", 255);
-	outtextxy(10, 80, "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ", 255);
+	outtextxy(10, 80, "   Si necesitaras  m\xA0s  energ\xA1"
+					  "a de la que tienes, ",
+			  255);
 	outtextxy(10, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 255);
-	outtextxy(10, 120, "   m\xA0s energ\xA1""a que un alma al contrario que en el", 255);
+	outtextxy(10, 120, "   m\xA0s energ\xA1"
+					   "a que un alma al contrario que en el",
+			  255);
 	outtextxy(10, 140, "   mundo f\xA1sico.", 255);
 
 	for (int i = 0; i < 32; i++) {
@@ -2621,16 +2634,16 @@ void sacrificeScene() {
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
 	delay(13000);
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 
 	for (int i = 32; i > 0; i--) {
 		setRGBPalette(255, 63 - (32 - i), i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
 	delay(2000);
-	if(g_engine->shouldQuit())
-	return;
+	if (g_engine->shouldQuit())
+		return;
 	clear();
 	outtextxy(10, 61, "              No te demores y recuerda...", 254);
 	outtextxy(10, 59, "              No te demores y recuerda...", 254);
@@ -2654,7 +2667,7 @@ void sacrificeScene() {
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
 	delay(7000);
-	if(g_engine->shouldQuit())
+	if (g_engine->shouldQuit())
 		return;
 	for (int i = 32; i > 0; i--) {
 		setRGBPalette(255, 63 - (32 - i), i * 2, i * 2);
@@ -2697,8 +2710,8 @@ void loadBat() {
 	Common::File fichcani;
 
 	animacion2 = true;
-	if(!fichcani.open("MURCIE.DAT")){
-		error("loadBat(): ioresult! (265)");
+	if (!fichcani.open("MURCIE.DAT")) {
+		showError(265);
 	}
 	sizeanimado = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
@@ -2712,8 +2725,8 @@ void loadDevil() {
 	Common::File fichcani;
 
 	animacion2 = true;
-	if(!fichcani.open("ROJOMOV.DAT")) {
-		error("loadDevil(): ioresult! (265)");
+	if (!fichcani.open("ROJOMOV.DAT")) {
+		showError(265);
 	}
 	sizeanimado = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
@@ -2747,7 +2760,6 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 			}
 		}
 	}
-
 }
 
 /**
@@ -2881,23 +2893,21 @@ void setRoomTrajectories(int animationHeight, int animationWidth, TRAJECTORIES_O
 
 	if (currentRoomData->banderamovimiento && currentRoomData->nombremovto != "QQQQQQQQ") {
 		for (int i = 0; i < currentRoomData->longtray2; i++) {
-			if(op == RESTORE) {
+			if (op == RESTORE) {
 				currentRoomData->tray2[i].x = currentRoomData->tray2[i].x + (animationWidth >> 1);
 				currentRoomData->tray2[i].y = currentRoomData->tray2[i].y + animationHeight;
-			}
-			else {
+			} else {
 				currentRoomData->tray2[i].x = currentRoomData->tray2[i].x - (animationWidth >> 1);
 				currentRoomData->tray2[i].y = currentRoomData->tray2[i].y - animationHeight;
 			}
 		}
-		if(fixGrids) {
+		if (fixGrids) {
 			for (int i = 0; i < maxrejax; i++) {
 				for (int j = 0; j < maxrejay; j++) {
-					if(op == RESTORE){
+					if (op == RESTORE) {
 						currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejafondomovto[i][j];
 						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejafondoraton[i][j];
-					}
-					else {
+					} else {
 						if (rejamascaramovto[i][j] > 0)
 							currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
 						if (rejamascararaton[i][j] > 0)

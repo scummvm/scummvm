@@ -22,17 +22,17 @@
  *
  */
 
+#include "gui/saveload.h"
 #include "common/error.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/system.h"
 #include "gui/message.h"
-#include "gui/saveload.h"
 
-#include "tot/tot.h"
 #include "tot/forest.h"
 #include "tot/playanim.h"
 #include "tot/routines.h"
+#include "tot/tot.h"
 
 namespace Tot {
 
@@ -118,14 +118,13 @@ boolean syncGeneralData(Common::Serializer &s, regispartida &game) {
 	}
 
 	for (int indiaux = 0; indiaux < maxpersonajes; indiaux++) {
-		//interleave them just to avoid creating many loops
+		// interleave them just to avoid creating many loops
 		s.syncAsByte(game.primera[indiaux]);
 		s.syncAsByte(game.lprimera[indiaux]);
 		s.syncAsByte(game.cprimera[indiaux]);
 		s.syncAsByte(game.libro[indiaux]);
 		s.syncAsByte(game.caramelos[indiaux]);
 	}
-
 
 	for (int indiaux = 0; indiaux < 5; indiaux++) {
 		s.syncAsByte(game.cavernas[indiaux]);
@@ -147,31 +146,31 @@ boolean syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStrea
 	uint32 startBytes = s.bytesSynced();
 	if (s.isSaving()) {
 
-		//Restore trajectory
+		// Restore trajectory
 		setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
-		//Make sure to save any unsaved changes in the room
+		// Make sure to save any unsaved changes in the room
 		saveRoomData(currentRoomData, rooms);
 
 		// Do not fix screen grids, they will be fixed differently below
 		setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);
 
 		int size = roomStream->size();
-        byte *roomBuf = (byte *)malloc(size);
+		byte *roomBuf = (byte *)malloc(size);
 		roomStream->seek(0, 0);
 		roomStream->read(roomBuf, size);
-        s.syncBytes(roomBuf, size);
-        free(roomBuf);
+		s.syncBytes(roomBuf, size);
+		free(roomBuf);
 		debug("return room totalBytes synced %d", s.bytesSynced());
 	}
 	uint32 newBytes = s.bytesSynced();
 	if (s.isLoading()) {
 		int size = rooms->size();
 		delete (rooms);
-        byte *roomBuf = (byte *)malloc(size);
-        s.syncBytes(roomBuf, size);
+		byte *roomBuf = (byte *)malloc(size);
+		s.syncBytes(roomBuf, size);
 
 		debug("Loading room data now");
-        //TODO: Will roomBuf be automatically freed?
+		// TODO: Will roomBuf be automatically freed?
 		rooms = new Common::MemorySeekableReadWriteStream(roomBuf, size, DisposeAfterUse::NO);
 	}
 	return true;
@@ -181,122 +180,122 @@ boolean syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWr
 	uint32 startBytes = s.bytesSynced();
 
 	int size = conversations->size();
-	if(s.isSaving()) {
+	if (s.isSaving()) {
 
 		byte *convBuf = (byte *)malloc(size);
 		conversations->seek(0, 0);
 		conversations->read(convBuf, size);
-        s.syncBytes(convBuf, size);
-        free(convBuf);
+		s.syncBytes(convBuf, size);
+		free(convBuf);
 		debug("return conversation totalBytes synced %d", s.bytesSynced());
 	}
-	if(s.isLoading()) {
+	if (s.isLoading()) {
 		delete (conversationData);
-        byte *convBuf = (byte *)malloc(size);
-        s.syncBytes(convBuf, size);
+		byte *convBuf = (byte *)malloc(size);
+		s.syncBytes(convBuf, size);
 		debug("Loading conversation data now");
-        //TODO: Will objBuf be automatically freed?
+		// TODO: Will objBuf be automatically freed?
 		conversationData = new Common::MemorySeekableReadWriteStream(convBuf, size, DisposeAfterUse::NO);
 	}
-    return true;
+	return true;
 }
 
 boolean syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *items) {
 	uint32 startBytes = s.bytesSynced();
 	int size = items->size();
 	if (s.isSaving()) {
-        byte *objBuf = (byte *)malloc(size);
+		byte *objBuf = (byte *)malloc(size);
 		items->seek(0, 0);
 		items->read(objBuf, size);
-        s.syncBytes(objBuf, size);
-        free(objBuf);
+		s.syncBytes(objBuf, size);
+		free(objBuf);
 		debug("return items totalBytes synced %d", s.bytesSynced());
 	}
 	uint32 newBytes = s.bytesSynced();
 	if (s.isLoading()) {
 		delete (invItemData);
-        byte *objBuf = (byte *)malloc(size);
-        s.syncBytes(objBuf, size);
+		byte *objBuf = (byte *)malloc(size);
+		s.syncBytes(objBuf, size);
 		debug("Loading item data now");
-        //TODO: Will objBuf be automatically freed?
+		// TODO: Will objBuf be automatically freed?
 		invItemData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
 	}
-    return true;
+	return true;
 }
 
 Common::Error syncSaveData(Common::Serializer &ser, regispartida &game) {
-    if(!syncGeneralData(ser, game)) {
+	if (!syncGeneralData(ser, game)) {
 		warning("Error while synchronizing general data");
-        return Common::kUnknownError;
-    }
-    if(!syncRoomData(ser, rooms)) {
-        warning("Error while synchronizing room data");
-        return Common::kUnknownError;
-    }
-	if(!syncItemData(ser, invItemData)) {
+		return Common::kUnknownError;
+	}
+	if (!syncRoomData(ser, rooms)) {
+		warning("Error while synchronizing room data");
+		return Common::kUnknownError;
+	}
+	if (!syncItemData(ser, invItemData)) {
 		warning("Error while syncrhonizing object data");
 		return Common::kUnknownError;
 	}
-	if(!syncConversationData(ser, conversationData)) {
+	if (!syncConversationData(ser, conversationData)) {
 		warning("Error while syncrhonizing conversation data");
 		return Common::kUnknownError;
 	}
-    return Common::kNoError;
+	return Common::kNoError;
 }
 
 Common::Error TotEngine::syncGame(Common::Serializer &s) {
-    Common::Error result;
+	Common::Error result;
 
-    if(s.isLoading()){
+	if (s.isLoading()) {
 		debug("Loading game!!");
-        regispartida loadedGame;
+		regispartida loadedGame;
 		// Means we are loading from before the game has started
 		// if(rooms == nullptr) {
-			clear();
-			processingActive();
+		clear();
+		processingActive();
 
-			loadCharAnimation();
-			loadObjects();
+		loadCharAnimation();
+		loadObjects();
 
-			loadPalette("DEFAULT");
-			loadScreenMemory();
+		loadPalette("DEFAULT");
+		loadScreenMemory();
 
-			totalFadeOut(0);
-			clear();
-			processingActive();
-			initializeScreenFile();
-			initializeObjectFile();
-			readConversationFile(Common::String("CONVERSA.TRE"));
+		totalFadeOut(0);
+		clear();
+		processingActive();
+		initializeScreenFile();
+		initializeObjectFile();
+		readConversationFile(Common::String("CONVERSA.TRE"));
 		// }
-        result = syncSaveData(s, loadedGame);
-        loadGame(loadedGame);
-    } else {
-        saveGameToRegister();
-        result = syncSaveData(s, regpartida);
-    }
+		result = syncSaveData(s, loadedGame);
+		loadGame(loadedGame);
+	} else {
+		saveGameToRegister();
+		result = syncSaveData(s, regpartida);
+	}
 	return result;
 }
 
 Common::Error TotEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-    const byte version = SAVEGAME_CURRENT_VERSION;
-    Common::Serializer s(nullptr, stream);
-    s.setVersion(version);
-    stream->writeByte(version);
+	const byte version = SAVEGAME_CURRENT_VERSION;
+	Common::Serializer s(nullptr, stream);
+	s.setVersion(version);
+	stream->writeByte(version);
 
-    return syncGame(s);
+	return syncGame(s);
 }
 Common::Error TotEngine::loadGameStream(Common::SeekableReadStream *stream) {
-    byte version = stream->readByte();
-    if(version > SAVEGAME_CURRENT_VERSION) {
-        GUI::MessageDialog dialog(Common::String("Saved game was created with a newer version of ScummVM. Unable to load."));
+	byte version = stream->readByte();
+	if (version > SAVEGAME_CURRENT_VERSION) {
+		GUI::MessageDialog dialog(Common::String("Saved game was created with a newer version of ScummVM. Unable to load."));
 		dialog.runModal();
 		return Common::kUnknownError;
-    }
+	}
 
-    Common::Serializer s(stream, nullptr);
-    s.setVersion(version);
+	Common::Serializer s(stream, nullptr);
+	s.setVersion(version);
 
-    return syncGame(s);
+	return syncGame(s);
 }
 
 bool TotEngine::canLoadGameStateCurrently(Common::U32String *msg) {

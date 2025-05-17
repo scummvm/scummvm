@@ -19,14 +19,14 @@
  *
  */
 
-#include "common/file.h"
 #include "common/debug.h"
+#include "common/file.h"
 
 #include "tot/forest.h"
 
 namespace Tot {
 
-void initTree(Tree& a, nodeElement dato) {
+void initTree(Tree &a, nodeElement dato) {
 	a = new treeDef;
 	a->element = dato;
 	a->parent = NULL;
@@ -38,7 +38,8 @@ boolean root(Tree nodo) {
 	boolean raiz_result;
 	if (nodo->parent == NULL)
 		raiz_result = true;
-	else raiz_result = false;
+	else
+		raiz_result = false;
 	return raiz_result;
 }
 
@@ -60,7 +61,6 @@ Tree leftChild(Tree nodo) {
 	return hijoizq_result;
 }
 
-
 int depth(Tree nodo) {
 	Tree auxiliar;
 	int contador;
@@ -76,7 +76,7 @@ int depth(Tree nodo) {
 	return profundidad_result;
 }
 
-void expandNode(Tree& nodo, nodeElement dato) {
+void expandNode(Tree &nodo, nodeElement dato) {
 	Tree auxiliar;
 
 	auxiliar = nodo;
@@ -84,7 +84,8 @@ void expandNode(Tree& nodo, nodeElement dato) {
 
 		auxiliar = leftChild(auxiliar);
 		while (auxiliar->sibling != NULL)
-			auxiliar = rightSibling(auxiliar);;
+			auxiliar = rightSibling(auxiliar);
+		;
 		auxiliar->sibling = new treeDef;
 		auxiliar = auxiliar->sibling;
 		auxiliar->element = dato;
@@ -102,7 +103,7 @@ void expandNode(Tree& nodo, nodeElement dato) {
 	}
 }
 
-void preOrder(Tree a, Common::String& cadena) {
+void preOrder(Tree a, Common::String &cadena) {
 	if (a != NULL) {
 		cadena = Common::String::format("%s%d%cN%d@", cadena.c_str(), a->element.index, a->element.dicho, depth(a));
 		preOrder(leftChild(a), cadena);
@@ -207,7 +208,7 @@ void readTree(Common::String f, Tree &a, uint lugar) {
 	Common::File fichero;
 	debug("Filename = %s", f.c_str());
 	if (!fichero.open(Common::Path(f))) {
-		error("error opening conversation file (314)");
+		showError(314);
 	}
 	readTree(fichero, a, lugar);
 	fichero.close();

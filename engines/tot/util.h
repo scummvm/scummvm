@@ -11,7 +11,7 @@ namespace Tot {
 
 typedef unsigned char boolean;
 
-void _exit(int code);
+void showError(int code);
 
 // Delays a specified number of milliseconds.
 void delay(uint16 ms);
@@ -25,7 +25,7 @@ void setRGBPalette(int color, int r, int g, int b);
 
 void outtextxy(int x, int y, char const *text, byte color, bool euro = false, Graphics::TextAlign align = Graphics::kTextAlignStart);
 
-void outtextxy(int x, int y, Common::String text, byte color, bool euro= false, Graphics::TextAlign align = Graphics::kTextAlignStart);
+void outtextxy(int x, int y, Common::String text, byte color, bool euro = false, Graphics::TextAlign align = Graphics::kTextAlignStart);
 
 void outtextxyBios(int x, int y, Common::String text, byte color);
 
@@ -48,11 +48,11 @@ void waitForKey();
 void changeGameSpeed(Common::Event e);
 
 inline int keypressed() {
-    warning("Stub keypressed!");
+	warning("Stub keypressed!");
 	return 0;
 }
 
-inline boolean odd(long i) { return i%2!= 0; }
+inline boolean odd(long i) { return i % 2 != 0; }
 
 unsigned Random(unsigned range);
 int Random(int range);

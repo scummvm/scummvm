@@ -43,7 +43,7 @@ public:
 	void setPalette(byte palette[768], uint num = 256);
 
 	void restoreBackground(uint x, uint y, uint x2, uint y2);
-	void littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign  align = Graphics::kTextAlignLeft, bool alignCenterY = false);
+	void littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
 	void euroText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
 	void biosText(const Common::String &str, int x, int y, uint32 color);
 	void clear();

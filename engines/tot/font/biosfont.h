@@ -22,8 +22,8 @@
 #ifndef TOT_BIG5FONT_H
 #define TOT_BIG5FONT_H
 
-#include "graphics/font.h"
 #include "graphics/big5.h"
+#include "graphics/font.h"
 #include "graphics/surface.h"
 
 namespace Tot {
@@ -36,6 +36,7 @@ public:
 	int getMaxCharWidth() const override;
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+
 private:
 	void drawBiosFontGlyph(uint8 chr, int x, int y, uint8 color) const;
 };

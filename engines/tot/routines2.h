@@ -31,12 +31,11 @@
 namespace Tot {
 
 enum TRAJECTORIES_OP {
-    // Subtracts the animation dimensions to the trajectory coordinates to adjust movement
+	// Subtracts the animation dimensions to the trajectory coordinates to adjust movement
 	SET_WITH_ANIM = false,
-    // Adds the animation dimensions to the trajectory coordinates to restore
+	// Adds the animation dimensions to the trajectory coordinates to restore
 	RESTORE = true
 };
-
 
 void loadScreenMemory();
 void loadAnimation(Common::String animacion);
@@ -72,7 +71,7 @@ void firstIntroduction();
 void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte colorbarra);
 void readAlphaGraphSmall(Common::String &data, int long_, int posx, int posy, byte colorbarra, byte textColor);
 void hipercadena(Common::String cadenatextnueva, uint xhcnueva, uint yhcnueva, byte anchohc, byte colortextohc, byte colorsombrahc);
-void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1 , byte color2, byte color3, byte color4, byte color5, uint xtexto, Common::String outputGameName);
+void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5, uint xtexto, Common::String outputGameName);
 void copyProtection();
 void initialLogo();
 void initialMenu(boolean fade);
