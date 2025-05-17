@@ -270,11 +270,6 @@ public:
 	bool isConnectionLimited() override;
 	Common::String getSystemLanguage() const override;
 
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	int getDefaultGraphicsMode() const override;
-	bool setGraphicsMode(int mode, uint flags) override;
-	int getGraphicsMode() const override;
-
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;
