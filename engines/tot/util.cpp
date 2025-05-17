@@ -120,7 +120,7 @@ void waitForKey() {
 	while (!teclapulsada && !g_engine->shouldQuit())
 	{
 		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYUP) {
+			if (e.type == Common::EVENT_KEYDOWN) {
 				teclapulsada = true;
 			}
 		}

@@ -136,7 +136,7 @@ void SoundManager::setSfxBalance(bool left, bool right) {
 
 void SoundManager::setMusicVolume(int volume) {
 
-	debug("Setting music volume to =%d", volume);
+	// debug("Setting music volume to =%d", volume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 	ConfMan.setInt("music_volume", volume);
 	ConfMan.flushToDisk();
