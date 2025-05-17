@@ -996,36 +996,42 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 	// It's also used to restore state from 3D to 2D GFX manager
 	SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
 	_gfxManagerState = sdlGraphicsManager->getState();
-	bool supports3D = sdlGraphicsManager->hasFeature(kFeatureOpenGLForGame);
 
 	bool switchedManager = false;
 
 	// If the new mode and the current mode are not from the same graphics
 	// manager, delete and create the new mode graphics manager
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-	if (render3d && !supports3D) {
-		debug(1, "switching to OpenGL 3D graphics");
-		sdlGraphicsManager->deactivateManager();
-		delete sdlGraphicsManager;
-		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _supportsFrameBuffer);
-		switchedManager = true;
-	} else
-#endif
-	{
-		for (uint i = 0; i < GraphicsManagerCount; ++i) {
+	if (render3d) {
+		uint best3DSupport = -1;
+		uint i;
+		// Make sure the requested mode supports 3D
+		for (i = 0; i < GraphicsManagerCount; ++i) {
+			if (_supports3D[i]) {
+				best3DSupport = i;
+			}
 			if (!(mode >= _firstMode[i] && mode <= _lastMode[i]))
 				continue;
-			if (_graphicsMode >= _firstMode[i] && _graphicsMode <= _lastMode[i] && !supports3D)
+			if (_supports3D[i])
 				break;
-			debug(1, "switching graphics manager");
-			if (sdlGraphicsManager) {
-				sdlGraphicsManager->deactivateManager();
-				delete sdlGraphicsManager;
-			}
-			_graphicsManager = sdlGraphicsManager = createGraphicsManager(_eventSource, _window, (GraphicsManagerType)i);
-			switchedManager = true;
-			break;
 		}
+		if (i == GraphicsManagerCount) {
+			mode = _firstMode[best3DSupport];
+		}
+	}
+
+	for (uint i = 0; i < GraphicsManagerCount; ++i) {
+		if (!(mode >= _firstMode[i] && mode <= _lastMode[i]))
+			continue;
+		if (_graphicsMode >= _firstMode[i] && _graphicsMode <= _lastMode[i])
+			break;
+		debug(1, "switching graphics manager");
+		if (sdlGraphicsManager) {
+			sdlGraphicsManager->deactivateManager();
+			delete sdlGraphicsManager;
+		}
+		_graphicsManager = sdlGraphicsManager = createGraphicsManager(_eventSource, _window, (GraphicsManagerType)i);
+		switchedManager = true;
+		break;
 	}
 
 	_graphicsMode = mode;
@@ -1100,6 +1106,7 @@ void OSystem_SDL::setupGraphicsModes() {
 			srcMode++;
 		}
 		_lastMode[i] = _graphicsModes.size() - 1;
+		_supports3D[i] = manager->hasFeature(kFeatureOpenGLForGame);
 		delete manager;
 		assert(_defaultMode[i] != -1);
 	}
