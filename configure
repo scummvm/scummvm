@@ -2395,9 +2395,7 @@ if test "$have_gcc" = yes; then
 				fi
 
 				# Many false positives with Common::Serializer
-				if test $_cxx_minor -le 9; then
-					append_var CXXFLAGS "-Wno-maybe-uninitialized"
-				fi
+				append_var CXXFLAGS "-Wno-maybe-uninitialized"
 			fi
 		fi
 	fi
