@@ -1364,6 +1364,11 @@ Common::Error ScummEngine::init() {
 				// is because the engine will attempt to load Mac fonts from resources... using the
 				// _macGui object. This is not optimal, ideally we would want to decouple resource
 				// handling from the responsibilities of a simulated OS interface.
+
+				// The Aaron Giles Mac ports have an MBAR resource. The older
+				// ones do not.
+
+				_isModernMacVersion = (resource.getResLength(MKTAG('M', 'B', 'A', 'R'), 128) > 0);
 				_macGui = new MacGui(this, macResourceFile);
 			}
 
@@ -1380,11 +1385,6 @@ Common::Error ScummEngine::init() {
 
 			if (!resource.hasResFork())
 				return Common::Error(Common::kReadingFailed, Common::U32String::format(_("Could not find resource fork in Macintosh resource file %s"), macResourceFile.toString().c_str()));
-
-			// The Aaron Giles Mac ports have an MBAR resource. The older ones
-			// does not.
-
-			_isModernMacVersion = (resource.getResLength(MKTAG('M', 'B', 'A', 'R'), 128) > 0);
 
 			// The Dig is special, in that it has a smaller launcher executable
 			// that, I think, decides which one of the real executables to run.
