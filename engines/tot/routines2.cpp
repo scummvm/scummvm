@@ -2181,8 +2181,7 @@ void soundControls() {
 		volumenfx,
 		volumenmelodia,
 		xfade,
-		oldxfade,
-		ypaso;
+		oldxfade;
 
 	byte ytext, oldiraton;
 	boolean salirmenucontroles;
@@ -2260,12 +2259,13 @@ void soundControls() {
 				xfade = 86 + volumenfx;
 				boolean mouseReleased = false;
 				do {
+
+					oldxfade = xfade;
 					while (g_system->getEventManager()->pollEvent(e)) {
 						if (e.type == Common::EVENT_LBUTTONUP) {
 							mouseReleased = true;
 						} else if (e.type == Common::EVENT_MOUSEMOVE) {
 							xfade = e.mouse.x;
-							ypaso = e.mouse.y;
 						}
 					}
 					if (xfade < 86) {
@@ -2299,7 +2299,6 @@ void soundControls() {
 							mouseReleased = true;
 						} else if (e.type == Common::EVENT_MOUSEMOVE) {
 							xfade = e.mouse.x;
-							ypaso = e.mouse.y;
 						}
 					}
 					if (xfade < 86) {
