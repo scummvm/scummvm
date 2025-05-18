@@ -999,7 +999,7 @@ bool MacV6Gui::runOptionsDialog() {
 
 	window->setDefaultWidget(buttonOk);
 
-	if (_vm->_game.id == GID_TENTACLE) {
+	if (_vm->_game.id == GID_TENTACLE || _vm->_game.id == GID_INDY4) {
 		// Yes, the frames really are supposed to be slightly
 		// misaligned to match the original appearance.
 
@@ -1032,8 +1032,6 @@ bool MacV6Gui::runOptionsDialog() {
 
 		checkboxSpoolMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
 #endif
-	} else if (_vm->_game.id == GID_INDY4) {
-		// TODO
 	} else
 		error("MacV6Gui::runOptionsDialog: Unknown game");
 
