@@ -129,7 +129,7 @@ struct inventoryBitmaps {
  */
 struct regismht {
 	Common::String cadenatext; // string
-	boolean encadenado;        // true if the next entry is a continuation of this one
+	bool encadenado;        // true if the next entry is a continuation of this one
 	uint16 respuesta;          // entry number of reply
 	int32 punteronil;
 };
@@ -147,10 +147,10 @@ struct InvItemRegister {
 	uint16 pickTextRef;      /* Registro al coger el objeto */
 	uint16 useTextRef;       /* Registro al usar el objeto */
 	byte habla;              /* number of character to respond */
-	boolean abrir;           /* true if it can be opened */
-	boolean cerrar;          /* true if it can be closed*/
+	bool abrir;           /* true if it can be opened */
+	bool cerrar;          /* true if it can be closed*/
 	byte usar[8];
-	boolean coger;
+	bool coger;
 	uint16 usarcon,
 		reemplazarpor; /*Numero del objeto por el que se reemplaza en el
 			   caso de que se utilize con un objeto de la mochila
@@ -214,9 +214,9 @@ struct RoomFileRegister {
 	DoorRegistry doors[5]; /* doors in the room */
 	RoomBitmapRegister bitmapasociados[15];
 	RoomObjectListEntry *indexadoobjetos[51] = {NULL}; /* includes name of objects for mouseover + index to object file*/
-	boolean animationFlag;                             /* true if there is a secondary animation */
+	bool animationFlag;                             /* true if there is a secondary animation */
 	Common::String nombremovto;                        /* name of the secondary animation, 8 chars*/
-	boolean paletteAnimationFlag;                      /* true if there exist palette animation */
+	bool paletteAnimationFlag;                      /* true if there exist palette animation */
 	uint16 puntpaleta;                                 /* points to the screen palette */
 	Common::Point tray2[300];                          /* trajectory of the secondary animation */
 	uint16 dir2[300];                                  /* directions of the secondary trajectory. Pos 300 reflects object code. */
@@ -250,7 +250,7 @@ struct regispartida {
 		direccionmovimiento,
 		iframe,
 		parte_del_juego;
-	boolean sello_quitado,
+	bool sello_quitado,
 		manual_torno,
 		lista1,
 		lista2,
@@ -280,13 +280,13 @@ struct regispartida {
 	route mainRoute;
 	uint16 firstList[5], secondList[5];
 	Common::Point trayec[300];
-	boolean primera[maxpersonajes],
+	bool primera[maxpersonajes],
 		lprimera[maxpersonajes],
 		cprimera[maxpersonajes],
 		libro[maxpersonajes],
 		caramelos[maxpersonajes];
 
-	boolean cavernas[5];
+	bool cavernas[5];
 	uint hornacina[2][4];
 };
 
@@ -319,13 +319,13 @@ extern uint oldxrejilla, oldyrejilla;
 
 extern regispartida regpartida;
 
-extern boolean sello_quitado;
+extern bool sello_quitado;
 
 /**
  * Flag to enable screen/room change
  */
-extern boolean cambiopantalla;
-extern boolean teleencendida,
+extern bool cambiopantalla;
+extern bool teleencendida,
 	vasijapuesta,
 	guadagna,
 	tridente,
@@ -342,35 +342,35 @@ extern boolean teleencendida,
 /**
  * Flag for temporary savegame
  */
-extern boolean inGame;
+extern bool inGame;
 /**
  * Flag for first time run of the game.
  */
-extern boolean hechaprimeravez;
+extern bool hechaprimeravez;
 /**
  * Flag to exit program.
  */
-extern boolean salirdeljuego;
+extern bool salirdeljuego;
 /**
  * Flag to initialize game
  */
-extern boolean partidanueva;
+extern bool partidanueva;
 /**
  * Flag to resume game
  */
-extern boolean continuarpartida;
+extern bool continuarpartida;
 /**
  * Flag to load a game upon start.
  */
-extern boolean desactivagrabar;
+extern bool desactivagrabar;
 /**
  * true if sprites should be drawn
  */
-extern boolean pintaractivo;
+extern bool pintaractivo;
 /**
  * Flag for secondary animation
  */
-extern boolean animacion2;
+extern bool animacion2;
 /**
  * 54 color palette slice.
  */
@@ -562,18 +562,18 @@ extern byte rejamascaramovto[10][10];
  */
 extern byte rejamascararaton[10][10];
 
-extern boolean completadalista1,
+extern bool completadalista1,
 	completadalista2,
 	lista1, // whether we've been given list 1
 	lista2; // whether we've been given list 2
 
-extern boolean primera[maxpersonajes],
+extern bool primera[maxpersonajes],
 	lprimera[maxpersonajes],
 	cprimera[maxpersonajes],
 	libro[maxpersonajes],
 	caramelos[maxpersonajes];
 
-extern boolean cavernas[5];
+extern bool cavernas[5];
 /**
  * First and second lists of objects to retrieve in the game
  */
@@ -592,10 +592,6 @@ extern uint sizeframe,
 	ofspasoanimado,
 	segfondo,
 	offfondo;
-/**
- * Flags for animations
- */
-// extern boolean tocapintar, tocapintar2;
 /**
  * Max num of loaded frames for secondary animation
  */
@@ -644,7 +640,7 @@ extern byte *handpantalla;
 
 extern uint currentRoomNumber;
 
-extern boolean isLoadingFromLauncher;
+extern bool isLoadingFromLauncher;
 
 void initializeScreenFile();
 void clearObj();

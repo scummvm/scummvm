@@ -28,8 +28,8 @@
 namespace Tot {
 
 void drawFlc(uint flicx, uint flicy, int32 posicionfli, uint loop,
-			 byte veloc, byte numevento, boolean palcompleta, boolean permitesalida,
-			 boolean doscientos, boolean &salidaflis);
+			 byte veloc, byte numevento, bool palcompleta, bool permitesalida,
+			 bool doscientos, bool &salidaflis);
 
 /**
  * Header of an Autodesk Animator FLIC file.

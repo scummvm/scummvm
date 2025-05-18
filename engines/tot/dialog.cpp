@@ -38,7 +38,7 @@ byte conversationIndex;
 plista l1, l;
 Tree ar, auxTree, step;
 
-boolean endOfConversation;
+bool endOfConversation;
 
 Common::String decrypt(Common::String tEncriptado) {
 	for (int i = 0; i < tEncriptado.size(); i++) {
@@ -49,7 +49,7 @@ Common::String decrypt(Common::String tEncriptado) {
 
 void findDialogLine(byte persona);
 
-static void findDownwards(Tree paso, boolean &desciende) {
+static void findDownwards(Tree paso, bool &desciende) {
 	if (paso != NULL) {
 		if (paso->element.dicho != '1') {
 			desciende = true;
@@ -62,7 +62,7 @@ static void findDownwards(Tree paso, boolean &desciende) {
 }
 
 void findDialogLine(byte persona) {
-	boolean hecho, decir, subida, desciende, borde, adelanta;
+	bool hecho, decir, subida, desciende, borde, adelanta;
 
 	auxTree = ar;
 	auxTree = auxTree->child;
@@ -299,7 +299,7 @@ void findDialogLine(byte persona) {
 }
 
 void modifyTree(uint nodonew) {
-	boolean encontrado;
+	bool encontrado;
 
 	encontrado = false;
 	auxTree = ar->child;

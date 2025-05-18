@@ -134,7 +134,7 @@ void copyFromScreen(byte *&screen) {
 	Common::copy(src, src + 64000, screen);
 }
 
-void drawScreen(byte *screen, boolean offsetSize) {
+void drawScreen(byte *screen, bool offsetSize) {
 	int offset = offsetSize ? 4 : 0;
 	for (int i1 = 0; i1 < 320; i1++) {
 		for (int j1 = 0; j1 < 140; j1++) {
@@ -144,7 +144,7 @@ void drawScreen(byte *screen, boolean offsetSize) {
 	g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 }
 
-void putImg(uint coordx, uint coordy, byte *image, boolean transparency) {
+void putImg(uint coordx, uint coordy, byte *image, bool transparency) {
 	uint16 w, h;
 
 	w = READ_LE_UINT16(image);
@@ -186,7 +186,7 @@ void updateSceneAreaIfNeeded(int speed = 1) {
 		g_engine->_screen->update();
 	}
 }
-void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
+void effect(byte numeroefecto, bool pasaranegro, byte *pantalla2) {
 
 	int i1, i2, i3, j1, j2, j3;
 	bool enabled = false;

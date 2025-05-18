@@ -46,10 +46,10 @@ uint oldxrejilla, oldyrejilla;
 
 regispartida regpartida;
 
-boolean sello_quitado;
+bool sello_quitado;
 
-boolean cambiopantalla;
-boolean teleencendida,
+bool cambiopantalla;
+bool teleencendida,
 	vasijapuesta,
 	guadagna,
 	tridente,
@@ -63,21 +63,21 @@ boolean teleencendida,
 	trampa_puesta,
 	peteractivo;
 
-boolean inGame;
+bool inGame;
 
-boolean hechaprimeravez;
+bool hechaprimeravez;
 
-boolean salirdeljuego;
+bool salirdeljuego;
 
-boolean partidanueva;
+bool partidanueva;
 
-boolean continuarpartida;
+bool continuarpartida;
 
-boolean desactivagrabar;
+bool desactivagrabar;
 
-boolean pintaractivo;
+bool pintaractivo;
 
-boolean animacion2;
+bool animacion2;
 
 palette movimientopal;
 
@@ -177,16 +177,16 @@ byte rejamascaramovto[10][10];
 
 byte rejamascararaton[10][10];
 
-boolean completadalista1, completadalista2,
+bool completadalista1, completadalista2,
 	lista1, lista2;
 
-boolean primera[maxpersonajes],
+bool primera[maxpersonajes],
 	lprimera[maxpersonajes],
 	cprimera[maxpersonajes],
 	libro[maxpersonajes],
 	caramelos[maxpersonajes];
 
-boolean cavernas[5];
+bool cavernas[5];
 
 uint16 firstList[5], secondList[5];
 
@@ -225,7 +225,7 @@ byte *handpantalla;
 
 uint currentRoomNumber;
 
-boolean isLoadingFromLauncher;
+bool isLoadingFromLauncher;
 
 void clearObj() {
 	byte indpasolimpiador1, indpasolimpiador2;

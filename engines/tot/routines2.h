@@ -74,7 +74,7 @@ void hipercadena(Common::String cadenatextnueva, uint xhcnueva, uint yhcnueva, b
 void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5, uint xtexto, Common::String outputGameName);
 void copyProtection();
 void initialLogo();
-void initialMenu(boolean fade);
+void initialMenu(bool fade);
 void exitToDOS();
 void soundControls();
 void sacrificeScene();
@@ -82,9 +82,9 @@ void ending();
 void loadBat();
 void loadDevil();
 void assembleCompleteBackground(byte *image, uint coordx, uint coordy);
-void assembleScreen(boolean scroll = false);
+void assembleScreen(bool scroll = false);
 void disableSecondAnimation();
-void setRoomTrajectories(int alto, int ancho, TRAJECTORIES_OP op, boolean fixGrids = true);
+void setRoomTrajectories(int alto, int ancho, TRAJECTORIES_OP op, bool fixGrids = true);
 void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction);
 
 // Debug methods

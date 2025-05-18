@@ -54,7 +54,7 @@ void runaroundRed() {
 
 	uint itrayseg, longtrayseg;
 
-	boolean exitLoop = false;
+	bool exitLoop = false;
 	loadDevil();
 	itrayseg = 0;
 	longtrayseg = 82;
@@ -139,7 +139,7 @@ void updateMovementCells() {
 	}
 }
 
-void sprites(boolean pintapersonaje);
+void sprites(bool pintapersonaje);
 
 static uint indice;
 /**
@@ -290,7 +290,7 @@ void drawMainCharacter() {
 	free(characterDirtyRect);
 }
 
-void sprites(boolean pintapersonaje) {
+void sprites(bool pintapersonaje) {
 	// grabs the current frame from the walk cycle
 	pasoframe = secuencia.bitmap[direccionmovimiento][iframe];
 
@@ -932,7 +932,7 @@ void lookInventoryObject(byte numeroobjeto) {
 	byte yaux;
 
 	Common::String cadenadescripcion;
-	boolean kkaux;
+	bool kkaux;
 	regismht reghpt;
 	palette paletaseg;
 
@@ -1053,7 +1053,7 @@ void useInventoryObjectWithInventoryObject(uint numobj1, uint numobj2) {
 		drawText(kaka);
 }
 
-void calculateRoute(byte zona1, byte zona2, boolean extraCorrection, boolean zonavedada) {
+void calculateRoute(byte zona1, byte zona2, bool extraCorrection, bool zonavedada) {
 	// Resets the entire route
 	for (pasos = 0; pasos < 7; pasos++) {
 		mainRoute[pasos].x = 0;
@@ -1119,7 +1119,7 @@ void calculateRoute(byte zona1, byte zona2, boolean extraCorrection, boolean zon
 }
 
 void goToObject(byte zona1, byte zona2) {
-	boolean zonavedada = false;
+	bool zonavedada = false;
 
 	contadorpc2 = contadorpc;
 
@@ -1217,7 +1217,7 @@ void updateMainCharacterDepth() {
 	}
 }
 
-void advanceAnimations(boolean zonavedada, boolean animateMouse) {
+void advanceAnimations(bool zonavedada, bool animateMouse) {
 	if (tocapintar) {
 
 		if (currentRoomData->animationFlag && tocapintar2) {
@@ -1459,7 +1459,7 @@ void animateBat() {
 	uint anchoaniseg, altoaniseg,
 		itrayseg, longtrayseg, xseg, yseg, profseg, dirseg;
 
-	boolean salir_del_bucle = false;
+	bool salir_del_bucle = false;
 	if (currentRoomData->animationFlag) {
 		iframe2seg = iframe2;
 		xseg = animado.posx;
@@ -2097,7 +2097,7 @@ void dropObjectInScreen(InvItemRegister regobjsustituto) {
 void useScreenObject() {
 	byte indicemochila, indlista, aciertoslista, indmoch,
 		indicex, indicey;
-	boolean controlarlista, basurillalog;
+	bool controlarlista, basurillalog;
 
 	uint mouseX = (pulsax + 7) / factorx;
 	uint mouseY = (pulsay + 7) / factory;
@@ -3432,7 +3432,7 @@ void useScreenObject() {
 
 void openScreenObject() {
 	byte indicex, indicey;
-	boolean sueltapegote;
+	bool sueltapegote;
 
 	uint mouseX = (pulsax + 7) / factorx;
 	uint mouseY = (pulsay + 7) / factory;
@@ -3586,7 +3586,7 @@ void openScreenObject() {
 
 void closeScreenObject() {
 	byte indicex, indicey, x_del_raton, y_del_raton;
-	boolean sueltapegote;
+	bool sueltapegote;
 	uint objeto_de_la_pantalla;
 
 	x_del_raton = ((pulsax + 7) / factorx);
@@ -3814,7 +3814,7 @@ void obtainName(Common::String &nombrejugador) {
 	free(puntfondonom);
 }
 
-void loadScrollData(uint numpantalla, boolean scrollder,
+void loadScrollData(uint numpantalla, bool scrollder,
 					uint poshor, int correccionscroll);
 
 static byte *fondsprite;
@@ -3951,7 +3951,7 @@ static void scrollLeft(uint &poshor) {
  * Scrolling happens between two screens. We grab the area surroudning the player from screen A,
  * then transition to screen B.
  */
-void loadScrollData(uint numpantalla, boolean scrollder, uint poshor, int correccionscroll) {
+void loadScrollData(uint numpantalla, bool scrollder, uint poshor, int correccionscroll) {
 	uint indicecarga;
 
 	handPantallaToBackground();
@@ -4318,8 +4318,8 @@ void saveLoad() {
 	byte *puntfondmenu;
 	byte ytext;
 	byte partidaselecc;
-	boolean modificada;
-	boolean salirmenufunciones;
+	bool modificada;
+	bool salirmenufunciones;
 	Common::String nombrepartida;
 	indicepart regindfich;
 
@@ -4376,8 +4376,8 @@ void saveLoad() {
 	setMousePos(1, xraton, yraton);
 	do {
 		Common::Event e;
-		boolean mouseClicked = false;
-		boolean keyPressed = false;
+		bool mouseClicked = false;
+		bool keyPressed = false;
 		do {
 			if (tocapintar) {
 				g_engine->_chrono->updateChrono();
@@ -4543,7 +4543,7 @@ void loadTalkAnimations() {
 	if ((currentRoomData->nombremovto != "PETER") && (currentRoomData->nombremovto != "ARZCAEL")) {
 		iframe2 = 0;
 		free(pasoanimado);
-		boolean result;
+		bool result;
 		switch (regobj.habla) {
 		case 1:
 			result = fichcani.open("JOHN.SEC");
@@ -4630,7 +4630,7 @@ void hypertext(
 	byte colorsombraht,
 	uint &numresp,
 	/** Whether the text being said is part of a conversation or just descriptions */
-	boolean banderaconversa) {
+	bool banderaconversa) {
 	regismht regmht;
 
 	byte insertarnombre, iht, iteracionesht, lineaht, anchoht;

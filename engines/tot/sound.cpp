@@ -93,7 +93,7 @@ void playVoc(Common::String vocfile, int32 posinicio, uint tamvocleer) {
 	pitavocmem();
 }
 
-void playMidiFile(Common::String nomfich, boolean loop) {
+void playMidiFile(Common::String nomfich, bool loop) {
 
 	Common::File ficheromus;
 	if (!ficheromus.open(Common::Path(nomfich + ".MUS"))) {

@@ -38,7 +38,7 @@ struct lista {
 extern byte conversationIndex;
 extern plista l1, l;
 extern Tree ar, auxTree, step;
-extern boolean endOfConversation;
+extern bool endOfConversation;
 
 void talkScreenObject();
 
