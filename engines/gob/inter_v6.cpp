@@ -117,7 +117,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (_vm->isCurrentTot("avt005.tot") && file.equalsIgnoreCase("MXRAMPART"))
 		file = "PLCOFDR2";
 
-	if (file == "RIEN") {
+	if (file == "RIEN") { // (French word for "nothing")
 		_vm->_vidPlayer->closeAll();
 		return;
 	}
