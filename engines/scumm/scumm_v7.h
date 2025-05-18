@@ -54,7 +54,7 @@ protected:
 
 	bool _smushActive = false;
 
-	Insane *_insane;
+	Insane *_insane = nullptr;
 
 public:
 	void syncSoundSettings() override;
