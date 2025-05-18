@@ -145,6 +145,7 @@ Engine::Engine(OSystem *syst)
 		_metaEngine(nullptr),
 		_pauseLevel(0),
 		_pauseStartTime(0),
+		_pauseScreenChangeID(-1),
 		_saveSlotToLoad(-1),
 		_autoSaving(false),
 		_engineStartTime(_system->getMillis()),
@@ -702,6 +703,7 @@ PauseToken Engine::pauseEngine() {
 
 	if (_pauseLevel == 1) {
 		_pauseStartTime = _system->getMillis();
+		_pauseScreenChangeID = g_system->getScreenChangeID();
 		pauseEngineIntern(true);
 	}
 
@@ -714,6 +716,13 @@ void Engine::resumeEngine() {
 	_pauseLevel--;
 
 	if (_pauseLevel == 0) {
+		if (_pauseScreenChangeID != g_system->getScreenChangeID()) {
+			// Inject a screen change event in the event loop for the engine
+			Common::Event ev;
+			ev.type = Common::EVENT_SCREEN_CHANGED;
+			g_system->getEventManager()->pushEvent(ev);
+		}
+		_pauseScreenChangeID = -1;
 		pauseEngineIntern(false);
 		_engineStartTime += _system->getMillis() - _pauseStartTime;
 		_pauseStartTime = 0;
