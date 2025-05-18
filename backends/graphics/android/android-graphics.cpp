@@ -268,7 +268,7 @@ void AndroidGraphicsManager::touchControlInitSurface(const Graphics::ManagedSurf
 			(byte *)dst->getPixels(), (const byte *)surf.getPixels(),
 			dst->pitch, surf.pitch,
 			surf.w, surf.h,
-			surf.format, dst->format);
+			dst->format, surf.format);
 	_touchcontrols->updateGLTexture();
 }
 
