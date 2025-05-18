@@ -1739,9 +1739,7 @@ void Inter_v7::o7_getFreeMem(OpFuncParams &params) {
 void Inter_v7::o7_checkData(OpFuncParams &params) {
 	Common::String file = getFile(_vm->_game->_script->evalString());
 
-	if (_vm->getGameType() == kGameTypeAdibou2
-		&&
-		file == "CD.INF") {
+	if (_vm->getGameType() == kGameTypeAdibou2 && file == "CD.INF") {
 		// WORKAROUND: some versions of Adibou2 are only able to handle one CD at a time.
 		// In such versions, scripts always begin to look for CD.INF file in the CD, and check
 		// if its contents matches the selected application. We insert a hack here, to set
@@ -1784,7 +1782,10 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 	int32 size   = -1;
 	int16 handle = 1;
 	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
-	if (mode == SaveLoad::kSaveModeNone) {
+	if (_vm->getGameType() == kGameTypeAdibou2 && file.compareToIgnoreCase("CARON.BOU") == 0) {
+		// WORKAROUND to disable the 3D driving activity in Adibou2/Sciences (not supported in ScummVM)
+		size = -1;
+	} else if (mode == SaveLoad::kSaveModeNone) {
 		size = _vm->_dataIO->fileSize(file);
 		if (size == -1)
 			warning("File \"%s\" not found", file.c_str());
@@ -1801,9 +1802,7 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		   file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
-	if (_vm->getGameType() == kGameTypeAdibou2
-		&&
-		_vm->isCurrentTot("BE_CD.TOT")) {
+	if (_vm->getGameType() == kGameTypeAdibou2 && _vm->isCurrentTot("BE_CD.TOT")) {
 		// WORKAROUND: in script BE_CD.TOT of Adibou 2, o7_checkData() can be called in the "leave" callback of a hotspot.
 		// This corrupts the "current hotspot" variable, which is also VAR(16) (!), and lead to an infinite loop.
 		// We skip writing the file size into VAR(16) here as a workarond (the value is not used anyway).
