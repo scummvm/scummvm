@@ -117,6 +117,7 @@ public:
 #endif
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
+	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
 #endif
 
 public:

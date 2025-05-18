@@ -111,6 +111,37 @@ OSystem_iOS7::~OSystem_iOS7() {
 	delete _graphicsManager;
 }
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+Common::Array<uint> OSystem_iOS7::getSupportedAntiAliasingLevels() const {
+	Common::Array<uint> levels;
+
+	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
+		return levels;
+	}
+
+	GLint numLevels;
+	GLint *glLevels;
+
+	// We take the format used by Renderer3D
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_NUM_SAMPLE_COUNTS, 1, &numLevels);
+	if (numLevels == 0) {
+		return levels;
+	}
+
+	glLevels = new GLint[numLevels];
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_SAMPLES, numLevels, glLevels);
+
+	// SDL returns values in ascending order while glGetInternalformativ returns them in descending order.
+	// Revert our result to match SDL
+	for(numLevels--; numLevels >= 0; numLevels--) {
+		levels.push_back(glLevels[numLevels]);
+	}
+
+	delete glLevels;
+	return levels;
+}
+#endif
+
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 void *OSystem_iOS7::getOpenGLProcAddress(const char *name) const {
 	return dlsym(RTLD_DEFAULT, name);
