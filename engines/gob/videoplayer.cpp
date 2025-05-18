@@ -683,12 +683,14 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		int16 y = 0;
 		int16 width = 0;
 		int16 height = 0;
-		video->decoder->getFrameCoords(video->decoder->getCurFrame(), x, y, width, height);
-		Graphics::crossBlitMap(video->surface->getData(x, y), static_cast<const byte *>(surface->getBasePtr(x, y)),
-							   video->surface->getWidth() * video->surface->getBPP(),
-							   surface->pitch,
-							   width, height,
-							   video->surface->getBPP(), video->highColorMap);
+		if (video->decoder->getFrameCoords(video->decoder->getCurFrame(), x, y, width, height)
+				&& x >= 0 && y >= 0 && width > 0 && height > 0) {
+			Graphics::crossBlitMap(video->surface->getData(x, y), static_cast<const byte *>(surface->getBasePtr(x, y)),
+								   video->surface->getWidth() * video->surface->getBPP(),
+								   surface->pitch,
+								   width, height,
+								   video->surface->getBPP(), video->highColorMap);
+		}
 	}
 
 	if (_vm->getGameType() != kGameTypeAdibou2)
