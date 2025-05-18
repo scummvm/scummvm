@@ -51,6 +51,8 @@ void TranslationDatabases::setLanguage(Common::Language language) {
 		lang = "E";
 	else if (language == Common::DE_DEU)
 		lang = "G";
+	else if (language == Common::IT_ITA)
+		lang = "G";
 	else if (language == Common::FR_FRA)
 		lang = "F";
 	else
