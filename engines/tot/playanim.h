@@ -210,13 +210,13 @@ struct RoomFileRegister {
 	 * trayectorias then has a precalculated route from each possible combination of two areas in the game.
 	 * pixel by pixel translation within the area is done by bresenham algorithm in the trajectory function.
 	 */
-	Common::Point trayectories[9][30][5];
+	Common::Point trajectories[9][30][5];
 	DoorRegistry doors[5]; /* doors in the room */
 	RoomBitmapRegister bitmapasociados[15];
 	RoomObjectListEntry *indexadoobjetos[51] = {NULL}; /* includes name of objects for mouseover + index to object file*/
-	boolean banderamovimiento;                         /* true if another character is moving */
+	boolean animationFlag;                             /* true if there is a secondary animation */
 	Common::String nombremovto;                        /* name of the secondary animation, 8 chars*/
-	boolean banderapaleta;                             /* true if there exist palette animation */
+	boolean paletteAnimationFlag;                      /* true if there exist palette animation */
 	uint16 puntpaleta;                                 /* points to the screen palette */
 	Common::Point tray2[300];                          /* trajectory of the secondary animation */
 	uint16 dir2[300];                                  /* directions of the secondary trajectory. Pos 300 reflects object code. */

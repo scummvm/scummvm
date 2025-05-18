@@ -781,6 +781,13 @@ void updatePalette(byte indicepaleta) {
 			ip = -4;
 			break;
 		}
+		// debug("-----------BEFORE--------------- (adding %d)", ip);
+		// debug("Color 131: %d,%d,%d", pal[131 * 3 + 0], pal[131 * 3 + 1], pal[131 * 3 + 2]);
+		// debug("Color 134: %d,%d,%d", pal[134 * 3 + 0], pal[134 * 3 + 1], pal[134 * 3 + 2]);
+		// debug("Color 143: %d,%d,%d", pal[143 * 3 + 0], pal[143 * 3 + 1], pal[143 * 3 + 2]);
+		// debug("Color 187: %d,%d,%d", pal[187 * 3 + 0], pal[187 * 3 + 1], pal[187 * 3 + 2]);
+
+
 		for (int i = 0; i < 3; i++) {
 			pal[131 * 3 + i] = pal[131 * 3 + i] - ip;
 			pal[134 * 3 + i] = pal[134 * 3 + i] - ip;
@@ -788,6 +795,12 @@ void updatePalette(byte indicepaleta) {
 			pal[187 * 3 + i] = pal[187 * 3 + i] - ip;
 		}
 		g_engine->_graphics->setPalette(pal);
+
+		// debug("-----------AFTER--------------- (adding %d)", ip);
+		// debug("Color 131: %d,%d,%d", pal[131 * 3 + 0], pal[131 * 3 + 1], pal[131 * 3 + 2]);
+		// debug("Color 134: %d,%d,%d", pal[134 * 3 + 0], pal[134 * 3 + 1], pal[134 * 3 + 2]);
+		// debug("Color 143: %d,%d,%d", pal[143 * 3 + 0], pal[143 * 3 + 1], pal[143 * 3 + 2]);
+		// debug("Color 187: %d,%d,%d", pal[187 * 3 + 0], pal[187 * 3 + 1], pal[187 * 3 + 2]);
 	} break;
 	}
 }

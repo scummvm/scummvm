@@ -382,7 +382,7 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 			}
 
 			if (tocapintar) {
-				if (currentRoomData->banderapaleta && saltospal >= 4) {
+				if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 					saltospal = 0;
 					if (movidapaleta > 6)
 						movidapaleta = 0;

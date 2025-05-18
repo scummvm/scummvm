@@ -703,7 +703,7 @@ void animatedSequence(uint numSequence) {
 		sprites(true);
 	} break;
 	case 6: {
-		currentRoomData->banderamovimiento = false;
+		currentRoomData->animationFlag = false;
 		if (!animationFile.open("AZCCOG.DAT")) {
 			showError(277);
 		}
@@ -742,7 +742,7 @@ void animatedSequence(uint numSequence) {
 		animationFile.close();
 		stopVoc();
 		screenObjects[6] = NULL;
-		currentRoomData->banderamovimiento = true;
+		currentRoomData->animationFlag = true;
 	} break;
 	}
 }
@@ -796,7 +796,7 @@ RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile)
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 30; j++) {
 			for (int k = 0; k < 5; k++) {
-				screenData->trayectories[i][j][k] = readPunto(screenDataFile);
+				screenData->trajectories[i][j][k] = readPunto(screenDataFile);
 			}
 		}
 	}
@@ -811,10 +811,10 @@ RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile)
 		screenData->indexadoobjetos[i] = readRegIndexadoObjetos(screenDataFile);
 	}
 
-	screenData->banderamovimiento = screenDataFile->readByte();
+	screenData->animationFlag = screenDataFile->readByte();
 	screenData->nombremovto = screenDataFile->readPascalString();
 	screenDataFile->skip(8 - screenData->nombremovto.size());
-	screenData->banderapaleta = screenDataFile->readByte();
+	screenData->paletteAnimationFlag = screenDataFile->readByte();
 	screenData->puntpaleta = screenDataFile->readUint16LE();
 	for (int i = 0; i < 300; i++) {
 		screenData->tray2[i] = readPunto(screenDataFile);
@@ -838,7 +838,7 @@ void loadScreenData(uint screenNumber) {
 			loadItem(bitmap.coordx, bitmap.coordy, bitmap.tambitmap, bitmap.puntbitmap, bitmap.profund);
 		}
 	}
-	if (currentRoomData->banderamovimiento && currentRoomData->codigo != 24) {
+	if (currentRoomData->animationFlag && currentRoomData->codigo != 24) {
 		loadAnimation(currentRoomData->nombremovto);
 		iframe2 = 0;
 		indicetray2 = 1;
@@ -858,7 +858,7 @@ void loadScreenData(uint screenNumber) {
 					currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
 			}
 	} else
-		currentRoomData->banderamovimiento = false;
+		currentRoomData->animationFlag = false;
 
 	updateMainCharacterDepth();
 	assembleScreen();
@@ -1067,7 +1067,7 @@ void calculateRoute(byte zona1, byte zona2, boolean extraCorrection, boolean zon
 	Common::Point point;
 	do {
 		pasos += 1;
-		point = currentRoomData->trayectories[zona1 - 1][zona2 - 1][pasos - 1];
+		point = currentRoomData->trajectories[zona1 - 1][zona2 - 1][pasos - 1];
 
 		if (point.x < (rectificacionx + 3))
 			mainRoute[pasos].x = 3;
@@ -1130,7 +1130,7 @@ void goToObject(byte zona1, byte zona2) {
 		}
 	}
 
-	if (currentRoomData->codigo == 21 && currentRoomData->banderamovimiento) {
+	if (currentRoomData->codigo == 21 && currentRoomData->animationFlag) {
 		if ((zona2 >= 1 && zona2 <= 5) ||
 			(zona2 >= 9 && zona2 <= 13) ||
 			(zona2 >= 18 && zona2 <= 21) ||
@@ -1220,7 +1220,7 @@ void updateMainCharacterDepth() {
 void advanceAnimations(boolean zonavedada, boolean animateMouse) {
 	if (tocapintar) {
 
-		if (currentRoomData->banderamovimiento && tocapintar2) {
+		if (currentRoomData->animationFlag && tocapintar2) {
 			if (peteractivo && (Random(100) == 1) && !g_engine->_sound->isVocPlaying() && caramelos[0] == false) {
 				debug("Playing tos");
 				playVoc("TOS", 258006, 14044);
@@ -1324,7 +1324,7 @@ void advanceAnimations(boolean zonavedada, boolean animateMouse) {
 			sprites(true);
 		}
 		tocapintar = false;
-		if (currentRoomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1351,7 +1351,7 @@ void animateGive(uint cogedir, uint cogealt) {
 		// Must add 1 to i because the original game uses 1-based indices
 		iframe = 15 + 6 + 5 + cogealt * 10 - (i + 1);
 
-		if (currentRoomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1373,7 +1373,7 @@ void animatePickup1(uint cogedir, uint cogealt) {
 		tocapintar = false;
 		iframe = 15 + cogealt * 10 + (i + 1);
 
-		if (currentRoomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1397,7 +1397,7 @@ void animatePickup2(uint cogedir, uint cogealt) {
 
 		iframe = 15 + 5 + cogealt * 10 + (i + 1);
 
-		if (currentRoomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1423,7 +1423,7 @@ void animateOpen2(uint cogedir, uint cogealt) {
 		tocapintar = false;
 		iframe = 15 + 6 + cogealt * 10 - (i + 1);
 
-		if (currentRoomData->banderapaleta && saltospal >= 4) {
+		if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 			saltospal = 0;
 			if (movidapaleta > 6)
 				movidapaleta = 0;
@@ -1460,7 +1460,7 @@ void animateBat() {
 		itrayseg, longtrayseg, xseg, yseg, profseg, dirseg;
 
 	boolean salir_del_bucle = false;
-	if (currentRoomData->banderamovimiento) {
+	if (currentRoomData->animationFlag) {
 		iframe2seg = iframe2;
 		xseg = animado.posx;
 		yseg = animado.posy;
@@ -1512,7 +1512,7 @@ void animateBat() {
 
 	stopVoc();
 	freeAnimation();
-	if (currentRoomData->banderamovimiento) {
+	if (currentRoomData->animationFlag) {
 		anchoanimado = anchoaniseg;
 		altoanimado = altoaniseg;
 		setRoomTrajectories(altoanimado, anchoanimado, RESTORE, false);
@@ -1624,7 +1624,7 @@ void pickupScreenObject() {
 			currentRoomData->mouseGrid[10][12] = 18;
 		} break;
 		case 567: { // Pickup rubble
-			if (currentRoomData->banderamovimiento) {
+			if (currentRoomData->animationFlag) {
 				g_engine->_mouseManager->show();
 				drawText(3226);
 				return;
@@ -3076,10 +3076,12 @@ void useScreenObject() {
 				if (tridente)
 					cavernas[3] = true;
 			} break;
-			case 633: {
+			case 633: { //Use ring!
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-
+				debug("-------------------------------------");
+				debug("USING RING WITH PEDESTAL");
+				debug("-------------------------------------");
 				animateGive(3, 1);
 				loadItem(86, 55, 92, 1591272, 8);
 				handPantallaToBackground();
@@ -3254,7 +3256,7 @@ void useScreenObject() {
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
 			} break;
-			case 709: {
+			case 709: { // rock with mural
 				if (sello_quitado) {
 					drawText(regobj.useTextRef);
 					g_engine->_mouseManager->hide();
@@ -3271,7 +3273,6 @@ void useScreenObject() {
 						loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
 					}
 					handPantallaToBackground();
-					// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
 					assembleScreen();
 					drawScreen(background);
 
@@ -3343,12 +3344,12 @@ void useScreenObject() {
 					if (teleencendida) {
 						playVoc("CLICK", 27742, 2458);
 						g_engine->_sound->waitForSoundEnd();
-						currentRoomData->banderapaleta = true;
+						currentRoomData->paletteAnimationFlag = true;
 						autoPlayVoc("PARASITO", 355778, 20129);
 					} else {
 						stopVoc();
 						playVoc("CLICK", 27742, 2458);
-						currentRoomData->banderapaleta = false;
+						currentRoomData->paletteAnimationFlag = false;
 						for (indicex = 195; indicex <= 200; indicex++) {
 							pal[indicex * 3 + 0] = 2 << 2;
 							pal[indicex * 3 + 1] = 2 << 2;
@@ -4227,7 +4228,7 @@ void loadGame(regispartida game) {
 		autoPlayVoc("CALDERA", 6433, 15386);
 	} break;
 	case 17: {
-		if (libro[0] == true && currentRoomData->banderamovimiento)
+		if (libro[0] == true && currentRoomData->animationFlag)
 			disableSecondAnimation();
 	} break;
 	case 20: {
@@ -4269,7 +4270,7 @@ void loadGame(regispartida game) {
 			break;
 		}
 		if (trampa_puesta) {
-			currentRoomData->banderamovimiento = true;
+			currentRoomData->animationFlag = true;
 			loadAnimation(currentRoomData->nombremovto);
 			iframe2 = 0;
 			indicetray2 = 1;
@@ -4633,7 +4634,6 @@ void hypertext(
 	uint &numresp,
 	/** Whether the text being said is part of a conversation or just descriptions */
 	boolean banderaconversa) {
-	debug("hypertext");
 	regismht regmht;
 
 	byte insertarnombre, iht, iteracionesht, lineaht, anchoht;
@@ -4852,7 +4852,7 @@ void hypertext(
 						sprites(false);
 					}
 				}
-				if (currentRoomData->banderapaleta && saltospal >= 4) {
+				if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 					saltospal = 0;
 					if (movidapaleta > 6)
 						movidapaleta = 0;
@@ -4997,7 +4997,7 @@ void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStr
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 30; j++) {
 			for (int k = 0; k < 5; k++) {
-				savePoint(room->trayectories[i][j][k], screenDataStream);
+				savePoint(room->trajectories[i][j][k], screenDataStream);
 			}
 		}
 	}
@@ -5011,7 +5011,7 @@ void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStr
 	for (int i = 0; i < 51; i++) {
 		saveRoomObjectList(*room->indexadoobjetos[i], screenDataStream);
 	}
-	screenDataStream->writeByte(room->banderamovimiento);
+	screenDataStream->writeByte(room->animationFlag);
 
 	screenDataStream->writeByte(room->nombremovto.size());
 	screenDataStream->writeString(room->nombremovto);
@@ -5026,7 +5026,7 @@ void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStr
 
 		free(padding);
 	}
-	screenDataStream->writeByte(room->banderapaleta);
+	screenDataStream->writeByte(room->paletteAnimationFlag);
 	screenDataStream->writeUint16LE(room->puntpaleta);
 	for (int i = 0; i < 300; i++) {
 		savePoint(room->tray2[i], screenDataStream);
