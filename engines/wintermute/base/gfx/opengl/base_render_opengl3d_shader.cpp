@@ -57,7 +57,6 @@ BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
 }
 
 bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed) {
-
 	glGenBuffers(1, &_spriteVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertex), nullptr, GL_DYNAMIC_DRAW);
@@ -356,10 +355,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		SWAP(texTop, texBottom);
 	}
 
-	SpriteVertex vertices[4] = {};
-
-	// Convert to OpenGL origin space
-	SWAP(texTop, texBottom);
+	SpriteVertex vertices[4];
 
 	// texture coords
 	vertices[0].u = texLeft;
@@ -374,27 +370,34 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	vertices[3].u = texRight;
 	vertices[3].v = texTop;
 
-	float offset = _height / 2.0f;
-	float correctedYPos = (pos.y - offset) * -1.0f + offset;
-
 	// position coords
 	vertices[0].x = pos.x;
-	vertices[0].y = correctedYPos;
+	vertices[0].y = pos.y + height;
 	vertices[0].z = 0.9f;
 
 	vertices[1].x = pos.x;
-	vertices[1].y = correctedYPos - height;
+	vertices[1].y = pos.y;
 	vertices[1].z = 0.9f;
 
 	vertices[2].x = pos.x + width;
-	vertices[2].y = correctedYPos;
+	vertices[2].y = pos.y + height;
 	vertices[2].z = 0.9f;
 
 	vertices[3].x = pos.x + width;
-	vertices[3].y = correctedYPos - height;
+	vertices[3].y = pos.y;
 	vertices[3].z = 0.9f;
 
-	// not exactly sure about the color format, but this seems to work
+	if (angle != 0) {
+		DXVector2 sc(1.0f, 1.0f);
+		DXVector2 rotation(rot.x, rot.y);
+		transformVertices(vertices, &rotation, &sc, degToRad(-angle));
+	}
+
+	for (int i = 0; i < 4; i++) {
+		vertices[i].x += _drawOffsetX;
+		vertices[i].y += _drawOffsetY;
+	}
+
 	byte a = RGBCOLGetA(color);
 	byte r = RGBCOLGetR(color);
 	byte g = RGBCOLGetG(color);
@@ -405,12 +408,6 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		vertices[i].g = g / 255.0f;
 		vertices[i].b = b / 255.0f;
 		vertices[i].a = a / 255.0f;
-	}
-
-	if (angle != 0) {
-		DXVector2 sc(1.0f, 1.0f);
-		DXVector2 rotation(rot.x, (rot.y - (_height / 2.0f)) * -1.0f + (_height / 2.0f));
-		transformVertices(vertices, &rotation, &sc, degToRad(-angle));
 	}
 
 	setSpriteBlendMode(blendMode);
@@ -424,7 +421,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		glBindTexture(GL_TEXTURE_2D, texture->getTextureName());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		// for sprites we clamp to the edge, to avoid line fragments at the edges
-		// this is not done by wme, though
+		// this is not done by wme, but centering pixel by 0.5
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glEnable(GL_TEXTURE_2D);
@@ -433,7 +430,10 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertex), vertices);
 
+	glViewport(0, 0, _width, _height);
 	setProjection2D(_spriteShader);
+
+	glFrontFace(GL_CW);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -744,7 +744,7 @@ void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *
 
 // backend layer 3DShadowVolume::Render()
 void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-	                                           const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+	                                            const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
 	DXMatrix matIdentity;
 	DXMatrixIdentity(&matIdentity);
 
@@ -806,7 +806,7 @@ bool BaseRenderOpenGL3DShader::setViewport(int left, int top, int right, int bot
 	_viewport._y = top;
 	_viewport._width = right - left;
 	_viewport._height = bottom - top;
-	glViewport(left, _height - bottom, right - left, bottom - top);
+	glViewport(left, top, right - left, bottom - top);
 	return true;
 }
 
@@ -819,7 +819,8 @@ bool BaseRenderOpenGL3DShader::setViewport3D(DXViewport *viewport) {
 
 bool BaseRenderOpenGL3DShader::setProjection2D(OpenGL::Shader *shader) {
 	DXMatrix matrix2D;
-	DXMatrixOrthoOffCenterLH(&matrix2D, 0, _width, 0, _height, 0.0f, 1.0f);
+	DXMatrixIdentity(&matrix2D);
+	DXMatrixOrthoOffCenterLH(&matrix2D, 0, _width, _height, 0, 0.0f, 1.0f);
 
 	// convert DX [0, 1] depth range to OpenGL [-1, 1] depth range.
 	matrix2D.matrix._33 = 2.0f;

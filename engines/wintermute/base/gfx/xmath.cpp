@@ -662,8 +662,8 @@ DXMatrix *DXMatrixOrthoOffCenterLH(DXMatrix *pout, float l, float r, float b, fl
 	pout->_m[0][0] = 2.0f / (r - l);
 	pout->_m[1][1] = 2.0f / (t - b);
 	pout->_m[2][2] = 1.0f / (zf -zn);
-	pout->_m[3][0] = -1.0f -2.0f * l / (r - l);
-	pout->_m[3][1] = 1.0f + 2.0f * t / (b - t);
+	pout->_m[3][0] = -1.0f - 2.0f * l / (r - l);
+	pout->_m[3][1] =  1.0f + 2.0f * t / (b - t);
 	pout->_m[3][2] = zn / (zn -zf);
 	return pout;
 }
