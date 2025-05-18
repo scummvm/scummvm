@@ -1000,6 +1000,37 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	return Common::String(value, len);
 }
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+Common::Array<uint> OSystem_Android::getSupportedAntiAliasingLevels() const {
+	Common::Array<uint> levels;
+
+	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
+		return levels;
+	}
+
+	GLint numLevels = 0;
+	GLint *glLevels;
+
+	// We take the format used by Renderer3D
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_NUM_SAMPLE_COUNTS, 1, &numLevels);
+	if (numLevels == 0) {
+		return levels;
+	}
+
+	glLevels = new GLint[numLevels];
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_SAMPLES, numLevels, glLevels);
+
+	// SDL returns values in ascending order while glGetInternalformativ returns them in descending order.
+	// Revert our result to match SDL
+	for(numLevels--; numLevels >= 0; numLevels--) {
+		levels.push_back(glLevels[numLevels]);
+	}
+
+	delete glLevels;
+	return levels;
+}
+#endif
+
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
 	// eglGetProcAddress exists since Android 2.3 (API Level 9)
