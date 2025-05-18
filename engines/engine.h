@@ -203,6 +203,11 @@ private:
 	uint32 _pauseStartTime;
 
 	/**
+	 * The screen change ID when the pause was started
+	 */
+	int _pauseScreenChangeID;
+
+	/**
 	 * The time when the engine was started.
 	 *
 	 * This value is used to calculate the current play time of the game running.
