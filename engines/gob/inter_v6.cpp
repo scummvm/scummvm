@@ -117,7 +117,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (_vm->isCurrentTot("avt005.tot") && file.equalsIgnoreCase("MXRAMPART"))
 		file = "PLCOFDR2";
 
-	if (file == "RIEN") {
+	if (file == "RIEN") { // (French word for "nothing")
 		_vm->_vidPlayer->closeAll();
 		return;
 	}
@@ -133,7 +133,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 //		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
 		return;
 	} else if (props.lastFrame == -7) {
-//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
+//		warning("Urban/Playtoons Stub: Video/Music command -7 (flush cache)");
 		return;
 	} else if ((props.lastFrame == -8) || (props.lastFrame == -9)) {
 		if (!file.contains('.'))

@@ -716,7 +716,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 //		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
 		return;
 	} else if (props.lastFrame == -7) {
-//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
+//		warning("Urban/Playtoons Stub: Video/Music command -7 (flush cache)");
 		return;
 	} else if ((props.lastFrame == -8) || (props.lastFrame == -9)) {
 		if (!file.contains('.'))
