@@ -270,7 +270,10 @@ public:
 	bool isConnectionLimited() override;
 	Common::String getSystemLanguage() const override;
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
+	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
+#endif
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;
 #endif
