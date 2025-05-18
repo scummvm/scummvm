@@ -109,6 +109,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x23] = "Tasse"; // leer
 	ObjectNames[0x24] = "Axt";
 	ObjectNames[0x24] = "Whiskyglas"; // leer
+	ObjectNames[0x2E] = "Whiykglas";
 	ObjectNames[0x30] = "Schürhaken";
 	ObjectNames[0x43] = "Koffer"; // geschlossen
 	ObjectNames[0x47] = "Messer";
@@ -116,6 +117,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x52] = "Stoffbeutel"; // Mit Murmeln
 	ObjectNames[0x53] = "Blasebalg";
 	ObjectNames[0x54] = "Brennholz";
+	ObjectNames[0x55] = "Brot";
 	ObjectNames[0x56] = "Brotmesser";
 	ObjectNames[0x57] = "Brot";
 	ObjectNames[0x58] = "Bücher";
@@ -129,6 +131,8 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x74] = "Schaufel";
 	ObjectNames[0x70] = "Musketen";
 	ObjectNames[0x74] = "Schüssel"; // mit Teig
+	ObjectNames[0x78] = "Messingschlüssel";
+	ObjectNames[0x7C] = "Schüssel"; // mit Schwefel
 	ObjectNames[0x7F] = "Schwefel";
 	ObjectNames[0x82] = "Seil";
 	ObjectNames[0x83] = "Socken";
@@ -137,7 +141,10 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x86] = "Streichholz";
 	ObjectNames[0x82] = "Seil";
 	ObjectNames[0x88] = "Tasse"; // mit Öl
+	ObjectNames[0x89] = "Teig";
 	ObjectNames[0x8A] = "Topflappen";
+	ObjectNames[0x8C] = "Wolle";
+	ObjectNames[0x8D] = "Wolle" // mit Alkohol
 	ObjectNames[0x8E] = "Holzwürfel";
 	ObjectNames[0x8F] = "Brief";
 }
