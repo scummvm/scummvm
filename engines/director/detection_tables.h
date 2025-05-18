@@ -8328,6 +8328,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("melements", "", "Meesters van Macht", "r:888e9ea9987e5ef6833d5af3683fcb3a", 115776,  Common::NL_NLD, 601),
 	WINGAME1_l("melements", "", "MVM.EXE",            "t:25ecda33e9fc9aaf70efcd2e124b114a", 2082817, Common::NL_NLD, 601),
 
+	// Italian: "I Signori degli Elementi", published by Editori Riuniti Multimedia
+	MACGAME1_l("melements", "", "I signori degli elementi", "r:398eb2cdf121feb490097c6323d52267", 1032406, Common::IT_ITA, 602),
+	WINGAME1_l("melements", "", "MVM.EXE",                  "t:caeea1aec3be6d1171992c824e3e3714", 2292781, Common::IT_ITA, 602),
+
 	WINGAME2("meetchuck", "", "HORSE.EXE",  "t:b0f3841f6e8005e519445b22de37749b", 1130649,
 	 						  "HPICTS.DXR", "d:60aba531fc0bf4897ba94413eb8ae24f", 7878094, 600),
 
