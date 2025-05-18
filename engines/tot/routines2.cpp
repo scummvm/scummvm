@@ -286,7 +286,7 @@ void loadScreen() {
 		}
 		fichcp.seek(currentRoomData->puntpaleta);
 		fichcp.read(palcp, 603);
-		if (currentRoomData->banderapaleta) {
+		if (currentRoomData->paletteAnimationFlag) {
 			fichcp.read(movimientopal, 144);
 			for (int i = 0; i <= 48; i++) {
 				movimientopal[i * 3 + 0] = movimientopal[i * 3 + 0] << 2;
@@ -304,7 +304,7 @@ void loadScreen() {
 	} break;
 	case 2: {
 		loadPalette("SEGUNDA");
-		currentRoomData->banderapaleta = true;
+		currentRoomData->paletteAnimationFlag = true;
 	} break;
 	}
 }
@@ -2349,8 +2349,8 @@ void sacrificeScene() {
 	palette palaux;
 
 	stopVoc();
-	boolean pulsada_salida = currentRoomData->banderapaleta;
-	currentRoomData->banderapaleta = false;
+	boolean pulsada_salida = currentRoomData->paletteAnimationFlag;
+	currentRoomData->paletteAnimationFlag = false;
 
 	bar(0, 139, 319, 149, 0);
 	bar(10, 10, 300, 120, 0);
@@ -2673,7 +2673,7 @@ void sacrificeScene() {
 	}
 	delay(2000);
 	totalFadeOut(0);
-	currentRoomData->banderapaleta = pulsada_salida;
+	currentRoomData->paletteAnimationFlag = pulsada_salida;
 }
 
 void ending() {
@@ -2690,15 +2690,26 @@ void ending() {
 
 	outtextxy(10, 40, "           Al fin lo has conseguido....", 253);
 	outtextxy(10, 60, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 253);
+	if(g_engine->shouldQuit()) {
+		return;
+	}
 	delay(4000);
 	totalFadeOut(0);
 	clear();
-
+	if(g_engine->shouldQuit()) {
+		return;
+	}
 	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	playMidiFile("SACRIFIC", true);
 	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	drawFlc(0, 0, 2481274, 12, 9, 26, true, false, false, pulsada_salida);
+	if(pulsada_salida){
+		return;
+	}
 	drawFlc(0, 0, 2554766, 0, 9, 0, false, false, false, pulsada_salida);
+	if(pulsada_salida){
+		return;
+	}
 	delay(1000);
 	playVoc("NOOO", 0, 0);
 	delay(3000);
@@ -2773,7 +2784,7 @@ void assembleScreen(boolean scroll) {
 		if (!scroll && secuencia.profundidad == indice) {
 			assembleCompleteBackground(secuencia.bitmap[direccionmovimiento][iframe], characterPosX, characterPosY);
 		}
-		if (!scroll && currentRoomData->banderamovimiento && animado.profundidad == indice) {
+		if (!scroll && currentRoomData->animationFlag && animado.profundidad == indice) {
 			assembleCompleteBackground(pasoanimado, animado.posx, animado.posy);
 		}
 	}
@@ -2781,7 +2792,7 @@ void assembleScreen(boolean scroll) {
 
 void disableSecondAnimation() {
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
-	currentRoomData->banderamovimiento = false;
+	currentRoomData->animationFlag = false;
 	freeAnimation();
 	handPantallaToBackground();
 	assembleScreen();
@@ -2889,7 +2900,7 @@ void drawGrid() {
 void setRoomTrajectories(int animationHeight, int animationWidth, TRAJECTORIES_OP op, boolean fixGrids) {
 	// add to restore the room, subtract to adjust before loading the screen
 
-	if (currentRoomData->banderamovimiento && currentRoomData->nombremovto != "QQQQQQQQ") {
+	if (currentRoomData->animationFlag && currentRoomData->nombremovto != "QQQQQQQQ") {
 		for (int i = 0; i < currentRoomData->longtray2; i++) {
 			if (op == RESTORE) {
 				currentRoomData->tray2[i].x = currentRoomData->tray2[i].x + (animationWidth >> 1);

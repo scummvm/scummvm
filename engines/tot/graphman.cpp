@@ -73,7 +73,6 @@ void GraphicsManager::writeActionLine(const Common::String &str) {
 }
 
 void GraphicsManager::setPalette(byte *palette, uint num) {
-
 	g_system->getPaletteManager()->setPalette(palette, 0, num);
 }
 

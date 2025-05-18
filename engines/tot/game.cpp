@@ -118,7 +118,7 @@ int engine_start() {
 		desactivagrabar = false;
 	}
 
-	boolean enforceSecondPart = false;
+	boolean enforceSecondPart = true;
 	if (enforceSecondPart) { // DEBUG
 		completadalista1 = true;
 		completadalista2 = true;
@@ -246,7 +246,7 @@ int startGame() {
 							yframe2 = pulsay + 7;
 							// obtains the target area from the clicked coordinates
 							zonadestino = currentRoomData->rejapantalla[xframe2 / factorx][yframe2 / factory];
-							if (currentRoomData->codigo == 21 && currentRoomData->banderamovimiento) {
+							if (currentRoomData->codigo == 21 && currentRoomData->animationFlag) {
 								if ((zonadestino >= 1 && zonadestino <= 5) ||
 									(zonadestino >= 9 && zonadestino <= 13) ||
 									(zonadestino >= 18 && zonadestino <= 21) ||
@@ -510,7 +510,7 @@ int startGame() {
 				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 				if (contadorpc2 > 43)
 					showError(274);
-				sacrificeScene();
+				// sacrificeScene();
 				clear();
 				loadObjects();
 				loadPalette("SEGUNDA");
@@ -807,7 +807,7 @@ void sceneChange() {
 		effect(tipoefectofundido, true, NULL);
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-		if (libro[0] == true && currentRoomData->banderamovimiento == true)
+		if (libro[0] == true && currentRoomData->animationFlag == true)
 			disableSecondAnimation();
 		if (contadorpc > 89)
 			showError(274);
@@ -960,7 +960,7 @@ void sceneChange() {
 			showError(274);
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 		if (trampa_puesta) {
-			currentRoomData->banderamovimiento = true;
+			currentRoomData->animationFlag = true;
 			loadAnimation(currentRoomData->nombremovto);
 			iframe2 = 0;
 			indicetray2 = 1;
