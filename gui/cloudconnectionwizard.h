@@ -34,7 +34,6 @@ class ButtonWidget;
 class EditTextWidget;
 
 class CloudConnectionWizard : public Dialog {
-    using Dialog::runModal;
 	enum class Step {
 		NONE,
 		MODE_SELECT,
@@ -129,7 +128,7 @@ public:
 	CloudConnectionWizard();
 	~CloudConnectionWizard() override;
 
-	int runModal(uint32 selectedStorageIndex);
+	int runStorageModal(uint32 selectedStorageIndex);
 	void open() override;
 	void close() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;

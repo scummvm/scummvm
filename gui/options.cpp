@@ -3467,7 +3467,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kOpenCloudConnectionWizardCmd: {
 		CloudConnectionWizard wizard;
-		wizard.runModal(_selectedStorageIndex);
+		wizard.runStorageModal(_selectedStorageIndex);
 		setupCloudTab();
 		reflowLayout();
 		break;
