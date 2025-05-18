@@ -144,7 +144,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x89] = "Teig";
 	ObjectNames[0x8A] = "Topflappen";
 	ObjectNames[0x8C] = "Wolle";
-	ObjectNames[0x8D] = "Wolle" // mit Alkohol
+	ObjectNames[0x8D] = "Wolle"; // mit Alkohol
 	ObjectNames[0x8E] = "Holzwürfel";
 	ObjectNames[0x8F] = "Brief";
 }
