@@ -92,34 +92,23 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 		lightEnable(i, false);
 	}
 
-	float fadeVertexCoords[8];
-
-	fadeVertexCoords[0 * 2 + 0] = 0;
-	fadeVertexCoords[0 * 2 + 1] = height;
-	fadeVertexCoords[1 * 2 + 0] = 0;
-	fadeVertexCoords[1 * 2 + 1] = 0;
-	fadeVertexCoords[2 * 2 + 0] = width;
-	fadeVertexCoords[2 * 2 + 1] = height;
-	fadeVertexCoords[3 * 2 + 0] = width;
-	fadeVertexCoords[3 * 2 + 1] = 0;
-
 	glGenBuffers(1, &_fadeVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
-	glBufferData(GL_ARRAY_BUFFER, 4 * 8, fadeVertexCoords, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(LineVertex), nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *fadeAttributes[] = { "position", nullptr };
 	_fadeShader = OpenGL::Shader::fromFiles("wme_fade", fadeAttributes);
-	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, false, 8, 0);
+	_fadeShader->enableVertexAttribute("position", _fadeVBO, 3, GL_FLOAT, false, sizeof(LineVertex), 0);
 
 	glGenBuffers(1, &_lineVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
-	glBufferData(GL_ARRAY_BUFFER, 2 * 12, nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(LineVertex), nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *lineAttributes[] = { "position", nullptr };
 	_lineShader = OpenGL::Shader::fromFiles("wme_line", lineAttributes);
-	_lineShader->enableVertexAttribute("position", _lineVBO, 3, GL_FLOAT, false, 12, 0);
+	_lineShader->enableVertexAttribute("position", _lineVBO, 3, GL_FLOAT, false, sizeof(LineVertex), 0);
 
 
 
@@ -545,17 +534,17 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 	y2 += _drawOffsetY;
 
 	// position coords
-	float lineCoords[6];
-	lineCoords[0] = x1;
-	lineCoords[1] = y1;
-	lineCoords[2] = 0.9f;
-	lineCoords[3] = x2;
-	lineCoords[4] = y2;
-	lineCoords[5] = 0.9f;
+	LineVertex vertices[2];
+	vertices[0].x = x1;
+	vertices[0].y = y1;
+	vertices[0].z = 0.9f;
+	vertices[1].x = x2;
+	vertices[1].y = y2;
+	vertices[1].z = 0.9f;
 
 	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * 12, lineCoords);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * sizeof(LineVertex), vertices);
 
 	byte a = RGBCOLGetA(color);
 	byte r = RGBCOLGetR(color);
@@ -582,25 +571,50 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 }
 
 void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
+	float left, right, bottom, top;
+
+	left = _viewportRect.left;
+	right = _viewportRect.right;
+	bottom = _viewportRect.bottom;
+	top = _viewportRect.top;
+
+	// position coords
+	LineVertex vertices[4];
+	vertices[0].x = left;
+	vertices[0].y = bottom;
+	vertices[0].z = 0.0f;
+	vertices[1].x = left;
+	vertices[1].y = top;
+	vertices[1].z = 0.0f;
+	vertices[2].x = right;
+	vertices[2].y = bottom;
+	vertices[2].z = 0.0f;
+	vertices[3].x = right;
+	vertices[3].y = top;
+	vertices[3].z = 0.0f;
+
 	Math::Vector4d color;
 	color.x() = r / 255.0f;
 	color.y() = g / 255.0f;
 	color.z() = b / 255.0f;
 	color.w() = a / 255.0f;
 
-	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
+	glEnable(GL_BLEND);
+	setSpriteBlendMode(Graphics::BLEND_NORMAL);
 
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
 	_lastTexture = nullptr;
+
+	glViewport(0, 0, _width, _height);
+	setProjection2D(_fadeShader);
 
 	_fadeShader->use();
 	_fadeShader->setUniform("color", color);
-	setProjection2D(_fadeShader);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(LineVertex), vertices);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 

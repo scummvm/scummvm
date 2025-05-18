@@ -56,6 +56,24 @@ class BaseRenderOpenGL3DShader : public BaseRenderer3D {
 		float a;
 	};
 
+	struct LineVertex {
+		float x;
+		float y;
+		float z;
+	};
+
+	struct SimpleShadowVertex {
+		float u;
+		float v;
+		float nx;
+		float ny;
+		float nz;
+		float x;
+		float y;
+		float z;
+	};
+
+
 public:
 	BaseRenderOpenGL3DShader(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3DShader() override;

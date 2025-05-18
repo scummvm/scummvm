@@ -560,61 +560,49 @@ bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) 
 }
 
 void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
-	const int vertexSize = 16;
-	byte vertices[4 * vertexSize];
-	float *vertexCoords = reinterpret_cast<float *>(vertices);
+	float left, right, bottom, top;
 
-	vertexCoords[0 * 4 + 1] = _viewportRect.left;
-	vertexCoords[0 * 4 + 2] = _viewportRect.bottom;
-	vertexCoords[0 * 4 + 3] = 0.0f;
-	vertexCoords[1 * 4 + 1] = _viewportRect.left;
-	vertexCoords[1 * 4 + 2] = _viewportRect.top;
-	vertexCoords[1 * 4 + 3] = 0.0f;
-	vertexCoords[2 * 4 + 1] = _viewportRect.right;
-	vertexCoords[2 * 4 + 2] = _viewportRect.bottom;
-	vertexCoords[2 * 4 + 3] = 0.0f;
-	vertexCoords[3 * 4 + 1] = _viewportRect.right;
-	vertexCoords[3 * 4 + 2] = _viewportRect.top;
-	vertexCoords[3 * 4 + 3] = 0.0f;
+	left = _viewportRect.left;
+	right = _viewportRect.right;
+	bottom = _viewportRect.bottom;
+	top = _viewportRect.top;
 
-	vertices[0 * vertexSize + 0] = r;
-	vertices[0 * vertexSize + 1] = g;
-	vertices[0 * vertexSize + 2] = b;
-	vertices[0 * vertexSize + 3] = a;
-	vertices[1 * vertexSize + 0] = r;
-	vertices[1 * vertexSize + 1] = g;
-	vertices[1 * vertexSize + 2] = b;
-	vertices[1 * vertexSize + 3] = a;
-	vertices[2 * vertexSize + 0] = r;
-	vertices[2 * vertexSize + 1] = g;
-	vertices[2 * vertexSize + 2] = b;
-	vertices[2 * vertexSize + 3] = a;
-	vertices[3 * vertexSize + 0] = r;
-	vertices[3 * vertexSize + 1] = g;
-	vertices[3 * vertexSize + 2] = b;
-	vertices[3 * vertexSize + 3] = a;
+	// position coords
+	LineVertex vertices[4];
+	vertices[0].x = left;
+	vertices[0].y = bottom;
+	vertices[0].z = 0.0f;
+	vertices[1].x = left;
+	vertices[1].y = top;
+	vertices[1].z = 0.0f;
+	vertices[2].x = right;
+	vertices[2].y = bottom;
+	vertices[2].z = 0.0f;
+	vertices[3].x = right;
+	vertices[3].y = top;
+	vertices[3].z = 0.0f;
 
-	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
+
+	glEnable(GL_BLEND);
+	setSpriteBlendMode(Graphics::BLEND_NORMAL);
 
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 	_lastTexture = nullptr;
 
+	glViewport(0, 0, _width, _height);
 	setProjection2D();
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
+	glColor4ub(r, g, b, a);
 
-	glVertexPointer(3, GL_FLOAT, vertexSize, vertices + 4);
-	glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, vertices);
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, sizeof(LineVertex), &vertices[0].x);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
 
 	setup2D(true);
 }

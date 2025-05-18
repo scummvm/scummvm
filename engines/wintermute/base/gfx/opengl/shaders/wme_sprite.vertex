@@ -1,4 +1,4 @@
-in vec2 position;
+in vec3 position;
 in vec2 texcoord;
 in vec4 color;
 
@@ -10,8 +10,8 @@ out vec2 Texcoord;
 out vec4 Color;
 
 void main() {
-	vec3 transformed_position = transform * vec3(position, 1.0);
-	gl_Position = projMatrix * vec4(transformed_position.x, transformed_position.y, 0.9, 1.0);
+	vec3 transformed_position = transform * vec3(position);
+	gl_Position = projMatrix * vec4(transformed_position.x, transformed_position.y, transformed_position.z, 1.0);
 	Texcoord = texcoord;
 	Color = color;
 }

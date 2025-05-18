@@ -49,10 +49,10 @@ class BaseRenderOpenGL3D : public BaseRenderer3D {
 		float z;
 		float u;
 		float v;
-		uint8 r;
-		uint8 g;
-		uint8 b;
-		uint8 a;
+		float r;
+		float g;
+		float b;
+		float a;
 	};
 
 	struct LineVertex {
