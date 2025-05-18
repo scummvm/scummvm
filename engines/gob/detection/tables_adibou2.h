@@ -346,7 +346,7 @@
 		AD_ENTRY1s("intro.stk", "22b997d97eef71c867b49092bd89c2b8", 38128),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO0()
 	},
 	kFeatures640x480,
