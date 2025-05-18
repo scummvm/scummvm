@@ -1551,9 +1551,6 @@ void alcoveAnimation(byte direccionhn, int32 bitmap) {
 		depthMap[1].posy2 = 16 + object1Height + 1;
 	}
 
-	uint16 dibW;
-	uint16 dibH;
-	debug("direccion=%d", direccionhn);
 	switch (direccionhn) {
 	case 0: {
 		posdibhn = 44904;
@@ -3842,9 +3839,9 @@ static void montaimagenvir(byte *image1, byte *image2) { // Near;
 /**
  * Grabs the action area of the screen into a pointer
  */
-static void getScreen(byte *background) {
+static void getScreen(byte *bg) {
 	byte *screenBuf = (byte *)g_engine->_screen->getPixels();
-	Common::copy(screenBuf, screenBuf + (22400 * 2), background + 4);
+	Common::copy(screenBuf, screenBuf + (22400 * 2), bg + 4);
 }
 
 static void scrollRight(uint &horizontalPos) {

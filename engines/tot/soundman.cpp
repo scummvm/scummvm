@@ -62,7 +62,6 @@ void SoundManager::loadVoc(Common::String fileName, long offset, int16 size) {
 		_lastSrcStream = vocResource.readStream((uint32)vocResource.size());
 
 	} else {
-		Common::File vocResource;
 		if (!vocResource.open("EFECTOS.DAT")) {
 			showError(266);
 		}

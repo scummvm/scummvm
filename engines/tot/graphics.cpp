@@ -490,8 +490,6 @@ void effect(byte numeroefecto, boolean pasaranegro, byte *pantalla2) {
 				}
 			} break;
 			case 11: {
-				long lastRender = 0;
-				long rendertime = 10;
 				for (i2 = 0; i2 <= 3; i2++) {
 					j1 = 1 + i2;
 					for (i1 = (1 + i2); i1 <= (16 - i2); i1++) {
