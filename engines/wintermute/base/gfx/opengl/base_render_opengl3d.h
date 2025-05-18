@@ -55,6 +55,12 @@ class BaseRenderOpenGL3D : public BaseRenderer3D {
 		uint8 a;
 	};
 
+	struct LineVertex {
+		float x;
+		float y;
+		float z;
+	};
+
 	struct SimpleShadowVertex {
 		float u;
 		float v;

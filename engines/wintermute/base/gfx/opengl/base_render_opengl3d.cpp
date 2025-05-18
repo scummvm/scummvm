@@ -378,10 +378,10 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 	byte b = RGBCOLGetB(color);
 
 	for (int i = 0; i < 4; ++i) {
-		vertices[i].r = r;
-		vertices[i].g = g;
-		vertices[i].b = b;
-		vertices[i].a = a;
+		vertices[i].r = r / 255.0f;
+		vertices[i].g = g / 255.0f;
+		vertices[i].b = b / 255.0f;
+		vertices[i].a = a / 255.0f;
 	}
 
 	setSpriteBlendMode(blendMode);
@@ -413,7 +413,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 
 	glVertexPointer(3, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].x);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].u);
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SpriteVertex), &vertices[0].r);
+	glColorPointer(4, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].r);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -529,16 +529,32 @@ bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) 
 	y1 += _drawOffsetY;
 	y2 += _drawOffsetY;
 
+	// position coords
+	LineVertex vertices[2];
+	vertices[0].x = x1;
+	vertices[0].y = y1;
+	vertices[0].z = 0.9f;
+	vertices[1].x = x2;
+	vertices[1].y = y2;
+	vertices[1].z = 0.9f;
+
 	byte a = RGBCOLGetA(color);
 	byte r = RGBCOLGetR(color);
 	byte g = RGBCOLGetG(color);
 	byte b = RGBCOLGetB(color);
 
-	glBegin(GL_LINES);
-		glColor4ub(r, g, b, a);
-		glVertex3f(x1, _height - y1, 0.9f);
-		glVertex3f(x2, _height - y2, 0.9f);
-	glEnd();
+	glViewport(0, 0, _width, _height);
+	setProjection2D();
+
+	glColor4ub(r, g, b, a);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, sizeof(LineVertex), &vertices[0].x);
+
+	glDrawArrays(GL_LINES, 0, 2);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 	return true;
 }

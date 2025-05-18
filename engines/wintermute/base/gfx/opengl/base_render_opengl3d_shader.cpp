@@ -114,12 +114,12 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	glGenBuffers(1, &_lineVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
-	glBufferData(GL_ARRAY_BUFFER, 2 * 8, nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 2 * 12, nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *lineAttributes[] = { "position", nullptr };
 	_lineShader = OpenGL::Shader::fromFiles("wme_line", lineAttributes);
-	_lineShader->enableVertexAttribute("position", _lineVBO, 2, GL_FLOAT, false, 8, 0);
+	_lineShader->enableVertexAttribute("position", _lineVBO, 3, GL_FLOAT, false, 12, 0);
 
 
 
@@ -236,11 +236,10 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		_gameRef->getFogParams(&fogEnabled, &fogColor, &fogStart, &fogEnd);
 		if (fogEnabled) {
 			// TODO: Implement fog
-			GLfloat color[4];
-			color[0] = RGBCOLGetR(fogColor) / 255.0f;
-			color[1] = RGBCOLGetG(fogColor) / 255.0f;
-			color[2] = RGBCOLGetB(fogColor) / 255.0f;
-			color[3] = RGBCOLGetA(fogColor) / 255.0f;
+			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f,
+			                     RGBCOLGetG(fogColor) / 255.0f,
+			                     RGBCOLGetB(fogColor) / 255.0f,
+			                     RGBCOLGetA(fogColor) / 255.0f };
 			debug(5, "BaseRenderOpenGL3DShader::setup3D fog not yet implemented! [%f %f %f %f]", color[0], color[1], color[2], color[3]);
 		} else {
 			// TODO: Disable fog in shader
@@ -540,16 +539,23 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 }
 
 bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+	x1 += _drawOffsetX;
+	x2 += _drawOffsetX;
+	y1 += _drawOffsetY;
+	y2 += _drawOffsetY;
+
+	// position coords
+	float lineCoords[6];
+	lineCoords[0] = x1;
+	lineCoords[1] = y1;
+	lineCoords[2] = 0.9f;
+	lineCoords[3] = x2;
+	lineCoords[4] = y2;
+	lineCoords[5] = 0.9f;
+
 	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
 
-	float lineCoords[4];
-
-	lineCoords[0] = x1;
-	lineCoords[1] = _height - y1;
-	lineCoords[2] = x2;
-	lineCoords[3] = _height - y2;
-
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * 8, lineCoords);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * 12, lineCoords);
 
 	byte a = RGBCOLGetA(color);
 	byte r = RGBCOLGetR(color);
@@ -564,6 +570,9 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 
 	_lineShader->use();
 	_lineShader->setUniform("color", colorValue);
+
+	glViewport(0, 0, _width, _height);
+
 	setProjection2D(_lineShader);
 
 	glDrawArrays(GL_LINES, 0, 2);
