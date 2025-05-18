@@ -580,7 +580,7 @@ void CloudConnectionWizard::manualModeStorageConnectionCallback(const Networking
 
 // public
 
-int CloudConnectionWizard::runModal(uint32 selectedStorageIndex) {
+int CloudConnectionWizard::runStorageModal(uint32 selectedStorageIndex) {
 	_selectedStorageIndex = selectedStorageIndex;
 	return Dialog::runModal();
 }
