@@ -20,7 +20,6 @@
  */
 
 #include "common/str.h"
-#include "common/macresman.h"
 
 #include "scumm/scumm.h"
 #include "scumm/macgui/macgui.h"
@@ -33,9 +32,6 @@
 namespace Scumm {
 
 MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
-	Common::MacResManager resource;
-	Common::SeekableReadStream *mbar;
-
 	switch (vm->_game.id) {
 	case GID_INDY3:
 		_impl = new MacIndy3Gui(vm, resourceFile);
@@ -51,16 +47,10 @@ MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
 		break;
 
 	case GID_INDY4:
-		resource.open(resourceFile);
-		mbar = resource.getResource(MKTAG('M', 'B', 'A', 'R'), 128);
-
-		if (mbar) {
+		if (vm->_isModernMacVersion)
 			_impl = new MacV6Gui(vm, resourceFile);
-			delete mbar;
-		} else
+		else
 			_impl = new MacV5Gui(vm, resourceFile);
-
-		resource.close();
 		break;
 
 	case GID_TENTACLE:

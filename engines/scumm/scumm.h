@@ -1597,6 +1597,7 @@ public:
 	Graphics::Surface _textSurface;
 	int _textSurfaceMultiplier = 0;
 
+	bool _isModernMacVersion = false;
 	bool _useGammaCorrection = true;
 
 	Graphics::Surface *_macScreen = nullptr;

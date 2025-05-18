@@ -1345,13 +1345,18 @@ Common::Error ScummEngine::init() {
 					return Common::Error(Common::kReadingFailed, Common::U32String::format(_("This game requires the '%s' Macintosh executable for its fonts."), gameName));
 				}
 
-				if (_game.id == GID_LOOM || _game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) {
+				// Only the PPC version of Fate of Atlantis requires the
+				// executable for music, but without the executable we don't
+				// know which version it is. The message is a bit misleading
+				// because only Loom needs it for the fonts.
+
+				if (_game.id == GID_LOOM || _game.id == GID_TENTACLE || _game.id == GID_SAMNMAX || _game.id == GID_INDY4) {
 					return Common::Error(Common::kReadingFailed, Common::U32String::format(_("This game requires the '%s' Macintosh executable for its music and fonts."), gameName));
 				}
 
 				GUI::MessageDialog dialog(Common::U32String::format(
 					_("Could not find the '%s' Macintosh executable to read resources from. %s will be disabled."),
-						gameName, (_game.id == GID_INDY4 || _game.id == GID_MONKEY2 || _game.version > 6) ? _s("The Mac GUI") : _s("The music and the Mac GUI")), _("OK"));
+						gameName, (_game.id == GID_MONKEY2 || _game.version > 6) ? _s("The Mac GUI") : _s("The music and the Mac GUI")), _("OK"));
 				dialog.runModal();
 			} else if (isUsingOriginalGUI() || _game.id == GID_INDY3 || _game.id == GID_LOOM) {
 				// FIXME: THIS IS A TEMPORARY WORKAROUND!
@@ -1376,12 +1381,16 @@ Common::Error ScummEngine::init() {
 			if (!resource.hasResFork())
 				return Common::Error(Common::kReadingFailed, Common::U32String::format(_("Could not find resource fork in Macintosh resource file %s"), macResourceFile.toString().c_str()));
 
-			// The Dig is special, in that it has a smaller launcher
-			// executable that, I think, decides which one of the
-			// real executables to run. Check that the user didn't
-			// accidentally pick the launcher one.
+			// The Aaron Giles Mac ports have an MBAR resource. The older ones
+			// does not.
+
+			_isModernMacVersion = (resource.getResLength(MKTAG('M', 'B', 'A', 'R'), 128) > 0);
+
+			// The Dig is special, in that it has a smaller launcher executable
+			// that, I think, decides which one of the real executables to run.
+			// Check that the user didn't accidentally pick the launcher one.
 			if (_game.id == GID_DIG) {
-				if (resource.getResLength(MKTAG('M', 'B', 'A', 'R'), 128) == 0) {
+				if (!_isModernMacVersion) {
 					return Common::Error(Common::kReadingFailed, Common::U32String::format(_("'%s' appears to be the wrong Dig executable. It may be the launcher one found in the CD root, which does not contain any of the necessary menu and dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from its sub-folders should be what you need."), filename));
 				}
 			}
