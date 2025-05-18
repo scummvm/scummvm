@@ -8320,7 +8320,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("melements", "", "MVM.EXE",        "t:31a3726973886c0f3de3ee127f56fcb3", 1512503, Common::DE_DEU, 602),
 
 	// French: "Le Maître des éléments", published by Gallimard Multimédia
-	// Hybrid disc: Mac version needs to be added, unknown projector file/needs extraction?
+	// Mac version requires installation, installer in file "Installeur", created with VISE Lite 3.6 from MindVision Software
 	WINGAME1_l("melements", "", "MDE.EXE", "t:8db5c7ffd823515b341cee7acb72b9a8", 2256946, Common::FR_FRA, 602),
 
 	// Dutch: "Meesters van Macht", Netherlands/Belgium release by Karakter Interactive
