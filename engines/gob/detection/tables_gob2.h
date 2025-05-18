@@ -510,8 +510,8 @@
 {
 	{
 		"gob2",
-		"",
-		AD_ENTRY1("intro.stk", "d28b9e9b41f31acfa58dcd12406c7b2c"),
+		"v1.02",
+		AD_ENTRY1s("intro.stk", "d28b9e9b41f31acfa58dcd12406c7b2c", 554865),
 		DE_DEU,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
@@ -523,7 +523,7 @@
 { // Supplied by goodoldgeorg in bug report #4164
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY1s("intro.stk", "686c88f7302a80b744aae9f8413e853d", 554384),
 		IT_ITA,
 		kPlatformAmiga,
