@@ -9,6 +9,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for The Adventures of Willy Beamish.
    - Added support for Heart of China.
 
+ Drascula:
+   - Fixed displaying accented characters.
+   - Added Text-to-Speech support.
+
  Freescape:
    - Added roll rotation to Driller and Dark Side.
 
