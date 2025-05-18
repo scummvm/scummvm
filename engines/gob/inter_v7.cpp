@@ -1615,7 +1615,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 			_vm->_draw->_destSurface -= 80;
 
 		if (_vm->_draw->_pattern & 0x8000)
-			warning("o7_fillRect: pattern %d & 0x8000 != 0 stub", _vm->_draw->_pattern);
+			warning("o7_fillRect: pattern %d & 0x8000 != 0 Stub", _vm->_draw->_pattern);
 		else {
 			// Replace a specific color in the rectangle
 			uint8 colorIndexToReplace = (_vm->_draw->_backColor >> 8) & 0xFF;
