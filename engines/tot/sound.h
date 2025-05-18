@@ -36,9 +36,9 @@ void autoPlayVoc(Common::String vocFile, int32 startPos, uint vocSize);
 void pitavocmem();
 void playVoc(Common::String vocFile, int32 startPos, uint vocSize);
 void stopVoc();
-void playMidiFile(Common::String nomfich, boolean loop);
+void playMidiFile(Common::String nomfich, bool loop);
 void pitamidmem();
-void loopactivo(boolean mid_loop);
+void loopactivo(bool mid_loop);
 
 } // End of namespace Tot
 

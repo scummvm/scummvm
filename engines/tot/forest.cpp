@@ -34,8 +34,8 @@ void initTree(Tree &a, nodeElement dato) {
 	a->child = NULL;
 }
 
-boolean root(Tree nodo) {
-	boolean raiz_result;
+bool root(Tree nodo) {
+	bool raiz_result;
 	if (nodo->parent == NULL)
 		raiz_result = true;
 	else

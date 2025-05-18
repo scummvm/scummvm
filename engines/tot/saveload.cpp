@@ -38,7 +38,7 @@ namespace Tot {
 
 #define SAVEGAME_CURRENT_VERSION 1
 
-boolean syncGeneralData(Common::Serializer &s, regispartida &game) {
+bool syncGeneralData(Common::Serializer &s, regispartida &game) {
 	uint32 startBytes = s.bytesSynced();
 	// Uint16
 	s.syncAsUint16LE(game.numeropantalla);
@@ -142,7 +142,7 @@ boolean syncGeneralData(Common::Serializer &s, regispartida &game) {
 	return true;
 }
 
-boolean syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *roomStream) {
+bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *roomStream) {
 	uint32 startBytes = s.bytesSynced();
 	if (s.isSaving()) {
 
@@ -176,7 +176,7 @@ boolean syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStrea
 	return true;
 }
 
-boolean syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *conversations) {
+bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *conversations) {
 	uint32 startBytes = s.bytesSynced();
 
 	int size = conversations->size();
@@ -200,7 +200,7 @@ boolean syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWr
 	return true;
 }
 
-boolean syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *items) {
+bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *items) {
 	uint32 startBytes = s.bytesSynced();
 	int size = items->size();
 	if (s.isSaving()) {

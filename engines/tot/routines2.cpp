@@ -780,7 +780,7 @@ void generateDiploma(Common::String &nombrefoto) {
 	loadDiploma(nombrefoto, clave);
 
 	Common::Event e;
-	boolean keyPressed = false;
+	bool keyPressed = false;
 	do {
 		g_engine->_screen->update();
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -938,7 +938,7 @@ void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte co
 	outtextxyBios(posx, posy, "_", 0);
 
 	Common::Event e;
-	boolean done = false;
+	bool done = false;
 	while (!done && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 
@@ -985,12 +985,12 @@ void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte co
 void readAlphaGraphSmall(Common::String &dato, int long_, int posx, int posy, byte colorbarra,
 						 byte colortexto) {
 	int pun = 1;
-	boolean borracursor;
+	bool borracursor;
 	bar(posx, posy + 2, posx + long_ * 6, posy + 9, colorbarra);
 
 	outtextxyBios(posx, posy, "-", colortexto);
 	Common::Event e;
-	boolean done = false;
+	bool done = false;
 
 	while (!done && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -1107,7 +1107,7 @@ void buttonBorder(uint x1, uint y1, uint x2, uint y2,
 
 void copyProtection();
 
-// static void buttonPress(uint xx1, uint yy1, uint xx2, uint yy2, boolean bandera) {
+// static void buttonPress(uint xx1, uint yy1, uint xx2, uint yy2, bool bandera) {
 // 	g_engine->_mouseManager->hide();
 
 // 	byte color = bandera ? 249 : 255;
@@ -1128,7 +1128,7 @@ void copyProtection() {
 	// byte filanum, columnanum, posicioncursor, intentos, ytext, oldiraton,
 	// 	oldcolorprotec;
 	// // textsettingstype oldstyle;
-	// boolean salirprotec;
+	// bool salirprotec;
 	// char chaux;
 	// varying_string<5> clavetecleada, filastr, columnastr;
 	// int _error;
@@ -1470,7 +1470,7 @@ void drawCreditsScreen(byte *&fondopp, uint &sizefondo2, byte *&fondo2) {
 		showError(274);
 }
 
-void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, boolean direct) {
+void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, bool direct) {
 
 	uint16 wImagen1, hImagen1;
 	uint auxhor;
@@ -1561,10 +1561,10 @@ void scrollCredit(
 	uint tam,
 	palette &pal2,
 	byte *&fondopp,
-	boolean &salirpitando,
+	bool &salirpitando,
 	int minHeight,
-	boolean withFade,
-	boolean refresh) {
+	bool withFade,
+	bool refresh) {
 	Common::File fich;
 	if (!fich.open("CREDITOS.DAT")) {
 		showError(270);
@@ -1587,7 +1587,7 @@ void scrollCredit(
 
 	changeRGBBlock(16, 240, &pal[16 * 3 + 0]);
 	Common::Event e;
-	boolean keyPressed = false;
+	bool keyPressed = false;
 
 	// Loops an image from the bottom of the screen to the top
 	for (int i = 199; i >= minHeight; i--) {
@@ -1616,7 +1616,7 @@ void scrollSingleCredit(
 	uint tam,
 	palette &pal2,
 	byte *&fondopp,
-	boolean &salirpitando) {
+	bool &salirpitando) {
 	scrollCredit(
 		posicion,
 		tam,
@@ -1663,7 +1663,7 @@ void removeTitle(byte *&fondo2) {
 	g_engine->_screen->update();
 }
 
-inline boolean keyPressed() {
+inline bool keyPressed() {
 	Common::Event e;
 	g_system->getEventManager()->pollEvent(e);
 	return e.type == Common::EVENT_KEYUP;
@@ -1676,7 +1676,7 @@ void credits() {
 	byte *fondopp;
 	byte *fondo2;
 	uint sizefondo2;
-	boolean salirpitando;
+	bool salirpitando;
 
 	g_engine->_mouseManager->hide();
 	totalFadeOut(0);
@@ -1765,7 +1765,7 @@ Lsalida:
 
 void introduction() {
 	g_engine->_mouseManager->hide();
-	boolean pulsada_salida;
+	bool pulsada_salida;
 	uint contadorvueltas;
 
 	pulsada_salida = false;
@@ -1898,14 +1898,14 @@ void firstIntroduction() {
 }
 
 void initialLogo() {
-	boolean basurillalogica = false;
+	bool basurillalogica = false;
 	drawFlc(0, 0, 0, 0, 18, 25, false, false, false, basurillalogica);
 	delay(1000);
 }
 
-void initialMenu(boolean fundido) {
-	boolean kklogica = false;
-	boolean opcionvalida = false;
+void initialMenu(bool fundido) {
+	bool kklogica = false;
+	bool opcionvalida = false;
 	stopVoc();
 
 	if (fundido)
@@ -2184,7 +2184,7 @@ void soundControls() {
 		oldxfade;
 
 	byte ytext, oldiraton;
-	boolean salirmenucontroles;
+	bool salirmenucontroles;
 
 	salirmenucontroles = false;
 	oldxraton = xraton;
@@ -2227,8 +2227,8 @@ void soundControls() {
 	putImg(volumenmelodia + 86, 76, slade);
 
 	setMousePos(1, xraton, yraton);
-	boolean keyPressed = false;
-	boolean mouseClicked = false;
+	bool keyPressed = false;
+	bool mouseClicked = false;
 	Common::Event e;
 	do {
 		g_engine->_chrono->updateChrono();
@@ -2257,7 +2257,7 @@ void soundControls() {
 			if (pulsay >= 22 && pulsay <= 37) {
 				g_engine->_mouseManager->hide();
 				xfade = 86 + volumenfx;
-				boolean mouseReleased = false;
+				bool mouseReleased = false;
 				do {
 
 					oldxfade = xfade;
@@ -2292,7 +2292,7 @@ void soundControls() {
 			} else if (pulsay >= 67 && pulsay <= 82) {
 				g_engine->_mouseManager->hide();
 				xfade = 86 + volumenmelodia;
-				boolean mouseReleased = false;
+				bool mouseReleased = false;
 				do {
 					while (g_system->getEventManager()->pollEvent(e)) {
 						if (e.type == Common::EVENT_LBUTTONUP) {
@@ -2348,7 +2348,7 @@ void sacrificeScene() {
 	palette palaux;
 
 	stopVoc();
-	boolean pulsada_salida = currentRoomData->paletteAnimationFlag;
+	bool pulsada_salida = currentRoomData->paletteAnimationFlag;
 	currentRoomData->paletteAnimationFlag = false;
 
 	bar(0, 139, 319, 149, 0);
@@ -2676,7 +2676,7 @@ void sacrificeScene() {
 }
 
 void ending() {
-	boolean pulsada_salida;
+	bool pulsada_salida;
 
 	outtextxy(10, 41, "           Al fin lo has conseguido....", 249);
 	outtextxy(10, 39, "           Al fin lo has conseguido....", 249);
@@ -2774,7 +2774,7 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
  * Assemble the screen for scroll assembles only the objects because scrolling screens
  * never have secondary animations and character animation is assembled elsewhere.
  */
-void assembleScreen(boolean scroll) {
+void assembleScreen(bool scroll) {
 
 	for (int indice = 0; indice < nivelesdeprof; indice++) {
 		if (screenObjects[indice] != NULL) {
@@ -2896,7 +2896,7 @@ void drawGrid() {
 	g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 }
 
-void setRoomTrajectories(int animationHeight, int animationWidth, TRAJECTORIES_OP op, boolean fixGrids) {
+void setRoomTrajectories(int animationHeight, int animationWidth, TRAJECTORIES_OP op, bool fixGrids) {
 	// add to restore the room, subtract to adjust before loading the screen
 
 	if (currentRoomData->animationFlag && currentRoomData->nombremovto != "QQQQQQQQ") {

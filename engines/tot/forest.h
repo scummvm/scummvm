@@ -43,7 +43,7 @@ struct treeDef {
 
 void initTree(Tree& a, nodeElement data);
 
-boolean root(Tree node);
+bool root(Tree node);
 
 Tree rightSibling(Tree node);
 

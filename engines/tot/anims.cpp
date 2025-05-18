@@ -41,7 +41,7 @@ int32 posflicfile;
 uint numerovuelta, posrelfli;
 byte *punterofondofrase = (byte *)malloc(sizefrase);
 byte framecontador;
-boolean primeravuelta;
+bool primeravuelta;
 
 void drawText(uint xfrase, uint yfrase, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte colorfrase, byte colorborde) {
 
@@ -626,10 +626,10 @@ void handleFlcEvent(byte numero_del_evento) {
 }
 
 void drawFlc(uint flicx, uint flicy, int32 posicionfli, uint loop,
-			 byte veloc, byte numevento, boolean palcompleta, boolean permitesalida,
-			 boolean doscientos, boolean &salidaflis);
+			 byte veloc, byte numevento, bool palcompleta, bool permitesalida,
+			 bool doscientos, bool &salidaflis);
 
-static void exitProcedure(boolean &salir_bucle, boolean &permitesalida) {
+static void exitProcedure(bool &salir_bucle, bool &permitesalida) {
 
 	salir_bucle = false;
 	if (permitesalida) {
@@ -686,11 +686,11 @@ void blit(const Graphics::Surface *src, Common::Rect bounds) {
 
 static void loadFlc(
 	uint &loop,
-	boolean &permitesalida,
-	boolean &salidaflis,
+	bool &permitesalida,
+	bool &salidaflis,
 	byte &numevento,
-	boolean &palcompleta,
-	boolean &doscientos,
+	bool &palcompleta,
+	bool &doscientos,
 	byte &veloc,
 	uint &flicx,
 	uint &flicy) {
@@ -804,10 +804,10 @@ void drawFlc(
 	uint loop,
 	byte veloc,
 	byte numevento,
-	boolean palcompleta,
-	boolean permitesalida,
-	boolean doscientos,
-	boolean &salidaflis) {
+	bool palcompleta,
+	bool permitesalida,
+	bool doscientos,
+	bool &salidaflis) {
 
 	primeravuelta = true;
 	posflicfile = posicionfli;

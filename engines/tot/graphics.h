@@ -33,12 +33,12 @@ void putVirtualImg(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte 
 void clear();
 void drawFullScreen(byte *screen);
 void copyFromScreen(byte *&screen);
-void drawScreen(byte *screen, boolean offsetSize = true);
-void putImg(uint coordx, uint coordy, byte *image, boolean transparency = false);
+void drawScreen(byte *screen, bool offsetSize = true);
+void putImg(uint coordx, uint coordy, byte *image, bool transparency = false);
 void putShape(uint coordx, uint coordy, byte *image);
 void getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image);
 void loadPalette(Common::String image);
-void effect(byte effectNumber, boolean fadeToBlack, byte *screen);
+void effect(byte effectNumber, bool fadeToBlack, byte *screen);
 void turnLightOn();
 void totalFadeOut(byte red);
 void partialFadeOut(byte numCol);

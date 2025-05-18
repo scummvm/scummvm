@@ -9,8 +9,6 @@
 
 namespace Tot {
 
-typedef unsigned char boolean;
-
 void showError(int code);
 
 // Delays a specified number of milliseconds.
@@ -52,7 +50,7 @@ inline int keypressed() {
 	return 0;
 }
 
-inline boolean odd(long i) { return i % 2 != 0; }
+inline bool odd(long i) { return i % 2 != 0; }
 
 unsigned Random(unsigned range);
 int Random(int range);
