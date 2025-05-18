@@ -765,7 +765,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 					if ((obj.videoSlot != 0 && _vm->_vidPlayer->getFlags(obj.videoSlot - 1) & 0x800) ||
 						doDraw) {
 						if (obj.videoSlot != 0 && _vm->_vidPlayer->getFlags(obj.videoSlot - 1) & 0x800)
-							warning("updateAnim Adibou2 Stub obj.field_38 & 0x800 != 0");
+							warning("updateAnim Adibou2 stub obj.field_38 & 0x800 != 0");
 
 						VideoPlayer::Properties props;
 						props.x = 0;

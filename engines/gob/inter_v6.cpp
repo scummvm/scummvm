@@ -303,7 +303,7 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 	} else
 		loopCount = 1;
 
-	// WORKAROUND: For a bug in Adibou 2 scripts for cooking activity: bananas count is not updated correctly.
+	// WORKAROUND for a bug in Adibou 2 scripts for cooking activity: bananas count is not updated correctly.
 	// The banana balance equation should be: "remaining bananas = previous remaining bananas - bananas used for cake"
 	// but scripts do instead "remaining bananas = previous remaining *cherries* - bananas used for cake" :p
 	if (_vm->getGameType() == kGameTypeAdibou2 &&
