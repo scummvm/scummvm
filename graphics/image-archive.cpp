@@ -20,6 +20,7 @@
  */
 
 #include "graphics/image-archive.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 
 #include "common/archive.h"
@@ -37,8 +38,10 @@ ImageArchive::~ImageArchive() {
 
 void ImageArchive::reset() {
 #ifdef USE_PNG
-	for (auto &i : _imageCache)
+	for (auto &i : _imageCache) {
+		i._value->free();
 		delete i._value;
+	}
 	_imageCache.clear();
 #endif
 }
@@ -87,12 +90,16 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 	}
 
 	if (_imageCache.contains(fname)) {
+		// Surface was created by scale(), it needs to be freed explicitly
+		_imageCache[fname]->free();
 		delete _imageCache[fname];
 		_imageCache.erase(fname);
 	}
 
 	const Graphics::Surface *surf = decoder.getSurface();
 	_imageCache[fname] = surf->scale(w ? w : surf->w, h ? h : surf->h, true);
+
+	delete stream;
 	return _imageCache[fname];
 #endif // USE_PNG
 }
