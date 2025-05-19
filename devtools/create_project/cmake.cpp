@@ -349,8 +349,16 @@ void CMakeProvider::writeWarnings(std::ofstream &output) const {
 		output << ' ' << warning;
 	}
 	output << "\")\n";
-	output << "\tif(CMAKE_CXX_COMPILER_ID STREQUAL \"GNU\" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.0)\n";
-	output << "\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member\")\n";
+	output << "\tif(CMAKE_CXX_COMPILER_ID STREQUAL \"GNU\")\n";
+	output << "\t\tif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 7.1)\n";
+	output << "\t\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-stringop-overflow\")\n";
+	output << "\t\tendif()\n";
+	output << "\t\tif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 8.1)\n";
+	output << "\t\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-stringop-truncation\")\n";
+	output << "\t\tendif()\n";
+	output << "\t\tif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.0)\n";
+	output << "\t\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member\")\n";
+	output << "\t\tendif()\n";
 	output << "\tendif()\n";
 	output << "endif()\n";
 }

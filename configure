@@ -2383,6 +2383,12 @@ if test "$have_gcc" = yes; then
 
 		if test $_cxx_major -ge 5; then
 			append_var CXXFLAGS "-Wshadow"
+			if test $_cxx_major -ge 7; then
+				append_var CXXFLAGS "-Wno-stringop-overflow"
+				if test $_cxx_major -ge 8; then
+					append_var CXXFLAGS "-Wno-stringop-truncation"
+				fi
+			fi
 		else
 			append_var CXXFLAGS "-Wno-missing-field-initializers"
 
