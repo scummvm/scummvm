@@ -83,7 +83,11 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 	}
 
 	Image::PNGDecoder decoder;
-	if (!decoder.loadStream(*stream)) {
+
+	bool result = decoder.loadStream(*stream);
+	delete stream;
+
+	if (!result) {
 		warning("ImageArchive::getImageSurface(): Cannot load file %s", fname.toString().c_str());
 
 		return _imageCache[fname];
@@ -99,7 +103,6 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 	const Graphics::Surface *surf = decoder.getSurface();
 	_imageCache[fname] = surf->scale(w ? w : surf->w, h ? h : surf->h, true);
 
-	delete stream;
 	return _imageCache[fname];
 #endif // USE_PNG
 }
