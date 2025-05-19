@@ -1366,9 +1366,13 @@ Common::Error ScummEngine::init() {
 				// handling from the responsibilities of a simulated OS interface.
 
 				// The Aaron Giles Mac ports have an MBAR resource. The older
-				// ones do not.
+				// ones do not. If opening the resource fails here, that will
+				// be flagged later.
 
-				_isModernMacVersion = (resource.getResLength(MKTAG('M', 'B', 'A', 'R'), 128) > 0);
+				if (resource.open(macResourceFile)) {
+					_isModernMacVersion = (resource.getResLength(MKTAG('M', 'B', 'A', 'R'), 128) > 0);
+					resource.close();
+				}
 				_macGui = new MacGui(this, macResourceFile);
 			}
 
