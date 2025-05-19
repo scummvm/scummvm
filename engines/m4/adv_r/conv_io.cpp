@@ -27,8 +27,11 @@
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
+
+#define NAME_SIZE (g_engine->getGameType() == GType_Riddle ? 12 : 8)
 
 #define HIDDEN		    0x00000004
 #define DESTROYED       0x00000008
@@ -286,20 +289,19 @@ void conv_init(Conv *c) {
 	}
 }
 
-static int32 find_state(char *s, char *c, int file_size) {
-	char name[9];
+static int32 find_state(const char *s, char *c, int file_size) {
+	char name[13];
 	int32 size = 0, offset = 0;
 
 	while (offset < file_size) {
-		cstrncpy(name, &c[offset], 8);
-		name[8] = '\0';
+		Common::strcpy_s(name, &c[offset]);
 
-		if (!scumm_strnicmp(name, s, 8)) {
-			offset += 8 * sizeof(char);
+		if (!scumm_stricmp(name, s)) {
+			offset += NAME_SIZE * sizeof(char);
 			goto handled;
 		}
 
-		offset += 8 * sizeof(char);
+		offset += NAME_SIZE * sizeof(char);
 		if (offset < file_size) {
 			memcpy(&size, &c[offset], sizeof(int32));
 		}
@@ -342,12 +344,12 @@ static void conv_save_state(Conv *c) {
 	// the number of ENTRY_CHUNKs affects the amt_to_write
 	// also extract fname from the CONV_CHUNK
 
-	int32 amt_to_write = 3 * sizeof(int32);	// mystery padding
+	int32 amt_to_write = 3 * sizeof(int32);	// Header size
 	int32 ent = 0;
 	int32 next, tag;	// receive conv_ops_get_entry results
 	int32 myCNode = c->myCNode;
-	char fname[9];
-	memset(fname, 0, 9);
+	char fname[13];
+	memset(fname, 0, 13);
 
 	int32 num_decls = 0;
 	int32 num_entries = 0;
@@ -362,8 +364,7 @@ static void conv_save_state(Conv *c) {
 		case CONV_CHUNK:
 			conv = get_conv(c, ent);
 			assert(conv);
-			cstrncpy(fname, get_string(c, c->myCNode + ent + sizeof(conv_chunk)), 8);
-			fname[8] = '\0';
+			Common::strcpy_s(fname, get_string(c, c->myCNode + ent + sizeof(conv_chunk)));
 			break;
 
 		case DECL_CHUNK:
@@ -412,7 +413,7 @@ static void conv_save_state(Conv *c) {
 		if (offset != -1) {
 			overwrite_file = true;
 			int32 prev_size = READ_LE_UINT32(&conv_save_buff[offset]);
-			prev_size += 3 * sizeof(int32);
+			prev_size += NAME_SIZE + sizeof(int32);
 			offset += sizeof(int32);	// Skip header. (name + size)
 		} else {
 			// Append
@@ -421,12 +422,12 @@ static void conv_save_state(Conv *c) {
 			if (conv_save_buff)
 				mem_free(conv_save_buff);
 
-			conv_save_buff = (char *)mem_alloc(amt_to_write + 3 * sizeof(int32), "conv save buff");
+			conv_save_buff = (char *)mem_alloc(amt_to_write + NAME_SIZE + sizeof(int32), "conv save buff");
 			if (!conv_save_buff)
 				error_show(FL, 'OOM!');
 
-			memcpy(&conv_save_buff[offset], fname, 8 * sizeof(char));
-			offset += 8 * sizeof(char);
+			memcpy(&conv_save_buff[offset], fname, NAME_SIZE * sizeof(char));
+			offset += NAME_SIZE * sizeof(char);
 			WRITE_LE_UINT32(&conv_save_buff[offset], amt_to_write);
 			offset += sizeof(int32);
 		}
@@ -436,12 +437,12 @@ static void conv_save_state(Conv *c) {
 
 		offset = 0;
 
-		conv_save_buff = (char *)mem_alloc(amt_to_write + 3 * sizeof(int32), "conv save buff");
+		conv_save_buff = (char *)mem_alloc(amt_to_write + NAME_SIZE + sizeof(int32), "conv save buff");
 		if (!conv_save_buff)
 			error_show(FL, 'OOM!');
 
-		memcpy(&conv_save_buff[offset], fname, 8 * sizeof(char));
-		offset += 8 * sizeof(char);
+		memcpy(&conv_save_buff[offset], fname, NAME_SIZE * sizeof(char));
+		offset += NAME_SIZE * sizeof(char);
 		WRITE_LE_UINT32(&conv_save_buff[offset], amt_to_write);
 		offset += sizeof(int32);
 	}
@@ -473,7 +474,7 @@ static void conv_save_state(Conv *c) {
 
 	while (ent < c->chunkSize) {
 		conv_ops_get_entry(ent, &next, &tag, c);
-		decl_chunk *decl; 	// declared here for the benefit of Watcom 10.0 not liking to scope things into switches
+		decl_chunk *decl;
 
 		switch (tag) {
 		case DECL_CHUNK:
@@ -533,7 +534,7 @@ static void conv_save_state(Conv *c) {
 	} else {
 		// Append conversation
 		size_t oldSize = _GC(convSave).size();
-		file_size = amt_to_write + 3 * sizeof(int32);
+		file_size = amt_to_write + NAME_SIZE + sizeof(int32);
 
 		_GC(convSave).resize(_GC(convSave).size() + file_size);
 		Common::copy(conv_save_buff, conv_save_buff + file_size, &_GC(convSave)[oldSize]);
@@ -555,15 +556,14 @@ static Conv *conv_restore_state(Conv *c) {
 	int32 e_flags = 0;
 	int32 myCNode;
 
-	char fname[9];
+	char fname[13];
 	int file_size = 0;
 	char *conv_save_buff = nullptr;
 
 	ent = 0; c->myCNode = 0;
 
 	find_and_set_conv_name(c);
-	cstrncpy(fname, _GC(conv_name), 8);
-	fname[8] = '\0';
+	Common::strcpy_s(fname, _GC(conv_name));
 
 	if (_GC(convSave).empty())
 		file_size = -1;
