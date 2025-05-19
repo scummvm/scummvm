@@ -671,8 +671,8 @@ Common::String Util::readString(Common::SeekableReadStream &stream, int n) {
 	return str;
 }
 
-/* NOT IMPLEMENTED */
 void Util::checkJoystick() {
+	warning("Util::checkJoystick: - NOT IMPLEMENTED");
 	_vm->_global->_useJoystick = 0;
 }
 
