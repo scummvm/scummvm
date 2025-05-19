@@ -161,7 +161,6 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 
 		_alphaRef = 0.0f;
 
-		glPolygonMode(GL_FRONT, GL_FILL);
 		glFrontFace(GL_CCW);  // WME DX have CW
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_STENCIL_TEST);
@@ -183,14 +182,13 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		// It will be enabled in other places when needed.
 		// This is delta compared to original sources.
 		glDisable(GL_BLEND);
-		
+
 		glEnable(GL_DEPTH_TEST);
 		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
 		_alphaRef = 8 / 255.0f;
 
 		setAmbientLightRenderState();
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
 		if (camera)
@@ -294,7 +292,6 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 	if (_state != RSTATE_LINES) {
 		_state = RSTATE_LINES;
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDisable(GL_DEPTH_TEST);
 		glFrontFace(GL_CW); // WME DX have CCW
 		glEnable(GL_CULL_FACE);
@@ -313,8 +310,9 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 
 bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32 &rect,
 	                                    const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot,
-	                                    const Wintermute::Vector2 &scale, float angle, uint32 color,
-	                                    bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+	                                    const Wintermute::Vector2 &scale,
+	                                    float angle, uint32 color, bool alphaDisable,
+	                                    Graphics::TSpriteBlendMode blendMode,
 	                                    bool mirrorX, bool mirrorY) {
 	BaseSurfaceOpenGL3D *texture = dynamic_cast<BaseSurfaceOpenGL3D *>(tex);
 	if (!texture)

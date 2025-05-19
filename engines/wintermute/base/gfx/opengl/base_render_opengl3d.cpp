@@ -154,7 +154,6 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GEQUAL, 0.0f);
 
-		glPolygonMode(GL_FRONT, GL_FILL);
 		glFrontFace(GL_CCW);  // WME DX have CW
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_STENCIL_TEST);
@@ -187,7 +186,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 
 		setAmbientLightRenderState();
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
 		if (camera)
@@ -279,7 +277,6 @@ bool BaseRenderOpenGL3D::setupLines() {
 
 		float value[] = { 0, 0, 0, 0 };
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 		glFrontFace(GL_CW); // WME DX have CCW
@@ -678,6 +675,7 @@ void BaseRenderOpenGL3D::displaySimpleShadow(BaseObject *object) {
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	glDisable(GL_TEXTURE_2D);
 	glDepthMask(GL_TRUE);
 }
 
