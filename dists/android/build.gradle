@@ -43,7 +43,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 35
 
-        versionName "2.9.0"
+        versionName "2.9.1"
         versionCode 2091000
         // versioncode must be incremented for each market upload
         // maximum versioncode allowed by Play Store is: 2100000000
