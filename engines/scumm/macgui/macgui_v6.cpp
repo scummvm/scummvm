@@ -70,6 +70,8 @@ MacV6Gui::MacV6Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiIm
 #endif
 	else if (_vm->_game.id == GID_MANIAC)
 		_gameName = "Maniac Mansion";
+	else if (_vm->_game.id == GID_INDY4)
+		_gameName = "Fate of Atlantis PowerPC";
 	else
 		_gameName = "Some Game I Do Not Know";
 
@@ -1101,7 +1103,7 @@ bool MacV6Gui::runOptionsDialog() {
 
 					if (_vm->_game.id == GID_MANIAC) {
 						effectVolume = musicVolume;
-					} else if (_vm->_game.id == GID_TENTACLE) {
+					} else if (_vm->_game.id == GID_TENTACLE || _vm->_game.id == GID_INDY4) {
 						musicVolume = sliderMusicVolume->getValue();
 						voiceVolume = sliderVoiceVolume->getValue();
 						effectVolume = voiceVolume;
