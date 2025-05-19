@@ -37,7 +37,7 @@ ifeq "$(HAVE_GCC)" "1"
 
 	# Currently we disable this gcc flag, since it will also warn in cases,
 	# where using GCC_PRINTF (means: __attribute__((format(printf, x, y))))
-	# is not possible, thus it would fail compiliation with -Werror without
+	# is not possible, thus it would fail compilation with -Werror without
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
