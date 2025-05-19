@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.10.0 (XXXX-XX-XX)
 
  New games:
+   - Added support for Adibou2/Sciences.
    - Added support for Another World.
    - Added support for Dark Seed.
    - Added support for God of Thunder.
