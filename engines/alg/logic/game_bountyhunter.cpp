@@ -30,10 +30,6 @@
 #include "alg/logic/game_bountyhunter.h"
 #include "alg/scene.h"
 
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif
-
 namespace Alg {
 
 GameBountyHunter::GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
