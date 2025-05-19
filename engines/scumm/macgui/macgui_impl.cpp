@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/maccursor.h"
 #include "graphics/macgamma.h"
 #include "graphics/paletteman.h"
 #include "graphics/fonts/macfont.h"
@@ -605,6 +606,31 @@ Graphics::Surface *MacGuiImpl::createRemappedSurface(const Graphics::Surface *su
 	}
 
 	return s;
+}
+
+bool MacGuiImpl::setupResourceCursor(int id, int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
+	Common::MacResManager resource;
+	Graphics::MacCursor macCursor;
+	bool success = false;
+
+	resource.open(_resourceFile);
+
+	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), id);
+
+	if (curs && macCursor.readFromStream(*curs)) {
+		width = macCursor.getWidth();
+		height = macCursor.getHeight();
+		hotspotX = macCursor.getHotspotX();
+		hotspotY = macCursor.getHotspotY();
+		animate = 0;
+
+		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
+		success = true;
+	}
+
+	delete curs;
+	resource.close();
+	return success;
 }
 
 // ---------------------------------------------------------------------------

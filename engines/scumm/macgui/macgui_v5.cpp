@@ -25,7 +25,6 @@
 
 #include "engines/engine.h"
 
-#include "graphics/maccursor.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/surface.h"
@@ -119,22 +118,7 @@ bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 }
 
 void MacV5Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	Common::MacResManager resource;
-	Graphics::MacCursor macCursor;
-
-	resource.open(_resourceFile);
-
-	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), 128);
-
-	if (curs && macCursor.readFromStream(*curs)) {
-		width = macCursor.getWidth();
-		height = macCursor.getHeight();
-		hotspotX = macCursor.getHotspotX();
-		hotspotY = macCursor.getHotspotY();
-		animate = 0;
-
-		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
-	} else {
+	if (!setupResourceCursor(128, width, height, hotspotX, hotspotY, animate)) {
 		// Monkey Island 1 uses the arrow cursor, and we have to use it
 		// for the Fate of Atlantis demo as well.
 		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
@@ -144,9 +128,6 @@ void MacV5Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY
 		hotspotY = 3;
 		animate = 0;
 	}
-
-	delete curs;
-	resource.close();
 }
 
 void MacV5Gui::updateMenus() {
