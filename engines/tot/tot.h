@@ -69,6 +69,11 @@ public:
 	MouseManager *_mouseManager = nullptr;
 	ChronoManager *_chrono = nullptr;
 
+	bool _showMouseGrid = false;
+	bool _showScreenGrid = false;
+	bool _showGameGrid = false;
+	bool _drawObjectAreas = false;
+
 public:
 	TotEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TotEngine() override;

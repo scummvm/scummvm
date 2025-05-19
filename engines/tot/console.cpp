@@ -20,18 +20,82 @@
  */
 
 #include "tot/console.h"
+#include "tot/playanim.h"
+#include "tot/routines.h"
 
 namespace Tot {
 
-Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+TotConsole::TotConsole(TotEngine *engine) : _engine(engine) {
+	registerCmd("jumpToPart2", WRAP_METHOD(TotConsole, cmdJumpToPart2));
+	registerCmd("loadRoom", WRAP_METHOD(TotConsole, cmdLoadRoom));
+	registerCmd("showMouseGrid", WRAP_METHOD(TotConsole, cmdShowMouseGrid));
+	registerCmd("showGameGrid", WRAP_METHOD(TotConsole, cmdShowGameGrid));
+	registerCmd("showScreenGrid", WRAP_METHOD(TotConsole, cmdShowScreenGrid));
+	registerCmd("showObjectAreas", WRAP_METHOD(TotConsole, cmdShowObjectAreas));
+	registerCmd("clearLayers", WRAP_METHOD(TotConsole, cmdClearLayers));
 }
 
-Console::~Console() {
+TotConsole::~TotConsole() {
+
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+
+bool TotConsole::cmdShowMouseGrid(int argc, const char **argv) {
+	_engine->_showMouseGrid = true;
+	debugPrintf("Enabled mouse hotspot grid");
+	return true;
+}
+
+bool TotConsole::cmdShowGameGrid(int argc, const char **argv) {
+	_engine->_showGameGrid = true;
+	debugPrintf("Enabled screen base grid");
+	return true;
+}
+
+bool TotConsole::cmdShowScreenGrid(int argc, const char **argv) {
+	_engine->_showScreenGrid = true;
+	debugPrintf("Enabled screen walk area grid");
+	return true;
+}
+
+bool TotConsole::cmdShowObjectAreas(int argc, const char **argv) {
+	_engine->_drawObjectAreas = true;
+	debugPrintf("Enabled room object area display");
+	return true;
+}
+
+bool TotConsole::cmdClearLayers(int argc, const char **argv) {
+	_engine->_drawObjectAreas = false;
+	_engine->_showScreenGrid = false;
+	_engine->_showGameGrid = false;
+	_engine->_showMouseGrid = false;
+	drawScreen(background);
+	debugPrintf("Cleared all debug layers");
+	return true;
+}
+
+bool TotConsole::cmdLoadRoom(int argc, const char **argv) {
+
+	int roomID = atoi(argv[1]);
+
+	if (roomID < 0 || roomID > 24) {
+		debugPrintf("Invalid RoomID %d!\n", roomID);
+		return true;
+	}
+	freeAnimation();
+	freeScreenObjects();
+	clearScreenData();
+	loadScreenData(roomID);
+	drawScreen(background);
+	debugPrintf("Loaded screen %d", roomID);
+	return true;
+}
+
+
+bool TotConsole::cmdJumpToPart2(int argc, const char **argv) {
+	completadalista1 = true;
+	completadalista2 = true;
+	debugPrintf("Moving on to part 2 of the game");
 	return true;
 }
 
