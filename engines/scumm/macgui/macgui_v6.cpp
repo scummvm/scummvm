@@ -129,6 +129,11 @@ bool MacV6Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 }
 
 void MacV6Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
+	if (_vm->_game.id == GID_INDY4) {
+		setupResourceCursor(128, width, height, hotspotX, hotspotY, animate);
+		return;
+	}
+
 	if (_vm->_game.id != GID_MANIAC)
 		return;
 

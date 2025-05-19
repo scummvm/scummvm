@@ -25,7 +25,6 @@
 
 #include "engines/engine.h"
 
-#include "graphics/maccursor.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/surface.h"
@@ -109,25 +108,7 @@ bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 }
 
 void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	Common::MacResManager resource;
-	Graphics::MacCursor macCursor;
-
-	resource.open(_resourceFile);
-
-	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), 1000);
-
-	if (macCursor.readFromStream(*curs)) {
-		width = macCursor.getWidth();
-		height = macCursor.getHeight();
-		hotspotX = macCursor.getHotspotX();
-		hotspotY = macCursor.getHotspotY();
-		animate = 0;
-
-		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
-	}
-
-	delete curs;
-	resource.close();
+	setupResourceCursor(1000, width, height, hotspotX, hotspotY, animate);
 }
 
 void MacLoomGui::updateMenus() {

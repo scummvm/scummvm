@@ -245,6 +245,8 @@ protected:
 
 	Graphics::Surface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount);
 
+	bool setupResourceCursor(int id, int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
+
 public:
 	class MacGuiObject {
 	protected:
