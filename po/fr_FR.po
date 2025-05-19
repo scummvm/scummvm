@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-05-18 21:13+0000\n"
-"PO-Revision-Date: 2025-05-05 12:44+0000\n"
+"PO-Revision-Date: 2025-05-19 11:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10087,10 +10087,8 @@ msgstr ""
 "patch officiel de HeR Interactive."
 
 #: engines/nancy/state/loadsave.cpp:154
-#, fuzzy
-#| msgid "Would you like to save or restore a game?"
 msgid "Would you like to load or save a game?"
-msgstr "Voulez-vous sauvegarder ou charger une partie ?"
+msgstr "Voulez-vous charger ou sauvegarder une partie ?"
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
