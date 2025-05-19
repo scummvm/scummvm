@@ -449,10 +449,10 @@ bool MinigameManager::loadState(bool current) {
 
 			GameInfoIndex index(0, 0);
 
-			while (!file->eos()) {
+			while (!file->eos() && file->pos() < file->size()) {
 				index.read(*file);
 
-				if (file->eos()) {
+				if (file->eos() || file->pos() >= file->size()) {
 					delete file;
 					return false;
 				}
