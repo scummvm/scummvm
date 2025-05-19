@@ -23,10 +23,8 @@
 #include "common/endian.h"
 
 #include "tot/routines.h"
+#include "tot/texts.h"
 #include "tot/tot.h"
-
-// Remove after debug
-#include "tot/routines2.h"
 
 namespace Tot {
 
@@ -1535,7 +1533,7 @@ void updateVideo() {
 	drawScreen(background);
 }
 
-void alcoveAnimation(byte direccionhn, int32 bitmap) {
+void nicheAnimation(byte direccionhn, int32 bitmap) {
 	uint posdibhn, indicehn;
 	int incrementohn;
 
@@ -1722,7 +1720,7 @@ void pickupScreenObject() {
 						if (hornacina[0][3] == 2 || hornacina[0][hornacina[0][3]] == 563) {
 							readItemRegister(hornacina[0][hornacina[0][3]]);
 							hornacina[0][hornacina[0][3]] = 0;
-							currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
+							currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
 							animatePickup1(3, 1);
 							readBitmap(1190768, screenObjects[regobj.profundidad - 1], 892, 319);
 							currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
@@ -1754,23 +1752,23 @@ void pickupScreenObject() {
 							currentRoomData->bitmapasociados[1].profund = 1;
 							switch (hornacina[0][hornacina[0][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
-								alcoveAnimation(0, 1190768);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
+								nicheAnimation(0, 1190768);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
-								alcoveAnimation(0, 1182652);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
+								nicheAnimation(0, 1182652);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 							} break;
 							case 563: {
-								currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
-								alcoveAnimation(0, 1186044);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
+								nicheAnimation(0, 1186044);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
-								alcoveAnimation(0, 1181760);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
+								nicheAnimation(0, 1181760);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 							} break;
 							}
@@ -1789,7 +1787,7 @@ void pickupScreenObject() {
 						if (hornacina[1][3] == 2) {
 							readItemRegister(hornacina[1][2]);
 							hornacina[1][2] = 0;
-							currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
+							currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
 							animatePickup1(0, 1);
 							readBitmap(1399610, screenObjects[regobj.profundidad - 1], 892, 319);
 							currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
@@ -1820,28 +1818,28 @@ void pickupScreenObject() {
 							currentRoomData->bitmapasociados[0].profund = 1;
 							switch (hornacina[1][hornacina[1][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
-								alcoveAnimation(0, 1399610);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
+								nicheAnimation(0, 1399610);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
-								alcoveAnimation(0, 1381982);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
+								nicheAnimation(0, 1381982);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
-								alcoveAnimation(0, 1381090);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
+								nicheAnimation(0, 1381090);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 							} break;
 							case 622: {
-								currentRoomData->indexadoobjetos[8]->objectName = "PARED";
-								alcoveAnimation(0, 1400502);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
+								nicheAnimation(0, 1400502);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
 							} break;
 							case 623: {
-								currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
-								alcoveAnimation(0, 1398718);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
+								nicheAnimation(0, 1398718);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
 							} break;
 							}
@@ -2748,12 +2746,12 @@ void useScreenObject() {
 							animateGive(3, 1);
 							switch (hornacina[0][0]) {
 							case 561: {
-								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
 								readBitmap(1182652, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
 								readBitmap(1181760, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 							} break;
@@ -2796,23 +2794,23 @@ void useScreenObject() {
 							playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[0][hornacina[0][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
-								alcoveAnimation(1, 1190768);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
+								nicheAnimation(1, 1190768);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
-								alcoveAnimation(1, 1182652);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
+								nicheAnimation(1, 1182652);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 							} break;
 							case 563: {
-								currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
-								alcoveAnimation(1, 1186044);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
+								nicheAnimation(1, 1186044);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
-								alcoveAnimation(1, 1181760);
+								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
+								nicheAnimation(1, 1181760);
 								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 							} break;
 							}
@@ -2839,12 +2837,12 @@ void useScreenObject() {
 							animateGive(0, 1);
 							switch (hornacina[1][0]) {
 							case 561: {
-								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
 								readBitmap(1381982, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
 								readBitmap(1381090, screenObjects[0], 892, 319);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 							} break;
@@ -2891,28 +2889,28 @@ void useScreenObject() {
 							playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[1][hornacina[1][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
-								alcoveAnimation(1, 1399610);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
+								nicheAnimation(1, 1399610);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
-								alcoveAnimation(1, 1381982);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
+								nicheAnimation(1, 1381982);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
-								alcoveAnimation(1, 1381090);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
+								nicheAnimation(1, 1381090);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 							} break;
 							case 622: {
-								currentRoomData->indexadoobjetos[8]->objectName = "PARED";
-								alcoveAnimation(1, 1400502);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
+								nicheAnimation(1, 1400502);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
 							} break;
 							case 623: {
-								currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
-								alcoveAnimation(1, 1398718);
+								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
+								nicheAnimation(1, 1398718);
 								currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
 							} break;
 							}
@@ -3383,9 +3381,9 @@ void useScreenObject() {
 					g_engine->_mouseManager->show();
 					updateItem(regobj.code);
 					currentRoomData->indexadoobjetos[16]->indicefichero = 362;
-					currentRoomData->indexadoobjetos[16]->objectName = "CARBON";
+					currentRoomData->indexadoobjetos[16]->objectName = getObjectName(2);
 					currentRoomData->indexadoobjetos[1]->indicefichero = 347;
-					currentRoomData->indexadoobjetos[1]->objectName = "BOMBILLA";
+					currentRoomData->indexadoobjetos[1]->objectName = getObjectName(3);
 					stopVoc();
 					autoPlayVoc("CALDERA", 6433, 15386);
 				} break;
@@ -3661,26 +3659,26 @@ void action() {
 	Common::String actionLine;
 	switch (numeroaccion) {
 	case 0:
-		actionLine = "IR A ";
+		actionLine = actionLine_ES[0];
 		break;
 	case 1:
-		actionLine = "HABLAR CON ";
+		actionLine = actionLine_ES[1];
 		break;
 	case 2:
-		actionLine = "COGER ";
+		actionLine = actionLine_ES[2];
 		break;
 	case 3:
-		actionLine = "MIRAR ";
+		actionLine = actionLine_ES[3];
 		break;
 	case 4: {
-		actionLine = "USAR ";
+		actionLine = actionLine_ES[4];
 		objetomochila = "";
 	} break;
 	case 5:
-		actionLine = "ABRIR ";
+		actionLine = actionLine_ES[5];
 		break;
 	case 6:
-		actionLine = "CERRAR ";
+		actionLine = actionLine_ES[6];
 		break;
 	}
 	actionLineText(actionLine);
@@ -3692,7 +3690,7 @@ void handleAction(byte posinv) {
 	switch (numeroaccion) {
 	case 1: {
 		g_engine->_mouseManager->hide();
-		actionLineText(Common::String("HABLAR CON ") + mobj[posinv].objectName);
+		actionLineText(actionLine_ES[1] + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		drawText((Random(10) + 1039));
 		numeroaccion = 0;
@@ -3704,7 +3702,7 @@ void handleAction(byte posinv) {
 	} break;
 	case 2: {
 		g_engine->_mouseManager->hide();
-		actionLineText(Common::String("COGER ") + mobj[posinv].objectName);
+		actionLineText(actionLine_ES[2] + mobj[posinv].objectName);
 		if (contadorpc2 > 13)
 			showError(274);
 		g_engine->_mouseManager->show();
@@ -3716,7 +3714,7 @@ void handleAction(byte posinv) {
 	} break;
 	case 3: {
 		g_engine->_mouseManager->hide();
-		actionLineText(Common::String("MIRAR ") + mobj[posinv].objectName);
+		actionLineText(actionLine_ES[3] + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		numeroaccion = 0;
 		lookInventoryObject(posinv);
@@ -3727,7 +3725,7 @@ void handleAction(byte posinv) {
 	case 4:
 		if (objetomochila == "") {
 			g_engine->_mouseManager->hide();
-			actionLineText(Common::String("USAR ") + mobj[posinv].objectName + " CON ");
+			actionLineText(actionLine_ES[4] + mobj[posinv].objectName + actionLine_ES[7]);
 			g_engine->_mouseManager->show();
 			objetomochila = mobj[posinv].objectName;
 			codigoobjmochila = mobj[posinv].code;
@@ -3744,7 +3742,7 @@ void handleAction(byte posinv) {
 		break;
 	case 5: {
 		g_engine->_mouseManager->hide();
-		actionLineText(Common::String("ABRIR ") + mobj[posinv].objectName);
+		actionLineText(actionLine_ES[5] + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		drawText(Random(9) + 1059);
 		numeroaccion = 0;
@@ -3754,7 +3752,7 @@ void handleAction(byte posinv) {
 	} break;
 	case 6: {
 		g_engine->_mouseManager->hide();
-		actionLineText(Common::String("CERRAR ") + mobj[posinv].objectName);
+		actionLineText(actionLine_ES[6] + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		drawText(Random(10) + 1068);
 		numeroaccion = 0;
@@ -4231,16 +4229,16 @@ void loadGame(regispartida game) {
 	case 20: {
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0:
-			currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
 			break;
 		case 563:
-			currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
 			break;
 		case 615:
-			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
 			break;
 		}
 	} break;
@@ -4251,19 +4249,19 @@ void loadGame(regispartida game) {
 	case 24: {
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0:
-			currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
 			break;
 		case 615:
-			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
 			break;
 		case 622:
-			currentRoomData->indexadoobjetos[8]->objectName = "PARED";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
 			break;
 		case 623:
-			currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
 			break;
 		}
 		if (trampa_puesta) {
@@ -4884,25 +4882,25 @@ void wcScene() {
 
 	partialFadeOut(234);
 
-	outtextxy(10, 20, "... MMPFFFF!! ...", 253);
+	outtextxy(10, 20, fullScreenMessages_ES[45], 253);
 	delay(1000);
 
 	bar(10, 20, 150, 30, 0);
 	delay(2000);
 
-	outtextxy(100, 50, "... PPTRRFF!! ...", 255);
+	outtextxy(100, 50, fullScreenMessages_ES[46], 255);
 	delay(1000);
 
 	bar(100, 50, 250, 60, 0);
 	delay(2000);
 
-	outtextxy(30, 110, "... GGNNNNN!! ...", 253);
+	outtextxy(30, 110, fullScreenMessages_ES[47], 253);
 	delay(1000);
 
 	bar(30, 110, 210, 120, 0);
 	delay(3000);
 
-	outtextxy(50, 90, "... AAAHHHHH!! ...", 248);
+	outtextxy(50, 90, fullScreenMessages_ES[48], 248);
 	delay(1000);
 
 	playVoc("WATER", 272050, 47062);

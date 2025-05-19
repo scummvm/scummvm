@@ -31,6 +31,7 @@
 #include "tot/decoder/TotFlicDecoder.h"
 #include "tot/graphics.h"
 #include "tot/playanim.h"
+#include "tot/texts.h"
 #include "tot/tot.h"
 
 namespace Tot {
@@ -102,55 +103,82 @@ void handleFlcEvent(byte numero_del_evento) {
 
 			switch (numerovuelta) {
 			case 2:
-				drawText(80, 0, "Las \xA3ltimas  encuestas  realizadas",
-						 "acerca  de  la  siniestralidad  en ",
-						 "los transportes arrojan resultados",
-						 "alentadores...", "", 253, 0);
+				drawText(80, 0,
+					animMessages_ES[0],
+					animMessages_ES[1],
+					animMessages_ES[2],
+					animMessages_ES[3],
+					animMessages_ES[4],
+					253, 0);
 				break;
 			case 13:
 				removeText(80, 0, 319, 53, 0);
 				break;
 			case 14:
-				drawText(80, 0, "El cien por cien  de los encuestados",
-						 "declararon no haber sufrido nunca un",
-						 "accidente mortal...", "", "", 253, 0);
+				drawText(80, 0,
+					animMessages_ES[5],
+					animMessages_ES[6],
+					animMessages_ES[7],
+					animMessages_ES[8],
+					animMessages_ES[9],
+					253, 0);
 				break;
 			case 25:
 				removeText(80, 0, 319, 53, 0);
 				break;
 			case 26:
-				drawText(80, 0, "Es una noticia que nos anima a salir",
-						 "de viaje con m\xA0s seguridad.", "", "", "", 253, 0);
+				drawText(80, 0,
+					animMessages_ES[10],
+					animMessages_ES[11],
+					animMessages_ES[12],
+					animMessages_ES[13],
+					animMessages_ES[14],
+					253, 0);
 				break;
 			case 35:
 				removeText(80, 0, 319, 53, 0);
 				break;
 			case 36:
-				drawText(2, 100, "\xAD\xADPor un tornillo!!...",
-						 "Por un m\xA1sero y simple",
-						 "tornillo  del  tr\xA1"
-						 "fugo",
-						 "del trapecio...", "", 255, 0);
+				drawText(2, 100,
+					animMessages_ES[15],
+					animMessages_ES[16],
+					animMessages_ES[17],
+					animMessages_ES[18],
+					animMessages_ES[19],
+					255, 0);
 				break;
 			case 47:
 				removeText(2, 100, 134, 199, 0);
 				break;
 			case 48:
-				drawText(2, 100, "Si lo hubiese apretado",
-						 "bien, no estar\xA1"
-						 "a ahora",
-						 "sin trabajo...", "", "", 255, 0);
+				drawText(2, 100,
+					animMessages_ES[20],
+					animMessages_ES[21],
+					animMessages_ES[22],
+					animMessages_ES[23],
+					animMessages_ES[24],
+					255, 0);
 				break;
 			case 59:
 				removeText(2, 100, 134, 199, 0);
 				break;
 			case 60:
-				drawText(80, 0, "\xAD\xADNoticia de \xA3ltima hora!!", "", "", "", "", 253, 0);
+				drawText(80, 0,
+					animMessages_ES[25],
+					animMessages_ES[26],
+					animMessages_ES[27],
+					animMessages_ES[28],
+					animMessages_ES[29],
+					253, 0);
 				break;
 			case 63:
-				drawText(2, 100, "Llevo  sin dormir toda",
-						 "la noche, pensando qu\x82",
-						 "voy a hacer.", "", "", 255, 0);
+				drawText(2, 100,
+					animMessages_ES[30],
+					animMessages_ES[31],
+					animMessages_ES[32],
+					animMessages_ES[33],
+					animMessages_ES[34],
+					255, 0);
 				break;
 			case 75:
 				removeText(2, 100, 135, 199, 0);
@@ -159,47 +187,58 @@ void handleFlcEvent(byte numero_del_evento) {
 				removeText(80, 0, 319, 53, 0);
 				break;
 			case 77:
-				drawText(2, 100, "Seguramente  no  podr\x82",
-						 "encontrar  trabajo  en",
-						 "mucho tiempo...",
-						 "Aunque  ponga mucha f\x82",
-						 "la oficina de empleo.", 255, 0);
+				drawText(2, 100,
+					animMessages_ES[35],
+					animMessages_ES[36],
+					animMessages_ES[37],
+					animMessages_ES[38],
+					animMessages_ES[39],
+					255, 0);
 				break;
 			case 89:
 				removeText(2, 100, 135, 199, 0);
 				break;
 			case 90:
-				drawText(2, 100, "Y  para  animarme  m\xA0s",
-						 "todav\xAD"
-						 "a, ma\xA4"
-						 "ana  noche",
-						 "es HALLOWEEN...", "",
-						 "Es que tengo la negra.", 255, 0);
+				drawText(2, 100,
+					animMessages_ES[40],
+					animMessages_ES[41],
+					animMessages_ES[42],
+					animMessages_ES[43],
+					animMessages_ES[44],
+					 255, 0);
 				break;
 			case 102:
 				removeText(2, 100, 135, 199, 0);
 				break;
 			case 103:
-				drawText(80, 0, "Grave  accidente  en  TWELVE MOTORS...",
-						 "un empleado olvid\xA2 apretar un tornillo",
-						 "y media  cadena  de montaje ha quedado",
-						 "para chatarra...",
-						 "las p\x82rdidas se  estiman cuantiosas...", 253, 0);
+				drawText(80, 0,
+					animMessages_ES[45],
+					animMessages_ES[46],
+					animMessages_ES[47],
+					animMessages_ES[48],
+					animMessages_ES[49],
+					253, 0);
 				break;
 			case 120:
 				removeText(80, 0, 319, 53, 0);
 				break;
 			case 121:
-				drawText(80, 0, "No se descartan las acciones legales",
-						 "contra ese inconsciente...", "", "", "", 253, 0);
+				drawText(80, 0,
+					animMessages_ES[50],
+					animMessages_ES[51],
+					animMessages_ES[52],
+					animMessages_ES[53],
+					animMessages_ES[54],
+					253, 0);
 				break;
 			case 125:
-				drawText(2, 100, "\xAD"
-								 "Dios mio!... hasta en",
-						 "la televisi\xA2n...",
-						 "Seguro  que  hasta  mi",
-						 "perro  encuentra curro",
-						 "antes que yo...", 255, 0);
+				drawText(2, 100,
+					animMessages_ES[55],
+					animMessages_ES[56],
+					animMessages_ES[57],
+					animMessages_ES[58],
+					animMessages_ES[59],
+					255, 0);
 				break;
 			case 135: {
 				removeText(80, 0, 319, 53, 0);
@@ -217,58 +256,79 @@ void handleFlcEvent(byte numero_del_evento) {
 			playVoc("MANDO", 142001, 11469);
 			break;
 		case 20:
-			drawText(2, 100, "\xADHORROR!...una factura", "", "", "", "", 255, 0);
+			drawText(2, 100,
+				animMessages_ES[60],
+				animMessages_ES[61],
+				animMessages_ES[62],
+				animMessages_ES[63],
+				animMessages_ES[64],
+				255, 0);
 			break;
 		case 58: {
 			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100, "\xA8"
-							 "Oficina de empleo?...",
-					 "\xA8"
-					 "y para m\xA1?...",
-					 "",
-					 "\xADSe habr\xA0n equivocado!", "", 255, 0);
+			drawText(2, 100,
+				animMessages_ES[65],
+				animMessages_ES[66],
+				animMessages_ES[67],
+				animMessages_ES[68],
+				animMessages_ES[69],
+				255, 0);
 		} break;
 		case 74: {
 			delay(1500);
 			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100, "\xA8Tan  pronto lograron",
-					 "encontrarme  trabajo?", "",
-					 "Claro... antes de ver",
-					 "las noticias...", 255, 0);
+			drawText(2, 100,
+				animMessages_ES[70],
+				animMessages_ES[71],
+				animMessages_ES[72],
+				animMessages_ES[73],
+				animMessages_ES[74],
+				255, 0);
 			delay(4000);
 			removeText(2, 100, 135, 199, 0);
-			drawText(80, 0, "Estimado se\xA4or: Nos dirigimos a",
-					 "usted  para  comunicarle que su",
-					 "solicitud n\xA7:93435 fu\x82 aceptada",
-					 "y le hemos encontrado un puesto",
-					 "de acuerdo con sus aptitudes...", 253, 0);
+			drawText(80, 0,
+				animMessages_ES[75],
+				animMessages_ES[76],
+				animMessages_ES[77],
+				animMessages_ES[78],
+				animMessages_ES[79],
+				253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
-			drawText(80, 0, "Deber\xA0 presentarse  ma\xA4"
-							"ana, dia",
-					 "31  de  Octubre en la direcci\xA2n",
-					 "abajo indicada,  para ocupar el",
-					 "puesto de ENCARGADO GENERAL.", "", 253, 0);
+			drawText(80, 0,
+				animMessages_ES[80],
+				animMessages_ES[81],
+				animMessages_ES[82],
+				animMessages_ES[83],
+				animMessages_ES[84],
+				253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
-			drawText(80, 0, "Le adjuntamos las  credenciales",
-					 "de presentaci\xA2n.",
-					 "Deseando no verle  por  aqu\xA1 en",
-					 "mucho tiempo se despide:",
-					 "    Leonor Scott.", 253, 0);
+			drawText(80, 0,
+				animMessages_ES[85],
+				animMessages_ES[86],
+				animMessages_ES[87],
+				animMessages_ES[88],
+				animMessages_ES[89],
+				253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
-			drawText(2, 100, "\xAD\xADQue ilu!! encargado",
-					 "general...  si ya  me",
-					 "lo decia  mi madre...",
-					 "<<nene tienes cara de",
-					 "encargado general>>", 255, 0);
+			drawText(2, 100,
+				animMessages_ES[90],
+				animMessages_ES[91],
+				animMessages_ES[92],
+				animMessages_ES[93],
+				animMessages_ES[94],
+				255, 0);
 			delay(6000);
 			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100, "Tendr\x82  que conseguir",
-					 "ropa  m\xA0s  de acuerdo",
-					 "con mi nuevo cargo.", "",
-					 "Manos a la obra...", 255, 0);
+			drawText(2, 100,
+				animMessages_ES[95],
+				animMessages_ES[96],
+				animMessages_ES[97],
+				animMessages_ES[98],
+				animMessages_ES[99],
+				255, 0);
 			delay(6000);
 		} break;
 		}
@@ -297,91 +357,154 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 2)) {
 
 			delay(2000);
-			drawText(5, 1, "\xADV\xA0yase!... no queremos vendedores...",
-					 "y menos de planes de jubilaci\xA2n.", "", "", "", 255, 249);
+			drawText(5, 1,
+				animMessages_ES[100],
+				animMessages_ES[101],
+				animMessages_ES[102],
+				animMessages_ES[103],
+				animMessages_ES[104],
+				255, 249);
 			delay(3500);
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "No soy ning\xA3n vendedor... me envia la oficina",
-					 "de empleo... tenga mis credenciales.", "", "", "", 255, 0);
+			drawText(5, 1,
+				animMessages_ES[105],
+				animMessages_ES[106],
+				animMessages_ES[107],
+				animMessages_ES[108],
+				animMessages_ES[109],
+				255, 0);
 		}
 		break;
 	case 6:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "\xADVaya! eres t\xA3...llegas con retraso. Los ancianos est\xA0n",
-					 "esper\xA0ndote en el sal\xA2n. Debes cuidarlos muy bien.",
-					 "", "", "", 255, 249);
+			drawText(5, 1,
+				animMessages_ES[110],
+				animMessages_ES[111],
+				animMessages_ES[112],
+				animMessages_ES[113],
+				animMessages_ES[114],
+				255, 249);
 		}
 		break;
 	case 7:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Lo siento, no sab\xA1"
-						   "a a que hora deb\xA1"
-						   "a presentarme, en",
-					 "la oficina de empleo no me lo dijeron.",
-					 "", "", "", 255, 0);
+			drawText(5, 1,
+				animMessages_ES[115],
+				animMessages_ES[116],
+				animMessages_ES[117],
+				animMessages_ES[118],
+				animMessages_ES[119],
+				255, 0);
 		}
 		break;
 	case 8:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Bueno... no importa... ya est\xA0s aqu\xA1.",
-					 "Ese coche es tuyo \xA8no?...", "", "", "", 255, 249);
+			drawText(5, 1,
+				animMessages_ES[120],
+				animMessages_ES[121],
+				animMessages_ES[122],
+				animMessages_ES[123],
+				animMessages_ES[124],
+				255, 249);
 		}
 		break;
 	case 9:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Si... es precioso \xA8verdad?...", "", "", "", "", 255, 0);
+			drawText(5, 1,
+				animMessages_ES[125],
+				animMessages_ES[126],
+				animMessages_ES[127],
+				animMessages_ES[128],
+				animMessages_ES[129],
+				255, 0);
 		}
 		break;
 	case 10:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Vaya... 200 caballos... elevalunas el\x82"
-						   "ctricos... ",
-					 "inyecci\xA2n electr\xA2nica, llantas de aleaci\xA2n...",
-					 "", "", "", 255, 249);
+			drawText(5, 1,
+				animMessages_ES[130],
+				animMessages_ES[131],
+				animMessages_ES[132],
+				animMessages_ES[133],
+				animMessages_ES[134],
+				255, 249);
 		}
 		break;
 	case 11:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Pues si...", "", "", "", "", 255, 0);
+			drawText(5, 1,
+				animMessages_ES[135],
+				animMessages_ES[136],
+				animMessages_ES[137],
+				animMessages_ES[138],
+				animMessages_ES[139],
+				 255, 0);
 		}
 		break;
 	case 12:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Airbag... asientos envolventes... aire acondicionado",
-					 "", "", "", "", 255, 249);
+			drawText(5, 1,
+				animMessages_ES[140],
+				animMessages_ES[141],
+				animMessages_ES[142],
+				animMessages_ES[143],
+				animMessages_ES[144],
+				255, 249);
 		}
 		break;
 	case 13:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Es el m\xA0s alto de la gama...", "", "", "", "", 255, 0);
+			drawText(5, 1,
+				animMessages_ES[145],
+				animMessages_ES[146],
+				animMessages_ES[147],
+				animMessages_ES[148],
+				animMessages_ES[149],
+				255, 0);
 		}
 		break;
 	case 14:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "ABS, equipo de m\xA3sica con CD, estructura reforzada",
-					 "indeformable, detector de radar...", "", "", "", 255, 249);
+			drawText(5, 1,
+				animMessages_ES[150],
+				animMessages_ES[151],
+				animMessages_ES[152],
+				animMessages_ES[153],
+				animMessages_ES[154],
+				255, 249);
 		}
 		break;
 	case 15:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Parece que te gusta, \xA8no?", "", "", "", "", 255, 0);
+			drawText(5, 1,
+				animMessages_ES[155],
+				animMessages_ES[156],
+				animMessages_ES[157],
+				animMessages_ES[158],
+				animMessages_ES[159],
+				255, 0);
 		}
 		break;
 	case 16:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "Bueno, no est\xA0 mal... pero... gracias de todos modos.",
-					 "", "", "", "", 255, 249);
+			drawText(5, 1,
+				animMessages_ES[160],
+				animMessages_ES[161],
+				animMessages_ES[162],
+				animMessages_ES[163],
+				animMessages_ES[164],
+				255, 249);
 		}
 		break;
 	case 17:
@@ -400,15 +523,24 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 18:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
-			drawText(5, 1, "\xA8Gracias?... \xA8qu\x82?... \xAD"
-						   "espera!... ese es mi coche...",
-					 "", "", "", "", 255, 0);
+			drawText(5, 1,
+				animMessages_ES[165],
+				animMessages_ES[166],
+				animMessages_ES[167],
+				animMessages_ES[168],
+				animMessages_ES[169],
+				255, 0);
 		}
 		break;
 	case 19:
 		if (framecontador == 1)
-			drawText(5, 121, "Toma una copita, te la has ganado...",
-					 "", "", "", "", 253, 249);
+			drawText(5, 121,
+				animMessages_ES[170],
+				animMessages_ES[171],
+				animMessages_ES[172],
+				animMessages_ES[173],
+				animMessages_ES[174],
+			 	253, 249);
 		break;
 	case 20:
 		switch (numerovuelta) {
@@ -418,9 +550,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				getImg(0, 0, 319, 29, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "\xA8"
-								"Donde estoy? ... \xA8Qu\x82 me ha pasado?",
-						 "", "", "", "", 255, 0);
+				drawText(15, 1,
+					animMessages_ES[175],
+					animMessages_ES[176],
+					animMessages_ES[177],
+					animMessages_ES[178],
+					animMessages_ES[179],
+					255, 0);
 				break;
 			}
 			break;
@@ -430,8 +566,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Tranquilizate, no est\xA0s muerto...",
-						 "Est\xA0s tras la puerta de acero...", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[180],
+					animMessages_ES[181],
+					animMessages_ES[182],
+					animMessages_ES[183],
+					animMessages_ES[184],
+					230, 249);
 				break;
 			}
 			break;
@@ -441,8 +582,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Te necesitamos para encontrar a Jacob,",
-						 "nuestro Gran Maestre.", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[185],
+					animMessages_ES[186],
+					animMessages_ES[187],
+					animMessages_ES[188],
+					animMessages_ES[189],
+					230, 249);
 				break;
 			}
 			break;
@@ -452,8 +598,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Hace unos dias se puso a estudiar el libro",
-						 "que me diste y desapareci\xA2...", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[190],
+					animMessages_ES[191],
+					animMessages_ES[192],
+					animMessages_ES[193],
+					animMessages_ES[194],
+					230, 249);
 				break;
 			}
 			break;
@@ -463,7 +614,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, Common::String("Creemos que realiz\xA2 un conjuro sin darse") + " cuenta...", "", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[195],
+					animMessages_ES[196],
+					animMessages_ES[197],
+					animMessages_ES[198],
+					animMessages_ES[199],
+					230, 249);
 				break;
 			}
 			break;
@@ -473,9 +630,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Por fortuna, pudimos ponernos en contacto",
-						 "con \x82l, y nos dijo que est\xA0 en problemas...",
-						 "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[200],
+					animMessages_ES[201],
+					animMessages_ES[202],
+					animMessages_ES[203],
+					animMessages_ES[204],
+					230, 249);
 				break;
 			}
 			break;
@@ -485,8 +646,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Nos pidi\xA2 que envi\xA0semos a alguien en su ayuda,",
-						 "y TU eres el elegido...", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[205],
+					animMessages_ES[206],
+					animMessages_ES[207],
+					animMessages_ES[208],
+					animMessages_ES[209],
+					230, 249);
 				break;
 			}
 			break;
@@ -496,8 +662,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Para ir a las CAVERNAS ETERNAS debes morir...",
-						 "Ning\xA3n cuerpo con alma puede estar all\xA1...", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[210],
+					animMessages_ES[211],
+					animMessages_ES[212],
+					animMessages_ES[213],
+					animMessages_ES[214],
+					230, 249);
 				break;
 			}
 			break;
@@ -507,8 +678,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, Common::String("Haremos un ritual para crear un v\xA1nculo entre") + " tu", "cuerpo y tu alma, s\xA2lo as\xA1 podr\xA0s volver a la vida...",
-						 "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[215],
+					animMessages_ES[216],
+					animMessages_ES[217],
+					animMessages_ES[218],
+					animMessages_ES[219],
+					230, 249);
 				break;
 			}
 			break;
@@ -518,7 +694,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, Common::String("Si rescatas a Jacob, el v\xA1nculo te traer\xA0") + " de regreso...", "", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[220],
+					animMessages_ES[221],
+					animMessages_ES[222],
+					animMessages_ES[223],
+					animMessages_ES[224],
+					230, 249);
 				break;
 			}
 			break;
@@ -528,8 +710,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
-				drawText(15, 1, "Ahora... \xADPrep\xA0rate!... Ha llegado tu hora...",
-						 "", "", "", "", 230, 249);
+				drawText(15, 1,
+					animMessages_ES[225],
+					animMessages_ES[226],
+					animMessages_ES[227],
+					animMessages_ES[228],
+					animMessages_ES[229],
+					230, 249);
 				break;
 			}
 			break;
@@ -579,7 +766,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				getImg(0, 0, 319, 29, punterofondofrase);
 				break;
 			case 3:
-				drawText(65, 1, "\xADGracias ILUSO!...", "", "", "", "", 253, 249);
+				drawText(65, 1,
+					animMessages_ES[230],
+					animMessages_ES[231],
+					animMessages_ES[232],
+					animMessages_ES[233],
+					animMessages_ES[234],
+					253, 249);
 				break;
 			}
 			break;
@@ -589,8 +782,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 2:
-				drawText(65, 1, "Ahora tendr\x82 un cuerpo nuevo y podr\x82",
-						 "volver a la vida...", "", "", "", 253, 249);
+				drawText(65, 1,
+					animMessages_ES[235],
+					animMessages_ES[236],
+					animMessages_ES[237],
+					animMessages_ES[238],
+					animMessages_ES[239],
+					253, 249);
 				break;
 			}
 			break;
@@ -600,8 +798,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 2:
-				drawText(65, 1, "Tu mientras tanto, puedes seguir en",
-						 "las CAVERNAS ETERNAS...", "", "", "", 253, 249);
+				drawText(65, 1,
+					animMessages_ES[240],
+					animMessages_ES[241],
+					animMessages_ES[242],
+					animMessages_ES[243],
+					animMessages_ES[244],
+					253, 249);
 				break;
 			}
 			break;
@@ -611,8 +814,13 @@ void handleFlcEvent(byte numero_del_evento) {
 				putImg(0, 0, punterofondofrase);
 				break;
 			case 2:
-				drawText(65, 1, "No te preocupes, seguro que nos mandan",
-						 "otro encargado...  JA,JA,JA...", "", "", "", 253, 249);
+				drawText(65, 1,
+					animMessages_ES[245],
+					animMessages_ES[246],
+					animMessages_ES[247],
+					animMessages_ES[248],
+					animMessages_ES[249],
+					253, 249);
 				break;
 			}
 			break;
@@ -728,7 +936,6 @@ static void loadFlc(
 			g_engine->_chrono->updateChrono();
 			exitProcedure(salidaflis, permitesalida);
 			if (salidaflis) {
-				debug("Salidaflis!");
 				goto Lsalir_proc;
 			}
 			if (tocapintar) {
@@ -745,11 +952,9 @@ static void loadFlc(
 						palette[1] = 0;
 						palette[2] = 0;
 						if (palcompleta) {
-							debug("PALCOMPLETA! palette");
 							changePalette(g_engine->_graphics->getPalette(), palette);
 							copyPalette(palette, pal);
 						} else if (doscientos) {
-							debug("Doscientos!!");
 							g_engine->_graphics->setPalette(palette, 200);
 							for (int i = 0; i <= 200; i++) {
 								if(gamePart == 2 && !salirdeljuego && (i == 131 || i == 134 || i == 143 || i == 187)) {
@@ -762,7 +967,6 @@ static void loadFlc(
 
 						} else {
 							g_engine->_graphics->setPalette(palette);
-							debug("else palette");
 							copyPalette(palette, pal);
 						}
 					}

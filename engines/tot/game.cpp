@@ -29,6 +29,7 @@
 #include "tot/routines.h"
 #include "tot/routines2.h"
 #include "tot/sound.h"
+#include "tot/texts.h"
 #include "tot/tot.h"
 #include "tot/util.h"
 
@@ -56,7 +57,7 @@ void newGame() {
 		for (int i = 0; i < inventoryIconCount; i++) {
 			mobj[i].bitmapIndex = 34;
 			mobj[i].code = 0;
-			mobj[i].objectName = "VACIO";
+			mobj[i].objectName = getObjectName(10);
 		}
 		readConversationFile(Common::String("CONVERSA.TRE"));
 		initializeScreenFile();
@@ -131,6 +132,13 @@ int startGame() {
 	inGame = true;
 
 	Common::Event e;
+	const char hotKeyOpen = hotKeyFor(OPEN);
+	const char hotKeyClose = hotKeyFor(CLOSE);
+	const char hotKeyPickup = hotKeyFor(PICKUP);
+	const char hotKeyTalk = hotKeyFor(TALK);
+	const char hotKeyLook = hotKeyFor(LOOKAT);
+	const char hotKeyUse = hotKeyFor(USE);
+
 	while (!salirdeljuego && !g_engine->shouldQuit()) {
 		bool escapePressed = false;
 		g_engine->_chrono->updateChrono();
@@ -156,63 +164,46 @@ int startGame() {
 					g_engine->openMainMenuDialog();
 					// saveLoad();
 					break;
-				// 	/* Debug */
-				// 	{
-				// 	case Common::KEYCODE_5:
-				// 		showMouseGrid = !showMouseGrid;
-				// 		break;
-				// 	case Common::KEYCODE_6:
-				// 		showScreenGrid = !showScreenGrid;
-				// 		break;
-				// 	case Common::KEYCODE_7:
-				// 		showGameGrid = !showGameGrid;
-				// 		break;
-				// 	case Common::KEYCODE_0:
-				// 		effect(13, false, background);
-				// 		break;
-				// 	case Common::KEYCODE_8:
-				// 		drawObjectAreas = !drawObjectAreas;
-				// 		break;
-				// 	}
-				// /* End debug */
-				case Common::KEYCODE_a: // open
-					numeroaccion = 5;
-					action();
-					oldxrejilla = 0;
-					oldyrejilla = 0;
-					break;
-				case Common::KEYCODE_e: // close
-					numeroaccion = 6;
-					action();
-					oldxrejilla = 0;
-					oldyrejilla = 0;
-					break;
-				case Common::KEYCODE_c: // pickup
-					numeroaccion = 2;
-					action();
-					oldxrejilla = 0;
-					oldyrejilla = 0;
-					break;
-				case Common::KEYCODE_h: // talk
-					numeroaccion = 1;
-					action();
-					oldxrejilla = 0;
-					oldyrejilla = 0;
-					break;
-				case Common::KEYCODE_m: // look
-					numeroaccion = 3;
-					action();
-					oldxrejilla = 0;
-					oldyrejilla = 0;
-					break;
-				case Common::KEYCODE_u: // use
-					numeroaccion = 4;
-					action();
-					oldxrejilla = 0;
-					oldyrejilla = 0;
-					break;
 				default:
-					numeroaccion = 0; // go to
+					if(e.kbd.keycode == hotKeyOpen) {
+						numeroaccion = 5;
+						action();
+						oldxrejilla = 0;
+						oldyrejilla = 0;
+					}
+					else if (e.kbd.keycode == hotKeyClose) {
+						numeroaccion = 6;
+						action();
+						oldxrejilla = 0;
+						oldyrejilla = 0;
+					}
+					else if (e.kbd.keycode == hotKeyPickup) {
+						numeroaccion = 2;
+						action();
+						oldxrejilla = 0;
+						oldyrejilla = 0;
+					}
+					else if (e.kbd.keycode == hotKeyTalk) {
+						numeroaccion = 1;
+						action();
+						oldxrejilla = 0;
+						oldyrejilla = 0;
+					}
+					else if (e.kbd.keycode == hotKeyLook) {
+						numeroaccion = 3;
+						action();
+						oldxrejilla = 0;
+						oldyrejilla = 0;
+					}
+					else if (e.kbd.keycode == hotKeyUse) {
+						numeroaccion = 4;
+						action();
+						oldxrejilla = 0;
+						oldyrejilla = 0;
+					}
+					else {
+						numeroaccion = 0; // go to
+					}
 				}
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				pulsax = e.mouse.x;
@@ -883,16 +874,16 @@ void sceneChange() {
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0:
-			currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
 			break;
 		case 563:
-			currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
 			break;
 		case 615:
-			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
 			break;
 		}
 		if (contadorpc > 89)
@@ -923,19 +914,19 @@ void sceneChange() {
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0:
-			currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
 			break;
 		case 615:
-			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
 			break;
 		case 622:
-			currentRoomData->indexadoobjetos[8]->objectName = "PARED";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
 			break;
 		case 623:
-			currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
 			break;
 		}
 		if (contadorpc > 89)

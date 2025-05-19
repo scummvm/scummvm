@@ -29,6 +29,7 @@
 
 #include "tot/routines.h"
 #include "tot/routines2.h"
+#include "tot/texts.h"
 #include "tot/tot.h"
 #include "tot/util.h"
 
@@ -131,19 +132,19 @@ void updateAltScreen(byte otherScreenNumber) {
 	case 20: {
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0: {
-			currentRoomData->indexadoobjetos[9]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
 			currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
 		} break;
 		case 561: {
-			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
 			currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
 		} break;
 		case 563: {
-			currentRoomData->indexadoobjetos[9]->objectName = "MANUAL DE ALFARERO";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
 			currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
 		} break;
 		case 615: {
-			currentRoomData->indexadoobjetos[9]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
 			currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
 		} break;
 		}
@@ -155,23 +156,23 @@ void updateAltScreen(byte otherScreenNumber) {
 	case 24: {
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0: {
-			currentRoomData->indexadoobjetos[8]->objectName = "HORNACINA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
 			currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
 		} break;
 		case 561: {
-			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA DIVINA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
 			currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
 		} break;
 		case 615: {
-			currentRoomData->indexadoobjetos[8]->objectName = "ESTATUA GROTESCA";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
 			currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
 		} break;
 		case 622: {
-			currentRoomData->indexadoobjetos[8]->objectName = "PARED";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
 			currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
 		} break;
 		case 623: {
-			currentRoomData->indexadoobjetos[8]->objectName = "TORNO";
+			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
 			currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
 		} break;
 		}
@@ -709,25 +710,25 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 
 	clave.append(passArray, passArray + 10);
 
-	outtextxyBios(91, 16, "CERTIFICADO N\xA7:" + clave, 255);
-	outtextxyBios(90, 15, "CERTIFICADO N\xA7:" + clave, 13);
+	outtextxyBios(91, 16,  fullScreenMessages_ES[49] + clave, 255);
+	outtextxyBios(90, 15,  fullScreenMessages_ES[49] + clave, 13);
 
-	outtextxyBios(81, 61, "Yo, Jacob, el Gran Maestre ", 0);
-	outtextxyBios(61, 81, "de la Hermandad de Sek Umh Nejl", 0);
-	outtextxyBios(31, 101, "certifico que: " + nombrepersonaje, 0);
-	outtextxyBios(31, 121, "me ha liberado de las Cavernas", 0);
-	outtextxyBios(31, 141, "Eternas, por lo cual le estar\x82 ", 0);
-	outtextxyBios(31, 161, "por siempre agradecido.", 0);
+	outtextxyBios(81, 61,  fullScreenMessages_ES[50], 0);
+	outtextxyBios(61, 81,  fullScreenMessages_ES[51], 0);
+	outtextxyBios(31, 101, fullScreenMessages_ES[52] + nombrepersonaje, 0);
+	outtextxyBios(31, 121, fullScreenMessages_ES[53], 0);
+	outtextxyBios(31, 141, fullScreenMessages_ES[54], 0);
+	outtextxyBios(31, 161, fullScreenMessages_ES[55], 0);
 
-	outtextxyBios(80, 60, "Yo, Jacob, el Gran Maestre ", 15);
-	outtextxyBios(60, 80, "de la Hermandad de Sek Umh Nejl", 15);
-	outtextxyBios(30, 100, "certifico que: ", 15);
+	outtextxyBios(80, 60,  fullScreenMessages_ES[50], 15);
+	outtextxyBios(60, 80,  fullScreenMessages_ES[51], 15);
+	outtextxyBios(30, 100, fullScreenMessages_ES[52], 15);
 
 	outtextxyBios(150, 100, nombrepersonaje, 13);
 
-	outtextxyBios(30, 120, "me ha liberado de las Cavernas", 15);
-	outtextxyBios(30, 140, "Eternas, por lo cual le estar\x82 ", 15);
-	outtextxyBios(30, 160, "por siempre agradecido.", 15);
+	outtextxyBios(30, 120, fullScreenMessages_ES[53], 15);
+	outtextxyBios(30, 140, fullScreenMessages_ES[54], 15);
+	outtextxyBios(30, 160, fullScreenMessages_ES[55], 15);
 	delay(1500);
 	playVoc("PORTAZO", 434988, 932);
 	// putShape(270, 161, (byte *)sello);
@@ -806,31 +807,31 @@ void checkMouseGrid() {
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 0:
-				actionLine = Common::String("IR A ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = actionLine_ES[0] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 1:
-				actionLine = Common::String("HABLAR CON ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = actionLine_ES[1] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 2:
-				actionLine = Common::String("COGER ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = actionLine_ES[2] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 3:
-				actionLine = Common::String("MIRAR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = actionLine_ES[3] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 4:
 				if (objetomochila != "")
-					actionLine = Common::String("USAR ") + objetomochila + " CON " + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = actionLine_ES[4] + objetomochila + actionLine_ES[7] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				else
-					actionLine = Common::String("USAR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = actionLine_ES[4] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 5:
-				actionLine = Common::String("ABRIR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = actionLine_ES[5] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 6:
-				actionLine = Common::String("CERRAR ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = actionLine_ES[6] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			default:
-				actionLine = Common::String("IR A ") + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = actionLine_ES[0] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
@@ -845,28 +846,28 @@ void checkMouseGrid() {
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 0:
-				actionLine = "IR A ";
+				actionLine = actionLine_ES[0];
 				break;
 			case 1:
-				actionLine = "HABLAR CON ";
+				actionLine = actionLine_ES[1];
 				break;
 			case 2:
-				actionLine = "COGER ";
+				actionLine = actionLine_ES[2];
 				break;
 			case 3:
-				actionLine = "MIRAR ";
+				actionLine = actionLine_ES[3];
 				break;
 			case 4:
 				if (objetomochila != "")
-					actionLine = Common::String("USAR ") + objetomochila + " CON ";
+					actionLine = actionLine_ES[4] + objetomochila + actionLine_ES[7];
 				else
-					actionLine = "USAR ";
+					actionLine = actionLine_ES[4];
 				break;
 			case 5:
-				actionLine = "ABRIR ";
+				actionLine = actionLine_ES[5];
 				break;
 			case 6:
-				actionLine = "CERRAR ";
+				actionLine = actionLine_ES[6];
 				break;
 			}
 			actionLineText(actionLine);
@@ -898,25 +899,25 @@ void checkMouseGrid() {
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 1:
-				actionLine = Common::String("HABLAR CON ") + objmochila;
+				actionLine = actionLine_ES[1] + objmochila;
 				break;
 			case 2:
-				actionLine = Common::String("COGER ") + objmochila;
+				actionLine = actionLine_ES[2] + objmochila;
 				break;
 			case 3:
-				actionLine = Common::String("MIRAR ") + objmochila;
+				actionLine = actionLine_ES[3] + objmochila;
 				break;
 			case 4:
 				if (objetomochila == "")
-					actionLine = Common::String("USAR ") + objmochila;
+					actionLine = actionLine_ES[4] + objmochila;
 				else
-					actionLine = Common::String("USAR ") + objetomochila + " CON " + objmochila;
+					actionLine = actionLine_ES[4] + objetomochila + actionLine_ES[7] + objmochila;
 				break;
 			case 5:
-				actionLine = Common::String("ABRIR ") + objmochila;
+				actionLine = actionLine_ES[5] + objmochila;
 				break;
 			case 6:
-				actionLine = Common::String("CERRAR ") + objmochila;
+				actionLine = actionLine_ES[6] + objmochila;
 				break;
 			default:
 				outtextxy(160, 144, objmochila, 255, true, Graphics::kTextAlignCenter);
@@ -1786,15 +1787,15 @@ void introduction() {
 	totalFadeOut(0);
 	cleardevice();
 
-	outtextxy(25, 20, " ... Despu\x82s  de  estar  durante  ocho horas", 253);
-	outtextxy(25, 35, "conduciendo,  haberte   perdido  tres  veces", 253);
-	outtextxy(25, 50, "y  haber hecho  doscientos kil\xA2metros de m\xA0s", 253);
-	outtextxy(25, 65, "llegas  a  una  casa  que se encuentra en un", 253);
-	outtextxy(25, 80, "paraje muy tranquilo y apartado del mundanal", 253);
-	outtextxy(25, 95, "ruido. (\xAD\xADY TAN APARTADO!!) ...", 253);
-	outtextxy(25, 120, "Pero esto no tiene importancia ... ", 253);
-	outtextxy(25, 140, "Hay que  encarar  el trabajo con una actitud", 253);
-	outtextxy(25, 155, "optimista y positiva...", 253);
+	outtextxy(25, 20, fullScreenMessages_ES[0], 253);
+	outtextxy(25, 35, fullScreenMessages_ES[1], 253);
+	outtextxy(25, 50, fullScreenMessages_ES[2], 253);
+	outtextxy(25, 65, fullScreenMessages_ES[3], 253);
+	outtextxy(25, 80, fullScreenMessages_ES[4], 253);
+	outtextxy(25, 95, fullScreenMessages_ES[5], 253);
+	outtextxy(25, 120, fullScreenMessages_ES[6], 253);
+	outtextxy(25, 140, fullScreenMessages_ES[7], 253);
+	outtextxy(25, 155, fullScreenMessages_ES[8], 253);
 	totalFadeIn(0, "DEFAULT");
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
@@ -2128,6 +2129,8 @@ void exitToDOS() {
 	setMouseArea(115, 80, 190, 100);
 	setMousePos(iraton, xraton, yraton);
 	Common::Event e;
+	const char hotKeyYes = hotKeyFor(YES);
+	const char hotKeyNo = hotKeyFor(NO);
 	chpasosalida = '@';
 	do {
 		g_engine->_chrono->updateChrono();
@@ -2140,13 +2143,13 @@ void exitToDOS() {
 			if (e.type == Common::EVENT_KEYDOWN) {
 				if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					chpasosalida = '\33';
-				} else if (e.kbd.keycode == Common::KEYCODE_s) {
+				} else if (e.kbd.keycode == hotKeyYes) {
 					debug("would exit game now");
 					free(puntfondcontroles);
 					// CLEAR MEMORY!!
 					exitGame();
 					// exit game
-				} else if (e.kbd.keycode == Common::KEYCODE_n) {
+				} else if (e.kbd.keycode == hotKeyNo) {
 					chpasosalida = '\33';
 				}
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
@@ -2354,11 +2357,11 @@ void sacrificeScene() {
 	bar(0, 139, 319, 149, 0);
 	bar(10, 10, 300, 120, 0);
 
-	outtextxy(10, 10, "    A pesar  de todo, no lo  has  hecho tan mal.", 200);
-	outtextxy(10, 30, "    Has  conseguido todo  lo que te  pidieron, y", 200);
-	outtextxy(10, 50, "    van a poder celebrar su fiesta de Halloween.", 200);
-	outtextxy(10, 70, "    Es  todo un  detalle que t\xA3 seas el invitado", 200);
-	outtextxy(10, 90, "    de honor...", 200);
+	outtextxy(10, 10, fullScreenMessages_ES[9], 200);
+	outtextxy(10, 30, fullScreenMessages_ES[10], 200);
+	outtextxy(10, 50, fullScreenMessages_ES[11], 200);
+	outtextxy(10, 70, fullScreenMessages_ES[12], 200);
+	outtextxy(10, 90, fullScreenMessages_ES[13], 200);
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2371,11 +2374,11 @@ void sacrificeScene() {
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
 	bar(10, 10, 300, 120, 0);
-	outtextxy(10, 10, "    Como recompensa a tus esfuerzos te mandan a", 200);
-	outtextxy(10, 30, "    darte una  vuelta  por ah\xA1 mientras ellos se", 200);
-	outtextxy(10, 50, "    encargan de  los  preparativos de la fiesta.", 200);
-	outtextxy(10, 70, "    T\xA3, obviamente, aceptas  de  inmediato  y te", 200);
-	outtextxy(10, 90, "    vas a tomar el fresco un rato...", 200);
+	outtextxy(10, 10, fullScreenMessages_ES[14], 200);
+	outtextxy(10, 30, fullScreenMessages_ES[15], 200);
+	outtextxy(10, 50, fullScreenMessages_ES[16], 200);
+	outtextxy(10, 70, fullScreenMessages_ES[17], 200);
+	outtextxy(10, 90, fullScreenMessages_ES[18], 200);
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2387,10 +2390,10 @@ void sacrificeScene() {
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
 	bar(10, 10, 300, 120, 0);
-	outtextxy(10, 10, "                  Horas m\xA0s tarde... ", 200);
-	outtextxy(10, 50, "    La  fiesta  ya  est\xA0  preparada, regresas al", 200);
-	outtextxy(10, 70, "    sal\xA2n a  recibir tus merecidos honores, tras", 200);
-	outtextxy(10, 90, "    un completo dia de trabajo... ", 200);
+	outtextxy(10, 10, fullScreenMessages_ES[19], 200);
+	outtextxy(10, 50, fullScreenMessages_ES[20] , 200);
+	outtextxy(10, 70, fullScreenMessages_ES[21] , 200);
+	outtextxy(10, 90, fullScreenMessages_ES[22], 200);
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2439,22 +2442,24 @@ void sacrificeScene() {
 	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	clear();
 
-	outtextxy(10, 31, "      Despu\x82s de todo lo que hice por ellos...", 254);
-	outtextxy(10, 29, "      Despu\x82s de todo lo que hice por ellos...", 254);
-	outtextxy(11, 30, "      Despu\x82s de todo lo que hice por ellos...", 254);
-	outtextxy(9, 30, "      Despu\x82s de todo lo que hice por ellos...", 254);
-	outtextxy(10, 51, "      Todos mis esfuerzos y desvelos para esto...", 254);
-	outtextxy(10, 49, "      Todos mis esfuerzos y desvelos para esto...", 254);
-	outtextxy(11, 50, "      Todos mis esfuerzos y desvelos para esto...", 254);
-	outtextxy(9, 50, "      Todos mis esfuerzos y desvelos para esto...", 254);
-	outtextxy(10, 71, "      Morir envenenado, ese era mi destino...", 254);
-	outtextxy(10, 69, "      Morir envenenado, ese era mi destino...", 254);
-	outtextxy(11, 70, "      Morir envenenado, ese era mi destino...", 254);
-	outtextxy(9, 70, "      Morir envenenado, ese era mi destino...", 254);
+	outtextxy(10, 31, fullScreenMessages_ES[23], 254);
+	outtextxy(10, 29, fullScreenMessages_ES[23], 254);
+	outtextxy(11, 30, fullScreenMessages_ES[23], 254);
+	outtextxy(9, 30,  fullScreenMessages_ES[23], 254);
 
-	outtextxy(10, 30, "      Despu\x82s de todo lo que hice por ellos...", 255);
-	outtextxy(10, 50, "      Todos mis esfuerzos y desvelos para esto...", 255);
-	outtextxy(10, 70, "      Morir envenenado, ese era mi destino...", 255);
+	outtextxy(10, 51, fullScreenMessages_ES[24], 254);
+	outtextxy(10, 49, fullScreenMessages_ES[24], 254);
+	outtextxy(11, 50, fullScreenMessages_ES[24], 254);
+	outtextxy(9, 50,  fullScreenMessages_ES[24], 254);
+
+	outtextxy(10, 71, fullScreenMessages_ES[25], 254);
+	outtextxy(10, 69, fullScreenMessages_ES[25], 254);
+	outtextxy(11, 70, fullScreenMessages_ES[25], 254);
+	outtextxy(9, 70,  fullScreenMessages_ES[25], 254);
+
+	outtextxy(10, 30, fullScreenMessages_ES[23], 255);
+	outtextxy(10, 50, fullScreenMessages_ES[24], 255);
+	outtextxy(10, 70, fullScreenMessages_ES[25], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2506,42 +2511,48 @@ void sacrificeScene() {
 	stopVoc();
 	clear();
 
-	outtextxy(10, 21, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
-	outtextxy(10, 19, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
-	outtextxy(11, 20, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
-	outtextxy(9, 20, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 254);
-	outtextxy(10, 41, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
-	outtextxy(10, 39, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
-	outtextxy(11, 40, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
-	outtextxy(9, 40, "   vez que hablemos contigo. Definitivamente est\xA0s", 254);
-	outtextxy(10, 61, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
-	outtextxy(10, 59, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
-	outtextxy(11, 60, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
-	outtextxy(9, 60, "   muerto, pero a\xA3n es  posible reunir tu alma con", 254);
-	outtextxy(10, 81, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 254);
-	outtextxy(10, 79, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 254);
-	outtextxy(11, 80, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 254);
-	outtextxy(9, 80, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 254);
-	outtextxy(10, 101, "   liberarlo de aquello  que lo retenga. Cuando lo", 254);
-	outtextxy(10, 99, "   liberarlo de aquello  que lo retenga. Cuando lo", 254);
-	outtextxy(11, 100, "   liberarlo de aquello  que lo retenga. Cuando lo", 254);
-	outtextxy(9, 100, "   liberarlo de aquello  que lo retenga. Cuando lo", 254);
-	outtextxy(10, 121, "   consigas podremos traeros  a ambos de vuelta al", 254);
-	outtextxy(10, 119, "   consigas podremos traeros  a ambos de vuelta al", 254);
-	outtextxy(11, 120, "   consigas podremos traeros  a ambos de vuelta al", 254);
-	outtextxy(9, 120, "   consigas podremos traeros  a ambos de vuelta al", 254);
-	outtextxy(10, 141, "   mundo de los vivos.", 254);
-	outtextxy(10, 139, "   mundo de los vivos.", 254);
-	outtextxy(11, 140, "   mundo de los vivos.", 254);
-	outtextxy(9, 140, "   mundo de los vivos.", 254);
+	outtextxy(10, 21, fullScreenMessages_ES[26], 254);
+	outtextxy(10, 19, fullScreenMessages_ES[26], 254);
+	outtextxy(11, 20, fullScreenMessages_ES[26], 254);
+	outtextxy(9, 20,  fullScreenMessages_ES[26], 254);
 
-	outtextxy(10, 20, "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima", 255);
-	outtextxy(10, 40, "   vez que hablemos contigo. Definitivamente est\xA0s", 255);
-	outtextxy(10, 60, "   muerto, pero a\xA3n es  posible reunir tu alma con", 255);
-	outtextxy(10, 80, "   tu cuerpo,  para  ello  debes  buscar a Jacob y", 255);
-	outtextxy(10, 100, "   liberarlo de aquello  que lo retenga. Cuando lo", 255);
-	outtextxy(10, 120, "   consigas podremos traeros  a ambos de vuelta al", 255);
-	outtextxy(10, 140, "   mundo de los vivos.", 255);
+	outtextxy(10, 41, fullScreenMessages_ES[27], 254);
+	outtextxy(10, 39, fullScreenMessages_ES[27], 254);
+	outtextxy(11, 40, fullScreenMessages_ES[27], 254);
+	outtextxy(9, 40,  fullScreenMessages_ES[27], 254);
+
+	outtextxy(10, 61, fullScreenMessages_ES[28], 254);
+	outtextxy(10, 59, fullScreenMessages_ES[28], 254);
+	outtextxy(11, 60, fullScreenMessages_ES[28], 254);
+	outtextxy(9, 60,  fullScreenMessages_ES[28], 254);
+
+	outtextxy(10, 81, fullScreenMessages_ES[29], 254);
+	outtextxy(10, 79, fullScreenMessages_ES[29], 254);
+	outtextxy(11, 80, fullScreenMessages_ES[29], 254);
+	outtextxy(9, 80,  fullScreenMessages_ES[29], 254);
+
+	outtextxy(10, 101, fullScreenMessages_ES[30], 254);
+	outtextxy(10, 99,  fullScreenMessages_ES[30], 254);
+	outtextxy(11, 100, fullScreenMessages_ES[30], 254);
+	outtextxy(9, 100,  fullScreenMessages_ES[30], 254);
+
+	outtextxy(10, 121, fullScreenMessages_ES[31], 254);
+	outtextxy(10, 119, fullScreenMessages_ES[31], 254);
+	outtextxy(11, 120, fullScreenMessages_ES[31], 254);
+	outtextxy(9, 120,  fullScreenMessages_ES[31], 254);
+
+	outtextxy(10, 141, fullScreenMessages_ES[32], 254);
+	outtextxy(10, 139, fullScreenMessages_ES[32], 254);
+	outtextxy(11, 140, fullScreenMessages_ES[32], 254);
+	outtextxy(9, 140,  fullScreenMessages_ES[32], 254);
+
+	outtextxy(10, 20,  fullScreenMessages_ES[26], 255);
+	outtextxy(10, 40,  fullScreenMessages_ES[27], 255);
+	outtextxy(10, 60,  fullScreenMessages_ES[28], 255);
+	outtextxy(10, 80,  fullScreenMessages_ES[29], 255);
+	outtextxy(10, 100, fullScreenMessages_ES[30], 255);
+	outtextxy(10, 120, fullScreenMessages_ES[31], 255);
+	outtextxy(10, 140, fullScreenMessages_ES[32], 255);
 	for (int i = 0; i <= 31; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
@@ -2559,72 +2570,48 @@ void sacrificeScene() {
 		return;
 
 	clear();
-	outtextxy(10, 21, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
-	outtextxy(10, 19, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
-	outtextxy(11, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
-	outtextxy(9, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 254);
-	outtextxy(10, 41, "   cuerpo se  debilita  y tu  alma podr\xA1"
-					  "a  quedar",
-			  254);
-	outtextxy(10, 39, "   cuerpo se  debilita  y tu  alma podr\xA1"
-					  "a  quedar",
-			  254);
-	outtextxy(11, 40, "   cuerpo se  debilita  y tu  alma podr\xA1"
-					  "a  quedar",
-			  254);
-	outtextxy(9, 40, "   cuerpo se  debilita  y tu  alma podr\xA1"
-					 "a  quedar",
-			  254);
-	outtextxy(10, 61, "   atrapada para siempre en las Cavernas Eternas.", 254);
-	outtextxy(10, 59, "   atrapada para siempre en las Cavernas Eternas.", 254);
-	outtextxy(11, 60, "   atrapada para siempre en las Cavernas Eternas.", 254);
-	outtextxy(9, 60, "   atrapada para siempre en las Cavernas Eternas.", 254);
-	outtextxy(10, 81, "   Si necesitaras  m\xA0s  energ\xA1"
-					  "a de la que tienes, ",
-			  254);
-	outtextxy(10, 79, "   Si necesitaras  m\xA0s  energ\xA1"
-					  "a de la que tienes, ",
-			  254);
-	outtextxy(11, 80, "   Si necesitaras  m\xA0s  energ\xA1"
-					  "a de la que tienes, ",
-			  254);
-	outtextxy(9, 80, "   Si necesitaras  m\xA0s  energ\xA1"
-					 "a de la que tienes, ",
-			  254);
-	outtextxy(10, 101, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
-	outtextxy(10, 99, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
-	outtextxy(11, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
-	outtextxy(9, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 254);
-	outtextxy(10, 121, "   m\xA0s energ\xA1"
-					   "a que un alma al contrario que en el",
-			  254);
-	outtextxy(10, 119, "   m\xA0s energ\xA1"
-					   "a que un alma al contrario que en el",
-			  254);
-	outtextxy(11, 120, "   m\xA0s energ\xA1"
-					   "a que un alma al contrario que en el",
-			  254);
-	outtextxy(9, 120, "   m\xA0s energ\xA1"
-					  "a que un alma al contrario que en el",
-			  254);
-	outtextxy(10, 141, "   mundo f\xA1sico.", 254);
-	outtextxy(10, 139, "   mundo f\xA1sico.", 254);
-	outtextxy(11, 140, "   mundo f\xA1sico.", 254);
-	outtextxy(9, 140, "   mundo f\xA1sico.", 254);
+	outtextxy(10, 21,  fullScreenMessages_ES[33], 254);
+	outtextxy(10, 19,  fullScreenMessages_ES[33], 254);
+	outtextxy(11, 20,  fullScreenMessages_ES[33], 254);
+	outtextxy(9,  20,  fullScreenMessages_ES[33], 254);
 
-	outtextxy(10, 20, "   Pero debes darte prisa  pues el v\xA1nculo con tu", 255);
-	outtextxy(10, 40, "   cuerpo se  debilita  y tu  alma podr\xA1"
-					  "a  quedar",
-			  255);
-	outtextxy(10, 60, "   atrapada para siempre en las Cavernas Eternas.", 255);
-	outtextxy(10, 80, "   Si necesitaras  m\xA0s  energ\xA1"
-					  "a de la que tienes, ",
-			  255);
-	outtextxy(10, 100, "   recuerda que all\xA0 donde vas un cuerpo contiene", 255);
-	outtextxy(10, 120, "   m\xA0s energ\xA1"
-					   "a que un alma al contrario que en el",
-			  255);
-	outtextxy(10, 140, "   mundo f\xA1sico.", 255);
+	outtextxy(10, 41,  fullScreenMessages_ES[34], 254);
+	outtextxy(10, 39,  fullScreenMessages_ES[34], 254);
+	outtextxy(11, 40,  fullScreenMessages_ES[34], 254);
+	outtextxy(9, 40,   fullScreenMessages_ES[34], 254);
+
+	outtextxy(10, 61,  fullScreenMessages_ES[35], 254);
+	outtextxy(10, 59,  fullScreenMessages_ES[35], 254);
+	outtextxy(11, 60,  fullScreenMessages_ES[35], 254);
+	outtextxy(9, 60,   fullScreenMessages_ES[35], 254);
+
+	outtextxy(10, 81,  fullScreenMessages_ES[36], 254);
+	outtextxy(10, 79,  fullScreenMessages_ES[36], 254);
+	outtextxy(11, 80,  fullScreenMessages_ES[36], 254);
+	outtextxy(9, 80,   fullScreenMessages_ES[36], 254);
+
+	outtextxy(10, 101, fullScreenMessages_ES[37], 254);
+	outtextxy(10, 99,  fullScreenMessages_ES[37], 254);
+	outtextxy(11, 100, fullScreenMessages_ES[37], 254);
+	outtextxy(9, 100,  fullScreenMessages_ES[37], 254);
+
+	outtextxy(10, 121, fullScreenMessages_ES[38], 254);
+	outtextxy(10, 119, fullScreenMessages_ES[38], 254);
+	outtextxy(11, 120, fullScreenMessages_ES[38], 254);
+	outtextxy(9, 120,  fullScreenMessages_ES[38], 254);
+
+	outtextxy(10, 141, fullScreenMessages_ES[39], 254);
+	outtextxy(10, 139, fullScreenMessages_ES[39], 254);
+	outtextxy(11, 140, fullScreenMessages_ES[39], 254);
+	outtextxy(9, 140,  fullScreenMessages_ES[39], 254);
+
+	outtextxy(10, 20,  fullScreenMessages_ES[33], 255);
+	outtextxy(10, 40,  fullScreenMessages_ES[34], 255);
+	outtextxy(10, 60,  fullScreenMessages_ES[35], 255);
+	outtextxy(10, 80,  fullScreenMessages_ES[36], 255);
+	outtextxy(10, 100, fullScreenMessages_ES[37], 255);
+	outtextxy(10, 120, fullScreenMessages_ES[38], 255);
+	outtextxy(10, 140, fullScreenMessages_ES[39], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2642,22 +2629,24 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 	clear();
-	outtextxy(10, 61, "              No te demores y recuerda...", 254);
-	outtextxy(10, 59, "              No te demores y recuerda...", 254);
-	outtextxy(11, 60, "              No te demores y recuerda...", 254);
-	outtextxy(9, 60, "              No te demores y recuerda...", 254);
-	outtextxy(10, 81, "      Si triunfas, el premio es la vida, si no...", 254);
-	outtextxy(10, 79, "      Si triunfas, el premio es la vida, si no...", 254);
-	outtextxy(11, 80, "      Si triunfas, el premio es la vida, si no...", 254);
-	outtextxy(9, 80, "      Si triunfas, el premio es la vida, si no...", 254);
-	outtextxy(10, 101, "                  LA MUERTE ETERNA.", 254);
-	outtextxy(10, 99, "                  LA MUERTE ETERNA.", 254);
-	outtextxy(11, 100, "                  LA MUERTE ETERNA.", 254);
-	outtextxy(9, 100, "                  LA MUERTE ETERNA.", 254);
+	outtextxy(10, 61,  fullScreenMessages_ES[40], 254);
+	outtextxy(10, 59,  fullScreenMessages_ES[40], 254);
+	outtextxy(11, 60,  fullScreenMessages_ES[40], 254);
+	outtextxy(9, 60,   fullScreenMessages_ES[40], 254);
 
-	outtextxy(10, 60, "              No te demores y recuerda...", 255);
-	outtextxy(10, 80, "      Si triunfas, el premio es la vida, si no...", 255);
-	outtextxy(10, 100, "                  LA MUERTE ETERNA.", 255);
+	outtextxy(10, 81,  fullScreenMessages_ES[41], 254);
+	outtextxy(10, 79,  fullScreenMessages_ES[41], 254);
+	outtextxy(11, 80,  fullScreenMessages_ES[41], 254);
+	outtextxy(9, 80,   fullScreenMessages_ES[41], 254);
+
+	outtextxy(10, 101, fullScreenMessages_ES[42], 254);
+	outtextxy(10, 99,  fullScreenMessages_ES[42], 254);
+	outtextxy(11, 100, fullScreenMessages_ES[42], 254);
+	outtextxy(9, 100,  fullScreenMessages_ES[42], 254);
+
+	outtextxy(10, 60,  fullScreenMessages_ES[40], 255);
+	outtextxy(10, 80,  fullScreenMessages_ES[41], 255);
+	outtextxy(10, 100, fullScreenMessages_ES[42], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2678,17 +2667,18 @@ void sacrificeScene() {
 void ending() {
 	bool pulsada_salida;
 
-	outtextxy(10, 41, "           Al fin lo has conseguido....", 249);
-	outtextxy(10, 39, "           Al fin lo has conseguido....", 249);
-	outtextxy(11, 40, "           Al fin lo has conseguido....", 249);
-	outtextxy(9, 40, "           Al fin lo has conseguido....", 249);
-	outtextxy(10, 61, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
-	outtextxy(10, 59, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
-	outtextxy(11, 60, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
-	outtextxy(9, 60, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 249);
+	outtextxy(10, 41, fullScreenMessages_ES[43], 249);
+	outtextxy(10, 39, fullScreenMessages_ES[43], 249);
+	outtextxy(11, 40, fullScreenMessages_ES[43], 249);
+	outtextxy(9, 40,  fullScreenMessages_ES[43], 249);
 
-	outtextxy(10, 40, "           Al fin lo has conseguido....", 253);
-	outtextxy(10, 60, "               \xAD\xAD\xADSoy LIBREEEEE!!!", 253);
+	outtextxy(10, 61, fullScreenMessages_ES[44], 249);
+	outtextxy(10, 59, fullScreenMessages_ES[44], 249);
+	outtextxy(11, 60, fullScreenMessages_ES[44], 249);
+	outtextxy(9, 60,  fullScreenMessages_ES[44], 249);
+
+	outtextxy(10, 40, fullScreenMessages_ES[43], 253);
+	outtextxy(10, 60, fullScreenMessages_ES[44], 253);
 	if(g_engine->shouldQuit()) {
 		return;
 	}
