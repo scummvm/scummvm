@@ -285,6 +285,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new GoInvViewScene();
 	case 140:
 		return new SetVolume();
+	case 149:
+		if (g_nancy->getGameType() >= kGameTypeNancy9) {
+			// This got moved in nancy9
+			return new SetVolume();
+		}
 	case 150:
 		return new PlaySound();
 	case 151:
