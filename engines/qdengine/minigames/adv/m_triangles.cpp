@@ -133,8 +133,15 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 	if (!_runtime->processGameData(gameData))
 		return;
 
-	for (auto &it : _positions)
-		it.read(gameData);
+	GameInfo *gameInfo = _runtime->getCurrentGameInfo();
+	if (gameInfo) {
+		Common::MemoryReadStream buf((byte *)gameInfo->_gameData, gameInfo->_dataSize);
+		for (auto &it : _positions)
+			it.read(buf);
+	} else {
+		for (auto &it : _positions)
+			it.read(gameData);
+	}
 
 	for (int num = 1; num <= 2; ++num) {
 		for (int angle = 1; angle <= 3; ++angle) {

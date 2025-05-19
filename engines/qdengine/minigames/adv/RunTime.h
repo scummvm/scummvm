@@ -124,6 +124,7 @@ public:
 		return _gameTime;
 	}
 
+	GameInfo *getCurrentGameInfo() const { return _currentGameInfo; };
 	const MinigameData *getScore(int level, int game) const;
 
 	bool debugMode() const {

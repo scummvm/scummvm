@@ -907,12 +907,8 @@ bool MinigameManager::processGameData(Common::SeekableReadStream &data) {
 			assert(data.size());
 			_currentGameInfo->persist(data);
 		} else {
-			if (data.size() != _currentGameInfo->_dataSize)
+			if (data.size() != _currentGameInfo->_dataSize) {
 				warning("MinigameManager::processGameData(): Old minigame save detected. Remove '%s'", _state_container_name.c_str());
-
-			if (data.size() == _currentGameInfo->_dataSize) {
-				_currentGameInfo->persist(data);
-			} else {
 				data.seek(0);
 				return false;
 			}
