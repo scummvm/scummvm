@@ -118,6 +118,8 @@ void Help::run() {
 		_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
 		_state = kWait;
 	}
+
+	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 }
 
 void Help::wait() {
