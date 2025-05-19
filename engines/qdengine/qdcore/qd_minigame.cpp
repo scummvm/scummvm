@@ -395,7 +395,9 @@ bool qdMiniGame::load_interface() {
 }
 
 bool qdMiniGame::release_interface() {
-	delete _interface;
+	if (_interface)
+		close_adv_minigame(_interface);
+
 	_interface = nullptr;
 	return true;
 }
