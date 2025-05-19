@@ -1844,8 +1844,8 @@ BEGIN_MESSAGE_MAP(CMainWindow, CFrameWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
 
-	ON_MESSAGE(MM_MCINOTIFY, OnMCINotify)
-	ON_MESSAGE(MM_WOM_DONE, OnMMIONotify)
+	ON_MESSAGE(MM_MCINOTIFY, CMainWindow::OnMCINotify)
+	ON_MESSAGE(MM_WOM_DONE, CMainWindow::OnMMIONotify)
 END_MESSAGE_MAP()
 
 /*****************************************************************************************************************

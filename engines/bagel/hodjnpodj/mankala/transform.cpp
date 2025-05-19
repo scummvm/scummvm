@@ -31,6 +31,10 @@ and saves the result in v. The length of each record is len.
 The len can't exceed 64.
 */
 
+struct _complex {
+	double x = 0.0, y = 0.0;
+};
+
 BOOL dft(double *v, const int *u, int len) {
 	int n, k;
 	struct _complex z[64];
