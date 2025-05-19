@@ -295,9 +295,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "korkydragons",		"Dragons!" },
 	{ "kothhoot",			"King of the Hill: Hootenany" },
 	{ "koththunt",			"King of the Hill: Texas Hunting" },
-	{ "krakelstorm",		"Krakels ABC: Storm över Allemansland" },
-	{ "krakeldamm",			"Krakels ABC: Den galna dammsugaren" },
-	{ "krakelaven",			"Krakels ABC: Det magiska äventyret" },
 	{ "kyoto",				"Cosmology of Kyoto" },
 	{ "lbkinder",			"Maurice Sendak's Little Bear Kindergarten Thinking Adventures" },
 	{ "lbpre",				"Maurice Sendak's Little Bear Preschool Thinking Adventures" },
@@ -440,7 +437,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "rhmeteor",			"Rescue Heroes: Meteor Madness" },
 	{ "robinson",			"Robinson Crusoe" },
 	{ "robinson-makingof",	"Robinson Crusoe: Making-of" },
-	{ "rockmanager",		"Rock Manager" },
 	{ "rodneyfs",			"Rodney's Funscreen" },
 	{ "rodneyfs2",			"Rodney's Funscreen² Extreme: Dinky's Revenge" },
 	{ "rodneyww",			"Rodney's Wonder Window" },
@@ -1495,6 +1491,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "brspel",				"BR spel" },
 	{ "djuphavsjakten",		"Djuphavsjakten" },
 	{ "ernie",				"Ernie: Broke in Bayonne" },  // aka Ernie: Pank i Bayonne
+	{ "femmyror1",			"Fem myror är fler än fyra elefanter: Första delen" },
+	{ "femmyror2",			"Fem myror är fler än fyra elefanter: Andra delen" },
 	{ "garygadget2",		"Bygg båtar med Mulle Meck" },              // First game listed under English
 	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
@@ -1505,6 +1503,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
 	{ "kosmopolska",		"Kosmopolska" },
+	{ "krakelstorm",		"Krakels ABC: Storm över Allemansland" },
+	{ "krakeldamm",			"Krakels ABC: Den galna dammsugaren" },
+	{ "krakelaven",			"Krakels ABC: Det magiska äventyret" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
 	{ "onsalakorv",			"Onsalakorv" },
 	{ "pettson1",			"Pettson o Findus i snickarbon" },
@@ -1517,6 +1518,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "polis2",				"Polis 2: Någon ljuger" },
 	{ "polis3",				"Polis 3: Vargspår" },
 	{ "requiem",			"Requiem: en mordgåta på 1600-talet" },
+	{ "rockmanager",		"Rock Manager" },
 	{ "rymdjakten",			"Rymdjakten" },
 	{ "singingbirdbook",	"Jan Lindblad presenterar den sjungande Fågelboken" },
 	{ "sverigejakten",		"Sverigejakten"},
@@ -3190,6 +3192,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO2("sk8board", "Demo", "RIDE.EXE",  "65d06b5fef155a2473434571aff5bc29", 370013,
 								 "INTRO.MMM", "91195cec43e8a7bafe8b91d5e121b2e5", 273118, 310),
+
+	// Magnus og Myggen (original Danish 1996 release)
+	WINGAME1_1("skeeto1", "Windows 3.1", "MAGNUS.EXE", "", "", Common::DA_DNK, 0),
 
 	// Demo from Blender 1.5
 	// Version 1.2 onwards are D4
@@ -7558,6 +7563,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("sinkha", "Music and Animation", "MUSIC.EXE",		 "3460ad87d2ba57104e2810a77b53c220", 1393827,
 											  "MUS_ANIM.DXR",    "2e31baec8a4957593db517bbf46c6740", 1141212, 500),
 
+	// Magnus og Myggen's first Nordic multilanguage release(s), not sure where the German, English nor Russian ones could be
+	// MAGNUSDK (Dansk), MAGNUSN (Norsk), MAGNUSS (Svensk), MAGNUSSF (Finsk), not sure though...
+	//WINGAME2("skeeto1", "Windows 95", "START32.EXE",	"", Common::DA_DNK, 0),
+	//WINGAME2("skeeto1", "Magnus och Myggan", "START32.EXE",	"", Common::SV_SWE, 0),
+	//WINGAME2("skeeto1", "Magnus og Myggen", "START32.EXE",	"", Common::NB_NOR, 0),
+	//WINGAME2("skeeto1", "Manu Ja Matti", "START32.EXE",	"", Common:FI_FIN, 0),
+	//WINGAME2("skeeto1", "Max und Mario", "", "", Common::DE_DEU, 0),
+	//WINGAME2("skeeto1", "Skipper & Skeeto", "", "", 0, 0),
+
 	// Developed by Mary Boies Software, published by Creative Wonders
 	// Windows version also found in Middle School Advantage 2001 bundle
 	MACGAME1("slamdunktyping", "",     "Mac Install/Slam Dunk Typing/Slam Dunk Typing", "r:5683c6b3956a3bca7fb5fc5bbb237984", 718945, 501),
@@ -8282,6 +8296,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("kontyngent99", "", "START.EXE",		"d:d62438566e44826960fc16c5c23dbe43", 1513041,
 								   "DANE/MAIN.DXR",	"d:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
 
+	// Krakel Spektakel, listed based on latest Director version used
+	// Krakels ABC - Storm över Allemansland
+	MACGAME2_1("krakelstorm", "", "Krakels ABC, 5-7 år",	"", 0, "MOVIES/",	"", 0, Common::SV_SWE, 0),
+	WINGAME2_1("krakelstorm", "Windows 95", "STORM.EXE",	"", 0, "MOVIES/",	"", 0, Common::SV_SWE, 0),
+
+	// Mera Krakel - Den galna dammsugaren
+	MACGAME2_1("krakeldamm", "", "Krakels ABC, 7-9 år",		"", 0, "MOVIES/",	"", 0, Common::SV_SWE, 0),
+	WINGAME2_1("krakeldamm", "Windows 3.1/95/98", "DAMMNT.EXE",		"", 0, "MOVIES/",	"", 0, Common::SV_SWE, 0),
+	MACGAME2_1("krakeldamm", "Krakels ABC - Den vanvittige støvsuger", "Krakels ABC",		"", 0, "MOVIES/",	"", 0, Common::DA_DNK, 0),
+	WINGAME2_1("krakeldamm", "Krakels ABC - Den vanvittige støvsuger", "KRAKEL32.EXE",		"", 0, "MOVIES/",	"", 0, Common::DA_DNK, 0),
+
+	// Krakels ABC - Det magiska äventyret
+	MACGAME2_1("krakelaven", "", "Krakels ABC, 8-10",		"", 0, "MOVIES/",	"", 0, Common::SV_SWE, 0),
+	WINGAME2_1("krakelaven", "", "KRAKEL3.EXE",		"", 0, "MOVIES/",	"", 0, Common::SV_SWE, 0),
+
 	// Published by Future Soft of Nasr City, Cairo
 	WINGAME1_l("ktaralarkam", "", "123.exe", "a593079aecf5bd938ce75264cac24b2d", 2748951, Common::AR_ARB, 600),
 
@@ -8934,6 +8963,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("erdisaster", "", "ER Disaster Strikes Start", "0944b962ebb00f4b5d5149d220f8449b", 114890, 702),
 	WINGAME1("erdisaster", "", "ER Disaster Strikes.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2682526, 702),
+
+	// Fem myror är fler än fyra elefanter
+	MACGAME2_1("femmyror1", "",	"Fem myror", "Media/Fem myror", "", 0, "Media/", "", 0, Common::SV_SWE, 0),
+	WINGAME2_1("femmyror1", "Windows 95/98", "MEDIA/FEMMYROR.EXE", "", 0, "MEDIA/", "", 0, Common::SV_SWE, 0),
+
+	MACGAME2_1("femmyror2", "",	"Fem myror 2", "Media/Fem myror 2", "", 0, "Media/", "", 0, Common::SV_SWE, 0),
+	WINGAME2_1("femmyror2", "Windows 95/98", "MEDIA/FEMMYROR.EXE", "", 0, "MEDIA/", "", 0, Common::SV_SWE, 0),
 
 	MACGAME1_l("fg25ans", "", "FG25Ans", "dec72b4b6f8e97f1ea24361794bf0bdf", 114301, Common::FR_FRA, 702),
 	WINGAME1_l("fg25ans", "", "FG25Ans.exe", "88d4c24f6d4b78a73ce5b07693eddbc8", 2412706, Common::FR_FRA, 702),
@@ -9850,6 +9886,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("sinkha2", "98 - XP SP1", "START_(Win_98-ME-2000-XP_sp1).exe", "c163f36141579ee374f7b4b2bddee95a", 2117678,
 									   "ME/MAA.cxt",						"26f7dcd7a5690910f2116205f54cb44b", 759494, 850),
 
+	// Magnus og Myggen's 2002 release, final multilanguage release
+	//WINGAME2("skeeto1", "Windows 95", "START32.EXE",	"", Common::DA_DNK, 0),
+	//WINGAME2("skeeto1", "Magnus och Myggan", "START32.EXE",	"", Common::SV_SWE, 0),
+	//WINGAME2("skeeto1", "Magnus og Myggen", "START32.EXE",	"", Common::NB_NOR, 0),
+	//WINGAME2("skeeto1", "Manu Ja Matti", "START32.EXE",	"", Common:FI_FIN, 0),
+
 	WINGAME1_l("skeeto10", "", "mm7main.exe", "0c81c84ca4966313ad27d47daba44537", 12051446, Common::DA_DNK, 851),
 
 	// Dutch demos found on Flipper & Lopaka compilation
@@ -10335,6 +10377,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// http://www.sinkha.com/dfiles/players/ATM_MOSX1.zip
 	MACGAME2("sinkha2", "OS X 10.1-10.4", "START.osx",	"5af79c7672a0db0bc2ddacb9dee4d86c", 3121400,
 										  "ME/MAA.cxt", "26f7dcd7a5690910f2116205f54cb44b", 759494, 1000),
+
+	// Magnus og Myggen "Gyldne Klassikere" from 2008, published by PAN Vision
+	//WINGAME2("skeeto1", "Windows XP", "", "", 0, "", "", Common::DA_DNK, 0),
 
 	// 2006 remaster originally released on GameTap, also released on Steam
 	WINGAME1t("spelunx", "", "Spelunx.exe", "965e31ec421fa6dfe8ea157ef38ebd42", 2800981, 1010),
