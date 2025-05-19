@@ -45,7 +45,10 @@
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
+#include "engines/nancy/action/puzzle/memorypuzzle.h"
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
+#include "engines/nancy/action/puzzle/multibuildpuzzle.h"
+#include "engines/nancy/action/puzzle/onebuildpuzzle.h"
 #include "engines/nancy/action/puzzle/orderingpuzzle.h"
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
@@ -59,12 +62,14 @@
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
 #include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
+#include "engines/nancy/action/puzzle/soundmatchpuzzle.h"
 #include "engines/nancy/action/puzzle/spigotpuzzle.h"
 #include "engines/nancy/action/puzzle/tangrampuzzle.h"
 #include "engines/nancy/action/puzzle/telephone.h"
 #include "engines/nancy/action/puzzle/towerpuzzle.h"
 #include "engines/nancy/action/puzzle/turningpuzzle.h"
 #include "engines/nancy/action/puzzle/twodialpuzzle.h"
+#include "engines/nancy/action/puzzle/whalesurvivorpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -370,6 +375,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new OrderingPuzzle(OrderingPuzzle::kKeypadTerse);
 	case 225:
 		return new SpigotPuzzle();
+	// -- Nancy 8 and up --
 	case 226:
 		return new CuttingPuzzle();
 	case 228:
@@ -382,6 +388,17 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new QuizPuzzle();
 	case 232:
 		return new AngleTossPuzzle();
+	// -- Nancy 9 and up --
+	case 233:
+		return new SoundMatchPuzzle();
+	case 234:
+		return new OneBuildPuzzle();
+	case 235:
+		return new MultiBuildPuzzle();
+	case 237:
+		return new WhaleSurvivorPuzzle();
+	case 238:
+		return new MemoryPuzzle();
 	default:
 		warning("Unknown action record type %d", type);
 		return nullptr;

@@ -28,7 +28,10 @@ MODULE_OBJS = \
   action/puzzle/leverpuzzle.o \
   action/puzzle/mazechasepuzzle.o \
   action/puzzle/matchpuzzle.o \
+  action/puzzle/memorypuzzle.o \
   action/puzzle/mouselightpuzzle.o \
+  action/puzzle/multibuildpuzzle.o \
+  action/puzzle/onebuildpuzzle.o \
   action/puzzle/orderingpuzzle.o \
   action/puzzle/overridelockpuzzle.o \
   action/puzzle/passwordpuzzle.o \
@@ -42,12 +45,14 @@ MODULE_OBJS = \
   action/puzzle/setplayerclock.o \
   action/puzzle/sliderpuzzle.o \
   action/puzzle/soundequalizerpuzzle.o \
+  action/puzzle/soundmatchpuzzle.o \
   action/puzzle/spigotpuzzle.o \
   action/puzzle/tangrampuzzle.o \
   action/puzzle/telephone.o \
   action/puzzle/towerpuzzle.o \
   action/puzzle/turningpuzzle.o \
   action/puzzle/twodialpuzzle.o \
+  action/puzzle/whalesurvivorpuzzle.o \
   ui/fullscreenimage.o \
   ui/animatedbutton.o \
   ui/button.o \
