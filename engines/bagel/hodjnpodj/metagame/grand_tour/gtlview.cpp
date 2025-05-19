@@ -76,8 +76,8 @@ BEGIN_MESSAGE_MAP(CGtlView, MFC_VIEW)
 	ON_WM_CREATE()
 	ON_WM_TIMER()
 	ON_WM_SETCURSOR()
-	ON_MESSAGE(MM_MCINOTIFY, OnMCINotify)     // uncomment these when
-	ON_MESSAGE(MM_WOM_DONE, OnMMIONotify)     // the spinner sound works
+	ON_MESSAGE(MM_MCINOTIFY, CGtlView::OnMCINotify)     // uncomment these when
+	ON_MESSAGE(MM_WOM_DONE, CGtlView::OnMMIONotify)     // the spinner sound works
 	//}}AFX_MSG_MAP
 	// Standard printing commands
 END_MESSAGE_MAP()
