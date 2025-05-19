@@ -25,14 +25,23 @@
 
 #include "gui/debugger.h"
 
+#include "tot/tot.h"
+
 namespace Tot {
 
-class Console : public GUI::Debugger {
+class TotConsole : public GUI::Debugger {
 private:
-	bool Cmd_test(int argc, const char **argv);
+	TotEngine *_engine;
+	bool cmdJumpToPart2(int argc, const char **argv);
+	bool cmdLoadRoom(int argc, const char **argv);
+	bool cmdShowMouseGrid(int argc, const char **argv);
+	bool cmdShowScreenGrid(int argc, const char **argv);
+	bool cmdShowGameGrid(int argc, const char **argv);
+	bool cmdShowObjectAreas(int argc, const char **argv);
+	bool cmdClearLayers(int argc, const char **argv);
 public:
-	Console();
-	~Console() override;
+	TotConsole(TotEngine *engine);
+	~TotConsole() override;
 };
 
 } // End of namespace Tot

@@ -84,7 +84,7 @@ Common::Error TotEngine::run() {
 	// _inventoryManager = new InventoryManager();
 	// _totGame = new TotGame();
 	// Set the engine's debugger console
-	setDebugger(new Console());
+	setDebugger(new TotConsole(this));
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");

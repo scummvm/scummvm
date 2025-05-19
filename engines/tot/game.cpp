@@ -35,11 +35,6 @@
 namespace Tot {
 byte iaux, iaux2;
 
-bool showMouseGrid = false;
-bool showScreenGrid = false;
-bool showGameGrid = false;
-bool drawObjectAreas = false;
-
 void loadTemporaryGame() {
 	g_engine->loadGameState(g_engine->getMetaEngine()->getAutosaveSlot());
 }
@@ -118,13 +113,6 @@ int engine_start() {
 		desactivagrabar = false;
 	}
 
-	bool enforceSecondPart = false;
-	if (enforceSecondPart) { // DEBUG
-		completadalista1 = true;
-		completadalista2 = true;
-		gamePart = 1;
-	}
-
 	return startGame();
 }
 
@@ -168,31 +156,25 @@ int startGame() {
 					g_engine->openMainMenuDialog();
 					// saveLoad();
 					break;
-					/* Debug */
-					{
-					case Common::KEYCODE_5:
-						showMouseGrid = !showMouseGrid;
-						break;
-					case Common::KEYCODE_6:
-						showScreenGrid = !showScreenGrid;
-						break;
-					case Common::KEYCODE_7:
-						showGameGrid = !showGameGrid;
-						break;
-					case Common::KEYCODE_0:
-						effect(13, false, background);
-						break;
-					case Common::KEYCODE_8:
-						drawObjectAreas = !drawObjectAreas;
-						break;
-					case Common::KEYCODE_1:
-						setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
-						break;
-					case Common::KEYCODE_2:
-						setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);
-						break;
-					}
-				/* End debug */
+				// 	/* Debug */
+				// 	{
+				// 	case Common::KEYCODE_5:
+				// 		showMouseGrid = !showMouseGrid;
+				// 		break;
+				// 	case Common::KEYCODE_6:
+				// 		showScreenGrid = !showScreenGrid;
+				// 		break;
+				// 	case Common::KEYCODE_7:
+				// 		showGameGrid = !showGameGrid;
+				// 		break;
+				// 	case Common::KEYCODE_0:
+				// 		effect(13, false, background);
+				// 		break;
+				// 	case Common::KEYCODE_8:
+				// 		drawObjectAreas = !drawObjectAreas;
+				// 		break;
+				// 	}
+				// /* End debug */
 				case Common::KEYCODE_a: // open
 					numeroaccion = 5;
 					action();
@@ -542,17 +524,17 @@ int startGame() {
 			// g_engine->_graphics->euroText(Common::String::format("Room: %d", currentRoomNumber), 0, 0, 220, Graphics::kTextAlignLeft);
 			// g_engine->_mouseManager->printPos(xraton, yraton, 220, 0);
 			// printPos(characterPosX, characterPosY, 220, 10, "CharPos");
-			if (showMouseGrid) {
+			if (g_engine->_showMouseGrid) {
 				drawMouseGrid(currentRoomData);
 			}
-			if (showScreenGrid) {
+			if (g_engine->_showScreenGrid) {
 				drawScreenGrid(currentRoomData);
 			}
-			if (showGameGrid) {
+			if (g_engine->_showGameGrid) {
 				drawGrid();
 			}
 
-			if (drawObjectAreas) {
+			if (g_engine->_drawObjectAreas) {
 				for (int indice = 0; indice < nivelesdeprof; indice++) {
 					if (screenObjects[indice] != NULL) {
 						if (true) {
