@@ -807,7 +807,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId, Common::Rect
 	_macWhite = _windowManager->_colorWhite;
 	_macBlack = _windowManager->_colorBlack;
 
-	if (_vm->_game.version >= 6 || _vm->_game.id == GID_MANIAC) {
+	if (_vm->_isModernMacVersion) {
 		res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
 		if (!res)
 			return nullptr;
