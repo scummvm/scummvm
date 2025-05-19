@@ -29,6 +29,7 @@
 #include "tot/playanim.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
+#include "tot/texts.h"
 #include "tot/tot.h"
 
 namespace Tot {
@@ -521,7 +522,7 @@ void talk(byte person) {
 				}
 				mobj[indicemochila].bitmapIndex = indicelista1;
 				mobj[indicemochila].code = codigolista1;
-				mobj[indicemochila].objectName = "LISTA ";
+				mobj[indicemochila].objectName = getObjectName(0);
 			} break;
 			case 25: {
 				lista2 = true;
@@ -531,7 +532,7 @@ void talk(byte person) {
 				}
 				mobj[indicemochila].bitmapIndex = indicelista2;
 				mobj[indicemochila].code = codigolista2;
-				mobj[indicemochila].objectName = "LISTA";
+				mobj[indicemochila].objectName = getObjectName(1);
 			} break;
 			}
 		}

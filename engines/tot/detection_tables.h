@@ -31,12 +31,20 @@ const ADGameDescription gameDescriptions[] = {
 		"tot",
 		nullptr,
 		AD_ENTRY1s("CREDITOS.DAT", "6885c1fadd25a0c0da1c88f071a30e63", 130080),
+		Common::ES_ESP,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"tot",
+		nullptr,
+		AD_ENTRY1s("CREDITOS.DAT", "bca1c63cfee9ec8b722f7715e21b5e8e", 130080),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
-
 	AD_TABLE_END_MARKER
 };
 

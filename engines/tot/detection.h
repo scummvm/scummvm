@@ -58,7 +58,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Tot (C)";
+		return "(C) Todos los derechos reservados. ACA Soft. S.L. Granada Octubre de 1994";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
