@@ -2723,6 +2723,11 @@ EOF
 # so that the checks below can be done, even with LTO on.
 test "$have_gcc" = yes && no_lto_regular_machine_code_removal=-ffat-lto-objects
 $CXX $LDFLAGS $CXXFLAGS $no_lto_regular_machine_code_removal -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
+# The flag may not exist in some older Clang releases (e.g. "Apple LLVM
+# version 6.0 (based on LLVM 3.5svn)")
+if test "$?" -ne 0 && test "$have_gcc" = yes; then
+	$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
+fi
 if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep BIGenDianSyS >/dev/null; then
 	_endian=big
 elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; then
