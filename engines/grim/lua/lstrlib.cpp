@@ -15,18 +15,11 @@
 
 namespace Grim {
 
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstringop-truncation"
-#endif
 static void addnchar(const char *s, int32 n) {
 	char *b = luaL_openspace(n);
 	strncpy(b, s, n);
 	luaL_addsize(n);
 }
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
 
 static void addstr(const char *s) {
 	addnchar(s, strlen(s));
