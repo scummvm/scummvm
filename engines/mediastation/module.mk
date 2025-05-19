@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	assets/sprite.o \
 	assets/text.o \
 	assets/timer.o \
+	audio.o \
 	bitmap.o \
 	boot.o \
 	context.o \

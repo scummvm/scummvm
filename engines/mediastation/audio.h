@@ -19,38 +19,37 @@
  *
  */
 
-#ifndef MEDIASTATION_ASSETS_SOUND_H
-#define MEDIASTATION_ASSETS_SOUND_H
+#ifndef MEDIASTATION_AUDIO_H
+#define MEDIASTATION_AUDIO_H
 
-#include "mediastation/asset.h"
-#include "mediastation/audio.h"
+#include "common/array.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
 #include "mediastation/datafile.h"
-#include "mediastation/mediascript/scriptvalue.h"
-#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Sound : public Asset {
+class AudioSequence {
 public:
-	Sound() : Asset(kAssetTypeSound) {};
+	AudioSequence() {};
+	~AudioSequence();
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void process() override;
+	void play();
+	void stop();
 
-	virtual void readChunk(Chunk& chunk) override { _sequence.readChunk(chunk); }
-	virtual void readSubfile(Subfile &subFile, Chunk &chunk) override;
+	void readParameters(Chunk &chunk);
+	void readChunk(Chunk &chunk);
+	bool isActive();
+	bool isEmpty() { return _streams.empty(); }
+
+	uint _rate = 0;
+	uint _channelCount = 0;
+	uint _bitsPerSample = 0;
 
 private:
-	uint _loadType = 0;
-	bool _hasOwnSubfile = false;
-	bool _isPlaying = true;
-	uint _chunkCount = 0;
-	AudioSequence _sequence;
-
-	// Script method implementations
-	void timePlay();
-	void timeStop();
+	Common::Array<Audio::SeekableAudioStream *> _streams;
+	Audio::SoundHandle _handle;
 };
 
 } // End of namespace MediaStation

@@ -60,8 +60,6 @@ enum AssetType {
 
 enum AssetHeaderSectionType {
 	kAssetHeaderEmptySection = 0x0000,
-	kAssetHeaderSoundEncoding1 = 0x0001,
-	kAssetHeaderSoundEncoding2 = 0x0002,
 	kAssetHeaderEventHandler = 0x0017,
 	kAssetHeaderStageId = 0x0019,
 	kAssetHeaderAssetId = 0x001a,
@@ -119,10 +117,6 @@ enum AssetHeaderSectionType {
 	kAssetHeaderSpriteFrameMapping = 0x03e9
 };
 
-enum SoundEncoding {
-	PCM_S16LE_MONO_22050 = 0x0010, // Uncompressed linear PCM
-	IMA_ADPCM_S16LE_MONO_22050 = 0x0004 // IMA ADPCM encoding, must be decoded
-};
 class Asset {
 public:
 	Asset(AssetType type) : _type(type) {};

@@ -19,23 +19,11 @@
  *
  */
 
-#include "audio/decoders/raw.h"
-#include "audio/decoders/adpcm.h"
-
+#include "mediastation/audio.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/assets/sound.h"
-#include "mediastation/mediastation.h"
 
 namespace MediaStation {
-
-Sound::~Sound() {
-	g_engine->_mixer->stopHandle(_handle);
-
-	for (Audio::SeekableAudioStream *stream : _streams) {
-		delete stream;
-	}
-	_streams.clear();
-}
 
 void Sound::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	switch (paramType) {
@@ -59,12 +47,7 @@ void Sound::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 
 	case kAssetHeaderSoundInfo:
 		_chunkCount = chunk.readTypedUint16();
-		_rate = chunk.readTypedUint32();
-		break;
-
-	case kAssetHeaderSoundEncoding1:
-	case kAssetHeaderSoundEncoding2:
-		_encoding = static_cast<SoundEncoding>(chunk.readTypedUint16());
+		_sequence.readParameters(chunk);
 		break;
 
 	case kAssetHeaderMovieLoadType:
@@ -79,10 +62,10 @@ void Sound::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 void Sound::process() {
 	processTimeEventHandlers();
 
-	if (_isActive && !g_engine->_mixer->isSoundHandleActive(_handle)) {
+	if (_isActive && !_sequence.isActive()) {
 		_isPlaying = false;
 		setInactive();
-		_handle = Audio::SoundHandle();
+		_sequence.stop();
 
 		runEventHandlerIfExists(kSoundEndEvent);
 	}
@@ -92,6 +75,14 @@ ScriptValue Sound::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	ScriptValue returnValue;
 
 	switch (methodId) {
+	case kSpatialShowMethod:
+		// WORKAROUND: No-op to avoid triggering error on Dalmatians
+		// timer_6c06_AnsweringMachine, which calls SpatialShow on a sound.
+		// Since the engine is currently flagging errors on unimplemented
+		// methods for easier debugging, a no-op is used here to avoid the error.
+		assert(args.empty());
+		return returnValue;
+
 	case kTimePlayMethod: {
 		assert(args.empty());
 		timePlay();
@@ -107,32 +98,6 @@ ScriptValue Sound::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	default:
 		return Asset::callMethod(methodId, args);
 	}
-}
-
-void Sound::readChunk(Chunk &chunk) {
-	byte *buffer = (byte *)malloc(chunk._length);
-	chunk.read((void *)buffer, chunk._length);
-	Audio::SeekableAudioStream *stream = nullptr;
-	switch (_encoding) {
-	case SoundEncoding::PCM_S16LE_MONO_22050:
-		stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-		break;
-
-	case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
-		// TODO: The interface here is different. We can't pass in the
-		// buffers directly. We have to make a stream first.
-		// stream = Audio::makeADPCMStream(buffer, chunk.length,
-		// DisposeAfterUse::NO, Audio::ADPCMType::kADPCMMSIma, 22050, 1,
-		// 4);
-		warning("Sound::readSubfile(): ADPCM decoding not implemented yet");
-		chunk.skip(chunk.bytesRemaining());
-		break;
-
-	default:
-		error("Sound::readChunk(): Unknown audio encoding 0x%x", static_cast<uint>(_encoding));
-	}
-	_streams.push_back(stream);
-	debugC(5, kDebugLoading, "Sound::readChunk(): Finished reading audio chunk (@0x%llx)", static_cast<long long int>(chunk.pos()));
 }
 
 void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
@@ -156,25 +121,15 @@ void Sound::timePlay() {
 		return;
 	}
 
-	if (_streams.empty()) {
+	if (_sequence.isEmpty()) {
 		warning("Sound::timePlay(): Sound has no contents, probably because the sound is in INSTALL.CXT and isn't loaded yet");
 		return;
 	}
+
 	_isPlaying = true;
 	setActive();
-
+	_sequence.play();
 	runEventHandlerIfExists(kSoundBeginEvent);
-
-	_handle = Audio::SoundHandle();
-	if (!_streams.empty()) {
-		Audio::QueuingAudioStream *audio = Audio::makeQueuingAudioStream(22050, false);
-		for (Audio::SeekableAudioStream *stream : _streams) {
-			stream->rewind();
-			audio->queueAudioStream(stream, DisposeAfterUse::NO);
-		}
-		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audio, -1, Audio::Mixer::kMaxChannelVolume, DisposeAfterUse::YES);
-		audio->finish();
-	}
 }
 
 void Sound::timeStop() {
@@ -184,10 +139,7 @@ void Sound::timeStop() {
 	}
 
 	setInactive();
-
-	g_engine->_mixer->stopHandle(_handle);
-	_handle = Audio::SoundHandle();
-
+	_sequence.stop();
 	runEventHandlerIfExists(kSoundStoppedEvent);
 }
 

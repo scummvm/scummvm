@@ -23,9 +23,9 @@
 #define MEDIASTATION_MOVIE_H
 
 #include "common/array.h"
-#include "audio/audiostream.h"
 
 #include "mediastation/asset.h"
+#include "mediastation/audio.h"
 #include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/scriptconstants.h"
@@ -109,9 +109,8 @@ public:
 	uint32 _animationChunkReference = 0;
 
 private:
-	SoundEncoding _soundEncoding;
-	uint _chunkCount = 0;
-	uint _rate = 0;
+	AudioSequence _audioSequence;
+	uint _audioChunkCount = 0;
 
 	uint _loadType = 0;
 	double _dissolveFactor = 0.0;
@@ -121,8 +120,6 @@ private:
 	Common::Array<MovieFrame *> _frames;
 	Common::Array<MovieFrame *> _stills;
 	Common::Array<MovieFrameFooter *> _footers;
-	Common::Array<Audio::SeekableAudioStream *> _audioStreams;
-	Audio::SoundHandle _soundHandle;
 
 	Common::Array<MovieFrame *> _framesNotYetShown;
 	Common::Array<MovieFrame *> _framesOnScreen;

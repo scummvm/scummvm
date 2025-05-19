@@ -19,9 +19,6 @@
  *
  */
 
-#include "audio/decoders/raw.h"
-#include "audio/decoders/adpcm.h"
-
 #include "mediastation/mediastation.h"
 #include "mediastation/assets/movie.h"
 #include "mediastation/debugchannels.h"
@@ -155,8 +152,6 @@ MovieFrame::~MovieFrame() {
 }
 
 Movie::~Movie() {
-	g_engine->_mixer->stopHandle(_soundHandle);
-
 	for (MovieFrame *frame : _frames) {
 		delete frame;
 	}
@@ -166,11 +161,6 @@ Movie::~Movie() {
 		delete still;
 	}
 	_stills.clear();
-
-	for (Audio::SeekableAudioStream *stream : _audioStreams) {
-		delete stream;
-	}
-	_audioStreams.clear();
 
 	for (MovieFrameFooter *footer : _footers) {
 		delete footer;
@@ -219,13 +209,8 @@ void Movie::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 
 	case kAssetHeaderSoundInfo:
-		_chunkCount = chunk.readTypedUint16();
-		_rate = chunk.readTypedUint32();
-		break;
-
-	case kAssetHeaderSoundEncoding1:
-	case kAssetHeaderSoundEncoding2:
-		_soundEncoding = static_cast<SoundEncoding>(chunk.readTypedUint16());
+		_audioChunkCount = chunk.readTypedUint16();
+		_audioSequence.readParameters(chunk);
 		break;
 
 	default:
@@ -345,19 +330,8 @@ void Movie::timePlay() {
 		return;
 	}
 
-	// START PLAYING SOUND.
 	// TODO: This won't work when we have some chunks that don't have audio.
-	if (!_audioStreams.empty()) {
-		Audio::QueuingAudioStream *audio = Audio::makeQueuingAudioStream(22050, false);
-		for (Audio::SeekableAudioStream *stream : _audioStreams) {
-			stream->rewind();
-			audio->queueAudioStream(stream, DisposeAfterUse::NO);
-		}
-		// Then play the audio!
-		g_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audio, -1, Audio::Mixer::kMaxChannelVolume);
-		audio->finish();
-	}
-
+	_audioSequence.play();
 	_framesNotYetShown = _frames;
 	_isVisible = true;
 	_isPlaying = true;
@@ -379,9 +353,7 @@ void Movie::timeStop() {
 	}
 	_framesOnScreen.clear();
 	_framesNotYetShown.clear();
-
-	g_engine->_mixer->stopHandle(_soundHandle);
-	_soundHandle = Audio::SoundHandle();
+	_audioSequence.stop();
 
 	// Show the persistent frames.
 	_isPlaying = false;
@@ -595,22 +567,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isAudioChunk = (chunk._id == _audioChunkReference);
 		if (isAudioChunk) {
-			byte *buffer = (byte *)malloc(chunk._length);
-			chunk.read((void *)buffer, chunk._length);
-			Audio::SeekableAudioStream *stream = nullptr;
-			switch (_soundEncoding) {
-			case SoundEncoding::PCM_S16LE_MONO_22050:
-				stream = Audio::makeRawStream(buffer, chunk._length, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-				break;
-
-			case SoundEncoding::IMA_ADPCM_S16LE_MONO_22050:
-				error("Movie::readSubfile(): ADPCM decoding not supported for movies");
-				break;
-
-			default:
-				error("Movie::readSubfile(): Unknown audio encoding 0x%x", static_cast<uint>(_soundEncoding));
-			}
-			_audioStreams.push_back(stream);
+			_audioSequence.readChunk(chunk);
 			chunk = subfile.nextChunk();
 		} else {
 			debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) No audio chunk to read. (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
