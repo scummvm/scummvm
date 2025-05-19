@@ -236,6 +236,10 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 	if (_vm->_game.version > 6 && id >= 204 && id < 300)
 		id++;
 
+	// Fate of Atlantis doesn't have an Effects menu entry
+	if (_vm->_game.id == GID_INDY4 && id >= 501 && id < 600)
+		id++;
+
 	switch (id) {
 	case 100:	// About
 		runAboutDialog();
