@@ -190,6 +190,7 @@ static const char HELP_STRING4[] =
 	"  --no-show-fps            Set the turn off display FPS info in 3D games\n"
 	"  --random-seed=SEED       Set the random seed used to initialize entropy\n"
 	"  --renderer=RENDERER      Select 3D renderer (software, opengl, opengl_shaders)\n"
+	"  --antialiasing=SAMPLES   Select the antialiasing level\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --[no-]dirtyrects        Enable dirty rectangles optimisation in software renderer\n"
 	"                           (default: enabled)\n"
@@ -920,6 +921,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Graphics::RendererType renderer = Graphics::Renderer::parseTypeCode(option);
 				if (renderer == Graphics::kRendererTypeDefault)
 					usage("Unrecognized renderer type '%s'", option);
+			END_OPTION
+
+			DO_LONG_OPTION_INT("antialiasing")
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("show-fps")
