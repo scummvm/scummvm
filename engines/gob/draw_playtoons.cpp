@@ -212,7 +212,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 																				  _destSpriteY,
 																				  _backColor);
 			dirtiedRect(_destSurface, dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
-			break ;
+			break;
 		}
 		case 0: {
 			if (!(_backColor & 0xFF00) || !(_backColor & 0x0100)) {
@@ -239,7 +239,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 
 	case DRAW_DRAWLINE:
 		if ((_needAdjust != 2) && (_needAdjust < 10)) {
-			warning ("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw multiple lines");
+			warning("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw multiple lines");
 				_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
 				_spritesArray[_destSurface]->drawLine(_destSpriteX + 1, _destSpriteY,
@@ -385,7 +385,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_CLEARRECT:
-		warning ("oPlaytoons_spriteOperation: DRAW_CLEARRECT uses _backColor %d", _backColor);
+		warning("oPlaytoons_spriteOperation: DRAW_CLEARRECT uses _backColor %d", _backColor);
 		if (_backColor != -1) {
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
@@ -403,7 +403,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 
 	default:
-		warning ("oPlaytoons_spriteOperation: Unhandled operation %d", operation);
+		warning("oPlaytoons_spriteOperation: Unhandled operation %d", operation);
 		break;
 	}
 
