@@ -50,7 +50,6 @@ protected: // create from serialization only
 	CGtlView();
 	DECLARE_DYNCREATE(CGtlView)
 
-// Attributes
 public:
 	CBsuSet m_cViewBsuSet ; // boffo scroll bar set for windows
 
@@ -60,40 +59,37 @@ public:
 	class CGtlFrame *m_xpFrame ;    // pointer to frame window
 	char m_cEndData ;
 
-// Operations
-public:
 	class CGtlDoc *GetDocument();
 	void UpdateDialogs(void) ;
 	void OnSoundNotify(CSound *);
 
-//- OnUpdate -- called when document changes to update view
-	virtual void OnUpdate(CView * xpSender, LPARAM lHint, CObject * xpHint) ;
-//- OnDraw -- draw current view
-	virtual void OnDraw(CDC* xpDc) ;
+	//- OnUpdate -- called when document changes to update view
+	virtual void OnUpdate(CView *xpSender, LPARAM lHint, CObject * xpHint);
+	//- OnDraw -- draw current view
+	virtual void OnDraw(CDC* xpDc);
 
 private:
-//- OnInitialUpdate --
-	void OnInitialUpdate(void) ;
+	//- OnInitialUpdate --
+	void OnInitialUpdate(void);
 
-	#ifdef NODEEDIT
-//- CheckSize -- check window size, adjust if necessary
-	BOOL CheckSize(void) ;
-	#endif
+#ifdef NODEEDIT
+	//- CheckSize -- check window size, adjust if necessary
+	BOOL CheckSize(void);
+#endif
 
 protected:
-//- PreCreateWindow -- change view window style
-	BOOL PreCreateWindow(CREATESTRUCT& cCs) ;
+	//- PreCreateWindow -- change view window style
+	BOOL PreCreateWindow(CREATESTRUCT& cCs);
 
 // Implementation
 public:
 	virtual ~CGtlView();
 
-	#ifdef BAGEL_DEBUG
+#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-	#endif
+#endif
 
-public:
 	void FlushInputEvents(void);
 
 

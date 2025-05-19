@@ -45,7 +45,6 @@ private:
 	char    m_lpszSource[MAX_SOURCE_LEN];
 
 public:
-
 	CCryptRecord();     // constructor
 	~CCryptRecord();    // destructor
 

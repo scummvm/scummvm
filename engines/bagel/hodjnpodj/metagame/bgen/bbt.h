@@ -42,7 +42,6 @@ public:
 	CBbutton FAR *m_lpDownBbt ;
 	char m_cEndData ;
 
-// methods
 public:
 	CBbtMgr(CBgbMgr FAR * lpBgbMgr = NULL) {
 		memset(&m_cStartData, 0,
@@ -50,25 +49,16 @@ public:
 		m_lpBgbMgr = lpBgbMgr ;
 	}
 
-
-// bbt.cpp -- Boffo button handling
-
-//- ~CBbtMgr -- destructor
-public:
 	~CBbtMgr() ;
-//- LinkButton -- link button into button manager
-public:
+    //- LinkButton -- link button into button manager
 	BOOL LinkButton(CBbutton FAR * lpBbt,
 	                         CBgbObject FAR * lpcBgbObject1,
 	                         CBgbObject FAR * lpcBgbObject2) ;
-//- AcceptClick -- process mouse click or mouse move
-public:
+    //- AcceptClick -- process mouse click or mouse move
 	int AcceptClick(CRPoint crPoint, int iClickType) ;
-//- MoveDown -- move button down
-private:
+    //- MoveDown -- move button down
 	BOOL MoveDown(CBbutton FAR * lpDownBbt PDFT(NULL)) ;
-//- GetCurrentBitmap -- get current bitmap for button
-public:
+    //- GetCurrentBitmap -- get current bitmap for button
 	CBgbObject FAR *GetCurrentBitmap(CBbutton * xpBbt) ;
 } ;
 

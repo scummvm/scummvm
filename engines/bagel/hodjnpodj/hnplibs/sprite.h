@@ -41,16 +41,10 @@ enum {
 class CSprite : public CObject {
 	DECLARE_DYNCREATE(CSprite)
 
-// Constructors
 public:
 	CSprite();  // use "new" operator to create sprites, then LoadSprite
-
-// Destructors
-public:
 	~CSprite();
 
-// Implementation
-public:
 	CSprite *DuplicateSprite(CDC *pDC);
 	BOOL DuplicateSprite(CDC *pDC, CSprite *pSprite);
 

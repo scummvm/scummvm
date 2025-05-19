@@ -74,65 +74,27 @@ public:
 		return (lpBdbgMgr) ;
 	}
 
-
-
-// bdbg.cpp -- Boffo debugging for meta game
-
-//- CBdbgMgr -- constructor
-public:
 	CBdbgMgr(void) ;
-//- ~CBdbgMgr -- destructor
-public:
 	~CBdbgMgr(void) ;
-//- DebugInit -- Initialize
-public:
 	BOOL DebugInit(LPCSTR lpszIniFilename,
 	               LPCSTR lpszIniSectionname) ;
-//- GetDebugInt -- get debugging integer
-public:
 	int GetDebugInt(LPCSTR lpszOption,
 	                int iDefault PDFT(0)) ;
-//- GetDebugString --
-public:
 	BOOL GetDebugString(LPCSTR lpszOption,
 	                    LPSTR lpszTarget, int iTargetSize,
 	                    LPCSTR lpszDefault PDFT(NULL)) ;
-//- TraceConstructor -- trace object constructor, if optioned
-public:
 	BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
-//- TraceDestructor -- trace object destructor, if optioned
-public:
 	BOOL TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
-//- DebugMessageBox --
-public:
 	BOOL DebugMessageBox(LPCSTR lpszPrompt,
 	                     UINT nType, UINT nIDPrompt) ;
-//- AddTraceObject -- add object to trace list
-public:
 	BOOL AddTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-//- TestTraceObject -- test
-public:
 	BOOL TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
 	                     BOOL bMissing PDFT(FALSE)) ;
-//- RemoveTraceObject -- add object to trace list
-public:
 	BOOL RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-//- ReportTraceObjects -- final report at program end
-public:
 	BOOL ReportTraceObjects(void) ;
-//- OutputWithTime -- output debugging string with time
-public:
 	STATIC BOOL OutputWithTime(LPCSTR lpszPattern) ;
-//- OutputWithWordWrap -- output debugging string with time
-public:
 	STATIC BOOL OutputWithWordWrap(LPCSTR lpStr1,
 	                               LPCSTR lpStr2, int iIndent) ;
-
-
-
-
-
-
 } ;
 
 #ifndef JXENTER

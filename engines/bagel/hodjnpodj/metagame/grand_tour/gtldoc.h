@@ -75,25 +75,24 @@ protected:
 
 // gtldoc.cpp -- implementation of the CGtlDoc class
 
-//- DeleteContents() --
 public:
 	void DeleteContents() ;
-//- InitDocument -- initialize document to specified file
 protected:
+	//- InitDocument -- initialize document to specified file
 	void InitDocument(const char * xpszPathName) ;
-//- OnOpenDocument --
 	virtual BOOL OnOpenDocument(const char* xpszPathName) ;
-//- OnSaveDocument --
 	virtual BOOL OnSaveDocument(const char* xpszPathName) ;
-//- DoOnFileSaveAs --
+
 public:
 	virtual BOOL DoOnFileSaveAs(void) ;
-//- OnChangedViewList -- called by MFC when a view is
-//		added or deleted
-private:
+
+	private:
+	//- OnChangedViewList -- called by MFC when a view is
+	//		added or deleted
 	virtual VOID OnChangedViewList(void) ;
-//- FixChecks -- fix dialog box check marks
-public:
+
+	public:
+	//- FixChecks -- fix dialog box check marks
 	BOOL FixChecks(void);
 
 };

@@ -200,15 +200,6 @@ class CWindowMain : public CFrameWnd {
 	DECLARE_DYNCREATE(CWindowMain)
 protected:
 	CWindowMain();          // protected constructor used by dynamic creation
-
-// Attributes
-public:
-
-// Operations
-public:
-
-// Implementation
-protected:
 	virtual ~CWindowMain();
 
 	// Generated message map functions

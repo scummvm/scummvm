@@ -39,11 +39,11 @@ namespace GrandTour {
 #endif
 
 class CGtlFrame : public MFC_FRAME {
-	#if GTLMDI
+#if GTLMDI
 	DECLARE_DYNAMIC(CGtlFrame)
-	#else
+#else
 	DECLARE_DYNCREATE(CGtlFrame)
-	#endif
+#endif
 
 public:
 	CGtlFrame();
@@ -56,9 +56,6 @@ public:
 	void ShowOptions(CPalette *);
 	BOOL ShowClue(CPalette *, CNote *);
 
-// Attributes
-public:
-
 	class CGtlView *m_xpcLastFocusView ;        // last view with focus
 	class CGtlView *m_xpcLastMouseView ;        // last view touched by mouse
 	class CGtlDoc *m_xpDocument ;
@@ -66,11 +63,6 @@ public:
 	BOOL m_bExitDll ;           // if turned on, exit meta game DLL
 	int         m_nReturnCode;
 
-// Operations
-public:
-
-// Implementation
-public:
 	virtual ~CGtlFrame();
 	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
@@ -82,10 +74,10 @@ public:
 protected:
 	//{{AFX_MSG(CGtlFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	#if GTLDLL
+#if GTLDLL
 	afx_msg void OnDestroy();
-	#endif
-	afx_msg void OnUpdateViewStatusBar(CCmdUI* pCmdUI);
+#endif
+	afx_msg void OnUpdateViewStatusBar(CCmdUI *pCmdUI);
 	afx_msg void OnViewInfoDlg();
 	afx_msg void OnViewCtlDlg();
 	afx_msg void OnViewNodeDlg();
@@ -101,32 +93,24 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-// gtlfrm.cpp : implementation of the CGtlFrame class
-
-//- NewFrame -- set pointer to interface manager in frame
+	// gtlfrm.cpp : implementation of the CGtlFrame class
 public:
-	BOOL NewFrame(CBfcMgr * lpBfcMgr PDFT(NULL)) ;
-//- ShowControlDialog --
-public:
+	//- NewFrame -- set pointer to interface manager in frame
+	BOOL NewFrame(CBfcMgr *lpBfcMgr PDFT(NULL)) ;
 	BOOL ShowControlDialog(void) ;
-//- ShowNodeDialog --
-public:
 	BOOL ShowNodeDialog(void) ;
-//- ShowInfoDialog --
-public:
 	BOOL ShowInfoDialog(void) ;
-//- ShowMenuDialog --
-public:
 	BOOL ShowMenuDialog(void) ;
-//- GetCurrentDocAndView -- get last focused doc/view
-public:
-	BOOL GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
+	//- GetCurrentDocAndView -- get last focused doc/view
+	BOOL GetCurrentDocAndView(CGtlDoc *&xpcGtlDoc,
 	                                     CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView) ;
-//- PreCreateWindow -- change frame window style
+
 protected:
+	//- PreCreateWindow -- change frame window style
 	BOOL PreCreateWindow(CREATESTRUCT &cCs) override;
-//- RecalcLayout -- override CFrameWnd::RecalcLayout
+
 public:
+	//- RecalcLayout -- override CFrameWnd::RecalcLayout
 	virtual void RecalcLayout(BOOL bNotify PDFT(TRUE)) ;
 };
 

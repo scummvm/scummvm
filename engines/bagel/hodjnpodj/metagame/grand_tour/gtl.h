@@ -63,13 +63,11 @@ public:
 	BOOL m_bDumpGamePlay ;      // dump game play
 	char m_cEndData ;
 
-// Overrides
 	virtual BOOL InitInstance();
-	#if GTLDLL
+#if GTLDLL
 	virtual int ExitInstance();
-	#endif
+#endif
 
-// Implementation
 	CGtlApp();  // constructor
 	~CGtlApp(); // destructor
 
@@ -80,28 +78,15 @@ public:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
-// gtl.cpp : Defines the class behaviors for the application.
-
 public:
 	void CreateInstance(void);
-
-//- CallOnFileNew --
-public:
 	BOOL CallOnFileNew(void) ;
-//- CallOnFileOpen --
-public:
 	BOOL CallOnFileOpen(void) ;
-//- CallOnFileSave --
-public:
 	BOOL CallOnFileSave(void) ;
-//- DoMessageBox -- override of CWinApp function to
-//              display message box messages
-public:
+	//- DoMessageBox -- override of CWinApp function to
+	//              display message box messages
 	virtual int DoMessageBox(LPCSTR lpszPrompt,
 	                                  UINT nType, UINT nIDPrompt) ;
-
-
 };
 
 #if GTLMDI

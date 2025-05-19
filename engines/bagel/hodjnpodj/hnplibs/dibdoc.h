@@ -34,8 +34,7 @@ class CDibDoc : public CDocument {
 public:
 	CDibDoc();
 
-// Attributes
-public:
+	// Attributes
 	HDIB GetHDIB() const {
 		return m_hDIB;
 	}
@@ -47,13 +46,11 @@ public:
 		return m_sizeDoc;
 	}
 
-// Operations
-public:
+	// Operations
 	void ReplaceHDIB(HDIB hDIB);
 	void InitDIBData();
 
-// Implementation
-public:
+	// Implementation
 	virtual ~CDibDoc();
 	virtual BOOL SaveDocument(const char* pszPathName);
 	virtual BOOL OpenDocument(const char* pszPathName);

@@ -32,13 +32,13 @@ namespace Metagame {
 
 // define scroll bar types (should not conflict with IDC_xxxx codes
 //	from resource.h)
-#define BSCT_GEN 1      
+#define BSCT_GEN 1
 /* general (no special type) */
-#define BSCT_HORZ 2     
+#define BSCT_HORZ 2
 /* horizontal scroll bar for window */
-#define BSCT_VERT 3     
+#define BSCT_VERT 3
 /* vertical scroll bar for window */
-#define BSCT_EDIT 4     
+#define BSCT_EDIT 4
 /* tied to numeric value in edit box */
 
 // window regions defined according to the following diagram:
@@ -86,7 +86,6 @@ public:
 	CBsuSet *m_xpSetLink ;  // one alternate set of scroll bars
 	char m_cEndData ;
 
-// methods
 public:
 	CBsuSet() {
 		TRACECONSTRUCTOR(CBsuSet) ;
@@ -99,75 +98,53 @@ public:
 	}
 	#endif
 
-// bsutl.cpp : Boffo scroll bar utilities
-
-//- ~CBsuSet -- destructor
-public:
 	~CBsuSet(void) ;
-//- InitWndBsuSet -- initialize bsu set for a window
-public:
+	//- InitWndBsuSet -- initialize bsu set for a window
 	BOOL InitWndBsuSet(CWnd * xpWnd,
 	                            BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
 	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
-//- InitDlgBsuSet -- initialize bsu set for dialog box
-public:
+	//- InitDlgBsuSet -- initialize bsu set for dialog box
 	BOOL InitDlgBsuSet(CDialog * xpDlg,
 	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
-//- AddBarToSet -- add scroll bar to scroll bar set
-public:
+	//- AddBarToSet -- add scroll bar to scroll bar set
 	BOOL AddBarToSet(int iId, int iWndScrollCode,
 	                          int iBarType PDFT(0)) ;
-//- PrepareWndBsuSet -- prepare window scroll bar set
-//		by filling in the device fields
-public:
+	//- PrepareWndBsuSet -- prepare window scroll bar set
+	//		by filling in the device fields
 	BOOL PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
-//- UpdateWndDeviceExtents -- update window devices coordinates
-private:
+	//- UpdateWndDeviceExtents -- update window devices coordinates
 	BOOL UpdateWndDeviceExtents(void) ;
-//- LinkWndBsuSet -- link window/dialog bsu sets
-public:
+	//- LinkWndBsuSet -- link window/dialog bsu sets
 	BOOL LinkWndBsuSet(void) ;
-//- PrepareDc -- replace OnPrepareDC -- set the viewport and
-//	the clip rectangle to the specified region
-public:
+	//- PrepareDc -- replace OnPrepareDC -- set the viewport and
+	//	the clip rectangle to the specified region
 	BOOL PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
-//- OnScroll -- handle OnHScroll and OnVScroll messages
-public:
+	//- OnScroll -- handle OnHScroll and OnVScroll messages
 	BOOL OnScroll(UINT nSBCode, UINT nPos,
 	                       CScrollBar* xpScrollBar, int iBarType PDFT(0)) ;
-//- GetBar -- get bsu scroll bar object
-private:
+	//- GetBar -- get bsu scroll bar object
 	CBsuBar *GetBar(int iBarType) ;
-//- ScrollWindowToPoint -- scroll window to spec point
-public:
+	//- ScrollWindowToPoint -- scroll window to spec point
 	BOOL ScrollWindowToPoint(CPoint cScrollPosition,
 	                                  BOOL bScrollWindow PDFT(TRUE)) ;
-//- EdgeToCenter -- if point is on edge, scroll it to center
-public:
+	//- EdgeToCenter -- if point is on edge, scroll it to center
 	BOOL EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
-//- SetSubWindowRect -- set rectangle to portion of window
-//		(logical coordinates)
-public:
+	//- SetSubWindowRect -- set rectangle to portion of window
+	//		(logical coordinates)
 	BOOL SetSubWindowRect(LPRECT lpRect, int iBsRegion);
-//- TestRect -- test whether rectangle is in window
-public:
+	//- TestRect -- test whether rectangle is in window
 	BOOL TestRect(CRRect crTestRect,
 	                       BOOL & bPhysical, BOOL & bEdge) ;
-//- GetWindowBars -- set rectangle to portion of window
-//		(device coordinates)
-public:
+	//- GetWindowBars -- set rectangle to portion of window
+	//		(device coordinates)
 	BOOL GetWindowBars(CBsuBar * &xpHBar,
 	                            CBsuBar *&xpVBar, BOOL bErrorRtn PDFT(TRUE)) ;
-//- PointLogical -- convert device point to logical coords
-public:
+	//- PointLogical -- convert device point to logical coords
 	CRPoint PointLogical(CPoint cPoint) ;
-//- GetInfo -- get information about scroll set
-public:
+	//- GetInfo -- get information about scroll set
 	BOOL GetInfo(CBsuInfo * xpBsuInfo) ;
-//- DumpInfo -- dump information about scroll set
-public:
+	//- DumpInfo -- dump information about scroll set
 	BOOL DumpInfo(LPSTR lpStart PDFT(NULL)) ;
-
 } ;
 
 

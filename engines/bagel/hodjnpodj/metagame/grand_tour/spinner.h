@@ -50,17 +50,11 @@ namespace GrandTour {
 class CSpinner : public CObject {
 	DECLARE_DYNCREATE(CSpinner)
 
-// Constructors
 public:
 	CSpinner();
 	CSpinner(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, BOOL bHodj = TRUE);
-
-// Destructors
-public:
 	~CSpinner();
 
-// Implementation
-public:
 	int Animate(void) {
 		return (Animate(m_nX, m_nY));
 	}
@@ -75,13 +69,11 @@ private:
 	}
 	BOOL Show(int nX, int nY);
 
-private:
 	void SetupSpinner(void);
 
 	static BOOL HandleMessages(void);
 
 private:
-
 	CWnd    *m_pWnd;            // window for messages
 	CDC     *m_pDC;             // context for display
 	CSprite *m_pSprite;         // sprite for spinner

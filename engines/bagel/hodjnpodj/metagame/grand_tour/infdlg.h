@@ -263,7 +263,6 @@ protected:
 
 class CMenuDlg : public CDialog {
 public:
-
 	CGtlFrame *m_xpFrameWnd;    // parent window = frame window
 	//  CWnd * m_xpParentWnd ;      // parent window = frame
 	class CGtlDoc *m_xpDocument;

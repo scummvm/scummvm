@@ -69,17 +69,11 @@ typedef WAVEINST FAR *LPWAVEINST;
 class CSound : public CObject {
 	DECLARE_DYNCREATE(CSound)
 
-// Constructors
 public:
 	CSound();
 	CSound(CWnd *pWnd, char *pszPathName, WORD wFlags);
-
-// Destructors
-public:
 	~CSound();
 
-// Implementation
-public:
 	void Initialize(char *pszPathName, WORD wFlags) {
 		Initialize(NULL, pszPathName, wFlags);
 	}

@@ -62,17 +62,11 @@ enum {
 class CText : public CObject {
 	DECLARE_DYNCREATE(CText)
 
-// Constructors
 public:
 	CText();
 	CText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
-
-// Destructors
-public:
 	~CText();
 
-// Implementation
-public:
 	BOOL SetupText(CDC *pDC, CPalette * pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
 	BOOL RestoreBackground(CDC *pDC);
 	BOOL DisplayString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);

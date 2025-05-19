@@ -437,75 +437,58 @@ public:
 		       0, &m_cEndData - &m_cStartData) ;
 	}
 
-// gtldcp.cpp -- decompiler for meta game
+	// gtldcp.cpp -- decompiler for meta game
 
-//- Decompile -- output data to .GTL file
-public:
+	//- Decompile -- output data to .GTL file
 	int Decompile(const char * xpszPathName) ;
-//- AsciiOutput -- ascii output
-private:
+	//- AsciiOutput -- ascii output
 	int AsciiOutput(int iIndent, XPSTR lpszOut) ;
-//- ListingOutput -- listing output
-private:
+	//- ListingOutput -- listing output
 	int ListingOutput(int iIndent, XPSTR lpszOut) ;
 
 
-// gtlcpl.cpp -- compiler for graphics utility
+	// gtlcpl.cpp -- compiler for graphics utility
 
-//- Compile -- compile .gtl file to internal objects
-public:
+	//- Compile -- compile .gtl file to internal objects
 	int Compile(const char * xpszPathName) ;
-//- ParseLine -- parse input line
-private:
+	//- ParseLine -- parse input line
 	BOOL ParseLine(void) ;
-//- ParseInteger -- parse integer, store into node structure
-private:
+	//- ParseInteger -- parse integer, store into node structure
 	CLexElement *ParseInteger(CLexElement * xpLxel,
 	                          int iPrevType, int FAR& iValue) ;
-//- ParseString -- parse string, store into node structure
-//      Note: Accepts identifier as well as string
-private:
+	//- ParseString -- parse string, store into node structure
+	//      Note: Accepts identifier as well as string
 	CLexElement *ParseString(CLexElement * xpLxel,
 	                         int iPrevType, LPSTR lpszValue, XPINT xpiValue) ;
-//- GetLabel -- get bitmap or node label
-private:
+	//- GetLabel -- get bitmap or node label
 	BOOL GetLabel(CLexElement * xpLxel,
 	              BOOL bNode, int FAR& iIndex) ;
-//- GetLabel -- get bitmap or node label
-private:
+	//- GetLabel -- get bitmap or node label
 	BOOL GetLabel(LPSTR lpszLabel,
 	              BOOL bNode, int FAR& iIndex) ;
-//- AddLink -- link together a pair of nodes
+
 private:
-	BOOL AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
-//- AddLink -- add link to one node
-private:
+	 //- AddLink -- link together a pair of nodes
+	 BOOL AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
+	//- AddLink -- add link to one node
 	BOOL AddLink(CNode FAR * lpNode, int iLink) ;
 
 
+	// gtllex -- lexical analysis for graphics utility
 
-// gtllex -- lexical analysis for graphics utility
-
-//- FindKeyword -- find keyword, given tree node type
-private:
+	//- FindKeyword -- find keyword, given tree node type
 	LPCSTR FindKeyword(int iType) ;
-//- ReadLine -- read input line
-private:
+	//- ReadLine -- read input line
 	BOOL ReadLine(void) ;
-//- ErrorMsg -- publish error message
-private:
+	//- ErrorMsg -- publish error message
 	BOOL ErrorMsg(CLexElement * xpLxel, LPCSTR szMessage) ;
 
+	// gtlui.cpp -- data interface to Windows
 
-
-// gtlui.cpp -- data interface to Windows
-
-//- CGtlData -- constructor -- zero out all fields, allocate
-//      arrays, and set colors
 public:
+	//- CGtlData -- constructor -- zero out all fields, allocate
+	//      arrays, and set colors
 	CGtlData(void) ;
-//- ~CGtlData -- destructor
-public:
 	~CGtlData(void) ;
 
 	VOID    CreateOffScreenBmp(VOID);
@@ -515,278 +498,229 @@ public:
 	VOID    ReleaseMemDC(CMemDC *);
 
 
-//- SetColors -- set colors of various elements
-public:
 	BOOL SetColors(void) ;
-//- ClearInhibitDraw -- clear m_bInhibitDraw flag
-private:
+	//- ClearInhibitDraw -- clear m_bInhibitDraw flag
 	BOOL ClearInhibitDraw(void) ;
-//- Draw -- draw data
-public:
+	//- Draw -- draw data
 	BOOL Draw(CGtlView * xpGtlView, CRect * xpClipRect,
 	          CDC* xpDc PDFT(NULL)) ;
-//- SwitchDc -- switch between relocatable/nonrelocatable
-//              device context
-private:
+	//- SwitchDc -- switch between relocatable/nonrelocatable
+	//              device context
 	BOOL SwitchDc(CDC * xpDc, BOOL bRelocatable) ;
-//- DrawBitmaps -- draw bitmaps for Draw routine
-private:
+	//- DrawBitmaps -- draw bitmaps for Draw routine
 	BOOL DrawBitmaps(CDC *, BOOL);
 
-//- DrawABitmap -- draw a bitmap object for Draw routine
-private:
+	//- DrawABitmap -- draw a bitmap object for Draw routine
 	BOOL DrawABitmap(CDC *, CBgbObject *, BOOL bPaint PDFT(FALSE));
 
-//- NodeToPoint -- return relocatable coordinates of node
-//              adjusted by optional size object
-private:
+	//- NodeToPoint -- return relocatable coordinates of node
+	//              adjusted by optional size object
 	CRPoint NodeToPoint(CNode * lpNode,
 	                    CSize FAR * lpcSize PDFT(NULL)) ;
-//- SpecifyUpdate -- specify update rectangle
-public:
+	//- SpecifyUpdate -- specify update rectangle
 	BOOL SpecifyUpdate(CGtlView * xpGtlView) ;
-//- UpdateDialogs -- update modeless dialog boxes
-public:
+	//- UpdateDialogs -- update modeless dialog boxes
 	BOOL UpdateDialogs(BOOL bRetrieve PDFT(FALSE)) ;
-//- UpdateMenuDialog -- update control dialog box
+
 private:
+	//- UpdateMenuDialog -- update control dialog box
 	BOOL UpdateMenuDialog(BOOL bRetrieve) ;
 
-//- UpdateInfoDialog -- update information dialog box
-private:
+	//- UpdateInfoDialog -- update information dialog box
 	BOOL UpdateInfoDialog(BOOL bRetrieve) ;
 
-//- UpdateControlDialog -- update control dialog box
-private:
+	//- UpdateControlDialog -- update control dialog box
 	BOOL UpdateControlDialog(BOOL bRetrieve) ;
 
-//- UpdateNodeDialog -- update node dialog box
-private:
+	//- UpdateNodeDialog -- update node dialog box
 	BOOL UpdateNodeDialog(BOOL bRetrieve) ;
 
-//- UpdateFocusRect -- update focus rectangle for hiliting
-private:
+	//- UpdateFocusRect -- update focus rectangle for hiliting
 	BOOL UpdateFocusRect(void) ;
 
-//- AdjustToView -- set up bitmaps for view
-private:
+	//- AdjustToView -- set up bitmaps for view
 	BOOL AdjustToView(CGtlView *);
 
-//- InitOverlay -- initialize overlay
-private:
+	//- InitOverlay -- initialize overlay
 	BOOL InitOverlay(CMap FAR * lpMap) ;
-//- NormalizeData -- normalize data after loading
-private:
+	//- NormalizeData -- normalize data after loading
 	BOOL NormalizeData(CGtlView * xpGtlView) ;
 
-// gtlmanp.cpp -- manipulate the data
+	// gtlmanp.cpp -- manipulate the data
+public:
 
-//- AcceptClick -- process a mouse click by user
-public:
+	//- AcceptClick -- process a mouse click by user
 	BOOL AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickType) ;
-//- AcceptDeleteKey -- process depressing delete key
-public:
+	//- AcceptDeleteKey -- process depressing delete key
 	BOOL AcceptDeleteKey(CGtlView * xpGtlView) ;
-//- PointToNode -- find node closest to point
+
 private:
+	//- PointToNode -- find node closest to point
 	CNode FAR *PointToNode(CRPoint crPoint) ;
-//- SelectNode -- algorithm when node is clicked
-private:
+	//- SelectNode -- algorithm when node is clicked
 	BOOL SelectNode(CNode FAR * lpNode) ;
-//- ModifySelectNode -- modify node select/deselect
-private:
+	//- ModifySelectNode -- modify node select/deselect
 	BOOL ModifySelectNode(CNode FAR * lpNode PDFT(NULL), BOOL bSelect PDFT(TRUE)) ;
-//- GetSelectedNode -- return selected node, or NULL if none
-private:
+	//- GetSelectedNode -- return selected node, or NULL if none
 	CNode FAR *GetSelectedNode(void) ;
-//- SelectLink -- select or deselect a link
-private:
+	//- SelectLink -- select or deselect a link
 	BOOL SelectLink(CNode FAR * lpNode1 PDFT(NULL), CNode FAR * lpNode2 PDFT(NULL)) ;
-//- IfLinked -- test whether two nodes are linked
-private:
+	//- IfLinked -- test whether two nodes are linked
 	BOOL IfLinked(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
-//- DeleteNode -- delete node and all connecting links
-private:
+	//- DeleteNode -- delete node and all connecting links
 	BOOL DeleteNode(CNode * lpNode) ;
-//- DeleteLink -- delete link between two nodes
-private:
+	//- DeleteLink -- delete link between two nodes
 	BOOL DeleteLink(CNode FAR * lpNode1 PDFT(NULL), CNode FAR * lpNode2 PDFT(NULL)) ;
-//- DeleteLinkIndex -- delete index from array of link
-//              indices for a given node, if found
-private:
+	//- DeleteLinkIndex -- delete index from array of link
+	//              indices for a given node, if found
 	BOOL DeleteLinkIndex(CNode FAR * lpNode, int iLink) ;
-//- CallUpdate -- call to update all views for this map
-private:
+	//- CallUpdate -- call to update all views for this map
 	BOOL CallUpdate(CNode FAR * lpNode1 PDFT(NULL),
 	                CNode FAR * lpNode2 PDFT(NULL), BOOL bLinks PDFT(FALSE),
 	                BOOL bWmPaint PDFT(FALSE)) ;
-//- CallUpdate -- call to update all views for this map
-//              -- version which updates a bitmap object
-private:
+	//- CallUpdate -- call to update all views for this map
+	//              -- version which updates a bitmap object
 	BOOL CallUpdate(CBgbObject * lpcBgbObject) ;
-//- CreateNode -- create a new node
-private:
+	//- CreateNode -- create a new node
 	BOOL CreateNode(CNode FAR * &lpNode, CRPoint crPosition) ;
-//- MoveNode -- move node
-private:
+	//- MoveNode -- move node
 	BOOL MoveNode(CNode FAR * lpNode, CRPoint crPosition) ;
 
 	int DoSpecialTravel(int, BOOL);
 	VOID LoadCharDirection(CBgbObject *, CPoint, CPoint);
 
-//- CreateLink -- create link between two nodes
-private:
+	//- CreateLink -- create link between two nodes
 	BOOL CreateLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
-//- SetNodePosition -- set position relative to bitmap
-private:
+	//- SetNodePosition -- set position relative to bitmap
 	BOOL SetNodePosition(CNode FAR * lpNode, CRPoint crPosition) ;
 
 
-// gtlmgm.cpp -- meta game
+	// gtlmgm.cpp -- meta game
+public:
 
-//- SetMetaGame -- set meta game on or off
-public:
+	//- SetMetaGame -- set meta game on or off
 	BOOL SetMetaGame(BOOL bOn) ;
-//- InitMetaGame -- init or release sprites for Meta Game
-public:
+	//- InitMetaGame -- init or release sprites for Meta Game
 	BOOL InitMetaGame(CGtlView * xpGtlView PDFT(NULL),
 	                  BOOL bInit PDFT(TRUE)) ;
-//- ProcessMove -- handle move processing
-public:
+	//- ProcessMove -- handle move processing
 	BOOL ProcessMove(CNode FAR * lpTargetNode PDFT(NULL)) ;
-//- MoveCharToNode -- move current character to specified node
+
 private:
+	//- MoveCharToNode -- move current character to specified node
 	BOOL MoveCharToNode(CNode FAR * lpTargetNode) ;
-//- EstimatePathDistance -- estimate distance between nodes
-private:
+	//- EstimatePathDistance -- estimate distance between nodes
 	int EstimatePathDistance(CNode FAR * lpNode1,
 	                         CNode FAR * lpNode2) ;
-//- FindShortestPath -- between two nodes
-private:
+	//- FindShortestPath -- between two nodes
 	LPINT FindShortestPath(CNode FAR * lpNode1,
 	                       CNode FAR * lpNode2) ;
-//- PositionCharacters -- set positions for Hodj and Podj
+
 public:
+	//- PositionCharacters -- set positions for Hodj and Podj
 	BOOL PositionCharacters(void) ;
-//- PositionACharacter -- find positions for Hodj and Podj
+
 private:
+	//- PositionACharacter -- find positions for Hodj and Podj
 	BOOL PositionACharacter(CXodj * xpXodj, int iShift) ;
-//- LocationToNode -- find node for game location
-private:
+	//- LocationToNode -- find node for game location
 	CNode FAR *LocationToNode(int iLocationCode) ;
+
 public:
 	int FindNodeId(const char *pszLabel);
 
 
-// gtlmve.cpp -- meta game move processing
+	// gtlmve.cpp -- meta game move processing
 
-//- InitProblem -- initialize character problem
 private:
+	//- InitProblem -- initialize character problem
 	BOOL InitProblem(void) ;
-//- EndMoveProcessing -- handle things at end of a move
-private:
+	//- EndMoveProcessing -- handle things at end of a move
 	BOOL EndMoveProcessing(void) ;
-//- SwitchPlayers -- switch between Hodj and Podj
+
 public:
+	//- SwitchPlayers -- switch between Hodj and Podj
 	BOOL SwitchPlayers(void) ;
-//- InitInterface -- init data for interface manager
-public:
+	//- InitInterface -- init data for interface manager
 	BOOL InitInterface(int iCode, BOOL & bExitDll) ;
-//- ReturnFromInterface -- reset everything
-//              after interface return
-public:
+	//- ReturnFromInterface -- reset everything
+	//              after interface return
 	BOOL ReturnFromInterface(void) ;
-//- TakeIneligibleAction -- take action if character is at
-//      a location but is not eligible to perform function
+
 private:
+	//- TakeIneligibleAction -- take action if character is at
+	//      a location but is not eligible to perform function
 	BOOL TakeIneligibleAction(CXodj * xpXodj,
 	                          int iFunctionCode, int iLocationCode) ;
-//- DumpGameStatus -- (debugging) dump status of game
-private:
+	//- DumpGameStatus -- (debugging) dump status of game
 	BOOL DumpGameStatus(int iOptionFlags
 	                    PDFT(DUMPSTAT_EVERYTHING)) ;
-//- ProcessGameResult -- process result of game,
-//              optionally generating a random win
-private:
+	//- ProcessGameResult -- process result of game,
+	//              optionally generating a random win
 	BOOL ProcessGameResult(CXodj * xpXodj,
 	                       int iGameCode, LPGAMESTRUCT lpGameStruct PDFT(NULL)) ;
 
-//- GainRandomItem -- player receives a random item from store
 public:
+	//- GainRandomItem -- player receives a random item from store
 	BOOL GainRandomItem(CXodj * xpXodj) ;
 
-//- GainMoney -- player has won some money
-public:
+	//- GainMoney -- player has won some money
 	BOOL GainMoney(CXodj * xpXodj, long lCrowns) ;
 
-//- GainMishMosh -- player gets MishMosh
-public:
+	//- GainMishMosh -- player gets MishMosh
 	BOOL GainMishMosh(CXodj * xpXodj, long lCrowns) ;
 
-//- DivulgeInformation -- divulge information to player
-public:
+	//- DivulgeInformation -- divulge information to player
 	BOOL DivulgeInformation(CXodj * xpXodj, BOOL bSecondary) ;
 
-//- DetermineEligibility -- determine whether
-//  player has objects/money needed for current location
 private:
+	//- DetermineEligibility -- determine whether
+	//  player has objects/money needed for current location
 	BOOL DetermineEligibility(CXodj *xpXodj, int, int &, BOOL bExecute PDFT(FALSE));
 
-//- DetermineGameEligibility -- determine if eligible to play
-//  a game, and update game history if so (and bExecute)
-// ***** modify this function to determine how often a user can
-//  play the same game over and over
-private:
+	//- DetermineGameEligibility -- determine if eligible to play
+	//  a game, and update game history if so (and bExecute)
+	// ***** modify this function to determine how often a user can
+	//  play the same game over and over
 	BOOL DetermineGameEligibility(CXodj *xpXodj, int iGameCode, BOOL bExecute PDFT(FALSE));
 
-//- GetGameObjectCount -- get the count of the specified
-//      object in the player's inventory
-private:
+	//- GetGameObjectCount -- get the count of the specified
+	//      object in the player's inventory
 	long GetGameObjectCount(CXodj * xpXodj, int iObjectCode) ;
 
-//- DetermineInfoEligibility -- determine if eligible to
-//  get information at this location
-private:
+	//- DetermineInfoEligibility -- determine if eligible to
+	//  get information at this location
 	BOOL DetermineInfoEligibility(CXodj * xpXodj,
 	                              int iLocationCode, BOOL bExecute PDFT(FALSE)) ;
 
-//- DetermineMishMoshEligibility -- determine if eligible to
-//  grab Mish and Mosh from current location
-private:
+	//- DetermineMishMoshEligibility -- determine if eligible to
+	//  grab Mish and Mosh from current location
 	BOOL DetermineMishMoshEligibility(CXodj *, int);
 
 	VOID DoTransport(CXodj *, INT);
 
 
-// gtlcmp.cpp -- meta game computer play
-
-//- SelectBestMove -- select best move for computer play
-//      (can also be used for human player for debugging or giving hints)
+	// gtlcmp.cpp -- meta game computer play
 private:
+	//- SelectBestMove -- select best move for computer play
+	//      (can also be used for human player for debugging or giving hints)
 	BOOL SelectBestMove(CXodj * xpXodj) ;
-//- GatherInformation -- gather info to decide computer's move
-private:
+	//- GatherInformation -- gather info to decide computer's move
 	BOOL GatherInformation(CXodj * xpXodj) ;
-//- DetermineWeights -- determine weight for each
-//              location (independent of distance)
-private:
+	//- DetermineWeights -- determine weight for each
+	//              location (independent of distance)
 	BOOL DetermineWeights(CXodj * xpXodj) ;
-//- DetermineDistances -- determine distance to each
-//                      eligible location
-private:
+	//- DetermineDistances -- determine distance to each
+	//                      eligible location
 	BOOL DetermineDistances(CXodj * xpXodj) ;
-//- AdjustWeightByDistance -- adjust each by the distance
-//              of the node
-private:
+	//- AdjustWeightByDistance -- adjust each by the distance
+	//              of the node
 	BOOL AdjustWeightByDistance(CXodj * xpXodj) ;
-//- FindTopLocations -- find locations with top weights
-private:
+	//- FindTopLocations -- find locations with top weights
 	BOOL FindTopLocations(CXodj * xpXodj) ;
-//- DumpBestMoveData -- dump data used in best move computation
-private:
+	//- DumpBestMoveData -- dump data used in best move computation
 	BOOL DumpBestMoveData(CXodj * xpXodj) ;
 
-private:
 	void CheckForTransport(CXodj *, int);
 	void SetFurlongs(CXodj *);
 } ;
