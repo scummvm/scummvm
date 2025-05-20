@@ -225,6 +225,11 @@ typedef struct tagMSG {
 	POINT       pt;
 } MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
 
+inline bool PtInRect(const RECT *lprc, POINT &pt) {
+	return pt.x >= lprc->left && pt.x < lprc->right &&
+		pt.y >= lprc->top && pt.y < lprc->bottom;
+}
+
 } // namespace MFC
 } // namespace Bagel
 

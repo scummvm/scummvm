@@ -189,6 +189,8 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/grand_tour/savegame.o \
 	hodjnpodj/metagame/grand_tour/spinner.o \
 	hodjnpodj/metagame/grand_tour/store.o \
+	hodjnpodj/metagame/zoom/dllinit.o \
+	hodjnpodj/metagame/zoom/zoommap.o \
 	hodjnpodj/archeroids/dllinit.o \
 	hodjnpodj/archeroids/main.o \
 	hodjnpodj/artparts/gamedll.o \
