@@ -47,30 +47,78 @@ BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame) : BaseRenderer3D(inGame) {
 	setDefaultAmbientLightColor();
-	_spriteVBO = 0;
 	_alphaRef = 0;
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
 	_camera = nullptr; // ref only
 	glDeleteBuffers(1, &_spriteVBO);
+	glDeleteBuffers(1, &_fadeVBO);
+	glDeleteBuffers(1, &_lineVBO);
+	glDeleteBuffers(1, &_simpleShadowVBO);
 }
 
 bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed) {
+	_simpleShadow[0].x = -1.0f;
+	_simpleShadow[0].y = 0.0f;
+	_simpleShadow[0].z = 1.0f;
+	_simpleShadow[0].nx = 0.0f;
+	_simpleShadow[0].ny = 1.0f;
+	_simpleShadow[0].nz = 0.0f;
+	_simpleShadow[0].u = 0.0f;
+	_simpleShadow[0].v = 1.0f;
+
+	_simpleShadow[1].x = -1.0f;
+	_simpleShadow[1].y = 0.0f;
+	_simpleShadow[1].z = -1.0f;
+	_simpleShadow[1].nx = 0.0f;
+	_simpleShadow[1].ny = 1.0f;
+	_simpleShadow[1].nz = 0.0f;
+	_simpleShadow[1].u = 1.0f;
+	_simpleShadow[1].v = 1.0f;
+
+	_simpleShadow[2].x = 1.0f;
+	_simpleShadow[2].y = 0.0f;
+	_simpleShadow[2].z = 1.0f;
+	_simpleShadow[2].nx = 0.0f;
+	_simpleShadow[2].ny = 1.0f;
+	_simpleShadow[2].nz = 0.0f;
+	_simpleShadow[2].u = 0.0f;
+	_simpleShadow[2].v = 0.0f;
+
+	_simpleShadow[3].x = 1.0f;
+	_simpleShadow[3].y = 0.0f;
+	_simpleShadow[3].z = -1.0f;
+	_simpleShadow[3].nx = 0.0f;
+	_simpleShadow[3].ny = 1.0f;
+	_simpleShadow[3].nz = 0.0f;
+	_simpleShadow[3].u = 1.0f;
+	_simpleShadow[3].v = 0.0f;
+
 	glGenBuffers(1, &_spriteVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertex), nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	static const char *spriteAttributes[] = {"position", "texcoord", "color", nullptr};
+	static const char *spriteAttributes[] = { "position", "texcoord", "color", nullptr };
 	_spriteShader = OpenGL::Shader::fromFiles("wme_sprite", spriteAttributes);
-
 	_spriteShader->enableVertexAttribute("position", _spriteVBO, 3, GL_FLOAT, false, sizeof(SpriteVertex), 0);
 	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertex), 12);
 	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertex), 20);
 
 	static const char *geometryAttributes[] = { "position", "color", nullptr };
 	_geometryShader = OpenGL::Shader::fromFiles("wme_geometry", geometryAttributes);
+
+	glGenBuffers(1, &_simpleShadowVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _simpleShadowVBO);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SimpleShadowVertex), _simpleShadow, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	static const char *simpleShadowAttributes[] = { "position", "normal", "texcoord", nullptr };
+	_simpleShadowShader = OpenGL::Shader::fromFiles("wme_simple_shadow", simpleShadowAttributes);
+	_simpleShadowShader->enableVertexAttribute("position", _simpleShadowVBO, 3, GL_FLOAT, false, sizeof(SimpleShadowVertex), 0);
+	_simpleShadowShader->enableVertexAttribute("normal", _simpleShadowVBO, 3, GL_FLOAT, false, sizeof(SimpleShadowVertex), 12);
+	_simpleShadowShader->enableVertexAttribute("texcoord", _simpleShadowVBO, 2, GL_FLOAT, false, sizeof(SimpleShadowVertex), 24);
 
 	static const char *shadowVolumeAttributes[] = { "position", nullptr };
 	_shadowVolumeShader = OpenGL::Shader::fromFiles("wme_shadow_volume", shadowVolumeAttributes);
@@ -82,7 +130,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	DXMatrixIdentity(&m);
 	_transformStack.push_back(m);
 
-	static const char *XModelAttributes[] = {"position", "texcoord", "normal", nullptr};
+	static const char *XModelAttributes[] = { "position", "texcoord", "normal", nullptr };
 	_xmodelShader = OpenGL::Shader::fromFiles("wme_modelx", XModelAttributes);
 
 	setDefaultAmbientLightColor();
@@ -248,6 +296,12 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	_geometryShader->use();
 	_geometryShader->setUniform("viewMatrix", viewMatrix);
 	_geometryShader->setUniform("projMatrix", projectionMatrix);
+
+	_simpleShadowShader->use();
+	_simpleShadowShader->setUniform("viewMatrix", viewMatrix);
+	_simpleShadowShader->setUniform("projMatrix", projectionMatrix);
+	_simpleShadowShader->setUniform1f("alphaRef", _alphaRef);
+	_simpleShadowShader->setUniform("alphaTest", true);
 
 	_shadowVolumeShader->use();
 	_shadowVolumeShader->setUniform("viewMatrix", viewMatrix);
@@ -653,7 +707,39 @@ void BaseRenderOpenGL3DShader::displaySimpleShadow(BaseObject *object) {
 	if (!_ready || !object)
 		return;
 
-	// TODO: to be implemented
+	BaseSurface *shadowImage;
+	if (object->_shadowImage) {
+		shadowImage = object->_shadowImage;
+	} else {
+		shadowImage = _gameRef->_shadowImage;
+	}
+
+	if (!shadowImage) {
+		return;
+	}
+
+	DXMatrix scale, trans, rot, finalm;
+	DXMatrixScaling(&scale, object->_shadowSize * object->_scale3D, 1.0f, object->_shadowSize * object->_scale3D);
+	DXMatrixRotationY(&rot, degToRad(object->_angle));
+	DXMatrixTranslation(&trans, object->_posVector._x, object->_posVector._y, object->_posVector._z);
+	DXMatrixMultiply(&finalm, &scale, &rot);
+	DXMatrixMultiply(&finalm, &finalm, &trans);
+	setWorldTransform(finalm);
+
+	glFrontFace(GL_CCW);
+
+	glDepthMask(GL_FALSE);
+	glEnable(GL_TEXTURE_2D);
+	static_cast<BaseSurfaceOpenGL3D *>(shadowImage)->setTexture();
+
+	_simpleShadowShader->use();
+
+	glBindBuffer(GL_ARRAY_BUFFER, _simpleShadowVBO);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glDisable(GL_TEXTURE_2D);
+	glDepthMask(GL_TRUE);
 }
 
 void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange) {
@@ -873,6 +959,10 @@ bool BaseRenderOpenGL3DShader::setWorldTransform(const DXMatrix &transform) {
 	_xmodelShader->use();
 	_xmodelShader->setUniform("modelMatrix", modelMatrix);
 	_xmodelShader->setUniform("normalMatrix", normalMatrix);
+
+	_simpleShadowShader->use();
+	_simpleShadowShader->setUniform("modelMatrix", modelMatrix);
+	_simpleShadowShader->setUniform("normalMatrix", normalMatrix);
 
 	_shadowVolumeShader->use();
 	_shadowVolumeShader->setUniform("modelMatrix", modelMatrix);

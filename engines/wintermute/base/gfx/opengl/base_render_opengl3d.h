@@ -62,14 +62,14 @@ class BaseRenderOpenGL3D : public BaseRenderer3D {
 	};
 
 	struct SimpleShadowVertex {
-		float u;
-		float v;
 		float nx;
 		float ny;
 		float nz;
 		float x;
 		float y;
 		float z;
+		float u;
+		float v;
 	};
 
 public:
@@ -163,7 +163,7 @@ public:
 private:
 	void displaySimpleShadow(BaseObject *object) override;
 
-	SimpleShadowVertex _simpleShadow[4]{};
+	SimpleShadowVertex _simpleShadow[4];
 	Common::Array<DXVector4> _lightPositions;
 	Common::Array<DXVector3> _lightDirections;
 	GLuint _filterTexture;

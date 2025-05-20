@@ -63,14 +63,14 @@ class BaseRenderOpenGL3DShader : public BaseRenderer3D {
 	};
 
 	struct SimpleShadowVertex {
-		float u;
-		float v;
-		float nx;
-		float ny;
-		float nz;
 		float x;
 		float y;
 		float z;
+		float nx;
+		float ny;
+		float nz;
+		float u;
+		float v;
 	};
 
 
@@ -166,6 +166,8 @@ public:
 private:
 	void displaySimpleShadow(BaseObject *object) override;
 
+	SimpleShadowVertex _simpleShadow[4];
+
 	DXMatrix _glProjectionMatrix;
 	float _alphaRef;
 
@@ -173,13 +175,15 @@ private:
 
 	Math::Vector4d _flatShadowColor;
 
-	GLuint _spriteVBO;
-	GLuint _fadeVBO;
-	GLuint _lineVBO;
+	GLuint _spriteVBO{};
+	GLuint _fadeVBO{};
+	GLuint _lineVBO{};
+	GLuint _simpleShadowVBO{};
 	OpenGL::Shader *_spriteShader{};
 	OpenGL::Shader *_fadeShader{};
 	OpenGL::Shader *_xmodelShader{};
 	OpenGL::Shader *_geometryShader{};
+	OpenGL::Shader *_simpleShadowShader{};
 	OpenGL::Shader *_shadowVolumeShader{};
 	OpenGL::Shader *_lineShader{};
 };
