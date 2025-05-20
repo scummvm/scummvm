@@ -11,6 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Heart of China.
    - Added support for Nancy Drew: Secret of the Scarlet Hand.
    - Added support for Nancy Drew: Ghost Dogs of Moon Lake.
+   - Added support for Ripley's Believe It or Not!: The Riddle of Master Lu
 
  Drascula:
    - Fixed displaying accented characters.
