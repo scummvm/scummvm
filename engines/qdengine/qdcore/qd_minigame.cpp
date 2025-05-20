@@ -64,6 +64,7 @@
 #include "qdengine/minigames/3mice2_babochka.h"
 
 // dogncat
+#include "qdengine/minigames/adv/m_scores.h"
 #include "qdengine/minigames/adv/m_triangles.h"
 
 namespace QDEngine {
@@ -378,8 +379,9 @@ bool qdMiniGame::load_interface() {
 		} else if (_dll_name == "DLL\\triangles.dll") {
 			_interface = create_adv_minigame(_dll_name.c_str(), createMinigameTriangle);
 			return true;
-		// scores.dll
-		// triangles.dll
+		} else if (_dll_name == "DLL\\scores.dll") {
+			_interface = create_adv_minigame(_dll_name.c_str(), createMinigameScores);
+			return true;
 
 		// dogncat2
 		// scores.dll

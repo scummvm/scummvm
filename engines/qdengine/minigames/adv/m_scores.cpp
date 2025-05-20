@@ -20,6 +20,8 @@
  */
 
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/memstream.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
@@ -46,16 +48,14 @@ Scores::Scores(MinigameManager *runtime) {
 	if (!gameButtonName || !*gameButtonName)
 		return;
 
-	warning("STUB: Scores::Scores()");
-#if 0
-	XBuffer gameData;
+	Common::MemoryReadWriteStream gameData(DisposeAfterUse::YES);
 	char name[128];
 	name[127] = 0;
 	for (int num = 1; ; ++num) {
 		snprintf(name, 127, "%s%02d", gameButtonName, num);
 		if (_runtime->testObject(name)) {
 			QDObject obj = _runtime->getObject(name);
-			gameData.write(obj->R());
+			obj->R().write(gameData);
 			_games.push_back(_runtime->getObject(name));
 		} else
 			break;
@@ -69,33 +69,36 @@ Scores::Scores(MinigameManager *runtime) {
 		return;
 
 	_positions.resize(_games.size());
-	for (int idx = 0; idx < _games.size(); ++idx)
-		gameData.read(_positions[idx]);
+	GameInfo *gameInfo = _runtime->getCurrentGameInfo();
+	if (gameInfo) {
+		Common::MemoryReadStream buf((byte *)gameInfo->_gameData, gameInfo->_dataSize);
+		for (auto &it : _positions)
+			it.read(buf);
+	} else {
+		for (auto &it : _positions)
+			it.read(gameData);
+	}
 
-	XStream file(false);
-	if (!file.open(fileName, XS_IN)) {
+	Common::File file;
+	if (!file.open(Common::Path(_runtime->gameListFileName()))) {
 		error("Failed to open games list file '%s'", transCyrillic(fileName));
 	}
 
 	char read_buf[512];
-	while (!file.eof()) {
-		file.getline(read_buf, 512);
-		XBuffer xbuf((void*)read_buf, strlen(read_buf));
-		int level;
-		xbuf >= level;
-		unsigned char ch;
-		xbuf > ch;
+	while (!file.eos()) {
+		file.readLine(read_buf, 512);
+		Common::MemoryReadStream buf((const byte *)&read_buf[0], strlen(read_buf));
+		int level = buf.readByte() - '0';
+		byte ch = buf.readByte();
 		if (ch != ':') {
 			error("Wrong file format");
 		}
 		Level lvl(level);
 		debugCN(2, kDebugMinigames, "%d: ", level);
-		while (xbuf.tell() < xbuf.size()) {
-			xbuf > ch;
+		while (buf.pos() < buf.size()) {
+			ch = buf.readByte();
 			if (Common::isDigit(ch)) {
-				--xbuf;
-				int game;
-				xbuf >= game;
+				int game = ch - '0';
 				lvl.games.push_back(game);
 				debugCN(2, kDebugMinigames, "%d, ", game);
 				if (const MinigameData *data = _runtime->getScore(level, game))
@@ -109,7 +112,6 @@ Scores::Scores(MinigameManager *runtime) {
 		levels_.push_back(lvl);
 		debugC(2, kDebugMinigames, "");
 	}
-#endif
 
 	if (levels_.empty())
 		return;
@@ -128,9 +130,9 @@ Scores::Scores(MinigameManager *runtime) {
 	if (!(_currentLevel = _runtime->parameter("current_level")))
 		return;
 
-	if (!(_prev = _runtime->getObject(_runtime->parameter("_prevbutton"))))
+	if (!(_prev = _runtime->getObject(_runtime->parameter("prev_button"))))
 		return;
-	if (!(_next = _runtime->getObject(_runtime->parameter("_nextbutton"))))
+	if (!(_next = _runtime->getObject(_runtime->parameter("next_button"))))
 		return;
 
 	_outMaxLevel = _runtime->getObject(_runtime->parameter("for_game_level"));
