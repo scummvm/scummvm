@@ -181,7 +181,7 @@ struct PixelFormat {
 	}
 
 	/** Define a CLUT8 pixel format. */
-	static inline PixelFormat createFormatCLUT8() {
+	static constexpr inline PixelFormat createFormatCLUT8() {
 		return PixelFormat(1, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
