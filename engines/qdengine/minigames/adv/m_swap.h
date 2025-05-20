@@ -26,6 +26,8 @@
 
 namespace QDEngine {
 
+MinigameInterface *createMinigameSwap(MinigameManager *runtime);
+
 class Swap : public MinigameInterface {
 public:
 	Swap(MinigameManager *runtime);

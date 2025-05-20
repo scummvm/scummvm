@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/memstream.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
@@ -71,11 +72,9 @@ Swap::Swap(MinigameManager *runtime) {
 		return;
 	_nextRotateTime = _runtime->getTime() + _rotateTimePeriod;
 
-	/*const char *name_begin = */_runtime->parameter("obj_name_begin", "obj_");
+	const char *name_begin = _runtime->parameter("obj_name_begin", "obj_");
 
-	warning("STUB: Swap::Swap()");
-#if 0
-	XBuffer gameData;
+	Common::MemoryReadWriteStream gameData(DisposeAfterUse::YES);
 
 	for (int idx = 0; idx < _gameSize; ++idx) {
 		Common::String buf = Common::String::format("%s%02d", name_begin, idx + 1);
@@ -86,16 +85,22 @@ Swap::Swap(MinigameManager *runtime) {
 		node.obj.setState(getStateName(node.angle, false));
 		_nodes.push_back(node);
 
-		gameData.write(node.obj->R());
+		node.obj->R().write(gameData);
 	}
 
 	if (!_runtime->processGameData(gameData))
 		return;
 
 	_positions.resize(_gameSize);
-	for (int idx = 0; idx < _gameSize; ++idx)
-		gameData.read(_positions[idx]);
-#endif
+	GameInfo *gameInfo = _runtime->getCurrentGameInfo();
+	if (gameInfo) {
+		Common::MemoryReadStream buf((byte *)gameInfo->_gameData, gameInfo->_dataSize);
+		for (auto &it : _positions)
+			it.read(buf);
+	} else {
+		for (auto &it : _positions)
+			it.read(gameData);
+	}
 
 	_size = _runtime->getParameter("element_size", _runtime->getSize(_nodes[0].obj));
 	assert(_size.x > 0.f && _size.y > 0.f && _size.x < 500.f && _size.y < 500.f);

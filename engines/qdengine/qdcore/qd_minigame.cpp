@@ -67,6 +67,9 @@
 #include "qdengine/minigames/adv/m_scores.h"
 #include "qdengine/minigames/adv/m_triangles.h"
 
+// dogncat2
+#include "qdengine/minigames/adv/m_swap.h"
+
 namespace QDEngine {
 
 qdMiniGame::qdMiniGame() : _dll_handle(NULL),
@@ -384,8 +387,9 @@ bool qdMiniGame::load_interface() {
 			return true;
 
 		// dogncat2
-		// scores.dll
-		// swap.dll
+		} else if (_dll_name == "DLL\\swap.dll") {
+			_interface = create_adv_minigame(_dll_name.c_str(), createMinigameSwap);
+			return true;
 		} else {
 			warning("qdMiniGame::load_interface(): trying to load dll: %s", _dll_name.c_str());
 			// call here dll->open_game_interface(game_name())
