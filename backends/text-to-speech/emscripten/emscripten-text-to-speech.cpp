@@ -79,7 +79,7 @@ EmscriptenTextToSpeechManager::~EmscriptenTextToSpeechManager() {
 EM_JS(bool, _ttsSay, (const char *text, const char *voice_name, const char *voice_lang, int pitch, int rate, int volume, int action), {
 	voice_name = UTF8ToString(voice_name);
 	voice_lang = UTF8ToString(voice_lang);
-	if(!(voice_lang in globalThis['ttsVoiceMap'] && voice_name in globalThis['ttsVoiceMap'][voice_lang])){
+	if (!(voice_lang in globalThis['ttsVoiceMap'] && voice_name in globalThis['ttsVoiceMap'][voice_lang])){
 		console.error("_ttsSay: Voice not found");
 		return false;
 	}
@@ -113,12 +113,12 @@ EM_JS(bool, _ttsSay, (const char *text, const char *voice_name, const char *voic
 		return false;
 	}
 	//  INTERRUPT_NO_REPEAT with a matching string - empty queue but let the current string finish
-	if(action == Actions.INTERRUPT_NO_REPEAT && globalThis['ttsUtteranceQueue'].length > 0 && globalThis['ttsUtteranceQueue'][0].text == text){
+	if (action == Actions.INTERRUPT_NO_REPEAT && globalThis['ttsUtteranceQueue'].length > 0 && globalThis['ttsUtteranceQueue'][0].text == text){
 		globalThis['ttsUtteranceQueue'] = globalThis['ttsUtteranceQueue'].slice(0,1);
 		return false;
 	}
 	// interrupt or INTERRUPT_NO_REPEAT with a non-matching string (or no string talking) - empty queue, cancel all talking
-	if(action == Actions.INTERRUPT || action == Actions.INTERRUPT_NO_REPEAT ) {
+	if (action == Actions.INTERRUPT || action == Actions.INTERRUPT_NO_REPEAT ) {
 		globalThis['ttsUtteranceQueue'] = [];//globalThis['ttsUtteranceQueue'].slice(0,1);
 		window.speechSynthesis.cancel();
 		
@@ -127,18 +127,18 @@ EM_JS(bool, _ttsSay, (const char *text, const char *voice_name, const char *voic
 	voice = globalThis['ttsVoiceMap'][voice_lang][voice_name];
 	const utterance = new SpeechSynthesisUtterance(text);
 	utterance.onend = function(event) { // this is triggered when an utterance completes speaking 
-		if(globalThis['ttsUtteranceQueue'][0] == event.target){
+		if (globalThis['ttsUtteranceQueue'][0] == event.target){
 			globalThis['ttsUtteranceQueue'].shift(); //remove utterance that was just spoken
 		}
-		if(globalThis['ttsUtteranceQueue'].length > 0 && !window.speechSynthesis.speaking){ // speak next utterance if nothing is being spoken
+		if (globalThis['ttsUtteranceQueue'].length > 0 && !window.speechSynthesis.speaking){ // speak next utterance if nothing is being spoken
 			window.speechSynthesis.speak(globalThis['ttsUtteranceQueue'][0]);
 		}
 	};
 	utterance.onerror = function(event) { // this includes canceled utterances (so not just errors)
-		if(globalThis['ttsUtteranceQueue'][0] == event.target){
+		if (globalThis['ttsUtteranceQueue'][0] == event.target){
 			globalThis['ttsUtteranceQueue'].shift(); //remove utterance that was just spoken
 		}
-		if(globalThis['ttsUtteranceQueue'].length > 0 && !window.speechSynthesis.speaking){ // speak next utterance if nothing is being spoken
+		if (globalThis['ttsUtteranceQueue'].length > 0 && !window.speechSynthesis.speaking){ // speak next utterance if nothing is being spoken
 			window.speechSynthesis.speak(globalThis['ttsUtteranceQueue'][0]);
 		}
 	};
@@ -151,13 +151,13 @@ EM_JS(bool, _ttsSay, (const char *text, const char *voice_name, const char *voic
 	 *	};
 	*/
 	utterance.voice = voice;
-	utterance.volume = volume/100; // linearly adjust 0 to 100 -> 0 to 1
-	utterance.pitch = (pitch+100)/100; // linearly adjust -100 to 100 (0 default) -> 0 to 2 (1 default)
-	utterance.rate = rate > 0 ? 1 + (rate/(100-9)) : 0.1 + (rate+100)/(100/0.9); // linearly adjust -100 to 100 (0 default)  -> 0.1 to 10 (1 default)
+	utterance.volume = volume / 100; // linearly adjust 0 to 100 -> 0 to 1
+	utterance.pitch = (pitch + 100) / 100; // linearly adjust -100 to 100 (0 default) -> 0 to 2 (1 default)
+	utterance.rate = rate > 0 ? 1 + (rate / (100 - 9)) : 0.1 + (rate + 100) / (100 / 0.9); // linearly adjust -100 to 100 (0 default)  -> 0.1 to 10 (1 default)
 	
 	console.debug("Pushing to queue: %s",text);
 	globalThis['ttsUtteranceQueue'].push(utterance);
-	if(globalThis['ttsUtteranceQueue'].length == 1){
+	if (globalThis['ttsUtteranceQueue'].length == 1){
 		console.debug("Speaking %s",text);
 		window.speechSynthesis.speak(utterance);
 	}
