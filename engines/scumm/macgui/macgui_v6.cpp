@@ -150,7 +150,8 @@ void MacV6Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY
 		hotspotX = 7;
 		hotspotY = 7;
 		animate = false;
-		return;
+
+		_vm->updateCursor();
 	} else if (_vm->_game.id == GID_MANIAC) {
 		byte invertedMacArrow[] = {
 			0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
