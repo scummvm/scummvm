@@ -8,8 +8,7 @@ uniform UBOOL alphaTest;
 OUTPUT
 
 void main() {
-	vec4 texColor = texture(tex, Texcoord);
-	outColor = Color * texColor;
+	outColor = Color * texture(tex, Texcoord);
 
 	if (UBOOL_TEST(alphaTest) && outColor.a < alphaRef) {
 		discard;

@@ -120,6 +120,9 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_simpleShadowShader->enableVertexAttribute("normal", _simpleShadowVBO, 3, GL_FLOAT, false, sizeof(SimpleShadowVertex), 12);
 	_simpleShadowShader->enableVertexAttribute("texcoord", _simpleShadowVBO, 2, GL_FLOAT, false, sizeof(SimpleShadowVertex), 24);
 
+	static const char *flatShadowAttributes[] = { "position", nullptr };
+	_flatShadowShader = OpenGL::Shader::fromFiles("wme_flat_shadow_modelx", flatShadowAttributes);
+
 	static const char *shadowVolumeAttributes[] = { "position", nullptr };
 	_shadowVolumeShader = OpenGL::Shader::fromFiles("wme_shadow_volume", shadowVolumeAttributes);
 
@@ -302,6 +305,10 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	_simpleShadowShader->setUniform("projMatrix", projectionMatrix);
 	_simpleShadowShader->setUniform1f("alphaRef", _alphaRef);
 	_simpleShadowShader->setUniform("alphaTest", true);
+
+	_flatShadowShader->use();
+	_flatShadowShader->setUniform("viewMatrix", viewMatrix);
+	_flatShadowShader->setUniform("projMatrix", projectionMatrix);
 
 	_shadowVolumeShader->use();
 	_shadowVolumeShader->setUniform("viewMatrix", viewMatrix);
@@ -695,7 +702,7 @@ BaseImage *BaseRenderOpenGL3DShader::takeScreenshot() {
 }
 
 bool BaseRenderOpenGL3DShader::enableShadows() {
-	_gameRef->_supportsRealTimeShadows = false;
+	_gameRef->_supportsRealTimeShadows = true;
 	return true;
 }
 
@@ -962,7 +969,9 @@ bool BaseRenderOpenGL3DShader::setWorldTransform(const DXMatrix &transform) {
 
 	_simpleShadowShader->use();
 	_simpleShadowShader->setUniform("modelMatrix", modelMatrix);
-	_simpleShadowShader->setUniform("normalMatrix", normalMatrix);
+
+	_flatShadowShader->use();
+	_flatShadowShader->setUniform("modelMatrix", modelMatrix);
 
 	_shadowVolumeShader->use();
 	_shadowVolumeShader->setUniform("modelMatrix", modelMatrix);
@@ -1003,7 +1012,7 @@ Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
 }
 
 XMesh *BaseRenderOpenGL3DShader::createXMesh() {
-	return new XMeshOpenGLShader(_gameRef, _xmodelShader);
+	return new XMeshOpenGLShader(_gameRef, _xmodelShader, _flatShadowShader);
 }
 
 ShadowVolume *BaseRenderOpenGL3DShader::createShadowVolume() {

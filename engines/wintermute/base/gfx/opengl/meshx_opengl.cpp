@@ -159,8 +159,7 @@ bool XMeshOpenGL::renderFlatShadowModel(uint32 shadowColor) {
 	if (!_gameRef->_renderer3D->_camera)
 		return false;
 
-	auto fvf = _blendedMesh->getFVF();
-	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
+	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;

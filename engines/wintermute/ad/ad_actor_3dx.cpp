@@ -536,8 +536,8 @@ bool AdActor3DX::displayFlatShadow() {
 	}
 
 	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
-								   _shadowLightPos._y * _scale3D,
-								   _shadowLightPos._z * _scale3D);
+	                               _shadowLightPos._y * _scale3D,
+	                               _shadowLightPos._z * _scale3D);
 
 	_gameRef->_renderer3D->getWorldTransform(&origWorld);
 

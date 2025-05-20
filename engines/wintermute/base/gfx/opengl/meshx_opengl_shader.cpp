@@ -43,8 +43,8 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-XMeshOpenGLShader::XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader) :
-	XMesh(inGame), _shader(shader) {
+XMeshOpenGLShader::XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader) :
+	XMesh(inGame), _shader(shader), _flatShadowShader(flatShadowShader) {
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);
 }
@@ -170,21 +170,86 @@ bool XMeshOpenGLShader::render(XModel *model) {
 }
 
 bool XMeshOpenGLShader::renderFlatShadowModel(uint32 shadowColor) {
-	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
+	if (!_blendedMesh)
+		return false;
+
+	// For WME DX, mesh model is not visible, possible it's clipped.
+	// For OpenGL, mesh is visible, skip draw it here instead in core.
+	if (!_gameRef->_renderer3D->_camera)
+		return false;
+
 	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
 	}
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+	bool noAttrs = false;
+	auto attrsTable = _blendedMesh->getAttributeTable();
+	uint32 numAttrs = attrsTable->_size;
+	DXAttributeRange *attrs;
+	if (numAttrs == 0) {
+		noAttrs = true;
+		numAttrs = 1;
+		attrs = new DXAttributeRange[numAttrs];
+	} else {
+		attrs = attrsTable->_ptr;
+	}
 
-	_flatShadowShader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 4);
+	if (noAttrs) {
+		attrs[0]._attribId = 0;
+		attrs[0]._vertexStart = attrs[0]._faceStart = 0;
+		attrs[0]._vertexCount = _blendedMesh->getNumVertices();
+		attrs[0]._faceCount = _blendedMesh->getNumFaces();
+	}
+
+	Math::Vector4d color;
+	color.x() = RGBCOLGetR(shadowColor) / 255.0f;
+	color.y() = RGBCOLGetG(shadowColor) / 255.0f;
+	color.z() = RGBCOLGetB(shadowColor) / 255.0f;
+	color.w() = RGBCOLGetA(shadowColor) / 255.0f;
+
+	_flatShadowShader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 0);
 	_flatShadowShader->use(true);
 
-	glDrawElements(GL_TRIANGLES, _blendedMesh->getNumFaces() * 3, GL_UNSIGNED_SHORT, 0);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, (GLuint)~0);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+
+	for (uint32 i = 0; i < numAttrs; i++) {
+		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+	}
+
+	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
+	glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+
+	_flatShadowShader->setUniform("shadowColor", color);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDepthMask(GL_TRUE);
+
+	for (uint32 i = 0; i < numAttrs; i++) {
+		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	if (noAttrs) {
+		delete[] attrs;
+	}
+
+	glDisable(GL_BLEND);
+	glDisable(GL_STENCIL_TEST);
 
 	return true;
 }

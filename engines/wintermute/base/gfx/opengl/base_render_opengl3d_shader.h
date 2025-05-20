@@ -184,6 +184,7 @@ private:
 	OpenGL::Shader *_xmodelShader{};
 	OpenGL::Shader *_geometryShader{};
 	OpenGL::Shader *_simpleShadowShader{};
+	OpenGL::Shader *_flatShadowShader{};
 	OpenGL::Shader *_shadowVolumeShader{};
 	OpenGL::Shader *_lineShader{};
 };

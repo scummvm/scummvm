@@ -1,7 +1,8 @@
 uniform vec4 shadowColor;
+uniform float alphaRef;
 
 OUTPUT
 
 void main() {
-	outColor = vec4(shadowColor.rgb, 1.0);
+	outColor = shadowColor;
 }
