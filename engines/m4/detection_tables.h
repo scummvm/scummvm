@@ -221,10 +221,23 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Riddle,
 		kFeaturesDemo
 	},
-	{	// Game Version NYUK -- July 13, 1995
+	{	// Game Version DELTOID - June 8, 1995
 		{
 			"riddle",
 			"Demo",
+			AD_ENTRY1s("option1/ripley.has", "3a90dd7052860b6e246ec7e0aaf202f6", 104527),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+		},
+		GType_Riddle,
+		kFeaturesDemo
+	},
+	{	// Game Version NYUK -- July 13, 1995
+		{
+			"riddle",
+			"Demo2",
 			// Small/Medium/Vast installation
 			AD_ENTRY1s("ripley.has", "2c5e80441c4ace6ff4ffe0ecd4099a58", 149057),
 			// Large/Huge installation
