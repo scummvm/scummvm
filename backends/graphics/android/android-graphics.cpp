@@ -56,8 +56,9 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	// Initialize our OpenGL ES context.
 	initSurface();
 
-	// not in 3D, not in GUI
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
+	_rendering3d = (_renderer3d != nullptr);
+	// maybe in 3D, not in GUI
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(_rendering3d, false);
 	dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 }
 
@@ -185,8 +186,8 @@ void AndroidGraphicsManager::showOverlay(bool inGUI) {
 	// Don't change touch mode when not changing mouse coordinates
 	if (inGUI) {
 		_old_touch_mode = JNI::getTouchMode();
-		// not in 3D, in overlay
-		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+		// maybe in 3D, in overlay
+		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(_renderer3d != nullptr, true);
 		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	} else if (_overlayInGUI) {
 		// Restore touch mode active before overlay was shown
@@ -226,6 +227,13 @@ bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHe
 		warning("Requesting antialiased video mode while not available");
 	}
 
+	const bool render3d = (_renderer3d != nullptr);
+	if (_rendering3d != render3d) {
+		_rendering3d = render3d;
+		// 3D status changed: refresh the touch mode
+		applyTouchSettings();
+	}
+
 	// We get this whenever a new resolution is requested. Since Android is
 	// using a fixed output size we do nothing like that here.
 	return true;
@@ -241,8 +249,8 @@ void AndroidGraphicsManager::refreshScreen() {
 }
 
 void AndroidGraphicsManager::applyTouchSettings() const {
-	// not in 3D, maybe in GUI
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, _overlayVisible && _overlayInGUI);
+	// maybe in 3D, maybe in GUI
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(_renderer3d != nullptr, _overlayVisible && _overlayInGUI);
 }
 
 void AndroidGraphicsManager::syncVirtkeyboardState(bool virtkeybd_on) {
