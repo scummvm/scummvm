@@ -75,6 +75,14 @@ bool ShadowVolumeOpenGLShader::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 	_gameRef->_renderer3D->_lastTexture = nullptr;
+
+	Math::Vector4d colorValue;
+	colorValue.x() = 1.0f;
+	colorValue.y() = 1.0f;
+	colorValue.z() = 1.0f;
+	colorValue.w() = 1.0f;
+	_volumeShader->setUniform("color", colorValue);
+
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
 
 	return true;
@@ -154,6 +162,8 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 
 	_maskShader->enableVertexAttribute("position", _shadowMaskVertexBuffer, 2, GL_FLOAT, false, 8, 0);
 	_maskShader->use(true);
+
+	glFrontFace(GL_CW);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 

@@ -51,6 +51,7 @@ bool ShadowVolumeOpenGL::render() {
 	glDisable(GL_TEXTURE_2D);
 	_gameRef->_renderer3D->_lastTexture = nullptr;
 
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, _vertices.data());
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
@@ -125,6 +126,8 @@ bool ShadowVolumeOpenGL::renderToScene() {
 
 	BaseRenderOpenGL3D *renderer = dynamic_cast<BaseRenderOpenGL3D *>(_gameRef->_renderer3D);
 	renderer->setProjection2D();
+
+	glFrontFace(GL_CW);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
