@@ -35,6 +35,10 @@ void Hotspot::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 	}
 
+	case kAssetHeaderStartup:
+		_isActive = static_cast<bool>(chunk.readTypedByte());
+		break;
+
 	case kAssetHeaderCursorResourceId:
 		_cursorResourceId = chunk.readTypedUint16();
 		break;
@@ -93,7 +97,6 @@ ScriptValue Hotspot::callMethod(BuiltInMethod methodId, Common::Array<ScriptValu
 	case kMouseActivateMethod: {
 		assert(args.empty());
 		_isActive = true;
-		g_engine->addPlayingAsset(this);
 		g_engine->_needsHotspotRefresh = true;
 		return returnValue;
 	}

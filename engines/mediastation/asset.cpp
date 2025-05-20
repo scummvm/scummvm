@@ -83,25 +83,7 @@ void Asset::readSubfile(Subfile &subfile, Chunk &chunk) {
 	error("Asset::readSubfile(): Subfile reading for asset type 0x%x is not implemented", static_cast<uint>(_type));
 }
 
-void Asset::setActive() {
-	_isActive = true;
-	_startTime = g_system->getMillis();
-	_lastProcessedTime = 0;
-	g_engine->addPlayingAsset(this);
-}
-
-void Asset::setInactive() {
-	_isActive = false;
-	_startTime = 0;
-	_lastProcessedTime = 0;
-}
-
 void Asset::processTimeEventHandlers() {
-	if (!_isActive) {
-		warning("Asset::processTimeEventHandlers(): Attempted to process time event handlers while asset %d is not playing", _id);
-		return;
-	}
-
 	// TODO: Replace with a queue.
 	uint currentTime = g_system->getMillis();
 	const Common::Array<EventHandler *> &_timeHandlers = _eventHandlers.getValOrDefault(kTimerEvent);
@@ -236,13 +218,6 @@ void SpatialEntity::readParameter(Chunk &chunk, AssetHeaderSectionType paramType
 
 	case kAssetHeaderZIndex:
 		_zIndex = chunk.readTypedGraphicUnit();
-		break;
-
-	case kAssetHeaderStartup:
-		_isVisible = static_cast<bool>(chunk.readTypedByte());
-		if (_isVisible) {
-			setActive();
-		}
 		break;
 
 	case kAssetHeaderTransparency:

@@ -196,6 +196,10 @@ void Movie::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 	}
 
+	case kAssetHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
+		break;
+
 	case kAssetHeaderDissolveFactor:
 		_dissolveFactor = chunk.readTypedDouble();
 		break;
@@ -297,7 +301,6 @@ void Movie::spatialShow() {
 		g_engine->_dirtyRects.push_back(getFrameBoundingBox(still));
 	}
 
-	setActive();
 	_isVisible = true;
 	_isPlaying = false;
 }
@@ -319,14 +322,12 @@ void Movie::spatialHide() {
 
 	_isVisible = false;
 	_isPlaying = false;
-	setInactive();
 }
 
 void Movie::timePlay() {
 	// TODO: Play movies one chunk at a time, which more directly approximates
 	// the original's reading from the CD one chunk at a time.
 	if (_isPlaying) {
-		warning("Movie::timePlay(): (%d) Attempted to play a movie that is already playing", _id);
 		return;
 	}
 
@@ -335,8 +336,10 @@ void Movie::timePlay() {
 	_framesNotYetShown = _frames;
 	_isVisible = true;
 	_isPlaying = true;
-	setActive();
+	_startTime = g_system->getMillis();
+	_lastProcessedTime = 0;
 	runEventHandlerIfExists(kMovieBeginEvent);
+	process();
 }
 
 void Movie::timeStop() {
@@ -362,26 +365,24 @@ void Movie::timeStop() {
 			_framesOnScreen.push_back(still);
 			g_engine->_dirtyRects.push_back(getFrameBoundingBox(still));
 		}
-	} else {
-		setInactive();
 	}
 
 	runEventHandlerIfExists(kMovieStoppedEvent);
 }
 
 void Movie::process() {
-	if (_isPlaying) {
-		processTimeEventHandlers();
-	}
-	updateFrameState();
-}
-
-void Movie::updateFrameState() {
 	if (_isVisible && _atFirstFrame) {
 		spatialShow();
 		_atFirstFrame = false;
 	}
 
+	if (_isPlaying) {
+		processTimeEventHandlers();
+		updateFrameState();
+	}
+}
+
+void Movie::updateFrameState() {
 	if (!_isPlaying) {
 		debugC(6, kDebugGraphics, "Movie::updateFrameState (%d): Not playing", _id);
 		for (MovieFrame *frame : _framesOnScreen) {
@@ -437,9 +438,7 @@ void Movie::updateFrameState() {
 	if (_framesOnScreen.empty() && _framesNotYetShown.empty()) {
 		_isPlaying = false;
 		_framesOnScreen.clear();
-		if (_stills.empty()) {
-			setInactive();
-		} else {
+		if (!_stills.empty()) {
 			showPersistentFrame();
 		}
 

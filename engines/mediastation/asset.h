@@ -129,7 +129,6 @@ public:
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args);
 
 	virtual bool isSpatialActor() const { return false; }
-	virtual bool isActive() const { return _isActive; }
 
 	virtual void initFromParameterStream(Chunk &chunk);
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType);
@@ -139,8 +138,6 @@ public:
 	virtual void readChunk(Chunk &chunk);
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
 
-	void setInactive();
-	void setActive();
 	void processTimeEventHandlers();
 	void runEventHandlerIfExists(EventType eventType, const ScriptValue &arg);
 	void runEventHandlerIfExists(EventType eventType);
@@ -159,7 +156,6 @@ protected:
 	uint _id = 0;
 	uint _contextId = 0;
 
-	bool _isActive = false;
 	uint _startTime = 0;
 	uint _lastProcessedTime = 0;
 	uint _duration = 0;

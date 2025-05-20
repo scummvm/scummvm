@@ -60,13 +60,14 @@ void Sound::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 }
 
 void Sound::process() {
+	if (!_isPlaying) {
+		return;
+	}
+
 	processTimeEventHandlers();
-
-	if (_isActive && !_sequence.isActive()) {
+	if (!_sequence.isActive()) {
 		_isPlaying = false;
-		setInactive();
 		_sequence.stop();
-
 		runEventHandlerIfExists(kSoundEndEvent);
 	}
 }
@@ -116,29 +117,29 @@ void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
 }
 
 void Sound::timePlay() {
-	if (_isActive) {
-		warning("Sound::timePlay(): Attempt to play a sound that is already playing");
+	if (_isPlaying) {
 		return;
 	}
 
 	if (_sequence.isEmpty()) {
 		warning("Sound::timePlay(): Sound has no contents, probably because the sound is in INSTALL.CXT and isn't loaded yet");
+		_isPlaying = false;
 		return;
 	}
 
 	_isPlaying = true;
-	setActive();
+	_startTime = g_system->getMillis();
+	_lastProcessedTime = 0;
 	_sequence.play();
 	runEventHandlerIfExists(kSoundBeginEvent);
 }
 
 void Sound::timeStop() {
-	if (!_isActive) {
-		warning("Sound::timeStop(): Attempt to stop a sound that isn't playing");
+	if (!_isPlaying) {
 		return;
 	}
 
-	setInactive();
+	_isPlaying = false;
 	_sequence.stop();
 	runEventHandlerIfExists(kSoundStoppedEvent);
 }

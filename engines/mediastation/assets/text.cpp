@@ -90,14 +90,14 @@ ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 
 	case kSpatialShowMethod: {
 		assert(args.empty());
-		_isActive = true;
+		_isVisible = true;
 		warning("Text::callMethod(): spatialShow method not implemented yet");
 		return returnValue;
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
-		_isActive = false;
+		_isVisible = false;
 		warning("Text::callMethod(): spatialHide method not implemented yet");
 		return returnValue;
 	}

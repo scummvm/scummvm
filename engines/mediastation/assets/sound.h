@@ -38,13 +38,13 @@ public:
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 
-	virtual void readChunk(Chunk& chunk) override { _sequence.readChunk(chunk); }
+	virtual void readChunk(Chunk &chunk) override { _sequence.readChunk(chunk); }
 	virtual void readSubfile(Subfile &subFile, Chunk &chunk) override;
 
 private:
 	uint _loadType = 0;
 	bool _hasOwnSubfile = false;
-	bool _isPlaying = true;
+	bool _isPlaying = false;
 	uint _chunkCount = 0;
 	AudioSequence _sequence;
 

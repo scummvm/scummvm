@@ -70,7 +70,6 @@ public:
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
-	void registerActiveAssets();
 
 private:
 	// This is not an internal file ID, but the number of the file

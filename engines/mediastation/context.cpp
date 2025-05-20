@@ -147,14 +147,6 @@ ScriptValue *Context::getVariable(uint variableId) {
 	return _variables.getValOrDefault(variableId);
 }
 
-void Context::registerActiveAssets() {
-	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
-		if (it->_value->isActive()) {
-			g_engine->addPlayingAsset(it->_value);
-		}
-	}
-}
-
 void Context::readCreateContextData(Chunk &chunk) {
 	_fileNumber = chunk.readTypedUint16();
 
@@ -389,15 +381,13 @@ bool Context::readHeaderSection(Chunk &chunk) {
 
 	case kContextAssetHeaderSection: {
 		Asset *asset = readCreateAssetData(chunk);
-		if (g_engine->getAssetById(asset->id())) {
-			error("Context::readHeaderSection(): Asset with ID 0x%d was already defined in this title", asset->id());
-		}
-
 		_assets.setVal(asset->id(), asset);
+		g_engine->registerAsset(asset);
 		if (asset->_chunkReference != 0) {
 			debugC(5, kDebugLoading, "Context::readHeaderSection(): Storing asset with chunk ID \"%s\" (0x%x)", tag2str(asset->_chunkReference), asset->_chunkReference);
 			_assetsByChunkReference.setVal(asset->_chunkReference, asset);
 		}
+
 		if (asset->type() == kAssetTypeMovie) {
 			Movie *movie = static_cast<Movie *>(asset);
 			if (movie->_audioChunkReference != 0) {

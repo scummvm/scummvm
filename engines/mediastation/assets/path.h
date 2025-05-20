@@ -43,6 +43,7 @@ private:
 	uint _currentStep = 0;
 	uint _nextPathStepTime = 0;
 	uint _stepDurationInMilliseconds = 0;
+	bool _isPlaying = false;
 
 	Common::Point _startPoint;
 	Common::Point _endPoint;

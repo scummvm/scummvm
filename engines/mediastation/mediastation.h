@@ -81,7 +81,7 @@ public:
 	void redraw();
 
 	void setPalette(Asset *palette);
-	void addPlayingAsset(Asset *assetToAdd);
+	void registerAsset(Asset *assetToAdd);
 
 	Asset *getAssetById(uint assetId);
 	Asset *getAssetByChunkReference(uint chunkReference);
@@ -117,9 +117,10 @@ private:
 	void setCursor(uint id);
 
 	Boot *_boot = nullptr;
-	Common::List<Asset *> _assetsPlaying;
+	Common::Array<Asset *> _assets;
+	Common::SortedArray<SpatialEntity *, const SpatialEntity *> _spatialEntities;
 	Common::HashMap<uint, Context *> _loadedContexts;
-	Hotspot *_currentHotspot = nullptr;
+	Asset *_currentHotspot = nullptr;
 
 	uint _requestedScreenBranchId = 0;
 	Common::Array<uint> _requestedContextReleaseId;
@@ -130,6 +131,8 @@ private:
 	Asset *findAssetToAcceptMouseEvents();
 
 	void effectTransition(Common::Array<ScriptValue> &args);
+
+	static int compareAssetByZIndex(const SpatialEntity *a, const SpatialEntity *b);
 };
 
 extern MediaStationEngine *g_engine;

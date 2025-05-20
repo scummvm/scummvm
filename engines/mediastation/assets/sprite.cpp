@@ -90,6 +90,10 @@ void Sprite::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		_loadType = chunk.readTypedByte();
 		break;
 
+	case kAssetHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
+		break;
+
 	case kAssetHeaderSpriteChunkCount:
 		_frameCount = chunk.readTypedUint16();
 		break;
@@ -180,50 +184,37 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 
 void Sprite::spatialShow() {
 	if (_isVisible) {
-		warning("Sprite::spatialShow(): (%d) Attempted to spatialShow when already showing", _id);
 		return;
 	}
 	showFrame(_frames[0]);
 
-	setActive();
 	_isVisible = true;
-	_isPlaying = false;
 }
 
 void Sprite::spatialHide() {
 	if (!_isVisible) {
-		warning("Sprite::spatialHide(): (%d) Attempted to spatialHide when not showing", _id);
 		return;
 	}
 	showFrame(nullptr);
 
-	setInactive();
 	_isVisible = false;
-	_isPlaying = false;
 }
 
 void Sprite::timePlay() {
-	if (!_isVisible) {
-		warning("Sprite::timePlay(): (%d) Attempted to timePlay when not showing", _id);
-		return;
-	} else if (_isPlaying) {
-		warning("Sprite::timePlay(): (%d) Attempted to timePlay when already playing", _id);
+	if (_isPlaying) {
 		return;
 	}
 
-	setActive();
 	_isPlaying = true;
+	_startTime = g_system->getMillis();
+	_lastProcessedTime = 0;
 	_nextFrameTime = 0;
 
 	runEventHandlerIfExists(kMovieBeginEvent);
 }
 
 void Sprite::timeStop() {
-	if (!_isVisible) {
-		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not showing", _id);
-		return;
-	} else if (!_isPlaying) {
-		warning("Sprite::timeStop(): (%d) Attempted to timeStop when not playing", _id);
+	if (!_isPlaying) {
 		return;
 	}
 
@@ -232,11 +223,8 @@ void Sprite::timeStop() {
 }
 
 void Sprite::movieReset() {
-	setActive();
 	if (_isVisible) {
 		showFrame(_frames[0]);
-	} else {
-		showFrame(nullptr);
 	}
 	_isPlaying = false;
 	_startTime = 0;
@@ -279,10 +267,6 @@ void Sprite::updateFrameState() {
 		return;
 	}
 
-	if (!_isActive) {
-		return;
-	}
-
 	if (!_isPlaying) {
 		if (_activeFrame != nullptr) {
 			debugC(6, kDebugGraphics, "Sprite::updateFrameState(): (%d): Not playing. Persistent frame %d (%d x %d) @ (%d, %d)",
@@ -315,7 +299,6 @@ void Sprite::updateFrameState() {
 		_isPlaying = false;
 
 		// But otherwise, the sprite's params should be reset.
-		_isActive = true;
 		_startTime = 0;
 		_lastProcessedTime = 0;
 		_currentFrameIndex = 0;

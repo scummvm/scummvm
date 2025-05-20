@@ -83,7 +83,7 @@ ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 
 	case kIsPlayingMethod: {
 		assert(args.empty());
-		returnValue.setToBool(_isActive);
+		returnValue.setToBool(_isPlaying);
 		return returnValue;
 	}
 
@@ -93,8 +93,7 @@ ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 }
 
 void Path::timePlay() {
-	if (_isActive) {
-		warning("Path::timePlay(): Attempted to play a path that is already playing");
+	if (_isPlaying) {
 		return;
 	}
 
@@ -104,7 +103,9 @@ void Path::timePlay() {
 		error("Path::timePlay(): Got zero step rate");
 	}
 
-	setActive();
+	_isPlaying = true;
+	_startTime = g_system->getMillis();
+	_lastProcessedTime = 0;
 	_percentComplete = 0;
 	_nextPathStepTime = 0;
 	_currentStep = 0;
@@ -116,6 +117,10 @@ void Path::timePlay() {
 }
 
 void Path::process() {
+	if (!_isPlaying) {
+		return;
+	}
+
 	uint currentTime = g_system->getMillis();
 	uint pathTime = currentTime - _startTime;
 
@@ -135,7 +140,7 @@ void Path::process() {
 		runEventHandlerIfExists(kStepEvent);
 		_nextPathStepTime = ++_currentStep * _stepDurationInMilliseconds;
 	} else {
-		setInactive();
+		_isPlaying = false;
 		_percentComplete = 0;
 		_nextPathStepTime = 0;
 		_currentStep = 0;

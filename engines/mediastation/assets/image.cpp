@@ -40,6 +40,10 @@ void Image::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		_chunkReference = chunk.readTypedChunkReference();
 		break;
 
+	case kAssetHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
+		break;
+
 	case kAssetHeaderLoadType:
 		_loadType = chunk.readTypedByte();
 		break;
@@ -89,7 +93,7 @@ ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 }
 
 void Image::redraw(Common::Rect &rect) {
-	if (!_isActive) {
+	if (!_isVisible) {
 		return;
 	}
 
@@ -105,15 +109,12 @@ void Image::redraw(Common::Rect &rect) {
 }
 
 void Image::spatialShow() {
-	_isActive = true;
 	_isVisible = true;
-	g_engine->addPlayingAsset(this);
 	Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
 	g_engine->_dirtyRects.push_back(bbox);
 }
 
 void Image::spatialHide() {
-	_isActive = false;
 	_isVisible = false;
 	Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
 	g_engine->_dirtyRects.push_back(bbox);

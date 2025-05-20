@@ -36,7 +36,8 @@ public:
 	virtual void process() override;
 
 private:
-	// Method implementations.
+	bool _isPlaying = false;
+
 	void timePlay();
 	void timeStop();
 };
