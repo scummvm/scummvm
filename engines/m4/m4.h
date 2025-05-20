@@ -111,6 +111,8 @@ public:
 		return _randomSource.getRandomNumber(maxNum);
 	}
 
+	void initializePath(const Common::FSNode &gamePath) override;
+
 	bool hasFeature(EngineFeature f) const override {
 		return
 		    (f == kSupportsLoadingDuringRuntime) ||

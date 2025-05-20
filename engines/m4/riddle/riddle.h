@@ -82,6 +82,8 @@ public:
 	RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	~RiddleEngine() override {}
 
+	void initializePath(const Common::FSNode &gamePath) override;
+
 	/**
 	 * Show the engine information
 	 */

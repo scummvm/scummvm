@@ -50,13 +50,15 @@ M4Engine *g_engine;
 M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("M4") {
 	g_engine = this;
-
-	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "goodstuf");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 }
 
 M4Engine::~M4Engine() {
+}
+
+void M4Engine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	SearchMan.addDirectory(gamePath.getChild("goodstuf"));
+	SearchMan.addDirectory(gamePath.getChild("resource"), 0, 2);
 }
 
 uint32 M4Engine::getFeatures() const {

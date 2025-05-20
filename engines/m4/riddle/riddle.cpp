@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "m4/riddle/gui/game_menu.h"
 #include "m4/riddle/riddle.h"
@@ -43,6 +44,11 @@ RiddleEngine::RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 	_sections.push_back(&_section7);
 	_sections.push_back(&_section8);
 	_sections.push_back(&_section9);
+}
+
+void RiddleEngine::initializePath(const Common::FSNode &gamePath) {
+	M4Engine::initializePath(gamePath);
+	SearchMan.addDirectory(gamePath.getChild("option1"));
 }
 
 M4::Vars *RiddleEngine::createVars() {
