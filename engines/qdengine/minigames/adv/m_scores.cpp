@@ -101,8 +101,10 @@ Scores::Scores(MinigameManager *runtime) {
 				int game = ch - '0';
 				lvl.games.push_back(game);
 				debugCN(2, kDebugMinigames, "%d, ", game);
-				if (const MinigameData *data = _runtime->getScore(level, game))
-					lvl.data.push_back(GameData(game, *data));
+				if (const MinigameData *data = _runtime->getScore(level, game)) {
+					if (data->_sequenceIndex != -1)
+						lvl.data.push_back(GameData(game, *data));
+				}
 			}
 		}
 		if (lvl.games.size() > _games.size()) {
