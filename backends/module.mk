@@ -93,6 +93,12 @@ MODULE_OBJS += \
 	networking/curl/url.o
 endif
 
+ifdef EMSCRIPTEN
+ifdef USE_TTS
+MODULE_OBJS += \
+	text-to-speech/emscripten/emscripten-text-to-speech.o
+endif
+endif
 ifdef USE_SDL_NET
 MODULE_OBJS += \
 	networking/sdl_net/client.o \
