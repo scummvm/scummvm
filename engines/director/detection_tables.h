@@ -1498,14 +1498,14 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
 	{ "garygadget5",		"Upptäck rymden med Mulle Meck" },
 	{ "historia",			"Svensk historia: från asatro till frihetskrig år 800-1500" },
-	{ "greveholm2",			"Mysteriet på Greveholm 2: Resan till Planutus" },
-	{ "greveholm3",			"Mysteriet på Greveholm 3: Den gamla legenden" },
+	{ "greveholm3",			"Mysteriet på Greveholm 3: Den gamla legenden" }, //Greveholm 2 is not in Director (source: "mtropolis/detection_tables.h")
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
 	{ "kosmopolska",		"Kosmopolska" },
 	{ "krakelstorm",		"Krakels ABC: Storm över Allemansland" },
 	{ "krakeldamm",			"Krakels ABC: Den galna dammsugaren" },
 	{ "krakelaven",			"Krakels ABC: Det magiska äventyret" },
+	{ "mib",				"Myror i brallan" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
 	{ "onsalakorv",			"Onsalakorv" },
 	{ "pettson1",			"Pettson o Findus i snickarbon" },
@@ -9666,6 +9666,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Actual game is D7
 	WINGAME2_l("miareading1", "Autorun", "Autorun.exe", "t:62bc020a3b36022da9d53b562acb2e7c", 56594,
 									     "copy.dir",	"d:c9dc5dd185a0e62eb9f9d1e564223ce3", 476823, Common::NL_NLD, 800),
+
+	// ♫ Har du myror i brallan? Sluta var en sur en, följ med ut i naturen! ♫
+	WINGAME1_1("mib", "", "MIB.EXE", "", 0, "MIBDATA/", 0, Common:SV_SWE, 0),
 
 	MACDEMO1("mickeyk", "D8 Demo",	 "MickeyK",		 "4ea5fc09f79eee6dded94dc40f303779", 197114, 800),
 	WINDEMO1("mickeyk", "D8 Demo",	 "MickeyK.exe",	 "e24d4bab978b1a5c2326d2c56cf4d781", 2532440, 800),
