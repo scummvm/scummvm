@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 
@@ -616,38 +617,30 @@ const MinigameData *MinigameManager::getScore(int level, int game) const {
 }
 
 bool MinigameManager::testAllGamesWin() {
-	warning("STUB: MinigameManager::testAllGamesWin()");
-
-#if 0
-	XStream file(false);
-	if (!file.open(gameListFileName(), XS_IN))
+	Common::File file;
+	if (!file.open(Common::Path(gameListFileName())))
 		return false;
 
 	char read_buf[512];
-	while (!file.eof()) {
-		file.getline(read_buf, 512);
-		XBuffer xbuf((void*)read_buf, strlen(read_buf));
-		int level;
-		xbuf >= level;
-		unsigned char ch;
-		xbuf > ch;
+	while (!file.eos()) {
+		file.readLine(read_buf, 512);
+		Common::MemoryReadStream buf((const byte *)&read_buf[0], strlen(read_buf));
+		int level = buf.readByte() - '0';
+		byte ch = buf.readByte();
 		if (ch != ':') {
 			warning("MinigameManager::testAllGamesWin(): incorrect file format: '%s'", gameListFileName());
 			return false;
 		}
-		while (xbuf.tell() < xbuf.size()) {
-			xbuf > ch;
+		while (buf.pos() < buf.size()) {
+			ch = buf.readByte();
 			if (Common::isDigit(ch)) {
-				--xbuf;
-				int game;
-				xbuf >= game;
+				int game = ch - '0';
 				const MinigameData *data = getScore(level, game);
 				if (!data || data->_sequenceIndex == -1)
 					return false;
 			}
 		}
 	}
-#endif
 
 	return true;
 }
