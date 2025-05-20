@@ -130,22 +130,24 @@ bool XMeshOpenGLShader::render(XModel *model) {
 	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 0);
 	_shader->enableVertexAttribute("texcoord", _vertexBuffer, 2, GL_FLOAT, false, 4 * vertexSize, 4 * textureOffset);
 	_shader->enableVertexAttribute("normal", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 4 * normalOffset);
+	_shader->use(true);
 
 	for (uint32 i = 0; i < numAttrs; i++) {
 		Material *mat = _materials[attrs[i]._attribId];
 		if (mat->getSurface()) {
 			glEnable(GL_TEXTURE_2D);
 			static_cast<BaseSurfaceOpenGL3D *>(mat->getSurface())->setTexture();
+			_shader->setUniform("useTexture", true);
 		} else {
-			glDisable(GL_TEXTURE_2D);
+			_shader->setUniform("useTexture", false);
 			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
 		}
 
 		if (mat->getEffect()) {
 			renderEffect(mat);
 		} else {
 			Math::Vector4d diffuse(mat->_material._diffuse._data);
-			_shader->use(true);
 			_shader->setUniform("diffuse", diffuse);
 			_shader->setUniform("ambient", diffuse);
 		}
@@ -202,7 +204,6 @@ bool XMeshOpenGLShader::update(FrameNode *parentFrame) {
 
 void XMeshOpenGLShader::renderEffect(Material *material) {
 	Math::Vector4d diffuse(material->_material._diffuse._data);
-	_shader->use(true);
 	_shader->setUniform("diffuse", diffuse);
 	_shader->setUniform("ambient", diffuse);
 }

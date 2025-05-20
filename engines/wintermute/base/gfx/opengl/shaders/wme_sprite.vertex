@@ -3,7 +3,6 @@ in vec2 texcoord;
 in vec4 color;
 
 uniform highp mat4 projMatrix;
-
 uniform highp mat3 transform;
 
 out vec2 Texcoord;

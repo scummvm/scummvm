@@ -285,8 +285,8 @@ bool BaseRenderOpenGL3D::setupLines() {
 		glEnable(GL_ALPHA_TEST);
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
 
-		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
 		_lastTexture = nullptr;
 	}
 
@@ -792,8 +792,8 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 	glFrontFace(GL_CW); // WME DX have CCW
 	glEnable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
-	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
@@ -872,8 +872,8 @@ void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &pl
 
 	// no texture
 	_lastTexture = nullptr;
-	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 
 	glFrontFace(GL_CW); // WME DX have CCW
 

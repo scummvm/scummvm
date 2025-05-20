@@ -300,8 +300,8 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 		_lineShader->setUniform1f("alphaRef", _alphaRef);
 		_lineShader->setUniform("alphaTest", true);
 
-		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
 		_lastTexture = nullptr;
 	}
 
@@ -780,8 +780,8 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 
 	// no texture
 	_lastTexture = nullptr;
-	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 
 	glFrontFace(GL_CW); // WME DX have CCW
 

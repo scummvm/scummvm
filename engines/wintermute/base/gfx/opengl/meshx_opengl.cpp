@@ -109,8 +109,8 @@ bool XMeshOpenGL::render(XModel *model) {
 			glEnable(GL_TEXTURE_2D);
 			static_cast<BaseSurfaceOpenGL3D *>(mat->getSurface())->setTexture();
 		} else {
-			glDisable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
 		}
 
 		if (mat->getEffect()) {
