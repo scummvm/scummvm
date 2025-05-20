@@ -657,6 +657,8 @@ void BaseRenderOpenGL3D::displaySimpleShadow(BaseObject *object) {
 	DXMatrixMultiply(&finalm, &finalm, &trans);
 	setWorldTransform(finalm);
 
+	glFrontFace(GL_CCW);
+
 	glDepthMask(GL_FALSE);
 	glEnable(GL_TEXTURE_2D);
 	static_cast<BaseSurfaceOpenGL3D *>(shadowImage)->setTexture();
