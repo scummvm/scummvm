@@ -471,6 +471,18 @@ enum {
 #define DT_NOPREFIX                 0x00000800
 #define DT_INTERNAL                 0x00001000
 
+/* Text Alignment Options */
+#define TA_NOUPDATECP                0
+#define TA_UPDATECP                  1
+
+#define TA_LEFT                      0
+#define TA_RIGHT                     2
+#define TA_CENTER                    6
+
+#define TA_TOP                       0
+#define TA_BOTTOM                    8
+#define TA_BASELINE                  24
+
  /*
   * Menu flags for Add/Check/EnableMenuItem()
   */
@@ -639,7 +651,7 @@ extern int SetStretchBltMode(HDC hdc, int mode);
 extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
                          int xSrc, int ySrc, int SrcWidth, int SrcHeight,
                          CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop);
-
+extern int GetTextExtent(HDC hdc, LPCSTR text, size_t len);
 extern WORD GetWindowWord(HWND hWnd, int nIndex);
 extern int WINAPI AddFontResource(LPCSTR fontName);
 extern int SetScrollPos(HWND hWnd, int nBar,

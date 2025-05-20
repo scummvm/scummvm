@@ -164,6 +164,8 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/mgstat.o \
 	hodjnpodj/metagame/bgen/note.o \
 	hodjnpodj/metagame/bgen/notebook.o \
+	hodjnpodj/metagame/grand_tour/dllinit.o \
+	hodjnpodj/metagame/grand_tour/grand_tour.o \
 	hodjnpodj/metagame/gtl/citemdlg.o \
 	hodjnpodj/metagame/gtl/cmapdlg.o \
 	hodjnpodj/metagame/gtl/cturndlg.o \
