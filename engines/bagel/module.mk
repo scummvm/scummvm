@@ -164,31 +164,31 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/mgstat.o \
 	hodjnpodj/metagame/bgen/note.o \
 	hodjnpodj/metagame/bgen/notebook.o \
-	hodjnpodj/metagame/grand_tour/citemdlg.o \
-	hodjnpodj/metagame/grand_tour/cmapdlg.o \
-	hodjnpodj/metagame/grand_tour/cturndlg.o \
-	hodjnpodj/metagame/grand_tour/dllinit.o \
-	hodjnpodj/metagame/grand_tour/encount.o \
-	hodjnpodj/metagame/grand_tour/gtl.o \
-	hodjnpodj/metagame/grand_tour/gtlcmp.o \
-	hodjnpodj/metagame/grand_tour/gtlcpl.o \
-	hodjnpodj/metagame/grand_tour/gtldcp.o \
-	hodjnpodj/metagame/grand_tour/gtldoc.o \
-	hodjnpodj/metagame/grand_tour/gtlfrm.o \
-	hodjnpodj/metagame/grand_tour/gtllex.o \
-	hodjnpodj/metagame/grand_tour/gtlmanp.o \
-	hodjnpodj/metagame/grand_tour/gtlmgm.o \
-	hodjnpodj/metagame/grand_tour/gtlmve.o \
-	hodjnpodj/metagame/grand_tour/gtlui.o \
-	hodjnpodj/metagame/grand_tour/gtlview.o \
-	hodjnpodj/metagame/grand_tour/infdlg.o \
-	hodjnpodj/metagame/grand_tour/optdlg.o \
-	hodjnpodj/metagame/grand_tour/pawn.o \
-	hodjnpodj/metagame/grand_tour/rules.o \
-	hodjnpodj/metagame/grand_tour/savedlg.o \
-	hodjnpodj/metagame/grand_tour/savegame.o \
-	hodjnpodj/metagame/grand_tour/spinner.o \
-	hodjnpodj/metagame/grand_tour/store.o \
+	hodjnpodj/metagame/gtl/citemdlg.o \
+	hodjnpodj/metagame/gtl/cmapdlg.o \
+	hodjnpodj/metagame/gtl/cturndlg.o \
+	hodjnpodj/metagame/gtl/dllinit.o \
+	hodjnpodj/metagame/gtl/encount.o \
+	hodjnpodj/metagame/gtl/gtl.o \
+	hodjnpodj/metagame/gtl/gtlcmp.o \
+	hodjnpodj/metagame/gtl/gtlcpl.o \
+	hodjnpodj/metagame/gtl/gtldcp.o \
+	hodjnpodj/metagame/gtl/gtldoc.o \
+	hodjnpodj/metagame/gtl/gtlfrm.o \
+	hodjnpodj/metagame/gtl/gtllex.o \
+	hodjnpodj/metagame/gtl/gtlmanp.o \
+	hodjnpodj/metagame/gtl/gtlmgm.o \
+	hodjnpodj/metagame/gtl/gtlmve.o \
+	hodjnpodj/metagame/gtl/gtlui.o \
+	hodjnpodj/metagame/gtl/gtlview.o \
+	hodjnpodj/metagame/gtl/infdlg.o \
+	hodjnpodj/metagame/gtl/optdlg.o \
+	hodjnpodj/metagame/gtl/pawn.o \
+	hodjnpodj/metagame/gtl/rules.o \
+	hodjnpodj/metagame/gtl/savedlg.o \
+	hodjnpodj/metagame/gtl/savegame.o \
+	hodjnpodj/metagame/gtl/spinner.o \
+	hodjnpodj/metagame/gtl/store.o \
 	hodjnpodj/metagame/zoom/dllinit.o \
 	hodjnpodj/metagame/zoom/zoommap.o \
 	hodjnpodj/archeroids/dllinit.o \
