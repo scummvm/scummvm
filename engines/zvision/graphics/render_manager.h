@@ -30,6 +30,9 @@
 
 #include "graphics/surface.h"
 
+#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
+
 #include "zvision/graphics/graphics_effect.h"
 
 class OSystem;
@@ -47,7 +50,7 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow, const Graphics::PixelFormat &pixelFormat, bool doubleFPS);
+	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Common::Rect menuArea, const Graphics::PixelFormat pixelFormat, bool doubleFPS);
 	~RenderManager();
 
 private:
@@ -78,6 +81,12 @@ private:
 	const int _screenCenterX;
 	// Center of the screen in the y direction
 	const int _screenCenterY;
+	
+	
+	/**
+	Managed surface representing physical screen; dirty rectangles will be handled automatically by this from now on
+    */
+	Graphics::Screen _screenSurface;
 
 	/** A buffer for background image that's being used to create the background */
 	Graphics::Surface _currentBackgroundImage;
@@ -97,6 +106,7 @@ private:
 	// If it's a normal scene, the pixels will be blitted directly to the screen
 	// If it's a panorma / tilt scene, the pixels will be first warped to _warpedSceneSurface
 	Graphics::Surface _backgroundSurface;
+	Graphics::ManagedSurface _backgroundManagedSurface;
 	Common::Rect _backgroundSurfaceDirtyRect;
 
 	// A buffer for subtitles
@@ -107,6 +117,7 @@ private:
 
 	// A buffer for menu drawing
 	Graphics::Surface _menuSurface;
+	Graphics::ManagedSurface _menuManagedSurface;
 	Common::Rect _menuSurfaceDirtyRect;
 
 	// Rectangle for menu area
@@ -117,7 +128,6 @@ private:
 
 	// A buffer to store the result of the panorama / tilt warps
 	Graphics::Surface _warpedSceneSurface;
-
 
 	/** Used to warp the background image */
 	RenderTable _renderTable;
@@ -221,8 +231,17 @@ public:
 	// Scale buffer (nearest)
 	void scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight);
 
-	// Blitting surface-to-surface methods
-	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int x, int y);
+	/**
+	 * Blit from one surface to another surface
+	 *
+	 * @param src       Source surface
+	 * @param _srcRect  Rectangle defining area of source surface to blit; if this rectangle is empty, entire source surface is blitted
+	 * @param dst       Destination surface
+ 	 * @param x         Destination surface x coordinate
+	 * @param y         Destination surface y coordinate
+	 */	
+
+	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y);
 	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
 
 	// Blitting surface-to-background methods
@@ -232,7 +251,7 @@ public:
 	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey = -1);
 
 	// Blitting surface-to-menu methods
-	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
+	void blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = -1);
 
 	// Subtitles methods
 
@@ -263,11 +282,8 @@ public:
 	Graphics::Surface *loadImage(const Common::Path &file, bool transposed);
 
 	// Clear whole/area of menu surface
-	void clearMenuSurface();
-	void clearMenuSurface(const Common::Rect &r);
-
-	// Copy menu buffer to screen
-	void renderMenuToScreen();
+	void clearMenuSurface(int32 colorkey = 0);
+	void clearMenuSurface(const Common::Rect &r, int32 colorkey = 0);
 
 	// Copy needed portion of background surface to workingWindow surface
 	void prepareBackground();

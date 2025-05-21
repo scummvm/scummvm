@@ -167,29 +167,37 @@ void ZVision::processEvents() {
 		switch (_event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			_cursorManager->cursorDown(true);
-			_scriptManager->setStateValue(StateKey_LMouse, 1);
 			_menu->onMouseDown(_event.mouse);
-			_scriptManager->addEvent(_event);
+			if(!_menu->isInMenu() || !_widescreen) {
+			  _scriptManager->setStateValue(StateKey_LMouse, 1);
+			  _scriptManager->addEvent(_event);
+		  }
 			break;
 
 		case Common::EVENT_LBUTTONUP:
 			_cursorManager->cursorDown(false);
-			_scriptManager->setStateValue(StateKey_LMouse, 0);
 			_menu->onMouseUp(_event.mouse);
-			_scriptManager->addEvent(_event);
+			if(!_menu->isInMenu() || !_widescreen) {
+			  _scriptManager->setStateValue(StateKey_LMouse, 0);
+			  _scriptManager->addEvent(_event);
+      }
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
 			_cursorManager->cursorDown(true);
-			_scriptManager->setStateValue(StateKey_RMouse, 1);
+			if(!_menu->isInMenu() || !_widescreen) {
+			  _scriptManager->setStateValue(StateKey_RMouse, 1);
 
-			if (getGameId() == GID_NEMESIS)
-				_scriptManager->inventoryCycle();
+			  if (getGameId() == GID_NEMESIS)
+				  _scriptManager->inventoryCycle();
+			}
 			break;
 
 		case Common::EVENT_RBUTTONUP:
 			_cursorManager->cursorDown(false);
-			_scriptManager->setStateValue(StateKey_RMouse, 0);
+			if(!_menu->isInMenu() || !_widescreen) {
+  			_scriptManager->setStateValue(StateKey_RMouse, 0);
+			}
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -319,7 +327,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	Common::Point clippedPos = pos;
 	clippedPos.x = CLIP<int16>(pos.x, _workingWindow.left + 1, _workingWindow.right - 1);
 
-	if (_workingWindow.contains(clippedPos)) {
+	if (_workingWindow.contains(clippedPos) && !_menu->isInMenu()) {
 		cursorWasChanged = _scriptManager->onMouseMove(clippedPos, imageCoord);
 
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();

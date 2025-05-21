@@ -220,7 +220,7 @@ void ZVision::initialize() {
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _resourcePixelFormat, _doubleFPS);
+	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _menuArea, _resourcePixelFormat, _doubleFPS);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, _resourcePixelFormat);
@@ -228,9 +228,9 @@ void ZVision::initialize() {
 	_midiManager = new MidiManager();
 
 	if (getGameId() == GID_GRANDINQUISITOR)
-		_menu = new MenuZGI(this);
+		_menu = new MenuZGI(this, _menuArea);
 	else
-		_menu = new MenuNemesis(this);
+		_menu = new MenuNemesis(this, _menuArea);
 
 	// Initialize the managers
 	_cursorManager->initialize();
@@ -334,9 +334,8 @@ Common::Error ZVision::run() {
 
 		// Render the backBuffer to the screen
 		_renderManager->prepareBackground();
-		_renderManager->renderMenuToScreen(); //TODO - disable in widescreen mode.
-		_renderManager->processSubs(deltaTime); //TODO - alter to blit subs to intermediate buffer, then handle this buffer in renderscenetoscreen()?
-		_renderManager->renderSceneToScreen();  //TODO - add code to composite menu surface into scene in this function in widescreen mode.
+		_renderManager->processSubs(deltaTime); //TODO - alter to blit subs to intermediate buffer, then handle this buffer in renderscenetoscreen, in same manner as menu
+		_renderManager->renderSceneToScreen();
 
 		// Update the screen
 		if (canRender()) {
@@ -403,6 +402,17 @@ void ZVision::initScreen() {
 						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
 						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
 					 );
+
+	uint16 menuAreaHeight = (getGameId() == GID_NEMESIS) ? ZNM_MENU_HEIGHT : ZGI_MENU_HEIGHT;
+  _menuArea = Common::Rect(
+						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
+						 0,
+						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
+						menuAreaHeight
+					 );
+
+  if(_widescreen)
+    _menuArea.moveTo(_workingWindow.left, _workingWindow.top);
 
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, &_screenPixelFormat);
 }

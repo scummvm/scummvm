@@ -38,9 +38,12 @@
 
 #include "graphics/blit.h"
 
+//FOR BUG TEST ONLY
+#include "common/debug.h"
+
 namespace ZVision {
 
-RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow, const Graphics::PixelFormat &pixelFormat, bool doubleFPS)
+RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Common::Rect menuArea, const Graphics::PixelFormat pixelFormat, bool doubleFPS)
 	: _engine(engine),
 	  _system(engine->_system),
 	  _screenCenterX(_workingWindow.width() / 2),
@@ -52,14 +55,21 @@ RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowH
 	  _backgroundOffset(0),
 	  _renderTable(_workingWindow.width(), _workingWindow.height()),
 	  _doubleFPS(doubleFPS),
-	  _subid(0) {
-
+	  _subid(0),
+	  _menuArea(menuArea) {
+	  
+  _screenSurface.create(WINDOW_WIDTH, WINDOW_HEIGHT, _pixelFormat);
+	_screenSurface.setTransparentColor(-1);
+	_screenSurface.clear();
+  
 	_backgroundSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
+	_backgroundManagedSurface.create(_screenSurface, _workingWindow);
+
 	_effectSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
 	_warpedSceneSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
-	_menuSurface.create(windowWidth, workingWindow.top, _pixelFormat);
 
-	_menuArea = Common::Rect(0, 0, windowWidth, workingWindow.top);
+	_menuSurface.create(_menuArea.width(), _menuArea.height(), _pixelFormat);
+	_menuManagedSurface.create(_screenSurface, _menuArea);
 
 	initSubArea(windowWidth, windowHeight, workingWindow);
 }
@@ -67,10 +77,13 @@ RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowH
 RenderManager::~RenderManager() {
 	_currentBackgroundImage.free();
 	_backgroundSurface.free();
+	_backgroundManagedSurface.free();
 	_effectSurface.free();
 	_warpedSceneSurface.free();
 	_menuSurface.free();
+	_menuManagedSurface.free();
 	_subtitleSurface.free();
+	_screenSurface.free();
 }
 
 void RenderManager::renderSceneToScreen() {
@@ -78,7 +91,7 @@ void RenderManager::renderSceneToScreen() {
 	Graphics::Surface *in = &_backgroundSurface;
 	Common::Rect outWndDirtyRect;
 
-	// If we have graphical effects, we apply them using a temporary buffer
+	//Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
 	if (!_effects.empty()) {
 		bool copied = false;
 		Common::Rect windowRect(_workingWindow.width(), _workingWindow.height());
@@ -114,6 +127,7 @@ void RenderManager::renderSceneToScreen() {
 		}
 	}
 
+  //Apply panorama/tilt warp to background image
 	RenderTable::RenderState state = _renderTable.getRenderState();
 	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
 		if (!_backgroundSurfaceDirtyRect.isEmpty()) {
@@ -125,18 +139,23 @@ void RenderManager::renderSceneToScreen() {
 		out = in;
 		outWndDirtyRect = _backgroundSurfaceDirtyRect;
 	}
+	
+	
+	_backgroundManagedSurface.simpleBlitFrom(*out); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
+	//_menuManagedSurface.simpleBlitFrom(_menuSurface);
+	_menuManagedSurface.transBlitFrom(_menuSurface, -1);
+	_screenSurface.update();
 
-  //TODO - add widescreen menu buffer about here?
-
+  /*
 	if (!outWndDirtyRect.isEmpty()) {
-		Common::Rect rect(
-			outWndDirtyRect.left + _workingWindow.left,
-			outWndDirtyRect.top + _workingWindow.top,
-			outWndDirtyRect.left + _workingWindow.left + outWndDirtyRect.width(),
-			outWndDirtyRect.top + _workingWindow.top + outWndDirtyRect.height()
-		);
-		copyToScreen(*out, rect, outWndDirtyRect.left, outWndDirtyRect.top);
+		Common::Rect rect = outWndDirtyRect;
+		rect.translate(_workingWindow.left,_workingWindow.top); //NB - feels like this should really be moveTo(), but that causes an offset bug when rendering doorknocker.  Suspect this is an irregularity elsewhere that will eventually need to be found & fixed, but can be tolerated for now.
+		
+  //Update dirty rectangle of screen
+		//copyToScreen(*out, rect, outWndDirtyRect.left, outWndDirtyRect.top);
+    copyToScreen(_backgroundManagedSurface, rect, outWndDirtyRect.left, outWndDirtyRect.top);
 	}
+	//*/
 }
 
 void RenderManager::copyToScreen(const Graphics::Surface &surface, Common::Rect &rect, int16 srcLeft, int16 srcTop) {
@@ -384,43 +403,116 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 	}
 }
 
+
+//ORIGINAL FUNCTION
+//*
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y) {
 	Common::Rect srcRect = _srcRect;
+	Common::Point dstPos = Common::Point(_x,_y);
+	//Default to using whole source surface
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
-	srcRect.clip(src.w, src.h);
-	Common::Rect dstRect = Common::Rect(-_x + srcRect.left , -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
+  //Clip source rectangle to within bounds of source buffer
+	srcRect.clip(src.w, src.h); 
+	
+	//CODE IDENTICAL TO HERE
+	
+	//BUG TEST CODE
+	Common::Point dstPos2 = dstPos;
+	Common::Rect srcRect2 = srcRect;
+	Common::Rect::getBlitRect(dstPos2, srcRect2, Common::Rect(dst.w,dst.h));
+	
+	//Generate destination rectangle
+	Common::Rect dstRect = Common::Rect(dst.w, dst.h);
+	//Translate destination rectangle to its position relative to source rectangle
+	dstRect.translate(srcRect.left-_x,srcRect.top-_y);
+	//clip source rectangle to within bounds of offset destination rectangle
 	srcRect.clip(dstRect);
-
-	if (srcRect.isEmpty() || !srcRect.isValidRect())
-		return;
-
-	Graphics::Surface *srcAdapted = src.convertTo(dst.format);
-
-	// Copy srcRect from src surface to dst surface
-	const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
-
-	int xx = _x;
-	int yy = _y;
-
-	if (xx < 0)
-		xx = 0;
-	if (yy < 0)
-		yy = 0;
-
-	if (_x >= dst.w || _y >= dst.h) {
-		srcAdapted->free();
-		delete srcAdapted;
-		return;
+	
+	//BUG TEST
+	/*
+	if(srcRect.left != srcRect2.left) {
+	   debug("srcRect.left = %i, srcRect2.left = %i", srcRect.left, srcRect2.left);	   	   
 	}
+	if(srcRect.top != srcRect2.top) {
+	   debug("srcRect.top = %i, srcRect2.top = %i", srcRect.top, srcRect2.top);
+  } 
+	if(srcRect.right != srcRect2.right) {
+	   debug("srcRect.right = %i, srcRect2.right = %i", srcRect.right, srcRect2.right);
+  }
+	if(srcRect.bottom != srcRect2.bottom) {
+	   debug("srcRect.bottom = %i, srcRect2.bottom = %i", srcRect.bottom, srcRect2.bottom);	   
+  }
+*/
 
-	byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
+  //CODE IDENTICAL FROM HERE  
 
-	Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
+  //Abort if nothing to blit
+	if (!srcRect.isEmpty()) {
+    //Convert pixel format of source to match destination
+	  Graphics::Surface *srcAdapted = src.convertTo(dst.format);
+	  //Get pointer for source buffer blit rectangle origin
+	  const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
 
-	srcAdapted->free();
-	delete srcAdapted;
+    //Default to blitting into origin of target surface if negative valued
+	  if (dstPos.x < 0)
+		  dstPos.x = 0;
+	  if (dstPos.y < 0)
+		  dstPos.y = 0;
+		  
+	  //BUG TEST
+	  assert(dstPos == dstPos2);
+    
+    //If _x & _y lie within destination surface
+    if (dstPos.x < dst.w && dstPos.y < dst.h) {
+      //Get pointer for destination buffer blit rectangle origin
+	    byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
+	    Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
+    }
+    srcAdapted->free();
+    delete srcAdapted;
+  }
+
 }
+/*/
+
+//SIMPLIFIED FUNCTION
+//TODO - find bug that breaks panorama rotation.  Suspect problem with negative arguments of some sort.
+//*
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y) {
+	Common::Rect srcRect = _srcRect;
+	Common::Point dstPos = Common::Point(_x,_y);
+	//Default to using whole source surface
+	if (srcRect.isEmpty())
+		srcRect = Common::Rect(src.w, src.h);
+  //Ensure source rectangle does not read beyond bounds of source surface
+	srcRect.clip(src.w, src.h);
+
+	//CODE IDENTICAL TO HERE
+	
+	//Ensure source rectangle does not write beyond bounds of destination surface & is valid
+	  //NB alters dstPos & srcRect!
+	Common::Rect::getBlitRect(dstPos, srcRect, Common::Rect(dst.w,dst.h));
+
+  //CODE IDENTICAL FROM HERE
+  
+	//Abort if nothing to blit
+	if(!srcRect.isEmpty()) {
+    //Convert pixel format of source to match destination
+	  Graphics::Surface *srcAdapted = src.convertTo(dst.format);
+	  //Get pointer for source buffer blit rectangle origin
+	  const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top); 
+    //If _x & _y lie within destination surface
+    if (dstPos.x < dst.w && dstPos.y < dst.h) {
+      //Get pointer for destination buffer blit rectangle origin
+	    byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
+	    Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
+    }
+	  srcAdapted->free();
+	  delete srcAdapted;
+  }
+}
+//*/
 
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
 	Common::Rect srcRect = _srcRect;
@@ -430,6 +522,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	Common::Rect dstRect = Common::Rect(-_x + srcRect.left , -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
 	srcRect.clip(dstRect);
 
+  //Abort if nothing to blit
 	if (srcRect.isEmpty() || !srcRect.isValidRect())
 		return;
 
@@ -447,16 +540,11 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	if (yy < 0)
 		yy = 0;
 
-	if (_x >= dst.w || _y >= dst.h) {
-		srcAdapted->free();
-		delete srcAdapted;
-		return;
-	}
-
+	if (_x < dst.w && _y < dst.h) {
 	byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
-
   Graphics::keyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel,keycolor);
-
+  }
+  
 	srcAdapted->free();
 	delete srcAdapted;
 }
@@ -488,21 +576,28 @@ void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const C
 	}
 }
 
-void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, int32 colorkey) {
+void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey) {
 	Common::Rect empt;
-  Graphics::Surface *dstSurface = &_menuSurface;  //Add code to change this to background in widescreen mode if test works.
-	if (colorkey >= 0)
+	Common::Point destPos{x,y};
+  Graphics::Surface *dstSurface = &_menuSurface;
+	if (colorkey >= 0) {
 		//blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
     blitSurfaceToSurface(src, empt, *dstSurface, x, y, colorkey);
-	else
+    //_menuManagedSurface.transBlitFrom(src,destPos,colorkey);
+  }
+	else {
 		//blitSurfaceToSurface(src, empt, _menuSurface, x, y);
 		blitSurfaceToSurface(src, empt, *dstSurface, x, y);
+    //_menuManagedSurface.blitFrom(src,destPos);
+  }
+  //*/
 	Common::Rect dirty(src.w, src.h);
-	dirty.translate(x, y);
+	dirty.moveTo(x, y);
 	if (_menuSurfaceDirtyRect.isEmpty())
 		_menuSurfaceDirtyRect = dirty;
 	else
 		_menuSurfaceDirtyRect.extend(dirty);
+	//*/
 }
 
 Graphics::Surface *RenderManager::getBkgRect(Common::Rect &rect) {
@@ -606,33 +701,17 @@ void RenderManager::prepareBackground() {
 	_backgroundSurfaceDirtyRect.clip(_workingWindow.width(), _workingWindow.height());
 }
 
-void RenderManager::clearMenuSurface() {
+void RenderManager::clearMenuSurface(int32 colorkey) {
 	_menuSurfaceDirtyRect = Common::Rect(0, 0, _menuSurface.w, _menuSurface.h);
-	_menuSurface.fillRect(_menuSurfaceDirtyRect, 0);
+	_menuSurface.fillRect(_menuSurfaceDirtyRect, colorkey);
 }
 
-void RenderManager::clearMenuSurface(const Common::Rect &r) {
+void RenderManager::clearMenuSurface(const Common::Rect &r, int32 colorkey) {
 	if (_menuSurfaceDirtyRect.isEmpty())
 		_menuSurfaceDirtyRect = r;
 	else
 		_menuSurfaceDirtyRect.extend(r);
-	_menuSurface.fillRect(r, 0);
-}
-
-void RenderManager::renderMenuToScreen() {
-	if (!_menuSurfaceDirtyRect.isEmpty()) {
-		_menuSurfaceDirtyRect.clip(Common::Rect(_menuSurface.w, _menuSurface.h));
-		if (!_menuSurfaceDirtyRect.isEmpty()) {
-			Common::Rect rect(
-				_menuSurfaceDirtyRect.left + _menuArea.left,
-				_menuSurfaceDirtyRect.top + _menuArea.top,
-				_menuSurfaceDirtyRect.left + _menuArea.left + _menuSurfaceDirtyRect.width(),
-				_menuSurfaceDirtyRect.top + _menuArea.top + _menuSurfaceDirtyRect.height()
-			);
-			copyToScreen(_menuSurface, rect, _menuSurfaceDirtyRect.left, _menuSurfaceDirtyRect.top);
-		}
-		_menuSurfaceDirtyRect = Common::Rect();
-	}
+	_menuSurface.fillRect(r, colorkey);
 }
 
 void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow) {
