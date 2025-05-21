@@ -61,6 +61,8 @@ extern HINSTANCE AfxGetInstanceHandle();
 extern HINSTANCE AfxGetResourceHandle();
 extern int LoadString(HINSTANCE hInstance,
                       UINT uID, LPSTR lpBuffer, int cchBufferMax);
+extern HMODULE LoadLibrary(LPCSTR lpLibFileName);
+extern void FreeLibrary(HMODULE hModule);
 extern FARPROC GetProcAddress(HMODULE hModule,
 	LPCSTR  lpProcName);
 extern HMODULE GetModuleHandle(LPCSTR lpModuleName);

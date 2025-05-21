@@ -687,6 +687,7 @@ extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
 
 extern DWORD GetSysColor(int nIndex);
 extern BOOL DestroyMenu(HMENU hMenu);
+extern void SetActiveWindow(HWND hWnd);
 
 } // namespace MFC
 } // namespace Bagel

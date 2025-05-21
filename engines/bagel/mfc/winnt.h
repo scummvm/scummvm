@@ -94,6 +94,8 @@ typedef void *POSITION;
 	#define TRUE                1
 #endif
 
+#define HINSTANCE_ERROR (HINSTANCE)32
+
 //
 // Success codes
 //

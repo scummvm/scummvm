@@ -1098,6 +1098,8 @@ class CWinApp : public CWinThread {
 
 public:
 	int m_nCmdShow = SW_SHOWNORMAL;
+	const char *m_lpCmdLine = "";
+	CWnd *m_pMainWnd = nullptr;
 
 public:
 	CWinApp(const char *appName = nullptr);
@@ -1115,6 +1117,11 @@ public:
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	BOOL SaveAllModified();
 	void CloseAllDocuments(BOOL bEndSession);
+
+	UINT GetProfileInt(LPCSTR lpszSection,
+		LPCSTR lpszEntry, int nDefault);
+	void WriteProfileInt(LPCSTR lpszSection,
+		LPCSTR lpszEntry, int nValue);
 
 	virtual void OnFileNew() {}
 	virtual void OnFileOpen() {}

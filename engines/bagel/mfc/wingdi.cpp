@@ -227,5 +227,9 @@ BOOL DestroyMenu(HMENU hMenu) {
 	error("TODO: DestroyMenu");
 }
 
+void SetActiveWindow(HWND hWnd) {
+	error("TODO: SetActiveWindow");
+}
+
 } // namespace MFC
 } // namespace Bagel

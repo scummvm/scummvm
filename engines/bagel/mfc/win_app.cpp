@@ -74,6 +74,17 @@ void CWinApp::CloseAllDocuments(BOOL bEndSession) {
 	error("TODO: CWinApp::CloseAllDocuments");
 }
 
+UINT CWinApp::GetProfileInt(LPCSTR lpszSection,
+		LPCSTR lpszEntry, int nDefault) {
+	error("TODO: CWinApp::GetProfileInt");
+}
+
+void CWinApp::WriteProfileInt(LPCSTR lpszSection,
+		LPCSTR lpszEntry, int nValue) {
+	error("TODO: CWinApp::WriteProfileInt");
+}
+
+
 CWinApp *AfxGetApp() {
 	error("TODO: AfxGetApp");
 }
@@ -90,6 +101,15 @@ int LoadString(HINSTANCE hInstance,
                UINT uID, LPSTR lpBuffer, int cchBufferMax) {
 	error("TODO: LoadString");
 }
+
+HMODULE LoadLibrary(LPCSTR lpLibFileName) {
+	error("LoadLibrary is unsupported");
+}
+
+void FreeLibrary(HMODULE hModule) {
+	error("FreeLibrary is unsupported");
+}
+
 
 FARPROC GetProcAddress(HMODULE hModule,
 		LPCSTR lpProcName) {

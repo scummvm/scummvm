@@ -233,113 +233,113 @@ const CLocTable CMgStatic::cLocTable[] = {
 const CGameTable CMgStatic::cGameTable[] = {
 	{
 		MG_GAME_ANAGRAMS, 0,
-		"Anagrams", NULL, NULL, NULL, FALSE
+		"Anagrams", NULL, NULL, NULL, true
 	},
 	{
 		MG_GAME_ARCHEROIDS, MG_WIN_INFO,
-		"Archeroids", "..\\arch", "hnparch.dll", "RunArch", FALSE
+		"Archeroids", "..\\arch", "hnparch.dll", "RunArch", true
 	},
 	{
 		MG_GAME_ARTPARTS, MG_WIN_INFO,
-		"Art Parts", "..\\artparts", "hnpartp.dll", "RunArtp", FALSE
+		"Art Parts", "..\\artparts", "hnpartp.dll", "RunArtp", true
 	},
 	{
 		MG_GAME_BARBERSHOP, MG_WIN_OBJECT,
-		"Barbershop Quintet", "..\\barb", "hnpbarb.dll", "RunBarb", FALSE
+		"Barbershop Quintet", "..\\barb", "hnpbarb.dll", "RunBarb", true
 	},
 	{
 		MG_GAME_BATTLEFISH, MG_WIN_OBJECT,
-		"Battlefish", "..\\bfish", "hnpbfish.dll", "RunBFish", FALSE
+		"Battlefish", "..\\bfish", "hnpbfish.dll", "RunBFish", true
 	},
 	{
 		MG_GAME_BEACON, MG_WIN_MONEY,
-		"Beacon", "..\\beacon", "hnpbeac.dll", "RunBeac", FALSE
+		"Beacon", "..\\beacon", "hnpbeac.dll", "RunBeac", true
 	},
 	{
 		MG_GAME_CRYPTOGRAMS, MG_WIN_MONEY,
-		"Cryptograms", "..\\crypt", "hnpcrypt.dll", "RunCrypt", FALSE
+		"Cryptograms", "..\\crypt", "hnpcrypt.dll", "RunCrypt", true
 	},
 	{
 		MG_GAME_DAMFURRY, MG_WIN_MONEY,
-		"Dam Furry Animals", "..\\dfa", "hnpdfa.dll", "RunDFA", FALSE
+		"Dam Furry Animals", "..\\dfa", "hnpdfa.dll", "RunDFA", true
 	},
 	{
 		MG_GAME_EVERYTHING, MG_WIN_INFO,
-		"Everything Under the Sun", NULL, NULL, NULL, FALSE
+		"Everything Under the Sun", NULL, NULL, NULL, true
 	},
 	{
 		MG_GAME_FUGE, MG_WIN_MONEY,
-		"Fuge", "..\\fuge", "hnpfuge.dll", "RunFuge", FALSE
+		"Fuge", "..\\fuge", "hnpfuge.dll", "RunFuge", true
 	},
 	{
 		MG_GAME_GARFUNKEL, MG_WIN_INFO,
-		"Garfunkel", "..\\garf", "hnpgarf.dll", "RunGarf", FALSE
+		"Garfunkel", "..\\garf", "hnpgarf.dll", "RunGarf", true
 	},
 	{
 		MG_GAME_LIFE, MG_WIN_INFO,
-		"Life", "..\\life", "hnplife.dll", "RunLife", FALSE
+		"Life", "..\\life", "hnplife.dll", "RunLife", true
 	},
 	{
 		MG_GAME_MANKALA, MG_WIN_INFO,
-		"Mankala", "..\\mankala", "hnpmank.dll", "RunMank", FALSE
+		"Mankala", "..\\mankala", "hnpmank.dll", "RunMank", true
 	},
 	{
 		MG_GAME_MAZEODOOM, MG_WIN_OBJECT,
-		"Maze o'Doom", "..\\mazedoom", "hnpmaze.dll", "RunMaze", FALSE
+		"Maze o'Doom", "..\\mazedoom", "hnpmaze.dll", "RunMaze", true
 	},
 	{
 		MG_GAME_NOVACANCY, MG_WIN_INFO,
-		"No Vacancy", "..\\novac", "hnpnova.dll", "RunNoVa", FALSE
+		"No Vacancy", "..\\novac", "hnpnova.dll", "RunNoVa", true
 	},
 	{
 		MG_GAME_PACRAT, MG_WIN_OBJECT,
-		"Pac-Rat", "..\\packrat", "hnppkrt.dll", "RunPackRat", FALSE
+		"Pac-Rat", "..\\packrat", "hnppkrt.dll", "RunPackRat", true
 	},
 	{
 		MG_GAME_PEGGLEBOZ, MG_WIN_MONEY,
-		"Peggleboz", "..\\peggle", "hnppggl.dll", "RunPeggle", FALSE
+		"Peggleboz", "..\\peggle", "hnppggl.dll", "RunPeggle", true
 	},
 	{
 		MG_GAME_PINBALL, 0,
-		"Pinball", NULL, NULL, NULL, FALSE
+		"Pinball", NULL, NULL, NULL, true
 	},
 	{
 		MG_GAME_RIDDLES, MG_WIN_OBJECT,
-		"Riddles", "..\\riddles", "hnpridl.dll", "RunRidl", FALSE
+		"Riddles", "..\\riddles", "hnpridl.dll", "RunRidl", true
 	},
 	{
 		MG_GAME_ROULETTE, 0,
-		"Roulette", NULL, NULL, NULL, FALSE
+		"Roulette", NULL, NULL, NULL, true
 	},
 	{
 		MG_GAME_SHOTMACHINE, 0,
-		"Shot Machine", NULL, NULL, NULL, FALSE
+		"Shot Machine", NULL, NULL, NULL, true
 	},
 	{
 		MG_GAME_SPINBALL, 0,
-		"Spinball", NULL, NULL, NULL, FALSE
+		"Spinball", NULL, NULL, NULL, true
 	},
 	{
 		MG_GAME_THGESNGGME, MG_WIN_MONEY,
-		"TH GESNG GME", "..\\pdq", "hnptgg.dll", "RunTGG", FALSE
+		"TH GESNG GME", "..\\pdq", "hnptgg.dll", "RunTGG", true
 	},
 	{
 		MG_GAME_TRIVIA, 0,
-		"Trivia", NULL, NULL, NULL, FALSE
+		"Trivia", NULL, NULL, NULL, true
 	},
 	{
 		MG_GAME_VIDEOPOKER, MG_WIN_MONEY,
-		"Video Poker", "..\\poker", "hnppkr.dll", "RunPoker", FALSE
+		"Video Poker", "..\\poker", "hnppkr.dll", "RunPoker", true
 	},
 	{
 		MG_GAME_WORDSEARCH, MG_WIN_OBJECT,
-		"Word Search", "..\\wordsrch", "hnpws.dll", "RunWordSearch", FALSE
+		"Word Search", "..\\wordsrch", "hnpws.dll", "RunWordSearch", true
 	},
 	{
 		MG_GAME_CHALLENGE, MG_WIN_MISHMOSH,
-		"Challenge", ".", "hnpzm.dll", "RunZoom", FALSE
+		"Challenge", ".", "hnpzm.dll", "RunZoom", true
 	},
-	{0, 0, NULL, NULL, NULL, FALSE}
+	{0, 0, NULL, NULL, NULL, NULL, false}
 } ;
 
 
