@@ -114,7 +114,8 @@ enum AssetHeaderSectionType {
 	kAssetHeaderTextCharacterClass = 0x0266,
 
 	// SPRITE FIELDS.
-	kAssetHeaderSpriteFrameMapping = 0x03e9
+	kAssetHeaderSpriteClip = 0x03e9,
+	kAssetHeaderCurrentSpriteClip = 0x03ea
 };
 
 class Asset {

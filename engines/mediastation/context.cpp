@@ -99,6 +99,7 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 					error("Context::Context(): Asset %d references non-existent asset %d", asset->id(), referencedAssetId);
 				}
 				sprite->_frames = referencedSprite->_frames;
+				sprite->_clips = referencedSprite->_clips;
 				break;
 			}
 

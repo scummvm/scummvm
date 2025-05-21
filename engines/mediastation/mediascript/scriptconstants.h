@@ -122,8 +122,10 @@ enum BuiltInMethod {
 
 	// SPRITE METHODS.
 	kMovieResetMethod = 219, // PARAMS: 0
-	kSetSpriteFrameByIdMethod = 220, // PARAMS: 1
-	kSetCurrentClipMethod = 221, // PARAMS: 0-1
+	kSetCurrentClipMethod = 220, // PARAMS: 1
+	kIncrementFrameMethod = 221, // PARAMS: 0-1
+	kDecrementFrameMethod = 222, // PARAMS: 0-1
+	kGetCurrentClipIdMethod = 240, // PARAMS: 0
 
 	// STAGE METHODS.
 	kSetWorldSpaceExtentMethod = 363, // PARAMS: 2

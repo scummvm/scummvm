@@ -33,6 +33,12 @@
 
 namespace MediaStation {
 
+struct SpriteClip {
+	uint id = 0;
+	uint firstFrameIndex = 0;
+	uint lastFrameIndex = 0;
+};
+
 class SpriteFrameHeader : public BitmapHeader {
 public:
 	SpriteFrameHeader(Chunk &chunk);
@@ -76,29 +82,36 @@ public:
 	virtual void readChunk(Chunk &chunk) override;
 
 private:
+	static const uint DEFAULT_CLIP_ID = 1200;
 	double _dissolveFactor = 0.0;
 	uint _loadType = 0;
 	uint _frameRate = 0;
 	uint _frameCount = 0;
-	Common::HashMap<uint32, uint32> _spriteFrameMapping;
+	Common::HashMap<uint, SpriteClip> _clips;
 	Common::Array<SpriteFrame *> _frames;
-	SpriteFrame *_activeFrame = nullptr;
 	bool _isPlaying = false;
-	bool _atFirstFrame = true;
 	uint _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;
+	SpriteClip _activeClip;
 
-	// Method implementations.
-	void spatialShow();
-	void spatialHide();
-	void timePlay();
-	void timeStop();
-	void movieReset();
-	void setCurrentClip();
+	void play();
+	void stop();
+	void setCurrentClip(uint clipId);
+
+	bool activateNextFrame();
+	bool activatePreviousFrame();
+
+	void dirtyIfVisible();
+	void setCurrentFrameToInitial();
+	void setCurrentFrameToFinal();
+
+	void scheduleNextFrame();
+	void scheduleNextTimerEvent();
+	void postMovieEndEventIfNecessary();
+	void setVisibility(bool visibility);
 
 	void updateFrameState();
-	void showFrame(SpriteFrame *frame);
-	Common::Rect getActiveFrameBoundingBox();
+	void timerEvent();
 };
 
 } // End of namespace MediaStation
