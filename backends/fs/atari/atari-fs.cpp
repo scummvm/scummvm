@@ -27,7 +27,7 @@
 #if defined(ATARI)
 
 void AtariFilesystemNode::setFlags() {
-	POSIXFilesystemNode::setFlags();
+	DrivePOSIXFilesystemNode::setFlags();
 
 	if (!_displayNameChecked) {
 		if (_fileHashMap.contains(_displayName))

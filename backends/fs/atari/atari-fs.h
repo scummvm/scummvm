@@ -22,27 +22,34 @@
 #ifndef ATARI_FILESYSTEM_H
 #define ATARI_FILESYSTEM_H
 
-#include "backends/fs/posix/posix-fs.h"
+#include "backends/fs/posix-drives/posix-drives-fs.h"
 
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 
 /**
- * Implementation of the ScummVM file system API based on POSIX with some Atari specific features.
+ * Implementation of the ScummVM file system API based on DrivePOSIX with translation to 8+3 filenames.
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class AtariFilesystemNode final : public POSIXFilesystemNode {
+class AtariFilesystemNode final : public DrivePOSIXFilesystemNode {
 protected:
+	AbstractFSNode *makeNode() const override {
+		return new AtariFilesystemNode(_config, _fileHashMap);
+	}
 	AbstractFSNode *makeNode(const Common::String &path) const override {
-		return new AtariFilesystemNode(path, _fileHashMap);
+		return new AtariFilesystemNode(path, _config, _fileHashMap);
 	}
 
 public:
 	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileHashMap;
 
-	AtariFilesystemNode(const Common::String &path, const FileHashMap &fileHashMap)
-		: POSIXFilesystemNode(path)
+	AtariFilesystemNode(const Config &config, const FileHashMap &fileHashMap)
+		: DrivePOSIXFilesystemNode(config)
+		, _fileHashMap(fileHashMap) {
+	}
+	AtariFilesystemNode(const Common::String &path, const Config &config, const FileHashMap &fileHashMap)
+		: DrivePOSIXFilesystemNode(path, config)
 		, _fileHashMap(fileHashMap) {
 	}
 
