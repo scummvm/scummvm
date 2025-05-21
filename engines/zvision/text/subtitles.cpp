@@ -46,6 +46,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 				if (upscaleToHires)
 					_engine->getRenderManager()->upscaleRect(rct);
 				_areaId = _engine->getRenderManager()->createSubArea(rct);
+				debug(1,"Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
 			} 
 			else if (str.matchString("*TextFile*", true)) {
 				char filename[64];

@@ -59,15 +59,12 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 #endif
 	else
 		error("Unknown suffix for animation %s", fileName.toString().c_str());
-
 	Common::File *_file = getSearchManager()->openFile(fileName);
 	if (!_file)
 		error("Error opening %s", fileName.toString().c_str());
-
 	bool loaded = animation->loadStream(_file);
 	if (!loaded)
 		error("Error loading animation %s", fileName.toString().c_str());
-
 	return animation;
 }
 
@@ -84,6 +81,7 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	 
 void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, Subtitle *sub) {
 	Common::Rect dst = dstRect;
+	Common::Rect _workingArea = _renderManager->getWorkingArea();
 	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
 	if (dst.isEmpty())
 		dst = Common::Rect(vid.getWidth(), vid.getHeight());
@@ -98,8 +96,8 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 		scaled->create(dst.width(), dst.height(), vid.getPixelFormat());
 	}
 
-	uint16 finalWidth = dst.width() < _workingWindow.width() ? dst.width() : _workingWindow.width();
-	uint16 finalHeight = dst.height() < _workingWindow.height() ? dst.height() : _workingWindow.height();
+	uint16 finalWidth = dst.width() < _workingArea.width() ? dst.width() : _workingArea.width();
+	uint16 finalHeight = dst.height() < _workingArea.height() ? dst.height() : _workingArea.height();
 	bool showSubs = (_scriptManager->getStateValue(StateKey_Subtitles) == 1);
 
 	_clock.stop();
@@ -142,7 +140,6 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 					frame = scaled; 
 				}
 				Common::Rect rect = Common::Rect(finalWidth, finalHeight);
-				//TODO - fix problem with full-screen video playback not rendering to screen.
 				debug(2,"Blitting from area %d x %d to video output surface at area %d, %d", frame->w, frame->h, dst.left, dst.top);
 				outSurface.simpleBlitFrom(*frame, rect, Common::Point(0,0));
 				_renderManager->processSubs(0);
