@@ -137,8 +137,7 @@ uint8 *Resource3do::loadFile(int num, uint8 *dst, uint32 *size) {
 		if (!dst) {
 			dst = (uint8 *)malloc(sz);
 			if (!dst) {
-				warning("Unable to allocate %d bytes", sz);
-				return nullptr;
+				error("loadFile - Unable to allocate %d bytes", sz);
 			}
 		}
 		*size = sz;
@@ -148,16 +147,16 @@ uint8 *Resource3do::loadFile(int num, uint8 *dst, uint32 *size) {
 		return nullptr;
 	}
 
-	if (dst && memcmp(dst, "\x00\xf4\x01\x00", 4) == 0) {
+	if (memcmp(dst, "\x00\xf4\x01\x00", 4) == 0) {
 		static const int SZ = 64000 * 2;
 		uint8 *tmp = (uint8 *)calloc(1, SZ);
 		if (!tmp) {
-			warning("Unable to allocate %d bytes", SZ);
-			if (in != dst) free(dst);
-			return nullptr;
+			error("loadFile - Unable to allocate %d bytes", SZ);
 		}
 		const int decodedSize = decodeLzss(dst + 4, *size - 4, tmp);
-		if (in != dst) free(dst);
+		if (in != dst)
+			free(dst);
+
 		if (decodedSize != SZ) {
 			warning("Unexpected LZSS decoded size %d", decodedSize);
 			return nullptr;
