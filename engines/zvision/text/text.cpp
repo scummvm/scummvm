@@ -238,7 +238,6 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 void TextStyleState::readAllStyles(const Common::String &txt) {
 	int16 startTextPosition = -1;
 	int16 endTextPosition = -1;
-
 	for (uint16 i = 0; i < txt.size(); i++) {
 		if (txt[i] == '<')
 			startTextPosition = i;
@@ -250,13 +249,11 @@ void TextStyleState::readAllStyles(const Common::String &txt) {
 				}
 			}
 		}
-
 	}
 }
 
 void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 	uint tempStyle = 0;
-
 	if (_bold) {
 		tempStyle |= StyledTTFont::TTF_STYLE_BOLD;
 	}
@@ -272,26 +269,28 @@ void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 	if (_sharp) {
 		tempStyle |= StyledTTFont::TTF_STYLE_SHARP;
 	}
-
 	font.loadFont(_fontname, _size, tempStyle);
 }
 
 void TextRenderer::drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification justify) {
-	if (justify == TEXT_JUSTIFY_LEFT)
-		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignLeft);
-	else if (justify == TEXT_JUSTIFY_CENTER)
-		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignCenter);
-	else if (justify == TEXT_JUSTIFY_RIGHT)
-		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignRight);
+  switch(justify) {
+  case TEXT_JUSTIFY_LEFT :
+	  font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignLeft);
+	  break;
+  case TEXT_JUSTIFY_CENTER :
+	  font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignCenter);
+	  break;
+  case TEXT_JUSTIFY_RIGHT :
+	  font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignRight);
+    break;
+	}
 }
 
 int32 TextRenderer::drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest) {
 	StyledTTFont font(_engine);
 	state.updateFontWithTextState(font);
-
 	uint32 color = _engine->_resourcePixelFormat.RGBToColor(state._red, state._green, state._blue);
 	drawTextWithJustification(text, font, color, dest, 0, state._justification);
-
 	return font.getStringWidth(text);
 }
 
@@ -307,7 +306,7 @@ struct TextSurface {
 	uint _lineNumber;
 };
 
-void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest) {
+void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest, bool blackFrame) {
 	Common::Array<TextSurface> textSurfaces;
 	Common::Array<uint> lineWidths;
 	Common::Array<TextJustification> lineJustifications;
@@ -337,12 +336,13 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	uint i = 0u;
 	uint stringlen = text.size();
 
+  //Parse entirety of supplied text
 	while (i < stringlen) {
+	  //Style tag encountered?
 		if (text[i] == '<') {
 			// Flush the currentWord to the currentSentence
 			currentSentence += currentWord;
 			sentenceWidth += wordWidth;
-
 			// Reset the word variables
 			currentWord.clear();
 			wordWidth = 0;
@@ -479,25 +479,28 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	// Render out any remaining words/sentences
 	if (!currentWord.empty() || !currentSentence.empty()) {
 		currentSentence += currentWord;
-		sentenceWidth += wordWidth;
-
+		sentenceWidth += wordWidth;		
 		textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, currentState.getTextColor(_engine)), sentencePixelOffset, currentLineNumber));
 	}
-
 	lineWidths.push_back(lineWidth + sentenceWidth);
 	lineJustifications.push_back(currentState._justification);
-
 	for (Common::Array<TextSurface>::iterator iter = textSurfaces.begin(); iter != textSurfaces.end(); ++iter) {
 		Common::Rect empty;
-
-		if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_LEFT) {
-			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
-		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_CENTER) {
-			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, ((dest.w - lineWidths[iter->_lineNumber]) / 2) + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
-		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_RIGHT) {
-			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, dest.w - lineWidths[iter->_lineNumber]  + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
-		}
-
+		int16 Xpos = iter->_surfaceOffset.x;
+    switch (lineJustifications[iter->_lineNumber]) {
+      case TEXT_JUSTIFY_LEFT :
+	      break;
+      case TEXT_JUSTIFY_CENTER :
+        Xpos += ((dest.w - lineWidths[iter->_lineNumber]) / 2);
+	      break;
+      case TEXT_JUSTIFY_RIGHT :
+        Xpos += dest.w - lineWidths[iter->_lineNumber];
+	      break;
+    }
+    if(blackFrame)
+      _engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y);
+    else
+      _engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y, 0);
 		// Release memory
 		iter->_surface->free();
 		delete iter->_surface;
@@ -518,7 +521,6 @@ Common::U32String readWideLine(Common::SeekableReadStream &stream) {
 			// End of the line. Break
 			break;
 		}
-
 		asciiString += value;
 	}
 	return asciiString;

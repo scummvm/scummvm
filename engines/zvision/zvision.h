@@ -69,13 +69,13 @@ class Subtitle;
 class MidiManager;
 
 enum {
-	WINDOW_WIDTH = 640,//640,
-	WINDOW_HEIGHT = 480,//480,
+	WINDOW_WIDTH = 640,//Original 640,
+	WINDOW_HEIGHT = 480,//Original 480,
 	WINDOW_WIDTH_WIDE = 854,
 	WINDOW_HEIGHT_WIDE = 480,
 
-	HIRES_WINDOW_WIDTH = 800,
-	HIRES_WINDOW_HEIGHT = 600,
+	HIRES_WINDOW_WIDTH = 800, //Original 800
+	HIRES_WINDOW_HEIGHT = 600,  //Original 600
 
 	// Zork Nemesis working window sizes (original aspect ratio 8:5)
 	ZNM_WORKING_WINDOW_WIDTH = 512, //Original 512
@@ -262,6 +262,10 @@ public:
 	void fpsTimer();
 	int getFPS() const {
 		return _fps;
+	}
+	
+	bool isWidescreen() {
+	  return _widescreen;
 	}
 
 	void syncSoundSettings() override;
