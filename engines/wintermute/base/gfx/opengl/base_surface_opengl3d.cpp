@@ -235,7 +235,20 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 }
 
 bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
-	warning("BaseSurfaceOpenGL3D::getPixel not yet implemented");
+	if (x < 0 || y < 0 || x >= _width || y >= _height) {
+		return false;
+	}
+
+	if (_imageData == nullptr) {
+		return false;
+	}
+
+	uint8 alpha, red, green, blue;
+	_imageData->format.colorToARGB(_imageData->getPixel(x, y), alpha, red, green, blue);
+	*r = red;
+	*g = green;
+	*b = blue;
+	*a = alpha;
 	return true;
 }
 
