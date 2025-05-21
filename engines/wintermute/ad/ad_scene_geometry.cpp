@@ -479,10 +479,10 @@ float AdSceneGeometry::getHeightAt(DXVector3 pos, float tolerance, bool *intFoun
 	for (uint32 i = 0; i < _planes.size(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->_numFaces; j++) {
 			if (C3DUtils::intersectTriangle(pos, dir,
-								  _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[0]]._pos,
-								  _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[1]]._pos,
-								  _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[2]]._pos,
-								  &intersection._x, &intersection._y, &intersection._z)) {
+				                        _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[0]]._pos,
+				                        _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[1]]._pos,
+				                        _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[2]]._pos,
+				                        &intersection._x, &intersection._y, &intersection._z)) {
 				if (intersection._y > pos._y + tolerance) {
 					continue; // only fall down
 				}
@@ -545,12 +545,12 @@ bool AdSceneGeometry::directPathExists(DXVector3 *p1, DXVector3 *p2) {
 
 			if (C3DUtils::pickGetIntersect(*p1, *p2, v0, v1, v2, &intersection, &dist)) {
 				if (C3DUtils::intersectTriangle(*p1, *p1 - *p2, v0, v1, v2,
-				                           &intersection._x, &intersection._y, &intersection._z)) {
+				                                &intersection._x, &intersection._y, &intersection._z)) {
 					return false;
 				}
 
 				if (C3DUtils::intersectTriangle(*p2, *p2 - *p1, v0, v1, v2,
-				                           &intersection._x, &intersection._y, &intersection._z)) {
+				                                &intersection._x, &intersection._y, &intersection._z)) {
 					return false;
 				}
 			}
