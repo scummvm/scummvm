@@ -68,6 +68,32 @@ class TextRenderer;
 class Subtitle;
 class MidiManager;
 
+struct ScreenLayout {
+  Common::Rect screenArea;  //Original screen resolution
+  Common::Rect menuArea;  //Menu display area, relative to original screen
+  Common::Rect workingArea;   //Playfield & video playback area, relative to original screen
+  Common::Rect textArea;  //Subtitle & message area, relative to original screen
+};
+
+//NB Footage of original DOS Nemesis engine indicates playfield was centrally placed on screen.
+//Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.  Could just be an error in the scripts.
+//TODO Need to make a decision how to handle this.  Should be irrelevant for widescreen mode anyway, & purists will want original appearance for 4:3 ratio.
+//Figures below currently have playfield offset to fit subtitles entirely in lower bar
+
+static const ScreenLayout nemesisLayout {
+  Common::Rect(640,480),  //Screen
+  Common::Rect(Common::Point(64,0), 512, 32), //Menu
+  Common::Rect(Common::Point(64,40), 512, 320), //Working
+  Common::Rect(Common::Point(64,380), 512, 100) //Text
+};
+
+static const ScreenLayout zgiLayout {
+  Common::Rect(640,480),  //Screen
+  Common::Rect(Common::Point(0,0), 640, 32), //Menu
+  Common::Rect(Common::Point(0,40), 640, 344), //Working
+  Common::Rect(Common::Point(0,400), 640, 80) //Text
+};
+
 enum {
 	WINDOW_WIDTH = 640,//Original 640,
 	WINDOW_HEIGHT = 480,//Original 480,
@@ -77,14 +103,14 @@ enum {
 	HIRES_WINDOW_WIDTH = 800, //Original 800
 	HIRES_WINDOW_HEIGHT = 600,  //Original 600
 
-	// Zork Nemesis working window sizes (original aspect ratio 8:5)
+	// Zork Nemesis working window size (original aspect ratio 1.6)
 	ZNM_WORKING_WINDOW_WIDTH = 512, //Original 512
 	ZNM_WORKING_WINDOW_HEIGHT = 320,  //Original 320
 	
 	ZNM_SUBTITLE_HEIGHT = 80, //Original 80
 	ZNM_MENU_HEIGHT = 32,  //Original 80
 
-	// ZGI working window sizes (original aspect ratio 2:1)
+	// ZGI working window size (original aspect ratio 1.86)
 	ZGI_WORKING_WINDOW_WIDTH = 640, //Original 640
 	ZGI_WORKING_WINDOW_HEIGHT = 344,  //Original 344
 	
@@ -124,11 +150,11 @@ public:
 
 public:
 	/**
-	 * A Rectangle centered inside the actual window. All in-game coordinates
+	 * A Rectangle centered inside the game window. All in-game coordinates
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
 	 */
-	Common::Rect _workingWindow;
+//	Common::Rect _workingArea;
 	/**
 	 * A Rectangle in which the menu will be rendered.  
 	 * In the original game, this is always separate from the working window,
@@ -136,8 +162,8 @@ public:
 	 * In the widescreen mod, this window may intersect the working window,
 	 * and thus must be composited and rendered within renderSceneToScreen().
 	 */
-	Common::Rect _menuArea;
-	Common::Rect _subArea;
+//	Common::Rect _menuArea;
+//	Common::Rect _textArea;
 	const Graphics::PixelFormat _resourcePixelFormat;
 	const Graphics::PixelFormat _screenPixelFormat;
 
@@ -241,7 +267,7 @@ public:
 		_clock.stop();
 	}
 
-	void initScreen();
+	void initScreen(bool hiRes=false);
 	void initHiresScreen();
 
 	/**

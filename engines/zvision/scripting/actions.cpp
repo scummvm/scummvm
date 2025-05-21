@@ -996,15 +996,13 @@ bool ActionStreamVideo::execute() {
 
 	decoder = _engine->loadAnimation(_fileName);
 	Subtitle *sub = (subtitleExists) ? new Subtitle(_engine, subpath, switchToHires) : NULL;
-
 	_engine->getCursorManager()->showMouse(false);
 
 	if (switchToHires) {
-		_engine->initHiresScreen();
-		destRect = Common::Rect(40, -40, 760, 440);
-		Common::Rect workingWindow = _engine->_workingWindow;
-		workingWindow.translate(0, -40);
-		_engine->getRenderManager()->initSubArea(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, workingWindow);
+		_engine->getRenderManager()->initialize(true);
+		destRect = Common::Rect(40, -40, 760, 440); //Placed relative to working window origin, of course.
+		//ZGI hi-res video resolution = 720x480, with baked-in letterboxing around video at 720x387 resolution (at origin 0,77) conforming to playfield aspect ratio 0f 1.86
+		//At 800x600 screen resolution, with original video origin position of (40,-40), the letterboxed are will play at position 40,37.  Weird.
 	}
 
 	// WORKAROUND for what appears to be a script bug. When riding with
@@ -1018,22 +1016,14 @@ bool ActionStreamVideo::execute() {
 	// simply pause the ScummVM mixer during the ride.
 
 	bool pauseBackgroundMusic = _engine->getGameId() == GID_GRANDINQUISITOR && (_fileName == "hp3ea021.avi" || _fileName == "hp4ea051.avi");
-
-	if (pauseBackgroundMusic) {
+	if (pauseBackgroundMusic)
 		_engine->_mixer->pauseAll(true);
-	}
-
 	_engine->playVideo(*decoder, destRect, _skippable, sub);
-
-	if (pauseBackgroundMusic) {
+	if (pauseBackgroundMusic)
 		_engine->_mixer->pauseAll(false);
-	}
 
-	if (switchToHires) {
-		_engine->initScreen();
-		_engine->getRenderManager()->initSubArea(WINDOW_WIDTH, WINDOW_HEIGHT, _engine->_workingWindow);
-	}
-
+	if (switchToHires)
+		_engine->getRenderManager()->initialize(false);
 	_engine->getCursorManager()->showMouse(true);
 
 	delete decoder;
