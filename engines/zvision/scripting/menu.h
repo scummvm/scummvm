@@ -27,6 +27,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/scroller.h"
 
 namespace ZVision {
 
@@ -41,12 +42,14 @@ enum menuBar {
 
 class MenuHandler {
 public:
-	MenuHandler(ZVision *engine);
+	MenuHandler(ZVision *engine, Common::Rect menuArea);
 	virtual ~MenuHandler() {};
 	virtual void onMouseMove(const Common::Point &Pos) {};
 	virtual void onMouseDown(const Common::Point &Pos) {};
 	virtual void onMouseUp(const Common::Point &Pos) {};
 	virtual void process(uint32 deltaTimeInMillis) {};
+  bool isInMenu() {return inMenu;}; //For widescreen mod; used to suspend panning, tilting & scripting triggers when the mouse is within the working window but also in the menu.
+  //NB former boolean flag inMenu has been renamed to menuActive.
 
 	void setEnable(uint16 flags) {
 		menuBarFlag = flags;
@@ -57,11 +60,18 @@ public:
 protected:
 	uint16 menuBarFlag;
 	ZVision *_engine;
+  Common::Rect _menuArea;	
+  Common::Rect _menuTriggerArea;
+	bool menuActive;  //True if mouse is in menu area
+	bool inMenu = false;  //True if mouse is over scrolled menu graphics, regardless of menuActive
+	bool redraw = true;
+	int mouseOnItem;
+	int32 colorkey = -1;  //Transparency color for compositing menu over playfield
 };
 
 class MenuZGI: public MenuHandler {
 public:
-	MenuZGI(ZVision *engine);
+	MenuZGI(ZVision *engine, Common::Rect menuArea);
 	~MenuZGI() override;
 	void onMouseMove(const Common::Point &Pos) override;
 	void onMouseUp(const Common::Point &Pos) override;
@@ -76,21 +86,16 @@ private:
 	uint magicId[12];
 
 	int menuMouseFocus;
-	bool inMenu;
-
-	int mouseOnItem;
 
 	bool scrolled[3];
 	int16 scrollPos[3];
 
 	bool clean;
-	bool redraw;
-
 };
 
 class MenuNemesis: public MenuHandler {
 public:
-	MenuNemesis(ZVision *engine);
+	MenuNemesis(ZVision *engine, Common::Rect menuArea);
 	~MenuNemesis() override;
 	void onMouseMove(const Common::Point &Pos) override;
 	void onMouseUp(const Common::Point &Pos) override;
@@ -98,19 +103,17 @@ public:
 private:
 	Graphics::Surface but[4][6];
 	Graphics::Surface menuBar;
-
-	bool inMenu;
-
-	int mouseOnItem;
-
-	bool scrolled;
-	int16 scrollPos;  //Offset of scrolling menu from its fully visible position
-
-	bool redraw;
+	Common::Rect hotspots[4];
+	
+  //Widths & X positions of buttons; {Save, Restore, Prefs, Exit}
+  //X positions relative to left of menu area
+  //const int16 wxButs[4][2] = { {120 , 64}, {144, 184}, {128, 328}, {120, 456} };  //Originals
+  const int16 wxButs[4][2] = { {120 , 0}, {144, 120}, {128, 264}, {120, 392} };
+	
+  Scroller menuScroller;
 
 	int frm;
 	int16 delay;
-
 };
 
 } // End of namespace ZVision

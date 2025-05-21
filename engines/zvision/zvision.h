@@ -77,14 +77,14 @@ enum {
 	HIRES_WINDOW_WIDTH = 800,
 	HIRES_WINDOW_HEIGHT = 600,
 
-	// Zork Nemesis working window sizes
+	// Zork Nemesis working window sizes (original aspect ratio 8:5)
 	ZNM_WORKING_WINDOW_WIDTH = 512, //Original 512
 	ZNM_WORKING_WINDOW_HEIGHT = 320,  //Original 320
 	
 	ZNM_SUBTITLE_HEIGHT = 80, //Original 80
 	ZNM_MENU_HEIGHT = 40,  //Original 80
 
-	// ZGI working window sizes
+	// ZGI working window sizes (original aspect ratio 2:1)
 	ZGI_WORKING_WINDOW_WIDTH = 640, //Original 640
 	ZGI_WORKING_WINDOW_HEIGHT = 320,  //Original 320
 	
@@ -129,6 +129,14 @@ public:
 	 * edges of this Rectangle
 	 */
 	Common::Rect _workingWindow;
+	/**
+	 * A Rectangle in which the menu will be rendered.  
+	 * In the original game, this is always separate from the working window,
+	 * and thus may be rendered completely independently.
+	 * In the widescreen mod, this window may intersect the working window,
+	 * and thus must be composited and rendered within renderSceneToScreen().
+	 */
+	Common::Rect _menuArea;
 	const Graphics::PixelFormat _resourcePixelFormat;
 	const Graphics::PixelFormat _screenPixelFormat;
 

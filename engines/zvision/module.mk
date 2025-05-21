@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	scripting/controls/titler_control.o \
 	scripting/inventory.o \
 	scripting/menu.o \
+	scripting/scroller.o \
 	scripting/scr_file_handling.o \
 	scripting/script_manager.o \
 	scripting/effects/animation_effect.o \
