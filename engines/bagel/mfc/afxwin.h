@@ -27,6 +27,7 @@
 #include "bagel/mfc/afx.h"
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
+#include "bagel/mfc/libs/settings.h"
 
 namespace Bagel {
 namespace MFC {
@@ -1095,6 +1096,9 @@ public:
 
 class CWinApp : public CWinThread {
 	DECLARE_DYNAMIC(CWinApp)
+
+private:
+	Libs::Settings _settings;
 
 public:
 	int m_nCmdShow = SW_SHOWNORMAL;

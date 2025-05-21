@@ -19,15 +19,16 @@
  *
  */
 
-#ifndef BAGEL_HODJNPODJ_LIBS_SETTINGS_H
-#define BAGEL_HODJNPODJ_LIBS_SETTINGS_H
+#ifndef BAGEL_MFC_LIBS_SETTINGS_H
+#define BAGEL_MFC_LIBS_SETTINGS_H
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/savefile.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
+namespace Libs {
 
 class Settings {
 public:
@@ -35,7 +36,7 @@ public:
 		friend class Settings;
 	private:
 		typedef Common::HashMap<Common::String, Common::String,
-		        Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Values;
+			Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Values;
 		Settings *_settings = nullptr;
 		Values _values;
 		bool _modified = false;
@@ -60,7 +61,7 @@ public:
 		}
 		bool getBool(const Common::String &key, bool defaultValue = false) const {
 			return !hasKey(key) || _values[key].empty() ? false :
-			       tolower(_values[key][0]) == 't';
+				tolower(_values[key][0]) == 't';
 		}
 		Common::String getString(const Common::String &key, const char *defaultValue = nullptr) const {
 			return hasKey(key) ? _values[key] : defaultValue;
@@ -87,7 +88,8 @@ public:
 		bool _isSaving;
 	public:
 		Serializer(Domain &domain, bool isSaving) :
-			_domain(domain), _isSaving(isSaving) {}
+			_domain(domain), _isSaving(isSaving) {
+		}
 		~Serializer() {
 			_domain.flushToDisk();
 		}
@@ -112,6 +114,9 @@ public:
 		}
 	};
 
+private:
+	static Common::String getFilename();
+
 public:
 	~Settings() {
 		save();
@@ -125,11 +130,12 @@ public:
 
 private:
 	typedef Common::HashMap<Common::String, Domain,
-	        Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Domains;
+		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> Domains;
 	Domains _domains;
 };
 
-} // namespace HodjNPodj
+} // namespace Libs
+} // namespace MFC
 } // namespace Bagel
 
 #endif

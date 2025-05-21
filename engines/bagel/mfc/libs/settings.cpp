@@ -20,15 +20,24 @@
  */
 
 #include "common/system.h"
-#include "bagel/hodjnpodj/libs/settings.h"
+#include "engines/engine.h"
+#include "bagel/mfc/libs/settings.h"
 
 namespace Bagel {
-namespace HodjNPodj {
+namespace MFC {
+namespace Libs {
 
-static const char *FILENAME = "hodjnpodj_settings.ini";
+Common::String Settings::getFilename() {
+	// Hack to get engine target name
+	Common::String fname = g_engine->getSaveStateName(0);
+	fname = Common::String(fname.c_str(), strchr(fname.c_str(), '.'));
+	fname += "_settings.ini";
+
+	return fname;
+}
 
 void Settings::load() {
-	Common::InSaveFile *src = g_system->getSavefileManager()->openForLoading(FILENAME);
+	Common::InSaveFile *src = g_system->getSavefileManager()->openForLoading(getFilename());
 	Common::String domainName;
 
 	if (src) {
@@ -46,7 +55,7 @@ void Settings::save() {
 	if (_domains.empty() || !isModified())
 		return;
 
-	Common::OutSaveFile *dest = g_system->getSavefileManager()->openForSaving(FILENAME, false);
+	Common::OutSaveFile *dest = g_system->getSavefileManager()->openForSaving(getFilename(), false);
 	Common::String domainName;
 
 	for (Domains::iterator it = _domains.begin(); it != _domains.end(); ++it) {
@@ -68,7 +77,7 @@ void Settings::save() {
 
 bool Settings::isModified() const {
 	for (Domains::iterator it = _domains.begin();
-	        it != _domains.end(); ++it) {
+		it != _domains.end(); ++it) {
 		if (it->_value.isModified())
 			return true;
 	}
@@ -104,8 +113,8 @@ void Settings::Domain::load(Common::InSaveFile *src) {
 		assert(equals != Common::String::npos);
 
 		_values[Common::String(str.c_str(),
-		                       str.c_str() + equals)] =
-		                           Common::String(str.c_str() + equals + 1);
+			str.c_str() + equals)] =
+			Common::String(str.c_str() + equals + 1);
 	}
 }
 
@@ -114,7 +123,7 @@ void Settings::Domain::save(Common::OutSaveFile *dest) {
 
 	for (Values::iterator it = _values.begin(); it != _values.end(); ++it) {
 		str = Common::String::format("%s=%s",
-		                             it->_key.c_str(), it->_value.c_str());
+			it->_key.c_str(), it->_value.c_str());
 		dest->writeString(str);
 		dest->writeByte('\n');
 	}
@@ -127,5 +136,6 @@ void Settings::Domain::flushToDisk() {
 	_settings->save();
 }
 
-} // namespace HodjNPodj
+} // namespace Libs
+} // namespace MFC
 } // namespace Bagel

@@ -70,14 +70,14 @@ Common::Error HodjNPodjEngine::run() {
 		_fonts[size] = new Gfx::BoldFont(font);
 	}
 
-	_settings.load();
 	//_metaGame.initBFCInfo();
-
+#if 0
+	_settings.load();
 	Settings::Domain &meta = _settings["Meta"];
 	_bAnimationsEnabled = meta.getBool("Animations", true);
 	_bScrollingEnabled = meta.getBool("MapScrolling", false);
 	_gameId = getGameId();
-
+#endif
 	// Run the game
 	//runGame();
 	WordSearch::RunWordSearch(nullptr, &_gameInfo);
@@ -85,7 +85,7 @@ Common::Error HodjNPodjEngine::run() {
 	for (int size = 8; size <= 14; size += 2)
 		delete _fonts[size];
 
-	_settings.save();
+//	_settings.save();
 	return Common::kNoError;
 }
 

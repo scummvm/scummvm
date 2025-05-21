@@ -34,7 +34,6 @@
 #include "engines/savestate.h"
 #include "graphics/fonts/winfont.h"
 #include "graphics/screen.h"
-#include "bagel/hodjnpodj/libs/settings.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/bagel.h"
 
@@ -63,7 +62,6 @@ public:
 //	Metagame::SCORESTRUCT _topScores[10];
 //	Metagame::GRANDTRSTRUCT _grandTour;
 	GAMESTRUCT _gameInfo;
-	Settings _settings;
 	bool _bDonePodj = false;
 	bool _bReturnToZoom = false;
 	bool _bReturnToMeta = false;
