@@ -288,10 +288,11 @@ struct Resource20th : ResourceNth {
 	char _datName[32];
 	const char *_bitmapSize;
 
-	Resource20th() : _textBuf(nullptr) {
+	Resource20th() : _textBuf(nullptr), _bitmapSize(nullptr) {
 		memset(_stringsTable, 0, sizeof(_stringsTable));
 		_musicType = 0;
 		_datName[0] = 0;
+		_musicName[0] = 0;
 	}
 
 	virtual ~Resource20th() {

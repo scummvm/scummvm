@@ -113,6 +113,7 @@ struct LzHuffman {
 		memset(_child, 0, sizeof(_child));
 		memset(_freq, 0, sizeof(_freq));
 		memset(_parent, 0, sizeof(_parent));
+		memset(_historyBuffer, 0, sizeof(_historyBuffer));
 	}
 
 	void resetHuffTables() {
