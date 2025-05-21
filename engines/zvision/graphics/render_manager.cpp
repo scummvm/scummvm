@@ -94,15 +94,14 @@ void RenderManager::renderSceneToScreen() {
 	//Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
 	if (!_effects.empty()) {
 		bool copied = false;
-		Common::Rect windowRect(_workingWindow.width(), _workingWindow.height());
+		const Common::Rect windowRect(_workingWindow.width(), _workingWindow.height());
 
 		for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
 			Common::Rect rect = (*it)->getRegion();
 			Common::Rect screenSpaceLocation = rect;
 
-			if ((*it)->isPort()) {
+			if ((*it)->isPort())
 				screenSpaceLocation = transformBackgroundSpaceRectToScreenSpace(screenSpaceLocation);
-			}
 
 			if (windowRect.intersects(screenSpaceLocation)) {
 				if (!copied) {
@@ -135,7 +134,8 @@ void RenderManager::renderSceneToScreen() {
 			out = &_warpedSceneSurface;
 			outWndDirtyRect = Common::Rect(_workingWindow.width(), _workingWindow.height());
 		}
-	} else {
+	} 
+	else {
 		out = in;
 		outWndDirtyRect = _backgroundSurfaceDirtyRect;
 	}
@@ -417,9 +417,9 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	//CODE IDENTICAL TO HERE
 	
 	//BUG TEST CODE
-	Common::Point dstPos2 = dstPos;
-	Common::Rect srcRect2 = srcRect;
-	Common::Rect::getBlitRect(dstPos2, srcRect2, Common::Rect(dst.w,dst.h));
+	//Common::Point dstPos2 = dstPos;
+	//Common::Rect srcRect2 = srcRect;
+	//Common::Rect::getBlitRect(dstPos2, srcRect2, Common::Rect(dst.w,dst.h));
 	
 	//Generate destination rectangle
 	Common::Rect dstRect = Common::Rect(dst.w, dst.h);
@@ -460,7 +460,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 		  dstPos.y = 0;
 		  
 	  //BUG TEST
-	  assert(dstPos == dstPos2);
+	  //assert(dstPos == dstPos2);
     
     //If _x & _y lie within destination surface
     if (dstPos.x < dst.w && dstPos.y < dst.h) {
@@ -703,14 +703,6 @@ void RenderManager::prepareBackground() {
 void RenderManager::clearMenuSurface(int32 colorkey) {
 	_menuSurfaceDirtyRect = Common::Rect(0, 0, _menuSurface.w, _menuSurface.h);
 	_menuSurface.fillRect(_menuSurfaceDirtyRect, colorkey);
-}
-
-void RenderManager::clearMenuSurface(const Common::Rect &r, int32 colorkey) {
-	if (_menuSurfaceDirtyRect.isEmpty())
-		_menuSurfaceDirtyRect = r;
-	else
-		_menuSurfaceDirtyRect.extend(r);
-	_menuSurface.fillRect(r, colorkey);
 }
 
 void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow) {
