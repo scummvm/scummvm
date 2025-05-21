@@ -788,7 +788,6 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 
 	setWorldTransform(matIdentity);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 	glFrontFace(GL_CW); // WME DX have CCW
@@ -822,30 +821,56 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 		}
 	}
 
+	// render lights lines
 	for (uint i = 0; i < lights.size(); ++i) {
 		if (lights[i]->_active) {
-			glBegin(GL_LINES);
-			glColor3f(1.0f, 1.0f, 0.0f);
-			DXVector3 right = lights[i]->_pos + DXVector3(1000.0f, 0.0f, 0.0f);
-			DXVector3 up = lights[i]->_pos + DXVector3(0.0f, 1000.0f, 0.0f);
-			DXVector3 backward = lights[i]->_pos + DXVector3(0.0f, 0.0f, 1000.0f);
-			DXVector3 left = lights[i]->_pos + DXVector3(-1000.0f, 0.0f, 0.0f);
-			DXVector3 down = lights[i]->_pos + DXVector3(0.0f, -1000.0f, 0.0f);
-			DXVector3 forward = lights[i]->_pos + DXVector3(0.0f, 0.0f, -1000.0f);
+			LineVertex vertices[12];
+			vertices[0].x = lights[i]->_pos._x;
+			vertices[0].y = lights[i]->_pos._y;
+			vertices[0].z = lights[i]->_pos._z;
+			vertices[1].x = lights[i]->_pos._x + 1000.0f;
+			vertices[1].y = lights[i]->_pos._y;
+			vertices[1].z = lights[i]->_pos._z;
+			vertices[2].x = lights[i]->_pos._x;
+			vertices[2].y = lights[i]->_pos._y;
+			vertices[2].z = lights[i]->_pos._z;
+			vertices[3].x = lights[i]->_pos._x;
+			vertices[3].y = lights[i]->_pos._y + 1000.0f;
+			vertices[3].z = lights[i]->_pos._z;
+			vertices[4].x = lights[i]->_pos._x;
+			vertices[4].y = lights[i]->_pos._y;
+			vertices[4].z = lights[i]->_pos._z;
+			vertices[5].x = lights[i]->_pos._x;
+			vertices[5].y = lights[i]->_pos._y;
+			vertices[5].z = lights[i]->_pos._z + 1000.0f;
+			vertices[6].x = lights[i]->_pos._x;
+			vertices[6].y = lights[i]->_pos._y;
+			vertices[6].z = lights[i]->_pos._z;
+			vertices[7].x = lights[i]->_pos._x - 1000.0f;
+			vertices[7].y = lights[i]->_pos._y;
+			vertices[7].z = lights[i]->_pos._z;
+			vertices[8].x = lights[i]->_pos._x;
+			vertices[8].y = lights[i]->_pos._y;
+			vertices[8].z = lights[i]->_pos._z;
+			vertices[9].x = lights[i]->_pos._x;
+			vertices[9].y = lights[i]->_pos._y - 1000.0f;
+			vertices[9].z = lights[i]->_pos._z;
+			vertices[10].x = lights[i]->_pos._x;
+			vertices[10].y = lights[i]->_pos._y;
+			vertices[10].z = lights[i]->_pos._z;
+			vertices[11].x = lights[i]->_pos._x;
+			vertices[11].y = lights[i]->_pos._y;
+			vertices[11].z = lights[i]->_pos._z - 1000.0f;
 
-			glVertex3fv(lights[i]->_pos);
-			glVertex3fv(right);
-			glVertex3fv(lights[i]->_pos);
-			glVertex3fv(up);
-			glVertex3fv(lights[i]->_pos);
-			glVertex3fv(backward);
-			glVertex3fv(lights[i]->_pos);
-			glVertex3fv(left);
-			glVertex3fv(lights[i]->_pos);
-			glVertex3fv(down);
-			glVertex3fv(lights[i]->_pos);
-			glVertex3fv(forward);
-			glEnd();
+			glColor3f(1.0f, 1.0f, 0.0f);
+
+			glEnableClientState(GL_VERTEX_ARRAY);
+
+			glVertexPointer(3, GL_FLOAT, sizeof(LineVertex), &vertices[0].x);
+
+			glDrawArrays(GL_LINES, 0, 12);
+
+			glDisableClientState(GL_VERTEX_ARRAY);
 		}
 	}
 
@@ -853,7 +878,6 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 	glDisable(GL_BLEND);
 
 	glDisable(GL_COLOR_MATERIAL);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 // backend layer 3DShadowVolume::Render()
