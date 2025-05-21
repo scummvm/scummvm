@@ -1143,8 +1143,6 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		if (CONTAINS_DEFINE(setup.defines, "ENABLE_WINTERMUTE")) {
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex");
-			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment");
-			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment");
@@ -1157,6 +1155,8 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_simple_shadow.fragment");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_simple_shadow.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex");
 		}
