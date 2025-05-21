@@ -56,11 +56,6 @@ bool BaseSurfaceOpenGL3D::invalidate() {
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayHalfTrans(int x, int y, Rect32 rect) {
-	warning("BaseSurfaceOpenGL3D::displayHalfTrans not yet implemented");
-	return true;
-}
-
 bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
 	prepareToDraw();
 
@@ -115,11 +110,6 @@ bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX,
 
 	Vector2 scale(numTimesX, numTimesY);
 	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, false, Graphics::BLEND_NORMAL, false, false);
-	return true;
-}
-
-bool BaseSurfaceOpenGL3D::restore() {
-	warning("BaseSurfaceOpenGL3D::restore not yet implemented");
 	return true;
 }
 
@@ -244,18 +234,8 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, int a) {
-	warning("BaseSurfaceOpenGL3D::putPixel not yet implemented");
-	return true;
-}
-
 bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
 	warning("BaseSurfaceOpenGL3D::getPixel not yet implemented");
-	return true;
-}
-
-bool BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
-	warning("BaseSurfaceOpenGL3D::comparePixel not yet implemented");
 	return true;
 }
 
