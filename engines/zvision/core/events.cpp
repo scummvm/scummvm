@@ -292,8 +292,10 @@ void ZVision::processEvents() {
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
+  debug(6,"ZVision::onMouseMove()");
 	_menu->onMouseMove(pos);
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
+	Common::Rect _workingArea = _renderManager->getWorkingArea();
 
 	bool cursorWasChanged = false;
 
@@ -328,32 +330,33 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	//               ^
 
 	// Clip the horizontal mouse position to the working window
+	debug(6,"Mouse pos.x, %d, clipping with %d+1, %d+1", pos.x, _workingArea.left, _workingArea.right);
 	Common::Point clippedPos = pos;
-	clippedPos.x = CLIP<int16>(pos.x, _workingWindow.left + 1, _workingWindow.right - 1);
+	clippedPos.x = CLIP<int16>(pos.x, _workingArea.left + 1, _workingArea.right - 1);
 
-	if (_workingWindow.contains(clippedPos) && !_menu->inMenu()) {
+	if (_workingArea.contains(clippedPos) && !_menu->inMenu()) {
 		cursorWasChanged = _scriptManager->onMouseMove(clippedPos, imageCoord);
 
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
 		if (renderState == RenderTable::PANORAMA) {
-			if (clippedPos.x >= _workingWindow.left && clippedPos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
+			if (clippedPos.x >= _workingArea.left && clippedPos.x < _workingArea.left + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0) {
 					mspeed = 25;
 				}
-				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.left)) - mspeed).toInt(), -1);
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingArea.left)) - mspeed).toInt(), -1);
 
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
-			} else if (clippedPos.x <= _workingWindow.right && clippedPos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
+			} else if (clippedPos.x <= _workingArea.right && clippedPos.x > _workingArea.right - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0) {
 					mspeed = 25;
 				}
-				_mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
+				_mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingArea.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
 
 				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
@@ -361,23 +364,23 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				_mouseVelocity = 0;
 			}
 		} else if (renderState == RenderTable::TILT) {
-			if (clippedPos.y >= _workingWindow.top && clippedPos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
+			if (clippedPos.y >= _workingArea.top && clippedPos.y < _workingArea.top + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0) {
 					mspeed = 25;
 				}
-				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - mspeed).toInt(), -1);
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingArea.top)) - mspeed).toInt(), -1);
 
 				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;
-			} else if (clippedPos.y <= _workingWindow.bottom && clippedPos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
+			} else if (clippedPos.y <= _workingArea.bottom && clippedPos.y > _workingArea.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0) {
 					mspeed = 25;
 				}
-				_mouseVelocity = MAX((Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.bottom + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
+				_mouseVelocity = MAX((Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingArea.bottom + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
 
 				_cursorManager->changeCursor(CursorIndex_DownArr);
 				cursorWasChanged = true;

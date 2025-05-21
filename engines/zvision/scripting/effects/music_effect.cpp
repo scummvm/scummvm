@@ -113,7 +113,7 @@ MusicNode::~MusicNode() {
 		_engine->getScriptManager()->setStateValue(_key, 2);
 	if (_sub)
 		delete _sub;
-	debug(1, "MusicNode: %d destroyed", _key);
+	debug(2, "MusicNode: %d destroyed", _key);
 }
 
 void MusicNode::setDeltaVolume(uint8 volume) {

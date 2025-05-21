@@ -44,7 +44,7 @@ enum {
 
 struct MenuParams {
   int16 wxButs[4][2];   //Widths & X positions of main menu buttons; {Save, Restore, Prefs, Quit}
-  int16 wMain;  //Widths & X position of main menu background
+  int16 wMain;  //Width of main menu background
   int8 idleFrame; //Frame to display of unselected main menu button
   int8 activeFrame; //Frame to display of selected main menu button when mouse is down
   int8 clickedFrame; //Frame to display of selected main menu button when mouse is down

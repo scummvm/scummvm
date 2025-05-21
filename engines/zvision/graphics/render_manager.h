@@ -50,7 +50,9 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Common::Rect menuArea, const Graphics::PixelFormat pixelFormat, bool doubleFPS);
+  //TODO - eliminate this; old system
+//	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingArea, const Common::Rect menuArea, const Graphics::PixelFormat pixelFormat, bool doubleFPS);
+	RenderManager(ZVision *engine, const ScreenLayout layout, const Graphics::PixelFormat pixelFormat, bool doubleFPS, bool widescreen = false);
 	~RenderManager();
 
 private:
@@ -69,21 +71,27 @@ private:
 	ZVision *_engine;
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
+	const ScreenLayout _layout;
+	bool _hiRes = false;
 
 	/**
-	 * A Rectangle centered inside the actual window. All in-game coordinates
+	 * A Rectangle representing the screen/window resolution.
+	 */	
+	Common::Rect _screenArea;
+	
+	Common::Point _screenCentre; //Centre of the screen at current resolution
+
+	/**
+	 * A Rectangle placed inside _screenArea All in-game coordinates
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
 	 */
-	Common::Rect _workingWindow;
-	
-	const Common::Point _screenCentre; //Centre of the screen at current resolution
-	
+	Common::Rect _workingArea;
 	
 	/**
 	Managed surface representing physical screen; dirty rectangles will be handled automatically by this from now on
     */
-	Graphics::Screen _screenSurface;
+	Graphics::Screen _screen;
 
 	/** A buffer for background image that's being used to create the background */
 	Graphics::Surface _currentBackgroundImage;
@@ -103,18 +111,18 @@ private:
 	// If it's a normal scene, the pixels will be blitted directly to the screen
 	// If it's a panorma / tilt scene, the pixels will be first warped to _warpedSceneSurface
 	Graphics::Surface _backgroundSurface;
-	Graphics::ManagedSurface _backgroundManagedSurface;
+	Graphics::ManagedSurface _workingManagedSurface;
 	Common::Rect _backgroundSurfaceDirtyRect;
 
-	// A buffer for subtitles
+	// Buffer for subtitles
 	Graphics::Surface _subSurface;
-	Graphics::ManagedSurface _subManagedSurface;
 	Common::Rect _subSurfaceDirtyRect;
 
-	// Rectangle for subtitles area
-	Common::Rect _subArea;
+	// Rectangle for subtitles & other messages
+	Graphics::ManagedSurface _textManagedSurface;
+	Common::Rect _textArea;
 
-	// A buffer for menu drawing
+	// Buffer for menu drawing
 	Graphics::Surface _menuSurface;
 	Graphics::ManagedSurface _menuManagedSurface;
 	Common::Rect _menuSurfaceDirtyRect;
@@ -144,17 +152,21 @@ private:
 	EffectsList _effects;
 
 	bool _doubleFPS;
+	bool _widescreen;
 
 public:
-	void init(bool hiRes = false);  //TODO - implement this & add to engine initialisation!
+	void initialize(bool hiRes = false);
 
 	/**
 	 * Renders the scene to the screen
 	 . Returns true if screen was updated
 	 */
-	bool renderSceneToScreen(bool overlayOnly = false, bool immediate = false);
+	bool renderSceneToScreen(bool immediate = false, bool overlayOnly = false);
 	
 	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working window origin
+	
+	Common::Rect getMenuArea() {return _menuArea;}
+	Common::Rect getWorkingArea() {return _workingArea;}
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -205,6 +217,8 @@ public:
 	 * @param offset The amount to offset the background
 	 */
 	void setBackgroundPosition(int offset);
+
+
 
 	/**
 	 * Converts a point in screen coordinate space to image coordinate space
@@ -257,8 +271,7 @@ public:
 	void blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = 0);
 
 	// Subtitles methods
-
-	void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow);
+	//void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingArea);
 
 	// Create subtitle area and return ID
 	uint16 createSubArea(const Common::Rect &area);
@@ -290,7 +303,7 @@ public:
 	// Clear whole/area of subtitle surface
 	void clearSubSurface(int32 colorkey = -1);
 
-	// Copy needed portion of background surface to workingWindow surface
+	// Copy needed portion of background surface to workingArea surface
 	void prepareBackground();
 
 	/**
