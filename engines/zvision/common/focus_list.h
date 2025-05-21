@@ -24,8 +24,10 @@
 
 #include "common/array.h"
 
+namespace ZVision {
+
 /**
- * FILO list of unique members
+ * FILO array of unique members
  * 
  * Tracks redraw order of layered graphical elements.
  * When an element has current focus, it is reshuffled to the top of the pile.
@@ -33,79 +35,58 @@
  * Used to: 
  *	ensure scrolling menus are drawn in the order in which they last had mouse focus.
  * 	ensure most recently updated subtitle is drawn atop all others.
- * Provides limited Common::Array functionality
  */
 
-template<typename T>
-class FocusList {
+template<class T>
+class FocusList : public Common::Array<T> {
 private:
-	Common::Array<T> _focus;
-	typedef uint SizeType;  //TODO - find a way to make this typedef inherit from the definition in Common::Array
+	typedef uint size_type;
 public:
 /**
  * Move unique entry to front of list; add to list if not already present.
  * Sequence of all remaining members remains unchanged.
  */
-	void set(T currentFocus) {
-		if (!_focus.size())
-			_focus.push_back(currentFocus);
+	void set(const T currentFocus) {
+		if (!this->size())
+			this->push_back(currentFocus);
 		else {
-			if (_focus.front() != currentFocus) {
+			if (this->front() != currentFocus) {
 				Common::Array<T> buffer;
-				while (_focus.size() > 0) {
-					if (_focus.back() != currentFocus)
-						buffer.push_back(_focus.back());
-					_focus.pop_back();
+				while (this->size() > 0) {
+					if (this->back() != currentFocus)
+						buffer.push_back(this->back());
+					this->pop_back();
 				}
-				_focus.push_back(currentFocus);
+				this->push_back(currentFocus);
 				while (buffer.size() > 0) {
-					_focus.push_back(buffer.back());
+					this->push_back(buffer.back());
 					buffer.pop_back();
 				}
 			}
 		}
 	}
 
-	T get(SizeType idx = 0) {
-		return _focus[idx];
-	}
-
-	T front() {
-		return _focus.front();
-	}
-
-	T &operator[](SizeType idx) {
-		assert(idx < _focus.size());
-		return _focus[idx];
-	}
-
-	SizeType size() {
-		return _focus.size();
-	}
-
-	void clear() {
-		_focus.clear();
-	}
-
 /**
  * Remove unique entry, if present.
  * Sequence of all remaining members remains unchanged.
  */
-	void remove(T value) {
-		if (_focus.size()) {
+	void remove(const T value) {
+		if (this->size()) {
 			Common::Array<T> buffer;
-			while (_focus.size() > 0) {
-				if (_focus.back() != value)
-					buffer.push_back(_focus.back());
-				_focus.pop_back();
+			while (this->size() > 0) {
+				if (this->back() != value)
+					buffer.push_back(this->back());
+				this->pop_back();
 			}
 			while (buffer.size() > 0) {
-				_focus.push_back(buffer.back());
+				this->push_back(buffer.back());
 				buffer.pop_back();
 			}
 		}
 	}
 
 };
+
+}  // End of namespace ZVision
 
 #endif
