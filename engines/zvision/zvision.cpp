@@ -326,24 +326,18 @@ Common::Error ZVision::run() {
 
 		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
 
-		processEvents();
+		processEvents();  //NB rotateTo or playVideo event will pause clock & call renderSceneToScreen() directly.
 		_renderManager->updateRotation();
-
 		_scriptManager->update(deltaTime);
 		_menu->process(deltaTime);
 
 		// Render the backBuffer to the screen
 		_renderManager->prepareBackground();
-		_renderManager->processSubs(deltaTime); //TODO - alter to blit subs to intermediate buffer, then handle this buffer in renderscenetoscreen, in same manner as menu
-		_renderManager->renderSceneToScreen();
-
-		// Update the screen
-		if (canRender()) {
-			_system->updateScreen();
+		_renderManager->processSubs(deltaTime);
+		if(_renderManager->renderSceneToScreen())
 			_renderedFrameCount++;
-		} else {
+		else
 			_frameRenderDelay--;
-		}
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
@@ -353,10 +347,8 @@ Common::Error ZVision::run() {
 		if (_doubleFPS) {
 			delay >>= 1;
 		}
-
 		_system->delayMillis(delay);
 	}
-
 	return Common::kNoError;
 }
 
@@ -371,6 +363,7 @@ void ZVision::pauseEngineIntern(bool pause) {
 }
 
 void ZVision::setRenderDelay(uint delay) {
+  debug(2,"Setting framerenderdelay to %d", delay);
 	_frameRenderDelay = delay;
 }
 
@@ -397,23 +390,34 @@ void ZVision::initScreen() {
 	uint16 workingWindowWidth = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH : ZGI_WORKING_WINDOW_WIDTH;
 	uint16 workingWindowHeight = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
 	_workingWindow = Common::Rect(
-						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
-						 (WINDOW_HEIGHT - workingWindowHeight) / 2,
-						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
-						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
-					 );
+    (WINDOW_WIDTH  -  workingWindowWidth) / 2,
+    (WINDOW_HEIGHT - workingWindowHeight) / 2,
+    ((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
+    ((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
+  );
 
 	uint16 menuAreaHeight = (getGameId() == GID_NEMESIS) ? ZNM_MENU_HEIGHT : ZGI_MENU_HEIGHT;
+	
   _menuArea = Common::Rect(
-						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
-						 0,
-						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
-						menuAreaHeight
-					 );
+    (WINDOW_WIDTH  -  workingWindowWidth) / 2,
+    0,
+    ((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
+    menuAreaHeight
+  );
+ 
+	uint16 subAreaHeight = (getGameId() == GID_NEMESIS) ? ZNM_SUBTITLE_HEIGHT : ZGI_SUBTITLE_HEIGHT;
+ 
+  _subArea = Common::Rect(
+    0,
+    WINDOW_HEIGHT - subAreaHeight,
+    WINDOW_WIDTH,
+    WINDOW_HEIGHT
+  );
 
-  if(_widescreen)
+  if(_widescreen) {
     _menuArea.moveTo(_workingWindow.left, _workingWindow.top);
-
+    _subArea.moveTo(0, _workingWindow.bottom - _subArea.height());
+  }
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, &_screenPixelFormat);
 }
 

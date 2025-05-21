@@ -115,7 +115,6 @@ protected:
 	bool prevInMenu = false;
 	bool redraw = true;
 	int mouseOnItem = -1;
-	static const int32 colorkey = -1;  //Transparency color for compositing menu over playfield
 	static const uint8 hMainMenu = 32;
   int8 mainClicked = -1;
 

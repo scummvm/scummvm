@@ -150,8 +150,9 @@ public:
 
 	/**
 	 * Renders the scene to the screen
+	 . Returns true if screen was updated
 	 */
-	void renderSceneToScreen(bool videoPlaying = false);
+	bool renderSceneToScreen(bool overlayOnly = false, bool immediate = false);
 	
 	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working window origin
 
@@ -264,7 +265,7 @@ public:
 	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey = -1);
 
 	// Blitting surface-to-menu methods
-	void blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = -1);
+	void blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = 0);
 
 	// Subtitles methods
 
@@ -295,7 +296,10 @@ public:
 	Graphics::Surface *loadImage(const Common::Path &file, bool transposed);
 
 	// Clear whole/area of menu surface
-	void clearMenuSurface(int32 colorkey = 0);
+	void clearMenuSurface(int32 colorkey = -1);
+	
+	// Clear whole/area of subtitle surface
+	void clearSubSurface(int32 colorkey = -1);
 
 	// Copy needed portion of background surface to workingWindow surface
 	void prepareBackground();
