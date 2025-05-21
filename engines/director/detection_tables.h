@@ -543,7 +543,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wiggles1",			"A Day with the Wiggles" },
 	{ "willywabbit",		"Willy Wabbit & His Magical Books" },
 	{ "willywabbit2",		"Around the World With Willy Wabbit" },
-	{ "willywabbitmandarin",	"Willy Wabbit Mandarin Adventure" },
+	{ "willywabbitmandarin","Willy Wabbit Mandarin Adventure" },
 	{ "willywabbitmath",	"Willy Wabbit Math Adventure" },
 	{ "willywabbitmosaic",	"Mosaic Game" },
 	{ "winniewitch",		"Winnie the Witch" },
@@ -1601,6 +1601,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "cmc",				"Creative Multimedia Catalog" },
 	{ "compuserve",			"CompuServe Demo" },
 	{ "coreltour",			"Corel Product Tour" },
+	{ "daedalusguide",		"The Official Guide to The Daedalus Encounter" },  // Companion Disc
 	{ "davidsonpp",			"Davidson Product Previews" },
 	{ "davidsonps",			"Davidson Product Sampler" },
 	{ "dewarswl",			"DeWar's \"White Label\"" },
@@ -3976,6 +3977,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	//									  "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69538, Common::FR_FRA, 404),
 	MACGAME2_l("daedalus", "", "DAEDALUS",	   "0c7bbb4b24823e5ab871cb4c1d6f3710", 483518,
 							   "DAEDALUS.DAT", "4eb2fab14f1b932ae9f01d8b05a411de", 69538, Common::FR_FRA, 404),
+
+	MACGAME1("daedalusguide", "", "Daedalus Guide (24 Bit)", "r:77f4098988d5386794d1530065f514cd", 303961, 400),
+	WINGAME2("daedalusguide", "", "GUIDE.EXE", "t:194e099857d6524dcbabce20250048ea", 1719019,
+								  "MOVIES/TV_11.MOV", "t:3918daeea52777ceedf8e1d8fad250af", 74445870, 404),
 
 	WINDEMO2("dailymail100", "Demo", "STARTUP.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1129467,
 									 "LAUNCH2.DIR", "f913a0c83847ccc9df461311a4475a77", 223086, 404),
