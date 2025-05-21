@@ -54,9 +54,6 @@
 #define INCL_DOS
 #include <os2.h>
 #endif
-#ifdef ATARI
-#include <mint/osbind.h>
-#endif
 
 bool POSIXFilesystemNode::exists() const {
 	return access(_path.c_str(), F_OK) == 0;
@@ -93,7 +90,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 		_path = p;
 	}
 
-#if defined(__OS2__) || defined(ATARI)
+#ifdef __OS2__
 	// On OS/2, 'X:/' is a root of drive X, so we should not remove that last
 	// slash.
 	if (!(_path.size() == 3 && _path.hasSuffix(":/")))
@@ -143,17 +140,13 @@ AbstractFSNode *POSIXFilesystemNode::getChild(const Common::String &n) const {
 bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
 
-#if defined(__OS2__) || defined(ATARI)
+#ifdef __OS2__
 	if (_path == "/") {
 		// Special case for the root dir: List all DOS drives
-#ifdef __OS2__
 		ULONG ulDrvNum;
 		ULONG ulDrvMap;
 
 		DosQueryCurrentDisk(&ulDrvNum, &ulDrvMap);
-#else
-		unsigned long ulDrvMap = Drvmap();
-#endif
 
 		for (int i = 0; i < 26; i++) {
 			if (ulDrvMap & 1) {
@@ -193,11 +186,11 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		}
 
 		// Start with a clone of this node, with the correct path set
-		POSIXFilesystemNode *entry = static_cast<POSIXFilesystemNode *>(makeNode(_path));
-		entry->_displayName = dp->d_name;
+		POSIXFilesystemNode entry(*this);
+		entry._displayName = dp->d_name;
 		if (_path.lastChar() != '/')
-			entry->_path += '/';
-		entry->_path += entry->_displayName;
+			entry._path += '/';
+		entry._path += entry._displayName;
 
 #if defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
 		/* TODO: d_type is not part of POSIX, so it might not be supported
@@ -207,21 +200,21 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		 * The d_type method is used to avoid costly recurrent stat() calls in big
 		 * directories.
 		 */
-		entry->setFlags();
+		entry.setFlags();
 #else
 		switch (dp->d_type) {
 		case DT_DIR:
 		case DT_REG:
-			entry->_isValid = true;
-			entry->_isDirectory = (dp->d_type == DT_DIR);
+			entry._isValid = true;
+			entry._isDirectory = (dp->d_type == DT_DIR);
 			break;
 		case DT_LNK:
-			entry->_isValid = true;
+			entry._isValid = true;
 			struct stat st;
-			if (stat(entry->_path.c_str(), &st) == 0)
-				entry->_isDirectory = S_ISDIR(st.st_mode);
+			if (stat(entry._path.c_str(), &st) == 0)
+				entry._isDirectory = S_ISDIR(st.st_mode);
 			else
-				entry->_isDirectory = false;
+				entry._isDirectory = false;
 			break;
 		case DT_UNKNOWN:
 		default:
@@ -231,26 +224,22 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			// be unreliable on some OSes and filesystems; a confirmed example is
 			// macOS 10.4, where d_type can hold bogus values when iterating over
 			// the files of a cddafs mount point (as used by MacOSXAudioCDManager).
-			entry->setFlags();
+			entry.setFlags();
 			break;
 		}
 #endif
 
 		// Skip files that are invalid for some reason (e.g. because we couldn't
 		// properly stat them).
-		if (!entry->_isValid) {
-			delete entry;
+		if (!entry._isValid)
 			continue;
-		}
 
 		// Honor the chosen mode
-		if ((mode == Common::FSNode::kListFilesOnly && entry->_isDirectory) ||
-			(mode == Common::FSNode::kListDirectoriesOnly && !entry->_isDirectory)) {
-			delete entry;
+		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
+			(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
-		}
 
-		myList.push_back(entry);
+		myList.push_back(new POSIXFilesystemNode(entry));
 	}
 	closedir(dirp);
 
@@ -261,7 +250,7 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;	// The filesystem root has no parent
 
-#if defined(__OS2__) || defined(ATARI)
+#ifdef __OS2__
 	if (_path.size() == 3 && _path.hasSuffix(":/"))
 		// This is a root directory of a drive
 		return makeNode("/");   // return a virtual root for a list of drives
