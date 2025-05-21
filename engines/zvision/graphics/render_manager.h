@@ -283,7 +283,6 @@ public:
 
 	// Clear whole/area of menu surface
 	void clearMenuSurface(int32 colorkey = 0);
-	void clearMenuSurface(const Common::Rect &r, int32 colorkey = 0);
 
 	// Copy needed portion of background surface to workingWindow surface
 	void prepareBackground();
