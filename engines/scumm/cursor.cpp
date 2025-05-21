@@ -896,6 +896,8 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 		_cursor.height = height;
 		_cursor.hotspotX = hotspotX;
 		_cursor.hotspotY = hotspotY;
+
+		return;
 	} else {
 		_cursor.width = 23;
 		_cursor.height = 21;
