@@ -75,7 +75,7 @@ void SubtitleManager::process(int32 deltatime) {
 		_renderManager->clearTextSurface();
 		//Render just the most recent subtitle
 		if (_subsFocus.size()) {
-			uint16 curSub = _subsFocus.get();
+			uint16 curSub = _subsFocus.front();
 			debug(4, "Rendering subtitle %d", curSub);
 			Subtitle *sub = _subsList[curSub];
 			if (sub->_lineId >= 0) {
