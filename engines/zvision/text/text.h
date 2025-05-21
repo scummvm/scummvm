@@ -76,7 +76,7 @@ public:
 
 	void drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification jusification);
 	int32 drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest);
-	void drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest);
+	void drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest, bool blackFrame = false);
 
 private:
 	ZVision *_engine;

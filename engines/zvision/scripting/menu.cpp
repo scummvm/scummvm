@@ -118,7 +118,7 @@ void MenuManager::onMouseDown(const Common::Point &Pos) {
         redraw = true;
       }
   }
-  debug("mouse position %d %d", Pos.x, Pos.y);
+  debug(1, "mouse position %d %d", Pos.x, Pos.y);
 }
 
 void MenuManager::onMouseMove(const Common::Point &Pos) {
@@ -178,7 +178,7 @@ void MenuManager::process(uint32 deltatime) {
       redraw = true;
     }
 	if(redraw) {
-	  _engine->getRenderManager()->clearMenuSurface(colorkey);
+	  _engine->getRenderManager()->clearMenuSurface();
   	redrawAll();
   	redraw = false;
   }

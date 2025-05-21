@@ -69,7 +69,7 @@ RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowH
 
 	_menuSurface.create(_menuArea.width(), _menuArea.height(), _pixelFormat);
 	_menuManagedSurface.create(_screenSurface, _menuArea);
-	_subManagedSurface.create(_screenSurface, _subArea);
+	_subManagedSurface.create(_screenSurface, _engine->_subArea);
 
 	initSubArea(windowWidth, windowHeight, workingWindow);
 }
@@ -87,8 +87,11 @@ RenderManager::~RenderManager() {
 	_screenSurface.free();
 }
 
-void RenderManager::renderSceneToScreen(bool videoPlaying) {
-  if(!videoPlaying) {
+bool RenderManager::renderSceneToScreen(bool overlayOnly, bool immediate) {
+
+  //TODO - add functionality to blank sidebars or letterbox bars as appropriate
+
+  if(!overlayOnly) {
 	  Graphics::Surface *out = &_warpedSceneSurface;
 	  Graphics::Surface *in = &_backgroundSurface;
 	  Common::Rect outWndDirtyRect;
@@ -140,32 +143,28 @@ void RenderManager::renderSceneToScreen(bool videoPlaying) {
 	  else {
 		  out = in;
 		  outWndDirtyRect = _backgroundSurfaceDirtyRect;
-	  }
-	  
-	  
+	  }	  
 	  _backgroundManagedSurface.simpleBlitFrom(*out); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
 	}
 	
 	_menuManagedSurface.transBlitFrom(_menuSurface, -1);
-	if(_engine->canRender())
-	  _screenSurface.update();
+  _subManagedSurface.transBlitFrom(_subSurface, -1);
 
-  /*
-	if (!outWndDirtyRect.isEmpty()) {
-		Common::Rect rect = outWndDirtyRect;
-		rect.translate(_workingWindow.left,_workingWindow.top); //NB - feels like this should really be moveTo(), but that causes an offset bug when rendering doorknocker.  Suspect this is an irregularity elsewhere that will eventually need to be found & fixed, but can be tolerated for now.
-		
-  //Update dirty rectangle of screen
-		//copyToScreen(*out, rect, outWndDirtyRect.left, outWndDirtyRect.top);
-    copyToScreen(_backgroundManagedSurface, rect, outWndDirtyRect.left, outWndDirtyRect.top);
-	}
-	//*/
+  if(_engine->canRender() || immediate) {
+    _screenSurface.update();
+    return true;
+  }
+  else {
+    debug(1,"Skipping screen update; engine forbids rendering at this time.");
+    return false;
+  }
 }
 
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
   Common::Rect _dstRect = dstRect;
-  _dstRect.moveTo(_workingWindow.left, _workingWindow.top);
+  _dstRect.translate(_workingWindow.left, _workingWindow.top);
 	_vidManagedSurface.create(_screenSurface, _dstRect);
+	debug(1,"Obtaining managed video surface at %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
 	return _vidManagedSurface;
 }
 
@@ -184,11 +183,11 @@ void RenderManager::renderImageToBackground(const Common::Path &fileName, int16 
 	surface.free();
 }
 
-void RenderManager::renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY, uint32 keycolor) {
+void RenderManager::renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY, uint32 colorkey) {
 	Graphics::Surface surface;
 	readImageToSurface(fileName, surface);
 
-	blitSurfaceToBkg(surface, destX, destY, keycolor);
+	blitSurfaceToBkg(surface, destX, destY, colorkey);
 	surface.free();
 }
 
@@ -532,7 +531,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 		return;
 
 	Graphics::Surface *srcAdapted = src.convertTo(dst.format);
-	uint32 keycolor = colorkey & ((1 << (src.format.bytesPerPixel << 3)) - 1);
+	uint32 keycolor = colorkey & ((1 << (src.format.bytesPerPixel << 3)) - 1);  //TODO - figure out what the crap is going on here.
 
 	// Copy srcRect from src surface to dst surface
 	const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
@@ -583,18 +582,7 @@ void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const C
 
 void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey) {
 	Common::Rect empt;
-	Common::Point destPos{x,y};
-  Graphics::Surface *dstSurface = &_menuSurface;
-	if (colorkey >= 0) {
-		//blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
-    blitSurfaceToSurface(src, empt, *dstSurface, x, y, colorkey);
-    //_menuManagedSurface.transBlitFrom(src,destPos,colorkey);
-  }
-	else {
-		//blitSurfaceToSurface(src, empt, _menuSurface, x, y);
-		blitSurfaceToSurface(src, empt, *dstSurface, x, y);
-    //_menuManagedSurface.blitFrom(src,destPos);
-  }
+	blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
   //*/
 	Common::Rect dirty(src.w, src.h);
 	dirty.moveTo(x, y);
@@ -707,8 +695,17 @@ void RenderManager::prepareBackground() {
 }
 
 void RenderManager::clearMenuSurface(int32 colorkey) {
+  //TODO - reinstate more efficient dirtyrect system
+  //TODO - blank upper letterbox area when NOT in widescreen mode.
 	_menuSurfaceDirtyRect = Common::Rect(0, 0, _menuSurface.w, _menuSurface.h);
 	_menuSurface.fillRect(_menuSurfaceDirtyRect, colorkey);
+}
+
+void RenderManager::clearSubSurface(int32 colorkey) {
+  //TODO - reinstate more efficient dirtyrect system
+  //TODO - blank lower letterbox area when NOT in widescreen mode.
+	_subSurfaceDirtyRect = Common::Rect(0, 0, _subSurface.w, _subSurface.h);
+	_subSurface.fillRect(_subSurfaceDirtyRect, colorkey);
 }
 
 void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow) {
@@ -720,11 +717,11 @@ void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const C
 	_subArea = Common::Rect(0, workingWindow.bottom, windowWidth, windowHeight);
   if(_engine->isWidescreen())
     _subArea.translate(0,-_subArea.height());
+  clearSubSurface();
 }
 
 uint16 RenderManager::createSubArea(const Common::Rect &area) {
 	_subid++;
-
 	OneSubtitle sub;
 	sub.redraw = false;
 	sub.timer = -1;
@@ -738,6 +735,8 @@ uint16 RenderManager::createSubArea(const Common::Rect &area) {
   //If we are in widescreen mode, then shift the subtitle rectangle upwards to overlay the working window.	
   if(_engine->isWidescreen())
     sub.r.translate(0, -_subArea.height());
+
+  debug(1,"Creating subtitle area %d, dimenisions %dx%d, screen location %d,%d", _subid, sub.r.width(), sub.r.height(), sub.r.left, sub.r.top);
 
 	_subsList[_subid] = sub;
 
@@ -770,6 +769,8 @@ void RenderManager::updateSubArea(uint16 id, const Common::String &txt) {
 
 void RenderManager::processSubs(uint16 deltatime) {
 	bool redraw = false;
+	
+	//Update all subtitles' respective timers; delete expired subtitles.
 	for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 		if (it->_value.timer != -1) {
 			it->_value.timer -= deltatime;
@@ -785,31 +786,23 @@ void RenderManager::processSubs(uint16 deltatime) {
 	}
 
 	if (redraw) {
-	  //Blank
-		_subSurface.fillRect(Common::Rect(_subSurface.w, _subSurface.h), 0); //Replace with colorkey for overlay mode
+	  //Blank subtitle buffer
+	  clearSubSurface();
 
-    //
+    //Cycle through all extant subtitles, if subtitle contains text then render it to an auxiliary buffer within a rectangle specified by that subtitle & blit into main subtitle buffer
 		for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 			OneSubtitle *sub = &it->_value;
 			if (sub->txt.size()) {
 				Graphics::Surface subSurface;
 				subSurface.create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
-				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->txt, subSurface);
+				subSurface.fillRect(Common::Rect(sub->r.width(), sub->r.height()), -1);
+				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->txt, subSurface, _engine->isWidescreen());
 				Common::Rect empty;
-				blitSurfaceToSurface(subSurface, empty, _subSurface, sub->r.left - _subArea.left + _workingWindow.left, sub->r.top - _subArea.top + _workingWindow.top);
+				blitSurfaceToSurface(subSurface, empty, _subSurface, sub->r.left - _subArea.left + _workingWindow.left, sub->r.top - _subArea.top + _workingWindow.top, -1);
 				subSurface.free();
 			}
 			sub->redraw = false;
 		}
-
-    //Draw to screen
-		Common::Rect rect(
-			_subArea.left,
-			_subArea.top,
-			_subArea.left + _subSurface.w,
-			_subArea.top + _subSurface.h
-		);
-		copyToScreen(_subSurface, rect, 0, 0);
 	}
 }
 
@@ -1008,16 +1001,17 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 #endif
 
 void RenderManager::timedMessage(const Common::String &str, uint16 milsecs) {
+  //TODO - rework to use new renderscene system
 	uint16 msgid = createSubArea();
 	updateSubArea(msgid, str);
 	deleteSubArea(msgid, milsecs);
 }
 
 bool RenderManager::askQuestion(const Common::String &str) {
-	Graphics::Surface textSurface;
-	textSurface.create(_subArea.width(), _subArea.height(), _engine->_resourcePixelFormat);
-	_engine->getTextRenderer()->drawTextWithWordWrapping(str, textSurface);
-	copyToScreen(textSurface, _subArea, 0, 0);
+	Graphics::Surface backupSubSurface;
+	backupSubSurface.copyFrom(_subSurface);
+	_engine->getTextRenderer()->drawTextWithWordWrapping(str, _subSurface, _engine->isWidescreen());
+	renderSceneToScreen(true); 
 
 	_engine->stopClock();
 
@@ -1064,25 +1058,25 @@ bool RenderManager::askQuestion(const Common::String &str) {
 				}
 			}
 		}
-		_system->updateScreen();
+	  renderSceneToScreen(true); 
 		if (_doubleFPS)
 			_system->delayMillis(33);
 		else
 			_system->delayMillis(66);
 	}
 
-	// Draw over the text in order to clear it
-	textSurface.fillRect(Common::Rect(_subArea.width(), _subArea.height()), 0);
-	copyToScreen(textSurface, _subArea, 0, 0);
+  //Clear question graphics by restoring saved subtitle buffer
+  _subSurface.copyFrom(backupSubSurface);
 
 	// Free the surface
-	textSurface.free();
+	backupSubSurface.free();
 
 	_engine->startClock();
 	return result == 2;
 }
 
 void RenderManager::delayedMessage(const Common::String &str, uint16 milsecs) {
+  //TODO - rework to use new renderscene system
 	uint16 msgid = createSubArea();
 	updateSubArea(msgid, str);
 	processSubs(0);

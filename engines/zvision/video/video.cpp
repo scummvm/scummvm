@@ -89,7 +89,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 		dst = Common::Rect(vid.getWidth(), vid.getHeight());
 
 	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(dst);
-  debug(1, "Playing video, size %d x %d", outSurface.w, outSurface.h);
+  debug(1, "Playing video, size %d x %d, at working window offset %d, %d", outSurface.w, outSurface.h, dst.left, dst.top);
 
 	Graphics::Surface *scaled = NULL;
 
@@ -142,13 +142,14 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 					frame = scaled; 
 				}
 				Common::Rect rect = Common::Rect(finalWidth, finalHeight);
-				debug(2,"Blitting from area %d x %d to video output surface", frame->w, frame->h);
+				//TODO - fix problem with full-screen video playback not rendering to screen.
+				debug(2,"Blitting from area %d x %d to video output surface at area %d, %d", frame->w, frame->h, dst.left, dst.top);
 				outSurface.simpleBlitFrom(*frame, rect, Common::Point(0,0));
 				_renderManager->processSubs(0);
 			}
 		}
-		// Always update the screen so the mouse continues to render
-		_renderManager->renderSceneToScreen(true);
+		// Always update the screen so the mouse continues to render & video does not skip
+		_renderManager->renderSceneToScreen(true,true);
 		_system->delayMillis(vid.getTimeToNextFrame() / 2); //Exponentially decaying delay
 	}
 

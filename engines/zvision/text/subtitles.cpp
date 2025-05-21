@@ -36,17 +36,18 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 			Common::String str = file.readLine();
 			if (str.lastChar() == '~')
 				str.deleteLastChar();
-
 			if (str.matchString("*Initialization*", true)) {
 				// Not used
-			} else if (str.matchString("*Rectangle*", true)) {
+			} 
+			else if (str.matchString("*Rectangle*", true)) {
 				int32 x1, y1, x2, y2;
 				sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
 				Common::Rect rct = Common::Rect(x1, y1, x2, y2);
 				if (upscaleToHires)
 					_engine->getRenderManager()->upscaleRect(rct);
 				_areaId = _engine->getRenderManager()->createSubArea(rct);
-			} else if (str.matchString("*TextFile*", true)) {
+			} 
+			else if (str.matchString("*TextFile*", true)) {
 				char filename[64];
 				sscanf(str.c_str(), "%*[^:]:%s", filename);
 				Common::File txt;
@@ -62,7 +63,8 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 					}
 					txt.close();
 				}
-			} else {
+			} 
+			else {
 				int32 st;
 				int32 en;
 				int32 sb;
@@ -85,7 +87,6 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 Subtitle::~Subtitle() {
 	if (_areaId != -1)
 		_engine->getRenderManager()->deleteSubArea(_areaId);
-
 	_subs.clear();
 }
 
