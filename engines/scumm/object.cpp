@@ -107,8 +107,12 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	// WORKAROUND for bug #3657: Game crash when finishing Indy3 demo.
 	// Script 94 tries to empty the inventory but does so in a bogus way.
+	// (It clears the inventory while iterating it in ascending order.)
 	// This causes it to try to remove object 0 from the inventory.
-	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94)
+	// This would then trigger the assert() below.
+	//
+	// Note that the original interpreter did NOT produce an error, here.
+	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94 && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return;
 
 	// WORKAROUND for bug #6802: assert() was triggered in freddi2.
@@ -120,6 +124,9 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	if (_game.id == GID_HEGAME && obj == 0 && _currentRoom == 39 && vm.slot[_currentScript].number == 10)
 		return;
 
+	// TODO: Should the following assert(), and the ScummEngine::clearOwnerOf()
+	// one, really be used? It looks like some original interpreters let this
+	// through -- but what did they exactly do, in this case?
 	assert(obj > 0);
 
 	if (owner == 0) {
@@ -136,7 +143,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// The bad code:
 		//   if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
 		// That check makes no sense at all: _inventory only contains 80 items,
-		// which are in the order the player picked up items. We can only
+		// which are in the order the player picked them up. We can only
 		// guess that the SCUMM coders meant to write
 		//   if (ss->where == WIO_INVENTORY && ss->number == obj) {
 		// which would ensure that an object script that nukes itself gets
