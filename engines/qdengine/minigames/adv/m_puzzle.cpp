@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/memstream.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
@@ -96,15 +97,12 @@ Puzzle::Puzzle(MinigameManager *runtime) {
 	assert(flySpeed_ > 0.f);
 	returnSpeed_ = _runtime->getParameter("inventory_return_speed", -1.f);
 
-	warning("STUB: Puzzle::Puzzle()");
-
-#if 0
 	const char *name_begin = _runtime->parameter("obj_name_begin", "obj_");
 
 	char buf[128];
 	buf[127] = 0;
 
-	XBuffer gameData;
+	Common::MemoryReadWriteStream gameData(DisposeAfterUse::YES);
 	for (int idx = 0; idx < gameSize_; ++idx) {
 		snprintf(buf, 127, "%s%02d", name_begin, idx + 1);
 
@@ -119,7 +117,7 @@ Puzzle::Puzzle(MinigameManager *runtime) {
 			node.angle = _runtime->rnd(0, angles_ - 1);
 		node.obj.setState(getStateName(node.angle, false, true));
 
-		gameData.write(node.obj->R());
+		node.obj->R().write(gameData);
 
 		nodes_.push_back(node);
 	}
@@ -127,13 +125,24 @@ Puzzle::Puzzle(MinigameManager *runtime) {
 	if (!_runtime->processGameData(gameData))
 		return;
 
-	for (int idx = 0; idx < gameSize_; ++idx) {
-		mgVect3f crd;
-		gameData.read(crd);
-		nodes_[idx].obj->set_R(crd);
-		positions_.push_back(crd);
+	GameInfo *gameInfo = _runtime->getCurrentGameInfo();
+	if (gameInfo) {
+		Common::MemoryReadStream data((byte *)gameInfo->_gameData, gameInfo->_dataSize);
+		for (int idx = 0; idx < gameSize_; ++idx) {
+			mgVect3f crd;
+			crd.read(data);
+			nodes_[idx].obj->set_R(crd);
+			positions_.push_back(crd);
+		}
+	} else {
+		for (int idx = 0; idx < gameSize_; ++idx) {
+			mgVect3f crd;
+			crd.read(gameData);
+			nodes_[idx].obj->set_R(crd);
+			positions_.push_back(crd);
+		}
 	}
-#endif
+
 	if (_runtime->debugMode())
 		nodes_[0].angle = angles_ - 1;
 
@@ -201,23 +210,24 @@ void Puzzle::put(int where, int what, float flowSpeed) {
 	if (flowSpeed > 0.f || isFlying(what)) {
 		FlyQDObject* flyObj = 0;
 
-		for (auto &fit : flyObjs_) {
-			if (fit.data == what)
+		FlyQDObjects::iterator fit;
+		for (fit = flyObjs_.begin(); fit != flyObjs_.end(); fit++) {
+			if (fit->data == what)
 				break;
-			if (&fit != flyObjs_.end()) // Этот фрагмент уже летит, просто поменять точку назначения
-				flyObj = &fit;
-			else { // Добавляем новый летящий фрагмент
-				flyObjs_.push_back(FlyQDObject());
-				flyObj = &flyObjs_.back();
+		}
+		if (fit != flyObjs_.end()) // Этот фрагмент уже летит, просто поменять точку назначения
+			flyObj = fit;
+		else { // Добавляем новый летящий фрагмент
+			flyObjs_.push_back(FlyQDObject());
+			flyObj = &flyObjs_.back();
 
-				flyObj->data = what;
+			flyObj->data = what;
 
-				mgVect3f from = isOnMouse(node) ? node.obj->R() : start < -1 ? stackPosition(stidx(start)) : position(start);
-				flyObj->current = _runtime->world2game(from);
-				node.obj->set_R(from);
+			mgVect3f from = isOnMouse(node) ? node.obj->R() : start < -1 ? stackPosition(stidx(start)) : position(start);
+			flyObj->current = _runtime->world2game(from);
+			node.obj->set_R(from);
 
-				flyObj->speed = flowSpeed;
-			}
+			flyObj->speed = flowSpeed;
 		}
 
 		mgVect3f to = where < -1 ? stackPosition(stidx(where)) : position(where);

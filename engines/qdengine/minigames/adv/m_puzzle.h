@@ -27,6 +27,8 @@
 
 namespace QDEngine {
 
+MinigameInterface *createMinigamePuzzle(MinigameManager *runtime);
+
 class Puzzle : public MinigameInterface {
 	struct Node {
 		QDObject obj;

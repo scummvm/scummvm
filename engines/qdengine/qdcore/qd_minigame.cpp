@@ -70,6 +70,9 @@
 // dogncat2
 #include "qdengine/minigames/adv/m_swap.h"
 
+// klepa
+#include "qdengine/minigames/adv/m_puzzle.h"
+
 namespace QDEngine {
 
 qdMiniGame::qdMiniGame() : _dll_handle(NULL),
@@ -342,6 +345,9 @@ bool qdMiniGame::load_interface() {
 		// klepa
 		// Karaoke.dll
 		// puzzle.dll
+		} else if (_dll_name == "DLL\\puzzle.dll") {
+			_interface = create_adv_minigame(_dll_name.c_str(), createMinigamePuzzle);
+			return true;
 
 		// 3mice2
 		} else if (_dll_name == "DLL\\3Mice2_sbor_karty.dll") {
