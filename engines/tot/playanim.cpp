@@ -227,6 +227,8 @@ uint currentRoomNumber;
 
 bool isLoadingFromLauncher;
 
+bool saveAllowed = true;
+
 void clearObj() {
 	byte indpasolimpiador1, indpasolimpiador2;
 

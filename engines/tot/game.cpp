@@ -42,6 +42,7 @@ void loadTemporaryGame() {
 int startGame();
 
 void newGame() {
+	saveAllowed = true;
 	g_engine->_mouseManager->hide();
 	obtainName(nombrepersonaje);
 
