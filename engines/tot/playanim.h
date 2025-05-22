@@ -638,7 +638,7 @@ extern uint currentRoomNumber;
 
 extern bool isLoadingFromLauncher;
 
-extern bool saveAllowed = false;
+extern bool saveAllowed;
 
 void initializeScreenFile();
 void clearObj();

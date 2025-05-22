@@ -48,6 +48,8 @@ TotEngine *g_engine;
 TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																		 _gameDescription(gameDesc), _randomSource("Tot") {
 	g_engine = this;
+
+	_lang = _gameDescription->language;
 }
 
 TotEngine::~TotEngine() {

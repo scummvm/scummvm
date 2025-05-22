@@ -3,9 +3,12 @@
 
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/language.h"
 #include "common/scummsys.h"
 
 #include "graphics/font.h"
+#include "engines/tot/texts.h"
+#include "engines/tot/tot.h"
 
 namespace Tot {
 
@@ -54,6 +57,19 @@ inline bool odd(long i) { return i % 2 != 0; }
 
 unsigned Random(unsigned range);
 int Random(int range);
+
+inline Common::String getObjectName(int idx) {
+	return g_engine->_lang == Common::ES_ESP ? hardcodedObjects_ES[idx] : hardcodedObjects_EN[idx];
+}
+
+inline Common::String getActionLineText(int idx) {
+	return g_engine->_lang == Common::ES_ESP ? actionLine_ES[idx] : actionLine_EN[idx];
+}
+inline Common::KeyCode hotKeyFor(HOTKEYS hotkey) {
+	const Common::KeyCode *selectedHotkeys = (g_engine->_lang == Common::ES_ESP)? hotkeys[0]: hotkeys[1];
+	return selectedHotkeys[hotkey];
+};
+
 
 } // End of namespace Tot
 

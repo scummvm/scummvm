@@ -25,6 +25,7 @@
 
 #include "tot/font/biosfont.h"
 #include "tot/graphman.h"
+#include "tot/offsets.h"
 #include "tot/tot.h"
 
 namespace Tot {
@@ -38,11 +39,18 @@ GraphicsManager::GraphicsManager() {
 	if (!exeFile.open(Common::Path("TOT.EXE"))) {
 		error("Could not open executable file!");
 	}
-	exeFile.seek(FONT_LITT_OFFSET_ES);
-	// exeFile.seek(FONT_LITT_OFFSET_EN);
+
+	if (g_engine->_lang == Common::ES_ESP) {
+		exeFile.seek(FONT_LITT_OFFSET_ES);
+	} else {
+		exeFile.seek(FONT_LITT_OFFSET_EN);
+	}
 	_litt.loadChr(exeFile);
-	exeFile.seek(FONT_EURO_OFFSET_ES);
-	// exeFile.seek(FONT_EURO_OFFSET_EN);
+	if (g_engine->_lang == Common::ES_ESP) {
+		exeFile.seek(FONT_EURO_OFFSET_ES);
+	} else {
+		exeFile.seek(FONT_EURO_OFFSET_EN);
+	}
 	_euro.loadChr(exeFile);
 	exeFile.close();
 	_bios = new BiosFont();

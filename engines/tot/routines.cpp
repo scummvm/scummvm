@@ -3659,26 +3659,26 @@ void action() {
 	Common::String actionLine;
 	switch (numeroaccion) {
 	case 0:
-		actionLine = actionLine_ES[0];
+		actionLine = getActionLineText(0);
 		break;
 	case 1:
-		actionLine = actionLine_ES[1];
+		actionLine = getActionLineText(1);
 		break;
 	case 2:
-		actionLine = actionLine_ES[2];
+		actionLine = getActionLineText(2);
 		break;
 	case 3:
-		actionLine = actionLine_ES[3];
+		actionLine = getActionLineText(3);
 		break;
 	case 4: {
-		actionLine = actionLine_ES[4];
+		actionLine = getActionLineText(4);
 		objetomochila = "";
 	} break;
 	case 5:
-		actionLine = actionLine_ES[5];
+		actionLine = getActionLineText(5);
 		break;
 	case 6:
-		actionLine = actionLine_ES[6];
+		actionLine = getActionLineText(6);
 		break;
 	}
 	actionLineText(actionLine);
@@ -3690,7 +3690,7 @@ void handleAction(byte posinv) {
 	switch (numeroaccion) {
 	case 1: {
 		g_engine->_mouseManager->hide();
-		actionLineText(actionLine_ES[1] + mobj[posinv].objectName);
+		actionLineText(getActionLineText(1) + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		drawText((Random(10) + 1039));
 		numeroaccion = 0;
@@ -3702,7 +3702,7 @@ void handleAction(byte posinv) {
 	} break;
 	case 2: {
 		g_engine->_mouseManager->hide();
-		actionLineText(actionLine_ES[2] + mobj[posinv].objectName);
+		actionLineText(getActionLineText(2) + mobj[posinv].objectName);
 		if (contadorpc2 > 13)
 			showError(274);
 		g_engine->_mouseManager->show();
@@ -3714,7 +3714,7 @@ void handleAction(byte posinv) {
 	} break;
 	case 3: {
 		g_engine->_mouseManager->hide();
-		actionLineText(actionLine_ES[3] + mobj[posinv].objectName);
+		actionLineText(getActionLineText(3) + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		numeroaccion = 0;
 		lookInventoryObject(posinv);
@@ -3725,7 +3725,7 @@ void handleAction(byte posinv) {
 	case 4:
 		if (objetomochila == "") {
 			g_engine->_mouseManager->hide();
-			actionLineText(actionLine_ES[4] + mobj[posinv].objectName + actionLine_ES[7]);
+			actionLineText(getActionLineText(4) + mobj[posinv].objectName + getActionLineText(7));
 			g_engine->_mouseManager->show();
 			objetomochila = mobj[posinv].objectName;
 			codigoobjmochila = mobj[posinv].code;
@@ -3742,7 +3742,7 @@ void handleAction(byte posinv) {
 		break;
 	case 5: {
 		g_engine->_mouseManager->hide();
-		actionLineText(actionLine_ES[5] + mobj[posinv].objectName);
+		actionLineText(getActionLineText(5) + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		drawText(Random(9) + 1059);
 		numeroaccion = 0;
@@ -3752,7 +3752,7 @@ void handleAction(byte posinv) {
 	} break;
 	case 6: {
 		g_engine->_mouseManager->hide();
-		actionLineText(actionLine_ES[6] + mobj[posinv].objectName);
+		actionLineText(getActionLineText(6) + mobj[posinv].objectName);
 		g_engine->_mouseManager->show();
 		drawText(Random(10) + 1068);
 		numeroaccion = 0;
@@ -4882,25 +4882,27 @@ void wcScene() {
 
 	partialFadeOut(234);
 
-	outtextxy(10, 20, fullScreenMessages_ES[45], 253);
+	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+
+	outtextxy(10, 20, messages[45], 253);
 	delay(1000);
 
 	bar(10, 20, 150, 30, 0);
 	delay(2000);
 
-	outtextxy(100, 50, fullScreenMessages_ES[46], 255);
+	outtextxy(100, 50, messages[46], 255);
 	delay(1000);
 
 	bar(100, 50, 250, 60, 0);
 	delay(2000);
 
-	outtextxy(30, 110, fullScreenMessages_ES[47], 253);
+	outtextxy(30, 110, messages[47], 253);
 	delay(1000);
 
 	bar(30, 110, 210, 120, 0);
 	delay(3000);
 
-	outtextxy(50, 90, fullScreenMessages_ES[48], 248);
+	outtextxy(50, 90, messages[48], 248);
 	delay(1000);
 
 	playVoc("WATER", 272050, 47062);

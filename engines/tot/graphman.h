@@ -56,11 +56,6 @@ public:
 
 private:
 	signed char datosfundido[256][256];
-
-	const int FONT_LITT_OFFSET_ES = 153584;
-	const int FONT_EURO_OFFSET_ES = 159681;
-	const int FONT_LITT_OFFSET_EN = 153010;
-	const int FONT_EURO_OFFSET_EN = 159107;
 };
 
 } // End of namespace Tot

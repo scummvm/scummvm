@@ -74,6 +74,8 @@ public:
 	bool _showGameGrid = false;
 	bool _drawObjectAreas = false;
 
+	Common::Language _lang = Common::ES_ESP;
+
 public:
 	TotEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TotEngine() override;

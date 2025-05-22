@@ -725,9 +725,6 @@ void initPlayAnim() {
 }
 
 void clearVars() {
-	if(pasoanimado != NULL) {
-		free(pasoanimado);
-	}
 	if(background != NULL) {
 		free(background);
 	}
