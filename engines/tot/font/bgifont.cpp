@@ -144,7 +144,7 @@ BgiFont::CachedFont *BgiFont::drawCachedFont(int size) {
 
 		for (int j = 0; j < _glyphs[i].insts.size(); j++) {
 			int opCode = _glyphs[i].insts[j]->opCode;
-			// Need to normalize Y coord because the stroke instructions start at origin and extend upwards up ti originAscender, downwards to originToDescender
+			// Need to normalize Y coord because the stroke instructions start at origin and extend upwards up to originAscender, downwards to originToDescender
 			int adjustedY = _originToAscender - _glyphs[i].insts[j]->yCoord;
 
 			switch (opCode) {

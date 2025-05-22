@@ -268,8 +268,7 @@ void findDialogLine(byte persona) {
 						auxTree = parent(auxTree);
 					else
 						break;
-				} while (!((auxTree->element.dicho == '1') &&
-						   (rightSibling(auxTree) != NULL)));
+				} while (!((auxTree->element.dicho == '1') && (rightSibling(auxTree) != NULL)));
 				if (rightSibling(auxTree) != NULL)
 					auxTree = rightSibling(auxTree);
 				else

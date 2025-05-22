@@ -93,6 +93,9 @@ void removeText(uint xfrase1, uint yfrase1, uint xfrase2, uint yfrase2, byte col
 }
 
 void handleFlcEvent(byte numero_del_evento) {
+
+	const char *const *messages = g_engine->_lang == Common::ES_ESP ? animMessages[0] : animMessages[1];
+
 	switch (numero_del_evento) {
 	case 0:
 		if (contadorpc > 103)
@@ -104,11 +107,11 @@ void handleFlcEvent(byte numero_del_evento) {
 			switch (numerovuelta) {
 			case 2:
 				drawText(80, 0,
-					animMessages_ES[0],
-					animMessages_ES[1],
-					animMessages_ES[2],
-					animMessages_ES[3],
-					animMessages_ES[4],
+					messages[0],
+					messages[1],
+					messages[2],
+					messages[3],
+					messages[4],
 					253, 0);
 				break;
 			case 13:
@@ -116,11 +119,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 14:
 				drawText(80, 0,
-					animMessages_ES[5],
-					animMessages_ES[6],
-					animMessages_ES[7],
-					animMessages_ES[8],
-					animMessages_ES[9],
+					messages[5],
+					messages[6],
+					messages[7],
+					messages[8],
+					messages[9],
 					253, 0);
 				break;
 			case 25:
@@ -128,11 +131,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 26:
 				drawText(80, 0,
-					animMessages_ES[10],
-					animMessages_ES[11],
-					animMessages_ES[12],
-					animMessages_ES[13],
-					animMessages_ES[14],
+					messages[10],
+					messages[11],
+					messages[12],
+					messages[13],
+					messages[14],
 					253, 0);
 				break;
 			case 35:
@@ -140,11 +143,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 36:
 				drawText(2, 100,
-					animMessages_ES[15],
-					animMessages_ES[16],
-					animMessages_ES[17],
-					animMessages_ES[18],
-					animMessages_ES[19],
+					messages[15],
+					messages[16],
+					messages[17],
+					messages[18],
+					messages[19],
 					255, 0);
 				break;
 			case 47:
@@ -152,11 +155,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 48:
 				drawText(2, 100,
-					animMessages_ES[20],
-					animMessages_ES[21],
-					animMessages_ES[22],
-					animMessages_ES[23],
-					animMessages_ES[24],
+					messages[20],
+					messages[21],
+					messages[22],
+					messages[23],
+					messages[24],
 					255, 0);
 				break;
 			case 59:
@@ -164,20 +167,20 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 60:
 				drawText(80, 0,
-					animMessages_ES[25],
-					animMessages_ES[26],
-					animMessages_ES[27],
-					animMessages_ES[28],
-					animMessages_ES[29],
+					messages[25],
+					messages[26],
+					messages[27],
+					messages[28],
+					messages[29],
 					253, 0);
 				break;
 			case 63:
 				drawText(2, 100,
-					animMessages_ES[30],
-					animMessages_ES[31],
-					animMessages_ES[32],
-					animMessages_ES[33],
-					animMessages_ES[34],
+					messages[30],
+					messages[31],
+					messages[32],
+					messages[33],
+					messages[34],
 					255, 0);
 				break;
 			case 75:
@@ -188,11 +191,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 77:
 				drawText(2, 100,
-					animMessages_ES[35],
-					animMessages_ES[36],
-					animMessages_ES[37],
-					animMessages_ES[38],
-					animMessages_ES[39],
+					messages[35],
+					messages[36],
+					messages[37],
+					messages[38],
+					messages[39],
 					255, 0);
 				break;
 			case 89:
@@ -200,11 +203,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 90:
 				drawText(2, 100,
-					animMessages_ES[40],
-					animMessages_ES[41],
-					animMessages_ES[42],
-					animMessages_ES[43],
-					animMessages_ES[44],
+					messages[40],
+					messages[41],
+					messages[42],
+					messages[43],
+					messages[44],
 					 255, 0);
 				break;
 			case 102:
@@ -212,11 +215,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 103:
 				drawText(80, 0,
-					animMessages_ES[45],
-					animMessages_ES[46],
-					animMessages_ES[47],
-					animMessages_ES[48],
-					animMessages_ES[49],
+					messages[45],
+					messages[46],
+					messages[47],
+					messages[48],
+					messages[49],
 					253, 0);
 				break;
 			case 120:
@@ -224,20 +227,20 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 121:
 				drawText(80, 0,
-					animMessages_ES[50],
-					animMessages_ES[51],
-					animMessages_ES[52],
-					animMessages_ES[53],
-					animMessages_ES[54],
+					messages[50],
+					messages[51],
+					messages[52],
+					messages[53],
+					messages[54],
 					253, 0);
 				break;
 			case 125:
 				drawText(2, 100,
-					animMessages_ES[55],
-					animMessages_ES[56],
-					animMessages_ES[57],
-					animMessages_ES[58],
-					animMessages_ES[59],
+					messages[55],
+					messages[56],
+					messages[57],
+					messages[58],
+					messages[59],
 					255, 0);
 				break;
 			case 135: {
@@ -257,77 +260,77 @@ void handleFlcEvent(byte numero_del_evento) {
 			break;
 		case 20:
 			drawText(2, 100,
-				animMessages_ES[60],
-				animMessages_ES[61],
-				animMessages_ES[62],
-				animMessages_ES[63],
-				animMessages_ES[64],
+				messages[60],
+				messages[61],
+				messages[62],
+				messages[63],
+				messages[64],
 				255, 0);
 			break;
 		case 58: {
 			removeText(2, 100, 135, 199, 0);
 			drawText(2, 100,
-				animMessages_ES[65],
-				animMessages_ES[66],
-				animMessages_ES[67],
-				animMessages_ES[68],
-				animMessages_ES[69],
+				messages[65],
+				messages[66],
+				messages[67],
+				messages[68],
+				messages[69],
 				255, 0);
 		} break;
 		case 74: {
 			delay(1500);
 			removeText(2, 100, 135, 199, 0);
 			drawText(2, 100,
-				animMessages_ES[70],
-				animMessages_ES[71],
-				animMessages_ES[72],
-				animMessages_ES[73],
-				animMessages_ES[74],
+				messages[70],
+				messages[71],
+				messages[72],
+				messages[73],
+				messages[74],
 				255, 0);
 			delay(4000);
 			removeText(2, 100, 135, 199, 0);
 			drawText(80, 0,
-				animMessages_ES[75],
-				animMessages_ES[76],
-				animMessages_ES[77],
-				animMessages_ES[78],
-				animMessages_ES[79],
+				messages[75],
+				messages[76],
+				messages[77],
+				messages[78],
+				messages[79],
 				253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
 			drawText(80, 0,
-				animMessages_ES[80],
-				animMessages_ES[81],
-				animMessages_ES[82],
-				animMessages_ES[83],
-				animMessages_ES[84],
+				messages[80],
+				messages[81],
+				messages[82],
+				messages[83],
+				messages[84],
 				253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
 			drawText(80, 0,
-				animMessages_ES[85],
-				animMessages_ES[86],
-				animMessages_ES[87],
-				animMessages_ES[88],
-				animMessages_ES[89],
+				messages[85],
+				messages[86],
+				messages[87],
+				messages[88],
+				messages[89],
 				253, 0);
 			delay(7000);
 			removeText(80, 0, 319, 53, 0);
 			drawText(2, 100,
-				animMessages_ES[90],
-				animMessages_ES[91],
-				animMessages_ES[92],
-				animMessages_ES[93],
-				animMessages_ES[94],
+				messages[90],
+				messages[91],
+				messages[92],
+				messages[93],
+				messages[94],
 				255, 0);
 			delay(6000);
 			removeText(2, 100, 135, 199, 0);
 			drawText(2, 100,
-				animMessages_ES[95],
-				animMessages_ES[96],
-				animMessages_ES[97],
-				animMessages_ES[98],
-				animMessages_ES[99],
+				messages[95],
+				messages[96],
+				messages[97],
+				messages[98],
+				messages[99],
 				255, 0);
 			delay(6000);
 		} break;
@@ -358,20 +361,20 @@ void handleFlcEvent(byte numero_del_evento) {
 
 			delay(2000);
 			drawText(5, 1,
-				animMessages_ES[100],
-				animMessages_ES[101],
-				animMessages_ES[102],
-				animMessages_ES[103],
-				animMessages_ES[104],
+				messages[100],
+				messages[101],
+				messages[102],
+				messages[103],
+				messages[104],
 				255, 249);
 			delay(3500);
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[105],
-				animMessages_ES[106],
-				animMessages_ES[107],
-				animMessages_ES[108],
-				animMessages_ES[109],
+				messages[105],
+				messages[106],
+				messages[107],
+				messages[108],
+				messages[109],
 				255, 0);
 		}
 		break;
@@ -379,11 +382,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[110],
-				animMessages_ES[111],
-				animMessages_ES[112],
-				animMessages_ES[113],
-				animMessages_ES[114],
+				messages[110],
+				messages[111],
+				messages[112],
+				messages[113],
+				messages[114],
 				255, 249);
 		}
 		break;
@@ -391,11 +394,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[115],
-				animMessages_ES[116],
-				animMessages_ES[117],
-				animMessages_ES[118],
-				animMessages_ES[119],
+				messages[115],
+				messages[116],
+				messages[117],
+				messages[118],
+				messages[119],
 				255, 0);
 		}
 		break;
@@ -403,11 +406,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[120],
-				animMessages_ES[121],
-				animMessages_ES[122],
-				animMessages_ES[123],
-				animMessages_ES[124],
+				messages[120],
+				messages[121],
+				messages[122],
+				messages[123],
+				messages[124],
 				255, 249);
 		}
 		break;
@@ -415,11 +418,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[125],
-				animMessages_ES[126],
-				animMessages_ES[127],
-				animMessages_ES[128],
-				animMessages_ES[129],
+				messages[125],
+				messages[126],
+				messages[127],
+				messages[128],
+				messages[129],
 				255, 0);
 		}
 		break;
@@ -427,11 +430,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[130],
-				animMessages_ES[131],
-				animMessages_ES[132],
-				animMessages_ES[133],
-				animMessages_ES[134],
+				messages[130],
+				messages[131],
+				messages[132],
+				messages[133],
+				messages[134],
 				255, 249);
 		}
 		break;
@@ -439,11 +442,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[135],
-				animMessages_ES[136],
-				animMessages_ES[137],
-				animMessages_ES[138],
-				animMessages_ES[139],
+				messages[135],
+				messages[136],
+				messages[137],
+				messages[138],
+				messages[139],
 				 255, 0);
 		}
 		break;
@@ -451,11 +454,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[140],
-				animMessages_ES[141],
-				animMessages_ES[142],
-				animMessages_ES[143],
-				animMessages_ES[144],
+				messages[140],
+				messages[141],
+				messages[142],
+				messages[143],
+				messages[144],
 				255, 249);
 		}
 		break;
@@ -463,11 +466,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[145],
-				animMessages_ES[146],
-				animMessages_ES[147],
-				animMessages_ES[148],
-				animMessages_ES[149],
+				messages[145],
+				messages[146],
+				messages[147],
+				messages[148],
+				messages[149],
 				255, 0);
 		}
 		break;
@@ -475,11 +478,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[150],
-				animMessages_ES[151],
-				animMessages_ES[152],
-				animMessages_ES[153],
-				animMessages_ES[154],
+				messages[150],
+				messages[151],
+				messages[152],
+				messages[153],
+				messages[154],
 				255, 249);
 		}
 		break;
@@ -487,11 +490,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[155],
-				animMessages_ES[156],
-				animMessages_ES[157],
-				animMessages_ES[158],
-				animMessages_ES[159],
+				messages[155],
+				messages[156],
+				messages[157],
+				messages[158],
+				messages[159],
 				255, 0);
 		}
 		break;
@@ -499,11 +502,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[160],
-				animMessages_ES[161],
-				animMessages_ES[162],
-				animMessages_ES[163],
-				animMessages_ES[164],
+				messages[160],
+				messages[161],
+				messages[162],
+				messages[163],
+				messages[164],
 				255, 249);
 		}
 		break;
@@ -524,22 +527,22 @@ void handleFlcEvent(byte numero_del_evento) {
 		if ((numerovuelta == 1) && (framecontador == 3)) {
 			putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
-				animMessages_ES[165],
-				animMessages_ES[166],
-				animMessages_ES[167],
-				animMessages_ES[168],
-				animMessages_ES[169],
+				messages[165],
+				messages[166],
+				messages[167],
+				messages[168],
+				messages[169],
 				255, 0);
 		}
 		break;
 	case 19:
 		if (framecontador == 1)
 			drawText(5, 121,
-				animMessages_ES[170],
-				animMessages_ES[171],
-				animMessages_ES[172],
-				animMessages_ES[173],
-				animMessages_ES[174],
+				messages[170],
+				messages[171],
+				messages[172],
+				messages[173],
+				messages[174],
 			 	253, 249);
 		break;
 	case 20:
@@ -551,11 +554,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[175],
-					animMessages_ES[176],
-					animMessages_ES[177],
-					animMessages_ES[178],
-					animMessages_ES[179],
+					messages[175],
+					messages[176],
+					messages[177],
+					messages[178],
+					messages[179],
 					255, 0);
 				break;
 			}
@@ -567,11 +570,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[180],
-					animMessages_ES[181],
-					animMessages_ES[182],
-					animMessages_ES[183],
-					animMessages_ES[184],
+					messages[180],
+					messages[181],
+					messages[182],
+					messages[183],
+					messages[184],
 					230, 249);
 				break;
 			}
@@ -583,11 +586,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[185],
-					animMessages_ES[186],
-					animMessages_ES[187],
-					animMessages_ES[188],
-					animMessages_ES[189],
+					messages[185],
+					messages[186],
+					messages[187],
+					messages[188],
+					messages[189],
 					230, 249);
 				break;
 			}
@@ -599,11 +602,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[190],
-					animMessages_ES[191],
-					animMessages_ES[192],
-					animMessages_ES[193],
-					animMessages_ES[194],
+					messages[190],
+					messages[191],
+					messages[192],
+					messages[193],
+					messages[194],
 					230, 249);
 				break;
 			}
@@ -615,11 +618,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[195],
-					animMessages_ES[196],
-					animMessages_ES[197],
-					animMessages_ES[198],
-					animMessages_ES[199],
+					messages[195],
+					messages[196],
+					messages[197],
+					messages[198],
+					messages[199],
 					230, 249);
 				break;
 			}
@@ -631,11 +634,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[200],
-					animMessages_ES[201],
-					animMessages_ES[202],
-					animMessages_ES[203],
-					animMessages_ES[204],
+					messages[200],
+					messages[201],
+					messages[202],
+					messages[203],
+					messages[204],
 					230, 249);
 				break;
 			}
@@ -647,11 +650,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[205],
-					animMessages_ES[206],
-					animMessages_ES[207],
-					animMessages_ES[208],
-					animMessages_ES[209],
+					messages[205],
+					messages[206],
+					messages[207],
+					messages[208],
+					messages[209],
 					230, 249);
 				break;
 			}
@@ -663,11 +666,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[210],
-					animMessages_ES[211],
-					animMessages_ES[212],
-					animMessages_ES[213],
-					animMessages_ES[214],
+					messages[210],
+					messages[211],
+					messages[212],
+					messages[213],
+					messages[214],
 					230, 249);
 				break;
 			}
@@ -679,11 +682,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[215],
-					animMessages_ES[216],
-					animMessages_ES[217],
-					animMessages_ES[218],
-					animMessages_ES[219],
+					messages[215],
+					messages[216],
+					messages[217],
+					messages[218],
+					messages[219],
 					230, 249);
 				break;
 			}
@@ -695,11 +698,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[220],
-					animMessages_ES[221],
-					animMessages_ES[222],
-					animMessages_ES[223],
-					animMessages_ES[224],
+					messages[220],
+					messages[221],
+					messages[222],
+					messages[223],
+					messages[224],
 					230, 249);
 				break;
 			}
@@ -711,11 +714,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(15, 1,
-					animMessages_ES[225],
-					animMessages_ES[226],
-					animMessages_ES[227],
-					animMessages_ES[228],
-					animMessages_ES[229],
+					messages[225],
+					messages[226],
+					messages[227],
+					messages[228],
+					messages[229],
 					230, 249);
 				break;
 			}
@@ -767,11 +770,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 3:
 				drawText(65, 1,
-					animMessages_ES[230],
-					animMessages_ES[231],
-					animMessages_ES[232],
-					animMessages_ES[233],
-					animMessages_ES[234],
+					messages[230],
+					messages[231],
+					messages[232],
+					messages[233],
+					messages[234],
 					253, 249);
 				break;
 			}
@@ -783,11 +786,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 2:
 				drawText(65, 1,
-					animMessages_ES[235],
-					animMessages_ES[236],
-					animMessages_ES[237],
-					animMessages_ES[238],
-					animMessages_ES[239],
+					messages[235],
+					messages[236],
+					messages[237],
+					messages[238],
+					messages[239],
 					253, 249);
 				break;
 			}
@@ -799,11 +802,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 2:
 				drawText(65, 1,
-					animMessages_ES[240],
-					animMessages_ES[241],
-					animMessages_ES[242],
-					animMessages_ES[243],
-					animMessages_ES[244],
+					messages[240],
+					messages[241],
+					messages[242],
+					messages[243],
+					messages[244],
 					253, 249);
 				break;
 			}
@@ -815,11 +818,11 @@ void handleFlcEvent(byte numero_del_evento) {
 				break;
 			case 2:
 				drawText(65, 1,
-					animMessages_ES[245],
-					animMessages_ES[246],
-					animMessages_ES[247],
-					animMessages_ES[248],
-					animMessages_ES[249],
+					messages[245],
+					messages[246],
+					messages[247],
+					messages[248],
+					messages[249],
 					253, 249);
 				break;
 			}

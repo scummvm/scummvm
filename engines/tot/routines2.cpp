@@ -27,6 +27,7 @@
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
+#include "tot/offsets.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
 #include "tot/texts.h"
@@ -353,6 +354,7 @@ void freeAnimation() {
 	if (animacion2) {
 		animacion2 = false;
 		free(pasoanimado);
+		pasoanimado = NULL;
 	}
 }
 
@@ -489,7 +491,7 @@ void readItemRegister(uint itemPosition) {
 void drawLookAtItem(RoomObjectListEntry obj) {
 	g_engine->_mouseManager->hide();
 	bar(0, 140, 319, 149, 0);
-	actionLineText(Common::String("MIRAR ") + obj.objectName);
+	actionLineText(getActionLineText(3) + obj.objectName);
 	g_engine->_mouseManager->show();
 }
 
@@ -592,56 +594,43 @@ void drawMenu(byte nummenu) {
 		showError(258);
 	}
 
+	posicionmenu = g_engine->_lang == Common::ES_ESP ? menuOffsets_ES[nummenu - 1][0] : menuOffsets_EN[nummenu - 1][0];
+	tampunteromenu = g_engine->_lang == Common::ES_ESP ? menuOffsets_ES[nummenu - 1][1] : menuOffsets_EN[nummenu - 1][1];
+
 	switch (nummenu) {
 	case 1: {
-		tampunteromenu = 16004;
-		posicionmenu = 0;
 		xmenu = 0;
 		ymenu = 150;
 	} break;
 	case 2: {
-		tampunteromenu = 24535;
-		posicionmenu = 16004;
 		xmenu = 50;
 		ymenu = 10;
 	} break;
 	case 3: {
-		tampunteromenu = 24535;
-		posicionmenu = 40539;
 		xmenu = 50;
 		ymenu = 10;
 	} break;
 	case 4: {
 		if (contadorpc2 > 20)
 			showError(274);
-		tampunteromenu = 26745;
-		posicionmenu = 65074;
 		xmenu = 50;
 		ymenu = 10;
 	} break;
 	case 5: {
 		if (contadorpc > 23)
 			showError(274);
-		tampunteromenu = 16004;
-		posicionmenu = 91819;
 		xmenu = 0;
 		ymenu = 150;
 	} break;
 	case 6: {
-		tampunteromenu = 24535;
-		posicionmenu = 107823;
 		xmenu = 50;
 		ymenu = 10;
 	} break;
 	case 7: {
-		tampunteromenu = 14969;
-		posicionmenu = 132358;
 		xmenu = 58;
 		ymenu = 48;
 	} break;
 	case 8: {
-		tampunteromenu = 7148;
-		posicionmenu = 147327;
 		xmenu = 84;
 		ymenu = 34;
 	} break;
@@ -710,25 +699,26 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 
 	clave.append(passArray, passArray + 10);
 
-	outtextxyBios(91, 16,  fullScreenMessages_ES[49] + clave, 255);
-	outtextxyBios(90, 15,  fullScreenMessages_ES[49] + clave, 13);
+	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+	outtextxyBios(91, 16, messages[49] + clave, 255);
+	outtextxyBios(90, 15,  messages[49] + clave, 13);
 
-	outtextxyBios(81, 61,  fullScreenMessages_ES[50], 0);
-	outtextxyBios(61, 81,  fullScreenMessages_ES[51], 0);
-	outtextxyBios(31, 101, fullScreenMessages_ES[52] + nombrepersonaje, 0);
-	outtextxyBios(31, 121, fullScreenMessages_ES[53], 0);
-	outtextxyBios(31, 141, fullScreenMessages_ES[54], 0);
-	outtextxyBios(31, 161, fullScreenMessages_ES[55], 0);
+	outtextxyBios(81, 61,  messages[50], 0);
+	outtextxyBios(61, 81,  messages[51], 0);
+	outtextxyBios(31, 101, messages[52] + nombrepersonaje, 0);
+	outtextxyBios(31, 121, messages[53], 0);
+	outtextxyBios(31, 141, messages[54], 0);
+	outtextxyBios(31, 161, messages[55], 0);
 
-	outtextxyBios(80, 60,  fullScreenMessages_ES[50], 15);
-	outtextxyBios(60, 80,  fullScreenMessages_ES[51], 15);
-	outtextxyBios(30, 100, fullScreenMessages_ES[52], 15);
+	outtextxyBios(80, 60,  messages[50], 15);
+	outtextxyBios(60, 80,  messages[51], 15);
+	outtextxyBios(30, 100, messages[52], 15);
 
 	outtextxyBios(150, 100, nombrepersonaje, 13);
 
-	outtextxyBios(30, 120, fullScreenMessages_ES[53], 15);
-	outtextxyBios(30, 140, fullScreenMessages_ES[54], 15);
-	outtextxyBios(30, 160, fullScreenMessages_ES[55], 15);
+	outtextxyBios(30, 120, messages[53], 15);
+	outtextxyBios(30, 140, messages[54], 15);
+	outtextxyBios(30, 160, messages[55], 15);
 	delay(1500);
 	playVoc("PORTAZO", 434988, 932);
 	// putShape(270, 161, (byte *)sello);
@@ -807,31 +797,31 @@ void checkMouseGrid() {
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 0:
-				actionLine = actionLine_ES[0] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(0) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 1:
-				actionLine = actionLine_ES[1] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(1) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 2:
-				actionLine = actionLine_ES[2] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(2) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 3:
-				actionLine = actionLine_ES[3] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(3) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 4:
 				if (objetomochila != "")
-					actionLine = actionLine_ES[4] + objetomochila + actionLine_ES[7] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				else
-					actionLine = actionLine_ES[4] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = getActionLineText(4) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 5:
-				actionLine = actionLine_ES[5] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(5) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 6:
-				actionLine = actionLine_ES[6] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(6) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			default:
-				actionLine = actionLine_ES[0] + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(0) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
@@ -846,28 +836,28 @@ void checkMouseGrid() {
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 0:
-				actionLine = actionLine_ES[0];
+				actionLine = getActionLineText(0);
 				break;
 			case 1:
-				actionLine = actionLine_ES[1];
+				actionLine = getActionLineText(1);
 				break;
 			case 2:
-				actionLine = actionLine_ES[2];
+				actionLine = getActionLineText(2);
 				break;
 			case 3:
-				actionLine = actionLine_ES[3];
+				actionLine = getActionLineText(3);
 				break;
 			case 4:
 				if (objetomochila != "")
-					actionLine = actionLine_ES[4] + objetomochila + actionLine_ES[7];
+					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7);
 				else
-					actionLine = actionLine_ES[4];
+					actionLine = getActionLineText(4);
 				break;
 			case 5:
-				actionLine = actionLine_ES[5];
+				actionLine = getActionLineText(5);
 				break;
 			case 6:
-				actionLine = actionLine_ES[6];
+				actionLine = getActionLineText(6);
 				break;
 			}
 			actionLineText(actionLine);
@@ -899,25 +889,25 @@ void checkMouseGrid() {
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 1:
-				actionLine = actionLine_ES[1] + objmochila;
+				actionLine = getActionLineText(1) + objmochila;
 				break;
 			case 2:
-				actionLine = actionLine_ES[2] + objmochila;
+				actionLine = getActionLineText(2) + objmochila;
 				break;
 			case 3:
-				actionLine = actionLine_ES[3] + objmochila;
+				actionLine = getActionLineText(3) + objmochila;
 				break;
 			case 4:
 				if (objetomochila == "")
-					actionLine = actionLine_ES[4] + objmochila;
+					actionLine = getActionLineText(4) + objmochila;
 				else
-					actionLine = actionLine_ES[4] + objetomochila + actionLine_ES[7] + objmochila;
+					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7) + objmochila;
 				break;
 			case 5:
-				actionLine = actionLine_ES[5] + objmochila;
+				actionLine = getActionLineText(5) + objmochila;
 				break;
 			case 6:
-				actionLine = actionLine_ES[6] + objmochila;
+				actionLine = getActionLineText(6) + objmochila;
 				break;
 			default:
 				outtextxy(160, 144, objmochila, 255, true, Graphics::kTextAlignCenter);
@@ -1770,6 +1760,7 @@ void introduction() {
 	g_engine->_mouseManager->hide();
 	bool pulsada_salida;
 	uint contadorvueltas;
+	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
 
 	pulsada_salida = false;
 	totalFadeOut(0);
@@ -1789,15 +1780,15 @@ void introduction() {
 	totalFadeOut(0);
 	cleardevice();
 
-	outtextxy(25, 20, fullScreenMessages_ES[0], 253);
-	outtextxy(25, 35, fullScreenMessages_ES[1], 253);
-	outtextxy(25, 50, fullScreenMessages_ES[2], 253);
-	outtextxy(25, 65, fullScreenMessages_ES[3], 253);
-	outtextxy(25, 80, fullScreenMessages_ES[4], 253);
-	outtextxy(25, 95, fullScreenMessages_ES[5], 253);
-	outtextxy(25, 120, fullScreenMessages_ES[6], 253);
-	outtextxy(25, 140, fullScreenMessages_ES[7], 253);
-	outtextxy(25, 155, fullScreenMessages_ES[8], 253);
+	outtextxy(25, 20, messages[0], 253);
+	outtextxy(25, 35, messages[1], 253);
+	outtextxy(25, 50, messages[2], 253);
+	outtextxy(25, 65, messages[3], 253);
+	outtextxy(25, 80, messages[4], 253);
+	outtextxy(25, 95, messages[5], 253);
+	outtextxy(25, 120, messages[6], 253);
+	outtextxy(25, 140, messages[7], 253);
+	outtextxy(25, 155, messages[8], 253);
 	totalFadeIn(0, "DEFAULT");
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
@@ -2359,6 +2350,8 @@ void sacrificeScene() {
 	saveAllowed = false;
 	palette palaux;
 
+	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+
 	stopVoc();
 	bool pulsada_salida = currentRoomData->paletteAnimationFlag;
 	currentRoomData->paletteAnimationFlag = false;
@@ -2366,11 +2359,11 @@ void sacrificeScene() {
 	bar(0, 139, 319, 149, 0);
 	bar(10, 10, 300, 120, 0);
 
-	outtextxy(10, 10, fullScreenMessages_ES[9], 200);
-	outtextxy(10, 30, fullScreenMessages_ES[10], 200);
-	outtextxy(10, 50, fullScreenMessages_ES[11], 200);
-	outtextxy(10, 70, fullScreenMessages_ES[12], 200);
-	outtextxy(10, 90, fullScreenMessages_ES[13], 200);
+	outtextxy(10, 10, messages[9], 200);
+	outtextxy(10, 30, messages[10], 200);
+	outtextxy(10, 50, messages[11], 200);
+	outtextxy(10, 70, messages[12], 200);
+	outtextxy(10, 90, messages[13], 200);
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2383,11 +2376,11 @@ void sacrificeScene() {
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
 	bar(10, 10, 300, 120, 0);
-	outtextxy(10, 10, fullScreenMessages_ES[14], 200);
-	outtextxy(10, 30, fullScreenMessages_ES[15], 200);
-	outtextxy(10, 50, fullScreenMessages_ES[16], 200);
-	outtextxy(10, 70, fullScreenMessages_ES[17], 200);
-	outtextxy(10, 90, fullScreenMessages_ES[18], 200);
+	outtextxy(10, 10, messages[14], 200);
+	outtextxy(10, 30, messages[15], 200);
+	outtextxy(10, 50, messages[16], 200);
+	outtextxy(10, 70, messages[17], 200);
+	outtextxy(10, 90, messages[18], 200);
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2399,10 +2392,10 @@ void sacrificeScene() {
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
 	bar(10, 10, 300, 120, 0);
-	outtextxy(10, 10, fullScreenMessages_ES[19], 200);
-	outtextxy(10, 50, fullScreenMessages_ES[20] , 200);
-	outtextxy(10, 70, fullScreenMessages_ES[21] , 200);
-	outtextxy(10, 90, fullScreenMessages_ES[22], 200);
+	outtextxy(10, 10, messages[19], 200);
+	outtextxy(10, 50, messages[20] , 200);
+	outtextxy(10, 70, messages[21] , 200);
+	outtextxy(10, 90, messages[22], 200);
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2451,24 +2444,24 @@ void sacrificeScene() {
 	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	clear();
 
-	outtextxy(10, 31, fullScreenMessages_ES[23], 254);
-	outtextxy(10, 29, fullScreenMessages_ES[23], 254);
-	outtextxy(11, 30, fullScreenMessages_ES[23], 254);
-	outtextxy(9, 30,  fullScreenMessages_ES[23], 254);
+	outtextxy(10, 31, messages[23], 254);
+	outtextxy(10, 29, messages[23], 254);
+	outtextxy(11, 30, messages[23], 254);
+	outtextxy(9, 30,  messages[23], 254);
 
-	outtextxy(10, 51, fullScreenMessages_ES[24], 254);
-	outtextxy(10, 49, fullScreenMessages_ES[24], 254);
-	outtextxy(11, 50, fullScreenMessages_ES[24], 254);
-	outtextxy(9, 50,  fullScreenMessages_ES[24], 254);
+	outtextxy(10, 51, messages[24], 254);
+	outtextxy(10, 49, messages[24], 254);
+	outtextxy(11, 50, messages[24], 254);
+	outtextxy(9, 50,  messages[24], 254);
 
-	outtextxy(10, 71, fullScreenMessages_ES[25], 254);
-	outtextxy(10, 69, fullScreenMessages_ES[25], 254);
-	outtextxy(11, 70, fullScreenMessages_ES[25], 254);
-	outtextxy(9, 70,  fullScreenMessages_ES[25], 254);
+	outtextxy(10, 71, messages[25], 254);
+	outtextxy(10, 69, messages[25], 254);
+	outtextxy(11, 70, messages[25], 254);
+	outtextxy(9, 70,  messages[25], 254);
 
-	outtextxy(10, 30, fullScreenMessages_ES[23], 255);
-	outtextxy(10, 50, fullScreenMessages_ES[24], 255);
-	outtextxy(10, 70, fullScreenMessages_ES[25], 255);
+	outtextxy(10, 30, messages[23], 255);
+	outtextxy(10, 50, messages[24], 255);
+	outtextxy(10, 70, messages[25], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2520,48 +2513,48 @@ void sacrificeScene() {
 	stopVoc();
 	clear();
 
-	outtextxy(10, 21, fullScreenMessages_ES[26], 254);
-	outtextxy(10, 19, fullScreenMessages_ES[26], 254);
-	outtextxy(11, 20, fullScreenMessages_ES[26], 254);
-	outtextxy(9, 20,  fullScreenMessages_ES[26], 254);
+	outtextxy(10, 21, messages[26], 254);
+	outtextxy(10, 19, messages[26], 254);
+	outtextxy(11, 20, messages[26], 254);
+	outtextxy(9, 20,  messages[26], 254);
 
-	outtextxy(10, 41, fullScreenMessages_ES[27], 254);
-	outtextxy(10, 39, fullScreenMessages_ES[27], 254);
-	outtextxy(11, 40, fullScreenMessages_ES[27], 254);
-	outtextxy(9, 40,  fullScreenMessages_ES[27], 254);
+	outtextxy(10, 41, messages[27], 254);
+	outtextxy(10, 39, messages[27], 254);
+	outtextxy(11, 40, messages[27], 254);
+	outtextxy(9, 40,  messages[27], 254);
 
-	outtextxy(10, 61, fullScreenMessages_ES[28], 254);
-	outtextxy(10, 59, fullScreenMessages_ES[28], 254);
-	outtextxy(11, 60, fullScreenMessages_ES[28], 254);
-	outtextxy(9, 60,  fullScreenMessages_ES[28], 254);
+	outtextxy(10, 61, messages[28], 254);
+	outtextxy(10, 59, messages[28], 254);
+	outtextxy(11, 60, messages[28], 254);
+	outtextxy(9, 60,  messages[28], 254);
 
-	outtextxy(10, 81, fullScreenMessages_ES[29], 254);
-	outtextxy(10, 79, fullScreenMessages_ES[29], 254);
-	outtextxy(11, 80, fullScreenMessages_ES[29], 254);
-	outtextxy(9, 80,  fullScreenMessages_ES[29], 254);
+	outtextxy(10, 81, messages[29], 254);
+	outtextxy(10, 79, messages[29], 254);
+	outtextxy(11, 80, messages[29], 254);
+	outtextxy(9, 80,  messages[29], 254);
 
-	outtextxy(10, 101, fullScreenMessages_ES[30], 254);
-	outtextxy(10, 99,  fullScreenMessages_ES[30], 254);
-	outtextxy(11, 100, fullScreenMessages_ES[30], 254);
-	outtextxy(9, 100,  fullScreenMessages_ES[30], 254);
+	outtextxy(10, 101, messages[30], 254);
+	outtextxy(10, 99,  messages[30], 254);
+	outtextxy(11, 100, messages[30], 254);
+	outtextxy(9, 100,  messages[30], 254);
 
-	outtextxy(10, 121, fullScreenMessages_ES[31], 254);
-	outtextxy(10, 119, fullScreenMessages_ES[31], 254);
-	outtextxy(11, 120, fullScreenMessages_ES[31], 254);
-	outtextxy(9, 120,  fullScreenMessages_ES[31], 254);
+	outtextxy(10, 121, messages[31], 254);
+	outtextxy(10, 119, messages[31], 254);
+	outtextxy(11, 120, messages[31], 254);
+	outtextxy(9, 120,  messages[31], 254);
 
-	outtextxy(10, 141, fullScreenMessages_ES[32], 254);
-	outtextxy(10, 139, fullScreenMessages_ES[32], 254);
-	outtextxy(11, 140, fullScreenMessages_ES[32], 254);
-	outtextxy(9, 140,  fullScreenMessages_ES[32], 254);
+	outtextxy(10, 141, messages[32], 254);
+	outtextxy(10, 139, messages[32], 254);
+	outtextxy(11, 140, messages[32], 254);
+	outtextxy(9, 140,  messages[32], 254);
 
-	outtextxy(10, 20,  fullScreenMessages_ES[26], 255);
-	outtextxy(10, 40,  fullScreenMessages_ES[27], 255);
-	outtextxy(10, 60,  fullScreenMessages_ES[28], 255);
-	outtextxy(10, 80,  fullScreenMessages_ES[29], 255);
-	outtextxy(10, 100, fullScreenMessages_ES[30], 255);
-	outtextxy(10, 120, fullScreenMessages_ES[31], 255);
-	outtextxy(10, 140, fullScreenMessages_ES[32], 255);
+	outtextxy(10, 20,  messages[26], 255);
+	outtextxy(10, 40,  messages[27], 255);
+	outtextxy(10, 60,  messages[28], 255);
+	outtextxy(10, 80,  messages[29], 255);
+	outtextxy(10, 100, messages[30], 255);
+	outtextxy(10, 120, messages[31], 255);
+	outtextxy(10, 140, messages[32], 255);
 	for (int i = 0; i <= 31; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
@@ -2579,48 +2572,48 @@ void sacrificeScene() {
 		return;
 
 	clear();
-	outtextxy(10, 21,  fullScreenMessages_ES[33], 254);
-	outtextxy(10, 19,  fullScreenMessages_ES[33], 254);
-	outtextxy(11, 20,  fullScreenMessages_ES[33], 254);
-	outtextxy(9,  20,  fullScreenMessages_ES[33], 254);
+	outtextxy(10, 21,  messages[33], 254);
+	outtextxy(10, 19,  messages[33], 254);
+	outtextxy(11, 20,  messages[33], 254);
+	outtextxy(9,  20,  messages[33], 254);
 
-	outtextxy(10, 41,  fullScreenMessages_ES[34], 254);
-	outtextxy(10, 39,  fullScreenMessages_ES[34], 254);
-	outtextxy(11, 40,  fullScreenMessages_ES[34], 254);
-	outtextxy(9, 40,   fullScreenMessages_ES[34], 254);
+	outtextxy(10, 41,  messages[34], 254);
+	outtextxy(10, 39,  messages[34], 254);
+	outtextxy(11, 40,  messages[34], 254);
+	outtextxy(9, 40,   messages[34], 254);
 
-	outtextxy(10, 61,  fullScreenMessages_ES[35], 254);
-	outtextxy(10, 59,  fullScreenMessages_ES[35], 254);
-	outtextxy(11, 60,  fullScreenMessages_ES[35], 254);
-	outtextxy(9, 60,   fullScreenMessages_ES[35], 254);
+	outtextxy(10, 61,  messages[35], 254);
+	outtextxy(10, 59,  messages[35], 254);
+	outtextxy(11, 60,  messages[35], 254);
+	outtextxy(9, 60,   messages[35], 254);
 
-	outtextxy(10, 81,  fullScreenMessages_ES[36], 254);
-	outtextxy(10, 79,  fullScreenMessages_ES[36], 254);
-	outtextxy(11, 80,  fullScreenMessages_ES[36], 254);
-	outtextxy(9, 80,   fullScreenMessages_ES[36], 254);
+	outtextxy(10, 81,  messages[36], 254);
+	outtextxy(10, 79,  messages[36], 254);
+	outtextxy(11, 80,  messages[36], 254);
+	outtextxy(9, 80,   messages[36], 254);
 
-	outtextxy(10, 101, fullScreenMessages_ES[37], 254);
-	outtextxy(10, 99,  fullScreenMessages_ES[37], 254);
-	outtextxy(11, 100, fullScreenMessages_ES[37], 254);
-	outtextxy(9, 100,  fullScreenMessages_ES[37], 254);
+	outtextxy(10, 101, messages[37], 254);
+	outtextxy(10, 99,  messages[37], 254);
+	outtextxy(11, 100, messages[37], 254);
+	outtextxy(9, 100,  messages[37], 254);
 
-	outtextxy(10, 121, fullScreenMessages_ES[38], 254);
-	outtextxy(10, 119, fullScreenMessages_ES[38], 254);
-	outtextxy(11, 120, fullScreenMessages_ES[38], 254);
-	outtextxy(9, 120,  fullScreenMessages_ES[38], 254);
+	outtextxy(10, 121, messages[38], 254);
+	outtextxy(10, 119, messages[38], 254);
+	outtextxy(11, 120, messages[38], 254);
+	outtextxy(9, 120,  messages[38], 254);
 
-	outtextxy(10, 141, fullScreenMessages_ES[39], 254);
-	outtextxy(10, 139, fullScreenMessages_ES[39], 254);
-	outtextxy(11, 140, fullScreenMessages_ES[39], 254);
-	outtextxy(9, 140,  fullScreenMessages_ES[39], 254);
+	outtextxy(10, 141, messages[39], 254);
+	outtextxy(10, 139, messages[39], 254);
+	outtextxy(11, 140, messages[39], 254);
+	outtextxy(9, 140,  messages[39], 254);
 
-	outtextxy(10, 20,  fullScreenMessages_ES[33], 255);
-	outtextxy(10, 40,  fullScreenMessages_ES[34], 255);
-	outtextxy(10, 60,  fullScreenMessages_ES[35], 255);
-	outtextxy(10, 80,  fullScreenMessages_ES[36], 255);
-	outtextxy(10, 100, fullScreenMessages_ES[37], 255);
-	outtextxy(10, 120, fullScreenMessages_ES[38], 255);
-	outtextxy(10, 140, fullScreenMessages_ES[39], 255);
+	outtextxy(10, 20,  messages[33], 255);
+	outtextxy(10, 40,  messages[34], 255);
+	outtextxy(10, 60,  messages[35], 255);
+	outtextxy(10, 80,  messages[36], 255);
+	outtextxy(10, 100, messages[37], 255);
+	outtextxy(10, 120, messages[38], 255);
+	outtextxy(10, 140, messages[39], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2638,24 +2631,24 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 	clear();
-	outtextxy(10, 61,  fullScreenMessages_ES[40], 254);
-	outtextxy(10, 59,  fullScreenMessages_ES[40], 254);
-	outtextxy(11, 60,  fullScreenMessages_ES[40], 254);
-	outtextxy(9, 60,   fullScreenMessages_ES[40], 254);
+	outtextxy(10, 61,  messages[40], 254);
+	outtextxy(10, 59,  messages[40], 254);
+	outtextxy(11, 60,  messages[40], 254);
+	outtextxy(9, 60,   messages[40], 254);
 
-	outtextxy(10, 81,  fullScreenMessages_ES[41], 254);
-	outtextxy(10, 79,  fullScreenMessages_ES[41], 254);
-	outtextxy(11, 80,  fullScreenMessages_ES[41], 254);
-	outtextxy(9, 80,   fullScreenMessages_ES[41], 254);
+	outtextxy(10, 81,  messages[41], 254);
+	outtextxy(10, 79,  messages[41], 254);
+	outtextxy(11, 80,  messages[41], 254);
+	outtextxy(9, 80,   messages[41], 254);
 
-	outtextxy(10, 101, fullScreenMessages_ES[42], 254);
-	outtextxy(10, 99,  fullScreenMessages_ES[42], 254);
-	outtextxy(11, 100, fullScreenMessages_ES[42], 254);
-	outtextxy(9, 100,  fullScreenMessages_ES[42], 254);
+	outtextxy(10, 101, messages[42], 254);
+	outtextxy(10, 99,  messages[42], 254);
+	outtextxy(11, 100, messages[42], 254);
+	outtextxy(9, 100,  messages[42], 254);
 
-	outtextxy(10, 60,  fullScreenMessages_ES[40], 255);
-	outtextxy(10, 80,  fullScreenMessages_ES[41], 255);
-	outtextxy(10, 100, fullScreenMessages_ES[42], 255);
+	outtextxy(10, 60,  messages[40], 255);
+	outtextxy(10, 80,  messages[41], 255);
+	outtextxy(10, 100, messages[42], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2678,18 +2671,20 @@ void ending() {
 	saveAllowed = false;
 	bool pulsada_salida;
 
-	outtextxy(10, 41, fullScreenMessages_ES[43], 249);
-	outtextxy(10, 39, fullScreenMessages_ES[43], 249);
-	outtextxy(11, 40, fullScreenMessages_ES[43], 249);
-	outtextxy(9, 40,  fullScreenMessages_ES[43], 249);
+	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
 
-	outtextxy(10, 61, fullScreenMessages_ES[44], 249);
-	outtextxy(10, 59, fullScreenMessages_ES[44], 249);
-	outtextxy(11, 60, fullScreenMessages_ES[44], 249);
-	outtextxy(9, 60,  fullScreenMessages_ES[44], 249);
+	outtextxy(10, 41, messages[43], 249);
+	outtextxy(10, 39, messages[43], 249);
+	outtextxy(11, 40, messages[43], 249);
+	outtextxy(9, 40,  messages[43], 249);
 
-	outtextxy(10, 40, fullScreenMessages_ES[43], 253);
-	outtextxy(10, 60, fullScreenMessages_ES[44], 253);
+	outtextxy(10, 61, messages[44], 249);
+	outtextxy(10, 59, messages[44], 249);
+	outtextxy(11, 60, messages[44], 249);
+	outtextxy(9, 60,  messages[44], 249);
+
+	outtextxy(10, 40, messages[43], 253);
+	outtextxy(10, 60, messages[44], 253);
 	if(g_engine->shouldQuit()) {
 		return;
 	}
