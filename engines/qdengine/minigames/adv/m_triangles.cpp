@@ -108,6 +108,8 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 	if (!_runtime->getParameter("animation_time", _animationTime, true))
 		return;
 
+	_quickReselect = _runtime->getParameter("quick_reselect", false);
+
 	const char *faceNameBegin = _runtime->parameter("object_name_begin", "obj_");
 	const char *backNameBegin = _runtime->parameter("backg_name_begin", "element__back");
 	const char *selectNameBegin = _runtime->parameter("select_name_begin", "element_select_");
