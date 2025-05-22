@@ -552,6 +552,8 @@ ifneq (,$(findstring $(platform), wiiu vita))
    DEFINES += -Os
 else ifneq (,$(findstring $(platform), ios osx))
    DEFINES += -O1
+else ifneq (,$(findstring $(platform), armv7)) # fixes a GCC 15.1 internal compiler error. TODO check if it is fixed in GCC newer releases.
+   DEFINES += -O1
 else ifneq (,$(findstring $(platform), msvc genode rpi))
    DEFINES += -O2
 else
