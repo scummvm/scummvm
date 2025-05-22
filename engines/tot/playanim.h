@@ -120,10 +120,6 @@ struct reginventario {
 	Common::String objectName;
 };
 
-struct inventoryBitmaps {
-	byte *bitmap[inventoryIconCount];
-};
-
 /**
  * Hypertext struct
  */
@@ -385,9 +381,9 @@ extern palette pal;
  */
 extern reginventario mobj[inventoryIconCount];
 /**
- * Keeps an array of all inventory icons
+ * Keeps an array of all inventory icon bitmaps
  */
-extern inventoryBitmaps mochilaxms;
+extern byte *mochilaxms[inventoryIconCount];
 
 /**
  * Delay of palette animation
@@ -647,6 +643,7 @@ void clearObj();
 void clearScreenData();
 void initPlayAnim();
 void resetGameState();
+void clearVars();
 
 } // End of namespace Tot
 #endif

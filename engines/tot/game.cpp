@@ -34,7 +34,6 @@
 #include "tot/util.h"
 
 namespace Tot {
-byte iaux, iaux2;
 
 void loadTemporaryGame() {
 	g_engine->loadGameState(g_engine->getMetaEngine()->getAutosaveSlot());
@@ -944,13 +943,13 @@ void sceneChange() {
 			animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
 			animado.profundidad = 14;
 
-			for (iaux = 0; iaux < maxrejax; iaux++)
-				for (iaux2 = 0; iaux2 < maxrejay; iaux2++) {
-					if (rejamascaramovto[iaux][iaux2] > 0) {
-						currentRoomData->rejapantalla[oldposx + iaux][oldposy + iaux2] = rejamascaramovto[iaux][iaux2];
+			for (int i = 0; i < maxrejax; i++)
+				for (int j = 0; j < maxrejay; j++) {
+					if (rejamascaramovto[i][j] > 0) {
+						currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
 					}
-					if (rejamascararaton[iaux][iaux2] > 0)
-						currentRoomData->mouseGrid[oldposx + iaux][oldposy + iaux2] = rejamascararaton[iaux][iaux2];
+					if (rejamascararaton[i][j] > 0)
+						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
 				}
 			assembleScreen();
 		}

@@ -3780,8 +3780,8 @@ void loadObjects() {
 	if (!ficheroobj.isOpen())
 		showError(312);
 	for (int i = 0; i < inventoryIconCount; i++) {
-		mochilaxms.bitmap[i] = (byte *)malloc(sizeicono);
-		ficheroobj.read(mochilaxms.bitmap[i], sizeicono);
+		mochilaxms[i] = (byte *)malloc(sizeicono);
+		ficheroobj.read(mochilaxms[i], sizeicono);
 	}
 	if (contadorpc > 65)
 		showError(274);
@@ -4135,7 +4135,7 @@ void loadGame(regispartida game) {
 	if (game.parte_del_juego != gamePart) {
 		gamePart = game.parte_del_juego;
 		for (int i = 0; i < inventoryIconCount; i++) {
-			free(mochilaxms.bitmap[i]);
+			free(mochilaxms[i]);
 		}
 		loadObjects();
 	}

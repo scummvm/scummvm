@@ -85,7 +85,7 @@ palette pal;
 
 reginventario mobj[inventoryIconCount];
 
-inventoryBitmaps mochilaxms;
+byte *mochilaxms[inventoryIconCount];
 
 byte saltospal;
 
@@ -722,4 +722,49 @@ void initPlayAnim() {
 	inGame = false;
 }
 
+void clearVars() {
+	if(pasoanimado != NULL) {
+		free(pasoanimado);
+	}
+	if(background != NULL) {
+		free(background);
+	}
+	if(handpantalla != NULL) {
+		free(handpantalla);
+	}
+	if(conversationData != NULL) {
+		free(conversationData);
+	}
+	if(rooms != NULL) {
+		free(rooms);
+	}
+	if(invItemData != NULL) {
+		free(invItemData);
+	}
+	for(int i = 0; i < numobjetosconv; i++) {
+		if(screenObjects[i] != NULL) {
+			free(screenObjects[i]);
+		}
+	}
+	for(int i = 0; i < inventoryIconCount; i++) {
+		if(mochilaxms[i] != NULL) {
+			free(mochilaxms[i]);
+		}
+	}
+	for(int i = 0; i < 4; i++) {
+		for(int j = 0; j < walkFrameCount + 30; j++) {
+			if(secuencia.bitmap[i][j] != NULL) {
+				free(secuencia.bitmap[i][j]);
+			}
+		}
+	}
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < secAnimationFrameCount; j++) {
+			if(animado.dib[i][j] != NULL){
+				free(animado.dib[i][j]);
+			}
+		}
+	}
+}
 } // End of namespace Tot

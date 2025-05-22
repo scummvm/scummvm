@@ -39,7 +39,6 @@ void stopVoc();
 void playMidiFile(Common::String nomfich, bool loop);
 void pitamidmem();
 void loopactivo(bool mid_loop);
-
 } // End of namespace Tot
 
 #endif
