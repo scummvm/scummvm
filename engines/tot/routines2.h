@@ -86,9 +86,9 @@ void assembleScreen(bool scroll = false);
 void disableSecondAnimation();
 void setRoomTrajectories(int alto, int ancho, TRAJECTORIES_OP op, bool fixGrids = true);
 void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction);
+void clearGame();
 
 // Debug methods
-
 void drawMouseGrid(RoomFileRegister *screen);
 void drawScreenGrid(RoomFileRegister *screen);
 void drawCharacterPosition();

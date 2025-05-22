@@ -27,8 +27,7 @@
 namespace Tot {
 
 void initGraph();
-void getVirtualImg(uint getcoordx1, uint getcoordy1, uint getcoordx2, uint getcoordy2,
-				   byte *backgroundScreen, byte *image);
+void getVirtualImg(uint getcoordx1, uint getcoordy1, uint getcoordx2, uint getcoordy2, byte *backgroundScreen, byte *image);
 void putVirtualImg(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte *image);
 void clear();
 void drawFullScreen(byte *screen);

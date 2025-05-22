@@ -358,7 +358,7 @@ void freeAnimation() {
 
 void freeInventory() {
 	for (int i = 0; i < inventoryIconCount; i++) {
-		free(mochilaxms.bitmap[i]);
+		free(mochilaxms[i]);
 	}
 }
 
@@ -495,7 +495,7 @@ void drawLookAtItem(RoomObjectListEntry obj) {
 
 void putIcon(uint posiconx, uint posicony, uint numicon) {
 	// substract 1 to account for 1-based indices
-	putImg(posiconx, posicony, mochilaxms.bitmap[mobj[numicon].bitmapIndex - 1]);
+	putImg(posiconx, posicony, mochilaxms[mobj[numicon].bitmapIndex - 1]);
 }
 
 void drawBackpack() {
@@ -2101,9 +2101,15 @@ void saveTemporaryGame() {
 }
 
 void exitGame() {
+	clear();
 	g_system->quit();
-	// Should do cleanup here!
-	free(conversationData);
+}
+
+void clearGame() {
+	debug("releasing game...");
+	resetGameState();
+	clearAnims();
+	clearVars();
 }
 
 void exitToDOS() {
@@ -2179,8 +2185,8 @@ void soundControls() {
 	uint oldxraton,
 		oldyraton,
 		tamfondcontroles,
-		tamslade,
-		tamfondoslade,
+		sliderSize,
+		sliderBgSize,
 		volumenfx,
 		volumenmelodia,
 		xfade,
@@ -2212,22 +2218,22 @@ void soundControls() {
 
 	line(90, 31, 90, 44, 255);
 
-	tamslade = imagesize(86, 31, 94, 44);
-	byte *slade = (byte *)malloc(tamslade);
-	getImg(86, 31, 94, 44, slade);
+	sliderSize = imagesize(86, 31, 94, 44);
+	byte *slider = (byte *)malloc(sliderSize);
+	getImg(86, 31, 94, 44, slider);
 
 	drawMenu(3);
-	tamfondoslade = imagesize(86, 31, 234, 44);
+	sliderBgSize = imagesize(86, 31, 234, 44);
 
-	byte *fondoslade1 = (byte *)malloc(tamfondoslade);
-	byte *fondoslade2 = (byte *)malloc(tamfondoslade);
-	getImg(86, 31, 234, 44, fondoslade1);
-	getImg(86, 76, 234, 89, fondoslade2);
+	byte *sliderBackground1 = (byte *)malloc(sliderBgSize);
+	byte *sliderBackground2 = (byte *)malloc(sliderBgSize);
+	getImg(86, 31, 234, 44, sliderBackground1);
+	getImg(86, 76, 234, 89, sliderBackground2);
 
 	volumenfx = round(((volumenfxderecho + volumenfxizquierdo) / 2) * 20);
 	volumenmelodia = round(((volumenmelodiaderecho + volumenmelodiaizquierdo) / 2) * 20);
-	putImg(volumenfx + 86, 31, slade);
-	putImg(volumenmelodia + 86, 76, slade);
+	putImg(volumenfx + 86, 31, slider);
+	putImg(volumenmelodia + 86, 76, slider);
 
 	setMousePos(1, xraton, yraton);
 	bool keyPressed = false;
@@ -2278,8 +2284,8 @@ void soundControls() {
 					}
 
 					if (oldxfade != xfade) {
-						putImg(86, 31, fondoslade1);
-						putImg(xfade, 31, slade);
+						putImg(86, 31, sliderBackground1);
+						putImg(xfade, 31, slider);
 						// This yields a volume between 0 and 140
 						volumenfx = xfade - 86;
 
@@ -2311,8 +2317,8 @@ void soundControls() {
 					}
 
 					if (oldxfade != xfade) {
-						putImg(86, 76, fondoslade2);
-						putImg(xfade, 76, slade);
+						putImg(86, 76, sliderBackground2);
+						putImg(xfade, 76, slider);
 						volumenmelodia = xfade - 86;
 						volumenmelodiaderecho = round((float)(volumenmelodia) / 20);
 						volumenmelodiaizquierdo = round((float)(volumenmelodia) / 20);
@@ -2337,9 +2343,9 @@ void soundControls() {
 	iraton = oldiraton;
 	setMousePos(iraton, xraton, yraton);
 	free(puntfondcontroles);
-	free(slade);
-	free(fondoslade1);
-	free(fondoslade2);
+	free(slider);
+	free(sliderBackground1);
+	free(sliderBackground2);
 
 	if (contadorpc > 7)
 		showError(274);

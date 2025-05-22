@@ -156,6 +156,7 @@ MusicPlayer::MusicPlayer() {
 
 MusicPlayer::~MusicPlayer() {
 	killMidi();
+	free(_data);
 }
 
 void MusicPlayer::sndMidiStart(bool loop) {

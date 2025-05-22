@@ -31,6 +31,7 @@ void drawFlc(uint flicx, uint flicy, int32 posicionfli, uint loop,
 			 byte veloc, byte numevento, bool palcompleta, bool permitesalida,
 			 bool doscientos, bool &salidaflis);
 
+void clearAnims();
 /**
  * Header of an Autodesk Animator FLIC file.
  */

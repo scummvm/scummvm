@@ -49,6 +49,7 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
+	delete(_bios);
 }
 
 void GraphicsManager::restoreBackground(uint x, uint y, uint x2, uint y2) {

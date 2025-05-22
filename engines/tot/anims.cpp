@@ -1016,10 +1016,11 @@ void drawFlc(
 	primeravuelta = true;
 	posflicfile = posicionfli;
 	posrelfli = flicx + flicy * 320;
-	// punterofondofrase = malloc(sizefrase);
 	loadFlc(loop, permitesalida, salidaflis, numevento, palcompleta, doscientos, veloc, flicx, flicy);
 	debug("Salida flis: %d", salidaflis);
-	// free(punterofondofrase);
 }
 
+void clearAnims() {
+	free(punterofondofrase);
+}
 } // End of namespace Tot

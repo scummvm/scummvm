@@ -111,5 +111,4 @@ void initSound() {
 	playMidiFile("Silent", false);
 	setSfxVolume(6, 6);
 }
-
 } // End of namespace Tot

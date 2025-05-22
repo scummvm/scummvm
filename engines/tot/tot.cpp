@@ -35,6 +35,7 @@
 #include "tot/font/bgifont.h"
 #include "tot/graphman.h"
 #include "tot/mouse.h"
+#include "tot/playanim.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
 #include "tot/soundman.h"
@@ -50,6 +51,7 @@ TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 }
 
 TotEngine::~TotEngine() {
+	clearGame();
 	delete _screen;
 	delete _graphics;
 	delete _sound;
