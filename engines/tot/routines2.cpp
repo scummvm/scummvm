@@ -1671,6 +1671,7 @@ inline bool keyPressed() {
 }
 
 void credits() {
+	saveAllowed = true;
 	debug("Credits");
 	// 	byte ii;
 	palette pal2;
@@ -1765,6 +1766,7 @@ Lsalida:
 }
 
 void introduction() {
+	saveAllowed = false;
 	g_engine->_mouseManager->hide();
 	bool pulsada_salida;
 	uint contadorvueltas;
@@ -2354,6 +2356,7 @@ void soundControls() {
 }
 
 void sacrificeScene() {
+	saveAllowed = false;
 	palette palaux;
 
 	stopVoc();
@@ -2668,9 +2671,11 @@ void sacrificeScene() {
 	delay(2000);
 	totalFadeOut(0);
 	currentRoomData->paletteAnimationFlag = pulsada_salida;
+	saveAllowed = true;
 }
 
 void ending() {
+	saveAllowed = false;
 	bool pulsada_salida;
 
 	outtextxy(10, 41, fullScreenMessages_ES[43], 249);
@@ -2708,6 +2713,7 @@ void ending() {
 	delay(1000);
 	playVoc("NOOO", 0, 0);
 	delay(3000);
+	saveAllowed = true;
 }
 
 void loadBat() {
