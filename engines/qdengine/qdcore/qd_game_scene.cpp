@@ -896,6 +896,10 @@ void qdGameScene::set_active_personage(qdGameObjectMoving *p) {
 
 	_camera.set_default_object(p);
 
+	if (g_engine->_gameVersion <= 20040601) {
+		_selected_object->set_last_move_order(_selected_object->R());
+	}
+
 	if (p && p->has_camera_mode()) {
 		_camera.set_mode(p->camera_mode(), p);
 		_camera.set_default_mode(p->camera_mode());
