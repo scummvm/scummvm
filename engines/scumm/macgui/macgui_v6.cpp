@@ -217,8 +217,7 @@ void MacV6Gui::updateMenus() {
 	} else
 #endif
 	if (_vm->_game.id == GID_INDY4) {
-		// TODO
-		menu->getSubMenuItem(soundMenu, 0)->checked = false; // Music
+	  menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
 		voiceMenuIndex = 4;
 	} else {
 		menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
@@ -226,7 +225,7 @@ void MacV6Gui::updateMenus() {
 	}
 
 	for (int i = 0; i < 3; i++)
-		menu->getSubMenuItem(soundMenu, i)->checked = false;
+		menu->getSubMenuItem(soundMenu, i + voiceMenuIndex)->checked = false;
 
 	switch (_vm->_voiceMode) {
 	case 0:	// Voice Only
