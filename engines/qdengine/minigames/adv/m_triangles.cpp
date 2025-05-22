@@ -343,6 +343,8 @@ void MinigameTriangle::endSwapNodes(int pos1, int pos2) {
 }
 
 bool MinigameTriangle::animate(float dt) {
+	warning("STUB: MinigameTriangle::animate()");
+
 	if (_animationState == NO_ANIMATION)
 		return false;
 
@@ -496,6 +498,8 @@ void MinigameTriangle::quant(float dt) {
 			}
 		}
 	}
+
+	warning("STUB: MinigameTriangle::quant()");
 
 	if (_hovered != mousePos || _selected != lastSelected) {
 		highlight(_hovered, false);
