@@ -31,7 +31,7 @@
 #include "bagel/hodjnpodj/console.h"
 #include "bagel/hodjnpodj/gfx/bold_font.h"
 #include "bagel/music.h"
-#include "bagel/hodjnpodj/wordsearch/dllinit.h"
+#include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -79,8 +79,7 @@ Common::Error HodjNPodjEngine::run() {
 	_gameId = getGameId();
 #endif
 	// Run the game
-	//runGame();
-	WordSearch::RunWordSearch(nullptr, &_gameInfo);
+	Metagame::Frame::theApp.Run();
 
 	for (int size = 8; size <= 14; size += 2)
 		delete _fonts[size];

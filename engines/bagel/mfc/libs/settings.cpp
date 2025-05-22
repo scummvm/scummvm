@@ -31,7 +31,7 @@ Common::String Settings::getFilename() {
 	// Hack to get engine target name
 	Common::String fname = g_engine->getSaveStateName(0);
 	fname = Common::String(fname.c_str(), strchr(fname.c_str(), '.'));
-	fname += "_settings.ini";
+	fname += "-settings.ini";
 
 	return fname;
 }

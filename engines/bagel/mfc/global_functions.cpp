@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/global_functions.h"
 
 namespace Bagel {

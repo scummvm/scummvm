@@ -25,6 +25,7 @@
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/afx.h"
+#include "bagel/mfc/afxmsg.h"
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
 #include "bagel/mfc/libs/settings.h"
@@ -1100,15 +1101,33 @@ class CWinApp : public CWinThread {
 private:
 	Libs::Settings _settings;
 
+private:
+	/**
+	 * Get any pending event
+	 * @return		Returns false if app should quit
+	 */
+	bool GetMessage(MSG &msg);
+
+protected:
+	virtual BOOL InitApplication();
+	virtual BOOL InitInstance();
+	virtual int ExitInstance();
+	virtual BOOL SaveAllModified();
+
 public:
+	static CWinApp *_activeApp;
 	int m_nCmdShow = SW_SHOWNORMAL;
 	const char *m_lpCmdLine = "";
 	CWnd *m_pMainWnd = nullptr;
 
 public:
 	CWinApp(const char *appName = nullptr);
-	~CWinApp() override {
-	}
+	~CWinApp() override;
+
+	/**
+	 * Main execution for MFC applications
+	 */
+	int Run();
 
 	virtual BOOL PreTranslateMessage(MSG *pMsg);
 	void SetDialogBkColor();
@@ -1119,7 +1138,6 @@ public:
 	void EndWaitCursor();
 	void DoWaitCursor(int nCode);
 	void AddDocTemplate(CDocTemplate *pTemplate);
-	BOOL SaveAllModified();
 	void CloseAllDocuments(BOOL bEndSession);
 
 	UINT GetProfileInt(LPCSTR lpszSection,

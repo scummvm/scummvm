@@ -19,16 +19,84 @@
  *
  */
 
+#include "common/system.h"
+#include "common/events.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/libs/event.h"
 
 namespace Bagel {
 namespace MFC {
 
 IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 
+CWinApp *CWinApp::_activeApp = nullptr;
+
 CWinApp::CWinApp(const char *appName) : CWinThread() {
+	assert(!_activeApp);	// Only one app per engine
+	_activeApp = this;
+	Libs::Event::init();
+}
+
+CWinApp::~CWinApp() {
+	_activeApp = nullptr;
+}
+
+BOOL CWinApp::InitApplication() {
+	_settings.load();
+	return true;
+}
+
+BOOL CWinApp::InitInstance() {
+	return true;
+}
+
+int CWinApp::ExitInstance() {
+	return 0;
+}
+
+BOOL CWinApp::SaveAllModified() {
+	_settings.save();
+	return true;
+}
+
+int CWinApp::Run() {
+	InitApplication();
+	InitInstance();
+	assert(m_pMainWnd);
+
+	MSG msg;
+	while (m_pMainWnd && GetMessage(msg)) {
+		if (!PreTranslateMessage(&msg)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+
+	ExitInstance();
+	SaveAllModified();
+
+	return 0;
+}
+
+bool CWinApp::GetMessage(MSG &msg) {
+	Libs::Event ev;
+
+	// Poll for event
+	if (!g_system->getEventManager()->pollEvent(ev)) {
+		g_system->delayMillis(10);
+		return true;
+	}
+
+	// Check for quit event
+	if (ev.type == Common::EVENT_QUIT ||
+		ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+		return false;
+
+	// Convert other event types
+	msg = ev;
+	return true;
 }
 
 BOOL CWinApp::PreTranslateMessage(MSG *pMsg) {
@@ -66,10 +134,6 @@ void CWinApp::AddDocTemplate(CDocTemplate *pTemplate) {
 	error("TODO: CWinApp::AddDocTemplate");
 }
 
-BOOL CWinApp::SaveAllModified() {
-	error("TODO: CWinApp::SaveAllModified");
-}
-
 void CWinApp::CloseAllDocuments(BOOL bEndSession) {
 	error("TODO: CWinApp::CloseAllDocuments");
 }
@@ -86,7 +150,7 @@ void CWinApp::WriteProfileInt(LPCSTR lpszSection,
 
 
 CWinApp *AfxGetApp() {
-	error("TODO: AfxGetApp");
+	return CWinApp::_activeApp;
 }
 
 HINSTANCE AfxGetInstanceHandle() {

@@ -57,9 +57,7 @@ namespace Frame {
 // See game.cpp for the code to the member functions and the message map.
 //              
 
-class CHodjPodjWindow : public CFrameWnd
-{
-
+class CHodjPodjWindow : public CFrameWnd {
 private:
     CBitmap *m_pCurrentBmp;
     UINT     m_nFlags;
@@ -100,8 +98,8 @@ public:
     BOOL Restore(VOID);
     VOID ShowCredits(VOID);
 
-static  void ReleaseResources(void);
-static  void FlushInputEvents(void);
+	static  void ReleaseResources(void);
+	static  void FlushInputEvents(void);
 
 private:
 	BOOL CheckConfig(CDC *pDC);
@@ -112,7 +110,7 @@ private:
 	void StopBackgroundMidi(void);
 
 protected:
-virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
     //{{AFX_MSG( CHodjPodjWindow )
     afx_msg void OnPaint();
@@ -131,17 +129,16 @@ virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
-
-// CTheApp:
-// See game.cpp for the code to the InitInstance member function.
-//
-class CTheApp : public CWinApp
-{
+/**
+ * Main app class for the game
+ */
+class CTheApp : public CWinApp {
 public:
-    BOOL InitInstance();
-    int ExitInstance();
+    BOOL InitInstance() override;
+    int ExitInstance() override;
 };
+
+extern CTheApp theApp;
 
 } // namespace Frame
 } // namespace Metagame

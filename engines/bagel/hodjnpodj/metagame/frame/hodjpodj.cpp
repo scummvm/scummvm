@@ -41,8 +41,9 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Frame {
 
-#define SAVEDLL         0
+CTheApp theApp;
 
+#define SAVEDLL         0
 
 #define CONTROL_PHYSICAL_MEMORY		TRUE
 
@@ -194,14 +195,7 @@ static const CREDITS stCredits[MAX_CREDITS] = {
 };
 
 // local prototypes
-void LoadFloatLib(void);
-
-/////////////////////////////////////////////////////////////////////////////
-
-// theApp:
-// Just creating this application object runs the whole application.
-//
-CTheApp NEAR theApp;
+void LoadFloatLib();
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -2503,15 +2497,12 @@ VOID CHodjPodjWindow::ShowCredits(VOID)
  *
  ****************************************************************/
 
-BOOL CTheApp::InitInstance()
-{
-    CString         lpszCommandLine = m_lpCmdLine;
-
+BOOL CTheApp::InitInstance() {
     m_pMainWnd = new CHodjPodjWindow();
     m_pMainWnd->ShowWindow( SW_SHOWNORMAL );
     m_pMainWnd->UpdateWindow();
 
-    return(TRUE);
+    return TRUE;
 }
 
 
