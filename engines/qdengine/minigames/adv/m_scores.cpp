@@ -129,12 +129,17 @@ Scores::Scores(MinigameManager *runtime) {
 		return;
 	if (!(_lastTime = _runtime->parameter("last_time")))
 		return;
+	if (!(_timeFormat = _runtime->parameter("time_format")))
+		return;
 	if (!(_currentLevel = _runtime->parameter("current_level")))
 		return;
 
 	if (!(_prev = _runtime->getObject(_runtime->parameter("prev_button"))))
 		return;
 	if (!(_next = _runtime->getObject(_runtime->parameter("next_button"))))
+		return;
+
+	if (!(_gameBorder = _runtime->getObject(_runtime->parameter("game_border"))))
 		return;
 
 	_outMaxLevel = _runtime->getObject(_runtime->parameter("for_game_level"));
