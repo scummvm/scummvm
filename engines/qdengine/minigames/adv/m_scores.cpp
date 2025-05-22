@@ -205,6 +205,14 @@ void Scores::quant(float dt) {
 		}
 	}
 
+	_runtime->hide(_gameBorder);
+	for (int idx = 0; idx < (int)_games.size(); ++idx) {
+		if (_games[idx].hit(_runtime->mousePosition())) {
+			_gameBorder->set_R(_runtime->game2world(_runtime->world2game(_games[idx])));
+			break;
+		}
+	}
+
 	if (_runtime->mouseLeftPressed()) {
 		if (_level < (int)levels_.size() - 1 && lvl.data.size() == lvl.games.size() && _next.hit(_runtime->mousePosition()))
 			++_level;
