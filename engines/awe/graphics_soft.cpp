@@ -100,10 +100,11 @@ void GraphicsSoft::setSize(int w, int h) {
 	assert(_byteDepth == 1 || _byteDepth == 2);
 
 	for (int i = 0; i < 4; ++i) {
-		_pagePtrs[i] = (uint8 *)realloc(_pagePtrs[i], getPageSize());
-		if (!_pagePtrs[i]) {
+		uint8 *tmp = (uint8 *)realloc(_pagePtrs[i], getPageSize());
+		if (!tmp) {
 			error("Not enough memory to allocate offscreen buffers");
 		}
+		_pagePtrs[i] = tmp;
 		memset(_pagePtrs[i], 0, getPageSize());
 	}
 	setWorkPagePtr(2);
