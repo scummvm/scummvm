@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-05-18 21:13+0000\n"
-"PO-Revision-Date: 2025-05-11 15:18+0000\n"
+"PO-Revision-Date: 2025-05-22 18:56+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -9912,10 +9912,8 @@ msgstr ""
 "virallinen korjaus."
 
 #: engines/nancy/state/loadsave.cpp:154
-#, fuzzy
-#| msgid "Would you like to save or restore a game?"
 msgid "Would you like to load or save a game?"
-msgstr "Haluatko tallentaa vai ladata pelin?"
+msgstr "Haluatko ladata vai tallentaa pelin?"
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
