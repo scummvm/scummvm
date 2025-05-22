@@ -171,6 +171,8 @@ void Scores::quant(float dt) {
 	assert(_level >= 0 && _level < (int)levels_.size());
 	const Level& lvl = levels_[_level];
 
+	char timeBuf[32];
+
 	if (_level != _preLevel) {
 		_preLevel = _level;
 
@@ -193,9 +195,21 @@ void Scores::quant(float dt) {
 				_games[gameNum].setState(Common::String::format("%d", _level).c_str());
 				_games[gameNum]->set_R(_positions[idx]);
 				_runtime->setText(getName(_bestScore, idx), data.info._bestScore);
-				_runtime->setText(getName(_bestTime, idx), data.info._bestTime);
+
+				if (!_timeFormat || !*_timeFormat)
+					snprintf(timeBuf, 31, "%d", data.info._bestTime);
+				else
+					snprintf(timeBuf, 31, _timeFormat, data.info._bestTime / 60, data.info._bestTime % 60);
+
+				_runtime->setText(getName(_bestTime, idx), timeBuf);
 				_runtime->setText(getName(_lastScore, idx), data.info._lastScore);
-				_runtime->setText(getName(_lastTime, idx), data.info._lastTime);
+
+				if (!_timeFormat || !*_timeFormat)
+					snprintf(timeBuf, 31, "%d", data.info._lastTime);
+				else
+					snprintf(timeBuf, 31, _timeFormat, data.info._lastTime / 60, data.info._lastTime % 60);
+
+				_runtime->setText(getName(_lastTime, idx), timeBuf);
 			} else {
 				_runtime->setText(getName(_bestScore, idx), "");
 				_runtime->setText(getName(_bestTime, idx), "");
