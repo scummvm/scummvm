@@ -87,6 +87,8 @@ qdMiniGame::qdMiniGame(const qdMiniGame &mg) : qdNamedObject(mg),
 }
 
 qdMiniGame::~qdMiniGame() {
+	if (_interface)
+		_interface->finit();
 	release_interface();
 }
 
