@@ -602,6 +602,7 @@ bool Window::step() {
 					g_director->_firstMovie = false;
 					return true;
 				}
+				g_director->_firstMovie = false;
 
 				if (!goodMovie)
 					return false;
