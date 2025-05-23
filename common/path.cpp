@@ -1176,7 +1176,7 @@ String Path::toConfig() const {
 			return toString(Path::kNativeSeparator);
 		}
 	}
-#elif defined(__3DS__) || defined(__amigaos4__) || defined(__DS__) || defined(__MORPHOS__) || defined(NINTENDO_SWITCH) || defined(__PSP__) || defined(PSP2) || defined(RISCOS) || defined(__WII__) || defined(WIN32)
+#elif defined(__3DS__) || defined(__amigaos4__) || defined(ATARI) || defined(__DS__) || defined(__MORPHOS__) || defined(NINTENDO_SWITCH) || defined(__PSP__) || defined(PSP2) || defined(RISCOS) || defined(__WII__) || defined(WIN32)
 	// For all platforms making use of : as a drive separator, avoid useless punycoding
 	if (!isEscaped()) {
 		// If we are escaped, we have forbidden characters which must be encoded
