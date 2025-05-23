@@ -186,8 +186,12 @@ HMODULE GetModuleHandle(LPCSTR lpModuleName) {
 
 
 LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
-                                  HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
-	error("TODO: AfxRegisterWndClass");
+		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
+	// Not currently handled
+	assert(!hCursor && !hbrBackground && !hIcon);
+
+	// Common class name for all ScummVM windows
+	return "ScummVMWindow";
 }
 
 int GetSystemMetrics(int nIndex) {

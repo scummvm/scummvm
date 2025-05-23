@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/gfx/window.h"
 
 namespace Bagel {
 namespace MFC {
@@ -29,10 +30,30 @@ IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 END_MESSAGE_MAP()
 
+CWnd::~CWnd() {
+	delete m_hWnd;
+}
+
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-                  DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
-                  CCreateContext *pContext) {
-	error("TODO: CWnd::Create");
+        DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+        CCreateContext *pContext) {
+	assert(!strcmp(lpszClassName, "ScummVMWindow"));
+
+	// Set up create structure
+	CREATESTRUCT cs;
+	cs.x = rect.left;
+	cs.y = rect.top;
+	cs.cx = rect.right - rect.left + 1;
+	cs.cy = rect.bottom - rect.top + 1;
+
+	// Trigger pre-create event
+	if (!PreCreateWindow(cs))
+		return false;
+
+	// Create the actual window content
+	m_hWnd = (HWND)new Gfx::Window(cs);
+
+	return true;
 }
 
 const MSG *CWnd::GetCurrentMessage() {
@@ -217,6 +238,8 @@ HWND CWnd::GetSafeHwnd() const {
 }
 
 void CWnd::ShowWindow(int nCmdShow) {
+	assert(nCmdShow == SW_SHOWNORMAL);
+
 	error("TODO: CWnd::ShowWindow");
 }
 

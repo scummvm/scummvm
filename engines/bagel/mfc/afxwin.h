@@ -654,25 +654,30 @@ public:
 
 
 typedef struct tagCREATESTRUCTA {
-	LPVOID      lpCreateParams;
-	HINSTANCE   hInstance;
-	HMENU       hMenu;
-	HWND        hwndParent;
-	int         cy;
-	int         cx;
-	int         y;
-	int         x;
-	LONG        style;
-	LPCSTR      lpszName;
-	LPCSTR      lpszClass;
-	DWORD       dwExStyle;
+	LPVOID      lpCreateParams = nullptr;
+	HINSTANCE   hInstance = 0;
+	HMENU       hMenu = 0;
+	HWND        hwndParent = 0;
+	int         cy = 0;
+	int         cx = 0;
+	int         y = 0;
+	int         x = 0;
+	LONG        style = 0;
+	LPCSTR      lpszName = nullptr;
+	LPCSTR      lpszClass = nullptr;
+	DWORD       dwExStyle = 0;
 } CREATESTRUCT, *LPCREATESTRUCT;
 
 class CWnd : public CCmdTarget {
 	DECLARE_DYNCREATE(CWnd)
 protected:
 	static const MSG *GetCurrentMessage();
+
 	virtual void DoDataExchange(CDataExchange *dataExch);
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cs) {
+		return true;
+	}
+
 	DECLARE_MESSAGE_MAP()
 
 protected:
@@ -808,11 +813,11 @@ public:
 	static CWnd *FromHandlePermanent(HWND hWnd);
 
 public:
-	~CWnd() override {
-	}
-	CVIRTUAL BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-	                     DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
-	                     CCreateContext *pContext = nullptr);
+	~CWnd() override;
+
+	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+	    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+	    CCreateContext *pContext = nullptr);
 
 	CWnd *GetParent() const;
 	HWND GetSafeHwnd() const;

@@ -79,7 +79,7 @@ private:
 
 protected:
 	//- PreCreateWindow -- change view window style
-	BOOL PreCreateWindow(CREATESTRUCT& cCs);
+	BOOL PreCreateWindow(CREATESTRUCT& cCs) override;
 
 // Implementation
 public:

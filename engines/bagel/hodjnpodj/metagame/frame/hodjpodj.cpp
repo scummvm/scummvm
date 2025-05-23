@@ -249,23 +249,10 @@ CHodjPodjWindow::CHodjPodjWindow()
 
     WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
 
-    //sbrand( (unsigned)time( NULL ));
-
-#ifdef _DEBUG
     MainRect.left = 0;
     MainRect.top = 0;
-    MainRect.right = GAME_WIDTH;    // determine where to place the game window
-    MainRect.bottom = GAME_HEIGHT;   // ... so it is centered on the screen
-#else
-    pDC = GetDC();                                  // get a device context for our window
-
-    MainRect.left = 0;
-    MainRect.top = 0;
-    MainRect.right = pDC->GetDeviceCaps(HORZRES);    // determine where to place the game window
-    MainRect.bottom = pDC->GetDeviceCaps(VERTRES);   // ... so it is centered on the screen
-    ReleaseDC( pDC );
-#endif
-
+    MainRect.right = GAME_WIDTH;
+    MainRect.bottom = GAME_HEIGHT;
     bTestDibDoc = Create( WndClass, "Boffo Games - Hodj 'n' Podj", WS_POPUP, MainRect, NULL, NULL );
     ASSERT( bTestDibDoc );
 
