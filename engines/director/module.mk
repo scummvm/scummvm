@@ -156,6 +156,7 @@ MODULE_OBJS = \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/vmisonxfcn.o \
 	lingo/xlibs/volumelist.o \
+	lingo/xlibs/voyagerxsound.o \
 	lingo/xlibs/widgetxobj.o \
 	lingo/xlibs/window.o \
 	lingo/xlibs/winxobj.o \
@@ -169,6 +170,7 @@ MODULE_OBJS = \
 	lingo/xtras/directsound.o \
 	lingo/xtras/filextra.o \
 	lingo/xtras/keypoll.o \
+	lingo/xtras/masterapp.o \
 	lingo/xtras/openurl.o \
 	lingo/xtras/qtvrxtra.o \
 	lingo/xtras/rtk.o \
