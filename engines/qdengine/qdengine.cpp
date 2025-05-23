@@ -624,7 +624,10 @@ byte *transCyrillic(const Common::String &str) {
 		}
 	}
 
-	tmp[i] = 0;
+	if (i < 1024)
+		tmp[i] = 0;
+	else
+		tmp[1023] = 0;
 
 	return tmp;
 }
