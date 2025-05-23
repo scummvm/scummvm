@@ -1112,9 +1112,8 @@ void ScummEngine::killScriptsAndResources() {
 					// the pegs may be renamed to mouth: this custom name is lost
 					// when leaving the room; this hack prevents this).
 					//
-					// TODO: investigate this bug report from 2004, and see if the
-					// issue appears with an original interpreter, and with our current
-					// (much more accurate) SCUMMv5 implementation.
+					// TODO: This does *not* happen with the original interpreter,
+					// or with the 2009 (Aaron Giles) one!
 					if (owner == OF_OWNER_ROOM && _game.id == GID_INDY4 && 336 <= obj && obj <= 340)
 						continue;
 
