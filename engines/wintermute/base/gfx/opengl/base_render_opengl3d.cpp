@@ -825,59 +825,6 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 		}
 	}
 
-	// render lights lines
-	for (uint i = 0; i < lights.size(); ++i) {
-		if (lights[i]->_active) {
-			LineVertex vertices[12];
-			vertices[0].x = lights[i]->_pos._x;
-			vertices[0].y = lights[i]->_pos._y;
-			vertices[0].z = lights[i]->_pos._z;
-			vertices[1].x = lights[i]->_pos._x + 1000.0f;
-			vertices[1].y = lights[i]->_pos._y;
-			vertices[1].z = lights[i]->_pos._z;
-			vertices[2].x = lights[i]->_pos._x;
-			vertices[2].y = lights[i]->_pos._y;
-			vertices[2].z = lights[i]->_pos._z;
-			vertices[3].x = lights[i]->_pos._x;
-			vertices[3].y = lights[i]->_pos._y + 1000.0f;
-			vertices[3].z = lights[i]->_pos._z;
-			vertices[4].x = lights[i]->_pos._x;
-			vertices[4].y = lights[i]->_pos._y;
-			vertices[4].z = lights[i]->_pos._z;
-			vertices[5].x = lights[i]->_pos._x;
-			vertices[5].y = lights[i]->_pos._y;
-			vertices[5].z = lights[i]->_pos._z + 1000.0f;
-			vertices[6].x = lights[i]->_pos._x;
-			vertices[6].y = lights[i]->_pos._y;
-			vertices[6].z = lights[i]->_pos._z;
-			vertices[7].x = lights[i]->_pos._x - 1000.0f;
-			vertices[7].y = lights[i]->_pos._y;
-			vertices[7].z = lights[i]->_pos._z;
-			vertices[8].x = lights[i]->_pos._x;
-			vertices[8].y = lights[i]->_pos._y;
-			vertices[8].z = lights[i]->_pos._z;
-			vertices[9].x = lights[i]->_pos._x;
-			vertices[9].y = lights[i]->_pos._y - 1000.0f;
-			vertices[9].z = lights[i]->_pos._z;
-			vertices[10].x = lights[i]->_pos._x;
-			vertices[10].y = lights[i]->_pos._y;
-			vertices[10].z = lights[i]->_pos._z;
-			vertices[11].x = lights[i]->_pos._x;
-			vertices[11].y = lights[i]->_pos._y;
-			vertices[11].z = lights[i]->_pos._z - 1000.0f;
-
-			glColor3f(1.0f, 1.0f, 0.0f);
-
-			glEnableClientState(GL_VERTEX_ARRAY);
-
-			glVertexPointer(3, GL_FLOAT, sizeof(LineVertex), &vertices[0].x);
-
-			glDrawArrays(GL_LINES, 0, 12);
-
-			glDisableClientState(GL_VERTEX_ARRAY);
-		}
-	}
-
 	// render waypoints
 	AdScene *scene = ((AdGame *)_gameRef)->_scene;
 	AdSceneGeometry *geom = scene->_geom;

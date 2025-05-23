@@ -41,7 +41,6 @@ private:
 	Mesh3DSVertex *_vertexData;
 	uint16 _vertexCount;
 	GLuint _vertexBuffer;
-	GLuint _indexBuffer;
 	OpenGL::Shader *_shader;
 };
 

@@ -20,11 +20,16 @@
  */
 
 #include "engines/wintermute/ad/ad_block.h"
+#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_generic.h"
+#include "engines/wintermute/ad/ad_scene.h"
+#include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/ad/ad_walkplane.h"
+#include "engines/wintermute/ad/ad_waypoint_group3d.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/3dcamera.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -97,7 +102,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	glGenBuffers(1, &_spriteVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertex), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertex), nullptr, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *spriteAttributes[] = { "position", "texcoord", "color", nullptr };
@@ -145,7 +150,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	glGenBuffers(1, &_fadeVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(LineVertex), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(LineVertex), nullptr, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *fadeAttributes[] = { "position", nullptr };
@@ -154,7 +159,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	glGenBuffers(1, &_lineVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
-	glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(LineVertex), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(LineVertex), nullptr, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *lineAttributes[] = { "position", nullptr };
@@ -289,12 +294,12 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	Math::Matrix4 viewMatrix, projectionMatrix;
 	viewMatrix.setData(_viewMatrix);
 	projectionMatrix.setData(_glProjectionMatrix);
+
 	_xmodelShader->use();
 	_xmodelShader->setUniform("viewMatrix", viewMatrix);
 	_xmodelShader->setUniform("projMatrix", projectionMatrix);
 	_xmodelShader->setUniform1f("alphaRef", _alphaRef);
 	_xmodelShader->setUniform("alphaTest", true);
-
 
 	_geometryShader->use();
 	_geometryShader->setUniform("viewMatrix", viewMatrix);
@@ -853,7 +858,62 @@ void BaseRenderOpenGL3DShader::setLightParameters(int index, const DXVector3 &po
 // backend layer AdSceneGeometry::Render
 void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
 	                                           const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
-	// don't render scene geometry, as OpenGL ES 2 has no wireframe rendering and we don't have a shader alternative yet
+	DXMatrix matIdentity;
+	DXMatrixIdentity(&matIdentity);
+
+	if (camera)
+		_gameRef->_renderer3D->setup3D(camera, true);
+	
+	setWorldTransform(matIdentity);
+
+	glDisable(GL_DEPTH_TEST);
+	glFrontFace(GL_CW); // WME DX have CCW
+	glEnable(GL_BLEND);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	for (uint i = 0; i < planes.size(); i++) {
+		if (planes[i]->_active) {
+			planes[i]->_mesh->render();
+		}
+	}
+
+	// render blocks
+	for (uint i = 0; i < blocks.size(); i++) {
+		if (blocks[i]->_active) {
+			blocks[i]->_mesh->render();
+		}
+	}
+
+	// render generic objects
+	for (uint i = 0; i < generics.size(); i++) {
+		if (generics[i]->_active) {
+			generics[i]->_mesh->render();
+		}
+	}
+
+	// render waypoints
+	AdScene *scene = ((AdGame *)_gameRef)->_scene;
+	AdSceneGeometry *geom = scene->_geom;
+	if (geom && geom->_wptMarker) {
+		DXMatrix viewMat, projMat, worldMat;
+		DXVector3 vec2d(0.0f, 0.0f, 0.0f);
+
+		getViewTransform(&viewMat);
+		getProjectionTransform(&projMat);
+		DXMatrixIdentity(&worldMat);
+
+		DXViewport vport = getViewPort();
+
+		setup2D();
+
+		for (uint i = 0; i < geom->_waypointGroups.size(); i++) {
+			for (uint j = 0; j < geom->_waypointGroups[i]->_points.size(); j++) {
+				DXVec3Project(&vec2d, geom->_waypointGroups[i]->_points[j], &vport, &projMat, &viewMat, &worldMat);
+				geom->_wptMarker->display(vec2d._x + scene->getOffsetLeft() - _drawOffsetX, vec2d._y + scene->getOffsetTop() - _drawOffsetY);
+			}
+		}
+	}
 }
 
 // backend layer 3DShadowVolume::Render()
@@ -966,6 +1026,9 @@ bool BaseRenderOpenGL3DShader::setWorldTransform(const DXMatrix &transform) {
 	_xmodelShader->use();
 	_xmodelShader->setUniform("modelMatrix", modelMatrix);
 	_xmodelShader->setUniform("normalMatrix", normalMatrix);
+
+	_geometryShader->use();
+	_geometryShader->setUniform("modelMatrix", modelMatrix);
 
 	_simpleShadowShader->use();
 	_simpleShadowShader->setUniform("modelMatrix", modelMatrix);

@@ -34,12 +34,10 @@ Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(BaseGame *inGame, OpenGL::Shader *shade
 	_vertexData = nullptr;
 
 	glGenBuffers(1, &_vertexBuffer);
-	glGenBuffers(1, &_indexBuffer);
 }
 
 Mesh3DSOpenGLShader::~Mesh3DSOpenGLShader() {
 	glDeleteBuffers(1, &_vertexBuffer);
-	glDeleteBuffers(1, &_indexBuffer);
 }
 
 void Mesh3DSOpenGLShader::fillVertexBuffer() {
@@ -57,8 +55,6 @@ void Mesh3DSOpenGLShader::render() {
 
 	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, sizeof(Mesh3DSVertex), 0);
 	_shader->enableVertexAttribute("color", _vertexBuffer, 4, GL_FLOAT, false, sizeof(Mesh3DSVertex), 24);
-	_shader->setUniform("useTexture", false);
-
 	_shader->use(true);
 
 	glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
