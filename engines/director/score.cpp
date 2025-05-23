@@ -494,6 +494,14 @@ void Score::updateCurrentFrame() {
 
 		// finally, update the channels and buffer any dirty rectangles
 		updateSprites(kRenderModeNormal, true);
+	} else if (!_vm->_playbackPaused) {
+		// Loading the same frame; e.g. "go to frame".
+		// This is mostly a no-op, however any sprite changes for
+		// non-puppet sprites will be reverted.
+
+		// If playback has been paused on a frame, the sprites aren't cleaned.
+		updateSprites(kRenderModeNormal, true);
+
 	}
 	return;
 }
