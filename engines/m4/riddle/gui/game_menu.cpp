@@ -201,7 +201,7 @@ void GameMenu::cbLoad(void *, void *) {
 	guiMenu::shutdown(true);
 	_GM(buttonClosesDialog) = true;
 
-	// Create the save game menu
+	// Create the load game menu
 	g_engine->showLoadScreen(M4Engine::kLoadFromGameDialog);
 }
 

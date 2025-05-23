@@ -31,6 +31,7 @@ namespace Rooms {
 class Room494 : public Room {
 private:
 	static void escapeFn(void *, void *);
+	static void loadFn(void *, void *);
 	int getSelectedButton() const;
 	void restoreHotkeys();
 

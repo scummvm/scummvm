@@ -66,6 +66,7 @@ private:
 
 	void showMessageLog(int trigger);
 	void lookAtInventoryItem();
+	bool canLoadGameStateCurrently(Common::U32String *msg) override;
 
 protected:
 	/**
