@@ -1213,6 +1213,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "timegal",			"Time Gal" },
 	{ "tokimemotype1",		"ときめきメモリアルタイピング" },					// Tokimeki Memorial Typing
 	{ "tokimemotypegs",		"ときメモGSタイピング" },							// Tokimemo GS Typing (Girl's Side)
+	{ "tripitaka",			"TRIPITAKA 玄奘三蔵求法の旅" },						// TRIPITAKA - Xuanzang Sanzo's Dharma-Seeking Journey
 	{ "truegolf1",			"TrueGolf Part I" },
 	{ "ttw",				"Through the Window: In Search for the Lost Bag" },
 	{ "twinbeeparadise",	"ツインビーPARADISE in どんぶり島" },				// TwinBee Paradise in Donburi Shima
@@ -8756,6 +8757,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("trekshipaddon", "Mission Watcher", "ShipMain/Mission Watcher", "ce8cd9917c9ba9d454d8ed71478a1486", 113475, 650),
 	WINGAME1t("trekshipaddon", "", "addonpak/sscreate.exe", "68d5ccbfc4921c19d1d46b866ec4080d", 2753651, 602),
 	WINGAME1t("trekshipaddon", "Mission Watcher", "addonpak/ShipMain/MssnWchr.exe", "749923faa5cd1c281089a2143c4510ad", 1518003, 602),
+
+	// Sequel to Cosmology of Kyoto.
+	MACGAME1_l("tripitaka", "", "TRIPITAKA", "r:412d75e8fd005978b6c1b6240c36da47", 1035232, Common::JA_JPN, 602),
+	WINGAME1_l("tripitaka", "", "TRPTK_32.EXE", "t:f6ae72181e7ed6adc415b9833a121a9d", 1514121, Common::JA_JPN, 602),
 
 	// Overview of Tutti's Magical Stories series
 	WINGAME1_l("tutti", "", "TUTTI.EXE", "a593079aecf5bd938ce75264cac24b2d", 14715583, Common::RU_RUS, 600),
