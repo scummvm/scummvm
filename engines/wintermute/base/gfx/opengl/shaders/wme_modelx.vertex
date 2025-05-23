@@ -8,9 +8,12 @@ uniform highp mat4 projMatrix;
 uniform highp mat4 normalMatrix;
 
 uniform vec4 ambientLight;
-
 uniform vec4 diffuse;
 uniform vec4 ambient;
+
+uniform float fogStart;
+uniform float fogEnd;
+varying float fogFactor;
 
 struct Light {
 	vec4 _position;
@@ -35,6 +38,9 @@ void main() {
 
 	vec3 light = vec3(0.0, 0.0, 0.0);
 	vec3 normalEye = normalize((normalMatrix * vec4(normal, 0.0)).xyz);
+
+	float fogCoord = abs(viewCoords.z);
+	fogFactor = clamp((fogEnd - fogCoord) / (fogEnd - fogStart), 0.0, 1.0);
 
 	for (int i = 0; i < maxLights; ++i) {
 		if (lights[i].enabled < 0.0) {

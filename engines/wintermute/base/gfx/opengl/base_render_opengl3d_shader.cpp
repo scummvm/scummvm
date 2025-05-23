@@ -278,14 +278,17 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 
 		_gameRef->getFogParams(&fogEnabled, &fogColor, &fogStart, &fogEnd);
 		if (fogEnabled) {
-			// TODO: Implement fog
-			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f,
-			                     RGBCOLGetG(fogColor) / 255.0f,
-			                     RGBCOLGetB(fogColor) / 255.0f,
-			                     RGBCOLGetA(fogColor) / 255.0f };
-			debug(5, "BaseRenderOpenGL3DShader::setup3D fog not yet implemented! [%f %f %f %f]", color[0], color[1], color[2], color[3]);
+			Math::Vector4d color;
+			color.x() = RGBCOLGetR(fogColor) / 255.0f;
+			color.y() = RGBCOLGetG(fogColor) / 255.0f;
+			color.z() = RGBCOLGetB(fogColor) / 255.0f;
+			color.w() = RGBCOLGetA(fogColor) / 255.0f;
+			_xmodelShader->setUniform("enableFog", true);
+			_xmodelShader->setUniform("fogColor", color);
+			_xmodelShader->setUniform1f("fogStart", fogStart);
+			_xmodelShader->setUniform1f("fogEnd", fogEnd);
 		} else {
-			// TODO: Disable fog in shader
+			_xmodelShader->setUniform("enableFog", false);
 		}
 
 		setProjection();

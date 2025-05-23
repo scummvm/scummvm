@@ -1,5 +1,4 @@
 uniform vec4 shadowColor;
-uniform float alphaRef;
 
 OUTPUT
 

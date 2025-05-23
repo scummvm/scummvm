@@ -5,15 +5,22 @@ uniform sampler2D tex;
 uniform float alphaRef;
 uniform UBOOL alphaTest;
 uniform UBOOL useTexture;
+uniform UBOOL enableFog;
+uniform vec4 fogColor;
+
+varying float fogFactor;
 
 OUTPUT
 
 void main() {
+	outColor = Color;
+
 	if (useTexture) {
-		vec4 texColor = texture(tex, Texcoord);
-		outColor.rgba = texColor.rgba * Color.rgba;
-	} else {
-		outColor.rgba = Color.rgba;
+		outColor = texture(tex, Texcoord) * outColor;
+	}
+
+	if (enableFog) {
+		outColor = mix(fogColor, outColor, fogFactor);
 	}
 
 	if (UBOOL_TEST(alphaTest) && outColor.a < alphaRef) {
