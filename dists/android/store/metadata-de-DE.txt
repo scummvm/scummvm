@@ -21,7 +21,7 @@ Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release (limit is 500 characters):
-2.9.0
+2.9.1
 
 *** Release notes:
 - Unterstützung für Android 15 hinzugefügt
