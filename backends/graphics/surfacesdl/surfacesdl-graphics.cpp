@@ -1439,7 +1439,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool doPresent = false;
+#endif
 	if (actualDirtyRects > 0 || _cursorNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
@@ -1637,7 +1639,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
 			updateScreen(_dirtyRectList, actualDirtyRects);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 			doPresent = true;
+#endif
 		}
 	}
 
