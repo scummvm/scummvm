@@ -40,7 +40,7 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
 FrameNode::FrameNode(BaseGame *inGame) : BaseNamedObject(inGame) {
 	DXMatrixIdentity(&_transformationMatrix);
-   	DXMatrixIdentity(&_originalMatrix);
+	DXMatrixIdentity(&_originalMatrix);
 	DXMatrixIdentity(&_combinedMatrix);
 
 	for (int i = 0; i < 2; i++) {

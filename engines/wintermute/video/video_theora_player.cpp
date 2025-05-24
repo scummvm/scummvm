@@ -153,7 +153,6 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::resetStream() {
-	warning("VidTheoraPlayer::resetStream - hacked");
 	// HACK: Just reopen the same file again.
 	if (_theoraDecoder) {
 		_theoraDecoder->close();
@@ -304,9 +303,8 @@ bool VideoTheoraPlayer::update() {
 		}
 
 		if (_theoraDecoder->endOfVideo() && _looping) {
-			warning("Should loop movie %s, hacked for now", _filename.c_str());
 			_theoraDecoder->rewind();
-			//HACK: Just reinitialize the same video again:
+			// HACK: Just reinitialize the same video again
 			return resetStream();
 		} else if (_theoraDecoder->endOfVideo() && !_looping) {
 			debugC(kWintermuteDebugLog, "Finished movie %s", _filename.c_str());
@@ -475,7 +473,7 @@ inline int intlog(int num) {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::seekToTime(uint32 time) {
-	warning("VideoTheoraPlayer::SeekToTime(%d) - not supported", time);
+	error("VideoTheoraPlayer::SeekToTime(%d) - not supported", time);
 	return STATUS_OK;
 }
 

@@ -178,7 +178,7 @@ DXQuaternion::DXQuaternion(float fx, float fy, float fz, float fw) {
 	_z = fz;
 	_w = fw;
 }
-					  
+
 DXQuaternion::operator float* () {
 	return (float *)&_x;
 }
