@@ -112,7 +112,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	// This would then trigger the assert() below.
 	//
 	// Note that the original interpreter did NOT produce an error, here.
-	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94 && enhancementEnabled(kEnhGameBreakingBugFixes))
+	if (_game.id == GID_PASS && obj == 0 && currentScriptSlotIs(94) && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return;
 
 	// WORKAROUND for bug #6802: assert() was triggered in freddi2.
@@ -121,7 +121,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	// case, it is obj 0. That means two setOwnerOf calls are made with obj 0.
 	// The correct setOwnerOf calls are made afterwards, so just ignoring this
 	// seems to work just fine.
-	if (_game.id == GID_HEGAME && obj == 0 && _currentRoom == 39 && vm.slot[_currentScript].number == 10)
+	if (_game.id == GID_HEGAME && obj == 0 && _currentRoom == 39 && currentScriptSlotIs(10))
 		return;
 
 	// TODO: Should the following assert(), and the ScummEngine::clearOwnerOf()

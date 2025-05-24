@@ -408,7 +408,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	// the array. Ouch.
 	//
 	// TODO: what did the original interpreter precisely do in this case?
-	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1 &&
+	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && currentScriptSlotIs(2010) && idx == -1 && base == -1 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		return 0;
 	}
@@ -504,7 +504,7 @@ void ScummEngine_v6::o6_pushWordVar() {
 	if (_enableHECompetitiveOnlineMods) {
 		// Sprinting in competitive Backyard Baseball is considered too weak in its current state. This will increase how effective
 		// it is, limiting the highest speed characters enough to where they cannot go TOO fast.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && vm.slot[_currentScript].number == 2095 && readVar(399) == 1) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && currentScriptSlotIs(2095) && readVar(399) == 1) {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			int sprintCounter = readArray(344, vm.localvar[_currentScript][0], 1);
 			int sprintGain = vm.localvar[_currentScript][4];
@@ -534,7 +534,7 @@ void ScummEngine_v6::o6_pushWordVar() {
 		}
 
 		// This code will change the velocity of the hit based on the pitch thrown, and the location of the pitch itself.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2090 && readVar(399) == 1) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2090) && readVar(399) == 1) {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			int powerAdjustment = vm.localvar[_currentScript][4];
 			int pitchSelected = readVar(ROOM_VAL(10));
@@ -562,12 +562,12 @@ void ScummEngine_v6::o6_pushWordVar() {
 		}
 
 		// Remember the previous pitch thrown and the previous pitch "zone location", then set those two values to the "remembered" values for later use.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2201 && readVar(399) == 1) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2201) && readVar(399) == 1) {
 			writeArray(346, 1, 0, readArray(346, 0, 0));
 			writeArray(346, 1, 1, readArray(346, 0, 1));
 		}
 		// This sets the base cost of a slow ball to 2. Previously it costed the least of every pitch to throw, which resulted in people only using that pitch.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2057 && readVar(399) == 1) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2057) && readVar(399) == 1) {
 			if (readVar(0x4000 + 1) == 15) {
 				writeVar(0x4000 + 2, 2);
 			}
@@ -589,7 +589,7 @@ void ScummEngine_v6::o6_wordArrayRead() {
 	if (_enableHECompetitiveOnlineMods) {
 		// If we're pulling from the randomly selected teams for online play
 		// at Prince Rupert, read from variables 748 and 749 instead
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 6 && vm.slot[_currentScript].number == 2071 &&
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 6 && currentScriptSlotIs(2071) &&
 			readVar(399) == 1 &&  // We're online and in the team name select screen
 			readVar(747) == 1) {  // We successfully got team arrays the host and opponent
 			switch (array) {
@@ -641,7 +641,7 @@ void ScummEngine_v6::o6_eq() {
 	// version of players' stats, leading to unfair play and potential desyncs. This hack ensures the away team's game doesn't
 	// exit the script before applying these stat adjustments. The script checks whether the game is being played online before
 	// this, such that this code doesn't execute for offline play.
-	if (_game.id == GID_BASEBALL2001 && _currentRoom == 27 && vm.slot[_currentScript].number == 2346) {
+	if (_game.id == GID_BASEBALL2001 && _currentRoom == 27 && currentScriptSlotIs(2346)) {
 		int offset = _scriptPointer - _scriptOrgPointer;
 		if (offset == 196137) {
 			push(0);
@@ -664,7 +664,7 @@ void ScummEngine_v6::o6_eq() {
 		// b. at least 2 pixels lower than the top of the zone/at least 3 pixels above the bottom of the zone
 		// If either of these are true AND the x value is less than or equal to 279 OR greater than or equal to 354, make the game read as a ball.
 		// The strike zone should be much more lenient in the corners, as well as removing the small advantage of throwing to the farthest right side of the zone.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && (vm.slot[_currentScript].number == 2202 || vm.slot[_currentScript].number == 2192) && readVar(399) == 1) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && (currentScriptSlotIs(2202) || currentScriptSlotIs(2192)) && readVar(399) == 1) {
 			if (((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue <= 279) ||
 				((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue >= 354)) {
 				writeVar(ROOM_VAL(16), 2);
@@ -679,7 +679,7 @@ void ScummEngine_v6::o6_eq() {
 		// This change affects the angle adjustment for each batting stance when timing your swing. There are complaints that
 		// the game does not give you enough control when batting, resulting in a lot of hits going to the same area. This should
 		// give players more agency on where they want to hit the ball, which will also increase the skill ceiling.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2087 && readVar(399) == 1) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2087) && readVar(399) == 1) {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			// OPEN STANCE ADJUSTMENTS (1 being earliest, 5 being latest)
 			if (offset == 101898 && readVar(447) == 1) {
@@ -745,7 +745,7 @@ void ScummEngine_v6::o6_eq() {
 
 		// This code makes it so that generic players (and Mr. Clanky) play pro player music when hitting home runs.
 		// This is a purely aesthetic change, as they have no home run music by default.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && vm.slot[_currentScript].number == 11 && vm.localvar[_currentScript][0] > 61 && readVar(399) == 1) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && currentScriptSlotIs(11) && vm.localvar[_currentScript][0] > 61 && readVar(399) == 1) {
 			// this local variable checks for player ID
 			writeVar(0x4000 + 0, 60);
 		}
@@ -758,7 +758,7 @@ void ScummEngine_v6::o6_eq() {
 	// are incorrect.  They were set to "3 innings" and "no swing spot" respectively, while they were supposed to be set to
 	// "no special rules" and "3 innings".  This is a script bug which assumed to be fixed in later post-retail updates, but
 	// since we don't have access to any of those, this workaround will have to do.
-	if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 419 && ((a == 9 && b == 9) || (a == 8 && b == 8))) {
+	if (_game.id == GID_BASEBALL2001 && currentScriptSlotIs(419) && ((a == 9 && b == 9) || (a == 8 && b == 8))) {
 		switch (a) {
 		case 9:
 			// Mountain Aire (No special rules)
@@ -779,30 +779,30 @@ void ScummEngine_v6::o6_eq() {
 	// field's value is 5 (SCD's number) and incrementing/decrementing if it is. To allow SCD to be used, we return 0
 	// for those checks.
 	} else if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 40 &&
-		vm.slot[_currentScript].number == 2106 && a == 5 && (offset == 16754 || offset == 16791)) {
+		currentScriptSlotIs(2106) && a == 5 && (offset == 16754 || offset == 16791)) {
 		push(0);
 
 	// WORKAROUND: Online play is disabled in the Macintosh versions of Backyard Football and Backyard Baseball 2001
 	// because the original U32 makes use of DirectPlay, a Windows exclusive API; we now have our own implementation
 	// which is cross-platform compatible.  We get around that by tricking those checks that we are playing on
 	// the Windows version. These scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
-	} else if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
+	} else if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (currentScriptSlotIs(2049) || currentScriptSlotIs(2050) ||
 #else
-	if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
+	if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (currentScriptSlotIs(2049) || currentScriptSlotIs(2050) ||
 #endif
-		vm.slot[_currentScript].number == 498) && a == 2 && b == 2) {
+		currentScriptSlotIs(498)) && a == 2 && b == 2) {
 		push(0);
-	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (vm.slot[_currentScript].number == kScriptNumENCD || vm.slot[_currentScript].number == 2050) &&
+	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (currentScriptSlotIs(kScriptNumENCD) || currentScriptSlotIs(2050)) &&
 		a == 2 && b == 2) {
 		push(0);
-	} else if (_game.id == GID_FOOTBALL2002 && _currentRoom == 3 && vm.slot[_currentScript].number == 2079 &&
+	} else if (_game.id == GID_FOOTBALL2002 && _currentRoom == 3 && currentScriptSlotIs(2079) &&
 		a == 2 && b == 2) {
 		push(0);
 
 	// WORKAROUND: Forces the game version string set via script 1 to be used in both Macintosh and Windows versions,
 	// when checking for save game compatibility. Allows saved games to be shared between Macintosh and Windows versions.
 	// The scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
-	} else if (_game.id == GID_BASEBALL2001 && (vm.slot[_currentScript].number == 291 || vm.slot[_currentScript].number == 292) &&
+	} else if (_game.id == GID_BASEBALL2001 && (currentScriptSlotIs(291) || currentScriptSlotIs(292)) &&
 		a == 2 && b == 1) {
 		push(1);
 	} else {
@@ -835,7 +835,7 @@ void ScummEngine_v6::o6_gt() {
 	// they please; we do not want them to go through the whole setup again after the timeout
 	// so let's just make unreachable, allowing the session to be hosted indefinitely until
 	// they cancel it out.
-	if (_game.id == GID_FOOTBALL2002 && _currentRoom == 3 && vm.slot[_currentScript].number == 2052) {
+	if (_game.id == GID_FOOTBALL2002 && _currentRoom == 3 && currentScriptSlotIs(2052)) {
 		push(0);
 		return;
 	}
@@ -860,7 +860,7 @@ void ScummEngine_v6::o6_ge() {
 	// Mod for Backyard Baseball 2001 online competitive play: Reduce sprints
 	// required to reach top speed
 	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 &&
-		_currentRoom == 3 && vm.slot[_currentScript].number == 2095 && readVar(399) == 1) {
+		_currentRoom == 3 && currentScriptSlotIs(2095) && readVar(399) == 1) {
 		a -= 1;  // If sprint counter (b) is higher than a, runner gets 1 extra speed
 	}
 #endif
@@ -891,7 +891,7 @@ void ScummEngine_v6::o6_div() {
 	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
 	// running half-speed on a popup
 	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
-		vm.slot[_currentScript].number == 2095 && readVar(399) == 1 && a == 2) {
+		currentScriptSlotIs(2095) && readVar(399) == 1 && a == 2) {
 		// Normally divides speed by two here
 		int runnerIdx = readVar(0x4000);
 		int runnerReSprint = readArray(344, runnerIdx, 1);
@@ -913,7 +913,7 @@ void ScummEngine_v6::o6_land() {
 	// showing the coach list.  var133 is set 1 somewhere but var134
 	// is always set at 0. I am going to assume this is a script bug,
 	// so let's skip the 5 second wait.
-	if (_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2122)
+	if (_game.id == GID_BASEBALL2001 && _currentRoom == 40 && currentScriptSlotIs(2122))
 		push(1);
 	else
 		push(b && a);
@@ -1034,9 +1034,9 @@ void ScummEngine_v6::o6_jump() {
 	// will cause the raft to disappear. This is a script bug in the
 	// original game and affects several versions.
 	if (_game.id == GID_PUTTZOO) {
-		if (_game.heversion == 73 && vm.slot[_currentScript].number == 206 && offset == 176 && !isScriptRunning(202))
+		if (_game.heversion == 73 && currentScriptSlotIs(206) && offset == 176 && !isScriptRunning(202))
 			_scummVars[244] = 35;
-		if (_game.features & GF_HE_985 && vm.slot[_currentScript].number == 2054 && offset == 178 && !isScriptRunning(2050))
+		if (_game.features & GF_HE_985 && currentScriptSlotIs(2054) && offset == 178 && !isScriptRunning(2050))
 			_scummVars[202] = 35;
 	}
 
@@ -1047,7 +1047,7 @@ void ScummEngine_v6::o6_jump() {
 	//
 	// Intentionally using `kEnhGameBreakingBugFixes`, since having the game hang
 	// is not useful to anyone.
-	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(ROOM_VAL(97)) == 1 && offset == 1 &&
+	if (_game.id == GID_SAMNMAX && currentScriptSlotIs(101) && readVar(ROOM_VAL(97)) == 1 && offset == 1 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		offset = -18;
 	}
@@ -1058,8 +1058,8 @@ void ScummEngine_v6::o6_jump() {
 	// the popuation.  Not only this may slow down the game a bit, it sends quite a bit of bandwidth
 	// considering we're outside the game.  So let's break the script for 5 seconds
 	// before jumping back to the beginning.
-	if ((_game.id == GID_BASEBALL2001 && _currentRoom == 39 && vm.slot[_currentScript].number == 2090 && offset == -904) ||
-		(_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2101 && offset == -128)) {
+	if ((_game.id == GID_BASEBALL2001 && _currentRoom == 39 && currentScriptSlotIs(2090) && offset == -904) ||
+		(_game.id == GID_BASEBALL2001 && _currentRoom == 40 && currentScriptSlotIs(2101) && offset == -128)) {
 		vm.slot[_currentScript].delay = 5 * 60; // 5 seconds
 		vm.slot[_currentScript].status = ssPaused;
 		o6_breakHere();
@@ -1084,7 +1084,7 @@ void ScummEngine_v6::o6_startScript() {
 	// differently when it's just been lit, but then the idea was dropped?).
 	// This also happens with the original interpreters and with the remaster.
 	if (_game.id == GID_TENTACLE && _roomResource == 13 &&
-		vm.slot[_currentScript].number == 21 && script == 106 &&
+		currentScriptSlotIs(21) && script == 106 &&
 		args[0] == 91 && enhancementEnabled(kEnhRestoredContent)) {
 		return;
 	}
@@ -1103,7 +1103,7 @@ void ScummEngine_v6::o6_startScript() {
 	// This fix checks for this situation happening (and only this one), and makes a call
 	// to a soundKludge operation like script 29 would have done.
 	if (_game.id == GID_CMI && _currentRoom == 19 &&
-		vm.slot[_currentScript].number == 168 && script == 118 && enhancementEnabled(kEnhAudioChanges)) {
+		currentScriptSlotIs(168) && script == 118 && enhancementEnabled(kEnhAudioChanges)) {
 		int list[16] = { 4096, 1278, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		_sound->soundKludge(list, 2);
 	}
@@ -1113,7 +1113,7 @@ void ScummEngine_v6::o6_startScript() {
 	// stopping and starting their speech. This was a script bug in the original
 	// game, which would also block the "That was informative" reaction from Sam.
 	if (_game.id == GID_SAMNMAX && _roomResource == 59 &&
-		vm.slot[_currentScript].number == 201 && script == 48 && enhancementEnabled(kEnhRestoredContent)) {
+		currentScriptSlotIs(201) && script == 48 && enhancementEnabled(kEnhRestoredContent)) {
 		o6_breakHere();
 	}
 
@@ -1246,7 +1246,7 @@ void ScummEngine_v6::o6_drawObjectAt() {
 	// WORKAROUND bug #3487 : Adjust x and y position of
 	// objects in credits sequence, to match other ports
 	if (_game.id == GID_PUTTMOON && _game.platform == Common::kPlatform3DO &&
-		_roomResource == 38 && vm.slot[_currentScript].number == 206) {
+		_roomResource == 38 && currentScriptSlotIs(206)) {
 		x = y = -1;
 	}
 
@@ -1498,7 +1498,7 @@ void ScummEngine_v6::o6_loadRoom() {
 	// WORKAROUND bug #13378: During Sam's reactions to Max beating up the
 	// scientist in the intro, we sometimes have to slow down animations
 	// artificially. This is where we speed them back up again.
-	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && room == 6 && enhancementEnabled(kEnhTimingChanges)) {
+	if (_game.id == GID_SAMNMAX && currentScriptSlotIs(65) && room == 6 && enhancementEnabled(kEnhTimingChanges)) {
 		int actors[] = { 2, 3, 10 };
 
 		for (int i = 0; i < ARRAYSIZE(actors); i++) {
@@ -1623,7 +1623,7 @@ void ScummEngine_v6::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
 
-	if (_game.id == GID_SAMNMAX && _roomResource == 35 && vm.slot[_currentScript].number == 202 &&
+	if (_game.id == GID_SAMNMAX && _roomResource == 35 && currentScriptSlotIs(202) &&
 		act == 4 && anim == 14 && enhancementEnabled(kEnhMinorBugFixes)) {
 		// WORKAROUND bug #2068 (Animation glitch at World of Fish).
 		// Before starting animation 14 of the fisherman, make sure he isn't
@@ -1635,7 +1635,7 @@ void ScummEngine_v6::o6_animateActor() {
 		}
 	}
 
-	if (_game.id == GID_SAMNMAX && _roomResource == 47 && vm.slot[_currentScript].number == 202 &&
+	if (_game.id == GID_SAMNMAX && _roomResource == 47 && currentScriptSlotIs(202) &&
 		act == 2 && anim == 249 && enhancementEnabled(kEnhMinorBugFixes)) {
 		// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
 		// escapes Bumpusville with Trixie. Bruno (act. 11) and Trixie (act. 12) are
@@ -1740,7 +1740,7 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 	if (_enableHECompetitiveOnlineMods) {
 		// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
 		// let's pull from the variables that contain the teams
-		if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298 &&
+		if (_game.id == GID_BASEBALL2001 && currentScriptSlotIs(298) &&
 			readVar(399) == 1 && readVar(747) == 1) {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			if (offset == 117) {
@@ -1754,7 +1754,7 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 		// Mod for Backyard Football online competitive play: allow all 38 backyard kids and pros
 		// to be drafted in an online game. This controls how many kids are shown in the bleachers
 		// when drafting. Without this mod, a random selection of between 31 and 35 kids are shown.
-		if (_game.id == GID_FOOTBALL && readVar(465) == 1 && _currentRoom == 5 && vm.slot[_currentScript].number == 2107) {
+		if (_game.id == GID_FOOTBALL && readVar(465) == 1 && _currentRoom == 5 && currentScriptSlotIs(2107)) {
 			rnd = 38;
 		}
 	}
@@ -1858,7 +1858,7 @@ void ScummEngine_v6::o6_getAnimateVariable() {
 	// regardless if the ball's foul or not.
 	if ((_game.id == GID_BASEBALL2001 || _game.id == GID_BASEBALL2003) && \
 			_currentRoom == ((_game.id == GID_BASEBALL2001) ? 4 : 3) && \
-			vm.slot[_currentScript].number == 2105 && \
+			currentScriptSlotIs(2105) && \
 			a->_costume == ((_game.id == GID_BASEBALL2001) ? 107 : 99) && \
 			// Room variable 5 to ensure this workaround executes only once at
 			// the beginning of the script and room variable 22 to check if we
@@ -1923,7 +1923,7 @@ void ScummEngine_v6::o6_beginOverride() {
 	//
 	// To amend this, we intercept this exact script override and we force the playback of sound 2277,
 	// which is the iMUSE sequence which would have been played after the dialogue.
-	if (enhancementEnabled(kEnhAudioChanges) && _game.id == GID_CMI && _currentRoom == 37 && vm.slot[_currentScript].number == 251 &&
+	if (enhancementEnabled(kEnhAudioChanges) && _game.id == GID_CMI && _currentRoom == 37 && currentScriptSlotIs(251) &&
 		_sound->isSoundRunning(2275) != 0 && (_scriptPointer - _scriptOrgPointer) == 0x1A) {
 		int list[16] = {0x1001, 2277, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		_sound->soundKludge(list, 2);
@@ -2198,7 +2198,7 @@ void ScummEngine_v6::o6_roomOps() {
 		// so we have two ways to perform it: the accurate one, and our
 		// improved one...
 		if (_game.id == GID_SAMNMAX && enhancementEnabled(kEnhMinorBugFixes) &&
-			_currentScript != 0xFF && vm.slot[_currentScript].number == 64) {
+			currentScriptSlotIs(64)) {
 			setDirtyColors(0, 255);
 		} else {
 			setCurrentPalette(a);
@@ -2232,7 +2232,7 @@ void ScummEngine_v6::o6_actorOps() {
 		// makes Washington leave the room can only exist if he's wearing the
 		// chattering teeth, but yet when he comes back he's not wearing them
 		// during this cutscene.
-		if (_game.id == GID_TENTACLE && _currentRoom == 13 && vm.slot[_currentScript].number == 211 &&
+		if (_game.id == GID_TENTACLE && _currentRoom == 13 && currentScriptSlotIs(211) &&
 			a->_number == 8 && i == 53 && enhancementEnabled(kEnhVisualChanges)) {
 			i = 69;
 		}
@@ -2717,10 +2717,11 @@ void ScummEngine_v6::o6_soundKludge() {
 	// the best of circumstances, this will cause the game to hang briefly.
 	// On platforms where threading is cooperative, it will cause the game
 	// to hang indefinitely (hence the use of `kEnhGameBreakingBugFixes`).
+	//
 	// We identify the buggy part of the script by looking for a
 	// soundKludge() opcode immediately followed by a jump.
 
-	if (_game.id == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66 &&
+	if (_game.id == GID_CMI && _roomResource == 11 && currentScriptSlotIs(2016) && *_scriptPointer == 0x66 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		debug(3, "Working around script bug in room-11-2016");
 		o6_breakHere();
@@ -2784,7 +2785,7 @@ void ScummEngine_v6::o6_delaySeconds() {
 	// [004E] (4F) localvar3++
 	// [0051] (B1) delaySeconds(1)
 	// [0054] (5D) unless ((var135 || (localvar3 > localvar2))) jump 4e
-	if (!(_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 414)) {
+	if (!(_game.id == GID_BASEBALL2001 && currentScriptSlotIs(414))) {
 		delay = delay * 60;
 	}
 	vm.slot[_currentScript].delay = delay;
@@ -2856,7 +2857,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// This call can't just be inserted after Max's line; it needs to be done
 	// just before the employee's line, otherwise the timing with Sam's moves
 	// will feel off -- so we can't use the _forcedWaitForMessage trick.
-	if (_game.id == GID_SAMNMAX && _roomResource == 11 && vm.slot[_currentScript].number == 67
+	if (_game.id == GID_SAMNMAX && _roomResource == 11 && currentScriptSlotIs(67)
 		&& getOwner(70) != 2 && !readVar(ROOM_VAL(67)) && !readVar(ROOM_VAL(39)) && readVar(ROOM_VAL(12)) == 1
 		&& !getClass(126, 6) && enhancementEnabled(kEnhRestoredContent)) {
 		if (VAR(VAR_HAVE_MSG)) {
@@ -2871,7 +2872,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// WORKAROUND for bug #3803: "DOTT: Bernard impersonating LaVerne"
 	// Original script did not check for VAR_EGO == 2 before executing
 	// a talkActor opcode.
-	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 307
+	if (_game.id == GID_TENTACLE && currentScriptSlotIs(307)
 			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2
 			&& enhancementEnabled(kEnhMinorBugFixes)) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
@@ -2883,7 +2884,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// above the piano in the bar. Probably an original placeholder which
 	// hasn't been properly replaced... Fixed in the 2017 remaster, though.
 	if (_game.id == GID_FT && _language == Common::FR_FRA
-		&& _roomResource == 7 && vm.slot[_currentScript].number == 77
+		&& _roomResource == 7 && currentScriptSlotIs(77)
 		&& _actorToPrintStrFor == 1 && enhancementEnabled(kEnhTextLocFixes)) {
 		const int len = resStrLen(_scriptPointer) + 1;
 		if (len == 93 && memcmp(_scriptPointer + 16 + 18, "piano-low-kick", 14) == 0) {
@@ -2909,7 +2910,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// triggering Dr Fred's lines in this part of the script, since there is
 	// no stable offset for all the floppy, CD and translated versions, and
 	// no easy way to only target the impacted lines.
-	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 9
+	if (_game.id == GID_TENTACLE && currentScriptSlotIs(9)
 		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && enhancementEnabled(kEnhRestoredContent)) {
 		_forcedWaitForMessage = true;
 		_scriptPointer--;
@@ -2928,7 +2929,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// [0166] (73)   } else {
 	//
 	// Here we simulate that opcode.
-	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && enhancementEnabled(kEnhRestoredContent)) {
+	if (_game.id == GID_DIG && currentScriptSlotIs(88) && enhancementEnabled(kEnhRestoredContent)) {
 		if (offset == 0x158 || offset == 0x214 || offset == 0x231 || offset == 0x278) {
 			_forcedWaitForMessage = true;
 			_scriptPointer--;
@@ -2944,7 +2945,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// animation was lost and he would just glide over the floor. Having him
 	// wait before he moves is less disturbing, since that's something he
 	// already does in the game.
-	if (_game.id == GID_DIG && _roomResource == 58 && vm.slot[_currentScript].number == 402
+	if (_game.id == GID_DIG && _roomResource == 58 && currentScriptSlotIs(402)
 		&& _actorToPrintStrFor == 3 && vm.localvar[_currentScript][0] == 0
 		&& readVar(ROOM_VAL(94)) && readVar(ROOM_VAL(78)) && !readVar(ROOM_VAL(97))
 		&& _scummVars[269] == 3 && getState(388) == 2 && enhancementEnabled(kEnhRestoredContent)) {
@@ -3429,8 +3430,8 @@ void ScummEngine_v6::o6_delayFrames() {
 	//
 	// WORKAROUND:  On Baseball 2001, there is a 10 frame pause before sending the login information
 	// to the server.  This is rather a pointless break, so let's skip that.
-	if ((_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) ||
-		(_game.id == GID_BASEBALL2001 && _currentRoom == 37 && vm.slot[_currentScript].number == 2068)) {
+	if ((_game.id == GID_MOONBASE && currentScriptSlotIs(69)) ||
+		(_game.id == GID_BASEBALL2001 && _currentRoom == 37 && currentScriptSlotIs(2068))) {
 		pop();
 		return;
 	}

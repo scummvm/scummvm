@@ -978,6 +978,14 @@ protected:
 
 	OpcodeEntry _opcodes[256];
 
+	/**
+	 * Small helper to avoid checking `_currentScript != 0xFF` before every
+	 * `vm.slot[_currentScript].number` use that would require so.
+	 */
+	bool currentScriptSlotIs(uint16 script) const {
+		return _currentScript != 0xFF && vm.slot[_currentScript].number == script;
+	}
+
 	virtual void setupOpcodes() = 0;
 	void executeOpcode(byte i);
 	const char *getOpcodeDesc(byte i);
