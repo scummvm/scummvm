@@ -792,7 +792,7 @@ void ScummEngine_v6::o6_eq() {
 #endif
 		vm.slot[_currentScript].number == 498) && a == 2 && b == 2) {
 		push(0);
-	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (vm.slot[_currentScript].number == 10002 || vm.slot[_currentScript].number == 2050) &&
+	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (vm.slot[_currentScript].number == kScriptNumENCD || vm.slot[_currentScript].number == 2050) &&
 		a == 2 && b == 2) {
 		push(0);
 	} else if (_game.id == GID_FOOTBALL2002 && _currentRoom == 3 && vm.slot[_currentScript].number == 2079 &&

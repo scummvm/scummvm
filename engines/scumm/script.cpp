@@ -984,7 +984,7 @@ void ScummEngine::runExitScript() {
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = ssRunning;
-		vm.slot[slot].number = 10001;
+		vm.slot[slot].number = kScriptNumEXCD;
 		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _EXCD_offs;
 		vm.slot[slot].freezeResistant = false;
@@ -1035,7 +1035,7 @@ void ScummEngine::runEntryScript() {
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = ssRunning;
-		vm.slot[slot].number = 10002;
+		vm.slot[slot].number = kScriptNumENCD;
 		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _ENCD_offs;
 		vm.slot[slot].freezeResistant = false;
