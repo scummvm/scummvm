@@ -1458,11 +1458,8 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	Framebuffer *target,
 	const Graphics::PixelFormat &defaultFormat,
 	const Graphics::PixelFormat &defaultFormatAlpha) {
-	// Set up the target: backbuffer usually
-	delete _targetBuffer;
-	_targetBuffer = target;
 
-	// Initialize pipeline.
+	// Destroy the existing pipeline first (as it depends on the framebuffer)
 	delete _pipeline;
 	_pipeline = nullptr;
 
@@ -1470,6 +1467,10 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	// _libretroPipeline has just been destroyed as the pipeline
 	_libretroPipeline = nullptr;
 #endif
+
+	// Set up the target: backbuffer usually
+	delete _targetBuffer;
+	_targetBuffer = target;
 
 	OpenGLContext.initialize(type);
 
