@@ -64,6 +64,7 @@ void Context::reset() {
 	glslVersion = 0;
 
 	NPOTSupported = false;
+	imagingSupported = false;
 	shadersSupported = false;
 	enginesShadersSupported = false;
 	multitextureSupported = false;
@@ -175,6 +176,8 @@ void Context::initialize(ContextType contextType) {
 
 		if (token == "GL_ARB_texture_non_power_of_two" || token == "GL_OES_texture_npot") {
 			NPOTSupported = true;
+		} else if (token == "GL_ARB_imaging") {
+			imagingSupported = true;
 		} else if (token == "GL_ARB_multitexture") {
 			multitextureSupported = true;
 		} else if (token == "GL_ARB_framebuffer_object") {
@@ -213,6 +216,9 @@ void Context::initialize(ContextType contextType) {
 #endif
 		// GLES2 always has (limited) NPOT support.
 		NPOTSupported = true;
+
+		// GLES2 always has imaging support
+		imagingSupported = true;
 
 		// GLES2 always has shader support.
 		shadersSupported = true;
@@ -255,6 +261,9 @@ void Context::initialize(ContextType contextType) {
 		// ScummVM does not support multisample FBOs with GLES for now
 		framebufferObjectMultisampleSupported = false;
 
+		// GLES always has imaging support
+		imagingSupported = true;
+
 		packedPixelsSupported = true;
 		textureEdgeClampSupported = true;
 		// No border clamping in GLES
@@ -282,8 +291,9 @@ void Context::initialize(ContextType contextType) {
 			textureEdgeClampSupported = true;
 			textureMaxLevelSupported = true;
 		}
-		// OpenGL 1.3 adds texture border clamp support
+		// OpenGL 1.3 adds texture border clamp support and mandatory imaging support
 		if (isGLVersionOrHigher(1, 3)) {
+			imagingSupported = true;
 			textureBorderClampSupported = true;
 		}
 		// OpenGL 1.4 adds texture mirror repeat support
@@ -314,6 +324,7 @@ void Context::initialize(ContextType contextType) {
 	debug(5, "OpenGL: GLSL version: %d", glslVersion);
 	debug(5, "OpenGL: Max texture size: %d", maxTextureSize);
 	debug(5, "OpenGL: NPOT texture support: %d", NPOTSupported);
+	debug(5, "OpenGL: Imaging support: %d", imagingSupported);
 	debug(5, "OpenGL: Shader support: %d", shadersSupported);
 	debug(5, "OpenGL: Shader support for engines: %d", enginesShadersSupported);
 	debug(5, "OpenGL: Multitexture support: %d", multitextureSupported);
