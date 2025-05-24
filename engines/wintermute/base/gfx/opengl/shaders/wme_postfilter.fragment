@@ -1,0 +1,21 @@
+varying vec2 texPos;
+
+uniform sampler2D tex;
+uniform UBOOL sepiaMode;
+
+OUTPUT
+
+void main() {
+	vec4 color = texture2D(tex, texPos);
+	if (sepiaMode) {
+		float r = color.r;
+		float g = color.g;
+		float b = color.b;
+		outColor.r = dot(vec3(r, g, b), vec3(0.393, 0.769, 0.189));
+		outColor.g = dot(vec3(r, g, b), vec3(0.349, 0.686, 0.168));
+		outColor.b = dot(vec3(r, g, b), vec3(0.272, 0.534, 0.131));
+	} else {
+		float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+		outColor = vec4(vec3(gray), 1.0f);
+	}
+}

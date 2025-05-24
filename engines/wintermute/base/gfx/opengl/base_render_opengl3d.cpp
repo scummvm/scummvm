@@ -99,8 +99,8 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_simpleShadow[3].v = 0.0f;
 
 	// filter post process: greyscale, sepia
-	glGenTextures(1, &_filterTexture);
-	glBindTexture(GL_TEXTURE_2D, _filterTexture);
+	glGenTextures(1, &_postfilterTexture);
+	glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
@@ -1007,7 +1007,7 @@ void BaseRenderOpenGL3D::postfilter() {
 
 
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, _filterTexture);
+		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
 
 
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);

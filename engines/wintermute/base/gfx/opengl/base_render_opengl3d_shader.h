@@ -179,6 +179,7 @@ private:
 	GLuint _fadeVBO{};
 	GLuint _lineVBO{};
 	GLuint _simpleShadowVBO{};
+	GLuint _postfilterVBO{};
 	OpenGL::Shader *_spriteShader{};
 	OpenGL::Shader *_fadeShader{};
 	OpenGL::Shader *_xmodelShader{};
@@ -187,6 +188,8 @@ private:
 	OpenGL::Shader *_flatShadowShader{};
 	OpenGL::Shader *_shadowVolumeShader{};
 	OpenGL::Shader *_lineShader{};
+	OpenGL::Shader *_postfilterShader{};
+	GLuint _postfilterTexture;
 };
 
 } // namespace Wintermute

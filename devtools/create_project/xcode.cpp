@@ -1151,6 +1151,8 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_postfilter.fragment");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_postfilter.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment");
