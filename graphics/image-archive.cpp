@@ -152,4 +152,3 @@ bool ImageArchive::getImageDimensions(const Common::Path &fname, uint16 &wOut, u
 }
 
 } // End of namespace Graphics
-

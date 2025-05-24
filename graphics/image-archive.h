@@ -46,9 +46,6 @@ public:
 	bool setImageArchive(const Common::Path &fname);
 
 	/* Retrieve an image from the cache, or load it from the archive if it hasn't been loaded previously. */
-	const Surface *getImageSurface(const Common::Path &fname) {
-		return getImageSurface(fname, 0, 0);
-	}
 	const Surface *getImageSurface(const Common::Path &fname, int w, int h);
 
 	/* Lookup image dimensions from the archive, cache it for later */
