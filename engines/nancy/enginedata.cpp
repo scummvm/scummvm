@@ -209,7 +209,14 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 			textBuf[59] = '\0';
 			assembleTextLine((char *)textBuf, item.cantText, 60);
 
-			item.cantSound.readNormal(*chunkStream);
+			// TODO: The "I can't do that" sound format has changed,
+			// so only override the sound name, to avoid reading junk
+			// into the SoundDescription members.
+			// item.cantSound.readNormal(*chunkStream);
+			SoundDescription tmp;
+			tmp.readNormal(*chunkStream);
+			item.cantSound.name = tmp.name;
+
 			s.skip(170);	// TODO: Handle this data properly
 		}
 	}
