@@ -111,10 +111,6 @@ Source: COPYING.txt; DestDir: {app}
 Source: COPYRIGHT.txt; DestDir: {app}
 Source: LICENSES\*; DestDir: {app}\LICENSES;
 
-; NEWS
-Source: NEWS.html; DestDir: {app}; Flags: ignoreversion; Languages: not german
-Source: NEUES.html; DestDir: {app}; Flags: ignoreversion; Languages: german
-
 ; QUICKSTART
 Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
 Source: doc/es/InicioRapido.txt; DestDir: {app}; Flags: ignoreversion; Languages: spanish
