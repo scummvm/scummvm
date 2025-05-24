@@ -217,7 +217,7 @@ void MacV6Gui::updateMenus() {
 	} else
 #endif
 	if (_vm->_game.id == GID_INDY4) {
-	  menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
+		menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
 		voiceMenuIndex = 4;
 	} else {
 		menu->getSubMenuItem(soundMenu, 0)->checked = (_vm->_soundEnabled & 2); // Music
