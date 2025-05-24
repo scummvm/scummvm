@@ -956,6 +956,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 	// disable color write
 	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
 	glBlendFunc(GL_ZERO, GL_ONE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
 	// no texture
 	_lastTexture = nullptr;
@@ -986,6 +987,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 	}
 
 	setSpriteBlendMode(Graphics::BLEND_NORMAL);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 // implements D3D SetRenderState() D3DRS_CULLMODE - CCW
