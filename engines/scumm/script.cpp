@@ -606,13 +606,13 @@ int ScummEngine::readVar(uint var) {
 			// successfully fetched custom teams, and we're not in one of the three scripts
 			// that cause bugs if 263 is returned here, return 263.
 			if (_game.id == GID_BASEBALL2001 && var == 586 && readVar(399) == 1 && readVar(747) == 1 &&
-				!(_currentRoom == 4 && (vm.slot[_currentScript].number == 2150 || vm.slot[_currentScript].number == 2208 || vm.slot[_currentScript].number == 2210))) {
+				!(_currentRoom == 4 && (currentScriptSlotIs(2150) || currentScriptSlotIs(2208) || currentScriptSlotIs(2210)))) {
 				return 263;
 			}
 			// Mod for Backyard Baseball 2001 online competitive play: allow random bounces
 			// Normally they only happen offline; this script checks var399, here we tell this
 			// script that we're not in online play even if we are
-			if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 39 && var == 399) {
+			if (_game.id == GID_BASEBALL2001 && currentScriptSlotIs(39) && var == 399) {
 				return 0;
 			}
 		}
@@ -631,7 +631,7 @@ int ScummEngine::readVar(uint var) {
 				// Mod for Backyard Baseball 2001 online competitive play: don't give powerups for double plays
 				// Return true for this variable, which dictates whether powerups are disabled, but only in this script
 				// that detects double plays (among other things)
-				if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && vm.slot[_currentScript].number == 2099 && var == 32 && readVar(399) == 1) {
+				if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && currentScriptSlotIs(2099) && var == 32 && readVar(399) == 1) {
 					return 1;
 				}
 			}
@@ -682,7 +682,7 @@ int ScummEngine::readVar(uint var) {
 		// batter's power stat on hit power
 		if (_enableHECompetitiveOnlineMods) {
 			if (_game.id == GID_BASEBALL2001 &&
-				_currentRoom == 4 && vm.slot[_currentScript].number == 2090  // The script that calculates hit power
+				_currentRoom == 4 && currentScriptSlotIs(2090)  // The script that calculates hit power
 				&& readVar(399) == 1  // Check that we're playing online
 				&& var == 2  // Local var for batter's hitting power stat
 			) {
@@ -718,14 +718,14 @@ void ScummEngine::writeVar(uint var, int value) {
 
 		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
 			// Ignore default setting in HE72-74 games
-			if (_game.heversion <= 74 && vm.slot[_currentScript].number == 1)
+			if (_game.heversion <= 74 && currentScriptSlotIs(1))
 				return;
 			assert(value == 0 || value == 1);
 			ConfMan.setBool("subtitles", (value != 0));
 		}
 		if (VAR_NOSUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
 			// Ignore default setting in HE60-71 games
-			if (_game.heversion >= 60 && vm.slot[_currentScript].number == 1)
+			if (_game.heversion >= 60 && currentScriptSlotIs(1))
 				return;
 			assert(value == 0 || value == 1);
 			ConfMan.setBool("subtitles", !value);
@@ -755,7 +755,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// Any modifications here depend on knowing if the script will
 		// set the timer value back to something sensible afterwards.
 
-		if (_game.id == GID_SAMNMAX && _currentScript != 0xFF && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
+		if (_game.id == GID_SAMNMAX && currentScriptSlotIs(65) && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
 			// "Wirst Du brutzeln, wie eine grobe Bratwurst!"
 			if (value == 1 && _language == Common::DE_DEU)
 				value = 4;
@@ -775,7 +775,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// throughout the intro. This does not apply to the VGA talkie
 		// version, because there the fire isn't animated.
 
-		else if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
+		if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && currentScriptSlotIs(44) && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
 			Actor *a = derefActorSafe(4, "writeVar");
 			if (a) {
 				a->setAnimSpeed((value == 0) ? 6 : 0);
@@ -1632,9 +1632,10 @@ void ScummEngine::endCutscene() {
 		// script bug (with UNZ, DREAMM or TOWNSEMU), and decide which
 		// Enhancement setting should be used in this case.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
-			vm.slot[_currentScript].number == 205 && _currentRoom == 185) {
+			currentScriptSlotIs(205) && _currentRoom == 185) {
 			return;
 		}
+
 		error("Cutscene stack underflow");
 	}
 	vm.cutSceneStackPointer--;

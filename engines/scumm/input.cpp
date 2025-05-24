@@ -603,7 +603,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 			// rest of the game.
 			// This fix produces the intended behaviour from the original interpreter.
 			if (_game.id == GID_FT && _currentRoom == 6
-				&& (vm.slot[_currentScript].number == 65 || vm.slot[_currentScript].number == 64)) {
+				&& (currentScriptSlotIs(65) || currentScriptSlotIs(64))) {
 				_skipVideo = false;
 			} else {
 				_skipVideo = true;

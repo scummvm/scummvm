@@ -173,7 +173,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 		// and if they are then basepath clicks to turn them around have no effect.
 		// Here we return 0 (false) under certain conditions, so these clicks now have the desired effect.
 		if (_game.id == GID_BASEBALL2001 &&
-			_currentRoom == 3 && vm.slot[_currentScript].number == 2076 &&  // This is the script that handles basepath clicks
+			_currentRoom == 3 && currentScriptSlotIs(2076) &&  // This is the script that handles basepath clicks
 			readVar(399) == 1 &&  // This checks that we're playing online
 			readVar(ROOM_VAL(11)) == 1 &&  // The ball is a pop-up
 			readVar(291) < 2 &&  // Less than two outs

@@ -30,9 +30,9 @@
 
 namespace Scumm {
 
-	// Helper functions for ManiacMansion workarounds
-#define MM_SCRIPT(script)  (script + (_game.version == 0 ? 0 : 5))
-#define MM_VALUE(v0,v1)    (_game.version == 0 ? v0 : v1)
+// Helper functions for Maniac Mansion workarounds
+#define MM_SCRIPT(script)  ((script) + (_game.version == 0 ? 0 : 5))
+#define MM_VALUE(v0,v1)    (_game.version == 0 ? (v0) : (v1))
 
 #define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v2, x)
 
@@ -407,7 +407,7 @@ void ScummEngine_v2::decodeParseString() {
 	//
 	// (Using `kEnhGameBreakingBugFixes`, because some users could be really confused
 	// by the game hanging and they may not know about the Esc key.)
-	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot[_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
+	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && currentScriptSlotIs(155) && _roomResource == 31 && _actorToPrintStrFor == 9 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		while (ptr - buffer < 100) {
 			*ptr++ = ' ';
 		}
@@ -417,10 +417,10 @@ void ScummEngine_v2::decodeParseString() {
 	// WORKAROUND: There is a typo in Syd's biography ("tring" instead of
 	// "trying") in the English DOS version of Maniac Mansion (v1). As far
 	// as I know, this is the only version with the typo.
-	else if (_game.id == GID_MANIAC && _game.version == 1
+	if (_game.id == GID_MANIAC && _game.version == 1
 		&& _game.platform == Common::kPlatformDOS
-		&& !(_game.features & GF_DEMO) && _language == Common::EN_ANY && _currentScript != 0xFF
-		&& vm.slot[_currentScript].number == 260 && enhancementEnabled(kEnhTextLocFixes)
+		&& !(_game.features & GF_DEMO) && _language == Common::EN_ANY
+		&& currentScriptSlotIs(260) && enhancementEnabled(kEnhTextLocFixes)
 		&& strncmp((char *)buffer + 26, " tring ", 7) == 0) {
 		for (byte *p = ptr; p >= buffer + 29; p--)
 			*(p + 1) = *p;
@@ -479,7 +479,7 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 
 	if (_game.id == GID_MANIAC && (_game.version == 1 || _game.version == 2)
 			&& _game.platform != Common::kPlatformNES
-			&& vm.slot[_currentScript].number == 4
+			&& currentScriptSlotIs(4)
 			&& VAR(VAR_CLICK_AREA) == kSentenceClickArea
 			&& var == 34 && value == 0 && enhancementEnabled(kEnhRestoredContent)) {
 		value = 1;
@@ -813,7 +813,7 @@ void ScummEngine_v2::o2_resourceRoutines() {
 		return;
 
 	// HACK V2 Maniac Mansion tries to load an invalid sound resource in demo script.
-	if (_game.id == GID_MANIAC && _game.version == 2 && _currentScript != 0xFF && vm.slot[_currentScript].number == 9 && type == rtSound && resid == 1)
+	if (_game.id == GID_MANIAC && _game.version == 2 && currentScriptSlotIs(9) && type == rtSound && resid == 1)
 		return;
 
 	if ((opcode & 0x0f) == 1) {
@@ -1090,7 +1090,7 @@ void ScummEngine_v2::o2_walkActorTo() {
 	// walkActorTo() is called with an invalid actor number by script 115,
 	// after the room is loaded. The original DOS interpreter probably let
 	// this slip by (TODO: confirm this? and choose an Enhancement class).
-	if (_game.id == GID_ZAK && _game.version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
+	if (_game.id == GID_ZAK && _game.version == 1 && currentScriptSlotIs(115) && act == 249) {
 		act = VAR(VAR_EGO);
 	}
 
@@ -1187,11 +1187,8 @@ void ScummEngine_v2::stopScriptCommon(int script) {
 	// back on. This fix forces the power on, when the player enters the lab,
 	// if the script which turned it off is running
 	if (_game.id == GID_MANIAC && _roomResource == 4 && isScriptRunning(MM_SCRIPT(138))) {
-
-		if (vm.slot[_currentScript].number == MM_VALUE(130, 163)) {
-
+		if (currentScriptSlotIs(MM_VALUE(130, 163))) {
 			if (script == MM_SCRIPT(138)) {
-
 				int obj = MM_VALUE(124, 157);
 				putState(obj, getState(obj) & ~kObjectStateIntrinsic);
 			}
@@ -1201,7 +1198,7 @@ void ScummEngine_v2::stopScriptCommon(int script) {
 	// FIXME: Nasty hack for bug #1529
 	// Don't let the exit script for room 26 stop the script (116), when
 	// switching to the dungeon (script 89)
-	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == kScriptNumEXCD) {
+	if (_game.id == GID_MANIAC && _roomResource == 26 && currentScriptSlotIs(kScriptNumEXCD)) {
 		if (script == MM_SCRIPT(111) && isScriptRunning(MM_SCRIPT(84)))
 			return;
 	}

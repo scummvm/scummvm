@@ -76,9 +76,8 @@ void ScummEngine_v4::o4_ifState() {
 	// This workaround is meant to address that.
 	//
 	// See also the similar ScummEngine_v5::o5_startScript() workaround.
-	if (_game.id == GID_INDY3 && a == 367 && _currentScript != 0xFF &&
-	    vm.slot[_currentScript].number == 363 && _currentRoom == 25 &&
-	    enhancementEnabled(kEnhMinorBugFixes)) {
+	if (_game.id == GID_INDY3 && a == 367 && currentScriptSlotIs(363) &&
+	    _currentRoom == 25 && enhancementEnabled(kEnhMinorBugFixes)) {
 		// Buggy script compares it with '1'
 		b = 0;
 	}
