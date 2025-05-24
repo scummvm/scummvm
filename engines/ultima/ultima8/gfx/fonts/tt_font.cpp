@@ -78,9 +78,14 @@ static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
 	Std::string::size_type len = T::length(text);
 	Common::U32String result = Common::U32String(text.c_str(), len);
 
-	for (uint idx = 0; idx < result.size(); ++idx) {
-		if (result[idx] == '@')
+	Std::string::const_iterator iter = text.begin();
+	for (uint idx = 0; idx < len; ++idx) {
+		uint32 u = T::unicode(iter);
+		if (u == '@') {
 			result.setChar(bullet, idx);
+		} else {
+			result.setChar(u, idx);
+		}
 	}
 
 	return result;
