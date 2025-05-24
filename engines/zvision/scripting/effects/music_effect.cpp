@@ -215,7 +215,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 		if (!_staticScreen)
 			//Original game scripted behaviour
 			switch (_engine->getRenderManager()->getRenderTable()->getRenderState()) {
-			case RenderTable::PANORAMA :
+			case RenderTable::PANORAMA:
 				debug(3, "PanTrackNode in panorama mode");
 				_width = _engine->getRenderManager()->getBkgSize().x;
 				if (_width) {
@@ -227,9 +227,9 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 					//_viewPos.setDegrees(0);
 				}
 				break;
-			case RenderTable::FLAT :
-			case RenderTable::TILT :
-			default :
+			case RenderTable::FLAT:
+			case RenderTable::TILT:
+			default:
 				debug(3, "PanTrackNode in FLAT/TILT mode");
 				_sourcePos.setDegrees(0);
 				_viewPos.setDegrees(0);

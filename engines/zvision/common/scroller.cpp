@@ -96,7 +96,7 @@ Scroller::~Scroller() {
 void Scroller::reset() {
 	_xScroller.reset();
 	_yScroller.reset();
-};
+}
 
 
 void Scroller::setActive(bool active) {
