@@ -25,9 +25,9 @@ The source code is available from https://github.com/scummvm/scummvm.
 2.9.1
 
 *** Release notes (limit is 500 characters):
-- Added a feature to let users backup and restore their configuration and saves.
-- Enabled NEON support by default, resulting in better performance for the vast majority of older Android devices.
-- Worked around a bug in ARMv7a Android 6.0 and below, which could cause some game options to be missing, for example.
-- Increased stack allocation for Android Java thread, benefiting game engines that heavily use the stack.
+– Eine Funktion zum Sichern und Wiederherstellen von Konfigurationen und Spielständen wurde hinzugefügt
+– NEON-Unterstützung wurde standardmäßig aktiviert, was zu einer besseren Leistung auf den meisten älteren Android-Geräten führt
+– Ein Fehler in ARMv7a Android 6.0 und niedriger wurde behoben, der zum Fehlen einiger Spieloptionen führen konnte
+– Performance-Verbesserungen für einige Spiele-Engines
 
-Full release notes: https://scummvm.org/frs/scummvm/2.9.1/ReleaseNotes.html
+Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.9.1/ReleaseNotes.html
