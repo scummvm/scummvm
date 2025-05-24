@@ -254,8 +254,8 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 		} else {
 			debug(2, "Skipping screen update; engine forbids rendering at this time.");
 			return false;
-		};
-	};
+		}
+	}
 }
 
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
@@ -437,12 +437,12 @@ void RenderManager::setBackgroundImage(const Common::Path &fileName) {
 
 void RenderManager::setBackgroundPosition(int offset) {
 	switch (_renderTable.getRenderState()) {
-	case RenderTable::PANORAMA :
-	case RenderTable::TILT :
+	case RenderTable::PANORAMA:
+	case RenderTable::TILT:
 		if (_backgroundOffset != offset)
 			_backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
 		break;
-	default :
+	default:
 		break;
 	}
 	_backgroundOffset = offset;
@@ -452,10 +452,10 @@ void RenderManager::setBackgroundPosition(int offset) {
 
 uint32 RenderManager::getCurrentBackgroundOffset() {
 	switch (_renderTable.getRenderState()) {
-	case RenderTable::PANORAMA :
-	case RenderTable::TILT :
+	case RenderTable::PANORAMA:
+	case RenderTable::TILT:
 		return _backgroundOffset;
-	default :
+	default:
 		return 0;
 	}
 }
@@ -1048,12 +1048,12 @@ void RenderManager::updateRotation() {
 	int16 _velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
 	ScriptManager *scriptManager = _engine->getScriptManager();
 
-	if (_doubleFPS | !_frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
+	if (_doubleFPS || !_frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
 		_velocity /= 2;
 
 	if (_velocity) {
 		switch (_renderTable.getRenderState()) {
-		case RenderTable::PANORAMA : {
+		case RenderTable::PANORAMA: {
 			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
 
 			int16 newPosition = startPosition + (_renderTable.getPanoramaReverse() ? -_velocity : _velocity);
@@ -1074,7 +1074,7 @@ void RenderManager::updateRotation() {
 			setBackgroundPosition(newPosition);
 			break;
 		}
-		case RenderTable::TILT : {
+		case RenderTable::TILT: {
 			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
 
 			int16 newPosition = startPosition + _velocity;
