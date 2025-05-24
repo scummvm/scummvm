@@ -175,7 +175,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 		if (_game.id == GID_BASEBALL2001 &&
 			_currentRoom == 3 && vm.slot[_currentScript].number == 2076 &&  // This is the script that handles basepath clicks
 			readVar(399) == 1 &&  // This checks that we're playing online
-			readVar(0x8000 + 11) == 1 &&  // The ball is a pop-up
+			readVar(ROOM_VAL(11)) == 1 &&  // The ball is a pop-up
 			readVar(291) < 2 &&  // Less than two outs
 			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
 			array == 295 && idx1 == 8) {

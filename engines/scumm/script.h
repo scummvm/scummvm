@@ -122,6 +122,9 @@ enum {
 	kScriptNumENCD = 10002
 };
 
+/** Small helper to avoid `readVar(0x8000 + var)` repetition. */
+#define ROOM_VAL(val)	(0x8000 + (val))
+
 struct VirtualMachineState {
 	uint32 cutScenePtr[kMaxCutsceneNum];
 	byte cutSceneScript[kMaxCutsceneNum];
