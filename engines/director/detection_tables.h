@@ -202,6 +202,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "garage",				"Garage: Bad Dream Adventure" }, // English fan translation
 	{ "garfieldmadcats",	"Garfield: Mad about Cats" },
 	{ "garygadget1",		"Building Cars with Gary Gadget" }, // Sequels list under Swedish
+//	{ "greveholm1",		"The Mystery at Greveholm" },
 	{ "generations",		"Generations" },
 	{ "getaheadmath",		"Math Heads" },
 	{ "getaheadmathcr",		"Math Heads Creator" },
@@ -462,6 +463,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sinkha1",			"Sinkha: Hyleyn" },
 	{ "sinkha2",			"Sinkha: Atmosphere / Planet of the Clouds" },
 	{ "sitfarm",			"Sitting on the Farm" },
+//	{ "skeeto1",			"Skipper & Skeeto: Tales from Paradise Park" },
 	{ "skeeto10",			"Skipper & Skeeto: Fun in the Park" }, // Magnus & Myggen
 	{ "skippy",             "Skippy and the Curse of the Temple of Ock" },
 	{ "skyborg",			"SkyBorg: Into the Vortex" },
@@ -1489,14 +1491,22 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "brspel",				"BR spel" },
 	{ "djuphavsjakten",		"Djuphavsjakten" },
 	{ "ernie",				"Ernie: Broke in Bayonne" },  // aka Ernie: Pank i Bayonne
+//	{ "femmyror1",			"Fem myror är fler än fyra elefanter: Första delen" },
+//	{ "femmyror2",			"Fem myror är fler än fyra elefanter: Andra delen" },
+	{ "femmyrordemo",		"Fem myror är fler än fyra elefanter - Demo" },	//10 games from parts 1 and 2
 	{ "garygadget2",		"Bygg båtar med Mulle Meck" },              // First game listed under English
 	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
 	{ "garygadget5",		"Upptäck rymden med Mulle Meck" },
+//	{ "greveholm3",		"Mysteriet på Greveholm 3: Den gamla legenden" },	//Greveholm 2 runs on mTropolis, not Director
 	{ "historia",			"Svensk historia: från asatro till frihetskrig år 800-1500" },
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
 	{ "kosmopolska",		"Kosmopolska" },
+//	{ "krakelstorm",		"Krakels ABC: Storm över Allemansland/Krakel Spektakel" },
+	{ "krakeldamm",		"Krakels ABC: Den galna dammsugaren/Mera Krakel" },
+//	{ "krakelaventyr",		"Krakels ABC: Det magiska äventyret" },
+//	{ "myroribrallan",		"Myror i Brallan" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
 	{ "onsalakorv",			"Onsalakorv" },
 	{ "pettson1",			"Pettson o Findus i snickarbon" },
@@ -1508,7 +1518,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "polis1",				"Polis" },
 	{ "polis2",				"Polis 2: Någon ljuger" },
 	{ "polis3",				"Polis 3: Vargspår" },
+//	{ "pussjakten",			"Sune och hans värld: Pussjakten" },
 	{ "requiem",			"Requiem: en mordgåta på 1600-talet" },
+//	{ "rockmanager",		"Rock Manager" },
 	{ "rymdjakten",			"Rymdjakten" },
 	{ "singingbirdbook",	"Jan Lindblad presenterar den sjungande Fågelboken" },
 	{ "sverigejakten",		"Sverigejakten"},
@@ -8274,6 +8286,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("kontyngent99", "", "START.EXE",		"d:d62438566e44826960fc16c5c23dbe43", 1513041,
 								   "DANE/MAIN.DXR",	"d:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
 
+	// Krakel Spektakel - Krakels ABC
+	MACGAME1_l("krakeldamm", "Hemglass V1.1", "xn--Icon-ja6e", "sdfökljsdf", 348907, Common:SV_SWE, 602),
+	WINGAME1_l("krakeldamm", "Hemglass V1.1", "DAMMNT.EXE", "518a98696fe1122e08410b0f157f21bf", 1515971, Common::SV_SWE, 602),
+
+
 	// Published by Future Soft of Nasr City, Cairo
 	WINGAME1_l("ktaralarkam", "", "123.exe", "a593079aecf5bd938ce75264cac24b2d", 2748951, Common::AR_ARB, 600),
 
@@ -9012,6 +9029,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"JOTO/intro.dxr",		"d:f5a9969070ef59b66aa4474bc8ef684e",	21136, 700),
 	WINGAME2("jewels1", "", "Jewels.exe",			"t:b362017d018a849198bd0a4f3c469e0a", 2023828,
 							"JOTO/intro.dxr",		"d:f5a9969070ef59b66aa4474bc8ef684e",	21136, 700),
+
+	// Fem myror är fler än fyra elefanter, Första & Andra delen + Hemglass demo
+	// BreakinBenny: Dedicated to the memory of Magnus, Brasse and Eva!
+	WINGAME1_l("femmyrordemo", "Hemglass Demo", "MEDIA/femmyror.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2619547, Common::SV_SWE, 702),
+
 
 	// All of the installers also use Director
 	// Mac filename is Starta Jönssonligan
