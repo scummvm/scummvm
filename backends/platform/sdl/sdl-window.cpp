@@ -441,13 +441,13 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 #endif
 
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_MOUSE_GRABBED | SDL_WINDOW_RESIZABLE;
+	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_MOUSE_GRABBED | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
 #elif SDL_VERSION_ATLEAST(2, 0, 5)
 	// SDL_WINDOW_RESIZABLE can be updated without recreating the window starting with SDL 2.0.5
 	// Even though some users may switch the SDL version when it's linked dynamically, 2.0.5 is now getting quite old
-	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE;
+	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
 #else
-	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED;
+	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_MAXIMIZED;
 #endif
 
 	const uint32 oldNonUpdateableFlags = _lastFlags & ~updateableFlagsMask;
@@ -537,6 +537,11 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 #endif
 		} else {
 			SDL_SetWindowSize(_window, width, height);
+			if (flags & SDL_WINDOW_MAXIMIZED) {
+				SDL_MaximizeWindow(_window);
+			} else {
+				SDL_RestoreWindow(_window);
+			}
 		}
 
 		SDL_SetWindowFullscreen(_window, fullscreenFlags);
