@@ -253,19 +253,19 @@ void initCommonGFX(bool is3D) {
 	if (gameDomain->contains("stretch_mode"))
 		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 
+	if (gameDomain->contains("shader"))
+		g_system->setShader(ConfMan.getPath("shader"));
+
 	// Stop here for hardware-accelerated 3D games
 	if (is3D)
 		return;
 
-	// Set up filtering, scaling and shaders for 2D games
+	// Set up filtering, scaling for 2D games
 	if (gameDomain->contains("filtering"))
 		g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 
 	if (gameDomain->contains("scaler") || gameDomain->contains("scale_factor"))
 		g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
-
-	if (gameDomain->contains("shader"))
-		g_system->setShader(ConfMan.getPath("shader"));
 
 	// TODO: switching between OpenGL and SurfaceSDL is quite fragile
 	// and the SDL backend doesn't really need this so leave it out
