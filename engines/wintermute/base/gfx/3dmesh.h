@@ -62,7 +62,7 @@ public:
 	virtual ~Mesh3DS();
 	virtual void fillVertexBuffer() = 0;
 	bool fillVertexBuffer(uint32 color);
-	virtual void render() = 0;
+	virtual void render(bool color = false) = 0;
 
 	Face3D *_faces;
 	uint16 _numFaces;

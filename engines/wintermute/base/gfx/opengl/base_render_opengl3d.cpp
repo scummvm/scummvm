@@ -807,21 +807,21 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 	// render walk planes
 	for (uint i = 0; i < planes.size(); i++) {
 		if (planes[i]->_active) {
-			planes[i]->_mesh->render();
+			planes[i]->_mesh->render(true);
 		}
 	}
 
 	// render blocks
 	for (uint i = 0; i < blocks.size(); i++) {
 		if (blocks[i]->_active) {
-			blocks[i]->_mesh->render();
+			blocks[i]->_mesh->render(true);
 		}
 	}
 
 	// render generic objects
 	for (uint i = 0; i < generics.size(); i++) {
 		if (generics[i]->_active) {
-			generics[i]->_mesh->render();
+			generics[i]->_mesh->render(true);
 		}
 	}
 

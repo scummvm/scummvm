@@ -35,7 +35,7 @@ public:
 	Mesh3DSOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader);
 	~Mesh3DSOpenGLShader();
 	void fillVertexBuffer() override;
-	void render() override;
+	void render(bool color) override;
 
 private:
 	Mesh3DSVertex *_vertexData;

@@ -42,14 +42,15 @@ void Mesh3DSOpenGL::fillVertexBuffer() {
 	_vertexData = (Mesh3DSVertex *)_vb.ptr();
 }
 
-void Mesh3DSOpenGL::render() {
+void Mesh3DSOpenGL::render(bool color) {
 	if (_vertexCount == 0)
 		return;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(Mesh3DSVertex), &_vertexData[0]._x);
-	glColorPointer(4, GL_FLOAT, sizeof(Mesh3DSVertex), &_vertexData[0]._r);
+	if (color)
+		glColorPointer(4, GL_FLOAT, sizeof(Mesh3DSVertex), &_vertexData[0]._r);
 	glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);

@@ -49,12 +49,13 @@ void Mesh3DSOpenGLShader::fillVertexBuffer() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Mesh3DSOpenGLShader::render() {
+void Mesh3DSOpenGLShader::render(bool color) {
 	if (_vertexCount == 0)
 		return;
 
 	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, sizeof(Mesh3DSVertex), 0);
-	_shader->enableVertexAttribute("color", _vertexBuffer, 4, GL_FLOAT, false, sizeof(Mesh3DSVertex), 24);
+	if (color)
+		_shader->enableVertexAttribute("color", _vertexBuffer, 4, GL_FLOAT, false, sizeof(Mesh3DSVertex), 24);
 	_shader->use(true);
 
 	glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
