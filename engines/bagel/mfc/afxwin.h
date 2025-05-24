@@ -1146,9 +1146,10 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG *pMsg);
 	void SetDialogBkColor();
-	HCURSOR LoadStandardCursor(LPCSTR lpszCursorName) const;
-	HCURSOR LoadCursor(LPCSTR lpszResourceName) const;
-	HCURSOR LoadCursor(UINT nIDResource) const;
+	HCURSOR LoadStandardCursor(LPCSTR lpszCursorName);
+	HCURSOR LoadCursor(LPCSTR lpszResourceName);
+	HCURSOR LoadCursor(UINT nIDResource);
+	HCURSOR SetCursor(HCURSOR hCursor);
 	void BeginWaitCursor();
 	void EndWaitCursor();
 

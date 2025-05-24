@@ -107,16 +107,22 @@ BOOL CWinApp::PreTranslateMessage(MSG *pMsg) {
 void CWinApp::SetDialogBkColor() {
 }
 
-HCURSOR CWinApp::LoadStandardCursor(LPCSTR lpszCursorName) const {
-	return MFC::LoadCursor(NULL, lpszCursorName);
+HCURSOR CWinApp::LoadStandardCursor(LPCSTR lpszCursorName) {
+	return _cursors.loadCursor(lpszCursorName);
 }
 
-HCURSOR CWinApp::LoadCursor(LPCSTR lpszResourceName) const {
-	return MFC::LoadCursor(NULL, lpszResourceName);
+HCURSOR CWinApp::LoadCursor(LPCSTR lpszResourceName) {
+	return _cursors.loadCursor(lpszResourceName);
 }
 
-HCURSOR CWinApp::LoadCursor(UINT nIDResource) const {
-	error("TODO: CWinApp::LoadCursor");
+HCURSOR CWinApp::LoadCursor(UINT nIDResource) {
+	return _cursors.loadCursor((LPCSTR)nIDResource);
+}
+
+HCURSOR CWinApp::SetCursor(HCURSOR hCursor) {
+	Gfx::Cursor *c = (Gfx::Cursor *)hCursor;
+	c->showCursor();
+	return hCursor;
 }
 
 void CWinApp::BeginWaitCursor() {

@@ -22,6 +22,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/wingdi.h"
+#include "bagel/mfc/global_functions.h"
+#include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
@@ -172,15 +174,16 @@ BOOL ReleaseCapture() {
 
 HCURSOR LoadCursor(HINSTANCE hInstance,
                    LPCSTR lpCursorName) {
-	error("TODO: LoadCursor");
+	return AfxGetApp()->LoadCursor(lpCursorName);
 }
 
 HCURSOR SetCursor(HCURSOR hCursor) {
-	error("TODO: SetCursor");
+	return AfxGetApp()->SetCursor(hCursor);
 }
 
 int ShowCursor(BOOL bShow) {
-	error("TODO: ShowCursor");
+	g_system->showMouse(bShow);
+	return 0;
 }
 
 BOOL LineDDA(int nXStart, int nYStart,
