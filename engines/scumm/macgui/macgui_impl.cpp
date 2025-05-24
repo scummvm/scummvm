@@ -732,7 +732,7 @@ void MacGuiImpl::setMacGuiColors(Graphics::Palette &palette) {
 }
 
 MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) {
-	if (_vm->_game.version < 6 && _vm->_game.id != GID_MANIAC) {
+	if (!_vm->_isModernMacVersion) {
 		updatePalette();
 		_macBlack = _windowManager->_colorBlack;
 		_macWhite = _windowManager->_colorWhite;
@@ -757,8 +757,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	Common::Rect bounds;
 
 	// Default dialog sizes for dialogs without a DITL resource.
-
-	if (_vm->_game.version < 6 && _vm->_game.id != GID_MANIAC) {
+	if (!_vm->_isModernMacVersion) {
 		bounds.top = 0;
 		bounds.left = 0;
 		bounds.bottom = 86;
