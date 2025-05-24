@@ -68,6 +68,8 @@ protected:
 
 	bool saveScreenshot(const Common::Path &filename) const override;
 
+	bool canSwitchFullscreen() const override;
+
 private:
 	bool setupMode(uint width, uint height);
 

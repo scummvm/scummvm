@@ -257,7 +257,6 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureIconifyWindow:
 	case OSystem::kFeatureVSync:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	case OSystem::kFeatureFullscreenToggleKeepsContext:
 	case OSystem::kFeatureRotationMode:
 #endif
 		return true;
@@ -324,6 +323,21 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	default:
 		return OpenGLGraphicsManager::getFeatureState(f);
 	}
+}
+
+bool OpenGLSdlGraphicsManager::canSwitchFullscreen() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// In SDL2+, we can always switch the fullscreen state
+	// The OpenGL context is not reset in this case.
+	return true;
+#elif defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	// In SDL 1.2, we can only switch dynamically if we are in 2D
+	// In 3D, the context may get reset which would upset the engine.
+	return _renderer3d == nullptr;
+#else
+	// In SDL1.2 with only 2D, no problem
+	return true;
+#endif
 }
 
 float OpenGLSdlGraphicsManager::getHiDPIScreenFactor() const {

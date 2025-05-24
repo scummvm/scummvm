@@ -212,6 +212,11 @@ protected:
 	SdlEventSource *_eventSource;
 	SdlWindow *_window;
 
+	/**
+	 * @returns whether switching the fullscreen state is currently safe
+	 */
+	virtual bool canSwitchFullscreen() const { return false; }
+
 private:
 	void toggleFullScreen();
 
