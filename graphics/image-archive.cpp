@@ -107,5 +107,49 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 #endif // USE_PNG
 }
 
+bool ImageArchive::getImageDimensions(const Common::Path &fname, uint16 &wOut, uint16 &hOut) {
+#ifndef USE_PNG
+	warning("ImageArchive::getImageDimensions(): PNG support not compiled. Cannot load file %s", fname.toString().c_str());
+
+	return false;
+#else
+
+	if (_imageDimsCache.contains(fname)) {
+		wOut = _imageDimsCache[fname].w;
+		hOut = _imageDimsCache[fname].h;
+		return true;
+	}
+
+	if (!_imageArchive) {
+		warning("ImageArchive::getImageDimensions(): Image Archive was not loaded. Use setImageArchive()");
+		return false;
+	}
+
+	Common::SeekableReadStream *stream = _imageArchive->createReadStreamForMember(fname);
+
+	if (!stream) {
+		warning("ImageArchive::getImageDimensions(): Cannot open file %s", fname.toString().c_str());
+		return false;
+	}
+
+	Image::PNGDecoder decoder;
+
+	bool result = decoder.loadStream(*stream);
+	delete stream;
+
+	if (!result) {
+		warning("ImageArchive::getImageDimensions(): Cannot load file %s", fname.toString().c_str());
+		return false;
+	}
+
+	const Graphics::Surface *surf = decoder.getSurface();
+	wOut = surf->w;
+	hOut = surf->h;
+	_imageDimsCache[fname] = {wOut, hOut};
+
+	return true;
+#endif // USE_PNG
+}
+
 } // End of namespace Graphics
 

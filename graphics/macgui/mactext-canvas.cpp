@@ -94,7 +94,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		if (w < maxWidth) {
 			chunk->text += str;	// Only append if within bounds
 		}
-		
+
 		getLineCharWidth(curLine, true);
 
 		return;
@@ -751,9 +751,9 @@ void MacTextCanvas::render(int from, int to) {
 }
 
 int getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str) {
-	if (str.empty()) 
+	if (str.empty())
 		return 0;
-	
+
 	if (format.plainByteMode()) {
 		Common::StringTokenizer tok(Common::convertFromU32String(str, format.getEncoding()));
 		int maxW = 0;
@@ -874,12 +874,12 @@ int MacTextCanvas::getLineWidth(int lineNum, bool enforce, int col) {
 		return line->width;
 
 	if (!line->picfname.empty()) {
-		const Surface *image = _imageArchive.getImageSurface(line->picfname);
+		uint16 w, h;
 
-		if (image) {
+		bool imageFound = _imageArchive.getImageDimensions(line->picfname, w, h);
+
+		if (imageFound) {
 			line->width = _maxWidth;
-
-			uint16 w = image->w, h = image->h;
 
 			parsePicExt(line->picext, w, h, line->picpercent);
 			line->charwidth = w;

@@ -51,11 +51,21 @@ public:
 	}
 	const Surface *getImageSurface(const Common::Path &fname, int w, int h);
 
+	/* Lookup image dimensions from the archive, cache it for later */
+	bool getImageDimensions(const Common::Path &fname, uint16 &wOut, uint16 &hOut);
+
 private:
 #ifdef USE_PNG
 	Common::HashMap<Common::Path, Surface *, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _imageCache;
 #endif
 	Common::Archive *_imageArchive = nullptr;
+
+	struct ImageDimensions {
+		uint16 w;
+		uint16 h;
+	};
+
+	Common::HashMap<Common::Path, ImageDimensions, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _imageDimsCache;
 };
 
 } // End of namespace Graphics
