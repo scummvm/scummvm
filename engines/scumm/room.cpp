@@ -507,7 +507,7 @@ void ScummEngine::setupRoomSubBlocks() {
 	//
 	// Using `kEnhGameBreakingBugFixes`, since leaving the room too quickly
 	// would just make this puzzle impossible to complete.
-	if (_game.id == GID_TENTACLE && _roomResource == 26 && readVar(0x8000 + 69)
+	if (_game.id == GID_TENTACLE && _roomResource == 26 && readVar(ROOM_VAL(69))
 			&& getClass(182, kObjectClassUntouchable)
 			&& enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		putClass(182, kObjectClassUntouchable, 0);

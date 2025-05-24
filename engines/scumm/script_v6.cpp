@@ -537,7 +537,7 @@ void ScummEngine_v6::o6_pushWordVar() {
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2090 && readVar(399) == 1) {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			int powerAdjustment = vm.localvar[_currentScript][4];
-			int pitchSelected = readVar(0x8000 + 10);
+			int pitchSelected = readVar(ROOM_VAL(10));
 
 			// Checks if the swing is either Power or Line Drive
 			if (offset == 102789 && (readVar(387) == 1||readVar(387) == 2)) {
@@ -650,10 +650,10 @@ void ScummEngine_v6::o6_eq() {
 	}
 
 	if (_enableHECompetitiveOnlineMods) {
-		int pitchXValue = readVar(0x8000 + 11);
-		int pitchYValue = readVar(0x8000 + 12);
-		int strikeZoneTop = readVar(0x8000 + 29);
-		int strikeZoneBottom = readVar(0x8000 + 30);
+		int pitchXValue = readVar(ROOM_VAL(11));
+		int pitchYValue = readVar(ROOM_VAL(12));
+		int strikeZoneTop = readVar(ROOM_VAL(29));
+		int strikeZoneBottom = readVar(ROOM_VAL(30));
 
 		// People have been complaining about strikes being visually unclear during online games. This is because the strike zone's visual is not
 		// equal length compared to the actual range in which a strike can be called. These changes should fix that, with some extra leniency in
@@ -667,12 +667,12 @@ void ScummEngine_v6::o6_eq() {
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && (vm.slot[_currentScript].number == 2202 || vm.slot[_currentScript].number == 2192) && readVar(399) == 1) {
 			if (((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue <= 279) ||
 				((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue >= 354)) {
-				writeVar(0x8000 + 16, 2);
+				writeVar(ROOM_VAL(16), 2);
 			}
 			// if the ball's y location is 1 pixel higher than the bottom of the zone, then it will be a ball.
 			// This removes the small advantage of throwing at the very bottom of the zone.
 			if (pitchYValue > strikeZoneBottom - 1) {
-				writeVar(0x8000 + 16, 2);
+				writeVar(ROOM_VAL(16), 2);
 			}
 		}
 
@@ -683,7 +683,7 @@ void ScummEngine_v6::o6_eq() {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			// OPEN STANCE ADJUSTMENTS (1 being earliest, 5 being latest)
 			if (offset == 101898 && readVar(447) == 1) {
-				switch (readVar(0x8000 + 1)) {
+				switch (readVar(ROOM_VAL(1))) {
 				case 1:
 					writeVar(0x4000 + 0, -13);
 					break;
@@ -703,7 +703,7 @@ void ScummEngine_v6::o6_eq() {
 			}
 			// SQUARED STANCE ADJUSTMENTS (1 being earliest, 5 being latest)
 			if (offset == 101898 && readVar(447) == 2) {
-				switch (readVar(0x8000 + 1)) {
+				switch (readVar(ROOM_VAL(1))) {
 				case 1:
 					writeVar(0x4000 + 0, -30);
 					break;
@@ -723,7 +723,7 @@ void ScummEngine_v6::o6_eq() {
 			}
 			// CLOSED STANCE ADJUSTMENTS (1 being earliest, 5 being latest)
 			if (offset == 101898 && readVar(447) == 3) {
-				switch (readVar(0x8000 + 1)) {
+				switch (readVar(ROOM_VAL(1))) {
 				case 1:
 					writeVar(0x4000 + 0, -47);
 					break;
@@ -1047,7 +1047,7 @@ void ScummEngine_v6::o6_jump() {
 	//
 	// Intentionally using `kEnhGameBreakingBugFixes`, since having the game hang
 	// is not useful to anyone.
-	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1 &&
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(ROOM_VAL(97)) == 1 && offset == 1 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		offset = -18;
 	}
@@ -1863,7 +1863,7 @@ void ScummEngine_v6::o6_getAnimateVariable() {
 			// Room variable 5 to ensure this workaround executes only once at
 			// the beginning of the script and room variable 22 to check if we
 			// are bunting.
-			readVar(0x8000 + 5) != 0 && readVar(0x8000 + 22) == 4)
+			readVar(ROOM_VAL(5)) != 0 && readVar(ROOM_VAL(22)) == 4)
 		push(1);
 	else
 		push(a->getAnimVar(var));
@@ -2857,7 +2857,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// just before the employee's line, otherwise the timing with Sam's moves
 	// will feel off -- so we can't use the _forcedWaitForMessage trick.
 	if (_game.id == GID_SAMNMAX && _roomResource == 11 && vm.slot[_currentScript].number == 67
-		&& getOwner(70) != 2 && !readVar(0x8000 + 67) && !readVar(0x8000 + 39) && readVar(0x8000 + 12) == 1
+		&& getOwner(70) != 2 && !readVar(ROOM_VAL(67)) && !readVar(ROOM_VAL(39)) && readVar(ROOM_VAL(12)) == 1
 		&& !getClass(126, 6) && enhancementEnabled(kEnhRestoredContent)) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
@@ -2946,7 +2946,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// already does in the game.
 	if (_game.id == GID_DIG && _roomResource == 58 && vm.slot[_currentScript].number == 402
 		&& _actorToPrintStrFor == 3 && vm.localvar[_currentScript][0] == 0
-		&& readVar(0x8000 + 94) && readVar(0x8000 + 78) && !readVar(0x8000 + 97)
+		&& readVar(ROOM_VAL(94)) && readVar(ROOM_VAL(78)) && !readVar(ROOM_VAL(97))
 		&& _scummVars[269] == 3 && getState(388) == 2 && enhancementEnabled(kEnhRestoredContent)) {
 		_forcedWaitForMessage = true;
 		_scriptPointer--;

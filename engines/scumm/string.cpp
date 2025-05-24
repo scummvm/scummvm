@@ -1524,7 +1524,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					// German releases use `startAnim(8)` while the English release correctly
 					// uses `startAnim(7)` for this.
 					if (_game.id == GID_SAMNMAX && _currentRoom == 52 && vm.slot[_currentScript].number == 102 &&
-						chr == 9 && readVar(0x8000 + 95) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
+						chr == 9 && readVar(ROOM_VAL(95)) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
 						dst[-2] == 8 && enhancementEnabled(kEnhMinorBugFixes)) {
 						dst[-2] = 7;
 					}

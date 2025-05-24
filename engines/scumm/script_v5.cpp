@@ -1065,7 +1065,7 @@ void ScummEngine_v5::o5_drawObject() {
 	// be called if Bit[129] is set in that script, so if it does happen, it means
 	// the check was missing, and so we ignore the next 32 bytes of Dread's reaction.
 	if (_game.id == GID_MONKEY2 && !(_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 22 && _currentScript != 0xFF && vm.slot[_currentScript].number == 201 && obj == 237 &&
-		state == 1 && readVar(0x8000 + 129) == 1 && enhancementEnabled(kEnhMinorBugFixes)) {
+		state == 1 && readVar(ROOM_VAL(129)) == 1 && enhancementEnabled(kEnhMinorBugFixes)) {
 		_scriptPointer += 32;
 		return;
 	}
@@ -1599,7 +1599,7 @@ void ScummEngine_v5::o5_isEqual() {
 		a == b && (b == 7 || b == 13)) {
 		// No need to skip any line if playing in always-prefer-original-text
 		// mode (Bit[588]) where silent lines are expected, or if speech is muted.
-		if (readVar(0x8000 + 588) == 1 && !ConfMan.getBool("speech_mute")) {
+		if (readVar(ROOM_VAL(588)) == 1 && !ConfMan.getBool("speech_mute")) {
 			// Only skip the line when we can detect one and it has no sound prologue.
 			if (memcmp(_scriptPointer + 2, "\x27\x01\x1D", 3) == 0 && memcmp(_scriptPointer + 5, "\xFF\x0A", 2) != 0) {
 				// Cheat and use the next recorded line, but do it in a way so that it
@@ -1710,16 +1710,16 @@ void ScummEngine_v5::o5_notEqualZero() {
 		//
 		// Note that fixing this unveils the script error causing the possible
 		// dead-end described above.
-		if (!(_game.features & GF_ULTIMATE_TALKIE) && var == 0x8000 + 70 && a == 0 && getOwner(519) == VAR(VAR_EGO) && enhancementEnabled(kEnhRestoredContent)) {
+		if (!(_game.features & GF_ULTIMATE_TALKIE) && var == ROOM_VAL(70) && a == 0 && getOwner(519) == VAR(VAR_EGO) && enhancementEnabled(kEnhRestoredContent)) {
 			a = 1;
 		}
 
 		// [Back to the previous "dead-end" workaround.]
 		// If you've got the four map pieces and the script is checking this...
-		else if (var == 0x8000 + 69 && a == 1 && getOwner(519) == VAR(VAR_EGO) && readVar(0x8000 + 55) == 1 && readVar(0x8000 + 366) == 1) {
+		else if (var == ROOM_VAL(69) && a == 1 && getOwner(519) == VAR(VAR_EGO) && readVar(ROOM_VAL(55)) == 1 && readVar(ROOM_VAL(366)) == 1) {
 			// ...but you don't have the lens and you never gave it to Wally...
 			// (and you're not playing the Lite mode, where this doesn't matter)
-			if (getOwner(295) != VAR(VAR_EGO) && readVar(0x8000 + 67) != 0 && readVar(0x8000 + 567) == 0) {
+			if (getOwner(295) != VAR(VAR_EGO) && readVar(ROOM_VAL(67)) != 0 && readVar(ROOM_VAL(567)) == 0) {
 				// ...then short-circuit this condition, so that you can still go back
 				// to Phatt Island to pick up the lens, as in the original game.
 				a = 0;
@@ -1741,7 +1741,7 @@ void ScummEngine_v5::o5_notEqualZero() {
 			int var = fetchScriptWord();
 			a = readVar(var);
 
-			if (var == 0x8000 + 321 && enhancementEnabled(kEnhRestoredContent))
+			if (var == ROOM_VAL(321) && enhancementEnabled(kEnhRestoredContent))
 				a = !a;
 		} else {
 			a = getVar();
