@@ -48,6 +48,7 @@ MODULE_OBJS = \
 	mfc/gfx/cursor.o \
 	mfc/gfx/window.o \
 	mfc/libs/event.o \
+	mfc/libs/resources.o \
 	mfc/libs/settings.o \
 	spacebar/baglib/area_object.o \
 	spacebar/baglib/bagel.o \

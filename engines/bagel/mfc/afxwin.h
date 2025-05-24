@@ -1110,6 +1110,7 @@ class CWinApp : public CWinThread {
 	DECLARE_DYNAMIC(CWinApp)
 
 private:
+	Libs::Resources _resources;
 	Libs::Settings _settings;
 	Gfx::Cursors _cursors;
 	int m_nWaitCursorCount = 0;
@@ -1168,6 +1169,14 @@ public:
 	virtual void OnFileNew() {}
 	virtual void OnFileOpen() {}
 	virtual void OnFilePrintSetup() {}
+
+	/*== ScummVM added functions ==*/
+	/**
+	 * Adds a Windows file containing resources
+	 */
+	void addResources(const Common::Path &file) {
+		_resources.addResources(file);
+	}
 };
 
 extern CWinApp *AfxGetApp();

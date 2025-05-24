@@ -19,57 +19,30 @@
  *
  */
 
-#ifndef BAGEL_MFC_GFX_CURSOR_H
-#define BAGEL_MFC_GFX_CURSOR_H
-
-#include "common/path.h"
 #include "common/formats/winexe_ne.h"
-#include "graphics/managed_surface.h"
-#include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/libs/resources.h"
 
 namespace Bagel {
 namespace MFC {
-namespace Gfx {
+namespace Libs {
 
-class Cursor {
-private:
-	Graphics::ManagedSurface _surface;
-public:
-	/**
-	 * Constructor for predefined cursors
-	 */
-	Cursor(const byte *pixels);
+Resources::~Resources() {
+	while (!_resources.empty())
+		popResources();
+}
 
-	/**
-	 * Constructor for cursor resources
-	 */
-	Cursor(Common::WinResources &res, LPCSTR cursorId);
+void Resources::addResources(const Common::Path &file) {
+	Common::NEResources *res = new Common::NEResources();
+	if (!res->loadFromEXE(file))
+		error("Could not load %s", file.baseName().c_str());
 
-	/**
-	 * Set the cursor to be active
-	 */
-	void showCursor();
-};
+	_resources.push(res);
+}
 
-class Cursors {
-private:
-	Libs::Resources &_resources;
-	typedef Common::HashMap<LPCSTR, Cursor *> CursorHash;
-	CursorHash _cursors;
-public:
-	HCURSOR _arrowCursor;
-	HCURSOR _waitCursor;
+void Resources::popResources() {
+	delete _resources.pop();
+}
 
-public:
-	Cursors(Libs::Resources &res);
-	~Cursors();
-
-	HCURSOR loadCursor(LPCSTR cursorId);
-};
-
-} // namespace Gfx
+} // namespace Libs
 } // namespace MFC
 } // namespace Bagel
-
-#endif

@@ -79,7 +79,9 @@ Common::Error HodjNPodjEngine::run() {
 	_gameId = getGameId();
 #endif
 	// Run the game
-	Metagame::Frame::theApp.Run();
+	auto &app = Metagame::Frame::theApp;
+	app.addResources("meta/hnpmeta.dll");
+	app.Run();
 
 	for (int size = 8; size <= 14; size += 2)
 		delete _fonts[size];
