@@ -1,7 +1,11 @@
+; Get the version information from the ScummVM executable.
+; Since we always bundle the 32 bit and 64 bit version of the same
+; version in one installer, we just use the 32 bit version here
+; for simplicity.
 #define AppName "ScummVM"
-#define FileVersion=GetFileVersion('scummvm.exe')
-#define ProductVersion=GetStringFileInfo('scummvm.exe', 'ProductVersion')
-#define Copyright=GetStringFileInfo('scummvm.exe', 'LegalCopyright')
+#define FileVersion=GetFileVersion('scummvm-i686.exe')
+#define ProductVersion=GetStringFileInfo('scummvm-i686.exe', 'ProductVersion')
+#define Copyright=GetStringFileInfo('scummvm-i686.exe', 'LegalCopyright')
 
 [Setup]
 AppCopyright={#Copyright}
@@ -9,30 +13,37 @@ AppName={#AppName}
 AppVersion={#ProductVersion}
 VersionInfoVersion={#FileVersion}
 AppVerName={#AppName} {#ProductVersion}
+VersionInfoCompany=The ScummVM Team
 AppPublisher=The ScummVM Team
 AppPublisherURL=https://www.scummvm.org/
 AppSupportURL=https://www.scummvm.org/
 AppUpdatesURL=https://www.scummvm.org/
 DefaultDirName={pf}\{#AppName}
 DefaultGroupName={#AppName}
-AllowNoIcons=true
-AlwaysUsePersonalGroup=false
 EnableDirDoesntExistWarning=false
-Compression=lzma2/ultra
 OutputDir=C:\{#AppName}
 OutputBaseFilename=scummvm-win32
 DisableStartupPrompt=true
 AppendDefaultDirName=false
-SolidCompression=true
 DirExistsWarning=no
+DisableDirPage=no
 SetupIconFile=graphics\scummvm-install.ico
 UninstallDisplayIcon={app}\scummvm.exe
 WizardImageFile=graphics\left.bmp
 WizardSmallImageFile=graphics\scummvm-install.bmp
 ShowLanguageDialog=yes
 LanguageDetectionMethod=uilanguage
-PrivilegesRequired=none
 DisableWelcomePage=False
+ArchitecturesInstallIn64BitMode=x64
+AlwaysShowGroupOnReadyPage=True
+AlwaysShowDirOnReadyPage=True
+
+SolidCompression=true
+Compression=lzma2/ultra64
+CompressionThreads=2
+LZMANumBlockThreads=4
+LZMADictionarySize=524288
+LZMAUseSeparateProcess=yes
 
 
 ; This privilege escalation code comes from
@@ -209,6 +220,11 @@ Filename: {app}\ScummVM.exe; Parameters: "--no-console"; Flags: nowait skipifdoe
 
 ; Creates a symbolic link for standard save games area, under Windows Vista and higher
 ; Filename: {cmd}; Parameters: "/c ""mklink /d ""%userprofile%\Saved Games\ScummVM"" ""%appdata%\ScummVM\Saved games"" "" "; MinVersion: 0, 6.1
+
+[InstallDelete]
+Type: files; Name: {app}\SDL2.dll
+Type: files; Name: {app}\SDL2_net.dll
+Type: files; Name: {app}\discord-rpc.dll
 
 [UninstallDelete]
 Type: files; Name: {app}\ISTool.url
