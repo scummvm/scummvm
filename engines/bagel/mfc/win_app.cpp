@@ -127,7 +127,19 @@ void CWinApp::EndWaitCursor() {
 }
 
 void CWinApp::DoWaitCursor(int nCode) {
-	error("TODO: CWinApp::DoWaitCursor");
+	assert(nCode == 0 || nCode == 1 || nCode == -1);
+
+	m_nWaitCursorCount += nCode;
+	if (m_nWaitCursorCount > 0) {
+		// Set wait cursor
+		HCURSOR hcurPrev = MFC::SetCursor(_cursors._waitCursor);
+		if (nCode > 0 && m_nWaitCursorCount == 1)
+			m_hcurWaitCursorRestore = hcurPrev;
+	} else {
+		// Turn off wait cursor
+		m_nWaitCursorCount = 0;
+		MFC::SetCursor(m_hcurWaitCursorRestore);
+	}
 }
 
 void CWinApp::AddDocTemplate(CDocTemplate *pTemplate) {

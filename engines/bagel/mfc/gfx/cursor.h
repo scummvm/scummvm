@@ -19,33 +19,23 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/afxwin.h"
+#ifndef BAGEL_MFC_GFX_CURSOR_H
+#define BAGEL_MFC_GFX_CURSOR_H
+
+#include "graphics/managed_surface.h"
+#include "bagel/mfc/minwindef.h"
 
 namespace Bagel {
 namespace MFC {
+namespace Gfx {
 
-IMPLEMENT_DYNAMIC(CCmdTarget, CObject)
+class Cursors {
+public:
+	HCURSOR _waitCursor;
+};
 
-const AFX_MSGMAP *CCmdTarget::GetThisMessageMap() {
-	error("TODO: GetMessageMap");
-}
-
-void CCmdTarget::DoWaitCursor(int nCode) {
-	AfxGetApp()->DoWaitCursor(nCode);
-}
-
-void CCmdTarget::BeginWaitCursor() {
-	AfxGetApp()->DoWaitCursor(1);
-}
-
-void CCmdTarget::EndWaitCursor() {
-	AfxGetApp()->DoWaitCursor(-1);
-}
-
-void CCmdTarget::RestoreWaitCursor() {
-	AfxGetApp()->DoWaitCursor(0);
-}
-
+} // namespace Gfx
 } // namespace MFC
 } // namespace Bagel
+
+#endif

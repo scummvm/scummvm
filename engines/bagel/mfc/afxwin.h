@@ -28,6 +28,7 @@
 #include "bagel/mfc/afxmsg.h"
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
+#include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/libs/settings.h"
 
 namespace Bagel {
@@ -607,6 +608,11 @@ public:
 		return GetThisMessageMap();
 	}
 
+	/**
+	 * Adds or remove a wait mouse cursor
+	 * @param nCode		0 => restore, 1=> begin, -1=> end
+	 */
+	virtual void DoWaitCursor(int nCode);
 	void BeginWaitCursor();
 	void EndWaitCursor();
 	void RestoreWaitCursor();
@@ -1105,6 +1111,9 @@ class CWinApp : public CWinThread {
 
 private:
 	Libs::Settings _settings;
+	Gfx::Cursors _cursors;
+	int m_nWaitCursorCount = 0;
+	HCURSOR m_hcurWaitCursorRestore = 0;
 
 private:
 	/**
@@ -1141,7 +1150,13 @@ public:
 	HCURSOR LoadCursor(UINT nIDResource) const;
 	void BeginWaitCursor();
 	void EndWaitCursor();
-	void DoWaitCursor(int nCode);
+
+	/**
+	 * Adds or remove a wait mouse cursor
+	 * @param nCode		0 => restore, 1=> begin, -1=> end
+	 */
+	void DoWaitCursor(int nCode) override;
+
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	void CloseAllDocuments(BOOL bEndSession);
 

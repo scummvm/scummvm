@@ -45,6 +45,7 @@ MODULE_OBJS = \
 	mfc/win_thread.o \
 	mfc/wingdi.o \
 	mfc/wnd.o \
+	mfc/gfx/cursor.o \
 	mfc/gfx/window.o \
 	mfc/libs/event.o \
 	mfc/libs/settings.o \
