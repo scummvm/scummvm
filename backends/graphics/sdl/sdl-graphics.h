@@ -197,6 +197,9 @@ public:
 		_hintedHeight = 0;
 	}
 
+	// Called by SdlWindow when the window is about to be destroyed
+	virtual void destroyingWindow() {}
+
 protected:
 	Uint32 _lastFlags;
 	bool _allowWindowSizeReset;
