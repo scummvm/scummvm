@@ -321,8 +321,10 @@ void Renderer3D::enter3D() {
 	} else {
 		// 3D engine just starts, make sure the state is clean
 		glDisable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ZERO);
+		if (OpenGLContext.imagingSupported) {
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFunc(GL_ONE, GL_ZERO);
+		}
 
 		glDisable(GL_CULL_FACE);
 		glCullFace(GL_BACK);

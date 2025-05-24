@@ -75,6 +75,9 @@ public:
 	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
 	bool NPOTSupported;
 
+	/** Whether GL_ARB_imaging is available or not. */
+	bool imagingSupported;
+
 	/** Whether shader support is available or not. */
 	bool shadersSupported;
 
