@@ -189,6 +189,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
+	setSpriteBlendMode(Graphics::BLEND_NORMAL, true);
 
 	_windowed = !ConfMan.getBool("fullscreen");
 	_width = width;
