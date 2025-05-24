@@ -724,7 +724,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 		SDL_Locale *locales = *pLocales;
 		if (locales[0].language != NULL) {
 			Common::String str = Common::String::format("%s_%s", locales[0].country, locales[0].language);
-			SDL_free(locales);
+			SDL_free(pLocales);
 			return str;
 		}
 		SDL_free(pLocales);
