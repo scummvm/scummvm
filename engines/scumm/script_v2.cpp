@@ -1089,7 +1089,7 @@ void ScummEngine_v2::o2_walkActorTo() {
 	// WORKAROUND bug #2110: crash when trying to fly back to San Francisco.
 	// walkActorTo() is called with an invalid actor number by script 115,
 	// after the room is loaded. The original DOS interpreter probably let
-	// this slip by (TODO: confirm this? and chose an Enhancement class).
+	// this slip by (TODO: confirm this? and choose an Enhancement class).
 	if (_game.id == GID_ZAK && _game.version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
 		act = VAR(VAR_EGO);
 	}
@@ -1198,10 +1198,10 @@ void ScummEngine_v2::stopScriptCommon(int script) {
 		}
 	}
 
-	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
 	// FIXME: Nasty hack for bug #1529
 	// Don't let the exit script for room 26 stop the script (116), when
 	// switching to the dungeon (script 89)
+	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == kScriptNumEXCD) {
 		if (script == MM_SCRIPT(111) && isScriptRunning(MM_SCRIPT(84)))
 			return;
 	}

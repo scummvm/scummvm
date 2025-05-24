@@ -117,6 +117,11 @@ enum {
 	kMaxScriptNestingHE = 40
 };
 
+enum {
+	kScriptNumEXCD = 10001,
+	kScriptNumENCD = 10002
+};
+
 struct VirtualMachineState {
 	uint32 cutScenePtr[kMaxCutsceneNum];
 	byte cutSceneScript[kMaxCutsceneNum];

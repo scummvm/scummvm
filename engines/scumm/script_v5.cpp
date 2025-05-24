@@ -653,7 +653,7 @@ void ScummEngine_v5::o5_setClass() {
 		// are taken from the Ultimate Talkie Edition.
 		if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformFMTowns &&
 		    _game.platform != Common::kPlatformSegaCD && _roomResource == 59 &&
-			_currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
+			_currentScript != 0xFF && vm.slot[_currentScript].number == kScriptNumENCD &&
 			obj == 915 && cls == 6 && _currentPalette[251 * 3] == 0 &&
 			enhancementEnabled(kEnhVisualChanges) && !(_game.features & GF_ULTIMATE_TALKIE)) {
 			// True as long as Guybrush isn't done with the voodoo recipe on the
@@ -1091,7 +1091,7 @@ void ScummEngine_v5::o5_drawObject() {
 	// been officially fixed in some '1.2' releases (e.g. French DOS/EGA) and
 	// all later versions; this smaller workaround appears to be enough.
 	if (_game.id == GID_LOOM && _game.version == 3 && !(_game.features & GF_OLD256) && _roomResource == 32 &&
-		vm.slot[_currentScript].number == 10002 && obj == 540 && state == 1 && xpos == 255 && ypos == 255 &&
+		vm.slot[_currentScript].number == kScriptNumENCD && obj == 540 && state == 1 && xpos == 255 && ypos == 255 &&
 		enhancementEnabled(kEnhMinorBugFixes)) {
 		if (getState(541) == 1) {
 			putState(obj, state);
@@ -1691,7 +1691,7 @@ void ScummEngine_v5::o5_notEqualZero() {
 	// stuck on Scabb Island with no way of going back to the Phatt Island
 	// Library, since Dread's ship is gone.
 	if (_game.id == GID_MONKEY2 && ((_roomResource == 22 && vm.slot[_currentScript].number == 202) ||
-		(_roomResource == 2 && vm.slot[_currentScript].number == 10002) ||
+		(_roomResource == 2 && vm.slot[_currentScript].number == kScriptNumENCD) ||
 		vm.slot[_currentScript].number == 97) && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		int var = fetchScriptWord();
 		a = readVar(var);
@@ -1734,7 +1734,7 @@ void ScummEngine_v5::o5_notEqualZero() {
 		// Ron Gilbert commented on this: "Not sure I'd call that a
 		// coding error. The lines were just cut. But what do I know."
 
-		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && vm.slot[_currentScript].number == 10002) {
+		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && vm.slot[_currentScript].number == kScriptNumENCD) {
 			// A local getVar(), where the var number can be examined.
 			// Taking care to limit this to Monkey1, so that the proper getVar()
 			// implementation still gets called for v2 and below.
@@ -2176,7 +2176,7 @@ void ScummEngine_v5::o5_putActorInRoom() {
 	// really have been that under-powered?
 
 	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh &&
-		_currentRoom == 7 && vm.slot[_currentScript].number == 10002 &&
+		_currentRoom == 7 && vm.slot[_currentScript].number == kScriptNumENCD &&
 		a->_number == 11 && room == 0 && enhancementEnabled(kEnhRestoredContent)) {
 		room = _currentRoom;
 		a->animateActor(250);
@@ -2841,11 +2841,11 @@ void ScummEngine_v5::o5_stopSound() {
 	// they keep playing like they do in the Special Edition. (Though there
 	// the background makes it more obvious.)
 	//
-	// The sound is stopped by the exit script, which always has number
-	// 10001 regardless of which room it is. We figure out which one by
-	// looking at which rooms we're moving between.
+	// The sound is stopped by the exit script kScriptNumEXCD, which always
+	// has the same value regardless of which room it is. We figure out
+	// which one by looking at which rooms we're moving between.
 
-	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == 10001 && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76 && enhancementEnabled(kEnhAudioChanges)) {
+	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == kScriptNumEXCD && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76 && enhancementEnabled(kEnhAudioChanges)) {
 		return;
 	}
 
@@ -3330,7 +3330,7 @@ void ScummEngine_v5::o5_walkActorTo() {
 	//
 	// Intentionally using `kEnhGameBreakingBugFixes`, since you can get
 	// completely stuck.
-	if (_game.id == GID_INDY4 && _currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
+	if (_game.id == GID_INDY4 && _currentScript != 0xFF && vm.slot[_currentScript].number == kScriptNumENCD &&
 		_currentRoom == (_game.platform == Common::kPlatformAmiga ? 58 : 60) &&
 		VAR(224) == 140 && a->_number == VAR(VAR_EGO) && x == 45 && y == 137 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
@@ -3844,7 +3844,7 @@ bool ScummEngine_v5::workaroundMonkey1JollyRoger(byte callerOpcode, int arg) {
 	// also need to remove the flag from the room, once it's been shown for the first time.
 	// We fix both issues.
 	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
-		_roomResource == 87 && _currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
+		_roomResource == 87 && _currentScript != 0xFF && vm.slot[_currentScript].number == kScriptNumENCD &&
 		enhancementEnabled(kEnhVisualChanges)) {
 		// The script that's only run the first time the flag is shown
 		const int defaultExpectedScriptNr = (_game.version == 5) ? 122 : 119;
