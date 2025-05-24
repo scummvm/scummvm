@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/platform/sdl/sdl-window.h"
+#include "backends/platform/sdl/sdl.h"
 
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -595,6 +596,15 @@ void SdlWindow::destroyWindow() {
 	if (_window) {
 		if (!(_lastFlags & fullscreenMask)) {
 			SDL_GetWindowPosition(_window, &_lastX, &_lastY);
+		}
+		// Notify the graphics manager that we are about to delete its window
+		OSystem_SDL *system = dynamic_cast<OSystem_SDL *>(g_system);
+		assert(system);
+		GraphicsManager *graphics = system->getGraphicsManager();
+		if (graphics) {
+			SdlGraphicsManager *sdlGraphics = dynamic_cast<SdlGraphicsManager *>(graphics);
+			assert(sdlGraphics);
+			sdlGraphics->destroyingWindow();
 		}
 		SDL_DestroyWindow(_window);
 		_window = nullptr;
