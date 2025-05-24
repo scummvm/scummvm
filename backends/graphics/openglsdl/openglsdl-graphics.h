@@ -55,6 +55,10 @@ public:
 	void freeImGuiTexture(void *texture) override;
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	void destroyingWindow() override;
+#endif
+
 protected:
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) override;
 

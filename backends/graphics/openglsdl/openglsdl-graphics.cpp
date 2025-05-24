@@ -244,6 +244,13 @@ void OpenGLSdlGraphicsManager::deinitOpenGLContext() {
 #endif
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+void OpenGLSdlGraphicsManager::destroyingWindow() {
+	// We are about to destroy the window: cleanup the context first
+	deinitOpenGLContext();
+}
+#endif
+
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
@@ -571,16 +578,12 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	// If current antialiasing is not what's expected, destroy the context and the window
+	// If current antialiasing is not what's expected, destroy the window (and the context)
 	// This will force to recreate it
 	if (supportsAntialiasing && _effectiveAntialiasing != _requestedAntialiasing && _glContext) {
-		deinitOpenGLContext();
 		_window->destroyWindow();
 	}
 #endif
-
-	// Destroy OpenGL context before messing with the window
-	deinitOpenGLContext();
 
 	// In case we request a fullscreen mode we will use the mode the user
 	// has chosen last time or the biggest mode available.
@@ -729,11 +732,15 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			continue;
 		}
 
-		_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
-		if (!_glContext) {
-			warning("SDL_GL_CreateContext failed: %s", SDL_GetError());
-			// Try the next pixel format
-			continue;
+		const bool newContext = !_glContext;
+		if (newContext) {
+			// If createOrUpdateWindow reused the exisiting window, _glContext will still have its previous value
+			_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
+			if (!_glContext) {
+				warning("SDL_GL_CreateContext failed: %s", SDL_GetError());
+				// Try the next pixel format
+				continue;
+			}
 		}
 
 		// Now that we have a context, the AA is really effective
@@ -743,15 +750,19 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 		}
 
-		notifyContextCreate(_glContextType, new OpenGL::Backbuffer(), it[0], it[1]);
+		if (newContext) {
+			notifyContextCreate(_glContextType, new OpenGL::Backbuffer(), it[0], it[1]);
+		}
 		int actualWidth, actualHeight;
 		getWindowSizeFromSdl(&actualWidth, &actualHeight);
 
 		handleResize(actualWidth, actualHeight);
 
 #ifdef USE_IMGUI
-		// Setup Dear ImGui
-		initImGui(nullptr, _glContext);
+		if (newContext) {
+			// Setup Dear ImGui
+			initImGui(nullptr, _glContext);
+		}
 #endif
 
 #ifdef WIN32
@@ -782,6 +793,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 				SDL_Delay(10);
 			}
 		}
+
+		// Destroy OpenGL context before messing with the window: in SDL1.2 we can't now when the window will get destroyed or not
+		deinitOpenGLContext();
 
 		uint32 flags = SDL_OPENGL;
 		if (_wantsFullScreen) {
