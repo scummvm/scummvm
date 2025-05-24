@@ -94,6 +94,7 @@ Filename: {app}\ScummVM.exe; Parameters: "--no-console"; Flags: nowait skipifdoe
 Type: files; Name: {app}\SDL2.dll
 Type: files; Name: {app}\SDL2_net.dll
 Type: files; Name: {app}\discord-rpc.dll
+Type: files; Name: {app}\LICENSES
 
 [UninstallDelete]
 Type: files; Name: {app}\ISTool.url
@@ -105,32 +106,27 @@ Name: "{userappdata}\ScummVM"; MinVersion: 0, 1
 Name: "{userappdata}\ScummVM\Saved Games"; MinVersion: 0, 1; Flags: uninsneveruninstall
 
 [Files]
-; AUTHORS and LICENSING
-Source: AUTHORS.txt; DestDir: {app}
-Source: COPYING.txt; DestDir: {app}
-Source: COPYRIGHT.txt; DestDir: {app}
-Source: LICENSES\*; DestDir: {app}\LICENSES;
+; NEWS, README, AUTHORS, LICENSES...
+Source: ..\..\win32dist-mingw\*.txt; DestDir: {app}
 
 ; QUICKSTART
-Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
-Source: doc/es/InicioRapido.txt; DestDir: {app}; Flags: ignoreversion; Languages: spanish
-Source: doc/fr/DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion; Languages: french
-Source: doc/it/GuidaRapida.txt; DestDir: {app}; Flags: ignoreversion; Languages: italian
-Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion; Languages: norwegian
-Source: doc/sv/Snabbstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
+Source: ..\..\win32dist-mingw\doc\de\Schnellstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
+Source: ..\..\win32dist-mingw\doc\es\InicioRapido.txt; DestDir: {app}; Flags: ignoreversion; Languages: spanish
+Source: ..\..\win32dist-mingw\doc\fr\DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion; Languages: french
+Source: ..\..\win32dist-mingw\doc\it\GuidaRapida.txt; DestDir: {app}; Flags: ignoreversion; Languages: italian
+Source: ..\..\win32dist-mingw\doc\no-nb\HurtigStart.txt; DestDir: {app}; Flags: ignoreversion; Languages: norwegian
+Source: ..\..\win32dist-mingw\doc\sv\Snabbstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
 
 ; README and DOCUMENTATION
-Source: README.html; DestDir: {app}; Flags: ignoreversion; Languages: not (czech or german or swedish)
-Source: doc/cz/PrectiMe.txt; DestDir: {app}; Flags: ignoreversion; Languages: czech
-Source: doc/de/LIESMICH.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
-Source: doc/sv/LasMig.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
-Source: *Manual*.pdf; DestDir: {app}; Flags: ignoreversion isreadme
+Source: ..\..\win32dist-mingw\doc\cz\PrectiMe.txt; DestDir: {app}; Flags: ignoreversion; Languages: czech
+Source: ..\..\win32dist-mingw\doc\de\LIESMICH.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
+Source: ..\..\win32dist-mingw\doc\sv\LasMig.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
 
 ; ScummVM executables and libraries
 ; for 32 bit aka. i686:
-Source: scummvm-i686.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: not Is64BitInstallMode
-Source: WinSparkle-i686.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
+Source: ..\..\win32dist-mingw\scummvm-i686.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: not Is64BitInstallMode
+Source: ..\..\win32dist-mingw\WinSparkle-i686.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
 
 ; for 64 bit aka. x86_64
-Source: scummvm-x86_64.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: Is64BitInstallMode
-Source: WinSparkle-x86_64.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: Is64BitInstallMode
+Source: ..\..\win32dist-mingw\scummvm-x86_64.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: Is64BitInstallMode
+Source: ..\..\win32dist-mingw\WinSparkle-x86_64.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: Is64BitInstallMode
