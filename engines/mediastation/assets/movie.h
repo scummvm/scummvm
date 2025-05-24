@@ -40,58 +40,44 @@ public:
 	uint _keyframeEndInMilliseconds = 0;
 };
 
-class MovieFrameFooter {
+class MovieFrameImage : public Bitmap {
 public:
-	MovieFrameFooter(Chunk &chunk);
+	MovieFrameImage(Chunk &chunk, MovieFrameHeader *header);
+	virtual ~MovieFrameImage() override;
 
-	uint _unk1 = 0;
-	uint _unk2 = 0;
-	uint _startInMilliseconds = 0;
-	uint _endInMilliseconds = 0;
-	uint _left = 0;
-	uint _top = 0;
-	uint _unk3 = 0;
-	uint _unk4 = 0;
-	uint _zIndex = 0; // TODO: This is still unconfirmed but seems likely.
-	uint _diffBetweenKeyframeAndFrameX = 0;
-	uint _diffBetweenKeyframeAndFrameY = 0;
-	uint _keyframeIndex = 0;
-	uint _unk9 = 0;
-	uint _index = 0;
-};
-
-class MovieFrame : public Bitmap {
-public:
-	MovieFrame(Chunk &chunk, MovieFrameHeader *header);
-	virtual ~MovieFrame() override;
-
-	void setFooter(MovieFrameFooter *footer);
-	uint32 left();
-	uint32 top();
-	Common::Point topLeft();
-	Common::Rect boundingBox();
-	uint32 index();
-	uint32 startInMilliseconds();
-	uint32 endInMilliseconds();
-	uint32 keyframeEndInMilliseconds();
-	// This is called zCoordinate because zIndex is too close to "index" and
-	// that could be confusing.
-	uint32 zCoordinate();
+	uint32 index() { return _bitmapHeader->_index; }
 
 private:
 	MovieFrameHeader *_bitmapHeader = nullptr;
-	MovieFrameFooter *_footer = nullptr;
 };
 
 enum MovieSectionType {
 	kMovieRootSection = 0x06a8,
-	kMovieFrameSection = 0x06a9,
-	kMovieFooterSection = 0x06aa
+	kMovieImageDataSection = 0x06a9,
+	kMovieFrameDataSection = 0x06aa
+};
+
+struct MovieFrame {
+	MovieFrame(Chunk &chunk);
+	uint unk3 = 0;
+	uint unk4 = 0;
+	uint layerId = 0;
+	uint startInMilliseconds = 0;
+	uint endInMilliseconds = 0;
+	Common::Point leftTop;
+	Common::Point diffBetweenKeyframeAndFrame;
+	uint blitType = 0;
+	int16 zIndex = 0;
+	uint keyframeIndex = 0;
+	bool keepAfterEnd = false;
+	uint index = 0;
+	MovieFrameImage *image = nullptr;
+	MovieFrameImage *keyframeImage = nullptr;
 };
 
 class Movie : public SpatialEntity {
 public:
-	Movie() : SpatialEntity(kAssetTypeMovie) {};
+	Movie() : _framesOnScreen(Movie::compareFramesByZIndex), SpatialEntity(kAssetTypeMovie) {}
 	virtual ~Movie() override;
 
 	virtual void readChunk(Chunk &chunk) override;
@@ -111,29 +97,32 @@ public:
 private:
 	AudioSequence _audioSequence;
 	uint _audioChunkCount = 0;
+	uint _fullTime = 0;
 
 	uint _loadType = 0;
 	double _dissolveFactor = 0.0;
 	bool _isPlaying = false;
-	bool _atFirstFrame = true;
+	bool _hasStill = false;
 
 	Common::Array<MovieFrame *> _frames;
-	Common::Array<MovieFrame *> _stills;
-	Common::Array<MovieFrameFooter *> _footers;
+	Common::Array<MovieFrameImage *> _images;
 
 	Common::Array<MovieFrame *> _framesNotYetShown;
-	Common::Array<MovieFrame *> _framesOnScreen;
+	Common::SortedArray<MovieFrame *, const MovieFrame *> _framesOnScreen;
 
 	// Script method implementations.
 	void timePlay();
 	void timeStop();
-	void spatialShow();
-	void spatialHide();
 
+	void setVisibility(bool visibility);
 	void updateFrameState();
-	void showPersistentFrame();
+	void invalidateRect(const Common::Rect &rect);
+
+	void readImageData(Chunk &chunk);
+	void readFrameData(Chunk &chunk);
 
 	Common::Rect getFrameBoundingBox(MovieFrame *frame);
+	static int compareFramesByZIndex(const MovieFrame *a, const MovieFrame *b);
 };
 
 } // End of namespace MediaStation
