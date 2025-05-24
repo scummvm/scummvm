@@ -115,6 +115,8 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 
 	setProjection();
 
+	_postFilterMode = kPostFilterOff;
+
 	_active = true;
 
 	return true;
