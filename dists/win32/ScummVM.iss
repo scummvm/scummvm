@@ -133,14 +133,8 @@ Source: *Manual*.pdf; DestDir: {app}; Flags: ignoreversion isreadme
 ; ScummVM executables and libraries
 ; for 32 bit aka. i686:
 Source: scummvm-i686.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: not Is64BitInstallMode
-Source: SDL2-i686.dll; DestDir: {app}; DestName: SDL2.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
-Source: SDL2_net-i686.dll; DestDir: {app}; DestName: SDL2_net.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
 Source: WinSparkle-i686.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
-Source: discord-rpc-i686.dll; DestDir: {app}; DestName: discord-rpc.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
 
 ; for 64 bit aka. x86_64
 Source: scummvm-x86_64.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: Is64BitInstallMode
-Source: SDL2-x86_64.dll; DestDir: {app}; DestName: SDL2.dll; Flags: replacesameversion; Check: Is64BitInstallMode
-Source: SDL2_net-x86_64.dll; DestDir: {app}; DestName: SDL2_net.dll; Flags: replacesameversion; Check: Is64BitInstallMode
 Source: WinSparkle-x86_64.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: Is64BitInstallMode
-Source: discord-rpc-x86_64.dll; DestDir: {app}; DestName: discord-rpc.dll; Flags: replacesameversion; Check: Is64BitInstallMode
