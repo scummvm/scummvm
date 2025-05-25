@@ -30,7 +30,6 @@
 #include "common/archive.h"
 #include "common/array.h"
 #include "common/ustr.h"
-#include "engines/engine.h"
 
 namespace Graphics {
 	struct Surface;
@@ -210,8 +209,6 @@ private:
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
 	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
 	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
-
-	static PauseToken _pauseToken;
 
 	static JNIEnv *fetchEnv();
 	static int fetchEGLVersion();

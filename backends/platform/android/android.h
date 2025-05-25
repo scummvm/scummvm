@@ -34,6 +34,7 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/log/log.h"
 #include "backends/platform/android/touchcontrols.h"
+#include "engines/engine.h"
 
 #include <pthread.h>
 
@@ -147,6 +148,8 @@ private:
 	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
+	PauseToken _pauseToken;
+
 	Common::Queue<Common::Event> _event_queue;
 	EventWithDelay _delayedMouseBtnUpEvent;
 	EventWithDelay _delayedMouseBtnDownEvent;
@@ -220,6 +223,8 @@ public:
 	bool hasFeature(OSystem::Feature f) override;
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) override;
+
+	void setPause(bool pause);
 
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	void pushEvent(const Common::Event &event);

@@ -795,6 +795,17 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	}
 }
 
+void OSystem_Android::setPause(bool value) {
+	if (g_engine) {
+		LOGD("pauseEngine: %d", value);
+
+		if (value)
+			_pauseToken = g_engine->pauseEngine();
+		else if (_pauseToken.isActive())
+			_pauseToken.clear();
+	}
+}
+
 // TODO Re-eval if we need this here
 Common::HardwareInputSet *OSystem_Android::getHardwareInputSet() {
 	using namespace Common;
