@@ -102,7 +102,7 @@ class Engine;
 */
 class PauseToken {
 public:
-	PauseToken();
+	constexpr PauseToken() : _engine(nullptr) {}
 	/**
 	 * Construct a pause token.
 	 */
@@ -132,7 +132,7 @@ public:
 	bool isActive() const { return _engine != nullptr; }
 
 private:
-	PauseToken(Engine *);
+	constexpr PauseToken(Engine *engine) : _engine(engine) {}
 
 	Engine *_engine;
 	/**

@@ -1026,10 +1026,6 @@ GUI::Debugger *Engine::getOrCreateDebugger() {
 	return _debugger;
 }
 
-PauseToken::PauseToken() : _engine(nullptr) {}
-
-PauseToken::PauseToken(Engine *engine) : _engine(engine) {}
-
 void PauseToken::operator=(const PauseToken &t2) {
 	if (_engine) {
 		error("Tried to assign to an already busy PauseToken");
