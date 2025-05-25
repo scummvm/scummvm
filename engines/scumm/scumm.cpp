@@ -2477,10 +2477,10 @@ void ScummEngine::syncSoundSettings() {
 
 	bool mute = (ConfMan.hasKey("mute") && ConfMan.getBool("mute"));
 
-	if (_game.version >= 6 && _game.platform == Common::kPlatformMacintosh) {
+	if (_isModernMacVersion) {
 		_soundEnabled = mute ? 8 : ((ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") && _soundEnabled != 8) ? 0 : 2) | ((ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") && _soundEnabled != 8) ? 0 : 1);
 
-		if (_game.version == 6) {
+		if (_game.version <= 6) {
 			if (!(_soundEnabled & 2))
 				soundVolumeMusic = 0;
 		} else {
