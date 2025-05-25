@@ -66,7 +66,7 @@ public:
 	 */
 	uint getLastFrameDuration() const {
 		return _frameDuration;
-	};
+	}
 	/**
 	 * Return duration of last screen update
 	 * If Vsync is inactive, this value will just be the duration of the redraw process itself;
@@ -74,14 +74,14 @@ public:
 	 */
 	uint getLastDrawDuration() const {
 		return _drawDuration;
-	};
+	}
 	/**
 	 * Return duration of last game logic loop
 	 * Specifically, this is the time from when startFrame() was last called to when delayBeforeSwap() was last called
 	 */
 	uint getLastLoopDuration() const {
 		return _loopDuration;
-	};
+	}
 	/**
 	 * If true, framelimiter is active and applying _system->delayMillis(delay) to maintain the specified FPS, if valid.
 	 * If false, framelimiter is inactive, either because supplied FPS was invalid or because Vsync is active.
@@ -89,7 +89,7 @@ public:
 	 */
 	bool isEnabled() const {
 		return _enabled;
-	};
+	}
 
 private:
 	OSystem *_system;
