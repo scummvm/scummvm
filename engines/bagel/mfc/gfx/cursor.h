@@ -54,6 +54,8 @@ struct ResourceString_EqualTo {
 class Cursor {
 private:
 	Graphics::ManagedSurface _surface;
+	bool _isBuiltIn = false;
+
 public:
 	/**
 	 * Constructor for predefined cursors

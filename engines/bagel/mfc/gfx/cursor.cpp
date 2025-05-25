@@ -100,12 +100,13 @@ HCURSOR Cursors::loadCursor(LPCSTR cursorId) {
 
 /*--------------------------------------------*/
 
-Cursor::Cursor(const byte *pixels) {
+Cursor::Cursor(const byte *pixels) : _isBuiltIn(true) {
 	_surface.create(CURSOR_W, CURSOR_H,
 		Graphics::PixelFormat::createFormatCLUT8());
 }
 
-Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) {
+Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) :
+		_isBuiltIn(false) {
 	Image::BitmapDecoder decoder;
 
 	intptr id = (intptr)cursorId;
@@ -143,7 +144,10 @@ Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) {
 void Cursor::showCursor() {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
-	CursorMan.disableCursorPalette(true);
+	CursorMan.disableCursorPalette(!_isBuiltIn);
+	if (_isBuiltIn)
+		CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
+
 	CursorMan.replaceCursor(_surface.getPixels(),
 		_surface.w, _surface.h, 0, 0, 0, true, &format);
 }
