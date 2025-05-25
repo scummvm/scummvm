@@ -296,7 +296,6 @@ void SafeDialPuzzle::handleInput(NancyInput &input) {
 }
 
 void SafeDialPuzzle::drawDialFrame(uint frame) {
-	debug("%u", frame);
 	if (frame >= _dialSrcs.size() / 2 && !_imageName2.empty()) {
 		_drawSurface.blitFrom(_image2, _dialSrcs[frame], _dialDest);
 	} else {
