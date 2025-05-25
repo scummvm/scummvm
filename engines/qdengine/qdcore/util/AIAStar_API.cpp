@@ -19,6 +19,7 @@
  *
  */
 
+#include "qdengine/qdengine.h"
 #include "qdengine/qd_fwd.h"
 #include "qdengine/xmath.h"
 #include "qdengine/qdcore/qd_camera.h"
@@ -38,9 +39,12 @@ int qdHeuristic::getH(int x, int y) {
 	x -= _target.x;
 	y -= _target.y;
 
-	//return sqrt(static_cast<float>(x * x + y * y));
-	// Достаточно будет эвристики без квадратного корня, который медленный
-	return static_cast<float>(x * x + y * y);
+	if (g_engine->_gameVersion <= 20041201) {
+		return sqrt(static_cast<float>(x * x + y * y));
+	} else {
+		// Достаточно будет эвристики без квадратного корня, который медленный
+		return static_cast<float>(x * x + y * y);
+	}
 }
 
 int qdHeuristic::getG(int x1, int y1, int x2, int y2) {
