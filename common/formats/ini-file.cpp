@@ -144,10 +144,14 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			while (*p && ((_allowNonEnglishCharacters && *p != ']') || isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' ' || *p == ':'))
 				p++;
 
-			if (*p == '\0')
-				error("INIFile::loadFromStream: missing ] in line %d", lineno);
-			else if (*p != ']')
-				error("INIFile::loadFromStream: Invalid character '%c' occurred in section name in line %d", *p, lineno);
+			if (*p == '\0') {
+				warning("INIFile::loadFromStream: missing ] in line %d", lineno);
+				return false;
+			}
+			else if (*p != ']') {
+				warning("INIFile::loadFromStream: Invalid character '%c' occurred in section name in line %d", *p, lineno);
+				return false;
+			}
 
 			// Previous section is finished now, store it.
 			if (!section.name.empty())
@@ -167,7 +171,8 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 
 			// If no section has been set, this config file is invalid!
 			if (section.name.empty()) {
-				error("INIFile::loadFromStream: Key/value pair found outside a section in line %d", lineno);
+				warning("INIFile::loadFromStream: Key/value pair found outside a section in line %d", lineno);
+				return false;
 			}
 
 			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
