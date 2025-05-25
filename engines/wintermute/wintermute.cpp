@@ -264,7 +264,12 @@ int WintermuteEngine::init() {
 
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");
-		_game->loadGame(slot);
+		if (!_game->loadGame(slot)) {
+			_game->LOG(ret, "Error loading save game file.");
+			delete _game;
+			_game = nullptr;
+			return 2;
+		}
 	}
 
 	_game->_scEngine->attachMonitor(_dbgController);

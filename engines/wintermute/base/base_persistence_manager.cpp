@@ -151,6 +151,11 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 		debugC(kWintermuteDebugSaveGame, "getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
 		return;
 	}
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		if (_savedVerMajor == 1 && _savedVerMinor < 5) {
+			return;
+		}
+	}
 	desc.setSaveSlot(slot);
 	desc.setDescription(_savedDescription);
 	desc.setDeletableFlag(true);
@@ -206,6 +211,11 @@ bool BasePersistenceManager::getSaveExists(int slot) {
 	Common::String filename = getFilenameForSlot(slot);
 	if (DID_FAIL(readHeader(filename))) {
 		return false;
+	}
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		if (_savedVerMajor == 1 && _savedVerMinor < 5) {
+			return false;
+		}
 	}
 	return true;
 }
@@ -381,6 +391,14 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game name doesn't match current game");
 		cleanup();
 		return STATUS_FAILED;
+	}
+
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		if (_savedVerMajor == 1 && _savedVerMinor < 5) {
+			debugC(kWintermuteDebugSaveGame, "ERROR: Saved game version is too old for 3D game");
+			cleanup();
+			return STATUS_FAILED;
+		}
 	}
 
 	// if save is newer version than we are, fail
