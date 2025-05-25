@@ -51,7 +51,7 @@ public:
 	virtual void setVolume(uint8 volume) = 0;
 	uint8 getVolume() {
 		return _volume;
-	};
+	}
 	virtual void setFade(int32 time, uint8 target) = 0;
 	virtual void setBalance(int8 balance);  //NB Overrides effects of setDirection()
 	void setDirection(Math::Angle azimuth, uint8 magnitude = 255);  //NB Overrides effects of setBalance()
