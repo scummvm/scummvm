@@ -450,6 +450,11 @@ int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 		dialog.runModal();
 	}
 
+	if (gfxError & OSystem::kTransactionShaderChangeFailed) {
+		GUI::MessageDialog dialog(_("Could not apply shader setting."));
+		dialog.runModal();
+	}
+
 	return candidate;
 }
 

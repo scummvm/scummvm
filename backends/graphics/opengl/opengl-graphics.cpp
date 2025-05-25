@@ -498,6 +498,15 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		   || (   _currentState.gameWidth  > (uint)OpenGLContext.maxTextureSize
 		       || _currentState.gameHeight > (uint)OpenGLContext.maxTextureSize)) {
 			if (_transactionMode == kTransactionActive) {
+				// If the shader failed, it means that loadVideoMode succeeded
+				// Mark the error and continue without it
+				if (!shaderOK && !_currentState.shader.empty()) {
+					transactionError |= OSystem::kTransactionShaderChangeFailed;
+
+					_currentState.shader.clear();
+					_transactionMode = kTransactionRollback;
+					continue;
+				}
 				// Try to setup the old state in case its valid and is
 				// actually different from the new one.
 				if (_oldState.valid && _oldState != _currentState) {
@@ -540,12 +549,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 					_transactionMode = kTransactionRollback;
 
 					// Try to set up the old state.
-					continue;
-				}
-				// If the shader failed and we had not a valid old state, try to unset the shader and do it again
-				if (!shaderOK && !_currentState.shader.empty()) {
-					_currentState.shader.clear();
-					_transactionMode = kTransactionRollback;
 					continue;
 				}
 			}
