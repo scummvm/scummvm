@@ -185,7 +185,7 @@ int WintermuteEngine::init() {
 		if (dialog.runModal() != GUI::kMessageOK) {
 			delete _game;
 			_game = nullptr;
-			return false;
+			return 1;
 		}
 	}
 	#endif
@@ -253,7 +253,7 @@ int WintermuteEngine::init() {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
 		_game = nullptr;
-		return false;
+		return 2;
 	}
 
 	_game->_renderer->_ready = true;
