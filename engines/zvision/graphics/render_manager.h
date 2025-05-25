@@ -174,10 +174,10 @@ public:
 
 	Graphics::ManagedSurface &getVidSurface(Common::Rect dstRect);  //dstRect is defined relative to working area origin
 
-	Common::Rect getMenuArea() {
+	const Common::Rect getMenuArea() {
 		return _menuArea;
 	}
-	Common::Rect getWorkingArea() {
+	const Common::Rect getWorkingArea() {
 		return _workingArea;
 	}
 
