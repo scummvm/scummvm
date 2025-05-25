@@ -91,7 +91,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy8ConditionalDialog
 	{	0, 1458, "NHS58",
 		{ { kEv, 244, true }, { kEv, 388, true }, { kEv, 385, false }, { kEv, 198, false }, { kEv, 167, false } } },
 	{	0, 1459, "NHS59",
-		{ { kIn, 24, true }, { kEv, 117, false } } },
+		{ { kIn, 24, true }, { kEv, 177, false } } },
 	{	0, 1460, "NHS60",
 		{ { kEv, 365, true }, { kIn, 23, true }, { kEv, 174, false } } },
 	{	0, 1461, "NHS61",
