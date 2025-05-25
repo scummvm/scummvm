@@ -385,7 +385,38 @@ View1::View1() : UIElement("View1") {
 		}
 	}
 
-	void View1::setStringBox(const Common::StringArray& sa) {
+	void View1::openMainMenu(Common::Point clickedPosition) {
+
+		isShowingMainMenu = true;
+		// Let's prototype the icon size first
+		Common::Point iconMaxSize(20, 20);
+		iconMaxSize += Common::Point(6, 6);
+		Common::Point inventorySize(iconMaxSize.x * 3 + 0x10, iconMaxSize.y * 3 + 0x10);
+		Common::Point upperLeft = clickedPosition - inventorySize / 2;
+		if (upperLeft.x < 0) {
+			upperLeft.x += ABS(upperLeft.x);
+		}
+		if (upperLeft.y < 0) {
+			upperLeft.y += ABS(upperLeft.x);
+		}
+		Common::Point lowerRight = upperLeft + inventorySize;
+		// TODO: No hard coding
+		if (lowerRight.x > 320) {
+			upperLeft.x -= lowerRight.x - 320;
+		}
+		if (lowerRight.y > 240) {
+			upperLeft.y -= lowerRight.y - 240;
+		}
+		lowerRight = upperLeft + inventorySize;
+		mainMenuRect = Common::Rect(upperLeft, lowerRight);
+		isShowingMainMenu = true;
+	}
+
+	void View1::drawMainMenu(Graphics::ManagedSurface &s) {
+		DrawBorder(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.right, mainMenuRect.bottom), s);
+	}
+
+	void View1::setStringBox(const Common::StringArray &sa) {
 		_drawnStringBox = sa;
 		_isShowingStringBox = true;
 		_continueScriptAfterUI = true;
@@ -580,6 +611,7 @@ View1::View1() : UIElement("View1") {
 			UpdateCursor();
 			return true;
 		}
+		return false;
 	}
 
 	bool View1::msgMouseMove(const MouseMoveMessage &msg) {
@@ -660,7 +692,11 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		GetCharacterByIndex(1)->IsFollowingPath = pathfindingResult;
 		GetCharacterByIndex(1)->CurrentPathIndex = -1;
 		
+	} else if (msg.ascii == 'n') {
+		Common::Point mousePos = g_system->getEventManager()->getMousePos();
+		openMainMenu(mousePos);
 	}
+	
 	return true;
 }
 
@@ -769,6 +805,10 @@ void View1::draw() {
 	if (_isShowingInventory && !_isShowingStringBox) {
 		// drawInventory(s);
 		drawInventory2(s);
+	}
+
+	if (isShowingMainMenu) {
+		drawMainMenu(s);
 	}
 
 	if (activeInventoryItem != nullptr) {
