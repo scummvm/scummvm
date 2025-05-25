@@ -40,7 +40,7 @@ public:
 
 //  bool _printDebug = false;
 
-	FilterPixel() {};
+	FilterPixel() {}
 //  FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
 	FilterPixel(float x, float y, bool highQuality = false) {
 		_Src.left = int16(floor(x));
@@ -72,16 +72,16 @@ public:
 			        debug(5,"\tNearest neighbour, _xDir: 0x%X, _yDir: 0x%X", _xDir, _yDir);
 			*/
 		}
-	};
-	~FilterPixel() {};
+	}
+	~FilterPixel() {}
 	inline void flipH() {
 		_Src.left = -_Src.left;
 		_Src.right = -_Src.right;
-	};
+	}
 	inline void flipV() {
 		_Src.top = -_Src.top;
 		_Src.bottom = -_Src.bottom;
-	};
+	}
 };
 
 class RenderTable {
@@ -119,11 +119,11 @@ private:
 		r = color & 0x001f;
 		g = color & 0x03e0;
 		b = color & 0x7c00;
-	};
+	}
 	inline uint16 mergeColor(uint32 &r, uint32 &g, uint32 &b) const {
 		//NB Red uses the lowest bits in RGB555 and so doesn't need its fractional bits masked away after averaging
 		return r | (g & 0x03e0) | (b & 0x7c00);
-	};
+	}
 
 
 	struct {
