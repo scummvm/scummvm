@@ -51,7 +51,7 @@ public:
 
 	void processInput();
 
-	void drawFrame(int testId);
+	void drawFrame();
 
 private:
 	OSystem *_system;
@@ -59,6 +59,7 @@ private:
 	Graphics::FrameLimiter *_frameLimiter;
 	Math::Vector4d _clearColor;
 	Math::Vector4d _fogColor;
+	int _testId;
 	float _fade;
 	bool _fadeIn;
 	bool _fogEnable;

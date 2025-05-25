@@ -84,10 +84,6 @@ TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 		_blitImageRgba4444(nullptr) {
 }
 
-TinyGLRenderer::~TinyGLRenderer() {
-	TinyGL::destroyContext(_context);
-}
-
 void TinyGLRenderer::init() {
 	debug("Initializing Software 3D Renderer");
 
@@ -128,6 +124,7 @@ void TinyGLRenderer::deinit() {
 	tglDeleteBlitImage(_blitImageRgb565);
 	tglDeleteBlitImage(_blitImageRgba5551);
 	tglDeleteBlitImage(_blitImageRgba4444);
+	TinyGL::destroyContext(_context);
 }
 
 void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
