@@ -36,7 +36,7 @@ class TestbedConfigManager;
 enum {
 	kTestbedLogOutput = 1,
 	kTestbedEngineDebug,
-
+	kViewLogCmd = 'vwlg',
 	kCmdRerunTestbed = 'crtb'
 };
 

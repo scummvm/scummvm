@@ -31,6 +31,9 @@
 #include "engines/achievements.h"
 #include "engines/util.h"
 
+#include "gui/textviewer.h"
+#include "gui/gui-manager.h"
+
 #include "testbed/events.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
@@ -90,6 +93,7 @@ void TestbedExitDialog::init() {
 	_yOffset += 5;
 	addButtonXY(_xOffset + 80, _yOffset, 120, 24, "Rerun test suite", kCmdRerunTestbed);
 	addButtonXY(_xOffset + 240, _yOffset, 60, 24, "Close", GUI::kCloseCmd);
+	addButtonXY(_xOffset + 340, _yOffset, 60, 24, "Open Log", kViewLogCmd);
 }
 
 void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -97,9 +101,15 @@ void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	default:
 		break;
 
-	case kCmdRerunTestbed :
+	case kCmdRerunTestbed:
 		ConfParams.setRerunFlag(true);
 		cmd = GUI::kCloseCmd;
+		break;
+	case kViewLogCmd: 
+		Common::Path logPath = Common::Path(ConfParams.getLogDirectory());
+		GUI::TextViewerDialog viewer(logPath.appendComponent(ConfParams.getLogFilename()));
+		viewer.runModal();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 
@@ -111,7 +121,7 @@ bool TestbedEngine::hasFeature(EngineFeature f) const {
 }
 
 TestbedEngine::TestbedEngine(OSystem *syst)
- : Engine(syst) {
+	: Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
@@ -160,9 +170,9 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	ts = new NetworkingTestSuite();
 	testsuiteList.push_back(ts);
 #ifdef USE_TTS
-	 // TextToSpeech
-	 ts = new SpeechTestSuite();
-	 testsuiteList.push_back(ts);
+	// TextToSpeech
+	ts = new SpeechTestSuite();
+	testsuiteList.push_back(ts);
 #endif
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud

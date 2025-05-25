@@ -33,6 +33,7 @@ class Font;
 
 namespace GUI {
 
+class ButtonWidget;
 class ScrollBarWidget;
 
 class TextViewerDialog : public Dialog {
