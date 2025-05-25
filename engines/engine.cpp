@@ -360,53 +360,14 @@ void initGraphicsModes(const Graphics::ModeList &modes) {
 	g_system->initSizeHint(modes);
 }
 
-/**
- * Inits any of the modes in "modes". "modes" is in the order of preference.
- * Return value is index in modes of resulting mode.
- */
-int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
-	int candidate = -1;
-	OSystem::TransactionError gfxError = OSystem::kTransactionSizeChangeFailed;
-	int last_width = 0, last_height = 0;
-
-	for (candidate = start; candidate < (int)modes.size(); candidate++) {
-		g_system->beginGFXTransaction();
-		initCommonGFX(false);
-#ifdef USE_RGB_COLOR
-		if (modes[candidate].hasFormat)
-			g_system->initSize(modes[candidate].width, modes[candidate].height, &modes[candidate].format);
-		else {
-			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
-			g_system->initSize(modes[candidate].width, modes[candidate].height, &bestFormat);
-		}
-#else
-		g_system->initSize(modes[candidate].width, modes[candidate].height);
-#endif
-		last_width = modes[candidate].width;
-		last_height = modes[candidate].height;
-
-		gfxError = g_system->endGFXTransaction();
-
-		if (!splash && !GUI::GuiManager::instance()._launched)
-			splashScreen();
-
-		if (gfxError == OSystem::kTransactionSuccess)
-			return candidate;
-
-		// If error is related to resolution, continue
-		if (gfxError & (OSystem::kTransactionSizeChangeFailed | OSystem::kTransactionFormatNotSupported))
-			continue;
-
-		break;
-	}
-
+static void warnTransactionFailures(OSystem::TransactionError gfxError, int width, int height) {
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
 		Common::U32String message;
-		message = Common::U32String::format(_("Could not switch to resolution '%dx%d'."), last_width, last_height);
+		message = Common::U32String::format(_("Could not switch to resolution '%dx%d'."), width, height);
 
 		GUIErrorMessage(message);
-		error("Could not switch to resolution '%dx%d'.", last_width, last_height);
+		error("Could not switch to resolution '%dx%d'.", width, height);
 	}
 
 	// Just show warnings then these occur:
@@ -454,6 +415,49 @@ int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 		GUI::MessageDialog dialog(_("Could not apply shader setting."));
 		dialog.runModal();
 	}
+}
+
+/**
+ * Inits any of the modes in "modes". "modes" is in the order of preference.
+ * Return value is index in modes of resulting mode.
+ */
+int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
+	int candidate = -1;
+	OSystem::TransactionError gfxError = OSystem::kTransactionSizeChangeFailed;
+	int last_width = 0, last_height = 0;
+
+	for (candidate = start; candidate < (int)modes.size(); candidate++) {
+		g_system->beginGFXTransaction();
+		initCommonGFX(false);
+#ifdef USE_RGB_COLOR
+		if (modes[candidate].hasFormat)
+			g_system->initSize(modes[candidate].width, modes[candidate].height, &modes[candidate].format);
+		else {
+			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
+			g_system->initSize(modes[candidate].width, modes[candidate].height, &bestFormat);
+		}
+#else
+		g_system->initSize(modes[candidate].width, modes[candidate].height);
+#endif
+		last_width = modes[candidate].width;
+		last_height = modes[candidate].height;
+
+		gfxError = g_system->endGFXTransaction();
+
+		if (!splash && !GUI::GuiManager::instance()._launched)
+			splashScreen();
+
+		if (gfxError == OSystem::kTransactionSuccess)
+			return candidate;
+
+		// If error is related to resolution, continue
+		if (gfxError & (OSystem::kTransactionSizeChangeFailed | OSystem::kTransactionFormatNotSupported))
+			continue;
+
+		break;
+	}
+
+	warnTransactionFailures(gfxError, last_width, last_height);
 
 	return candidate;
 }
@@ -500,13 +504,15 @@ void initGraphics3d(int width, int height) {
 		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d);
 		initCommonGFX(true);
 		g_system->initSize(width, height);
-	g_system->endGFXTransaction();
+	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (!splash && !GUI::GuiManager::instance()._launched) {
 		Common::Event event;
 		(void)g_system->getEventManager()->pollEvent(event);
 		splashScreen();
 	}
+
+	warnTransactionFailures(gfxError, width, height);
 }
 
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
