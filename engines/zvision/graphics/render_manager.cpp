@@ -504,8 +504,6 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 	}
 }
 
-//ORIGINAL FUNCTION
-//*
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y) {
 	debug(9, "blitSurfaceToSurface");
 	Common::Point dstPos = Common::Point(_x, _y);
@@ -515,37 +513,12 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::R
 	//Clip source rectangle to within bounds of source buffer
 	srcRect.clip(src.w, src.h);
 
-	//CODE IDENTICAL TO HERE
-
-	//BUG TEST CODE
-	//Common::Point dstPos2 = dstPos;
-	//Common::Rect srcRect2 = srcRect;
-	//Common::Rect::getBlitRect(dstPos2, srcRect2, Common::Rect(dst.w,dst.h));
-
 	//Generate destination rectangle
 	Common::Rect dstRect = Common::Rect(dst.w, dst.h);
 	//Translate destination rectangle to its position relative to source rectangle
 	dstRect.translate(srcRect.left - _x, srcRect.top - _y);
 	//clip source rectangle to within bounds of offset destination rectangle
 	srcRect.clip(dstRect);
-
-	//BUG TEST
-	/*
-	if(srcRect.left != srcRect2.left) {
-	   debug("srcRect.left = %i, srcRect2.left = %i", srcRect.left, srcRect2.left);
-	}
-	if(srcRect.top != srcRect2.top) {
-	   debug("srcRect.top = %i, srcRect2.top = %i", srcRect.top, srcRect2.top);
-	}
-	if(srcRect.right != srcRect2.right) {
-	   debug("srcRect.right = %i, srcRect2.right = %i", srcRect.right, srcRect2.right);
-	}
-	if(srcRect.bottom != srcRect2.bottom) {
-	   debug("srcRect.bottom = %i, srcRect2.bottom = %i", srcRect.bottom, srcRect2.bottom);
-	}
-	*/
-
-	//CODE IDENTICAL FROM HERE
 
 	//Abort if nothing to blit
 	if (!srcRect.isEmpty()) {
@@ -560,9 +533,6 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::R
 		if (dstPos.y < 0)
 			dstPos.y = 0;
 
-		//BUG TEST
-		//assert(dstPos == dstPos2);
-
 		//If _x & _y lie within destination surface
 		if (dstPos.x < dst.w && dstPos.y < dst.h) {
 			//Get pointer for destination buffer blit rectangle origin
@@ -572,46 +542,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::R
 		srcAdapted->free();
 		delete srcAdapted;
 	}
-
 }
-/*/
-
-//SIMPLIFIED FUNCTION
-//TODO - find bug that breaks panorama rotation.  Suspect problem with negative arguments of some sort.
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect , Graphics::Surface &dst, int _x, int _y) {
-    Common::Rect srcRect = srcRect;
-    Common::Point dstPos = Common::Point(_x,_y);
-    //Default to using whole source surface
-    if (srcRect.isEmpty())
-        srcRect = Common::Rect(src.w, src.h);
-  //Ensure source rectangle does not read beyond bounds of source surface
-    srcRect.clip(src.w, src.h);
-
-    //CODE IDENTICAL TO HERE
-
-    //Ensure source rectangle does not write beyond bounds of destination surface & is valid
-      //NB alters dstPos & srcRect!
-    Common::Rect::getBlitRect(dstPos, srcRect, Common::Rect(dst.w,dst.h));
-
-  //CODE IDENTICAL FROM HERE
-
-    //Abort if nothing to blit
-    if(!srcRect.isEmpty()) {
-    //Convert pixel format of source to match destination
-      Graphics::Surface *srcAdapted = src.convertTo(dst.format);
-      //Get pointer for source buffer blit rectangle origin
-      const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
-    //If _x & _y lie within destination surface
-    if (dstPos.x < dst.w && dstPos.y < dst.h) {
-      //Get pointer for destination buffer blit rectangle origin
-        byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
-        Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
-    }
-      srcAdapted->free();
-      delete srcAdapted;
-  }
-}
-//*/
 
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
 	debug(9, "blitSurfaceToSurface");
