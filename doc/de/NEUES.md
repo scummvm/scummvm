@@ -42,7 +42,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehlerhafte Text-Darstellung in der chinesischen und japanischen Version korrigiert.
    - Unterstützung für die japanische DVD-Version von Schizm: Mysterious Journey hinzugefügt.
 
-#### 2.9.1 (25.05.2025)
+#### 2.9.1 "Slappin da BASS" (25.05.2025)
 
  AGI:
    - Unterstützung für frühe Versionen von Christmas Card 1986 mit Werbung
