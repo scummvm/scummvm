@@ -1178,6 +1178,9 @@ public:
 	void addResources(const Common::Path &file) {
 		_resources.addResources(file);
 	}
+	void removeResources() {
+		_resources.popResources();
+	}
 };
 
 extern CWinApp *AfxGetApp();

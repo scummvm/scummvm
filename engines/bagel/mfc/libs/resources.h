@@ -48,9 +48,7 @@ public:
 	 */
 	void popResources();
 
-	Common::WinResources *getResources() const {
-		return _resources.top();
-	}
+	Common::WinResources *getResources() const;
 };
 
 } // namespace Libs

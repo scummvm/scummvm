@@ -43,6 +43,13 @@ void Resources::popResources() {
 	delete _resources.pop();
 }
 
+Common::WinResources *Resources::getResources() const {
+	if (_resources.empty())
+		error("Use CWinApp::addResources to register "
+			"an .exe or .dll file containing the resources");
+	return _resources.top();
+}
+
 } // namespace Libs
 } // namespace MFC
 } // namespace Bagel

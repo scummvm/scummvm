@@ -22,6 +22,7 @@
 #ifndef BAGEL_MFC_GFX_CURSOR_H
 #define BAGEL_MFC_GFX_CURSOR_H
 
+#include "common/hash-str.h"
 #include "common/path.h"
 #include "common/formats/winexe_ne.h"
 #include "graphics/managed_surface.h"
@@ -31,6 +32,24 @@
 namespace Bagel {
 namespace MFC {
 namespace Gfx {
+
+struct ResourceString_Hash {
+	uint operator()(const LPCSTR s) const {
+		return (intptr)s <= 0xffff ? (intptr)s : Common::hashit(s);
+	}
+};
+
+struct ResourceString_EqualTo {
+	bool operator()(const LPCSTR x, const LPCSTR y) const {
+		bool xNum = (intptr)x <= 0xffff;
+		bool yNum = (intptr)y <= 0xffff;
+
+		return (xNum == yNum) && (
+			(xNum && (intptr)x == (intptr)y) ||
+			(!xNum && !strcmp(x, y))
+		);
+	}
+};
 
 class Cursor {
 private:
@@ -55,8 +74,10 @@ public:
 class Cursors {
 private:
 	Libs::Resources &_resources;
-	typedef Common::HashMap<LPCSTR, Cursor *> CursorHash;
+	typedef Common::HashMap<LPCSTR, Cursor *,
+		ResourceString_Hash, ResourceString_EqualTo> CursorHash;
 	CursorHash _cursors;
+
 public:
 	HCURSOR _arrowCursor;
 	HCURSOR _waitCursor;
