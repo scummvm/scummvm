@@ -54,14 +54,16 @@ static bool sdlSetSwapInterval(int interval) {
 }
 #endif
 
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 static bool sdlGetAttribute(SDL_GLAttr attr, int *value) {
 	return SDL_GL_GetAttribute(attr, value);
 }
-#elif !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+#else
 static bool sdlGetAttribute(SDL_GLattr attr, int *value) {
 	return SDL_GL_GetAttribute(attr, value) == 0;
 }
+#endif
 #endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
