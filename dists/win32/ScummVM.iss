@@ -3,9 +3,9 @@
 ; version in one installer, we just use the 32 bit version here
 ; for simplicity.
 #define AppName "ScummVM"
-#define FileVersion=GetFileVersion('scummvm-i686.exe')
-#define ProductVersion=GetStringFileInfo('scummvm-i686.exe', 'ProductVersion')
-#define Copyright=GetStringFileInfo('scummvm-i686.exe', 'LegalCopyright')
+#define FileVersion=GetFileVersion('..\..\win32dist-mingw\scummvm-i686.exe')
+#define ProductVersion=GetStringFileInfo('..\..\win32dist-mingw\scummvm-i686.exe', 'ProductVersion')
+#define Copyright=GetStringFileInfo('..\..\win32dist-mingw\scummvm-i686.exe', 'LegalCopyright')
 
 [Setup]
 AppCopyright={#Copyright}
