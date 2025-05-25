@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-18 21:13+0000\n"
+"POT-Creation-Date: 2025-05-25 09:34+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -4718,12 +4718,12 @@ msgstr "放大模式已关闭。正重新激活拖动模式..."
 msgid "Magnify Mode Off"
 msgstr "放大模式已关闭"
 
-#: backends/platform/android/android.cpp:1114
+#: backends/platform/android/android.cpp:1125
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "获取帮助"
 
-#: backends/platform/android/android.cpp:1117
+#: backends/platform/android/android.cpp:1128
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4760,13 +4760,13 @@ msgstr ""
 "哦，还有，请注意，许多我们支持的游戏都有故意设置的难题，有时甚至令人匪夷所"
 "思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
 
-#: backends/platform/android/android.cpp:1126
+#: backends/platform/android/android.cpp:1137
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "触屏控制"
 
-#: backends/platform/android/android.cpp:1129
+#: backends/platform/android/android.cpp:1140
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4892,13 +4892,13 @@ msgstr ""
 "  ![键盘图标](keyboard.png \"键盘图标\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1185
+#: backends/platform/android/android.cpp:1196
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "添加游戏"
 
-#: backends/platform/android/android.cpp:1188
+#: backends/platform/android/android.cpp:1199
 msgid ""
 "## Adding Games \n"
 "\n"
