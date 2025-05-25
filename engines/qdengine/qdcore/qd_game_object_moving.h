@@ -450,6 +450,7 @@ private:
 	// Спрямление четырех точек для пути с восемью направлениями
 	bool four_pts_eight_dir_straight(Std::list<Vect2i> &path,
 	                                 Std::list<Vect2i>::reverse_iterator cur) const;
+	bool four_pts_eight_dir_straight_old(Std::list<Vect2i> path, Std::list<Vect2i>::iterator cur) const;
 	// Удаляем точки, лежащие внутри прямых отрезков пути
 	bool del_coll_pts(Std::list<Vect2i> &path) const;
 	void optimize_path_eight_dirs(Std::list<Vect2i> &path) const;

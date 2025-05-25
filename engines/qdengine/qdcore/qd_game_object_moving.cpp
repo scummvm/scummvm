@@ -2305,8 +2305,8 @@ bool qdGameObjectMoving::del_coll_pts(Std::list<Vect2i> &path) const {
 }
 
 // Вспомогательная функция - пытается спрямить отрезок пути из четырех точек, начиная с cur
-/*
-bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
+
+bool qdGameObjectMoving::four_pts_eight_dir_straight_old(Std::list<Vect2i> path,
                                                      const Std::list<Vect2i>::iterator cur) const
 {
     // Извлекаем четыре точки
@@ -2318,6 +2318,9 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
         pts[i] = (*buf);
         ++buf;
     }
+
+	const double SQRT_2_DIV_2 = 0.7071067811865475244;
+
     // Проверяем - является ли четверка точек "вытянутым зигзагом"
     if ((fabs(vec_cos(pts[1] - pts[0], pts[2] - pts[1]) - SQRT_2_DIV_2) > 0.0001) ||
         (fabs(vec_cos(pts[2] - pts[1], pts[3] - pts[2]) - SQRT_2_DIV_2) > 0.0001) ||
@@ -2349,7 +2352,6 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
 
     return false;
 }
-*/
 
 bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> &path, Std::list<Vect2i>::reverse_iterator cur) const {
 	// Извлекаем четыре точки
@@ -2390,13 +2392,27 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> &path, St
 }
 
 void qdGameObjectMoving::optimize_path_eight_dirs(Std::list<Vect2i> &path) const {
-	// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
+	if (g_engine->_gameVersion <= 20041201) {
+		bool changed;
+		int step = 0;
+		do {
+			step++;
+			del_coll_pts(path); // Для успешного спрямления путь не должен содержать более
+								// двух последовательных точек, лежащих на одной прямой
+			changed = false;
+			for (Std::list<Vect2i>::iterator it = path.begin(); it != path.end(); ++it)
+				if (four_pts_eight_dir_straight_old(path, it) && !changed)
+					changed = true;
+		} while (changed && (step < 2));
+	} else {
+		// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
 
-	for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++) {
-		for (Std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
-			four_pts_eight_dir_straight(path, it);
+		for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++) {
+			for (Std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
+				four_pts_eight_dir_straight(path, it);
 
-		if (!del_coll_pts(path)) break;
+			if (!del_coll_pts(path)) break;
+		}
 	}
 }
 
