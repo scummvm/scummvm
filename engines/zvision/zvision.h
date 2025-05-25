@@ -268,7 +268,7 @@ public:
 	 * @param srcRect         What subset of video to blit to destRect (In video frame coords)  //TODO implement
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
-	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0, const Common::Rect &srcRect = Common::Rect(0, 0, 0, 0));
+	void playVideo(Video::VideoDecoder &videoDecoder, Common::Rect destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0, Common::Rect srcRect = Common::Rect(0, 0, 0, 0));
 	Video::VideoDecoder *loadAnimation(const Common::Path &fileName);
 
 	void setRenderDelay(uint);

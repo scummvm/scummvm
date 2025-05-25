@@ -83,39 +83,37 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
  * @param srcRect   Rectangle within video frame, defined relative to frame origin, to blit to output.  Only used for removing baked-in letterboxing in ZGI DVD HD videos
  */
 
-void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, bool skippable, uint16 sub, const Common::Rect &srcRect) {
-	Common::Rect _dstRect = dstRect;
-	Common::Rect _srcRect = srcRect;
-	Common::Rect _frameArea = Common::Rect(vid.getWidth(), vid.getHeight());
-	Common::Rect _workingArea = _renderManager->getWorkingArea();
+void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool skippable, uint16 sub, Common::Rect srcRect) {
+	Common::Rect frameArea = Common::Rect(vid.getWidth(), vid.getHeight());
+	Common::Rect workingArea = _renderManager->getWorkingArea();
 	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
 	bool scaled = false;
-	_workingArea.moveTo(0, 0); //Set local origin system in this scope to origin of working area
+	workingArea.moveTo(0, 0); //Set local origin system in this scope to origin of working area
 
-	debug(1, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom, _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+	debug(1, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", srcRect.left, srcRect.top, srcRect.right, srcRect.bottom, dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 
-	if (_dstRect.isEmpty())
-		_dstRect = _frameArea;
-	_dstRect.clip(_workingArea);
+	if (dstRect.isEmpty())
+		dstRect = frameArea;
+	dstRect.clip(workingArea);
 
-	debug(2, "Clipped dstRect = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+	debug(2, "Clipped dstRect = %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 
-	if (_srcRect.isEmpty())
-		_srcRect = _frameArea;
+	if (srcRect.isEmpty())
+		srcRect = frameArea;
 	else
-		_srcRect.clip(_frameArea);
+		srcRect.clip(frameArea);
 
-	debug(2, "Clipped srcRect = %d,%d,%d,%d", _srcRect.left, _srcRect.top, _srcRect.right, _srcRect.bottom);
+	debug(2, "Clipped srcRect = %d,%d,%d,%d", srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
 
-	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(_dstRect);
-	_dstRect.moveTo(0, 0);
-	_dstRect.clip(Common::Rect(outSurface.w, outSurface.h));
+	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(dstRect);
+	dstRect.moveTo(0, 0);
+	dstRect.clip(Common::Rect(outSurface.w, outSurface.h));
 
-	debug(2, "dstRect clipped with outSurface = %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+	debug(2, "dstRect clipped with outSurface = %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 
-	debug(1, "Final size %d x %d, at working window coordinates %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
-	if (_srcRect.width() != _dstRect.width() || _srcRect.height() != _dstRect.height()) {
-		debug(1, "Video will be scaled from %dx%d to %dx%d", _srcRect.width(), _srcRect.height(), _dstRect.width(), _dstRect.height());
+	debug(1, "Final size %d x %d, at working window coordinates %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
+	if (srcRect.width() != dstRect.width() || srcRect.height() != dstRect.height()) {
+		debug(1, "Video will be scaled from %dx%d to %dx%d", srcRect.width(), srcRect.height(), dstRect.width(), dstRect.height());
 		scaled = true;
 	}
 
@@ -159,11 +157,11 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &dstRect, b
 			if (frame) {
 				_renderManager->renderSceneToScreen(true, true, true); //Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
 				if (scaled) {
-					debug(8, "Scaled blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
-					outSurface.blitFrom(*frame, _srcRect, _dstRect);
+					debug(8, "Scaled blit from area %d x %d to video output surface at output surface position %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
+					outSurface.blitFrom(*frame, srcRect, dstRect);
 				} else {
-					debug(8, "Simple blit from area %d x %d to video output surface at output surface position %d, %d", _srcRect.width(), _srcRect.height(), _dstRect.left, _dstRect.top);
-					outSurface.simpleBlitFrom(*frame, _srcRect, _dstRect.origin());
+					debug(8, "Simple blit from area %d x %d to video output surface at output surface position %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
+					outSurface.simpleBlitFrom(*frame, srcRect, dstRect.origin());
 				}
 				_subtitleManager->process(0);
 			}
