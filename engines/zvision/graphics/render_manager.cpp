@@ -258,11 +258,10 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 	}
 }
 
-Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect &dstRect) {
-	Common::Rect _dstRect = dstRect;
-	_dstRect.translate(_workingArea.left, _workingArea.top);  //Convert to screen coordinates
-	_vidManagedSurface.create(_screen, _dstRect);
-	debug(1, "Obtaining managed video surface at %d,%d,%d,%d", _dstRect.left, _dstRect.top, _dstRect.right, _dstRect.bottom);
+Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect dstRect) {
+	dstRect.translate(_workingArea.left, _workingArea.top);  //Convert to screen coordinates
+	_vidManagedSurface.create(_screen, dstRect);
+	debug(1, "Obtaining managed video surface at %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 	return _vidManagedSurface;
 }
 
@@ -507,9 +506,8 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 
 //ORIGINAL FUNCTION
 //*
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y) {
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y) {
 	debug(9, "blitSurfaceToSurface");
-	Common::Rect srcRect = _srcRect;
 	Common::Point dstPos = Common::Point(_x, _y);
 	//Default to using whole source surface
 	if (srcRect.isEmpty())
@@ -580,8 +578,8 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 
 //SIMPLIFIED FUNCTION
 //TODO - find bug that breaks panorama rotation.  Suspect problem with negative arguments of some sort.
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y) {
-    Common::Rect srcRect = _srcRect;
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect , Graphics::Surface &dst, int _x, int _y) {
+    Common::Rect srcRect = srcRect;
     Common::Point dstPos = Common::Point(_x,_y);
     //Default to using whole source surface
     if (srcRect.isEmpty())
@@ -615,9 +613,8 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 }
 //*/
 
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
 	debug(9, "blitSurfaceToSurface");
-	Common::Rect srcRect = _srcRect;
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
 	srcRect.clip(src.w, src.h);
@@ -666,14 +663,14 @@ void RenderManager::blitSurfaceToBkg(const Graphics::Surface &src, int x, int y,
 		_backgroundDirtyRect.extend(dirty);
 }
 
-void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey) {
-	if (src.w == _dstRect.width() && src.h == _dstRect.height()) {
-		blitSurfaceToBkg(src, _dstRect.left, _dstRect.top, colorkey);
+void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &dstRect, int32 colorkey) {
+	if (src.w == dstRect.width() && src.h == dstRect.height()) {
+		blitSurfaceToBkg(src, dstRect.left, dstRect.top, colorkey);
 	} else {
 		Graphics::Surface *tmp = new Graphics::Surface;
-		tmp->create(_dstRect.width(), _dstRect.height(), src.format);
-		scaleBuffer(src.getPixels(), tmp->getPixels(), src.w, src.h, src.format.bytesPerPixel, _dstRect.width(), _dstRect.height());
-		blitSurfaceToBkg(*tmp, _dstRect.left, _dstRect.top, colorkey);
+		tmp->create(dstRect.width(), dstRect.height(), src.format);
+		scaleBuffer(src.getPixels(), tmp->getPixels(), src.w, src.h, src.format.bytesPerPixel, dstRect.width(), dstRect.height());
+		blitSurfaceToBkg(*tmp, dstRect.left, dstRect.top, colorkey);
 		tmp->free();
 		delete tmp;
 	}
@@ -1045,18 +1042,18 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 
 
 void RenderManager::updateRotation() {
-	int16 _velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
+	int16 velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
 	ScriptManager *scriptManager = _engine->getScriptManager();
 
 	if (_doubleFPS || !_frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
-		_velocity /= 2;
+		velocity /= 2;
 
-	if (_velocity) {
+	if (velocity) {
 		switch (_renderTable.getRenderState()) {
 		case RenderTable::PANORAMA: {
 			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
 
-			int16 newPosition = startPosition + (_renderTable.getPanoramaReverse() ? -_velocity : _velocity);
+			int16 newPosition = startPosition + (_renderTable.getPanoramaReverse() ? -velocity : velocity);
 
 			int16 zeroPoint = _renderTable.getPanoramaZeroPoint();
 			if (startPosition >= zeroPoint && newPosition < zeroPoint)
@@ -1077,7 +1074,7 @@ void RenderManager::updateRotation() {
 		case RenderTable::TILT: {
 			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
 
-			int16 newPosition = startPosition + _velocity;
+			int16 newPosition = startPosition + velocity;
 
 			int16 screenHeight = getBkgSize().y;
 			int16 tiltGap = (int16)_renderTable.getTiltGap();
@@ -1189,13 +1186,13 @@ void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 }
 
 void RenderManager::upscaleRect(Common::Rect &rect) {
-	Common::Rect _HDscreen = _widescreen ? _HDscreenAreaWide : _HDscreenArea;
-	Common::Rect _SDscreen = _widescreen ? _layout.workingArea : _layout.screenArea;
-	_SDscreen.moveTo(0, 0);
-	rect.top = rect.top * _HDscreen.height() / _SDscreen.height();
-	rect.left = rect.left * _HDscreen.width() / _SDscreen.width();
-	rect.bottom = rect.bottom * _HDscreen.height() / _SDscreen.height();
-	rect.right = rect.right * _HDscreen.width() / _SDscreen.width();
+	Common::Rect HDscreen = _widescreen ? _HDscreenAreaWide : _HDscreenArea;
+	Common::Rect SDscreen = _widescreen ? _layout.workingArea : _layout.screenArea;
+	SDscreen.moveTo(0, 0);
+	rect.top = rect.top * HDscreen.height() / SDscreen.height();
+	rect.left = rect.left * HDscreen.width() / SDscreen.width();
+	rect.bottom = rect.bottom * HDscreen.height() / SDscreen.height();
+	rect.right = rect.right * HDscreen.width() / SDscreen.width();
 }
 
 } // End of namespace ZVision

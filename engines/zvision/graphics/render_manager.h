@@ -172,7 +172,7 @@ public:
 	 */
 	bool renderSceneToScreen(bool immediate = false, bool overlayOnly = false, bool preStream = false);
 
-	Graphics::ManagedSurface &getVidSurface(Common::Rect &dstRect);  //dstRect is defined relative to working area origin
+	Graphics::ManagedSurface &getVidSurface(Common::Rect dstRect);  //dstRect is defined relative to working area origin
 
 	Common::Rect getMenuArea() {
 		return _menuArea;
@@ -263,20 +263,20 @@ public:
 	 * Blit from one surface to another surface
 	 *
 	 * @param src       Source surface
-	 * @param _srcRect  Rectangle defining area of source surface to blit; if this rectangle is empty, entire source surface is blitted
+	 * @param srcRect  Rectangle defining area of source surface to blit; if this rectangle is empty, entire source surface is blitted
 	 * @param dst       Destination surface
 	 * @param x         Destination surface x coordinate
 	 * @param y         Destination surface y coordinate
 	 */
 
-	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y);
-	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
+	void blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y);
+	void blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
 
 	// Blitting surface-to-background methods
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
 
 	// Blitting surface-to-background methods with scale
-	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey = -1);
+	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &dstRect, int32 colorkey = -1);
 
 	/**
 	 * Blit from source surface to menu area
