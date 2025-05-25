@@ -625,12 +625,15 @@ void onImGuiInit() {
 }
 
 void onImGuiRender() {
+	ImGuiIO& io = ImGui::GetIO();
 	if (!debugChannelSet(-1, kDebugConsole)) {
-		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
+		io.MouseDrawCursor = false;
 		return;
 	}
 
-	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
+	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
+	io.MouseDrawCursor = true;
 	drawGeneral();
 	drawThreads();
 	drawObjects();
