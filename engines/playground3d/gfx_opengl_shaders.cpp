@@ -156,6 +156,24 @@ void ShaderRenderer::deinit() {
 		delete _textures[i];
 		_textures[i] = nullptr;
 	}
+
+	delete _cubeShader;
+	_cubeShader = nullptr;
+	delete _offsetShader;
+	_offsetShader = nullptr;
+	delete _fadeShader;
+	_fadeShader = nullptr;
+	delete _viewportShader;
+	_viewportShader = nullptr;
+	delete _bitmapShader;
+	_bitmapShader = nullptr;
+
+	OpenGL::Shader::freeBuffer(_cubeVBO);
+	OpenGL::Shader::freeBuffer(_offsetVBO);
+	OpenGL::Shader::freeBuffer(_fadeVBO);
+	OpenGL::Shader::freeBuffer(_viewportVBO);
+	OpenGL::Shader::freeBuffer(_bitmapVBO);
+	OpenGL::Shader::freeBuffer(_bitmapTexVBO);
 }
 
 void ShaderRenderer::clear(const Math::Vector4d &clearColor) {

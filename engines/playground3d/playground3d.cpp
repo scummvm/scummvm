@@ -72,13 +72,11 @@ void Playground3dEngine::genTextures() {
 	_rgba4444Texture = generateRgbaTexture(120, 120, pixelFormatRGB4444);
 }
 
-static int testId;
-static bool texturesGenerated;
 Playground3dEngine::Playground3dEngine(OSystem *syst)
 		: Engine(syst), _system(syst), _gfx(nullptr), _frameLimiter(nullptr),
 		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0), _fogEnable(false),
 		_clearColor(0.0f, 0.0f, 0.0f, 1.0f), _fogColor(0.0f, 0.0f, 0.0f, 1.0f),
-		_fade(1.0f), _fadeIn(false), _scissorEnable(false),
+		_testId(0), _fade(1.0f), _fadeIn(false), _scissorEnable(false),
 		_rgbaTexture(nullptr), _rgbTexture(nullptr), _rgb565Texture(nullptr),
 		_rgba5551Texture(nullptr), _rgba4444Texture(nullptr) {
 }
@@ -86,6 +84,19 @@ Playground3dEngine::Playground3dEngine(OSystem *syst)
 Playground3dEngine::~Playground3dEngine() {
 	delete _frameLimiter;
 	delete _gfx;
+
+	if (_rgbaTexture) {
+		_rgbaTexture->free();
+		delete _rgbaTexture;
+		_rgbTexture->free();
+		delete _rgbTexture;
+		_rgb565Texture->free();
+		delete _rgb565Texture;
+		_rgba5551Texture->free();
+		delete _rgba5551Texture;
+		_rgba4444Texture->free();
+		delete _rgba4444Texture;
+	}
 }
 
 Common::Error Playground3dEngine::run() {
@@ -96,14 +107,12 @@ Common::Error Playground3dEngine::run() {
 
 	_system->showMouse(true);
 
-	texturesGenerated = false;
-
 	// 1 - rotated colorfull cube
 	// 2 - rotated two triangles with depth offset
 	// 3 - fade in/out
 	// 4 - moving filled rectangle in viewport
 	// 5 - drawing RGBA pattern texture to check endian correctness
-	testId = 1;
+	_testId = 1;
 	_fogEnable = false;
 	_scissorEnable = false;
 
@@ -111,7 +120,7 @@ Common::Error Playground3dEngine::run() {
 		_fogColor = Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
-	switch (testId) {
+	switch (_testId) {
 		case 1:
 			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
 			_rotateAngleX = 45, _rotateAngleY = 45, _rotateAngleZ = 10;
@@ -127,8 +136,9 @@ Common::Error Playground3dEngine::run() {
 			break;
 		case 5: {
 			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
-			genTextures();
-			texturesGenerated = true;
+			if (!_rgbaTexture) {
+				genTextures();
+			}
 			break;
 		}
 		default:
@@ -137,14 +147,9 @@ Common::Error Playground3dEngine::run() {
 
 	while (!shouldQuit()) {
 		processInput();
-		drawFrame(testId);
+		drawFrame();
 	}
 
-	delete _rgbaTexture;
-	delete _rgbTexture;
-	delete _rgb565Texture;
-	delete _rgba5551Texture;
-	delete _rgba4444Texture;
 	_gfx->deinit();
 	_system->showMouse(false);
 
@@ -164,10 +169,10 @@ void Playground3dEngine::processInput() {
 
 		switch (event.customType) {
 		case kActionSwitchTest:
-			testId++;
-			if (testId > 5)
-				testId = 1;
-			switch (testId) {
+			_testId++;
+			if (_testId > 5)
+				_testId = 1;
+			switch (_testId) {
 				case 1:
 					_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
 					_rotateAngleX = 45, _rotateAngleY = 45, _rotateAngleZ = 10;
@@ -183,9 +188,8 @@ void Playground3dEngine::processInput() {
 					break;
 				case 5: {
 					_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
-					if (!texturesGenerated) {
+					if (!_rgbaTexture) {
 						genTextures();
-						texturesGenerated = true;
 					}
 					break;
 				}
@@ -270,7 +274,7 @@ void Playground3dEngine::drawRgbaTexture() {
 	_gfx->drawRgbaTexture();
 }
 
-void Playground3dEngine::drawFrame(int id) {
+void Playground3dEngine::drawFrame() {
 	_gfx->clear(_clearColor);
 
 	float pitch = 0.0f;
@@ -287,7 +291,7 @@ void Playground3dEngine::drawFrame(int id) {
 
 	_gfx->disableFog();
 
-	switch (id) {
+	switch (_testId) {
 		case 1:
 			if (_fogEnable) {
 				_gfx->enableFog(_fogColor);
