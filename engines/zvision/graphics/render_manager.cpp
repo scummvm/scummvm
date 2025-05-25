@@ -219,8 +219,8 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 			_outputSurface = inputSurface;
 			outWndDirtyRect = _backgroundSurfaceDirtyRect;
 			break;
-			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
 		}
+		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
 		debug(5, "Rendering working area");
 		_workingManagedSurface.simpleBlitFrom(*_outputSurface); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
 		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
