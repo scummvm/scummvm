@@ -770,23 +770,23 @@ ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 sl
 	// Original script gives wrong coordinates & frames
 	if (engine->getGameId() == GID_NEMESIS)
 		switch (_slotKey) {
-			case 1282:
-				_x1 = 146;
-				_y1 = 142;
-				_x2 = 298;
-				_y2 = 236;
-				_startFrame = 16;
-				_endFrame = 31;
-				break;
-			case 1289:
-				_x1 = 146;
-				_y1 = 142;
-				_x2 = 298;
-				_y2 = 236;
-				_endFrame = 15;
-				break;
-			default:
-				break;
+		case 1282:
+			_x1 = 146;
+			_y1 = 142;
+			_x2 = 298;
+			_y2 = 236;
+			_startFrame = 16;
+			_endFrame = 31;
+			break;
+		case 1289:
+			_x1 = 146;
+			_y1 = 142;
+			_x2 = 298;
+			_y2 = 236;
+			_endFrame = 15;
+			break;
+		default:
+			break;
 		}
 }
 
