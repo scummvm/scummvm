@@ -101,7 +101,14 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 	}
 
 	const Graphics::Surface *surf = decoder.getSurface();
-	_imageCache[fname] = surf->scale(w ? w : surf->w, h ? h : surf->h, true);
+
+	// Disable filtering when surface dimensions are not changed to improve performance
+	if (w && h) {
+		_imageCache[fname] = surf->scale(w, h, true);
+	}
+	else {
+		_imageCache[fname] = surf->scale(surf->w, surf->h, false);
+	}
 
 	return _imageCache[fname];
 #endif // USE_PNG
