@@ -273,6 +273,14 @@ public:
 
 	Common::Point stringBoxPosition;
 
+	Common::Rect mainMenuRect;
+
+	bool isShowingMainMenu = false;
+
+	void openMainMenu(Common::Point clickedPosition);
+
+	void drawMainMenu(Graphics::ManagedSurface &s);
+
 	void setStringBox(const Common::StringArray& sa);
 	void setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos);
 	void clearStringBox();
