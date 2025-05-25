@@ -33,8 +33,8 @@ namespace ZVision {
  * When an element has current focus, it is reshuffled to the top of the pile.
  * When redrawing, start with last (bottom) element of list and finish with first (top)
  * Used to: 
- *	ensure scrolling menus are drawn in the order in which they last had mouse focus.
- * 	ensure most recently updated subtitle is drawn atop all others.
+ *	- ensure scrolling menus are drawn in the order in which they last had mouse focus.
+ * 	- ensure most recently updated subtitle is drawn atop all others.
  */
 
 template<class T>
@@ -42,10 +42,10 @@ class FocusList : public Common::Array<T> {
 private:
 	typedef uint size_type;
 public:
-/**
- * Move unique entry to front of list; add to list if not already present.
- * Sequence of all remaining members remains unchanged.
- */
+	/**
+	 * Move unique entry to front of list; add to list if not already present.
+	 * Sequence of all remaining members remains unchanged.
+	 */
 	void set(const T currentFocus) {
 		if (!this->size())
 			this->push_back(currentFocus);
@@ -66,10 +66,10 @@ public:
 		}
 	}
 
-/**
- * Remove unique entry, if present.
- * Sequence of all remaining members remains unchanged.
- */
+	/**
+	 * Remove unique entry, if present.
+	 * Sequence of all remaining members remains unchanged.
+	 */
 	void remove(const T value) {
 		if (this->size()) {
 			Common::Array<T> buffer;
