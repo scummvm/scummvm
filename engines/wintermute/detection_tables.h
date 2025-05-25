@@ -5640,7 +5640,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Wintermute Engine Technology Demo (1.2)
 	WME_WINENTRY("wmedemo", "1.2",
-		WME_ENTRY1s("data.dcp", "511f447de05211a4dc979fafce74c046", 6031195), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_0),
+		WME_ENTRY1s("data.dcp", "511f447de05211a4dc979fafce74c046", 6031195), Common::EN_ANY, ADGF_DEMO, WME_1_7_0),
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
@@ -5652,7 +5652,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// WME 3D characters technology demo
 	WME_WINENTRY("wmedemo3d", "Demo",
-		WME_ENTRY1s("data.dcp", "9ca18ca52f873ca8fbc78bf408e0a68d", 3224894), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_8_0),
+		WME_ENTRY1s("data.dcp", "9ca18ca52f873ca8fbc78bf408e0a68d", 3224894), Common::EN_ANY, ADGF_DEMO | GF_3D, WME_1_8_0),
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
