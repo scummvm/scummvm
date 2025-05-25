@@ -24,6 +24,7 @@
 #include "common/error.h"
 #include "common/events.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/renderer.h"
 
 #include "engines/util.h"
@@ -105,7 +106,8 @@ Common::Error Playground3dEngine::run() {
 
 	_frameLimiter = new Graphics::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 
-	_system->showMouse(true);
+	CursorMan.setDefaultArrowCursor();
+	CursorMan.showMouse(true);
 
 	// 1 - rotated colorfull cube
 	// 2 - rotated two triangles with depth offset
@@ -151,7 +153,7 @@ Common::Error Playground3dEngine::run() {
 	}
 
 	_gfx->deinit();
-	_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	return Common::kNoError;
 }
@@ -163,7 +165,7 @@ void Playground3dEngine::processInput() {
 		if (event.type == Common::EVENT_SCREEN_CHANGED) {
 			_gfx->computeScreenViewport();
 		}
-		if (event.type != Common::EVENT_CUSTOM_ENGINE_ACTION_START)	{
+		if (event.type != Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 			continue;
 		}
 
