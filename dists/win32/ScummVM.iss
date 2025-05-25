@@ -94,7 +94,11 @@ Filename: {app}\ScummVM.exe; Parameters: "--no-console"; Flags: nowait skipifdoe
 Type: files; Name: {app}\SDL2.dll
 Type: files; Name: {app}\SDL2_net.dll
 Type: files; Name: {app}\discord-rpc.dll
-Type: files; Name: {app}\LICENSES
+Type: files; Name: {app}\LICENSES\*
+Type: files; Name: {app}\*.html
+Type: files; Name: {app}\*.txt
+Type: files; Name: {app}\*.pdf
+Type: dirifempty; Name: {app}\LICENSES
 
 [UninstallDelete]
 Type: files; Name: {app}\ISTool.url
