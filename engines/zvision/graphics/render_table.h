@@ -152,7 +152,7 @@ public:
 //	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
 	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter = false);
 	template <typename I>
-	Common::String pixelToBinary(I &pixel, bool splitColors = true) {
+	Common::String pixelToBinary(const I &pixel, bool splitColors = true) {
 		uint8 bits = sizeof(pixel) << 3;
 		Common::String str("0b");
 		I spaceMask = 0;
