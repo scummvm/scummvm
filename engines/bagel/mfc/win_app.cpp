@@ -24,7 +24,7 @@
 #include "common/textconsole.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/libs/event.h"
+#include "bagel/mfc/libs/events.h"
 
 namespace Bagel {
 namespace MFC {
@@ -170,6 +170,11 @@ void CWinApp::WriteProfileInt(LPCSTR lpszSection,
 
 CWinApp *AfxGetApp() {
 	return CWinApp::_activeApp;
+}
+
+CWnd *AfxGetMainWnd() {
+	assert(CWinApp::_activeApp);
+	return CWinApp::_activeApp->m_pMainWnd;
 }
 
 HINSTANCE AfxGetInstanceHandle() {

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef BAGEL_MFC_LIBS_EVENT_H
-#define BAGEL_MFC_LIBS_EVENT_H
+#ifndef BAGEL_MFC_LIBS_EVENTS_H
+#define BAGEL_MFC_LIBS_EVENTS_H
 
 #include "common/events.h"
 #include "bagel/mfc/minwindef.h"
@@ -40,6 +40,41 @@ public:
 	operator MSG() const;
 };
 
+class EventQueue {
+private:
+	Common::Array<MSG> _queue;
+
+public:
+	/**
+	 * Returns true if the queue is empty
+	 * @return	true if empty
+	 */
+	bool empty() const {
+		return _queue.empty();
+	}
+
+	/**
+	 * Adds a message to the queue
+	 * @param msg	Message to add
+	*/
+	void push(const MSG &msg) {
+		_queue.insert_at(0, msg);
+	}
+
+	/**
+	 * Removes a message from the queue.
+	 * @return 
+	*/
+	MSG pop();
+
+	/**
+	 * Checks the queue for a WM_PAINT message,
+	 * and if found, removes it and returns true
+	 * @return	True if WM_PAINT message found
+	 */
+	bool popPaint();
+
+};
 } // namespace Libs
 } // namespace MFC
 } // namespace Bagel

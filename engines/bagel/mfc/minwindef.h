@@ -217,12 +217,21 @@ typedef struct tagPAINTSTRUCT {
  * Message structure
  */
 typedef struct tagMSG {
-	HWND        hwnd;
-	UINT        message;
-	WPARAM      wParam;
-	LPARAM      lParam;
-	DWORD       time;
+	HWND        hwnd = 0;
+	UINT        message = 0;
+	WPARAM      wParam = 0;
+	LPARAM      lParam = 0;
+	DWORD       time = 0;
 	POINT       pt;
+
+	tagMSG() {
+		pt.x = pt.y = 0;
+	}
+	tagMSG(UINT message_, WPARAM wParam_ = 0,
+		LPARAM lParam_ = 0) :
+		message(message_), wParam(wParam_),
+		lParam(lParam_) {
+	}
 } MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
 
 inline bool PtInRect(const RECT *lprc, POINT &pt) {

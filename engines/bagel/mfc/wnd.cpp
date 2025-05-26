@@ -239,8 +239,7 @@ HWND CWnd::GetSafeHwnd() const {
 
 void CWnd::ShowWindow(int nCmdShow) {
 	assert(nCmdShow == SW_SHOWNORMAL);
-
-	error("TODO: CWnd::ShowWindow");
+	Invalidate(false);
 }
 
 BOOL CWnd::EnableWindow(BOOL bEnable) {
@@ -268,12 +267,10 @@ void CWnd::DestroyWindow() {
 	error("TODO: CWnd::DestroyWindow");
 }
 
-BOOL CWnd::IsWindowVisible() const {
-	error("TODO: CWnd::IsWindowVisible");
-}
-
 void CWnd::Invalidate(BOOL bErase) {
-	error("TODO: CWnd::Invalidate");
+	if (bErase)
+		_messages.push(MSG(WM_ERASEBKGND));
+	_messages.push(MSG(WM_PAINT));
 }
 
 int CWnd::GetWindowText(CString &rString) const {

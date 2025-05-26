@@ -21,7 +21,7 @@
 
 #include "common/system.h"
 #include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/libs/event.h"
+#include "bagel/mfc/libs/events.h"
 
 namespace Bagel {
 namespace MFC {
@@ -132,6 +132,28 @@ Event::operator MSG() const {
 	}
 
 	return msg;
+}
+
+/*--------------------------------------------*/
+
+MSG EventQueue::pop() {
+	assert(!empty());
+	MSG result = _queue.back();
+	_queue.remove_at(_queue.size() - 1);
+
+	return result;
+}
+
+bool EventQueue::popPaint() {
+	for (uint i = 0; i < _queue.size(); ++i) {
+		const MSG &msg = _queue[i];
+		if (msg.message == WM_PAINT) {
+			_queue.remove_at(i);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // namespace Libs

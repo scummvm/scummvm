@@ -29,6 +29,7 @@
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
 #include "bagel/mfc/gfx/cursor.h"
+#include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/libs/settings.h"
 
 namespace Bagel {
@@ -815,6 +816,8 @@ protected:
 public:
 	HWND m_hWnd = (HWND)0;
 	CWnd *m_pParentWnd = nullptr;
+	bool _visible = false;
+	Libs::EventQueue _messages;
 
 	static CWnd *FromHandlePermanent(HWND hWnd);
 
@@ -837,7 +840,9 @@ public:
 	);
 	void SetActiveWindow();
 	void SetFocus();
-	BOOL IsWindowVisible() const;
+	BOOL IsWindowVisible() const {
+		return _visible;
+	}
 	void DestroyWindow();
 	void Invalidate(BOOL bErase = TRUE);
 	int GetWindowText(CString &rString) const;

@@ -29,6 +29,7 @@ namespace Bagel {
 namespace MFC {
 
 class CWinApp;
+class CWnd;
 
 /* Global Memory Flags */
 #define GMEM_FIXED          0x0000
@@ -57,6 +58,7 @@ class CWinApp;
 #define MB_ICONSTOP                 MB_ICONHAND
 
 extern CWinApp *AfxGetApp();
+extern CWnd *AfxGetMainWnd();
 extern HINSTANCE AfxGetInstanceHandle();
 extern HINSTANCE AfxGetResourceHandle();
 extern int LoadString(HINSTANCE hInstance,
