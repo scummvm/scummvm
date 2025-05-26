@@ -25,6 +25,7 @@
 #include "agi/words.h"
 
 #include "common/fs.h"
+#include "common/substream.h"
 
 namespace Agi {
 
@@ -380,9 +381,8 @@ int AgiLoader_v1::loadWords() {
 		return errBadFileOpen;
 	}
 
-	// TODO: pass length and validate in parser
-	disk.seek(_words.offset);
-	return _vm->_words->loadDictionary_v1(disk);
+	Common::SeekableSubReadStream words(&disk, _words.offset, _words.offset + _words.len);
+	return _vm->_words->loadDictionary_v1(words);
 }
 
 } // End of namespace Agi

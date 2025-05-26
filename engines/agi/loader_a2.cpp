@@ -27,6 +27,7 @@
 #include "common/formats/disk_image.h"
 #include "common/fs.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 
 namespace Agi {
 
@@ -451,13 +452,11 @@ int AgiLoader_A2::loadWords() {
 		return errFilesNotFound;
 	}
 
-	// TODO: pass length and validate in parser
-	Common::SeekableReadStream &disk = *_disks[0];
-	disk.seek(_words.offset);
+	Common::SeekableSubReadStream words(_disks[0], _words.offset, _words.offset + _words.len);
 	if (_vm->getVersion() < 0x2000) {
-		return _vm->_words->loadDictionary_v1(disk);
+		return _vm->_words->loadDictionary_v1(words);
 	} else {
-		return _vm->_words->loadDictionary(disk);
+		return _vm->_words->loadDictionary(words);
 	}
 }
 
