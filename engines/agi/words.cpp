@@ -77,6 +77,16 @@ int Words::loadDictionary(const char *fname) {
 	return loadDictionary(fp);
 }
 
+/**
+ * Load all words from WORDS.TOK into the dictionary.
+ *
+ * Note that this parser handles words that start with a digit. These appear in
+ * fan games because AGI Studio allowed them and placed them at the start of the
+ * 'A' section. These words had no effect because the interpreter only matched
+ * user input that began with A-Z, and the matching logic happened to skip words
+ * until it reached one with the expected first letter. In the past, these words 
+ * caused problems for our parser. See bugs #6415, #15000
+ */
 int Words::loadDictionary(Common::SeekableReadStream &stream) {
 	// Read words for each letter (A-Z)
 	const uint32 start = stream.pos();
@@ -108,24 +118,17 @@ int Words::loadDictionary(Common::SeekableReadStream &stream) {
 				break;
 			}
 
-			// WORKAROUND:
-			// The SQ0 fan game stores words starting with numbers (like '7up')
-			// in its dictionary under the 'a' entry. We skip these.
-			// See bug #6415
-			if (str[0] == 'a' + i) {
-				// Store word in dictionary
-				WordEntry newWord;
-				newWord.word = Common::String(str, k);
-				newWord.id = wordId
-				_dictionary[str[0]].push_back(newWord);
-			}
+			// Store word in dictionary
+			WordEntry newWord;
+			newWord.word = Common::String(str, k);
+			newWord.id = wordId;
+			_dictionary[str[0]].push_back(newWord);
 
+			// Read next word's copy count, or this letter's zero terminator.
+			// Stop on zero if the word we read begins with the expected letter,
+			// otherwise this is a fan game and we just read a word that starts
+			// with a digit at the start of the 'A' section. Bugs #6413, #15000
 			k = stream.readByte();
-
-			// Are there more words with an already known prefix?
-			// WORKAROUND: We only break after already seeing words with the
-			// right prefix, for the SQ0 words starting with digits filed under
-			// 'a'. See above comment and bug #6415.
 			if (k == 0 && str[0] == 'a' + i) {
 				break;
 			}
@@ -252,8 +255,12 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowercase, uint
 
 	const byte lastCharInAbc = _vm->getFeatures() & GF_EXTCHAR ? 0xff : 'z';
 
-	if ((firstChar >= 'a') && (firstChar <= lastCharInAbc)) {
-		// word has to start with a letter
+	// Words normally have to start with a letter.
+	// ENHANCEMENT: Fan games and translations include words that start with a
+	// digit, even though the original interpreter ignored them. We allow input
+	// words to start with a digit if the dictionary contains such a word.
+	if (('a' <= firstChar && firstChar <= lastCharInAbc) ||
+		('0' <= firstChar && firstChar <= '9' && _dictionary.contains(firstChar))) {
 		if (((userInputPos + 1) < userInputLen) && (userInputLowercase[userInputPos + 1] == ' ')) {
 			// current word is 1 char only?
 			if ((firstChar == 'a') || (firstChar == 'i')) {
