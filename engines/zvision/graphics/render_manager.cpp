@@ -58,20 +58,20 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _widescreen(widescreen),
 	  _frameLimiter(engine->_system, doubleFPS ? 60 : 30) {
 	debug(1, "creating render manager");
-	//Define graphics modes & screen subarea geometry
+	// Define graphics modes & screen subarea geometry
 	Graphics::ModeList modes;
 	_textOffset = _layout.workingArea.origin() - _layout.textArea.origin();
 	modes.push_back(Graphics::Mode(_screenArea.width(), _screenArea.height()));
-	#if defined(USE_MPEG2) && defined(USE_A52)
+#if defined(USE_MPEG2) && defined(USE_A52)
 	if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD)) {
 		if (_widescreen)
 			modes.push_back(Graphics::Mode(_HDscreenAreaWide.width(), _HDscreenAreaWide.height()));
 		else
 			modes.push_back(Graphics::Mode(_HDscreenArea.width(), _HDscreenArea.height()));
 	}
-	#endif
+#endif
 	initGraphicsModes(modes);
-	//Create backbuffers
+	// Create backbuffers
 	_backgroundSurface.create(_workingArea.width(), _workingArea.height(), _pixelFormat);
 	_effectSurface.create(_workingArea.width(), _workingArea.height(), _pixelFormat);
 	_warpedSceneSurface.create(_workingArea.width(), _workingArea.height(), _pixelFormat);
@@ -112,8 +112,8 @@ void RenderManager::initialize(bool hiRes) {
 		_textLetterbox.moveTo(_textArea.origin());
 	}
 
-	//Screen
-	#if defined(USE_MPEG2) && defined(USE_A52)
+	// Screen
+#if defined(USE_MPEG2) && defined(USE_A52)
 	if (_hiRes) {
 		debug(1, "Switching to high resolution");
 		upscaleRect(_screenArea);
@@ -121,14 +121,14 @@ void RenderManager::initialize(bool hiRes) {
 		upscaleRect(_textArea);
 	} else
 		debug(1, "Switching to standard resolution");
-	#endif
+#endif
 	_screen.create(_screenArea.width(), _screenArea.height(), _pixelFormat);
 	_screen.setTransparentColor(-1);
 	_screen.clear();
 
 	debug(1, "_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
 
-	//Managed screen subsurfaces
+	// Managed screen subsurfaces
 	_workingManagedSurface.create(_screen, _workingArea);
 	_menuManagedSurface.create(_screen, _menuArea);
 	_textManagedSurface.create(_screen, _textArea);
@@ -136,7 +136,7 @@ void RenderManager::initialize(bool hiRes) {
 	debug(2, "working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
 	debug(2, "text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
 
-	//Menu & text area dirty rectangles
+	// Menu & text area dirty rectangles
 	_menuOverlay = _menuArea.findIntersectingRect(_workingArea);
 	if (!_menuOverlay.isEmpty() && _menuArea.left >= _workingArea.left && _menuArea.right <= _workingArea.right)
 		_menuLetterbox = Common::Rect(_menuArea.left, _menuArea.top, _menuArea.right, _workingArea.top);
@@ -153,12 +153,12 @@ void RenderManager::initialize(bool hiRes) {
 	debug(2, "menu overlay area: %d,%d,%d,%d", _menuOverlay.left, _menuOverlay.top, _menuOverlay.bottom, _menuOverlay.right);
 
 	debug(2, "Clearing backbuffers");
-	//Clear backbuffer surfaces
+	// Clear backbuffer surfaces
 	clearMenuSurface(true);
 	clearTextSurface(true);
 	debug(2, "Backbuffers cleared");
 
-	//Set hardware/window resolution
+	// Set hardware/window resolution
 	debug(1, "_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
 	initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
 	_frameLimiter.initialize();
@@ -171,7 +171,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 	if (!overlayOnly) {
 		Graphics::Surface *inputSurface = &_backgroundSurface;
 		Common::Rect outWndDirtyRect;
-		//Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
+		// Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
 		if (!_effects.empty()) {
 			debug(6, "Rendering effects");
 			bool copied = false;
@@ -196,15 +196,15 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 					blitSurfaceToSurface(*post, empty, _effectSurface, screenSpaceLocation.left, screenSpaceLocation.top);
 					debug(1, "windowRect %d,%d,%d,%d, screenSpaceLocation %d,%d,%d,%d", windowRect.left, windowRect.top, windowRect.bottom, windowRect.right, screenSpaceLocation.left, screenSpaceLocation.top, screenSpaceLocation.bottom, screenSpaceLocation.right);
 					screenSpaceLocation.clip(windowRect);
-					if (_backgroundSurfaceDirtyRect .isEmpty())
+					if (_backgroundSurfaceDirtyRect.isEmpty())
 						_backgroundSurfaceDirtyRect = screenSpaceLocation;
 					else
 						_backgroundSurfaceDirtyRect.extend(screenSpaceLocation);
 				}
 			}
-			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+			debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		}
-		//Apply panorama/tilt warp to background image
+		// Apply panorama/tilt warp to background image
 		switch (_renderTable.getRenderState()) {
 		case RenderTable::PANORAMA:
 		case RenderTable::TILT:
@@ -220,27 +220,27 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 			outWndDirtyRect = _backgroundSurfaceDirtyRect;
 			break;
 		}
-		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		debug(5, "Rendering working area");
-		_workingManagedSurface.simpleBlitFrom(*_outputSurface); //TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
-		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		_workingManagedSurface.simpleBlitFrom(*_outputSurface); // TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
+		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 	}
 	if (preStream) {
 		debug(5, "Pre-rendering text area for video stream");
-		_workingManagedSurface.simpleBlitFrom(*_outputSurface, _textOverlay, _textOverlay.origin()); //Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
+		_workingManagedSurface.simpleBlitFrom(*_outputSurface, _textOverlay, _textOverlay.origin()); // Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
 		return false;
 	} else {
 		debug(5, "Rendering menu");
 		_menuManagedSurface.transBlitFrom(_menuSurface, -1);
-		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		debug(5, "Rendering text");
 		_textManagedSurface.transBlitFrom(_textSurface, -1);
-		debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		if (immediate) {
 			_frameLimiter.startFrame();
 			debug(5, "Updating screen, immediate");
 			_screen.update();
-			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+			debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 			debug(10, "~renderSceneToScreen, immediate");
 			return true;
 		} else if (_engine->canRender()) {
@@ -248,7 +248,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 			_frameLimiter.startFrame();
 			debug(5, "Updating screen, frame limited");
 			_screen.update();
-			debug(5, "\tNett render time %d ms", _system->getMillis() - startTime);
+			debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 			debug(10, "~renderSceneToScreen, frame limited");
 			return true;
 		} else {
@@ -259,7 +259,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 }
 
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect dstRect) {
-	dstRect.translate(_workingArea.left, _workingArea.top);  //Convert to screen coordinates
+	dstRect.translate(_workingArea.left, _workingArea.top);  // Convert to screen coordinates
 	_vidManagedSurface.create(_screen, dstRect);
 	debug(1, "Obtaining managed video surface at %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 	return _vidManagedSurface;
@@ -507,35 +507,35 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y) {
 	debug(9, "blitSurfaceToSurface");
 	Common::Point dstPos = Common::Point(_x, _y);
-	//Default to using whole source surface
+	// Default to using whole source surface
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
-	//Clip source rectangle to within bounds of source buffer
+	// Clip source rectangle to within bounds of source buffer
 	srcRect.clip(src.w, src.h);
 
-	//Generate destination rectangle
+	// Generate destination rectangle
 	Common::Rect dstRect = Common::Rect(dst.w, dst.h);
-	//Translate destination rectangle to its position relative to source rectangle
+	// Translate destination rectangle to its position relative to source rectangle
 	dstRect.translate(srcRect.left - _x, srcRect.top - _y);
-	//clip source rectangle to within bounds of offset destination rectangle
+	// clip source rectangle to within bounds of offset destination rectangle
 	srcRect.clip(dstRect);
 
-	//Abort if nothing to blit
+	// Abort if nothing to blit
 	if (!srcRect.isEmpty()) {
-		//Convert pixel format of source to match destination
+		// Convert pixel format of source to match destination
 		Graphics::Surface *srcAdapted = src.convertTo(dst.format);
-		//Get pointer for source buffer blit rectangle origin
+		// Get pointer for source buffer blit rectangle origin
 		const byte *srcBuffer = (const byte *)srcAdapted->getBasePtr(srcRect.left, srcRect.top);
 
-		//Default to blitting into origin of target surface if negative valued
+		// Default to blitting into origin of target surface if negative valued
 		if (dstPos.x < 0)
 			dstPos.x = 0;
 		if (dstPos.y < 0)
 			dstPos.y = 0;
 
-		//If _x & _y lie within destination surface
+		// If _x & _y lie within destination surface
 		if (dstPos.x < dst.w && dstPos.y < dst.h) {
-			//Get pointer for destination buffer blit rectangle origin
+			// Get pointer for destination buffer blit rectangle origin
 			byte *dstBuffer = (byte *)dst.getBasePtr(dstPos.x, dstPos.y);
 			Graphics::copyBlit(dstBuffer, srcBuffer, dst.pitch, srcAdapted->pitch, srcRect.width(), srcRect.height(), srcAdapted->format.bytesPerPixel);
 		}
@@ -552,7 +552,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::R
 	Common::Rect dstRect = Common::Rect(-_x + srcRect.left , -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
 	srcRect.clip(dstRect);
 
-	//Abort if nothing to blit
+	// Abort if nothing to blit
 	if (srcRect.isEmpty() || !srcRect.isValidRect())
 		return;
 
@@ -622,7 +622,7 @@ void RenderManager::clearMenuSurface(bool force, int32 colorkey) {
 	if (force)
 		_menuSurfaceDirtyRect = Common::Rect(_menuArea.width(), _menuArea.height());
 	if (!_menuSurfaceDirtyRect.isEmpty()) {
-		//Convert to local menuArea coordinates
+		// Convert to local menuArea coordinates
 		Common::Rect letterbox = _menuLetterbox;
 		Common::Rect overlay = _menuOverlay;
 		letterbox.translate(-_menuArea.left, -_menuArea.top);
@@ -633,7 +633,7 @@ void RenderManager::clearMenuSurface(bool force, int32 colorkey) {
 		Common::Rect _menuOverlayDirty = _menuSurfaceDirtyRect.findIntersectingRect(overlay);
 		if (!_menuOverlayDirty.isEmpty()) {
 			_menuSurface.fillRect(_menuOverlayDirty, colorkey);
-			//TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
+			// TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
 		}
 		_menuSurfaceDirtyRect = Common::Rect(0, 0);
 	}
@@ -654,7 +654,7 @@ void RenderManager::clearTextSurface(bool force, int32 colorkey) {
 	if (force)
 		_textSurfaceDirtyRect = Common::Rect(_textArea.width(), _textArea.height());
 	if (!_textSurfaceDirtyRect.isEmpty()) {
-		//Convert to local textArea coordinates
+		// Convert to local textArea coordinates
 		Common::Rect letterbox = _textLetterbox;
 		Common::Rect overlay = _textOverlay;
 		letterbox.translate(-_textArea.left, -_textArea.top);
@@ -665,7 +665,7 @@ void RenderManager::clearTextSurface(bool force, int32 colorkey) {
 		Common::Rect _textOverlayDirty = _textSurfaceDirtyRect.findIntersectingRect(overlay);
 		if (!_textOverlayDirty.isEmpty()) {
 			_textSurface.fillRect(_textOverlayDirty, colorkey);
-			//TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
+			// TODO - mark working window dirty here so that it will redraw & blank overlaid residue on next frame
 		}
 		_textSurfaceDirtyRect = Common::Rect(0, 0);
 	}
@@ -964,19 +964,19 @@ void RenderManager::markDirty() {
 	_backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
 }
 
-//*
+// *
 void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 	_currentBackgroundImage.fillRect(Common::Rect(_currentBackgroundImage.w, _currentBackgroundImage.h), _currentBackgroundImage.format.RGBToColor(r, g, b));
 	markDirty();
 }
-//*/
+// */
 
 
 void RenderManager::updateRotation() {
 	int16 velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
 	ScriptManager *scriptManager = _engine->getScriptManager();
 
-	if (_doubleFPS || !_frameLimiter.isEnabled()) //Assuming 60fps when in Vsync mode.
+	if (_doubleFPS || !_frameLimiter.isEnabled()) // Assuming 60fps when in Vsync mode.
 		velocity /= 2;
 
 	if (velocity) {
