@@ -39,7 +39,7 @@ public:
 	void setPan(uint8 channel, int8 pan);
 	void setProgram(uint8 channel, uint8 prog);
 
-	int8 getFreeChannel();  //Negative if none available
+	int8 getFreeChannel();  // Negative if none available
 	bool isAvailable() {
 		return _available;
 	};

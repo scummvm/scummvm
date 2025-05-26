@@ -41,7 +41,7 @@ SubtitleManager::SubtitleManager(ZVision *engine, const ScreenLayout layout, con
 }
 
 SubtitleManager::~SubtitleManager() {
-	//Delete all subtitles referenced in subslist
+	// Delete all subtitles referenced in subslist
 	for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 		delete it->_value;
 		_subsList.erase(it);
@@ -51,10 +51,10 @@ SubtitleManager::~SubtitleManager() {
 
 void SubtitleManager::process(int32 deltatime) {
 	for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
-		//Update all automatic subtitles
+		// Update all automatic subtitles
 		if (it->_value->selfUpdate())
 			_redraw = true;
-		//Update all subtitles' respective deletion timers
+		// Update all subtitles' respective deletion timers
 		if (it->_value->process(deltatime)) {
 			debug(4, "Deleting subtitle, subId=%d", it->_key);
 			_subsFocus.remove(it->_key);
@@ -71,9 +71,9 @@ void SubtitleManager::process(int32 deltatime) {
 		}
 	if (_redraw) {
 		debug(4, "Redrawing subtitles");
-		//Blank subtitle buffer
+		// Blank subtitle buffer
 		_renderManager->clearTextSurface();
-		//Render just the most recent subtitle
+		// Render just the most recent subtitle
 		if (_subsFocus.size()) {
 			uint16 curSub = _subsFocus.front();
 			debug(4, "Rendering subtitle %d", curSub);
@@ -81,7 +81,7 @@ void SubtitleManager::process(int32 deltatime) {
 			if (sub->_lineId >= 0) {
 				Graphics::Surface textSurface;
 				textSurface.create(sub->_textArea.width(), sub->_textArea.height(), _engine->_resourcePixelFormat);
-				textSurface.fillRect(Common::Rect(sub->_textArea.width(), sub->_textArea.height()), -1); //TODO Unnecessary operation?  Check later.
+				textSurface.fillRect(Common::Rect(sub->_textArea.width(), sub->_textArea.height()), -1); // TODO Unnecessary operation?  Check later.
 				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->_lines[sub->_lineId].subStr, textSurface, _engine->isWidescreen());
 				_renderManager->blitSurfaceToText(textSurface, sub->_textArea.left, sub->_textArea.top, -1);
 				textSurface.free();
@@ -95,7 +95,7 @@ void SubtitleManager::process(int32 deltatime) {
 void SubtitleManager::update(int32 count, uint16 subid) {
 	if (_subsList.contains(subid))
 		if (_subsList[subid]->update(count)) {
-			//_subsFocus.set(subid);
+			// _subsFocus.set(subid);
 			_redraw = true;
 		}
 }
@@ -251,7 +251,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 	Common::File subFile;
 	Common::Point _textOffset = _engine->getSubtitleManager()->getTextOffset();
 	if (_engine->getSearchManager()->openFile(subFile, subname)) {
-		//Parse subtitle parameters from script
+		// Parse subtitle parameters from script
 		while (!subFile.eos()) {
 			Common::String str = subFile.readLine();
 			if (str.lastChar() == '~')
@@ -263,10 +263,10 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 				sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
 				_textArea = Common::Rect(x1, y1, x2, y2);
 				debug(1, "Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
-				//Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
-				//To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
-				//This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
-				_textArea.translate(_textOffset.x, _textOffset.y);  //Convert working area coordinates to text area coordinates
+				// Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
+				// To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
+				// This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
+				_textArea.translate(_textOffset.x, _textOffset.y);  // Convert working area coordinates to text area coordinates
 				debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
 			} else if (str.matchString("*TextFile*", true)) {
 				char filename[64];
@@ -284,16 +284,16 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 					txtFile.close();
 				}
 			} else {
-				int32 st; //Line start time
-				int32 en; //Line end time
-				int32 sb; //Line number
+				int32 st; // Line start time
+				int32 en; // Line end time
+				int32 sb; // Line number
 				if (sscanf(str.c_str(), "%*[^:]:(%d,%d)=%d", &st, &en, &sb) == 3) {
 					if (sb <= (int32)_lines.size()) {
 						if (vob) {
 							// Convert frame number from 15FPS (AVI) to 29.97FPS (VOB) to synchronise with video
-							//st = st * 2997 / 1500;
-							//en = en * 2997 / 1500;
-							st = st * 2900 / 1500;  //TODO: Subtitles only synchronise correctly at 29fps, but vob files should be 29.97fps; check if video codec is rounding this value down!
+							// st = st * 2997 / 1500;
+							// en = en * 2997 / 1500;
+							st = st * 2900 / 1500;  // TODO: Subtitles only synchronise correctly at 29fps, but vob files should be 29.97fps; check if video codec is rounding this value down!
 							en = en * 2900 / 1500;
 						}
 						_lines[sb].start = st;
@@ -304,7 +304,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 		}
 		subFile.close();
 	} else {
-		//TODO - add error message here
+		// TODO - add error message here
 		_toDelete = true;
 	}
 }
@@ -339,24 +339,24 @@ bool Subtitle::process(int32 deltatime) {
 
 bool Subtitle::update(int32 count) {
 	int16 j = -1;
-	//Search all lines to find first line that encompasses current time/framecount, set j to this
+	// Search all lines to find first line that encompasses current time/framecount, set j to this
 	for (uint16 i = (_lineId >= 0 ? _lineId : 0); i < _lines.size(); i++)
 		if (count >= _lines[i].start && count <= _lines[i].stop) {
 			j = i;
 			break;
 		}
 	if (j == -1) {
-		//No line exists for current time/framecount
+		// No line exists for current time/framecount
 		if (_lineId != -1) {
-			//Line is set
-			_lineId = -1; //Unset line
+			// Line is set
+			_lineId = -1; // Unset line
 			_redraw = true;
 		}
 	} else {
-		//Line exists for current time/framecount
+		// Line exists for current time/framecount
 		if (j != _lineId && _lines[j].subStr.size()) {
-			//Set line is not equal to current line & current line is not blank
-			_lineId = j;  //Set line to current
+			// Set line is not equal to current line & current line is not blank
+			_lineId = j;  // Set line to current
 			_redraw = true;
 		}
 	}

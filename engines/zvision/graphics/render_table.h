@@ -31,17 +31,17 @@ namespace ZVision {
 
 class FilterPixel {
 public:
-	//Bitfields representing sequential direction of contraction
-	bool _xDir = 0; //0 left, 1 right
-	bool _yDir = 0; //0 up, 1 down
-	Common::Rect _Src = Common::Rect(0, 0); //Coordinates of four panorama image pixels around actual working window pixel
+	// Bitfields representing sequential direction of contraction
+	bool _xDir = 0; // 0 left, 1 right
+	bool _yDir = 0; // 0 up, 1 down
+	Common::Rect _Src = Common::Rect(0, 0); // Coordinates of four panorama image pixels around actual working window pixel
 
 	float _fX, _fY, _fTL, _fTR, _fBL, _fBR;
 
-//  bool _printDebug = false;
+// bool _printDebug = false;
 
 	FilterPixel() {}
-//  FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
+// FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
 	FilterPixel(float x, float y, bool highQuality = false) {
 		_Src.left = int16(floor(x));
 		_Src.right = int16(ceil(x));
@@ -64,7 +64,7 @@ public:
 			        debug(5,"_fX: %f, _fY: %f, _fTL:%f, _fTR:%f, _fBL:%f, _fBR:%f", _fX, _fY, _fTL, _fTR, _fBL, _fBR);
 			*/
 		} else {
-			//Nearest neighbour
+			// Nearest neighbour
 			_xDir = (x - _Src.left) > 0.5f;
 			_yDir = (y - _Src.top) > 0.5f;
 			/*
@@ -89,7 +89,7 @@ public:
 	RenderTable(ZVision *engine, uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
 	~RenderTable();
 
-//	Common::Point testPixel = Common::Point(255,0);
+// Common::Point testPixel = Common::Point(255,0);
 public:
 	enum RenderState {
 		PANORAMA,
@@ -100,8 +100,8 @@ public:
 private:
 	ZVision *_engine;
 	OSystem *_system;
-	uint _numRows, _numColumns, _halfRows, _halfColumns; //Working area width, height; half width, half height, in whole pixels
-	float _halfWidth, _halfHeight;  //Centre axis to midpoint of outermost pixel
+	uint _numRows, _numColumns, _halfRows, _halfColumns; // Working area width, height; half width, half height, in whole pixels
+	float _halfWidth, _halfHeight;  // Centre axis to midpoint of outermost pixel
 	FilterPixel *_internalBuffer;
 	RenderState _renderState;
 	bool _highQuality = false;
@@ -115,19 +115,19 @@ private:
 	uint32 _bTL, _bTR, _bBL, _bBR, _bF;
 
 	inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
-		//NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
+		// NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
 		r = color & 0x001f;
 		g = color & 0x03e0;
 		b = color & 0x7c00;
 	}
 	inline uint16 mergeColor(uint32 &r, uint32 &g, uint32 &b) const {
-		//NB Red uses the lowest bits in RGB555 and so doesn't need its fractional bits masked away after averaging
+		// NB Red uses the lowest bits in RGB555 and so doesn't need its fractional bits masked away after averaging
 		return r | (g & 0x03e0) | (b & 0x7c00);
 	}
 
 
 	struct {
-		float verticalFOV;  //Radians
+		float verticalFOV;  // Radians
 		float linearScale;
 		bool reverse;
 		uint16 zeroPoint;
@@ -135,7 +135,7 @@ private:
 
 	// TODO: See if tilt and panorama need to have separate options
 	struct {
-		float verticalFOV;  //Radians
+		float verticalFOV;  // Radians
 		float linearScale;
 		bool reverse;
 		float gap;
@@ -147,9 +147,9 @@ public:
 	}
 	void setRenderState(RenderState newState);
 
-	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);  //input point in working area coordinates
+	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);  // input point in working area coordinates
 
-//	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
+// void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
 	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter = false);
 	template <typename I>
 	Common::String pixelToBinary(const I &pixel, bool splitColors = true) {
@@ -167,14 +167,14 @@ public:
 	}
 	void generateRenderTable();
 
-	void setPanoramaFoV(float fov); //Degrees
+	void setPanoramaFoV(float fov); // Degrees
 	void setPanoramaScale(float scale);
 	void setPanoramaReverse(bool reverse);
 	void setPanoramaZeroPoint(uint16 point);
 	uint16 getPanoramaZeroPoint();
 	bool getPanoramaReverse();
 
-	void setTiltFoV(float fov); //Degrees
+	void setTiltFoV(float fov); // Degrees
 	void setTiltScale(float scale);
 	void setTiltReverse(bool reverse);
 
@@ -185,7 +185,7 @@ public:
 private:
 	void generateLookupTable(bool tilt = false);
 	void generatePanoramaLookupTable();
-//	Common::Point generatePanoramaLookupPoint();
+// Common::Point generatePanoramaLookupPoint();
 	void generateTiltLookupTable();
 };
 
