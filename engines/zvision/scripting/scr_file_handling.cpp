@@ -81,7 +81,7 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 	else {
 		debug(1, "Parsing primary script file");
 		parse(mainFile);
-		//TODO - add config option to disable/enable auxiliary scripting
+		// TODO - add config option to disable/enable auxiliary scripting
 		if (auxFile.exists(auxFilePath)) {
 			debug(1, "Auxiliary script file found");
 			if (auxFile.open(auxFilePath)) {
@@ -103,7 +103,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions, puzzle->key);
-			//WORKAROUNDS:
+			// WORKAROUNDS:
 			switch (_engine->getGameId()) {
 			case GID_NEMESIS: {
 				// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
@@ -127,10 +127,10 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 					// run the player gets stuck in a dark room instead. We have
 					// to add the assignment action to the front, or it won't be
 					// reached because changing the location terminates the script.
-					//
+					// 
 					// Fixing it this way only keeps the bug from happening. It
 					// will not repair old savegames.
-					//
+					// 
 					// Note that the bug only affects the DVD version. The CD
 					// version doesn't have a separate room for the cutscene.
 					if (_engine->getFeatures() & ADGF_DVD)
@@ -182,7 +182,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	// Create a new List to hold the CriteriaEntries
 	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
 
-	//WORKAROUNDS
+	// WORKAROUNDS
 	switch (_engine->getGameId()) {
 	case GID_NEMESIS:
 		// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
@@ -274,7 +274,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		// than 10 units left, it will get stuck and never time out. We
 		// work around that by changing the condition from "greater than
 		// 10" to "greater than 0 but not 2 (the magic time-out value)".
-		//
+		// 
 		// I have a sneaking suspicion that there may be other timer
 		// glitches like this, but this one makes the game unplayable
 		// and is easy to trigger.
@@ -307,9 +307,9 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	line.toLowercase();
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
-	//While within results block
+	// While within results block
 	while (!stream.eos() && !line.contains('}')) {
-		//Skip empty lines
+		// Skip empty lines
 		if (line.empty()) {
 			line = stream.readLine();
 			trimCommentsAndWhiteSpace(&line);
@@ -320,7 +320,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		const char *chrs = line.c_str();
 		uint pos;
 		/*/
-		        //Iterate along line until colon encountered
+		        // Iterate along line until colon encountered
 		        for (pos = 0; pos < line.size(); pos++) {
 		            if (chrs[pos] == ':')
 		                break;
@@ -334,19 +334,19 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			pos = 10;
 		else
 			continue;
-//*/
-		if (pos < line.size()) {  //Stuff left
-			uint startpos = pos + 1;  //first character after colon
-			//Scan for next colon or opening bracket
+// */
+		if (pos < line.size()) {  // Stuff left
+			uint startpos = pos + 1;  // first character after colon
+			// Scan for next colon or opening bracket
 			for (pos = startpos; pos < line.size(); pos++)
 				if (chrs[pos] == ':' || chrs[pos] == '(')
 					break;
 
 			debug(4, "startpos %d, pos %d, line.size %d", startpos, pos, line.size());
-			int32 slot = 11;  //Non-setting default slot
+			int32 slot = 11;  // Non-setting default slot
 			Common::String args = "";
 			Common::String act(chrs + startpos, chrs + pos);
-			//Extract arguments, if any
+			// Extract arguments, if any
 			if (pos < line.size()) {
 
 				startpos = pos + 1;
@@ -355,7 +355,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == '(')
 							break;
-					//Extract slotkey, if specified
+					// Extract slotkey, if specified
 					Common::String strSlot(chrs + startpos, chrs + pos);
 					slot = atoi(strSlot.c_str());
 

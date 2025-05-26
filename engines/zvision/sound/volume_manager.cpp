@@ -25,7 +25,7 @@
 
 namespace ZVision {
 
-//Power law with exponent 1.5.
+// Power law with exponent 1.5.
 static constexpr uint8 powerLaw[256] = {
   0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  3,  3,  3,  4, 
   4,  4,  5,  5,  6,  6,  6,  7,  7,  8,  8,  9,  9, 10, 10, 11,
@@ -64,7 +64,7 @@ static constexpr uint8 logPower[256] = {
 113,119,126,133,140,148,156,165,174,184,194,205,217,229,241,255
 };
 
-//*/
+// */
 static constexpr uint8 logAmplitude[256] = {
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  
@@ -104,7 +104,7 @@ static constexpr uint8 logAmplitude[256] = {
  83, 86, 89, 92, 96, 99,103,107,111,115,119,123,128,133,137,143,
 148,153,159,165,171,177,184,191,198,205,212,220,228,237,245,255
 };
-//*/
+// */
 
 /*
 Estimated relative amplitude of a point sound source as it circles the listener's head from front to rear, due to ear pinna shape.

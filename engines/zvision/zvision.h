@@ -71,48 +71,48 @@ class MidiManager;
 class VolumeManager;
 
 struct ScreenLayout {
-	Common::Rect screenArea;  //Original screen resolution
-	Common::Rect menuArea;  //Menu display area, relative to original screen
-	Common::Rect workingArea;   //Playfield & video playback area, relative to original screen
-	Common::Rect textArea;  //Subtitle & message area, relative to original screen
+	Common::Rect screenArea;  // Original screen resolution
+	Common::Rect menuArea;  // Menu display area, relative to original screen
+	Common::Rect workingArea;   // Playfield & video playback area, relative to original screen
+	Common::Rect textArea;  // Subtitle & message area, relative to original screen
 };
 
-//NB Footage of original DOS Nemesis engine indicates playfield was centrally placed on screen.
-//Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.  Could just be an error in the scripts.
-//TODO Need to make a decision how to handle this.  Should be irrelevant for widescreen mode anyway, & purists will want original appearance for 4:3 ratio.
-//Figures below currently have playfield offset to fit subtitles entirely in lower bar
+// NB Footage of original DOS Nemesis engine indicates playfield was centrally placed on screen.
+// Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.  Could just be an error in the scripts.
+// TODO Need to make a decision how to handle this.  Should be irrelevant for widescreen mode anyway, & purists will want original appearance for 4:3 ratio.
+// Figures below currently have playfield offset to fit subtitles entirely in lower bar
 
 /*/
-//Vertically offset values
+// Vertically offset values
 static const ScreenLayout nemesisLayout {
-  Common::Rect(640,480),  //Screen
-  Common::Rect(Common::Point(64,0), 512, 32), //Menu
-  Common::Rect(Common::Point(64,40), 512, 320), //Working; aspect ratio 1.6
-  Common::Rect(Common::Point(64,380), 512, 100) //Text
+  Common::Rect(640,480),  // Screen
+  Common::Rect(Common::Point(64,0), 512, 32), // Menu
+  Common::Rect(Common::Point(64,40), 512, 320), // Working; aspect ratio 1.6
+  Common::Rect(Common::Point(64,380), 512, 100) // Text
 };
 static const ScreenLayout zgiLayout {
-  Common::Rect(640,480),  //Screen
-  Common::Rect(Common::Point(0,0), 640, 32), //Menu
-  Common::Rect(Common::Point(0,40), 640, 344), //Working; aspect ratio 1.86
-  Common::Rect(Common::Point(0,400), 640, 80) //Text
+  Common::Rect(640,480),  // Screen
+  Common::Rect(Common::Point(0,0), 640, 32), // Menu
+  Common::Rect(Common::Point(0,40), 640, 344), // Working; aspect ratio 1.86
+  Common::Rect(Common::Point(0,400), 640, 80) // Text
 };
-//*/
-//*/
-//Central values
+// */
+// */
+// Central values
 static const ScreenLayout nemesisLayout {
-	Common::Rect(640, 480), //Screen
-	Common::Rect(Common::Point(64, 0), 512, 32), //Menu
-	Common::Rect(Common::Point(64, 80), 512, 320), //Working; aspect ratio 1.6
-	Common::Rect(Common::Point(64, 420), 512, 60) //Text
+	Common::Rect(640, 480), // Screen
+	Common::Rect(Common::Point(64, 0), 512, 32), // Menu
+	Common::Rect(Common::Point(64, 80), 512, 320), // Working; aspect ratio 1.6
+	Common::Rect(Common::Point(64, 420), 512, 60) // Text
 };
 
 static const ScreenLayout zgiLayout {
-	Common::Rect(640, 480), //Screen
-	Common::Rect(Common::Point(0, 0), 640, 32), //Menu
-	Common::Rect(Common::Point(0, 68), 640, 344), //Working; aspect ratio 1.86
-	Common::Rect(Common::Point(0, 412), 640, 68) //Text
+	Common::Rect(640, 480), // Screen
+	Common::Rect(Common::Point(0, 0), 640, 32), // Menu
+	Common::Rect(Common::Point(0, 68), 640, 344), // Working; aspect ratio 1.86
+	Common::Rect(Common::Point(0, 412), 640, 68) // Text
 };
-//*/
+// */
 enum {
 
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
@@ -265,7 +265,7 @@ public:
 	 *
 	 * @param videoDecoder    The video to play
 	 * @param destRect        Where to put the video. (In working window coords)
-	 * @param srcRect         What subset of video to blit to destRect (In video frame coords)  //TODO implement
+	 * @param srcRect         What subset of video to blit to destRect (In video frame coords)  // TODO implement
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, Common::Rect destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0, Common::Rect srcRect = Common::Rect(0, 0, 0, 0));

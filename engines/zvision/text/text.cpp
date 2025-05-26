@@ -342,9 +342,9 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	uint i = 0u;
 	uint stringlen = text.size();
 
-	//Parse entirety of supplied text
+	// Parse entirety of supplied text
 	while (i < stringlen) {
-		//Style tag encountered?
+		// Style tag encountered?
 		if (text[i] == '<') {
 			// Flush the currentWord to the currentSentence
 			currentSentence += currentWord;

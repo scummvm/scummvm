@@ -88,7 +88,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 	Common::Rect workingArea = _renderManager->getWorkingArea();
 	// If dstRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
 	bool scaled = false;
-	workingArea.moveTo(0, 0); //Set local origin system in this scope to origin of working area
+	workingArea.moveTo(0, 0); // Set local origin system in this scope to origin of working area
 
 	debug(1, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", srcRect.left, srcRect.top, srcRect.right, srcRect.bottom, dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 
@@ -155,7 +155,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 				_subtitleManager->update(vid.getCurFrame(), sub);
 
 			if (frame) {
-				_renderManager->renderSceneToScreen(true, true, true); //Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
+				_renderManager->renderSceneToScreen(true, true, true); // Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
 				if (scaled) {
 					debug(8, "Scaled blit from area %d x %d to video output surface at output surface position %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
 					outSurface.blitFrom(*frame, srcRect, dstRect);
@@ -170,7 +170,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 		// Always update the screen so the mouse continues to render & video does not skip
 		_renderManager->renderSceneToScreen(true, true, false);
 
-		_system->delayMillis(vid.getTimeToNextFrame() / 2); //Exponentially decaying delay
+		_system->delayMillis(vid.getTimeToNextFrame() / 2); // Exponentially decaying delay
 	}
 
 	_cutscenesKeymap->setEnabled(false);
@@ -187,7 +187,7 @@ double ZVision::getVobAmplification(Common::String fileName) const {
 	// in the low-res ones. So we artificially boost the volume. This is an
 	// approximation, but I've tried to match the old volumes reasonably
 	// well.
-	//
+	// 
 	// Some of these will cause audio clipping. Hopefully not enough to be
 	// noticeable.
 	double amplification = 0.0;

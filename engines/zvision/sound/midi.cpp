@@ -81,7 +81,7 @@ void MidiManager::noteOff(uint8 channel) {
 }
 
 int8 MidiManager::getFreeChannel() {
-	uint8 start = _mt32 ? 1 : 0; //MT-32 can be used for MIDI, but does not play anything on MIDI channel 0
+	uint8 start = _mt32 ? 1 : 0; // MT-32 can be used for MIDI, but does not play anything on MIDI channel 0
 	for (uint8 i = start; i < 16; i++)
 		if (!_activeChannels[i].playing)
 			return i;

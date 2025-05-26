@@ -180,7 +180,7 @@ void ZVision::saveSettings() {
 }
 
 void ZVision::initialize() {
-	//File Paths
+	// File Paths
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	_searchManager = new SearchManager(ConfMan.getPath("path"), 6);
@@ -204,11 +204,11 @@ void ZVision::initialize() {
 		break;
 	}
 
-	//Graphics
+	// Graphics
 	_widescreen = ConfMan.getBool("widescreen");
 	_doubleFPS = ConfMan.getBool("doublefps");
 
-	//Keymaps
+	// Keymaps
 
 	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
 	_gameKeymap = keymapper->getKeymap(gameKeymapId);
@@ -266,7 +266,7 @@ void ZVision::initialize() {
 
 	// Initialize FPS timer callback
 	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
-	//Ensure a new game is launched with correct panorama quality setting
+	// Ensure a new game is launched with correct panorama quality setting
 	_scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
 }
 
@@ -351,15 +351,15 @@ Common::Error ZVision::run() {
 	while (!shouldQuit()) {
 		debug(5, "\nInitiating new game cycle");
 		debug(5, "Timers");
-		//Timers
+		// Timers
 		_clock.update();
 		uint32 deltaTime = _clock.getDeltaTime();
 		debug(5, "Logic");
-		//Process game logic & update backbuffers as necessary
+		// Process game logic & update backbuffers as necessary
 		debug(5, "Cursor");
 		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
 		debug(5, "Events");
-		processEvents();  //NB rotateTo or playVideo event will pause clock & call renderSceneToScreen() directly.
+		processEvents();  // NB rotateTo or playVideo event will pause clock & call renderSceneToScreen() directly.
 		debug(5, "Rotation");
 		_renderManager->updateRotation();
 		debug(5, "Scripts");
