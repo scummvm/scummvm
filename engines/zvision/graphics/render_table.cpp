@@ -92,13 +92,14 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 	return newPoint;
 }
 
+//Disused at present; potentially useful for future rendering efficient improvements.
 /*/
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect) {
     uint32 destOffset = 0;
   uint32 sourceXIndex = 0;
   uint32 sourceYIndex = 0;
   if(highQuality) {
-    //TODO - convert to high quality pixel filtering
+    // TODO - convert to high quality pixel filtering
       for (int16 y = subRect.top; y < subRect.bottom; ++y) {
           uint32 sourceOffset = y * _numColumns;
           for (int16 x = subRect.left; x < subRect.right; ++x) {
@@ -127,7 +128,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
       }
   }
 }
-//*/
+// */
 
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
 	_destOffset = 0;
@@ -140,7 +141,7 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 	}
 	uint32 mutationTime = _system->getMillis();
 	if (_highQuality) {
-		//Apply bilinear interpolation
+		// Apply bilinear interpolation
 		FilterPixel _curP;
 		for (int16 y = 0; y < srcBuf->h; ++y) {
 			_sourceOffset = y * _numColumns;
@@ -165,11 +166,11 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 				debug(2,"\t_fX: %f, _fY: %f", _curP._fX, _curP._fY);
 				debug(2,"\tYT: %d, YB: %d, XL: %d XR: %d", _srcIndexYT, _srcIndexYB, _srcIndexXL, _srcIndexXR);
 				}
-				//*/
+				// */
 			}
 		}
 	} else {
-		//Apply nearest-neighbour interpolation
+		// Apply nearest-neighbour interpolation
 		for (int16 y = 0; y < srcBuf->h; ++y) {
 			_sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
@@ -213,9 +214,9 @@ void RenderTable::generateLookupTable(bool tilt) {
 	uint x = 0;
 	uint y = 0;
 	auto outerLoop = [&](uint & polarCoord, float & halfPolarSize, float & scale) {
-		//polarCoord is the coordinate of the working window pixel parallel to the direction of camera rotation
-		//halfPolarSize is the distance from the central axis to the outermost working window pixel in the direction of camera rotation
-		//alpha represents the angle in the direction of camera rotation between the view axis and the centre of a pixel at the given polar coordinate
+		// polarCoord is the coordinate of the working window pixel parallel to the direction of camera rotation
+		// halfPolarSize is the distance from the central axis to the outermost working window pixel in the direction of camera rotation
+		// alpha represents the angle in the direction of camera rotation between the view axis and the centre of a pixel at the given polar coordinate
 		alpha = atan(((float)polarCoord - halfPolarSize) / cylinderRadius);
 		// To map the polar coordinate to the cylinder surface coordinates, we just need to calculate the arc length
 		// We also scale it by linearScale
@@ -236,10 +237,10 @@ void RenderTable::generateLookupTable(bool tilt) {
 		    }
 		*/
 		// Only store the (x,y) offsets instead of the absolute positions
-//		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
+// 		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
 		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality);
-		//Transformation is both horizontally and vertically symmetrical about the camera axis,
-		//We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y:
+		// Transformation is both horizontally and vertically symmetrical about the camera axis,
+		// We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y:
 		_internalBuffer[indexBL] = _internalBuffer[indexTL];
 		_internalBuffer[indexBL].flipV();
 		_internalBuffer[indexTR] = _internalBuffer[indexTL];

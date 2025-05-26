@@ -60,11 +60,11 @@ ZorkCursor::ZorkCursor(ZVision *engine, const Common::Path &fileName)
 	uint32 bytesRead = file.read(_surface.getPixels(), dataSize);
 	assert(bytesRead == dataSize);
 
-	#ifndef SCUMM_LITTLE_ENDIAN
+#ifndef SCUMM_LITTLE_ENDIAN
 	int16 *buffer = (int16 *)_surface.getPixels();
 	for (uint32 i = 0; i < dataSize / 2; ++i)
 		buffer[i] = FROM_LE_16(buffer[i]);
-	#endif
+#endif
 }
 
 ZorkCursor::ZorkCursor(const ZorkCursor &other) {

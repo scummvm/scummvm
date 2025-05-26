@@ -131,20 +131,8 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 Common::Error SaveManager::loadGame(int slot) {
 	Common::SeekableReadStream *saveFile = NULL;
 	if (slot < 0) {
-		//Restart game, used by ZGI death screen only
-		/*
-		        saveFile = _engine->getSearchManager()->openFile("r.svr");
-		        if (!saveFile) {
-		            Common::File *restoreFile = new Common::File();
-		            if (!restoreFile->open("r.svr")) {
-		                delete restoreFile;
-		                return Common::kPathDoesNotExist;
-		            }
-		            saveFile = restoreFile;
-		        }
-		/*/
+		// Restart game, used by ZGI death screen only
 		_engine->getScriptManager()->initialize(true);
-//*/
 		return Common::kNoError;
 	} else {
 		saveFile = getSlotFile(slot);
@@ -159,8 +147,8 @@ Common::Error SaveManager::loadGame(int slot) {
 		scriptManager->deserialize(saveFile);
 		delete saveFile;
 		if (_engine->getGameId() == GID_NEMESIS)  {
-			//Zork Nemesis has no in-game option to select panorama quality or animation options
-			//We set them here to ensure loaded games don't override current game configuration
+			// Zork Nemesis has no in-game option to select panorama quality or animation options
+			// We set them here to ensure loaded games don't override current game configuration
 			scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
 			scriptManager->setStateValue(StateKey_NoTurnAnim, ConfMan.getBool("noanimwhileturning"));
 			if (scriptManager->getCurrentLocation() == "tv2f") {
