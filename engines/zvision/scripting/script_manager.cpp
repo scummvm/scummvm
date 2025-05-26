@@ -75,11 +75,11 @@ void ScriptManager::initialize(bool restarted) {
 		_referenceTable.clear();
 		switch (_engine->getGameId()) {
 		case GID_GRANDINQUISITOR:
-			//Bypass logo video
+			// Bypass logo video
 			setStateValue(16966, 1);
-			//Ensure post-logo screen redraw is not inhibited in CD version
+			// Ensure post-logo screen redraw is not inhibited in CD version
 			setStateValue(5813, 1);
-			//Bypass additional logo videos in DVD version
+			// Bypass additional logo videos in DVD version
 			setStateValue(19810, 1);
 			setStateValue(19848, 1);
 			break;
@@ -102,7 +102,7 @@ void ScriptManager::update(uint deltaTimeMillis) {
 		// triggered other scripts, so give them all one extra cycle to
 		// run. This fixes some missing scoring in ZGI, and quite
 		// possibly other minor glitches as well.
-		//
+		// 
 		// Another idea would be to change if there are pending scripts
 		// in the exec queues, but that could cause this to hang
 		// indefinitely.
@@ -633,7 +633,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		}
 	}
 
-	//_engine->setRenderDelay(2); //Uncertain if this is necessary; doesn't seem to cause any problems when disabled, but keep an eye on it.
+	// _engine->setRenderDelay(2); // Uncertain if this is necessary; doesn't seem to cause any problems when disabled, but keep an eye on it.
 
 	if (!leavingMenu) {
 		if (!isLoading && !enteringMenu) {
@@ -761,8 +761,8 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 	stream->writeUint32BE(MKTAG('F', 'L', 'A', 'G'));
 
 	int32 slots = _engine->getGameId() == GID_NEMESIS ? 31000 : 21000;
-	//Original games use key values up to 29500 and 19737, respectively
-	//Values 30001~31000 and 20001~21000 are now set aside for auxiliary scripting to add extra directional audio effects.
+	// Original games use key values up to 29500 and 19737, respectively
+	// Values 30001~31000 and 20001~21000 are now set aside for auxiliary scripting to add extra directional audio effects.
 
 	stream->writeUint32LE(slots * 2);
 

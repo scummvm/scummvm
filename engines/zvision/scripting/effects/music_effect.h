@@ -53,8 +53,8 @@ public:
 		return _volume;
 	}
 	virtual void setFade(int32 time, uint8 target) = 0;
-	virtual void setBalance(int8 balance);  //NB Overrides effects of setDirection()
-	void setDirection(Math::Angle azimuth, uint8 magnitude = 255);  //NB Overrides effects of setBalance()
+	virtual void setBalance(int8 balance);  // NB Overrides effects of setDirection()
+	void setDirection(Math::Angle azimuth, uint8 magnitude = 255);  // NB Overrides effects of setBalance()
 protected:
 	void updateMixer();
 	virtual void outputMixer() = 0;
@@ -62,7 +62,7 @@ protected:
 	uint8 _volume = 0;
 	int8 _balance = 0;
 	Math::Angle _azimuth;
-	uint8 _directionality;  //0 = fully ambient, 255 = fully directional
+	uint8 _directionality;  // 0 = fully ambient, 255 = fully directional
 	uint8 _volumeOut = 0;
 };
 
@@ -91,7 +91,7 @@ private:
 	uint8 _fadeStartVol;
 	uint8 _fadeEndVol;
 	uint32 _fadeTime;
-	uint32 _fadeElapsed; //Cumulative time since fade start
+	uint32 _fadeElapsed; // Cumulative time since fade start
 	bool _stereo;
 	Audio::SoundHandle _handle;
 	uint16 _sub;

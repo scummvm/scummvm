@@ -44,19 +44,19 @@ enum {
 };
 
 struct MenuParams {
-	int16 wxButs[4][2];   //Widths & X positions of main menu buttons; {Save, Restore, Prefs, Quit}
-	int16 wMain;  //Width of main menu background
-	int8 idleFrame; //Frame to display of unselected main menu button
-	int8 activeFrame; //Frame to display of selected main menu button when mouse is down
-	int8 clickedFrame; //Frame to display of selected main menu button when mouse is down
-	Common::Point activePos;  //Fully scrolled main menu position, relative to origin of menu area
-	Common::Point idlePos;  //Fully retracted main menu position, relative to origin of menu area
-	int16 period; //Duration of main menu scrolldown
-	int16 triggerHeight;  //Height of menu trigger area when inactive
-	int16 buttonPeriod; //Duration of main menu button animation
+	int16 wxButs[4][2];   // Widths & X positions of main menu buttons; {Save, Restore, Prefs, Quit}
+	int16 wMain;  // Width of main menu background
+	int8 idleFrame; // Frame to display of unselected main menu button
+	int8 activeFrame; // Frame to display of selected main menu button when mouse is down
+	int8 clickedFrame; // Frame to display of selected main menu button when mouse is down
+	Common::Point activePos;  // Fully scrolled main menu position, relative to origin of menu area
+	Common::Point idlePos;  // Fully retracted main menu position, relative to origin of menu area
+	int16 period; // Duration of main menu scrolldown
+	int16 triggerHeight;  // Height of menu trigger area when inactive
+	int16 buttonPeriod; // Duration of main menu button animation
 };
 
-//NB - menu area is same width as working window.
+// NB - menu area is same width as working window.
 
 static const MenuParams nemesisParams {
 	{ {120, -1}, {144, 120}, {128, 264}, {120, 392} },
@@ -97,10 +97,10 @@ public:
 	};
 	virtual bool inMenu(const Common::Point &Pos) {
 		return false;
-	}; //For widescreen mod; used to suspend panning, tilting & scripting triggers when the mouse is within the working window but also in the menu.
+	}; // For widescreen mod; used to suspend panning, tilting & scripting triggers when the mouse is within the working window but also in the menu.
 
-	void mainMouseDown(const Common::Point &Pos); //Show clicked graphic under selected button
-	bool mainMouseMove(const Common::Point &Pos); //return true if selected button has changed
+	void mainMouseDown(const Common::Point &Pos); // Show clicked graphic under selected button
+	bool mainMouseMove(const Common::Point &Pos); // return true if selected button has changed
 
 	void setEnable(uint16 flags);
 	uint16 getEnable() {
@@ -133,10 +133,10 @@ protected:
 	Common::BitArray _enableFlags;
 	Common::Rect _mainArea;
 	Common::Rect _menuHotspots[4];
-	int8 _mainFrames[4]; //Frame to display of each main menu button; first row is currently displayed, 2nd row is backbuffer for idle animations
+	int8 _mainFrames[4]; // Frame to display of each main menu button; first row is currently displayed, 2nd row is backbuffer for idle animations
 	Scroller _mainScroller;
-	FocusList<int8> _menuFocus;  //Order in which menus have most recently had focus; determines current mouse focus & order in which to redraw them.
-	bool _clean = false; //Whether or not to blank
+	FocusList<int8> _menuFocus;  // Order in which menus have most recently had focus; determines current mouse focus & order in which to redraw them.
+	bool _clean = false; // Whether or not to blank
 	LinearScroller *_buttonAnim[4];
 };
 
@@ -144,7 +144,7 @@ class MenuZGI: public MenuManager {
 public:
 	MenuZGI(ZVision *engine, Common::Rect menuArea);
 	~MenuZGI() override;
-	void onMouseMove(const Common::Point &Pos) override;  //NB Pos is in screen coordinates
+	void onMouseMove(const Common::Point &Pos) override;  // NB Pos is in screen coordinates
 	void onMouseUp(const Common::Point &Pos) override;
 	void process(uint32 deltaTimeInMillis) override;
 	bool inMenu(const Common::Point &Pos) override;

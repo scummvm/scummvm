@@ -66,7 +66,7 @@ bool LinearScroller::update(uint32 deltatime) {
 			_pos = _idlePos;
 		_moving = false;
 	}
-	return (_pos != _prevPos);  //True if redraw necessary
+	return (_pos != _prevPos);  // True if redraw necessary
 }
 
 void LinearScroller::reset() {

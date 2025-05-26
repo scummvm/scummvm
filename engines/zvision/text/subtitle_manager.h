@@ -33,20 +33,20 @@ class ZVision;
 class Subtitle {
 	friend class SubtitleManager;
 public:
-	Subtitle(ZVision *engine, const Common::Path &subname, bool vob = false); //For scripted subtitles
-	Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea);  //For other text messages
+	Subtitle(ZVision *engine, const Common::Path &subname, bool vob = false); // For scripted subtitles
+	Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea);  // For other text messages
 	virtual ~Subtitle();
-	bool update(int32 count); //Return true if necessary to redraw
+	bool update(int32 count); // Return true if necessary to redraw
 	virtual bool selfUpdate() {
 		return false;
 	};
 
 protected:
-	virtual bool process(int32 deltatime);  //Return true if to be deleted
+	virtual bool process(int32 deltatime);  // Return true if to be deleted
 	ZVision *_engine;
 	Common::Rect _textArea;
-	//Common::String _txt;
-	int16 _timer; //Always in milliseconds; countdown to deletion
+	// Common::String _txt;
+	int16 _timer; // Always in milliseconds; countdown to deletion
 	bool _toDelete;
 	bool _redraw;
 
@@ -56,23 +56,23 @@ protected:
 		int stop;
 		Common::String subStr;
 	};
-	//NB: start & stop do not always use the same units between different instances of this struct!
-	//Sound effect & music subtitles use milliseconds
-	//Video subtitle timings are specified in video frames at 15fps, i.e. in multiples of 66.6' milliseconds!
-	//AVI videos run at 15fps and can have frames counted directly
-	//DVD videos in VOB format run at 29.97 fps and must be converted to work with the subtitle files, which were made for AVI.
+	// NB: start & stop do not always use the same units between different instances of this struct!
+	// Sound effect & music subtitles use milliseconds
+	// Video subtitle timings are specified in video frames at 15fps, i.e. in multiples of 66.6' milliseconds!
+	// AVI videos run at 15fps and can have frames counted directly
+	// DVD videos in VOB format run at 29.97 fps and must be converted to work with the subtitle files, which were made for AVI.
 
 	Common::Array<Line> _lines;
 };
 
 class AutomaticSubtitle : public Subtitle {
 public:
-	AutomaticSubtitle(ZVision *engine, const Common::Path &subname, Audio::SoundHandle handle);  //For scripted audio subtitles
+	AutomaticSubtitle(ZVision *engine, const Common::Path &subname, Audio::SoundHandle handle);  // For scripted audio subtitles
 	~AutomaticSubtitle() {};
 
 private:
-	bool process(int32 deltatime);  //Return true if to be deleted
-	bool selfUpdate(); //Return true if necessary to redraw
+	bool process(int32 deltatime);  // Return true if to be deleted
+	bool selfUpdate(); // Return true if necessary to redraw
 	Audio::SoundHandle _handle;
 };
 
@@ -85,7 +85,7 @@ private:
 	OSystem *_system;
 	RenderManager *_renderManager;
 	const Graphics::PixelFormat _pixelFormat;
-	const Common::Point _textOffset;  //Position vector of text area origin relative to working window origin
+	const Common::Point _textOffset;  // Position vector of text area origin relative to working window origin
 	const Common::Rect _textArea;
 	bool _redraw;
 	bool _doubleFPS;
@@ -100,10 +100,10 @@ private:
 	FocusList<uint16> _subsFocus;
 
 public:
-	//Update all subtitle objects' deletion timers, delete expired subtitles, & redraw most recent.  Does NOT update any subtitle's count value or displayed string!
-	void process(int32 deltatime);  //deltatime is always milliseconds
-	//Update counter value of referenced subtitle id & set current line to display, if any.
-	void update(int32 count, uint16 subid);  //Count is milliseconds for sound & music; frames for video playback.
+	// Update all subtitle objects' deletion timers, delete expired subtitles, & redraw most recent.  Does NOT update any subtitle's count value or displayed string!
+	void process(int32 deltatime);  // deltatime is always milliseconds
+	// Update counter value of referenced subtitle id & set current line to display, if any.
+	void update(int32 count, uint16 subid);  // Count is milliseconds for sound & music; frames for video playback.
 
 	Common::Point getTextOffset() {
 		return _textOffset;
@@ -111,7 +111,7 @@ public:
 
 	// Create subtitle object and return ID
 	uint16 create(const Common::Path &subname, bool vob = false);
-	uint16 create(const Common::Path &subname, Audio::SoundHandle handle);  //NB this creates an automatic subtitle
+	uint16 create(const Common::Path &subname, Audio::SoundHandle handle);  // NB this creates an automatic subtitle
 	uint16 create(const Common::String &str);
 
 	// Delete subtitle object by ID

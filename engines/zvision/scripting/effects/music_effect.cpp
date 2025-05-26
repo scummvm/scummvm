@@ -57,10 +57,10 @@ void MusicNodeBASE::setBalance(int8 balance) {
 
 void MusicNodeBASE::updateMixer() {
 	if (_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1)
-		_volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth, _directionality);  //Apply game-specific volume profile and then attenuate according to azimuth
+		_volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth, _directionality);  // Apply game-specific volume profile and then attenuate according to azimuth
 	else
-//    _volumeOut = _engine->getVolumeManager()->convert(_volume, kVolumeLinear);  //Apply linear volume profile and ignore azimuth
-		_volumeOut = _engine->getVolumeManager()->convert(_volume);  //Apply game-specific volume profile and ignore azimuth
+//    _volumeOut = _engine->getVolumeManager()->convert(_volume, kVolumeLinear);  // Apply linear volume profile and ignore azimuth
+		_volumeOut = _engine->getVolumeManager()->convert(_volume);  // Apply game-specific volume profile and ignore azimuth
 	outputMixer();
 }
 
@@ -112,7 +112,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 
 		Common::Path subpath(filename.getParent().appendComponent(subname));
 		if (_engine->getSearchManager()->hasFile(subpath))
-			_sub = _engine->getSubtitleManager()->create(subpath, _handle); //NB automatic subtitle!
+			_sub = _engine->getSubtitleManager()->create(subpath, _handle); // NB automatic subtitle!
 
 		_loaded = true;
 		updateMixer();
@@ -163,11 +163,11 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 			if (_volume != _newvol)
 				setVolume(_newvol);
 		}
-		/*  //Redundant with switch to automatic subtitles
+		/*  // Redundant with switch to automatic subtitles
 
 		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
 		  _engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
-		//*/
+		// */
 	}
 	return false;
 }
@@ -213,7 +213,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		if (!_staticScreen)
-			//Original game scripted behaviour
+			// Original game scripted behaviour
 			switch (_engine->getRenderManager()->getRenderTable()->getRenderState()) {
 			case RenderTable::PANORAMA:
 				debug(3, "PanTrackNode in panorama mode");
@@ -223,8 +223,8 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 					_viewPos.setDegrees(360 * scriptManager->getStateValue(StateKey_ViewPos) / _width);
 				} else {
 					warning("Encountered zero background width whilst processing PanTrackNode in panoramic mode!");
-					//_sourcePos.setDegrees(0);
-					//_viewPos.setDegrees(0);
+					// _sourcePos.setDegrees(0);
+					// _viewPos.setDegrees(0);
 				}
 				break;
 			case RenderTable::FLAT:
@@ -235,14 +235,14 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 				_viewPos.setDegrees(0);
 				break;
 			} else {
-			//Used for auxiliary scripts only
+			// Used for auxiliary scripts only
 			_sourcePos.setDegrees(_pos);
 			_viewPos.setDegrees(0);
 		}
 		Math::Angle azimuth;
 		azimuth = _sourcePos - _viewPos;
 		debug(3, "soundPos: %f, _viewPos: %f, azimuth: %f, width %d", _sourcePos.getDegrees(), _viewPos.getDegrees(), azimuth.getDegrees(), _width);
-		//azimuth is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
+		// azimuth is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
 		mus->setDirection(azimuth, _mag);
 	}
 	return false;
