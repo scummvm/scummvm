@@ -97,6 +97,8 @@ bool CWinApp::GetMessage(MSG &msg) {
 
 	// Convert other event types
 	msg = ev;
+	msg.hwnd = m_pMainWnd;
+
 	return true;
 }
 
