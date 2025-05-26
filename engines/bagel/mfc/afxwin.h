@@ -818,7 +818,7 @@ public:
 	CWnd *m_pParentWnd = nullptr;
 	bool _visible = false;
 	Libs::EventQueue _messages;
-
+	Common::String _windowText;
 	static CWnd *FromHandlePermanent(HWND hWnd);
 
 public:

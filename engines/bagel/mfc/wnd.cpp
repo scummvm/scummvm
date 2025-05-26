@@ -278,11 +278,12 @@ int CWnd::GetWindowText(CString &rString) const {
 }
 
 int CWnd::GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const {
+	Common::strcpy_s(lpszStringBuf, nMaxCount, _windowText.c_str());
 	error("TODO: CWnd::GetWindowText");
 }
 
 BOOL CWnd::SetWindowText(LPCSTR lpszString) {
-	error("TODO: CWnd::SetWindowText");
+	_windowText = lpszString;
 }
 
 UINT CWnd::GetState() const {
