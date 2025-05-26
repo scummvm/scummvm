@@ -518,15 +518,19 @@ public:
 };
 
 class CRgn : public CGdiObject {
+private:
+	Common::Array<POINT> _points;
+	Common::Rect _rect;
+	int _polyFillMode = 0;
+
 public:
 	~CRgn() override {
 	}
 
-	BOOL CreatePolygonRgn(
-	    const POINT *lpPoints,
-	    int nCount,
-	    int nPolyFillMode
-	);
+	BOOL CreateRectRgn(int x1, int y1, int x2, int y2);
+	BOOL CreateRectRgnIndirect(LPCRECT lpRect);
+	BOOL CreatePolygonRgn(const POINT *lpPoints,
+	    int nCount, int nPolyFillMode);
 };
 
 class CDC : public CObject {
@@ -896,11 +900,17 @@ protected:
 	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex) { return 0; }
 
 public:
-	HWND m_hWnd = (HWND)0;
+	// For ScummVM the m_hWnd just points to the window itself,
+	// so it'll be set up once in the constructor
+	CWnd *const m_hWnd;
+
 	CWnd *m_pParentWnd = nullptr;
 	bool _visible = false;
 	Libs::EventQueue _messages;
 	Common::String _windowText;
+	Common::Rect _windowRect;
+	Common::Rect _updateRect;
+	Graphics::ManagedSurface _surface;
 
 public:
 	static CWnd *FromHandle(HWND hWnd) {
@@ -911,6 +921,7 @@ public:
 	}
 
 public:
+	CWnd() : m_hWnd(this) {}
 	~CWnd() override;
 
 	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,

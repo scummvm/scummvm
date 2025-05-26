@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/gfx/window.h"
@@ -51,7 +52,13 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 		return false;
 
 	// Create the actual window content
-	m_hWnd = (HWND)new Gfx::Window(cs);
+	_windowRect.left = cs.x;
+	_windowRect.top = cs.y;
+	_windowRect.right = cs.x + cs.cx;
+	_windowRect.bottom = cs.y + cs.cy;
+
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	_surface.create(cs.cx, cs.cy, format);
 
 	return true;
 }
@@ -82,7 +89,9 @@ BOOL CWnd::EnableWindow(BOOL bEnable) {
 }
 
 void CWnd::UpdateWindow() {
-	error("TODO: CWnd::UpdateWindow");
+	// If there's a pending paint, do it now
+	if (_messages.popPaint())
+		SendMessage(WM_PAINT);
 }
 
 BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
@@ -103,6 +112,10 @@ void CWnd::DestroyWindow() {
 }
 
 void CWnd::Invalidate(BOOL bErase) {
+	// Mark the entire window for redrawing
+	_updateRect = _windowRect;
+
+	// Handle adding optional erase, and paint messages
 	if (bErase)
 		_messages.push(MSG(WM_ERASEBKGND));
 	_messages.push(MSG(WM_PAINT));
@@ -408,31 +421,47 @@ LReturnTrue:
 }
 
 BOOL CWnd::ValidateRect(LPCRECT lpRect) {
-	error("TODO: CWnd::ValidateRect");
+	Common::Rect r(lpRect->left, lpRect->top,
+		lpRect->right, lpRect->bottom);
+
+	if (_updateRect.isEmpty() || _updateRect.contains(r))
+		_updateRect = Common::Rect();
+	return true;
 }
 
 BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
-	error("TODO: CWnd::InvalidateRect");
+	Common::Rect r(lpRect->left, lpRect->top,
+		lpRect->right, lpRect->bottom);
+	_updateRect.extend(r);
+	return true;
 }
 
 void CWnd::GetWindowRect(LPRECT lpRect) const {
-	error("TODO: CWnd::GetWindowRect");
+	lpRect->left = _windowRect.left;
+	lpRect->top = _windowRect.top;
+	lpRect->right = _windowRect.right;
+	lpRect->bottom = _windowRect.bottom;
 }
 
 BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
-	error("TODO: CWnd::GetUpdateRect");
+	lpRect->left = _updateRect.left;
+	lpRect->top = _updateRect.top;
+	lpRect->right = _updateRect.right;
+	lpRect->bottom = _updateRect.bottom;
+	return true;
 }
 
 BOOL CWnd::GetClientRect(LPRECT lpRect) const {
-	error("TODO: CWnd::GetClientRect");
-}
-void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
-	error("TODO: CWnd::MoveWindow");
+	GetWindowRect(lpRect);
+	return true;
 }
 
-void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight,
-                      BOOL bRepaint) {
-	error("TODO: CWnd::MoveWIndow");
+void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
+	error("CWnd::MoveWindow is unsupported");
+}
+
+void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
+	error("CWnd::MoveWindow is unsupported");
 }
 
 HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
