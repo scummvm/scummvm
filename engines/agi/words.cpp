@@ -47,22 +47,18 @@ int Words::loadDictionary_v1(Common::SeekableReadStream &stream) {
 	stream.seek(26 * 2, SEEK_CUR);
 	do {
 		// Read next word
-		for (k = 0; k < (int)sizeof(str) - 1; k++) {
+		for (k = 0; k < ARRAYSIZE(str) - 1; k++) {
 			str[k] = stream.readByte();
 			if (str[k] == 0 || (uint8)str[k] == 0xFF)
 				break;
 		}
 
-		// And store it in our internal dictionary
+		// Store word in dictionary
 		if (k > 0) {
-			WordEntry *newWord = new WordEntry;
-			byte firstCharNr = str[0] - 'a';
-
-			newWord->word = Common::String(str, k + 1); // myStrndup(str, k + 1);
-			newWord->id = stream.readUint16LE();
-
-			_dictionaryWords[firstCharNr].push_back(newWord);
-			debug(3, "'%s' (%d)", newWord->word.c_str(), newWord->id);
+			WordEntry newWord;
+			newWord.word = Common::String(str, k + 1);
+			newWord.id = stream.readUint16LE();
+			_dictionary[str[0]].push_back(newWord);
 		}
 	} while ((uint8)str[0] != 0xFF);
 
@@ -82,38 +78,46 @@ int Words::loadDictionary(const char *fname) {
 }
 
 int Words::loadDictionary(Common::SeekableReadStream &stream) {
-	// Loop through alphabet, as words in the dictionary file are sorted by
-	// first character
-	uint32 start = stream.pos();
-	char str[64] = { 0 };
-	char c;
+	// Read words for each letter (A-Z)
+	const uint32 start = stream.pos();
 	for (int i = 0; i < 26; i++) {
+		// Read letter index and seek to first word
 		stream.seek(start + i * 2);
 		int offset = stream.readUint16BE();
-		if (offset == 0)
-			continue;
+		if (offset == 0) {
+			continue; // no words
+		}
 		stream.seek(start + offset);
-		int k = stream.readByte();
-		while (!stream.eos() && !stream.err()) {
-			// Read next word
-			do {
+
+		// Read all words in this letter's section
+		char str[64] = { 0 };
+		int prevWordLength = 0;
+		int k = stream.readByte(); // copy-count of first word
+		while (!stream.eos() && !stream.err() && k <= prevWordLength) {
+			// Read word
+			char c = 0;
+			while (!(c & 0x80) && k < ARRAYSIZE(str) - 1) {
 				c = stream.readByte();
 				str[k++] = (c ^ 0x7F) & 0x7F;
-			} while (!(c & 0x80) && k < (int)sizeof(str) - 1);
+			}
 			str[k] = 0;
+
+			// Read word id
+			uint16 wordId = stream.readUint16BE();
+			if (stream.eos() || stream.err()) {
+				break;
+			}
 
 			// WORKAROUND:
 			// The SQ0 fan game stores words starting with numbers (like '7up')
 			// in its dictionary under the 'a' entry. We skip these.
 			// See bug #6415
 			if (str[0] == 'a' + i) {
-				// And store it in our internal dictionary
-				WordEntry *newWord = new WordEntry;
-				newWord->word = Common::String(str, k);
-				newWord->id = stream.readUint16BE();
-				_dictionaryWords[i].push_back(newWord);
-			} else {
-				stream.readUint16BE();
+				// Store word in dictionary
+				WordEntry newWord;
+				newWord.word = Common::String(str, k);
+				newWord.id = wordId
+				_dictionary[str[0]].push_back(newWord);
 			}
 
 			k = stream.readByte();
@@ -122,8 +126,10 @@ int Words::loadDictionary(Common::SeekableReadStream &stream) {
 			// WORKAROUND: We only break after already seeing words with the
 			// right prefix, for the SQ0 words starting with digits filed under
 			// 'a'. See above comment and bug #6415.
-			if (k == 0 && str[0] >= 'a' + i)
+			if (k == 0 && str[0] == 'a' + i) {
 				break;
+			}
+			prevWordLength = k;
 		}
 	}
 
@@ -146,16 +152,11 @@ int Words::loadExtendedDictionary(const char *sierraFname) {
 	fp.readString('\n');
 
 	while (!fp.eos() && !fp.err()) {
-		Common::String word = fp.readString();
-		uint16 id = atoi(fp.readString('\n').c_str());
-		if (!word.empty()) {
-			byte index = (byte)word[0] - 'a';
-			if (index < ARRAYSIZE(_dictionaryWords)) {
-				WordEntry *newWord = new WordEntry();
-				newWord->word = word;
-				newWord->id = id;
-				_dictionaryWords[index].push_back(newWord);
-			}
+		WordEntry newWord;
+		newWord.word = fp.readString();
+		newWord.id = atoi(fp.readString('\n').c_str());
+		if (!newWord.word.empty()) {
+			_dictionary[(byte)newWord.word[0]].push_back(newWord);
 		}
 	}
 
@@ -163,16 +164,7 @@ int Words::loadExtendedDictionary(const char *sierraFname) {
 }
 
 void Words::unloadDictionary() {
-	for (int16 firstCharNr = 0; firstCharNr < 26; firstCharNr++) {
-		Common::Array<WordEntry *> &dictionary = _dictionaryWords[firstCharNr];
-		int16 dictionarySize = dictionary.size();
-
-		for (int16 dictionaryWordNr = 0; dictionaryWordNr < dictionarySize; dictionaryWordNr++) {
-			delete dictionary[dictionaryWordNr];
-		}
-
-		_dictionaryWords[firstCharNr].clear();
-	}
+	_dictionary.clear();
 }
 
 void Words::clearEgoWords() {
@@ -270,12 +262,9 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowercase, uint
 			}
 		}
 
-		Common::Array<WordEntry *> &dictionary = _dictionaryWords[firstChar - 'a'];
-		int16 dictionarySize = dictionary.size();
-
-		for (int16 dictionaryWordNr = 0; dictionaryWordNr < dictionarySize; dictionaryWordNr++) {
-			WordEntry *dictionaryEntry = dictionary[dictionaryWordNr];
-			uint16 dictionaryWordLen = dictionaryEntry->word.size();
+		const Common::Array<WordEntry> &words = _dictionary.getValOrDefault(firstChar);
+		for (const WordEntry &wordEntry : words) {
+			uint16 dictionaryWordLen = wordEntry.word.size();
 
 			if (dictionaryWordLen <= userInputLeft) {
 				// dictionary word is longer or same length as the remaining user input
@@ -285,7 +274,7 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowercase, uint
 				userInputPos = wordStartPos;
 				while (curCompareLeft) {
 					byte curUserInputChar = userInputLowercase[userInputPos];
-					byte curDictionaryChar = dictionaryEntry->word[dictionaryWordPos];
+					byte curDictionaryChar = wordEntry.word[dictionaryWordPos];
 
 					if (curUserInputChar != curDictionaryChar)
 						break;
@@ -299,7 +288,7 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowercase, uint
 					// check, if there is also nothing more of user input left or if a space the follow-up char?
 					if ((userInputPos >= userInputLen) || (userInputLowercase[userInputPos] == ' ')) {
 						// so fully matched, remember match
-						wordId = dictionaryEntry->id;
+						wordId = wordEntry.id;
 						foundWordLen = dictionaryWordLen;
 
 						// perfect match? -> exit loop
