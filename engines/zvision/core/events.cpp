@@ -218,25 +218,21 @@ void ZVision::processEvents() {
 				break;
 
 			case kZVisionActionSave:
-				//if (_menu->getEnable() & kMenubarSave)
 				if (_menu->getEnable(kMainMenuSave))
 					_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
 				break;
 
 			case kZVisionActionRestore:
-				//if (_menu->getEnable() & kMenubarRestore)
 				if (_menu->getEnable(kMainMenuLoad))
 					_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
 				break;
 
 			case kZVisionActionPreferences:
-				//if (_menu->getEnable() & kMenubarSettings)
 				if (_menu->getEnable(kMainMenuPrefs))
 					_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
 				break;
 
 			case kZVisionActionQuit:
-				//if (_menu->getEnable() & kMenubarExit)
 				if (_menu->getEnable(kMainMenuExit))
 					ifQuit();
 				break;
