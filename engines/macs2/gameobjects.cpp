@@ -130,6 +130,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x70] = "Musketen";
 	ObjectNames[0x74] = "Schaufel";
 	ObjectNames[0x70] = "Musketen";
+	ObjectNames[0x73] = "Salpeter";
 	ObjectNames[0x74] = "Schüssel"; // mit Teig
 	ObjectNames[0x78] = "Messingschlüssel";
 	ObjectNames[0x7C] = "Schüssel"; // mit Schwefel
