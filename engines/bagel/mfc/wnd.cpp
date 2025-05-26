@@ -64,171 +64,6 @@ void CWnd::DoDataExchange(CDataExchange *) {
 	error("TODO: CWnd::DoDataExchange");
 }
 
-BOOL CWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
-	error("TODO: CWnd::OnCommand");
-}
-
-BOOL CWnd::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
-	error("TODO: CWnd::OnNotify");
-}
-
-void CWnd::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {}
-void CWnd::OnActivateApp(BOOL bActive, DWORD dwThreadID) {}
-LRESULT CWnd::OnActivateTopLevel(WPARAM, LPARAM) {
-	return 0;
-}
-void CWnd::OnCancelMode() {}
-void CWnd::OnChildActivate() {}
-void CWnd::OnClose() {}
-void CWnd::OnContextMenu(CWnd *pWnd, CPoint pos) {}
-int CWnd::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-	return 0;
-}
-HBRUSH CWnd::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor) {
-	return 0;
-}
-void CWnd::OnDestroy() {}
-void CWnd::OnEnable(BOOL bEnable) {}
-void CWnd::OnEndSession(BOOL bEnding) {}
-void CWnd::OnEnterIdle(UINT nWhy, CWnd *pWho) {}
-BOOL CWnd::OnEraseBkgnd(CDC *pDC) {
-	return false;
-}
-void CWnd::OnIconEraseBkgnd(CDC *pDC) {}
-void CWnd::OnKillFocus(CWnd *pNewWnd) {}
-void CWnd::OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hSysMenu) {}
-void CWnd::OnMove(int x, int y) {}
-void CWnd::OnPaint() {}
-void CWnd::OnSyncPaint() {}
-void CWnd::OnParentNotify(UINT message, LPARAM lParam) {}
-UINT CWnd::OnNotifyFormat(CWnd *pWnd, UINT nCommand) {
-	return 0;
-}
-HCURSOR CWnd::OnQueryDragIcon() {
-	return 0;
-}
-BOOL CWnd::OnQueryEndSession() {
-	return false;
-}
-BOOL CWnd::OnQueryNewPalette() {
-	return false;
-}
-BOOL CWnd::OnQueryOpen() {
-	return false;
-}
-void CWnd::OnSetFocus(CWnd *pOldWnd) {}
-void CWnd::OnShowWindow(BOOL bShow, UINT nStatus) {}
-void CWnd::OnSize(UINT nType, int cx, int cy) {}
-void CWnd::OnTCard(UINT idAction, DWORD dwActionData) {}
-void CWnd::OnSessionChange(UINT nSessionState, UINT nId) {}
-void CWnd::OnChangeUIState(UINT nAction, UINT nUIElement) {}
-void CWnd::OnUpdateUIState(UINT nAction, UINT nUIElement) {}
-UINT CWnd::OnQueryUIState() {
-	return 0;
-}
-BOOL CWnd::OnNcActivate(BOOL bActive) {
-	return false;
-}
-BOOL CWnd::OnNcCreate(LPCREATESTRUCT lpCreateStruct) {
-	return false;
-}
-void CWnd::OnNcDestroy() {}
-LRESULT CWnd::OnNcHitTest(CPoint point) {
-	return 0;
-}
-void CWnd::OnNcLButtonDblClk(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcLButtonDown(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcLButtonUp(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcMButtonDblClk(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcMButtonDown(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcMButtonUp(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcMouseHover(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcMouseLeave() {}
-void CWnd::OnNcMouseMove(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcPaint() {}
-void CWnd::OnNcRButtonDblClk(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcRButtonDown(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcRButtonUp(UINT nHitTest, CPoint point) {}
-void CWnd::OnNcXButtonDown(short zHitTest, UINT nButton, CPoint point) {}
-void CWnd::OnNcXButtonUp(short zHitTest, UINT nButton, CPoint point) {}
-void CWnd::OnNcXButtonDblClk(short zHitTest, UINT nButton, CPoint point) {}
-void CWnd::OnDropFiles(HDROP hDropInfo) {}
-void CWnd::OnPaletteIsChanging(CWnd *pRealizeWnd) {}
-void CWnd::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnSysCommand(UINT nID, LPARAM lParam) {}
-void CWnd::OnSysDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnSysKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-BOOL CWnd::OnAppCommand(CWnd *pWnd, UINT nCmd, UINT nDevice, UINT nKey) {
-	return false;
-}
-void CWnd::OnRawInput(UINT nInputCode, HRAWINPUT hRawInput) {}
-void CWnd::OnCompacting(UINT nCpuTime) {}
-void CWnd::OnDevModeChange(_In_z_ LPTSTR lpDeviceName) {}
-void CWnd::OnFontChange() {}
-void CWnd::OnPaletteChanged(CWnd *pFocusWnd) {}
-void CWnd::OnSpoolerStatus(UINT nStatus, UINT nJobs) {}
-void CWnd::OnSysColorChange() {}
-void CWnd::OnTimeChange() {}
-void CWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection) {}
-void CWnd::OnWinIniChange(LPCTSTR lpszSection) {}
-UINT CWnd::OnPowerBroadcast(UINT nPowerEvent, LPARAM lEventData) {
-	return 0;
-}
-void CWnd::OnUserChanged() {}
-void CWnd::OnInputLangChange(UINT nCharSet, UINT nLocaleId) {}
-void CWnd::OnInputLangChangeRequest(UINT nFlags, UINT nLocaleId) {}
-void CWnd::OnInputDeviceChange(unsigned short nFlags, HANDLE hDevice) {}
-void CWnd::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnUniChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar) {}
-void CWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar) {}
-void CWnd::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-void CWnd::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2) {}
-void CWnd::OnLButtonDblClk(UINT nFlags, CPoint point) {}
-void CWnd::OnLButtonDown(UINT nFlags, CPoint point) {}
-void CWnd::OnLButtonUp(UINT nFlags, CPoint point) {}
-void CWnd::OnMButtonDblClk(UINT nFlags, CPoint point) {}
-void CWnd::OnMButtonDown(UINT nFlags, CPoint point) {}
-void CWnd::OnMButtonUp(UINT nFlags, CPoint point) {}
-void CWnd::OnXButtonDblClk(UINT nFlags, UINT nButton, CPoint point) {}
-void CWnd::OnXButtonDown(UINT nFlags, UINT nButton, CPoint point) {}
-void CWnd::OnXButtonUp(UINT nFlags, UINT nButton, CPoint point) {}
-int CWnd::OnMouseActivate(CWnd *pDesktopWnd, UINT nHitTest, UINT message) {
-	return 0;
-}
-void CWnd::OnMouseHover(UINT nFlags, CPoint point) {}
-void CWnd::OnMouseLeave() {}
-void CWnd::OnMouseMove(UINT nFlags, CPoint point) {}
-void CWnd::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt) {}
-BOOL CWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
-	return false;
-}
-void CWnd::OnRButtonDblClk(UINT nFlags, CPoint point) {}
-void CWnd::OnRButtonDown(UINT nFlags, CPoint point) {}
-void CWnd::OnRButtonUp(UINT nFlags, CPoint point) {}
-BOOL CWnd::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message) {
-	return false;
-}
-void CWnd::OnTimer(UINT_PTR nIDEvent) {}
-void CWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {}
-UINT CWnd::OnGetDlgCode() {
-	return 0;
-}
-void CWnd::OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct) {}
-int CWnd::OnCharToItem(UINT nChar, CListBox *pListBox, UINT nIndex) {
-	return 0;
-}
-int CWnd::OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex) {
-	return 0;
-}
-
-CWnd *CWnd::FromHandlePermanent(HWND hWnd) {
-	error("TODO: CWnd::FromHandlePermanent");
-}
-
 CWnd *CWnd::GetParent() const {
 	error("TODO: CWnd::GetParent");
 }
@@ -284,6 +119,7 @@ int CWnd::GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const {
 
 BOOL CWnd::SetWindowText(LPCSTR lpszString) {
 	_windowText = lpszString;
+	return true;
 }
 
 UINT CWnd::GetState() const {
@@ -299,11 +135,276 @@ int CWnd::ReleaseDC(CDC *pDC) {
 }
 
 BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
-	error("TODO: CWnd::PostMessage");
+	_messages.push(MSG(message, wParam, lParam));
+	return true;
 }
 
 LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
-	error("TODO: CWnd::SendMessage");
+	LRESULT lResult = 0;
+	if (!OnWndMsg(message, wParam, lParam, &lResult))
+		lResult = DefWindowProc(message, wParam, lParam);
+	return lResult;
+}
+
+BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
+	LRESULT lResult = 0;
+	const AFX_MSGMAP_ENTRY *lpEntry;
+
+	// Special case for commands
+	if (message == WM_COMMAND) {
+		if (OnCommand(wParam, lParam)) {
+			lResult = 1;
+			goto LReturnTrue;
+		}
+
+		return FALSE;
+	}
+
+	// Special cases we don't currently support
+	#define UNHANDLED(MSG) if (message == MSG) \
+		error(#MSG " not currently supported")
+	UNHANDLED(WM_NOTIFY);
+	UNHANDLED(WM_ACTIVATE);
+	UNHANDLED(WM_SETCURSOR);
+	UNHANDLED(WM_SETTINGCHANGE);
+	#undef UNHANDLED
+
+	// Look up the message in the message map
+	lpEntry = LookupMessage(message);
+	if (!lpEntry)
+		return DefWindowProc(message, lParam, wParam);
+
+	assert(message < 0xC000);
+	union MessageMapFunctions mmf;
+	mmf.pfn = lpEntry->pfn;
+
+	int nSig;
+	nSig = lpEntry->nSig;
+
+	switch (nSig) {
+	case AfxSig_bD:
+		lResult = (this->*mmf.pfn_bD)(CDC::FromHandle((HDC)wParam));
+		break;
+
+	case AfxSig_bb:     // AfxSig_bb, AfxSig_bw, AfxSig_bh
+		lResult = (this->*mmf.pfn_bb)((BOOL)wParam);
+		break;
+
+	case AfxSig_bWww:   // really AfxSig_bWiw
+		lResult = (this->*mmf.pfn_bWww)(CWnd::FromHandle((HWND)wParam),
+			(short)LOWORD(lParam), HIWORD(lParam));
+		break;
+
+	case AfxSig_bWCDS:
+		lResult = (this->*mmf.pfn_bWCDS)(CWnd::FromHandle((HWND)wParam),
+			(COPYDATASTRUCT *)lParam);
+		break;
+
+	case AfxSig_bHELPINFO:
+		lResult = (this->*mmf.pfn_bHELPINFO)((HELPINFO *)lParam);
+		break;
+
+	case AfxSig_hDWw:
+		// Special case for OnCtlColor to avoid too many temporary objects
+		error("Unsupported OnCtlColor");
+		break;
+
+	case AfxSig_hDw:
+		// Special case for CtlColor to avoid too many temporary objects
+		error("Unsupported WM_REFLECT_BASE");
+		break;
+
+	case AfxSig_iwWw:
+		lResult = (this->*mmf.pfn_iwWw)(LOWORD(wParam),
+			CWnd::FromHandle((HWND)lParam), HIWORD(wParam));
+		break;
+
+	case AfxSig_iww:
+		lResult = (this->*mmf.pfn_iww)(LOWORD(wParam), HIWORD(wParam));
+		break;
+
+	case AfxSig_iWww:
+		// Really AfxSig_iWiw
+		lResult = (this->*mmf.pfn_iWww)(CWnd::FromHandle((HWND)wParam),
+			(short)LOWORD(lParam), HIWORD(lParam));
+		break;
+
+	case AfxSig_is:
+		lResult = (this->*mmf.pfn_is)((LPTSTR)lParam);
+		break;
+
+	case AfxSig_lwl:
+		lResult = (this->*mmf.pfn_lwl)(wParam, lParam);
+		break;
+
+	case AfxSig_lwwM:
+		lResult = (this->*mmf.pfn_lwwM)((UINT)LOWORD(wParam),
+			(UINT)HIWORD(wParam), (CMenu *)CMenu::FromHandle((HMENU)lParam));
+		break;
+
+	case AfxSig_vv:
+		(this->*mmf.pfn_vv)();
+		break;
+
+	case AfxSig_vw: // AfxSig_vb, AfxSig_vh
+		(this->*mmf.pfn_vw)(wParam);
+		break;
+
+	case AfxSig_vww:
+		(this->*mmf.pfn_vww)((UINT)wParam, (UINT)lParam);
+		break;
+
+	case AfxSig_vvii:
+		(this->*mmf.pfn_vvii)((short)LOWORD(lParam), (short)HIWORD(lParam));
+		break;
+
+	case AfxSig_vwww:
+		(this->*mmf.pfn_vwww)(wParam, LOWORD(lParam), HIWORD(lParam));
+		break;
+
+	case AfxSig_vwii:
+		(this->*mmf.pfn_vwii)(wParam, LOWORD(lParam), HIWORD(lParam));
+		break;
+
+	case AfxSig_vwl:
+		(this->*mmf.pfn_vwl)(wParam, lParam);
+		break;
+
+	case AfxSig_vbWW:
+		(this->*mmf.pfn_vbWW)(m_hWnd == (HWND)lParam,
+			CWnd::FromHandle((HWND)lParam),
+			CWnd::FromHandle((HWND)wParam));
+		break;
+
+	case AfxSig_vD:
+		(this->*mmf.pfn_vD)(CDC::FromHandle((HDC)wParam));
+		break;
+
+	case AfxSig_vM:
+		(this->*mmf.pfn_vM)(CMenu::FromHandle((HMENU)wParam));
+		break;
+
+	case AfxSig_vMwb:
+		(this->*mmf.pfn_vMwb)(CMenu::FromHandle((HMENU)wParam),
+			LOWORD(lParam), (BOOL)HIWORD(lParam));
+		break;
+
+	case AfxSig_vW:
+		(this->*mmf.pfn_vW)(CWnd::FromHandle((HWND)wParam));
+		break;
+
+	case AfxSig_vW2:
+		(this->*mmf.pfn_vW)(CWnd::FromHandle((HWND)lParam));
+		break;
+
+	case AfxSig_vWww:
+		(this->*mmf.pfn_vWww)(CWnd::FromHandle((HWND)wParam), LOWORD(lParam),
+			HIWORD(lParam));
+		break;
+
+	case AfxSig_vWp:
+	{
+		CPoint point((DWORD)lParam);
+		(this->*mmf.pfn_vWp)(CWnd::FromHandle((HWND)wParam), point);
+	}
+	break;
+
+	case AfxSig_vWh:
+		(this->*mmf.pfn_vWh)(CWnd::FromHandle((HWND)wParam),
+			(HANDLE)lParam);
+		break;
+
+	case AfxSig_vwW:
+		(this->*mmf.pfn_vwW)(wParam, CWnd::FromHandle((HWND)lParam));
+		break;
+
+	case AfxSig_vwWb:
+		(this->*mmf.pfn_vwWb)((UINT)(LOWORD(wParam)),
+			CWnd::FromHandle((HWND)lParam), (BOOL)HIWORD(wParam));
+		break;
+
+	case AfxSig_vwwW:
+	case AfxSig_vwwx:
+	{
+		// special case for WM_VSCROLL and WM_HSCROLL
+		ASSERT(message == WM_VSCROLL || message == WM_HSCROLL ||
+			message == WM_VSCROLL + WM_REFLECT_BASE || message == WM_HSCROLL + WM_REFLECT_BASE);
+		int nScrollCode = (short)LOWORD(wParam);
+		int nPos = (short)HIWORD(wParam);
+		if (lpEntry->nSig == AfxSig_vwwW)
+			(this->*mmf.pfn_vwwW)(nScrollCode, nPos,
+				CWnd::FromHandle((HWND)lParam));
+		else
+			(this->*mmf.pfn_vwwx)(nScrollCode, nPos);
+	}
+	break;
+
+	case AfxSig_vs:
+		(this->*mmf.pfn_vs)((LPTSTR)lParam);
+		break;
+
+	case AfxSig_vws:
+		(this->*mmf.pfn_vws)((UINT)wParam, (LPCTSTR)lParam);
+		break;
+
+	case AfxSig_vOWNER:
+		(this->*mmf.pfn_vOWNER)((int)wParam, (LPTSTR)lParam);
+		lResult = TRUE;
+		break;
+
+	case AfxSig_iis:
+		lResult = (this->*mmf.pfn_iis)((int)wParam, (LPTSTR)lParam);
+		break;
+
+	case AfxSig_wp:
+	{
+		CPoint point((DWORD)lParam);
+		lResult = (this->*mmf.pfn_wp)(point);
+	}
+	break;
+
+	case AfxSig_wv: // AfxSig_bv, AfxSig_wv
+		lResult = (this->*mmf.pfn_wv)();
+		break;
+
+	case AfxSig_vCALC:
+		(this->*mmf.pfn_vCALC)((BOOL)wParam, (NCCALCSIZE_PARAMS *)lParam);
+		break;
+
+	case AfxSig_vPOS:
+		(this->*mmf.pfn_vPOS)((WINDOWPOS *)lParam);
+		break;
+
+	case AfxSig_vwwh:
+		(this->*mmf.pfn_vwwh)(LOWORD(wParam), HIWORD(wParam), (HANDLE)lParam);
+		break;
+
+	case AfxSig_vwp:
+	{
+		CPoint point((DWORD)lParam);
+		(this->*mmf.pfn_vwp)(wParam, point);
+		break;
+	}
+	case AfxSig_vwSIZING:
+		(this->*mmf.pfn_vwl)(wParam, lParam);
+		lResult = TRUE;
+		break;
+
+	case AfxSig_bwsp:
+		lResult = (this->*mmf.pfn_bwsp)(LOWORD(wParam), (short)HIWORD(wParam),
+			CPoint(LOWORD(lParam), HIWORD(lParam)));
+		if (!lResult)
+			return FALSE;
+
+	default:
+		error("Unknown AFX signature");
+		break;
+	}
+
+LReturnTrue:
+	if (pResult != nullptr)
+		*pResult = lResult;
+	return TRUE;
 }
 
 BOOL CWnd::ValidateRect(LPCRECT lpRect) {

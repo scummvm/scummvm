@@ -81,8 +81,6 @@ DECLARE_HANDLE(HHOOK);
 DECLARE_HANDLE(HICON);
 DECLARE_HANDLE(HMENU);
 DECLARE_HANDLE(HRAWINPUT);
-DECLARE_HANDLE(HWND);
-
 DECLARE_HANDLE(HGDIOBJ);
 typedef HGDIOBJ HBITMAP;
 typedef HGDIOBJ HBRUSH;
@@ -92,6 +90,9 @@ typedef HGDIOBJ HPEN;
 typedef HGDIOBJ HRGN;
 typedef HGDIOBJ HDC;         // NOTE: Actually not a GDI object handle (see note below)
 typedef HGDIOBJ HENHMETAFILE; // Somewhat legacy
+
+class CWnd;
+typedef CWnd *HWND;
 
 
 /* Types use for passing & returning polymorphic values */

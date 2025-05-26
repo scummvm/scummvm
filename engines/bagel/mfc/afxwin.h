@@ -35,17 +35,26 @@
 namespace Bagel {
 namespace MFC {
 
-class CCmdTarget;
-class CWnd;
-class CDocument;
-class CDocTemplate;
-class CView;
-class CFrameWnd;
-class CDC;
-class CScrollBar;
-class CListBox;
 class CBitmap;
+class CCmdTarget;
+class CCmdUI;
+class CDC;
+class CDocTemplate;
+class CDocument;
+class CFrameWnd;
+class CListBox;
+class CScrollBar;
+class CView;
+class CWinThread;
+class CWnd;
 
+// Dummy class definitions that may need replacing later
+class CDataExchange {};
+struct COPYDATASTRUCT {};
+struct HELPINFO {};
+struct NCCALCSIZE_PARAMS {};
+struct NMHDR {};
+struct WINDOWPOS {};
 
 /*============================================================================*/
 // CMenu
@@ -326,7 +335,77 @@ typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)(void);
 	DECLARE_DYNAMIC(class_name) \
 	static CObject *CreateObject();
 
-class CDataExchange {
+
+union MessageMapFunctions
+{
+	AFX_PMSG pfn;   // generic member function pointer
+
+	// specific type safe variants for WM_COMMAND and WM_NOTIFY messages
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND)();
+	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_bCOMMAND)();
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_RANGE)(UINT);
+	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_EX)(UINT);
+
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_UPDATE_COMMAND_UI)(CCmdUI *);
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_UPDATE_COMMAND_UI_RANGE)(CCmdUI *, UINT);
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_OTHER)(void *);
+	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_OTHER_EX)(void *);
+
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY)(NMHDR *, LRESULT *);
+	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_bNOTIFY)(NMHDR *, LRESULT *);
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_RANGE)(UINT, NMHDR *, LRESULT *);
+	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_EX)(UINT, NMHDR *, LRESULT *);
+
+	// Type safe variant for thread messages
+
+	void (AFX_MSG_CALL CWinThread:: *pfn_THREAD)(WPARAM, LPARAM);
+
+	// Specific type safe variants for WM-style messages
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bD)(CDC *);
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bb)(BOOL);
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bWww)(CWnd *, UINT, UINT);
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bHELPINFO)(HELPINFO *);
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bWCDS)(CWnd *, COPYDATASTRUCT *);
+	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDWw)(CDC *, CWnd *, UINT);
+	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDw)(CDC *, UINT);
+	int     (AFX_MSG_CALL CWnd:: *pfn_iwWw)(UINT, CWnd *, UINT);
+	int     (AFX_MSG_CALL CWnd:: *pfn_iww)(UINT, UINT);
+	int     (AFX_MSG_CALL CWnd:: *pfn_iWww)(CWnd *, UINT, UINT);
+	int     (AFX_MSG_CALL CWnd:: *pfn_is)(LPTSTR);
+	LRESULT(AFX_MSG_CALL CWnd:: *pfn_lwl)(WPARAM, LPARAM);
+	LRESULT(AFX_MSG_CALL CWnd:: *pfn_lwwM)(UINT, UINT, CMenu *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vv)(void);
+
+	void    (AFX_MSG_CALL CWnd:: *pfn_vw)(UINT);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vww)(UINT, UINT);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vvii)(int, int);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwww)(UINT, UINT, UINT);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwii)(UINT, int, int);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwl)(WPARAM, LPARAM);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vbWW)(BOOL, CWnd *, CWnd *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vD)(CDC *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vM)(CMenu *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vMwb)(CMenu *, UINT, BOOL);
+
+	void    (AFX_MSG_CALL CWnd:: *pfn_vW)(CWnd *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vWww)(CWnd *, UINT, UINT);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vWp)(CWnd *, CPoint);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vWh)(CWnd *, HANDLE);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwW)(UINT, CWnd *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwWb)(UINT, CWnd *, BOOL);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwwW)(UINT, UINT, CWnd *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwwx)(UINT, UINT);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vs)(LPTSTR);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vOWNER)(int, LPTSTR);   // force return TRUE
+	int     (AFX_MSG_CALL CWnd:: *pfn_iis)(int, LPTSTR);
+	UINT(AFX_MSG_CALL CWnd:: *pfn_wp)(CPoint);
+	UINT(AFX_MSG_CALL CWnd:: *pfn_wv)(void);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vPOS)(WINDOWPOS *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vCALC)(BOOL, NCCALCSIZE_PARAMS *);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwp)(UINT, CPoint);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vwwh)(UINT, UINT, HANDLE);
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bwsp)(UINT, short, CPoint);
+	void    (AFX_MSG_CALL CWnd:: *pfn_vws)(UINT, LPCTSTR);
 };
 
 /*============================================================================*/
@@ -336,9 +415,6 @@ public:
 	bool IsStoring() const {
 		return false;
 	}
-};
-
-class CCmdUI {
 };
 
 /*============================================================================*/
@@ -600,6 +676,10 @@ public:
 
 class CCmdTarget : public CObject {
 	DECLARE_DYNAMIC(CCmdTarget)
+
+protected:
+	const AFX_MSGMAP_ENTRY *LookupMessage(UINT message);
+
 public:
 	~CCmdTarget() override {
 	}
@@ -688,130 +768,132 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) { return false; }
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) { return false; }
+	virtual LRESULT DefWindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam) { return 0; }
+	BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
-	afx_msg void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized);
-	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
-	afx_msg LRESULT OnActivateTopLevel(WPARAM, LPARAM);
-	afx_msg void OnCancelMode();
-	afx_msg void OnChildActivate();
-	afx_msg void OnClose();
-	afx_msg void OnContextMenu(CWnd *pWnd, CPoint pos);
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {}
+	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID) {}
+	afx_msg LRESULT OnActivateTopLevel(WPARAM, LPARAM) { return 0; }
+	afx_msg void OnCancelMode() {}
+	afx_msg void OnChildActivate() {}
+	afx_msg void OnClose() {}
+	afx_msg void OnContextMenu(CWnd *pWnd, CPoint pos) {}
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct) { return 0; }
 
-	afx_msg HBRUSH OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor);
+	afx_msg HBRUSH OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor) { return 0; }
 
-	afx_msg void OnDestroy();
-	afx_msg void OnEnable(BOOL bEnable);
-	afx_msg void OnEndSession(BOOL bEnding);
-	afx_msg void OnEnterIdle(UINT nWhy, CWnd *pWho);
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg void OnIconEraseBkgnd(CDC *pDC);
-	afx_msg void OnKillFocus(CWnd *pNewWnd);
-	afx_msg void OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hSysMenu);
-	afx_msg void OnMove(int x, int y);
-	afx_msg void OnPaint();
-	afx_msg void OnSyncPaint();
-	afx_msg void OnParentNotify(UINT message, LPARAM lParam);
-	afx_msg UINT OnNotifyFormat(CWnd *pWnd, UINT nCommand);
-	afx_msg HCURSOR OnQueryDragIcon();
-	afx_msg BOOL OnQueryEndSession();
-	afx_msg BOOL OnQueryNewPalette();
-	afx_msg BOOL OnQueryOpen();
-	afx_msg void OnSetFocus(CWnd *pOldWnd);
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnTCard(UINT idAction, DWORD dwActionData);
-	afx_msg void OnSessionChange(UINT nSessionState, UINT nId);
+	afx_msg void OnDestroy() {}
+	afx_msg void OnEnable(BOOL bEnable) {}
+	afx_msg void OnEndSession(BOOL bEnding) {}
+	afx_msg void OnEnterIdle(UINT nWhy, CWnd *pWho) {}
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC) { return false; }
+	afx_msg void OnIconEraseBkgnd(CDC *pDC) {}
+	afx_msg void OnKillFocus(CWnd *pNewWnd) {}
+	afx_msg void OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hSysMenu) {}
+	afx_msg void OnMove(int x, int y) {}
+	afx_msg void OnPaint() {}
+	afx_msg void OnSyncPaint() {}
+	afx_msg void OnParentNotify(UINT message, LPARAM lParam) {}
+	afx_msg UINT OnNotifyFormat(CWnd *pWnd, UINT nCommand) { return 0; }
+	afx_msg HCURSOR OnQueryDragIcon() { return 0; }
+	afx_msg BOOL OnQueryEndSession() {}
+	afx_msg BOOL OnQueryNewPalette() {}
+	afx_msg BOOL OnQueryOpen() {}
+	afx_msg void OnSetFocus(CWnd *pOldWnd) {}
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus) {}
+	afx_msg void OnSize(UINT nType, int cx, int cy) {}
+	afx_msg void OnTCard(UINT idAction, DWORD dwActionData) {}
+	afx_msg void OnSessionChange(UINT nSessionState, UINT nId) {}
 
-	afx_msg void OnChangeUIState(UINT nAction, UINT nUIElement);
-	afx_msg void OnUpdateUIState(UINT nAction, UINT nUIElement);
-	afx_msg UINT OnQueryUIState();
+	afx_msg void OnChangeUIState(UINT nAction, UINT nUIElement) {}
+	afx_msg void OnUpdateUIState(UINT nAction, UINT nUIElement) {}
+	afx_msg UINT OnQueryUIState() { return 0; }
 
 	// Nonclient-Area message handler member functions
-	afx_msg BOOL OnNcActivate(BOOL bActive);
-	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnNcDestroy();
-	afx_msg LRESULT OnNcHitTest(CPoint point);
-	afx_msg void OnNcLButtonDblClk(UINT nHitTest, CPoint point);
-	afx_msg void OnNcLButtonDown(UINT nHitTest, CPoint point);
-	afx_msg void OnNcLButtonUp(UINT nHitTest, CPoint point);
-	afx_msg void OnNcMButtonDblClk(UINT nHitTest, CPoint point);
-	afx_msg void OnNcMButtonDown(UINT nHitTest, CPoint point);
-	afx_msg void OnNcMButtonUp(UINT nHitTest, CPoint point);
-	afx_msg void OnNcMouseHover(UINT nHitTest, CPoint point);
-	afx_msg void OnNcMouseLeave();
-	afx_msg void OnNcMouseMove(UINT nHitTest, CPoint point);
-	afx_msg void OnNcPaint();
-	afx_msg void OnNcRButtonDblClk(UINT nHitTest, CPoint point);
-	afx_msg void OnNcRButtonDown(UINT nHitTest, CPoint point);
-	afx_msg void OnNcRButtonUp(UINT nHitTest, CPoint point);
-	afx_msg void OnNcXButtonDown(short zHitTest, UINT nButton, CPoint point);
-	afx_msg void OnNcXButtonUp(short zHitTest, UINT nButton, CPoint point);
-	afx_msg void OnNcXButtonDblClk(short zHitTest, UINT nButton, CPoint point);
+	afx_msg BOOL OnNcActivate(BOOL bActive) { return false; }
+	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct) { return false; }
+	afx_msg void OnNcDestroy() {}
+	afx_msg LRESULT OnNcHitTest(CPoint point) { return 0; }
+	afx_msg void OnNcLButtonDblClk(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcLButtonDown(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcLButtonUp(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcMButtonDblClk(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcMButtonDown(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcMButtonUp(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcMouseHover(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcMouseLeave() {}
+	afx_msg void OnNcMouseMove(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcPaint() {}
+	afx_msg void OnNcRButtonDblClk(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcRButtonDown(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcRButtonUp(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcXButtonDown(short zHitTest, UINT nButton, CPoint point) {}
+	afx_msg void OnNcXButtonUp(short zHitTest, UINT nButton, CPoint point) {}
+	afx_msg void OnNcXButtonDblClk(short zHitTest, UINT nButton, CPoint point) {}
 
 	// System message handler member functions
-	afx_msg void OnDropFiles(HDROP hDropInfo);
-	afx_msg void OnPaletteIsChanging(CWnd *pRealizeWnd);
-	afx_msg void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnSysDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg BOOL OnAppCommand(CWnd *pWnd, UINT nCmd, UINT nDevice, UINT nKey);
-	afx_msg void OnRawInput(UINT nInputCode, HRAWINPUT hRawInput);
-	afx_msg void OnCompacting(UINT nCpuTime);
-	afx_msg void OnDevModeChange(_In_z_ LPTSTR lpDeviceName);
-	afx_msg void OnFontChange();
-	afx_msg void OnPaletteChanged(CWnd *pFocusWnd);
-	afx_msg void OnSpoolerStatus(UINT nStatus, UINT nJobs);
-	afx_msg void OnSysColorChange();
-	afx_msg void OnTimeChange();
-	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
-	afx_msg void OnWinIniChange(LPCTSTR lpszSection);
-	afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, LPARAM lEventData);
-	afx_msg void OnUserChanged();
-	afx_msg void OnInputLangChange(UINT nCharSet, UINT nLocaleId);
-	afx_msg void OnInputLangChangeRequest(UINT nFlags, UINT nLocaleId);
-	afx_msg void OnInputDeviceChange(unsigned short nFlags, HANDLE hDevice);
+	afx_msg void OnDropFiles(HDROP hDropInfo) {}
+	afx_msg void OnPaletteIsChanging(CWnd *pRealizeWnd) {}
+	afx_msg void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam) {}
+	afx_msg void OnSysDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnSysKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg BOOL OnAppCommand(CWnd *pWnd, UINT nCmd, UINT nDevice, UINT nKey) { return false; }
+	afx_msg void OnRawInput(UINT nInputCode, HRAWINPUT hRawInput) {}
+	afx_msg void OnCompacting(UINT nCpuTime) {}
+	afx_msg void OnDevModeChange(_In_z_ LPTSTR lpDeviceName) {}
+	afx_msg void OnFontChange() {}
+	afx_msg void OnPaletteChanged(CWnd *pFocusWnd) {}
+	afx_msg void OnSpoolerStatus(UINT nStatus, UINT nJobs) {}
+	afx_msg void OnSysColorChange() {}
+	afx_msg void OnTimeChange() {}
+	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection) {}
+	afx_msg void OnWinIniChange(LPCTSTR lpszSection) {}
+	afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, LPARAM lEventData) { return 0; }
+	afx_msg void OnUserChanged() {}
+	afx_msg void OnInputLangChange(UINT nCharSet, UINT nLocaleId) {}
+	afx_msg void OnInputLangChangeRequest(UINT nFlags, UINT nLocaleId) {}
+	afx_msg void OnInputDeviceChange(unsigned short nFlags, HANDLE hDevice) {}
 
 	// Input message handler member functions
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnUniChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnMButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnMButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnXButtonDblClk(UINT nFlags, UINT nButton, CPoint point);
-	afx_msg void OnXButtonDown(UINT nFlags, UINT nButton, CPoint point);
-	afx_msg void OnXButtonUp(UINT nFlags, UINT nButton, CPoint point);
-	afx_msg int OnMouseActivate(CWnd *pDesktopWnd, UINT nHitTest, UINT message);
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnUniChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar) {}
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar) {}
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {}
+	afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2) {}
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point) {}
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point) {}
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) {}
+	afx_msg void OnMButtonDblClk(UINT nFlags, CPoint point) {}
+	afx_msg void OnMButtonDown(UINT nFlags, CPoint point) {}
+	afx_msg void OnMButtonUp(UINT nFlags, CPoint point) {}
+	afx_msg void OnXButtonDblClk(UINT nFlags, UINT nButton, CPoint point) {}
+	afx_msg void OnXButtonDown(UINT nFlags, UINT nButton, CPoint point) {}
+	afx_msg void OnXButtonUp(UINT nFlags, UINT nButton, CPoint point) {}
+	afx_msg int OnMouseActivate(CWnd *pDesktopWnd, UINT nHitTest, UINT message) { return 0; }
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point) {}
+	afx_msg void OnMouseLeave() {}
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point) {}
+	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt) {}
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) { return false; }
+	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point) {}
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point) {}
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point) {}
+	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message) { return false; }
+	afx_msg void OnTimer(UINT_PTR nIDEvent) {}
 
 	// Control message handler member functions
-	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
-	afx_msg UINT OnGetDlgCode();
-	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct);
-	afx_msg int OnCharToItem(UINT nChar, CListBox *pListBox, UINT nIndex);
-	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex);
+	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {}
+	afx_msg UINT OnGetDlgCode() { return 0; }
+	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct) {}
+	afx_msg int OnCharToItem(UINT nChar, CListBox *pListBox, UINT nIndex) { return 0; }
+	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex) { return 0; }
 
 public:
 	HWND m_hWnd = (HWND)0;
@@ -819,7 +901,14 @@ public:
 	bool _visible = false;
 	Libs::EventQueue _messages;
 	Common::String _windowText;
-	static CWnd *FromHandlePermanent(HWND hWnd);
+
+public:
+	static CWnd *FromHandle(HWND hWnd) {
+		return static_cast<CWnd *>(hWnd);
+	}
+	static CWnd *FromHandlePermanent(HWND hWnd) {
+		return static_cast<CWnd *>(hWnd);
+	}
 
 public:
 	~CWnd() override;
