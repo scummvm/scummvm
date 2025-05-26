@@ -397,23 +397,35 @@ View1::View1() : UIElement("View1") {
 			upperLeft.x += ABS(upperLeft.x);
 		}
 		if (upperLeft.y < 0) {
-			upperLeft.y += ABS(upperLeft.x);
+			upperLeft.y += ABS(upperLeft.y);
 		}
 		Common::Point lowerRight = upperLeft + inventorySize;
 		// TODO: No hard coding
 		if (lowerRight.x > 320) {
 			upperLeft.x -= lowerRight.x - 320;
 		}
-		if (lowerRight.y > 240) {
-			upperLeft.y -= lowerRight.y - 240;
+		if (lowerRight.y > 200) {
+			upperLeft.y -= lowerRight.y - 200;
 		}
 		lowerRight = upperLeft + inventorySize;
 		mainMenuRect = Common::Rect(upperLeft, lowerRight);
+		assert(mainMenuRect.width() == inventorySize.x && mainMenuRect.height() == inventorySize.y);
 		isShowingMainMenu = true;
 	}
 
 	void View1::drawMainMenu(Graphics::ManagedSurface &s) {
-		DrawBorder(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.right, mainMenuRect.bottom), s);
+		DrawBorder(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
+		uint16 currentX = mainMenuRect.left;
+		uint16 currentY = mainMenuRect.top;
+		for (int i = 0; i < 6; i++) {
+			for (uint16 index : g_engine->inventoryIconIndices) {
+				AnimFrame &currentFrame = g_engine->imageResources[i];
+				
+	
+				DrawSprite(currentX, currentY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
+				currentX += currentFrame.Width + 4;
+			}
+		}
 	}
 
 	void View1::setStringBox(const Common::StringArray &sa) {
