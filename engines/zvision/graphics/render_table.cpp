@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http:// www.gnu.org/licenses/>.
  *
  */
 
@@ -92,7 +92,7 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 	return newPoint;
 }
 
-//Disused at present; potentially useful for future rendering efficient improvements.
+// Disused at present; potentially useful for future rendering efficient improvements.
 /*/
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect) {
     uint32 destOffset = 0;
