@@ -1761,20 +1761,17 @@ void introduction() {
 	bool pulsada_salida;
 	uint contadorvueltas;
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
-
+	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
 	pulsada_salida = false;
 	totalFadeOut(0);
 
 	if (contadorpc > 6)
 		showError(270);
 	cleardevice();
-	drawFlc(136, 53, 888366, 136, 9, 1, true, true, false, pulsada_salida);
+	drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(136, 53, 888366, 1, 9, 1, true, true, false, pulsada_salida);
-	if (pulsada_salida)
-		goto Lsalirpres;
-	drawFlc(135, 54, 908896, 0, 9, 2, true, true, false, pulsada_salida);
+	drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
 	totalFadeOut(0);
@@ -1810,61 +1807,61 @@ void introduction() {
 
 	totalFadeOut(0);
 	cleardevice();
-	drawFlc(0, 0, 972458, 0, 9, 3, true, true, false, pulsada_salida);
+	drawFlc(0, 0, offsets[4], 0, 9, 3, true, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, 1269108, 2, 9, 4, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[5], 2, 9, 4, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, 1284784, 3, 9, 5, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[6], 3, 9, 5, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, 1299404, 0, 9, 0, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[7], 0, 9, 0, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, 1321354, 4, 9, 6, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[8], 4, 9, 6, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, 1334608, 3, 9, 7, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[9], 3, 9, 7, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, 1321354, 3, 9, 8, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[8], 3, 9, 8, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, 1334608, 2, 9, 9, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[9], 2, 9, 9, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(0, 0, 1349402, 0, 9, 0, false, true, false, pulsada_salida);
+	drawFlc(0, 0, offsets[10], 0, 9, 0, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(235, 100, 1463880, 3, 9, 10, false, true, false, pulsada_salida);
+	drawFlc(235, 100, offsets[11], 3, 9, 10, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(150, 40, 1471630, 0, 9, 11, false, true, false, pulsada_salida);
+	drawFlc(150, 40, offsets[12], 0, 9, 11, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(235, 100, 1463880, 3, 9, 12, false, true, false, pulsada_salida);
+	drawFlc(235, 100, offsets[11], 3, 9, 12, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(150, 40, 1471630, 0, 9, 13, false, true, false, pulsada_salida);
+	drawFlc(150, 40, offsets[12], 0, 9, 13, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(235, 100, 1463880, 3, 9, 14, false, true, false, pulsada_salida);
+	drawFlc(235, 100, offsets[11], 3, 9, 14, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(150, 40, 1471630, 0, 9, 15, false, true, false, pulsada_salida);
+	drawFlc(150, 40, offsets[12], 0, 9, 15, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(173, 98, 1480982, 0, 9, 0, false, true, false, pulsada_salida);
+	drawFlc(173, 98, offsets[13], 0, 9, 0, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(224, 100, 1500902, 2, 9, 16, false, true, false, pulsada_salida);
+	drawFlc(224, 100, offsets[14], 2, 9, 16, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(0, 0, 1508036, 0, 18, 17, false, true, false, pulsada_salida);
+	drawFlc(0, 0, offsets[15], 0, 18, 17, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(150, 40, 1701780, 0, 9, 18, false, true, false, pulsada_salida);
+	drawFlc(150, 40, offsets[16], 0, 9, 18, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
 	delay(1000);
@@ -1893,7 +1890,8 @@ void firstIntroduction() {
 
 void initialLogo() {
 	bool basurillalogica = false;
-	drawFlc(0, 0, 0, 0, 18, 25, false, false, false, basurillalogica);
+	long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][0] : flcOffsets[1][0];
+	drawFlc(0, 0, offset, 0, 18, 25, false, false, false, basurillalogica);
 	delay(1000);
 }
 
@@ -1902,10 +1900,12 @@ void initialMenu(bool fundido) {
 	bool opcionvalida = false;
 	stopVoc();
 
+	long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][1] : flcOffsets[1][1];
+
 	if (fundido)
-		drawFlc(0, 0, 837602, 0, 9, 0, true, false, false, kklogica);
+		drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
 	else
-		drawFlc(0, 0, 837602, 0, 9, 0, false, false, false, kklogica);
+		drawFlc(0, 0, offset, 0, 9, 0, false, false, false, kklogica);
 	if (contadorpc2 > 10)
 		showError(274);
 	xraton = 160;
@@ -1935,14 +1935,14 @@ void initialMenu(bool fundido) {
 						opcionvalida = true;
 					} else if (x > 173 && x < 267) {
 						credits();
-						drawFlc(0, 0, 837602, 0, 9, 0, true, false, false, kklogica);
+						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
 					}
 				} else if (y > 140 && y < 155) {
 					if (x > 173 && x < 292) {
 						totalFadeOut(0);
 						cleardevice();
 						introduction();
-						drawFlc(0, 0, 837602, 0, 9, 0, true, false, false, kklogica);
+						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
 					} else if (x >= 18 && x <= 145) {
 						debug("Load");
 						partidanueva = false;
@@ -2352,6 +2352,8 @@ void sacrificeScene() {
 
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
 
+	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
+
 	stopVoc();
 	bool pulsada_salida = currentRoomData->paletteAnimationFlag;
 	currentRoomData->paletteAnimationFlag = false;
@@ -2432,7 +2434,7 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 
-	drawFlc(0, 0, 1712400, 0, 9, 19, false, false, true, pulsada_salida);
+	drawFlc(0, 0, offsets[17], 0, 9, 19, false, false, true, pulsada_salida);
 	totalFadeOut(128);
 	stopVoc();
 	delay(1000);
@@ -2499,12 +2501,12 @@ void sacrificeScene() {
 
 	redFadeIn(palaux);
 
-	drawFlc(112, 57, 1783054, 33, 9, 20, true, false, true, pulsada_salida);
+	drawFlc(112, 57, offsets[18], 33, 9, 20, true, false, true, pulsada_salida);
 	autoPlayVoc("REZOS", 0, 0);
 	if (g_engine->shouldQuit())
 		return;
 
-	drawFlc(42, 30, 1806212, 0, 9, 27, false, false, false, pulsada_salida);
+	drawFlc(42, 30, offsets[19], 0, 9, 27, false, false, false, pulsada_salida);
 
 	if (g_engine->shouldQuit())
 		return;
@@ -2672,6 +2674,7 @@ void ending() {
 	bool pulsada_salida;
 
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
 
 	outtextxy(10, 41, messages[43], 249);
 	outtextxy(10, 39, messages[43], 249);
@@ -2697,11 +2700,11 @@ void ending() {
 	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	playMidiFile("SACRIFIC", true);
 	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-	drawFlc(0, 0, 2481274, 12, 9, 26, true, false, false, pulsada_salida);
+	drawFlc(0, 0, offsets[30], 12, 9, 26, true, false, false, pulsada_salida);
 	if(pulsada_salida){
 		return;
 	}
-	drawFlc(0, 0, 2554766, 0, 9, 0, false, false, false, pulsada_salida);
+	drawFlc(0, 0, offsets[31], 0, 9, 0, false, false, false, pulsada_salida);
 	if(pulsada_salida){
 		return;
 	}
