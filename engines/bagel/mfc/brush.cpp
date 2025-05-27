@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/gfx/gdi_objects.h"
 
 namespace Bagel {
 namespace MFC {
@@ -29,12 +30,15 @@ CBrush::CBrush() {
 }
 
 CBrush::CBrush(CBitmap *pBitmap) {
+	m_hObject = new Gfx::CBrushImpl(pBitmap);
 }
 
 CBrush::CBrush(COLORREF crColor) {
+	m_hObject = new Gfx::CBrushImpl(crColor);
 }
 
 CBrush::CBrush(int nIndex, COLORREF crColor) {
+	m_hObject = new Gfx::CBrushImpl(nIndex, crColor);
 }
 
 BOOL CBrush::CreateSolidBrush(COLORREF crColor) {

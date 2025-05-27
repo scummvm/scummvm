@@ -22,17 +22,27 @@
 #ifndef BAGEL_MFC_GFX_GDI_OBJECTS_H
 #define BAGEL_MFC_GFX_GDI_OBJECTS_H
 
+#include "common/textconsole.h"
 #include "bagel/mfc/minwindef.h"
 
 namespace Bagel {
 namespace MFC {
+
+class CBitmap;
+
 namespace Gfx {
 
 struct CGdiObjectImpl {
 };
 
 struct CBrushImpl : public CGdiObjectImpl {
+	int _type;
 	COLORREF _color = 0;
+
+	CBrushImpl();
+	CBrushImpl(COLORREF crColor);
+	CBrushImpl(int nIndex, COLORREF crColor);
+	CBrushImpl(CBitmap *pBitmap);
 };
 
 } // namespace Gfx

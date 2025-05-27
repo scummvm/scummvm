@@ -26,6 +26,21 @@ namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
+CBrushImpl::CBrushImpl() : _type(HS_HORIZONTAL) {
+}
+
+CBrushImpl::CBrushImpl(COLORREF crColor) : _color(crColor),
+	_type(HS_HORIZONTAL) {
+}
+
+CBrushImpl::CBrushImpl(int nIndex, COLORREF crColor) :
+	_type(nIndex), _color(crColor) {
+}
+
+CBrushImpl::CBrushImpl(CBitmap *pBitmap) :
+		_type(HS_HORIZONTAL) {
+	error("TODO: CBrushImpl for bitmaps");
+}
 
 } // namespace Gfx
 } // namespace MFC
