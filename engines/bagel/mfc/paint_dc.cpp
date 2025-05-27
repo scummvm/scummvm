@@ -34,5 +34,9 @@ CPaintDC::CPaintDC(CWnd *pWnd) {
 		error("Could not attach to window");
 }
 
+CPaintDC::~CPaintDC() {
+	MFC::EndPaint(m_hWnd, &m_ps);
+}
+
 } // namespace MFC
 } // namespace Bagel

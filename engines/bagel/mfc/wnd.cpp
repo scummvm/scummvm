@@ -428,10 +428,7 @@ BOOL CWnd::ValidateRect(LPCRECT lpRect) {
 		_updateRect = Common::Rect();
 
 	} else {
-		Common::Rect r(lpRect->left, lpRect->top,
-			lpRect->right, lpRect->bottom);
-
-		if (_updateRect.isEmpty() || _updateRect.contains(r))
+		if (_updateRect.isEmpty() || _updateRect.contains(*lpRect))
 			_updateRect = Common::Rect();
 	}
 
@@ -439,24 +436,16 @@ BOOL CWnd::ValidateRect(LPCRECT lpRect) {
 }
 
 BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
-	Common::Rect r(lpRect->left, lpRect->top,
-		lpRect->right, lpRect->bottom);
-	_updateRect.extend(r);
+	_updateRect.extend(*lpRect);
 	return true;
 }
 
 void CWnd::GetWindowRect(LPRECT lpRect) const {
-	lpRect->left = _windowRect.left;
-	lpRect->top = _windowRect.top;
-	lpRect->right = _windowRect.right;
-	lpRect->bottom = _windowRect.bottom;
+	*lpRect = _windowRect;
 }
 
 BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
-	lpRect->left = _updateRect.left;
-	lpRect->top = _updateRect.top;
-	lpRect->right = _updateRect.right;
-	lpRect->bottom = _updateRect.bottom;
+	*lpRect = _updateRect;
 	return true;
 }
 
@@ -474,8 +463,15 @@ void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
 }
 
 HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
-	assert(!_dc);
-	_dc = new CPaintDC(this);
+	CDC *dc = GetDC();
+
+	lpPaint->hdc = dc;
+	lpPaint->fErase = _updateErase;
+	lpPaint->rcPaint = _updateRect;
+	lpPaint->fRestore = false;
+	lpPaint->fIncUpdate = false;
+	Common::fill(lpPaint->rgbReserved,
+		lpPaint->rgbReserved + 32, 0);
 
 	return _dc;
 }

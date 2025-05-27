@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/rect.h"
 #include "bagel/mfc/winnt.h"
 
 namespace Bagel {
@@ -154,10 +155,21 @@ DECLARE_HANDLE(HWINSTA);
 DECLARE_HANDLE(HKL);
 
 typedef struct tagRECT {
-	LONG    left;
-	LONG    top;
-	LONG    right;
-	LONG    bottom;
+	LONG    left = 0;
+	LONG    top = 0;
+	LONG    right = 0;
+	LONG    bottom = 0;
+
+	tagRECT() {}
+	tagRECT(LONG x1, LONG y1, LONG x2, LONG y2) :
+		left(x1), top(y1), right(x2), bottom(y2) {
+	}
+	tagRECT(const Common::Rect &r) :
+		left(r.left), top(r.top), right(r.right), bottom(r.bottom) {
+	}
+	operator Common::Rect() const {
+		return Common::Rect(left, top, right, bottom);
+	}
 } RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
 
 typedef const RECT FAR *LPCRECT;

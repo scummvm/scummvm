@@ -679,6 +679,7 @@ protected:
 
 public:
 	explicit CPaintDC(CWnd *pWnd);
+	~CPaintDC() override;
 };
 
 class CCmdTarget : public CObject {
