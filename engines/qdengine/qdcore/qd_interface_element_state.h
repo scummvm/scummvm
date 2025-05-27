@@ -235,6 +235,9 @@ public:
 	//! Высвобождает ресурсы, связанные с состоянием (анимацию и звук).
 	bool unregister_resources();
 
+	Common::String event2Str(int fl, bool truncate = false) const;
+	Common::String eventActivation2Str(int fl, bool truncate = false) const;
+
 	//! Запись данных в скрипт.
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 	//! Загрузка данных из скрипта.
