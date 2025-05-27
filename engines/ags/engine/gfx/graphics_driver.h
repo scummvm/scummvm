@@ -128,7 +128,6 @@ public:
 	// Report which color depth options are best suited for the given native color depth
 	virtual int  GetDisplayDepthForNativeDepth(int native_color_depth) const = 0;
 	virtual IGfxModeList *GetSupportedModeList(int color_depth) = 0;
-	virtual bool IsModeSupported(const DisplayMode &mode) = 0;
 	virtual DisplayMode GetDisplayMode() const = 0;
 	virtual PGfxFilter GetGraphicsFilter() const = 0;
 	virtual Size GetNativeSize() const = 0;

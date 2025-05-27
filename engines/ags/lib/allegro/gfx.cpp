@@ -47,7 +47,7 @@ int set_gfx_mode(int card, int w, int h, int depth) {
 	// Graphics shutdown can be ignored
 	if (card != -1) {
 		assert(card == SCUMMVM_ID);
-		::AGS::g_vm->setGraphicsMode(w, h, depth);
+		return ::AGS::g_vm->setGraphicsMode(w, h, depth) ? 0 : -1;
 	}
 	return 0;
 }

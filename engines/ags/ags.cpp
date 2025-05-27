@@ -247,64 +247,34 @@ SaveStateList AGSEngine::listSaves() const {
 	return getMetaEngine()->listSaves(_targetName.c_str());
 }
 
-bool AGSEngine::getPixelFormat(int depth, Graphics::PixelFormat &format) const {
+bool AGSEngine::setGraphicsMode(size_t w, size_t h, int depth) {
 	if (depth == 8) {
-		format = Graphics::PixelFormat::createFormatCLUT8();
+		initGraphics(w, h);
 		return true;
-	}
+	} else {
+		Common::List<Graphics::PixelFormat> tryFormats;
 
-	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
+		// Internally the engine uses the following format (see create_bitmap_ex())
+		//  16 bit: RGB565   / Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)
+		//  32 bit: ARGB8888 / Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)
+		// If supported by the backend, use it so that we can do direct rendering.
+		if (depth == 16) {
+			tryFormats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+		} else {
+			tryFormats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 
-	// Internally the engine uses the following format (see create_bitmap_ex())
-	//  16 bit: RGB565   / Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)
-	//  32 bit: ARGB8888 / Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)
-	// If supported by the backend, use it so that we can do direct rendering.
-	Graphics::PixelFormat engine_format = depth == 16 ? Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	if (Common::find(supportedFormatsList.begin(), supportedFormatsList.end(), engine_format) != supportedFormatsList.end()) {
-		format = engine_format;
-		return true;
-	}
-
-	// For 32 bit color depth, the next best formats for which there is some optimization in the
-	// engine are RGBA8888 or ABGR8888 (see ScummVMRendererGraphicsDriver::Present()).
-	if (depth == 32) {
-		Graphics::PixelFormat preferred_format1 = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		Graphics::PixelFormat preferred_format2 = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-		for (Common::List<Graphics::PixelFormat>::iterator it =
-				supportedFormatsList.begin(); it != supportedFormatsList.end(); ++it) {
-			if (*it == preferred_format1 || *it == preferred_format2) {
-				format = *it;
-				return true;
-			}
+			// For 32 bit color depth, the next best formats for which there is some optimization in the
+			// engine are RGBA8888 or ABGR8888 (see ScummVMRendererGraphicsDriver::Present()).
+			tryFormats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+			tryFormats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 		}
+
+		// Allow the backend to select a different format if the requested ones are slow/unavailable
+		initGraphics(w, h, tryFormats, false);
+
+		// A CLUT8 format may get selected if RGB support isn't available
+		return !g_system->getScreenFormat().isCLUT8();
 	}
-
-	// Otherwise prefer another format with the same color depth
-	for (Common::List<Graphics::PixelFormat>::iterator it =
-			supportedFormatsList.begin(); it != supportedFormatsList.end(); ++it) {
-		if (it->bpp() == depth) {
-			format = *it;
-			return true;
-		}
-	}
-
-	// Allow using 16 bit <-> 32 bit conversions by using the preferred graphics mode
-	if (!supportedFormatsList.empty()) {
-		format = supportedFormatsList.front();
-		return true;
-	}
-
-	return false;
-}
-
-
-void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
-	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
-	Graphics::PixelFormat format;
-	if (!getPixelFormat(colorDepth, format))
-		error("Unsupported color depth %d", colorDepth);
-
-	initGraphics(w, h, &format);
 }
 
 bool AGSEngine::isUnsupportedPre25() const {
