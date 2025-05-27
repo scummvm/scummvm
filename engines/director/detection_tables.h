@@ -486,6 +486,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
 	{ "teazle",				"Teazle" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
+	{ "thequest",			"The Quest" },
 	{ "timmysafari",		"Timmy's Safari Adventure" },
 	{ "tkkg1",				"A Case for TKKG 1: Jennifer is Missing" },
 	{ "tkkg2",				"A Case for TKKG 2: Deadly Chocolate" },
@@ -5920,6 +5921,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Full version is not Director
 	// Found on MACLIFE 09 #89
 	MACDEMO1_l("thetowerxmas", "Demo", "TowerXmasDiscDEMO", "b0fb747bd526bd4ba820a4072d009bd0", 481803, Common::JA_JPN, 404),
+
+	// Made by Cartoon Network in 1995, released by Kidsoft/AOL
+	WINGAME1("thequest", "", "movies/thequest.exe", "t:59e3f69b3b057b5a72e8063c5301f559", 726503, 404),
+	MACGAME1("thequest", "", "Mac Movie Folder/TheQuest", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310, 404),
 
 	// Mac version is not Director
 	// Found on Thinkin' Things Collection 1
