@@ -23,6 +23,7 @@
 #define BAGEL_MFC_WINGDI_H
 
 #include "bagel/mfc/minwindef.h"
+#include "bagel/mfc/gfx/gdi_objects.h"
 
 namespace Bagel {
 namespace MFC {
@@ -509,6 +510,14 @@ enum {
 #define MF_MENUBREAK        0x00000040L
 #define MF_UNHILITE         0x00000000L
 #define MF_HILITE           0x00000080L
+
+// CBrush hatch styles
+#define HS_HORIZONTAL	0
+#define HS_VERTICAL		1
+#define HS_FDIAGONAL	2
+#define HS_BDIAGONAL	3
+#define HS_CROSS		4
+#define HS_DIAGCROSS	5
 
 
 typedef struct tagBITMAPINFOHEADER {

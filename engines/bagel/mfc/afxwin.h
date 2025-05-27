@@ -442,13 +442,26 @@ struct CCreateContext {
 
 class CGdiObject : public CObject {
 public:
-	HGDIOBJ m_hObject;
+	HGDIOBJ m_hObject = nullptr;
+	operator HGDIOBJ() const {
+		return m_hObject;
+	}
 
 public:
 	~CGdiObject() override {
+		DeleteObject();
 	}
 
+	BOOL Attach(HGDIOBJ hObject);
+	HGDIOBJ Detach();
 	BOOL DeleteObject();
+
+	BOOL operator==(const CGdiObject &obj) const {
+		return obj.m_hObject == m_hObject;
+	}
+	BOOL operator!=(const CGdiObject &obj) const {
+		return obj.m_hObject != m_hObject;
+	}
 };
 
 class CPen : public CGdiObject {

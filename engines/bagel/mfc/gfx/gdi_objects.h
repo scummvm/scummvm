@@ -19,28 +19,34 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "bagel/mfc/afxwin.h"
+#ifndef BAGEL_MFC_GFX_GDI_OBJECTS_H
+#define BAGEL_MFC_GFX_GDI_OBJECTS_H
+
+#include "bagel/mfc/minwindef.h"
 
 namespace Bagel {
 namespace MFC {
+namespace Gfx {
 
-BOOL CGdiObject::Attach(HGDIOBJ hObject) {
-	m_hObject = hObject;
-	return true;
-}
+struct CGdiObjectImpl {
+};
 
-HGDIOBJ CGdiObject::Detach() {
-	HGDIOBJ result = nullptr;
-	SWAP(result, m_hObject);
-	return result;
-}
+struct CBrushImpl : public CGdiObjectImpl {
+	COLORREF _color = 0;
+};
 
-BOOL CGdiObject::DeleteObject() {
-	delete m_hObject;
-	m_hObject = nullptr;
-	return true;
-}
+} // namespace Gfx
+
+typedef Gfx::CGdiObjectImpl *HGDIOBJ;
+typedef HGDIOBJ HBITMAP;
+typedef HGDIOBJ HBRUSH;
+typedef HGDIOBJ HFONT;
+typedef HGDIOBJ HPALETTE;
+typedef HGDIOBJ HPEN;
+typedef HGDIOBJ HRGN;
+typedef HGDIOBJ HENHMETAFILE;
 
 } // namespace MFC
 } // namespace Bagel
+
+#endif

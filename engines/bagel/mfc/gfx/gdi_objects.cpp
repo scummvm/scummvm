@@ -19,28 +19,14 @@
  *
  */
 
-#include "common/textconsole.h"
+#include "bagel/mfc/gfx/gdi_objects.h"
 #include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
+namespace Gfx {
 
-BOOL CGdiObject::Attach(HGDIOBJ hObject) {
-	m_hObject = hObject;
-	return true;
-}
 
-HGDIOBJ CGdiObject::Detach() {
-	HGDIOBJ result = nullptr;
-	SWAP(result, m_hObject);
-	return result;
-}
-
-BOOL CGdiObject::DeleteObject() {
-	delete m_hObject;
-	m_hObject = nullptr;
-	return true;
-}
-
+} // namespace Gfx
 } // namespace MFC
 } // namespace Bagel
