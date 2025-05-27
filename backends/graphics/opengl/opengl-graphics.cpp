@@ -224,24 +224,17 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 
 	// ABGR8888/RGBA8888
 	formats.push_back(OpenGL::Texture::getRGBAPixelFormat());
+
+	// TODO: Limit these formats to implementations that support them -
+	// currently the Kyra, SCUMM and Trecision engines expect at least
+	// one 16bpp format in this list.
+
 	// RGB565
 	formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	// RGBA5551
 	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
-
-	// These formats are not natively supported by OpenGL ES implementations,
-	// we convert the pixel format internally.
-#ifdef SCUMM_LITTLE_ENDIAN
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	// ABGR8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
-	// RGB555, this is used by SCUMM HE 16 bit games.
-	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -397,14 +390,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #ifdef USE_RGB_COLOR
 	if (_oldState.gameFormat != _currentState.gameFormat) {
 		setupNewGameScreen = true;
-	}
-
-	// Check whether the requested format can actually be used.
-	Common::List<Graphics::PixelFormat> supportedFormats = getSupportedFormats();
-	// In case the requested format is not usable we will fall back to CLUT8.
-	if (Common::find(supportedFormats.begin(), supportedFormats.end(), _currentState.gameFormat) == supportedFormats.end()) {
-		_currentState.gameFormat = Graphics::PixelFormat::createFormatCLUT8();
-		transactionError |= OSystem::kTransactionFormatNotSupported;
 	}
 #endif
 
