@@ -123,6 +123,8 @@ public:
 		return true;
 	}
 
+	Common::String stateMode2Str(int fl, bool truncate = false) const;
+
 	//! Запись данных в скрипт.
 	/**
 	type_id - тип события
