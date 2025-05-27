@@ -41,15 +41,19 @@ BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
 }
 
 BOOL CDC::CreateCompatibleDC(CDC *pDC) {
-	error("TODO: CDC::CreateCompatibleDC");
+	m_hDC = pDC->m_hDC;
+	return true;
 }
 
 BOOL CDC::DeleteDC() {
-	error("TODO: CDC::DeleteDC");
+	delete m_hDC;
+	m_hDC = nullptr;
+	return true;
 }
 
 BOOL CDC::Attach(HDC hDC) {
-	error("TODO: CDC::Attach");
+	m_hDC = hDC;
+	return true;
 }
 
 void CDC::Detach() {
