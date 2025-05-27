@@ -55,7 +55,7 @@ struct CifInfo {
 	uint32 compressedSize = 0, size = 0;
 	Common::Rect src, dest; // Used when drawing conversation cels
 
-	uint32 dataOffset;
+	uint32 dataOffset = 0;
 };
 
 // Wrapper for a single file. Exclusively used for scene IFFs, though it can contain anything.
