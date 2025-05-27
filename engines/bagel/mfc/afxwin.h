@@ -550,7 +550,7 @@ public:
 	    LPCSTR lpszOutput, const void *lpInitData);
 	BOOL CreateCompatibleDC(CDC *pDC);
 	BOOL DeleteDC();
-	void Attach(HDC hDC);
+	BOOL Attach(HDC hDC);
 	void Detach();
 	int SetStretchBltMode(int nStretchMode);
 	int GetDeviceCaps(int nIndex) const;
@@ -674,6 +674,7 @@ class CPaintDC : public CDC {
 	DECLARE_DYNAMIC(CPaintDC)
 
 protected:
+	PAINTSTRUCT m_ps;
 	HWND m_hWnd = nullptr;
 
 public:
@@ -914,6 +915,7 @@ public:
 	Common::Rect _updateRect;
 	bool _updateErase = false;
 	Graphics::ManagedSurface _surface;
+	CDC *_dc = nullptr;
 
 public:
 	static CWnd *FromHandle(HWND hWnd) {

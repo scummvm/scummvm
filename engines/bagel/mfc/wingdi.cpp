@@ -57,11 +57,13 @@ int GetObject(HANDLE h, int c, LPVOID pv) {
 }
 
 HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint) {
-	error("TODO: BeginPaint");
+	CWnd *wnd = static_cast<CWnd *>(hWnd);
+	return wnd->BeginPaint(lpPaint);
 }
 
 BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
-	error("TODO: EndPaint");
+	CWnd *wnd = static_cast<CWnd *>(hWnd);
+	return wnd->EndPaint(lpPaint);
 }
 
 INT_PTR DialogBoxParam(HINSTANCE hInstance,

@@ -40,7 +40,7 @@ BOOL CDC::DeleteDC() {
 	error("TODO: CDC::DeleteDC");
 }
 
-void CDC::Attach(HDC hDC) {
+BOOL CDC::Attach(HDC hDC) {
 	error("TODO: CDC::Attach");
 }
 

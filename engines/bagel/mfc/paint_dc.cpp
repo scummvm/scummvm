@@ -28,7 +28,10 @@ namespace MFC {
 IMPLEMENT_DYNAMIC(CPaintDC, CDC)
 
 CPaintDC::CPaintDC(CWnd *pWnd) {
-	error("TODO: CPaintDC::CPaintDC");
+	m_hWnd = pWnd->m_hWnd;
+
+	if (!Attach(MFC::BeginPaint(m_hWnd, &m_ps)))
+		error("Could not attach to window");
 }
 
 } // namespace MFC

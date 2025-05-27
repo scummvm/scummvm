@@ -469,11 +469,19 @@ void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
 }
 
 HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
-	error("TODO: CWnd::BeginPaint");
+	assert(!_dc);
+	_dc = new CPaintDC(this);
+
+	return _dc;
 }
 
 BOOL CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
-	error("TODO: CWnd::EndPaint");
+	delete _dc;
+	_dc = nullptr;
+	_updateRect = Common::Rect();
+	_updateErase = false;
+
+	return true;
 }
 
 CWnd *CWnd::GetDlgItem(int nID) const {
