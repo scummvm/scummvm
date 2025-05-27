@@ -536,16 +536,18 @@ public:
 class CDC : public CObject {
 	DECLARE_DYNAMIC(CDC)
 public:
-	HDC m_hDC = nullptr;
+	CDC *const m_hDC;
 
-	static CDC *PASCAL FromHandle(HDC hDC);
-
-public:
-	~CDC() override {
+	static CDC *FromHandle(HDC hDC) {
+		return static_cast<CDC *>(hDC);
 	}
 
+public:
+	CDC() : m_hDC(this) {}
+	~CDC() override {}
+
 	BOOL CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
-	              LPCSTR lpszOutput, const void *lpInitData);
+	    LPCSTR lpszOutput, const void *lpInitData);
 	BOOL CreateCompatibleDC(CDC *pDC);
 	BOOL DeleteDC();
 	void Attach(HDC hDC);
@@ -910,6 +912,7 @@ public:
 	Common::String _windowText;
 	Common::Rect _windowRect;
 	Common::Rect _updateRect;
+	bool _updateErase = false;
 	Graphics::ManagedSurface _surface;
 
 public:

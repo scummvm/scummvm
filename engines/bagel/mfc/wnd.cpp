@@ -22,7 +22,6 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/gfx/window.h"
 
 namespace Bagel {
 namespace MFC {
@@ -114,10 +113,8 @@ void CWnd::DestroyWindow() {
 void CWnd::Invalidate(BOOL bErase) {
 	// Mark the entire window for redrawing
 	_updateRect = _windowRect;
+	_updateErase = bErase;
 
-	// Handle adding optional erase, and paint messages
-	if (bErase)
-		_messages.push(MSG(WM_ERASEBKGND));
 	_messages.push(MSG(WM_PAINT));
 }
 
@@ -421,11 +418,18 @@ LReturnTrue:
 }
 
 BOOL CWnd::ValidateRect(LPCRECT lpRect) {
-	Common::Rect r(lpRect->left, lpRect->top,
-		lpRect->right, lpRect->bottom);
-
-	if (_updateRect.isEmpty() || _updateRect.contains(r))
+	if (!lpRect) {
+		// Remove entire area
 		_updateRect = Common::Rect();
+
+	} else {
+		Common::Rect r(lpRect->left, lpRect->top,
+			lpRect->right, lpRect->bottom);
+
+		if (_updateRect.isEmpty() || _updateRect.contains(r))
+			_updateRect = Common::Rect();
+	}
+
 	return true;
 }
 

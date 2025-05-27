@@ -88,9 +88,10 @@ typedef HGDIOBJ HFONT;
 typedef HGDIOBJ HPALETTE;
 typedef HGDIOBJ HPEN;
 typedef HGDIOBJ HRGN;
-typedef HGDIOBJ HDC;         // NOTE: Actually not a GDI object handle (see note below)
 typedef HGDIOBJ HENHMETAFILE; // Somewhat legacy
 
+class CDC;
+typedef CDC *HDC;
 class CWnd;
 typedef CWnd *HWND;
 
