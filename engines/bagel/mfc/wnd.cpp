@@ -137,11 +137,16 @@ UINT CWnd::GetState() const {
 }
 
 CDC *CWnd::GetDC() {
-	error("TODO: CWnd::GetDC");
+	assert(!_dc);
+	_dc = new CPaintDC(this);
+
+	return _dc;
 }
 
 int CWnd::ReleaseDC(CDC *pDC) {
-	error("TODO: CWnd::ReleaseDC");
+	delete _dc;
+	_dc = nullptr;
+	return 1;
 }
 
 BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
@@ -182,7 +187,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 	// Look up the message in the message map
 	lpEntry = LookupMessage(message);
 	if (!lpEntry)
-		return DefWindowProc(message, lParam, wParam);
+		return false;
 
 	assert(message < 0xC000);
 	union MessageMapFunctions mmf;
