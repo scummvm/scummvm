@@ -308,36 +308,36 @@ static const char *const animMessages[2][250] = {
 },
 //English
 {
-	"Las \xA3ltimas  encuestas  realizadas",
-	"acerca  de  la  siniestralidad  en ",
-	"los transportes arrojan resultados",
-	"alentadores...",
+	"The  latest  nationwide car safety",
+	"surveys have  shown very  positive",
+	"results    regarding    accidental",
+	"accidents...",
 	"",
 	// 5
-	"El cien por cien  de los encuestados",
-	"declararon no haber sufrido nunca un",
-	"accidente mortal...",
-	"",
+	"100%  of  the  people  interviewed",
+	"reported that never in their lives",
+	"had they  ever  suffered  a  fatal",
+	"accident...",
 	"",
 	// 10
-	"Es una noticia que nos anima a salir",
-	"de viaje con m\xA0s seguridad.",
+	"This being  very  reassuring news",
+	"indeed for today''s motorist...",
 	"",
 	"",
 	"",
 	// 15
-	"\xAD\xADPor un tornillo!!...",
-	"Por un m\xA1sero y simple",
-	"tornillo  del  tr\xA1"
-	"fugo",
-	"del trapecio...",
+	"I don''t believe it!",
+	"Sacked again!  And",
+	"for what? One little"
+	"screw on the boss''s",
+	"wife''s car!",
 	"",
 	// 20
-	"Si lo hubiese apretado",
-	"bien, no estar\xA1"
-	"a ahora",
-	"sin trabajo...",
-	"",
+	"I knew I shouldn''t of",
+	"listened to her. \"Oh,"
+	"it''ll only take you a",
+	"minute. I Know it''s",
+	"supposed to be Henry''s",
 	"",
 	// 25
 	"\xAD\xADNoticia de \xA3ltima hora!!",
@@ -703,21 +703,23 @@ static const char *const fullScreenMessages[2][56] = {
     "   liberarlo de aquello  que lo retenga. Cuando lo",
     "   consigas podremos traeros  a ambos de vuelta al",
     "   mundo de los vivos.",
+
     // 33
-    "   Pero debes darte prisa  pues el v\xA1nculo con tu",
-    "   cuerpo se  debilita  y tu  alma podr\xA1""a  quedar",
-    "   atrapada para siempre en las Cavernas Eternas.",
+    "  However  you  must hurry,  for  the link  between ",
+    "  your body and soul  will deminish  and  your soul ",
+    "  will be trapped in the Eternal Caverns... FOREVER!",
+		//FIXME! dont show these in the english version!
     "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ",
     "   recuerda que all\xA0 donde vas un cuerpo contiene",
     "   m\xA0s energ\xA1""a que un alma al contrario que en el",
     "   mundo f\xA1sico.",
     // 40
-    "              No te demores y recuerda...",
-    "      Si triunfas, el premio es la vida, si no...",
-    "                  LA MUERTE ETERNA.",
+    "                     Remember.",
+    "        If you succed, the prize will be life!",
+    "           If you fail... ETERNAL DEATH!!!",
     // 43
-    "           Al fin lo has conseguido....",
-    "               \xAD\xAD\xADSoy LIBREEEEE!!!",
+    "                   You did it!",
+    "               I''M FREEEEEEEEEEE!!!",
     // WC
     // 45
     "... MMPFFFF!! ...",

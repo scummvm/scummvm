@@ -4633,8 +4633,12 @@ regismht readVerbRegister(uint numRegister) {
 
 regismht readVerbRegister() {
 	regismht regmht;
+	// Since the text is encrypted it's safer to save the size as reported by
+	// the pascal string.
+	byte size = verb.readByte();
+	verb.seek(-1, SEEK_CUR);
 	regmht.cadenatext = verb.readPascalString(false);
-	verb.skip(255 - regmht.cadenatext.size());
+	verb.skip(255 - size);
 	regmht.encadenado = verb.readByte();
 	regmht.respuesta = verb.readUint16LE();
 	regmht.punteronil = verb.readSint32LE();
