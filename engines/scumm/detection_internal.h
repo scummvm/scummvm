@@ -526,7 +526,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			Common::String md5str;
 			if (tmp)
 				md5str = computeStreamMD5AsString(*tmp, kMD5FileSizeLimit);
-			if (!md5str.empty()) {
+			if (tmp && !md5str.empty()) {
 				int64 filesize = tmp->size();
 
 				d.md5 = md5str;
