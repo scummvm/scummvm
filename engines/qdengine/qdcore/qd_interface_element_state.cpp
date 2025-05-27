@@ -73,6 +73,60 @@ qdInterfaceElementState &qdInterfaceElementState::operator = (const qdInterfaceE
 	return *this;
 }
 
+#define defEnum(x) #x
+
+static const char *eventList[] = {
+	defEnum(EVENT_NONE),
+	defEnum(EVENT_EXIT),
+	defEnum(EVENT_LOAD_SCENE),
+	defEnum(EVENT_SAVE_GAME),
+	defEnum(EVENT_NEW_GAME),
+	defEnum(EVENT_CHANGE_INTERFACE_SCREEN),
+	defEnum(EVENT_CHANGE_PERSONAGE),
+	defEnum(EVENT_TMP_HIDE_ELEMENT),
+	defEnum(EVENT_HIDE_ELEMENT),
+	defEnum(EVENT_SHOW_ELEMENT),
+	defEnum(EVENT_RESUME_GAME),
+	defEnum(EVENT_SET_SAVE_MODE),
+	defEnum(EVENT_SET_LOAD_MODE),
+	defEnum(EVENT_ACTIVATE_PERSONAGE),
+	defEnum(EVENT_PREV_ELEMENT_STATE),
+	defEnum(EVENT_NEXT_ELEMENT_STATE),
+	defEnum(EVENT_MAIN_MENU),
+	defEnum(EVENT_PLAY_VIDEO),
+	defEnum(EVENT_BUTTON_STATE),
+	defEnum(EVENT_CLEAR_MOUSE),
+	defEnum(EVENT_SCROLL_LEFT),
+	defEnum(EVENT_SCROLL_RIGHT),
+	defEnum(EVENT_SCROLL_UP),
+	defEnum(EVENT_SCROLL_DOWN),
+	defEnum(EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL),
+	defEnum(EVENT_MODAL_OK),
+	defEnum(EVENT_MODAL_CANCEL),
+	defEnum(EVENT_HALL_OF_FAME_PLAYER),
+	defEnum(EVENT_HALL_OF_FAME_SCORE),
+	defEnum(EVENT_HALL_OF_FAME_CUR_SCORE),
+};
+
+static const char *eventActivationList[] = {
+	defEnum(EVENT_ACTIVATION_CLICK),
+	defEnum(EVENT_ACTIVATION_HOVER),
+};
+
+Common::String qdInterfaceElementState::event2Str(int fl, bool truncate) const {
+	if (fl >= ARRAYSIZE(eventList) || fl < 0)
+		return Common::String::format("<%d>", fl);
+
+	return Common::String(&eventList[fl][truncate ? 6 : 0]);
+}
+
+Common::String qdInterfaceElementState::eventActivation2Str(int fl, bool truncate) const {
+	if (fl >= ARRAYSIZE(eventActivationList) || fl < 0)
+		return Common::String::format("<%d>", fl);
+
+	return Common::String(&eventActivationList[fl][truncate ? 17 : 0]);
+}
+
 bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
@@ -90,7 +144,11 @@ bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) c
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<event type=\"%d\"", int(_events[j].event())));
+		if (debugChannelSet(-1, kDebugLog)) {
+			fh.writeString(Common::String::format("<event type=\"%s\"", event2Str(_events[j].event()).c_str()));
+		} else {
+			fh.writeString(Common::String::format("<event type=\"%d\"", int(_events[j].event())));
+		}
 
 		if (_events[j].has_data()) {
 			fh.writeString(Common::String::format(" event_data=\"%s\"", qdscr_XML_string(_events[j].event_data())));
@@ -101,7 +159,11 @@ bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) c
 		}
 
 		if (_events[j].activation() != qdInterfaceEvent::EVENT_ACTIVATION_CLICK) {
-			fh.writeString(Common::String::format(" activation_type=\"%d\"", (int)_events[j].activation()));
+			if (debugChannelSet(-1, kDebugLog)) {
+				fh.writeString(Common::String::format(" activation_type=\"%s\"", eventActivation2Str((int)_events[j].activation()).c_str()));
+			} else {
+				fh.writeString(Common::String::format(" activation_type=\"%d\"", (int)_events[j].activation()));
+			}
 		}
 
 		fh.writeString("/>\r\n");
