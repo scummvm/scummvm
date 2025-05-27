@@ -76,12 +76,14 @@ DATAFILES_LIST_DATA=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data.mk" 2>/
 DATAFILES_LIST_DATA_BIG=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data_big.mk" 2>/dev/null| grep DIST_FILES_LIST | sed "s|DIST_FILES_LIST += \(.*\)|${SCUMMVM_PATH}/\1|g")
 DATAFILES_LIST_DATA_CORE=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data_core.mk" 2>/dev/null| grep DIST_FILES_LIST | sed "s|DIST_FILES_LIST += \(.*\)|${SCUMMVM_PATH}/\1|g")
 SOUNDFONTS_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*dists/soundfonts | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
+SHADERS_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*/shaders/ | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
 
 # Put retrieved data into arrays
 set +e
 read -a THEME_ARRAY -d '' -r <<< "${THEMES_LIST}"
 read -a DATAFILES_ARRAY -d '' -r <<< "$DATAFILES_LIST_DATA $DATAFILES_LIST_DATA_BIG $DATAFILES_LIST_DATA_CORE"
 read -a SOUNDFONTS_ARRAY -d '' -r <<< "$SOUNDFONTS_LIST"
+read -a SHADERS_ARRAY -d '' -r <<< "$SHADERS_LIST"
 set -e
 
 # Add specific data files
@@ -90,6 +92,7 @@ DATAFILES_ARRAY[${#DATAFILES_ARRAY[@]}]="${SCUMMVM_PATH}"/backends/vkeybd/packs/
 # Make sure target folders exist
 [ $3 = "bundle" ] && mkdir -p "${TMP_PATH}/${BUNDLE_THEME_DIR}/"
 [ $3 = "bundle" ] && mkdir -p "${TMP_PATH}/${BUNDLE_DATAFILES_DIR}/"
+[ $3 = "bundle" ] && mkdir -p "${TMP_PATH}/${BUNDLE_DATAFILES_DIR}/shaders"
 
 count=0
 # Process themes
@@ -98,6 +101,7 @@ count=0
 # Process datafiles
 	process_group "$BUNDLE_DATAFILES_DIR" $3 ${DATAFILES_ARRAY[@]}
 	process_group "$BUNDLE_DATAFILES_DIR" $3 ${SOUNDFONTS_ARRAY[@]}
+	process_group "$BUNDLE_DATAFILES_DIR/shaders" $3 ${SHADERS_ARRAY[@]}
 
 # Process additional local bundle files
 if [ -d "$BUNDLE_LOCAL_DATAFILES_DIR" -a ! -z "$(ls -A ${BUNDLE_LOCAL_DATAFILES_DIR} 2>/dev/null)" ] ; then
