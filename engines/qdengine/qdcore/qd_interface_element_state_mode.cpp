@@ -70,11 +70,31 @@ void qdInterfaceElementStateMode::set_animation_file(const Common::Path &name) {
 	_animation_file = name;
 }
 
+#define defEnum(x) #x
+
+static const char *stateModeList[] = {
+	defEnum(DEFAULT_MODE),
+	defEnum(MOUSE_HOVER_MODE),
+	defEnum(EVENT_MODE),
+};
+
+Common::String qdInterfaceElementStateMode::stateMode2Str(int fl, bool truncate) const {
+	if (fl >= ARRAYSIZE(stateModeList) || fl < 0)
+		return Common::String::format("<%d>", fl);
+
+	Common::String out(stateModeList[fl]);
+	return truncate ? out.substr(0, out.size() - 5) : out;
+}
+
 bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_id, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<state_mode type=\"%d\"", type_id));
+	if (debugChannelSet(-1, kDebugLog)) {
+		fh.writeString(Common::String::format("<state_mode type=\"%s\"", stateMode2Str(type_id).c_str()));
+	} else {
+		fh.writeString(Common::String::format("<state_mode type=\"%d\"", type_id));
+	}
 
 	if (has_animation()) {
 		fh.writeString(Common::String::format(" animation=\"%s\"", qdscr_XML_string(animation_file().toString('\\'))));
