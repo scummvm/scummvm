@@ -21,11 +21,19 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/gfx/surface_dc.h"
 
 namespace Bagel {
 namespace MFC {
 
 IMPLEMENT_DYNAMIC(CDC, CObject)
+
+CDC *CDC::FromHandle(HDC hDC) {
+	Gfx::SurfaceDC *surf = static_cast<Gfx::SurfaceDC *>(hDC);
+	CWnd *wnd = surf->_owner;
+
+	return &wnd->_dc;
+}
 
 BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
                    LPCSTR lpszOutput, const void *lpInitData) {

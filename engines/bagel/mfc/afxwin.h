@@ -29,6 +29,7 @@
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
 #include "bagel/mfc/gfx/cursor.h"
+#include "bagel/mfc/gfx/surface_dc.h"
 #include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/libs/settings.h"
 
@@ -536,16 +537,16 @@ public:
 class CDC : public CObject {
 	DECLARE_DYNAMIC(CDC)
 public:
-	CDC *const m_hDC;
+	HDC m_hDC = nullptr;
 
-	static CDC *FromHandle(HDC hDC) {
-		return static_cast<CDC *>(hDC);
-	}
+	static CDC *FromHandle(HDC hDC);
 
 public:
-	CDC() : m_hDC(this) {}
 	~CDC() override {}
 
+	operator HDC() const {
+		return m_hDC;
+	}
 	BOOL CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
 	    LPCSTR lpszOutput, const void *lpInitData);
 	BOOL CreateCompatibleDC(CDC *pDC);
@@ -915,8 +916,8 @@ public:
 	Common::Rect _windowRect;
 	Common::Rect _updateRect;
 	bool _updateErase = false;
-	Graphics::ManagedSurface _surface;
-	CDC *_dc = nullptr;
+	Gfx::SurfaceDC _surface;
+	CDC _dc;
 
 public:
 	static CWnd *FromHandle(HWND hWnd) {
@@ -927,7 +928,7 @@ public:
 	}
 
 public:
-	CWnd() : m_hWnd(this) {}
+	CWnd();
 	~CWnd() override;
 
 	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,

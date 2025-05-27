@@ -91,8 +91,11 @@ typedef HGDIOBJ HPEN;
 typedef HGDIOBJ HRGN;
 typedef HGDIOBJ HENHMETAFILE; // Somewhat legacy
 
-class CDC;
-typedef CDC *HDC;
+namespace Gfx {
+class SurfaceDC;
+} // namespace Gfx
+
+typedef Gfx::SurfaceDC *HDC;
 class CWnd;
 typedef CWnd *HWND;
 

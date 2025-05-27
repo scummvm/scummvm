@@ -30,6 +30,10 @@ IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 END_MESSAGE_MAP()
 
+CWnd::CWnd() : m_hWnd(this), _surface(this) {
+	_dc.Attach(&_surface);
+}
+
 CWnd::~CWnd() {
 	delete m_hWnd;
 }
@@ -137,15 +141,11 @@ UINT CWnd::GetState() const {
 }
 
 CDC *CWnd::GetDC() {
-	assert(!_dc);
-	_dc = new CPaintDC(this);
-
-	return _dc;
+	return &_dc;
 }
 
 int CWnd::ReleaseDC(CDC *pDC) {
-	delete _dc;
-	_dc = nullptr;
+	// No implementation in ScummVM
 	return 1;
 }
 
@@ -463,9 +463,7 @@ void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
 }
 
 HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
-	CDC *dc = GetDC();
-
-	lpPaint->hdc = dc;
+	lpPaint->hdc = &_surface;
 	lpPaint->fErase = _updateErase;
 	lpPaint->rcPaint = _updateRect;
 	lpPaint->fRestore = false;
@@ -473,12 +471,10 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 	Common::fill(lpPaint->rgbReserved,
 		lpPaint->rgbReserved + 32, 0);
 
-	return _dc;
+	return lpPaint->hdc;
 }
 
 BOOL CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
-	delete _dc;
-	_dc = nullptr;
 	_updateRect = Common::Rect();
 	_updateErase = false;
 
