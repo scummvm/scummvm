@@ -449,10 +449,13 @@ Common::Error PrinceEngine::run() {
 
 void PrinceEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
-	if (pause) {
-		_midiPlayer->pause();
-	} else {
-		_midiPlayer->resume();
+
+	if (_midiPlayer) {
+		if (pause) {
+			_midiPlayer->pause();
+		} else {
+			_midiPlayer->resume();
+		}
 	}
 }
 
