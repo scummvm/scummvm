@@ -59,7 +59,6 @@ void MusicNodeBASE::updateMixer() {
 	if (_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1)
 		_volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth, _directionality);  // Apply game-specific volume profile and then attenuate according to azimuth
 	else
-//    _volumeOut = _engine->getVolumeManager()->convert(_volume, kVolumeLinear);  // Apply linear volume profile and ignore azimuth
 		_volumeOut = _engine->getVolumeManager()->convert(_volume);  // Apply game-specific volume profile and ignore azimuth
 	outputMixer();
 }
@@ -163,11 +162,6 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 			if (_volume != _newvol)
 				setVolume(_newvol);
 		}
-		/*  // Redundant with switch to automatic subtitles
-
-		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
-		  _engine->getSubtitleManager()->update(_engine->_mixer->getSoundElapsedTime(_handle) / 100, _sub);
-		// */
 	}
 	return false;
 }
@@ -223,8 +217,6 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 					_viewPos.setDegrees(360 * scriptManager->getStateValue(StateKey_ViewPos) / _width);
 				} else {
 					warning("Encountered zero background width whilst processing PanTrackNode in panoramic mode!");
-					// _sourcePos.setDegrees(0);
-					// _viewPos.setDegrees(0);
 				}
 				break;
 			case RenderTable::FLAT:
