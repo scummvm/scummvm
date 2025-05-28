@@ -81,6 +81,7 @@ Common::Error HodjNPodjEngine::run() {
 	// Run the game
 	auto &app = Metagame::Frame::theApp;
 	app.addResources("meta/hnpmeta.dll");
+	app.setDirectory("meta");
 	app.Run();
 
 	for (int size = 8; size <= 14; size += 2)

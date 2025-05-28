@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/global_functions.h"
@@ -169,6 +170,16 @@ void CWinApp::WriteProfileInt(LPCSTR lpszSection,
 	error("TODO: CWinApp::WriteProfileInt");
 }
 
+void CWinApp::setDirectory(const char *folder) {
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	_currentDirectory = gameDataDir.getChild(folder);
+}
+
+Common::FSNode CWinApp::getDirectory() const {
+	return _currentDirectory;
+}
+
+/*--------------------------------------------*/
 
 CWinApp *AfxGetApp() {
 	return CWinApp::_activeApp;

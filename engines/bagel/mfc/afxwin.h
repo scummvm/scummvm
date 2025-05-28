@@ -22,6 +22,7 @@
 #ifndef BAGEL_MFC_AFXWIN_H
 #define BAGEL_MFC_AFXWIN_H
 
+#include "common/fs.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/afx.h"
@@ -1256,6 +1257,7 @@ private:
 	Gfx::Cursors _cursors;
 	int m_nWaitCursorCount = 0;
 	HCURSOR m_hcurWaitCursorRestore = 0;
+	Common::FSNode _currentDirectory;
 
 private:
 	/**
@@ -1322,6 +1324,8 @@ public:
 	void removeResources() {
 		_resources.popResources();
 	}
+	void setDirectory(const char *folder);
+	Common::FSNode getDirectory() const;
 };
 
 extern CWinApp *AfxGetApp();
