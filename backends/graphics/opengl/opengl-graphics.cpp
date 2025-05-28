@@ -257,6 +257,11 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 	// ABGR8888/RGBA8888
 	formats.push_back(OpenGL::Texture::getRGBAPixelFormat());
 
+	if (OpenGLContext.bgraSupported) {
+		// ARGB8888/BGRA8888
+		formats.push_back(OpenGL::Texture::getBGRAPixelFormat());
+	}
+
 	// TODO: Limit these formats to implementations that support them -
 	// currently the Kyra, SCUMM and Trecision engines expect at least
 	// one 16bpp format in this list.
@@ -267,6 +272,37 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
+
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (OpenGLContext.packedPixelsSupported && !isGLESContext()) {
+#ifdef SCUMM_LITTLE_ENDIAN
+		// RGBA8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		// BGRA8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0));
+#endif
+#ifdef SCUMM_BIG_ENDIAN
+		// ABGR8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		// ARGB8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+#endif
+		// BGR565
+		formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0));
+		// ABGR1555
+		formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+		// ARGB1555
+		formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+		// BGRA5551
+		formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 1, 6, 11, 0));
+		// ABGR4444
+		formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12));
+		// ARGB4444
+		formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12));
+		// BGRA4444
+		formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0));
+	}
+#endif // !USE_FORCED_GLES && !USE_FORCED_GLES2
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -1660,6 +1696,11 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_RGB;
 		glType = GL_UNSIGNED_BYTE;
 		return true;
+	} else if (OpenGLContext.bgraSupported && pixelFormat == OpenGL::Texture::getBGRAPixelFormat()) { // ARGB8888 / BGRA8888
+		glIntFormat = isGLESContext() ? GL_BGRA : GL_RGBA;
+		glFormat = GL_BGRA;
+		glType = GL_UNSIGNED_BYTE;
+		return true;
 	} else if (!OpenGLContext.packedPixelsSupported) {
 		return false;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
@@ -1688,33 +1729,38 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_INT_8_8_8_8;
 		return true;
-#endif
-	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
-		glIntFormat = GL_RGB;
-		glFormat = GL_BGRA;
-		glType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
-		return true;
-	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)) { // ARGB4444
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) { // BGRA8888
 		glIntFormat = GL_RGBA;
 		glFormat = GL_BGRA;
-		glType = GL_UNSIGNED_SHORT_4_4_4_4_REV;
+		glType = GL_UNSIGNED_INT_8_8_8_8;
 		return true;
+#endif
 #ifdef SCUMM_BIG_ENDIAN
 	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
 		glIntFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_INT_8_8_8_8_REV;
 		return true;
-#endif
-	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) { // BGRA8888
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) { // ARGB8888
 		glIntFormat = GL_RGBA;
 		glFormat = GL_BGRA;
-		glType = GL_UNSIGNED_INT_8_8_8_8;
+		glType = GL_UNSIGNED_INT_8_8_8_8_REV;
 		return true;
+#endif
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0)) { // BGR565
 		glIntFormat = GL_RGB;
 		glFormat = GL_RGB;
 		glType = GL_UNSIGNED_SHORT_5_6_5_REV;
+		return true;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15)) { // ABGR1555
+		glIntFormat = GL_RGB;
+		glFormat = GL_RGBA;
+		glType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
+		return true;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15)) { // ARGB1555
+		glIntFormat = GL_RGB;
+		glFormat = GL_BGRA;
+		glType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 1, 6, 11, 0)) { // BGRA5551
 		glIntFormat = GL_RGBA;
@@ -1724,6 +1770,11 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12)) { // ABGR4444
 		glIntFormat = GL_RGBA;
 		glFormat = GL_RGBA;
+		glType = GL_UNSIGNED_SHORT_4_4_4_4_REV;
+		return true;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)) { // ARGB4444
+		glIntFormat = GL_RGBA;
+		glFormat = GL_BGRA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4_REV;
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)) { // BGRA4444

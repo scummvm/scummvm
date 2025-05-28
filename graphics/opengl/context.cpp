@@ -71,6 +71,7 @@ void Context::reset() {
 	framebufferObjectSupported = false;
 	framebufferObjectMultisampleSupported = false;
 	multisampleMaxSamples = -1;
+	bgraSupported = false;
 	packedPixelsSupported = false;
 	packedDepthStencilSupported = false;
 	unpackSubImageSupported = false;
@@ -182,6 +183,8 @@ void Context::initialize(ContextType contextType) {
 			multitextureSupported = true;
 		} else if (token == "GL_ARB_framebuffer_object") {
 			framebufferObjectSupported = true;
+		} else if (token == "GL_EXT_bgra" || token == "GL_EXT_texture_format_BGRA8888") {
+			bgraSupported = true;
 		} else if (token == "GL_EXT_packed_pixels" || token == "GL_APPLE_packed_pixels") {
 			packedPixelsSupported = true;
 		} else if (token == "GL_EXT_packed_depth_stencil" || token == "GL_OES_packed_depth_stencil") {
@@ -287,6 +290,7 @@ void Context::initialize(ContextType contextType) {
 
 		// OpenGL 1.2 and later always has packed pixels, texture edge clamp and texture max level support
 		if (isGLVersionOrHigher(1, 2)) {
+			bgraSupported = true;
 			packedPixelsSupported = true;
 			textureEdgeClampSupported = true;
 			textureMaxLevelSupported = true;
@@ -331,6 +335,7 @@ void Context::initialize(ContextType contextType) {
 	debug(5, "OpenGL: FBO support: %d", framebufferObjectSupported);
 	debug(5, "OpenGL: Multisample FBO support: %d", framebufferObjectMultisampleSupported);
 	debug(5, "OpenGL: Multisample max number: %d", multisampleMaxSamples);
+	debug(5, "OpenGL: BGRA support: %d", bgraSupported);
 	debug(5, "OpenGL: Packed pixels support: %d", packedPixelsSupported);
 	debug(5, "OpenGL: Packed depth stencil support: %d", packedDepthStencilSupported);
 	debug(5, "OpenGL: Unpack subimage support: %d", unpackSubImageSupported);

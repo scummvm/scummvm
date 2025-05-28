@@ -99,6 +99,9 @@ public:
 	 */
 	int multisampleMaxSamples;
 
+	/** Whether BGRA support is available or not. */
+	bool bgraSupported;
+
 	/** Whether packed pixels support is available or not. */
 	bool packedPixelsSupported;
 

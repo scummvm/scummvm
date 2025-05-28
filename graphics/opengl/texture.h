@@ -164,6 +164,14 @@ public:
 #endif
 	}
 
+	static inline const Graphics::PixelFormat getBGRAPixelFormat() {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+#else
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+#endif
+	}
+
 protected:
 	const GLenum _glIntFormat;
 	const GLenum _glFormat;
