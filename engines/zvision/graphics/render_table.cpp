@@ -160,13 +160,6 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 				_bF = _curP._fTL * _bTL + _curP._fTR * _bTR + _curP._fBL * _bBL + _curP._fBR * _bBR;
 				destBuffer[_destOffset] = mergeColor(_rF, _gF, _bF);
 				_destOffset++;
-				/*/
-				if(Common::Point(x,y)==testPixel) {
-				debug(2,"\tMutated test pixel %d, %d", x, y);
-				debug(2,"\t_fX: %f, _fY: %f", _curP._fX, _curP._fY);
-				debug(2,"\tYT: %d, YB: %d, XL: %d XR: %d", _srcIndexYT, _srcIndexYB, _srcIndexXL, _srcIndexXR);
-				}
-				// */
 			}
 		}
 	} else {
@@ -229,15 +222,6 @@ void RenderTable::generateLookupTable(bool tilt) {
 		linearCoordInCylinderCoords = halfLinearSize + ((float)linearCoord - halfLinearSize) * cosAlpha;
 		linearOffset = linearCoordInCylinderCoords - linearCoord;
 		polarOffset = polarCoordInCylinderCoords - polarCoord;
-		/*
-		    bool _printDebug = (Common::Point(x,y)==testPixel);
-		    if(_printDebug) {
-		      debug(5,"\tGenerating test pixel %d, %d", x, y);
-		      debug(5,"\tOffsets %f,%f", xOffset, yOffset);
-		    }
-		*/
-		// Only store the (x,y) offsets instead of the absolute positions
-// 		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality, _printDebug);
 		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality);
 		// Transformation is both horizontally and vertically symmetrical about the camera axis,
 		// We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y:

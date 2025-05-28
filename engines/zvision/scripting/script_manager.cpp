@@ -633,7 +633,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		}
 	}
 
-	// _engine->setRenderDelay(2); // Uncertain if this is necessary; doesn't seem to cause any problems when disabled, but keep an eye on it.
+	// _engine->setRenderDelay(2); // TODO: Uncertain if this is necessary; doesn't seem to cause any problems when disabled, but keep an eye on it.
 
 	if (!leavingMenu) {
 		if (!isLoading && !enteringMenu) {

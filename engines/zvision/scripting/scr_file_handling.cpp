@@ -319,13 +319,6 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		debug(4, "Result line: %s", line.c_str());
 		const char *chrs = line.c_str();
 		uint pos;
-		/*/
-		        // Iterate along line until colon encountered
-		        for (pos = 0; pos < line.size(); pos++) {
-		            if (chrs[pos] == ':')
-		                break;
-		        }
-		/*/
 		if (line.matchString("action:*", true))
 			pos = 6;
 		else if (line.matchString("event:*", true))
@@ -334,7 +327,6 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			pos = 10;
 		else
 			continue;
-// */
 		if (pos < line.size()) {  // Stuff left
 			uint startpos = pos + 1;  // first character after colon
 			// Scan for next colon or opening bracket

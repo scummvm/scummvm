@@ -45,7 +45,6 @@ protected:
 	virtual bool process(int32 deltatime);  // Return true if to be deleted
 	ZVision *_engine;
 	Common::Rect _textArea;
-	// Common::String _txt;
 	int16 _timer; // Always in milliseconds; countdown to deletion
 	bool _toDelete;
 	bool _redraw;

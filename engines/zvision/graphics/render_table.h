@@ -37,21 +37,13 @@ public:
 	Common::Rect _Src = Common::Rect(0, 0); // Coordinates of four panorama image pixels around actual working window pixel
 
 	float _fX, _fY, _fTL, _fTR, _fBL, _fBR;
-
-// bool _printDebug = false;
-
+	
 	FilterPixel() {}
-// FilterPixel(float x, float y, bool highQuality=false, bool printDebug=false) {
 	FilterPixel(float x, float y, bool highQuality = false) {
 		_Src.left = int16(floor(x));
 		_Src.right = int16(ceil(x));
 		_Src.top = int16(floor(y));
 		_Src.bottom = int16(ceil(y));
-		/*
-		      _printDebug = printDebug;
-		    if(_printDebug)
-		      debug(5,"\tTarget pixel offset: %f, %f", x, y);
-		*/
 		if (highQuality) {
 			_fX = x - (float)_Src.left;
 			_fY = y - (float)_Src.top;
@@ -59,18 +51,10 @@ public:
 			_fTR = _fX * (1 - _fY);
 			_fBL = (1 - _fX) * _fY;
 			_fBR = _fX * _fY;
-			/*
-			      if(_printDebug)
-			        debug(5,"_fX: %f, _fY: %f, _fTL:%f, _fTR:%f, _fBL:%f, _fBR:%f", _fX, _fY, _fTL, _fTR, _fBL, _fBR);
-			*/
 		} else {
 			// Nearest neighbour
 			_xDir = (x - _Src.left) > 0.5f;
 			_yDir = (y - _Src.top) > 0.5f;
-			/*
-			      if(_printDebug)
-			        debug(5,"\tNearest neighbour, _xDir: 0x%X, _yDir: 0x%X", _xDir, _yDir);
-			*/
 		}
 	}
 	~FilterPixel() {}
@@ -133,7 +117,6 @@ private:
 		uint16 zeroPoint;
 	} _panoramaOptions;
 
-	// TODO: See if tilt and panorama need to have separate options
 	struct {
 		float verticalFOV;  // Radians
 		float linearScale;
@@ -185,7 +168,6 @@ public:
 private:
 	void generateLookupTable(bool tilt = false);
 	void generatePanoramaLookupTable();
-// Common::Point generatePanoramaLookupPoint();
 	void generateTiltLookupTable();
 };
 
