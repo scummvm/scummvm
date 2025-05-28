@@ -62,18 +62,18 @@ bool FrameLimiter::delayBeforeSwap() {
 	_now = _system->getMillis();
 	_loopDuration = _now - _frameStart;
 	if (_enabled) {
-		//_delay = _frameLimit - _loopDuration;  //Original functionality, will tend to undershoot target framerate slightly due to finite screen.update() time.
-		_delay = _frameLimit - (_now - _drawStart); //Ensure EXACTLY the specified frame duration has elapsed since last screen.update() was called.
+		//_delay = _frameLimit - _loopDuration;  // Original functionality, will tend to undershoot target framerate slightly due to finite screen.update() time.
+		_delay = _frameLimit - (_now - _drawStart); // Ensure that EXACTLY the specified frame duration has elapsed since last screen.update() was called.
 		if (_delay > 0)
 			_system->delayMillis(_delay);
 	}
 	_drawStart = _system->getMillis();
-	return (_delay < 0); //Check if frame is late
+	return (_delay < 0); // Check if frame is late
 }
 
 void FrameLimiter::pause(bool pause) {
 	if (!pause)
-		_frameStart = 0; // Ensure the frame duration value is consistent when resuming
+		_frameStart = 0; // Ensure that the frame duration value is consistent when resuming
 }
 
 } // End of namespace Graphics
