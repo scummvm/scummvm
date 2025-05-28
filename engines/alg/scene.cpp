@@ -351,6 +351,7 @@ Scene::Scene(const Common::String &name, uint32 startFrame, uint32 endFrame) {
 	_name = name;
 	_startFrame = startFrame;
 	_endFrame = endFrame;
+	_diff = 0;
 	_difficultyMod = 0;
 }
 
