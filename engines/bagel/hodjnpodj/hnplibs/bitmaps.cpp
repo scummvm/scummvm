@@ -26,23 +26,6 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-/*************************************************************************
- *
- * FetchScreenBitmap()
- *
- * Parameters:
- *  CDC *pDC                pointer to device context to be used for display
- *  CPalette *pPalette      pointer to color palette to be used for the bitmap
- *  int x, y                upper left hand corner of bitmap to fetch
- *  int dx, dy              size of rectangular area to retrive
- *
- * Return Value:
- *  CBitmap *               pointer to bitmap object or NULL
- *
- * Description:     return a rectangular area of the screen in a CBitmap object.
- *
- ************************************************************************/
-
 CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int y, const int dx, const int dy) {
 	BOOL        bSuccess = FALSE;
 	CDC         *pWorkDC = NULL;
@@ -92,23 +75,6 @@ CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int 
 	return (pWork);
 }
 
-
-/*************************************************************************
- *
- * FetchBitmap()
- *
- * Parameters:
- *  CDC *pDC                pointer to device context to be used for display
- *  CPalette **pPalette     address of pointer where to store palette from the DIB
- *  char *pszPathName       pointer to path string for disk based DIB file
- *
- * Return Value:
- *  CBitmap *               pointer to bitmap object or NULL
- *
- * Description:     Read in a DDB bitmap from disk and return it as a CBitmap.
- *
- ************************************************************************/
-
 CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName) {
 	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
 	HDIB        hDIB = NULL;
@@ -132,23 +98,6 @@ CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName) {
 	return (pBitmap);
 }
 
-
-/*************************************************************************
- *
- * FetchBitmap()
- *
- * Parameters:
- *  CDC *pDC                pointer to device context to be used for display
- *  CPalette **pPalette     address of pointer where to store palette from the DIB
- *  char *pszPathName       pointer to path string for disk based DIB file
- *
- * Return Value:
- *  CBitmap *               pointer to bitmap object or NULL
- *
- * Description:     Read in a DDB bitmap from disk and return it as a CBitmap.
- *
- ************************************************************************/
-
 CBitmap *FetchBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName) {
 	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
 	HDIB        hDIB = NULL;
@@ -167,23 +116,6 @@ CBitmap *FetchBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName) {
 
 	return (pBitmap);
 }
-
-
-/*************************************************************************
- *
- * FetchResourceBitmap()
- *
- * Parameters:
- *  CDC *pDC                pointer to device context to be used for display
- *  CPalette **pPalette     address of pointer where to store palette from the DIB
- *  char *pszName           pointer to name string for resource a based DIB
- *
- * Return Value:
- *  CBitmap *               pointer to bitmap object or NULL
- *
- * Description:     Read in a DDB bitmap resource and return it as a CBitmap.
- *
- ************************************************************************/
 
 CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName) {
 	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
@@ -207,23 +139,6 @@ CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName)
 
 	return (pBitmap);
 }
-
-
-/*************************************************************************
- *
- * FetchResourceBitmap()
- *
- * Parameters:
- *  CDC *pDC                pointer to device context to be used for display
- *  CPalette **pPalette     address of pointer where to store palette from the DIB
- *  int nResID              identifier for a resource based DIB
- *
- * Return Value:
- *  CBitmap *               pointer to bitmap object or NULL
- *
- * Description:     Read in a DDB bitmap resource and return it as a CBitmap.
- *
- ************************************************************************/
 
 CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID) {
 	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
@@ -250,25 +165,6 @@ CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID) {
 
 	return (pBitmap);
 }
-
-
-/*************************************************************************
- *
- * ExtractBitmap()
- *
- * Parameters:
- *  CDC *pDC                pointer to device context to be used for display
- *  CBitmap *pBase          pointer to source bitmap for extraction
- *  CPalette *pPalette      pointer to color palette to be used for the bitmap
- *  int x, y                upper left hand corner of bitmap to fetch
- *  int dx, dy              size of rectangular area to retrive
- *
- * Return Value:
- *  CBitmap *               pointer to bitmap object or NULL
- *
- * Description:     return a section of another CBitmap object.
- *
- ************************************************************************/
 
 CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int x, const int y, const int dx, const int dy) {
 	BOOL        bSuccess = FALSE;

@@ -29,13 +29,53 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int y, const int dx, const int dy);
+/**
+ * Return a rectangular area of the screen in a CBitmap object.
+ * @param pDC		Pointer to device context to be used for display
+ * @param pPalette	Pointer to color palette to be used for the bitmap
+ * @param x,y		Upper left hand corner of bitmap to fetch
+ * @param dx,dy		Size of rectangular area to retrive
+ * @return		Pointer to bitmap object or NULL
+ */
+extern CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int y, const int dx, const int dy);
 
-CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName);
-CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName);
-CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID);
+/**
+ * Loads a bitmap file
+ * @param pDC			Pointer to device context to be used for display
+ * @param pPalette		Address of pointer where to store palette from the DIB
+ * @param pszPathName	Pointer to path string for disk based DIB file
+ * @return		Pointer to bitmap object or NULL
+ */
+extern CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName);
 
-CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int x, const int y, const int dx, const int dy);
+/**
+ * Loads a bitmap from a string named resource
+ * @param pDC			Pointer to device context to be used for display
+ * @param pPalette		Address of pointer where to store palette from the DIB
+ * @param pszName		Resource string name
+ * @return		Pointer to bitmap object or NULL
+ */
+extern CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName);
+
+/**
+ * Loads a bitmap from a numeric Id resource
+ * @param pDC			Pointer to device context to be used for display
+ * @param pPalette		Address of pointer where to store palette from the DIB
+ * @param nResID		Resource Id
+ * @return		Pointer to bitmap object or NULL
+ */
+extern CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID);
+
+/**
+ * Creates a bitmap from a section of another bitmap
+ * @param pDC			Pointer to device context to be used for display
+ * @param pBase			Pointer to source bitmap for extraction
+ * @param pPalette		Pointer to color palette to be used for the bitmap
+ * @param x,y			Upper left hand corner of bitmap to fetch
+ * @param dx,dy			Size of rectangular area to retrive
+ * @return	Pointer to bitmap object or NULL
+ */
+extern CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int x, const int y, const int dx, const int dy);
 
 BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
 BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszName, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
