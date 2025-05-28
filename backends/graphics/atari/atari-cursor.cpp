@@ -78,7 +78,7 @@ void Cursor::update() {
 		assert(_srcRect.width() == _dstRect.width());
 		assert(_srcRect.height() == _dstRect.height());
 
-		const int dstBitsPerPixel = _manager->getBitsPerPixel(_parentScreen->offsettedSurf->format);
+		const int dstBitsPerPixel = _parentScreen->offsettedSurf->getBitsPerPixel();
 
 		// non-direct rendering never uses 4bpp but maybe in the future ...
 		_savedRect = _manager->alignRect(
@@ -269,8 +269,8 @@ void Cursor::saveBackground() {
 }
 
 void Cursor::draw() {
-	auto &dstSurface          = *_parentScreen->offsettedSurf;
-	const int dstBitsPerPixel = _manager->getBitsPerPixel(dstSurface.format);
+	AtariSurface &dstSurface  = *_parentScreen->offsettedSurf;
+	const int dstBitsPerPixel = dstSurface.getBitsPerPixel();
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
@@ -281,7 +281,7 @@ void Cursor::draw() {
 
 		if (!g_hasSuperVidel) {
 			// C2P in-place
-			AtariSurface surf(dstBitsPerPixel);
+			AtariSurface surf;
 			surf.w = _surface.w;
 			surf.h = _surface.h;
 			surf.pitch = _surface.pitch * dstBitsPerPixel / 8;	// 4bpp is not byte per pixel anymore

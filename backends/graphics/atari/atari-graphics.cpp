@@ -41,10 +41,6 @@
 
 #define SCREEN_ACTIVE
 
-static const Graphics::PixelFormat PIXELFORMAT_CLUT8 = Graphics::PixelFormat::createFormatCLUT8();
-static const Graphics::PixelFormat PIXELFORMAT_RGB332 = Graphics::PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0);
-static const Graphics::PixelFormat PIXELFORMAT_RGB121 = Graphics::PixelFormat(1, 1, 2, 1, 0, 3, 1, 0, 0);
-
 static void shrinkVidelVisibleArea() {
 	// Active VGA screen area consists of 960 half-lines, i.e. 480 raster lines.
 	// In case of 320x240, the number is still 480 but data is fetched
@@ -1074,10 +1070,6 @@ Common::Keymap *AtariGraphicsManager::getKeymap() const {
 	}
 
 	return keymap;
-}
-
-int AtariGraphicsManager::getBitsPerPixel(const Graphics::PixelFormat &format) const {
-	return format == PIXELFORMAT_RGB121 ? 4 : 8;
 }
 
 void AtariGraphicsManager::allocateSurfaces() {

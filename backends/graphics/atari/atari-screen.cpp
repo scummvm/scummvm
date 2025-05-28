@@ -25,7 +25,6 @@
 
 #include "atari-graphics.h"
 #include "atari-supervidel.h"
-#include "atari-surface.h"
 #include "backends/platform/atari/atari-debug.h"
 
 Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
@@ -33,25 +32,21 @@ Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graph
 	, cursor(manager, this)
 	, palette(palette_) {
 
-	const int bitsPerPixel = _manager->getBitsPerPixel(format);
-
 #ifdef USE_SUPERVIDEL
 	if (g_hasSuperVidel) {
 		surf.reset(new SuperVidelSurface(
 			width + 2 * MAX_HZ_SHAKE,
 			height + 2 * MAX_V_SHAKE,
-			format,
-			bitsPerPixel));
-		_offsettedSurf.reset(new SuperVidelSurface(bitsPerPixel));
+			format));
+		_offsettedSurf.reset(new SuperVidelSurface());
 	} else
 #endif
 	{
 		surf.reset(new AtariSurface(
 			width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE),
 			height + 2 * MAX_V_SHAKE,
-			format,
-			bitsPerPixel));
-		_offsettedSurf.reset(new AtariSurface(bitsPerPixel));
+			format));
+		_offsettedSurf.reset(new AtariSurface());
 	}
 
 	_offsettedSurf->create(
@@ -73,7 +68,7 @@ void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf,
 	rez = -1;
 	mode = -1;
 
-	const int bitsPerPixel = _manager->getBitsPerPixel(surf->format);
+	const int bitsPerPixel = surf->getBitsPerPixel();
 
 	// erase old screen
 	_offsettedSurf->fillRect(_offsettedSurf->getBounds(), 0);

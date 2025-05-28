@@ -26,10 +26,14 @@
 
 #include "backends/graphics/atari/atari-supervidel.h"
 
+constexpr Graphics::PixelFormat PIXELFORMAT_CLUT8  = Graphics::PixelFormat::createFormatCLUT8();
+constexpr Graphics::PixelFormat PIXELFORMAT_RGB332 = Graphics::PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0);
+constexpr Graphics::PixelFormat PIXELFORMAT_RGB121 = Graphics::PixelFormat(1, 1, 2, 1, 0, 3, 1, 0, 0);
+
 class AtariSurface : public Graphics::ManagedSurface {
 public:
-	AtariSurface(int bitsPerPixel);
-	AtariSurface(int16 width, int16 height, const Graphics::PixelFormat &pixelFormat, int bitsPerPixel);
+	AtariSurface() = default;
+	AtariSurface(int16 width, int16 height, const Graphics::PixelFormat &pixelFormat);
 	~AtariSurface() override;
 
 	using Graphics::ManagedSurface::create;
@@ -54,18 +58,17 @@ public:
 								  int destX, int destY,
 								  const Common::Rect &subRect);
 
-protected:
-	int _bitsPerPixel = 0;
+	int getBitsPerPixel() const {
+		return format == PIXELFORMAT_RGB121 ? 4 : 8;
+	}
 };
 
 #ifdef USE_SUPERVIDEL
 class SuperVidelSurface final : public AtariSurface {
 public:
-	SuperVidelSurface(int bitsPerPixel)
-		: AtariSurface(bitsPerPixel) {
-	}
-	SuperVidelSurface(int16 width, int16 height, const Graphics::PixelFormat &pixelFormat, int bitsPerPixel)
-		: AtariSurface(width, height, pixelFormat, bitsPerPixel) {
+	SuperVidelSurface() = default;
+	SuperVidelSurface(int16 width, int16 height, const Graphics::PixelFormat &pixelFormat)
+		: AtariSurface(width, height, pixelFormat) {
 	}
 
 	//using Graphics::ManagedSurface::copyRectToSurface;

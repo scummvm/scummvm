@@ -123,7 +123,6 @@ private:
 		kActionToggleAspectRatioCorrection = 100,
 	};
 
-	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
 	void allocateSurfaces();
 	void freeSurfaces();
 

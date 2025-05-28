@@ -133,12 +133,7 @@ void Surface::free() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-AtariSurface::AtariSurface(int bitsPerPixel)
-	: _bitsPerPixel(bitsPerPixel) {
-}
-
-AtariSurface::AtariSurface(int16 width, int16 height, const Graphics::PixelFormat &pixelFormat, int bitsPerPixel)
-	: _bitsPerPixel(bitsPerPixel) {
+AtariSurface::AtariSurface(int16 width, int16 height, const Graphics::PixelFormat &pixelFormat) {
 	create(width, height, pixelFormat);
 }
 
@@ -150,7 +145,7 @@ void AtariSurface::create(int16 width, int16 height, const Graphics::PixelFormat
 	MemoryPool *oldPool = s_currentPool;
 	s_currentPool = &s_videoRamPool;
 
-	Graphics::ManagedSurface::create(width * _bitsPerPixel / 8, height, pixelFormat);
+	Graphics::ManagedSurface::create(width * (format == PIXELFORMAT_RGB121 ? 4 : 8) / 8, height, pixelFormat);
 	w = width;
 
 	s_currentPool = oldPool;
@@ -176,9 +171,9 @@ void AtariSurface::copyRectToSurface(const void *buffer, int srcPitch, int destX
 	const byte *pChunky    = (const byte *)buffer;
 	const byte *pChunkyEnd = pChunky + (height - 1) * srcPitch + width * format.bytesPerPixel;
 
-	byte *pScreen = (byte *)getPixels() + destY * pitch + destX * _bitsPerPixel/8;
+	byte *pScreen = (byte *)getPixels() + destY * pitch + destX * getBitsPerPixel()/8;
 
-	if (_bitsPerPixel == 8) {
+	if (getBitsPerPixel() == 8) {
 		if (srcPitch == width) {
 			if (srcPitch == pitch) {
 				asm_c2p1x1_8(pChunky, pChunkyEnd, pScreen);
@@ -218,13 +213,13 @@ void AtariSurface::drawMaskedSprite(
 	assert(subRect.width() == srcSurface.w);
 	assert(srcSurface.format == format);
 
-	if (_bitsPerPixel == 4) {
+	if (getBitsPerPixel() == 4) {
 		asm_draw_4bpl_sprite(
 			(uint16 *)getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
 			(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
 			destX, destY,
 			pitch, subRect.width(), subRect.height());
-	} else if (_bitsPerPixel == 8) {
+	} else if (getBitsPerPixel() == 8) {
 		asm_draw_8bpl_sprite(
 			(uint16 *)getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
 			(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
