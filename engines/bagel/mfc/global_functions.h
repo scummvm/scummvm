@@ -24,7 +24,6 @@
 
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/winnt.h"
-#include "bagel/mfc/gfx/gdi_objects.h"
 
 namespace Bagel {
 namespace MFC {

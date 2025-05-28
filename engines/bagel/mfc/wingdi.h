@@ -23,7 +23,6 @@
 #define BAGEL_MFC_WINGDI_H
 
 #include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/gfx/gdi_objects.h"
 
 namespace Bagel {
 namespace MFC {

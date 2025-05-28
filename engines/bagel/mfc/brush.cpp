@@ -21,7 +21,6 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/gfx/gdi_objects.h"
 
 namespace Bagel {
 namespace MFC {
@@ -30,27 +29,50 @@ CBrush::CBrush() {
 }
 
 CBrush::CBrush(CBitmap *pBitmap) {
-	m_hObject = new Gfx::CBrushImpl(pBitmap);
+	m_hObject = new Impl(pBitmap);
 }
 
 CBrush::CBrush(COLORREF crColor) {
-	m_hObject = new Gfx::CBrushImpl(crColor);
+	CreateSolidBrush(crColor);
 }
 
 CBrush::CBrush(int nIndex, COLORREF crColor) {
-	m_hObject = new Gfx::CBrushImpl(nIndex, crColor);
+	m_hObject = new Impl(nIndex, crColor);
 }
 
 BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
-	error("TODO: CreateSolidBrush");
+	DeleteObject();
+	m_hObject = new Impl(crColor);
+	return true;
 }
 
 BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
-	error("TODO: CBrush::CreateBrushIndirect");
+	DeleteObject();
+	m_hObject = new Impl(lpLogBrush->lbStyle,
+		lpLogBrush->lbColor);
+	return true;
 }
 
 BOOL CBrush::CreateStockObject(int nIndex) {
 	error("TODO: CreateStockObject");
+}
+
+/*--------------------------------------------*/
+
+CBrush::Impl::Impl() : _type(HS_HORIZONTAL) {
+}
+
+CBrush::Impl::Impl(COLORREF crColor) : _color(crColor),
+_type(HS_HORIZONTAL) {
+}
+
+CBrush::Impl::Impl(int nIndex, COLORREF crColor) :
+	_type(nIndex), _color(crColor) {
+}
+
+CBrush::Impl::Impl(CBitmap *pBitmap) :
+	_type(HS_HORIZONTAL) {
+	error("TODO: CBrush::Impl for bitmaps");
 }
 
 } // namespace MFC

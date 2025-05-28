@@ -83,6 +83,17 @@ DECLARE_HANDLE(HICON);
 DECLARE_HANDLE(HMENU);
 DECLARE_HANDLE(HRAWINPUT);
 
+struct CGdiObjectImpl {};
+typedef CGdiObjectImpl *HGDIOBJ;
+typedef HGDIOBJ HBITMAP;
+typedef HGDIOBJ HBRUSH;
+typedef HGDIOBJ HFONT;
+typedef HGDIOBJ HPALETTE;
+typedef HGDIOBJ HPEN;
+typedef HGDIOBJ HRGN;
+typedef HGDIOBJ HENHMETAFILE;
+
+
 namespace Gfx {
 class SurfaceDC;
 } // namespace Gfx
@@ -237,9 +248,10 @@ typedef struct tagMSG {
 		pt.x = pt.y = 0;
 	}
 	tagMSG(UINT message_, WPARAM wParam_ = 0,
-		LPARAM lParam_ = 0) :
-		message(message_), wParam(wParam_),
-		lParam(lParam_) {
+			LPARAM lParam_ = 0) :
+			message(message_), wParam(wParam_),
+			lParam(lParam_) {
+		pt.x = pt.y = 0;
 	}
 } MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
 

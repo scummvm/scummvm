@@ -473,6 +473,15 @@ public:
 };
 
 class CBrush : public CGdiObject {
+	struct Impl : public CGdiObjectImpl {
+		int _type;
+		COLORREF _color = 0;
+
+		Impl();
+		Impl(COLORREF crColor);
+		Impl(int nIndex, COLORREF crColor);
+		Impl(CBitmap *pBitmap);
+	};
 public:
 	CBrush();
 	CBrush(CBitmap *pBitmap);
