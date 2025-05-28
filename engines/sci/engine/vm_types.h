@@ -41,8 +41,7 @@ struct reg_t {
 	SegmentId _segment;
 	uint16 _offset;
 
-	reg_t() = default;
-	reg_t(SegmentId segment, uint32 offset);
+	void init(SegmentId segment, uint32 offset);
 
 	SegmentId getSegment() const;
 	void setSegment(SegmentId segment);
@@ -195,11 +194,15 @@ private:
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {
-	return reg_t(segment, offset);
+	reg_t r;
+	r.init(segment, offset);
+	return r;
 }
 
 static inline reg_t make_reg32(SegmentId segment, uint32 offset) {
-	return reg_t(segment, offset);
+	reg_t r;
+	r.init(segment, offset);
+	return r;
 }
 
 #define PRINT_REG(r) (kSegmentMask) & (unsigned) (r).getSegment(), (unsigned) (r).getOffset()
