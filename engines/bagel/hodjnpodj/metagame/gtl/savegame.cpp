@@ -196,9 +196,9 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 ERROR_CODE GetSaveGameDescriptions(VOID) {
 	ERROR_CODE errCode = ERR_NONE;
 
-#ifndef TODO
+	#ifndef TODO
 	error("TODO: Load savegame");
-#else
+	#else
 	SAVEGAME_INFO *pSaveGameInfo;
 	Common::InSaveFile *pFile;
 	INT i;
@@ -243,7 +243,7 @@ ERROR_CODE GetSaveGameDescriptions(VOID) {
 		errCode = ERR_FFIND;
 		ErrorLog("ERROR.LOG", "%s not found.  Can't restore game.", gszSaveGameFileName);
 	}
-#endif
+	#endif
 	return errCode;
 }
 
@@ -266,9 +266,9 @@ ERROR_CODE GetSaveGameDescriptions(VOID) {
 ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 	ERROR_CODE errCode = ERR_NONE;
 
-#ifndef TODO
+	#ifndef TODO
 	error("TODO: Load savegame");
-#else
+	#else
 	SAVEGAME_INFO *pSaveGameInfo;
 	Common::OutSaveFile *pFile;
 
@@ -313,7 +313,7 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 		ErrorLog("ERROR.LOG", "errCode = %d in %s at line %d", errCode, __FILE__, __LINE__);
 	}
 //#endif
-#endif
+	#endif
 	return errCode;
 }
 
@@ -333,9 +333,9 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 ERROR_CODE InitSaveGameFile(VOID) {
 	ERROR_CODE errCode = ERR_NONE;
 
-#ifndef TODO
+	#ifndef TODO
 	error("TODO: Init savegame");
-#else
+	#else
 	SAVEGAME_INFO *pNewInfo;
 	FILE *pFile;
 	INT i;
@@ -371,7 +371,7 @@ ERROR_CODE InitSaveGameFile(VOID) {
 	} else {
 		errCode = ERR_MEMORY;
 	}
-#endif
+	#endif
 	return errCode;
 }
 
@@ -394,7 +394,7 @@ ERROR_CODE InitSaveGameFile(VOID) {
 *****************************************************************************/
 ERROR_CODE WriteSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
 	ERROR_CODE errCode = ERR_NONE;
-#ifdef TODO
+	#ifdef TODO
 	// validate explicit input
 	assert(pFile != nullptr);
 	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
@@ -417,7 +417,7 @@ ERROR_CODE WriteSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInf
 	}
 
 	Decrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
-#endif
+	#endif
 	return errCode;
 }
 
@@ -441,7 +441,7 @@ ERROR_CODE WriteSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInf
 ERROR_CODE ReadSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo) {
 	ERROR_CODE errCode = ERR_NONE;
 
-#ifdef TODO
+	#ifdef TODO
 	// validate explicit input
 	assert(pFile != nullptr);
 	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
@@ -470,7 +470,7 @@ ERROR_CODE ReadSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo
 	} else {
 		errCode = ERR_FSEEK;
 	}
-#endif
+	#endif
 	return errCode;
 }
 

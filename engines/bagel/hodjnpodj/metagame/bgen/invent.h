@@ -63,9 +63,9 @@ public:
 	}
 
 private:
-	const char *m_lpsTitle;	// title string for inventory
-	int m_nItemCount;		// number of items in the inventory
-	CItem *m_pEquipment;	// linked list of inventory items
+	const char *m_lpsTitle; // title string for inventory
+	int m_nItemCount;       // number of items in the inventory
+	CItem *m_pEquipment;    // linked list of inventory items
 
 	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;

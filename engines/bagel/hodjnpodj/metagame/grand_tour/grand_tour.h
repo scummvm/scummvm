@@ -37,61 +37,59 @@ namespace Metagame {
 namespace GrandTour {
 
 // Button Identifier codes (BIDs)
-#define	IDC_JUNK				999
+#define IDC_JUNK                999
 
-#define	IDC_PLAY				100
-#define	IDC_SAVE				101
-#define	IDC_RESTORE				102
-#define	IDC_LEAVE				103
-#define	IDC_RESET_SCORES		104
+#define IDC_PLAY                100
+#define IDC_SAVE                101
+#define IDC_RESTORE             102
+#define IDC_LEAVE               103
+#define IDC_RESET_SCORES        104
 
-#define	IDC_AUDIO				105
-#define	IDC_TOP10				106
+#define IDC_AUDIO               105
+#define IDC_TOP10               106
 
-#define IDC_HODJ_SKILL_HARD		110
-#define IDC_HODJ_SKILL_MEDIUM	111
-#define IDC_HODJ_SKILL_EASY		112
-#define IDC_HODJ_NO_PLAY		113
+#define IDC_HODJ_SKILL_HARD     110
+#define IDC_HODJ_SKILL_MEDIUM   111
+#define IDC_HODJ_SKILL_EASY     112
+#define IDC_HODJ_NO_PLAY        113
 
-#define IDC_PODJ_SKILL_HARD		120
-#define IDC_PODJ_SKILL_MEDIUM	121
-#define IDC_PODJ_SKILL_EASY		122
-#define IDC_PODJ_NO_PLAY		123
+#define IDC_PODJ_SKILL_HARD     120
+#define IDC_PODJ_SKILL_MEDIUM   121
+#define IDC_PODJ_SKILL_EASY     122
+#define IDC_PODJ_NO_PLAY        123
 
-#define IDC_GAME_ALPHA			130
+#define IDC_GAME_ALPHA          130
 #define IDC_GAME_GEO            131
 #define IDC_GAME_RAND           132
 
-#define SCROLL_WIDTH			502
-#define SCROLL_HEIGHT			395
+#define SCROLL_WIDTH            502
+#define SCROLL_HEIGHT           395
 
-#define SCROLL_LEFT				( GAME_WIDTH / 2 ) - ( SCROLL_WIDTH / 2 )
+#define SCROLL_LEFT             ( GAME_WIDTH / 2 ) - ( SCROLL_WIDTH / 2 )
 #define SCROLL_TOP              ( GAME_HEIGHT / 2 ) - ( SCROLL_HEIGHT / 2 )
 
-struct SCORESTRUCT
-{
-	char 		acName[64];
-	int 		nSkillLevel;
-	int 		nScore;
+struct SCORESTRUCT {
+	char        acName[64];
+	int         nSkillLevel;
+	int         nScore;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 // CMainPackRatWindow:
 // See game.cpp for the code to the member functions and the message map.
-//              
+//
 
-class CMainGTWindow : public CFrameWnd
-{
+class CMainGTWindow : public CFrameWnd {
 public:
 
 private:
-	HWND	m_hCallAppWnd;
+	HWND    m_hCallAppWnd;
 
-	LPGRANDTRSTRUCT	m_pgtGTStruct;
-	
+	LPGRANDTRSTRUCT m_pgtGTStruct;
+
 public:
-	CMainGTWindow( HWND, LPGRANDTRSTRUCT );
+	CMainGTWindow(HWND, LPGRANDTRSTRUCT);
 
 	void SplashScreen(void);
 	void AdjustScore(void);
@@ -100,27 +98,27 @@ public:
 	void ResetScores(void);
 	void SaveCurrGame(void);
 	void RestoreGame(void);
-	int	GetNextGameCode( BOOL = TRUE );
+	int GetNextGameCode(BOOL = TRUE);
 
-static	void ReleaseResources(void);
-static	void FlushInputEvents(void);
+	static  void ReleaseResources(void);
+	static  void FlushInputEvents(void);
 
 private:
 
 protected:
-virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	//{{AFX_MSG( CMainPackRatWindow )
 	afx_msg void OnPaint();
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-  	afx_msg void OnLButtonDown( UINT, CPoint );
-  	afx_msg void OnLButtonUp( UINT, CPoint );
-	afx_msg void OnMouseMove( UINT, CPoint );
-	afx_msg void OnKeyDown( UINT, UINT, UINT);
-	afx_msg void OnChar( UINT, UINT, UINT);
-	afx_msg BOOL OnEraseBkgnd( CDC * );
-	afx_msg void OnActivate(UINT nState, CWnd	*pWndOther, BOOL bMinimized);
+	afx_msg void OnLButtonDown(UINT, CPoint);
+	afx_msg void OnLButtonUp(UINT, CPoint);
+	afx_msg void OnMouseMove(UINT, CPoint);
+	afx_msg void OnKeyDown(UINT, UINT, UINT);
+	afx_msg void OnChar(UINT, UINT, UINT);
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

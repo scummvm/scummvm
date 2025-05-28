@@ -31,23 +31,23 @@ namespace Frame {
 
 static CPalette     *pMainPalette;
 
-static CColorButton	*pPlayButton = nullptr;
-static CColorButton	*pCancelButton = nullptr;
+static CColorButton *pPlayButton = nullptr;
+static CColorButton *pCancelButton = nullptr;
 
-static CRadioButton *pHSHButton = nullptr;	// Hodj Skill High Radio Button
-static CRadioButton *pHSMButton = nullptr;	// Hodj Skill Medium Radio Button
-static CRadioButton *pHSLButton = nullptr;	// Hodj Skill Low Radio Button
+static CRadioButton *pHSHButton = nullptr;  // Hodj Skill High Radio Button
+static CRadioButton *pHSMButton = nullptr;  // Hodj Skill Medium Radio Button
+static CRadioButton *pHSLButton = nullptr;  // Hodj Skill Low Radio Button
 
-static CRadioButton *pPSHButton = nullptr;	// Podj Skill High Radio Button
-static CRadioButton *pPSMButton = nullptr;	// Podj Skill Medium Radio Button
-static CRadioButton *pPSLButton = nullptr;	// Podj Skill Low Radio Button
+static CRadioButton *pPSHButton = nullptr;  // Podj Skill High Radio Button
+static CRadioButton *pPSMButton = nullptr;  // Podj Skill Medium Radio Button
+static CRadioButton *pPSLButton = nullptr;  // Podj Skill Low Radio Button
 
-static CRadioButton *pGTLButton = nullptr;	// Game Time Long Radio Button
-static CRadioButton *pGTMButton = nullptr;	// Game Time Medium Radio Button
-static CRadioButton *pGTSButton = nullptr;	// Game Time Short Radio Button
+static CRadioButton *pGTLButton = nullptr;  // Game Time Long Radio Button
+static CRadioButton *pGTMButton = nullptr;  // Game Time Medium Radio Button
+static CRadioButton *pGTSButton = nullptr;  // Game Time Short Radio Button
 
-static CRadioButton *pPCButton = nullptr;	// Podj is Computer High Radio Button
-static CRadioButton *pPHButton = nullptr;	// Podj is Human High Radio Button
+static CRadioButton *pPCButton = nullptr;   // Podj is Computer High Radio Button
+static CRadioButton *pPHButton = nullptr;   // Podj is Human High Radio Button
 
 /*****************************************************************
  *
@@ -55,35 +55,34 @@ static CRadioButton *pPHButton = nullptr;	// Podj is Human High Radio Button
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *      Constructor sends the input to the CBmpDialog constructor and 
- *      the intializes the private members 
- *   
+ *      Constructor sends the input to the CBmpDialog constructor and
+ *      the intializes the private members
+ *
  * FORMAL PARAMETERS:
  *
- *      Those needed to contruct a CBmpDialog dialog: pParent,pPalette, nID 
+ *      Those needed to contruct a CBmpDialog dialog: pParent,pPalette, nID
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      private member m_nCurrenLEVEL
- *  globals     rectDisplayAmount and pSeLEVELPalette           
- *   
+ *  globals     rectDisplayAmount and pSeLEVELPalette
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette ) :  CBmpDialog(pParent, pPalette, IDD_META_SETUP, ".\\ART\\MLSCROLL.BMP",-1,-1,FALSE)
-{
-        pMainPalette = pPalette;                  
-		m_lpMetaGameStruct = nullptr;
-		m_nHodjSkillLevel = SKILLLEVEL_LOW;
-		m_nPodjSkillLevel = SKILLLEVEL_LOW;
-		m_nGameTime = MEDIUM_GAME;
-		m_bPodjIsComputer = TRUE;
+CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_META_SETUP, ".\\ART\\MLSCROLL.BMP", -1, -1, FALSE) {
+	pMainPalette = pPalette;
+	m_lpMetaGameStruct = nullptr;
+	m_nHodjSkillLevel = SKILLLEVEL_LOW;
+	m_nPodjSkillLevel = SKILLLEVEL_LOW;
+	m_nGameTime = MEDIUM_GAME;
+	m_bPodjIsComputer = TRUE;
 }
 
 /*****************************************************************
@@ -92,238 +91,234 @@ CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette ) :  CBmpDialog(p
  *
  * FUNCTIONAL DESCRIPTION:
  *
- * Process the "Set" and "Cancel" buttons 
+ * Process the "Set" and "Cancel" buttons
  *
  * This function is called when a WM_COMMAND message is issued,
  * typically in order to process control related activities.
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      wParam          identifier for the button to be processed
  *      lParam          type of message to be processed
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-BOOL CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam)
-{
+BOOL CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
 
-if (HIWORD(lParam) == BN_CLICKED) {
-    switch (wParam) {
-			case IDC_HODJ_SKILL_HARD: 
-				pHSHButton->SetCheck( 1 );
-				m_nHodjSkillLevel = SKILLLEVEL_HIGH;
-				break;
-			case IDC_HODJ_SKILL_MEDIUM:
-				pHSMButton->SetCheck( 1 );
-				m_nHodjSkillLevel = SKILLLEVEL_MEDIUM;
-				break;
-			case IDC_HODJ_SKILL_EASY:
-				pHSLButton->SetCheck( 1 );
-				m_nHodjSkillLevel = SKILLLEVEL_LOW;
-				break;
+	if (HIWORD(lParam) == BN_CLICKED) {
+		switch (wParam) {
+		case IDC_HODJ_SKILL_HARD:
+			pHSHButton->SetCheck(1);
+			m_nHodjSkillLevel = SKILLLEVEL_HIGH;
+			break;
+		case IDC_HODJ_SKILL_MEDIUM:
+			pHSMButton->SetCheck(1);
+			m_nHodjSkillLevel = SKILLLEVEL_MEDIUM;
+			break;
+		case IDC_HODJ_SKILL_EASY:
+			pHSLButton->SetCheck(1);
+			m_nHodjSkillLevel = SKILLLEVEL_LOW;
+			break;
 
-			case IDC_PODJ_SKILL_HARD:
-				pPSHButton->SetCheck( 1 );
-				m_nPodjSkillLevel = SKILLLEVEL_HIGH;
-				break;
-			case IDC_PODJ_SKILL_MEDIUM:
-				pPSMButton->SetCheck( 1 );
-				m_nPodjSkillLevel = SKILLLEVEL_MEDIUM;
-				break;
-			case IDC_PODJ_SKILL_EASY:
-				pPSLButton->SetCheck( 1 );
-				m_nPodjSkillLevel = SKILLLEVEL_LOW;
-				break;
+		case IDC_PODJ_SKILL_HARD:
+			pPSHButton->SetCheck(1);
+			m_nPodjSkillLevel = SKILLLEVEL_HIGH;
+			break;
+		case IDC_PODJ_SKILL_MEDIUM:
+			pPSMButton->SetCheck(1);
+			m_nPodjSkillLevel = SKILLLEVEL_MEDIUM;
+			break;
+		case IDC_PODJ_SKILL_EASY:
+			pPSLButton->SetCheck(1);
+			m_nPodjSkillLevel = SKILLLEVEL_LOW;
+			break;
 
-			case IDC_GAMETIME_LONG:
-				pGTLButton->SetCheck( 1 );
-				m_nGameTime = LONG_GAME;
-				break;
-			case IDC_GAMETIME_MEDIUM:
-				pGTMButton->SetCheck( 1 );
-				m_nGameTime = MEDIUM_GAME;
-				break;
-			case IDC_GAMETIME_SHORT:
-				pGTSButton->SetCheck( 1 );
-				m_nGameTime = SHORT_GAME;
-				break;             
+		case IDC_GAMETIME_LONG:
+			pGTLButton->SetCheck(1);
+			m_nGameTime = LONG_GAME;
+			break;
+		case IDC_GAMETIME_MEDIUM:
+			pGTMButton->SetCheck(1);
+			m_nGameTime = MEDIUM_GAME;
+			break;
+		case IDC_GAMETIME_SHORT:
+			pGTSButton->SetCheck(1);
+			m_nGameTime = SHORT_GAME;
+			break;
 
-			case IDC_PODJ_COMPUTER:
-				pPCButton->SetCheck( 1 );
-				SetDlgItemText(IDC_PODJ_SKILL_HARD,"Tough Opponent");
-				SetDlgItemText(IDC_PODJ_SKILL_MEDIUM,"Average Opponent");
-				SetDlgItemText(IDC_PODJ_SKILL_EASY,"Unskilled Opponent");
-				m_bPodjIsComputer = TRUE;
-				break;
-			case IDC_PODJ_HUMAN:
-				pPHButton->SetCheck( 1 );
-				SetDlgItemText(IDC_PODJ_SKILL_HARD,"Hard");
-				SetDlgItemText(IDC_PODJ_SKILL_MEDIUM,"Medium");
-				SetDlgItemText(IDC_PODJ_SKILL_EASY,"Easy");
-				m_bPodjIsComputer = FALSE;
-				break;
-			
+		case IDC_PODJ_COMPUTER:
+			pPCButton->SetCheck(1);
+			SetDlgItemText(IDC_PODJ_SKILL_HARD, "Tough Opponent");
+			SetDlgItemText(IDC_PODJ_SKILL_MEDIUM, "Average Opponent");
+			SetDlgItemText(IDC_PODJ_SKILL_EASY, "Unskilled Opponent");
+			m_bPodjIsComputer = TRUE;
+			break;
+		case IDC_PODJ_HUMAN:
+			pPHButton->SetCheck(1);
+			SetDlgItemText(IDC_PODJ_SKILL_HARD, "Hard");
+			SetDlgItemText(IDC_PODJ_SKILL_MEDIUM, "Medium");
+			SetDlgItemText(IDC_PODJ_SKILL_EASY, "Easy");
+			m_bPodjIsComputer = FALSE;
+			break;
 
-            case IDC_PLAY:
-// fill in the appropriate settings for the game structure   
-                m_lpMetaGameStruct->m_cHodj.m_iSkillLevel = m_nHodjSkillLevel;
-                m_lpMetaGameStruct->m_cPodj.m_iSkillLevel = m_nPodjSkillLevel;
-                m_lpMetaGameStruct->m_cHodj.m_bComputer = FALSE;
-                m_lpMetaGameStruct->m_cPodj.m_bComputer = m_bPodjIsComputer;
-                m_lpMetaGameStruct->m_iGameTime = m_nGameTime;
-			    ClearDialogImage();
-                EndDialog( 1 );
-                return(TRUE);
 
-            case IDC_CANCEL_PLAY:
-			    ClearDialogImage();
-                EndDialog( 0 );
-                return(TRUE);
-        }
-    }
+		case IDC_PLAY:
+// fill in the appropriate settings for the game structure
+			m_lpMetaGameStruct->m_cHodj.m_iSkillLevel = m_nHodjSkillLevel;
+			m_lpMetaGameStruct->m_cPodj.m_iSkillLevel = m_nPodjSkillLevel;
+			m_lpMetaGameStruct->m_cHodj.m_bComputer = FALSE;
+			m_lpMetaGameStruct->m_cPodj.m_bComputer = m_bPodjIsComputer;
+			m_lpMetaGameStruct->m_iGameTime = m_nGameTime;
+			ClearDialogImage();
+			EndDialog(1);
+			return (TRUE);
 
-    return(CBmpDialog::OnCommand(wParam, lParam));
+		case IDC_CANCEL_PLAY:
+			ClearDialogImage();
+			EndDialog(0);
+			return (TRUE);
+		}
+	}
+
+	return (CBmpDialog::OnCommand(wParam, lParam));
 }
 
-void CMetaSetupDlg::OnCancel(void)
-{
-    ClearDialogImage();
-	EndDialog( 0 );
+void CMetaSetupDlg::OnCancel(void) {
+	ClearDialogImage();
+	EndDialog(0);
 	return;
 }
 
-void CMetaSetupDlg::OnOK(void)
-{
-	
-	if ( pPlayButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_PLAY, (LPARAM)BN_CLICKED );
-		return;
-	}          
-	if ( pCancelButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_CANCEL_PLAY, (LPARAM)BN_CLICKED );
+void CMetaSetupDlg::OnOK(void) {
+
+	if (pPlayButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_PLAY, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pHSHButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_HODJ_SKILL_HARD, (LPARAM)BN_CLICKED );
+	if (pCancelButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_CANCEL_PLAY, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pHSMButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_HODJ_SKILL_MEDIUM, (LPARAM)BN_CLICKED );
+	if (pHSHButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_HODJ_SKILL_HARD, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pHSLButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_HODJ_SKILL_EASY, (LPARAM)BN_CLICKED );
+	if (pHSMButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_HODJ_SKILL_MEDIUM, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pPSHButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_PODJ_SKILL_HARD, (LPARAM)BN_CLICKED );
+	if (pHSLButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_HODJ_SKILL_EASY, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pPSMButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_PODJ_SKILL_MEDIUM, (LPARAM)BN_CLICKED );
+	if (pPSHButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_PODJ_SKILL_HARD, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pPSLButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_PODJ_SKILL_EASY, (LPARAM)BN_CLICKED );
+	if (pPSMButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_PODJ_SKILL_MEDIUM, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pGTLButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_GAMETIME_LONG, (LPARAM)BN_CLICKED );
+	if (pPSLButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_PODJ_SKILL_EASY, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pGTMButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_GAMETIME_MEDIUM, (LPARAM)BN_CLICKED );
+	if (pGTLButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_GAMETIME_LONG, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pGTSButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_GAMETIME_SHORT, (LPARAM)BN_CLICKED );
+	if (pGTMButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_GAMETIME_MEDIUM, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pPCButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_PODJ_COMPUTER, (LPARAM)BN_CLICKED );
+	if (pGTSButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_GAMETIME_SHORT, (LPARAM)BN_CLICKED);
 		return;
 	}
-	if ( pPHButton->GetState() & 0x0008 ) {
-		SendMessage( WM_COMMAND, IDC_PODJ_HUMAN, (LPARAM)BN_CLICKED );
+	if (pPCButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_PODJ_COMPUTER, (LPARAM)BN_CLICKED);
+		return;
+	}
+	if (pPHButton->GetState() & 0x0008) {
+		SendMessage(WM_COMMAND, IDC_PODJ_HUMAN, (LPARAM)BN_CLICKED);
 		return;
 	}
 
 	return;
 }
 
-void CMetaSetupDlg::ClearDialogImage(void)
-{
-/*
-	if ( pPlayButton != nullptr )
-		delete pPlayButton;
-		
-	if ( pCancelButton != nullptr )
-		delete pCancelButton;
+void CMetaSetupDlg::ClearDialogImage(void) {
+	/*
+	    if ( pPlayButton != nullptr )
+	        delete pPlayButton;
 
-	if ( pHSHButton != nullptr )
-		delete pHSHButton;
-		
-	if ( pHSMButton != nullptr )
-		delete pHSMButton;
-		
-	if ( pHSLButton != nullptr )
-		delete pHSLButton;
-		
-	if ( pPSHButton != nullptr )
-		delete pPSHButton;
-		
-	if ( pPSMButton != nullptr )
-		delete pPSMButton;
-		
-	if ( pPSLButton != nullptr )
-		delete pPSLButton;
+	    if ( pCancelButton != nullptr )
+	        delete pCancelButton;
 
-	if ( pGTLButton != nullptr )
-		delete pGTLButton;
-		
-	if ( pGTMButton != nullptr )
-		delete pGTMButton;
-		
-	if ( pGTSButton != nullptr )
-		delete pGTSButton;
+	    if ( pHSHButton != nullptr )
+	        delete pHSHButton;
 
-	if ( pPCButton != nullptr )
-		delete pPCButton;
-		
-	if ( pPHButton != nullptr )
-		delete pPHButton;
+	    if ( pHSMButton != nullptr )
+	        delete pHSMButton;
 
-    pPlayButton = nullptr;
-    pCancelButton = nullptr;
+	    if ( pHSLButton != nullptr )
+	        delete pHSLButton;
 
-	pHSHButton = nullptr;
-	pHSMButton = nullptr;
-	pHSLButton = nullptr;
-	pPSHButton = nullptr;
-	pPSMButton = nullptr;
-	pPSLButton = nullptr;
-	pGTLButton = nullptr;
-	pGTMButton = nullptr;
-	pGTSButton = nullptr;
-	pPCButton = nullptr;
-	pPHButton = nullptr;
+	    if ( pPSHButton != nullptr )
+	        delete pPSHButton;
 
-    ValidateRect(nullptr);
-*/
+	    if ( pPSMButton != nullptr )
+	        delete pPSMButton;
+
+	    if ( pPSLButton != nullptr )
+	        delete pPSLButton;
+
+	    if ( pGTLButton != nullptr )
+	        delete pGTLButton;
+
+	    if ( pGTMButton != nullptr )
+	        delete pGTMButton;
+
+	    if ( pGTSButton != nullptr )
+	        delete pGTSButton;
+
+	    if ( pPCButton != nullptr )
+	        delete pPCButton;
+
+	    if ( pPHButton != nullptr )
+	        delete pPHButton;
+
+	    pPlayButton = nullptr;
+	    pCancelButton = nullptr;
+
+	    pHSHButton = nullptr;
+	    pHSMButton = nullptr;
+	    pHSLButton = nullptr;
+	    pPSHButton = nullptr;
+	    pPSMButton = nullptr;
+	    pPSLButton = nullptr;
+	    pGTLButton = nullptr;
+	    pGTMButton = nullptr;
+	    pGTSButton = nullptr;
+	    pPCButton = nullptr;
+	    pPHButton = nullptr;
+
+	    ValidateRect(nullptr);
+	*/
 }
 
 /*****************************************************************
@@ -332,120 +327,118 @@ void CMetaSetupDlg::ClearDialogImage(void)
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *      This sets the privates to the inputted values 
+ *      This sets the privates to the inputted values
  *
  * FORMAL PARAMETERS:
  *
- *      lCurrenLEVEL = the current amount the user has  
+ *      lCurrenLEVEL = the current amount the user has
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      m_nCurrenLEVEL = (int)min( AMOUNTMAX, lCurrenLEVEL)
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *
  ****************************************************************/
-void CMetaSetupDlg::SetInitialOptions( CBfcMgr *lpMetaGameStruct )
-{        
+void CMetaSetupDlg::SetInitialOptions(CBfcMgr *lpMetaGameStruct) {
 	m_lpMetaGameStruct = lpMetaGameStruct;
-    m_nHodjSkillLevel = m_lpMetaGameStruct->m_cHodj.m_iSkillLevel;
-    m_nPodjSkillLevel = m_lpMetaGameStruct->m_cPodj.m_iSkillLevel;
-    m_bPodjIsComputer = m_lpMetaGameStruct->m_cPodj.m_bComputer;
-    m_nGameTime = m_lpMetaGameStruct->m_iGameTime;
-    return;
-}  
+	m_nHodjSkillLevel = m_lpMetaGameStruct->m_cHodj.m_iSkillLevel;
+	m_nPodjSkillLevel = m_lpMetaGameStruct->m_cPodj.m_iSkillLevel;
+	m_bPodjIsComputer = m_lpMetaGameStruct->m_cPodj.m_bComputer;
+	m_nGameTime = m_lpMetaGameStruct->m_iGameTime;
+	return;
+}
 
 
-BOOL CMetaSetupDlg::OnInitDialog()
-{
-BOOL	bSuccess;
+BOOL CMetaSetupDlg::OnInitDialog() {
+	BOOL    bSuccess;
 
-    CBmpDialog::OnInitDialog();
+	CBmpDialog::OnInitDialog();
 
 	pPlayButton = new CColorButton();
-	ASSERT( pPlayButton != nullptr );
-	pPlayButton->SetPalette( pMainPalette );
-	bSuccess = pPlayButton->SetControl( IDC_PLAY, this );
-	ASSERT( bSuccess );
-	
+	ASSERT(pPlayButton != nullptr);
+	pPlayButton->SetPalette(pMainPalette);
+	bSuccess = pPlayButton->SetControl(IDC_PLAY, this);
+	ASSERT(bSuccess);
+
 	pCancelButton = new CColorButton();
-	ASSERT( pCancelButton != nullptr );
-	pCancelButton->SetPalette( pMainPalette );
-	bSuccess = pCancelButton->SetControl( IDC_CANCEL_PLAY, this );
-	ASSERT( bSuccess );
-	
+	ASSERT(pCancelButton != nullptr);
+	pCancelButton->SetPalette(pMainPalette);
+	bSuccess = pCancelButton->SetControl(IDC_CANCEL_PLAY, this);
+	ASSERT(bSuccess);
+
 	pHSHButton = new CRadioButton();
-	ASSERT( pHSHButton != nullptr );
-	pHSHButton->SetPalette( pMainPalette );
-	bSuccess = pHSHButton->SetControl( IDC_HODJ_SKILL_HARD, this );
-	ASSERT( bSuccess );
-	
+	ASSERT(pHSHButton != nullptr);
+	pHSHButton->SetPalette(pMainPalette);
+	bSuccess = pHSHButton->SetControl(IDC_HODJ_SKILL_HARD, this);
+	ASSERT(bSuccess);
+
 	pHSMButton = new CRadioButton();
-	ASSERT( pHSMButton != nullptr );
-	pHSMButton->SetPalette( pMainPalette );
-	bSuccess = pHSMButton->SetControl( IDC_HODJ_SKILL_MEDIUM, this );
-	ASSERT( bSuccess );
-	
+	ASSERT(pHSMButton != nullptr);
+	pHSMButton->SetPalette(pMainPalette);
+	bSuccess = pHSMButton->SetControl(IDC_HODJ_SKILL_MEDIUM, this);
+	ASSERT(bSuccess);
+
 	pHSLButton = new CRadioButton();
-	ASSERT( pHSLButton != nullptr );
-	pHSLButton->SetPalette( pMainPalette );
-	bSuccess = pHSLButton->SetControl( IDC_HODJ_SKILL_EASY, this );
-	ASSERT( bSuccess );
+	ASSERT(pHSLButton != nullptr);
+	pHSLButton->SetPalette(pMainPalette);
+	bSuccess = pHSLButton->SetControl(IDC_HODJ_SKILL_EASY, this);
+	ASSERT(bSuccess);
 
 	pPSHButton = new CRadioButton();
-	ASSERT( pPSHButton != nullptr );
-	pPSHButton->SetPalette( pMainPalette );
-	bSuccess = pPSHButton->SetControl( IDC_PODJ_SKILL_HARD, this );
-	ASSERT( bSuccess );
+	ASSERT(pPSHButton != nullptr);
+	pPSHButton->SetPalette(pMainPalette);
+	bSuccess = pPSHButton->SetControl(IDC_PODJ_SKILL_HARD, this);
+	ASSERT(bSuccess);
 
 	pPSMButton = new CRadioButton();
-	ASSERT( pPSMButton != nullptr );
-	pPSMButton->SetPalette( pMainPalette );
-	bSuccess = pPSMButton->SetControl( IDC_PODJ_SKILL_MEDIUM, this );
-	ASSERT( bSuccess );
+	ASSERT(pPSMButton != nullptr);
+	pPSMButton->SetPalette(pMainPalette);
+	bSuccess = pPSMButton->SetControl(IDC_PODJ_SKILL_MEDIUM, this);
+	ASSERT(bSuccess);
 
 	pPSLButton = new CRadioButton();
-	ASSERT( pPSLButton != nullptr );
-	pPSLButton->SetPalette( pMainPalette );
-	bSuccess = pPSLButton->SetControl( IDC_PODJ_SKILL_EASY, this );
-	ASSERT( bSuccess );
+	ASSERT(pPSLButton != nullptr);
+	pPSLButton->SetPalette(pMainPalette);
+	bSuccess = pPSLButton->SetControl(IDC_PODJ_SKILL_EASY, this);
+	ASSERT(bSuccess);
 
 	pGTLButton = new CRadioButton();
-	ASSERT( pGTLButton != nullptr );
-	pGTLButton->SetPalette( pMainPalette );
-	bSuccess = pGTLButton->SetControl( IDC_GAMETIME_LONG, this );
-	ASSERT( bSuccess );
+	ASSERT(pGTLButton != nullptr);
+	pGTLButton->SetPalette(pMainPalette);
+	bSuccess = pGTLButton->SetControl(IDC_GAMETIME_LONG, this);
+	ASSERT(bSuccess);
 
 	pGTMButton = new CRadioButton();
-	ASSERT( pGTMButton != nullptr );
-	pGTMButton->SetPalette( pMainPalette );
-	bSuccess = pGTMButton->SetControl( IDC_GAMETIME_MEDIUM, this );
-	ASSERT( bSuccess );
+	ASSERT(pGTMButton != nullptr);
+	pGTMButton->SetPalette(pMainPalette);
+	bSuccess = pGTMButton->SetControl(IDC_GAMETIME_MEDIUM, this);
+	ASSERT(bSuccess);
 
 	pGTSButton = new CRadioButton();
-	ASSERT( pGTSButton != nullptr );
-	pGTSButton->SetPalette( pMainPalette );
-	bSuccess = pGTSButton->SetControl( IDC_GAMETIME_SHORT, this );
-	ASSERT( bSuccess );
+	ASSERT(pGTSButton != nullptr);
+	pGTSButton->SetPalette(pMainPalette);
+	bSuccess = pGTSButton->SetControl(IDC_GAMETIME_SHORT, this);
+	ASSERT(bSuccess);
 
 	pPCButton = new CRadioButton();
-	ASSERT( pPCButton != nullptr );
-	pPCButton->SetPalette( pMainPalette );
-	bSuccess = pPCButton->SetControl( IDC_PODJ_COMPUTER, this );
-	ASSERT( bSuccess );
+	ASSERT(pPCButton != nullptr);
+	pPCButton->SetPalette(pMainPalette);
+	bSuccess = pPCButton->SetControl(IDC_PODJ_COMPUTER, this);
+	ASSERT(bSuccess);
 
 	pPHButton = new CRadioButton();
-	ASSERT( pPHButton != nullptr );
-	pPHButton->SetPalette( pMainPalette );
-	bSuccess = pPHButton->SetControl( IDC_PODJ_HUMAN, this );
-	ASSERT( bSuccess );
+	ASSERT(pPHButton != nullptr);
+	pPHButton->SetPalette(pMainPalette);
+	bSuccess = pPHButton->SetControl(IDC_PODJ_HUMAN, this);
+	ASSERT(bSuccess);
 
-    return(TRUE);
+	return (TRUE);
 }
 
 /*****************************************************************
@@ -465,144 +458,135 @@ BOOL	bSuccess;
  * Note that creating a CPaintDC automatically does a BeginPaint and
  * an EndPaint call is done when it is destroyed at the end of this
  * function.  CPaintDC's constructor needs the window (this).
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-void CMetaSetupDlg::OnPaint(void)
-{
+void CMetaSetupDlg::OnPaint(void) {
 //      call CBmpDialog onpaint, to paint the background
-    CBmpDialog::OnPaint();
+	CBmpDialog::OnPaint();
 
-    // CPaintDC dc(this);
-    PAINTSTRUCT lpPaint;
-    Invalidate(FALSE);
-    BeginPaint(&lpPaint);
+	// CPaintDC dc(this);
+	PAINTSTRUCT lpPaint;
+	Invalidate(FALSE);
+	BeginPaint(&lpPaint);
 
-    CDC     *pDC = GetDC();
-    int     nOldBkMode = pDC->SetBkMode( TRANSPARENT );
+	CDC     *pDC = GetDC();
+	int     nOldBkMode = pDC->SetBkMode(TRANSPARENT);
 
-	pDC->TextOut( 72, 63, "Number of Players", 17);
-	pDC->TextOut( 262, 63, "Game Duration", 13);
-	pDC->TextOut( 72, 184, "Hodj's Skill Level", 18);
-	pDC->TextOut( 262, 184, "Podj's Skill Level", 18);
+	pDC->TextOut(72, 63, "Number of Players", 17);
+	pDC->TextOut(262, 63, "Game Duration", 13);
+	pDC->TextOut(72, 184, "Hodj's Skill Level", 18);
+	pDC->TextOut(262, 184, "Podj's Skill Level", 18);
 
-	pDC->SetBkMode( nOldBkMode );
-    ReleaseDC(pDC);
-	
-    EndPaint(&lpPaint);
+	pDC->SetBkMode(nOldBkMode);
+	ReleaseDC(pDC);
 
-	if ( m_nHodjSkillLevel == SKILLLEVEL_HIGH ) {
-		pHSHButton->SetCheck( 1 );
-	}
-	else {
-		if ( m_nHodjSkillLevel == SKILLLEVEL_MEDIUM ) {
-			pHSMButton->SetCheck( 1 );
-		}
-		else {
-			pHSLButton->SetCheck( 1 );
+	EndPaint(&lpPaint);
+
+	if (m_nHodjSkillLevel == SKILLLEVEL_HIGH) {
+		pHSHButton->SetCheck(1);
+	} else {
+		if (m_nHodjSkillLevel == SKILLLEVEL_MEDIUM) {
+			pHSMButton->SetCheck(1);
+		} else {
+			pHSLButton->SetCheck(1);
 		}
 	}
 
-	if ( m_nPodjSkillLevel == SKILLLEVEL_HIGH ) {
-		pPSHButton->SetCheck( 1 );
-	}
-	else {
-		if ( m_nPodjSkillLevel == SKILLLEVEL_MEDIUM ) {
-			pPSMButton->SetCheck( 1 );
-		}
-		else {
-			pPSLButton->SetCheck( 1 );
+	if (m_nPodjSkillLevel == SKILLLEVEL_HIGH) {
+		pPSHButton->SetCheck(1);
+	} else {
+		if (m_nPodjSkillLevel == SKILLLEVEL_MEDIUM) {
+			pPSMButton->SetCheck(1);
+		} else {
+			pPSLButton->SetCheck(1);
 		}
 	}
 
 
-	if ( m_nGameTime == LONG_GAME ) {
-		pGTLButton->SetCheck( 1 );
-	}
-	else {
-		if ( m_nGameTime == MEDIUM_GAME ) {
-			pGTMButton->SetCheck( 1 );
-		}
-		else {
-			pGTSButton->SetCheck( 1 );
+	if (m_nGameTime == LONG_GAME) {
+		pGTLButton->SetCheck(1);
+	} else {
+		if (m_nGameTime == MEDIUM_GAME) {
+			pGTMButton->SetCheck(1);
+		} else {
+			pGTSButton->SetCheck(1);
 		}
 	}
 
-	if ( m_bPodjIsComputer == TRUE ) {
-		pPCButton->SetCheck( 1 );
-	}
-	else {
-		pPHButton->SetCheck( 1 );
+	if (m_bPodjIsComputer == TRUE) {
+		pPCButton->SetCheck(1);
+	} else {
+		pPHButton->SetCheck(1);
 	}
 
-    return;
+	return;
 }
 
-void CMetaSetupDlg::OnDestroy()
-{
-	if ( pPlayButton != nullptr )
+void CMetaSetupDlg::OnDestroy() {
+	if (pPlayButton != nullptr)
 		delete pPlayButton;
-		
-	if ( pCancelButton != nullptr )
+
+	if (pCancelButton != nullptr)
 		delete pCancelButton;
-		
-	if ( pHSHButton != nullptr )
+
+	if (pHSHButton != nullptr)
 		delete pHSHButton;
-		
-	if ( pHSMButton != nullptr )
+
+	if (pHSMButton != nullptr)
 		delete pHSMButton;
-		
-	if ( pHSLButton != nullptr )
+
+	if (pHSLButton != nullptr)
 		delete pHSLButton;
-		
-	if ( pPSHButton != nullptr )
+
+	if (pPSHButton != nullptr)
 		delete pPSHButton;
-		
-	if ( pPSMButton != nullptr )
+
+	if (pPSMButton != nullptr)
 		delete pPSMButton;
-		
-	if ( pPSLButton != nullptr )
+
+	if (pPSLButton != nullptr)
 		delete pPSLButton;
 
-	if ( pGTLButton != nullptr )
+	if (pGTLButton != nullptr)
 		delete pGTLButton;
-		
-	if ( pGTMButton != nullptr )
+
+	if (pGTMButton != nullptr)
 		delete pGTMButton;
-		
-	if ( pGTSButton != nullptr )
+
+	if (pGTSButton != nullptr)
 		delete pGTSButton;
 
-	if ( pPCButton != nullptr )
+	if (pPCButton != nullptr)
 		delete pPCButton;
-		
-	if ( pPHButton != nullptr )
+
+	if (pPHButton != nullptr)
 		delete pPHButton;
-		
-    CBmpDialog::OnDestroy();
+
+	CBmpDialog::OnDestroy();
 }
 
 // Message Map
 BEGIN_MESSAGE_MAP(CMetaSetupDlg, CBmpDialog)
-    //{{AFX_MSG_MAP( CMainPokerWindow )
-    ON_WM_PAINT()
+	//{{AFX_MSG_MAP( CMainPokerWindow )
+	ON_WM_PAINT()
 	ON_WM_DESTROY()
-    //}}AFX_MSG_MAP
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 } // namespace Frame

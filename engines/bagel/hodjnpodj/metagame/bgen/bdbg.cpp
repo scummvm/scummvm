@@ -75,9 +75,9 @@ BOOL CBdbgMgr::DebugInit(LPCSTR lpszIniFilename, LPCSTR lpszIniSectionname)
 	char szStr[100] ;
 
 	strncpy(m_szIniFilename, lpszIniFilename,
-	          sizeof(m_szIniFilename)) ;
+	        sizeof(m_szIniFilename)) ;
 	strncpy(m_szIniSectionname, lpszIniSectionname,
-	          sizeof(m_szIniSectionname)) ;
+	        sizeof(m_szIniSectionname)) ;
 
 	m_bDebug = GetDebugInt("debug") ;
 	m_bDebugMessages = GetDebugInt("debugmessages") ;
@@ -151,8 +151,8 @@ BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSi
 		lpszDefault = "";
 
 	GetPrivateProfileString(m_szIniSectionname,
-	    lpszOption, lpszDefault, lpszTarget, iTargetSize,
-	    m_szIniFilename) ;
+	                        lpszOption, lpszDefault, lpszTarget, iTargetSize,
+	                        m_szIniFilename) ;
 
 // cleanup:
 	#endif
@@ -173,7 +173,7 @@ BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, LPVOID lpLoc)
 
 	if (m_iConstructorMsgLevel) {
 		Common::sprintf_s(szStr, sizeof(szStr) - 1, "Constructing %Fs at %#04x:%#04x.\n",
-		          lpszName, HIWORD(lpLoc), LOWORD(lpLoc)) ;
+		                  lpszName, HIWORD(lpLoc), LOWORD(lpLoc)) ;
 		JXOutputDebugString(szStr) ;
 	}
 
@@ -199,7 +199,7 @@ BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, LPVOID lpLoc)
 
 	if (m_iConstructorMsgLevel) {
 		Common::sprintf_s(szStr, sizeof(szStr) -1, "Destructing %Fs at %#04x:%#04x.\n",
-		          lpszName, HIWORD(lpLoc), LOWORD(lpLoc)) ;
+		                  lpszName, HIWORD(lpLoc), LOWORD(lpLoc)) ;
 		JXOutputDebugString(szStr) ;
 	}
 
@@ -266,9 +266,9 @@ BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 
 	if (!lpPtr) {
 		Common::sprintf_s(szStr, sizeof(szStr) - 1,
-		          "AddTraceObject error: %Fs %#04x:%#04x "
-		          "invalid pointer.\n", lpszName,
-		          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+		                  "AddTraceObject error: %Fs %#04x:%#04x "
+		                  "invalid pointer.\n", lpszName,
+		                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 		JXOutputDebugString(szStr) ;
 		++m_iErrorCount ;
 		iError = 100 ;
@@ -282,9 +282,9 @@ BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 
 			else if (m_lpTraceObjects[iK] == lpPtr) {
 				Common::sprintf_s(szStr, sizeof(szStr) - 1,
-				          "AddTraceObject error: %Fs %#04x:%#04x "
-				          "already in array.\n", lpszName,
-				          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+				                  "AddTraceObject error: %Fs %#04x:%#04x "
+				                  "already in array.\n", lpszName,
+				                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 				JXOutputDebugString(szStr) ;
 				++m_iErrorCount ;
 				iError = 101 ;
@@ -328,9 +328,9 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
 
 	if (!lpPtr) {
 		Common::sprintf_s(szStr, sizeof(szStr) - 1,
-		          "TestTraceObject error: %Fs %#04x:%#04x "
-		          "invalid pointer.\n", lpszName,
-		          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+		                  "TestTraceObject error: %Fs %#04x:%#04x "
+		                  "invalid pointer.\n", lpszName,
+		                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 		JXOutputDebugString(szStr) ;
 		++m_iErrorCount ;
 		iError = 100 ;
@@ -345,9 +345,9 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
 
 		if (bMissing && iPosition >= 0) {
 			Common::sprintf_s(szStr, sizeof(szStr) - 1,
-			          "TestTraceObject error: %Fs %#04x:%#04x "
-			          "already in array.\n", lpszName,
-			          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+			                  "TestTraceObject error: %Fs %#04x:%#04x "
+			                  "already in array.\n", lpszName,
+			                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 			JXOutputDebugString(szStr) ;
 			++m_iErrorCount ;
 			iError = 101 ;
@@ -357,9 +357,9 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
 		if (!bMissing && iPosition < 0
 		        && m_iTraceObjectCurrent < m_iTraceObjectCount - 1) {
 			Common::sprintf_s(szStr, sizeof(szStr) - 1,
-			          "TestTraceObject error: %Fs %#04x:%#04x "
-			          "is not in array.\n", lpszName,
-			          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+			                  "TestTraceObject error: %Fs %#04x:%#04x "
+			                  "is not in array.\n", lpszName,
+			                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 			JXOutputDebugString(szStr) ;
 			++m_iErrorCount ;
 			iError = 102 ;
@@ -388,9 +388,9 @@ BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 
 	if (!lpPtr) {
 		Common::sprintf_s(szStr, sizeof(szStr) - 1,
-		          "RemoveTraceObject error: %Fs %#04x:%#04x "
-		          "invalid pointer.\n", lpszName,
-		          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+		                  "RemoveTraceObject error: %Fs %#04x:%#04x "
+		                  "invalid pointer.\n", lpszName,
+		                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 		JXOutputDebugString(szStr) ;
 		++m_iErrorCount ;
 		iError = 100 ;
@@ -408,9 +408,9 @@ BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 
 		else if (m_iTraceObjectCurrent < m_iTraceObjectCount - 1) {
 			Common::sprintf_s(szStr, sizeof(szStr) - 1,
-			          "RemoveTraceObject error: %Fs %#04x:%#04x "
-			          "is not in array.\n", lpszName,
-			          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+			                  "RemoveTraceObject error: %Fs %#04x:%#04x "
+			                  "is not in array.\n", lpszName,
+			                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 			JXOutputDebugString(szStr) ;
 			++m_iErrorCount ;
 			iError = 101 ;
@@ -450,7 +450,7 @@ BOOL CBdbgMgr::ReportTraceObjects(void)
 		for (iK = 0 ; iK < m_iTraceObjectCurrent ; ++iK)
 			if ((lpPtr = m_lpTraceObjects[iK]) != nullptr) {
 				Common::sprintf_s(szStr, sizeof(szStr) - 1, "    Unfreed object: %#04x:%#04x.\n",
-				          HIWORD(lpPtr), LOWORD(lpPtr)) ;
+				                  HIWORD(lpPtr), LOWORD(lpPtr)) ;
 				JXOutputDebugString(szStr) ;
 				++iUnfreed ;
 			}

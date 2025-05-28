@@ -67,19 +67,19 @@ int CDC::SetStretchBltMode(int nStretchMode) {
 
 int CDC::GetDeviceCaps(int nIndex) const {
 	const Graphics::PixelFormat format =
-		g_system->getScreenFormat();
+	    g_system->getScreenFormat();
 
 	switch (nIndex) {
 	case BITSPIXEL:
 		return format.bytesPerPixel * 8;
 	case RASTERCAPS:
 		return (format.bytesPerPixel == 1 ? RC_PALETTE : 0) |
-			RC_BITBLT |
-			RC_BITMAP64 |
-			RC_DI_BITMAP |
-			RC_DIBTODEV |
-			RC_PALETTE |
-			RC_STRETCHBLT;
+		       RC_BITBLT |
+		       RC_BITMAP64 |
+		       RC_DI_BITMAP |
+		       RC_DIBTODEV |
+		       RC_PALETTE |
+		       RC_STRETCHBLT;
 
 	default:
 		break;
@@ -206,9 +206,9 @@ void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
 void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
 	auto *surf = surface();
 	CBrush::Impl *brush = static_cast<CBrush::Impl *>(
-		pBrush->m_hObject);
+	                          pBrush->m_hObject);
 	assert(brush->_type == HS_HORIZONTAL ||
-		brush->_type == HS_VERTICAL);
+	       brush->_type == HS_VERTICAL);
 
 	// TODO: Palette handling
 	surf->fillRect(*lpRect, brush->_color);
@@ -346,7 +346,7 @@ CSize CDC::TabbedTextOut(int x, int y, const CString &str,
 }
 
 int CDC::DrawText(LPCSTR lpszString, int nCount,
-	LPRECT lpRect, UINT nFormat) {
+                  LPRECT lpRect, UINT nFormat) {
 	error("TODO: CDC::DrawText");
 }
 

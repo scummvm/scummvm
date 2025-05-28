@@ -45,8 +45,8 @@ namespace Metagame {
 
 
 C1ButtonDialog::C1ButtonDialog(CWnd *pParent, CPalette *pPalette,
-		const char *pszButton1Text, const char *pszText1,
-		const char *pszText2, const char *pszText3)
+                               const char *pszButton1Text, const char *pszText1,
+                               const char *pszText2, const char *pszText3)
 	: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, ".\\ART\\MSSCROLL.BMP") {
 	assert(pParent != nullptr);
 	assert(pPalette != nullptr);

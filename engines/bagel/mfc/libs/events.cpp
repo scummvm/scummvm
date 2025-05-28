@@ -47,12 +47,12 @@ Event::operator MSG() const {
 
 	// For mouse events, set the position
 	if (type >= Common::EVENT_MOUSEMOVE &&
-		type <= Common::EVENT_MBUTTONUP) {
+	        type <= Common::EVENT_MBUTTONUP) {
 		_mouseX = mouse.x;
 		_mouseY = mouse.y;
 
 		msg.lParam = (uint32)((int16)_mouseX) |
-			(((uint32)(int16)_mouseY) << 16);
+		             (((uint32)(int16)_mouseY) << 16);
 
 		switch (type) {
 		case Common::EVENT_LBUTTONDOWN:
@@ -77,11 +77,11 @@ Event::operator MSG() const {
 			break;
 		}
 
-		msg.wParam = _flags;		
+		msg.wParam = _flags;
 	}
 
 	if (type == Common::EVENT_KEYDOWN ||
-		type == Common::EVENT_KEYUP) {
+	        type == Common::EVENT_KEYUP) {
 		// Update flags
 		if (kbd.flags & Common::KBD_CTRL)
 			_flags |= MK_CONTROL;
@@ -98,11 +98,11 @@ Event::operator MSG() const {
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
 		msg.message = (type == Common::EVENT_KEYDOWN) ?
-			WM_KEYDOWN : WM_KEYUP;
+		              WM_KEYDOWN : WM_KEYUP;
 		msg.lParam = (kbdRepeat ? 1 : 0) |
-			((uint)kbd.keycode << 16) |
-			((kbd.keycode >= 256 ? 1 : 0) << 24) |
-			(((kbd.flags & Common::KBD_ALT) ? 1 : 0) << 29);
+		             ((uint)kbd.keycode << 16) |
+		             ((kbd.keycode >= 256 ? 1 : 0) << 24) |
+		             (((kbd.flags & Common::KBD_ALT) ? 1 : 0) << 29);
 		break;
 
 	case Common::EVENT_MOUSEMOVE:

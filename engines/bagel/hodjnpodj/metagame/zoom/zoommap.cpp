@@ -28,20 +28,20 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Zoom {
 
-#define	SPLASHSPEC	".\\ART\\ZOOMMAP.BMP"
+#define SPLASHSPEC  ".\\ART\\ZOOMMAP.BMP"
 
-#define	IDC_LEAVE	999
+#define IDC_LEAVE   999
 
-extern HCURSOR			hGameCursor;
-extern CMainZoomWindow	*pMainGameWnd;
+extern HCURSOR          hGameCursor;
+extern CMainZoomWindow  *pMainGameWnd;
 
-CPalette	*pGamePalette = nullptr;		// Palette to be used throughout the game
+CPalette    *pGamePalette = nullptr;        // Palette to be used throughout the game
 
-CRect	MainRect;							// screen area spanned by the game window
-CRect	OptionRect;							// screen area spanned by the option button
+CRect   MainRect;                           // screen area spanned by the game window
+CRect   OptionRect;                         // screen area spanned by the option button
 
-int		nReturnValue = -1;       // the values to return to the main EXE to tell it what
-								// DLL to dispatch to
+int     nReturnValue = -1;       // the values to return to the main EXE to tell it what
+// DLL to dispatch to
 // set the game rects
 static const RECT arGameRect[21] = {
 	{  24, 243,  63, 263 },
@@ -89,8 +89,8 @@ const int16 anGameValues[21] = {
 	MG_GAME_WORDSEARCH,
 	-1
 };
-		
-static const LPCSTR astrGames[21] = {		// set the display names for when the cursor passes over a game rect
+
+static const LPCSTR astrGames[21] = {       // set the display names for when the cursor passes over a game rect
 	"Click Here To Play Archeroids",
 	"Click Here To Play Art Parts",
 	"Click Here To Play Barbershop Quintet",
@@ -113,14 +113,14 @@ static const LPCSTR astrGames[21] = {		// set the display names for when the cur
 	"Click Here To Go To Main Menu"
 };
 
-int				nLastRect;		// the last gaem rect passed over
-CText			*pText = nullptr;	// the game name display
+int             nLastRect;      // the last gaem rect passed over
+CText           *pText = nullptr;   // the game name display
 
-static	BOOL	bActiveWindow = FALSE;			// whether our window is activesho
-CBitmap			*pSplashScreen = nullptr;
-CRect	    	rText( 0, 428, 640, 450 );
-CRect			rLeaveRect;
-CColorButton	*pReturnButton = nullptr;
+static  BOOL    bActiveWindow = FALSE;          // whether our window is activesho
+CBitmap         *pSplashScreen = nullptr;
+CRect           rText(0, 428, 640, 450);
+CRect           rLeaveRect;
+CColorButton    *pReturnButton = nullptr;
 
 /*****************************************************************
  *
@@ -131,84 +131,83 @@ CColorButton	*pReturnButton = nullptr;
  * Create the window with the appropriate style, size, menu, etc.;
  * it will be later revealed by CTheApp::InitInstance().  Then
  * create our splash screen object by opening and loading its DIB.
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	lUserAmount = initial amount of money that user starts with
- *								defaults to zero
- *	nRounds			= the number of rounds to play, if 0 then not playing rounds
- *							= defaults to zero
+ *  lUserAmount = initial amount of money that user starts with
+ *                              defaults to zero
+ *  nRounds         = the number of rounds to play, if 0 then not playing rounds
+ *                          = defaults to zero
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
 
-CMainZoomWindow::CMainZoomWindow( HWND hCallingWnd, BOOL bShowExit )
-{
-CDC			*pDC = nullptr;						// device context for the screen
-CString		WndClass;
-BOOL		bSuccess = FALSE;
+CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, BOOL bShowExit) {
+	CDC         *pDC = nullptr;                     // device context for the screen
+	CString     WndClass;
+	BOOL        bSuccess = FALSE;
 
-BeginWaitCursor();
+	BeginWaitCursor();
 // Define a special window class which traps double-clicks, is byte aligned
 // to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 // the five system defined DCs which are not guaranteed to be available;
-// this adds a bit to our app size but avoids hangs/freezes/lockups. 
+// this adds a bit to our app size but avoids hangs/freezes/lockups.
 
-WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-								hGameCursor, nullptr, nullptr);
+	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
+	                               hGameCursor, nullptr, nullptr);
 
-m_hCallAppWnd = hCallingWnd;
-m_bShowExit = bShowExit;
+	m_hCallAppWnd = hCallingWnd;
+	m_bShowExit = bShowExit;
 
 // set the seed for the random number generator
 //srand( (unsigned)time( nullptr ));
 
 // load splash screen
-pDC = GetDC();									// get a device context for our window
+	pDC = GetDC();                                  // get a device context for our window
 
 // set window coordinates to center game on screeen
-MainRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
-MainRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
-MainRect.right = MainRect.left + GAME_WIDTH;	// determine where to place the game window
-MainRect.bottom = MainRect.top + GAME_HEIGHT;   // ... so it is centered on the screen
+	MainRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
+	MainRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
+	MainRect.right = MainRect.left + GAME_WIDTH;    // determine where to place the game window
+	MainRect.bottom = MainRect.top + GAME_HEIGHT;   // ... so it is centered on the screen
 
-rLeaveRect.SetRect( ( GAME_WIDTH / 2 ) - 50, 450, ( GAME_WIDTH / 2 ) + 50, 470 );
+	rLeaveRect.SetRect((GAME_WIDTH / 2) - 50, 450, (GAME_WIDTH / 2) + 50, 470);
 
-pText = new CText( pDC, pGamePalette, &rText, JUSTIFY_CENTER );	// Set up the Text Object to show the game names
+	pText = new CText(pDC, pGamePalette, &rText, JUSTIFY_CENTER);    // Set up the Text Object to show the game names
 
-ReleaseDC(pDC);									// release our window context 
-pDC = nullptr;
+	ReleaseDC(pDC);                                 // release our window context
+	pDC = nullptr;
 
 // Create the window as a POPUP so that no boarders, title, or menu are present;
 // this is because the game's background art will fill the entire 640x40 area.
-Create( WndClass, "Boffo Games - ZOOM MAP", WS_POPUP, MainRect, nullptr, 0);
+	Create(WndClass, "Boffo Games - ZOOM MAP", WS_POPUP, MainRect, nullptr, 0);
 
-pDC = GetDC();
-pSplashScreen = FetchBitmap( pDC, &pGamePalette, SPLASHSPEC );
-ReleaseDC( pDC );
+	pDC = GetDC();
+	pSplashScreen = FetchBitmap(pDC, &pGamePalette, SPLASHSPEC);
+	ReleaseDC(pDC);
 
-if ( bShowExit ) {
-	pReturnButton = new CColorButton;
-	ASSERT(pReturnButton);
-	bSuccess = pReturnButton->Create("Main Menu",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, rLeaveRect, this, IDC_LEAVE );
-	ASSERT(bSuccess);
-	pReturnButton->SetPalette(pGamePalette);
-}
+	if (bShowExit) {
+		pReturnButton = new CColorButton;
+		ASSERT(pReturnButton);
+		bSuccess = pReturnButton->Create("Main Menu", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, rLeaveRect, this, IDC_LEAVE);
+		ASSERT(bSuccess);
+		pReturnButton->SetPalette(pGamePalette);
+	}
 
-nLastRect = -1;	// contains the number of the last rect that the mouse ran thru
+	nLastRect = -1; // contains the number of the last rect that the mouse ran thru
 
-EndWaitCursor();
+	EndWaitCursor();
 }
 
 /*****************************************************************
@@ -227,31 +226,30 @@ EndWaitCursor();
  * Note that creating a CPaintDC automatically does a BeginPaint and
  * an EndPaint call is done when it is destroyed at the end of this
  * function.  CPaintDC's constructor needs the window (this).
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	n/a
+ *  n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
-void CMainZoomWindow::OnPaint()
-{
-PAINTSTRUCT	lpPaint;
+void CMainZoomWindow::OnPaint() {
+	PAINTSTRUCT lpPaint;
 
 	BeginPaint(&lpPaint);                           // bracket start of window update
-	SplashScreen();                                 // repaint our window's content 
-	EndPaint(&lpPaint);                             // bracket end of window update 
+	SplashScreen();                                 // repaint our window's content
+	EndPaint(&lpPaint);                             // bracket end of window update
 }
 
 /*****************************************************************
@@ -264,37 +262,36 @@ PAINTSTRUCT	lpPaint;
  * sprite chain queue.  The entire window is redrawn, rather than just
  * the updated area, to ensure that the sprites end up with the correct
  * background bitmaps saved for their image areas.
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	n/a
+ *  n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
-void CMainZoomWindow::SplashScreen()
-{
-CDC			*pDC = GetDC();                                                                          // get a device context for the window
-CPalette	*pOldPalette = pDC->SelectPalette( pGamePalette, FALSE );	// load game palette;
+void CMainZoomWindow::SplashScreen() {
+	CDC         *pDC = GetDC();                                                                          // get a device context for the window
+	CPalette    *pOldPalette = pDC->SelectPalette(pGamePalette, FALSE);      // load game palette;
 
-ASSERT(pDC);
+	ASSERT(pDC);
 
-pDC->RealizePalette();                      // realize game palette
+	pDC->RealizePalette();                      // realize game palette
 
-PaintBitmap( pDC, pGamePalette, pSplashScreen );
+	PaintBitmap(pDC, pGamePalette, pSplashScreen);
 
-pDC->SelectPalette( pOldPalette, FALSE );   // replace old palette
-ReleaseDC(pDC);								// release the window's context
+	pDC->SelectPalette(pOldPalette, FALSE);     // replace old palette
+	ReleaseDC(pDC);                             // release the window's context
 
 }
 
@@ -308,58 +305,56 @@ ReleaseDC(pDC);								// release the window's context
  *
  * This function is called when a WM_COMMAND message is issued,
  * typically in order to process control related activities.
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	wParam		identifier for the button to be processed
- *	lParam		type of message to be processed
+ *  wParam      identifier for the button to be processed
+ *  lParam      type of message to be processed
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
 
 // OnCommand
 //
 
-void CALLBACK lpfnOptionCallback ( CWnd * pWnd) {
+void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 // do the mini options dialog
 	return;
 }
 
-BOOL CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam)
-{
+BOOL CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (HIWORD(lParam) == BN_CLICKED) {
-		if (wParam == IDC_LEAVE ) {
+		if (wParam == IDC_LEAVE) {
 			nReturnValue = -1;
-			PostMessage( WM_CLOSE );
+			PostMessage(WM_CLOSE);
 		}
 	}
-	(*this).SetFocus();							// Reset focus back to the main window
-	return(TRUE);
+	(*this).SetFocus();                         // Reset focus back to the main window
+	return (TRUE);
 }
 
-void CMainZoomWindow::OnLButtonDown(UINT nFlags, CPoint point)
-{
-int	x; // counter 
+void CMainZoomWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+	int x; // counter
 
-	for (x = 0; x < 21; x++ ) {
-		if ( PtInRect( &arGameRect[x], point ) ) {	// check to see if player clicked on a game
-			if (( anGameValues[x] == -1 ) && ( m_bShowExit == FALSE )) {
+	for (x = 0; x < 21; x++) {
+		if (PtInRect(&arGameRect[x], point)) {        // check to see if player clicked on a game
+			if ((anGameValues[x] == -1) && (m_bShowExit == FALSE)) {
 				CWnd::OnLButtonDown(nFlags, point);
 				return;
 			}
-			nReturnValue = anGameValues[x];     	// if so then dispatch to game
-			PostMessage( WM_CLOSE );
+			nReturnValue = anGameValues[x];         // if so then dispatch to game
+			PostMessage(WM_CLOSE);
 			return;
 		}
 	}
@@ -367,44 +362,43 @@ int	x; // counter
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainZoomWindow::OnMouseMove(UINT nFlags, CPoint point)
-{
-int	x;
+void CMainZoomWindow::OnMouseMove(UINT nFlags, CPoint point) {
+	int x;
 
-	for (x = 0; x < 21; x++ ) {
-		if ( PtInRect( &arGameRect[x], point ) ) {  // if cursor passes over a game rect
-			if (( anGameValues[x] == -1 ) && ( m_bShowExit == FALSE )) {
+	for (x = 0; x < 21; x++) {
+		if (PtInRect(&arGameRect[x], point)) {      // if cursor passes over a game rect
+			if ((anGameValues[x] == -1) && (m_bShowExit == FALSE)) {
 				CWnd::OnMouseMove(nFlags, point);
 				return;
 			}
-					
-			if ( x != nLastRect ) {					// then hilight it and flash the 
-			CRect	rTemp( arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
-							 arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10 );
-			CDC	*pDC = GetDC();
-	        CBrush  brshCyanBrush( RGB ( 0, 255, 255));
-	        CBrush  brshBlackBrush( RGB ( 0, 0, 0));
-	        CRect	rTemp1( (arGameRect[x].left - 5 + 2), (arGameRect[x].top - 5 + 2),
-	        				(arGameRect[x].right + 5 + 2), (arGameRect[x].bottom + 5 + 2) );
-	        CRect	rTemp2( (arGameRect[x].left - 5 ), (arGameRect[x].top - 5 ),
-	        				(arGameRect[x].right + 5 ), (arGameRect[x].bottom + 5 ) );
-	
+
+			if (x != nLastRect) {                    // then hilight it and flash the
+				CRect   rTemp(arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
+				              arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10);
+				CDC *pDC = GetDC();
+				CBrush  brshCyanBrush(RGB(0, 255, 255));
+				CBrush  brshBlackBrush(RGB(0, 0, 0));
+				CRect   rTemp1((arGameRect[x].left - 5 + 2), (arGameRect[x].top - 5 + 2),
+				               (arGameRect[x].right + 5 + 2), (arGameRect[x].bottom + 5 + 2));
+				CRect   rTemp2((arGameRect[x].left - 5), (arGameRect[x].top - 5),
+				               (arGameRect[x].right + 5), (arGameRect[x].bottom + 5));
+
 				RedrawWindow(&rTemp);
-	            pDC->FrameRect( &rTemp1, &brshBlackBrush);
-	            pDC->FrameRect( &rTemp2, &brshCyanBrush);
-					
-				pText->DisplayShadowedString( pDC, astrGames[x], 16, FW_BOLD, RGB( 0, 255, 255) );
+				pDC->FrameRect(&rTemp1, &brshBlackBrush);
+				pDC->FrameRect(&rTemp2, &brshCyanBrush);
+
+				pText->DisplayShadowedString(pDC, astrGames[x], 16, FW_BOLD, RGB(0, 255, 255));
 				nLastRect = x;
-				ReleaseDC( pDC );
+				ReleaseDC(pDC);
 			}
 			return;
 		}
 	}
 
 
-	if ( nLastRect != -1 ) {
-	CRect	rTemp( arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
-					 arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10 );
+	if (nLastRect != -1) {
+		CRect   rTemp(arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
+		              arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10);
 
 		RedrawWindow(&rTemp);
 		RedrawWindow(&rText);
@@ -413,32 +407,29 @@ int	x;
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CMainZoomWindow::OnLButtonUp(UINT nFlags, CPoint point)
-{
+void CMainZoomWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainZoomWindow::OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags)
-{      
+void CMainZoomWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
-	switch ( nChar ) {
-		case VK_ESCAPE:
-			if ( m_bShowExit == TRUE ) {
-				nReturnValue = -1;
-				PostMessage( WM_CLOSE );
-			}
-			break;
-		default:
-			CFrameWnd::OnKeyDown( nChar, nRepCnt, nFlags);
-			break;
+	switch (nChar) {
+	case VK_ESCAPE:
+		if (m_bShowExit == TRUE) {
+			nReturnValue = -1;
+			PostMessage(WM_CLOSE);
+		}
+		break;
+	default:
+		CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		break;
 	}
 	return;
 }
 
-void CMainZoomWindow::OnTimer( UINT nWhichTimer ) 
-{
+void CMainZoomWindow::OnTimer(UINT nWhichTimer) {
 	return;
-}                   
+}
 
 /*****************************************************************
  *
@@ -447,49 +438,48 @@ void CMainZoomWindow::OnTimer( UINT nWhichTimer )
  * FUNCTIONAL DESCRIPTION:
  *
  *      These functions are called when ever the corresponding WM_
- *		event message is generated for the mouse.
+ *      event message is generated for the mouse.
  *
- *		(Add game-specific processing)
- *   
+ *      (Add game-specific processing)
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 
-BOOL CMainZoomWindow::OnEraseBkgnd( CDC *pDC ) {
+BOOL CMainZoomWindow::OnEraseBkgnd(CDC *pDC) {
 // eat this
 	return TRUE;
 }
 
 
-void CMainZoomWindow::OnActivate(UINT nState, CWnd	*pWndOther, BOOL bMinimized)
-{
-BOOL	bUpdateNeeded;
+void CMainZoomWindow::OnActivate(UINT nState, CWnd  *pWndOther, BOOL bMinimized) {
+	BOOL    bUpdateNeeded;
 
-	switch(nState) {
-		case WA_INACTIVE:
-			bActiveWindow = FALSE;
-			break;
-		case WA_ACTIVE:
-		case WA_CLICKACTIVE:
-			bActiveWindow = TRUE;
-			bUpdateNeeded = GetUpdateRect(nullptr,FALSE);
-			if (bUpdateNeeded)
-				InvalidateRect(nullptr,FALSE);
-		}
+	switch (nState) {
+	case WA_INACTIVE:
+		bActiveWindow = FALSE;
+		break;
+	case WA_ACTIVE:
+	case WA_CLICKACTIVE:
+		bActiveWindow = TRUE;
+		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
+		if (bUpdateNeeded)
+			InvalidateRect(nullptr, FALSE);
+	}
 }
 
 
@@ -499,35 +489,34 @@ BOOL	bUpdateNeeded;
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	This function is called when a Close event is generated.  For
- *	this sample application we need only kill our event timer;
- *  The ExitInstance will handle releasing resources. 
- *   
+ *  This function is called when a Close event is generated.  For
+ *  this sample application we need only kill our event timer;
+ *  The ExitInstance will handle releasing resources.
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-void CMainZoomWindow::OnClose()
-{
-CDC	*pDC = GetDC();
-CRect		rctFillRect( 0, 0, 640, 480 );
-CBrush  Brush( RGB( 0, 0, 0 ));
+void CMainZoomWindow::OnClose() {
+	CDC *pDC = GetDC();
+	CRect       rctFillRect(0, 0, 640, 480);
+	CBrush  Brush(RGB(0, 0, 0));
 
-	pDC->FillRect( &rctFillRect, &Brush);
+	pDC->FillRect(&rctFillRect, &Brush);
 	ReleaseDC(pDC);
 	ReleaseResources();
 	CFrameWnd ::OnClose();
@@ -539,34 +528,33 @@ CBrush  Brush( RGB( 0, 0, 0 ));
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	This function is called when after the window has been destroyed.
- *	For poker, we post a message bak to the calling app to tell it
+ *  This function is called when after the window has been destroyed.
+ *  For poker, we post a message bak to the calling app to tell it
  * that the user has quit the game, and therefore the app can unload
- * this DLLL 
- *   
+ * this DLLL
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
-void CMainZoomWindow::OnDestroy()
-{
+void CMainZoomWindow::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
-	MFC::PostMessage( m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)nReturnValue );
+	MFC::PostMessage(m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)nReturnValue);
 	CFrameWnd::OnDestroy();
-} 
+}
 
 
 /*****************************************************************
@@ -575,43 +563,42 @@ void CMainZoomWindow::OnDestroy()
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	Release all resources that were created and retained during the
- *	course of the game.  This includes sprites in the sprite chain,
- *	the game color palette, and button controls. 
- *   
+ *  Release all resources that were created and retained during the
+ *  course of the game.  This includes sprites in the sprite chain,
+ *  the game color palette, and button controls.
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-void CMainZoomWindow::ReleaseResources(void)
-{
+void CMainZoomWindow::ReleaseResources(void) {
 
 	delete pText;
 
-	if ( pSplashScreen != nullptr )
+	if (pSplashScreen != nullptr)
 		delete pSplashScreen;
-		
-	if ( pGamePalette !=nullptr ) {
+
+	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();         // release the game color palette
-		delete pGamePalette;                    
+		delete pGamePalette;
 	}
-	
-	if ( pReturnButton != nullptr )
-		delete pReturnButton;										// release the buttons we used
+
+	if (pReturnButton != nullptr)
+		delete pReturnButton;                                       // release the buttons we used
 
 	return;
 }
@@ -623,45 +610,46 @@ void CMainZoomWindow::ReleaseResources(void)
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	Remove all keyboard and mouse related events from the message
- *	so that they will not be sent to us for processing; i.e. this
- *	flushes keyboard type ahead and extra mouse clicks and movement. 
- *   
+ *  Remove all keyboard and mouse related events from the message
+ *  so that they will not be sent to us for processing; i.e. this
+ *  flushes keyboard type ahead and extra mouse clicks and movement.
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
  *
  ****************************************************************/
 
-void CMainZoomWindow::FlushInputEvents(void)
-{
-MSG msg;
+void CMainZoomWindow::FlushInputEvents(void) {
+	MSG msg;
 
-while(TRUE) {										// find and remove all keyboard events
-	if (!PeekMessage(&msg,nullptr,WM_KEYFIRST,WM_KEYLAST,PM_REMOVE))
-		break;}
+	while (TRUE) {                                      // find and remove all keyboard events
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+			break;
+	}
 
-while(TRUE) {                                       // find and remove all mouse events
-	if (!PeekMessage(&msg,nullptr,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE))
-		break;}
+	while (TRUE) {                                      // find and remove all mouse events
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+			break;
+	}
 }
 
 // CMainZoomWindow message map:
 // Associate messages with member functions.
 //
-BEGIN_MESSAGE_MAP( CMainZoomWindow, CFrameWnd )
+BEGIN_MESSAGE_MAP(CMainZoomWindow, CFrameWnd)
 	//{{AFX_MSG_MAP( CMainZoomWindow )
 	ON_WM_PAINT()
 	ON_WM_LBUTTONDOWN()

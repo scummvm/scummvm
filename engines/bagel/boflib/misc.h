@@ -103,8 +103,8 @@ extern void encryptPartial(void *, int32, int32, const char *pPassword = nullptr
 
 /**
  * Return a true / false based on the probability given
- * @param nProbability	The probability of returning a true
- * @returns		True/false result
+ * @param nProbability  The probability of returning a true
+ * @returns     True/false result
 **/
 extern bool ProbableTrue(int nProbability);
 

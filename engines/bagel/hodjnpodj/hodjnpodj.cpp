@@ -71,13 +71,13 @@ Common::Error HodjNPodjEngine::run() {
 	}
 
 	//_metaGame.initBFCInfo();
-#if 0
+	#if 0
 	_settings.load();
 	Settings::Domain &meta = _settings["Meta"];
 	_bAnimationsEnabled = meta.getBool("Animations", true);
 	_bScrollingEnabled = meta.getBool("MapScrolling", false);
 	_gameId = getGameId();
-#endif
+	#endif
 	// Run the game
 	auto &app = Metagame::Frame::theApp;
 	app.addResources("meta/hnpmeta.dll");

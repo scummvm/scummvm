@@ -21,37 +21,37 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/resource.h"
-#include "bagel/hodjnpodj/metagame/grand_tour/grand_tour.h" 
+#include "bagel/hodjnpodj/metagame/grand_tour/grand_tour.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-HINSTANCE	hDLLInst;
-HINSTANCE 	hExeInst;
+HINSTANCE   hDLLInst;
+HINSTANCE   hExeInst;
 
-CMainGTWindow	*pMainGameWnd = nullptr;	// pointer to the poker's main window 
-CPalette		*pTestPalette = nullptr;
-HCURSOR			hGameCursor;
+CMainGTWindow   *pMainGameWnd = nullptr;    // pointer to the poker's main window
+CPalette        *pTestPalette = nullptr;
+HCURSOR         hGameCursor;
 
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
 
-HWND RunGrandTour( HWND hParentWnd, LPGRANDTRSTRUCT pgtGrandTourStruct ) {
+HWND RunGrandTour(HWND hParentWnd, LPGRANDTRSTRUCT pgtGrandTourStruct) {
 	// if the pointer has garbage in it, the clean it out
-	if ( pMainGameWnd != nullptr ) {
+	if (pMainGameWnd != nullptr) {
 		pMainGameWnd = nullptr;
 	}
 // create a my poker window and show it
-	pMainGameWnd = new CMainGTWindow( hParentWnd, pgtGrandTourStruct );
-	pMainGameWnd->ShowWindow( SW_SHOWNORMAL );
+	pMainGameWnd = new CMainGTWindow(hParentWnd, pgtGrandTourStruct);
+	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
 	pMainGameWnd->UpdateWindow();
-  	pMainGameWnd->SetActiveWindow(); 
+	pMainGameWnd->SetActiveWindow();
 
 // return the handle to this window
-	hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-	hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
 	return pMainGameWnd->m_hWnd;
 }

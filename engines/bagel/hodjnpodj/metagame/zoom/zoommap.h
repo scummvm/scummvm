@@ -40,14 +40,14 @@ namespace Metagame {
 namespace Zoom {
 
 // Button Identifier codes (BIDs)
-#define	IDC_OPTION			100  
-#define	IDC_JUNK			999
+#define IDC_OPTION          100
+#define IDC_JUNK            999
 
 // Button positioning constants
-#define OPTION_WIDTH				146
-#define OPTION_HEIGHT				23
-#define OPTION_LEFT					246
-#define OPTION_TOP					0
+#define OPTION_WIDTH                146
+#define OPTION_HEIGHT               23
+#define OPTION_LEFT                 246
+#define OPTION_TOP                  0
 
 class CMainZoomWindow : public CFrameWnd {
 private:
@@ -69,13 +69,13 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnTimer( UINT );
-  	afx_msg void OnLButtonDown( UINT, CPoint );
-  	afx_msg void OnLButtonUp( UINT, CPoint );
-	afx_msg void OnMouseMove( UINT, CPoint );
-	afx_msg void OnKeyDown( UINT, UINT, UINT);
-	afx_msg BOOL OnEraseBkgnd( CDC * );
-	afx_msg void OnActivate(UINT nState, CWnd	*pWndOther, BOOL bMinimized);
+	afx_msg void OnTimer(UINT);
+	afx_msg void OnLButtonDown(UINT, CPoint);
+	afx_msg void OnLButtonUp(UINT, CPoint);
+	afx_msg void OnMouseMove(UINT, CPoint);
+	afx_msg void OnKeyDown(UINT, UINT, UINT);
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

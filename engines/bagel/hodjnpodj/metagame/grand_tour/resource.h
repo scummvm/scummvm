@@ -27,10 +27,10 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#define IDI_GT		                    2
-#define IDD_TOP10_SCROLL				10
-#define IDD_AUDIOCFG					463
-#define IDC_TOP10_OK					20
+#define IDI_GT                          2
+#define IDD_TOP10_SCROLL                10
+#define IDD_AUDIOCFG                    463
+#define IDC_TOP10_OK                    20
 
 } // namespace GrandTour
 } // namespace Metagame

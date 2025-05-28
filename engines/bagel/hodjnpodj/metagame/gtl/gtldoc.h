@@ -86,12 +86,12 @@ protected:
 public:
 	virtual BOOL DoOnFileSaveAs(void) ;
 
-	private:
+private:
 	//- OnChangedViewList -- called by MFC when a view is
-	//		added or deleted
+	//      added or deleted
 	virtual VOID OnChangedViewList(void) ;
 
-	public:
+public:
 	//- FixChecks -- fix dialog box check marks
 	BOOL FixChecks(void);
 

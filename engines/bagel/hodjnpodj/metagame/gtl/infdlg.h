@@ -50,7 +50,7 @@ public:
 	CInfDlg(CWnd *pParent = nullptr);  // standard constructor
 	void Create(void) {
 		CDialog::Create(IDD,
-			(CWnd *)m_xpFrameWnd);
+		                (CWnd *)m_xpFrameWnd);
 	}
 	~CInfDlg(void) {
 		TRACEDESTRUCTOR(CInfDlg);

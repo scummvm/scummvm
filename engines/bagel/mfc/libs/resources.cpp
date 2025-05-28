@@ -46,7 +46,7 @@ void Resources::popResources() {
 Common::WinResources *Resources::getResources() const {
 	if (_resources.empty())
 		error("Use CWinApp::addResources to register "
-			"an .exe or .dll file containing the resources");
+		      "an .exe or .dll file containing the resources");
 	return _resources.top();
 }
 

@@ -113,77 +113,77 @@ public:
 
 #ifdef JX_DEBUG
 
-#define JXOutputDebugString ifcwst
+	#define JXOutputDebugString ifcwst
 
-extern LPVOID dbgptr ;
-extern int dbgtrk ;
-extern int dbgtrc ;
-extern int dbgtrr ;
+	extern LPVOID dbgptr ;
+	extern int dbgtrk ;
+	extern int dbgtrc ;
+	extern int dbgtrr ;
 
-extern int dbgreopen ;
-extern char dbgfile[DBGFILESIZE] ;
+	extern int dbgreopen ;
+	extern char dbgfile[DBGFILESIZE] ;
 
-/* bdbgc.c -- debugging routines */
+	/* bdbgc.c -- debugging routines */
 
-//- dbgarg -- handle debugging arguments
-void dbgarg(int argc, char * argv[]) ;
-//- dbgntr -- enter a subroutine
-void dbgntr(const char * name) ;
-//- dbgxit -- exit a subroutine
-void dbgxit(const char * name, int iError) ;
-//- dbgtyp -- type status line
-void dbgtyp(const char * ps, BOOL bReset) ;
-//- dbgntu -- enter a subroutine -- unconditional message
-void dbgntu(const char * name) ;
-//- dbgxiu -- exit a subroutine -- unconditional message
-void dbgxiu(const char * name) ;
-//- dbgttg -- keyboard trace toggle hit
-void dbgttg(void) ;
-//- dbggsd -- get current stack depth
-int dbggsd(void) ;
-//- dbgssd -- set stack depth
-void dbgssd(int depth) ;
-//- dbgcnp -- check null pointer storage area clobbered
-void dbgcnp(char * caller, char * name) ;
-//- kybupq -- input chars, update keyboard input queue
-void kybupq(void) ;
-//- kybrd -- keyboard read -- wait if no char available
-int kybrd(void) ;
-//- kybrdz -- keyboard read, return zero if no char
-int kybrdz(void) ;
-//- kybord -- o/s keyboard read -- returns char or scan code + 1000
-int kybord(void) ;
-//- kybtst -- test for keyboard input, return char, leave in queue
-// Quick test for keyboard input -- returns next char, but
-//		doesn't remove it from queue
-int kybtst(void) ;
-//- kybnlt -- new line test -- test if there's a newline in queue
-int kybnlt(void) ;
-//- ifcprf -- printf replacement
-void ifcprf(char * cs, ...) ;
-//- ifcspf -- Common::sprintf_s replacement
-int ifcspf(char * ds, char * cs, ...) ;
-//- ifcfmt -- formatting routine
-char *ifcfmt(char * cs, char * ds, void * pparg, int * flen) ;
-//- ifcwst -- write character string to screen
-void ifcwst(LPCSTR xpStr) ;
-//- ifcwtt -- write character to screen
-void ifcwtt(char ch) ;
-//- ifcwnl -- write newline
-void ifcwnl(void) ;
-//- ifcbep -- "display" a beep
-void ifcbep(void) ;
-//- ifcwwf -- write character to windows file
-void ifcwwf(int iChar) ;
-//- dbgWindowDump -- dump current window tree
-VOID FAR PASCAL dbgWindowDump(HWND hStartWnd) ;
-//- dbgDumpEnumProc - enumeration function to find child windows
-BOOL FAR PASCAL dbgDumpEnumProc(HWND hWnd, DWORD dwlpWddb) ;
-//- dbgDumpWindowInfo - dump info on one window
-VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb) ;
+	//- dbgarg -- handle debugging arguments
+	void dbgarg(int argc, char * argv[]) ;
+	//- dbgntr -- enter a subroutine
+	void dbgntr(const char * name) ;
+	//- dbgxit -- exit a subroutine
+	void dbgxit(const char * name, int iError) ;
+	//- dbgtyp -- type status line
+	void dbgtyp(const char * ps, BOOL bReset) ;
+	//- dbgntu -- enter a subroutine -- unconditional message
+	void dbgntu(const char * name) ;
+	//- dbgxiu -- exit a subroutine -- unconditional message
+	void dbgxiu(const char * name) ;
+	//- dbgttg -- keyboard trace toggle hit
+	void dbgttg(void) ;
+	//- dbggsd -- get current stack depth
+	int dbggsd(void) ;
+	//- dbgssd -- set stack depth
+	void dbgssd(int depth) ;
+	//- dbgcnp -- check null pointer storage area clobbered
+	void dbgcnp(char * caller, char * name) ;
+	//- kybupq -- input chars, update keyboard input queue
+	void kybupq(void) ;
+	//- kybrd -- keyboard read -- wait if no char available
+	int kybrd(void) ;
+	//- kybrdz -- keyboard read, return zero if no char
+	int kybrdz(void) ;
+	//- kybord -- o/s keyboard read -- returns char or scan code + 1000
+	int kybord(void) ;
+	//- kybtst -- test for keyboard input, return char, leave in queue
+	// Quick test for keyboard input -- returns next char, but
+	//		doesn't remove it from queue
+	int kybtst(void) ;
+	//- kybnlt -- new line test -- test if there's a newline in queue
+	int kybnlt(void) ;
+	//- ifcprf -- printf replacement
+	void ifcprf(char * cs, ...) ;
+	//- ifcspf -- Common::sprintf_s replacement
+	int ifcspf(char * ds, char * cs, ...) ;
+	//- ifcfmt -- formatting routine
+	char *ifcfmt(char * cs, char * ds, void * pparg, int * flen) ;
+	//- ifcwst -- write character string to screen
+	void ifcwst(LPCSTR xpStr) ;
+	//- ifcwtt -- write character to screen
+	void ifcwtt(char ch) ;
+	//- ifcwnl -- write newline
+	void ifcwnl(void) ;
+	//- ifcbep -- "display" a beep
+	void ifcbep(void) ;
+	//- ifcwwf -- write character to windows file
+	void ifcwwf(int iChar) ;
+	//- dbgWindowDump -- dump current window tree
+	VOID FAR PASCAL dbgWindowDump(HWND hStartWnd) ;
+	//- dbgDumpEnumProc - enumeration function to find child windows
+	BOOL FAR PASCAL dbgDumpEnumProc(HWND hWnd, DWORD dwlpWddb) ;
+	//- dbgDumpWindowInfo - dump info on one window
+	VOID dbgDumpWindowInfo(HWND hWnd, DWORD dwlpWddb) ;
 
 #else
-#define JXOutputDebugString TRACE
+	#define JXOutputDebugString TRACE
 
 #endif /* JX_DEBUG */
 

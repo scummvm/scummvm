@@ -28,12 +28,12 @@ namespace Metagame {
 
 ///DEFS btimeut.h
 static void CALLBACK DelayMsCallback(HWND,
-	UINT, UINT, DWORD);
+                                     UINT, UINT, DWORD);
 
 BOOL bTimeDelayPassed = TRUE ;
 
 void CALLBACK DelayMsCallback(HWND /* hWnd */,
-	UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */);
+                              UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */);
 
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
@@ -69,7 +69,7 @@ cleanup:
 
 ///* DelayMsCallback -- SetTimer callback routine for DelayMs
 void CTimeUtil::DelayMsCallback(HWND /* hWnd */,
-    UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */)
+                                UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */)
 // hWnd -- handle of window (always nullptr in this case)
 // uMsg -- WM_TIMER message
 // uTimerId -- timer identifier

@@ -101,44 +101,44 @@ public:
 	~CBsuSet(void) ;
 	//- InitWndBsuSet -- initialize bsu set for a window
 	BOOL InitWndBsuSet(CWnd * xpWnd,
-	                            BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
-	                            CBsuSet * xpLinkSet PDFT(nullptr)) ;
+	                   BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
+	                   CBsuSet * xpLinkSet PDFT(nullptr)) ;
 	//- InitDlgBsuSet -- initialize bsu set for dialog box
 	BOOL InitDlgBsuSet(CDialog * xpDlg,
-	                            CBsuSet * xpLinkSet PDFT(nullptr)) ;
+	                   CBsuSet * xpLinkSet PDFT(nullptr)) ;
 	//- AddBarToSet -- add scroll bar to scroll bar set
 	BOOL AddBarToSet(int iId, int iWndScrollCode,
-	                          int iBarType PDFT(0)) ;
+	                 int iBarType PDFT(0)) ;
 	//- PrepareWndBsuSet -- prepare window scroll bar set
-	//		by filling in the device fields
+	//      by filling in the device fields
 	BOOL PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect) ;
 	//- UpdateWndDeviceExtents -- update window devices coordinates
 	BOOL UpdateWndDeviceExtents(void) ;
 	//- LinkWndBsuSet -- link window/dialog bsu sets
 	BOOL LinkWndBsuSet(void) ;
 	//- PrepareDc -- replace OnPrepareDC -- set the viewport and
-	//	the clip rectangle to the specified region
+	//  the clip rectangle to the specified region
 	BOOL PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
 	//- OnScroll -- handle OnHScroll and OnVScroll messages
 	BOOL OnScroll(UINT nSBCode, UINT nPos,
-	                       CScrollBar* xpScrollBar, int iBarType PDFT(0)) ;
+	              CScrollBar* xpScrollBar, int iBarType PDFT(0)) ;
 	//- GetBar -- get bsu scroll bar object
 	CBsuBar *GetBar(int iBarType) ;
 	//- ScrollWindowToPoint -- scroll window to spec point
 	BOOL ScrollWindowToPoint(CPoint cScrollPosition,
-	                                  BOOL bScrollWindow PDFT(TRUE)) ;
+	                         BOOL bScrollWindow PDFT(TRUE)) ;
 	//- EdgeToCenter -- if point is on edge, scroll it to center
 	BOOL EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
 	//- SetSubWindowRect -- set rectangle to portion of window
-	//		(logical coordinates)
+	//      (logical coordinates)
 	BOOL SetSubWindowRect(LPRECT lpRect, int iBsRegion);
 	//- TestRect -- test whether rectangle is in window
 	BOOL TestRect(CRRect crTestRect,
-	                       BOOL & bPhysical, BOOL & bEdge) ;
+	              BOOL & bPhysical, BOOL & bEdge) ;
 	//- GetWindowBars -- set rectangle to portion of window
-	//		(device coordinates)
+	//      (device coordinates)
 	BOOL GetWindowBars(CBsuBar * &xpHBar,
-	                            CBsuBar *&xpVBar, BOOL bErrorRtn PDFT(TRUE)) ;
+	                   CBsuBar *&xpVBar, BOOL bErrorRtn PDFT(TRUE)) ;
 	//- PointLogical -- convert device point to logical coords
 	CRPoint PointLogical(CPoint cPoint) ;
 	//- GetInfo -- get information about scroll set

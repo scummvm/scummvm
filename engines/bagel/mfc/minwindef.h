@@ -248,16 +248,16 @@ typedef struct tagMSG {
 		pt.x = pt.y = 0;
 	}
 	tagMSG(UINT message_, WPARAM wParam_ = 0,
-			LPARAM lParam_ = 0) :
-			message(message_), wParam(wParam_),
-			lParam(lParam_) {
+	       LPARAM lParam_ = 0) :
+		message(message_), wParam(wParam_),
+		lParam(lParam_) {
 		pt.x = pt.y = 0;
 	}
 } MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
 
 inline bool PtInRect(const RECT *lprc, POINT &pt) {
 	return pt.x >= lprc->left && pt.x < lprc->right &&
-		pt.y >= lprc->top && pt.y < lprc->bottom;
+	       pt.y >= lprc->top && pt.y < lprc->bottom;
 }
 
 } // namespace MFC

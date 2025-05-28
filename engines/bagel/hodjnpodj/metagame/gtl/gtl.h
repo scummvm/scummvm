@@ -64,9 +64,9 @@ public:
 	char m_cEndData ;
 
 	virtual BOOL InitInstance();
-#if GTLDLL
+	#if GTLDLL
 	virtual int ExitInstance();
-#endif
+	#endif
 
 	CGtlApp();  // constructor
 	~CGtlApp(); // destructor
@@ -86,7 +86,7 @@ public:
 	//- DoMessageBox -- override of CWinApp function to
 	//              display message box messages
 	virtual int DoMessageBox(LPCSTR lpszPrompt,
-	                                  UINT nType, UINT nIDPrompt) ;
+	                         UINT nType, UINT nIDPrompt) ;
 };
 
 #if GTLMDI

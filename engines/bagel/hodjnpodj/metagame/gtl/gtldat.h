@@ -190,7 +190,7 @@ class CMap {
 
 	CMap() {
 		memset(&m_cStartData,
-		    0, &m_cEndData - &m_cStartData);
+		       0, &m_cEndData - &m_cStartData);
 	}
 } ;
 
@@ -468,8 +468,8 @@ public:
 	              BOOL bNode, int FAR& iIndex) ;
 
 private:
-	 //- AddLink -- link together a pair of nodes
-	 BOOL AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
+	//- AddLink -- link together a pair of nodes
+	BOOL AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
 	//- AddLink -- add link to one node
 	BOOL AddLink(CNode FAR * lpNode, int iLink) ;
 

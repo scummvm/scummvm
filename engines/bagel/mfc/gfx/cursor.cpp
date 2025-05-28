@@ -34,41 +34,41 @@ constexpr int CURSOR_W = 12;
 constexpr int CURSOR_H = 20;
 
 static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
-	1,1,0,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,1,1,1,1,1,
-	1,2,2,2,1,2,2,1,0,0,0,0,
-	1,2,2,1,1,2,2,1,0,0,0,0,
-	1,2,1,0,0,1,2,2,1,0,0,0,
-	1,1,0,0,0,1,2,2,1,0,0,0,
-	1,0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,0,1,2,2,1,0,
-	0,0,0,0,0,0,0,1,2,2,1,0,
-	0,0,0,0,0,0,0,0,1,1,0,0
+	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+	1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+	1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+	1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
 };
 
 static const byte HOURGLASS_CURSOR[12 * 12] = {
-	0,0,1,1,1,1,1,1,1,1,0,0,
-	0,1,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,2,2,2,2,2,1,
-	0,1,2,2,2,2,2,2,2,2,1,0,
-	0,0,1,2,2,2,2,2,2,1,0,0,
-	0,0,1,2,2,2,2,2,2,1,0,0,
-	0,1,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,2,2,2,2,2,1,
-	0,1,2,2,2,2,2,2,2,2,1,0,
-	0,0,1,1,1,1,1,1,1,1,0,0
+	0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+	0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+	0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+	0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+	0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+	0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0
 };
 
 static const byte CURSOR_PALETTE[9] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
@@ -85,7 +85,7 @@ Cursors::Cursors(Libs::Resources &res) : _resources(res) {
 
 Cursors::~Cursors() {
 	for (CursorHash::iterator it = _cursors.begin();
-			it != _cursors.end(); ++it)
+	        it != _cursors.end(); ++it)
 		delete it->_value;
 }
 
@@ -102,20 +102,20 @@ HCURSOR Cursors::loadCursor(LPCSTR cursorId) {
 
 Cursor::Cursor(const byte *pixels) : _isBuiltIn(true) {
 	_surface.create(CURSOR_W, CURSOR_H,
-		Graphics::PixelFormat::createFormatCLUT8());
+	                Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) :
-		_isBuiltIn(false) {
+	_isBuiltIn(false) {
 	Image::BitmapDecoder decoder;
 
 	intptr id = (intptr)cursorId;
 	bool success = false;
 
 	Common::SeekableReadStream *bmp = res.getResource(
-		Common::kWinBitmap,
-		(id < 65536) ? Common::WinResourceID(id) :
-		Common::WinResourceID(cursorId));
+	                                      Common::kWinBitmap,
+	                                      (id < 65536) ? Common::WinResourceID(id) :
+	                                      Common::WinResourceID(cursorId));
 	if (bmp) {
 		success = decoder.loadStream(*bmp);
 
@@ -127,7 +127,7 @@ Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) :
 
 	if (_surface.empty()) {
 		Graphics::WinCursorGroup *group =
-			Graphics::WinCursorGroup::createCursorGroup(&res, id);
+		    Graphics::WinCursorGroup::createCursorGroup(&res, id);
 		if (group) {
 			const auto &cursor = group->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor);
@@ -149,7 +149,7 @@ void Cursor::showCursor() {
 		CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
 
 	CursorMan.replaceCursor(_surface.getPixels(),
-		_surface.w, _surface.h, 0, 0, 0, true, &format);
+	                        _surface.w, _surface.h, 0, 0, 0, true, &format);
 }
 
 } // namespace Gfx

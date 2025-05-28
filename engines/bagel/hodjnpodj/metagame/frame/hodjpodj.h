@@ -39,15 +39,15 @@ namespace Frame {
 
 
 // Button Identifier codes (BIDs)
-#define IDC_ZOOM		888
-#define IDC_META		887
-#define IDC_QUIT		886
-#define IDC_MAINDLG 	885
-#define IDC_GRANDTOUR	884
+#define IDC_ZOOM        888
+#define IDC_META        887
+#define IDC_QUIT        886
+#define IDC_MAINDLG     885
+#define IDC_GRANDTOUR   884
 // Sound File Identifiers
 
 // Bitmap Identifiers
-#define MAINSCROLL	".\\ART\\MLSCROLL.BMP" 
+#define MAINSCROLL  ".\\ART\\MLSCROLL.BMP"
 
 // Button positioning constants
 
@@ -55,16 +55,16 @@ namespace Frame {
 
 // CMainPokerWindow:
 // See game.cpp for the code to the member functions and the message map.
-//              
+//
 
 class CHodjPodjWindow : public CFrameWnd {
 private:
-    CBitmap *m_pCurrentBmp;
-    UINT     m_nFlags;
-    BOOL     m_bInCredits;
+	CBitmap *m_pCurrentBmp;
+	UINT     m_nFlags;
+	BOOL     m_bInCredits;
 
 public:
-    CHodjPodjWindow();
+	CHodjPodjWindow();
 
 	void BlackScreen(void);
 
@@ -73,9 +73,9 @@ public:
 	BOOL LoadZoomDLL(void);
 	BOOL LoadGrandTourDLL(void);
 
-    void HandleError(ERROR_CODE);
+	void HandleError(ERROR_CODE);
 
-    void PlayMovie(const int, const char *, BOOL);
+	void PlayMovie(const int, const char *, BOOL);
 
 	void GetProfilePath(void);
 	void GetHomePath(void);
@@ -92,11 +92,11 @@ public:
 
 	void GetProfileSettings(void);
 	void SaveProfileSettings(void);
-	
+
 	BOOL CheckLowMemory(void);
 
-    BOOL Restore(VOID);
-    VOID ShowCredits(VOID);
+	BOOL Restore(VOID);
+	VOID ShowCredits(VOID);
 
 	static  void ReleaseResources(void);
 	static  void FlushInputEvents(void);
@@ -104,7 +104,7 @@ public:
 private:
 	BOOL CheckConfig(CDC *pDC);
 	BOOL SetupNewMeta(void);
-	void LoadNewDLL( LPARAM );
+	void LoadNewDLL(LPARAM);
 	void UpdateDLLRouting(void);
 	void StartBackgroundMidi(void);
 	void StopBackgroundMidi(void);
@@ -112,21 +112,21 @@ private:
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-    //{{AFX_MSG( CHodjPodjWindow )
-    afx_msg void OnPaint();
-    afx_msg void OnClose();
-    afx_msg void OnDestroy();
-    afx_msg void OnMouseMove( UINT, CPoint );
-    afx_msg void OnLButtonDown( UINT, CPoint );
-    afx_msg void OnRButtonDown( UINT, CPoint );
-    afx_msg long OnMCINotify( WPARAM, LPARAM);
-    afx_msg BOOL OnEraseBkgnd( CDC * );
-    afx_msg void OnParentNotify( UINT, LPARAM);
-    afx_msg void OnActivate( UINT, CWnd *, BOOL );
-    afx_msg void OnKeyDown( UINT, UINT, UINT );
-    //}}AFX_MSG
+	//{{AFX_MSG( CHodjPodjWindow )
+	afx_msg void OnPaint();
+	afx_msg void OnClose();
+	afx_msg void OnDestroy();
+	afx_msg void OnMouseMove(UINT, CPoint);
+	afx_msg void OnLButtonDown(UINT, CPoint);
+	afx_msg void OnRButtonDown(UINT, CPoint);
+	afx_msg long OnMCINotify(WPARAM, LPARAM);
+	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg void OnParentNotify(UINT, LPARAM);
+	afx_msg void OnActivate(UINT, CWnd *, BOOL);
+	afx_msg void OnKeyDown(UINT, UINT, UINT);
+	//}}AFX_MSG
 
-    DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 };
 
 /**
@@ -134,8 +134,8 @@ protected:
  */
 class CTheApp : public CWinApp {
 public:
-    BOOL InitInstance() override;
-    int ExitInstance() override;
+	BOOL InitInstance() override;
+	int ExitInstance() override;
 };
 
 extern CTheApp theApp;

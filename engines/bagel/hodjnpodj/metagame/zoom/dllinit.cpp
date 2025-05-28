@@ -21,7 +21,7 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/metagame/zoom/resource.h"
-#include "bagel/hodjnpodj/metagame/zoom/zoommap.h" 
+#include "bagel/hodjnpodj/metagame/zoom/zoommap.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -32,31 +32,31 @@ namespace Zoom {
 //#error This source file must be compiled with _DEBUG defined
 //#endif
 
-HINSTANCE	hDLLInst;
-HINSTANCE 	hExeInst;
+HINSTANCE   hDLLInst;
+HINSTANCE   hExeInst;
 
-CMainZoomWindow	*pMainGameWnd = nullptr;	// pointer to the poker's main window 
-CPalette		*pTestPalette = nullptr;
-HCURSOR			hGameCursor;
+CMainZoomWindow *pMainGameWnd = nullptr;    // pointer to the poker's main window
+CPalette        *pTestPalette = nullptr;
+HCURSOR         hGameCursor;
 
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
 
-HWND RunZoomMap( HWND hParentWnd, BOOL bShowExit ) {
+HWND RunZoomMap(HWND hParentWnd, BOOL bShowExit) {
 
 // if the pointer has garbage in it, the clean it out
-	if ( pMainGameWnd != nullptr ) {
+	if (pMainGameWnd != nullptr) {
 		pMainGameWnd = nullptr;
 	}
 // create a my poker window and show it
-	pMainGameWnd = new CMainZoomWindow( hParentWnd, bShowExit );
-	pMainGameWnd->ShowWindow( SW_SHOWNORMAL );
+	pMainGameWnd = new CMainZoomWindow(hParentWnd, bShowExit);
+	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
 	pMainGameWnd->UpdateWindow();
-  	pMainGameWnd->SetActiveWindow(); 
+	pMainGameWnd->SetActiveWindow();
 
 // return the handle to this window
-	hDLLInst = (HINSTANCE)GetWindowWord( pMainGameWnd->m_hWnd, GWW_HINSTANCE);
-	hExeInst = (HINSTANCE)GetWindowWord( hParentWnd, GWW_HINSTANCE);  
+	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
+	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
 	return pMainGameWnd->m_hWnd;
 }

@@ -50,15 +50,15 @@ public:
 	}
 
 	~CBbtMgr() ;
-    //- LinkButton -- link button into button manager
+	//- LinkButton -- link button into button manager
 	BOOL LinkButton(CBbutton FAR * lpBbt,
-	                         CBgbObject FAR * lpcBgbObject1,
-	                         CBgbObject FAR * lpcBgbObject2) ;
-    //- AcceptClick -- process mouse click or mouse move
+	                CBgbObject FAR * lpcBgbObject1,
+	                CBgbObject FAR * lpcBgbObject2) ;
+	//- AcceptClick -- process mouse click or mouse move
 	int AcceptClick(CRPoint crPoint, int iClickType) ;
-    //- MoveDown -- move button down
+	//- MoveDown -- move button down
 	BOOL MoveDown(CBbutton FAR * lpDownBbt PDFT(nullptr)) ;
-    //- GetCurrentBitmap -- get current bitmap for button
+	//- GetCurrentBitmap -- get current bitmap for button
 	CBgbObject FAR *GetCurrentBitmap(CBbutton * xpBbt) ;
 } ;
 
@@ -81,7 +81,7 @@ public:
 public:
 	CBbutton(int iId = 0) {
 		memset(&m_cStartData, 0,
-		         &m_cEndData - &m_cStartData) ;
+		       &m_cEndData - &m_cStartData) ;
 		m_iBbtId = iId;
 	}
 	BOOL PtInButton(CRPoint crPoint) {

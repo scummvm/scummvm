@@ -896,15 +896,15 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	// if debug5 is 1, then FindShortestPath dumps debugging information
 	if (CBdbgMgr::GetPointer()->m_iDebugValues[5]) {
 		Common::sprintf_s(szMsg, "Finding shortest path from node #%d "
-		        "(%d,%d) to node #%d (%d,%d).\n",
-		        iStartNode, iTargetNode,
-		        cStartPoint.x, cStartPoint.y,
-		        cTargetPoint.x, cTargetPoint.y) ;
+		                  "(%d,%d) to node #%d (%d,%d).\n",
+		                  iStartNode, iTargetNode,
+		                  cStartPoint.x, cStartPoint.y,
+		                  cTargetPoint.x, cTargetPoint.y) ;
 		JXOutputDebugString(szMsg) ;
 	}
 	#endif
 
-	stStartTime = g_system->getMillis();	// save current time
+	stStartTime = g_system->getMillis();    // save current time
 
 	iDistanceDX = abs(cStartPoint.x - cTargetPoint.x);
 	iDistanceDY = abs(cStartPoint.y - cTargetPoint.y);
@@ -1037,7 +1037,7 @@ done:
 
 	lpiPath[0] += 1;
 
-	stEndTime = g_system->getMillis();	// get ending time
+	stEndTime = g_system->getMillis();  // get ending time
 	lTimeDiff = stEndTime - stStartTime;
 
 	#ifdef BAGEL_DEBUG

@@ -34,30 +34,29 @@ namespace GrandTour {
 //////////////////////////////////////////////////////////////////////////////
 ////////    Options Specific to Word Search
 //////////////////////////////////////////////////////////////////////////////
-class CTop10Dlg : public CBmpDialog
-{
+class CTop10Dlg : public CBmpDialog {
 private:
 
 public:
-    CTop10Dlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr );
+	CTop10Dlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);
 
 private:
 	void GetScores();
-    BOOL OnInitDialog();
+	BOOL OnInitDialog();
 	void ClearDialogImage(void);
-        
+
 protected:
-    //{{AFX_MSG(COptions)
+	//{{AFX_MSG(COptions)
 	virtual void OnOK(void);
 	virtual void OnCancel(void);
-    virtual BOOL OnCommand(WPARAM, LPARAM);
-    afx_msg void OnPaint();
-    afx_msg void OnDestroy();
-    //}}AFX_MSG
-    DECLARE_MESSAGE_MAP()
+	virtual BOOL OnCommand(WPARAM, LPARAM);
+	afx_msg void OnPaint();
+	afx_msg void OnDestroy();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
-    // data
-	CColorButton	*m_pOKButton;
+	// data
+	CColorButton    *m_pOKButton;
 };
 
 } // namespace GrandTour

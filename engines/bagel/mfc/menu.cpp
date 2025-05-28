@@ -28,12 +28,24 @@ namespace MFC {
 CMenu::CMenu() {
 }
 
-BOOL CMenu::CreateMenu() { error("TODO: CMenu::CreateMenu"); }
-BOOL CMenu::CreatePopupMenu() { error("TODO: CMenu::CreatePopupMenu"); }
-BOOL CMenu::LoadMenu(LPCTSTR lpszResourceName) { error("TODO: CMenu::LoadMenu"); }
-BOOL CMenu::LoadMenu(UINT nIDResource) { error("TODO: CMenu::LoadMenu"); }
-BOOL CMenu::LoadMenuIndirect(const void *lpMenuTemplate) { error("TODO: CMenu::LoadMenuIndirect"); }
-BOOL CMenu::DestroyMenu() { error("TODO: CMenu::DestroyMenu"); }
+BOOL CMenu::CreateMenu() {
+	error("TODO: CMenu::CreateMenu");
+}
+BOOL CMenu::CreatePopupMenu() {
+	error("TODO: CMenu::CreatePopupMenu");
+}
+BOOL CMenu::LoadMenu(LPCTSTR lpszResourceName) {
+	error("TODO: CMenu::LoadMenu");
+}
+BOOL CMenu::LoadMenu(UINT nIDResource) {
+	error("TODO: CMenu::LoadMenu");
+}
+BOOL CMenu::LoadMenuIndirect(const void *lpMenuTemplate) {
+	error("TODO: CMenu::LoadMenuIndirect");
+}
+BOOL CMenu::DestroyMenu() {
+	error("TODO: CMenu::DestroyMenu");
+}
 
 CMenu *CMenu::FromHandle(HMENU hMenu) {
 	error("TODO: CMenu::FromHandle");

@@ -61,14 +61,14 @@ namespace Frame {
 #define IDC_PLAY_HODJ_MOVIE             1037
 #define IDC_PLAY_PODJ_MOVIE             1038
 #define IDC_PLAY_LOGO_MOVIE             1039
-#define IDC_PLAY_TITLE_MOVIE			1040
+#define IDC_PLAY_TITLE_MOVIE            1040
 #define IDC_RSLOT1                      1040
 #define IDC_RSLOT2                      1041
 #define IDC_RSLOT3                      1042
 #define IDC_RSLOT4                      1043
 #define IDC_RSLOT5                      1044
 #define IDC_RSLOT6                      1045
-#define IDC_SHOW_CREDITS				1046
+#define IDC_SHOW_CREDITS                1046
 
 } // namespace Frame
 } // namespace Metagame

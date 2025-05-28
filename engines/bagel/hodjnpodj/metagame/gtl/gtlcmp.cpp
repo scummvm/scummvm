@@ -102,7 +102,7 @@ cleanup:
 		DumpBestMoveData(xpXodj) ;
 		if (iError) {
 			Common::sprintf_s(szMsg, "    Error %d in computing best move.\n",
-			        iError) ;
+			                  iError) ;
 			JXOutputDebugString(szMsg) ;
 		}
 	}
@@ -751,9 +751,9 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
 		}
 
 		Common::sprintf_s(szMsg, "%d locations close to max adjusted "
-		               " weight of %d:\n",
-		        xpStrategyInfo->m_iTopLocCount,
-		        xpStrategyInfo->m_iMaxAdjustedWeight) ;
+		                         " weight of %d:\n",
+		                  xpStrategyInfo->m_iTopLocCount,
+		                  xpStrategyInfo->m_iMaxAdjustedWeight) ;
 		JXOutputDebugString(szMsg) ;
 
 		for (iK = 0 ; iK < xpStrategyInfo->m_iTopLocCount ; ++iK) {
@@ -779,7 +779,7 @@ BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
 				          ? " (Selected target)" : "") ;
 			} else
 				Common::sprintf_s(szMsg, "Invalid location code %d.\n",
-				        xpStratLocInfo->m_iLocCode) ;
+				                  xpStratLocInfo->m_iLocCode) ;
 
 			JXOutputDebugString(szMsg) ;
 		}

@@ -88,7 +88,7 @@ BOOL CGtlData::ReadLine(void)
 // returns: TRUE if error, FALSE otherwise
 {
 	int iError = 0 ;        // error code
-	char szLine[512];		// input line
+	char szLine[512];       // input line
 	char *xpStart ;       // ptr to first char of element
 	int iElementLength ;    // length of current lexical element
 	int iStringListPos = 0 ;    // current position in string list
@@ -261,7 +261,7 @@ BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, LPCSTR szMessage)
 
 	if (xpLxel) {
 		Common::sprintf_s(szTitle, "Error in line %i, column %i.",
-		        xpLxel->m_iLineNumber, xpLxel->m_iColumn) ;
+		                  xpLxel->m_iLineNumber, xpLxel->m_iColumn) ;
 		// printf(szLine) ;
 	} else {
 		Common::strcpy_s(szTitle, "Error message") ;

@@ -72,10 +72,10 @@ private:
 	//- OnInitialUpdate --
 	void OnInitialUpdate(void);
 
-#ifdef NODEEDIT
+	#ifdef NODEEDIT
 	//- CheckSize -- check window size, adjust if necessary
 	BOOL CheckSize(void);
-#endif
+	#endif
 
 protected:
 	//- PreCreateWindow -- change view window style
@@ -85,10 +85,10 @@ protected:
 public:
 	virtual ~CGtlView();
 
-#ifdef BAGEL_DEBUG
+	#ifdef BAGEL_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
-#endif
+	#endif
 
 	void FlushInputEvents(void);
 

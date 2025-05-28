@@ -29,29 +29,29 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#define	NOPLAY		-1
-#define GAME_ALPHA	0
-#define GAME_GEO	1
-#define GAME_RAND	2
+#define NOPLAY      -1
+#define GAME_ALPHA  0
+#define GAME_GEO    1
+#define GAME_RAND   2
 
 struct GRANDTRSTRUCT {
-	int 		nHodjSkillLevel;
-	int 		nPodjSkillLevel;
-	int 		nGameSelection;
-	int 		nCurrGameCode;
-	int			nHodjScore;
-	int			nPodjScore;
-	int			nHodjLastGame;
-	int			nPodjLastGame;
-	int			nHodjLastScore;
-	int			nPodjLastScore;
-	bool		bPlayingHodj;
-	bool		bPlayMusic;
-	bool		bPlayFX;
-	bool		bMidGrandTour;
-	bool		abHGamePlayed[18];
-	bool		abPGamePlayed[18];
-	GAMESTRUCT	stMiniGame;
+	int         nHodjSkillLevel;
+	int         nPodjSkillLevel;
+	int         nGameSelection;
+	int         nCurrGameCode;
+	int         nHodjScore;
+	int         nPodjScore;
+	int         nHodjLastGame;
+	int         nPodjLastGame;
+	int         nHodjLastScore;
+	int         nPodjLastScore;
+	bool        bPlayingHodj;
+	bool        bPlayMusic;
+	bool        bPlayFX;
+	bool        bMidGrandTour;
+	bool        abHGamePlayed[18];
+	bool        abPGamePlayed[18];
+	GAMESTRUCT  stMiniGame;
 };
 
 typedef GRANDTRSTRUCT *LPGRANDTRSTRUCT;

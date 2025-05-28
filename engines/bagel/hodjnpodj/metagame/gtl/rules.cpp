@@ -63,17 +63,17 @@ namespace Gtl {
 
 #if BUILD_FOR_DLL
 
-LRESULT FAR PASCAL KeyboardHookProc(int, WORD, LONG);   // keyboard hook procedure definition
+	LRESULT FAR PASCAL KeyboardHookProc(int, WORD, LONG);   // keyboard hook procedure definition
 
-typedef LRESULT(FAR PASCAL *FPKBDHOOKPROC)(int, WORD, LONG);
-extern  HINSTANCE   hDLLInst;
-extern  HINSTANCE   hExeInst;
-static  FPKBDHOOKPROC   lpfnKbdHook = nullptr;         // pointer to hook procedure
+	typedef LRESULT(FAR PASCAL *FPKBDHOOKPROC)(int, WORD, LONG);
+	extern  HINSTANCE   hDLLInst;
+	extern  HINSTANCE   hExeInst;
+	static  FPKBDHOOKPROC   lpfnKbdHook = nullptr;         // pointer to hook procedure
 
 #else
 
-LRESULT FAR PASCAL PrefHookProc(int, WORD, LONG);   // keyboard hook procedure definition
-static  FARPROC     pKbdHook = nullptr;                // pointer to hook procedure
+	LRESULT FAR PASCAL PrefHookProc(int, WORD, LONG);   // keyboard hook procedure definition
+	static  FARPROC     pKbdHook = nullptr;                // pointer to hook procedure
 
 #endif
 
@@ -86,29 +86,29 @@ static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
 static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
 static  CDibDoc *pScrollTopDIB = nullptr,          // DIB for scroll top section
-	*pScrollMidDIB = nullptr,          // DIB for scroll mid section
-	*pScrollBotDIB = nullptr;          // DIB for scroll bottom section
+                 *pScrollMidDIB = nullptr,          // DIB for scroll mid section
+                  *pScrollBotDIB = nullptr;          // DIB for scroll bottom section
 
 static  CBitmap     *pScrollTopBitmap = nullptr,       // bitmap for scroll top section
-	*pScrollTopBitmapOld = nullptr,    // bitmap previously mapped to top section context
-	*pScrollMidBitmap = nullptr,       // bitmap for scroll mid section
-	*pScrollMidBitmapOld = nullptr,    // bitmap previously mapped to mid section context
-	*pScrollBotBitmap = nullptr,       // bitmap for scroll bottom section
-	*pScrollBotBitmapOld = nullptr;    // bitmap previously mapped to bottom section context
+                     *pScrollTopBitmapOld = nullptr,    // bitmap previously mapped to top section context
+                      *pScrollMidBitmap = nullptr,       // bitmap for scroll mid section
+                       *pScrollMidBitmapOld = nullptr,    // bitmap previously mapped to mid section context
+                        *pScrollBotBitmap = nullptr,       // bitmap for scroll bottom section
+                         *pScrollBotBitmapOld = nullptr;    // bitmap previously mapped to bottom section context
 
 static  CBitmap *pScrollTopMask = nullptr,         // mask for scroll top section bitmap
-	*pScrollTopMaskOld = nullptr,      // bitmap previously mapped to top mask context
-	*pScrollMidMask = nullptr,         // mask for scroll mid section bitmap
-	*pScrollMidMaskOld = nullptr,      // bitmap previously mapped to mid mask context
-	*pScrollBotMask = nullptr,         // mask for scroll bottom section bitmap
-	*pScrollBotMaskOld = nullptr;      // bitmap previously mapped to bottom mask context
+                 *pScrollTopMaskOld = nullptr,      // bitmap previously mapped to top mask context
+                  *pScrollMidMask = nullptr,         // mask for scroll mid section bitmap
+                   *pScrollMidMaskOld = nullptr,      // bitmap previously mapped to mid mask context
+                    *pScrollBotMask = nullptr,         // mask for scroll bottom section bitmap
+                     *pScrollBotMaskOld = nullptr;      // bitmap previously mapped to bottom mask context
 
 static  CBitmap *pScrollBitmap = nullptr,          // bitmap for an entirely blank scroll
-	*pScrollBitmapOld = nullptr,       // bitmap previously mapped to the scroll context
-	*pBackgroundBitmap = nullptr,      // bitmap containing the background for the scroll
-	*pBackgroundBitmapOld = nullptr,   // bitmap previously mapped to the background context
-	*pWorkBitmap = nullptr,            // bitmap containing the work area for the scroll
-	*pWorkBitmapOld = nullptr;         // bitmap previously mapped to the work area context
+                 *pScrollBitmapOld = nullptr,       // bitmap previously mapped to the scroll context
+                  *pBackgroundBitmap = nullptr,      // bitmap containing the background for the scroll
+                   *pBackgroundBitmapOld = nullptr,   // bitmap previously mapped to the background context
+                    *pWorkBitmap = nullptr,            // bitmap containing the work area for the scroll
+                     *pWorkBitmapOld = nullptr;         // bitmap previously mapped to the work area context
 
 static  CRect       ScrollRect,                     // x/y (left/right) and dx/dy (right/bottom) for the scroll window
         ScrollTopRect,                  // rectangle bounding the scroll top section
@@ -119,25 +119,25 @@ static  CRect       ScrollTopCurlRect,              // current location of top c
         ScrollBotCurlRect;              // current location of bottom curl for mouse clicks
 
 static  CPalette *pScrollPalette = nullptr,         // palette used for the scroll
-	*pScrollPalOld = nullptr,          // previous palette mapped to scroll context
-	*pBackgroundPalOld = nullptr,      // previous palette mapped to background context
-	*pScrollTopPalOld = nullptr,       // previous palette mapped to top context
-	*pScrollMidPalOld = nullptr,       // previous palette mapped to middle context
-	*pScrollBotPalOld = nullptr,       // previous palette mapped to bottom context
-	*pScrollTopMaskPalOld = nullptr,   // previous palette mapped to top mask context
-	*pScrollMidMaskPalOld = nullptr,   // previous palette mapped to middle mask context
-	*pScrollBotMaskPalOld = nullptr,   // previous palette mapped to bottom mask context
-	*pWorkPalOld = nullptr;            // previous palette mapped to work area context
+                  *pScrollPalOld = nullptr,          // previous palette mapped to scroll context
+                   *pBackgroundPalOld = nullptr,      // previous palette mapped to background context
+                    *pScrollTopPalOld = nullptr,       // previous palette mapped to top context
+                     *pScrollMidPalOld = nullptr,       // previous palette mapped to middle context
+                      *pScrollBotPalOld = nullptr,       // previous palette mapped to bottom context
+                       *pScrollTopMaskPalOld = nullptr,   // previous palette mapped to top mask context
+                        *pScrollMidMaskPalOld = nullptr,   // previous palette mapped to middle mask context
+                         *pScrollBotMaskPalOld = nullptr,   // previous palette mapped to bottom mask context
+                          *pWorkPalOld = nullptr;            // previous palette mapped to work area context
 
 static  CDC *pScrollDC = nullptr,              // device context for the scroll bitmap
-	*pBackgroundDC = nullptr,          // device context for the background bitmap
-	*pScrollTopDC = nullptr,           // device context for the top section bitmap
-	*pScrollMidDC = nullptr,           // device context for the middle section bitmap
-	*pScrollBotDC = nullptr,           // device context for the bottom section bitmap
-	*pScrollTopMaskDC = nullptr,       // device context for the top mask bitmap
-	*pScrollMidMaskDC = nullptr,       // device context for the middle section bitmap
-	*pScrollBotMaskDC = nullptr,       // device context for the bottom section bitmap
-	*pWorkDC = nullptr;                // device context for the work area bitmap
+             *pBackgroundDC = nullptr,          // device context for the background bitmap
+              *pScrollTopDC = nullptr,           // device context for the top section bitmap
+               *pScrollMidDC = nullptr,           // device context for the middle section bitmap
+                *pScrollBotDC = nullptr,           // device context for the bottom section bitmap
+                 *pScrollTopMaskDC = nullptr,       // device context for the top mask bitmap
+                  *pScrollMidMaskDC = nullptr,       // device context for the middle section bitmap
+                   *pScrollBotMaskDC = nullptr,       // device context for the bottom section bitmap
+                    *pWorkDC = nullptr;                // device context for the work area bitmap
 
 static  CFont       *pFont = nullptr;                  // font to use for displaying rules text
 static  char        chPathName[128];                // buffer to hold path name of the rules file

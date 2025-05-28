@@ -34,27 +34,27 @@ namespace Metagame {
 namespace Frame {
 
 class CRestoreDlg: public CBmpDialog {
-    public:
-        CRestoreDlg(CHAR *[], CWnd *, CPalette *);
+public:
+	CRestoreDlg(CHAR *[], CWnd *, CPalette *);
 
-    protected:
-        void ClearDialogImage(void);
+protected:
+	void ClearDialogImage(void);
 
-        //{{AFX_MSG(COptions)
-        virtual BOOL OnCommand(WPARAM, LPARAM);
-        virtual void OnCancel(void);
-        afx_msg void OnDestroy(void);
-        afx_msg void OnPaint(void);
-        //}}AFX_MSG
-        DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(COptions)
+	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual void OnCancel(void);
+	afx_msg void OnDestroy(void);
+	afx_msg void OnPaint(void);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
-    private:
-        BOOL OnInitDialog(void);
+private:
+	BOOL OnInitDialog(void);
 
-        CColorButton *m_pSlotButtons[MAX_SAVEGAMES];
-        CColorButton *m_pQuitButton;
-        CText *m_pTxtRestore;
-        CHAR *m_pszDescriptions[MAX_SAVEGAMES];
+	CColorButton *m_pSlotButtons[MAX_SAVEGAMES];
+	CColorButton *m_pQuitButton;
+	CText *m_pTxtRestore;
+	CHAR *m_pszDescriptions[MAX_SAVEGAMES];
 
 };
 

@@ -50,10 +50,10 @@ void CCmdTarget::RestoreWaitCursor() {
 const AFX_MSGMAP_ENTRY *CCmdTarget::LookupMessage(UINT message) {
 	// Iterate through this class and any ancestors
 	for (const AFX_MSGMAP *map = GetThisMessageMap();
-		map; map = map->pfnGetBaseMap()) {
+	        map; map = map->pfnGetBaseMap()) {
 		// Scan the entries to look for the message
 		for (const AFX_MSGMAP_ENTRY *entry = map->lpEntries;
-			entry->nMessage; ++entry) {
+		        entry->nMessage; ++entry) {
 			if (entry->nMessage == message)
 				return entry;
 		}

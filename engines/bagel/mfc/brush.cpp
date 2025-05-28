@@ -49,7 +49,7 @@ BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
 BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 	DeleteObject();
 	m_hObject = new Impl(lpLogBrush->lbStyle,
-		lpLogBrush->lbColor);
+	                     lpLogBrush->lbColor);
 	return true;
 }
 
@@ -63,7 +63,7 @@ CBrush::Impl::Impl() : _type(HS_HORIZONTAL) {
 }
 
 CBrush::Impl::Impl(COLORREF crColor) : _color(crColor),
-_type(HS_HORIZONTAL) {
+	_type(HS_HORIZONTAL) {
 }
 
 CBrush::Impl::Impl(int nIndex, COLORREF crColor) :

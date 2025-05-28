@@ -77,7 +77,7 @@ void Settings::save() {
 
 bool Settings::isModified() const {
 	for (Domains::iterator it = _domains.begin();
-		it != _domains.end(); ++it) {
+	        it != _domains.end(); ++it) {
 		if (it->_value.isModified())
 			return true;
 	}
@@ -113,8 +113,8 @@ void Settings::Domain::load(Common::InSaveFile *src) {
 		assert(equals != Common::String::npos);
 
 		_values[Common::String(str.c_str(),
-			str.c_str() + equals)] =
-			Common::String(str.c_str() + equals + 1);
+		                       str.c_str() + equals)] =
+		                           Common::String(str.c_str() + equals + 1);
 	}
 }
 
@@ -123,7 +123,7 @@ void Settings::Domain::save(Common::OutSaveFile *dest) {
 
 	for (Values::iterator it = _values.begin(); it != _values.end(); ++it) {
 		str = Common::String::format("%s=%s",
-			it->_key.c_str(), it->_value.c_str());
+		                             it->_key.c_str(), it->_value.c_str());
 		dest->writeString(str);
 		dest->writeByte('\n');
 	}

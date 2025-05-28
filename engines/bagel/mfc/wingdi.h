@@ -483,9 +483,9 @@ enum {
 #define TA_BOTTOM                    8
 #define TA_BASELINE                  24
 
- /*
-  * Menu flags for Add/Check/EnableMenuItem()
-  */
+/*
+ * Menu flags for Add/Check/EnableMenuItem()
+ */
 #define MF_INSERT           0x00000000L
 #define MF_CHANGE           0x00000080L
 #define MF_APPEND           0x00000100L
@@ -511,12 +511,12 @@ enum {
 #define MF_HILITE           0x00000080L
 
 // CBrush hatch styles
-#define HS_HORIZONTAL	0
-#define HS_VERTICAL		1
-#define HS_FDIAGONAL	2
-#define HS_BDIAGONAL	3
-#define HS_CROSS		4
-#define HS_DIAGCROSS	5
+#define HS_HORIZONTAL   0
+#define HS_VERTICAL     1
+#define HS_FDIAGONAL    2
+#define HS_BDIAGONAL    3
+#define HS_CROSS        4
+#define HS_DIAGCROSS    5
 
 
 typedef struct tagBITMAPINFOHEADER {

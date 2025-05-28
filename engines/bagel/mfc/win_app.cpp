@@ -35,8 +35,8 @@ IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 CWinApp *CWinApp::_activeApp = nullptr;
 
 CWinApp::CWinApp(const char *appName) :
-		CWinThread(), _cursors(_resources) {
-	assert(!_activeApp);	// Only one app per engine
+	CWinThread(), _cursors(_resources) {
+	assert(!_activeApp);    // Only one app per engine
 	_activeApp = this;
 	Libs::Event::init();
 }
@@ -93,7 +93,7 @@ bool CWinApp::GetMessage(MSG &msg) {
 
 	// Check for quit event
 	if (ev.type == Common::EVENT_QUIT ||
-		ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+	        ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 		return false;
 
 	// Convert other event types
@@ -161,12 +161,12 @@ void CWinApp::CloseAllDocuments(BOOL bEndSession) {
 }
 
 UINT CWinApp::GetProfileInt(LPCSTR lpszSection,
-		LPCSTR lpszEntry, int nDefault) {
+                            LPCSTR lpszEntry, int nDefault) {
 	error("TODO: CWinApp::GetProfileInt");
 }
 
 void CWinApp::WriteProfileInt(LPCSTR lpszSection,
-		LPCSTR lpszEntry, int nValue) {
+                              LPCSTR lpszEntry, int nValue) {
 	error("TODO: CWinApp::WriteProfileInt");
 }
 
@@ -213,7 +213,7 @@ void FreeLibrary(HMODULE hModule) {
 
 
 FARPROC GetProcAddress(HMODULE hModule,
-		LPCSTR lpProcName) {
+                       LPCSTR lpProcName) {
 	error("TODO: GetProcAddress");
 }
 
@@ -223,7 +223,7 @@ HMODULE GetModuleHandle(LPCSTR lpModuleName) {
 
 
 LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
-		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
+                                  HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
 	// Not currently handled
 	assert(!hCursor && !hbrBackground && !hIcon);
 

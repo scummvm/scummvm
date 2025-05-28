@@ -45,9 +45,9 @@ struct ResourceString_EqualTo {
 		bool yNum = (intptr)y <= 0xffff;
 
 		return (xNum == yNum) && (
-			(xNum && (intptr)x == (intptr)y) ||
-			(!xNum && !strcmp(x, y))
-		);
+		           (xNum && (intptr)x == (intptr)y) ||
+		           (!xNum && !strcmp(x, y))
+		       );
 	}
 };
 
@@ -77,7 +77,7 @@ class Cursors {
 private:
 	Libs::Resources &_resources;
 	typedef Common::HashMap<LPCSTR, Cursor *,
-		ResourceString_Hash, ResourceString_EqualTo> CursorHash;
+	        ResourceString_Hash, ResourceString_EqualTo> CursorHash;
 	CursorHash _cursors;
 
 public:

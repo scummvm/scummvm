@@ -38,8 +38,8 @@ void CFrameWnd::RecalcLayout(BOOL bNotify) {
 }
 
 BOOL CFrameWnd::RepositionBars(UINT nIDFirst, UINT nIDLast,
-	UINT nIDLeftOver, UINT nFlag, LPRECT lpRectParam,
-	LPCRECT lpRectClient, BOOL bStretch) {
+                               UINT nIDLeftOver, UINT nFlag, LPRECT lpRectParam,
+                               LPCRECT lpRectClient, BOOL bStretch) {
 	error("TODO: CFrameWnd::RepositionBars");
 }
 

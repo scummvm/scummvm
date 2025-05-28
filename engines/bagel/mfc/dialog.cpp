@@ -45,11 +45,11 @@ CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
 }
 
 BOOL CDialog::Create(LPCSTR lpszTemplateName,
-		CWnd *pParentWnd) {
+                     CWnd *pParentWnd) {
 	error("TODO: CDialog::Create");
 }
 BOOL CDialog::Create(UINT nIDTemplate,
-		CWnd *pParentWnd) {
+                     CWnd *pParentWnd) {
 	error("TODO: CDialog::Create");
 }
 

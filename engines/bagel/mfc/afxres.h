@@ -97,9 +97,9 @@ namespace MFC {
 #define ID_WINDOW_TILE_VERT             0xE134
 #define ID_WINDOW_SPLIT                 0xE135
 #ifndef RC_INVOKED      // code only
-#define AFX_IDM_WINDOW_FIRST            0xE130
-#define AFX_IDM_WINDOW_LAST             0xE13F
-#define AFX_IDM_FIRST_MDICHILD          0xFF00  // window list starts here
+	#define AFX_IDM_WINDOW_FIRST            0xE130
+	#define AFX_IDM_WINDOW_LAST             0xE13F
+	#define AFX_IDM_FIRST_MDICHILD          0xFF00  // window list starts here
 #endif //!RC_INVOKED
 
 // Help and App commands

@@ -39,11 +39,11 @@ namespace Gtl {
 #endif
 
 class CGtlFrame : public MFC_FRAME {
-#if GTLMDI
+	#if GTLMDI
 	DECLARE_DYNAMIC(CGtlFrame)
-#else
+	#else
 	DECLARE_DYNCREATE(CGtlFrame)
-#endif
+	#endif
 
 public:
 	CGtlFrame();
@@ -74,9 +74,9 @@ public:
 protected:
 	//{{AFX_MSG(CGtlFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-#if GTLDLL
+	#if GTLDLL
 	afx_msg void OnDestroy();
-#endif
+	#endif
 	afx_msg void OnUpdateViewStatusBar(CCmdUI *pCmdUI);
 	afx_msg void OnViewInfoDlg();
 	afx_msg void OnViewCtlDlg();
@@ -102,8 +102,8 @@ public:
 	BOOL ShowInfoDialog(void) ;
 	BOOL ShowMenuDialog(void) ;
 	//- GetCurrentDocAndView -- get last focused doc/view
-	BOOL GetCurrentDocAndView(CGtlDoc *&xpcGtlDoc,
-	                                     CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView) ;
+	BOOL GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
+	                          CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView) ;
 
 protected:
 	//- PreCreateWindow -- change frame window style

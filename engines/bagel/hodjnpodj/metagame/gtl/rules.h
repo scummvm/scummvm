@@ -56,7 +56,7 @@ private:
 	static  CBitmap *CreateScrollBitmap(CDC *pDC, CDibDoc *pDibDoc, CPalette *pPalette);
 	static  CDC *SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap * &pMaskOld, CRect *pRect);
 	static  CDC *SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap, CBitmap * &pBitmapOld, CPalette *pPalette, CPalette * &pPalOld);
-	static  void ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pBitmapOld, CPalette *pPalOld);
+	static  void ReleaseCompatibleContext(CDC * &pDC, CBitmap * &pBitmap, CBitmap *pBitmapOld, CPalette *pPalOld);
 
 	static  BOOL CreateWorkAreas(CDC *pDC);
 	static  void UnfurlScroll(CDC *pDC);

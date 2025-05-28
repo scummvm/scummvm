@@ -33,136 +33,138 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#define	SPLASHSPEC	".\\ART\\MLSCROLL.BMP"
+#define SPLASHSPEC  ".\\ART\\MLSCROLL.BMP"
 
 // Button positioning constants
 
-#define F_WIDTH					110
+#define F_WIDTH                 110
 #define F_HEIGHT                20
 #define F_TOP                   SCROLL_TOP + 325
-#define PLAY_LEFT				SCROLL_LEFT + 75
-#define SAVE_LEFT				PLAY_LEFT + F_WIDTH + 5
-#define RESTORE_LEFT			SAVE_LEFT + F_WIDTH + 5
-#define	AUDIO_LEFT				PLAY_LEFT
+#define PLAY_LEFT               SCROLL_LEFT + 75
+#define SAVE_LEFT               PLAY_LEFT + F_WIDTH + 5
+#define RESTORE_LEFT            SAVE_LEFT + F_WIDTH + 5
+#define AUDIO_LEFT              PLAY_LEFT
 #define TOP10_LEFT              AUDIO_LEFT + F_WIDTH + 5
-#define LEAVE_LEFT				TOP10_LEFT + F_WIDTH + 5
+#define LEAVE_LEFT              TOP10_LEFT + F_WIDTH + 5
 
-#define S_WIDTH					130
-#define S_HEIGHT				21
+#define S_WIDTH                 130
+#define S_HEIGHT                21
 
-#define HS_LEFT					SCROLL_LEFT + 110
+#define HS_LEFT                 SCROLL_LEFT + 110
 
-#define HSH_TOP					SCROLL_TOP + 50
-#define HSM_TOP					HSH_TOP + S_HEIGHT + 2
-#define HSL_TOP					HSM_TOP + S_HEIGHT + 2
-#define HSNP_TOP				HSL_TOP + S_HEIGHT + 2
+#define HSH_TOP                 SCROLL_TOP + 50
+#define HSM_TOP                 HSH_TOP + S_HEIGHT + 2
+#define HSL_TOP                 HSM_TOP + S_HEIGHT + 2
+#define HSNP_TOP                HSL_TOP + S_HEIGHT + 2
 
-#define PS_LEFT					SCROLL_LEFT + 310
+#define PS_LEFT                 SCROLL_LEFT + 310
 
-#define PSH_TOP					SCROLL_TOP + 50
-#define PSM_TOP					PSH_TOP + S_HEIGHT + 2
-#define PSL_TOP					PSM_TOP + S_HEIGHT + 2
-#define PSNP_TOP				PSL_TOP + S_HEIGHT + 2
+#define PSH_TOP                 SCROLL_TOP + 50
+#define PSM_TOP                 PSH_TOP + S_HEIGHT + 2
+#define PSL_TOP                 PSM_TOP + S_HEIGHT + 2
+#define PSNP_TOP                PSL_TOP + S_HEIGHT + 2
 
-#define G_WIDTH					130
-#define G_HEIGHT				21
+#define G_WIDTH                 130
+#define G_HEIGHT                21
 
-#define G_TOP					SCROLL_TOP + 185
-#define GA_LEFT					SCROLL_LEFT + 55
-#define GG_LEFT					GA_LEFT + G_WIDTH + 5
-#define GR_LEFT					GG_LEFT + G_WIDTH + 5
+#define G_TOP                   SCROLL_TOP + 185
+#define GA_LEFT                 SCROLL_LEFT + 55
+#define GG_LEFT                 GA_LEFT + G_WIDTH + 5
+#define GR_LEFT                 GG_LEFT + G_WIDTH + 5
 
 // Globals
-extern HCURSOR			hGameCursor;
+extern HCURSOR          hGameCursor;
 
-CBitmap		*pSplashScreen = nullptr;
-CPalette	*pGamePalette = nullptr;		// Palette to be used throughout the game
+CBitmap     *pSplashScreen = nullptr;
+CPalette    *pGamePalette = nullptr;        // Palette to be used throughout the game
 
-CRect	MainRect;							// screen area spanned by the game window
-CRect   SplashRect( 0, 0, SCROLL_WIDTH, SCROLL_HEIGHT );
+CRect   MainRect;                           // screen area spanned by the game window
+CRect   SplashRect(0, 0, SCROLL_WIDTH, SCROLL_HEIGHT);
 
-CRect	ScoresLeaveRect( PLAY_LEFT, F_TOP, SAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT );
-CRect	ScoresResetRect( RESTORE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT );
+CRect   ScoresLeaveRect(PLAY_LEFT, F_TOP, SAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
+CRect   ScoresResetRect(RESTORE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
 
-CRect	PlayRect( PLAY_LEFT, F_TOP - 25, PLAY_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT );
-CRect	SaveRect( SAVE_LEFT, F_TOP - 25, SAVE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT );
-CRect	RestoreRect( RESTORE_LEFT, F_TOP - 25, RESTORE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT );
-CRect	AudioRect( AUDIO_LEFT, F_TOP, AUDIO_LEFT + F_WIDTH, F_TOP + F_HEIGHT );
-CRect	Top10Rect( TOP10_LEFT, F_TOP, TOP10_LEFT + F_WIDTH, F_TOP + F_HEIGHT );
-CRect	LeaveRect( LEAVE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT );
+CRect   PlayRect(PLAY_LEFT, F_TOP - 25, PLAY_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT);
+CRect   SaveRect(SAVE_LEFT, F_TOP - 25, SAVE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT);
+CRect   RestoreRect(RESTORE_LEFT, F_TOP - 25, RESTORE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT);
+CRect   AudioRect(AUDIO_LEFT, F_TOP, AUDIO_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
+CRect   Top10Rect(TOP10_LEFT, F_TOP, TOP10_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
+CRect   LeaveRect(LEAVE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
 
-CRect	HSHRect( HS_LEFT, HSH_TOP, HS_LEFT + S_WIDTH, HSH_TOP + S_HEIGHT);
-CRect	HSMRect( HS_LEFT, HSM_TOP, HS_LEFT + S_WIDTH, HSM_TOP + S_HEIGHT);
-CRect	HSLRect( HS_LEFT, HSL_TOP, HS_LEFT + S_WIDTH, HSL_TOP + S_HEIGHT);
-CRect	HSNPRect( HS_LEFT, HSNP_TOP, HS_LEFT + S_WIDTH, HSNP_TOP + S_HEIGHT);
+CRect   HSHRect(HS_LEFT, HSH_TOP, HS_LEFT + S_WIDTH, HSH_TOP + S_HEIGHT);
+CRect   HSMRect(HS_LEFT, HSM_TOP, HS_LEFT + S_WIDTH, HSM_TOP + S_HEIGHT);
+CRect   HSLRect(HS_LEFT, HSL_TOP, HS_LEFT + S_WIDTH, HSL_TOP + S_HEIGHT);
+CRect   HSNPRect(HS_LEFT, HSNP_TOP, HS_LEFT + S_WIDTH, HSNP_TOP + S_HEIGHT);
 
-CRect	PSHRect( PS_LEFT, PSH_TOP, PS_LEFT + S_WIDTH, PSH_TOP + S_HEIGHT);
-CRect	PSMRect( PS_LEFT, PSM_TOP, PS_LEFT + S_WIDTH, PSM_TOP + S_HEIGHT);
-CRect	PSLRect( PS_LEFT, PSL_TOP, PS_LEFT + S_WIDTH, PSL_TOP + S_HEIGHT);
-CRect	PSNPRect( PS_LEFT, PSNP_TOP, PS_LEFT + S_WIDTH, PSNP_TOP + S_HEIGHT);
+CRect   PSHRect(PS_LEFT, PSH_TOP, PS_LEFT + S_WIDTH, PSH_TOP + S_HEIGHT);
+CRect   PSMRect(PS_LEFT, PSM_TOP, PS_LEFT + S_WIDTH, PSM_TOP + S_HEIGHT);
+CRect   PSLRect(PS_LEFT, PSL_TOP, PS_LEFT + S_WIDTH, PSL_TOP + S_HEIGHT);
+CRect   PSNPRect(PS_LEFT, PSNP_TOP, PS_LEFT + S_WIDTH, PSNP_TOP + S_HEIGHT);
 
-CRect	GARect( GA_LEFT, G_TOP, GA_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
-CRect	GGRect( GG_LEFT, G_TOP, GG_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
-CRect	GRRect( GR_LEFT, G_TOP, GR_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
+CRect   GARect(GA_LEFT, G_TOP, GA_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
+CRect   GGRect(GG_LEFT, G_TOP, GG_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
+CRect   GRRect(GR_LEFT, G_TOP, GR_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
 
-CColorButton	*pScoresResetButton = nullptr;
-CColorButton	*pScoresLeaveButton = nullptr;
+CColorButton    *pScoresResetButton = nullptr;
+CColorButton    *pScoresLeaveButton = nullptr;
 
-CColorButton	*pPlayButton = nullptr;
-CColorButton	*pSaveButton = nullptr;
-CColorButton	*pRestoreButton = nullptr;
-CColorButton	*pLeaveButton = nullptr;
+CColorButton    *pPlayButton = nullptr;
+CColorButton    *pSaveButton = nullptr;
+CColorButton    *pRestoreButton = nullptr;
+CColorButton    *pLeaveButton = nullptr;
 
-CColorButton	*pAudioButton = nullptr;
-CColorButton	*pTop10Button = nullptr;
+CColorButton    *pAudioButton = nullptr;
+CColorButton    *pTop10Button = nullptr;
 
-CRadioButton *pHSHButton = nullptr;	// Hodj Skill High Radio Button
-CRadioButton *pHSMButton = nullptr;	// Hodj Skill Medium Radio Button
-CRadioButton *pHSLButton = nullptr;	// Hodj Skill Low Radio Button
-CRadioButton *pHSNPButton = nullptr;	// Hodj Not Playing Radio Button
+CRadioButton *pHSHButton = nullptr; // Hodj Skill High Radio Button
+CRadioButton *pHSMButton = nullptr; // Hodj Skill Medium Radio Button
+CRadioButton *pHSLButton = nullptr; // Hodj Skill Low Radio Button
+CRadioButton *pHSNPButton = nullptr;    // Hodj Not Playing Radio Button
 
-CRadioButton *pPSHButton = nullptr;	// Podj Skill High Radio Button
-CRadioButton *pPSMButton = nullptr;	// Podj Skill Medium Radio Button
-CRadioButton *pPSLButton = nullptr;	// Podj Skill Low Radio Button
-CRadioButton *pPSNPButton = nullptr;	// Podj Not Playing Radio Button
+CRadioButton *pPSHButton = nullptr; // Podj Skill High Radio Button
+CRadioButton *pPSMButton = nullptr; // Podj Skill Medium Radio Button
+CRadioButton *pPSLButton = nullptr; // Podj Skill Low Radio Button
+CRadioButton *pPSNPButton = nullptr;    // Podj Not Playing Radio Button
 
-CRadioButton *pGAButton = nullptr;	// Game Played in Alphabetical Order Radio Button
-CRadioButton *pGGButton = nullptr;	// Game Played in Geographical Order Radio Button
-CRadioButton *pGRButton = nullptr;	// Game Played in Random Order Radio Button
+CRadioButton *pGAButton = nullptr;  // Game Played in Alphabetical Order Radio Button
+CRadioButton *pGGButton = nullptr;  // Game Played in Geographical Order Radio Button
+CRadioButton *pGRButton = nullptr;  // Game Played in Random Order Radio Button
 
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active
 
-int		nReturnValue = -1;       // the values to return to the main EXE to tell it what
-								// DLL to dispatch to
+int     nReturnValue = -1;       // the values to return to the main EXE to tell it what
+// DLL to dispatch to
 
-int		anGameValues[18] = {		// set the game values to return
+int     anGameValues[18] = {        // set the game values to return
 	MG_GAME_ARCHEROIDS, MG_GAME_ARTPARTS, MG_GAME_BARBERSHOP, MG_GAME_BATTLEFISH,
 	MG_GAME_BEACON, MG_GAME_CRYPTOGRAMS, MG_GAME_DAMFURRY, MG_GAME_FUGE,
 	MG_GAME_GARFUNKEL, MG_GAME_LIFE, MG_GAME_MANKALA, MG_GAME_MAZEODOOM,
 	MG_GAME_NOVACANCY, MG_GAME_PACRAT, MG_GAME_PEGGLEBOZ, MG_GAME_RIDDLES,
-	MG_GAME_THGESNGGME, MG_GAME_WORDSEARCH };
-		
-static LPCSTR aszGames[18] = {		// set the display names for when the cursor passes over a game rect
+	MG_GAME_THGESNGGME, MG_GAME_WORDSEARCH
+};
+
+static LPCSTR aszGames[18] = {      // set the display names for when the cursor passes over a game rect
 	"Archeroids", "Art Parts", "Barbershop Quintet", "Battlefish", "Beacon", "Cryptograms",
 	"Dam Furry Animals", "Fuge", "Garfunkel", "Life", "Mankala", "Maze O' Doom",
-	"No Vacancy", "Pack-Rat", "Peggleboz", "Riddles", "TH GESNG GAM", "Word Search" };
+	"No Vacancy", "Pack-Rat", "Peggleboz", "Riddles", "TH GESNG GAM", "Word Search"
+};
 
-int		anGeoOrder[18] = { 9, 12, 11, 0, 7, 13, 5, 16, 17, 1, 4, 14, 3, 10, 15, 2, 6, 8 };
+int     anGeoOrder[18] = { 9, 12, 11, 0, 7, 13, 5, 16, 17, 1, 4, 14, 3, 10, 15, 2, 6, 8 };
 
-SCORESTRUCT	astTopTenScores[10];
-BOOL		bDisplayTopTen = FALSE;
-BOOL		bInsertPlayer = FALSE;
-int			nNewRank = -1;
-int			nCurChar = 0;
-int 		tmWidth = 0;
-int 		tmHeight = 0;
-CRect		rCharRect;
-BOOL		bDonePodj = FALSE;
+SCORESTRUCT astTopTenScores[10];
+BOOL        bDisplayTopTen = FALSE;
+BOOL        bInsertPlayer = FALSE;
+int         nNewRank = -1;
+int         nCurChar = 0;
+int         tmWidth = 0;
+int         tmHeight = 0;
+CRect       rCharRect;
+BOOL        bDonePodj = FALSE;
 CText       *pText = nullptr;
-CRect		cTextRect( 0, 0, 0, 0 );
+CRect       cTextRect(0, 0, 0, 0);
 
-int			nHLastScore;
-int			nPLastScore;
+int         nHLastScore;
+int         nPLastScore;
 /*****************************************************************
  *
  * CMainGTWindow
@@ -172,47 +174,47 @@ int			nPLastScore;
  * Create the window with the appropriate style, size, menu, etc.;
  * it will be later revealed by CTheApp::InitInstance().  Then
  * create our splash screen object by opening and loading its DIB.
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	lUserAmount = initial amount of money that user starts with
- *								defaults to zero
- *	nRounds			= the number of rounds to play, if 0 then not playing rounds
- *							= defaults to zero
+ *  lUserAmount = initial amount of money that user starts with
+ *                              defaults to zero
+ *  nRounds         = the number of rounds to play, if 0 then not playing rounds
+ *                          = defaults to zero
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
 
-CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStruct ) {
-	CDC			*pDC = nullptr;						// device context for the screen
-	CString		WndClass;
-	CSize		mySize;         
-	BOOL		bSuccess; 			// bool for testing the creation of each button
-	CRect	    rText( SCROLL_LEFT, SCROLL_TOP + 456, SCROLL_LEFT + SCROLL_WIDTH, SCROLL_TOP + 478 );
-	CBrush		cBrush( RGB( 0, 0, 0 ));
-	BOOL		bThereAreGamesToBePlayed = FALSE;
-	int			i;
-	TEXTMETRIC	sTextMetic;
+CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStruct) {
+	CDC         *pDC = nullptr;                     // device context for the screen
+	CString     WndClass;
+	CSize       mySize;
+	BOOL        bSuccess;           // bool for testing the creation of each button
+	CRect       rText(SCROLL_LEFT, SCROLL_TOP + 456, SCROLL_LEFT + SCROLL_WIDTH, SCROLL_TOP + 478);
+	CBrush      cBrush(RGB(0, 0, 0));
+	BOOL        bThereAreGamesToBePlayed = FALSE;
+	int         i;
+	TEXTMETRIC  sTextMetic;
 
 	BeginWaitCursor();
 	// Define a special window class which traps double-clicks, is byte aligned
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
-	// this adds a bit to our app size but avoids hangs/freezes/lockups. 
+	// this adds a bit to our app size but avoids hangs/freezes/lockups.
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-									hGameCursor, (HBRUSH)cBrush.m_hObject, nullptr);
+	                               hGameCursor, (HBRUSH)cBrush.m_hObject, nullptr);
 
 	m_hCallAppWnd = hCallingWnd;
 	m_pgtGTStruct = pgtGrandTourStruct;
@@ -225,104 +227,104 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
 	//srand( (unsigned)time( nullptr ));
 
 	// load splash screen
-	pDC = GetDC();									// get a device context for our window
+	pDC = GetDC();                                  // get a device context for our window
 
 	// set window coordinates to center game on screeen
 	MainRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
 	MainRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
-	MainRect.right = MainRect.left + GAME_WIDTH;	// determine where to place the game window
+	MainRect.right = MainRect.left + GAME_WIDTH;    // determine where to place the game window
 	MainRect.bottom = MainRect.top + GAME_HEIGHT;   // ... so it is centered on the screen
 
-	ReleaseDC(pDC);									// release our window context 
+	ReleaseDC(pDC);                                 // release our window context
 
 	// Create the window as a POPUP so that no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x40 area.
-	Create( WndClass, "Boffo Games - Grand Tour", WS_POPUP, MainRect, nullptr, 0);
+	Create(WndClass, "Boffo Games - Grand Tour", WS_POPUP, MainRect, nullptr, 0);
 
 	//#ifndef _DEBUG
 	//SetWindowPos( &wndTopMost, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
 	//#endif
 
-	pDC = GetDC();									// get a device context for our window
+	pDC = GetDC();                                  // get a device context for our window
 
-	pSplashScreen = FetchBitmap( pDC, &pGamePalette, SPLASHSPEC );
+	pSplashScreen = FetchBitmap(pDC, &pGamePalette, SPLASHSPEC);
 
-	pDC->GetTextMetrics( &sTextMetic );
+	pDC->GetTextMetrics(&sTextMetic);
 	tmWidth = sTextMetic.tmMaxCharWidth;
 	tmHeight = sTextMetic.tmHeight;
-		
-	ReleaseDC(pDC);									// release our window context 
+
+	ReleaseDC(pDC);                                 // release our window context
 	pDC = nullptr;
 
-	for ( i = 0; i < 18; i++ ) {
-		if (( m_pgtGTStruct->nHodjSkillLevel != NOPLAY ) && ( m_pgtGTStruct->abHGamePlayed[i] == FALSE )) {
+	for (i = 0; i < 18; i++) {
+		if ((m_pgtGTStruct->nHodjSkillLevel != NOPLAY) && (m_pgtGTStruct->abHGamePlayed[i] == FALSE)) {
 			bThereAreGamesToBePlayed = TRUE;
 			break;
 		}
-		if (( m_pgtGTStruct->nPodjSkillLevel != NOPLAY ) && ( m_pgtGTStruct->abPGamePlayed[i] == FALSE )) {
+		if ((m_pgtGTStruct->nPodjSkillLevel != NOPLAY) && (m_pgtGTStruct->abPGamePlayed[i] == FALSE)) {
 			bThereAreGamesToBePlayed = TRUE;
 			break;
 		}
 	}
 
-	if ( bThereAreGamesToBePlayed == FALSE ) {
+	if (bThereAreGamesToBePlayed == FALSE) {
 
 		pScoresLeaveButton = new CColorButton;
 		ASSERT(pScoresLeaveButton);
-		bSuccess = pScoresLeaveButton->Create("Main Menu",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScoresLeaveRect, this, IDC_LEAVE );
+		bSuccess = pScoresLeaveButton->Create("Main Menu", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScoresLeaveRect, this, IDC_LEAVE);
 		ASSERT(bSuccess);
 		pScoresLeaveButton->SetPalette(pGamePalette);
-	
+
 		pScoresResetButton = new CColorButton;
 		ASSERT(pScoresResetButton);
-		bSuccess = pScoresResetButton->Create("Reset Scores",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScoresResetRect, this, IDC_RESET_SCORES );
+		bSuccess = pScoresResetButton->Create("Reset Scores", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScoresResetRect, this, IDC_RESET_SCORES);
 		ASSERT(bSuccess);
 		pScoresResetButton->SetPalette(pGamePalette);
-	
+
 		GetScores();
-	
+
 		bDisplayTopTen = TRUE;
 
-		for ( i = 0; i < 10; i++ ) {
-			if (( m_pgtGTStruct->nHodjSkillLevel != NOPLAY ) && ( m_pgtGTStruct->nHodjScore > astTopTenScores[i].nScore )) {
-			int	j;
-		
+		for (i = 0; i < 10; i++) {
+			if ((m_pgtGTStruct->nHodjSkillLevel != NOPLAY) && (m_pgtGTStruct->nHodjScore > astTopTenScores[i].nScore)) {
+				int j;
+
 				nNewRank = i;
-				for ( j = 10; j > i; j-- ) {
-					Common::strcpy_s( astTopTenScores[j].acName, astTopTenScores[j-1].acName );
-					astTopTenScores[j].nScore = astTopTenScores[j-1].nScore;
-					astTopTenScores[j].nSkillLevel = astTopTenScores[j-1].nSkillLevel;
+				for (j = 10; j > i; j--) {
+					Common::strcpy_s(astTopTenScores[j].acName, astTopTenScores[j - 1].acName);
+					astTopTenScores[j].nScore = astTopTenScores[j - 1].nScore;
+					astTopTenScores[j].nSkillLevel = astTopTenScores[j - 1].nSkillLevel;
 				}
-				Common::strcpy_s( astTopTenScores[i].acName, "HODJ" );
+				Common::strcpy_s(astTopTenScores[i].acName, "HODJ");
 				nCurChar = 5;
-				astTopTenScores[i].acName[nCurChar-1] = '|';
+				astTopTenScores[i].acName[nCurChar - 1] = '|';
 				astTopTenScores[i].acName[nCurChar] = 0;
 				astTopTenScores[i].nScore = m_pgtGTStruct->nHodjScore;
 				astTopTenScores[i].nSkillLevel = m_pgtGTStruct->nHodjSkillLevel;
 				pDC = GetDC();
 				pText = new CText();
-				cTextRect.SetRect( SCROLL_LEFT + 69, SCROLL_TOP + ( nNewRank * 20 ) + 90, SCROLL_LEFT + 349,  SCROLL_TOP + ( nNewRank * 20 ) + 110 );
-				pText->SetupText( pDC, pGamePalette, &cTextRect, JUSTIFY_LEFT );
-				ReleaseDC( pDC );
+				cTextRect.SetRect(SCROLL_LEFT + 69, SCROLL_TOP + (nNewRank * 20) + 90, SCROLL_LEFT + 349,  SCROLL_TOP + (nNewRank * 20) + 110);
+				pText->SetupText(pDC, pGamePalette, &cTextRect, JUSTIFY_LEFT);
+				ReleaseDC(pDC);
 				pDC = nullptr;
 				break;
 			}
 		}
 
-		if ( nNewRank == -1 ) {
-			for ( i = 0; i < 10; i++ ) {
-				if (( m_pgtGTStruct->nPodjSkillLevel != NOPLAY ) && ( m_pgtGTStruct->nPodjScore > astTopTenScores[i].nScore )) {
-				int	j;
-		
+		if (nNewRank == -1) {
+			for (i = 0; i < 10; i++) {
+				if ((m_pgtGTStruct->nPodjSkillLevel != NOPLAY) && (m_pgtGTStruct->nPodjScore > astTopTenScores[i].nScore)) {
+					int j;
+
 					nNewRank = i;
-					for ( j = 10; j > i; j-- ) {
-						Common::strcpy_s( astTopTenScores[j].acName, astTopTenScores[j-1].acName );
-						astTopTenScores[j].nScore = astTopTenScores[j-1].nScore;
-						astTopTenScores[j].nSkillLevel = astTopTenScores[j-1].nSkillLevel;
+					for (j = 10; j > i; j--) {
+						Common::strcpy_s(astTopTenScores[j].acName, astTopTenScores[j - 1].acName);
+						astTopTenScores[j].nScore = astTopTenScores[j - 1].nScore;
+						astTopTenScores[j].nSkillLevel = astTopTenScores[j - 1].nSkillLevel;
 					}
-					Common::strcpy_s( astTopTenScores[i].acName, "PODJ*" );
+					Common::strcpy_s(astTopTenScores[i].acName, "PODJ*");
 					nCurChar = 5;
-					astTopTenScores[i].acName[nCurChar-1] = '|';
+					astTopTenScores[i].acName[nCurChar - 1] = '|';
 					astTopTenScores[i].acName[nCurChar] = 0;
 					astTopTenScores[i].nScore = m_pgtGTStruct->nPodjScore;
 					astTopTenScores[i].nSkillLevel = m_pgtGTStruct->nPodjSkillLevel;
@@ -331,221 +333,211 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
 				}
 			}
 		}
-		if ( nNewRank > -1 ) {
-			pScoresResetButton->EnableWindow( FALSE );
-			pScoresLeaveButton->EnableWindow( FALSE );
+		if (nNewRank > -1) {
+			pScoresResetButton->EnableWindow(FALSE);
+			pScoresLeaveButton->EnableWindow(FALSE);
 			(*this).SetFocus();
 		}
-	//	else {
-	//		pScoresLeaveButton->SetFocus();
-	//	}
-	}
-	else {
+		//  else {
+		//      pScoresLeaveButton->SetFocus();
+		//  }
+	} else {
 		// create buttons
 		pPlayButton = new CColorButton;
 		ASSERT(pPlayButton);
-		bSuccess = pPlayButton->Create("Play",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PlayRect, this, IDC_PLAY );
+		bSuccess = pPlayButton->Create("Play", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PlayRect, this, IDC_PLAY);
 		ASSERT(bSuccess);
 		pPlayButton->SetPalette(pGamePalette);
-	
+
 		pSaveButton = new CColorButton;
 		ASSERT(pSaveButton);
-		bSuccess = pSaveButton->Create("Save",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, SaveRect, this, IDC_SAVE );
+		bSuccess = pSaveButton->Create("Save", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, SaveRect, this, IDC_SAVE);
 		ASSERT(bSuccess);
 		pSaveButton->SetPalette(pGamePalette);
-	
+
 		pRestoreButton = new CColorButton;
 		ASSERT(pRestoreButton);
-		bSuccess = pRestoreButton->Create("Restore",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, RestoreRect, this, IDC_RESTORE );
+		bSuccess = pRestoreButton->Create("Restore", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, RestoreRect, this, IDC_RESTORE);
 		ASSERT(bSuccess);
 		pRestoreButton->SetPalette(pGamePalette);
-	
+
 		pLeaveButton = new CColorButton;
 		ASSERT(pLeaveButton);
-		bSuccess = pLeaveButton->Create("Main Menu",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, LeaveRect, this, IDC_LEAVE );
+		bSuccess = pLeaveButton->Create("Main Menu", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, LeaveRect, this, IDC_LEAVE);
 		ASSERT(bSuccess);
 		pLeaveButton->SetPalette(pGamePalette);
-	
+
 		pHSHButton = new CRadioButton;
 		ASSERT(pHSHButton);
-		bSuccess = pHSHButton->Create("Hard",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE | WS_GROUP, HSHRect, this, IDC_HODJ_SKILL_HARD );
+		bSuccess = pHSHButton->Create("Hard", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE | WS_GROUP, HSHRect, this, IDC_HODJ_SKILL_HARD);
 		ASSERT(bSuccess);
 		pHSHButton->SetPalette(pGamePalette);
-	
+
 		pHSMButton = new CRadioButton;
 		ASSERT(pHSMButton);
-		bSuccess = pHSMButton->Create("Medium",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, HSMRect, this, IDC_HODJ_SKILL_MEDIUM );
+		bSuccess = pHSMButton->Create("Medium", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, HSMRect, this, IDC_HODJ_SKILL_MEDIUM);
 		ASSERT(bSuccess);
 		pHSMButton->SetPalette(pGamePalette);
-	
+
 		pHSLButton = new CRadioButton;
 		ASSERT(pHSLButton);
-		bSuccess = pHSLButton->Create("Easy",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, HSLRect, this, IDC_HODJ_SKILL_EASY );
+		bSuccess = pHSLButton->Create("Easy", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, HSLRect, this, IDC_HODJ_SKILL_EASY);
 		ASSERT(bSuccess);
 		pHSLButton->SetPalette(pGamePalette);
-	
+
 		pHSNPButton = new CRadioButton;
 		ASSERT(pHSNPButton);
-		bSuccess = pHSNPButton->Create("Count Me Out",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, HSNPRect, this, IDC_HODJ_NO_PLAY );
+		bSuccess = pHSNPButton->Create("Count Me Out", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, HSNPRect, this, IDC_HODJ_NO_PLAY);
 		ASSERT(bSuccess);
 		pHSNPButton->SetPalette(pGamePalette);
-	
+
 		pPSHButton = new CRadioButton;
 		ASSERT(pPSHButton);
-		bSuccess = pPSHButton->Create("Hard",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE | WS_GROUP, PSHRect, this, IDC_PODJ_SKILL_HARD );
+		bSuccess = pPSHButton->Create("Hard", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE | WS_GROUP, PSHRect, this, IDC_PODJ_SKILL_HARD);
 		ASSERT(bSuccess);
 		pPSHButton->SetPalette(pGamePalette);
-	
+
 		pPSMButton = new CRadioButton;
 		ASSERT(pPSMButton);
-		bSuccess = pPSMButton->Create("Medium",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PSMRect, this, IDC_PODJ_SKILL_MEDIUM );
+		bSuccess = pPSMButton->Create("Medium", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PSMRect, this, IDC_PODJ_SKILL_MEDIUM);
 		ASSERT(bSuccess);
 		pPSMButton->SetPalette(pGamePalette);
-	
+
 		pPSLButton = new CRadioButton;
 		ASSERT(pPSLButton);
-		bSuccess = pPSLButton->Create("Easy",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PSLRect, this, IDC_PODJ_SKILL_EASY );
+		bSuccess = pPSLButton->Create("Easy", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PSLRect, this, IDC_PODJ_SKILL_EASY);
 		ASSERT(bSuccess);
 		pPSLButton->SetPalette(pGamePalette);
-	
+
 		pPSNPButton = new CRadioButton;
 		ASSERT(pPSNPButton);
-		bSuccess = pPSNPButton->Create("Count Me Out",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PSNPRect, this, IDC_PODJ_NO_PLAY );
+		bSuccess = pPSNPButton->Create("Count Me Out", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PSNPRect, this, IDC_PODJ_NO_PLAY);
 		ASSERT(bSuccess);
 		pPSNPButton->SetPalette(pGamePalette);
-	
+
 		pGAButton = new CRadioButton;
 		ASSERT(pGAButton);
-		bSuccess = pGAButton->Create("Alphabetically",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE | WS_GROUP, GARect, this, IDC_GAME_ALPHA );
+		bSuccess = pGAButton->Create("Alphabetically", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE | WS_GROUP, GARect, this, IDC_GAME_ALPHA);
 		ASSERT(bSuccess);
 		pGAButton->SetPalette(pGamePalette);
-	
+
 		pGGButton = new CRadioButton;
 		ASSERT(pGGButton);
-		bSuccess = pGGButton->Create("Geographically",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, GGRect, this, IDC_GAME_GEO );
+		bSuccess = pGGButton->Create("Geographically", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, GGRect, this, IDC_GAME_GEO);
 		ASSERT(bSuccess);
 		pGGButton->SetPalette(pGamePalette);
-	
+
 		pGRButton = new CRadioButton;
 		ASSERT(pGRButton);
-		bSuccess = pGRButton->Create("Randomly",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, GRRect, this, IDC_GAME_RAND );
+		bSuccess = pGRButton->Create("Randomly", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, GRRect, this, IDC_GAME_RAND);
 		ASSERT(bSuccess);
 		pGRButton->SetPalette(pGamePalette);
-	
+
 		pAudioButton = new CColorButton;
 		ASSERT(pAudioButton);
-		bSuccess = pAudioButton->Create("Audio Settings",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, AudioRect, this, IDC_AUDIO );
+		bSuccess = pAudioButton->Create("Audio Settings", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, AudioRect, this, IDC_AUDIO);
 		ASSERT(bSuccess);
 		pAudioButton->SetPalette(pGamePalette);
-	
+
 		pTop10Button = new CColorButton;
 		ASSERT(pTop10Button);
-		bSuccess = pTop10Button->Create("Top 10 List",BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, Top10Rect, this, IDC_TOP10 );
+		bSuccess = pTop10Button->Create("Top 10 List", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, Top10Rect, this, IDC_TOP10);
 		ASSERT(bSuccess);
 		pTop10Button->SetPalette(pGamePalette);
-	
-		if ( m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_LOW ) {
-			pHSLButton->SetCheck( 1 );
-			pHSMButton->SetCheck( 0 );
-			pHSHButton->SetCheck( 0 );
-			pHSNPButton->SetCheck( 0 );
-		}
-		else {
-			if ( m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_MEDIUM ) {
-				pHSLButton->SetCheck( 0 );
-				pHSMButton->SetCheck( 1 );
-				pHSHButton->SetCheck( 0 );
-				pHSNPButton->SetCheck( 0 );
-			}
-			else {
-				if ( m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_HIGH ) {
-					pHSLButton->SetCheck( 0 );
-					pHSMButton->SetCheck( 0 );
-					pHSHButton->SetCheck( 1 );
-					pHSNPButton->SetCheck( 0 );
-				}
-				else {
-					pHSLButton->SetCheck( 0 );
-					pHSMButton->SetCheck( 0 );
-					pHSHButton->SetCheck( 0 );
-					pHSNPButton->SetCheck( 1 );
+
+		if (m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_LOW) {
+			pHSLButton->SetCheck(1);
+			pHSMButton->SetCheck(0);
+			pHSHButton->SetCheck(0);
+			pHSNPButton->SetCheck(0);
+		} else {
+			if (m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_MEDIUM) {
+				pHSLButton->SetCheck(0);
+				pHSMButton->SetCheck(1);
+				pHSHButton->SetCheck(0);
+				pHSNPButton->SetCheck(0);
+			} else {
+				if (m_pgtGTStruct->nHodjSkillLevel == SKILLLEVEL_HIGH) {
+					pHSLButton->SetCheck(0);
+					pHSMButton->SetCheck(0);
+					pHSHButton->SetCheck(1);
+					pHSNPButton->SetCheck(0);
+				} else {
+					pHSLButton->SetCheck(0);
+					pHSMButton->SetCheck(0);
+					pHSHButton->SetCheck(0);
+					pHSNPButton->SetCheck(1);
 				}
 			}
 		}
-	
-		if ( m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_LOW ) {
-			pPSLButton->SetCheck( 1 );
-			pPSMButton->SetCheck( 0 );
-			pPSHButton->SetCheck( 0 );
-			pPSNPButton->SetCheck( 0 );
-		}
-		else {
-			if ( m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_MEDIUM ) {
-				pPSLButton->SetCheck( 0 );
-				pPSMButton->SetCheck( 1 );
-				pPSHButton->SetCheck( 0 );
-				pPSNPButton->SetCheck( 0 );
-			}
-			else {
-				if ( m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_HIGH ) {
-					pPSLButton->SetCheck( 0 );
-					pPSMButton->SetCheck( 0 );
-					pPSHButton->SetCheck( 1 );
-					pPSNPButton->SetCheck( 0 );
-				}
-				else {
-					pPSLButton->SetCheck( 0 );
-					pPSMButton->SetCheck( 0 );
-					pPSHButton->SetCheck( 0 );
-					pPSNPButton->SetCheck( 1 );
+
+		if (m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_LOW) {
+			pPSLButton->SetCheck(1);
+			pPSMButton->SetCheck(0);
+			pPSHButton->SetCheck(0);
+			pPSNPButton->SetCheck(0);
+		} else {
+			if (m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_MEDIUM) {
+				pPSLButton->SetCheck(0);
+				pPSMButton->SetCheck(1);
+				pPSHButton->SetCheck(0);
+				pPSNPButton->SetCheck(0);
+			} else {
+				if (m_pgtGTStruct->nPodjSkillLevel == SKILLLEVEL_HIGH) {
+					pPSLButton->SetCheck(0);
+					pPSMButton->SetCheck(0);
+					pPSHButton->SetCheck(1);
+					pPSNPButton->SetCheck(0);
+				} else {
+					pPSLButton->SetCheck(0);
+					pPSMButton->SetCheck(0);
+					pPSHButton->SetCheck(0);
+					pPSNPButton->SetCheck(1);
 				}
 			}
 		}
-	
-		if ( m_pgtGTStruct->nGameSelection == GAME_ALPHA ) {
-			pGAButton->SetCheck( 1 );
-			pGGButton->SetCheck( 0 );
-			pGRButton->SetCheck( 0 );
-		}
-		else {
-			if ( m_pgtGTStruct->nGameSelection == GAME_GEO ) {
-				pGAButton->SetCheck( 0 );
-				pGGButton->SetCheck( 1 );
-				pGRButton->SetCheck( 0 );
-			}
-			else {
-				pGAButton->SetCheck( 0 );
-				pGGButton->SetCheck( 0 );
-				pGRButton->SetCheck( 1 );
+
+		if (m_pgtGTStruct->nGameSelection == GAME_ALPHA) {
+			pGAButton->SetCheck(1);
+			pGGButton->SetCheck(0);
+			pGRButton->SetCheck(0);
+		} else {
+			if (m_pgtGTStruct->nGameSelection == GAME_GEO) {
+				pGAButton->SetCheck(0);
+				pGGButton->SetCheck(1);
+				pGRButton->SetCheck(0);
+			} else {
+				pGAButton->SetCheck(0);
+				pGGButton->SetCheck(0);
+				pGRButton->SetCheck(1);
 			}
 		}
-	
-		if ( m_pgtGTStruct->bMidGrandTour ) {
-	
-			pHSHButton->EnableWindow( FALSE );
-			pHSMButton->EnableWindow( FALSE );
-			pHSLButton->EnableWindow( FALSE );
-			pHSNPButton->EnableWindow( FALSE );
-			pPSHButton->EnableWindow( FALSE );
-			pPSMButton->EnableWindow( FALSE );
-			pPSLButton->EnableWindow( FALSE );
-			pPSNPButton->EnableWindow( FALSE );
-			pGAButton->EnableWindow( FALSE );
-			pGGButton->EnableWindow( FALSE );
-			pGRButton->EnableWindow( FALSE );
-	
-			if ( m_pgtGTStruct->bPlayingHodj ) {
-				if ( m_pgtGTStruct->nPodjSkillLevel != NOPLAY)
+
+		if (m_pgtGTStruct->bMidGrandTour) {
+
+			pHSHButton->EnableWindow(FALSE);
+			pHSMButton->EnableWindow(FALSE);
+			pHSLButton->EnableWindow(FALSE);
+			pHSNPButton->EnableWindow(FALSE);
+			pPSHButton->EnableWindow(FALSE);
+			pPSMButton->EnableWindow(FALSE);
+			pPSLButton->EnableWindow(FALSE);
+			pPSNPButton->EnableWindow(FALSE);
+			pGAButton->EnableWindow(FALSE);
+			pGGButton->EnableWindow(FALSE);
+			pGRButton->EnableWindow(FALSE);
+
+			if (m_pgtGTStruct->bPlayingHodj) {
+				if (m_pgtGTStruct->nPodjSkillLevel != NOPLAY)
 					m_pgtGTStruct->bPlayingHodj = FALSE;
+			} else {
+				if (m_pgtGTStruct->nHodjSkillLevel != NOPLAY)
+					m_pgtGTStruct->bPlayingHodj = TRUE;
 			}
-			else {
-				if ( m_pgtGTStruct->nHodjSkillLevel != NOPLAY)
-	    			m_pgtGTStruct->bPlayingHodj = TRUE;
-			}	
-	
-			if ( m_pgtGTStruct->bPlayingHodj )
+
+			if (m_pgtGTStruct->bPlayingHodj)
 				m_pgtGTStruct->nCurrGameCode = 0;
-	
+
 		}
 	}
 	(*this).SetFocus();
@@ -560,27 +552,27 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
  * FUNCTIONAL DESCRIPTION:
  *
  *      increments the current players score by the return of the mini game
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 void CMainGTWindow::AdjustScore() {
-	int		nGameScore = 0;
-	long	lTemp = 0l;
+	int     nGameScore = 0;
+	long    lTemp = 0l;
 
 	switch (m_pgtGTStruct->nCurrGameCode) {
 
@@ -677,31 +669,30 @@ void CMainGTWindow::AdjustScore() {
  * Note that creating a CPaintDC automatically does a BeginPaint and
  * an EndPaint call is done when it is destroyed at the end of this
  * function.  CPaintDC's constructor needs the window (this).
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	n/a
+ *  n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
-void CMainGTWindow::OnPaint()
-{
-PAINTSTRUCT	lpPaint;
+void CMainGTWindow::OnPaint() {
+	PAINTSTRUCT lpPaint;
 
 	BeginPaint(&lpPaint);                           // bracket start of window update
-	SplashScreen();                                 // repaint our window's content 
-	EndPaint(&lpPaint);                             // bracket end of window update 
+	SplashScreen();                                 // repaint our window's content
+	EndPaint(&lpPaint);                             // bracket end of window update
 
 }
 
@@ -715,35 +706,35 @@ PAINTSTRUCT	lpPaint;
  * sprite chain queue.  The entire window is redrawn, rather than just
  * the updated area, to ensure that the sprites end up with the correct
  * background bitmaps saved for their image areas.
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	n/a
+ *  n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
 void CMainGTWindow::SplashScreen() {
 	CDC *pDC = GetDC();                                                                          // get a device context for the window
-	CPalette *pOldPalette = pDC->SelectPalette(pGamePalette, FALSE);	// load game palette;
-	int			i;
-	int			nLeft = SCROLL_LEFT;
-	int			nTop = SCROLL_TOP;
-	int			nOldBkMode;
-	COLORREF	rgbOldColorRef;
-	char		cTemp[64];
-	char		cTemp1[64];
-	char		cTemp2[64];
+	CPalette *pOldPalette = pDC->SelectPalette(pGamePalette, FALSE);    // load game palette;
+	int         i;
+	int         nLeft = SCROLL_LEFT;
+	int         nTop = SCROLL_TOP;
+	int         nOldBkMode;
+	COLORREF    rgbOldColorRef;
+	char        cTemp[64];
+	char        cTemp1[64];
+	char        cTemp2[64];
 
 	ASSERT(pDC);
 	pDC->RealizePalette();                      // realize game palette
@@ -787,7 +778,7 @@ void CMainGTWindow::SplashScreen() {
 
 			pDC->TextOut(ScoresLeaveRect.left, nTop + 300, "Press Enter When Done.", 22);
 
-			(*this).SetFocus();							// Reset focus back to the main window
+			(*this).SetFocus();                         // Reset focus back to the main window
 
 		} else {
 			rgbOldColorRef = pDC->SetTextColor(RGB(0, 0, 255));
@@ -803,11 +794,11 @@ void CMainGTWindow::SplashScreen() {
 		}
 	} else {
 
-		UINT	nOldTextAlign;
-		char	cNextGame[64];
-		char	cLastGame[64];
-		int		nGameCode;
-		int		nGamesCompleted = 0;
+		UINT    nOldTextAlign;
+		char    cNextGame[64];
+		char    cLastGame[64];
+		int     nGameCode;
+		int     nGamesCompleted = 0;
 
 		Common::strcpy_s(cNextGame, "RANDOM");
 		nGameCode = GetNextGameCode(FALSE);
@@ -818,7 +809,7 @@ void CMainGTWindow::SplashScreen() {
 			}
 		}
 
-		//	Hodj's Text
+		//  Hodj's Text
 		rgbOldColorRef = pDC->SetTextColor(RGB(0, 0, 255));
 		pDC->TextOut(HS_LEFT - 40, HSH_TOP, "Hodj", 4);
 		pDC->TextOut(HS_LEFT, HSNP_TOP + S_HEIGHT + 2, "Score :", 7);
@@ -843,7 +834,7 @@ void CMainGTWindow::SplashScreen() {
 			pDC->TextOut(HS_LEFT + S_WIDTH + 5, G_TOP + 78, cTemp, strlen(cTemp));
 		}
 
-		//	Podj's Text
+		//  Podj's Text
 		pDC->SetTextColor(RGB(255, 0, 0));
 		pDC->TextOut(PS_LEFT - 40, PSH_TOP, "Podj", 4);
 		pDC->TextOut(PS_LEFT, PSNP_TOP + S_HEIGHT + 2, "Score :", 7);
@@ -867,7 +858,7 @@ void CMainGTWindow::SplashScreen() {
 			pDC->TextOut(HS_LEFT + S_WIDTH + 5, G_TOP + 78, cTemp, strlen(cTemp));
 		}
 
-		//	Other Text
+		//  Other Text
 		pDC->SetTextColor(RGB(128, 0, 128));
 		pDC->TextOut(GA_LEFT, G_TOP - 20, "Game Order:", 11);
 
@@ -885,7 +876,7 @@ void CMainGTWindow::SplashScreen() {
 
 	pDC->SetBkMode(nOldBkMode);
 	pDC->SelectPalette(pOldPalette, FALSE);   // replace old palette
-	ReleaseDC(pDC);								// release the window's context
+	ReleaseDC(pDC);                             // release the window's context
 
 }
 
@@ -899,28 +890,28 @@ void CMainGTWindow::SplashScreen() {
  *
  * This function is called when a WM_COMMAND message is issued,
  * typically in order to process control related activities.
- *   
+ *
  * FORMAL PARAMETERS:
  *
- *	wParam		identifier for the button to be processed
- *	lParam		type of message to be processed
+ *  wParam      identifier for the button to be processed
+ *  lParam      type of message to be processed
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
- *	n/a
- *   
+ *
+ *  n/a
+ *
  * RETURN VALUE:
  *
- *	n/a
+ *  n/a
  *
  ****************************************************************/
 BOOL CMainGTWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
-	CRect	cRect1(SCROLL_LEFT + 50, PSNP_TOP + S_HEIGHT + 1, SCROLL_LEFT + 500, G_TOP - 21);
-	CRect	cRect2(SCROLL_LEFT + 50, G_TOP + 23, SCROLL_LEFT + 500, F_TOP - 26);
+	CRect   cRect1(SCROLL_LEFT + 50, PSNP_TOP + S_HEIGHT + 1, SCROLL_LEFT + 500, G_TOP - 21);
+	CRect   cRect2(SCROLL_LEFT + 50, G_TOP + 23, SCROLL_LEFT + 500, F_TOP - 26);
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
@@ -1002,17 +993,15 @@ BOOL CMainGTWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			RedrawWindow(cRect2);
 			break;
 
-		case IDC_AUDIO:
-		{
+		case IDC_AUDIO: {
 			CAudioCfgDlg dlgAudioCfg((CWnd *)this, pGamePalette, IDD_AUDIOCFG);
 			m_pgtGTStruct->bPlayMusic = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
 			m_pgtGTStruct->bPlayFX = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
 		}
 		break;
 
-		case IDC_TOP10:
-		{
-			CTop10Dlg	cTopTenDlg((CWnd *)this, pGamePalette);
+		case IDC_TOP10: {
+			CTop10Dlg   cTopTenDlg((CWnd *)this, pGamePalette);
 			cTopTenDlg.DoModal();
 		}
 		break;
@@ -1046,8 +1035,8 @@ BOOL CMainGTWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	(*this).SetFocus();							// Reset focus back to the main window
-	return(TRUE);
+	(*this).SetFocus();                         // Reset focus back to the main window
+	return (TRUE);
 }
 
 void CMainGTWindow::OnLButtonDown(UINT nFlags, CPoint point) {
@@ -1058,23 +1047,21 @@ void CMainGTWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CMainGTWindow::OnLButtonUp(UINT nFlags, CPoint point)
-{
+void CMainGTWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainGTWindow::OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags)
-{      
-	CWnd::OnKeyDown( nChar, nRepCnt, nFlags);
+void CMainGTWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
 void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	CRect	rTempRect;
-	char	cAlpha[27];
-	int 	i;
-	DWORD		dwTextWidth;
-	int			nLeft = SCROLL_LEFT;
-	int			nTop = SCROLL_TOP;
+	CRect   rTempRect;
+	char    cAlpha[27];
+	int     i;
+	DWORD       dwTextWidth;
+	int         nLeft = SCROLL_LEFT;
+	int         nTop = SCROLL_TOP;
 	CDC *pDC = nullptr;
 
 
@@ -1083,7 +1070,7 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 	Common::strcpy_s(cAlpha, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	pDC = GetDC();
-	int	nOldBKMode = pDC->SetBkMode(TRANSPARENT);
+	int nOldBKMode = pDC->SetBkMode(TRANSPARENT);
 
 	dwTextWidth = MFC::GetTextExtent(pDC->m_hDC, astTopTenScores[nNewRank].acName, strlen(astTopTenScores[nNewRank].acName));
 	rTempRect.SetRect((nLeft + 70 + LOWORD(dwTextWidth)) - tmWidth - 1, nTop + (nNewRank * 20) + 90 - 1, nLeft + (70 + LOWORD(dwTextWidth) + (tmWidth * 2)) + 1, nTop + (nNewRank * 20) + 110 + 1);
@@ -1112,7 +1099,7 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 					pText->DisplayString(pDC, astTopTenScores[nNewRank].acName, 16, FW_BOLD, (COLORREF)RGB(255, 0, 0));
 			}
 		} else {
-			if (nChar == VK_BACK) {	// back space
+			if (nChar == VK_BACK) { // back space
 				if (nCurChar > 1) {
 					nCurChar--;
 					astTopTenScores[nNewRank].acName[nCurChar - 1] = '|';
@@ -1123,7 +1110,7 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 						pText->DisplayString(pDC, astTopTenScores[nNewRank].acName, 16, FW_BOLD, (COLORREF)RGB(255, 0, 0));
 				}
 			} else {
-				if (nChar == VK_RETURN) {	// return key
+				if (nChar == VK_RETURN) {   // return key
 					nCurChar--;
 					astTopTenScores[nNewRank].acName[nCurChar] = 0;
 					if (pText != nullptr) {
@@ -1137,7 +1124,7 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 					if (bDonePodj == FALSE) {
 						for (i = 0; i < 10; i++) {
 							if ((m_pgtGTStruct->nPodjSkillLevel != NOPLAY) && (m_pgtGTStruct->nPodjScore > astTopTenScores[i].nScore)) {
-								int	j;
+								int j;
 
 								nNewRank = i;
 								for (j = 10; j > i; j--) {
@@ -1208,28 +1195,28 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
  * FUNCTIONAL DESCRIPTION:
  *
  *      resets the top 10 list of top scores
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 void CMainGTWindow::ResetScores() {
-	int 	i;
-	CRect	rTemp(SCROLL_LEFT + 40, SCROLL_TOP + 50, SCROLL_LEFT + 500, SCROLL_TOP + 320);
-	char	cTemp1[64];
+	int     i;
+	CRect   rTemp(SCROLL_LEFT + 40, SCROLL_TOP + 50, SCROLL_LEFT + 500, SCROLL_TOP + 320);
+	char    cTemp1[64];
 
 
 	for (i = 0; i < 10; i++) {
@@ -1254,27 +1241,27 @@ void CMainGTWindow::ResetScores() {
  * FUNCTIONAL DESCRIPTION:
  *
  *      gets the top 10 list of top scores from the hodjpodj.ini
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 void CMainGTWindow::GetScores() {
-	int 	i;
-	char	cTemp1[64];
+	int     i;
+	char    cTemp1[64];
 
 
 	for (i = 0; i < 10; i++) {
@@ -1297,28 +1284,28 @@ void CMainGTWindow::GetScores() {
  * FUNCTIONAL DESCRIPTION:
  *
  *      writes out updates top 10 list of top scores to HODDJPODJ.INI
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 void CMainGTWindow::SaveScores() {
-	int 	i;
-	char 	cTemp1[64];
-	char	cTemp2[64];
+	int     i;
+	char    cTemp1[64];
+	char    cTemp2[64];
 
 	for (i = 0; i < 10; i++) {
 		Common::sprintf_s(cTemp1, "acName%i", i);
@@ -1339,27 +1326,27 @@ void CMainGTWindow::SaveScores() {
  * FUNCTIONAL DESCRIPTION:
  *
  *      determines the next game to be played
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 int CMainGTWindow::GetNextGameCode(BOOL bExecute) {
-	int	i;
-	int	result = -1;
+	int i;
+	int result = -1;
 	BOOL bThereAreGamesToBePlayed = FALSE;
 
 	if (m_pgtGTStruct->nGameSelection == GAME_ALPHA) {
@@ -1468,27 +1455,27 @@ int CMainGTWindow::GetNextGameCode(BOOL bExecute) {
  * FUNCTIONAL DESCRIPTION:
  *
  *      Save current game to HODJPODJ.INI file
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 void CMainGTWindow::SaveCurrGame() {
-	int 	i;
-	char	cTemp[64];
+	int     i;
+	char    cTemp[64];
 
 	Common::sprintf_s(cTemp, "%i", m_pgtGTStruct->bPlayingHodj);
 	WritePrivateProfileString("GRAND TOUR", "bPlayingHodj", cTemp, INI_FILENAME);
@@ -1542,29 +1529,29 @@ void CMainGTWindow::SaveCurrGame() {
  * FUNCTIONAL DESCRIPTION:
  *
  *      Restores previously saved game from the HODJPODJ.INI
- *   
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 void CMainGTWindow::RestoreGame() {
-	int 	i;
+	int     i;
 	char    cTemp[64];
-	CRect	cRect1(SCROLL_LEFT + 50, PSNP_TOP + S_HEIGHT + 1, SCROLL_LEFT + 500, G_TOP - 21);
-	CRect	cRect2(SCROLL_LEFT + 50, G_TOP + 23, SCROLL_LEFT + 500, F_TOP - 26);
+	CRect   cRect1(SCROLL_LEFT + 50, PSNP_TOP + S_HEIGHT + 1, SCROLL_LEFT + 500, G_TOP - 21);
+	CRect   cRect2(SCROLL_LEFT + 50, G_TOP + 23, SCROLL_LEFT + 500, F_TOP - 26);
 
 	pHSHButton->EnableWindow(TRUE);
 	pHSMButton->EnableWindow(TRUE);
@@ -1695,36 +1682,36 @@ void CMainGTWindow::RestoreGame() {
  * FUNCTIONAL DESCRIPTION:
  *
  *      These functions are called when ever the corresponding WM_
- *		event message is generated for the mouse.
+ *      event message is generated for the mouse.
  *
- *		(Add game-specific processing)
- *   
+ *      (Add game-specific processing)
+ *
  * FORMAL PARAMETERS:
  *
  *      [Show arguments]
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      [External data read]
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      [External data modified]
- *   
+ *
  * RETURN VALUE:
  *
  *      [Discuss return value]
  *
  ****************************************************************/
 
-BOOL CMainGTWindow::OnEraseBkgnd( CDC *pDC ) {
+BOOL CMainGTWindow::OnEraseBkgnd(CDC *pDC) {
 // eat this
 	return TRUE;
 }
 
 
 void CMainGTWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
-	BOOL	bUpdateNeeded;
+	BOOL    bUpdateNeeded;
 
 	switch (nState) {
 	case WA_INACTIVE:
@@ -1746,22 +1733,22 @@ void CMainGTWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	This function is called when a Close event is generated.  For
- *	this sample application we need only kill our event timer;
- *  The ExitInstance will handle releasing resources. 
- *   
+ *  This function is called when a Close event is generated.  For
+ *  this sample application we need only kill our event timer;
+ *  The ExitInstance will handle releasing resources.
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
@@ -1770,7 +1757,7 @@ void CMainGTWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 
 void CMainGTWindow::OnClose() {
 	CDC *pDC = GetDC();
-	CRect		rctFillRect(0, 0, 640, 480);
+	CRect       rctFillRect(0, 0, 640, 480);
 	CBrush  Brush(RGB(0, 0, 0));
 
 	pDC->FillRect(&rctFillRect, &Brush);
@@ -1785,23 +1772,23 @@ void CMainGTWindow::OnClose() {
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	This function is called when after the window has been destroyed.
- *	For poker, we post a message bak to the calling app to tell it
+ *  This function is called when after the window has been destroyed.
+ *  For poker, we post a message bak to the calling app to tell it
  * that the user has quit the game, and therefore the app can unload
- * this DLLL 
- *   
+ * this DLLL
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
@@ -1833,22 +1820,22 @@ void CMainGTWindow::OnDestroy() {
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	Release all resources that were created and retained during the
- *	course of the game.  This includes sprites in the sprite chain,
- *	the game color palette, and button controls. 
- *   
+ *  Release all resources that were created and retained during the
+ *  course of the game.  This includes sprites in the sprite chain,
+ *  the game color palette, and button controls.
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
@@ -1933,22 +1920,22 @@ void CMainGTWindow::ReleaseResources(void) {
  *
  * FUNCTIONAL DESCRIPTION:
  *
- *	Remove all keyboard and mouse related events from the message
- *	so that they will not be sent to us for processing; i.e. this
- *	flushes keyboard type ahead and extra mouse clicks and movement. 
- *   
+ *  Remove all keyboard and mouse related events from the message
+ *  so that they will not be sent to us for processing; i.e. this
+ *  flushes keyboard type ahead and extra mouse clicks and movement.
+ *
  * FORMAL PARAMETERS:
  *
  *      n/a
  *
  * IMPLICIT INPUT PARAMETERS:
- *  
+ *
  *      n/a
- *   
+ *
  * IMPLICIT OUTPUT PARAMETERS:
- *   
+ *
  *      n/a
- *   
+ *
  * RETURN VALUE:
  *
  *      n/a
@@ -1958,7 +1945,7 @@ void CMainGTWindow::ReleaseResources(void) {
 void CMainGTWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {										// find and remove all keyboard events
+	while (TRUE) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
@@ -1972,7 +1959,7 @@ void CMainGTWindow::FlushInputEvents(void) {
 // CMainGTWindow message map:
 // Associate messages with member functions.
 //
-BEGIN_MESSAGE_MAP( CMainGTWindow, CFrameWnd )
+BEGIN_MESSAGE_MAP(CMainGTWindow, CFrameWnd)
 	//{{AFX_MSG_MAP( CMainGTWindow )
 	ON_WM_PAINT()
 	ON_WM_LBUTTONDOWN()

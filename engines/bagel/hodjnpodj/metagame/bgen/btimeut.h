@@ -50,13 +50,13 @@ public:
 private:
 	/**
 	 * SetTimer callback routine for DelayMs
-	 * @param hWnd		handle of window (always nullptr in this case)
-	 * @param uMsg		WM_TIMER message
-	 * @param uTimerId	timer identifier
-	 * @param dwTime	current system time
+	 * @param hWnd      handle of window (always nullptr in this case)
+	 * @param uMsg      WM_TIMER message
+	 * @param uTimerId  timer identifier
+	 * @param dwTime    current system time
 	 */
 	static void DelayMsCallback(HWND hWnd, UINT uMsg,
-		UINT uTimerId, DWORD dwTime);
+	                            UINT uTimerId, DWORD dwTime);
 };
 
 } // namespace Metagame

@@ -64,7 +64,7 @@ void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
 }
 
 void CDocument::UpdateAllViews(CView *pSender, LPARAM lHint,
-		CObject *pHint) {
+                               CObject *pHint) {
 	error("TODO: CDocument::UpdateAllViews");
 }
 

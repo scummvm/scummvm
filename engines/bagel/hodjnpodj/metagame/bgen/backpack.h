@@ -63,7 +63,7 @@ class CBackpack : public CDialog {
 // Construction
 public:
 	CBackpack(CWnd *pParent, CPalette *pPalette,
-		CInventory *pInventory);
+	          CInventory *pInventory);
 
 	int SelectedItem(CPoint point);
 

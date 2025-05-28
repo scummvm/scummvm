@@ -32,7 +32,7 @@ END_MESSAGE_MAP()
 const SIZE CScrollView::sizeNull = { 0, 0 };
 
 void CScrollView::SetScrollSizes(int nMapMode, SIZE sizeTotal,
-		const SIZE &sizePage, const SIZE &sizeLine) {
+                                 const SIZE &sizePage, const SIZE &sizeLine) {
 	error("TODO: CScrollView::SetScrollSizes");
 }
 

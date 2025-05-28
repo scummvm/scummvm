@@ -76,7 +76,7 @@ CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int 
 }
 
 CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName) {
-	CDibDoc *pDIB;	// Pointer to our loaded DIB file
+	CDibDoc *pDIB;  // Pointer to our loaded DIB file
 	HDIB hDIB = nullptr;
 	CBitmap *pBitmap = nullptr;
 	CPalette *pThisPalette = nullptr;

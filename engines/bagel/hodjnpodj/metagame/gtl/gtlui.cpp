@@ -1001,7 +1001,7 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 			for (xpSectorEntry = xpSectorTable ;
 			        xpSectorEntry->m_iSectorCode
 			        && scumm_stricmp(lpSelectedNode->m_szSector,
-			                   xpSectorEntry->m_lpszLabel) ;
+			                         xpSectorEntry->m_lpszLabel) ;
 			        ++xpSectorEntry)
 				;   // null loop body
 
@@ -1057,7 +1057,7 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 		if (xpNodeDlg->m_bApply && lpSelectedNode
 		        && lpSelectedNode->m_szLabel != xpNodeDlg->m_stName)
 			strncpy(lpSelectedNode->m_szLabel, xpNodeDlg->m_stName,
-			          MAX_LABEL_LENGTH - 1) ;
+			        MAX_LABEL_LENGTH - 1) ;
 
 //      if (xpNodeDlg->m_bApply && lpSelectedNode
 //              && lpSelectedNode->m_szAction != xpNodeDlg->m_stAction)
@@ -1159,7 +1159,7 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 		if (xpNodeDlg->m_bApply && lpSelectedNode
 		        && lpSelectedNode->m_szSector != lpszSector)
 			strncpy(lpSelectedNode->m_szSector, lpszSector,
-			          MAX_LABEL_LENGTH - 1) ;
+			        MAX_LABEL_LENGTH - 1) ;
 
 //      if (xpNodeDlg->m_bApply && lpSelectedNode
 //              && iSector != lpSelectedNode->m_iSector)

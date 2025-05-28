@@ -81,7 +81,7 @@ int CGtlData::Decompile(const char * xpszPathName)
 			Common::sprintf_s(szOut, "%Fs:", (LPSTR)lpMap->m_szLabel) ;
 
 		Common::sprintf_s(szOut + strlen(szOut), "\tBITMAP\t\"%Fs\"",
-		        (LPSTR)lpMap->m_szFilename) ;
+		                  (LPSTR)lpMap->m_szFilename) ;
 
 		if (lpMap->m_iRelationType) {
 
@@ -126,10 +126,10 @@ int CGtlData::Decompile(const char * xpszPathName)
 			if (!lpMap->m_bPositionSpecified)
 				strcat(szOut, "// ") ;
 			Common::sprintf_s(szOut + strlen(szOut), "POSITION(%d,%d,%d,%d)",
-			        lpMap->m_lpcBgbObject->m_crPosition.x,
-			        lpMap->m_lpcBgbObject->m_crPosition.y,
-			        lpMap->m_lpcBgbObject->m_cSize.cx,
-			        lpMap->m_lpcBgbObject->m_cSize.cy) ;
+			                  lpMap->m_lpcBgbObject->m_crPosition.x,
+			                  lpMap->m_lpcBgbObject->m_crPosition.y,
+			                  lpMap->m_lpcBgbObject->m_cSize.cx,
+			                  lpMap->m_lpcBgbObject->m_cSize.cy) ;
 		}
 
 		AsciiOutput(0, szOut) ;
@@ -199,11 +199,11 @@ int CGtlData::Decompile(const char * xpszPathName)
 
 			if (lpNode->m_bSenSpec)
 				Common::sprintf_s(szOut + strlen(szOut), " SENSITIVITY %d",
-				        lpNode->m_iSensitivity) ;
+				                  lpNode->m_iSensitivity) ;
 
 			if (lpNode->m_szSector[0])  // if there's an action
 				Common::sprintf_s(szOut + strlen(szOut),
-				        " SECTOR %Fs", (LPSTR)lpNode->m_szSector) ;
+				                  " SECTOR %Fs", (LPSTR)lpNode->m_szSector) ;
 
 			AsciiOutput(0, szOut) ;
 
@@ -213,7 +213,7 @@ int CGtlData::Decompile(const char * xpszPathName)
 					if ((iLink = lpNode->m_iLinks[iL]) >= 0
 					        && iLink < iK - 1) {
 						Common::sprintf_s(szOut, "\tLINK\t%Fs",
-						        (LPSTR)m_lpNodes[iLink].m_szLabel) ;
+						                  (LPSTR)m_lpNodes[iLink].m_szLabel) ;
 						AsciiOutput(0, szOut) ;
 					}
 		}

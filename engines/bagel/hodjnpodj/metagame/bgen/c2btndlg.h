@@ -39,9 +39,9 @@ public:
 
 	// standard constructor
 	C2ButtonDialog(CWnd *pParent, CPalette *pPalette,
-		const char *pszButton1Text, const char *pszButton2Text,
-		const char *pszText1, const char *pszText2 = nullptr,
-		const char *pszText3 = nullptr);
+	               const char *pszButton1Text, const char *pszButton2Text,
+	               const char *pszText1, const char *pszText2 = nullptr,
+	               const char *pszText3 = nullptr);
 
 private:
 	void ClearDialogImage(void);

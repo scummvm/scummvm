@@ -25,7 +25,7 @@
 #include "bagel/boflib/sound.h"
 
 #if BUILD_FOR_META_DLL
-#include "bagel/hodjnpodj/metagame/bgen/bgb.h"
+	#include "bagel/hodjnpodj/metagame/bgen/bgb.h"
 #endif
 
 namespace Bagel {
