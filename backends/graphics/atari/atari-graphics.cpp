@@ -481,10 +481,10 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 		_chunkySurfaceOffsetted.init(_currentState.width, _currentState.height, c2pWidth,
 			_chunkySurface.getBasePtr(xOffset, 0), _currentState.format);
 
-		_screen[kFrontBuffer]->reset(c2pWidth, _currentState.height, _chunkySurfaceOffsetted, xOffset, true);
+		_screen[kFrontBuffer]->reset(c2pWidth, _currentState.height, _chunkySurfaceOffsetted);
 		if (_currentState.mode > kSingleBuffering) {
-			_screen[kBackBuffer1]->reset(c2pWidth, _currentState.height, _chunkySurfaceOffsetted, xOffset, true);
-			_screen[kBackBuffer2]->reset(c2pWidth, _currentState.height, _chunkySurfaceOffsetted, xOffset, true);
+			_screen[kBackBuffer1]->reset(c2pWidth, _currentState.height, _chunkySurfaceOffsetted);
+			_screen[kBackBuffer2]->reset(c2pWidth, _currentState.height, _chunkySurfaceOffsetted);
 		}
 
 		{
@@ -754,11 +754,7 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 
 	// cursor is reset before calling showOverlay()
 
-	// do not cache dirtyRects and saved cursor rect
-	_screen[kOverlayBuffer]->reset(
-		getOverlayWidth(), getOverlayHeight(),
-		*lockOverlay(), 0,
-		false);
+	_screen[kOverlayBuffer]->reset(getOverlayWidth(), getOverlayHeight(), *lockOverlay());
 
 	_overlayState = kOverlayVisible;
 

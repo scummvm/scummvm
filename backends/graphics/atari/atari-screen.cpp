@@ -58,13 +58,10 @@ Screen::Screen(bool tt, int width, int height, const Graphics::PixelFormat &form
 			width, height));
 }
 
-void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition) {
-	_xOffset = xOffset;
-
+void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf) {
 	clearDirtyRects();
-	cursor.reset(&boundingSurf, xOffset);
-	if (resetCursorPosition)
-		cursor.setPosition(boundingSurf.w / 2, boundingSurf.h / 2);
+	cursor.reset(&boundingSurf);
+	cursor.setPosition(boundingSurf.w / 2, boundingSurf.h / 2);
 	rez = -1;
 	mode = -1;
 
@@ -140,6 +137,10 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int
 	if (fullRedraw)
 		return;
 
+	// x,y are relative to srcSurface but screen's width is always aligned to 16 bytes
+	// so both dirty rects and cursor must be drawn in its coordinates
+	const int xOffset = (_offsettedSurf->w - srcSurface.w) / 2;
+
 	if ((w == srcSurface.w && h == srcSurface.h)
 		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
 		//atari_debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
@@ -147,13 +148,13 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int
 		dirtyRects.clear();
 		// don't use x/y/w/h, the 2nd expression may be true
 		// also, it's ok if e.g. w = 630 gets aligned to w = 640, nothing is drawn in 630~639
-		dirtyRects.insert(AtariSurface::alignRect(_xOffset, 0, _xOffset + srcSurface.w, srcSurface.h));
+		dirtyRects.insert(AtariSurface::alignRect(xOffset, 0, xOffset + srcSurface.w, srcSurface.h));
 
-		cursor.reset(&srcSurface, _xOffset);
+		cursor.reset(&srcSurface);
 
 		fullRedraw = true;
 	} else {
-		const Common::Rect alignedRect = AtariSurface::alignRect(x + _xOffset, y, x + _xOffset + w, y + h);
+		const Common::Rect alignedRect = AtariSurface::alignRect(x + xOffset, y, x + xOffset + w, y + h);
 
 		dirtyRects.insert(alignedRect);
 

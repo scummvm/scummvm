@@ -36,9 +36,8 @@ struct Cursor {
 	Cursor(const Screen *screen);
 	~Cursor();
 
-	void reset(const Graphics::Surface *boundingSurf, int xOffset) {
+	void reset(const Graphics::Surface *boundingSurf) {
 		_boundingSurf = boundingSurf;
-		_xOffset = xOffset;
 
 		_positionChanged = true;
 		_surfaceChanged = true;
@@ -106,7 +105,6 @@ private:
 
 	const Screen *_parentScreen;
 	const Graphics::Surface *_boundingSurf = nullptr;
-	int _xOffset = 0;
 
 	bool _positionChanged = false;
 	bool _surfaceChanged = false;

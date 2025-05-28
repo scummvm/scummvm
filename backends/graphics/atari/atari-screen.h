@@ -60,7 +60,7 @@ struct Screen {
 
 	Screen(bool tt, int width, int height, const Graphics::PixelFormat &format, const Palette *palette);
 
-	void reset(int width, int height, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition);
+	void reset(int width, int height, const Graphics::Surface &boundingSurf);
 	// must be called before any rectangle drawing
 	void addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int w, int h, bool directRendering);
 
@@ -94,7 +94,6 @@ private:
 
 	bool _tt;
 	Common::ScopedPtr<AtariSurface> _offsettedSurf;
-	int _xOffset = 0;
 };
 
 #endif // BACKENDS_GRAPHICS_ATARI_SCREEN_H

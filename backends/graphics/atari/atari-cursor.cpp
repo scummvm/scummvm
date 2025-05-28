@@ -77,6 +77,7 @@ void Cursor::update() {
 		assert(_srcRect.height() == _dstRect.height());
 
 		const int dstBitsPerPixel = _parentScreen->offsettedSurf->getBitsPerPixel();
+		const int xOffset         = (_parentScreen->offsettedSurf->w - _boundingSurf->w) / 2;
 
 		// non-direct rendering never uses 4bpp but maybe in the future ...
 		_savedRect = AtariSurface::alignRect(
@@ -88,9 +89,9 @@ void Cursor::update() {
 		// this is used only in flushBackground() for comparison with rects
 		// passed by Screen::addDirtyRect (aligned and shifted by the same offset)
 		_alignedDstRect = AtariSurface::alignRect(
-			_dstRect.left + _xOffset,
+			_dstRect.left + xOffset,
 			_dstRect.top,
-			_dstRect.right + _xOffset,
+			_dstRect.right + xOffset,
 			_dstRect.bottom);
 	}
 }
@@ -270,6 +271,7 @@ void Cursor::saveBackground() {
 void Cursor::draw() {
 	AtariSurface &dstSurface  = *_parentScreen->offsettedSurf;
 	const int dstBitsPerPixel = dstSurface.getBitsPerPixel();
+	const int xOffset         = (dstSurface.w - _boundingSurf->w) / 2;
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
@@ -298,7 +300,7 @@ void Cursor::draw() {
 
 	dstSurface.drawMaskedSprite(
 		_surface, _surfaceMask,
-		_dstRect.left + _xOffset, _dstRect.top,
+		_dstRect.left + xOffset, _dstRect.top,
 		g_hasSuperVidel
 			? _srcRect
 			// TODO: _srcRect and add clipping to AtariSurface::drawMaskedSprite
