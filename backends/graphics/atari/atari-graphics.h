@@ -156,19 +156,6 @@ private:
 
 	Graphics::Surface *lockOverlay();
 
-	Common::Rect alignRect(int x1, int y1, int x2, int y2) const {
-		// make non-virtual for performance reasons
-		return g_hasSuperVidel
-				   ? Common::Rect(x1, y1, x2, y2)
-				   : Common::Rect(x1 & (-16), y1, (x2 + 15) & (-16), y2);
-	}
-	Common::Rect alignRect(const Common::Rect &rect) const {
-		// make non-virtual for performance reasons
-		return g_hasSuperVidel
-				   ? rect
-				   : Common::Rect(rect.left & (-16), rect.top, (rect.right + 15) & (-16), rect.bottom);
-	}
-
 	bool _vgaMonitor = true;
 	bool _tt = false;
 

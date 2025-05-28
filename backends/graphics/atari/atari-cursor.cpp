@@ -81,14 +81,14 @@ void Cursor::update() {
 		const int dstBitsPerPixel = _parentScreen->offsettedSurf->getBitsPerPixel();
 
 		// non-direct rendering never uses 4bpp but maybe in the future ...
-		_savedRect = _manager->alignRect(
+		_savedRect = AtariSurface::alignRect(
 			_dstRect.left * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's x/2
 			_dstRect.top,
 			_dstRect.right * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
 			_dstRect.bottom);
 
 		// this is used only in flushBackground()
-		_alignedDstRect = _manager->alignRect(
+		_alignedDstRect = AtariSurface::alignRect(
 			_dstRect.left + _xOffset,
 			_dstRect.top,
 			_dstRect.right + _xOffset,

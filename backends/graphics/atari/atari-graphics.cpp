@@ -1152,7 +1152,7 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 
 void AtariGraphicsManager::copyRectToScreenInternal(AtariSurface &dstSurface,
 													const byte *buf, int pitch, int x, int y, int w, int h) {
-	const Common::Rect rect = alignRect(x, y, x + w, y + h);
+	const Common::Rect rect = AtariSurface::alignRect(x, y, x + w, y + h);
 
 	// TODO: mask the unaligned parts and copy the rest
 	buf -= (x - rect.left);	// HACK: this assumes pointer to a complete buffer

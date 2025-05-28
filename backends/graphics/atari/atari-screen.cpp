@@ -147,13 +147,13 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int
 		dirtyRects.clear();
 		// don't use x/y/w/h, the 2nd expression may be true
 		// also, it's ok if e.g. w = 630 gets aligned to w = 640, nothing is drawn in 630~639
-		dirtyRects.insert(_manager->alignRect(_xOffset, 0, _xOffset + srcSurface.w, srcSurface.h));
+		dirtyRects.insert(AtariSurface::alignRect(_xOffset, 0, _xOffset + srcSurface.w, srcSurface.h));
 
 		cursor.reset(&srcSurface, _xOffset);
 
 		fullRedraw = true;
 	} else {
-		const Common::Rect alignedRect = _manager->alignRect(x + _xOffset, y, x + _xOffset + w, y + h);
+		const Common::Rect alignedRect = AtariSurface::alignRect(x + _xOffset, y, x + _xOffset + w, y + h);
 
 		dirtyRects.insert(alignedRect);
 
