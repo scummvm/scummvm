@@ -96,14 +96,14 @@ private:
 
 	bool _enabled;
 	bool _deferToVsync;
-	uint _frameStart;  //Time at which screen update completed and startFrame() was called; start of next cycle of game logic
-	uint _frameLimit;  //Target frame duration to achieve specified FPS
-	uint _frameDuration; //Duration of previous frame between successive startFrame() calls; total game logic, delay (if any) and screen update time
-	uint _drawStart;  //Time at which delayBeforeSwap() returns
-	uint _drawDuration;  //Measured screen update time
-	uint _loopDuration;  //Duration of last game logic cycle, from when startFrame() was called to when delayBeforeSwap() was called
-	int _delay; //Time to delay before returning from delayBeforeSwap()
-	uint _now; //Current time
+	uint _frameStart;  // Time at which screen update completed and startFrame() was called; start of next cycle of game logic
+	uint _frameLimit;  // Target frame duration to achieve specified FPS
+	uint _frameDuration; // Duration of previous frame between successive startFrame() calls; total game logic, delay (if any) and screen update time
+	uint _drawStart;  // Time at which delayBeforeSwap() returns
+	uint _drawDuration;  // Measured screen update time
+	uint _loopDuration;  // Duration of last game logic cycle, from when startFrame() was called to when delayBeforeSwap() was called
+	int _delay; // Time to delay before returning from delayBeforeSwap()
+	uint _now; // Current time
 };
 
 } // End of namespace Graphics
