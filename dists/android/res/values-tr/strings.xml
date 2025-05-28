@@ -1,12 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="app_name">ScummVM\'den çık</string>
-  <string name="ok">OK</string>
-  <string name="quit">Oyun</string>
-  <string name="no_save_path_title">Kaydetme Yolu:</string>
-  <string name="no_icons_path_title">/kök/ Yolu:</string>
+  <string name="ok">Tamam</string>
   <string name="customkeyboardview_keycode_cancel">İptal</string>
   <string name="customkeyboardview_keycode_delete">Sil</string>
-  <string name="customkeyboardview_keycode_enter">Etkileşim</string>
-  <string name="customkeyboardview_popup_close">Kapat</string>
 </resources>

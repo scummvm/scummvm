@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (відладка)</string>
   <string name="app_desc">Движок графічних квестів</string>
   <string name="ok">OK</string>
   <string name="quit">Вихід</string>
+  <string name="no_log_file_title">Помилка файла логу</string>
+  <string name="no_log_file">Не вдалося прочитати лог-файл ScummVM або створити новий!</string>
   <string name="no_config_file_title">Помилка файла конфігурації</string>
   <string name="no_config_file">Не вдалося прочитати файл конфігурації ScummVM або створити новий!</string>
   <string name="no_save_path_title">Помилка шляху зберігання</string>
@@ -13,13 +16,19 @@
   <string name="bad_explicit_save_path_configured">Не вдалося дістатися до глобального шляху збереження ігор! Будь-ласка, поверніться до значень за замовченням в Налаштуваннях ScummVM</string>
   <string name="keyboard_toggle_btn_desc">Перемикнути віртуальну клавіатуру</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
-  <string name="customkeyboardview_keycode_cancel">Відміна</string>
+  <string name="customkeyboardview_keycode_cancel">Скасувати</string>
   <string name="customkeyboardview_keycode_delete">Видалити</string>
   <string name="customkeyboardview_keycode_done">Готове</string>
-  <string name="customkeyboardview_keycode_mode_change">Змінити режим</string>
+  <string name="customkeyboardview_keycode_mode_change">Зміна режиму</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
   <string name="customkeyboardview_popup_close">Закрити вискакуючий список</string>
   <string name="saf_request_prompt">Будь-ласка, оберіть папку *root* (корень) у вашій зовнішній (фізичній) SD-картці. Це необхідно, щоб ScummVM міг дістатися цієї папки: </string>
   <string name="saf_revoke_done">Дозвіл доступу ScummVM до Storage Access Framework було вилучено!</string>
+  <string name="ini_parsing_error">Файл конфігурації має помилку у форматі</string>
+  <string name="shortcut_creator_title">Запустити гру</string>
+  <string name="shortcut_creator_search_game">Шукати гру</string>
+  <string name="shortcut_creator_game_item_icon">Іконки гри</string>
+  <string name="shortcut_creator_customize_game_name_hint">Мітка скроту</string>
+  <string name="shortcut_creator_customize_game_icon_description">Іконка скроту</string>
 </resources>

@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (depuración)</string>
   <string name="app_desc">Motor de aventuras gráficas</string>
   <string name="ok">Aceptar</string>
   <string name="quit">Salir</string>
+  <string name="no_log_file_title">Error en el archivo de registro</string>
+  <string name="no_log_file">¡No se ha podido leer o crear el archivo de registro de ScummVM!</string>
   <string name="no_config_file_title">Error en el archivo de configuración</string>
   <string name="no_config_file">¡No se ha podido leer o crear el archivo de configuración de ScummVM!</string>
   <string name="no_save_path_title">Error de la ruta de partidas guardadas</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">Cerrar ventana</string>
   <string name="saf_request_prompt">Selecciona la *raíz* de tu tarjeta SD externa (física). Debes indicarla para que ScummVM pueda acceder a la siguiente ruta: </string>
   <string name="saf_revoke_done">¡Se han revocado los permisos del framework de acceso al almacenamiento para ScummVM!</string>
+  <string name="ini_parsing_error">No se ha podido analizar el archivo de configuración</string>
+  <string name="shortcut_creator_title">Ejecutar un juego</string>
+  <string name="shortcut_creator_search_game">Buscar un juego</string>
+  <string name="shortcut_creator_game_item_icon">Icono del juego</string>
+  <string name="shortcut_creator_customize_game_name_hint">Etiqueta del acceso directo</string>
+  <string name="shortcut_creator_customize_game_icon_description">Icono del acceso directo</string>
 </resources>

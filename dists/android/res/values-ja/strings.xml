@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM(デバッグ)</string>
   <string name="app_desc">グラフィックアドベンチャーエンジン</string>
   <string name="ok">OK</string>
   <string name="quit">終了</string>
+  <string name="no_log_file_title">ログファイルエラー</string>
+  <string name="no_log_file">ScummVMログファイルの読込/作成ができません!</string>
   <string name="no_config_file_title">設定ファイルエラー</string>
   <string name="no_config_file">ScummVM設定ファイルの読込/作成ができません!</string>
   <string name="no_save_path_title">セーブパスエラー</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">ポップアップを閉じる</string>
   <string name="saf_request_prompt">外付け(物理)SDカードのルートを選択して下さい。ScummVMがアクセスするために必要です： </string>
   <string name="saf_revoke_done">ScummVMのStorage Access Frameworkの権限が取り消されました!</string>
+  <string name="ini_parsing_error">設定ファイルを解析できません</string>
+  <string name="shortcut_creator_title">ゲーム開始</string>
+  <string name="shortcut_creator_search_game">ゲームを検索</string>
+  <string name="shortcut_creator_game_item_icon">ゲームアイコン</string>
+  <string name="shortcut_creator_customize_game_name_hint">ショートカットラベル</string>
+  <string name="shortcut_creator_customize_game_icon_description">ショートカットアイコン</string>
 </resources>
