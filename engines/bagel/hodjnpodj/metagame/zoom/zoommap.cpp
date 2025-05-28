@@ -194,10 +194,6 @@ pDC = nullptr;
 // this is because the game's background art will fill the entire 640x40 area.
 Create( WndClass, "Boffo Games - ZOOM MAP", WS_POPUP, MainRect, nullptr, 0);
 
-#ifndef _DEBUG
-SetWindowPos( &wndTopMost, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
-#endif
-
 pDC = GetDC();
 pSplashScreen = FetchBitmap( pDC, &pGamePalette, SPLASHSPEC );
 ReleaseDC( pDC );

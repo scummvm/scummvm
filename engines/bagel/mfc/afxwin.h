@@ -837,9 +837,9 @@ protected:
 	afx_msg void OnParentNotify(UINT message, LPARAM lParam) {}
 	afx_msg UINT OnNotifyFormat(CWnd *pWnd, UINT nCommand) { return 0; }
 	afx_msg HCURSOR OnQueryDragIcon() { return 0; }
-	afx_msg BOOL OnQueryEndSession() {}
-	afx_msg BOOL OnQueryNewPalette() {}
-	afx_msg BOOL OnQueryOpen() {}
+	afx_msg BOOL OnQueryEndSession() { return false; }
+	afx_msg BOOL OnQueryNewPalette() { return false; }
+	afx_msg BOOL OnQueryOpen() { return false; }
 	afx_msg void OnSetFocus(CWnd *pOldWnd) {}
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus) {}
 	afx_msg void OnSize(UINT nType, int cx, int cy) {}

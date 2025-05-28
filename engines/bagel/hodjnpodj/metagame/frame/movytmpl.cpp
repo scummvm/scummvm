@@ -473,7 +473,7 @@ void CDumWnd::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags){
 }
 
 BEGIN_MESSAGE_MAP(CDumWnd, CWnd)
-	ON_MESSAGE(MM_MCINOTIFY,  OnMCINotify)   //map the MM_MCINOTIFY message.
+	ON_MESSAGE(MM_MCINOTIFY,  CDumWnd::OnMCINotify)   //map the MM_MCINOTIFY message.
 	ON_WM_SYSKEYDOWN()
 	ON_WM_KEYDOWN()
     ON_WM_PAINT()
