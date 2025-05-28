@@ -473,6 +473,7 @@ public:
 };
 
 class CBrush : public CGdiObject {
+public:
 	struct Impl : public CGdiObjectImpl {
 		int _type;
 		COLORREF _color = 0;
@@ -558,6 +559,12 @@ public:
 
 class CDC : public CObject {
 	DECLARE_DYNAMIC(CDC)
+
+protected:
+	Gfx::SurfaceDC *surface() const {
+		return static_cast<Gfx::SurfaceDC *>(m_hDC);
+	}
+
 public:
 	HDC m_hDC = nullptr;
 

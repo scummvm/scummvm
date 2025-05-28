@@ -346,39 +346,21 @@ void LoadFloatLib(void)
 }
 
 
-BOOL CHodjPodjWindow::CheckConfig(CDC *pDC)
-{
-int     nDevCaps;
-BOOL    bSuccess = TRUE;
+BOOL CHodjPodjWindow::CheckConfig(CDC *pDC) {
+	int nDevCaps;
 
     bLowMemory = CheckLowMemory();
 
     nDevCaps = (*pDC).GetDeviceCaps(BITSPIXEL);
     if (nDevCaps < 8) {
-    MessageBox(NULL,"Please set your display to 256 colors\nbefore playing this game.","Display Configuration",MB_ICONEXCLAMATION);
-    bSuccess = FALSE;
-    }
-    else {
+		error("Please set your display to 256 colors before playing this game.","Display Configuration");
+    } else {
         nDevCaps = (*pDC).GetDeviceCaps(RASTERCAPS);
         if (!(nDevCaps & RC_PALETTE))
-        MessageBox(NULL,"It is recommended that your display\nbe set to 256 colors before playing.","Display Configuration",MB_ICONINFORMATION);
-#ifdef _DEBUG
-        if (!(nDevCaps & RC_BITBLT))
-        MessageBox(NULL,"BitBLTs not Supported","Display Configuration",MB_ICONEXCLAMATION);
-        if (!(nDevCaps & RC_BITMAP64))
-        MessageBox(NULL,"64K+ bitmaps not Supported","Display Configuration",MB_ICONEXCLAMATION);
-        if (!(nDevCaps & RC_DI_BITMAP))
-        MessageBox(NULL,"SetDIBits not Supported","Display Configuration",MB_ICONEXCLAMATION);
-        if (!(nDevCaps & RC_DIBTODEV))
-        MessageBox(NULL,"SetDIBitsToDevice not Supported","DDisplay Configuration",MB_ICONEXCLAMATION);
-        if (!(nDevCaps & RC_PALETTE))
-        MessageBox(NULL,"Palettes not Supported","Display Configuration",MB_ICONEXCLAMATION);
-        if (!(nDevCaps & RC_STRETCHBLT))
-        MessageBox(NULL,"StretchBlts not Supported","Display Configuration",MB_ICONEXCLAMATION);
-#endif
+			error("It is recommended that your display be set to 256 colors before playing.");
     }
 
-    return(bSuccess);
+    return true;
 }
 
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/gfx/surface_dc.h"
@@ -65,7 +66,27 @@ int CDC::SetStretchBltMode(int nStretchMode) {
 }
 
 int CDC::GetDeviceCaps(int nIndex) const {
+	const Graphics::PixelFormat format =
+		g_system->getScreenFormat();
+
+	switch (nIndex) {
+	case BITSPIXEL:
+		return format.bytesPerPixel * 8;
+	case RASTERCAPS:
+		return (format.bytesPerPixel == 1 ? RC_PALETTE : 0) |
+			RC_BITBLT |
+			RC_BITMAP64 |
+			RC_DI_BITMAP |
+			RC_DIBTODEV |
+			RC_PALETTE |
+			RC_STRETCHBLT;
+
+	default:
+		break;
+	}
+
 	error("TODO: CDC::GetDeviceCaps");
+	return 0;
 }
 
 int CDC::GetMapMode() const {
@@ -183,7 +204,14 @@ void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
 }
 
 void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
-	error("TODO: CDC::FillRect");
+	auto *surf = surface();
+	CBrush::Impl *brush = static_cast<CBrush::Impl *>(
+		pBrush->m_hObject);
+	assert(brush->_type == HS_HORIZONTAL ||
+		brush->_type == HS_VERTICAL);
+
+	// TODO: Palette handling
+	surf->fillRect(*lpRect, brush->_color);
 }
 
 BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {
