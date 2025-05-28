@@ -38,7 +38,7 @@ class C1ButtonDialog : public CBmpDialog {
 public:
 
 	// standard constructor
-	C1ButtonDialog(CWnd *, CPalette *, const char *, const char *, const char *pszText2 = NULL, const char *pszText3 = NULL);
+	C1ButtonDialog(CWnd *, CPalette *, const char *, const char *, const char *pszText2 = nullptr, const char *pszText3 = nullptr);
 
 private:
 	void ClearDialogImage(void);

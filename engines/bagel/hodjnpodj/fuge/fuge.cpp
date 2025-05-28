@@ -374,26 +374,26 @@ CFugeWindow::CFugeWindow(VOID) {
 	m_nInitPaddleSize = PSIZE_DEF;
 	m_nGForceFactor = GFORCE_DEF;
 
-	m_pScrollButton = NULL;
-	m_pGamePalette = NULL;
-	m_pSoundTrack = NULL;
+	m_pScrollButton = nullptr;
+	m_pGamePalette = nullptr;
+	m_pSoundTrack = nullptr;
 	m_bPause = FALSE;
 	m_bGameActive = FALSE;
 	m_bIgnoreScrollClick = FALSE;
 	m_bBallOnPaddle = FALSE;
 	m_nPaddleCelIndex = 29;
-	m_pPaddle = NULL;
-	m_pBall = NULL;
+	m_pPaddle = nullptr;
+	m_pBall = nullptr;
 	m_bMovingPaddle = FALSE;
 	m_lScore = 0;
-	m_pBrickSound = NULL;
-	m_pWallSound = NULL;
-	m_pPaddleSound = NULL;
-	m_pExtraLifeSound = NULL;
-	m_hBrickRes = NULL;
-	m_hWallRes = NULL;
-	m_hPaddleRes = NULL;
-	m_hExtraLifeRes = NULL;
+	m_pBrickSound = nullptr;
+	m_pWallSound = nullptr;
+	m_pPaddleSound = nullptr;
+	m_pExtraLifeSound = nullptr;
+	m_hBrickRes = nullptr;
+	m_hWallRes = nullptr;
+	m_hPaddleRes = nullptr;
+	m_hExtraLifeRes = nullptr;
 	pGameParams->lScore = 0;
 	m_nNumRows = 0;
 	m_bJoyActive = FALSE;
@@ -407,7 +407,7 @@ CFugeWindow::CFugeWindow(VOID) {
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
-	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 
 	// can't play this game if the background art is not available
 	//
@@ -415,10 +415,10 @@ CFugeWindow::CFugeWindow(VOID) {
 
 		// get this game's palette
 		//
-		if ((pDC = GetDC()) != NULL) {
-			if ((pBmp = FetchBitmap(pDC, &m_pGamePalette, MINI_GAME_MAP)) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
+			if ((pBmp = FetchBitmap(pDC, &m_pGamePalette, MINI_GAME_MAP)) != nullptr) {
 				delete pBmp;
-				pBmp = NULL;
+				pBmp = nullptr;
 				pGamePalette = m_pGamePalette;
 			}
 			ReleaseDC(pDC);
@@ -432,7 +432,7 @@ CFugeWindow::CFugeWindow(VOID) {
 	//
 	tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	#ifndef DEBUG
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
 		tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
 		tmpRect.right = tmpRect.left + GAME_WIDTH;
@@ -451,7 +451,7 @@ CFugeWindow::CFugeWindow(VOID) {
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
 	//
-	Create(WndClass, "Boffo Games -- Fuge", WS_POPUP, tmpRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Fuge", WS_POPUP, tmpRect, nullptr, 0);
 
 	BeginWaitCursor();
 	ShowWindow(SW_SHOWNORMAL);
@@ -464,11 +464,11 @@ CFugeWindow::CFugeWindow(VOID) {
 	//
 	if (errCode == ERR_NONE) {
 
-		if ((m_pScrollButton = new CBmpButton) != NULL) {
+		if ((m_pScrollButton = new CBmpButton) != nullptr) {
 
 			m_bIgnoreScrollClick = FALSE;
 			tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y, SCROLL_BUTTON_X + SCROLL_BUTTON_DX, SCROLL_BUTTON_Y + SCROLL_BUTTON_DY);
-			bSuccess = m_pScrollButton->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
+			bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
 			assert(bSuccess);
 			if (bSuccess) {
 				bSuccess = m_pScrollButton->LoadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
@@ -489,7 +489,7 @@ CFugeWindow::CFugeWindow(VOID) {
 			// Start the Fuge soundtrack
 			//
 			if (pGameParams->bMusicEnabled) {
-				if ((m_pSoundTrack = new CSound) != NULL) {
+				if ((m_pSoundTrack = new CSound) != nullptr) {
 					m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 				} else {
@@ -498,7 +498,7 @@ CFugeWindow::CFugeWindow(VOID) {
 			}
 
 			// seed the random number generator
-			//srand((UINT)time(NULL));
+			//srand((UINT)time(nullptr));
 
 			//
 			// The vector table is rotated by 11 or so degrees, because it
@@ -579,9 +579,9 @@ ERROR_CODE CFugeWindow::LoadMasterSprites(VOID) {
 
 	if (errCode == ERR_NONE) {
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 
-			if ((m_pBall = new CSprite) != NULL) {
+			if ((m_pBall = new CSprite) != nullptr) {
 
 				if (m_pBall->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -617,16 +617,16 @@ ERROR_CODE CFugeWindow::LoadMasterSprites(VOID) {
 }
 
 VOID CFugeWindow::ReleaseMasterSprites(VOID) {
-	assert(m_pBall != NULL);
-	if (m_pBall != NULL) {
+	assert(m_pBall != nullptr);
+	if (m_pBall != nullptr) {
 		delete m_pBall;
-		m_pBall = NULL;
+		m_pBall = nullptr;
 	}
 
-	assert(m_pPaddle != NULL);
-	if (m_pPaddle != NULL) {
+	assert(m_pPaddle != nullptr);
+	if (m_pPaddle != nullptr) {
 		delete m_pPaddle;
-		m_pPaddle = NULL;
+		m_pPaddle = nullptr;
 	}
 }
 
@@ -646,7 +646,7 @@ VOID CFugeWindow::HandleError(ERROR_CODE errCode) {
 		PostMessage(WM_CLOSE, 0, 0);
 
 		// Don't allow a repaint (remove all WM_PAINT messages)
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 }
 
@@ -668,7 +668,7 @@ VOID CFugeWindow::PaintScreen() {
 	// Paint the background art and upadate any sprites called by OnPaint
 	//
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		// painting the bricks will paint the screen
 		//
@@ -699,7 +699,7 @@ VOID CFugeWindow::RepaintSpriteList(CDC *pDC) {
 	CSprite *pSprite;
 
 	// can't use a null pointer
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	//
 	// Paint each sprite
@@ -726,7 +726,7 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this,
 	                       m_pGamePalette,
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
-	                       GetGameParams, "fuge.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL), pGameParams);
+	                       GetGameParams, "fuge.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr), pGameParams);
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
@@ -773,15 +773,15 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				m_pScrollButton->SendMessage(BM_SETSTATE, FALSE, 0);
 				m_bIgnoreScrollClick = FALSE;
 
-				if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
+				if (!pGameParams->bMusicEnabled && (m_pSoundTrack != nullptr)) {
 
 					m_pSoundTrack->stop();
 					delete m_pSoundTrack;
-					m_pSoundTrack = NULL;
+					m_pSoundTrack = nullptr;
 
-				} else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
+				} else if (pGameParams->bMusicEnabled && (m_pSoundTrack == nullptr)) {
 
-					if ((m_pSoundTrack = new CSound) != NULL) {
+					if ((m_pSoundTrack = new CSound) != nullptr) {
 						m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 						m_pSoundTrack->midiLoopPlaySegment(5390, 32280, 0, FMT_MILLISEC);
 					}
@@ -839,7 +839,7 @@ VOID CFugeWindow::PlayGame(VOID) {
 		// game starts paused
 		m_bPause = TRUE;
 		m_bGameActive = TRUE;
-		SetTimer(TIMER_ID, TIMER_INTERVAL, NULL);
+		SetTimer(TIMER_ID, TIMER_INTERVAL, nullptr);
 	}
 
 	HandleError(errCode);
@@ -855,20 +855,20 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		// don't try to load the same paddle
 		//
 		if (nOldSize != nNewSize) {
 
-			if (m_pPaddle != NULL) {
+			if (m_pPaddle != nullptr) {
 				m_pPaddle->EraseSprite(pDC);
 				m_pPaddle->UnlinkSprite();
 				delete m_pPaddle;
-				m_pPaddle = NULL;
+				m_pPaddle = nullptr;
 			}
 
-			if ((m_pPaddle = new CSprite) != NULL) {
+			if ((m_pPaddle = new CSprite) != nullptr) {
 
 				if (m_pPaddle->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -913,11 +913,11 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
 
 	// Load and lock the Brick "ping" into memory
 	//
-	if ((hResInfo = FindResource(hInst, "brickSound", "WAVE")) != NULL) {
+	if ((hResInfo = FindResource(hInst, "brickSound", "WAVE")) != nullptr) {
 
-		if ((m_hBrickRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+		if ((m_hBrickRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-			if ((m_pBrickSound = (LPSTR)LockResource((HGLOBAL)m_hBrickRes)) != NULL) {
+			if ((m_pBrickSound = (LPSTR)LockResource((HGLOBAL)m_hBrickRes)) != nullptr) {
 
 				// we have now loaded at least one of the master sounds
 
@@ -935,11 +935,11 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
 
 		// Load and lock the wall "ping" into memory
 		//
-		if ((hResInfo = FindResource(hInst, "wallSound", "WAVE")) != NULL) {
+		if ((hResInfo = FindResource(hInst, "wallSound", "WAVE")) != nullptr) {
 
-			if ((m_hWallRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+			if ((m_hWallRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pWallSound = (LPSTR)LockResource((HGLOBAL)m_hWallRes)) == NULL)
+				if ((m_pWallSound = (LPSTR)LockResource((HGLOBAL)m_hWallRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -953,11 +953,11 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
 
 		// Load and lock the paddle "ping" into memory
 		//
-		if ((hResInfo = FindResource(hInst, "paddleSound", "WAVE")) != NULL) {
+		if ((hResInfo = FindResource(hInst, "paddleSound", "WAVE")) != nullptr) {
 
-			if ((m_hPaddleRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+			if ((m_hPaddleRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pPaddleSound = (LPSTR)LockResource((HGLOBAL)m_hPaddleRes)) == NULL)
+				if ((m_pPaddleSound = (LPSTR)LockResource((HGLOBAL)m_hPaddleRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -971,11 +971,11 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
 
 		// Load and lock the extra life sound into memory
 		//
-		if ((hResInfo = FindResource(hInst, "NewLife", "WAVE")) != NULL) {
+		if ((hResInfo = FindResource(hInst, "NewLife", "WAVE")) != nullptr) {
 
-			if ((m_hExtraLifeRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+			if ((m_hExtraLifeRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pExtraLifeSound = (LPSTR)LockResource((HGLOBAL)m_hExtraLifeRes)) == NULL)
+				if ((m_pExtraLifeSound = (LPSTR)LockResource((HGLOBAL)m_hExtraLifeRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -990,30 +990,30 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
 
 
 VOID CFugeWindow::ReleaseMasterSounds(VOID) {
-	if (m_hExtraLifeRes != NULL) {
+	if (m_hExtraLifeRes != nullptr) {
 		FreeResource(m_hExtraLifeRes);
-		m_hExtraLifeRes = NULL;
+		m_hExtraLifeRes = nullptr;
 	}
-	if (m_pPaddleSound != NULL) {
+	if (m_pPaddleSound != nullptr) {
 		FreeResource(m_hPaddleRes);
-		m_pPaddleSound = NULL;
+		m_pPaddleSound = nullptr;
 	}
-	if (m_pWallSound != NULL) {
+	if (m_pWallSound != nullptr) {
 		FreeResource(m_hWallRes);
-		m_pWallSound = NULL;
+		m_pWallSound = nullptr;
 	}
-	if (m_pBrickSound != NULL) {
+	if (m_pBrickSound != nullptr) {
 		FreeResource(m_hBrickRes);
-		m_pBrickSound = NULL;
+		m_pBrickSound = nullptr;
 	}
 }
 
 
 VOID CFugeWindow::EndBall(VOID) {
 	CDC *pDC;
-	assert(m_pBall != NULL);
+	assert(m_pBall != nullptr);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		if (m_pBall->IsLinked()) {
 			m_pBall->EraseSprite(pDC);
 			m_pBall->UnlinkSprite();
@@ -1026,7 +1026,7 @@ VOID CFugeWindow::EndBall(VOID) {
 VOID CFugeWindow::StartBall(VOID) {
 	CDC *pDC;
 
-	assert(m_pBall != NULL);
+	assert(m_pBall != nullptr);
 
 	// have the ball start on the paddle like in arkinoids
 	//
@@ -1034,7 +1034,7 @@ VOID CFugeWindow::StartBall(VOID) {
 	m_ptBallLocation = BallOnPaddle();
 
 	m_pBall->LinkSprite();
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		m_pBall->PaintSprite(pDC, (INT)m_ptBallLocation.x, (INT)m_ptBallLocation.y);
 		ReleaseDC(pDC);
 	}
@@ -1064,7 +1064,7 @@ VOID CFugeWindow::PaintBall(VOID) {
 
 	if (m_bGameActive && !m_bPause && !m_bBallOnPaddle) {
 
-		assert(m_pBall != NULL);
+		assert(m_pBall != nullptr);
 
 		ptLast.x = (INT)m_ptBallLocation.x;
 		ptLast.y = (INT)m_ptBallLocation.y;
@@ -1232,7 +1232,7 @@ VOID CFugeWindow::PaintBall(VOID) {
 
 				// paint the ball to it's new location
 				//
-				if ((pDC = GetDC()) != NULL) {
+				if ((pDC = GetDC()) != nullptr) {
 					m_pBall->PaintSprite(pDC, (INT)m_ptBallLocation.x, (INT)m_ptBallLocation.y);
 					ReleaseDC(pDC);
 				}
@@ -1680,7 +1680,7 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length) {
 						sndPlaySound(m_pBrickSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
 					}
 
-					if ((pDC = GetDC()) != NULL) {
+					if ((pDC = GetDC()) != nullptr) {
 						m_pBall->EraseSprite(pDC);
 						EraseBrick(pDC, nBrickIndex);
 						m_pBall->PaintSprite(pDC, m_pBall->GetPosition());
@@ -1743,7 +1743,7 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length) {
 						if (pGameParams->bSoundEffectsEnabled) {
 							#if CSOUND
 							#else
-							sndPlaySound(NULL, SND_ASYNC);
+							sndPlaySound(nullptr, SND_ASYNC);
 							#endif
 						}
 
@@ -1887,7 +1887,7 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length) {
 
 
 VOID CFugeWindow::EraseBrick(CDC *pDC, INT nBrickIndex) {
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	assert((nBrickIndex >= 0) && (nBrickIndex < N_BRICKS));
 
@@ -1913,7 +1913,7 @@ VOID CFugeWindow::LoseBall(VOID) {
 	// reset turbo
 	m_fTurboBoost = 0.0;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		m_pBall->EraseSprite(pDC);
 		m_pBall->UnlinkSprite();
@@ -1938,7 +1938,7 @@ VOID CFugeWindow::LoseBall(VOID) {
 
 		        // start the black hole animation
 		        //
-		        if ((pSprite = new CSprite) != NULL) {
+		        if ((pSprite = new CSprite) != nullptr) {
 
 		            if (pSprite->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -2023,9 +2023,9 @@ VOID CFugeWindow::LoseBall(VOID) {
 
 
 VOID CFugeWindow::StartPaddle(VOID) {
-	assert(m_pPaddle != NULL);
+	assert(m_pPaddle != nullptr);
 
-	if (m_pPaddle != NULL)
+	if (m_pPaddle != nullptr)
 		m_pPaddle->LinkSprite();
 
 	m_bBallOnPaddle = TRUE;
@@ -2037,10 +2037,10 @@ VOID CFugeWindow::StartPaddle(VOID) {
 VOID CFugeWindow::EndPaddle(VOID) {
 	CDC *pDC;
 
-	assert(m_pPaddle != NULL);
+	assert(m_pPaddle != nullptr);
 
-	if ((m_pPaddle != NULL) && (m_pPaddle->IsLinked())) {
-		if ((pDC = GetDC()) != NULL) {
+	if ((m_pPaddle != nullptr) && (m_pPaddle->IsLinked())) {
+		if ((pDC = GetDC()) != nullptr) {
 			m_pPaddle->EraseSprite(pDC);
 			m_pPaddle->UnlinkSprite();
 			ReleaseDC(pDC);
@@ -2078,7 +2078,7 @@ VOID CFugeWindow::PaintPaddle(BOOL bPaint) {
 	assert(m_nPaddleCelIndex > -N_PADDLE_CELS);
 
 	// can't access a null pointer
-	assert(m_pPaddle != NULL);
+	assert(m_pPaddle != nullptr);
 
 	// get old cel index
 	nOldIndex = m_pPaddle->GetCelIndex();
@@ -2101,7 +2101,7 @@ VOID CFugeWindow::PaintPaddle(BOOL bPaint) {
 
 		// paint paddle to new location
 		//
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 			bSuccess = m_pPaddle->PaintSprite(pDC, PADDLE_START_X, PADDLE_START_Y);
 			assert(bSuccess);
 
@@ -2109,7 +2109,7 @@ VOID CFugeWindow::PaintPaddle(BOOL bPaint) {
 			//
 			if (m_bBallOnPaddle) {
 
-				assert(m_pBall != NULL);
+				assert(m_pBall != nullptr);
 
 				// ball is rotating with paddle
 				//
@@ -2178,7 +2178,7 @@ VOID CFugeWindow::StartBricks(VOID) {
 		}
 	}
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		PaintBricks(pDC);
 		ReleaseDC(pDC);
 	}
@@ -2193,23 +2193,23 @@ VOID CFugeWindow::PaintBricks(CDC *pDC) {
 	HBITMAP   hOldBitmap;
 	INT i;
 
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 	assert((m_nNumRows >= 0) && (m_nNumRows <= N_ROWS));
 
 	if (FileExists(pszFugeArt[m_nNumRows])) {
 
-		pBmp = FetchBitmap(pDC, NULL, pszFugeArt[m_nNumRows]);
+		pBmp = FetchBitmap(pDC, nullptr, pszFugeArt[m_nNumRows]);
 
-		pMemDC = NULL;
-		pMemBmp = NULL;
-		if ((pMemDC = new CDC) != NULL) {
+		pMemDC = nullptr;
+		pMemBmp = nullptr;
+		if ((pMemDC = new CDC) != nullptr) {
 
-			if ((pMemBmp = new CBitmap) != NULL) {
+			if ((pMemBmp = new CBitmap) != nullptr) {
 
 				size = GetBitmapSize(pBmp);
 				if ((m_nNumRows != 0) && (pMemBmp->CreateCompatibleBitmap(pDC, size.cx, size.cy) != FALSE)) {
 
-					pMemDC->CreateCompatibleDC(NULL);
+					pMemDC->CreateCompatibleDC(nullptr);
 					pPalOld = pMemDC->SelectPalette(m_pGamePalette, FALSE);
 					pMemDC->RealizePalette();
 					hOldBitmap = SelectBitmap(pMemDC->m_hDC, pMemBmp->m_hObject);
@@ -2253,20 +2253,20 @@ VOID CFugeWindow::PaintBricks(CDC *pDC) {
 			}
 		}
 
-		if (pMemBmp != NULL) {
+		if (pMemBmp != nullptr) {
 			delete pMemBmp;
-			pMemBmp = NULL;
+			pMemBmp = nullptr;
 		}
-		if (pMemDC != NULL) {
+		if (pMemDC != nullptr) {
 			delete pMemDC;
-			pMemDC = NULL;
+			pMemDC = nullptr;
 		}
-		if (pBmp != NULL) {
+		if (pBmp != nullptr) {
 			delete pBmp;
-			pBmp = NULL;
+			pBmp = nullptr;
 		}
 	}
-	if (m_pScrollButton != NULL) {
+	if (m_pScrollButton != nullptr) {
 		m_pScrollButton->Invalidate(FALSE);
 		m_pScrollButton->UpdateWindow();
 	}
@@ -2339,7 +2339,7 @@ VOID CFugeWindow::GameReset(VOID) {
 	if (pGameParams->bSoundEffectsEnabled) {
 		#if CSOUND
 		#else
-		sndPlaySound(NULL, SND_ASYNC);          // stop all sounds
+		sndPlaySound(nullptr, SND_ASYNC);          // stop all sounds
 		#endif
 	}
 
@@ -2489,10 +2489,10 @@ VOID CFugeWindow::OnMouseMove(UINT, CPoint point) {
 		}
 
 		// hide the cursor
-		SetCursor(NULL);
+		SetCursor(nullptr);
 
 	} else {
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	}
 }
 
@@ -2506,12 +2506,12 @@ VOID CFugeWindow::OnRButtonUp(UINT nFlags, CPoint point) {
 
 		if (m_bMovingPaddle) {
 
-			SetCursor(NULL);
+			SetCursor(nullptr);
 			SetCursorPos(m_ptOrigin.x, m_ptOrigin.y);
 			GameResume();
 
 		} else {
-			SetCursor(LoadCursor(NULL, IDC_ARROW));
+			SetCursor(LoadCursor(nullptr, IDC_ARROW));
 			GamePause();
 		}
 
@@ -2716,7 +2716,7 @@ void CFugeWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	case VK_F1: {
 		GamePause();
 		CSound::waitWaveSounds();
-		CRules  RulesDlg(this, "fuge.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
+		CRules  RulesDlg(this, "fuge.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr));
 		RulesDlg.DoModal();
 		GameResume();
 	}
@@ -2752,7 +2752,7 @@ void CFugeWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 
 		default:
@@ -2766,7 +2766,7 @@ LONG CFugeWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 
 	return (0);
@@ -2777,7 +2777,7 @@ LONG CFugeWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 
 	return (0);
@@ -2797,7 +2797,7 @@ VOID CFugeWindow::OnClose() {
 	CRect myRect;
 	CDC *pDC;
 
-	ClipCursor(NULL);
+	ClipCursor(nullptr);
 
 	// perform cleanup
 	//
@@ -2809,12 +2809,12 @@ VOID CFugeWindow::OnClose() {
 
 	// Stop the sountrack
 	//
-	if (m_pSoundTrack != NULL) {
+	if (m_pSoundTrack != nullptr) {
 
 		// we should have been playing music
 		assert(pGameParams->bMusicEnabled);
 		delete m_pSoundTrack;
-		m_pSoundTrack = NULL;
+		m_pSoundTrack = nullptr;
 	}
 
 	#if CSOUND
@@ -2824,23 +2824,23 @@ VOID CFugeWindow::OnClose() {
 	//
 	// de-allocate the main menu scroll button
 	//
-	assert(m_pScrollButton != NULL);
-	if (m_pScrollButton != NULL) {
+	assert(m_pScrollButton != nullptr);
+	if (m_pScrollButton != nullptr) {
 		delete m_pScrollButton;
-		m_pScrollButton = NULL;
+		m_pScrollButton = nullptr;
 	}
 
 	//
 	// need to de-allocate the game palette
 	//
-	assert(m_pGamePalette != NULL);
-	if (m_pGamePalette != NULL) {
+	assert(m_pGamePalette != nullptr);
+	if (m_pGamePalette != nullptr) {
 		m_pGamePalette->DeleteObject();
 		delete m_pGamePalette;
-		m_pGamePalette = NULL;
+		m_pGamePalette = nullptr;
 	}
 
-	if ((pDC = GetDC()) != NULL) {              // paint black
+	if ((pDC = GetDC()) != nullptr) {              // paint black
 
 		myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 		myBrush.CreateStockObject(BLACK_BRUSH);

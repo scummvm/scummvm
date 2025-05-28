@@ -26,7 +26,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define BOOBYSOUND(n) NULL
+#define BOOBYSOUND(n) nullptr
 
 // character codes
 #define MG_CHAR_HODJ            100
@@ -497,14 +497,14 @@ public:
 
 #define FINDS(tab, idx) { const C##tab *lpTab ; \
 		for (lpTab = c##tab ;; ++lpTab) \
-			if (!lpTab->m_##idx) return(NULL) ; \
+			if (!lpTab->m_##idx) return(nullptr) ; \
 			else if (lpTab->m_##idx == idx) return(lpTab) ;}
 
 
 #define FINDI(nm, tab, idx) { \
 		if (idx >= MG_##nm##_BASE && idx <= MG_##nm##_MAX) \
 			return(c##tab+(idx-MG_##nm##_BASE)) ; \
-		else return(NULL) ; }
+		else return(nullptr) ; }
 
 // CMgStatic -- meta game static class
 class CMgStatic {

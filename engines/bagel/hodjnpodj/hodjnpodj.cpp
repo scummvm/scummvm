@@ -143,9 +143,9 @@ void HodjNPodjEngine::selectMinigame(int newArea) {
 	#ifdef TODO
 	if (bReturnToZoom) {
 
-		if (lpGameStruct != NULL) {
+		if (lpGameStruct != nullptr) {
 			delete lpGameStruct;
-			lpGameStruct = NULL;
+			lpGameStruct = nullptr;
 		}
 		lpGameStruct = new GAMESTRUCT;
 		lpGameStruct->lCrowns = 1000;

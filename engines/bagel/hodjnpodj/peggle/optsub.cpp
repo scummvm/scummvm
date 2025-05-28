@@ -45,17 +45,17 @@ extern  CBmpButton  *m_pTriPButton;
 extern  CBmpButton  *m_pCroButton;
 extern  CBmpButton  *m_pCroPButton;
 
-CPalette    *pOptionsPalette = NULL;
+CPalette    *pOptionsPalette = nullptr;
 
-static  CColorButton *pRulesButton = NULL;
-static  CColorButton *pNewgameButton = NULL;
-static  CColorButton *pOptionsButton = NULL;
-static  CColorButton *pAudioButton = NULL;
-static  CColorButton *pReturnButton = NULL;
-static  CColorButton *pQuitButton = NULL;
+static  CColorButton *pRulesButton = nullptr;
+static  CColorButton *pNewgameButton = nullptr;
+static  CColorButton *pOptionsButton = nullptr;
+static  CColorButton *pAudioButton = nullptr;
+static  CColorButton *pReturnButton = nullptr;
+static  CColorButton *pQuitButton = nullptr;
 
-static  CColorButton *pOkayButton = NULL;
-static  CColorButton *pCancelButton = NULL;
+static  CColorButton *pOkayButton = nullptr;
+static  CColorButton *pCancelButton = nullptr;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ COptions::COptions(CWnd* pParent, CPalette *pPalette, int iDlgId)
 	: CDialog(iDlgId, pParent) {
 	pOptionsPalette = pPalette;
 	m_iDlgId = iDlgId ;     // dialog id
-	if (pParent == NULL)
+	if (pParent == nullptr)
 		m_pDlgParentWnd = ((CWnd *)this)->GetParent();
 	else
 		m_pDlgParentWnd = pParent ;
@@ -147,49 +147,49 @@ BOOL COptions::OnInitDialog(void) {
 	MoveWindow(&cDlgRect, FALSE) ;  // center window, don't repaint
 
 	pDC = GetDC();
-	ASSERT(pDC != NULL);
+	ASSERT(pDC != nullptr);
 	m_pDlgBackground = FetchScreenBitmap(pDC, pOptionsPalette, 0, 0, iDlgWidth, iDlgHeight);
-	ASSERT(m_pDlgBackground != NULL);
+	ASSERT(m_pDlgBackground != nullptr);
 	ReleaseDC(pDC);
 
 	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 		pRulesButton = new CColorButton();
-		ASSERT(pRulesButton != NULL);
+		ASSERT(pRulesButton != nullptr);
 		(*pRulesButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pRulesButton).SetControl(IDC_OPTIONS_RULES, this);
 
 		pNewgameButton = new CColorButton();
-		ASSERT(pNewgameButton != NULL);
+		ASSERT(pNewgameButton != nullptr);
 		(*pNewgameButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pNewgameButton).SetControl(IDC_OPTIONS_NEWGAME, this);
 
 		pOptionsButton = new CColorButton();
-		ASSERT(pOptionsButton != NULL);
+		ASSERT(pOptionsButton != nullptr);
 		(*pOptionsButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pOptionsButton).SetControl(IDC_OPTIONS_OPTIONS, this);
 
 		pAudioButton = new CColorButton();
-		ASSERT(pAudioButton != NULL);
+		ASSERT(pAudioButton != nullptr);
 		(*pAudioButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pAudioButton).SetControl(IDC_OPTIONS_AUDIO, this);
 
 		pReturnButton = new CColorButton();
-		ASSERT(pReturnButton != NULL);
+		ASSERT(pReturnButton != nullptr);
 		(*pReturnButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pReturnButton).SetControl(IDC_OPTIONS_RETURN, this);
 
 		pQuitButton = new CColorButton();
-		ASSERT(pQuitButton != NULL);
+		ASSERT(pQuitButton != nullptr);
 		(*pQuitButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pQuitButton).SetControl(IDC_OPTIONS_QUIT, this);
 	} else if (m_iDlgId == IDD_SUBOPTIONS) {
 		pOkayButton = new CColorButton();
-		ASSERT(pOkayButton != NULL);
+		ASSERT(pOkayButton != nullptr);
 		(*pOkayButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pOkayButton).SetControl(IDC_SUB_OKAY, this);
 
 		pCancelButton = new CColorButton();
-		ASSERT(pCancelButton != NULL);
+		ASSERT(pCancelButton != nullptr);
 		(*pCancelButton).SetPalette(pOptionsPalette);
 		bSuccess = (*pCancelButton).SetControl(IDC_SUB_CANCEL, this);
 	}
@@ -197,17 +197,17 @@ BOOL COptions::OnInitDialog(void) {
 	#if DEMO_FLAG
 	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 		pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
-		ASSERT(pButton != NULL);                        // ... and verify we have it
+		ASSERT(pButton != nullptr);                        // ... and verify we have it
 		(*pButton).EnableWindow(FALSE);
 	}
 	#else
 	if ((*pGameInfo).bPlayingMetagame) {
 		if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 			pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
-			ASSERT(pButton != NULL);                        // ... and verify we have it
+			ASSERT(pButton != nullptr);                        // ... and verify we have it
 			(*pButton).EnableWindow(FALSE);
 			pButton = GetDlgItem(IDC_OPTIONS_NEWGAME);      // get the window for the options button
-			ASSERT(pButton != NULL);                        // ... and verify we have it
+			ASSERT(pButton != nullptr);                        // ... and verify we have it
 			(*pButton).EnableWindow(FALSE);
 		}
 	}
@@ -221,40 +221,40 @@ void COptions::OnDestroy(void) {
 	BOOL    bUpdateNeeded;
 
 	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
-		if (pRulesButton != NULL)
+		if (pRulesButton != nullptr)
 			delete pRulesButton;
-		if (pNewgameButton != NULL)
+		if (pNewgameButton != nullptr)
 			delete pNewgameButton;
-		if (pOptionsButton != NULL)
+		if (pOptionsButton != nullptr)
 			delete pOptionsButton;
-		if (pAudioButton != NULL)
+		if (pAudioButton != nullptr)
 			delete pAudioButton;
-		if (pReturnButton != NULL)
+		if (pReturnButton != nullptr)
 			delete pReturnButton;
-		if (pQuitButton != NULL)
+		if (pQuitButton != nullptr)
 			delete pQuitButton;
 	} else if (m_iDlgId == IDD_SUBOPTIONS) {
-		if (pOkayButton != NULL)
+		if (pOkayButton != nullptr)
 			delete pOkayButton;
-		if (pCancelButton != NULL)
+		if (pCancelButton != nullptr)
 			delete pCancelButton;
-		if (m_pTriButton != NULL)
+		if (m_pTriButton != nullptr)
 			delete m_pTriButton;
-		if (m_pTriPButton != NULL)
+		if (m_pTriPButton != nullptr)
 			delete m_pTriPButton;
-		if (m_pCroButton != NULL)
+		if (m_pCroButton != nullptr)
 			delete m_pCroButton;
-		if (m_pCroPButton != NULL)
+		if (m_pCroPButton != nullptr)
 			delete m_pCroPButton;
 	}
 
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 		delete m_pDlgBackground;
-		m_pDlgBackground = NULL;
+		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(NULL, FALSE);
+		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			(*m_pDlgParentWnd).ValidateRect(NULL);
+			(*m_pDlgParentWnd).ValidateRect(nullptr);
 	}
 
 	CDialog::OnDestroy();
@@ -267,7 +267,7 @@ if (!bMinimized)
     switch(nState) {
         case WA_ACTIVE:
         case WA_CLICKACTIVE:
-                InvalidateRect(NULL,FALSE);
+                InvalidateRect(nullptr,FALSE);
             break;
         }
 }
@@ -280,15 +280,15 @@ BOOL COptions::OnEraseBkgnd(CDC *pDC) {
 
 void COptions::OnPaint(void) {
 	BOOL        bSuccess;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 
-	InvalidateRect(NULL, FALSE);
+	InvalidateRect(nullptr, FALSE);
 
 	CPaintDC    dc(this);                               // device context for painting
 
 	RefreshBackground();
 
-	if (pOptionsPalette != NULL) {
+	if (pOptionsPalette != nullptr) {
 		pPalOld = dc.SelectPalette(pOptionsPalette, FALSE);
 		(void) dc.RealizePalette();
 	}
@@ -296,55 +296,55 @@ void COptions::OnPaint(void) {
 	bSuccess = PaintMaskedDIB(&dc, pOptionsPalette, ".\\art\\oscroll.bmp", 0, 0);
 	ASSERT(bSuccess);
 
-	if (pOptionsPalette != NULL)
+	if (pOptionsPalette != nullptr)
 		(void) dc.SelectPalette(pPalOld, FALSE);
 }
 
 
 void COptions::ClearDialogImage(void) {
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 		if (m_iDlgId == IDD_OPTIONS_DIALOG) {
-			if (pRulesButton != NULL)
+			if (pRulesButton != nullptr)
 				delete pRulesButton;
-			if (pNewgameButton != NULL)
+			if (pNewgameButton != nullptr)
 				delete pNewgameButton;
-			if (pOptionsButton != NULL)
+			if (pOptionsButton != nullptr)
 				delete pOptionsButton;
-			if (pAudioButton != NULL)
+			if (pAudioButton != nullptr)
 				delete pAudioButton;
-			if (pReturnButton != NULL)
+			if (pReturnButton != nullptr)
 				delete pReturnButton;
-			if (pQuitButton != NULL)
+			if (pQuitButton != nullptr)
 				delete pQuitButton;
-			pRulesButton = NULL;
-			pNewgameButton = NULL;
-			pOptionsButton = NULL;
-			pReturnButton = NULL;
-			pQuitButton = NULL;
-			pAudioButton = NULL;
+			pRulesButton = nullptr;
+			pNewgameButton = nullptr;
+			pOptionsButton = nullptr;
+			pReturnButton = nullptr;
+			pQuitButton = nullptr;
+			pAudioButton = nullptr;
 		} else if (m_iDlgId == IDD_SUBOPTIONS) {
-			if (pOkayButton != NULL)
+			if (pOkayButton != nullptr)
 				delete pOkayButton;
-			if (pCancelButton != NULL)
+			if (pCancelButton != nullptr)
 				delete pCancelButton;
-			if (m_pTriButton != NULL)
+			if (m_pTriButton != nullptr)
 				delete m_pTriButton;
-			if (m_pTriPButton != NULL)
+			if (m_pTriPButton != nullptr)
 				delete m_pTriPButton;
-			if (m_pCroButton != NULL)
+			if (m_pCroButton != nullptr)
 				delete m_pCroButton;
-			if (m_pCroPButton != NULL)
+			if (m_pCroPButton != nullptr)
 				delete m_pCroPButton;
-			pOkayButton = NULL;
-			pCancelButton = NULL;
-			m_pTriButton = NULL;
-			m_pTriPButton = NULL;
-			m_pCroButton = NULL;
-			m_pCroPButton = NULL;
+			pOkayButton = nullptr;
+			pCancelButton = nullptr;
+			m_pTriButton = nullptr;
+			m_pTriPButton = nullptr;
+			m_pCroButton = nullptr;
+			m_pCroPButton = nullptr;
 		}
-		InvalidateRect(NULL, FALSE);
+		InvalidateRect(nullptr, FALSE);
 		RefreshBackground();
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 }
 
@@ -352,14 +352,14 @@ void COptions::ClearDialogImage(void) {
 void COptions::RefreshBackground(void) {
 	BOOL        bSuccess;
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 
-	if (m_pDlgBackground == NULL)
+	if (m_pDlgBackground == nullptr)
 		return;
 
 	pDC = GetDC();
 
-	if (pOptionsPalette != NULL) {
+	if (pOptionsPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(pOptionsPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -367,7 +367,7 @@ void COptions::RefreshBackground(void) {
 	bSuccess = PaintBitmap(pDC, pOptionsPalette, m_pDlgBackground, 0, 0);
 	ASSERT(bSuccess);
 
-	if (pOptionsPalette != NULL)
+	if (pOptionsPalette != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	ReleaseDC(pDC);

@@ -91,14 +91,14 @@ CMainWindow::CMainWindow(VOID) {
 
 	// Initialize members
 	//
-	m_pScrollSprite = NULL;
-	m_pGamePalette = NULL;
+	m_pScrollSprite = nullptr;
+	m_pGamePalette = nullptr;
 	m_bPause = FALSE;
 	m_bGameActive = FALSE;
 	m_bInMenu = FALSE;
 	m_bMIDIPlaying = FALSE;
-	m_pBarb = NULL;
-	m_pMIDISound = NULL;
+	m_pBarb = nullptr;
+	m_pMIDISound = nullptr;
 
 	// Initialize score to LOSE condition in case the user bails out
 	//
@@ -113,7 +113,7 @@ CMainWindow::CMainWindow(VOID) {
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
-	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 
 	// can't play this game if the background art is not available
 	//
@@ -121,7 +121,7 @@ CMainWindow::CMainWindow(VOID) {
 
 		// Acquire the shared palette for our game from the splash screen art
 		//
-		if ((pDibDoc = new CDibDoc()) != NULL) {
+		if ((pDibDoc = new CDibDoc()) != nullptr) {
 			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else
@@ -138,7 +138,7 @@ CMainWindow::CMainWindow(VOID) {
 	//
 	tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	#ifndef BAGEL_DEBUG
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
 		tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
 		tmpRect.right = tmpRect.left + GAME_WIDTH;
@@ -152,7 +152,7 @@ CMainWindow::CMainWindow(VOID) {
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
 	//
-	Create(WndClass, "Boffo Games -- Barbershop Quintet", WS_POPUP, tmpRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Barbershop Quintet", WS_POPUP, tmpRect, nullptr, 0);
 
 	BeginWaitCursor();
 	ShowWindow(SW_SHOWNORMAL);
@@ -163,12 +163,12 @@ CMainWindow::CMainWindow(VOID) {
 	//
 	if (errCode == ERR_NONE) {
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 
 			//
 			// build our main menu button
 			//
-			if ((m_pScrollSprite = new CSprite) != NULL) {
+			if ((m_pScrollSprite = new CSprite) != nullptr) {
 				m_pScrollSprite->SharePalette(m_pGamePalette);
 				bSuccess = m_pScrollSprite->LoadSprite(pDC, ".\\ART\\SCROLBTN.BMP");
 				assert(bSuccess);
@@ -187,7 +187,7 @@ CMainWindow::CMainWindow(VOID) {
 			if (errCode == ERR_NONE) {
 
 				// seed the random number generator
-				//srand((unsigned)time(NULL));
+				//srand((unsigned)time(nullptr));
 			}
 
 			ReleaseDC(pDC);
@@ -198,7 +198,7 @@ CMainWindow::CMainWindow(VOID) {
 		//
 		// Initialize midi music
 		//
-		if ((m_pMIDISound = new CSound((CWnd *) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) == NULL) {
+		if ((m_pMIDISound = new CSound((CWnd *) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) == nullptr) {
 			errCode = ERR_MEMORY;
 		}
 	}
@@ -207,7 +207,7 @@ CMainWindow::CMainWindow(VOID) {
 		//
 		// Initialize wav sound
 		//
-		if ((m_pWavSound = new CSound) == NULL) {
+		if ((m_pWavSound = new CSound) == nullptr) {
 			errCode = ERR_MEMORY;
 		}
 	}
@@ -216,7 +216,7 @@ CMainWindow::CMainWindow(VOID) {
 		//
 		// Initialize Barbershop Quintet!
 		//
-		if ((m_pBarb = new CBarber(pDC, m_pWavSound)) == NULL) {
+		if ((m_pBarb = new CBarber(pDC, m_pWavSound)) == nullptr) {
 			errCode = ERR_MEMORY;
 		} else {
 			g_nCardBack = m_pBarb->m_cPnt->m_nCardBack;
@@ -227,7 +227,7 @@ CMainWindow::CMainWindow(VOID) {
 		//
 		// Initialize animations
 		//
-		if ((m_pAnim = new CAnimate(m_pWavSound)) == NULL) {
+		if ((m_pAnim = new CAnimate(m_pWavSound)) == nullptr) {
 			errCode = ERR_MEMORY;
 		}
 	}
@@ -268,7 +268,7 @@ VOID CMainWindow::HandleError(ERROR_CODE errCode) {
 		PostMessage(WM_CLOSE, 0, 0);
 
 		// Don't allow a repaint (remove all WM_PAINT messages)
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 }
 
@@ -301,11 +301,11 @@ VOID CMainWindow::PaintScreen() {
 		hDIB = myDoc.GetHDIB();
 
 		pDC = GetDC();
-		assert(pDC != NULL);
+		assert(pDC != nullptr);
 
-		if (pDC != NULL) {
+		if (pDC != nullptr) {
 
-			if (hDIB && (m_pGamePalette != NULL)) {
+			if (hDIB && (m_pGamePalette != nullptr)) {
 
 				GetClientRect(rcDest);
 				LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
@@ -318,11 +318,11 @@ VOID CMainWindow::PaintScreen() {
 
 			// repaint the command scroll
 			//
-			if (!m_bInMenu && (m_pScrollSprite != NULL)) {
+			if (!m_bInMenu && (m_pScrollSprite != nullptr)) {
 				m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 			}
 
-			if (m_pBarb != NULL)
+			if (m_pBarb != nullptr)
 				m_pBarb->Refresh(pDC);  // repaint the board of cards
 
 			ReleaseDC(pDC);
@@ -364,7 +364,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			    (pGameParams->bPlayingMetagame ? NO_NEWGAME : 0),
 			    GetGameParams,
 			    RULES_TXT,
-			    pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL,
+			    pGameParams->bSoundEffectsEnabled ? RULES_WAV : nullptr,
 			    pGameParams
 			);
 
@@ -469,7 +469,7 @@ VOID CMainWindow::PlayGame() {
 	GameReset();
 
 	if (errCode == ERR_NONE) {
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 			//
 			// Start game
 			//
@@ -501,7 +501,7 @@ VOID CMainWindow::SaveIniSettings(VOID) {
 
 
 VOID CMainWindow::GameReset(VOID) {
-	//sndPlaySound(NULL, SND_SYNC);               // stop all sounds
+	//sndPlaySound(nullptr, SND_SYNC);               // stop all sounds
 }
 
 
@@ -520,8 +520,8 @@ VOID CMainWindow::OnTimer(UINT nEvent) {
 VOID CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CDC *pDC;
 
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
-	if (m_pBarb->m_pCrd != NULL) {
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));
+	if (m_pBarb->m_pCrd != nullptr) {
 		pDC = GetDC();
 		m_pBarb->OnMouseMove(pDC, point);
 		ReleaseDC(pDC);
@@ -533,7 +533,7 @@ VOID CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 VOID CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 	CPoint  UndoPoint(UNDO_LEF + (UNDO_RIG - UNDO_LEF) / 2, UNDO_TOP + (UNDO_BOT - UNDO_TOP) / 2);
 
-	if (m_pBarb->m_pCrd != NULL)        // r we currently moving a card?
+	if (m_pBarb->m_pCrd != nullptr)        // r we currently moving a card?
 		return;                         // Yes - just quit.
 
 	if (m_pBarb->m_bIsGameOver == FALSE) {
@@ -550,10 +550,10 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	char    buf[32];
 	CRect   tmpRect;
 
-	if (m_pBarb->m_pCrd != NULL)        // r we currently moving a card?
+	if (m_pBarb->m_pCrd != nullptr)        // r we currently moving a card?
 		return;                         // Yes - just quit.
 
-	if (m_pScrollSprite != NULL)
+	if (m_pScrollSprite != nullptr)
 		tmpRect = m_pScrollSprite->GetRect();
 
 	pDC = GetDC();
@@ -653,7 +653,7 @@ VOID CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
 	char    buf[32];
 	CRect   tmpRect;
 
-	if (m_pScrollSprite != NULL)
+	if (m_pScrollSprite != nullptr)
 		tmpRect = m_pScrollSprite->GetRect();
 
 	// User clicked on the Menu button
@@ -761,9 +761,9 @@ VOID CMainWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		pSprite->EraseSprite(pDC);                  // erase it from screen
 		ReleaseDC(pDC);
 	}
@@ -811,13 +811,13 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	// Bring up the Rules
 	//
 	case VK_F1: {
-		if (m_pBarb->m_pCrd != NULL) {      // user holding a card?
+		if (m_pBarb->m_pCrd != nullptr) {      // user holding a card?
 			break;                          // yeap, can't allow this
 		}
 
 		GamePause();
 		CSound::waitWaveSounds();
-		CRules  RulesDlg(this, RULES_TXT, m_pGamePalette, pGameParams->bSoundEffectsEnabled ? RULES_WAV : NULL);
+		CRules  RulesDlg(this, RULES_TXT, m_pGamePalette, pGameParams->bSoundEffectsEnabled ? RULES_WAV : nullptr);
 		RulesDlg.DoModal();
 		GameResume();
 	}
@@ -827,7 +827,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	// Bring up the options menu
 	//
 	case VK_F2:
-		if (m_pBarb->m_pCrd != NULL) {      // user holding a card?
+		if (m_pBarb->m_pCrd != nullptr) {      // user holding a card?
 			break;                          // yeap, can't allow this
 		}
 
@@ -844,12 +844,12 @@ void CMainWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	while (TRUE) {                                      // find and remove all keyboard events
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	} // end while
 
 	while (TRUE) {                                      // find and remove all mouse events
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	} // end while
 }
@@ -863,7 +863,7 @@ void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 
 		default:
@@ -877,7 +877,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-//      if (pSound != NULL)
+//      if (pSound != nullptr)
 //          OnSoundNotify(pSound);
 	return (0L);
 }
@@ -886,7 +886,7 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	//if (pSound != NULL)
+	//if (pSound != nullptr)
 	//  OnSoundNotify(pSound);
 	return (0L);
 }
@@ -903,34 +903,34 @@ VOID CMainWindow::OnClose() {
 	//
 	GameReset();
 
-	if (m_pAnim != NULL) {
+	if (m_pAnim != nullptr) {
 		delete m_pAnim;
-		m_pAnim = NULL;
+		m_pAnim = nullptr;
 	}
 
-	if (m_pMIDISound != NULL || m_pWavSound != NULL) {
+	if (m_pMIDISound != nullptr || m_pWavSound != nullptr) {
 		CSound::clearSounds();      // turn all sounds totally off and delete the objects
-		m_pMIDISound = NULL;
-		m_pWavSound = NULL;
+		m_pMIDISound = nullptr;
+		m_pWavSound = nullptr;
 	}
 
-	if (m_pBarb != NULL) {
+	if (m_pBarb != nullptr) {
 		delete m_pBarb;
-		m_pBarb = NULL;
+		m_pBarb = nullptr;
 	}
 
 	//
 	// de-allocate any controls that we used
 	//
-	assert(m_pScrollSprite != NULL);
-	if (m_pScrollSprite != NULL)
+	assert(m_pScrollSprite != nullptr);
+	if (m_pScrollSprite != nullptr)
 		delete m_pScrollSprite;
 
 	//
 	// need to de-allocate the game palette
 	//
-	assert(m_pGamePalette != NULL);
-	if (m_pGamePalette != NULL) {
+	assert(m_pGamePalette != nullptr);
+	if (m_pGamePalette != nullptr) {
 		//m_pGamePalette->DeleteObject();
 		delete m_pGamePalette;
 	}

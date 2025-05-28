@@ -56,9 +56,9 @@ static const CHAR *apszSpeeds[10] = {
 	"Cheetah on Steroids"
 };
 
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
-static  CColorButton *pDefaultsButton = NULL;               // Defaults button on scroll
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
+static  CColorButton *pDefaultsButton = nullptr;               // Defaults button on scroll
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
@@ -139,7 +139,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 	CDC *pDC;
 
 	// can't access a null pointer
-	assert(pScroll != NULL);
+	assert(pScroll != nullptr);
 
 	switch (pScroll->GetDlgCtrlID()) {
 
@@ -340,17 +340,17 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 
 	ReleaseDC(pDC);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
 		(*pOKButton).SetControl(ID_OK, this);               // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(m_pPalette);                        // set the palette to use
 		(*pCancelButton).SetControl(ID_CANCEL, this);               // tie to the dialog control
 	}
 
-	if ((pDefaultsButton = new CColorButton) != NULL) {                 // build a color QUIT button to let us exit
+	if ((pDefaultsButton = new CColorButton) != nullptr) {                 // build a color QUIT button to let us exit
 		(*pDefaultsButton).SetPalette(m_pPalette);                      // set the palette to use
 		(*pDefaultsButton).SetControl(ID_RESET, this);              // tie to the dialog control
 	}
@@ -376,24 +376,24 @@ void CUserCfgDlg::OnPaint(void) {
 void CUserCfgDlg::OnDestroy() {
 	ClearDialogImage();
 
-	assert(m_pTxtSpeed != NULL);
-	if (m_pTxtSpeed != NULL) {
+	assert(m_pTxtSpeed != nullptr);
+	if (m_pTxtSpeed != nullptr) {
 		delete m_pTxtSpeed;
-		m_pTxtSpeed = NULL;
+		m_pTxtSpeed = nullptr;
 	}
 
-	assert(m_pTxtSpeedSetting != NULL);
-	if (m_pTxtSpeedSetting != NULL) {
+	assert(m_pTxtSpeedSetting != nullptr);
+	if (m_pTxtSpeedSetting != nullptr) {
 		delete m_pTxtSpeedSetting;
 	}
 
-	assert(m_pTxtLevel != NULL);
-	if (m_pTxtLevel != NULL) {
+	assert(m_pTxtLevel != nullptr);
+	if (m_pTxtLevel != nullptr) {
 		delete m_pTxtLevel;
 	}
 
-	assert(m_pTxtLives != NULL);
-	if (m_pTxtLives != NULL) {
+	assert(m_pTxtLives != nullptr);
+	if (m_pTxtLives != nullptr) {
 		delete m_pTxtLives;
 	}
 
@@ -409,21 +409,21 @@ void CUserCfgDlg::OnDestroy() {
 }
 
 void CUserCfgDlg::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (pDefaultsButton != NULL) {                    // release the button
+	if (pDefaultsButton != nullptr) {                    // release the button
 		delete pDefaultsButton;
-		pDefaultsButton = NULL;
+		pDefaultsButton = nullptr;
 	}
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 

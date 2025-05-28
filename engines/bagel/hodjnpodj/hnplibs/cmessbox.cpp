@@ -35,7 +35,7 @@ namespace HodjNPodj {
 	static char BASED_CODE THIS_FILE[] = __FILE__;
 #endif
 
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
 
 CMessageBox::CMessageBox(CWnd* pParent, CPalette *pPalette, const char *msg1, const char *msg2, const int dx, const int dy)
 	: CBmpDialog(pParent, pPalette, IDD_GAMEOVER, ".\\ART\\SSCROLL.BMP", dx, dy) {
@@ -45,8 +45,8 @@ CMessageBox::CMessageBox(CWnd* pParent, CPalette *pPalette, const char *msg1, co
 	m_pMessage1 = msg1;
 	m_pMessage2 = msg2;
 
-	m_cTextMessage1 = NULL;
-	m_cTextMessage2 = NULL;
+	m_cTextMessage1 = nullptr;
+	m_cTextMessage2 = nullptr;
 
 	DoModal();
 
@@ -56,28 +56,28 @@ CMessageBox::CMessageBox(CWnd* pParent, CPalette *pPalette, const char *msg1, co
 }
 
 void CMessageBox::ClearDialogImage() {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 void CMessageBox::OnDestroy() {
-	if (m_cTextMessage1 != NULL) {
+	if (m_cTextMessage1 != nullptr) {
 		delete m_cTextMessage1;
-		m_cTextMessage1 = NULL;
+		m_cTextMessage1 = nullptr;
 	}
 
-	if (m_cTextMessage2 != NULL) {
+	if (m_cTextMessage2 != nullptr) {
 		delete m_cTextMessage2;
-		m_cTextMessage2 = NULL;
+		m_cTextMessage2 = nullptr;
 	}
 
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -127,7 +127,7 @@ BOOL CMessageBox::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_cTextMessage1 = new CText()) != NULL) {
+	if ((m_cTextMessage1 = new CText()) != nullptr) {
 		bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
@@ -140,14 +140,14 @@ BOOL CMessageBox::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_cTextMessage2 = new CText()) != NULL) {
+	if ((m_cTextMessage2 = new CText()) != nullptr) {
 		bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
 	ReleaseDC(pDC);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
@@ -165,12 +165,12 @@ void CMessageBox::OnPaint() {
 
 	pDC = GetDC();
 
-	if (m_pMessage1 != NULL) {
+	if (m_pMessage1 != nullptr) {
 		bAssertCheck = (*m_cTextMessage1).DisplayString(pDC, m_pMessage1, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 
-	if (m_pMessage2 != NULL) {
+	if (m_pMessage2 != nullptr) {
 		bAssertCheck = (*m_cTextMessage2).DisplayString(pDC, m_pMessage2, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}

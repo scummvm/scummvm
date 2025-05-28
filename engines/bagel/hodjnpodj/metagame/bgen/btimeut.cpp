@@ -46,7 +46,7 @@ BOOL CTimeUtil::DelayMs(UINT uMs)
 	UINT uTimerId ;     // timer id returned by SetTimer
 
 	// set timer, and test for success
-	if ((uTimerId = SetTimer(NULL, 0, uMs, DelayMsCallback)) == 0) {
+	if ((uTimerId = SetTimer(nullptr, 0, uMs, DelayMsCallback)) == 0) {
 		iError = 100 ;      // SetTimer failed
 		goto cleanup ;
 	}
@@ -56,7 +56,7 @@ BOOL CTimeUtil::DelayMs(UINT uMs)
 		DoPendingEvents() ;
 
 	// kill timer and test success
-	if (!KillTimer(NULL, uTimerId)) {
+	if (!KillTimer(nullptr, uTimerId)) {
 		iError = 101 ;      // KillTimer failed
 		goto cleanup ;
 	}
@@ -70,7 +70,7 @@ cleanup:
 ///* DelayMsCallback -- SetTimer callback routine for DelayMs
 void CTimeUtil::DelayMsCallback(HWND /* hWnd */,
     UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */)
-// hWnd -- handle of window (always NULL in this case)
+// hWnd -- handle of window (always nullptr in this case)
 // uMsg -- WM_TIMER message
 // uTimerId -- timer identifier
 // dwTime -- current system time
@@ -85,7 +85,7 @@ void CTimeUtil::DelayMsCallback(HWND /* hWnd */,
 void DoPendingEvents() {
 	MSG  msg;
 
-	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}

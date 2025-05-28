@@ -93,9 +93,9 @@ extern BOOL gbTurnSoundsOff;
 
 //* CMnkWindow::CMnkWindow() -- mankala window constructor function
 CMnkWindow::CMnkWindow(void) {
-	CDC* pDC = NULL ;                         // device context for the screen
+	CDC* pDC = nullptr ;                         // device context for the screen
 	CString xpszWndClass ;
-	CDibDoc *xpDibDoc = NULL ;   // pointer to the background art DIB
+	CDibDoc *xpDibDoc = nullptr ;   // pointer to the background art DIB
 	CSize   cMySize ;
 	HCURSOR hOldCursor;
 
@@ -111,9 +111,9 @@ CMnkWindow::CMnkWindow(void) {
 	pGameParams->lScore = 0L;
 	gbTurnSoundsOff = GetPrivateProfileInt("Mankala", "MuteCrab", 0, INI_FILENAME) ; // Crab talks
 
-	hHourGlassCursor = LoadCursor(NULL, IDC_WAIT);
+	hHourGlassCursor = LoadCursor(nullptr, IDC_WAIT);
 	SetCursor(hHourGlassCursor);
-	hOldCursor = LoadCursor(NULL, IDC_ARROW);
+	hOldCursor = LoadCursor(nullptr, IDC_ARROW);
 
 	if (pGameParams->bMusicEnabled)
 		m_pSound = new CSound(this, MIDI_BCKGND, SOUND_MIDI | SOUND_DONT_LOOP_TO_END);
@@ -143,20 +143,20 @@ CMnkWindow::CMnkWindow(void) {
 
 	xpszWndClass = AfxRegisterWndClass(CS_DBLCLKS |
 	                                   CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                                   NULL, NULL, NULL) ;
+	                                   nullptr, nullptr, nullptr) ;
 
 
 	xpDibDoc = new CDibDoc() ;  // create an object to hold our screen
 	if (! xpDibDoc) {
 		MFC::SetCursor(hOldCursor);
-		MFC::MessageBox(NULL, "Abnormal MiniGame Termination", "Internal Error", MB_ICONSTOP);
+		MFC::MessageBox(nullptr, "Abnormal MiniGame Termination", "Internal Error", MB_ICONSTOP);
 		delete this;
 		return;
 	}      // ... and verify we got it
 
 	if (!(*xpDibDoc).OpenDocument(".\\ART\\MANKALA.BMP")) {
 		MFC::SetCursor(hOldCursor);
-		MFC::MessageBox(NULL, "Cannot Open Background Bitmap. Please Check for file path and/or system resources. Terminating Game", "Open Error", MB_ICONEXCLAMATION | MB_OK) ;
+		MFC::MessageBox(nullptr, "Cannot Open Background Bitmap. Please Check for file path and/or system resources. Terminating Game", "Open Error", MB_ICONEXCLAMATION | MB_OK) ;
 		delete xpDibDoc;
 		delete this;
 		return;
@@ -166,7 +166,7 @@ CMnkWindow::CMnkWindow(void) {
 	if (!(CMnkWindow::m_xpGamePalette = (*xpDibDoc).DetachPalette())) {
 		// grab its palette and save it for later use
 		MFC::SetCursor(hOldCursor);
-		MFC::MessageBox(NULL, "Cannot acquire a non NULL Palette. Game Terminated", "Palette Error", MB_OK | MB_ICONEXCLAMATION);
+		MFC::MessageBox(nullptr, "Cannot acquire a non nullptr Palette. Game Terminated", "Palette Error", MB_OK | MB_ICONEXCLAMATION);
 		delete xpDibDoc;
 		delete this;
 		return;
@@ -199,16 +199,16 @@ CMnkWindow::CMnkWindow(void) {
 		pDC->SelectPalette(CMnkWindow::m_xpGamePalette, FALSE);
 		pDC->RealizePalette();
 		ReleaseDC(pDC);
-		pDC = NULL ;        // zero out context pointer
+		pDC = nullptr ;        // zero out context pointer
 	} else {
 		#ifdef BAGEL_DEBUG
-		MFC::MessageBox(NULL, "Cannot acquire device context. Abnormal Program Termination", "Error", MB_ICONSTOP) ;
+		MFC::MessageBox(nullptr, "Cannot acquire device context. Abnormal Program Termination", "Error", MB_ICONSTOP) ;
 		#endif
 		return;
 	}
 	if (!Create(xpszWndClass, "Boffo Games -- Mankala", WSTYLE,
-	            m_cMainRect, NULL, NULL)) {
-		MFC::MessageBox(NULL, "Cannot open window. Close some other windows to continue", "Error", MB_ICONSTOP) ;
+	            m_cMainRect, nullptr, 0)) {
+		MFC::MessageBox(nullptr, "Cannot open window. Close some other windows to continue", "Error", MB_ICONSTOP) ;
 		delete this;
 		return ;
 	}
@@ -282,11 +282,11 @@ CMnkWindow::CMnkWindow(void) {
 	}
 	#endif
 
-//    //srand((unsigned) time(NULL)) ;  // seed the random number generator
+//    //srand((unsigned) time(nullptr)) ;  // seed the random number generator
 
 	MFC::SetCursor(hOldCursor);
 
-//    ASSERT(SetTimer(SPRITE_TIMER,SPRITE_INTERVAL,NULL)) ;
+//    ASSERT(SetTimer(SPRITE_TIMER,SPRITE_INTERVAL,nullptr)) ;
 	// set the interval timer for movement
 	#ifdef _MACROS
 	EM("///////////////////////////////////////////////////////////////////////////////////////////");
@@ -337,7 +337,7 @@ CMnkWindow::~CMnkWindow(void) {
 void CMnkWindow::OnPaint() {
 	PAINTSTRUCT lpPaint ;
 
-	InvalidateRect(NULL, FALSE) ;   // invalidate the entire window
+	InvalidateRect(nullptr, FALSE) ;   // invalidate the entire window
 	BeginPaint(&lpPaint) ;              // bracket start of window update
 	PaintScreen() ;                    // repaint our window's content
 	EndPaint(&lpPaint) ;                // bracket end of window update
@@ -446,7 +446,7 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 	if (nChar == VK_F1) {
 		m_bRulesActive = FALSE;
-		CRules cRulesDlg(this, RULES, m_xpGamePalette, pGameParams->bSoundEffectsEnabled ? RULES_NARRATION : NULL) ;
+		CRules cRulesDlg(this, RULES, m_xpGamePalette, pGameParams->bSoundEffectsEnabled ? RULES_NARRATION : nullptr) ;
 		CSound::waitWaveSounds();
 		if ((iRVal = cRulesDlg.DoModal()) == -1)
 			MessageBox("The Mankala Rules Text File Can't Be Opened", "Error Opening File");
@@ -615,7 +615,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	#ifdef _MACROS
 	EM("Entering MouseMove");
 	#endif
-	MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));
+	MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));
 
 	static int dxCursor = GetSystemMetrics(SM_CXCURSOR);        //cursor size.
 	static int dyCursor = GetSystemMetrics(SM_CYCURSOR);
@@ -652,7 +652,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 				if (m_pText) {
 					m_pText->RestoreBackground(pDC);
 					delete m_pText;
-					m_pText = NULL;
+					m_pText = nullptr;
 				}
 
 				/* the following values are arrived thru trial and error */
@@ -666,7 +666,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 				MFC::LocalFree(hlocShells);
 			}
 			ReleaseDC(pDC);
-			pDC = NULL;
+			pDC = nullptr;
 		}
 	} else {
 
@@ -674,9 +674,9 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 			pDC = GetDC();
 			m_pText->RestoreBackground(pDC);
 			delete m_pText;
-			m_pText = NULL;
+			m_pText = nullptr;
 			ReleaseDC(pDC);
-			pDC = NULL;
+			pDC = nullptr;
 		}
 	}//end if bFound&&...
 
@@ -694,7 +694,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CRect   rectTemp;
 	CSprite *pSpriteGlobe, *pSpriteChair;
-	CDC     *pDC = NULL;
+	CDC     *pDC = nullptr;
 	HCURSOR hOldCur;
 	int i;
 	CSound  *pChairWaveSound = nullptr,
@@ -724,9 +724,9 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 		pDC = GetDC();
 		m_pText->RestoreBackground(pDC);
 		ReleaseDC(pDC);
-		pDC = NULL;
+		pDC = nullptr;
 		delete m_pText;
-		m_pText = NULL;
+		m_pText = nullptr;
 	}
 
 	rectTemp.SetRect(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
@@ -748,7 +748,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				EM("Clicked On Globe");
 				#endif
 				CSound::waitWaveSounds();
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				if (pDC = GetDC()) {
 					if (pSpriteGlobe = new CSprite()) {
 						hOldCur = MFC::SetCursor(hHourGlassCursor);
@@ -786,12 +786,12 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 						delete pSpriteGlobe;
 					}
 					ReleaseDC(pDC);
-					pDC = NULL;
+					pDC = nullptr;
 				}       // end if pDC
 			}       //  if rectTemp.SetRect(Globe.left,....)  over.
 			else if ((point.x < Chair.right) && (point.x > Chair.left) && (point.y < Chair.bottom) && (point.y > Chair.top)) {
 				CSound::waitWaveSounds();
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				if (pDC = GetDC()) {
 					if (pSpriteChair = new CSprite()) {
 						hOldCur = MFC::SetCursor(hHourGlassCursor);
@@ -822,7 +822,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 						delete pSpriteChair;
 					}//end if pSpriteChair=new...
 					ReleaseDC(pDC);
-					pDC = NULL;
+					pDC = nullptr;
 				}   // end if pDC
 			} else {                      //  elseif (point.x <Chair.right....) over.
 				if (pGameParams->bSoundEffectsEnabled) { // play EasterEggs only if sounds enabled
@@ -865,7 +865,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 void CMnkWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 
-	CDC *pDC = NULL;
+	CDC *pDC = nullptr;
 
 	#ifdef _MACROS
 	EM("OnLBUp");
@@ -877,9 +877,9 @@ void CMnkWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 		if (pDC = GetDC()) {
 			m_pText->RestoreBackground(pDC);
 			ReleaseDC(pDC);
-			pDC = NULL;
+			pDC = nullptr;
 			delete m_pText;
-			m_pText = NULL;
+			m_pText = nullptr;
 		}//end if pDC.
 	}
 
@@ -1038,7 +1038,7 @@ void CMnkWindow::OnTimer(UINT nIDEvent) {
 
 void CMnkWindow::OnClose() {
 	CBrush Brush;
-	CDC *pDC = NULL;
+	CDC *pDC = nullptr;
 	CRect rctTmp;
 	NPSTR npszTmp;
 	HLOCAL hlocTmp;
@@ -1053,7 +1053,7 @@ void CMnkWindow::OnClose() {
 			pDC->FillRect(&rctTmp, &Brush);
 		}
 		ReleaseDC(pDC);
-		pDC = NULL;
+		pDC = nullptr;
 	}
 
 	hlocTmp = MFC::LocalAlloc(LHND, 16);
@@ -1083,15 +1083,15 @@ void CMnkWindow::OnClose() {
 	MFC::LocalUnlock(hlocTmp);
 	MFC::LocalFree(hlocTmp);
 
-	if (m_xpGamePalette != NULL) {
+	if (m_xpGamePalette != nullptr) {
 		m_xpGamePalette->DeleteObject();
 		delete m_xpGamePalette;
-		m_xpGamePalette = NULL;
+		m_xpGamePalette = nullptr;
 	}
 
 	if (m_pText) {
 		delete (m_pText);
-		m_pText = NULL;
+		m_pText = nullptr;
 	}
 
 	ReleaseResources() ;    // release game specific resources

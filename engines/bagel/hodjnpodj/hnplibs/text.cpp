@@ -92,11 +92,11 @@ CText::CText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) {
 CText::~CText() {
 	ReleaseContexts();
 
-	if (m_pWork != NULL) {
+	if (m_pWork != nullptr) {
 		(*m_pWork).DeleteObject();
 		delete m_pWork;
 	}
-	if (m_pBackground != NULL) {
+	if (m_pBackground != nullptr) {
 		(*m_pBackground).DeleteObject();
 		delete m_pBackground;
 	}
@@ -111,22 +111,22 @@ CText::~CText() {
  *
  * Return Value:    none
  *
- * Description:     Initializes key fields to zero or NULL states.
+ * Description:     Initializes key fields to zero or nullptr states.
  *
  ************************************************************************/
 
 void CText::InitializeFields(void) {
-	m_pBackgroundDC = NULL;
-	m_pBackground = NULL;
-	m_pBackgroundOld = NULL;
+	m_pBackgroundDC = nullptr;
+	m_pBackground = nullptr;
+	m_pBackgroundOld = nullptr;
 
-	m_pWorkDC = NULL;
-	m_pWork = NULL;
-	m_pWorkOld = NULL;
+	m_pWorkDC = nullptr;
+	m_pWork = nullptr;
+	m_pWorkOld = nullptr;
 
-	m_pPalette = NULL;
-	m_pPalBackOld = NULL;
-	m_pPalWorkOld = NULL;
+	m_pPalette = nullptr;
+	m_pPalBackOld = nullptr;
+	m_pPalWorkOld = nullptr;
 
 	m_cPosition = CPoint(0, 0);
 	m_cSize = CSize(0, 0);
@@ -140,7 +140,7 @@ void CText::InitializeFields(void) {
 	m_bHaveBackground = FALSE;
 	m_nJustify = JUSTIFY_LEFT;
 
-	m_pFont = NULL;
+	m_pFont = nullptr;
 }
 
 
@@ -167,13 +167,13 @@ void CText::InitializeFields(void) {
  ************************************************************************/
 
 BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) {
-	CPalette *pPalOld = NULL;
+	CPalette *pPalOld = nullptr;
 
 	m_bBounded = TRUE;                          // set for bounded area painting
 	m_pPalette = pPalette;
 	m_nJustify = nJustify;
 
-	if (m_pPalette != NULL) {
+	if (m_pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -188,16 +188,16 @@ BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 	m_cSize.cy = m_cRect.bottom - m_cRect.top;
 
 	m_pWork = new CBitmap();                    // create a bitmap to serve as our
-	if ((m_pWork == NULL) ||                    // ... work area as we output text
+	if ((m_pWork == nullptr) ||                    // ... work area as we output text
 	        !(*m_pWork).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
 		return (FALSE);
 
 	m_pBackground = new CBitmap();              // create a bitmap to hold the
-	if ((m_pBackground == NULL) ||              // ... background we overwrite
+	if ((m_pBackground == nullptr) ||              // ... background we overwrite
 	        !(*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
 		return (FALSE);
 
-	if (m_pPalette != NULL)
+	if (m_pPalette != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (TRUE);                              // return status
@@ -222,14 +222,14 @@ BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 
 BOOL CText::RestoreBackground(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
-	CPalette *pPalOld = NULL;
+	CPalette *pPalOld = nullptr;
 
-	if (m_pPalette != NULL) {
+	if (m_pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
 
-	if ((m_pBackground != NULL) &&
+	if ((m_pBackground != nullptr) &&
 	        SetupContexts(pDC)) {
 		bSuccess = (*pDC).BitBlt(                   // simply splat the background art
 		               m_cRect.left,           // ... back where it came from
@@ -243,7 +243,7 @@ BOOL CText::RestoreBackground(CDC *pDC) {
 		ReleaseContexts();
 	}
 
-	if (m_pPalette != NULL)
+	if (m_pPalette != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (bSuccess);
@@ -333,14 +333,14 @@ BOOL CText::DisplayShadowedString(CDC *pDC, const char *pszText, const int nSize
  ************************************************************************/
 
 BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const BOOL bShadowed) {
-	CFont *pFontOld = NULL;               // font that was mapped to the context
+	CFont *pFontOld = nullptr;               // font that was mapped to the context
 	CSize       textInfo;                       // font info about the text to be displayed
 	TEXTMETRIC  fontMetrics;                    // info about the font itself
 	CRect       unionRect;
 	CRect       newRect;
-	CPalette *pPalOld = NULL;
+	CPalette *pPalOld = nullptr;
 
-	if (m_pPalette != NULL) {
+	if (m_pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -413,7 +413,7 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	(void)(*m_pWorkDC).SelectObject(pFontOld);         // map out the font
 
 	delete m_pFont;                                     // release the font instance
-	m_pFont = NULL;
+	m_pFont = nullptr;
 
 	(void)(*pDC).BitBlt(                               // copy the result to the destination context
 	    m_cRect.left,
@@ -427,7 +427,7 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 
 	ReleaseContexts();
 
-	if (m_pPalette != NULL)
+	if (m_pPalette != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (TRUE);
@@ -452,31 +452,31 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
  ************************************************************************/
 
 BOOL CText::SetupContexts(CDC *pDC) {
-	if (m_pWorkDC == NULL) {
+	if (m_pWorkDC == nullptr) {
 		m_pWorkDC = new CDC();
-		if ((m_pWorkDC == NULL) ||
+		if ((m_pWorkDC == nullptr) ||
 		        !(*m_pWorkDC).CreateCompatibleDC(pDC))
 			return (FALSE);
-		if (m_pPalette != NULL) {
+		if (m_pPalette != nullptr) {
 			m_pPalWorkOld = (*m_pWorkDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pWorkDC).RealizePalette();
 		}
 		m_pWorkOld = (*m_pWorkDC).SelectObject(m_pWork);
-		if (m_pWorkOld == NULL)
+		if (m_pWorkOld == nullptr)
 			return (FALSE);
 	}
 
-	if (m_pBackgroundDC == NULL) {
+	if (m_pBackgroundDC == nullptr) {
 		m_pBackgroundDC = new CDC();
-		if ((m_pBackgroundDC == NULL) ||
+		if ((m_pBackgroundDC == nullptr) ||
 		        !(*m_pBackgroundDC).CreateCompatibleDC(pDC))
 			return (FALSE);
-		if (m_pPalette != NULL) {
+		if (m_pPalette != nullptr) {
 			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pBackgroundDC).RealizePalette();
 		}
 		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
-		if (m_pBackgroundOld == NULL)
+		if (m_pBackgroundOld == nullptr)
 			return (FALSE);
 	}
 
@@ -498,33 +498,33 @@ BOOL CText::SetupContexts(CDC *pDC) {
  ************************************************************************/
 
 void CText::ReleaseContexts(void) {
-	if (m_pWorkOld != NULL) {
+	if (m_pWorkOld != nullptr) {
 		(void)(*m_pWorkDC).SelectObject(m_pWorkOld);
-		m_pWorkOld = NULL;
+		m_pWorkOld = nullptr;
 	}
-	if (m_pBackgroundOld != NULL) {
+	if (m_pBackgroundOld != nullptr) {
 		(void)(*m_pBackgroundDC).SelectObject(m_pBackgroundOld);
-		m_pBackgroundOld = NULL;
+		m_pBackgroundOld = nullptr;
 	}
 
-	if (m_pPalWorkOld != NULL) {
+	if (m_pPalWorkOld != nullptr) {
 		(void)(*m_pWorkDC).SelectPalette(m_pPalWorkOld, FALSE);
-		m_pPalWorkOld = NULL;
+		m_pPalWorkOld = nullptr;
 	}
-	if (m_pPalBackOld != NULL) {
+	if (m_pPalBackOld != nullptr) {
 		(void)(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, FALSE);
-		m_pPalBackOld = NULL;
+		m_pPalBackOld = nullptr;
 	}
 
-	if (m_pWorkDC != NULL) {
+	if (m_pWorkDC != nullptr) {
 		(*m_pWorkDC).DeleteDC();
 		delete m_pWorkDC;
-		m_pWorkDC = NULL;
+		m_pWorkDC = nullptr;
 	}
-	if (m_pBackgroundDC != NULL) {
+	if (m_pBackgroundDC != nullptr) {
 		(*m_pBackgroundDC).DeleteDC();
 		delete m_pBackgroundDC;
-		m_pBackgroundDC = NULL;
+		m_pBackgroundDC = nullptr;
 	}
 }
 

@@ -41,8 +41,8 @@ CText               *ptxtGTime;
 static CRect        rDisplayBTime(43, 35, 174, 47);
 CText               *ptxtBTime;
 
-CColorButton    *pDFAOKButton = NULL;
-CColorButton    *pDFACancelButton = NULL;
+CColorButton    *pDFAOKButton = nullptr;
+CColorButton    *pDFACancelButton = nullptr;
 
 /*****************************************************************
  *
@@ -147,16 +147,16 @@ void CDFAOptDlg::OnOK(void) {
 
 void CDFAOptDlg::ClearDialogImage(void) {
 
-	if (pDFAOKButton != NULL) {
+	if (pDFAOKButton != nullptr) {
 		delete pDFAOKButton;
-		pDFAOKButton = NULL;
+		pDFAOKButton = nullptr;
 	}
-	if (pDFACancelButton != NULL) {
+	if (pDFACancelButton != nullptr) {
 		delete pDFACancelButton;
-		pDFACancelButton = NULL;
+		pDFACancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }
@@ -197,13 +197,13 @@ BOOL CDFAOptDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	pDFAOKButton = new CColorButton();
-	ASSERT(pDFAOKButton != NULL);
+	ASSERT(pDFAOKButton != nullptr);
 	pDFAOKButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pDFAOKButton->SetControl(IDC_MINI_OK, this);
 	ASSERT(bSuccess);
 
 	pDFACancelButton = new CColorButton();
-	ASSERT(pDFACancelButton != NULL);
+	ASSERT(pDFACancelButton != nullptr);
 	pDFACancelButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pDFACancelButton->SetControl(IDC_MINI_CANCEL, this);
 	ASSERT(bSuccess);
@@ -252,8 +252,8 @@ void CDFAOptDlg::OnPaint(void) {
 	CString         strGTime = "Game Time (Secs) :";
 	int             nOldBkMode;
 
-	CScrollBar      *pBTime = NULL;
-	CScrollBar      *pGTime = NULL;
+	CScrollBar      *pBTime = nullptr;
+	CScrollBar      *pGTime = nullptr;
 
 	char    cGDisplay[12];
 	char    cBDisplay[12];
@@ -318,12 +318,12 @@ void CDFAOptDlg::OnPaint(void) {
 	pBTime->SetScrollRange(BEAVERTIMEMIN, BEAVERTIMEMAX, TRUE);
 	pBTime->SetScrollPos(m_nBeaverTime, TRUE);
 
-	if (pGTime != NULL) {
-		pGTime = NULL;
+	if (pGTime != nullptr) {
+		pGTime = nullptr;
 	}
 
-	if (pBTime != NULL) {
-		pBTime = NULL;
+	if (pBTime != nullptr) {
+		pBTime = nullptr;
 	}
 
 	ReleaseDC(pDC);
@@ -470,13 +470,13 @@ BOOL CDFAOptDlg::OnEraseBkgnd(CDC *pDC) {
 
 void CDFAOptDlg::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
-	if (pDFAOKButton != NULL) {
+	if (pDFAOKButton != nullptr) {
 		delete pDFAOKButton;
-		pDFAOKButton = NULL;
+		pDFAOKButton = nullptr;
 	}
-	if (pDFACancelButton != NULL) {
+	if (pDFACancelButton != nullptr) {
 		delete pDFACancelButton;
-		pDFACancelButton = NULL;
+		pDFACancelButton = nullptr;
 	}
 
 	delete ptxtBTime;

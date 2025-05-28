@@ -51,7 +51,7 @@ private:
 	BOOL         m_bScrolling;
 
 public:
-	CMetaOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL);
+	CMetaOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);
 	void SetInitialOptions(CBfcMgr *);    // Sets the private members
 
 private:

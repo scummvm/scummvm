@@ -54,18 +54,18 @@ struct SPECIAL_TRAVEL {
 };
 
 static const SPECIAL_TRAVEL aTravelArray[MG_SPECIAL_VISIT_COUNT] = {
-	{{"st35", "st36", "st37", "st38", "st39", "st40", NULL}, "Boat2", ".\\ART\\?0BOAT.BMP", 0, 0},
-	{{"st40", "st39", "st38", "st37", "st36", "st35", NULL}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
-	{{"st30", "st31", "st32", "st33", "st34", "st35", NULL}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
-	{{"st35", "st34", "st33", "st32", "st31", "st30", NULL}, "Boat3", ".\\ART\\?0BOAT.BMP", 0, 0},
+	{{"st35", "st36", "st37", "st38", "st39", "st40", nullptr}, "Boat2", ".\\ART\\?0BOAT.BMP", 0, 0},
+	{{"st40", "st39", "st38", "st37", "st36", "st35", nullptr}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
+	{{"st30", "st31", "st32", "st33", "st34", "st35", nullptr}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
+	{{"st35", "st34", "st33", "st32", "st31", "st30", nullptr}, "Boat3", ".\\ART\\?0BOAT.BMP", 0, 0},
 
-	{{"st01", "st02", "st03", "st04", NULL, NULL, NULL}, "Sky2", ".\\ART\\?0SKY.BMP", 0, 0},
-	{{"st04", "st03", "st02", "st01", NULL, NULL, NULL}, "Sky1", ".\\ART\\?0SKY.BMP", 0, 0},
+	{{"st01", "st02", "st03", "st04", nullptr, nullptr, nullptr}, "Sky2", ".\\ART\\?0SKY.BMP", 0, 0},
+	{{"st04", "st03", "st02", "st01", nullptr, nullptr, nullptr}, "Sky1", ".\\ART\\?0SKY.BMP", 0, 0},
 
-	{{"st22", "st21", "st20", "st19", "st18", "st17", "st15", "st14", "st13", "st11", "st10", "Aerie", NULL}, NULL, ".\\ART\\?0CAR.BMP", MG_SOUND_TRAN1, MG_SOUND_TRAN2},
-	{{NULL, NULL, NULL, NULL, NULL, NULL, NULL}, NULL, ".\\ART\\?0WALK.BMP", 0, 0},
-	{{NULL, NULL, NULL, NULL, NULL, NULL, NULL}, "Secret2", ".\\ART\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6},
-	{{NULL, NULL, NULL, NULL, NULL, NULL, NULL}, "Secret1", ".\\ART\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6}
+	{{"st22", "st21", "st20", "st19", "st18", "st17", "st15", "st14", "st13", "st11", "st10", "Aerie", nullptr}, nullptr, ".\\ART\\?0CAR.BMP", MG_SOUND_TRAN1, MG_SOUND_TRAN2},
+	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, nullptr, ".\\ART\\?0WALK.BMP", 0, 0},
+	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, "Secret2", ".\\ART\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6},
+	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, "Secret1", ".\\ART\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6}
 };
 
 // CGtlData::SetMetaGame -- set meta game on or off
@@ -80,7 +80,7 @@ BOOL CGtlData::SetMetaGame(BOOL bOn)
 	if (bOn && (!m_bMetaGame || !m_bInitMetaGame || m_bStartMetaGame)) {
 		m_bStartMetaGame = FALSE ;
 		m_bMetaGame = m_bInitMetaGame = TRUE ;
-		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(NULL, HINT_INIT_METAGAME, NULL) ;
+		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, HINT_INIT_METAGAME, nullptr) ;
 	}
 
 	// turn off meta game
@@ -89,8 +89,8 @@ BOOL CGtlData::SetMetaGame(BOOL bOn)
 
 		m_bMetaGame = FALSE ;
 		m_bInitMetaGame = TRUE ;
-		InitMetaGame(NULL, FALSE) ;             // release sprites
-		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(NULL, HINT_INIT_METAGAME, NULL);
+		InitMetaGame(nullptr, FALSE) ;             // release sprites
+		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, HINT_INIT_METAGAME, nullptr);
 	}
 
 // cleanup:
@@ -109,7 +109,7 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit)
 	int iError = 0 ;            // error code
 	CXodj * xpXodj ;            // character block pointer
 	BOOL bCenter = FALSE ;      // flag: centered
-	CNode FAR *lpNode = NULL;
+	CNode FAR *lpNode = nullptr;
 	BOOL bNodeFound ;
 	int iN ;                    // loop variable
 
@@ -174,7 +174,7 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit)
 		}
 
 		//ClearInhibitDraw() ;    // clear draw inhibit flag, if set
-		ProcessMove(NULL) ;     // play computer moves, if any
+		ProcessMove(nullptr) ;     // play computer moves, if any
 //      EndMoveProcessing(xpGtlView) ;
 	}
 
@@ -220,7 +220,7 @@ BOOL CGtlData::ProcessMove(CNode FAR *lpTargetNode)
 
 	// as long as the computer's on the move, then compute move and
 	// play it
-	while ((m_xpCurXodj != NULL) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == FALSE) && (bExitMetaDLL == FALSE)) {
+	while ((m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == FALSE) && (bExitMetaDLL == FALSE)) {
 
 		if (((m_xpCurXodj->m_bHodj) && (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh)) ||
 		        ((m_xpCurXodj->m_bHodj == FALSE) && (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh)))
@@ -274,20 +274,20 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 	int iK ;            // loop variable
 	BOOL bDone = FALSE ;        // flag: done with move
 
-	LPINT lpiShortPath = NULL ; // shortest path between nodes
+	LPINT lpiShortPath = nullptr ; // shortest path between nodes
 
 	gnFurlongs = 0;
 
 	// no current char sprite
-	if ((m_xpCurXodj == NULL) || ((lpChar = m_xpCurXodj->m_lpcCharSprite) == NULL)) {
-		MessageBox(NULL, "No current char sprite.", NULL, MB_OK);
+	if ((m_xpCurXodj == nullptr) || ((lpChar = m_xpCurXodj->m_lpcCharSprite) == nullptr)) {
+		MessageBox(nullptr, "No current char sprite.", nullptr, MB_OK);
 		iError = 100 ;
 		goto cleanup ;
 	}
 
 	lpNode = m_lpNodes + m_xpCurXodj->m_iCharNode ;
 
-	if ((lpiShortPath = FindShortestPath(lpNode, lpTargetNode)) == NULL) {
+	if ((lpiShortPath = FindShortestPath(lpNode, lpTargetNode)) == nullptr) {
 		C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", "You can't get there", "from here...");
 		(void) dlg1Button.DoModal();
 		iError = 101 ;
@@ -319,8 +319,8 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 			//
 			if (!lpMetaGameStruct->m_bScrolling) {
 
-				if ((m_xpCurXodj->m_iFurlongs >= 0) && (m_xpCurXodj->m_iFurlongs < 24) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != NULL) && lpMap->m_lpcBgbObject)
-					DrawABitmap(NULL, lpMap->m_lpcBgbObject);
+				if ((m_xpCurXodj->m_iFurlongs >= 0) && (m_xpCurXodj->m_iFurlongs < 24) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != nullptr) && lpMap->m_lpcBgbObject)
+					DrawABitmap(nullptr, lpMap->m_lpcBgbObject);
 			}
 		}
 		lpNode = lpNextNode ;
@@ -381,8 +381,8 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 
 	// must have a valid player object
 	//
-	assert(m_xpCurXodj != NULL);
-	assert(m_xpCurXodj->m_lpcCharSprite != NULL);
+	assert(m_xpCurXodj != nullptr);
+	assert(m_xpCurXodj->m_lpcCharSprite != nullptr);
 
 	pCurPlayer = m_xpCurXodj->m_lpcCharSprite;
 
@@ -390,11 +390,11 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 	m_cBgbMgr.CacheLoadObject(pCurPlayer);
 
 	// if there is no DC, then get one
-	if (m_cBgbMgr.m_xpDc == NULL) {
+	if (m_cBgbMgr.m_xpDc == nullptr) {
 		m_cBgbMgr.ReInitDc();
 	}
 
-	assert(m_cBgbMgr.m_xpBsuSet != NULL);
+	assert(m_cBgbMgr.m_xpBsuSet != nullptr);
 	if (pCurPlayer->IfRelocatable()) {
 		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, TRUE);
 	} else {
@@ -426,7 +426,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 
 		// stop if at end of itinerary
 		//
-		if (aTravelArray[iSpecialIndex].pszLink[i] == NULL || aTravelArray[iSpecialIndex].pszLink[i + 1] == NULL)
+		if (aTravelArray[iSpecialIndex].pszLink[i] == nullptr || aTravelArray[iSpecialIndex].pszLink[i + 1] == nullptr)
 			break;
 
 		// find the node id's that correspond to these node labels
@@ -463,7 +463,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 
 	nId = -1;
 	// get player's new final location
-	if (aTravelArray[iSpecialIndex].pszFinalNode != NULL)
+	if (aTravelArray[iSpecialIndex].pszFinalNode != nullptr)
 		nId = FindNodeId(aTravelArray[iSpecialIndex].pszFinalNode);
 
 	// if random transport
@@ -573,11 +573,11 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 	}
 
 	// if there is no DC, then get one
-	if (m_cBgbMgr.m_xpDc == NULL) {
+	if (m_cBgbMgr.m_xpDc == nullptr) {
 		m_cBgbMgr.ReInitDc();
 	}
 
-	assert(m_cBgbMgr.m_xpBsuSet != NULL);
+	assert(m_cBgbMgr.m_xpBsuSet != nullptr);
 	if (pCurPlayer->IfRelocatable()) {
 		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, TRUE);
 	} else {
@@ -615,7 +615,7 @@ int CGtlData::FindNodeId(const char *pszLabel) {
 	CNode *pNode;
 	int i, iNodeID;
 
-	assert(pszLabel != NULL);
+	assert(pszLabel != nullptr);
 
 	iNodeID = -1;
 	for (i = 0 ; i < m_iNodes ; ++i) {
@@ -639,7 +639,7 @@ VOID CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint pt
 	INT x, y;
 
 	// can't access null pointers
-	assert(pBgbSprite != NULL);
+	assert(pBgbSprite != nullptr);
 
 	if (pBgbSprite->m_bInit) {
 
@@ -708,7 +708,7 @@ VOID CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint pt
 				// make sure this sprite is loaded
 				m_cBgbMgr.CacheLoadObject(pBgbSprite);
 
-				if (m_cBgbMgr.m_xpDc == NULL) {
+				if (m_cBgbMgr.m_xpDc == nullptr) {
 					m_cBgbMgr.ReInitDc();
 				}
 
@@ -729,7 +729,7 @@ VOID CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint pt
 	CHAR chOldChar, chNewChar;
 
 	// can't access null pointers
-	assert(pBgbSprite != NULL);
+	assert(pBgbSprite != nullptr);
 
 	if (pBgbSprite->m_bInit) {
 
@@ -806,7 +806,7 @@ VOID CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint pt
 				// make sure this sprite is loaded
 				m_cBgbMgr.CacheLoadObject(pBgbSprite);
 
-				if (m_cBgbMgr.m_xpDc == NULL) {
+				if (m_cBgbMgr.m_xpDc == nullptr) {
 					m_cBgbMgr.ReInitDc();
 				}
 
@@ -842,8 +842,8 @@ int CGtlData::EstimatePathDistance(CNode FAR * lpNode1, CNode FAR * lpNode2)
 	long lXDiff, lYDiff, lDistance = MAXPOSINT;
 
 	if (lpNode1 && lpNode2) {
-		cStartPoint = NodeToPoint(lpNode1, NULL) ;
-		cTargetPoint = NodeToPoint(lpNode2, NULL) ;
+		cStartPoint = NodeToPoint(lpNode1, nullptr) ;
+		cTargetPoint = NodeToPoint(lpNode2, nullptr) ;
 
 		lXDiff = (cTargetPoint.x - cStartPoint.x) / 100;
 		lYDiff = (cTargetPoint.y - cStartPoint.y) / 100;
@@ -876,7 +876,7 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	int iLink ; // , iTest ;    // current link number
 	CNode FAR * lpNode ;        // current node
 	CNode FAR * lpTestNode ;    // current node
-	LPINT lpiPath = NULL ;      // pointer to result path array
+	LPINT lpiPath = nullptr ;      // pointer to result path array
 	BOOL        bClipBounds = TRUE;
 	CPoint      cStartPoint, cTargetPoint, cThisPoint;
 	CRect       cBoundingRect;
@@ -889,8 +889,8 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 
 	struct DIST FAR * lpDist = new FAR struct DIST[m_iNodes] ;
 
-	cStartPoint = NodeToPoint(lpNode1, NULL) ;
-	cTargetPoint = NodeToPoint(lpNode2, NULL) ;
+	cStartPoint = NodeToPoint(lpNode1, nullptr) ;
+	cTargetPoint = NodeToPoint(lpNode2, nullptr) ;
 
 	#ifdef BAGEL_DEBUG
 	// if debug5 is 1, then FindShortestPath dumps debugging information
@@ -949,7 +949,7 @@ retry:
 
 				if (bClipBounds) {
 
-					cThisPoint = NodeToPoint(lpNode, NULL) ;
+					cThisPoint = NodeToPoint(lpNode, nullptr) ;
 					if (!cBoundingRect.PtInRect(cThisPoint))
 						continue;
 				}
@@ -958,7 +958,7 @@ retry:
 					iLink = lpNode->m_iLinks[iL] ;
 					lpTestNode = m_lpNodes + iLink ;
 					if (bClipBounds) {
-						cThisPoint = NodeToPoint(lpTestNode, NULL) ;
+						cThisPoint = NodeToPoint(lpTestNode, nullptr) ;
 						if (!cBoundingRect.PtInRect(cThisPoint))
 							continue;
 					}
@@ -1087,12 +1087,12 @@ cleanup:
 
 	if (lpDist) {
 		delete [] lpDist ;
-		lpDist = NULL ;
+		lpDist = nullptr ;
 	}
 
 	if (iError && lpiPath) {
 		delete [] lpiPath ;
-		lpiPath = NULL ;
+		lpiPath = nullptr ;
 	}
 
 	JXELEAVE(CGtlData::FindShortestPath) ;
@@ -1106,10 +1106,10 @@ BOOL CGtlData::PositionCharacters(void)
 	JXENTER(CGtlData::PositionCharacters) ;
 	int iError = 0 ;            // error code
 	CXodj * xpXodj ;
-	CXodj * xpXodj1 = NULL, *xpXodj2 = NULL ;   // character objects
+	CXodj * xpXodj1 = nullptr, *xpXodj2 = nullptr ;   // character objects
 	BOOL bSame, bSamePrev ;
 
-	if ((xpXodj1 = m_xpXodjChain) != NULL)
+	if ((xpXodj1 = m_xpXodjChain) != nullptr)
 		xpXodj2 = xpXodj1->m_xpXodjNext;
 
 	bSamePrev = (xpXodj1 && xpXodj2 && xpXodj1->m_iCharNode == xpXodj2->m_iCharNode) ;
@@ -1184,11 +1184,11 @@ BOOL CGtlData::PositionACharacter(CXodj * xpXodj, int iShift)
 //* CGtlData::LocationToNode -- find node for game location
 CNode FAR *CGtlData::LocationToNode(int iLocationCode)
 // iLocationCode -- MG_LOC_xxxx -- location code
-// returns: pointer to node, or NULL if not found
+// returns: pointer to node, or nullptr if not found
 {
 	JXENTER(CGtlData::LocationToNode) ;
 	int iN ;            // loop variable
-	CNode FAR *lpNode = NULL ; // return value
+	CNode FAR *lpNode = nullptr ; // return value
 
 	if (iLocationCode >= MG_LOC_BASE && iLocationCode <= MG_LOC_MAX) {
 
@@ -1215,7 +1215,7 @@ CNode FAR *CGtlData::LocationToNode(int iLocationCode)
 
 // HACK-O-RAMA
 VOID CGtlData::SetFurlongs(CXodj *pXodj) {
-	assert(pXodj != NULL);
+	assert(pXodj != nullptr);
 
 	if (pXodj->m_bHodj) {
 		lpMetaGameStruct->m_cHodj.m_iFurlongs = pXodj->m_iFurlongs;

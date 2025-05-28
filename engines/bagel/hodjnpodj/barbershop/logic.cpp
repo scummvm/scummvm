@@ -168,7 +168,7 @@ BOOL CLogic::IsMoveOk(CCard *pCard, CStack *pStack) {
 			if (        // yes - source card from stack with other face cards?
 			    pCard->m_pStack->GetID() >= tab &&
 			    pCard->m_pStack->GetID() < stock &&
-			    pCard->m_pPrevCard != NULL &&
+			    pCard->m_pPrevCard != nullptr &&
 			    pCard->m_pPrevCard->m_bIsBack == TRUE
 			)
 				return TRUE;                // this is a valid move
@@ -183,7 +183,7 @@ BOOL CLogic::IsMoveOk(CCard *pCard, CStack *pStack) {
 		    pStack->IsEmpty() == TRUE &&
 		    pCard->m_pStack->GetID() >= tab &&
 		    pCard->m_pStack->GetID() < stock &&
-		    pCard->m_pPrevCard != NULL &&
+		    pCard->m_pPrevCard != nullptr &&
 		    pCard->m_pPrevCard->m_bIsBack == TRUE
 		)                   // when there's an empty space on the tab
 			return TRUE;
@@ -205,7 +205,7 @@ BOOL CLogic::IsMoveOk(CCard *pCard, CStack *pStack) {
 		if (pTopCard->GetPip() == pCard->GetPip()) {
 			if (pCard->m_pStack->GetID() == used)            // Card from used stack?
 				return TRUE;                                // yes - acceptable move
-			if (pCard->m_pPrevCard == NULL)              // anything under cur card?
+			if (pCard->m_pPrevCard == nullptr)              // anything under cur card?
 				return TRUE;                                // no
 			if (pCard->m_pPrevCard->m_bIsBack == TRUE)   // card under cur card a card back?
 				return TRUE;                                // yes
@@ -229,7 +229,7 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 	* Check all combinations of tableau to tableau moves. *
 	******************************************************/
 	for (i = tab; i < stock; i++) {
-		if ((pCard = pBoard->GetStack((loc) i)->Top()) == NULL)
+		if ((pCard = pBoard->GetStack((loc) i)->Top()) == nullptr)
 			continue;
 
 		if (pCard->m_bIsBack == TRUE)
@@ -249,7 +249,7 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 	* Check all combinations of tableau to foundation moves. *
 	*********************************************************/
 	for (i = tab; i < stock; i++) {
-		if ((pCard = pBoard->GetStack((loc) i)->Top()) == NULL)
+		if ((pCard = pBoard->GetStack((loc) i)->Top()) == nullptr)
 			continue;
 
 		if (IsMoveOk(pCard, pFnd) == TRUE)
@@ -264,7 +264,7 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 	* - stock to foundation.            *
 	************************************/
 	pCard   = pBoard->GetStack((loc) stock)->Top();
-	while (pCard != NULL) {
+	while (pCard != nullptr) {
 		for (j = 0; j < STOCK_DRAW; j++) {
 			if (pCard->m_pStack->Bottom() == pCard)      // Out of cards on the Stock stack?
 				break;
@@ -277,7 +277,7 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 
 		for (j = fnd; j < stock; j++) {
 			#ifdef REVEAL
-			if (pBoard->GetStack((loc) j)->Top() == NULL)
+			if (pBoard->GetStack((loc) j)->Top() == nullptr)
 				if (tab <= j && j < stock) {     // empty slots r valid moves
 					return FALSE;
 				} else {
@@ -294,7 +294,7 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 	} // end while
 
 	pCard   = pBoard->GetStack((loc) used)->Bottom();
-	while (pCard != NULL) {
+	while (pCard != nullptr) {
 		for (j = 0; j < STOCK_DRAW; j++) {
 			if (pCard->m_pStack->Top() == pCard)         // Out of cards on the Stock stack?
 				break;
@@ -307,7 +307,7 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 
 		for (j = fnd; j < stock; j++) {
 			#ifdef REVEAL
-			if (pBoard->GetStack((loc) j)->Top() == NULL)
+			if (pBoard->GetStack((loc) j)->Top() == nullptr)
 				continue;
 			#endif
 

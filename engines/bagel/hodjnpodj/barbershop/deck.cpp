@@ -35,7 +35,7 @@ CDeck::CDeck() {
 	for (i = 0; i < DECK; i++)
 		m_cDeck[i] = CCard(i);          // Reset deck
 
-	//srand((unsigned) time(NULL));     // seed the random number generator
+	//srand((unsigned) time(nullptr));     // seed the random number generator
 }
 
 CDeck::~CDeck() {

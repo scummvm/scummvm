@@ -65,7 +65,7 @@ CCryptogram::CCryptogram(CDC *pDC) {
 	********************************************************/
 	bIsGameOver         = FALSE;        // Initialize solved switch
 
-	//srand((unsigned) time(NULL));     // seed the random number generator
+	//srand((unsigned) time(nullptr));     // seed the random number generator
 }
 
 /*****************************************************************
@@ -94,13 +94,13 @@ CCryptogram::CCryptogram(CDC *pDC) {
  *
  ****************************************************************/
 CCryptogram::~CCryptogram() {
-	if (m_cStats != NULL)
+	if (m_cStats != nullptr)
 		delete m_cStats;
 
-	if (m_cPaintGram != NULL)
+	if (m_cPaintGram != nullptr)
 		delete m_cPaintGram;
 
-	if (m_cRecordGram != NULL)
+	if (m_cRecordGram != nullptr)
 		delete m_cRecordGram;
 }
 
@@ -245,7 +245,7 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
 	/********************************
 	* Clicked on letter anywhere?   *
 	********************************/
-	if (pSprite == NULL) {
+	if (pSprite == nullptr) {
 		//MessageBeep(-1);                          // No - exit
 		return FALSE;
 	}
@@ -514,7 +514,7 @@ void CCryptogram::Encrypt() {
 	/*****************************************
 	* Encrypt entire string using crypt map. *
 	*****************************************/
-	for (i = 0; m_chEncryptGram[i] != NULL; i++) {
+	for (i = 0; m_chEncryptGram[i] != 0; i++) {
 		if ((m_cPaintGram->IsAlphaChar(m_chEncryptGram[i]) == TRUE) &&                   // Is this a char?
 		        (m_nCryptMap[DECRYPT_MAP][m_cPaintGram->CharToIndex(m_chEncryptGram[i])] != NOT_USED)   // and should this char be encrypted?
 		   ) {
@@ -572,7 +572,7 @@ void CCryptogram::CreateCryptMap(int nLettersSolved) {
 	/****************************************************
 	* Create encryption map based on letters in phrase. *
 	****************************************************/
-	for (i = 0; m_chEncryptGram[i] != NULL; i++) {
+	for (i = 0; m_chEncryptGram[i] != 0; i++) {
 		if (m_cPaintGram->IsAlphaChar(m_chEncryptGram[i]) == TRUE) {     // Is this a char?
 
 			nDecryptCode = m_cPaintGram->CharToIndex(m_chEncryptGram[i]);

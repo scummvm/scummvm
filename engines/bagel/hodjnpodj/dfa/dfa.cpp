@@ -52,11 +52,11 @@ namespace DFA {
 
 extern CMainDFAWindow   *pMainGameWnd;
 
-CPalette    *pGamePalette = NULL;       // Palette to be used throughout the game
-CBmpButton  *pOptionButton = NULL;      // Option button object for getting to the options dialog
-CSprite     *pMalletSprite = NULL;      // The cursor will be a sprite that animates on LButtonDown
+CPalette    *pGamePalette = nullptr;       // Palette to be used throughout the game
+CBmpButton  *pOptionButton = nullptr;      // Option button object for getting to the options dialog
+CSprite     *pMalletSprite = nullptr;      // The cursor will be a sprite that animates on LButtonDown
 
-CSprite     *pTimerSprite = NULL;
+CSprite     *pTimerSprite = nullptr;
 int         nCurrentCel;
 CRect   MainRect;                           // screen area spanned by the game window
 CRect   ArtRect;                            // screen area inside the border trim
@@ -70,7 +70,7 @@ CRect   arBeaver[NUM_BEAVERS];
 CString aHitFile[NUM_HIT_SOUNDS];
 CString aMissFile[NUM_MISS_SOUNDS];
 
-static  CSound  *pGameSound = NULL;                             // Game theme song
+static  CSound  *pGameSound = nullptr;                             // Game theme song
 int     nCurrentTimer;
 BOOL    bEndGame;
 BOOL    bResetGame;
@@ -108,14 +108,14 @@ BOOL    bStart;
  ****************************************************************/
 
 CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
-	CDC         *pDC = NULL;                        // device context for the screen
-//	CPalette *pOldPalette = NULL;
-	CPalette    *pOldPal = NULL;
+	CDC         *pDC = nullptr;                        // device context for the screen
+//	CPalette *pOldPalette = nullptr;
+	CPalette    *pOldPal = nullptr;
 	CString     WndClass;
 	CSize       mySize;
 	BOOL        bTestCreate, bTestDibDoc;           // bool for testing the creation of each button
 	CText       atxtDisplayRow[NUMBEROFROWS];
-	CDibDoc     *pDibDoc = NULL;
+	CDibDoc     *pDibDoc = nullptr;
 	int         x, i;
 	CString     BeaverFiles[NUM_BEAVERS];
 
@@ -129,10 +129,10 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               NULL, NULL, NULL);
+	                               nullptr, nullptr, nullptr);
 
 	// set the seed for the random number generator
-	//srand( (unsigned)time( NULL ));
+	//srand( (unsigned)time( nullptr ));
 
 	// initialize private members
 	m_lpGameStruct = lpGameStruct;
@@ -162,7 +162,7 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	// Create the window as a POPUP so that no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x40 area.
-	Create(WndClass, "Boffo Games - Dam Furry Animals", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games - Dam Furry Animals", WS_POPUP, MainRect, nullptr, 0);
 
 	#ifndef BAGEL_DEBUG
 	ClipCursor(&MainRect);
@@ -178,9 +178,9 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	                   OPTION_LEFT + OPTION_WIDTH,
 	                   OPTION_TOP + OPTION_HEIGHT);
 	bTestCreate = pOptionButton->Create("Options", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, OptionRect, this, IDC_OPTION);
-	ASSERT(bTestCreate != NULL);                 // test for button's creation
-	bTestCreate = pOptionButton->LoadBitmaps(SCROLLUP, NULL, NULL, SCROLLDOWN);
-	ASSERT(bTestCreate != NULL);                 // test for button's creation
+	ASSERT(bTestCreate != 0);                 // test for button's creation
+	bTestCreate = pOptionButton->LoadBitmaps(SCROLLUP, 0, 0, SCROLLDOWN);
+	ASSERT(bTestCreate != 0);                 // test for button's creation
 
 	// Since we have the screen & button, let's put it up to amuse the player-in-waiting
 	m_nTimeForGame = 0;                 // will be checked in SplashScreen(), so initialize
@@ -204,13 +204,13 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	aMissFile[2] = "MissTwoSound";
 
 	for (i = 0; i < NUM_HIT_SOUNDS; i++) {
-		m_pHitSound[i] = NULL;
-		m_hHitRes[i] = NULL;
+		m_pHitSound[i] = nullptr;
+		m_hHitRes[i] = nullptr;
 	}
 
 	for (i = 0; i < NUM_MISS_SOUNDS; i++) {
-		m_pMissSound[i] = NULL;
-		m_hMissRes[i] = NULL;
+		m_pMissSound[i] = nullptr;
+		m_hMissRes[i] = nullptr;
 	}
 
 	pTimerSprite = new CSprite;
@@ -246,7 +246,7 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	BeaverFiles[6] = BEAVER7;
 
 	for (x = 0; x < NUM_BEAVERS; x++) {
-		apBeaverSprite[x] = NULL;
+		apBeaverSprite[x] = nullptr;
 		apBeaverSprite[x] = new CSprite;
 		apBeaverSprite[x]->SharePalette(pGamePalette);
 		bTestCreate = apBeaverSprite[x]->LoadSprite(pDC, BeaverFiles[x]);
@@ -308,14 +308,14 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 	if (m_lpGameStruct->bMusicEnabled) {
-		if (pGameSound != NULL)
+		if (pGameSound != nullptr)
 			(*pGameSound).midiLoopPlaySegment(1480, 30700, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
 
 	EndWaitCursor();
 	if (m_lpGameStruct->bPlayingMetagame)
-		SetTimer(GAMETIMER, 500, NULL);
+		SetTimer(GAMETIMER, 500, nullptr);
 
 }
 
@@ -496,7 +496,7 @@ void CMainDFAWindow::ResetGame() {
 		pTimerSprite->SetCel(nCurrentCel);
 		pTimerSprite->PaintSprite(pDC, WATCH_X, WATCH_Y);
 	}
-	SetTimer(GAMETIMER, 500, NULL);
+	SetTimer(GAMETIMER, 500, nullptr);
 
 	return;
 }
@@ -608,7 +608,7 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			CDC *pDC;
 			pDC = GetDC();
 			pMalletSprite->EraseSprite(pDC);
-			SetCursor(LoadCursor(NULL, IDC_ARROW));
+			SetCursor(LoadCursor(nullptr, IDC_ARROW));
 			ReleaseDC(pDC);
 
 			pOptionButton->EnableWindow(FALSE);
@@ -616,7 +616,7 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (m_lpGameStruct->bPlayingMetagame == TRUE) {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, (NO_NEWGAME | NO_OPTIONS),
 				                            lpfnOptionCallback, RULESFILE,
-				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
+				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
 				nMainOption = dlgMainOpts.DoModal();
 				switch (nMainOption) {
 				case IDC_OPTIONS_QUIT:
@@ -627,7 +627,7 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			} else {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, 0,
 				                            lpfnOptionCallback, RULESFILE,
-				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
+				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
 				nMainOption = dlgMainOpts.DoModal();
 				switch (nMainOption) {
 				case IDC_OPTIONS_QUIT:
@@ -643,15 +643,15 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			pOptionButton->EnableWindow(TRUE);
 			SetFocus();
 
-			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
+			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
 					(*pGameSound).stop();
 			} else if (m_lpGameStruct->bMusicEnabled == TRUE) {
-				if (pGameSound == NULL) {
+				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
-				if (pGameSound != NULL) {
+				if (pGameSound != nullptr) {
 					(*pGameSound).midiLoopPlaySegment(1480, 30700, 0, FMT_MILLISEC);
 				} // end if pGameSound
 			}
@@ -667,7 +667,7 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					ReleaseDC(pDC);
 				}
 
-				SetTimer(GAMETIMER, 500, NULL);
+				SetTimer(GAMETIMER, 500, nullptr);
 			}
 			break;
 		}
@@ -685,7 +685,7 @@ void CMainDFAWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 }
 
 void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
-	CSound  *pEffect = NULL;
+	CSound  *pEffect = nullptr;
 	CRect   rWatch,
 	        rLake,
 	        rMount,
@@ -719,7 +719,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 	if (rWatch.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)   {
 		CSound::clearWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, WATCH_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
 		(*pEffect).play();                                                      //...play the narration
@@ -727,7 +727,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 	else if (rLake.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)   {
 		CSound::clearWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, LAKE_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
 		(*pEffect).play();                                                      //...play the narration
@@ -735,7 +735,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 	else if (rMount.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)  {
 		CSound::clearWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, MOUNT_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
 		(*pEffect).play();                                                      //...play the narration
@@ -743,7 +743,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 	else if (rFlowers.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)    {
 		CSound::clearWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		pEffect = new CSound((CWnd *)this, BEE_WAV,
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
 		(*pEffect).play();                                                      //...play the narration
@@ -788,12 +788,12 @@ void CMainDFAWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	pDC = GetDC();
 
 	if (ArtRect.PtInRect(point) && !bEndGame) {
-		SetCursor(LoadCursor(NULL, NULL));
+		SetCursor(LoadCursor(nullptr, nullptr));
 		pMalletSprite->SetCel(-1);
 		pMalletSprite->PaintSprite(pDC, point);
 	} else {
 		pMalletSprite->EraseSprite(pDC);
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	}
 
 	ReleaseDC(pDC);
@@ -834,7 +834,7 @@ void CMainDFAWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 void CMainDFAWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette,
-	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL));
+	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 
 	switch (nChar) {
 	case VK_F1:
@@ -852,7 +852,7 @@ void CMainDFAWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			ReleaseDC(pDC);
 		}
 
-		SetTimer(GAMETIMER, 500, NULL);
+		SetTimer(GAMETIMER, 500, nullptr);
 		break;
 	case VK_F2:
 		SendMessage(WM_COMMAND, IDC_OPTION, BN_CLICKED);
@@ -865,7 +865,7 @@ void CMainDFAWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 void CMainDFAWindow::OnTimer(UINT nWhichTimer) {
-	CSound  *pEffect = NULL;
+	CSound  *pEffect = nullptr;
 
 	if (nWhichTimer == GAMETIMER) {
 		CDC *pDC = GetDC();
@@ -918,7 +918,7 @@ void CMainDFAWindow::OnTimer(UINT nWhichTimer) {
 
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
 				CSound::clearWaveSounds();
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				pEffect = new CSound((CWnd *)this, TIME_WAV,
 				                     SOUND_WAVE | SOUND_ASYNCH /*| SOUND_QUEUE*/ | SOUND_AUTODELETE);    //...Wave file, to delete itself
 				(*pEffect).play();                                                      //...play the narration
@@ -994,7 +994,7 @@ void CMainDFAWindow::OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 		}
 	return;
@@ -1035,7 +1035,7 @@ void CMainDFAWindow::OnClose() {
 	CBrush  Brush(RGB(0, 0, 0));
 
 	#ifndef BAGEL_DEBUG
-	ClipCursor(NULL);
+	ClipCursor(nullptr);
 	#endif
 
 	pDC->FillRect(&rctFillRect, &Brush);
@@ -1078,7 +1078,7 @@ void CMainDFAWindow::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lScore = m_lScore;
 	MFC::PostMessage(m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct);
-	m_lpGameStruct = NULL;
+	m_lpGameStruct = nullptr;
 	CFrameWnd::OnDestroy();
 }
 
@@ -1114,27 +1114,27 @@ void CMainDFAWindow::OnDestroy() {
 void CMainDFAWindow::ReleaseResources(void) {
 	int x;
 
-	if (pGameSound != NULL) {
+	if (pGameSound != nullptr) {
 		delete pGameSound;                      // delete the game theme song
-		pGameSound = NULL;
+		pGameSound = nullptr;
 	}
 
 	CSound::clearSounds();
 
-	if (pTimerSprite != NULL) {
+	if (pTimerSprite != nullptr) {
 		delete pTimerSprite;
 	}
 
-	if (pMalletSprite != NULL) {
+	if (pMalletSprite != nullptr) {
 		delete pMalletSprite;
 	}
 
 	for (x = 0; x < NUM_BEAVERS; x++) {
-		if (apBeaverSprite[x] != NULL)
+		if (apBeaverSprite[x] != nullptr)
 			delete apBeaverSprite[x];
 	}
 
-	if (pGamePalette != NULL) {
+	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();         // release the game color palette
 		delete pGamePalette;
 	}
@@ -1176,12 +1176,12 @@ void CMainDFAWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	while (TRUE) {                                      // find and remove all keyboard events
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	while (TRUE) {                                      // find and remove all mouse events
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }
@@ -1192,7 +1192,7 @@ long CMainDFAWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1202,7 +1202,7 @@ long CMainDFAWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1227,9 +1227,9 @@ BOOL CMainDFAWindow::LoadBeaverSounds(VOID) {
 	for (i = 0; i < NUM_HIT_SOUNDS; i++) {
 		// Load and lock
 		//
-		if ((hResInfo = FindResource(hInst, aHitFile[i], "WAVE")) != NULL) {
-			if ((m_hHitRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
-				if ((m_pHitSound[i] = (LPSTR)LockResource((HGLOBAL)m_hHitRes[i])) != NULL) {
+		if ((hResInfo = FindResource(hInst, aHitFile[i], "WAVE")) != nullptr) {
+			if ((m_hHitRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
+				if ((m_pHitSound[i] = (LPSTR)LockResource((HGLOBAL)m_hHitRes[i])) != nullptr) {
 					// we have now loaded at least one of the master sounds
 				} else bSuccess = FALSE;
 			} else bSuccess = FALSE;
@@ -1239,9 +1239,9 @@ BOOL CMainDFAWindow::LoadBeaverSounds(VOID) {
 	for (i = 0; i < NUM_MISS_SOUNDS; i++) {
 		// Load and lock
 		//
-		if ((hResInfo = FindResource(hInst, aMissFile[i], "WAVE")) != NULL) {
-			if ((m_hMissRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
-				if ((m_pMissSound[i] = (LPSTR)LockResource((HGLOBAL)m_hMissRes[i])) != NULL) {
+		if ((hResInfo = FindResource(hInst, aMissFile[i], "WAVE")) != nullptr) {
+			if ((m_hMissRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
+				if ((m_pMissSound[i] = (LPSTR)LockResource((HGLOBAL)m_hMissRes[i])) != nullptr) {
 					// we have now loaded at least one of the master sounds
 				} else bSuccess = FALSE;
 			} else bSuccess = FALSE;
@@ -1256,16 +1256,16 @@ void CMainDFAWindow::ReleaseBeaverSounds() {
 	int i;
 
 	for (i = 0; i < NUM_HIT_SOUNDS; i++) {
-		if (m_hHitRes[i] != NULL) {
+		if (m_hHitRes[i] != nullptr) {
 			FreeResource(m_hHitRes[i]);
-			m_hHitRes[i] = NULL;
+			m_hHitRes[i] = nullptr;
 		}
 	}
 
 	for (i = 0; i < NUM_MISS_SOUNDS; i++) {
-		if (m_hMissRes[i] != NULL) {
+		if (m_hMissRes[i] != nullptr) {
 			FreeResource(m_hMissRes[i]);
-			m_hMissRes[i] = NULL;
+			m_hMissRes[i] = nullptr;
 		}
 	}
 }

@@ -30,6 +30,6 @@
 #define DMint(X)    ErrorLog(".\\msg.log",#X"=%d",(X));
 #define DMstr(X)    ErrorLog(".\\msg.log",#X"=%s",(X));
 #define  DMaddr(X)  {\
-		(X)? ErrorLog(".\\msg.log",#X"=%p",(void _far*)(X)) : ErrorLog(".\\msg.log",#X"is NULL");   }
+		(X)? ErrorLog(".\\msg.log",#X"=%p",(void _far*)(X)) : ErrorLog(".\\msg.log",#X"is nullptr");   }
 
 #endif

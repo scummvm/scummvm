@@ -48,11 +48,11 @@ C2ButtonDialog::C2ButtonDialog(CWnd *pParent, CPalette *pPalette,
 		const char *pszText1, const char *pszText2,
 		const char *pszText3)
 	: CBmpDialog(pParent, pPalette, IDD_2BTNDLG, ".\\ART\\MSSCROLL.BMP") {
-	assert(pParent != NULL);
-	assert(pPalette != NULL);
-	assert(pszText1 != NULL);
-	assert(pszButton1Text != NULL);
-	assert(pszButton2Text != NULL);
+	assert(pParent != nullptr);
+	assert(pPalette != nullptr);
+	assert(pszText1 != nullptr);
+	assert(pszButton1Text != nullptr);
+	assert(pszButton2Text != nullptr);
 
 	// Initialize all members
 	//
@@ -63,9 +63,9 @@ C2ButtonDialog::C2ButtonDialog(CWnd *pParent, CPalette *pPalette,
 	m_pszButton1Text = pszButton1Text;
 	m_pszButton2Text = pszButton2Text;
 
-	m_cTextMessage1 = NULL;
-	m_cTextMessage2 = NULL;
-	m_cTextMessage3 = NULL;
+	m_cTextMessage1 = nullptr;
+	m_cTextMessage2 = nullptr;
+	m_cTextMessage3 = nullptr;
 
 	//{{AFX_DATA_INIT(C2ButtonDialog)
 	// NOTE: the ClassWizard will add member initialization here
@@ -73,32 +73,32 @@ C2ButtonDialog::C2ButtonDialog(CWnd *pParent, CPalette *pPalette,
 }
 
 void C2ButtonDialog::ClearDialogImage() {
-	if (m_pButton1 != NULL) {                          // release the 1st button
+	if (m_pButton1 != nullptr) {                          // release the 1st button
 		delete m_pButton1;
-		m_pButton1 = NULL;
+		m_pButton1 = nullptr;
 	}
-	if (m_pButton2 != NULL) {                          // release the 2nd button
+	if (m_pButton2 != nullptr) {                          // release the 2nd button
 		delete m_pButton2;
-		m_pButton2 = NULL;
+		m_pButton2 = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 void C2ButtonDialog::OnDestroy() {
-	if (m_cTextMessage1 != NULL) {
+	if (m_cTextMessage1 != nullptr) {
 		delete m_cTextMessage1;
-		m_cTextMessage1 = NULL;
+		m_cTextMessage1 = nullptr;
 	}
 
-	if (m_cTextMessage2 != NULL) {
+	if (m_cTextMessage2 != nullptr) {
 		delete m_cTextMessage2;
-		m_cTextMessage2 = NULL;
+		m_cTextMessage2 = nullptr;
 	}
 
-	if (m_cTextMessage3 != NULL) {
+	if (m_cTextMessage3 != nullptr) {
 		delete m_cTextMessage3;
-		m_cTextMessage3 = NULL;
+		m_cTextMessage3 = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -146,7 +146,7 @@ BOOL C2ButtonDialog::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_cTextMessage1 = new CText()) != NULL) {
+	if ((m_cTextMessage1 = new CText()) != nullptr) {
 		bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
@@ -158,7 +158,7 @@ BOOL C2ButtonDialog::OnInitDialog() {
 	                  nStat_row_offset + nStatHeight
 	                 );
 
-	if ((m_cTextMessage2 = new CText()) != NULL) {
+	if ((m_cTextMessage2 = new CText()) != nullptr) {
 		bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
@@ -170,19 +170,19 @@ BOOL C2ButtonDialog::OnInitDialog() {
 	                  nStat_row_offset + nStatHeight
 	                 );
 
-	if ((m_cTextMessage3 = new CText()) != NULL) {
+	if ((m_cTextMessage3 = new CText()) != nullptr) {
 		bAssertCheck = m_cTextMessage3->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
 	ReleaseDC(pDC);
 
-	if ((m_pButton1 = new CColorButton) != NULL) {            // build the first color button
+	if ((m_pButton1 = new CColorButton) != nullptr) {            // build the first color button
 		(*m_pButton1).SetPalette(m_pPalette);                 // set the palette to use
 		(*m_pButton1).SetControl(IDOK, this);                 // tie to the dialog control
 		(*m_pButton1).SetWindowText(m_pszButton1Text);
 	}
-	if ((m_pButton2 = new CColorButton) != NULL) {             // build the second color button
+	if ((m_pButton2 = new CColorButton) != nullptr) {             // build the second color button
 		(*m_pButton2).SetPalette(m_pPalette);                  // set the palette to use
 		(*m_pButton2).SetControl(IDCANCEL, this);              // tie to the dialog control
 		(*m_pButton2).SetWindowText(m_pszButton2Text);
@@ -201,17 +201,17 @@ void C2ButtonDialog::OnPaint() {
 
 	pDC = GetDC();
 
-	if (m_pszMessage1 != NULL) {
+	if (m_pszMessage1 != nullptr) {
 		bAssertCheck = m_cTextMessage1->DisplayString(pDC, m_pszMessage1, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 
-	if (m_pszMessage2 != NULL) {
+	if (m_pszMessage2 != nullptr) {
 		bAssertCheck = m_cTextMessage2->DisplayString(pDC, m_pszMessage2, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 
-	if (m_pszMessage3 != NULL) {
+	if (m_pszMessage3 != nullptr) {
 		bAssertCheck = m_cTextMessage3->DisplayString(pDC, m_pszMessage3, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}

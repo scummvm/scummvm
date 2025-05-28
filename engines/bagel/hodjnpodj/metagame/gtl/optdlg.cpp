@@ -69,12 +69,12 @@ STATIC const CHAR *pszSaveGameFile = "HODJPODJ.SAV";
 CMetaOptDlg::CMetaOptDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_OPTIONDLG, ".\\ART\\MLSCROLL.BMP") {
 	m_pParent = pParent;
 	m_pPalette = pPalette;
-	m_pBfcMgr = NULL;
-	m_pSaveGameButton = NULL;
-	m_pOptionsGameButton = NULL;
-	m_pLeaveGameButton = NULL;
-	m_pContinueGameButton = NULL;
-	m_pRulesGameButton = NULL;
+	m_pBfcMgr = nullptr;
+	m_pSaveGameButton = nullptr;
+	m_pOptionsGameButton = nullptr;
+	m_pLeaveGameButton = nullptr;
+	m_pContinueGameButton = nullptr;
+	m_pRulesGameButton = nullptr;
 }
 
 /*****************************************************************
@@ -115,7 +115,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_SAVE_GAME:
 
-			SaveGame(pszSaveGameFile, m_pBfcMgr, (CWnd *)this, m_pPalette, NULL);
+			SaveGame(pszSaveGameFile, m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
 			ClearDialogImage();
 			EndDialog(0);
 			return (TRUE);
@@ -124,7 +124,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (m_pBfcMgr->m_bChanged) {
 				C2ButtonDialog dlg2Button(this, m_pPalette, "&Yes", "&No", "Would you like to", "save this game", "before leaving?");
 				if (dlg2Button.DoModal() == CBUTTON1)
-					SaveGame(pszSaveGameFile, m_pBfcMgr, (CWnd *)this, m_pPalette, NULL);
+					SaveGame(pszSaveGameFile, m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
 			}
 			ClearDialogImage();
 			EndDialog(1);
@@ -138,7 +138,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		return (TRUE);
 
 		case IDC_RULES: {
-			CRules RulesDlg(this, "metarule.txt", m_pPalette, NULL);
+			CRules RulesDlg(this, "metarule.txt", m_pPalette, nullptr);
 			(void) RulesDlg.DoModal();
 			return (TRUE);
 		}
@@ -185,28 +185,28 @@ void CMetaOptDlg::OnCancel(void) {
 }
 
 void CMetaOptDlg::ClearDialogImage(void) {
-	if (m_pSaveGameButton != NULL) {
+	if (m_pSaveGameButton != nullptr) {
 		delete m_pSaveGameButton;
-		m_pSaveGameButton = NULL;
+		m_pSaveGameButton = nullptr;
 	}
-	if (m_pLeaveGameButton != NULL) {
+	if (m_pLeaveGameButton != nullptr) {
 		delete m_pLeaveGameButton;
-		m_pLeaveGameButton = NULL;
+		m_pLeaveGameButton = nullptr;
 	}
-	if (m_pContinueGameButton != NULL) {
+	if (m_pContinueGameButton != nullptr) {
 		delete m_pContinueGameButton;
-		m_pContinueGameButton = NULL;
+		m_pContinueGameButton = nullptr;
 	}
-	if (m_pOptionsGameButton != NULL) {
+	if (m_pOptionsGameButton != nullptr) {
 		delete m_pOptionsGameButton;
-		m_pOptionsGameButton = NULL;
+		m_pOptionsGameButton = nullptr;
 	}
-	if (m_pRulesGameButton != NULL) {
+	if (m_pRulesGameButton != nullptr) {
 		delete m_pRulesGameButton;
-		m_pRulesGameButton = NULL;
+		m_pRulesGameButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 /*****************************************************************
  *
@@ -246,31 +246,31 @@ BOOL CMetaOptDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	m_pSaveGameButton = new CColorButton();
-	ASSERT(m_pSaveGameButton != NULL);
+	ASSERT(m_pSaveGameButton != nullptr);
 	m_pSaveGameButton->SetPalette(m_pPalette);
 	bSuccess = m_pSaveGameButton->SetControl(IDC_SAVE_GAME, this);
 	ASSERT(bSuccess);
 
 	m_pLeaveGameButton = new CColorButton();
-	ASSERT(m_pLeaveGameButton != NULL);
+	ASSERT(m_pLeaveGameButton != nullptr);
 	m_pLeaveGameButton->SetPalette(m_pPalette);
 	bSuccess = m_pLeaveGameButton->SetControl(IDC_LEAVE_GAME, this);
 	ASSERT(bSuccess);
 
 	m_pContinueGameButton = new CColorButton();
-	ASSERT(m_pContinueGameButton != NULL);
+	ASSERT(m_pContinueGameButton != nullptr);
 	m_pContinueGameButton->SetPalette(m_pPalette);
 	bSuccess = m_pContinueGameButton->SetControl(IDC_CONTINUE, this);
 	ASSERT(bSuccess);
 
 	m_pOptionsGameButton = new CColorButton();
-	ASSERT(m_pOptionsGameButton != NULL);
+	ASSERT(m_pOptionsGameButton != nullptr);
 	m_pOptionsGameButton->SetPalette(m_pPalette);
 	bSuccess = m_pOptionsGameButton->SetControl(IDC_OPTIONS, this);
 	ASSERT(bSuccess);
 
 	m_pRulesGameButton = new CColorButton();
-	ASSERT(m_pRulesGameButton != NULL);
+	ASSERT(m_pRulesGameButton != nullptr);
 	m_pRulesGameButton->SetPalette(m_pPalette);
 	bSuccess = m_pRulesGameButton->SetControl(IDC_RULES, this);
 	ASSERT(bSuccess);
@@ -326,25 +326,25 @@ void CMetaOptDlg::OnPaint(void) {
 }
 
 void CMetaOptDlg::OnDestroy() {
-	if (m_pSaveGameButton != NULL) {
+	if (m_pSaveGameButton != nullptr) {
 		delete m_pSaveGameButton;
-		m_pSaveGameButton = NULL;
+		m_pSaveGameButton = nullptr;
 	}
-	if (m_pLeaveGameButton != NULL) {
+	if (m_pLeaveGameButton != nullptr) {
 		delete m_pLeaveGameButton;
-		m_pLeaveGameButton = NULL;
+		m_pLeaveGameButton = nullptr;
 	}
-	if (m_pContinueGameButton != NULL) {
+	if (m_pContinueGameButton != nullptr) {
 		delete m_pContinueGameButton;
-		m_pContinueGameButton = NULL;
+		m_pContinueGameButton = nullptr;
 	}
-	if (m_pOptionsGameButton != NULL) {
+	if (m_pOptionsGameButton != nullptr) {
 		delete m_pOptionsGameButton;
-		m_pOptionsGameButton = NULL;
+		m_pOptionsGameButton = nullptr;
 	}
-	if (m_pRulesGameButton != NULL) {
+	if (m_pRulesGameButton != nullptr) {
 		delete m_pRulesGameButton;
-		m_pRulesGameButton = NULL;
+		m_pRulesGameButton = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();

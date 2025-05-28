@@ -120,7 +120,7 @@ void CGtlDoc::InitDocument(const char *xpszPathName)
 	#endif
 
 	m_xpGtlData->m_bStartMetaGame = xpGtlApp->m_bStartMetaGame ;
-	UpdateAllViews(NULL, 0L, NULL) ;
+	UpdateAllViews(nullptr, 0L, nullptr) ;
 
 	#ifdef NODEEDIT
 	if (xpGtlApp->m_bMenuDialog && m_xpGtlFrame)
@@ -201,7 +201,7 @@ VOID CGtlDoc::OnChangedViewList(void)
 	//
 	if (!m_xpGtlFrame) {
 
-		if ((xpGtlView = (CGtlView *)GetNextView(nViewPosition)) != NULL) {
+		if ((xpGtlView = (CGtlView *)GetNextView(nViewPosition)) != nullptr) {
 			if (!m_xpcLastFocusView)
 				m_xpcLastFocusView = xpGtlView ;
 

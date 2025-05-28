@@ -43,7 +43,7 @@ public:
 	char m_cEndData ;
 
 public:
-	CBbtMgr(CBgbMgr FAR * lpBgbMgr = NULL) {
+	CBbtMgr(CBgbMgr FAR * lpBgbMgr = nullptr) {
 		memset(&m_cStartData, 0,
 		       &m_cEndData - &m_cStartData) ;
 		m_lpBgbMgr = lpBgbMgr ;
@@ -57,7 +57,7 @@ public:
     //- AcceptClick -- process mouse click or mouse move
 	int AcceptClick(CRPoint crPoint, int iClickType) ;
     //- MoveDown -- move button down
-	BOOL MoveDown(CBbutton FAR * lpDownBbt PDFT(NULL)) ;
+	BOOL MoveDown(CBbutton FAR * lpDownBbt PDFT(nullptr)) ;
     //- GetCurrentBitmap -- get current bitmap for button
 	CBgbObject FAR *GetCurrentBitmap(CBbutton * xpBbt) ;
 } ;

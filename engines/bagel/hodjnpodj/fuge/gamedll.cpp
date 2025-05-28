@@ -76,7 +76,7 @@ HWND FAR PASCAL RunFuge(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	ghParentWnd = hParentWnd;
 
-	if ((pMain = new CFugeWindow) != NULL) {
+	if ((pMain = new CFugeWindow) != nullptr) {
 
 		pMain->ShowWindow(SW_SHOWNORMAL);
 

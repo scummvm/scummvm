@@ -39,7 +39,7 @@ class CTop10Dlg : public CBmpDialog
 private:
 
 public:
-    CTop10Dlg(CWnd* pParent = NULL, CPalette *pPalette = NULL );
+    CTop10Dlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr );
 
 private:
 	void GetScores();

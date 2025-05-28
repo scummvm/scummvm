@@ -38,9 +38,9 @@ static CPalette     *pPackRatOptPalette;
 static CRect        rDisplayTime(35, 90, 200, 110);      //( 43, 90, 174, 110 );
 CText               *ptxtTime;
 
-CColorButton    *pOKButton = NULL;
-CColorButton    *pCancelButton = NULL;
-CCheckButton    *pWordForwardButton = NULL;
+CColorButton    *pOKButton = nullptr;
+CColorButton    *pCancelButton = nullptr;
+CCheckButton    *pWordForwardButton = nullptr;
 
 /*****************************************************************
  *
@@ -209,20 +209,20 @@ void CWSOptDlg::OnOK(void) {
 
 void CWSOptDlg::ClearDialogImage(void) {
 
-	if (pOKButton != NULL) {
+	if (pOKButton != nullptr) {
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
-	if (pCancelButton != NULL) {
+	if (pCancelButton != nullptr) {
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
-	if (pWordForwardButton != NULL) {
+	if (pWordForwardButton != nullptr) {
 		delete pWordForwardButton;
-		pWordForwardButton = NULL;
+		pWordForwardButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }
@@ -303,19 +303,19 @@ BOOL CWSOptDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	pOKButton = new CColorButton();
-	ASSERT(pOKButton != NULL);
+	ASSERT(pOKButton != nullptr);
 	pOKButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pOKButton->SetControl(IDC_MINI_OK, this);
 	ASSERT(bSuccess);
 
 	pCancelButton = new CColorButton();
-	ASSERT(pCancelButton != NULL);
+	ASSERT(pCancelButton != nullptr);
 	pCancelButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pCancelButton->SetControl(IDC_MINI_CANCEL, this);
 	ASSERT(bSuccess);
 
 	pWordForwardButton = new CCheckButton();
-	ASSERT(pWordForwardButton != NULL);
+	ASSERT(pWordForwardButton != nullptr);
 	pWordForwardButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pWordForwardButton->SetControl(IDC_MINI_BWTOGGLE, this);
 	ASSERT(bSuccess);
@@ -561,16 +561,16 @@ void CWSOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 
 void CWSOptDlg::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
-	if (pOKButton != NULL)
+	if (pOKButton != nullptr)
 		delete pOKButton;
 
-	if (pCancelButton != NULL)
+	if (pCancelButton != nullptr)
 		delete pCancelButton;
 
-	if (pWordForwardButton != NULL)
+	if (pWordForwardButton != nullptr)
 		delete pWordForwardButton;
 
-	if (ptxtTime != NULL)
+	if (ptxtTime != nullptr)
 		delete ptxtTime;
 
 	CBmpDialog::OnDestroy();

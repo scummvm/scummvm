@@ -29,17 +29,17 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
 
 
-CText   *m_pShellText = NULL;
-CText   *m_pStrengthText = NULL;
+CText   *m_pShellText = nullptr;
+CText   *m_pStrengthText = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMnkOpt dialog
 
-CMnkOpt::CMnkOpt(CWnd* pParent /*=NULL*/)
+CMnkOpt::CMnkOpt(CWnd* pParent /*=nullptr*/)
 	: CDialog(CMnkOpt::IDD, pParent) {
 	//{{AFX_DATA_INIT(CMnkOpt)
 	m_iLevel0 = -1;
@@ -115,9 +115,9 @@ CMnkUsr::CMnkUsr(CWnd *xpParent, CPalette *xpPalette, UINT nID)
 }
 
 CMnkUsr::~CMnkUsr() {
-	if (m_pShellText != NULL)
+	if (m_pShellText != nullptr)
 		delete m_pShellText;
-	if (m_pStrengthText != NULL)
+	if (m_pStrengthText != nullptr)
 		delete m_pStrengthText;
 }
 
@@ -157,12 +157,12 @@ BOOL CMnkUsr::OnInitDialog() {
 	mLevelTable[3] =  "King Crab";
 	mLevelTable[4] =  "Invincible";         /*nish added 08/04/94*/
 	statRect.SetRect(LEFT_SIDE, 25, LEFT_SIDE + 100, 40);
-	if ((m_pShellText = new CText()) != NULL) {
+	if ((m_pShellText = new CText()) != nullptr) {
 		(*m_pShellText).SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 185, 80);
-	if ((m_pStrengthText = new CText()) != NULL) {
+	if ((m_pStrengthText = new CText()) != nullptr) {
 		(*m_pStrengthText).SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -174,12 +174,12 @@ BOOL CMnkUsr::OnInitDialog() {
 	m_xpUScrStrength->SetScrollRange(MINSTRENGTH, MAXSTRENGTH, TRUE) ;
 	m_xpUScrStrength->SetScrollPos(m_iUStrength) ;
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(m_pPalette);                        // set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
@@ -190,17 +190,17 @@ BOOL CMnkUsr::OnInitDialog() {
 }
 
 void CMnkUsr::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
@@ -237,7 +237,7 @@ void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {
 	iValCur = xpScrollBar->GetScrollPos() ;
 
 //    int * xpiVariable = (iId == IDC_USCRSHELL) ? &m_iUShells
-//		: (iId == IDC_USCRSTRENGTH) ? &m_iUStrength : NULL ;
+//		: (iId == IDC_USCRSTRENGTH) ? &m_iUStrength : nullptr ;
 
 	switch (nSBCode) {
 	case SB_LEFT:

@@ -40,7 +40,7 @@ namespace Gtl {
 class CRules : public CDialog {
 // Construction
 public:
-	CRules(CWnd* pParent = NULL, char *pszPathName = NULL, CPalette *pPalette = NULL, char *pszSoundPath = NULL);   // standard constructor
+	CRules(CWnd* pParent = nullptr, char *pszPathName = nullptr, CPalette *pPalette = nullptr, char *pszSoundPath = nullptr);   // standard constructor
 
 	void UpdateScroll(int nPage);
 	void ClearDialogImage(void);

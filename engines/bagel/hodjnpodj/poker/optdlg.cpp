@@ -28,11 +28,11 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Poker {
 
-static CPalette     *m_pOptionsPalette = NULL;
+static CPalette     *m_pOptionsPalette = nullptr;
 
-static CColorButton    *pAmountButton = NULL;
-static CColorButton    *pPayoffButton = NULL;
-static CColorButton    *pCancelButton = NULL;
+static CColorButton    *pAmountButton = nullptr;
+static CColorButton    *pPayoffButton = nullptr;
+static CColorButton    *pCancelButton = nullptr;
 /*****************************************************************
  *
  * COptionsDlg
@@ -159,19 +159,19 @@ BOOL COptionsDlg::OnInitDialog(void) {
 	CBmpDialog::OnInitDialog();
 
 	pPayoffButton = new CColorButton();
-	ASSERT(pPayoffButton != NULL);
+	ASSERT(pPayoffButton != nullptr);
 	pPayoffButton->SetPalette(m_pOptionsPalette);
 	bSuccess = pPayoffButton->SetControl(ID_SETPAYOFFS, this);
 	ASSERT(bSuccess);
 
 	pAmountButton = new CColorButton();
-	ASSERT(pAmountButton != NULL);
+	ASSERT(pAmountButton != nullptr);
 	pAmountButton->SetPalette(m_pOptionsPalette);
 	bSuccess = pAmountButton->SetControl(ID_SETUSERAMT, this);
 	ASSERT(bSuccess);
 
 	pCancelButton = new CColorButton();
-	ASSERT(pCancelButton != NULL);
+	ASSERT(pCancelButton != nullptr);
 	pCancelButton->SetPalette(m_pOptionsPalette);
 	bSuccess = pCancelButton->SetControl(ID_CANCEL, this);
 	ASSERT(bSuccess);
@@ -235,20 +235,20 @@ void COptionsDlg::OnDestroy() {
 
 void COptionsDlg::ClearDialogImage(void) {
 
-	if (pAmountButton != NULL) {
+	if (pAmountButton != nullptr) {
 		delete pAmountButton;
-		pAmountButton = NULL;
+		pAmountButton = nullptr;
 	}
-	if (pPayoffButton != NULL) {
+	if (pPayoffButton != nullptr) {
 		delete pPayoffButton;
-		pPayoffButton = NULL;
+		pPayoffButton = nullptr;
 	}
-	if (pCancelButton != NULL) {
+	if (pCancelButton != nullptr) {
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }

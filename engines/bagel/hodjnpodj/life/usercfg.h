@@ -75,7 +75,7 @@ public:
 	            nLifeTemp;
 	BOOL        bPrePlaceTemp;
 
-	CUserCfgDlg(CWnd *pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_USERCFG);
+	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERCFG);
 
 	enum { IDD = IDD_USERCFG };
 	CScrollBar      m_ScrollVillages;

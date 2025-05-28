@@ -41,7 +41,7 @@ BOOL CTimeUtil::DelayMs(UINT uMs)
 
 //    RETURN(FALSE) ;   // ***************
 
-	if (!(uTimerId = SetTimer(NULL, 0, uMs, DelayMsCallback)))
+	if (!(uTimerId = SetTimer(nullptr, 0, uMs, DelayMsCallback)))
 		// set timer, and test for success
 	{
 		iError = 100 ;      // SetTimer failed
@@ -53,7 +53,7 @@ BOOL CTimeUtil::DelayMs(UINT uMs)
 		DoPendingEvents() ;
 
 
-	if (!KillTimer(NULL, uTimerId)) { // kill timer and test success
+	if (!KillTimer(nullptr, uTimerId)) { // kill timer and test success
 		iError = 101 ;      // KillTimer failed
 		goto cleanup ;
 	}
@@ -76,7 +76,7 @@ void CTimeUtil::DelayMsCallback(HWND hWnd, UINT uMsg,
 void DoPendingEvents() {
 	MSG  msg;
 
-	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}

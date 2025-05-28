@@ -100,7 +100,7 @@ CLife::CLife(CDC *pDC) {
 		m_cCalendar.pMonthSprite[i]->SetMasked(TRUE);
 	}
 
-	//srand((unsigned) time(NULL));     // seed the random number generator
+	//srand((unsigned) time(nullptr));     // seed the random number generator
 }
 
 /*****************************************************************
@@ -260,7 +260,7 @@ void CLife::change_board(UINT nFlags, CPoint point, CDC *pDC, BOOL bPlayingMeta)
 		}
 
 		pSprite = CSprite::Touched(sprite_loc);
-		if (pSprite != NULL) { // See if the point is in the sprite's rectangle
+		if (pSprite != nullptr) { // See if the point is in the sprite's rectangle
 			(*pSprite).RefreshBackground(pDC);      // ... simply repaint background
 			(*pSprite).UnlinkSprite(); // ... and if so, unlink it from chain
 			delete pSprite;
@@ -359,7 +359,7 @@ void CLife::evolution(CDC *pDC) {
 					sprite_loc.x = BOARD_START_COL + (CURLY_X + BOARD_SPACING_TIMES_TWO) * col;
 
 					pSprite = CSprite::Touched(sprite_loc);
-					if (pSprite != NULL) { // See if the point is in the sprite's rectangle
+					if (pSprite != nullptr) { // See if the point is in the sprite's rectangle
 						(*pSprite).RefreshBackground(pDC);      // ... simply repaint background
 						(*pSprite).UnlinkSprite(); // ... and if so, unlink it from chain
 						delete pSprite;

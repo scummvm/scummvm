@@ -68,47 +68,47 @@ LRESULT FAR PASCAL KeyboardHookProc(int, WORD, LONG);   // keyboard hook procedu
 typedef LRESULT(FAR PASCAL *FPKBDHOOKPROC)(int, WORD, LONG);
 extern  HINSTANCE   hDLLInst;
 extern  HINSTANCE   hExeInst;
-static  FPKBDHOOKPROC   lpfnKbdHook = NULL;         // pointer to hook procedure
+static  FPKBDHOOKPROC   lpfnKbdHook = nullptr;         // pointer to hook procedure
 
 #else
 
 LRESULT FAR PASCAL PrefHookProc(int, WORD, LONG);   // keyboard hook procedure definition
-static  FARPROC     pKbdHook = NULL;                // pointer to hook procedure
+static  FARPROC     pKbdHook = nullptr;                // pointer to hook procedure
 
 #endif
 
-static  HHOOK       hKbdHook = NULL;                // handle for hook procedure
+static  HHOOK       hKbdHook = nullptr;                // handle for hook procedure
 
-static  CRules      *pRulesDialog = NULL;           // pointer to our rules dialog box
-static  CWnd        *pParentWnd = NULL;             // parent window pointer
+static  CRules      *pRulesDialog = nullptr;           // pointer to our rules dialog box
+static  CWnd        *pParentWnd = nullptr;             // parent window pointer
 
-static  CColorButton *pOKButton = NULL;             // OKAY button on scroll
+static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
 static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
-static  CDibDoc *pScrollTopDIB = NULL,          // DIB for scroll top section
-	*pScrollMidDIB = NULL,          // DIB for scroll mid section
-	*pScrollBotDIB = NULL;          // DIB for scroll bottom section
+static  CDibDoc *pScrollTopDIB = nullptr,          // DIB for scroll top section
+	*pScrollMidDIB = nullptr,          // DIB for scroll mid section
+	*pScrollBotDIB = nullptr;          // DIB for scroll bottom section
 
-static  CBitmap     *pScrollTopBitmap = NULL,       // bitmap for scroll top section
-	*pScrollTopBitmapOld = NULL,    // bitmap previously mapped to top section context
-	*pScrollMidBitmap = NULL,       // bitmap for scroll mid section
-	*pScrollMidBitmapOld = NULL,    // bitmap previously mapped to mid section context
-	*pScrollBotBitmap = NULL,       // bitmap for scroll bottom section
-	*pScrollBotBitmapOld = NULL;    // bitmap previously mapped to bottom section context
+static  CBitmap     *pScrollTopBitmap = nullptr,       // bitmap for scroll top section
+	*pScrollTopBitmapOld = nullptr,    // bitmap previously mapped to top section context
+	*pScrollMidBitmap = nullptr,       // bitmap for scroll mid section
+	*pScrollMidBitmapOld = nullptr,    // bitmap previously mapped to mid section context
+	*pScrollBotBitmap = nullptr,       // bitmap for scroll bottom section
+	*pScrollBotBitmapOld = nullptr;    // bitmap previously mapped to bottom section context
 
-static  CBitmap *pScrollTopMask = NULL,         // mask for scroll top section bitmap
-	*pScrollTopMaskOld = NULL,      // bitmap previously mapped to top mask context
-	*pScrollMidMask = NULL,         // mask for scroll mid section bitmap
-	*pScrollMidMaskOld = NULL,      // bitmap previously mapped to mid mask context
-	*pScrollBotMask = NULL,         // mask for scroll bottom section bitmap
-	*pScrollBotMaskOld = NULL;      // bitmap previously mapped to bottom mask context
+static  CBitmap *pScrollTopMask = nullptr,         // mask for scroll top section bitmap
+	*pScrollTopMaskOld = nullptr,      // bitmap previously mapped to top mask context
+	*pScrollMidMask = nullptr,         // mask for scroll mid section bitmap
+	*pScrollMidMaskOld = nullptr,      // bitmap previously mapped to mid mask context
+	*pScrollBotMask = nullptr,         // mask for scroll bottom section bitmap
+	*pScrollBotMaskOld = nullptr;      // bitmap previously mapped to bottom mask context
 
-static  CBitmap *pScrollBitmap = NULL,          // bitmap for an entirely blank scroll
-	*pScrollBitmapOld = NULL,       // bitmap previously mapped to the scroll context
-	*pBackgroundBitmap = NULL,      // bitmap containing the background for the scroll
-	*pBackgroundBitmapOld = NULL,   // bitmap previously mapped to the background context
-	*pWorkBitmap = NULL,            // bitmap containing the work area for the scroll
-	*pWorkBitmapOld = NULL;         // bitmap previously mapped to the work area context
+static  CBitmap *pScrollBitmap = nullptr,          // bitmap for an entirely blank scroll
+	*pScrollBitmapOld = nullptr,       // bitmap previously mapped to the scroll context
+	*pBackgroundBitmap = nullptr,      // bitmap containing the background for the scroll
+	*pBackgroundBitmapOld = nullptr,   // bitmap previously mapped to the background context
+	*pWorkBitmap = nullptr,            // bitmap containing the work area for the scroll
+	*pWorkBitmapOld = nullptr;         // bitmap previously mapped to the work area context
 
 static  CRect       ScrollRect,                     // x/y (left/right) and dx/dy (right/bottom) for the scroll window
         ScrollTopRect,                  // rectangle bounding the scroll top section
@@ -118,30 +118,30 @@ static  CRect       ScrollRect,                     // x/y (left/right) and dx/d
 static  CRect       ScrollTopCurlRect,              // current location of top curl for mouse clicks
         ScrollBotCurlRect;              // current location of bottom curl for mouse clicks
 
-static  CPalette *pScrollPalette = NULL,         // palette used for the scroll
-	*pScrollPalOld = NULL,          // previous palette mapped to scroll context
-	*pBackgroundPalOld = NULL,      // previous palette mapped to background context
-	*pScrollTopPalOld = NULL,       // previous palette mapped to top context
-	*pScrollMidPalOld = NULL,       // previous palette mapped to middle context
-	*pScrollBotPalOld = NULL,       // previous palette mapped to bottom context
-	*pScrollTopMaskPalOld = NULL,   // previous palette mapped to top mask context
-	*pScrollMidMaskPalOld = NULL,   // previous palette mapped to middle mask context
-	*pScrollBotMaskPalOld = NULL,   // previous palette mapped to bottom mask context
-	*pWorkPalOld = NULL;            // previous palette mapped to work area context
+static  CPalette *pScrollPalette = nullptr,         // palette used for the scroll
+	*pScrollPalOld = nullptr,          // previous palette mapped to scroll context
+	*pBackgroundPalOld = nullptr,      // previous palette mapped to background context
+	*pScrollTopPalOld = nullptr,       // previous palette mapped to top context
+	*pScrollMidPalOld = nullptr,       // previous palette mapped to middle context
+	*pScrollBotPalOld = nullptr,       // previous palette mapped to bottom context
+	*pScrollTopMaskPalOld = nullptr,   // previous palette mapped to top mask context
+	*pScrollMidMaskPalOld = nullptr,   // previous palette mapped to middle mask context
+	*pScrollBotMaskPalOld = nullptr,   // previous palette mapped to bottom mask context
+	*pWorkPalOld = nullptr;            // previous palette mapped to work area context
 
-static  CDC *pScrollDC = NULL,              // device context for the scroll bitmap
-	*pBackgroundDC = NULL,          // device context for the background bitmap
-	*pScrollTopDC = NULL,           // device context for the top section bitmap
-	*pScrollMidDC = NULL,           // device context for the middle section bitmap
-	*pScrollBotDC = NULL,           // device context for the bottom section bitmap
-	*pScrollTopMaskDC = NULL,       // device context for the top mask bitmap
-	*pScrollMidMaskDC = NULL,       // device context for the middle section bitmap
-	*pScrollBotMaskDC = NULL,       // device context for the bottom section bitmap
-	*pWorkDC = NULL;                // device context for the work area bitmap
+static  CDC *pScrollDC = nullptr,              // device context for the scroll bitmap
+	*pBackgroundDC = nullptr,          // device context for the background bitmap
+	*pScrollTopDC = nullptr,           // device context for the top section bitmap
+	*pScrollMidDC = nullptr,           // device context for the middle section bitmap
+	*pScrollBotDC = nullptr,           // device context for the bottom section bitmap
+	*pScrollTopMaskDC = nullptr,       // device context for the top mask bitmap
+	*pScrollMidMaskDC = nullptr,       // device context for the middle section bitmap
+	*pScrollBotMaskDC = nullptr,       // device context for the bottom section bitmap
+	*pWorkDC = nullptr;                // device context for the work area bitmap
 
-static  CFont       *pFont = NULL;                  // font to use for displaying rules text
+static  CFont       *pFont = nullptr;                  // font to use for displaying rules text
 static  char        chPathName[128];                // buffer to hold path name of the rules file
-static  CFile       *pHelpFile = NULL;              // the rules file
+static  CFile       *pHelpFile = nullptr;              // the rules file
 static  DWORD       nHelpFileSize = 0;              // size of rules file
 static  int         nHelpPage = 0;                  // current page of rules text
 static  DWORD       dwHelpPagePosition[100];        // position of each page (# chars from file start)
@@ -149,8 +149,8 @@ static  BOOL        dwHelpPageEOL[100];             // whether page starts with 
 static  BOOL        bHelpEOF = FALSE;               // whether end-of-file has been reached
 static  int         tabstop = 20 + TEXT_LEFT_MARGIN;// pixels per tab stop
 
-static  char        *pSoundPath = NULL;             // path spec for rules narration
-static  CSound      *pNarrative = NULL;             // sound object
+static  char        *pSoundPath = nullptr;             // path spec for rules narration
+static  CSound      *pNarrative = nullptr;             // sound object
 
 static  BOOL        first_time = TRUE;
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active
@@ -167,7 +167,7 @@ BOOL CRules::SetupKeyboardHook() {
 	pRulesDialog = this;                            // retain pointer to our dialog box
 
 	lpfnKbdHook = (FPKBDHOOKPROC)GetProcAddress(hDLLInst, "KeyboardHookProc");
-	if (lpfnKbdHook == NULL)                           // setup pointer to our procedure
+	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
 		return (FALSE);
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
@@ -179,13 +179,13 @@ BOOL CRules::SetupKeyboardHook() {
 	hInst = AfxGetInstanceHandle();                 // get our application instance
 
 	pKbdHook = MakeProcInstance((FARPROC) PrefHookProc, hInst);
-	if (pKbdHook == NULL)                           // setup pointer to our procedure
+	if (pKbdHook == nullptr)                           // setup pointer to our procedure
 		return (FALSE);
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) pKbdHook, hInst, GetCurrentTask());
 	#endif
 
-	if (hKbdHook == NULL)                           // plug in our keyboard hook
+	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return (FALSE);
 
 	return (TRUE);
@@ -197,18 +197,18 @@ void CRules::RemoveKeyboardHook(void) {
 	if (m_bKeyboardHook)
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 
-	lpfnKbdHook = NULL;
+	lpfnKbdHook = nullptr;
 	#else
 	if (m_bKeyboardHook) {
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 		FreeProcInstance(pKbdHook);                     // release our procedure pointer
 	}
 
-	pKbdHook = NULL;
+	pKbdHook = nullptr;
 	#endif
 
-	pRulesDialog = NULL;
-	hKbdHook = NULL;
+	pRulesDialog = nullptr;
+	hKbdHook = nullptr;
 	m_bKeyboardHook = FALSE;
 }
 
@@ -310,18 +310,18 @@ void CRules::OnCancel(void) {
 
 void CRules::OnDestroy() {
 	BOOL    bUpdateNeeded;
-	HCURSOR hNewCursor = NULL;
+	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 	hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
-	//if (hNewCursor != NULL);
+	//if (hNewCursor != nullptr);
 	MFC::SetCursor(hNewCursor);
 
-	if (pNarrative != NULL)                         // end the narration
+	if (pNarrative != nullptr)                         // end the narration
 		delete pNarrative;
 
-	if (pOKButton != NULL)                          // release the button
+	if (pOKButton != nullptr)                          // release the button
 		delete pOKButton;
 
 	delete pFont;                                   // release the font file
@@ -329,10 +329,10 @@ void CRules::OnDestroy() {
 	(*pHelpFile).Close();                           // close and release the rules file
 	delete pHelpFile;
 
-	if (pBackgroundBitmap != NULL) {
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(NULL, FALSE);
+	if (pBackgroundBitmap != nullptr) {
+		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			(*pParentWnd).ValidateRect(NULL);
+			(*pParentWnd).ValidateRect(nullptr);
 	}
 
 	if (!bBruteForce) {
@@ -358,7 +358,7 @@ BOOL CRules::OnInitDialog() {
 
 	CDialog::OnInitDialog();                        // do basic dialog initialization
 
-	if (pParentWnd == NULL)                         // get our parent window
+	if (pParentWnd == nullptr)                         // get our parent window
 		pParentWnd = ((CWnd *) this)->GetParent();  // ... as passed to us or inquired about
 
 	(*pParentWnd).GetWindowRect(&myRect);
@@ -367,7 +367,7 @@ BOOL CRules::OnInitDialog() {
 	MoveWindow(x, y, ScrollRect.right, ScrollRect.bottom);      // center the dialog box on the parent
 
 	pButton = GetDlgItem((int) GetDefID());         // get the window for the okay button
-	ASSERT(pButton != NULL);                        // ... and verify we have it
+	ASSERT(pButton != nullptr);                        // ... and verify we have it
 	(*pButton).GetWindowRect(&myRect);              // get the button's position and size
 
 	dx = myRect.right - myRect.left;                // calculate where to place the button
@@ -380,13 +380,13 @@ BOOL CRules::OnInitDialog() {
 
 	#if COLOR_BUTTONS
 	pOKButton = new CColorButton;                   // build a color QUIT button to let us exit
-	ASSERT(pOKButton != NULL);
+	ASSERT(pOKButton != nullptr);
 	(*pOKButton).SetPalette(pScrollPalette);        // set the palette to use
 	bSuccess = (*pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
 	#endif
 
-	if (pSoundPath != NULL)
+	if (pSoundPath != nullptr)
 		pNarrative = new CSound(this, pSoundPath, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);
 
 	m_bKeyboardHook = SetupKeyboardHook();          // establish keyboard hook
@@ -407,21 +407,21 @@ void CRules::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
 		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(NULL, FALSE);
+		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 	}
 }
 
 
 void CRules::OnPaint() {
 	CPaintDC    dc(this);                               // device context for painting
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	CDibDoc     *pDibDoc;
 
 	DoWaitCursor();                                 // put up the hourglass cursor
 
-	if (pScrollPalette != NULL) {                   // map in our palette
+	if (pScrollPalette != nullptr) {                   // map in our palette
 		pPalOld = dc.SelectPalette(pScrollPalette, FALSE);
 		(void) dc.RealizePalette();                 // .. and make the system use it
 	}
@@ -433,11 +433,11 @@ void CRules::OnPaint() {
 		ReleaseCompatibleContext(pScrollBotDC, pScrollBotBitmap, pScrollBotBitmapOld, pScrollBotPalOld);
 		ReleaseCompatibleContext(pScrollTopMaskDC, pScrollTopMask, pScrollTopMaskOld, pScrollTopMaskPalOld);
 		ReleaseCompatibleContext(pScrollBotMaskDC, pScrollBotMask, pScrollBotMaskOld, pScrollBotMaskPalOld);
-		if (pNarrative != NULL)
+		if (pNarrative != nullptr)
 			(*pNarrative).play();                   // play the narration
 	} else if (bBruteForce) {                           // need to paint directly to screen
-		pDibDoc = LoadScrollDIB(SCROLL_SPEC, NULL);
-		if (pDibDoc != NULL) {
+		pDibDoc = LoadScrollDIB(SCROLL_SPEC, nullptr);
+		if (pDibDoc != nullptr) {
 			PaintScrollDIB(&dc, pDibDoc);
 			delete pDibDoc;
 		}
@@ -452,7 +452,7 @@ void CRules::OnPaint() {
 		    0, 0,
 		    SRCCOPY);
 
-	if (pScrollPalette != NULL)                     // map out our palette
+	if (pScrollPalette != nullptr)                     // map out our palette
 		(void) dc.SelectPalette(pPalOld, FALSE);
 
 	DoArrowCursor();                                // return to an arrow cursor
@@ -466,23 +466,23 @@ BOOL CRules::OnEraseBkgnd(CDC *pDC) {
 
 void CRules::ClearDialogImage(void) {
 	delete pOKButton;
-	pOKButton = NULL;
-	if (pBackgroundBitmap != NULL)
-		ValidateRect(NULL);
+	pOKButton = nullptr;
+	if (pBackgroundBitmap != nullptr)
+		ValidateRect(nullptr);
 	RefreshBackground();
 }
 
 
 void CRules::RefreshBackground(void) {
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 
-	if (pBackgroundBitmap == NULL)
+	if (pBackgroundBitmap == nullptr)
 		return;
 
 	pDC = GetDC();                                  // get a context for our window
 
-	if (pScrollPalette != NULL) {                   // map in our palette
+	if (pScrollPalette != nullptr) {                   // map in our palette
 		pPalOld = (*pDC).SelectPalette(pScrollPalette, FALSE);
 		(void)(*pDC).RealizePalette();              // .. and make the system use it
 	}
@@ -497,7 +497,7 @@ void CRules::RefreshBackground(void) {
 	    0,
 	    SRCCOPY);
 
-	if (pScrollPalette != NULL)                     // map out our palette
+	if (pScrollPalette != nullptr)                     // map out our palette
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	ReleaseDC(pDC);                                 // release the context
@@ -518,8 +518,8 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		ReleaseCompatibleContext(pBackgroundDC, pBackgroundBitmap, pBackgroundBitmapOld, pBackgroundPalOld);
 		ReleaseCompatibleContext(pScrollMidDC, pScrollMidBitmap, pScrollMidBitmapOld, pScrollMidPalOld);
 		ReleaseCompatibleContext(pScrollMidMaskDC, pScrollMidMask, pScrollMidMaskOld, pScrollMidMaskPalOld);
-		pDibDoc = LoadScrollDIB(SCROLL_SPEC, NULL);
-		if (pDibDoc != NULL) {
+		pDibDoc = LoadScrollDIB(SCROLL_SPEC, nullptr);
+		if (pDibDoc != nullptr) {
 			PaintScrollDIB(pDC, pDibDoc);
 			delete pDibDoc;
 		}
@@ -564,7 +564,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
-	    NULL,
+	    nullptr,
 	    0, 0,
 	    DSTINVERT);
 
@@ -580,7 +580,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
-	    NULL,
+	    nullptr,
 	    0, 0,
 	    DSTINVERT);
 
@@ -602,7 +602,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
-	    NULL,
+	    nullptr,
 	    0, 0,
 	    DSTINVERT);
 
@@ -618,7 +618,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
-	    NULL,
+	    nullptr,
 	    0, 0,
 	    DSTINVERT);
 
@@ -661,7 +661,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
-	    NULL,
+	    nullptr,
 	    0, 0,
 	    DSTINVERT);
 
@@ -677,7 +677,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
-	    NULL,
+	    nullptr,
 	    0, 0,
 	    DSTINVERT);
 
@@ -853,17 +853,17 @@ void CRules::UpdateScroll(int nPage) {
 	int         i;
 	CRect       dstRect;
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 
 	if (bBruteForce) {
 		nHelpPage = nPage;
-		InvalidateRect(NULL, FALSE);
+		InvalidateRect(nullptr, FALSE);
 		return;
 	}
 
 	pDC = GetDC();
 
-	if (pScrollPalette != NULL) {                   // map in our palette
+	if (pScrollPalette != nullptr) {                   // map in our palette
 		pPalOld = (*pDC).SelectPalette(pScrollPalette, FALSE);
 		(void)(*pDC).RealizePalette();              // .. and make the system use it
 	}
@@ -906,7 +906,7 @@ void CRules::UpdateScroll(int nPage) {
 
 	UpdateMore(pDC);                                // update the "more" indicator
 
-	if (pScrollPalette != NULL)                     // map out our palette
+	if (pScrollPalette != nullptr)                     // map out our palette
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	ReleaseDC(pDC);
@@ -918,7 +918,7 @@ void CRules::WritePage(CDC *pDC, int nPage) {
 	UINT        nCropped = 0;
 	UINT        nCount = 0;
 	char        chInBuf[TEXT_BUFFER_SIZE];
-	CFont       *pFontOld = NULL;
+	CFont       *pFontOld = nullptr;
 	CSize       textInfo;
 	BOOL        bEOL, bEOF;
 	TEXTMETRIC  fontMetrics;
@@ -1024,7 +1024,7 @@ crop_byte:
 				        (chInBuf[i + n - 1] != '\t'))
 					while (n > 0) {
 						n -= 1;
-						if (strchr(" \t,;:-", chInBuf[i + n - 1]) != NULL)
+						if (strchr(" \t,;:-", chInBuf[i + n - 1]) != nullptr)
 							break;
 					}
 				break;
@@ -1080,7 +1080,7 @@ crop_byte:
 
 void CRules::UpdateMore(CDC *pDC) {
 	int         x, y, dx, dy;
-	CFont       *pFontOld = NULL;
+	CFont       *pFontOld = nullptr;
 	TEXTMETRIC  fontMetrics;
 	CSize       textInfo;
 
@@ -1153,8 +1153,8 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	int     xDIB, yDIB, dxDIB, dyDIB;
 
 	pHelpFile = new CFile();
-	ASSERT(pHelpFile != NULL);
-	bSuccess = (*pHelpFile).Open(chPathName, CFile::modeRead | CFile::typeBinary, NULL);
+	ASSERT(pHelpFile != nullptr);
+	bSuccess = (*pHelpFile).Open(chPathName, CFile::modeRead | CFile::typeBinary, nullptr);
 	ASSERT(bSuccess);
 	if (!bSuccess)
 		return (-1);
@@ -1162,7 +1162,7 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	AddFontResource("msserif.fon");
 	pFont = new CFont();
-	ASSERT(pFont != NULL);
+	ASSERT(pFont != nullptr);
 	bSuccess = (*pFont).CreateFont(16, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 	ASSERT(bSuccess);
 
@@ -1171,22 +1171,22 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		pScrollTopDIB = LoadScrollDIB(SCROLL_TOP_SPEC, &ScrollTopRect);
 		pScrollMidDIB = LoadScrollDIB(SCROLL_MID_SPEC, &ScrollMidRect);
 		pScrollBotDIB = LoadScrollDIB(SCROLL_BOT_SPEC, &ScrollBotRect);
-		if ((pScrollTopDIB == NULL) ||
-		        (pScrollMidDIB == NULL) ||
-		        (pScrollBotDIB == NULL))
+		if ((pScrollTopDIB == nullptr) ||
+		        (pScrollMidDIB == nullptr) ||
+		        (pScrollBotDIB == nullptr))
 			bBruteForce = TRUE;
 		else
 			bBruteForce = FALSE;
 		if (bBruteForce) {
-			if (pScrollTopDIB != NULL)
+			if (pScrollTopDIB != nullptr)
 				delete pScrollTopDIB;
-			if (pScrollMidDIB != NULL)
+			if (pScrollMidDIB != nullptr)
 				delete pScrollMidDIB;
-			if (pScrollBotDIB != NULL)
+			if (pScrollBotDIB != nullptr)
 				delete pScrollBotDIB;
-			pScrollTopDIB = NULL;
-			pScrollMidDIB = NULL;
-			pScrollBotDIB = NULL;
+			pScrollTopDIB = nullptr;
+			pScrollMidDIB = nullptr;
+			pScrollBotDIB = nullptr;
 		}
 	} else
 		bBruteForce = TRUE;
@@ -1225,37 +1225,37 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	delete pScrollMidDIB;
 	pScrollBotBitmap = CreateScrollBitmap(pDC, pScrollBotDIB, pScrollPalette);
 	delete pScrollBotDIB;
-	if ((pScrollTopBitmap == NULL) ||
-	        (pScrollMidBitmap == NULL) ||
-	        (pScrollBotBitmap == NULL))
+	if ((pScrollTopBitmap == nullptr) ||
+	        (pScrollMidBitmap == nullptr) ||
+	        (pScrollBotBitmap == nullptr))
 		return (FALSE);
 
 	pScrollTopDC = SetupCompatibleContext(pDC, pScrollTopBitmap, pScrollTopBitmapOld, pScrollPalette, pScrollTopPalOld);
 	pScrollMidDC = SetupCompatibleContext(pDC, pScrollMidBitmap, pScrollMidBitmapOld, pScrollPalette, pScrollMidPalOld);
 	pScrollBotDC = SetupCompatibleContext(pDC, pScrollBotBitmap, pScrollBotBitmapOld, pScrollPalette, pScrollBotPalOld);
-	if ((pScrollTopDC == NULL) ||
-	        (pScrollMidDC == NULL) ||
-	        (pScrollBotDC == NULL))
+	if ((pScrollTopDC == nullptr) ||
+	        (pScrollMidDC == nullptr) ||
+	        (pScrollBotDC == nullptr))
 		return (FALSE);
 
 	pScrollBitmap = new CBitmap();
-	if (pScrollBitmap == NULL)
+	if (pScrollBitmap == nullptr)
 		return (FALSE);
 	bSuccess = (*pScrollBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
 		return (FALSE);
 	pScrollDC = SetupCompatibleContext(pDC, pScrollBitmap, pScrollBitmapOld, pScrollPalette, pScrollPalOld);
-	if (pScrollDC == NULL)
+	if (pScrollDC == nullptr)
 		return (FALSE);
 
 	pBackgroundBitmap = new CBitmap();
-	if (pBackgroundBitmap == NULL)
+	if (pBackgroundBitmap == nullptr)
 		return (FALSE);
 	bSuccess = (*pBackgroundBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
 		return (FALSE);
 	pBackgroundDC = SetupCompatibleContext(pDC, pBackgroundBitmap, pBackgroundBitmapOld, pScrollPalette, pBackgroundPalOld);
-	if (pBackgroundDC == NULL)
+	if (pBackgroundDC == nullptr)
 		return (FALSE);
 
 	WorkRect.UnionRect(&ScrollTopRect, &ScrollMidRect);
@@ -1263,28 +1263,28 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	WorkRect.bottom += SCROLL_STRIP_WIDTH;
 
 	pWorkBitmap = new CBitmap();
-	if (pWorkBitmap == NULL)
+	if (pWorkBitmap == nullptr)
 		return (FALSE);
 	bSuccess = (*pWorkBitmap).CreateCompatibleBitmap(pDC, WorkRect.right, WorkRect.bottom);
 	if (!bSuccess)
 		return (FALSE);
 	pWorkDC = SetupCompatibleContext(pDC, pWorkBitmap, pWorkBitmapOld, pScrollPalette, pWorkPalOld);
-	if (pWorkDC == NULL)
+	if (pWorkDC == nullptr)
 		return (FALSE);
 
 	pScrollTopMask = new CBitmap();
 	pScrollMidMask = new CBitmap();
 	pScrollBotMask = new CBitmap();
-	if ((pScrollTopMask == NULL) ||
-	        (pScrollMidMask == NULL) ||
-	        (pScrollBotMask == NULL))
+	if ((pScrollTopMask == nullptr) ||
+	        (pScrollMidMask == nullptr) ||
+	        (pScrollBotMask == nullptr))
 		return (FALSE);
 	pScrollTopMaskDC = SetupMask(pDC, pScrollTopDC, pScrollTopMask, pScrollTopMaskOld, &ScrollTopRect);
 	pScrollMidMaskDC = SetupMask(pDC, pScrollMidDC, pScrollMidMask, pScrollMidMaskOld, &ScrollMidRect);
 	pScrollBotMaskDC = SetupMask(pDC, pScrollBotDC, pScrollBotMask, pScrollBotMaskOld, &ScrollBotRect);
-	if ((pScrollTopMaskDC == NULL) ||
-	        (pScrollMidMaskDC == NULL) ||
-	        (pScrollBotMaskDC == NULL))
+	if ((pScrollTopMaskDC == nullptr) ||
+	        (pScrollMidMaskDC == nullptr) ||
+	        (pScrollBotMaskDC == nullptr))
 		return (FALSE);
 
 	return (TRUE);
@@ -1292,16 +1292,16 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 
 
 CDC *CRules::SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap * &pMaskOld, CRect *pRect) {
-	CDC *pNewDC = NULL;
+	CDC *pNewDC = nullptr;
 
-	(*pMask).CreateBitmap((*pRect).right, (*pRect).bottom, 1, 1, NULL);
+	(*pMask).CreateBitmap((*pRect).right, (*pRect).bottom, 1, 1, nullptr);
 
 	pNewDC = new CDC();
 
-	if ((pNewDC != NULL) &&
+	if ((pNewDC != nullptr) &&
 	        (*pNewDC).CreateCompatibleDC(pDC)) {
 		pMaskOld = (*pNewDC).SelectObject(pMask);
-		if (pMaskOld != NULL) {
+		if (pMaskOld != nullptr) {
 			(void)(*pNewDC).BitBlt(
 			    0, 0,
 			    (*pRect).right,
@@ -1313,53 +1313,53 @@ CDC *CRules::SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap * &pMas
 		}
 	}
 
-	return (NULL);
+	return (nullptr);
 }
 
 
 CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap, CBitmap * &pBitmapOld, CPalette *pPalette, CPalette * &pPalOld) {
-	CDC *pNewDC = NULL;
+	CDC *pNewDC = nullptr;
 
 	pNewDC = new CDC();
 
-	if ((pDC != NULL) &&
-	        (pNewDC != NULL) &&
+	if ((pDC != nullptr) &&
+	        (pNewDC != nullptr) &&
 	        (*pNewDC).CreateCompatibleDC(pDC)) {
 		if (pPalette)
 			pPalOld = (*pNewDC).SelectPalette(pPalette, FALSE);
 		else
-			pPalOld = NULL;
+			pPalOld = nullptr;
 		(void)(*pNewDC).RealizePalette();
 		pBitmapOld = (*pNewDC).SelectObject(pBitmap);
-		if (pBitmapOld != NULL)
+		if (pBitmapOld != nullptr)
 			return (pNewDC);
 	}
 
-	return (NULL);
+	return (nullptr);
 }
 
 
 void CRules::ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pBitmapOld, CPalette *pPalOld) {
-	if (pBitmapOld != NULL) {
+	if (pBitmapOld != nullptr) {
 		(void)(*pDC).SelectObject(pBitmapOld);
-		pBitmapOld = NULL;
+		pBitmapOld = nullptr;
 	}
 
-	if (pPalOld != NULL) {
+	if (pPalOld != nullptr) {
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
-		pPalOld = NULL;
+		pPalOld = nullptr;
 	}
 
-	if (pBitmap != NULL) {
+	if (pBitmap != nullptr) {
 		(*pBitmap).DeleteObject();
 		delete pBitmap;
-		pBitmap = NULL;
+		pBitmap = nullptr;
 	}
 
-	if (pDC != NULL) {
+	if (pDC != nullptr) {
 		(*pDC).DeleteDC();
 		delete pDC;
-		pDC = NULL;
+		pDC = nullptr;
 	}
 }
 
@@ -1369,21 +1369,21 @@ CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 	HDIB        hDIB;
 	LPSTR       lpDIB;
 	int         dxDIB, dyDIB;
-	CDibDoc     *pDibDoc = NULL;
+	CDibDoc     *pDibDoc = nullptr;
 
 	pDibDoc = new CDibDoc();
-	ASSERT(pDibDoc != NULL);
+	ASSERT(pDibDoc != nullptr);
 
 	bSuccess = (*pDibDoc).OpenDocument(pszPathName);
 	ASSERT(bSuccess);
 	hDIB = (*pDibDoc).GetHDIB();
-	ASSERT(hDIB != NULL);
+	ASSERT(hDIB != nullptr);
 	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
 	dxDIB = (int) DIBWidth(lpDIB);
 	dyDIB = (int) DIBHeight(lpDIB);
 	GlobalUnlock((HGLOBAL) hDIB);
 
-	if (pRect != NULL)
+	if (pRect != nullptr)
 		(*pRect).SetRect(0, 0, dxDIB, dyDIB);
 
 	return (pDibDoc);
@@ -1398,7 +1398,7 @@ BOOL CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
 	CRect       myRect;
 
 	hDIB = (*pDibDoc).GetHDIB();
-	ASSERT(hDIB != NULL);
+	ASSERT(hDIB != nullptr);
 	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
 	dxDIB = (int) DIBWidth(lpDIB);
 	dyDIB = (int) DIBHeight(lpDIB);
@@ -1414,10 +1414,10 @@ BOOL CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
 
 CBitmap *CRules::CreateScrollBitmap(CDC *pDC, CDibDoc *pDibDoc, CPalette *pPalette) {
 	HDIB        hDIB;
-	CBitmap     *pBitmap = NULL;
+	CBitmap     *pBitmap = nullptr;
 
 	hDIB = (*pDibDoc).GetHDIB();
-	ASSERT(hDIB != NULL);
+	ASSERT(hDIB != nullptr);
 
 	pBitmap = ConvertDIB(pDC, hDIB, pPalette);
 
@@ -1441,7 +1441,7 @@ void CRules::OnLButtonDown(UINT nFlags, CPoint point) {
 
 
 void CRules::OnMouseMove(UINT nFlags, CPoint point) {
-	HCURSOR hNewCursor = NULL;
+	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp;
 
 	if (!bActiveWindow)
@@ -1464,7 +1464,7 @@ void CRules::OnMouseMove(UINT nFlags, CPoint point) {
 	} else
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
-	//if (hNewCursor != NULL);
+	//if (hNewCursor != nullptr);
 	MFC::SetCursor(hNewCursor);
 
 	CDialog::OnMouseMove(nFlags, point);

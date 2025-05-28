@@ -31,7 +31,7 @@ namespace Packrat {
 
 static CPalette         *pPackRatOptPalette;
 
-CColorButton    *pMsgOKButton = NULL;
+CColorButton    *pMsgOKButton = nullptr;
 
 /*****************************************************************
  *
@@ -123,12 +123,12 @@ void CMsgDlg::OnOK(void) {
 
 void CMsgDlg::ClearDialogImage(void) {
 
-	if (pMsgOKButton != NULL) {
+	if (pMsgOKButton != nullptr) {
 		delete pMsgOKButton;
-		pMsgOKButton = NULL;
+		pMsgOKButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }
@@ -170,7 +170,7 @@ BOOL CMsgDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	pMsgOKButton = new CColorButton();
-	ASSERT(pMsgOKButton != NULL);
+	ASSERT(pMsgOKButton != nullptr);
 	pMsgOKButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pMsgOKButton->SetControl(IDOK, this);
 	ASSERT(bSuccess);
@@ -271,9 +271,9 @@ void CMsgDlg::OnPaint(void) {
 
 void CMsgDlg::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
-	if (pMsgOKButton != NULL) {
+	if (pMsgOKButton != nullptr) {
 		delete pMsgOKButton;
-		pMsgOKButton = NULL;
+		pMsgOKButton = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();

@@ -52,12 +52,12 @@ CSaveDlg::CSaveDlg(CHAR *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
 	INT i;
 
 	// Inits
-	m_pTxtSave = NULL;
+	m_pTxtSave = nullptr;
 	m_nCurSlot = -1;
 
-	m_pQuitButton = NULL;
+	m_pQuitButton = nullptr;
 	for (i = 0; i < MAX_SAVEGAMES; i++) {
-		m_pSlotButtons[i] = NULL;
+		m_pSlotButtons[i] = nullptr;
 		m_pszDescriptions[i] = pszDescriptions[i];
 	}
 
@@ -142,7 +142,7 @@ VOID CSaveDlg::EditDescription(INT nNewSlot) {
 	// put the current save game text into that box
 	//
 	szBuf[0] = '\0';
-	if (m_pszDescriptions[nNewSlot] != NULL) {
+	if (m_pszDescriptions[nNewSlot] != nullptr) {
 		Common::strcpy_s(szBuf, m_pszDescriptions[nNewSlot]);
 		assert(strlen(szBuf) < MAX_BUTTON_TEXT);
 	}
@@ -166,7 +166,7 @@ BOOL CSaveDlg::OnInitDialog(void) {
 	//
 	for (i = 0; i < MAX_SAVEGAMES; i++) {
 
-		if ((m_pSlotButtons[i] = new CColorButton()) != NULL) {
+		if ((m_pSlotButtons[i] = new CColorButton()) != nullptr) {
 			m_pSlotButtons[i]->SetPalette(m_pPalette);
 			bSuccess = m_pSlotButtons[i]->SetControl(IDC_SLOT1 + i, this);
 			assert(bSuccess);
@@ -174,7 +174,7 @@ BOOL CSaveDlg::OnInitDialog(void) {
 
 		// if a slot is empty
 		//
-		if (m_pszDescriptions[i] == NULL) {
+		if (m_pszDescriptions[i] == nullptr) {
 
 			m_pSlotButtons[i]->SetWindowText("empty");
 
@@ -183,7 +183,7 @@ BOOL CSaveDlg::OnInitDialog(void) {
 		}
 
 		m_pSlotText[i] = (CEdit *)GetDlgItem(IDC_TEXT1 + i);
-		if (m_pSlotText[i] != NULL) {
+		if (m_pSlotText[i] != nullptr) {
 			m_pSlotText[i]->LimitText(MAX_BUTTON_TEXT);
 			m_pSlotText[i]->ShowWindow(SW_HIDE);
 		}
@@ -191,20 +191,20 @@ BOOL CSaveDlg::OnInitDialog(void) {
 		// the text boxes need to be initially hidden
 	}
 
-	if ((m_pQuitButton = new CColorButton()) != NULL) {
+	if ((m_pQuitButton = new CColorButton()) != nullptr) {
 		m_pQuitButton->SetPalette(m_pPalette);
 		bSuccess = m_pQuitButton->SetControl(IDCANCEL, this);
 		m_pQuitButton->SetFocus();
 		assert(bSuccess);
 	}
 
-	if ((m_pOkButton = new CColorButton()) != NULL) {
+	if ((m_pOkButton = new CColorButton()) != nullptr) {
 		m_pOkButton->SetPalette(m_pPalette);
 		bSuccess = m_pOkButton->SetControl(IDOK, this);
 		assert(bSuccess);
 	}
 
-	if ((m_pTxtSave = new CText) != NULL) {
+	if ((m_pTxtSave = new CText) != nullptr) {
 		rect.SetRect(198, 40, 367, 80);
 		pDC = GetDC();
 		m_pTxtSave->SetupText(pDC, m_pPalette, &rect, JUSTIFY_LEFT);
@@ -220,7 +220,7 @@ void CSaveDlg::OnPaint(void) {
 
 	CBmpDialog::OnPaint();
 
-	if (m_pTxtSave != NULL) {
+	if (m_pTxtSave != nullptr) {
 		pDC = GetDC();
 		m_pTxtSave->DisplayString(pDC, gpszTitle, 25, FW_BOLD, RGB(0, 0, 0));
 		ReleaseDC(pDC);
@@ -231,25 +231,25 @@ void CSaveDlg::OnPaint(void) {
 void CSaveDlg::ClearDialogImage(void) {
 	INT i;
 
-	if (m_pTxtSave != NULL) {
+	if (m_pTxtSave != nullptr) {
 		delete m_pTxtSave;
-		m_pTxtSave = NULL;
+		m_pTxtSave = nullptr;
 	}
 
-	if (m_pOkButton != NULL) {
+	if (m_pOkButton != nullptr) {
 		delete m_pOkButton;
-		m_pOkButton = NULL;
+		m_pOkButton = nullptr;
 	}
 
-	if (m_pQuitButton != NULL) {
+	if (m_pQuitButton != nullptr) {
 		delete m_pQuitButton;
-		m_pQuitButton = NULL;
+		m_pQuitButton = nullptr;
 	}
 
 	for (i = 0; i < MAX_SAVEGAMES; i++) {
-		if (m_pSlotButtons[i] != NULL) {
+		if (m_pSlotButtons[i] != nullptr) {
 			delete m_pSlotButtons[i];
-			m_pSlotButtons[i] = NULL;
+			m_pSlotButtons[i] = nullptr;
 		}
 	}
 }

@@ -28,13 +28,13 @@ namespace HodjNPodj {
 
 CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int y, const int dx, const int dy) {
 	BOOL        bSuccess = FALSE;
-	CDC         *pWorkDC = NULL;
-	CPalette    *pPalOld = NULL,
-	             *pPalOldWork = NULL;
-	CBitmap     *pWork = NULL,
-	             *pWorkOld = NULL;
+	CDC         *pWorkDC = nullptr;
+	CPalette    *pPalOld = nullptr,
+	             *pPalOldWork = nullptr;
+	CBitmap     *pWork = nullptr,
+	             *pWorkOld = nullptr;
 
-	if (pPalette != NULL) {                                 // map in color palette to be used
+	if (pPalette != nullptr) {                                 // map in color palette to be used
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -42,32 +42,32 @@ CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int 
 	pWorkDC = new CDC();                                    // create the context and bitmap objects
 	pWork = new CBitmap();
 
-	if ((pWorkDC != NULL) &&                                // construct an offscreen bitmap that we
-	        (pWork != NULL) &&                                  // ... can use as a work area, and then
+	if ((pWorkDC != nullptr) &&                                // construct an offscreen bitmap that we
+	        (pWork != nullptr) &&                                  // ... can use as a work area, and then
 	        (*pWorkDC).CreateCompatibleDC(pDC) &&               // ... use as a return value to the caller
 	        (*pWork).CreateCompatibleBitmap(pDC, dx, dy)) {     // create a bitmap of the appropriate size
-		if (pPalette != NULL) {                             // map the palette into the work area
+		if (pPalette != nullptr) {                             // map the palette into the work area
 			pPalOldWork = (*pWorkDC).SelectPalette(pPalette, FALSE);
 			(void)(*pWorkDC).RealizePalette();
 		}
 		pWorkOld = (*pWorkDC).SelectObject(pWork);          // now map in the work area's bitmap
-		if (pWorkOld != NULL)                               // capture the desired pixels
+		if (pWorkOld != nullptr)                               // capture the desired pixels
 			bSuccess = (*pWorkDC).BitBlt(0, 0, dx, dy, pDC, x, y, SRCCOPY);
 	}
 
-	if (pPalOld != NULL)                                    // relinquish the resources we built
+	if (pPalOld != nullptr)                                    // relinquish the resources we built
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
-	if (pWorkOld != NULL)
+	if (pWorkOld != nullptr)
 		(void)(*pWorkDC).SelectObject(pWorkOld);
-	if (pPalOldWork != NULL)
+	if (pPalOldWork != nullptr)
 		(void)(*pWorkDC).SelectPalette(pPalOldWork, FALSE);
 	if (!bSuccess &&                                        // release the bitmap result we built
-	        (pWork != NULL)) {                                  // ... if something failed
+	        (pWork != nullptr)) {                                  // ... if something failed
 		(*pWork).DeleteObject();
 		delete pWork;
-		pWork = NULL;
+		pWork = nullptr;
 	}
-	if (pWorkDC != NULL) {
+	if (pWorkDC != nullptr) {
 		(*pWorkDC).DeleteDC();
 		delete pWorkDC;
 	}
@@ -76,91 +76,91 @@ CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int 
 }
 
 CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName) {
-	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
-	HDIB        hDIB = NULL;
-	CBitmap     *pBitmap = NULL;
-	CPalette    *pThisPalette = NULL;
+	CDibDoc     *pDIB = nullptr;                               // pointer to our loaded DIB file
+	HDIB        hDIB = nullptr;
+	CBitmap     *pBitmap = nullptr;
+	CPalette    *pThisPalette = nullptr;
 
 	pDIB = new CDibDoc();                               // create an object for our DIB
 
-	if ((pDIB != NULL) &&                               // verify we have the objects we just created
+	if ((pDIB != nullptr) &&                               // verify we have the objects we just created
 	        (*pDIB).OpenDocument(pszPathName)) {            // .... bitmap file
 		pThisPalette = (*pDIB).GetDocPalette();
 		hDIB = (*pDIB).GetHDIB();
 		pBitmap = ConvertDIB(pDC, hDIB, pThisPalette);
-		if (pPalette != NULL)
+		if (pPalette != nullptr)
 			*pPalette = (*pDIB).DetachPalette();
 	}
 
-	if (pDIB != NULL)
+	if (pDIB != nullptr)
 		delete pDIB;
 
 	return (pBitmap);
 }
 
 CBitmap *FetchBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName) {
-	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
-	HDIB        hDIB = NULL;
-	CBitmap     *pBitmap = NULL;
+	CDibDoc     *pDIB = nullptr;                               // pointer to our loaded DIB file
+	HDIB        hDIB = nullptr;
+	CBitmap     *pBitmap = nullptr;
 
 	pDIB = new CDibDoc();                               // create an object for our DIB
 
-	if ((pDIB != NULL) &&                               // verify we have the objects we just created
+	if ((pDIB != nullptr) &&                               // verify we have the objects we just created
 	        (*pDIB).OpenDocument(pszPathName)) {            // .... bitmap file
 		hDIB = (*pDIB).GetHDIB();
 		pBitmap = ConvertDIB(pDC, hDIB, pPalette);
 	}
 
-	if (pDIB != NULL)
+	if (pDIB != nullptr)
 		delete pDIB;
 
 	return (pBitmap);
 }
 
 CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName) {
-	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
-	HDIB        hDIB = NULL;
-	CBitmap     *pBitmap = NULL;
-	CPalette    *pThisPalette = NULL;
+	CDibDoc     *pDIB = nullptr;                               // pointer to our loaded DIB file
+	HDIB        hDIB = nullptr;
+	CBitmap     *pBitmap = nullptr;
+	CPalette    *pThisPalette = nullptr;
 
 	pDIB = new CDibDoc();                               // create an object for our DIB
 
-	if ((pDIB != NULL) &&                               // verify we have the objects we just created
+	if ((pDIB != nullptr) &&                               // verify we have the objects we just created
 	        (*pDIB).OpenResourceDocument(pszName)) {        // .... bitmap file
 		pThisPalette = (*pDIB).GetDocPalette();
 		hDIB = (*pDIB).GetHDIB();
 		pBitmap = ConvertDIB(pDC, hDIB, pThisPalette);
-		if (pPalette != NULL)
+		if (pPalette != nullptr)
 			*pPalette = (*pDIB).DetachPalette();
 	}
 
-	if (pDIB != NULL)
+	if (pDIB != nullptr)
 		delete pDIB;
 
 	return (pBitmap);
 }
 
 CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID) {
-	CDibDoc     *pDIB = NULL;                               // pointer to our loaded DIB file
-	HDIB        hDIB = NULL;
-	CBitmap     *pBitmap = NULL;
+	CDibDoc     *pDIB = nullptr;                               // pointer to our loaded DIB file
+	HDIB        hDIB = nullptr;
+	CBitmap     *pBitmap = nullptr;
 	char        chResName[16];
-	CPalette    *pThisPalette = NULL;
+	CPalette    *pThisPalette = nullptr;
 
 	Common::sprintf_s(chResName, "#%d", nResID);
 
 	pDIB = new CDibDoc();                               // create an object for our DIB
 
-	if ((pDIB != NULL) &&                               // verify we have the objects we just created
+	if ((pDIB != nullptr) &&                               // verify we have the objects we just created
 	        (*pDIB).OpenResourceDocument(chResName)) {      // .... bitmap file
 		pThisPalette = (*pDIB).GetDocPalette();
 		hDIB = (*pDIB).GetHDIB();
 		pBitmap = ConvertDIB(pDC, hDIB, pThisPalette);
-		if (pPalette != NULL)
+		if (pPalette != nullptr)
 			*pPalette = (*pDIB).DetachPalette();
 	}
 
-	if (pDIB != NULL)
+	if (pDIB != nullptr)
 		delete pDIB;
 
 	return (pBitmap);
@@ -168,16 +168,16 @@ CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID) {
 
 CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int x, const int y, const int dx, const int dy) {
 	BOOL        bSuccess = FALSE;
-	CDC         *pWorkDC = NULL,
-	             *pBaseDC = NULL;
-	CPalette    *pPalOld = NULL,
-	             *pPalOldWork = NULL,
-	              *pPalOldBase = NULL;
-	CBitmap     *pWork = NULL,
-	             *pWorkOld = NULL,
-	              *pBaseOld = NULL;
+	CDC         *pWorkDC = nullptr,
+	             *pBaseDC = nullptr;
+	CPalette    *pPalOld = nullptr,
+	             *pPalOldWork = nullptr,
+	              *pPalOldBase = nullptr;
+	CBitmap     *pWork = nullptr,
+	             *pWorkOld = nullptr,
+	              *pBaseOld = nullptr;
 
-	if (pPalette != NULL) {                                 // map in color palette to be used
+	if (pPalette != nullptr) {                                 // map in color palette to be used
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -186,13 +186,13 @@ CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int
 	pWork = new CBitmap();
 	pBaseDC = new CDC();
 
-	if ((pWorkDC != NULL) &&                                // construct an offscreen bitmap that we
-	        (pWork != NULL) &&                                  // ... can use as a work area, and then
-	        (pBaseDC != NULL) &&                                // ... use as a return value to the caller
+	if ((pWorkDC != nullptr) &&                                // construct an offscreen bitmap that we
+	        (pWork != nullptr) &&                                  // ... can use as a work area, and then
+	        (pBaseDC != nullptr) &&                                // ... use as a return value to the caller
 	        (*pWorkDC).CreateCompatibleDC(pDC) &&               // setup a context for the source bitmap
 	        (*pBaseDC).CreateCompatibleDC(pDC) &&
 	        (*pWork).CreateCompatibleBitmap(pDC, dx, dy)) {     // create a bitmap of the appropriate size
-		if (pPalette != NULL) {                             // map the palette into the contexts
+		if (pPalette != nullptr) {                             // map the palette into the contexts
 			pPalOldWork = (*pWorkDC).SelectPalette(pPalette, FALSE);
 			(void)(*pWorkDC).RealizePalette();
 			pPalOldBase = (*pBaseDC).SelectPalette(pPalette, FALSE);
@@ -200,32 +200,32 @@ CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int
 		}
 		pWorkOld = (*pWorkDC).SelectObject(pWork);          // now map in the work area's bitmap
 		pBaseOld = (*pBaseDC).SelectObject(pBitmap);        // ... as well as the source bitmap
-		if ((pWorkOld != NULL) &&
-		        (pBaseOld != NULL))                             // grab the bitmap section if all is well
+		if ((pWorkOld != nullptr) &&
+		        (pBaseOld != nullptr))                             // grab the bitmap section if all is well
 			bSuccess = (*pWorkDC).BitBlt(0, 0, dx, dy, pBaseDC, x, y, SRCCOPY);
 	}
 
-	if (pPalOld != NULL)                                    // relinquish the resources we built
+	if (pPalOld != nullptr)                                    // relinquish the resources we built
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
-	if (pWorkOld != NULL)
+	if (pWorkOld != nullptr)
 		(void)(*pWorkDC).SelectObject(pWorkOld);
-	if (pBaseOld != NULL)
+	if (pBaseOld != nullptr)
 		(void)(*pBaseDC).SelectObject(pBaseOld);
-	if (pPalOldWork != NULL)
+	if (pPalOldWork != nullptr)
 		(void)(*pWorkDC).SelectPalette(pPalOldWork, FALSE);
-	if (pPalOldBase != NULL)
+	if (pPalOldBase != nullptr)
 		(void)(*pBaseDC).SelectPalette(pPalOldBase, FALSE);
 	if (!bSuccess &&                                        // release the bitmap result we built
-	        (pWork != NULL)) {                                  // ... if something failed
+	        (pWork != nullptr)) {                                  // ... if something failed
 		(*pWork).DeleteObject();
 		delete pWork;
-		pWork = NULL;
+		pWork = nullptr;
 	}
-	if (pWorkDC != NULL) {
+	if (pWorkDC != nullptr) {
 		(*pWorkDC).DeleteDC();
 		delete pWorkDC;
 	}
-	if (pBaseDC != NULL) {
+	if (pBaseDC != nullptr) {
 		(*pBaseDC).DeleteDC();
 		delete pBaseDC;
 	}
@@ -255,28 +255,28 @@ CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int
 
 BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, CRect *pDstRect, DWORD dwMode) {
 	BOOL        bSuccess = FALSE;
-	CDC         *pWorkDC = NULL;
-	CPalette    *pPalOld = NULL,
-	             *pPalOldWork = NULL;
-	CBitmap     *pWorkOld = NULL;
+	CDC         *pWorkDC = nullptr;
+	CPalette    *pPalOld = nullptr,
+	             *pPalOldWork = nullptr;
+	CBitmap     *pWorkOld = nullptr;
 	HDIB        hDib;
 
-	if (pPalette != NULL) {                                 // map in color palette to be used
+	if (pPalette != nullptr) {                                 // map in color palette to be used
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
 
 	pWorkDC = new CDC();                                    // create the context and bitmap objects
 
-	if ((pWorkDC != NULL) &&                                // verify we got what we asked for
-	        (pBitmap != NULL) &&
+	if ((pWorkDC != nullptr) &&                                // verify we got what we asked for
+	        (pBitmap != nullptr) &&
 	        (*pWorkDC).CreateCompatibleDC(pDC)) {               // create a context for our bitmap
-		if (pPalette != NULL) {                             // map the palette into the context
+		if (pPalette != nullptr) {                             // map the palette into the context
 			pPalOldWork = (*pWorkDC).SelectPalette(pPalette, FALSE);
 			(void)(*pWorkDC).RealizePalette();
 		}
 		pWorkOld = (*pWorkDC).SelectObject(pBitmap);        // now map in our bitmap
-		if (pWorkOld != NULL) {                             // paint back the saved pixels
+		if (pWorkOld != nullptr) {                             // paint back the saved pixels
 			if ((((*pSrcRect).right - (*pSrcRect).left) != ((*pDstRect).right - (*pDstRect).left)) ||
 			        (((*pSrcRect).bottom - (*pSrcRect).top) != ((*pDstRect).bottom - (*pDstRect).top))) {
 				(*pDC).SetStretchBltMode(STRETCH_DELETESCANS);
@@ -293,7 +293,7 @@ BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, 
 					                             dwMode);
 				else {
 					hDib = (HDIB) BitmapToDIB((HBITMAP)(*pBitmap).m_hObject, (HPALETTE)(*pPalette).m_hObject);
-					if (hDib != NULL) {
+					if (hDib != nullptr) {
 						bSuccess = PaintDIB((*pDC).m_hDC, pDstRect, (HDIB) hDib, pSrcRect, pPalette);
 						GlobalFree(hDib);
 					} else
@@ -311,13 +311,13 @@ BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, 
 		}
 	}
 
-	if (pPalOld != NULL)                                    // relinquish the resources we built
+	if (pPalOld != nullptr)                                    // relinquish the resources we built
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
-	if (pWorkOld != NULL)
+	if (pWorkOld != nullptr)
 		(void)(*pWorkDC).SelectObject(pWorkOld);
-	if (pPalOldWork != NULL)
+	if (pPalOldWork != nullptr)
 		(void)(*pWorkDC).SelectPalette(pPalOldWork, FALSE);
-	if (pWorkDC != NULL) {
+	if (pWorkDC != nullptr) {
 		(*pWorkDC).DeleteDC();
 		delete pWorkDC;
 	}
@@ -347,24 +347,24 @@ BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, 
  ************************************************************************/
 
 BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, const int x, const int y) {
-	CDC         *pImageDC = NULL,                       // context for the bitmap image
-	             *pWorkDC = NULL,                        // context for the bitmap work area
-	              *pMaskDC = NULL;                        // context for the image's mask
-	CBitmap     *pImage = NULL,                         // bitmap that has our image
-	             *pImageOld = NULL,                      // bitmap previously mapped to image context
-	              *pWork = NULL,                          // work area bitmap
-	               *pWorkOld = NULL,                       // bitmap previously mapped to work context
-	                *pMask = NULL,                          // image mask bitmap
-	                 *pMaskOld = NULL;                       // bitmap previously mapped to mask context
-	CPalette    *pPalOldImage = NULL,                   // palette previously mapped to image context
-	             *pPalOldWork = NULL;                    // palette previously mapped to work context
+	CDC         *pImageDC = nullptr,                       // context for the bitmap image
+	             *pWorkDC = nullptr,                        // context for the bitmap work area
+	              *pMaskDC = nullptr;                        // context for the image's mask
+	CBitmap     *pImage = nullptr,                         // bitmap that has our image
+	             *pImageOld = nullptr,                      // bitmap previously mapped to image context
+	              *pWork = nullptr,                          // work area bitmap
+	               *pWorkOld = nullptr,                       // bitmap previously mapped to work context
+	                *pMask = nullptr,                          // image mask bitmap
+	                 *pMaskOld = nullptr;                       // bitmap previously mapped to mask context
+	CPalette    *pPalOldImage = nullptr,                   // palette previously mapped to image context
+	             *pPalOldWork = nullptr;                    // palette previously mapped to work context
 	BOOL        bSuccess = FALSE;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	CSize       cSize;
 	int         dx, dy;
 	CRect       dstRect;
 
-	if (pPalette != NULL) {
+	if (pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -376,12 +376,12 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 	pMask = new CBitmap();
 	pWork = new CBitmap();
 
-	if ((pImageDC != NULL) &&                               // verify we got the requested objects
-	        (pMaskDC != NULL) &&
-	        (pWorkDC != NULL) &&
-	        (pImage != NULL) &&
-	        (pMask != NULL) &&
-	        (pWork != NULL) &&
+	if ((pImageDC != nullptr) &&                               // verify we got the requested objects
+	        (pMaskDC != nullptr) &&
+	        (pWorkDC != nullptr) &&
+	        (pImage != nullptr) &&
+	        (pMask != nullptr) &&
+	        (pWork != nullptr) &&
 	        (*pImageDC).CreateCompatibleDC(pDC) &&              // now create all the compatible contexts
 	        (*pMaskDC).CreateCompatibleDC(pDC) &&               // ... that we need to hold our bitmaps
 	        (*pWorkDC).CreateCompatibleDC(pDC)) {
@@ -389,7 +389,7 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 		dx = (*pSrcRect).right - (*pSrcRect).left;
 		dy = (*pSrcRect).bottom - (*pSrcRect).top;
 
-		if (pPalette != NULL) {                     // map in the color palette if specified
+		if (pPalette != nullptr) {                     // map in the color palette if specified
 			pPalOldImage = (*pImageDC).SelectPalette(pPalette, FALSE);
 			(void)(*pImageDC).RealizePalette();
 			pPalOldWork = (*pWorkDC).SelectPalette(pPalette, FALSE);
@@ -398,7 +398,7 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 
 		if ((*pImage).CreateCompatibleBitmap(pDC, dx, dy) &&
 		        (*pWork).CreateCompatibleBitmap(pDC, dx, dy) &&
-		        (*pMask).CreateBitmap(dx, dy, 1, 1, NULL)) {
+		        (*pMask).CreateBitmap(dx, dy, 1, 1, nullptr)) {
 
 			pImageOld = (*pImageDC).SelectObject(pImage);
 			pMaskOld = (*pMaskDC).SelectObject(pMask);  // map the work and mask bitmaps into
@@ -407,8 +407,8 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 			dstRect.SetRect(0, 0, dx, dy);
 			BltBitmap(pImageDC, pPalette, pBitmap, pSrcRect, &dstRect, (DWORD) SRCCOPY);
 
-			if ((pMaskOld != NULL) &&                   // verify so far so good
-			        (pWorkOld != NULL)) {
+			if ((pMaskOld != nullptr) &&                   // verify so far so good
+			        (pWorkOld != nullptr)) {
 				(void)(*pWorkDC).BitBlt(     // grab what the background looks like
 				    0,                              // ... putting it in the work area
 				    0,
@@ -466,43 +466,43 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 		}
 	}
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	if (pImageOld != NULL)                              // select out bitmaps out of their contexts
+	if (pImageOld != nullptr)                              // select out bitmaps out of their contexts
 		(void)(*pImageDC).SelectObject(pImageOld);
-	if (pWorkOld != NULL)
+	if (pWorkOld != nullptr)
 		(void)(*pWorkDC).SelectObject(pWorkOld);
-	if (pMaskOld != NULL)
+	if (pMaskOld != nullptr)
 		(void)(*pMaskDC).SelectObject(pMaskOld);
 
-	if (pPalOldImage != NULL)                           // map out the palettes we used
+	if (pPalOldImage != nullptr)                           // map out the palettes we used
 		(void)(*pImageDC).SelectPalette(pPalOldImage, FALSE);
-	if (pPalOldWork != NULL)
+	if (pPalOldWork != nullptr)
 		(void)(*pWorkDC).SelectPalette(pPalOldWork, FALSE);
 
-	if (pImage != NULL) {                                // delete the bitmaps we created
+	if (pImage != nullptr) {                                // delete the bitmaps we created
 		(*pImage).DeleteObject();
 		delete pImage;
 	}
-	if (pWork != NULL) {
+	if (pWork != nullptr) {
 		(*pWork).DeleteObject();
 		delete pWork;
 	}
-	if (pMask != NULL) {
+	if (pMask != nullptr) {
 		(*pMask).DeleteObject();
 		delete pMask;
 	}
 
-	if (pImageDC != NULL) {                             // delete the contexts we created
+	if (pImageDC != nullptr) {                             // delete the contexts we created
 		(*pImageDC).DeleteDC();
 		delete pImageDC;
 	}
-	if (pWorkDC != NULL) {
+	if (pWorkDC != nullptr) {
 		(*pWorkDC).DeleteDC();
 		delete pWorkDC;
 	}
-	if (pMaskDC != NULL) {
+	if (pMaskDC != nullptr) {
 		(*pMaskDC).DeleteDC();
 		delete pMaskDC;
 	}
@@ -531,32 +531,32 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 
 BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, const int y, const int dx, const int dy) {
 	BOOL        bSuccess = FALSE;
-	CDC         *pWorkDC = NULL;
-	CPalette    *pPalOld = NULL,
-	             *pPalOldWork = NULL;
-	CBitmap     *pWorkOld = NULL;
+	CDC         *pWorkDC = nullptr;
+	CPalette    *pPalOld = nullptr,
+	             *pPalOldWork = nullptr;
+	CBitmap     *pWorkOld = nullptr;
 	BITMAP      cBitmapData;
 	HDIB        hDib;
 	CRect       SrcRect, DstRect;
 
 	(*pBitmap).GetObject(sizeof(BITMAP), &cBitmapData);
 
-	if (pPalette != NULL) {                                 // map in color palette to be used
+	if (pPalette != nullptr) {                                 // map in color palette to be used
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
 
 	pWorkDC = new CDC();                                    // create the context and bitmap objects
 
-	if ((pWorkDC != NULL) &&                                // verify we got what we asked for
-	        (pBitmap != NULL) &&
+	if ((pWorkDC != nullptr) &&                                // verify we got what we asked for
+	        (pBitmap != nullptr) &&
 	        (*pWorkDC).CreateCompatibleDC(pDC)) {               // create a context for our bitmap
-		if (pPalette != NULL) {                             // map the palette into the context
+		if (pPalette != nullptr) {                             // map the palette into the context
 			pPalOldWork = (*pWorkDC).SelectPalette(pPalette, FALSE);
 			(void)(*pWorkDC).RealizePalette();
 		}
 		pWorkOld = (*pWorkDC).SelectObject(pBitmap);        // now map in our bitmap
-		if (pWorkOld != NULL) {                             // paint back the saved pixels
+		if (pWorkOld != nullptr) {                             // paint back the saved pixels
 			if ((dx != 0) && (dy != 0) &&
 			        ((dx != cBitmapData.bmWidth) || (dy != cBitmapData.bmHeight))) {
 				(*pDC).SetStretchBltMode(STRETCH_DELETESCANS);
@@ -564,7 +564,7 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, co
 					bSuccess = (*pDC).StretchBlt(x, y, dx, dy, pWorkDC, 0, 0, cBitmapData.bmWidth, cBitmapData.bmHeight, SRCCOPY);
 				else {
 					hDib = (HDIB) BitmapToDIB((HBITMAP)(*pBitmap).m_hObject, (HPALETTE)(*pPalette).m_hObject);
-					if (hDib != NULL) {
+					if (hDib != nullptr) {
 						DstRect.SetRect(x, y, x + dx, y + dy);
 						SrcRect.SetRect(0, 0, cBitmapData.bmWidth, cBitmapData.bmHeight);
 						bSuccess = PaintDIB((*pDC).m_hDC, &DstRect, (HDIB) hDib, &SrcRect, pPalette);
@@ -577,13 +577,13 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, co
 		}
 	}
 
-	if (pPalOld != NULL)                                    // relinquish the resources we built
+	if (pPalOld != nullptr)                                    // relinquish the resources we built
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
-	if (pWorkOld != NULL)
+	if (pWorkOld != nullptr)
 		(void)(*pWorkDC).SelectObject(pWorkOld);
-	if (pPalOldWork != NULL)
+	if (pPalOldWork != nullptr)
 		(void)(*pWorkDC).SelectPalette(pPalOldWork, FALSE);
-	if (pWorkDC != NULL) {
+	if (pWorkDC != nullptr) {
 		(*pWorkDC).DeleteDC();
 		delete pWorkDC;
 	}
@@ -621,13 +621,13 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName, const in
 	BOOL    bSuccess;
 
 	bSuccess = myDoc.OpenDocument(pszPathName);
-	if ((pDC != NULL) && bSuccess) {
+	if ((pDC != nullptr) && bSuccess) {
 		hDIB = myDoc.GetHDIB();
-		if (hDIB == NULL)
+		if (hDIB == nullptr)
 			bSuccess = FALSE;
 		else {
 			lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-			if (lpDIB == NULL)
+			if (lpDIB == nullptr)
 				bSuccess = FALSE;
 			else {
 				cxDIB = (int) DIBWidth(lpDIB);
@@ -671,15 +671,15 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName, const in
 
 BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, const char *pszPathName, const int x, const int y, const int dx, const int dy) {
 	BOOL    bSuccess = FALSE;
-	CDibDoc *pDIB = NULL;                                   // pointer to our loaded DIB file
+	CDibDoc *pDIB = nullptr;                                   // pointer to our loaded DIB file
 
 	pDIB = new CDibDoc();                               // create an object for our DIB
 
-	if ((pDIB != NULL) &&                               // verify we have the objects we just created
+	if ((pDIB != nullptr) &&                               // verify we have the objects we just created
 	        (*pDIB).OpenDocument(pszPathName))              // .... bitmap file
 		bSuccess = PaintMaskedDIB(pDC, pPalette, pDIB, x, y, dx, dy) ;
 
-	if (pDIB != NULL)
+	if (pDIB != nullptr)
 		delete pDIB;
 
 	return (bSuccess);                                  // return success or failure
@@ -708,18 +708,18 @@ BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, const char *pszPathName, const
 
 BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const int nResID, const int x, const int y, const int dx, const int dy) {
 	BOOL    bSuccess = FALSE;
-	CDibDoc *pDIB = NULL;                                   // pointer to our loaded DIB file
+	CDibDoc *pDIB = nullptr;                                   // pointer to our loaded DIB file
 	char    chResName[16];
 
 	Common::sprintf_s(chResName, "#%d", nResID);
 
 	pDIB = new CDibDoc();                               // create an object for our DIB
 
-	if ((pDIB != NULL) &&                               // verify we have the objects we just created
+	if ((pDIB != nullptr) &&                               // verify we have the objects we just created
 	        (*pDIB).OpenResourceDocument(chResName))        // .... bitmap file
 		bSuccess = PaintMaskedDIB(pDC, pPalette, pDIB, x, y, dx, dy) ;
 
-	if (pDIB != NULL)
+	if (pDIB != nullptr)
 		delete pDIB;
 
 	return (bSuccess);                                  // return success or failure
@@ -749,15 +749,15 @@ BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const int nResID, const i
 
 BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const char *pszName, const int x, const int y, const int dx, const int dy) {
 	BOOL    bSuccess = FALSE;
-	CDibDoc *pDIB = NULL;                                   // pointer to our loaded DIB file
+	CDibDoc *pDIB = nullptr;                                   // pointer to our loaded DIB file
 
 	pDIB = new CDibDoc();                               // create an object for our DIB
 
-	if ((pDIB != NULL) &&                               // verify we have the objects we just created
+	if ((pDIB != nullptr) &&                               // verify we have the objects we just created
 	        (*pDIB).OpenResourceDocument(pszName))          // .... bitmap file
 		bSuccess = PaintMaskedDIB(pDC, pPalette, pDIB, x, y, dx, dy) ;
 
-	if (pDIB != NULL)
+	if (pDIB != nullptr)
 		delete pDIB;
 
 	return (bSuccess);                                  // return success or failure
@@ -786,11 +786,11 @@ BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const char *pszName, cons
 
 BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, CDibDoc *pDIB, const int x, const int y, const int dx, const int dy) {
 	BOOL        bSuccess = FALSE;
-	CBitmap     *pBitmap = NULL;
-	CPalette    *pMyPalette = NULL;
-	HDIB        hDIB = NULL;
+	CBitmap     *pBitmap = nullptr;
+	CPalette    *pMyPalette = nullptr;
+	HDIB        hDIB = nullptr;
 
-	if (pPalette == NULL)
+	if (pPalette == nullptr)
 		pMyPalette = (*pDIB).GetDocPalette();
 	else
 		pMyPalette = pPalette;
@@ -798,7 +798,7 @@ BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, CDibDoc *pDIB, const int x, co
 	hDIB = (*pDIB).GetHDIB();
 	pBitmap = ConvertDIB(pDC, hDIB, pMyPalette);
 
-	if (pBitmap != NULL) {
+	if (pBitmap != nullptr) {
 		bSuccess = PaintMaskedBitmap(pDC, pMyPalette, pBitmap, x, y, dx, dy);
 		(*pBitmap).DeleteObject();
 		delete pBitmap;
@@ -830,22 +830,22 @@ BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, CDibDoc *pDIB, const int x, co
 
 BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, const int y, const int dx, const int dy) {
 	BITMAP      myBitmap;                               // area for bitmap info
-	CDC         *pImageDC = NULL,                       // context for the bitmap image
-	             *pWorkDC = NULL,                        // context for the bitmap work area
-	              *pMaskDC = NULL;                        // context for the image's mask
-	CBitmap     *pImage = NULL,                         // bitmap that has our image
-	             *pImageOld = NULL,                      // bitmap previously mapped to image context
-	              *pWork = NULL,                          // work area bitmap
-	               *pWorkOld = NULL,                       // bitmap previously mapped to work context
-	                *pMask = NULL,                          // image mask bitmap
-	                 *pMaskOld = NULL;                       // bitmap previously mapped to mask context
-	CPalette    *pPalOldImage = NULL,                   // palette previously mapped to image context
-	             *pPalOldWork = NULL;                    // palette previously mapped to work context
+	CDC         *pImageDC = nullptr,                       // context for the bitmap image
+	             *pWorkDC = nullptr,                        // context for the bitmap work area
+	              *pMaskDC = nullptr;                        // context for the image's mask
+	CBitmap     *pImage = nullptr,                         // bitmap that has our image
+	             *pImageOld = nullptr,                      // bitmap previously mapped to image context
+	              *pWork = nullptr,                          // work area bitmap
+	               *pWorkOld = nullptr,                       // bitmap previously mapped to work context
+	                *pMask = nullptr,                          // image mask bitmap
+	                 *pMaskOld = nullptr;                       // bitmap previously mapped to mask context
+	CPalette    *pPalOldImage = nullptr,                   // palette previously mapped to image context
+	             *pPalOldWork = nullptr;                    // palette previously mapped to work context
 	BOOL        bSuccess = FALSE;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	CSize       cSize;
 
-	if (pPalette != NULL) {
+	if (pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -857,12 +857,12 @@ BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int
 	pMask = new CBitmap();
 	pWork = new CBitmap();
 
-	if ((pImageDC != NULL) &&                               // verify we got the requested objects
-	        (pMaskDC != NULL) &&
-	        (pWorkDC != NULL) &&
-	        (pImage != NULL) &&
-	        (pMask != NULL) &&
-	        (pWork != NULL) &&
+	if ((pImageDC != nullptr) &&                               // verify we got the requested objects
+	        (pMaskDC != nullptr) &&
+	        (pWorkDC != nullptr) &&
+	        (pImage != nullptr) &&
+	        (pMask != nullptr) &&
+	        (pWork != nullptr) &&
 	        (*pImageDC).CreateCompatibleDC(pDC) &&              // now create all the compatible contexts
 	        (*pMaskDC).CreateCompatibleDC(pDC) &&               // ... that we need to hold our bitmaps
 	        (*pWorkDC).CreateCompatibleDC(pDC)) {
@@ -877,7 +877,7 @@ BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int
 			cSize.cy = dy;
 		}
 
-		if (pPalette != NULL) {                     // map in the color palette if specified
+		if (pPalette != nullptr) {                     // map in the color palette if specified
 			pPalOldImage = (*pImageDC).SelectPalette(pPalette, FALSE);
 			(void)(*pImageDC).RealizePalette();
 			pPalOldWork = (*pWorkDC).SelectPalette(pPalette, FALSE);
@@ -886,7 +886,7 @@ BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int
 
 		if ((*pImage).CreateCompatibleBitmap(pDC, cSize.cx, cSize.cy) &&
 		        (*pWork).CreateCompatibleBitmap(pDC, cSize.cx, cSize.cy) &&
-		        (*pMask).CreateBitmap(cSize.cx, cSize.cy, 1, 1, NULL)) {
+		        (*pMask).CreateBitmap(cSize.cx, cSize.cy, 1, 1, nullptr)) {
 
 			pImageOld = (*pImageDC).SelectObject(pImage);
 			pMaskOld = (*pMaskDC).SelectObject(pMask);  // map the work and mask bitmaps into
@@ -894,8 +894,8 @@ BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int
 
 			PaintBitmap(pImageDC, pPalette, pBitmap, 0, 0, dx, dy);
 
-			if ((pMaskOld != NULL) &&                   // verify so far so good
-			        (pWorkOld != NULL)) {
+			if ((pMaskOld != nullptr) &&                   // verify so far so good
+			        (pWorkOld != nullptr)) {
 				(void)(*pWorkDC).BitBlt(     // grab what the background looks like
 				    0,                              // ... putting it in the work area
 				    0,
@@ -953,43 +953,43 @@ BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int
 		}
 	}
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	if (pImageOld != NULL)                              // select out bitmaps out of their contexts
+	if (pImageOld != nullptr)                              // select out bitmaps out of their contexts
 		(void)(*pImageDC).SelectObject(pImageOld);
-	if (pWorkOld != NULL)
+	if (pWorkOld != nullptr)
 		(void)(*pWorkDC).SelectObject(pWorkOld);
-	if (pMaskOld != NULL)
+	if (pMaskOld != nullptr)
 		(void)(*pMaskDC).SelectObject(pMaskOld);
 
-	if (pPalOldImage != NULL)                           // map out the palettes we used
+	if (pPalOldImage != nullptr)                           // map out the palettes we used
 		(void)(*pImageDC).SelectPalette(pPalOldImage, FALSE);
-	if (pPalOldWork != NULL)
+	if (pPalOldWork != nullptr)
 		(void)(*pWorkDC).SelectPalette(pPalOldWork, FALSE);
 
-	if (pImage != NULL) {                                // delete the bitmaps we created
+	if (pImage != nullptr) {                                // delete the bitmaps we created
 		(*pImage).DeleteObject();
 		delete pImage;
 	}
-	if (pWork != NULL) {
+	if (pWork != nullptr) {
 		(*pWork).DeleteObject();
 		delete pWork;
 	}
-	if (pMask != NULL) {
+	if (pMask != nullptr) {
 		(*pMask).DeleteObject();
 		delete pMask;
 	}
 
-	if (pImageDC != NULL) {                             // delete the contexts we created
+	if (pImageDC != nullptr) {                             // delete the contexts we created
 		(*pImageDC).DeleteDC();
 		delete pImageDC;
 	}
-	if (pWorkDC != NULL) {
+	if (pWorkDC != nullptr) {
 		(*pWorkDC).DeleteDC();
 		delete pWorkDC;
 	}
-	if (pMaskDC != NULL) {
+	if (pMaskDC != nullptr) {
 		(*pMaskDC).DeleteDC();
 		delete pMaskDC;
 	}
@@ -1028,12 +1028,12 @@ BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int
 
 
 BOOL PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette* pPalette, int nBlockSize) {
-	HDIB    hDIB = NULL;
-	CBitmap *pBitmap = NULL;
+	HDIB    hDIB = nullptr;
+	CBitmap *pBitmap = nullptr;
 	BOOL    bSuccess = FALSE;
 
-	if ((pDC == NULL) ||
-	        (pDIB == NULL))
+	if ((pDC == nullptr) ||
+	        (pDIB == nullptr))
 		return (FALSE);
 
 	hDIB = (*pDIB).GetHDIB();
@@ -1041,7 +1041,7 @@ BOOL PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette* pPalette, int nBlockSiz
 
 	bSuccess = PaintBlockEffect(pDC, pBitmap, pPalette, nBlockSize);
 
-	if (pBitmap != NULL)
+	if (pBitmap != nullptr)
 		delete pBitmap;
 
 	return (bSuccess);
@@ -1067,10 +1067,10 @@ BOOL PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette* pPalette, int nBlockSiz
  ************************************************************************/
 
 BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette* pPalette, int nBlockSize) {
-	CPalette *pOldPal = NULL;
-	CPalette *pOldPal2 = NULL;
-	CBitmap  *pBitmapOld = NULL;
-	CDC      *pMemDC = NULL;
+	CPalette *pOldPal = nullptr;
+	CPalette *pOldPal2 = nullptr;
+	CBitmap  *pBitmapOld = nullptr;
+	CDC      *pMemDC = nullptr;
 	BITMAP   myBitmap;
 	BOOL     bSuccess = FALSE;
 	unsigned long   seed;
@@ -1081,17 +1081,17 @@ BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette* pPalette, int nBlock
 	unsigned long   tmp, cnt, shft;
 	unsigned long   width, height;
 
-	if ((pDC == NULL) ||
-	        (pBitmap == NULL))
+	if ((pDC == nullptr) ||
+	        (pBitmap == nullptr))
 		return (FALSE);
 
-	if (pPalette != NULL) {
+	if (pPalette != nullptr) {
 		pOldPal = (*pDC).SelectPalette(pPalette, FALSE);
 		(*pDC).RealizePalette();
 	}
 
 	pMemDC = new CDC();
-	if ((pMemDC == NULL) ||
+	if ((pMemDC == nullptr) ||
 	        ((*pMemDC).CreateCompatibleDC(pDC) == FALSE))
 		goto clean_up;
 
@@ -1149,14 +1149,14 @@ BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette* pPalette, int nBlock
 	bSuccess = TRUE;
 
 clean_up:
-	if (pBitmapOld != NULL)
+	if (pBitmapOld != nullptr)
 		(*pMemDC).SelectObject(pBitmapOld);
-	if (pOldPal2 != NULL)
+	if (pOldPal2 != nullptr)
 		(void)(*pMemDC).SelectPalette(pOldPal2, FALSE);
-	if (pMemDC != NULL)
+	if (pMemDC != nullptr)
 		delete pMemDC;
 
-	if (pOldPal != NULL)
+	if (pOldPal != nullptr)
 		(void)(*pDC).SelectPalette(pOldPal, FALSE);
 
 	return (bSuccess);
@@ -1184,7 +1184,7 @@ clean_up:
 BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette* pPalette, int nBlockSize, int nX, int nY, int nWidth, int nHeight) {
 	CBrush   myBrush;
 	CRect    thisRect, fillRect;
-	CPalette *pOldPal = NULL;
+	CPalette *pOldPal = nullptr;
 	BOOL     bSuccess = FALSE;
 	unsigned long   seed;
 	unsigned long   value, maxvalue;
@@ -1194,10 +1194,10 @@ BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette* pPalette, int nBloc
 	unsigned long   tmp, cnt, shft;
 	unsigned long   width, height;
 
-	if (pDC == NULL)
+	if (pDC == nullptr)
 		return (FALSE);
 
-	if (pPalette != NULL) {
+	if (pPalette != nullptr) {
 		pOldPal = (*pDC).SelectPalette(pPalette, FALSE);
 		(*pDC).RealizePalette();
 	}
@@ -1240,7 +1240,7 @@ BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette* pPalette, int nBloc
 
 	bSuccess = TRUE;
 
-	if (pOldPal != NULL)
+	if (pOldPal != nullptr)
 		(void)(*pDC).SelectPalette(pOldPal, FALSE);
 
 	return (bSuccess);

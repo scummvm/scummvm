@@ -63,15 +63,15 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 	LPSTR    lpDIBHdr;            // Pointer to BITMAPINFOHEADER
 	LPSTR    lpDIBBits;           // Pointer to DIB bits
 	BOOL     bSuccess = FALSE;      // Success/fail flag
-	HPALETTE hPal = NULL;           // Our DIB's palette
-	HPALETTE hOldPal = NULL;        // Previous palette
-	HPALETTE hOldPal2 = NULL;        // Previous palette
+	HPALETTE hPal = nullptr;           // Our DIB's palette
+	HPALETTE hOldPal = nullptr;        // Previous palette
+	HPALETTE hOldPal2 = nullptr;        // Previous palette
 	HBITMAP  hBitmap, hBitmapOld;
 	HDC      hdcMem;                     /* memory device context */
 	int      nDevCaps;
 
 	/* Check for valid DIB handle */
-	if (hDIB == NULL)
+	if (hDIB == nullptr)
 		return FALSE;
 
 	/* Lock down the DIB, and get a pointer to the beginning of the bit
@@ -81,7 +81,7 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 	lpDIBBits = FindDIBBits(lpDIBHdr);
 
 	// Get the palette, then select it into DC
-	if (pPal != NULL) {
+	if (pPal != nullptr) {
 		hPal = (HPALETTE)pPal->m_hObject;
 
 		// Select as foreground and realize it
@@ -91,7 +91,7 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 
 	nDevCaps = GetDeviceCaps(hDC, RASTERCAPS);
 	if (!(nDevCaps & RC_STRETCHDIB)) {
-		hBitmap = DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
+		hBitmap = DIBtoBitmap(hDC, nullptr, (LPBITMAPINFO)lpDIBHdr);
 		if (hBitmap) {
 			hdcMem = CreateCompatibleDC(hDC);
 			if (hdcMem) {
@@ -115,9 +115,9 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 				DeleteDC(hdcMem);
 			}
 		}
-		if (hBitmap != NULL)
+		if (hBitmap != nullptr)
 			DeleteBitmap(hBitmap);
-		if (pPal != NULL)
+		if (pPal != nullptr)
 			SelectPalette(hDC, hOldPal, FALSE);
 		GlobalUnlock((HGLOBAL)hDIB);
 		return (bSuccess);
@@ -160,7 +160,7 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 		                         DIB_RGB_COLORS,                 // wUsage
 		                         SRCCOPY);                       // dwROP
 
-	if (pPal != NULL)
+	if (pPal != nullptr)
 		SelectPalette(hDC, hOldPal, FALSE);
 
 	GlobalUnlock((HGLOBAL)hDIB);
@@ -195,7 +195,7 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 BOOL WINAPI CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 	LPLOGPALETTE lpPal;      // pointer to a logical palette
 	HANDLE hLogPal;          // handle to a logical palette
-	//HPALETTE hPal = NULL;    // handle to a palette
+	//HPALETTE hPal = nullptr;    // handle to a palette
 	int i;                   // loop index
 	WORD wNumColors;         // number of colors in color table
 	LPSTR lpbi;              // pointer to packed-DIB
@@ -207,7 +207,7 @@ BOOL WINAPI CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 
 	/* if handle to DIB is invalid, return FALSE */
 
-	if (hDIB == NULL)
+	if (hDIB == nullptr)
 		return FALSE;
 
 	lpbi = (LPSTR) GlobalLock((HGLOBAL)hDIB);
@@ -228,7 +228,7 @@ try_again:
 		                      + sizeof(PALETTEENTRY)
 		                      * wNumColors);
 
-		/* if not enough memory, clean up and return NULL */
+		/* if not enough memory, clean up and return nullptr */
 		if (hLogPal == 0) {
 			if (!bRetry) {
 				bRetry = TRUE;
@@ -289,21 +289,21 @@ try_again:
 
 	nResult = (*pOrigPal).GetObject(sizeof(WORD), &wNumColors);
 	if (nResult == 0)
-		return (NULL);
+		return (nullptr);
 
 	/* allocate memory block for logical palette */
 	hLogPal = GlobalAlloc(GPTR, sizeof(LOGPALETTE)
 	                      + sizeof(PALETTEENTRY)
 	                      * wNumColors);
 
-	/* if not enough memory, clean up and return NULL */
+	/* if not enough memory, clean up and return nullptr */
 	if (hLogPal == 0) {
 		if (!bRetry) {
 			bRetry = TRUE;
 			(void)GlobalCompact(1000000L);
 			goto try_again;
 		}
-		return (NULL);
+		return (nullptr);
 	}
 
 	lpPal = (LPLOGPALETTE) GlobalLock((HGLOBAL)hLogPal);
@@ -320,7 +320,7 @@ try_again:
 	bResult = pPal->CreatePalette(lpPal);
 	if (!bResult) {
 		delete pPal;
-		pPal = NULL;
+		pPal = nullptr;
 	}
 
 	GlobalUnlock((HGLOBAL)hLogPal);
@@ -534,7 +534,7 @@ WORD WINAPI DIBNumColors(LPSTR lpbi) {
 
         RETURN
         A handle to the Bitmap (CBitmap *).  If an error occurs, the return
-        value will be NULL.
+        value will be nullptr.
 **************************************************************************/
 
 CBitmap *WINAPI ConvertDIB(CDC *pDC,
@@ -543,16 +543,16 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	LPSTR    lpDIBHdr;            // Pointer to BITMAPINFOHEADER
 	//LPSTR    lpDIBBits;           // Pointer to DIB bits
 	//BOOL     bSuccess = FALSE;      // Success/fail flag
-	HPALETTE hPal = NULL;           // Our DIB's palette
-	HPALETTE hOldPal = NULL;        // Previous palette
+	HPALETTE hPal = nullptr;           // Our DIB's palette
+	HPALETTE hOldPal = nullptr;        // Previous palette
 	HDC      hDC;
-	HBITMAP  hBitmap = NULL;
-	CBitmap *pBitmap = NULL;
+	HBITMAP  hBitmap = nullptr;
+	CBitmap *pBitmap = nullptr;
 
 	hDC = (*pDC).m_hDC;
 
 	// Get the palette, then select it into DC
-	if (pPal != NULL) {
+	if (pPal != nullptr) {
 		hPal = (HPALETTE)pPal->m_hObject;
 
 		// Select as foreground and realize it
@@ -566,18 +566,18 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	lpDIBHdr = (LPSTR) GlobalLock((HGLOBAL)hDIB);
 	/*lpDIBBits =*/(void)FindDIBBits(lpDIBHdr);
 
-	hBitmap = DIBtoBitmap(hDC, NULL, (LPBITMAPINFO)lpDIBHdr);
+	hBitmap = DIBtoBitmap(hDC, nullptr, (LPBITMAPINFO)lpDIBHdr);
 
 	GlobalUnlock((HGLOBAL)hDIB);
 
-	if (hBitmap != NULL) {
+	if (hBitmap != nullptr) {
 		pBitmap = new CBitmap();
-		if (pBitmap != NULL)
+		if (pBitmap != nullptr)
 			(*pBitmap).Attach(hBitmap);
 	}
 
 	/* Reselect old palette */
-	if (pPal != NULL)
+	if (pPal != nullptr)
 		SelectPalette(hDC, hOldPal, FALSE);
 
 	return (pBitmap);
@@ -591,7 +591,7 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 
         RETURN
         A handle to the DDB (HBITMAP).  If an error occurs, the return
-        value will be NULL.
+        value will be nullptr.
 **************************************************************************/
 
 HBITMAP WINAPI DIBtoBitmap(HDC hDC,                     // where DDB will be displayed
@@ -611,7 +611,7 @@ try_again:
 	                         (LPBITMAPINFO)lpbih,
 	                         DIB_RGB_COLORS);
 
-	if (hBitmap == NULL) {
+	if (hBitmap == nullptr) {
 		if (!bRetry) {
 			bRetry = TRUE;
 			(void)GlobalCompact(1000000L);
@@ -692,7 +692,7 @@ void WINAPI InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
 //
 // Parms:      hBitmap == Handle to device dependent bitmap compatible
 //                        with default screen display device.
-//             hPal    == Palette to render the DDB with.  If it's NULL,
+//             hPal    == Palette to render the DDB with.  If it's nullptr,
 //                        use the default palette.
 //
 // History:   Date      Reason
@@ -707,17 +707,17 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	LPSTR              lpBits;
 	HDC                hMemDC;
 	HANDLE             hDIB;
-	HPALETTE           hOldPal = NULL;
+	HPALETTE           hOldPal = nullptr;
 
 	// Do some setup -- make sure the Bitmap passed in is valid,
 	//  get info on the bitmap (like its height, width, etc.),
 	//  then setup a BITMAPINFOHEADER.
 
 	if (!hBitmap)
-		return NULL;
+		return nullptr;
 
 	if (!GetObject(hBitmap, sizeof(Bitmap), (LPSTR)&Bitmap))
-		return NULL;
+		return nullptr;
 
 	InitBitmapInfoHeader(&bmInfoHdr,
 	                     Bitmap.bmWidth,
@@ -732,7 +732,7 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	                   PaletteSize((LPSTR)&bmInfoHdr) + bmInfoHdr.biSizeImage);
 
 	if (!hDIB)
-		return NULL;
+		return nullptr;
 
 	lpbmInfoHdr = (LPBITMAPINFOHEADER) GlobalLock(hDIB);
 	*lpbmInfoHdr = bmInfoHdr;
@@ -742,7 +742,7 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	// Now, we need a DC to hold our bitmap.  If the app passed us
 	//  a palette, it should be selected into the DC.
 
-	hMemDC = MFC::GetDC(NULL);
+	hMemDC = MFC::GetDC(nullptr);
 
 	if (hPal) {
 		hOldPal = SelectPalette(hMemDC, hPal, FALSE);
@@ -764,7 +764,7 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	               DIB_RGB_COLORS)) {
 		GlobalUnlock(hDIB);
 		GlobalFree(hDIB);
-		hDIB = NULL;
+		hDIB = nullptr;
 	} else
 		GlobalUnlock(hDIB);
 
@@ -774,7 +774,7 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	if (hOldPal)
 		SelectPalette(hMemDC, hOldPal, FALSE);
 
-	MFC::ReleaseDC(NULL, hMemDC);
+	MFC::ReleaseDC(nullptr, hMemDC);
 
 	return hDIB;
 }
@@ -788,7 +788,7 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 // Function:   CopyHandle (from SDK DibView sample clipbrd.c)
 //
 // Purpose:    Makes a copy of the given global memory block.  Returns
-//             a handle to the new memory block (NULL on error).
+//             a handle to the new memory block (nullptr on error).
 //
 //             Routine stolen verbatim out of ShowDIB.
 //
@@ -804,12 +804,12 @@ HANDLE WINAPI CopyHandle(HANDLE h) {
 	HANDLE hCopy;
 	DWORD dwLen;
 
-	if (h == NULL)
-		return NULL;
+	if (h == nullptr)
+		return nullptr;
 
 	dwLen = GlobalSize((HGLOBAL)h);
 
-	if ((hCopy = (HANDLE) GlobalAlloc(GHND, dwLen)) != NULL) {
+	if ((hCopy = (HANDLE) GlobalAlloc(GHND, dwLen)) != nullptr) {
 		lpCopy = (BYTE *) GlobalLock((HGLOBAL)hCopy);
 		lp = (BYTE *) GlobalLock((HGLOBAL)h);
 
@@ -828,12 +828,12 @@ void WINAPI ShowMemoryInfo(const char *chMessage, const char *chTitle) {
 	#ifdef BAGEL_DEBUG
 	char    buf[256];
 
-	MessageBox(NULL, chMessage, chTitle, MB_ICONEXCLAMATION);
+	MessageBox(nullptr, chMessage, chTitle, MB_ICONEXCLAMATION);
 	Common::sprintf_s(buf, "Free Memory = %ld\nLargest Memory Block = %ld",
 	                  GetFreeSpace(0), GlobalCompact(0));
-	MessageBox(NULL, buf, "Internal Status", MB_ICONINFORMATION);
+	MessageBox(nullptr, buf, "Internal Status", MB_ICONINFORMATION);
 	//  Common::sprintf_s(buf,"Largest Memory Block = %ld",GlobalCompact(0));
-	//  MessageBox(NULL,buf,"Internal Problem",MB_ICONINFORMATION);
+	//  MessageBox(nullptr,buf,"Internal Problem",MB_ICONINFORMATION);
 	#endif
 }
 

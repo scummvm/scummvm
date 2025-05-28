@@ -52,7 +52,7 @@ BOOL CGuessDlg::OnInitDialog(void) {
 	pEdit = (CEdit *)GetDlgItem(IDC_EDIT);
 	pEdit->LimitText(MAX_PLENGTH_S + 1);
 
-	SetTimer(10, 50, NULL);
+	SetTimer(10, 50, nullptr);
 
 	return (TRUE);
 }
@@ -74,7 +74,7 @@ void CGuessDlg::OnPaint() {
 }
 
 void CGuessDlg::OnSetFocus(CWnd *) {
-	SetTimer(10, 50, NULL);
+	SetTimer(10, 50, nullptr);
 }
 
 void CGuessDlg::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
@@ -88,7 +88,7 @@ void CGuessDlg::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
 			pEdit->SetSel(-1, 0, TRUE);
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 		}
 	}

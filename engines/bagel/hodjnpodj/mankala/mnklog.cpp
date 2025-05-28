@@ -82,7 +82,7 @@ BOOL CMnk::InitMankala(void)
 //* CMnk::Move -- make a move
 BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 // xpcSowPit -- ptr to pit object whose stones are being sowed
-// xpcMove -- move object for position to start from; if NULL,
+// xpcMove -- move object for position to start from; if nullptr,
 //      then use the move object for current position on
 //      the board, and make the actual moves on the board
 // returns: TRUE if error, FALSE otherwise
@@ -215,11 +215,11 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 	}
 
 
-	while (MFC::PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE)); //flush out pending mouse clicks
+	while (MFC::PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE)); //flush out pending mouse clicks
 
 	// test for stones in this pit
 	if (pGameParams->bSoundEffectsEnabled && !gbTurnSoundsOff && bStonesFound && bOtherStonesFound) {
-		if (MFC::PeekMessage(&msg, NULL, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
+		if (MFC::PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
 			MFC::TranslateMessage(&msg);
 			MFC::DispatchMessage(&msg);
 		}
@@ -307,7 +307,7 @@ BOOL CMnk::MoveStone(CMove * xpcMove,
 	++xpcMove->m_iNumStones[xpcToPit->m_iPlayer][xpcToPit->m_iPit + 2] ;
 	/*
 	MSG msg;
-	if(MFC::PeekMessage(&msg,NULL,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
+	if(MFC::PeekMessage(&msg,nullptr,MM_MCINOTIFY, MM_MCINOTIFY,PM_REMOVE)){
 	    MFC::TranslateMessage(&msg);
 	    MFC::DispatchMessage(&msg);
 	}
@@ -391,26 +391,26 @@ BOOL CMnk::InitData(BOOL bInit)
 	else {      // we're releasing table
 		if (m_lpCMnkData) { // if data table locked
 			GlobalUnlock(m_lpCMnkData->m_hBestWin) ;    // unlock it
-			m_lpCMnkData = NULL ;   // clear pointer
+			m_lpCMnkData = nullptr ;   // clear pointer
 		}
 		if (m_lpCMnkData->m_hBestWin)       // if allocated
 			GlobalFree(m_lpCMnkData->m_hBestWin),
-			           m_lpCMnkData->m_hBestWin = NULL ;
+			           m_lpCMnkData->m_hBestWin = nullptr ;
 		// free it
 		#if 0
 		if (m_lpCMnkData) { // if data table allocated
 			if (m_lpCMnkData->m_hpcBestWin)
 				// if there's a best win table
 				delete m_lpCMnkData->m_hpcBestWin,
-				       m_lpCMnkData->m_hpcBestWin = NULL ;
+				       m_lpCMnkData->m_hpcBestWin = nullptr ;
 			delete m_lpCMnkData ;
-			m_lpCMnkData = NULL ;
+			m_lpCMnkData = nullptr ;
 		}
 		#endif
 	}
 
 //delete m_lpCMnkData ;
-//m_lpCMnkData = NULL ;
+//m_lpCMnkData = nullptr ;
 
 cleanup:
 

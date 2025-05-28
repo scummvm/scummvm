@@ -36,11 +36,11 @@ CRestoreDlg::CRestoreDlg(CHAR *pszDescriptions[], CWnd *pWnd, CPalette *pPalette
     INT i;
 
     // Inits
-    m_pTxtRestore = NULL;
+    m_pTxtRestore = nullptr;
 
-    m_pQuitButton = NULL;
+    m_pQuitButton = nullptr;
     for (i = 0; i < MAX_SAVEGAMES; i++) {
-        m_pSlotButtons[i] = NULL;
+        m_pSlotButtons[i] = nullptr;
         m_pszDescriptions[i] = pszDescriptions[i];
     }
 
@@ -100,7 +100,7 @@ BOOL CRestoreDlg::OnInitDialog(void)
     //
     for (i = 0; i < MAX_SAVEGAMES; i++) {
 
-        if ((m_pSlotButtons[i] = new CColorButton()) != NULL) {
+        if ((m_pSlotButtons[i] = new CColorButton()) != nullptr) {
             m_pSlotButtons[i]->SetPalette( m_pPalette );
             bSuccess = m_pSlotButtons[i]->SetControl(IDC_RSLOT1 + i, this);
             assert(bSuccess);
@@ -108,7 +108,7 @@ BOOL CRestoreDlg::OnInitDialog(void)
 
         // if a slot is empty
         //
-        if (m_pszDescriptions[i] == NULL) {
+        if (m_pszDescriptions[i] == nullptr) {
 
             m_pSlotButtons[i]->SetWindowText("empty");
 
@@ -121,14 +121,14 @@ BOOL CRestoreDlg::OnInitDialog(void)
         }
     }
 
-    if ((m_pQuitButton = new CColorButton()) != NULL) {
+    if ((m_pQuitButton = new CColorButton()) != nullptr) {
         m_pQuitButton->SetPalette( m_pPalette );
         bSuccess = m_pQuitButton->SetControl(IDCANCEL, this);
         m_pQuitButton->SetFocus();
         assert(bSuccess);
     }
 
-    if ((m_pTxtRestore = new CText) != NULL) {
+    if ((m_pTxtRestore = new CText) != nullptr) {
         rect.SetRect(193, 40, 365, 80);
         pDC = GetDC();
         m_pTxtRestore->SetupText(pDC, m_pPalette, &rect, JUSTIFY_LEFT);
@@ -145,7 +145,7 @@ void CRestoreDlg::OnPaint(void)
 
     CBmpDialog::OnPaint();
 
-    if (m_pTxtRestore != NULL) {
+    if (m_pTxtRestore != nullptr) {
         pDC = GetDC();
         m_pTxtRestore->DisplayString(pDC, gpszTitle, 25, FW_BOLD, RGB( 0, 0, 0));
         ReleaseDC(pDC);
@@ -156,20 +156,20 @@ void CRestoreDlg::OnPaint(void)
 void CRestoreDlg::ClearDialogImage(void)
 {
     INT i;
-    if (m_pTxtRestore != NULL) {
+    if (m_pTxtRestore != nullptr) {
         delete m_pTxtRestore;
-        m_pTxtRestore = NULL;
+        m_pTxtRestore = nullptr;
     }
 
-    if (m_pQuitButton != NULL) {
+    if (m_pQuitButton != nullptr) {
         delete m_pQuitButton;
-        m_pQuitButton = NULL;
+        m_pQuitButton = nullptr;
     }
 
     for (i = 0; i < MAX_SAVEGAMES; i++) {
-        if (m_pSlotButtons[i] != NULL ) {
+        if (m_pSlotButtons[i] != nullptr ) {
             delete m_pSlotButtons[i];
-            m_pSlotButtons[i] = NULL;
+            m_pSlotButtons[i] = nullptr;
         }
     }
 }
@@ -179,20 +179,20 @@ void CRestoreDlg::OnDestroy(void)
 {
     INT i;
 
-    if (m_pTxtRestore != NULL) {
+    if (m_pTxtRestore != nullptr) {
         delete m_pTxtRestore;
-        m_pTxtRestore = NULL;
+        m_pTxtRestore = nullptr;
     }
 
-    if (m_pQuitButton != NULL) {
+    if (m_pQuitButton != nullptr) {
         delete m_pQuitButton;
-        m_pQuitButton = NULL;
+        m_pQuitButton = nullptr;
     }
 
     for (i = 0; i < MAX_SAVEGAMES; i++) {
-        if (m_pSlotButtons[i] != NULL ) {
+        if (m_pSlotButtons[i] != nullptr ) {
             delete m_pSlotButtons[i];
-            m_pSlotButtons[i] = NULL;
+            m_pSlotButtons[i] = nullptr;
         }
     }
 

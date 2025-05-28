@@ -49,11 +49,11 @@ extern const char *INI_SECTION;
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
-	m_pOKButton = NULL;
-	m_pCancelButton = NULL;
-	m_pDefaultsButton = NULL;
-	m_pUserButton = NULL;
-	m_pCompButton = NULL;
+	m_pOKButton = nullptr;
+	m_pCancelButton = nullptr;
+	m_pDefaultsButton = nullptr;
+	m_pUserButton = nullptr;
+	m_pCompButton = nullptr;
 	DoModal();
 }
 
@@ -63,58 +63,58 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 
 	CBmpDialog::OnInitDialog();
 
-	m_pTxtLevel = NULL;
-	m_pTxtDifficulty = NULL;
+	m_pTxtLevel = nullptr;
+	m_pTxtDifficulty = nullptr;
 
 	tmpRect.SetRect(22, 135, 122, 155);
-	if ((m_pScrollBar = new CScrollBar) != NULL) {
+	if ((m_pScrollBar = new CScrollBar) != nullptr) {
 		m_pScrollBar->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_LIMIT);
 		m_pScrollBar->SetScrollRange(DIFF_MIN, DIFF_MAX, TRUE);
 	}
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		tmpRect.SetRect(25, 111, 80, 131);
-		if ((m_pTxtLevel = new CText) != NULL) {
+		if ((m_pTxtLevel = new CText) != nullptr) {
 			m_pTxtLevel->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		tmpRect.SetRect(81, 111, 146, 131);
-		if ((m_pTxtDifficulty = new CText) != NULL) {
+		if ((m_pTxtDifficulty = new CText) != nullptr) {
 			m_pTxtDifficulty->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		tmpRect.SetRect(25, 20, 150, 40);
-		if ((m_pTxtOrder = new CText) != NULL) {
+		if ((m_pTxtOrder = new CText) != nullptr) {
 			m_pTxtOrder->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		ReleaseDC(pDC);
 	}
 
-	if ((m_pOKButton = new CColorButton) != NULL) {       // build a color QUIT button to let us exit
+	if ((m_pOKButton = new CColorButton) != nullptr) {       // build a color QUIT button to let us exit
 		(*m_pOKButton).SetPalette(m_pPalette);            // set the palette to use
 		(*m_pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((m_pCancelButton = new CColorButton) != NULL) {   // build a color QUIT button to let us exit
+	if ((m_pCancelButton = new CColorButton) != nullptr) {   // build a color QUIT button to let us exit
 		(*m_pCancelButton).SetPalette(m_pPalette);        // set the palette to use
 		(*m_pCancelButton).SetControl(IDCANCEL, this);    // tie to the dialog control
 	}
 
-	if ((m_pDefaultsButton = new CColorButton) != NULL) { // build a color QUIT button to let us exit
+	if ((m_pDefaultsButton = new CColorButton) != nullptr) { // build a color QUIT button to let us exit
 		(*m_pDefaultsButton).SetPalette(m_pPalette);      // set the palette to use
 		(*m_pDefaultsButton).SetControl(ID_RESET, this);  // tie to the dialog control
 	}
 
-	if ((m_pUserButton = new CRadioButton) != NULL) {
+	if ((m_pUserButton = new CRadioButton) != nullptr) {
 		tmpRect.SetRect(21, 32, 75, 45);
 		//m_pUserButton->Create("Human", BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP | BS_OWNERDRAW, tmpRect, this, ID_PLAYER);
 		m_pUserButton->SetPalette(m_pPalette);
 		m_pUserButton->SetControl(ID_PLAYER, this);
 	}
 
-	if ((m_pCompButton = new CRadioButton) != NULL) {
+	if ((m_pCompButton = new CRadioButton) != nullptr) {
 		tmpRect.SetRect(21, 45, 75, 58);
 		//m_pUserButton->Create("Computer", BS_AUTORADIOBUTTON | WS_TABSTOP | BS_OWNERDRAW, tmpRect, this, ID_COMPUTER);
 		m_pCompButton->SetPalette(m_pPalette);
@@ -239,7 +239,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 		m_nDifficultyLevel = DIFF_MAX;
 
 	// can't access a null pointer
-	assert(pScroll != NULL);
+	assert(pScroll != nullptr);
 
 	pScroll->SetScrollPos(m_nDifficultyLevel);
 
@@ -297,7 +297,7 @@ void CUserCfgDlg::OnPaint(void) {
 
 	CBmpDialog::OnPaint();
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		m_pTxtLevel->DisplayString(pDC, "Difficulty:", 14, TEXT_BOLD, RGB(0, 0, 0));
 		m_pTxtOrder->DisplayString(pDC, "Who goes first?", 14, TEXT_BOLD, RGB(0, 0, 0));
 		ReleaseDC(pDC);
@@ -307,45 +307,45 @@ void CUserCfgDlg::OnPaint(void) {
 }
 
 void CUserCfgDlg::OnDestroy() {
-	if (m_pOKButton != NULL) {                          // release the button
+	if (m_pOKButton != nullptr) {                          // release the button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
-	if (m_pCancelButton != NULL) {                        // release the button
+	if (m_pCancelButton != nullptr) {                        // release the button
 		delete m_pCancelButton;
-		m_pCancelButton = NULL;
+		m_pCancelButton = nullptr;
 	}
 
-	if (m_pDefaultsButton != NULL) {                    // release the button
+	if (m_pDefaultsButton != nullptr) {                    // release the button
 		delete m_pDefaultsButton;
-		m_pDefaultsButton = NULL;
+		m_pDefaultsButton = nullptr;
 	}
 
-	assert(m_pTxtDifficulty != NULL);
-	if (m_pTxtDifficulty != NULL) {
+	assert(m_pTxtDifficulty != nullptr);
+	if (m_pTxtDifficulty != nullptr) {
 		delete m_pTxtDifficulty;
-		m_pTxtDifficulty = NULL;
+		m_pTxtDifficulty = nullptr;
 	}
 
-	assert(m_pTxtLevel != NULL);
-	if (m_pTxtLevel != NULL) {
+	assert(m_pTxtLevel != nullptr);
+	if (m_pTxtLevel != nullptr) {
 		delete m_pTxtLevel;
-		m_pTxtLevel = NULL;
+		m_pTxtLevel = nullptr;
 	}
 
-	if (m_pTxtOrder != NULL) {
+	if (m_pTxtOrder != nullptr) {
 		delete m_pTxtOrder;
-		m_pTxtOrder = NULL;
+		m_pTxtOrder = nullptr;
 	}
 
 	//
 	// de-allocate the scroll bar
 	//
-	assert(m_pScrollBar != NULL);
-	if (m_pScrollBar != NULL) {
+	assert(m_pScrollBar != nullptr);
+	if (m_pScrollBar != nullptr) {
 		delete m_pScrollBar;
-		m_pScrollBar = NULL;
+		m_pScrollBar = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -358,38 +358,38 @@ void CUserCfgDlg::ClearDialogImage(void) {
 		SaveIniSettings();
 	}
 
-	if (m_pCompButton != NULL) {
+	if (m_pCompButton != nullptr) {
 		delete m_pCompButton;
-		m_pCompButton = NULL;
+		m_pCompButton = nullptr;
 	}
 
-	if (m_pUserButton != NULL) {
+	if (m_pUserButton != nullptr) {
 		delete m_pUserButton;
-		m_pUserButton = NULL;
+		m_pUserButton = nullptr;
 	}
 
-	if (m_pOKButton != NULL) {                          // release the button
+	if (m_pOKButton != nullptr) {                          // release the button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
-	if (m_pCancelButton != NULL) {                        // release the button
+	if (m_pCancelButton != nullptr) {                        // release the button
 		delete m_pCancelButton;
-		m_pCancelButton = NULL;
+		m_pCancelButton = nullptr;
 	}
 
-	if (m_pDefaultsButton != NULL) {                    // release the button
+	if (m_pDefaultsButton != nullptr) {                    // release the button
 		delete m_pDefaultsButton;
-		m_pDefaultsButton = NULL;
+		m_pDefaultsButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 void CUserCfgDlg::DispLimit(void) {
 	CDC *pDC;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		m_pTxtDifficulty->DisplayString(pDC, pszDiffLevel[m_nDifficultyLevel], 14, TEXT_BOLD, RGB(0, 0, 0));
 		ReleaseDC(pDC);

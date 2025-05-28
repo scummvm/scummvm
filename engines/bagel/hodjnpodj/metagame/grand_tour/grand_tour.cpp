@@ -75,8 +75,8 @@ namespace GrandTour {
 // Globals
 extern HCURSOR			hGameCursor;
 
-CBitmap		*pSplashScreen = NULL;
-CPalette	*pGamePalette = NULL;		// Palette to be used throughout the game
+CBitmap		*pSplashScreen = nullptr;
+CPalette	*pGamePalette = nullptr;		// Palette to be used throughout the game
 
 CRect	MainRect;							// screen area spanned by the game window
 CRect   SplashRect( 0, 0, SCROLL_WIDTH, SCROLL_HEIGHT );
@@ -105,30 +105,30 @@ CRect	GARect( GA_LEFT, G_TOP, GA_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
 CRect	GGRect( GG_LEFT, G_TOP, GG_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
 CRect	GRRect( GR_LEFT, G_TOP, GR_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
 
-CColorButton	*pScoresResetButton = NULL;
-CColorButton	*pScoresLeaveButton = NULL;
+CColorButton	*pScoresResetButton = nullptr;
+CColorButton	*pScoresLeaveButton = nullptr;
 
-CColorButton	*pPlayButton = NULL;
-CColorButton	*pSaveButton = NULL;
-CColorButton	*pRestoreButton = NULL;
-CColorButton	*pLeaveButton = NULL;
+CColorButton	*pPlayButton = nullptr;
+CColorButton	*pSaveButton = nullptr;
+CColorButton	*pRestoreButton = nullptr;
+CColorButton	*pLeaveButton = nullptr;
 
-CColorButton	*pAudioButton = NULL;
-CColorButton	*pTop10Button = NULL;
+CColorButton	*pAudioButton = nullptr;
+CColorButton	*pTop10Button = nullptr;
 
-CRadioButton *pHSHButton = NULL;	// Hodj Skill High Radio Button
-CRadioButton *pHSMButton = NULL;	// Hodj Skill Medium Radio Button
-CRadioButton *pHSLButton = NULL;	// Hodj Skill Low Radio Button
-CRadioButton *pHSNPButton = NULL;	// Hodj Not Playing Radio Button
+CRadioButton *pHSHButton = nullptr;	// Hodj Skill High Radio Button
+CRadioButton *pHSMButton = nullptr;	// Hodj Skill Medium Radio Button
+CRadioButton *pHSLButton = nullptr;	// Hodj Skill Low Radio Button
+CRadioButton *pHSNPButton = nullptr;	// Hodj Not Playing Radio Button
 
-CRadioButton *pPSHButton = NULL;	// Podj Skill High Radio Button
-CRadioButton *pPSMButton = NULL;	// Podj Skill Medium Radio Button
-CRadioButton *pPSLButton = NULL;	// Podj Skill Low Radio Button
-CRadioButton *pPSNPButton = NULL;	// Podj Not Playing Radio Button
+CRadioButton *pPSHButton = nullptr;	// Podj Skill High Radio Button
+CRadioButton *pPSMButton = nullptr;	// Podj Skill Medium Radio Button
+CRadioButton *pPSLButton = nullptr;	// Podj Skill Low Radio Button
+CRadioButton *pPSNPButton = nullptr;	// Podj Not Playing Radio Button
 
-CRadioButton *pGAButton = NULL;	// Game Played in Alphabetical Order Radio Button
-CRadioButton *pGGButton = NULL;	// Game Played in Geographical Order Radio Button
-CRadioButton *pGRButton = NULL;	// Game Played in Random Order Radio Button
+CRadioButton *pGAButton = nullptr;	// Game Played in Alphabetical Order Radio Button
+CRadioButton *pGGButton = nullptr;	// Game Played in Geographical Order Radio Button
+CRadioButton *pGRButton = nullptr;	// Game Played in Random Order Radio Button
 
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active
 
@@ -158,7 +158,7 @@ int 		tmWidth = 0;
 int 		tmHeight = 0;
 CRect		rCharRect;
 BOOL		bDonePodj = FALSE;
-CText       *pText = NULL;
+CText       *pText = nullptr;
 CRect		cTextRect( 0, 0, 0, 0 );
 
 int			nHLastScore;
@@ -195,7 +195,7 @@ int			nPLastScore;
  ****************************************************************/
 
 CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStruct ) {
-	CDC			*pDC = NULL;						// device context for the screen
+	CDC			*pDC = nullptr;						// device context for the screen
 	CString		WndClass;
 	CSize		mySize;         
 	BOOL		bSuccess; 			// bool for testing the creation of each button
@@ -212,7 +212,7 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
 	// this adds a bit to our app size but avoids hangs/freezes/lockups. 
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-									hGameCursor, (HBRUSH)cBrush.m_hObject, NULL);
+									hGameCursor, (HBRUSH)cBrush.m_hObject, nullptr);
 
 	m_hCallAppWnd = hCallingWnd;
 	m_pgtGTStruct = pgtGrandTourStruct;
@@ -222,7 +222,7 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
 	AdjustScore();
 
 	// set the seed for the random number generator
-	//srand( (unsigned)time( NULL ));
+	//srand( (unsigned)time( nullptr ));
 
 	// load splash screen
 	pDC = GetDC();									// get a device context for our window
@@ -237,7 +237,7 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
 
 	// Create the window as a POPUP so that no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x40 area.
-	Create( WndClass, "Boffo Games - Grand Tour", WS_POPUP, MainRect, NULL, NULL );
+	Create( WndClass, "Boffo Games - Grand Tour", WS_POPUP, MainRect, nullptr, 0);
 
 	//#ifndef _DEBUG
 	//SetWindowPos( &wndTopMost, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
@@ -252,7 +252,7 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
 	tmHeight = sTextMetic.tmHeight;
 		
 	ReleaseDC(pDC);									// release our window context 
-	pDC = NULL;
+	pDC = nullptr;
 
 	for ( i = 0; i < 18; i++ ) {
 		if (( m_pgtGTStruct->nHodjSkillLevel != NOPLAY ) && ( m_pgtGTStruct->abHGamePlayed[i] == FALSE )) {
@@ -304,7 +304,7 @@ CMainGTWindow::CMainGTWindow( HWND hCallingWnd, LPGRANDTRSTRUCT	pgtGrandTourStru
 				cTextRect.SetRect( SCROLL_LEFT + 69, SCROLL_TOP + ( nNewRank * 20 ) + 90, SCROLL_LEFT + 349,  SCROLL_TOP + ( nNewRank * 20 ) + 110 );
 				pText->SetupText( pDC, pGamePalette, &cTextRect, JUSTIFY_LEFT );
 				ReleaseDC( pDC );
-				pDC = NULL;
+				pDC = nullptr;
 				break;
 			}
 		}
@@ -778,7 +778,7 @@ void CMainGTWindow::SplashScreen() {
 
 		if (nNewRank > -1) {
 
-			if (pText != NULL) {
+			if (pText != nullptr) {
 				if (bDonePodj == FALSE)
 					pText->DisplayString(pDC, astTopTenScores[nNewRank].acName, 16, FW_BOLD, (COLORREF)RGB(0, 0, 255));
 				else
@@ -1075,7 +1075,7 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	DWORD		dwTextWidth;
 	int			nLeft = SCROLL_LEFT;
 	int			nTop = SCROLL_TOP;
-	CDC *pDC = NULL;
+	CDC *pDC = nullptr;
 
 
 	if (nNewRank == -1)
@@ -1126,9 +1126,9 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 				if (nChar == VK_RETURN) {	// return key
 					nCurChar--;
 					astTopTenScores[nNewRank].acName[nCurChar] = 0;
-					if (pText != NULL) {
+					if (pText != nullptr) {
 						delete pText;
-						pText = NULL;
+						pText = nullptr;
 					}
 					SaveScores();
 					nCurChar = -1;
@@ -1168,10 +1168,10 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 						pScoresLeaveButton->EnableWindow(TRUE);
 						pScoresLeaveButton->SetFocus();
 					}
-					if (pDC != NULL) {
+					if (pDC != nullptr) {
 						pDC->SetBkMode(nOldBKMode);
 						ReleaseDC(pDC);
-						pDC = NULL;
+						pDC = nullptr;
 					}
 					RedrawWindow(&rTempRect);
 				} else {
@@ -1193,10 +1193,10 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 	}
 
-	if (pDC != NULL) {
+	if (pDC != nullptr) {
 		pDC->SetBkMode(nOldBKMode);
 		ReleaseDC(pDC);
-		pDC = NULL;
+		pDC = nullptr;
 	}
 }
 
@@ -1733,9 +1733,9 @@ void CMainGTWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
 		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(NULL, FALSE);
+		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 	}
 }
 
@@ -1857,70 +1857,70 @@ void CMainGTWindow::OnDestroy() {
 
 void CMainGTWindow::ReleaseResources(void) {
 
-	if (pText != NULL)
+	if (pText != nullptr)
 		delete pText;
 
-	if (pScoresResetButton != NULL)
+	if (pScoresResetButton != nullptr)
 		delete pScoresResetButton;
 
-	if (pScoresLeaveButton != NULL)
+	if (pScoresLeaveButton != nullptr)
 		delete pScoresLeaveButton;
 
-	if (pPlayButton != NULL)
+	if (pPlayButton != nullptr)
 		delete pPlayButton;
 
-	if (pSaveButton != NULL)
+	if (pSaveButton != nullptr)
 		delete pSaveButton;
 
-	if (pRestoreButton != NULL)
+	if (pRestoreButton != nullptr)
 		delete pRestoreButton;
 
-	if (pLeaveButton != NULL)
+	if (pLeaveButton != nullptr)
 		delete pLeaveButton;
 
-	if (pHSHButton != NULL)
+	if (pHSHButton != nullptr)
 		delete pHSHButton;
 
-	if (pHSMButton != NULL)
+	if (pHSMButton != nullptr)
 		delete pHSMButton;
 
-	if (pHSLButton != NULL)
+	if (pHSLButton != nullptr)
 		delete pHSLButton;
 
-	if (pHSNPButton != NULL)
+	if (pHSNPButton != nullptr)
 		delete pHSNPButton;
 
-	if (pPSHButton != NULL)
+	if (pPSHButton != nullptr)
 		delete pPSHButton;
 
-	if (pPSMButton != NULL)
+	if (pPSMButton != nullptr)
 		delete pPSMButton;
 
-	if (pPSLButton != NULL)
+	if (pPSLButton != nullptr)
 		delete pPSLButton;
 
-	if (pPSNPButton != NULL)
+	if (pPSNPButton != nullptr)
 		delete pPSNPButton;
 
-	if (pGAButton != NULL)
+	if (pGAButton != nullptr)
 		delete pGAButton;
 
-	if (pGGButton != NULL)
+	if (pGGButton != nullptr)
 		delete pGGButton;
 
-	if (pGRButton != NULL)
+	if (pGRButton != nullptr)
 		delete pGRButton;
 
-	if (pAudioButton != NULL)
+	if (pAudioButton != nullptr)
 		delete pAudioButton;
 
-	if (pTop10Button != NULL)
+	if (pTop10Button != nullptr)
 		delete pTop10Button;
 
-	if (pSplashScreen != NULL)
+	if (pSplashScreen != nullptr)
 		delete pSplashScreen;
 
-	if (pGamePalette != NULL) {
+	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();         // release the game color palette
 		delete pGamePalette;
 	}
@@ -1959,12 +1959,12 @@ void CMainGTWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	while (TRUE) {										// find and remove all keyboard events
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	while (TRUE) {                                       // find and remove all mouse events
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }

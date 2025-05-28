@@ -54,7 +54,7 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	LPBITMAPINFOHEADER lpBI;   // Pointer to DIB info structure
 	DWORD dwDIBSize;
 
-	if (hDib == NULL)
+	if (hDib == nullptr)
 		return FALSE;
 
 	/*
@@ -62,7 +62,7 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	 * a BITMAPINFO structure
 	 */
 	lpBI = (LPBITMAPINFOHEADER) GlobalLock((HGLOBAL)hDib);
-	if (lpBI == NULL)
+	if (lpBI == nullptr)
 		return FALSE;
 
 	if (!IS_WIN30_DIB(lpBI)) {
@@ -159,7 +159,7 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
              memory.
 
    Returns:  A handle to a dib (hDIB) if successful.
-             NULL if an error occurs.
+             nullptr if an error occurs.
 
   Comments:  BITMAPFILEHEADER is stripped off of the DIB.  Everything
              from the end of the BITMAPFILEHEADER structure on is
@@ -172,7 +172,7 @@ HDIB WINAPI ReadDIBFile(CFile &file) {
 	#ifdef TODO
 	BITMAPFILEHEADER bmfHeader;
 	DWORD dwBitsSize;
-	HDIB hDIB = NULL;
+	HDIB hDIB = nullptr;
 	LPSTR pDIB;
 	BOOL bRetry = FALSE;
 
@@ -195,7 +195,7 @@ try_again:
 	 * Allocate memory for DIB
 	 */
 	hDIB = (HDIB) ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwBitsSize);
-	if (hDIB == NULL) {
+	if (hDIB == nullptr) {
 		goto done;
 	}
 	pDIB = (LPSTR) GlobalLock((HGLOBAL)hDIB);
@@ -207,14 +207,14 @@ try_again:
 	        dwBitsSize - sizeof(BITMAPFILEHEADER)) {
 		GlobalUnlock((HGLOBAL)hDIB);
 		::GlobalFree((HGLOBAL)hDIB);
-		hDIB = NULL;
+		hDIB = nullptr;
 		goto done;
 	}
 	GlobalUnlock((HGLOBAL)hDIB);
 
 done:
 
-	if ((hDIB == NULL) && !bRetry) {
+	if ((hDIB == nullptr) && !bRetry) {
 		bRetry = TRUE;
 		(void)GlobalCompact(1000000L);
 		goto try_again;
@@ -236,7 +236,7 @@ done:
              memory.
 
    Returns:  A handle to a dib (hDIB) if successful.
-             NULL if an error occurs.
+             nullptr if an error occurs.
 
   Comments:  BITMAPFILEHEADER is stripped off of the DIB.  Everything
              from the end of the BITMAPFILEHEADER structure on is
@@ -247,13 +247,13 @@ done:
 
 HDIB WINAPI ReadDIBResource(const char *pszName) {
 	#ifdef TODO
-	HRSRC       hRsc = NULL;
-	HINSTANCE   hInst = NULL;
-	HGLOBAL     hGbl = NULL;
-	char *pData = NULL;
+	HRSRC       hRsc = nullptr;
+	HINSTANCE   hInst = nullptr;
+	HGLOBAL     hGbl = nullptr;
+	char *pData = nullptr;
 	size_t      dwBytes;
-	HDIB        hDIB = NULL;
-	LPSTR       pDIB = NULL;
+	HDIB        hDIB = nullptr;
+	LPSTR       pDIB = nullptr;
 	BOOL        bRetry = FALSE;
 
 	hInst = AfxGetInstanceHandle();
@@ -261,14 +261,14 @@ HDIB WINAPI ReadDIBResource(const char *pszName) {
 try_again:
 
 	hRsc = FindResource(hInst, pszName, RT_BITMAP);
-	if (hRsc != NULL) {
+	if (hRsc != nullptr) {
 		dwBytes = (size_t)SizeofResource(hInst, hRsc);
 		hGbl = LoadResource(hInst, hRsc);
 		if ((dwBytes != 0) &&
-		        (hGbl != NULL)) {
+		        (hGbl != nullptr)) {
 			pData = (char *)LockResource(hGbl);
 			hDIB = (HDIB) ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwBytes);
-			if (hDIB != NULL) {
+			if (hDIB != nullptr) {
 				pDIB = (LPSTR) GlobalLock((HGLOBAL)hDIB);
 				memcpy(pDIB, pData, dwBytes);
 				GlobalUnlock((HGLOBAL)hDIB);
@@ -280,7 +280,7 @@ try_again:
 		}
 	}
 
-	if (hGbl != NULL)
+	if (hGbl != nullptr)
 		FreeResource(hGbl);
 
 	if (!bRetry) {
@@ -289,7 +289,7 @@ try_again:
 		goto try_again;
 	}
 
-	return (NULL);
+	return (nullptr);
 	#else
 	error("TODO: ReadDIBResource");
 	#endif

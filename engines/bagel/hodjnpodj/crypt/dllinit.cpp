@@ -41,8 +41,8 @@ namespace Crypt {
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
-CMainWindow     *pMainGameWnd = NULL;   // pointer to the poker's main window
-CPalette        *pTestPalette = NULL;
+CMainWindow     *pMainGameWnd = nullptr;   // pointer to the poker's main window
+CPalette        *pTestPalette = nullptr;
 HCURSOR         hGameCursor;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,8 +79,8 @@ HWND FAR PASCAL RunCrypt(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 //  lpGameInfo->bPlayingMetagame = TRUE;
 // if the pointer has garbage in it, the clean it out
-	if (pMainGameWnd != NULL) {
-		pMainGameWnd = NULL;
+	if (pMainGameWnd != nullptr) {
+		pMainGameWnd = nullptr;
 	}
 
 	#ifdef BAGEL_DEBUG

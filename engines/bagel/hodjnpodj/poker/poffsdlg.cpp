@@ -28,19 +28,19 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Poker {
 
-CPalette    *pPayoffPalette = NULL;
+CPalette    *pPayoffPalette = nullptr;
 CRect           crectRedraw(10, 140, 44, 290);
 
-CText           *ptxtPair = NULL;
-CText           *ptxtPairJacks = NULL;
-CText           *ptxtTwoPair = NULL;
-CText           *ptxtThreeOAK = NULL;
-CText           *ptxtStraight = NULL;
-CText           *ptxtFlush = NULL;
-CText           *ptxtFullHouse = NULL;
-CText           *ptxtFourOAK = NULL;
-CText           *ptxtStraightFlush = NULL;
-CText           *ptxtRoyalFlush = NULL;
+CText           *ptxtPair = nullptr;
+CText           *ptxtPairJacks = nullptr;
+CText           *ptxtTwoPair = nullptr;
+CText           *ptxtThreeOAK = nullptr;
+CText           *ptxtStraight = nullptr;
+CText           *ptxtFlush = nullptr;
+CText           *ptxtFullHouse = nullptr;
+CText           *ptxtFourOAK = nullptr;
+CText           *ptxtStraightFlush = nullptr;
+CText           *ptxtRoyalFlush = nullptr;
 
 CRect           rectPair(10, 131, 80, 146);
 CRect           rectPairJacks(10, 145, 80, 160);
@@ -53,15 +53,15 @@ CRect           rectFour(10, 229, 80, 244);
 CRect           rectStraightFlush(10, 243, 80, 258);
 CRect           rectRoyalFlush(10, 257, 80, 272);
 
-static CColorButton    *pSetPayButton = NULL;
-static CColorButton    *pCancelButton = NULL;
-static CColorButton    *pOKButton = NULL;
+static CColorButton    *pSetPayButton = nullptr;
+static CColorButton    *pCancelButton = nullptr;
+static CColorButton    *pOKButton = nullptr;
 
-static CRadioButton    *pKlingonButton = NULL;
-static CRadioButton    *pVegasButton = NULL;
-static CRadioButton    *pPoPorButton = NULL;
-static CRadioButton    *pKuwaitiButton = NULL;
-static CRadioButton    *pMartianButton = NULL;
+static CRadioButton    *pKlingonButton = nullptr;
+static CRadioButton    *pVegasButton = nullptr;
+static CRadioButton    *pPoPorButton = nullptr;
+static CRadioButton    *pKuwaitiButton = nullptr;
+static CRadioButton    *pMartianButton = nullptr;
 
 CSetPayoffsDlg::CSetPayoffsDlg(CWnd *pParent, CPalette *pPalette, UINT nID, int nOdds, BOOL bJustDisplay)
 	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\MSCROLL.BMP") {
@@ -93,49 +93,49 @@ BOOL CSetPayoffsDlg::OnInitDialog(void) {
 	CBmpDialog::OnInitDialog();
 
 	pOKButton = new CColorButton();
-	ASSERT(pOKButton != NULL);
+	ASSERT(pOKButton != nullptr);
 	pOKButton->SetPalette(pPayoffPalette);
 	bSuccess = pOKButton->SetControl(ID_CANCEL_VIEW, this);
 	ASSERT(bSuccess);
 
 	pSetPayButton = new CColorButton();
-	ASSERT(pSetPayButton != NULL);
+	ASSERT(pSetPayButton != nullptr);
 	pSetPayButton->SetPalette(pPayoffPalette);
 	bSuccess = pSetPayButton->SetControl(ID_SETPAYOFFS, this);
 	ASSERT(bSuccess);
 
 	pCancelButton = new CColorButton();
-	ASSERT(pCancelButton != NULL);
+	ASSERT(pCancelButton != nullptr);
 	pCancelButton->SetPalette(pPayoffPalette);
 	bSuccess = pCancelButton->SetControl(ID_CANCEL, this);
 	ASSERT(bSuccess);
 
 	pKlingonButton = new CRadioButton();
-	ASSERT(pKlingonButton != NULL);
+	ASSERT(pKlingonButton != nullptr);
 	pKlingonButton->SetPalette(pPayoffPalette);
 	bSuccess = pKlingonButton->SetControl(ID_KLINGON, this);
 	ASSERT(bSuccess);
 
 	pVegasButton = new CRadioButton();
-	ASSERT(pVegasButton != NULL);
+	ASSERT(pVegasButton != nullptr);
 	pVegasButton->SetPalette(pPayoffPalette);
 	bSuccess = pVegasButton->SetControl(ID_VEGAS, this);
 	ASSERT(bSuccess);
 
 	pPoPorButton = new CRadioButton();
-	ASSERT(pPoPorButton != NULL);
+	ASSERT(pPoPorButton != nullptr);
 	pPoPorButton->SetPalette(pPayoffPalette);
 	bSuccess = pPoPorButton->SetControl(ID_POPO, this);
 	ASSERT(bSuccess);
 
 	pKuwaitiButton = new CRadioButton();
-	ASSERT(pKuwaitiButton != NULL);
+	ASSERT(pKuwaitiButton != nullptr);
 	pKuwaitiButton->SetPalette(pPayoffPalette);
 	bSuccess = pKuwaitiButton->SetControl(ID_KUWAITI, this);
 	ASSERT(bSuccess);
 
 	pMartianButton = new CRadioButton();
-	ASSERT(pMartianButton != NULL);
+	ASSERT(pMartianButton != nullptr);
 	pMartianButton->SetPalette(pPayoffPalette);
 	bSuccess = pMartianButton->SetControl(ID_MARTIAN, this);
 	ASSERT(bSuccess);
@@ -523,37 +523,37 @@ void CSetPayoffsDlg::OnDestroy() {
 	delete ptxtStraightFlush;
 	delete ptxtRoyalFlush;
 
-	if (pSetPayButton != NULL) {
+	if (pSetPayButton != nullptr) {
 		delete pSetPayButton;
-		pSetPayButton = NULL;
+		pSetPayButton = nullptr;
 	}
-	if (pCancelButton != NULL) {
+	if (pCancelButton != nullptr) {
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
-	if (pOKButton != NULL) {
+	if (pOKButton != nullptr) {
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
-	if (pKlingonButton != NULL) {
+	if (pKlingonButton != nullptr) {
 		delete pKlingonButton;
-		pKlingonButton = NULL;
+		pKlingonButton = nullptr;
 	}
-	if (pVegasButton != NULL) {
+	if (pVegasButton != nullptr) {
 		delete pVegasButton;
-		pVegasButton = NULL;
+		pVegasButton = nullptr;
 	}
-	if (pPoPorButton != NULL) {
+	if (pPoPorButton != nullptr) {
 		delete pPoPorButton;
-		pPoPorButton = NULL;
+		pPoPorButton = nullptr;
 	}
-	if (pKuwaitiButton != NULL) {
+	if (pKuwaitiButton != nullptr) {
 		delete pKuwaitiButton;
-		pKuwaitiButton = NULL;
+		pKuwaitiButton = nullptr;
 	}
-	if (pMartianButton != NULL) {
+	if (pMartianButton != nullptr) {
 		delete pMartianButton;
-		pMartianButton = NULL;
+		pMartianButton = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -565,40 +565,40 @@ BOOL CSetPayoffsDlg::OnEraseBkgnd(CDC *pDC) {
 
 void CSetPayoffsDlg::ClearDialogImage(void) {
 
-	if (pSetPayButton != NULL) {
+	if (pSetPayButton != nullptr) {
 		delete pSetPayButton;
-		pSetPayButton = NULL;
+		pSetPayButton = nullptr;
 	}
-	if (pOKButton != NULL) {
+	if (pOKButton != nullptr) {
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
-	if (pCancelButton != NULL) {
+	if (pCancelButton != nullptr) {
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
-	if (pKlingonButton != NULL) {
+	if (pKlingonButton != nullptr) {
 		delete pKlingonButton;
-		pKlingonButton = NULL;
+		pKlingonButton = nullptr;
 	}
-	if (pVegasButton != NULL) {
+	if (pVegasButton != nullptr) {
 		delete pVegasButton;
-		pVegasButton = NULL;
+		pVegasButton = nullptr;
 	}
-	if (pPoPorButton != NULL) {
+	if (pPoPorButton != nullptr) {
 		delete pPoPorButton;
-		pPoPorButton = NULL;
+		pPoPorButton = nullptr;
 	}
-	if (pKuwaitiButton != NULL) {
+	if (pKuwaitiButton != nullptr) {
 		delete pKuwaitiButton;
-		pKuwaitiButton = NULL;
+		pKuwaitiButton = nullptr;
 	}
-	if (pMartianButton != NULL) {
+	if (pMartianButton != nullptr) {
 		delete pMartianButton;
-		pMartianButton = NULL;
+		pMartianButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }

@@ -155,7 +155,7 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 		break ;
 
 	case HINT_UPDATE_FULL:
-		xpGtlData->Draw(this, NULL);
+		xpGtlData->Draw(this, nullptr);
 		bDone = TRUE ;
 		break ;
 
@@ -176,13 +176,13 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 
 	default:
 
-		//xpGtlData->Draw(this, NULL);
+		//xpGtlData->Draw(this, nullptr);
 		xpGtlData->m_bStartMetaGame = FALSE;
 		xpGtlData->m_bMetaGame = xpGtlData->m_bInitMetaGame = TRUE;
 		xpDoc->m_xpGtlData->InitMetaGame(this);
 
 		// BRIAN
-		SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, NULL);
+		SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, nullptr);
 		break;
 	}
 
@@ -247,13 +247,13 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 
 	case HINT_INIT_METAGAME:
 		if (xpDoc->m_xpGtlData) {
-//      xpDoc->m_xpGtlData->Draw(this, NULL) ;
-			InvalidateRect(NULL) ;
+//      xpDoc->m_xpGtlData->Draw(this, nullptr) ;
+			InvalidateRect(nullptr) ;
 			UpdateWindow() ;
 			xpDoc->m_xpGtlData->InitMetaGame(this), bDone = TRUE ;
 
 			// start the animations
-			SetTimer(TIMER_ID, 100, NULL);
+			SetTimer(TIMER_ID, 100, nullptr);
 		}
 		break ;
 
@@ -330,7 +330,7 @@ void CGtlView::OnInitialUpdate(void) {
 	#endif
 
 //
-//    OnUpdate(NULL, 0, NULL) ;
+//    OnUpdate(nullptr, 0, nullptr) ;
 
 // cleanup:
 
@@ -350,7 +350,7 @@ void CGtlView::OnDestroy() {
 		iReturnValue = lpMetaGameStruct->m_iFunctionCode ;
 	}
 
-	m_xpFrame = NULL ;
+	m_xpFrame = nullptr ;
 	MFC::PostMessage(ghwndParent, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM) iReturnValue);
 	#endif
 
@@ -370,7 +370,7 @@ BOOL CGtlView::PreCreateWindow(CREATESTRUCT& cCs)
 //  if (stWndClass == "")
 //  stWndClass = AfxRegisterWndClass(CS_DBLCLKS |
 //              CS_BYTEALIGNWINDOW | CS_OWNDC,
-//              NULL, NULL, NULL) ;
+//              nullptr, nullptr, nullptr) ;
 
 	// if we don't want a title bar
 	if (!xpGtlApp->m_bTitle) {
@@ -404,7 +404,7 @@ void CGtlView::OnDraw(CDC *xpDc) {
 	CGtlDoc* xpDoc = GetDocument();
 
 	#ifdef BAGEL_DEBUG
-	if (xpDoc == NULL)
+	if (xpDoc == nullptr)
 		MessageBox("No Document!!!");
 	#endif
 
@@ -416,7 +416,7 @@ void CGtlView::OnDraw(CDC *xpDc) {
 	OnPrepareDC(xpDc) ;
 	#endif
 	if (xpDoc->m_xpGtlData && !xpDoc->m_xpGtlData->m_bInhibitDraw)
-		xpDoc->m_xpGtlData->Draw(this, NULL, xpDc) ;
+		xpDoc->m_xpGtlData->Draw(this, nullptr, xpDc) ;
 
 // cleanup:
 
@@ -526,7 +526,7 @@ void CGtlView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	switch (nChar) {
 
 	case VK_F1: {
-		CRules RulesDlg(this, "metarule.txt", gpBgbMgr->m_xpGamePalette, NULL);
+		CRules RulesDlg(this, "metarule.txt", gpBgbMgr->m_xpGamePalette, nullptr);
 		if ((bAnimations = gpBgbMgr->AnimationsActive()) != FALSE)
 			gpBgbMgr->PauseAnimations();
 		gpBgbMgr->CacheOptimize(2000000);
@@ -882,7 +882,7 @@ long CGtlView::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -892,7 +892,7 @@ long CGtlView::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }

@@ -39,7 +39,7 @@ private:
 	BOOL    m_bWordForwardOnly;
 
 public:
-	CWSOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MINIOPTIONS_DIALOG);
+	CWSOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);
 	void SetInitialOptions(int = 0, BOOL = TRUE, BOOL = FALSE);  // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();
@@ -65,7 +65,7 @@ private:
 	long    m_nWordsLeft;
 
 public:
-	CMsgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MESSAGEBOX);
+	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MESSAGEBOX);
 	void SetInitialOptions(int, int);    // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();

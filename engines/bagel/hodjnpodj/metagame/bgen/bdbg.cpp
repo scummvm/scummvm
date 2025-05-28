@@ -28,7 +28,7 @@ namespace Metagame {
 
 ///DEFS bdbg.h
 
-CBdbgMgr FAR *CBdbgMgr::lpBdbgMgr = NULL ;
+CBdbgMgr FAR *CBdbgMgr::lpBdbgMgr = nullptr ;
 
 //* CBdbgMgr::CBdbgMgr -- constructor
 CBdbgMgr::CBdbgMgr(void) {
@@ -53,9 +53,9 @@ CBdbgMgr::~CBdbgMgr(void)
 	if (m_lpTraceObjects)
 		delete [] m_lpTraceObjects ;
 
-	m_lpTraceObjects = NULL ;
+	m_lpTraceObjects = nullptr ;
 
-	lpBdbgMgr = NULL ;
+	lpBdbgMgr = nullptr ;
 
 // cleanup:
 
@@ -92,7 +92,7 @@ BOOL CBdbgMgr::DebugInit(LPCSTR lpszIniFilename, LPCSTR lpszIniSectionname)
 	dbgtrr = m_bTraceError ;
 	dbgtrc = m_bTrace ;
 
-	GetDebugString("debugoutput", dbgfile, DBGFILESIZE, NULL) ;
+	GetDebugString("debugoutput", dbgfile, DBGFILESIZE, nullptr) ;
 	dbgreopen = GetDebugInt("reopen", MAXPOSINT) ;
 
 	for (iK = 0 ; iK < DIMENSION(m_iDebugValues) ; ++iK) {
@@ -140,7 +140,7 @@ int CBdbgMgr::GetDebugInt(LPCSTR lpszOption, int iDefault)
 //* CBdbgMgr::GetDebugString --
 BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSize, LPCSTR lpszDefault)
 // lpszOption -- option name string
-// lpszDefault -- default value; if NULL, then default is null string
+// lpszDefault -- default value; if nullptr, then default is null string
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CBdbgMgr::GetDebugString) ;
@@ -404,7 +404,7 @@ BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 				iPosition = iK ;
 
 		if (iPosition >= 0)
-			m_lpTraceObjects[iPosition] = NULL ;
+			m_lpTraceObjects[iPosition] = nullptr ;
 
 		else if (m_iTraceObjectCurrent < m_iTraceObjectCount - 1) {
 			Common::sprintf_s(szStr, sizeof(szStr) - 1,
@@ -448,7 +448,7 @@ BOOL CBdbgMgr::ReportTraceObjects(void)
 		}
 
 		for (iK = 0 ; iK < m_iTraceObjectCurrent ; ++iK)
-			if ((lpPtr = m_lpTraceObjects[iK]) != NULL) {
+			if ((lpPtr = m_lpTraceObjects[iK]) != nullptr) {
 				Common::sprintf_s(szStr, sizeof(szStr) - 1, "    Unfreed object: %#04x:%#04x.\n",
 				          HIWORD(lpPtr), LOWORD(lpPtr)) ;
 				JXOutputDebugString(szStr) ;
@@ -512,13 +512,13 @@ BOOL CBdbgMgr::OutputWithWordWrap(LPCSTR lpStr1, LPCSTR lpStr2, int iIndent)
 	char szMsg[100] ;
 	BOOL bSecond = FALSE ;
 	int iK = 0, iBlank = 0;        // index variables
-	LPCSTR lpStr = lpStr1, lpBlank = NULL;
+	LPCSTR lpStr = lpStr1, lpBlank = nullptr;
 	char cChar ;
 
 	while (((cChar = *lpStr++) != '\0') || !bSecond) {
 
 		if (!cChar)
-			lpStr = lpStr2, lpBlank = NULL, bSecond = TRUE ;
+			lpStr = lpStr2, lpBlank = nullptr, bSecond = TRUE ;
 
 		else {
 			szMsg[iK++] = cChar ;

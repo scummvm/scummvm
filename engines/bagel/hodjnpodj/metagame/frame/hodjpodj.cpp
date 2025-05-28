@@ -83,9 +83,9 @@ typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO) (void);
 
 static FPGETFREEMEMINFO lpfnGetFreeMemInfo;
 
-HINSTANCE   hExeInst = NULL;
-HINSTANCE   hDllInst = NULL;
-HINSTANCE   hMetaInst = NULL;
+HINSTANCE   hExeInst = nullptr;
+HINSTANCE   hDllInst = nullptr;
+HINSTANCE   hMetaInst = nullptr;
 
 BOOL        bMetaLoaded = FALSE;
 
@@ -107,7 +107,7 @@ const CHAR *gpszSaveGameFile = "HODJPODJ.SAV";
 
 static  BOOL        bScreenSaver;
 
-static  CPalette    *pGamePalette = NULL;
+static  CPalette    *pGamePalette = nullptr;
 static  RECT        MainRect;                           // screen area spanned by the game window
 
 int                                     nInstallCode;
@@ -123,26 +123,26 @@ static  int         nHomeDrive = -1;
 static  int         nMiniDrive = -1;
 static  int         nCDDrive = -1;
 
-static  HWND        hwndGame = NULL;
+static  HWND        hwndGame = nullptr;
 static  BOOL        bActiveWindow = FALSE;
 
 static  BOOL        bReturnToZoom = FALSE;
 static  BOOL        bReturnToMeta = FALSE;
 static  BOOL        bReturnToGrandTour = FALSE;
 
-CBfcMgr             *lpMetaGame = NULL;
+CBfcMgr             *lpMetaGame = nullptr;
 const char          *pszTest = "Corruption Test";
 
-LPGAMESTRUCT        lpGameStruct = NULL;
-LPGRANDTRSTRUCT     lpGrandTour = NULL;
+LPGAMESTRUCT        lpGameStruct = nullptr;
+LPGRANDTRSTRUCT     lpGrandTour = nullptr;
 
-CMovieWindow    *pMovie = NULL;    
+CMovieWindow    *pMovie = nullptr;    
 
 int     nChallengePhase = 0;
 int     nChallengeGame = 0;
 long    lChallengeScore = 0;
 
-CSound  *pBackgroundMidi = NULL;
+CSound  *pBackgroundMidi = nullptr;
 
 #define BELLCURVE   100
 UBYTE     anBellCurve[BELLCURVE] =
@@ -232,7 +232,7 @@ void LoadFloatLib();
 CHodjPodjWindow::CHodjPodjWindow()
 {
     BOOL    bSuccess;
-    CDC     *pDC = NULL;                        // device context for the screen
+    CDC     *pDC = nullptr;                        // device context for the screen
     CString WndClass;
     CSize   mySize;
     BOOL    bTestDibDoc;
@@ -243,17 +243,17 @@ CHodjPodjWindow::CHodjPodjWindow()
     LoadFloatLib();
 
     // Inits
-    m_pCurrentBmp = NULL;
+    m_pCurrentBmp = nullptr;
     m_nFlags = 0;
     m_bInCredits = FALSE;
 
-    WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+    WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 
     MainRect.left = 0;
     MainRect.top = 0;
     MainRect.right = GAME_WIDTH;
     MainRect.bottom = GAME_HEIGHT;
-    bTestDibDoc = Create( WndClass, "Boffo Games - Hodj 'n' Podj", WS_POPUP, MainRect, NULL, NULL );
+    bTestDibDoc = Create( WndClass, "Boffo Games - Hodj 'n' Podj", WS_POPUP, MainRect, nullptr, 0);
     ASSERT( bTestDibDoc );
 
     BeginWaitCursor();
@@ -387,7 +387,7 @@ DWORD                   dwFreeSpace;
 #if CONTROL_PHYSICAL_MEMORY    
     else {
         lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
-        if (lpfnGetFreeMemInfo != NULL) {
+        if (lpfnGetFreeMemInfo != nullptr) {
             dwInfo = lpfnGetFreeMemInfo();
             if (dwInfo != -1L) {
                 wFreePages = HIWORD(dwInfo);
@@ -455,9 +455,9 @@ void CHodjPodjWindow::OnPaint()
 
     } else {
 
-        if (m_pCurrentBmp != NULL) {
-            if ((pDC = GetDC()) != NULL) {
-                PaintBitmap(pDC, NULL, m_pCurrentBmp, 0, 0);
+        if (m_pCurrentBmp != nullptr) {
+            if ((pDC = GetDC()) != nullptr) {
+                PaintBitmap(pDC, nullptr, m_pCurrentBmp, 0, 0);
                 ReleaseDC(pDC);
             }
 
@@ -522,9 +522,9 @@ void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, BOOL b
     
     BlackScreen();
 
-    if ( pMovie != NULL ) {
+    if ( pMovie != nullptr ) {
         delete pMovie;
-        pMovie = NULL;
+        pMovie = nullptr;
     }
 
     pMovie = new CMovieWindow();
@@ -539,9 +539,9 @@ void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, BOOL b
         if (nMovieId != MOVIE_ID_TITLE)
             ShowCursor(FALSE);
     } else {
-        if ( pMovie !=NULL ) {
+        if ( pMovie !=nullptr ) {
             delete pMovie;
-            pMovie = NULL;
+            pMovie = nullptr;
         }
 
         ShowCursor(TRUE);
@@ -589,8 +589,8 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam)
     BOOL            bSuccess;
     CMainGameDlg    cMainDlg( (CWnd *)this, pGamePalette );
     int             nMainDlgReturn = 0;
-    CDC            *pDC = NULL;
-    CWnd           *pWnd = NULL;
+    CDC            *pDC = nullptr;
+    CWnd           *pWnd = nullptr;
     int                         nMovieId;
 
     switch ( wParam ) {
@@ -598,16 +598,16 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam)
     case MOVIE_OVER:
         PositionAtHomePath();
 
-        if ( pMovie == NULL )
+        if ( pMovie == nullptr )
         nMovieId = MOVIE_ID_NONE;
         else {
         nMovieId = pMovie->nMovieId;
         delete pMovie;
-        pMovie = NULL;
+        pMovie = nullptr;
         }
 
         pWnd = (CWnd *)lParam;
-        if ( pWnd != NULL ) {
+        if ( pWnd != nullptr ) {
         (*pWnd).SendMessage(WM_CLOSE,0,0L);
         delete pWnd;
         }
@@ -710,11 +710,11 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam)
     case IDC_GRANDTOUR:
         BlackScreen();
         
-        if ( lpGrandTour != NULL ) { 
-            if ( lpGameStruct != NULL )
-                lpGameStruct = NULL;
+        if ( lpGrandTour != nullptr ) { 
+            if ( lpGameStruct != nullptr )
+                lpGameStruct = nullptr;
             delete lpGrandTour;
-            lpGrandTour = NULL;
+            lpGrandTour = nullptr;
         }
         bSuccess = LoadGrandTourDLL();
         if (!bSuccess)
@@ -731,7 +731,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam)
         break;
     }   
 
-    if ( pDC != NULL )
+    if ( pDC != nullptr )
         ReleaseDC(pDC);
 
     return(TRUE);
@@ -740,7 +740,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void CHodjPodjWindow::OnMouseMove(UINT nFlags, CPoint point)
 {
-HCURSOR hNewCursor = NULL;
+HCURSOR hNewCursor = nullptr;
 CWinApp *pMyApp;
 
     if (!bActiveWindow)
@@ -750,7 +750,7 @@ CWinApp *pMyApp;
 
     hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 
-    //if (hNewCursor != NULL);
+    //if (hNewCursor != nullptr);
         SetCursor(hNewCursor);
 
     CWnd::OnMouseMove(nFlags, point);
@@ -814,21 +814,21 @@ void CHodjPodjWindow::BlackScreen(void)
 {
 CDC         *pDC;
 CBrush  	Brush( RGB( 0, 0, 0 ));
-CPalette	*pPalOld = NULL;
+CPalette	*pPalOld = nullptr;
 
-    ValidateRect(NULL);
+    ValidateRect(nullptr);
     pDC = GetDC();
 
     pDC->FillRect( &MainRect, &Brush);
 
-	if (pGamePalette != NULL) {									// map in color palette to be used
+	if (pGamePalette != nullptr) {									// map in color palette to be used
 		pPalOld = (*pDC).SelectPalette(pGamePalette,FALSE);
 		(void) (*pDC).RealizePalette();
 	}
 
     pDC->FillRect( &MainRect, &Brush);
 
-	if (pPalOld != NULL)									// relinquish the resources we built
+	if (pPalOld != nullptr)									// relinquish the resources we built
 		(void) (*pDC).SelectPalette(pPalOld,FALSE);
 
     ReleaseDC(pDC);
@@ -845,24 +845,24 @@ void CHodjPodjWindow::OnActivate( UINT nState, CWnd *, BOOL) {
     case WA_ACTIVE:
     case WA_CLICKACTIVE:
 #ifdef TODO
-        if (( pMovie != NULL ) && ( pMovie->pDum->m_hWnd != NULL )) {
+        if (( pMovie != nullptr ) && ( pMovie->pDum->m_hWnd != nullptr )) {
             SetFocus( pMovie->pDum->m_hWnd );
             break;
         }
         else {
-            if (( pMovie != NULL ) && ( pMovie->hWndDum != NULL )) {
+            if (( pMovie != nullptr ) && ( pMovie->hWndDum != nullptr )) {
                 SetFocus( pMovie->hWndDum );
                 break;
             }
         }
 
-        if (hwndGame != NULL)
+        if (hwndGame != nullptr)
             ::SetActiveWindow( hwndGame );
         else {    
             bActiveWindow = TRUE;
-            bUpdateNeeded = GetUpdateRect(NULL,FALSE);
+            bUpdateNeeded = GetUpdateRect(nullptr,FALSE);
             if (bUpdateNeeded)
-                InvalidateRect(NULL,FALSE);
+                InvalidateRect(nullptr,FALSE);
         }
 #endif
         break;
@@ -971,8 +971,8 @@ CWinApp *pMyApp;
     
     StopBackgroundMidi();
 
-    if (( CMgStatic::cGameTable[ nWhichDLL ].m_lpszDllName !=NULL ) &&
-    ( CMgStatic::cGameTable[ nWhichDLL ].m_lpszApiName !=NULL )) {
+    if (( CMgStatic::cGameTable[ nWhichDLL ].m_lpszDllName !=nullptr ) &&
+    ( CMgStatic::cGameTable[ nWhichDLL ].m_lpszApiName !=nullptr )) {
     
     FPDLLFUNCT  lpfnGame;
 
@@ -980,9 +980,9 @@ CWinApp *pMyApp;
             
     if ( bReturnToZoom ) {
 
-        if ( lpGameStruct != NULL ) {
+        if ( lpGameStruct != nullptr ) {
             delete lpGameStruct;
-            lpGameStruct = NULL;
+            lpGameStruct = nullptr;
         }
         lpGameStruct = new GAMESTRUCT;
         lpGameStruct->lCrowns = 1000;
@@ -1002,7 +1002,7 @@ CWinApp *pMyApp;
     
         if ( hDllInst > HINSTANCE_ERROR ) {
         lpfnGame = (FPDLLFUNCT)GetProcAddress( hDllInst, CMgStatic::cGameTable[ nWhichDLL ].m_lpszApiName );
-        if ((lpfnGame != NULL) && PositionAtMiniPath(nWhichDLL)) {
+        if ((lpfnGame != nullptr) && PositionAtMiniPath(nWhichDLL)) {
             if ( bReturnToZoom ) {
                 hwndGame = lpfnGame( m_hWnd, lpGameStruct );
             }
@@ -1059,7 +1059,7 @@ void CHodjPodjWindow::FreeCurrentDLL(void)
     if ( hDllInst > HINSTANCE_ERROR ) {
     if (hDllInst != hMetaInst)
         FreeLibrary(hDllInst);
-    hDllInst = NULL;
+    hDllInst = nullptr;
     hwndGame = m_hWnd;
     }
 }
@@ -1082,8 +1082,8 @@ FPMETAFUNCT lpfnMeta;
 
     if ( hDllInst > HINSTANCE_ERROR ) {
         lpfnMeta = (FPMETAFUNCT)GetProcAddress( hDllInst, "RunMeta");
-        if (lpfnMeta !=NULL) {
-        hwndGame = NULL;
+        if (lpfnMeta !=nullptr) {
+        hwndGame = nullptr;
 #if RETAIN_META_DLL
         hwndGame = lpfnMeta( m_hWnd, lpMetaGame, bMetaLoaded );
         hMetaInst = hDllInst;
@@ -1128,8 +1128,8 @@ FPZOOMFUNCT lpfnZoom;
     hDllInst = LoadLibrary( "hnpzm.dll" );
     if ( hDllInst > HINSTANCE_ERROR ) {
         lpfnZoom = (FPZOOMFUNCT)GetProcAddress( hDllInst, "RunZoomMap");
-        if (lpfnZoom !=NULL) {
-        hwndGame = NULL;
+        if (lpfnZoom !=nullptr) {
+        hwndGame = nullptr;
         
         if ( nChallengePhase == 0 )
             hwndGame = lpfnZoom( m_hWnd, TRUE );
@@ -1163,7 +1163,7 @@ FPGTFUNCT lpfnGT;
 
     FreeCurrentDLL();
     
-    if ( lpGrandTour == NULL ) {
+    if ( lpGrandTour == nullptr ) {
     int i;
 
     lpGrandTour = new GrandTour::GRANDTRSTRUCT();
@@ -1201,8 +1201,8 @@ FPGTFUNCT lpfnGT;
     hDllInst = LoadLibrary( "hnpgt.dll" );
     if ( hDllInst > HINSTANCE_ERROR ) {
         lpfnGT = (FPGTFUNCT)GetProcAddress( hDllInst, "RunGrandTour");
-        if ( lpfnGT !=NULL) {
-        hwndGame = NULL;
+        if ( lpfnGT !=nullptr) {
+        hwndGame = nullptr;
         hwndGame = lpfnGT( m_hWnd, lpGrandTour );
         bReturnToGrandTour = TRUE;
         return(TRUE);
@@ -1254,7 +1254,7 @@ LPARAM CHodjPodjWindow::UpdateChallengePhase(LPARAM lParam)
         int nGameIndex;
         do {
             nGameIndex = brand() % ( MG_GAME_COUNT - 1 );
-        } while ( CMgStatic::cGameTable[nGameIndex].m_lpszDllName == NULL );
+        } while ( CMgStatic::cGameTable[nGameIndex].m_lpszDllName == nullptr );
         nGameID = (LPARAM)(nGameIndex + MG_GAME_BASE);
             {
             C1ButtonDialog  cMsgBox( (CWnd *)this, pGamePalette, "&OK", "Podj chooses :", " ", CMgStatic::cGameTable[nGameIndex].m_lpszGameName );
@@ -1341,7 +1341,7 @@ PHASE4:
         if ( lChallengeScore > DetermineChallengeScore() ) {
         // give Mish and Mosh to challengee and give the turn back to the challengee
         if ( lpMetaGame->m_cHodj.m_bHaveMishMosh ) {
-        CItem   *pItem = NULL;
+        CItem   *pItem = nullptr;
                     {
                 C1ButtonDialog  cMsgBox( (CWnd *)this, pGamePalette, "&OK", "Podj Challenges;", "Podj has won Mish,", "Mosh and a turn." );
                         cMsgBox.DoModal();
@@ -1349,18 +1349,18 @@ PHASE4:
             pItem = lpMetaGame->m_cHodj.m_pInventory->FindItem( MG_OBJ_MISH );
             lpMetaGame->m_cHodj.m_pInventory->RemoveItem( pItem );
             lpMetaGame->m_cPodj.m_pInventory->AddItem( pItem );
-            pItem = NULL;
+            pItem = nullptr;
             pItem = lpMetaGame->m_cHodj.m_pInventory->FindItem( MG_OBJ_MOSH );
             lpMetaGame->m_cHodj.m_pInventory->RemoveItem( pItem );
             lpMetaGame->m_cPodj.m_pInventory->AddItem( pItem );
-            pItem = NULL;
+            pItem = nullptr;
             lpMetaGame->m_cHodj.m_bHaveMishMosh = FALSE;
             lpMetaGame->m_cPodj.m_bHaveMishMosh = TRUE;
             lpMetaGame->m_cHodj.m_bMoving = TRUE;
             lpMetaGame->m_cPodj.m_bMoving = FALSE;
         }
         else {
-        CItem   *pItem = NULL;
+        CItem   *pItem = nullptr;
                     {
                 C1ButtonDialog  cMsgBox( (CWnd *)this, pGamePalette, "&OK", "Hodj Challenges;", "Hodj has won Mish,", "Mosh and a turn." );
                         cMsgBox.DoModal();
@@ -1368,11 +1368,11 @@ PHASE4:
             pItem = lpMetaGame->m_cPodj.m_pInventory->FindItem( MG_OBJ_MISH );
             lpMetaGame->m_cPodj.m_pInventory->RemoveItem( pItem );
             lpMetaGame->m_cHodj.m_pInventory->AddItem( pItem );
-            pItem = NULL;
+            pItem = nullptr;
             pItem = lpMetaGame->m_cPodj.m_pInventory->FindItem( MG_OBJ_MOSH );
             lpMetaGame->m_cPodj.m_pInventory->RemoveItem( pItem );
             lpMetaGame->m_cHodj.m_pInventory->AddItem( pItem );
-            pItem = NULL;
+            pItem = nullptr;
             lpMetaGame->m_cPodj.m_bHaveMishMosh = FALSE;
             lpMetaGame->m_cHodj.m_bHaveMishMosh = TRUE;
             lpMetaGame->m_cPodj.m_bMoving = TRUE;
@@ -1797,13 +1797,13 @@ LPARAM      nGameReturn;
     switch (msg){
     case WM_DESTROY:
     
-        if (bReturnToMeta && (lpMetaGame != NULL)) {
+        if (bReturnToMeta && (lpMetaGame != nullptr)) {
         bSoundEffectsEnabled = (*lpMetaGame).m_stGameStruct.bSoundEffectsEnabled;
         bMusicEnabled = (*lpMetaGame).m_stGameStruct.bMusicEnabled;
         bScrollingEnabled = (*lpMetaGame).m_bScrolling;
         }
         else
-        if (bReturnToGrandTour && (lpGrandTour != NULL)) {
+        if (bReturnToGrandTour && (lpGrandTour != nullptr)) {
         bSoundEffectsEnabled = (*lpGrandTour).stMiniGame.bSoundEffectsEnabled;
         bMusicEnabled = (*lpGrandTour).stMiniGame.bMusicEnabled;
         }
@@ -1913,7 +1913,7 @@ void CHodjPodjWindow::StartBackgroundMidi(void)
 
     bMusicEnabled = pMyApp->GetProfileInt("Meta","Music",TRUE);
 
-    if (bMusicEnabled && (pBackgroundMidi == NULL)) {
+    if (bMusicEnabled && (pBackgroundMidi == nullptr)) {
         PositionAtHomePath();
         pBackgroundMidi = new CSound(this,LOGO_MIDI,SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */ );
         (*pBackgroundMidi).play();
@@ -1923,10 +1923,10 @@ void CHodjPodjWindow::StartBackgroundMidi(void)
 
 void CHodjPodjWindow::StopBackgroundMidi(void)
 {
-    if (pBackgroundMidi != NULL) {
+    if (pBackgroundMidi != nullptr) {
         (*pBackgroundMidi).stop();
         delete pBackgroundMidi;
-        pBackgroundMidi = NULL;
+        pBackgroundMidi = nullptr;
     }
 }
 
@@ -1940,7 +1940,7 @@ void CHodjPodjWindow::OnDestroy()
 void CHodjPodjWindow::OnClose()
 {
     if ( hDllInst > HINSTANCE_ERROR ) {
-    if (hwndGame != NULL)
+    if (hwndGame != nullptr)
         MFC::SetActiveWindow( hwndGame );
     return;
     }
@@ -1959,30 +1959,30 @@ void CHodjPodjWindow::ReleaseResources(void) {
 	if (bMetaLoaded) {
 		if (hMetaInst > HINSTANCE_ERROR) {
 			FreeLibrary(hMetaInst);
-			hMetaInst = NULL;
+			hMetaInst = nullptr;
 		}
 	}
 
-	if (lpGrandTour != NULL) {
+	if (lpGrandTour != nullptr) {
 		delete lpGrandTour;
-		lpGrandTour = NULL;
+		lpGrandTour = nullptr;
 	}
 
-	if (lpGameStruct != NULL) {
+	if (lpGameStruct != nullptr) {
 		delete lpGameStruct;
-		lpGameStruct = NULL;
+		lpGameStruct = nullptr;
 	}
 
-	assert(lpMetaGame != NULL);
-	if (lpMetaGame != NULL) {
+	assert(lpMetaGame != nullptr);
+	if (lpMetaGame != nullptr) {
 		FreeBFCInfo(lpMetaGame);
 		delete lpMetaGame;
-		lpMetaGame = NULL;
+		lpMetaGame = nullptr;
 	}
 
-	if (pGamePalette != NULL) {
+	if (pGamePalette != nullptr) {
 		delete pGamePalette;
-		pGamePalette = NULL;
+		pGamePalette = nullptr;
 	}
 }
 
@@ -1991,19 +1991,19 @@ VOID FreeBFCInfo(CBfcMgr *pBfcMgr)
     CHodjPodj *pPlayer;
     int i, k;
 
-    assert(pBfcMgr != NULL);
+    assert(pBfcMgr != nullptr);
 
     pBfcMgr->m_bRestoredGame = FALSE;
 
     // delete any Mish/Mosh items
     //
-    if (pBfcMgr->m_pMishItem != NULL) {
+    if (pBfcMgr->m_pMishItem != nullptr) {
     delete pBfcMgr->m_pMishItem;
-    pBfcMgr->m_pMishItem = NULL;
+    pBfcMgr->m_pMishItem = nullptr;
     }
-    if (pBfcMgr->m_pMoshItem != NULL) {
+    if (pBfcMgr->m_pMoshItem != nullptr) {
     delete pBfcMgr->m_pMoshItem;
-    pBfcMgr->m_pMoshItem = NULL;
+    pBfcMgr->m_pMoshItem = nullptr;
     }
 
     pPlayer = &pBfcMgr->m_cHodj;
@@ -2013,24 +2013,24 @@ VOID FreeBFCInfo(CBfcMgr *pBfcMgr)
         pPlayer = &pBfcMgr->m_cPodj;
     }
 
-    if ( pPlayer->m_pBlackMarket != NULL ) {
+    if ( pPlayer->m_pBlackMarket != nullptr ) {
         delete pPlayer->m_pBlackMarket;
-        pPlayer->m_pBlackMarket = NULL;
+        pPlayer->m_pBlackMarket = nullptr;
     }
 
-    if ( pPlayer->m_pGenStore != NULL ) {
+    if ( pPlayer->m_pGenStore != nullptr ) {
         delete pPlayer->m_pGenStore;
-        pPlayer->m_pGenStore = NULL;
+        pPlayer->m_pGenStore = nullptr;
     }
 
-    if ( pPlayer->m_pTradingPost != NULL ) {
+    if ( pPlayer->m_pTradingPost != nullptr ) {
         delete pPlayer->m_pTradingPost;
-        pPlayer->m_pTradingPost = NULL;
+        pPlayer->m_pTradingPost = nullptr;
     }
 
-    if ( pPlayer->m_pInventory != NULL ) {
+    if ( pPlayer->m_pInventory != nullptr ) {
         delete pPlayer->m_pInventory;
-        pPlayer->m_pInventory = NULL;
+        pPlayer->m_pInventory = nullptr;
     }
 
     // This deallocation MUST be after the delete pInventorys
@@ -2039,9 +2039,9 @@ VOID FreeBFCInfo(CBfcMgr *pBfcMgr)
 
         if (!pPlayer->m_aClueArray[i].bUsed) {
 
-        if (pPlayer->m_aClueArray[i].pNote != NULL) {
+        if (pPlayer->m_aClueArray[i].pNote != nullptr) {
             delete pPlayer->m_aClueArray[i].pNote;
-            pPlayer->m_aClueArray[i].pNote = NULL;
+            pPlayer->m_aClueArray[i].pNote = nullptr;
         }
         }
     }
@@ -2056,7 +2056,7 @@ VOID InitBFCInfo(CBfcMgr *pBfcMgr)
     CItem *pItem;
     int i, j, k;
 
-    assert(pBfcMgr != NULL);
+    assert(pBfcMgr != nullptr);
 
     FreeBFCInfo(pBfcMgr);
 
@@ -2080,10 +2080,10 @@ VOID InitBFCInfo(CBfcMgr *pBfcMgr)
 
     pPlayer->m_bHaveMishMosh = FALSE;
 
-    pPlayer->m_pTradingPost = NULL;
-    pPlayer->m_pBlackMarket = NULL;
+    pPlayer->m_pTradingPost = nullptr;
+    pPlayer->m_pBlackMarket = nullptr;
 
-    if ((pPlayer->m_pInventory = new CInventory(k == 0 ? "Hodj's Stuff" : "Podj's Stuff")) != NULL) {
+    if ((pPlayer->m_pInventory = new CInventory(k == 0 ? "Hodj's Stuff" : "Podj's Stuff")) != nullptr) {
 
         pPlayer->m_pInventory->AddItem(k == 0 ? MG_OBJ_HODJ_NOTEBOOK : MG_OBJ_PODJ_NOTEBOOK, 1);
         pItem = pPlayer->m_pInventory->FindItem(k == 0 ? MG_OBJ_HODJ_NOTEBOOK : MG_OBJ_PODJ_NOTEBOOK);
@@ -2093,7 +2093,7 @@ VOID InitBFCInfo(CBfcMgr *pBfcMgr)
 
     pszTest = (CHAR *)&"Corruption Test";
 
-    if ((pPlayer->m_pGenStore = new CInventory("General Store")) != NULL) {
+    if ((pPlayer->m_pGenStore = new CInventory("General Store")) != nullptr) {
         for ( i = MG_OBJ_BASE; i <= MG_OBJ_MAX; i++ ) {
         switch ( i ) {
             case MG_OBJ_HERRING:
@@ -2109,7 +2109,7 @@ VOID InitBFCInfo(CBfcMgr *pBfcMgr)
         }
         }
 
-        if ((pPlayer->m_pBlackMarket = new CInventory("Black Market")) != NULL) {
+        if ((pPlayer->m_pBlackMarket = new CInventory("Black Market")) != nullptr) {
         for  ( i = 0; i < ITEMS_IN_BLACK_MARKET; i ++ ) {
             j = brand() % pPlayer->m_pGenStore->ItemCount();
             pItem = pPlayer->m_pGenStore->FetchItem( j );
@@ -2166,10 +2166,10 @@ VOID InitBFCInfo(CBfcMgr *pBfcMgr)
     Common::strcpy_s(pBfcMgr->m_chMiniPath,chMiniPath);
 
     // create Mish/Mosh items
-    assert(pBfcMgr->m_pMishItem == NULL);
+    assert(pBfcMgr->m_pMishItem == nullptr);
     pBfcMgr->m_pMishItem = new CItem(MG_OBJ_MISH);
 
-    assert(pBfcMgr->m_pMoshItem == NULL);
+    assert(pBfcMgr->m_pMoshItem == nullptr);
     pBfcMgr->m_pMoshItem = new CItem(MG_OBJ_MOSH);
 }
 
@@ -2207,11 +2207,11 @@ void CHodjPodjWindow::FlushInputEvents(void)
     MSG msg;
 
 while(TRUE) {                                       // find and remove all keyboard events
-    if (!PeekMessage(&msg,NULL,WM_KEYFIRST,WM_KEYLAST,PM_REMOVE))
+    if (!PeekMessage(&msg,nullptr,WM_KEYFIRST,WM_KEYLAST,PM_REMOVE))
     break;}
 
 while(TRUE) {                                       // find and remove all mouse events
-    if (!PeekMessage(&msg,NULL,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE))
+    if (!PeekMessage(&msg,nullptr,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE))
     break;}
 }
 
@@ -2261,10 +2261,10 @@ BOOL CHodjPodjWindow::Restore(VOID)
     bSuccess = TRUE;
 
     // validate implicit input
-    assert(gpszSaveGameFile != NULL);
-    assert(gpszSaveDLL != NULL);
-    assert(lpMetaGame != NULL);
-    assert(pGamePalette != NULL);
+    assert(gpszSaveGameFile != nullptr);
+    assert(gpszSaveDLL != nullptr);
+    assert(lpMetaGame != nullptr);
+    assert(pGamePalette != nullptr);
 
     PositionAtHomePath();
 
@@ -2280,7 +2280,7 @@ BOOL CHodjPodjWindow::Restore(VOID)
     if (hInst > HINSTANCE_ERROR) {
 
     lpfnRestore = (LPSAVEFUNC)GetProcAddress(hInst, "RestoreGame");
-    if (lpfnRestore != NULL) {
+    if (lpfnRestore != nullptr) {
 
         // call RestoreGame()
         bSuccess = lpfnRestore(gpszSaveGameFile, lpMetaGame, (CWnd *)this, pGamePalette, &errCode);
@@ -2362,12 +2362,12 @@ VOID CHodjPodjWindow::ShowCredits(VOID)
 
     m_nFlags = 0;
 
-    if ((pDC = GetDC()) != NULL) {
+    if ((pDC = GetDC()) != nullptr) {
 
         // load first bitmap
-        m_pCurrentBmp = NULL;
+        m_pCurrentBmp = nullptr;
         if (FileExists(stCredits[0].m_pszCelFile)) {
-            m_pCurrentBmp = FetchBitmap(pDC, NULL, stCredits[0].m_pszCelFile);
+            m_pCurrentBmp = FetchBitmap(pDC, nullptr, stCredits[0].m_pszCelFile);
         }
 
         // for each credit screen
@@ -2376,10 +2376,10 @@ VOID CHodjPodjWindow::ShowCredits(VOID)
 
             // Paint bitmap onto sreen
             //
-            if (m_pCurrentBmp != NULL) {
-                PaintBitmap(pDC, NULL, m_pCurrentBmp, 0, 0);
+            if (m_pCurrentBmp != nullptr) {
+                PaintBitmap(pDC, nullptr, m_pCurrentBmp, 0, 0);
                 delete m_pCurrentBmp;
-                m_pCurrentBmp = NULL;
+                m_pCurrentBmp = nullptr;
             }
 
             // get current time
@@ -2389,7 +2389,7 @@ VOID CHodjPodjWindow::ShowCredits(VOID)
             //
             if (i < (MAX_CREDITS - 1)) {
                 if (FileExists(stCredits[i+1].m_pszCelFile)) {
-                    m_pCurrentBmp = FetchBitmap(pDC, NULL, stCredits[i+1].m_pszCelFile);
+                    m_pCurrentBmp = FetchBitmap(pDC, nullptr, stCredits[i+1].m_pszCelFile);
                 } else {
                     continue;
                 }
@@ -2410,7 +2410,7 @@ VOID CHodjPodjWindow::ShowCredits(VOID)
                 // give windows some time because we need to be able to get
                 // mouse clicks and keyboard hits to stop this credits screen
                 //
-                if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+                if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
                     TranslateMessage(&msg);
                     DispatchMessage(&msg);
                 }
@@ -2422,9 +2422,9 @@ VOID CHodjPodjWindow::ShowCredits(VOID)
 
             m_nFlags = 0;
         }
-        if (m_pCurrentBmp != NULL) {
+        if (m_pCurrentBmp != nullptr) {
             delete m_pCurrentBmp;
-            m_pCurrentBmp = NULL;
+            m_pCurrentBmp = nullptr;
         }
         ReleaseDC(pDC);
     }
@@ -2504,22 +2504,22 @@ BOOL CTheApp::InitInstance() {
 int CTheApp::ExitInstance()
 {
     if ( hDllInst > HINSTANCE_ERROR ) {
-    if (hwndGame != NULL)
+    if (hwndGame != nullptr)
         SendMessage( hwndGame, WM_CLOSE, 0, 0L );
 
     FreeLibrary( hDllInst );
-    hDllInst = NULL;
+    hDllInst = nullptr;
     }
     
     if ( hMetaInst > HINSTANCE_ERROR ) {
-    if (hwndGame != NULL)
+    if (hwndGame != nullptr)
         SendMessage( hwndGame, WM_CLOSE, 0, 0L );
 
     FreeLibrary( hMetaInst );
-    hMetaInst = NULL;
+    hMetaInst = nullptr;
     }
     
-    if ( m_pMainWnd != NULL )
+    if ( m_pMainWnd != nullptr )
     m_pMainWnd->SendMessage( WM_CLOSE );
 
     return(0);

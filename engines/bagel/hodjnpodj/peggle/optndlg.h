@@ -45,7 +45,7 @@ namespace Peggle {
 class COptnDlg : public COptions {
 // Construction
 public:
-	COptnDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL);  // standard constructor
+	COptnDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);  // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(COptnDlg)

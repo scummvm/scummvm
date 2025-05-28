@@ -69,23 +69,23 @@ CPoint ScreenToTile(CPoint pointScreen);
 BOOL InArtRegion(CPoint point);
 
 CBmpButton  *m_pScrollButton;
-CSprite     *_playerSprite = NULL;
-CPalette    *pGamePalette = NULL,                   // Palette of current artwork
-             *pOldPal = NULL;
-CBitmap     *pMazeBitmap = NULL,
-             *pOldBmp = NULL,
-              *_wallBitmap = NULL,
-               *_pathBitmap = NULL,
-                *_startBitmap = NULL,
-                 *_topEdgeBmp = NULL,
-                  *_rightEdgeBmp = NULL,
-                   *_bottomEdgeBmp = NULL,
-                    *_leftEdgeBmp = NULL,
+CSprite     *_playerSprite = nullptr;
+CPalette    *pGamePalette = nullptr,                   // Palette of current artwork
+             *pOldPal = nullptr;
+CBitmap     *pMazeBitmap = nullptr,
+             *pOldBmp = nullptr,
+              *_wallBitmap = nullptr,
+               *_pathBitmap = nullptr,
+                *_startBitmap = nullptr,
+                 *_topEdgeBmp = nullptr,
+                  *_rightEdgeBmp = nullptr,
+                   *_bottomEdgeBmp = nullptr,
+                    *_leftEdgeBmp = nullptr,
                      *_trapBitmap[NUM_TRAP_MAPS];
-CDC         *pMazeDC = NULL;                    // DC for the MazeBitmap
-CText       *m_pTimeText = NULL;                // Time to be posted in Locale box of screen
-CBitmap     *_localeBitmap = NULL,              // Locale of game bitmap for title bar
-             *_blankBitmap = NULL;               // Blank area of locale for time display
+CDC         *pMazeDC = nullptr;                    // DC for the MazeBitmap
+CText       *m_pTimeText = nullptr;                // Time to be posted in Locale box of screen
+CBitmap     *_localeBitmap = nullptr,              // Locale of game bitmap for title bar
+             *_blankBitmap = nullptr;               // Blank area of locale for time display
 
 BOOL        _success;
 BOOL        m_bIgnoreScrollClick;
@@ -109,7 +109,7 @@ struct  TILE {          // Data type for each square of the underlying Grid of t
 	BOOL    m_bHidden;  // 0 = Visible, 1 = Invisible
 } _mazeTile[NUM_COLUMNS][NUM_ROWS];
 
-static CSound   *_gameSound = NULL;                             // Game theme song
+static CSound   *_gameSound = nullptr;                             // Game theme song
 
 extern  LPGAMESTRUCT pGameInfo;
 
@@ -127,8 +127,8 @@ extern  LPGAMESTRUCT pGameInfo;
 CMainWindow::CMainWindow() {
 	CString WndClass;
 	CRect   MainRect, tmpRect;
-	CBitmap *pPartsBitmap = NULL;
-	CDC     *pDC = NULL;
+	CBitmap *pPartsBitmap = nullptr;
+	CDC     *pDC = nullptr;
 	int     i;                  // counter for trap assignment
 
 	BeginWaitCursor();
@@ -143,9 +143,9 @@ CMainWindow::CMainWindow() {
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
 	WndClass = AfxRegisterWndClass(CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               NULL,
-	                               NULL,
-	                               NULL);
+	                               nullptr,
+	                               nullptr,
+	                               nullptr);
 
 	// Center our window on the screen
 	pDC = GetDC();
@@ -156,11 +156,11 @@ CMainWindow::CMainWindow() {
 
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
-	Create(WndClass, "Boffo Games -- Maze o' Doom", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Maze o' Doom", WS_POPUP, MainRect, nullptr, 0);
 
 	CDibDoc     *pSourceDoc;                // Get the game palette
 	pSourceDoc = new CDibDoc();
-	ASSERT(pSourceDoc != NULL);
+	ASSERT(pSourceDoc != nullptr);
 	(*pSourceDoc).OpenDocument(MAINSCREEN);
 	pGamePalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art
 	delete pSourceDoc;
@@ -173,13 +173,13 @@ CMainWindow::CMainWindow() {
 
 	// Build Scroll Command button
 	m_pScrollButton = new CBmpButton;
-	ASSERT(m_pScrollButton != NULL);
+	ASSERT(m_pScrollButton != nullptr);
 	tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 	                SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 	                SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
-	_success = (*m_pScrollButton).Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_SCROLL);
+	_success = (*m_pScrollButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_SCROLL);
 	ASSERT(_success);
-	_success = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, NULL, NULL);
+	_success = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, 0, 0);
 	ASSERT(_success);
 	m_bIgnoreScrollClick = FALSE;
 
@@ -195,7 +195,7 @@ CMainWindow::CMainWindow() {
 //
 // Load up the various bitmaps for wall, edge, booby traps, etc.
 //
-	pPartsBitmap = FetchResourceBitmap(pDC, NULL, IDB_PARTS);
+	pPartsBitmap = FetchResourceBitmap(pDC, nullptr, IDB_PARTS);
 
 	_wallBitmap = ExtractBitmap(pDC, pPartsBitmap, pGamePalette, WALL_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT);
 	_pathBitmap = ExtractBitmap(pDC, pPartsBitmap, pGamePalette, PATH_X, WALL_Y, PATH_WIDTH, PATH_HEIGHT);
@@ -215,7 +215,7 @@ CMainWindow::CMainWindow() {
 		                               TRAP_WIDTH * i, 0, TRAP_WIDTH, TRAP_HEIGHT);
 	}
 
-	if (pPartsBitmap != NULL) {
+	if (pPartsBitmap != nullptr) {
 		pPartsBitmap->DeleteObject();
 		delete pPartsBitmap;
 	}
@@ -227,20 +227,20 @@ CMainWindow::CMainWindow() {
 	(*_playerSprite).SetMasked(TRUE);
 	(*_playerSprite).SetMobile(TRUE);
 
-	_localeBitmap = FetchResourceBitmap(pDC, NULL, "IDB_LOCALE_BMP");
-	ASSERT(_localeBitmap != NULL);
-	_blankBitmap = FetchResourceBitmap(pDC, NULL, "IDB_BLANK_BMP");
-	ASSERT(_blankBitmap != NULL);
+	_localeBitmap = FetchResourceBitmap(pDC, nullptr, "IDB_LOCALE_BMP");
+	ASSERT(_localeBitmap != nullptr);
+	_blankBitmap = FetchResourceBitmap(pDC, nullptr, "IDB_BLANK_BMP");
+	ASSERT(_blankBitmap != nullptr);
 
 	tmpRect.SetRect(TIME_LOCATION_X, TIME_LOCATION_Y,
 	                TIME_LOCATION_X + TIME_WIDTH, TIME_LOCATION_Y + TIME_HEIGHT);
-	if ((m_pTimeText = new CText()) != NULL) {
+	if ((m_pTimeText = new CText()) != nullptr) {
 		(*m_pTimeText).SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
 	}
 
 	ReleaseDC(pDC);
 
-	//srand((unsigned) time( NULL ));         // seed the random number generator
+	//srand((unsigned) time( nullptr ));         // seed the random number generator
 
 	if (pGameInfo->bPlayingMetagame) {
 		if (pGameInfo->nSkillLevel == SKILLLEVEL_LOW) {
@@ -268,7 +268,7 @@ CMainWindow::CMainWindow() {
 	SetUpMaze();                // "translate" from the created maze into uniform grid of doom
 	PaintMaze(pMazeDC);         // draw it in the MazeBitmap
 	_playing = TRUE;
-	SetTimer(GAME_TIMER, CLICK_TIME, NULL);     // Reset ticker
+	SetTimer(GAME_TIMER, CLICK_TIME, nullptr);     // Reset ticker
 
 	#ifdef BAGEL_DEBUG
 	//pGameInfo->bMusicEnabled = TRUE;
@@ -277,7 +277,7 @@ CMainWindow::CMainWindow() {
 
 	if (pGameInfo->bMusicEnabled) {
 		_gameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		if (_gameSound != NULL) {
+		if (_gameSound != nullptr) {
 			(*_gameSound).midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
 		} // end if pGameSound
 	}
@@ -299,7 +299,7 @@ CMainWindow::CMainWindow() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(NULL, FALSE);                // invalidate the entire window
+	InvalidateRect(nullptr, FALSE);                // invalidate the entire window
 	BeginPaint(&lpPaint);
 	SplashScreen();
 	EndPaint(&lpPaint);
@@ -311,7 +311,7 @@ void CMainWindow::SplashScreen() {
 	CRect   rcDest;
 	CRect   rcDIB;
 	CDC     *pDC;
-	CPalette    *pPalOld = NULL;                                                    // Old palette holder
+	CPalette    *pPalOld = nullptr;                                                    // Old palette holder
 	CDibDoc myDoc;
 	HDIB    hDIB;
 	char    msg[64];
@@ -335,7 +335,7 @@ void CMainWindow::SplashScreen() {
 		rcDIB.bottom = cyDIB;
 		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 		pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pMazeDC, 0, SQ_SIZE_Y / 2, SRCCOPY);    // Draw Maze
-		if ((_playerSprite != NULL) && _playing)
+		if ((_playerSprite != nullptr) && _playing)
 			(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 			                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2); // Update PLAYER
 	}
@@ -349,7 +349,7 @@ void CMainWindow::SplashScreen() {
 		}
 		(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 	} else {
-		if (_localeBitmap != NULL)
+		if (_localeBitmap != nullptr)
 			PaintBitmap(pDC, pGamePalette, _localeBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	}
 
@@ -375,11 +375,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		CDC *pDC;
 		CRules  RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette,
-		                 pGameInfo->bSoundEffectsEnabled ? RULES_WAV : NULL);
+		                 pGameInfo->bSoundEffectsEnabled ? RULES_WAV : nullptr);
 		CMainMenu COptionsWind((CWnd *)this, pGamePalette,
 		                       pGameInfo->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
 		                       GetSubOptions, RULES_TEXT,
-		                       pGameInfo->bSoundEffectsEnabled ? RULES_WAV : NULL, pGameInfo) ;        // Construct option dialog
+		                       pGameInfo->bSoundEffectsEnabled ? RULES_WAV : nullptr, pGameInfo) ;        // Construct option dialog
 
 		pDC = GetDC();
 		PaintBitmap(pDC, pGamePalette, _localeBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
@@ -396,7 +396,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_bIgnoreScrollClick = FALSE;
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
 			if (!_gameOver)
-				SetTimer(GAME_TIMER, CLICK_TIME, NULL);                     // Reset ticker
+				SetTimer(GAME_TIMER, CLICK_TIME, nullptr);                     // Reset ticker
 			break;
 
 		case IDC_SCROLL:
@@ -425,7 +425,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
 				m_bIgnoreScrollClick = FALSE;
 				if (!_gameOver)
-					SetTimer(GAME_TIMER, CLICK_TIME, NULL);     // Reset ticker
+					SetTimer(GAME_TIMER, CLICK_TIME, nullptr);     // Reset ticker
 				break;
 
 			case IDC_OPTIONS_QUIT:                      // Quit button was clicked
@@ -437,15 +437,15 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			} //end switch(ComDlg.DoModal())
 
-			if (!pGameInfo->bMusicEnabled && (_gameSound != NULL)) {
+			if (!pGameInfo->bMusicEnabled && (_gameSound != nullptr)) {
 
 				_gameSound->stop();
 				delete _gameSound;
-				_gameSound = NULL;
+				_gameSound = nullptr;
 
-			} else if (pGameInfo->bMusicEnabled && (_gameSound == NULL)) {
+			} else if (pGameInfo->bMusicEnabled && (_gameSound == nullptr)) {
 
-				if ((_gameSound = new CSound) != NULL) {
+				if ((_gameSound = new CSound) != nullptr) {
 					_gameSound->initialize(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					_gameSound->midiLoopPlaySegment(3000, 32980, 0, FMT_MILLISEC);
 				}
@@ -568,7 +568,7 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 		if (nFlags & MK_LBUTTON) {                          // If the Left mouse button is down,
 			MovePlayer(point);                              //...have the player follow the mouse
 		}
-	} else SetCursor(LoadCursor(NULL, IDC_ARROW));          // Refresh cursor object to arrow
+	} else SetCursor(LoadCursor(nullptr, IDC_ARROW));          // Refresh cursor object to arrow
 	//...when outside the maze area
 	CFrameWnd ::OnMouseMove(nFlags, point);
 }
@@ -714,7 +714,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  ****************************************************************/
 void CMainWindow::OnTimer(UINT nIDEvent) {
 	CDC     *pDC;
-	CSound  *pEffect = NULL;
+	CSound  *pEffect = nullptr;
 	char    msg[64];
 
 	pDC = GetDC();
@@ -814,7 +814,7 @@ void CMainWindow::NewGame() {
 	_time = tempTime;;                            // get new time limit,
 	_difficulty = tempDifficulty;                 //...new Difficulty
 
-	if (_playerSprite != NULL)                      // Refresh PLAYER
+	if (_playerSprite != nullptr)                      // Refresh PLAYER
 		(*_playerSprite).EraseSprite(pDC);          // Erase PlayerSprite
 
 	if (_time != 0) {                             // If we've got a time limit
@@ -830,7 +830,7 @@ void CMainWindow::NewGame() {
 	SetUpMaze();                                    // translate maze data to grid layout for display
 	PaintMaze(pMazeDC);                             // paint that sucker to the offscreen bitmap
 	pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pMazeDC, 0, SQ_SIZE_Y / 2, SRCCOPY);    // Draw Maze
-	if (_playerSprite != NULL)
+	if (_playerSprite != nullptr)
 		(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 		                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2); // Display PLAYER
 	_playing = TRUE;                                // Game is started
@@ -844,7 +844,7 @@ void CMainWindow::NewGame() {
 	}
 	(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
 
-	SetTimer(GAME_TIMER, CLICK_TIME, NULL);         // Reset ticker
+	SetTimer(GAME_TIMER, CLICK_TIME, nullptr);         // Reset ticker
 
 	ReleaseDC(pDC);
 } // end NewGame
@@ -877,7 +877,7 @@ void CMainWindow::NewGame() {
  ****************************************************************/
 void CMainWindow::MovePlayer(CPoint point) {
 	CDC     *pDC;
-	CSound  *pEffect = NULL;
+	CSound  *pEffect = nullptr;
 	CPoint  NewPosition;
 	CPoint  TileLocation;
 	CPoint  Hit;
@@ -920,7 +920,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 	if ((Step.x != 0) || (Step.y != 0)) {       // If the click is not in the Player's Tile
 		_success = (*_playerSprite).LoadResourceCels(pDC, nBmpID, NUM_CELS);
 		ASSERT(_success);
-		if (_playerSprite != NULL)                                              // Refresh PLAYER
+		if (_playerSprite != nullptr)                                              // Refresh PLAYER
 			(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 			                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2);  //...in new direction
 
@@ -938,12 +938,12 @@ void CMainWindow::MovePlayer(CPoint point) {
 				for (i = 0; i < 4; i++) {                                       // Go through three cels
 					x += Step.x * i * (SQ_SIZE_X / 4);                          //...per tile moved
 					y += Step.y * i * (SQ_SIZE_Y / 4);
-					if (_playerSprite != NULL)
+					if (_playerSprite != nullptr)
 						(*_playerSprite).PaintSprite(pDC, x, y);                // Update PLAYER
 				} // end for
 				_playerPos.x = NewPosition.x;
 				_playerPos.y = NewPosition.y;
-				if (_playerSprite != NULL)                                      // Refresh PLAYER
+				if (_playerSprite != nullptr)                                      // Refresh PLAYER
 					(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 					                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2);  //...in new direction
 			} // end if
@@ -958,7 +958,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 				}
 				_mazeTile[NewPosition.x][NewPosition.y].m_bHidden = FALSE;
 
-				if (_playerSprite != NULL)                                      // Refresh PLAYER
+				if (_playerSprite != nullptr)                                      // Refresh PLAYER
 					(*_playerSprite).EraseSprite(pDC);                          // Erase PlayerSprite
 				PaintBitmap(pDC, pGamePalette, _wallBitmap,                     // Paint wall on screen
 				            _mazeTile[NewPosition.x][NewPosition.y].m_nStart.x + SIDE_BORDER,
@@ -968,7 +968,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 				            _mazeTile[NewPosition.x][NewPosition.y].m_nStart.x,
 				            _mazeTile[NewPosition.x][NewPosition.y].m_nStart.y);
 				AddEdges(pMazeDC, NewPosition.x, NewPosition.y, 0, 0);
-				if (_playerSprite != NULL)                                      // Refresh PLAYER
+				if (_playerSprite != nullptr)                                      // Refresh PLAYER
 					(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 					                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2);  //...in new direction
 				bCollision = TRUE;
@@ -980,7 +980,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 				_mazeTile[NewPosition.x][NewPosition.y].m_bHidden = FALSE;
 				_playerPos.x = _mazeTile[NewPosition.x][NewPosition.y].m_nDest.x;
 				_playerPos.y = _mazeTile[NewPosition.x][NewPosition.y].m_nDest.y;
-				if (_playerSprite != NULL)
+				if (_playerSprite != nullptr)
 					(*_playerSprite).EraseSprite(pDC);                      // Erase PlayerSprite
 				PaintBitmap(pDC, pGamePalette,                              // Paint trap on screen
 				            _trapBitmap[_mazeTile[NewPosition.x][NewPosition.y].m_nTrap],
@@ -996,7 +996,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 				            _trapBitmap[_mazeTile[NewPosition.x][NewPosition.y].m_nTrap],
 				            _mazeTile[NewPosition.x][NewPosition.y].m_nStart.x,
 				            _mazeTile[NewPosition.x][NewPosition.y].m_nStart.y);
-				if (_playerSprite != NULL)
+				if (_playerSprite != nullptr)
 					(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 					                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2); // Update PLAYER
 				bCollision = TRUE;
@@ -1067,7 +1067,7 @@ void CMainWindow::GetNewCursor() {
 	CPoint  Hit, Delta;
 	POINT   pCursorLoc;
 
-	HCURSOR hNewCursor = NULL;
+	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
@@ -1097,7 +1097,7 @@ void CMainWindow::GetNewCursor() {
 			hNewCursor = (*pMyApp).LoadCursor(IDC_MOD_DNARROW);
 	}
 
-//    if (hNewCursor != NULL);
+//    if (hNewCursor != nullptr);
 	MFC::SetCursor(hNewCursor);
 }
 
@@ -1775,84 +1775,84 @@ void CMainWindow::OnClose() {
 	(*pDC).FillRect(&myRect, &myBrush);
 	ReleaseDC(pDC);
 
-	SetCursor(LoadCursor(NULL, IDC_ARROW));            // Refresh cursor object to arrow
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));            // Refresh cursor object to arrow
 
 	// delete the game theme song
 	//
-	if (_gameSound != NULL) {
+	if (_gameSound != nullptr) {
 		delete _gameSound;
-		_gameSound = NULL;
+		_gameSound = nullptr;
 	}
 
 	CSound::clearSounds();                              // Clean up sounds before returning
 
-	if (m_pScrollButton != NULL)
+	if (m_pScrollButton != nullptr)
 		delete m_pScrollButton;
 
-	if (m_pTimeText != NULL)
+	if (m_pTimeText != nullptr)
 		delete m_pTimeText;
 
-	if (_blankBitmap != NULL) {
+	if (_blankBitmap != nullptr) {
 		_blankBitmap->DeleteObject();
 		delete _blankBitmap;
 	}
 
-	if (_localeBitmap != NULL) {
+	if (_localeBitmap != nullptr) {
 		_localeBitmap->DeleteObject();
 		delete _localeBitmap;
 	}
 
-	if (_playerSprite != NULL)
+	if (_playerSprite != nullptr)
 		delete _playerSprite;
 
-	if (pOldBmp != NULL)                    // Get rid of Scratch1
+	if (pOldBmp != nullptr)                    // Get rid of Scratch1
 		pMazeDC->SelectObject(pOldBmp);
-	if (pOldPal != NULL)
+	if (pOldPal != nullptr)
 		pMazeDC->SelectPalette(pOldPal, FALSE);
-	if (pMazeDC->m_hDC != NULL) {
+	if (pMazeDC->m_hDC != nullptr) {
 		pMazeDC->DeleteDC();
 		delete pMazeDC;
 	}
 
-	if (pMazeBitmap != NULL) {
+	if (pMazeBitmap != nullptr) {
 		pMazeBitmap->DeleteObject();
 		delete pMazeBitmap;
 	}
-	if (_pathBitmap != NULL) {
+	if (_pathBitmap != nullptr) {
 		_pathBitmap->DeleteObject();
 		delete _pathBitmap;
 	}
-	if (_topEdgeBmp != NULL) {
+	if (_topEdgeBmp != nullptr) {
 		_topEdgeBmp->DeleteObject();
 		delete _topEdgeBmp;
 	}
-	if (_rightEdgeBmp != NULL) {
+	if (_rightEdgeBmp != nullptr) {
 		_rightEdgeBmp->DeleteObject();
 		delete _rightEdgeBmp;
 	}
-	if (_bottomEdgeBmp != NULL) {
+	if (_bottomEdgeBmp != nullptr) {
 		_bottomEdgeBmp->DeleteObject();
 		delete _bottomEdgeBmp;
 	}
-	if (_leftEdgeBmp != NULL) {
+	if (_leftEdgeBmp != nullptr) {
 		_leftEdgeBmp->DeleteObject();
 		delete _leftEdgeBmp;
 	}
-	if (_wallBitmap != NULL) {
+	if (_wallBitmap != nullptr) {
 		_wallBitmap->DeleteObject();
 		delete _wallBitmap;
 	}
-	if (_startBitmap != NULL) {
+	if (_startBitmap != nullptr) {
 		_startBitmap->DeleteObject();
 		delete _startBitmap;
 	}
 	for (int i = 0; i < NUM_TRAP_MAPS; i++) {
-		if (_trapBitmap[i] != NULL) {
+		if (_trapBitmap[i] != nullptr) {
 			_trapBitmap[i]->DeleteObject();
 			delete _trapBitmap[i];
 		}
 	}
-	if (pGamePalette != NULL) {
+	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();
 		delete pGamePalette;
 	}
@@ -1885,7 +1885,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1895,7 +1895,7 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }

@@ -38,8 +38,8 @@ extern void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
                           const char *pszAnimFile, const char *pszSoundFile,
                           int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound);
 
-CPalette    *pGamePalette = NULL;       // Palette to be used throughout the game
-CBmpButton  *pOptionButton = NULL;      // Option button object for getting to the options dialog
+CPalette    *pGamePalette = nullptr;       // Palette to be used throughout the game
+CBmpButton  *pOptionButton = nullptr;      // Option button object for getting to the options dialog
 
 CRect   MainRect;                           // screen area spanned by the game window
 CRect   OptionRect;                         // screen area spanned by the option button
@@ -57,16 +57,16 @@ POINT   ptOrigPosInGrid;
 
 BOOL    bResetGame;
 
-CDC         *pOffScreenDC = NULL;
-CPalette    *pOldOffScreenPal = NULL;
-CBitmap     *pOffScreenBmp = NULL;
-CBitmap     *pOldOffScreenBmp = NULL;
-CBitmap     *pbmpSplashScreen = NULL;
+CDC         *pOffScreenDC = nullptr;
+CPalette    *pOldOffScreenPal = nullptr;
+CBitmap     *pOffScreenBmp = nullptr;
+CBitmap     *pOldOffScreenBmp = nullptr;
+CBitmap     *pbmpSplashScreen = nullptr;
 
 CBitmap     *pbmpAllLetters;
 int         nCurrentLetter;
 
-CText       *ptxtScore = NULL;
+CText       *ptxtScore = nullptr;
 CRect       rScore(190, 340, 610, 365);
 
 CString     astrCurrentDisplay[NUMBEROFROWS];
@@ -77,9 +77,9 @@ CString astrGameListDisplay[WORDSPERLIST];
 CText   atxtDisplayWord[WORDSPERLIST];
 CRect   arWordDisplay[WORDSPERLIST];
 
-static  CSound  *pGameSound = NULL;                             // Game theme song
+static  CSound  *pGameSound = nullptr;                             // Game theme song
 
-CSprite *pTimerSprite = NULL;
+CSprite *pTimerSprite = nullptr;
 int     nLastCell;
 UINT    nTimerRes;
 long    lCurrentTimer;
@@ -126,7 +126,7 @@ extern char acList[NUMBEROFLISTS][WORDSPERLIST][20];
  ****************************************************************/
 
 CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
-	CDC     *pDC = NULL;                        // device context for the screen
+	CDC     *pDC = nullptr;                        // device context for the screen
 	CString WndClass;
 	CSize   mySize;
 	BOOL    bTestCreate;                        // bool for testing the creation of each button
@@ -135,7 +135,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	BeginWaitCursor();
 
-	CPalette    *pOldPal = NULL;
+	CPalette    *pOldPal = nullptr;
 
 	// Define a special window class which traps double-clicks, is byte aligned
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
@@ -143,10 +143,10 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               hGameCursor, NULL, NULL);
+	                               hGameCursor, nullptr, nullptr);
 
 	// set the seed for the random number generator
-	//srand( (unsigned)time( NULL ));
+	//srand( (unsigned)time( nullptr ));
 
 	// initialize private members
 	m_lpGameStruct = lpGameStruct;
@@ -180,22 +180,22 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	// Create the window as a POPUP so that no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x40 area.
-	Create(WndClass, "Boffo Games - Word Search", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games - Word Search", WS_POPUP, MainRect, nullptr, 0);
 
 	pDC = GetDC();
 	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);   // load game palette
 	pDC->RealizePalette();                                  // realize game palette
 
 	pOptionButton = new CBmpButton;         // create the Options button
-	ASSERT(pOptionButton != NULL);
+	ASSERT(pOptionButton != 0);
 	OptionRect.SetRect(OPTION_LEFT,
 	                   OPTION_TOP,
 	                   OPTION_LEFT + OPTION_WIDTH,
 	                   OPTION_TOP + OPTION_HEIGHT);
 	bTestCreate = pOptionButton->Create("Options", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, OptionRect, this, IDC_OPTION);
-	ASSERT(bTestCreate != NULL);                 // test for button's creation
-	bTestCreate = pOptionButton->LoadBitmaps(SCROLLUP, NULL, NULL, SCROLLDOWN);
-	ASSERT(bTestCreate != NULL);                 // test for button's creation
+	ASSERT(bTestCreate != 0);                 // test for button's creation
+	bTestCreate = pOptionButton->LoadBitmaps(SCROLLUP, 0, 0, SCROLLDOWN);
+	ASSERT(bTestCreate != 0);                 // test for button's creation
 
 	ShowWindow(SW_SHOWNORMAL);
 	PaintBitmap(pDC, pGamePalette, pbmpSplashScreen, 0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -211,9 +211,9 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	pOffScreenDC->RealizePalette();                                         // realize palette
 
 	pbmpAllLetters = new CBitmap;
-	//pbmpAllLetters = FetchBitmap( pDC, NULL, ALLLETTERS );
-	pbmpAllLetters = FetchBitmap(pOffScreenDC, NULL, ALLLETTERS);
-	ASSERT(pbmpAllLetters != NULL);
+	//pbmpAllLetters = FetchBitmap( pDC, nullptr, ALLLETTERS );
+	pbmpAllLetters = FetchBitmap(pOffScreenDC, nullptr, ALLLETTERS);
+	ASSERT(pbmpAllLetters != 0);
 
 	ptxtScore = new CText(pOffScreenDC, pGamePalette, &rScore, JUSTIFY_CENTER);
 
@@ -259,7 +259,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 			m_bWordsForwardOnly = FALSE;
 		}
 
-//	SetTimer( GAMETIMER, nTimerRes, NULL );
+//	SetTimer( GAMETIMER, nTimerRes, nullptr );
 		long    lTemp = (long)m_nTimeForGame * 1000;
 
 //	nTimerRes = (UINT)( lTemp / ( TIMERSPRITECELS - 1) );
@@ -298,7 +298,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	if (m_lpGameStruct->bPlayingMetagame) {
 		CreateNewGrid();
 		SplashScreen();
-		SetTimer(GAMETIMER, nTimerRes, NULL);
+		SetTimer(GAMETIMER, nTimerRes, nullptr);
 	}
 
 }
@@ -433,7 +433,7 @@ void CMainWSWindow::ResetGame() {
 		long    lTemp = (long)m_nTimeForGame * 1000;
 
 		nTimerRes = (UINT)(lTemp / (TIMERSPRITECELS - 2));
-		SetTimer(GAMETIMER, nTimerRes, NULL);
+		SetTimer(GAMETIMER, nTimerRes, nullptr);
 	}
 
 	ReleaseDC(pDC);
@@ -828,7 +828,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (m_lpGameStruct->bPlayingMetagame == TRUE) {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, (NO_NEWGAME | NO_OPTIONS),
 				                            lpfnOptionCallback, RULESFILE,
-				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL),
+				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr),
 				                            m_lpGameStruct);
 				nMainOption = dlgMainOpts.DoModal();
 				switch (nMainOption) {
@@ -840,7 +840,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			} else {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, 0,
 				                            lpfnOptionCallback, RULESFILE,
-				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL),
+				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr),
 				                            m_lpGameStruct);
 				nMainOption = dlgMainOpts.DoModal();
 				switch (nMainOption) {
@@ -858,15 +858,15 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			//
 			// Check to see if the music state was changed and adjust to match it
 			//
-			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
+			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
 					pGameSound->stop();
 			} else if (m_lpGameStruct->bMusicEnabled) {
-				if (pGameSound == NULL) {
+				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
-				if (pGameSound != NULL) {
+				if (pGameSound != nullptr) {
 					if (!pGameSound->playing())
 						(*pGameSound).midiLoopPlaySegment(500, 31500, 0, FMT_MILLISEC);
 				}
@@ -878,7 +878,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 				nTimerRes = (UINT)(lTemp / (TIMERSPRITECELS - 1));
 //					nTimerRes = ( ( m_nTimeForGame * 1000 ) / TIMERSPRITECELS );
-				SetTimer(GAMETIMER, nTimerRes, NULL);
+				SetTimer(GAMETIMER, nTimerRes, nullptr);
 			}
 			break;
 		}
@@ -889,8 +889,8 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 void CMainWSWindow::OnLButtonDown(UINT nFlags, CPoint point) {
-	CDC         *pDC = NULL;
-	CPalette    *pTempPal = NULL;
+	CDC         *pDC = nullptr;
+	CPalette    *pTempPal = nullptr;
 	CRect       rChicken,
 	            rPig,
 	            rCow,
@@ -913,21 +913,21 @@ void CMainWSWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 	if (rChicken.PtInRect(point)) {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		PlayEasterEgg(pDC, (CWnd *)this, pGamePalette, CHICKEN_ANIM, CHICKEN_WAV, NUM_CHICKEN_CELS,
 		              CHICKEN_X, CHICKEN_Y, CHICKEN_SLEEP, (*m_lpGameStruct).bSoundEffectsEnabled);
 	} else if (rCow.PtInRect(point)) {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		PlayEasterEgg(pDC, (CWnd *)this, pGamePalette, COW_ANIM, COW_WAV, NUM_COW_CELS,
 		              COW_X, COW_Y, COW_SLEEP, (*m_lpGameStruct).bSoundEffectsEnabled);
 	} else if (rPig.PtInRect(point) && (*m_lpGameStruct).bSoundEffectsEnabled) {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		sndPlaySound(PIG_WAV, SND_ASYNC);
 	} else if (rFlower.PtInRect(point) && (*m_lpGameStruct).bSoundEffectsEnabled) {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		sndPlaySound(FLOWER_WAV, SND_ASYNC);
 	}
 
@@ -965,16 +965,16 @@ void CMainWSWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 void CMainWSWindow::OnMouseMove(UINT nFlags, CPoint point) {
-	CDC     *pDC = NULL;
+	CDC     *pDC = nullptr;
 	CBrush  cBrush((COLORREF)RGB(0, 255, 255));
-	CPalette    *pTempPal = NULL;
+	CPalette    *pTempPal = nullptr;
 	CRgn    FrameRgn;
 	POINT   aptFrame[6];
 
 	int x, y;
 	int nCurrentX, nCurrentY;
 
-	SetCursor(LoadCursor(NULL, IDC_ARROW));           // Refresh cursor object
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));           // Refresh cursor object
 
 	if (m_bNoGrid)
 		return;
@@ -1163,7 +1163,7 @@ void CMainWSWindow::OnMouseMove(UINT nFlags, CPoint point) {
 		ptLastPosInGrid.x = ptCurrPosInGrid.x;
 		ptLastPosInGrid.y = ptCurrPosInGrid.y;
 	}
-	if (pDC != NULL) {
+	if (pDC != nullptr) {
 		pDC->SelectPalette(pTempPal, FALSE);
 		ReleaseDC(pDC);
 	}
@@ -1218,7 +1218,7 @@ void CMainWSWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 
 			if (bFoundWord) {
 				if ((*m_lpGameStruct).bSoundEffectsEnabled) {
-					sndPlaySound(NULL, 0);
+					sndPlaySound(nullptr, 0);
 					sndPlaySound(FIND_WAV, SND_ASYNC);
 				}
 				astrGameList[nWordNum].Empty();
@@ -1297,7 +1297,7 @@ void CMainWSWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 			} // end if bWordFound
 			else {
 				if ((*m_lpGameStruct).bSoundEffectsEnabled) {
-					sndPlaySound(NULL, 0);
+					sndPlaySound(nullptr, 0);
 					sndPlaySound(NOPE_WAV, SND_SYNC);
 					sndPlaySound(TRYAGAIN_WAV, SND_SYNC);
 				}
@@ -1310,7 +1310,7 @@ void CMainWSWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 			KillTimer(GAMETIMER);
 			m_bNoGrid = TRUE;
 			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				sndPlaySound(ALLFOUND_WAV, SND_SYNC);            // play sound
 			}
 			msgGameOver.SetInitialOptions(1, nWordsLeft);
@@ -1347,7 +1347,7 @@ void CMainWSWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 void CMainWSWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette, NULL);
+	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette, nullptr);
 
 	switch (nChar) {
 	case VK_F1:
@@ -1384,7 +1384,7 @@ void CMainWSWindow::OnTimer(UINT nWhichTimer) {
 			ReleaseDC(pDC);
 			m_bNoGrid = TRUE;
 			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				sndPlaySound(TIMEOUT_WAV, SND_SYNC);             // play sound
 			}
 			msgGameOver.SetInitialOptions(2, nWordsLeft);
@@ -1398,7 +1398,7 @@ void CMainWSWindow::OnTimer(UINT nWhichTimer) {
 			lCurrentTimer++;
 			nLastCell++;
 			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				sndPlaySound(TICK_WAV, SND_ASYNC);
 			}
 			pTimerSprite->SetCel(nLastCell);
@@ -1452,7 +1452,7 @@ void CMainWSWindow::OnActivate(UINT nState, CWnd    *pWndOther, BOOL bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 		}
 	return;
@@ -1530,7 +1530,7 @@ void CMainWSWindow::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lScore = (WORDSPERLIST - nWordsLeft);
 	MFC::PostMessage(m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct);
-	m_lpGameStruct = NULL;
+	m_lpGameStruct = nullptr;
 	CFrameWnd::OnDestroy();
 }
 
@@ -1565,46 +1565,46 @@ void CMainWSWindow::OnDestroy() {
 
 void CMainWSWindow::ReleaseResources(void) {
 
-	if (pGameSound != NULL) {
+	if (pGameSound != nullptr) {
 		delete pGameSound;                      // delete the game theme song
-		pGameSound = NULL;
+		pGameSound = nullptr;
 	}
 
 	CSound::clearSounds();
 
-	if (pTimerSprite != NULL)
+	if (pTimerSprite != nullptr)
 		delete pTimerSprite;
 
-	if (pOldOffScreenBmp != NULL)
+	if (pOldOffScreenBmp != nullptr)
 		pOffScreenDC->SelectObject(pOldOffScreenBmp);
 
-	if (pOldOffScreenPal != NULL)
+	if (pOldOffScreenPal != nullptr)
 		pOffScreenDC->SelectPalette(pOldOffScreenPal, FALSE);
 
-	if (pOffScreenDC->m_hDC != NULL) {
+	if (pOffScreenDC->m_hDC != nullptr) {
 		pOffScreenDC->DeleteDC();
 		delete pOffScreenDC;
 	}
 
-	if (pOffScreenBmp != NULL) {
+	if (pOffScreenBmp != nullptr) {
 		pOffScreenBmp->DeleteObject();
 		delete pOffScreenBmp;
 	}
 
-	if (pbmpSplashScreen != NULL) {
+	if (pbmpSplashScreen != nullptr) {
 		pbmpSplashScreen->DeleteObject();
 		delete pbmpSplashScreen;
 	}
 
-	if (pbmpAllLetters != NULL) {
+	if (pbmpAllLetters != nullptr) {
 		pbmpAllLetters->DeleteObject();
 		delete pbmpAllLetters;
 	}
 
-	if (ptxtScore != NULL)
+	if (ptxtScore != nullptr)
 		delete ptxtScore;
 
-	if (pGamePalette != NULL) {
+	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();         // release the game color palette
 		delete pGamePalette;
 	}
@@ -1646,12 +1646,12 @@ void CMainWSWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	while (TRUE) {                                      // find and remove all keyboard events
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	while (TRUE) {                                      // find and remove all mouse events
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }
@@ -1662,7 +1662,7 @@ long CMainWSWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1672,7 +1672,7 @@ long CMainWSWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1709,8 +1709,8 @@ END_MESSAGE_MAP()
 void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
                    const char *pszAnimFile, const char *pszSoundFile,
                    int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound) {
-	CSprite *pSprite = NULL;
-	CSound  *pEffect = NULL;
+	CSprite *pSprite = nullptr;
+	CSound  *pEffect = nullptr;
 	BOOL    bSuccess;
 	int     i;
 
@@ -1728,7 +1728,7 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 		pEffect = new CSound(pWnd, pszSoundFile,                                 // Load up the sound file as a
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 	}
-	if (pEffect != NULL) {
+	if (pEffect != nullptr) {
 		bSuccess = (*pEffect).play();
 		if (!bSuccess)
 			delete pEffect;
@@ -1739,7 +1739,7 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 		Sleep(nSleep);
 	}
 
-	if (pSprite != NULL)
+	if (pSprite != nullptr)
 		delete pSprite;
 
 } // end PlayEasterEgg

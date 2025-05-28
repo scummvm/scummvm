@@ -28,15 +28,15 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
 /////////////////////////////////////////////////////////////////////////////
 // COptn dialog
 
 
 COptn::COptn(
-    CWnd* pParent /*=NULL*/,
-    CPalette *pPalette /*=NULL*/,
+    CWnd* pParent /*=nullptr*/,
+    CPalette *pPalette /*=nullptr*/,
     int nLttrsSlvd /*LSLVD_DEFAULT*/,
     int nTime /*TIME_DEFAULT*/
 )
@@ -69,20 +69,20 @@ COptn::COptn(
 	m_nTime = TimeToIndex(nTime);
 	m_nLttrsSlvd = nLttrsSlvd;
 
-	m_pLttrsSlvd = NULL;
-	m_pTime = NULL;
+	m_pLttrsSlvd = nullptr;
+	m_pTime = nullptr;
 	//}}AFX_DATA_INIT
 }
 
 COptn::~COptn() {
-	if (m_pLttrsSlvd != NULL) {
+	if (m_pLttrsSlvd != nullptr) {
 		delete m_pLttrsSlvd;
-		m_pLttrsSlvd = NULL;
+		m_pLttrsSlvd = nullptr;
 	}
 
-	if (m_pTime != NULL) {
+	if (m_pTime != nullptr) {
 		delete m_pTime;
-		m_pLttrsSlvd = NULL;
+		m_pLttrsSlvd = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -186,7 +186,7 @@ BOOL COptn::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_pLttrsSlvd = new CText()) != NULL) {
+	if ((m_pLttrsSlvd = new CText()) != nullptr) {
 		bAssertCheck = (*m_pLttrsSlvd).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);               // initialize the text objext
 	}
@@ -201,7 +201,7 @@ BOOL COptn::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_pTime = new CText()) != NULL) {
+	if ((m_pTime = new CText()) != nullptr) {
 		bAssertCheck = (*m_pTime).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);               // initialize the text objext
 	}
@@ -209,12 +209,12 @@ BOOL COptn::OnInitDialog() {
 	m_Time.SetScrollRange(MIN_INDEX_TIME, MAX_INDEX_TIME, FALSE);               // Time scroll bar defaults
 	m_Time.SetScrollPos(m_nTime, TRUE);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pGamePalette);                      // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(pGamePalette);                      // set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
@@ -363,17 +363,17 @@ void COptn::OnCancel() {
 }
 
 void COptn::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 } // namespace Crypt

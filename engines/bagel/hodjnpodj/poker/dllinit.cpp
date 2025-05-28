@@ -30,8 +30,8 @@ namespace Poker {
 HINSTANCE   hDLLInst;
 HINSTANCE hExeInst;
 
-CMainPokerWindow  *pcwndPoker = NULL;   // pointer to the poker's main window
-CPalette          *pTestPalette = NULL;
+CMainPokerWindow  *pcwndPoker = nullptr;   // pointer to the poker's main window
+CPalette          *pTestPalette = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
@@ -65,8 +65,8 @@ CPalette          *pTestPalette = NULL;
 
 HWND FAR PASCAL RunPoker(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	// if the pointer has garbage in it, the clean it out
-	if (pcwndPoker != NULL) {
-		pcwndPoker = NULL;
+	if (pcwndPoker != nullptr) {
+		pcwndPoker = nullptr;
 	}
 
 	// create a my poker window and show it

@@ -50,7 +50,7 @@ public:
 private:
 	/**
 	 * SetTimer callback routine for DelayMs
-	 * @param hWnd		handle of window (always NULL in this case)
+	 * @param hWnd		handle of window (always nullptr in this case)
 	 * @param uMsg		WM_TIMER message
 	 * @param uTimerId	timer identifier
 	 * @param dwTime	current system time

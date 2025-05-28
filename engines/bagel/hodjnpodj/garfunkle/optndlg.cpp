@@ -32,13 +32,13 @@ namespace HodjNPodj {
 namespace Garkfunkle {
 
 static  CPalette *pSubOptionsPalette;
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
-static  CRadioButton *pGameButton = NULL;
-static  CRadioButton *pMusicButton = NULL;
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
+static  CRadioButton *pGameButton = nullptr;
+static  CRadioButton *pMusicButton = nullptr;
 
-CText   *m_pButtonsText = NULL;
-CText   *m_pSpeedText = NULL;
+CText   *m_pButtonsText = nullptr;
+CText   *m_pSpeedText = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
@@ -55,9 +55,9 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 }
 
 COptnDlg::~COptnDlg() {
-	if (m_pButtonsText != NULL)
+	if (m_pButtonsText != nullptr)
 		delete m_pButtonsText;
-	if (m_pSpeedText != NULL)
+	if (m_pSpeedText != nullptr)
 		delete m_pSpeedText;
 
 	CBmpDialog::OnDestroy();
@@ -114,7 +114,7 @@ BOOL COptnDlg::OnInitDialog() {
 	mSpeedTable[11] = "Way Prestissimo";
 
 	statRect.SetRect(LEFT_SIDE, 26, LEFT_SIDE + 175, 41);
-	if ((m_pButtonsText = new CText()) != NULL) {
+	if ((m_pButtonsText = new CText()) != nullptr) {
 		(*m_pButtonsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -122,30 +122,30 @@ BOOL COptnDlg::OnInitDialog() {
 	m_ScrollButtons.SetScrollPos(m_nNumButtons, TRUE);
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 175, 80);
-	if ((m_pSpeedText = new CText()) != NULL) {
+	if ((m_pSpeedText = new CText()) != nullptr) {
 		(*m_pSpeedText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, 0);
 	m_ScrollSpeed.SetScrollPos(m_nSpeed, TRUE);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
-	if ((pGameButton = new CRadioButton) != NULL) {                 // build a color QUIT button to let us exit
+	if ((pGameButton = new CRadioButton) != nullptr) {                 // build a color QUIT button to let us exit
 		(*pGameButton).SetPalette(pSubOptionsPalette);                      // set the palette to use
 		(*pGameButton).SetControl(IDC_PLAYGAME, this);              // tie to the dialog control
 	}
 
 
-	if ((pMusicButton = new CRadioButton) != NULL) {                    // build a color QUIT button to let us exit
+	if ((pMusicButton = new CRadioButton) != nullptr) {                    // build a color QUIT button to let us exit
 		(*pMusicButton).SetPalette(pSubOptionsPalette);                     // set the palette to use
 		(*pMusicButton).SetControl(IDC_PLAYMUSIC, this);            // tie to the dialog control
 	}
@@ -331,27 +331,27 @@ void COptnDlg::OnPaint() {
 }
 
 void COptnDlg::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (pGameButton != NULL) {                      // release the button
+	if (pGameButton != nullptr) {                      // release the button
 		delete pGameButton;
-		pGameButton = NULL;
+		pGameButton = nullptr;
 	}
 
-	if (pMusicButton != NULL) {                         // release the button
+	if (pMusicButton != nullptr) {                         // release the button
 		delete pMusicButton;
-		pMusicButton = NULL;
+		pMusicButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 } // namespace Garfunkle

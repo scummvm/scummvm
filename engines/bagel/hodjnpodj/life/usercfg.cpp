@@ -141,7 +141,7 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_pVillages = new CText) != NULL) {
+	if ((m_pVillages = new CText) != nullptr) {
 		bAssertCheck = (*m_pVillages).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
@@ -159,7 +159,7 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_pSpeed = new CText) != NULL) {
+	if ((m_pSpeed = new CText) != nullptr) {
 		bAssertCheck = (*m_pSpeed).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
@@ -177,7 +177,7 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	    nStat_row_offset + nStatHeight
 	);
 
-	if ((m_pRounds = new CText) != NULL) {
+	if ((m_pRounds = new CText) != nullptr) {
 		bAssertCheck = (*m_pRounds).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
@@ -191,18 +191,18 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	/************************
 	* Set up color buttons. *
 	************************/
-	if ((m_pPrePlaceButton = new CCheckButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((m_pPrePlaceButton = new CCheckButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*m_pPrePlaceButton).SetPalette(pGamePalette);                      // set the palette to use
 		(*m_pPrePlaceButton).SetControl(IDC_PREPLACE, this);            // tie to the dialog control
 	}
 	((CWnd *)this)->CheckDlgButton(IDC_PREPLACE, bPrePlaceColonies);             // Set the frame option box
 
-	if ((m_pOKButton = new CColorButton) != NULL) {     // build a color OK button
+	if ((m_pOKButton = new CColorButton) != nullptr) {     // build a color OK button
 		(*m_pOKButton).SetPalette(pGamePalette);        // set the palette to use
 		(*m_pOKButton).SetControl(IDOK, this);          // tie to the dialog control
 	} // end if
 
-	if ((m_pCancelButton = new CColorButton) != NULL) { // build a color CANCEL button
+	if ((m_pCancelButton = new CColorButton) != nullptr) { // build a color CANCEL button
 		(*m_pCancelButton).SetPalette(pGamePalette);
 		(*m_pCancelButton).SetControl(IDCANCEL, this);
 	} // end if
@@ -461,22 +461,22 @@ void CUserCfgDlg::OnPaint() {
 }
 
 void CUserCfgDlg::ClearDialogImage(void) {
-	if (m_pOKButton != NULL) {      // release button
+	if (m_pOKButton != nullptr) {      // release button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
-	if (m_pCancelButton != NULL) {
+	if (m_pCancelButton != nullptr) {
 		delete m_pCancelButton;
-		m_pCancelButton = NULL;
+		m_pCancelButton = nullptr;
 	}
 
-	if (m_pPrePlaceButton != NULL) {                        // release the button
+	if (m_pPrePlaceButton != nullptr) {                        // release the button
 		delete m_pPrePlaceButton;
-		m_pPrePlaceButton = NULL;
+		m_pPrePlaceButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 void CUserCfgDlg::OnClose() {
@@ -486,19 +486,19 @@ void CUserCfgDlg::OnClose() {
 void CUserCfgDlg::OnDestroy() {
 	CDC *pDC = GetDC();
 
-	if (m_pVillages != NULL) {
+	if (m_pVillages != nullptr) {
 		delete m_pVillages;
-		m_pVillages = NULL;
+		m_pVillages = nullptr;
 	}
 
-	if (m_pSpeed != NULL) {
+	if (m_pSpeed != nullptr) {
 		delete m_pSpeed;
-		m_pSpeed = NULL;
+		m_pSpeed = nullptr;
 	}
 
-	if (m_pRounds != NULL) {
+	if (m_pRounds != nullptr) {
 		delete m_pRounds;
-		m_pRounds = NULL;
+		m_pRounds = nullptr;
 	}
 	ReleaseDC(pDC);
 

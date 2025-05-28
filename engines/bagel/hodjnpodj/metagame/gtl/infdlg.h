@@ -47,7 +47,7 @@ public:
 
 	// Construction
 public:
-	CInfDlg(CWnd *pParent = NULL);  // standard constructor
+	CInfDlg(CWnd *pParent = nullptr);  // standard constructor
 	void Create(void) {
 		CDialog::Create(IDD,
 			(CWnd *)m_xpFrameWnd);
@@ -112,7 +112,7 @@ public:
 
 	// Construction
 public:
-	CCtlDlg(CWnd *pParent = NULL);  // standard constructor
+	CCtlDlg(CWnd *pParent = nullptr);  // standard constructor
 	void Create(void) {
 		CDialog::Create(IDD,
 		                (CWnd *)m_xpFrameWnd);
@@ -198,7 +198,7 @@ public:
 
 // Construction
 public:
-	CNodeDlg(CWnd *pParent = NULL); // standard constructor
+	CNodeDlg(CWnd *pParent = nullptr); // standard constructor
 	void Create(void) {
 		CDialog::Create(CNodeDlg::IDD,
 		                (CWnd *)m_xpFrameWnd);
@@ -232,7 +232,7 @@ protected:
 class CActDlg : public CDialog {
 	// Construction
 public:
-	CActDlg(CWnd *pParent = NULL);  // standard constructor
+	CActDlg(CWnd *pParent = nullptr);  // standard constructor
 	~CActDlg(void) {
 		TRACEDESTRUCTOR(CActDlg);
 	}
@@ -277,7 +277,7 @@ public:
 
 	// Construction
 public:
-	CMenuDlg(CWnd *pParent = NULL); // standard constructor
+	CMenuDlg(CWnd *pParent = nullptr); // standard constructor
 	void Create(void) {
 		CDialog::Create(CMenuDlg::IDD,
 		                (CWnd *)m_xpFrameWnd);

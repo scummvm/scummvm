@@ -34,7 +34,7 @@ namespace Gtl {
 
 extern CGtlFrame        *pMainWindow;
 
-static CSingleDocTemplate *pSdiDocTemplate = NULL;
+static CSingleDocTemplate *pSdiDocTemplate = nullptr;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -159,11 +159,11 @@ void CGtlApp::CreateInstance(void) {
 
 int CGtlApp::ExitInstance() {
 	/*
-	    if (pSdiDocTemplate != NULL) {
+	    if (pSdiDocTemplate != nullptr) {
 	        pSdiDocTemplate->CloseAllDocuments(TRUE);
-	        pSdiDocTemplate = NULL;
+	        pSdiDocTemplate = nullptr;
 	    }
-	    if ( pMainWindow != NULL )
+	    if ( pMainWindow != nullptr )
 	        pMainWindow->DestroyWindow();
 	*/
 	// Don't call CWinApp::ExitInstance(); Because we would get the recent

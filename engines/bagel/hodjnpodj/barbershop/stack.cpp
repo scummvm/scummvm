@@ -27,8 +27,8 @@ namespace HodjNPodj {
 namespace Barbershop {
 
 CStack::CStack(CRect cRect, int nID) {
-	m_pTopCard      = NULL;
-	m_pBottomCard   = NULL;
+	m_pTopCard      = nullptr;
+	m_pBottomCard   = nullptr;
 	m_nID           = nID;
 	m_nSize         = 0;
 	m_cRect         = cRect;
@@ -38,32 +38,32 @@ CStack::~CStack() {
 }
 
 void CStack::Reset() {
-	m_pTopCard      = NULL;
-	m_pBottomCard   = NULL;
+	m_pTopCard      = nullptr;
+	m_pBottomCard   = nullptr;
 	m_nSize         = 0;
 }
 
 void CStack::Push(CCard *pCard) {
-	if (pCard == NULL)
+	if (pCard == nullptr)
 		return;
 
 	/*********************************************************
 	* Update card pointers aligning them with current stack. *
 	*********************************************************/
 	pCard->m_pPrevCard  = m_pTopCard;   // link new top prev to old top card
-	pCard->m_pNextCard  = NULL;         // new top next card now does not point anywhere
+	pCard->m_pNextCard  = nullptr;         // new top next card now does not point anywhere
 
 	pCard->m_pStack     = this;         // reassign proper stack location
 
 	/*************************
 	* Update stack pointers. *
 	*************************/
-	if (m_pTopCard != NULL)
+	if (m_pTopCard != nullptr)
 		m_pTopCard->m_pNextCard = pCard;    // create forward chain for next card
 
 	m_pTopCard = pCard;                     // link old top card to new top
 
-	if (m_pBottomCard == NULL)
+	if (m_pBottomCard == nullptr)
 		m_pBottomCard = pCard;
 
 	m_nSize++;
@@ -77,22 +77,22 @@ CCard *CStack::Pop() {
 	**************************************************/
 	pReturnCard = m_pTopCard;
 
-	if (m_pTopCard == NULL) {
+	if (m_pTopCard == nullptr) {
 		m_nSize = 0;
-		return NULL;
+		return nullptr;
 	}
 
-	if (m_pTopCard->m_pPrevCard != NULL) {
-		m_pTopCard->m_pPrevCard->m_pNextCard = NULL;
+	if (m_pTopCard->m_pPrevCard != nullptr) {
+		m_pTopCard->m_pPrevCard->m_pNextCard = nullptr;
 		m_pTopCard = m_pTopCard->m_pPrevCard;
 
-		if (m_pTopCard->m_pNextCard != NULL)
+		if (m_pTopCard->m_pNextCard != nullptr)
 			m_pTopCard->m_pNextCard->m_pPrevCard = m_pTopCard->m_pPrevCard; // make cur prev card point to prev of prev card :^) (if any)
 
 		m_nSize--;
 	} else {
-		m_pTopCard      = NULL;
-		m_pBottomCard   = NULL;
+		m_pTopCard      = nullptr;
+		m_pBottomCard   = nullptr;
 		m_nSize         = 0;
 	}
 
@@ -103,24 +103,24 @@ void CStack::Unlink(CCard *pCard) {
 	/**************************************************
 	* Undo any links of current card to other stacks. *
 	**************************************************/
-	if (pCard->m_pNextCard != NULL) {
+	if (pCard->m_pNextCard != nullptr) {
 		pCard->m_pNextCard->m_pPrevCard = pCard->m_pPrevCard;   // make cur prev card point to prev of prev card :^) (if any)
-		pCard->m_pNextCard = NULL;
+		pCard->m_pNextCard = nullptr;
 	}
 
-	if (pCard->m_pPrevCard != NULL) {
+	if (pCard->m_pPrevCard != nullptr) {
 		pCard->m_pPrevCard->m_pNextCard = pCard->m_pNextCard;   // make cur of prev of next pointer point to next of the next (if any)
 		this->m_pTopCard = pCard->m_pPrevCard;                  // Top of stack points to the prev card
-		pCard->m_pPrevCard = NULL;                              // clear the card "prev card" pointer
+		pCard->m_pPrevCard = nullptr;                              // clear the card "prev card" pointer
 	} else {
-		m_pTopCard      = NULL;
-		m_pBottomCard   = NULL;
+		m_pTopCard      = nullptr;
+		m_pBottomCard   = nullptr;
 	}
 
 	/**************************************************
 	* Card's stack pointer should not point anywhere. *
 	**************************************************/
-	pCard->m_pStack = NULL;                                     // clear card "stack" pointer
+	pCard->m_pStack = nullptr;                                     // clear card "stack" pointer
 }
 
 int CStack::Size() {

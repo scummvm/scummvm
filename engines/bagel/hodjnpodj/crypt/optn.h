@@ -60,7 +60,7 @@ private:
 	int         TimeToIndex(int nTime);
 
 public:
-	COptn(CWnd* pParent = NULL, CPalette *pGamePalette = NULL, int nLttrsSolvd = FALSE, int nTime = FALSE); // standard constructor
+	COptn(CWnd* pParent = nullptr, CPalette *pGamePalette = nullptr, int nLttrsSolvd = FALSE, int nTime = FALSE); // standard constructor
 	~COptn();
 	void ClearDialogImage(void);
 

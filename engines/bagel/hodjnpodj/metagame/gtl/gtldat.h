@@ -503,7 +503,7 @@ public:
 	BOOL ClearInhibitDraw(void) ;
 	//- Draw -- draw data
 	BOOL Draw(CGtlView * xpGtlView, CRect * xpClipRect,
-	          CDC* xpDc PDFT(NULL)) ;
+	          CDC* xpDc PDFT(nullptr)) ;
 	//- SwitchDc -- switch between relocatable/nonrelocatable
 	//              device context
 	BOOL SwitchDc(CDC * xpDc, BOOL bRelocatable) ;
@@ -516,7 +516,7 @@ public:
 	//- NodeToPoint -- return relocatable coordinates of node
 	//              adjusted by optional size object
 	CRPoint NodeToPoint(CNode * lpNode,
-	                    CSize FAR * lpcSize PDFT(NULL)) ;
+	                    CSize FAR * lpcSize PDFT(nullptr)) ;
 	//- SpecifyUpdate -- specify update rectangle
 	BOOL SpecifyUpdate(CGtlView * xpGtlView) ;
 	//- UpdateDialogs -- update modeless dialog boxes
@@ -560,23 +560,23 @@ private:
 	//- SelectNode -- algorithm when node is clicked
 	BOOL SelectNode(CNode FAR * lpNode) ;
 	//- ModifySelectNode -- modify node select/deselect
-	BOOL ModifySelectNode(CNode FAR * lpNode PDFT(NULL), BOOL bSelect PDFT(TRUE)) ;
-	//- GetSelectedNode -- return selected node, or NULL if none
+	BOOL ModifySelectNode(CNode FAR * lpNode PDFT(nullptr), BOOL bSelect PDFT(TRUE)) ;
+	//- GetSelectedNode -- return selected node, or nullptr if none
 	CNode FAR *GetSelectedNode(void) ;
 	//- SelectLink -- select or deselect a link
-	BOOL SelectLink(CNode FAR * lpNode1 PDFT(NULL), CNode FAR * lpNode2 PDFT(NULL)) ;
+	BOOL SelectLink(CNode FAR * lpNode1 PDFT(nullptr), CNode FAR * lpNode2 PDFT(nullptr)) ;
 	//- IfLinked -- test whether two nodes are linked
 	BOOL IfLinked(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
 	//- DeleteNode -- delete node and all connecting links
 	BOOL DeleteNode(CNode * lpNode) ;
 	//- DeleteLink -- delete link between two nodes
-	BOOL DeleteLink(CNode FAR * lpNode1 PDFT(NULL), CNode FAR * lpNode2 PDFT(NULL)) ;
+	BOOL DeleteLink(CNode FAR * lpNode1 PDFT(nullptr), CNode FAR * lpNode2 PDFT(nullptr)) ;
 	//- DeleteLinkIndex -- delete index from array of link
 	//              indices for a given node, if found
 	BOOL DeleteLinkIndex(CNode FAR * lpNode, int iLink) ;
 	//- CallUpdate -- call to update all views for this map
-	BOOL CallUpdate(CNode FAR * lpNode1 PDFT(NULL),
-	                CNode FAR * lpNode2 PDFT(NULL), BOOL bLinks PDFT(FALSE),
+	BOOL CallUpdate(CNode FAR * lpNode1 PDFT(nullptr),
+	                CNode FAR * lpNode2 PDFT(nullptr), BOOL bLinks PDFT(FALSE),
 	                BOOL bWmPaint PDFT(FALSE)) ;
 	//- CallUpdate -- call to update all views for this map
 	//              -- version which updates a bitmap object
@@ -601,10 +601,10 @@ public:
 	//- SetMetaGame -- set meta game on or off
 	BOOL SetMetaGame(BOOL bOn) ;
 	//- InitMetaGame -- init or release sprites for Meta Game
-	BOOL InitMetaGame(CGtlView * xpGtlView PDFT(NULL),
+	BOOL InitMetaGame(CGtlView * xpGtlView PDFT(nullptr),
 	                  BOOL bInit PDFT(TRUE)) ;
 	//- ProcessMove -- handle move processing
-	BOOL ProcessMove(CNode FAR * lpTargetNode PDFT(NULL)) ;
+	BOOL ProcessMove(CNode FAR * lpTargetNode PDFT(nullptr)) ;
 
 private:
 	//- MoveCharToNode -- move current character to specified node
@@ -658,7 +658,7 @@ private:
 	//- ProcessGameResult -- process result of game,
 	//              optionally generating a random win
 	BOOL ProcessGameResult(CXodj * xpXodj,
-	                       int iGameCode, LPGAMESTRUCT lpGameStruct PDFT(NULL)) ;
+	                       int iGameCode, LPGAMESTRUCT lpGameStruct PDFT(nullptr)) ;
 
 public:
 	//- GainRandomItem -- player receives a random item from store

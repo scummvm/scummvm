@@ -96,7 +96,7 @@ protected:
 	// gtlfrm.cpp : implementation of the CGtlFrame class
 public:
 	//- NewFrame -- set pointer to interface manager in frame
-	BOOL NewFrame(CBfcMgr *lpBfcMgr PDFT(NULL)) ;
+	BOOL NewFrame(CBfcMgr *lpBfcMgr PDFT(nullptr)) ;
 	BOOL ShowControlDialog(void) ;
 	BOOL ShowNodeDialog(void) ;
 	BOOL ShowInfoDialog(void) ;

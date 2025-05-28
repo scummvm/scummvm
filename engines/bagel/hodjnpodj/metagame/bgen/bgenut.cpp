@@ -124,7 +124,7 @@ BOOL CGenUtil::RandomSelection(int *xpiArray, int iNum, int iSize)
 
 	if (iSize > 0) {
 
-		if ((xpiPermutation = new int [iSize]) != NULL) {
+		if ((xpiPermutation = new int [iSize]) != nullptr) {
 
 			RandomPermutation(iNum, iSize, xpiPermutation) ;
 

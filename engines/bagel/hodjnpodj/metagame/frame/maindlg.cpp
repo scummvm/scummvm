@@ -68,14 +68,14 @@ CMainGameDlg::CMainGameDlg(CWnd *pParent, CPalette *pPalette )
             : CBmpDialog(pParent, pPalette, IDD_MAIN_SCROLL, ".\\ART\\MLSCROLL.BMP",-1,-1,FALSE)
 {
     // Inits
-    m_pPlayMetaButton = NULL;
-    m_pPlayMiniButton = NULL;
-    m_pRestoreButton = NULL;
-    m_pGrandTourButton = NULL;
-    m_pRestartMovieButton = NULL;
-    m_pQuitButton = NULL;
+    m_pPlayMetaButton = nullptr;
+    m_pPlayMiniButton = nullptr;
+    m_pRestoreButton = nullptr;
+    m_pGrandTourButton = nullptr;
+    m_pRestartMovieButton = nullptr;
+    m_pQuitButton = nullptr;
 #ifdef BMP_BUTTONS
-	m_pButtonsBmp = NULL;
+	m_pButtonsBmp = nullptr;
 	m_pButtonPalette = pPalette;
 	bDestroyBmp = TRUE;
 #endif
@@ -171,37 +171,37 @@ void CMainGameDlg::OnOK(void)
 void CMainGameDlg::ClearDialogImage(void)
 {
 /*
-    if ( m_pPlayMetaButton != NULL ) {
+    if ( m_pPlayMetaButton != nullptr ) {
         delete m_pPlayMetaButton;
-        m_pPlayMetaButton = NULL;
+        m_pPlayMetaButton = nullptr;
     }
 		
-    if ( m_pPlayMiniButton != NULL ) {
+    if ( m_pPlayMiniButton != nullptr ) {
         delete m_pPlayMiniButton;
-        m_pPlayMiniButton = NULL;
+        m_pPlayMiniButton = nullptr;
     }
 
-    if ( m_pRestoreButton != NULL ) {
+    if ( m_pRestoreButton != nullptr ) {
         delete m_pRestoreButton;
-        m_pRestoreButton = NULL;
+        m_pRestoreButton = nullptr;
     }
 		
-    if ( m_pGrandTourButton != NULL ) {
+    if ( m_pGrandTourButton != nullptr ) {
         delete m_pGrandTourButton;
-        m_pGrandTourButton = NULL;
+        m_pGrandTourButton = nullptr;
     }
 		
-    if ( m_pRestartMovieButton != NULL ) {
+    if ( m_pRestartMovieButton != nullptr ) {
         delete m_pRestartMovieButton;
-        m_pRestartMovieButton = NULL;
+        m_pRestartMovieButton = nullptr;
     }
 		
-    if ( m_pQuitButton != NULL ) {
+    if ( m_pQuitButton != nullptr ) {
         delete m_pQuitButton;
-        m_pQuitButton = NULL;
+        m_pQuitButton = nullptr;
     }
 
-    ValidateRect(NULL);
+    ValidateRect(nullptr);
 */
 }
 
@@ -210,10 +210,10 @@ BOOL CMainGameDlg::OnInitDialog()
 {
 BOOL    bSuccess;
 #ifdef BMP_BUTTONS
-CBitmap	*pUp = NULL;
-CBitmap	*pDn = NULL;
-CBitmap	*pFcs = NULL;
-CBitmap	*pDs = NULL;
+CBitmap	*pUp = nullptr;
+CBitmap	*pDn = nullptr;
+CBitmap	*pFcs = nullptr;
+CBitmap	*pDs = nullptr;
 int		nTop = 0;
 int		nLeft = 0;
 int		nWidth = 270;
@@ -226,20 +226,20 @@ CDC		*pDC;
 #ifndef BMP_BUTTONS
 
     m_pPlayMetaButton = new CColorButton();
-    ASSERT( m_pPlayMetaButton != NULL );
+    ASSERT( m_pPlayMetaButton != nullptr );
     m_pPlayMetaButton->SetPalette( m_pPalette );
     bSuccess = m_pPlayMetaButton->SetControl( IDC_PLAY_META, this );
     ASSERT( bSuccess );
 
     
     m_pPlayMiniButton = new CColorButton();
-    ASSERT( m_pPlayMiniButton != NULL );
+    ASSERT( m_pPlayMiniButton != nullptr );
     m_pPlayMiniButton->SetPalette( m_pPalette );
     bSuccess = m_pPlayMiniButton->SetControl( IDC_PLAY_MINI, this );
     ASSERT( bSuccess );
     
     m_pRestoreButton = new CColorButton();
-    ASSERT( m_pRestoreButton != NULL );
+    ASSERT( m_pRestoreButton != nullptr );
     m_pRestoreButton->SetPalette( m_pPalette );
     bSuccess = m_pRestoreButton->SetControl( IDC_RESTORE_GAME, this );
     if (!FileExists(gpszSaveGameFile)) {
@@ -248,19 +248,19 @@ CDC		*pDC;
     ASSERT( bSuccess );
     
     m_pGrandTourButton = new CColorButton();
-    ASSERT( m_pGrandTourButton != NULL );
+    ASSERT( m_pGrandTourButton != nullptr );
     m_pGrandTourButton->SetPalette( m_pPalette );
     bSuccess = m_pGrandTourButton->SetControl( IDC_GRAND_TOUR, this );
     ASSERT( bSuccess );
     
     m_pRestartMovieButton = new CColorButton();
-    ASSERT( m_pRestartMovieButton != NULL );
+    ASSERT( m_pRestartMovieButton != nullptr );
     m_pRestartMovieButton->SetPalette( m_pPalette );
     bSuccess = m_pRestartMovieButton->SetControl( IDC_RESTART_MOVIE, this );
     ASSERT( bSuccess );
     
     m_pQuitButton = new CColorButton();
-    ASSERT( m_pQuitButton != NULL );
+    ASSERT( m_pQuitButton != nullptr );
     m_pQuitButton->SetPalette( m_pPalette );
     bSuccess = m_pQuitButton->SetControl( IDC_QUIT_GAME, this );
     ASSERT( bSuccess );
@@ -269,7 +269,7 @@ CDC		*pDC;
     pDC = GetDC();
 
 	if ( bDestroyBmp )
-    	m_pButtonsBmp = FetchBitmap( pDC, NULL, BUTTONSBMP );
+    	m_pButtonsBmp = FetchBitmap( pDC, nullptr, BUTTONSBMP );
 
 	pUp = ExtractBitmap( pDC, m_pButtonsBmp, m_pButtonPalette, nLeft, nTop, nWidth, nHeight );
 	nTop+=34;
@@ -281,13 +281,13 @@ CDC		*pDC;
 	nTop+=34;
 	
     m_pPlayMetaButton = new CBmpButton();
-    ASSERT( m_pPlayMetaButton != NULL );
+    ASSERT( m_pPlayMetaButton != nullptr );
     bSuccess = m_pPlayMetaButton->LoadBitmaps( m_pButtonPalette, pUp, pDn, pFcs, pDs );
 	ASSERT( bSuccess );
     bSuccess = m_pPlayMetaButton->SetControl( IDC_PLAY_META, this );
 	ASSERT( bSuccess );
 
-	pUp = pDn = pFcs = pDs = NULL;
+	pUp = pDn = pFcs = pDs = nullptr;
 	nLeft+=270;
 	nTop = 0;
 	pUp = ExtractBitmap( pDC, m_pButtonsBmp, m_pButtonPalette, nLeft, nTop, nWidth, nHeight );
@@ -300,7 +300,7 @@ CDC		*pDC;
 	nTop+=34;
 	
     m_pRestoreButton = new CBmpButton();
-    ASSERT( m_pRestoreButton != NULL );
+    ASSERT( m_pRestoreButton != nullptr );
     bSuccess = m_pRestoreButton->LoadBitmaps( m_pButtonPalette, pUp, pDn, pFcs, pDs );
 	ASSERT( bSuccess );
     bSuccess = m_pRestoreButton->SetControl( IDC_RESTORE_GAME, this );
@@ -309,7 +309,7 @@ CDC		*pDC;
     }
 	ASSERT( bSuccess );
 	
-	pUp = pDn = pFcs = pDs = NULL;
+	pUp = pDn = pFcs = pDs = nullptr;
 	nLeft+=270;
 	nTop = 0;
 	pUp = ExtractBitmap( pDC, m_pButtonsBmp, m_pButtonPalette, nLeft, nTop, nWidth, nHeight );
@@ -322,13 +322,13 @@ CDC		*pDC;
 	nTop+=34;
 	
     m_pPlayMiniButton = new CBmpButton();
-    ASSERT( m_pPlayMiniButton != NULL );
+    ASSERT( m_pPlayMiniButton != nullptr );
     bSuccess = m_pPlayMiniButton->LoadBitmaps( m_pButtonPalette, pUp, pDn, pFcs, pDs );
 	ASSERT( bSuccess );
     bSuccess = m_pPlayMiniButton->SetControl( IDC_PLAY_MINI, this );
 	ASSERT( bSuccess );
 	
-	pUp = pDn = pFcs = pDs = NULL;
+	pUp = pDn = pFcs = pDs = nullptr;
 	nLeft+=270;
 	nTop = 0;
 	pUp = ExtractBitmap( pDC, m_pButtonsBmp, m_pButtonPalette, nLeft, nTop, nWidth, nHeight );
@@ -341,13 +341,13 @@ CDC		*pDC;
 	nTop+=34;
 	
     m_pGrandTourButton = new CBmpButton();
-    ASSERT( m_pGrandTourButton != NULL );
+    ASSERT( m_pGrandTourButton != nullptr );
     bSuccess = m_pGrandTourButton->LoadBitmaps( m_pButtonPalette, pUp, pDn, pFcs, pDs );
 	ASSERT( bSuccess );
     bSuccess = m_pGrandTourButton->SetControl( IDC_GRAND_TOUR, this );
 	ASSERT( bSuccess );
 	
-	pUp = pDn = pFcs = pDs = NULL;
+	pUp = pDn = pFcs = pDs = nullptr;
 	nLeft+=270;
 	nTop = 0;
 	pUp = ExtractBitmap( pDC, m_pButtonsBmp, m_pButtonPalette, nLeft, nTop, nWidth, nHeight );
@@ -360,13 +360,13 @@ CDC		*pDC;
 	nTop+=34;
 	
     m_pRestartMovieButton = new CBmpButton();
-    ASSERT( m_pRestartMovieButton != NULL );
+    ASSERT( m_pRestartMovieButton != nullptr );
     bSuccess = m_pRestartMovieButton->LoadBitmaps( m_pButtonPalette, pUp, pDn, pFcs, pDs );
 	ASSERT( bSuccess );
     bSuccess = m_pRestartMovieButton->SetControl( IDC_RESTART_MOVIE, this );
 	ASSERT( bSuccess );
 	
-	pUp = pDn = pFcs = pDs = NULL;
+	pUp = pDn = pFcs = pDs = nullptr;
 	nLeft+=270;
 	nTop = 0;
 	pUp = ExtractBitmap( pDC, m_pButtonsBmp, m_pButtonPalette, nLeft, nTop, nWidth, nHeight );
@@ -379,7 +379,7 @@ CDC		*pDC;
 	nTop+=34;
 	
     m_pQuitButton = new CBmpButton();
-    ASSERT( m_pQuitButton != NULL );
+    ASSERT( m_pQuitButton != nullptr );
     bSuccess = m_pQuitButton->LoadBitmaps( m_pButtonPalette, pUp, pDn, pFcs, pDs );
 	ASSERT( bSuccess );
     bSuccess = m_pQuitButton->SetControl( IDC_QUIT_GAME, this );
@@ -440,41 +440,41 @@ void CMainGameDlg::OnDestroy()
 {
 #ifdef BMP_BUTTONS
 
-	if (( m_pButtonsBmp != NULL ) && ( bDestroyBmp )){
+	if (( m_pButtonsBmp != nullptr ) && ( bDestroyBmp )){
 		delete m_pButtonsBmp;
-		m_pButtonsBmp = NULL;
+		m_pButtonsBmp = nullptr;
 	}
 
 #endif
 
-    if ( m_pPlayMetaButton != NULL ) {
+    if ( m_pPlayMetaButton != nullptr ) {
         delete m_pPlayMetaButton;
-        m_pPlayMetaButton = NULL;
+        m_pPlayMetaButton = nullptr;
     }
 		
-    if ( m_pPlayMiniButton != NULL ) {
+    if ( m_pPlayMiniButton != nullptr ) {
         delete m_pPlayMiniButton;
-        m_pPlayMiniButton = NULL;
+        m_pPlayMiniButton = nullptr;
     }
 
-    if ( m_pRestoreButton != NULL ) {
+    if ( m_pRestoreButton != nullptr ) {
         delete m_pRestoreButton;
-        m_pRestoreButton = NULL;
+        m_pRestoreButton = nullptr;
     }
 		
-    if ( m_pGrandTourButton != NULL ) {
+    if ( m_pGrandTourButton != nullptr ) {
         delete m_pGrandTourButton;
-        m_pGrandTourButton = NULL;
+        m_pGrandTourButton = nullptr;
     }
 		
-    if ( m_pRestartMovieButton != NULL ) {
+    if ( m_pRestartMovieButton != nullptr ) {
         delete m_pRestartMovieButton;
-        m_pRestartMovieButton = NULL;
+        m_pRestartMovieButton = nullptr;
     }
 		
-    if ( m_pQuitButton != NULL ) {
+    if ( m_pQuitButton != nullptr ) {
         delete m_pQuitButton;
-        m_pQuitButton = NULL;
+        m_pQuitButton = nullptr;
     }
 
     CBmpDialog::OnDestroy();

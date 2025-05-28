@@ -35,7 +35,7 @@ class C1ButtonDialog : public CBmpDialog {
 public:
 
 	// standard constructor
-	C1ButtonDialog(CWnd *, CPalette *, char *, char *, char *pszText2 = NULL);
+	C1ButtonDialog(CWnd *, CPalette *, char *, char *, char *pszText2 = nullptr);
 
 private:
 	void ClearDialogImage(void);

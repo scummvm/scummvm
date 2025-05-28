@@ -30,13 +30,13 @@ CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, const char *p
 	: CDialog(nID, pParent) {
 	// can't access null pointers
 	//
-	assert(pParent != NULL);
-	assert(pPalette != NULL);
-	assert(pFileName != NULL);
+	assert(pParent != nullptr);
+	assert(pPalette != nullptr);
+	assert(pFileName != nullptr);
 
 	// Inits
 	//
-	m_pDlgBackground = NULL;
+	m_pDlgBackground = nullptr;
 	m_pParentWnd = pParent;
 	m_pPalette = pPalette;
 	m_pBmpFileName = pFileName;
@@ -53,13 +53,13 @@ CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, int nBmpID, c
 	: CDialog(nID, pParent) {
 	// can't access null pointers
 	//
-	assert(pParent != NULL);
-	assert(pPalette != NULL);
+	assert(pParent != nullptr);
+	assert(pPalette != nullptr);
 
 	// Inits
 	//
-	m_pDlgBackground = NULL;
-	m_pBmpFileName = NULL;
+	m_pDlgBackground = nullptr;
+	m_pBmpFileName = nullptr;
 	m_pParentWnd = pParent;
 	m_pPalette = pPalette;
 	m_nBmpID = nBmpID;
@@ -82,9 +82,9 @@ void CBmpDialog::DoDataExchange(CDataExchange *pDX) {
 
 
 void CBmpDialog::EndDialog(int nResult) {
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 		RefreshBackground();
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 	CDialog::EndDialog(nResult);
 }
@@ -96,14 +96,14 @@ void CBmpDialog::OnDestroy() {
 	//
 	// delete the bitmap created with FetchScreenBitmap
 	//
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 		m_pDlgBackground->DeleteObject();
 		delete m_pDlgBackground;
-		m_pDlgBackground = NULL;
+		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pParentWnd).GetUpdateRect(NULL, FALSE);
+		bUpdateNeeded = (*m_pParentWnd).GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			(*m_pParentWnd).ValidateRect(NULL);
+			(*m_pParentWnd).ValidateRect(nullptr);
 	}
 
 	CDialog::OnDestroy();
@@ -125,13 +125,13 @@ BOOL CBmpDialog::OnInitDialog() {
 	((CWnd *)this)->GetWindowRect(&cDlgRect);           // get pos/size of dialog
 
 	pDC = GetDC();
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
-	if (m_pBmpFileName == NULL)                         // try to fetch the bitmap
-		pBitmap = FetchResourceBitmap(pDC, NULL, m_nBmpID);
+	if (m_pBmpFileName == nullptr)                         // try to fetch the bitmap
+		pBitmap = FetchResourceBitmap(pDC, nullptr, m_nBmpID);
 	else
-		pBitmap = FetchBitmap(pDC, NULL, m_pBmpFileName);
-	if (pBitmap == NULL) {                              // no luck, so use what we know
+		pBitmap = FetchBitmap(pDC, nullptr, m_pBmpFileName);
+	if (pBitmap == nullptr) {                              // no luck, so use what we know
 		iDlgWidth = cDlgRect.right - cDlgRect.left;     // dlg box width
 		iDlgHeight = cDlgRect.bottom - cDlgRect.top;    // dlg box height
 	} else {
@@ -186,9 +186,9 @@ void CBmpDialog::RefreshBackground(CDC *pDC) {
 
 	// paint back the background
 	//
-	if (m_pDlgBackground != NULL) {
-		if (pDC == NULL) {
-			if ((pMyDC = GetDC()) != NULL) {
+	if (m_pDlgBackground != nullptr) {
+		if (pDC == nullptr) {
+			if ((pMyDC = GetDC()) != nullptr) {
 				PaintBitmap(pMyDC, m_pPalette, m_pDlgBackground, 0, 0);
 				ReleaseDC(pMyDC);
 			}
@@ -199,13 +199,13 @@ void CBmpDialog::RefreshBackground(CDC *pDC) {
 
 
 void CBmpDialog::OnPaint() {
-	InvalidateRect(NULL, FALSE);
+	InvalidateRect(nullptr, FALSE);
 
 	CPaintDC    dc(this);                    // device context for painting
-	CPalette *pPalOld = NULL;
+	CPalette *pPalOld = nullptr;
 	BOOL        bSuccess;
 
-	if (m_pPalette != NULL) {
+	if (m_pPalette != nullptr) {
 		pPalOld = dc.SelectPalette(m_pPalette, FALSE);
 		dc.RealizePalette();
 	}
@@ -214,14 +214,14 @@ void CBmpDialog::OnPaint() {
 	//
 	RefreshBackground(&dc);
 
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 		bSuccess = PaintBitmap(&dc, m_pPalette, m_pDlgBackground, 0, 0);
 		assert(bSuccess);
 	}
 
 	// paint the dialog (uses bitmap instead of standard windows dialog)
 	//
-	if (m_pBmpFileName != NULL) {
+	if (m_pBmpFileName != nullptr) {
 		bSuccess = PaintMaskedDIB(&dc, m_pPalette, m_pBmpFileName, 0, 0);
 	} else {
 		bSuccess = PaintMaskedResource(&dc, m_pPalette, m_nBmpID, 0, 0);
@@ -229,7 +229,7 @@ void CBmpDialog::OnPaint() {
 
 	assert(bSuccess);
 
-	if (m_pPalette != NULL)
+	if (m_pPalette != nullptr)
 		dc.SelectPalette(pPalOld, FALSE);
 }
 

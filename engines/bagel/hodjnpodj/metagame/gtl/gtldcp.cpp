@@ -50,7 +50,7 @@ int CGtlData::Decompile(const char * xpszPathName)
 
 	strncpy(m_szGtlFile, xpszPathName, sizeof(m_szGtlFile) -1) ;
 
-	if ((m_xpGtlFile = fopen(m_szGtlFile, "w")) == NULL) {
+	if ((m_xpGtlFile = fopen(m_szGtlFile, "w")) == nullptr) {
 
 		Common::sprintf_s(szOut, "\n\nCan't open output file %s.\n\n", m_szGtlFile);
 		goto cleanup ;

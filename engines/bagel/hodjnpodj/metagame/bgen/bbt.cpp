@@ -69,7 +69,7 @@ int CBbtMgr::AcceptClick(CRPoint crPoint, int iClickType)
 {
 	JXENTER(CBbtMgr::AcceptClick) ;
 	int iId = 0 ;   // return value
-	CBbutton FAR * lpPtBbt = NULL, FAR * lpBbt ;
+	CBbutton FAR * lpPtBbt = nullptr, FAR * lpBbt ;
 	BOOL bButtonUp = FALSE, bButtonDown = FALSE ;
 
 	for (lpBbt = m_lpBbtChain ; lpBbt ; lpBbt = lpBbt->m_lpBbtNext)
@@ -122,7 +122,7 @@ BOOL CBbtMgr::MoveDown(CBbutton FAR *lpDownBbt)
 	if (m_lpDownBbt && m_lpDownBbt != lpDownBbt) {
 		m_lpBgbMgr->PaintBitmapObject(m_lpDownBbt->m_lpcBgbObject1) ;
 		// paint button in up position
-		m_lpDownBbt = NULL ;    // no more down button
+		m_lpDownBbt = nullptr ;    // no more down button
 	}
 
 	if (lpDownBbt && m_lpDownBbt != lpDownBbt)
@@ -147,7 +147,7 @@ CBgbObject FAR *CBbtMgr::GetCurrentBitmap(CBbutton * xpBbt)
 // returns: pointer to Boffo bitmap object
 {
 	JXENTER(CBbtMgr::GetCurrentBitmap) ;
-	CBgbObject FAR * lpcBgbObject = NULL ;  // return value
+	CBgbObject FAR * lpcBgbObject = nullptr ;  // return value
 
 	if (xpBbt) {
 		if (xpBbt == m_lpDownBbt)

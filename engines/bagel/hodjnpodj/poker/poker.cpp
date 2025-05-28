@@ -69,9 +69,9 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 
 extern CMainPokerWindow *pcwndPoker;
 
-CPalette        *pGamePalette = NULL;           // Palette to be used throughout the game
-CPalette        *pBtnPalette = NULL;            // Palette to be used throughout the game
-CBmpButton      *pOptionButton = NULL;      // Option button object for getting to the options dialog
+CPalette        *pGamePalette = nullptr;           // Palette to be used throughout the game
+CPalette        *pBtnPalette = nullptr;            // Palette to be used throughout the game
+CBmpButton      *pOptionButton = nullptr;      // Option button object for getting to the options dialog
 
 CRect   MainRect;                           // screen area spanned by the game window
 
@@ -81,11 +81,11 @@ int roundOfPlay;
 
 CSprite             *apCard[5];             // Bitmap buttons for displaying the cards
 
-CBitmap             *pBetButtons = NULL;
+CBitmap             *pBetButtons = nullptr;
 CBmpButton  *apBet[7];
-CBitmap     *pUpBmp = NULL;
-CBitmap     *pDnBmp = NULL;
-CBitmap     *pDsBmp = NULL;
+CBitmap     *pUpBmp = nullptr;
+CBitmap     *pDnBmp = nullptr;
+CBitmap     *pDsBmp = nullptr;
 RECT        arDstBet[7] = {
 	{ BET1_LEFT, BET1_TOP, BET1_LEFT + BET1_WIDTH, BET1_TOP + BET1_HEIGHT },
 	{ BET5_LEFT, BET5_TOP, BET5_LEFT + BET5_WIDTH, BET5_TOP + BET5_HEIGHT },
@@ -98,7 +98,7 @@ RECT        arDstBet[7] = {
 
 
 CBmpButton  *apHold[5];       // Bitmap buttons for the Hold card buttons
-CBitmap     *pHoldButtons = NULL;
+CBitmap     *pHoldButtons = nullptr;
 
 RECT        arHoldRect[5] = {
 	{ HOLD1_LEFT, HOLD_TOP, HOLD1_LEFT + HOLD_WIDTH, HOLD_TOP + HOLD_HEIGHT },
@@ -108,9 +108,9 @@ RECT        arHoldRect[5] = {
 	{ HOLD5_LEFT, HOLD_TOP, HOLD5_LEFT + HOLD_WIDTH, HOLD_TOP + HOLD_HEIGHT },
 };
 
-CBmpButton          *pClearBet = NULL;      // Button for betting Clearing out the bet
-CBmpButton          *pDealButton = NULL;    // Button for deal all five cards, starts a hand
-CBmpButton          *pDrawButton = NULL;  // Button for drawing cards not held, after initial deal
+CBmpButton          *pClearBet = nullptr;      // Button for betting Clearing out the bet
+CBmpButton          *pDealButton = nullptr;    // Button for deal all five cards, starts a hand
+CBmpButton          *pDrawButton = nullptr;  // Button for drawing cards not held, after initial deal
 
 CRect   BetRect1,               // window area spanned by the Bet1 button
         BetRect5,               // window area spanned by the Bet5 button
@@ -128,7 +128,7 @@ CRect   BetRect1,               // window area spanned by the Bet1 button
 CRect   JunkRect;
 CRect   NewGameRect(21, 4, 225, 21);
 
-static  CSound  *pGameSound = NULL;                             // Game theme song
+static  CSound  *pGameSound = nullptr;                             // Game theme song
 
 LPCSTR sBitmaps[53] = {
 	"ART\\PKR1.BMP",
@@ -230,16 +230,16 @@ BOOL    bFirstTime;
  ****************************************************************/
 
 CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
-	CDC     *pDC = NULL;                        // device context for the screen
+	CDC     *pDC = nullptr;                        // device context for the screen
 	CString WndClass;
-	CDibDoc *pDibDoc = NULL;            // pointer to the background art DIB
+	CDibDoc *pDibDoc = nullptr;            // pointer to the background art DIB
 	CSize   mySize;
 	int     nCounter1;
 	BOOL    bTestCreate,                        // bool for testing the creation of each button
 	        bTestLoadBmp,                       // bool for testing the loading of bitmaps
 	        bTestDibDoc;                        // bool for testing the creation of the splash screen
 	int     i;
-	CPalette    *pOldPal = NULL;
+	CPalette    *pOldPal = nullptr;
 
 	BeginWaitCursor();
 // Define a special window class which traps double-clicks, is byte aligned
@@ -248,16 +248,16 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 // this adds a bit to our app size but avoids hangs/freezes/lockups.
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               NULL, NULL, NULL);
+	                               nullptr, nullptr, nullptr);
 
 // set the seed for the random number generator
-//srand( (unsigned)time( NULL ));
+//srand( (unsigned)time( nullptr ));
 
 // initiialize arrays
 	for (nCounter1 = 0; nCounter1 < 5; ++nCounter1) {
 		abHoldArray[nCounter1] = FALSE;
-//	apCard[nCounter1] = NULL;
-//	apHold[nCounter1] = NULL;
+//	apCard[nCounter1] = nullptr;
+//	apHold[nCounter1] = nullptr;
 	}
 
 	for (nCounter1 = 0; nCounter1 < 10; ++nCounter1)    {
@@ -311,7 +311,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 
 // Create the window as a POPUP so that no boarders, title, or menu are present;
 // this is because the game's background art will fill the entire 640x40 area.
-	Create(WndClass, "Boffo Games -- Poker", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Poker", WS_POPUP, MainRect, nullptr, 0);
 
 	ShowWindow(SW_SHOWNORMAL);
 	UpdateWindow();
@@ -326,7 +326,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	                   OPTION_TOP,
 	                   OPTION_LEFT + OPTION_WIDTH,
 	                   OPTION_TOP + OPTION_HEIGHT);
-	bTestCreate = pOptionButton->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, OptionRect, this, IDC_OPTION);
+	bTestCreate = pOptionButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, OptionRect, this, IDC_OPTION);
 	ASSERT(bTestCreate);                // test for button's creation
 	bTestLoadBmp = pOptionButton->LoadBitmaps((IDB_OPTIONSCROLL),
 	               (IDB_OPTIONSCROLL),
@@ -340,9 +340,9 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	                 DEAL_TOP,
 	                 DEAL_LEFT + DEAL_WIDTH,
 	                 DEAL_TOP + DEAL_HEIGHT);
-	bTestCreate = pDealButton->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, DealRect, this, IDC_DEAL);
+	bTestCreate = pDealButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, DealRect, this, IDC_DEAL);
 	ASSERT(bTestCreate);                // test for button's creation
-	bTestLoadBmp = pDealButton->LoadBmpBitmaps(DEALUP, DEALDOWN, NULL, DEALDISABLED);
+	bTestLoadBmp = pDealButton->LoadBmpBitmaps(DEALUP, DEALDOWN, nullptr, DEALDISABLED);
 	ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
 
 	pDrawButton = new CBmpButton;   // create the Draw button
@@ -351,17 +351,17 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	                 DRAW_TOP,
 	                 DRAW_LEFT + DRAW_WIDTH,
 	                 DRAW_TOP + DRAW_HEIGHT);
-	bTestCreate = pDrawButton->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, DrawRect, this, IDC_DRAW);
+	bTestCreate = pDrawButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, DrawRect, this, IDC_DRAW);
 	ASSERT(bTestCreate);              // test for button's creation
-	bTestLoadBmp = pDrawButton->LoadBmpBitmaps(DRAWUP, DRAWDOWN, NULL, DRAWDISABLED);
+	bTestLoadBmp = pDrawButton->LoadBmpBitmaps(DRAWUP, DRAWDOWN, nullptr, DRAWDISABLED);
 	ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
 
-	pDC = NULL;
+	pDC = nullptr;
 	pDC = GetDC();
 	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);
 	pDC->RealizePalette();
 
-	pBetButtons = FetchBitmap(pDC, NULL, BETBUTTONS);
+	pBetButtons = FetchBitmap(pDC, nullptr, BETBUTTONS);
 
 	for (i = 0; i < 7; i++) {
 
@@ -378,29 +378,29 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 		                       arDstBet[i].right - arDstBet[i].left,
 		                       arDstBet[i].bottom - arDstBet[i].top);
 
-		apBet[i] = NULL;
+		apBet[i] = nullptr;
 		apBet[i] = new CBmpButton;          // create the Bet 1 Crown button
-		ASSERT(apBet[i] != NULL);
+		ASSERT(apBet[i] != nullptr);
 
-		bTestCreate = apBet[i]->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, arDstBet[i], this, IDC_BET1 + i);
+		bTestCreate = apBet[i]->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, arDstBet[i], this, IDC_BET1 + i);
 		ASSERT(bTestCreate);      // test for button's creation
 
-		bTestLoadBmp = apBet[i]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, NULL, pDsBmp);
+		bTestLoadBmp = apBet[i]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, nullptr, pDsBmp);
 		ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
 
-		pUpBmp = NULL;
-		pDnBmp = NULL;
-		pDsBmp = NULL;
-		pBtnPalette = NULL;
+		pUpBmp = nullptr;
+		pDnBmp = nullptr;
+		pDsBmp = nullptr;
+		pBtnPalette = nullptr;
 	}
 
-	pHoldButtons = FetchBitmap(pDC, NULL, HOLDBUTTONS);
+	pHoldButtons = FetchBitmap(pDC, nullptr, HOLDBUTTONS);
 
 	for (i = 0; i < 5; i++) {
 
 		arCardRect[i].SetRect(CARD_LEFT + (i * CARD_OFFSET) - 1, CARD_TOP - 1,
 		                      CARD_LEFT + CARD_WIDTH + (i * CARD_OFFSET) - 1,  CARD_TOP + CARD_HEIGHT - 1);
-		apCard[i] = NULL;
+		apCard[i] = nullptr;
 
 		pUpBmp = ExtractBitmap(pDC, pHoldButtons, pGamePalette,
 		                       (i * HOLD_BMP_GRID_WITDH), HOLD_BMP_GRID_TOP2,
@@ -415,25 +415,25 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 		                       arHoldRect[i].right - arHoldRect[i].left,
 		                       arHoldRect[i].bottom - arHoldRect[i].top);
 
-		apHold[i] = NULL;
+		apHold[i] = nullptr;
 		apHold[i] = new CBmpButton;         // create the Bet 1 Crown button
-		ASSERT(apHold[i] != NULL);
+		ASSERT(apHold[i] != nullptr);
 
-		bTestCreate = apHold[i]->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, arHoldRect[i], this, (IDC_HOLD1 + i));
+		bTestCreate = apHold[i]->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, arHoldRect[i], this, (IDC_HOLD1 + i));
 		ASSERT(bTestCreate);      // test for button's creation
 
-		bTestLoadBmp = apHold[i]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, NULL, pDsBmp);
+		bTestLoadBmp = apHold[i]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, nullptr, pDsBmp);
 		ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
 
-		pUpBmp = NULL;
-		pDnBmp = NULL;
-		pDsBmp = NULL;
-		pBtnPalette = NULL;
+		pUpBmp = nullptr;
+		pDnBmp = nullptr;
+		pDsBmp = nullptr;
+		pBtnPalette = nullptr;
 	}
 
 	(void)pDC->SelectPalette(pOldPal, FALSE);
 	pDC->RealizePalette();
-	pOldPal = NULL;
+	pOldPal = nullptr;
 	ReleaseDC(pDC);
 
 	pClearBet = new CBmpButton;  // create the Clear Bet button
@@ -442,9 +442,9 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	                     CLEARBET_TOP,
 	                     CLEARBET_LEFT + CLEARBET_WIDTH,
 	                     CLEARBET_TOP + CLEARBET_HEIGHT);
-	bTestCreate = pClearBet->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ClearBetRect, this, IDC_CLEARBET);
+	bTestCreate = pClearBet->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ClearBetRect, this, IDC_CLEARBET);
 	ASSERT(bTestCreate);      // test for button's creation
-	bTestLoadBmp = pClearBet->LoadBmpBitmaps(CLEARBETUP, CLEARBETDOWN, NULL, CLEARBETDISABLED);
+	bTestLoadBmp = pClearBet->LoadBmpBitmaps(CLEARBETUP, CLEARBETDOWN, nullptr, CLEARBETDISABLED);
 	ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
 
 // initialize payoffs to Poporrean
@@ -468,7 +468,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	if (m_lpGameStruct->bMusicEnabled) {
 		pGameSound = new CSound(this, GAME_THEME,
 		                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		if (pGameSound != NULL)
+		if (pGameSound != nullptr)
 			(*pGameSound).midiLoopPlaySegment(6370, 33000, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
@@ -653,8 +653,8 @@ void CMainPokerWindow::SplashScreen() {
 	int             nDisplayIndex;          // keeps track of the current element in the new array
 	int             nCounter1;              // counter
 	int             i, j;
-	CText           *ptxtUserDisplay = NULL;
-	CText           *ptxtBetDisplay = NULL;
+	CText           *ptxtUserDisplay = nullptr;
+	CText           *ptxtBetDisplay = nullptr;
 	CRect           rectDisplayUser;
 	CRect           rectDisplayBet;
 
@@ -726,7 +726,7 @@ void CMainPokerWindow::SplashScreen() {
 	for (i = 0; i < 5; i++) {
 		CPoint  ptTemp(arCardRect[i].left + 1, arCardRect[i].top + 1);
 
-		if (apCard[i] != NULL)
+		if (apCard[i] != nullptr)
 			apCard[i]->PaintSprite(pDC, ptTemp.x, ptTemp.y);
 	}
 
@@ -765,7 +765,7 @@ void CMainPokerWindow::SplashScreen() {
 
 void CMainPokerWindow::ResetGame(long lAmount) {
 	int nLoop;
-	CDC     *pDC = NULL;
+	CDC     *pDC = nullptr;
 
 	// set arrays to 0
 	for (nLoop = 0; nLoop < 10; ++nLoop)    {
@@ -799,11 +799,11 @@ void CMainPokerWindow::ResetGame(long lAmount) {
 	}
 	for (nLoop = 0; nLoop < 5; ++nLoop) {
 
-		if (apCard[nLoop] != NULL) {
+		if (apCard[nLoop] != nullptr) {
 			pDC = GetDC();
 			apCard[nLoop]->EraseSprite(pDC);
 			delete apCard[nLoop];
-			apCard[nLoop] = NULL;
+			apCard[nLoop] = nullptr;
 			ReleaseDC(pDC);
 		}
 
@@ -887,11 +887,11 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	int         nHoldLoop, nLoop1;  // loop variables
 	int         nMainOption = 0;       // return from the Options dialog
 	CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette,
-	                            (m_lpGameStruct->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : NULL),
+	                            (m_lpGameStruct->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0),
 	                            lpfnOptionCallback, RULESFILE,
-	                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
+	                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
 
-	CDC     *pDC = NULL;
+	CDC     *pDC = nullptr;
 	int         nTemp = 0;
 
 	if (HIWORD(lParam) == BN_CLICKED)           // only want to look at button clicks
@@ -900,7 +900,7 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_OPTION:                                // Option button clicked, then put up the Options dialog
 			pOptionButton->ShowWindow(SW_HIDE);
 			CSound::waitWaveSounds();
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			nMainOption = dlgMainOpts.DoModal();
 			switch (nMainOption) {
 			case IDC_OPTIONS_QUIT:                      // if Quit buttons was hit, quit
@@ -916,18 +916,18 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			}
 			m_bPlaySounds = m_lpGameStruct->bSoundEffectsEnabled;
 			if (m_lpGameStruct->bMusicEnabled) {
-				if (pGameSound == NULL) {
+				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-					if (pGameSound != NULL)
+					if (pGameSound != nullptr)
 						(*pGameSound).midiLoopPlaySegment(6370, 33000, 0, FMT_MILLISEC);
 				}
 			} // end if pGameSound
 			else {
-				if (pGameSound != NULL) {
+				if (pGameSound != nullptr) {
 					pGameSound->stop();
 					delete pGameSound;
-					pGameSound = NULL;
+					pGameSound = nullptr;
 				}
 			}
 			pOptionButton->ShowWindow(SW_SHOWNORMAL);
@@ -981,7 +981,7 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				pDC = GetDC();
 				apCard[nLoop1]->EraseSprite(pDC);
 				delete apCard[nLoop1];
-				apCard[nLoop1] = NULL;
+				apCard[nLoop1] = nullptr;
 
 				ReleaseDC(pDC);
 
@@ -1079,7 +1079,7 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		case IDC_CLEARBET:
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				sndPlaySound(WAV_CLEAR, SND_ASYNC);
 			}
 			SetBet(-1);
@@ -1108,8 +1108,8 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	        rChair,
 	        rWindow,
 	        rLight;
-	CSprite *pSprite = NULL;
-	CSound  *pEffect = NULL;
+	CSprite *pSprite = nullptr;
+	CSound  *pEffect = nullptr;
 	BOOL    bSuccess;
 	int     i;
 
@@ -1128,7 +1128,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 		m_bMouseCaptured = TRUE;
 	} else if (rClock.PtInRect(point))  {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		PlayEasterEgg(pDC, (CWnd *)this, pGamePalette, CLOCK_ANIM, WAV_CLOCK, CLOCK_FRAMES,
 		              CLOCK_X, CLOCK_Y, CLOCK_SLEEP, m_bPlaySounds);
 	} else if (rBoom.PtInRect(point))  {
@@ -1143,13 +1143,13 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 		(*pSprite).SetMobile(FALSE);
 
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 
 		if (m_bPlaySounds) {
 			pEffect = new CSound((CWnd *)this, WAV_BOOM,                                 // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
-		if (pEffect != NULL) {
+		if (pEffect != nullptr) {
 			bSuccess = (*pEffect).play();
 			if (!bSuccess)
 				delete pEffect;
@@ -1164,7 +1164,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			pEffect = new CSound((CWnd *)this, WAV_STAR,                                 // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
-		if (pEffect != NULL) {
+		if (pEffect != nullptr) {
 			bSuccess = (*pEffect).play();
 			if (!bSuccess)
 				delete pEffect;
@@ -1175,16 +1175,16 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			Sleep(BOOM_SLEEP);
 			i++;
 		}
-		if (pSprite != NULL)
+		if (pSprite != nullptr)
 			delete pSprite;
 	} else if (rPencil.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)  {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		if (m_bPlaySounds) {
 			pEffect = new CSound((CWnd *)this, WAV_PENCIL,                               // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
-		if (pEffect != NULL) {
+		if (pEffect != nullptr) {
 			bSuccess = (*pEffect).play();
 			if (!bSuccess)
 				delete pEffect;
@@ -1192,12 +1192,12 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 //		sndPlaySound( WAV_PENCIL, SND_ASYNC );
 	} else if (rChair.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)  {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		if (m_bPlaySounds) {
 			pEffect = new CSound((CWnd *)this, WAV_CHAIR,                                // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
-		if (pEffect != NULL) {
+		if (pEffect != nullptr) {
 			bSuccess = (*pEffect).play();
 			if (!bSuccess)
 				delete pEffect;
@@ -1205,12 +1205,12 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 //		sndPlaySound( WAV_CHAIR, SND_ASYNC );
 	} else if (rWindow.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)  {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		if (m_bPlaySounds) {
 			pEffect = new CSound((CWnd *)this, WAV_WINDOW,                               // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
-		if (pEffect != NULL) {
+		if (pEffect != nullptr) {
 			bSuccess = (*pEffect).play();
 			if (!bSuccess)
 				delete pEffect;
@@ -1218,12 +1218,12 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 //		sndPlaySound( WAV_WINDOW, SND_ASYNC );
 	} else if (rLight.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)  {
 		CSound::waitWaveSounds();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 		if (m_bPlaySounds) {
 			pEffect = new CSound((CWnd *)this, WAV_LIGHT,                                // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
-		if (pEffect != NULL) {
+		if (pEffect != nullptr) {
 			bSuccess = (*pEffect).play();
 			if (!bSuccess)
 				delete pEffect;
@@ -1248,7 +1248,7 @@ void CMainPokerWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 
 void CMainPokerWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette,
-	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL));
+	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 
 	if (nChar == VK_F1) {
 		pOptionButton->ShowWindow(SW_HIDE);
@@ -1440,15 +1440,15 @@ void CMainPokerWindow::CheckWinningHand() {
 	        (anShownCards[4] == anShownCards[1] + 3) &&
 	        (anShownCards[0] == anShownCards[1] - 9)) {
 		if (m_bPlaySounds) {
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_PAY, SND_ASYNC);
 		}
 
-//      MessageBox("You got a Royal Flush", NULL, MB_OK);
+//      MessageBox("You got a Royal Flush", nullptr, MB_OK);
 		dlgWon.SetInitialOptions(10);
 		dlgWon.DoModal();
 
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
@@ -1466,13 +1466,13 @@ void CMainPokerWindow::CheckWinningHand() {
 	if (anShownCards[4] == anShownCards[0] + 4) {
 
 		if (m_bPlaySounds) {
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_PAY, SND_ASYNC);
 		}
-//      MessageBox("You got a Straight Flush", NULL, MB_OK);
+//      MessageBox("You got a Straight Flush", nullptr, MB_OK);
 		dlgWon.SetInitialOptions(9);
 		dlgWon.DoModal();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
@@ -1506,13 +1506,13 @@ void CMainPokerWindow::CheckWinningHand() {
 	if (nPairMatch == 6) {
 
 		if (m_bPlaySounds) {
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_PAY, SND_ASYNC);
 		}
-//      MessageBox("You got a Four of a Kind", NULL, MB_OK);
+//      MessageBox("You got a Four of a Kind", nullptr, MB_OK);
 		dlgWon.SetInitialOptions(8);
 		dlgWon.DoModal();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
@@ -1528,13 +1528,13 @@ void CMainPokerWindow::CheckWinningHand() {
 	if (nPairMatch == 4) {
 
 		if (m_bPlaySounds) {
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_PAY, SND_ASYNC);
 		}
-//      MessageBox("You got a Full House", NULL, MB_OK);
+//      MessageBox("You got a Full House", nullptr, MB_OK);
 		dlgWon.SetInitialOptions(7);
 		dlgWon.DoModal();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
@@ -1550,13 +1550,13 @@ void CMainPokerWindow::CheckWinningHand() {
 	if (nPairMatch == 3) {
 
 		if (m_bPlaySounds) {
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_PAY, SND_ASYNC);
 		}
-//      MessageBox("You got a Three of a Kind", NULL, MB_OK);
+//      MessageBox("You got a Three of a Kind", nullptr, MB_OK);
 		dlgWon.SetInitialOptions(4);
 		dlgWon.DoModal();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
@@ -1572,13 +1572,13 @@ void CMainPokerWindow::CheckWinningHand() {
 	if (nPairMatch == 2) {
 
 		if (m_bPlaySounds) {
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_PAY, SND_ASYNC);
 		}
-//      MessageBox("You got a Two Pair", NULL, MB_OK);
+//      MessageBox("You got a Two Pair", nullptr, MB_OK);
 		dlgWon.SetInitialOptions(3);
 		dlgWon.DoModal();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
@@ -1599,16 +1599,16 @@ void CMainPokerWindow::CheckWinningHand() {
 					sndPlaySound(WAV_NOPAY, SND_ASYNC);
 				dlgWon.SetInitialOptions();
 				dlgWon.DoModal();
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 			} else {
 				if (m_bPlaySounds) {
-					sndPlaySound(NULL, 0);
+					sndPlaySound(nullptr, 0);
 					sndPlaySound(WAV_PAY, SND_ASYNC);
 				}
-//      MessageBox("You got a Pair ( Jacks or Higher", NULL, MB_OK);
+//      MessageBox("You got a Pair ( Jacks or Higher", nullptr, MB_OK);
 				dlgWon.SetInitialOptions(2);
 				dlgWon.DoModal();
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 			}
 //	Check for overflow, if so then the user broken the bank, reset to zero
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
@@ -1626,16 +1626,16 @@ void CMainPokerWindow::CheckWinningHand() {
 					sndPlaySound(WAV_NOPAY, SND_ASYNC);
 				dlgWon.SetInitialOptions();
 				dlgWon.DoModal();
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 			} else {
 				if (m_bPlaySounds) {
-					sndPlaySound(NULL, 0);
+					sndPlaySound(nullptr, 0);
 					sndPlaySound(WAV_PAY, SND_ASYNC);
 				}
-//      MessageBox("You got a Pair", NULL, MB_OK);
+//      MessageBox("You got a Pair", nullptr, MB_OK);
 				dlgWon.SetInitialOptions(1);
 				dlgWon.DoModal();
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 			}
 
 //	Check for overflow, if so then the user broken the bank, reset to zero
@@ -1658,13 +1658,13 @@ void CMainPokerWindow::CheckWinningHand() {
 		        (anShownCards[4] <= (13 + nLoop)) && (anShownCards[4] >= (nLoop))) {
 
 			if (m_bPlaySounds) {
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				sndPlaySound(WAV_PAY, SND_ASYNC);
 			}
-//      MessageBox("You got a Flush", NULL, MB_OK);
+//      MessageBox("You got a Flush", nullptr, MB_OK);
 			dlgWon.SetInitialOptions(6);
 			dlgWon.DoModal();
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 				m_lUserAmount = 2147483647;
@@ -1702,13 +1702,13 @@ void CMainPokerWindow::CheckWinningHand() {
 	         (anShownCards[1] == 10))) {
 
 		if (m_bPlaySounds) {
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_PAY, SND_ASYNC);
 		}
-//      MessageBox("You got a Straight", NULL, MB_OK);
+//      MessageBox("You got a Straight", nullptr, MB_OK);
 		dlgWon.SetInitialOptions(5);
 		dlgWon.DoModal();
-		sndPlaySound(NULL, 0);
+		sndPlaySound(nullptr, 0);
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
@@ -1727,7 +1727,7 @@ void CMainPokerWindow::CheckWinningHand() {
 	dlgWon.SetInitialOptions();
 	dlgWon.DoModal();
 
-	sndPlaySound(NULL, 0);
+	sndPlaySound(nullptr, 0);
 	delete pPotRect;
 
 	return;
@@ -1772,7 +1772,7 @@ void CMainPokerWindow::SetBet(long lBet) {
 // if lBet > 0, then add it to the current bet
 		if (lBet > 0) {
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, 0);
+				sndPlaySound(nullptr, 0);
 				sndPlaySound(WAV_PLACE, SND_ASYNC);
 			}
 //      if lBet > 10000, then max bet at 10000
@@ -1840,7 +1840,7 @@ void CMainPokerWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 		}
 	return;
@@ -1884,7 +1884,7 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 		                       arHoldRect[nIndex].bottom - arHoldRect[nIndex].top);
 	} else {
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
-			sndPlaySound(NULL, SND_ASYNC);
+			sndPlaySound(nullptr, SND_ASYNC);
 			sndPlaySound(WAV_HOLD, SND_ASYNC);
 		}
 		abHoldArray[nIndex] = TRUE;
@@ -1903,16 +1903,16 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 	                       arHoldRect[nIndex].right - arHoldRect[nIndex].left,
 	                       arHoldRect[nIndex].bottom - arHoldRect[nIndex].top);
 
-	bTestLoadBmp = apHold[nIndex]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, NULL, pDsBmp);
+	bTestLoadBmp = apHold[nIndex]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, nullptr, pDsBmp);
 	ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
 
-	pUpBmp = NULL;
-	pDnBmp = NULL;
-	pDsBmp = NULL;
+	pUpBmp = nullptr;
+	pDnBmp = nullptr;
+	pDsBmp = nullptr;
 
 	(void)pDC->SelectPalette(pOldPal, FALSE);
 	pDC->RealizePalette();
-	pOldPal = NULL;
+	pOldPal = nullptr;
 	ReleaseDC(pDC);
 
 	return;
@@ -2010,10 +2010,10 @@ void CMainPokerWindow::ShowNewCard(int nCard, int nCardPos)    {
 	CDC     *pDC = GetDC();
 
 	pDC = GetDC();
-	if (apCard[nCardPos] != NULL) {
+	if (apCard[nCardPos] != nullptr) {
 		apCard[nCardPos]->EraseSprite(pDC);
 		delete apCard[nCardPos];
-		apCard[nCardPos] = NULL;
+		apCard[nCardPos] = nullptr;
 	}
 	apCard[nCardPos] = new CSprite;
 	apCard[nCardPos]->SharePalette(pGamePalette);
@@ -2141,7 +2141,7 @@ void CMainPokerWindow::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lCrowns = m_lUserAmount;
 	MFC::PostMessage(m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct);
-//	m_lpGameStruct = NULL;
+//	m_lpGameStruct = nullptr;
 //	delete m_lpGameStruct;
 	CFrameWnd::OnDestroy();
 }
@@ -2216,29 +2216,29 @@ int CMainPokerWindow::Mod(int Dividend, int Divisor) {
 void CMainPokerWindow::ReleaseResources(void) {
 	int i;
 
-	if (pGameSound != NULL) {
+	if (pGameSound != nullptr) {
 		delete pGameSound;                      // delete the game theme song
-		pGameSound = NULL;
+		pGameSound = nullptr;
 	}
 
 	for (i = 0; i < 7; i++) {
-		if (apBet[i] != NULL)
+		if (apBet[i] != nullptr)
 			delete apBet[i];
 	}
 
-	if (pUpBmp != NULL)
+	if (pUpBmp != nullptr)
 		delete pUpBmp;
 
-	if (pDnBmp != NULL)
+	if (pDnBmp != nullptr)
 		delete pDnBmp;
 
-	if (pDsBmp != NULL)
+	if (pDsBmp != nullptr)
 		delete pDsBmp;
 
-	if (pHoldButtons != NULL)
+	if (pHoldButtons != nullptr)
 		delete pHoldButtons;
 
-	if (pBetButtons != NULL)
+	if (pBetButtons != nullptr)
 		delete pBetButtons;
 
 	delete pOptionButton;                                       // release the buttons we used
@@ -2247,9 +2247,9 @@ void CMainPokerWindow::ReleaseResources(void) {
 	delete pDealButton;
 
 	for (i = 0; i < 5; i++) {
-		if (apCard[i] != NULL)
+		if (apCard[i] != nullptr)
 			delete apCard[i];
-		if (apHold[i] != NULL)
+		if (apHold[i] != nullptr)
 			delete apHold[i];
 	}
 
@@ -2291,12 +2291,12 @@ void CMainPokerWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	while (TRUE) {                                      // find and remove all keyboard events
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	while (TRUE) {                                      // find and remove all mouse events
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }
@@ -2305,7 +2305,7 @@ long CMainPokerWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -2315,7 +2315,7 @@ long CMainPokerWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -2353,8 +2353,8 @@ END_MESSAGE_MAP()
 void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
                    const char *pszAnimFile, const char *pszSoundFile,
                    int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound) {
-	CSprite *pSprite = NULL;
-	CSound  *pEffect = NULL;
+	CSprite *pSprite = nullptr;
+	CSound  *pEffect = nullptr;
 	BOOL    bSuccess;
 	int     i;
 
@@ -2372,7 +2372,7 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 		pEffect = new CSound(pWnd, pszSoundFile,                                 // Load up the sound file as a
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 	}
-	if (pEffect != NULL) {
+	if (pEffect != nullptr) {
 		bSuccess = (*pEffect).play();
 		if (!bSuccess)
 			delete pEffect;
@@ -2382,7 +2382,7 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 		(*pSprite).PaintSprite(pDC, nXLoc, nYLoc);
 		Sleep(nSleep);
 	}
-	if (pSprite != NULL)
+	if (pSprite != nullptr)
 		delete pSprite;
 
 } // end PlayEasterEgg

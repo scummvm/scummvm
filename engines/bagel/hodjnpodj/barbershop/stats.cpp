@@ -30,8 +30,8 @@ namespace HodjNPodj {
 namespace Barbershop {
 
 CStats::CStats() {
-	m_pTime = NULL;
-	m_pScore = NULL;
+	m_pTime = nullptr;
+	m_pScore = nullptr;
 
 	m_nLettersSolved = GetPrivateProfileInt(
 	                       INI_SECTION,
@@ -68,14 +68,14 @@ CStats::CStats() {
 
 
 CStats::~CStats() {
-	if (m_pScore != NULL) {
+	if (m_pScore != nullptr) {
 		delete m_pScore;
-		m_pScore = NULL;
+		m_pScore = nullptr;
 	}
 
-	if (m_pTime != NULL) {
+	if (m_pTime != nullptr) {
 		delete m_pTime;
-		m_pTime = NULL;
+		m_pTime = nullptr;
 	}
 }
 

@@ -186,8 +186,8 @@ INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
 	INT i, divergence;
 
 	/* can't access null pointers */
-	assert(mask != NULL);
-	assert(test != NULL);
+	assert(mask != nullptr);
+	assert(test != nullptr);
 
 	/* assume no match by making the divergence really high */
 	divergence = 100;
@@ -228,8 +228,8 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2, UINT nSize) {
 	BOOL bMatch;
 
 	/* can't access null pointers */
-	assert(pszStr1 != NULL);
-	assert(pszStr2 != NULL);
+	assert(pszStr1 != nullptr);
+	assert(pszStr2 != nullptr);
 
 	/* make sure that we are not going to blow the stack */
 	assert(strlen(pszStr1) < 256);
@@ -257,7 +257,7 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2, UINT nSize) {
 	StrUprStr(s1, " an ");
 	StrUprStr(s1, " a ");
 
-	if ((sp = strstr(s2, " THE ")) != NULL) {
+	if ((sp = strstr(s2, " THE ")) != nullptr) {
 		memmove(sp, sp + 5, strlen(sp + 5) + 1);
 	}
 
@@ -357,7 +357,7 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2, UINT nSize) {
 INT StrCharCount(const CHAR *str, CHAR c) {
 	INT n;
 
-	assert(str != NULL);
+	assert(str != nullptr);
 	assert(strlen(str) <= 255);
 
 	n = 0;
@@ -380,7 +380,7 @@ INT StrCharCount(const CHAR *str, CHAR c) {
 *  purpose   To search for a string inside another string while ignoring case
 *
 *
-*  returns   pointer to substring s2 in s1 or NULL if not found
+*  returns   pointer to substring s2 in s1 or nullptr if not found
 *
 **/
 
@@ -389,8 +389,8 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 	CHAR str2[80];
 
 	/* can't access null pointers */
-	assert(s1 != NULL);
-	assert(s2 != NULL);
+	assert(s1 != nullptr);
+	assert(s2 != nullptr);
 
 	/* make sure we don't blow the stack */
 	assert(strlen(s1) < 80);
@@ -408,7 +408,7 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 	p = strstr(str1, str2);
 
 	/* re-point to original string s1 */
-	if (p != NULL) {
+	if (p != nullptr) {
 		p = (char *)s1 + (p - str1);
 	}
 
@@ -420,11 +420,11 @@ VOID StrUprStr(CHAR *s1, const CHAR *s2) {
 	INT i, n;
 
 	/* can't access null pointers */
-	assert(s1 != NULL);
-	assert(s2 != NULL);
+	assert(s1 != nullptr);
+	assert(s2 != nullptr);
 
 	p = s1;
-	while ((p = StriStr(p, s2)) != NULL) {
+	while ((p = StriStr(p, s2)) != nullptr) {
 		n = strlen(s2);
 		for (i = 0; i < n; i++) {
 			*p = (CHAR)toupper(*p);
@@ -451,8 +451,8 @@ VOID StrUprStr(CHAR *s1, const CHAR *s2) {
 **/
 VOID StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
 	/* can't access null pointers */
-	assert(dest != NULL);
-	assert(source != NULL);
+	assert(dest != nullptr);
+	assert(source != nullptr);
 
 	/* source and destination cannot be the same */
 	assert(dest != source);
@@ -468,7 +468,7 @@ CHAR *StrStripChar(CHAR *str, CHAR c) {
 	CHAR *p = str;
 
 	/* can't acces a null pointer */
-	assert(str != NULL);
+	assert(str != nullptr);
 
 	/* if c was '\0' then this function would do nothing */
 	assert(c != '\0');
@@ -489,7 +489,7 @@ CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
 	CHAR *p = str;
 
 	/* can't acces a null pointer */
-	assert(str != NULL);
+	assert(str != nullptr);
 
 	/* if cOld was '\0' then this function would do nothing */
 	assert(cOld != '\0');

@@ -44,7 +44,7 @@ void CALLBACK GetSubOptions(CWnd* pParentWind);
 void add_note_to_series(int nNewValue);
 
 CBmpButton  *m_pScrollButton;               // Scroll button
-CPalette    *pGamePalette = NULL;           // Palette of current artwork
+CPalette    *pGamePalette = nullptr;           // Palette of current artwork
 BOOL        bSuccess = FALSE;
 BOOL        m_bIgnoreScrollClick;
 BOOL        bLDown = FALSE;                 // Make sure we only act on LUp if LDown was on a musician
@@ -57,14 +57,14 @@ BOOL        bPlayingBackSeries = FALSE;
 //
 // Musician-related stuff:
 //
-CSound      *pMusic = NULL;                     // The sound object for the musician's music
+CSound      *pMusic = nullptr;                     // The sound object for the musician's music
 CSprite     *pAnimSprite[MAX_BUTTONS];          // Pointer for the animating musician
 CBitmap     *pMusicians[(MAX_BUTTONS * 2)];     // Bitmap for Not_playing and Not_there
 CRect       rectMusic[MAX_BUTTONS];             // Musician locations
 int         m_nButID = 0;                       // button which is animating
 
-CText       *m_pSignText = NULL;                // The current series length display on the sign
-CBitmap     *pRibbon = NULL;                    // The blue ribbon to be put on sign at win condition
+CText       *m_pSignText = nullptr;                // The current series length display on the sign
+CBitmap     *pRibbon = nullptr;                    // The blue ribbon to be put on sign at win condition
 
 BOOL    m_bPlaying;
 BOOL    m_bNewGame = FALSE;
@@ -123,8 +123,8 @@ CMainWindow::CMainWindow() {
 	CDC     *pDC;
 	CString WndClass;
 	CRect   MainRect, StartRect;
-	CBitmap *pBackBitmap = NULL;
-	CPalette *pOldPal = NULL;
+	CBitmap *pBackBitmap = nullptr;
+	CPalette *pOldPal = nullptr;
 	int     i, j;
 
 	BeginWaitCursor();
@@ -136,9 +136,9 @@ CMainWindow::CMainWindow() {
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
 	WndClass = AfxRegisterWndClass(CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               NULL,
-	                               NULL,
-	                               NULL);
+	                               nullptr,
+	                               nullptr,
+	                               nullptr);
 
 	// Center our window on the screen
 	pDC = GetDC();
@@ -155,7 +155,7 @@ CMainWindow::CMainWindow() {
 
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
-	Create(WndClass, "Boffo Games -- Garfunkel", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Garfunkel", WS_POPUP, MainRect, nullptr, 0);
 
 	pDC = GetDC();
 	pBackBitmap = FetchBitmap(pDC, &pGamePalette, MAINSCREEN);
@@ -170,18 +170,18 @@ CMainWindow::CMainWindow() {
 
 	// Build Scroll Command button
 	m_pScrollButton = new CBmpButton;
-	ASSERT(m_pScrollButton != NULL);
+	ASSERT(m_pScrollButton != nullptr);
 	StartRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 	                  SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 	                  SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
-	bSuccess = (*m_pScrollButton).Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, StartRect, this, IDC_SCROLL);
+	bSuccess = (*m_pScrollButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, StartRect, this, IDC_SCROLL);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, NULL, NULL);
+	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, 0, 0);
 	ASSERT(bSuccess);
 	m_bIgnoreScrollClick = FALSE;
 
 	if (pGameInfo->bPlayingMetagame)                         // only in metamode
-		pRibbon = FetchBitmap(pDC, NULL, RIBBON);            // load bitmap for ribbon
+		pRibbon = FetchBitmap(pDC, nullptr, RIBBON);            // load bitmap for ribbon
 
 	// Initialize the musician bitmaps and locations
 	rectMusic[0].SetRect(VIOLIN_LOCATION_X, VIOLIN_LOCATION_Y,
@@ -199,7 +199,7 @@ CMainWindow::CMainWindow() {
 
 	for (i = 0; i < MAX_BUTTONS; i++) {
 		for (j = 0; j < 2; j++) {
-			pMusicians[(i * 2) + j] = FetchResourceBitmap(pDC, NULL, FIRST_MUSICIAN + (i * 2) + j);
+			pMusicians[(i * 2) + j] = FetchResourceBitmap(pDC, nullptr, FIRST_MUSICIAN + (i * 2) + j);
 		}
 		pAnimSprite[i] = new CSprite;
 		(*pAnimSprite[i]).SharePalette(pGamePalette);
@@ -212,14 +212,14 @@ CMainWindow::CMainWindow() {
 	// Set up the text on the sign to display the current series length
 	StartRect.SetRect(SIGN_LOCATION_X, SIGN_LOCATION_Y,
 	                  SIGN_LOCATION_X + SIGN_WIDTH, SIGN_LOCATION_Y + SIGN_HEIGHT);
-	if ((m_pSignText = new CText()) != NULL) {
+	if ((m_pSignText = new CText()) != nullptr) {
 		(*m_pSignText).SetupText(pDC, pGamePalette, &StartRect, JUSTIFY_CENTER);
 	}
 
 	(*pDC).SelectPalette(pOldPal, FALSE);           // Select back the old palette
 	ReleaseDC(pDC);
 
-	//srand((unsigned) time(NULL));                 // seed the random number generator
+	//srand((unsigned) time(nullptr));                 // seed the random number generator
 
 	m_bPlayGame = TRUE;
 
@@ -278,7 +278,7 @@ CMainWindow::CMainWindow() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(NULL, FALSE);                    // invalidate the entire window
+	InvalidateRect(nullptr, FALSE);                    // invalidate the entire window
 	BeginPaint(&lpPaint);
 	SplashScreen();                                 // Paint the backdrop and scroll button
 	ActivateButtons(m_nNumButtons, NOT_PLAYING);     // Activate the buttons
@@ -341,18 +341,18 @@ void CMainWindow::SplashScreen() {
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CDC     *pDC;
 	CNote   *pNewNote;
-	CSound  *pEffect = NULL;
+	CSound  *pEffect = nullptr;
 
 	KillTimer(PLAYER_TIMER);
 
 	pDC = GetDC();
 
 	if (HIWORD(lParam) == BN_CLICKED) {
-		CRules  RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette, pGameInfo->bSoundEffectsEnabled ? RULES_SOUND : NULL);
+		CRules  RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette, pGameInfo->bSoundEffectsEnabled ? RULES_SOUND : nullptr);
 
 		CMainMenu COptionsWind((CWnd *)this, pGamePalette,
 		                       pGameInfo->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0,
-		                       GetSubOptions, RULES_TEXT, pGameInfo->bSoundEffectsEnabled ? RULES_SOUND : NULL, pGameInfo) ;       // Construct Option dialog
+		                       GetSubOptions, RULES_TEXT, pGameInfo->bSoundEffectsEnabled ? RULES_SOUND : nullptr, pGameInfo) ;       // Construct Option dialog
 
 		switch (wParam) {
 
@@ -365,8 +365,8 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (pNewNote) {                              // if list is not empty
 				PlayBackSeries(nNoteCount);                  // Play the first note
 				pNoteMarker = CNote::GetNoteHead();     // set checking pointer
-				pNewNote = NULL;                            // Stop pointing at the note list
-				SetTimer(PLAYER_TIMER, TIME_LIMIT, NULL);    // Give the player TIME_LIMIT to respond
+				pNewNote = nullptr;                            // Stop pointing at the note list
+				SetTimer(PLAYER_TIMER, TIME_LIMIT, nullptr);    // Give the player TIME_LIMIT to respond
 			}                                           //...to head of list
 			else                                            // no note chain,
 				m_bPlaying = FALSE;                         //...so we can't play
@@ -405,7 +405,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Wrong musician!", buf);
 					CSound::waitWaveSounds();
 
-					pNoteMarker = NULL;
+					pNoteMarker = nullptr;
 					m_bPlaying = FALSE;
 					m_bNewGame = FALSE;
 					CNote::FlushNoteList();                     // Flush the last series of notes
@@ -414,7 +414,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					break;
 				}
 				if (nCheckCount == nNoteCount) {                 // If they completed the series
-					pNoteMarker = NULL;
+					pNoteMarker = nullptr;
 					if (nNoteCount == MAX_SEQUENCE) {
 						nNoteCount++;                           // Hitting MAX increments NoteCount to MAX + 1
 						Common::sprintf_s(msg, "%d", nNoteCount - 1);    //...so return is correct
@@ -457,11 +457,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 						PlayBackSeries(nNoteCount);
 						MSG lpmsg;
 						while (PeekMessage(&lpmsg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE)) ;
-						SetTimer(PLAYER_TIMER, TIME_LIMIT, NULL);    //Reset time limit
+						SetTimer(PLAYER_TIMER, TIME_LIMIT, nullptr);    //Reset time limit
 					}
 					pNoteMarker = CNote::GetNoteHead();         //set checking pointer to head of list
 				} else
-					SetTimer(PLAYER_TIMER, TIME_LIMIT, NULL);    //Reset time limit
+					SetTimer(PLAYER_TIMER, TIME_LIMIT, nullptr);    //Reset time limit
 			}
 
 			break;
@@ -551,7 +551,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	        rectSign,
 	        rectBench;
 	CDC     *pDC;
-	CSound  *pEffect = NULL;
+	CSound  *pEffect = nullptr;
 	int     i,
 	        nPick = 0;
 	char    bufName[64];
@@ -608,7 +608,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_AUTODELETE); // Wave file, sync, to delete itself
 			(*pEffect).play();                                                      // Play the sound
 			if (m_bPlayGame && m_bNewGame)
-				SetTimer(PLAYER_TIMER, TIME_LIMIT, NULL);                        // Reset response time limit
+				SetTimer(PLAYER_TIMER, TIME_LIMIT, nullptr);                        // Reset response time limit
 		}
 	} else if (rectSign.PtInRect(point)) {
 		if (pGameInfo->bSoundEffectsEnabled) {
@@ -635,7 +635,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_AUTODELETE);             // Wave file, to delete itself
 			(*pEffect).play();                                                  // play the sound
 			if (m_bPlayGame && m_bNewGame)
-				SetTimer(PLAYER_TIMER, TIME_LIMIT, NULL);                            // Reset response time limit
+				SetTimer(PLAYER_TIMER, TIME_LIMIT, nullptr);                            // Reset response time limit
 		}
 	} else if (rectBench.PtInRect(point)) {
 		if (pGameInfo->bSoundEffectsEnabled) {
@@ -644,7 +644,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_AUTODELETE);             // Wave file, to delete itself
 			(*pEffect).play();                                                  // Play the sound
 			if (m_bPlayGame && m_bNewGame)
-				SetTimer(PLAYER_TIMER, TIME_LIMIT, NULL);                            // Reset response time limit
+				SetTimer(PLAYER_TIMER, TIME_LIMIT, nullptr);                            // Reset response time limit
 		}
 	}
 
@@ -656,7 +656,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	if (m_bNewGame) {
 		if (m_bPlaying && bLDown) {
-			if (pAnimSprite[m_nButID] != NULL) {
+			if (pAnimSprite[m_nButID] != nullptr) {
 				StopAnimation();
 				MFC::SendMessage(m_hWnd, WM_COMMAND, m_nButID + IDC_A, BN_CLICKED);          // Activate hit logic
 			}
@@ -701,9 +701,9 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
  ****************************************************************/
 void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	if (bPlayingBackSeries) {
-		SetCursor(LoadCursor(NULL, IDC_WAIT));            // Refresh cursor object
+		SetCursor(LoadCursor(nullptr, IDC_WAIT));            // Refresh cursor object
 	} else {
-		SetCursor(LoadCursor(NULL, IDC_ARROW));           // Refresh cursor object
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));           // Refresh cursor object
 	}
 
 	CFrameWnd ::OnMouseMove(nFlags, point);
@@ -802,7 +802,7 @@ void CMainWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
         } // end switch
 
         if (bMusician && m_bPlaying) {
-            if (pAnimSprite[m_nButID] != NULL) {
+            if (pAnimSprite[m_nButID] != nullptr) {
                 StopAnimation();
                 ::SendMessage( m_hWnd, WM_COMMAND, m_nButID + IDC_A, BN_CLICKED );      // Activate hit logic
             }
@@ -836,8 +836,8 @@ void CMainWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
  *
  ****************************************************************/
 void CMainWindow::OnTimer(UINT nIDEvent) {
-	CDC     *pDC = NULL;
-	CSound  *pEffect = NULL;
+	CDC     *pDC = nullptr;
+	CSound  *pEffect = nullptr;
 
 	pDC = GetDC();
 
@@ -846,7 +846,7 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 	case PLAYER_TIMER: {
 		char buf[64];
 		Common::sprintf_s(buf, "Longest series:  %d", nNoteCount - 1);
-		if (pAnimSprite[m_nButID] != NULL)                                  // If there's an animation
+		if (pAnimSprite[m_nButID] != nullptr)                                  // If there's an animation
 			StopAnimation();                                        //...running, stop it
 		KillTimer(nIDEvent);                                         // Stop this timer
 		if (pGameInfo->bSoundEffectsEnabled) {
@@ -859,7 +859,7 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 
 		CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Time ran out!", buf);
 		CSound::waitWaveSounds();
-		pNoteMarker = NULL;
+		pNoteMarker = nullptr;
 		m_bPlaying = FALSE;
 		CNote::FlushNoteList();
 		if (pGameInfo->bPlayingMetagame)
@@ -889,7 +889,7 @@ void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			//InvalidateRect(NULL, FALSE);
+			//InvalidateRect(nullptr, FALSE);
 			break;
 
 		default:
@@ -946,7 +946,7 @@ void CMainWindow::StartAnimation() {
 	pDC = GetDC();
 
 	(*pAnimSprite[m_nButID]).SetCel(nNumCels[m_nButID]);
-	SetTimer(ANIM_TIMER, ANIM_SLEEP, NULL);
+	SetTimer(ANIM_TIMER, ANIM_SLEEP, nullptr);
 
 	if (pGameInfo->bSoundEffectsEnabled) {
 		pMusic = new CSound((CWnd *)this, cSoundName[m_nButID],
@@ -970,14 +970,14 @@ void CMainWindow::StopAnimation() {
 
 	KillTimer(ANIM_TIMER);
 
-	if (pAnimSprite[m_nButID] != NULL) {
+	if (pAnimSprite[m_nButID] != nullptr) {
 		pAnimSprite[m_nButID]->EraseSprite(pDC);
 	}
 
-	if (pMusic != NULL) {
+	if (pMusic != nullptr) {
 		(*pMusic).stop();
 		delete pMusic;
-		pMusic = NULL;
+		pMusic = nullptr;
 	}
 
 	CSound::clearSounds();
@@ -1015,7 +1015,7 @@ BOOL CMainWindow::GetNewSequence(int nLength) {
 
 void CMainWindow::ActivateButtons(UINT nNumActive, BOOL bState) {
 	CDC         *pDC;
-	CPalette    *pOldPal = NULL;
+	CPalette    *pOldPal = nullptr;
 	UINT i;
 
 	pDC = GetDC();
@@ -1042,11 +1042,11 @@ void add_note_to_series(int nNewValue) {
 	CNote *pNewNote;
 
 	if ((pNewNote = new CNote()) == 0) {
-		MessageBox(NULL, "Could not create note!!", NULL, MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Could not create note!!", nullptr, MB_ICONEXCLAMATION);
 	}
 	(*pNewNote).SetValue(nNewValue);
 	(*pNewNote).LinkNote();                 //Add the new note to the bottom of the list
-	pNewNote = NULL;
+	pNewNote = nullptr;
 }//end add_note_to_series
 
 void CMainWindow::PlayBackSeries(int nNumNotes) {
@@ -1058,8 +1058,8 @@ void CMainWindow::PlayBackSeries(int nNumNotes) {
 
 	bPlayingBackSeries = TRUE;
 
-//	HCURSOR HOldCursor = MFC::SetCursor( AfxGetApp ()->LoadStandardCursor( NULL ) ); // Make cursor go away
-	HCURSOR HOldCursor = MFC::SetCursor(LoadCursor(NULL, IDC_WAIT));          // Refresh cursor object
+//	HCURSOR HOldCursor = MFC::SetCursor( AfxGetApp ()->LoadStandardCursor( nullptr ) ); // Make cursor go away
+	HCURSOR HOldCursor = MFC::SetCursor(LoadCursor(nullptr, IDC_WAIT));          // Refresh cursor object
 	MFC::ShowCursor(TRUE);
 
 	pNewNote = CNote::GetNoteHead();
@@ -1076,7 +1076,7 @@ void CMainWindow::PlayBackSeries(int nNumNotes) {
 			if (i != 1) wait_awhile(5 * (NUM_SPEEDS - m_nSpeed));                     // Process events while-you-wait!
 		}
 	}
-	pNewNote = NULL;
+	pNewNote = nullptr;
 
 	MFC::ShowCursor(FALSE);
 	MFC::SetCursor(HOldCursor);
@@ -1133,28 +1133,28 @@ void CMainWindow::OnClose() {
 	CNote::FlushNoteList();                     // Delete list from memory
 	CSound::clearSounds();                      // Make sure there's no sounds on return
 
-	if (m_pSignText != NULL)
+	if (m_pSignText != nullptr)
 		delete m_pSignText;
 
 	for (i = 0; i < (MAX_BUTTONS * 2); i++) {
-		if (pMusicians[i] != NULL) {
+		if (pMusicians[i] != nullptr) {
 			//pMusicians[i]->DeleteObject;
 			delete pMusicians[i];               // Bitmap for Not_playing and Not_there
 		}
 	}
 
 	for (i = 0; i < MAX_BUTTONS; i++) {
-		if (pAnimSprite[i] != NULL) {
+		if (pAnimSprite[i] != nullptr) {
 			pAnimSprite[i]->EraseSprite(pDC);
 			delete pAnimSprite[i];
-			pAnimSprite[i] = NULL;
+			pAnimSprite[i] = nullptr;
 		}
 	}
 
-	if (m_pScrollButton != NULL)
+	if (m_pScrollButton != nullptr)
 		delete m_pScrollButton;
 
-	if (pGamePalette != NULL) {
+	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();
 		delete pGamePalette;
 	}
@@ -1185,7 +1185,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1195,7 +1195,7 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }

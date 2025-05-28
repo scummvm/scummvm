@@ -31,8 +31,8 @@ namespace GrandTour {
 HINSTANCE	hDLLInst;
 HINSTANCE 	hExeInst;
 
-CMainGTWindow	*pMainGameWnd = NULL;	// pointer to the poker's main window 
-CPalette		*pTestPalette = NULL;
+CMainGTWindow	*pMainGameWnd = nullptr;	// pointer to the poker's main window 
+CPalette		*pTestPalette = nullptr;
 HCURSOR			hGameCursor;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -40,8 +40,8 @@ HCURSOR			hGameCursor;
 
 HWND RunGrandTour( HWND hParentWnd, LPGRANDTRSTRUCT pgtGrandTourStruct ) {
 	// if the pointer has garbage in it, the clean it out
-	if ( pMainGameWnd != NULL ) {
-		pMainGameWnd = NULL;
+	if ( pMainGameWnd != nullptr ) {
+		pMainGameWnd = nullptr;
 	}
 // create a my poker window and show it
 	pMainGameWnd = new CMainGTWindow( hParentWnd, pgtGrandTourStruct );

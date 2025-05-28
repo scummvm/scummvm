@@ -80,13 +80,13 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 	ERROR_CODE errCode;
 
 	// validate input
-	assert(pszFileName != NULL);
-	assert(pBfcMgr != NULL);
-	assert(pWnd != NULL);
-	assert(pPalette != NULL);
+	assert(pszFileName != nullptr);
+	assert(pBfcMgr != nullptr);
+	assert(pWnd != nullptr);
+	assert(pPalette != nullptr);
 
 	// if not keeping track of errors externally
-	if (pErrCode == NULL)
+	if (pErrCode == nullptr)
 		pErrCode = &errCode;
 
 	// assume no error
@@ -130,7 +130,7 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 				//
 				pMyApp = AfxGetApp();
 				hCursor = pMyApp->LoadCursor(IDC_SAVE_BUSY);
-				assert(hCursor != NULL);
+				assert(hCursor != nullptr);
 				MFC::SetCursor(hCursor);
 
 				// pause for a 2 seconds to make it look good
@@ -142,7 +142,7 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 				// change cursor back to arrow
 				//
 				hCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
-				assert(hCursor != NULL);
+				assert(hCursor != nullptr);
 				MFC::SetCursor(hCursor);
 
 			} else {
@@ -207,11 +207,11 @@ ERROR_CODE GetSaveGameDescriptions(VOID) {
 	//
 	if (FileExists(gszSaveGameFileName)) {
 
-		if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+		if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != nullptr) {
 
 			// open the .SAV file
 			//
-			if ((pFile = fopen(gszSaveGameFileName, "rb")) != NULL) {
+			if ((pFile = fopen(gszSaveGameFileName, "rb")) != nullptr) {
 
 				for (i = 0; i < MAX_SAVEGAMES; i++) {
 
@@ -222,7 +222,7 @@ ERROR_CODE GetSaveGameDescriptions(VOID) {
 
 						if (!pSaveGameInfo->m_bUsed) {
 							szDescriptions[i][0] = '\0';
-							pszDesc[i] = NULL;
+							pszDesc[i] = nullptr;
 						}
 
 					} else {
@@ -276,7 +276,7 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 	errCode = ERR_NONE;
 
 	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-	assert(pBfcMgr != NULL);
+	assert(pBfcMgr != nullptr);
 
 	// if the save game file does not already exist then create one with
 	// 10 empty slots
@@ -287,14 +287,14 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 	}
 
 	// allocate 1 SGI record
-	if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+	if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != nullptr) {
 
 		ConvertToSGI(pBfcMgr, pSaveGameInfo);
 
 		// copy user's description of this saved game
 		Common::strcpy_s(pSaveGameInfo->m_szSaveGameDescription, szDescriptions[iGameNum]);
 
-		if ((pFile = fopen(gszSaveGameFileName, "r+b")) != NULL) {
+		if ((pFile = fopen(gszSaveGameFileName, "r+b")) != nullptr) {
 
 			errCode = WriteSavedGame(pFile, iGameNum, pSaveGameInfo);
 
@@ -345,7 +345,7 @@ ERROR_CODE InitSaveGameFile(VOID) {
 
 	// allocate one save game record
 	//
-	if ((pNewInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+	if ((pNewInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != nullptr) {
 
 		memset(pNewInfo, 0, sizeof(SAVEGAME_INFO));
 
@@ -355,7 +355,7 @@ ERROR_CODE InitSaveGameFile(VOID) {
 		// this slot is not used
 		pNewInfo->m_bUsed = FALSE;
 
-		if ((pFile = fopen(gszSaveGameFileName, "w+b")) != NULL) {
+		if ((pFile = fopen(gszSaveGameFileName, "w+b")) != nullptr) {
 
 			for (i = 0; i < MAX_SAVEGAMES; i++) {
 				if ((errCode = WriteSavedGame(pFile, i, pNewInfo)) != ERR_NONE)
@@ -396,9 +396,9 @@ ERROR_CODE WriteSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInf
 	ERROR_CODE errCode = ERR_NONE;
 #ifdef TODO
 	// validate explicit input
-	assert(pFile != NULL);
+	assert(pFile != nullptr);
 	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-	assert(pSaveGameInfo != NULL);
+	assert(pSaveGameInfo != nullptr);
 
 	Encrypt(pSaveGameInfo, sizeof(SAVEGAME_INFO));
 
@@ -443,9 +443,9 @@ ERROR_CODE ReadSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo
 
 #ifdef TODO
 	// validate explicit input
-	assert(pFile != NULL);
+	assert(pFile != nullptr);
 	assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-	assert(pSaveGameInfo != NULL);
+	assert(pSaveGameInfo != nullptr);
 
 	// seek to correct save game number (slot)
 	//
@@ -498,8 +498,8 @@ VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 	INVENTORY *pSaveInv;
 	INT i, j, k;
 
-	assert(pBfcMgr != NULL);
-	assert(pSaveGameInfo != NULL);
+	assert(pBfcMgr != nullptr);
+	assert(pSaveGameInfo != nullptr);
 
 	// reset entire info structure
 	memset(pSaveGameInfo, 0, sizeof(SAVEGAME_INFO));
@@ -517,7 +517,7 @@ VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 	pSaveGameInfo->m_bMusicEnabled = pBfcMgr->m_stGameStruct.bMusicEnabled;
 	pSaveGameInfo->m_bScrolling = pBfcMgr->m_bScrolling;
 
-	pSaveGameInfo->m_bNewMishMosh = (pBfcMgr->m_pMishItem != NULL);
+	pSaveGameInfo->m_bNewMishMosh = (pBfcMgr->m_pMishItem != nullptr);
 
 	pPlayer = &pBfcMgr->m_cHodj;
 	for (i = 0; i < MAX_PLAYERS; i++) {
@@ -561,7 +561,7 @@ VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 		pSavePlayer->m_iFurlongs = pPlayer->m_iFurlongs;
 		pSavePlayer->m_nTurns = pPlayer->m_nTurns;
 
-		assert(pPlayer->m_pInventory != NULL);
+		assert(pPlayer->m_pInventory != nullptr);
 
 		pSavePlayer->m_lCrowns = pPlayer->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity();
 
@@ -594,13 +594,13 @@ VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 				break;
 			}
 
-			if (pInv != NULL) {
+			if (pInv != nullptr) {
 
 				Common::strcpy_s(pSaveInv->m_szTitle, pInv->GetTitle());
 
 				k = 0;
 				pItem = pInv->FirstItem();
-				while (pItem != NULL) {
+				while (pItem != nullptr) {
 					pSaveInv->m_aItemList[k] = pItem->GetID();
 
 					assert(pSaveInv->m_aItemList[k] >= MG_OBJ_BASE && pSaveInv->m_aItemList[k] <= MG_OBJ_MAX);

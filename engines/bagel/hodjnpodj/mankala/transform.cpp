@@ -107,7 +107,7 @@ BOOL graph(HWND hWndParent, HGLOBAL hglbX, HGLOBAL hglbY, int len) {
 	                    hWndParent,
 	                    (HMENU)wChildID,
 	                    GetWindowWord(hWndParent, GWW_HINSTANCE),
-	                    NULL
+	                    nullptr
 	                   );
 #define OFFSET_X 0
 #define OFFSET_Y 2

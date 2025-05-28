@@ -30,7 +30,7 @@ namespace Poker {
 
 static CPalette *pUWonPalette;
 
-CColorButton    *pOKButton = NULL;
+CColorButton    *pOKButton = nullptr;
 
 /*****************************************************************
  *
@@ -116,12 +116,12 @@ void CUserWonDlg::OnOK(void) {
 
 void CUserWonDlg::ClearDialogImage(void) {
 
-	if (pOKButton != NULL) {
+	if (pOKButton != nullptr) {
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }
@@ -250,7 +250,7 @@ BOOL CUserWonDlg::OnInitDialog(void) {
 	CBmpDialog::OnInitDialog();
 
 	pOKButton = new CColorButton();
-	ASSERT(pOKButton != NULL);
+	ASSERT(pOKButton != nullptr);
 	pOKButton->SetPalette(pUWonPalette);
 	bSuccess = pOKButton->SetControl(IDOK, this);
 	ASSERT(bSuccess);
@@ -260,9 +260,9 @@ BOOL CUserWonDlg::OnInitDialog(void) {
 
 void CUserWonDlg::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
-	if (pOKButton != NULL) {
+	if (pOKButton != nullptr) {
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();

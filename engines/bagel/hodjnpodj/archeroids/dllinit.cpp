@@ -75,7 +75,7 @@ HWND FAR PASCAL RunArch(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	ghParentWnd = hParentWnd;
 
-	if ((pMainWnd = new CMainWindow) != NULL) {
+	if ((pMainWnd = new CMainWindow) != nullptr) {
 
 		pMainWnd->ShowWindow(SW_SHOWNORMAL);
 

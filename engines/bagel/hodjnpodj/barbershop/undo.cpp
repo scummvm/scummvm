@@ -58,8 +58,8 @@ CUndo::CUndo() {
 	                  UNDO_RIG,
 	                  UNDO_BOT
 	              );
-	m_pStack    = NULL;
-	m_pCard     = NULL;
+	m_pStack    = nullptr;
+	m_pCard     = nullptr;
 	m_nStock    = NONE;
 }
 
@@ -150,8 +150,8 @@ void CUndo::Record(CStack *pStack, CCard *pCard) {
 void CUndo::Record(int nCardsFlipped) {
 	m_nStock    = nCardsFlipped;
 
-	m_pStack    = NULL;
-	m_pCard     = NULL;
+	m_pStack    = nullptr;
+	m_pCard     = nullptr;
 }
 
 /*****************************************************************
@@ -180,8 +180,8 @@ void CUndo::Record(int nCardsFlipped) {
  *
  ****************************************************************/
 void CUndo::Reset() {
-	m_pStack    = NULL;
-	m_pCard     = NULL;
+	m_pStack    = nullptr;
+	m_pCard     = nullptr;
 	m_nStock    = NONE;
 }
 
@@ -236,7 +236,7 @@ BOOL CUndo::Undo(CDC *pDC, CBoard *pBoard, CPaint *pPaint) {
 		return TRUE;
 	} // end if
 
-	if (m_pStack == NULL)            // basic card undo?
+	if (m_pStack == nullptr)            // basic card undo?
 		return FALSE;               // No - nothing can be undone
 
 
@@ -247,7 +247,7 @@ BOOL CUndo::Undo(CDC *pDC, CBoard *pBoard, CPaint *pPaint) {
 		//
 		// messy code to handle special visual used stacking order
 		//
-		if (m_pCard->m_pPrevCard == NULL) {
+		if (m_pCard->m_pPrevCard == nullptr) {
 			pPaint->m_nUsedInd = 0;
 		} else {
 			if (m_pCard->m_pPrevCard->m_cOrigin.x == m_pCard->m_pStack->m_cRect.TopLeft().x) {

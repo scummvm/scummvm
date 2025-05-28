@@ -32,13 +32,13 @@ namespace HodjNPodj {
 namespace MazeDoom {
 
 static  CPalette *pSubOptionsPalette;
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
 
-CText   *m_pTimeLeft = NULL;
-CText   *m_pDiffTitleText = NULL;
-CText   *m_pDifficultyText = NULL;
-CText   *m_pTimerText = NULL;
+CText   *m_pTimeLeft = nullptr;
+CText   *m_pDiffTitleText = nullptr;
+CText   *m_pDifficultyText = nullptr;
+CText   *m_pTimerText = nullptr;
 
 int m_nTimeScale[10] =  {30, 45, 60, 75, 90, 120, 180, 240, 300, 600};
 
@@ -51,23 +51,23 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 	//{{AFX_DATA_INIT(COptnDlg)
 	_time = MIN_TIME;
 	_difficulty = MIN_DIFFICULTY;
-	m_pTimeLeft = NULL;
-	m_pTimerText = NULL;
-	m_pDifficultyText = NULL;
-	m_pDiffTitleText = NULL;
+	m_pTimeLeft = nullptr;
+	m_pTimerText = nullptr;
+	m_pDifficultyText = nullptr;
+	m_pDiffTitleText = nullptr;
 
 	pSubOptionsPalette = pPalette;
 	//}}AFX_DATA_INIT
 }
 
 COptnDlg::~COptnDlg() {
-	if (m_pTimeLeft != NULL)
+	if (m_pTimeLeft != nullptr)
 		delete m_pTimeLeft;
-	if (m_pTimerText != NULL)
+	if (m_pTimerText != nullptr)
 		delete m_pTimerText;
-	if (m_pDiffTitleText != NULL)
+	if (m_pDiffTitleText != nullptr)
 		delete m_pDiffTitleText;
-	if (m_pDifficultyText != NULL)
+	if (m_pDifficultyText != nullptr)
 		delete m_pDifficultyText;
 
 	CBmpDialog::OnDestroy();
@@ -123,17 +123,17 @@ BOOL COptnDlg::OnInitDialog() {
 	pDC = GetDC();
 
 	statRect.SetRect(LEFT_SIDE, 25, LEFT_SIDE + 70, 40);
-	if ((m_pTimeLeft = new CText()) != NULL) {
+	if ((m_pTimeLeft = new CText()) != nullptr) {
 		(*m_pTimeLeft).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 45, LEFT_SIDE + 80, 70);
-	if ((m_pDiffTitleText = new CText()) != NULL) {
+	if ((m_pDiffTitleText = new CText()) != nullptr) {
 		(*m_pDiffTitleText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 170, 80);
-	if ((m_pDifficultyText = new CText()) != NULL) {
+	if ((m_pDifficultyText = new CText()) != nullptr) {
 		(*m_pDifficultyText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -141,7 +141,7 @@ BOOL COptnDlg::OnInitDialog() {
 	m_ScrollDifficulty.SetScrollPos(_difficulty, TRUE);
 
 	statRect.SetRect(LEFT_SIDE, 115, LEFT_SIDE + 100, 130);
-	if ((m_pTimerText = new CText()) != NULL) {
+	if ((m_pTimerText = new CText()) != nullptr) {
 		(*m_pTimerText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -154,12 +154,12 @@ BOOL COptnDlg::OnInitDialog() {
 
 	ReleaseDC(pDC);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
@@ -322,17 +322,17 @@ void COptnDlg::OnPaint() {
 }
 
 void COptnDlg::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 } // namespace MazeDoom

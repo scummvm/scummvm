@@ -416,7 +416,7 @@ myLOGPALETTE myPalette = {0x300, 256, {
 			int     i;
 			HDC     hDC;
 
-			hDC = GetDC(NULL);                      // get screen's device context
+			hDC = GetDC(nullptr);                      // get screen's device context
 
 			nScreenWidth = GetDeviceCaps(hDC, HORZRES);
 			nScreenHeight = GetDeviceCaps(hDC, VERTRES);
@@ -424,7 +424,7 @@ myLOGPALETTE myPalette = {0x300, 256, {
 			bHasPalette = ((GetDeviceCaps(hDC, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE);
 			nColorDepth = GetDeviceCaps(hDC, PLANES) * GetDeviceCaps(hDC, BITSPIXEL);
 
-			ReleaseDC(NULL, hDC);
+			ReleaseDC(nullptr, hDC);
 
 			for (i = 0; i < SYSCOLORS; i++) {
 				oldsyscolorvalues[i] = GetSysColor(syscolorelements[i]);
@@ -467,13 +467,13 @@ myLOGPALETTE myPalette = {0x300, 256, {
 					pLogPal->palPalEntry[i].peRed = palette_table[i].red;
 					pLogPal->palPalEntry[i].peGreen = palette_table[i].green;
 					pLogPal->palPalEntry[i].peBlue = palette_table[i].blue;
-					pLogPal->palPalEntry[i].peFlags = NULL;
+					pLogPal->palPalEntry[i].peFlags = nullptr;
 				} else if (PalSize == 16)
 				for (i = 0; i < PalSize; i++) {
 					pLogPal->palPalEntry[i].peRed = mini_palette_table[i].red;
 					pLogPal->palPalEntry[i].peGreen = mini_palette_table[i].green;
 					pLogPal->palPalEntry[i].peBlue = mini_palette_table[i].blue;
-					pLogPal->palPalEntry[i].peFlags = NULL;
+					pLogPal->palPalEntry[i].peFlags = nullptr;
 				}
 
 			myPalette = CreatePalette((LPLOGPALETTE)pLogPal);

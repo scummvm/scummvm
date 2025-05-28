@@ -224,13 +224,13 @@ int nMissTurn = 0;  // 0 - nobody misses turn; 1 - Hodj misses turn; 2 - Podj mi
 
 // destructor deletes strategy information object
 CXodj::~CXodj(void) {
-	if (m_xpStrategyInfo != NULL)
+	if (m_xpStrategyInfo != nullptr)
 		delete m_xpStrategyInfo ;
 
-	if (m_pThemeSound != NULL) {
+	if (m_pThemeSound != nullptr) {
 		m_pThemeSound->stop();
 		delete m_pThemeSound;
-		m_pThemeSound = NULL;
+		m_pThemeSound = nullptr;
 	}
 }
 
@@ -250,7 +250,7 @@ BOOL CGtlData::InitProblem(void)
 //    if (lpMetaGameStruct && lpMetaGameStruct->m_bInventories)
 //  GTB - Ichanged this
 
-	if (lpMetaGameStruct != NULL)
+	if (lpMetaGameStruct != nullptr)
 		iLengthCode =
 		    (lpMetaGameStruct->m_iGameTime == SHORT_GAME)
 		    ? MG_LENGTH_SHORT
@@ -587,8 +587,8 @@ BOOL CGtlData::EndMoveProcessing(void)
 		//
 		if (!lpMetaGameStruct->m_bScrolling) {
 
-			if ((m_xpCurXodj->m_iFurlongs >= 0) && (m_xpCurXodj->m_iFurlongs < 24) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != NULL) && lpMap->m_lpcBgbObject)
-				DrawABitmap(NULL, lpMap->m_lpcBgbObject);
+			if ((m_xpCurXodj->m_iFurlongs >= 0) && (m_xpCurXodj->m_iFurlongs < 24) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != nullptr) && lpMap->m_lpcBgbObject)
+				DrawABitmap(nullptr, lpMap->m_lpcBgbObject);
 		}
 
 		if (!bExitDll && (xpXodj->m_iFurlongs == 0) && !m_bGameOver) {
@@ -699,11 +699,11 @@ VOID CGtlData::DoTransport(CXodj *pXodj, INT iNode) {
 	m_cBgbMgr.CacheLoadObject(pCurPlayer);
 
 	// if there is no DC, then get one
-	if (m_cBgbMgr.m_xpDc == NULL) {
+	if (m_cBgbMgr.m_xpDc == nullptr) {
 		m_cBgbMgr.ReInitDc();
 	}
 
-	assert(m_cBgbMgr.m_xpBsuSet != NULL);
+	assert(m_cBgbMgr.m_xpBsuSet != nullptr);
 	if (pCurPlayer->IfRelocatable()) {
 		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, TRUE);
 	} else {
@@ -744,11 +744,11 @@ VOID CGtlData::DoTransport(CXodj *pXodj, INT iNode) {
 	m_cBgbMgr.CacheLoadObject(pCurPlayer);
 
 	// if there is no DC, then get one
-	if (m_cBgbMgr.m_xpDc == NULL) {
+	if (m_cBgbMgr.m_xpDc == nullptr) {
 		m_cBgbMgr.ReInitDc();
 	}
 
-	assert(m_cBgbMgr.m_xpBsuSet != NULL);
+	assert(m_cBgbMgr.m_xpBsuSet != nullptr);
 	if (pCurPlayer->IfRelocatable()) {
 		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, TRUE);
 	} else {
@@ -796,21 +796,21 @@ BOOL CGtlData::SwitchPlayers(void)
 
 		// stop this character's theme song
 		//
-		if (m_xpCurXodj->m_pThemeSound != NULL) {
+		if (m_xpCurXodj->m_pThemeSound != nullptr) {
 			m_xpCurXodj->m_pThemeSound->stop();
 			delete m_xpCurXodj->m_pThemeSound;
-			m_xpCurXodj->m_pThemeSound = NULL;
+			m_xpCurXodj->m_pThemeSound = nullptr;
 		}
 
 		// do the switch
-		if ((m_xpCurXodj = m_xpCurXodj->m_xpXodjNext) == NULL)
+		if ((m_xpCurXodj = m_xpCurXodj->m_xpXodjNext) == nullptr)
 			m_xpCurXodj = m_xpXodjChain;
 
 		// new player has 1 more turn
 		m_xpCurXodj->m_nTurns++;
 
 		// show turn indicator
-		DrawABitmap(NULL, m_xpCurXodj->m_lpcIcon, TRUE);
+		DrawABitmap(nullptr, m_xpCurXodj->m_lpcIcon, TRUE);
 
 		// Re-center new current player
 		m_xpcGtlDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(m_xpCurXodj->m_lpcCharSprite->m_crPosition, TRUE);
@@ -822,7 +822,7 @@ BOOL CGtlData::SwitchPlayers(void)
 
 		// start new character's theme song
 		//
-		if (m_xpCurXodj->m_pThemeSound == NULL) {
+		if (m_xpCurXodj->m_pThemeSound == nullptr) {
 
 			m_xpCurXodj->m_pThemeSound = new CSound(m_xpGtlView, m_xpCurXodj->m_pszThemeFile, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 			m_xpCurXodj->m_pThemeSound->midiLoopPlaySegment(m_xpCurXodj->m_nThemeStart, m_xpCurXodj->m_nThemeEnd);
@@ -979,8 +979,8 @@ BOOL CGtlData::SwitchPlayers(void)
 
 	SetFurlongs(m_xpCurXodj);
 
-	if (!bExitDll && m_xpCurXodj->m_iFurlongs >= 0 && m_xpCurXodj->m_iFurlongs < DIMENSION(m_lpFurlongMaps) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != NULL) && lpMap->m_lpcBgbObject)
-		DrawABitmap(NULL, lpMap->m_lpcBgbObject);
+	if (!bExitDll && m_xpCurXodj->m_iFurlongs >= 0 && m_xpCurXodj->m_iFurlongs < DIMENSION(m_lpFurlongMaps) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != nullptr) && lpMap->m_lpcBgbObject)
+		DrawABitmap(nullptr, lpMap->m_lpcBgbObject);
 
 	return (bAgain);
 }
@@ -996,11 +996,11 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 {
 	JXENTER(CGtlData::InitInterface) ;
 	int iError = 0 ;        // error code
-	CXodj * xpXodj, *xpHXodj = NULL, *xpPXodj = NULL ;    // hodj/podj
+	CXodj * xpXodj, *xpHXodj = nullptr, *xpPXodj = nullptr ;    // hodj/podj
 	CHodjPodj FAR * lpCodj, FAR * lpHodj, FAR * lpPodj ;
 	// interface hodj/podj
 	int iCount ;
-	CSpinner    *pSpinner = NULL;
+	CSpinner    *pSpinner = nullptr;
 	CGtlFrame * xpGtlFrame = m_xpcGtlDoc->m_xpGtlFrame ;
 	CBfcMgr FAR * lpBfcMgr ;
 	CNode FAR * lpNode ;
@@ -1022,12 +1022,12 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 	long    lCrowns;
 	int     j;
 	BOOL    bSellItem = TRUE;
-	CItem   *pItem = NULL;
+	CItem   *pItem = nullptr;
 
 	// check to see if this is TRUE and if so then exit the function
 	bExitDll = FALSE ;  // assume no exit from DLL
 
-	if ((xpGtlFrame == NULL) || ((lpBfcMgr = xpGtlFrame->m_lpBfcMgr) == NULL)) {
+	if ((xpGtlFrame == nullptr) || ((lpBfcMgr = xpGtlFrame->m_lpBfcMgr) == nullptr)) {
 		iError = 100 ;
 		goto cleanup ;
 	}
@@ -1109,10 +1109,10 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 	// if this game is in table
 	if (xpGameEntry->m_iGameCode) {
 
-		if (m_xpCurXodj->m_pThemeSound != NULL) {
+		if (m_xpCurXodj->m_pThemeSound != nullptr) {
 			m_xpCurXodj->m_pThemeSound->stop();
 			delete m_xpCurXodj->m_pThemeSound;
-			m_xpCurXodj->m_pThemeSound = NULL;
+			m_xpCurXodj->m_pThemeSound = nullptr;
 		}
 		xpGtlFrame->m_nReturnCode = xpGameEntry->m_iGameCode;
 
@@ -1120,7 +1120,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 		// or we're not in a DLL
 		if (((m_xpCurXodj->m_bComputer) && (xpGameEntry->m_iGameCode != MG_GAME_CHALLENGE)) || !m_bGtlDll) {
 			// generate random game result, and process
-			ProcessGameResult(m_xpCurXodj, xpGameEntry->m_iGameCode, NULL);
+			ProcessGameResult(m_xpCurXodj, xpGameEntry->m_iGameCode, nullptr);
 
 		} else {
 			bExitDll = TRUE ;   // end DLL and process game
@@ -1131,10 +1131,10 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 		switch (lpBfcMgr->m_iFunctionCode) {
 
 		case MG_DLLX_QUIT:  /* quit game (game is over) */
-			if (m_xpCurXodj->m_pThemeSound != NULL) {
+			if (m_xpCurXodj->m_pThemeSound != nullptr) {
 				m_xpCurXodj->m_pThemeSound->stop();
 				delete m_xpCurXodj->m_pThemeSound;
-				m_xpCurXodj->m_pThemeSound = NULL;
+				m_xpCurXodj->m_pThemeSound = nullptr;
 			}
 			bExitDll = TRUE ;
 			break ;
@@ -1295,7 +1295,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 
 		case MG_DLLX_SCROLL:    /* display inventory */
 			if (lpMetaGameStruct->m_stGameStruct.bMusicEnabled) {
-				if (m_xpCurXodj->m_pThemeSound != NULL) {
+				if (m_xpCurXodj->m_pThemeSound != nullptr) {
 					//m_xpCurXodj->m_pThemeSound->Pause();
 				}
 			}
@@ -1312,7 +1312,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 			}
 			if (lpMetaGameStruct->m_stGameStruct.bMusicEnabled) {
 
-				if (m_xpCurXodj->m_pThemeSound != NULL) {
+				if (m_xpCurXodj->m_pThemeSound != nullptr) {
 					//m_xpCurXodj->m_pThemeSound->Resume();
 
 				} else {
@@ -1322,10 +1322,10 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 				}
 
 			} else {
-				if (m_xpCurXodj->m_pThemeSound != NULL) {
+				if (m_xpCurXodj->m_pThemeSound != nullptr) {
 					m_xpCurXodj->m_pThemeSound->stop();
 					delete m_xpCurXodj->m_pThemeSound;
-					m_xpCurXodj->m_pThemeSound = NULL;
+					m_xpCurXodj->m_pThemeSound = nullptr;
 				}
 			}
 			break ;
@@ -1365,7 +1365,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 							xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->SetQuantity((long)pItem->GetValue());
 						}
 					}
-					pItem = NULL;
+					pItem = nullptr;
 				}
 			}
 			bExitDll = FALSE ;
@@ -1411,7 +1411,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 								if ((l >= MG_OBJ_BASE) && (l <= MG_OBJ_MAX)) {
 									CItem   *item = xpXodj->m_pInventory->FindItem(l);
 
-									if (item != NULL) {
+									if (item != nullptr) {
 										if (item->GetQuantity() > 0) {
 											bHasItem = TRUE;
 										}
@@ -1425,7 +1425,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 							}
 							if (bHasItem == FALSE) {
 								CItem   *item = xpXodj->m_pGenStore->FindItem(l);
-								if (item != NULL) {
+								if (item != nullptr) {
 									if (item->GetQuantity() > 0) {
 										if (item->GetValue() < xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity()) {
 											long m = xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity() - item->GetValue();
@@ -1495,7 +1495,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 								if ((l >= MG_OBJ_BASE) && (l <= MG_OBJ_MAX)) {
 									pItem = xpXodj->m_pInventory->FindItem(l);
 
-									if (pItem != NULL) {
+									if (pItem != nullptr) {
 										if (pItem->GetQuantity() > 0) {
 											bHasItem = TRUE;
 										}
@@ -1509,7 +1509,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 							}
 							if (bHasItem == FALSE) {
 								pItem = xpXodj->m_pBlackMarket->FindItem(l);
-								if (pItem != NULL) {
+								if (pItem != nullptr) {
 									if (pItem->GetQuantity() > 0) {
 										if (pItem->GetValue() < xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity()) {
 											long m = xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity() - pItem->GetValue();
@@ -1551,17 +1551,17 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 		//
 		case MG_DLLX_SPINNER: {
 
-			if (m_xpCurXodj->m_pThemeSound != NULL) {
+			if (m_xpCurXodj->m_pThemeSound != nullptr) {
 				m_xpCurXodj->m_pThemeSound->pause();
 			}
 			m_cBgbMgr.PauseAnimations();
 			m_cBgbMgr.CacheOptimize(0);
 
-			CDC         *pDC = NULL;
-			if ((pDC = gpMyView->GetDC()) != NULL) {
+			CDC         *pDC = nullptr;
+			if ((pDC = gpMyView->GetDC()) != nullptr) {
 
 				m_cBgbMgr.m_xpBsuSet->PrepareDc(pDC, TRUE);
-				if ((pSpinner = new CSpinner(xpGtlView, pDC, 0, 0, m_xpCurXodj->m_bHodj)) != NULL) {
+				if ((pSpinner = new CSpinner(xpGtlView, pDC, 0, 0, m_xpCurXodj->m_bHodj)) != nullptr) {
 					point = pDC->GetViewportOrg();
 					point.x = abs(point.x);
 					point.y = abs(point.y);
@@ -1598,7 +1598,7 @@ BOOL CGtlData::InitInterface(int iCode, BOOL & bExitDll)
 			}
 
 			m_cBgbMgr.ResumeAnimations();
-			if (m_xpCurXodj->m_pThemeSound != NULL) {
+			if (m_xpCurXodj->m_pThemeSound != nullptr) {
 				m_xpCurXodj->m_pThemeSound->resume();
 			}
 
@@ -1731,7 +1731,7 @@ BOOL CGtlData::ReturnFromInterface(void)
 {
 	JXENTER(CGtlData::ReturnFromInterface) ;
 	int iError = 0 ;        // error code
-	CXodj * xpXodj, *xpHXodj = NULL, *xpPXodj = NULL ;    // hodj/podj
+	CXodj * xpXodj, *xpHXodj = nullptr, *xpPXodj = nullptr ;    // hodj/podj
 	CHodjPodj FAR * lpCodj, FAR * lpHodj, FAR * lpPodj ;
 	// interface hodj/podj
 	int iCount ;
@@ -1740,7 +1740,7 @@ BOOL CGtlData::ReturnFromInterface(void)
 	CNode FAR * lpNode ;
 	int iFunctionCode ;
 
-	if ((xpGtlFrame == NULL) || ((lpBfcMgr = xpGtlFrame->m_lpBfcMgr) == NULL)) {
+	if ((xpGtlFrame == nullptr) || ((lpBfcMgr = xpGtlFrame->m_lpBfcMgr) == nullptr)) {
 		iError = 100 ;
 		goto cleanup ;
 	}
@@ -2030,7 +2030,7 @@ BOOL CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 
 			// find opponent
 			//
-			if ((pOpponent = xpXodj->m_xpXodjNext) == NULL)
+			if ((pOpponent = xpXodj->m_xpXodjNext) == nullptr)
 				pOpponent = m_xpXodjChain;
 
 			if (GetGameObjectCount(xpXodj, MG_OBJ_MISH) || GetGameObjectCount(pOpponent, MG_OBJ_MISH)) {
@@ -2213,7 +2213,7 @@ BOOL CGtlData::DumpGameStatus(int iOptionFlags)
 BOOL CGtlData::ProcessGameResult(CXodj *xpXodj, int iGameCode, LPGAMESTRUCT lpGameStruct)
 // xpXodj -- player
 // iGameCode -- GM_GAME_xxxx -- game code
-// lpGameStruct -- game structure; if NULL, then generate random win
+// lpGameStruct -- game structure; if nullptr, then generate random win
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlData::ProcessGameResult) ;
@@ -2222,13 +2222,13 @@ BOOL CGtlData::ProcessGameResult(CXodj *xpXodj, int iGameCode, LPGAMESTRUCT lpGa
 	const CGameTable * xpGameEntry ;  // pointer to game table entry
 	long lMoneyWon = 0 ;         // amount of money won
 	int iWinCode ;              // MG_WIN_xxxx (win money, object, info)
-	CSound *pSound = NULL;
+	CSound *pSound = nullptr;
 	int iSoundCode = -1;
 	CGtlView * xpGtlView = (CGtlView *)m_cBgbMgr.m_xpcView ;
 
 	// if not a legal game code
 	//
-	if ((xpGameEntry = CMgStatic::FindGame(iGameCode)) == NULL) {
+	if ((xpGameEntry = CMgStatic::FindGame(iGameCode)) == nullptr) {
 		iError = 100 ;
 		goto cleanup ;
 	}
@@ -2668,7 +2668,7 @@ BOOL CGtlData::ProcessGameResult(CXodj *xpXodj, int iGameCode, LPGAMESTRUCT lpGa
 		//
 		iSoundCode -= MG_SOUND_BASE;
 		assert(iSoundCode >= 0 && iSoundCode <= MG_SOUND_MAX);
-		if ((pSound = new CSound(xpGtlView, szGameSounds[iSoundCode], SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE)) != NULL) {
+		if ((pSound = new CSound(xpGtlView, szGameSounds[iSoundCode], SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE)) != nullptr) {
 			pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
 			pSound->play();
 		}
@@ -2743,7 +2743,7 @@ BOOL CGtlData::GainRandomItem(CXodj * xpXodj)
 
 		xpItem = xpInventory->FetchItem(iItemNumber - 1);
 
-		if (xpItem == NULL) {
+		if (xpItem == nullptr) {
 			iError = 100 ;
 			goto cleanup ;
 		}
@@ -2779,7 +2779,7 @@ BOOL CGtlData::GainMoney(CXodj * xpXodj, long lCrowns)
 	long lCount = 0 ;        // total number of crowns
 	CItem * xpItem ;        // inventory item structure
 
-	if (xpXodj->m_pInventory && ((xpItem = xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)) != NULL)) {
+	if (xpXodj->m_pInventory && ((xpItem = xpXodj->m_pInventory->FindItem(MG_OBJ_CROWN)) != nullptr)) {
 
 		lCount = xpItem->m_nQuantity ;  // get quantity
 		lCount += lCrowns ;             // increment
@@ -2815,17 +2815,17 @@ BOOL CGtlData::GainMishMosh(CXodj *pXodj, long)
 	JXENTER(CGtlData::GainMishMosh) ;
 	int iError = 0 ;        // error code
 
-	if (pXodj->m_pInventory != NULL) {
+	if (pXodj->m_pInventory != nullptr) {
 
 		// add Mish/Mosh to player's inventory
 		//
-		assert(lpMetaGameStruct->m_pMishItem != NULL);
+		assert(lpMetaGameStruct->m_pMishItem != nullptr);
 		pXodj->m_pInventory->AddItem(lpMetaGameStruct->m_pMishItem);
-		lpMetaGameStruct->m_pMishItem = NULL;
+		lpMetaGameStruct->m_pMishItem = nullptr;
 
-		assert(lpMetaGameStruct->m_pMoshItem != NULL);
+		assert(lpMetaGameStruct->m_pMoshItem != nullptr);
 		pXodj->m_pInventory->AddItem(lpMetaGameStruct->m_pMoshItem);
-		lpMetaGameStruct->m_pMoshItem = NULL;
+		lpMetaGameStruct->m_pMoshItem = nullptr;
 	}
 
 // cleanup:
@@ -2852,14 +2852,14 @@ BOOL CGtlData::DivulgeInformation(CXodj * pXodj, BOOL bSecondary)
 	int iNoteID, iPersonID, iPlaceID, iLocID;
 
 	// make sure there is a valid player object
-	assert(pXodj != NULL);
+	assert(pXodj != nullptr);
 
 	// winning a mini-game
 	if (!bSecondary) {
 
 		// if there are no more primary msgs left
 		if (pXodj->m_iWinInfoWon >= pXodj->m_iWinInfoNeed) {
-//			::MessageBox(NULL,"Primary clue needed but all already given out","Debug Info",MB_OK);
+//			::MessageBox(nullptr,"Primary clue needed but all already given out","Debug Info",MB_OK);
 			iError = 100 ;      // no more primary messages
 			goto cleanup ;
 		}
@@ -2868,14 +2868,14 @@ BOOL CGtlData::DivulgeInformation(CXodj * pXodj, BOOL bSecondary)
 
 		// if there are no more secondary msgs left
 		if (pXodj->m_iSecondaryInfoWon >= pXodj->m_iSecondaryInfoNeed) {
-//			::MessageBox(NULL,"Secondary clue needed but all already given out","Debug Info",MB_OK);
+//			::MessageBox(nullptr,"Secondary clue needed but all already given out","Debug Info",MB_OK);
 			iError = 101 ;      // no more primary messages
 			goto cleanup ;
 		}
 		iClueCode = pXodj->m_iSecondaryInfoTable[pXodj->m_iSecondaryInfoWon++] ;
 	}
 
-	if (((pClueTable = CMgStatic::FindClue(pXodj->m_bHodj, iClueCode)) != NULL) && (pClueTable->m_iCluePicCode != 0)) {
+	if (((pClueTable = CMgStatic::FindClue(pXodj->m_bHodj, iClueCode)) != nullptr) && (pClueTable->m_iCluePicCode != 0)) {
 
 		if (pClueTable->m_iClueCode == MG_CLUE_GOTO) {
 			for (iK = DIMENSION(pXodj->m_iSecondaryLoc) - 1 ; iK > 0 ; --iK)
@@ -2909,7 +2909,7 @@ BOOL CGtlData::DivulgeInformation(CXodj * pXodj, BOOL bSecondary)
 			pCurXodj = &m_xpcGtlDoc->m_xpGtlFrame->m_lpBfcMgr->m_cHodj;
 
 		assert(pCurXodj->m_aClueArray[iClueCode].bUsed == FALSE);
-		assert(pCurXodj->m_aClueArray[iClueCode].pNote != NULL);
+		assert(pCurXodj->m_aClueArray[iClueCode].pNote != nullptr);
 
 		pCurXodj->m_aClueArray[iClueCode].bUsed = TRUE;
 		pNote = pCurXodj->m_aClueArray[iClueCode].pNote;
@@ -2942,7 +2942,7 @@ BOOL CGtlData::DivulgeInformation(CXodj * pXodj, BOOL bSecondary)
 		pXodj->m_pInventory->FindItem(pXodj->m_bHodj ? MG_OBJ_HODJ_NOTEBOOK : MG_OBJ_PODJ_NOTEBOOK)->AddNote(pNote);
 
 	} else {
-//		::MessageBox(NULL,"Invalid clue number detected","Debug Info",MB_OK);
+//		::MessageBox(nullptr,"Invalid clue number detected","Debug Info",MB_OK);
 		iError = 102 ;      // invalid clue number
 		goto cleanup ;
 	}
@@ -2972,7 +2972,7 @@ BOOL CGtlData::DetermineEligibility(CXodj *xpXodj, int iLocationCode, int &iLocF
 	CHodjPodj *pCurPlayer;
 	CSound *pSound;
 
-	if ((xpLocEntry = CMgStatic::FindLoc(iLocationCode)) == NULL) {
+	if ((xpLocEntry = CMgStatic::FindLoc(iLocationCode)) == nullptr) {
 		iError = 100 ;
 		goto cleanup ;
 	}
@@ -3170,7 +3170,7 @@ BOOL CGtlData::DetermineEligibility(CXodj *xpXodj, int iLocationCode, int &iLocF
 							if ((l >= MG_OBJ_BASE) && (l <= MG_OBJ_MAX)) {
 								CItem   *pItem = xpXodj->m_pInventory->FindItem(l);
 
-								if (pItem != NULL) {
+								if (pItem != nullptr) {
 									if (pItem->GetQuantity() == 0) {
 										bEligibility = TRUE;
 										break;
@@ -3216,7 +3216,7 @@ BOOL CGtlData::DetermineEligibility(CXodj *xpXodj, int iLocationCode, int &iLocF
 							if ((l >= MG_OBJ_BASE) && (l <= MG_OBJ_MAX)) {
 								CItem   *pItem = xpXodj->m_pInventory->FindItem(l);
 
-								if (pItem != NULL) {
+								if (pItem != nullptr) {
 									if (pItem->GetQuantity() == 0) {
 										bEligibility = TRUE;
 										break;
@@ -3332,8 +3332,8 @@ BOOL CGtlData::DetermineGameEligibility(CXodj *xpXodj, int iGameCode, BOOL bExec
 				bEligibility = FALSE;
 		} else if ((bEligibility) && !xpXodj->m_bComputer && (iGameCode == MG_GAME_BEACON)) {
 			int nDevCaps;
-			CDC *pDC = NULL;
-			if ((pDC = gpMyView->GetDC()) != NULL) {
+			CDC *pDC = nullptr;
+			if ((pDC = gpMyView->GetDC()) != nullptr) {
 				m_cBgbMgr.m_xpBsuSet->PrepareDc(pDC, TRUE);
 				nDevCaps = (*pDC).GetDeviceCaps(RASTERCAPS);
 				m_cBgbMgr.m_xpBsuSet->PrepareDc(pDC, FALSE);
@@ -3366,7 +3366,7 @@ long CGtlData::GetGameObjectCount(CXodj *xpXodj, int iObjectCode)
 	long lCount = 0 ;        // count of number of objects
 	CItem * xpItem ;        // inventory item structure
 
-	if (xpXodj->m_pInventory && ((xpItem = xpXodj->m_pInventory->FindItem(iObjectCode)) != NULL))
+	if (xpXodj->m_pInventory && ((xpItem = xpXodj->m_pInventory->FindItem(iObjectCode)) != nullptr))
 		lCount = xpItem->m_nQuantity ;
 
 // cleanup:
@@ -3479,7 +3479,7 @@ BOOL CGtlData::DetermineMishMoshEligibility(CXodj *xpXodj, int iLocationCode)
 		        }
 		*/
 
-		if ((xpOpponent = xpXodj->m_xpXodjNext) == NULL)
+		if ((xpOpponent = xpXodj->m_xpXodjNext) == nullptr)
 			xpOpponent = m_xpXodjChain ;    // find opponent
 
 		if (GetGameObjectCount(xpXodj, MG_OBJ_MISH) || GetGameObjectCount(xpOpponent, MG_OBJ_MISH)) {

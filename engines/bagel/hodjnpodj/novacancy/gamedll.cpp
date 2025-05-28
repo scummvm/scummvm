@@ -78,7 +78,7 @@ HWND FAR PASCAL RunNoVa(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 //    pGameParams->bPlayingMetagame = TRUE;        //meta_game simulation
 	#endif
 
-	if ((pMain = new CMainWindow) != NULL) {
+	if ((pMain = new CMainWindow) != nullptr) {
 
 		pMain->ShowWindow(SW_SHOWNORMAL);
 

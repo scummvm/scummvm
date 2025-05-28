@@ -38,7 +38,7 @@ private:
 	int     m_nBeaverTime;
 
 public:
-	CDFAOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MINIOPTIONS_DIALOG);
+	CDFAOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);
 	void SetInitialOptions(int = 8, int = 1);    // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();
@@ -65,7 +65,7 @@ private:
 	long    m_lScore;
 
 public:
-	CMsgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MESSAGEBOX);
+	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MESSAGEBOX);
 	void SetInitialOptions(int, long);   // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();

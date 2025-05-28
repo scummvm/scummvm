@@ -74,7 +74,7 @@ HWND FAR PASCAL RunBFish(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	ghParentWnd = hParentWnd;
 
-	if ((pMain = new CBFishWindow) != NULL) {
+	if ((pMain = new CBFishWindow) != nullptr) {
 
 		pMain->ShowWindow(SW_SHOWNORMAL);
 

@@ -42,7 +42,7 @@ CMapDialog::CMapDialog(CWnd* pParent, CPalette *pPalette, POINT HodjLoc, POINT P
 	m_HodjLoc = HodjLoc;
 	m_PodjLoc = PodjLoc;
 
-	m_pTextMessage = NULL;
+	m_pTextMessage = nullptr;
 
 	DoModal();
 
@@ -52,14 +52,14 @@ CMapDialog::CMapDialog(CWnd* pParent, CPalette *pPalette, POINT HodjLoc, POINT P
 }
 
 void CMapDialog::OnDestroy() {
-	if (m_pTextMessage != NULL) {
+	if (m_pTextMessage != nullptr) {
 		delete m_pTextMessage;
-		m_pTextMessage = NULL;
+		m_pTextMessage = nullptr;
 	}
 
-	if (m_pOKButton != NULL) {                        // release the button
+	if (m_pOKButton != nullptr) {                        // release the button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -104,7 +104,7 @@ BOOL CMapDialog::OnInitDialog() {
 	                 nText_col_offset + nTextWidth,
 	                 nText_row_offset + nTextHeight);
 
-	if ((m_pTextMessage = new CText()) != NULL) {
+	if ((m_pTextMessage = new CText()) != nullptr) {
 		bSuccess = (*m_pTextMessage).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
 		ASSERT(bSuccess);   // initialize the text objext
 	}
@@ -112,7 +112,7 @@ BOOL CMapDialog::OnInitDialog() {
 	ReleaseDC(pDC);
 
 	m_pOKButton = new CColorButton;                   // build a color QUIT button to let us exit
-	ASSERT(m_pOKButton != NULL);
+	ASSERT(m_pOKButton != nullptr);
 	(*m_pOKButton).SetPalette(m_pPalette);                       // set the palette to use
 	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
@@ -152,12 +152,12 @@ void CMapDialog::OnPaint() {
 }
 
 void CMapDialog::ClearDialogImage() {
-	if (m_pOKButton != NULL) {                        // release the button
+	if (m_pOKButton != nullptr) {                        // release the button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 void CMapDialog::OnOK() {

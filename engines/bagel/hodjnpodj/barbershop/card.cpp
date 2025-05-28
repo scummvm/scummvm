@@ -27,16 +27,16 @@ namespace HodjNPodj {
 namespace Barbershop {
 
 OSpr::OSpr() : CSprite() {
-	m_cCard = NULL;
+	m_cCard = nullptr;
 }
 
 CCard::CCard() {
 	m_enSuit    = (suit) suit_none;
 	m_nPip      = 0;
-	m_pPrevCard = NULL;
-	m_pNextCard = NULL;
-	m_pSprite   = NULL;
-	m_pStack    = NULL;
+	m_pPrevCard = nullptr;
+	m_pNextCard = nullptr;
+	m_pSprite   = nullptr;
+	m_pStack    = nullptr;
 	m_bIsBack   = FALSE;
 	m_cOrigin   = CPoint(0, 0);
 }
@@ -50,10 +50,10 @@ CCard::CCard(int nValue) {
 		m_nPip      = nValue % PIPS;
 	}
 
-	m_pPrevCard = NULL;
-	m_pNextCard = NULL;
-	m_pSprite   = NULL;
-	m_pStack    = NULL;
+	m_pPrevCard = nullptr;
+	m_pNextCard = nullptr;
+	m_pSprite   = nullptr;
+	m_pStack    = nullptr;
 	m_bIsBack   = FALSE;
 	m_cOrigin   = CPoint(0, 0);
 }
@@ -61,10 +61,10 @@ CCard::CCard(int nValue) {
 CCard::CCard(suit enSuit, int nPip) {
 	m_enSuit    = enSuit;
 	m_nPip      = nPip;
-	m_pPrevCard = NULL;
-	m_pNextCard = NULL;
-	m_pSprite   = NULL;
-	m_pStack    = NULL;
+	m_pPrevCard = nullptr;
+	m_pNextCard = nullptr;
+	m_pSprite   = nullptr;
+	m_pStack    = nullptr;
 	m_bIsBack   = FALSE;
 	m_cOrigin   = CPoint(0, 0);
 }

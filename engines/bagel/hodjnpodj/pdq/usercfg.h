@@ -41,7 +41,7 @@ namespace PDQ {
 
 class CUserCfgDlg : public CBmpDialog {
 public:
-	CUserCfgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_USERCFG);
+	CUserCfgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERCFG);
 
 protected:
 

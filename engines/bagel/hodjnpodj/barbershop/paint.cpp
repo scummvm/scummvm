@@ -54,13 +54,13 @@ namespace Barbershop {
  *
  ****************************************************************/
 CPaint::CPaint(CDC *pDC) {
-	CBitmap *pBmpCardSet = NULL;
-	CBitmap *pCard = NULL;
+	CBitmap *pBmpCardSet = nullptr;
+	CBitmap *pCard = nullptr;
 	BOOL    bSuccess;
 	int     i, j;
 
 	for (i = 0; i < CARDS_PER_COL; i++) {    // Initialize master alphabet list
-		pBmpCardSet = FetchBitmap(pDC, (CPalette**) NULL, lpszDeck[i]);
+		pBmpCardSet = FetchBitmap(pDC, (CPalette**) nullptr, lpszDeck[i]);
 		ASSERT(pBmpCardSet);
 
 		for (j = 0; j < CARDS_PER_ROW; j ++) {
@@ -85,9 +85,9 @@ CPaint::CPaint(CDC *pDC) {
 			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMasked(TRUE);
 		}  // end for
 
-		if (pBmpCardSet != NULL) {
+		if (pBmpCardSet != nullptr) {
 			delete pBmpCardSet;
-			pBmpCardSet = NULL;
+			pBmpCardSet = nullptr;
 		} // end if
 	}  // end for
 
@@ -221,7 +221,7 @@ void CPaint::Board(CDC *pDC, CBoard *pBoard) {
 	************************************************************/
 	pCard[0]    = pBoard->GetStack(stock)->Bottom();        // Get first card in stack
 	i           = 0;
-	while (pCard[0] != NULL) {
+	while (pCard[0] != nullptr) {
 		m_pSprite = new OSpr();             // set up visual sprite
 		m_cCardSet[m_nCardBack]->DuplicateSprite(pDC, (CSprite*) m_pSprite);
 		(*m_pSprite).LinkSprite();
@@ -244,7 +244,7 @@ void CPaint::Refresh(CDC *pDC, CBoard *pBoard) {
 	CPoint  cPos;
 
 	m_pSprite = (OSpr*) OSpr::GetSpriteChain();
-	if (m_pSprite == NULL)                   // any sprites to refresh?
+	if (m_pSprite == nullptr)                   // any sprites to refresh?
 		return;                                 // no
 
 	OSpr::ClearBackgrounds();
@@ -252,8 +252,8 @@ void CPaint::Refresh(CDC *pDC, CBoard *pBoard) {
 	pStack      = pBoard->GetStack(fnd);        // refresh foundation
 	pCard       = pStack->Bottom();
 	nCardPos    = 0;
-	while (pCard != NULL) {
-		if (pCard->m_pSprite != NULL) {
+	while (pCard != nullptr) {
+		if (pCard->m_pSprite != nullptr) {
 			pCard->m_pSprite->RefreshSprite(pDC);
 		}
 		pCard = pCard->m_pNextCard;
@@ -265,8 +265,8 @@ void CPaint::Refresh(CDC *pDC, CBoard *pBoard) {
 		pCard   = pStack->Bottom();
 		nCardPos = 0;
 
-		while (pCard != NULL) {
-			if (pCard->m_pSprite != NULL) {
+		while (pCard != nullptr) {
+			if (pCard->m_pSprite != nullptr) {
 				pCard->m_pSprite->RefreshSprite(pDC);
 			}
 			pCard = pCard->m_pNextCard;
@@ -277,8 +277,8 @@ void CPaint::Refresh(CDC *pDC, CBoard *pBoard) {
 	pStack      = pBoard->GetStack(stock);      // refresh stock top card only
 	pCard       = pStack->Bottom();
 	nCardPos    = 0;
-	while (pCard != NULL) {
-		if (pCard->m_pSprite != NULL) {
+	while (pCard != nullptr) {
+		if (pCard->m_pSprite != nullptr) {
 			pCard->m_pSprite->RefreshSprite(pDC);
 		}
 		pCard = pCard->m_pNextCard;
@@ -288,8 +288,8 @@ void CPaint::Refresh(CDC *pDC, CBoard *pBoard) {
 	pStack      = pBoard->GetStack(used);       // refresh used stack
 	pCard       = pStack->Bottom();
 	nCardPos    = 0;
-	while (pCard != NULL) {
-		if (pCard->m_pSprite != NULL) {
+	while (pCard != nullptr) {
+		if (pCard->m_pSprite != nullptr) {
 			pCard->m_pSprite->RefreshSprite(pDC);
 		}
 		pCard = pCard->m_pNextCard;
@@ -298,8 +298,8 @@ void CPaint::Refresh(CDC *pDC, CBoard *pBoard) {
 }
 
 CCard *CPaint::IsOnCard(CPoint cPoint) {
-	if ((m_pSprite = (OSpr *) m_pSprite->Touched(cPoint)) == NULL)
-		return NULL;
+	if ((m_pSprite = (OSpr *) m_pSprite->Touched(cPoint)) == nullptr)
+		return nullptr;
 
 	return m_pSprite->m_cCard->m_pStack->Top();
 }
@@ -367,7 +367,7 @@ void CPaint::FlipCard(CDC *pDC, CCard *pCard) {
 void CPaint::Stack(CDC *pDC, CCard *pCard, int nSize) {
 	int i;
 
-	if (pCard == NULL)
+	if (pCard == nullptr)
 		return;
 
 	if (nSize == -1) {               // funct overloaded?
@@ -402,7 +402,7 @@ void CPaint::Stack(CDC *pDC, CCard *pCard, int nSize) {
 		break;
 
 	default:
-		if (pCard->m_pPrevCard != NULL) {    // card face req pos?
+		if (pCard->m_pPrevCard != nullptr) {    // card face req pos?
 			if (pCard->m_pPrevCard->m_bIsBack == FALSE) {
 				pCard->m_cOrigin.x = pCard->m_pPrevCard->m_cOrigin.x + STACK_FACE_DX;
 				pCard->m_cOrigin.y = pCard->m_pPrevCard->m_cOrigin.y + STACK_FACE_DY;
@@ -493,7 +493,7 @@ void CPaint::ChangeBack(CDC *pDC, CBoard *pBoard, int nBack) {
 		pStack  = pBoard->GetStack((loc) i);
 		pCard   = pStack->Bottom();
 
-		while (pCard != NULL) {
+		while (pCard != nullptr) {
 			if (pCard->m_bIsBack == FALSE) {
 				pCard = pCard->m_pNextCard;
 				continue;

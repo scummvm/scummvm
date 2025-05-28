@@ -82,9 +82,9 @@ public:
 	//
 	BOOL InitBitmapObject(CBgbObject *, XPSTR);
 	BOOL SetPosition(CBgbObject *, CRPoint);
-	BOOL PaintBitmapObject(CBgbObject *, BOOL bPaint PDFT(FALSE), CRect *p = NULL);
+	BOOL PaintBitmapObject(CBgbObject *, BOOL bPaint PDFT(FALSE), CRect *p = nullptr);
 	BOOL AnimateSprite(CBgbObject *, CPoint, CPoint);
-	BOOL InitDc(CView * xpView, CBsuSet *xpBsuSet PDFT(NULL), CDC * xpDc PDFT(NULL));
+	BOOL InitDc(CView * xpView, CBsuSet *xpBsuSet PDFT(nullptr), CDC * xpDc PDFT(nullptr));
 	BOOL ReInitDc(void);
 	BOOL AdjustLockCount(int iIncr);
 	BOOL SetBrush(COLORREF cBrushColor, int iBrushStyle PDFT(BS_SOLID));

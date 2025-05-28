@@ -46,8 +46,8 @@ VOID CALLBACK GetGameParams(CWnd *pParentWnd);
 /***********
 * Globals! *
 ***********/
-CPalette        *pGamePalette = NULL;       // Palette to be used throughout the game
-static CSound   *pGameSound = NULL;         // Game theme song
+CPalette        *pGamePalette = nullptr;       // Palette to be used throughout the game
+static CSound   *pGameSound = nullptr;         // Game theme song
 CCryptogram     *m_cCryptograms;            // cryptogram game object
 static CSprite  *aHourGlass[MAX_HOURS];
 static BOOL     m_bPause;                   // flag to pause the timer
@@ -83,18 +83,18 @@ static int      tempTimeLimit;
  *
  ****************************************************************/
 CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
-	CDC     *pDC = NULL;                // device context for the screen
+	CDC     *pDC = nullptr;                // device context for the screen
 	CString WndClass;
-	CDibDoc *pDibDoc = NULL;            // pointer to the background art DIB
+	CDibDoc *pDibDoc = nullptr;            // pointer to the background art DIB
 	CSize   mySize;
 	BOOL    bSuccess;                   // bitmap button vars
 	CRect   ScrollRect;                 // bitmap button vars
-	CSprite *pSprite = NULL;
+	CSprite *pSprite = nullptr;
 	int     i;
 
 	m_bPause = FALSE;
 	m_nTimer = 0;
-	m_pHourGlass = NULL;
+	m_pHourGlass = nullptr;
 	m_hCallAppWnd = hCallingWnd;
 	m_lpGameStruct = lpGameStruct;
 	if (m_lpGameStruct->bPlayingMetagame)
@@ -109,9 +109,9 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	* this adds a bit to our app size but avoids hangs/freezes/lockups.             *
 	********************************************************************************/
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               LoadCursor(NULL, IDC_ARROW),    //put in my own cursor
-	                               NULL,
-	                               NULL);
+	                               LoadCursor(nullptr, IDC_ARROW),    //put in my own cursor
+	                               nullptr,
+	                               nullptr);
 
 	pDC = GetDC();                                  // get a device context for our window
 
@@ -144,7 +144,7 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	* Create the window as a POPUP so that no boarders, title, or menu are present; *
 	* this is because the game's background art will fill the entire 640x40 area.   *
 	********************************************************************************/
-	Create(WndClass, "Boffo Games -- Cryptograms", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Cryptograms", WS_POPUP, MainRect, nullptr, 0);
 	// SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);  // Makes window always on top
 	// before every domodal must do update window
 	// UpdateWindow();
@@ -155,12 +155,12 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	***********************/
 	pDC = GetDC();                                  // get a device context for our window
 	m_pScrollButton = new CBmpButton();                     // build a bitmapped scroll button that will invoke
-	ASSERT(m_pScrollButton != NULL);                         // ... the game options dialog box when clicked
+	ASSERT(m_pScrollButton != nullptr);                         // ... the game options dialog box when clicked
 	ScrollRect.SetRect(SCROLL_BUTTON_X,                     // establish the rectangular bounds for the button
 	                   SCROLL_BUTTON_Y,
 	                   SCROLL_BUTTON_X + SCROLL_BUTTON_DX,
 	                   SCROLL_BUTTON_Y + SCROLL_BUTTON_DY + 1);
-	bSuccess = (*m_pScrollButton).Create(NULL,              // create the actual button
+	bSuccess = (*m_pScrollButton).Create(nullptr,              // create the actual button
 	                                     BS_OWNERDRAW | WS_CHILD | WS_VISIBLE,
 	                                     ScrollRect, this, IDC_SCROLL);
 	ASSERT(bSuccess);
@@ -183,7 +183,7 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	* initialize cryptograms *
 	*************************/
 	m_cCryptograms = new CCryptogram(pDC);
-	ASSERT(m_cCryptograms != NULL);
+	ASSERT(m_cCryptograms != nullptr);
 	if (m_lpGameStruct->bPlayingMetagame != FALSE) {
 		switch (m_lpGameStruct->nSkillLevel) {
 
@@ -217,7 +217,7 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	//
 	for (i = 0; i < MAX_HOURS; i++) {
 
-		if ((aHourGlass[i] = new CSprite) != NULL) {
+		if ((aHourGlass[i] = new CSprite) != nullptr) {
 			pSprite = aHourGlass[i];
 			bSuccess = pSprite->LoadResourceSprite(pDC, IDB_HOUR + i);
 			ASSERT(bSuccess);
@@ -230,16 +230,16 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 		}
 	} // end for
-	ASSERT(aHourGlass[0] != NULL);
+	ASSERT(aHourGlass[0] != nullptr);
 	m_pHourGlass = aHourGlass[0];
 
 	ReleaseDC(pDC);                                 // release our window context
 
-	//srand((unsigned) time(NULL));                 // seed the random number generator
+	//srand((unsigned) time(nullptr));                 // seed the random number generator
 
 	pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 	if (m_lpGameStruct->bMusicEnabled) {
-		if (pGameSound != NULL) {
+		if (pGameSound != nullptr) {
 			(*pGameSound).midiLoopPlaySegment(1080, 32500, 0, FMT_MILLISEC);    //32750
 		} // end if pGameSound
 	}
@@ -253,27 +253,27 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 }
 
 CMainWindow::~CMainWindow() {
-	if (pGameSound != NULL) {
+	if (pGameSound != nullptr) {
 		delete pGameSound;
-		pGameSound = NULL;
+		pGameSound = nullptr;
 	}
 
 	CSound::clearSounds();              // clean exit to metagame
 
-	if (m_cCryptograms != NULL) {        // release Cryptograms
+	if (m_cCryptograms != nullptr) {        // release Cryptograms
 		delete m_cCryptograms;
-		m_cCryptograms = NULL;
+		m_cCryptograms = nullptr;
 	}
 
-	if (m_pScrollButton != NULL) {   // release button
+	if (m_pScrollButton != nullptr) {   // release button
 		delete m_pScrollButton;
-		m_pScrollButton = NULL;
+		m_pScrollButton = nullptr;
 	}
 
-	if (pGamePalette != NULL) {          // game color palette
+	if (pGamePalette != nullptr) {          // game color palette
 		//(*pGamePalette).DeleteObject();
 		delete pGamePalette;
-		pGamePalette = NULL;
+		pGamePalette = nullptr;
 	}
 }
 
@@ -314,7 +314,7 @@ CMainWindow::~CMainWindow() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(NULL, FALSE);                    // invalidate the entire window
+	InvalidateRect(nullptr, FALSE);                    // invalidate the entire window
 	BeginPaint(&lpPaint);                           // bracket start of window update
 	SplashScreen();                                 // repaint our window's content
 	RefreshStats();                                 // repaint the stats
@@ -409,7 +409,7 @@ void CMainWindow::RefreshStats() {
 	pDC = GetDC();
 
 	if (m_cCryptograms->m_cStats->m_nTime != MAX_TIME) {                // Game is timed
-		if (m_pHourGlass != NULL) {
+		if (m_pHourGlass != nullptr) {
 			(*m_pHourGlass).ClearBackground();                  // ... background and repaint its image, thus
 			bSuccess = (*m_pHourGlass).RefreshSprite(pDC);      // ... restoring the image but forcing it to
 		}
@@ -498,11 +498,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CDC         *pDC;
 	long        IntervalLength = 0;
 	CRules      RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette,
-	                     (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL));
+	                     (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 	CMainMenu COptionsWind((CWnd *)this, pGamePalette,
 	                       (m_lpGameStruct->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0),
 	                       GetGameParams, RULES_TEXT,
-	                       (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
+	                       (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
 
 	m_bPause = TRUE;
 
@@ -540,14 +540,14 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			KillTimer(STAT_TIMER_ID);
 
 			m_nTimer = 0;                                       // Go back to first hourglass
-			m_pHourGlass = NULL;
+			m_pHourGlass = nullptr;
 			m_pHourGlass = aHourGlass[m_nTimer];
 
 			if (m_cCryptograms->m_cStats->m_nTime == MAX_TIME) {        // if the hourglass was up, erase it
 				m_pHourGlass->EraseSprite(pDC);
 			} else if (m_cCryptograms->m_cStats->m_nTime != MAX_TIME) {      // Max time is more than max
 				IntervalLength = ((long)1000 * m_cCryptograms->m_cStats->m_nTime) / (MAX_HOURS - 1);
-				SetTimer(STAT_TIMER_ID, (UINT)(IntervalLength), NULL);
+				SetTimer(STAT_TIMER_ID, (UINT)(IntervalLength), nullptr);
 			}
 
 			RefreshStats();
@@ -596,15 +596,15 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				return (FALSE);
 
 			} //end switch(ComDlg.DoModal())
-			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != NULL)) {
+			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
 					(*pGameSound).stop();
 			} else if (m_lpGameStruct->bMusicEnabled) {
-				if (pGameSound == NULL) {
+				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				}
-				if (pGameSound != NULL) {
+				if (pGameSound != nullptr) {
 					if (!pGameSound->playing())
 						(*pGameSound).midiLoopPlaySegment(1080, 32500, 0, FMT_MILLISEC);
 				} // end if pGameSound
@@ -735,8 +735,8 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 
 void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CDC *pDC;
-	CSprite *pSprite = NULL;                    // Easter Egg anim pointer
-	CSound  *pEffect = NULL;                    // EE & Sound pointer
+	CSprite *pSprite = nullptr;                    // Easter Egg anim pointer
+	CSound  *pEffect = nullptr;                    // EE & Sound pointer
 	CRect   skullRect,                          // Easter Egg hotspots
 	        urn1Rect,
 	        urn2Rect,
@@ -834,7 +834,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				}
 			}
 		}
-		if (pSprite != NULL)
+		if (pSprite != nullptr)
 			delete pSprite;
 
 		ReleaseDC(pDC);
@@ -859,7 +859,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				Sleep(URN1_SLEEP);
 			}
 		}
-		if (pSprite != NULL)
+		if (pSprite != nullptr)
 			delete pSprite;
 
 		ReleaseDC(pDC);
@@ -884,7 +884,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				Sleep(URN2_SLEEP);
 			}
 		}
-		if (pSprite != NULL)
+		if (pSprite != nullptr)
 			delete pSprite;
 
 		ReleaseDC(pDC);
@@ -909,7 +909,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				Sleep(URN3_SLEEP);
 			}
 		}
-		if (pSprite != NULL)
+		if (pSprite != nullptr)
 			delete pSprite;
 
 		ReleaseDC(pDC);
@@ -1021,11 +1021,11 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 		//
 		m_nTimer++;
 
-		m_pHourGlass = NULL;
+		m_pHourGlass = nullptr;
 		ASSERT(m_nTimer >= 0 && m_nTimer < MAX_HOURS);
 		if (m_nTimer < MAX_HOURS)
 			m_pHourGlass = aHourGlass[m_nTimer];
-		ASSERT(m_pHourGlass != NULL);
+		ASSERT(m_pHourGlass != nullptr);
 
 		RefreshStats();
 
@@ -1045,10 +1045,10 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 		        else {
 		            // move pointer to next hour glass formation
 		            //
-		            m_pHourGlass = NULL;
+		            m_pHourGlass = nullptr;
 		            ASSERT(m_nTimer >= 0 && m_nTimer < MAX_HOURS );
 		            m_pHourGlass = aHourGlass[m_nTimer];
-		            ASSERT(m_pHourGlass != NULL);
+		            ASSERT(m_pHourGlass != nullptr);
 
 		            RefreshStats();
 		        }
@@ -1139,12 +1139,12 @@ void CMainWindow::OnClose() {
 
 	// release the master sprites
 	//
-	m_pHourGlass = NULL;
+	m_pHourGlass = nullptr;
 
 	for (i = 0; i < MAX_HOURS; i++) {
-		if (aHourGlass[i] != NULL) {
+		if (aHourGlass[i] != nullptr) {
 			delete aHourGlass[i];
-			aHourGlass[i] = NULL;
+			aHourGlass[i] = nullptr;
 		}
 	}
 
@@ -1189,12 +1189,12 @@ void CMainWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	while (TRUE) {                                      // find and remove all keyboard events
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	while (TRUE) {                                      // find and remove all mouse events
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }
@@ -1287,7 +1287,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1297,7 +1297,7 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }

@@ -44,7 +44,7 @@ HWND RunRiddles(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	ghParentWnd = hParentWnd;
 
-	if ((pMain = new CRiddlesWindow) != NULL) {
+	if ((pMain = new CRiddlesWindow) != nullptr) {
 
 		pMain->ShowWindow(SW_SHOWNORMAL);
 

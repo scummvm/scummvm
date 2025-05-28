@@ -49,12 +49,12 @@ public:
 	BOOL DuplicateSprite(CDC *pDC, CSprite *pSprite);
 
 	BOOL LoadSprite(CDC *pDC, const char* pszPathName);
-	BOOL LoadSprite(CBitmap *pBitmap, CPalette *pPalette = NULL);
+	BOOL LoadSprite(CBitmap *pBitmap, CPalette *pPalette = nullptr);
 	BOOL LoadResourceSprite(CDC *pDC, const int resId);
 	BOOL LoadResourceSprite(CDC *pDC, const char* pszName);
 
 	BOOL LoadCels(CDC *pDC, const char* pszPathName, const int nCels);
-	BOOL LoadCels(CBitmap *pBitmap, const int nCels, CPalette *pPalette = NULL);
+	BOOL LoadCels(CBitmap *pBitmap, const int nCels, CPalette *pPalette = nullptr);
 	BOOL LoadResourceCels(CDC *pDC, const int resId, const int nCels);
 	BOOL LoadResourceCels(CDC *pDC, const char* pszName, const int nCels);
 
@@ -94,7 +94,7 @@ public:
 		return (Interception(newRect, m_pSpriteChain));
 	}
 	CSprite *Interception(CRect *newRect, CSprite * pSprite);
-	BOOL TestInterception(CDC *pDC, CSprite * pSprite, CPoint * pPoint = NULL);
+	BOOL TestInterception(CDC *pDC, CSprite * pSprite, CPoint * pPoint = nullptr);
 
 	BOOL GetVisible(void) {
 		return (m_bVisible);
@@ -276,7 +276,7 @@ private:
 	void ClearMask(void);
 	void ClearPalette(void);
 
-	BOOL SpritesOverlap(CDC *pDC, CSprite *pSprite, CPoint * pPoint = NULL);
+	BOOL SpritesOverlap(CDC *pDC, CSprite *pSprite, CPoint * pPoint = nullptr);
 
 	BOOL DoSpritePainting(CDC *pDC, CPoint cPoint);
 	BOOL DoOptimizedPainting(CDC *pDC, CRect *pDst);

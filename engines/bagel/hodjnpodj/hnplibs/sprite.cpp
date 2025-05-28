@@ -29,15 +29,15 @@ namespace HodjNPodj {
 
 
 int         CSprite::m_nIndex = 0;                  // used for generating unique Ids
-CSprite     *CSprite::m_pSpriteChain = NULL;        // pointer to chain of linked sprites
+CSprite     *CSprite::m_pSpriteChain = nullptr;        // pointer to chain of linked sprites
 BOOL        CSprite::m_bTouchedSprite = FALSE;      // set if sprite overlapped during painting
-CSprite     *CSprite::m_pTouchedSprite = NULL;      // pointer to sprite overlapped during painting
+CSprite     *CSprite::m_pTouchedSprite = nullptr;      // pointer to sprite overlapped during painting
 BOOL        CSprite::m_bHaveBackdrop = FALSE;       // whether we have a bitmap for the background
-CDC         *CSprite::m_pBackdropDC = NULL;         // backdrop context for background painting
-CBitmap     *CSprite::m_pBackdrop = NULL;           // backdrop for background painting
-CBitmap     *CSprite::m_pBackdropOld = NULL;        // previous bitmap mapped to backdrop context
-CPalette    *CSprite::m_pBackdropPalette = NULL;    // palette mapped to backdrop context
-CPalette    *CSprite::m_pBackdropPalOld = NULL;     // previous palette mapped to backdrop context
+CDC         *CSprite::m_pBackdropDC = nullptr;         // backdrop context for background painting
+CBitmap     *CSprite::m_pBackdrop = nullptr;           // backdrop for background painting
+CBitmap     *CSprite::m_pBackdropOld = nullptr;        // previous bitmap mapped to backdrop context
+CPalette    *CSprite::m_pBackdropPalette = nullptr;    // palette mapped to backdrop context
+CPalette    *CSprite::m_pBackdropPalOld = nullptr;     // previous palette mapped to backdrop context
 
 IMPLEMENT_DYNCREATE(CSprite, CObject)
 
@@ -51,24 +51,24 @@ IMPLEMENT_DYNCREATE(CSprite, CObject)
  * Return Value:    none
  *
  * Description:     Constructor for sprite class.  Initialize all fields
- *                  to logical NULL.  Calls should then be made to other
+ *                  to logical nullptr.  Calls should then be made to other
  *                  sprite routines to load palettes and bitmaps.
  *
  ************************************************************************/
 
 CSprite::CSprite() {
-	m_pImageDC = NULL;                                  // no device context allocated for sprite image
-	m_pImage = NULL;                                    // no initial bitmap image for the sprite
-	m_pImageOld = NULL;                                 // ... hence no unmapped bitmap for the context
-	m_pMaskDC = NULL;                                   // no device context allocated for sprite mask
-	m_pMask = NULL;                                     // no initial image mask
-	m_pMaskOld = NULL;                                  // ... hence no unmapped bitmap for the context
-	m_pBackgroundDC = NULL;                             // no device context allocated for background
-	m_pBackground = NULL;                               // no initial background mask
-	m_pBackgroundOld = NULL;                            // ... hence no unmapped bitmap for the context
-	m_pPalette = NULL;                                  // no initial palette assigned to this sprite
-	m_pPalImageOld = NULL;                              // ... hence no unmapped palette for the image
-	m_pPalBackOld = NULL;                               // ... and no unmapped palette for the background
+	m_pImageDC = nullptr;                                  // no device context allocated for sprite image
+	m_pImage = nullptr;                                    // no initial bitmap image for the sprite
+	m_pImageOld = nullptr;                                 // ... hence no unmapped bitmap for the context
+	m_pMaskDC = nullptr;                                   // no device context allocated for sprite mask
+	m_pMask = nullptr;                                     // no initial image mask
+	m_pMaskOld = nullptr;                                  // ... hence no unmapped bitmap for the context
+	m_pBackgroundDC = nullptr;                             // no device context allocated for background
+	m_pBackground = nullptr;                               // no initial background mask
+	m_pBackgroundOld = nullptr;                            // ... hence no unmapped bitmap for the context
+	m_pPalette = nullptr;                                  // no initial palette assigned to this sprite
+	m_pPalImageOld = nullptr;                              // ... hence no unmapped palette for the image
+	m_pPalBackOld = nullptr;                               // ... and no unmapped palette for the background
 	m_bSharedPalette = FALSE;                           // ... and thus it is not currently shared
 	m_cSize = CSize(0, 0);                              // there is no size to the sprite image
 	m_cRect = CRect(0, 0, 0, 0);                        // rectangular bounds not yet defined
@@ -87,15 +87,15 @@ CSprite::CSprite() {
 	m_bDuplicated = FALSE;                              // not sharing resources with other sprites
 	m_nId = ++m_nIndex;                                 // set its unique identifirer
 	m_nType = 0;                                        // no user defined information
-	m_pData = NULL;                                     // no user define pointer information
+	m_pData = nullptr;                                     // no user define pointer information
 	m_nZOrder = SPRITE_TOPMOST;                         // default to top most in fore/back ground order
 	m_nZPosition = SPRITE_TOPMOST;                      // default to top most in fore/back ground order
 	m_nCelID = -1;                                      // cel identifier not pointing at a cel
 	m_nCelCount = 0;                                    // no cels to be played
 	m_bAnimated = FALSE;                                // not initially animated
 	m_bLinked = FALSE;                                  // not initially linked into the sprite chain
-	m_pNext = NULL;                                     // it is not yet in the sprite chain and
-	m_pPrev = NULL;                                     // ... thus has no links to other sprites
+	m_pNext = nullptr;                                     // it is not yet in the sprite chain and
+	m_pPrev = nullptr;                                     // ... thus has no links to other sprites
 }
 
 
@@ -145,13 +145,13 @@ CSprite::~CSprite() {
 void CSprite::LinkSprite(void) {
 	m_bLinked = TRUE;                                   // set for linked into chain
 
-	if ((m_pPrev != NULL) ||                            // punt if already in chain
-	        (m_pNext != NULL))
+	if ((m_pPrev != nullptr) ||                            // punt if already in chain
+	        (m_pNext != nullptr))
 		return;
 
 	m_pNext = m_pSpriteChain;                           // link sprite into head of chain
-	m_pPrev = NULL;                                     // ... by pointing it at the current
-	if (m_pSpriteChain != NULL)                         // ... initial sprite, and pointing it
+	m_pPrev = nullptr;                                     // ... by pointing it at the current
+	if (m_pSpriteChain != nullptr)                         // ... initial sprite, and pointing it
 		(*m_pSpriteChain).m_pPrev = this;               // ... back at us
 	m_pSpriteChain = this;
 }
@@ -173,20 +173,20 @@ void CSprite::LinkSprite(void) {
 void CSprite::UnlinkSprite(void) {
 	m_bLinked = FALSE;                                  // set for not linked into chain
 
-	if ((m_pPrev == NULL) &&                            // punt if not in chain
-	        (m_pNext == NULL) &&
+	if ((m_pPrev == nullptr) &&                            // punt if not in chain
+	        (m_pNext == nullptr) &&
 	        (m_pSpriteChain != this))
 		return;
 
-	if (m_pPrev != NULL)                                // disconnect us from the sprite chain
+	if (m_pPrev != nullptr)                                // disconnect us from the sprite chain
 		(*m_pPrev).m_pNext = m_pNext;                   // ... by pointing the one before us, and
 	else                                                // ... the one after us, at each other
 		m_pSpriteChain = m_pNext;                       // special case the instance where the
 	// ... sprite to be removed is the first
-	if (m_pNext != NULL)                                // ... in the list - in particular, update
+	if (m_pNext != nullptr)                                // ... in the list - in particular, update
 		(*m_pNext).m_pPrev = m_pPrev;                   // ... the head of chain pointer
 
-	m_pNext = m_pPrev = NULL;
+	m_pNext = m_pPrev = nullptr;
 }
 
 
@@ -204,9 +204,9 @@ void CSprite::UnlinkSprite(void) {
  ************************************************************************/
 
 void CSprite::FlushSpriteChain(void) {
-	CSprite *pSprite = NULL;
+	CSprite *pSprite = nullptr;
 
-	while ((pSprite = CSprite::GetSpriteChain()) != NULL) { // cycle getting head of chain
+	while ((pSprite = CSprite::GetSpriteChain()) != nullptr) { // cycle getting head of chain
 		(*pSprite).UnlinkSprite();                          // ... unlinking it
 		delete pSprite;
 	}                                    // ... and then deleting it
@@ -231,10 +231,10 @@ void CSprite::FlushSpriteChain(void) {
  ************************************************************************/
 
 BOOL CSprite::SetBackdrop(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap) {
-	if (m_pBackdropDC != NULL)                              // if the backdrop context is active
+	if (m_pBackdropDC != nullptr)                              // if the backdrop context is active
 		ReleaseBackdropDC();                                // ... then unmap all of its resources
 
-	if (m_pBackdrop != NULL)                                // delete the old bitmap
+	if (m_pBackdrop != nullptr)                                // delete the old bitmap
 		delete m_pBackdrop;
 
 	m_pBackdrop = pBitmap;                                  // save the new bitmap
@@ -260,16 +260,16 @@ BOOL CSprite::SetBackdrop(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap) {
 void CSprite::ClearBackdrop(void) {
 	ReleaseBackdropDC();                                // unmap any resources
 
-	if (m_pBackdrop != NULL) {                          // delete the backdrop bitmap
+	if (m_pBackdrop != nullptr) {                          // delete the backdrop bitmap
 		delete m_pBackdrop;
-		m_pBackdrop = NULL;
+		m_pBackdrop = nullptr;
 	}
 
-	m_pBackdropPalette = NULL;
+	m_pBackdropPalette = nullptr;
 
-	if (m_pBackdropDC != NULL) {                        //  delete the device context
+	if (m_pBackdropDC != nullptr) {                        //  delete the device context
 		delete m_pBackdropDC;
-		m_pBackdropDC = NULL;
+		m_pBackdropDC = nullptr;
 	}
 
 	m_bHaveBackdrop = FALSE;
@@ -293,22 +293,22 @@ void CSprite::ClearBackdrop(void) {
 
 BOOL CSprite::RefreshBackdrop(CDC *pDC, CPalette *pPalette) {
 	BOOL        bSuccess = FALSE;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 
 	if (m_bHaveBackdrop == FALSE)                   // punt if no backdrop art
 		return (FALSE);
 
-	if (GetBackdropDC(pDC) == NULL)                 // setup backdrop context
+	if (GetBackdropDC(pDC) == nullptr)                 // setup backdrop context
 		return (FALSE);
 
-	if (pPalette != NULL) {                         // map in our palette
+	if (pPalette != nullptr) {                         // map in our palette
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
 	// zap it to the screen
 	bSuccess = (*pDC).BitBlt(0, 0, GAME_WIDTH, GAME_HEIGHT, m_pBackdropDC, 0, 0, SRCCOPY);
 
-	if (pPalOld != NULL)                            // map out the palette
+	if (pPalOld != nullptr)                            // map out the palette
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	ReleaseBackdropDC();                            // release backdrop context resources
@@ -326,7 +326,7 @@ BOOL CSprite::RefreshBackdrop(CDC *pDC, CPalette *pPalette) {
  *                  the sprite
  *
  * Return Value:
- *  CSprite *       pointer to new sprite (Success) / NULL (failure)
+ *  CSprite *       pointer to new sprite (Success) / nullptr (failure)
  *
  * Description:     Create a sprite based on sharing the resources of a
  *                  master sprite (passed implicitly when this is invoked).
@@ -338,15 +338,15 @@ BOOL CSprite::RefreshBackdrop(CDC *pDC, CPalette *pPalette) {
  ************************************************************************/
 
 CSprite *CSprite::DuplicateSprite(CDC *pDC) {
-	CSprite *pSprite = NULL;
+	CSprite *pSprite = nullptr;
 
 	pSprite = new CSprite();                                // create an object for the sprite
 
-	if ((pSprite != NULL) &&                                // try to duplicate it
+	if ((pSprite != nullptr) &&                                // try to duplicate it
 	        DuplicateSprite(pDC, pSprite))
 		return (pSprite);
 
-	return (NULL);                                          // return failure
+	return (nullptr);                                          // return failure
 }
 
 
@@ -372,14 +372,14 @@ CSprite *CSprite::DuplicateSprite(CDC *pDC) {
  ************************************************************************/
 
 BOOL CSprite::DuplicateSprite(CDC *pDC, CSprite *pSprite) {
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 
 	if (m_pPalette) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
 
-	if (pSprite != NULL) {                                  // only duplicate visible sprites                                   // ... unable to create that object
+	if (pSprite != nullptr) {                                  // only duplicate visible sprites                                   // ... unable to create that object
 		if (m_bVisible) {
 			if (m_bRetainContexts) {
 				if (!SetupImage(pDC))
@@ -396,7 +396,7 @@ BOOL CSprite::DuplicateSprite(CDC *pDC, CSprite *pSprite) {
 			(*pSprite).m_pImage = m_pImage;
 		}
 		(*pSprite).m_pPalette = m_pPalette;
-		if (m_pPalette != NULL) {
+		if (m_pPalette != nullptr) {
 			(*pSprite).m_bSharedPalette = TRUE;
 			(*pSprite).m_pPalImageOld = m_pPalImageOld;
 		}
@@ -461,11 +461,11 @@ BOOL CSprite::DuplicateSprite(CDC *pDC, CSprite *pSprite) {
  ************************************************************************/
 
 BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
-	CDibDoc     *myDib = NULL;                          // pointer to our loaded DIB file
-	LPSTR       lpDIBHdr = NULL;                        // pointer to our DIB's BITMAPINFOHEADER
+	CDibDoc     *myDib = nullptr;                          // pointer to our loaded DIB file
+	LPSTR       lpDIBHdr = nullptr;                        // pointer to our DIB's BITMAPINFOHEADER
 	BOOL        bHavePalette = FALSE;                   // whether or not we have a palette already
-	CPalette    *pPalOld = NULL;                        // palette previously mapped to base context
-	HPALETTE    hPalette = NULL;
+	CPalette    *pPalOld = nullptr;                        // palette previously mapped to base context
+	HPALETTE    hPalette = nullptr;
 
 	ClearImage();                                       // clear out any/all existing bitmaps, palettes,
 	ClearMask();                                        // ... and device contexts
@@ -477,13 +477,13 @@ BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
 	// ... loading its color palette, which
 	// ... must be deleted if we already
 	// ... have one assigned to this sprite
-	if ((myDib != NULL) &&                              // verify we have the objects we just created
-	        (m_pImage != NULL) &&                           // .. and then attempt to open the requested
+	if ((myDib != nullptr) &&                              // verify we have the objects we just created
+	        (m_pImage != nullptr) &&                           // .. and then attempt to open the requested
 	        (*myDib).OpenDocument(pszPathName)) {           // .... bitmap file
 		m_bVisible = TRUE;
 		if (!bHavePalette)                              // if we don't have a palette, then
 			m_pPalette = (*myDib).DetachPalette();      // ... detach the DIB's palette for our use
-		if (m_pPalette != NULL) {
+		if (m_pPalette != nullptr) {
 			pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*pDC).RealizePalette();
 			hPalette = (HPALETTE)(*m_pPalette).m_hObject;
@@ -494,8 +494,8 @@ BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
 			                                    hPalette,
 			                                    (LPBITMAPINFO) lpDIBHdr);   // ... and store it in the sprite
 			GlobalUnlock((HGLOBAL)(*myDib).GetHDIB());
-			if ((*m_pImage).m_hObject != NULL) {        // verify the conversion was sucessfull
-				if (pPalOld != NULL)
+			if ((*m_pImage).m_hObject != nullptr) {        // verify the conversion was sucessfull
+				if (pPalOld != nullptr)
 					(void)(*pDC).SelectPalette(pPalOld, FALSE);
 				if (!m_bRetainContexts)                  // release the context if not optimizing
 					ReleaseImageContext();
@@ -506,25 +506,25 @@ BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
 				m_nCelID = -1;
 				m_nCelCount = 0;
 				delete myDib;                           // discard the DIB
-				myDib = NULL;
+				myDib = nullptr;
 				return (TRUE);                          // return success
 			}
 		}
 	}
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	ClearImage();
 
 	if (!bHavePalette &&                                // delete the palette resource and object
-	        (m_pPalette != NULL)) {                         // ... if it came from the DIB
+	        (m_pPalette != nullptr)) {                         // ... if it came from the DIB
 		(*m_pPalette).DeleteObject();
 		delete m_pPalette;
-		m_pPalette = NULL;
+		m_pPalette = nullptr;
 	}
 
-	if (myDib != NULL)                                  // lastly delete the DIB itself
+	if (myDib != nullptr)                                  // lastly delete the DIB itself
 		delete myDib;
 
 	return (FALSE);                                     // return failure
@@ -553,14 +553,14 @@ BOOL CSprite::LoadSprite(CBitmap *pBitmap, CPalette *pPalette) {
 	CSize   mySize;
 	BITMAP  cBitmapData;
 
-	if (pBitmap == NULL)                                // punt if no bitmap
+	if (pBitmap == nullptr)                                // punt if no bitmap
 		return (FALSE);
 
 	ClearImage();                                       // clear out any/all existing bitmaps, palettes,
 	ClearMask();                                        // ... and device contexts
 
 	m_pImage = pBitmap;                                 // save pointer to bitmap
-	if (pPalette != NULL)                               // ... and the palette, if specified
+	if (pPalette != nullptr)                               // ... and the palette, if specified
 		SharePalette(pPalette);
 
 	(*pBitmap).GetObject(sizeof(BITMAP), &cBitmapData); // get the size of the bitmap
@@ -631,11 +631,11 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const int resId) {
  ************************************************************************/
 
 BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
-	CDibDoc     *myDib = NULL;                          // pointer to our loaded DIB file
-	LPSTR       lpDIBHdr = NULL;                        // pointer to our DIB's BITMAPINFOHEADER
+	CDibDoc     *myDib = nullptr;                          // pointer to our loaded DIB file
+	LPSTR       lpDIBHdr = nullptr;                        // pointer to our DIB's BITMAPINFOHEADER
 	BOOL        bHavePalette = FALSE;                   // whether or not we have a palette already
-	CPalette    *pPalOld = NULL;                        // palette previously mapped to base context
-	HPALETTE    hPalette = NULL;
+	CPalette    *pPalOld = nullptr;                        // palette previously mapped to base context
+	HPALETTE    hPalette = nullptr;
 
 	ClearImage();                                       // clear out any/all existing bitmaps, palettes,
 	ClearMask();                                        // ... and device contexts
@@ -647,13 +647,13 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
 	// ... loading its color palette, which
 	// ... must be deleted if we already
 	// ... have one assigned to this sprite
-	if ((myDib != NULL) &&                              // verify we have the objects we just created
-	        (m_pImage != NULL) &&                           // .. and then attempt to open the requested
+	if ((myDib != nullptr) &&                              // verify we have the objects we just created
+	        (m_pImage != nullptr) &&                           // .. and then attempt to open the requested
 	        (*myDib).OpenResourceDocument(pszName)) {       // .... bitmap file
 		m_bVisible = TRUE;
 		if (!bHavePalette)                              // if we don't have a palette, then
 			m_pPalette = (*myDib).DetachPalette();      // ... detach the DIB's palette for our use
-		if (m_pPalette != NULL) {
+		if (m_pPalette != nullptr) {
 			pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*pDC).RealizePalette();
 			hPalette = (HPALETTE)(*m_pPalette).m_hObject;
@@ -664,8 +664,8 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
 			                                    hPalette,
 			                                    (LPBITMAPINFO) lpDIBHdr);   // ... and store it in the sprite
 			GlobalUnlock((HGLOBAL)(*myDib).GetHDIB());
-			if ((*m_pImage).m_hObject != NULL) {        // verify the conversion was sucessfull
-				if (pPalOld != NULL)
+			if ((*m_pImage).m_hObject != nullptr) {        // verify the conversion was sucessfull
+				if (pPalOld != nullptr)
 					(void)(*pDC).SelectPalette(pPalOld, FALSE);
 				if (!m_bRetainContexts)                  // release the context if not optimizing
 					ReleaseImageContext();
@@ -676,25 +676,25 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
 				m_nCelID = -1;
 				m_nCelCount = 0;
 				delete myDib;                           // discard the DIB
-				myDib = NULL;
+				myDib = nullptr;
 				return (TRUE);                          // return success
 			}
 		}
 	}
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	ClearImage();
 
 	if (!bHavePalette &&                                // delete the palette resource and object
-	        (m_pPalette != NULL)) {                         // ... if it came from the DIB
+	        (m_pPalette != nullptr)) {                         // ... if it came from the DIB
 		(*m_pPalette).DeleteObject();
 		delete m_pPalette;
-		m_pPalette = NULL;
+		m_pPalette = nullptr;
 	}
 
-	if (myDib != NULL)                                  // lastly delete the DIB itself
+	if (myDib != nullptr)                                  // lastly delete the DIB itself
 		delete myDib;
 
 	return (FALSE);                                     // return failure
@@ -882,44 +882,44 @@ BOOL CSprite::SetupCels(const int nCels) {
  ************************************************************************/
 
 BOOL CSprite::SetPalette(CPalette *pPalette) {
-	if (m_pImageDC != NULL) {                               // if we already have a palette we must
-		if (m_pImage != NULL)                               // ... first map out any existing image
+	if (m_pImageDC != nullptr) {                               // if we already have a palette we must
+		if (m_pImage != nullptr)                               // ... first map out any existing image
 			(void)(*m_pImageDC).SelectObject(m_pImageOld);  // ... then map out the old palette
-		if (m_pPalette != NULL)
+		if (m_pPalette != nullptr)
 			(void)(*m_pImageDC).SelectPalette(m_pPalImageOld, FALSE);
 	}
 
-	if (m_pBackgroundDC != NULL) {                          // similarly we need to map out our background
-		if (m_pBackground != NULL)                          // ... bitmap as well
+	if (m_pBackgroundDC != nullptr) {                          // similarly we need to map out our background
+		if (m_pBackground != nullptr)                          // ... bitmap as well
 			(void)(*m_pBackgroundDC).SelectObject(m_pBackgroundOld);
-		if (m_pPalette != NULL)                             // .. then map out the palette
+		if (m_pPalette != nullptr)                             // .. then map out the palette
 			(void)(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, FALSE);
 	}
 
 	ClearPalette();                                         // release existing palette
 	m_pPalette = pPalette;                                  // set the new palette
 
-	if (m_pImageDC == NULL)                                 // done if no context to map it into
+	if (m_pImageDC == nullptr)                                 // done if no context to map it into
 		return (TRUE);
 
 	m_pPalImageOld = (*m_pImageDC).SelectPalette(m_pPalette, FALSE); // map in the new palette and then
 	(void)(*m_pImageDC).RealizePalette();                           // ... tell the system to use it
 
-	if (m_pImage != NULL) {
+	if (m_pImage != nullptr) {
 		m_pImageOld = (*m_pImageDC).SelectObject(m_pImage);     // map in our image bitmap if it exists
-		if (m_pImageOld == NULL)
+		if (m_pImageOld == nullptr)
 			return (FALSE);
 	}
 
-	if (m_pBackgroundDC == NULL)                            // done if no background context
+	if (m_pBackgroundDC == nullptr)                            // done if no background context
 		return (TRUE);
 
 	m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE); // map in the new palette and then
 	(void)(*m_pBackgroundDC).RealizePalette();                          // ... tell the system to use it
 
-	if (m_pBackground != NULL) {
+	if (m_pBackground != nullptr) {
 		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);      // map in our background
-		if (m_pBackgroundOld == NULL)
+		if (m_pBackgroundOld == nullptr)
 			return (FALSE);
 	}
 
@@ -953,7 +953,7 @@ BOOL CSprite::SharePalette(CPalette *pPalette) {
 		return (TRUE);
 	}                                  // ... whioh means it continues to exist
 	// ... when this sprite is later destroyed
-	m_pPalette = NULL;                                  // not able to do that so ensure the
+	m_pPalette = nullptr;                                  // not able to do that so ensure the
 	return (FALSE);                                     // ... pointer is nulled
 }
 
@@ -985,10 +985,10 @@ BOOL CSprite::SharePalette(CPalette *pPalette) {
 BOOL CSprite::PaintSprite(CDC *pDC, const int x, const int y) {
 	BOOL        bSuccess = FALSE;
 	CRect       overlapRect, dstRect;
-	CSprite     *pOverlap = NULL;
+	CSprite     *pOverlap = nullptr;
 
 	m_bTouchedSprite = FALSE;                       // default to no sprite being overlapped by this
-	m_pTouchedSprite = NULL;                        // ... painting operation
+	m_pTouchedSprite = nullptr;                        // ... painting operation
 
 	if (!m_bPositioned)                             // setup the initial location if not
 		SetPosition(x, y);
@@ -998,7 +998,7 @@ BOOL CSprite::PaintSprite(CDC *pDC, const int x, const int y) {
 		return (TRUE);
 	}
 
-	if (pDC == NULL)                                // punt if no device context for the sprite
+	if (pDC == nullptr)                                // punt if no device context for the sprite
 		return (FALSE);
 
 	if (m_bAnimated && m_nCelCount)                 // advance to the next cel in the strip
@@ -1007,20 +1007,20 @@ BOOL CSprite::PaintSprite(CDC *pDC, const int x, const int y) {
 	dstRect.SetRect(x, y, x + m_cSize.cx, y + m_cSize.cy); // calculate destination rectangle
 
 	pOverlap = Interception(&dstRect);              // see if the sprite will intercept another
-	if (pOverlap != NULL) {                         // ... and if so, record that fact
+	if (pOverlap != nullptr) {                         // ... and if so, record that fact
 		m_bTouchedSprite = TRUE;                    // we've touched something
 		m_pTouchedSprite = pOverlap;                // here's what we touched
 	}
 
 	if (!m_bLinked ||                               // how we do the painting depends on whether
 	        (!m_bOverlaps &&
-	         (pOverlap == NULL))) {                       // ... we intercept another sprite
-		if ((m_bHaveBackdrop || (m_pBackground != NULL)) &&
+	         (pOverlap == nullptr))) {                       // ... we intercept another sprite
+		if ((m_bHaveBackdrop || (m_pBackground != nullptr)) &&
 		        overlapRect.IntersectRect(&m_cRect, &dstRect)) { // ... optimize painting of localized movement
 			bSuccess = DoOptimizedPainting(pDC, &dstRect);  // ... by doing it all offscreen
 			SetPosition(x, y);                      // establish the sprite's new position
 		} else {
-			if (m_bHaveBackdrop || (m_pBackground != NULL)) {
+			if (m_bHaveBackdrop || (m_pBackground != nullptr)) {
 				bSuccess = RefreshBackground(pDC);  // If it isn't close, just restore its background
 				if (!bSuccess)
 					return (FALSE);
@@ -1096,16 +1096,16 @@ BOOL CSprite::UpdateSprite(CDC *pDC) {
 	if (!m_bVisible)                                        // punt if not visible
 		return (TRUE);
 
-	if (pDC == NULL)                                        // verify we have the necessary device contexts
+	if (pDC == nullptr)                                        // verify we have the necessary device contexts
 		return (FALSE);
 
 	if (!m_bHaveBackdrop && m_bRetainBackground &&          // if we don't have a bitmap backdrop, and if
-	        (m_pBackgroundDC == NULL)) {                        // ... we move and are painting for the first time
+	        (m_pBackgroundDC == nullptr)) {                        // ... we move and are painting for the first time
 		if (!SaveBackground(pDC))                           // ... and then load it with the proper image
 			return (FALSE);
 	}
 
-	if (m_pPalette != NULL) {
+	if (m_pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);  // map in a palette if present
 		(void)(*pDC).RealizePalette();
 	}                    // ... and tell the system we did that
@@ -1128,7 +1128,7 @@ BOOL CSprite::UpdateSprite(CDC *pDC) {
 		}
 	}
 
-	if (m_pPalette != NULL)                                 // map back the previous palette if needed
+	if (m_pPalette != nullptr)                                 // map back the previous palette if needed
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (bSuccess);
@@ -1156,16 +1156,16 @@ BOOL CSprite::UpdateSprite(CDC *pDC) {
  ************************************************************************/
 
 BOOL CSprite::DoSpritePainting(CDC * pDC, CPoint cPoint) {
-	CDC         *pDC2 = NULL;                           // context for manipulating background image
-	CBitmap     *pBitmap2 = NULL,                       // bitmap for pDC2
-	             *pBitmap2Old = NULL;                    // bitmap previously mapped into pDC2
-	CPalette    *pPal2Old = NULL;                       // palette previously mapped into pDC2
+	CDC         *pDC2 = nullptr;                           // context for manipulating background image
+	CBitmap     *pBitmap2 = nullptr,                       // bitmap for pDC2
+	             *pBitmap2Old = nullptr;                    // bitmap previously mapped into pDC2
+	CPalette    *pPal2Old = nullptr;                       // palette previously mapped into pDC2
 	BOOL        bSuccess = FALSE;                       // success/failure
 
 	if (!m_bVisible)                                    // punt if not visible
 		return (TRUE);
 
-	if (pDC == NULL)                                    // punt if we don't have contexts
+	if (pDC == nullptr)                                    // punt if we don't have contexts
 		return (FALSE);
 
 	if (SetupImage(pDC) &&                              // put the image and mask bitmaps into
@@ -1174,18 +1174,18 @@ BOOL CSprite::DoSpritePainting(CDC * pDC, CPoint cPoint) {
 		pDC2 = new CDC();                               // create our temporary bitmap work areas
 		pBitmap2 = new CBitmap();
 
-		if ((pDC2 != NULL) &&
-		        (pBitmap2 != NULL) &&
+		if ((pDC2 != nullptr) &&
+		        (pBitmap2 != nullptr) &&
 		        (*pDC2).CreateCompatibleDC(pDC)) {
-			if (m_pPalette != NULL) {                   // map in a palette if available
+			if (m_pPalette != nullptr) {                   // map in a palette if available
 				pPal2Old = (*pDC2).SelectPalette(m_pPalette, FALSE); // ... and for the background work area
 				(void)(*pDC2).RealizePalette();
 			}                   // ... make it real too
 			if ((*pBitmap2).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy)) {
 				pBitmap2Old = (*pDC2).SelectObject(pBitmap2);
-				if (pBitmap2Old != NULL) {
+				if (pBitmap2Old != nullptr) {
 					if (m_bHaveBackdrop) {              // get background image, either from
-						if (GetBackdropDC(pDC) == NULL) // .. the backdrop or the sprite itselt
+						if (GetBackdropDC(pDC) == nullptr) // .. the backdrop or the sprite itselt
 							goto punt;
 						(void)(*pDC2).BitBlt(0, 0, m_cSize.cx, m_cSize.cy, m_pBackdropDC, cPoint.x, cPoint.y, SRCCOPY);
 						ReleaseBackdropDC();
@@ -1199,18 +1199,18 @@ BOOL CSprite::DoSpritePainting(CDC * pDC, CPoint cPoint) {
 		}
 
 punt:
-		if (pBitmap2Old != NULL)                        // now release the temporary resources we used
+		if (pBitmap2Old != nullptr)                        // now release the temporary resources we used
 			(void)(*pDC2).SelectObject(pBitmap2Old);
 
-		if (pBitmap2 != NULL) {
+		if (pBitmap2 != nullptr) {
 			(*pBitmap2).DeleteObject();
 			delete pBitmap2;
 		}
 
-		if (pPal2Old != NULL)
+		if (pPal2Old != nullptr)
 			(void)(*pDC2).SelectPalette(pPal2Old, FALSE);
 
-		if (pDC2 != NULL) {
+		if (pDC2 != nullptr) {
 			(*pDC2).DeleteDC();
 			delete pDC2;
 		}
@@ -1254,28 +1254,28 @@ BOOL CSprite::DoOptimizedPainting(CDC *pDC, CRect *pDstRect) {
 	CPoint  cPoint;                                     // where to paint sprite in the work area
 	CRect   unionRect;                                  // rectangle enclosing old and new sprite locations
 	CDC     workDC;                                     // device context for offscreen work area
-	CBitmap *pBitmap = NULL,                            // bitmap for the work area
-	         *pBitmapOldWork = NULL;                     // bitmap previously mapped to work area's context
-	CPalette *pPalOld = NULL,                           // palette previously mapped to destination context
-	          *pPalOldWork = NULL;                        // palette prevously mapped to work area's context
+	CBitmap *pBitmap = nullptr,                            // bitmap for the work area
+	         *pBitmapOldWork = nullptr;                     // bitmap previously mapped to work area's context
+	CPalette *pPalOld = nullptr,                           // palette previously mapped to destination context
+	          *pPalOldWork = nullptr;                        // palette prevously mapped to work area's context
 	int     dx, dy;                                     // delta sizes of work area's bitmap
 
-	if (pDC == NULL)                                    // punt if no sprite device context
+	if (pDC == nullptr)                                    // punt if no sprite device context
 		return (FALSE);
 
-	if (m_pPalette != NULL) {                               // if there is a palette
+	if (m_pPalette != nullptr) {                               // if there is a palette
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);  // ... select it into the context
 		(void)(*pDC).RealizePalette();
 	}                    // ... and tell the system about it
 
 	unionRect = m_cRect;                                // the work area is defined by our sprite
-	if (pDstRect != NULL)
+	if (pDstRect != nullptr)
 		unionRect.UnionRect(unionRect, pDstRect);       // calculate the smallest enclosing rectangle that
 	dx = unionRect.right - unionRect.left;              // ... contains the bitmap area where the sprite was
 	dy = unionRect.bottom - unionRect.top;              // ... and the bitmap area where it will be next
 
 	pBitmap = new CBitmap();                            // create an offscreen bitmap where we do all the
-	if (pBitmap == NULL)                                // ... work; first create a bitmap for the enclosing
+	if (pBitmap == nullptr)                                // ... work; first create a bitmap for the enclosing
 		return (FALSE);                                 // ... rectangle, and if that fails, then punt
 	if (!(*pBitmap).CreateCompatibleBitmap(pDC, dx, dy)) {
 		delete pBitmap;
@@ -1283,14 +1283,14 @@ BOOL CSprite::DoOptimizedPainting(CDC *pDC, CRect *pDstRect) {
 	}
 
 	if (workDC.CreateCompatibleDC(pDC)) {               // setup the work area context
-		if (m_pPalette != NULL) {                       // if we have a palette, map it into the work context
+		if (m_pPalette != nullptr) {                       // if we have a palette, map it into the work context
 			pPalOldWork = workDC.SelectPalette(m_pPalette, FALSE);
 			(void) workDC.RealizePalette();
 		}                // ... and tell the system to use it
 		pBitmapOldWork = workDC.SelectObject(pBitmap);      // now map in the bitmap into that context
-		if (pBitmapOldWork != NULL) {                       // next copy the image enclosed by the rectangle
+		if (pBitmapOldWork != nullptr) {                       // next copy the image enclosed by the rectangle
 			if (m_bHaveBackdrop) {                          // restore the background where the sprite was
-				if (GetBackdropDC(pDC) == NULL)
+				if (GetBackdropDC(pDC) == nullptr)
 					goto punt;
 				bSuccess = workDC.BitBlt(0,
 				                         0,
@@ -1376,7 +1376,7 @@ BOOL CSprite::DoOptimizedPainting(CDC *pDC, CRect *pDstRect) {
 				                    0,
 				                    SRCCOPY);
 				(void) workDC.SelectObject(pBitmapOldWork);     // tear down the work area's bitmap, palette
-				if (m_pPalette != NULL) {                           // ... and device context, as well as the
+				if (m_pPalette != nullptr) {                           // ... and device context, as well as the
 					(void) workDC.SelectPalette(pPalOldWork, FALSE); // ... destination's palette
 					(void)(*pDC).SelectPalette(pPalOld, FALSE);
 				}
@@ -1390,17 +1390,17 @@ BOOL CSprite::DoOptimizedPainting(CDC *pDC, CRect *pDstRect) {
 
 punt:
 
-	if (pBitmapOldWork != NULL)                             // we failed, so tear down the resources used
+	if (pBitmapOldWork != nullptr)                             // we failed, so tear down the resources used
 		(void) workDC.SelectObject(pBitmapOldWork);         // ... map out the bitmap
-	if (pPalOldWork != NULL)                                // ... map out the palette
+	if (pPalOldWork != nullptr)                                // ... map out the palette
 		(void) workDC.SelectPalette(pPalOldWork, FALSE);
-	if (workDC.m_hDC != NULL)                               // ... release the context
+	if (workDC.m_hDC != nullptr)                               // ... release the context
 		workDC.DeleteDC();
 
 	(*pBitmap).DeleteObject();                              // ... delete the bitmap
 	delete pBitmap;
 
-	if (pPalOld != NULL)                                    // map out the palette from the output context
+	if (pPalOld != nullptr)                                    // map out the palette from the output context
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (FALSE);
@@ -1428,20 +1428,20 @@ punt:
  ************************************************************************/
 
 BOOL CSprite::DoOverlapPainting(CDC *pDC, CRect *myRect) {
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	BOOL        bSuccess = FALSE;
 
-	if (pDC == NULL)                                        // punt if no context
+	if (pDC == nullptr)                                        // punt if no context
 		return (FALSE);
 
-	if (m_pPalette != NULL) {                               // if there is a palette
+	if (m_pPalette != nullptr) {                               // if there is a palette
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);  // ... select it into the context
 		(void)(*pDC).RealizePalette();
 	}                    // ... and tell the system about it
 
 	bSuccess = ReconstructBackground(pDC, myRect);          // go do the actual painting
 
-	if (m_pPalette != NULL)                                 // map out the palette
+	if (m_pPalette != nullptr)                                 // map out the palette
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (bSuccess);
@@ -1465,28 +1465,28 @@ BOOL CSprite::DoOverlapPainting(CDC *pDC, CRect *myRect) {
  ************************************************************************/
 
 BOOL CSprite::RefreshBackground(CDC *pDC) {
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	BOOL        bSuccess = FALSE;
 
 	if (!m_bVisible)                                        // punt if not visible
 		return (TRUE);
 
-	if (pDC == NULL)                                        // punt if no sprite device context
+	if (pDC == nullptr)                                        // punt if no sprite device context
 		return (FALSE);
 
 	if (!m_bHaveBackdrop &&
-	        m_pBackground == NULL)                              // done if no saved background
+	        m_pBackground == nullptr)                              // done if no saved background
 		return (TRUE);
 
-	if (m_pPalette != NULL) {                               // map a palette to the destination context
+	if (m_pPalette != nullptr) {                               // map a palette to the destination context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);  // ... if available
 		(void)(*pDC).RealizePalette();
 	}
 
 	if (m_bOverlaps)                                        // paint the background bitmap to the device
-		bSuccess = ReconstructBackground(pDC, NULL);        // ... from all the sprites that overlap it
+		bSuccess = ReconstructBackground(pDC, nullptr);        // ... from all the sprites that overlap it
 	else if (m_bHaveBackdrop) {
-		if (GetBackdropDC(pDC) == NULL)
+		if (GetBackdropDC(pDC) == nullptr)
 			bSuccess = FALSE;
 		else {
 			bSuccess = (*pDC).BitBlt(m_cPosition.x, m_cPosition.y, m_cSize.cx, m_cSize.cy, m_pBackdropDC, m_cPosition.x, m_cPosition.y, SRCCOPY);
@@ -1501,7 +1501,7 @@ BOOL CSprite::RefreshBackground(CDC *pDC) {
 		}
 	}
 
-	if (m_pPalette != NULL)                                 // map out the palette from the destination
+	if (m_pPalette != nullptr)                                 // map out the palette from the destination
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	m_bPositioned = FALSE;                                  // no real position now
@@ -1528,7 +1528,7 @@ BOOL CSprite::RefreshBackground(CDC *pDC) {
  ************************************************************************/
 
 BOOL CSprite::SaveBackground(CDC *pDC) {
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	BOOL        bSuccess = FALSE;
 
 	if (m_bHaveBackdrop || !m_bRetainBackground)        // not valid to save background with backdrop
@@ -1537,13 +1537,13 @@ BOOL CSprite::SaveBackground(CDC *pDC) {
 	if (!m_bVisible)                                    // punt if not visible
 		return (TRUE);
 
-	if (pDC == NULL)                                    // punt if no output context
+	if (pDC == nullptr)                                    // punt if no output context
 		return (FALSE);
 
 	if (!CreateBackground(pDC))                         // create background context
 		return (FALSE);
 
-	if (m_pPalette != NULL) {                           // map a palette to the destination context
+	if (m_pPalette != nullptr) {                           // map a palette to the destination context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 		(void)(*pDC).RealizePalette();
 	}
@@ -1555,7 +1555,7 @@ BOOL CSprite::SaveBackground(CDC *pDC) {
 			ReleaseBackgroundContext();
 	}
 
-	if (m_pPalette != NULL)                             // map out palette from destination context
+	if (m_pPalette != nullptr)                             // map out palette from destination context
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (bSuccess);
@@ -1568,7 +1568,7 @@ BOOL CSprite::SaveBackground(CDC *pDC) {
  *
  * Parameters:
  *  CDC *pDC        pointer to device context where the sprite will be painted
- *  CRect *myRect   NULL or pointer to new area where sprite gets painted
+ *  CRect *myRect   nullptr or pointer to new area where sprite gets painted
  *  CSprite *pSprite    pointer to intercepted sprite in chain
  *
  * Return Value:
@@ -1586,7 +1586,7 @@ BOOL CSprite::SaveBackground(CDC *pDC) {
 
 BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 	CDC         workDC;                                 // context for our work area
-	CSprite     *pSprite = NULL,                        // various sprite pointers
+	CSprite     *pSprite = nullptr,                        // various sprite pointers
 	             *pTestSprite,
 	             *pZHead;
 	BOOL        bDoingTopMost;                          // special case for single sprite that is topmost
@@ -1596,17 +1596,17 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 	            overlapRect;                            // temporary rectangle information
 	int         dx, dy;                                 // size of unionRect and work bitmap
 	CPoint      cPoint;                                 // temporary point information
-	CBitmap     *pBitmap = NULL,                        // work area bitmap
-	             *pBitmapOld = NULL;                     // bitmap previously selected to work context
-	CPalette    *pPalOld = NULL,                        // palette previously selected to display context
-	             *pPalOldWork = NULL;                    // palette previously selected to work context
+	CBitmap     *pBitmap = nullptr,                        // work area bitmap
+	             *pBitmapOld = nullptr;                     // bitmap previously selected to work context
+	CPalette    *pPalOld = nullptr,                        // palette previously selected to display context
+	             *pPalOldWork = nullptr;                    // palette previously selected to work context
 	#if SPRITE_DEBUG
 	CRect       clipRect;                               // current clipping area
 	CPoint      viewOrigin;                             // current viewport origin
 	int         nClipResult;
 
 	(*pDC).GetClipBox(&clipRect);
-	nClipResult = (*pDC).SelectClipRgn(NULL);
+	nClipResult = (*pDC).SelectClipRgn(nullptr);
 	(*pDC).GetClipBox(&clipRect);
 	viewOrigin = (*pDC).GetViewportOrg();
 	viewOrigin.x = - viewOrigin.x;
@@ -1614,16 +1614,16 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 	#endif
 
 	unionRect = m_cRect;                                // the work area is defined by our sprite
-	if (myRect != NULL)                                 // include the area of our new destination
+	if (myRect != nullptr)                                 // include the area of our new destination
 		unionRect.UnionRect(unionRect, myRect);         // ... if specified, and retain it for later
 	baseRect = unionRect;
 
 	pSprite = this;                                     // start processing from this sprite and make
-	(*pSprite).m_pZNext = NULL;                         // ... it be the first in the z order chain
-	(*pSprite).m_pZPrev = NULL;
+	(*pSprite).m_pZNext = nullptr;                         // ... it be the first in the z order chain
+	(*pSprite).m_pZPrev = nullptr;
 
 	pTestSprite = m_pSpriteChain;                       // set all sprites to not having been tested
-	while (pTestSprite != NULL) {                       // ... for this reconstruction cycle
+	while (pTestSprite != nullptr) {                       // ... for this reconstruction cycle
 		if ((*pTestSprite).m_bVisible && (*pTestSprite).m_bPositioned)
 			(*pTestSprite).m_bOverlapTest = FALSE;
 		else
@@ -1633,43 +1633,43 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 	pTestSprite = m_pSpriteChain;                       // get first sprite to test against
 	m_bOverlapTest = TRUE;                              // set to not test against the first sprite
 	m_bOverlaps = TRUE;
-	if (m_bHaveBackdrop || (m_pBackground != NULL))
+	if (m_bHaveBackdrop || (m_pBackground != nullptr))
 		m_bPaintOverlap = TRUE;
 	else
 		m_bPaintOverlap = FALSE;
 
-	while (pTestSprite != NULL) {                       // look for sprites we overlap or which are
+	while (pTestSprite != nullptr) {                       // look for sprites we overlap or which are
 		if (!(*pTestSprite).m_bOverlapTest &&           // ... overlapped by sprites that overlap us
 		        overlapRect.IntersectRect(&unionRect, &(*pTestSprite).m_cRect)) {
 			unionRect.UnionRect(unionRect, (*pTestSprite).m_cRect); // expand rectangle to encompass it
 			(*pTestSprite).m_bOverlapTest = TRUE;       // mark it as having been tested
 			(*pTestSprite).m_bOverlaps = TRUE;          // mark it as involved in an overlap situation
 			if ((m_bHaveBackdrop ||                     // won't paint sprites without a background
-			        ((*pTestSprite).m_pBackground != NULL)) &&
+			        ((*pTestSprite).m_pBackground != nullptr)) &&
 			        overlapRect.IntersectRect(&baseRect, &(*pTestSprite).m_cRect))
 				(*pTestSprite).m_bPaintOverlap = TRUE;
 			else
 				(*pTestSprite).m_bPaintOverlap = FALSE;
 			while (TRUE) {                              // insert the sprite in the sorted z chain
 				if ((*pTestSprite).m_nZPosition < (*pSprite).m_nZPosition) {    // need to head leftward
-					if (((*pSprite).m_pZPrev == NULL) ||    // put it to the left of us (i.e. overlaps us)
+					if (((*pSprite).m_pZPrev == nullptr) ||    // put it to the left of us (i.e. overlaps us)
 					        ((*(*pSprite).m_pZPrev).m_nZPosition < (*pTestSprite).m_nZPosition)) {
 						(*pTestSprite).m_pZPrev = (*pSprite).m_pZPrev;
 						(*pTestSprite).m_pZNext = pSprite;
 						(*pSprite).m_pZPrev = pTestSprite;
-						if ((*pTestSprite).m_pZPrev != NULL)
+						if ((*pTestSprite).m_pZPrev != nullptr)
 							(*(*pTestSprite).m_pZPrev).m_pZNext = pTestSprite;
 						break;
 					} else
 						pSprite = (*pSprite).m_pZPrev;  // shift left in chain and set to test again
 				} else                                  // need to head rightward
 					if ((*pTestSprite).m_nZPosition >= (*pSprite).m_nZPosition) {
-						if (((*pSprite).m_pZNext == NULL) ||    // put it to the right of us (we overlap it)
+						if (((*pSprite).m_pZNext == nullptr) ||    // put it to the right of us (we overlap it)
 						        ((*(*pSprite).m_pZNext).m_nZPosition >= (*pTestSprite).m_nZPosition)) {
 							(*pTestSprite).m_pZNext = (*pSprite).m_pZNext;
 							(*pTestSprite).m_pZPrev = pSprite;
 							(*pSprite).m_pZNext = pTestSprite;
-							if ((*pTestSprite).m_pZNext != NULL)
+							if ((*pTestSprite).m_pZNext != nullptr)
 								(*(*pTestSprite).m_pZNext).m_pZPrev = pTestSprite;
 							break;
 						} else
@@ -1682,7 +1682,7 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 			pTestSprite = (*pTestSprite).m_pNext;       // set to test against the next sprite
 	}
 
-	while ((*pSprite).m_pZPrev != NULL)                 // find the head of the z order chain so that
+	while ((*pSprite).m_pZPrev != nullptr)                 // find the head of the z order chain so that
 		pSprite = (*pSprite).m_pZPrev;                  // ... we can begin background reconstruction
 
 	pZHead = pSprite;                                   // save head of z order chain
@@ -1691,7 +1691,7 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 	        (m_nZOrder == SPRITE_TOPMOST) &&                // ... and we are a top-most type of sprite
 	        !m_bHaveBackdrop) {                             // ... and we're painting direct to the screen
 		pTestSprite = (*pZHead).m_pZNext;               // ... then we only need to handle this sprite
-		while (pTestSprite != NULL) {                   // so set to not paint others in z order chain
+		while (pTestSprite != nullptr) {                   // so set to not paint others in z order chain
 			(*pTestSprite).m_bPaintOverlap = FALSE;
 			pTestSprite = (*pTestSprite).m_pZNext;
 		}
@@ -1707,7 +1707,7 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 	dy = unionRect.bottom - unionRect.top;              // ... spanned by all overlapping sprites
 
 	pBitmap = new CBitmap();                            // create a bitmap to contain our work area
-	if (pBitmap == NULL)
+	if (pBitmap == nullptr)
 		return (FALSE);
 	if (!(*pBitmap).CreateCompatibleBitmap(pDC, dx, dy)) {
 		delete pBitmap;
@@ -1715,16 +1715,16 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 	}
 
 	if (workDC.CreateCompatibleDC(pDC)) {               // create a device context to contain our
-		if (m_pPalette != NULL) {                       // ... work area and map in the palette
+		if (m_pPalette != nullptr) {                       // ... work area and map in the palette
 			pPalOldWork = workDC.SelectPalette(m_pPalette, FALSE);
 			(void) workDC.RealizePalette();
 			pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*pDC).RealizePalette();
 		}
 		pBitmapOld = workDC.SelectObject(pBitmap);      // map our bitmap into the work area
-		if (pBitmapOld != NULL) {                       // now need to create the original background
+		if (pBitmapOld != nullptr) {                       // now need to create the original background
 			if (m_bHaveBackdrop) {                      // ... which is easy if we are maintaining an
-				if (GetBackdropDC(pDC) == NULL)         // ... offscreen bitmap for the whole screen
+				if (GetBackdropDC(pDC) == nullptr)         // ... offscreen bitmap for the whole screen
 					bSuccess = FALSE;
 				else {
 					bSuccess = workDC.BitBlt(0,         // copy the background section into the work area
@@ -1741,7 +1741,7 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 					goto punt;
 				while (TRUE) {
 					pTestSprite = (*pSprite).m_pZNext;  // now update z order relative positions
-					if (pTestSprite == NULL)            // ... of every sprite in the z order chain
+					if (pTestSprite == nullptr)            // ... of every sprite in the z order chain
 						break;                          // ... to ensure/maintain increasing ordering
 					if ((*pSprite).m_nZOrder == (*pTestSprite).m_nZOrder)
 						(*pTestSprite).m_nZPosition = (*pSprite).m_nZPosition + 1;
@@ -1829,17 +1829,17 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 							goto punt;
 					}
 
-					if ((*pSprite).m_pZNext == NULL) {          // once we have restored all backgrounds
+					if ((*pSprite).m_pZNext == nullptr) {          // once we have restored all backgrounds
 						if ((m_nZOrder == SPRITE_TOPMOST) &&    // ... then place us at the head of the
 						        (m_nId != (*pZHead).m_nId)) {       // ... z order chain if we are to be topmost
 							if ((*pSprite).m_nId == m_nId)      // maintain pointer to last in z order
 								pSprite = m_pZPrev;             // ... backing up one if it is us
 							pTestSprite = m_pZPrev;             // ... since we're moving to the head
 							(*pTestSprite).m_pZNext = m_pZNext;
-							if (m_pZNext != NULL)
+							if (m_pZNext != nullptr)
 								(*m_pZNext).m_pZPrev = pTestSprite;
 							m_pZNext = pZHead;
-							m_pZPrev = NULL;
+							m_pZPrev = nullptr;
 							(*pZHead).m_pZPrev = this;
 							pZHead = this;
 							m_nZPosition = m_nZOrder;
@@ -1851,7 +1851,7 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 				}
 
 				pTestSprite = pZHead;                           // update z order relative positions
-				while ((*pTestSprite).m_pZNext != NULL) {       // ... to ensure increasing ordering
+				while ((*pTestSprite).m_pZNext != nullptr) {       // ... to ensure increasing ordering
 					if ((*pTestSprite).m_nZOrder == (*(*pTestSprite).m_pZNext).m_nZOrder)
 						(*(*pTestSprite).m_pZNext).m_nZPosition = (*pTestSprite).m_nZPosition + 1;
 					pTestSprite = (*pTestSprite).m_pZNext;
@@ -1860,12 +1860,12 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 
 			while (TRUE) {                                      // now repaint the images of the sprites
 				if (m_nId == (*pSprite).m_nId) {                // ... onto the work area
-					if (myRect == NULL)                         // no image, just erasing our sprite
+					if (myRect == nullptr)                         // no image, just erasing our sprite
 						bSuccess = TRUE;
 					else {
 						if (!m_bHaveBackdrop) {                 // but before we paint in the sprite's image
 							if (m_bRetainBackground) {          // ... retain what that area looks like as
-								if (m_pBackground == NULL) {    // ... the new saved background
+								if (m_pBackground == nullptr) {    // ... the new saved background
 									if (!CreateBackground(pDC) ||
 									        !SetupBackground(pDC))
 										goto punt;
@@ -1956,7 +1956,7 @@ paint_sprite:
 				}
 				if (!bSuccess)
 					goto punt;
-				if ((*pSprite).m_pZPrev == NULL)                // see if done with image painting
+				if ((*pSprite).m_pZPrev == nullptr)                // see if done with image painting
 					break;
 				pSprite = (*pSprite).m_pZPrev;
 			}
@@ -1971,7 +1971,7 @@ paint_sprite:
 			                    SRCCOPY);
 
 			(void) workDC.SelectObject(pBitmapOld);     // tear down the work area's bitmap, palette
-			if (m_pPalette != NULL) {                           // ... and device context, as well as the
+			if (m_pPalette != nullptr) {                           // ... and device context, as well as the
 				(void) workDC.SelectPalette(pPalOldWork, FALSE); // ... destination's palette
 				(void)(*pDC).SelectPalette(pPalOld, FALSE);
 			}
@@ -1984,17 +1984,17 @@ paint_sprite:
 
 punt:
 
-	if (pBitmapOld != NULL)                             // we failed, so tear down the resources used
+	if (pBitmapOld != nullptr)                             // we failed, so tear down the resources used
 		(void) workDC.SelectObject(pBitmapOld);         // ... map out the bitmap
-	if (pPalOldWork != NULL)                            // ... map out the palette
+	if (pPalOldWork != nullptr)                            // ... map out the palette
 		(void) workDC.SelectPalette(pPalOldWork, FALSE);
-	if (workDC.m_hDC != NULL)                           // ... release the context
+	if (workDC.m_hDC != nullptr)                           // ... release the context
 		workDC.DeleteDC();
 
 	(*pBitmap).DeleteObject();                          // ... delete the bitmap
 	delete pBitmap;
 
-	if (pPalOld != NULL)                                // map out the palette from the output context
+	if (pPalOld != nullptr)                                // map out the palette from the output context
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	return (FALSE);
@@ -2022,7 +2022,7 @@ BOOL CSprite::EraseSprites(CDC *pDC) {
 
 	pSprite = m_pSpriteChain;
 
-	while (pSprite != NULL) {
+	while (pSprite != nullptr) {
 		if (!(*pSprite).EraseSprite(pDC))
 			return (FALSE);
 		pSprite = (*pSprite).m_pNext;
@@ -2071,7 +2071,7 @@ BOOL CSprite::EraseSprite(CDC *pDC) {
  *  CPoint * pPoint         optional address of place to store estimated pixel overlap
  *
  * Return Value:
- *  CSprite *               pointer to sprite touched, or NULL
+ *  CSprite *               pointer to sprite touched, or nullptr
  *
  * Description:     Determine whether a given sprite touches another given sprite.
  *                  The defining rectangular areas of the sprites are tested first,
@@ -2112,7 +2112,7 @@ BOOL CSprite::TestInterception(CDC *pDC, CSprite * pTestSprite, CPoint *pPoint) 
  *  CSprite *       pointer to a lone sprite or a sprite chain
  *
  * Return Value:
- *  CSprite *       pointer to sprite touched, or NULL
+ *  CSprite *       pointer to sprite touched, or nullptr
  *
  * Description:     Determine whether a sprite will touch another sprite if
  *                  moved to its new location.  Simply determine whether
@@ -2133,7 +2133,7 @@ CSprite *CSprite::Interception(CRect *newRect, CSprite * pTestSprite) {
 	pSprite = pTestSprite;                              // get first sprite to be tested
 	myRect = *newRect;                                  // acquire the rectangle for base sprite
 
-	while (pSprite != NULL) {                           // thumb through the sprite chain
+	while (pSprite != nullptr) {                           // thumb through the sprite chain
 		if ((m_nId != (*pSprite).m_nId) &&              // be sure to not test against ourself
 		        (*pSprite).m_bIntercepts) {                 // ... and only test against overlapping sprites
 			testRect = (*pSprite).m_cRect;              // sprites touch if their rectangles intersect
@@ -2143,7 +2143,7 @@ CSprite *CSprite::Interception(CRect *newRect, CSprite * pTestSprite) {
 		pSprite = (*pSprite).m_pNext;
 	}                  // fetch next sprite in chain for testing
 
-	return (NULL);
+	return (nullptr);
 }
 
 
@@ -2156,7 +2156,7 @@ CSprite *CSprite::Interception(CRect *newRect, CSprite * pTestSprite) {
  *  CSprite * pTestSprite   pointer to a lone test sprite or a sprite chain
  *
  * Return Value:
- *  CSprite *               pointer to sprite touched, or NULL
+ *  CSprite *               pointer to sprite touched, or nullptr
  *
  * Description:     Determine whether a sprite will touch another sprite if
  *                  moved to its new location.  Simply determine whether
@@ -2171,13 +2171,13 @@ CSprite *CSprite::Interception(CDC *pDC, CSprite * pTestSprite) {
 
 	pSprite = pTestSprite;                              // get first sprite to be tested
 
-	while (pSprite != NULL) {                           // thumb through the entire sprite collection
-		if (TestInterception(pDC, pSprite, NULL))       // ... testing against each sprite in turn
+	while (pSprite != nullptr) {                           // thumb through the entire sprite collection
+		if (TestInterception(pDC, pSprite, nullptr))       // ... testing against each sprite in turn
 			return (pSprite);                           // found an interception
 		pSprite = (*pSprite).m_pNext;
 	}                  // fetch next sprite in chain for testing
 
-	return (NULL);
+	return (nullptr);
 }
 
 
@@ -2201,13 +2201,13 @@ CSprite *CSprite::Interception(CDC *pDC, CSprite * pTestSprite) {
 BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	BOOL    bSuccess = FALSE;                           // success/failure return status
 	CRect   unionRect;                                  // rectangle enclosing old and new sprite locations
-	CDC     *cDC1 = NULL,                               // device context for sprite 1
-	         *cDC2 = NULL;                               // device context for sprite 2
-	CBitmap *pBitmap1 = NULL,                           // bitmap for context 1
-	         *pBitmap2 = NULL,                           // bitmap for context 2
-	          *pBitmap1Old = NULL,                        // bitmap previously mapped to context 1
-	           *pBitmap2Old = NULL;                        // bitmap previously mapped to context 2
-	BYTE    *chPixels = NULL;                           // buffer for holding pixel values
+	CDC     *cDC1 = nullptr,                               // device context for sprite 1
+	         *cDC2 = nullptr;                               // device context for sprite 2
+	CBitmap *pBitmap1 = nullptr,                           // bitmap for context 1
+	         *pBitmap2 = nullptr,                           // bitmap for context 2
+	          *pBitmap1Old = nullptr,                        // bitmap previously mapped to context 1
+	           *pBitmap2Old = nullptr;                        // bitmap previously mapped to context 2
+	BYTE    *chPixels = nullptr;                           // buffer for holding pixel values
 	int     dx, dy,                                     // dimensions of context bitmaps
 	        i, j, n;
 	size_t  stN;
@@ -2218,7 +2218,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	if (!m_bVisible || !(*pSprite).m_bVisible)          // punt if not visible
 		return (FALSE);
 
-	if (pDC == NULL)                                    // punt if no output context
+	if (pDC == nullptr)                                    // punt if no output context
 		return (FALSE);
 
 	unionRect.UnionRect(m_cRect, (*pSprite).m_cRect);   // calculate the smallest enclosing rectangle that
@@ -2235,16 +2235,16 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	pBitmap1 = new CBitmap();
 	pBitmap2 = new CBitmap();
 
-	if ((cDC1 != NULL) &&                               // verify we got the objects we asked for
-	        (cDC2 != NULL) &&
+	if ((cDC1 != nullptr) &&                               // verify we got the objects we asked for
+	        (cDC2 != nullptr) &&
 	        (*cDC1).CreateCompatibleDC(pDC) &&              // create the actual device contexts
 	        (*cDC2).CreateCompatibleDC(pDC) &&
 	        (*pBitmap1).CreateBitmap(dx, dy, 1, 1, chPixels) && // create the actual bitmaps
 	        (*pBitmap2).CreateBitmap(dx, dy, 1, 1, chPixels)) {
 		pBitmap1Old = (*cDC1).SelectObject(pBitmap1);   // map the bitmaps into the contexts
 		pBitmap2Old = (*cDC2).SelectObject(pBitmap2);
-		if ((pBitmap1Old != NULL) &&
-		        (pBitmap2Old != NULL)) {
+		if ((pBitmap1Old != nullptr) &&
+		        (pBitmap2Old != nullptr)) {
 			bx = m_cPosition.x - unionRect.left;        // get positioning information for sprite 1
 			by = m_cPosition.y - unionRect.top;
 			bdx = m_cSize.cx;
@@ -2265,7 +2265,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 						(*pSprite).ReleaseMaskContext();
 					(void)(*cDC1).BitBlt(0, 0, dx, dy, cDC2, 0, 0, SRCAND); // logically AND the masks together
 					(void)(*cDC1).SelectObject(pBitmap1Old);            // ... leaving bits set where they overlap
-					pBitmap1Old = NULL;
+					pBitmap1Old = nullptr;
 					dwBytes = (*pBitmap1).GetBitmapBits(dwN, chPixels); // fetch the image we created
 					(*pBitmap1).GetObject(sizeof(BITMAP), &cBitmapData); // .. get the scanline length
 					bSuccess = FALSE;
@@ -2273,7 +2273,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 						for (j = 0; j < cBitmapData.bmWidthBytes; j++) {// ... in which case we have an image overlap
 							if (chPixels[(i * cBitmapData.bmWidthBytes) + j] != 0) {
 								bSuccess = TRUE;
-								if (pPoint != NULL) {                   // estimate point of intersection
+								if (pPoint != nullptr) {                   // estimate point of intersection
 									(*pPoint).x = (j * 8) - (m_cPosition.x - unionRect.left);
 									(*pPoint).y = i - (m_cPosition.y - unionRect.top);
 									if ((*pPoint).x < 0)
@@ -2290,28 +2290,28 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 		}
 	}
 
-	if (chPixels != NULL)
+	if (chPixels != nullptr)
 		free(chPixels);                                 // free up the work area's bitmap
 
-	if (pBitmap1Old != NULL)                            // map out the bitmaps we used
+	if (pBitmap1Old != nullptr)                            // map out the bitmaps we used
 		(void)(*cDC1).SelectObject(pBitmap1Old);
-	if (pBitmap2Old != NULL)
+	if (pBitmap2Old != nullptr)
 		(void)(*cDC2).SelectObject(pBitmap2Old);
 
-	if (pBitmap1 != NULL) {                             // delete the bitmap resources and objects
+	if (pBitmap1 != nullptr) {                             // delete the bitmap resources and objects
 		(*pBitmap1).DeleteObject();
 		delete pBitmap1;
 	}
-	if (pBitmap2 != NULL) {
+	if (pBitmap2 != nullptr) {
 		(*pBitmap2).DeleteObject();
 		delete pBitmap2;
 	}
 
-	if (cDC1 != NULL) {                                 // release the contexts and delete the objects
+	if (cDC1 != nullptr) {                                 // release the contexts and delete the objects
 		(*cDC1).DeleteDC();
 		delete cDC1;
 	}
-	if (cDC2 != NULL) {
+	if (cDC2 != nullptr) {
 		(*cDC2).DeleteDC();
 		delete cDC2;
 	}
@@ -2352,7 +2352,7 @@ BOOL CSprite::Touching(CPoint myPoint) {
  *  CSprite *           pointer to sprite with which to begin testing
  *
  * Return Value:
- *  CSprite *       pointer to sprite touched, or NULL
+ *  CSprite *       pointer to sprite touched, or nullptr
  *
  * Description:     Determine whether a sprite is touched by the given point,
  *                  if not test against succeeding members in its chain.
@@ -2362,7 +2362,7 @@ BOOL CSprite::Touching(CPoint myPoint) {
 CSprite *CSprite::Touched(CPoint myPoint, CSprite *pSprite) {
 	CRect   testRect;                                   // sprite area to be tested
 
-	while (pSprite != NULL) {                           // thumb through the entire sprite collection
+	while (pSprite != nullptr) {                           // thumb through the entire sprite collection
 		if ((*pSprite).m_bIntercepts) {                 // ... ignoring sprites that don't intercept
 			testRect = (*pSprite).m_cRect;
 			if (testRect.PtInRect(myPoint))             // See if the point is in the sprite's rectangle
@@ -2371,7 +2371,7 @@ CSprite *CSprite::Touched(CPoint myPoint, CSprite *pSprite) {
 		pSprite = (*pSprite).m_pNext;
 	}                  // fetch next sprite for testing
 
-	return (NULL);
+	return (nullptr);
 }
 
 
@@ -2427,11 +2427,11 @@ BOOL CSprite::CropImage(CDC *pDC, CRect *pRect) {
 	myRect.left += m_cImageRect.left;
 	myRect.right += m_cImageRect.left;
 
-	if (m_pImage != NULL) {
+	if (m_pImage != nullptr) {
 		if (SetupImage(pDC)) {                      // blacken image section to crop it
 			myBrush.CreateStockObject(BLACK_BRUSH);
 			(*m_pImageDC).FillRect(&myRect, &myBrush);
-			if (!m_bMasked || (m_pMask == NULL))
+			if (!m_bMasked || (m_pMask == nullptr))
 				bSuccess = TRUE;
 			else {
 				bSuccess = SetupMask(pDC);          // whiten mask section to crop it
@@ -2439,7 +2439,7 @@ BOOL CSprite::CropImage(CDC *pDC, CRect *pRect) {
 				(*m_pMaskDC).FillRect(&myRect, &myBrush);
 			}
 			if (bSuccess && m_bHaveBackdrop) {
-				if (GetBackdropDC(pDC) == NULL)
+				if (GetBackdropDC(pDC) == nullptr)
 					bSuccess = FALSE;
 				else {
 					bSuccess = (*pDC).BitBlt(
@@ -2453,7 +2453,7 @@ BOOL CSprite::CropImage(CDC *pDC, CRect *pRect) {
 					               SRCCOPY);
 					ReleaseBackdropDC();
 				}
-			} else if (bSuccess && (m_pBackground != NULL)) {
+			} else if (bSuccess && (m_pBackground != nullptr)) {
 				bSuccess = SetupBackground(pDC);    // update background with cropped area
 				if (bSuccess) {
 					bSuccess = (*pDC).BitBlt(
@@ -2503,27 +2503,27 @@ BOOL CSprite::CreateMask(CDC *pDC) {
 	if (!m_bVisible)                                    // punt if not visible
 		return (FALSE);
 
-	if (m_pMask != NULL)                                // done if already have a mask
+	if (m_pMask != nullptr)                                // done if already have a mask
 		return (TRUE);
 
 	if (!m_bMasked ||                                   // fail if not masked or, no image from
-	        (m_pImage == NULL) ||                           // ... which to obtain a mask, or no
-	        (pDC == NULL))                                  // ... output context
+	        (m_pImage == nullptr) ||                           // ... which to obtain a mask, or no
+	        (pDC == nullptr))                                  // ... output context
 		return (FALSE);
 
-	if (m_pImageDC != NULL)                             // see if contexts already exist
+	if (m_pImageDC != nullptr)                             // see if contexts already exist
 		bHaveImageContext = TRUE;
-	if (m_pMaskDC != NULL)
+	if (m_pMaskDC != nullptr)
 		bHaveMaskContext = TRUE;
 
 	mySize.cx = m_cSize.cx * (m_nCelCount + 1);
 	mySize.cy = m_cSize.cy;
 
 	m_pMask = new CBitmap();                            // create object to hold the mask
-	if ((m_pMask != NULL) &&                            // verify that worked
+	if ((m_pMask != nullptr) &&                            // verify that worked
 	        SetupImage(pDC) &&                              // setup the image bitmap and context
 	        CreateMaskContext(pDC)) {                       // create a context for the mask
-		if ((*m_pMask).CreateBitmap(mySize.cx, mySize.cy, 1, 1, NULL)) { // create mask bitmap
+		if ((*m_pMask).CreateBitmap(mySize.cx, mySize.cy, 1, 1, nullptr)) { // create mask bitmap
 			m_pMaskOld = (*m_pMaskDC).SelectObject(m_pMask);    // map bitmap into context
 			if (m_pMaskOld) {
 				(void)(*m_pMaskDC).BitBlt(0,            // copy in the image, doing an inversion
@@ -2564,9 +2564,9 @@ BOOL CSprite::CreateMask(CDC *pDC) {
 	if (!bHaveMaskContext)
 		ReleaseMaskContext();
 
-	if (m_pMask != NULL) {                              // delete mask bitmap since we failed
+	if (m_pMask != nullptr) {                              // delete mask bitmap since we failed
 		delete m_pMask;
-		m_pMask = NULL;
+		m_pMask = nullptr;
 	}
 
 	return (FALSE);
@@ -2592,16 +2592,16 @@ BOOL CSprite::CreateBackground(CDC *pDC) {
 	if (!m_bVisible || m_bHaveBackdrop)                 // punt if not visible or have backdrop
 		return (FALSE);
 
-	if (m_pBackground != NULL)                          // done if already have a background
+	if (m_pBackground != nullptr)                          // done if already have a background
 		return (TRUE);
 
-	if (pDC != NULL) {                                  // create an object to hold things
+	if (pDC != nullptr) {                                  // create an object to hold things
 		m_pBackground = new CBitmap();
-		if (m_pBackground != NULL) {                    // create the background bitmap
+		if (m_pBackground != nullptr) {                    // create the background bitmap
 			if ((*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
 				return (TRUE);
 			delete m_pBackground;                       // tear things down if we failed
-			m_pBackground = NULL;
+			m_pBackground = nullptr;
 		}
 	}
 
@@ -2630,16 +2630,16 @@ BOOL CSprite::SetupImage(CDC * pDC) {
 	if (!m_bVisible)                                    // punt if not visible
 		return (FALSE);
 
-	if ((m_pImage != NULL) &&                           // punt if no image bitmap
-	        (pDC != NULL)) {                                // ... or no output context
+	if ((m_pImage != nullptr) &&                           // punt if no image bitmap
+	        (pDC != nullptr)) {                                // ... or no output context
 
-		if (m_pImageDC != NULL)                         // see if already have a context
+		if (m_pImageDC != nullptr)                         // see if already have a context
 			bHaveContext = TRUE;
 
 		if (CreateImageContext(pDC)) {                  // create a context for the image
-			if (m_pImageOld == NULL)                    // ... then map in the bitmap
+			if (m_pImageOld == nullptr)                    // ... then map in the bitmap
 				m_pImageOld = (*m_pImageDC).SelectObject(m_pImage);
-			if (m_pImageOld != NULL)
+			if (m_pImageOld != nullptr)
 				return (TRUE);
 		}
 
@@ -2672,16 +2672,16 @@ BOOL CSprite::SetupBackground(CDC * pDC) {
 	if (!m_bVisible || m_bHaveBackdrop)                 // punt if not visible or have backdrop
 		return (FALSE);
 
-	if ((m_pBackground != NULL) &&                      // verify there is a background bitmap
-	        (pDC != NULL)) {                                // ... and an output context
+	if ((m_pBackground != nullptr) &&                      // verify there is a background bitmap
+	        (pDC != nullptr)) {                                // ... and an output context
 
-		if (m_pBackgroundDC != NULL)                    // see if a context already exists
+		if (m_pBackgroundDC != nullptr)                    // see if a context already exists
 			bHaveContext = TRUE;
 
 		if (CreateBackgroundContext(pDC)) {             // create a context for
-			if (m_pBackgroundOld == NULL)               // ... and map in the bitmap
+			if (m_pBackgroundOld == nullptr)               // ... and map in the bitmap
 				m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
-			if (m_pBackgroundOld != NULL)
+			if (m_pBackgroundOld != nullptr)
 				return (TRUE);
 		}
 
@@ -2715,16 +2715,16 @@ BOOL CSprite::SetupMask(CDC * pDC) {
 		return (FALSE);
 
 	if (m_bMasked &&                                    // verify we have a bitmap
-	        (pDC != NULL)) {                                // ... and an output context
+	        (pDC != nullptr)) {                                // ... and an output context
 
-		if (m_pMaskDC != NULL)                          // see if we already have a context
+		if (m_pMaskDC != nullptr)                          // see if we already have a context
 			bHaveContext = TRUE;
 
 		if (CreateMaskContext(pDC) &&                   // create a context for the mask
 		        CreateMask(pDC)) {                          // create the mask bitmap and content
-			if (m_pMaskOld == NULL)                     // map bitmap into context
+			if (m_pMaskOld == nullptr)                     // map bitmap into context
 				m_pMaskOld = (*m_pMaskDC).SelectObject(m_pMask);
-			if (m_pMaskOld != NULL)
+			if (m_pMaskOld != nullptr)
 				return (TRUE);
 		}
 
@@ -2754,13 +2754,13 @@ BOOL CSprite::CreateImageContext(CDC * pDC) {
 	if (!m_bVisible)                                    // punt if not visible
 		return (FALSE);
 
-	if (pDC != NULL) {                                  // verify output context
-		if (m_pImageDC == NULL) {                       // if we don't already have
+	if (pDC != nullptr) {                                  // verify output context
+		if (m_pImageDC == nullptr) {                       // if we don't already have
 			m_pImageDC = new CDC();                     // ... a context for the image
 			if (!(*m_pImageDC).CreateCompatibleDC(pDC)) // ... we create one now
 				goto Error;
 		}
-		if ((m_pPalette != NULL) && (m_pPalImageOld == NULL)) { // map in palette if present
+		if ((m_pPalette != nullptr) && (m_pPalImageOld == nullptr)) { // map in palette if present
 			m_pPalImageOld = (*m_pImageDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pImageDC).RealizePalette();
 		}
@@ -2793,13 +2793,13 @@ BOOL CSprite::CreateBackgroundContext(CDC * pDC) {
 	if (!m_bVisible || m_bHaveBackdrop)                 // punt if not visible or have backdrop
 		return (FALSE);
 
-	if (pDC != NULL) {                                  // verify the output context
-		if (m_pBackgroundDC == NULL) {                  // if we don't have a context
+	if (pDC != nullptr) {                                  // verify the output context
+		if (m_pBackgroundDC == nullptr) {                  // if we don't have a context
 			m_pBackgroundDC = new CDC();                // ... then we create one now
 			if (!(*m_pBackgroundDC).CreateCompatibleDC(pDC))
 				goto Error;
 		}
-		if ((m_pPalette != NULL) && (m_pPalBackOld == NULL)) {  // map in palette if present
+		if ((m_pPalette != nullptr) && (m_pPalBackOld == nullptr)) {  // map in palette if present
 			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pBackgroundDC).RealizePalette();
 		}
@@ -2833,11 +2833,11 @@ BOOL CSprite::CreateMaskContext(CDC * pDC) {
 		return (FALSE);
 
 	if (m_bMasked &&                                    // verify it is a masked sprite
-	        (pDC != NULL)) {                                // ... and we have an output context
-		if (m_pMaskDC != NULL)                          // done if already have a context
+	        (pDC != nullptr)) {                                // ... and we have an output context
+		if (m_pMaskDC != nullptr)                          // done if already have a context
 			return (TRUE);
 		m_pMaskDC = new CDC();                          // create an object for the context
-		if ((m_pMaskDC != NULL) &&                      // ... then create the context itself
+		if ((m_pMaskDC != nullptr) &&                      // ... then create the context itself
 		        (*m_pMaskDC).CreateCompatibleDC(pDC))
 			return (TRUE);
 		ReleaseMaskContext();
@@ -2863,17 +2863,17 @@ void CSprite::ReleaseImageContext(void) {
 	if (!m_bVisible)                                    // punt if not visible
 		return;
 
-	if (m_pImageDC != NULL) {                           // if there is an image device context
-		if (m_pImageOld != NULL)                        // ... map out existing bitmap
+	if (m_pImageDC != nullptr) {                           // if there is an image device context
+		if (m_pImageOld != nullptr)                        // ... map out existing bitmap
 			(void)(*m_pImageDC).SelectObject(m_pImageOld);
-		if (m_pPalImageOld != NULL)                     // ... map out the palette
+		if (m_pPalImageOld != nullptr)                     // ... map out the palette
 			(void)(*m_pImageDC).SelectPalette(m_pPalImageOld, FALSE);
 		(*m_pImageDC).DeleteDC();                       // ... release the context
 		delete m_pImageDC;                              // ... then delete the device context
 
-		m_pImageOld = NULL;
+		m_pImageOld = nullptr;
 		m_pPalImageOld = FALSE;
-		m_pImageDC = NULL;
+		m_pImageDC = nullptr;
 	}
 }
 
@@ -2894,18 +2894,18 @@ void CSprite::ReleaseBackgroundContext(void) {
 	if (!m_bVisible || m_bHaveBackdrop)                 // punt if not visible or have backdrop
 		return;
 
-	if (m_pBackgroundDC != NULL) {                      // if there is a background device context
-		if (m_pBackgroundOld != NULL) {                 // ... map out existing bitmap
+	if (m_pBackgroundDC != nullptr) {                      // if there is a background device context
+		if (m_pBackgroundOld != nullptr) {                 // ... map out existing bitmap
 			(void)(*m_pBackgroundDC).SelectObject(m_pBackgroundOld);
-			m_pBackgroundOld = NULL;
+			m_pBackgroundOld = nullptr;
 		}
-		if (m_pPalBackOld != NULL) {                    // ... map out the palette
+		if (m_pPalBackOld != nullptr) {                    // ... map out the palette
 			(void)(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, FALSE);
 			m_pPalBackOld = FALSE;
 		}
 		(*m_pBackgroundDC).DeleteDC();                  // ... release the context
 		delete m_pBackgroundDC;
-		m_pBackgroundDC = NULL;
+		m_pBackgroundDC = nullptr;
 	}                        // ... then delete the device context
 }
 
@@ -2927,14 +2927,14 @@ void CSprite::ReleaseMaskContext(void) {
 		return;
 
 	if (m_bMasked &&
-	        (m_pMaskDC != NULL)) {                          // if there is a mask device context
-		if (m_pMaskOld != NULL)                         // ... map out existing bitmap
+	        (m_pMaskDC != nullptr)) {                          // if there is a mask device context
+		if (m_pMaskOld != nullptr)                         // ... map out existing bitmap
 			(void)(*m_pMaskDC).SelectObject(m_pMaskOld);
 		(*m_pMaskDC).DeleteDC();                        // ... release the context
 		delete m_pMaskDC;                               // ... then delete the device context
 
-		m_pMaskOld = NULL;
-		m_pMaskDC = NULL;
+		m_pMaskOld = nullptr;
+		m_pMaskDC = nullptr;
 	}
 }
 
@@ -2958,13 +2958,13 @@ void CSprite::ClearImage(void) {
 	if (!m_bDuplicated) {
 		ReleaseImageContext();                          // release the imnage context
 
-		if (m_pImage != NULL) {                         // destroy the image bitmap object
+		if (m_pImage != nullptr) {                         // destroy the image bitmap object
 			(*m_pImage).DeleteObject();                 // ... if present
 			delete m_pImage;
 		}
 	}
 
-	m_pImage = NULL;
+	m_pImage = nullptr;
 }
 
 
@@ -2988,7 +2988,7 @@ void CSprite::ClearBackgrounds(void) {
 
 	pSprite = m_pSpriteChain;
 
-	while (pSprite != NULL) {
+	while (pSprite != nullptr) {
 		(*pSprite).ClearBackground();
 		pSprite = (*pSprite).m_pNext;
 	}
@@ -3017,10 +3017,10 @@ void CSprite::ClearBackground(void) {
 
 	ReleaseBackgroundContext();                         // release the background context
 
-	if (m_pBackground != NULL) {                        // destroy the backgrond bitmap object
+	if (m_pBackground != nullptr) {                        // destroy the backgrond bitmap object
 		(*m_pBackground).DeleteObject();                // ... if present
 		delete m_pBackground;
-		m_pBackground = NULL;
+		m_pBackground = nullptr;
 	}
 }
 
@@ -3065,13 +3065,13 @@ void CSprite::ClearMask(void) {
 	if (m_bMasked && !m_bDuplicated) {
 		ReleaseMaskContext();                           // release mask context
 
-		if (m_pMask != NULL) {                          // destroy the Mask bitmap resource and object
+		if (m_pMask != nullptr) {                          // destroy the Mask bitmap resource and object
 			(*m_pMask).DeleteObject();                  // ... if present
 			delete m_pMask;
 		}
 	}
 
-	m_pMask = NULL;
+	m_pMask = nullptr;
 }
 
 
@@ -3089,13 +3089,13 @@ void CSprite::ClearMask(void) {
  ************************************************************************/
 
 void CSprite::ClearPalette(void) {
-	if ((m_pPalette != NULL) && !m_bSharedPalette) {            // explicitly delete the palette resource
+	if ((m_pPalette != nullptr) && !m_bSharedPalette) {            // explicitly delete the palette resource
 		(*m_pPalette).DeleteObject();                           // ... if it is not shared by other sprites
 		delete m_pPalette;
 	}
 
 	m_bSharedPalette = FALSE;
-	m_pPalette = NULL;
+	m_pPalette = nullptr;
 }
 
 
@@ -3106,42 +3106,42 @@ void CSprite::ClearPalette(void) {
  * Parameters:      none
  *
  * Return Value:
- *  CDC *           pointer to device context or NULL
+ *  CDC *           pointer to device context or nullptr
  *
  * Description:     setup the device context for the backdrop.
  *
  ************************************************************************/
 
 CDC *CSprite::GetBackdropDC(CDC *pDC) {
-	if (m_pBackdropDC != NULL)                              // punt if no context
+	if (m_pBackdropDC != nullptr)                              // punt if no context
 		return (m_pBackdropDC);
 
 	m_pBackdropDC = new CDC();
 	if (!(*m_pBackdropDC).CreateCompatibleDC(pDC)) {
 		delete m_pBackdropDC;
-		m_pBackdropDC = NULL;
-		return (NULL);
+		m_pBackdropDC = nullptr;
+		return (nullptr);
 	}
 
-	if (m_pBackdropPalette != NULL) {                       // map in the palette if present
+	if (m_pBackdropPalette != nullptr) {                       // map in the palette if present
 		m_pBackdropPalOld = (*m_pBackdropDC).SelectPalette(m_pBackdropPalette, FALSE);
-		if (m_pBackdropPalOld == NULL) {                     // punt if not successful
+		if (m_pBackdropPalOld == nullptr) {                     // punt if not successful
 			delete m_pBackdropDC;
-			m_pBackdropDC = NULL;
-			return (NULL);
+			m_pBackdropDC = nullptr;
+			return (nullptr);
 		}
 		(void)(*m_pBackdropDC).RealizePalette();            // make the system use the palette
 	}
 
 	m_pBackdropOld = (*m_pBackdropDC).SelectObject(m_pBackdrop);    // map in our bitmap
-	if (m_pBackdropOld == NULL) {
-		if (m_pBackdropPalOld != NULL) {                    // map out palette on failure
+	if (m_pBackdropOld == nullptr) {
+		if (m_pBackdropPalOld != nullptr) {                    // map out palette on failure
 			(void)(*m_pBackdropDC).SelectPalette(m_pBackdropPalOld, FALSE);
 			m_pBackdropPalOld = FALSE;
 			delete m_pBackdropDC;
-			m_pBackdropDC = NULL;
+			m_pBackdropDC = nullptr;
 		}
-		return (NULL);
+		return (nullptr);
 	}
 
 	return (m_pBackdropDC);                                 // send back the context
@@ -3161,19 +3161,19 @@ CDC *CSprite::GetBackdropDC(CDC *pDC) {
  ************************************************************************/
 
 void CSprite::ReleaseBackdropDC(void) {
-	if (m_pBackdropOld != NULL) {                       // map back the previous bitmap
+	if (m_pBackdropOld != nullptr) {                       // map back the previous bitmap
 		(void)(*m_pBackdropDC).SelectObject(m_pBackdropOld);
-		m_pBackdropOld = NULL;
+		m_pBackdropOld = nullptr;
 	}
 
-	if (m_pBackdropPalOld != NULL) {                    // map back the previous palette
+	if (m_pBackdropPalOld != nullptr) {                    // map back the previous palette
 		(void)(*m_pBackdropDC).SelectPalette(m_pBackdropPalOld, FALSE);
 		m_pBackdropPalOld = FALSE;
 	}
 
-	if (m_pBackdropDC != NULL) {
+	if (m_pBackdropDC != nullptr) {
 		delete m_pBackdropDC;
-		m_pBackdropDC = NULL;
+		m_pBackdropDC = nullptr;
 	}
 }
 

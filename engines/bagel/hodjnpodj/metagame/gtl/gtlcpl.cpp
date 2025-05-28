@@ -78,7 +78,7 @@ cleanup:
 
 	if (iError) {
 		Common::sprintf_s(szOut, "CGtlData::Compile -- Error code %i", iError);
-		CGtlData::ErrorMsg(NULL, szOut) ;
+		CGtlData::ErrorMsg(nullptr, szOut) ;
 	}
 
 	JXELEAVE(CGtlData::Compile) ;
@@ -101,7 +101,7 @@ BOOL CGtlData::ParseLine(void)
 	int iTmp;
 
 	JXENTER(CGtlData::ParseLine) ;
-	m_xpLexLabel = NULL ;       // no label yet
+	m_xpLexLabel = nullptr ;       // no label yet
 
 	xpLxel = &m_cLexElts[0] ;   // point to first lex element
 
@@ -125,7 +125,7 @@ BOOL CGtlData::ParseLine(void)
 		if (m_xpLexLabel)
 			ErrorMsg(xpLxel, "Label ignored.") ;
 
-		xpLxel = ParseString(xpLxel, LXT_IDENT, m_szBmpDirectory, NULL) ;
+		xpLxel = ParseString(xpLxel, LXT_IDENT, m_szBmpDirectory, nullptr) ;
 
 		// if there's a directory
 		//
@@ -154,7 +154,7 @@ BOOL CGtlData::ParseLine(void)
 		// point to first/next bitmap
 		lpMap = m_lpMaps + m_iMaps++ ;
 
-		if (!lpMap->m_lpcBgbObject && ((lpMap->m_lpcBgbObject = new FAR CBgbObject) == NULL)) {
+		if (!lpMap->m_lpcBgbObject && ((lpMap->m_lpcBgbObject = new FAR CBgbObject) == nullptr)) {
 			ErrorMsg(xpLxel, "Can't allocate BGB") ;
 			iError = 131 ;  // can't allocate
 			goto cleanup ;
@@ -167,7 +167,7 @@ BOOL CGtlData::ParseLine(void)
 			strncpy(lpMap->m_szLabel, &m_szStringList[m_xpLexLabel->m_iStringListPos], MAX_LABEL_LENGTH - 1);
 		}
 
-		xpLxel = ParseString(xpLxel, LXT_IDENT, lpMap->m_szFilename, NULL) ;
+		xpLxel = ParseString(xpLxel, LXT_IDENT, lpMap->m_szFilename, nullptr) ;
 
 		lpMap->m_bRelocatable = TRUE ;  // default
 		while (xpLxel->m_iType == LXT_IDENT) {
@@ -381,7 +381,7 @@ BOOL CGtlData::ParseLine(void)
 
 			case KT_SECTOR:
 
-				xpLxel = ParseString(xpLxel, LXT_IDENT, szBuf, NULL);
+				xpLxel = ParseString(xpLxel, LXT_IDENT, szBuf, nullptr);
 
 				// find this node's sector
 				//
@@ -411,7 +411,7 @@ BOOL CGtlData::ParseLine(void)
 	case KT_LINK:
 
 		// get last node
-		if ((lpNode = m_lpLastNode) == NULL) {
+		if ((lpNode = m_lpLastNode) == nullptr) {
 			iError = 101 ;
 			goto cleanup ;
 		}
@@ -489,8 +489,8 @@ CLexElement *CGtlData::ParseInteger(CLexElement * xpLxel, int iPrevType, int FAR
 CLexElement *CGtlData::ParseString(CLexElement * xpLxel, int iPrevType, LPSTR lpszValue, XPINT xpiValue)
 // xpLxel -- pointer to previous lexeme
 // iPrevType -- type of previous lexeme
-// lpszValue -- where string is to be stored, or NULL if not stored
-// xpiValue -- where to store keyword value, or NULL if not stored
+// lpszValue -- where string is to be stored, or nullptr if not stored
+// xpiValue -- where to store keyword value, or nullptr if not stored
 // returns: pointer to next lexeme
 {
 	JXENTER(CGtlData::ParseString) ;
@@ -623,7 +623,7 @@ BOOL CGtlData::AddLink(CNode FAR * lpNode, int iLink)
 	if (!bFound) {
 		if (lpNode->m_iNumLinks >= DIMENSION(lpNode->m_iLinks)) {
 			iError = 100 ;
-			ErrorMsg(NULL, "Too many links for node.") ;
+			ErrorMsg(nullptr, "Too many links for node.") ;
 			goto cleanup ;
 		}
 		lpNode->m_iLinks[lpNode->m_iNumLinks++] = iLink ;

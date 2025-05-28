@@ -38,8 +38,8 @@ CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, BOOL b
 	m_bGain = bGain;
 	m_lAmount = lAmount;
 
-	m_pTextMessage = NULL;
-	m_pTextDescription = NULL;
+	m_pTextMessage = nullptr;
+	m_pTextDescription = nullptr;
 
 	DoModal();
 
@@ -49,28 +49,28 @@ CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, BOOL b
 }
 
 void CItemDialog::ClearDialogImage() {
-	if (m_pOKButton != NULL) {                        // release the button
+	if (m_pOKButton != nullptr) {                        // release the button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 void CItemDialog::OnDestroy() {
-	if (m_pTextMessage != NULL) {
+	if (m_pTextMessage != nullptr) {
 		delete m_pTextMessage;
-		m_pTextMessage = NULL;
+		m_pTextMessage = nullptr;
 	}
 
-	if (m_pTextDescription != NULL) {
+	if (m_pTextDescription != nullptr) {
 		delete m_pTextDescription;
-		m_pTextDescription = NULL;
+		m_pTextDescription = nullptr;
 	}
 
-	if (m_pOKButton != NULL) {                        // release the button
+	if (m_pOKButton != nullptr) {                        // release the button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -115,7 +115,7 @@ BOOL CItemDialog::OnInitDialog() {
 	                 nText_col_offset + nTextWidth,
 	                 nText_row_offset + nTextHeight);
 
-	if ((m_pTextMessage = new CText()) != NULL) {
+	if ((m_pTextMessage = new CText()) != nullptr) {
 		bSuccess = (*m_pTextMessage).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
 		ASSERT(bSuccess);   // initialize the text objext
 	}
@@ -128,7 +128,7 @@ BOOL CItemDialog::OnInitDialog() {
 	    nText_row_offset + nTextHeight
 	);
 
-	if ((m_pTextDescription = new CText()) != NULL) {
+	if ((m_pTextDescription = new CText()) != nullptr) {
 		bSuccess = (*m_pTextDescription).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
 		ASSERT(bSuccess);   // initialize the text objext
 	}
@@ -136,7 +136,7 @@ BOOL CItemDialog::OnInitDialog() {
 	ReleaseDC(pDC);
 
 	m_pOKButton = new CColorButton;                   // build a color QUIT button to let us exit
-	ASSERT(m_pOKButton != NULL);
+	ASSERT(m_pOKButton != nullptr);
 	(*m_pOKButton).SetPalette(m_pPalette);        // set the palette to use
 	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
@@ -160,7 +160,7 @@ void CItemDialog::OnPaint() {
 	ASSERT(bSuccess);
 
 	Common::sprintf_s(buf, (*m_pItem).GetDescription((*m_pItem).GetID(), m_lAmount));
-	while (buf[i] != NULL) i++;
+	while (buf[i] != 0) i++;
 	if (i > 20)
 		bSuccess = (*m_pTextDescription).DisplayString(pDC, buf, 13, FW_BOLD, ITEMDLG_TEXT_COLOR);
 	else

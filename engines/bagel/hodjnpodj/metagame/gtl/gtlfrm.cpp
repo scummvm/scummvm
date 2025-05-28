@@ -45,13 +45,13 @@ extern CBgbMgr  *gpBgbMgr;
 
 #if GTLDLL
 	extern HWND     ghwndParent;
-	CGtlFrame       *pMainWindow = NULL;
+	CGtlFrame       *pMainWindow = nullptr;
 	extern CBfcMgr  *lpMetaGameStruct;
 
 #else
 	#define ITEMS_IN_PAWN_SHOP 12
-	CGtlFrame       *pMainWindow = NULL;
-	CBfcMgr             *lpMetaGameStruct = NULL;
+	CGtlFrame       *pMainWindow = nullptr;
+	CBfcMgr             *lpMetaGameStruct = nullptr;
 #endif
 
 
@@ -96,11 +96,11 @@ END_MESSAGE_MAP()
 CGtlFrame::CGtlFrame() {
 	TRACECONSTRUCTOR(CGtlFrame) ;
 
-	m_xpcLastFocusView = m_xpcLastMouseView = NULL ;
+	m_xpcLastFocusView = m_xpcLastMouseView = nullptr ;
 	// no last view
 
 	#if GTLDLL
-	if ((m_lpBfcMgr = lpMetaGameStruct) == NULL)
+	if ((m_lpBfcMgr = lpMetaGameStruct) == nullptr)
 		m_lpBfcMgr = new CBfcMgr ;
 	#else
 	m_lpBfcMgr = new CBfcMgr ;
@@ -116,7 +116,7 @@ CGtlFrame::~CGtlFrame() {
 	#if !GTLDLL
 	if (m_lpBfcMgr) {
 		delete m_lpBfcMgr ;
-		m_lpBfcMgr = NULL ;
+		m_lpBfcMgr = nullptr ;
 	}
 	#endif
 }
@@ -128,7 +128,7 @@ BOOL CGtlFrame::NewFrame(CBfcMgr *lpBfcMgr)
 	JXENTER(CGtlFrame::NewFrame) ;
 	int iError = 0 ;        // error code
 
-	if ((m_lpBfcMgr = lpBfcMgr) == NULL)
+	if ((m_lpBfcMgr = lpBfcMgr) == nullptr)
 		m_lpBfcMgr = new CBfcMgr ;
 	m_nReturnCode = -1;
 
@@ -150,7 +150,7 @@ void CGtlFrame::OnDestroy() {
 
 	lpMetaGameStruct->m_bRestart = TRUE;
 
-	pMainWindow = NULL;
+	pMainWindow = nullptr;
 
 	CFrameWnd::OnDestroy();
 }
@@ -189,7 +189,7 @@ void CGtlFrame::OnUpdateViewStatusBar(CCmdUI *) {
 }
 
 void CGtlFrame::OnViewInfoDlg() {
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -207,13 +207,13 @@ void CGtlFrame::OnViewInfoDlg() {
 		else if (!(uMenuState & MF_CHECKED) && !xpGtlDoc->m_xpcInfDlg)
 			ShowInfoDialog() ;
 	}  else {
-		::MessageBox(NULL, "No current document.", NULL, MB_OK) ;
+		::MessageBox(nullptr, "No current document.", nullptr, MB_OK) ;
 	}
 }
 
 
 void CGtlFrame::OnViewCtlDlg() {
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -232,7 +232,7 @@ void CGtlFrame::OnViewCtlDlg() {
 			ShowControlDialog() ;
 
 	} else {
-		::MessageBox(NULL, "No current document.", NULL, MB_OK) ;
+		::MessageBox(nullptr, "No current document.", nullptr, MB_OK) ;
 	}
 }
 
@@ -242,7 +242,7 @@ BOOL CGtlFrame::ShowControlDialog(void)
 {
 	JXENTER(CGtlFrame::ShowControlDialog) ;
 	int iError = 0 ;        // error code
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -272,7 +272,7 @@ BOOL CGtlFrame::ShowNodeDialog(void)
 	JXENTER(CGtlFrame::ShowNodeDialog) ;
 	int iError = 0 ;        // error code
 
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -301,7 +301,7 @@ BOOL CGtlFrame::ShowInfoDialog(void)
 {
 	JXENTER(CGtlFrame::ShowInfoDialog) ;
 	int iError = 0 ;        // error code
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -330,7 +330,7 @@ BOOL CGtlFrame::ShowMenuDialog(void)
 {
 	JXENTER(CGtlFrame::ShowMenuDialog) ;
 	int iError = 0 ;        // error code
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -354,7 +354,7 @@ BOOL CGtlFrame::ShowMenuDialog(void)
 }
 
 void CGtlFrame::OnViewMenuDlg() {
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -374,13 +374,13 @@ void CGtlFrame::OnViewMenuDlg() {
 			ShowMenuDialog() ;
 
 	} else {
-		::MessageBox(NULL, "No current document.", NULL, MB_OK) ;
+		::MessageBox(nullptr, "No current document.", nullptr, MB_OK) ;
 	}
 }
 
 
 void CGtlFrame::OnViewNodeDlg() {
-	CGtlDoc * xpGtlDoc = NULL ;
+	CGtlDoc * xpGtlDoc = nullptr ;
 	CGtlView * xpGtlFocusView, *xpGtlMouseView ;
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -400,14 +400,14 @@ void CGtlFrame::OnViewNodeDlg() {
 			ShowNodeDialog() ;
 
 	} else {
-		::MessageBox(NULL, "No current document.", NULL, MB_OK) ;
+		::MessageBox(nullptr, "No current document.", nullptr, MB_OK) ;
 	}
 }
 #endif
 
 
 BOOL CGtlFrame::ShowClue(CPalette *pPalette, CNote *pNote) {
-	CNotebook dlgNoteBook((CWnd *)this, pPalette, NULL, pNote);
+	CNotebook dlgNoteBook((CWnd *)this, pPalette, nullptr, pNote);
 	dlgNoteBook.DoModal();
 	SetupCursor();
 	return (FALSE);
@@ -417,10 +417,10 @@ BOOL CGtlFrame::ShowClue(CPalette *pPalette, CNote *pNote) {
 BOOL CGtlFrame::GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
                                      CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView)
 // xpcGtlDoc (output) -- the document which most recently had focus
-//      in some view, or NULL if none
-// xpcGtlFocusView (output) -- view which had most recent focus, or NULL
+//      in some view, or nullptr if none
+// xpcGtlFocusView (output) -- view which had most recent focus, or nullptr
 // xpcGtlMouseView (output) -- the view for this same document that was
-//      most recently touched by the mouse, or NULL
+//      most recently touched by the mouse, or nullptr
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlFrame::GetCurrentDocAndView) ;
@@ -428,7 +428,7 @@ BOOL CGtlFrame::GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
 
 	xpcGtlDoc = m_xpDocument ;
 
-	if ((xpcGtlFocusView = m_xpcLastFocusView) != NULL) {
+	if ((xpcGtlFocusView = m_xpcLastFocusView) != nullptr) {
 
 		if (!xpcGtlDoc)
 			xpcGtlDoc = m_xpcLastFocusView->GetDocument() ;
@@ -439,7 +439,7 @@ BOOL CGtlFrame::GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
 		// no pointer to last focus view
 		//
 	} else {
-		xpcGtlMouseView = NULL;
+		xpcGtlMouseView = nullptr;
 	}
 
 // cleanup:
@@ -462,7 +462,7 @@ BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
 //  if (stWndClass == "")
 //  stWndClass = AfxRegisterWndClass(CS_DBLCLKS |
 //              CS_BYTEALIGNWINDOW | CS_OWNDC,
-//              NULL, NULL, NULL) ;
+//              nullptr, nullptr, nullptr) ;
 
 	if (!xpGtlApp->m_bTitle) {   // if we don't want a title bar
 //      cCs.lpszClass = stWndClass ;
@@ -480,7 +480,7 @@ BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
 
 		if (!(cCs.style & WS_CHILD)) {
 			cCs.style = WS_POPUP | WS_VISIBLE ;
-			if (cCs.hMenu != NULL)
+			if (cCs.hMenu != nullptr)
 				MFC::DestroyMenu(cCs.hMenu);
 			cCs.hMenu = 0 ;
 		}
@@ -504,7 +504,7 @@ void CGtlFrame::RecalcLayout(BOOL bNotify)
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 
 //      // call the layout hook -- OLE 2.0 support uses this hook
-//      if (bNotify && m_pNotifyHook != NULL)
+//      if (bNotify && m_pNotifyHook != nullptr)
 //              m_pNotifyHook->OnRecalcLayout();
 
 //      // reposition all the child windows (regardless of ID)
@@ -673,7 +673,7 @@ void CGtlFrame::OnCallClose() {
 
 void CGtlFrame::OnCallExit() {
 	int         iReturnValue = -1 ;
-	CGtlDoc     *xpGtlDoc = NULL ;
+	CGtlDoc     *xpGtlDoc = nullptr ;
 	CGtlView    *xpGtlFocusView, *xpGtlMouseView ;
 
 	GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
@@ -683,10 +683,10 @@ void CGtlFrame::OnCallExit() {
 	#if RETAIN_META_DLL
 	ShowWindow(SW_HIDE);
 
-	if (gpBgbMgr != NULL)
+	if (gpBgbMgr != nullptr)
 		gpBgbMgr->CacheOptimize(2000000);
 	#else
-	if (gpBgbMgr != NULL)
+	if (gpBgbMgr != nullptr)
 		gpBgbMgr->CacheFlush();
 	#endif
 

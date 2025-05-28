@@ -36,7 +36,7 @@ extern CPalette     *pGamePalette;
 extern LPGAMESTRUCT pGameParams;
 
 CAnimate::CAnimate(CSound *pSound) {
-	m_pSprite       = NULL;
+	m_pSprite       = nullptr;
 	m_cClownRect    = CRect(CLOWN_LEFT, CLOWN_TOP, CLOWN_RIG, CLOWN_BOT);
 	m_cUFORect      = CRect(UFO_LEFT, UFO_TOP, UFO_RIG, UFO_BOT);
 	m_cCarRect      = CRect(CAR_LEFT, CAR_TOP, CAR_RIG, CAR_BOT);
@@ -45,7 +45,7 @@ CAnimate::CAnimate(CSound *pSound) {
 	m_cCutRect      = CRect(CUT_LEFT, CUT_TOP, CUT_RIG, CUT_BOT);
 	m_pSound        = pSound;
 
-	//srand((unsigned) time(NULL));     // seed the random number generator
+	//srand((unsigned) time(nullptr));     // seed the random number generator
 } // CAnimate
 
 CAnimate::~CAnimate() {
@@ -85,9 +85,9 @@ BOOL CAnimate::Clown(CDC *pDC, CPoint point) {
 	} // end if
 
 	m_pSprite->EraseSprite(pDC);
-	if (m_pSprite != NULL) {
+	if (m_pSprite != nullptr) {
 		delete m_pSprite;
-		m_pSprite = NULL;
+		m_pSprite = nullptr;
 	} // end if
 
 	return TRUE;
@@ -201,9 +201,9 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
 	} // end if
 
 	m_pSprite->EraseSprite(pDC);
-	if (m_pSprite != NULL) {
+	if (m_pSprite != nullptr) {
 		delete m_pSprite;
-		m_pSprite = NULL;
+		m_pSprite = nullptr;
 	} // end if
 
 	return TRUE;

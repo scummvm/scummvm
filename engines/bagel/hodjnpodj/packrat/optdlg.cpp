@@ -31,11 +31,11 @@ namespace Packrat {
 static CPalette         *pPackRatOptPalette;
 static CRect            rectDisplayLevel(43, 60, 174, 72);
 static CRect            rectDisplayLives(43, 101, 174, 113);
-CText                   *ptxtLevel = NULL;
-CText                   *ptxtLives = NULL;
+CText                   *ptxtLevel = nullptr;
+CText                   *ptxtLives = nullptr;
 
-CColorButton    *pPROKButton = NULL;
-CColorButton    *pPRCancelButton = NULL;
+CColorButton    *pPROKButton = nullptr;
+CColorButton    *pPRCancelButton = nullptr;
 
 /*****************************************************************
  *
@@ -151,16 +151,16 @@ void CPackRatOptDlg::OnOK(void) {
 
 void CPackRatOptDlg::ClearDialogImage(void) {
 
-	if (pPROKButton != NULL) {
+	if (pPROKButton != nullptr) {
 		delete pPROKButton;
-		pPROKButton = NULL;
+		pPROKButton = nullptr;
 	}
-	if (pPRCancelButton != NULL) {
+	if (pPRCancelButton != nullptr) {
 		delete pPRCancelButton;
-		pPRCancelButton = NULL;
+		pPRCancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }
@@ -201,13 +201,13 @@ BOOL CPackRatOptDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	pPROKButton = new CColorButton();
-	ASSERT(pPROKButton != NULL);
+	ASSERT(pPROKButton != nullptr);
 	pPROKButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pPROKButton->SetControl(IDC_MINI_OK, this);
 	ASSERT(bSuccess);
 
 	pPRCancelButton = new CColorButton();
-	ASSERT(pPRCancelButton != NULL);
+	ASSERT(pPRCancelButton != nullptr);
 	pPRCancelButton->SetPalette(pPackRatOptPalette);
 	bSuccess = pPRCancelButton->SetControl(IDC_MINI_CANCEL, this);
 	ASSERT(bSuccess);
@@ -289,11 +289,11 @@ void CPackRatOptDlg::OnPaint(void) {
 	pLevel->SetScrollPos(m_nLevel, TRUE);
 	pLives->SetScrollPos(m_nLives, TRUE);
 
-	if (pLevel != NULL) {
-		pLevel = NULL;
+	if (pLevel != nullptr) {
+		pLevel = nullptr;
 	}
-	if (pLevel != NULL) {
-		pLives = NULL;
+	if (pLevel != nullptr) {
+		pLives = nullptr;
 	}
 	return;
 }
@@ -433,13 +433,13 @@ void CPackRatOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 
 void CPackRatOptDlg::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
-	if (pPROKButton != NULL) {
+	if (pPROKButton != nullptr) {
 		delete pPROKButton;
-		pPROKButton = NULL;
+		pPROKButton = nullptr;
 	}
-	if (pPRCancelButton != NULL) {
+	if (pPRCancelButton != nullptr) {
 		delete pPRCancelButton;
-		pPRCancelButton = NULL;
+		pPRCancelButton = nullptr;
 	}
 
 	delete ptxtLevel;

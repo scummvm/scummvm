@@ -96,7 +96,7 @@ BOOL CGtlData::ReadLine(void)
 	char *xpStr ;       // string pointer
 	char *xpszIdent;       // identifier string pointer
 	const CKeyTab * xpKytb ;      // pointer to keyword table
-	CLexElement * xpLxel, *xpLastLxel = NULL ;  // last lexical element on line
+	CLexElement * xpLxel, *xpLastLxel = nullptr ;  // last lexical element on line
 	BOOL bDone ;    // loop variable
 
 	JXENTER(CGtlData::ReadLine) ;
@@ -267,7 +267,7 @@ BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, LPCSTR szMessage)
 		Common::strcpy_s(szTitle, "Error message") ;
 	}
 
-	MessageBox(NULL, szLine, szTitle, MB_OK) ;
+	MessageBox(nullptr, szLine, szTitle, MB_OK) ;
 
 // cleanup:
 

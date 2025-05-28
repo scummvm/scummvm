@@ -42,7 +42,7 @@ class CMainGameDlg : public CBmpDialog
 private:
 
 public:
-    CMainGameDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL );
+    CMainGameDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr );
 
 private:
     BOOL OnInitDialog();
@@ -91,7 +91,7 @@ private:
     BOOL        m_bPodjIsComputer;
 
 public:
-    CMetaSetupDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL );
+    CMetaSetupDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr );
     void SetInitialOptions(CBfcMgr *);  // Sets the private members
 
 private:

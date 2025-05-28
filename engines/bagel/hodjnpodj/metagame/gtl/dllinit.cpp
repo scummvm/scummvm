@@ -37,13 +37,13 @@ HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 HWND        ghwndParent;
 
-//CMainDFAWindow    *pMainGameWnd = NULL;   // pointer to the poker's main window
-CPalette        *pTestPalette = NULL;
+//CMainDFAWindow    *pMainGameWnd = nullptr;   // pointer to the poker's main window
+CPalette        *pTestPalette = nullptr;
 HCURSOR         hGameCursor;
 extern CGtlFrame       *pMainWindow;
-LPGAMESTRUCT    pGameInfo = NULL;
+LPGAMESTRUCT    pGameInfo = nullptr;
 HWND            hThisWind;
-CBfcMgr         *lpMetaGameStruct = NULL;
+CBfcMgr         *lpMetaGameStruct = nullptr;
 BOOL            bJustReturned = FALSE;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -83,15 +83,15 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	#if RETAIN_META_DLL
 	if (bMetaLoaded) {
 		CGtlView    *xpGtlFocusView, *xpGtlMouseView;
-		CGtlDoc     *xpGtlDoc = NULL;
+		CGtlDoc     *xpGtlDoc = nullptr;
 
 		pMainWindow->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
-		xpGtlDoc->m_xpGtlData->m_xpGtlView->SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, NULL);
+		xpGtlDoc->m_xpGtlData->m_xpGtlView->SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, nullptr);
 		if (lpBfcMgr->m_bRestart == FALSE) {
-			xpGtlDoc->m_xpGtlData->m_xpXodjChain = NULL;
-			xpGtlDoc->m_xpGtlData->m_xpCurXodj = NULL;
+			xpGtlDoc->m_xpGtlData->m_xpXodjChain = nullptr;
+			xpGtlDoc->m_xpGtlData->m_xpCurXodj = nullptr;
 			xpGtlDoc->m_xpGtlData->m_iMishMoshLoc = 0;
-			pMainWindow->m_lpBfcMgr = NULL;
+			pMainWindow->m_lpBfcMgr = nullptr;
 			pMainWindow->m_lpBfcMgr = lpBfcMgr;
 			xpGtlDoc->m_xpGtlData->m_bGameOver = FALSE;
 		}
@@ -118,7 +118,7 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	SetupWindow(lpBfcMgr);
 	#endif
 
-	sndPlaySound(NULL, 0);              // clear all rogue sounds
+	sndPlaySound(nullptr, 0);              // clear all rogue sounds
 
 	return pMainWindow->m_hWnd;
 }
@@ -139,10 +139,10 @@ void SetupWindow(CBfcMgr *) {
 
 void SetupCursor() {
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-	HCURSOR hNewCursor = NULL;
+	HCURSOR hNewCursor = nullptr;
 
 	hNewCursor = xpGtlApp->LoadStandardCursor(IDC_ARROW);
-	//if (hNewCursor != NULL);
+	//if (hNewCursor != nullptr);
 	MFC::SetCursor(hNewCursor);
 }
 

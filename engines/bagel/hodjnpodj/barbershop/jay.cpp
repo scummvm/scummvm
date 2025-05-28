@@ -28,11 +28,11 @@ namespace HodjNPodj {
 namespace Barbershop {
 
 void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
-	CBrush      *pMyBrush = NULL;                   // New Brush
-	CBrush      *pOldBrush = NULL;                  // Pointer to old brush
-	CPen        *pMyPen = NULL;                     // New Pen
-	CPen        *pOldPen = NULL;                    // Pointer to old pen
-	CPalette    *pPalOld = NULL;                    // Pointer to old palette
+	CBrush      *pMyBrush = nullptr;                   // New Brush
+	CBrush      *pOldBrush = nullptr;                  // Pointer to old brush
+	CPen        *pMyPen = nullptr;                     // New Pen
+	CPen        *pOldPen = nullptr;                    // Pointer to old pen
+	CPalette    *pPalOld = nullptr;                    // Pointer to old palette
 	int         OldDrawMode;                        // Holder for old draw mode
 
 	pMyBrush = new CBrush();                        // Construct new brush
@@ -54,12 +54,12 @@ void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
 	(*pDC).SelectPalette(pPalOld, FALSE);           // Select back the old palette
 
-	if (pMyBrush != NULL) {                         // If the brush was constructed, delete it
+	if (pMyBrush != nullptr) {                         // If the brush was constructed, delete it
 		pMyBrush->DeleteObject();
 		delete pMyBrush;
 	}
 
-	if (pMyPen != NULL) {                           // If the pen was constructed, delete it
+	if (pMyPen != nullptr) {                           // If the pen was constructed, delete it
 		pMyPen->DeleteObject();
 		delete pMyPen;
 	}

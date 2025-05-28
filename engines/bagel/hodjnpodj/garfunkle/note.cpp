@@ -26,8 +26,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Garkfunkle {
 
-CNote   *CNote::m_pNoteHead = NULL;            // pointer to list of linked notes
-CNote   *CNote::m_pNoteTail = NULL;            // pointer to tail of list of linked notes
+CNote   *CNote::m_pNoteHead = nullptr;            // pointer to list of linked notes
+CNote   *CNote::m_pNoteTail = nullptr;            // pointer to tail of list of linked notes
 
 IMPLEMENT_DYNCREATE(CNote, CObject)
 
@@ -45,8 +45,8 @@ IMPLEMENT_DYNCREATE(CNote, CObject)
 
 CNote::CNote() {
 	m_nValue = 1;
-	m_pNext = NULL;                                     // it is not yet in the sprite chain and
-	m_pPrev = NULL;                                     // ... thus has no links to other sprites
+	m_pNext = nullptr;                                     // it is not yet in the sprite chain and
+	m_pPrev = nullptr;                                     // ... thus has no links to other sprites
 }
 
 
@@ -97,10 +97,10 @@ void CNote::SetValue(int nValue) {
  ************************************************************************/
 
 void CNote::LinkNote(void) {
-	m_pNext = NULL;                 // link note onto tail of list
+	m_pNext = nullptr;                 // link note onto tail of list
 	m_pPrev = m_pNoteTail;          //... by pointing it back at the current
 	//... tail, making it the tail, and
-	if (m_pNoteTail)                //... pointing it at NULL (the list terminator)
+	if (m_pNoteTail)                //... pointing it at nullptr (the list terminator)
 		(*m_pNoteTail).m_pNext = this;
 	else
 		m_pNoteHead = this;
@@ -131,7 +131,7 @@ void CNote::UnLinkNote(void) {
 	else
 		m_pNoteTail = m_pPrev;
 
-	m_pNext = m_pPrev = NULL;
+	m_pNext = m_pPrev = nullptr;
 }
 
 /*************************************************************************

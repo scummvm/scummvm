@@ -36,13 +36,13 @@ namespace HodjNPodj {
 #define ID_SOUND     110
 
 
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
 
 
 CAudioCfgDlg::CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
 	: CBmpDialog(pParent, pPalette, IDD_AUDIOCFG, ".\\ART\\SSCROLL.BMP") {
-	m_pScrollBar1 = NULL;
+	m_pScrollBar1 = nullptr;
 
 	DoModal();
 }
@@ -178,15 +178,15 @@ BOOL CAudioCfgDlg::OnInitDialog(void) {
 
 	CBmpDialog::OnInitDialog();
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		tmpRect.SetRect(54, 85, 168, 98);
-		if ((m_pTxtVolume = new CText) != NULL) {
+		if ((m_pTxtVolume = new CText) != nullptr) {
 			m_pTxtVolume->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		tmpRect.SetRect(54, 100, 168, 118);
-		if ((m_pScrollBar1 = new CScrollBar) != NULL) {
+		if ((m_pScrollBar1 = new CScrollBar) != nullptr) {
 			m_pScrollBar1->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL1);
 			m_pScrollBar1->SetScrollRange(LEVEL_MIN, LEVEL_MAX, TRUE);
 		}
@@ -194,24 +194,24 @@ BOOL CAudioCfgDlg::OnInitDialog(void) {
 		ReleaseDC(pDC);
 	}
 
-	if ((pOKButton = new CColorButton) != NULL) {           // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {           // build a color QUIT button to let us exit
 		pOKButton->SetPalette(m_pPalette);                  // set the palette to use
 		pOKButton->SetControl(IDOK, this);                  // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {       // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {       // build a color QUIT button to let us exit
 		pCancelButton->SetPalette(m_pPalette);              // set the palette to use
 		pCancelButton->SetControl(IDCANCEL, this);          // tie to the dialog control
 	}
 
-	if ((m_pMusicButton = new CCheckButton) != NULL) {
+	if ((m_pMusicButton = new CCheckButton) != nullptr) {
 		m_pMusicButton->SetPalette(m_pPalette);
 		m_pMusicButton->SetControl(ID_MUSIC, this);
 		if (!CSound::MidiAvailable())
 			m_pMusicButton->EnableWindow(FALSE);
 	}
 
-	if ((m_pSoundButton = new CCheckButton) != NULL) {
+	if ((m_pSoundButton = new CCheckButton) != nullptr) {
 		m_pSoundButton->SetPalette(m_pPalette);
 		m_pSoundButton->SetControl(ID_SOUND, this);
 		if (!CSound::SoundAvailable())
@@ -240,8 +240,8 @@ VOID CAudioCfgDlg::UpdateOptions(VOID) {
 	CHAR buf[40];
 	CDC *pDC;
 
-	if ((pDC = GetDC()) != NULL) {
-		if (m_pTxtVolume != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
+		if (m_pTxtVolume != nullptr) {
 			if (CSound::SoundVolumeAvailable() || CSound::MidiVolumeAvailable())
 				Common::sprintf_s(buf, "Volume: %d", m_nVolume);
 			else
@@ -259,34 +259,34 @@ BOOL CAudioCfgDlg::OnEraseBkgnd(CDC *) {
 
 
 void CAudioCfgDlg::OnClose() {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (m_pTxtVolume != NULL) {
+	if (m_pTxtVolume != nullptr) {
 		delete m_pTxtVolume;
-		m_pTxtVolume = NULL;
+		m_pTxtVolume = nullptr;
 	}
 
-	if (m_pScrollBar1 != NULL) {
+	if (m_pScrollBar1 != nullptr) {
 		delete m_pScrollBar1;
-		m_pScrollBar1 = NULL;
+		m_pScrollBar1 = nullptr;
 	}
 
-	if (m_pMusicButton != NULL) {
+	if (m_pMusicButton != nullptr) {
 		delete m_pMusicButton;
-		m_pMusicButton = NULL;
+		m_pMusicButton = nullptr;
 	}
 
-	if (m_pSoundButton != NULL) {
+	if (m_pSoundButton != nullptr) {
 		delete m_pSoundButton;
-		m_pSoundButton = NULL;
+		m_pSoundButton = nullptr;
 	}
 
 	ClearDialogImage();
@@ -294,17 +294,17 @@ void CAudioCfgDlg::OnClose() {
 }
 
 void CAudioCfgDlg::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 

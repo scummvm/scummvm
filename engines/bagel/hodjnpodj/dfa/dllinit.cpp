@@ -30,8 +30,8 @@ namespace DFA {
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
-CMainDFAWindow  *pMainGameWnd = NULL;   // pointer to the poker's main window
-CPalette        *pTestPalette = NULL;
+CMainDFAWindow  *pMainGameWnd = nullptr;   // pointer to the poker's main window
+CPalette        *pTestPalette = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
@@ -65,8 +65,8 @@ CPalette        *pTestPalette = NULL;
 HWND FAR PASCAL RunDFA(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 // if the pointer has garbage in it, the clean it out
-	if (pMainGameWnd != NULL) {
-		pMainGameWnd = NULL;
+	if (pMainGameWnd != nullptr) {
+		pMainGameWnd = nullptr;
 	}
 	#ifdef BAGEL_DEBUG
 //  lpGameInfo->bPlayingMetagame = TRUE;

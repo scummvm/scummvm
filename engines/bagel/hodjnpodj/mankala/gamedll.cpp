@@ -78,7 +78,7 @@ HWND FAR PASCAL RunMank(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 #undef _MEM_LEAK_TEST
 	#ifndef _MEM_LEAK_TEST
-	if ((pMain = new CMnkWindow) != NULL) {
+	if ((pMain = new CMnkWindow) != nullptr) {
 
 		pMain->ShowWindow(SW_SHOWNORMAL);
 
@@ -101,10 +101,10 @@ HWND FAR PASCAL RunMank(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	return pMain->m_hWnd;   // return the m_hWnd of your main game window
 	#else
-	hDLLInst = NULL;
+	hDLLInst = nullptr;
 	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
-	return ((HWND)NULL);
+	return ((HWND)nullptr);
 	#endif
 }
 

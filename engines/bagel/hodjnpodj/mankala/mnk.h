@@ -295,7 +295,7 @@ class CMnk {
 //- InitMankala -- initialize a new game of Mankala
 private: BOOL InitMankala(void) ;
 //- Move -- make a move
-private: BOOL Move(CPit * xpcSowPit, CMove * xpcMove PDFT(NULL)) ;
+private: BOOL Move(CPit * xpcSowPit, CMove * xpcMove PDFT(nullptr)) ;
 //- MoveStone -- move one stone for move
 public: BOOL MoveStone(CMove * xpcMove,
 	                       CPit * xpcFromPit, CPit * xpcToPit) ;

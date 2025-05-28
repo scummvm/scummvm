@@ -102,10 +102,10 @@ public:
 	//- InitWndBsuSet -- initialize bsu set for a window
 	BOOL InitWndBsuSet(CWnd * xpWnd,
 	                            BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
-	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
+	                            CBsuSet * xpLinkSet PDFT(nullptr)) ;
 	//- InitDlgBsuSet -- initialize bsu set for dialog box
 	BOOL InitDlgBsuSet(CDialog * xpDlg,
-	                            CBsuSet * xpLinkSet PDFT(NULL)) ;
+	                            CBsuSet * xpLinkSet PDFT(nullptr)) ;
 	//- AddBarToSet -- add scroll bar to scroll bar set
 	BOOL AddBarToSet(int iId, int iWndScrollCode,
 	                          int iBarType PDFT(0)) ;
@@ -144,7 +144,7 @@ public:
 	//- GetInfo -- get information about scroll set
 	BOOL GetInfo(CBsuInfo * xpBsuInfo) ;
 	//- DumpInfo -- dump information about scroll set
-	BOOL DumpInfo(LPSTR lpStart PDFT(NULL)) ;
+	BOOL DumpInfo(LPSTR lpStart PDFT(nullptr)) ;
 } ;
 
 

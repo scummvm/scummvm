@@ -41,7 +41,7 @@ extern CSprite      *pInvalidSlot;
 extern CPalette     *pGamePalette;
 extern CBmpButton   *pScrollButton;
 
-CMainWindow     *pcwndPeggle = NULL;
+CMainWindow     *pcwndPeggle = nullptr;
 LPGAMESTRUCT    pGameInfo;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -82,8 +82,8 @@ HWND FAR PASCAL RunPeggle(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 //#endif
 
 // if the pointer has garbage in it, the clean it out
-	if (pcwndPeggle != NULL) {
-		pcwndPeggle = NULL;
+	if (pcwndPeggle != nullptr) {
+		pcwndPeggle = nullptr;
 	}
 // create a my window and show it
 	pcwndPeggle = new CMainWindow(hParentWnd);

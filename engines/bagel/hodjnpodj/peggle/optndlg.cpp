@@ -33,12 +33,12 @@ namespace HodjNPodj {
 namespace Peggle {
 
 CPalette    *pSubOptionsPalette;
-CBmpButton  *m_pTriButton = NULL;
-CBmpButton  *m_pTriPButton = NULL;
-CBmpButton  *m_pCroButton = NULL;
-CBmpButton  *m_pCroPButton = NULL;
+CBmpButton  *m_pTriButton = nullptr;
+CBmpButton  *m_pTriPButton = nullptr;
+CBmpButton  *m_pCroButton = nullptr;
+CBmpButton  *m_pCroPButton = nullptr;
 
-static  CCheckButton *pRandomButton = NULL;                 // Framed check box
+static  CCheckButton *pRandomButton = nullptr;                 // Framed check box
 
 extern  char        BoardSelected;
 extern  BOOL        bRandomBoard;
@@ -101,39 +101,39 @@ BOOL COptnDlg::OnInitDialog() {
 	m_bRandom = bRandomBoard;
 
 	m_pTriButton = new CBmpButton;
-	ASSERT(m_pTriButton != NULL);
+	ASSERT(m_pTriButton != nullptr);
 	myRect.SetRect(TRIANGLE_X, TRIANGLE_Y, TRIANGLE_X + OPTN_BUTTON_WIDTH, TRIANGLE_Y + OPTN_BUTTON_HEIGHT);
-	bSuccess = (*m_pTriButton).Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_TRIANGLE);
+	bSuccess = (*m_pTriButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_TRIANGLE);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pTriButton).LoadBitmaps("TRIUP", "TRIDOWN", NULL, NULL);
+	bSuccess = (*m_pTriButton).LoadBitmaps("TRIUP", "TRIDOWN", nullptr, nullptr);
 	ASSERT(bSuccess);
 
 	m_pCroButton = new CBmpButton;
-	ASSERT(m_pCroButton != NULL);
+	ASSERT(m_pCroButton != nullptr);
 	myRect.SetRect(CROSS_X, CROSS_Y, CROSS_X + OPTN_BUTTON_WIDTH, CROSS_Y + OPTN_BUTTON_HEIGHT);
-	bSuccess = (*m_pCroButton).Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_CROSS);
+	bSuccess = (*m_pCroButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_CROSS);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pCroButton).LoadBitmaps("CROUP", "CRODOWN", NULL, NULL);
+	bSuccess = (*m_pCroButton).LoadBitmaps("CROUP", "CRODOWN", nullptr, nullptr);
 	ASSERT(bSuccess);
 
 	m_pTriPButton = new CBmpButton;
-	ASSERT(m_pTriPButton != NULL);
+	ASSERT(m_pTriPButton != nullptr);
 	myRect.SetRect(TRIANGLEPLUS_X, TRIANGLEPLUS_Y,
 	               TRIANGLEPLUS_X + OPTN_BUTTON_WIDTH, TRIANGLEPLUS_Y + OPTN_BUTTON_HEIGHT);
-	bSuccess = (*m_pTriPButton).Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_TRIANGLEPLUS);
+	bSuccess = (*m_pTriPButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_TRIANGLEPLUS);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pTriPButton).LoadBitmaps("TRIPUP", "TRIPDOWN", NULL, NULL);
+	bSuccess = (*m_pTriPButton).LoadBitmaps("TRIPUP", "TRIPDOWN", nullptr, nullptr);
 	ASSERT(bSuccess);
 
 	m_pCroPButton = new CBmpButton;
-	ASSERT(m_pCroPButton != NULL);
+	ASSERT(m_pCroPButton != nullptr);
 	myRect.SetRect(CROSSPLUS_X, CROSSPLUS_Y, CROSSPLUS_X + OPTN_BUTTON_WIDTH, CROSSPLUS_Y + OPTN_BUTTON_HEIGHT);
-	bSuccess = (*m_pCroPButton).Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_CROSSPLUS);
+	bSuccess = (*m_pCroPButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, myRect, this, IDC_SUB_CROSSPLUS);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pCroPButton).LoadBitmaps("CROPUP", "CROPDOWN", NULL, NULL);
+	bSuccess = (*m_pCroPButton).LoadBitmaps("CROPUP", "CROPDOWN", nullptr, nullptr);
 	ASSERT(bSuccess);
 
-	if ((pRandomButton = new CCheckButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pRandomButton = new CCheckButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pRandomButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pRandomButton).SetControl(IDC_RANDOM, this);              // tie to the dialog control
 	}
@@ -166,18 +166,18 @@ BOOL COptnDlg::OnInitDialog() {
 void COptnDlg::OnDestroy(void) {
 	BOOL    bUpdateNeeded;
 
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 		delete m_pDlgBackground;
-		m_pDlgBackground = NULL;
+		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(NULL, FALSE);
+		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(nullptr, FALSE);
 		if (bUpdateNeeded)
-			(*m_pDlgParentWnd).ValidateRect(NULL);
+			(*m_pDlgParentWnd).ValidateRect(nullptr);
 	}
 
-	if (pRandomButton != NULL) {                        // release the button
+	if (pRandomButton != nullptr) {                        // release the button
 		delete pRandomButton;
-		pRandomButton = NULL;
+		pRandomButton = nullptr;
 	}
 
 	CDialog::OnDestroy();

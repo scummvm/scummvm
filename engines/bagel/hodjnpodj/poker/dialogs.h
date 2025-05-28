@@ -42,7 +42,7 @@ private:
 	// "Set Amount" and "Set Payoffs" buttons
 
 public:
-	COptionsDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_OPTIONS);
+	COptionsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_OPTIONS);
 	void SetInitialOptions(BOOL = FALSE, BOOL = TRUE);   // Sets the private members
 	void ClearDialogImage();
 
@@ -64,7 +64,7 @@ private:
 	char    m_cAmount [6];
 
 public:
-	CSetAmountDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_SETAMOUNT);
+	CSetAmountDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_SETAMOUNT);
 	void SetInitialOptions(long = 0);    // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();
@@ -97,7 +97,7 @@ private:
 	int  m_nSetOfOdds;
 	BOOL m_bJustDisplay;
 public:
-	CSetPayoffsDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_WINRATIO, int = IDC_POPO, BOOL = FALSE);
+	CSetPayoffsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_WINRATIO, int = IDC_POPO, BOOL = FALSE);
 	void ClearDialogImage();
 	void OnKlingon(BOOL = TRUE);
 	void OnKuwaiti(BOOL = TRUE);
@@ -125,7 +125,7 @@ private:
 	int m_nWinPhrase;
 
 public:
-	CUserWonDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_USERWON);
+	CUserWonDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERWON);
 	void SetInitialOptions(int = 0);
 	void ClearDialogImage();
 	BOOL OnInitDialog();

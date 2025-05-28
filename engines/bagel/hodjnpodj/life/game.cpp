@@ -66,9 +66,9 @@ CColorButton    *pEvolveButton;
 extern      CMainWindow *gMainWnd;  // Allows me to pass main window New_Game
 // messages from GameOver.cpp
 
-CPalette    *pGamePalette = NULL;   // Used everywhere for ref
-CSprite     *pScrollSprite = NULL;  // Commands button
-CSprite     *pCalendarSprite = NULL;    // Blank calendar
+CPalette    *pGamePalette = nullptr;   // Used everywhere for ref
+CSprite     *pScrollSprite = nullptr;  // Commands button
+CSprite     *pCalendarSprite = nullptr;    // Blank calendar
 HWND        hWndParent;
 
 VOID CALLBACK GetGameParams(CWnd *pParentWnd);
@@ -118,8 +118,8 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	*******************************************/
 	m_lpGameStruct =  lpGameInfo;
 
-	m_cLife = NULL;
-	m_pSound = NULL;
+	m_cLife = nullptr;
+	m_pSound = nullptr;
 
 	/********************************
 	* Set the global window handle. *
@@ -146,9 +146,9 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	* avoids hangs/freezes/lockups.                                     *
 	********************************************************************/
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               LoadCursor(NULL, IDC_ARROW),    //put in my own cursor
-	                               NULL,
-	                               NULL);
+	                               LoadCursor(nullptr, IDC_ARROW),    //put in my own cursor
+	                               nullptr,
+	                               nullptr);
 
 	/***********************************
 	* Center our window on the screen. *
@@ -165,7 +165,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	* present; this is because the game's background art will fill the  *
 	* entire 640x40 area.                                               *
 	********************************************************************/
-	Create(WndClass, "Boffo Games -- Life", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Life", WS_POPUP, MainRect, nullptr, 0);
 
 	BeginWaitCursor();
 	ShowWindow(SW_SHOWNORMAL);
@@ -252,7 +252,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	                   (GAME_WIDTH >> 1) + (EVOLVE_BUTTON_WIDTH >> 1) - EVOLVE_BUTTON_OFFSET_X,
 	                   EVOLVE_BUTTON_HEIGHT + EVOLVE_BUTTON_OFFSET_Y);
 	pEvolveButton = new CColorButton;
-	if (pEvolveButton != NULL) {
+	if (pEvolveButton != nullptr) {
 		(*pEvolveButton).Create("Evolve", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
 		                        EvolveRect, this, IDC_EVOLVE);
 		(*pEvolveButton).SetPalette(pGamePalette);
@@ -289,7 +289,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	* Initialize MIDI sound. *
 	*************************/
 	if (m_lpGameStruct->bMusicEnabled != FALSE) {
-		if ((m_pSound = new CSound((CWnd *) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) != NULL) {
+		if ((m_pSound = new CSound((CWnd *) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) != nullptr) {
 			m_pSound->midiLoopPlaySegment(1500L, 31000L, 00L, FMT_MILLISEC);
 		} else {
 			PostMessage(WM_CLOSE, 0, 0);
@@ -299,7 +299,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	/**************************************
 	* Initialize random number generator. *
 	**************************************/
-	//srand((unsigned) time(NULL));         // seed the random number generator
+	//srand((unsigned) time(nullptr));         // seed the random number generator
 
 	/**************************
 	* New game or popup menu? *
@@ -338,13 +338,13 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
  *
  ****************************************************************/
 CMainWindow::~CMainWindow() {
-	if (pGamePalette != NULL)
+	if (pGamePalette != nullptr)
 		delete pGamePalette;
 
-	if (pCalendarSprite != NULL)
+	if (pCalendarSprite != nullptr)
 		delete pCalendarSprite;
 
-	if (pScrollSprite != NULL)
+	if (pScrollSprite != nullptr)
 		delete pScrollSprite;
 }
 
@@ -380,7 +380,7 @@ CMainWindow::~CMainWindow() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(NULL, FALSE);
+	InvalidateRect(nullptr, FALSE);
 	BeginPaint(&lpPaint);
 	SplashScreen();
 	RefreshStats();
@@ -515,7 +515,7 @@ void CMainWindow::GamePause() {
 void CMainWindow::GameResume() {
 	if ((*m_cLife).m_bIsEvolving == TRUE) {
 		RefreshStats();
-		SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, NULL);
+		SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, nullptr);
 	}
 }
 
@@ -590,15 +590,15 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		}  // end switch
 
-		if (!m_lpGameStruct->bMusicEnabled && (m_pSound != NULL)) {
+		if (!m_lpGameStruct->bMusicEnabled && (m_pSound != nullptr)) {
 
 			m_pSound->stop();
 			delete m_pSound;
-			m_pSound = NULL;
+			m_pSound = nullptr;
 
-		} else if (m_lpGameStruct->bMusicEnabled && (m_pSound == NULL)) {
+		} else if (m_lpGameStruct->bMusicEnabled && (m_pSound == nullptr)) {
 
-			if ((m_pSound = new CSound((CWnd *) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) != NULL)
+			if ((m_pSound = new CSound((CWnd *) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) != nullptr)
 				m_pSound->midiLoopPlaySegment(1500L, 31000L, 00L, FMT_MILLISEC);
 		}
 
@@ -635,7 +635,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			ReleaseDC(pDC);
 
 			RefreshStats();
-			SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, NULL);
+			SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, nullptr);
 		} // end if
 	} else if (wParam == IDC_OPTIONS_NEWGAME) {
 		NewGame();
@@ -889,7 +889,7 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 			(*m_cLife).m_bIsEvolving = FALSE;
 
 			if (m_lpGameStruct->bSoundEffectsEnabled != FALSE) {
-				sndPlaySound(NULL, SND_SYNC);
+				sndPlaySound(nullptr, SND_SYNC);
 			}
 
 			PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
@@ -921,7 +921,7 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 				}
 
 				ReleaseDC(pDC);
-				SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, NULL);
+				SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, nullptr);
 			} else {  // No, timer not zero, decrement
 				// Reduce counter by 1
 				nCountDown -= 1;
@@ -995,17 +995,17 @@ void CMainWindow::OnClose() {
 	ReleaseDC(pDC);
 	// TODO: Add your message handler code here and/or call default
 
-	if (pEvolveButton != NULL) {
+	if (pEvolveButton != nullptr) {
 		delete pEvolveButton;
-		pEvolveButton = NULL;
+		pEvolveButton = nullptr;
 	}
 
 	delete m_cLife;
 
-	if (m_pSound != NULL) {
+	if (m_pSound != nullptr) {
 		m_pSound->stop();
 		delete m_pSound;
-		m_pSound = NULL;
+		m_pSound = nullptr;
 	} // end if
 
 	CSound::clearSounds();
@@ -1098,9 +1098,9 @@ void CMainWindow::SplashScreen() {
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
 		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
-		if (pScrollSprite != NULL)
+		if (pScrollSprite != nullptr)
 			pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
-		if (pCalendarSprite != NULL)
+		if (pCalendarSprite != nullptr)
 			pCalendarSprite->PaintSprite(pDC, MONTH_COL_POS, MONTH_ROW_POS);
 	}
 
@@ -1122,7 +1122,7 @@ void CMainWindow::SplashScreen() {
 			nMonthIndex = 0;
 	}
 
-	if (m_cLife != NULL)
+	if (m_cLife != nullptr)
 		m_cLife->m_cCalendar.pMonthSprite[nMonthIndex]->ClearBackground();
 
 	ReleaseDC(pDC);
@@ -1168,7 +1168,7 @@ void CMainWindow::DisplayStats() {
 	                  CURRENT_RIGHT_COL,
 	                  CURRENT_RIGHT_ROW);
 
-	if (((*m_cLife).pColonyPlaced = new CText()) != NULL) {
+	if (((*m_cLife).pColonyPlaced = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pColonyPlaced->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1183,7 +1183,7 @@ void CMainWindow::DisplayStats() {
 	                  SCORE_RIGHT_COL,
 	                  SCORE_RIGHT_ROW);
 
-	if (((*m_cLife).pScore = new CText()) != NULL) {
+	if (((*m_cLife).pScore = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pScore->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1198,7 +1198,7 @@ void CMainWindow::DisplayStats() {
 	                  ROUND_RIGHT_COL,
 	                  ROUND_RIGHT_ROW);
 
-	if (((*m_cLife).pYears = new CText()) != NULL) {
+	if (((*m_cLife).pYears = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pYears->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1212,7 +1212,7 @@ void CMainWindow::DisplayStats() {
 	                  ROUND_TEXT1_RIGHT_COL,
 	                  ROUND_TEXT1_RIGHT_ROW);
 
-	if (((*m_cLife).pYearsText1 = new CText()) != NULL) {
+	if (((*m_cLife).pYearsText1 = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pYearsText1->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1226,7 +1226,7 @@ void CMainWindow::DisplayStats() {
 	                  ROUND_TEXT2_RIGHT_COL,
 	                  ROUND_TEXT2_RIGHT_ROW);
 
-	if (((*m_cLife).pYearsText2 = new CText()) != NULL) {
+	if (((*m_cLife).pYearsText2 = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pYearsText2->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1241,7 +1241,7 @@ void CMainWindow::DisplayStats() {
 	                  VILLAGE_RIGHT_COL,
 	                  VILLAGE_RIGHT_ROW);
 
-	if (((*m_cLife).pColonyStat = new CText()) != NULL) {
+	if (((*m_cLife).pColonyStat = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pColonyStat->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 
@@ -1255,7 +1255,7 @@ void CMainWindow::DisplayStats() {
 	                  VILLAGE_TEXT1_RIGHT_COL,
 	                  VILLAGE_TEXT1_RIGHT_ROW);
 
-	if (((*m_cLife).pColonyStatText1 = new CText()) != NULL) {
+	if (((*m_cLife).pColonyStatText1 = new CText()) != nullptr) {
 		bAssertCheck = m_cLife->pColonyStatText1->SetupText(pDC, pGamePalette, &statsRect);
 		ASSERT(bAssertCheck);   // initialize the text objext
 

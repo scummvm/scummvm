@@ -64,8 +64,8 @@ CPaintGram::CPaintGram(CDC *pDC)
 	    m_nStandardSpaceLength(STANDARD_SPACE_LENGTH),
 	    m_nStandardCharHeight(STANDARD_CHAR_HEIGHT),
 	    m_nStandardCharWidth(STANDARD_CHAR_WIDTH) {
-	CBitmap *pFontSource = NULL,
-	         *pFontCel = NULL;
+	CBitmap *pFontSource = nullptr,
+	         *pFontCel = nullptr;
 	BOOL    bSuccess;
 	int     i;
 	int     nExtraWidth = 0;
@@ -86,7 +86,7 @@ CPaintGram::CPaintGram(CDC *pDC)
 	    GRAM_BOT_ROW
 	);
 
-	pFontSource = FetchResourceBitmap(pDC, NULL, ALPHA_RESOURCE_ID);         // get the font bitmap
+	pFontSource = FetchResourceBitmap(pDC, nullptr, ALPHA_RESOURCE_ID);         // get the font bitmap
 
 	for (i = 0; i < SYMBOLS ; i++) {         // Initialize master alphabet list
 		m_cAlphabet[i] = new CSprite();     // Initize the individual letter of the alphabet list
@@ -139,10 +139,10 @@ CPaintGram::CPaintGram(CDC *pDC)
 	}  // end for
 
 	// Delete temporary font bitmaps
-	if (pFontSource != NULL) {
+	if (pFontSource != nullptr) {
 		pFontSource->DeleteObject();
 		delete pFontSource;
-		pFontSource = NULL;
+		pFontSource = nullptr;
 	}
 
 	m_cHiLite = new CSprite();              // HiLite box area
@@ -184,7 +184,7 @@ CPaintGram::~CPaintGram() {
 	int i;
 
 	CSprite::FlushSpriteChain();
-	if (m_cHiLite != NULL)
+	if (m_cHiLite != nullptr)
 		delete m_cHiLite;
 	for (i = 0; i < USED_SYMBOLS; i++)
 		delete m_cRevealAlphabet[i];    // each letter in the alpha
@@ -694,7 +694,7 @@ void CPaintGram::PaintGram(CDC *pDC, char *lpszCryptedGram) {
 	* call 'PaintLine' member to draw the visual line.              *
 	****************************************************************/
 	for (i = 0, nSpaceMarker = 0, nStartPos = 0; TRUE; i++) {
-		if (lpszCryptedGram[i] == NULL) {
+		if (lpszCryptedGram[i] == 0) {
 			if ((nLineLength + m_nGramRightMargin) >= m_cGramRegion.Width()) {
 				nSpaceMarker++;                     // Advance one past space
 				PaintLine(pDC, lpszCryptedGram + nStartPos, m_cPos, nSpaceMarker - nStartPos);
@@ -785,7 +785,7 @@ void CPaintGram::PaintLine(CDC *pDC, char *lpszCryptedGram, CSize cPos, int i) {
 	CSize   cLetterDim;
 
 	for (j = 0; j < i; j++) {
-		if (lpszCryptedGram[j] == NULL) {
+		if (lpszCryptedGram[j] == 0) {
 			break;
 		}
 
@@ -851,7 +851,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 	    nSpaceMarker = 0,
 	    nLineLength = m_nGramLeftMargin; TRUE ; i++
 	) {             // Estimate for Gram
-		if (lpszGram[i] == NULL) {
+		if (lpszGram[i] == 0) {
 			if ((nLineLength + m_nGramRightMargin) >= m_cGramRegion.Width()) {
 				nEstimate++;
 			} // end if
@@ -896,7 +896,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 	    nSpaceMarker = 0,
 	    nLineLength = m_nGramLeftMargin; TRUE ; i++
 	) {             // Estimate for Gram
-		if (lpszSource[i] == NULL) {
+		if (lpszSource[i] == 0) {
 			if ((nLineLength + m_nGramRightMargin) >= m_cGramRegion.Width()) {
 				nEstimate++;
 			} // end if
@@ -966,7 +966,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
  ****************************************************************/
 BOOL CPaintGram::IsHiLiteOn() {
 	m_cDisplayLetters = CSprite::GetSpriteChain();
-	while (m_cDisplayLetters != NULL) {
+	while (m_cDisplayLetters != nullptr) {
 		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == TRUE) {
 			return TRUE;
 		}
@@ -1006,7 +1006,7 @@ int CPaintGram::GetHiLiteType(CDC *pDC) {
 	int     nTypeCode;
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();
-	while (m_cDisplayLetters != NULL) {
+	while (m_cDisplayLetters != nullptr) {
 		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == TRUE) {
 			crectSprite = (*m_cDisplayLetters).GetRect();
 			m_cDisplayLetters = (*m_cDisplayLetters).Interception(&crectSprite);
@@ -1059,7 +1059,7 @@ void CPaintGram::HiLiteOff(CDC *pDC) {
 	int     nTypeCode;      // holds char info
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();
-	while (m_cDisplayLetters != NULL) {
+	while (m_cDisplayLetters != nullptr) {
 		nTypeCode = (*m_cDisplayLetters).GetTypeCode();         // Get sprite's Hilite Code
 
 		if (IsHiLiteType(nTypeCode) == TRUE) {               // Is this sprite hi-lited?
@@ -1112,7 +1112,7 @@ void CPaintGram::HiLiteOn(CDC *pDC, int nTypeCode) {
 	CPoint  cpointSprite;   // hilited sprite position
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();  // Get entire sprite chain
-	while (m_cDisplayLetters != NULL) {              // Hilite all matching chars
+	while (m_cDisplayLetters != nullptr) {              // Hilite all matching chars
 		if (nTypeCode == (*m_cDisplayLetters).GetTypeCode()) {   // Is this a char to hilite?
 			cpointSprite = (*m_cDisplayLetters).GetPosition();      // Yes - get old sprite's position
 			pSprite = (*m_cDisplayLetters).GetNextSprite();         // save current pos in sprite chain
@@ -1169,7 +1169,7 @@ void CPaintGram::ReplaceLetter(CDC *pDC, int nOldType, int nNewType) {
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();
 
-	while (m_cDisplayLetters != NULL) {
+	while (m_cDisplayLetters != nullptr) {
 		nTypeCode = (*m_cDisplayLetters).GetTypeCode();
 		if (nOldType == nTypeCode) {                                 // Is this a char to change?
 
@@ -1303,7 +1303,7 @@ void CPaintGram::RevealOn(CDC *pDC, int nTypeCode) {
 void CPaintGram::ClearGram(CDC *pDC) {
 	CSprite::EraseSprites(pDC);
 	CSprite::FlushSpriteChain();        // flush any existing sprites
-	m_cDisplayLetters = NULL;
+	m_cDisplayLetters = nullptr;
 }
 
 } // namespace Crypt

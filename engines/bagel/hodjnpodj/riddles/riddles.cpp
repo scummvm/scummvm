@@ -164,12 +164,12 @@ CRiddlesWindow::CRiddlesWindow(VOID) {
 
 	// Initialize members
 	//
-	m_pGamePalette = NULL;
-	m_pScrollButton = NULL;
-	m_pEditText = NULL;
-	m_pSunDial = NULL;
-	m_pRiddle = NULL;
-	m_pSoundTrack = NULL;
+	m_pGamePalette = nullptr;
+	m_pScrollButton = nullptr;
+	m_pEditText = nullptr;
+	m_pSunDial = nullptr;
+	m_pRiddle = nullptr;
+	m_pSoundTrack = nullptr;
 	m_bGameActive = FALSE;
 	m_bPause = FALSE;
 	m_nRiddleNumber = 0;
@@ -186,7 +186,7 @@ CRiddlesWindow::CRiddlesWindow(VOID) {
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
-	WndClass = AfxRegisterWndClass(CS_SAVEBITS | CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+	WndClass = AfxRegisterWndClass(CS_SAVEBITS | CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 
 	// the game cannot continue if this bitmap does not exist
 	//
@@ -194,7 +194,7 @@ CRiddlesWindow::CRiddlesWindow(VOID) {
 
 		// Acquire the shared palette for our game from the splash screen art
 		//
-		if ((pDibDoc = new CDibDoc()) != NULL) {
+		if ((pDibDoc = new CDibDoc()) != nullptr) {
 			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else {
@@ -218,19 +218,19 @@ CRiddlesWindow::CRiddlesWindow(VOID) {
 
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
-	Create(WndClass, "Boffo Games -- Riddles", WS_POPUP, tmpRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Riddles", WS_POPUP, tmpRect, nullptr, 0);
 
 	if (errCode == ERR_NONE) {
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 
 			pPalOld = pDC->SelectPalette(m_pGamePalette, FALSE);
 
-			if ((m_pScrollButton = new CBmpButton) != NULL) {
+			if ((m_pScrollButton = new CBmpButton) != nullptr) {
 
 				m_bIgnoreScrollClick = FALSE;
 				tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y, SCROLL_BUTTON_X + SCROLL_BUTTON_DX, SCROLL_BUTTON_Y + SCROLL_BUTTON_DY);
-				bSuccess = m_pScrollButton->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
+				bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
 				assert(bSuccess);
 				if (bSuccess) {
 
@@ -262,7 +262,7 @@ CRiddlesWindow::CRiddlesWindow(VOID) {
 		// create the user guess edit text control
 		//
 		tmpRect.SetRect(330, 427, 560, 447);
-		if ((m_pEditText = new CMyEdit) != NULL) {
+		if ((m_pEditText = new CMyEdit) != nullptr) {
 			bSuccess = m_pEditText->Create(WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_UPPERCASE, tmpRect, this, IDC_EDITTEXT);
 			assert(bSuccess);
 			m_pEditText->LimitText(MAX_ANSWER_LENGTH);
@@ -281,7 +281,7 @@ CRiddlesWindow::CRiddlesWindow(VOID) {
 			// start this game's sound track
 			//
 			m_pSoundTrack = new CSound(this, ".\\sound\\riddles.mid", SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-			if (m_pSoundTrack != NULL) {
+			if (m_pSoundTrack != nullptr) {
 				(*m_pSoundTrack).midiLoopPlaySegment(1930, 32870, 0, FMT_MILLISEC);
 			} else {
 				errCode = ERR_MEMORY;
@@ -289,7 +289,7 @@ CRiddlesWindow::CRiddlesWindow(VOID) {
 		}
 
 		// seed the random number generator
-		////srand((unsigned)time(NULL));
+		////srand((unsigned)time(nullptr));
 
 		// load the 32 character sprites into masters
 		//
@@ -327,7 +327,7 @@ VOID CRiddlesWindow::HandleError(ERROR_CODE errCode) {
 		PostMessage(WM_CLOSE, 0, 0);
 
 		// Don't allow a repaint (remove all WM_PAINT messages)
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 }
 
@@ -342,15 +342,15 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(VOID) {
 	// assume no erorr
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
-		if ((pFontBmp = FetchBitmap(pDC, NULL, ".\\ART\\RIDFONT.BMP")) != NULL) {
+		if ((pFontBmp = FetchBitmap(pDC, nullptr, ".\\ART\\RIDFONT.BMP")) != nullptr) {
 
 			// Load all of the letters used in the riddles
 			//
 			for (i = 0; i < N_SPRITECHARS; i++) {
 
-				if ((pSprite = aMasterSpriteList[i] = new CSprite) != NULL) {
+				if ((pSprite = aMasterSpriteList[i] = new CSprite) != nullptr) {
 
 					pBmp = ExtractBitmap(pDC, pFontBmp, m_pGamePalette, i * LETTERSIZE_X, 0, LETTERSIZE_X, LETTERSIZE_Y);
 
@@ -369,7 +369,7 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(VOID) {
 
 		if (errCode == ERR_NONE) {
 
-			if ((m_pSunDial = new CSprite) != NULL) {
+			if ((m_pSunDial = new CSprite) != nullptr) {
 
 				if (m_pSunDial->LoadCels(pDC, ".\\ART\\DIALCEL.BMP", DIAL_SEGMENTS) != FALSE) {
 
@@ -425,11 +425,11 @@ VOID CRiddlesWindow::PaintScreen() {
 		hDIB = myDoc.GetHDIB();
 
 		pDC = GetDC();
-		assert(pDC != NULL);
+		assert(pDC != nullptr);
 
-		if (pDC != NULL) {
+		if (pDC != nullptr) {
 
-			if (hDIB && (m_pGamePalette != NULL)) {
+			if (hDIB && (m_pGamePalette != nullptr)) {
 
 				GetClientRect(rcDest);
 				LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
@@ -443,7 +443,7 @@ VOID CRiddlesWindow::PaintScreen() {
 			ReleaseDC(pDC);
 		}
 
-		if (m_pSunDial != NULL) {
+		if (m_pSunDial != nullptr) {
 			assert((m_nTimer >= 0) && (m_nTimer <= DIAL_SEGMENTS));
 			m_pSunDial->SetCel(m_nTimer - 1);
 		}
@@ -459,7 +459,7 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this,
 	                       m_pGamePalette,
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
-	                       GetGameParams, "riddles.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL), pGameParams);
+	                       GetGameParams, "riddles.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr), pGameParams);
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
@@ -511,14 +511,14 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				//
 				// Check to see if the music state was changed and adjust to match it
 				//
-				if ((pGameParams->bMusicEnabled == FALSE) && (m_pSoundTrack != NULL)) {
+				if ((pGameParams->bMusicEnabled == FALSE) && (m_pSoundTrack != nullptr)) {
 					if (m_pSoundTrack->playing())
 						m_pSoundTrack->stop();
 				} else if (pGameParams->bMusicEnabled) {
-					if (m_pSoundTrack == NULL) {
+					if (m_pSoundTrack == nullptr) {
 						m_pSoundTrack = new CSound(this, ".\\sound\\riddles.mid", SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					}
-					if (m_pSoundTrack != NULL) {
+					if (m_pSoundTrack != nullptr) {
 						if (!m_pSoundTrack->playing())
 							(*m_pSoundTrack).midiLoopPlaySegment(1930, 32870, 0, FMT_MILLISEC);
 					}
@@ -547,7 +547,7 @@ VOID CRiddlesWindow::GameResume(VOID) {
 VOID CRiddlesWindow::PlayGame() {
 	CHAR szBuf[40];
 	ERROR_CODE errCode;
-	CSound  *pRiddleReading = NULL;
+	CSound  *pRiddleReading = nullptr;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -575,7 +575,7 @@ VOID CRiddlesWindow::PlayGame() {
 				CSound::clearWaveSounds();
 				pRiddleReading = new CSound((CWnd *)this, szBuf,                                // Load up the sound file as a
 				                            SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-				if (pRiddleReading != NULL)
+				if (pRiddleReading != nullptr)
 					pRiddleReading->play();                                                          //...play the sound effect
 			}
 		}
@@ -583,7 +583,7 @@ VOID CRiddlesWindow::PlayGame() {
 		// Set the timer for 1 second intervals
 		//
 		if (m_nInitTimeLimit != 0)
-			SetTimer(TIMER_ID, 1000 / DIAL_SEGMENTS * m_nInitTimeLimit, NULL);
+			SetTimer(TIMER_ID, 1000 / DIAL_SEGMENTS * m_nInitTimeLimit, nullptr);
 
 		m_bGameActive = TRUE;
 	}
@@ -640,7 +640,7 @@ VOID CRiddlesWindow::GameReset(VOID) {
 
 	pDC = GetDC();                              // get the current device context
 
-	sndPlaySound(NULL, 0);                   // stop any sndPlaySound waves in play
+	sndPlaySound(nullptr, 0);                   // stop any sndPlaySound waves in play
 
 	m_nTimer = 0;                               // reset current time
 
@@ -649,7 +649,7 @@ VOID CRiddlesWindow::GameReset(VOID) {
 
 	CSprite::EraseSprites(pDC);                 // erase any on-screen letters
 
-	assert(m_pSunDial != NULL);                 // take sun dial out of chain
+	assert(m_pSunDial != nullptr);                 // take sun dial out of chain
 	m_pSunDial->UnlinkSprite();                 // so it's not flushed
 	m_pSunDial->SetCel(m_nTimer - 1);           // revert to original Sun dial
 
@@ -660,7 +660,7 @@ VOID CRiddlesWindow::GameReset(VOID) {
 
 	ReleaseDC(pDC);                             // release current device context
 
-	if (m_pEditText != NULL)
+	if (m_pEditText != nullptr)
 		m_pEditText->SetWindowText("");         // erase any text in edit ctrl
 
 	m_bGameActive = FALSE;                      // there is no current game
@@ -675,7 +675,7 @@ VOID CRiddlesWindow::GameReset(VOID) {
 
 	KillTimer(TIMER_ID);                        // kill any timers
 
-	m_pRiddle = NULL;                           // there is no current riddle
+	m_pRiddle = nullptr;                           // there is no current riddle
 }
 
 
@@ -771,7 +771,7 @@ ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	assert(pRiddle != NULL);
+	assert(pRiddle != nullptr);
 
 	if (pRiddle->nSoundId < MIN_SOUND_ID || pRiddle->nSoundId > MAX_SOUND_ID) {
 		errCode = ERR_FTYPE;
@@ -828,7 +828,7 @@ ERROR_CODE CRiddlesWindow::BuildSpriteList(VOID) {
 	ERROR_CODE errCode;
 
 	// can't access a null pointer
-	assert(m_pRiddle != NULL);
+	assert(m_pRiddle != nullptr);
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -880,7 +880,7 @@ ERROR_CODE CRiddlesWindow::DisplayLine(const CHAR *pszText, INT nChars, INT x, I
 
 	pDC = GetDC();
 
-	if (pDC != NULL) {
+	if (pDC != nullptr) {
 
 		for (i = 0; i < nChars; i++, pszText++) {
 
@@ -893,12 +893,12 @@ ERROR_CODE CRiddlesWindow::DisplayLine(const CHAR *pszText, INT nChars, INT x, I
 				// validate the master sprites and their IDs
 				//
 				assert(nID >= 0 && nID <= N_SPRITECHARS);
-				assert(aMasterSpriteList[nID] != NULL);
+				assert(aMasterSpriteList[nID] != nullptr);
 
 				//
 				// create a new sprite for this letter
 				//
-				if ((pSprite = aMasterSpriteList[nID]->DuplicateSprite(pDC)) != NULL) {
+				if ((pSprite = aMasterSpriteList[nID]->DuplicateSprite(pDC)) != nullptr) {
 
 					pSprite->SetMasked(TRUE);
 					pSprite->LinkSprite();
@@ -1054,13 +1054,13 @@ ERROR_CODE CRiddlesWindow::RepaintSpriteList() {
 	errCode = ERR_NONE;
 
 	pDC = GetDC();
-	if (pDC != NULL) {
+	if (pDC != nullptr) {
 
 		//
 		// Paint each sprite
 		//
 		pSprite = CSprite::GetSpriteChain();
-		while (pSprite != NULL) {
+		while (pSprite != nullptr) {
 
 			pSprite->ClearBackground();
 			pSprite->RefreshSprite(pDC);
@@ -1099,12 +1099,12 @@ VOID CRiddlesWindow::OnTimer(UINT nEvent) {
 		//
 		if (m_nInitTimeLimit != 0) {
 
-			if ((pDC = GetDC()) != NULL) {
+			if ((pDC = GetDC()) != nullptr) {
 
 				// display next sun dial formation
 				//
 				assert((m_nTimer >= 0) && (m_nTimer <= DIAL_SEGMENTS));
-				assert(m_pSunDial != NULL);
+				assert(m_pSunDial != nullptr);
 
 				m_pSunDial->SetCel(m_nTimer - 1);
 				m_pSunDial->PaintSprite(pDC, m_pSunDial->GetPosition());
@@ -1125,7 +1125,7 @@ VOID CRiddlesWindow::OnTimer(UINT nEvent) {
 					sndPlaySound(WAV_GAMEOVER, SND_ASYNC);
 
 				// can't read from a null pointer
-				assert(m_pRiddle != NULL);
+				assert(m_pRiddle != nullptr);
 
 				FlushInputEvents();
 				CMessageBox dlgYouLose((CWnd *)this, m_pGamePalette, "Time's up.", "");
@@ -1134,7 +1134,7 @@ VOID CRiddlesWindow::OnTimer(UINT nEvent) {
 
 				if (pGameParams->bPlayingMetagame) {
 					if (pGameParams->bSoundEffectsEnabled)
-						sndPlaySound(NULL, SND_ASYNC);
+						sndPlaySound(nullptr, SND_ASYNC);
 					pGameParams->lScore = 0;
 					PostMessage(WM_CLOSE, 0, 0);
 				} else                                          // In stand-alone
@@ -1146,7 +1146,7 @@ VOID CRiddlesWindow::OnTimer(UINT nEvent) {
 
 
 VOID CRiddlesWindow::OnMouseMove(UINT, CPoint) {
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
 CBrush cBrush(PALETTEINDEX(11));
@@ -1212,7 +1212,7 @@ void CMyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	case VK_F1: {
 		CSound::waitWaveSounds();
 		gMainWindow->GamePause();
-		CRules  RulesDlg(pParent, "riddles.txt", pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
+		CRules  RulesDlg(pParent, "riddles.txt", pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr));
 		RulesDlg.DoModal();
 		gMainWindow->GameResume();
 	}
@@ -1248,7 +1248,7 @@ VOID CMyEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		//
 		GetWindowText(szBuf, MAX_ANSWER_LENGTH);
 
-		assert(gMainWindow != NULL);
+		assert(gMainWindow != nullptr);
 		gMainWindow->ParseAnswer(szBuf);
 
 		// erase the contents of the edit control
@@ -1298,7 +1298,7 @@ VOID CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer) {
 			if (pGameParams->bPlayingMetagame) {
 				pGameParams->lScore = 1;
 				if (pGameParams->bSoundEffectsEnabled)
-					sndPlaySound(NULL, SND_ASYNC);
+					sndPlaySound(nullptr, SND_ASYNC);
 				PostMessage(WM_CLOSE, 0, 0);
 			} else                                          // In stand-alone
 				PlayGame();                                 //...continuous play
@@ -1316,7 +1316,7 @@ VOID CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer) {
 BOOL CRiddlesWindow::CheckUserGuess(const CHAR *pszGuess) {
 	INT i;
 
-	assert(pszGuess != NULL);
+	assert(pszGuess != nullptr);
 	assert(strlen(pszGuess) <= MAX_ANSWER_LENGTH);
 
 	//
@@ -1423,7 +1423,7 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			}
 		} // end if bSuccess
 
-		if (pSprite != NULL)
+		if (pSprite != nullptr)
 			delete pSprite;
 
 		ReleaseDC(pDC);
@@ -1443,7 +1443,7 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 VOID CRiddlesWindow::OnSetFocus(CWnd *) {
-	if (m_pEditText != NULL)
+	if (m_pEditText != nullptr)
 		m_pEditText->SetFocus();
 }
 
@@ -1451,9 +1451,9 @@ VOID CRiddlesWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		pSprite->EraseSprite(pDC);                  // erase it from screen
 		ReleaseDC(pDC);
 	}
@@ -1468,14 +1468,14 @@ VOID CRiddlesWindow::FlushInputEvents(VOID) {
 	// find and remove all keyboard events
 	//
 	while (TRUE) {
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	// find and remove all mouse events
 	//
 	while (TRUE) {
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }
@@ -1492,55 +1492,55 @@ VOID CRiddlesWindow::OnClose() {
 
 	// delete the game theme song
 	//
-	if (m_pSoundTrack != NULL) {
+	if (m_pSoundTrack != nullptr) {
 		delete m_pSoundTrack;
-		m_pSoundTrack = NULL;
+		m_pSoundTrack = nullptr;
 	}
 
 	CSound::clearSounds();
 
 	// release the master sprites
 	//
-	if (m_pSunDial != NULL) {
+	if (m_pSunDial != nullptr) {
 		delete m_pSunDial;
-		m_pSunDial = NULL;
+		m_pSunDial = nullptr;
 	}
 
 	for (i = 0; i < N_SPRITECHARS; i++) {
-		if (aMasterSpriteList[i] != NULL) {
+		if (aMasterSpriteList[i] != nullptr) {
 			delete aMasterSpriteList[i];
-			aMasterSpriteList[i] = NULL;
+			aMasterSpriteList[i] = nullptr;
 		}
 	}
 
 	// delete the guess edit text control
 	//
 	assert(m_pEditText);
-	if (m_pEditText != NULL) {
+	if (m_pEditText != nullptr) {
 		delete m_pEditText;
-		m_pEditText = NULL;
+		m_pEditText = nullptr;
 	}
 
 	//
 	// de-allocate any controls that we used
 	//
-	assert(m_pScrollButton != NULL);
-	if (m_pScrollButton != NULL) {
+	assert(m_pScrollButton != nullptr);
+	if (m_pScrollButton != nullptr) {
 		delete m_pScrollButton;
-		m_pScrollButton = NULL;
+		m_pScrollButton = nullptr;
 	}
 
 	//
 	// need to de-allocate the game palette
 	//
-	assert(m_pGamePalette != NULL);
-	if (m_pGamePalette != NULL) {
+	assert(m_pGamePalette != nullptr);
+	if (m_pGamePalette != nullptr) {
 		m_pGamePalette->DeleteObject();
 		delete m_pGamePalette;
-		m_pGamePalette = NULL;
+		m_pGamePalette = nullptr;
 	}
 
-	if ((pDC = GetDC()) != NULL) {              // paint black
+	if ((pDC = GetDC()) != nullptr) {              // paint black
 
 		myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 		myBrush.CreateStockObject(BLACK_BRUSH);
@@ -1561,7 +1561,7 @@ long CRiddlesWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1571,7 +1571,7 @@ long CRiddlesWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }

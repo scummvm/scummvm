@@ -43,7 +43,7 @@ private:
 	int     m_nLevel;
 
 public:
-	CPackRatOptDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MINIOPTIONS_DIALOG);
+	CPackRatOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);
 	void SetInitialOptions(int = 1, int = 1);    // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();
@@ -70,7 +70,7 @@ private:
 	int     m_nLevel;
 
 public:
-	CMsgDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL, UINT = IDD_MESSAGEBOX);
+	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MESSAGEBOX);
 	void SetInitialOptions(int, long, int = 0);  // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog();

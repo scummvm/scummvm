@@ -70,22 +70,22 @@ CMovieWindow::CMovieWindow(void){
 	m_dwErrorFlag=MAKELPARAM(0,(WPARAM)PLAY_SUCCESSFUL);				//clear Error Flag.
 		 
     /* set up the open parameters */
-    mciOpen.dwCallback = NULL;
+    mciOpen.dwCallback = nullptr;
     mciOpen.wDeviceID = mciOpen.wReserved0 =
 			 mciOpen.wReserved1 = 0;
     mciOpen.lpstrDeviceType = "avivideo";
-    mciOpen.lpstrElementName = NULL;
-    mciOpen.lpstrAlias = NULL;
+    mciOpen.lpstrElementName = nullptr;
+    mciOpen.lpstrAlias = nullptr;
     mciOpen.dwStyle = 0;
-    mciOpen.hWndParent = NULL;
+    mciOpen.hWndParent = nullptr;
 		 
    /* try to open the driver */
     mciSendCommand(0, MCI_OPEN, (DWORD)(MCI_OPEN_TYPE), 
                          (DWORD)(LPMCI_DGV_OPEN_PARMS)&mciOpen);
 	
 	videoID=-1;
-	hWndParent=(HWND)NULL;
-	hWndMovie=(HWND)NULL;
+	hWndParent=(HWND)nullptr;
+	hWndMovie=(HWND)nullptr;
 	pDum=new CDumWnd;
 #endif
 }                                                                                                           
@@ -167,12 +167,12 @@ BOOL CMovieWindow::PlayMovie(void){
 		videoID=-1;
 	}                                 
 	
-	mciopen.dwCallback = NULL;
+	mciopen.dwCallback = nullptr;
 	mciopen.wDeviceID = mciopen.wReserved0 =
 	mciopen.wReserved1 = 0;
-	mciopen.lpstrDeviceType = NULL;
+	mciopen.lpstrDeviceType = nullptr;
 	mciopen.lpstrElementName = lpszAviMovie;
-	mciopen.lpstrAlias = NULL;
+	mciopen.lpstrAlias = nullptr;
 	mciopen.dwStyle = WS_CHILD;
 	mciopen.hWndParent = hWndParent;
     
@@ -187,11 +187,11 @@ BOOL CMovieWindow::PlayMovie(void){
 	videoID=mciopen.wDeviceID;       
                                                                                                                                                            
 
-	mciWindow.dwCallback = NULL;
-	mciWindow.hWnd = NULL;
+	mciWindow.dwCallback = nullptr;
+	mciWindow.hWnd = nullptr;
 	mciWindow.wReserved1 = mciWindow.wReserved2 = 0;
 	mciWindow.nCmdShow = SW_SHOW;
-	mciWindow.lpstrText = (LPSTR)NULL;
+	mciWindow.lpstrText = (LPSTR)nullptr;
 	mciSendCommand(videoID, MCI_WINDOW, \
 												MCI_DGV_WINDOW_STATE, \
 			 										(DWORD)(LPMCI_DGV_WINDOW_PARMS)&mciWindow);
@@ -212,15 +212,15 @@ BOOL CMovieWindow::PlayMovie(void){
    	::MoveWindow(hWndMovie,MovieRect.left,MovieRect.top,MovieRect.Width(), MovieRect.Height(), TRUE);
 
 	if(!(pDum->CreateDum(hWndParent, hWndMovie,  pOwner, this, MovieRect.left - ((WINDOW_WIDTH - MovieRect.Width()) >> 1), MovieRect.top - ((WINDOW_HEIGHT - MovieRect.Height()) >> 1)))) {
-		mciSendCommand(videoID, MCI_CLOSE, 0L, NULL);
+		mciSendCommand(videoID, MCI_CLOSE, 0L, nullptr);
     	videoID=-1;
-		mciSendCommand(mciGetDeviceID("avivideo"),MCI_CLOSE, MCI_WAIT, NULL);
+		mciSendCommand(mciGetDeviceID("avivideo"),MCI_CLOSE, MCI_WAIT, nullptr);
 	}
    	
 	mciPlay.dwCallback=MAKELPARAM((HWND)pDum->m_hWnd,0);       //notify the Parent window upon end_of_movie.
 	mciPlay.dwFrom = mciPlay.dwTo = 0;
 	if(RtnVal=mciSendCommand(videoID,MCI_PLAY,MCI_NOTIFY,(DWORD)(LPVOID)&mciPlay)) {
-		mciSendCommand(videoID,MCI_CLOSE,0,NULL);
+		mciSendCommand(videoID,MCI_CLOSE,0,nullptr);
 #ifdef _DEBUG
 		mciGetErrorString(RtnVal,(LPSTR)Str,STRLEN);
         MessageBox(Str,"",MB_ICONEXCLAMATION| MB_OK);
@@ -256,7 +256,7 @@ CDumWnd::CDumWnd(){
 
 		/*need a window class which shares the parent-dc for optimization, in order to create a DUMMY window
 		*/
-	WndClass = (LPSTR)AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_PARENTDC, NULL, NULL, NULL);    
+	WndClass = (LPSTR)AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_PARENTDC, nullptr, nullptr, nullptr);    
 	CDumRect.SetRect(0,0,30,30);                                                        //arbitrary because it's gonna be invisible anyways.
 }       
 
@@ -298,12 +298,12 @@ long CDumWnd::OnMCINotify(WPARAM wParam, LPARAM lParam){
                  (DWORD)(LPMCI_GENERIC_PARMS)&mciGeneric);
     	videoID=-1;
 	}                                           
-	mciSendCommand(mciGetDeviceID("avivideo"),MCI_CLOSE, MCI_WAIT, NULL);
+	mciSendCommand(mciGetDeviceID("avivideo"),MCI_CLOSE, MCI_WAIT, nullptr);
 	if(d=IsWindow(hChild)){
 		d=::DestroyWindow(hChild);
 	}
 
-	::InvalidateRect( hOwnr, NULL, TRUE);           
+	::InvalidateRect( hOwnr, nullptr, TRUE);           
 	::UpdateWindow(hOwnr);
 	
 	d=DestroyWindow();                                                                                                                              
@@ -356,7 +356,7 @@ BOOL CDumWnd::CreateDum(HWND hWndPar, HWND hWndMov, CWnd* pPar, CMovieWindow* pM
 	
 	cWndRect.SetRect(x,y,x + WINDOW_WIDTH,y + WINDOW_HEIGHT);
 	
-	b=Create(WndClass,"DUMMY", WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CS_BYTEALIGNWINDOW | CS_OWNDC, cWndRect,  pOwnr, NULL); 
+	b=Create(WndClass,"DUMMY", WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CS_BYTEALIGNWINDOW | CS_OWNDC, cWndRect,  pOwnr, nullptr); 
     if(b){
     	hDum=(HWND)(this->m_hWnd);
     	MFC::ShowWindow(hDum,SW_SHOW);
@@ -416,13 +416,13 @@ void CDumWnd::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	    	mciSendCommand(videoID, MCI_CLOSE, 0L, 
 	                 (DWORD)(LPMCI_GENERIC_PARMS)&mciGeneric);
    			videoID=-1;
-			mciSendCommand(mciGetDeviceID("avivideo"),MCI_CLOSE, MCI_WAIT, NULL);
+			mciSendCommand(mciGetDeviceID("avivideo"),MCI_CLOSE, MCI_WAIT, nullptr);
 
 			if(d=IsWindow(hChild)){
 				d=::DestroyWindow(hChild);
 			}   
 
-			::InvalidateRect( hOwnr, NULL, TRUE);           
+			::InvalidateRect( hOwnr, nullptr, TRUE);           
 			::UpdateWindow(hOwnr);
 	
 			::SendMessage(hOwnr, WM_COMMAND, MOVIE_OVER, (LPARAM)(LPVOID)this);

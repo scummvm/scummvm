@@ -39,14 +39,14 @@ IMPLEMENT_DYNCREATE(CInventory, CObject)
  * Return Value:    none
  *
  * Description:     Constructor for inventory class.  Initialize all fields
- *                  to logical NULL.
+ *                  to logical nullptr.
  *
  ************************************************************************/
 
 CInventory::CInventory(const char *lpsTitle) {
 	m_lpsTitle = lpsTitle;
 	m_nItemCount = 0;
-	m_pEquipment = NULL;
+	m_pEquipment = nullptr;
 }
 
 
@@ -69,12 +69,12 @@ CInventory::~CInventory() {
 	m_nItemCount = 0;                               // zero the item count
 	while (TRUE) {                                  // flush the equipment list
 		pItem = m_pEquipment;                       // ... one item at a time
-		if (pItem == NULL)
+		if (pItem == nullptr)
 			break;
 		m_pEquipment = (*pItem).m_pNext;            // make next item be first
 		delete pItem;
 	}
-	m_pEquipment = NULL;
+	m_pEquipment = nullptr;
 }
 
 
@@ -94,22 +94,22 @@ CInventory::~CInventory() {
 void CInventory::AddItem(CItem *pItem) {
 	CItem   *pTemp;
 
-	if (((*pItem).m_pPrev != NULL) ||               // don't relink a linked item
-	        ((*pItem).m_pNext != NULL))
+	if (((*pItem).m_pPrev != nullptr) ||               // don't relink a linked item
+	        ((*pItem).m_pNext != nullptr))
 		return;
 
 	pTemp = FindItem((*pItem).m_nID);               // see if it is already in the list
-	if (pTemp != NULL) {                            // ... and if so, just bump the quantity
+	if (pTemp != nullptr) {                            // ... and if so, just bump the quantity
 		(*pTemp).m_nQuantity += (*pItem).m_nQuantity;   // ... of the existing item and
 		delete pItem;                               // ... then purge the item given us
 		return;
 	}
 
-	if (m_pEquipment == NULL)                       // make it be first in the list
+	if (m_pEquipment == nullptr)                       // make it be first in the list
 		m_pEquipment = pItem;                       // ... if no existing items
 	else {
 		pTemp = m_pEquipment;                       // otherwise hunt for the last item
-		while ((*pTemp).m_pNext != NULL)            // ... and insert it as the new last one
+		while ((*pTemp).m_pNext != nullptr)            // ... and insert it as the new last one
 			pTemp = (*pTemp).m_pNext;
 		(*pTemp).m_pNext = pItem;
 		(*pItem).m_pPrev = pTemp;
@@ -137,7 +137,7 @@ void CInventory::AddItem(int nID, long nQuantity) {
 	CItem   *pItem;
 
 	pItem = FindItem(nID);                          // see if we already have it
-	if (pItem == NULL) {                            // if not, then create it
+	if (pItem == nullptr) {                            // if not, then create it
 		pItem = new CItem(nID);                     // ... initialize its values
 		(*pItem).m_nQuantity = nQuantity;           // ... and link it into the list
 		AddItem(pItem);
@@ -162,23 +162,23 @@ void CInventory::AddItem(int nID, long nQuantity) {
 void CInventory::RemoveItem(CItem *pItem) {
 	CItem   *pTemp;
 
-	if (((*pItem).m_pPrev == NULL) &&               // don't unlink a lone item
-	        ((*pItem).m_pNext == NULL) &&
+	if (((*pItem).m_pPrev == nullptr) &&               // don't unlink a lone item
+	        ((*pItem).m_pNext == nullptr) &&
 	        (m_pEquipment != pItem))
 		return;
 
-	if ((*pItem).m_pPrev == NULL) {                 // handle being first item in list
+	if ((*pItem).m_pPrev == nullptr) {                 // handle being first item in list
 		m_pEquipment = (*pItem).m_pNext;            // ... next item becomes new head
-		if (m_pEquipment != NULL)                   // ... if we weren't the only item
-			(*m_pEquipment).m_pPrev = NULL;         // ... then clear head's previous pointer
+		if (m_pEquipment != nullptr)                   // ... if we weren't the only item
+			(*m_pEquipment).m_pPrev = nullptr;         // ... then clear head's previous pointer
 	} else {                                        // handle being not head of list
 		pTemp = (*pItem).m_pPrev;                   // ... make previous item point to after us
 		(*pTemp).m_pNext = (*pItem).m_pNext;
-		if ((*pTemp).m_pNext != NULL)               // ... if something was after us, then
+		if ((*pTemp).m_pNext != nullptr)               // ... if something was after us, then
 			(*(*pTemp).m_pNext).m_pPrev = pTemp;    // ... have it point to what's previous
 	}
 
-	(*pItem).m_pNext = (*pItem).m_pPrev = NULL;
+	(*pItem).m_pNext = (*pItem).m_pPrev = nullptr;
 	m_nItemCount -= 1;                              // decrement item count accordingly
 }
 
@@ -246,7 +246,7 @@ void CInventory::DiscardItem(int nItem) {
 	CItem   *pItem;
 
 	pItem = FindItem(nItem);                        // see if we have the specified item
-	if (pItem != NULL)                              // ... and if so, remove it from the list
+	if (pItem != nullptr)                              // ... and if so, remove it from the list
 		DiscardItem(pItem);
 }
 
@@ -271,7 +271,7 @@ void CInventory::DiscardItem(int nItem, long nQuantity) {
 	CItem   *pItem;
 
 	pItem = FindItem(nItem);                        // see if we have the specified item
-	if (pItem != NULL)                              // ... and if so remove the specified quantity
+	if (pItem != nullptr)                              // ... and if so remove the specified quantity
 		DiscardItem(pItem, nQuantity);
 }
 
@@ -284,7 +284,7 @@ void CInventory::DiscardItem(int nItem, long nQuantity) {
  *  int nIdx        index of the item to look for
  *
  * Return Value:
- *  CItem *         pointer to item or NULL
+ *  CItem *         pointer to item or nullptr
  *
  * Description:     retrieve an item from the inventory, and return it pointer.
  *
@@ -296,10 +296,10 @@ CItem *CInventory::FetchItem(int nIdx) {
 
 	if ((nIdx >= m_nItemCount) ||                   // punt if the index is invalid
 	        (nIdx < 0))
-		return (NULL);
+		return (nullptr);
 
 	pItem = m_pEquipment;                           // get head of equipment list
-	for (i = 0; pItem != NULL; i++) {               // scan through the list
+	for (i = 0; pItem != nullptr; i++) {               // scan through the list
 		if (nIdx == i)                              // ... looking for item
 			break;
 		pItem = (*pItem).m_pNext;
@@ -317,7 +317,7 @@ CItem *CInventory::FetchItem(int nIdx) {
  *  int nID         identifier of the item to look for
  *
  * Return Value:
- *  CItem *         pointer to item or NULL
+ *  CItem *         pointer to item or nullptr
  *
  * Description:     look for an item in the inventory, and return it pointer.
  *
@@ -327,7 +327,7 @@ CItem *CInventory::FindItem(int nID) {
 	CItem   *pItem;
 
 	pItem = m_pEquipment;                           // get head of equipment list
-	while (pItem != NULL) {                         // scan through the list
+	while (pItem != nullptr) {                         // scan through the list
 		if (nID == (*pItem).m_nID)                  // ... looking for a match
 			break;
 		pItem = (*pItem).m_pNext;

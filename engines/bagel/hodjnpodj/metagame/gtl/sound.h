@@ -75,7 +75,7 @@ public:
 	~CSound();
 
 	void Initialize(char *pszPathName, WORD wFlags) {
-		Initialize(NULL, pszPathName, wFlags);
+		Initialize(nullptr, pszPathName, wFlags);
 	}
 	void Initialize(CWnd *pWnd, char *pszPathName, WORD wFlags);
 	int  GetID() {
@@ -173,11 +173,11 @@ private:
 
 	CWnd        *m_pWnd;        // parent window for messages
 
-	CSound      *m_pNext;       // next sound in chain or NULL
-	CSound      *m_pPrev;       // previous sound in chain or NULL
+	CSound      *m_pNext;       // next sound in chain or nullptr
+	CSound      *m_pPrev;       // previous sound in chain or nullptr
 
 	static  BOOL    m_bInited;      // whether sounds have been inited
-	static  CSound  *m_pSoundChain; // first item in chain or NULL
+	static  CSound  *m_pSoundChain; // first item in chain or nullptr
 	static  int     m_nIndex;       // used to create IDs
 	static  int     m_nCount;       // count of active sounds
 	static  int     m_nWavCount;    // number of wave sound devices

@@ -43,7 +43,7 @@ namespace Mankala {
 class CMnkOpt : public CDialog {
 // Construction
 public:
-	CMnkOpt(CWnd* pParent = NULL);  // standard constructor
+	CMnkOpt(CWnd* pParent = nullptr);  // standard constructor
 	~CMnkOpt();     // destructor
 
 // Dialog Data
@@ -82,8 +82,8 @@ protected:
 class CMnkUsr : public CBmpDialog {
 // Construction
 public:
-	CMnkUsr(CWnd *xpParent = NULL,
-	        CPalette *xpPalette = NULL, UINT nID = IDD_MNK_USER) ;
+	CMnkUsr(CWnd *xpParent = nullptr,
+	        CPalette *xpPalette = nullptr, UINT nID = IDD_MNK_USER) ;
 	~CMnkUsr();     // destructor
 
 	CPalette *m_xpGamePalette ;

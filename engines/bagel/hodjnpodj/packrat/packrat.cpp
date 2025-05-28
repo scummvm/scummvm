@@ -126,45 +126,45 @@ namespace Packrat {
 
 extern CMainPackRatWindow   *pcwndPackRat;
 
-CPalette    *pGamePalette = NULL;           // Palette to be used throughout the game
-CBmpButton      *pOptionButton = NULL;      // Option button object for getting to the options dialog
+CPalette    *pGamePalette = nullptr;           // Palette to be used throughout the game
+CBmpButton      *pOptionButton = nullptr;      // Option button object for getting to the options dialog
 
 CRect   MainRect;                           // screen area spanned by the game window
 CRect   OptionRect;                         // screen area spanned by the game window
 
-CSprite *pPlayerRightSprite = NULL;
-CSprite *pPlayerLeftSprite = NULL;
-CSprite *pPlayerUpSprite = NULL;
-CSprite *pPlayerDownSprite = NULL;
+CSprite *pPlayerRightSprite = nullptr;
+CSprite *pPlayerLeftSprite = nullptr;
+CSprite *pPlayerUpSprite = nullptr;
+CSprite *pPlayerDownSprite = nullptr;
 
-CSprite *pBadGuyUpSprite  = NULL;
-CSprite *pBadGuyDownSprite  = NULL;
-CSprite *pBadGuyLeftSprite  = NULL;
-CSprite *pBadGuyRightSprite  = NULL;
+CSprite *pBadGuyUpSprite  = nullptr;
+CSprite *pBadGuyDownSprite  = nullptr;
+CSprite *pBadGuyLeftSprite  = nullptr;
+CSprite *pBadGuyRightSprite  = nullptr;
 
-CSprite *pGoodGuyUpSprite  = NULL;
-CSprite *pGoodGuyDownSprite  = NULL;
-CSprite *pGoodGuyLeftSprite  = NULL;
-CSprite *pGoodGuyRightSprite  = NULL;
+CSprite *pGoodGuyUpSprite  = nullptr;
+CSprite *pGoodGuyDownSprite  = nullptr;
+CSprite *pGoodGuyLeftSprite  = nullptr;
+CSprite *pGoodGuyRightSprite  = nullptr;
 
-CSprite *pFlashUpSprite  = NULL;
-CSprite *pFlashDownSprite  = NULL;
-CSprite *pFlashLeftSprite  = NULL;
-CSprite *pFlashRightSprite  = NULL;
+CSprite *pFlashUpSprite  = nullptr;
+CSprite *pFlashDownSprite  = nullptr;
+CSprite *pFlashLeftSprite  = nullptr;
+CSprite *pFlashRightSprite  = nullptr;
 
-CSprite *pLiveSprite  = NULL;
+CSprite *pLiveSprite  = nullptr;
 CSprite *pLivesSprite[MAXLIVESPRITE];
 
-CSprite *pBalloonSprite  = NULL;
+CSprite *pBalloonSprite  = nullptr;
 CPoint  ptBaloon(609, 25);
 
-CSprite *pPlayerSprite = NULL;
+CSprite *pPlayerSprite = nullptr;
 CSprite *apBadGuySprite[4];
 
-CBitmap *pSSpaceBMP = NULL;
-CBitmap *pLSpaceBMP = NULL;
+CBitmap *pSSpaceBMP = nullptr;
+CBitmap *pLSpaceBMP = nullptr;
 
-static  CSound  *pGameSound = NULL;                             // Game theme song
+static  CSound  *pGameSound = nullptr;                             // Game theme song
 
 POINT   ptNOLocInGrid;
 int     nPaintObject;
@@ -338,11 +338,11 @@ BOOL    bInLoop;
 BOOL    bBALLOONShown;
 
 #ifdef SHOW_SCORE
-	CText   *pScore = NULL;
+	CText   *pScore = nullptr;
 	CRect   rScoreRect(17, 448, 307, 463);
-	CText   *pObjsLeft = NULL;
+	CText   *pObjsLeft = nullptr;
 	CRect   rObjsLeftRect(353, 448, 623, 463);
-	CText   *pCounter = NULL;
+	CText   *pCounter = nullptr;
 	CRect   rCounterRect(100, 448, 350, 463);
 #endif
 
@@ -378,19 +378,19 @@ BOOL    bBALLOONShown;
  ****************************************************************/
 
 CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
-	CDC     *pDC = NULL;                        // device context for the screen
-//CPalette    *pOldPalette = NULL;
+	CDC     *pDC = nullptr;                        // device context for the screen
+//CPalette    *pOldPalette = nullptr;
 	CString WndClass;
 	CSize   mySize;
 	BOOL    bTestCreate;                        // bool for testing the creation of each button
 
-//CDibDoc *pDibDoc = NULL;            // pointer to the background art DIB
+//CDibDoc *pDibDoc = nullptr;            // pointer to the background art DIB
 	BOOL    bTestBmp;                       // bool for testing the creation of the splash screen
 
 	int     nLoop1;
 	JOYINFO joyInfo;
 
-	CBitmap *pTempBMP = NULL;
+	CBitmap *pTempBMP = nullptr;
 // Define a special window class which traps double-clicks, is byte aligned
 // to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 // the five system defined DCs which are not guaranteed to be available;
@@ -399,10 +399,10 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	BeginWaitCursor();
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               NULL, NULL, NULL);
+	                               nullptr, nullptr, nullptr);
 
 // set the seed for the random number generator
-//srand( (unsigned)time( NULL ));
+//srand( (unsigned)time( nullptr ));
 
 // initialize private members
 	m_lpGameStruct = lpGameStruct;
@@ -427,10 +427,10 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	MainRect.bottom = MainRect.top + GAME_HEIGHT;   // ... so it is centered on the screen
 
 	ReleaseDC(pDC);
-	pDC = NULL;
+	pDC = nullptr;
 // Create the window as a POPUP so that no boarders, title, or menu are present;
 // this is because the game's background art will fill the entire 640x40 area.
-	Create(WndClass, "Boffo Games -- Packrat", WS_POPUP, MainRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Packrat", WS_POPUP, MainRect, nullptr, 0);
 
 	pDC = GetDC();
 	pTempBMP = new CBitmap();
@@ -438,10 +438,10 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 
 	bTestBmp = CSprite::SetBackdrop(pDC, pGamePalette, pTempBMP);
 	ASSERT(bTestBmp);
-	pTempBMP = NULL;
+	pTempBMP = nullptr;
 
 //ReleaseDC( pDC );
-//pDC = NULL;
+//pDC = nullptr;
 
 	ShowWindow(SW_SHOWNORMAL);
 //UpdateWindow();
@@ -450,8 +450,8 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 //pOldPalette = pDC->SelectPalette( pGamePalette, FALSE );
 //pDC->RealizePalette();
 
-	pSSpaceBMP = FetchResourceBitmap(pDC, NULL, IDB_SEMPTY);
-	pLSpaceBMP = FetchResourceBitmap(pDC, NULL, IDB_LEMPTY);
+	pSSpaceBMP = FetchResourceBitmap(pDC, nullptr, IDB_SEMPTY);
+	pLSpaceBMP = FetchResourceBitmap(pDC, nullptr, IDB_LEMPTY);
 
 	CSprite::RefreshBackdrop(pDC, pGamePalette);
 
@@ -476,7 +476,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		pBalloonSprite->SetMasked(TRUE);
 		pBalloonSprite->SetMobile(FALSE);
 		pBalloonSprite->SetOptimizeSpeed(FALSE);
-		ASSERT(bTestCreate != NULL);                // test for sprite's creation
+		ASSERT(bTestCreate != 0);                // test for sprite's creation
 		bBALLOONShown = FALSE;
 	}
 
@@ -487,10 +487,10 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	                   OPTION_LEFT + OPTION_WIDTH,
 	                   OPTION_TOP + OPTION_HEIGHT);
 	bTestCreate = pOptionButton->Create("Options", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, OptionRect, this, IDC_OPTION);
-	ASSERT(bTestCreate != NULL);                // test for button's creation
+	ASSERT(bTestCreate != 0);                // test for button's creation
 	bTestCreate = pOptionButton->LoadBitmaps(IDB_OPTIONU, IDB_OPTIONU, IDB_OPTIONU, IDB_OPTIONG);
-//bTestCreate = pOptionButton->LoadBitmaps( OPTIONU, NULL, NULL, OPTIONG );
-	ASSERT(bTestCreate != NULL);                // test for button's creation
+//bTestCreate = pOptionButton->LoadBitmaps( OPTIONU, nullptr, nullptr, OPTIONG );
+	ASSERT(bTestCreate != 0);                // test for button's creation
 
 	if (m_lpGameStruct->bPlayingHodj) {
 		pPlayerRightSprite = new CSprite;
@@ -579,7 +579,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pBadGuyUpSprite->SetMasked(TRUE);
 	pBadGuyUpSprite->SetMobile(TRUE);
 	pBadGuyUpSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pBadGuyDownSprite  = new CSprite;
 	pBadGuyDownSprite->SharePalette(pGamePalette);
@@ -588,7 +588,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pBadGuyDownSprite->SetMasked(TRUE);
 	pBadGuyDownSprite->SetMobile(TRUE);
 	pBadGuyDownSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pBadGuyLeftSprite  = new CSprite;
 	pBadGuyLeftSprite->SharePalette(pGamePalette);
@@ -597,7 +597,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pBadGuyLeftSprite->SetMasked(TRUE);
 	pBadGuyLeftSprite->SetMobile(TRUE);
 	pBadGuyLeftSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pBadGuyRightSprite  = new CSprite;
 	pBadGuyRightSprite->SharePalette(pGamePalette);
@@ -606,7 +606,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pBadGuyRightSprite->SetMasked(TRUE);
 	pBadGuyRightSprite->SetMobile(TRUE);
 	pBadGuyRightSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyUpSprite  = new CSprite;
 	pGoodGuyUpSprite->SharePalette(pGamePalette);
@@ -615,7 +615,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pGoodGuyUpSprite->SetMasked(TRUE);
 	pGoodGuyUpSprite->SetMobile(TRUE);
 	pGoodGuyUpSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyDownSprite  = new CSprite;
 	pGoodGuyDownSprite->SharePalette(pGamePalette);
@@ -624,7 +624,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pGoodGuyDownSprite->SetMasked(TRUE);
 	pGoodGuyDownSprite->SetMobile(TRUE);
 	pGoodGuyDownSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyLeftSprite  = new CSprite;
 	pGoodGuyLeftSprite->SharePalette(pGamePalette);
@@ -633,7 +633,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pGoodGuyLeftSprite->SetMasked(TRUE);
 	pGoodGuyLeftSprite->SetMobile(TRUE);
 	pGoodGuyLeftSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyRightSprite  = new CSprite;
 	pGoodGuyRightSprite->SharePalette(pGamePalette);
@@ -642,7 +642,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pGoodGuyRightSprite->SetMasked(TRUE);
 	pGoodGuyRightSprite->SetMobile(TRUE);
 	pGoodGuyRightSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashUpSprite  = new CSprite;
 	pFlashUpSprite->SharePalette(pGamePalette);
@@ -651,7 +651,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pFlashUpSprite->SetMasked(TRUE);
 	pFlashUpSprite->SetMobile(TRUE);
 	pFlashUpSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashDownSprite  = new CSprite;
 	pFlashDownSprite->SharePalette(pGamePalette);
@@ -660,7 +660,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pFlashDownSprite->SetMasked(TRUE);
 	pFlashDownSprite->SetMobile(TRUE);
 	pFlashDownSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashLeftSprite  = new CSprite;
 	pFlashLeftSprite->SharePalette(pGamePalette);
@@ -669,7 +669,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pFlashLeftSprite->SetMasked(TRUE);
 	pFlashLeftSprite->SetMobile(TRUE);
 	pFlashLeftSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashRightSprite  = new CSprite;
 	pFlashRightSprite->SharePalette(pGamePalette);
@@ -678,10 +678,10 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pFlashRightSprite->SetMasked(TRUE);
 	pFlashRightSprite->SetMobile(TRUE);
 	pFlashRightSprite->SetOptimizeSpeed(TRUE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	for (nLoop1 = 0; nLoop1 < 4; nLoop1++) {
-		apBadGuySprite[nLoop1] = NULL;
+		apBadGuySprite[nLoop1] = nullptr;
 		apBadGuySprite[nLoop1] = new CSprite;
 		apBadGuySprite[nLoop1] = pBadGuyUpSprite->DuplicateSprite(pDC);
 		apBadGuySprite[nLoop1]->LinkSprite();
@@ -694,7 +694,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pLiveSprite->SetMasked(TRUE);
 	pLiveSprite->SetMobile(TRUE);
 	pLiveSprite->SetOptimizeSpeed(FALSE);
-	ASSERT(bTestCreate != NULL);                // test for sprite's creation
+	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	for (nLoop1 = 0; nLoop1 < MAXLIVESPRITE; nLoop1++) {
 		pLivesSprite[nLoop1] = new CSprite;
@@ -781,14 +781,14 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	if (m_lpGameStruct->bMusicEnabled) {
 		pGameSound = new CSound(this, GAME_THEME,
 		                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		if (pGameSound != NULL)
+		if (pGameSound != nullptr)
 			(*pGameSound).midiLoopPlaySegment(2310, 29400, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
 	if (m_lpGameStruct->bPlayingMetagame) {
 		m_bSuspend = FALSE;
 		bFirstTimer = FALSE;
-		SetTimer(PACKRATTIMER, 50, NULL);
+		SetTimer(PACKRATTIMER, 50, nullptr);
 	}
 
 	bStart = FALSE;
@@ -823,9 +823,9 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
  ****************************************************************/
 void CMainPackRatWindow::SetMaze() {
 	CDC     *pDC = GetDC();
-	CPalette    *pOldPal = NULL;
+	CPalette    *pOldPal = nullptr;
 	int     nLoop1;
-	CBitmap *pTempBmp = NULL;
+	CBitmap *pTempBmp = nullptr;
 	BOOL    bTestBmp;
 	#ifdef DYNAMIC_OBJ_COUNT
 	int     nLoop;
@@ -833,9 +833,9 @@ void CMainPackRatWindow::SetMaze() {
 
 	SetLevel();
 
-//    if ( pGamePalette != NULL ) {
+//    if ( pGamePalette != nullptr ) {
 //      delete pGamePalette;
-//      pGamePalette = NULL;
+//      pGamePalette = nullptr;
 //  }
 
 	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);
@@ -845,7 +845,7 @@ void CMainPackRatWindow::SetMaze() {
 
 	switch (m_nMaze) {
 	case 2:
-		pTempBmp = FetchBitmap(pDC, NULL, MAZE2);
+		pTempBmp = FetchBitmap(pDC, nullptr, MAZE2);
 
 		#ifndef DYNAMIC_OBJ_COUNT
 		m_nNumberOfObjectsLeft = 0;
@@ -858,7 +858,7 @@ void CMainPackRatWindow::SetMaze() {
 		#endif
 		break;
 	case 3:
-		pTempBmp = FetchBitmap(pDC, NULL, MAZE3);
+		pTempBmp = FetchBitmap(pDC, nullptr, MAZE3);
 
 		#ifndef DYNAMIC_OBJ_COUNT
 		m_nNumberOfObjectsLeft = 0;
@@ -871,7 +871,7 @@ void CMainPackRatWindow::SetMaze() {
 		#endif
 		break;
 	case 4:
-		pTempBmp = FetchBitmap(pDC, NULL, MAZE4);
+		pTempBmp = FetchBitmap(pDC, nullptr, MAZE4);
 
 		#ifndef DYNAMIC_OBJ_COUNT
 		m_nNumberOfObjectsLeft = 0;
@@ -884,7 +884,7 @@ void CMainPackRatWindow::SetMaze() {
 		#endif
 		break;
 	default:
-		pTempBmp = FetchBitmap(pDC, NULL, MAZE1);
+		pTempBmp = FetchBitmap(pDC, nullptr, MAZE1);
 
 		#ifndef DYNAMIC_OBJ_COUNT
 		m_nNumberOfObjectsLeft = 0;
@@ -904,7 +904,7 @@ void CMainPackRatWindow::SetMaze() {
 
 	bTestBmp = CSprite::SetBackdrop(pDC, pGamePalette, pTempBmp);
 	ASSERT(bTestBmp);
-	pTempBmp = NULL;
+	pTempBmp = nullptr;
 
 //  CSprite::RefreshBackdrop( pDC, pGamePalette );
 	m_anMazeArray = (int *) &anCurrentMaze[0];
@@ -1175,7 +1175,7 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 	m_bSuspend = TRUE;
 
 	if (nWhichBadGuy >= BG4) {
-		if (apBadGuySprite[3] != NULL)
+		if (apBadGuySprite[3] != nullptr)
 			apBadGuySprite[3]->EraseSprite(pDC);
 
 		m_aptCurrBLocInGrid[3].x = 34;
@@ -1194,7 +1194,7 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 	}
 
 	if (nWhichBadGuy >= BG3) {
-		if (apBadGuySprite[2] != NULL)
+		if (apBadGuySprite[2] != nullptr)
 			apBadGuySprite[2]->EraseSprite(pDC);
 
 		m_aptCurrBLocInGrid[2].x = 2;
@@ -1213,7 +1213,7 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 	}
 
 	if (nWhichBadGuy >= BG2) {
-		if (apBadGuySprite[1] != NULL)
+		if (apBadGuySprite[1] != nullptr)
 			apBadGuySprite[1]->EraseSprite(pDC);
 
 		m_aptCurrBLocInGrid[1].x = 34;
@@ -1232,7 +1232,7 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 	}
 
 	if (nWhichBadGuy >= BG1) {
-		if (apBadGuySprite[0] != NULL)
+		if (apBadGuySprite[0] != nullptr)
 			apBadGuySprite[0]->EraseSprite(pDC);
 
 		m_aptCurrBLocInGrid[0].x = 2;
@@ -1324,7 +1324,7 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 		pOptionButton->EnableWindow(TRUE);
 		if (m_nLives == 0) {
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, SND_ASYNC);
+				sndPlaySound(nullptr, SND_ASYNC);
 				sndPlaySound(DEAD_WAV, SND_ASYNC);
 			}
 			if (m_bMouseCaptured) {
@@ -1345,7 +1345,7 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 			}
 
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, SND_ASYNC);
+				sndPlaySound(nullptr, SND_ASYNC);
 			}
 
 			RedrawWindow();
@@ -1360,7 +1360,7 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 			cMessageBoxDlg.SetInitialOptions(3, m_lScore, m_nLives);
 			cMessageBoxDlg.DoModal();
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, SND_ASYNC);
+				sndPlaySound(nullptr, SND_ASYNC);
 			}
 			(*this).SetFocus();
 		}
@@ -1518,7 +1518,7 @@ void CMainPackRatWindow::PickUpSuperObject() {
 		nOldTSpeed = m_nBadGuySpeed;
 		m_nBadGuySpeed *= 2;
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
-			sndPlaySound(NULL, SND_ASYNC);
+			sndPlaySound(nullptr, SND_ASYNC);
 			sndPlaySound(SUPERSOUND, SND_ASYNC);
 		}
 		bChangeTurtle = TRUE;
@@ -1614,13 +1614,13 @@ BOOL CMainPackRatWindow::PlayerKilled(int nWhichBadGuy) {
 
 		if (bEatTurtle) {
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, SND_ASYNC);
+				sndPlaySound(nullptr, SND_ASYNC);
 				sndPlaySound(BADGUYSOUND, SND_ASYNC);
 			}
 			nKillBadGuy += Power(2, nWhichBadGuy);
 		} else {
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, SND_ASYNC);
+				sndPlaySound(nullptr, SND_ASYNC);
 				sndPlaySound(PLAYERSOUND, SND_ASYNC);
 			}
 			bReturn = TRUE;
@@ -1657,7 +1657,7 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 	CDC *pDC = GetDC();
 	int nWhichBadGuy;
 	int nOldDir;
-	CSprite     *pTempSprite = NULL;
+	CSprite     *pTempSprite = nullptr;
 	JOYINFO joyInfo;
 	CMsgDlg cMessageBoxDlg((CWnd *)this, pGamePalette);
 
@@ -1810,7 +1810,7 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 		break;
 	}
 
-	if (pTempSprite != NULL) {
+	if (pTempSprite != nullptr) {
 		pTempSprite->LinkSprite();
 		pTempSprite->PaintSprite(pDC, m_ptCurrentPPos);
 		pPlayerSprite->EraseSprite(pDC);
@@ -1821,14 +1821,14 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 
 	pPlayerSprite->PaintSprite(pDC, m_ptCurrentPPos);
 
-	pTempSprite = NULL;
+	pTempSprite = nullptr;
 
 //	m_anMazeArray[m_ptCurrPLocInGrid.x + ( m_ptCurrPLocInGrid.y * NUMBEROFCOLS )]=0;
 
 	for (nWhichBadGuy = 0; nWhichBadGuy < 4; nWhichBadGuy++) {
 		if (PlayerKilled(nWhichBadGuy)) {
 			bKillPlayer = TRUE;
-			if (pDC != NULL)
+			if (pDC != nullptr)
 				ReleaseDC(pDC);
 			return;
 		}
@@ -1867,7 +1867,7 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 			m_nGameLevel++;
 			if (m_nGameLevel > LEVELMAX) {
 				if (m_lpGameStruct->bSoundEffectsEnabled) {
-					sndPlaySound(NULL, SND_ASYNC);
+					sndPlaySound(nullptr, SND_ASYNC);
 					sndPlaySound(LASTLEV_WAV, SND_ASYNC);
 				}
 				pOptionButton->EnableWindow(TRUE);
@@ -1882,7 +1882,7 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 				(*this).SetFocus();
 				m_bSuspend = TRUE;
 				if (m_lpGameStruct->bPlayingMetagame) {
-					sndPlaySound(NULL, SND_ASYNC);
+					sndPlaySound(nullptr, SND_ASYNC);
 					PostMessage(WM_CLOSE, 0, 0);
 					bEndGame = TRUE;
 				}
@@ -1909,12 +1909,12 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 	if (m_nNumberOfObjectsLeft == 0)
 		m_nNumberOfObjectsLeft--;
 
-	if (pTempSprite != NULL) {
+	if (pTempSprite != nullptr) {
 		delete pTempSprite;
-		pTempSprite = NULL;
+		pTempSprite = nullptr;
 	}
 
-	if (pDC != NULL) {
+	if (pDC != nullptr) {
 		ReleaseDC(pDC);
 	}
 	return;
@@ -2031,7 +2031,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 	CDC     *pDC = GetDC();
 	int     nOldDir;
 //BOOL    bNewDirOK = FALSE;
-	CSprite *pTempSprite = NULL;
+	CSprite *pTempSprite = nullptr;
 	BOOL    bSeePlayer = FALSE;
 	BOOL    bNearPlayer = FALSE;
 	int     nOldDirection;
@@ -2364,7 +2364,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 		break;
 	}
 
-	if (pTempSprite != NULL) {
+	if (pTempSprite != nullptr) {
 		pTempSprite->LinkSprite();
 		pTempSprite->PaintSprite(pDC, m_aptCurrentBPos[nWhichBadGuy]);
 		apBadGuySprite[nWhichBadGuy]->EraseSprite(pDC);
@@ -2374,13 +2374,13 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 	}
 
 	apBadGuySprite[nWhichBadGuy]->PaintSprite(pDC, m_aptCurrentBPos[nWhichBadGuy]);
-	pTempSprite = NULL;
+	pTempSprite = nullptr;
 
 	if (PlayerKilled(nWhichBadGuy)) {
 		bKillPlayer = TRUE;
 	} else {
 		if (nKillBadGuy != 0) {
-			if (pDC != NULL)
+			if (pDC != nullptr)
 				ReleaseDC(pDC);
 			return bReturn;
 		}
@@ -2393,7 +2393,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 	if (m_anBDirection[nWhichBadGuy] > 4)
 		m_anBDirection[nWhichBadGuy] = brand() % 4;
 	bChangeTurtle = FALSE;
-	if (pDC != NULL)
+	if (pDC != nullptr)
 		ReleaseDC(pDC);
 	return bReturn;
 }
@@ -2519,7 +2519,7 @@ void CMainPackRatWindow::MoveBadGuys() {
 BOOL CMainPackRatWindow::CheckMessages() {
 	MSG msg;
 
-	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT) {
 			bEndGame = TRUE;
@@ -2563,15 +2563,15 @@ BOOL CMainPackRatWindow::CheckMessages() {
 
 void CMainPackRatWindow::SplashScreen() {
 	CDC         *pDC = GetDC();                                     // pointer to the window device context
-	CSprite     *pSprite = NULL;
+	CSprite     *pSprite = nullptr;
 	POINT       ptLive;
 	int         nLoop1;
 
 	CSprite::RefreshBackdrop(pDC, pGamePalette);
 
 	pSprite = CSprite::GetSpriteChain();
-	if (pSprite != NULL) {
-		while (pSprite !=  NULL) {
+	if (pSprite != nullptr) {
+		while (pSprite !=  nullptr) {
 			pSprite->ClearBackground();
 			pSprite->RefreshSprite(pDC);
 			pSprite = pSprite->GetNextSprite();
@@ -2579,14 +2579,14 @@ void CMainPackRatWindow::SplashScreen() {
 
 		/*
 		    for ( nLoop1 = 0; nLoop1 < MAXLIVES; nLoop1++ ) {
-		        if ( pLivesSprite[nLoop1] != NULL )
+		        if ( pLivesSprite[nLoop1] != nullptr )
 		            pLivesSprite[nLoop1]->EraseSprite( pDC );
 		    }
 		*/
 	}
 
 	for (nLoop1 = 0; nLoop1 < MAXLIVESPRITE; nLoop1++) {
-		if (pLivesSprite[nLoop1] != NULL) {
+		if (pLivesSprite[nLoop1] != nullptr) {
 			pLivesSprite[nLoop1]->EraseSprite(pDC);
 			if (nLoop1 < m_nLives) {
 				ptLive.x = 15 + (17 * nLoop1);
@@ -2600,12 +2600,12 @@ void CMainPackRatWindow::SplashScreen() {
 	for ( nLoop1 = 0; nLoop1 < m_nLives; nLoop1++ ) {
 	    ptLive.x = 15 + ( 17 * nLoop1);
 	    ptLive.y = 25;
-	    if ( pLivesSprite[nLoop1] != NULL )
+	    if ( pLivesSprite[nLoop1] != nullptr )
 	        pLivesSprite[nLoop1]->PaintSprite( pDC, ptLive );
 	}
 	*/
 
-	if ((bBALLOONShown) && (pBalloonSprite != NULL)) {
+	if ((bBALLOONShown) && (pBalloonSprite != nullptr)) {
 		pBalloonSprite->PaintSprite(pDC, ptBaloon.x, ptBaloon.y);
 	}
 
@@ -2719,7 +2719,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			bResetGame = FALSE;
 			UpdateWindow();
 			//CSound::waitWaveSounds();
-			sndPlaySound(NULL, 0);
+			sndPlaySound(nullptr, 0);
 			if (m_bMouseCaptured) {
 				ReleaseCapture();
 				m_bMouseCaptured = FALSE;
@@ -2729,7 +2729,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (m_lpGameStruct->bPlayingMetagame) {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, (NO_NEWGAME | NO_OPTIONS),
 				                            lpfnOptionCallback, RULESFILE,
-				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
+				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
 				nMainOption = dlgMainOpts.DoModal();
 				switch (nMainOption) {
 				case IDC_OPTIONS_QUIT:
@@ -2742,7 +2742,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			} else {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, 0,
 				                            lpfnOptionCallback, RULESFILE,
-				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL), m_lpGameStruct);
+				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
 				nMainOption = dlgMainOpts.DoModal();
 				switch (nMainOption) {
 				case IDC_OPTIONS_QUIT:
@@ -2764,18 +2764,18 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			}
 
 			if (m_lpGameStruct->bMusicEnabled) {
-				if (pGameSound == NULL) {
+				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-					if (pGameSound != NULL)
+					if (pGameSound != nullptr)
 						(*pGameSound).midiLoopPlaySegment(2310, 29400, 0, FMT_MILLISEC);
 				}
 			} // end if pGameSound
 			else {
-				if (pGameSound != NULL) {
+				if (pGameSound != nullptr) {
 					pGameSound->stop();
 					delete pGameSound;
-					pGameSound = NULL;
+					pGameSound = nullptr;
 				}
 			}
 
@@ -2793,7 +2793,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			if (bFirstTimer) {
 				bFirstTimer = FALSE;
-				SetTimer(PACKRATTIMER, 50, NULL);
+				SetTimer(PACKRATTIMER, 50, nullptr);
 			}
 			break;
 		}
@@ -2919,14 +2919,14 @@ void CMainPackRatWindow::OnRButtonUp(UINT nFlags, CPoint point) {
 
 void CMainPackRatWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette,
-	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : NULL));
+	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 
 	switch (nChar) {
 	case VK_F1:
 		if (bInLoop) {
 			BOOL    bTemp = m_bSuspend;
 			m_bSuspend = TRUE;
-			sndPlaySound(NULL, SND_ASYNC);
+			sndPlaySound(nullptr, SND_ASYNC);
 			if (m_bMouseCaptured) {
 				m_bMouseCaptured = FALSE;
 				ReleaseCapture();
@@ -3035,10 +3035,10 @@ void CMainPackRatWindow::OnTimer(UINT nWhichTimer) {
  ****************************************************************/
 void CMainPackRatWindow::MainLoop() {
 	int         nLoop1;
-	CSprite     *pTempSprite = NULL;
+	CSprite     *pTempSprite = nullptr;
 //long      lOldScore = 0;
 	int         nLoop2;
-	CDC         *pDC = NULL;
+	CDC         *pDC = nullptr;
 	POINT       ptLive;
 	BOOL        bRedrawLives = FALSE;
 	#ifdef SHOW_SCORE
@@ -3092,8 +3092,8 @@ void CMainPackRatWindow::MainLoop() {
 				else
 					bFlashTurtle = FALSE;
 			} else {
-				if (pTempSprite != NULL) {
-					pTempSprite = NULL;
+				if (pTempSprite != nullptr) {
+					pTempSprite = nullptr;
 					delete pTempSprite;
 				}
 
@@ -3172,13 +3172,13 @@ void CMainPackRatWindow::MainLoop() {
 				if (m_nLives < MAXLIVES) {
 					if (m_lpGameStruct->bSoundEffectsEnabled) {
 						/*
-						                    CSound  *pSound = NULL;
+						                    CSound  *pSound = nullptr;
 						                        CSound::StopWaveSounds();
-						                        sndPlaySound( NULL, SND_ASYNC);
+						                        sndPlaySound( nullptr, SND_ASYNC);
 						                        pSound = new CSound((CWnd *)this, ".\\SOUND\\NEWLIFE.WAV", SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE );
 						                        pSound->play();
 						*/
-						sndPlaySound(NULL, SND_ASYNC);
+						sndPlaySound(nullptr, SND_ASYNC);
 						sndPlaySound(NEWLIFE_WAV, SND_ASYNC);
 					}
 
@@ -3196,7 +3196,7 @@ void CMainPackRatWindow::MainLoop() {
 					                    }
 					*/
 					for (nLoop2 = 0; nLoop2 < MAXLIVESPRITE; nLoop2++) {
-						if (pLivesSprite[nLoop2] != NULL) {
+						if (pLivesSprite[nLoop2] != nullptr) {
 							pLivesSprite[nLoop2]->EraseSprite(pDC);
 							if (nLoop2 < m_nLives) {
 								ptLive.x = 15 + (17 * nLoop2);
@@ -3206,7 +3206,7 @@ void CMainPackRatWindow::MainLoop() {
 						}
 					}
 					ReleaseDC(pDC);
-					pDC = NULL;
+					pDC = nullptr;
 				}
 			}
 
@@ -3294,7 +3294,7 @@ void CMainPackRatWindow::OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimi
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
 			m_bSuspend = FALSE;
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 		}
 	return;
@@ -3382,7 +3382,7 @@ void CMainPackRatWindow::OnDestroy() {
 //  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lScore = m_lScore;
 	MFC::PostMessage(m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct);
-	m_lpGameStruct = NULL;
+	m_lpGameStruct = nullptr;
 	CFrameWnd::OnDestroy();
 }
 
@@ -3419,35 +3419,35 @@ void CMainPackRatWindow::ReleaseResources(void) {
 	int nLoop1;
 
 	#ifdef SHOW_SCORE
-	if (pScore != NULL)
+	if (pScore != nullptr)
 		delete pScore;
 
-	if (pObjsLeft != NULL)
+	if (pObjsLeft != nullptr)
 		delete pObjsLeft;
 
-	if (pCounter != NULL)
+	if (pCounter != nullptr)
 		delete pCounter;
 
 	#endif
 
-	if (pBalloonSprite != NULL) {
+	if (pBalloonSprite != nullptr) {
 		delete pBalloonSprite;
 	}
 
-	if (pGameSound != NULL) {
+	if (pGameSound != nullptr) {
 		delete pGameSound;                      // delete the game theme song
-		pGameSound = NULL;
+		pGameSound = nullptr;
 	}
 
 	CSound::clearSounds();
 
 	CSprite::FlushSpriteChain();
 
-	if (pSSpaceBMP != NULL) {
+	if (pSSpaceBMP != nullptr) {
 		pSSpaceBMP->DeleteObject();
 		delete pSSpaceBMP;
 	}
-	if (pLSpaceBMP != NULL) {
+	if (pLSpaceBMP != nullptr) {
 		pLSpaceBMP->DeleteObject();
 		delete pLSpaceBMP;
 	}
@@ -3559,12 +3559,12 @@ void CMainPackRatWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	while (TRUE) {                                      // find and remove all keyboard events
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	while (TRUE) {                                      // find and remove all mouse events
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }
@@ -3575,7 +3575,7 @@ long CMainPackRatWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -3585,7 +3585,7 @@ long CMainPackRatWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }

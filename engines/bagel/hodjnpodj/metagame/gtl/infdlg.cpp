@@ -44,10 +44,10 @@ namespace Gtl {
 /////////////////////////////////////////////////////////////////////////////
 // CInfDlg dialog
 
-CInfDlg::CInfDlg(CWnd *pParent /*=NULL*/)
+CInfDlg::CInfDlg(CWnd *pParent /*=nullptr*/)
 	: CDialog(CInfDlg::IDD, pParent) {
 	TRACECONSTRUCTOR(CInfDlg) ;
-	// note: parent is same as frame, but GetParentFrame returns NULL.
+	// note: parent is same as frame, but GetParentFrame returns nullptr.
 	m_xpFrameWnd = (CGtlFrame *)pParent ;
 
 	//{{AFX_DATA_INIT(CInfDlg)
@@ -121,7 +121,7 @@ void CInfDlg::PostNcDestroy() {
 		m_xpGtlData->UpdateDialogs(TRUE) ;  // handle close
 	}
 	if (m_xpDocument)
-		m_xpDocument->m_xpcInfDlg = NULL ;
+		m_xpDocument->m_xpcInfDlg = nullptr ;
 	delete this;
 }
 
@@ -139,7 +139,7 @@ void CInfDlg::PostNcDestroy() {
 		m_xpFrameWnd->GetMenu()->CheckMenuItem(ID_VIEW_INFO_DLG,
 		                                       MF_UNCHECKED) ;
 	// uncheck menu item in frame window
-	m_xpDocument->m_xpcInfDlg = NULL ;
+	m_xpDocument->m_xpcInfDlg = nullptr ;
 	delete this;
 }
 #endif
@@ -150,10 +150,10 @@ void CInfDlg::PostNcDestroy() {
 /////////////////////////////////////////////////////////////////////////////
 // CCtlDlg dialog
 
-CCtlDlg::CCtlDlg(CWnd* pParent /*=NULL*/)
+CCtlDlg::CCtlDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CCtlDlg::IDD, pParent) {
 	TRACECONSTRUCTOR(CCtlDlg) ;
-	// note: parent is same as frame, but GetParentFrame returns NULL.
+	// note: parent is same as frame, but GetParentFrame returns nullptr.
 	m_xpFrameWnd = (CGtlFrame *)pParent ;
 //    m_xpFrameWnd = (CGtlFrame *)GetParentFrame() ;
 
@@ -196,7 +196,7 @@ END_MESSAGE_MAP()
 BOOL CCtlDlg::OnInitDialog() {
 	CDialog::OnInitDialog();
 
-	if (m_xpGtlData && m_xpDocument && ((m_xpView = m_xpDocument->m_xpcLastFocusView) != NULL)) {
+	if (m_xpGtlData && m_xpDocument && ((m_xpView = m_xpDocument->m_xpcLastFocusView) != nullptr)) {
 		m_cDlgBsuSet.InitDlgBsuSet(this, &m_xpView->m_cViewBsuSet) ;
 		m_cDlgBsuSet.AddBarToSet(IDC_CTL_HSCROLL, SB_HORZ) ;
 		m_cDlgBsuSet.AddBarToSet(IDC_CTL_VSCROLL, SB_VERT) ;
@@ -209,7 +209,7 @@ BOOL CCtlDlg::OnInitDialog() {
 
 void CCtlDlg::OnClickedCtlPaintBkg() {
 	// TODO: Add your control notification handler code here
-//  ::dbgWindowDump(NULL) ;
+//  ::dbgWindowDump(nullptr) ;
 	EffectControl() ;
 
 }
@@ -234,7 +234,7 @@ void CCtlDlg::OnClickedCtlMetaGame() {
 
 void CCtlDlg::OnCtlDump() {
 	// TODO: Add your control notification handler code here
-	::dbgWindowDump(NULL) ;
+	::dbgWindowDump(nullptr) ;
 }
 
 void CCtlDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {
@@ -274,7 +274,7 @@ void CCtlDlg::PostNcDestroy() {
 	}
 
 	if (m_xpDocument)
-		m_xpDocument->m_xpcCtlDlg = NULL ;
+		m_xpDocument->m_xpcCtlDlg = nullptr ;
 	delete this;
 }
 
@@ -316,10 +316,10 @@ BOOL CCtlDlg::InitDialogBox(void)
 /////////////////////////////////////////////////////////////////////////////
 // CNodeDlg dialog
 
-CNodeDlg::CNodeDlg(CWnd* pParent /*=NULL*/)
+CNodeDlg::CNodeDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CNodeDlg::IDD, pParent) {
 	TRACECONSTRUCTOR(CNodeDlg) ;
-	// note: parent is same as frame, but GetParentFrame returns NULL.
+	// note: parent is same as frame, but GetParentFrame returns nullptr.
 	m_xpFrameWnd = (CGtlFrame *)pParent ;
 
 	//{{AFX_DATA_INIT(CNodeDlg)
@@ -477,7 +477,7 @@ void CNodeDlg::PostNcDestroy() {
 	}
 
 	if (m_xpDocument)
-		m_xpDocument->m_xpcNodeDlg = NULL ;
+		m_xpDocument->m_xpcNodeDlg = nullptr ;
 	delete this;
 }
 
@@ -507,7 +507,7 @@ BOOL CNodeDlg::EffectControl(BOOL bUpdate)
 // CActDlg dialog
 
 
-CActDlg::CActDlg(CWnd* pParent /*=NULL*/)
+CActDlg::CActDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CActDlg::IDD, pParent) {
 	TRACECONSTRUCTOR(CActDlg) ;
 	//{{AFX_DATA_INIT(CActDlg)
@@ -539,10 +539,10 @@ END_MESSAGE_MAP()
 // CMenuDlg dialog
 
 
-CMenuDlg::CMenuDlg(CWnd* pParent /*=NULL*/)
+CMenuDlg::CMenuDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CMenuDlg::IDD, pParent) {
 	TRACECONSTRUCTOR(CMenuDlg) ;
-	// note: parent is same as frame, but GetParentFrame returns NULL.
+	// note: parent is same as frame, but GetParentFrame returns nullptr.
 	m_xpFrameWnd = (CGtlFrame *)pParent ;
 
 	//{{AFX_DATA_INIT(CMenuDlg)
@@ -646,7 +646,7 @@ void CMenuDlg::PostNcDestroy() {
 	}
 
 	if (m_xpDocument)
-		m_xpDocument->m_xpcMenuDlg = NULL ;
+		m_xpDocument->m_xpcMenuDlg = nullptr ;
 	delete this;
 }
 

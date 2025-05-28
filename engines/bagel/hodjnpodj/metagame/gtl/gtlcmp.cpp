@@ -48,9 +48,9 @@ BOOL CGtlData::SelectBestMove(CXodj * xpXodj)
 
 	// we only allocate the strategy info storage when absolutely
 	// necessary
-	if ((xpStrategyInfo = xpXodj->m_xpStrategyInfo) == NULL) {
+	if ((xpStrategyInfo = xpXodj->m_xpStrategyInfo) == nullptr) {
 
-		if ((xpStrategyInfo = xpXodj->m_xpStrategyInfo = new CStrategyInfo) == NULL) {
+		if ((xpStrategyInfo = xpXodj->m_xpStrategyInfo = new CStrategyInfo) == nullptr) {
 			iError = 100 ;
 			goto cleanup ;
 		}
@@ -63,16 +63,16 @@ BOOL CGtlData::SelectBestMove(CXodj * xpXodj)
 	}
 
 	/*
-	    if (( xpXodj->m_pInventory->FindItem( MG_OBJ_MISH ) != NULL ) ||
-	        ( xpXodj->m_pInventory->FindItem( MG_OBJ_MOSH ) != NULL ) )
-	        ::MessageBox( NULL, "I have Mish", "HELLO", MB_OK );
+	    if (( xpXodj->m_pInventory->FindItem( MG_OBJ_MISH ) != nullptr ) ||
+	        ( xpXodj->m_pInventory->FindItem( MG_OBJ_MOSH ) != nullptr ) )
+	        ::MessageBox( nullptr, "I have Mish", "HELLO", MB_OK );
 	*/
 
 	if (xpXodj->m_bGatherInformation) {
 
 		xpXodj->m_bGatherInformation = FALSE ;
 		xpXodj->m_iTargetLocation = 0 ; // no target location
-		xpStrategyInfo->xpTargetLocInfo = NULL ;
+		xpStrategyInfo->xpTargetLocInfo = nullptr ;
 		// target location has to
 		// be recomputed
 		if ((iError = GatherInformation(xpXodj)) != 0)
@@ -83,7 +83,7 @@ BOOL CGtlData::SelectBestMove(CXodj * xpXodj)
 	// if we have no target location
 	if (!xpXodj->m_iTargetLocation) {
 
-		xpStrategyInfo->xpTargetLocInfo = NULL ;
+		xpStrategyInfo->xpTargetLocInfo = nullptr ;
 		DetermineDistances(xpXodj) ;    // set distances to all
 		// eligible locations
 		AdjustWeightByDistance(xpXodj) ;
@@ -155,7 +155,7 @@ BOOL CGtlData::GatherInformation(CXodj * xpXodj)
 
 				// if not a legal game code
 				//
-				if ((xpGameEntry = CMgStatic::FindGame(xpStratLocInfo->m_iValueCode)) == NULL) {
+				if ((xpGameEntry = CMgStatic::FindGame(xpStratLocInfo->m_iValueCode)) == nullptr) {
 
 					// location no longer eligible
 					xpStratLocInfo->m_iValueCode = 0 ;
@@ -202,7 +202,7 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 	BOOL    bNeedObject = FALSE;
 	BOOL    bNeedMoney;
 	BOOL    bCanBuyObject;
-	CItem   *pItem = NULL;
+	CItem   *pItem = nullptr;
 	BOOL    bObjInGenStore;
 	BOOL    bCanSellObject;
 
@@ -269,10 +269,10 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 			if (bNeedObject) {
 				pItem = xpXodj->m_pGenStore->FindItem(nObjectCode);
 
-				if (pItem == NULL)
+				if (pItem == nullptr)
 					pItem = xpXodj->m_pBlackMarket->FindItem(nObjectCode);
 
-				if ((pItem != NULL) && (pItem->GetValue() > GetGameObjectCount(xpXodj, MG_OBJ_CROWN)))
+				if ((pItem != nullptr) && (pItem->GetValue() > GetGameObjectCount(xpXodj, MG_OBJ_CROWN)))
 					bNeedMoney = TRUE;
 			}
 
@@ -370,10 +370,10 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 			if (bNeedObject) {
 				pItem = xpXodj->m_pGenStore->FindItem(nObjectCode);
 
-				if (pItem == NULL)
+				if (pItem == nullptr)
 					pItem = xpXodj->m_pBlackMarket->FindItem(nObjectCode);
 
-				if ((pItem != NULL) && (pItem->GetValue() > GetGameObjectCount(xpXodj, MG_OBJ_CROWN)))
+				if ((pItem != nullptr) && (pItem->GetValue() > GetGameObjectCount(xpXodj, MG_OBJ_CROWN)))
 					bNeedMoney = TRUE;
 			}
 
@@ -405,7 +405,7 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 						} else {
 							bCanSellObject = FALSE;
 						}
-						pItem = NULL;
+						pItem = nullptr;
 						if (bCanSellObject)
 							break;
 					}
@@ -482,12 +482,12 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 				bObjInGenStore = TRUE;
 				pItem = xpXodj->m_pGenStore->FindItem(nObjectCode);
 
-				if (pItem == NULL) {
+				if (pItem == nullptr) {
 					pItem = xpXodj->m_pBlackMarket->FindItem(nObjectCode);
 					bObjInGenStore = FALSE;
 				}
 
-				if ((pItem != NULL) && (pItem->GetValue() <= GetGameObjectCount(xpXodj, MG_OBJ_CROWN))) {
+				if ((pItem != nullptr) && (pItem->GetValue() <= GetGameObjectCount(xpXodj, MG_OBJ_CROWN))) {
 
 					bCanBuyObject = TRUE;
 					if (lpMetaGameStruct->m_bVisitedStore) {
@@ -570,7 +570,7 @@ BOOL CGtlData::DetermineDistances(CXodj * xpXodj)
 		xpStratLocInfo = &xpStrategyInfo->m_cStratLocInfo[iK] ;
 
 		xpStratLocInfo->m_iDistance = 0;
-		if ((lpTargetNode = xpStratLocInfo->m_lpNode) != NULL) {
+		if ((lpTargetNode = xpStratLocInfo->m_lpNode) != nullptr) {
 
 			if ((xpStratLocInfo->m_iValueCode == MG_VISIT_CASTLE) ||
 			        (xpStratLocInfo->m_iValueCode == MG_VISIT_MISHMOSH)) {
@@ -633,7 +633,7 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 	int i;
 
 	xpStrategyInfo->m_iTopLocCount = 0 ;  // not top locations yet
-	xpStrategyInfo->xpTargetLocInfo = NULL ;
+	xpStrategyInfo->xpTargetLocInfo = nullptr ;
 	// no chosen location yet
 
 //	xpStratTemp = &xpStrategyInfo->m_cStratLocInfo[0];
@@ -693,7 +693,7 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 		Common::strcat_s(cTemp, xpStratTemp[2]->m_lpNode->m_szLabel);
 
 //	wsprintf( cTemp, "%s : %s : %s", xpStratTemp[0].m_lpNode->m_szLabel, xpStratTemp[1].m_lpNode->m_szLabel, xpStratTemp[2].m_lpNode->m_szLabel);
-		MessageBox(NULL, cTemp, xpStrategyInfo->xpTargetLocInfo->m_lpNode->m_szLabel, MB_OK);
+		MessageBox(nullptr, cTemp, xpStrategyInfo->xpTargetLocInfo->m_lpNode->m_szLabel, MB_OK);
 	}
 	#endif
 

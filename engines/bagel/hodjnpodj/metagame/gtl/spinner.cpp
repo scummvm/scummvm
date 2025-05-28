@@ -110,7 +110,7 @@ IMPLEMENT_DYNCREATE(CSpinner, CObject)
  * Return Value:    none
  *
  * Description:     Constructor for animation class.  Initialize all fields
- *                  to logical NULL.  A call should then be made to the
+ *                  to logical nullptr.  A call should then be made to the
  *                  Initialize routine to setup the spinner sprite.
  *
  ************************************************************************/
@@ -118,7 +118,7 @@ IMPLEMENT_DYNCREATE(CSpinner, CObject)
 CSpinner::CSpinner() {
 	m_nValue = -1;                                  // no defined value
 	m_bVisible = FALSE;                             // not yet visible
-	m_pSprite = NULL;                               // no loaded sprite
+	m_pSprite = nullptr;                               // no loaded sprite
 	m_nX = m_nY = 0;                                // upper left hand corner
 	SetupSpinner();                                 // shuffle spinner values
 }
@@ -175,14 +175,14 @@ BOOL CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
 	m_bHodj = bHodj;
 
 	m_pSprite = new CSprite();                      // load the sprite image
-	if ((m_pDC != NULL) &&
-	        (m_pSprite != NULL)) {
+	if ((m_pDC != nullptr) &&
+	        (m_pSprite != nullptr)) {
 		bSuccess = (*m_pSprite).LoadSprite(m_pDC, SPINNER_SPEC);
 		if (bSuccess)
 			(*m_pSprite).SetMasked(TRUE);
 		else {
 			delete m_pSprite;                       // failed so release it
-			m_pSprite = NULL;
+			m_pSprite = nullptr;
 		}
 	}
 
@@ -204,7 +204,7 @@ BOOL CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
  ************************************************************************/
 
 CSpinner::~CSpinner() {
-	if (m_pSprite != NULL)                          // delete the sprite
+	if (m_pSprite != nullptr)                          // delete the sprite
 		delete m_pSprite;
 }
 
@@ -312,7 +312,7 @@ int CSpinner::Animate(int nX, int nY) {
 BOOL CSpinner::Show(int nX, int nY) {
 	BOOL    bSuccess = FALSE;
 
-	if (m_pSprite == NULL)                              // punt if no spinner sprite
+	if (m_pSprite == nullptr)                              // punt if no spinner sprite
 		return (FALSE);
 
 	m_nX = nX;
@@ -342,7 +342,7 @@ BOOL CSpinner::Show(int nX, int nY) {
 BOOL CSpinner::Hide(void) {
 	BOOL    bSuccess = FALSE;
 
-	if (m_pSprite == NULL)                              // punt if no spinner sprite
+	if (m_pSprite == nullptr)                              // punt if no spinner sprite
 		return (FALSE);
 
 	if (m_bVisible) {                                   // if visible ...
@@ -371,14 +371,14 @@ BOOL CSpinner::Hide(void) {
 
 int CSpinner::Spin(void) {
 	int         n, i, j, nIdx;
-	CBitmap     *pBitmap = NULL;
-	CPalette    *pPalette = NULL;
+	CBitmap     *pBitmap = nullptr;
+	CPalette    *pPalette = nullptr;
 	CRect       srcRect, dstARect, dstBRect;
 	int         nValue = -1;
 	CSound      *pSound;
 	BOOL        bSuccess = FALSE;
 
-	if (m_pSprite == NULL)                              // punt if no spinner sprite
+	if (m_pSprite == nullptr)                              // punt if no spinner sprite
 		return (-1);
 
 	CSound::waitWaveSounds();
@@ -407,7 +407,7 @@ int CSpinner::Spin(void) {
 	pBitmap = FetchBitmap(m_pDC, &pPalette, (m_bHodj ? HODJ_SPINNER_NUMBERS_SPEC : PODJ_SPINNER_NUMBERS_SPEC));
 
 	(*pSound).play();                                   // start the spinner sound
-	if (pBitmap != NULL)
+	if (pBitmap != nullptr)
 		for (n = 0; n < SPINNER_CYCLE; n++)
 			for (i = 0; i < 2; i++) {
 				srcRect.SetRect(i * SPINNER_SLOT_DDX, 0, (i + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
@@ -433,19 +433,19 @@ int CSpinner::Spin(void) {
 		bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstBRect, (DWORD) SRCCOPY);
 	}
 
-	if (pSound != NULL) {                               // terminate the sound gracefully
+	if (pSound != nullptr) {                               // terminate the sound gracefully
 		(*pSound).stop();
 		delete pSound;
-		pSound = NULL;
+		pSound = nullptr;
 	}
 
 punt:
-	if (pBitmap != NULL)                                // release the resources we used
+	if (pBitmap != nullptr)                                // release the resources we used
 		delete pBitmap;
-	if (pPalette != NULL)
+	if (pPalette != nullptr)
 		delete pPalette;
 
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		delete pSound;
 
 	if (bSuccess)                                      // return value if all went well
@@ -471,19 +471,19 @@ punt:
 BOOL CSpinner::HandleMessages(void) {
 	MSG     msg;
 
-	if (PeekMessage(&msg, NULL, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
 			return (TRUE);
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	if (PeekMessage(&msg, NULL, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
 			return (TRUE);
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	if (PeekMessage(&msg, NULL, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
 			return (TRUE);
 		TranslateMessage(&msg);

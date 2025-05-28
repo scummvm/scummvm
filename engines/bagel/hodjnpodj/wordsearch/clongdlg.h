@@ -35,7 +35,7 @@ class CLongDialog : public CBmpDialog {
 public:
 	// standard constructor
 	CLongDialog(CWnd *, CPalette *, const char *,
-	            const char *, const char *pszText2 = NULL);
+	            const char *, const char *pszText2 = nullptr);
 
 private:
 	void ClearDialogImage(void);

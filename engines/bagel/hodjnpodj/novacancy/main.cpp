@@ -104,15 +104,15 @@ CMainWindow::CMainWindow(VOID) {
 	*/
 	// assume no error
 	errCode = ERR_NONE;
-	MFC::SetCursor(LoadCursor(NULL, IDC_WAIT));     //hourglass cursor (wait!)
+	MFC::SetCursor(LoadCursor(nullptr, IDC_WAIT));     //hourglass cursor (wait!)
 
 	/* Initialize members   */
-	m_pScrollButton = NULL;
-	m_pGamePalette = NULL;
+	m_pScrollButton = nullptr;
+	m_pGamePalette = nullptr;
 	m_bIgnoreScrollClick = FALSE;
 	m_bSound = TRUE;
-	m_pCLRollingDie = NULL;
-	m_pCRRollingDie = NULL;
+	m_pCLRollingDie = nullptr;
+	m_pCRRollingDie = nullptr;
 
 
 	m_bGameLoadUp = TRUE;           //this flag is reset to FALSE as soon as the first paint message is processed.
@@ -141,20 +141,20 @@ CMainWindow::CMainWindow(VOID) {
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
-	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 	gWndClass = WndClass;
 
 	// play this game if the background art is available
 	Common::strcpy_s(szMapFile, GetStringFromResource(IDS_MINI_GAME_MAP));
 	if (FileExists(szMapFile)) {
 		// Acquire the shared palette for our game from the splash screen art
-		if ((pDibDoc = new CDibDoc()) != NULL) {
+		if ((pDibDoc = new CDibDoc()) != nullptr) {
 			if (pDibDoc->OpenDocument(szMapFile) != FALSE)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else
 				errCode = ERR_UNKNOWN;
 			delete pDibDoc;
-			pDibDoc = NULL;
+			pDibDoc = nullptr;
 		} else {
 			errCode = ERR_MEMORY;
 		}
@@ -167,9 +167,9 @@ CMainWindow::CMainWindow(VOID) {
 
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
-	if (!Create(WndClass, "Boffo Games -- No Vacancy", WS_POPUP | WS_CLIPCHILDREN, m_rectGameArea, NULL, NULL)) {
+	if (!Create(WndClass, "Boffo Games -- No Vacancy", WS_POPUP | WS_CLIPCHILDREN, m_rectGameArea, nullptr, 0)) {
 		errCode = ERR_UNKNOWN;
-		MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));              //reset cursor
+		MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));              //reset cursor
 		HandleError(errCode);
 		return ;
 	}
@@ -177,11 +177,11 @@ CMainWindow::CMainWindow(VOID) {
 	// only continue if there was no error
 	if (errCode == ERR_NONE) {
 
-		if ((m_pScrollButton = new CBmpButton) != NULL) {
+		if ((m_pScrollButton = new CBmpButton) != nullptr) {
 
 			m_bIgnoreScrollClick = FALSE;
 			tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y, SCROLL_BUTTON_X + SCROLL_BUTTON_DX, SCROLL_BUTTON_Y + SCROLL_BUTTON_DY);
-			bSuccess = m_pScrollButton->Create(NULL, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
+			bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
 			assert(bSuccess);
 			if (bSuccess) {
 				bSuccess = m_pScrollButton->LoadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
@@ -260,12 +260,12 @@ CMainWindow::CMainWindow(VOID) {
 				m_psndBkgndMusic->midiLoopPlaySegment(4000L, 31030L, 0L, FMT_MILLISEC);
 			}//end if m_psndBkgndMusic=new...
 		} else {
-			m_psndBkgndMusic = NULL;
+			m_psndBkgndMusic = nullptr;
 		}
 
 	}
 
-	MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));
+	MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	HandleError(errCode);
 }
 
@@ -289,7 +289,7 @@ VOID CMainWindow::HandleError(ERROR_CODE errCode) {
 		PostMessage(WM_CLOSE, 0, 0);
 
 		// Don't allow a repaint (remove all WM_PAINT messages)
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 }
 
@@ -341,7 +341,7 @@ VOID CMainWindow::PaintScreen() {
 		hDIB = myDoc.GetHDIB();
 
 		pDC = GetDC();
-		assert(pDC != NULL);
+		assert(pDC != nullptr);
 
 		if (pDC && m_pGamePalette) {
 
@@ -397,8 +397,8 @@ VOID CMainWindow::PaintScreen() {
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this, m_pGamePalette, \
 	                       (pGameParams->bPlayingMetagame ? NO_NEWGAME : 0X00) | (m_bGameActive ? 0X0 : NO_RETURN) | NO_OPTIONS, \
-	                       NULL, RULES,
-	                       pGameParams->bSoundEffectsEnabled ? GetStringFromResource(IDS_RULES_WAV) : NULL,
+	                       nullptr, RULES,
+	                       pGameParams->bSoundEffectsEnabled ? GetStringFromResource(IDS_RULES_WAV) : nullptr,
 	                       pGameParams);           //DLL CHNG.
 
 	#ifdef _MACROS
@@ -452,14 +452,14 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				//
 				// Check to see if the music state was changed and adjust to match it
 				//
-				if ((pGameParams->bMusicEnabled == FALSE) && (m_psndBkgndMusic != NULL)) {
+				if ((pGameParams->bMusicEnabled == FALSE) && (m_psndBkgndMusic != nullptr)) {
 					if (m_psndBkgndMusic->playing())
 						m_psndBkgndMusic->stop();
 				} else if (pGameParams->bMusicEnabled) {
-					if (m_psndBkgndMusic == NULL) {
+					if (m_psndBkgndMusic == nullptr) {
 						m_psndBkgndMusic = new CSound(this, GetStringFromResource(IDS_MIDI_FILE), SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					}
-					if (m_psndBkgndMusic != NULL) {
+					if (m_psndBkgndMusic != nullptr) {
 						if (!m_psndBkgndMusic->playing())
 							m_psndBkgndMusic->midiLoopPlaySegment(4000L, 31030L, 0L, FMT_MILLISEC);
 					}
@@ -504,7 +504,7 @@ VOID CMainWindow::PlayGame() {
 	errCode = ERR_NONE;
 	HCURSOR hOldCursor;
 	char szMapFile[256];
-	CBitmap *pCMonolithDiceBmp = NULL;
+	CBitmap *pCMonolithDiceBmp = nullptr;
 
 	//used to ExtractBitmap from the monolithic DiceBmp.
 	int xDice[RIGHT + 1][7] = {{0, 60, 120, 180, 240, 300, 360}, {0, 58, 116, 174, 232, 290, 348}};
@@ -525,7 +525,7 @@ VOID CMainWindow::PlayGame() {
 	GameReset();
 
 	if (!m_bDiceBmpsLoaded) {
-		hOldCursor = MFC::SetCursor(LoadCursor(NULL, IDC_WAIT));
+		hOldCursor = MFC::SetCursor(LoadCursor(nullptr, IDC_WAIT));
 		if ((pDC = GetDC()) != nullptr) {
 			if ((m_pCLRollingDie = new CSprite()) != nullptr) {
 				m_pCLRollingDie->SetMobile(TRUE);
@@ -534,13 +534,13 @@ VOID CMainWindow::PlayGame() {
 					m_pCLRollingDie->LinkSprite();
 				else {
 					errCode = ERR_MEMORY;
-					MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));              //reset cursor
+					MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));              //reset cursor
 					HandleError(errCode);
 					return ;
 				}
 			} else {
 				errCode = ERR_MEMORY;
-				MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));              //reset cursor
+				MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));              //reset cursor
 				HandleError(errCode);
 				return ;
 			}  // end if m_pCLRollingDie
@@ -552,19 +552,19 @@ VOID CMainWindow::PlayGame() {
 					m_pCRRollingDie->LinkSprite();
 				else {
 					errCode = ERR_MEMORY;
-					MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));              //reset cursor
+					MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));              //reset cursor
 					HandleError(errCode);
 					return ;
 				}
 			} else {
 				errCode = ERR_MEMORY;
-				MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));              //reset cursor
+				MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));              //reset cursor
 				HandleError(errCode);
 				return ;
 			}   // end if m_pCRRollingDie
 
 
-			if ((pCMonolithDiceBmp = FetchBitmap(pDC, NULL, GetStringFromResource(IDS_DICE_MONOLITHE))) != nullptr) {
+			if ((pCMonolithDiceBmp = FetchBitmap(pDC, nullptr, GetStringFromResource(IDS_DICE_MONOLITHE))) != nullptr) {
 				pCLDieBmp[0] = ExtractBitmap(pDC, pCMonolithDiceBmp, m_pGamePalette, xDice[LEFT][0], yDice[LEFT][0], dxDice[LEFT][0], dyDice[LEFT][0]);     //flr under Ldie
 				pCRDieBmp[0] = ExtractBitmap(pDC, pCMonolithDiceBmp, m_pGamePalette, xDice[RIGHT][0], yDice[RIGHT][0], dxDice[RIGHT][0], dyDice[RIGHT][0]); //flr under Rdie
 				for (int i = 1; i < 7; i++) {
@@ -572,11 +572,11 @@ VOID CMainWindow::PlayGame() {
 					pCRDieBmp[i] = ExtractBitmap(pDC, pCMonolithDiceBmp, m_pGamePalette, xDice[RIGHT][i], yDice[RIGHT][i], dxDice[RIGHT][i], dyDice[RIGHT][i]);
 				}//end for i
 				if (pCMonolithDiceBmp)  delete pCMonolithDiceBmp;
-				pCMonolithDiceBmp = NULL;
+				pCMonolithDiceBmp = nullptr;
 
 			} else {
 				errCode = ERR_MEMORY;
-				MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));               //reset cursor
+				MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));               //reset cursor
 				HandleError(errCode);
 				return ;
 			}             // end if pCMonolithDiceBmp
@@ -585,7 +585,7 @@ VOID CMainWindow::PlayGame() {
 
 
 			ReleaseDC(pDC);
-			pDC = NULL;
+			pDC = nullptr;
 
 		} else {  // pDC
 			errCode = ERR_MEMORY;
@@ -692,7 +692,7 @@ VOID CMainWindow::GameReset(VOID) {
 */
 VOID CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	#ifdef _MCITEST
 	_recursion_count = 0;
 	#endif
@@ -790,7 +790,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 					if ((pBottleSprite = new CSprite()) != nullptr) {
 						if (!pBottleSprite->LoadCels(pDC, GetStringFromResource(IDS_BOTTLE_STRIP_door_closed), BOTTLE_CELS)) {
 							errCode = ERR_MEMORY;
-							MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));              //reset cursor
+							MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));              //reset cursor
 							HandleError(errCode);
 							return ;
 						} else {
@@ -803,7 +803,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 							pBottleSprite->EraseSprite(pDC);
 						}
 						delete pBottleSprite;
-						pBottleSprite = NULL;
+						pBottleSprite = nullptr;
 					}//end if pBottleSprite
 				} else {
 					sndPlaySound(GetStringFromResource(IDS_HICCUPS), SND_SYNC);
@@ -835,7 +835,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 					}
 					pCatSprite->EraseSprite(pDC);
 					delete pCatSprite;
-					pCatSprite = NULL;
+					pCatSprite = nullptr;
 				}
 			}
 			if (Hat6.PtInRect(point)) {             //Hat EasterEgg.
@@ -864,7 +864,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 						m_iDoorStatus[i] = FIXED;  // lock all closed doors, before permitting player to click on door(s),
 						if (pCDoorBmp[i]) {
 							delete pCDoorBmp[i];                                // and free up those sprites.
-							pCDoorBmp[i] = NULL;
+							pCDoorBmp[i] = nullptr;
 							m_bDoorBmpLoaded[i] = FALSE;
 						}
 					}      // end if m_iDoorStatus[i]==CLOSED
@@ -1228,7 +1228,7 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	#endif
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	//if (pSound != NULL)
+	//if (pSound != nullptr)
 	//  OnSoundNotify(pSound);
 	return (0L);
 }
@@ -1266,9 +1266,9 @@ VOID CMainWindow::DeleteSprite(CSprite *pSprite) {
 	EM("DeleteSprite");
 	#endif
 	// can't delete a null pointer
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		pSprite->EraseSprite(pDC);                  // erase it from screen
 		ReleaseDC(pDC);
 	}
@@ -1339,7 +1339,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		GamePause();
 		CSound::waitWaveSounds();
 		CRules  RulesDlg(this, ".\\novac.txt", m_pGamePalette, \
-		                 (pGameParams->bSoundEffectsEnabled) ? GetStringFromResource(IDS_RULES_WAV) : NULL);
+		                 (pGameParams->bSoundEffectsEnabled) ? GetStringFromResource(IDS_RULES_WAV) : nullptr);
 		RulesDlg.DoModal();
 		GameResume();
 	}
@@ -1380,7 +1380,7 @@ void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(NULL, FALSE);
+			InvalidateRect(nullptr, FALSE);
 			break;
 
 		default:
@@ -1767,53 +1767,53 @@ VOID CMainWindow::OnClose() {
 	for (i = 0; i < 7; i++) {
 		if (pCLDieBmp[i]) {
 			delete pCLDieBmp[i];            //clear dice bmps.
-			pCLDieBmp[i] = NULL;
+			pCLDieBmp[i] = nullptr;
 		}
 		if (pCRDieBmp[i]) {
 			delete pCRDieBmp[i];
-			pCRDieBmp[i] = NULL;
+			pCRDieBmp[i] = nullptr;
 		}
 	}
 
 	//
 	// de-allocate the main menu scroll button
 	//
-	assert(m_pScrollButton != NULL);
-	if (m_pScrollButton != NULL) {
+	assert(m_pScrollButton != nullptr);
+	if (m_pScrollButton != nullptr) {
 		delete m_pScrollButton;
-		m_pScrollButton = NULL;
+		m_pScrollButton = nullptr;
 	}
 
 
 	//
 	// need to de-allocate the game palette
 	//
-	assert(m_pGamePalette != NULL);
-	if (m_pGamePalette != NULL) {
+	assert(m_pGamePalette != nullptr);
+	if (m_pGamePalette != nullptr) {
 		m_pGamePalette->DeleteObject();
 		delete m_pGamePalette;
-		m_pGamePalette = NULL;
+		m_pGamePalette = nullptr;
 	}
 
 	for (i = 1; i < 10; i++) {
 		if (pCDoorBmp[i]) {
 			DeleteSprite(pCDoorBmp[i]); /* clear door sprites */
-			pCDoorBmp[i] = NULL;
+			pCDoorBmp[i] = nullptr;
 		}
 	}
 
 	/*clear dice sprites*/
 	if (m_pCRRollingDie) {
 		DeleteSprite(m_pCRRollingDie);
-		m_pCRRollingDie = NULL;
+		m_pCRRollingDie = nullptr;
 	}
 
 	if (m_pCLRollingDie) {
 		DeleteSprite(m_pCLRollingDie);
-		m_pCLRollingDie = NULL;
+		m_pCLRollingDie = nullptr;
 	}
 
-	if ((pDC = GetDC()) != NULL) {              // paint black  screen after all's over.
+	if ((pDC = GetDC()) != nullptr) {              // paint black  screen after all's over.
 		crectSplashScr.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 		cbrBlack.CreateStockObject(BLACK_BRUSH);
 		pDC->FillRect(&crectSplashScr, &cbrBlack);
@@ -1911,7 +1911,7 @@ void CMainWindow::AnimateDice(void) {
 		}
 
 		if (pGameParams->bSoundEffectsEnabled) {
-			sndPlaySound(NULL, 0);                           // kill rattle
+			sndPlaySound(nullptr, 0);                           // kill rattle
 			sndPlaySound(GetStringFromResource(IDS_ROLL), SND_ASYNC);    // and roll!
 		}
 		m_pCRRollingDie->SetCel(NUM_RDIE_CELS - 2);         //paint LAST CEL
@@ -1926,7 +1926,7 @@ void CMainWindow::AnimateDice(void) {
 			if (ii < NUM_SINGLE_DIE_CELS - 1) Sleep(22); //slow down animation, except for the last cel (this enables quick
 			//repainting of actual dice throws .)
 			else if (pGameParams->bSoundEffectsEnabled) {
-				sndPlaySound(NULL, 0);                           // kill rattle
+				sndPlaySound(nullptr, 0);                           // kill rattle
 				sndPlaySound(GetStringFromResource(IDS_ROLL), SND_ASYNC);    // and roll!
 			}
 
@@ -1970,7 +1970,7 @@ char *GetStringFromResource(UINT nID) {
 	if (LoadString(AfxGetResourceHandle(), nID, szBuffer, 256))
 		return szBuffer;
 	else
-		return NULL;
+		return nullptr;
 }
 
 } // namespace NoVacancy

@@ -612,12 +612,12 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 			if (nTestProb >= nRandom) {                                        // If we are in the probability percentage...
 				// check ItemCount(void), set Item flag
 				pItem = (*pInventory).FindItem(MG_OBJ_MISH);                    // See if they have mish or mosh
-				if (pItem != NULL)                                              // don't count crowns and notebook
+				if (pItem != nullptr)                                              // don't count crowns and notebook
 					nItems = (*pInventory).ItemCount() - INVENT_MIN_ITEM_COUNT - ENC_MISHMOSH; // and Mish & Mosh
 				else
 					nItems = (*pInventory).ItemCount() - INVENT_MIN_ITEM_COUNT;     // don't count crowns and notebook
 				pItem = (*pInventory).FindItem(MG_OBJ_CROWN);               // get money item obj, set Money int to am't
-				if (pItem == NULL)
+				if (pItem == nullptr)
 					lCrowns = 0;
 				else
 					lCrowns = (int)(*pItem).GetQuantity();
@@ -664,7 +664,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 								lCrowns = 0;                                        //...crowns, make it zero
 
 							pItem = (*pInventory).FindItem(MG_OBJ_CROWN);           // get money item obj
-							if (pItem != NULL)                                      //...if successful
+							if (pItem != nullptr)                                      //...if successful
 								(*pItem).SetQuantity(lCrowns);                      //...set Money int to am't
 							CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, (nRandFactor > 0) ? TRUE : FALSE, nChangeAmount);
 							i++;                                                    // skip the one we just read in
@@ -696,7 +696,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 								while (!bDone) {
 									assert(nItems != 0);
 									pItem = (*pInventory).FetchItem(INVENT_MIN_ITEM_COUNT + brand() % nItems);   // Get one
-									if ((pItem != NULL) &&                          //...make sure it's valid
+									if ((pItem != nullptr) &&                          //...make sure it's valid
 									        ((pItem->GetID() != MG_OBJ_MISH) &&
 									         (pItem->GetID() != MG_OBJ_MOSH))) {
 
@@ -857,11 +857,11 @@ int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
 
 BOOL PlayEncounter(CWnd *pWnd, int nID) {
 	CGtlFrame   *pFrame = (CGtlFrame *) pWnd;
-	CSound      *pNarration = NULL;
-	CGtlDoc     * xpGtlDoc = NULL ;
+	CSound      *pNarration = nullptr;
+	CGtlDoc     * xpGtlDoc = nullptr ;
 	CGtlView    * xpGtlFocusView, *xpGtlMouseView ;
 
-	if (Encounters[nID].m_lpszWavEFile == NULL)                         // punt if no spec
+	if (Encounters[nID].m_lpszWavEFile == nullptr)                         // punt if no spec
 		return (FALSE);
 
 	pFrame->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
@@ -869,7 +869,7 @@ BOOL PlayEncounter(CWnd *pWnd, int nID) {
 	pNarration = new CSound(xpGtlDoc->m_xpGtlData->m_xpGtlView, Encounters[nID].m_lpszWavEFile,   // get a new sound object in
 	                        SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);       //...wave format, which deletes
 
-	if (pNarration == NULL)
+	if (pNarration == nullptr)
 		return (FALSE);
 
 	(*pNarration).setDrivePath(lpMetaGameStruct->m_chCDPath);

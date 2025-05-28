@@ -221,7 +221,7 @@ const CLocTable CMgStatic::cLocTable[] = {
 		MG_LOC_SECRET2, MG_VISIT_SECRET2, 0,
 		"Secret2", "Secret Passage 2"
 	},
-	{0, 0, 0, NULL, NULL}
+	{0, 0, 0, nullptr, nullptr}
 } ;
 #endif
 
@@ -233,7 +233,7 @@ const CLocTable CMgStatic::cLocTable[] = {
 const CGameTable CMgStatic::cGameTable[] = {
 	{
 		MG_GAME_ANAGRAMS, 0,
-		"Anagrams", NULL, NULL, NULL, true
+		"Anagrams", nullptr, nullptr, nullptr, true
 	},
 	{
 		MG_GAME_ARCHEROIDS, MG_WIN_INFO,
@@ -265,7 +265,7 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_EVERYTHING, MG_WIN_INFO,
-		"Everything Under the Sun", NULL, NULL, NULL, true
+		"Everything Under the Sun", nullptr, nullptr, nullptr, true
 	},
 	{
 		MG_GAME_FUGE, MG_WIN_MONEY,
@@ -301,7 +301,7 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_PINBALL, 0,
-		"Pinball", NULL, NULL, NULL, true
+		"Pinball", nullptr, nullptr, nullptr, true
 	},
 	{
 		MG_GAME_RIDDLES, MG_WIN_OBJECT,
@@ -309,15 +309,15 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_ROULETTE, 0,
-		"Roulette", NULL, NULL, NULL, true
+		"Roulette", nullptr, nullptr, nullptr, true
 	},
 	{
 		MG_GAME_SHOTMACHINE, 0,
-		"Shot Machine", NULL, NULL, NULL, true
+		"Shot Machine", nullptr, nullptr, nullptr, true
 	},
 	{
 		MG_GAME_SPINBALL, 0,
-		"Spinball", NULL, NULL, NULL, true
+		"Spinball", nullptr, nullptr, nullptr, true
 	},
 	{
 		MG_GAME_THGESNGGME, MG_WIN_MONEY,
@@ -325,7 +325,7 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_TRIVIA, 0,
-		"Trivia", NULL, NULL, NULL, true
+		"Trivia", nullptr, nullptr, nullptr, true
 	},
 	{
 		MG_GAME_VIDEOPOKER, MG_WIN_MONEY,
@@ -339,7 +339,7 @@ const CGameTable CMgStatic::cGameTable[] = {
 		MG_GAME_CHALLENGE, MG_WIN_MISHMOSH,
 		"Challenge", ".", "hnpzm.dll", "RunZoom", true
 	},
-	{0, 0, NULL, NULL, NULL, NULL, false}
+	{0, 0, nullptr, nullptr, nullptr, nullptr, false}
 } ;
 
 
@@ -1024,7 +1024,7 @@ const CClueTable *CMgStatic::FindClue(BOOL bHodj, int iClue)
 {
 	int iError = 0 ;            // error code
 	const CClueTable * xpClueTable = bHodj ? cHodjClueTable : cPodjClueTable ;
-	const CClueTable * xpClueEntry = NULL ;   // return value
+	const CClueTable * xpClueEntry = nullptr ;   // return value
 	int iK ;    // loop variable
 
 	// this loop verifies that index is not out of range
@@ -1067,7 +1067,7 @@ const CSectorTable CMgStatic::cSectorTable[] = {
 	{MG_SECTOR_VOLCANO, "VolcanoVw", "Volcano View"},
 	{MG_SECTOR_WITTY, "WittyWoods", "Witty Woods"},
 
-	{0, NULL, NULL}
+	{0, nullptr, nullptr}
 } ;
 #endif
 

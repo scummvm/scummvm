@@ -262,7 +262,7 @@ VOID BuildRandomPhraseOrder() {
 	/*
 	* if there is a current active game
 	*/
-	if (curPhrase != NULL) {
+	if (curPhrase != nullptr) {
 
 		curPhraseOrder = curPhrase->order;
 
@@ -310,7 +310,7 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 	ERROR_CODE errCode;
 
 	/* can't access null pointers */
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	/* assume no error */
 	errCode = ERR_NONE;
@@ -318,9 +318,9 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 	/*
 	* if there is a game currently active
 	*/
-	if (curPhrase != NULL) {
+	if (curPhrase != nullptr) {
 
-		if (pDC == NULL) {
+		if (pDC == nullptr) {
 			errCode = ERR_UNKNOWN;
 
 		} else {
@@ -344,7 +344,7 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 					/*
 					* create a new sprite for this letter
 					*/
-					if ((spriteList[i].sprite = pNewSprite = new CSprite) == NULL) {
+					if ((spriteList[i].sprite = pNewSprite = new CSprite) == nullptr) {
 						errCode = ERR_MEMORY;
 						break;
 
@@ -399,19 +399,19 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 VOID KillCurPhrase() {
 	INT i, n;
 
-	if (curPhrase != NULL) {
+	if (curPhrase != nullptr) {
 
 		/*
 		* delete each of the remaining letters that have not yet been revealed
 		*/
 		n = StrLenNoSpaces(curPhrase->text);
 		for (i = 0; i < n; i++) {
-			if ((spriteList[i].sprite != NULL) && !spriteList[i].bUsed) {
+			if ((spriteList[i].sprite != nullptr) && !spriteList[i].bUsed) {
 				delete spriteList[i].sprite;
-				spriteList[i].sprite = NULL;
+				spriteList[i].sprite = nullptr;
 			}
 		}
-		curPhrase =  NULL;
+		curPhrase =  nullptr;
 	}
 }
 
@@ -434,7 +434,7 @@ BOOLEAN RevealNextLetter() {
 	BOOLEAN lastLetter;
 
 	lastLetter = FALSE;
-	if (curPhrase != NULL) {
+	if (curPhrase != nullptr) {
 
 		/* get next valid letter to reveal */
 		index = curPhrase->order[iNextLetter++] - 1;
@@ -443,7 +443,7 @@ BOOLEAN RevealNextLetter() {
 		assert((index >= 0) && (index < MAX_PLENGTH));
 
 		/* validate this sprite */
-		assert(spriteList[index].sprite != NULL);
+		assert(spriteList[index].sprite != nullptr);
 		assert(spriteList[index].bUsed != TRUE);
 
 		/*
@@ -480,7 +480,7 @@ ERROR_CODE RecalcDisplay(CDC *pDC) {
 	ERROR_CODE errCode;
 
 	/* can't use a null pointer */
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	/* assume no error */
 	errCode = ERR_NONE;
@@ -490,7 +490,7 @@ ERROR_CODE RecalcDisplay(CDC *pDC) {
 	*/
 	if (bInGame) {
 
-		if (pDC == NULL) {
+		if (pDC == nullptr) {
 			errCode = ERR_UNKNOWN;
 		} else {
 
@@ -507,7 +507,7 @@ ERROR_CODE RecalcDisplay(CDC *pDC) {
 				last = SIGN_START_X + gap;
 				for (i = 0; i < MAX_PLENGTH; i++) {
 					if (spriteList[i].bUsed) {
-						assert(spriteList[i].sprite != NULL);
+						assert(spriteList[i].sprite != nullptr);
 						spriteList[i].sprite->PaintSprite(pDC, last, LETTER_START_Y);
 						size = spriteList[i].sprite->GetSize();
 
@@ -527,12 +527,12 @@ ERROR_CODE RepaintSpriteList(CDC *pDC) {
 	ERROR_CODE errCode;
 
 	/* can't use a null pointer */
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	/* assume no error */
 	errCode = ERR_NONE;
 
-	if (pDC == NULL) {
+	if (pDC == nullptr) {
 		errCode = ERR_UNKNOWN;
 	} else {
 
@@ -554,7 +554,7 @@ ERROR_CODE RepaintSpriteList(CDC *pDC) {
 INT GetIndex(CSprite *pSprite) {
 	INT i;
 
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
 	for (i = 0; i < MAX_PLENGTH; i++) {
 		if (pSprite == spriteList[i].sprite) {
@@ -588,7 +588,7 @@ ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
 	INT i;
 	ERROR_CODE errCode;
 
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	/* assume no error */
 	errCode = ERR_NONE;
@@ -596,7 +596,7 @@ ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
 	/* keep a copy of this game's window handle */
 	gGameWnd = hWnd;
 
-	if (pDC == NULL) {
+	if (pDC == nullptr) {
 		errCode = ERR_UNKNOWN;
 
 	} else {
@@ -650,12 +650,12 @@ ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
 ERROR_CODE CleanScreen(CDC *pDC) {
 	ERROR_CODE errCode;
 
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	/* assume no error */
 	errCode = ERR_NONE;
 
-	if (pDC == NULL) {
+	if (pDC == nullptr) {
 		errCode  = ERR_UNKNOWN;
 	} else {
 
@@ -767,7 +767,7 @@ VOID GameStopTimer() {
 ERROR_CODE GameStartTimer() {
 	ERROR_CODE errCode = ERR_NONE;
 
-	if (curPhrase != NULL) {
+	if (curPhrase != nullptr) {
 		if (SetTimer(gGameWnd, TIMER_ID, timerInterval, GameTimerHook) != TIMER_ID)
 			errCode = ERR_UNKNOWN;
 	}
@@ -800,7 +800,7 @@ VOID GameResumeTimer() {
 ERROR_CODE StartGame(CDC *pDC) {
 	ERROR_CODE errCode;
 
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	/*
 	* start the timer
@@ -830,12 +830,12 @@ ERROR_CODE StartGame(CDC *pDC) {
 ERROR_CODE EndGame(CDC *pDC) {
 	ERROR_CODE errCode;
 
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	/* assume no error */
 	errCode = ERR_NONE;
 
-	if (pDC == NULL) {
+	if (pDC == nullptr) {
 		errCode = ERR_UNKNOWN;
 	} else {
 
@@ -1016,10 +1016,10 @@ BOOLEAN CheckUserGuess(const CHAR *guess) {
 
 	winStatus = FALSE;
 
-	if (curPhrase != NULL) {
+	if (curPhrase != nullptr) {
 
 		/* can't access null pointers */
-		assert(guess != NULL);
+		assert(guess != nullptr);
 
 		/* make sure that we are not going to blow the stack */
 		assert(strlen(curPhrase->text) < (MAX_PLENGTH_S + 1));
@@ -1100,16 +1100,16 @@ BOOLEAN CheckUserGuess(const CHAR *guess) {
 VOID ValidateParser() {
 	#if 0
 	if (!CheckUserGuess("THE THERAPIST"))
-		MessageBox(NULL, "THE THERAPIST", "Failed", MB_OK);
+		MessageBox(nullptr, "THE THERAPIST", "Failed", MB_OK);
 
 	if (!CheckUserGuess("THETHERAPIST"))
-		MessageBox(NULL, "THETHERAPIST", "Failed", MB_OK);
+		MessageBox(nullptr, "THETHERAPIST", "Failed", MB_OK);
 
 	if (!CheckUserGuess("THERAPIST"))
-		MessageBox(NULL, "THERAPIST", "Failed", MB_OK);
+		MessageBox(nullptr, "THERAPIST", "Failed", MB_OK);
 
 	if (CheckUserGuess("THERAPISTER"))
-		MessageBox(NULL, "THERAPISTER", "Worked", MB_OK);
+		MessageBox(nullptr, "THERAPISTER", "Worked", MB_OK);
 	#endif
 }
 #endif
@@ -1132,7 +1132,7 @@ INT StrLenNoSpaces(const CHAR *str) {
 	INT len;
 
 	/* can't access a null pointer */
-	assert(str != NULL);
+	assert(str != nullptr);
 
 	len = 0;
 	while (*str) {
@@ -1150,7 +1150,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 	CHAR c;
 	ERROR_CODE errCode;
 
-	assert(phrase != NULL);
+	assert(phrase != nullptr);
 
 	/* set all entries to FALSE */
 	memset(bList, 0, sizeof(BOOLEAN)*MAX_PLENGTH);
@@ -1219,10 +1219,10 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 
 VOID GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg) {
 	/* can't write to null pointers */
-	assert(nLeft != NULL);
-	assert(nTotal != NULL);
-	assert(nLeftAvg != NULL);
-	assert(nTotalAvg != NULL);
+	assert(nLeft != nullptr);
+	assert(nTotal != nullptr);
+	assert(nLeftAvg != nullptr);
+	assert(nTotalAvg != nullptr);
 
 	*nLeft = *nTotal = 0;
 	if (bInGame) {

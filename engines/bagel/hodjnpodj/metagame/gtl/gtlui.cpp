@@ -130,18 +130,18 @@ VOID CGtlData::CreateOffScreenBmp(VOID) {
 	CDC *pScreenDC;
 	CGtlApp *xpGtlApp = (CGtlApp *)AfxGetApp();
 
-	if (m_pOffScreenBmp == NULL) {
+	if (m_pOffScreenBmp == nullptr) {
 
-		if ((m_cBgbMgr.m_xpGamePalette != NULL) &&
+		if ((m_cBgbMgr.m_xpGamePalette != nullptr) &&
 		        (GetFreeSpace(0) >= (ULONG)250000) && (GlobalCompact(0) >= (ULONG)500000)) {
 
-			if ((m_pOffScreenBmp = new CBitmap) != NULL) {
+			if ((m_pOffScreenBmp = new CBitmap) != nullptr) {
 
 				pScreenDC = m_xpGtlView->GetDC();
 				if (m_pOffScreenBmp->CreateCompatibleBitmap(pScreenDC, xpGtlApp->m_iWidth, xpGtlApp->m_iHeight) == FALSE) {
 
 					delete m_pOffScreenBmp;
-					m_pOffScreenBmp = NULL;
+					m_pOffScreenBmp = nullptr;
 				}
 				m_xpGtlView->ReleaseDC(pScreenDC);
 			}
@@ -150,9 +150,9 @@ VOID CGtlData::CreateOffScreenBmp(VOID) {
 }
 
 VOID CGtlData::DeleteOffScreenBmp(VOID) {
-	if (m_pOffScreenBmp != NULL) {
+	if (m_pOffScreenBmp != nullptr) {
 		delete m_pOffScreenBmp;
-		m_pOffScreenBmp = NULL;
+		m_pOffScreenBmp = nullptr;
 	}
 }
 
@@ -162,11 +162,11 @@ VOID CGtlData::PaintOffScreenBmp(VOID) {
 	CPalette *pScreenPalOld;
 	CGtlApp *xpGtlApp = (CGtlApp *)AfxGetApp();
 
-	if (m_pOffScreenBmp != NULL) {
+	if (m_pOffScreenBmp != nullptr) {
 
-		if ((pMemDC = GetMemDC()) != NULL) {
+		if ((pMemDC = GetMemDC()) != nullptr) {
 
-			if ((pScreenDC = m_xpGtlView->GetDC()) != NULL) {
+			if ((pScreenDC = m_xpGtlView->GetDC()) != nullptr) {
 				pScreenPalOld = pScreenDC->SelectPalette(m_cBgbMgr.m_xpGamePalette, FALSE);
 				pScreenDC->BitBlt(0, 0, xpGtlApp->m_iWidth, xpGtlApp->m_iHeight, pMemDC->m_pDC, 0, 0, SRCCOPY);
 				pScreenDC->SelectPalette(pScreenPalOld, FALSE);
@@ -178,35 +178,35 @@ VOID CGtlData::PaintOffScreenBmp(VOID) {
 }
 CMemDC::CMemDC(VOID) {
 	m_pDC = new CDC;
-	assert(m_pDC != NULL);
+	assert(m_pDC != nullptr);
 }
 
 CMemDC::~CMemDC(VOID) {
-	if (m_pDC != NULL) {
+	if (m_pDC != nullptr) {
 		delete m_pDC;
-		m_pDC = NULL;
+		m_pDC = nullptr;
 	}
 }
 
 CMemDC *CGtlData::GetMemDC(VOID) {
 	CMemDC *pMemDC;
 
-	if ((pMemDC = new CMemDC) != NULL) {
-		pMemDC->m_pDC->CreateCompatibleDC(NULL);
-		assert(m_cBgbMgr.m_xpGamePalette != NULL);
+	if ((pMemDC = new CMemDC) != nullptr) {
+		pMemDC->m_pDC->CreateCompatibleDC(nullptr);
+		assert(m_cBgbMgr.m_xpGamePalette != nullptr);
 		pMemDC->m_pPalOld = pMemDC->m_pDC->SelectPalette(m_cBgbMgr.m_xpGamePalette, FALSE);
 		pMemDC->m_pDC->RealizePalette();
 		pMemDC->m_hBmpOld = SelectBitmap(pMemDC->m_pDC->m_hDC, m_pOffScreenBmp->m_hObject);
 	}
-	assert(pMemDC != NULL);
+	assert(pMemDC != nullptr);
 
 	return (pMemDC);
 }
 
 VOID CGtlData::ReleaseMemDC(CMemDC *pMemDC) {
-	assert(pMemDC != NULL);
+	assert(pMemDC != nullptr);
 
-	if (pMemDC != NULL) {
+	if (pMemDC != nullptr) {
 		SelectBitmap(pMemDC->m_pDC->m_hDC, pMemDC->m_hBmpOld);
 		pMemDC->m_pDC->SelectPalette(pMemDC->m_pPalOld, FALSE);
 		delete pMemDC;
@@ -269,7 +269,7 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 	int iError = 0 ;            // error code
 	CRPoint crPoint1, crPoint2 ;        // link points
 	CRPoint crPosition ;                // position within window
-	BOOL bPaint = (xpDc != NULL) ;      // test for WM_PAINT
+	BOOL bPaint = (xpDc != nullptr) ;      // test for WM_PAINT
 	CMemDC *pMemDC;
 	CDC *pOldDC;
 
@@ -349,12 +349,12 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 
 	if (!m_bInhibitDraw) {
 
-		pMemDC = NULL;
-		pOldDC = NULL;
-		if (m_pOffScreenBmp == NULL) {
+		pMemDC = nullptr;
+		pOldDC = nullptr;
+		if (m_pOffScreenBmp == nullptr) {
 			CreateOffScreenBmp();
 		}
-		if (m_pOffScreenBmp != NULL) {
+		if (m_pOffScreenBmp != nullptr) {
 			pOldDC = m_cBgbMgr.m_xpDc;
 			pMemDC = GetMemDC();
 			xpDc = m_cBgbMgr.m_xpDc = pMemDC->m_pDC;
@@ -464,7 +464,7 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 		// paint sprites and moveable overlays
 		DrawBitmaps(xpDc, TRUE) ;   // draw non-overlay bitmaps
 
-		if (m_pOffScreenBmp != NULL) {
+		if (m_pOffScreenBmp != nullptr) {
 			ReleaseMemDC(pMemDC);
 			PaintOffScreenBmp();
 
@@ -483,7 +483,7 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 	UpdateDialogs();
 	#endif
 
-	m_xpClipRect = m_xpDevClipRect = NULL ;
+	m_xpClipRect = m_xpDevClipRect = nullptr ;
 
 	m_bDrawing = FALSE ;
 
@@ -548,7 +548,7 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 
 		lpMap = m_lpMaps + iK ;
 
-		if (!lpMap->m_bSpecialPaint && EQV(lpMap->m_bOverlay, bOverlay) && (m_bMetaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != NULL))
+		if (!lpMap->m_bSpecialPaint && EQV(lpMap->m_bOverlay, bOverlay) && (m_bMetaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr))
 			DrawABitmap(pDC, lpcBgbObject, TRUE);
 	}
 
@@ -570,7 +570,7 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 		DrawABitmap(pDC, m_cBbtMgr.GetCurrentBitmap(&m_cScrollButton), TRUE);
 
 		// draw number of furlongs
-		if ((xpXodj = m_xpCurXodj) != NULL) {
+		if ((xpXodj = m_xpCurXodj) != nullptr) {
 
 			int iNumFurlongs = xpXodj->m_iFurlongs ;
 
@@ -578,7 +578,7 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 				iNumFurlongs = 0 ;
 			if (iNumFurlongs > 24)
 				iNumFurlongs = 24 ;
-			if (((lpMap = m_lpFurlongMaps[iNumFurlongs]) != NULL) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != NULL))
+			if (((lpMap = m_lpFurlongMaps[iNumFurlongs]) != nullptr) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr))
 				DrawABitmap(pDC, lpcBgbObject, TRUE);
 		}
 	}
@@ -602,7 +602,7 @@ BOOL CGtlData::DrawABitmap(CDC *pDC, CBgbObject *pBgbObject, BOOL bPaint)
 	CRRect crDestRect ; // relocatable destination rectangle
 	BOOL bDrawBitmap = !bPaint ;
 
-	assert(pBgbObject != NULL);
+	assert(pBgbObject != nullptr);
 
 	if (!pDC) {
 
@@ -735,30 +735,30 @@ BOOL CGtlData::UpdateMenuDialog(BOOL bRetrieve)
 	CMenuDlg * xpMenuDlg = m_xpcGtlDoc->m_xpcMenuDlg ;
 
 	if (xpMenuDlg && !bRetrieve) {      // update dialog box
-		xpMenuDlg->m_bCtlDlg = (m_xpcGtlDoc->m_xpcCtlDlg != NULL) ;
-		xpMenuDlg->m_bInfoDlg = (m_xpcGtlDoc->m_xpcInfDlg != NULL) ;
-		xpMenuDlg->m_bNodeDlg = (m_xpcGtlDoc->m_xpcNodeDlg != NULL) ;
+		xpMenuDlg->m_bCtlDlg = (m_xpcGtlDoc->m_xpcCtlDlg != nullptr) ;
+		xpMenuDlg->m_bInfoDlg = (m_xpcGtlDoc->m_xpcInfDlg != nullptr) ;
+		xpMenuDlg->m_bNodeDlg = (m_xpcGtlDoc->m_xpcNodeDlg != nullptr) ;
 
 		if (xpMenuDlg->m_hWnd)  // if dialog box window created
 			xpMenuDlg->UpdateData(FALSE) ;      // update dialog box
 	}
 
 	if (xpMenuDlg && bRetrieve) { // update data from dialog box
-		if ((xpMenuDlg->m_bCtlDlg != 0) != (m_xpcGtlDoc->m_xpcCtlDlg != NULL)) {
+		if ((xpMenuDlg->m_bCtlDlg != 0) != (m_xpcGtlDoc->m_xpcCtlDlg != nullptr)) {
 			if (xpMenuDlg->m_bCtlDlg && m_xpcGtlDoc->m_xpGtlFrame)
 				m_xpcGtlDoc->m_xpGtlFrame->ShowControlDialog() ;
 			if (!xpMenuDlg->m_bCtlDlg)
 				m_xpcGtlDoc->m_xpcCtlDlg->DestroyWindow() ;
 		}
 
-		if ((xpMenuDlg->m_bNodeDlg != 0) != (m_xpcGtlDoc->m_xpcNodeDlg != NULL)) {
+		if ((xpMenuDlg->m_bNodeDlg != 0) != (m_xpcGtlDoc->m_xpcNodeDlg != nullptr)) {
 			if (xpMenuDlg->m_bNodeDlg && m_xpcGtlDoc->m_xpGtlFrame)
 				m_xpcGtlDoc->m_xpGtlFrame->ShowNodeDialog() ;
 			if (!xpMenuDlg->m_bNodeDlg)
 				m_xpcGtlDoc->m_xpcNodeDlg->DestroyWindow() ;
 		}
 
-		if ((xpMenuDlg->m_bInfoDlg != 0) != (m_xpcGtlDoc->m_xpcInfDlg != NULL)) {
+		if ((xpMenuDlg->m_bInfoDlg != 0) != (m_xpcGtlDoc->m_xpcInfDlg != nullptr)) {
 			if (xpMenuDlg->m_bInfoDlg && m_xpcGtlDoc->m_xpGtlFrame)
 				m_xpcGtlDoc->m_xpGtlFrame->ShowInfoDialog() ;
 			if (!xpMenuDlg->m_bInfoDlg)
@@ -783,7 +783,7 @@ BOOL CGtlData::UpdateMenuDialog(BOOL bRetrieve)
 //      if (m_xpcGtlDoc->m_xpcMenuDlg->m_bSave) // save file
 //      {
 //          m_xpcGtlDoc->m_xpcMenuDlg->m_bSave = FALSE ;
-//          m_xpcGtlDoc->DoSave(NULL) ;
+//          m_xpcGtlDoc->DoSave(nullptr) ;
 //      }
 
 		// request to close dialog box?
@@ -795,7 +795,7 @@ BOOL CGtlData::UpdateMenuDialog(BOOL bRetrieve)
 				// uncheck menu item in frame window
 				m_xpcGtlDoc->m_xpGtlFrame->GetMenu()->CheckMenuItem(ID_VIEW_MENU_DLG, MF_UNCHECKED) ;
 			}
-			m_xpcGtlDoc->m_xpcMenuDlg = NULL ;
+			m_xpcGtlDoc->m_xpcMenuDlg = nullptr ;
 		}
 	}
 
@@ -864,7 +864,7 @@ BOOL CGtlData::UpdateInfoDialog(BOOL bRetrieve)
 			if (m_xpcGtlDoc->m_xpGtlFrame && m_xpcGtlDoc->m_xpGtlFrame->GetMenu())
 				m_xpcGtlDoc->m_xpGtlFrame->GetMenu()->CheckMenuItem(ID_VIEW_INFO_DLG, MF_UNCHECKED) ;
 
-			m_xpcGtlDoc->m_xpcInfDlg = NULL ;
+			m_xpcGtlDoc->m_xpcInfDlg = nullptr ;
 		}
 	}
 
@@ -926,7 +926,7 @@ BOOL CGtlData::UpdateControlDialog(BOOL bRetrieve)
 				m_xpcGtlDoc->m_xpGtlFrame->GetMenu()
 				->CheckMenuItem(ID_VIEW_CTL_DLG, MF_UNCHECKED) ;
 			// uncheck menu item in frame window
-			m_xpcGtlDoc->m_xpcCtlDlg = NULL ;
+			m_xpcGtlDoc->m_xpcCtlDlg = nullptr ;
 		}
 	}
 
@@ -1041,7 +1041,7 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 		                            || xpNodeDlg->m_iNodeIndex >= m_iNodes
 		                            || (lpNode = m_lpNodes + xpNodeDlg->m_iNodeIndex)
 		                            ->m_bDeleted)) {
-			::MessageBox(NULL, "Invalid node number.", NULL,
+			::MessageBox(nullptr, "Invalid node number.", nullptr,
 			             MB_OK | MB_ICONINFORMATION) ;
 			UpdateNodeDialog(FALSE) ;   // reset dialog box
 			iError = 100 ;
@@ -1073,18 +1073,18 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 			if ((xpNodeDlg->m_stLoc != "") &&
 			        (iError = GetLabel((const LPSTR)(const char *)
 			                           xpNodeDlg->m_stLoc, FALSE, iBitmap))) {
-				::MessageBox(NULL, "Invalid bitmap label.", NULL,
+				::MessageBox(nullptr, "Invalid bitmap label.", nullptr,
 				             MB_OK | MB_ICONINFORMATION) ;
 				UpdateNodeDialog(FALSE) ;       // reset dialog box
 				goto cleanup ;
 			}
 
-			CallUpdate(lpSelectedNode, NULL, TRUE, TRUE) ;
+			CallUpdate(lpSelectedNode, nullptr, TRUE, TRUE) ;
 			lpSelectedNode->m_bRelative = (xpNodeDlg->m_stLoc != "") ;
 			lpSelectedNode->m_iBitmap = iBitmap ;
 			xpNodeDlg->m_iX = xpNodeDlg->m_iY = 0 ;
 			bUpdateDialog = TRUE ;
-			CallUpdate(lpSelectedNode, NULL, TRUE, TRUE) ;
+			CallUpdate(lpSelectedNode, nullptr, TRUE, TRUE) ;
 		}
 
 		if (xpNodeDlg->m_bApply && lpSelectedNode
@@ -1095,15 +1095,15 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 
 				if (xpNodeDlg->m_iX < 0 ||
 				        xpNodeDlg->m_iX > lpcBgbObject->m_cSize.cx) {
-					::MessageBox(NULL, "X coordinate out of range.", NULL,
+					::MessageBox(nullptr, "X coordinate out of range.", nullptr,
 					             MB_OK | MB_ICONINFORMATION) ;
 					UpdateNodeDialog(FALSE) ;   // reset dialog box
 					goto cleanup ;
 				}
 			}
-			CallUpdate(lpSelectedNode, NULL, TRUE, TRUE) ;
+			CallUpdate(lpSelectedNode, nullptr, TRUE, TRUE) ;
 			lpSelectedNode->m_iX = xpNodeDlg->m_iX ;
-			CallUpdate(lpSelectedNode, NULL, TRUE, TRUE) ;
+			CallUpdate(lpSelectedNode, nullptr, TRUE, TRUE) ;
 		}
 
 
@@ -1115,15 +1115,15 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 
 				if (xpNodeDlg->m_iY < 0 ||
 				        xpNodeDlg->m_iY > lpcBgbObject->m_cSize.cy) {
-					::MessageBox(NULL, "Y coordinate out of range.",
-					             NULL, MB_OK | MB_ICONINFORMATION) ;
+					::MessageBox(nullptr, "Y coordinate out of range.",
+					             nullptr, MB_OK | MB_ICONINFORMATION) ;
 					UpdateNodeDialog(FALSE) ;   // reset dialog box
 					goto cleanup ;
 				}
 			}
-			CallUpdate(lpSelectedNode, NULL, TRUE, TRUE) ;
+			CallUpdate(lpSelectedNode, nullptr, TRUE, TRUE) ;
 			lpSelectedNode->m_iY = xpNodeDlg->m_iY ;
-			CallUpdate(lpSelectedNode, NULL, TRUE, TRUE) ;
+			CallUpdate(lpSelectedNode, nullptr, TRUE, TRUE) ;
 		}
 
 		if (xpNodeDlg->m_bApply && lpSelectedNode
@@ -1175,7 +1175,7 @@ BOOL CGtlData::UpdateNodeDialog(BOOL bRetrieve)
 				m_xpcGtlDoc->m_xpGtlFrame->GetMenu()
 				->CheckMenuItem(ID_VIEW_NODE_DLG, MF_UNCHECKED) ;
 			// uncheck menu item in frame window
-			m_xpcGtlDoc->m_xpcNodeDlg = NULL ;
+			m_xpcGtlDoc->m_xpcNodeDlg = nullptr ;
 		}
 	}
 
@@ -1230,7 +1230,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 			lpcBgbObject = lpMap->m_lpcBgbObject;
 
 			// the object should have already been allocted in GTLCPL
-			assert(lpcBgbObject != NULL);
+			assert(lpcBgbObject != nullptr);
 
 			if (!lpcBgbObject->m_bInit) {
 
@@ -1297,7 +1297,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 	for (iK = 0 ; iK < m_iMaps ; ++iK) {
 		lpMap = m_lpMaps + iK ;
 
-		if ((m_bMetaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != NULL)) {
+		if ((m_bMetaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr)) {
 
 			// Adjust sprite positions in case anything's moved
 			// Note: May have to add code here to erase sprite background
@@ -1326,38 +1326,38 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Minib1") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
-				m_cBbtMgr.LinkButton(&m_cMiniButton, lpcBgbObject, NULL) ;
+				m_cBbtMgr.LinkButton(&m_cMiniButton, lpcBgbObject, nullptr) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Minib2") == 0) {
 				lpMap->m_bSpecialPaint = TRUE;
-				m_cBbtMgr.LinkButton(&m_cMiniButton, NULL, lpcBgbObject);
+				m_cBbtMgr.LinkButton(&m_cMiniButton, nullptr, lpcBgbObject);
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Invb1") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
-				m_cBbtMgr.LinkButton(&m_cInvButton, lpcBgbObject, NULL) ;
+				m_cBbtMgr.LinkButton(&m_cInvButton, lpcBgbObject, nullptr) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Invb2") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
-				m_cBbtMgr.LinkButton(&m_cInvButton, NULL, lpcBgbObject) ;
+				m_cBbtMgr.LinkButton(&m_cInvButton, nullptr, lpcBgbObject) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Scrob1") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
-				m_cBbtMgr.LinkButton(&m_cScrollButton, lpcBgbObject, NULL) ;
+				m_cBbtMgr.LinkButton(&m_cScrollButton, lpcBgbObject, nullptr) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Scrob2") == 0) {
 				lpMap->m_bSpecialPaint = TRUE ;
-				m_cBbtMgr.LinkButton(&m_cScrollButton, NULL, lpcBgbObject) ;
+				m_cBbtMgr.LinkButton(&m_cScrollButton, nullptr, lpcBgbObject) ;
 
 				#ifndef NODEEDIT
 			} else if (scumm_stricmp(lpMap->m_szLabel, "podjb1") == 0) {
 
-				assert(m_xpXodjChain != NULL);
+				assert(m_xpXodjChain != nullptr);
 				m_xpXodjChain->m_lpcIcon = lpcBgbObject;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "hodjb1") == 0) {
 
-				assert(m_xpXodjChain != NULL);
-				assert(m_xpXodjChain->m_xpXodjNext != NULL);
+				assert(m_xpXodjChain != nullptr);
+				assert(m_xpXodjChain->m_xpXodjNext != nullptr);
 				m_xpXodjChain->m_xpXodjNext->m_lpcIcon = lpcBgbObject;
 				#endif
 			}
@@ -1386,14 +1386,14 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 {
 	JXENTER(CGtlData::InitOverlay) ;
 	int iError = 0 ;            // error code
-	CXodj * xpXodj = NULL ;
+	CXodj * xpXodj = nullptr ;
 
 	for (xpXodj = m_xpXodjChain ; xpXodj && scumm_stricmp(lpMap->m_szLabel, xpXodj->m_szName); xpXodj = xpXodj->m_xpXodjNext)
 		;       // null loop body
 
 	if (!xpXodj) {              // existing character not found
 
-		if ((xpXodj = new CXodj) == NULL) {
+		if ((xpXodj = new CXodj) == nullptr) {
 			iError = 100 ;      // can't allocate character
 			goto cleanup ;
 		}
@@ -1414,14 +1414,14 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 		int     nTemp = 0;
 		do {
 			if (strcmp(pNode->m_szLabel, STARTING_LOCATION) == 0) {
-				pNode = NULL;
+				pNode = nullptr;
 				break;
 			} else {
 				pNode++;
 				nTemp++;
 			}
 
-		} while (pNode != NULL);
+		} while (pNode != nullptr);
 
 		xpXodj->m_iCharNode = nTemp ;
 // GTB - 8/25 end of my change
@@ -1474,8 +1474,8 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 
 	for (iK = 0 ; iK < m_iMaps ; ++iK) {
 		lpMap = m_lpMaps + iK ;
-		lpPrevMap = NULL ;
-		lpcPrevBgbObject = NULL ;
+		lpPrevMap = nullptr ;
+		lpcPrevBgbObject = nullptr ;
 
 		if (lpMap->m_iRelation >= 0 && lpMap->m_iRelation < m_iMaps) {
 			lpPrevMap = m_lpMaps + lpMap->m_iRelation ;
@@ -1483,7 +1483,7 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 			lpcPrevBgbObject = lpPrevMap->m_lpcBgbObject ;
 		}
 
-		if (!lpMap->m_bPositionDetermined && lpMap->m_iRelationType && ((lpcBgbObject = lpMap->m_lpcBgbObject) != NULL)) {
+		if (!lpMap->m_bPositionDetermined && lpMap->m_iRelationType && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr)) {
 
 			switch (lpMap->m_iRelationType) {
 
@@ -1597,7 +1597,7 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 	m_iMargin = 24;
 
 	if (bChangeSize)
-		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(xpGtlView, HINT_SIZE, NULL);
+		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(xpGtlView, HINT_SIZE, nullptr);
 
 cleanup:
 

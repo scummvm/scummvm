@@ -64,7 +64,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	CBmpDialog::OnInitDialog();
 	m_bSave = FALSE;
 
-	if ((m_ctextBox = new CText) != NULL) {
+	if ((m_ctextBox = new CText) != nullptr) {
 		BOOL    bAssertCheck;
 
 		tmpRect.SetRect(TEXT_LEFT, TEXT_TOP, TEXT_RIG, TEXT_BOT);
@@ -72,7 +72,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
 
-	if ((m_pOKButton = new CColorButton) != NULL) {     // build a color OK button
+	if ((m_pOKButton = new CColorButton) != nullptr) {     // build a color OK button
 		(*m_pOKButton).SetPalette(pGamePalette);        // set the palette to use
 		(*m_pOKButton).SetControl(IDOK, this);          // tie to the dialog control
 	} // end if
@@ -82,7 +82,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 }
 
 void CUserCfgDlg::OnPaint(void) {
-	CDC     *pDC = NULL;
+	CDC     *pDC = nullptr;
 	char    msg[64];
 	BOOL    bAssertCheck;
 
@@ -134,26 +134,26 @@ void CUserCfgDlg::OnLButtonUp(UINT nFlags, CPoint point) {
 }
 
 void CUserCfgDlg::OnOK() {
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 	g_nCardBack = m_nCardBack;
 	EndDialog(IDOK);
 }
 
 void CUserCfgDlg::OnCancel() {
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 	EndDialog(IDCANCEL);
 }
 
 void CUserCfgDlg::OnClose() {
-	ValidateRect(NULL);
-	if (m_pOKButton != NULL) {      // release button
+	ValidateRect(nullptr);
+	if (m_pOKButton != nullptr) {      // release button
 		delete m_pOKButton;
-		m_pOKButton = NULL;
+		m_pOKButton = nullptr;
 	}
 
-	if (m_ctextBox != NULL) {
+	if (m_ctextBox != nullptr) {
 		delete m_ctextBox;
-		m_ctextBox = NULL;
+		m_ctextBox = nullptr;
 	} // end if
 }
 
@@ -191,11 +191,11 @@ END_MESSAGE_MAP()
  *
  ****************************************************************/
 void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbColor) {
-	CBrush      *pMyBrush = NULL;                   // New Brush
-	CBrush      *pOldBrush = NULL;                  // Pointer to old brush
-	CPen        *pMyPen = NULL;                     // New Pen
-	CPen        *pOldPen = NULL;                    // Pointer to old pen
-	CPalette    *pPalOld = NULL;                    // Pointer to old palette
+	CBrush      *pMyBrush = nullptr;                   // New Brush
+	CBrush      *pOldBrush = nullptr;                  // Pointer to old brush
+	CPen        *pMyPen = nullptr;                     // New Pen
+	CPen        *pOldPen = nullptr;                    // Pointer to old pen
+	CPalette    *pPalOld = nullptr;                    // Pointer to old palette
 	int         OldDrawMode;                        // Holder for old draw mode
 
 	pMyBrush = new CBrush();                        // Construct new brush
@@ -220,12 +220,12 @@ void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbC
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
 	(*pDC).SelectPalette(pPalOld, FALSE);           // Select back the old palette
 
-	if (pMyBrush != NULL) {                         // If the brush was constructed, delete it
+	if (pMyBrush != nullptr) {                         // If the brush was constructed, delete it
 		pMyBrush->DeleteObject();
 		delete pMyBrush;
 	}
 
-	if (pMyPen != NULL) {                           // If the pen was constructed, delete it
+	if (pMyPen != nullptr) {                           // If the pen was constructed, delete it
 		pMyPen->DeleteObject();
 		delete pMyPen;
 	}

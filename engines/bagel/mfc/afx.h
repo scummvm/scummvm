@@ -44,7 +44,7 @@ class CFileException;
 #define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew) \
 	const CRuntimeClass class_name::class##class_name = { \
 		#class_name, sizeof(class class_name), wSchema, pfnNew, \
-			RUNTIME_CLASS(base_class_name), NULL }; \
+			RUNTIME_CLASS(base_class_name), nullptr }; \
 	const CRuntimeClass* class_name::GetRuntimeClass() const \
 	{ return RUNTIME_CLASS(class_name); }
 
@@ -158,7 +158,7 @@ public:
 		Close();
 	}
 
-	BOOL Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError = NULL);
+	BOOL Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError = nullptr);
 	void Close();
 	void Abort();
 	ULONGLONG SeekToEnd();

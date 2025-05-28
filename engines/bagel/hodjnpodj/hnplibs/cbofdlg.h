@@ -34,7 +34,7 @@ public:
 	CBmpDialog(CWnd *, CPalette *, int, const char *, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
 	CBmpDialog(CWnd *, CPalette *, int, int, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
 
-	void RefreshBackground(CDC *pDC = NULL);
+	void RefreshBackground(CDC *pDC = nullptr);
 
 private:
 	// Dialog Data

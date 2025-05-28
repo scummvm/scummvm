@@ -45,13 +45,13 @@ IMPLEMENT_DYNCREATE(CBmpButton, CBitmapButton)
  * Return Value:    none
  *
  * Description:     Constructor for button class.  Initialize all fields
- *                  to logical NULL.  Calls should then be made to other
+ *                  to logical nullptr.  Calls should then be made to other
  *                  button routines to load palettes and bitmaps.
  *
  ************************************************************************/
 
 CBmpButton::CBmpButton() {
-	m_pPalette = NULL;                      // no initial palette
+	m_pPalette = nullptr;                      // no initial palette
 }
 
 
@@ -72,10 +72,10 @@ CBmpButton::CBmpButton() {
  ************************************************************************/
 
 CBmpButton::~CBmpButton() {
-	if (m_pPalette != NULL) {               // release the palette resource
+	if (m_pPalette != nullptr) {               // release the palette resource
 		(*m_pPalette).DeleteObject();
 		delete m_pPalette;
-		m_pPalette = NULL;
+		m_pPalette = nullptr;
 	}
 }
 
@@ -112,7 +112,7 @@ BOOL CBmpButton::OnEraseBkgnd(CDC *pDC) {
 
 void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 //BOOL      bActiveWindow = FALSE;
 //CWnd      *pActiveWindow;
 	CBitmap     *pBitmap;
@@ -120,19 +120,19 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
-	        (pParentWnd == NULL) ||
+	        (pParentWnd == nullptr) ||
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 	/*
 	    pActiveWindow = GetActiveWindow();              // get the active window and if it is
 	    if ((this == pActiveWindow) ||                  // ... us, then we will use the palette
-	        (pActiveWindow == NULL))
+	        (pActiveWindow == nullptr))
 	        bActiveWindow = TRUE;                       // ... in a foreground mode
 	*/
 	pDC = new CDC;                                  // setup the device context given to us
 	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
 
-	if (m_pPalette != NULL) {                       // map the palette into the context
+	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, TRUE);
 		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
@@ -147,9 +147,9 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	else
 		pBitmap = &m_bitmap;
 
-	PaintBitmap(pDC, NULL, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
+	PaintBitmap(pDC, nullptr, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
@@ -234,15 +234,15 @@ BOOL CBmpButton::AutoLoad(UINT nID, CWnd * pParent) {
  ************************************************************************/
 
 BOOL CBmpButton::LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelected, CBitmap *pFocus, CBitmap *pDisabled) {
-	HBITMAP     hBitmap = NULL;
+	HBITMAP     hBitmap = nullptr;
 
-	if (pBase == NULL)
+	if (pBase == nullptr)
 		return (FALSE);
 
-	if (pPalette == NULL)
-		m_pPalette = NULL;
+	if (pPalette == nullptr)
+		m_pPalette = nullptr;
 	else {
-		if (m_pPalette != NULL)
+		if (m_pPalette != nullptr)
 			delete m_pPalette;
 		m_pPalette = DuplicatePalette(pPalette);
 	}
@@ -253,21 +253,21 @@ BOOL CBmpButton::LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelec
 	delete pBase;
 
 	m_bitmapSel.DeleteObject();
-	if (pSelected != NULL) {
+	if (pSelected != nullptr) {
 		hBitmap = (HBITMAP)(*pSelected).Detach();
 		m_bitmapSel.Attach(hBitmap);
 		delete pSelected;
 	}
 
 	m_bitmapFocus.DeleteObject();
-	if (pFocus != NULL) {
+	if (pFocus != nullptr) {
 		hBitmap = (HBITMAP)(*pFocus).Detach();
 		m_bitmapFocus.Attach(hBitmap);
 		delete pFocus;
 	}
 
 	m_bitmapDisabled.DeleteObject();
-	if (pDisabled != NULL) {
+	if (pDisabled != nullptr) {
 		hBitmap = (HBITMAP)(*pDisabled).Detach();
 		m_bitmapDisabled.Attach(hBitmap);
 		delete pDisabled;
@@ -295,31 +295,31 @@ BOOL CBmpButton::LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelec
  ************************************************************************/
 
 BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFocus, const int nDisabled) {
-	CDC         *pDC = NULL;
-	CBitmap     *pBitmap = NULL;
-	HBITMAP     hBitmap = NULL;
+	CDC         *pDC = nullptr;
+	CBitmap     *pBitmap = nullptr;
+	HBITMAP     hBitmap = nullptr;
 	BOOL        bSuccess = TRUE;
 
-	if (m_pPalette != NULL) {                       // release any existing palette resource
+	if (m_pPalette != nullptr) {                       // release any existing palette resource
 		(*m_pPalette).DeleteObject();
 		delete m_pPalette;
-		m_pPalette = NULL;
+		m_pPalette = nullptr;
 	}
 
 	pDC = GetDC();                                  // fetch a device context we can use
-	if (pDC == NULL)
+	if (pDC == nullptr)
 		bSuccess = FALSE;
 
 	if (bSuccess) {                                 // get a CBitmap for the UP button
 		pBitmap = FetchResourceBitmap(pDC, &m_pPalette, nBase);
-		if (pBitmap != NULL) {                      // ... and plug it into our instance
+		if (pBitmap != nullptr) {                      // ... and plug it into our instance
 			m_bitmap.DeleteObject();                // release what ever was already there
 			hBitmap = (HBITMAP)(*pBitmap).Detach();
 			m_bitmap.Attach(hBitmap);
 			delete pBitmap;
 			if (nSelected != 0) {               // get the SELECTED bitmap and plug it in
-				pBitmap = FetchResourceBitmap(pDC, NULL, nSelected);
-				if (pBitmap == NULL)
+				pBitmap = FetchResourceBitmap(pDC, nullptr, nSelected);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapSel.DeleteObject();     // release what ever was already there
@@ -330,8 +330,8 @@ BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 			}
 			if (bSuccess &&                         // get the FOCUS bitmap and plug it in
 			        (nFocus != 0)) {
-				pBitmap = FetchResourceBitmap(pDC, NULL, nFocus);
-				if (pBitmap == NULL)
+				pBitmap = FetchResourceBitmap(pDC, nullptr, nFocus);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapFocus.DeleteObject();   // release what ever was already there
@@ -342,8 +342,8 @@ BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 			}
 			if (bSuccess &&                         // get the DISABLED bitmap and plug it in
 			        (nDisabled != 0)) {
-				pBitmap = FetchResourceBitmap(pDC, NULL, nDisabled);
-				if (pBitmap == NULL)
+				pBitmap = FetchResourceBitmap(pDC, nullptr, nDisabled);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapDisabled.DeleteObject();// release what ever was already there
@@ -356,7 +356,7 @@ BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 			bSuccess = FALSE;
 	}
 
-	if (pDC != NULL)
+	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
 	return (bSuccess);
@@ -381,31 +381,31 @@ BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
  ************************************************************************/
 
 BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFocus, LPCSTR lpszDisabled) {
-	CDC         *pDC = NULL;
-	CBitmap     *pBitmap = NULL;
-	HBITMAP     hBitmap = NULL;
+	CDC         *pDC = nullptr;
+	CBitmap     *pBitmap = nullptr;
+	HBITMAP     hBitmap = nullptr;
 	BOOL        bSuccess = TRUE;
 
-	if (m_pPalette != NULL) {                       // release any existing palette resource
+	if (m_pPalette != nullptr) {                       // release any existing palette resource
 		(*m_pPalette).DeleteObject();
 		delete m_pPalette;
-		m_pPalette = NULL;
+		m_pPalette = nullptr;
 	}
 
 	pDC = GetDC();                                  // fetch a device context we can use
-	if (pDC == NULL)
+	if (pDC == nullptr)
 		bSuccess = FALSE;
 
 	if (bSuccess) {                                 // get a CBitmap for the UP button
 		pBitmap = FetchResourceBitmap(pDC, &m_pPalette, lpszBase);
-		if (pBitmap != NULL) {                      // ... and plug it into our instance
+		if (pBitmap != nullptr) {                      // ... and plug it into our instance
 			m_bitmap.DeleteObject();                // release what ever was already there
 			hBitmap = (HBITMAP)(*pBitmap).Detach();
 			m_bitmap.Attach(hBitmap);
 			delete pBitmap;
-			if (lpszSelected != NULL) {             // get the SELECTED bitmap and plug it in
-				pBitmap = FetchResourceBitmap(pDC, NULL, lpszSelected);
-				if (pBitmap == NULL)
+			if (lpszSelected != nullptr) {             // get the SELECTED bitmap and plug it in
+				pBitmap = FetchResourceBitmap(pDC, nullptr, lpszSelected);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapSel.DeleteObject();     // release what ever was already there
@@ -415,9 +415,9 @@ BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFo
 				}
 			}
 			if (bSuccess &&                         // get the FOCUS bitmap and plug it in
-			        (lpszFocus != NULL)) {
-				pBitmap = FetchResourceBitmap(pDC, NULL, lpszFocus);
-				if (pBitmap == NULL)
+			        (lpszFocus != nullptr)) {
+				pBitmap = FetchResourceBitmap(pDC, nullptr, lpszFocus);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapFocus.DeleteObject();   // release what ever was already there
@@ -427,9 +427,9 @@ BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFo
 				}
 			}
 			if (bSuccess &&                         // get the DISABLED bitmap and plug it in
-			        (lpszDisabled != NULL)) {
-				pBitmap = FetchResourceBitmap(pDC, NULL, lpszDisabled);
-				if (pBitmap == NULL)
+			        (lpszDisabled != nullptr)) {
+				pBitmap = FetchResourceBitmap(pDC, nullptr, lpszDisabled);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapDisabled.DeleteObject();// release what ever was already there
@@ -442,7 +442,7 @@ BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFo
 			bSuccess = FALSE;
 	}
 
-	if (pDC != NULL)
+	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
 	return (bSuccess);
@@ -467,31 +467,31 @@ BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFo
  ************************************************************************/
 
 BOOL CBmpButton::LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFocus, LPCSTR lpszDisabled) {
-	CDC         *pDC = NULL;
-	CBitmap     *pBitmap = NULL;
-	HBITMAP     hBitmap = NULL;
+	CDC         *pDC = nullptr;
+	CBitmap     *pBitmap = nullptr;
+	HBITMAP     hBitmap = nullptr;
 	BOOL        bSuccess = TRUE;
 
-	if (m_pPalette != NULL) {                       // release any existing palette resource
+	if (m_pPalette != nullptr) {                       // release any existing palette resource
 		(*m_pPalette).DeleteObject();
 		delete m_pPalette;
-		m_pPalette = NULL;
+		m_pPalette = nullptr;
 	}
 
 	pDC = GetDC();                                  // fetch a device context we can use
-	if (pDC == NULL)
+	if (pDC == nullptr)
 		bSuccess = FALSE;
 
 	if (bSuccess) {                                 // get a CBitmap for the UP button
 		pBitmap = FetchBitmap(pDC, &m_pPalette, lpszBase);
-		if (pBitmap != NULL) {                      // ... and plug it into our instance
+		if (pBitmap != nullptr) {                      // ... and plug it into our instance
 			m_bitmap.DeleteObject();                // release what ever was already there
 			hBitmap = (HBITMAP)(*pBitmap).Detach();
 			m_bitmap.Attach(hBitmap);
 			delete pBitmap;
-			if (lpszSelected != NULL) {             // get the SELECTED bitmap and plug it in
-				pBitmap = FetchBitmap(pDC, NULL, lpszSelected);
-				if (pBitmap == NULL)
+			if (lpszSelected != nullptr) {             // get the SELECTED bitmap and plug it in
+				pBitmap = FetchBitmap(pDC, nullptr, lpszSelected);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapSel.DeleteObject();     // release what ever was already there
@@ -501,9 +501,9 @@ BOOL CBmpButton::LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lps
 				}
 			}
 			if (bSuccess &&                         // get the FOCUS bitmap and plug it in
-			        (lpszFocus != NULL)) {
-				pBitmap = FetchBitmap(pDC, NULL, lpszFocus);
-				if (pBitmap == NULL)
+			        (lpszFocus != nullptr)) {
+				pBitmap = FetchBitmap(pDC, nullptr, lpszFocus);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapFocus.DeleteObject();   // release what ever was already there
@@ -513,9 +513,9 @@ BOOL CBmpButton::LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lps
 				}
 			}
 			if (bSuccess &&                         // get the DISABLED bitmap and plug it in
-			        (lpszDisabled != NULL)) {
-				pBitmap = FetchBitmap(pDC, NULL, lpszDisabled);
-				if (pBitmap == NULL)
+			        (lpszDisabled != nullptr)) {
+				pBitmap = FetchBitmap(pDC, nullptr, lpszDisabled);
+				if (pBitmap == nullptr)
 					bSuccess = FALSE;
 				else {
 					m_bitmapDisabled.DeleteObject();// release what ever was already there
@@ -528,7 +528,7 @@ BOOL CBmpButton::LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lps
 			bSuccess = FALSE;
 	}
 
-	if (pDC != NULL)
+	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
 	return (bSuccess);
@@ -574,14 +574,14 @@ IMPLEMENT_DYNCREATE(CMaskedButton, CBmpButton)
  * Return Value:    none
  *
  * Description:     Constructor for button class.  Initialize all fields
- *                  to logical NULL.  Calls should then be made to other
+ *                  to logical nullptr.  Calls should then be made to other
  *                  button routines to load palettes and bitmaps.
  *
  ************************************************************************/
 
 CMaskedButton::CMaskedButton() {
-	m_pPalette = NULL;                      // no initial palette
-	m_pBackground = NULL;                   // no initial background
+	m_pPalette = nullptr;                      // no initial palette
+	m_pBackground = nullptr;                   // no initial background
 }
 
 
@@ -602,15 +602,15 @@ CMaskedButton::CMaskedButton() {
  ************************************************************************/
 
 CMaskedButton::~CMaskedButton() {
-	if (m_pPalette != NULL) {               // release the palette resource
+	if (m_pPalette != nullptr) {               // release the palette resource
 		(*m_pPalette).DeleteObject();
 		delete m_pPalette;
-		m_pPalette = NULL;
+		m_pPalette = nullptr;
 	}
 
-	if (m_pBackground != NULL) {            // release the background resource
+	if (m_pBackground != nullptr) {            // release the background resource
 		delete m_pBackground;
-		m_pBackground = NULL;
+		m_pBackground = nullptr;
 	}
 }
 
@@ -647,25 +647,25 @@ BOOL CMaskedButton::OnEraseBkgnd(CDC *pDC) {
 
 void CMaskedButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	CBitmap     *pBitmap;
 	CWnd        *pParentWnd;
 
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
-	        (pParentWnd == NULL) ||
+	        (pParentWnd == nullptr) ||
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 
 	pDC = new CDC;                                  // setup the device context given to us
 	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
 
-	if (m_pPalette != NULL) {                       // map the palette into the context
+	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, TRUE);
 		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
 
-	if (m_pBackground == NULL)
+	if (m_pBackground == nullptr)
 		m_pBackground = FetchScreenBitmap(pDC, m_pPalette,
 		                                  (*lpDrawItemStruct).rcItem.left,
 		                                  (*lpDrawItemStruct).rcItem.top,
@@ -686,9 +686,9 @@ void CMaskedButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	else
 		pBitmap = &m_bitmap;
 
-	PaintMaskedBitmap(pDC, NULL, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
+	PaintMaskedBitmap(pDC, nullptr, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
@@ -737,13 +737,13 @@ IMPLEMENT_DYNCREATE(CColorButton, CButton)
  * Return Value:    none
  *
  * Description:     Constructor for button class.  Initialize all fields
- *                  to logical NULL.  Calls should then be made to other
+ *                  to logical nullptr.  Calls should then be made to other
  *                  button routines to load palettes and bitmaps.
  *
  ************************************************************************/
 
 CColorButton::CColorButton() {
-	m_pPalette = NULL;              // no initial palette
+	m_pPalette = nullptr;              // no initial palette
 	m_cButtonFace = RGB_BUTTON_FACE;
 	m_cButtonHighlight = RGB_BUTTON_HIGHLIGHT;
 	m_cButtonShadow = RGB_BUTTON_SHADOW;
@@ -770,7 +770,7 @@ CColorButton::CColorButton() {
  ************************************************************************/
 
 CColorButton::~CColorButton() {
-	m_pPalette = NULL;
+	m_pPalette = nullptr;
 }
 
 
@@ -881,7 +881,7 @@ BOOL CColorButton::SetControl(UINT nID, CWnd * pParent) {
 
 void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	CPen        myPen, myInversePen, *pOldPen;
 	CBrush      myBrush, *pOldBrush, myQuill, myFrame;
 	COLORREF    myTextColor, oldTextColor;
@@ -898,7 +898,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
-	        (pParentWnd == NULL) ||
+	        (pParentWnd == nullptr) ||
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 
@@ -919,7 +919,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pDC = new CDC;                                  // setup the device context given to us
 	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
 
-	if (m_pPalette != NULL) {                       // map the palette into the context
+	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, TRUE);
 		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
@@ -994,7 +994,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		(*pDC).FrameRect(&focusRect, &myQuill);
 	}
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
@@ -1043,14 +1043,14 @@ IMPLEMENT_DYNCREATE(CCheckButton, CButton)
  * Return Value:    none
  *
  * Description:     Constructor for button class.  Initialize all fields
- *                  to logical NULL.  Calls should then be made to other
+ *                  to logical nullptr.  Calls should then be made to other
  *                  button routines to load palettes and bitmaps.
  *
  ************************************************************************/
 
 CCheckButton::CCheckButton() {
 	m_bCheckState = FALSE;
-	m_pPalette = NULL;
+	m_pPalette = nullptr;
 	m_cButtonFace = RGB_CHECK_FACE;
 	m_cButtonControl = RGB_CHECK_CONTROL;
 	m_cButtonText = RGB_CHECK_TEXT;
@@ -1076,7 +1076,7 @@ CCheckButton::CCheckButton() {
  ************************************************************************/
 
 CCheckButton::~CCheckButton() {
-	m_pPalette = NULL;
+	m_pPalette = nullptr;
 }
 
 
@@ -1185,7 +1185,7 @@ BOOL CCheckButton::SetControl(UINT nID, CWnd * pParent) {
 
 void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	CPen        outlinePen, controlPen, *pOldPen;
 	CBrush      faceBrush, *pOldBrush, myQuill, frameBrush;
 	COLORREF    myTextColor, oldTextColor;
@@ -1202,7 +1202,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
-	        (pParentWnd == NULL) ||
+	        (pParentWnd == nullptr) ||
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 
@@ -1221,7 +1221,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pDC = new CDC;                                  // setup the device context given to us
 	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
 
-	if (m_pPalette != NULL) {                       // map the palette into the context
+	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, TRUE);
 		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
@@ -1302,7 +1302,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	} else
 		(*pDC).FrameRect(&focusRect, &faceBrush);
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
@@ -1403,14 +1403,14 @@ IMPLEMENT_DYNCREATE(CRadioButton, CButton)
  * Return Value:    none
  *
  * Description:     Constructor for button class.  Initialize all fields
- *                  to logical NULL.  Calls should then be made to other
+ *                  to logical nullptr.  Calls should then be made to other
  *                  button routines to load palettes and bitmaps.
  *
  ************************************************************************/
 
 CRadioButton::CRadioButton() {
 	m_bCheckState = FALSE;
-	m_pPalette = NULL;
+	m_pPalette = nullptr;
 	m_cButtonFace = RGB_RADIO_FACE;
 	m_cButtonControl = RGB_RADIO_CONTROL;
 	m_cButtonText = RGB_RADIO_TEXT;
@@ -1436,7 +1436,7 @@ CRadioButton::CRadioButton() {
  ************************************************************************/
 
 CRadioButton::~CRadioButton() {
-	m_pPalette = NULL;
+	m_pPalette = nullptr;
 }
 
 
@@ -1546,7 +1546,7 @@ BOOL CRadioButton::SetControl(UINT nID, CWnd * pParent) {
 
 void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	CDC         *pDC;
-	CPalette    *pPalOld = NULL;
+	CPalette    *pPalOld = nullptr;
 	CPen        outlinePen, controlPen, framePen, *pOldPen;
 	CBrush      faceBrush, *pOldBrush, myQuill, controlBrush;
 	COLORREF    myTextColor, oldTextColor;
@@ -1563,7 +1563,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	pParentWnd = GetParent();
 	if (!IsWindowVisible() ||                       // punt if not visible
-	        (pParentWnd == NULL) ||
+	        (pParentWnd == nullptr) ||
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 
@@ -1582,7 +1582,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pDC = new CDC;                                  // setup the device context given to us
 	(*pDC).Attach((*lpDrawItemStruct).hDC);         // ... as a pointer to a CDC object
 
-	if (m_pPalette != NULL) {                       // map the palette into the context
+	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, TRUE);
 		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
@@ -1667,7 +1667,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	} else
 		(*pDC).FrameRect(&focusRect, &faceBrush);
 
-	if (pPalOld != NULL)
+	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
 	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built

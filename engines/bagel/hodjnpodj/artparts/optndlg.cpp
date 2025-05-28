@@ -32,15 +32,15 @@ namespace HodjNPodj {
 namespace ArtParts {
 
 static  CPalette *pSubOptionsPalette;
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
-static  CCheckButton *pFramedButton = NULL;                 // Framed check box
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
+static  CCheckButton *pFramedButton = nullptr;                 // Framed check box
 
 
-CText   *m_pPartsText = NULL;
-CText   *m_pColumnText = NULL;
-CText   *m_pRowText = NULL;
-CText   *m_pTimerText = NULL;
+CText   *m_pPartsText = nullptr;
+CText   *m_pColumnText = nullptr;
+CText   *m_pRowText = nullptr;
+CText   *m_pTimerText = nullptr;
 
 int m_nColumnFactors[14] =  {1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 25, 30};  // 14 factors
 int m_nRowFactors[11] =     {1, 2, 3, 4, 6, 8, 9, 12, 16, 18, 24};              // 11 factors
@@ -65,15 +65,15 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 }
 
 COptnDlg::~COptnDlg() {
-	if (m_pPartsText != NULL)
+	if (m_pPartsText != nullptr)
 		delete m_pPartsText;
-	if (m_pColumnText != NULL)
+	if (m_pColumnText != nullptr)
 		delete m_pColumnText;
-	if (m_pRowText != NULL)
+	if (m_pRowText != nullptr)
 		delete m_pRowText;
-	if (m_pTimerText != NULL)
+	if (m_pTimerText != nullptr)
 		delete m_pTimerText;
-//	if( m_pFramedText != NULL )
+//	if( m_pFramedText != nullptr )
 //		delete m_pFramedText;
 
 	CBmpDialog::OnDestroy();
@@ -120,12 +120,12 @@ BOOL COptnDlg::OnInitDialog() {
 	pDC = GetDC();
 
 	statRect.SetRect(LEFT_SIDE, 45, LEFT_SIDE + 100, 60);
-	if ((m_pPartsText = new CText()) != NULL) {
+	if ((m_pPartsText = new CText()) != nullptr) {
 		(*m_pPartsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 100, 80);
-	if ((m_pColumnText = new CText()) != NULL) {
+	if ((m_pColumnText = new CText()) != nullptr) {
 		(*m_pColumnText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -136,7 +136,7 @@ BOOL COptnDlg::OnInitDialog() {
 	}
 
 	statRect.SetRect(LEFT_SIDE, 99, LEFT_SIDE + 100, 114);
-	if ((m_pRowText = new CText()) != NULL) {
+	if ((m_pRowText = new CText()) != nullptr) {
 		(*m_pRowText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -149,7 +149,7 @@ BOOL COptnDlg::OnInitDialog() {
 	m_nNumParts = m_nColumns * m_nRows;
 
 	statRect.SetRect(LEFT_SIDE, 132, LEFT_SIDE + 100, 146);
-	if ((m_pTimerText = new CText()) != NULL) {
+	if ((m_pTimerText = new CText()) != nullptr) {
 		(*m_pTimerText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -164,17 +164,17 @@ BOOL COptnDlg::OnInitDialog() {
 
 	statRect.SetRect(155, 45, 205, 60);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
-	if ((pFramedButton = new CCheckButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pFramedButton = new CCheckButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pFramedButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pFramedButton).SetControl(IDC_FRAMED, this);              // tie to the dialog control
 	}
@@ -355,22 +355,22 @@ void COptnDlg::OnPaint() {
 }
 
 void COptnDlg::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (pFramedButton != NULL) {                        // release the button
+	if (pFramedButton != nullptr) {                        // release the button
 		delete pFramedButton;
-		pFramedButton = NULL;
+		pFramedButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 } // namespace ArtParts

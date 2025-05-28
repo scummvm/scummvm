@@ -82,7 +82,7 @@ public:
 	                int iDefault PDFT(0)) ;
 	BOOL GetDebugString(LPCSTR lpszOption,
 	                    LPSTR lpszTarget, int iTargetSize,
-	                    LPCSTR lpszDefault PDFT(NULL)) ;
+	                    LPCSTR lpszDefault PDFT(nullptr)) ;
 	BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
 	BOOL TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
 	BOOL DebugMessageBox(LPCSTR lpszPrompt,

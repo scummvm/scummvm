@@ -30,8 +30,8 @@ namespace Life {
 HINSTANCE       hDLLInst;
 HINSTANCE       hExeInst;
 
-CMainWindow     *gMainWnd = NULL;   // pointer to the poker's main window
-CPalette                *pTestPalette = NULL;
+CMainWindow     *gMainWnd = nullptr;   // pointer to the poker's main window
+CPalette                *pTestPalette = nullptr;
 HCURSOR                 hGameCursor;
 
 /////////////////////////////////////////////////////////////////////////////

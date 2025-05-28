@@ -299,18 +299,18 @@ CBFishWindow::CBFishWindow(VOID) {
 
 	// Initialize members
 	//
-	m_pGamePalette = NULL;
+	m_pGamePalette = nullptr;
 	m_bPause = FALSE;
 	m_bGameActive = FALSE;
 	m_bMovingFish = FALSE;
 	m_bUserEditMode = FALSE;
 	m_bInMenu = FALSE;
-	m_pMasterHit = NULL;
-	m_pMasterMiss = NULL;
-	m_pDragFish = NULL;
-	m_pTxtClickHere = NULL;
-	m_pScrollSprite = NULL;
-	m_pSoundTrack = NULL;                               // Game theme song
+	m_pMasterHit = nullptr;
+	m_pMasterMiss = nullptr;
+	m_pDragFish = nullptr;
+	m_pTxtClickHere = nullptr;
+	m_pScrollSprite = nullptr;
+	m_pSoundTrack = nullptr;                               // Game theme song
 
 	// make sure score is initially zero
 	pGameParams->lScore = 0;
@@ -335,7 +335,7 @@ CBFishWindow::CBFishWindow(VOID) {
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
-	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 
 	// can't play this game if the background art is not available
 	//
@@ -343,7 +343,7 @@ CBFishWindow::CBFishWindow(VOID) {
 
 		// Acquire the shared palette for our game from the splash screen art
 		//
-		if ((pDibDoc = new CDibDoc()) != NULL) {
+		if ((pDibDoc = new CDibDoc()) != nullptr) {
 			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else
@@ -360,7 +360,7 @@ CBFishWindow::CBFishWindow(VOID) {
 	//
 	tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	#ifndef DEBUG
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
 		tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
 		tmpRect.right = tmpRect.left + GAME_WIDTH;
@@ -374,7 +374,7 @@ CBFishWindow::CBFishWindow(VOID) {
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
 	//
-	Create(WndClass, "Boffo Games -- Battlefish", WS_POPUP, tmpRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Battlefish", WS_POPUP, tmpRect, nullptr, 0);
 
 	BeginWaitCursor();
 	ShowWindow(SW_SHOWNORMAL);
@@ -385,11 +385,11 @@ CBFishWindow::CBFishWindow(VOID) {
 	//
 	if (errCode == ERR_NONE) {
 
-		if ((m_pScrollSprite = new CSprite) != NULL) {
+		if ((m_pScrollSprite = new CSprite) != nullptr) {
 
 			m_pScrollSprite->SharePalette(m_pGamePalette);
 
-			if ((pDC = GetDC()) != NULL) {
+			if ((pDC = GetDC()) != nullptr) {
 				bSuccess = m_pScrollSprite->LoadResourceSprite(pDC, IDB_SCROLBTN);
 
 				if (!bSuccess)
@@ -415,7 +415,7 @@ CBFishWindow::CBFishWindow(VOID) {
 			// Start the BFish soundtrack
 			//
 			if (pGameParams->bMusicEnabled) {
-				if ((m_pSoundTrack = new CSound) != NULL) {
+				if ((m_pSoundTrack = new CSound) != nullptr) {
 					m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					m_pSoundTrack->midiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
 				} else {
@@ -424,7 +424,7 @@ CBFishWindow::CBFishWindow(VOID) {
 			}
 
 			// seed the random number generator
-			//srand((unsigned)time(NULL));
+			//srand((unsigned)time(nullptr));
 
 			errCode = LoadMasterSprites();
 
@@ -475,7 +475,7 @@ VOID CBFishWindow::HandleError(ERROR_CODE errCode) {
 		PostMessage(WM_CLOSE, 0, 0);
 
 		// Don't allow a repaint (remove all WM_PAINT messages)
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 }
 
@@ -487,9 +487,9 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
-		if ((m_pMasterHit = new CSprite) != NULL) {
+		if ((m_pMasterHit = new CSprite) != nullptr) {
 
 			// this BMP uses the same palette as entire game
 			//
@@ -513,7 +513,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 
 		if (errCode == ERR_NONE) {
 
-			if ((m_pMasterMiss = new CSprite) != NULL) {
+			if ((m_pMasterMiss = new CSprite) != nullptr) {
 
 				// this BMP uses the same palette as entire game
 				//
@@ -538,7 +538,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 
 		if (errCode == ERR_NONE) {
 
-			if ((m_pMasterHarpoon = new CSprite) != NULL) {
+			if ((m_pMasterHarpoon = new CSprite) != nullptr) {
 
 				// this BMP uses the same palette as entire game
 				//
@@ -562,7 +562,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 
 		if (errCode == ERR_NONE) {
 
-			if ((m_pOctopus = new CSprite) != NULL) {
+			if ((m_pOctopus = new CSprite) != nullptr) {
 
 				// this BMP uses the same palette as entire game
 				//
@@ -589,7 +589,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 
 			for (i = 0; i < MAX_FISH; i++) {
 
-				if ((m_pFish[i] = new CSprite) != NULL) {
+				if ((m_pFish[i] = new CSprite) != nullptr) {
 
 					// attach sprite to the Game Palette
 					//
@@ -620,7 +620,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 
 			for (i = 0; i < MAX_FISH; i++) {
 
-				if ((m_pEnemyFish[i] = new CSprite) != NULL) {
+				if ((m_pEnemyFish[i] = new CSprite) != nullptr) {
 
 					// attach good guy to the Game Palette
 					//
@@ -664,47 +664,47 @@ VOID CBFishWindow::ReleaseMasterSprites(VOID) {
 	//
 	for (i = 0; i < MAX_FISH; i++) {
 
-		if (m_pEnemyFish[i] != NULL) {
+		if (m_pEnemyFish[i] != nullptr) {
 			delete m_pEnemyFish[i];
-			m_pEnemyFish[i] = NULL;
+			m_pEnemyFish[i] = nullptr;
 		}
 
-		if (m_pFish[i] != NULL) {
+		if (m_pFish[i] != nullptr) {
 			delete m_pFish[i];
-			m_pFish[i] = NULL;
+			m_pFish[i] = nullptr;
 		}
 	}
 
 	// free the octopus sprite
 	//
-	assert(m_pOctopus != NULL);
-	if (m_pOctopus != NULL) {
+	assert(m_pOctopus != nullptr);
+	if (m_pOctopus != nullptr) {
 		delete m_pOctopus;
-		m_pOctopus = NULL;
+		m_pOctopus = nullptr;
 	}
 
 	// free the master turn-harpoon sprite
 	//
-	assert(m_pMasterHarpoon != NULL);
-	if (m_pMasterHarpoon != NULL) {
+	assert(m_pMasterHarpoon != nullptr);
+	if (m_pMasterHarpoon != nullptr) {
 		delete m_pMasterHarpoon;
-		m_pMasterHarpoon = NULL;
+		m_pMasterHarpoon = nullptr;
 	}
 
 	// free the master shoot-miss sprite
 	//
-	assert(m_pMasterMiss != NULL);
-	if (m_pMasterMiss != NULL) {
+	assert(m_pMasterMiss != nullptr);
+	if (m_pMasterMiss != nullptr) {
 		delete m_pMasterMiss;
-		m_pMasterMiss = NULL;
+		m_pMasterMiss = nullptr;
 	}
 
 	// free the master shoot-hit sprite
 	//
-	assert(m_pMasterHit != NULL);
-	if (m_pMasterHit != NULL) {
+	assert(m_pMasterHit != nullptr);
+	if (m_pMasterHit != nullptr) {
 		delete m_pMasterHit;
-		m_pMasterHit = NULL;
+		m_pMasterHit = nullptr;
 	}
 }
 
@@ -773,11 +773,11 @@ VOID CBFishWindow::PaintScreen() {
 		hDIB = myDoc.GetHDIB();
 
 		pDC = GetDC();
-		assert(pDC != NULL);
+		assert(pDC != nullptr);
 
-		if (pDC != NULL) {
+		if (pDC != nullptr) {
 
-			if (hDIB && (m_pGamePalette != NULL)) {
+			if (hDIB && (m_pGamePalette != nullptr)) {
 
 				GetClientRect(rcDest);
 				LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
@@ -788,7 +788,7 @@ VOID CBFishWindow::PaintScreen() {
 				PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
 			}
 
-			if (!m_bInMenu && (m_pScrollSprite != NULL)) {
+			if (!m_bInMenu && (m_pScrollSprite != nullptr)) {
 				m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 			}
 
@@ -797,7 +797,7 @@ VOID CBFishWindow::PaintScreen() {
 			errCode = RepaintSpriteList(pDC);
 
 			// redisplay the "click here" text
-			if (m_pTxtClickHere != NULL) {
+			if (m_pTxtClickHere != nullptr) {
 				m_pTxtClickHere->DisplayString(pDC, "Click here when done", 12, TEXT_NORMAL, RGB(0, 0, 0));
 			}
 
@@ -836,7 +836,7 @@ ERROR_CODE CBFishWindow::RepaintSpriteList(CDC *pDC) {
 	errCode = ERR_NONE;
 
 	// can't use a null pointer
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	//
 	// Paint each sprite
@@ -883,7 +883,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this,
 	                       m_pGamePalette,
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive || m_bUserEditMode ? 0 : NO_RETURN),
-	                       GetGameParams, "bfish.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL), pGameParams);
+	                       GetGameParams, "bfish.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr), pGameParams);
 	CDC *pDC;
 	//CSound *pSound;
 	INT nPick = 0;
@@ -900,7 +900,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			m_bInMenu = TRUE;
 
-			if ((pDC = GetDC()) != NULL) {
+			if ((pDC = GetDC()) != nullptr) {
 				m_pScrollSprite->EraseSprite(pDC);
 			}
 
@@ -926,22 +926,22 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				break;
 			}
 
-			if (pDC != NULL) {
+			if (pDC != nullptr) {
 				m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 				ReleaseDC(pDC);
 			}
 
 			m_bInMenu = FALSE;
 
-			if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
+			if (!pGameParams->bMusicEnabled && (m_pSoundTrack != nullptr)) {
 
 				m_pSoundTrack->stop();
 				delete m_pSoundTrack;
-				m_pSoundTrack = NULL;
+				m_pSoundTrack = nullptr;
 
-			} else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
+			} else if (pGameParams->bMusicEnabled && (m_pSoundTrack == nullptr)) {
 
-				if ((m_pSoundTrack = new CSound) != NULL) {
+				if ((m_pSoundTrack = new CSound) != nullptr) {
 					m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					m_pSoundTrack->midiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
 				}
@@ -953,8 +953,8 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case COMPUTERS_TURN:
 
-			if ((pDC = GetDC()) != NULL) {
-				if (m_pOctopus != NULL) {
+			if ((pDC = GetDC()) != nullptr) {
+				if (m_pOctopus != nullptr) {
 					m_pOctopus->LinkSprite();
 					m_pOctopus->PaintSprite(pDC, OCTOPUS_X, OCTOPUS_Y);
 				}
@@ -1016,8 +1016,8 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 				PlaceTurnHarpoons();
 
-				if ((pDC = GetDC()) != NULL) {
-					if (m_pOctopus != NULL) {
+				if ((pDC = GetDC()) != nullptr) {
+					if (m_pOctopus != nullptr) {
 						m_pOctopus->EraseSprite(pDC);
 						m_pOctopus->UnlinkSprite();
 					}
@@ -1044,13 +1044,13 @@ VOID CBFishWindow::PlaceTurnHarpoons(VOID) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		for (i = 0; i < m_nTurns; i++) {
 
 			// create a dup of the master harpoon
 			//
-			if ((pSprite = m_pMasterHarpoon->DuplicateSprite(pDC)) != NULL) {
+			if ((pSprite = m_pMasterHarpoon->DuplicateSprite(pDC)) != nullptr) {
 				pSprite->LinkSprite();
 				pSprite->PaintSprite(pDC, ptHarpoons[i]);
 				m_pHarpoons[i] = pSprite;
@@ -1071,10 +1071,10 @@ VOID CBFishWindow::PlaceTurnHarpoons(VOID) {
 
 VOID CBFishWindow::RemoveTurnHarpoon(VOID) {
 	assert(m_nTurns >= 0 && m_nTurns < MAX_TURNS);
-	assert(m_pHarpoons[m_nTurns] != NULL);
+	assert(m_pHarpoons[m_nTurns] != nullptr);
 
 	DeleteSprite(m_pHarpoons[m_nTurns]);
-	m_pHarpoons[m_nTurns] = NULL;
+	m_pHarpoons[m_nTurns] = nullptr;
 }
 
 
@@ -1162,7 +1162,7 @@ VOID CBFishWindow::PlayGame(VOID) {
 
 	// show fish in the bin
 	//
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		//RepaintSpriteList(pDC);
 		for (i = 0; i < MAX_FISH; i++) {
@@ -1172,13 +1172,13 @@ VOID CBFishWindow::PlayGame(VOID) {
 
 		// show the "Click here when you are finished placing your fish" text
 		//
-		if (m_pTxtClickHere != NULL) {
+		if (m_pTxtClickHere != nullptr) {
 			m_pTxtClickHere->RestoreBackground(pDC);
 			delete m_pTxtClickHere;
-			m_pTxtClickHere = NULL;
+			m_pTxtClickHere = nullptr;
 		}
 		rTmpRect.SetRect(380, 180, 490, 200);
-		if ((m_pTxtClickHere = new CText) != NULL) {
+		if ((m_pTxtClickHere = new CText) != nullptr) {
 			m_pTxtClickHere->SetupText(pDC, m_pGamePalette, &rTmpRect, JUSTIFY_LEFT);
 			m_pTxtClickHere->DisplayString(pDC, "Click here when done", 12, TEXT_NORMAL, RGB(0, 0, 0));
 		} else {
@@ -1404,7 +1404,7 @@ VOID CBFishWindow::GameReset(VOID) {
 	//fred = 0;
 
 	if (pGameParams->bSoundEffectsEnabled)
-		sndPlaySound(NULL, SND_ASYNC);          // stop all sounds
+		sndPlaySound(nullptr, SND_ASYNC);          // stop all sounds
 
 	m_bGameActive = FALSE;                      // there is no active game
 
@@ -1414,14 +1414,14 @@ VOID CBFishWindow::GameReset(VOID) {
 
 	m_bMovingFish = FALSE;                      // user is not moving fish
 
-	if ((pDC = GetDC()) != NULL) {              // erase all sprites from the screen
+	if ((pDC = GetDC()) != nullptr) {              // erase all sprites from the screen
 		CSprite::EraseSprites(pDC);
 
 		for (i = 0; i < MAX_FISH; i++) {        // remove fish from the sprite chain
-			assert(m_pFish[i] != NULL);         // ...so they are not discarded
+			assert(m_pFish[i] != nullptr);         // ...so they are not discarded
 			m_pFish[i]->UnlinkSprite();
 
-			assert(m_pEnemyFish[i] != NULL);
+			assert(m_pEnemyFish[i] != nullptr);
 			if (m_pEnemyFish[i]->GetTypeCode()) {
 				m_pEnemyFish[i]->UnlinkSprite();
 				m_pEnemyFish[i]->SetTypeCode(FALSE);
@@ -1435,7 +1435,7 @@ VOID CBFishWindow::GameReset(VOID) {
 
 		// make sure we don't delete the octopus yet
 		//
-		if (m_pOctopus != NULL) {
+		if (m_pOctopus != nullptr) {
 			if (m_pOctopus->IsLinked()) {
 				m_pOctopus->UnlinkSprite();
 			}
@@ -1444,7 +1444,7 @@ VOID CBFishWindow::GameReset(VOID) {
 		CSprite::FlushSpriteChain();            // delete all linked sprites
 
 		for (i = 0; i < MAX_FISH; i++) {        // Put the active fish back
-			assert(m_pFish[i] != NULL);         // and reset them to bin coordinates
+			assert(m_pFish[i] != nullptr);         // and reset them to bin coordinates
 			//m_pFish[i]->SetPosition(ptFishBin[i]);
 			//m_pFish[i]->LinkSprite();
 		}
@@ -1492,9 +1492,9 @@ void CBFishWindow::RotateFish(INT nFishIndex) {
 	pSprite = m_pFish[nFishIndex];
 
 	// can't access a null pointer
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		// is this fish horizontal or vertical
 		//
@@ -1676,7 +1676,7 @@ INT CBFishWindow::GetUserGridIndex(CPoint point) {
 INT CBFishWindow::GetFishIndex(CSprite *pSprite) {
 	INT i, nIndex;
 
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
 	nIndex = -1;
 	for (i = 0; i < MAX_FISH; i++) {
@@ -1814,7 +1814,7 @@ VOID CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 	} else if (!m_bMovingFish && m_rEndPlacement.PtInRect(point)) {
 
 		// there can be NO current fish being dragged
-		assert(m_pDragFish == NULL);
+		assert(m_pDragFish == nullptr);
 
 		if (m_bUserEditMode) {
 
@@ -1831,11 +1831,11 @@ VOID CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 
 			if (bOkToPlay) {
 
-				if ((pDC = GetDC()) != NULL) {
-					if (m_pTxtClickHere != NULL) {
+				if ((pDC = GetDC()) != nullptr) {
+					if (m_pTxtClickHere != nullptr) {
 						m_pTxtClickHere->RestoreBackground(pDC);
 						delete m_pTxtClickHere;
-						m_pTxtClickHere = NULL;
+						m_pTxtClickHere = nullptr;
 					}
 					ReleaseDC(pDC);
 				}
@@ -1863,8 +1863,8 @@ VOID CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 					//
 				} else {
 
-					if ((pDC = GetDC()) != NULL) {                                  // put up the octopus
-						if (m_pOctopus != NULL) {
+					if ((pDC = GetDC()) != nullptr) {                                  // put up the octopus
+						if (m_pOctopus != nullptr) {
 							m_pOctopus->LinkSprite();
 							m_pOctopus->PaintSprite(pDC, OCTOPUS_X, OCTOPUS_Y);
 						}
@@ -1890,8 +1890,8 @@ VOID CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 
 					PlaceTurnHarpoons();
 
-					if (pDC != NULL) {                                  // get her outta there
-						if (m_pOctopus != NULL) {
+					if (pDC != nullptr) {                                  // get her outta there
+						if (m_pOctopus != nullptr) {
 							m_pOctopus->UnlinkSprite();
 							m_pOctopus->EraseSprite(pDC);
 						}
@@ -1922,7 +1922,7 @@ VOID CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 						m_cLastPoint = m_pDragFish->GetPosition();
 						m_bLastRotated = m_pDragFish->GetTypeCode();
 
-						if ((pDC = GetDC()) != NULL) {
+						if ((pDC = GetDC()) != nullptr) {
 
 							// Dragged fish must be topmost
 							//
@@ -1995,7 +1995,7 @@ void CBFishWindow::OnLButtonUp(UINT, CPoint point) {
 	if (m_bUserEditMode && m_bMovingFish) {
 
 		assert(m_bGameActive != TRUE);
-		assert(m_pDragFish != NULL);
+		assert(m_pDragFish != nullptr);
 
 		m_bMovingFish = FALSE;
 
@@ -2020,7 +2020,7 @@ void CBFishWindow::OnLButtonUp(UINT, CPoint point) {
 		if (pGameParams->bSoundEffectsEnabled)
 			sndPlaySound(WAV_PLACESHIP, SND_ASYNC);
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 
 			m_pDragFish->EraseSprite(pDC);
 
@@ -2042,7 +2042,7 @@ void CBFishWindow::OnLButtonUp(UINT, CPoint point) {
 			m_pDragFish->PaintSprite(pDC, point);
 			ReleaseDC(pDC);
 		}
-		m_pDragFish = NULL;
+		m_pDragFish = nullptr;
 	}
 }
 
@@ -2203,11 +2203,11 @@ VOID CBFishWindow::OnMouseMove(UINT, CPoint point) {
 
 	if (m_bUserEditMode && m_bMovingFish) {
 
-		hCursor = NULL;
+		hCursor = nullptr;
 
-		assert(m_pDragFish != NULL);
+		assert(m_pDragFish != nullptr);
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 			size = m_pDragFish->GetSize();
 			point.x -= size.cx / 2;
 			point.y -= size.cy / 2;
@@ -2216,7 +2216,7 @@ VOID CBFishWindow::OnMouseMove(UINT, CPoint point) {
 		}
 	} else {
 
-		hCursor = LoadCursor(NULL, IDC_ARROW);
+		hCursor = LoadCursor(nullptr, IDC_ARROW);
 	}
 
 	MFC::SetCursor(hCursor);
@@ -2365,12 +2365,12 @@ VOID CBFishWindow::SinkEnemyFish(INT nFishIndex) {
 
 	pSprite = m_pEnemyFish[nFishIndex];
 
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
 	pSprite->SetTypeCode(TRUE);
 	pSprite->LinkSprite();
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		pSprite->PaintSprite(pDC, pSprite->GetPosition());
 		ReleaseDC(pDC);
 	}
@@ -3199,11 +3199,11 @@ VOID CBFishWindow::CreatePlume(CPoint point) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		// Play a plume of water animation sequence inline
 		//
-		if ((pSprite = new CSprite) != NULL) {
+		if ((pSprite = new CSprite) != nullptr) {
 
 			// attach good guy to the Game Palette
 			//
@@ -3232,7 +3232,7 @@ VOID CBFishWindow::CreatePlume(CPoint point) {
 
 			// create a dup of the master plume of water
 			//
-			if ((pSprite = m_pMasterMiss->DuplicateSprite(pDC)) != NULL) {
+			if ((pSprite = m_pMasterMiss->DuplicateSprite(pDC)) != nullptr) {
 				pSprite->LinkSprite();
 				pSprite->PaintSprite(pDC, point);
 
@@ -3262,11 +3262,11 @@ VOID CBFishWindow::CreateHarpoon(CPoint point) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		// Play a harpoon hitting fish animation sequence inline
 		//
-		if ((pSprite = new CSprite) != NULL) {
+		if ((pSprite = new CSprite) != nullptr) {
 
 			// attach good guy to the Game Palette
 			//
@@ -3295,7 +3295,7 @@ VOID CBFishWindow::CreateHarpoon(CPoint point) {
 
 			// create a dup of the master harpoon
 			//
-			if ((pSprite = m_pMasterHit->DuplicateSprite(pDC)) != NULL) {
+			if ((pSprite = m_pMasterHit->DuplicateSprite(pDC)) != nullptr) {
 				pSprite->LinkSprite();
 				pSprite->PaintSprite(pDC, point);
 
@@ -3399,11 +3399,11 @@ VOID CBFishWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
-	if (pSprite != NULL) {
+	if (pSprite != nullptr) {
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 			pSprite->EraseSprite(pDC);              // erase it from screen
 			ReleaseDC(pDC);
 		}
@@ -3512,7 +3512,7 @@ void CBFishWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	case VK_F1: {
 		GamePause();
 		CSound::waitWaveSounds();
-		CRules  RulesDlg(this, "bfish.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
+		CRules  RulesDlg(this, "bfish.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr));
 		PaintScreen();
 		RulesDlg.DoModal();
 		GameResume();
@@ -3589,7 +3589,7 @@ void CBFishWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			//InvalidateRect(NULL, FALSE);
+			//InvalidateRect(nullptr, FALSE);
 			break;
 
 		case WA_INACTIVE:
@@ -3607,14 +3607,14 @@ VOID CBFishWindow::FlushInputEvents(VOID) {
 	// find and remove all keyboard events
 	//
 	while (TRUE) {
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	// find and remove all mouse events
 	//
 	while (TRUE) {
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }
@@ -3648,9 +3648,9 @@ VOID CBFishWindow::OnClose() {
 
 	// delete the game theme song
 	//
-	if (m_pSoundTrack != NULL) {
+	if (m_pSoundTrack != nullptr) {
 		delete m_pSoundTrack;
-		m_pSoundTrack = NULL;
+		m_pSoundTrack = nullptr;
 	}
 
 	CSound::clearSounds();              // Make sure to return cleanly to Metagame
@@ -3658,31 +3658,31 @@ VOID CBFishWindow::OnClose() {
 	// de-allocate the master sprites
 	ReleaseMasterSprites();
 
-	if (m_pTxtClickHere != NULL) {
+	if (m_pTxtClickHere != nullptr) {
 		delete m_pTxtClickHere;
-		m_pTxtClickHere = NULL;
+		m_pTxtClickHere = nullptr;
 	}
 
 	//
 	// de-allocate any controls that we used
 	//
-	assert(m_pScrollSprite != NULL);
-	if (m_pScrollSprite != NULL) {
+	assert(m_pScrollSprite != nullptr);
+	if (m_pScrollSprite != nullptr) {
 		delete m_pScrollSprite;
-		m_pScrollSprite = NULL;
+		m_pScrollSprite = nullptr;
 	}
 
 	//
 	// need to de-allocate the game palette
 	//
-	assert(m_pGamePalette != NULL);
-	if (m_pGamePalette != NULL) {
+	assert(m_pGamePalette != nullptr);
+	if (m_pGamePalette != nullptr) {
 		m_pGamePalette->DeleteObject();
 		delete m_pGamePalette;
-		m_pGamePalette = NULL;
+		m_pGamePalette = nullptr;
 	}
 
-	if ((pDC = GetDC()) != NULL) {              // paint black
+	if ((pDC = GetDC()) != nullptr) {              // paint black
 
 		rMyRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 		myBrush.CreateStockObject(BLACK_BRUSH);
@@ -3703,7 +3703,7 @@ long CBFishWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -3713,7 +3713,7 @@ long CBFishWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }

@@ -38,7 +38,7 @@ namespace ArtParts {
 class COptnDlg : public CBmpDialog {
 // Construction
 public:
-	COptnDlg(CWnd* pParent = NULL, CPalette *pPalette = NULL);  // standard constructor
+	COptnDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);  // standard constructor
 	~COptnDlg();        // destructor
 	void UpdateScrollbars();
 	void ClearDialogImage(void);

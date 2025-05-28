@@ -35,7 +35,7 @@ namespace Zoom {
 extern HCURSOR			hGameCursor;
 extern CMainZoomWindow	*pMainGameWnd;
 
-CPalette	*pGamePalette = NULL;		// Palette to be used throughout the game
+CPalette	*pGamePalette = nullptr;		// Palette to be used throughout the game
 
 CRect	MainRect;							// screen area spanned by the game window
 CRect	OptionRect;							// screen area spanned by the option button
@@ -114,13 +114,13 @@ static const LPCSTR astrGames[21] = {		// set the display names for when the cur
 };
 
 int				nLastRect;		// the last gaem rect passed over
-CText			*pText = NULL;	// the game name display
+CText			*pText = nullptr;	// the game name display
 
 static	BOOL	bActiveWindow = FALSE;			// whether our window is activesho
-CBitmap			*pSplashScreen = NULL;
+CBitmap			*pSplashScreen = nullptr;
 CRect	    	rText( 0, 428, 640, 450 );
 CRect			rLeaveRect;
-CColorButton	*pReturnButton = NULL;
+CColorButton	*pReturnButton = nullptr;
 
 /*****************************************************************
  *
@@ -155,7 +155,7 @@ CColorButton	*pReturnButton = NULL;
 
 CMainZoomWindow::CMainZoomWindow( HWND hCallingWnd, BOOL bShowExit )
 {
-CDC			*pDC = NULL;						// device context for the screen
+CDC			*pDC = nullptr;						// device context for the screen
 CString		WndClass;
 BOOL		bSuccess = FALSE;
 
@@ -166,13 +166,13 @@ BeginWaitCursor();
 // this adds a bit to our app size but avoids hangs/freezes/lockups. 
 
 WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-								hGameCursor, NULL, NULL);
+								hGameCursor, nullptr, nullptr);
 
 m_hCallAppWnd = hCallingWnd;
 m_bShowExit = bShowExit;
 
 // set the seed for the random number generator
-//srand( (unsigned)time( NULL ));
+//srand( (unsigned)time( nullptr ));
 
 // load splash screen
 pDC = GetDC();									// get a device context for our window
@@ -188,11 +188,11 @@ rLeaveRect.SetRect( ( GAME_WIDTH / 2 ) - 50, 450, ( GAME_WIDTH / 2 ) + 50, 470 )
 pText = new CText( pDC, pGamePalette, &rText, JUSTIFY_CENTER );	// Set up the Text Object to show the game names
 
 ReleaseDC(pDC);									// release our window context 
-pDC = NULL;
+pDC = nullptr;
 
 // Create the window as a POPUP so that no boarders, title, or menu are present;
 // this is because the game's background art will fill the entire 640x40 area.
-Create( WndClass, "Boffo Games - ZOOM MAP", WS_POPUP, MainRect, NULL, NULL );
+Create( WndClass, "Boffo Games - ZOOM MAP", WS_POPUP, MainRect, nullptr, 0);
 
 #ifndef _DEBUG
 SetWindowPos( &wndTopMost, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
@@ -490,9 +490,9 @@ BOOL	bUpdateNeeded;
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
 			bActiveWindow = TRUE;
-			bUpdateNeeded = GetUpdateRect(NULL,FALSE);
+			bUpdateNeeded = GetUpdateRect(nullptr,FALSE);
 			if (bUpdateNeeded)
-				InvalidateRect(NULL,FALSE);
+				InvalidateRect(nullptr,FALSE);
 		}
 }
 
@@ -606,15 +606,15 @@ void CMainZoomWindow::ReleaseResources(void)
 
 	delete pText;
 
-	if ( pSplashScreen != NULL )
+	if ( pSplashScreen != nullptr )
 		delete pSplashScreen;
 		
-	if ( pGamePalette !=NULL ) {
+	if ( pGamePalette !=nullptr ) {
 		pGamePalette->DeleteObject();         // release the game color palette
 		delete pGamePalette;                    
 	}
 	
-	if ( pReturnButton != NULL )
+	if ( pReturnButton != nullptr )
 		delete pReturnButton;										// release the buttons we used
 
 	return;
@@ -654,11 +654,11 @@ void CMainZoomWindow::FlushInputEvents(void)
 MSG msg;
 
 while(TRUE) {										// find and remove all keyboard events
-	if (!PeekMessage(&msg,NULL,WM_KEYFIRST,WM_KEYLAST,PM_REMOVE))
+	if (!PeekMessage(&msg,nullptr,WM_KEYFIRST,WM_KEYLAST,PM_REMOVE))
 		break;}
 
 while(TRUE) {                                       // find and remove all mouse events
-	if (!PeekMessage(&msg,NULL,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE))
+	if (!PeekMessage(&msg,nullptr,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE))
 		break;}
 }
 

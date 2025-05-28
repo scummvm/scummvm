@@ -32,14 +32,14 @@ namespace HodjNPodj {
 namespace Beacon {
 
 static  CPalette *pSubOptionsPalette;
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
-static  CCheckButton *pAutoButton = NULL;                   // Framed check box
-static  CCheckButton *pChangeButton = NULL;                 // Framed check box
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
+static  CCheckButton *pAutoButton = nullptr;                   // Framed check box
+static  CCheckButton *pChangeButton = nullptr;                 // Framed check box
 
-CText   *m_pScoreText = NULL;
-CText   *m_pSweepsText = NULL;
-CText   *m_pSpeedText = NULL;
+CText   *m_pScoreText = nullptr;
+CText   *m_pSweepsText = nullptr;
+CText   *m_pSpeedText = nullptr;
 
 int     m_nSweepSettings[15] =  {MIN_SWEEPS, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, MAX_SWEEPS};  // 14 factors
 
@@ -60,11 +60,11 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 }
 
 COptnDlg::~COptnDlg() {
-	if (m_pScoreText != NULL)
+	if (m_pScoreText != nullptr)
 		delete m_pScoreText;
-	if (m_pSweepsText != NULL)
+	if (m_pSweepsText != nullptr)
 		delete m_pSweepsText;
-	if (m_pSpeedText != NULL)
+	if (m_pSpeedText != nullptr)
 		delete m_pSpeedText;
 
 	CBmpDialog::OnDestroy();
@@ -118,12 +118,12 @@ BOOL COptnDlg::OnInitDialog() {
 	mSpeedTable[2] =  "Hovercraft";
 
 	statRect.SetRect(LEFT_SIDE, 35, LEFT_SIDE + 185, 50);
-	if ((m_pScoreText = new CText()) != NULL) {
+	if ((m_pScoreText = new CText()) != nullptr) {
 		(*m_pScoreText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 20, LEFT_SIDE + 185, 35);
-	if ((m_pSweepsText = new CText()) != NULL) {
+	if ((m_pSweepsText = new CText()) != nullptr) {
 		(*m_pSweepsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
@@ -134,30 +134,30 @@ BOOL COptnDlg::OnInitDialog() {
 	}
 
 	statRect.SetRect(LEFT_SIDE, 70, LEFT_SIDE + 115, 88);
-	if ((m_pSpeedText = new CText()) != NULL) {
+	if ((m_pSpeedText = new CText()) != nullptr) {
 		(*m_pSpeedText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, 0);
 	m_ScrollSpeed.SetScrollPos(m_nSpeed, TRUE);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
-	if ((pAutoButton = new CCheckButton) != NULL) {                 // build a color QUIT button to let us exit
+	if ((pAutoButton = new CCheckButton) != nullptr) {                 // build a color QUIT button to let us exit
 		(*pAutoButton).SetPalette(pSubOptionsPalette);                      // set the palette to use
 		(*pAutoButton).SetControl(IDC_AUTOMATIC, this);             // tie to the dialog control
 	}
 	((CWnd *)this)->CheckDlgButton(IDC_AUTOMATIC, m_bAutomatic);         // Set the Auto option box
 
-	if ((pChangeButton = new CCheckButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pChangeButton = new CCheckButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pChangeButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
 		(*pChangeButton).SetControl(IDC_CHANGE, this);              // tie to the dialog control
 	}
@@ -359,27 +359,27 @@ void COptnDlg::OnPaint() {
 }
 
 void COptnDlg::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (pAutoButton != NULL) {                      // release the button
+	if (pAutoButton != nullptr) {                      // release the button
 		delete pAutoButton;
-		pAutoButton = NULL;
+		pAutoButton = nullptr;
 	}
 
-	if (pChangeButton != NULL) {                        // release the button
+	if (pChangeButton != nullptr) {                        // release the button
 		delete pChangeButton;
-		pChangeButton = NULL;
+		pChangeButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 } // namespace Beacon

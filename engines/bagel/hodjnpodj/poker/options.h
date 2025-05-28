@@ -39,7 +39,7 @@ private:
 
 // Construction
 public:
-//	COptions(CWnd* pParent = NULL, CPalette *pPalette = NULL);   // standard constructor
+//	COptions(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);   // standard constructor
 	COptions(CWnd* pParent, CPalette *pPalette, int iDlgId) ;
 // #include "options.inc"       // put in your own include file
 

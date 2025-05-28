@@ -166,7 +166,7 @@ const char *CItem::m_pItemSoundPath[MG_OBJ_COUNT] = {
 	".\\sound\\obj26.wav",
 	".\\sound\\obj08.wav",
 	".\\sound\\obj18.wav",
-	NULL,
+	nullptr,
 	".\\sound\\obj30.wav",
 	".\\sound\\obj13.wav",
 	".\\sound\\obj05.wav",
@@ -244,9 +244,9 @@ CItem::CItem(int nID) {
 	m_nID = nID;
 	m_nQuantity = 1;
 	m_nActionCode = ITEM_ACTION_NONE;
-	m_pNotes = NULL;
-	m_pNext = NULL;
-	m_pPrev = NULL;
+	m_pNotes = nullptr;
+	m_pNext = nullptr;
+	m_pPrev = nullptr;
 }
 
 
@@ -266,7 +266,7 @@ CItem::CItem(int nID) {
 CItem::~CItem() {
 	CNote   *pNote;
 
-	while (m_pNotes != NULL) {                      // remove all associated notes
+	while (m_pNotes != nullptr) {                      // remove all associated notes
 		pNote = m_pNotes;
 		m_pNotes = (*pNote).m_pNext;
 		delete pNote;
@@ -290,7 +290,7 @@ CItem::~CItem() {
 #ifndef FRAME_EXE
 char *CItem::GetDescription(int nID, long nQuantity) {
 	if ((nID < MG_OBJ_BASE) ||
-	        (nID >= MG_OBJ_BASE + MG_OBJ_COUNT))            // return NULL if invalid identifier
+	        (nID >= MG_OBJ_BASE + MG_OBJ_COUNT))            // return nullptr if invalid identifier
 		m_chTextBuffer[0] = '\0';
 	else {
 		if (nQuantity > 1)                              // create blurb for multiple
@@ -331,9 +331,9 @@ BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 		return (FALSE);
 
 	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);    // create the note object
-	if (pNote != NULL) {                            // ... and add it to the list
+	if (pNote != nullptr) {                            // ... and add it to the list
 		(*pNote).m_pNext = m_pNotes;                // make head of list follow us
-		if (m_pNotes != NULL)                       // have list point back at us
+		if (m_pNotes != nullptr)                       // have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
 		m_pNotes = pNote;                           // make us be new head of list
 		bSuccess = TRUE;
@@ -360,9 +360,9 @@ BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 BOOL CItem::AddNote(CNote *pNote) {
 	BOOL    bSuccess = FALSE;
 
-	if (pNote != NULL) {                            // ... and add it to the list
+	if (pNote != nullptr) {                            // ... and add it to the list
 		(*pNote).m_pNext = m_pNotes;                // make head of list follow us
-		if (m_pNotes != NULL)                       // have list point back at us
+		if (m_pNotes != nullptr)                       // have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
 		m_pNotes = pNote;                           // make us be new head of list
 		bSuccess = TRUE;

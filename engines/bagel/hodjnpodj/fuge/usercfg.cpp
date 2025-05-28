@@ -44,23 +44,23 @@ namespace Fuge {
 
 extern const char *INI_SECTION;
 
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
-static  CColorButton *pDefaultsButton = NULL;               // Defaults button on scroll
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
+static  CColorButton *pDefaultsButton = nullptr;               // Defaults button on scroll
 
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	// Inits
 	//
-	m_pScrollBar1 = NULL;
-	m_pScrollBar2 = NULL;
-	m_pScrollBar3 = NULL;
-	m_pScrollBar4 = NULL;
-	m_pTxtNumBalls = NULL;
-	m_pTxtStartLevel = NULL;
-	m_pTxtBallSpeed = NULL;
-	m_pTxtPaddleSize = NULL;
+	m_pScrollBar1 = nullptr;
+	m_pScrollBar2 = nullptr;
+	m_pScrollBar3 = nullptr;
+	m_pScrollBar4 = nullptr;
+	m_pTxtNumBalls = nullptr;
+	m_pTxtStartLevel = nullptr;
+	m_pTxtBallSpeed = nullptr;
+	m_pTxtPaddleSize = nullptr;
 
 	DoModal();
 }
@@ -145,7 +145,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 	CDC *pDC;
 
 	// can't access a null pointer
-	assert(pScroll != NULL);
+	assert(pScroll != nullptr);
 
 	if (pScroll == m_pScrollBar1) {
 
@@ -217,12 +217,12 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 
 	pScroll->SetScrollPos(nVal);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		if (pScroll == m_pScrollBar1) {
 
 			m_nNumBalls = nVal;
-			if (m_pTxtNumBalls != NULL) {
+			if (m_pTxtNumBalls != nullptr) {
 				Common::sprintf_s(buf, "Number of Balls: %d", m_nNumBalls);
 				m_pTxtNumBalls->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 			}
@@ -230,7 +230,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 		} else if (pScroll == m_pScrollBar2) {
 
 			m_nStartLevel = nVal;
-			if (m_pTxtStartLevel != NULL) {
+			if (m_pTxtStartLevel != nullptr) {
 				Common::sprintf_s(buf, "Starting Level: %d", m_nStartLevel);
 				m_pTxtStartLevel->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 			}
@@ -238,7 +238,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 		} else if (pScroll == m_pScrollBar3) {
 
 			m_nBallSpeed = nVal;
-			if (m_pTxtBallSpeed != NULL) {
+			if (m_pTxtBallSpeed != nullptr) {
 				Common::sprintf_s(buf, "Ball Speed: %d", m_nBallSpeed);
 				m_pTxtBallSpeed->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 			}
@@ -246,7 +246,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 		} else if (pScroll == m_pScrollBar4) {
 
 			m_nPaddleSize = nVal;
-			if (m_pTxtPaddleSize != NULL) {
+			if (m_pTxtPaddleSize != nullptr) {
 				Common::sprintf_s(buf, "Paddle Size: %d", m_nPaddleSize);
 				m_pTxtPaddleSize->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 			}
@@ -265,48 +265,48 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 
 	CBmpDialog::OnInitDialog();
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		tmpRect.SetRect(22, 22, 135, 35);
-		if ((m_pTxtNumBalls = new CText) != NULL) {
+		if ((m_pTxtNumBalls = new CText) != nullptr) {
 			m_pTxtNumBalls->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		tmpRect.SetRect(22, 35, 92, 53);
-		if ((m_pScrollBar1 = new CScrollBar) != NULL) {
+		if ((m_pScrollBar1 = new CScrollBar) != nullptr) {
 			m_pScrollBar1->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL1);
 			m_pScrollBar1->SetScrollRange(BALLS_MIN, BALLS_MAX, TRUE);
 		}
 
 		tmpRect.SetRect(22, 57, 135, 70);
-		if ((m_pTxtStartLevel = new CText) != NULL) {
+		if ((m_pTxtStartLevel = new CText) != nullptr) {
 			m_pTxtStartLevel->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		tmpRect.SetRect(22, 70, 92, 88);
-		if ((m_pScrollBar2 = new CScrollBar) != NULL) {
+		if ((m_pScrollBar2 = new CScrollBar) != nullptr) {
 			m_pScrollBar2->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL2);
 			m_pScrollBar2->SetScrollRange(LEVEL_MIN, LEVEL_MAX, TRUE);
 		}
 
 		tmpRect.SetRect(22, 92, 135, 105);
-		if ((m_pTxtBallSpeed = new CText) != NULL) {
+		if ((m_pTxtBallSpeed = new CText) != nullptr) {
 			m_pTxtBallSpeed->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		tmpRect.SetRect(22, 105, 92, 123);
-		if ((m_pScrollBar3 = new CScrollBar) != NULL) {
+		if ((m_pScrollBar3 = new CScrollBar) != nullptr) {
 			m_pScrollBar3->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL3);
 			m_pScrollBar3->SetScrollRange(SPEED_MIN, SPEED_MAX, TRUE);
 		}
 
 		tmpRect.SetRect(22, 127, 110, 140);
-		if ((m_pTxtPaddleSize = new CText) != NULL) {
+		if ((m_pTxtPaddleSize = new CText) != nullptr) {
 			m_pTxtPaddleSize->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 		}
 
 		tmpRect.SetRect(22, 140, 92, 158);
-		if ((m_pScrollBar4 = new CScrollBar) != NULL) {
+		if ((m_pScrollBar4 = new CScrollBar) != nullptr) {
 			m_pScrollBar4->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL4);
 			m_pScrollBar4->SetScrollRange(PSIZE_MIN, PSIZE_MAX, TRUE);
 		}
@@ -314,22 +314,22 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		ReleaseDC(pDC);
 	}
 
-	if ((pOKButton = new CColorButton) != NULL) {           // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {           // build a color QUIT button to let us exit
 		pOKButton->SetPalette(m_pPalette);                  // set the palette to use
 		pOKButton->SetControl(IDOK, this);                  // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {       // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {       // build a color QUIT button to let us exit
 		pCancelButton->SetPalette(m_pPalette);              // set the palette to use
 		pCancelButton->SetControl(IDCANCEL, this);          // tie to the dialog control
 	}
 
-	if ((pDefaultsButton = new CColorButton) != NULL) {     // build a color QUIT button to let us exit
+	if ((pDefaultsButton = new CColorButton) != nullptr) {     // build a color QUIT button to let us exit
 		pDefaultsButton->SetPalette(m_pPalette);            // set the palette to use
 		pDefaultsButton->SetControl(ID_RESET, this);        // tie to the dialog control
 	}
 
-	if ((m_pWallButton = new CCheckButton) != NULL) {
+	if ((m_pWallButton = new CCheckButton) != nullptr) {
 		m_pWallButton->SetPalette(m_pPalette);
 		m_pWallButton->SetControl(ID_WALLS, this);
 	}
@@ -353,24 +353,24 @@ VOID CUserCfgDlg::UpdateOptions(VOID) {
 	CHAR buf[40];
 	CDC *pDC;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
-		if (m_pTxtNumBalls != NULL) {
+		if (m_pTxtNumBalls != nullptr) {
 			Common::sprintf_s(buf, "Number of Balls: %d", m_nNumBalls);
 			m_pTxtNumBalls->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 		}
 
-		if (m_pTxtStartLevel != NULL) {
+		if (m_pTxtStartLevel != nullptr) {
 			Common::sprintf_s(buf, "Starting Level: %d", m_nStartLevel);
 			m_pTxtStartLevel->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 		}
 
-		if (m_pTxtBallSpeed != NULL) {
+		if (m_pTxtBallSpeed != nullptr) {
 			Common::sprintf_s(buf, "Ball Speed: %d", m_nBallSpeed);
 			m_pTxtBallSpeed->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 		}
 
-		if (m_pTxtPaddleSize != NULL) {
+		if (m_pTxtPaddleSize != nullptr) {
 			Common::sprintf_s(buf, "Paddle Size: %d", m_nPaddleSize);
 			m_pTxtPaddleSize->DisplayString(pDC, buf, 14, TEXT_BOLD, RGB(0, 0, 0));
 		}
@@ -390,72 +390,72 @@ void CUserCfgDlg::OnClose() {
 		SaveIniSettings();
 	}
 
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (pDefaultsButton != NULL) {                    // release the button
+	if (pDefaultsButton != nullptr) {                    // release the button
 		delete pDefaultsButton;
-		pDefaultsButton = NULL;
+		pDefaultsButton = nullptr;
 	}
 
-	assert(m_pTxtPaddleSize != NULL);
-	if (m_pTxtPaddleSize != NULL) {
+	assert(m_pTxtPaddleSize != nullptr);
+	if (m_pTxtPaddleSize != nullptr) {
 		delete m_pTxtPaddleSize;
-		m_pTxtPaddleSize = NULL;
+		m_pTxtPaddleSize = nullptr;
 	}
 
-	assert(m_pTxtBallSpeed != NULL);
-	if (m_pTxtBallSpeed != NULL) {
+	assert(m_pTxtBallSpeed != nullptr);
+	if (m_pTxtBallSpeed != nullptr) {
 		delete m_pTxtBallSpeed;
-		m_pTxtBallSpeed = NULL;
+		m_pTxtBallSpeed = nullptr;
 	}
 
-	assert(m_pTxtStartLevel != NULL);
-	if (m_pTxtStartLevel != NULL) {
+	assert(m_pTxtStartLevel != nullptr);
+	if (m_pTxtStartLevel != nullptr) {
 		delete m_pTxtStartLevel;
-		m_pTxtStartLevel = NULL;
+		m_pTxtStartLevel = nullptr;
 	}
 
-	assert(m_pTxtNumBalls != NULL);
-	if (m_pTxtNumBalls != NULL) {
+	assert(m_pTxtNumBalls != nullptr);
+	if (m_pTxtNumBalls != nullptr) {
 		delete m_pTxtNumBalls;
-		m_pTxtNumBalls = NULL;
+		m_pTxtNumBalls = nullptr;
 	}
 
 	//
 	// de-allocate the scroll bars
 	//
-	assert(m_pScrollBar4 != NULL);
-	if (m_pScrollBar4 != NULL) {
+	assert(m_pScrollBar4 != nullptr);
+	if (m_pScrollBar4 != nullptr) {
 		delete m_pScrollBar4;
-		m_pScrollBar4 = NULL;
+		m_pScrollBar4 = nullptr;
 	}
-	assert(m_pScrollBar3 != NULL);
-	if (m_pScrollBar3 != NULL) {
+	assert(m_pScrollBar3 != nullptr);
+	if (m_pScrollBar3 != nullptr) {
 		delete m_pScrollBar3;
-		m_pScrollBar3 = NULL;
+		m_pScrollBar3 = nullptr;
 	}
-	assert(m_pScrollBar2 != NULL);
-	if (m_pScrollBar2 != NULL) {
+	assert(m_pScrollBar2 != nullptr);
+	if (m_pScrollBar2 != nullptr) {
 		delete m_pScrollBar2;
-		m_pScrollBar2 = NULL;
+		m_pScrollBar2 = nullptr;
 	}
-	assert(m_pScrollBar1 != NULL);
-	if (m_pScrollBar1 != NULL) {
+	assert(m_pScrollBar1 != nullptr);
+	if (m_pScrollBar1 != nullptr) {
 		delete m_pScrollBar1;
-		m_pScrollBar1 = NULL;
+		m_pScrollBar1 = nullptr;
 	}
 
-	if (m_pWallButton != NULL) {
+	if (m_pWallButton != nullptr) {
 		delete m_pWallButton;
-		m_pWallButton = NULL;
+		m_pWallButton = nullptr;
 	}
 
 	ClearDialogImage();
@@ -463,22 +463,22 @@ void CUserCfgDlg::OnClose() {
 }
 
 void CUserCfgDlg::ClearDialogImage(void) {
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (pDefaultsButton != NULL) {                    // release the button
+	if (pDefaultsButton != nullptr) {                    // release the button
 		delete pDefaultsButton;
-		pDefaultsButton = NULL;
+		pDefaultsButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 

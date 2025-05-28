@@ -30,11 +30,11 @@ namespace Poker {
 
 static CPalette *pSetAmountPalette;
 static CRect        rectDisplayAmount;
-CText           *ptxtAmount = NULL;
+CText           *ptxtAmount = nullptr;
 long            lCAmount;
 
-static CColorButton    *pAmountButton = NULL;
-static CColorButton    *pCancelButton = NULL;
+static CColorButton    *pAmountButton = nullptr;
+static CColorButton    *pCancelButton = nullptr;
 
 /*****************************************************************
  *
@@ -157,13 +157,13 @@ BOOL CSetAmountDlg::OnInitDialog(void) {
 	CBmpDialog::OnInitDialog();
 
 	pAmountButton = new CColorButton();
-	ASSERT(pAmountButton != NULL);
+	ASSERT(pAmountButton != nullptr);
 	pAmountButton->SetPalette(pSetAmountPalette);
 	bSuccess = pAmountButton->SetControl(IDC_SETSTARTAMOUNT, this);
 	ASSERT(bSuccess);
 
 	pCancelButton = new CColorButton();
-	ASSERT(pCancelButton != NULL);
+	ASSERT(pCancelButton != nullptr);
 	pCancelButton->SetPalette(pSetAmountPalette);
 	bSuccess = pCancelButton->SetControl(ID_CANCEL, this);
 	ASSERT(bSuccess);
@@ -240,9 +240,9 @@ void CSetAmountDlg::OnPaint(void) {
 	CString     strHowMuch2 = "like (0 - 1000)?";
 	char        cDisplay[40];
 	int         nOldBkMode;
-	CText       *ptxtCAmount = NULL;
+	CText       *ptxtCAmount = nullptr;
 	CRect       rectCAmount(42, 102, 200, 117);
-	CScrollBar  *pSetAmountSB = NULL;
+	CScrollBar  *pSetAmountSB = nullptr;
 	int         nScrollPos = 0;
 
 //  call COptions onpaint, to paint the background
@@ -302,8 +302,8 @@ void CSetAmountDlg::OnPaint(void) {
 	pSetAmountSB->SetScrollRange(AMOUNTMIN, AMOUNTMAX, TRUE);
 	pSetAmountSB->SetScrollPos(nScrollPos, TRUE);
 
-	if (pSetAmountSB != NULL) {
-		pSetAmountSB = NULL;
+	if (pSetAmountSB != nullptr) {
+		pSetAmountSB = nullptr;
 	}
 
 	ReleaseDC(pDC);
@@ -423,17 +423,17 @@ BOOL CSetAmountDlg::OnEraseBkgnd(CDC *pDC) {
 
 void CSetAmountDlg::ClearDialogImage(void) {
 
-	if (pAmountButton != NULL) {
+	if (pAmountButton != nullptr) {
 		delete pAmountButton;
-		pAmountButton = NULL;
+		pAmountButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {
+	if (pCancelButton != nullptr) {
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 
 	return;
 }

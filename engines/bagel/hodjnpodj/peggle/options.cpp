@@ -40,7 +40,7 @@ extern  LPGAMESTRUCT    pGameInfo;
 static  CRect       OptionsRect,
         OkayRect;
 
-static  CFont       *pFont = NULL;
+static  CFont       *pFont = nullptr;
 static  int         tabstop = 20;
 
 extern CPalette *pOptionsPalette;
@@ -58,9 +58,9 @@ void COptions::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 void COptions::OnClickedRules() {
-	CWnd    *pControl = NULL;
+	CWnd    *pControl = nullptr;
 
-	CRules  RulesDlg(this, RULESSPEC, pOptionsPalette, ((*pGameInfo).bSoundEffectsEnabled ? NARRATIVESPEC : NULL));
+	CRules  RulesDlg(this, RULESSPEC, pOptionsPalette, ((*pGameInfo).bSoundEffectsEnabled ? NARRATIVESPEC : nullptr));
 	(void) RulesDlg.DoModal();                      // invoke the help dialog box
 	SetDefID(IDC_OPTIONS_OPTIONS);
 	SetDefID(IDC_OPTIONS_RETURN);
@@ -77,7 +77,7 @@ void COptions::OnClickedNewgame() {
 
 
 void COptions::OnClickedOptions() {
-	CWnd    *pControl = NULL;
+	CWnd    *pControl = nullptr;
 
 	COptnDlg OptionsDlg(this, pOptionsPalette);      // Call Specific Game
 
@@ -94,11 +94,11 @@ void COptions::OnClickedOptions() {
 
 
 void COptions::OnClickedAudio() {
-	CWnd    *pControl = NULL;
+	CWnd    *pControl = nullptr;
 
 	CAudioCfgDlg dlgAudioCfg(this, pOptionsPalette, IDD_AUDIOCFG);
 
-	if (pGameInfo != NULL) {
+	if (pGameInfo != nullptr) {
 		pGameInfo->bMusicEnabled = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
 		pGameInfo->bSoundEffectsEnabled = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
 	}

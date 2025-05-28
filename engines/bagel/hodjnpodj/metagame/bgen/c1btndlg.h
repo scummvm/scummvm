@@ -39,7 +39,7 @@ public:
 
 	// standard constructor
 	C1ButtonDialog(CWnd *, CPalette *, const char *, const char *,
-		const char *pszText2 = NULL, const char *pszText3 = NULL);
+		const char *pszText2 = nullptr, const char *pszText3 = nullptr);
 
 private:
 	void ClearDialogImage(void);

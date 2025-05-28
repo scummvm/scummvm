@@ -65,7 +65,7 @@ class CEncounterTable {
 public:
 	int     m_iSectorCode ;         // MG_SECTOR_xxxx: sector code
 	const char *m_lpszWavEFile;        // name of 8-bit sound file (*m_pItemSoundPath)
-	int     m_Actions[MAX_ACTIONS]; // string of action codes, set to NULL for Colour Narrations
+	int     m_Actions[MAX_ACTIONS]; // string of action codes, set to nullptr for Colour Narrations
 	const char *m_lpszText ;           // text of booby trap
 } ;
 

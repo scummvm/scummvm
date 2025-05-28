@@ -39,27 +39,27 @@ END_MESSAGE_MAP()
 // CDibDoc construction/destruction
 
 CDibDoc::CDibDoc() {
-	m_hDIB = NULL;
-	m_palDIB = NULL;
+	m_hDIB = nullptr;
+	m_palDIB = nullptr;
 	m_sizeDoc = CSize(1, 1);     // dummy value to make CScrollView happy
 }
 
 CDibDoc::~CDibDoc() {
-	if (m_hDIB != NULL) {
+	if (m_hDIB != nullptr) {
 		GlobalFree((HGLOBAL)m_hDIB);
 	}
-	if (m_palDIB != NULL) {
+	if (m_palDIB != nullptr) {
 		(*m_palDIB).DeleteObject();
 		delete m_palDIB;
 	}
 }
 
 void CDibDoc::InitDIBData() {
-	if (m_palDIB != NULL) {
+	if (m_palDIB != nullptr) {
 		delete m_palDIB;
-		m_palDIB = NULL;
+		m_palDIB = nullptr;
 	}
-	if (m_hDIB == NULL) {
+	if (m_hDIB == nullptr) {
 		return;
 	}
 	// Set up document size
@@ -68,7 +68,7 @@ void CDibDoc::InitDIBData() {
 	if (DIBWidth(lpDIB) > INT_MAX || DIBHeight(lpDIB) > INT_MAX) {
 		GlobalUnlock((HGLOBAL)m_hDIB);
 		GlobalFree((HGLOBAL)m_hDIB);
-		m_hDIB = NULL;
+		m_hDIB = nullptr;
 		return;
 	}
 
@@ -77,10 +77,10 @@ void CDibDoc::InitDIBData() {
 	GlobalUnlock((HGLOBAL)m_hDIB);
 	// Create copy of palette
 	m_palDIB = new CPalette;
-	if (m_palDIB == NULL) {
+	if (m_palDIB == nullptr) {
 		// we must be really low on memory
 		GlobalFree((HGLOBAL)m_hDIB);
-		m_hDIB = NULL;
+		m_hDIB = nullptr;
 		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
 		return;
 	}
@@ -88,7 +88,7 @@ void CDibDoc::InitDIBData() {
 	if (!CreateDIBPalette(m_hDIB, m_palDIB)) {
 		// DIB may not have a palette
 		delete m_palDIB;
-		m_palDIB = NULL;
+		m_palDIB = nullptr;
 		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
 		return;
 	}
@@ -102,10 +102,10 @@ BOOL CDibDoc::OpenResourceDocument(const int nResID) {
 
 	Common::sprintf_s(chResID, "#%d", nResID);
 	m_hDIB = ReadDIBResource(chResID);
-	if (m_hDIB != NULL)
+	if (m_hDIB != nullptr)
 		InitDIBData();
 
-	if (m_hDIB == NULL) {
+	if (m_hDIB == nullptr) {
 		char    buf[128];
 
 		Common::sprintf_s(buf, "Unable to load artwork resource: %s", chResID);
@@ -122,10 +122,10 @@ BOOL CDibDoc::OpenResourceDocument(const char *pszPathName) {
 	DeleteContents();
 
 	m_hDIB = ReadDIBResource(pszPathName);
-	if (m_hDIB != NULL)
+	if (m_hDIB != nullptr)
 		InitDIBData();
 
-	if (m_hDIB == NULL) {
+	if (m_hDIB == nullptr) {
 		char    buf[128];
 
 		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
@@ -143,7 +143,7 @@ CPalette *CDibDoc::DetachPalette() {
 	CPalette *pMyPalette;
 
 	pMyPalette = m_palDIB;
-	m_palDIB = NULL;
+	m_palDIB = nullptr;
 	return (pMyPalette);
 }
 
@@ -170,7 +170,7 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 	TRY {
 		m_hDIB = ReadDIBFile(file);
 
-		if (m_hDIB == NULL) {
+		if (m_hDIB == nullptr) {
 			char    buf[128];
 
 			Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
@@ -182,7 +182,7 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 		//      EndWaitCursor();
 		ReportSaveLoadException(pszPathName, eLoad,
 		                        FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
-		m_hDIB = NULL;
+		m_hDIB = nullptr;
 		return FALSE;
 	}
 	END_CATCH
@@ -190,7 +190,7 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 	InitDIBData();
 	//  EndWaitCursor();
 
-	if (m_hDIB == NULL) {
+	if (m_hDIB == nullptr) {
 		char    buf[128];
 
 		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
@@ -238,7 +238,7 @@ BOOL CDibDoc::SaveDocument(const char *pszPathName) {
 }
 
 void CDibDoc::ReplaceHDIB(HDIB hDIB) {
-	if (m_hDIB != NULL) {
+	if (m_hDIB != nullptr) {
 		GlobalFree((HGLOBAL)m_hDIB);
 	}
 	m_hDIB = hDIB;

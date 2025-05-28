@@ -35,8 +35,8 @@ namespace Zoom {
 HINSTANCE	hDLLInst;
 HINSTANCE 	hExeInst;
 
-CMainZoomWindow	*pMainGameWnd = NULL;	// pointer to the poker's main window 
-CPalette		*pTestPalette = NULL;
+CMainZoomWindow	*pMainGameWnd = nullptr;	// pointer to the poker's main window 
+CPalette		*pTestPalette = nullptr;
 HCURSOR			hGameCursor;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -45,8 +45,8 @@ HCURSOR			hGameCursor;
 HWND RunZoomMap( HWND hParentWnd, BOOL bShowExit ) {
 
 // if the pointer has garbage in it, the clean it out
-	if ( pMainGameWnd != NULL ) {
-		pMainGameWnd = NULL;
+	if ( pMainGameWnd != nullptr ) {
+		pMainGameWnd = nullptr;
 	}
 // create a my poker window and show it
 	pMainGameWnd = new CMainZoomWindow( hParentWnd, bShowExit );

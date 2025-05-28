@@ -421,10 +421,10 @@ public:
 /*============================================================================*/
 
 // Creation information structure
-// All fields are optional and may be NULL
+// All fields are optional and may be nullptr
 struct CCreateContext {
 	// for creating new views
-	CRuntimeClass *m_pNewViewClass; // runtime class of view to create or NULL
+	CRuntimeClass *m_pNewViewClass; // runtime class of view to create or nullptr
 	CDocument *m_pCurrentDoc;
 
 	// for creating MDI children (CMDIChildWnd::LoadFrame)
@@ -992,7 +992,7 @@ public:
 	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	LRESULT SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 
-	BOOL ValidateRect(LPCRECT lpRect = NULL);
+	BOOL ValidateRect(LPCRECT lpRect = nullptr);
 	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
 	void GetWindowRect(LPRECT lpRect) const;
 	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
@@ -1014,7 +1014,7 @@ public:
 	                           WPARAM wParam = 0, LPARAM lParam = 0) const;
 
 	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-	                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
+	                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
 	BOOL KillTimer(UINT_PTR nIDEvent);
 
 	BOOL GetScrollRange(int nBar,
@@ -1039,8 +1039,8 @@ protected:
 		UINT nIDLast,
 		UINT nIDLeftOver,
 		UINT nFlag = reposDefault,
-		LPRECT lpRectParam = NULL,
-		LPCRECT lpRectClient = NULL,
+		LPRECT lpRectParam = nullptr,
+		LPCRECT lpRectClient = nullptr,
 		BOOL bStretch = TRUE
 	);
 
@@ -1065,9 +1065,9 @@ protected:
 public:
 	CDialog();
 	explicit CDialog(LPCSTR lpszTemplateName,
-	                 CWnd *pParentWnd = NULL);
+	                 CWnd *pParentWnd = nullptr);
 	explicit CDialog(UINT nIDTemplate,
-	                 CWnd *pParentWnd = NULL);
+	                 CWnd *pParentWnd = nullptr);
 	~CDialog() override {}
 	BOOL Create(LPCSTR lpszTemplateName,
 		CWnd *pParentWnd = nullptr);

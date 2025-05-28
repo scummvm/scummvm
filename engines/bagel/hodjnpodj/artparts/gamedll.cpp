@@ -50,7 +50,7 @@ HWND FAR PASCAL RunArtp(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	ghParentWnd = hParentWnd;
 
-	if ((pMain = new CMainWindow) != NULL) {
+	if ((pMain = new CMainWindow) != nullptr) {
 
 //        pMain->ShowWindow(SW_SHOWNORMAL);
 

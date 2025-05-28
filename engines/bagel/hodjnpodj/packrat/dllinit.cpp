@@ -30,8 +30,8 @@ namespace Packrat {
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
-CMainPackRatWindow  *pcwndPackRat = NULL;   // pointer to the poker's main window
-CPalette            *pTestPalette = NULL;
+CMainPackRatWindow  *pcwndPackRat = nullptr;   // pointer to the poker's main window
+CPalette            *pTestPalette = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
@@ -66,8 +66,8 @@ CPalette            *pTestPalette = NULL;
 HWND FAR PASCAL RunPackRat(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 // if the pointer has garbage in it, the clean it out
-	if (pcwndPackRat != NULL) {
-		pcwndPackRat = NULL;
+	if (pcwndPackRat != nullptr) {
+		pcwndPackRat = nullptr;
 	}
 
 // create a my poker window and show it

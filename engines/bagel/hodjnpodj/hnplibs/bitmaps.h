@@ -35,7 +35,7 @@ namespace HodjNPodj {
  * @param pPalette	Pointer to color palette to be used for the bitmap
  * @param x,y		Upper left hand corner of bitmap to fetch
  * @param dx,dy		Size of rectangular area to retrive
- * @return		Pointer to bitmap object or NULL
+ * @return		Pointer to bitmap object or nullptr
  */
 extern CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int y, const int dx, const int dy);
 
@@ -44,7 +44,7 @@ extern CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, con
  * @param pDC			Pointer to device context to be used for display
  * @param pPalette		Address of pointer where to store palette from the DIB
  * @param pszPathName	Pointer to path string for disk based DIB file
- * @return		Pointer to bitmap object or NULL
+ * @return		Pointer to bitmap object or nullptr
  */
 extern CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName);
 
@@ -53,7 +53,7 @@ extern CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathNa
  * @param pDC			Pointer to device context to be used for display
  * @param pPalette		Address of pointer where to store palette from the DIB
  * @param pszName		Resource string name
- * @return		Pointer to bitmap object or NULL
+ * @return		Pointer to bitmap object or nullptr
  */
 extern CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName);
 
@@ -62,7 +62,7 @@ extern CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *p
  * @param pDC			Pointer to device context to be used for display
  * @param pPalette		Address of pointer where to store palette from the DIB
  * @param nResID		Resource Id
- * @return		Pointer to bitmap object or NULL
+ * @return		Pointer to bitmap object or nullptr
  */
 extern CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID);
 
@@ -73,7 +73,7 @@ extern CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nRe
  * @param pPalette		Pointer to color palette to be used for the bitmap
  * @param x,y			Upper left hand corner of bitmap to fetch
  * @param dx,dy			Size of rectangular area to retrive
- * @return	Pointer to bitmap object or NULL
+ * @return	Pointer to bitmap object or nullptr
  */
 extern CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int x, const int y, const int dx, const int dy);
 

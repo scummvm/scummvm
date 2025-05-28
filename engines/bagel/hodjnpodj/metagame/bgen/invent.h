@@ -35,7 +35,7 @@ class CInventory : public CObject {
 
 // Constructors
 public:
-	CInventory(const char *lpsTitle = NULL);
+	CInventory(const char *lpsTitle = nullptr);
 
 // Destructors
 public:

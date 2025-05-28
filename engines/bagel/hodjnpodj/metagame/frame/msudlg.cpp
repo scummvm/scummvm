@@ -31,23 +31,23 @@ namespace Frame {
 
 static CPalette     *pMainPalette;
 
-static CColorButton	*pPlayButton = NULL;
-static CColorButton	*pCancelButton = NULL;
+static CColorButton	*pPlayButton = nullptr;
+static CColorButton	*pCancelButton = nullptr;
 
-static CRadioButton *pHSHButton = NULL;	// Hodj Skill High Radio Button
-static CRadioButton *pHSMButton = NULL;	// Hodj Skill Medium Radio Button
-static CRadioButton *pHSLButton = NULL;	// Hodj Skill Low Radio Button
+static CRadioButton *pHSHButton = nullptr;	// Hodj Skill High Radio Button
+static CRadioButton *pHSMButton = nullptr;	// Hodj Skill Medium Radio Button
+static CRadioButton *pHSLButton = nullptr;	// Hodj Skill Low Radio Button
 
-static CRadioButton *pPSHButton = NULL;	// Podj Skill High Radio Button
-static CRadioButton *pPSMButton = NULL;	// Podj Skill Medium Radio Button
-static CRadioButton *pPSLButton = NULL;	// Podj Skill Low Radio Button
+static CRadioButton *pPSHButton = nullptr;	// Podj Skill High Radio Button
+static CRadioButton *pPSMButton = nullptr;	// Podj Skill Medium Radio Button
+static CRadioButton *pPSLButton = nullptr;	// Podj Skill Low Radio Button
 
-static CRadioButton *pGTLButton = NULL;	// Game Time Long Radio Button
-static CRadioButton *pGTMButton = NULL;	// Game Time Medium Radio Button
-static CRadioButton *pGTSButton = NULL;	// Game Time Short Radio Button
+static CRadioButton *pGTLButton = nullptr;	// Game Time Long Radio Button
+static CRadioButton *pGTMButton = nullptr;	// Game Time Medium Radio Button
+static CRadioButton *pGTSButton = nullptr;	// Game Time Short Radio Button
 
-static CRadioButton *pPCButton = NULL;	// Podj is Computer High Radio Button
-static CRadioButton *pPHButton = NULL;	// Podj is Human High Radio Button
+static CRadioButton *pPCButton = nullptr;	// Podj is Computer High Radio Button
+static CRadioButton *pPHButton = nullptr;	// Podj is Human High Radio Button
 
 /*****************************************************************
  *
@@ -79,7 +79,7 @@ static CRadioButton *pPHButton = NULL;	// Podj is Human High Radio Button
 CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette ) :  CBmpDialog(pParent, pPalette, IDD_META_SETUP, ".\\ART\\MLSCROLL.BMP",-1,-1,FALSE)
 {
         pMainPalette = pPalette;                  
-		m_lpMetaGameStruct = NULL;
+		m_lpMetaGameStruct = nullptr;
 		m_nHodjSkillLevel = SKILLLEVEL_LOW;
 		m_nPodjSkillLevel = SKILLLEVEL_LOW;
 		m_nGameTime = MEDIUM_GAME;
@@ -268,61 +268,61 @@ void CMetaSetupDlg::OnOK(void)
 void CMetaSetupDlg::ClearDialogImage(void)
 {
 /*
-	if ( pPlayButton != NULL )
+	if ( pPlayButton != nullptr )
 		delete pPlayButton;
 		
-	if ( pCancelButton != NULL )
+	if ( pCancelButton != nullptr )
 		delete pCancelButton;
 
-	if ( pHSHButton != NULL )
+	if ( pHSHButton != nullptr )
 		delete pHSHButton;
 		
-	if ( pHSMButton != NULL )
+	if ( pHSMButton != nullptr )
 		delete pHSMButton;
 		
-	if ( pHSLButton != NULL )
+	if ( pHSLButton != nullptr )
 		delete pHSLButton;
 		
-	if ( pPSHButton != NULL )
+	if ( pPSHButton != nullptr )
 		delete pPSHButton;
 		
-	if ( pPSMButton != NULL )
+	if ( pPSMButton != nullptr )
 		delete pPSMButton;
 		
-	if ( pPSLButton != NULL )
+	if ( pPSLButton != nullptr )
 		delete pPSLButton;
 
-	if ( pGTLButton != NULL )
+	if ( pGTLButton != nullptr )
 		delete pGTLButton;
 		
-	if ( pGTMButton != NULL )
+	if ( pGTMButton != nullptr )
 		delete pGTMButton;
 		
-	if ( pGTSButton != NULL )
+	if ( pGTSButton != nullptr )
 		delete pGTSButton;
 
-	if ( pPCButton != NULL )
+	if ( pPCButton != nullptr )
 		delete pPCButton;
 		
-	if ( pPHButton != NULL )
+	if ( pPHButton != nullptr )
 		delete pPHButton;
 
-    pPlayButton = NULL;
-    pCancelButton = NULL;
+    pPlayButton = nullptr;
+    pCancelButton = nullptr;
 
-	pHSHButton = NULL;
-	pHSMButton = NULL;
-	pHSLButton = NULL;
-	pPSHButton = NULL;
-	pPSMButton = NULL;
-	pPSLButton = NULL;
-	pGTLButton = NULL;
-	pGTMButton = NULL;
-	pGTSButton = NULL;
-	pPCButton = NULL;
-	pPHButton = NULL;
+	pHSHButton = nullptr;
+	pHSMButton = nullptr;
+	pHSLButton = nullptr;
+	pPSHButton = nullptr;
+	pPSMButton = nullptr;
+	pPSLButton = nullptr;
+	pGTLButton = nullptr;
+	pGTMButton = nullptr;
+	pGTSButton = nullptr;
+	pPCButton = nullptr;
+	pPHButton = nullptr;
 
-    ValidateRect(NULL);
+    ValidateRect(nullptr);
 */
 }
 
@@ -368,79 +368,79 @@ BOOL	bSuccess;
     CBmpDialog::OnInitDialog();
 
 	pPlayButton = new CColorButton();
-	ASSERT( pPlayButton != NULL );
+	ASSERT( pPlayButton != nullptr );
 	pPlayButton->SetPalette( pMainPalette );
 	bSuccess = pPlayButton->SetControl( IDC_PLAY, this );
 	ASSERT( bSuccess );
 	
 	pCancelButton = new CColorButton();
-	ASSERT( pCancelButton != NULL );
+	ASSERT( pCancelButton != nullptr );
 	pCancelButton->SetPalette( pMainPalette );
 	bSuccess = pCancelButton->SetControl( IDC_CANCEL_PLAY, this );
 	ASSERT( bSuccess );
 	
 	pHSHButton = new CRadioButton();
-	ASSERT( pHSHButton != NULL );
+	ASSERT( pHSHButton != nullptr );
 	pHSHButton->SetPalette( pMainPalette );
 	bSuccess = pHSHButton->SetControl( IDC_HODJ_SKILL_HARD, this );
 	ASSERT( bSuccess );
 	
 	pHSMButton = new CRadioButton();
-	ASSERT( pHSMButton != NULL );
+	ASSERT( pHSMButton != nullptr );
 	pHSMButton->SetPalette( pMainPalette );
 	bSuccess = pHSMButton->SetControl( IDC_HODJ_SKILL_MEDIUM, this );
 	ASSERT( bSuccess );
 	
 	pHSLButton = new CRadioButton();
-	ASSERT( pHSLButton != NULL );
+	ASSERT( pHSLButton != nullptr );
 	pHSLButton->SetPalette( pMainPalette );
 	bSuccess = pHSLButton->SetControl( IDC_HODJ_SKILL_EASY, this );
 	ASSERT( bSuccess );
 
 	pPSHButton = new CRadioButton();
-	ASSERT( pPSHButton != NULL );
+	ASSERT( pPSHButton != nullptr );
 	pPSHButton->SetPalette( pMainPalette );
 	bSuccess = pPSHButton->SetControl( IDC_PODJ_SKILL_HARD, this );
 	ASSERT( bSuccess );
 
 	pPSMButton = new CRadioButton();
-	ASSERT( pPSMButton != NULL );
+	ASSERT( pPSMButton != nullptr );
 	pPSMButton->SetPalette( pMainPalette );
 	bSuccess = pPSMButton->SetControl( IDC_PODJ_SKILL_MEDIUM, this );
 	ASSERT( bSuccess );
 
 	pPSLButton = new CRadioButton();
-	ASSERT( pPSLButton != NULL );
+	ASSERT( pPSLButton != nullptr );
 	pPSLButton->SetPalette( pMainPalette );
 	bSuccess = pPSLButton->SetControl( IDC_PODJ_SKILL_EASY, this );
 	ASSERT( bSuccess );
 
 	pGTLButton = new CRadioButton();
-	ASSERT( pGTLButton != NULL );
+	ASSERT( pGTLButton != nullptr );
 	pGTLButton->SetPalette( pMainPalette );
 	bSuccess = pGTLButton->SetControl( IDC_GAMETIME_LONG, this );
 	ASSERT( bSuccess );
 
 	pGTMButton = new CRadioButton();
-	ASSERT( pGTMButton != NULL );
+	ASSERT( pGTMButton != nullptr );
 	pGTMButton->SetPalette( pMainPalette );
 	bSuccess = pGTMButton->SetControl( IDC_GAMETIME_MEDIUM, this );
 	ASSERT( bSuccess );
 
 	pGTSButton = new CRadioButton();
-	ASSERT( pGTSButton != NULL );
+	ASSERT( pGTSButton != nullptr );
 	pGTSButton->SetPalette( pMainPalette );
 	bSuccess = pGTSButton->SetControl( IDC_GAMETIME_SHORT, this );
 	ASSERT( bSuccess );
 
 	pPCButton = new CRadioButton();
-	ASSERT( pPCButton != NULL );
+	ASSERT( pPCButton != nullptr );
 	pPCButton->SetPalette( pMainPalette );
 	bSuccess = pPCButton->SetControl( IDC_PODJ_COMPUTER, this );
 	ASSERT( bSuccess );
 
 	pPHButton = new CRadioButton();
-	ASSERT( pPHButton != NULL );
+	ASSERT( pPHButton != nullptr );
 	pPHButton->SetPalette( pMainPalette );
 	bSuccess = pPHButton->SetControl( IDC_PODJ_HUMAN, this );
 	ASSERT( bSuccess );
@@ -555,43 +555,43 @@ void CMetaSetupDlg::OnPaint(void)
 
 void CMetaSetupDlg::OnDestroy()
 {
-	if ( pPlayButton != NULL )
+	if ( pPlayButton != nullptr )
 		delete pPlayButton;
 		
-	if ( pCancelButton != NULL )
+	if ( pCancelButton != nullptr )
 		delete pCancelButton;
 		
-	if ( pHSHButton != NULL )
+	if ( pHSHButton != nullptr )
 		delete pHSHButton;
 		
-	if ( pHSMButton != NULL )
+	if ( pHSMButton != nullptr )
 		delete pHSMButton;
 		
-	if ( pHSLButton != NULL )
+	if ( pHSLButton != nullptr )
 		delete pHSLButton;
 		
-	if ( pPSHButton != NULL )
+	if ( pPSHButton != nullptr )
 		delete pPSHButton;
 		
-	if ( pPSMButton != NULL )
+	if ( pPSMButton != nullptr )
 		delete pPSMButton;
 		
-	if ( pPSLButton != NULL )
+	if ( pPSLButton != nullptr )
 		delete pPSLButton;
 
-	if ( pGTLButton != NULL )
+	if ( pGTLButton != nullptr )
 		delete pGTLButton;
 		
-	if ( pGTMButton != NULL )
+	if ( pGTMButton != nullptr )
 		delete pGTMButton;
 		
-	if ( pGTSButton != NULL )
+	if ( pGTSButton != nullptr )
 		delete pGTSButton;
 
-	if ( pPCButton != NULL )
+	if ( pPCButton != nullptr )
 		delete pPCButton;
 		
-	if ( pPHButton != NULL )
+	if ( pPHButton != nullptr )
 		delete pPHButton;
 		
     CBmpDialog::OnDestroy();

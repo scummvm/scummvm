@@ -54,7 +54,7 @@ public:     // functions
 		return (m_pBottomCard);
 	}
 	BOOL    IsEmpty() {
-		return (BOOL)(m_pTopCard == NULL);
+		return (BOOL)(m_pTopCard == nullptr);
 	}
 	int     GetID() {
 		return (m_nID);

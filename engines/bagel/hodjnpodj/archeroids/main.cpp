@@ -284,37 +284,37 @@ CMainWindow::CMainWindow() {
 
 	// Initialize data
 	//
-	m_pHayList = m_pBadGuyList = NULL;
-	m_pBadArrowList = m_pGoodArrowList = NULL;
-	m_pScrollSprite = NULL;
-	m_pGamePalette = NULL;
-	m_pFXList = NULL;
-	m_pHodj = NULL;
+	m_pHayList = m_pBadGuyList = nullptr;
+	m_pBadArrowList = m_pGoodArrowList = nullptr;
+	m_pScrollSprite = nullptr;
+	m_pGamePalette = nullptr;
+	m_pFXList = nullptr;
+	m_pHodj = nullptr;
 	m_bTimerActive = FALSE;
 	m_bGameActive = FALSE;
 	m_bJoyActive = FALSE;
 	m_bMoveMode = FALSE;
 	m_bInMenu = FALSE;
-	m_pMasterBadArrow = NULL;
-	m_pMasterGoodArrow = NULL;
-	m_pMasterBurn = NULL;
-	m_pMasterBadWalk = NULL;
-	m_pMasterBadShoot = NULL;
-	m_pMasterBadDie = NULL;
-	m_pMasterGoodWalk = NULL;
-	m_pMasterGoodShoot = NULL;
-	m_pMasterGoodDie = NULL;
-	m_pMasterHeart = NULL;
+	m_pMasterBadArrow = nullptr;
+	m_pMasterGoodArrow = nullptr;
+	m_pMasterBurn = nullptr;
+	m_pMasterBadWalk = nullptr;
+	m_pMasterBadShoot = nullptr;
+	m_pMasterBadDie = nullptr;
+	m_pMasterGoodWalk = nullptr;
+	m_pMasterGoodShoot = nullptr;
+	m_pMasterGoodDie = nullptr;
+	m_pMasterHeart = nullptr;
 
-	m_pSoundTrack = NULL;
-	m_pBadDieSound = NULL;
-	m_pBoltSound = NULL;
-	m_pArrowSound = NULL;
-	m_pBurnSound = NULL;
-	m_hBadDieRes = NULL;
-	m_hBoltRes = NULL;
-	m_hArrowRes = NULL;
-	m_hBurnRes = NULL;
+	m_pSoundTrack = nullptr;
+	m_pBadDieSound = nullptr;
+	m_pBoltSound = nullptr;
+	m_pArrowSound = nullptr;
+	m_pBurnSound = nullptr;
+	m_hBadDieRes = nullptr;
+	m_hBoltRes = nullptr;
+	m_hArrowRes = nullptr;
+	m_hBurnRes = nullptr;
 
 	// make sure score is initially zero
 	pGameParams->lScore = 0;
@@ -330,13 +330,13 @@ CMainWindow::CMainWindow() {
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
-	WndClass = AfxRegisterWndClass(CS_BYTEALIGNWINDOW | CS_OWNDC, NULL, NULL, NULL);
+	WndClass = AfxRegisterWndClass(CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 
 	// Acquire the shared palette for our game from the splash screen art
 	//
 	if (FileExists(MINI_GAME_MAP)) {
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 			pSplashScreen = FetchBitmap(pDC, &m_pGamePalette, MINI_GAME_MAP);
 			bSuccess = CSprite::SetBackdrop(pDC, m_pGamePalette, pSplashScreen);
 			assert(bSuccess);
@@ -354,7 +354,7 @@ CMainWindow::CMainWindow() {
 	//
 	tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	#ifndef DEBUG
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) / 2;
 		tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) / 2;
 		tmpRect.right = tmpRect.left + GAME_WIDTH;
@@ -370,7 +370,7 @@ CMainWindow::CMainWindow() {
 
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.
-	Create(WndClass, "Boffo Games -- Archeroids", WS_POPUP, tmpRect, NULL, NULL);
+	Create(WndClass, "Boffo Games -- Archeroids", WS_POPUP, tmpRect, nullptr, 0);
 
 	BeginWaitCursor();
 	ShowWindow(SW_SHOWNORMAL);
@@ -385,11 +385,11 @@ CMainWindow::CMainWindow() {
 		//
 		// build our main menu button
 		//
-		if ((m_pScrollSprite = new CSprite) != NULL) {
+		if ((m_pScrollSprite = new CSprite) != nullptr) {
 
 			m_pScrollSprite->SharePalette(m_pGamePalette);
 
-			if ((pDC = GetDC()) != NULL) {
+			if ((pDC = GetDC()) != nullptr) {
 
 				bSuccess = m_pScrollSprite->LoadResourceSprite(pDC, IDB_SCROLBTN);
 				if (!bSuccess)
@@ -413,7 +413,7 @@ CMainWindow::CMainWindow() {
 		BeginWaitCursor();
 
 		// Seed the random number generator
-		//srand((UINT)time(NULL));
+		//srand((UINT)time(nullptr));
 
 		errCode = LoadMasterSprites();
 
@@ -433,7 +433,7 @@ CMainWindow::CMainWindow() {
 
 		if (pGameParams->bMusicEnabled) {
 			m_pSoundTrack = new CSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-			assert(m_pSoundTrack != NULL);
+			assert(m_pSoundTrack != nullptr);
 			m_pSoundTrack->midiLoopPlaySegment(6400, 37680, 0, FMT_MILLISEC);    //6320
 		} // end if m_pSoundTrack
 
@@ -476,9 +476,9 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
-		if ((m_pMasterGoodDie = new CSprite) != NULL) {
+		if ((m_pMasterGoodDie = new CSprite) != nullptr) {
 
 			if (m_pMasterGoodDie->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -503,7 +503,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 		#if 0
 		if (errCode == ERR_NONE) {
 
-			if ((m_pMasterGoodShoot = new CSprite) != NULL) {
+			if ((m_pMasterGoodShoot = new CSprite) != nullptr) {
 
 				if (m_pMasterGoodShoot->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -528,7 +528,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 		}
 		#endif
 		if (errCode == ERR_NONE) {
-			if ((m_pMasterGoodWalk = new CSprite) != NULL) {
+			if ((m_pMasterGoodWalk = new CSprite) != nullptr) {
 
 				if (m_pMasterGoodWalk->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -555,7 +555,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 
 		if (errCode == ERR_NONE) {
 
-			if ((m_pMasterBadDie = new CSprite) != NULL) {
+			if ((m_pMasterBadDie = new CSprite) != nullptr) {
 
 				if (m_pMasterBadDie->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -581,7 +581,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 		#if 0
 		if (errCode == ERR_NONE) {
 
-			if ((m_pMasterBadShoot = new CSprite) != NULL) {
+			if ((m_pMasterBadShoot = new CSprite) != nullptr) {
 
 				if (m_pMasterBadShoot->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -605,7 +605,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 			}
 		}
 		#endif
-		if ((m_pMasterBadWalk = new CSprite) != NULL) {
+		if ((m_pMasterBadWalk = new CSprite) != nullptr) {
 
 			if (m_pMasterBadWalk->SharePalette(m_pGamePalette) != FALSE) {
 
@@ -631,7 +631,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 
 		// Create the master burning hay
 		//
-		if ((m_pMasterBurn = new CSprite) != NULL) {
+		if ((m_pMasterBurn = new CSprite) != nullptr) {
 
 			// attach arrow to the Game Palette
 			//
@@ -659,7 +659,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 
 			// Create the master bad arrow
 			//
-			if ((m_pMasterBadArrow = new CSprite) != NULL) {
+			if ((m_pMasterBadArrow = new CSprite) != nullptr) {
 
 				// attach arrow to the Game Palette
 				//
@@ -691,7 +691,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 
 			// Create the master good arrow
 			//
-			if ((m_pMasterGoodArrow = new CSprite) != NULL) {
+			if ((m_pMasterGoodArrow = new CSprite) != nullptr) {
 
 				// attach arrow to the Game Palette
 				//
@@ -721,7 +721,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 
 		if (errCode == ERR_NONE) {
 
-			if ((m_pMasterHeart = new CSprite) != NULL) {
+			if ((m_pMasterHeart = new CSprite) != nullptr) {
 
 				//
 				// load picture of heart
@@ -760,54 +760,54 @@ VOID CMainWindow::ReleaseMasterSprites(VOID) {
 	// free all master sprite objects
 	//
 
-	if (m_pMasterHeart != NULL) {
+	if (m_pMasterHeart != nullptr) {
 		delete m_pMasterHeart;
-		m_pMasterHeart = NULL;
+		m_pMasterHeart = nullptr;
 	}
 
-	if (m_pMasterGoodArrow != NULL) {
+	if (m_pMasterGoodArrow != nullptr) {
 		delete m_pMasterGoodArrow;
-		m_pMasterGoodArrow = NULL;
+		m_pMasterGoodArrow = nullptr;
 	}
 
-	if (m_pMasterBadArrow != NULL) {
+	if (m_pMasterBadArrow != nullptr) {
 		delete m_pMasterBadArrow;
-		m_pMasterBadArrow = NULL;
+		m_pMasterBadArrow = nullptr;
 	}
 
-	if (m_pMasterBurn != NULL) {
+	if (m_pMasterBurn != nullptr) {
 		delete m_pMasterBurn;
-		m_pMasterBurn = NULL;
+		m_pMasterBurn = nullptr;
 	}
 
-	if (m_pMasterBadWalk != NULL) {
+	if (m_pMasterBadWalk != nullptr) {
 		delete m_pMasterBadWalk;
-		m_pMasterBadWalk = NULL;
+		m_pMasterBadWalk = nullptr;
 	}
 
-	if (m_pMasterBadShoot != NULL) {
+	if (m_pMasterBadShoot != nullptr) {
 		delete m_pMasterBadShoot;
-		m_pMasterBadShoot = NULL;
+		m_pMasterBadShoot = nullptr;
 	}
 
-	if (m_pMasterBadDie != NULL) {
+	if (m_pMasterBadDie != nullptr) {
 		delete m_pMasterBadDie;
-		m_pMasterBadDie = NULL;
+		m_pMasterBadDie = nullptr;
 	}
 
-	if (m_pMasterGoodWalk != NULL) {
+	if (m_pMasterGoodWalk != nullptr) {
 		delete m_pMasterGoodWalk;
-		m_pMasterGoodWalk = NULL;
+		m_pMasterGoodWalk = nullptr;
 	}
 
-	if (m_pMasterGoodShoot != NULL) {
+	if (m_pMasterGoodShoot != nullptr) {
 		delete m_pMasterGoodShoot;
-		m_pMasterGoodShoot = NULL;
+		m_pMasterGoodShoot = nullptr;
 	}
 
-	if (m_pMasterGoodDie != NULL) {
+	if (m_pMasterGoodDie != nullptr) {
 		delete m_pMasterGoodDie;
-		m_pMasterGoodDie = NULL;
+		m_pMasterGoodDie = nullptr;
 	}
 }
 
@@ -824,11 +824,11 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID) {
 
 	// Load and lock
 	//
-	if ((hResInfo = FindResource(hInst, "BadDieSound", "WAVE")) != NULL) {
+	if ((hResInfo = FindResource(hInst, "BadDieSound", "WAVE")) != nullptr) {
 
-		if ((m_hBadDieRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+		if ((m_hBadDieRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-			if ((m_pBadDieSound = (LPSTR)LockResource((HGLOBAL)m_hBadDieRes)) != NULL) {
+			if ((m_pBadDieSound = (LPSTR)LockResource((HGLOBAL)m_hBadDieRes)) != nullptr) {
 
 				// we have now loaded at least one of the master sounds
 
@@ -846,11 +846,11 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID) {
 
 		// Load and lock
 		//
-		if ((hResInfo = FindResource(hInst, "BoltSound", "WAVE")) != NULL) {
+		if ((hResInfo = FindResource(hInst, "BoltSound", "WAVE")) != nullptr) {
 
-			if ((m_hBoltRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+			if ((m_hBoltRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pBoltSound = (LPSTR)LockResource((HGLOBAL)m_hBoltRes)) == NULL)
+				if ((m_pBoltSound = (LPSTR)LockResource((HGLOBAL)m_hBoltRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -864,11 +864,11 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID) {
 
 		// Load and lock
 		//
-		if ((hResInfo = FindResource(hInst, "ArrowSound", "WAVE")) != NULL) {
+		if ((hResInfo = FindResource(hInst, "ArrowSound", "WAVE")) != nullptr) {
 
-			if ((m_hArrowRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+			if ((m_hArrowRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pArrowSound = (LPSTR)LockResource((HGLOBAL)m_hArrowRes)) == NULL)
+				if ((m_pArrowSound = (LPSTR)LockResource((HGLOBAL)m_hArrowRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -882,11 +882,11 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID) {
 
 		// Load and lock the hay burn sound into memory
 		//
-		if ((hResInfo = FindResource(hInst, "BurnHay", "WAVE")) != NULL) {
+		if ((hResInfo = FindResource(hInst, "BurnHay", "WAVE")) != nullptr) {
 
-			if ((m_hBurnRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+			if ((m_hBurnRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pBurnSound = (LPSTR)LockResource((HGLOBAL)m_hBurnRes)) == NULL)
+				if ((m_pBurnSound = (LPSTR)LockResource((HGLOBAL)m_hBurnRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -900,11 +900,11 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID) {
 
 		// Load and lock the extra life sound into memory
 		//
-		if ((hResInfo = FindResource(hInst, "NewLife", "WAVE")) != NULL) {
+		if ((hResInfo = FindResource(hInst, "NewLife", "WAVE")) != nullptr) {
 
-			if ((m_hExtraLifeRes = LoadResource(hInst, (HRSRC)hResInfo)) != NULL) {
+			if ((m_hExtraLifeRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pExtraLifeSound = (LPSTR)LockResource((HGLOBAL)m_hExtraLifeRes)) == NULL)
+				if ((m_pExtraLifeSound = (LPSTR)LockResource((HGLOBAL)m_hExtraLifeRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -919,25 +919,25 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID) {
 
 
 VOID CMainWindow::ReleaseMasterSounds(VOID) {
-	if (m_hExtraLifeRes != NULL) {
+	if (m_hExtraLifeRes != nullptr) {
 		FreeResource(m_hExtraLifeRes);
-		m_hExtraLifeRes = NULL;
+		m_hExtraLifeRes = nullptr;
 	}
-	if (m_hBurnRes != NULL) {
+	if (m_hBurnRes != nullptr) {
 		FreeResource(m_hBurnRes);
-		m_hBurnRes = NULL;
+		m_hBurnRes = nullptr;
 	}
-	if (m_hArrowRes != NULL) {
+	if (m_hArrowRes != nullptr) {
 		FreeResource(m_hArrowRes);
-		m_hArrowRes = NULL;
+		m_hArrowRes = nullptr;
 	}
-	if (m_hBoltRes != NULL) {
+	if (m_hBoltRes != nullptr) {
 		FreeResource(m_hBoltRes);
-		m_hBoltRes = NULL;
+		m_hBoltRes = nullptr;
 	}
-	if (m_hBadDieRes != NULL) {
+	if (m_hBadDieRes != nullptr) {
 		FreeResource(m_hBadDieRes);
-		m_hBadDieRes = NULL;
+		m_hBadDieRes = nullptr;
 	}
 }
 
@@ -959,11 +959,11 @@ VOID CMainWindow::PaintScreen() {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		CSprite::RefreshBackdrop(pDC, m_pGamePalette);
 
-		if (!m_bInMenu && (m_pScrollSprite != NULL)) {
+		if (!m_bInMenu && (m_pScrollSprite != nullptr)) {
 			m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 		}
 
@@ -998,12 +998,12 @@ ERROR_CODE CMainWindow::RepaintSpriteList(CDC *pDC) {
 	ERROR_CODE errCode;
 
 	// can't use a null pointer
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	// assume no error
 	errCode = ERR_NONE;
 
-	if (pDC == NULL) {
+	if (pDC == nullptr) {
 		errCode = ERR_UNKNOWN;
 	} else {
 
@@ -1024,7 +1024,7 @@ ERROR_CODE CMainWindow::RepaintSpriteList(CDC *pDC) {
 
 
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
-	CMainMenu COptionsWind((CWnd *)this, m_pGamePalette, (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : (m_bGameActive ? 0 : NO_RETURN)), GetGameParams, "arch.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL), pGameParams);
+	CMainMenu COptionsWind((CWnd *)this, m_pGamePalette, (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : (m_bGameActive ? 0 : NO_RETURN)), GetGameParams, "arch.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr), pGameParams);
 	CDC *pDC;
 	BOOL bSuccess;
 
@@ -1041,7 +1041,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_bInMenu = TRUE;
 
 			pDC = GetDC();
-			if (m_pScrollSprite != NULL) {
+			if (m_pScrollSprite != nullptr) {
 				bSuccess = m_pScrollSprite->EraseSprite(pDC);
 				ASSERT(bSuccess);
 			}
@@ -1062,7 +1062,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				break;
 			}
 
-			if (m_pScrollSprite != NULL) {
+			if (m_pScrollSprite != nullptr) {
 				bSuccess = m_pScrollSprite->PaintSprite(pDC, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 				ASSERT(bSuccess);
 			}
@@ -1070,13 +1070,13 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			m_bInMenu = FALSE;
 
-			if (!pGameParams->bMusicEnabled && (m_pSoundTrack != NULL)) {
+			if (!pGameParams->bMusicEnabled && (m_pSoundTrack != nullptr)) {
 
 				m_pSoundTrack->stop();
 				delete m_pSoundTrack;
-				m_pSoundTrack = NULL;
+				m_pSoundTrack = nullptr;
 
-			} else if (pGameParams->bMusicEnabled && (m_pSoundTrack == NULL)) {
+			} else if (pGameParams->bMusicEnabled && (m_pSoundTrack == nullptr)) {
 				m_pSoundTrack = new CBofSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 				m_pSoundTrack->midiLoopPlaySegment(6400, 37680, 0, FMT_MILLISEC);
 			}
@@ -1096,11 +1096,11 @@ CSprite *CMainWindow::NewLife(INT iLifeIndex) {
 	CDC *pDC;
 	CSprite *pSprite;
 
-	pSprite = NULL;
+	pSprite = nullptr;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
-		if ((pSprite = m_pMasterHeart->DuplicateSprite(pDC)) != NULL) {
+		if ((pSprite = m_pMasterHeart->DuplicateSprite(pDC)) != nullptr) {
 
 			pSprite->SetZOrder(SPRITE_HINDMOST);
 
@@ -1132,7 +1132,7 @@ ERROR_CODE CMainWindow::CreateLives() {
 
 		// create our hearts
 		//
-		if ((m_pLives[i] = NewLife(i)) == NULL) {
+		if ((m_pLives[i] = NewLife(i)) == nullptr) {
 			errCode = ERR_MEMORY;
 			break;
 		}
@@ -1162,11 +1162,11 @@ ERROR_CODE CMainWindow::CreateGoodGuy() {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		// create our good guy sprite
 		//
-		if ((m_pHodj = m_pMasterGoodWalk->DuplicateSprite(pDC)) != NULL) {
+		if ((m_pHodj = m_pMasterGoodWalk->DuplicateSprite(pDC)) != nullptr) {
 
 			m_pHodj->SetZOrder(SPRITE_FOREGROUND);
 			m_pHodj->SetAnimated(TRUE);
@@ -1216,14 +1216,14 @@ ERROR_CODE CMainWindow::CreateHay() {
 
 	memcpy(aHayPosUse, aHayPosition, sizeof(POINT) * N_HAY * N_SECTIONS_PER_HAY);
 
-	if ((pDC = GetDC()) == NULL) {
+	if ((pDC = GetDC()) == nullptr) {
 		errCode = ERR_UNKNOWN;
 
 	} else {
 
 		for (i = 0; i < 4; i++) {
 
-			if ((pSprite = new CSprite()) == NULL) {
+			if ((pSprite = new CSprite()) == nullptr) {
 				errCode = ERR_MEMORY;
 				break;
 
@@ -1258,7 +1258,7 @@ ERROR_CODE CMainWindow::CreateHay() {
 						//
 						pList = new CLList(pSprite);
 
-						if (m_pHayList != NULL) {
+						if (m_pHayList != nullptr) {
 							m_pHayList->Insert(pList);
 						} else {
 							m_pHayList = pList;
@@ -1282,9 +1282,9 @@ ERROR_CODE CMainWindow::CreateBurningHay(CPoint point) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
-		if ((pSprite = m_pMasterBurn->DuplicateSprite(pDC)) != NULL) {
+		if ((pSprite = m_pMasterBurn->DuplicateSprite(pDC)) != nullptr) {
 
 			pSprite->SetZOrder(SPRITE_BACKGROUND);
 			pSprite->SetAnimated(TRUE);
@@ -1296,9 +1296,9 @@ ERROR_CODE CMainWindow::CreateBurningHay(CPoint point) {
 			//
 			// add this burning hay to our special FX list
 			//
-			if ((pList = new CLList(pSprite)) != NULL) {
+			if ((pList = new CLList(pSprite)) != nullptr) {
 
-				if (m_pFXList != NULL) {
+				if (m_pFXList != nullptr) {
 					m_pFXList->Insert(pList);
 				} else {
 					m_pFXList = pList;
@@ -1364,7 +1364,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 		//
 		bHit = FALSE;
 		pList = m_pHayList;
-		while (pList != NULL) {
+		while (pList != nullptr) {
 			oldRect = ((CSprite *)pList->getData())->GetRect();
 
 			// Check for intercection
@@ -1381,12 +1381,12 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 		//
 		if (!bHit) {
 
-			if ((pDC = GetDC()) != NULL) {
+			if ((pDC = GetDC()) != nullptr) {
 
 				// Animate this badguy to shoot
 				//
 				#if 0
-				if ((pSprite = m_pMasterBadShoot->DuplicateSprite(pDC)) != NULL) {
+				if ((pSprite = m_pMasterBadShoot->DuplicateSprite(pDC)) != nullptr) {
 					INT i;
 
 					pSprite->LinkSprite();
@@ -1403,7 +1403,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 				#endif
 				// Create the new arrow
 				//
-				if ((pSprite = m_pMasterBadArrow->DuplicateSprite(pDC)) != NULL) {
+				if ((pSprite = m_pMasterBadArrow->DuplicateSprite(pDC)) != nullptr) {
 
 					pSprite->SetZOrder(SPRITE_TOPMOST);
 					pSprite->SetAnimated(TRUE);
@@ -1423,9 +1423,9 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 					//
 					// add this arrow to the aBadArrowList
 					//
-					if ((pList = new CLList(pSprite)) != NULL) {
+					if ((pList = new CLList(pSprite)) != nullptr) {
 
-						if (m_pBadArrowList != NULL)
+						if (m_pBadArrowList != nullptr)
 							m_pBadArrowList->addToTail(pList);
 						else {
 							m_pBadArrowList = pList;
@@ -1457,11 +1457,11 @@ POINT CMainWindow::GetLeftMostBadGuy(VOID) {
 	POINT ptTmp, ptBest;
 	CLList *pList;
 
-	assert(m_pBadGuyList != NULL);
+	assert(m_pBadGuyList != nullptr);
 
 	ptBest.x = 9999;
 	pList = m_pBadGuyList->getHead();
-	while (pList != NULL) {
+	while (pList != nullptr) {
 		ptTmp = ((CSprite *)pList->getData())->GetPosition();
 
 		if (ptTmp.x < ptBest.x)
@@ -1505,7 +1505,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow() {
 	if (m_nGoodArrows < MAX_GOOD_ARROWS) {
 
 		// Good guy must be valid to shoot an arrow
-		assert(m_pHodj != NULL);
+		assert(m_pHodj != nullptr);
 
 		// Arrow is shot from end of crossbow
 		//
@@ -1521,7 +1521,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow() {
 		//
 		bHit = FALSE;
 		pList = m_pGoodArrowList;
-		while (pList != NULL) {
+		while (pList != nullptr) {
 			oldRect = ((CSprite *)pList->getData())->GetRect();
 
 			// Check for intercection
@@ -1538,12 +1538,12 @@ ERROR_CODE CMainWindow::CreateGoodArrow() {
 		//
 		if (!bHit) {
 
-			if ((pDC = GetDC()) == NULL) {
+			if ((pDC = GetDC()) == nullptr) {
 				errCode = ERR_UNKNOWN;
 
 			} else {
 				#if 0
-				if ((pSprite = m_pMasterGoodShoot->DuplicateSprite(pDC)) != NULL) {
+				if ((pSprite = m_pMasterGoodShoot->DuplicateSprite(pDC)) != nullptr) {
 
 					INT i;
 					pSprite->LinkSprite();
@@ -1562,7 +1562,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow() {
 
 				// Create the new arrow
 				//
-				if ((pSprite = m_pMasterGoodArrow->DuplicateSprite(pDC)) != NULL) {
+				if ((pSprite = m_pMasterGoodArrow->DuplicateSprite(pDC)) != nullptr) {
 
 					// set arrows to topmost
 					pSprite->SetZOrder(SPRITE_TOPMOST);
@@ -1582,7 +1582,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow() {
 					// add this arrow to the aGoodArrowList
 					//
 					pList = new CLList(pSprite);
-					if (m_pGoodArrowList != NULL)
+					if (m_pGoodArrowList != nullptr)
 						m_pGoodArrowList->addToTail(pList);
 					else {
 						m_pGoodArrowList = pList;
@@ -1627,14 +1627,14 @@ ERROR_CODE CMainWindow::CreateBadGuys() {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 
 		//
 		// create a sprite for each of the on screen bad guys
 		//
 		for (i = 0; i < m_nBadGuys; i++) {
 
-			if ((pSprite = m_pMasterBadWalk->DuplicateSprite(pDC)) != NULL) {
+			if ((pSprite = m_pMasterBadWalk->DuplicateSprite(pDC)) != nullptr) {
 
 				pSprite->SetZOrder(SPRITE_FOREGROUND);
 				pSprite->SetAnimated(TRUE);
@@ -1656,9 +1656,9 @@ ERROR_CODE CMainWindow::CreateBadGuys() {
 				//
 				// add this badguy sprite to our private badguy list
 				//
-				if ((pList = new CLList(pSprite)) != NULL) {
+				if ((pList = new CLList(pSprite)) != nullptr) {
 
-					if (m_pBadGuyList != NULL) {
+					if (m_pBadGuyList != nullptr) {
 						m_pBadGuyList->Insert(pList);
 					} else {
 						m_pBadGuyList = pList;
@@ -1701,7 +1701,7 @@ VOID CMainWindow::PlayGame(VOID) {
 	if (!m_bTimerActive) {
 
 		m_bTimerActive = TRUE;
-		CWnd::SetTimer(TIMER_ID, 50, NULL);
+		CWnd::SetTimer(TIMER_ID, 50, nullptr);
 	}
 
 	m_bNewGame = TRUE;                                  // a new game has been started
@@ -1767,43 +1767,43 @@ VOID CMainWindow::WaveReset(VOID) {
 	m_pHodj->UnlinkSprite();                        // unlink good guy so we don't flush him from sprite chain
 
 	for (i = 0; i < LIVES_MAX; i++) {               // unlink hearts so we don't flush them
-		if (m_pLives[i] != NULL)
+		if (m_pLives[i] != nullptr)
 			m_pLives[i]->UnlinkSprite();
 	}
 
-	if ((pDC = GetDC()) != NULL) {                  // erase any sprites from the screen
+	if ((pDC = GetDC()) != nullptr) {                  // erase any sprites from the screen
 		CSprite::EraseSprites(pDC);
 		ReleaseDC(pDC);
 	}
 	CSprite::FlushSpriteChain();                    // flush all sprites from the chain
 
 	for (i = 0; i < LIVES_MAX; i++) {               // link the hearts back into the sprite list
-		if (m_pLives[i] != NULL)
+		if (m_pLives[i] != nullptr)
 			m_pLives[i]->LinkSprite();
 	}
 	m_pHodj->LinkSprite();                          // link good guy back into list
 
 	m_nGoodArrows = m_nBadArrows = 0;               // reset # of arrows
 
-	if (m_pHayList != NULL) {                       // reset the hay list
+	if (m_pHayList != nullptr) {                       // reset the hay list
 		m_pHayList->FlushList();
 		delete m_pHayList;
-		m_pHayList = NULL;
+		m_pHayList = nullptr;
 	}
-	if (m_pBadGuyList != NULL) {                    // reset the bad guy list
+	if (m_pBadGuyList != nullptr) {                    // reset the bad guy list
 		m_pBadGuyList->FlushList();
 		delete m_pBadGuyList;
-		m_pBadGuyList = NULL;
+		m_pBadGuyList = nullptr;
 	}
-	if (m_pBadArrowList != NULL) {                  // reset the bad guy arrow list
+	if (m_pBadArrowList != nullptr) {                  // reset the bad guy arrow list
 		m_pBadArrowList->FlushList();
 		delete m_pBadArrowList;
-		m_pBadArrowList = NULL;
+		m_pBadArrowList = nullptr;
 	}
-	if (m_pGoodArrowList != NULL) {                 // reset the good guy arrow list
+	if (m_pGoodArrowList != nullptr) {                 // reset the good guy arrow list
 		m_pGoodArrowList->FlushList();
 		delete m_pGoodArrowList;
-		m_pGoodArrowList = NULL;
+		m_pGoodArrowList = nullptr;
 	}
 
 	m_nBadGuySpeed = m_nBadGuys * m_nGameSpeed * SPEED_FACTOR;// set default sprite speed
@@ -1847,33 +1847,33 @@ void CMainWindow::GameReset() {
 
 	memset(m_pLives, 0, sizeof(CSprite *) * LIVES_MAX); // reset hearts
 
-	if ((pDC = GetDC()) != NULL) {                  // erase any sprites from the screen
+	if ((pDC = GetDC()) != nullptr) {                  // erase any sprites from the screen
 		CSprite::EraseSprites(pDC);
 		ReleaseDC(pDC);
 	}
 	CSprite::FlushSpriteChain();                    // clean up after any previous game
 
-	if (m_pHayList != NULL) {                       // reset the hay list
+	if (m_pHayList != nullptr) {                       // reset the hay list
 		m_pHayList->FlushList();
 		delete m_pHayList;
-		m_pHayList = NULL;
+		m_pHayList = nullptr;
 	}
-	if (m_pBadGuyList != NULL) {                    // reset the bad guy list
+	if (m_pBadGuyList != nullptr) {                    // reset the bad guy list
 		m_pBadGuyList->FlushList();
 		delete m_pBadGuyList;
-		m_pBadGuyList = NULL;
+		m_pBadGuyList = nullptr;
 	}
-	if (m_pBadArrowList != NULL) {                  // reset the bad guy arrow list
+	if (m_pBadArrowList != nullptr) {                  // reset the bad guy arrow list
 		m_pBadArrowList->FlushList();
 		delete m_pBadArrowList;
-		m_pBadArrowList = NULL;
+		m_pBadArrowList = nullptr;
 	}
-	if (m_pGoodArrowList != NULL) {                 // reset the good guy arrow list
+	if (m_pGoodArrowList != nullptr) {                 // reset the good guy arrow list
 		m_pGoodArrowList->FlushList();
 		delete m_pGoodArrowList;
-		m_pGoodArrowList = NULL;
+		m_pGoodArrowList = nullptr;
 	}
-	m_pHodj = NULL;                                 // reset our good guy
+	m_pHodj = nullptr;                                 // reset our good guy
 
 	m_nBadGuys = m_nInitNumBadGuys;                 // reset # badguys
 
@@ -1890,7 +1890,7 @@ VOID CMainWindow::KillAnimation(VOID) {
 
 	// delete the Special FX list
 	//
-	while (m_pFXList != NULL) {
+	while (m_pFXList != nullptr) {
 
 		DeleteSprite((CSprite *)m_pFXList->getData());
 
@@ -2001,7 +2001,7 @@ BOOL CMainWindow::MainLoop() {
 
 	if (m_bGameActive && !m_bPause) {
 
-		if ((pDC = GetDC()) != NULL) {
+		if ((pDC = GetDC()) != nullptr) {
 
 			t1 = GetTickCount();
 
@@ -2009,7 +2009,7 @@ BOOL CMainWindow::MainLoop() {
 			// Handle special effects (Animation)
 			//
 			pList = m_pFXList;
-			while (pList != NULL) {
+			while (pList != nullptr) {
 				pNext = pList->getNext();
 
 				// get local pointer to this cell's sprite
@@ -2076,7 +2076,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 	CSize size;
 	BOOL bHit;
 
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	// acknowledge that we have moved the arrows one more time
 	m_nMoveArrows++;
@@ -2085,7 +2085,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 	// parse Bad Guy arrow list and move each one left
 	//
 	pList = m_pBadArrowList;
-	while (pList != NULL) {
+	while (pList != nullptr) {
 		pSprite = (CSprite *)pList->getData();
 		point = pSprite->GetPosition();
 		point.x -= ARROW_SPEED;
@@ -2103,7 +2103,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 					bHit = FALSE;
 
 					pSearchList = m_pHayList;
-					while (pSearchList != NULL) {
+					while (pSearchList != nullptr) {
 
 						newRect = pSprite->GetRect();
 						//newRect.right = newRect.left + 2;
@@ -2145,7 +2145,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 	// parse Good Guy arrow list and move each one right
 	//
 	pList = m_pGoodArrowList;
-	while (pList != NULL) {
+	while (pList != nullptr) {
 		pSprite = (CSprite *)pList->getData();
 		size = pSprite->GetSize();
 
@@ -2171,7 +2171,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 				if (point.x < HAY_AXIS) {
 
 					pSearchList = m_pHayList;
-					while (pSearchList != NULL) {
+					while (pSearchList != nullptr) {
 
 						newRect = pSprite->GetRect();
 						//newRect.left = newRect.right - 2;
@@ -2196,7 +2196,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 					// check for hitting bad guy as a secondary hit
 					//
 					pSearchList = m_pBadGuyList;
-					while (pSearchList != NULL) {
+					while (pSearchList != nullptr) {
 
 						// if badguy is not already dead
 						//
@@ -2212,7 +2212,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 								// Are all the bad guys dead?
 								//
 								if (m_nBadGuys == 0) {
-									pNext = NULL;
+									pNext = nullptr;
 									GamePause();
 									++m_nWave;
 
@@ -2272,12 +2272,12 @@ BOOL CMainWindow::CheckMessages(VOID) {
 		OnJoyStick(joyInfo.wButtons, (LONG)joyInfo.wYpos << 16);
 	}
 
-	if (PeekMessage(&msg, NULL, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 
-	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT) {
 			m_bTimerActive = FALSE;
@@ -2300,11 +2300,11 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 	INT i, n;
 
 	// can't access a null pointer
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 	assert(m_bTimerActive);
 	assert(m_bGameActive);
 
-	if (!m_bPause && (m_nBadGuys > 0) && (m_pBadGuyList != NULL) && !m_bNewGame) {
+	if (!m_bPause && (m_nBadGuys > 0) && (m_pBadGuyList != nullptr) && !m_bNewGame) {
 
 		PruneDeadBadGuys();
 
@@ -2327,10 +2327,10 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 			//
 			i = 0;
 			pList = m_pBadGuyList;
-			while (pList != NULL) {
+			while (pList != nullptr) {
 				pSprite = (CSprite *)pList->getData();
 
-				assert(pSprite != NULL);
+				assert(pSprite != nullptr);
 
 				// as long as this badguy is not dead then move him
 				//
@@ -2357,7 +2357,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 							// Test badguy vs hay
 							//
 							pSearchList = m_pHayList;
-							while (pSearchList != NULL) {
+							while (pSearchList != nullptr) {
 								pSearchNext = pSearchList->getNext();
 
 								if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->getData())->GetRect())) {
@@ -2406,10 +2406,10 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 			//
 			i = 0;
 			pList = m_pBadGuyList;
-			while (pList != NULL) {
+			while (pList != nullptr) {
 				pSprite = (CSprite *)pList->getData();
 
-				assert(pSprite != NULL);
+				assert(pSprite != nullptr);
 
 				// as long as this badguy is not dead then move him
 				//
@@ -2436,7 +2436,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 							// Test badguy vs hay
 							//
 							pSearchList = m_pHayList;
-							while (pSearchList != NULL) {
+							while (pSearchList != nullptr) {
 								pSearchNext = pSearchList->getNext();
 
 								if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->getData())->GetRect())) {
@@ -2491,10 +2491,10 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 			//
 			i = 0;
 			pList = m_pBadGuyList;
-			while (pList != NULL) {
+			while (pList != nullptr) {
 				pSprite = (CSprite *)pList->getData();
 
-				assert(pSprite != NULL);
+				assert(pSprite != nullptr);
 
 				// as long as this badguy is not dead then move him
 				//
@@ -2520,7 +2520,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 							// Test badguy vs hay
 							//
 							pSearchList = m_pHayList;
-							while (pSearchList != NULL) {
+							while (pSearchList != nullptr) {
 								pSearchNext = pSearchList->getNext();
 
 								if (tmpRect.IntersectRect(pSprite->GetRect(), ((CSprite *)pSearchList->getData())->GetRect())) {
@@ -2584,14 +2584,14 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate) {
 	INT i;
 
 	// validate the device context
-	assert(pDC != NULL);
+	assert(pDC != nullptr);
 
 	GamePause();                                    // stop the timer while we process stuff
 
 	--m_nLives;                                     // one less life
 
 	DeleteSprite(m_pLives[m_nLives]);               // remove 1 heart
-	m_pLives[m_nLives] = NULL;
+	m_pLives[m_nLives] = nullptr;
 
 	// play the death sound
 	//
@@ -2604,7 +2604,7 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate) {
 
 	if (bAnimate) {
 
-		if ((pSprite = m_pMasterGoodDie->DuplicateSprite(pDC)) != NULL) {
+		if ((pSprite = m_pMasterGoodDie->DuplicateSprite(pDC)) != nullptr) {
 
 			pSprite->SetAnimated(TRUE);
 			pSprite->LinkSprite();
@@ -2633,13 +2633,13 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate) {
 		// Need to erase all on-screen arrows
 		//
 		pList = m_pBadArrowList;                // destroy all bad arrows
-		while (pList != NULL) {
+		while (pList != nullptr) {
 			pNext = pList->getNext();
 			DestroyBadArrow(pList);
 			pList = pNext;
 		}
 		pList = m_pGoodArrowList;               // destroy all good arrows
-		while (pList != NULL) {
+		while (pList != nullptr) {
 			pNext = pList->getNext();
 			DestroyGoodArrow(pList);
 			pList = pNext;
@@ -2654,10 +2654,10 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate) {
 		//
 		i = 0;
 		pList = m_pBadGuyList;
-		while (pList != NULL) {
+		while (pList != nullptr) {
 			pSprite = (CSprite *)pList->getData();
 
-			assert(pSprite != NULL);
+			assert(pSprite != nullptr);
 
 			point = aBadGuyPosition[m_nWave % N_WAVES][i];
 			point.x -= (m_nInitArcherLevel - 1) * BADGUYMOVE_X;
@@ -2694,12 +2694,12 @@ VOID CMainWindow::PruneDeadBadGuys() {
 	CSprite *pSprite;
 
 	pList = m_pBadGuyList;
-	while (pList != NULL) {
+	while (pList != nullptr) {
 
 		pNext = pList->getNext();
 
 		pSprite = (CSprite *)(pList->getData());
-		assert(pSprite != NULL);
+		assert(pSprite != nullptr);
 
 		if (pSprite->GetTypeCode() == TRUE) {
 			delete pSprite;
@@ -2723,8 +2723,8 @@ VOID CMainWindow::DestroyBadGuy(CLList *pList, CDC *pDC) {
 	INT i;
 
 	// can't access null pointers
-	assert(pList != NULL);
-	assert(pDC != NULL);
+	assert(pList != nullptr);
+	assert(pDC != nullptr);
 
 	// can't delete a non existant bad guy
 	assert(m_nBadGuys != 0);
@@ -2736,7 +2736,7 @@ VOID CMainWindow::DestroyBadGuy(CLList *pList, CDC *pDC) {
 	//
 	pSprite = (CSprite *)pList->getData();
 
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
 	point = pSprite->GetPosition();
 	m_lScore += ((LEVEL1 - point.x) / BADGUYMOVE_X) + 1;
@@ -2771,7 +2771,7 @@ VOID CMainWindow::DestroyBadGuy(CLList *pList, CDC *pDC) {
 	//
 	// perform some animation to kill a bad guy
 	//
-	if ((pNewSprite = m_pMasterBadDie->DuplicateSprite(pDC)) != NULL) {
+	if ((pNewSprite = m_pMasterBadDie->DuplicateSprite(pDC)) != nullptr) {
 		pNewSprite->SetZOrder(SPRITE_BACKGROUND);
 		pNewSprite->SetAnimated(TRUE);
 		pNewSprite->LinkSprite();
@@ -2786,11 +2786,11 @@ VOID CMainWindow::DestroyBadGuy(CLList *pList, CDC *pDC) {
 	//
 	if (m_nBadGuys != 0) {
 
-		if ((pNewList = new CLList) != NULL) {
+		if ((pNewList = new CLList) != nullptr) {
 
 			pNewList->PutData(pNewSprite);
 
-			if (m_pFXList == NULL)
+			if (m_pFXList == nullptr)
 				m_pFXList = pNewList;
 			else
 				m_pFXList->Insert(pNewList);
@@ -2819,11 +2819,11 @@ VOID CMainWindow::DestroyHay(CLList *pList, CRect rect, CDC *pDC, BOOL bAnimate)
 	INT i, nID;
 
 	// can't access null pointers
-	assert(pList != NULL);
-	assert(pDC != NULL);
+	assert(pList != nullptr);
+	assert(pDC != nullptr);
 
 	pSprite = (CSprite *)pList->getData();
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
 	point = pSprite->GetPosition();
 	nID = pSprite->GetTypeCode();
@@ -2885,7 +2885,7 @@ VOID CMainWindow::DestroyHay(CLList *pList, CRect rect, CDC *pDC, BOOL bAnimate)
 
 VOID CMainWindow::DestroyGoodArrow(CLList *pList) {
 	// can't access a null pointer
-	assert(pList != NULL);
+	assert(pList != nullptr);
 
 	// can't delete a non-existant arrow
 	assert(m_nGoodArrows > 0);
@@ -2908,7 +2908,7 @@ VOID CMainWindow::DestroyGoodArrow(CLList *pList) {
 
 VOID CMainWindow::DestroyBadArrow(CLList *pList) {
 	// can't access a null pointer
-	assert(pList != NULL);
+	assert(pList != nullptr);
 
 	// can't delete a non-existant arrow
 	assert(m_nBadArrows > 0);
@@ -2933,9 +2933,9 @@ VOID CMainWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
-	assert(pSprite != NULL);
+	assert(pSprite != nullptr);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		pSprite->EraseSprite(pDC);                  // erase it from screen
 		ReleaseDC(pDC);
 	}
@@ -3023,7 +3023,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	case VK_F1: {
 		GamePause();
 		CSound::waitWaveSounds();
-		CRules  RulesDlg(this, "arch.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : NULL));
+		CRules  RulesDlg(this, "arch.txt", m_pGamePalette, (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr));
 		RulesDlg.DoModal();
 
 		GameResume();
@@ -3073,7 +3073,7 @@ VOID CMainWindow::MoveHodj(INT y) {
 			GameResume();
 
 			// something is wrong if hodj does not exist
-			assert(m_pHodj != NULL);
+			assert(m_pHodj != nullptr);
 
 			// limit his movement
 			//
@@ -3094,7 +3094,7 @@ VOID CMainWindow::MoveHodj(INT y) {
 				point.y = GAME_TOP_BORDER_WIDTH;
 			}
 
-			if ((pDC = GetDC()) != NULL) {
+			if ((pDC = GetDC()) != nullptr) {
 				m_pHodj->PaintSprite(pDC, point);
 				ReleaseDC(pDC);
 			}
@@ -3119,7 +3119,7 @@ VOID CMainWindow::HandleError(ERROR_CODE errCode) {
 		PostMessage(WM_CLOSE, 0, 0);
 
 		// Don't allow a repaint (remove all WM_PAINT messages)
-		ValidateRect(NULL);
+		ValidateRect(nullptr);
 	}
 }
 
@@ -3131,7 +3131,7 @@ VOID CMainWindow::OnClose() {
 
 	assert(m_bTimerActive == FALSE);            // the main loop had better be stopped
 
-	ClipCursor(NULL);                           // release mouse limits
+	ClipCursor(nullptr);                           // release mouse limits
 
 	CSound::clearSounds();                      // stop and delete all CSounds
 
@@ -3149,20 +3149,20 @@ VOID CMainWindow::OnClose() {
 		joyReleaseCapture(JOYSTICKID1);
 
 
-	if (m_pScrollSprite != NULL) {              // release sprite scroll button
+	if (m_pScrollSprite != nullptr) {              // release sprite scroll button
 		delete m_pScrollSprite;
-		m_pScrollSprite = NULL;
+		m_pScrollSprite = nullptr;
 	}
 
 	CSprite::ClearBackdrop();                   // free the off screen bitmap
 
-	if (m_pGamePalette != NULL) {               // need to de-allocate the palette
+	if (m_pGamePalette != nullptr) {               // need to de-allocate the palette
 		m_pGamePalette->DeleteObject();
 		delete m_pGamePalette;
-		m_pGamePalette = NULL;
+		m_pGamePalette = nullptr;
 	}
 
-	if ((pDC = GetDC()) != NULL) {              // paint black
+	if ((pDC = GetDC()) != nullptr) {              // paint black
 
 		myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 		myBrush.CreateStockObject(BLACK_BRUSH);
@@ -3212,7 +3212,7 @@ VOID CMainWindow::GamePause(VOID) {
 	m_bPause = TRUE;
 	if (m_bMoveMode) {
 		m_bMoveMode = FALSE;
-		MFC::SetCursor(LoadCursor(NULL, IDC_ARROW));
+		MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	}
 };
 
@@ -3221,7 +3221,7 @@ VOID CMainWindow::GameResume(VOID) {
 	m_bPause = FALSE;
 
 	if (m_bMoveMode)
-		SetCursor(NULL);
+		SetCursor(nullptr);
 };
 
 void CMainWindow::OnActivate(UINT nState, CWnd *, BOOL) {
@@ -3241,7 +3241,7 @@ void CMainWindow::OnRButtonUp(UINT, CPoint) {
 			GameResume();
 
 			// hide the cursor
-			SetCursor(NULL);
+			SetCursor(nullptr);
 
 			// move cursor to anchor point
 			SetCursorPos(m_ptAnchor.x, m_ptAnchor.y);
@@ -3250,7 +3250,7 @@ void CMainWindow::OnRButtonUp(UINT, CPoint) {
 			GamePause();
 
 			// unhide the cursor
-			SetCursor(LoadCursor(NULL, IDC_ARROW));
+			SetCursor(LoadCursor(nullptr, IDC_ARROW));
 		}
 	}
 }
@@ -3274,7 +3274,7 @@ void CMainWindow::OnMouseMove(UINT, CPoint point) {
 
 	} else {
 
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	}
 }
 
@@ -3284,7 +3284,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -3294,7 +3294,7 @@ long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	if (pSound != NULL)
+	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 	return (0L);
 }
@@ -3312,14 +3312,14 @@ VOID CMainWindow::FlushInputEvents(VOID) {
 	// find and remove all keyboard events
 	//
 	while (TRUE) {
-		if (!PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	// find and remove all mouse events
 	//
 	while (TRUE) {
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 }

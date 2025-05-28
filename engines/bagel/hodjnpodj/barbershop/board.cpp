@@ -41,26 +41,26 @@ CBoard::CBoard(CPaint *m_cPnt) {
 CBoard::~CBoard() {
 	int i;
 
-	if (m_pUsed != NULL) {
+	if (m_pUsed != nullptr) {
 		delete m_pUsed;
-		m_pUsed = NULL;
+		m_pUsed = nullptr;
 	}
 
-	if (m_pStock != NULL) {
+	if (m_pStock != nullptr) {
 		delete m_pStock;
-		m_pStock = NULL;
+		m_pStock = nullptr;
 	}
 
 	for (i = 0; i < TAB_COUNT; i++) {
-		if (m_pTab[i] != NULL) {
+		if (m_pTab[i] != nullptr) {
 			delete m_pTab[i];
-			m_pTab[i] = NULL;
+			m_pTab[i] = nullptr;
 		}
 	}
 
-	if (m_pFound != NULL) {
+	if (m_pFound != nullptr) {
 		delete m_pFound;
-		m_pFound = NULL;
+		m_pFound = nullptr;
 	}
 }
 
@@ -84,7 +84,7 @@ CStack *CBoard::GetStack(loc nStack) {
 				return m_pTab[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BOOL CBoard::IsTabStack(int nStack) {

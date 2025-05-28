@@ -44,7 +44,7 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlData::AcceptClick) ;
-	CNode *lpFoundNode = NULL;  // current node
+	CNode *lpFoundNode = nullptr;  // current node
 	int iError = 0 ;            // error code
 	int iButtonId = 0 ;         // handle button
 	CRPoint crClickPoint ;      // relocatable click position
@@ -111,7 +111,7 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 		        && !m_xpcGtlDoc->m_xpcMenuDlg
 		        && ::GetKeyState(VK_SHIFT) < 0) {
 			m_xpcGtlDoc->m_xpGtlFrame->ShowMenuDialog() ;
-			lpFoundNode = m_lpFoundNode = NULL ;
+			lpFoundNode = m_lpFoundNode = nullptr ;
 		}
 		#endif
 	// drop through
@@ -120,7 +120,7 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 
 		#ifdef NODEEDIT
 		if (m_lpFoundNode && lpFoundNode != m_lpFoundNode && (!m_lpFoundNode->m_bSelected || m_bMetaGame))
-			m_lpFoundNode = NULL ;
+			m_lpFoundNode = nullptr ;
 
 		if (iClickType == CLICK_LMOVE) {
 			if (m_bMetaGame)
@@ -181,7 +181,7 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 		if (!m_bMetaGame) {
 
 			// if we're double clicking in empty space
-			if ((lpNode = lpFoundNode) == NULL) {
+			if ((lpNode = lpFoundNode) == nullptr) {
 
 				// create new node and test for error
 				if ((iError = CreateNode(lpNode, crClickPoint)) != 0)
@@ -266,12 +266,12 @@ BOOL CGtlData::AcceptDeleteKey(CGtlView * xpGtlView)
 	if (!m_bMetaGame) {
 
 		if (lpSelectedNode) {
-			if (::MessageBox(NULL, "Delete node and all links to it?", "Delete Key", MB_OKCANCEL) == IDOK)
+			if (::MessageBox(nullptr, "Delete node and all links to it?", "Delete Key", MB_OKCANCEL) == IDOK)
 				DeleteNode(lpSelectedNode) ;
 		}
 
 		if (m_bSelectedLink) {
-			if (::MessageBox(NULL, "Delete link?", "Delete Key", MB_OKCANCEL) == IDOK) {
+			if (::MessageBox(nullptr, "Delete link?", "Delete Key", MB_OKCANCEL) == IDOK) {
 
 				DeleteLink() ;
 				m_xpcGtlDoc->SetModifiedFlag() ;
@@ -292,14 +292,14 @@ BOOL CGtlData::AcceptDeleteKey(CGtlView * xpGtlView)
 //* CGtlData::PointToNode -- find node closest to point
 CNode FAR *CGtlData::PointToNode(CRPoint crPoint)
 // crPoint -- relocatable point
-// returns: node nearest to point, or NULL if none close enough
+// returns: node nearest to point, or nullptr if none close enough
 {
 	JXENTER(CGtlData::PointToNode) ;
 	long lSqDistance ;
 	long lSqSensitivity ;
 	long lSqMinDistance = MAXPOSLONG ;
 	int iK ;            // loop variable
-	CNode FAR * lpNode, FAR * lpClosestNode = NULL ;
+	CNode FAR * lpNode, FAR * lpClosestNode = nullptr ;
 	CRPoint crNodePosition ;
 
 	// search through nodes to find which node (if any) is selected
@@ -363,7 +363,7 @@ BOOL CGtlData::SelectNode(CNode FAR * lpNode)
 
 //* CGtlData::ModifySelectNode -- modify node select/deselect
 BOOL CGtlData::ModifySelectNode(CNode FAR *lpNode, BOOL bSelect)
-// lpNode -- node to be selected or deselected; if NULL, then
+// lpNode -- node to be selected or deselected; if nullptr, then
 //              deselect currently selected node
 // bSelect -- select/deselect flag (if non-null lpNull)
 // returns: TRUE if error, FALSE otherwise
@@ -403,13 +403,13 @@ BOOL CGtlData::ModifySelectNode(CNode FAR *lpNode, BOOL bSelect)
 }
 
 
-//* CGtlData::GetSelectedNode -- return selected node, or NULL if none
+//* CGtlData::GetSelectedNode -- return selected node, or nullptr if none
 CNode FAR *CGtlData::GetSelectedNode(void)
-// returns: selected node if any, NULL otherwise
+// returns: selected node if any, nullptr otherwise
 {
 	JXENTER(CGtlData::GetSelectedNode) ;
 	int iError = 0 ;            // error code
-	CNode FAR * lpNode, FAR * lpSelectedNode = NULL ;
+	CNode FAR * lpNode, FAR * lpSelectedNode = nullptr ;
 
 	int iK ;                    // loop variable
 
@@ -426,7 +426,7 @@ CNode FAR *CGtlData::GetSelectedNode(void)
 
 //* CGtlData::SelectLink -- select or deselect a link
 BOOL CGtlData::SelectLink(CNode FAR *lpNode1, CNode FAR *lpNode2)
-// lpNode1, lpNode2 -- endpoints of link to be selected if non-NULL,
+// lpNode1, lpNode2 -- endpoints of link to be selected if non-nullptr,
 //      after de-selecting any currently selected link
 // returns: TRUE if error, FALSE otherwise
 {
@@ -531,7 +531,7 @@ cleanup:
 
 //* CGtlData::DeleteLink -- delete link between two nodes
 BOOL CGtlData::DeleteLink(CNode FAR * lpNode1, CNode FAR * lpNode2)
-// lpNode1, lpNode2 -- nodes whose link is to be deleted; if NULL,
+// lpNode1, lpNode2 -- nodes whose link is to be deleted; if nullptr,
 //              then delete selected link if any
 // returns: TRUE if error, FALSE otherwise
 {
@@ -549,7 +549,7 @@ BOOL CGtlData::DeleteLink(CNode FAR * lpNode1, CNode FAR * lpNode2)
 	if (lpNode1 || lpNode2) {
 
 		if (!lpNode1 || !lpNode2 || lpNode1->m_bDeleted || lpNode2->m_bDeleted) {
-			iError = 100 ;      // one of nodes is NULL or deleted
+			iError = 100 ;      // one of nodes is nullptr or deleted
 			goto cleanup ;
 		}
 		iIndex1 = lpNode1 - m_lpNodes ;
@@ -640,7 +640,7 @@ BOOL CGtlData::CallUpdate(CNode FAR *lpNode1, CNode FAR *lpNode2, BOOL bLinks, B
 		                                    crPoint2.y + NODERADIUS))) ;
 
 //  SetModifiedFlag(TRUE) ;
-	((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(NULL, lHintParam, &cHint) ;
+	((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, lHintParam, &cHint) ;
 
 	// want to update all node 1 links
 	if (lpNode1 && bLinks) {
@@ -672,7 +672,7 @@ BOOL CGtlData::CallUpdate(CBgbObject * lpcBgbObject)
 	CGtlHint cHint ;
 
 	cHint.cHintRect = lpcBgbObject->GetRect() ;
-	((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(NULL, HINT_UPDATE_RECT, &cHint);
+	((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, HINT_UPDATE_RECT, &cHint);
 
 // cleanup:
 
@@ -690,7 +690,7 @@ BOOL CGtlData::CreateNode(CNode FAR * &lpNode, CRPoint crPosition)
 	JXENTER(CGtlData::CreateNode) ;
 	int iError = 0 ;            // error code
 	if (m_iNodes >= MAX_NODES - 1) {
-		::MessageBox(NULL, "Too many nodes.", NULL, MB_OK | MB_ICONINFORMATION);
+		::MessageBox(nullptr, "Too many nodes.", nullptr, MB_OK | MB_ICONINFORMATION);
 		goto cleanup ;
 	}
 	lpNode = m_lpNodes + m_iNodes++ ;
@@ -713,9 +713,9 @@ BOOL CGtlData::MoveNode(CNode FAR * lpNode, CRPoint crPosition)
 {
 	JXENTER(CGtlData::MoveNode) ;
 	int iError = 0 ;            // error code
-	CallUpdate(lpNode, NULL, TRUE, TRUE) ;
+	CallUpdate(lpNode, nullptr, TRUE, TRUE) ;
 	SetNodePosition(lpNode, crPosition) ;
-	CallUpdate(lpNode, NULL, TRUE, TRUE) ;
+	CallUpdate(lpNode, nullptr, TRUE, TRUE) ;
 	m_xpcGtlDoc->SetModifiedFlag() ;
 
 // cleanup:
@@ -734,7 +734,7 @@ BOOL CGtlData::CreateLink(CNode FAR * lpNode1, CNode FAR * lpNode2)
 	if (!IfLinked(lpNode1, lpNode2)) {
 
 		if (lpNode1->m_iNumLinks >= DIMENSION(lpNode1->m_iLinks) || lpNode2->m_iNumLinks >= DIMENSION(lpNode1->m_iLinks)) {
-			::MessageBox(NULL, "Too many links for node.", NULL, MB_OK | MB_ICONINFORMATION);
+			::MessageBox(nullptr, "Too many links for node.", nullptr, MB_OK | MB_ICONINFORMATION);
 			goto cleanup ;
 		}
 		AddLink(lpNode1, lpNode2) ;
@@ -765,7 +765,7 @@ BOOL CGtlData::SetNodePosition(CNode FAR *lpNode, CRPoint crPosition)
 	for (iK = 0 ; !bFound && iK < m_iMaps ; ++iK) {
 
 		lpMap = m_lpMaps + iK ;
-		if (!lpMap->m_bOverlay && ((lpcBgbObject = lpMap->m_lpcBgbObject) != NULL)) {
+		if (!lpMap->m_bOverlay && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr)) {
 
 			cMapRect = CRect(CPoint(lpMap->m_lpcBgbObject->m_crPosition.x,
 			                        lpMap->m_lpcBgbObject->m_crPosition.y),

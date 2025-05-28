@@ -118,7 +118,7 @@ BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
 	DMaddr(pDC->m_hDC);
 	#endif
 	MSG msg;
-	if (MFC::PeekMessage(&msg, NULL, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
+	if (MFC::PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
 		MFC::TranslateMessage(&msg);
 		MFC::DispatchMessage(&msg);
 	}
@@ -197,7 +197,7 @@ BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
 cleanup:
 	if (pDC) {
 		ReleaseDC(pDC);
-		pDC = NULL;
+		pDC = nullptr;
 	}
 
 	#ifdef _MACROS2
@@ -314,33 +314,33 @@ BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
 		{BMT_SCROLL, -1, 1, "scrollup.bmp", FALSE, TRUE},           //scrolbtn.bmp
 		{BMT_STONE, -1, 4, "mans%d.bmp", FALSE, TRUE},
 		{BMT_PIT, 0, 1, "manp%d%d.bmp", TRUE, TRUE},
-		{BMT_PIT, 1, 4, NULL, TRUE, TRUE},
-		{BMT_PIT, 2, 6, NULL, TRUE, TRUE},
-		{BMT_PIT, 3, 8, NULL, TRUE, TRUE},
-		{BMT_PIT, 4, 8, NULL, TRUE, TRUE},
-		{BMT_PIT, 5, 5, NULL, TRUE, TRUE},
-		{BMT_PIT, 6, 4, NULL, TRUE, TRUE},
-		{BMT_PIT, 7, 4, NULL, TRUE, TRUE},
-		{BMT_PIT, 8, 4, NULL, TRUE, TRUE},
+		{BMT_PIT, 1, 4, nullptr, TRUE, TRUE},
+		{BMT_PIT, 2, 6, nullptr, TRUE, TRUE},
+		{BMT_PIT, 3, 8, nullptr, TRUE, TRUE},
+		{BMT_PIT, 4, 8, nullptr, TRUE, TRUE},
+		{BMT_PIT, 5, 5, nullptr, TRUE, TRUE},
+		{BMT_PIT, 6, 4, nullptr, TRUE, TRUE},
+		{BMT_PIT, 7, 4, nullptr, TRUE, TRUE},
+		{BMT_PIT, 8, 4, nullptr, TRUE, TRUE},
 		{BMT_PIT, -1, 2, "manpm%d.bmp", FALSE, TRUE},
 		{BMT_LEFTBIN, 22, 1, "manl%02d.bmp", TRUE, TRUE},
 		{BMT_LEFTBIN, -1, 1, "manlm.bmp", FALSE, TRUE},
 		{BMT_RIGHTBIN, 22, 1, "manr%02d.bmp", TRUE, TRUE},
 		{BMT_RIGHTBIN, -1, 1, "manrm.bmp", FALSE, TRUE},
-		{BMT_HAND, -1, 0, NULL, FALSE, TRUE},
+		{BMT_HAND, -1, 0, nullptr, FALSE, TRUE},
 		{BMT_SIGN, SBT_CRAB, 1, "mancrab.bmp", FALSE, FALSE},
 		{BMT_SIGN, SBT_MYTURN, 1, "mancm.bmp", FALSE, TRUE},
 		{BMT_SIGN, SBT_YOURTURN, 1, "mancy.bmp", FALSE, TRUE},
 		{BMT_SIGN, SBT_TIE, 1, "manctie.bmp", FALSE, TRUE},
 		{BMT_SIGN, SBT_IWIN, 1, "manciwin.bmp", FALSE, TRUE},
 		{BMT_SIGN, SBT_YOUWIN, 1, "mancuwin.bmp", FALSE, TRUE},
-		{0, 0, 0, NULL, FALSE, TRUE}
+		{0, 0, 0, nullptr, FALSE, TRUE}
 	} ;
 
 	int iError = 0 ;        // error code
 	CBmpTable * xpBmpTable ;
 	BOOL bFound = FALSE ;
-	const char *xpszFilenameString = NULL ;
+	const char *xpszFilenameString = nullptr ;
 	char szPath[200] = {0} ;    // bitmap file path
 	CPitWnd * xpcPit;
 	int iNumStones;
@@ -401,7 +401,7 @@ BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
 cleanup:
 	if (pDC) {
 		ReleaseDC(pDC);
-		pDC = NULL;
+		pDC = nullptr;
 	}
 	#ifdef _MACROS2
 	EM("ReleaseDc() within InitBitmapFilename");
@@ -684,7 +684,7 @@ BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 //  OutputDebugString("New stone allocated.\n") ;
 	}
 
-	xpcStone->m_xpcNext = NULL ;
+	xpcStone->m_xpcNext = nullptr ;
 	xpcStone->m_xpcPit = xpcFromPit ;   // set stone's pit ptr
 	xpcStone->m_iStoneNum = --xpcFromPit->m_iNumStones ;
 	// store stone number
@@ -718,7 +718,7 @@ BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 			goto cleanup ;
 		}
 		MSG msg;
-		if (MFC::PeekMessage(&msg, NULL, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
+		if (MFC::PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
 			MFC::TranslateMessage(&msg);
 			MFC::DispatchMessage(&msg);
 		}
@@ -745,7 +745,7 @@ BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 cleanup:
 	if (pDC) {
 		ReleaseDC(pDC);
-		pDC = NULL;
+		pDC = nullptr;
 	}
 	#ifdef _MACROS2
 	EM("ReleaseDC() from within MoveStoneDisplay");
@@ -776,7 +776,7 @@ BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
 	CRect cBitmapRect ;
 	MSG msg;
 
-	if (MFC::PeekMessage(&msg, NULL, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
+	if (MFC::PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
 		MFC::TranslateMessage(&msg);
 		MFC::DispatchMessage(&msg);
 	}
@@ -1053,7 +1053,7 @@ BOOL CMnkWindow::FreePitResources(BOOL bDelete)
 				xpcLastStone->m_xpcNext = m_xpFreeStoneChain ;
 				// add new chain to free chain
 				m_xpFreeStoneChain = xpcPit->m_xpcStoneChain ;
-				xpcPit->m_xpcStoneChain = NULL ;
+				xpcPit->m_xpcStoneChain = nullptr ;
 				// no more chain on pit
 			}
 
@@ -1098,7 +1098,7 @@ BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 	*/
 	if (xpcBmpObject->m_xpcSprite) { // if there's a sprite
 		delete xpcBmpObject->m_xpcSprite ;  // free it
-		xpcBmpObject->m_xpcSprite = NULL ;  // no more pointer
+		xpcBmpObject->m_xpcSprite = nullptr ;  // no more pointer
 	}
 
 	if (xpcBmpObject->m_xpDibDoc) { // if there's a DIB document
@@ -1107,9 +1107,9 @@ BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 			GlobalUnlock(hDib) ;      // unlock Dib memory
 		}
 
-		xpcBmpObject->m_lpDib = NULL ;  // clear pointers
+		xpcBmpObject->m_lpDib = nullptr ;  // clear pointers
 		delete xpcBmpObject->m_xpDibDoc ;
-		xpcBmpObject->m_xpDibDoc = NULL ;
+		xpcBmpObject->m_xpDibDoc = nullptr ;
 	}
 	xpcBmpObject->m_bInit = FALSE ; // object no longer initialized
 
@@ -1130,7 +1130,7 @@ void CMnkWindow::ReleaseResources(void) {
 
 	while ((xpcBmpObject = m_xpcBmpFreeChain)) {
 		m_xpcBmpFreeChain = xpcBmpObject->m_xpcNextFree ;
-		xpcBmpObject->m_xpcNextFree = NULL ;    // out of habit
+		xpcBmpObject->m_xpcNextFree = nullptr ;    // out of habit
 		ClearBitmapObject(xpcBmpObject) ;   // free resources
 		if (xpcBmpObject->m_bHeap)  // if on the heap
 			delete xpcBmpObject ;
@@ -1140,13 +1140,13 @@ void CMnkWindow::ReleaseResources(void) {
 		for (int j = -2 ; j < NUMPITS ; ++j) {
 			if (xpcPitWnd = m_xpcPits[ i ][ j + 2])
 				delete  xpcPitWnd;
-			xpcPitWnd = NULL;
+			xpcPitWnd = nullptr;
 		}
 
 	if (m_pSound) {
 		m_pSound->stop();
 		delete m_pSound;
-		m_pSound = NULL;
+		m_pSound = nullptr;
 	}
 	/*
 	#ifdef _MACROS
@@ -1252,7 +1252,7 @@ BOOL CMnkWindow::OptionsDialog(void)
 	JXENTER(CMnkWindow::OptionsDialog) ;
 	int iError = 0 ;        // error code
 
-	CDC *pDC = NULL ;
+	CDC *pDC = nullptr ;
 	#ifdef _MACROS2
 	EM("GetDC() from within OptionsDialog");
 	DMaddr(pDC->m_hDC);
@@ -1264,7 +1264,7 @@ BOOL CMnkWindow::OptionsDialog(void)
 			m_cBmpScroll.m_xpcSprite->EraseSprite(pDC) ;
 			// hide the command scroll
 			ReleaseDC(pDC);
-			pDC = NULL;
+			pDC = nullptr;
 		}
 
 		/*
@@ -1274,7 +1274,7 @@ BOOL CMnkWindow::OptionsDialog(void)
 		*/
 		CMainMenu cOptionsDlg(this, m_xpGamePalette,
 		                      (pGameParams->bPlayingMetagame ? NO_NEWGAME | NO_OPTIONS : FALSE) | (m_bStartGame ? NO_RETURN : 0X0),
-		                      CallUserDialog, RULES, pGameParams->bSoundEffectsEnabled ? RULES_NARRATION : NULL, pGameParams) ;
+		                      CallUserDialog, RULES, pGameParams->bSoundEffectsEnabled ? RULES_NARRATION : nullptr, pGameParams) ;
 		switch (cOptionsDlg.DoModal()) {
 		case IDC_OPTIONS_NEWGAME:
 			if (!pGameParams->bPlayingMetagame) StartGame() ;
@@ -1295,14 +1295,14 @@ BOOL CMnkWindow::OptionsDialog(void)
 		//
 		// Check to see if the music state was changed and adjust to match it
 		//
-		if ((pGameParams->bMusicEnabled == FALSE) && (m_pSound != NULL)) {
+		if ((pGameParams->bMusicEnabled == FALSE) && (m_pSound != nullptr)) {
 			if (m_pSound->playing())
 				m_pSound->stop();
 		} else if (pGameParams->bMusicEnabled) {
-			if (m_pSound == NULL) {
+			if (m_pSound == nullptr) {
 				m_pSound = new CSound(this, MIDI_BCKGND, SOUND_MIDI | SOUND_DONT_LOOP_TO_END);
 			}
-			if (m_pSound != NULL) {
+			if (m_pSound != nullptr) {
 				if (!m_pSound->playing())
 					m_pSound->midiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC);
 			}

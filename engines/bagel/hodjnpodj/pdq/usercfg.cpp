@@ -58,15 +58,15 @@ static CText *txtRevealed;
 static CText *txtSpeed;
 static CText *txtShown;
 
-static  CColorButton *pOKButton = NULL;                     // OKAY button on scroll
-static  CColorButton *pCancelButton = NULL;                 // Cancel button on scroll
-static  CColorButton *pDefaultsButton = NULL;               // Defaults button on scroll
-static  CCheckButton *pFixedButton = NULL;
+static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
+static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
+static  CColorButton *pDefaultsButton = nullptr;               // Defaults button on scroll
+static  CCheckButton *pFixedButton = nullptr;
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 
-	m_pNamesButton = NULL;
+	m_pNamesButton = nullptr;
 	DoModal();
 }
 
@@ -197,7 +197,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 			m_nGameSpeed = SPEED_MAX;
 
 		/* can't access a null pointers */
-		assert(pScroll != NULL);
+		assert(pScroll != nullptr);
 
 		pScroll->SetScrollPos(m_nGameSpeed);
 
@@ -246,7 +246,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 			m_nShown = SHOWN_MAX;
 
 		/* can't access a null pointers */
-		assert(pScroll != NULL);
+		assert(pScroll != nullptr);
 
 		pScroll->SetScrollPos(m_nShown);
 
@@ -280,48 +280,48 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	pDC = GetDC();
 
 	tmpRect.SetRect(22, 125, 60, 140);
-	if ((txtGameSpeed = new CText) != NULL) {
+	if ((txtGameSpeed = new CText) != nullptr) {
 		txtGameSpeed->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 	}
 
 	tmpRect.SetRect(65, 125, 170, 140);
-	if ((txtSpeed = new CText) != NULL) {
+	if ((txtSpeed = new CText) != nullptr) {
 		txtSpeed->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 	}
 
 	tmpRect.SetRect(22, 87, 80, 102);
-	if ((txtRevealed = new CText) != NULL) {
+	if ((txtRevealed = new CText) != nullptr) {
 		txtRevealed->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 	}
 
 	tmpRect.SetRect(85, 87, 146, 102);
-	if ((txtShown = new CText) != NULL) {
+	if ((txtShown = new CText) != nullptr) {
 		txtShown->SetupText(pDC, m_pPalette, &tmpRect, JUSTIFY_LEFT);
 	}
 
 	ReleaseDC(pDC);
 
-	if ((pOKButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	if ((pCancelButton = new CColorButton) != NULL) {                   // build a color QUIT button to let us exit
+	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pCancelButton).SetPalette(m_pPalette);                        // set the palette to use
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
-	if ((pDefaultsButton = new CColorButton) != NULL) {                 // build a color QUIT button to let us exit
+	if ((pDefaultsButton = new CColorButton) != nullptr) {                 // build a color QUIT button to let us exit
 		(*pDefaultsButton).SetPalette(m_pPalette);                      // set the palette to use
 		(*pDefaultsButton).SetControl(ID_RESET, this);              // tie to the dialog control
 	}
 
-	if ((pFixedButton = new CCheckButton) != NULL) {        // build a color QUIT button to let us exit
+	if ((pFixedButton = new CCheckButton) != nullptr) {        // build a color QUIT button to let us exit
 		(*pFixedButton).SetPalette(m_pPalette);             // set the palette to use
 		(*pFixedButton).SetControl(ID_FIXED, this);         // tie to the dialog control
 	}
 
-	if ((m_pNamesButton = new CCheckButton) != NULL) {
+	if ((m_pNamesButton = new CCheckButton) != nullptr) {
 		m_pNamesButton->SetPalette(m_pPalette);
 		m_pNamesButton->SetControl(ID_NAMES, this);
 	}
@@ -386,14 +386,14 @@ BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
 END_MESSAGE_MAP()
 
 void CUserCfgDlg::OnDestroy(void) {
-	if (m_pSpeedScroll != NULL) {
+	if (m_pSpeedScroll != nullptr) {
 		delete m_pSpeedScroll;
-		m_pSpeedScroll = NULL;
+		m_pSpeedScroll = nullptr;
 	}
 
-	if (m_pShownScroll != NULL) {
+	if (m_pShownScroll != nullptr) {
 		delete m_pShownScroll;
-		m_pShownScroll = NULL;
+		m_pShownScroll = nullptr;
 	}
 
 	CBmpDialog::OnDestroy();
@@ -403,7 +403,7 @@ void CUserCfgDlg::OnDestroy(void) {
 void CUserCfgDlg::DispSpeed(void) {
 	CDC *pDC;
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		txtSpeed->DisplayString(pDC, apszSpeeds[m_nGameSpeed - 1], 14, TEXT_BOLD, RGB(0, 0, 0));
 		ReleaseDC(pDC);
 	}
@@ -416,7 +416,7 @@ void CUserCfgDlg::DispShown(void) {
 
 	Common::sprintf_s(msg, "%d", m_nShown);
 
-	if ((pDC = GetDC()) != NULL) {
+	if ((pDC = GetDC()) != nullptr) {
 		txtShown->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
 		ReleaseDC(pDC);
 	}
@@ -443,58 +443,58 @@ void CUserCfgDlg::ClearDialogImage(void) {
 
 	pDC = GetDC();
 
-	if (txtSpeed != NULL) {
+	if (txtSpeed != nullptr) {
 		txtSpeed->RestoreBackground(pDC);
 		delete txtSpeed;
-		txtSpeed = NULL;
+		txtSpeed = nullptr;
 	}
 
-	if (txtShown != NULL) {
+	if (txtShown != nullptr) {
 		txtShown->RestoreBackground(pDC);
 		delete txtShown;
-		txtShown = NULL;
+		txtShown = nullptr;
 	}
 
-	if (txtRevealed != NULL) {
+	if (txtRevealed != nullptr) {
 		txtRevealed->RestoreBackground(pDC);
 		delete txtRevealed;
-		txtRevealed = NULL;
+		txtRevealed = nullptr;
 	}
 
-	if (txtGameSpeed != NULL) {
+	if (txtGameSpeed != nullptr) {
 		txtGameSpeed->RestoreBackground(pDC);
 		delete txtGameSpeed;
-		txtGameSpeed = NULL;
+		txtGameSpeed = nullptr;
 	}
 
 	ReleaseDC(pDC);
 
-	if (pOKButton != NULL) {                          // release the button
+	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
-		pOKButton = NULL;
+		pOKButton = nullptr;
 	}
 
-	if (pCancelButton != NULL) {                        // release the button
+	if (pCancelButton != nullptr) {                        // release the button
 		delete pCancelButton;
-		pCancelButton = NULL;
+		pCancelButton = nullptr;
 	}
 
-	if (pDefaultsButton != NULL) {                    // release the button
+	if (pDefaultsButton != nullptr) {                    // release the button
 		delete pDefaultsButton;
-		pDefaultsButton = NULL;
+		pDefaultsButton = nullptr;
 	}
 
-	if (pFixedButton != NULL) {                         // release the button
+	if (pFixedButton != nullptr) {                         // release the button
 		delete pFixedButton;
-		pFixedButton = NULL;
+		pFixedButton = nullptr;
 	}
 
-	if (m_pNamesButton != NULL) {
+	if (m_pNamesButton != nullptr) {
 		delete m_pNamesButton;
-		m_pNamesButton = NULL;
+		m_pNamesButton = nullptr;
 	}
 
-	ValidateRect(NULL);
+	ValidateRect(nullptr);
 }
 
 } // namespace PDQ

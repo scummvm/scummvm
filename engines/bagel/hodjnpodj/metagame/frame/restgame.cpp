@@ -81,11 +81,11 @@ BOOL CALLBACK RestoreGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd,
     BOOL bRestored;
 
     // validate input
-    assert(pszFileName != NULL);
-    assert(pBfcMgr != NULL);
-    assert(pWnd != NULL);
-    assert(pPalette != NULL);
-    assert(pErrCode != NULL);
+    assert(pszFileName != nullptr);
+    assert(pBfcMgr != nullptr);
+    assert(pWnd != nullptr);
+    assert(pPalette != nullptr);
+    assert(pErrCode != nullptr);
 
     // assume no error
     *pErrCode = ERR_NONE;
@@ -138,11 +138,11 @@ ERROR_CODE GetSaveGameDescriptions() {
     //
     if (FileExists(gpszSaveGameFileName)) {
 
-        if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+        if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != nullptr) {
 
             // open the .SAV file
             //
-            if ((pFile = fopen(gpszSaveGameFileName, "rb")) != NULL) {
+            if ((pFile = fopen(gpszSaveGameFileName, "rb")) != nullptr) {
 
                 for (i = 0; i < MAX_SAVEGAMES; i++) {
 
@@ -153,7 +153,7 @@ ERROR_CODE GetSaveGameDescriptions() {
 
                         if (!pSaveGameInfo->m_bUsed) {
                             szDescriptions[i][0] = '\0';
-                            pszDesc[i] = NULL;
+                            pszDesc[i] = nullptr;
                         }
 
                     } else {
@@ -206,13 +206,13 @@ ERROR_CODE RestoreSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
     errCode = ERR_NONE;
 
     assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-    assert(pBfcMgr != NULL);
+    assert(pBfcMgr != nullptr);
 
     assert(FileExists(gpszSaveGameFileName));
 
-    if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != NULL) {
+    if ((pSaveGameInfo = (SAVEGAME_INFO *)malloc(sizeof(SAVEGAME_INFO))) != nullptr) {
 
-        if ((pFile = fopen(gpszSaveGameFileName, "rb")) != NULL) {
+        if ((pFile = fopen(gpszSaveGameFileName, "rb")) != nullptr) {
 
 #ifdef _DEBUG
             memset(pSaveGameInfo, 0, sizeof(SAVEGAME_INFO));
@@ -259,9 +259,9 @@ ERROR_CODE ReadSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo
     errCode = ERR_NONE;
 
     // validate explicit input
-    assert(pFile != NULL);
+    assert(pFile != nullptr);
     assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-    assert(pSaveGameInfo != NULL);
+    assert(pSaveGameInfo != nullptr);
 
     // seek to correct save game number (slot)
     //
@@ -297,7 +297,7 @@ ERROR_CODE ReadSavedGame(void *pFile, INT iGameNum, SAVEGAME_INFO *pSaveGameInfo
 BOOL ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo)
 {
     // can't acess a null pointer
-    assert(pSaveGameInfo != NULL);
+    assert(pSaveGameInfo != nullptr);
 
     // this must be a valid saved game
     assert(pSaveGameInfo->m_bUsed);
@@ -348,8 +348,8 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo)
     // assume no error
     errCode = ERR_NONE;
 
-    assert(pBfcMgr != NULL);
-    assert(pSaveGameInfo != NULL);
+    assert(pBfcMgr != nullptr);
+    assert(pSaveGameInfo != nullptr);
 
     // clean out any info currently in the CBfcMgr
     WipeBFC(pBfcMgr);
@@ -430,13 +430,13 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo)
         Common::strcpy_s(stPlayerBuf[i].m_szGenStore, pSavePlayer->m_stGenStore.m_szTitle);
         Common::strcpy_s(stPlayerBuf[i].m_szInventory, pSavePlayer->m_stInventory.m_szTitle);
 
-        if ((pPlayer->m_pTradingPost = new CInventory(stPlayerBuf[i].m_szTradingPost)) != NULL) {
+        if ((pPlayer->m_pTradingPost = new CInventory(stPlayerBuf[i].m_szTradingPost)) != nullptr) {
 
-            if ((pPlayer->m_pBlackMarket = new CInventory(stPlayerBuf[i].m_szBlackMarket)) != NULL) {
+            if ((pPlayer->m_pBlackMarket = new CInventory(stPlayerBuf[i].m_szBlackMarket)) != nullptr) {
 
-                if ((pPlayer->m_pGenStore = new CInventory(stPlayerBuf[i].m_szGenStore)) != NULL) {
+                if ((pPlayer->m_pGenStore = new CInventory(stPlayerBuf[i].m_szGenStore)) != nullptr) {
 
-                    if ((pPlayer->m_pInventory = new CInventory(stPlayerBuf[i].m_szInventory)) != NULL) {
+                    if ((pPlayer->m_pInventory = new CInventory(stPlayerBuf[i].m_szInventory)) != nullptr) {
 
                         for (j = 0; j < 4; j++) {
 
@@ -529,58 +529,58 @@ VOID WipeBFC(CBfcMgr *pBfcMgr)
 {
     int i;
 
-    assert(pBfcMgr != NULL);
+    assert(pBfcMgr != nullptr);
 
     pBfcMgr->m_bRestoredGame = FALSE;
 
     // delete any Mish/Mosh items
     //
-    if (pBfcMgr->m_pMishItem != NULL) {
+    if (pBfcMgr->m_pMishItem != nullptr) {
         delete pBfcMgr->m_pMishItem;
-        pBfcMgr->m_pMishItem = NULL;
+        pBfcMgr->m_pMishItem = nullptr;
     }
-    if (pBfcMgr->m_pMoshItem != NULL) {
+    if (pBfcMgr->m_pMoshItem != nullptr) {
         delete pBfcMgr->m_pMoshItem;
-        pBfcMgr->m_pMoshItem = NULL;
+        pBfcMgr->m_pMoshItem = nullptr;
     }
 
-    if ( pBfcMgr->m_cPodj.m_pBlackMarket != NULL ) {
+    if ( pBfcMgr->m_cPodj.m_pBlackMarket != nullptr ) {
         delete pBfcMgr->m_cPodj.m_pBlackMarket;
-        pBfcMgr->m_cPodj.m_pBlackMarket = NULL;
+        pBfcMgr->m_cPodj.m_pBlackMarket = nullptr;
     }
-    if ( pBfcMgr->m_cHodj.m_pBlackMarket != NULL ) {
+    if ( pBfcMgr->m_cHodj.m_pBlackMarket != nullptr ) {
         delete pBfcMgr->m_cHodj.m_pBlackMarket;
-        pBfcMgr->m_cHodj.m_pBlackMarket = NULL;
+        pBfcMgr->m_cHodj.m_pBlackMarket = nullptr;
     }
 
-    if ( pBfcMgr->m_cPodj.m_pGenStore != NULL ) {
+    if ( pBfcMgr->m_cPodj.m_pGenStore != nullptr ) {
         delete pBfcMgr->m_cPodj.m_pGenStore;
-        pBfcMgr->m_cPodj.m_pGenStore = NULL;
+        pBfcMgr->m_cPodj.m_pGenStore = nullptr;
     }
 
-    if ( pBfcMgr->m_cHodj.m_pGenStore != NULL ) {
+    if ( pBfcMgr->m_cHodj.m_pGenStore != nullptr ) {
         delete pBfcMgr->m_cHodj.m_pGenStore;
-        pBfcMgr->m_cHodj.m_pGenStore = NULL;
+        pBfcMgr->m_cHodj.m_pGenStore = nullptr;
     }
 
-    if ( pBfcMgr->m_cPodj.m_pTradingPost != NULL ) {
+    if ( pBfcMgr->m_cPodj.m_pTradingPost != nullptr ) {
         delete pBfcMgr->m_cPodj.m_pTradingPost;
-        pBfcMgr->m_cPodj.m_pTradingPost = NULL;
+        pBfcMgr->m_cPodj.m_pTradingPost = nullptr;
     }
 
-    if ( pBfcMgr->m_cHodj.m_pTradingPost != NULL ) {
+    if ( pBfcMgr->m_cHodj.m_pTradingPost != nullptr ) {
         delete pBfcMgr->m_cHodj.m_pTradingPost;
-        pBfcMgr->m_cHodj.m_pTradingPost = NULL;
+        pBfcMgr->m_cHodj.m_pTradingPost = nullptr;
     }
 
-    if ( pBfcMgr->m_cPodj.m_pInventory != NULL ) {
+    if ( pBfcMgr->m_cPodj.m_pInventory != nullptr ) {
         delete pBfcMgr->m_cPodj.m_pInventory;
-        pBfcMgr->m_cPodj.m_pInventory = NULL;
+        pBfcMgr->m_cPodj.m_pInventory = nullptr;
     }
 
-    if ( pBfcMgr->m_cHodj.m_pInventory != NULL ) {
+    if ( pBfcMgr->m_cHodj.m_pInventory != nullptr ) {
         delete pBfcMgr->m_cHodj.m_pInventory;
-        pBfcMgr->m_cHodj.m_pInventory = NULL;
+        pBfcMgr->m_cHodj.m_pInventory = nullptr;
     }
 
     // This deallocation MUST be after the delete pInventorys
@@ -589,17 +589,17 @@ VOID WipeBFC(CBfcMgr *pBfcMgr)
 
         if (!pBfcMgr->m_cHodj.m_aClueArray[i].bUsed) {
 
-            if (pBfcMgr->m_cHodj.m_aClueArray[i].pNote != NULL) {
+            if (pBfcMgr->m_cHodj.m_aClueArray[i].pNote != nullptr) {
                 delete pBfcMgr->m_cHodj.m_aClueArray[i].pNote;
-                pBfcMgr->m_cHodj.m_aClueArray[i].pNote = NULL;
+                pBfcMgr->m_cHodj.m_aClueArray[i].pNote = nullptr;
             }
         }
 
         if (!pBfcMgr->m_cPodj.m_aClueArray[i].bUsed) {
 
-            if (pBfcMgr->m_cPodj.m_aClueArray[i].pNote != NULL) {
+            if (pBfcMgr->m_cPodj.m_aClueArray[i].pNote != nullptr) {
                 delete pBfcMgr->m_cPodj.m_aClueArray[i].pNote;
-                pBfcMgr->m_cPodj.m_aClueArray[i].pNote = NULL;
+                pBfcMgr->m_cPodj.m_aClueArray[i].pNote = nullptr;
             }
         }
     }

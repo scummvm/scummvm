@@ -49,7 +49,7 @@ private:
 
 public:
 	// standard constructor
-	CMessageBox(CWnd *pParent, CPalette *pPalette, const char *msg1, const char *msg2 = NULL, const int dx = -1, const int dy = -1);
+	CMessageBox(CWnd *pParent, CPalette *pPalette, const char *msg1, const char *msg2 = nullptr, const int dx = -1, const int dy = -1);
 
 	void ClearDialogImage(void);
 
