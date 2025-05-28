@@ -143,6 +143,7 @@ Common::Array<Graphics::Surface *> *AlgGraphics::loadScreenCoordAniImage(const C
 		aniImage->copyRectToSurface(*renderTarget, 0, 0, subSectionRect);
 		images->push_back(aniImage);
 		renderTarget->free();
+		delete[] renderTarget;
 	}
 	aniFile.close();
 	return images;

@@ -103,6 +103,7 @@ void GameJohnnyRock::init() {
 	moveMouse();
 }
 
+// FIXME: Need to unregisterScriptFunctions() in destructor to delete all allocated JRScriptFunctionRect and prevent reallocation to fix memory leakage here...
 void GameJohnnyRock::registerScriptFunctions() {
 #define RECT_HIT_FUNCTION(name, func) _rectHitFuncs[name] = new JRScriptFunctionRect(this, &GameJohnnyRock::func);
 	RECT_HIT_FUNCTION("DEFAULT", rectNewScene);
