@@ -1489,6 +1489,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "brspel",				"BR spel" },
 	{ "djuphavsjakten",		"Djuphavsjakten" },
 	{ "ernie",				"Ernie: Broke in Bayonne" },  // aka Ernie: Pank i Bayonne
+	{ "femmyrordemo",		"Fem myror är fler än fyra elefanter - Demo" },	//10 games from parts 1 and 2
 	{ "garygadget2",		"Bygg båtar med Mulle Meck" },              // First game listed under English
 	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
@@ -1497,6 +1498,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
 	{ "kosmopolska",		"Kosmopolska" },
+	{ "krakeldamm",		"Krakels ABC: Den galna dammsugaren/Mera Krakel" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
 	{ "onsalakorv",			"Onsalakorv" },
 	{ "pettson1",			"Pettson o Findus i snickarbon" },
@@ -8279,6 +8281,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("kontyngent99", "", "START.EXE",		"d:d62438566e44826960fc16c5c23dbe43", 1513041,
 								   "DANE/MAIN.DXR",	"d:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
 
+	// Krakel Spektakel - Krakels ABC
+	WINGAME1_l("krakeldamm", "Hemglass V1.1", "DAMMNT.EXE", "518a98696fe1122e08410b0f157f21bf", 1515971, Common::SV_SWE, 602),
+
+
 	// Published by Future Soft of Nasr City, Cairo
 	WINGAME1_l("ktaralarkam", "", "123.exe", "a593079aecf5bd938ce75264cac24b2d", 2748951, Common::AR_ARB, 600),
 
@@ -9017,6 +9023,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"JOTO/intro.dxr",		"d:f5a9969070ef59b66aa4474bc8ef684e",	21136, 700),
 	WINGAME2("jewels1", "", "Jewels.exe",			"t:b362017d018a849198bd0a4f3c469e0a", 2023828,
 							"JOTO/intro.dxr",		"d:f5a9969070ef59b66aa4474bc8ef684e",	21136, 700),
+
+	// Fem myror är fler än fyra elefanter, Första & Andra delen + Hemglass demo
+	// BreakinBenny: Dedicated to the memory of Magnus Härenstam, Brasse Brännström and Eva Remaeus!
+	MACGAME1_l("femmyrordemo", "Hemglass Demo", "MEDIA/Fem myror 2", "r:0944b962ebb00f4b5d5149d220f8449b", 111222, Common::SV_SWE, 702),
+	WINGAME1_l("femmyrordemo", "Hemglass Demo", "MEDIA/femmyror.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2619547, Common::SV_SWE, 702),
+
 
 	// All of the installers also use Director
 	// Mac filename is Starta Jönssonligan
