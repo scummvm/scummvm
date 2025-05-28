@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (debug)</string>
   <string name="app_desc">Μηχανή παιχνιδιών περιπέτειας</string>
   <string name="ok">OK</string>
   <string name="quit">Έξοδος</string>
+  <string name="no_log_file_title">Σφάλμα Αρχείου Καταγραφής</string>
+  <string name="no_log_file">Αδυναμία ανάγνωσης του αρχείου καταγραφής (log) του ScummVM ή δημιουργίας νέου!</string>
   <string name="no_config_file_title">Σφάλμα Αρχείου Ρυθμίσεων</string>
   <string name="no_config_file">Αδυναμία ανάγνωσης του αρχείου ρυθμίσεων του ScummVM ή δημιουργίας νέου!</string>
   <string name="no_save_path_title">Σφάλμα Διαδρομής Αποθήκευσης</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">Κλείσιμο αναδυόμενου παραθύρου</string>
   <string name="saf_request_prompt">Παρακαλούμε, επιλέξετε τον *αρχικό κατάλογο* (root) της εξωτερικής (φυσικής) SD κάρτας σας. Αυτό απαιτείται ώστε να έχει το ScummVM πρόσβαση σε αυτή τη διαδρομή: </string>
   <string name="saf_revoke_done">Τα Δικαιώματα για το Πλαίσιο Πρόσβασης Αποθηκευτικού Χώρου (Storage Access Framework) για το ScummVM ανακλήθηκαν!</string>
+  <string name="ini_parsing_error">Αδυναμία ανάλυσης του αρχείου ρυθμίσεων</string>
+  <string name="shortcut_creator_title">Εκτέλεση ενός παιχνιδιού</string>
+  <string name="shortcut_creator_search_game">Αναζήτηση ενός παιχνιδιού</string>
+  <string name="shortcut_creator_game_item_icon">Εικονίδιο παιχνιδιού</string>
+  <string name="shortcut_creator_customize_game_name_hint">Ετικέτα συντόμευσης</string>
+  <string name="shortcut_creator_customize_game_icon_description">Εικονίδιο συντόμευσης</string>
 </resources>

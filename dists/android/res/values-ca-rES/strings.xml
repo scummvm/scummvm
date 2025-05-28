@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (depurar)</string>
   <string name="app_desc">Motor de jocs d\'aventura gràfica</string>
   <string name="ok">D\'acord</string>
   <string name="quit">Surt</string>
+  <string name="no_log_file_title">Error en el fitxer de registre</string>
+  <string name="no_log_file">No s\'ha pogut llegir el fitxer de registre de ScummVM o crear-ne un de nou!</string>
   <string name="no_config_file_title">Error en el fitxer de configuració</string>
   <string name="no_config_file">No s\'ha pogut llegir el fitxer de configuració de ScummVM o crear-ne un de nou!</string>
   <string name="no_save_path_title">Error en el camí de les partides desades</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">Tanca la finestra emergent</string>
   <string name="saf_request_prompt">Seleccioneu l\'arrel de la targeta SD externa (física). És necessari perquè ScummVM accedeixi a aquest camí: </string>
   <string name="saf_revoke_done">S\'han revocat els permisos del framework d\'accés a l\'emmagatzematge per a ScummVM!</string>
+  <string name="ini_parsing_error">No s\'ha pogut analitzar el fitxer de configuració</string>
+  <string name="shortcut_creator_title">Executa una partida</string>
+  <string name="shortcut_creator_search_game">Cerca una partida</string>
+  <string name="shortcut_creator_game_item_icon">Icona del joc</string>
+  <string name="shortcut_creator_customize_game_name_hint">Etiqueta de la drecera</string>
+  <string name="shortcut_creator_customize_game_icon_description">Icona de drecera</string>
 </resources>
