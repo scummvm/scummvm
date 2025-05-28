@@ -78,27 +78,9 @@ struct ScreenLayout {
 };
 
 // NB Footage of original DOS Nemesis engine indicates playfield was centrally placed on screen.
-// Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.  Could just be an error in the scripts.
-// TODO Need to make a decision how to handle this.  Should be irrelevant for widescreen mode anyway, & purists will want original appearance for 4:3 ratio.
-// Figures below currently have playfield offset to fit subtitles entirely in lower bar
+// Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.  
+// This could just be an error in the scripts or an artefact of the original game's development, so we will continue to use as-released central placement.
 
-/*/
-// Vertically offset values
-static const ScreenLayout nemesisLayout {
-  Common::Rect(640,480),  // Screen
-  Common::Rect(Common::Point(64,0), 512, 32), // Menu
-  Common::Rect(Common::Point(64,40), 512, 320), // Working; aspect ratio 1.6
-  Common::Rect(Common::Point(64,380), 512, 100) // Text
-};
-static const ScreenLayout zgiLayout {
-  Common::Rect(640,480),  // Screen
-  Common::Rect(Common::Point(0,0), 640, 32), // Menu
-  Common::Rect(Common::Point(0,40), 640, 344), // Working; aspect ratio 1.86
-  Common::Rect(Common::Point(0,400), 640, 80) // Text
-};
-// */
-// */
-// Central values
 static const ScreenLayout nemesisLayout {
 	Common::Rect(640, 480), // Screen
 	Common::Rect(Common::Point(64, 0), 512, 32), // Menu
@@ -112,7 +94,7 @@ static const ScreenLayout zgiLayout {
 	Common::Rect(Common::Point(0, 68), 640, 344), // Working; aspect ratio 1.86
 	Common::Rect(Common::Point(0, 412), 640, 68) // Text
 };
-// */
+
 enum {
 
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
