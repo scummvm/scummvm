@@ -21,7 +21,6 @@
 
 #include "atari-cursor.h"
 
-#include "atari-graphics.h"
 #include "atari-screen.h"
 #include "atari-supervidel.h"
 #include "atari-surface.h"
@@ -41,9 +40,8 @@ uint32 Cursor::_keycolor;
 Graphics::Surface Cursor::_surface;
 Graphics::Surface Cursor::_surfaceMask;
 
-Cursor::Cursor(const AtariGraphicsManager *manager, const Screen *screen)
-	: _manager(manager)
-	, _parentScreen(screen) {
+Cursor::Cursor(const Screen *screen)
+		: _parentScreen(screen) {
 }
 
 Cursor::~Cursor() {
@@ -87,7 +85,8 @@ void Cursor::update() {
 			_dstRect.right * dstBitsPerPixel / 8,	// fake 4bpp by 8bpp's width/2
 			_dstRect.bottom);
 
-		// this is used only in flushBackground()
+		// this is used only in flushBackground() for comparison with rects
+		// passed by Screen::addDirtyRect (aligned and shifted by the same offset)
 		_alignedDstRect = AtariSurface::alignRect(
 			_dstRect.left + _xOffset,
 			_dstRect.top,

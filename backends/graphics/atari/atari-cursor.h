@@ -24,7 +24,6 @@
 
 #include "graphics/surface.h"
 
-class AtariGraphicsManager;
 struct Screen;
 
 // Global state consists of:
@@ -34,7 +33,7 @@ struct Screen;
 // These always get updates by ScummVM, no need to differentiate between engines and the overlay.
 
 struct Cursor {
-	Cursor(const AtariGraphicsManager *manager, const Screen *screen);
+	Cursor(const Screen *screen);
 	~Cursor();
 
 	void reset(const Graphics::Surface *boundingSurf, int xOffset) {
@@ -105,7 +104,6 @@ private:
 	void convertSurfaceTo(const Graphics::PixelFormat &format);
 	void restoreBackground();
 
-	const AtariGraphicsManager *_manager;
 	const Screen *_parentScreen;
 	const Graphics::Surface *_boundingSurf = nullptr;
 	int _xOffset = 0;

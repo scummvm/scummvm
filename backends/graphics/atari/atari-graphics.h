@@ -36,9 +36,7 @@
 #define MAX_V_SHAKE  16
 
 class AtariGraphicsManager final : public GraphicsManager, Common::EventObserver {
-	friend class Cursor;
 	friend class PendingScreenChanges;
-	friend class Screen;
 
 public:
 	AtariGraphicsManager();

@@ -39,8 +39,6 @@ struct std::hash<Common::Rect>
 	}
 };
 
-class AtariGraphicsManager;
-
 class Palette {
 public:
 	void clear() {
@@ -60,7 +58,7 @@ private:
 struct Screen {
 	using DirtyRects = std::unordered_set<Common::Rect>;
 
-	Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette);
+	Screen(bool tt, int width, int height, const Graphics::PixelFormat &format, const Palette *palette);
 
 	void reset(int width, int height, const Graphics::Surface &boundingSurf, int xOffset, bool resetCursorPosition);
 	// must be called before any rectangle drawing
@@ -94,8 +92,7 @@ private:
 		kRezValueTTHigh = 6		// 1280x960@1bpp, TT palette
 	};
 
-	const AtariGraphicsManager *_manager;
-
+	bool _tt;
 	Common::ScopedPtr<AtariSurface> _offsettedSurf;
 	int _xOffset = 0;
 };

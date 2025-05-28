@@ -106,7 +106,6 @@ private:
 	std::pair<int, bool> _aspectRatioCorrectionYOffset;
 	std::pair<bool, bool> _setScreenOffsets;
 	std::pair<bool, bool> _shrinkVidelVisibleArea;
-
 };
 
 #endif // ATARI-PENDINGSCREENCHANGES_H

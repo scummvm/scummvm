@@ -23,14 +23,14 @@
 
 #include <mint/falcon.h>
 
-#include "atari-graphics.h"
+#include "atari-graphics.h"	// MAX_HZ_SHAKE, MAX_V_SHAKE
 #include "atari-supervidel.h"
 #include "backends/platform/atari/atari-debug.h"
 
-Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
-	: _manager(manager)
-	, cursor(manager, this)
-	, palette(palette_) {
+Screen::Screen(bool tt, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
+	: cursor(this)
+	, palette(palette_)
+	, _tt(tt) {
 
 #ifdef USE_SUPERVIDEL
 	if (g_hasSuperVidel) {
@@ -43,7 +43,7 @@ Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graph
 #endif
 	{
 		surf.reset(new AtariSurface(
-			width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE),
+			width + (_tt ? 0 : 2 * MAX_HZ_SHAKE),
 			height + 2 * MAX_V_SHAKE,
 			format));
 		_offsettedSurf.reset(new AtariSurface());
@@ -73,7 +73,7 @@ void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf,
 	// erase old screen
 	_offsettedSurf->fillRect(_offsettedSurf->getBounds(), 0);
 
-	if (_manager->_tt) {
+	if (_tt) {
 		if (width <= 320 && height <= 240) {
 			surf->w = 320;
 			surf->h = 240 + 2 * MAX_V_SHAKE;
@@ -88,7 +88,7 @@ void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf,
 	} else {
 		mode = VsetMode(VM_INQUIRE) & PAL;
 
-		if (_manager->_vgaMonitor) {
+		if (VgetMonitor() == MON_VGA) {
 			mode |= VGA | (bitsPerPixel == 4 ? BPS4 : (g_hasSuperVidel ? BPS8C : BPS8));
 
 			if (width <= 320 && height <= 240) {

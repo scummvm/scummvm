@@ -1074,9 +1074,9 @@ Common::Keymap *AtariGraphicsManager::getKeymap() const {
 
 void AtariGraphicsManager::allocateSurfaces() {
 	for (int i : { kFrontBuffer, kBackBuffer1, kBackBuffer2 }) {
-		_screen[i] = new Screen(this, getMaximumScreenWidth(), getMaximumScreenHeight(), PIXELFORMAT_CLUT8, &_palette);
+		_screen[i] = new Screen(_tt, getMaximumScreenWidth(), getMaximumScreenHeight(), PIXELFORMAT_CLUT8, &_palette);
 	}
-	_screen[kOverlayBuffer] = new Screen(this, getOverlayWidth(), getOverlayHeight(), getOverlayFormat(), &_overlayPalette);
+	_screen[kOverlayBuffer] = new Screen(_tt, getOverlayWidth(), getOverlayHeight(), getOverlayFormat(), &_overlayPalette);
 	// initial position
 	_screen[kOverlayBuffer]->cursor.setPosition(getOverlayWidth() / 2, getOverlayHeight() / 2);
 
