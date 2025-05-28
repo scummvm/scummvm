@@ -61,7 +61,7 @@ def extract_translations(file):
     po_file = polib.pofile(os.path.join(BASE_PATH, 'po', file + '.po'))
     translations = {}
     for entry in po_file:
-        if entry.msgid and entry.msgstr:
+        if entry.msgid and entry.msgstr and not entry.fuzzy:
             translations[entry.msgid] = entry.msgstr
     return translations
 
@@ -124,7 +124,9 @@ def generate_translated_xml(file):
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-    tree.write(os.path.join(dir, 'strings.xml'), encoding='utf-8', xml_declaration=True)
+    with open(os.path.join(dir, 'strings.xml'), 'wb') as f:
+        tree.write(f, encoding='utf-8', xml_declaration=True)
+        f.write(b'\n')
 
 
 def get_po_files():
