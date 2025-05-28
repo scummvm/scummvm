@@ -520,6 +520,15 @@ byte *Resources::loadTOTLocTexts(const Common::String &fileBase, int32 &size) {
 
 		}
 
+		// The .ALL suffix, normally for German, is also used for Italian in Adibou2
+		if (_vm->getGameType() == kGameTypeAdibou2) {
+			if (_vm->_global->_languageWanted == kLanguageItalian) {
+				locTextFile = getLocTextFile(fileBase, kLanguageGerman);
+				if (!locTextFile.empty())
+					_vm->_global->_language = kLanguageItalian;
+			}
+		}
+
 		if (locTextFile.empty()) {
 			// Looking for the first existing language
 			for (int i = 0; i < 10; i++) {
