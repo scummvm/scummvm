@@ -791,17 +791,43 @@ void MainCharacter::onArrived() {
 }
 
 void MainCharacter::walkTo(
-	const Point &target, Direction endDirection,
+	const Point &target_, Direction endDirection,
 	ITriggerableObject *activateObject, const char *activateAction) {
 	_activateObject = activateObject;
 	_activateAction = activateAction;
+	Point target = target_;
 
-	// TODO: Add collision avoidance
+	Point evadeTarget = target;
+	const PathFindingShape *activeFloor = room()->activeFloor();
+	if (activeFloor != nullptr && activeFloor->findPath(_currentPos, target, _pathPoints))
+		evadeTarget = _pathPoints[0];
+
+	MainCharacter *otherCharacter = &g_engine->world().getOtherMainCharacterByKind(_kind);
+	Point otherTarget = otherCharacter->_currentPos;
+	if (otherCharacter->isWalking() && !otherCharacter->_pathPoints.empty())
+		otherTarget = otherCharacter->_pathPoints[0];
+
+	const float activeDepthScale = g_engine->player().activeCharacter()->_graphicNormal.depthScale();
+	const float avoidanceDistSqr = pow(75 * activeDepthScale, 2);
+	const bool willIBeBusy =
+		_activateObject != nullptr &&
+		strcmp(_activateAction, "MIRAR") != 0 &&
+		otherCharacter->currentlyUsing() != dynamic_cast<ObjectBase *>(_activateObject);
+
+	if (otherCharacter->room() == room() && evadeTarget.sqrDist(otherTarget) <= avoidanceDistSqr) {
+		if (!otherCharacter->isBusy()) {
+			if (activeFloor != nullptr && activeFloor->findEvadeTarget(evadeTarget, activeDepthScale, avoidanceDistSqr, evadeTarget))
+				otherCharacter->WalkingCharacter::walkTo(evadeTarget);
+		}
+		else if (!willIBeBusy) {
+			if (activeFloor != nullptr)
+				activeFloor->findEvadeTarget(evadeTarget, activeDepthScale, avoidanceDistSqr, target);
+		}
+	}
 
 	WalkingCharacter::walkTo(target, endDirection, activateObject, activateAction);
-	if (this == g_engine->player().activeCharacter()) {
+	if (this == g_engine->player().activeCharacter())
 		g_engine->camera().setFollow(this);
-	}
 }
 
 void MainCharacter::draw() {
