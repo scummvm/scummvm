@@ -201,7 +201,7 @@ void MinigameTriangle::Node::debugInfo() const {
 	debugC(5, kDebugMinigames, "name:\"%s\" state:\"%s\" number:%d rotation:%d flip:%d isBack:%d highlight:%d animated:%d", obj().getName(), obj()->current_state_name(), _number, _rotation, _flip, _isBack, _highlight, _animated);
 }
 
-const char *MinigameTriangle::Node::getFaceStateName(int angle, bool selected, bool animated, bool instantaneous) {
+const Common::String MinigameTriangle::Node::getFaceStateName(int angle, bool selected, bool animated, bool instantaneous) {
 	assert(!selected || !animated); // анимированные выделенными быть не могут
 
 	static const char *angleNames[3] = {"0", "120", "240"};
@@ -210,7 +210,7 @@ const char *MinigameTriangle::Node::getFaceStateName(int angle, bool selected, b
 	Common::String out;
 
 	out = Common::String::format("%s%s%s", (animated ? "02_" : "01_"), angleNames[angle], (selected || instantaneous ? "_sel" : ""));
-	return out.c_str();
+	return out;
 }
 
 const char *MinigameTriangle::Node::getBackStateName(bool selected, bool animated, bool instantaneous) {
@@ -252,7 +252,7 @@ void MinigameTriangle::updateNode(Node &node, int position, int flip, bool quick
 		QDObject &face = node._face[flip];
 		face->set_R(slotCoord(position, flip));
 		face->update_screen_R();
-		face.setState(Node::getFaceStateName(node._rotation, node._highlight, node._animated, quick));
+		face.setState(Node::getFaceStateName(node._rotation, node._highlight, node._animated, quick).c_str());
 	}
 }
 
@@ -370,10 +370,10 @@ bool MinigameTriangle::animate(float dt) {
 		releaseNodeBack(node2);
 
 		for (auto &it : node1._face)
-			it.setState(Node::getFaceStateName(0, false, false, false));
+			it.setState(Node::getFaceStateName(0, false, false, false).c_str());
 
 		for (auto &it : node2._face)
-			it.setState(Node::getFaceStateName(0, false, false, false));
+			it.setState(Node::getFaceStateName(0, false, false, false).c_str());
 
 		updateNode(node1, _animatedNodes[1], destination(_animatedNodes[0], _animatedNodes[1]), true);
 		updateNode(node2, _animatedNodes[0], destination(_animatedNodes[1], _animatedNodes[0]), true);
