@@ -121,6 +121,7 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 		Node &node = _nodes.back();
 		for (int angle = 1; angle <= 3; ++angle) {
 			snprintf(name, 63, "%s%02d_%1d", faceNameBegin, num + 1, angle);
+			debugC(5, kDebugMinigames, "Loading face object: %s", name);
 			QDObject obj = _runtime->getObject(name);
 			node._face.push_back(obj);
 			_positions.push_back(obj->R());
@@ -148,10 +149,12 @@ MinigameTriangle::MinigameTriangle(MinigameManager *runtime) {
 	for (int num = 1; num <= 2; ++num) {
 		for (int angle = 1; angle <= 3; ++angle) {
 			snprintf(name, 63, "%s%1d_%1d", backNameBegin, num, angle);
+			debugC(5, kDebugMinigames, "Loading back object: %s", name);
 			if (!_backSides[(num - 1) * 3 + angle - 1].load(name, _runtime))
 				return;
 		}
 		snprintf(name, 63, "%s%1d", selectNameBegin, num);
+		debugC(5, kDebugMinigames, "Loading select object: %s", name);
 		if (!_selectBorders[num - 1].load(name, _runtime))
 			return;
 	}
