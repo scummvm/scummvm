@@ -676,7 +676,7 @@ void GuiManager::runLoop() {
 	// called we cannot rely on catching EVENT_QUIT in the event loop above,
 	// since it would only catch it for the top run loop.
 	if ((eventMan->shouldQuit() || (g_engine && eventMan->shouldReturnToLauncher())) && activeDialog == getTopDialog()) {
-		getTopDialog()->close();
+		activeDialog->close();
 		emptyTrash(activeDialog);
 	}
 
