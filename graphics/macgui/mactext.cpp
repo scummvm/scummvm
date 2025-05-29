@@ -384,7 +384,7 @@ void MacText::setMaxWidth(int maxWidth) {
 		absoluteCharOffset -= lineWidth;
 		++_cursorRow;
 	}
-	
+
 	int ppos = 0;
 	if (absoluteCharOffset > _canvas.getLineCharWidth(_cursorRow, true))
 		ppos = _canvas.getLineCharWidth(_cursorRow, true);
@@ -1718,7 +1718,7 @@ Common::U32String MacText::getMouseLink(int x, int y) {
 	y += _scrollPos;
 
 	int row, chunk;
-	getLineCharacter(x, y, nullptr, nullptr, &row, nullptr, &chunk);
+	getRowCol(x, y, nullptr, nullptr, &row, nullptr, &chunk);
 
 	if (chunk < 0)
 		return Common::U32String();
