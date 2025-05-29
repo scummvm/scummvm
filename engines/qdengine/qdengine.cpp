@@ -288,6 +288,7 @@ Common::Error QDEngineEngine::run() {
 				} else if (event.kbd.ascii == 'g')
 					qdGameConfig::get_config().toggle_show_grid();
 #endif
+				grDispatcher::instance()->handle_char_input(event.kbd.keycode);
 				break;
 			default:
 				break;
