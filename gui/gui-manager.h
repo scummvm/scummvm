@@ -244,6 +244,8 @@ protected:
 
 	void giveFocusToDialog(Dialog *dialog);
 	void setLastMousePos(int16 x, int16 y);
+
+	void emptyTrash(Dialog *const activeDialog);
 };
 
 } // End of namespace GUI

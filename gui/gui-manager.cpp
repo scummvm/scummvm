@@ -607,15 +607,7 @@ void GuiManager::runLoop() {
 		}
 
 		// Delete GuiObject that have been added to the trash for a delayed deletion
-		Common::List<GuiObjectTrashItem>::iterator it = _guiObjectTrash.begin();
-		while (it != _guiObjectTrash.end()) {
-			if ((*it).parent == nullptr || (*it).parent == activeDialog) {
-				debug(7, "Delayed deletion of Gui Object %p", (void *)(*it).object);
-				delete (*it).object;
-				it = _guiObjectTrash.erase(it);
-			} else
-				++it;
-		}
+		emptyTrash(activeDialog);
 
 		// Handle tooltip for the widget under the mouse cursor.
 		// 1. Only try to show a tooltip if the mouse cursor was actually moved
@@ -997,6 +989,18 @@ Graphics::MacWindowManager *GuiManager::getWM() {
 	_wm = new Graphics::MacWindowManager(wmMode);
 
 	return _wm;
+}
+
+void GuiManager::emptyTrash(Dialog *const activeDialog) {
+	Common::List<GuiObjectTrashItem>::iterator it = _guiObjectTrash.begin();
+	while (it != _guiObjectTrash.end()) {
+		if ((*it).parent == nullptr || (*it).parent == activeDialog) {
+			debug(7, "Delayed deletion of Gui Object %p", (void *)(*it).object);
+			delete (*it).object;
+			it = _guiObjectTrash.erase(it);
+		} else
+			++it;
+	}
 }
 
 } // End of namespace GUI
