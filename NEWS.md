@@ -1,6 +1,12 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.9.2 (XXXX-XX-XX)
+
+ SCUMM:
+   - Render the TM glyph correctly in the Mac interface for Indiana Jones and
+     the Last Crusade.
+
 #### 2.9.1 (2025-05-25)
 
  AGI:
