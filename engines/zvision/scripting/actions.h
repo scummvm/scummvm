@@ -242,7 +242,7 @@ private:
 	int32 _pos; // Sound source position; NB in panoramas (all original game scripts), this is specified as the X background coordinate; otherwise it is specified in azimuth degrees.
 	uint8  _mag; // Magnitude of effect (not used by original game scripts); 255 for fully directional sound, 0 for fully ambient
 	bool _resetMusicNode; // If true (default, original game scripts have no concept of this), associated music slot value is reset to a value of 2 upon creation of this object;
-	/*
+/*
 	* this seems necessary to ensure all original game pan-track effects load correctly, though it is still unclear exactly what the original intent of these values was.
 	* So far, best guess for music slotkey values is: 0 = has never been loaded, 1 = loaded and actively playing now, 2 = has loaded & played & then subsequently been killed.
 	* Since there is literally nothing in the game scripts that sets some of these values to 2, and certain pan_tracks require it to be 2 for the puzzle that creates them to trigger,
