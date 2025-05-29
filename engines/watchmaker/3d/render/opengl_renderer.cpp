@@ -66,8 +66,8 @@ void OpenGLRenderer::drawIndexedPrimitivesVBO(PrimitiveType primitiveType, Commo
 		assert(index <= VBO->_buffer.size());
 		auto &vertex = VBO->_buffer[index];
 		//warning("%d/%d %d: [%f, %f, %f], [%f, %f], [%f, %f]", i, numFaces, index, vertex.x, vertex.y, vertex.z, vertex.u1, vertex.v1, vertex.u2, vertex.v2);
-		//glColor3f((float)i/numFaces, 1.0, 0.0);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		//glColor4f((float)i/numFaces, 1.0f, 0.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glTexCoord2f(vertex.u1, vertex.v1);
 		glVertex3f(vertex.x, vertex.y, -vertex.z);
 	}
@@ -85,7 +85,7 @@ void OpenGLRenderer::drawPrimitives(PrimitiveType primitiveType, Vertex *vertice
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < numPrimitives; i++) {
 		auto &vertex = vertices[i];
-		glColor3f(1.0, 1.0, 1.0);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glVertex3f(vertex.sx, vertex.sy, -vertex.sz);
 	}
 	glEnd();
