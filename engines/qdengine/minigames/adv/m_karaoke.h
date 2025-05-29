@@ -22,9 +22,12 @@
 #ifndef QDENGINE_MINIGAMES_ADV_M_KARAOKE_H
 #define QDENGINE_MINIGAMES_ADV_M_KARAOKE_H
 
+#include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/MinigameInterface.h"
 
 namespace QDEngine {
+
+MinigameInterface *createMinigameKaraoke(MinigameManager *runtime);
 
 class Karaoke : public MinigameInterface {
 public:
@@ -44,10 +47,10 @@ private:
 		Node();
 		TagType type;
 		float time;
-		string text;
+		Common::String text;
 	};
 
-	typedef vector<Node> Nodes;
+	typedef Std::vector<Node> Nodes;
 	Nodes nodes_;
 
 	float startTime_;
