@@ -72,6 +72,7 @@
 
 // klepa
 #include "qdengine/minigames/adv/m_puzzle.h"
+#include "qdengine/minigames/adv/m_karaoke.h"
 
 namespace QDEngine {
 
@@ -345,10 +346,11 @@ bool qdMiniGame::load_interface() {
 			return true;
 
 		// klepa
-		// Karaoke.dll
-		// puzzle.dll
 		} else if (_dll_name == "DLL\\puzzle.dll") {
 			_interface = create_adv_minigame(_dll_name.c_str(), createMinigamePuzzle);
+			return true;
+		} else if (_dll_name == "DLL\\Karaoke.dll") {
+			_interface = create_adv_minigame(_dll_name.c_str(), createMinigameKaraoke);
 			return true;
 
 		// 3mice2

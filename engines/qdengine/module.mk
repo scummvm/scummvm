@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	minigames/adv/Range.o \
 	minigames/adv/RunTime.o \
 	minigames/adv/TextManager.o \
+	minigames/adv/m_karaoke.o \
 	minigames/adv/m_puzzle.o \
 	minigames/adv/m_scores.o \
 	minigames/adv/m_swap.o \
