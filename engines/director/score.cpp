@@ -2016,7 +2016,7 @@ Common::String Score::formatChannelInfo() {
 	result += Common::String::format("SND: 2  sound2: %d, soundType2: %d\n", frame._mainChannels.sound2.member, frame._mainChannels.soundType2);
 	result += Common::String::format("LSCR:   actionId: %s\n", frame._mainChannels.actionId.asString().c_str());
 
-	for (int i = 0; i < frame._numChannels; i++) {
+	for (int i = 0; (i < frame._numChannels && ((i + 1) < (int)_channels.size())); i++) {
 		Channel &channel = *_channels[i + 1];
 		Sprite &sprite = *channel._sprite;
 		Common::Point position = channel.getPosition();
