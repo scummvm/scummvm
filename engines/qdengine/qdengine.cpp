@@ -562,7 +562,7 @@ void scan_qda() {
 // Translates cp-1251..utf-8
 byte *transCyrillic(const Common::String &str) {
 	const byte *s = (const byte *)str.c_str();
-	static byte tmp[1024];
+	static byte tmp[10240];
 
 	static int trans[] = {
 		0xa0, 0xc2a0,
@@ -587,6 +587,9 @@ byte *transCyrillic(const Common::String &str) {
 	int i = 0;
 
 	for (const byte *p = s; *p; p++) {
+		if (i >= 10240 - 3)
+			break;
+
 		if (*p < 128) {
 			tmp[i++] = *p;
 		} else {
@@ -624,10 +627,10 @@ byte *transCyrillic(const Common::String &str) {
 		}
 	}
 
-	if (i < 1024)
+	if (i < 10240)
 		tmp[i] = 0;
 	else
-		tmp[1023] = 0;
+		tmp[10239] = 0;
 
 	return tmp;
 }
