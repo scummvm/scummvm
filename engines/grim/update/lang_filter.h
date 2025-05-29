@@ -30,7 +30,10 @@ namespace Grim {
 class LangFilter : public Common::Archive {
 public:
 	LangFilter(Common::Archive *arc, Common::Language lang);
-	~LangFilter();
+	~LangFilter() {
+		delete _arc;
+	}
+
 
 	// Common::Archive API implementation
 	bool hasFile(const Common::Path &path) const override;

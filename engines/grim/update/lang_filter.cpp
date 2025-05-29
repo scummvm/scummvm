@@ -61,10 +61,6 @@ LangFilter::LangFilter(Common::Archive *arc, Common::Language lang) : _arc(arc) 
 	}
 }
 
-LangFilter::~LangFilter() {
-	delete _arc;
-}
-
 bool LangFilter::hasFile(const Common::Path &path) const {
 	if (!_arc)
 		return false;
