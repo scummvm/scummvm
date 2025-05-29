@@ -1089,7 +1089,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::CalculatePlaneIntersectionSim
 		}
 	}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	if (count > 1) {
 		dgInt32 j;
 		j = count - 1;
@@ -1134,7 +1134,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::CalculatePlaneIntersection(co
 			count++;
 		}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 		dgInt32 j = count - 1;
 		for (dgInt32 i = 0; i < count; i++) {
 			dgVector error(contactsOut[i] - contactsOut[j]);
@@ -1241,7 +1241,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::CalculatePlaneIntersection(co
 		}
 	}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	if (count > 1) {
 		dgInt32 j = count - 1;
 		for (dgInt32 i = 0; i < count; i++) {

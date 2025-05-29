@@ -1185,7 +1185,7 @@ void dgMeshEffect::AddPolygon(dgInt32 count, const dgFloat64 *const vertexList,
 				AddPoint(vertexList + i1 * stride, material);
 				AddPoint(vertexList + i2 * stride, material);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 				const dgBigVector &p0 = m_points[m_pointCount - 3];
 				const dgBigVector &p1 = m_points[m_pointCount - 2];
 				const dgBigVector &p2 = m_points[m_pointCount - 1];
@@ -1248,7 +1248,7 @@ void dgMeshEffect::EndPolygon(dgFloat64 tol) {
 	dgStack<dgInt32> indexMap(m_pointCount);
 	dgStack<dgInt32> attrIndexMap(m_atribCount);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	for (dgInt32 i = 0; i < m_pointCount; i += 3) {
 		dgBigVector p0(m_points[i + 0]);
 		dgBigVector p1(m_points[i + 1]);
@@ -1300,7 +1300,7 @@ void dgMeshEffect::EndPolygon(dgFloat64 tol) {
 
 				m_pointCount += 3;
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 				dgEdge *test = AddFace(3, index, userdata);
 				NEWTON_ASSERT(test);
 #else
@@ -1313,7 +1313,7 @@ void dgMeshEffect::EndPolygon(dgFloat64 tol) {
 
 	RepairTJoints(true);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	dgPolyhedra::Iterator iter(*this);
 	for (iter.Begin(); iter; iter++) {
 		dgEdge *const face = &(*iter);
@@ -2667,7 +2667,7 @@ dgMeshEffect::dgVertexAtribute dgMeshEffect::InterpolateVertex(
 
 			dgBigVector p10(q1 - q0);
 			dgBigVector p20(q2 - q0);
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 			dgFloat64 dot = p20 % p10;
 			dgFloat64 mag1 = p10 % p10;
 			dgFloat64 mag2 = p20 % p20;
@@ -2710,7 +2710,7 @@ dgMeshEffect::dgVertexAtribute dgMeshEffect::InterpolateVertex(
 				    attr0.m_normal_z * alpha0 + attr1.m_normal_z * alpha1 + attr2.m_normal_z * alpha2, dgFloat32(0.0f));
 				normal = normal.Scale(dgFloat64(1.0f) / sqrt(normal % normal));
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 				dgBigVector testPoint(
 				    attr0.m_vertex.m_x * alpha0 + attr1.m_vertex.m_x * alpha1 + attr2.m_vertex.m_x * alpha2,
 				    attr0.m_vertex.m_y * alpha0 + attr1.m_vertex.m_y * alpha1 + attr2.m_vertex.m_y * alpha2,
@@ -3958,7 +3958,7 @@ void dgMeshEffect::ClipMesh(const dgMeshEffectSolidTree *const clipper,
 				}
 
 				if (frontCount) {
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 					for (dgList<dgMeshTreeCSGFace *>::dgListNode *node1 =
 					            faceList.GetFirst();
 					        node1; node1 = node1->GetNext()) {
@@ -3970,7 +3970,7 @@ void dgMeshEffect::ClipMesh(const dgMeshEffectSolidTree *const clipper,
 					frontMesh->AddPolygon(count, &facePoints[0].m_vertex.m_x,
 					                      sizeof(dgVertexAtribute), dgFastInt(facePoints[0].m_material));
 				} else {
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 					for (dgList<dgMeshTreeCSGFace *>::dgListNode *dnode1 =
 					            faceList.GetFirst();
 					        dnode1; dnode1 = dnode1->GetNext()) {
@@ -4197,7 +4197,7 @@ void dgMeshEffect::RepairTJoints(bool triangulate) {
 						}
 						NEWTON_ASSERT(firstEdge->m_next->m_next->m_next == firstEdge);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 						dgEdge *tmp = firstEdge->m_twin;
 						do {
 							NEWTON_ASSERT(tmp->m_incidentFace > 0);
@@ -4241,7 +4241,7 @@ void dgMeshEffect::RepairTJoints(bool triangulate) {
 						}
 						NEWTON_ASSERT(firstEdge->m_next->m_next->m_next == firstEdge);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 						dgEdge *tmp = firstEdge->m_twin;
 						do {
 							NEWTON_ASSERT(tmp->m_incidentFace > 0);

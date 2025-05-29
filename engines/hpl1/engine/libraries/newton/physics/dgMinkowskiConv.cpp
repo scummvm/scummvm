@@ -744,7 +744,7 @@ class dgContactSolver {
 			dgPerimenterEdge *poly = &subdivision[0];
 			//NEWTON_ASSERT (CheckNormal (poly, shapeNormal));
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 			{
 				dgVector p0;
 				dgVector p1;
@@ -910,7 +910,7 @@ class dgContactSolver {
 
 			NEWTON_ASSERT(poly);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 			{
 				dgVector p0;
 				dgVector p1;
@@ -1088,7 +1088,7 @@ class dgContactSolver {
 
 			NEWTON_ASSERT(poly);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 			{
 				dgVector p0;
 				dgVector p1;
@@ -2091,7 +2091,7 @@ class dgContactSolver {
 							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 					dgFloat32 test = (m_hullVertex[0] - m_hullVertex[2]) % dir;
 					NEWTON_ASSERT(test >= dgFloat32(-2.0e-1f));
 #endif
@@ -2114,7 +2114,7 @@ class dgContactSolver {
 							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 					dgFloat32 test1 = (m_hullVertex[0] - m_hullVertex[3]) % dir;
 					NEWTON_ASSERT(test1 >= dgFloat32(-2.0e-1f));
 #endif

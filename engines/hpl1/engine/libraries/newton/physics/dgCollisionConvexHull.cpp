@@ -195,7 +195,7 @@ dgBigVector dgCollisionConvexHull::FaceNormal(const dgEdge *face,
 		dgBigVector p2(pool[edge->m_incidentVertex]);
 		dgBigVector e2(p2 - p0);
 		dgBigVector n1(e1 * e2);
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 		dgFloat64 mag = normal % n1;
 		NEWTON_ASSERT(mag >= -dgFloat32(0.1f));
 #endif
@@ -205,7 +205,7 @@ dgBigVector dgCollisionConvexHull::FaceNormal(const dgEdge *face,
 	dgFloat64 den = sqrt(normal % normal) + dgFloat64(1.0e-24f);
 	normal = normal.Scale(dgFloat64(1.0f) / den);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	edge = face;
 	dgBigVector e0(
 	    pool[edge->m_incidentVertex] - pool[edge->m_prev->m_incidentVertex]);
