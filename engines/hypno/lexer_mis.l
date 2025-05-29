@@ -1,3 +1,4 @@
+%top{
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,16 +20,6 @@
  *
  */
 
-%option noyywrap
-%option noinput
-%option nounput
-%option yylineno
-%option never-interactive
-
-%option outfile="engines/hypno/lexer_mis.cpp"
-%option prefix="HYPNO_MIS_"
-
-%{
 #define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
@@ -44,7 +35,16 @@
 #include "hypno/grammar.h"
 #include "hypno/tokens_mis.h"
 
-%}
+}
+
+%option noyywrap
+%option noinput
+%option nounput
+%option yylineno
+%option never-interactive
+
+%option outfile="engines/hypno/lexer_mis.cpp"
+%option prefix="HYPNO_MIS_"
 
 %%
 \;.+						/* return COMMENT; */
