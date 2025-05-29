@@ -173,6 +173,11 @@ public:
 		const Common::Point &to,
 		Common::Stack<Common::Point> &path) const;
 	int32 edgeTarget(uint polygonI, uint pointI) const;
+	bool findEvadeTarget(
+		Common::Point centerTarget,
+		float depthScale,
+		float minDistSqr,
+		Common::Point& evadeTarget) const;
 
 private:
 	using LinkIndex = Common::Pair<int32, int32>;
