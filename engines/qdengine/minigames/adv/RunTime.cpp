@@ -721,8 +721,16 @@ const char *MinigameManager::parameter(const char *name, const char *def) const 
 }
 
 bool MinigameManager::mouseLeftPressed() const {
-	if (_invertMouseButtons)
+	if (_invertMouseButtons) {
+		if (keyPressed(VK_LMENU)) {
+			return _engine->is_mouse_event_active(qdEngineInterface::MOUSE_EV_LEFT_DOWN);
+		}
 		return _engine->is_mouse_event_active(qdEngineInterface::MOUSE_EV_RIGHT_DOWN);
+	}
+
+	if (keyPressed(VK_LMENU))
+		return false;
+
 	return _engine->is_mouse_event_active(qdEngineInterface::MOUSE_EV_LEFT_DOWN);
 
 }
@@ -730,6 +738,10 @@ bool MinigameManager::mouseLeftPressed() const {
 bool MinigameManager::mouseRightPressed() const {
 	if (_invertMouseButtons)
 		return _engine->is_mouse_event_active(qdEngineInterface::MOUSE_EV_LEFT_DOWN);
+
+	if (keyPressed(VK_LMENU)) {
+		return _engine->is_mouse_event_active(qdEngineInterface::MOUSE_EV_LEFT_DOWN);
+	}
 	return _engine->is_mouse_event_active(qdEngineInterface::MOUSE_EV_RIGHT_DOWN);
 
 }
