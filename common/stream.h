@@ -964,9 +964,9 @@ protected:
 
 public:
 	SeekableReadStreamEndianWrapper(SeekableReadStream *parentStream, bool bigEndian, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
-		: _parentStream(parentStream, disposeParentStream),
-		  SeekableReadStreamEndian(bigEndian),
-		  ReadStreamEndian(bigEndian) {
+		: SeekableReadStreamEndian(bigEndian),
+		  ReadStreamEndian(bigEndian),
+		  _parentStream(parentStream, disposeParentStream) {
 		assert(parentStream);
 	}
 
