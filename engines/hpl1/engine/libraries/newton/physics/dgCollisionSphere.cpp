@@ -105,7 +105,7 @@ void dgCollisionSphere::Init(dgFloat32 radius, dgMemoryAllocator *allocator) {
 
 		polyhedra.BeginFace();
 		for (dgInt32 j = 0; j < count; j += 3) {
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 			dgEdge *const edge = polyhedra.AddFace(indexList[j], indexList[j + 1],
 			                                       indexList[j + 2]);
 			NEWTON_ASSERT(edge);
