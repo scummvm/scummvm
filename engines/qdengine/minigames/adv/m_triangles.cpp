@@ -480,8 +480,11 @@ void MinigameTriangle::quant(float dt) {
 		else if (compatible(_selected, mousePos)) { // поменять фишки местами
 			startAnimation = _selected;
 			_selected = -1;
-		} else
+		} else {
 			_selected = -1;
+			if (_quickReselect)
+				_selected = mousePos;
+		}
 	}
 
 	if (_selected != lastSelected) {
