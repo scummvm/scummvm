@@ -595,6 +595,9 @@ int main(int argc, char *argv[]) {
 		// 4351 (new behavior: elements of array 'array' will be default initialized)
 		//   a change in behavior in Visual Studio 2005. We want the new behavior, so it can be disabled
 		//
+		// 4505 ('function' : unreferenced local function has been removed)
+		//   libvpx triggers this warning a lot. The compiler eliminates the code and that's expected.
+		//
 		// 4512 ('class' : assignment operator could not be generated)
 		//   some classes use const items and the default assignment operator cannot be generated
 		//
@@ -653,6 +656,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4324");
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
+		globalWarnings.push_back("4505");
 		globalWarnings.push_back("4512");
 		globalWarnings.push_back("4589");
 		globalWarnings.push_back("4702");
