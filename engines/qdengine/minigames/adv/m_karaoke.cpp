@@ -164,7 +164,7 @@ void Karaoke::quant(float dt) {
 	Node& node = nodes_[currentTag_];
 	if (node.type == CLEAR) {
 		++currentTag_;
-		if (currentTag_ == nodes_.size())
+		if ((uint)currentTag_ == nodes_.size())
 			setState(MinigameInterface::GAME_WIN);
 		startScreenTag_ = currentTag_;
 		return;
@@ -174,7 +174,7 @@ void Karaoke::quant(float dt) {
 	outText += colorReaded_;
 	int idx = startScreenTag_;
 	while (idx < currentTag_) {
-		assert(idx < nodes_.size());
+		assert((uint)idx < nodes_.size());
 		assert(nodes_[idx].type == STRING);
 		outText += nodes_[idx].text.c_str();
 		++idx;
@@ -186,7 +186,7 @@ void Karaoke::quant(float dt) {
 		outText += node.text + "&>";
 		++currentTag_;
 		startTagTime_ += node.time;
-		if (currentTag_ == nodes_.size())
+		if ((uint)currentTag_ == nodes_.size())
 			setState(MinigameInterface::GAME_WIN);
 	} else {
 		int part = phase * node.text.size();
@@ -195,7 +195,7 @@ void Karaoke::quant(float dt) {
 	}
 
 	++idx;
-	while (idx < nodes_.size()) {
+	while ((uint)idx < nodes_.size()) {
 		if (nodes_[idx].type == CLEAR)
 			break;
 		outText += nodes_[idx].text.c_str();
