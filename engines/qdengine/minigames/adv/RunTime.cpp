@@ -546,10 +546,8 @@ bool MinigameManager::quant(float dt) {
 		if (_game_help)
 			_game_help.setState(_game_help_enabled ? _game_help_state_name.c_str() : "off");
 
-#ifdef _DEBUG
-		if (keyPressed(VK_MULTIPLY, true))
+		if (keyPressed(VK_MULTIPLY) || (keyPressed(VK_LSHIFT) && keyPressed('8')))
 			_game->setState(MinigameInterface::GAME_WIN);
-#endif
 
 		switch (_game->state()) {
 		case MinigameInterface::GAME_LOST:
