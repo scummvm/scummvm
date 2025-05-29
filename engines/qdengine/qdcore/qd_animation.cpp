@@ -221,7 +221,7 @@ void qdAnimation::redraw_rot(int x, int y, int z, float angle, const Vect2f &sca
 
 	if (tileAnimation()) {
 		tileAnimation()->drawFrame(Vect2i(x, y), get_cur_frame_number(), angle, scale, mode);
-	} else if (fabs(scale.x - scale.y) < 0.01f) {
+	} else if (fabs(scale.x - scale.y) >= 0.01f) {
 		if (const qdAnimationFrame *p = get_cur_frame())
 			p->redraw_rot(x, y, z, angle, scale, mode);
 	} else {
