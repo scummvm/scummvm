@@ -278,10 +278,9 @@ bool LoadWSAssets(const char *wsAssetName) {
 
 bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 	MemHandle workHandle;
-	char *mainAssetPtr, *parseAssetPtr, *endOfAssetBlock;
+	char *parseAssetPtr;
 	uint32 *tempPtr;
 	IntPointer chunkType, chunkSize, chunkHash;
-	bool finished, chunkSwap;
 	int32 *celsPtr, *palPtr;
 	int32 i;
 	int32 assetSize;
@@ -298,14 +297,14 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 	// Lock the handle so we can step through the chunk
 	HLock(workHandle);
-	mainAssetPtr = (char *)(*workHandle);
+	char *mainAssetPtr = (char *)(*workHandle);
 
-	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
+	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 
 	parseAssetPtr = mainAssetPtr;
 
 	// Set the finished flag
-	finished = false;
+	bool finished = false;
 
 	// Get the first chunkType
 	if (!GetNextint32(&parseAssetPtr, endOfAssetBlock, chunkType)) {
@@ -323,7 +322,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		}
 
 		// Process the chunk according to type
-		chunkSwap = false;
+		bool chunkSwap = false;
 		switch (*chunkType) {
 		// Chunk is a machine chunk
 		case CHUNK_HCAM:
@@ -500,9 +499,6 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 }
 
 M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index, M4sprite *mySprite, bool *streamSeries) {
-	uint32 *myCelSource, *data, *offsets, numCels;
-	uint32 *celsPtr;
-
 	// Parameter verification
 	if ((!resourceHandle) || (!*resourceHandle)) {
 		ws_LogErrorMsg(FL, "No sprite source in memory.");
@@ -519,21 +515,21 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 
 	// Find the cels source  from the asset block
 	HLock(resourceHandle);
-	celsPtr = (uint32 *)((intptr)*resourceHandle + handleOffset);
+	uint32 *celsPtr = (uint32 *)((intptr)*resourceHandle + handleOffset);
 
 	// Check that the index into the series requested is within a valid range
-	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
-	if (index >= (int)numCels) {
+	uint32 numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	if (index >= (int32)numCels) {
 		ws_LogErrorMsg(FL, "CreateSprite: Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return nullptr;
 	}
 
 	// Find the offset table, and the beginning of the data for all sprites
-	offsets = &celsPtr[CELS_OFFSETS];
-	data = &celsPtr[CELS_OFFSETS + numCels];
+	uint32 *offsets = &celsPtr[CELS_OFFSETS];
+	uint32 *data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
+	uint32 *myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
 
 	// Set the stream boolean
 	if (streamSeries) {
@@ -571,7 +567,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
 	MemHandle workHandle;
 	int32 celsSize, *celsPtr, *palPtr;
-	char *mainAssetPtr, *endOfAssetBlock, *parseAssetPtr;
+	char *parseAssetPtr;
 	int32 assetSize;
 
 	// This loads a sprite series into the provided vars, rather than the WS tables.
@@ -583,8 +579,8 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 
 	HLock(workHandle);
 
-	mainAssetPtr = (char *)*workHandle;
-	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
+	char *mainAssetPtr = (char *)*workHandle;
+	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -603,11 +599,9 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 }
 
 int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
-	MemHandle workHandle;
 	Common::File f;
 	int32 celsSize, *celsPtr, *palPtr;
-	char *mainAssetPtr, *endOfAssetBlock, *parseAssetPtr;
-	uint32 assetSize;
+	char *parseAssetPtr;
 
 	// This loads a sprite series into the provided vars, rather than the WS tables.
 	// The WS loader is not involved with this procedure.
@@ -617,14 +611,14 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 		return -1;
 
 	// Get the file size
-	assetSize = f.size();
+	uint32 assetSize = f.size();
 
 	// Create a handle big enough to hold the contents of the file
-	workHandle = NewHandle(assetSize, "ss file");
+	MemHandle workHandle = NewHandle(assetSize, "ss file");
 
 	// Lock the handle and read the contents of the file intoit
 	HLock(workHandle);
-	mainAssetPtr = (char *)*workHandle;
+	char *mainAssetPtr = (char *)*workHandle;
 	if (f.read(mainAssetPtr, assetSize) < assetSize) {
 		mem_free(workHandle);
 		return -1;
@@ -634,7 +628,7 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 	f.close();
 
 	// Set up some pointers
-	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
+	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -652,8 +646,6 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 }
 
 bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH) {
-	int32 *celsPtr;
-
 	// Parameter verification
 	if ((!ssHandle) || (!*ssHandle)) {
 		ws_LogErrorMsg(FL, "nullptr Handle given.");
@@ -662,7 +654,7 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 	// Lock the handle, and get the cels source
 	HLock(ssHandle);
-	celsPtr = (int32 *)((intptr)*ssHandle + ssOffset);
+	int32 *celsPtr = (int32 *)((intptr)*ssHandle + ssOffset);
 
 	// Return the values
 	if (maxW) {
@@ -681,15 +673,15 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 	MemHandle workHandle;
-	char *parseAssetPtr, *mainAssetPtr, *endOfAssetBlock;
-	int32 emptySlot, i, assetSize, *celsPtr, *palPtr;
+	char *parseAssetPtr;
+	int32 i, assetSize, *celsPtr, *palPtr;
 
 	// Check that the loader has been initialized
 	if (!_GWS(wsloaderInitialized)) {
 		error_show(FL, 'WSLI', "Asset Name: %s", wsAssetName);
 	}
 
-	emptySlot = -1;
+	int32 emptySlot = -1;
 
 	// If hash is < 0, find the first available slot
 	if (hash < 0) {
@@ -743,10 +735,10 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 
 		// Lock the handle so we can step through the chunk
 		HLock(workHandle);
-		mainAssetPtr = (char *)(*workHandle);
+		char *mainAssetPtr = (char *)(*workHandle);
 
 		parseAssetPtr = mainAssetPtr;
-		endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
+		char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 
 		ClearWSAssets(_WS_ASSET_CELS, emptySlot, emptySlot);
 
@@ -776,7 +768,9 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		HUnLock(workHandle);
 
 		return emptySlot;
-	} else if (i < MAX_ASSET_HASH) {
+	}
+
+	if (i < MAX_ASSET_HASH) {
 		// Else if we found the SS already loaded
 		if (_GWS(globalCELSPaloffsets)[i] >= 0) {
 			// Get the pointer to the pal data
@@ -802,9 +796,8 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char * /*mainAssetPtr*/, char *endOfAssetBlock,
 		int32 **dataOffset, int32 **palDataOffset, RGB8 *myPalette) {
 	IntPointer celsType, numColors, celsSize;
-	int32 *tempPtr, *data, *dataPtr, *offsetPtr, *palData, i, j;
+	int32 *tempPtr, i, j;
 	IntPointer header, format;
-	bool byteSwap;
 
 	if (!_GWS(wsloaderInitialized))
 		return -1;
@@ -843,7 +836,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		return -1;
 	}
 
-	byteSwap = false;
+	bool byteSwap = false;
 	// If the chunk is PAL info - celsType == CELS_LAP_ indicates the chunk needs to be byte-swapped.
 	if ((*celsType == CELS__PAL) || (*celsType == CELS_LAP_)) {
 		// Read the chunk size, and the number of palette colors, and byte-swap if necessary
@@ -871,7 +864,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 
 		// The asset block offset for palData should begin with the number of colors
 		*palDataOffset = numColors.ptr();
-		palData = numColors.ptr();
+		int32 *palData = numColors.ptr();
 
 		if (((intptr)endOfAssetBlock - (intptr)(*parseAssetPtr)) < ((int32)(*celsSize) - 8)) {
 			ws_LogErrorMsg(FL, "Pal info is larger than asset block.");
@@ -934,7 +927,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 
 	// The asset block offset for the cel should begin with the celsType
 	*dataOffset = (int32 *)celsType.ptr();
-	data = (int32 *)celsType.ptr();
+	int32 *data = (int32 *)celsType.ptr();
 
 	// Verify that we actually got legitimate values
 	if ((int32)(*celsSize) <= 0) {
@@ -964,7 +957,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 
 		// The chunk header has been byteswapped, now we must byte-swap the table of
 		// offsets into the chunk, which indicate where each individual sprite can be found.
-		offsetPtr = &(data[CELS_OFFSETS]);
+		int32 *offsetPtr = &(data[CELS_OFFSETS]);
 		tempPtr = offsetPtr;
 		for (i = 0; i < (int32)FROM_LE_32(data[CELS_COUNT]); i++) {
 			*tempPtr = SWAP_INT32(*tempPtr);
@@ -973,7 +966,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 
 		// dataPtr points to the beginning of the block which is a concatenation of
 		// all the sprites.  Loop through and byteswap each individual sprite header.
-		dataPtr = tempPtr;
+		int32 *dataPtr = tempPtr;
 		for (i = 0; i < (int32)FROM_LE_32(data[CELS_COUNT]); i++) {
 			// The beginning of sprite i is the dataPtr + the number of bytes in the offset table
 			tempPtr = (int32 *)((intptr)dataPtr + offsetPtr[i]);
@@ -991,18 +984,16 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 }
 
 static void RestoreSSPaletteInfo(RGB8 *myPalette, int32 *palPtr) {
-	uint32 *tempPtr, i, j;
-
 	// Parameter verification
 	if ((!myPalette) || (!palPtr))
 		return;
 
 	// Set up a pointer that can step through the pal info for the SS, and restore each color
 	if (myPalette) {
-		tempPtr = (uint32 *)(&palPtr[1]);
-		for (i = 0; i < FROM_LE_32(palPtr[0]); i++) {
+		uint32 *tempPtr = (uint32 *)(&palPtr[1]);
+		for (uint32 i = 0; i < FROM_LE_32(palPtr[0]); i++) {
 			uint32 rgb = READ_LE_UINT32(tempPtr);
-			j = (rgb & 0xff000000) >> 24;
+			uint32 j = (rgb & 0xff000000) >> 24;
 			myPalette[j].r = (rgb & 0x00ff0000) >> 14;
 			myPalette[j].g = (rgb & 0x0000ff00) >> 6;
 			myPalette[j].b = (rgb & 0x000000ff) << 2;
@@ -1012,7 +1003,6 @@ static void RestoreSSPaletteInfo(RGB8 *myPalette, int32 *palPtr) {
 }
 
 M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite *mySprite, bool *streamSeries) {
-	MemHandle workHandle;
 	int32 i;
 
 	// Ensure wsloader has been initialized
@@ -1042,7 +1032,7 @@ M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite
 	}
 
 	// Get the resource handle
-	workHandle = _GWS(globalCELSHandles)[hash];
+	MemHandle workHandle = _GWS(globalCELSHandles)[hash];
 
 	// Create the sprite
 	mySprite = CreateSprite(workHandle, _GWS(globalCELSoffsets)[hash], index, mySprite, streamSeries);
@@ -1059,7 +1049,7 @@ M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite
 int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
 	MemHandle workHandle;
 	int32 celsSize, *celsPtr, *palPtr;
-	char *mainAssetPtr, *endOfAssetBlock, *parseAssetPtr;
+	char *parseAssetPtr;
 	int32 assetSize;
 
 	//This loads a sprite series into the provided vars, rather than the WS tables.
@@ -1071,8 +1061,8 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 
 	HLock(workHandle);
 
-	mainAssetPtr = (char *)*workHandle;
-	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
+	char *mainAssetPtr = (char *)*workHandle;
+	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -1220,8 +1210,6 @@ int32 GetWSAssetCELCount(uint32 hash) {
 
 
 int32 GetWSAssetCELFrameRate(uint32 hash) {
-	uint32 *celsPtr;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1241,14 +1229,11 @@ int32 GetWSAssetCELFrameRate(uint32 hash) {
 	}
 
 	// Find and return the frame rate for the SS
-	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	uint32 *celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 	return FROM_LE_32(celsPtr[CELS_FRAME_RATE]);
 }
 
-
 int32 GetWSAssetCELPixSpeed(uint32 hash) {
-	uint32 *celsPtr;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1268,14 +1253,11 @@ int32 GetWSAssetCELPixSpeed(uint32 hash) {
 	}
 
 	// Find and return the pix speed for the SS
-	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	uint32 *celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 	return FROM_LE_32(celsPtr[CELS_PIX_SPEED]);
 }
 
 int32 ws_get_sprite_width(uint32 hash, int32 index) {
-	uint32 *celsPtr, *offsets, *data, *myCelSource;
-	int32 numCels;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1295,10 +1277,10 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	}
 
 	// Find the source for the SS
-	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	uint32 *celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
-	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	int32 numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= numCels) {
 		ws_LogErrorMsg(FL, "ws_get_sprite_width: Sprite index out of range - max index: %d, requested index: %d, hash: %d",
 			numCels - 1, index, hash);
@@ -1306,21 +1288,18 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	}
 
 	// Find the offset table in the SS header
-	offsets = &celsPtr[CELS_OFFSETS];
+	uint32 *offsets = &celsPtr[CELS_OFFSETS];
 
 	// Find the beginning of the data for all sprites in the SS
-	data = &celsPtr[CELS_OFFSETS + numCels];
+	uint32 *data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
+	uint32 *myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
 
 	return FROM_LE_32(myCelSource[CELS_W]);
 }
 
 int32 ws_get_sprite_height(uint32 hash, int32 index) {
-	uint32 *celsPtr, *offsets, *data, *myCelSource;
-	int32 numCels;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1340,10 +1319,10 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	}
 
 	// Find the source for the SS
-	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	uint32 *celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
-	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	int32 numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= numCels) {
 		ws_LogErrorMsg(FL, "ws_get_sprite_height: Sprite index out of range - max index: %d, requested index: %d, hash: %d",
 			numCels - 1, index, hash);
@@ -1351,20 +1330,18 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	}
 
 	// Find the offset table in the SS header
-	offsets = &celsPtr[CELS_OFFSETS];
+	uint32 *offsets = &celsPtr[CELS_OFFSETS];
 
 	// Find the beginning of the data for all sprites in the SS
-	data = &celsPtr[CELS_OFFSETS + numCels];
+	uint32 *data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
+	uint32 *myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
 
 	return FROM_LE_32(myCelSource[CELS_H]);
 }
 
 MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
-	uint32 *sequPtr;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1384,7 +1361,7 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 	}
 
 	// Find the sequence chunk
-	sequPtr = (uint32 *)((intptr)*(_GWS(globalSEQUHandles)[hash]) + (uint32)(_GWS(globalSEQUoffsets)[hash]));
+	uint32 *sequPtr = (uint32 *)((intptr)*(_GWS(globalSEQUHandles)[hash]) + (uint32)(_GWS(globalSEQUoffsets)[hash]));
 
 	// Return the offset into the resource chunk, and the number of local vars used by the sequence
 	*offset = (intptr)(&sequPtr[SEQU_SEQU_START]) - (intptr)*(_GWS(globalSEQUHandles)[hash]);
@@ -1395,8 +1372,6 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 }
 
 MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int32 *machInstrOffset) {
-	uint32 *machPtr;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1419,7 +1394,7 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 	HLock(_GWS(globalMACHHandles)[hash]);
 
 	// Find the machine chunk
-	machPtr = (uint32 *)((intptr)*(_GWS(globalMACHHandles)[hash]) + (uint32)(_GWS(globalMACHoffsets)[hash]));
+	uint32 *machPtr = (uint32 *)((intptr)*(_GWS(globalMACHHandles)[hash]) + (uint32)(_GWS(globalMACHoffsets)[hash]));
 
 	// Set the number of states, the state offset table, the start of the mach instructions
 	*numStates = FROM_LE_32(machPtr[MACH_NUM_STATES]);
@@ -1432,8 +1407,6 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 }
 
 MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
-	uint32 *dataPtr;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1453,7 +1426,7 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 	}
 
 	// Find the data block chunk
-	dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
+	uint32 *dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
 
 	// Verify the row index of the data block is valid
 	if (index > FROM_LE_32(dataPtr[DATA_REC_COUNT])) {
@@ -1472,8 +1445,6 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 }
 
 int32 ws_GetDATACount(uint32 hash) {
-	uint32 *dataPtr;
-
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
@@ -1493,16 +1464,15 @@ int32 ws_GetDATACount(uint32 hash) {
 	}
 
 	// Find the data block chunk
-	dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
+	uint32 *dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
 
 	// Return the number of rows in the data block
 	return FROM_LE_32(dataPtr[DATA_REC_COUNT]);
 }
 
 static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
-	uint32 celsType, celsSize, numColors, *myColors;
-	uint32 *tempPtr, i, j, header, format;
-	int32 numCels, dataOffset;
+	uint32 celsSize, *myColors;
+	uint32 *tempPtr, i;
 	bool byteSwap;
 
 	if (!sysFile) {
@@ -1511,8 +1481,8 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read in the series header and the format number
-	header = sysFile->readUint32LE();
-	format = sysFile->readUint32LE();
+	uint32 header = sysFile->readUint32LE();
+	uint32 format = sysFile->readUint32LE();
 
 	// Make sure the header is "M4SS", and that the format is not antique
 	if (header == HEAD_SS4M) {
@@ -1527,14 +1497,14 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read in the SS chunk type - either PAL or SS info
-	celsType = sysFile->readUint32LE();
+	uint32 celsType = sysFile->readUint32LE();
 
 	if ((celsType == CELS__PAL) || (celsType == CELS_LAP_)) {
 		// PAL info, read in the size of the PAL chunk
 		celsSize = sysFile->readUint32LE();
 
 		// Now read in the number of colors to be inserted into the PAL
-		numColors = sysFile->readUint32LE();
+		uint32 numColors = sysFile->readUint32LE();
 
 		// Make sure the info is in the correct format (swap between Motorola and Intel formats)
 		if (celsType == CELS_LAP_) {
@@ -1573,7 +1543,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 			if (myPalette) {
 				tempPtr = (uint32 *)(&myColors[0]);
 				for (i = 0; i < numColors; i++) {
-					j = (*tempPtr & 0xff000000) >> 24;
+					uint32 j = (*tempPtr & 0xff000000) >> 24;
 					myPalette[j].r = (*tempPtr & 0x00ff0000) >> 14;
 					myPalette[j].g = (*tempPtr & 0x0000ff00) >> 6;
 					myPalette[j].b = (*tempPtr & 0x000000ff) << 2;
@@ -1611,7 +1581,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read how many sprites are in the series
-	numCels = sysFile->readUint32LE();
+	int32 numCels = sysFile->readUint32LE();
 
 	// Again, byte-swap if the chunk is in the wrong format
 	if (celsType == CELS_SS__) {
@@ -1649,17 +1619,12 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Find out how far into the stream we are, and return that value
-	dataOffset = (*sysFile).get_pos();
+	int32 dataOffset = (*sysFile).get_pos();
 	return dataOffset;
 }
 
 bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
-	CCB *myCCB;
-	frac16 *myRegs;
-	uint32 *celsPtr, *offsets;
-	int32 ssDataOffset, i, numSprites;
 	int32 obesest_frame = 0;
-	uint32 maxFrameSize;
 
 	// Verify the parameters
 	if (!sysFile || !anim8 || !anim8->myCCB) {
@@ -1667,9 +1632,9 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 		return false;
 	}
 
-	myCCB = anim8->myCCB;
-	myRegs = anim8->myRegs;
-	ssDataOffset = 0;
+	CCB *myCCB = anim8->myCCB;
+	frac16 *myRegs = anim8->myRegs;
+	int32 ssDataOffset = 0;
 
 	// Read in the SS stream header
 	if ((ssDataOffset = GetSSHeaderInfo(sysFile, &(myCCB->streamSSHeader), &_G(master_palette)[0])) <= 0) {
@@ -1677,8 +1642,8 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	}
 
 	// Automatically set some of the sequence registers
-	celsPtr = myCCB->streamSSHeader;
-	numSprites = celsPtr[CELS_COUNT];
+	uint32 *celsPtr = myCCB->streamSSHeader;
+	int32 numSprites = celsPtr[CELS_COUNT];
 	myRegs[IDX_CELS_INDEX] = -(1 << 16);	// First frame inc will make it 0
 	myRegs[IDX_CELS_COUNT] = numSprites << 16;
 	myRegs[IDX_CELS_FRAME_RATE] = celsPtr[CELS_FRAME_RATE] << 16;
@@ -1686,11 +1651,11 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	// Here we convert the offset table to become the actual size of the data for each sprite
 	// This is so the stream can be optimized to always read in on sprite boundaries
 	// Get the beginning of the offset table
-	offsets = &celsPtr[CELS_OFFSETS];
+	uint32 *offsets = &celsPtr[CELS_OFFSETS];
 
-	maxFrameSize = 0;
+	uint32 maxFrameSize = 0;
 	// For all but the last frame, the frame size is the difference in offset values
-	for (i = 0; i < numSprites - 1; i++) {
+	for (int32 i = 0; i < numSprites - 1; i++) {
 		offsets[i] = offsets[i + 1] - offsets[i];
 
 		if (offsets[i] > maxFrameSize) {
@@ -1742,18 +1707,13 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 }
 
 bool ws_GetNextSSstreamCel(Anim8 *anim8) {
-	CCB *myCCB;
-	M4sprite *mySprite;
-	uint32 *celsPtr, *offsets, *myCelSource;
-	uint32 frameNum;
-
 	// Verify the parameters
 	if (!anim8) {
 		ws_LogErrorMsg(FL, "nullptr Anim8* given");
 		return false;
 	}
 
-	myCCB = anim8->myCCB;
+	CCB *myCCB = anim8->myCCB;
 	if ((!anim8->myCCB) || (!myCCB->streamSSHeader) || (!myCCB->myStream)) {
 		ws_LogErrorMsg(FL, "Invalid Anim8* given.");
 		return false;
@@ -1764,14 +1724,14 @@ bool ws_GetNextSSstreamCel(Anim8 *anim8) {
 	}
 
 	// Find the SS source and the offset table into the source
-	celsPtr = myCCB->streamSSHeader;
-	offsets = &celsPtr[CELS_OFFSETS];
+	uint32 *celsPtr = myCCB->streamSSHeader;
+	uint32 *offsets = &celsPtr[CELS_OFFSETS];
 
 	// Automatically increment the sequence register
 	anim8->myRegs[IDX_CELS_INDEX] += 0x10000;
 
 	// Check whether the end of the SS has been streamed
-	frameNum = anim8->myRegs[IDX_CELS_INDEX] >> 16;
+	uint32 frameNum = anim8->myRegs[IDX_CELS_INDEX] >> 16;
 	if (frameNum >= celsPtr[CELS_COUNT]) {
 		ws_LogErrorMsg(FL, "No more frames available to stream");
 		return false;
@@ -1790,8 +1750,8 @@ bool ws_GetNextSSstreamCel(Anim8 *anim8) {
 	}
 
 	// Initialize the sprite structure
-	myCelSource = myCCB->streamSpriteSource;
-	mySprite = myCCB->source;
+	uint32 *myCelSource = myCCB->streamSpriteSource;
+	M4sprite *mySprite = myCCB->source;
 
 	mySprite->xOffset = FROM_LE_32(myCelSource[CELS_X]);
 	mySprite->yOffset = FROM_LE_32(myCelSource[CELS_Y]);
