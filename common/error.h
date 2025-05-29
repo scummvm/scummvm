@@ -62,11 +62,7 @@ enum ErrorCode {
 	kReadingFailed,				///< Failed to read a file (permission denied?).
 	kWritingFailed,				///< Failure to write data - disk full?
 
-	/** Failed to find a MetaEnginePlugin. This should never happen, because all MetaEngines must always
-	 * be built into the executable, regardless if the engine plugins are present or not.
-	 */
-	kMetaEnginePluginNotFound,
-
+	kMetaEnginePluginNotFound,	///< Failed to find a MetaEnginePlugin.
 	kEnginePluginNotFound,		///< Failed to find an Engine plugin to handle target.
 	kEnginePluginNotSupportSaves,	///< The plugin does not support listing save states.
 

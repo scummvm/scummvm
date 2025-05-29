@@ -64,6 +64,7 @@ static String errorToString(ErrorCode errorCode) {
 		return _s("Writing data failed");
 
 	case kEnginePluginNotFound:
+	case kMetaEnginePluginNotFound:
 		return _s("Could not find suitable engine plugin");
 	case kEnginePluginNotSupportSaves:
 		return _s("Engine plugin does not support saved games");
