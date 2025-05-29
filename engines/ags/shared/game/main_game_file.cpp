@@ -125,6 +125,7 @@ bool IsMainGameLibrary(const String &filename) {
 // Tracks files with standard AGS package names:
 // - *.ags is a standart cross-platform file pattern for AGS games,
 // - ac2game.dat is a legacy file name for very old games,
+// - agsgame.dat is a legacy file name used in some non-Windows releases,
 // - *.exe is a MS Win executable; it is included to this case because
 //   users often run AGS ports with Windows versions of games.
 String FindGameData(const String &path, bool(*fn_testfile)(const String &)) {
@@ -136,8 +137,9 @@ String FindGameData(const String &path, bool(*fn_testfile)(const String &)) {
 			Common::Path filePath = it->getPath();
 
 			if (test_file.hasSuffixIgnoreCase(".ags") ||
-			        test_file.equalsIgnoreCase("ac2game.dat") ||
-			        test_file.hasSuffixIgnoreCase(".exe")) {
+				test_file.equalsIgnoreCase("ac2game.dat") ||
+				test_file.equalsIgnoreCase("agsgame.dat") ||
+				test_file.hasSuffixIgnoreCase(".exe")) {
 				if (IsMainGameLibrary(test_file.c_str()) && fn_testfile(filePath.toString('/'))) {
 					Debug::Printf("Found game data pak: %s", test_file.c_str());
 					return test_file.c_str();
