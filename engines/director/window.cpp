@@ -532,7 +532,6 @@ bool Window::loadNextMovie() {
 	debug(0, "@@@@   Switching to movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	g_director->setCurrentWindow(this);
 	if (g_director->getVersion() < 500)
 		loadNewSharedCast(previousSharedCast);
 
