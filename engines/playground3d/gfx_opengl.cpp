@@ -166,7 +166,7 @@ void OpenGLRenderer::disableScissor() {
 void OpenGLRenderer::drawFace(uint face) {
 	glBegin(GL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
-		glColor3f(cubeVertices[11 * (4 * face + i) + 8], cubeVertices[11 * (4 * face + i) + 9], cubeVertices[11 * (4 * face + i) + 10]);
+		glColor4f(cubeVertices[11 * (4 * face + i) + 8], cubeVertices[11 * (4 * face + i) + 9], cubeVertices[11 * (4 * face + i) + 10], 1.0f);
 		glVertex3f(cubeVertices[11 * (4 * face + i) + 2], cubeVertices[11 * (4 * face + i) + 3], cubeVertices[11 * (4 * face + i) + 4]);
 		glNormal3f(cubeVertices[11 * (4 * face + i) + 5], cubeVertices[11 * (4 * face + i) + 6], cubeVertices[11 * (4 * face + i) + 7]);
 	}
@@ -212,7 +212,7 @@ void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
 
-	glColor3f(0.0f, 1.0f, 0.0f);
+	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 	glBegin(GL_TRIANGLES);
 	glVertex3f(-1.0f,  1.0, 0.0f);
 	glVertex3f( 1.0f,  1.0, 0.0f);
@@ -221,7 +221,7 @@ void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 
 	glPolygonOffset(-1.0f, 0.0f);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_TRIANGLES);
 	glVertex3f(-0.5f,  0.5, 0.0f);
 	glVertex3f( 0.5f,  0.5, 0.0f);

@@ -72,7 +72,7 @@ void OpenGLRenderer::init() {
 void OpenGLRenderer::clear() {
 	glClearColor(0.f, 0.f, 0.f, 1.f); // Solid black
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void OpenGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) {
@@ -208,7 +208,7 @@ void OpenGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBindTexture(GL_TEXTURE_2D, glFont->id);
 
 	int x = position.x;

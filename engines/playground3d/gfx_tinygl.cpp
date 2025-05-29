@@ -202,7 +202,7 @@ void TinyGLRenderer::disableScissor() {
 void TinyGLRenderer::drawFace(uint face) {
 	tglBegin(TGL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
-		tglColor3f(cubeVertices[11 * (4 * face + i) + 8], cubeVertices[11 * (4 * face + i) + 9], cubeVertices[11 * (4 * face + i) + 10]);
+		tglColor4f(cubeVertices[11 * (4 * face + i) + 8], cubeVertices[11 * (4 * face + i) + 9], cubeVertices[11 * (4 * face + i) + 10], 1.0f);
 		tglVertex3f(cubeVertices[11 * (4 * face + i) + 2], cubeVertices[11 * (4 * face + i) + 3], cubeVertices[11 * (4 * face + i) + 4]);
 		tglNormal3f(cubeVertices[11 * (4 * face + i) + 5], cubeVertices[11 * (4 * face + i) + 6], cubeVertices[11 * (4 * face + i) + 7]);
 	}
@@ -248,7 +248,7 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
 
-	tglColor3f(0.0f, 1.0f, 0.0f);
+	tglColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 	tglBegin(TGL_TRIANGLES);
 	tglVertex3f(-1.0f,  1.0, 0.0f);
 	tglVertex3f( 1.0f,  1.0, 0.0f);
@@ -257,7 +257,7 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 
 	tglPolygonOffset(-1.0f, 0.0f);
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	tglBegin(TGL_TRIANGLES);
 	tglVertex3f(-0.5f,  0.5, 0.0f);
 	tglVertex3f( 0.5f,  0.5, 0.0f);

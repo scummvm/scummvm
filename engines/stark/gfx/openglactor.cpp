@@ -127,12 +127,12 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				else
-					glColor3f(1.0f, 1.0f, 1.0f);
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			} else {
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(material->r, material->g, material->b);
 				else
-					glColor3f(material->r, material->g, material->b);
+					glColor4f(material->r, material->g, material->b, 1.0f);
 			}
 			uint32 index = vertexIndices[i];
 			auto vertex = _faceVBO[index];

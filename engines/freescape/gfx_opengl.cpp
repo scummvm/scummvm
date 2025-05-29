@@ -228,7 +228,7 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect &viewArea) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
-	glColor3ub(255, 255, 255);
+	glColor4ub(255, 255, 255, 255);
 
 	glLineWidth(20);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -301,7 +301,7 @@ void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point &posit
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3ub(r, g, b);
+	glColor4ub(r, g, b, 255);
 
 	glLineWidth(5); // It will not work in every OpenGL implementation since the
 	                // spec doesn't require support for line widths other than 1
@@ -417,7 +417,7 @@ void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3ub(r, g, b);
+	glColor4ub(r, g, b, 255);
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
 	float coef = (9 - frame) / 9.0;
@@ -531,7 +531,7 @@ void OpenGLRenderer::useStipple(bool enabled) {
 }
 
 void OpenGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
-	glColor3ub(r, g, b);
+	glColor4ub(r, g, b, 255);
 }
 
 void OpenGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
@@ -547,7 +547,7 @@ void OpenGLRenderer::drawFloor(uint8 color) {
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple;
 	assert(getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple)); // TODO: move check inside this function
-	glColor3ub(r1, g1, b1);
+	glColor4ub(r1, g1, b1, 255);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, Math::Vector3d(-100000.0, 0.0, -100000.0));
