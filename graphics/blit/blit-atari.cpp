@@ -47,7 +47,7 @@ namespace Graphics {
 void keyBlitLogicAtari(byte *dst, const byte *src, const uint w, const uint h,
 					   const uint srcDelta, const uint dstDelta, const uint32 key) {
 #ifdef USE_SV_BLITTER
-	if (key == 0 && ((uintptr)src & 0xFF000000) >= 0xA0000000 && ((uintptr)dst & 0xFF000000) >= 0xA0000000) {
+	if (key == 0 && (uintptr)src >= 0xA0000000 && (uintptr)dst >= 0xA0000000) {
 		if (g_superVidelFwVersion >= 9) {
 			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
 			*SV_BLITTER_FIFO = (long)(g_blitMask ? g_blitMask : src);	// SV_BLITTER_SRC2
@@ -101,7 +101,7 @@ void copyBlit(byte *dst, const byte *src,
 		return;
 
 #ifdef USE_SV_BLITTER
-	if (((uintptr)src & 0xFF000000) >= 0xA0000000 && ((uintptr)dst & 0xFF000000) >= 0xA0000000) {
+	if ((uintptr)src >= 0xA0000000 && (uintptr)dst >= 0xA0000000) {
 		if (g_superVidelFwVersion >= 9) {
 			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
 			*SV_BLITTER_FIFO = 0x00000000;				// SV_BLITTER_SRC2

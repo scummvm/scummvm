@@ -21,7 +21,6 @@
 
 #include "atari-cursor.h"
 
-#include "atari-screen.h"
 #include "atari-supervidel.h"
 #include "atari-surface.h"
 //#include "backends/platform/atari/atari-debug.h"
@@ -40,16 +39,14 @@ uint32 Cursor::_keycolor;
 Graphics::Surface Cursor::_surface;
 Graphics::Surface Cursor::_surfaceMask;
 
-Cursor::Cursor(const Screen *screen)
-		: _parentScreen(screen) {
-}
-
 Cursor::~Cursor() {
 	_savedBackground.free();
 	// beware, called multiple times (they have to be destroyed before
 	// AtariSurfaceDeinit() is called)
-	_surface.free();
-	_surfaceMask.free();
+	if (_surface.getPixels())
+		_surface.free();
+	if (_surface.getPixels())
+		_surfaceMask.free();
 }
 
 void Cursor::update() {
@@ -76,8 +73,8 @@ void Cursor::update() {
 		assert(_srcRect.width() == _dstRect.width());
 		assert(_srcRect.height() == _dstRect.height());
 
-		const int dstBitsPerPixel = _parentScreen->offsettedSurf->getBitsPerPixel();
-		const int xOffset         = (_parentScreen->offsettedSurf->w - _boundingSurf->w) / 2;
+		const int dstBitsPerPixel = _screenSurf->getBitsPerPixel();
+		const int xOffset         = (_screenSurf->w - _boundingSurf->w) / 2;
 
 		// non-direct rendering never uses 4bpp but maybe in the future ...
 		_savedRect = AtariSurface::alignRect(
@@ -160,8 +157,12 @@ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 			bMask = format.bMax() << format.bShift;
 		}
 
-		_surface.create(cursorWidth, cursorHeight, format);	// keep it 8bpl even if bitsPerPixel == 4...
-		_surfaceMask.create(g_hasSuperVidel ? _surface.w : _surface.w / 8, _surface.h, format);	// 1 bpl
+		// always 8-bit as this is both 8-bit src and 4-bit dst for C2P
+		_surface.create(cursorWidth, cursorHeight, format);
+		assert(_surface.pitch == _surface.w);
+		// always 8-bit or 1-bit
+		_surfaceMask.create(g_hasSuperVidel ? _surface.w : _surface.w / 8, _surface.h, PIXELFORMAT_CLUT8);
+		_surfaceMask.w = _surface.w;
 	}
 
 	const int srcRectWidth = g_hasSuperVidel ? _width : _srcRect.width();
@@ -254,7 +255,7 @@ void Cursor::saveBackground() {
 
 	// as this is used only for direct rendering, we don't need to worry about offsettedSurf
 	// having different dimensions than the source surface
-	const Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
+	const Graphics::Surface &dstSurface = *_screenSurf;
 
 	//atari_debug("Cursor::saveBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
@@ -269,7 +270,7 @@ void Cursor::saveBackground() {
 }
 
 void Cursor::draw() {
-	AtariSurface &dstSurface  = *_parentScreen->offsettedSurf;
+	AtariSurface &dstSurface  = *_screenSurf;
 	const int dstBitsPerPixel = dstSurface.getBitsPerPixel();
 	const int xOffset         = (dstSurface.w - _boundingSurf->w) / 2;
 
@@ -319,7 +320,7 @@ void Cursor::restoreBackground() {
 
 	// as this is used only for direct rendering, we don't need to worry about offsettedSurf
 	// having different dimensions than the source surface
-	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf->surfacePtr();
+	Graphics::Surface &dstSurface = *_screenSurf->surfacePtr();
 
 	// restore native bitplanes or pixels, so it must be a Graphics::Surface to copy to
 	dstSurface.copyRectToSurface(

@@ -23,13 +23,12 @@
 
 #include <mint/falcon.h>
 
-#include "atari-graphics.h"	// MAX_HZ_SHAKE, MAX_V_SHAKE
-#include "atari-supervidel.h"
-#include "backends/platform/atari/atari-debug.h"
+#include "atari-graphics.h"		// MAX_HZ_SHAKE, MAX_V_SHAKE
+#include "atari-supervidel.h"	// g_hasSuperVidel
+//#include "backends/platform/atari/atari-debug.h"
 
 Screen::Screen(bool tt, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
-	: cursor(this)
-	, palette(palette_)
+	: palette(palette_)
 	, _tt(tt) {
 
 #ifdef USE_SUPERVIDEL
@@ -60,8 +59,7 @@ Screen::Screen(bool tt, int width, int height, const Graphics::PixelFormat &form
 
 void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf) {
 	clearDirtyRects();
-	cursor.reset(&boundingSurf);
-	cursor.setPosition(boundingSurf.w / 2, boundingSurf.h / 2);
+
 	rez = -1;
 	mode = -1;
 
@@ -131,29 +129,31 @@ void Screen::reset(int width, int height, const Graphics::Surface &boundingSurf)
 				(surf->w - width) / 2,		// left
 				(surf->h - height) / 2),	// top
 			width, height));
+
+	cursor.reset(_offsettedSurf.get(), &boundingSurf);
+	cursor.setPosition(boundingSurf.w / 2, boundingSurf.h / 2);
 }
 
 void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int w, int h, bool directRendering) {
 	if (fullRedraw)
 		return;
 
-	// x,y are relative to srcSurface but screen's width is always aligned to 16 bytes
-	// so both dirty rects and cursor must be drawn in its coordinates
-	const int xOffset = (_offsettedSurf->w - srcSurface.w) / 2;
-
 	if ((w == srcSurface.w && h == srcSurface.h)
 		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
 		//atari_debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
 
 		dirtyRects.clear();
-		// don't use x/y/w/h, the 2nd expression may be true
-		// also, it's ok if e.g. w = 630 gets aligned to w = 640, nothing is drawn in 630~639
-		dirtyRects.insert(AtariSurface::alignRect(xOffset, 0, xOffset + srcSurface.w, srcSurface.h));
+		// even if srcSurface.w != _offsettedSurf.w, alignRect would lead to the same result
+		dirtyRects.insert(_offsettedSurf->getBounds());
 
-		cursor.reset(&srcSurface);
+		cursor.reset(_offsettedSurf.get(), &srcSurface);
 
 		fullRedraw = true;
 	} else {
+		// x,y are relative to srcSurface but screen's width is always aligned to 16 bytes
+		// so both dirty rects and cursor must be drawn in screen coordinates
+		const int xOffset = (_offsettedSurf->w - srcSurface.w) / 2;
+
 		const Common::Rect alignedRect = AtariSurface::alignRect(x + xOffset, y, x + xOffset + w, y + h);
 
 		dirtyRects.insert(alignedRect);

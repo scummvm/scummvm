@@ -135,8 +135,8 @@ private:
 	void addDirtyRectToScreens(const Graphics::Surface &dstSurface,
 							   int x, int y, int w, int h, bool directRendering);
 	bool updateScreenInternal(Screen *dstScreen, const Graphics::Surface *srcSurface);
-	void copyRectToScreenInternal(AtariSurface &dstSurface,
-								  const byte *buf, int pitch, int x, int y, int w, int h);
+	void copyRectToAtariSurface(AtariSurface &dstSurface,
+								const byte *buf, int pitch, int x, int y, int w, int h);
 
 	bool isOverlayDirectRendering() const {
 #ifndef DISABLE_FANCY_THEMES

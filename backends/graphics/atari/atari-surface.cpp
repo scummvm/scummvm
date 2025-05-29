@@ -163,15 +163,12 @@ void AtariSurface::free() {
 void AtariSurface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
 	assert(width % 16 == 0);
 	assert(destX % 16 == 0);
+	assert(format.bytesPerPixel == 1);
 
-	// 'pChunkyEnd' is a delicate parameter: the c2p routine compares it to the address register
-	// used for pixel reading; two common mistakes:
-	// 1. (subRect.left, subRect.bottom) = beginning of the next line *including the offset*
-	// 2. (subRect.right, subRect.bottom) = even worse, end of the *next* line, not current one
 	const byte *pChunky    = (const byte *)buffer;
-	const byte *pChunkyEnd = pChunky + (height - 1) * srcPitch + width * format.bytesPerPixel;
+	const byte *pChunkyEnd = pChunky + (height - 1) * srcPitch + width;
 
-	byte *pScreen = (byte *)getPixels() + destY * pitch + destX * getBitsPerPixel()/8;
+	byte *pScreen = (byte *)getBasePtr(0, destY) + destX * getBitsPerPixel()/8;
 
 	if (getBitsPerPixel() == 8) {
 		if (srcPitch == width) {
@@ -212,15 +209,17 @@ void AtariSurface::drawMaskedSprite(
 	assert(subRect.width() % 16 == 0);
 	assert(subRect.width() == srcSurface.w);
 	assert(srcSurface.format == format);
+	assert(srcSurface.w == srcMask.w);
+	assert(srcSurface.h == srcMask.h);
 
-	if (getBitsPerPixel() == 4) {
-		asm_draw_4bpl_sprite(
+	if (getBitsPerPixel() == 8) {
+		asm_draw_8bpl_sprite(
 			(uint16 *)getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
 			(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
 			destX, destY,
 			pitch, subRect.width(), subRect.height());
-	} else if (getBitsPerPixel() == 8) {
-		asm_draw_8bpl_sprite(
+	} else {
+		asm_draw_4bpl_sprite(
 			(uint16 *)getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
 			(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
 			destX, destY,

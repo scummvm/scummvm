@@ -25,16 +25,13 @@
 
 #include <mint/cookie.h>
 #include <mint/falcon.h>
-#include <mint/osbind.h>
 #include <mint/sysvars.h>
 
 #include "backends/platform/atari/atari-debug.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "common/config-manager.h"
-#include "common/str.h"
 #include "common/translation.h"
-#include "engines/engine.h"
 #include "gui/ThemeEngine.h"
 
 #include "atari-surface.h"
@@ -581,7 +578,7 @@ void AtariGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, i
 		directRendering);
 
 	if (directRendering && !g_hasSuperVidel) {
-		copyRectToScreenInternal(
+		copyRectToAtariSurface(
 			*_screen[kFrontBuffer]->offsettedSurf,
 			(const byte *)buf, pitch, x, y, w, h);
 	} else {
@@ -912,7 +909,7 @@ void AtariGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, 
 		directRendering);
 
 	if (directRendering) {
-		copyRectToScreenInternal(
+		copyRectToAtariSurface(
 			*_screen[kOverlayBuffer]->offsettedSurf,
 			(const byte *)buf, pitch, x, y, w, h);
 	} else {
@@ -1146,8 +1143,8 @@ bool AtariGraphicsManager::updateScreenInternal(Screen *dstScreen, const Graphic
 	return updated;
 }
 
-void AtariGraphicsManager::copyRectToScreenInternal(AtariSurface &dstSurface,
-													const byte *buf, int pitch, int x, int y, int w, int h) {
+void AtariGraphicsManager::copyRectToAtariSurface(AtariSurface &dstSurface,
+												  const byte *buf, int pitch, int x, int y, int w, int h) {
 	const Common::Rect rect = AtariSurface::alignRect(x, y, x + w, y + h);
 
 	// TODO: mask the unaligned parts and copy the rest
