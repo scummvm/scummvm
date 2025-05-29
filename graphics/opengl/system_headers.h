@@ -115,6 +115,10 @@
 	#define GL_CLAMP_TO_BORDER 0x812D
 #endif
 
+#if !defined(GL_MIRRORED_REPEAT)
+	#define GL_MIRRORED_REPEAT 0x8370
+#endif
+
 #if !defined(GL_DRAW_FRAMEBUFFER_BINDING)
 	#define GL_DRAW_FRAMEBUFFER_BINDING 0x8CA6
 #endif

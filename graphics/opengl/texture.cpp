@@ -84,12 +84,10 @@ void Texture::setWrapMode(WrapMode wrapMode) {
 				break;
 			}
 		case kWrapModeMirroredRepeat:
-#if !USE_FORCED_GLES
 			if (OpenGLContext.textureMirrorRepeatSupported) {
 				glwrapMode = GL_MIRRORED_REPEAT;
 				break;
 			}
-#endif
 		// fall through
 		case kWrapModeRepeat:
 		default:
