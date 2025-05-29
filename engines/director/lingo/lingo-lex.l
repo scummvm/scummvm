@@ -1,3 +1,4 @@
+%top{
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -18,16 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-%option noyywrap
-%option noinput
-%option nounput
-%option never-interactive
-%option case-insensitive
-
-%option outfile="engines/director/lingo/lingo-lex.cpp"
-
-%{
 
 #define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
@@ -53,6 +44,18 @@ using namespace Director;
 
 static const char *inputbuffer;
 static uint inputlen;
+
+}
+
+%option noyywrap
+%option noinput
+%option nounput
+%option never-interactive
+%option case-insensitive
+
+%option outfile="engines/director/lingo/lingo-lex.cpp"
+
+%{
 
 // Push lines in stack
 static void pushLine(uint num) {
