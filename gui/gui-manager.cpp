@@ -675,8 +675,10 @@ void GuiManager::runLoop() {
 	// it will never be removed. Since we can have multiple run loops being
 	// called we cannot rely on catching EVENT_QUIT in the event loop above,
 	// since it would only catch it for the top run loop.
-	if ((eventMan->shouldQuit() || (g_engine && eventMan->shouldReturnToLauncher())) && activeDialog == getTopDialog())
+	if ((eventMan->shouldQuit() || (g_engine && eventMan->shouldReturnToLauncher())) && activeDialog == getTopDialog()) {
 		getTopDialog()->close();
+		emptyTrash(activeDialog);
+	}
 
 	if (didSaveState) {
 		_theme->disable();
