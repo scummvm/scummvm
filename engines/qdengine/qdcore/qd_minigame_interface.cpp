@@ -183,7 +183,7 @@ public:
 	const char *name() const;
 
 	//! Создаёт интерфейс к объекту с именем object_name.
-	qdMinigameObjectInterface *object_interface(const char *object_name);
+	qdMinigameObjectInterface *object_interface(const char *object_name, bool test = false);
 	//! Создаёт интерфейс к персонажу с именем personage_name.
 	qdMinigameObjectInterface *personage_interface(const char *personage_name);
 	//! Активация персонажа с именем personage_name.
@@ -322,11 +322,12 @@ const char *qdMinigameSceneInterfaceImpl::name() const {
 	return _scene->name();
 }
 
-qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::object_interface(const char *object_name) {
+qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::object_interface(const char *object_name, bool test) {
 	if (qdGameObjectAnimated * p = dynamic_cast<qdGameObjectAnimated * >(_scene->get_object(object_name)))
 		return new qdMinigameObjectInterfaceImpl(p);
 
-	warning("object_interface(): Unknown object '%s'", transCyrillic(object_name));
+	if (!test)
+		warning("object_interface(): Unknown object '%s'", transCyrillic(object_name));
 
 	return NULL;
 }

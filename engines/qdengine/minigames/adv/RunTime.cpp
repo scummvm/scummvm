@@ -809,7 +809,7 @@ QDObject MinigameManager::getObject(const char *name) const {
 }
 
 bool MinigameManager::testObject(const char *name) const {
-	if (qdMinigameObjectInterface *obj = _scene->object_interface(name)) {
+	if (qdMinigameObjectInterface *obj = _scene->object_interface(name, true)) {
 		_scene->release_object_interface(obj);
 		return true;
 	}

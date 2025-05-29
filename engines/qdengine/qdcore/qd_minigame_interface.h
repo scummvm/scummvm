@@ -320,7 +320,7 @@ public:
 	virtual const char *name() const = 0;
 
 	//! Создаёт интерфейс к объекту с именем object_name.
-	virtual qdMinigameObjectInterface *object_interface(const char *object_name) = 0;
+	virtual qdMinigameObjectInterface *object_interface(const char *object_name, bool test = false) = 0;
 	//! Создаёт интерфейс к персонажу с именем personage_name.
 	virtual qdMinigameObjectInterface *personage_interface(const char *personage_name) = 0;
 	//! Активация персонажа с именем personage_name.
