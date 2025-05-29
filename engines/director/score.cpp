@@ -815,8 +815,12 @@ void Score::incrementFilmLoops() {
 			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
 			if (!fl->_frames.empty()) {
 				// increment the film loop counter
-				it->_filmLoopFrame += 1;
-				it->_filmLoopFrame %= fl->_frames.size();
+				if (fl->_looping) {
+					it->_filmLoopFrame += 1;
+					it->_filmLoopFrame %= fl->_frames.size();
+				} else if (it->_filmLoopFrame < (fl->_frames.size() - 1)) {
+					it->_filmLoopFrame += 1;
+				}
 			} else {
 				warning("Score::updateFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
 			}
