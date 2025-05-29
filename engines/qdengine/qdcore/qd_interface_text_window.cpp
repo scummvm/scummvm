@@ -166,11 +166,8 @@ bool qdInterfaceTextWindow::keyboard_handler(Common::KeyCode vkey) {
 }
 
 bool qdInterfaceTextWindow::char_input_handler(int input) {
-	warning("STUB: qdInterfaceTextWindow::char_input_handler");
-	bool ret = false;
-#if 0
-	bool ret = __super::char_input_handler(input);
-#endif
+	bool ret = qdInterfaceElement::char_input_handler(input);
+
 	if (_windowType == WINDOW_EDIT && _isEditing) {
 		if (!_inputStringLimit || (int)_inputString.size() < _inputStringLimit) {
 			if (Common::isPrint(input) || input == '_' || input == '-' || input == ' ') {
