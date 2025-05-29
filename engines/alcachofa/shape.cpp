@@ -605,6 +605,29 @@ void PathFindingShape::floydWarshallPath(
 	path.push(_linkPoints[fromLink]);
 }
 
+bool PathFindingShape::findEvadeTarget(
+	Point centerTarget,
+	float depthScale, float minDistSqr,
+	Point &evadeTarget) const {
+	// TODO: Check if minDistSqr should just modify tryDistBase
+
+	for (float tryDistBase = 60; tryDistBase < 250; tryDistBase += 10) {
+		for (int tryAngleI = 0; tryAngleI < 6; tryAngleI++) {
+			const float tryAngle = tryAngleI / 3.0f * M_PI + deg2rad(30.0f);
+			const float tryDist = tryDistBase * depthScale;
+			const Point tryPos = evadeTarget + Point(
+				(int16)(cosf(tryAngle) * tryDist),
+				(int16)(sinf(tryAngle) * tryDist));
+
+			if (contains(tryPos) && tryPos.sqrDist(centerTarget) > minDistSqr) {
+				evadeTarget = tryPos;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 FloorColorShape::FloorColorShape() {}
 
 FloorColorShape::FloorColorShape(ReadStream &stream) {
