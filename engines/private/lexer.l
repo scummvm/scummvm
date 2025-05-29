@@ -1,3 +1,4 @@
+%top{
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,15 +20,6 @@
  *
  */
 
-%option noyywrap
-%option noinput
-%option nounput
-%option never-interactive
-
-%option outfile="engines/private/lexer.cpp"
-%option prefix="PRIVATE_"
-
-%{
 #define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
@@ -47,7 +39,15 @@ using namespace Private;
 using namespace Gen;
 using namespace Settings;
 
-%}
+}
+
+%option noyywrap
+%option noinput
+%option nounput
+%option never-interactive
+
+%option outfile="engines/private/lexer.cpp"
+%option prefix="PRIVATE_"
 
 %%
 \/\/.*				    /* ignoring the comment */
