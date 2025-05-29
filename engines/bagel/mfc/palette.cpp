@@ -26,30 +26,75 @@ namespace Bagel {
 namespace MFC {
 
 BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
-	error("TODO: CPalette::CreatePalette");
+	DeleteObject();
+	m_hObject = new Impl(lpLogPalette);
+	return true;
 }
 
 int CPalette::GetObject(int nCount, LPVOID lpObject) const {
-	error("TODO: CPalette::GetObject");
+	LOGPALETTE *pal = (LOGPALETTE *)lpObject;
+	const Impl *src = static_cast<const Impl *>(m_hObject);
+	assert((uint)nCount < 4 + (4 * src->size()));
+
+	for (uint i = 0; i < src->size(); ++i) {
+		auto &entry = pal->palPalEntry[i];
+		src->get(i, entry.peRed, entry.peGreen, entry.peBlue);
+		entry.peFlags = 0;
+	}
+
+	return 4 + (4 * src->size());
 }
 
 UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
-                                 LPPALETTEENTRY lpPaletteColors) const {
-	error("TODO: CPalette::GetPaletteEntries");
+		LPPALETTEENTRY lpPaletteColors) const {
+	const Impl *src = static_cast<const Impl *>(m_hObject);
+
+	for (uint i = 0; i < nNumEntries; ++i) {
+		auto &entry = lpPaletteColors[i];
+		src->get(nStartIndex + i, entry.peRed,
+			entry.peGreen, entry.peBlue);
+		entry.peFlags = 0;
+	}
+
+	return nNumEntries;
 }
 
 UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
-                                 LPPALETTEENTRY lpPaletteColors) {
-	error("TODO: CPalette::SetPaletteEntries");
+		LPPALETTEENTRY lpPaletteColors) {
+	Impl *pal = static_cast<Impl *>(m_hObject);
+
+	for (uint i = 0; i < nNumEntries; ++i) {
+		auto &entry = lpPaletteColors[i];
+		pal->set(nStartIndex + i, entry.peRed,
+			entry.peGreen, entry.peBlue);
+	}
+
+	return nNumEntries;
 }
 
 BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
-                              const PALETTEENTRY *lpPaletteColors) {
+		const PALETTEENTRY *lpPaletteColors) {
 	error("TODO: CPalette::AnimatePalette");
 }
 
 UINT CPalette::GetNearestPaletteIndex(COLORREF crColor) {
-	error("TODO: CPalette::GetNearestPaletteIndex");
+	const Impl *src = static_cast<const Impl *>(m_hObject);
+
+	return src->findBestColor(
+		GetRValue(crColor),
+		GetGValue(crColor),
+		GetBValue(crColor)
+	);
+}
+
+/*--------------------------------------------*/
+
+CPalette::Impl::Impl(const LPLOGPALETTE pal) :
+	CGdiObjectImpl(), Graphics::Palette(pal->palNumEntries) {
+	for (uint i = 0; i < size(); ++i) {
+		auto &e = pal->palPalEntry;
+		set(i, e->peRed, e->peGreen, e->peBlue);
+	}
 }
 
 } // namespace MFC

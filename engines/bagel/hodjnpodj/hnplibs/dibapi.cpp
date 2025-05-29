@@ -216,8 +216,6 @@ BOOL CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 		GlobalFree((HGLOBAL)hLogPal);
 	}
 
-	GlobalUnlock((HGLOBAL)hDIB);
-
 	return bResult;
 }
 

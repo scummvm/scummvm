@@ -23,6 +23,7 @@
 #define BAGEL_MFC_AFXWIN_H
 
 #include "common/fs.h"
+#include "graphics/palette.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/afx.h"
@@ -523,6 +524,10 @@ public:
 };
 
 class CPalette : public CGdiObject {
+	struct Impl : public CGdiObjectImpl,
+			public Graphics::Palette {
+		Impl(const LPLOGPALETTE pal);
+	};
 public:
 	HGDIOBJ m_hObject = nullptr;
 
