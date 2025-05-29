@@ -36,7 +36,7 @@ COpponent2::COpponent2(LastExpressEngine *engine, CFight *fight) : COpponent(eng
 	_seqs[5] = _engine->getArchiveManager()->loadSeq("2002okml.seq", 15, 0);
 	_seqs[6] = _engine->getArchiveManager()->loadSeq("2002okm.seq",  15, 0);
 
-	_engine->getLogicManager()->playDialog(kCharacterTableA, "MUS030", 16, 0);
+	_engine->getLogicManager()->playDialog(kCharacterTableA, engine->isDemo() ? "MUS030D" : "MUS030", 16, 0);
 
 	_timer = 30;
 }

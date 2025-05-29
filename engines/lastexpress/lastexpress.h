@@ -691,6 +691,12 @@ public:
 	int32 readTGAIntoMemory(const char *filename, TGAHeader *tgaHeader);
 	void constructPalette(TGAHeader *tgaHeader, uint16 *palette);
 
+	// DEMO CREDITS
+	bool demoEnding(bool wonGame);
+	void demoEndingMouse(Event *event);
+	void demoEndingTimer(Event *event);
+
+	// EVENT HANDLERS
 	void engineEventHandlerWrapper(Event *event);
 
 	void nodeStepMouseWrapper(Event *event);
@@ -705,8 +711,13 @@ public:
 	void creditsMouseWrapper(Event *event);
 	void creditsTimerWrapper(Event *event);
 
+	void demoEndingMouseWrapper(Event *event);
+	void demoEndingTimerWrapper(Event *event);
+
 	void fightMouseWrapper(Event *event);
 	void fightTimerWrapper(Event *event);
+
+	void emptyHandler(Event *event);
 
 	int _savedFrameCounter = 0;
 	int32 _savedFrameInterval = 0;

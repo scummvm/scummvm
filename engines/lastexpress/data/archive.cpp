@@ -226,7 +226,7 @@ bool ArchiveManager::lockCache(char *filename) {
 void ArchiveManager::initHPFS() {
 	g_HDFilePosition = 0;
 
-	if (!g_HDFilePointer || !g_HDFilePointer->open("HD.hpf")) {
+	if (!g_HDFilePointer || !g_HDFilePointer->open(_engine->isDemo() ? "DEMO.HPF" : "HD.hpf")) {
 		error("Hard drive cache not found (please reinstall)");
 	}
 
@@ -239,7 +239,7 @@ void ArchiveManager::initHPFS() {
 	g_HDArchiveNumFiles = g_HDFilePointer->readUint32LE();
 
 	if (g_HDFilePointer->err()) {
-		error("Error reading from file \"%s\"", "HD.hpf");
+		error("Error reading from file \"%s\"", _engine->isDemo() ? "DEMO.HPF" : "HD.hpf");
 	}
 
 	g_HDFilePosition += 4;
@@ -258,7 +258,7 @@ void ArchiveManager::initHPFS() {
 	}
 
 	if (g_HDFilePointer->err()) {
-		error("Error reading from file \"%s\"", "HD.hpf");
+		error("Error reading from file \"%s\"", _engine->isDemo() ? "DEMO.HPF" : "HD.hpf");
 	}
 
 	g_HDFilePosition += g_HDArchiveNumFiles;

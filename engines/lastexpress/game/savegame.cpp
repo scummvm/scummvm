@@ -1332,8 +1332,8 @@ void SaveManager::validateSaveFile(bool flag) {
 			error("Out of memory");
 		}
 
-		_engine->_savePointHeaders->gameTime = 1037700;
-		_engine->_savePointHeaders->chapter = 1;
+		_engine->_savePointHeaders->gameTime = _engine->isDemo() ? 2241000 : 1037700;
+		_engine->_savePointHeaders->chapter = _engine->isDemo() ? 3 : 1;
 	}
 
 	saveFile->open(_engine->_savegameFilename, CVCRMODE_RB);
@@ -1359,8 +1359,8 @@ void SaveManager::validateSaveFile(bool flag) {
 					error("Out of memory");
 				}
 
-				_engine->_savePointHeaders->gameTime = 1037700;
-				_engine->_savePointHeaders->chapter = 1;
+				_engine->_savePointHeaders->gameTime = _engine->isDemo() ? 2241000 : 1037700;
+				_engine->_savePointHeaders->chapter = _engine->isDemo() ? 3 : 1;
 			}
 
 			for (int i = 0; fileSize >= sizeof(SVCRFileHeader) && i < fileHeader.numSavePoints; ++i) {
@@ -1445,8 +1445,8 @@ void SaveManager::validateSaveFile(bool flag) {
 				error("Out of memory");
 			}
 
-			_engine->_savePointHeaders->gameTime = 1037700;
-			_engine->_savePointHeaders->chapter = 1;
+			_engine->_savePointHeaders->gameTime = _engine->isDemo() ? 2241000 : 1037700;
+			_engine->_savePointHeaders->chapter = _engine->isDemo() ? 3 : 1;
 		}
 
 		int offset = sizeof(SVCRFileHeader);

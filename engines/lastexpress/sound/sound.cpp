@@ -1674,7 +1674,11 @@ void SoundManager::ambientAI(int id) {
 			_loopingSoundDuration = ((rnd(UINT_MAX)) % 320) + 260;
 
 			if (soundId != 99) {
-				playSoundFile(newAmbientSoundName, kSoundTypeAmbient | kSoundFlagLooped | kVolume1, kCharacterSteam, 0);
+				if (_engine->isDemo()) {
+					playSoundFile(newAmbientSoundName, kSoundTypeAmbient | kSoundFlagLooped | kVolume2, kCharacterSteam, 0);
+				} else {
+					playSoundFile(newAmbientSoundName, kSoundTypeAmbient | kSoundFlagLooped | kVolume1, kCharacterSteam, 0);
+				}
 
 				if (oldAmbientSlot1)
 					oldAmbientSlot1->setFade(kVolumeNone);

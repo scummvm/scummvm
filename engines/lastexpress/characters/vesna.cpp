@@ -172,8 +172,12 @@ void LogicManager::CONS_Vesna_DoWalk(CONS_PARAMS) {
 void LogicManager::HAND_Vesna_DoWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1]))
-			goto LABEL_10;
+	case 12:
+		if (walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1])) {
+			getCharacter(kCharacterVesna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
+			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		}
 		break;
 	case 5:
 		if (rnd(2) == 0) {
@@ -186,16 +190,8 @@ void LogicManager::HAND_Vesna_DoWalk(HAND_PARAMS) {
 	case 6:
 		playChrExcuseMe(kCharacterVesna, kCharacterCath, 0);
 		break;
-	case 12:
-		if (walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1])) {
-		LABEL_10:
-			getCharacter(kCharacterVesna).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
-			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
-		}
-		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -249,7 +245,7 @@ void LogicManager::HAND_Vesna_DoWalkBehind(HAND_PARAMS) {
 			}
 			return;
 		}
-	LABEL_16:
+
 		walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1]);
 		return;
 	}
@@ -264,8 +260,9 @@ void LogicManager::HAND_Vesna_DoWalkBehind(HAND_PARAMS) {
 		getCharacter(kCharacterVesna).waitedTicksUntilCycleRestart = 0;
 		getCharacterCurrentParams(kCharacterVesna)[2] = 1;
 	}
-	if (!getCharacterCurrentParams(kCharacterVesna)[2])
-		goto LABEL_16;
+	if (!getCharacterCurrentParams(kCharacterVesna)[2]) {
+		walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1]);
+	}
 }
 
 void LogicManager::CONS_Vesna_WaitRCClear(CONS_PARAMS) {
@@ -279,13 +276,7 @@ void LogicManager::CONS_Vesna_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_WaitRCClear(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!rcClear())
-			return;
-		goto LABEL_7;
-	}
-	if (msg->action == 12 && rcClear()) {
-	LABEL_7:
+	if ((msg->action == 0 && rcClear()) || (msg->action == 12 && rcClear())) {
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
@@ -304,12 +295,12 @@ void LogicManager::CONS_Vesna_FinishSeqOtis(CONS_PARAMS) {
 
 void LogicManager::HAND_Vesna_FinishSeqOtis(HAND_PARAMS) {
 	if (msg->action == 0) {
-		if (getCharacter(kCharacterVesna).direction == 4)
-			return;
-		goto LABEL_5;
-	}
-	if (msg->action == 3) {
-	LABEL_5:
+		if (getCharacter(kCharacterVesna).direction != 4) {
+			getCharacter(kCharacterVesna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
+			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		}
+	} else if (msg->action == 3) {
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
@@ -415,8 +406,7 @@ void LogicManager::HAND_Vesna_HomeAlone(HAND_PARAMS) {
 				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterVesna)[3], 12, "VES1015B");
 			}
 		}
-		
-	LABEL_27:
+
 		setDoor(38, kCharacterVesna, 3, 0, 0);
 		if (msg->action == 9) {
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
@@ -926,7 +916,7 @@ void LogicManager::HAND_Vesna_KillAnna(HAND_PARAMS) {
 			if (getCharacter(kCharacterVesna).characterPosition.position < 2087)
 				getCharacter(kCharacterVesna).characterPosition.position = 2088;
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
-			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, 5, 850, 0, 0);
+			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, kCarRestaurant, 850, 0, 0);
 			break;
 		case 2:
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
@@ -966,7 +956,7 @@ void LogicManager::HAND_Vesna_KillAnna(HAND_PARAMS) {
 			break;
 		case 8:
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 9;
-			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, 4, 3050, 0, 0);
+			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, kCarRedSleeping, 3050, 0, 0);
 			break;
 		case 9:
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 10;

@@ -173,7 +173,7 @@ void VCR::shuffleGames() {
 		}
 
 		// If slot is empty, try to find a valid save to move here
-		if (!slotFilled && currentSlot < ARRAYSIZE(_engine->_savegameNames)) {
+		if (!slotFilled && currentSlot < ARRAYSIZE(_engine->_savegameNames) - 1) {
 			for (const char **candidateFile = &_engine->_savegameNames[currentSlot + 1];
 				 candidateFile < _engine->_savegameTempNames;
 				 candidateFile++) {
@@ -213,7 +213,7 @@ void VCR::shuffleGames() {
 	}
 	
 	// Set the current game color based on the most recent save...
-	Common::String currentSaveName = _engine->getTargetName() + "-" + Common::String(_engine->_savegameNames[currentSlot]);
+	Common::String currentSaveName = _engine->getTargetName() + "-" + Common::String(_engine->_savegameNames[currentSlot % 6]);
 	if (_engine->_currentGameFileColorId == -1 || !_engine->getSaveFileManager()->exists(currentSaveName)) {
 		setCurrentGameColor(0); // Default color
 		int32  newestSaveSecs = 0;
@@ -258,11 +258,11 @@ void VCR::setCurrentGameColor(int index) {
 }
 
 void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
-	int32 chosenTime;
 	int cdNum;
 	SVCRFileHeader header;
 	char path[80];
 
+	int32 chosenTime = 0;
 	bool flag = true;
 	bool writeSavePoint = false;
 
@@ -270,41 +270,62 @@ void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
 		_engine->_savegame->close();
 
 	if (_engine->_gracePeriodTimer) {
-		chosenTime = 0;
-
-		if (_engine->getLogicManager()->_gameProgress[kProgressChapter] <= 1) {
-			cdNum = 1;
-		} else {
-			cdNum = (_engine->getLogicManager()->_gameProgress[kProgressChapter] > 3) + 2;
-		}
-
-		if (_engine->getArchiveManager()->isCDAvailable(cdNum, path, sizeof(path))) {
-			writeSavePoint = 0;
+		if (_engine->isDemo()) {
+			time = 0;
 			_engine->_gracePeriodTimer = 0;
+			doSaveGameFlag = false;
 
 			if (_engine->getSaveManager()->removeSavegame(_engine->_savegameFilename)) {
 				error("Error deleting file \"%s\"", _engine->_savegameFilename);
 			}
 
-			flag = false;
 			_engine->_currentSavePoint = _engine->_gracePeriodIndex;
+			flag = false;
 			_engine->_savegameFilename = _engine->_savegameNames[_engine->_currentGameFileColorId];
 		} else {
-			writeSavePoint = false;
+			chosenTime = 0;
+
+			if (_engine->getLogicManager()->_gameProgress[kProgressChapter] <= 1) {
+				cdNum = 1;
+			} else {
+				cdNum = (_engine->getLogicManager()->_gameProgress[kProgressChapter] > 3) + 2;
+			}
+
+			if (_engine->getArchiveManager()->isCDAvailable(cdNum, path, sizeof(path))) {
+				writeSavePoint = 0;
+				_engine->_gracePeriodTimer = 0;
+
+				if (_engine->getSaveManager()->removeSavegame(_engine->_savegameFilename)) {
+					error("Error deleting file \"%s\"", _engine->_savegameFilename);
+				}
+
+				flag = false;
+				_engine->_currentSavePoint = _engine->_gracePeriodIndex;
+				_engine->_savegameFilename = _engine->_savegameNames[_engine->_currentGameFileColorId];
+			} else {
+				writeSavePoint = false;
+			}
 		}
 	} else {
-		if (_engine->_savegameTempNames[_engine->_currentGameFileColorId] == _engine->_savegameFilename)
+		if (_engine->_savegameFilename == _engine->_savegameTempNames[_engine->_currentGameFileColorId])
 			_engine->getVCR()->makePermanent();
 
-		writeSavePoint = doSaveGameFlag;
-		chosenTime = time;
+		if (!_engine->isDemo()) {
+			writeSavePoint = doSaveGameFlag;
+			chosenTime = time;
+		}
 	}
 
 	if (!_engine->getSaveManager()->fileExists(_engine->_savegameFilename))
 		_engine->getVCR()->virginSaveFile();
 
-	if (writeSavePoint)
-		_engine->getVCR()->writeSavePoint(3, kCharacterCath, 0);
+	if (_engine->isDemo()) {
+		if (doSaveGameFlag)
+			_engine->getVCR()->writeSavePoint(3, kCharacterCath, 0);
+	} else {
+		if (writeSavePoint)
+			_engine->getVCR()->writeSavePoint(3, kCharacterCath, 0);
+	}
 
 	if (!_engine->_gracePeriodTimer &&
 		_engine->getSaveManager()->fileExists(_engine->_savegameTempNames[_engine->_currentGameFileColorId]) &&
@@ -343,7 +364,13 @@ void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
 
 	if (_engine->_gameTimeOfLastSavePointInFile >= 1061100) {
 		_engine->getClock()->startClock(_engine->getLogicManager()->_gameTime);
-		_engine->getVCR()->autoRewind(saveType, chosenTime);
+
+		if (_engine->isDemo()) {
+			// Demo: use modified time parameter
+			_engine->getVCR()->autoRewind(saveType, time);
+		} else {
+			_engine->getVCR()->autoRewind(saveType, chosenTime);
+		}
 	}
 }
 

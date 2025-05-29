@@ -253,13 +253,23 @@ void LogicManager::nodeStepTimer(Event *event) {
 		_gameTime += ticks * _gameTimeTicksDelta;
 
 		if (_gameTimeTicksDelta) {
-			if (!_eventTicksUntilNextSavePoint--) {
-				_eventTicksUntilNextSavePoint = 450;
-				_engine->getVCR()->writeSavePoint(4, 31, 0);
-			}
+			if (_engine->isDemo()) {
+				if (!_eventTicksSinceLastDemoSavegame--) {
+					_eventTicksSinceLastDemoSavegame = 150;
+					_engine->getVCR()->writeSavePoint(4, 31, 0);
+				}
 
-			if ((_currentGameSessionTicks - _lastSavegameSessionTicks) > 2700)
-				_engine->getVCR()->writeSavePoint(5, 31, 0);
+				if ((_currentGameSessionTicks - _lastSavegameSessionTicks) > 450)
+					_engine->getVCR()->writeSavePoint(5, 31, 0);
+			} else {
+				if (!_eventTicksUntilNextSavePoint--) {
+					_eventTicksUntilNextSavePoint = 450;
+					_engine->getVCR()->writeSavePoint(4, 31, 0);
+				}
+
+				if ((_currentGameSessionTicks - _lastSavegameSessionTicks) > 2700)
+					_engine->getVCR()->writeSavePoint(5, 31, 0);
+			}
 		}
 	}
 
@@ -290,7 +300,7 @@ void LogicManager::nodeStepTimer(Event *event) {
 	}
 
 	if (_engine->_navigationEngineIsRunning) {
-		if (_engine->_beetle)
+		if (!_engine->isDemo() && _engine->_beetle)
 			_engine->_beetle->tick();
 
 		_engine->getMessageManager()->flushTime();
@@ -530,7 +540,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 								flag = false;
 							}
 
-							if (actionLink.action == 43 &&
+							if (!_engine->isDemo() && actionLink.action == 43 &&
 								actionLink.param1 == _gameProgress[kProgressChapter] &&
 								(event->flags & 2) != 0) {
 								doF4();

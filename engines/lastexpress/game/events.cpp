@@ -69,9 +69,12 @@ void MessageManager::addEvent(int channel, int x, int y, int flags) {
 		_engine->setEventTickInternal(true);
 	} else if (channel == 1) {
 		if ((flags & 1) != 0) {
-			_engine->mouseSetLeftClicked(true);
-	
+			// Originally _engine->mouseSetLeftClicked(true); was called from here,
+			// but it's been moved under the "if" because this lead to fake double
+			// clicks when registering mouse movement events (which are re-paired
+			// with RMOUSE and LMOUSE flags when sent to the engine via this function).
 			if (!_systemEventLeftMouseDown) {
+				_engine->mouseSetLeftClicked(true);
 				flags |= 0x8;
 				_systemEventLeftMouseDown = true;
 	
@@ -88,9 +91,12 @@ void MessageManager::addEvent(int channel, int x, int y, int flags) {
 		}
 	
 		if ((flags & 2) != 0) {
-			_engine->_mouseHasRightClicked = true;
-	
+			// Originally _engine->mouseSetRightClicked(true); was called from here,
+			// but it's been moved under the "if" because this lead to fake double
+			// clicks when registering mouse movement events (which are re-paired
+			// with RMOUSE and LMOUSE flags when sent to the engine via this function).
 			if (!_systemEventRightMouseDown) {
+				_engine->mouseSetRightClicked(true);
 				flags |= 0x10;
 				_systemEventRightMouseDown = true;
 			}

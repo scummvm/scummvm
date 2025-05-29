@@ -238,12 +238,12 @@ void LogicManager::CONS_Ivo_FinishSeqOtis(CONS_PARAMS) {
 
 void LogicManager::HAND_Ivo_FinishSeqOtis(HAND_PARAMS) {
 	if (msg->action == 0) {
-		if (getCharacter(kCharacterIvo).direction == 4)
-			return;
-		goto LABEL_5;
-	}
-	if (msg->action == 3) {
-	LABEL_5:
+		if (getCharacter(kCharacterIvo).direction != 4) {
+			getCharacter(kCharacterIvo).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
+			fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+		}
+	} else if (msg->action == 3) {
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
@@ -282,13 +282,7 @@ void LogicManager::CONS_Ivo_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_WaitRCClear(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!rcClear())
-			return;
-		goto LABEL_7;
-	}
-	if (msg->action == 12 && rcClear()) {
-	LABEL_7:
+	if ((msg->action == 0 && rcClear()) || (msg->action == 12 && rcClear())) {
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
