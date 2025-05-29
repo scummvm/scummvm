@@ -174,76 +174,42 @@ BOOL PaintDIB(HDC     hDC,
 }
 
 BOOL CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
-#ifdef TODO
-	LPLOGPALETTE lpPal;      // pointer to a logical palette
-	HANDLE hLogPal;          // handle to a logical palette
-	//HPALETTE hPal = nullptr;    // handle to a palette
-	int i;                   // loop index
-	WORD wNumColors;         // number of colors in color table
-	LPSTR lpbi;              // pointer to packed-DIB
-	LPBITMAPINFO lpbmi;      // pointer to BITMAPINFO structure (Win3.0)
-	LPBITMAPCOREINFO lpbmc;  // pointer to BITMAPCOREINFO structure (old)
-	BOOL bWinStyleDIB;       // flag which signifies whether this is a Win3.0 DIB
-	BOOL bRetry = FALSE;
-	BOOL bResult = FALSE;
+	WORD wNumColors;
+	HANDLE hLogPal;
+	LPLOGPALETTE lpPal;
+	BOOL bResult = false;
 
-	/* if handle to DIB is invalid, return FALSE */
-
+	// If handle to DIB is invalid, return FALSE
 	if (hDIB == nullptr)
 		return FALSE;
 
-	lpbi = (LPSTR) GlobalLock((HGLOBAL)hDIB);
-
-	/* get pointer to BITMAPINFO (Win 3.0) */
-	lpbmi = (LPBITMAPINFO)lpbi;
-
-	/* get pointer to BITMAPCOREINFO (old 1.x) */
-	lpbmc = (LPBITMAPCOREINFO)lpbi;
-
-	/* get the number of colors in the DIB */
+	// Get the number of colors in the DIB
 	wNumColors = DIBNumColors(hDIB);
 
 	if (wNumColors != 0) {
-try_again:
-		/* allocate memory block for logical palette */
-		hLogPal = GlobalAlloc(GPTR, sizeof(LOGPALETTE)
-		                      + sizeof(PALETTEENTRY)
-		                      * wNumColors);
+		const Graphics::Palette *pal = hDIB->grabPalette();
 
-		/* if not enough memory, clean up and return nullptr */
-		if (hLogPal == 0) {
-			if (!bRetry) {
-				bRetry = TRUE;
-				(void)GlobalCompact(1000000L);
-				goto try_again;
-			}
-			GlobalUnlock((HGLOBAL)hDIB);
-			return FALSE;
-		}
+		// Allocate memory block for logical palette
+		hLogPal = GlobalAlloc(GPTR, sizeof(LOGPALETTE)
+		    + sizeof(PALETTEENTRY)
+		    * wNumColors);
+		assert(hLogPal);
 
 		lpPal = (LPLOGPALETTE) GlobalLock((HGLOBAL)hLogPal);
 
-		/* set version and number of palette entries */
+		// Set version and number of palette entries
 		lpPal->palVersion = PALVERSION;
-		lpPal->palNumEntries = (WORD)wNumColors;
+		lpPal->palNumEntries = wNumColors;
 
-		/* is this a Win 3.0 DIB? */
-		bWinStyleDIB = IS_WIN30_DIB(lpbi);
-		for (i = 0; i < (int)wNumColors; i++) {
-			if (bWinStyleDIB) {
-				lpPal->palPalEntry[i].peRed = lpbmi->bmiColors[i].rgbRed;
-				lpPal->palPalEntry[i].peGreen = lpbmi->bmiColors[i].rgbGreen;
-				lpPal->palPalEntry[i].peBlue = lpbmi->bmiColors[i].rgbBlue;
-				lpPal->palPalEntry[i].peFlags = 0;
-			} else {
-				lpPal->palPalEntry[i].peRed = lpbmc->bmciColors[i].rgbtRed;
-				lpPal->palPalEntry[i].peGreen = lpbmc->bmciColors[i].rgbtGreen;
-				lpPal->palPalEntry[i].peBlue = lpbmc->bmciColors[i].rgbtBlue;
-				lpPal->palPalEntry[i].peFlags = 0;
-			}
+		for (uint i = 0; i < wNumColors; i++) {
+			pal->get(i,
+				lpPal->palPalEntry[i].peRed,
+				lpPal->palPalEntry[i].peGreen,
+				lpPal->palPalEntry[i].peBlue);
+			lpPal->palPalEntry[i].peFlags = 0;
 		}
 
-		/* create the palette and get handle to it */
+		// Create the palette and get handle to it
 		bResult = pPal->CreatePalette(lpPal);
 
 		GlobalUnlock((HGLOBAL)hLogPal);
@@ -253,9 +219,6 @@ try_again:
 	GlobalUnlock((HGLOBAL)hDIB);
 
 	return bResult;
-#else
-	error("TODO: CreateDIBPalette");
-#endif
 }
 
 CPalette *DuplicatePalette(CPalette *pOrigPal) {
