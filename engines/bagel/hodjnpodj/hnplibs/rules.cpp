@@ -1368,7 +1368,6 @@ void CRules::ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pB
 CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 	BOOL        bSuccess;
 	HDIB        hDIB;
-	LPSTR       lpDIB;
 	int         dxDIB, dyDIB;
 	CDibDoc     *pDibDoc = nullptr;
 //	CPalette *pPalette = nullptr;
@@ -1381,10 +1380,10 @@ CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 	ASSERT(bSuccess);
 	hDIB = (*pDibDoc).GetHDIB();
 	ASSERT(hDIB != nullptr);
-	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-	dxDIB = (int) DIBWidth(lpDIB);
-	dyDIB = (int) DIBHeight(lpDIB);
-	GlobalUnlock((HGLOBAL) hDIB);
+	
+	dxDIB = (int) DIBWidth(hDIB);
+	dyDIB = (int) DIBHeight(hDIB);
+	
 
 	if (pRect != nullptr)
 		(*pRect).SetRect(0, 0, dxDIB, dyDIB);
@@ -1396,16 +1395,15 @@ CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 BOOL CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
 	BOOL        bSuccess;
 	HDIB        hDIB;
-	LPSTR       lpDIB;
 	int         dxDIB, dyDIB;
 	CRect       myRect;
 
 	hDIB = (*pDibDoc).GetHDIB();
 	ASSERT(hDIB != nullptr);
-	lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-	dxDIB = (int) DIBWidth(lpDIB);
-	dyDIB = (int) DIBHeight(lpDIB);
-	GlobalUnlock((HGLOBAL) hDIB);
+	
+	dxDIB = (int) DIBWidth(hDIB);
+	dyDIB = (int) DIBHeight(hDIB);
+	
 
 	myRect.SetRect(0, 0, dxDIB, dyDIB);
 

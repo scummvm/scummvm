@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/palette.h"
 #include "bagel/hodjnpodj/hnplibs/dibapi.h"
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
 
@@ -55,11 +56,12 @@ namespace HodjNPodj {
  *
  ************************************************************************/
 
-BOOL WINAPI PaintDIB(HDC     hDC,
-                     LPRECT  lpDCRect,
-                     HDIB    hDIB,
-                     LPRECT  lpDIBRect,
-                     CPalette *pPal) {
+BOOL PaintDIB(HDC     hDC,
+		LPRECT  lpDCRect,
+		HDIB    hDIB,
+		LPRECT  lpDIBRect,
+		CPalette *pPal) {
+#ifdef TODO
 	LPSTR    lpDIBHdr;            // Pointer to BITMAPINFOHEADER
 	LPSTR    lpDIBBits;           // Pointer to DIB bits
 	BOOL     bSuccess = FALSE;      // Success/fail flag
@@ -166,33 +168,13 @@ BOOL WINAPI PaintDIB(HDC     hDC,
 	GlobalUnlock((HGLOBAL)hDIB);
 
 	return bSuccess;
+#else
+	error("TODO: PaintDIB");
+#endif
 }
 
-/*************************************************************************
- *
- * CreateDIBPalette()
- *
- * Parameter:
- *
- * HDIB hDIB        - specifies the DIB
- *
- * Return Value:
- *
- * HPALETTE         - specifies the palette
- *
- * Description:
- *
- * This function creates a palette from a DIB by allocating memory for the
- * logical palette, reading and storing the colors from the DIB's color table
- * into the logical palette, creating a palette from this logical palette,
- * and then returning the palette's handle. This allows the DIB to be
- * displayed using the best possible colors (important for DIBs with 256 or
- * more colors).
- *
- ************************************************************************/
-
-
-BOOL WINAPI CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
+BOOL CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
+#ifdef TODO
 	LPLOGPALETTE lpPal;      // pointer to a logical palette
 	HANDLE hLogPal;          // handle to a logical palette
 	//HPALETTE hPal = nullptr;    // handle to a palette
@@ -219,7 +201,7 @@ BOOL WINAPI CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 	lpbmc = (LPBITMAPCOREINFO)lpbi;
 
 	/* get the number of colors in the DIB */
-	wNumColors = DIBNumColors(lpbi);
+	wNumColors = DIBNumColors(hDIB);
 
 	if (wNumColors != 0) {
 try_again:
@@ -271,10 +253,10 @@ try_again:
 	GlobalUnlock((HGLOBAL)hDIB);
 
 	return bResult;
+#else
+	error("TODO: CreateDIBPalette");
+#endif
 }
-
-
-
 
 CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	CPalette *pPal;
@@ -329,218 +311,31 @@ try_again:
 	return (pPal);
 }
 
-
-/*************************************************************************
- *
- * FindDIBBits()
- *
- * Parameter:
- *
- * LPSTR lpbi       - pointer to packed-DIB memory block
- *
- * Return Value:
- *
- * LPSTR            - pointer to the DIB bits
- *
- * Description:
- *
- * This function calculates the address of the DIB's bits and returns a
- * pointer to the DIB bits.
- *
- ************************************************************************/
-
-
-LPSTR WINAPI FindDIBBits(LPSTR lpbi) {
-	return (lpbi + * (LPDWORD)lpbi + PaletteSize(lpbi));
+LPSTR FindDIBBits(HDIB hDIB) {
+	return (LPSTR)hDIB->getPixels();
 }
 
-
-/*************************************************************************
- *
- * DIBWidth()
- *
- * Parameter:
- *
- * LPSTR lpbi       - pointer to packed-DIB memory block
- *
- * Return Value:
- *
- * DWORD            - width of the DIB
- *
- * Description:
- *
- * This function gets the width of the DIB from the BITMAPINFOHEADER
- * width field if it is a Windows 3.0-style DIB or from the BITMAPCOREHEADER
- * width field if it is an other-style DIB.
- *
- ************************************************************************/
-
-
-DWORD WINAPI DIBWidth(LPSTR lpDIB) {
-	LPBITMAPINFOHEADER lpbmi;  // pointer to a Win 3.0-style DIB
-	LPBITMAPCOREHEADER lpbmc;  // pointer to an other-style DIB
-
-	/* point to the header (whether Win 3.0 and old) */
-
-	lpbmi = (LPBITMAPINFOHEADER)lpDIB;
-	lpbmc = (LPBITMAPCOREHEADER)lpDIB;
-
-	/* return the DIB width if it is a Win 3.0 DIB */
-	if (IS_WIN30_DIB(lpDIB))
-		return lpbmi->biWidth;
-	else  /* it is an other-style DIB, so return its width */
-		return (DWORD)lpbmc->bcWidth;
+DWORD DIBWidth(HDIB hDIB) {
+	return hDIB->w;
 }
 
-
-/*************************************************************************
- *
- * DIBHeight()
- *
- * Parameter:
- *
- * LPSTR lpbi       - pointer to packed-DIB memory block
- *
- * Return Value:
- *
- * DWORD            - height of the DIB
- *
- * Description:
- *
- * This function gets the height of the DIB from the BITMAPINFOHEADER
- * height field if it is a Windows 3.0-style DIB or from the BITMAPCOREHEADER
- * height field if it is an other-style DIB.
- *
- ************************************************************************/
-
-
-DWORD WINAPI DIBHeight(LPSTR lpDIB) {
-	LPBITMAPINFOHEADER lpbmi;  // pointer to a Win 3.0-style DIB
-	LPBITMAPCOREHEADER lpbmc;  // pointer to an other-style DIB
-
-	/* point to the header (whether old or Win 3.0 */
-
-	lpbmi = (LPBITMAPINFOHEADER)lpDIB;
-	lpbmc = (LPBITMAPCOREHEADER)lpDIB;
-
-	/* return the DIB height if it is a Win 3.0 DIB */
-	if (IS_WIN30_DIB(lpDIB))
-		return lpbmi->biHeight;
-	else  /* it is an other-style DIB, so return its height */
-		return (DWORD)lpbmc->bcHeight;
+DWORD DIBHeight(HDIB hDIB) {
+	return hDIB->h;
 }
 
-
-/*************************************************************************
- *
- * PaletteSize()
- *
- * Parameter:
- *
- * LPSTR lpbi       - pointer to packed-DIB memory block
- *
- * Return Value:
- *
- * WORD             - size of the color palette of the DIB
- *
- * Description:
- *
- * This function gets the size required to store the DIB's palette by
- * multiplying the number of colors by the size of an RGBQUAD (for a
- * Windows 3.0-style DIB) or by the size of an RGBTRIPLE (for an other-
- * style DIB).
- *
- ************************************************************************/
-
-
-WORD WINAPI PaletteSize(LPSTR lpbi) {
-	/* calculate the size required by the palette */
-	if (IS_WIN30_DIB(lpbi))
-		return (WORD)(DIBNumColors(lpbi) * sizeof(RGBQUAD));
-	else
-		return (WORD)(DIBNumColors(lpbi) * sizeof(RGBTRIPLE));
+WORD PaletteSize(HDIB hDIB) {
+	const Graphics::Palette *pal = hDIB->grabPalette();
+	return pal->size() * 3;
 }
 
-
-/*************************************************************************
- *
- * DIBNumColors()
- *
- * Parameter:
- *
- * LPSTR lpbi       - pointer to packed-DIB memory block
- *
- * Return Value:
- *
- * WORD             - number of colors in the color table
- *
- * Description:
- *
- * This function calculates the number of colors in the DIB's color table
- * by finding the bits per pixel for the DIB (whether Win3.0 or other-style
- * DIB). If bits per pixel is 1: colors=2, if 4: colors=16, if 8: colors=256,
- * if 24, no colors in color table.
- *
- ************************************************************************/
-
-
-WORD WINAPI DIBNumColors(LPSTR lpbi) {
-	WORD wBitCount;  // DIB bit count
-
-	/*  If this is a Windows-style DIB, the number of colors in the
-	 *  color table can be less than the number of bits per pixel
-	 *  allows for (i.e. lpbi->biClrUsed can be set to some value).
-	 *  If this is the case, return the appropriate value.
-	 */
-
-	if (IS_WIN30_DIB(lpbi)) {
-		DWORD dwClrUsed;
-
-		dwClrUsed = ((LPBITMAPINFOHEADER)lpbi)->biClrUsed;
-		if (dwClrUsed != 0)
-			return (WORD)dwClrUsed;
-	}
-
-	/*  Calculate the number of colors in the color table based on
-	 *  the number of bits per pixel for the DIB.
-	 */
-	if (IS_WIN30_DIB(lpbi))
-		wBitCount = ((LPBITMAPINFOHEADER)lpbi)->biBitCount;
-	else
-		wBitCount = ((LPBITMAPCOREHEADER)lpbi)->bcBitCount;
-
-	/* return number of colors based on bits per pixel */
-	switch (wBitCount) {
-	case 1:
-		return 2;
-
-	case 4:
-		return 16;
-
-	case 8:
-		return 256;
-
-	default:
-		return 0;
-	}
+WORD DIBNumColors(HDIB lpDIB) {
+	const Graphics::Palette *pal = lpDIB->grabPalette();
+	return pal->size();
 }
 
-
-/*************************************************************************
-        DIB TO Bitmap
-        Convert a device-independent bitmap (DIB) to a device-dependent
-        bitmap (DDB), with the desired color palette mapped to the context.
-        The DIB must be packed; i.e. same as a .BMP file.
-
-        RETURN
-        A handle to the Bitmap (CBitmap *).  If an error occurs, the return
-        value will be nullptr.
-**************************************************************************/
-
-CBitmap *WINAPI ConvertDIB(CDC *pDC,
-                           HDIB hDIB,
-                           CPalette *pPal) {
-	LPSTR    lpDIBHdr;            // Pointer to BITMAPINFOHEADER
+CBitmap *ConvertDIB(CDC *pDC,
+		HDIB hDIB, CPalette *pPal) {
+	LPSTR lpDIBHdr;            // Pointer to BITMAPINFOHEADER
 	//LPSTR    lpDIBBits;           // Pointer to DIB bits
 	//BOOL     bSuccess = FALSE;      // Success/fail flag
 	HPALETTE hPal = nullptr;           // Our DIB's palette
@@ -564,7 +359,7 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	 *  buffer
 	 */
 	lpDIBHdr = (LPSTR) GlobalLock((HGLOBAL)hDIB);
-	/*lpDIBBits =*/(void)FindDIBBits(lpDIBHdr);
+	/*lpDIBBits =*/(void)FindDIBBits(hDIB);
 
 	hBitmap = DIBtoBitmap(hDC, nullptr, (LPBITMAPINFO)lpDIBHdr);
 
@@ -583,20 +378,9 @@ CBitmap *WINAPI ConvertDIB(CDC *pDC,
 	return (pBitmap);
 }
 
-
-/*************************************************************************
-        DIB TO DDB
-        Convert a device-independent bitmap (DIB) to a device-dependent
-        bitmap (DDB).  The DIB must be packed; i.e. same as a .BMP file.
-
-        RETURN
-        A handle to the DDB (HBITMAP).  If an error occurs, the return
-        value will be nullptr.
-**************************************************************************/
-
-HBITMAP WINAPI DIBtoBitmap(HDC hDC,                     // where DDB will be displayed
-                           HPALETTE hPalette,
-                           LPBITMAPINFO lpbih) {       // pointer to a packed DIB
+HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette,
+		LPBITMAPINFO lpbih) {       // pointer to a packed DIB
+#ifdef TODO
 	BOOL     bRetry = FALSE;
 	HBITMAP  hBitmap;                                   // Handle to our DDB bitmap
 	LPSTR    lpbihBits;                                 // Pointer to DIB bits
@@ -621,6 +405,9 @@ try_again:
 	}
 
 	return (hBitmap);
+#else
+	error("TODO: DIBtoBitmap");
+#endif
 }
 
 
@@ -701,6 +488,7 @@ void WINAPI InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
 //---------------------------------------------------------------------
 
 HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
+#ifdef TODO
 	BITMAP             Bitmap;
 	BITMAPINFOHEADER   bmInfoHdr;
 	LPBITMAPINFOHEADER lpbmInfoHdr;
@@ -777,6 +565,9 @@ HANDLE WINAPI BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal) {
 	MFC::ReleaseDC(nullptr, hMemDC);
 
 	return hDIB;
+#else
+	error("TODO: BitmapToDIB");
+#endif
 }
 
 

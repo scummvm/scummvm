@@ -283,10 +283,13 @@ BOOL CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject)
 				iError = 104 ;  // can't lock global memory
 				goto cleanup ;
 			}
-
+#ifdef TODO
 			xpcBmpObject->m_cSize = CSize(
-			                            (int)DIBWidth((LPSTR)xpcBmpObject->m_lpDib),
-			                            (int)DIBHeight((LPSTR)xpcBmpObject->m_lpDib)) ;
+				(int)DIBWidth((LPSTR)xpcBmpObject->m_lpDib),
+				(int)DIBHeight((LPSTR)xpcBmpObject->m_lpDib)) ;
+#else
+			error("TODO: xpcBmpObject");
+#endif
 		}
 	}
 

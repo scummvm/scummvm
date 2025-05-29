@@ -341,10 +341,8 @@ void CMainWindow::SplashScratchPaint() {
 		if (hDIB) {
 			rcDest.SetRect(0, 0, ART_WIDTH + (2 * FRAME_WIDTH), ART_HEIGHT + (2 * FRAME_HEIGHT));
 
-			LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-			int cxDIB = (int) DIBWidth(lpDIB);
-			int cyDIB = (int) DIBHeight(lpDIB);
-			GlobalUnlock((HGLOBAL) hDIB);
+			int cxDIB = (int) DIBWidth(hDIB);
+			int cyDIB = (int) DIBHeight(hDIB);
 
 			if (cxDIB > ART_WIDTH) {                     // Center and crop
 				rcDIB.left = (cxDIB - ART_WIDTH) / 2;   //...too wide art
@@ -411,10 +409,9 @@ void CMainWindow::SplashScreen() {
 
 	if (pDC && hDIB) {
 		GetClientRect(rcDest);
-		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) DIBWidth(lpDIB);
-		int cyDIB = (int) DIBHeight(lpDIB);
-		GlobalUnlock((HGLOBAL) hDIB);
+		int cxDIB = (int)DIBWidth(hDIB);
+		int cyDIB = (int)DIBHeight(hDIB);
+
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
@@ -1384,10 +1381,8 @@ BOOL CMainWindow::LoadArtWork() {
 		else
 			rcDest.SetRect(0, 0, ART_WIDTH, ART_HEIGHT);
 
-		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) DIBWidth(lpDIB);
-		int cyDIB = (int) DIBHeight(lpDIB);
-		GlobalUnlock((HGLOBAL) hDIB);
+		int cxDIB = (int) DIBWidth(hDIB);
+		int cyDIB = (int) DIBHeight(hDIB);
 
 		if (cxDIB > ART_WIDTH) {                     // Center and crop
 			rcDIB.left = (cxDIB - ART_WIDTH) / 2;   //...too wide art

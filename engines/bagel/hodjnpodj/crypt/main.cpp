@@ -367,10 +367,10 @@ void CMainWindow::SplashScreen() {
 	ASSERT(pDC);
 
 	GetClientRect(rcDest);                           // get the rectangle to where we paint
-	LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB); // from the DIB get the size of the art
-	int cxDIB = (int) DIBWidth(lpDIB);
-	int cyDIB = (int) DIBHeight(lpDIB);
-	GlobalUnlock((HGLOBAL) hDIB);
+
+	int cxDIB = (int) DIBWidth(hDIB);
+	int cyDIB = (int) DIBHeight(hDIB);
+	
 	rcDIB.top = rcDIB.left = 0;                         // setup the source rectangle from which
 	rcDIB.right = cxDIB;                                // ... we'll do the painting
 	rcDIB.bottom = cyDIB;

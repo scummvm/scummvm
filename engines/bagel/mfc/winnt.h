@@ -629,6 +629,21 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define SC_CONTEXTHELP  0xF180
 #define SC_SEPARATOR    0xF00F
 
+ /*
+  * Predefined Resource Types
+  */
+#define MAKEINTRESOURCE(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
+#define RT_CURSOR           MAKEINTRESOURCE(1)
+#define RT_BITMAP           MAKEINTRESOURCE(2)
+#define RT_ICON             MAKEINTRESOURCE(3)
+#define RT_MENU             MAKEINTRESOURCE(4)
+#define RT_DIALOG           MAKEINTRESOURCE(5)
+#define RT_STRING           MAKEINTRESOURCE(6)
+#define RT_FONTDIR          MAKEINTRESOURCE(7)
+#define RT_FONT             MAKEINTRESOURCE(8)
+#define RT_ACCELERATOR      MAKEINTRESOURCE(9)
+#define RT_RCDATA           MAKEINTRESOURCE(10)
+#define RT_MESSAGETABLE     MAKEINTRESOURCE(11)
 
 typedef struct _GUID {
 	unsigned long  Data1;

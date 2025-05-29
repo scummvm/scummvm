@@ -129,9 +129,11 @@ extern LRESULT SendMessage(HWND hWnd, UINT Msg,
 
 extern HRSRC FindResource(HMODULE hModule,
                           LPCSTR lpName, LPCSTR lpType);
+extern size_t SizeofResource(HMODULE hModule, HRSRC hResInfo);
 extern HGLOBAL LoadResource(HMODULE hModule,
                             HRSRC hResInfo);
 extern LPVOID LockResource(HGLOBAL hResData);
+extern void UnlockResource(HGLOBAL hResData);
 extern BOOL FreeResource(HGLOBAL hResData);
 
 inline char *strUpper(char *s) {

@@ -169,6 +169,13 @@ public:
 
 	virtual UINT Read(void *lpBuf, UINT nCount);
 	virtual void Write(const void *lpBuf, UINT nCount);
+	UINT ReadHuge(void *lpBuf, UINT nCount) {
+		return Read(lpBuf, nCount);
+	}
+
+	operator Common::SeekableReadStream &() {
+		return *readStream();
+	}
 };
 
 /*============================================================================*/

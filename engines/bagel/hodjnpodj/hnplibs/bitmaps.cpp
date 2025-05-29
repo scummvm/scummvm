@@ -613,7 +613,6 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, co
 BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName, const int x, const int y, const int dx, const int dy) {
 	CDibDoc myDoc;
 	HDIB    hDIB;
-	LPSTR   lpDIB;
 	CRect   rcDest;
 	CRect   rcDIB;
 	int     cxDIB;
@@ -626,22 +625,17 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName, const in
 		if (hDIB == nullptr)
 			bSuccess = FALSE;
 		else {
-			lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-			if (lpDIB == nullptr)
-				bSuccess = FALSE;
-			else {
-				cxDIB = (int) DIBWidth(lpDIB);
-				cyDIB = (int) DIBHeight(lpDIB);
-				GlobalUnlock((HGLOBAL) hDIB);
-				rcDIB.top = rcDIB.left = 0;
-				rcDIB.right = cxDIB;
-				rcDIB.bottom = cyDIB;
-				if ((dx == 0) || (dy == 0))
-					rcDest.SetRect(x, y, x + cxDIB, y + cyDIB);
-				else
-					rcDest.SetRect(x, y, x + dx, y + dy);
-				bSuccess = PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pPalette);
-			}
+			cxDIB = (int) DIBWidth(hDIB);
+			cyDIB = (int) DIBHeight(hDIB);
+				
+			rcDIB.top = rcDIB.left = 0;
+			rcDIB.right = cxDIB;
+			rcDIB.bottom = cyDIB;
+			if ((dx == 0) || (dy == 0))
+				rcDest.SetRect(x, y, x + cxDIB, y + cyDIB);
+			else
+				rcDest.SetRect(x, y, x + dx, y + dy);
+			bSuccess = PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pPalette);
 		}
 	}
 

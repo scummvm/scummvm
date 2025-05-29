@@ -1258,10 +1258,9 @@ BOOL CMainWindow::LoadArtWork(CDC *pDC) {
 	if (hDIB) {
 		rcDest.SetRect(SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER);
 
-		LPSTR lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) DIBWidth(lpDIB);
-		int cyDIB = (int) DIBHeight(lpDIB);
-		GlobalUnlock((HGLOBAL) hDIB);
+		int cxDIB = (int) DIBWidth(hDIB);
+		int cyDIB = (int) DIBHeight(hDIB);
+		
 
 		if (cxDIB > ART_WIDTH) {                     // Center and crop
 			rcDIB.left = (cxDIB - ART_WIDTH) / 2;   //...too wide art

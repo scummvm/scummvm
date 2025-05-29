@@ -260,7 +260,6 @@ void CMainWindow::SplashScreen() {
 	CDC     *pDC;
 	CDibDoc myDoc;
 	HDIB    hDIB;
-	LPSTR   lpDIB;
 	CSprite *pSprite;
 	BOOL    bSuccess;
 
@@ -271,10 +270,10 @@ void CMainWindow::SplashScreen() {
 	pDC = GetDC();
 	if (pDC && hDIB) {
 		GetClientRect(rcDest);
-		lpDIB = (LPSTR) GlobalLock((HGLOBAL) hDIB);
-		int cxDIB = (int) DIBWidth(lpDIB);
-		int cyDIB = (int) DIBHeight(lpDIB);
-		GlobalUnlock((HGLOBAL) hDIB);
+		
+		int cxDIB = (int) DIBWidth(hDIB);
+		int cyDIB = (int) DIBHeight(hDIB);
+		
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/memstream.h"
+#include "image/bmp.h"
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
 #include "bagel/hodjnpodj/hnplibs/dibapi.h"
 
@@ -30,25 +32,7 @@ namespace HodjNPodj {
  */
 #define DIB_HEADER_MARKER   ((WORD) ('M' << 8) | 'B')
 
-
-/*************************************************************************
- *
- * SaveDIB()
- *
- * Saves the specified DIB into the specified CFile.  The CFile
- * is opened and closed by the caller.
- *
- * Parameters:
- *
- * HDIB hDib - Handle to the dib to save
- *
- * CFile& file - open CFile used to save DIB
- *
- * Return value: TRUE if successful, else FALSE or CFileException
- *
- *************************************************************************/
-
-BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
+BOOL SaveDIB(HDIB hDib, CFile &file) {
 	#ifdef TODO
 	BITMAPFILEHEADER bmfHdr; // Header for Bitmap file
 	LPBITMAPINFOHEADER lpBI;   // Pointer to DIB info structure
@@ -150,149 +134,61 @@ BOOL WINAPI SaveDIB(HDIB hDib, CFile &file) {
 	#endif
 }
 
+HDIB ReadDIBFile(CFile &file) {
+	Image::BitmapDecoder decoder;
+	if (!decoder.loadStream(file))
+		return nullptr;
 
-/*************************************************************************
+	Graphics::ManagedSurface *surf =
+		new Graphics::ManagedSurface();
+	surf->copyFrom(*decoder.getSurface());
 
-  Function:  ReadDIBFile (CFile&)
-
-   Purpose:  Reads in the specified DIB file into a global chunk of
-             memory.
-
-   Returns:  A handle to a dib (hDIB) if successful.
-             nullptr if an error occurs.
-
-  Comments:  BITMAPFILEHEADER is stripped off of the DIB.  Everything
-             from the end of the BITMAPFILEHEADER structure on is
-             returned in the global memory handle.
-
-*************************************************************************/
-
-
-HDIB WINAPI ReadDIBFile(CFile &file) {
-	#ifdef TODO
-	BITMAPFILEHEADER bmfHeader;
-	DWORD dwBitsSize;
-	HDIB hDIB = nullptr;
-	LPSTR pDIB;
-	BOOL bRetry = FALSE;
-
-	/*
-	 * get length of DIB in bytes for use when reading
-	 */
-
-try_again:
-
-	dwBitsSize = file.GetLength();
-
-	/*
-	 * Go read the DIB file header and check if it's valid.
-	 */
-	if ((file.Read((LPSTR)&bmfHeader, sizeof(bmfHeader)) !=
-	        sizeof(bmfHeader)) || (bmfHeader.bfType != DIB_HEADER_MARKER)) {
-		goto done;
-	}
-	/*
-	 * Allocate memory for DIB
-	 */
-	hDIB = (HDIB) ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwBitsSize);
-	if (hDIB == nullptr) {
-		goto done;
-	}
-	pDIB = (LPSTR) GlobalLock((HGLOBAL)hDIB);
-
-	/*
-	 * Go read the bits.
-	 */
-	if (file.ReadHuge(pDIB, dwBitsSize - sizeof(BITMAPFILEHEADER)) !=
-	        dwBitsSize - sizeof(BITMAPFILEHEADER)) {
-		GlobalUnlock((HGLOBAL)hDIB);
-		::GlobalFree((HGLOBAL)hDIB);
-		hDIB = nullptr;
-		goto done;
-	}
-	GlobalUnlock((HGLOBAL)hDIB);
-
-done:
-
-	if ((hDIB == nullptr) && !bRetry) {
-		bRetry = TRUE;
-		(void)GlobalCompact(1000000L);
-		goto try_again;
+	if (decoder.hasPalette()) {
+		const Graphics::Palette &pal = decoder.getPalette();
+		surf->setPalette(pal.data(), 0, pal.size());
 	}
 
-
-	return hDIB;
-	#else
-	error("TODO: ReadDIBFile");
-	#endif
+	return surf;
 }
 
-
-/*************************************************************************
-
-  Function:  ReadDIBResource (CFile&)
-
-   Purpose:  Reads in the specified DIB file into a global chunk of
-             memory.
-
-   Returns:  A handle to a dib (hDIB) if successful.
-             nullptr if an error occurs.
-
-  Comments:  BITMAPFILEHEADER is stripped off of the DIB.  Everything
-             from the end of the BITMAPFILEHEADER structure on is
-             returned in the global memory handle.
-
-*************************************************************************/
-
-
-HDIB WINAPI ReadDIBResource(const char *pszName) {
-	#ifdef TODO
-	HRSRC       hRsc = nullptr;
-	HINSTANCE   hInst = nullptr;
-	HGLOBAL     hGbl = nullptr;
-	char *pData = nullptr;
-	size_t      dwBytes;
-	HDIB        hDIB = nullptr;
-	LPSTR       pDIB = nullptr;
-	BOOL        bRetry = FALSE;
-
-	hInst = AfxGetInstanceHandle();
-
-try_again:
+HDIB ReadDIBResource(const char *pszName) {
+	Image::BitmapDecoder decoder;
+	HINSTANCE hInst = nullptr;
+	uint dwBytes;
+	HRSRC hRsc;
+	HGLOBAL hGbl;
+	byte *pData;
 
 	hRsc = FindResource(hInst, pszName, RT_BITMAP);
 	if (hRsc != nullptr) {
 		dwBytes = (size_t)SizeofResource(hInst, hRsc);
 		hGbl = LoadResource(hInst, hRsc);
 		if ((dwBytes != 0) &&
-		        (hGbl != nullptr)) {
-			pData = (char *)LockResource(hGbl);
-			hDIB = (HDIB) ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwBytes);
-			if (hDIB != nullptr) {
-				pDIB = (LPSTR) GlobalLock((HGLOBAL)hDIB);
-				memcpy(pDIB, pData, dwBytes);
-				GlobalUnlock((HGLOBAL)hDIB);
-				UnlockResource(hGbl);
-				FreeResource(hGbl);
-				return (hDIB);
-			}
+			(hGbl != nullptr)) {
+			pData = (byte *)LockResource(hGbl);
+			Common::MemoryReadStream rs(pData, dwBytes);
+
+			bool success = decoder.loadStream(rs);
+
 			UnlockResource(hGbl);
+			FreeResource(hGbl);
+
+			if (success) {
+				Graphics::ManagedSurface *surf =
+					new Graphics::ManagedSurface();
+				surf->copyFrom(*decoder.getSurface());
+
+				if (decoder.hasPalette()) {
+					const Graphics::Palette &pal = decoder.getPalette();
+					surf->setPalette(pal.data(), 0, pal.size());
+				}
+
+				return surf;
+			}
 		}
 	}
 
-	if (hGbl != nullptr)
-		FreeResource(hGbl);
-
-	if (!bRetry) {
-		bRetry = TRUE;
-		(void)GlobalCompact(1000000L);
-		goto try_again;
-	}
-
-	return (nullptr);
-	#else
-	error("TODO: ReadDIBResource");
-	#endif
+	return nullptr;
 }
 
 } // namespace HodjNPodj

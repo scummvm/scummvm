@@ -63,18 +63,14 @@ void CDibDoc::InitDIBData() {
 		return;
 	}
 	// Set up document size
-	LPSTR lpDIB = (LPSTR)GlobalLock((HGLOBAL)m_hDIB);
-
-	if (DIBWidth(lpDIB) > INT_MAX || DIBHeight(lpDIB) > INT_MAX) {
-		GlobalUnlock((HGLOBAL)m_hDIB);
-		GlobalFree((HGLOBAL)m_hDIB);
+	if (DIBWidth(m_hDIB) > INT_MAX || DIBHeight(m_hDIB) > INT_MAX) {
+		delete m_hDIB;
 		m_hDIB = nullptr;
 		return;
 	}
 
-	m_sizeDoc = CSize((int) DIBWidth(lpDIB), (int) DIBHeight(lpDIB));
+	m_sizeDoc = CSize((int)DIBWidth(m_hDIB), (int)DIBHeight(m_hDIB));
 
-	GlobalUnlock((HGLOBAL)m_hDIB);
 	// Create copy of palette
 	m_palDIB = new CPalette;
 	if (m_palDIB == nullptr) {
@@ -170,12 +166,8 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 	TRY {
 		m_hDIB = ReadDIBFile(file);
 
-		if (m_hDIB == nullptr) {
-			char    buf[128];
-
-			Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
-			ShowMemoryInfo(buf, "Internal Problem");
-		}
+		if (m_hDIB == nullptr)
+			error("Unable to load artwork file: %s", pszPathName);
 	}
 	CATCH(CFileException, eLoad) {
 		file.Abort(); // will not throw an exception

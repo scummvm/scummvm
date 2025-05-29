@@ -171,12 +171,20 @@ HRSRC FindResource(HMODULE hModule,
 	error("TODO: FindResource");
 }
 
+size_t SizeofResource(HMODULE hModule, HRSRC hResInfo) {
+	error("TODO: SizeofResource");
+}
+
 HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo) {
 	error("TODO: LoadResource");
 }
 
 LPVOID LockResource(HGLOBAL hResData) {
 	error("TODO: LockResource");
+}
+
+void UnlockResource(HGLOBAL hResData) {
+	error("TODO: UnlockResource");
 }
 
 BOOL FreeResource(HGLOBAL hResData) {

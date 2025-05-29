@@ -22,13 +22,14 @@
 #ifndef HODJNPODJ_HNPLIBS_DIBAPI_H
 #define HODJNPODJ_HNPLIBS_DIBAPI_H
 
+#include "graphics/managed_surface.h"
 #include "bagel/afxwin.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 /* Handle to a DIB */
-DECLARE_HANDLE(HDIB);
+typedef Graphics::ManagedSurface *HDIB;
 
 /* DIB constants */
 #define PALVERSION   0x300
@@ -54,29 +55,108 @@ DECLARE_HANDLE(HDIB);
 #define WIDTHBYTES(bits)    (((bits) + 31) / 32 * 4)
 
 /* Function prototypes */
-BOOL      WINAPI  PaintDIB(HDC, LPRECT, HDIB, LPRECT, CPalette *pPal);
-BOOL      WINAPI  CreateDIBPalette(HDIB hDIB, CPalette *cPal);
-LPSTR     WINAPI  FindDIBBits(LPSTR lpbi);
-DWORD     WINAPI  DIBWidth(LPSTR lpDIB);
-DWORD     WINAPI  DIBHeight(LPSTR lpDIB);
-WORD      WINAPI  PaletteSize(LPSTR lpbi);
-WORD      WINAPI  DIBNumColors(LPSTR lpbi);
-HANDLE    WINAPI  CopyHandle(HANDLE h);
-HBITMAP   WINAPI  DIBtoBitmap(HDC hDC, HPALETTE hPal, LPBITMAPINFO lpbih);
+BOOL      PaintDIB(HDC, LPRECT, HDIB, LPRECT, CPalette *pPal);
 
-CBitmap *WINAPI  ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal);
 
-BOOL      WINAPI  SaveDIB(HDIB hDib, CFile &file);
-HDIB      WINAPI  ReadDIBFile(CFile &file);
-HDIB      WINAPI  ReadDIBResource(const char *pszPathName);
+/**
+ * This function creates a palette from a DIB by allocating memory for the
+ * logical palette, reading and storing the colors from the DIB's color table
+ * into the logical palette, creating a palette from this logical palette,
+ * and then returning the palette's handle. This allows the DIB to be
+ * displayed using the best possible colors (important for DIBs with 256 or
+ * more colors).
+ * @param hDIB		Specifies the DIB
+ * @return		Specifies the palette
+ */
+extern BOOL CreateDIBPalette(HDIB hDIB, CPalette *cPal);
 
-HANDLE    WINAPI  BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal);
-void      WINAPI  InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
+/**
+ * This function calculates the address of the DIB's bits and returns a
+ * pointer to the DIB bits.
+ * @param hDIB		Pointer to packed-DIB memory block
+ * @return		Pointer to the DIB bits
+ */
+extern LPSTR FindDIBBits(HDIB lpbi);
+
+/**
+ * This function gets the width of the bitmap.
+ * @param lpbi		Bitmap pointer
+ * @return			Width
+ */
+extern DWORD DIBWidth(HDIB lpDIB);
+
+/**
+ * This function gets the height of the bitmap.
+ * @param lpbi		Bitmap pointer
+ * @return			Height
+ */
+extern DWORD DIBHeight(HDIB lpDIB);
+
+/**
+ * Gets the size required to store the DIB's palette
+ * @param lpbi		Pointer to packed-DIB memory block
+ * @return		Size of the color palette of the DIB
+ */
+extern WORD PaletteSize(HDIB lpDIB);
+
+/**
+ * Gets the number of colors in the palette
+ * @param lpbi		Pointer to packed-DIB memory block
+ * @return		Number of the palette colors.
+ */
+extern WORD DIBNumColors(HDIB lpDIB);
+
+HANDLE    CopyHandle(HANDLE h);
+
+/**
+ * Convert a device-independent bitmap (DIB) to a device-dependent
+ * bitmap (DDB).  The DIB must be packed; i.e. same as a .BMP file.
+ * @return		A handle to the DDB (HBITMAP).  If an error occurs, the return
+ * value will be nullptr.
+ */
+extern HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPal, LPBITMAPINFO lpbih);
+
+/**
+ * Convert a device-independent bitmap (DIB) to a device-dependent
+ * bitmap (DDB), with the desired color palette mapped to the context.
+ * The DIB must be packed; i.e. same as a .BMP file.
+ * @return		A handle to the Bitmap (CBitmap *).  If an error occurs, the return
+ * value will be nullptr.
+ */
+extern CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal);
+
+/**
+ * Saves the specified DIB into the specified CFile.
+ * The CFile is opened and closed by the caller.
+ * @param hDib		Handle to the dib to save
+ * @param file		Open CFile used to save DIB
+ * @return			TRUE if successful, else FALSE or CFileException
+ */
+extern BOOL SaveDIB(HDIB hDib, CFile &file);
+
+/**
+ * Reads in the specified DIB file into a global chunk of memory.
+ * @param file		Bitmap file to read
+ * @return			A handle to a dib (hDIB) if successful.
+ * nullptr if an error occurs.
+ */
+extern HDIB ReadDIBFile(CFile &file);
+
+/**
+ * Reads in the specified DIB from a resource entry.
+ * @param pszPathName	Resource name
+ * @return		A handle to a dib (hDIB) if successful.
+ * nullptr if an error occurs.
+ */
+extern HDIB ReadDIBResource(const char *pszPathName);
+
+HANDLE    BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal);
+void      InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
                                        DWORD dwWidth,
                                        DWORD dwHeight,
                                        int nBPP);
 
-void      WINAPI  ShowMemoryInfo(const char *chMessage, const char *chTitle);
+void      ShowMemoryInfo(const char *chMessage, const char *chTitle);
 
 CPalette *DuplicatePalette(CPalette *pPal);
 
