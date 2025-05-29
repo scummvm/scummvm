@@ -1422,7 +1422,7 @@ void LogicManager::HAND_Abbot_InSalon3(HAND_PARAMS) {
 			playDialog(kCharacterAbbot, "Abb3040", -1, 45);
 			blockView(kCharacterAbbot, kCarRestaurant, 57);
 			getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall + 8] = 3;
-			AbbotCall(&LogicManager::CONS_Abbot_DoJoinedSeqOtis, "121A", 2, 122358304u, "BOGUS");
+			AbbotCall(&LogicManager::CONS_Abbot_DoJoinedSeqOtis, "121A", 2, 122358304, "BOGUS");
 			break;
 		case 3:
 			releaseView(kCharacterAbbot, kCarRestaurant, 57);
@@ -1430,8 +1430,12 @@ void LogicManager::HAND_Abbot_InSalon3(HAND_PARAMS) {
 			getCharacter(kCharacterAbbot).characterPosition.location = 1;
 			CONS_Abbot_WithAugust(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
 
+		break;
+	default:
 		break;
 	}
 }

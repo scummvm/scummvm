@@ -2429,7 +2429,7 @@ void LogicManager::doPreFunction(int *sceneOut) {
 
 		break;
 	case kCarLocomotive:
-		if (_trainData[*sceneOut].parameter1 < 32) {
+		if (_trainData[*sceneOut].parameter1 < (_engine->isDemo() ? 16 : 32)) {
 			if (_softBlockedEntitiesBits[_trainData[*sceneOut].parameter1] || _blockedEntitiesBits[_trainData[*sceneOut].parameter1]) {
 				if (_engine->getOtisManager()->fDirection(_trainNodeIndex) &&
 					_engine->getOtisManager()->fDirection(*sceneOut) &&
@@ -2482,7 +2482,7 @@ void LogicManager::doPreFunction(int *sceneOut) {
 			fadeDialog(kCharacterTableE);
 	}
 
-	if (_engine->_beetle) {
+	if (!_engine->isDemo() && _engine->_beetle) {
 		if (_trainData[*sceneOut].car != 130)
 			_engine->endBeetle();
 	}
@@ -2515,13 +2515,6 @@ void LogicManager::doPostFunction() {
 			do {
 				tmp.copyFrom(_trainData[tmp.scene].link);
 				doAction(&tmp);
-
-				// TODO: Figure out why this happens when canceling fast-walks mode
-				// in between cars...
-				if (tmp.action == 0) {
-					warning("Possible loop for link with action 0");
-					//break;
-				}
 			} while (_trainData[tmp.scene].car == 128);
 		}
 
@@ -2561,11 +2554,17 @@ void LogicManager::doPostFunction() {
 		return;
 	}
 	case 129:
+		if (_engine->isDemo())
+			break;
+
 		if (_gameProgress[kProgressField18] == 2)
 			send(kCharacterCath, kCharacterMaster, 190346110, 0);
 
 		return;
 	case 130:
+		if (_engine->isDemo())
+			break;
+
 		_engine->doBeetle();
 		return;
 	case 131:
@@ -2836,6 +2835,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionSetItem:
+		if (_engine->isDemo())
+			break;
+
 		if (link->param1 < 32) {
 			if (!_gameInventory[link->param1].isPresent) {
 				_gameInventory[link->param1].location = link->param2;
@@ -2848,6 +2850,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionPickItem:
+		if (_engine->isDemo())
+			break;
+
 		if (link->param1 >= 32)
 			return;
 
@@ -2910,6 +2915,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionDropItem:
+		if (_engine->isDemo())
+			break;
+
 		if (link->param1 >= 32 || !_gameInventory[link->param1].isPresent || !link->param2)
 			return;
 
@@ -2947,6 +2955,9 @@ void LogicManager::doAction(Link *link) {
 		break;
 	
 	case kActionLeanOutWindow:
+		if (_engine->isDemo())
+			break;
+
 		if (!_gameEvents[kEventCathLookOutsideWindowDay] && !_gameEvents[kEventCathLookOutsideWindowNight] && getModel(1) != 1 || !_gameProgress[kProgressIsTrainRunning] || link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _gameObjects[kObjectOutsideBetweenCompartments].door != 2) || _inventorySelectedItemIdx == kItemBriefcase || _inventorySelectedItemIdx == kItemFirebird) {
 			if (link->param1 == 9 || link->param1 >= 44 && link->param1 <= 45) {
 				if (isNight()) {
@@ -3001,6 +3012,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionAlmostFall:
+		if (_engine->isDemo())
+			break;
+
 		if (link->param1 == 9) {
 			if (isNight()) {
 				playNIS(kEventCathSlipTylerCompartmentNight);
@@ -3031,6 +3045,9 @@ void LogicManager::doAction(Link *link) {
 		cleanNIS();
 		break;
 	case kActionClimbInWindow:
+		if (_engine->isDemo())
+			break;
+
 		switch (link->param1) {
 		case 9:
 			if (isNight()) {
@@ -3068,6 +3085,9 @@ void LogicManager::doAction(Link *link) {
 		cleanNIS();
 		break;
 	case kActionClimbLadder:
+		if (_engine->isDemo())
+			break;
+
 		if (link->param1 == 1) {
 			if (_gameProgress[kProgressChapter] == 2 || _gameProgress[kProgressChapter] == 3) {
 				playNIS(kEventCathTopTrainGreenJacket);
@@ -3096,6 +3116,9 @@ void LogicManager::doAction(Link *link) {
 		cleanNIS();
 		break;
 	case kActionClimbDownTrain:
+		if (_engine->isDemo())
+			break;
+
 		if (_gameProgress[kProgressChapter] == 2 || _gameProgress[kProgressChapter] == 3) {
 			nisId = kEventCathClimbDownTrainGreenJacket;
 		} else if (_gameProgress[kProgressChapter] == 5) {
@@ -3118,6 +3141,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionKronosSanctum:
+		if (_engine->isDemo())
+			break;
+
 		switch (link->param1) {
 		case 1:
 			send(kCharacterCath, 32, 225056224, 0);
@@ -3162,6 +3188,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionEscapeBaggage:
+		if (_engine->isDemo())
+			break;
+
 		switch (link->param1) {
 		case 1:
 			nisId = kEventCathStruggleWithBonds;
@@ -3213,10 +3242,16 @@ void LogicManager::doAction(Link *link) {
 			break;
 		case 3:
 			queueSFX(kCharacterCath, 43, 0);
-			if (cathHasItem(kItemKey)) {
-				if (!_gameEvents[kEventAnnaBaggageArgument]) {
-					forceJump(kCharacterAnna, &LogicManager::CONS_Anna_BaggageFight);
-					link->scene = kSceneNone;
+
+			if (_engine->isDemo()) {
+				forceJump(kCharacterAnna, &LogicManager::CONS_DemoAnna_BaggageFight);
+				link->scene = kSceneNone;
+			} else {
+				if (cathHasItem(kItemKey)) {
+					if (!_gameEvents[kEventAnnaBaggageArgument]) {
+						forceJump(kCharacterAnna, &LogicManager::CONS_Anna_BaggageFight);
+						link->scene = kSceneNone;
+					}
 				}
 			}
 
@@ -3225,6 +3260,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionBombPuzzle:
+		if (_engine->isDemo())
+			break;
+
 		switch (link->param1) {
 		case 1:
 			send(kCharacterCath, kCharacterMaster, 158610240, 0);
@@ -3259,6 +3297,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionConductors:
+		if (_engine->isDemo())
+			break;
+
 		if (!cathRunningDialog("LIB031"))
 			queueSFX(kCharacterCath, 31, 0);
 
@@ -3270,6 +3311,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionKronosConcert:
+		if (_engine->isDemo())
+			break;
+
 		if (link->param1 == 1) {
 			nisId = kEventConcertSit;
 		} else if (link->param1 == 2) {
@@ -3284,6 +3328,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionPlayMusic2:
+		if (_engine->isDemo())
+			break;
+
 		_gameProgress[kProgressFieldC] = 1;
 		queueSFX(kCharacterCath, link->param1, link->param2);
 		Common::sprintf_s(filename, "MUS%03d", link->param3);
@@ -3292,6 +3339,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionCatchBeetle:
+		if (_engine->isDemo())
+			break;
+
 		if (_engine->_beetle && _engine->_beetle->click()) {
 			_engine->endBeetle();
 			_gameInventory[kItemBeetle].location = 1;
@@ -3307,28 +3357,32 @@ void LogicManager::doAction(Link *link) {
 		bool skipFlag = false;
 
 		if (link->action != kActionCompartment) {
-			if (link->action == kActionExitCompartment) {
-				if (!_gameProgress[kProgressField30] && _gameProgress[kProgressJacket]) {
-					_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
-					_gameProgress[kProgressField30] = 1;
+			if (!_engine->isDemo()) {
+				if (link->action == kActionExitCompartment) {
+					if (!_gameProgress[kProgressField30] && _gameProgress[kProgressJacket]) {
+						_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
+						_gameProgress[kProgressField30] = 1;
+					}
+
+					setModel(1, link->param2);
 				}
 
-				setModel(1, link->param2);
-			}
+				if (_gameObjects[kItemMatchBox].door != 1 && _gameObjects[kItemMatchBox].door != 3 && _inventorySelectedItemIdx != kItemKey) {
+					if (!_gameProgress[kProgressEventFoundCorpse]) {
+						_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
+						playDialog(kCharacterCath, "LIB014", -1, 0);
+						playNIS(kEventCathFindCorpse);
+						playDialog(kCharacterCath, "LIB015", -1, 0);
+						_gameProgress[kProgressEventFoundCorpse] = 1;
+						link->scene = kSceneCompartmentCorpse;
 
-			if (_gameObjects[kItemMatchBox].door != 1 && _gameObjects[kItemMatchBox].door != 3 && _inventorySelectedItemIdx != kItemKey) {
-				if (!_gameProgress[kProgressEventFoundCorpse]) {
-					_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
-					playDialog(kCharacterCath, "LIB014", -1, 0);
-					playNIS(kEventCathFindCorpse);
-					playDialog(kCharacterCath, "LIB015", -1, 0);
-					_gameProgress[kProgressEventFoundCorpse] = 1;
-					link->scene = kSceneCompartmentCorpse;
-
-					return;
+						return;
+					}
+				} else {
+					skipFlag = true;
 				}
 			} else {
-				skipFlag = true;
+				link->action = kActionCompartment;
 			}
 		}
 
@@ -3342,9 +3396,11 @@ void LogicManager::doAction(Link *link) {
 				return;
 			}
 
-			if (bumpCathTowardsCond(link->param1, 1, 1)) {
-				link->scene = kSceneNone;
-				return;
+			if (!_engine->isDemo()) {
+				if (bumpCathTowardsCond(link->param1, 1, 1)) {
+					link->scene = kSceneNone;
+					return;
+				}
 			}
 
 			if (_gameObjects[link->param1].door == 1 || _gameObjects[link->param1].door == 3 || preventEnterComp(link->param1)) {
@@ -3394,21 +3450,26 @@ void LogicManager::doAction(Link *link) {
 			return;
 		}
 
-		queueSFX(kCharacterCath, 14, 0);
-		queueSFX(kCharacterCath, 15, 22);
+		if (!_engine->isDemo()) {
+			queueSFX(kCharacterCath, 14, 0);
+			queueSFX(kCharacterCath, 15, 22);
 
-		if (_gameProgress[kProgressField78] && !dialogRunning("MUS003")) {
-			playDialog(kCharacterCath, "MUS003", 16, 0);
-			_gameProgress[kProgressField78] = 0;
+			if (_gameProgress[kProgressField78] && !dialogRunning("MUS003")) {
+				playDialog(kCharacterCath, "MUS003", 16, 0);
+				_gameProgress[kProgressField78] = 0;
+			}
+
+			bumpCath(kCarGreenSleeping, 77, 255);
+			link->scene = kSceneNone;
 		}
-
-		bumpCath(kCarGreenSleeping, 77, 255);
-		link->scene = kSceneNone;
 
 		break;
 	}
 
 	case kActionOutsideTrain:
+		if (_engine->isDemo())
+			break;
+
 		switch (link->param1) {
 		case 1:
 			send(kCharacterCath, kCharacterSalko, 167992577, 0);
@@ -3441,6 +3502,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionFirebirdPuzzle:
+		if (_engine->isDemo())
+			break;
+
 		if (_gameEvents[kEventKronosBringFirebird]) {
 			switch (link->param1) {
 			case 1:
@@ -3498,6 +3562,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionOpenMatchBox:
+		if (_engine->isDemo())
+			break;
+
 		if (_gameInventory[kItemMatch].location && !_gameInventory[kItemMatch].isPresent) {
 			_gameInventory[kItemMatch].isPresent = 1;
 			_gameInventory[kItemMatch].location = 0;
@@ -3509,6 +3576,9 @@ void LogicManager::doAction(Link *link) {
 		queueSFX(kCharacterCath, 59, 0);
 		break;
 	case kActionHintDialog:
+		if (_engine->isDemo())
+			break;
+
 		if (dialogRunning(getHintDialog(link->param1))) {
 			endDialog(getHintDialog(link->param1));
 		}
@@ -3517,6 +3587,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionMusicEggBox:
+		if (_engine->isDemo())
+			break;
+
 		queueSFX(kCharacterCath, 43, 0);
 		if (_gameProgress[kProgressField7C] && !dialogRunning("MUS003")) {
 			playDialog(kCharacterCath, "MUS003", 16, 0);
@@ -3525,6 +3598,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionPlayMusic3:
+		if (_engine->isDemo())
+			break;
+
 		queueSFX(kCharacterCath, 24, 0);
 		if (_gameProgress[kProgressField80] && !dialogRunning("MUS003")) {
 			playDialog(kCharacterCath, "MUS003", 16, 0);
@@ -3534,6 +3610,9 @@ void LogicManager::doAction(Link *link) {
 		break;
 	case kActionKnockInside:
 	case kActionBed:
+		if (_engine->isDemo())
+			break;
+
 		if (link->action == kActionBed) {
 			queueSFX(kCharacterCath, 85, 0);
 		}
@@ -3567,6 +3646,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionPlayMusicChapterSetupTrain:
+		if (_engine->isDemo())
+			break;
+
 		switch (_gameProgress[kProgressChapter]) {
 		case 1:
 			musId = 1;
@@ -3592,6 +3674,9 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionEasterEggs:
+		if (_engine->isDemo())
+			break;
+
 		if (link->param1 == 1) {
 			send(kCharacterCath, kCharacterRebecca, 205034665, 0);
 		} else if (link->param1 == 2) {

@@ -246,8 +246,8 @@ void LogicManager::HAND_Francois_SaveGame(HAND_PARAMS) {
 		if (msg->action == 12) {
 			save(
 				kCharacterFrancois,
-				getCharacter(kCharacterFrancois).callParams[getCharacter(kCharacterFrancois).currentCall].parameters[0],
-				getCharacter(kCharacterFrancois).callParams[getCharacter(kCharacterFrancois).currentCall].parameters[1]
+				getCharacterCurrentParams(kCharacterFrancois)[0],
+				getCharacterCurrentParams(kCharacterFrancois)[1]
 			);
 
 			getCharacter(kCharacterFrancois).currentCall--;

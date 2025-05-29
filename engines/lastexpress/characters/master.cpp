@@ -198,7 +198,7 @@ void LogicManager::HAND_Master_Depart(HAND_PARAMS) {
 							}
 						}
 					} else {
-						bumpCath(5, 82, 255);
+						bumpCath(kCarRestaurant, 82, 255);
 					}
 				}
 				getCharacterParams(kCharacterMaster, 8)[1] = 0;
@@ -212,8 +212,8 @@ void LogicManager::HAND_Master_Depart(HAND_PARAMS) {
 
 		send(kCharacterMaster, kCharacterClerk, 203419131, 0);
 
-		setDoor(26, 0, 1, 0, 9);
-		setDoor(27, 0, 1, 0, 9);
+		setDoor(26, kCharacterCath, 1, 0, 9);
+		setDoor(27, kCharacterCath, 1, 0, 9);
 
 		_gameProgress[kProgressIsTrainRunning] = 1;
 
@@ -222,7 +222,8 @@ void LogicManager::HAND_Master_Depart(HAND_PARAMS) {
 		getCharacter(kCharacterMaster).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(
 			kCharacterMaster,
-			_functionsMaster[getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall]]);
+			_functionsMaster[getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall]]
+		);
 
 		fedEx(kCharacterMaster, kCharacterMaster, 18, 0);
 	}
@@ -409,7 +410,7 @@ void LogicManager::HAND_Master_FirstDream(HAND_PARAMS) {
 			_gameTimeTicksDelta = 3;
 			_gameProgress[kProgressField18] = 1;
 
-			setDoor(63, 0, 0, 10, 9);
+			setDoor(63, kCharacterCath, 0, 10, 9);
 
 			_gameProgress[kProgressField84] = 0;
 
@@ -418,7 +419,8 @@ void LogicManager::HAND_Master_FirstDream(HAND_PARAMS) {
 			getCharacter(kCharacterMaster).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(
 				kCharacterMaster,
-				_functionsMaster[getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall]]);
+				_functionsMaster[getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall]]
+			);
 
 			fedEx(kCharacterMaster, kCharacterMaster, 18, 0);
 		} else {
@@ -487,8 +489,8 @@ void LogicManager::HAND_Master_StartPart1(HAND_PARAMS) {
 
 		_gameProgress[kProgressField7C] = 1;
 
-		setDoor(1, 0, 0, 10, 9);
-		setDoor(9, 0, 0, 255, 255);
+		setDoor(1, kCharacterCath, 0, 10, 9);
+		setDoor(9, kCharacterCath, 0, 255, 255);
 
 		getCharacterCurrentParams(kCharacterMaster)[0] = 1;
 
@@ -509,22 +511,22 @@ void LogicManager::HAND_Master_StartPart1(HAND_PARAMS) {
 		setModel(98, 1);
 		setModel(55, 1);
 
-		setDoor(25, 0, 0, 0, 1);
-		setDoor(23, 0, 0, 0, 1);
-		setDoor(24, 0, 0, 0, 1);
-		setDoor(28, 0, 0, 0, 1);
-		setDoor(56, 0, 0, 0, 1);
-		setDoor(54, 0, 0, 0, 1);
-		setDoor(55, 0, 0, 0, 1);
-		setDoor(59, 0, 0, 0, 1);
-		setDoor(66, 0, 0, 0, 1);
-		setDoor(64, 0, 0, 0, 1);
-		setDoor(65, 0, 0, 0, 1);
-		setDoor(69, 0, 0, 0, 1);
-		setDoor(98, 0, 0, 0, 1);
-		setDoor(26, 0, 1, 0, 9);
-		setDoor(27, 0, 1, 0, 9);
-		setDoor(101, 0, 1, 10, 9);
+		setDoor(25, kCharacterCath, 0, 0, 1);
+		setDoor(23, kCharacterCath, 0, 0, 1);
+		setDoor(24, kCharacterCath, 0, 0, 1);
+		setDoor(28, kCharacterCath, 0, 0, 1);
+		setDoor(56, kCharacterCath, 0, 0, 1);
+		setDoor(54, kCharacterCath, 0, 0, 1);
+		setDoor(55, kCharacterCath, 0, 0, 1);
+		setDoor(59, kCharacterCath, 0, 0, 1);
+		setDoor(66, kCharacterCath, 0, 0, 1);
+		setDoor(64, kCharacterCath, 0, 0, 1);
+		setDoor(65, kCharacterCath, 0, 0, 1);
+		setDoor(69, kCharacterCath, 0, 0, 1);
+		setDoor(98, kCharacterCath, 0, 0, 1);
+		setDoor(26, kCharacterCath, 1, 0, 9);
+		setDoor(27, kCharacterCath, 1, 0, 9);
+		setDoor(101, kCharacterCath, 1, 10, 9);
 
 		CONS_Master_MovingNight(0, 0, 0, 0);
 	}
@@ -1509,8 +1511,8 @@ void LogicManager::HAND_Master_InitPart4(HAND_PARAMS) {
 
 		_gameProgress[kProgressIsTrainRunning] = 1;
 
-		setDoor(26, 0, 1, 0, 9);
-		setDoor(27, 0, 1, 0, 9);
+		setDoor(26, kCharacterCath, 1, 0, 9);
+		setDoor(27, kCharacterCath, 1, 0, 9);
 
 		send(kCharacterMaster, kCharacterClerk, 203419131, 0);
 		send(kCharacterMaster, kCharacterTableA, 103798704, 0);

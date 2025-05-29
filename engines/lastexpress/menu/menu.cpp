@@ -1352,16 +1352,22 @@ void MenuOld::setBrightness(uint32 brightness) const {
 
 Menu::Menu(LastExpressEngine *engine) {
 	_engine = engine;
+
+	if (_engine->isDemo())
+		_eggTimerDelta = 2700;
 }
 
 void Menu::doEgg(bool doSaveGame, int type, int32 time) {
 	if (!_isShowingMenu) {
 		_isShowingMenu = true;
 
+		if (_engine->isDemo())
+			_eggTimerDelta = 2700;
+
 		_engine->getOtisManager()->wipeAllGSysInfo();
 
 		if (!_engine->mouseHasRightClicked()) {
-			if (_engine->getVCR()->isVirgin(0) && _engine->getArchiveManager()->lockCD(1)) {
+			if (!_engine->isDemo() && _engine->getVCR()->isVirgin(0) && _engine->getArchiveManager()->lockCD(1)) {
 				if (!_hasShownIntro) {
 					_engine->getNISManager()->doNIS("1930.NIS", 0x4000);
 					_engine->getMessageManager()->clearClickEvents();
@@ -1447,6 +1453,9 @@ void Menu::eggFree() {
 }
 
 void Menu::eggMouse(Event *event) {
+	if (_engine->isDemo())
+		_eggTimerDelta = 2700;
+
 	if (_engine->getGraphicsManager()->canDrawMouse()) {
 		bool redrawMouse = true;
 
@@ -1517,8 +1526,17 @@ void Menu::eggTimer(Event *event) {
 	}
 
 	if (!_eggTimerDelta--) {
-		updateEgg();
-		_eggTimerDelta = 15;
+		if (_engine->isDemo()) {
+			endEgg();
+
+			if (!_engine->demoEnding(false))
+				_engine->getSaveManager()->removeSavegame(_engine->_savegameNames[_engine->_currentGameFileColorId]);
+
+			doEgg(false, 0, 0);
+		} else {
+			updateEgg();
+			_eggTimerDelta = 15;
+		}
 	}
 }
 
@@ -1563,7 +1581,11 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			setSprite(1, 6, true);
 			setSprite(0, -1, true);
 
-			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			if (_engine->isDemo()) {
+				_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+			} else {
+				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			}
 
 			clearSprites();
 
@@ -1590,7 +1612,12 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 			_engine->getSoundManager()->killAllSlots();
 			_engine->getSoundManager()->soundThread();
-			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+
+			if (_engine->isDemo()) {
+				_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+			} else {
+				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			}
 
 			while (_engine->getLogicManager()->dialogRunning("LIB046"))
 				_engine->getSoundManager()->soundThread();
@@ -1611,6 +1638,11 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 	case kMenuAction4:
 	{
 		if (action == kMenuAction4) {
+			if (_engine->isDemo()) {
+				clearSprites();
+				return true;
+			}
+
 			if ((flags & 8) != 0)
 				_engine->_currentSavePoint = 0;
 		}
@@ -1624,15 +1656,10 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		if (_engine->getLogicManager()->_gameProgress[kProgressChapter] > 1)
 			whichCD = (_engine->getLogicManager()->_gameProgress[kProgressChapter] > 3) + 2;
 
-		char path[80];
-		if (_engine->getArchiveManager()->isCDAvailable(whichCD, path, sizeof(path))) {
-			if (_gameInNotStartedInFile) {
-				setSprite(1, 0, true);
-				setSprite(0, 31, true);
-			} else {
+		if (_engine->isDemo()) {
+			if (!_gameInNotStartedInFile) {
 				setSprite(1, 7, true);
-
-				if (_engine->_lastSavePointIdInFile == _engine->_currentSavePoint) {
+				if (_engine->_currentSavePoint == _engine->_lastSavePointIdInFile) {
 					if (_engine->getVCR()->currentEndsGame()) {
 						setSprite(0, 6, true);
 					} else {
@@ -1642,59 +1669,117 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 					setSprite(0, 5, true);
 				}
 			}
+
+			if ((flags & 8) == 0)
+				return true;
+
+			_engine->getLogicManager()->loadTrain(whichCD);
+			setSprite(0, -1, true);
+			_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+			_engine->getMessageManager()->reset();
+			endEgg();
+
+			Slot *slot = _engine->getSoundManager()->_soundCache;
+			if (_engine->getSoundManager()->_soundCache) {
+				do {
+					if (slot->_tag == kSoundTagIntro)
+						break;
+					slot = slot->_next;
+				} while (slot);
+
+				if (slot)
+					slot->setFade(0);
+			}
+
+			_engine->getLogicManager()->fadeToBlack();
 		} else {
-			setSprite(1, -1, true);
-			setSprite(0, whichCD - 1, true);
-		}
+			char path[80];
+			if (_engine->getArchiveManager()->isCDAvailable(whichCD, path, sizeof(path))) {
+				if (_gameInNotStartedInFile) {
+					setSprite(1, 0, true);
+					setSprite(0, 31, true);
+				} else {
+					setSprite(1, 7, true);
 
-		if ((flags & 8) == 0)
-			return true;
+					if (_engine->_lastSavePointIdInFile == _engine->_currentSavePoint) {
+						if (_engine->getVCR()->currentEndsGame()) {
+							setSprite(0, 6, true);
+						} else {
+							setSprite(0, 3, true);
+						}
+					} else {
+						setSprite(0, 5, true);
+					}
+				}
+			} else {
+				setSprite(1, -1, true);
+				setSprite(0, whichCD - 1, true);
+			}
 
-		if (!_engine->getArchiveManager()->lockCD(whichCD))
-			return true;
+			if ((flags & 8) == 0)
+				return true;
 
-		_engine->getLogicManager()->loadTrain(whichCD);
+			if (!_engine->getArchiveManager()->lockCD(whichCD))
+				return true;
 
-		setSprite(0, -1, true);
+			_engine->getLogicManager()->loadTrain(whichCD);
 
-		_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
-		_engine->getMessageManager()->reset();
-		endEgg();
+			setSprite(0, -1, true);
 
-		if (!_engine->_currentSavePoint) {
+			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			_engine->getMessageManager()->reset();
+			endEgg();
 
-			if (!_engine->mouseHasRightClicked()) {
-				_engine->getLogicManager()->bumpCathNode(5 * _engine->_currentGameFileColorId + 3);
+			if (!_engine->_currentSavePoint) {
 
 				if (!_engine->mouseHasRightClicked()) {
-					_engine->getLogicManager()->bumpCathNode(5 * _engine->_currentGameFileColorId + 4);
+					_engine->getLogicManager()->bumpCathNode(5 * _engine->_currentGameFileColorId + 3);
 
 					if (!_engine->mouseHasRightClicked()) {
-						_engine->getLogicManager()->bumpCathNode(5 * _engine->_currentGameFileColorId + 5);
+						_engine->getLogicManager()->bumpCathNode(5 * _engine->_currentGameFileColorId + 4);
 
 						if (!_engine->mouseHasRightClicked()) {
-							Slot *slot = _engine->getSoundManager()->_soundCache;
-							if (_engine->getSoundManager()->_soundCache) {
-								do {
-									if (slot->_tag == kSoundTagIntro)
-										break;
+							_engine->getLogicManager()->bumpCathNode(5 * _engine->_currentGameFileColorId + 5);
 
-									slot = slot->_next;
-								} while (slot);
+							if (!_engine->mouseHasRightClicked()) {
+								Slot *slot = _engine->getSoundManager()->_soundCache;
+								if (_engine->getSoundManager()->_soundCache) {
+									do {
+										if (slot->_tag == kSoundTagIntro)
+											break;
 
-								if (slot)
-									slot->setFade(0);
+										slot = slot->_next;
+									} while (slot);
+
+									if (slot)
+										slot->setFade(0);
+								}
+
+								_engine->getNISManager()->doNIS("1601.NIS", 0x4000);
+								_engine->getLogicManager()->_gameEvents[kEventIntro] = 1;
 							}
-
-							_engine->getNISManager()->doNIS("1601.NIS", 0x4000);
-							_engine->getLogicManager()->_gameEvents[kEventIntro] = 1;
 						}
 					}
 				}
-			}
 
-			if (!_engine->getLogicManager()->_gameEvents[kEventIntro]) {
-				_engine->getLogicManager()->_gameEvents[kEventIntro] = 1;
+				if (!_engine->getLogicManager()->_gameEvents[kEventIntro]) {
+					_engine->getLogicManager()->_gameEvents[kEventIntro] = 1;
+					Slot *slot = _engine->getSoundManager()->_soundCache;
+					if (_engine->getSoundManager()->_soundCache) {
+						do {
+							if (slot->_tag == kSoundTagIntro)
+								break;
+
+							slot = slot->_next;
+						} while (slot);
+
+						if (slot)
+							slot->setFade(0);
+
+						_engine->getLogicManager()->fadeToBlack();
+					}
+				}
+			} else {
 				Slot *slot = _engine->getSoundManager()->_soundCache;
 				if (_engine->getSoundManager()->_soundCache) {
 					do {
@@ -1709,21 +1794,6 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 					_engine->getLogicManager()->fadeToBlack();
 				}
-			}
-		} else {
-			Slot *slot = _engine->getSoundManager()->_soundCache;
-			if (_engine->getSoundManager()->_soundCache) {
-				do {
-					if (slot->_tag == kSoundTagIntro)
-						break;
-
-					slot = slot->_next;
-				} while (slot);
-
-				if (slot)
-					slot->setFade(0);
-
-				_engine->getLogicManager()->fadeToBlack();
 			}
 		}
 
@@ -1741,50 +1811,60 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 8) != 0) {
-			setSprite(3, 1, true);
-			setSprite(0, -1, true);
+		if (_engine->isDemo()) {
+			// Demo: simplified implementation
+			if ((flags & 0x88) != 0)
+				return true;
 
-			_engine->getLogicManager()->playDialog(0, "LIB047", -1, 0);
-
-			switchEggs(_engine->getVCR()->switchGames());
-
-			_engine->_fightSkipCounter = 0;
-			return true;
-		}
-
-		if ((flags & 0x80) != 0)
-			return true;
-
-		setSprite(3, 0, true);
-
-		if (_gameInNotStartedInFile || _engine->_currentGameFileColorId == 5) {
-			setSprite(0, 25, true);
-		} else if (_engine->getVCR()->isVirgin(_engine->_currentGameFileColorId + 1)) {
+			setSprite(3, 0, true);
 			setSprite(0, 7, true);
+			return true;
 		} else {
-			switch (_engine->_currentGameFileColorId) {
-			case 0:
-				setSprite(0, 26, true);
-				break;
-			case 1:
-				setSprite(0, 28, true);
-				break;
-			case 2:
-				setSprite(0, 30, true);
-				break;
-			case 3:
-				setSprite(0, 29, true);
-				break;
-			case 4:
-				setSprite(0, 27, true);
-				break;
-			default:
-				break;
-			}
-		}
+			if ((flags & 8) != 0) {
+				setSprite(3, 1, true);
+				setSprite(0, -1, true);
 
-		return true;
+				_engine->getLogicManager()->playDialog(0, "LIB047", -1, 0);
+
+				switchEggs(_engine->getVCR()->switchGames());
+
+				_engine->_fightSkipCounter = 0;
+				return true;
+			}
+
+			if ((flags & 0x80) != 0)
+				return true;
+
+			setSprite(3, 0, true);
+
+			if (_gameInNotStartedInFile || _engine->_currentGameFileColorId == 5) {
+				setSprite(0, 25, true);
+			} else if (_engine->getVCR()->isVirgin(_engine->_currentGameFileColorId + 1)) {
+				setSprite(0, 7, true);
+			} else {
+				switch (_engine->_currentGameFileColorId) {
+				case 0:
+					setSprite(0, 26, true);
+					break;
+				case 1:
+					setSprite(0, 28, true);
+					break;
+				case 2:
+					setSprite(0, 30, true);
+					break;
+				case 3:
+					setSprite(0, 29, true);
+					break;
+				case 4:
+					setSprite(0, 27, true);
+					break;
+				default:
+					break;
+				}
+			}
+
+			return true;
+		}
 	case kMenuActionRewind:
 		if (!_engine->_currentSavePoint) {
 			clearSprites();
@@ -1806,7 +1886,12 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			setSprite(1, 2, true);
 			setSprite(0, -1, true);
 
-			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			if (_engine->isDemo()) {
+				_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+			} else {
+				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			}
+
 			_engine->getVCR()->rewind();
 
 			_moveClockHandsFlag = false;
@@ -1839,7 +1924,12 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			setSprite(1, 4, true);
 			setSprite(0, -1, true);
 
-			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			if (_engine->isDemo()) {
+				_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+			} else {
+				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+			}
+
 			_engine->getVCR()->forward();
 
 			_moveClockHandsFlag = false;
@@ -1859,22 +1949,31 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setCity(0);
 
-		if ((flags & 8) != 0) {
-			setSprite(0, -1, true);
+		if (_engine->isDemo()) {
+			// Demo doesn't implement time seeking...
+			if ((flags & 0x88) != 0)
+				return true;
 
-			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
-			_engine->getVCR()->seekToTime(1037700);
+			setSprite(0, 13, true);
+			return true;
+		} else {
+			if ((flags & 8) != 0) {
+				setSprite(0, -1, true);
 
-			_moveClockHandsFlag = true;
+				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+				_engine->getVCR()->seekToTime(1037700);
+
+				_moveClockHandsFlag = true;
+				return true;
+			}
+
+			if ((flags & 0x80) != 0)
+				return true;
+
+			setSprite(0, 13, true);
+
 			return true;
 		}
-
-		if ((flags & 0x80) != 0)
-			return true;
-
-		setSprite(0, 13, true);
-
-		return true;
 	case kMenuActionGoToStrasbourg:
 		if (_engine->_gameTimeOfLastSavePointInFile < 1490400 || _engine->getClock()->getTimeShowing() == 1490400 || _engine->getClock()->getTimeTo() == 1490400) {
 			clearSprites();
@@ -1883,26 +1982,40 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setCity(1);
 
-		if ((flags & 8) != 0) {
-			setSprite(0, -1, true);
+		if (_engine->isDemo()) {
+			// Demo doesn't implement time seeking...
+			if ((flags & 0x88) != 0)
+				return true;
 
-			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
-			_engine->getVCR()->seekToTime(1490400);
+			if (_engine->getClock()->getTimeShowing() <= 1490400) {
+				setSprite(0, 14, true);
+			} else {
+				setSprite(0, 15, true);
+			}
 
-			_moveClockHandsFlag = true;
 			return true;
-		}
-
-		if ((flags & 0x80) != 0)
-			return true;
-
-		if (_engine->getClock()->getTimeShowing() <= 1490400) {
-			setSprite(0, 14, true);
 		} else {
-			setSprite(0, 15, true);
-		}
+			if ((flags & 8) != 0) {
+				setSprite(0, -1, true);
 
-		return true;
+				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+				_engine->getVCR()->seekToTime(1490400);
+
+				_moveClockHandsFlag = true;
+				return true;
+			}
+
+			if ((flags & 0x80) != 0)
+				return true;
+
+			if (_engine->getClock()->getTimeShowing() <= 1490400) {
+				setSprite(0, 14, true);
+			} else {
+				setSprite(0, 15, true);
+			}
+
+			return true;
+		}
 	case kMenuActionGoToMunich:
 		if (_engine->_gameTimeOfLastSavePointInFile < 1852200 || _engine->getClock()->getTimeShowing() == 1852200 || _engine->getClock()->getTimeTo() == 1852200) {
 			clearSprites();
@@ -1911,27 +2024,46 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setCity(2);
 
-		if ((flags & 8) != 0) {
-			setSprite(0, -1, true);
+		if (_engine->isDemo()) {
+			// Demo doesn't implement time seeking...
+			if ((flags & 0x88) != 0)
+				return true;
 
-			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
-			_engine->getVCR()->seekToTime(1852200);
+			if (_engine->getClock()->getTimeShowing() <= 1852200) {
+				setSprite(0, 17, true);
+			} else {
+				setSprite(0, 16, true);
+			}
 
-			_moveClockHandsFlag = true;
 			return true;
-		}
-
-		if ((flags & 0x80) != 0)
-			return true;
-
-		if (_engine->getClock()->getTimeShowing() <= 1852200) {
-			setSprite(0, 17, true);
 		} else {
-			setSprite(0, 16, true);
+			if ((flags & 8) != 0) {
+				setSprite(0, -1, true);
+
+				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+				_engine->getVCR()->seekToTime(1852200);
+
+				_moveClockHandsFlag = true;
+				return true;
+			}
+
+			if ((flags & 0x80) != 0)
+				return true;
+
+			if (_engine->getClock()->getTimeShowing() <= 1852200) {
+				setSprite(0, 17, true);
+			} else {
+				setSprite(0, 16, true);
+			}
+
+			return true;
+		}
+	case kMenuActionGoToVienna:
+		if (_engine->isDemo()) {
+			clearSprites();
+			return true;
 		}
 
-		return true;
-	case kMenuActionGoToVienna:
 		if (_engine->_gameTimeOfLastSavePointInFile < 2268000 || _engine->getClock()->getTimeShowing() == 2268000 || _engine->getClock()->getTimeTo() == 2268000) {
 			clearSprites();
 			return true;
@@ -1960,6 +2092,11 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		return true;
 	case kMenuActionGoToBudapest:
+		if (_engine->isDemo()) {
+			clearSprites();
+			return true;
+		}
+
 		if (_engine->_gameTimeOfLastSavePointInFile < 2551500 || _engine->getClock()->getTimeShowing() == 2551500 || _engine->getClock()->getTimeTo() == 2551500) {
 			clearSprites();
 			return true;
@@ -1988,6 +2125,11 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		return true;
 	case kMenuActionGoToBelgrad:
+		if (_engine->isDemo()) {
+			clearSprites();
+			return true;
+		}
+
 		if (_engine->_gameTimeOfLastSavePointInFile < 2952000 || _engine->getClock()->getTimeShowing() == 2952000 || _engine->getClock()->getTimeTo() == 2952000) {
 			clearSprites();
 			return true;
@@ -2016,6 +2158,11 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		return true;
 	case kMenuActionGoToCostantinople:
+		if (_engine->isDemo()) {
+			clearSprites();
+			return true;
+		}
+
 		if (_engine->_gameTimeOfLastSavePointInFile < 4941000 || _engine->getClock()->getTimeShowing() == 4941000 || _engine->getClock()->getTimeTo() == 4941000) {
 			clearSprites();
 			return true;
@@ -2060,7 +2207,12 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setSprite(2, 0, true);
 
-		_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+		if (_engine->isDemo()) {
+			_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+		} else {
+			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+		}
+
 		_engine->getSoundManager()->setMasterVolume(_engine->getSoundManager()->getMasterVolume() - 1);
 		_engine->getVCR()->storeSettings();
 
@@ -2088,7 +2240,11 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			setSprite(0, 8, true);
 
 			if ((flags & 8) != 0) {
-				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+				if (_engine->isDemo()) {
+					_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+				} else {
+					_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+				}
 
 				setSprite(2, 4, true);
 
@@ -2131,7 +2287,12 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setSprite(2, 5, true);
 
-		_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+		if (_engine->isDemo()) {
+			_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+		} else {
+			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+		}
+
 		_engine->getGraphicsManager()->setGammaLevel(_engine->getGraphicsManager()->getGammaLevel() - 1);
 		_engine->getVCR()->storeSettings();
 
@@ -2173,7 +2334,12 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				if ((flags & 8) != 0) {
 					setSprite(2, 9, true);
 
-					_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+					if (_engine->isDemo()) {
+						_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
+					} else {
+						_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
+					}
+
 					_engine->getGraphicsManager()->setGammaLevel(_engine->getGraphicsManager()->getGammaLevel() + 1);
 					_engine->getVCR()->storeSettings();
 
@@ -2248,9 +2414,9 @@ void Menu::switchEggs(int whichEgg) {
 		_menuSeqs[3] = nullptr;
 	}
 
-	_gameInNotStartedInFile = _engine->_gameTimeOfLastSavePointInFile < 1061100;
+	_gameInNotStartedInFile = _engine->isDemo() || _engine->_gameTimeOfLastSavePointInFile < 1061100;
 
-	if (_engine->_gameTimeOfLastSavePointInFile >= 1061100) {
+	if (_engine->isDemo() || _engine->_gameTimeOfLastSavePointInFile >= 1061100) {
 		_engine->getLogicManager()->bumpCathNode((5 * whichEgg) + 1);
 	} else {
 		_engine->getLogicManager()->bumpCathNode((5 * whichEgg) + 2);
@@ -2258,6 +2424,12 @@ void Menu::switchEggs(int whichEgg) {
 
 	_engine->getGraphicsManager()->setMouseDrawable(true);
 	_engine->getLogicManager()->mouseStatus();
+
+	if (_engine->isDemo()) {
+		Common::strcpy_s(_eggButtonsSeqNames[3], "aconred.seq");
+		_menuSeqs[3] = _engine->getArchiveManager()->loadSeq(_eggButtonsSeqNames[3], 15, 0);
+		return;
+	}
 
 	if (_gameInNotStartedInFile && whichEgg == 0) {
 		return;
@@ -2295,6 +2467,14 @@ void Menu::switchEggs(int whichEgg) {
 
 bool Menu::isShowingMenu() {
 	return _isShowingMenu;
+}
+
+void Menu::setEggTimerDelta(int delta) {
+	_eggTimerDelta = delta;
+}
+
+int Menu::getEggTimerDelta() {
+	return _eggTimerDelta;
 }
 
 } // End of namespace LastExpress

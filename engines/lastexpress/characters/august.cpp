@@ -468,7 +468,7 @@ void LogicManager::HAND_August_SaveGame(HAND_PARAMS) {
 	if (msg->action) {
 		if (msg->action == 12) {
 			save(
-				2,
+				kCharacterAugust,
 				getCharacterCurrentParams(kCharacterAugust)[0],
 				getCharacterCurrentParams(kCharacterAugust)[1]
 			);

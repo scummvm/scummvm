@@ -47,6 +47,7 @@
 #include "common/timer.h"
 
 #include "engines/util.h"
+#include "engines/advancedDetector.h"
 
 const char *g_actionNames[] = {"None", "Action1", "Action2", "ExitCompartment", "Action4", "ExcuseMeCath", "ExcuseMe", "INVALID", "Knock", "OpenDoor", "Action10", "Action11", "Default", "INVALID", "INVALID", "INVALID", "Action16", "DrawScene", "Callback"};
 const char *g_directionNames[] = { "None", "Up", "Down", "Left", "Right", "Switch"};
@@ -112,7 +113,7 @@ void LastExpressEngine::startUp() {
 	getGraphicsManager()->setMouseDrawable(false);
 	initGameData();
 	getSubtitleManager()->initSubtitles();
-	getLogicManager()->loadTrain(1);
+	getLogicManager()->loadTrain(isDemo() ? 2 : 1);
 }
 
 void LastExpressEngine::shutDown() {
@@ -385,15 +386,15 @@ void LastExpressEngine::initGameData() {
 	getLogicManager()->_gameInventory[kItemArticle].scene = 36;
 	getLogicManager()->_gameInventory[kItemTelegram].isPresent = 1;
 	getLogicManager()->_gameInventory[kItemArticle].isPresent = 1;
-	getLogicManager()->_gameProgress[kProgressPortrait] = 32;
-	getLogicManager()->_gameProgress[kProgressChapter] = 1;
+	getLogicManager()->_gameProgress[kProgressPortrait] = isDemo() ? 34: 32;
+	getLogicManager()->_gameProgress[kProgressChapter] = isDemo() ? 3 : 1;
 	getLogicManager()->_lastSavegameSessionTicks = 0;
 	getLogicManager()->_currentGameSessionTicks = 0;
 	getLogicManager()->_useLastSavedNodeIndex = 0;
 	getLogicManager()->_lastNodeIndex = 0;
 	getLogicManager()->_lastSavedNodeIndex = 0;
 	getLogicManager()->_inventorySelectedItemIdx = 0;
-	getLogicManager()->_gameTime = 1037700;
+	getLogicManager()->_gameTime = isDemo() ? 2241000 : 1037700;
 	getLogicManager()->_gameTimeTicksDelta = 3;
 	getLogicManager()->_trainNodeIndex = 40;
 }
@@ -409,7 +410,7 @@ void LastExpressEngine::engineEventHandler(Event *event) {
 		//++g_numClicks;
 		getNISManager()->abortNIS();
 		warning("abortFight() missing from engineEventHandler");
-		//abortFight();
+		abortFight();
 		abortCredits();
 		if (shouldQuit()) {
 			// g_flag_running = 0;
@@ -435,14 +436,14 @@ void LastExpressEngine::engineEventHandler(Event *event) {
 		break;
 	case 2:
 		getNISManager()->abortNIS();
-		//abortFight();
+		abortFight();
 		warning("abortFight() missing from engineEventHandler");
 		abortCredits();
 		if (!shouldQuit() && !getMenu()->isShowingMenu()) {
 			if (getMessageManager()->getEventHandle(1) != &LastExpressEngine::nodeStepMouseWrapper || getVCR()->isVirgin(_currentGameFileColorId))
 				getMessageManager()->addEvent(4, 0, 0, 2);
 			else
-				getMenu()->doEgg(1, 0, 0);
+				getMenu()->doEgg(true, 0, 0);
 		}
 		break;
 	case 3:
@@ -597,7 +598,7 @@ bool LastExpressEngine::handleEvents() {
 			if (!getLogicManager()->_doubleClickFlag) {
 				if (_systemEventLeftMouseDown)
 					curFlags |= 1;
-
+			
 				if (_systemEventRightMouseDown)
 					curFlags |= 2;
 			}
@@ -743,12 +744,24 @@ void LastExpressEngine::creditsTimerWrapper(Event *event) {
 	creditsTimer(event);
 }
 
+void LastExpressEngine::demoEndingMouseWrapper(Event *event) {
+	demoEndingMouse(event);
+}
+
+void LastExpressEngine::demoEndingTimerWrapper(Event *event) {
+	demoEndingTimer(event);
+}
+
 void LastExpressEngine::fightMouseWrapper(Event *event) {
 	_fight->mouse(event);
 }
 
 void LastExpressEngine::fightTimerWrapper(Event *event) {
 	_fight->timer(event, true);
+}
+
+void LastExpressEngine::emptyHandler(Event *event) {
+	// No-op
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

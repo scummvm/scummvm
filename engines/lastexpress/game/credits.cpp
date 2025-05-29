@@ -461,4 +461,94 @@ void LastExpressEngine::constructPalette(TGAHeader *tgaHeader, uint16 *palette) 
 	getGraphicsManager()->modifyPalette(palette, 256);
 }
 
+bool LastExpressEngine::demoEnding(bool wonGame) {
+	bool exitFlag = false;
+	int frameIndex = 0;
+	bool savedMouseState = getGraphicsManager()->canDrawMouse();
+
+	const char backgroundNames[35][9] = {
+		"CROSSING", "ABBOT", "ANCATH", "MORNING", "GUNS", "DRINKUP", "SERBSRES",
+		"ANALXR13", "TATIANA", "KRONAN", "CONCERT", "AUDIENCE", "COUPLE", "RUSSIANS",
+		"SPIES", "1017DOG", "CARRIAGE", "TYLEREGG", "TRNM2", "MAHMUD", "CATHMIL",
+		"FRANCY", "ONROOF", "COPS2", "MILOSVES", "KAHINGUN", "1041KISS", "EVERYONE",
+		"BONDAGE", "KILL", "HIGHFITE", "1315GUNS", "BOOM2", "ISTANBUL", "LASTSHOT"};
+
+	if (wonGame) {
+		getMessageManager()->setEventHandle(1, &LastExpressEngine::emptyHandler);
+	} else {
+		getMessageManager()->setEventHandle(1, &LastExpressEngine::demoEndingMouseWrapper);
+	}
+
+	getMessageManager()->setEventHandle(3, &LastExpressEngine::demoEndingTimerWrapper);
+	getGraphicsManager()->setMouseDrawable(false);
+
+	mouseSetRightClicked(false);
+
+	if (getGraphicsManager()->acquireSurface()) {
+		getGraphicsManager()->clear(getGraphicsManager()->_screenSurface, 0, 0, 640, 480);
+		getGraphicsManager()->unlockSurface();
+	}
+
+	getGraphicsManager()->burstAll();
+	getSoundManager()->playSoundFile("MUSSELL.SND", kSoundTypeNIS | kVolumeFull, 0, 0);
+
+	while (!exitFlag && frameIndex < 35) {
+		Slot *soundSlot = getSoundManager()->_soundCache;
+		int frameDuration = 180;
+
+		if (soundSlot) {
+			while (soundSlot && soundSlot->getTag() != kSoundTagNIS)
+				soundSlot = soundSlot->getNext();
+
+			if (soundSlot)
+				frameDuration = 2 * soundSlot->getBlockCount() / (35 - frameIndex);
+		}
+
+		int targetTime = getSoundFrameCounter() + frameDuration;
+		int bgResult = getArchiveManager()->loadBG(backgroundNames[frameIndex]);
+
+		if (bgResult < 0) {
+			exitFlag = true;
+			break;
+		}
+
+		TBM *renderBox = (bgResult == 0) ? &getGraphicsManager()->_renderBox1 : &getGraphicsManager()->_renderBox2;
+		getGraphicsManager()->stepDissolve(renderBox);
+
+		while (getSoundFrameCounter() < targetTime && !exitFlag) {
+			if (wonGame) {
+				if (mouseHasRightClicked()) {
+					exitFlag = true;
+				}
+			} else {
+				if (getMenu()->getEggTimerDelta())
+					exitFlag = true;
+			}
+
+			if (!exitFlag) {
+				getMessageManager()->process();
+				getSoundManager()->soundThread();
+				getSubtitleManager()->subThread();
+				handleEvents();
+			}
+		}
+
+		frameIndex++;
+	}
+
+	getGraphicsManager()->setMouseDrawable(savedMouseState);
+	getMenu()->setEggTimerDelta(2700);
+
+	return exitFlag;
+}
+
+void LastExpressEngine::demoEndingMouse(Event *event) {
+	if (event->flags || ABS<int32>((int32)event->x - _cursorX) > 5 || ABS<int32>((int32)event->y - _cursorY) > 5)
+		getMenu()->setEggTimerDelta(2700);
+}
+
+void LastExpressEngine::demoEndingTimer(Event *event) {
+	setEventTickInternal(false);
+}
+
 } // End of namespace LastExpress

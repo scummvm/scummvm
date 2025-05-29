@@ -329,6 +329,7 @@ private:
 	int _navigationItemBrightness = 0;
 	int _navigationItemBrighnessStep = 1;
 	int32 _eventTicksUntilNextSavePoint = 450;
+	int32 _eventTicksSinceLastDemoSavegame = 150;
 	bool _actionJustPerformed = false;
 
 	bool _mitchellFlag = false;
@@ -5579,6 +5580,716 @@ private:
 		_tablesFuncNames,
 		_tablesFuncNames,
 		_mitchellFuncNames
+	};
+
+	
+	////////////////////////////////////
+	//         DEMO FUNCTIONS
+	////////////////////////////////////
+
+	// CHAPTER SELECTOR
+	void CONS_DemoAbbot(int chapter);
+	void CONS_DemoAnna(int chapter);
+	void CONS_DemoAugust(int chapter);
+	void CONS_DemoCond2(int chapter);
+	void CONS_DemoFrancois(int chapter);
+	void CONS_DemoIvo(int chapter);
+	void CONS_DemoMadame(int chapter);
+	void CONS_DemoMaster(int chapter);
+	void CONS_DemoMonsieur(int chapter);
+	void CONS_DemoRebecca(int chapter);
+	void CONS_DemoTableA(int chapter);
+	void CONS_DemoTableB(int chapter);
+	void CONS_DemoTableC(int chapter);
+	void CONS_DemoTableD(int chapter);
+	void CONS_DemoTableE(int chapter);
+	void CONS_DemoTableF(int chapter);
+	void CONS_DemoTatiana(int chapter);
+	void CONS_DemoVesna(int chapter);
+	void CONS_DemoWaiter1(int chapter);
+
+	// DEMO ANNA EVENTS
+
+	void DemoAnnaCall(CALL_PARAMS);
+
+	void CONS_DemoAnna_DoSeqOtis(CONS_PARAMS);
+	void HAND_DemoAnna_DoSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoAnna_FinishSeqOtis(CONS_PARAMS);
+	void HAND_DemoAnna_FinishSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoAnna_DoCorrOtis(CONS_PARAMS);
+	void HAND_DemoAnna_DoCorrOtis(HAND_PARAMS);
+
+	void CONS_DemoAnna_WaitRCClear(CONS_PARAMS);
+	void HAND_DemoAnna_WaitRCClear(HAND_PARAMS);
+
+	void CONS_DemoAnna_SaveGame(CONS_PARAMS);
+	void HAND_DemoAnna_SaveGame(HAND_PARAMS);
+
+	void CONS_DemoAnna_DoWalk(CONS_PARAMS);
+	void HAND_DemoAnna_DoWalk(HAND_PARAMS);
+
+	void CONS_DemoAnna_Birth(CONS_PARAMS);
+	void HAND_DemoAnna_Birth(HAND_PARAMS);
+
+	void CONS_DemoAnna_GoBagg(CONS_PARAMS);
+	void HAND_DemoAnna_GoBagg(HAND_PARAMS);
+
+	void CONS_DemoAnna_InBagg(CONS_PARAMS);
+	void HAND_DemoAnna_InBagg(HAND_PARAMS);
+
+	void CONS_DemoAnna_DeadBagg(CONS_PARAMS);
+	void HAND_DemoAnna_DeadBagg(HAND_PARAMS);
+
+	void CONS_DemoAnna_BaggageFight(CONS_PARAMS);
+	void HAND_DemoAnna_BaggageFight(HAND_PARAMS);
+
+	void CONS_DemoAnna_StartPart2(CONS_PARAMS);
+	void HAND_DemoAnna_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoAnna_StartPart3(CONS_PARAMS);
+	void HAND_DemoAnna_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoAnna_StartPart4(CONS_PARAMS);
+	void HAND_DemoAnna_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoAnna_StartPart5(CONS_PARAMS);
+	void HAND_DemoAnna_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoAnnaFuncNames = {
+		"DoSeqOtis",
+		"FinishSeqOtis",
+		"DoCorrOtis",
+		"WaitRCClear",
+		"SaveGame",
+		"DoWalk",
+		"Birth",
+		"GoBagg",
+		"InBagg",
+		"DeadBagg",
+		"BaggageFight",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO ABBOT EVENTS
+
+	void DemoAbbotCall(CALL_PARAMS);
+
+	void CONS_DemoAbbot_DoWait(CONS_PARAMS);
+	void HAND_DemoAbbot_DoWait(HAND_PARAMS);
+
+	void CONS_DemoAbbot_DoJoinedSeqOtis(CONS_PARAMS);
+	void HAND_DemoAbbot_DoJoinedSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoAbbot_WaitRCClear(CONS_PARAMS);
+	void HAND_DemoAbbot_WaitRCClear(HAND_PARAMS);
+
+	void CONS_DemoAbbot_Birth(CONS_PARAMS);
+	void HAND_DemoAbbot_Birth(HAND_PARAMS);
+
+	void CONS_DemoAbbot_StartPart2(CONS_PARAMS);
+	void HAND_DemoAbbot_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoAbbot_StartPart3(CONS_PARAMS);
+	void HAND_DemoAbbot_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoAbbot_StartPart4(CONS_PARAMS);
+	void HAND_DemoAbbot_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoAbbot_StartPart5(CONS_PARAMS);
+	void HAND_DemoAbbot_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoAbbotFuncNames = {
+		"DoWait",
+		"DoJoinedSeqOtis",
+		"WaitRCClear",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO AUGUST EVENTS
+
+	void DemoAugustCall(CALL_PARAMS);
+
+	void CONS_DemoAugust_SaveGame(CONS_PARAMS);
+	void HAND_DemoAugust_SaveGame(HAND_PARAMS);
+
+	void CONS_DemoAugust_Birth(CONS_PARAMS);
+	void HAND_DemoAugust_Birth(HAND_PARAMS);
+
+	void CONS_DemoAugust_StartPart2(CONS_PARAMS);
+	void HAND_DemoAugust_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoAugust_StartPart3(CONS_PARAMS);
+	void HAND_DemoAugust_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoAugust_StartPart4(CONS_PARAMS);
+	void HAND_DemoAugust_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoAugust_StartPart5(CONS_PARAMS);
+	void HAND_DemoAugust_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoAugustFuncNames = {
+		"SaveGame",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO COND2 EVENTS
+
+	void DemoCond2Call(CALL_PARAMS);
+
+	void CONS_DemoCond2_DoSeqOtis(CONS_PARAMS);
+	void HAND_DemoCond2_DoSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoCond2_FinishSeqOtis(CONS_PARAMS);
+	void HAND_DemoCond2_FinishSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoCond2_SitDown(CONS_PARAMS);
+	void HAND_DemoCond2_SitDown(HAND_PARAMS);
+
+	void CONS_DemoCond2_Birth(CONS_PARAMS);
+	void HAND_DemoCond2_Birth(HAND_PARAMS);
+
+	void CONS_DemoCond2_StartPart2(CONS_PARAMS);
+	void HAND_DemoCond2_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoCond2_StartPart3(CONS_PARAMS);
+	void HAND_DemoCond2_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoCond2_StartPart4(CONS_PARAMS);
+	void HAND_DemoCond2_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoCond2_StartPart5(CONS_PARAMS);
+	void HAND_DemoCond2_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoCond2FuncNames = {
+		"DoSeqOtis",
+		"FinishSeqOtis",
+		"SitDown",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO FRANCOIS EVENTS
+
+	void DemoFrancoisCall(CALL_PARAMS);
+
+	void CONS_DemoFrancois_DoSeqOtis(CONS_PARAMS);
+	void HAND_DemoFrancois_DoSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoFrancois_SaveGame(CONS_PARAMS);
+	void HAND_DemoFrancois_SaveGame(HAND_PARAMS);
+
+	void CONS_DemoFrancois_Birth(CONS_PARAMS);
+	void HAND_DemoFrancois_Birth(HAND_PARAMS);
+
+	void CONS_DemoFrancois_StartPart2(CONS_PARAMS);
+	void HAND_DemoFrancois_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoFrancois_StartPart3(CONS_PARAMS);
+	void HAND_DemoFrancois_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoFrancois_StartPart4(CONS_PARAMS);
+	void HAND_DemoFrancois_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoFrancois_StartPart5(CONS_PARAMS);
+	void HAND_DemoFrancois_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoFrancoisFuncNames = {
+		"DoSeqOtis",
+		"SaveGame",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO IVO EVENTS
+
+	void DemoIvoCall(CALL_PARAMS);
+
+	void CONS_DemoIvo_WaitRCClear(CONS_PARAMS);
+	void HAND_DemoIvo_WaitRCClear(HAND_PARAMS);
+
+	void CONS_DemoIvo_DoSeqOtis(CONS_PARAMS);
+	void HAND_DemoIvo_DoSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoIvo_FinishSeqOtis(CONS_PARAMS);
+	void HAND_DemoIvo_FinishSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoIvo_DoSplitOtis023A(CONS_PARAMS);
+	void HAND_DemoIvo_DoSplitOtis023A(HAND_PARAMS);
+
+	void CONS_DemoIvo_Birth(CONS_PARAMS);
+	void HAND_DemoIvo_Birth(HAND_PARAMS);
+
+	void CONS_DemoIvo_StartPart2(CONS_PARAMS);
+	void HAND_DemoIvo_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoIvo_StartPart3(CONS_PARAMS);
+	void HAND_DemoIvo_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoIvo_StartPart4(CONS_PARAMS);
+	void HAND_DemoIvo_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoIvo_StartPart5(CONS_PARAMS);
+	void HAND_DemoIvo_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoIvoFuncNames = {
+		"WaitRCClear",
+		"DoSeqOtis",
+		"FinishSeqOtis",
+		"DoSplitOtis023A",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO MADAME EVENTS
+
+	void DemoMadameCall(CALL_PARAMS);
+
+	void CONS_DemoMadame_DoDialog(CONS_PARAMS);
+	void HAND_DemoMadame_DoDialog(HAND_PARAMS);
+
+	void CONS_DemoMadame_Birth(CONS_PARAMS);
+	void HAND_DemoMadame_Birth(HAND_PARAMS);
+
+	void CONS_DemoMadame_StartPart2(CONS_PARAMS);
+	void HAND_DemoMadame_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoMadame_StartPart3(CONS_PARAMS);
+	void HAND_DemoMadame_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoMadame_StartPart4(CONS_PARAMS);
+	void HAND_DemoMadame_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoMadame_StartPart5(CONS_PARAMS);
+	void HAND_DemoMadame_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoMadameFuncNames = {
+		"DoDialog",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO MASTER EVENTS
+
+	void DemoMasterCall(CALL_PARAMS);
+
+	void CONS_DemoMaster_SaveGame(CONS_PARAMS);
+	void HAND_DemoMaster_SaveGame(HAND_PARAMS);
+
+	void CONS_DemoMaster_Birth(CONS_PARAMS);
+	void HAND_DemoMaster_Birth(HAND_PARAMS);
+
+	void CONS_DemoMaster_StartPart2(CONS_PARAMS);
+	void HAND_DemoMaster_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoMaster_StartPart3(CONS_PARAMS);
+	void HAND_DemoMaster_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoMaster_StartPart4(CONS_PARAMS);
+	void HAND_DemoMaster_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoMaster_StartPart5(CONS_PARAMS);
+	void HAND_DemoMaster_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoMasterFuncNames = {
+		"SaveGame",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO MONSIEUR EVENTS
+
+	void DemoMonsieurCall(CALL_PARAMS);
+
+	void CONS_DemoMonsieur_Birth(CONS_PARAMS);
+	void HAND_DemoMonsieur_Birth(HAND_PARAMS);
+
+	void CONS_DemoMonsieur_StartPart2(CONS_PARAMS);
+	void HAND_DemoMonsieur_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoMonsieur_StartPart3(CONS_PARAMS);
+	void HAND_DemoMonsieur_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoMonsieur_StartPart4(CONS_PARAMS);
+	void HAND_DemoMonsieur_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoMonsieur_StartPart5(CONS_PARAMS);
+	void HAND_DemoMonsieur_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoMonsieurFuncNames = {
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO REBECCA EVENTS
+
+	void DemoRebeccaCall(CALL_PARAMS);
+
+	void CONS_DemoRebecca_DoDialog(CONS_PARAMS);
+	void HAND_DemoRebecca_DoDialog(HAND_PARAMS);
+
+	void CONS_DemoRebecca_Birth(CONS_PARAMS);
+	void HAND_DemoRebecca_Birth(HAND_PARAMS);
+
+	void CONS_DemoRebecca_StartPart2(CONS_PARAMS);
+	void HAND_DemoRebecca_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoRebecca_StartPart3(CONS_PARAMS);
+	void HAND_DemoRebecca_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoRebecca_StartPart4(CONS_PARAMS);
+	void HAND_DemoRebecca_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoRebecca_StartPart5(CONS_PARAMS);
+	void HAND_DemoRebecca_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoRebeccaFuncNames = {
+		"DoDialog",
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO TABLEA EVENTS
+
+	void CONS_DemoTableA_Birth(CONS_PARAMS);
+	void HAND_DemoTableA_Birth(HAND_PARAMS);
+
+	void CONS_DemoTableA_StartPart2(CONS_PARAMS);
+	void HAND_DemoTableA_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoTableA_StartPart3(CONS_PARAMS);
+	void HAND_DemoTableA_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoTableA_StartPart4(CONS_PARAMS);
+	void HAND_DemoTableA_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoTableA_StartPart5(CONS_PARAMS);
+	void HAND_DemoTableA_StartPart5(HAND_PARAMS);
+
+
+	// DEMO TABLEB EVENTS
+
+	void CONS_DemoTableB_Birth(CONS_PARAMS);
+	void HAND_DemoTableB_Birth(HAND_PARAMS);
+
+	void CONS_DemoTableB_StartPart2(CONS_PARAMS);
+	void HAND_DemoTableB_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoTableB_StartPart3(CONS_PARAMS);
+	void HAND_DemoTableB_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoTableB_StartPart4(CONS_PARAMS);
+	void HAND_DemoTableB_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoTableB_StartPart5(CONS_PARAMS);
+	void HAND_DemoTableB_StartPart5(HAND_PARAMS);
+
+
+	// DEMO TABLEC EVENTS
+
+	void CONS_DemoTableC_Birth(CONS_PARAMS);
+	void HAND_DemoTableC_Birth(HAND_PARAMS);
+
+	void CONS_DemoTableC_StartPart2(CONS_PARAMS);
+	void HAND_DemoTableC_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoTableC_StartPart3(CONS_PARAMS);
+	void HAND_DemoTableC_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoTableC_StartPart4(CONS_PARAMS);
+	void HAND_DemoTableC_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoTableC_StartPart5(CONS_PARAMS);
+	void HAND_DemoTableC_StartPart5(HAND_PARAMS);
+
+
+	// DEMO TABLED EVENTS
+
+	void CONS_DemoTableD_Birth(CONS_PARAMS);
+	void HAND_DemoTableD_Birth(HAND_PARAMS);
+
+	void CONS_DemoTableD_StartPart2(CONS_PARAMS);
+	void HAND_DemoTableD_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoTableD_StartPart3(CONS_PARAMS);
+	void HAND_DemoTableD_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoTableD_StartPart4(CONS_PARAMS);
+	void HAND_DemoTableD_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoTableD_StartPart5(CONS_PARAMS);
+	void HAND_DemoTableD_StartPart5(HAND_PARAMS);
+
+
+	// DEMO TABLEE EVENTS
+
+	void CONS_DemoTableE_Birth(CONS_PARAMS);
+	void HAND_DemoTableE_Birth(HAND_PARAMS);
+
+	void CONS_DemoTableE_StartPart2(CONS_PARAMS);
+	void HAND_DemoTableE_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoTableE_StartPart3(CONS_PARAMS);
+	void HAND_DemoTableE_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoTableE_StartPart4(CONS_PARAMS);
+	void HAND_DemoTableE_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoTableE_StartPart5(CONS_PARAMS);
+	void HAND_DemoTableE_StartPart5(HAND_PARAMS);
+
+
+	// DEMO TABLEF EVENTS
+
+	void CONS_DemoTableF_Birth(CONS_PARAMS);
+	void HAND_DemoTableF_Birth(HAND_PARAMS);
+
+	void CONS_DemoTableF_StartPart2(CONS_PARAMS);
+	void HAND_DemoTableF_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoTableF_StartPart3(CONS_PARAMS);
+	void HAND_DemoTableF_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoTableF_StartPart4(CONS_PARAMS);
+	void HAND_DemoTableF_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoTableF_StartPart5(CONS_PARAMS);
+	void HAND_DemoTableF_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoTablesFuncNames = {
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO TATIANA EVENTS
+
+	void CONS_DemoTatiana_Birth(CONS_PARAMS);
+	void HAND_DemoTatiana_Birth(HAND_PARAMS);
+
+	void CONS_DemoTatiana_StartPart2(CONS_PARAMS);
+	void HAND_DemoTatiana_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoTatiana_StartPart3(CONS_PARAMS);
+	void HAND_DemoTatiana_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoTatiana_StartPart4(CONS_PARAMS);
+	void HAND_DemoTatiana_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoTatiana_StartPart5(CONS_PARAMS);
+	void HAND_DemoTatiana_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoTatianaFuncNames = {
+		"Birth",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO VESNA EVENTS
+
+	void DemoVesnaCall(CALL_PARAMS);
+
+	void CONS_DemoVesna_DoCorrOtis(CONS_PARAMS);
+	void HAND_DemoVesna_DoCorrOtis(HAND_PARAMS);
+
+	void CONS_DemoVesna_DoSeqOtis(CONS_PARAMS);
+	void HAND_DemoVesna_DoSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoVesna_DoWalk(CONS_PARAMS);
+	void HAND_DemoVesna_DoWalk(HAND_PARAMS);
+
+	void CONS_DemoVesna_WaitRCClear(CONS_PARAMS);
+	void HAND_DemoVesna_WaitRCClear(HAND_PARAMS);
+
+	void CONS_DemoVesna_FinishSeqOtis(CONS_PARAMS);
+	void HAND_DemoVesna_FinishSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoVesna_Birth(CONS_PARAMS);
+	void HAND_DemoVesna_Birth(HAND_PARAMS);
+
+	void CONS_DemoVesna_InComp(CONS_PARAMS);
+	void HAND_DemoVesna_InComp(HAND_PARAMS);
+
+	void CONS_DemoVesna_KillAnna(CONS_PARAMS);
+	void HAND_DemoVesna_KillAnna(HAND_PARAMS);
+
+	void CONS_DemoVesna_StartPart2(CONS_PARAMS);
+	void HAND_DemoVesna_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoVesna_StartPart3(CONS_PARAMS);
+	void HAND_DemoVesna_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoVesna_StartPart4(CONS_PARAMS);
+	void HAND_DemoVesna_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoVesna_StartPart5(CONS_PARAMS);
+	void HAND_DemoVesna_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoVesnaFuncNames = {
+		"DoCorrOtis",
+		"DoSeqOtis",
+		"DoWalk",
+		"WaitRCClear",
+		"FinishSeqOtis",
+		"Birth",
+		"InComp",
+		"KillAnna",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	// DEMO WAITER1 EVENTS
+
+	void DemoWaiter1Call(CALL_PARAMS);
+
+	void CONS_DemoWaiter1_DoSeqOtis(CONS_PARAMS);
+	void HAND_DemoWaiter1_DoSeqOtis(HAND_PARAMS);
+
+	void CONS_DemoWaiter1_Birth(CONS_PARAMS);
+	void HAND_DemoWaiter1_Birth(HAND_PARAMS);
+
+	void CONS_DemoWaiter1_RebeccaFeedUs(CONS_PARAMS);
+	void HAND_DemoWaiter1_RebeccaFeedUs(HAND_PARAMS);
+
+	void CONS_DemoWaiter1_StartPart2(CONS_PARAMS);
+	void HAND_DemoWaiter1_StartPart2(HAND_PARAMS);
+
+	void CONS_DemoWaiter1_StartPart3(CONS_PARAMS);
+	void HAND_DemoWaiter1_StartPart3(HAND_PARAMS);
+
+	void CONS_DemoWaiter1_StartPart4(CONS_PARAMS);
+	void HAND_DemoWaiter1_StartPart4(HAND_PARAMS);
+
+	void CONS_DemoWaiter1_StartPart5(CONS_PARAMS);
+	void HAND_DemoWaiter1_StartPart5(HAND_PARAMS);
+
+	Common::StringArray _demoWaiter1FuncNames = {
+		"DoSeqOtis",
+		"Birth",
+		"RebeccaFeedUs",
+		"StartPart2",
+		"StartPart3",
+		"StartPart4",
+		"StartPart5"
+	};
+
+
+	static void (LogicManager::*_functionsDemoAbbot[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoAnna[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoAugust[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoCond2[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoFrancois[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoIvo[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoMadame[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoMaster[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoMonsieur[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoRebecca[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoSophie[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoTableA[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoTableB[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoTableC[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoTableD[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoTableE[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoTableF[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoTatiana[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoVesna[])(HAND_PARAMS);
+	static void (LogicManager::*_functionsDemoWaiter1[])(HAND_PARAMS);
+
+
+	// For the debugger
+	Common::Array<Common::StringArray> _demoFuncNames = {
+		_cathFuncNames,
+		_demoAnnaFuncNames,
+		_demoAugustFuncNames,
+		_cathFuncNames,
+		_demoCond2FuncNames,
+		_cathFuncNames,
+		_demoWaiter1FuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_demoTatianaFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_demoAbbotFuncNames,
+		_cathFuncNames,
+		_demoVesnaFuncNames,
+		_demoIvoFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_demoFrancoisFuncNames,
+		_demoMadameFuncNames,
+		_demoMonsieurFuncNames,
+		_demoRebeccaFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_cathFuncNames,
+		_demoMasterFuncNames,
+		_cathFuncNames,
+		_demoTablesFuncNames,
+		_demoTablesFuncNames,
+		_demoTablesFuncNames,
+		_demoTablesFuncNames,
+		_demoTablesFuncNames,
+		_demoTablesFuncNames,
+		_cathFuncNames
 	};
 };
 

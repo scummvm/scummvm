@@ -617,24 +617,28 @@ void LogicManager::sendAll(int character, int action, ConsCallParam param) {
 void LogicManager::fedEx(int sender, int receiver, int action, ConsCallParam param) {
 	Message msg;
 
-	msg.sender = sender;
-	msg.receiver = receiver;
-	msg.action = action;
-	msg.param = param;
-	_engine->getMessageManager()->forceMessage(&msg);
+	if (!_engine->isDemo() || _engine->_navigationEngineIsRunning) {
+		msg.sender = sender;
+		msg.receiver = receiver;
+		msg.action = action;
+		msg.param = param;
+		_engine->getMessageManager()->forceMessage(&msg);
+	}
 }
 
 void LogicManager::forceJump(int character, void (LogicManager::*functionPointer)(CONS_PARAMS)) {
-	getCharacter(character).currentCall = 0;
-	getCharacter(character).inventoryItem = 0;
+	if (!_engine->isDemo() || _engine->_navigationEngineIsRunning) {
+		getCharacter(character).currentCall = 0;
+		getCharacter(character).inventoryItem = 0;
 
-	if (whoRunningDialog(character))
-		endDialog(character);
+		if (whoRunningDialog(character))
+			endDialog(character);
 
-	endGraphics(character);
-	releaseEverything(character);
+		endGraphics(character);
+		releaseEverything(character);
 
-	(this->*functionPointer)(0, 0, 0, 0);
+		(this->*functionPointer)(0, 0, 0, 0);
+	}
 }
 
 void LogicManager::autoMessage(int character, int action, ConsCallParam param) {
@@ -665,10 +669,14 @@ bool LogicManager::doAutoMessage(Message *msg) {
 }
 
 void LogicManager::save(int character, int type, int event) {
-	_engine->getVCR()->writeSavePoint(type, character, event);
+	if (!_engine->isDemo() || _engine->_navigationEngineIsRunning)
+		_engine->getVCR()->writeSavePoint(type, character, event);
 }
 
 void LogicManager::endGame(int type, int value, int sceneIndex, bool showScene) {
+	if (_engine->isDemo() && !_engine->_navigationEngineIsRunning)
+		return;
+
 	_engine->getSoundManager()->endAmbient();
 	_engine->getOtisManager()->wipeAllGSysInfo();
 
@@ -717,13 +725,22 @@ void LogicManager::endGame(int type, int value, int sceneIndex, bool showScene) 
 }
 
 void LogicManager::winGame() {
-	_engine->getSoundManager()->endAmbient();
-	playNIS(kEventFinalSequence);
-	_engine->doCredits();
-	_engine->getOtisManager()->wipeAllGSysInfo();
-	_engine->getMessageManager()->reset();
-	_engine->_stopUpdatingCharacters = true;
-	_engine->getMenu()->doEgg(false, 0, 0);
+	if (_engine->isDemo() && _engine->_navigationEngineIsRunning) {
+		_engine->getSoundManager()->endAmbient();
+		_engine->getOtisManager()->wipeAllGSysInfo();
+		_engine->getMessageManager()->reset();
+		_engine->_stopUpdatingCharacters = true;
+		_engine->demoEnding(true);
+		_engine->getMenu()->doEgg(false, 0, 0);
+	} else {
+		_engine->getSoundManager()->endAmbient();
+		playNIS(kEventFinalSequence);
+		_engine->doCredits();
+		_engine->getOtisManager()->wipeAllGSysInfo();
+		_engine->getMessageManager()->reset();
+		_engine->_stopUpdatingCharacters = true;
+		_engine->getMenu()->doEgg(false, 0, 0);
+	}
 }
 
 void LogicManager::killGracePeriod() {
@@ -1608,7 +1625,9 @@ int LogicManager::getBumpNode(int car, int position, int param) {
 }
 
 void LogicManager::bumpCath(int car, int position, int param) {
-	bumpCathNode(getBumpNode(car, position, param));
+	if (!_engine->isDemo() || _engine->_navigationEngineIsRunning) {
+		bumpCathNode(getBumpNode(car, position, param));
+	}
 }
 
 bool LogicManager::obstacleBetween(int character1, int character2) {
@@ -2219,7 +2238,9 @@ int LogicManager::getSmartBumpNode(int node) {
 }
 
 void LogicManager::smartBumpCath() {
-	bumpCathNode(getSmartBumpNode(_trainNodeIndex));
+	if (!_engine->isDemo() || _engine->_navigationEngineIsRunning) {
+		bumpCathNode(getSmartBumpNode(_trainNodeIndex));
+	}
 }
 
 void LogicManager::bumpCathCloseUp(int item) {
@@ -2236,10 +2257,17 @@ void LogicManager::bumpCathCloseUp(int item) {
 }
 
 int LogicManager::playFight(int fightId) {
-	return _engine->doFight(fightId);
+	if (!_engine->isDemo() || _engine->_navigationEngineIsRunning) {
+		return _engine->doFight(fightId);
+	} else {
+		return 1;
+	}
 }
 
 void LogicManager::playNIS(int nisId) {
+	if (_engine->isDemo() && !_engine->_navigationEngineIsRunning)
+		return;
+
 	char filename[16];
 
 	bool videoWithoutFade = false;
@@ -2290,6 +2318,9 @@ void LogicManager::playNIS(int nisId) {
 }
 
 void LogicManager::cleanNIS() {
+	if (_engine->isDemo() && !_engine->_navigationEngineIsRunning)
+		return;
+
 	if (_useLastSavedNodeIndex) {
 		int largeItem = findLargeItem();
 		_useLastSavedNodeIndex = 0;
@@ -2612,12 +2643,12 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		if (receivingCharacter == kCharacterCath && _gameProgress[kProgressJacket] == 2 && rnd(2) != 0) {
 			if (isNight()) {	
 				if (_gameProgress[kProgressField18] != 2) {
-					playDialog(0, "CON1110E", -1, 0);
+					playDialog(0, "CON1110E", volume, 0);
 				} else {
-					playDialog(0, "CON1110F", -1, 0);
+					playDialog(0, "CON1110F", volume, 0);
 				}
 			} else {
-				playDialog(0, "CON1110D", -1, 0);
+				playDialog(0, "CON1110D", volume, 0);
 			}
 		} else {
 			switch (rnd(3)) {
@@ -2700,11 +2731,11 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		if (isFemale(receivingCharacter)) {
 			switch (rnd(2)) {
 			case 0:
-				playDialog(0, "TRA1113A", -1, 0);
+				playDialog(0, "TRA1113A", volume, 0);
 				break;
 			case 1:
 			default:
-				playDialog(0, "TRA1113B", -1, 0);
+				playDialog(0, "TRA1113B", volume, 0);
 			}
 		} else {
 			playDialog(0, "TRA1112", volume, 0);
@@ -3997,73 +4028,99 @@ void LogicManager::makeAllJump(int chapter) {
 			_softBlockedEntitiesBits[i] = 0;
 		}
 
-		// Originally the game checked only for kSoundTagMenu;
+		// Originally the first edition of the game checked only for kSoundTagMenu;
 		// I added kSoundTagLink since otherwise the music coda playing after
 		// the very first cutscene is immediately killed by this function, which
 		// is also happening in the original. But the latter gets the news of the
 		// sound getting killed a bit later, so we manage to hear it anyway; not
 		// here though...
-		_engine->getSoundManager()->killAllExcept(kSoundTagMenu, kSoundTagLink, 0, 0, 0, 0, 0);
-	}
-
-	CONS_Anna(chapter);
-	CONS_August(chapter);
-	CONS_Cond1(chapter);
-	CONS_Cond2(chapter);
-	CONS_HeadWait(chapter);
-	CONS_Waiter1(chapter);
-	CONS_Waiter2(chapter);
-	CONS_Cook(chapter);
-	CONS_TrainM(chapter);
-	CONS_Tatiana(chapter);
-	CONS_Vassili(chapter);
-	CONS_Alexei(chapter);
-	CONS_Abbot(chapter);
-	CONS_Milos(chapter);
-	CONS_Vesna(chapter);
-	CONS_Ivo(chapter);
-	CONS_Salko(chapter);
-	CONS_Rebecca(chapter);
-	CONS_Sophie(chapter);
-	CONS_Francois(chapter);
-	CONS_Madame(chapter);
-	CONS_Monsieur(chapter);
-	CONS_Kronos(chapter);
-	CONS_Kahina(chapter);
-	CONS_Mahmud(chapter);
-	CONS_Yasmin(chapter);
-	CONS_Hadija(chapter);
-	CONS_Alouan(chapter);
-	CONS_Police(chapter);
-	CONS_Max(chapter);
-
-	if (chapter < 2)
-		CONS_Master(chapter);
-
-	CONS_Clerk(chapter);
-	CONS_TableA(chapter);
-	CONS_TableB(chapter);
-	CONS_TableC(chapter);
-	CONS_TableD(chapter);
-	CONS_TableE(chapter);
-	CONS_TableF(chapter);
-	CONS_Mitchell(chapter);
-}
-
-void LogicManager::CONS_All(bool isFirstChapter, int character) {
-	bool bumpCathNodeFlag = false;
-
-	makeAllJump(isFirstChapter ? 1 : 0);
-
-	if (!isFirstChapter) {
-		_flagBumpCathNode = false;
-		if (character) {
-			fedEx(kCharacterCath, character, 0, 0);
-			bumpCathNodeFlag = _flagBumpCathNode;
+		//
+		// Incidentally this is what the demo and subsequent releases do.
+		if (chapter == 1 || chapter == 3) {
+			_engine->getSoundManager()->killAllExcept(kSoundTagMenu, kSoundTagLink, 0, 0, 0, 0, 0);
+		} else {
+			_engine->getSoundManager()->killAllExcept(kSoundTagMenu, 0, 0, 0, 0, 0, 0);
 		}
 	}
 
-	_flagBumpCathNode = bumpCathNodeFlag;
+	if (_engine->isDemo()) {
+		CONS_DemoAnna(chapter);
+		CONS_DemoAugust(chapter);
+		CONS_DemoCond2(chapter);
+		CONS_DemoWaiter1(chapter);
+		CONS_DemoTatiana(chapter);
+		CONS_DemoAbbot(chapter);
+		CONS_DemoVesna(chapter);
+		CONS_DemoIvo(chapter);
+		CONS_DemoRebecca(chapter);
+		CONS_DemoFrancois(chapter);
+		CONS_DemoMadame(chapter);
+		CONS_DemoMonsieur(chapter);
+
+		if (chapter < 2)
+			CONS_DemoMaster(chapter);
+
+		CONS_DemoTableA(chapter);
+		CONS_DemoTableB(chapter);
+		CONS_DemoTableC(chapter);
+		CONS_DemoTableD(chapter);
+		CONS_DemoTableE(chapter);
+		CONS_DemoTableF(chapter);
+	} else {
+		CONS_Anna(chapter);
+		CONS_August(chapter);
+		CONS_Cond1(chapter);
+		CONS_Cond2(chapter);
+		CONS_HeadWait(chapter);
+		CONS_Waiter1(chapter);
+		CONS_Waiter2(chapter);
+		CONS_Cook(chapter);
+		CONS_TrainM(chapter);
+		CONS_Tatiana(chapter);
+		CONS_Vassili(chapter);
+		CONS_Alexei(chapter);
+		CONS_Abbot(chapter);
+		CONS_Milos(chapter);
+		CONS_Vesna(chapter);
+		CONS_Ivo(chapter);
+		CONS_Salko(chapter);
+		CONS_Rebecca(chapter);
+		CONS_Sophie(chapter);
+		CONS_Francois(chapter);
+		CONS_Madame(chapter);
+		CONS_Monsieur(chapter);
+		CONS_Kronos(chapter);
+		CONS_Kahina(chapter);
+		CONS_Mahmud(chapter);
+		CONS_Yasmin(chapter);
+		CONS_Hadija(chapter);
+		CONS_Alouan(chapter);
+		CONS_Police(chapter);
+		CONS_Max(chapter);
+
+		if (chapter < 2)
+			CONS_Master(chapter);
+
+		CONS_Clerk(chapter);
+		CONS_TableA(chapter);
+		CONS_TableB(chapter);
+		CONS_TableC(chapter);
+		CONS_TableD(chapter);
+		CONS_TableE(chapter);
+		CONS_TableF(chapter);
+		CONS_Mitchell(chapter);
+	}
+}
+
+void LogicManager::CONS_All(bool isFirstChapter, int character) {
+	makeAllJump(isFirstChapter ? 1 : 0);
+
+	_flagBumpCathNode = false;
+
+	if (!isFirstChapter && character) {
+		fedEx(kCharacterCath, character, 0, 0);
+	}
+
 	if (!_flagBumpCathNode)
 		bumpCathNode(_trainNodeIndex);
 

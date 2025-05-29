@@ -176,12 +176,12 @@ void LogicManager::CONS_Anna_FinishSeqOtis(CONS_PARAMS) {
 
 void LogicManager::HAND_Anna_FinishSeqOtis(HAND_PARAMS) {
 	if (msg->action == 0) {
-		if (getCharacter(kCharacterAnna).direction == 4)
-			return;
-		goto LABEL_5;
-	}
-	if (msg->action == 3) {
-	LABEL_5:
+		if (getCharacter(kCharacterAnna).direction != 4) {
+			getCharacter(kCharacterAnna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		}
+	} else if (msg->action == 3) {
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
@@ -262,12 +262,12 @@ void LogicManager::CONS_Anna_WaitRCClear(CONS_PARAMS) {
 
 void LogicManager::HAND_Anna_WaitRCClear(HAND_PARAMS) {
 	if (msg->action == 0) {
-		if (!rcClear())
-			return;
-		goto LABEL_7;
-	}
-	if (msg->action == 12 && rcClear()) {
-	LABEL_7:
+		if (rcClear()) {
+			getCharacter(kCharacterAnna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		}
+	} else if (msg->action == 12 && rcClear()) {
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
@@ -291,7 +291,7 @@ void LogicManager::HAND_Anna_SaveGame(HAND_PARAMS) {
 	if (msg->action) {
 		if (msg->action == 12) {
 			save(
-				1,
+				kCharacterAnna,
 				getCharacterCurrentParams(kCharacterAnna)[0],
 				getCharacterCurrentParams(kCharacterAnna)[1]
 			);
@@ -323,8 +323,13 @@ void LogicManager::CONS_Anna_DoWalk(CONS_PARAMS) {
 void LogicManager::HAND_Anna_DoWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[0], getCharacterCurrentParams(kCharacterAnna)[1]))
-			goto LABEL_12;
+	case 12:
+		if (walk(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[0], getCharacterCurrentParams(kCharacterAnna)[1])) {
+			getCharacter(kCharacterAnna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		}
+
 		break;
 	case 5:
 		if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction] || _gameProgress[kProgressChapter] >= 2) {
@@ -332,17 +337,10 @@ void LogicManager::HAND_Anna_DoWalk(HAND_PARAMS) {
 		} else {
 			playCathExcuseMe();
 		}
+
 		break;
 	case 6:
 		playChrExcuseMe(kCharacterAnna, kCharacterCath, 0);
-		break;
-	case 12:
-		if (walk(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[0], getCharacterCurrentParams(kCharacterAnna)[1])) {
-		LABEL_12:
-			getCharacter(kCharacterAnna).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
-			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-		}
 		break;
 	default:
 		return;
@@ -3429,6 +3427,8 @@ void LogicManager::HAND_Anna_DeadBagg(HAND_PARAMS) {
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaKilled, 0, 0);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3471,6 +3471,8 @@ void LogicManager::HAND_Anna_BaggageFight(HAND_PARAMS) {
 			forceJump(kCharacterVesna, &LogicManager::CONS_Vesna_InComp);
 			_gameTime = 2266200;
 			CONS_Anna_PrepareVienna(0, 0, 0, 0);
+			break;
+		default:
 			break;
 		}
 	}

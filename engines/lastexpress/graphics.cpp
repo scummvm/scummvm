@@ -311,13 +311,6 @@ void GraphicsManager::stepDissolve(TBM *tbm) {
 
 		// Not present in the original, like above.
 		_engine->handleEvents();
-
-		// Also not present in the original; but this is an enhancement which makes it easier
-		// and more reliable to get out of the fast-walk transitions before getting to the next car by mistake...
-		if (_engine->getLogicManager()->_doubleClickFlag && i > 1 && _engine->mouseHasLeftClicked()) {
-			debug("GraphicsManager::stepDissolve(): breaking out of transition in fast-walk mode; REMEMBER TO MAKE THIS AN ENHANCEMENT");
-			break;
-		}
 	}
 
 	if (acquireSurface()) {

@@ -226,7 +226,10 @@ public:
 	void switchEggs(int whichEgg);
 	bool isShowingMenu();
 
-private:
+	void setEggTimerDelta(int delta);
+	int getEggTimerDelta();
+
+protected:
 	LastExpressEngine *_engine = nullptr;
 	bool _isShowingMenu = false;
 	bool _hasShownIntro = false;

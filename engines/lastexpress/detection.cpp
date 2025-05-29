@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 	//   express.exe  ???
 	{
 		"lastexpress",
-		"",
+		"Interplay Release",
 		{
 			{"HD.HPF",  0, "bcc32d977f92bb52c060a0b4e8589cac", 30715904},
 			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},

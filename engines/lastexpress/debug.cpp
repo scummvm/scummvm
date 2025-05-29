@@ -428,7 +428,7 @@ void LogicManager::renderCharacterList(int &selectedCharacter) {
 }
 
 Common::StringArray LogicManager::getCharacterFunctionNames(int character) {
-	return _funcNames[character];
+	return _engine->isDemo() ? _demoFuncNames[character] : _funcNames[character];
 }
 
 void LogicManager::showTrainMapWindow() {
