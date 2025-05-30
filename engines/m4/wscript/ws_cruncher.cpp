@@ -527,7 +527,7 @@ int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8) {
 	myFormat = (opCode & OP_FORMAT2) >> 19;
 	if (myFormat) {
 		word2 = FROM_LE_32(*myPC++);
-		myData = (word2 & OP_HIGH_DATA) >> 16;
+		myData = word2 >> 16;
 		if (!ExtractArg(myAnim8, myFormat, myData, &_GWS(myArg2), &_GWS(dataArg2))) {
 			return -1;
 		}
@@ -792,9 +792,9 @@ static void op_FLOOR(Anim8 *myAnim8) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = floor(arg2)  or  arg1 = floor(rand(arg2,arg3))");
 	}
 	if (_GWS(myArg3)) {
-		*_GWS(myArg1) = (imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3))) & 0xffff0000;
+		*_GWS(myArg1) = ((imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3))) >> 16) << 16;
 	} else {
-		*_GWS(myArg1) = (*_GWS(myArg2)) & 0xffff0000;
+		*_GWS(myArg1) = ((*_GWS(myArg2)) >> 16) << 16;
 	}
 }
 

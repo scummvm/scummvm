@@ -32,7 +32,6 @@ namespace M4 {
 #define OP_FORMAT1			0x01c00000
 #define OP_FORMAT2			0x00380000
 #define OP_FORMAT3			0x00070000
-#define OP_HIGH_DATA		0xffff0000
 #define OP_LOW_DATA			0x0000ffff
 #define OP_DATA_SIGN		0x8000
 #define OP_DATA_VALUE		0x7fff
