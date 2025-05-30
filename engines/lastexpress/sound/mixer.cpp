@@ -19,7 +19,6 @@
  *
  */
 
-#include "lastexpress/sound/mixer.h"
 #include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"

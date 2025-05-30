@@ -21,24 +21,16 @@
 
 #include "lastexpress/lastexpress.h"
 
-#include "lastexpress/data/cursor.h"
-#include "lastexpress/data/font.h"
-
 #include "lastexpress/game/logic.h"
-#include "lastexpress/game/scenes.h"
-#include "lastexpress/game/state.h"
 
 #include "lastexpress/menu/menu.h"
 #include "lastexpress/menu/clock.h"
 
-#include "lastexpress/sound/queue.h"
 #include "lastexpress/sound/sound.h"
 #include "lastexpress/sound/subtitle.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
-#include "lastexpress/resource.h"
-#include "lastexpress/strings.h"
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -49,22 +41,11 @@
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
 
-const char *g_actionNames[] = {"None", "Action1", "Action2", "ExitCompartment", "Action4", "ExcuseMeCath", "ExcuseMe", "INVALID", "Knock", "OpenDoor", "Action10", "Action11", "Default", "INVALID", "INVALID", "INVALID", "Action16", "DrawScene", "Callback"};
-const char *g_directionNames[] = { "None", "Up", "Down", "Left", "Right", "Switch"};
-const char *g_entityNames[] = { "Player", "Anna", "August", "Mertens", "Coudert", "Pascale", "Waiter1", "Waiter2", "Cooks", "Verges", "Tatiana", "Vassili", "Alexei", "Abbot", "Milos", "Vesna", "Ivo", "Salko", "Kronos", "Kahina", "Francois", "MmeBoutarel", "Boutarel", "Rebecca", "Sophie", "Mahmud", "Yasmin", "Hadija", "Alouan", "Gendarmes", "Max", "Chapters", "Train", "Tables0", "Tables1", "Tables2", "Tables3", "Tables4", "Tables5", "Entity39"};
-
-
 namespace LastExpress {
 
 LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd),
-	_debugger(nullptr), _random("lastexpress"), _cursor(nullptr),
-	_font(nullptr), _logic(nullptr), _menuOld(nullptr),
-	_lastFrameCount(0),
-	_graphicsManOld(nullptr), _resMan(nullptr),
-	_sceneMan(nullptr), _soundManOld(nullptr),
-	_eventMouse(nullptr), _eventTick(nullptr),
-	_eventMouseBackup(nullptr), _eventTickBackup(nullptr) {
+	_debugger(nullptr), _random("lastexpress") {
 	// Setup mixer
 	Engine::syncSoundSettings();
 
@@ -77,24 +58,10 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
 
 LastExpressEngine::~LastExpressEngine() {
 	// Delete the remaining objects
-	SAFE_DELETE(_cursor);
-	SAFE_DELETE(_font);
-	SAFE_DELETE(_logic);
-	SAFE_DELETE(_menuOld);
 	SAFE_DELETE(_menu);
-	SAFE_DELETE(_graphicsManOld);
-	SAFE_DELETE(_resMan);
-	SAFE_DELETE(_sceneMan);
-	SAFE_DELETE(_soundManOld);
 	SAFE_DELETE(_clock);
 	SAFE_DELETE(_vcr);
 	//_debugger is deleted by Engine
-
-	// Cleanup event handlers
-	SAFE_DELETE(_eventMouse);
-	SAFE_DELETE(_eventTick);
-	SAFE_DELETE(_eventMouseBackup);
-	SAFE_DELETE(_eventTickBackup);
 
 	// Zero passed pointers
 	_gameDescription = nullptr;
@@ -150,7 +117,6 @@ void LastExpressEngine::soundTimerHandler(void *refCon) {
 	engine->_soundFrameCounter++;
 }
 
-// TODO: which error should we return when some game files are missing/corrupted?
 Common::Error LastExpressEngine::run() {
 	// Initialize the graphics
 	const Graphics::PixelFormat dataPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
@@ -167,12 +133,6 @@ Common::Error LastExpressEngine::run() {
 	if (gDebugLevel >= 3)
 		DebugMan.enableDebugChannel(kDebugConsole);
 
-	// Start the resource and graphics managers
-	_resMan = new ResourceManager(isDemo());
-	if (!_resMan->loadArchive(kArchiveCd1))
-		return Common::kNoGameDataFoundError;
-
-	_graphicsManOld = new GraphicsManagerOld();
 	_graphicsMan = new GraphicsManager(this);
 
 	_spriteMan = new SpriteManager(this);
@@ -191,33 +151,13 @@ Common::Error LastExpressEngine::run() {
 	// NIS manager
 	_nisMan = new NISManager(this);
 
-	// Load the cursor data
-	_cursor = _resMan->loadCursor();
-	if (!_cursor)
-		return Common::kNoGameDataFoundError;
-
-	// Load the font data
-	_font = _resMan->loadFont();
-	if (!_font)
-		return Common::kNoGameDataFoundError;
-
-	// Start scene manager
-	_sceneMan = new SceneManager(this);
-	_sceneMan->loadSceneDataFile(kArchiveCd1);
-
-	// Game logic
-	_logic = new Logic(this);
-
 	// Sound manager
-	_soundManOld = new SoundManagerOld(this);
 	_soundMan = new SoundManager(this);
 
 	// Logic manager
 	_logicMan = new LogicManager(this);
 
 	// Menu
-	_menuOld = new MenuOld(this);
-	//_menuOld->show(false, kSavegameTypeIndex, 0);
 	_menu = new Menu(this);
 
 	// Save manager
@@ -278,11 +218,6 @@ Common::Error LastExpressEngine::run() {
 #endif
 
 	return Common::kNoError;
-}
-
-uint32 LastExpressEngine::getFrameCounter() const {
-	// the original game has a timer running at 60Hz incrementing a dedicated variable
-	return (uint64)_system->getMillis() * 60 / 1000;
 }
 
 void LastExpressEngine::initGameData() {
@@ -498,25 +433,6 @@ bool LastExpressEngine::mouseHasRightClicked() {
 	return _mouseHasRightClicked;
 }
 
-void LastExpressEngine::pollEventsOld() {
-	Common::Event ev;
-	if (!_eventMan->pollEvent(ev))
-		return;
-
-	switch (ev.type) {
-	case Common::EVENT_LBUTTONUP:
-		getGameLogic()->getGameState()->getGameFlags()->mouseLeftClick = true;
-		break;
-
-	case Common::EVENT_RBUTTONUP:
-		getGameLogic()->getGameState()->getGameFlags()->mouseRightClick = true;
-		break;
-
-	default:
-		break;
-	}
-}
-
 void LastExpressEngine::waitForTimer(int frames) {
 	uint32 startTime = _system->getMillis();
 	uint32 waitTime = 17;
@@ -527,7 +443,6 @@ void LastExpressEngine::waitForTimer(int frames) {
 		}
 	}
 }
-
 
 bool LastExpressEngine::handleEvents() {
 	// Handle input
@@ -622,92 +537,6 @@ bool LastExpressEngine::handleEvents() {
 	return true;
 }
 
-bool LastExpressEngine::handleEventsOld() {
-	// Make sure all the subsystems have been initialized
-	if (!_debugger || !_graphicsManOld)
-		error("[LastExpressEngine::handleEvents] Called before the required subsystems have been initialized");
-
-	// Execute stored commands
-	if (_debugger->hasCommand()) {
-		_debugger->callCommand();
-
-		// re-attach the debugger
-		_debugger->attach();
-	}
-
-	// Handle input
-	Common::Event ev;
-	while (_eventMan->pollEvent(ev)) {
-		switch (ev.type) {
-
-		case Common::EVENT_KEYDOWN:
-			//// DEBUG: Quit game on escape
-			//if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-			//	quitGame();
-
-			break;
-
-		case Common::EVENT_MAINMENU:
-			// Closing the GMM
-
-		case Common::EVENT_LBUTTONUP:
-		case Common::EVENT_LBUTTONDOWN:
-			getGameLogic()->getGameState()->getGameFlags()->mouseLeftClick = true;
-			getGameLogic()->getGameState()->getGameFlags()->mouseLeftPressed = (ev.type == Common::EVENT_LBUTTONDOWN) ? true : false;
-
-			{
-				// Adjust frameInterval flag
-				uint32 frameCounter = getFrameCounter();
-				if (frameCounter < _lastFrameCount + 30)
-					getGameLogic()->getGameState()->getGameFlags()->frameInterval = true;
-				_lastFrameCount = frameCounter;
-			}
-
-			if (_eventMouse && _eventMouse->isValid())
-				(*_eventMouse)(ev);
-			break;
-
-		case Common::EVENT_RBUTTONUP:
-		case Common::EVENT_RBUTTONDOWN:
-			getGameLogic()->getGameState()->getGameFlags()->mouseRightClick = true;
-			getGameLogic()->getGameState()->getGameFlags()->mouseRightPressed = (ev.type == Common::EVENT_RBUTTONDOWN) ? true : false;
-
-			if (_eventMouse && _eventMouse->isValid())
-				(*_eventMouse)(ev);
-			break;
-
-		case Common::EVENT_MOUSEMOVE:
-			if (_eventMouse && _eventMouse->isValid())
-				(*_eventMouse)(ev);
-			break;
-
-		case Common::EVENT_QUIT:
-			quitGame();
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	// Game tick event
-	if (_eventTick && _eventTick->isValid())
-		(*_eventTick)(ev);
-
-	// Update the screen
-	_graphicsManOld->update();
-	_system->updateScreen();
-	//_system->delayMillis(50);
-
-	// The event loop may have triggered the quit status. In this case,
-	// stop the execution.
-	if (shouldQuit()) {
-		return true;
-	}
-
-	return false;
-}
-
 void LastExpressEngine::eggMouseWrapper(Event *event) {
 	getMenu()->eggMouse(event);
 }
@@ -762,43 +591,6 @@ void LastExpressEngine::fightTimerWrapper(Event *event) {
 
 void LastExpressEngine::emptyHandler(Event *event) {
 	// No-op
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-/// Event Handling
-///////////////////////////////////////////////////////////////////////////////////
-void LastExpressEngine::backupEventHandlers() {
-	if (_eventMouseBackup != nullptr || _eventTickBackup != nullptr)
-		error("[LastExpressEngine::backupEventHandlers] backup event handlers are already set");
-
-	_eventMouseBackup = _eventMouse;
-	_eventTickBackup = _eventTick;
-}
-
-void LastExpressEngine::restoreEventHandlers() {
-	if (_eventMouseBackup == nullptr || _eventTickBackup == nullptr)
-		error("[LastExpressEngine::restoreEventHandlers] restore called before backing up the event handlers");
-
-	// Cleanup previous event handlers
-	SAFE_DELETE(_eventMouse);
-	SAFE_DELETE(_eventTick);
-
-	_eventMouse = _eventMouseBackup;
-	_eventTick = _eventTickBackup;
-
-	_eventMouseBackup = nullptr;
-	_eventTickBackup = nullptr;
-}
-
-void LastExpressEngine::setEventHandlers(EventHandler::EventFunction *mouse, EventHandler::EventFunction *tick) {
-	if (_eventMouse != _eventMouseBackup)
-		SAFE_DELETE(_eventMouse);
-
-	if (_eventTick != _eventTickBackup)
-		SAFE_DELETE(_eventTick);
-
-	_eventMouse = mouse;
-	_eventTick = tick;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

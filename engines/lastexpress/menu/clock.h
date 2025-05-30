@@ -27,25 +27,6 @@
 namespace LastExpress {
 
 class LastExpressEngine;
-class SequenceFrame;
-
-class ClockOld {
-public:
-	explicit ClockOld(LastExpressEngine *engine);
-	~ClockOld();
-
-	void draw(uint32 time);
-	void clear();
-
-private:
-	LastExpressEngine *_engine;
-
-	// Frames
-	SequenceFrame *_frameMinutes;
-	SequenceFrame *_frameHour;
-	SequenceFrame *_frameSun;
-	SequenceFrame *_frameDate;
-};
 
 struct Seq;
 struct Sprite;

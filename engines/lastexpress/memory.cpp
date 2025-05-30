@@ -22,6 +22,8 @@
 #include "lastexpress/memory.h"
 #include "lastexpress/lastexpress.h"
 
+#include "common/memstream.h"
+
 namespace LastExpress {
 
 MemoryManager::MemoryManager(LastExpressEngine *engine) {

@@ -23,7 +23,6 @@
 #define LASTEXPRESS_LASTEXPRESS_H
 
 #include "lastexpress/debug.h"
-#include "lastexpress/eventhandler.h"
 #include "lastexpress/game/beetle.h"
 #include "lastexpress/game/vcr.h"
 #include "lastexpress/game/savegame.h"
@@ -77,27 +76,18 @@ class ArchiveManager;
 class CBeetle;
 class CFight;
 class Clock;
-class Cursor;
-class EventManager;
-class Font;
 class GraphicsManager;
-class GraphicsManagerOld;
-class Logic;
 class LogicManager;
 class MemoryManager;
 class Menu;
-class MenuOld;
 class MessageManager;
 class NISManager;
 class OtisManager;
 class ResourceManager;
 class SaveManager;
-class SceneManager;
 class Slot;
-class SoundManagerOld;
 class SoundManager;
 class SpriteManager;
-class Subtitle;
 class SubtitleManager;
 class VCR;
 
@@ -535,19 +525,9 @@ public:
 	// Misc
 	Common::RandomSource& getRandom() {return _random; }
 
-	// Game
-	Cursor          *getCursor()          const { return _cursor; }
-	Font            *getFont()            const { return _font; }
-	Logic           *getGameLogic()       const { return _logic; }
-	MenuOld         *getGameMenu()        const { return _menuOld; }
-
 	// Managers
 	ArchiveManager  *getArchiveManager()  const { return _archiveMan;  }
 	GraphicsManager *getGraphicsManager() const { return _graphicsMan; }
-	GraphicsManagerOld *getGraphicsManagerOld() const { return _graphicsManOld; }
-	ResourceManager *getResourceManager() const { return _resMan;      }
-	SceneManager    *getSceneManager()    const { return _sceneMan;    }
-	SoundManagerOld *getSoundManagerOld() const { return _soundManOld; }
 	SubtitleManager *getSubtitleManager() const { return _subtitleMan; }
 
 	MemoryManager  *getMemoryManager()  const { return _memMan;    }
@@ -566,20 +546,9 @@ public:
 	// Event handling
 	bool handleEvents();
 
-	bool handleEventsOld();
-	void pollEventsOld();
-
-	void backupEventHandlers();
-	void restoreEventHandlers();
-	void setEventHandlers(EventHandler::EventFunction *eventMouse, EventHandler::EventFunction *eventTick);
-
 	bool isDemo() const;
 
 	Common::String getTargetName() const;
-
-	// Frame Counter
-	// TODO: all callers could use _system->getMillis() directly without extra conversions
-	uint32 getFrameCounter() const;
 
 	// NEW STUFF
 	static void soundTimerHandler(void *refCon);
@@ -744,24 +713,13 @@ private:
 	Common::RandomSource _random;
 
 	// Game
-	Cursor *_cursor = nullptr;
-	Font   *_font = nullptr;
-	Logic  *_logic = nullptr;
-	MenuOld   *_menuOld = nullptr;
 	Menu *_menu = nullptr;
 	Clock *_clock = nullptr;
 	VCR *_vcr = nullptr;
 
-	// Frame counter
-	uint32 _lastFrameCount;
-
 	// Managers
 	ArchiveManager  *_archiveMan = nullptr;
 	GraphicsManager *_graphicsMan = nullptr;
-	GraphicsManagerOld *_graphicsManOld = nullptr;
-	ResourceManager *_resMan = nullptr;
-	SceneManager    *_sceneMan = nullptr;
-	SoundManagerOld *_soundManOld = nullptr;
 	SoundManager    *_soundMan = nullptr;
 	LogicManager    *_logicMan = nullptr;
 	OtisManager     *_otisMan = nullptr;
@@ -771,13 +729,6 @@ private:
 	NISManager      *_nisMan = nullptr;
 	SaveManager     *_saveMan = nullptr;
 	SubtitleManager *_subtitleMan = nullptr;
-
-	// Event handlers
-	EventHandler::EventFunction *_eventMouse;
-	EventHandler::EventFunction *_eventTick;
-
-	EventHandler::EventFunction *_eventMouseBackup;
-	EventHandler::EventFunction *_eventTickBackup;
 };
 
 } // End of namespace LastExpress

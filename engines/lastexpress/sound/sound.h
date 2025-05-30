@@ -43,59 +43,6 @@ class LastExpressEngine;
 class SoundQueue;
 class Slot;
 
-class SoundManagerOld {
-public:
-	SoundManagerOld(LastExpressEngine *engine);
-	~SoundManagerOld();
-
-	// Sound playing
-	// the original game uses byte in playSound but unsigned in playSoundWithSubtitles for activateDelay, no idea why
-	void playSound(CharacterIndex entity, Common::String filename, SoundFlag flag = kSoundVolumeEntityDefault, byte activateDelay = 0);
-	bool playSoundWithSubtitles(Common::String filename, uint32 flag, CharacterIndex entity, unsigned activateDelay = 0);
-	void playSoundEvent(CharacterIndex entity, byte action, byte activateDelay = 0);
-	void playDialog(CharacterIndex entity, CharacterIndex entityDialog, SoundFlag flag, byte a4);
-	void playSteam(CityIndex index);
-	void playFightSound(byte action, byte a4);
-	void playLocomotiveSound();
-	void playWarningCompartment(CharacterIndex entity, ObjectIndex compartment);
-	void playAmbientSound(int param);
-
-	// Dialog & Letters
-	void readText(int id);
-	const char *getDialogName(CharacterIndex entity) const;
-
-	// Sound bites
-	void excuseMe(CharacterIndex entity, CharacterIndex entity2 = kCharacterCath, SoundFlag flag = kVolumeNone);
-	void excuseMeCath();
-	const char *justCheckingCath() const;
-	const char *wrongDoorCath() const;
-	const char *justAMinuteCath() const;
-
-	// Flags
-	SoundFlag getSoundFlag(CharacterIndex index) const;
-
-	// Accessors
-	SoundQueue *getQueue() { return _queue; }
-	uint32 getAmbientSoundDuration() { return _ambientSoundDuration; }
-	bool needToChangeAmbientVolume();
-	SoundFlag getChangedAmbientVolume() { return _ambientScheduledVolume; }
-
-	// Setters
-	void clearAmbientVolumeChange() { _ambientScheduledVolume = kVolumeNone; }
-
-private:
-	LastExpressEngine *_engine;
-	SoundQueue *_queue;
-
-	// Compartment warnings by Mertens or Coudert
-	uint32 _lastWarning[12];
-
-	// Ambient sound
-	int _ambientSoundDuration;
-	uint32 _ambientVolumeChangeTimeMS, _ambientVolumeChangeDelayMS;
-	SoundFlag _ambientScheduledVolume;
-};
-
 class SoundManager {
 	friend class Slot;
 	friend class Logic;

@@ -21,6 +21,8 @@
 
 #include "lastexpress/lastexpress.h"
 
+#include "common/memstream.h"
+
 namespace LastExpress {
 
 void LastExpressEngine::doCredits() {

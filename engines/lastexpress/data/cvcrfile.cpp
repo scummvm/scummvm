@@ -24,7 +24,9 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/stream.h"
+
 #include "engines/metaengine.h"
 
 namespace LastExpress {
