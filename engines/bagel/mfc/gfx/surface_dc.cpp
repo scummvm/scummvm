@@ -31,6 +31,20 @@ SurfaceDC::SurfaceDC(CWnd *owner) : _owner(owner) {
 	create(surf, Common::Rect(0, 0, surf.w, surf.h));
 }
 
+HPALETTE SurfaceDC::selectPalette(HPALETTE pal) {
+	HPALETTE oldPal = _palette;
+	_palette = pal;
+
+	if (pal) {
+		auto *newPal = static_cast<CPalette::Impl *>(pal);
+		setPalette(newPal->data(), 0, newPal->size());
+	} else {
+		clearPalette();
+	}
+
+	return oldPal;
+}
+
 } // namespace Gfx
 } // namespace MFC
 } // namespace Bagel

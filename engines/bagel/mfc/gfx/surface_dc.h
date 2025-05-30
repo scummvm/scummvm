@@ -23,6 +23,7 @@
 #define BAGEL_MFC_GFX_SURFACE_DC_H
 
 #include "graphics/managed_surface.h"
+#include "bagel/mfc/minwindef.h"
 
 namespace Bagel {
 namespace MFC {
@@ -34,9 +35,12 @@ namespace Gfx {
 class SurfaceDC : public Graphics::ManagedSurface {
 public:
 	CWnd *_owner = nullptr;
+	HPALETTE _palette = nullptr;
 
 public:
 	SurfaceDC(CWnd *owner);
+
+	HPALETTE selectPalette(HPALETTE pal);
 };
 
 } // namespace Gfx

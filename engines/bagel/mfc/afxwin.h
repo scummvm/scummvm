@@ -524,6 +524,7 @@ public:
 };
 
 class CPalette : public CGdiObject {
+public:
 	struct Impl : public CGdiObjectImpl,
 			public Graphics::Palette {
 		Impl(const LPLOGPALETTE pal);

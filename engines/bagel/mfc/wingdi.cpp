@@ -94,7 +94,8 @@ HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
 }
 
 HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {
-	error("TODO: SelectPalette");
+	auto *surf = static_cast<Gfx::SurfaceDC *>(hdc);
+	return surf->selectPalette(hPal);
 }
 
 UINT RealizePalette(HDC hdc) {
