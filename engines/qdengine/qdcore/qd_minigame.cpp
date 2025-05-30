@@ -271,14 +271,15 @@ bool qdMiniGame::load_config() {
 		return false;
 
 	_config.clear();
+	Common::INIFile ini;
 	Common::INIFile::SectionList section_list;
-	enumerateIniSections(config_file_name(), section_list);
+	enumerateIniSections(ini, config_file_name(), section_list);
 
 	_config.reserve(section_list.size());
 
 	for (auto &it : section_list) {
 		qdMinigameConfigParameter prm;
-		prm.load_ini(config_file_name(), it.name.c_str());
+		prm.load_ini(ini, config_file_name(), it.name.c_str());
 		_config.push_back(prm);
 	}
 
