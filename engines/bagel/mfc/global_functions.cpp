@@ -28,28 +28,45 @@
 namespace Bagel {
 namespace MFC {
 
+struct MemBlock {
+	byte *_ptr;
+	size_t _size;
+	MemBlock(size_t size) :
+		_ptr(new byte[size]),
+		_size(size) {}
+	~MemBlock() {
+		delete[] _ptr;
+	}
+};
+
 HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) {
-	error("TODO: GlobalAlloc");
+	MemBlock *block = new MemBlock(dwBytes);
+	if (uFlags == GMEM_ZEROINIT)
+		Common::fill(block->_ptr, block->_ptr + dwBytes, 0);
+
+	return block;
 }
 
 LPVOID GlobalLock(HGLOBAL hMem) {
-	error("TODO: GlobalLock");
+	return ((MemBlock *)hMem)->_ptr;
 }
 
 BOOL GlobalUnlock(HGLOBAL hMem) {
-	error("TODO: GlobalUnlock");
+	return true;
 }
 
 HGLOBAL GlobalFree(HGLOBAL hMem) {
-	error("TODO: GlobalFree");
+	delete (MemBlock *)hMem;
+	return nullptr;
 }
 
 SIZE_T GlobalSize(HGLOBAL hMem) {
-	error("TODO: GlobalSize");
+	return ((MemBlock *)hMem)->_size;
 }
 
 SIZE_T GlobalCompact(DWORD dwMinFree) {
-	error("TODO: GlobalCompact");
+	// No implementation
+	return 999999;
 }
 
 int MessageBox(HWND hWnd, LPCSTR lpText,
