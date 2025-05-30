@@ -122,7 +122,7 @@ void RenderManager::initialize(bool hiRes) {
 	} else
 		debug(1, "Switching to standard resolution");
 #endif
-	_screen.create(_screenArea.width(), _screenArea.height(), _pixelFormat);
+	_screen.create(_screenArea.width(), _screenArea.height(), _engine->_screenPixelFormat);
 	_screen.setTransparentColor(-1);
 	_screen.clear();
 
