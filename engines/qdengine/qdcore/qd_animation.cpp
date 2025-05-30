@@ -698,6 +698,8 @@ bool qdAnimation::qda_load(const Common::Path &fpath) {
 		}
 
 		debugC(1, kDebugLoad, "qdAnimation::qda_load() tileAnimation %s", transCyrillic(fpath.toString()));
+		if (_tileAnimation)
+			_tileAnimation->clear();
 		_tileAnimation = new grTileAnimation;
 		_tileAnimation->load(fh, version);
 
