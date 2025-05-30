@@ -342,6 +342,12 @@ public:
 		Close = 5
 	};
 
+	enum class MainMenuButtonIndex {
+		Close = 8
+	};
+
+	Common::Array<Common::Rect> mainMenuButtonLocations;
+
 	uint16 inventoryPage = 0; 
 };
 
