@@ -176,26 +176,26 @@ void ws_KillCruncher() {
 }
 
 Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
-	Anim8 *myAnim8;
-	frac16 *my_regs;
-	int32 numLocalVars;
-
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_AddAnim8ToCruncher()");
 
 	// Allocate an anim8 structure
-	if ((myAnim8 = (Anim8 *)mem_alloc(sizeof(Anim8), "Anim8")) == nullptr) {
+	Anim8 *myAnim8 = (Anim8 *)mem_alloc(sizeof(Anim8), "Anim8");
+	if (myAnim8 == nullptr) {
 		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(Anim8));
 		return nullptr;
 	}
 
 	// Find the sequence
-	if ((myAnim8->sequHandle = ws_GetSEQU((uint32)sequHash, &numLocalVars, &myAnim8->pcOffset)) == nullptr) {
+	int32 numLocalVars;
+	myAnim8->sequHandle = ws_GetSEQU((uint32)sequHash, &numLocalVars, &myAnim8->pcOffset);
+	if (myAnim8->sequHandle == nullptr) {
 		return nullptr;
 	}
 
 	// Allocate an array of registers
-	if ((my_regs = (frac16 *)mem_alloc(sizeof(frac16) * (IDX_COUNT + numLocalVars), "Anim8 regs")) == nullptr) {
+	frac16 *my_regs = (frac16 *)mem_alloc(sizeof(frac16) * (IDX_COUNT + numLocalVars), "Anim8 regs");
+	if (my_regs == nullptr) {
 		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(frac16) * (IDX_COUNT + numLocalVars));
 		return nullptr;
 	}
@@ -249,8 +249,6 @@ Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 }
 
 bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
-	int32 numLocalVars;
-
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_ChangeAnim8Program()");
 
@@ -262,7 +260,9 @@ bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
 	Anim8 *myAnim8 = m->myAnim8;
 
 	// Find the sequence
-	if ((myAnim8->sequHandle = ws_GetSEQU((uint32)newSequHash, &numLocalVars, &myAnim8->pcOffset)) == nullptr) {
+	int32 numLocalVars;
+	myAnim8->sequHandle = ws_GetSEQU((uint32)newSequHash, &numLocalVars, &myAnim8->pcOffset);
+	if (myAnim8->sequHandle == nullptr) {
 		return false;
 	}
 
@@ -971,13 +971,12 @@ static void op_SEQ_SEND_MSG(Anim8 *myAnim8) {
 
 
 static void op_PUSH(Anim8 *myAnim8) {
-	uint32 *data;
-	int32 direction, numOfArgs, i; //,startReg
+	int32 numOfArgs;
 
 	if (!_GWS(myArg1)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: push arg1  or start with arg1, and push a total of arg2 values");
 	}
-	direction = 1;
+	int32 direction = 1;
 	if (_GWS(myArg2)) {
 		if (*_GWS(myArg2) > 0) numOfArgs = (*_GWS(myArg2)) >> 16;
 		else {
@@ -993,8 +992,8 @@ static void op_PUSH(Anim8 *myAnim8) {
 		return;
 	}
 	if (_GWS(myArg2)) {
-		data = (uint32 *)_GWS(myArg1);
-		for (i = 0; i < numOfArgs; i++) {
+		uint32 *data = (uint32 *)_GWS(myArg1);
+		for (int32 i = 0; i < numOfArgs; i++) {
 			*_GWS(stackTop)++ = *data;
 			data += direction;
 		}
@@ -1004,26 +1003,26 @@ static void op_PUSH(Anim8 *myAnim8) {
 }
 
 static void op_POP(Anim8 *myAnim8) {
-	uint32 *data;
-	int32 direction, numOfArgs, i;	// startReg,
+	int32 numOfArgs;
 
 	if (!_GWS(myArg1)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: pop into arg1  or start with arg1, and pop a total of arg2 values");
 	}
-	direction = 1;
+	int32 direction = 1;
 	if (_GWS(myArg2)) {
 		if (*_GWS(myArg2) > 0) numOfArgs = (*_GWS(myArg2)) >> 16;
 		else {
 			numOfArgs = -(int)(*_GWS(myArg2)) >> 16;
 			direction = -1;
 		}
-	} else numOfArgs = 1;
+	} else
+		numOfArgs = 1;
 	if (((byte *)_GWS(stackTop) - (byte *)_GWS(stackBase)) < (numOfArgs << 2)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0255, "underflow during pop instruction");
 	}
 	if (_GWS(myArg2)) {
-		data = (uint32 *)_GWS(myArg1);
-		for (i = 0; i < numOfArgs; i++) {
+		uint32 *data = (uint32 *)_GWS(myArg1);
+		for (int32 i = 0; i < numOfArgs; i++) {
 			*data = *(--_GWS(stackTop));
 			data += direction;
 		}
@@ -1033,8 +1032,6 @@ static void op_POP(Anim8 *myAnim8) {
 }
 
 static void op_JSR(Anim8 *myAnim8) {
-	int32 dummy;
-
 	if (myAnim8->returnStackIndex >= JSR_STACK_MAX) {
 		ws_LogErrorMsg(FL, "Max number of nested jsr instructions is: %d", JSR_STACK_MAX);
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0256, "jsr() failed");
@@ -1044,7 +1041,9 @@ static void op_JSR(Anim8 *myAnim8) {
 	myAnim8->returnStackIndex++;
 
 	// Find the sequence
-	if ((myAnim8->sequHandle = ws_GetSEQU((uint32)*_GWS(myArg1) >> 16, &dummy, &myAnim8->pcOffset)) == nullptr) {
+	int32 dummy;
+	myAnim8->sequHandle = ws_GetSEQU((uint32)*_GWS(myArg1) >> 16, &dummy, &myAnim8->pcOffset);
+	if (myAnim8->sequHandle == nullptr) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025f, "jsr() failed");
 	}
 	myAnim8->sequHash = (uint32)*_GWS(myArg1) >> 16;
@@ -1053,20 +1052,19 @@ static void op_JSR(Anim8 *myAnim8) {
 }
 
 static void op_RETURN(Anim8 *myAnim8) {
-	int32 dummy, dummy2;
-	uint32 returnSequHash, returnOffset;
-
 	if (myAnim8->returnStackIndex <= 0) {
 		op_END(myAnim8);
 		return;
 	}
 
 	myAnim8->returnStackIndex--;
-	returnSequHash = myAnim8->returnHashes[myAnim8->returnStackIndex];
-	returnOffset = myAnim8->returnOffsets[myAnim8->returnStackIndex];
+	uint32 returnSequHash = myAnim8->returnHashes[myAnim8->returnStackIndex];
+	uint32 returnOffset = myAnim8->returnOffsets[myAnim8->returnStackIndex];
 
 	// Find the sequence
-	if ((myAnim8->sequHandle = ws_GetSEQU((uint32)returnSequHash, &dummy, &dummy2)) == nullptr) {
+	int32 dummy, dummy2;
+	myAnim8->sequHandle = ws_GetSEQU((uint32)returnSequHash, &dummy, &dummy2);
+	if (myAnim8->sequHandle == nullptr) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025f, "return() failed");
 	}
 	myAnim8->sequHash = returnSequHash;
@@ -1105,13 +1103,12 @@ static void op_SET_INDEX(Anim8 *myAnim8) {
 
 static void op_SET_LAYER(Anim8 *myAnim8) {
 	Anim8 *tempAnim8;
-	int32 myLayer, newLayer;
 	if (!_GWS(myArg1)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: set_layer(arg1)");
 	}
 
-	newLayer = *_GWS(myArg1) >> 16;
-	myLayer = myAnim8->myLayer;
+	int32 newLayer = *_GWS(myArg1) >> 16;
+	int32 myLayer = myAnim8->myLayer;
 
 	if (myLayer == newLayer) {
 		return;
@@ -1503,7 +1500,6 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 }
 
 void ws_CrunchAnim8s(int16 *depth_table) {
-	EOSreq *tempEOSreq;
 
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_CrunchAnim8s()");
@@ -1523,7 +1519,9 @@ void ws_CrunchAnim8s(int16 *depth_table) {
 				if (currAnim8->eosReqOffset >= 0) {
 					// If the above field has a value, this implies that an On end sequence
 					//signal has been requested. If so, report back to the machine.
-					if ((tempEOSreq = (EOSreq *)mem_get_from_stash(_GWS(memtypeEOS), "+EOS")) == nullptr) return;
+					EOSreq *tempEOSreq = (EOSreq *)mem_get_from_stash(_GWS(memtypeEOS), "+EOS");
+					if (tempEOSreq == nullptr)
+						return;
 					tempEOSreq->myAnim8 = currAnim8;
 					tempEOSreq->prev = nullptr;
 					tempEOSreq->next = _GWS(EOSreqList);
