@@ -84,7 +84,7 @@ CMainWindow::CMainWindow(VOID) {
 	CDC     *pDC = nullptr;
 	CDibDoc *pDibDoc;
 	ERROR_CODE errCode;
-	BOOLEAN bSuccess;
+	bool bSuccess;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -331,7 +331,7 @@ VOID CMainWindow::PaintScreen() {
 
 BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CDC *pDC;
-	BOOLEAN bSuccess;
+	bool bSuccess;
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {

@@ -49,13 +49,13 @@ typedef struct {
 typedef struct {
 	UINT     gameSpeed;             // 1 to 5 = 2.5 to .5 seconds
 	UINT     nShown;                // 1 to 9   as of 9/9/94 0 to 6
-	BOOLEAN  bRandomLetters;         // TRUE if letter ordering shall be random
-	BOOLEAN  bShowNames;            // TRUE if we are to display category names
+	bool  bRandomLetters;         // TRUE if letter ordering shall be random
+	bool  bShowNames;            // TRUE if we are to display category names
 } USERCFG;
 
 typedef struct {
 	CSprite *sprite;
-	BOOLEAN bUsed;
+	bool bUsed;
 } SPRITE_LIST;
 
 
@@ -77,7 +77,7 @@ ERROR_CODE  LoadNewPhrase(VOID);
 ERROR_CODE  BuildSpriteList(CDC *);
 VOID        KillCurPhrase(VOID);
 VOID        BuildRandomPhraseOrder();
-BOOLEAN     RevealNextLetter(VOID);
+bool     RevealNextLetter(VOID);
 VOID CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, DWORD);
 INT         StrLenNoSpaces(const CHAR *);
 INT         GetIndex(CSprite *);
@@ -112,7 +112,7 @@ static PHRASES testPhrase[] = {"the therapist", {4, 7, 8, 12, 5, 11, 6, 1, 2, 9,
 #define START_PLACE  197
 
 extern CPalette *pMyGamePalette;
-extern BOOLEAN bInGame;
+extern bool bInGame;
 extern CMainWindow *gMain;
 extern LPGAMESTRUCT pGameParams;
 
@@ -125,7 +125,7 @@ SPRITE_LIST spriteList[MAX_PLENGTH];
 INT         iNextLetter;
 INT         timerInterval;
 HWND        gGameWnd;
-BOOLEAN     bPause;
+bool     bPause;
 UINT        gLeftAvg, gTotalAvg;
 const CHAR *INI_SECTION = "ThGesngGme";
 INT         nPhrasePixelLength;
@@ -257,7 +257,7 @@ ERROR_CODE LoadNewPhrase(VOID) {
 VOID BuildRandomPhraseOrder() {
 	UBYTE *curPhraseOrder;
 	INT i, j, n, newIndex;
-	BOOLEAN use;
+	bool use;
 
 	/*
 	* if there is a current active game
@@ -428,10 +428,10 @@ VOID KillCurPhrase() {
 *  returns   FALSE if this was the last letter to be revealed, else TRUE
 *
 **/
-BOOLEAN RevealNextLetter() {
+bool RevealNextLetter() {
 	CSize size;
 	INT index;
-	BOOLEAN lastLetter;
+	bool lastLetter;
 
 	lastLetter = FALSE;
 	if (curPhrase != nullptr) {
@@ -1008,11 +1008,11 @@ VOID SaveGameCfg() {
 *
 **/
 #if 0
-BOOLEAN CheckUserGuess(const CHAR *guess) {
+bool CheckUserGuess(const CHAR *guess) {
 	CHAR *p, *r, tmpPhrase[MAX_PLENGTH_S + 1];
 	CHAR *s, tmpGuess[MAX_PLENGTH_S + 1];
 	INT i, n, inc;
-	BOOLEAN winStatus;
+	bool winStatus;
 
 	winStatus = FALSE;
 
@@ -1091,7 +1091,7 @@ BOOLEAN CheckUserGuess(const CHAR *guess) {
 	return (winStatus);
 }
 #else
-BOOLEAN CheckUserGuess(const CHAR *guess) {
+bool CheckUserGuess(const CHAR *guess) {
 	return (StrCompare(curPhrase->text, guess, MAX_PLENGTH_S + 1));
 }
 #endif
@@ -1145,7 +1145,7 @@ INT StrLenNoSpaces(const CHAR *str) {
 
 
 ERROR_CODE ValidatePhrase(PHRASES *phrase) {
-	BOOLEAN bList[MAX_PLENGTH];
+	bool bList[MAX_PLENGTH];
 	INT i, n, order;
 	CHAR c;
 	ERROR_CODE errCode;
@@ -1153,7 +1153,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 	assert(phrase != nullptr);
 
 	/* set all entries to FALSE */
-	memset(bList, 0, sizeof(BOOLEAN)*MAX_PLENGTH);
+	memset(bList, 0, sizeof(bool)*MAX_PLENGTH);
 
 	/* assume no error */
 	errCode  = ERR_NONE;

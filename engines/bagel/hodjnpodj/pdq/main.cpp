@@ -78,7 +78,7 @@ VOID UpdateScore(UINT, UINT, UINT, UINT);
 */
 CPalette     *pMyGamePalette;
 CMainWindow  *gMain;
-BOOLEAN       bInGame;
+bool       bInGame;
 CText        *txtScore, *txtTotalScore, *txtTitle;
 LPGAMESTRUCT  pGameParams;
 
@@ -92,7 +92,7 @@ CMainWindow::CMainWindow() {
 	CDC     *pDC;
 	CDibDoc *pDibDoc;
 	ERROR_CODE errCode;
-	BOOLEAN bSuccess;
+	bool bSuccess;
 
 	// the game structure must be valid
 	assert(pGameParams != nullptr);
@@ -393,7 +393,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (bInGame ? 0 : NO_RETURN),
 	                       GetGameParams, "tggrules.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr), pGameParams);
 	CDC *pDC;
-	BOOLEAN bSuccess;
+	bool bSuccess;
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {

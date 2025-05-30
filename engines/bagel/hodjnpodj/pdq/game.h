@@ -92,7 +92,7 @@ extern VOID        GameResumeTimer(VOID);
 extern ERROR_CODE  EndGame(CDC *);
 extern VOID        WinGame(VOID);
 extern ERROR_CODE  RepaintSpriteList(CDC *);
-extern BOOLEAN     CheckUserGuess(const CHAR *);
+extern bool     CheckUserGuess(const CHAR *);
 extern VOID CALLBACK GetGameParams(CWnd *);
 extern VOID        GameGetScore(UINT *, UINT *, UINT *, UINT *);
 

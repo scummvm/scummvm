@@ -79,9 +79,9 @@ protected:
 	CRect       m_rNewGameButton;
 	CPalette   *m_pGamePalette;
 	CSprite    *m_pScrollSprite;
-	BOOLEAN     m_bGameActive;
-	BOOLEAN     m_bPause;
-	BOOLEAN     m_bInMenu;
+	bool     m_bGameActive;
+	bool     m_bPause;
+	bool     m_bInMenu;
 };
 
 } // namespace Barbershop

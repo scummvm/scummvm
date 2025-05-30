@@ -116,7 +116,7 @@ INT StrLenNoSpaces(const CHAR *str) {
 }
 
 ERROR_CODE ValidatePhrase(PHRASES *phrase) {
-	BOOLEAN bList[MAX_PLENGTH];
+	bool bList[MAX_PLENGTH];
 	INT i, n, order;
 	CHAR c;
 	ERROR_CODE errCode;
@@ -126,7 +126,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 	ErrorLog("DEBUG.LOG", "Validating %s", phrase->text);
 
 	/* set all entries to FALSE */
-	memset(bList, 0, sizeof(BOOLEAN)*MAX_PLENGTH);
+	memset(bList, 0, sizeof(bool)*MAX_PLENGTH);
 
 	/* assume no error */
 	errCode  = ERR_NONE;

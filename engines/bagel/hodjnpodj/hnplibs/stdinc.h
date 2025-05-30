@@ -79,9 +79,6 @@ typedef unsigned long ULONG;
 #define VOID void
 #define CONST const
 
-/* abnormal types */
-typedef int BOOLEAN;
-
 enum {
 	YES = 1,
 	NO = 0
