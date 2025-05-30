@@ -39,6 +39,46 @@ enum {
 
 class OSystem_DS : public ModularMixerBackend, public PaletteManager {
 protected:
+	enum TransactionMode {
+		kTransactionNone = 0,
+		kTransactionActive = 1,
+		kTransactionRollback = 2
+	};
+
+	/**
+	 * The current transaction mode.
+	 */
+	TransactionMode _transactionMode;
+
+	//
+	// Transaction support
+	//
+	struct VideoState {
+		constexpr VideoState() : width(0), height(0), format(),
+		    graphicsMode(GFX_HWSCALE), stretchMode(100) {
+		}
+
+		uint width, height;
+		Graphics::PixelFormat format;
+		int graphicsMode;
+		int stretchMode;
+	};
+
+	/**
+	 * The currently set up video state.
+	 */
+	VideoState _currentState;
+
+	/**
+	 * The old video state used when doing a transaction rollback.
+	 */
+	VideoState _oldState;
+
+	/**
+	 * The current screen change ID.
+	 */
+	int _screenChangeID;
+
 	Graphics::Surface _framebuffer, _overlay;
 	DS::Background *_screen, *_overlayScreen;
 #ifdef DISABLE_TEXT_CONSOLE
@@ -47,7 +87,7 @@ protected:
 #endif
 	bool _subScreenActive;
 	Graphics::Surface _cursor;
-	int _graphicsMode, _stretchMode;
+	bool _hiresHack;
 	bool _paletteDirty, _cursorDirty;
 
 	static OSystem_DS *_instance;
@@ -96,6 +136,11 @@ public:
 
 	virtual Graphics::PixelFormat getScreenFormat() const;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+
+	virtual void beginGFXTransaction();
+	virtual OSystem::TransactionError endGFXTransaction();
+
+	virtual int getScreenChangeID() const;
 
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
