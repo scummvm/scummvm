@@ -25,6 +25,7 @@
 #include "lastexpress/game/vcr.h"
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 
 #include "engines/metaengine.h"
 

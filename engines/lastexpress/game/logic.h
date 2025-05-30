@@ -26,8 +26,6 @@
 #include "lastexpress/shared.h"
 #include "lastexpress/game/events.h"
 
-#include "lastexpress/eventhandler.h"
-
 #include "common/events.h"
 
 namespace LastExpress {
@@ -36,58 +34,14 @@ class LastExpressEngine;
 
 class CVCRFile;
 class Action;
-class Beetle;
 class Debugger;
-class Entities;
 class SaveLoad;
-class State;
 
 struct Link;
 struct Node;
 struct Item;
 struct Object;
 struct Character;
-
-class Logic : public EventHandler {
-public:
-	Logic(LastExpressEngine *engine);
-	~Logic() override;
-
-	void eventMouse(const Common::Event &ev) override;
-	void eventTick(const Common::Event &ev) override;
-
-	void resetState();
-	void gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, bool showScene) const;
-	void playFinalSequence() const;
-	void updateCursor(bool redraw = true) const;
-
-	Action     *getGameAction()   { return _action; }
-	Beetle     *getGameBeetle()   { return _beetle; }
-	Entities   *getGameEntities() { return _entities; }
-	SaveLoad   *getGameSaveLoad() { return _saveload; }
-	State      *getGameState()    { return _state; }
-
-private:
-	LastExpressEngine *_engine;
-
-	Action   *_action;          ///< Actions
-	Beetle   *_beetle;          ///< Beetle catching
-	Entities *_entities;        ///< Entities
-	SaveLoad *_saveload;        ///< Save & loading
-	State    *_state;           ///< Game state
-
-	void switchChapter() const;
-	void showCredits() const;
-	void redrawCursor() const;
-
-	// Flags & Members
-	bool _flagActionPerformed;
-	bool _ignoreFrameInterval;
-	int _ticksSinceLastSavegame;
-
-	friend class Debugger;
-};
-
 struct ConsCallParam;
 
 #define HAND_PARAMS    Message *msg

@@ -22,58 +22,11 @@
 #ifndef LASTEXPRESS_HPF_H
 #define LASTEXPRESS_HPF_H
 
-/*
-	HPF Archive Format
-
-	* uint32 {4}   Number of files
-
-	For each file:
-		* char {12}    Name (zero-terminated)
-		* uint32 {4}   Offset (expressed in sectors of 2048 bytes)
-		* uint16 {2}   Size (expressed in sectors of 2048 bytes)
-		* uint16 {2}   Current position (expressed in sectors of 2048 bytes)
-		* uint16 {2}   File status flags:
-					   - Bit 0: "Is on CD"
-					   - Bit 1: "Is loaded"
-*/
-
-#include "common/archive.h"
-#include "common/hash-str.h"
-#include "common/hashmap.h"
-#include "common/str.h"
-#include "common/file.h"
-
 #include "lastexpress/lastexpress.h"
 
+#include "common/file.h"
+
 namespace LastExpress {
-
-class HPFArchive : public Common::Archive {
-public:
-	HPFArchive(const Common::Path &path);
-
-	bool hasFile(const Common::Path &path) const override;
-	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
-
-	int count() { return _files.size(); }
-
-private:
-	static const unsigned int _archiveNameSize = 12;
-	static const unsigned int _archiveSectorSize = 2048;
-
-	// File entry
-	struct HPFEntry {
-		uint32 offset;          ///< Offset (in sectors of 2048 bytes)
-		uint32 size;            ///< Size (in sectors of 2048 bytes)
-		uint16 isOnHD;          ///< File location (1: on HD; 0: on CD)
-	};
-
-	typedef Common::HashMap<Common::String, HPFEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
-
-	FileMap _files;             ///< List of files
-	Common::Path _filename;   ///< Filename of the archive
-};
 
 struct Seq;
 

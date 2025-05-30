@@ -21,98 +21,10 @@
 
 #include "lastexpress/menu/clock.h"
 
-#include "lastexpress/data/sequence.h"
-
-#include "lastexpress/game/scenes.h"
-#include "lastexpress/game/state.h"
-
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/resource.h"
 
 namespace LastExpress {
-
-ClockOld::ClockOld(LastExpressEngine *engine) : _engine(engine), _frameMinutes(nullptr), _frameHour(nullptr), _frameSun(nullptr), _frameDate(nullptr) {
-	_frameMinutes = new SequenceFrame(loadSequence("eggmin.seq"), 0, true);
-	_frameHour = new SequenceFrame(loadSequence("egghour.seq"), 0, true);
-	if (!_engine->isDemo()) {
-		_frameSun = new SequenceFrame(loadSequence("sun.seq"), 0, true);
-		_frameDate = new SequenceFrame(loadSequence("datenew.seq"), 0, true);
-	}
-}
-
-ClockOld::~ClockOld() {
-	SAFE_DELETE(_frameMinutes);
-	SAFE_DELETE(_frameHour);
-	if (!_engine->isDemo()) {
-		SAFE_DELETE(_frameSun);
-		SAFE_DELETE(_frameDate);
-	}
-
-	// Zero passed pointers
-	_engine = nullptr;
-}
-
-void ClockOld::clear() {
-	getScenes()->removeFromQueue(_frameMinutes);
-	getScenes()->removeFromQueue(_frameHour);
-	if (!_engine->isDemo()) {
-		getScenes()->removeFromQueue(_frameSun);
-		getScenes()->removeFromQueue(_frameDate);
-	}
-}
-
-void ClockOld::draw(uint32 time) {
-	assert(time >= kTimeCityParis && time <= kTimeCityConstantinople);
-
-	// Check that sequences have been loaded
-	if (!_frameMinutes || !_frameHour || (!_engine->isDemo() && !_frameSun) || (!_engine->isDemo() && !_frameDate))
-		error("[Clock::draw] Clock sequences have not been loaded correctly");
-
-	// Clear existing frames
-	clear();
-
-	// Game starts at: 1037700 = 7:13 p.m. on July 24, 1914
-	// Game ends at:   4941000 = 7:30 p.m. on July 26, 1914
-	// Game lasts for: 3903300 = 2 days + 17 mins = 2897 mins
-
-	// 15 = 1 second
-	// 15 * 60 = 900 = 1 minute
-	// 900 * 60 = 54000 = 1 hour
-	// 54000 * 24 = 1296000 = 1 day
-
-	// Calculate each sequence index from the current time
-
-	uint8 hour = 0;
-	uint8 minute = 0;
-	State::getHourMinutes(time, &hour, &minute);
-	uint32 index_date = 18 * time / 1296000;
-	if (hour == 23)
-		index_date += 18 * minute / 60;
-
-	// Set sequences frames
-	_frameMinutes->setFrame(minute);
-	_frameHour->setFrame((5 * hour + minute / 12) % 60);
-	if (!_engine->isDemo()) {
-		_frameSun->setFrame((5 * hour + minute / 12) % 120);
-		_frameDate->setFrame((uint16)index_date);
-	}
-
-	// Adjust z-order and queue
-	_frameMinutes->getInfo()->location = 1;
-	_frameHour->getInfo()->location = 1;
-	if (!_engine->isDemo()) {
-		_frameSun->getInfo()->location = 1;
-		_frameDate->getInfo()->location = 1;
-	}
-
-	getScenes()->addToQueue(_frameMinutes);
-	getScenes()->addToQueue(_frameHour);
-	if (!_engine->isDemo()) {
-		getScenes()->addToQueue(_frameSun);
-		getScenes()->addToQueue(_frameDate);
-	}
-}
 
 Clock::Clock(LastExpressEngine *engine) {
 	_engine = engine;

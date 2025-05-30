@@ -92,7 +92,6 @@ private:
 	FontData *_font = nullptr;
 };
 
-
 } // End of namespace LastExpress
 
 #endif // LASTEXPRESS_SOUND_SUBTITLE_H

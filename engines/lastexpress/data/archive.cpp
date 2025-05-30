@@ -24,95 +24,12 @@
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/data/archive.h"
-#include "lastexpress/debug.h"
 
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/substream.h"
-#include "common/savefile.h"
+#include "common/memstream.h"
 
 namespace LastExpress {
-
-HPFArchive::HPFArchive(const Common::Path &path) {
-	_filename = path;
-
-	// Open a stream to the archive
-	Common::SeekableReadStream *archive = SearchMan.createReadStreamForMember(_filename);
-	if (!archive) {
-		debugC(2, kLastExpressDebugResource, "Error opening file: %s", path.toString(Common::Path::kNativeSeparator).c_str());
-		return;
-	}
-
-	debugC(2, kLastExpressDebugResource, "Opened archive: %s", path.toString(Common::Path::kNativeSeparator).c_str());
-
-	// Read header to get the number of files
-	uint32 numFiles = archive->readUint32LE();
-	debugC(3, kLastExpressDebugResource, "Number of files in archive: %d", numFiles);
-
-	// Read the list of files
-	for (unsigned int i = 0; i < numFiles; ++i) {
-		char name[13];
-		HPFEntry entry;
-
-		archive->read(&name, sizeof(char) * _archiveNameSize);
-		entry.offset = archive->readUint32LE();
-		entry.size = archive->readUint32LE();
-		entry.isOnHD = archive->readUint16LE();
-
-		// Terminate string
-		name[12] = '\0';
-
-		Common::String filename(name);
-		filename.toLowercase();
-
-		_files[filename] = entry;
-
-		//debugC(9, kLastExpressDebugResource, "File entry: %s (offset:%d - Size: %d - HD: %u)", &eraseData, entry.offset, entry.size, entry.isOnHD);
-	}
-
-	// Close stream
-	delete archive;
-}
-
-bool HPFArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return (_files.find(name) != _files.end());
-}
-
-int HPFArchive::listMembers(Common::ArchiveMemberList &list) const {
-	int numMembers = 0;
-
-	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
-		numMembers++;
-	}
-
-	return numMembers;
-}
-
-const Common::ArchiveMemberPtr HPFArchive::getMember(const Common::Path &path) const {
-	if (!hasFile(path))
-		return Common::ArchiveMemberPtr();
-
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
-}
-
-Common::SeekableReadStream *HPFArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	FileMap::const_iterator fDesc = _files.find(name);
-	if (fDesc == _files.end())
-		return nullptr;
-
-	Common::File *archive = new Common::File();
-	if (!archive->open(_filename)) {
-		delete archive;
-		return nullptr;
-	}
-
-	return new Common::SeekableSubReadStream(archive, fDesc->_value.offset * _archiveSectorSize, fDesc->_value.offset * _archiveSectorSize + fDesc->_value.size * _archiveSectorSize, DisposeAfterUse::YES);
-}
-
-// NEW ARCHIVE
 
 ArchiveManager::ArchiveManager(LastExpressEngine *engine) {
 	_engine = engine;

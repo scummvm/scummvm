@@ -19,9 +19,13 @@
  *
  */
 
-#include "lastexpress/lastexpress.h"
-#include "lastexpress/game/logic.h"
+
 #include "lastexpress/data/archive.h"
+#include "lastexpress/game/logic.h"
+
+#include "lastexpress/lastexpress.h"
+
+#include "common/memstream.h"
 
 namespace LastExpress {
 
