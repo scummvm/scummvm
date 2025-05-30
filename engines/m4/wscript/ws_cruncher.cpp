@@ -792,9 +792,9 @@ static void op_FLOOR(Anim8 *myAnim8) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = floor(arg2)  or  arg1 = floor(rand(arg2,arg3))");
 	}
 	if (_GWS(myArg3)) {
-		*_GWS(myArg1) = ((imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3))) >> 16) << 16;
+		*_GWS(myArg1) = (imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3)) >> 16) << 16;
 	} else {
-		*_GWS(myArg1) = ((*_GWS(myArg2)) >> 16) << 16;
+		*_GWS(myArg1) = (*_GWS(myArg2) >> 16) << 16;
 	}
 }
 
@@ -809,9 +809,9 @@ static void op_ROUND(Anim8 *myAnim8) {
 		myArg = *_GWS(myArg2);
 	}
 	if ((myArg & 0xffff) >= 0x8000) {
-		*_GWS(myArg1) = (myArg + 0x10000) & 0xffff0000;
+		*_GWS(myArg1) = ((myArg + 0x10000) >> 16) << 16;
 	} else {
-		*_GWS(myArg1) = myArg & 0xffff0000;
+		*_GWS(myArg1) = (myArg >> 16) << 16;
 	}
 }
 
@@ -826,9 +826,9 @@ static void op_CEIL(Anim8 *myAnim8) {
 		myArg = *_GWS(myArg2);
 	}
 	if ((myArg & 0xffff) > 0) {
-		*_GWS(myArg1) = (myArg + 0x10000) & 0xffff0000;
+		*_GWS(myArg1) = ((myArg >> 16) << 16) + 0x10000;
 	} else {
-		*_GWS(myArg1) = myArg & 0xffff0000;
+		*_GWS(myArg1) = (myArg >> 16) << 16;
 	}
 }
 

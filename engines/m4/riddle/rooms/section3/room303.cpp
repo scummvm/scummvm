@@ -532,7 +532,7 @@ void Room303::daemon() {
 
 	case 124:
 		_G(globals)[GLB_TEMP_1] = 0;
-		_G(globals)[GLB_TEMP_2] = 0xFFFF0000;
+		_G(globals)[GLB_TEMP_2] = (int)-1 << 16;
 		sendWSMessage(0x200000, 0, _priestTalk, 0, nullptr, 1);
 		break;
 

@@ -1046,7 +1046,7 @@ machine *TriggerMachineByHash(int32 val1, int32 val2, int32 val3, int32 val4, in
 	_G(globals)[GLB_TEMP_8] = y << 16;
 	_G(globals)[GLB_TEMP_9] = (scale << 16) / 100;
 	_G(globals)[GLB_TEMP_10] = layer << 16;
-	_G(globals)[GLB_TEMP_11] = flag ? 0xffff0000 : 0x10000;
+	_G(globals)[GLB_TEMP_11] = (flag ? (int)-1 : 1) << 16;
 
 	return TriggerMachineByHash(40, nullptr, -1, -1, intrMsg, false, machName);
 }
