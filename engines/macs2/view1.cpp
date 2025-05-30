@@ -417,13 +417,15 @@ View1::View1() : UIElement("View1") {
 		DrawBorder(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
 		uint16 currentX = mainMenuRect.left;
 		uint16 currentY = mainMenuRect.top;
-		for (int i = 0; i < 6; i++) {
-			for (uint16 index : g_engine->inventoryIconIndices) {
-				AnimFrame &currentFrame = g_engine->imageResources[i];
-				
-	
-				DrawSprite(currentX, currentY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
-				currentX += currentFrame.Width + 4;
+		mainMenuButtonLocations.resize(9);
+		for (int i = 0; i < 9; i++) {
+			AnimFrame &currentFrame = g_engine->imageResources[i];
+			DrawSprite(currentX, currentY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
+			mainMenuButtonLocations[i] = Common::Rect(Common::Point(currentX, currentY), currentFrame.Width, currentFrame.Height);
+			currentX += currentFrame.Width + 4;
+			if (i > 0 && i % 3 == 0) {
+				currentX = mainMenuRect.left;
+				currentY += currentFrame.Height;
 			}
 		}
 	}
@@ -565,6 +567,19 @@ View1::View1() : UIElement("View1") {
 				
 				
 				return true;
+			}
+
+			if (isShowingMainMenu) {
+				for (int i = 0; i < 9; i++) {
+					const Common::Rect &current = mainMenuButtonLocations[i];
+					if (current.contains(msg._pos)) {
+						switch (i) {
+						case static_cast<int>(MainMenuButtonIndex::Close): {
+							isShowingMainMenu = false;
+						} break;
+						}
+					}
+				}
 			}
 
 			// Handle no other interactions during a script
