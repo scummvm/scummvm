@@ -43,27 +43,12 @@ void Screen::update() {
 	mergeDirtyRects();
 
 	// Loop through copying dirty areas to the physical screen
-	PixelFormat outputFormat = g_system->getScreenFormat();
 	Common::List<Common::Rect>::iterator i;
-	if (outputFormat == format) {
-		for (i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
-			const Common::Rect &r = *i;
-			const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
-			g_system->copyRectToScreen(srcP, pitch, r.left, r.top,
-			                           r.width(), r.height());
-		}
-	} else {
-		Graphics::Surface outSurface;
-		for (i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
-			const Common::Rect &r = *i;
-			const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
-			outSurface.create(r.width(), r.height(), format);
-			outSurface.copyRectToSurface(srcP, pitch, 0, 0, r.width(), r.height());
-			outSurface.convertToInPlace(outputFormat);
-			g_system->copyRectToScreen(outSurface.getBasePtr(0, 0), outSurface.pitch, r.left, r.top,
-			                           r.width(), r.height());
-		}
-		outSurface.free();
+	for (i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
+		const Common::Rect &r = *i;
+		const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
+		g_system->copyRectToScreen(srcP, pitch, r.left, r.top,
+			r.width(), r.height());
 	}
 
 	// Signal the physical screen to update
