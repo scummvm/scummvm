@@ -216,21 +216,47 @@ Widget *ThemeLayoutWidget::getWidget(Widget *widgetChain) const {
 	return Widget::findWidgetInChain(widgetChain, widgetName.c_str());
 }
 
+enum SafeAreaType {
+	kSafeAreaNone,
+	kSafeAreaMove,
+	kSafeAreaExtend
+};
+
 void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 	assert(_children.size() <= 1);
 
 	resetLayout();
 
+	int16 screenW;
+	int16 screenH;
+
+	Common::Rect safeArea = g_system->getSafeOverlayArea(&screenW, &screenH);
+	SafeAreaType safeAreaType;
+
+	// With RTL, we just flip everything on the X axis, so do the same with the safeArea
+	if (g_gui.useRTL()) {
+		int16 tmp = safeArea.left;
+		safeArea.left = screenW - safeArea.right;
+		safeArea.right = screenW - tmp;
+	}
+
+	int inset = _inset * g_gui.getScaleFactor();
+
 	if (_overlays == "screen") {
-		_x = 0;
-		_y = 0;
-		_w = g_gui.getGUIWidth() * g_gui.getScaleFactor();
-		_h = g_gui.getGUIHeight() * g_gui.getScaleFactor();
+		_x = MAX(inset, (int)safeArea.left);
+		_y = MAX(inset, (int)safeArea.top);
+		int16 r = MIN(screenW - inset, (int)safeArea.right);
+		int16 b = MIN(screenH - inset, (int)safeArea.bottom);
+		_w = r - _x;
+		_h = b - _y;
+		// Extend the dialog background only if it is supposed to stick on the borders
+		safeAreaType = inset == 0 ? kSafeAreaExtend : kSafeAreaMove;
 	} else if (_overlays == "screen_center") {
 		_x = -1;
 		_y = -1;
-		_w = _defaultW > 0 ? MIN(_defaultW, (int16)(g_gui.getGUIWidth() * g_gui.getScaleFactor())) : -1;
-		_h = _defaultH > 0 ? MIN(_defaultH, (int16)(g_gui.getGUIHeight() * g_gui.getScaleFactor())) : -1;
+		_w = _defaultW > 0 ? MIN(_defaultW - 2*inset, (int)safeArea.width()) : -1;
+		_h = _defaultH > 0 ? MIN(_defaultH - 2*inset, (int)safeArea.height()) : -1;
+		safeAreaType = kSafeAreaMove;
 	} else {
 		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, _w, _h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
@@ -238,23 +264,34 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 
 		if (_w == -1 || _h == -1) {
 			warning("The overlayed dialog %s has not been sized, using a default size for %s", _overlays.c_str(), _name.c_str());
-			_x = g_gui.getGUIWidth()      / 10 * g_gui.getScaleFactor();
-			_y = g_gui.getGUIHeight()     / 10 * g_gui.getScaleFactor();
-			_w = g_gui.getGUIWidth()  * 8 / 10 * g_gui.getScaleFactor();
-			_h = g_gui.getGUIHeight() * 8 / 10 * g_gui.getScaleFactor();
+			_x = MAX(safeArea.width()  / 10 + inset, (int)safeArea.left);
+			_y = MAX(safeArea.height() / 10 + inset, (int)safeArea.top);
+			int16 r = MIN(screenW - safeArea.width()  / 10 - inset, (int)safeArea.right);
+			int16 b = MIN(screenH - safeArea.height() / 10 - inset, (int)safeArea.bottom);
+			_w = r - _x;
+			_h = b - _y;
+			safeAreaType = kSafeAreaMove;
+		} else {
+			// We expect that the parent widget already takes the safe area into account
+			if (_x >= 0) _x += inset;
+			if (_y >= 0) _y += inset;
+			if (_w >= 0) _w -= 2 * inset;
+			if (_h >= 0) _h -= 2 * inset;
+			safeAreaType = kSafeAreaNone;
 		}
-
 	}
-
-	if (_x >= 0) _x += _inset * g_gui.getScaleFactor();
-	if (_y >= 0) _y += _inset * g_gui.getScaleFactor();
-	if (_w >= 0) _w -= 2 * _inset * g_gui.getScaleFactor();
-	if (_h >= 0) _h -= 2 * _inset * g_gui.getScaleFactor();
 
 	if (_children.size()) {
 		_children[0]->setWidth(_w);
 		_children[0]->setHeight(_h);
 		_children[0]->reflowLayout(widgetChain);
+
+		if (safeAreaType == kSafeAreaExtend) {
+			_x = 0;
+			_y = 0;
+			_w = screenW;
+			_h = screenH;
+		}
 
 		if (_w == -1)
 			_w = _children[0]->getWidth();
@@ -263,10 +300,24 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 			_h = _children[0]->getHeight();
 
 		if (_y == -1)
-			_y = (g_system->getOverlayHeight() >> 1) - (_h >> 1);
+			_y = (screenH >> 1) - (_h >> 1);
 
 		if (_x == -1)
-			_x = (g_system->getOverlayWidth() >> 1) - (_w >> 1);
+			_x = (screenW >> 1) - (_w >> 1);
+
+
+		if (safeAreaType == kSafeAreaExtend) {
+			// Move the children to allow for background draw since the origin
+			_children[0]->offsetX(safeArea.left);
+			_children[0]->offsetY(safeArea.top);
+		} else if (safeAreaType == kSafeAreaMove) {
+			assert(safeArea.constrain(_x, _y, _w, _h));
+		}
+	} else if (safeAreaType == kSafeAreaExtend) {
+		_x = 0;
+		_y = 0;
+		_w = screenW;
+		_h = screenH;
 	}
 }
 
