@@ -41,6 +41,7 @@ public:
 	SurfaceDC(CWnd *owner);
 
 	HPALETTE selectPalette(HPALETTE pal);
+	void realizePalette();
 };
 
 } // namespace Gfx

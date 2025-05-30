@@ -99,7 +99,9 @@ HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {
 }
 
 UINT RealizePalette(HDC hdc) {
-	error("TODO: RealizePalette");
+	auto *surf = static_cast<Gfx::SurfaceDC *>(hdc);
+	surf->realizePalette();
+	return 256;
 }
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/system.h"
+#include "graphics/paletteman.h"
 #include "bagel/mfc/gfx/surface_dc.h"
 #include "bagel/mfc/afxwin.h"
 
@@ -43,6 +45,11 @@ HPALETTE SurfaceDC::selectPalette(HPALETTE pal) {
 	}
 
 	return oldPal;
+}
+
+void SurfaceDC::realizePalette() {
+	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
+	g_system->getPaletteManager()->setPalette(*pal);
 }
 
 } // namespace Gfx
