@@ -87,10 +87,23 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "cmake_minimum_required(VERSION 3.13)\n";
 	workspace << "project(" << setup.projectDescription << ")\n\n";
 
-	workspace << R"(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+	workspace << R"EOS(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11) # Globally enable C++11
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-	add_definitions(-DRELEASE_BUILD)
+string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+if(NOT uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+	add_definitions(-DRELEASE_BUILD -UNDEBUG)
+
+	# Also remove /D NDEBUG to avoid MSVC warnings about conflicting defines.
+	foreach (flags_var_to_scrub
+			CMAKE_CXX_FLAGS_RELEASE
+			CMAKE_CXX_FLAGS_RELWITHDEBINFO
+			CMAKE_CXX_FLAGS_MINSIZEREL
+			CMAKE_C_FLAGS_RELEASE
+			CMAKE_C_FLAGS_RELWITHDEBINFO
+			CMAKE_C_FLAGS_MINSIZEREL)
+		string (REGEX REPLACE "(^| )[/-]D *NDEBUG($| )" " "
+			"${flags_var_to_scrub}" "${${flags_var_to_scrub}}")
+	endforeach()
 endif()
 
 find_package(PkgConfig QUIET)
@@ -129,7 +142,7 @@ macro(find_feature)
 	endif()
 endmacro()
 
-)";
+)EOS";
 
 	workspace << R"EOS(function(add_engine engine_name)
 	string(TOUPPER ${engine_name} _engine_var)
