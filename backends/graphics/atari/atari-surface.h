@@ -55,6 +55,7 @@ public:
 	}
 
 	virtual void drawMaskedSprite(const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+								  const Graphics::Surface &boundingSurface,
 								  int destX, int destY,
 								  const Common::Rect &subRect);
 
@@ -93,6 +94,7 @@ public:
 	}
 
 	void drawMaskedSprite(const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+						  const Graphics::Surface &boundingSurface,
 						  int destX, int destY,
 						  const Common::Rect &subRect) override {
 #ifdef USE_SV_BLITTER

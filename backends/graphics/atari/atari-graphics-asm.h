@@ -35,11 +35,15 @@ extern "C" {
  * @param destX sprite's X position (in pixels)
  * @param destY sprite's Y position (in pixels)
  * @param dstPitch destination buffer's pitch (in bytes)
+ * @param srcPitch source buffer's pitch (in bytes)
  * @param w sprite's width (in pixels)
  * @param h sprite's height (in pixels)
+ * @param skipFirstPix16 do not write first 16 pixels
+ * @param skipLastPix16 do not write last 16 pixels
  */
 void asm_draw_4bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
-						  uint destX, uint destY, uint dstPitch, uint w, uint h);
+						  uint destX, uint destY, uint dstPitch, uint srcPitch, uint w, uint h,
+						  bool skipFirstPix16, bool skipLastPix16);
 /**
  * Copy 8bpl sprite into 8bpl buffer. Sprite's width must be multiply of 16.
  *
@@ -49,11 +53,15 @@ void asm_draw_4bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint
  * @param destX sprite's X position (in pixels)
  * @param destY sprite's Y position (in pixels)
  * @param dstPitch destination buffer's pitch (in bytes)
+ * @param srcPitch source buffer's pitch (in bytes)
  * @param w sprite's width (in pixels)
  * @param h sprite's height (in pixels)
+ * @param skipFirstPix16 do not write first 16 pixels
+ * @param skipLastPix16 do not write last 16 pixels
  */
 void asm_draw_8bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
-						  uint destX, uint destY, uint dstPitch, uint w, uint h);
+						  uint destX, uint destY, uint dstPitch, uint srcPitch, uint w, uint h,
+						  bool skipFirstPix16, bool skipLastPix16);
 
 }
 

@@ -204,26 +204,59 @@ void AtariSurface::copyRectToSurface(const void *buffer, int srcPitch, int destX
 
 void AtariSurface::drawMaskedSprite(
 	const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+	const Graphics::Surface &boundingSurface,
 	int destX, int destY,
 	const Common::Rect &subRect) {
-	assert(subRect.width() % 16 == 0);
-	assert(subRect.width() == srcSurface.w);
 	assert(srcSurface.format == format);
 	assert(srcSurface.w == srcMask.w);
 	assert(srcSurface.h == srcMask.h);
 
+	bool skipFirstPix16 = false;
+	bool skipLastPix16  = false;
+
+	int srcSurfaceLeft  = 0;
+	int srcSurfaceWidth = srcSurface.w;
+	int dstSurfaceLeft  = 0;
+
+	if (subRect.left > 0) {
+		skipFirstPix16   = true;
+
+		const int offset = subRect.left & (-16);
+		srcSurfaceLeft  += offset;
+		srcSurfaceWidth -= offset;
+
+		destX            = 16 - (subRect.left & (16-1));
+		dstSurfaceLeft  -= 16;
+	}
+
+	if (destX + srcSurfaceWidth > boundingSurface.w) {
+		skipLastPix16    = true;
+
+		const int offset = (destX + srcSurfaceWidth - boundingSurface.w) & (-16);
+		srcSurfaceWidth -= offset;
+	}
+
+	assert(srcSurfaceLeft % 16 == 0);
+	assert(srcSurfaceWidth % 16 == 0);
+
+	destX += (this->w - boundingSurface.w) / 2;
+
 	if (getBitsPerPixel() == 8) {
 		asm_draw_8bpl_sprite(
-			(uint16 *)getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
-			(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
+			(uint16 *)getBasePtr(dstSurfaceLeft, 0),
+			(const uint16 *)srcSurface.getBasePtr(srcSurfaceLeft, subRect.top),
+			(const uint16 *)srcMask.getBasePtr(srcSurfaceLeft / 8, subRect.top),
 			destX, destY,
-			pitch, subRect.width(), subRect.height());
+			pitch, srcSurface.w, srcSurfaceWidth, subRect.height(),
+			skipFirstPix16, skipLastPix16);
 	} else {
 		asm_draw_4bpl_sprite(
-			(uint16 *)getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
-			(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
+			(uint16 *)getBasePtr(dstSurfaceLeft / 2, 0),
+			(const uint16 *)srcSurface.getBasePtr(srcSurfaceLeft / 2, subRect.top),
+			(const uint16 *)srcMask.getBasePtr(srcSurfaceLeft / 8, subRect.top),
 			destX, destY,
-			pitch, subRect.width(), subRect.height());
+			pitch, srcSurface.w / 2, srcSurfaceWidth, subRect.height(),
+			skipFirstPix16, skipLastPix16);
 	}
 }
 

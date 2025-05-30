@@ -43,7 +43,7 @@ struct Cursor {
 		_surfaceChanged = true;
 		_visibilityChanged = false;
 
-		_savedRect = _previousSrcRect = _alignedDstRect = Common::Rect();
+		_savedRect = _alignedDstRect = Common::Rect();
 	}
 
 	// updates outOfScreen OR srcRect/dstRect (only if visible/needed)
@@ -100,7 +100,7 @@ struct Cursor {
 	void draw();
 
 private:
-	void convertSurfaceTo(const Graphics::PixelFormat &format);
+	static void convertSurfaceTo(const Graphics::PixelFormat &format);
 	void restoreBackground();
 
 	AtariSurface *_screenSurf;
@@ -119,7 +119,6 @@ private:
 
 	Graphics::Surface _savedBackground;
 	Common::Rect _savedRect;
-	Common::Rect _previousSrcRect;
 	Common::Rect _alignedDstRect;
 
 	// related to 'surface'

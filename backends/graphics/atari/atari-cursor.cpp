@@ -137,12 +137,11 @@ void Cursor::updatePosition(int deltaX, int deltaY) {
 	_globalSurfaceChanged = true;
 }
 
-void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
+/* static */ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 	static int rShift, gShift, bShift;
 	static int rMask, gMask, bMask;
 
-	// TODO: maintain a max width
-	const int cursorWidth = g_hasSuperVidel ? _width : ((_srcRect.width() + 15) & (-16));
+	const int cursorWidth = g_hasSuperVidel ? _width : ((_width + 15) & (-16));
 	const int cursorHeight = _height;
 	const bool isCLUT8 = format.isCLUT8();
 
@@ -165,20 +164,17 @@ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 		_surfaceMask.w = _surface.w;
 	}
 
-	const int srcRectWidth = g_hasSuperVidel ? _width : _srcRect.width();
-
-	const byte *src = g_hasSuperVidel ? _buf : _buf + _srcRect.left;
+	const byte *src = _buf;
 	byte *dst = (byte *)_surface.getPixels();
 	byte *dstMask = (byte *)_surfaceMask.getPixels();
 	uint16 *dstMask16 = (uint16 *)_surfaceMask.getPixels();
-	const int srcPadding = _width - srcRectWidth;
-	const int dstPadding = _surface.w - srcRectWidth;
+	const int dstPadding = _surface.w - _width;
 
 	uint16 mask16 = 0xffff;
 	uint16 invertedBit = 0x7fff;
 
-	for (int j = 0; j < cursorHeight; ++j) {
-		for (int i = 0; i < srcRectWidth; ++i) {
+	for (int j = 0; j < _height; ++j) {
+		for (int i = 0; i < _width; ++i) {
 			const uint32 color = *src++;
 
 			if (color != _keycolor) {
@@ -210,8 +206,6 @@ void Cursor::convertSurfaceTo(const Graphics::PixelFormat &format) {
 			// ror.w #1,invertedBit
 			invertedBit = (invertedBit >> 1) | (invertedBit << (sizeof (invertedBit) * 8 - 1));
 		}
-
-		src += srcPadding;
 
 		if (dstPadding) {
 			assert(!g_hasSuperVidel);
@@ -272,13 +266,10 @@ void Cursor::saveBackground() {
 void Cursor::draw() {
 	AtariSurface &dstSurface  = *_screenSurf;
 	const int dstBitsPerPixel = dstSurface.getBitsPerPixel();
-	const int xOffset         = (dstSurface.w - _boundingSurf->w) / 2;
 
 	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
-	if (_globalSurfaceChanged || _srcRect.width() != _previousSrcRect.width()) {
-		_previousSrcRect = _srcRect;
-
+	if (_globalSurfaceChanged) {
 		convertSurfaceTo(dstSurface.format);
 
 		if (!g_hasSuperVidel) {
@@ -300,12 +291,9 @@ void Cursor::draw() {
 	}
 
 	dstSurface.drawMaskedSprite(
-		_surface, _surfaceMask,
-		_dstRect.left + xOffset, _dstRect.top,
-		g_hasSuperVidel
-			? _srcRect
-			// TODO: _srcRect and add clipping to AtariSurface::drawMaskedSprite
-			: Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
+		_surface, _surfaceMask, *_boundingSurf,
+		_dstRect.left, _dstRect.top,
+		_srcRect);
 
 	_visibilityChanged = _positionChanged = _surfaceChanged = false;
 }
