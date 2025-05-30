@@ -45,7 +45,8 @@ OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
 	: _eventSource(NULL), _engineRunning(false), _disableCursorPalette(true),
-	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
+	_currentState(), _oldState(), _hiresHack(false), _screenChangeID(0),
+	_transactionMode(kTransactionNone),
 	_paletteDirty(false), _cursorDirty(false), _overlayInGUI(false),
 	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)),
@@ -219,8 +220,23 @@ Common::String OSystem_DS::getSystemLanguage() const {
 
 void OSystem_DS::engineInit() {
 	_engineRunning = true;
+
+	const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
+	assert(activeDomain);
+
+	const Common::String engineId = activeDomain->getValOrDefault("engineid");
+	const Common::String gameId = activeDomain->getValOrDefault("gameid");
+
+	if ((engineId == "cine" && gameId == "fw")  ||
+	    (engineId == "gob"  && gameId == "lit") ||
+	     engineId == "supernova") {
+		_hiresHack = true;
+	} else {
+		_hiresHack = false;
+	}
 }
 
 void OSystem_DS::engineDone() {
 	_engineRunning = false;
+	_hiresHack = false;
 }

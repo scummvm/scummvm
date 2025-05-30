@@ -293,11 +293,13 @@ int OSystem_DS::getDefaultGraphicsMode() const {
 }
 
 bool OSystem_DS::setGraphicsMode(int mode, uint flags) {
+	assert(_transactionMode != kTransactionNone);
+
 	switch (mode) {
 	case GFX_NOSCALE:
 	case GFX_HWSCALE:
 	case GFX_SWSCALE:
-		_graphicsMode = mode;
+		_currentState.graphicsMode = mode;
 		return true;
 	default:
 		return false;
@@ -305,7 +307,7 @@ bool OSystem_DS::setGraphicsMode(int mode, uint flags) {
 }
 
 int OSystem_DS::getGraphicsMode() const {
-	return _graphicsMode;
+	return _currentState.graphicsMode;
 }
 
 static const OSystem::GraphicsMode stretchModes[] = {
@@ -324,17 +326,18 @@ int OSystem_DS::getDefaultStretchMode() const {
 }
 
 bool OSystem_DS::setStretchMode(int mode) {
-	_stretchMode = mode;
-	DS::setTopScreenZoom(mode);
+	assert(_transactionMode != kTransactionNone);
+
+	_currentState.stretchMode = mode;
 	return true;
 }
 
 int OSystem_DS::getStretchMode() const {
-	return _stretchMode;
+	return _currentState.stretchMode;
 }
 
 Graphics::PixelFormat OSystem_DS::getScreenFormat() const {
-	return _framebuffer.format;
+	return _currentState.format;
 }
 
 Common::List<Graphics::PixelFormat> OSystem_DS::getSupportedFormats() const {
@@ -345,59 +348,127 @@ Common::List<Graphics::PixelFormat> OSystem_DS::getSupportedFormats() const {
 	return res;
 }
 
+void OSystem_DS::beginGFXTransaction() {
+	assert(_transactionMode == kTransactionNone);
+
+	// Start a transaction.
+	_oldState = _currentState;
+	_transactionMode = kTransactionActive;
+}
+
 void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
-	_framebuffer.create(width, height, actualFormat);
+	_currentState.width = width;
+	_currentState.height = height;
+	_currentState.format = format ? *format : _pfCLUT8;
+}
 
-	bool isRGB = (actualFormat != _pfCLUT8), swScale = ((_graphicsMode == GFX_SWSCALE) && (width == 320));
+OSystem::TransactionError OSystem_DS::endGFXTransaction() {
+	assert(_transactionMode == kTransactionActive);
 
-	if (_screen)
-		_screen->reset();
-	delete _screen;
-	_screen = nullptr;
+	uint transactionError = OSystem::kTransactionSuccess;
 
 	// For Lost in Time, the title screen is displayed in 640x400.
 	// In order to support this game, the screen mode is set, but
 	// all draw calls are ignored until the game switches to 320x200.
-	if (DS::Background::getRequiredVRAM(width, height, isRGB, swScale) <= 0x40000) {
-		_screen = new DS::Background(&_framebuffer, 3, false, 8, swScale);
+	if ((_currentState.width > 512 || _currentState.height > 512) & !_hiresHack) {
+		_currentState.width  = _oldState.width;
+		_currentState.height = _oldState.height;
+		transactionError |= OSystem::kTransactionSizeChangeFailed;
+	}
+
+	if (_currentState.format != _pfCLUT8) {
+		if (_currentState.width > 256 && _currentState.height > 256) {
+			_currentState.format = _pfCLUT8;
+			transactionError |= OSystem::kTransactionFormatNotSupported;
+		} else if (_currentState.format != _pfABGR1555) {
+			_currentState.format = _pfABGR1555;
+			transactionError |= OSystem::kTransactionFormatNotSupported;
+		}
+	}
+
+	const bool isRGB = (_currentState.format != _pfCLUT8);
+
+	bool setupNewGameScreen = false;
+	if (_oldState.graphicsMode != _currentState.graphicsMode
+	    || _oldState.width     != _currentState.width
+	    || _oldState.height    != _currentState.height
+	    || _oldState.format    != _currentState.format) {
+		setupNewGameScreen = true;
+	}
+
+	bool bannerChanged = false;
+	if (  (!_engineRunning && (_banner == NULL))
+	    || (_engineRunning && (_banner != NULL))) {
+		bannerChanged = true;
+	}
+
+	if (setupNewGameScreen) {
+		bool swScale = ((_currentState.graphicsMode == GFX_SWSCALE) && (_currentState.width == 320));
+
+		_framebuffer.create(_currentState.width, _currentState.height, _currentState.format);
+
+		if (_screen)
+			_screen->reset();
+		delete _screen;
+		_screen = nullptr;
+
+		if (DS::Background::getRequiredVRAM(_currentState.width, _currentState.height, isRGB, swScale) <= 0x40000) {
+			_screen = new DS::Background(&_framebuffer, 3, false, 8, swScale);
+		}
+
+		// Something changed, so update the screen change ID.
+		++_screenChangeID;
+	} else if (bannerChanged) {
+		if (_screen)
+			_screen->reset();
 	}
 
 #ifdef DISABLE_TEXT_CONSOLE
-	if (_subScreen && _subScreenActive)
-		_subScreen->reset();
+	if (setupNewGameScreen || bannerChanged) {
+		if (_subScreen && _subScreenActive)
+			_subScreen->reset();
+		delete _subScreen;
+		_subScreen = nullptr;
 
-	delete _subScreen;
-	_subScreen = nullptr;
+		if (_engineRunning) {
+			if (_banner) {
+				_banner->reset();
+				_banner->hide();
+			}
 
-	if (_engineRunning) {
-		if (_banner) {
-			_banner->reset();
-			_banner->hide();
+			delete _banner;
+			_banner = nullptr;
+
+			if (DS::Background::getRequiredVRAM(_currentState.width, _currentState.height, isRGB, false) <= 0x20000) {
+				_subScreen = new DS::Background(&_framebuffer, 3, true, 0, false);
+			}
+		} else {
+			if (!_banner)
+				_banner = new DS::TiledBackground(bannerTiles, bannerTilesLen, bannerMap, bannerMapLen, 1, true, 30, 0);
+			_banner->update();
 		}
-
-		delete _banner;
-		_banner = nullptr;
-
-		if (DS::Background::getRequiredVRAM(width, height, isRGB, false) <= 0x20000) {
-			_subScreen = new DS::Background(&_framebuffer, 3, true, 0, false);
-		}
-	} else {
-		if (!_banner)
-			_banner = new DS::TiledBackground(bannerTiles, bannerTilesLen, bannerMap, bannerMapLen, 1, true, 30, 0);
-		_banner->update();
 	}
 #endif
 
-	DS::setGameSize(width, height);
+	DS::setGameSize(_currentState.width, _currentState.height);
+
+	DS::setTopScreenZoom(_currentState.stretchMode);
+
+	_transactionMode = kTransactionNone;
+
+	return (OSystem::TransactionError)transactionError;
+}
+
+int OSystem_DS::getScreenChangeID() const {
+	return _screenChangeID;
 }
 
 int16 OSystem_DS::getHeight() {
-	return _framebuffer.h;
+	return _currentState.height;
 }
 
 int16 OSystem_DS::getWidth() {
-	return _framebuffer.w;
+	return _currentState.width;
 }
 
 void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
