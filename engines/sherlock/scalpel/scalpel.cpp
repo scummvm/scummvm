@@ -253,20 +253,19 @@ void ScalpelEngine::setupGraphics() {
 		initGraphics(320, 200);
 	} else {
 		// 3DO actually uses RGB555, but some platforms of ours only support RGB565, so we use that
+		// TODO: Support platforms without RGB565
 		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
-		// First try for a 640x400 mode
-		g_system->beginGFXTransaction();
-			initCommonGFX(false);
-			g_system->initSize(640, 400, &pixelFormatRGB565);
-		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
-
-		if (gfxError == OSystem::kTransactionSuccess) {
-			_isScreenDoubled = true;
-		} else {
+		Graphics::ModeWithFormatList modes = {
+			// First try for a 640x400 mode
+			Graphics::ModeWithFormat(640, 400, pixelFormatRGB565),
 			// System doesn't support it, so fall back on 320x200 mode
-			initGraphics(320, 200, &pixelFormatRGB565);
-		}
+			Graphics::ModeWithFormat(320, 200, pixelFormatRGB565),
+		};
+
+		int modeIdx = initGraphicsAny(modes);
+
+		_isScreenDoubled = (modeIdx == 0);
 	}
 }
 
