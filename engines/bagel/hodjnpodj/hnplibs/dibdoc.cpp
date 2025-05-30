@@ -86,7 +86,6 @@ void CDibDoc::InitDIBData() {
 		delete m_palDIB;
 		m_palDIB = nullptr;
 		ShowMemoryInfo("Unable to create artwork palette", "Internal Problem");
-		return;
 	}
 }
 

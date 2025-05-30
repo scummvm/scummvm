@@ -58,8 +58,8 @@ public:
 	virtual BOOL OpenResourceDocument(const char* pszPathName);
 
 private:
-	HDIB m_hDIB;
-	CPalette *m_palDIB;
+	HDIB m_hDIB = 0;
+	CPalette *m_palDIB = nullptr;
 	CSize m_sizeDoc;
 
 	#ifdef BAGEL_DEBUG
