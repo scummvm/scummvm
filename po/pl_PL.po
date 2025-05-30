@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-05-25 09:50+0000\n"
-"PO-Revision-Date: 2025-02-24 15:18+0000\n"
+"PO-Revision-Date: 2025-05-30 21:26+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -5195,19 +5195,19 @@ msgstr "W grach"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "Eksportuj kopię zapasową"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Eksportuje kopię zapasową konfiguracji i zapisanych gier"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "Importuj kopię zapasową"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "Importuje wcześniej wyeksportowaną kopię zapasową"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5215,53 +5215,45 @@ msgid "Remove folder authorizations..."
 msgstr "Usuń uprawnienia folderów..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Wybierz orientację:"
+msgstr "Wybierz miejsce docelowe kopii zapasowej"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "Kopia zapasowa została zapisana."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "Kopia zapasowa została zapisana do folderu Pobrane."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "nie udało się zmienić shaderów"
+msgstr "Nie udało się wykonać kopii zapasowej zapisów gier"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "Wystąpił błąd podczas zapisywania stanu gry"
+msgstr "Wystąpił błąd podczas zapisywania kopii zapasowej."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Przywrócenie kopii zapasowej usunie bieżącą konfigurację i nadpisze "
+"istniejące zapisy stanu gier. Czy na pewno kontynuować?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Wybierz skórkę"
+msgstr "Wybierz plik kopii zapasowej"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "Kopia zapasowa została przywrócona."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "Wystąpił błąd podczas zapisywania stanu gry"
+msgstr "Wystąpił błąd podczas przywracania kopii zapasowej."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -5730,21 +5722,6 @@ msgid "Libretro playlist"
 msgstr "Lista odtwarzania Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
-#, fuzzy
-#| msgid ""
-#| "## Libretro playlists for ScummVM core\n"
-#| "Playlists used in Libretro frontends (e.g. Retroarch) are plain text "
-#| "lists used to directly launch a game with a specific core from the user "
-#| "interface. Those lists are structured to pass to the core the path of a "
-#| "specific content file to be loaded (e.g. ROM).\n"
-#| "\n"
-#| "ScummVM core can accept as content the path to any of the files inside a "
-#| "valid game folder, the detection system will try to autodetect the game "
-#| "from the content file parent folder and run the game with default ScummVM "
-#| "options.\n"
-#| "\n"
-#| "The core also supports dedicated per game **hook** plain text files with "
-#| "**."
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
@@ -5760,16 +5737,16 @@ msgid ""
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
 "## Listy odtwarzania Libretro dla rdzenia ScummVM\n"
-"Listy odtwarzania używane w interfejsach użytkownika Libretro (np. "
-"Retroarch) to zwykłe pliki tekstowe, używane do bezpośredniego uruchamiania "
-"gry z określonym rdzeniem z poziomu interfejsu użytkownika. Listy te "
-"przekazują rdzeniowi ścieżkę do określonego pliku zawartości, który ma "
-"zostać załadowany (np. ROM).\n"
+"Listy odtwarzania używane w interfejsach użytkownika Libretro (np. Retroarch)"
+" to zwykłe pliki tekstowe, używane do bezpośredniego uruchamiania gry z "
+"określonym rdzeniem z poziomu interfejsu użytkownika. Listy te przekazują "
+"rdzeniowi ścieżkę do określonego pliku zawartości, który ma zostać "
+"załadowany (np. ROM).\n"
 "\n"
-"Rdzeń ScummVM może zaakceptować jako zawartość ścieżkę do dowolnego pliku w "
-"prawidłowym folderze gry, system wykrywania spróbuje automatycznie wykryć "
-"grę z folderu nadrzędnego pliku zawartości i uruchomić grę z domyślnymi "
-"opcjami ScummVM.\n"
+"Rdzeń ScummVM może zaakceptować jako zawartość ścieżki w formie listy do "
+"dowolnego pliku w prawidłowym folderze gry, system wykrywania spróbuje "
+"automatycznie wykryć grę z folderu nadrzędnego pliku zawartości i uruchomić "
+"grę z domyślnymi opcjami ScummVM.\n"
 "\n"
 "Rdzeń obsługuje również dedykowane pliki zwykłego tekstu **hook** dla każdej "
 "gry z **."
@@ -6591,10 +6568,8 @@ msgid "Turn right"
 msgstr "Obrót w prawo"
 
 #: engines/agos/metaengine.cpp:315
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "Przełącz tryb szybki"
+msgstr "Przełącz tryb walki"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
@@ -6784,13 +6759,15 @@ msgstr ""
 
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
-msgstr ""
+msgstr "Użyj niższej jakości wideo z wersji CD-ROM pojedynczej prędkości"
 
 #: engines/alg/metaengine.cpp:35
 msgid ""
 "These videos are of lower quality, the default version uses double speed CD-"
 "ROM videos which are of better quality"
 msgstr ""
+"Te filmy są gorszej jakości, domyślna wersja używa filmów dla wersji CD-ROM "
+"podwójnej prędkości, które są lepszej jakości"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6901,7 +6878,7 @@ msgstr "Wczytaj mimo to"
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
-msgstr ""
+msgstr "Wybierz/Kopnij/Biegnij"
 
 #: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -6909,7 +6886,7 @@ msgstr "Skok"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
-msgstr ""
+msgstr "Podaj kod poziomu"
 
 #: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
@@ -7781,21 +7758,18 @@ msgid "Enable gamma correction"
 msgstr "Włącz korekcję gamma"
 
 #: engines/director/metaengine.cpp:71
-#, fuzzy
-#| msgid "Brighten the graphics to simulate a Macintosh monitor."
 msgid "Brighten the graphics to simulate a Macintosh monitor"
-msgstr "Rozjaśnij grafikę, aby symulować monitor Macintosh."
+msgstr "Rozjaśnij grafikę, aby symulować monitor Macintosh"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
-msgstr ""
+msgstr "Wymuś true color"
 
 #: engines/director/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
-"Używaj antyaliasingu do wyświetlania tekstu, nawet jeśli gra o to nie poprosi"
+"Używaj trybu grafiki true color, nawet jeśli gra nie jest do tego "
+"przeznaczona"
 
 #: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
@@ -7905,46 +7879,32 @@ msgid "Right click"
 msgstr "Kliknięcie PPM"
 
 #: engines/efh/metaengine.cpp:255
-#, fuzzy
-#| msgid "Move up-left"
 msgid "Move up left"
 msgstr "Ruch w górę i w lewo"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Move up-right"
 msgid "Move up right"
 msgstr "Ruch w górę i w prawo"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Move down-left"
 msgid "Move down left"
 msgstr "Ruch w dół i w lewo"
 
 #: engines/efh/metaengine.cpp:270
-#, fuzzy
-#| msgid "Move down-right"
 msgid "Move down right"
 msgstr "Ruch w dół i w prawo"
 
 #: engines/efh/metaengine.cpp:275
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 1 status"
-msgstr "Wyświetl portrety postaci"
+msgstr "Stan postaci 1"
 
 #: engines/efh/metaengine.cpp:280
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 2 status"
-msgstr "Wyświetl portrety postaci"
+msgstr "Stan postaci 2"
 
 #: engines/efh/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 3 status"
-msgstr "Wyświetl portrety postaci"
+msgstr "Stan postaci 3"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -8104,32 +8064,24 @@ msgstr "Twarzą do przodu"
 
 #: engines/freescape/games/dark/dark.cpp:222
 #: engines/freescape/games/driller/driller.cpp:198
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Ruch w lewo"
+msgstr "Przetocz się w lewo"
 
 #: engines/freescape/games/dark/dark.cpp:227
 #: engines/freescape/games/driller/driller.cpp:203
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Ruch w prawo"
+msgstr "Przetocz się w prawo"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:233
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Zwiększenie głośności"
+msgstr "Zwiększ kąt obrotu"
 
 #: engines/freescape/games/dark/dark.cpp:238
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Zmniejszenie głośności"
+msgstr "Zmniejsz kąt obrotu"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:244
@@ -10017,10 +9969,8 @@ msgstr ""
 "oficjalna poprawka autorstwa HeR Interactive."
 
 #: engines/nancy/state/loadsave.cpp:154
-#, fuzzy
-#| msgid "Would you like to save or restore a game?"
 msgid "Would you like to load or save a game?"
-msgstr "Czy chcesz zapisać, albo wczytać grę?"
+msgstr "Czy chcesz wczytać lub zapisać grę?"
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -10154,22 +10104,16 @@ msgid "This menu item is not yet implemented"
 msgstr "Ta pozycja menu nie została jeszcze zaimplementowana"
 
 #: engines/playground3d/metaengine.cpp:55
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch test"
-msgstr "Przełącz do gry"
+msgstr "Test przełączania"
 
 #: engines/playground3d/metaengine.cpp:61
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable fog"
-msgstr "Włącz/wyłącz Jetpack"
+msgstr "Włącz/wyłącz mgłę"
 
 #: engines/playground3d/metaengine.cpp:67
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable scissor"
-msgstr "Włącz/wyłącz Jetpack"
+msgstr "Włącz/wyłącz scissor"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
@@ -10177,14 +10121,14 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "Gra Plumbers na 3DO wymaga obsługi RGB."
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Włącza tryb debugowania"
+msgstr "Włącz tryb 16 bitów na piksel"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
+"Włącz tę opcję, jeśli backend nie obsługuje 32bpp i/lub w celu debugowania "
+"grafiki"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -10920,7 +10864,7 @@ msgstr "Rozjaśnij grafikę, aby symulować monitor Macintosh."
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Symuluj kolory Sega"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -10928,6 +10872,9 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"Zamiast używać kolorów zdefiniowanych w grze, symuluj kolory używane na "
+"prawdziwym sprzęcie Sega. Są one znacznie ciemniejsze, choć nie jest jasne, "
+"czy to było zamierzone, czy nie."
 
 #: engines/scumm/dialogs.cpp:1312
 msgid "Overture Timing:"
@@ -11579,6 +11526,9 @@ msgid ""
 "This fan-made translation is not supported, because it is known to contain\n"
 "corrupted resources that might make it crash or seriously misbehave."
 msgstr ""
+"To fanowskie tłumaczenie nie jest wspierane, ponieważ zawiera uszkodzone "
+"zasoby,\n"
+"które mogą spowodować jego zawieszenie lub poważne problemy z działaniem."
 
 #: engines/scumm/metaengine.cpp:404
 msgid ""
@@ -12503,23 +12453,19 @@ msgstr "Idź na koniec menu zapisywania i wczytywania"
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
-msgstr ""
+msgstr "Discworld Noir wymaga ScummVM z włączonym TinyGL"
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Ruch w lewo"
+msgstr "Ruch / Zaznacz"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform Default Action"
-msgstr ""
+msgstr "Ruch / Wykonaj domyślną akcję"
 
 #: engines/toltecs/metaengine.cpp:258
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip ride"
-msgstr "Pomiń wideo"
+msgstr "Pomiń przejażdżkę"
 
 #: engines/tony/tony.cpp:248
 #, c-format
