@@ -95,6 +95,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	Hotspots hs;
 	hs.push_back(q);
 	quit->hots = hs;
+	quit->resolution = "320x200";
 	_levels["<quit>"] = quit;
 	resetStatistics();
 }
