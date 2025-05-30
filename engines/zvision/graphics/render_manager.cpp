@@ -225,7 +225,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 		_workingManagedSurface.simpleBlitFrom(*_outputSurface); // TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
 		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 	}
-	if (preStream) {
+	if (preStream && !_hiRes) {
 		debug(5, "Pre-rendering text area for video stream");
 		_workingManagedSurface.simpleBlitFrom(*_outputSurface, _textOverlay, _textOverlay.origin()); // Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
 		return false;
