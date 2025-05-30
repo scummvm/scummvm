@@ -242,7 +242,7 @@ bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 				if (it->get_element_type() != qdInterfaceElement::EL_TEXT_WINDOW)
 					dp->disable_autohide();
 
-				if (it->mouse_handler(x, y, ev) && !it->is_locked())
+				if (!it->is_locked() && it->mouse_handler(x, y, ev))
 					return true;
 			} else
 				it->hover_clear();
