@@ -1145,7 +1145,7 @@ void Room203::daemon() {
 
 			case 4117:
 				_peasantSquatTo9 = series_load("peasant squat to 9");
-				_peasantFromSquat3 = series_load("shadow peskey from squat to pos3");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
 				_peasantSquat3 = series_load("peasant 3 to squat");
 				_peasantSquat9 = series_load("shadow pesky from 9 to squat");
 
