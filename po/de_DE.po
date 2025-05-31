@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-25 09:50+0000\n"
+"POT-Creation-Date: 2025-05-31 08:30+0000\n"
 "PO-Revision-Date: 2025-05-06 12:03+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -3141,19 +3141,19 @@ msgstr "Daten konnten nicht gelesen werden"
 msgid "Writing data failed"
 msgstr "Daten konnten nicht geschrieben werden"
 
-#: common/error.cpp:67
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Konnte kein passendes Engine-Plugin finden"
 
-#: common/error.cpp:69
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Engine-Plugin unterstützt keine Spielstände"
 
-#: common/error.cpp:72
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Abbruch durch Benutzer"
 
-#: common/error.cpp:76
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-25 09:50+0000\n"
+"POT-Creation-Date: 2025-05-31 08:30+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3077,19 +3077,19 @@ msgstr "Data lezen mislukt"
 msgid "Writing data failed"
 msgstr "Data wegschrijven mislukt"
 
-#: common/error.cpp:67
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Kon geen geschikte engine plugin vinden"
 
-#: common/error.cpp:69
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Engine plugin ondersteunt opgeslagen spellen niet"
 
-#: common/error.cpp:72
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Gebruiker annuleerde"
 
-#: common/error.cpp:76
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Onbekende fout"
 

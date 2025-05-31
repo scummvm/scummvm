@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-25 09:50+0000\n"
+"POT-Creation-Date: 2025-05-31 08:30+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3119,19 +3119,19 @@ msgstr "Помилка читання"
 msgid "Writing data failed"
 msgstr "Помилка запису даних"
 
-#: common/error.cpp:67
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Не можу знайти необхідного втулка для движка"
 
-#: common/error.cpp:69
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Втулок движка не підтримує збереження ігор"
 
-#: common/error.cpp:72
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Скасовано користувачем"
 
-#: common/error.cpp:76
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Невідома помилка"
 

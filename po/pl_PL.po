@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-25 09:50+0000\n"
+"POT-Creation-Date: 2025-05-31 08:30+0000\n"
 "PO-Revision-Date: 2025-05-30 21:26+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -3117,19 +3117,19 @@ msgstr "Błąd odczytu danych"
 msgid "Writing data failed"
 msgstr "Błąd zapisu danych"
 
-#: common/error.cpp:67
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Nie udało się znaleźć odpowiedniej wtyczki silnika"
 
-#: common/error.cpp:69
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Silnik nie wspiera zapisywania stanu gry"
 
-#: common/error.cpp:72
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Przerwane przez użytkownika"
 
-#: common/error.cpp:76
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Nieznany błąd"
 
@@ -5737,11 +5737,11 @@ msgid ""
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
 "## Listy odtwarzania Libretro dla rdzenia ScummVM\n"
-"Listy odtwarzania używane w interfejsach użytkownika Libretro (np. Retroarch)"
-" to zwykłe pliki tekstowe, używane do bezpośredniego uruchamiania gry z "
-"określonym rdzeniem z poziomu interfejsu użytkownika. Listy te przekazują "
-"rdzeniowi ścieżkę do określonego pliku zawartości, który ma zostać "
-"załadowany (np. ROM).\n"
+"Listy odtwarzania używane w interfejsach użytkownika Libretro (np. "
+"Retroarch) to zwykłe pliki tekstowe, używane do bezpośredniego uruchamiania "
+"gry z określonym rdzeniem z poziomu interfejsu użytkownika. Listy te "
+"przekazują rdzeniowi ścieżkę do określonego pliku zawartości, który ma "
+"zostać załadowany (np. ROM).\n"
 "\n"
 "Rdzeń ScummVM może zaakceptować jako zawartość ścieżki w formie listy do "
 "dowolnego pliku w prawidłowym folderze gry, system wykrywania spróbuje "

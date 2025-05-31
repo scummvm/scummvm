@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-25 09:50+0000\n"
+"POT-Creation-Date: 2025-05-31 08:30+0000\n"
 "PO-Revision-Date: 2025-05-22 09:25+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3108,19 +3108,19 @@ msgstr "Inläsning av data misslyckades"
 msgid "Writing data failed"
 msgstr "Skrivning av data misslyckades"
 
-#: common/error.cpp:67
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Kunde inte hitta lämpligt motortillägg"
 
-#: common/error.cpp:69
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Motorns tillägg saknar stöd för sparade spel"
 
-#: common/error.cpp:72
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Avbruten av användaren"
 
-#: common/error.cpp:76
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Okänt fel"
 

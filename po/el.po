@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-05-25 09:50+0000\n"
+"POT-Creation-Date: 2025-05-31 08:30+0000\n"
 "PO-Revision-Date: 2025-05-26 06:25+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3200,19 +3200,19 @@ msgstr "Η ανάγνωση δεδομένων απέτυχε"
 msgid "Writing data failed"
 msgstr "Η εγγραφή δεδομένων απέτυχε"
 
-#: common/error.cpp:67
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Αδυναμία εύρεσης κατάλληλου πρόσθετου μηχανής"
 
-#: common/error.cpp:69
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Το πρόσθετο μηχανής δεν υποστηρίζει αποθηκευμένα παιχνίδια"
 
-#: common/error.cpp:72
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Ο χρήστης ακύρωσε"
 
-#: common/error.cpp:76
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Άγνωστο σφάλμα"
 
@@ -5368,8 +5368,8 @@ msgstr ""
 #: backends/platform/android/options.cpp:313
 msgid "The game saves couldn't be backed up"
 msgstr ""
-"Αδυναμία δημιουργίας αντιγράφου ασφαλείας για τα αποθηκευμένα παιχνίδια ("
-"game saves)"
+"Αδυναμία δημιουργίας αντιγράφου ασφαλείας για τα αποθηκευμένα παιχνίδια "
+"(game saves)"
 
 #: backends/platform/android/options.cpp:282
 msgid "An error occured while saving the backup."
