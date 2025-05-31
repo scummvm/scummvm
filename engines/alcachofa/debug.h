@@ -40,8 +40,7 @@ class ClosestFloorPointDebugHandler final : public IDebugHandler {
 public:
 	ClosestFloorPointDebugHandler(int32 polygonI) : _polygonI(polygonI) {}
 
-	virtual void update() override
-	{
+	virtual void update() override {
 		auto mousePos2D = g_engine->input().debugInput().mousePos2D();
 		auto mousePos3D = g_engine->input().debugInput().mousePos3D();
 		auto floor = g_engine->player().currentRoom()->activeFloor();
@@ -64,8 +63,7 @@ class FloorIntersectionsDebugHandler final : public IDebugHandler {
 public:
 	FloorIntersectionsDebugHandler(int32 polygonI) : _polygonI(polygonI) {}
 
-	virtual void update() override
-	{
+	virtual void update() override {
 		auto floor = g_engine->player().currentRoom()->activeFloor();
 		auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
 		if (floor == nullptr || renderer == nullptr)
@@ -90,8 +88,7 @@ public:
 private:
 	static constexpr float kMarkerLength = 16;
 
-	void drawIntersectionsFor(const Polygon& polygon, IDebugRenderer* renderer)
-	{
+	void drawIntersectionsFor(const Polygon &polygon, IDebugRenderer *renderer) {
 		auto &camera = g_engine->camera();
 		auto mousePos2D = g_engine->input().debugInput().mousePos2D();
 		auto mousePos3D = g_engine->input().debugInput().mousePos3D();
@@ -104,7 +101,7 @@ private:
 			auto mid = (a + b) / 2;
 			auto length = sqrtf(a.sqrDist(b));
 			auto normal = a - b;
-			normal = { normal.y, (int16)-normal.x};
+			normal = { normal.y, (int16)-normal.x };
 			auto inner = mid + normal * (kMarkerLength / length);
 
 			renderer->debugPolyline(a, b, kDebugGreen);
@@ -118,8 +115,7 @@ class TeleportCharacterDebugHandler final : public IDebugHandler {
 public:
 	TeleportCharacterDebugHandler(int32 kindI) : _kind((MainCharacterKind)kindI) {}
 
-	virtual void update() override
-	{
+	virtual void update() override {
 		g_engine->drawQueue().clear();
 		g_engine->player().drawCursor(true);
 		g_engine->drawQueue().draw();
@@ -149,8 +145,7 @@ public:
 	}
 
 private:
-	void teleport(MainCharacter &character, Point position)
-	{
+	void teleport(MainCharacter &character, Point position) {
 		auto currentRoom = g_engine->player().currentRoom();
 		if (character.room() != currentRoom)
 		{

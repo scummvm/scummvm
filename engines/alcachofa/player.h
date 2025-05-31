@@ -32,7 +32,7 @@ public:
 
 	inline Room *currentRoom() const { return _currentRoom; }
 	inline MainCharacter *activeCharacter() const { return _activeCharacter; }
-    inline ShapeObject *&selectedObject() { return _selectedObject; }
+	inline ShapeObject *&selectedObject() { return _selectedObject; }
 	inline void *&pressedObject() { return _pressedObject; }
 	inline Item *&heldItem() { return _heldItem; }
 	inline FakeSemaphore &semaphore() { return _semaphore; }
@@ -69,8 +69,8 @@ private:
 	Room *_currentRoom = nullptr,
 		*_roomBeforeInventory = nullptr;
 	MainCharacter *_activeCharacter;
-    ShapeObject *_selectedObject = nullptr;
-    void *_pressedObject = nullptr; // terrible but GlobalUI wants to store a Graphic pointer
+	ShapeObject *_selectedObject = nullptr;
+	void *_pressedObject = nullptr; // terrible but GlobalUI wants to store a Graphic pointer
 	Item *_heldItem = nullptr;
 	int32 _cursorFrameI = 0;
 	bool

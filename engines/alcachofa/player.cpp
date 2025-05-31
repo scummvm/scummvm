@@ -253,7 +253,7 @@ private:
 
 void Player::triggerDoor(const Door *door) {
 	_heldItem = nullptr;
-	
+
 	FakeLock lock(_activeCharacter->semaphore());
 	g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
 }

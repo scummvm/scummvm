@@ -91,8 +91,7 @@ EdgeDistances Polygon::edgeDistances(uint startPointI, const Point &query) const
 	return distances;
 }
 
-static Point wiggleOnToLine(Point a, Point b, Point q)
-{
+static Point wiggleOnToLine(Point a, Point b, Point q) {
 	// due to rounding errors contains(bestPoint) might be false for on-edge closest points, let's fix that
 	// maybe there is a more mathematical solution to this, but it suffices for now
 	if (sideOfLine(a, b, q) >= 0) return q;
@@ -104,8 +103,7 @@ static Point wiggleOnToLine(Point a, Point b, Point q)
 	return q;
 }
 
-Point Polygon::closestPointTo(const Common::Point& query, float &distanceSqr) const
-{
+Point Polygon::closestPointTo(const Common::Point &query, float &distanceSqr) const {
 	assert(_points.size() > 0);
 	Common::Point bestPoint = {};
 	distanceSqr = std::numeric_limits<float>::infinity();
@@ -123,7 +121,7 @@ Point Polygon::closestPointTo(const Common::Point& query, float &distanceSqr) co
 		}
 		if (edgeDists._onEdge >= 0.0f && edgeDists._onEdge <= edgeDists._edgeLength)
 		{
-			float edgeDistSqr = powf(edgeDists._toEdge , 2.0f);
+			float edgeDistSqr = powf(edgeDists._toEdge, 2.0f);
 			if (edgeDistSqr < distanceSqr)
 			{
 				distanceSqr = edgeDistSqr;
@@ -131,7 +129,7 @@ Point Polygon::closestPointTo(const Common::Point& query, float &distanceSqr) co
 				bestPoint = _points[i] + (_points[j] - _points[i]) * (edgeDists._onEdge / edgeDists._edgeLength);
 				bestPoint = wiggleOnToLine(_points[i], _points[j], bestPoint);
 			}
-		}		
+		}
 	}
 	return bestPoint;
 }
@@ -307,8 +305,7 @@ bool Shape::contains(const Point &query) const {
 	return polygonContaining(query) >= 0;
 }
 
-Point Shape::closestPointTo(const Point &query, int32 &polygonI) const
-{
+Point Shape::closestPointTo(const Point &query, int32 &polygonI) const {
 	assert(_polygons.size() > 0);
 	float bestDistanceSqr = std::numeric_limits<float>::infinity();
 	Point bestPoint = {};
@@ -383,7 +380,7 @@ float PathFindingShape::depthAt(const Point &query) const {
 }
 
 PathFindingShape::LinkPolygonIndices::LinkPolygonIndices() {
-	Common::fill(_points, _points + kPointsPerPolygon, LinkIndex( -1, -1 ));
+	Common::fill(_points, _points + kPointsPerPolygon, LinkIndex(-1, -1));
 }
 
 static Pair<int32, int32> orderPoints(const Polygon &polygon, int32 point1, int32 point2) {

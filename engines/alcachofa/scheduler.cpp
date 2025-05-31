@@ -57,9 +57,10 @@ Task *Task::delay(uint32 millis) {
 
 DelayTask::DelayTask(Process &process, uint32 millis)
 	: Task(process)
-	, _endTime(millis) {}
+	, _endTime(millis) {
+}
 
-TaskReturn DelayTask::run(){
+TaskReturn DelayTask::run() {
 	TASK_BEGIN;
 	_endTime += g_system->getMillis();
 	while (g_system->getMillis() < _endTime)
@@ -112,7 +113,7 @@ void Process::debugPrint() {
 	const char *characterName;
 	switch (_character) {
 	case MainCharacterKind::None: characterName = "    <none>"; break;
-	case MainCharacterKind::Filemon: characterName =   " Filemon"; break;
+	case MainCharacterKind::Filemon: characterName = " Filemon"; break;
 	case MainCharacterKind::Mortadelo: characterName = "Mortadelo"; break;
 	default: characterName = "<invalid>"; break;
 	}

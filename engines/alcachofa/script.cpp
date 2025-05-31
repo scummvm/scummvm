@@ -41,7 +41,8 @@ enum ScriptDebugLevel {
 
 ScriptInstruction::ScriptInstruction(ReadStream &stream)
 	: _op((ScriptOp)stream.readSint32LE())
-	, _arg(stream.readSint32LE()) {}
+	, _arg(stream.readSint32LE()) {
+}
 
 Script::Script() {
 	File file;
@@ -122,7 +123,8 @@ bool Script::hasProcedure(const Common::String &procedure) const {
 struct ScriptTimerTask : public Task {
 	ScriptTimerTask(Process &process, int32 durationSec)
 		: Task(process)
-		, _durationSec(durationSec) {}
+		, _durationSec(durationSec) {
+	}
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
@@ -211,7 +213,7 @@ struct ScriptTask : public Task {
 				if (_stack.empty())
 					debug("empty");
 				else {
-					const auto& top = _stack.top();
+					const auto &top = _stack.top();
 					switch (top._type) {
 					case StackEntryType::Number: debug("Number %d", top._number); break;
 					case StackEntryType::Variable: debug("Var %u (%d)", top._index, _script._variables[top._index]); break;
@@ -454,7 +456,7 @@ private:
 	TObject *getObjectArg(uint argI) {
 		const char *const name = getStringArg(argI);
 		auto *object = g_engine->world().getObjectByName(process().character(), name);
-		return dynamic_cast<TObject*>(object);
+		return dynamic_cast<TObject *>(object);
 	}
 
 	MainCharacter &relatedCharacter() {
@@ -564,8 +566,8 @@ private:
 		case ScriptKernelTask::LerpWorldLodBias:
 			warning("STUB KERNEL CALL: LerpWorldLodBias");
 			return TaskReturn::finish(0);
-		
-		// object control / animation
+
+			// object control / animation
 		case ScriptKernelTask::On:
 			g_engine->world().toggleObject(process().character(), getStringArg(0), true);
 			return TaskReturn::finish(0);
@@ -604,7 +606,7 @@ private:
 			auto character = getObjectArg<WalkingCharacter>(0);
 			if (character == nullptr)
 				error("Script tried to make invalid character go: %s", getStringArg(0));
-			auto target= getObjectArg<PointObject>(1);
+			auto target = getObjectArg<PointObject>(1);
 			if (target == nullptr)
 				error("Script tried to make character go to invalid object %s", getStringArg(1));
 			character->walkTo(target->position());
@@ -722,7 +724,7 @@ private:
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ClearInventory:
-			switch((MainCharacterKind)getNumberArg(0)) {
+			switch ((MainCharacterKind)getNumberArg(0)) {
 			case MainCharacterKind::Mortadelo: g_engine->world().mortadelo().clearInventory(); break;
 			case MainCharacterKind::Filemon: g_engine->world().filemon().clearInventory(); break;
 			default: error("Script attempted to clear inventory with invalid character kind"); break;
@@ -855,7 +857,7 @@ private:
 	}
 
 	/**
-	 * @brief Check for original bugs related to the Put kernel call and handle them 
+	 * @brief Check for original bugs related to the Put kernel call and handle them
 	 * @param target An out reference to the point object (maybe we can find an alternative one)
 	 * @param targetName The given name of the target object
 	 * @return false if the put kernel call should be ignored, true if we set target and want to continue with the kernel call

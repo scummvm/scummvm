@@ -560,9 +560,8 @@ void World::toggleObject(MainCharacterKind character, const char *objName, bool 
 	ObjectBase *object = getObjectByName(character, objName);
 	if (object == nullptr)
 		object = getObjectByNameFromAnyRoom(objName);
-	if (object == nullptr)
+	if (object == nullptr) // I would have liked an error for this, but original inconsistencies...
 		warning("Tried to toggle unknown object: %s", objName);
-		// I would have liked an error for this, but original inconsistencies...
 	else
 		object->toggle(isEnabled);
 }

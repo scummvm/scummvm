@@ -188,8 +188,7 @@ struct CenterBottomTextTask : public Task {
 		, _durationMs(durationMs) {
 	}
 
-	TaskReturn run() override
-	{
+	TaskReturn run() override {
 		Font &font = g_engine->globalUI().dialogFont();
 		const char *text = g_engine->world().getDialogLine(_dialogId);
 		const Point pos(
@@ -209,8 +208,7 @@ struct CenterBottomTextTask : public Task {
 		TASK_END;
 	}
 
-	void debugPrint() override
-	{
+	void debugPrint() override {
 		uint32 remaining = g_system->getMillis() - _startTime <= _durationMs
 			? _durationMs - (g_system->getMillis() - _startTime)
 			: 0;

@@ -44,8 +44,10 @@ namespace Alcachofa {
 
 AlcachofaEngine *g_engine;
 
-AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Alcachofa") {
+AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc)
+	: Engine(syst)
+	, _gameDescription(gameDesc)
+	, _randomSource("Alcachofa") {
 	g_engine = this;
 }
 
@@ -104,7 +106,7 @@ Common::Error AlcachofaEngine::run() {
 	return Common::kNoError;
 }
 
-void AlcachofaEngine::playVideo(int32 videoId) {	
+void AlcachofaEngine::playVideo(int32 videoId) {
 	Video::MPEGPSDecoder decoder;
 	if (!decoder.loadFile(Common::Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1))))
 		error("Could not find video %d", videoId);
@@ -140,8 +142,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 	decoder.stop();
 }
 
-void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param)
-{
+void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param) {
 	switch (mode)
 	{
 	case DebugMode::ClosestFloorPoint:

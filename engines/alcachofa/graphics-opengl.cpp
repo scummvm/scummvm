@@ -210,7 +210,7 @@ public:
 		 * SRC0_RGB is TEXTURE
 		 * SRC1_RGB/ALPHA is PRIMARY COLOR
 		 * COMBINE_ALPHA is REPLACE
-		 */ 
+		 */
 		switch (blendMode) {
 		case BlendMode::AdditiveAlpha:
 		case BlendMode::Additive:

@@ -492,7 +492,8 @@ Graphic::Graphic(const Graphic &other)
 	, _isLooping(other._isLooping)
 	, _lastTime(other._lastTime)
 	, _frameI(other._frameI)
-	, _depthScale(other._depthScale) {}
+	, _depthScale(other._depthScale) {
+}
 
 void Graphic::loadResources() {
 	if (_animation != nullptr)
@@ -745,23 +746,24 @@ void TextDrawRequest::draw() {
 FadeDrawRequest::FadeDrawRequest(FadeType type, float value, int8 order)
 	: IDrawRequest(order)
 	, _type(type)
-	, _value(value) {}
+	, _value(value) {
+}
 
 void FadeDrawRequest::draw() {
 	Color color;
 	const byte valueAsByte = (byte)(_value * 255);
 	switch (_type) {
-		case FadeType::ToBlack:
-			color = { 0, 0, 0, valueAsByte };
-			g_engine->renderer().setBlendMode(BlendMode::AdditiveAlpha);
-			break;
-		case FadeType::ToWhite:
-			color = { valueAsByte, valueAsByte, valueAsByte, valueAsByte };
-			g_engine->renderer().setBlendMode(BlendMode::Additive);
-			break;
-		default:
-			assert(false && "Invalid fade type");
-			return;
+	case FadeType::ToBlack:
+		color = { 0, 0, 0, valueAsByte };
+		g_engine->renderer().setBlendMode(BlendMode::AdditiveAlpha);
+		break;
+	case FadeType::ToWhite:
+		color = { valueAsByte, valueAsByte, valueAsByte, valueAsByte };
+		g_engine->renderer().setBlendMode(BlendMode::Additive);
+		break;
+	default:
+		assert(false && "Invalid fade type");
+		return;
 	}
 	g_engine->renderer().setTexture(nullptr);
 	g_engine->renderer().quad(Vector2d(0, 0), as2D(Point(g_system->getWidth(), g_system->getHeight())), color);
@@ -780,7 +782,8 @@ struct FadeTask : public Task {
 		, _duration(duration)
 		, _easingType(easingType)
 		, _order(order)
-		, _permanentFadeAction(permanentFadeAction){}
+		, _permanentFadeAction(permanentFadeAction) {
+	}
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
