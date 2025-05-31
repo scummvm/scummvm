@@ -59,7 +59,7 @@ public:
 	virtual void loadResources();
 	virtual void freeResources();
 	virtual void serializeSave(Common::Serializer &serializer);
-	ObjectBase *getObjectByName(const Common::String &name) const;
+	ObjectBase *getObjectByName(const char *name) const;
 	void toggleActiveFloor();
 	void debugPrint(bool withObjects) const;
 
@@ -163,15 +163,15 @@ public:
 
 	MainCharacter &getMainCharacterByKind(MainCharacterKind kind) const;
 	MainCharacter &getOtherMainCharacterByKind(MainCharacterKind kind) const;
-	Room *getRoomByName(const Common::String &name) const;
-	ObjectBase *getObjectByName(const Common::String &name) const;
-	ObjectBase *getObjectByName(MainCharacterKind character, const Common::String &name) const;
-	ObjectBase *getObjectByNameFromAnyRoom(const Common::String &name) const;
+	Room *getRoomByName(const char *name) const;
+	ObjectBase *getObjectByName(const char *name) const;
+	ObjectBase *getObjectByName(MainCharacterKind character, const char *name) const;
+	ObjectBase *getObjectByNameFromAnyRoom(const char *name) const;
 	const Common::String &getGlobalAnimationName(GlobalAnimationKind kind) const;
 	const char *getLocalizedName(const Common::String &name) const;
 	const char *getDialogLine(int32 dialogId) const;
 
-	void toggleObject(MainCharacterKind character, const Common::String &objName, bool isEnabled);
+	void toggleObject(MainCharacterKind character, const char *objName, bool isEnabled);
 
 private:
 	bool loadWorldFile(const char *path);

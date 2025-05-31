@@ -120,7 +120,7 @@ Room::~Room() {
 		delete object;
 }
 
-ObjectBase *Room::getObjectByName(const Common::String &name) const {
+ObjectBase *Room::getObjectByName(const char *name) const {
 	for (auto *object : _objects) {
 		if (object->name().equalsIgnoreCase(name))
 			return object;
@@ -512,7 +512,7 @@ MainCharacter &World::getOtherMainCharacterByKind(MainCharacterKind kind) const 
 	}
 }
 
-Room *World::getRoomByName(const Common::String &name) const {
+Room *World::getRoomByName(const char *name) const {
 	for (auto *room : _rooms) {
 		if (room->name().equalsIgnoreCase(name))
 			return room;
@@ -520,7 +520,7 @@ Room *World::getRoomByName(const Common::String &name) const {
 	return nullptr;
 }
 
-ObjectBase *World::getObjectByName(const Common::String &name) const {
+ObjectBase *World::getObjectByName(const char *name) const {
 	ObjectBase *result = nullptr;
 	if (result == nullptr && g_engine->player().currentRoom() != nullptr)
 		result = g_engine->player().currentRoom()->getObjectByName(name);
@@ -531,7 +531,7 @@ ObjectBase *World::getObjectByName(const Common::String &name) const {
 	return result;
 }
 
-ObjectBase *World::getObjectByName(MainCharacterKind character, const Common::String &name) const {
+ObjectBase *World::getObjectByName(MainCharacterKind character, const char *name) const {
 	if (character == MainCharacterKind::None)
 		return getObjectByName(name);
 	const auto &player = g_engine->player();
@@ -547,7 +547,7 @@ ObjectBase *World::getObjectByName(MainCharacterKind character, const Common::St
 	return result;
 }
 
-ObjectBase *World::getObjectByNameFromAnyRoom(const Common::String &name) const {
+ObjectBase *World::getObjectByNameFromAnyRoom(const char *name) const {
 	for (auto *room : _rooms) {
 		ObjectBase *result = room->getObjectByName(name);
 		if (result != nullptr)
@@ -556,12 +556,12 @@ ObjectBase *World::getObjectByNameFromAnyRoom(const Common::String &name) const 
 	return nullptr;
 }
 
-void World::toggleObject(MainCharacterKind character, const Common::String &objName, bool isEnabled) {
+void World::toggleObject(MainCharacterKind character, const char *objName, bool isEnabled) {
 	ObjectBase *object = getObjectByName(character, objName);
 	if (object == nullptr)
 		object = getObjectByNameFromAnyRoom(objName);
 	if (object == nullptr)
-		warning("Tried to toggle unknown object: %s", objName.c_str());
+		warning("Tried to toggle unknown object: %s", objName);
 		// I would have liked an error for this, but original inconsistencies...
 	else
 		object->toggle(isEnabled);
