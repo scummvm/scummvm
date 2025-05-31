@@ -72,11 +72,11 @@ void initGraphics(int width, int height);
 /**
  * @overload
  */
-void initGraphics(int width, int height, const Graphics::PixelFormat *format);
+void initGraphics(int width, int height, const Graphics::PixelFormat *format, bool required = true);
 /**
  * @overload
  */
-void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList);
+void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList, bool required = true);
 /**
  * @overload
  */
