@@ -48,7 +48,7 @@ void LogicManager::CONS_Hadija(int chapter) {
 		CONS_Hadija_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,19 +69,25 @@ void LogicManager::CONS_Hadija_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterHadija).characterPosition.position = 0;
-			getCharacter(kCharacterHadija).characterPosition.location = 0;
-			getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterHadija)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterHadija, kCarGreenSleeping, getCharacterCurrentParams(kCharacterHadija)[0])) {
+			if (getCharacterCurrentParams(kCharacterHadija)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterHadija)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterHadija)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterHadija, kCarGreenSleeping, getCharacterCurrentParams(kCharacterHadija)[0])) {
-		if (getCharacterCurrentParams(kCharacterHadija)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterHadija)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterHadija)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterHadija).characterPosition.position = 0;
+		getCharacter(kCharacterHadija).characterPosition.location = 0;
+		getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterHadija)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -100,14 +106,19 @@ void LogicManager::CONS_Hadija_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterHadija, getCharacterCurrentParams(kCharacterHadija)[3]);
 		getCharacter(kCharacterHadija).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHadija, _functionsHadija[getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall]]);
 		fedEx(kCharacterHadija, kCharacterHadija, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterHadija, (char *)&getCharacterCurrentParams(kCharacterHadija)[0]);
 		blockAtDoor(kCharacterHadija, getCharacterCurrentParams(kCharacterHadija)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -124,12 +135,17 @@ void LogicManager::CONS_Hadija_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterHadija).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHadija, _functionsHadija[getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall]]);
 		fedEx(kCharacterHadija, kCharacterHadija, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterHadija, (char *)&getCharacterCurrentParams(kCharacterHadija)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -147,7 +163,8 @@ void LogicManager::CONS_Hadija_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterHadija)[1] || (getCharacterCurrentParams(kCharacterHadija)[1] = _gameTime + getCharacterCurrentParams(kCharacterHadija)[0], _gameTime + getCharacterCurrentParams(kCharacterHadija)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterHadija)[1] >= _gameTime)
 				return;
@@ -158,6 +175,9 @@ void LogicManager::HAND_Hadija_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterHadija).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHadija, _functionsHadija[getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall]]);
 		fedEx(kCharacterHadija, kCharacterHadija, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -214,11 +234,13 @@ void LogicManager::CONS_Hadija_PeekF(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_PeekF(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHadija).characterPosition.position = 2740;
 		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
 		HadijaCall(&LogicManager::CONS_Hadija_DoCorrOtis, "619Cf", 6, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] == 1) {
 			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
 			HadijaCall(&LogicManager::CONS_Hadija_DoCorrOtis, "619Df", 6, 0, 0);
@@ -230,6 +252,10 @@ void LogicManager::HAND_Hadija_PeekF(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHadija, _functionsHadija[getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall]]);
 			fedEx(kCharacterHadija, kCharacterHadija, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -244,11 +270,13 @@ void LogicManager::CONS_Hadija_PeekH(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_PeekH(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHadija).characterPosition.position = 2740;
 		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
 		HadijaCall(&LogicManager::CONS_Hadija_DoCorrOtis, "619Ch", 8, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] == 1) {
 			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
 			HadijaCall(&LogicManager::CONS_Hadija_DoCorrOtis, "619Dh", 8, 0, 0);
@@ -260,6 +288,10 @@ void LogicManager::HAND_Hadija_PeekH(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHadija, _functionsHadija[getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall]]);
 			fedEx(kCharacterHadija, kCharacterHadija, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -274,12 +306,14 @@ void LogicManager::CONS_Hadija_GoFtoH(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_GoFtoH(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHadija).characterPosition.position = 4070;
 		getCharacter(kCharacterHadija).characterPosition.location = 0;
 		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
 		HadijaCall(&LogicManager::CONS_Hadija_DoCorrOtis, "619Bf", 6, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
@@ -298,6 +332,10 @@ void LogicManager::HAND_Hadija_GoFtoH(HAND_PARAMS) {
 			fedEx(kCharacterHadija, kCharacterHadija, 18, 0);
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -312,12 +350,14 @@ void LogicManager::CONS_Hadija_GoHtoF(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_GoHtoF(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHadija).characterPosition.position = 2740;
 		getCharacter(kCharacterHadija).characterPosition.location = 0;
 		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
 		HadijaCall(&LogicManager::CONS_Hadija_DoCorrOtis, "619Bh", 8, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
@@ -336,6 +376,10 @@ void LogicManager::HAND_Hadija_GoHtoF(HAND_PARAMS) {
 			fedEx(kCharacterHadija, kCharacterHadija, 18, 0);
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -350,15 +394,21 @@ void LogicManager::CONS_Hadija_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Birth(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterHadija)[0]) {
 			getCharacterCurrentParams(kCharacterHadija)[0] = 1;
 			CONS_Hadija_Part1(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterHadija).characterPosition.position = 4070;
 		getCharacter(kCharacterHadija).characterPosition.location = 1;
 		getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -373,82 +423,158 @@ void LogicManager::CONS_Hadija_Part1(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Part1(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8]) {
-			case 1:
-				goto LABEL_8;
-			case 2:
-				goto LABEL_11;
-			case 3:
-				goto LABEL_21;
-			case 4:
-				goto LABEL_24;
-			default:
-				return;
-			}
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1075500 && !getCharacterCurrentParams(kCharacterHadija)[0]) {
+			getCharacterCurrentParams(kCharacterHadija)[0] = 1;
+			getCharacter(kCharacterHadija).characterPosition.position = 4840;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
+			HadijaCall(&LogicManager::CONS_Hadija_DoDialog, "Har1100", 0, 0, 0);
+			break;
 		}
-		return;
-	}
-	if (_gameTime > 1075500 && !getCharacterCurrentParams(kCharacterHadija)[0]) {
-		getCharacterCurrentParams(kCharacterHadija)[0] = 1;
-		getCharacter(kCharacterHadija).characterPosition.position = 4840;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
-		HadijaCall(&LogicManager::CONS_Hadija_DoDialog, "Har1100", 0, 0, 0);
-		return;
-	}
-LABEL_8:
-	if (_gameTime > 1084500 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
-		getCharacterCurrentParams(kCharacterHadija)[1] = 1;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
-		HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
-		return;
-	}
-LABEL_11:
-	if (getCharacterCurrentParams(kCharacterHadija)[2] != 0x7FFFFFFF && _gameTime > 1093500) {
-		if (_gameTime > 1134000)
-			goto LABEL_19;
-		if (!cathInCorridor(kCarGreenSleeping) ||
-			!inComp(kCharacterMahmud, kCarGreenSleeping, 5790) ||
-			!getCharacterCurrentParams(kCharacterHadija)[2]) {
-			getCharacterCurrentParams(kCharacterHadija)[2] = _gameTime + 75;
-			if (_gameTime == -75)
-				goto LABEL_20;
+
+		if (_gameTime > 1084500 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
+			getCharacterCurrentParams(kCharacterHadija)[1] = 1;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+			HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
+			break;
 		}
-		if (getCharacterCurrentParams(kCharacterHadija)[2] < _gameTime) {
-		LABEL_19:
-			getCharacterCurrentParams(kCharacterHadija)[2] = 0x7FFFFFFF;
-		LABEL_20:
-			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
-			HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
-			return;
-		}
-	}
-LABEL_21:
-	if (_gameTime > 1156500 && !getCharacterCurrentParams(kCharacterHadija)[3]) {
-		getCharacterCurrentParams(kCharacterHadija)[3] = 1;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
-		HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
-		return;
-	}
-LABEL_24:
-	if (getCharacterCurrentParams(kCharacterHadija)[4] != 0x7FFFFFFF && _gameTime > 1165500) {
-		if (_gameTime <= 1188000) {
-			if (!cathInCorridor(kCarGreenSleeping) || !
-				inComp(kCharacterMahmud, kCarGreenSleeping, 5790) ||
-				!getCharacterCurrentParams(kCharacterHadija)[4]) {
-				getCharacterCurrentParams(kCharacterHadija)[4] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_33;
+
+		if (getCharacterCurrentParams(kCharacterHadija)[2] != 0x7FFFFFFF && _gameTime > 1093500) {
+			if (_gameTime > 1134000) {
+				getCharacterCurrentParams(kCharacterHadija)[2] = 0x7FFFFFFF;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+				HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
+				break;
 			}
 
-			if (getCharacterCurrentParams(kCharacterHadija)[4] >= _gameTime)
-				return;
+			if (!cathInCorridor(kCarGreenSleeping) ||
+				!inComp(kCharacterMahmud, kCarGreenSleeping, 5790) ||
+				!getCharacterCurrentParams(kCharacterHadija)[2]) {
+				getCharacterCurrentParams(kCharacterHadija)[2] = _gameTime + 75;
+				if (_gameTime == -75) {
+					getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+					HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterHadija)[2] < _gameTime) {
+				getCharacterCurrentParams(kCharacterHadija)[2] = 0x7FFFFFFF;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+				HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
+				break;
+			}
 		}
-		getCharacterCurrentParams(kCharacterHadija)[4] = 0x7FFFFFFF;
-	LABEL_33:
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
-		HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+
+		if (_gameTime > 1156500 && !getCharacterCurrentParams(kCharacterHadija)[3]) {
+			getCharacterCurrentParams(kCharacterHadija)[3] = 1;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+			HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+			return;
+		}
+
+		if (getCharacterCurrentParams(kCharacterHadija)[4] != 0x7FFFFFFF && _gameTime > 1165500) {
+			if (_gameTime <= 1188000) {
+				if (!cathInCorridor(kCarGreenSleeping) || !inComp(kCharacterMahmud, kCarGreenSleeping, 5790) ||
+					!getCharacterCurrentParams(kCharacterHadija)[4]) {
+					getCharacterCurrentParams(kCharacterHadija)[4] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+						HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterHadija)[4] >= _gameTime)
+					break;
+			}
+
+			getCharacterCurrentParams(kCharacterHadija)[4] = 0x7FFFFFFF;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+			HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8]) {
+		case 1:
+			if (_gameTime > 1084500 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
+				getCharacterCurrentParams(kCharacterHadija)[1] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+				HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 2:
+			if (getCharacterCurrentParams(kCharacterHadija)[2] != 0x7FFFFFFF && _gameTime > 1093500) {
+				if (_gameTime > 1134000) {
+					getCharacterCurrentParams(kCharacterHadija)[2] = 0x7FFFFFFF;
+					getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+					HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
+					break;
+				}
+
+				if (!cathInCorridor(kCarGreenSleeping) ||
+					!inComp(kCharacterMahmud, kCarGreenSleeping, 5790) ||
+					!getCharacterCurrentParams(kCharacterHadija)[2]) {
+					getCharacterCurrentParams(kCharacterHadija)[2] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+						HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterHadija)[2] < _gameTime) {
+					getCharacterCurrentParams(kCharacterHadija)[2] = 0x7FFFFFFF;
+					getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+					HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
+					break;
+				}
+			}
+
+			// fall through
+		case 3:
+			if (_gameTime > 1156500 && !getCharacterCurrentParams(kCharacterHadija)[3]) {
+				getCharacterCurrentParams(kCharacterHadija)[3] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+				HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 4:
+			if (getCharacterCurrentParams(kCharacterHadija)[4] != 0x7FFFFFFF && _gameTime > 1165500) {
+				if (_gameTime <= 1188000) {
+					if (!cathInCorridor(kCarGreenSleeping) || !inComp(kCharacterMahmud, kCarGreenSleeping, 5790) ||
+						!getCharacterCurrentParams(kCharacterHadija)[4]) {
+						getCharacterCurrentParams(kCharacterHadija)[4] = _gameTime + 75;
+						if (_gameTime == -75) {
+							getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+							HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterHadija)[4] >= _gameTime)
+						break;
+				}
+
+				getCharacterCurrentParams(kCharacterHadija)[4] = 0x7FFFFFFF;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+				HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -463,12 +589,16 @@ void LogicManager::CONS_Hadija_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(8, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterHadija).characterPosition.position = 2740;
 		getCharacter(kCharacterHadija).characterPosition.location = 1;
 		getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
 		endGraphics(kCharacterHadija);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -483,7 +613,8 @@ void LogicManager::CONS_Hadija_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterHadija);
 		getCharacter(kCharacterHadija).characterPosition.position = 3050;
 		getCharacter(kCharacterHadija).characterPosition.location = 1;
@@ -491,6 +622,9 @@ void LogicManager::HAND_Hadija_StartPart2(HAND_PARAMS) {
 		getCharacter(kCharacterHadija).clothes = 0;
 		getCharacter(kCharacterHadija).inventoryItem = kItemNone;
 		CONS_Hadija_Part2(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -505,47 +639,67 @@ void LogicManager::CONS_Hadija_Part2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Part2(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1782000 && !getCharacterCurrentParams(kCharacterHadija)[0]) {
 			getCharacterCurrentParams(kCharacterHadija)[0] = 1;
 			getCharacter(kCharacterHadija).characterPosition.position = 2740;
 		}
 
-		if (getCharacterCurrentParams(kCharacterHadija)[1] == 0x7FFFFFFF || _gameTime <= 1786500)
-			goto LABEL_19;
+		if (getCharacterCurrentParams(kCharacterHadija)[1] == 0x7FFFFFFF || _gameTime <= 1786500) {
+			if (_gameTime > 1822500 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
+				getCharacterCurrentParams(kCharacterHadija)[2] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+				HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+			}
+
+			break;
+		}
 
 		if (_gameTime <= 1818000) {
 			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[1]) {
 				getCharacterCurrentParams(kCharacterHadija)[1] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_15;
+				if (_gameTime == -75) {
+					getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
+					HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
+					break;
+				}
 			}
 
-			if (getCharacterCurrentParams(kCharacterHadija)[1] >= _gameTime)
-				goto LABEL_19;
+			if (getCharacterCurrentParams(kCharacterHadija)[1] >= _gameTime) {
+				if (_gameTime > 1822500 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
+					getCharacterCurrentParams(kCharacterHadija)[2] = 1;
+					getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+					HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+				}
+
+				break;
+			}
 		}
+
 		getCharacterCurrentParams(kCharacterHadija)[1] = 0x7FFFFFFF;
-	LABEL_15:
 		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
 		HadijaCall(&LogicManager::CONS_Hadija_PeekH, 0, 0, 0, 0);
-		return;
-	}
+		break;
+	case 18:
+		if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] != 1) {
+			if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] == 2) {
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+				HadijaCall(&LogicManager::CONS_Hadija_DoDialog, "Har2012", 0, 0, 0);
+			}
 
-	if (msg->action != 18)
-		return;
-
-	if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] != 1) {
-		if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] == 2) {
-			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
-			HadijaCall(&LogicManager::CONS_Hadija_DoDialog, "Har2012", 0, 0, 0);
+			break;
 		}
-		return;
-	}
-LABEL_19:
-	if (_gameTime > 1822500 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
-		getCharacterCurrentParams(kCharacterHadija)[2] = 1;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
-		HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+
+		if (_gameTime > 1822500 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
+			getCharacterCurrentParams(kCharacterHadija)[2] = 1;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+			HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -560,13 +714,18 @@ void LogicManager::CONS_Hadija_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_StartPart3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Hadija_Part3(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterHadija);
 		getCharacter(kCharacterHadija).characterPosition.position = 4070;
 		getCharacter(kCharacterHadija).characterPosition.location = 1;
 		getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -581,65 +740,115 @@ void LogicManager::CONS_Hadija_Part3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Part3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8]) {
-			case 1:
-				goto LABEL_8;
-			case 2:
-				goto LABEL_11;
-			case 3:
-				goto LABEL_14;
-			case 4:
-				goto LABEL_17;
-			default:
-				return;
-			}
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1998000 && !getCharacterCurrentParams(kCharacterHadija)[0]) {
+			getCharacterCurrentParams(kCharacterHadija)[0] = 1;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
+			HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
+			return;
 		}
-		return;
-	}
-	if (_gameTime > 1998000 && !getCharacterCurrentParams(kCharacterHadija)[0]) {
-		getCharacterCurrentParams(kCharacterHadija)[0] = 1;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
-		HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
-		return;
-	}
-LABEL_8:
-	if (_gameTime > 2020500 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
-		getCharacterCurrentParams(kCharacterHadija)[1] = 1;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
-		HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
-		return;
-	}
-LABEL_11:
-	if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
-		getCharacterCurrentParams(kCharacterHadija)[2] = 1;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
-		HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
-		return;
-	}
-LABEL_14:
-	if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterHadija)[3]) {
-		getCharacterCurrentParams(kCharacterHadija)[3] = 1;
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
-		HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
-		return;
-	}
-LABEL_17:
-	if (getCharacterCurrentParams(kCharacterHadija)[4] != 0x7FFFFFFF && _gameTime > 2196000) {
-		if (_gameTime <= 2254500) {
-			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[4]) {
-				getCharacterCurrentParams(kCharacterHadija)[4] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_25;
-			}
-			if (getCharacterCurrentParams(kCharacterHadija)[4] >= _gameTime)
-				return;
+
+		if (_gameTime > 2020500 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
+			getCharacterCurrentParams(kCharacterHadija)[1] = 1;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+			HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+			break;
 		}
-		getCharacterCurrentParams(kCharacterHadija)[4] = 0x7FFFFFFF;
-	LABEL_25:
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
-		HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+
+		if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
+			getCharacterCurrentParams(kCharacterHadija)[2] = 1;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+			HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterHadija)[3]) {
+			getCharacterCurrentParams(kCharacterHadija)[3] = 1;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+			HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+			break;
+		}
+
+		if (getCharacterCurrentParams(kCharacterHadija)[4] != 0x7FFFFFFF && _gameTime > 2196000) {
+			if (_gameTime <= 2254500) {
+				if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[4]) {
+					getCharacterCurrentParams(kCharacterHadija)[4] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+						HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterHadija)[4] >= _gameTime)
+					break;
+			}
+
+			getCharacterCurrentParams(kCharacterHadija)[4] = 0x7FFFFFFF;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+			HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8]) {
+		case 1:
+			if (_gameTime > 2020500 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
+				getCharacterCurrentParams(kCharacterHadija)[1] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+				HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 2:
+			if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
+				getCharacterCurrentParams(kCharacterHadija)[2] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+				HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterHadija)[3]) {
+				getCharacterCurrentParams(kCharacterHadija)[3] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+				HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 4:
+			if (getCharacterCurrentParams(kCharacterHadija)[4] != 0x7FFFFFFF && _gameTime > 2196000) {
+				if (_gameTime <= 2254500) {
+					if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[4]) {
+						getCharacterCurrentParams(kCharacterHadija)[4] = _gameTime + 75;
+						if (_gameTime == -75) {
+							getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+							HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterHadija)[4] >= _gameTime)
+						break;
+				}
+
+				getCharacterCurrentParams(kCharacterHadija)[4] = 0x7FFFFFFF;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 5;
+				HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -654,12 +863,17 @@ void LogicManager::CONS_Hadija_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_StartPart4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Hadija_Part4(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterHadija).characterPosition.position = 4070;
 		getCharacter(kCharacterHadija).characterPosition.location = 1;
 		getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -674,65 +888,119 @@ void LogicManager::CONS_Hadija_Part4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Part4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterHadija)[0] != 0x7FFFFFFF && _gameTime) {
-			if (_gameTime > 1714500)
-				goto LABEL_11;
-			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[0]) {
-				getCharacterCurrentParams(kCharacterHadija)[0] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_12;
-			}
-			if (getCharacterCurrentParams(kCharacterHadija)[0] < _gameTime) {
-			LABEL_11:
+			if (_gameTime > 1714500) {
 				getCharacterCurrentParams(kCharacterHadija)[0] = 0x7FFFFFFF;
-			LABEL_12:
 				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
 				HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
-				return;
+				break;
+			}
+
+			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[0]) {
+				getCharacterCurrentParams(kCharacterHadija)[0] = _gameTime + 75;
+				if (_gameTime == -75) {
+					getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
+					HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterHadija)[0] < _gameTime) {
+				getCharacterCurrentParams(kCharacterHadija)[0] = 0x7FFFFFFF;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
+				HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+				break;
 			}
 		}
-	LABEL_17:
+
 		if (_gameTime > 2367000 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
 			getCharacterCurrentParams(kCharacterHadija)[1] = 1;
 			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
 			HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_20:
+
 		if (_gameTime > 2421000 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
 			getCharacterCurrentParams(kCharacterHadija)[2] = 1;
 			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
 			HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
-			return;
+			break;
 		}
-		goto LABEL_23;
-	}
 
-	if (msg->action != 18)
-		return;
+		if (getCharacterCurrentParams(kCharacterHadija)[3] != 0x7FFFFFFF && _gameTime > 2425500) {
+			if (_gameTime <= 2484000) {
+				if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[3]) {
+					getCharacterCurrentParams(kCharacterHadija)[3] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+						HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+						break;
+					}
+				}
 
-	if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] == 1)
-		goto LABEL_17;
-	if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] == 2)
-		goto LABEL_20;
-	if (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] != 3)
-		return;
-LABEL_23:
-	if (getCharacterCurrentParams(kCharacterHadija)[3] != 0x7FFFFFFF && _gameTime > 2425500) {
-		if (_gameTime <= 2484000) {
-			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[3]) {
-				getCharacterCurrentParams(kCharacterHadija)[3] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_31;
+				if (getCharacterCurrentParams(kCharacterHadija)[3] >= _gameTime)
+					break;
 			}
-			if (getCharacterCurrentParams(kCharacterHadija)[3] >= _gameTime)
-				return;
+
+			getCharacterCurrentParams(kCharacterHadija)[3] = 0x7FFFFFFF;
+			getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+			HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
 		}
-		getCharacterCurrentParams(kCharacterHadija)[3] = 0x7FFFFFFF;
-	LABEL_31:
-		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
-		HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8]) {
+		case 1:
+			if (_gameTime > 2367000 && !getCharacterCurrentParams(kCharacterHadija)[1]) {
+				getCharacterCurrentParams(kCharacterHadija)[1] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 2;
+				HadijaCall(&LogicManager::CONS_Hadija_GoFtoH, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 2:
+			if (_gameTime > 2421000 && !getCharacterCurrentParams(kCharacterHadija)[2]) {
+				getCharacterCurrentParams(kCharacterHadija)[2] = 1;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 3;
+				HadijaCall(&LogicManager::CONS_Hadija_GoHtoF, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (getCharacterCurrentParams(kCharacterHadija)[3] != 0x7FFFFFFF && _gameTime > 2425500) {
+				if (_gameTime <= 2484000) {
+					if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterHadija)[3]) {
+						getCharacterCurrentParams(kCharacterHadija)[3] = _gameTime + 75;
+						if (_gameTime == -75) {
+							getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+							HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterHadija)[3] >= _gameTime)
+						break;
+				}
+
+				getCharacterCurrentParams(kCharacterHadija)[3] = 0x7FFFFFFF;
+				getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 4;
+				HadijaCall(&LogicManager::CONS_Hadija_PeekF, 0, 0, 0, 0);
+			}
+
+			break;
+		default:
+			break;
+		}
+
+	
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -747,12 +1015,16 @@ void LogicManager::CONS_Hadija_Asleep4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Asleep4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(8, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterHadija).characterPosition.position = 4070;
 		getCharacter(kCharacterHadija).characterPosition.location = 1;
 		getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
 		endGraphics(kCharacterHadija);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -767,15 +1039,20 @@ void LogicManager::CONS_Hadija_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_StartPart5(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Hadija_Prisoner(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterHadija);
 		getCharacter(kCharacterHadija).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterHadija).characterPosition.position = 3969;
 		getCharacter(kCharacterHadija).characterPosition.location = 1;
 		getCharacter(kCharacterHadija).clothes = 0;
 		getCharacter(kCharacterHadija).inventoryItem = kItemNone;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -790,8 +1067,13 @@ void LogicManager::CONS_Hadija_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_Hadija_Free(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Hadija_Free(CONS_PARAMS) {
@@ -805,7 +1087,8 @@ void LogicManager::CONS_Hadija_Free(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Hadija_Free(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterHadija)[0] ||
 			(getCharacterCurrentParams(kCharacterHadija)[0] = _gameTime + 2700, _gameTime != -2700)) {
 			if (getCharacterCurrentParams(kCharacterHadija)[0] >= _gameTime)
@@ -814,17 +1097,20 @@ void LogicManager::HAND_Hadija_Free(HAND_PARAMS) {
 		}
 
 		CONS_Hadija_Hiding(0, 0, 0, 0);
-		return;
-	}
-	if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterHadija).characterPosition.car = kCarGreenSleeping;
 		getCharacter(kCharacterHadija).characterPosition.position = 5000;
 		getCharacter(kCharacterHadija).characterPosition.location = 0;
-		return;
-	}
-	if (msg->action == 17 && checkLoc(kCharacterCath, kCarGreenSleeping)) {
-		CONS_Hadija_Hiding(0, 0, 0, 0);
-		return;
+		break;
+	case 17:
+		if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
+			CONS_Hadija_Hiding(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -858,6 +1144,8 @@ void LogicManager::HAND_Hadija_Hiding(HAND_PARAMS) {
 		break;
 	case 135800432:
 		CONS_Hadija_Disappear(0, 0, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
