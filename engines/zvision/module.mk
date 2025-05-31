@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	core/console.o \
 	core/clock.o \
 	core/events.o \
+	common/scroller.o \
 	file/lzss_read_stream.o \
 	file/save_manager.o \
 	file/search_manager.o \
@@ -41,8 +42,9 @@ MODULE_OBJS := \
 	scripting/effects/ttytext_effect.o \
 	sound/midi.o \
 	sound/zork_raw.o \
+	sound/volume_manager.o \
 	text/string_manager.o \
-	text/subtitles.o \
+	text/subtitle_manager.o \
 	text/text.o \
 	text/truetype_font.o \
 	video/rlf_decoder.o \

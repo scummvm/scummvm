@@ -24,7 +24,7 @@
 
 #include "audio/mixer.h"
 #include "zvision/scripting/scripting_effect.h"
-#include "zvision/text/subtitles.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace Common {
 class String;
@@ -47,7 +47,7 @@ public:
 private:
 	int32 _syncto;
 	Audio::SoundHandle _handle;
-	Subtitle *_sub;
+	uint16 _sub;
 };
 
 } // End of namespace ZVision

@@ -183,10 +183,10 @@ private:
 
 	EventList _controlEvents;
 
-	ScriptScope universe;
-	ScriptScope world;
-	ScriptScope room;
-	ScriptScope nodeview;
+	ScriptScope _universe;
+	ScriptScope _world;
+	ScriptScope _room;
+	ScriptScope _nodeview;
 
 	/** Holds the currently active timers, musics, other */
 	SideFXList _activeSideFx;
@@ -198,7 +198,7 @@ private:
 	uint32 _currentlyFocusedControl;
 
 public:
-	void initialize();
+	void initialize(bool restarted = false);
 	void update(uint deltaTimeMillis);
 	void queuePuzzles(uint32 key);
 
@@ -345,9 +345,10 @@ private:
 	 *
 	 * @param stream        Scr file stream
 	 * @param actionList    The list where the results will be added
+	 * @param key           Puzzle key (for workarounds)
 	 * @return              Created Results object
 	 */
-	void parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const;
+	void parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList, uint32 key) const;
 
 	/**
 	 * Helper method for parsePuzzle. Parses the stream into a bitwise or of the StateFlags enum
@@ -366,13 +367,23 @@ private:
 	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
+/**
+ * Instances of this polymorphic class function either as a store of a single value, or as a "slot" that returns a StateValue
+ *
+ * @param line      The line initially read
+ * @param slotValue A text string containing a number, which may be enclosed within square braces.
+ *  If square braces are not present, getValue() will return slotValue.
+*  If square braces are present, getValue() will return the StateValue to which slotValue is the key.
+*
+* Once instantiated, the value and nature of slotValue may not be changed.
+ */
 class ValueSlot {
 public:
 	ValueSlot(ScriptManager *scriptManager, const char *slotValue);
 	int16 getValue();
 private:
-	int16 value;
-	bool slot;
+	int16 _value;
+	bool _slot;
 	ScriptManager *_scriptManager;
 };
 

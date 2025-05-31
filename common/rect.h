@@ -296,7 +296,7 @@ struct Rect {
 	}
 
 	/**
-	 * Clip this rectangle with another rectangle @p r.
+	 * Clip this rectangle to within the bounds of another rectangle @p r.
 	 */
 	void clip(const Rect &r) {
 		assert(isValidRect());
@@ -388,8 +388,17 @@ struct Rect {
 	}
 
 	/**
+	* Return a Point indicating the centroid of the rectangle
+	* @note The center point is rounded up and left when width and/or height are odd
+	*/
+	Point center() const {
+		return Point((left + right) / 2, (bottom + top) / 2);
+	}
+
+	/**
 	 * Given target surface with size clip, this function ensures that
-	 * blit arguments @p dst and @p rect are within the @p clip rectangle.
+	 * blit arguments @p dst and @p rect are within the @p clip rectangle,
+	 * shrinking them as necessary.
 	 * @param dst  Blit destination coordinates.
 	 * @param rect Blit source rectangle.
 	 * @param clip Clip rectangle (size of destination surface).

@@ -87,16 +87,23 @@ bool DistortNode::process(uint32 deltaTimeInMillis) {
 
 void DistortNode::setParams(float angl, float linScale) {
 	RenderTable *table = _engine->getRenderManager()->getRenderTable();
-	if (table->getRenderState() == RenderTable::PANORAMA) {
+	switch (table->getRenderState()) {
+	case RenderTable::PANORAMA: {
 		table->setPanoramaFoV(angl);
 		table->setPanoramaScale(linScale);
 		table->generateRenderTable();
 		_engine->getRenderManager()->markDirty();
-	} else if (table->getRenderState() == RenderTable::TILT) {
+		break;
+	}
+	case RenderTable::TILT: {
 		table->setTiltFoV(angl);
 		table->setTiltScale(linScale);
 		table->generateRenderTable();
 		_engine->getRenderManager()->markDirty();
+		break;
+	}
+	default:
+		break;
 	}
 }
 
