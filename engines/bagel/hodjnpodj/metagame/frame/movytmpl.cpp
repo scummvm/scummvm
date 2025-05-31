@@ -96,7 +96,7 @@ BOOL CMovieWindow::PlayMovie() {
 	}
 
 	decoder.stop();
-	m_pParent->PostMessage(MOVIE_OVER);
+	m_pParent->PostMessage(WM_COMMAND, MOVIE_OVER);
 
 	return TRUE;
 }
