@@ -27,8 +27,8 @@ namespace MFC {
 namespace Gfx {
 
 SurfaceDC::SurfaceDC(CWnd *owner) : _owner(owner) {
-	auto &surf = owner->_surface;
-	create(surf, Common::Rect(0, 0, surf.w, surf.h));
+	Graphics::Screen *screen = AfxGetApp()->getScreen();
+	create(*screen, Common::Rect(0, 0, screen->w, screen->h));
 }
 
 HPALETTE SurfaceDC::selectPalette(HPALETTE pal) {

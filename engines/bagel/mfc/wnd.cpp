@@ -46,8 +46,8 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	CREATESTRUCT cs;
 	cs.x = rect.left;
 	cs.y = rect.top;
-	cs.cx = rect.right - rect.left + 1;
-	cs.cy = rect.bottom - rect.top + 1;
+	cs.cx = rect.right - rect.left;
+	cs.cy = rect.bottom - rect.top;
 
 	// Trigger pre-create event
 	if (!PreCreateWindow(cs))
