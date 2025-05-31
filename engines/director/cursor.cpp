@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "graphics/macgui/macwindowmanager.h"
 #include "image/image_decoder.h"
 
 #include "graphics/wincursor.h"
@@ -145,8 +146,16 @@ void Cursor::readFromCast(Datum cursorCasts) {
 		offX = 8;
 		offY = 8;
 	}
+	_cursorType = Graphics::kMacCursorCustom;
 	_hotspotX = (uint16)offX;
 	_hotspotY = (uint16)offY;
+	// Returned value will be a list of two multiplexed cast member IDs
+	_cursorResId = Datum();
+	_cursorResId.type = ARRAY;
+	_cursorResId.u.farr = new FArray();
+	_cursorResId.u.farr->arr.push_back(Datum(cursorId.toMultiplex()));
+	_cursorResId.u.farr->arr.push_back(Datum(maskId.toMultiplex()));
+
 }
 
 void Cursor::readBuiltinType(Datum resourceId) {

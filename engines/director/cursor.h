@@ -25,7 +25,8 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 
-#include "engines/director/lingo/lingo.h"
+#include "director/types.h"
+#include "director/lingo/lingo.h"
 
 namespace Graphics {
 class ManagedSurface;
@@ -48,7 +49,7 @@ class Cursor : public Graphics::MacCursor {
 	void readBuiltinType(Datum resourceId);
 	bool readFromArchive(Archive *archive, uint16 resourceId);
 
-	bool isEmpty() {return Datum(0).equalTo(_cursorResId);}
+	bool isEmpty() {return _cursorResId.type != ARRAY && Datum(0).equalTo(_cursorResId);}
 	bool operator==(const Cursor &c);
 	bool operator==(const CursorRef &c);
 

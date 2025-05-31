@@ -224,6 +224,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "grammarplaytime2",	"Grammar Playtime Vol.2: Asking Questions" },
 	{ "gundam0079",			"Gundam 0079: The War for Earth" },
 	{ "guscarn",			"Gus Goes to the Kooky Carnival" },
+	{ "gusmuse",			"Gus Goes to the Megarific Museum" },
 	{ "gusolis",			"Gus Goes to Cyberopolis" },
 	{ "guspark",			"Gus Goes to CyberStone Park" },
 	{ "gussshc",			"Gus and the CyberBuds Software SchoolHouse Collection" },
@@ -485,6 +486,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
 	{ "teazle",				"Teazle" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
+	{ "thequest",			"The Quest" },
 	{ "timmysafari",		"Timmy's Safari Adventure" },
 	{ "tkkg1",				"A Case for TKKG 1: Jennifer is Missing" },
 	{ "tkkg2",				"A Case for TKKG 2: Deadly Chocolate" },
@@ -1212,6 +1214,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "timegal",			"Time Gal" },
 	{ "tokimemotype1",		"ときめきメモリアルタイピング" },					// Tokimeki Memorial Typing
 	{ "tokimemotypegs",		"ときメモGSタイピング" },							// Tokimemo GS Typing (Girl's Side)
+	{ "tripitaka",			"TRIPITAKA 玄奘三蔵求法の旅" },						// TRIPITAKA - Xuanzang Sanzo's Dharma-Seeking Journey
 	{ "truegolf1",			"TrueGolf Part I" },
 	{ "ttw",				"Through the Window: In Search for the Lost Bag" },
 	{ "twinbeeparadise",	"ツインビーPARADISE in どんぶり島" },				// TwinBee Paradise in Donburi Shima
@@ -4407,10 +4410,22 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("gusbuds", "",		"MMV Product Demos for PowerMac", "r:692f6732b6d7deaa00c9b3df57bb30ce", 60068, 404),
 	WINGAME1("gusbuds", "",		"MMVDEMOS.EXE",					  "d:71d4ad9e9dc92a81561476d4d9813492", 692037, 404),
 
-	MACGAME1("guscarn", "", "Gus Goes to the Kooky Carnival", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310, 404),
-	WINGAME1("guscarn", "", "CARNIVAL.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553, 404),
-	WINGAME1_l("guscarn", "", "PRETPARK.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553, Common::NL_NLD, 404),
+	MACGAME2("guscarn", "", "Gus Goes to the Kooky Carnival", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310,
+				"Title.dxr", "t:ceadd61bd30a8602a6ed112a2cc31366", 202112, 404),
+	WINGAME2("guscarn", "", "CARNIVAL.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553,
+				"TITLE.DIR", "t:182a0b3a7491f3d7816fe61cc7e6c20f", 199242, 404),
+	MACGAME2_l("guscarn", "", "Guus in het Pretpark", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310,
+				"Title.dir", "t:48d1c674927d573531d4693f0469eb61", 200576, Common::NL_NLD, 404),
+	WINGAME2_l("guscarn", "", "PRETPARK.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553,
+				"TITLE.DIR", "t:572cfd8f36dbf42fe13d5f9f4bf59f73", 195306, Common::NL_NLD, 404),
 	MACDEMO1("guscarn", "Demo", "Carnival Demo 4 you", "r:67f572196550aedb1f9523d782022be0", 481226, 404),
+
+	MACGAME2("gusmuse", "", "Gus Goes to the Museum", "r:ccfbfc1a0ac231db40a250babaa6ad7c", 285282,
+			"Content/Intro.dir", "t:2b6830757b15dc6546a492df2c3fd032", 115390, 404),
+	WINGAME2("gusmuse", "", "MUSEUM.EXE", "t:a94c1f2c2bb45335edaed96cb99243f7", 697019,
+			"CONTENT/INTRO.DIR", "t:2b6830757b15dc6546a492df2c3fd032", 115390, 404),
+	WINGAME2_l("gusmuse", "", "MUSEUM.EXE", "t:a94c1f2c2bb45335edaed96cb99243f7", 697019,
+			"CONTENT/INTRO.DIR", "t:40fb23b25fd6e873338e9f52d10983f7", 217402, Common::NL_NLD, 404),
 
 	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO", "r:77f4098988d5386794d1530065f514cd", 303961, 404),
 
@@ -5914,6 +5929,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Found on MACLIFE 09 #89
 	MACDEMO1_l("thetowerxmas", "Demo", "TowerXmasDiscDEMO", "b0fb747bd526bd4ba820a4072d009bd0", 481803, Common::JA_JPN, 404),
 
+	// Made by Cartoon Network in 1995, released by Kidsoft/AOL
+	WINGAME1("thequest", "", "movies/thequest.exe", "t:59e3f69b3b057b5a72e8063c5301f559", 726503, 404),
+	MACGAME1("thequest", "", "Mac Movie Folder/TheQuest", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285310, 404),
+
 	// Mac version is not Director
 	// Found on Thinkin' Things Collection 1
 	WINGAME2("thinkinthingsdp", "", "PARENTS.EXE", "t:a6a792efd6524beec7e5ec1619600ecf", 1160899,
@@ -6571,8 +6590,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("compconf", "Windows 3.1", "CCWIN311.EXE", "t:d2f5116b14bb8aaeaeae3d3d7e55d40b", 918905,  500),
 	WINGAME1("compconf", "Windows 95",  "CCWIN95.EXE",  "t:4cb9a6383932f6f11946a5692d82bcf0", 1395275, 500),
 
-	WINGAME2tf("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
-							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500, GF_32BPP),
+	WINGAME2tf("cracking", "", "crack.exe", "t:c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
+							  "ufog8.dxr", "t:7c8222a010d40b59dd96a97f0b4fa974", 542472, 501, GF_32BPP),
 
 	// Mac versions require installation
 	// Original Mac german filename is Kreuzzüge
@@ -8758,6 +8777,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("trekshipaddon", "Mission Watcher", "ShipMain/Mission Watcher", "ce8cd9917c9ba9d454d8ed71478a1486", 113475, 650),
 	WINGAME1t("trekshipaddon", "", "addonpak/sscreate.exe", "68d5ccbfc4921c19d1d46b866ec4080d", 2753651, 602),
 	WINGAME1t("trekshipaddon", "Mission Watcher", "addonpak/ShipMain/MssnWchr.exe", "749923faa5cd1c281089a2143c4510ad", 1518003, 602),
+
+	// Sequel to Cosmology of Kyoto.
+	MACGAME1_l("tripitaka", "", "TRIPITAKA", "r:412d75e8fd005978b6c1b6240c36da47", 1035232, Common::JA_JPN, 602),
+	WINGAME1_l("tripitaka", "", "TRPTK_32.EXE", "t:f6ae72181e7ed6adc415b9833a121a9d", 1514121, Common::JA_JPN, 602),
 
 	// Overview of Tutti's Magical Stories series
 	WINGAME1_l("tutti", "", "TUTTI.EXE", "a593079aecf5bd938ce75264cac24b2d", 14715583, Common::RU_RUS, 600),

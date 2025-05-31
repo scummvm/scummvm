@@ -132,7 +132,13 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Enabled by default for Macintosh and Pippin games in the detection code.
 	// Right now only used in 8-bit mode to adjust the palette.
 	// FIXME: How do we add this to true color rendering without a heap of workarounds?
-	_gammaCorrection = ConfMan.getBool("gamma_correction");
+	if ((getPlatform() == Common::kPlatformMacintosh) || (getPlatform() == Common::kPlatformPippin)) {
+		_gammaCorrection = ConfMan.getBool("gamma_correction");
+	} else {
+		// FIXME: It would be good if we could have this option for non-Mac, except not
+		// enabled by default.
+		_gammaCorrection = false;
+	}
 
 	switch (getPlatform()) {
 	case Common::kPlatformMacintoshII:

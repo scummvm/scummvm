@@ -494,6 +494,14 @@ void Score::updateCurrentFrame() {
 
 		// finally, update the channels and buffer any dirty rectangles
 		updateSprites(kRenderModeNormal, true);
+	} else if (!_vm->_playbackPaused) {
+		// Loading the same frame; e.g. "go to frame".
+		// This is mostly a no-op, however any sprite changes for
+		// non-puppet sprites will be reverted.
+
+		// If playback has been paused on a frame, the sprites aren't cleaned.
+		updateSprites(kRenderModeNormal, true);
+
 	}
 	return;
 }
@@ -807,8 +815,12 @@ void Score::incrementFilmLoops() {
 			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
 			if (!fl->_frames.empty()) {
 				// increment the film loop counter
-				it->_filmLoopFrame += 1;
-				it->_filmLoopFrame %= fl->_frames.size();
+				if (fl->_looping) {
+					it->_filmLoopFrame += 1;
+					it->_filmLoopFrame %= fl->_frames.size();
+				} else if (it->_filmLoopFrame < (fl->_frames.size() - 1)) {
+					it->_filmLoopFrame += 1;
+				}
 			} else {
 				warning("Score::updateFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
 			}
@@ -2004,7 +2016,7 @@ Common::String Score::formatChannelInfo() {
 	result += Common::String::format("SND: 2  sound2: %d, soundType2: %d\n", frame._mainChannels.sound2.member, frame._mainChannels.soundType2);
 	result += Common::String::format("LSCR:   actionId: %s\n", frame._mainChannels.actionId.asString().c_str());
 
-	for (int i = 0; i < frame._numChannels; i++) {
+	for (int i = 0; (i < frame._numChannels && ((i + 1) < (int)_channels.size())); i++) {
 		Channel &channel = *_channels[i + 1];
 		Sprite &sprite = *channel._sprite;
 		Common::Point position = channel.getPosition();

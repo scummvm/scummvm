@@ -46,12 +46,21 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 	_crop = false;
 	_center = false;
 
-	if (cast->_version >= kFileVer400) {
+	if (cast->_version >= kFileVer400 && cast->_version < kFileVer500) {
 		_initialRect = Movie::readRect(stream);
 		uint32 flags = stream.readUint32BE();
 		uint16 unk1 = stream.readUint16BE();
 		debugC(5, kDebugLoading, "FilmLoopCastMember::FilmLoopCastMember(): flags: %d, unk1: %d", flags, unk1);
 		_looping = flags & 64 ? 0 : 1;
+		_enableSound = flags & 8 ? 1 : 0;
+		_crop = flags & 2 ? 0 : 1;
+		_center = flags & 1 ? 1 : 0;
+	} else if (cast->_version >= kFileVer500 && cast->_version < kFileVer600) {
+		_initialRect = Movie::readRect(stream);
+		uint32 flags = stream.readUint32BE();
+		uint16 unk1 = stream.readUint16BE();
+		debugC(5, kDebugLoading, "FilmLoopCastMember::FilmLoopCastMember(): flags: %d, unk1: %d", flags, unk1);
+		_looping = flags & 32 ? 0 : 1;
 		_enableSound = flags & 8 ? 1 : 0;
 		_crop = flags & 2 ? 0 : 1;
 		_center = flags & 1 ? 1 : 0;

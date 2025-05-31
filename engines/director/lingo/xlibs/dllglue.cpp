@@ -31,6 +31,7 @@
  *
  * USED IN:
  * Virtual Nightclub
+ * Puppet Motel
  *
  **************************************************/
 

@@ -126,6 +126,7 @@
 #include "director/lingo/xlibs/videodiscxobj.h"
 #include "director/lingo/xlibs/vmisonxfcn.h"
 #include "director/lingo/xlibs/volumelist.h"
+#include "director/lingo/xlibs/voyagerxsound.h"
 #include "director/lingo/xlibs/widgetxobj.h"
 #include "director/lingo/xlibs/window.h"
 #include "director/lingo/xlibs/wininfo.h"
@@ -139,6 +140,7 @@
 #include "director/lingo/xtras/directsound.h"
 #include "director/lingo/xtras/filextra.h"
 #include "director/lingo/xtras/keypoll.h"
+#include "director/lingo/xtras/masterapp.h"
 #include "director/lingo/xtras/openurl.h"
 #include "director/lingo/xtras/qtvrxtra.h"
 #include "director/lingo/xtras/rtk.h"
@@ -209,9 +211,10 @@ void Lingo::cleanupMethods() {
 }
 
 #define XLIBDEF(class, flags, version) \
-	{ class::fileNames, class::open, class::close, flags, version }
+	{ #class, class::fileNames, class::open, class::close, flags, version }
 
 static const struct XLibProto {
+	const char *className;
 	const XlibFileDesc *names;
 	XLibOpenerFunc opener;
 	XLibCloserFunc closer;
@@ -279,6 +282,7 @@ static const struct XLibProto {
 	XLIBDEF(MMovieXObj,			kXObj,			400),	// D4
 	XLIBDEF(ManiacBgXObj,		kXObj,			300),	// D3
 	XLIBDEF(MapNavigatorXObj,	kXObj,			400),	// D4
+	XLIBDEF(MasterAppXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(MemCheckXObj,		kXObj,			400),	// D4
 	XLIBDEF(MemoryXObj,			kXObj,			300),	// D3
 	XLIBDEF(Misc,				kXObj,			400),	// D4
@@ -323,6 +327,7 @@ static const struct XLibProto {
 	XLIBDEF(ValkyrieXObj,		kXObj,			400),	// D4
 	XLIBDEF(VideodiscXObj,		kXObj,			200),	// D2
 	XLIBDEF(VolumeList,			kXObj,			300),	// D3
+	XLIBDEF(VoyagerXSoundXObj,			kXObj,					400),	// D4
 	XLIBDEF(WinInfoXObj,		kXObj,			400),	// D4
 	XLIBDEF(WidgetXObj, 		kXObj,			400),	// D4
 	XLIBDEF(WindowXObj,			kXObj,			200),	// D2
@@ -333,21 +338,35 @@ static const struct XLibProto {
 	XLIBDEF(XPlayAnim,			kXObj,			300),	// D3
 	XLIBDEF(XsoundXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(Yasix,				kXObj,			300),	// D3
-	{ nullptr, nullptr, nullptr, 0, 0 }
+	{ nullptr, nullptr, nullptr, nullptr, 0, 0 }
 };
 
 void Lingo::initXLibs() {
+	Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> quirks;
 	for (const XLibProto *lib = xlibs; lib->names; lib++) {
 		if (lib->version > _vm->getVersion())
 			continue;
 
 		for (uint i = 0; lib->names[i].name; i++) {
-			// If this entry belongs to a specific game, skip it unless matched
-			if (lib->names[i].gameId && strcmp(lib->names[i].gameId, g_director->getGameId()))
-				continue;
+			bool isQuirk = false;
+			if (lib->names[i].gameId) {
+				isQuirk = strcmp(lib->names[i].gameId, g_director->getGameId()) == 0;
+				// If this entry belongs to a specific game, skip it unless matched
+				if (!isQuirk)
+					continue;
+			}
 
-			if (_xlibOpeners.contains(lib->names[i].name))
+			if (isQuirk) {
+				quirks[lib->names[i].name] = i;
+			} else if (quirks.contains(lib->names[i].name)) {
+				// Ignore new entries that conflict with per-game quirks
+				continue;
+			}
+
+			if (!isQuirk && _xlibOpeners.contains(lib->names[i].name))
 				warning("Lingo::initXLibs(): Duplicate entry for %s", lib->names[i].name);
+
+			debugC(5, kDebugLingoExec, "Lingo::initXLibs(): %s -> %s", lib->names[i].name, lib->className);
 
 			_xlibOpeners[lib->names[i].name] = lib->opener;
 			_xlibClosers[lib->names[i].name] = lib->closer;
