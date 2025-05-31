@@ -308,3 +308,9 @@ bool AndroidGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 
 	return true;
 }
+
+WindowedGraphicsManager::Insets AndroidGraphicsManager::getSafeAreaInsets() const {
+	return WindowedGraphicsManager::Insets{
+		(int16)JNI::cutout_insets[0], (int16)JNI::cutout_insets[1],
+		(int16)JNI::cutout_insets[2], (int16)JNI::cutout_insets[3]};
+}
