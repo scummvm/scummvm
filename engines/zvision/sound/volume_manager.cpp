@@ -148,15 +148,17 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle a
 	uint8 index = abs(round(azimuth.getDegrees(-180)));
 	uint32 output = convert(inputValue, mode);
 	uint32 directionalOutput = (output * directionalAmplitude[index]) * directionality;
-	directionalOutput /= 255;
-	output *= (255 - directionality);
-	output = (output + directionalOutput) / 255;
+	directionalOutput /= 0xFF;
+	output *= (0xFF - directionality);
+	output = (output + directionalOutput) / 0xFF;
 	debug(4, "Directionally converted output %d", output);
 	return output;
 };
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
-	uint16 scaledInput = inputValue * 255;
+	if (inputValue > _scriptScale)
+		inputValue = _scriptScale;
+	uint32 scaledInput = inputValue * 0xFF;
 	scaledInput /= _scriptScale;
 	uint8 output = 0;
 	switch (mode) {
@@ -170,13 +172,17 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
 		output = powerLaw[scaledInput];
 		break;
 	case kVolumeParabolic:
-		output = pow(scaledInput, 2) / 255;
+		scaledInput *= scaledInput;
+		output = scaledInput / 0xFF;
 		break;
 	case kVolumeCubic:
-		output = pow(scaledInput, 3) / pow(255, 2);
+		scaledInput *= scaledInput * scaledInput;
+		output = scaledInput / 0xFE01;
 		break;
 	case kVolumeQuartic:
-		output = pow(scaledInput, 4) / pow(255, 3);
+		scaledInput *= scaledInput;
+		scaledInput *= scaledInput;
+		output = scaledInput / 0xFD02FF;
 		break;
 	case kVolumeLinear:
 	default:
