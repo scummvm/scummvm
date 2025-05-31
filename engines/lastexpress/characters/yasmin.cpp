@@ -28,8 +28,7 @@ void LogicManager::CONS_Yasmin(int chapter) {
 	case 0:
 		_engine->getMessageManager()->setMessageHandle(
 			kCharacterYasmin,
-			_functionsYasmin[getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall]]
-		);
+			_functionsYasmin[getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall]]);
 
 		break;
 	case 1:
@@ -48,7 +47,7 @@ void LogicManager::CONS_Yasmin(int chapter) {
 		CONS_Yasmin_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -77,6 +76,7 @@ void LogicManager::HAND_Yasmin_DebugWalks(HAND_PARAMS) {
 			else
 				getCharacterCurrentParams(kCharacterYasmin)[0] = 10000;
 		}
+
 		break;
 	case 5:
 		playCathExcuseMe();
@@ -110,14 +110,19 @@ void LogicManager::CONS_Yasmin_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterYasmin, getCharacterCurrentParams(kCharacterYasmin)[3]);
 		getCharacter(kCharacterYasmin).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterYasmin, _functionsYasmin[getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall]]);
 		fedEx(kCharacterYasmin, kCharacterYasmin, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterYasmin, (char *)&getCharacterCurrentParams(kCharacterYasmin)[0]);
 		blockAtDoor(kCharacterYasmin, getCharacterCurrentParams(kCharacterYasmin)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -134,12 +139,17 @@ void LogicManager::CONS_Yasmin_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterYasmin).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterYasmin, _functionsYasmin[getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall]]);
 		fedEx(kCharacterYasmin, kCharacterYasmin, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterYasmin, (char *)&getCharacterCurrentParams(kCharacterYasmin)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -156,7 +166,8 @@ void LogicManager::CONS_Yasmin_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterYasmin)[1] || (getCharacterCurrentParams(kCharacterYasmin)[1] = _gameTime + getCharacterCurrentParams(kCharacterYasmin)[0], _gameTime + getCharacterCurrentParams(kCharacterYasmin)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterYasmin)[1] >= _gameTime)
 				return;
@@ -167,6 +178,9 @@ void LogicManager::HAND_Yasmin_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterYasmin).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterYasmin, _functionsYasmin[getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall]]);
 		fedEx(kCharacterYasmin, kCharacterYasmin, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -223,12 +237,14 @@ void LogicManager::CONS_Yasmin_GoEtoG(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_GoEtoG(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterYasmin).characterPosition.position = 4840;
 		getCharacter(kCharacterYasmin).characterPosition.location = 0;
 		getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
 		YasminCall(&LogicManager::CONS_Yasmin_DoCorrOtis, "615Be", 5, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 2;
@@ -248,6 +264,10 @@ void LogicManager::HAND_Yasmin_GoEtoG(HAND_PARAMS) {
 		default:
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -262,12 +282,14 @@ void LogicManager::CONS_Yasmin_GoGtoE(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_GoGtoE(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterYasmin).characterPosition.position = 3050;
 		getCharacter(kCharacterYasmin).characterPosition.location = 0;
 		getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
 		YasminCall(&LogicManager::CONS_Yasmin_DoCorrOtis, "615Bg", 7, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 2;
@@ -287,6 +309,10 @@ void LogicManager::HAND_Yasmin_GoGtoE(HAND_PARAMS) {
 		default:
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -301,15 +327,21 @@ void LogicManager::CONS_Yasmin_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Birth(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterYasmin)[0]) {
 			getCharacterCurrentParams(kCharacterYasmin)[0] = 1;
 			CONS_Yasmin_Part1(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterYasmin).characterPosition.position = 4840;
 		getCharacter(kCharacterYasmin).characterPosition.location = 1;
 		getCharacter(kCharacterYasmin).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -324,70 +356,113 @@ void LogicManager::CONS_Yasmin_Part1(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Part1(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterYasmin).characterPosition.position = 2740;
-				getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 2;
-				YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1102", 0, 0, 0);
-				break;
-			case 2:
-				goto LABEL_9;
-			case 3:
-				goto LABEL_12;
-			case 4:
-				goto LABEL_15;
-			case 5:
-				goto LABEL_18;
-			case 6:
-				goto LABEL_21;
-			default:
-				return;
-			}
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1093500 && !getCharacterCurrentParams(kCharacterYasmin)[0]) {
+			getCharacterCurrentParams(kCharacterYasmin)[0] = 1;
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
+			YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
+			break;
 		}
-	} else if (_gameTime <= 1093500 || getCharacterCurrentParams(kCharacterYasmin)[0]) {
-	LABEL_9:
-		if (_gameTime <= 1161000 || getCharacterCurrentParams(kCharacterYasmin)[1]) {
-		LABEL_12:
-			if (_gameTime <= 1162800 || getCharacterCurrentParams(kCharacterYasmin)[2]) {
-			LABEL_15:
-				if (_gameTime <= 1165500 || getCharacterCurrentParams(kCharacterYasmin)[3]) {
-				LABEL_18:
-					if (_gameTime <= 1174500 || getCharacterCurrentParams(kCharacterYasmin)[4]) {
-					LABEL_21:
-						if (_gameTime > 1183500 && !getCharacterCurrentParams(kCharacterYasmin)[5]) {
-							getCharacterCurrentParams(kCharacterYasmin)[5] = 1;
-							getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 7;
-							YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
-						}
-					} else {
-						getCharacterCurrentParams(kCharacterYasmin)[4] = 1;
-						getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 6;
-						YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1106", 0, 0, 0);
-					}
-				} else {
-					getCharacterCurrentParams(kCharacterYasmin)[3] = 1;
-					getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 5;
-					YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1104", 0, 0, 0);
-				}
-			} else {
+
+		if (_gameTime > 1161000 && !getCharacterCurrentParams(kCharacterYasmin)[1]) {
+			getCharacterCurrentParams(kCharacterYasmin)[1] = 1;
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 3;
+			YasminCall(&LogicManager::CONS_Yasmin_GoGtoE, 0, 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1162800 && !getCharacterCurrentParams(kCharacterYasmin)[2]) {
+			getCharacterCurrentParams(kCharacterYasmin)[2] = 1;
+			getCharacter(kCharacterYasmin).characterPosition.position = 4070;
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 4;
+			YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1102", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1165500 && !getCharacterCurrentParams(kCharacterYasmin)[3]) {
+			getCharacterCurrentParams(kCharacterYasmin)[3] = 1;
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 5;
+			YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1104", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1174500 && !getCharacterCurrentParams(kCharacterYasmin)[4]) {
+			getCharacterCurrentParams(kCharacterYasmin)[4] = 1;
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 6;
+			YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1106", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1183500 && !getCharacterCurrentParams(kCharacterYasmin)[5]) {
+			getCharacterCurrentParams(kCharacterYasmin)[5] = 1;
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 7;
+			YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterYasmin).characterPosition.position = 2740;
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 2;
+			YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1102", 0, 0, 0);
+			break;
+		case 2:
+			if (_gameTime > 1161000 && !getCharacterCurrentParams(kCharacterYasmin)[1]) {
+				getCharacterCurrentParams(kCharacterYasmin)[1] = 1;
+				getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 3;
+				YasminCall(&LogicManager::CONS_Yasmin_GoGtoE, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (_gameTime > 1162800 && !getCharacterCurrentParams(kCharacterYasmin)[2]) {
 				getCharacterCurrentParams(kCharacterYasmin)[2] = 1;
 				getCharacter(kCharacterYasmin).characterPosition.position = 4070;
 				getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 4;
 				YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1102", 0, 0, 0);
+				break;
 			}
-		} else {
-			getCharacterCurrentParams(kCharacterYasmin)[1] = 1;
-			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 3;
-			YasminCall(&LogicManager::CONS_Yasmin_GoGtoE, 0, 0, 0, 0);
+
+			// fall through
+		case 4:
+			if (_gameTime > 1165500 && !getCharacterCurrentParams(kCharacterYasmin)[3]) {
+				getCharacterCurrentParams(kCharacterYasmin)[3] = 1;
+				getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 5;
+				YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1104", 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 5:
+			if (_gameTime > 1174500 && !getCharacterCurrentParams(kCharacterYasmin)[4]) {
+				getCharacterCurrentParams(kCharacterYasmin)[4] = 1;
+				getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 6;
+				YasminCall(&LogicManager::CONS_Yasmin_DoDialog, "Har1106", 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 6:
+			if (_gameTime > 1183500 && !getCharacterCurrentParams(kCharacterYasmin)[5]) {
+				getCharacterCurrentParams(kCharacterYasmin)[5] = 1;
+				getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 7;
+				YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
+			}
+
+			break;
+		default:
+			break;
 		}
-	} else {
-		getCharacterCurrentParams(kCharacterYasmin)[0] = 1;
-		getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
-		YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
+
+		break;
+	default:
+		break;
 	}
 }
+
 
 void LogicManager::CONS_Yasmin_Asleep(CONS_PARAMS) {
 	CharacterCallParams *params = &getCharacter(kCharacterYasmin).callParams[getCharacter(kCharacterYasmin).currentCall];
@@ -400,12 +475,16 @@ void LogicManager::CONS_Yasmin_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(7, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterYasmin).characterPosition.position = 3050;
 		getCharacter(kCharacterYasmin).characterPosition.location = 1;
 		getCharacter(kCharacterYasmin).characterPosition.car = kCarGreenSleeping;
 		endGraphics(kCharacterYasmin);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -420,7 +499,8 @@ void LogicManager::CONS_Yasmin_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterYasmin);
 		getCharacter(kCharacterYasmin).characterPosition.position = 3050;
 		getCharacter(kCharacterYasmin).characterPosition.location = 1;
@@ -428,6 +508,9 @@ void LogicManager::HAND_Yasmin_StartPart2(HAND_PARAMS) {
 		getCharacter(kCharacterYasmin).inventoryItem = kItemNone;
 		getCharacter(kCharacterYasmin).clothes = 0;
 		CONS_Yasmin_Part2(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -442,7 +525,8 @@ void LogicManager::CONS_Yasmin_Part2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Part2(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1759500 && !getCharacterCurrentParams(kCharacterYasmin)[0]) {
 			getCharacterCurrentParams(kCharacterYasmin)[0] = 1;
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
@@ -452,7 +536,9 @@ void LogicManager::HAND_Yasmin_Part2(HAND_PARAMS) {
 			getCharacter(kCharacterYasmin).characterPosition.position = 4070;
 			send(kCharacterYasmin, kCharacterClerk, 191070912, 4070);
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] == 1) {
 			if (_gameTime > 1800000 && !getCharacterCurrentParams(kCharacterYasmin)[1]) {
 				getCharacterCurrentParams(kCharacterYasmin)[1] = 1;
@@ -460,6 +546,10 @@ void LogicManager::HAND_Yasmin_Part2(HAND_PARAMS) {
 				send(kCharacterYasmin, kCharacterClerk, 191070912, 4070);
 			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -474,13 +564,18 @@ void LogicManager::CONS_Yasmin_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_StartPart3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Yasmin_Part3(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterYasmin);
 		getCharacter(kCharacterYasmin).characterPosition.position = 3050;
 		getCharacter(kCharacterYasmin).characterPosition.location = 1;
 		getCharacter(kCharacterYasmin).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -495,7 +590,8 @@ void LogicManager::CONS_Yasmin_Part3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Part3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 2062800 && !getCharacterCurrentParams(kCharacterYasmin)[0]) {
 			getCharacterCurrentParams(kCharacterYasmin)[0] = 1;
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
@@ -509,7 +605,9 @@ void LogicManager::HAND_Yasmin_Part3(HAND_PARAMS) {
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 3;
 			YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] != 1) {
 			if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] == 2) {
 				if (_gameTime > 2160000 && !getCharacterCurrentParams(kCharacterYasmin)[2]) {
@@ -519,6 +617,10 @@ void LogicManager::HAND_Yasmin_Part3(HAND_PARAMS) {
 				}
 			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -533,12 +635,17 @@ void LogicManager::CONS_Yasmin_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_StartPart4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Yasmin_Part4(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterYasmin).characterPosition.position = 3050;
 		getCharacter(kCharacterYasmin).characterPosition.location = 1;
 		getCharacter(kCharacterYasmin).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -553,7 +660,8 @@ void LogicManager::CONS_Yasmin_Part4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Part4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 2457000 && !getCharacterCurrentParams(kCharacterYasmin)[0]) {
 			getCharacterCurrentParams(kCharacterYasmin)[0] = 1;
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
@@ -563,7 +671,9 @@ void LogicManager::HAND_Yasmin_Part4(HAND_PARAMS) {
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 3;
 			YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] == 1) {
 			getCharacter(kCharacterYasmin).characterPosition.position = 4070;
 			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 2;
@@ -576,6 +686,10 @@ void LogicManager::HAND_Yasmin_Part4(HAND_PARAMS) {
 				YasminCall(&LogicManager::CONS_Yasmin_GoEtoG, 0, 0, 0, 0);
 			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -590,12 +704,16 @@ void LogicManager::CONS_Yasmin_Asleep4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Asleep4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(7, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterYasmin).characterPosition.position = 3050;
 		getCharacter(kCharacterYasmin).characterPosition.location = 1;
 		getCharacter(kCharacterYasmin).characterPosition.car = kCarGreenSleeping;
 		endGraphics(kCharacterYasmin);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -610,15 +728,20 @@ void LogicManager::CONS_Yasmin_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_StartPart5(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Yasmin_Prisoner(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterYasmin);
 		getCharacter(kCharacterYasmin).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterYasmin).characterPosition.position = 3969;
 		getCharacter(kCharacterYasmin).characterPosition.location = 1;
 		getCharacter(kCharacterYasmin).clothes = 0;
 		getCharacter(kCharacterYasmin).inventoryItem = kItemNone;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -633,8 +756,13 @@ void LogicManager::CONS_Yasmin_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_Yasmin_Free(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Yasmin_Free(CONS_PARAMS) {
@@ -648,7 +776,8 @@ void LogicManager::CONS_Yasmin_Free(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Free(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterYasmin)[0] || (getCharacterCurrentParams(kCharacterYasmin)[0] = _gameTime + 2700, _gameTime != -2700)) {
 			if (getCharacterCurrentParams(kCharacterYasmin)[0] >= _gameTime)
 				return;
@@ -657,14 +786,20 @@ void LogicManager::HAND_Yasmin_Free(HAND_PARAMS) {
 		}
 
 		CONS_Yasmin_Hiding(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterYasmin).characterPosition.car = kCarGreenSleeping;
 		getCharacter(kCharacterYasmin).characterPosition.position = 2500;
 		getCharacter(kCharacterYasmin).characterPosition.location = 0;
-	} else if (msg->action == 17) {
+		break;
+	case 17:
 		if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
 			CONS_Yasmin_Hiding(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -679,34 +814,42 @@ void LogicManager::CONS_Yasmin_Hiding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Yasmin_Hiding(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] == 1) {
-				getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 2;
-				YasminCall(&LogicManager::CONS_Yasmin_DoCorrOtis, "615BE", 5, 0, 0);
-			} else if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] == 2) {
-				endGraphics(kCharacterYasmin);
-				getCharacter(kCharacterYasmin).characterPosition.location = 1;
-				getCharacter(kCharacterYasmin).characterPosition.position = 3050;
-				setDoor(7, kCharacterCath, 1, 10, 9);
-				playDialog(kCharacterYasmin, "Har5001", -1, 0);
+	switch (msg->action) {
+	case 0:
+		if (!whoRunningDialog(kCharacterYasmin)) {
+			if (getCharacterCurrentParams(kCharacterYasmin)[0] || (getCharacterCurrentParams(kCharacterYasmin)[0] = _currentGameSessionTicks + 450, _currentGameSessionTicks != -450)) {
+				if (getCharacterCurrentParams(kCharacterYasmin)[0] >= _currentGameSessionTicks)
+					return;
+
+				getCharacterCurrentParams(kCharacterYasmin)[0] = 0x7FFFFFFF;
 			}
-		} else if (msg->action == 135800432) {
-			CONS_Yasmin_Disappear(0, 0, 0, 0);
+
+			playDialog(kCharacterYasmin, "Har5001", -1, 0);
+			getCharacterCurrentParams(kCharacterYasmin)[0] = 0;
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 1;
 		YasminCall(&LogicManager::CONS_Yasmin_DoWalk, 3, 4840, 0, 0);
-	} else if (msg->action == 0 && !whoRunningDialog(kCharacterYasmin)) {
-		if (getCharacterCurrentParams(kCharacterYasmin)[0] || (getCharacterCurrentParams(kCharacterYasmin)[0] = _currentGameSessionTicks + 450, _currentGameSessionTicks != -450)) {
-			if (getCharacterCurrentParams(kCharacterYasmin)[0] >= _currentGameSessionTicks)
-				return;
-
-			getCharacterCurrentParams(kCharacterYasmin)[0] = 0x7FFFFFFF;
+		break;
+	case 18:
+		if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] == 1) {
+			getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] = 2;
+			YasminCall(&LogicManager::CONS_Yasmin_DoCorrOtis, "615BE", 5, 0, 0);
+		} else if (getCharacter(kCharacterYasmin).callbacks[getCharacter(kCharacterYasmin).currentCall + 8] == 2) {
+			endGraphics(kCharacterYasmin);
+			getCharacter(kCharacterYasmin).characterPosition.location = 1;
+			getCharacter(kCharacterYasmin).characterPosition.position = 3050;
+			setDoor(7, kCharacterCath, 1, 10, 9);
+			playDialog(kCharacterYasmin, "Har5001", -1, 0);
 		}
-
-		playDialog(kCharacterYasmin, "Har5001", -1, 0);
-		getCharacterCurrentParams(kCharacterYasmin)[0] = 0;
+		break;
+	case 135800432:
+		CONS_Yasmin_Disappear(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
