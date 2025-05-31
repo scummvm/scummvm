@@ -1439,14 +1439,14 @@ public:
 	 *
 	 * @see getHeight
 	 */
-	virtual int16 getOverlayHeight() = 0;
+	virtual int16 getOverlayHeight() const = 0;
 
 	/**
 	 * Return the width of the overlay.
 	 *
 	 * @see getWidth
 	 */
-	virtual int16 getOverlayWidth() = 0;
+	virtual int16 getOverlayWidth() const = 0;
 
 	/** @} */
 
