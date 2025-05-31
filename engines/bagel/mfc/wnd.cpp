@@ -119,9 +119,7 @@ void CWnd::Invalidate(BOOL bErase) {
 	_updateRect = _windowRect;
 	_updateErase = bErase;
 
-	MSG msg(WM_PAINT);
-	msg.hwnd = m_hWnd;
-	_messages.push(msg);
+	PostMessage(WM_PAINT);
 }
 
 int CWnd::GetWindowText(CString &rString) const {

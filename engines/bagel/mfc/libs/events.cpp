@@ -145,15 +145,19 @@ MSG EventQueue::pop() {
 }
 
 bool EventQueue::popPaint() {
-	for (uint i = 0; i < _queue.size(); ++i) {
+	bool result = false;
+
+	for (uint i = 0; i < _queue.size(); ) {
 		const MSG &msg = _queue[i];
 		if (msg.message == WM_PAINT) {
 			_queue.remove_at(i);
-			return true;
+			result = true;
+		} else {
+			++i;
 		}
 	}
 
-	return false;
+	return result;
 }
 
 } // namespace Libs
