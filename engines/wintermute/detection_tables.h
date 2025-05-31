@@ -497,19 +497,19 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Bickadoodle
 	WME_WINENTRY("bickadoodle", "",
-		WME_ENTRY1s("data.dcp", "84db4d1594cac95e25614985775d10a8", 35303844), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "84db4d1594cac95e25614985775d10a8", 35303844), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Bickadoodle (Ver 1.1)
 	WME_WINENTRY("bickadoodle", "Version 1.1",
-		WME_ENTRY1s("data.dcp", "8bb52ac9a9ee129c5059e8e808b669d7", 35337760), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "8bb52ac9a9ee129c5059e8e808b669d7", 35337760), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Bickadoodle (Ver 1.2)
 	WME_WINENTRY("bickadoodle", "Version 1.2",
-		WME_ENTRY1s("data.dcp", "1796a48f3ed72dd785ce93334ab883cc", 35337760), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "1796a48f3ed72dd785ce93334ab883cc", 35337760), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Bickadoodle (https://web.archive.org/web/20150516210632/http://aethericgames.com/games/bickadoodle/download-bickadoodle/)
 	WME_WINENTRY("bickadoodle", "",
-		WME_ENTRY1s("data.dcp", "1584d83577c32add0fce27fae91141a2", 35337728), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "1584d83577c32add0fce27fae91141a2", 35337728), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// BookMania
 	WME_WINENTRY("bookmania", "",
