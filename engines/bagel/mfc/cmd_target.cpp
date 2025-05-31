@@ -28,7 +28,7 @@ namespace MFC {
 IMPLEMENT_DYNAMIC(CCmdTarget, CObject)
 
 const AFX_MSGMAP *CCmdTarget::GetThisMessageMap() {
-	error("TODO: GetMessageMap");
+	return nullptr;
 }
 
 void CCmdTarget::DoWaitCursor(int nCode) {
@@ -49,7 +49,7 @@ void CCmdTarget::RestoreWaitCursor() {
 
 const AFX_MSGMAP_ENTRY *CCmdTarget::LookupMessage(UINT message) {
 	// Iterate through this class and any ancestors
-	for (const AFX_MSGMAP *map = GetThisMessageMap();
+	for (const AFX_MSGMAP *map = GetMessageMap();
 	        map; map = map->pfnGetBaseMap()) {
 		// Scan the entries to look for the message
 		for (const AFX_MSGMAP_ENTRY *entry = map->lpEntries;
