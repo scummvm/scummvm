@@ -31,6 +31,7 @@
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/metagame/frame/resource.h"
+#include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -59,6 +60,7 @@ namespace Frame {
 
 class CHodjPodjWindow : public CFrameWnd {
 private:
+	CMovieWindow pMovie;
 	CBitmap *m_pCurrentBmp;
 	UINT     m_nFlags;
 	BOOL     m_bInCredits;

@@ -40,74 +40,22 @@ namespace Frame {
 static int      videoID;
 static BOOL     bPaintScroll;
 
-
-/*****************************************************************
- *
- * CMovieWindow::CMovieWindow()
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *       opens driver, creates a dummy window object
- *       and sets up default values.
- *
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * RETURN VALUE:
- *
- *      void
- *
- ****************************************************************/
-CMovieWindow::CMovieWindow(void) {
-	#ifdef TODO
-	MCI_DGV_OPEN_PARMS  mciOpen;
-
-	m_dwErrorFlag = MAKELPARAM(0, (WPARAM)PLAY_SUCCESSFUL);             //clear Error Flag.
-
-	/* set up the open parameters */
-	mciOpen.dwCallback = nullptr;
-	mciOpen.wDeviceID = mciOpen.wReserved0 =
-	mciOpen.wReserved1 = 0;
-	mciOpen.lpstrDeviceType = "avivideo";
-	mciOpen.lpstrElementName = nullptr;
-	mciOpen.lpstrAlias = nullptr;
-	mciOpen.dwStyle = 0;
-	mciOpen.hWndParent = nullptr;
-
-	/* try to open the driver */
-	mciSendCommand(0, MCI_OPEN, (DWORD)(MCI_OPEN_TYPE),
-	               (DWORD)(LPMCI_DGV_OPEN_PARMS)&mciOpen);
-
-	videoID = -1;
-	hWndParent = (HWND)nullptr;
-	hWndMovie = (HWND)nullptr;
-	pDum = new CDumWnd;
-	#endif
-}
-
-
 BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
 		LPCSTR AviMovee, int x, int y, int w, int h) {
-	BOOL b;
-
+	m_pParent = pParent;
 	bPaintScroll = bScroll;
 
 	MovieRect.SetRect(x, y, (x + w), (y + h));
 
-	hWndParent = pParent->m_hWnd;
-	if (!hWndParent) {
+	if (!pParent) {
 		warning("null hwndParent");
 		return FALSE;
 	}
 
 	lpszAviMovie = (LPSTR) AviMovee;
-	pOwner = pParent;
 
-	b = PlayMovie();
-	return (b);
+	return PlayMovie();
 }
-
 
 BOOL CMovieWindow::PlayMovie() {
 	Video::AVIDecoder decoder;
@@ -144,253 +92,10 @@ BOOL CMovieWindow::PlayMovie() {
 	}
 
 	decoder.stop();
+	m_pParent->PostMessage(MOVIE_OVER);
+
 	return TRUE;
 }
-
-
-/*****************************************************************
- *
- * CDumWnd::CDumWnd()
- *
- * FUNCTIONAL DESCRIPTION:
- *       CONSTRUCTOR for the DUMMY object class.
- *       registers a window class to be used in creation
- *       of DUMMY window and sets up default values.
- *
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * RETURN VALUE:
- *
- *      void
- *
- ****************************************************************/
-CDumWnd::CDumWnd() {
-
-	/*need a window class which shares the parent-dc for optimization, in order to create a DUMMY window
-	*/
-	WndClass = (LPSTR)AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_PARENTDC, nullptr, nullptr, nullptr);
-	CDumRect.SetRect(0, 0, 30, 30);                                                     //arbitrary because it's gonna be invisible anyways.
-}
-
-
-/*****************************************************************
- *
- * CDumWnd::OnMCINotify(WPARAM, LPARAM)
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      handles the MM_MCINOTIFY message, that is sent
- *      upon the completion of movie. It cleans up desktop
- *      by destroying the movie window and itself before
- *      restoring focus to the parent window. It also sends
- *      a WM_COMMAND message to the parent window with
- *      the following parameters:
- *      wParam :    MOVIE_OVER
- *      lParam  :   pointer to current object (ie. this)
- *
- * FORMAL PARAMETERS:
- *
- *      wParam, lParam : refer to MCI doc.
- *
- * RETURN VALUE:
- *
- *      long : 1L if wParam==MCI_NOTIFY_SUCCESSFUL,
- *                  0L otherwise.
- *
- ****************************************************************/
-long CDumWnd::OnMCINotify(WPARAM wParam, LPARAM lParam) {
-	#ifdef TODO
-	BOOL d;
-	MCI_GENERIC_PARMS mciGeneric;
-
-	bPaintScroll = FALSE;
-
-	if (wParam == MCI_NOTIFY_SUCCESSFUL) {
-		mciSendCommand(videoID, MCI_CLOSE, 0L,
-		               (DWORD)(LPMCI_GENERIC_PARMS)&mciGeneric);
-		videoID = -1;
-	}
-	mciSendCommand(mciGetDeviceID("avivideo"), MCI_CLOSE, MCI_WAIT, nullptr);
-	if (d = IsWindow(hChild)) {
-		d =::DestroyWindow(hChild);
-	}
-
-	::InvalidateRect(hOwnr, nullptr, TRUE);
-	::UpdateWindow(hOwnr);
-
-	d = DestroyWindow();
-
-	pChild->m_dwErrorFlag = MAKELPARAM((WORD)(!(wParam == MCI_NOTIFY_SUCCESSFUL) || !d), wParam); //set error flag, if error.
-
-	::PostMessage(hOwnr, WM_COMMAND, MOVIE_OVER, (LPARAM)(LPVOID)this);
-	::SetActiveWindow(hOwnr);
-	::SetFocus(hOwnr);
-
-	(void)lParam;
-	if (wParam == MCI_NOTIFY_SUCCESSFUL) return (1L);
-	#endif
-	return 0L;
-}
-
-
-/*****************************************************************
- *
- * CDumWnd::CreateDum(HWND, HWND, CWnd*, CWnd*)
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      creates a new window with appropriate ownerships
- *      and sets up the protected members of this class.
- *
- * FORMAL PARAMETERS:
- *
- *      hWndPar: parent window from application.
- *      hWndmov: child window to play movie.
- *      pPar:   class of parent window
- *      pMov:   class of MovieWindow.
- *
- * RETURN VALUE:
- *
- *      long : 1L if wParam==MCI_NOTIFY_SUCCESSFUL,
- *                  0L otherwise.
- *
- ****************************************************************/
-BOOL CDumWnd::CreateDum(HWND hWndPar, HWND hWndMov, CWnd* pPar, CMovieWindow* pMov, int x, int y) {
-	#ifdef TODO
-	BOOL b;
-	CRect   cWndRect;
-
-	hOwnr = hWndPar;
-	hChild = hWndMov;
-
-	pOwnr = pPar;
-	pChild = pMov;
-
-	cWndRect.SetRect(x, y, x + WINDOW_WIDTH, y + WINDOW_HEIGHT);
-
-	b = Create(WndClass, "DUMMY", WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CS_BYTEALIGNWINDOW | CS_OWNDC, cWndRect,  pOwnr, nullptr);
-	if (b) {
-		hDum = (HWND)(this->m_hWnd);
-		MFC::ShowWindow(hDum, SW_SHOW);
-	}
-	return b;
-	#endif
-	return false;
-}
-
-
-void CDumWnd::OnPaint() {
-	CPaintDC    dc(this);
-	CBitmap     *pBitmap;
-	CPalette    *pPalette;
-
-	if (bPaintScroll) {
-		pBitmap = FetchBitmap(&dc, &pPalette, SCROLL_BITMAP);
-		PaintBitmap(&dc, pPalette, pBitmap);
-		delete pBitmap;
-		delete pPalette;
-	}
-}
-
-
-/*****************************************************************
-*
-* CDumWnd::OnSysKeyDown(UINT, UINT, UINT)
-*
-* FUNCTIONAL DESCRIPTION:
-*
-*      handles the wm_SYSKEYDOWN message; it intercepts just
-*      the ALT_F4 combination and performs clean-up.
-*      Other keys are transmitted down  to the default handler.
-*
-* FORMAL PARAMETERS:
-*
-*      refer to WindowsSDK / MFC library doc.
-*
-* RETURN VALUE:
-*
-*  void
-*
-****************************************************************/
-void CDumWnd::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	#ifdef TODO
-	BOOL d;
-	MCI_GENERIC_PARMS mciGeneric;
-
-	switch (nChar) {
-
-	// User has hit ALT_F4 so close down the MCI calls and this dummy window.
-	//
-	case VK_F4:
-		bPaintScroll = FALSE;
-
-		mciSendCommand(videoID, MCI_CLOSE, 0L,
-		               (DWORD)(LPMCI_GENERIC_PARMS)&mciGeneric);
-		videoID = -1;
-		mciSendCommand(mciGetDeviceID("avivideo"), MCI_CLOSE, MCI_WAIT, nullptr);
-
-		if (d = IsWindow(hChild)) {
-			d =::DestroyWindow(hChild);
-		}
-
-		::InvalidateRect(hOwnr, nullptr, TRUE);
-		::UpdateWindow(hOwnr);
-
-		::SendMessage(hOwnr, WM_COMMAND, MOVIE_OVER, (LPARAM)(LPVOID)this);
-		PostMessage(WM_CLOSE, 0, 0);
-		break;
-
-	default:
-		CWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);
-		break;
-	}
-	#endif
-}
-
-
-
-/*****************************************************************
-*
-* CDumWnd::OnKeyDown(UINT, UINT, UINT)
-*
-* FUNCTIONAL DESCRIPTION:
-*
-*      handles the wm_KEYDOWN message; it intercepts just
-*      the ESC key and performs clean-up.
-*      Other keys are transmitted down  to the default handler.
-*
-* FORMAL PARAMETERS:
-*
-*      refer to WindowsSDK / MFC library doc.
-*
-* RETURN VALUE:
-*
-*  void
-*
-****************************************************************/
-void CDumWnd::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	switch (nChar) {
-
-	// User has hit ESCAPE so close down the MCI calls and this dummy window.
-	//
-	case VK_ESCAPE:
-		OnSysKeyDown(VK_F4, nRepCnt, nFlags);
-		break;
-
-	default:
-		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
-		break;
-	}
-}
-
-BEGIN_MESSAGE_MAP(CDumWnd, CWnd)
-	ON_MESSAGE(MM_MCINOTIFY,  CDumWnd::OnMCINotify)   //map the MM_MCINOTIFY message.
-	ON_WM_SYSKEYDOWN()
-	ON_WM_KEYDOWN()
-	ON_WM_PAINT()
-END_MESSAGE_MAP()
 
 } // namespace Frame
 } // namespace Metagame

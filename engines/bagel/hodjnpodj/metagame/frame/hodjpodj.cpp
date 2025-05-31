@@ -508,28 +508,17 @@ void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, BOOL b
 
 	BlackScreen();
 
-	if (pMovie != nullptr) {
-		delete pMovie;
-		pMovie = nullptr;
-	}
-
-	pMovie = new CMovieWindow();
-	pMovie->nMovieId = nMovieId;
+	pMovie.nMovieId = nMovieId;
 
 	ptMovie.x = (MainRect.right / 2) - (MOVIE_WIDTH / 2);
 	ptMovie.y = (MainRect.bottom / 2) - (MOVIE_HEIGHT / 2);
 
 	PositionAtCDPath();
 
-	if (pMovie->BlowWindow((CWnd *)this, bScroll, pszMovie, ptMovie.x, ptMovie.y) == TRUE) {
+	if (pMovie.BlowWindow((CWnd *)this, bScroll, pszMovie, ptMovie.x, ptMovie.y) == TRUE) {
 		if (nMovieId != MOVIE_ID_TITLE)
 			ShowCursor(FALSE);
 	} else {
-		if (pMovie != nullptr) {
-			delete pMovie;
-			pMovie = nullptr;
-		}
-
 		ShowCursor(TRUE);
 
 		PositionAtHomePath();
@@ -579,17 +568,10 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	int                         nMovieId;
 
 	switch (wParam) {
-
 	case MOVIE_OVER:
 		PositionAtHomePath();
 
-		if (pMovie == nullptr)
-			nMovieId = MOVIE_ID_NONE;
-		else {
-			nMovieId = pMovie->nMovieId;
-			delete pMovie;
-			pMovie = nullptr;
-		}
+		nMovieId = pMovie.nMovieId;
 
 		pWnd = (CWnd *)lParam;
 		if (pWnd != nullptr) {
