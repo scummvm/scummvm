@@ -117,8 +117,10 @@ BOOL CMovieWindow::PlayMovie() {
 	CFile file;
 	Common::Event event;
 
-	if (!file.Open(lpszAviMovie) ||
-			!decoder.loadStream(file))
+	if (!file.Open(lpszAviMovie))
+		return false;
+
+	if (!decoder.loadStream(file.detach()))
 		return false;
 
 	decoder.start();
@@ -142,7 +144,6 @@ BOOL CMovieWindow::PlayMovie() {
 	}
 
 	decoder.stop();
-	file.Close();
 	return TRUE;
 }
 

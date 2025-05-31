@@ -181,6 +181,12 @@ public:
 	operator Common::SeekableReadStream &() {
 		return *readStream();
 	}
+
+	/**
+	 * Detaches the stream from the CFile
+	 * without destroying it.
+	 */
+	Common::SeekableReadStream *detach();
 };
 
 /*============================================================================*/

@@ -103,5 +103,11 @@ void CFile::Write(const void *lpBuf, UINT nCount) {
 	writeStream()->write(lpBuf, nCount);
 }
 
+Common::SeekableReadStream *CFile::detach() {
+	Common::SeekableReadStream *result = readStream();
+	_stream = nullptr;
+	return result;
+}
+
 } // namespace MFC
 } // namespace Bagel
