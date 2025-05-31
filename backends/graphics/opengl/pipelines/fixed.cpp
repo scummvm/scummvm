@@ -28,6 +28,11 @@ namespace OpenGL {
 void FixedPipeline::activateInternal() {
 	Pipeline::activateInternal();
 
+	// Disable 3D properties.
+	GL_CALL(glDisable(GL_CULL_FACE));
+	GL_CALL(glDisable(GL_DEPTH_TEST));
+	GL_CALL(glDisable(GL_DITHER));
+
 	GL_CALL(glDisable(GL_LIGHTING));
 	GL_CALL(glDisable(GL_FOG));
 	GL_CALL(glShadeModel(GL_FLAT));
@@ -73,6 +78,9 @@ void FixedPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix) {
 	GL_CALL(glLoadMatrixf(projectionMatrix.getData()));
 
 	GL_CALL(glMatrixMode(GL_MODELVIEW));
+	GL_CALL(glLoadIdentity());
+
+	GL_CALL(glMatrixMode(GL_TEXTURE));
 	GL_CALL(glLoadIdentity());
 }
 #endif // !USE_FORCED_GLES2

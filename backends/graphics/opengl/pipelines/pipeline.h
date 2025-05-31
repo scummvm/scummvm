@@ -23,8 +23,6 @@
 #define BACKENDS_GRAPHICS_OPENGL_PIPELINES_PIPELINE_H
 
 #include "graphics/opengl/system_headers.h"
-
-#include "backends/graphics/opengl/framebuffer.h"
 #include "graphics/opengl/texture.h"
 
 #include "math/matrix4.h"
@@ -41,6 +39,11 @@ class Framebuffer;
  */
 class Pipeline {
 public:
+	/**
+	 * Deactivate any pipeline.
+	 */
+	static void disable() { if (activePipeline) activePipeline->deactivate(); }
+
 	Pipeline();
 	virtual ~Pipeline() { if (isActive()) deactivate(); }
 

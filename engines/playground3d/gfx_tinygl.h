@@ -36,7 +36,6 @@ namespace Playground3d {
 class TinyGLRenderer : public Renderer {
 public:
 	TinyGLRenderer(OSystem *_system);
-	virtual ~TinyGLRenderer();
 
 	void init() override;
 	void deinit() override;

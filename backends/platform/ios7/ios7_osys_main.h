@@ -96,8 +96,6 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 
-	bool setGraphicsMode(int mode, uint flags) override;
-
 	TouchMode getCurrentTouchMode() const { return _currentTouchMode; };
 	void setCurrentTouchMode(TouchMode mode) { _currentTouchMode = mode; };
 
@@ -119,6 +117,7 @@ public:
 #endif
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
+	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
 #endif
 
 public:

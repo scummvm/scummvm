@@ -28,9 +28,9 @@ class Surface;
 class LibretroOpenGLGraphics : public OpenGL::OpenGLGraphicsManager {
 public:
 	LibretroOpenGLGraphics(OpenGL::ContextType contextType);
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override {
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) override {
 		return true;
-	};
+	}
 	void refreshScreen() override;
 	void setSystemMousePosition(const int x, const int y) override {};
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;

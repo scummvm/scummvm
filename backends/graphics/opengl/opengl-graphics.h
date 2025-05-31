@@ -49,6 +49,9 @@ class Pipeline;
 #if !USE_FORCED_GLES
 class LibRetroPipeline;
 #endif
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+class Renderer3D;
+#endif
 
 enum {
 	GFX_OPENGL = 0
@@ -115,6 +118,8 @@ public:
 
 	int16 getOverlayWidth() const override;
 	int16 getOverlayHeight() const override;
+	void showOverlay(bool inGUI) override;
+	void hideOverlay() override;
 
 	Graphics::PixelFormat getOverlayFormat() const override;
 
@@ -196,6 +201,7 @@ protected:
 #endif
 		bool aspectRatioCorrection;
 		int graphicsMode;
+		uint flags;
 		bool filtering;
 
 		uint scalerIndex;
@@ -271,9 +277,11 @@ protected:
 	 * @parma requestedWidth  This is the requested actual game screen width.
 	 * @param requestedHeight This is the requested actual game screen height.
 	 * @param format          This is the requested pixel format of the virtual game screen.
+	 * @param resizable       This indicates that the window should not be resized because we can't handle it.
+	 * @param antialiasing    This is the requested antialiasing level.
 	 * @return true on success, false otherwise
 	 */
-	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
+	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) = 0;
 
 	bool loadShader(const Common::Path &fileName);
 
@@ -351,6 +359,13 @@ protected:
 	 * The rendering surface for the virtual game screen.
 	 */
 	Surface *_gameScreen;
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	/**
+	 * The rendering helper for 3D games.
+	 */
+	Renderer3D *_renderer3d;
+#endif
 
 	/**
 	 * The game palette if in CLUT8 mode.

@@ -627,7 +627,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				break;
 
 			ev0.type = Common::EVENT_MOUSEMOVE;
-			ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+			ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 			{
 				int16 *c;
 				int s;
@@ -669,7 +669,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				return;
 			}
 
-			ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+			ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 			pushEvent(ev0);
 			break;
 		}
@@ -719,7 +719,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 	case JE_DOWN:
 //		LOGD("JE_DOWN");
-		_touch_pt_down = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+		_touch_pt_down = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 		// If the cursor was outside the area (because the screen rotated) clip it
 		// to not scroll several times to make the cursor appear in the area
 		// Do not clamp the cursor position while rotating the screen because if the user rotated by mistake
@@ -773,7 +773,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		ev0.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
-			ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+			ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 		} else {
 			ev0.mouse.x = arg1;
 			ev0.mouse.y = arg2;
@@ -859,7 +859,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 //		LOGD("JE_DOUBLE_TAP - x: %d y: %d, arg3: %d", arg1, arg2, arg3);
 
 		ev0.type = Common::EVENT_MOUSEMOVE;
-		ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+		ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 
 //		LOGD("JE_DOUBLE_TAP 2 - x: %d y: %d, type: %d, arg3: %d", ev0.mouse.x , ev0.mouse.y, ev0.type, arg3);
 
@@ -934,7 +934,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		ev0.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
-			ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+			ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 		} else {
 			ev0.mouse.x = arg3;
 			ev0.mouse.y = arg4;
@@ -1092,7 +1092,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		break;
 
 	case JE_BALL:
-		ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+		ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 
 		switch (arg1) {
 		case AMOTION_EVENT_ACTION_DOWN:
@@ -1214,7 +1214,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			ev0.mouse.x = arg1;
 			ev0.mouse.y = arg2;
 		}
-//		ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+//		ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 		pushEvent(ev0);
 		break;
 
@@ -1236,7 +1236,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			ev0.mouse.x = arg1;
 			ev0.mouse.y = arg2;
 		}
-//		ev0.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+//		ev0.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 		pushEvent(ev0);
 		break;
 
@@ -1463,7 +1463,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 			// Keep a dangling surface until we get a resize
 			if (JNI::egl_surface_width > 0 && JNI::egl_surface_height > 0) {
 				// surface changed
-				dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->resizeSurface();
+				dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->resizeSurface();
 
 				event.type = Common::EVENT_SCREEN_CHANGED;
 
@@ -1473,7 +1473,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 		if (_virtkeybd_on != JNI::virt_keyboard_state) {
 			_virtkeybd_on = JNI::virt_keyboard_state;
-			dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->syncVirtkeyboardState(_virtkeybd_on);
+			dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->syncVirtkeyboardState(_virtkeybd_on);
 		}
 
 		if (JNI::pause) {
@@ -1540,7 +1540,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 	if (Common::isMouseEvent(event)) {
 		if (_graphicsManager)
-			return dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->notifyMousePosition(event.mouse);
+			return dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->notifyMousePosition(event.mouse);
 	}
 
 	return true;
@@ -1584,7 +1584,7 @@ void OSystem_Android::setupTouchMode(int oldValue, int newValue) {
 	if (newValue == TOUCH_MODE_TOUCHPAD) {
 		// Make sure we have a proper touch point if we switch to touchpad mode with finger down
 		if (_graphicsManager) {
-			_touch_pt_down = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+			_touch_pt_down = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 		} else {
 			_touch_pt_down.x = 0;
 			_touch_pt_down.y = 0;

@@ -52,11 +52,6 @@ bool ModularGraphicsBackend::getFeatureState(Feature f) {
 	return _graphicsManager->getFeatureState(f);
 }
 
-GraphicsManager *ModularGraphicsBackend::getGraphicsManager() {
-	assert(_graphicsManager);
-	return (GraphicsManager *)_graphicsManager;
-}
-
 const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedGraphicsModes() const {
 	return _graphicsManager->getSupportedGraphicsModes();
 }

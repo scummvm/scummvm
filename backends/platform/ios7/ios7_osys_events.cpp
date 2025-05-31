@@ -142,7 +142,7 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 
 		case kInputScreenChanged:
 			rebuildSurface();
-			dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyResize(getScreenWidth(), getScreenHeight());
+			dynamic_cast<iOSGraphicsManager *>(_graphicsManager)->notifyResize(getScreenWidth(), getScreenHeight());
 			event.type = Common::EVENT_SCREEN_CHANGED;
 			break;
 
@@ -165,7 +165,7 @@ bool OSystem_iOS7::handleEvent_touchBegan(Common::Event &event, int x, int y) {
 
 	if (_currentTouchMode == kTouchModeDirect) {
 		Common::Point mouse(x, y);
-		dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(mouse);
+		dynamic_cast<iOSGraphicsManager *>(_graphicsManager)->notifyMousePosition(mouse);
 	}
 
 	return false;
@@ -182,7 +182,7 @@ bool OSystem_iOS7::handleEvent_touchMoved(Common::Event &event, int x, int y) {
 	} else {
 		// Update mouse position
 		Common::Point mousePos(x, y);
-		dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(mousePos);
+		dynamic_cast<iOSGraphicsManager *>(_graphicsManager)->notifyMousePosition(mousePos);
 		event.type = Common::EVENT_MOUSEMOVE;
 		handleEvent_mouseEvent(event, deltaX, deltaY);
 	}
@@ -210,20 +210,20 @@ void OSystem_iOS7::handleEvent_mouseRightButtonUp(Common::Event &event, int x, i
 }
 
 void OSystem_iOS7::handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY) {
-	Common::Point mouseOldPos = dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->getMousePosition();
+	Common::Point mouseOldPos = dynamic_cast<iOSGraphicsManager *>(_graphicsManager)->getMousePosition();
 
 	Common::Point newMousePos((int)(mouseOldPos.x - (int)((float)deltaX * getMouseSpeed())), (int)(mouseOldPos.y - (int)((float)deltaY * getMouseSpeed())));
 
 	// Update mouse position
-	dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(newMousePos);
+	dynamic_cast<iOSGraphicsManager *>(_graphicsManager)->notifyMousePosition(newMousePos);
 
 	event.type = Common::EVENT_MOUSEMOVE;
 	handleEvent_mouseEvent(event, deltaX, deltaY);
 }
 
 void OSystem_iOS7::handleEvent_mouseEvent(Common::Event &event, int relX, int relY) {
-	Common::Point mouse = dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->getMousePosition();
-	dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(mouse);
+	Common::Point mouse = dynamic_cast<iOSGraphicsManager *>(_graphicsManager)->getMousePosition();
+	dynamic_cast<iOSGraphicsManager *>(_graphicsManager)->notifyMousePosition(mouse);
 
 	event.relMouse.x = relX;
 	event.relMouse.y = relY;

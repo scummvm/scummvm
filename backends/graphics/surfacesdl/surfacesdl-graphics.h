@@ -449,6 +449,9 @@ protected:
 	virtual void setGraphicsModeIntern();
 	virtual void getDefaultResolution(uint &w, uint &h);
 
+	// In SurfaceSDL mode we never render in 3D and can always switch the fullscreen state
+	bool canSwitchFullscreen() const override { return true; }
+
 private:
 	void setFullscreenMode(bool enable);
 	void handleScalerHotkeys(uint mode, int factor);

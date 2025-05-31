@@ -87,8 +87,10 @@ public:
 
 	/**
 	 * Bind the texture to the active texture unit.
+	 *
+	 * @return Whether a texture really exists
 	 */
-	void bind() const;
+	bool bind() const;
 
 	/**
 	 * Sets the size of the texture in pixels.
@@ -98,9 +100,10 @@ public:
 	 *
 	 * @param width  The desired logical width.
 	 * @param height The desired logical height.
+	 * @param flip   Whether to flip vertically the texture when displaying it.
 	 * @return Whether the call was successful
 	 */
-	bool setSize(uint width, uint height);
+	bool setSize(uint width, uint height, bool flip = false);
 
 	/**
 	 * Copy image data to the texture.

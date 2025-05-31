@@ -62,7 +62,7 @@ public:
 	/** @name Graphics */
 	//@{
 
-	GraphicsManager *getGraphicsManager();
+	GraphicsManager *getGraphicsManager() { return _graphicsManager; }
 	const GraphicsMode *getSupportedGraphicsModes() const override;
 	int getDefaultGraphicsMode() const override;
 	bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override;

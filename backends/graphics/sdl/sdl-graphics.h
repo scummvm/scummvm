@@ -197,6 +197,9 @@ public:
 		_hintedHeight = 0;
 	}
 
+	// Called by SdlWindow when the window is about to be destroyed
+	virtual void destroyingWindow() {}
+
 protected:
 	Uint32 _lastFlags;
 	bool _allowWindowSizeReset;
@@ -208,6 +211,11 @@ protected:
 	SDL_Surface *_hwScreen;
 	SdlEventSource *_eventSource;
 	SdlWindow *_window;
+
+	/**
+	 * @returns whether switching the fullscreen state is currently safe
+	 */
+	virtual bool canSwitchFullscreen() const { return false; }
 
 private:
 	void toggleFullScreen();
