@@ -26,17 +26,17 @@ using namespace Math;
 
 namespace Alcachofa {
 
-static int sideOfLine(const Point &a, const Point &b, const Point &q) {
+static int sideOfLine(Point a, Point b, Point q) {
 	return (b.x - a.x) * (q.y - a.y) - (b.y - a.y) * (q.x - a.x);
 }
 
-static bool segmentsIntersect(const Point &a1, const Point &b1, const Point &a2, const Point &b2) {
+static bool segmentsIntersect(Point a1, Point b1, Point a2, Point b2) {
 	// as there are a number of special cases to consider,
 	// this method is a direct translation of the original engine
-	const auto sideOfLine = [](const Point &a, const Point &b, const Point q) {
+	const auto sideOfLine = [](Point a, Point b, const Point q) {
 		return Alcachofa::sideOfLine(a, b, q) > 0;
 	};
-	const auto lineIntersects = [&](const Point &a1, const Point &b1, const Point &a2, const Point &b2) {
+	const auto lineIntersects = [&](Point a1, Point b1, Point a2, Point b2) {
 		return sideOfLine(a1, b1, a2) != sideOfLine(a1, b1, b2);
 	};
 
@@ -54,7 +54,7 @@ static bool segmentsIntersect(const Point &a1, const Point &b1, const Point &a2,
 	}
 }
 
-bool Polygon::contains(const Point &query) const {
+bool Polygon::contains(Point query) const {
 	switch (_points.size()) {
 	case 0: return false;
 	case 1: return query == _points[0];
@@ -74,7 +74,7 @@ bool Polygon::intersectsEdge(uint startPointI, Point a, Point b) const {
 	return segmentsIntersect(_points[startPointI], _points[endPointI], a, b);
 }
 
-EdgeDistances Polygon::edgeDistances(uint startPointI, const Point &query) const {
+EdgeDistances Polygon::edgeDistances(uint startPointI, Point query) const {
 	assert(startPointI < _points.size());
 	uint endPointI = startPointI + 1 == _points.size() ? 0 : startPointI + 1;
 	Vector2d
@@ -103,7 +103,7 @@ static Point wiggleOnToLine(Point a, Point b, Point q) {
 	return q;
 }
 
-Point Polygon::closestPointTo(const Common::Point &query, float &distanceSqr) const {
+Point Polygon::closestPointTo(Point query, float &distanceSqr) const {
 	assert(_points.size() > 0);
 	Common::Point bestPoint = {};
 	distanceSqr = std::numeric_limits<float>::infinity();
@@ -142,11 +142,11 @@ Point Polygon::midPoint() const {
 	return sum / (int16)_points.size();
 }
 
-static float depthAtForLine(const Point &a, const Point &b, const Point &q, int8 depthA, int8 depthB) {
+static float depthAtForLine(Point a, Point b, Point q, int8 depthA, int8 depthB) {
 	return (sqrtf(a.sqrDist(q)) / a.sqrDist(b) * depthB + depthA) * 0.01f;
 }
 
-static float depthAtForConvex(const PathFindingPolygon &p, const Point &q) {
+static float depthAtForConvex(const PathFindingPolygon &p, Point q) {
 	float sumDepths = 0, sumDistances = 0;
 	for (uint i = 0; i < p._points.size(); i++) {
 		uint j = i + 1 == p._points.size() ? 0 : i + 1;
@@ -160,7 +160,7 @@ static float depthAtForConvex(const PathFindingPolygon &p, const Point &q) {
 	return sumDepths / sumDistances * 0.01f;
 }
 
-float PathFindingPolygon::depthAt(const Point &query) const {
+float PathFindingPolygon::depthAt(Point query) const {
 	switch (_points.size()) {
 	case 0:
 	case 1: return 1.0f;
@@ -184,14 +184,14 @@ uint PathFindingPolygon::findSharedPoints(
 	return count;
 }
 
-static Color colorAtForLine(const Point &a, const Point &b, const Point &q, Color colorA, Color colorB) {
+static Color colorAtForLine(Point a, Point b, Point q, Color colorA, Color colorB) {
 	// I highly suspect RGB calculation being very bugged, so for now I just ignore and only calc alpha
 	float phase = sqrtf(q.sqrDist(a)) / a.sqrDist(b);
 	colorA.a += phase * colorB.a;
 	return colorA;
 }
 
-static Color colorAtForConvex(const FloorColorPolygon &p, const Point &query) {
+static Color colorAtForConvex(const FloorColorPolygon &p, Point query) {
 	// This is a quite literal translation of the original engine
 	// There may very well be a better way than this...
 	float weights[FloorColorShape::kPointsPerPolygon];
@@ -235,7 +235,7 @@ static Color colorAtForConvex(const FloorColorPolygon &p, const Point &query) {
 	};
 }
 
-Color FloorColorPolygon::colorAt(const Point &query) const {
+Color FloorColorPolygon::colorAt(Point query) const {
 	switch (_points.size()) {
 	case 0: return kWhite;
 	case 1: return { 255, 255, 255, _pointColors[0].a };
@@ -293,7 +293,7 @@ Polygon Shape::at(uint index) const {
 	return p;
 }
 
-int32 Shape::polygonContaining(const Point &query) const {
+int32 Shape::polygonContaining(Point query) const {
 	for (uint i = 0; i < _polygons.size(); i++) {
 		if (at(i).contains(query))
 			return (int32)i;
@@ -301,11 +301,11 @@ int32 Shape::polygonContaining(const Point &query) const {
 	return -1;
 }
 
-bool Shape::contains(const Point &query) const {
+bool Shape::contains(Point query) const {
 	return polygonContaining(query) >= 0;
 }
 
-Point Shape::closestPointTo(const Point &query, int32 &polygonI) const {
+Point Shape::closestPointTo(Point query, int32 &polygonI) const {
 	assert(_polygons.size() > 0);
 	float bestDistanceSqr = std::numeric_limits<float>::infinity();
 	Point bestPoint = {};
@@ -369,12 +369,12 @@ PathFindingPolygon PathFindingShape::at(uint index) const {
 	return p;
 }
 
-int8 PathFindingShape::orderAt(const Point &query) const {
+int8 PathFindingShape::orderAt(Point query) const {
 	int32 polygon = polygonContaining(query);
 	return polygon < 0 ? 49 : _polygonOrders[polygon];
 }
 
-float PathFindingShape::depthAt(const Point &query) const {
+float PathFindingShape::depthAt(Point query) const {
 	int32 polygon = polygonContaining(query);
 	return polygon < 0 ? 1.0f : at(polygon).depthAt(query);
 }
@@ -507,7 +507,7 @@ void PathFindingShape::calculateFloydWarshall() {
 	assert(find(_previousTarget.begin(), _previousTarget.end(), -1) == _previousTarget.end());
 }
 
-bool PathFindingShape::findPath(const Point &from, const Point &to_, Stack<Point> &path) const {
+bool PathFindingShape::findPath(Point from, Point to_, Stack<Point> &path) const {
 	Point to = to_; // we might want to correct it
 	path.clear();
 
@@ -535,7 +535,7 @@ int32 PathFindingShape::edgeTarget(uint polygonI, uint pointI) const {
 }
 
 bool PathFindingShape::canGoStraightThrough(
-	const Point &from, const Point &to,
+	Point from, Point to,
 	int32 fromContainingI, int32 toContainingI) const {
 	int32 lastContainingI = -1;
 	while (fromContainingI != toContainingI) {
@@ -560,7 +560,7 @@ bool PathFindingShape::canGoStraightThrough(
 }
 
 void PathFindingShape::floydWarshallPath(
-	const Point &from, const Point &to,
+	Point from, Point to,
 	int32 fromContaining, int32 toContaining,
 	Stack<Point> &path) const {
 	path.push(to);
@@ -663,7 +663,7 @@ FloorColorPolygon FloorColorShape::at(uint index) const {
 	return p;
 }
 
-OptionalColor FloorColorShape::colorAt(const Common::Point &query) const {
+OptionalColor FloorColorShape::colorAt(Point query) const {
 	int32 polygon = polygonContaining(query);
 	return polygon < 0
 		? OptionalColor(false, kClear)

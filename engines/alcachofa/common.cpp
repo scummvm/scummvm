@@ -78,7 +78,7 @@ Vector3d as3D(const Vector2d &v) {
 	return Vector3d(v.getX(), v.getY(), 0.0f);
 }
 
-Vector3d as3D(const Common::Point &p) {
+Vector3d as3D(Common::Point p) {
 	return Vector3d((float)p.x, (float)p.y, 0.0f);
 }
 
@@ -86,7 +86,7 @@ Vector2d as2D(const Vector3d &v) {
 	return Vector2d(v.x(), v.y());
 }
 
-Vector2d as2D(const Point &p) {
+Vector2d as2D(Point p) {
 	return Vector2d((float)p.x, (float)p.y);
 }
 

@@ -372,7 +372,7 @@ bool Inventory::updateInput() {
 }
 
 Item *Inventory::getHoveredItem() {
-	auto &mousePos = g_engine->input().mousePos2D();
+	auto mousePos = g_engine->input().mousePos2D();
 	for (auto item : _items) {
 		if (!item->isEnabled())
 			continue;

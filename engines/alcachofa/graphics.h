@@ -65,7 +65,7 @@ public:
 	virtual void update(const Graphics::Surface &surface) = 0;
 	inline void update(const Graphics::ManagedSurface &surface) { update(surface.rawSurface()); }
 
-	inline const Common::Point &size() const { return _size; }
+	inline Common::Point size() const { return _size; }
 
 private:
 	Common::Point _size;
@@ -187,7 +187,7 @@ public:
 	inline uint spriteCount() const { return _spriteBases.size(); }
 	inline uint frameCount() const { return _frames.size(); }
 	inline uint32 frameDuration(int32 frameI) const { return _frames[frameI]._duration; }
-	inline const Common::Point &frameCenter(int32 frameI) const { return _frames[frameI]._center; }
+	inline Common::Point frameCenter(int32 frameI) const { return _frames[frameI]._center; }
 	inline uint32 totalDuration() const { return _totalDuration; }
 	inline uint8 &premultiplyAlpha() { return _premultiplyAlpha; }
 	Common::Rect frameBounds(int32 frameI) const;
