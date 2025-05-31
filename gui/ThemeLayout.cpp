@@ -258,10 +258,10 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		}
 	}
 
-	if (_x >= 0) _x += _inset * g_gui.getScaleFactor();
-	if (_y >= 0) _y += _inset * g_gui.getScaleFactor();
-	if (_w >= 0) _w -= 2 * _inset * g_gui.getScaleFactor();
-	if (_h >= 0) _h -= 2 * _inset * g_gui.getScaleFactor();
+	if (_x >= 0) _x += _inset.left * g_gui.getScaleFactor();
+	if (_y >= 0) _y += _inset.top * g_gui.getScaleFactor();
+	if (_w >= 0) _w -= (_inset.left + _inset.right) * g_gui.getScaleFactor();
+	if (_h >= 0) _h -= (_inset.top + _inset.bottom) * g_gui.getScaleFactor();
 
 	if (_children.size()) {
 		_children[0]->setWidth(_w);

@@ -136,7 +136,8 @@
 	</globals>
 
 	<dialog name = 'Launcher' overlays = 'screen'>
-		<layout type = 'vertical' align = 'center' padding = '16, 16, 8, 8'>
+		<layout type = 'vertical' align = 'center' padding = '16, 16, 8, 8'
+			inset = 'kLauncherSafeAreaInsetLeft, kLauncherSafeAreaInsetRight, kLauncherSafeAreaInsetTop, kLauncherSafeAreaInsetBottom'>
 			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 0'>
 				<widget name = 'HelpButton'
 						height = 'Globals.Button.Height'

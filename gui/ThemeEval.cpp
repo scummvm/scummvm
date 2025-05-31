@@ -36,6 +36,13 @@ void ThemeEval::buildBuiltinVars() {
 	_builtin["kThumbnailWidth"] = kThumbnailWidth;
 	_builtin["kThumbnailHeight"] = kThumbnailHeight1;
 	_builtin["kThumbnailHeight2"] = kThumbnailHeight2;
+
+	int safeAreaInsetLeft, safeAreaInsetRight, safeAreaInsetTop, safeAreaInsetBottom;
+	g_system->getSafeAreaInsets(safeAreaInsetLeft, safeAreaInsetRight, safeAreaInsetTop, safeAreaInsetBottom);
+	_builtin["kLauncherSafeAreaInsetLeft"] = safeAreaInsetLeft;
+	_builtin["kLauncherSafeAreaInsetRight"] = safeAreaInsetRight;
+	_builtin["kLauncherSafeAreaInsetTop"] = safeAreaInsetTop;
+	_builtin["kLauncherSafeAreaInsetBottom"] = safeAreaInsetBottom;
 }
 
 void ThemeEval::reset() {
@@ -47,6 +54,7 @@ void ThemeEval::reset() {
 		delete i->_value;
 
 	_layouts.clear();
+	buildBuiltinVars();
 }
 
 bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h) {
@@ -121,7 +129,7 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 	return *this;
 }
 
-ThemeEval &ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) {
+ThemeEval &ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, int16 width, int16 height, const Common::Rect &inset) {
 	Common::String var = "Dialog." + name;
 
 	ThemeLayout *layout = new ThemeLayoutMain(name, overlays, width, height, inset);
