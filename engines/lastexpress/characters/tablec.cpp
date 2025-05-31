@@ -48,7 +48,7 @@ void LogicManager::CONS_TableC(int chapter) {
 		CONS_TableC_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -63,9 +63,13 @@ void LogicManager::CONS_TableC_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableC_Birth(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		_engine->getSoundManager()->playSoundFile("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC, 0);
 		CONS_TableC_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -80,9 +84,13 @@ void LogicManager::CONS_TableC_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableC_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		_engine->getSoundManager()->playSoundFile("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC, 0);
 		CONS_TableC_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -97,9 +105,13 @@ void LogicManager::CONS_TableC_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableC_StartPart3(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		_engine->getSoundManager()->playSoundFile("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC, 0);
 		CONS_TableC_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -114,9 +126,13 @@ void LogicManager::CONS_TableC_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableC_StartPart4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		_engine->getSoundManager()->playSoundFile("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kCharacterTableC, 0);
 		CONS_TableC_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -131,11 +147,15 @@ void LogicManager::CONS_TableC_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableC_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		if (whoRunningDialog(kCharacterTableC))
 			fadeDialog(kCharacterTableC);
 
 		CONS_TableC_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
