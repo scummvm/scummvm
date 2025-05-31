@@ -455,7 +455,6 @@ void SoundManager::mixEngine() {
 
 	Slot *cachedSlot;
 	Slot *nextCachedSlot;
-	Slot *soundEntry;
 	Slot *soundChannels[6];
 
 	if (_soundEngineToggle) {

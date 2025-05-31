@@ -403,7 +403,7 @@ void SoundManager::soundThread() {
 					if (_numActiveChannels < 6 && (cachedSlot->getStatusFlags() & kSoundVolumeMask) != 0) {
 						priority = cachedSlot->getPriority();
 
-						if (priority + (cachedSlot->getStatusFlags() & kSoundVolumeMask) > maxPriority) {
+						if (priority + (int)(cachedSlot->getStatusFlags() & kSoundVolumeMask) > maxPriority) {
 							slotToDevirtualize = cachedSlot;
 							maxPriority = (cachedSlot->getStatusFlags() & kSoundVolumeMask) + priority;
 						}

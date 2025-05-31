@@ -390,7 +390,7 @@ bool Slot::getBuffer() {
 
 		for (chosenSlot = nullptr; cacheSlots; cacheSlots = cacheSlots->getNext()) {
 			if ((cacheSlots->getStatusFlags() & kSoundFlagMute) == 0) {
-				if (cacheSlots->getPriority() + (getStatusFlags() & kSoundVolumeMask) < effPrio) {
+				if (cacheSlots->getPriority() + (int)(getStatusFlags() & kSoundVolumeMask) < effPrio) {
 					chosenSlot = cacheSlots;
 					effPrio = cacheSlots->getPriority() + (getStatusFlags() & kSoundVolumeMask);
 				}

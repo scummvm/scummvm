@@ -49,9 +49,9 @@ public:
 	void clearBounds();
 	void addBounds(Extent extent);
 	void convertNSPR16(byte *spriteData, NisSprite *outSprite);
-	void getStream(byte *data, uint32 size);
-	void loadSnd(uint32 size);
-	int loadChunk(uint32 size);
+	void getStream(byte *data, int32 size);
+	void loadSnd(int32 size);
+	int loadChunk(int32 size);
 	bool initNIS(const char *filename, int32 flags);
 	void endNIS();
 	void abortNIS();
@@ -88,7 +88,7 @@ private:
 	Slot *_chainedSoundSlot = nullptr;
 
 	int32 _streamCurrentPosition = 0;
-	uint32 _currentStreamPage = 0;
+	int32 _currentStreamPage = 0;
 	int32 _totalStreamPages = 0;
 	int32 _remainingStreamBytes = 0;
 	int32 _streamBufferSize = 0;

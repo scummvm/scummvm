@@ -98,7 +98,6 @@ void OtisManager::wipeAllGSysInfo() {
 bool OtisManager::fDirection(int nodeIdx) {
 	uint16 car;
 	uint8 cathDir;
-	bool result = false;
 
 	if (!nodeIdx)
 		nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
@@ -117,7 +116,6 @@ bool OtisManager::fDirection(int nodeIdx) {
 bool OtisManager::rDirection(int nodeIdx) {
 	uint16 car;
 	uint8 cathDir;
-	bool result = false;
 
 	if (!nodeIdx)
 		nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
@@ -136,7 +134,6 @@ bool OtisManager::rDirection(int nodeIdx) {
 bool OtisManager::doorView() {
 	uint16 car;
 	uint8 cathDir;
-	bool result = false;
 
 	int32 nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
 
@@ -157,7 +154,6 @@ bool OtisManager::doorView() {
 bool OtisManager::corrRender(int nodeIdx) {
 	uint16 car;
 	uint8 cathDir;
-	bool result = false;
 
 	if (!nodeIdx)
 		nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
@@ -703,10 +699,10 @@ void OtisManager::drawLooseSprites() {
 
 	int offset;
 	if (corrRender(0)) {
-		if (getCharacter(kCharacterCath).characterPosition.car == 3) {
+		if (getCharacter(kCharacterCath).characterPosition.car == kCarGreenSleeping) {
 			offset = 1;
 		} else {
-			if (getCharacter(kCharacterCath).characterPosition.car != 4)
+			if (getCharacter(kCharacterCath).characterPosition.car != kCarRedSleeping)
 				return;
 			offset = 32;
 		}
@@ -714,10 +710,10 @@ void OtisManager::drawLooseSprites() {
 		for (int k = offset; k < offset + 8; ++k) {
 			if (_engine->getLogicManager()->_gameObjects[k].door == 2) {
 				Common::sprintf_s(seqName, "633X%c-%02d.seq", k - offset + 65, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
-				_engine->_doorSeqs[k - offset] = _engine->getArchiveManager()->loadSeq(seqName, 0xFFu, 0);
+				_engine->_doorSeqs[k - offset] = _engine->getArchiveManager()->loadSeq(seqName, 255, 0);
 				if (_engine->_doorSeqs[k - offset]) {
 					if (fDirection(0)) {
-						_engine->_doorSeqs[k - offset]->sprites->hotspotPriority = -1 - (k - offset);
+						_engine->_doorSeqs[k - offset]->sprites->hotspotPriority = offset - k - 1;
 					} else {
 						_engine->_doorSeqs[k - offset]->sprites->hotspotPriority = k - offset - 8;
 					}
@@ -726,13 +722,13 @@ void OtisManager::drawLooseSprites() {
 				}
 			}
 		}
-	} else if (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].nodePosition.car == 5 && _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir == 81) {
+	} else if (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].nodePosition.car == kCarRestaurant && _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir == 81) {
 		Common::sprintf_s(seqName, "SCLKH-%02d.seq", _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
-		_engine->_clockHandsSeqs[0] = _engine->getArchiveManager()->loadSeq(seqName, 0xFFu, 0);
+		_engine->_clockHandsSeqs[0] = _engine->getArchiveManager()->loadSeq(seqName, 255, 0);
 		int32 hours = _engine->getLogicManager()->_gameTime % 1296000 % 54000 / 900;
 
 		Common::sprintf_s(seqName, "SCLKM-%02d.seq", _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
-		_engine->_clockHandsSeqs[1] = _engine->getArchiveManager()->loadSeq(seqName, 0xFFu, 0);
+		_engine->_clockHandsSeqs[1] = _engine->getArchiveManager()->loadSeq(seqName, 255, 0);
 
 		int32 period = _engine->getLogicManager()->_gameTime % 1296000 / 54000;
 		if (period >= 12)
@@ -741,11 +737,11 @@ void OtisManager::drawLooseSprites() {
 		int32 minutes = hours / 12 + 5 * period;
 
 		if (_engine->_clockHandsSeqs[0] && _engine->_clockHandsSeqs[1]) {
-			_engine->_clockHandsSeqs[0]->sprites[hours].hotspotPriority = -2;
+			_engine->_clockHandsSeqs[0]->sprites[hours].hotspotPriority = 0xFFFE;
 			_engine->getSpriteManager()->drawSprite(&_engine->_clockHandsSeqs[0]->sprites[hours]);
 			_engine->_clockHandsValues[0] = hours;
 
-			_engine->_clockHandsSeqs[1]->sprites[minutes].hotspotPriority = -1;
+			_engine->_clockHandsSeqs[1]->sprites[minutes].hotspotPriority = 0xFFFF;
 			_engine->getSpriteManager()->drawSprite(&_engine->_clockHandsSeqs[1]->sprites[minutes]);
 			_engine->_clockHandsValues[1] = minutes;
 		}
@@ -928,7 +924,7 @@ int OtisManager::findFrame(int character, Seq *sequence, int position, bool doPr
 }
 
 void OtisManager::initCurFrame(int character) {
-	uint32 ticks;
+	int32 ticks;
 	int curFrameIdx;
 	int tmpRemainingFrames;
 	bool foundCurrentFrame = false;
@@ -1066,7 +1062,7 @@ void OtisManager::initCurFrame(int character) {
 				tmpRemainingFrames = -1;
 
 			while (!foundCurrentFrame && curFrameIdx < getCharacter(character).sequence1->numFrames) {
-				if (ticks + getCharacter(character).sequence1->sprites[curFrameIdx].ticksToWaitUntilCycleRestart >= (uint16)getCharacter(character).elapsedFrames) {
+				if (ticks + getCharacter(character).sequence1->sprites[curFrameIdx].ticksToWaitUntilCycleRestart >= getCharacter(character).elapsedFrames) {
 					foundCurrentFrame = true;
 				} else {
 					if (ticks > (getCharacter(character).elapsedFrames - 10) && getCharacter(character).sequence1->sprites[curFrameIdx].soundAction) {

@@ -760,7 +760,6 @@ void LogicManager::HAND_Vesna_InComp(HAND_PARAMS) {
 			}
 		}
 
-	LABEL_40:
 		setDoor(38, kCharacterVesna, 3, 0, 0);
 		if (msg->action == 9) {
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
