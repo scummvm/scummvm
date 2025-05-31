@@ -29,6 +29,7 @@ namespace Bagel {
 namespace MFC {
 
 class CWnd;
+class CPalette;
 
 namespace Gfx {
 
@@ -36,12 +37,15 @@ class SurfaceDC : public Graphics::ManagedSurface {
 public:
 	CWnd *_owner = nullptr;
 	HPALETTE _palette = nullptr;
+	CPalette *_cPalette = nullptr;
 
 public:
 	SurfaceDC(CWnd *owner);
 
 	HPALETTE selectPalette(HPALETTE pal);
-	void realizePalette();
+	CPalette *selectPalette(CPalette *pal);
+	UINT realizePalette();
+	COLORREF GetNearestColor(COLORREF crColor) const;
 };
 
 } // namespace Gfx

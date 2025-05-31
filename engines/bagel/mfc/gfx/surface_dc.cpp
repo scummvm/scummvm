@@ -45,10 +45,28 @@ HPALETTE SurfaceDC::selectPalette(HPALETTE pal) {
 	return oldPal;
 }
 
-void SurfaceDC::realizePalette() {
+CPalette *SurfaceDC::selectPalette(CPalette *pal) {
+	CPalette *oldPal = _cPalette;
+	_cPalette = pal;
+	selectPalette((HPALETTE)_cPalette->m_hObject);
+	return oldPal;
+}
+
+
+UINT SurfaceDC::realizePalette() {
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
 	AfxGetApp()->setPalette(*pal);
+	return 256;
 }
+
+COLORREF SurfaceDC::GetNearestColor(COLORREF crColor) const {
+	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
+	return pal->findBestColor(
+		GetRValue(crColor),
+		GetGValue(crColor),
+		GetBValue(crColor));
+}
+
 
 } // namespace Gfx
 } // namespace MFC

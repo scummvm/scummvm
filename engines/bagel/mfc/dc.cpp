@@ -289,15 +289,15 @@ CGdiObject *CDC::SelectObject(CGdiObject *pObject) {
 }
 
 COLORREF CDC::GetNearestColor(COLORREF crColor) const {
-	error("TODO: CDC::GetNearestColor");
+	return surface()->GetNearestColor(crColor);
 }
 
 CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
-	error("TODO: CDC::SelectPalette");
+	return surface()->selectPalette(pPalette);
 }
 
 UINT CDC::RealizePalette() {
-	error("TODO: CDC::RealizePalette");
+	return surface()->realizePalette();
 }
 
 void CDC::UpdateColors() {
