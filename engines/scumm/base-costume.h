@@ -86,6 +86,9 @@ public:
 protected:
 	ScummEngine *_vm;
 
+	// flag to enable AkosRenderer's behaviour in paintCelByleRLECommon()
+	bool _akosRendering;
+
 	// Destination
 	Graphics::Surface _out;
 	int32 _numStrips;
@@ -129,7 +132,7 @@ public:
 		int scaleIndexMask;
 	};
 
-	BaseCostumeRenderer(ScummEngine *scumm) {
+    BaseCostumeRenderer(ScummEngine *scumm, bool akosRendering = false) {
 		_actorID = 0;
 		_shadowMode = 0;
 		_shadowTable = nullptr;
@@ -139,6 +142,8 @@ public:
 		_drawTop = _drawBottom = 0;
 
 		_vm = scumm;
+        _akosRendering = akosRendering;
+
 		_numStrips = -1;
 		_srcPtr = nullptr;
 		_xMove = _yMove = 0;

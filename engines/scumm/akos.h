@@ -95,7 +95,7 @@ protected:
 
 
 public:
-	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
+	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm, true) {
 		_useBompPalette = false;
 		_akhd = nullptr;
 		_akpl = nullptr;
