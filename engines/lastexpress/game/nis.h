@@ -55,8 +55,8 @@ public:
 	bool initNIS(const char *filename, int32 flags);
 	void endNIS();
 	void abortNIS();
-	void NISMouse(Event *event);
-	void NISTimer(Event *event);
+	void nisMouse(Event *event);
+	void nisTimer(Event *event);
 	void drawSprite(NisSprite *sprite);
 	void waxSprite(NisSprite *sprite);
 	void waneSprite(NisSprite *sprite);

@@ -330,12 +330,12 @@ void NISManager::abortNIS() {
 		_flags |= kNisFlagAbortRequested;
 }
 
-void NISManager::NISMouse(Event *event) {
+void NISManager::nisMouse(Event *event) {
 	if ((event->flags & 0x10) != 0)
 		abortNIS();
 }
 
-void NISManager::NISTimer(Event *event) {
+void NISManager::nisTimer(Event *event) {
 	_engine->setEventTickInternal(false);
 }
 

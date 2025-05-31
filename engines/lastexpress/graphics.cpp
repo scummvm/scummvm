@@ -43,15 +43,24 @@ GraphicsManager::GraphicsManager(LastExpressEngine *engine) {
 
 GraphicsManager::~GraphicsManager() {}
 
-bool GraphicsManager::goLockSurface() {
-	return true;
-}
-
 bool GraphicsManager::acquireSurface() {
+	// This function is technically useless, but I'm keeping it
+	// as a marker for when the engine wants to acquire the gfx context
+	// for when it has to draw something.
+	//
+	// It has proven to be useful during debugging,
+	// maybe it'll be useful in the future as well...
+
 	return true;
 }
 
 void GraphicsManager::unlockSurface() {
+	// As before, this function is technically useless, but I'm keeping it
+	// as a marker for when the engine wants to release the gfx context
+	// for when it finishes drawing something.
+	//
+	// It has proven to be useful during debugging,
+	// maybe it'll be useful in the future as well...
 }
 
 void GraphicsManager::burstAll() {

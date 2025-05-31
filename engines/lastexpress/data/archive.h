@@ -94,17 +94,17 @@ public:
 private:
 	LastExpressEngine *_engine = nullptr;
 
-	Common::File *g_CDFilePointer = nullptr;
-	int32 g_CDFilePosition = 0;
-	int32 g_CDArchiveNumFiles = 0;
+	Common::File *_cdFilePointer = nullptr;
+	int32 _cdFilePosition = 0;
+	int32 _cdArchiveNumFiles = 0;
 
-	Common::File *g_HDFilePointer = nullptr;
-	int32 g_HDFilePosition = 0;
-	int32 g_HDArchiveNumFiles = 0;
+	Common::File *_hdFilePointer = nullptr;
+	int32 _hdFilePosition = 0;
+	int32 _hdArchiveNumFiles = 0;
 
-	HPF *g_CDArchive = nullptr;
-	HPF *g_HDArchive = nullptr;
-	int32 g_CDArchiveIndex = 0;
+	HPF *_cdArchive = nullptr;
+	HPF *_hdArchive = nullptr;
+	int32 _cdArchiveIndex = 0;
 };
 
 } // End of namespace LastExpress

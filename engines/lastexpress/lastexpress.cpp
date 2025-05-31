@@ -57,10 +57,21 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 LastExpressEngine::~LastExpressEngine() {
-	// Delete the remaining objects
+	SAFE_DELETE(_graphicsMan);
+	SAFE_DELETE(_spriteMan);
+	SAFE_DELETE(_otisMan);
+	SAFE_DELETE(_subtitleMan);
+	SAFE_DELETE(_archiveMan);
+	SAFE_DELETE(_memMan);
+	SAFE_DELETE(_msgMan);
+	SAFE_DELETE(_nisMan);
+	SAFE_DELETE(_soundMan);
+	SAFE_DELETE(_logicMan);
 	SAFE_DELETE(_menu);
+	SAFE_DELETE(_saveMan);
 	SAFE_DELETE(_clock);
 	SAFE_DELETE(_vcr);
+
 	//_debugger is deleted by Engine
 
 	// Zero passed pointers
@@ -133,11 +144,12 @@ Common::Error LastExpressEngine::run() {
 	if (gDebugLevel >= 3)
 		DebugMan.enableDebugChannel(kDebugConsole);
 
+	// Graphics manager
 	_graphicsMan = new GraphicsManager(this);
 
+	// Animation system
 	_spriteMan = new SpriteManager(this);
 	_otisMan = new OtisManager(this);
-	_subtitleMan = new SubtitleManager(this);
 
 	// Archive manager
 	_archiveMan = new ArchiveManager(this);
@@ -151,8 +163,9 @@ Common::Error LastExpressEngine::run() {
 	// NIS manager
 	_nisMan = new NISManager(this);
 
-	// Sound manager
+	// Sound&subtitles manager
 	_soundMan = new SoundManager(this);
+	_subtitleMan = new SubtitleManager(this);
 
 	// Logic manager
 	_logicMan = new LogicManager(this);
@@ -200,13 +213,6 @@ Common::Error LastExpressEngine::run() {
 
 		waitForTimer(4); // Wait 4 ticks (tick duration: 17 ms dictated by the sound timer)
 		elapsedMs += 4 * 17;
-
-		// Simulate a WM_TIMER event every 250ms
-		if (elapsedMs >= 250) {
-			elapsedMs -= 250;
-			//if (_canDrawMouse)
-			//	getMessageManager()->addEvent(4, 0, 0, 4);
-		}	
 	}
 
 	getTimerManager()->removeTimerProc(soundTimerHandler);
@@ -558,11 +564,11 @@ void LastExpressEngine::nodeStepTimerWrapper(Event *event) {
 }
 
 void LastExpressEngine::nisMouseWrapper(Event *event) {
-	getNISManager()->NISMouse(event);
+	getNISManager()->nisMouse(event);
 }
 
 void LastExpressEngine::nisTimerWrapper(Event *event) {
-	getNISManager()->NISTimer(event);
+	getNISManager()->nisTimer(event);
 }
 
 void LastExpressEngine::creditsMouseWrapper(Event *event) {
