@@ -181,4 +181,49 @@ void GlobalUI::drawChangingButton() {
 	g_engine->drawQueue().add<AnimationDrawRequest>(_changeButton, false, BlendMode::AdditiveAlpha);
 }
 
+struct CenterBottomTextTask : public Task {
+	CenterBottomTextTask(Process &process, int32 dialogId, uint32 durationMs)
+		: Task(process)
+		, _dialogId(dialogId)
+		, _durationMs(durationMs) {
+	}
+
+	TaskReturn run() override
+	{
+		Font &font = g_engine->globalUI().dialogFont();
+		const char *text = g_engine->world().getDialogLine(_dialogId);
+		const Point pos(
+			g_system->getWidth() / 2,
+			g_system->getHeight() - 200
+		);
+
+		TASK_BEGIN;
+		_startTime = g_system->getMillis();
+		while (g_system->getMillis() - _startTime < _durationMs) {
+			if (process().isActiveForPlayer()) {
+				g_engine->drawQueue().add<TextDrawRequest>(
+					font, text, pos, -1, true, kWhite, 1);
+			}
+			TASK_YIELD;
+		}
+		TASK_END;
+	}
+
+	void debugPrint() override
+	{
+		uint32 remaining = g_system->getMillis() - _startTime <= _durationMs
+			? _durationMs - (g_system->getMillis() - _startTime)
+			: 0;
+		g_engine->console().debugPrintf("CenterBottomText (%d) with %ums remaining\n", _dialogId, remaining);
+	}
+
+private:
+	int32 _dialogId;
+	uint32 _startTime = 0, _durationMs;
+};
+
+Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs) {
+	return new CenterBottomTextTask(process, dialogId, durationMs);
+}
+
 }

@@ -21,6 +21,7 @@
 
 #include "script.h"
 #include "rooms.h"
+#include "global-ui.h"
 #include "alcachofa.h"
 #include "script-debug.h"
 
@@ -495,8 +496,7 @@ private:
 
 		// Misc / control flow
 		case ScriptKernelTask::ShowCenterBottomText:
-			warning("STUB KERNEL CALL: ShowCenterBottomText");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(showCenterBottomText(process(), getNumberArg(0), (uint32)getNumberArg(1)));
 		case ScriptKernelTask::Delay:
 			return getNumberArg(0) <= 0
 				? TaskReturn::finish(0)

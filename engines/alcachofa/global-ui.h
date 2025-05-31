@@ -61,6 +61,8 @@ private:
 	uint32 _timeForInventory = 0;
 };
 
+Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs);
+
 }
 
 
