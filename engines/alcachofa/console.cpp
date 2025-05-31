@@ -49,8 +49,7 @@ Console::Console() : GUI::Debugger() {
 Console::~Console() {
 }
 
-bool Console::isAnyDebugDrawingOn() const
-{
+bool Console::isAnyDebugDrawingOn() const {
 	return
 		g_engine->isDebugModeActive() ||
 		_showInteractables ||
@@ -207,8 +206,7 @@ bool Console::cmdItem(int argc, const char **args) {
 	return true;
 }
 
-bool Console::cmdDebugMode(int argc, const char **args)
-{
+bool Console::cmdDebugMode(int argc, const char **args) {
 	if (argc < 2 || argc > 3) {
 		debugPrintf("usage: debugMode <mode> [<param>]\n");
 		debugPrintf("modes:\n");
@@ -236,8 +234,7 @@ bool Console::cmdDebugMode(int argc, const char **args)
 	return true;
 }
 
-bool Console::cmdTeleport(int argc, const char **args)
-{
+bool Console::cmdTeleport(int argc, const char **args) {
 	if (argc < 1 || argc > 2)
 	{
 		debugPrintf("usagge: tp [<character>]\n");

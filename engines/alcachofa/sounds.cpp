@@ -36,7 +36,8 @@ using namespace Audio;
 namespace Alcachofa {
 
 Sounds::Playback::Playback(uint32 id, SoundHandle handle, Mixer::SoundType type)
-	: _id(id), _handle(handle), _type(type) {}
+	: _id(id), _handle(handle), _type(type) {
+}
 
 void Sounds::Playback::fadeOut(uint32 duration) {
 	_fadeStart = g_system->getMillis();
@@ -205,7 +206,8 @@ void Sounds::fadeOutVoiceAndSFX(uint32 duration) {
 
 PlaySoundTask::PlaySoundTask(Process &process, SoundID soundID)
 	: Task(process)
-	, _soundID(soundID) { }
+	, _soundID(soundID) {
+}
 
 TaskReturn PlaySoundTask::run() {
 	auto &sounds = g_engine->sounds();

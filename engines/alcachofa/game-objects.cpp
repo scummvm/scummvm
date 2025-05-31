@@ -65,7 +65,8 @@ void Item::trigger() {
 
 ITriggerableObject::ITriggerableObject(ReadStream &stream)
 	: _interactionPoint(Shape(stream).firstPoint())
-	, _interactionDirection((Direction)stream.readSint32LE()) {}
+	, _interactionDirection((Direction)stream.readSint32LE()) {
+}
 
 void ITriggerableObject::onClick() {
 	auto heldItem = g_engine->player().heldItem();
@@ -286,7 +287,8 @@ struct SayTextTask final : public Task {
 	SayTextTask(Process &process, Character *character, int32 dialogId)
 		: Task(process)
 		, _character(character)
-		, _dialogId(dialogId) { }
+		, _dialogId(dialogId) {
+	}
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
@@ -410,7 +412,8 @@ struct LerpLodBiasTask final : public Task {
 		: Task(process)
 		, _character(character)
 		, _targetLodBias(targetLodBias)
-		, _durationMs(durationMs) { }
+		, _durationMs(durationMs) {
+	}
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
@@ -558,7 +561,7 @@ void WalkingCharacter::updateWalking() {
 			_lastWalkAnimFrame = 0;
 		}
 	}
-	
+
 	if (_pathPoints.empty()) {
 		_isWalking = false;
 		_currentPos = _sourcePos = targetPos;
@@ -569,8 +572,7 @@ void WalkingCharacter::updateWalking() {
 	_graphicNormal.topLeft() = _currentPos;
 }
 
-void WalkingCharacter::updateWalkingAnimation()
-{
+void WalkingCharacter::updateWalkingAnimation() {
 	_direction = getDirection(_sourcePos, _pathPoints.top());
 	auto animation = walkingAnimation();
 	_graphicNormal.setAnimation(animation);
@@ -721,7 +723,8 @@ void WalkingCharacter::serializeSave(Serializer &serializer) {
 struct ArriveTask : public Task {
 	ArriveTask(Process &process, const WalkingCharacter &character)
 		: Task(process)
-		, _character(character) {}
+		, _character(character) {
+	}
 
 	virtual TaskReturn run() override {
 		return _character.isWalking()
@@ -964,7 +967,8 @@ struct DialogMenuTask : public Task {
 	DialogMenuTask(Process &process, MainCharacter *character)
 		: Task(process)
 		, _input(g_engine->input())
-		, _character(character) {}
+		, _character(character) {
+	}
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
@@ -1077,7 +1081,8 @@ const char *FloorColor::typeName() const { return "FloorColor"; }
 
 FloorColor::FloorColor(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
-	, _shape(stream) {}
+	, _shape(stream) {
+}
 
 void FloorColor::drawDebug() {
 	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());

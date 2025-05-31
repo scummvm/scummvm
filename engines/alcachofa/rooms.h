@@ -191,7 +191,7 @@ private:
 	MainCharacter *_filemon, *_mortadelo;
 	uint8 _loadedMapCount = 0;
 	Common::HashMap<const char *, const char *,
-		Common::Hash<const char*>,
+		Common::Hash<const char *>,
 		StringEqualTo> _localizedNames;
 	Common::Array<const char *> _dialogLines;
 	Common::Array<char> _namesChunk, _dialogChunk; ///< holds the memory for localizedNames / dialogLines

@@ -55,7 +55,7 @@ public:
 	Task *lerpPos(Process &process,
 		Math::Vector2d targetPos,
 		int32 duration, EasingType easingType);
-	Task *lerpPos(Process &process, 
+	Task *lerpPos(Process &process,
 		Math::Vector3d targetPos,
 		int32 duration, EasingType easingType);
 	Task *lerpPosZ(Process &process,

@@ -47,7 +47,7 @@ struct Polygon {
 	bool contains(const Common::Point &query) const;
 	bool intersectsEdge(uint startPointI, Common::Point a, Common::Point b) const;
 	EdgeDistances edgeDistances(uint startPointI, const Common::Point &query) const;
-	Common::Point closestPointTo(const Common::Point &query, float& distanceSqr) const;
+	Common::Point closestPointTo(const Common::Point &query, float &distanceSqr) const;
 	inline Common::Point closestPointTo(const Common::Point &query) const {
 		float dummy;
 		return closestPointTo(query, dummy);
@@ -94,14 +94,14 @@ struct PolygonIterator {
 		return tmp;
 	}
 
-	inline bool operator==(const my_type& it) const {
+	inline bool operator==(const my_type &it) const {
 		return &this->_shape == &it._shape && this->_index == it._index;
 	}
 
-	inline bool operator!=(const my_type& it) const {
+	inline bool operator!=(const my_type &it) const {
 		return &this->_shape != &it._shape || this->_index != it._index;
 	}
-	
+
 private:
 	friend typename Common::remove_const_t<TShape>;
 	PolygonIterator(const TShape &shape, uint index = 0)
@@ -177,7 +177,7 @@ public:
 		Common::Point centerTarget,
 		float depthScale,
 		float minDistSqr,
-		Common::Point& evadeTarget) const;
+		Common::Point &evadeTarget) const;
 
 private:
 	using LinkIndex = Common::Pair<int32, int32>;
@@ -213,7 +213,7 @@ private:
 	 */
 	Common::Array<Common::Point> _linkPoints;
 	/**
-	 * For each point of each polygon the index (or -1) to 
+	 * For each point of each polygon the index (or -1) to
 	 * the corresponding link point. The second point is the
 	 * index to the artifical center point
 	 */
@@ -223,7 +223,7 @@ private:
 	};
 	Common::Array<LinkPolygonIndices> _linkIndices;
 	/**
-	 * For the going-straight-through-edges check we need 
+	 * For the going-straight-through-edges check we need
 	 * to know for each shared edge (defined by the starting point)
 	 * into which quad we will walk.
 	 */
