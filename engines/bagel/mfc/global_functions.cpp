@@ -31,20 +31,19 @@ namespace MFC {
 struct MemBlock {
 	byte *_ptr;
 	size_t _size;
-	MemBlock(size_t size) :
-		_ptr(new byte[size]),
-		_size(size) {}
+	MemBlock(size_t size, bool clearFlag) : _size(size) {
+		_ptr = (byte *)malloc(size);
+		if (clearFlag)
+			Common::fill(_ptr, _ptr + size, 0);
+	}
 	~MemBlock() {
-		delete[] _ptr;
+		free(_ptr);
 	}
 };
 
 HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) {
-	MemBlock *block = new MemBlock(dwBytes);
-	if (uFlags == GMEM_ZEROINIT)
-		Common::fill(block->_ptr, block->_ptr + dwBytes, 0);
-
-	return block;
+	return new MemBlock(dwBytes,
+		uFlags == GMEM_ZEROINIT);
 }
 
 LPVOID GlobalLock(HGLOBAL hMem) {

@@ -92,10 +92,9 @@ CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName) {
 			*pPalette = (*pDIB).DetachPalette();
 	}
 
-	if (pDIB != nullptr)
-		delete pDIB;
+	delete pDIB;
 
-	return (pBitmap);
+	return pBitmap;
 }
 
 CBitmap *FetchBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName) {

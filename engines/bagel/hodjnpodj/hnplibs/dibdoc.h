@@ -58,7 +58,7 @@ public:
 	virtual BOOL OpenResourceDocument(const char* pszPathName);
 
 private:
-	HDIB m_hDIB = 0;
+	HDIB m_hDIB = nullptr;
 	CPalette *m_palDIB = nullptr;
 	CSize m_sizeDoc;
 

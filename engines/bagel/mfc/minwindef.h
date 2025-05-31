@@ -83,7 +83,9 @@ DECLARE_HANDLE(HICON);
 DECLARE_HANDLE(HMENU);
 DECLARE_HANDLE(HRAWINPUT);
 
-struct CGdiObjectImpl {};
+struct CGdiObjectImpl {
+	virtual ~CGdiObjectImpl() {};
+};
 typedef CGdiObjectImpl *HGDIOBJ;
 typedef HGDIOBJ HBITMAP;
 typedef HGDIOBJ HBRUSH;
