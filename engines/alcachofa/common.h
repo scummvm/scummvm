@@ -108,9 +108,9 @@ private:
 float ease(float t, EasingType type);
 
 Math::Vector3d as3D(const Math::Vector2d &v);
-Math::Vector3d as3D(const Common::Point &p);
+Math::Vector3d as3D(Common::Point p);
 Math::Vector2d as2D(const Math::Vector3d &v);
-Math::Vector2d as2D(const Common::Point &p);
+Math::Vector2d as2D(Common::Point p);
 
 bool readBool(Common::ReadStream &stream);
 Common::Point readPoint(Common::ReadStream &stream);

@@ -39,10 +39,10 @@ public:
 	inline const PathFindingShape *activeFloor() const {
 		return _activeFloorI < 0 ? nullptr : &_floors[_activeFloorI];
 	}
-	inline int8 orderAt(const Common::Point &query) const {
+	inline int8 orderAt(Common::Point query) const {
 		return _activeFloorI < 0 ? 49 : activeFloor()->orderAt(query);
 	}
-	inline float depthAt(const Common::Point &query) const {
+	inline float depthAt(Common::Point query) const {
 		return _activeFloorI < 0 ? 1 : activeFloor()->depthAt(query);
 	}
 	inline uint8 characterAlphaTint() const { return _characterAlphaTint; }

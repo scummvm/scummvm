@@ -325,7 +325,7 @@ public:
 	ITriggerableObject(Common::ReadStream &stream);
 
 	inline Direction interactionDirection() const { return _interactionDirection; }
-	inline const Common::Point &interactionPoint() const { return _interactionPoint; }
+	inline Common::Point interactionPoint() const { return _interactionPoint; }
 
 	virtual void trigger(const char *action) = 0;
 
@@ -420,7 +420,7 @@ public:
 	virtual ~WalkingCharacter() override = default;
 
 	inline bool isWalking() const { return _isWalking; }
-	inline const Common::Point &position() const { return _currentPos; }
+	inline Common::Point position() const { return _currentPos; }
 	inline float stepSizeFactor() const { return _stepSizeFactor; }
 
 	virtual void update() override;
@@ -430,12 +430,12 @@ public:
 	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual void walkTo(
-		const Common::Point &target,
+		Common::Point target,
 		Direction endDirection = Direction::Invalid,
 		ITriggerableObject *activateObject = nullptr,
 		const char *activateAction = nullptr);
 	void stopWalking(Direction direction = Direction::Invalid);
-	void setPosition(const Common::Point &target);
+	void setPosition(Common::Point target);
 	virtual const char *typeName() const;
 
 	Task *waitForArrival(Process &process);
@@ -497,7 +497,7 @@ public:
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual const char *typeName() const;
 	virtual void walkTo(
-		const Common::Point &target,
+		Common::Point target,
 		Direction endDirection = Direction::Invalid,
 		ITriggerableObject *activateObject = nullptr,
 		const char *activateAction = nullptr) override;
