@@ -226,8 +226,12 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 			}
 		}
 	} else {
-		if (!actorIsScaled)
-			linesToSkip = rect.right - compData.boundsRect.right;	// AkosRenderer had +1 here, weird
+		if (!actorIsScaled) {
+			if (_akosRendering)
+				linesToSkip = rect.right - compData.boundsRect.right + 1;
+			else
+				linesToSkip = rect.right - compData.boundsRect.right;
+		}
 		if (linesToSkip > 0) {
 			if (!amiOrPcEngCost && !c64Cost) {
 				compData.skipWidth -= linesToSkip;
@@ -247,7 +251,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 		}
 	}
 
-	if (compData.skipWidth <= 0 || _height <= 0) {	// AkosRenderer added the second check (|| _height <= 0)
+	if (compData.skipWidth <= 0 || (_akosRendering && _height <= 0)) {
 		decode = false;
 		return 0;
 	}
@@ -269,7 +273,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	if (_drawBottom < rect.bottom)
 		_drawBottom = rect.bottom;
 
-	if (_height + rect.top >= 256) {	// AkosRenderer didn't do this check
+	if (!_akosRendering && (_height + rect.top >= 256)) {
 		decode = false;
 		return 2;
 	}
