@@ -95,6 +95,21 @@ static const IcbGameDescription gameDescriptions[] = {
 	{
 		{
 			// In Cold Blood
+			// German GOG version
+			"icb",
+			"",
+			AD_ENTRY2s("g/speech.clu", "c880a89fe4a46b5c068acc06cf1dbf2b", 8785336, "g/g", "4ef623595db724fa33a127227b31acec", 65828),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ICB
+	},
+
+	{
+		{
+			// In Cold Blood
 			// English Demo
 			"icb",
 			"Demo",
@@ -116,6 +131,21 @@ static const IcbGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("g/speech.clu", "ced60009bdffa9a1055863bf10d2e79e", 7683040, "g/g", "2b9a8ca8d7a1bd91701708535b171aa8", 62080),
 			Common::EN_USA,
 			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ICB
+	},
+
+	{
+		{
+			// In Cold Blood
+			// English PS1 Demo from Official UK PlayStation Magazine CD Disk 64 (SCED-02638)
+			"icb",
+			"Demo",
+			AD_ENTRY2s("g/speech.clu", "4e58eafc80b734ad177bdb7e2b2a3794", 735688, "g/havenota.clu", "87bacf73f340c879484fbcff93e4fd74", 44432),
+			Common::EN_GRB,
+			Common::kPlatformPSX,
 			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
