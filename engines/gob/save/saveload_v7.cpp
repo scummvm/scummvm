@@ -934,8 +934,8 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"APPLIS/appli_07.ini", kSaveModeSave, nullptr, "app info" },
 
 	// Adi 4 / Addy 4 Base
-	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
-	{"statev00.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/config00.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev00.inf", kSaveModeSave, nullptr, nullptr        },
 	// Adi 4 / Addy 4 Grundschule
 	{ "premier.dep", kSaveModeSave, nullptr, nullptr        },
 	{ "quitter.dep", kSaveModeSave, nullptr, nullptr        },
