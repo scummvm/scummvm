@@ -104,6 +104,9 @@ protected:
 	// width and height of cel to decode
 	int _width, _height;
 
+	// actor _palette
+	uint16 _palette[256] = {};
+
 public:
 	struct ByleRLEData {
 		// Parameters for the original ("V1") costume codec.
@@ -123,6 +126,7 @@ public:
 		// These ones aren't accessed from ARM code.
 		Common::Rect boundsRect;
 		int scaleXIndex, scaleYIndex;
+		int scaleIndexMask;
 	};
 
 	BaseCostumeRenderer(ScummEngine *scumm) {
@@ -157,7 +161,23 @@ public:
 protected:
 	virtual byte drawLimb(const Actor *a, int limb) = 0;
 
+	byte paintCelByleRLECommon(
+		int xMoveCur,
+		int yMoveCur,
+		int numColors,
+		int scaletableSize,
+		bool amiOrPcEngCost,
+		bool c64Cost,
+		ByleRLEData &compData,
+		bool &decode);
+
+	void byleRLEDecode(ByleRLEData &compData, int16 actorHitX = 0, int16 actorHitY = 0, bool *actorHitResult = nullptr, const uint8 *xmap = nullptr);
+
 	void skipCelLines(ByleRLEData &compData, int num);
+
+private:
+	// helper function to be called from paintCelByleRLECommon
+	virtual void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {}
 };
 
 } // End of namespace Scumm
