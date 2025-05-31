@@ -92,7 +92,7 @@ void NISManager::convertNSPR16(byte *spriteData, NisSprite *outSprite) {
 		outSprite->eraseMask = &spriteData[eraseMaskOffset];
 }
 
-void NISManager::getStream(byte *data, uint32 size) {
+void NISManager::getStream(byte *data, int32 size) {
 	if (size > _remainingStreamBytes) {
 		Slot *slot;
 
@@ -128,10 +128,10 @@ void NISManager::getStream(byte *data, uint32 size) {
 	}
 }
 
-void NISManager::loadSnd(uint32 size) {
+void NISManager::loadSnd(int32 size) {
 	byte *currentBufferPtr = _currentNISSound->getCurrentBufferPtr();
 	byte *dataEnd = _currentNISSound->getDataEnd();
-	uint32 availableSize = dataEnd - currentBufferPtr;
+	int32 availableSize = dataEnd - currentBufferPtr;
 
 	if (size < dataEnd - currentBufferPtr) {
 		getStream(_currentNISSound->getCurrentBufferPtr(), size);
@@ -148,7 +148,7 @@ void NISManager::loadSnd(uint32 size) {
 		memcpy(_currentNISSound->getDataEnd(), _currentNISSound->getDataStart(), NIS_SOUND_CHUNK_SIZE);
 }
 
-int NISManager::loadChunk(uint32 size) {
+int NISManager::loadChunk(int32 size) {
 	int32 sizeToLoad = _totalStreamPages - ((_remainingStreamBytes + 2047) / PAGE_SIZE);
 
 	if (!_archive || (_archive->status & 2) == 0)
@@ -194,7 +194,6 @@ int NISManager::loadChunk(uint32 size) {
 bool NISManager::initNIS(const char *filename, int32 flags) {
 	int32 chunkSizeRead = 0;
 	int32 eventSize = 0;
-	int32 *p_eventSize = nullptr;
 	Slot *slot;
 
 	_currentNISSound = nullptr;

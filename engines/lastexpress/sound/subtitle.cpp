@@ -209,7 +209,7 @@ void SubtitleManager::initSubtitles() {
 
 		assert(_font->fontData);
 
-		for (int i = 0; !fontStream->eos() && i < sizeOfData; i++) {
+		for (uint i = 0; !fontStream->eos() && i < sizeOfData; i++) {
 			_font->fontData[i] = fontStream->readByte();
 		}
 

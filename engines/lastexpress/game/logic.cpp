@@ -1091,9 +1091,9 @@ bool LogicManager::obstacleBetween(int character1, int character2) {
 		char2Pos = getCharacter(character2).characterPosition.position;
 	}
 
-	for (i = 7; i > -1 && _objectPosition[i] < char1Pos; i--);
+	for (i = 7; i > -1 && _objectPosition[i] < (int)char1Pos; i--);
 
-	for (j = 0; j < 8 && _objectPosition[j] > char2Pos; j++);
+	for (j = 0; j < 8 && _objectPosition[j] > (int)char2Pos; j++);
 
 	if (i > -1 && j < 8) {
 		while (j <= i) {
@@ -1471,7 +1471,6 @@ void LogicManager::bumpCathTylerComp() {
 }
 
 int LogicManager::getSmartBumpNode(int node) {
-	int result;
 	uint8 effDir;
 	uint16 car = _trainData[node].nodePosition.car;
 
@@ -1874,140 +1873,139 @@ void LogicManager::queueSFX(int character, uint8 action, uint8 delay) {
 		if (inSalon(character) == inSalon(kCharacterCath)) {
 			sndNum = action;
 			volume = getVolume(character);
-			if (action < 256) {
-				switch (action) {
-				case 36:
-					ambientLevel = 16;
-					if (volume <= 9)
-						ambientLevel = volume + 7;
-					_engine->getSoundManager()->raiseAmbient(ambientLevel, delay);
-					break;
-				case 37:
-					_engine->getSoundManager()->levelAmbient(delay);
-					break;
-				case 150:
-					sndArray[0] = 151;
-					sndArray[1] = 152;
-					sndArray[2] = 153;
-					sndArray[3] = 154;
-					sndArray[4] = 155;
-					sndNum = sndArray[rnd(5)];
-					break;
-				case 156:
-					sndArray[0] = 157;
-					sndArray[1] = 158;
-					sndArray[2] = 159;
-					sndArray[3] = 160;
-					sndArray[4] = 161;
-					sndNum = sndArray[rnd(5)];
-					break;
-				case 162:
-					sndArray[0] = 163;
-					sndArray[1] = 164;
-					sndArray[2] = 165;
-					sndArray[3] = 166;
-					sndArray[4] = 167;
-					sndNum = sndArray[rnd(5)];
-					break;
-				case 168:
-					sndArray[0] = 169;
-					sndArray[1] = 170;
-					sndArray[2] = 171;
-					sndArray[3] = 172;
-					sndArray[4] = 173;
-					sndNum = sndArray[rnd(5)];
-					break;
-				case 174:
-					sndArray[0] = 175;
-					sndArray[1] = 176;
-					sndArray[2] = 177;
-					sndNum = sndArray[rnd(3)];
-					break;
-				case 180:
-					sndArray[0] = 181;
-					sndArray[1] = 182;
-					sndArray[2] = 183;
-					sndArray[3] = 184;
-					sndNum = sndArray[rnd(4)];
-					break;
-				case 184:
-					sndArray[0] = 185;
-					sndArray[1] = 186;
-					sndArray[2] = 187;
-					sndNum = sndArray[rnd(3)];
-					break;
-				case 188:
-					sndArray[0] = 189;
-					sndArray[1] = 190;
-					sndArray[2] = 191;
-					sndArray[3] = 192;
-					sndArray[4] = 193;
-					sndNum = sndArray[rnd(5)];
-					break;
-				case 194:
-					sndArray[0] = -61;
-					sndArray[1] = 196;
-					sndArray[2] = 197;
-					sndNum = sndArray[rnd(3)];
-					break;
-				case 198:
-					sndArray[0] = -57;
-					sndArray[1] = 200;
-					sndArray[2] = 201;
-					sndArray[3] = 202;
-					sndArray[4] = 203;
-					sndNum = sndArray[rnd(5)];
-					break;
-				case 246:
-					sndArray[0] = 0;
-					memcpy(&sndArray[1], "hint", 4);
-					sndNum = sndArray[rnd(5)];
-					break;
-				case 247:
-					sndArray[0] = 11;
-					memcpy(&sndArray[1], "{|", 2);
-					sndNum = sndArray[rnd(3)];
-					break;
-				case 248:
-					sndArray[0] = 0;
-					memcpy(&sndArray[1], "glm", 3);
-					sndNum = sndArray[rnd(4)];
-					break;
-				case 249:
-					sndArray[0] = 0;
-					memcpy(&sndArray[1], "8pq", 3);
-					sndNum = sndArray[rnd(4)];
-					break;
-				case 250:
-					sndArray[0] = 0;
-					memcpy(&sndArray[1], "ksu", 3);
-					sndNum = sndArray[rnd(4)];
-					break;
-				case 251:
-					sndArray[0] = 0;
-					sndArray[1] = 11;
-					memcpy(&sndArray[2], "8q", 2);
-					sndNum = sndArray[rnd(4)];
-					break;
-				case 252:
-					sndArray[0] = 0;
-					sndArray[1] = 6;
-					memcpy(&sndArray[2], "my", 2);
-					sndNum = sndArray[rnd(4)];
-					break;
-				case 254:
-					sndArray[0] = 0;
-					memcpy(&sndArray[1], "hxy", 3);
-					sndNum = sndArray[rnd(4)];
-					break;
-				case 255:
-					sndArray[0] = 0;
-					memcpy(&sndArray[1], "js", 2);
-					sndNum = sndArray[rnd(3)];
-					break;
-				default:
-					break;
-				}
+
+			switch (action) {
+			case 36:
+				ambientLevel = 16;
+				if (volume <= 9)
+					ambientLevel = volume + 7;
+				_engine->getSoundManager()->raiseAmbient(ambientLevel, delay);
+				break;
+			case 37:
+				_engine->getSoundManager()->levelAmbient(delay);
+				break;
+			case 150:
+				sndArray[0] = 151;
+				sndArray[1] = 152;
+				sndArray[2] = 153;
+				sndArray[3] = 154;
+				sndArray[4] = 155;
+				sndNum = sndArray[rnd(5)];
+				break;
+			case 156:
+				sndArray[0] = 157;
+				sndArray[1] = 158;
+				sndArray[2] = 159;
+				sndArray[3] = 160;
+				sndArray[4] = 161;
+				sndNum = sndArray[rnd(5)];
+				break;
+			case 162:
+				sndArray[0] = 163;
+				sndArray[1] = 164;
+				sndArray[2] = 165;
+				sndArray[3] = 166;
+				sndArray[4] = 167;
+				sndNum = sndArray[rnd(5)];
+				break;
+			case 168:
+				sndArray[0] = 169;
+				sndArray[1] = 170;
+				sndArray[2] = 171;
+				sndArray[3] = 172;
+				sndArray[4] = 173;
+				sndNum = sndArray[rnd(5)];
+				break;
+			case 174:
+				sndArray[0] = 175;
+				sndArray[1] = 176;
+				sndArray[2] = 177;
+				sndNum = sndArray[rnd(3)];
+				break;
+			case 180:
+				sndArray[0] = 181;
+				sndArray[1] = 182;
+				sndArray[2] = 183;
+				sndArray[3] = 184;
+				sndNum = sndArray[rnd(4)];
+				break;
+			case 184:
+				sndArray[0] = 185;
+				sndArray[1] = 186;
+				sndArray[2] = 187;
+				sndNum = sndArray[rnd(3)];
+				break;
+			case 188:
+				sndArray[0] = 189;
+				sndArray[1] = 190;
+				sndArray[2] = 191;
+				sndArray[3] = 192;
+				sndArray[4] = 193;
+				sndNum = sndArray[rnd(5)];
+				break;
+			case 194:
+				sndArray[0] = 195;
+				sndArray[1] = 196;
+				sndArray[2] = 197;
+				sndNum = sndArray[rnd(3)];
+				break;
+			case 198:
+				sndArray[0] = 198;
+				sndArray[1] = 200;
+				sndArray[2] = 201;
+				sndArray[3] = 202;
+				sndArray[4] = 203;
+				sndNum = sndArray[rnd(5)];
+				break;
+			case 246:
+				sndArray[0] = 0;
+				memcpy(&sndArray[1], "hint", 4);
+				sndNum = sndArray[rnd(5)];
+				break;
+			case 247:
+				sndArray[0] = 11;
+				memcpy(&sndArray[1], "{|", 2);
+				sndNum = sndArray[rnd(3)];
+				break;
+			case 248:
+				sndArray[0] = 0;
+				memcpy(&sndArray[1], "glm", 3);
+				sndNum = sndArray[rnd(4)];
+				break;
+			case 249:
+				sndArray[0] = 0;
+				memcpy(&sndArray[1], "8pq", 3);
+				sndNum = sndArray[rnd(4)];
+				break;
+			case 250:
+				sndArray[0] = 0;
+				memcpy(&sndArray[1], "ksu", 3);
+				sndNum = sndArray[rnd(4)];
+				break;
+			case 251:
+				sndArray[0] = 0;
+				sndArray[1] = 11;
+				memcpy(&sndArray[2], "8q", 2);
+				sndNum = sndArray[rnd(4)];
+				break;
+			case 252:
+				sndArray[0] = 0;
+				sndArray[1] = 6;
+				memcpy(&sndArray[2], "my", 2);
+				sndNum = sndArray[rnd(4)];
+				break;
+			case 254:
+				sndArray[0] = 0;
+				memcpy(&sndArray[1], "hxy", 3);
+				sndNum = sndArray[rnd(4)];
+				break;
+			case 255:
+				sndArray[0] = 0;
+				memcpy(&sndArray[1], "js", 2);
+				sndNum = sndArray[rnd(3)];
+				break;
+			default:
+				break;
 			}
 
 			if (sndNum) {
@@ -3293,7 +3291,7 @@ bool LogicManager::walk(int character, int car, int position) {
 			if (!_engine->getOtisManager()->rDirection(0))
 				return false;
 		} else {
-			if (cathPos >= characterPosition || characterPosition - cathPos < 500 || characterPosition - cathPos >= (uint16)getCharacter(character).walkStepSize + 500) {
+			if (cathPos >= characterPosition || characterPosition - cathPos < 500 || (int32)(characterPosition - cathPos) >= getCharacter(character).walkStepSize + 500) {
 				return false;
 			}
 

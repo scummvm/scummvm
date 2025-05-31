@@ -640,7 +640,7 @@ void VCR::seekToTime(int32 time) {
 }
 
 void VCR::updateCurGame(int32 fromTime, int32 toTime, bool searchEntry) {
-	uint32 minTimeDiff = 0xFFFFFFFF;
+	int32 minTimeDiff = 0x7FFFFFFF;
 	int newMenuIdx = 0;
 
 	if (toTime != fromTime) {

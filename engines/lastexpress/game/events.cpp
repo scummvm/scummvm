@@ -255,10 +255,10 @@ void MessageManager::saveMessages(CVCRFile *file) {
 	assert(msgData);
 
 	for (int i = 0; i < 128; i++) {
-		WRITE_LE_UINT32(msgData + (i * 16) + 0, _autoMessages[i].receiver);
-		WRITE_LE_UINT32(msgData + (i * 16) + 4, _autoMessages[i].action);
-		WRITE_LE_UINT32(msgData + (i * 16) + 8, _autoMessages[i].sender);
-		WRITE_LE_UINT32(msgData + (i * 16) + 12, _autoMessages[i].param.intParam);
+		WRITE_LE_INT32(msgData + (i * 16) + 0, _autoMessages[i].receiver);
+		WRITE_LE_INT32(msgData + (i * 16) + 4, _autoMessages[i].action);
+		WRITE_LE_INT32(msgData + (i * 16) + 8, _autoMessages[i].sender);
+		WRITE_LE_INT32(msgData + (i * 16) + 12, _autoMessages[i].param.intParam);
 	}
 
 	file->writeRLE(msgData, 16, 128);
@@ -276,10 +276,10 @@ void MessageManager::saveMessages(CVCRFile *file) {
 			msgData = (byte *)malloc(16);
 			assert(msgData);
 
-			WRITE_LE_UINT32(msgData + 0, msgToSave->receiver);
-			WRITE_LE_UINT32(msgData + 4, msgToSave->action);
-			WRITE_LE_UINT32(msgData + 8, msgToSave->sender);
-			WRITE_LE_UINT32(msgData + 12, msgToSave->param.intParam);
+			WRITE_LE_INT32(msgData + 0, msgToSave->receiver);
+			WRITE_LE_INT32(msgData + 4, msgToSave->action);
+			WRITE_LE_INT32(msgData + 8, msgToSave->sender);
+			WRITE_LE_INT32(msgData + 12, msgToSave->param.intParam);
 
 			nextIdx = (nextIdx + 1) & 0x7F;
 			file->writeRLE(msgData, 16, 1);
@@ -297,10 +297,10 @@ void MessageManager::loadMessages(CVCRFile *file) {
 	file->readRLE(msgData, 16, 128);
 
 	for (int i = 0; i < 128; i++) {
-		_autoMessages[i].receiver = READ_LE_UINT32(msgData + (i * 16) + 0);
-		_autoMessages[i].action = READ_LE_UINT32(msgData + (i * 16) + 4);
-		_autoMessages[i].sender = READ_LE_UINT32(msgData + (i * 16) + 8);
-		_autoMessages[i].param.intParam = READ_LE_UINT32(msgData + (i * 16) + 12);
+		_autoMessages[i].receiver = READ_LE_INT32(msgData + (i * 16) + 0);
+		_autoMessages[i].action = READ_LE_INT32(msgData + (i * 16) + 4);
+		_autoMessages[i].sender = READ_LE_INT32(msgData + (i * 16) + 8);
+		_autoMessages[i].param.intParam = READ_LE_INT32(msgData + (i * 16) + 12);
 		_autoMessages[i].param.stringParam = nullptr;
 	}
 
@@ -317,12 +317,11 @@ void MessageManager::loadMessages(CVCRFile *file) {
 
 		file->readRLE(msgData, 16, 1);
 
-		uint32 receiver = READ_LE_UINT32(msgData + 0);
-		uint32 action = READ_LE_UINT32(msgData + 4);
-		uint32 sender = READ_LE_UINT32(msgData + 8);
-		ConsCallParam param;
-		param.intParam = READ_LE_UINT32(msgData + 12);
-		param.stringParam = nullptr;
+		loadedMsg.receiver = READ_LE_INT32(msgData + 0);
+		loadedMsg.action = READ_LE_INT32(msgData + 4);
+		loadedMsg.sender = READ_LE_INT32(msgData + 8);
+		loadedMsg.param.intParam = READ_LE_INT32(msgData + 12);
+		loadedMsg.param.stringParam = nullptr;
 
 		addMessage(loadedMsg.receiver, loadedMsg.action, loadedMsg.sender, loadedMsg.param);
 		free(msgData);
