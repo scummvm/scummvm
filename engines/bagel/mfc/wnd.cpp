@@ -119,7 +119,9 @@ void CWnd::Invalidate(BOOL bErase) {
 	_updateRect = _windowRect;
 	_updateErase = bErase;
 
-	_messages.push(MSG(WM_PAINT));
+	MSG msg(WM_PAINT);
+	msg.hwnd = m_hWnd;
+	_messages.push(msg);
 }
 
 int CWnd::GetWindowText(CString &rString) const {
@@ -150,7 +152,10 @@ int CWnd::ReleaseDC(CDC *pDC) {
 }
 
 BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
-	_messages.push(MSG(message, wParam, lParam));
+	MSG msg(message, wParam, lParam);
+	msg.hwnd = m_hWnd;
+
+	_messages.push(msg);
 	return true;
 }
 

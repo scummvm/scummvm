@@ -86,7 +86,13 @@ int CWinApp::Run() {
 bool CWinApp::GetMessage(MSG &msg) {
 	Libs::Event ev;
 
-	// Poll for event
+	// Check for any existing messages
+	if (!m_pMainWnd->_messages.empty()) {
+		msg = m_pMainWnd->_messages.pop();
+		return true;
+	}
+
+	// Poll for event in ScummVM event manager
 	if (!g_system->getEventManager()->pollEvent(ev)) {
 		g_system->delayMillis(10);
 		return true;

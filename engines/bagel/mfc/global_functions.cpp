@@ -166,6 +166,8 @@ void TranslateMessage(LPMSG lpMsg) {
 
 void DispatchMessage(LPMSG lpMsg) {
 	CWnd *wnd = CWnd::FromHandle(lpMsg->hwnd);
+	assert(wnd);
+
 	wnd->SendMessage(lpMsg->message,
 	                 lpMsg->wParam, lpMsg->lParam);
 }
