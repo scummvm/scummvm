@@ -69,19 +69,25 @@ void LogicManager::CONS_Max_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterMax).characterPosition.position = 0;
-			getCharacter(kCharacterMax).characterPosition.location = 0;
-			getCharacter(kCharacterMax).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterMax)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterMax, kCarGreenSleeping, getCharacterCurrentParams(kCharacterMax)[0])) {
+			if (getCharacterCurrentParams(kCharacterMax)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterMax)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterMax)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterMax, kCarGreenSleeping, getCharacterCurrentParams(kCharacterMax)[0])) {
-		if (getCharacterCurrentParams(kCharacterMax)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterMax)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterMax)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterMax).characterPosition.position = 0;
+		getCharacter(kCharacterMax).characterPosition.location = 0;
+		getCharacter(kCharacterMax).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterMax)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -98,12 +104,17 @@ void LogicManager::CONS_Max_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterMax).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
 		fedEx(kCharacterMax, kCharacterMax, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterMax, (char *)&getCharacterCurrentParams(kCharacterMax)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -120,12 +131,17 @@ void LogicManager::CONS_Max_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterMax).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
 		fedEx(kCharacterMax, kCharacterMax, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMax, (char *)&getCharacterCurrentParams(kCharacterMax)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -144,14 +160,19 @@ void LogicManager::CONS_Max_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterMax, getCharacterCurrentParams(kCharacterMax)[3]);
 		getCharacter(kCharacterMax).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
 		fedEx(kCharacterMax, kCharacterMax, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMax, (char *)&getCharacterCurrentParams(kCharacterMax)[0]);
 		blockAtDoor(kCharacterMax, getCharacterCurrentParams(kCharacterMax)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -169,19 +190,25 @@ void LogicManager::CONS_Max_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_SaveGame(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterMax).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
 		fedEx(kCharacterMax, kCharacterMax, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		save(
 			kCharacterMax,
 			getCharacterCurrentParams(kCharacterMax)[0],
-			getCharacterCurrentParams(kCharacterMax)[1]);
+			getCharacterCurrentParams(kCharacterMax)[1]
+		);
 
 		getCharacter(kCharacterMax).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
 		fedEx(kCharacterMax, kCharacterMax, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -196,22 +223,11 @@ void LogicManager::CONS_Max_WithAnna(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_WithAnna(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action != 18) {
-			if (msg->action == 71277948) {
-				getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 1;
-				MaxCall(&LogicManager::CONS_Max_GuardingComp, 0, 0, 0, 0);
-			} else if (msg->action == 158007856 && !whoRunningDialog(kCharacterMax)) {
-				playDialog(kCharacterMax, "Max1122", -1, 0);
-				getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
-			}
-		}
-	} else if (msg->action == 12) {
-		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMax)[1] || (getCharacterCurrentParams(kCharacterMax)[1] = _gameTime + getCharacterCurrentParams(kCharacterMax)[0], _gameTime + getCharacterCurrentParams(kCharacterMax)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMax)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMax)[1] = 0x7FFFFFFF;
 		}
@@ -221,6 +237,25 @@ void LogicManager::HAND_Max_WithAnna(HAND_PARAMS) {
 
 		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
 		getCharacterCurrentParams(kCharacterMax)[1] = 0;
+		break;
+	case 12:
+		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
+		break;
+	case 18:
+		break;
+	case 71277948:
+		getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 1;
+		MaxCall(&LogicManager::CONS_Max_GuardingComp, 0, 0, 0, 0);
+		break;
+	case 158007856:
+		if (!whoRunningDialog(kCharacterMax)) {
+			playDialog(kCharacterMax, "Max1122", -1, 0);
+			getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -235,64 +270,11 @@ void LogicManager::CONS_Max_GuardingComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_GuardingComp(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			if (msg->action > 101687594) {
-				if (msg->action == 122358304 || msg->action == 135204609) {
-					send(kCharacterMax, kCharacterMax, 135204609, 0);
-					setDoor(37, kCharacterCath, 0, 10, 9);
-					setDoor(53, kCharacterCath, 0, 10, 9);
-					getCharacter(kCharacterMax).currentCall--;
-					_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
-					fedEx(kCharacterMax, kCharacterMax, 18, 0);
-				} else if (msg->action == 158007856 && !whoRunningDialog(kCharacterMax)) {
-					playDialog(kCharacterMax, "Max1122", -1, 0);
-					getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
-				}
-			} else if (msg->action == 101687594) {
-				endGraphics(kCharacterMax);
-				getCharacter(kCharacterMax).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
-				fedEx(kCharacterMax, kCharacterMax, 18, 0);
-			} else if (msg->action == 18) {
-				if (getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8]) {
-					if (getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] <= 2) {
-						getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 3;
-						MaxCall(&LogicManager::CONS_Max_DoDialog, "MAX1122", 0, 0, 0);
-					} else if (getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] == 3) {
-						setDoor(37, kCharacterMax, 1, 10, 9);
-						setDoor(53, kCharacterMax, 1, 10, 9);
-					}
-				}
-			}
-		} else if (msg->action == 17) {
-			if (!whoRunningDialog(kCharacterMax) && (checkCathDir(kCarRedSleeping, 56) || checkCathDir(kCarRedSleeping, 78))) {
-				playDialog(kCharacterMax, "MAX1120", -1, 0);
-			}
-		} else if (msg->action == 12) {
-			getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
-			getCharacter(kCharacterMax).characterPosition.position = 4070;
-			getCharacter(kCharacterMax).characterPosition.location = 1;
-			getCharacter(kCharacterMax).characterPosition.car = kCarRedSleeping;
-			setDoor(37, kCharacterMax, 1, 10, 9);
-			setDoor(53, kCharacterMax, 1, 10, 9);
-		}
-	} else if (msg->action >= 8) {
-		setDoor(37, kCharacterMax, 1, 0, 0);
-		setDoor(53, kCharacterMax, 1, 0, 0);
-		if (whoRunningDialog(kCharacterMax))
-			fadeDialog(kCharacterMax);
-		if (msg->action == 8) {
-			getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 1;
-			MaxCall(&LogicManager::CONS_Max_DoDialog, "LIB012", 0, 0, 0);
-		} else {
-			getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 2;
-			MaxCall(&LogicManager::CONS_Max_DoDialog, "LIB013", 0, 0, 0);
-		}
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMax)[1] || (getCharacterCurrentParams(kCharacterMax)[1] = _gameTime + getCharacterCurrentParams(kCharacterMax)[0], _gameTime + getCharacterCurrentParams(kCharacterMax)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMax)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMax)[1] = 0x7FFFFFFF;
 		}
@@ -302,6 +284,74 @@ void LogicManager::HAND_Max_GuardingComp(HAND_PARAMS) {
 
 		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
 		getCharacterCurrentParams(kCharacterMax)[1] = 0;
+		break;
+	case 8:
+	case 9:
+		setDoor(37, kCharacterMax, 1, 0, 0);
+		setDoor(53, kCharacterMax, 1, 0, 0);
+
+		if (whoRunningDialog(kCharacterMax))
+			fadeDialog(kCharacterMax);
+
+		if (msg->action == 8) {
+			getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 1;
+			MaxCall(&LogicManager::CONS_Max_DoDialog, "LIB012", 0, 0, 0);
+		} else {
+			getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 2;
+			MaxCall(&LogicManager::CONS_Max_DoDialog, "LIB013", 0, 0, 0);
+		}
+
+		break;
+	case 12:
+		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
+		getCharacter(kCharacterMax).characterPosition.position = 4070;
+		getCharacter(kCharacterMax).characterPosition.location = 1;
+		getCharacter(kCharacterMax).characterPosition.car = kCarRedSleeping;
+		setDoor(37, kCharacterMax, 1, 10, 9);
+		setDoor(53, kCharacterMax, 1, 10, 9);
+		break;
+	case 17:
+		if (!whoRunningDialog(kCharacterMax) && (checkCathDir(kCarRedSleeping, 56) || checkCathDir(kCarRedSleeping, 78))) {
+			playDialog(kCharacterMax, "MAX1120", -1, 0);
+		}
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8]) {
+			if (getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] <= 2) {
+				getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 3;
+				MaxCall(&LogicManager::CONS_Max_DoDialog, "MAX1122", 0, 0, 0);
+			} else if (getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] == 3) {
+				setDoor(37, kCharacterMax, 1, 10, 9);
+				setDoor(53, kCharacterMax, 1, 10, 9);
+			}
+		}
+
+		break;
+	case 101687594:
+		endGraphics(kCharacterMax);
+		getCharacter(kCharacterMax).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
+		fedEx(kCharacterMax, kCharacterMax, 18, 0);
+		break;
+	case 122358304:
+	case 135204609:
+		send(kCharacterMax, kCharacterMax, 135204609, 0);
+		setDoor(37, kCharacterCath, 0, 10, 9);
+		setDoor(53, kCharacterCath, 0, 10, 9);
+		getCharacter(kCharacterMax).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
+		fedEx(kCharacterMax, kCharacterMax, 18, 0);
+		break;
+	case 158007856:
+		if (!whoRunningDialog(kCharacterMax)) {
+			playDialog(kCharacterMax, "Max1122", -1, 0);
+			getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -322,7 +372,7 @@ void LogicManager::HAND_Max_InCageFriendly(HAND_PARAMS) {
 			(getCharacterCurrentParams(kCharacterMax)[2] = _gameTime + getCharacterCurrentParams(kCharacterMax)[1],
 				_gameTime + getCharacterCurrentParams(kCharacterMax)[1] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMax)[2] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMax)[2] = 0x7FFFFFFF;
 		}
@@ -369,13 +419,13 @@ void LogicManager::HAND_Max_InCageFriendly(HAND_PARAMS) {
 			playDialog(0, "LIB026", -1, 0);
 			playNIS(kEventCathMaxFree);
 			bumpCath(kCarBaggage, 92, 255);
-			setDoor(109, 0, 0, 0, 9);
+			setDoor(109, kCharacterCath, 0, 0, 9);
 			CONS_Max_Escaped(0, 0, 0, 0);
 		}
 
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -390,7 +440,8 @@ void LogicManager::CONS_Max_Escaped(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_Escaped(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMax)[1] != 0x7FFFFFFF && _gameTime) {
 			if (getCharacterCurrentParams(kCharacterMax)[0] >= _gameTime) {
 				if (!whoOnScreen(kCharacterMax) || !getCharacterCurrentParams(kCharacterMax)[1]) {
@@ -405,7 +456,7 @@ void LogicManager::HAND_Max_Escaped(HAND_PARAMS) {
 				}
 
 				if (getCharacterCurrentParams(kCharacterMax)[1] >= _gameTime)
-					return;
+					break;
 			}
 
 			getCharacterCurrentParams(kCharacterMax)[1] = 0x7FFFFFFF;
@@ -415,13 +466,18 @@ void LogicManager::HAND_Max_Escaped(HAND_PARAMS) {
 				CONS_Max_LetMeIn4(0, 0, 0, 0);
 			}
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterMax).characterPosition.position = 4070;
 		getCharacter(kCharacterMax).characterPosition.location = 0;
 		getCharacter(kCharacterMax).characterPosition.car = kCarRedSleeping;
 		startCycOtis(kCharacterMax, "630Af");
 		softBlockAtDoor(kCharacterMax, 37);
 		getCharacterCurrentParams(kCharacterMax)[0] = _gameTime + 2700;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -436,16 +492,22 @@ void LogicManager::CONS_Max_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_Birth(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterMax)[0]) {
 			getCharacterCurrentParams(kCharacterMax)[0] = 1;
 			CONS_Max_WithAnna(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterMax).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterMax).characterPosition.position = 4070;
 		getCharacter(kCharacterMax).characterPosition.location = 1;
 		getCharacter(kCharacterMax).clothes = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -460,15 +522,20 @@ void LogicManager::CONS_Max_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_StartPart2(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Max_WithAnna(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterMax);
 		getCharacter(kCharacterMax).characterPosition.position = 4070;
 		getCharacter(kCharacterMax).characterPosition.location = 1;
 		getCharacter(kCharacterMax).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterMax).clothes = 0;
 		getCharacter(kCharacterMax).inventoryItem = kItemNone;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -483,15 +550,20 @@ void LogicManager::CONS_Max_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_StartPart3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Max_WithAnna3(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterMax);
 		getCharacter(kCharacterMax).characterPosition.position = 4070;
 		getCharacter(kCharacterMax).characterPosition.location = 1;
 		getCharacter(kCharacterMax).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterMax).clothes = 0;
 		getCharacter(kCharacterMax).inventoryItem = kItemNone;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -506,15 +578,16 @@ void LogicManager::CONS_Max_WithAnna3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_WithAnna3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMax)[1]) {
 			getCharacter(kCharacterMax).characterPosition = getCharacter(kCharacterCond2).characterPosition;
-			return;
+			break;
 		}
 
 		if (getCharacterCurrentParams(kCharacterMax)[2] || (getCharacterCurrentParams(kCharacterMax)[2] = _gameTime + getCharacterCurrentParams(kCharacterMax)[0], _gameTime + getCharacterCurrentParams(kCharacterMax)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMax)[2] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMax)[2] = 0x7FFFFFFF;
 		}
@@ -524,21 +597,30 @@ void LogicManager::HAND_Max_WithAnna3(HAND_PARAMS) {
 
 		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
 		getCharacterCurrentParams(kCharacterMax)[2] = 0;
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
 		getCharacter(kCharacterMax).characterPosition.position = 4070;
 		getCharacter(kCharacterMax).characterPosition.location = 1;
 		getCharacter(kCharacterMax).characterPosition.car = kCarRedSleeping;
-	} else if (msg->action == 122358304) {
-		getCharacterCurrentParams(kCharacterMax)[1] = 1;
-	} else if (msg->action == 135204609) {
-		CONS_Max_InCageMad(0, 0, 0, 0);
-	} else if (msg->action == 158007856 && !getCharacterCurrentParams(kCharacterMax)[1] && !whoRunningDialog(30)) {
-		playDialog(kCharacterMax, "Max1122", -1, 0);
-		getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
-	} else if (msg->action == 71277948) {
+		break;
+	case 71277948:
 		getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 1;
 		MaxCall(&LogicManager::CONS_Max_GuardingComp, 0, 0, 0, 0);
+		break;
+	case 122358304:
+		getCharacterCurrentParams(kCharacterMax)[1] = 1;
+		break;
+	case 135204609:
+		CONS_Max_InCageMad(0, 0, 0, 0);
+		break;
+	case 158007856:
+		if (!getCharacterCurrentParams(kCharacterMax)[1] && !whoRunningDialog(30)) {
+			playDialog(kCharacterMax, "Max1122", -1, 0);
+			getCharacterCurrentParams(kCharacterMax)[0] = 225 * (4 * rnd(20) + 40);
+		}
+
+		break;
 	}
 }
 
@@ -623,7 +705,7 @@ void LogicManager::HAND_Max_LetMeIn3(HAND_PARAMS) {
 		if (!getCharacterCurrentParams(kCharacterMax)[0]) {
 			if (getCharacterCurrentParams(kCharacterMax)[2] || (getCharacterCurrentParams(kCharacterMax)[2] = _gameTime + 900, _gameTime != -900)) {
 				if (getCharacterCurrentParams(kCharacterMax)[2] >= _gameTime)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterMax)[2] = 0x7FFFFFFF;
 			}
@@ -682,13 +764,18 @@ void LogicManager::CONS_Max_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_StartPart4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Max_InCageFriendly(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterMax);
 		getCharacter(kCharacterMax).characterPosition.position = 8000;
 		getCharacter(kCharacterMax).characterPosition.location = 1;
 		getCharacter(kCharacterMax).characterPosition.car = kCarBaggage;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -741,12 +828,16 @@ void LogicManager::CONS_Max_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Max_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterMax);
 		getCharacter(kCharacterMax).characterPosition.position = 0;
 		getCharacter(kCharacterMax).characterPosition.location = 0;
 		getCharacter(kCharacterMax).characterPosition.car = kCarNone;
 		setDoor(109, kCharacterCath, 0, 0, 9);
+		break;
+	default:
+		break;
 	}
 }
 
