@@ -48,7 +48,7 @@ void LogicManager::CONS_Clerk(int chapter) {
 		CONS_Clerk_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -72,11 +72,13 @@ void LogicManager::CONS_Clerk_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_SaveGame(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterClerk).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterClerk, _functionsClerk[getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall]]);
 		fedEx(kCharacterClerk, kCharacterClerk, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		save(
 			kCharacterClerk,
 			getCharacterCurrentParams(kCharacterClerk)[0],
@@ -86,6 +88,9 @@ void LogicManager::HAND_Clerk_SaveGame(HAND_PARAMS) {
 		getCharacter(kCharacterClerk).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterClerk, _functionsClerk[getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall]]);
 		fedEx(kCharacterClerk, kCharacterClerk, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -100,8 +105,13 @@ void LogicManager::CONS_Clerk_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_Birth(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_Clerk_Processing(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Clerk_StartPart2(CONS_PARAMS) {
@@ -115,8 +125,13 @@ void LogicManager::CONS_Clerk_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_Clerk_Processing(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Clerk_StartPart3(CONS_PARAMS) {
@@ -130,8 +145,13 @@ void LogicManager::CONS_Clerk_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_StartPart3(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_Clerk_Processing(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Clerk_StartPart4(CONS_PARAMS) {
@@ -145,8 +165,13 @@ void LogicManager::CONS_Clerk_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_StartPart4(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_Clerk_Processing(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Clerk_StartPart5(CONS_PARAMS) {
@@ -160,8 +185,13 @@ void LogicManager::CONS_Clerk_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_Clerk_Processing(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Clerk_DoHaremKnock(CONS_PARAMS) {
@@ -178,7 +208,8 @@ void LogicManager::CONS_Clerk_DoHaremKnock(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		switch (getCharacterCurrentParams(kCharacterClerk)[0]) {
 		case 5:
 			getCharacterCurrentParams(kCharacterClerk)[2] = 4840;
@@ -235,8 +266,8 @@ void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
 				break;
 			}
 
-			_gameProgress[55] = 1;
-			_gameProgress[56] = 1;
+			_gameProgress[kProgressFieldDC] = 1;
+			_gameProgress[kProgressFieldE0] = 1;
 		} else {
 			if (getCharacterCurrentParams(kCharacterClerk)[5] && getCharacterCurrentParams(kCharacterClerk)[6]) {
 				getCharacterParams(kCharacterClerk, 8)[5]++;
@@ -265,7 +296,7 @@ void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
 						getCharacterCurrentParams(kCharacterClerk)[7] = 1;
 					}
 
-					_gameProgress[56] = 1;
+					_gameProgress[kProgressFieldE0] = 1;
 
 				} else {
 					if (getCharacterCurrentParams(kCharacterClerk)[5]) {
@@ -288,7 +319,7 @@ void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
 								getCharacterCurrentParams(kCharacterClerk)[7] = 1;
 							}
 
-							_gameProgress[55] = 1;
+							_gameProgress[kProgressFieldDC] = 1;
 						} else {
 							if (getCharacterCurrentParams(kCharacterClerk)[6]) {
 								getCharacterParams(kCharacterClerk, 8)[3]++;
@@ -318,6 +349,10 @@ void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
 		getCharacter(kCharacterClerk).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterClerk, _functionsClerk[getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall]]);
 		fedEx(kCharacterClerk, kCharacterClerk, 18, 0);
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -332,311 +367,47 @@ void LogicManager::CONS_Clerk_Processing(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
-	if (msg->action > 8) {
-		if (msg->action > 12) {
-			if (msg->action > 191070912) {
-				if (msg->action > 202613084) {
-					if (msg->action > 203419131) {
-						if (msg->action > 222746496) {
-							if (msg->action == 225056224) {
-								getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 6;
-								ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, 252, 0, 0);
-							} else if (msg->action == 338494260) {
-								getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 7;
-								ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, 253, 0, 0);
-							}
-						} else if (msg->action == 222746496) {
-							if (msg->param.intParam) {
-								switch (msg->param.intParam) {
-								case 1:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 8200;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
-									break;
-								case 2:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 7500;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
-									break;
-								case 3:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 6470;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
-									break;
-								case 4:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 5790;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
-									break;
-								case 5:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 4840;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
-									break;
-								case 6:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 4070;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
-									break;
-								case 7:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 3050;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 0;
-									break;
-								case 8:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 3;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 2740;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 0;
-									break;
-								case kCharacterClerk:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 8200;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
-									break;
-								case 33:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 7500;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
-									break;
-								case 34:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 6470;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
-									break;
-								case 35:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 5790;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
-									break;
-								case 36:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 4840;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
-									break;
-								case 37:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 4070;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
-									break;
-								case 38:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 3050;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 0;
-									break;
-								case 39:
-									getCharacterCurrentParams(kCharacterClerk)[8] = 4;
-									getCharacterCurrentParams(kCharacterClerk)[9] = 2740;
-									getCharacterCurrentParams(kCharacterClerk)[10] = 0;
-									break;
-								default:
-									return;
-								}
-							}
-						} else if (msg->action == 203863200 && msg->param.stringParam) {
-							getCharacterCurrentParams(kCharacterClerk)[7] = 1;
-							Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterClerk)[11], 12, msg->param.stringParam);
-						}
-					} else if (msg->action == 203419131) {
-						if (!getCharacterCurrentParams(kCharacterClerk)[2]) {
-							getCharacterCurrentParams(kCharacterClerk)[2] = 1;
-							getCharacterCurrentParams(kCharacterClerk)[0] = 0;
-							send(kCharacterClerk, kCharacterClerk, 17, 0);
-						}
-					} else if (msg->action == 203339360) {
-						if (getCharacterCurrentParams(kCharacterClerk)[6]) {
-							getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 5;
-							ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, 148, 0, 0);
+	switch (msg->action) {
+	case 0: {
+		if (cathInCorridor(kCarGreenSleeping) || cathInCorridor(kCarRedSleeping)) {
+			if (getCharacterCurrentParams(kCharacterClerk)[3]) {
+				if (!getCharacterCurrentParams(kCharacterClerk)[4]) {
+					getCharacterCurrentParams(kCharacterClerk)[3]--;
+
+					if (!getCharacterCurrentParams(kCharacterClerk)[3] && _gameProgress[kProgressJacket] == 2) {
+						if (isNight()) {
+							playNIS(kEventCathSmokeNight);
 						} else {
-							getCharacterCurrentParams(kCharacterClerk)[6] = 1;
-							playNIS(kEventLocomotiveConductorsLook);
-							bumpCath(kCarCoalTender, 2, 255);
+							playNIS(kEventCathSmokeDay);
 						}
-					}
-				} else if (msg->action == 202613084) {
-					getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 8;
-					ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, 259, 0, 0);
-				} else if (msg->action == 191350523) {
-					getCharacterCurrentParams(kCharacterClerk)[2] = 0;
-					endGraphics(kCharacterClerk);
-				}
-			} else {
-				switch (msg->action) {
-				case 191070912:
-					getCharacterParams(kCharacterClerk, 8)[6] = msg->param.intParam;
-					break;
-				case 17:
-					getCharacter(kCharacterClerk).characterPosition.car = getCharacter(kCharacterCath).characterPosition.car;
-					if (checkCathDir(kCarRestaurant, 81)) {
-						getCharacterCurrentParams(kCharacterClerk)[5] = 1;
-						if (!dialogRunning("ZFX1001"))
-							playDialog(0, "ZFX1001", -1, 0);
-					} else {
-						getCharacterCurrentParams(kCharacterClerk)[5] = 0;
-						if (cathRunningDialog("ZFX1001"))
-							endDialog("ZFX1001");
-					}
-					if ((getCharacterCurrentParams(kCharacterClerk)[2] && (getCharacter(kCharacterCath).characterPosition.car != getCharacterCurrentParams(kCharacterClerk)[0]) ||
-						(isNight() != (getCharacterCurrentParams(kCharacterClerk)[1] != 0 ? true : false)))) {
-						switch (getCharacter(kCharacterCath).characterPosition.car) {
-						case 1:
-						case 6:
-							if (_gameProgress[kProgressIsDayTime]) {
-								startCycOtis(kCharacterClerk, "B1WNM");
-							} else if (isNight()) {
-								startCycOtis(kCharacterClerk, "B1WNN");
-							} else {
-								startCycOtis(kCharacterClerk, "B1WND");
-							}
-							break;
-						case 3:
-						case 4:
-							if (_gameProgress[kProgressIsDayTime]) {
-								startCycOtis(kCharacterClerk, "S1WNM");
-							} else if (isNight()) {
-								startCycOtis(kCharacterClerk, "S1WNN");
-							} else {
-								startCycOtis(kCharacterClerk, "S1WND");
-							}
-							break;
-						case 5:
-							if (_gameProgress[kProgressIsDayTime]) {
-								startCycOtis(kCharacterClerk, "RCWNM");
-							} else if (isNight()) {
-								startCycOtis(kCharacterClerk, "RCWNN");
-							} else {
-								startCycOtis(kCharacterClerk, "RCWND");
-							}
-							break;
-						default:
-							endGraphics(kCharacterClerk);
-							break;
-						}
-						getCharacterCurrentParams(kCharacterClerk)[0] = getCharacter(kCharacterCath).characterPosition.car;
-						getCharacterCurrentParams(kCharacterClerk)[1] = isNight();
-					}
 
-					if (!getCharacterCurrentParams(kCharacterClerk)[4]) {
-						getCharacterCurrentParams(kCharacterClerk)[3] = 2700;
-						getCharacterCurrentParams(kCharacterClerk)[4] = 0;
-					}
-
-					if (_gameProgress[kProgressJacket] != 1)
-						goto LABEL_105;
-					if (checkCathDir(kCarRedSleeping, 18)) {
-						getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 1;
-						ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, 123, 0, 0);
-						return;
-					}
-					if (checkCathDir(kCarGreenSleeping, 22)) {
-						getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 2;
-						ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, 123, 0, 0);
-					} else {
-					LABEL_105:
-						if (getCharacterCurrentParams(kCharacterClerk)[7] && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[9]) && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[10])) {
-							if (dialogRunning((char *)&getCharacterCurrentParams(kCharacterClerk)[11]))
-								fadeDialog((char *)&getCharacterCurrentParams(kCharacterClerk)[11]);
-							getCharacterCurrentParams(kCharacterClerk)[7] = 0;
-						}
-					}
-					break;
-				case 18:
-					switch (getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8]) {
-					case 1:
-						playNIS(kEventCoudertBloodJacket);
-						goto LABEL_104;
-					case 2:
-						playNIS(kEventMertensBloodJacket);
-					LABEL_104:
-						endGame(0, 1, 55, true);
-						goto LABEL_105;
-					case 5:
-						playNIS(kEventLocomotiveConductorsDiscovered);
-						endGame(0, 1, 63, true);
-						return;
-					case 6:
-						playNIS(kEventCathBreakCeiling);
-						setDoor(73, 0, 2, 255, 255);
+						getCharacterCurrentParams(kCharacterClerk)[4] = 1;
 						cleanNIS();
-						return;
-					case 7:
-						playNIS(kEventCathJumpDownCeiling);
-						bumpCath(kCarKronos, 89, 255);
-						return;
-					case 8:
-						playNIS(kEventCloseMatchbox);
-						bumpCath(kCarRestaurant, 51, 255);
-						return;
-					default:
-						return;
 					}
 				}
-			}
-		} else if (msg->action == 12) {
-			getCharacterCurrentParams(kCharacterClerk)[2] = 1;
-			if (_gameProgress[11] < 5) {
-				setDoor(5, kCharacterClerk, 3, 10, 9);
-				setDoor(6, kCharacterClerk, 3, 10, 9);
-				setDoor(7, kCharacterClerk, 3, 10, 9);
-				setDoor(8, kCharacterClerk, 3, 10, 9);
-			}
-
-			getCharacter(kCharacterClerk).characterPosition.position = 30000;
-		} else if (msg->action == 9) {
-			if (msg->param.intParam == 5 || msg->param.intParam == 6 || msg->param.intParam == 7 || msg->param.intParam == 8) {
-				getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 4;
-				ClerkCall(&LogicManager::CONS_Clerk_DoHaremKnock, msg->param.intParam, 9, 0, 0);
 			}
 		}
-	} else {
-		if (msg->action != 8) {
-			if (msg->action)
-				return;
 
-			if (cathInCorridor(kCarGreenSleeping) || cathInCorridor(kCarRedSleeping)) {
-				if (getCharacterCurrentParams(kCharacterClerk)[3]) {
-					if (!getCharacterCurrentParams(kCharacterClerk)[4]) {
-						getCharacterCurrentParams(kCharacterClerk)[3]--;
+		// Horrible way to unroll a goto...
+		bool skip = false;
 
-						if (!getCharacterCurrentParams(kCharacterClerk)[3] && _gameProgress[kProgressJacket] == 2) {
-							if (isNight()) {
-								playNIS(kEventCathSmokeNight);
-							} else {
-								playNIS(kEventCathSmokeDay);
-							}
+		if (getCharacterCurrentParams(kCharacterClerk)[5]) {
+			if (getCharacterCurrentParams(kCharacterClerk)[14] || (getCharacterCurrentParams(kCharacterClerk)[14] = _gameTime + 900, (_gameTime != -900))) {
+				if (getCharacterCurrentParams(kCharacterClerk)[14] >= _gameTime)
+					skip = true;
 
-							getCharacterCurrentParams(kCharacterClerk)[4] = 1;
-							cleanNIS();
-						}
-					}
-				}
-			}
-
-			if (getCharacterCurrentParams(kCharacterClerk)[5]) {
-				if (getCharacterCurrentParams(kCharacterClerk)[14] || (getCharacterCurrentParams(kCharacterClerk)[14] = _gameTime + 900, (_gameTime != -900))) {
-					if (getCharacterCurrentParams(kCharacterClerk)[14] >= _gameTime)
-						goto LABEL_43;
-
+				if (!skip)
 					getCharacterCurrentParams(kCharacterClerk)[14] = 0x7FFFFFFF;
-				}
+			}
 
+			if (!skip)
 				bumpCath(kCarRestaurant, 58, 255);
-			}
+		}
 
+		if (!skip)
 			getCharacterCurrentParams(kCharacterClerk)[14] = 0;
-		LABEL_43:
-			if (!getCharacterCurrentParams(kCharacterClerk)[6])
-				goto LABEL_49;
 
-			if (getCharacterCurrentParams(kCharacterClerk)[15] || (getCharacterCurrentParams(kCharacterClerk)[15] = _gameTime + 4500, (_gameTime != -4500))) {
-				if (getCharacterCurrentParams(kCharacterClerk)[15] >= _gameTime)
-					goto LABEL_49;
-
-				getCharacterCurrentParams(kCharacterClerk)[15] = 0x7FFFFFFF;
-			}
-
-			getCharacterCurrentParams(kCharacterClerk)[6] = 0;
-			getCharacterCurrentParams(kCharacterClerk)[15] = 0;
-		LABEL_49:
+		if (!getCharacterCurrentParams(kCharacterClerk)[6]) {
 			if (getCharacterParams(kCharacterClerk, 8)[7] && !whoRunningDialog(kCharacterTableF)) {
 				setDoor(
 					getCharacterParams(kCharacterClerk, 8)[7],
@@ -645,6 +416,7 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 					10,
 					9
 				);
+
 				getCharacterParams(kCharacterClerk, 8)[7] = 0;
 			}
 
@@ -653,13 +425,356 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 					playDialog(0, "ZFX1001", -1, 0);
 			}
 
-			return;
+			break;
 		}
 
+		if (getCharacterCurrentParams(kCharacterClerk)[15] || (getCharacterCurrentParams(kCharacterClerk)[15] = _gameTime + 4500, (_gameTime != -4500))) {
+			if (getCharacterCurrentParams(kCharacterClerk)[15] >= _gameTime) {
+				if (getCharacterParams(kCharacterClerk, 8)[7] && !whoRunningDialog(kCharacterTableF)) {
+					setDoor(
+						getCharacterParams(kCharacterClerk, 8)[7],
+						_gameObjects[getCharacterParams(kCharacterClerk, 8)[7]].character,
+						3,
+						10,
+						9
+					);
+
+					getCharacterParams(kCharacterClerk, 8)[7] = 0;
+				}
+
+				if (getCharacterCurrentParams(kCharacterClerk)[5]) {
+					if (!cathRunningDialog("ZFX1001"))
+						playDialog(0, "ZFX1001", -1, 0);
+				}
+
+				break;
+			}
+
+			getCharacterCurrentParams(kCharacterClerk)[15] = 0x7FFFFFFF;
+		}
+
+		getCharacterCurrentParams(kCharacterClerk)[6] = 0;
+		getCharacterCurrentParams(kCharacterClerk)[15] = 0;
+
+		if (getCharacterParams(kCharacterClerk, 8)[7] && !whoRunningDialog(kCharacterTableF)) {
+			setDoor(
+				getCharacterParams(kCharacterClerk, 8)[7],
+				_gameObjects[getCharacterParams(kCharacterClerk, 8)[7]].character,
+				3,
+				10,
+				9);
+
+			getCharacterParams(kCharacterClerk, 8)[7] = 0;
+		}
+
+		if (getCharacterCurrentParams(kCharacterClerk)[5]) {
+			if (!cathRunningDialog("ZFX1001"))
+				playDialog(0, "ZFX1001", -1, 0);
+		}
+
+		break;
+	}
+	case 8:
 		if (msg->param.intParam == 5 || msg->param.intParam == 6 || msg->param.intParam == 7 || msg->param.intParam == 8) {
 			getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 3;
 			ClerkCall(&LogicManager::CONS_Clerk_DoHaremKnock, msg->param.intParam, 8, 0, 0);
 		}
+
+		break;
+	case 9:
+		if (msg->param.intParam == 5 || msg->param.intParam == 6 || msg->param.intParam == 7 || msg->param.intParam == 8) {
+			getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 4;
+			ClerkCall(&LogicManager::CONS_Clerk_DoHaremKnock, msg->param.intParam, 9, 0, 0);
+		}
+
+		break;
+	case 12:
+		getCharacterCurrentParams(kCharacterClerk)[2] = 1;
+		if (_gameProgress[kProgressChapter] < 5) {
+			setDoor(5, kCharacterClerk, 3, 10, 9);
+			setDoor(6, kCharacterClerk, 3, 10, 9);
+			setDoor(7, kCharacterClerk, 3, 10, 9);
+			setDoor(8, kCharacterClerk, 3, 10, 9);
+		}
+
+		getCharacter(kCharacterClerk).characterPosition.position = 30000;
+		break;
+	case 17:
+		getCharacter(kCharacterClerk).characterPosition.car = getCharacter(kCharacterCath).characterPosition.car;
+
+		if (checkCathDir(kCarRestaurant, 81)) {
+			getCharacterCurrentParams(kCharacterClerk)[5] = 1;
+			if (!dialogRunning("ZFX1001"))
+				playDialog(0, "ZFX1001", -1, 0);
+		} else {
+			getCharacterCurrentParams(kCharacterClerk)[5] = 0;
+			if (cathRunningDialog("ZFX1001"))
+				endDialog("ZFX1001");
+		}
+
+		if ((getCharacterCurrentParams(kCharacterClerk)[2] && (getCharacter(kCharacterCath).characterPosition.car != getCharacterCurrentParams(kCharacterClerk)[0]) ||
+			 (isNight() != (getCharacterCurrentParams(kCharacterClerk)[1] != 0 ? true : false)))) {
+
+			switch (getCharacter(kCharacterCath).characterPosition.car) {
+			case 1:
+			case 6:
+				if (_gameProgress[kProgressIsDayTime]) {
+					startCycOtis(kCharacterClerk, "B1WNM");
+				} else if (isNight()) {
+					startCycOtis(kCharacterClerk, "B1WNN");
+				} else {
+					startCycOtis(kCharacterClerk, "B1WND");
+				}
+
+				break;
+			case 3:
+			case 4:
+				if (_gameProgress[kProgressIsDayTime]) {
+					startCycOtis(kCharacterClerk, "S1WNM");
+				} else if (isNight()) {
+					startCycOtis(kCharacterClerk, "S1WNN");
+				} else {
+					startCycOtis(kCharacterClerk, "S1WND");
+				}
+
+				break;
+			case 5:
+				if (_gameProgress[kProgressIsDayTime]) {
+					startCycOtis(kCharacterClerk, "RCWNM");
+				} else if (isNight()) {
+					startCycOtis(kCharacterClerk, "RCWNN");
+				} else {
+					startCycOtis(kCharacterClerk, "RCWND");
+				}
+
+				break;
+			default:
+				endGraphics(kCharacterClerk);
+				break;
+			}
+
+			getCharacterCurrentParams(kCharacterClerk)[0] = getCharacter(kCharacterCath).characterPosition.car;
+			getCharacterCurrentParams(kCharacterClerk)[1] = isNight();
+		}
+
+		if (!getCharacterCurrentParams(kCharacterClerk)[4]) {
+			getCharacterCurrentParams(kCharacterClerk)[3] = 2700;
+			getCharacterCurrentParams(kCharacterClerk)[4] = 0;
+		}
+
+		if (_gameProgress[kProgressJacket] != 1) {
+			if (getCharacterCurrentParams(kCharacterClerk)[7] && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[9]) && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[10])) {
+				if (dialogRunning((char *)&getCharacterCurrentParams(kCharacterClerk)[11]))
+					fadeDialog((char *)&getCharacterCurrentParams(kCharacterClerk)[11]);
+				getCharacterCurrentParams(kCharacterClerk)[7] = 0;
+			}
+
+			break;
+		}
+
+		if (checkCathDir(kCarRedSleeping, 18)) {
+			getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 1;
+			ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
+			break;
+		}
+
+		if (checkCathDir(kCarGreenSleeping, 22)) {
+			getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 2;
+			ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
+		} else {
+			if (getCharacterCurrentParams(kCharacterClerk)[7] && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[9]) && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[10])) {
+				if (dialogRunning((char *)&getCharacterCurrentParams(kCharacterClerk)[11]))
+					fadeDialog((char *)&getCharacterCurrentParams(kCharacterClerk)[11]);
+
+				getCharacterCurrentParams(kCharacterClerk)[7] = 0;
+			}
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8]) {
+		case 1:
+			playNIS(kEventCoudertBloodJacket);
+			endGame(0, 1, 55, true);
+
+			if (getCharacterCurrentParams(kCharacterClerk)[7] && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[9]) && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[10])) {
+				if (dialogRunning((char *)&getCharacterCurrentParams(kCharacterClerk)[11]))
+					fadeDialog((char *)&getCharacterCurrentParams(kCharacterClerk)[11]);
+
+				getCharacterCurrentParams(kCharacterClerk)[7] = 0;
+			}
+
+			break;
+		case 2:
+			playNIS(kEventMertensBloodJacket);
+			endGame(0, 1, 55, true);
+
+			if (getCharacterCurrentParams(kCharacterClerk)[7] && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[9]) && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[10])) {
+				if (dialogRunning((char *)&getCharacterCurrentParams(kCharacterClerk)[11]))
+					fadeDialog((char *)&getCharacterCurrentParams(kCharacterClerk)[11]);
+
+				getCharacterCurrentParams(kCharacterClerk)[7] = 0;
+			}
+
+			break;
+		case 5:
+			playNIS(kEventLocomotiveConductorsDiscovered);
+			endGame(0, 1, 63, true);
+			break;
+		case 6:
+			playNIS(kEventCathBreakCeiling);
+			setDoor(73, kCharacterCath, 2, 255, 255);
+			cleanNIS();
+			break;
+		case 7:
+			playNIS(kEventCathJumpDownCeiling);
+			bumpCath(kCarKronos, 89, 255);
+			break;
+		case 8:
+			playNIS(kEventCloseMatchbox);
+			bumpCath(kCarRestaurant, 51, 255);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 191070912:
+		getCharacterParams(kCharacterClerk, 8)[6] = msg->param.intParam;
+		break;
+	case 191350523:
+		getCharacterCurrentParams(kCharacterClerk)[2] = 0;
+		endGraphics(kCharacterClerk);
+		break;
+	case 202613084:
+		getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 8;
+		ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, kEventCloseMatchbox, 0, 0);
+		break;
+	case 222746496:
+		if (msg->param.intParam) {
+			switch (msg->param.intParam) {
+			case 1:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 8200;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
+				break;
+			case 2:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 7500;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
+				break;
+			case 3:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 6470;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
+				break;
+			case 4:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 5790;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
+				break;
+			case 5:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 4840;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
+				break;
+			case 6:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 4070;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
+				break;
+			case 7:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 3050;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 0;
+				break;
+			case 8:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 3;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 2740;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 0;
+				break;
+			case 32:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 8200;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
+				break;
+			case 33:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 7500;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 7850;
+				break;
+			case 34:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 6470;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
+				break;
+			case 35:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 5790;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 6130;
+				break;
+			case 36:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 4840;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
+				break;
+			case 37:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 4070;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 4455;
+				break;
+			case 38:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 3050;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 0;
+				break;
+			case 39:
+				getCharacterCurrentParams(kCharacterClerk)[8] = 4;
+				getCharacterCurrentParams(kCharacterClerk)[9] = 2740;
+				getCharacterCurrentParams(kCharacterClerk)[10] = 0;
+				break;
+			default:
+				break;
+			}
+		}
+
+		break;
+	case 203339360:
+		if (getCharacterCurrentParams(kCharacterClerk)[6]) {
+			getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 5;
+			ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, kEventLocomotiveConductorsDiscovered, 0, 0);
+		} else {
+			getCharacterCurrentParams(kCharacterClerk)[6] = 1;
+			playNIS(kEventLocomotiveConductorsLook);
+			bumpCath(kCarCoalTender, 2, 255);
+		}
+
+		break;
+	case 203419131:
+		if (!getCharacterCurrentParams(kCharacterClerk)[2]) {
+			getCharacterCurrentParams(kCharacterClerk)[2] = 1;
+			getCharacterCurrentParams(kCharacterClerk)[0] = 0;
+			send(kCharacterClerk, kCharacterClerk, 17, 0);
+		}
+
+		break;
+	case 203863200:
+		if (msg->param.stringParam) {
+			getCharacterCurrentParams(kCharacterClerk)[7] = 1;
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterClerk)[11], 12, msg->param.stringParam);
+		}
+
+		break;
+	case 225056224:
+		getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 6;
+		ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, kEventCathBreakCeiling, 0, 0);
+		break;
+	case 338494260:
+		getCharacter(kCharacterClerk).callbacks[getCharacter(kCharacterClerk).currentCall + 8] = 7;
+		ClerkCall(&LogicManager::CONS_Clerk_SaveGame, 2, kEventCathJumpDownCeiling, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
