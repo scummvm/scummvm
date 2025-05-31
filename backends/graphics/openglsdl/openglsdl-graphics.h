@@ -50,7 +50,7 @@ public:
 	void notifyVideoExpose() override;
 	void notifyResize(const int width, const int height) override;
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 	void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) override;
 	void freeImGuiTexture(void *texture) override;
 #endif

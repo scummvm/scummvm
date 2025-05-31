@@ -29,6 +29,7 @@
 #include "common/rect.h"
 
 class SdlEventSource;
+class ImGui_ImplScummVM;
 
 #define USE_OSD	1
 
@@ -212,7 +213,7 @@ protected:
 private:
 	void toggleFullScreen();
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 public:
 	void setImGuiCallbacks(const ImGuiCallbacks &callbacks) override;
 
@@ -220,9 +221,13 @@ protected:
 	ImGuiCallbacks _imGuiCallbacks;
 	bool _imGuiReady = false;
 	bool _imGuiInited = false;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Renderer *_imGuiSDLRenderer = nullptr;
+#else
+	ImGui_ImplScummVM *_impl = nullptr;
+#endif
 
-	void initImGui(SDL_Renderer *renderer, void *glContext);
+	void initImGui(void *renderer, void *glContext);
 	void renderImGui();
 	void destroyImGui();
 #endif

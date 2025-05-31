@@ -6961,8 +6961,13 @@ EOF
 						echo "no (requires OpenGL or recent SDL)"
 					fi
 				else
-					_imgui=no
-					echo "no (backend unsupported)"
+					if test "$_opengl" = yes; then
+						_imgui=yes
+						echo "yes"
+					else
+						_imgui=no
+						echo "no (requires OpenGL or recent SDL)"
+					fi
 				fi
 				;;
 			*)

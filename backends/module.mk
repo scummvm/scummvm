@@ -516,16 +516,16 @@ MODULE_OBJS += \
 	imgui/imgui_tables.o \
 	imgui/imgui_widgets.o \
 	imgui/imgui_utils.o \
+	imgui/backends/imgui_impl_scummvm.o \
 	imgui/components/imgui_logger.o \
 	imgui/misc/freetype/imgui_freetype.o
-endif
 
-ifdef USE_SDL2
-ifdef USE_IMGUI
 ifdef USE_OPENGL
 MODULE_OBJS += \
 	imgui/backends/imgui_impl_opengl3.o
 endif
+
+ifdef USE_SDL2
 ifdef USE_IMGUI_SDLRENDERER2
 MODULE_OBJS += \
 	imgui/backends/imgui_impl_sdlrenderer2.o
@@ -533,6 +533,7 @@ endif
 MODULE_OBJS += \
 	imgui/backends/imgui_impl_sdl2.o
 endif
+
 endif
 
 ifdef USE_SDL3
