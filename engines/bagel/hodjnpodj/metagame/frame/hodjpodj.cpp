@@ -1827,6 +1827,7 @@ void CHodjPodjWindow::GetHomePath() {
 
 
 BOOL CHodjPodjWindow::PositionAtHomePath() {
+	AfxGetApp()->setDirectory(nullptr);
 	return true;
 }
 

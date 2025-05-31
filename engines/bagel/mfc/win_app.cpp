@@ -162,18 +162,21 @@ void CWinApp::CloseAllDocuments(BOOL bEndSession) {
 }
 
 UINT CWinApp::GetProfileInt(LPCSTR lpszSection,
-                            LPCSTR lpszEntry, int nDefault) {
-	error("TODO: CWinApp::GetProfileInt");
+        LPCSTR lpszEntry, int nDefault) {
+	return _settings[lpszSection].getInt(lpszEntry, nDefault);
 }
 
 void CWinApp::WriteProfileInt(LPCSTR lpszSection,
-                              LPCSTR lpszEntry, int nValue) {
-	error("TODO: CWinApp::WriteProfileInt");
+        LPCSTR lpszEntry, int nValue) {
+	_settings[lpszSection].setInt(lpszEntry, nValue);
 }
 
 void CWinApp::setDirectory(const char *folder) {
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	_currentDirectory = gameDataDir.getChild(folder);
+
+	_currentDirectory = gameDataDir;
+	if (folder && *folder)
+		_currentDirectory = gameDataDir.getChild(folder);
 }
 
 Common::FSNode CWinApp::getDirectory() const {
@@ -208,7 +211,8 @@ CWnd *AfxGetMainWnd() {
 }
 
 HINSTANCE AfxGetInstanceHandle() {
-	error("TODO: AfxGetInstanceHandle");
+	// Unused in ScummVM
+	return 0;
 }
 
 HINSTANCE AfxGetResourceHandle() {
