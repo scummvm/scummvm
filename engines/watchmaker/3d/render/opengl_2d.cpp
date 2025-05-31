@@ -167,7 +167,7 @@ void renderTexture(WGame &game, gTexture &bitmap, Common::Rect srcRect, Common::
 	float rightDst = ((dstRect.right == 0 ? 0 : ((double)dstRect.right) / viewport.width()) * 2.0) - 1.0;
 
 	glBegin(GL_QUADS);
-	glColor3f(1.0, 1.0, 1.0);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glTexCoord2f(leftSrc, bottomSrc); // Bottom Left
 	glVertex3f(leftDst, bottomDst, 0.0f);

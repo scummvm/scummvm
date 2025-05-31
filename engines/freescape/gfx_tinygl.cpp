@@ -175,7 +175,7 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect &viewArea) {
 	tglEnable(TGL_BLEND);
 	tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
-	tglColor3ub(255, 255, 255);
+	tglColor4ub(255, 255, 255, 255);
 	polygonOffset(true);
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	copyToVertexArray(0, player);
@@ -206,7 +206,7 @@ void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
-	tglColor3ub(r, g, b);
+	tglColor4ub(r, g, b, 255);
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
 	float coef = (9 - frame) / 9.0;
@@ -255,7 +255,7 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point &posit
 	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
-	tglColor3ub(r, g, b);
+	tglColor4ub(r, g, b, 255);
 
 	int viewPort[4];
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
@@ -535,7 +535,7 @@ void TinyGLRenderer::polygonOffset(bool enabled) {
 void TinyGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 	_lastColorSet1 = _lastColorSet0;
 	_lastColorSet0 = _texturePixelFormat.RGBToColor(r, g, b);
-	tglColor3ub(r, g, b);
+	tglColor4ub(r, g, b, 255);
 }
 
 void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
@@ -551,7 +551,7 @@ void TinyGLRenderer::drawFloor(uint8 color) {
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	assert(getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple)); // TODO: move check inside this function
-	tglColor3ub(r1, g1, b1);
+	tglColor4ub(r1, g1, b1, 255);
 
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	copyToVertexArray(0, Math::Vector3d(-100000.0, 0.0, -100000.0));

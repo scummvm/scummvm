@@ -65,6 +65,7 @@ struct _ActorVertex {
 	float r;
 	float g;
 	float b;
+	float a;
 };
 typedef _ActorVertex ActorVertex;
 

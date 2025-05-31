@@ -995,7 +995,7 @@ void Spriter::RenderMeshPartColor(MeshPart& part, Vectors& vertices, Vectors &no
 		TGLubyte g = (prim.color >> 8) & 0xff;
 		TGLubyte b = (prim.color >> 16) & 0xff;
 
-		tglColor3ub(r, g, b);
+		tglColor4ub(r, g, b, 255);
 
 		if (part.numVertices == 4) {
 			tglBegin(TGL_QUADS);
@@ -1024,7 +1024,7 @@ void Spriter::RenderMeshPartTexture(MeshPart& part, Vectors& vertices, Vectors &
 	}
 
 	tglEnable(TGL_TEXTURE_2D);
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	for (auto& prim : part.primitives) {
 		tglBindTexture(TGL_TEXTURE_2D, _texture[prim.texture]);

@@ -555,11 +555,11 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		if (g_grim->getGameType() == GType_GRIM) {
-			glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
+			glColor4ub(_shadowColorR, _shadowColorG, _shadowColorB, 255);
 		} else {
-			glColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
+			glColor4ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue(), 255);
 		}
-		//glColor3f(0.0f, 1.0f, 0.0f); // debug draw color
+		//glColor4f(0.0f, 1.0f, 0.0f, 1.0f); // debug draw color
 		shadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
@@ -621,7 +621,7 @@ void GfxOpenGL::finishActorDraw() {
 
 	if (_currentShadowArray) {
 		glEnable(GL_LIGHTING);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
@@ -633,7 +633,7 @@ void GfxOpenGL::finishActorDraw() {
 }
 
 void GfxOpenGL::drawShadowPlanes() {
-/*	glColor3f(1.0f, 1.0f, 1.0f);
+/*	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
 		Sector *shadowSector = i->sector;
@@ -755,7 +755,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glEnd();
 
 	if (!_currentShadowArray) {
-		glColor3f(1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	glEnable(GL_TEXTURE_2D);
@@ -1176,7 +1176,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 
-		glColor3f(1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 		BitmapData *data = bitmap->_data;
 		GLuint *textures = (GLuint *)bitmap->getTexIds();
@@ -1196,7 +1196,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 			glEnd();
 		}
 
-		glColor3f(1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
@@ -1473,7 +1473,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	const Color &color = text->getFGColor();
 	const Font *f = text->getFont();
 
-	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), 255);
 	if (!f->is8Bit()) {
 		const TextObjectUserData *ud = (const TextObjectUserData *)text->getUserData();
 
@@ -1512,7 +1512,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 			glEnd();
 		}
 
-		glColor3f(1, 1, 1);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
@@ -1561,7 +1561,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 		}
 	}
 
-	glColor3f(1, 1, 1);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
@@ -1856,7 +1856,7 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	glDisable(GL_LIGHTING);
 
 	glRasterPos2i(x, y);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glListBase(_emergFont);
 
@@ -2035,7 +2035,7 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	glDisable(GL_LIGHTING);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(0.0f, 0.0f, 0.0f);
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Explicitly cast to avoid problems with C++11
 	float fx1 = x1;
@@ -2063,7 +2063,7 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	}
 	glEnd();
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glDepthMask(GL_TRUE);
@@ -2086,7 +2086,7 @@ void GfxOpenGL::drawRectangle(const PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), 255);
 
 	if (primitive->isFilled()) {
 		glBegin(GL_QUADS);
@@ -2105,7 +2105,7 @@ void GfxOpenGL::drawRectangle(const PrimitiveObject *primitive) {
 		glEnd();
 	}
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -2130,7 +2130,7 @@ void GfxOpenGL::drawLine(const PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), 255);
 
 	glLineWidth(_scaleW);
 
@@ -2139,7 +2139,7 @@ void GfxOpenGL::drawLine(const PrimitiveObject *primitive) {
 	glVertex2f(x2, y2);
 	glEnd();
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -2205,7 +2205,7 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+	glColor4ub(color.getRed(), color.getGreen(), color.getBlue(), 255);
 
 	glBegin(GL_LINES);
 	glVertex2f(x1, y1);
@@ -2214,7 +2214,7 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glVertex2f(x4 + 1, y4);
 	glEnd();
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);

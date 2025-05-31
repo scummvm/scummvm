@@ -72,7 +72,7 @@ void OpenGLSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &de
 
 	glVertexPointer(2, GL_FLOAT, sizeof(SurfaceVertex), &vertices[0].x);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(float), textCords);
-	glColor3f(1.0f - _fadeLevel, 1.0f - _fadeLevel, 1.0f - _fadeLevel);
+	glColor4f(1.0f - _fadeLevel, 1.0f - _fadeLevel, 1.0f - _fadeLevel, 1.0f);
 
 	bitmap->bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

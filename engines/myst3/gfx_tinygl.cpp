@@ -76,7 +76,7 @@ void TinyGLRenderer::init() {
 void TinyGLRenderer::clear() {
 	tglClearColor(0.f, 0.f, 0.f, 1.f); // Solid black
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) {
@@ -191,7 +191,7 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	int x = position.x;
 	int y = position.y;
