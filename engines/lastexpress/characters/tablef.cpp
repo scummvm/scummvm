@@ -28,7 +28,8 @@ void LogicManager::CONS_TableF(int chapter) {
 	case 0:
 		_engine->getMessageManager()->setMessageHandle(
 			kCharacterTableF,
-			_functionsTableF[getCharacter(kCharacterTableF).callbacks[getCharacter(kCharacterTableF).currentCall]]);
+			_functionsTableF[getCharacter(kCharacterTableF).callbacks[getCharacter(kCharacterTableF).currentCall]]
+		);
 
 		break;
 	case 1:
@@ -47,7 +48,7 @@ void LogicManager::CONS_TableF(int chapter) {
 		CONS_TableF_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -62,8 +63,13 @@ void LogicManager::CONS_TableF_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableF_Birth(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableF_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableF_StartPart2(CONS_PARAMS) {
@@ -77,8 +83,13 @@ void LogicManager::CONS_TableF_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableF_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableF_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableF_StartPart3(CONS_PARAMS) {
@@ -92,8 +103,13 @@ void LogicManager::CONS_TableF_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableF_StartPart3(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableF_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableF_StartPart4(CONS_PARAMS) {
@@ -107,8 +123,13 @@ void LogicManager::CONS_TableF_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableF_StartPart4(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableF_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableF_StartPart5(CONS_PARAMS) {
@@ -122,8 +143,13 @@ void LogicManager::CONS_TableF_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableF_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableF_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableF_Idling(CONS_PARAMS) {

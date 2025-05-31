@@ -48,7 +48,7 @@ void LogicManager::CONS_TableE(int chapter) {
 		CONS_TableE_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -63,8 +63,13 @@ void LogicManager::CONS_TableE_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableE_Birth(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableE_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableE_StartPart2(CONS_PARAMS) {
@@ -78,8 +83,13 @@ void LogicManager::CONS_TableE_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableE_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableE_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableE_StartPart3(CONS_PARAMS) {
@@ -93,8 +103,13 @@ void LogicManager::CONS_TableE_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableE_StartPart3(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableE_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableE_StartPart4(CONS_PARAMS) {
@@ -108,8 +123,13 @@ void LogicManager::CONS_TableE_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableE_StartPart4(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableE_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableE_StartPart5(CONS_PARAMS) {
@@ -123,8 +143,13 @@ void LogicManager::CONS_TableE_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableE_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		CONS_TableE_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_TableE_Idling(CONS_PARAMS) {
