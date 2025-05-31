@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/textconsole.h"
+#include "graphics/paletteman.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/libs/events.h"
@@ -177,6 +178,22 @@ void CWinApp::setDirectory(const char *folder) {
 
 Common::FSNode CWinApp::getDirectory() const {
 	return _currentDirectory;
+}
+
+void CWinApp::setPalette(const Graphics::Palette &pal) {
+	_palette = pal;
+	g_system->getPaletteManager()->setPalette(_palette);
+}
+
+byte CWinApp::getColor(COLORREF color) const {
+	if (_palette.empty())
+		return 0;
+
+	return _palette.findBestColor(
+		GetRValue(color),
+		GetGValue(color),
+		GetBValue(color)
+	);
 }
 
 /*--------------------------------------------*/

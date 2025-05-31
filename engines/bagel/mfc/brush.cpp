@@ -75,5 +75,9 @@ CBrush::Impl::Impl(CBitmap *pBitmap) :
 	error("TODO: CBrush::Impl for bitmaps");
 }
 
+byte CBrush::Impl::getColor() const {
+	return AfxGetApp()->getColor(_color);
+}
+
 } // namespace MFC
 } // namespace Bagel

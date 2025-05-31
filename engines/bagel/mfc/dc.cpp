@@ -210,8 +210,7 @@ void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
 	assert(brush->_type == HS_HORIZONTAL ||
 	       brush->_type == HS_VERTICAL);
 
-	// TODO: Palette handling
-	surf->fillRect(*lpRect, brush->_color);
+	surf->fillRect(*lpRect, brush->getColor());
 }
 
 BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {

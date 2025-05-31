@@ -483,6 +483,8 @@ public:
 		Impl(COLORREF crColor);
 		Impl(int nIndex, COLORREF crColor);
 		Impl(CBitmap *pBitmap);
+
+		byte getColor() const;
 	};
 public:
 	CBrush();
@@ -1330,6 +1332,7 @@ public:
 	int m_nCmdShow = SW_SHOWNORMAL;
 	const char *m_lpCmdLine = "";
 	CWnd *m_pMainWnd = nullptr;
+	Graphics::Palette _palette;
 
 public:
 	CWinApp(const char *appName = nullptr);
@@ -1379,6 +1382,8 @@ public:
 	}
 	void setDirectory(const char *folder);
 	Common::FSNode getDirectory() const;
+	void setPalette(const Graphics::Palette &pal);
+	byte getColor(COLORREF color) const;
 };
 
 extern CWinApp *AfxGetApp();
