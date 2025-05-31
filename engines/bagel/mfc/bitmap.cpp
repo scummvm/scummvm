@@ -26,11 +26,15 @@ namespace Bagel {
 namespace MFC {
 
 BOOL CBitmap::Attach(HGDIOBJ hObject) {
-	error("TODO: CBitmap::Attach");
+	DeleteObject();
+	m_hObject = hObject;
+	return true;
 }
 
 HGDIOBJ CBitmap::Detach() {
-	error("TODO: CBitmap::Detach");
+	HGDIOBJ result = m_hObject;
+	m_hObject = nullptr;
+	return result;
 }
 
 BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
@@ -38,8 +42,25 @@ BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 }
 
 BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
-                           UINT nBitcount, const void *lpBits) {
-	error("TODO: CBitmap::CreateBitmap");
+		UINT nBitcount, const void *lpBits) {
+	assert(nPlanes == 1);
+
+	BITMAPINFOHEADER h;
+	h.biSize = 40;
+	h.biWidth = nWidth;
+	h.biHeight = nHeight;
+	h.biPlanes = 1;
+	h.biBitCount = nBitcount;
+	h.biCompression = BI_RGB;
+	h.biSizeImage = 0;
+	h.biXPelsPerMeter = 0;
+	h.biYPelsPerMeter = 0;
+	h.biClrUsed = 0;
+	h.biClrImportant = 0;
+
+	m_hObject = CreateDIBitmap(nullptr, &h,
+		CBM_INIT, lpBits, nullptr, DIB_RGB_COLORS);
+	return true;
 }
 
 int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
