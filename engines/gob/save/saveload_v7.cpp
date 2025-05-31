@@ -933,21 +933,738 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"APPLIS/appli_06.ini", kSaveModeSave, nullptr, "app info" },
 	{"APPLIS/appli_07.ini", kSaveModeSave, nullptr, "app info" },
 
-	// Adi 4 / Addy 4 Base
+	// Adi 4 / Addy 4 Base (up to 16 Children)
+	// Child 1
 	{"DATA/config00.inf", kSaveModeSave, nullptr, nullptr        },
-	{"DATA/statev00.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev00.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal00_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal00_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/palett00.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto00.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_00.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx00.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 2
+	{"DATA/config01.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev01.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal01_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal01_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing	
+	{"DATA/palett01.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto01.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_01.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx01.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 3
+	{"DATA/config02.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev02.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal02_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal02_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett02.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto02.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_02.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx02.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 4
+	{"DATA/config03.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev03.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal03_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal03_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett03.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto03.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_03.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx03.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 5
+	{"DATA/config04.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev04.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal04_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal04_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett04.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto04.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_04.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx04.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 6
+	{"DATA/config05.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev05.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal05_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal05_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett05.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto05.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_05.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx05.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 7
+	{"DATA/config06.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev06.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal06_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal06_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett06.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto06.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_06.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx06.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 8
+	{"DATA/config07.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev07.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal07_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal07_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett07.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto07.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_07.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx07.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 9
+	{"DATA/config08.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev08.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal08_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal08_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett08.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto08.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_08.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx08.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 10
+	{"DATA/config09.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev09.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal09_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal09_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett09.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto09.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_09.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx09.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 11
+	{"DATA/config10.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev10.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal10_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal10_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett10.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto10.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_10.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx10.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 12
+	{"DATA/config11.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev11.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal11_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal11_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett11.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto11.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_11.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx11.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 13
+	{"DATA/config12.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev12.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal12_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal12_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett12.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto12.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_12.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx12.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 14
+	{"DATA/config13.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev13.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal13_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal13_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett13.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto13.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_13.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx13.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 15
+	{"DATA/config14.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev14.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal14_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal14_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett14.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto14.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_14.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx14.inf", kSaveModeSave, nullptr, nullptr        },
+
+	// Child 16
+	{"DATA/config15.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/statev15.inf", kSaveModeSave, nullptr, nullptr        }, // Simulation
+	{"DATA/pal15_00.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_01.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_02.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_03.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_04.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_05.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_06.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_07.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_08.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_09.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_10.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_11.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_12.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_13.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_14.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_15.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_16.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_17.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_18.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_19.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_20.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_21.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_22.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_23.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_24.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_25.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_26.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_27.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_28.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_29.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_30.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_31.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_32.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_33.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_34.inf", kSaveModeSave, nullptr, nullptr}, // drawing
+	{"DATA/pal15_35.inf", kSaveModeSave, nullptr, nullptr}, // drawing		
+	{"DATA/palett15.inf", kSaveModeSave, nullptr, nullptr        }, // drawing pad
+	{"DATA/playto15.inf", kSaveModeSave, nullptr, nullptr        }, // Playtoons mini game
+	{"DATA/car00_15.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/catxxx15.inf", kSaveModeSave, nullptr, nullptr        },
+
+	{"BLOC/*.inf", kSaveModeSave, nullptr, nullptr        }, // * is used due to the specific names the User can give to protect the note with the password.
+	{"BLOC/*.rtf", kSaveModeSave, nullptr, nullptr        }, // * is used due to the specific password the User can set to the Notes.
 	// Adi 4 / Addy 4 Grundschule
 	{ "premier.dep", kSaveModeSave, nullptr, nullptr        },
 	{ "quitter.dep", kSaveModeSave, nullptr, nullptr        },
 	{   "appel.dep", kSaveModeSave, nullptr, nullptr        },
 	{  "parole.dep", kSaveModeSave, nullptr, nullptr        },
-	{    "ado4.inf", kSaveModeSave, nullptr, nullptr        },
-	{"mcurrent.inf", kSaveModeSave, nullptr, nullptr        },
+	{    "ado4.inf", kSaveModeSave, nullptr, nullptr        }, // Username list
+	{"DATA/mcurrent.inf", kSaveModeSave, nullptr, nullptr        },
 	{   "perso.dep", kSaveModeSave, nullptr, nullptr        },
 	{ "nouveau.dep", kSaveModeSave, nullptr, nullptr        },
 	{     "adi.tmp", kSaveModeSave, nullptr, nullptr        },
 	{     "adi.inf", kSaveModeSave, nullptr, nullptr        },
 	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr        },
+	{  "historic.var", kSaveModeSave, nullptr, nullptr        },
+	// Adi 4 / Addy 4 Applications
+	// Geographie
+	{  "adigeo.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/resa7100.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/resga200.inf", kSaveModeSave, nullptr, nullptr        },
+	// English
+	{"DATA/resa5200.inf", kSaveModeSave, nullptr, nullptr        },
+	// French / German
+	{"DATA/resf5200.inf", kSaveModeSave, nullptr, nullptr        },
+	{"DATA/resf6200.inf", kSaveModeSave, nullptr, nullptr        },
+
+
 };
 
 SaveLoad_v7::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
