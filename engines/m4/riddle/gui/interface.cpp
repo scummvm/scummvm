@@ -57,9 +57,9 @@ bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 		_G(gameInterfaceBuff) = new GrBuff(_x2 - _x1, _y2 - _y1);
 		setup();
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 Interface::~Interface() {

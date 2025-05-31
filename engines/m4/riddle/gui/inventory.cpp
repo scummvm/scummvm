@@ -20,7 +20,6 @@
  */
 
 #include "m4/riddle/gui/inventory.h"
-#include "m4/riddle/gui/inventory.h"
 #include "m4/riddle/vars.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_line.h"
@@ -78,8 +77,7 @@ void Inventory::addToInterfaceBox(InterfaceBox *box) {
 
 bool Inventory::add(const Common::String &name, const Common::String &verb, int32 invSprite, int32 cursor) {
 	// Don't add something twice
-	int iter;
-	for (iter = 0; iter < _num_cells; iter++) {
+	for (int iter = 0; iter < _num_cells; iter++) {
 		if (name.equals(_items[iter]._name))
 			return true;
 	}
@@ -125,8 +123,7 @@ void Inventory::toggleHidden() {
 }
 
 bool Inventory::remove(const Common::String &name) {
-	int iter;
-	for (iter = 0; iter < _num_cells; iter++) {
+	for (int iter = 0; iter < _num_cells; iter++) {
 		// Found the thing?
 		if (name.equals(_items[iter]._name)) {
 			// Eat up its slot by moving everything down
@@ -189,8 +186,6 @@ void Inventory::draw(GrBuff *myBuffer) {
 	if (!_must_redraw1 && !_must_redraw2 && !_must_redraw_all)
 		return;
 
-	int cell_iter;
-
 	Buffer *myBuff = myBuffer->get_buffer();
 
 	if (_must_redraw_all || _hidden) {
@@ -202,7 +197,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 		_right_arrow_visible = false;
 		const int X_BORDER = 2, Y_BORDER = 2;
 
-		for (cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_INVENTORY); cell_iter++) {
+		for (int cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_INVENTORY); cell_iter++) {
 			int16 left =_x1 + X_BORDER + cell_pos_x(cell_iter);
 			int16 top = _y1 + Y_BORDER + cell_pos_y(cell_iter);
 			int16 leftOffset = left + _cell_w;
