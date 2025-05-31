@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "m4/wscript/wscript.h"
 
 namespace M4 {

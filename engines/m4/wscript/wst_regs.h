@@ -23,8 +23,6 @@
 #ifndef M4_WSCRIPT_WST_REGS_H
 #define M4_WSCRIPT_WST_REGS_H
 
-#include "m4/m4_types.h"
-
 namespace M4 {
 
 enum {

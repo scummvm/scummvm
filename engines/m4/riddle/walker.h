@@ -22,7 +22,6 @@
 #ifndef M4_RIDDLE_WALKER_H
 #define M4_RIDDLE_WALKER_H
 
-#include "common/array.h"
 #include "m4/adv_r/adv_walk.h"
 
 namespace M4 {

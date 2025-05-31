@@ -27,7 +27,6 @@
 #include "m4/fileio/sys_file.h"
 #include "m4/mem/reloc.h"
 #include "m4/wscript/ws_machine.h"
-#include "m4/wscript/ws_univ.h"
 
 namespace M4 {
 

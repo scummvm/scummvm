@@ -20,7 +20,6 @@
  */
 
 #include "common/debug.h"
-#include "common/events.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/inventory.h"
 #include "m4/gui/gui_sys.h"

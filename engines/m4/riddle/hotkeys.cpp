@@ -22,7 +22,6 @@
 #include "m4/riddle/hotkeys.h"
 #include "m4/riddle/vars.h"
 #include "m4/gui/gui_sys.h"
-#include "m4/adv_r/other.h"
 
 namespace M4 {
 namespace Riddle {

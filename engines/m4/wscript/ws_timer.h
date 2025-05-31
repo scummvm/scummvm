@@ -23,7 +23,6 @@
 #ifndef M4_WSCRIPT_WS_TIMER_H
 #define M4_WSCRIPT_WS_TIMER_H
 
-#include "m4/m4_types.h"
 #include "m4/wscript/ws_machine.h"
 
 namespace M4 {

@@ -21,9 +21,6 @@
 
 #include "m4/riddle/flags.h"
 #include "m4/riddle/vars.h"
-#include "m4/core/term.h"
-#include "m4/adv_r/adv.h"
-#include "m4/adv_r/adv_inv.h"
 
 namespace M4 {
 namespace Riddle {
