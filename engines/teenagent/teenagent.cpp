@@ -26,6 +26,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -545,6 +546,12 @@ Common::Error TeenAgentEngine::run() {
 
 	syncSoundSettings();
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+	}
+
 	// Initialize CD audio
 	if (_gameDescription->flags & ADGF_CD)
 		g_system->getAudioCDManager()->open();
@@ -673,6 +680,8 @@ Common::Error TeenAgentEngine::run() {
 				if (currentObject)
 					name += currentObject->name;
 
+				sayText(name);
+
 				uint w = res->font7.render(NULL, 0, 0, name, textColorMark);
 				res->font7.render(surface, (kScreenWidth - w) / 2, 180, name, textColorMark, true);
 #if 0
@@ -681,6 +690,8 @@ Common::Error TeenAgentEngine::run() {
 					currentObject->actorRect.render(surface, 0x81);
 				}
 #endif
+			} else {
+				_previousSaid.clear();
 			}
 		}
 
@@ -1060,6 +1071,23 @@ bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 		return true;
 	default:
 		return false;
+	}
+}
+
+void TeenAgentEngine::sayText(const Common::String &text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	// _previousSaid is used to prevent the TTS from looping when sayText calls are inside loops
+	if (ttsMan && ConfMan.getBool("tts_enabled") && _previousSaid != text) {
+		_previousSaid = text;
+		ttsMan->say(text);
+	}
+}
+
+void TeenAgentEngine::stopTextToSpeech() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+		_previousSaid.clear();
 	}
 }
 

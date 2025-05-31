@@ -339,6 +339,10 @@ void Inventory::Item::render(Inventory *inventory, uint itemId, Graphics::Surfac
 	if (_hovered && inventory->_vm->scene->getMessage().empty()) {
 		int w = inventory->_vm->res->font7.render(NULL, 0, 0, name, textColorMark, true);
 		inventory->_vm->res->font7.render(dst, (kScreenWidth - w) / 2, 180, name, textColorMark, true);
+
+		inventory->_vm->sayText(name);
+	} else if (!inventory->_hoveredObj && inventory->_vm->scene->getMessage().empty()) {
+		inventory->_vm->_previousSaid.clear();
 	}
 }
 
