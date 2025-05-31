@@ -48,7 +48,7 @@ void LogicManager::CONS_Salko(int chapter) {
 		CONS_Salko_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,19 +69,25 @@ void LogicManager::CONS_Salko_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterSalko).characterPosition.position = 0;
-			getCharacter(kCharacterSalko).characterPosition.location = 0;
-			getCharacter(kCharacterSalko).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterSalko)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterSalko, kCarGreenSleeping, getCharacterCurrentParams(kCharacterSalko)[0])) {
+			if (getCharacterCurrentParams(kCharacterSalko)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterSalko)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterSalko)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterSalko, kCarGreenSleeping, getCharacterCurrentParams(kCharacterSalko)[0])) {
-		if (getCharacterCurrentParams(kCharacterSalko)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterSalko)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterSalko)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterSalko).characterPosition.position = 0;
+		getCharacter(kCharacterSalko).characterPosition.location = 0;
+		getCharacter(kCharacterSalko).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterSalko)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -100,15 +106,20 @@ void LogicManager::CONS_Salko_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[3]);
 
 		getCharacter(kCharacterSalko).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
 		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterSalko, (char *)&getCharacterCurrentParams(kCharacterSalko)[0]);
 		blockAtDoor(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -125,12 +136,17 @@ void LogicManager::CONS_Salko_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterSalko).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
 		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterSalko, (char *)&getCharacterCurrentParams(kCharacterSalko)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -148,16 +164,18 @@ void LogicManager::CONS_Salko_DoWalk(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_DoWalk(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!walk(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[0], getCharacterCurrentParams(kCharacterSalko)[1]))
-			return;
-		goto LABEL_7;
-	}
-	if (msg->action == 12 && walk(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[0], getCharacterCurrentParams(kCharacterSalko)[1])) {
-	LABEL_7:
-		getCharacter(kCharacterSalko).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
-		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (walk(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[0], getCharacterCurrentParams(kCharacterSalko)[1])) {
+			getCharacter(kCharacterSalko).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
+			fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -174,16 +192,21 @@ void LogicManager::CONS_Salko_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterSalko)[1] || (getCharacterCurrentParams(kCharacterSalko)[1] = _gameTime + getCharacterCurrentParams(kCharacterSalko)[0], _gameTime + getCharacterCurrentParams(kCharacterSalko)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterSalko)[1] >= _gameTime)
-				return;
+				break;
+
 			getCharacterCurrentParams(kCharacterSalko)[1] = 0x7FFFFFFF;
 		}
 
 		getCharacter(kCharacterSalko).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
 		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -201,22 +224,25 @@ void LogicManager::CONS_Salko_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterSalko,
-				getCharacterCurrentParams(kCharacterSalko)[0],
-				getCharacterCurrentParams(kCharacterSalko)[1]
-			);
-
-			getCharacter(kCharacterSalko).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
-			fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterSalko).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
 		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterSalko,
+			getCharacterCurrentParams(kCharacterSalko)[0],
+			getCharacterCurrentParams(kCharacterSalko)[1]
+		);
+
+		getCharacter(kCharacterSalko).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
+		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -234,37 +260,43 @@ void LogicManager::CONS_Salko_DoWalkBehind(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_DoWalkBehind(HAND_PARAMS) {
-	if (msg->action > 6) {
-		if (msg->action == 12) {
-		LABEL_19:
-			walk(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[0], getCharacterCurrentParams(kCharacterSalko)[1]);
-			return;
-		}
-		if (msg->action == 123668192) {
-			getCharacter(kCharacterSalko).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
-			fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
-		}
-	} else if (msg->action >= 5) {
-		playDialog(0, "ZFX1002", getVolume(kCharacterSalko), 0);
-		playDialog(kCharacterCath, "CAT1127A", -1, 0);
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		getCharacterCurrentParams(kCharacterSalko)[2] = 0;
 		if (nearChar(kCharacterSalko, kCharacterIvo, 500) ||
 			(getCharacter(kCharacterSalko).direction == 1) &&
-			((getCharacter(kCharacterSalko).characterPosition.car > getCharacter(kCharacterIvo).characterPosition.car) ||
-				getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
-				getCharacter(kCharacterSalko).characterPosition.position > getCharacter(kCharacterIvo).characterPosition.position) ||
+				((getCharacter(kCharacterSalko).characterPosition.car > getCharacter(kCharacterIvo).characterPosition.car) ||
+				 getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
+					 getCharacter(kCharacterSalko).characterPosition.position > getCharacter(kCharacterIvo).characterPosition.position) ||
 			getCharacter(kCharacterSalko).direction == 2 &&
 				((getCharacter(kCharacterSalko).characterPosition.car < getCharacter(kCharacterIvo).characterPosition.car) ||
-					getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
-					getCharacter(kCharacterSalko).characterPosition.position < getCharacter(kCharacterIvo).characterPosition.position)) {
+				 getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
+					 getCharacter(kCharacterSalko).characterPosition.position < getCharacter(kCharacterIvo).characterPosition.position)) {
 
 			getCharacter(kCharacterSalko).waitedTicksUntilCycleRestart = 0;
 			getCharacterCurrentParams(kCharacterSalko)[2] = 1;
 		}
-		if (!getCharacterCurrentParams(kCharacterSalko)[2])
-			goto LABEL_19;
+
+		if (!getCharacterCurrentParams(kCharacterSalko)[2]) {
+			walk(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[0], getCharacterCurrentParams(kCharacterSalko)[1]);
+		}
+
+		break;
+	case 5:
+	case 6:
+		playDialog(0, "ZFX1002", getVolume(kCharacterSalko), 0);
+		playDialog(kCharacterCath, "CAT1127A", -1, 0);
+		break;
+	case 12:
+		walk(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[0], getCharacterCurrentParams(kCharacterSalko)[1]);
+		break;
+	case 123668192:
+		break;
+	default:
+		getCharacter(kCharacterSalko).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
+		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+		break;
 	}
 }
 
@@ -279,10 +311,14 @@ void LogicManager::CONS_Salko_HomeTogether(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_HomeTogether(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterSalko).characterPosition.position = 2740;
 		getCharacter(kCharacterSalko).characterPosition.location = 1;
 		getCharacter(kCharacterSalko).characterPosition.car = kCarRedSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -297,15 +333,21 @@ void LogicManager::CONS_Salko_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterSalko).characterPosition.position = 4691;
-			getCharacter(kCharacterSalko).characterPosition.location = 0;
-			getCharacter(kCharacterSalko).characterPosition.car = kCarRestaurant;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterSalko)[0]) {
+			getCharacterCurrentParams(kCharacterSalko)[0] = 1;
+			CONS_Salko_WithIvo(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterSalko)[0]) {
-		getCharacterCurrentParams(kCharacterSalko)[0] = 1;
-		CONS_Salko_WithIvo(0, 0, 0, 0);
+
+		break;
+	case 12:
+		getCharacter(kCharacterSalko).characterPosition.position = 4691;
+		getCharacter(kCharacterSalko).characterPosition.location = 0;
+		getCharacter(kCharacterSalko).characterPosition.car = kCarRestaurant;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -320,18 +362,23 @@ void LogicManager::CONS_Salko_WithIvo(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_WithIvo(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1) {
-				startCycOtis(kCharacterSalko, "BLANK");
-				CONS_Salko_HomeTogether(0, 0, 0, 0);
-			}
-		} else if (msg->action == 125242096) {
-			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
-			SalkoCall(&LogicManager::CONS_Salko_DoWalkBehind, 4, 2740, 0, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterSalko).characterPosition = getCharacter(kCharacterIvo).characterPosition;
+		break;
+	case 18:
+		if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1) {
+			startCycOtis(kCharacterSalko, "BLANK");
+			CONS_Salko_HomeTogether(0, 0, 0, 0);
+		}
+
+		break;
+	case 125242096:
+		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
+		SalkoCall(&LogicManager::CONS_Salko_DoWalkBehind, 4, 2740, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -346,12 +393,16 @@ void LogicManager::CONS_Salko_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterSalko).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterSalko).characterPosition.position = 2740;
 		getCharacter(kCharacterSalko).characterPosition.location = 1;
 		endGraphics(kCharacterSalko);
 		setDoor(39, kCharacterCath, 3, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -366,16 +417,21 @@ void LogicManager::CONS_Salko_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterSalko);
 		getCharacter(kCharacterSalko).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterSalko).characterPosition.position = 2740;
 		getCharacter(kCharacterSalko).characterPosition.location = 1;
 		getCharacter(kCharacterSalko).clothes = 0;
 		getCharacter(kCharacterSalko).inventoryItem = 0;
-	} else if (msg->action == 136184016) {
+		break;
+	case 136184016:
 		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
 		SalkoCall(&LogicManager::CONS_Salko_JoinIvo, 0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -411,10 +467,13 @@ void LogicManager::HAND_Salko_JoinIvo(HAND_PARAMS) {
 			CONS_Salko_HomeTogether(0, 0, 0, 0);
 			break;
 		}
+
 		break;
 	case 125242096:
 		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 3;
 		SalkoCall(&LogicManager::CONS_Salko_DoWalkBehind, 4, 2740, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -430,17 +489,20 @@ void LogicManager::CONS_Salko_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterSalko);
-			getCharacter(kCharacterSalko).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterSalko).characterPosition.position = 2740;
-			getCharacter(kCharacterSalko).characterPosition.location = 1;
-			getCharacter(kCharacterSalko).clothes = 0;
-			getCharacter(kCharacterSalko).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Salko_InComp(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterSalko);
+		getCharacter(kCharacterSalko).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterSalko).characterPosition.position = 2740;
+		getCharacter(kCharacterSalko).characterPosition.location = 1;
+		getCharacter(kCharacterSalko).clothes = 0;
+		getCharacter(kCharacterSalko).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -455,19 +517,27 @@ void LogicManager::CONS_Salko_InComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_InComp(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18 && getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1)
-			getCharacterCurrentParams(kCharacterSalko)[0] = 0;
-	} else {
-		if (_gameTime >= 2200500)
-			return;
-		if (getCharacterCurrentParams(kCharacterSalko)[0] || (getCharacterCurrentParams(kCharacterSalko)[0] = _gameTime + 81000, _gameTime != -81000)) {
-			if (getCharacterCurrentParams(kCharacterSalko)[0] >= _gameTime)
-				return;
-			getCharacterCurrentParams(kCharacterSalko)[0] = 0x7FFFFFFF;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime < 2200500) {
+			if (getCharacterCurrentParams(kCharacterSalko)[0] || (getCharacterCurrentParams(kCharacterSalko)[0] = _gameTime + 81000, _gameTime != -81000)) {
+				if (getCharacterCurrentParams(kCharacterSalko)[0] >= _gameTime)
+					break;
+				getCharacterCurrentParams(kCharacterSalko)[0] = 0x7FFFFFFF;
+			}
+
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
+			SalkoCall(&LogicManager::CONS_Salko_EavesdropAnna, 0, 0, 0, 0);
 		}
-		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
-		SalkoCall(&LogicManager::CONS_Salko_EavesdropAnna, 0, 0, 0, 0);
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1)
+			getCharacterCurrentParams(kCharacterSalko)[0] = 0;
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -482,77 +552,91 @@ void LogicManager::CONS_Salko_EavesdropAnna(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_EavesdropAnna(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterSalko).characterPosition.location = 0;
-				if (getCharacter(kCharacterSalko).characterPosition.position < 2087)
-					getCharacter(kCharacterSalko).characterPosition.position = 2088;
-				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 2;
-				SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 4070, 0, 0);
-				break;
-			case 2:
-				startCycOtis(kCharacterSalko, "612AF");
-				softBlockAtDoor(kCharacterSalko, 37);
-				break;
-			case 3:
-				send(kCharacterSalko, kCharacterSalko, 101169464, 0);
-				goto LABEL_18;
-			case 4:
-				softReleaseAtDoor(kCharacterSalko, 37);
-				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 5;
-				SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 9460, 0, 0);
-				break;
-			case 5:
-				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 6;
-				SalkoCall(&LogicManager::CONS_Salko_DoWait, 4500, 0, 0, 0);
-				break;
-			case 6:
-				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 7;
-				SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 2740, 0, 0);
-				break;
-			case 7:
-				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 8;
-				SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Ch", 39, 0, 0);
-				break;
-			case 8:
-				getCharacter(kCharacterSalko).characterPosition.location = 1;
-				getCharacter(kCharacterSalko).characterPosition.position = 2740;
-				endGraphics(kCharacterSalko);
+	switch (msg->action) {
+	case 0:
+		if (whoOnScreen(kCharacterSalko) && nearChar(kCharacterSalko, kCharacterCath, 5000)) {
+			send(kCharacterSalko, kCharacterMax, 158007856, 0);
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 3;
+			SalkoCall(&LogicManager::CONS_Salko_DoWait, 75, 0, 0, 0);
+			break;
+		}
 
-				getCharacter(kCharacterSalko).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
-				fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+		if (getCharacterCurrentParams(kCharacterSalko)[0] || (getCharacterCurrentParams(kCharacterSalko)[0] = _gameTime + 4500, _gameTime != -4500)) {
+			if (getCharacterCurrentParams(kCharacterSalko)[0] >= _gameTime)
 				break;
-			default:
-				return;
-			}
-		} else if (msg->action == 101169464) {
-			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 4;
-			SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Bf", 37, 0, 0);
+
+			getCharacterCurrentParams(kCharacterSalko)[0] = 0x7FFFFFFF;
 		}
-	} else {
-		if (msg->action == 12) {
-			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
-			SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612DH", 0x27, 0, 0);
-			return;
-		}
-		if (msg->action == 0) {
-			if (whoOnScreen(kCharacterSalko) && nearChar(kCharacterSalko, kCharacterCath, 5000)) {
-				send(kCharacterSalko, kCharacterMax, 158007856, 0);
-				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 3;
-				SalkoCall(&LogicManager::CONS_Salko_DoWait, 75, 0, 0, 0);
-				return;
-			}
-		LABEL_18:
+
+		send(kCharacterSalko, kCharacterSalko, 101169464, 0);
+		break;
+	case 12:
+		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
+		SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612DH", 0x27, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterSalko).characterPosition.location = 0;
+
+			if (getCharacter(kCharacterSalko).characterPosition.position < 2087)
+				getCharacter(kCharacterSalko).characterPosition.position = 2088;
+
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 2;
+			SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 4070, 0, 0);
+			break;
+		case 2:
+			startCycOtis(kCharacterSalko, "612AF");
+			softBlockAtDoor(kCharacterSalko, 37);
+			break;
+		case 3:
+			send(kCharacterSalko, kCharacterSalko, 101169464, 0);
 			if (getCharacterCurrentParams(kCharacterSalko)[0] || (getCharacterCurrentParams(kCharacterSalko)[0] = _gameTime + 4500, _gameTime != -4500)) {
 				if (getCharacterCurrentParams(kCharacterSalko)[0] >= _gameTime)
-					return;
+					break;
+
 				getCharacterCurrentParams(kCharacterSalko)[0] = 0x7FFFFFFF;
 			}
+
 			send(kCharacterSalko, kCharacterSalko, 101169464, 0);
+			break;
+		case 4:
+			softReleaseAtDoor(kCharacterSalko, 37);
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 5;
+			SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 9460, 0, 0);
+			break;
+		case 5:
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 6;
+			SalkoCall(&LogicManager::CONS_Salko_DoWait, 4500, 0, 0, 0);
+			break;
+		case 6:
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 7;
+			SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 2740, 0, 0);
+			break;
+		case 7:
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 8;
+			SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Ch", 39, 0, 0);
+			break;
+		case 8:
+			getCharacter(kCharacterSalko).characterPosition.location = 1;
+			getCharacter(kCharacterSalko).characterPosition.position = 2740;
+			endGraphics(kCharacterSalko);
+
+			getCharacter(kCharacterSalko).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
+			fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 101169464:
+		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 4;
+		SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Bf", 37, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -567,7 +651,8 @@ void LogicManager::CONS_Salko_TellMilos(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_TellMilos(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterSalko).characterPosition.car = kCarGreenSleeping;
 		getCharacter(kCharacterSalko).characterPosition.position = 6470;
 		getCharacter(kCharacterSalko).characterPosition.location = 0;
@@ -575,7 +660,8 @@ void LogicManager::HAND_Salko_TellMilos(HAND_PARAMS) {
 		getCharacter(kCharacterSalko).inventoryItem = 0;
 		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
 		SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 2740, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1) {
 			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 2;
 			SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Ch", 39, 0, 0);
@@ -586,6 +672,10 @@ void LogicManager::HAND_Salko_TellMilos(HAND_PARAMS) {
 			send(kCharacterSalko, kCharacterMilos, 157691176, 0);
 			CONS_Salko_InComp(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -600,16 +690,19 @@ void LogicManager::CONS_Salko_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterSalko);
-			getCharacter(kCharacterSalko).characterPosition.position = 5420;
-			getCharacter(kCharacterSalko).characterPosition.location = 1;
-			getCharacter(kCharacterSalko).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterSalko).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Salko_WithIvo4(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterSalko);
+		getCharacter(kCharacterSalko).characterPosition.position = 5420;
+		getCharacter(kCharacterSalko).characterPosition.location = 1;
+		getCharacter(kCharacterSalko).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterSalko).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -624,15 +717,21 @@ void LogicManager::CONS_Salko_WithIvo4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_WithIvo4(HAND_PARAMS) {
-	if (msg->action == 18) {
+	switch (msg->action) {
+	case 18:
 		if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1) {
 			startCycOtis(kCharacterSalko, "BLANK");
 			getCharacter(kCharacterSalko).characterPosition.location = 1;
 			CONS_Salko_InComp4(0, 0, 0, 0);
 		}
-	} else if (msg->action == 125242096) {
+
+		break;
+	case 125242096:
 		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
 		SalkoCall(&LogicManager::CONS_Salko_DoWalkBehind, 4, 2740, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -647,7 +746,8 @@ void LogicManager::CONS_Salko_InComp4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_InComp4(HAND_PARAMS) {
-	if (msg->action == 18) {
+	switch (msg->action) {
+	case 18:
 		if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1) {
 			getCharacter(kCharacterSalko).characterPosition.location = 0;
 
@@ -660,9 +760,14 @@ void LogicManager::HAND_Salko_InComp4(HAND_PARAMS) {
 			endGraphics(kCharacterSalko);
 			CONS_Salko_Hiding(0, 0, 0, 0);
 		}
-	} else if (msg->action == 55996766) {
+
+		break;
+	case 55996766:
 		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
 		SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Dh", 39, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -677,19 +782,26 @@ void LogicManager::CONS_Salko_Hiding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_Hiding(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1) {
-				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 2;
-				SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Ch", 39, 0, 0);
-			} else if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 2) {
-				CONS_Salko_EndPart4(0, 0, 0, 0);
-			}
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 2422800 && !getCharacterCurrentParams(kCharacterSalko)[0]) {
+			getCharacterCurrentParams(kCharacterSalko)[0] = 1;
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
+			SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 2740, 0, 0);
 		}
-	} else if (_gameTime > 2422800 && !getCharacterCurrentParams(kCharacterSalko)[0]) {
-		getCharacterCurrentParams(kCharacterSalko)[0] = 1;
-		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
-		SalkoCall(&LogicManager::CONS_Salko_DoWalk, 4, 2740, 0, 0);
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 1) {
+			getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 2;
+			SalkoCall(&LogicManager::CONS_Salko_DoCorrOtis, "612Ch", 39, 0, 0);
+		} else if (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] == 2) {
+			CONS_Salko_EndPart4(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -704,13 +816,17 @@ void LogicManager::CONS_Salko_EndPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_EndPart4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterSalko);
 		setDoor(39, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterSalko).characterPosition.location = 1;
 		getCharacter(kCharacterSalko).characterPosition.position = 2740;
 		getCharacter(kCharacterSalko).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterSalko).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -725,16 +841,19 @@ void LogicManager::CONS_Salko_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterSalko);
-			getCharacter(kCharacterSalko).characterPosition.location = 1;
-			getCharacter(kCharacterSalko).characterPosition.position = 9460;
-			getCharacter(kCharacterSalko).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterSalko).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Salko_Guarding(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterSalko);
+		getCharacter(kCharacterSalko).characterPosition.location = 1;
+		getCharacter(kCharacterSalko).characterPosition.position = 9460;
+		getCharacter(kCharacterSalko).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterSalko).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -749,9 +868,8 @@ void LogicManager::CONS_Salko_Guarding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Salko_Guarding(HAND_PARAMS) {
-	int fightOutcome = 0;
-
-	if (msg->action == 18) {
+	switch (msg->action) {
+	case 18:
 		switch (getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8]) {
 		case 1:
 			if (dialogRunning("MUS050"))
@@ -761,7 +879,8 @@ void LogicManager::HAND_Salko_Guarding(HAND_PARAMS) {
 			SalkoCall(&LogicManager::CONS_Salko_SaveGame, 1, 0, 0, 0);
 			break;
 		case 2:
-			fightOutcome = playFight(2004);
+		{
+			int fightOutcome = playFight(2004);
 			getCharacterCurrentParams(kCharacterSalko)[0] = fightOutcome;
 			if (fightOutcome) {
 				endGame(0, 0, 0, fightOutcome == 1);
@@ -770,17 +889,26 @@ void LogicManager::HAND_Salko_Guarding(HAND_PARAMS) {
 				getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 3;
 				SalkoCall(&LogicManager::CONS_Salko_SaveGame, 2, 176, 0, 0);
 			}
+
 			break;
+		}
 		case 3:
 			playNIS(kEventCathSalkoTrainTopWin);
 			send(kCharacterSalko, kCharacterVesna, 134427424, 0);
 			bumpCath(kCarRestaurant, 10, 255);
 			CONS_Salko_Disappear(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
-	} else if (msg->action == 167992577) {
+
+		break;
+	case 167992577:
 		getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall + 8] = 1;
 		SalkoCall(&LogicManager::CONS_Salko_SaveGame, 2, 172, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
