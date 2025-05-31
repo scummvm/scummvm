@@ -32,9 +32,7 @@ bool ws_InitWSTimer(void) {
 }
 
 void ws_KillTime() {
-	onTimeReq *tempTime;
-
-	tempTime = _GWS(firstTimeReq);
+	onTimeReq *tempTime = _GWS(firstTimeReq);
 	while (tempTime) {
 		_GWS(firstTimeReq) = _GWS(firstTimeReq)->next;
 		dispose_timeRequest(tempTime);
@@ -53,10 +51,8 @@ static void dispose_timeRequest(onTimeReq *timeReq) {
 }
 
 void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcCount) {
-	onTimeReq *newTimeReq, *tempTimeReq;
-
 	// Create a new time request struct and set it's fields
-	newTimeReq = new_timeRequest();
+	onTimeReq *newTimeReq = new_timeRequest();
 	newTimeReq->myTime = wakeUpTime;
 	newTimeReq->myXM = myXM;
 	newTimeReq->pcOffset = pcOffset;
@@ -73,7 +69,7 @@ void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcC
 		_GWS(firstTimeReq) = newTimeReq;
 	} else {
 		// Else it belongs in the middle/end of a non-empty list...
-		tempTimeReq = _GWS(firstTimeReq);
+		onTimeReq *tempTimeReq = _GWS(firstTimeReq);
 		while (tempTimeReq->next && (tempTimeReq->next->myTime < newTimeReq->myTime)) {
 			tempTimeReq = tempTimeReq->next;
 		}
@@ -84,14 +80,12 @@ void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcC
 }
 
 void ws_CancelOnTimeReqs(machine *m) {
-	onTimeReq *tempTimeReq, *prevTimeReq;
-
 	if (!m)
 		return;
 
 	// Pass through the linked list, removing any requests for machine* m.
-	prevTimeReq = _GWS(firstTimeReq);
-	tempTimeReq = _GWS(firstTimeReq);
+	onTimeReq *prevTimeReq = _GWS(firstTimeReq);
+	onTimeReq *tempTimeReq = _GWS(firstTimeReq);
 
 	while (tempTimeReq) {
 		// If tempTimeReq is one to be cancelled...
@@ -119,17 +113,13 @@ void ws_CancelOnTimeReqs(machine *m) {
 }
 
 void ws_CheckTimeReqs(int32 curTime) {
-	onTimeReq *tempTimeReq;
-	machine *myXM;
-	int32 pcOffset, pcCount;
-
 	// Loop through the list, answering all expired time requests
-	tempTimeReq = _GWS(firstTimeReq);
+	onTimeReq *tempTimeReq = _GWS(firstTimeReq);
 	while (tempTimeReq && (tempTimeReq->myTime <= curTime)) {
 		// Extract all important information from request
-		myXM = tempTimeReq->myXM;
-		pcOffset = tempTimeReq->pcOffset;
-		pcCount = tempTimeReq->pcCount;
+		machine *myXM = tempTimeReq->myXM;
+		int32 pcOffset = tempTimeReq->pcOffset;
+		int32 pcCount = tempTimeReq->pcCount;
 
 		// Remove it from the list and dispose
 		_GWS(firstTimeReq) = _GWS(firstTimeReq)->next;
