@@ -126,7 +126,7 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 			_currentRoom->freeResources();
 	}
 
-	_currentRoom = g_engine->world().getRoomByName(targetRoomName);
+	_currentRoom = g_engine->world().getRoomByName(targetRoomName.c_str());
 	if (_currentRoom == nullptr)
 		error("Invalid room name: %s", targetRoomName.c_str());
 
@@ -198,11 +198,11 @@ struct DoorTask : public Task {
 		, _sourceDoor(door)
 		, _character(g_engine->player().activeCharacter())
 		, _player(g_engine->player()) {
-		_targetRoom = g_engine->world().getRoomByName(door->targetRoom());
+		_targetRoom = g_engine->world().getRoomByName(door->targetRoom().c_str());
 		if (_targetRoom == nullptr)
 			error("Invalid door target room: %s", door->targetRoom().c_str());
 
-		_targetObject = dynamic_cast<InteractableObject *>(_targetRoom->getObjectByName(door->targetObject()));
+		_targetObject = dynamic_cast<InteractableObject *>(_targetRoom->getObjectByName(door->targetObject().c_str()));
 		if (_targetObject == nullptr)
 			error("Invalid door target door: %s", door->targetObject().c_str());
 		auto targetDoor = dynamic_cast<const Door *>(_targetObject);
