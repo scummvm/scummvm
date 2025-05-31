@@ -1823,7 +1823,7 @@ void CHodjPodjWindow::GetHomePath() {
 
 
 BOOL CHodjPodjWindow::PositionAtHomePath() {
-	AfxGetApp()->setDirectory(nullptr);
+	AfxGetApp()->setDirectory("meta");
 	return true;
 }
 

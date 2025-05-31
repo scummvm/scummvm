@@ -35,7 +35,6 @@ CWnd::CWnd() : m_hWnd(this), _surface(this) {
 }
 
 CWnd::~CWnd() {
-	delete m_hWnd;
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,

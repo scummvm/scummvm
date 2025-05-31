@@ -22,8 +22,10 @@
 #ifndef BAGEL_MFC_AFXWIN_H
 #define BAGEL_MFC_AFXWIN_H
 
+#include "common/events.h"
 #include "common/fs.h"
 #include "graphics/palette.h"
+#include "graphics/screen.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/afx.h"
@@ -1315,9 +1317,12 @@ private:
 	Libs::Resources _resources;
 	Libs::Settings _settings;
 	Gfx::Cursors _cursors;
+	Graphics::Screen _screen;
+	uint32 _nextFrameTime = 0;
 	int m_nWaitCursorCount = 0;
 	HCURSOR m_hcurWaitCursorRestore = 0;
 	Common::FSNode _currentDirectory;
+	bool _quitFlag = false;
 
 private:
 	/**
@@ -1389,6 +1394,16 @@ public:
 	Common::FSNode getDirectory() const;
 	void setPalette(const Graphics::Palette &pal);
 	byte getColor(COLORREF color) const;
+	bool shouldQuit() const {
+		return _quitFlag;
+	}
+	void quit() {
+		_quitFlag = true;
+	}
+	Graphics::Screen *getScreen() {
+		return &_screen;
+	}
+	bool pollEvents(Common::Event &event);
 };
 
 extern CWinApp *AfxGetApp();

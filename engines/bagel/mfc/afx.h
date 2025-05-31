@@ -158,7 +158,9 @@ public:
 		Close();
 	}
 
-	BOOL Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError = nullptr);
+	BOOL Open(const char *lpszFileName,
+		UINT nOpenFlags = CFile::modeRead,
+		CFileException *pError = nullptr);
 	void Close();
 	void Abort();
 	ULONGLONG SeekToEnd();
@@ -173,6 +175,9 @@ public:
 		return Read(lpBuf, nCount);
 	}
 
+	operator Common::SeekableReadStream *() {
+		return readStream();
+	}
 	operator Common::SeekableReadStream &() {
 		return *readStream();
 	}

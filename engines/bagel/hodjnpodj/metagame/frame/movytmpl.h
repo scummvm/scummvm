@@ -78,23 +78,37 @@ public:
 	//  .   The command fails-PLAY_FAILURE
 
 	CMovieWindow();
-	BOOL BlowWindow(CWnd *pParentWnd, BOOL bScroll, LPCSTR lpszAviMovie, int movie_x = 0, int movie_y = 0, int movie_width = MOVIE_WIDTH, int movie_height = MOVIE_HEIGHT);
-	//use this func. to play the AVI movie within a child window,
-	// to be owned by the parent window CWnd*. The width
-	// and height of the child window are specified too.
-	//returns TRUE if no error, else FALSE.
+
+
+	/**
+	 * Opens up a movie window.
+	 * @param pParent	Pointer to owner class object.
+	 * @param bScroll	scroll flag
+	 * @param AviMovee	The name of movie, complete with the path.
+	 * @param x	X position
+	 * @param y	Y position
+	 * @param w	Width
+	 * @param h	Height
+	 * @return		True if movie's playable, else FALSE.
+	 */
+	BOOL BlowWindow(CWnd *pParentWnd, BOOL bScroll, LPCSTR lpszAviMovie,
+		int x = 0, int y = 0, int w = MOVIE_WIDTH, int h = MOVIE_HEIGHT);
 
 protected:
-	BOOL PlayMovie(void);  //plays movie.
+	/**
+	 * Plays a movie
+	 * @return	True if movie was playable; FALSE, if any error.
+	 */
+	BOOL PlayMovie();
 
-	LPSTR WndClass;       //the name of windw-class
-	CWnd *pOwner;           //the class of the owner(pparent) window object.
-	HWND hWndParent;        //the owner window, (from the calling program).
-	HWND hWndMovie;         //the child window where the movie'll be played.
-	LPSTR lpszAviMovie;     //the name of movie.
+	LPSTR WndClass = nullptr;		// The name of windw-class
+	CWnd *pOwner = nullptr;			// The class of the owner(pparent) window object.
+	HWND hWndParent = nullptr;		// The owner window, (from the calling program).
+	HWND hWndMovie = nullptr;		// The child window where the movie'll be played.
+	LPSTR lpszAviMovie = nullptr;	// The name of movie.
 	CRect MovieRect;
 public:
-	int   nMovieId;
+	int nMovieId = -1;
 };
 
 } // namespace Frame

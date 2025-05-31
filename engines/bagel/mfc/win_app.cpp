@@ -31,6 +31,8 @@
 namespace Bagel {
 namespace MFC {
 
+#define FRAME_RATE 50
+
 IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 
 CWinApp *CWinApp::_activeApp = nullptr;
@@ -93,19 +95,34 @@ bool CWinApp::GetMessage(MSG &msg) {
 	}
 
 	// Poll for event in ScummVM event manager
-	if (!g_system->getEventManager()->pollEvent(ev)) {
+	if (pollEvents(ev)) {
+		// Convert other event types
+		msg = ev;
+		msg.hwnd = m_pMainWnd;
+	}
+
+	return !_quitFlag;
+}
+
+bool CWinApp::pollEvents(Common::Event &event) {
+	if (!g_system->getEventManager()->pollEvent(event)) {
 		g_system->delayMillis(10);
-		return true;
+
+		uint32 time = g_system->getMillis();
+		if (time >= _nextFrameTime) {
+			_nextFrameTime = time + (1000 / FRAME_RATE);
+			_screen.update();
+		}
+
+		return false;
 	}
 
 	// Check for quit event
-	if (ev.type == Common::EVENT_QUIT ||
-	        ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+	if ((event.type == Common::EVENT_QUIT) ||
+		(event.type == Common::EVENT_RETURN_TO_LAUNCHER)) {
+		_quitFlag = true;
 		return false;
-
-	// Convert other event types
-	msg = ev;
-	msg.hwnd = m_pMainWnd;
+	}
 
 	return true;
 }

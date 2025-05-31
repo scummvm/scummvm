@@ -19,14 +19,10 @@
  *
  */
 
+#include "video/avi_decoder.h"
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-#ifdef TODO
-	#include <mciavi.h>
-	#include <digitalv.h>
-	#include <vfw.h>
-#endif
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -91,40 +87,20 @@ CMovieWindow::CMovieWindow(void) {
 }
 
 
-
-/*****************************************************************
- *
- * CMovieWindow::BlowWindow(CWnd*, LPCSTR, int, int, int, int)
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *       opens up a movie window.
- *
- * FORMAL PARAMETERS:
- *      pParent     pointer to owner class object.
- *      AviMovee    the name of movie, complete with the path.
- *      x, y, theMOVIE_WIDTH, theMOVIE_HEIGHT the coordinates/dimesnsions
- *                                                                                       of the movie window.
- *
- * RETURN VALUE:
- *
- *     True if movie's playable, else FALSE.
- *
- ****************************************************************/
-BOOL CMovieWindow::BlowWindow(CWnd* pParent, BOOL bScroll, LPCSTR AviMovee, int x, int y, int theMOVIE_WIDTH, int theMOVIE_HEIGHT) {
+BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
+		LPCSTR AviMovee, int x, int y, int w, int h) {
 	BOOL b;
 
 	bPaintScroll = bScroll;
 
-	MovieRect.SetRect(x, y, (x + theMOVIE_WIDTH), (y + theMOVIE_HEIGHT));
+	MovieRect.SetRect(x, y, (x + w), (y + h));
 
 	hWndParent = pParent->m_hWnd;
 	if (!hWndParent) {
-		#ifdef _DEBUG
-		MessageBox("null hwndParent");
-		#endif
-		return (FALSE);
+		warning("null hwndParent");
+		return FALSE;
 	}
+
 	lpszAviMovie = (LPSTR) AviMovee;
 	pOwner = pParent;
 
@@ -133,103 +109,40 @@ BOOL CMovieWindow::BlowWindow(CWnd* pParent, BOOL bScroll, LPCSTR AviMovee, int 
 }
 
 
-/*****************************************************************
- *
- * CMovieWindow::PlayMovie(void)
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *      plays movie, brings up error message boxes if needed.
+BOOL CMovieWindow::PlayMovie() {
+	Video::AVIDecoder decoder;
+	auto *app = AfxGetApp();
+	Graphics::Screen *screen = app->getScreen();
+	Common::Rect destRect = MovieRect;
+	CFile file;
+	Common::Event event;
 
- * FORMAL PARAMETERS:
- *      n/a
- *
- * RETURN VALUE:
- *
- *     True if movie's playable; FALSE, if any error.
- *
- ****************************************************************/
-BOOL CMovieWindow::PlayMovie(void) {
-	#ifdef TODO
-	MCI_DGV_WINDOW_PARMS    mciWindow;
-	MCI_DGV_OPEN_PARMS mciopen;
-	MCI_DGV_PLAY_PARMS mciPlay;
-	MCI_GENERIC_PARMS mcigen;
-	MCI_STATUS_PARMS mciStatus;
+	if (!file.Open(lpszAviMovie) ||
+			!decoder.loadStream(file))
+		return false;
 
-	DWORD RtnVal;
+	decoder.start();
 
-	char Str[STRLEN + 1];
+	while (!app->shouldQuit() &&
+			!decoder.endOfVideo()) {
+		if (decoder.hasDirtyPalette()) {
+			Graphics::Palette pal(decoder.getPalette(), 256);
+			AfxGetApp()->setPalette(pal);
+		}
 
-	if (videoID != -1) {
-		mcigen.dwCallback = MAKELPARAM((HWND)hWndParent, 0);
-		mciSendCommand(videoID, MCI_STOP, 0, (DWORD)(LPVOID)&mcigen);
-		videoID = -1;
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
+			screen->blitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), destRect);
+		}
+
+		while (app->pollEvents(event)) {
+		}
+
+		g_system->delayMillis(10);
 	}
 
-	mciopen.dwCallback = nullptr;
-	mciopen.wDeviceID = mciopen.wReserved0 =
-	mciopen.wReserved1 = 0;
-	mciopen.lpstrDeviceType = nullptr;
-	mciopen.lpstrElementName = lpszAviMovie;
-	mciopen.lpstrAlias = nullptr;
-	mciopen.dwStyle = WS_CHILD;
-	mciopen.hWndParent = hWndParent;
-
-	if (RtnVal = mciSendCommand(0, MCI_OPEN, MCI_DGV_OPEN_PARENT | MCI_OPEN_ELEMENT | MCI_DGV_OPEN_WS, (DWORD)(LPMCI_DGV_OPEN_PARMS)&mciopen)) {
-		#ifdef _DEBUG
-		mciGetErrorString(RtnVal, (LPSTR)Str, STRLEN);
-		MessageBox(Str, "", MB_ICONEXCLAMATION | MB_OK);
-		#endif
-		return (FALSE);
-	}
-
-	videoID = mciopen.wDeviceID;
-
-
-	mciWindow.dwCallback = nullptr;
-	mciWindow.hWnd = nullptr;
-	mciWindow.wReserved1 = mciWindow.wReserved2 = 0;
-	mciWindow.nCmdShow = SW_SHOW;
-	mciWindow.lpstrText = (LPSTR)nullptr;
-	mciSendCommand(videoID, MCI_WINDOW, \
-	               MCI_DGV_WINDOW_STATE, \
-	               (DWORD)(LPMCI_DGV_WINDOW_PARMS)&mciWindow);
-
-	/* get the window handle */
-	mciStatus.dwItem = MCI_DGV_STATUS_HWND;
-	mciSendCommand(videoID, \
-	               MCI_STATUS, MCI_STATUS_ITEM, \
-	               (DWORD)(LPMCI_STATUS_PARMS)&mciStatus);
-	hWndMovie = (HWND)mciStatus.dwReturn;
-	if (!hWndMovie) {
-		#ifdef _DEBUG
-		MessageBox("Null Movie Window");
-		#endif
-		return (FALSE);
-	}
-
-	::MoveWindow(hWndMovie, MovieRect.left, MovieRect.top, MovieRect.Width(), MovieRect.Height(), TRUE);
-
-	if (!(pDum->CreateDum(hWndParent, hWndMovie,  pOwner, this, MovieRect.left - ((WINDOW_WIDTH - MovieRect.Width()) >> 1), MovieRect.top - ((WINDOW_HEIGHT - MovieRect.Height()) >> 1)))) {
-		mciSendCommand(videoID, MCI_CLOSE, 0L, nullptr);
-		videoID = -1;
-		mciSendCommand(mciGetDeviceID("avivideo"), MCI_CLOSE, MCI_WAIT, nullptr);
-	}
-
-	mciPlay.dwCallback = MAKELPARAM((HWND)pDum->m_hWnd, 0);    //notify the Parent window upon end_of_movie.
-	mciPlay.dwFrom = mciPlay.dwTo = 0;
-	if (RtnVal = mciSendCommand(videoID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mciPlay)) {
-		mciSendCommand(videoID, MCI_CLOSE, 0, nullptr);
-		#ifdef _DEBUG
-		mciGetErrorString(RtnVal, (LPSTR)Str, STRLEN);
-		MessageBox(Str, "", MB_ICONEXCLAMATION | MB_OK);
-		#endif
-		return (FALSE);
-	}
-
-	RtnVal = MAKELPARAM(::SetFocus(pDum->m_hWnd), 0);
-	#endif
+	decoder.stop();
+	file.Close();
 	return TRUE;
 }
 
