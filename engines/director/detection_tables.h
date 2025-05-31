@@ -8343,6 +8343,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("melements", "", "I signori degli elementi", "r:398eb2cdf121feb490097c6323d52267", 1032406, Common::IT_ITA, 602),
 	WINGAME1_l("melements", "", "MVM.EXE",                  "t:caeea1aec3be6d1171992c824e3e3714", 2292781, Common::IT_ITA, 602),
 
+	// Japanese: "Masters of Elements: Unmei no Shihaisha" or "Ｍａｓｔｅｒｓ　ｏｆ　Ｅｌｅｍｅｎｔｓ　～運命の支配者～", published by Digitalogue
+	MACGAME1_l("melements", "", "Masters of Elements", "r:d1d1ee07987a38fd726f152a52d96114", 1035232, Common::JA_JPN, 602),
+	WINGAME1_l("melements", "", "MVM.EXE",             "t:d1c929615def3d55f47fbc2171864320", 2903578, Common::JA_JPN, 602),
+
 	WINGAME2("meetchuck", "", "HORSE.EXE",  "t:b0f3841f6e8005e519445b22de37749b", 1130649,
 	 						  "HPICTS.DXR", "d:60aba531fc0bf4897ba94413eb8ae24f", 7878094, 600),
 
