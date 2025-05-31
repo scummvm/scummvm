@@ -48,7 +48,7 @@ void LogicManager::CONS_Sophie(int chapter) {
 		CONS_Sophie_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,19 +69,25 @@ void LogicManager::CONS_Sophie_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterSophie).characterPosition.position = 0;
-			getCharacter(kCharacterSophie).characterPosition.location = 0;
-			getCharacter(kCharacterSophie).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterSophie)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterSophie, kCarGreenSleeping, getCharacterCurrentParams(kCharacterSophie)[0])) {
+			if (getCharacterCurrentParams(kCharacterSophie)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterSophie)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterSophie)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterSophie, kCarGreenSleeping, getCharacterCurrentParams(kCharacterSophie)[0])) {
-		if (getCharacterCurrentParams(kCharacterSophie)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterSophie)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterSophie)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterSophie).characterPosition.position = 0;
+		getCharacter(kCharacterSophie).characterPosition.location = 0;
+		getCharacter(kCharacterSophie).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterSophie)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -99,35 +105,40 @@ void LogicManager::CONS_Sophie_DoWalkBehind(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_DoWalkBehind(HAND_PARAMS) {
-	if (msg->action > 5) {
-		switch (msg->action) {
-		case 6:
-			playChrExcuseMe(kCharacterSophie, kCharacterCath, 0);
-			break;
-		case 12:
-			walk(kCharacterSophie, getCharacterCurrentParams(kCharacterSophie)[0], getCharacterCurrentParams(kCharacterSophie)[1]);
-			break;
-		case 123668192:
-			getCharacter(kCharacterSophie).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterSophie, _functionsSophie[getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall]]);
-			fedEx(kCharacterSophie, kCharacterSophie, 18, 0);
-			break;
-		}
-	} else if (msg->action == 5) {
-		playCathExcuseMe();
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		getCharacterCurrentParams(kCharacterSophie)[2] = 0;
 		if (nearChar(kCharacterSophie, kCharacterRebecca, 500) ||
 			(getCharacter(kCharacterSophie).direction == 1) && ((getCharacter(kCharacterSophie).characterPosition.car > getCharacter(kCharacterRebecca).characterPosition.car) ||
-				getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position > getCharacter(kCharacterRebecca).characterPosition.position) ||
-				getCharacter(kCharacterSophie).direction == 2 && ((getCharacter(kCharacterSophie).characterPosition.car < getCharacter(kCharacterRebecca).characterPosition.car) ||
-				getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position < getCharacter(kCharacterRebecca).characterPosition.position)) {
+																 getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position > getCharacter(kCharacterRebecca).characterPosition.position) ||
+			getCharacter(kCharacterSophie).direction == 2 && ((getCharacter(kCharacterSophie).characterPosition.car < getCharacter(kCharacterRebecca).characterPosition.car) ||
+															   getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position < getCharacter(kCharacterRebecca).characterPosition.position)) {
+
 			getCharacter(kCharacterSophie).waitedTicksUntilCycleRestart = 0;
 			getCharacterCurrentParams(kCharacterSophie)[2] = 1;
 		}
+
 		if (!getCharacterCurrentParams(kCharacterSophie)[2]) {
 			walk(kCharacterSophie, getCharacterCurrentParams(kCharacterSophie)[0], getCharacterCurrentParams(kCharacterSophie)[1]);
 		}
+
+		break;
+	case 5:
+		playCathExcuseMe();
+		break;
+	case 6:
+		playChrExcuseMe(kCharacterSophie, kCharacterCath, 0);
+		break;
+	case 12:
+		walk(kCharacterSophie, getCharacterCurrentParams(kCharacterSophie)[0], getCharacterCurrentParams(kCharacterSophie)[1]);
+		break;
+	case 123668192:
+		getCharacter(kCharacterSophie).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterSophie, _functionsSophie[getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall]]);
+		fedEx(kCharacterSophie, kCharacterSophie, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -142,35 +153,11 @@ void LogicManager::CONS_Sophie_WithRebecca(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_WithRebecca(HAND_PARAMS) {
-	if (msg->action > 18) {
-		if (msg->action > 136654208) {
-			if (msg->action == 259921280) {
-				getCharacter(kCharacterSophie).characterPosition.car = getCharacter(kCharacterRebecca).characterPosition.car;
-				getCharacter(kCharacterSophie).characterPosition.location = getCharacter(kCharacterRebecca).characterPosition.location;
-				getCharacter(kCharacterSophie).characterPosition.position = getCharacter(kCharacterRebecca).characterPosition.position + 100;
-				getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 3;
-				SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 2, 9460, 0, 0);
-			} else if (msg->action == 292775040) {
-				getCharacter(kCharacterSophie).characterPosition.car = 2;
-				getCharacter(kCharacterSophie).characterPosition.location = 0;
-				getCharacter(kCharacterSophie).characterPosition.position = 9270;
-				getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 4;
-				SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 4, 4840, 0, 0);
-			}
-		} else if (msg->action == 136654208) {
-			getCharacter(kCharacterSophie).characterPosition.car = getCharacter(kCharacterRebecca).characterPosition.car;
-			getCharacter(kCharacterSophie).characterPosition.location = getCharacter(kCharacterRebecca).characterPosition.location;
-			getCharacter(kCharacterSophie).characterPosition.position = getCharacter(kCharacterRebecca).characterPosition.position + 100;
-			getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 2;
-			SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 4, 4840, 0, 0);
-		} else if (msg->action == 125242096) {
-			getCharacter(kCharacterSophie).characterPosition.car = getCharacter(kCharacterRebecca).characterPosition.car;
-			getCharacter(kCharacterSophie).characterPosition.location = getCharacter(kCharacterRebecca).characterPosition.location;
-			getCharacter(kCharacterSophie).characterPosition.position = getCharacter(kCharacterRebecca).characterPosition.position - 100;
-			getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 1;
-			SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 5, 850, 0, 0);
-		}
-	} else if (msg->action == 18) {
+	switch (msg->action) {
+	case 0:
+		getCharacter(kCharacterSophie).characterPosition = getCharacter(kCharacterRebecca).characterPosition;
+		break;
+	case 18:
 		switch (getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8]) {
 		case 1:
 		case 3:
@@ -181,10 +168,40 @@ void LogicManager::HAND_Sophie_WithRebecca(HAND_PARAMS) {
 			startCycOtis(kCharacterSophie, "BLANK");
 			break;
 		default:
-			return;
+			break;
 		}
-	} else if (msg->action == 0) {
-		getCharacter(kCharacterSophie).characterPosition = getCharacter(kCharacterRebecca).characterPosition;
+
+		break;
+	case 259921280:
+		getCharacter(kCharacterSophie).characterPosition.car = getCharacter(kCharacterRebecca).characterPosition.car;
+		getCharacter(kCharacterSophie).characterPosition.location = getCharacter(kCharacterRebecca).characterPosition.location;
+		getCharacter(kCharacterSophie).characterPosition.position = getCharacter(kCharacterRebecca).characterPosition.position + 100;
+		getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 3;
+		SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 2, 9460, 0, 0);
+		break;
+	case 292775040:
+		getCharacter(kCharacterSophie).characterPosition.car = 2;
+		getCharacter(kCharacterSophie).characterPosition.location = 0;
+		getCharacter(kCharacterSophie).characterPosition.position = 9270;
+		getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 4;
+		SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 4, 4840, 0, 0);
+		break;
+	case 136654208:
+		getCharacter(kCharacterSophie).characterPosition.car = getCharacter(kCharacterRebecca).characterPosition.car;
+		getCharacter(kCharacterSophie).characterPosition.location = getCharacter(kCharacterRebecca).characterPosition.location;
+		getCharacter(kCharacterSophie).characterPosition.position = getCharacter(kCharacterRebecca).characterPosition.position + 100;
+		getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 2;
+		SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 4, 4840, 0, 0);
+		break;
+	case 125242096:
+		getCharacter(kCharacterSophie).characterPosition.car = getCharacter(kCharacterRebecca).characterPosition.car;
+		getCharacter(kCharacterSophie).characterPosition.location = getCharacter(kCharacterRebecca).characterPosition.location;
+		getCharacter(kCharacterSophie).characterPosition.position = getCharacter(kCharacterRebecca).characterPosition.position - 100;
+		getCharacter(kCharacterSophie).callbacks[getCharacter(kCharacterSophie).currentCall + 8] = 1;
+		SophieCall(&LogicManager::CONS_Sophie_DoWalkBehind, 5, 850, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -199,15 +216,21 @@ void LogicManager::CONS_Sophie_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterSophie).characterPosition.position = 4840;
-			getCharacter(kCharacterSophie).characterPosition.location = 1;
-			getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterSophie)[0]) {
+			getCharacterCurrentParams(kCharacterSophie)[0] = 1;
+			CONS_Sophie_WithRebecca(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterSophie)[0]) {
-		getCharacterCurrentParams(kCharacterSophie)[0] = 1;
-		CONS_Sophie_WithRebecca(0, 0, 0, 0);
+
+		break;
+	case 12:
+		getCharacter(kCharacterSophie).characterPosition.position = 4840;
+		getCharacter(kCharacterSophie).characterPosition.location = 1;
+		getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -222,11 +245,15 @@ void LogicManager::CONS_Sophie_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterSophie).characterPosition.position = 4840;
 		getCharacter(kCharacterSophie).characterPosition.location = 1;
 		getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
 		endGraphics(kCharacterSophie);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -241,17 +268,20 @@ void LogicManager::CONS_Sophie_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterSophie);
-			getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterSophie).characterPosition.position = 4840;
-			getCharacter(kCharacterSophie).characterPosition.location = 1;
-			getCharacter(kCharacterSophie).clothes = 0;
-			getCharacter(kCharacterSophie).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Sophie_WithRebecca(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterSophie);
+		getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterSophie).characterPosition.position = 4840;
+		getCharacter(kCharacterSophie).characterPosition.location = 1;
+		getCharacter(kCharacterSophie).clothes = 0;
+		getCharacter(kCharacterSophie).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -266,17 +296,20 @@ void LogicManager::CONS_Sophie_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterSophie);
-			getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterSophie).characterPosition.position = 4840;
-			getCharacter(kCharacterSophie).characterPosition.location = 1;
-			getCharacter(kCharacterSophie).clothes = 0;
-			getCharacter(kCharacterSophie).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Sophie_WithRebecca(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterSophie);
+		getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterSophie).characterPosition.position = 4840;
+		getCharacter(kCharacterSophie).characterPosition.location = 1;
+		getCharacter(kCharacterSophie).clothes = 0;
+		getCharacter(kCharacterSophie).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -291,17 +324,20 @@ void LogicManager::CONS_Sophie_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterSophie);
-			getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterSophie).characterPosition.position = 4840;
-			getCharacter(kCharacterSophie).characterPosition.location = 1;
-			getCharacter(kCharacterSophie).clothes = 0;
-			getCharacter(kCharacterSophie).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Sophie_WithRebecca(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterSophie);
+		getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterSophie).characterPosition.position = 4840;
+		getCharacter(kCharacterSophie).characterPosition.location = 1;
+		getCharacter(kCharacterSophie).clothes = 0;
+		getCharacter(kCharacterSophie).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -316,11 +352,15 @@ void LogicManager::CONS_Sophie_Asleep4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_Asleep4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterSophie).characterPosition.position = 4840;
 		getCharacter(kCharacterSophie).characterPosition.location = 1;
 		getCharacter(kCharacterSophie).characterPosition.car = kCarRedSleeping;
 		endGraphics(kCharacterSophie);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -335,16 +375,19 @@ void LogicManager::CONS_Sophie_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterSophie);
-			getCharacter(kCharacterSophie).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterSophie).characterPosition.position = 3969;
-			getCharacter(kCharacterSophie).characterPosition.location = 1;
-			getCharacter(kCharacterSophie).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Sophie_Prisoner(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterSophie);
+		getCharacter(kCharacterSophie).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterSophie).characterPosition.position = 3969;
+		getCharacter(kCharacterSophie).characterPosition.location = 1;
+		getCharacter(kCharacterSophie).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -359,8 +402,13 @@ void LogicManager::CONS_Sophie_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Sophie_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_Sophie_Free(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Sophie_Free(CONS_PARAMS) {
