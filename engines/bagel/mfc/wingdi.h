@@ -518,6 +518,8 @@ enum {
 #define HS_CROSS        4
 #define HS_DIAGCROSS    5
 
+// Constants for the biCompression field
+#define BI_RGB        0L
 
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;

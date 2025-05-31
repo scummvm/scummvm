@@ -26,6 +26,38 @@
 namespace Bagel {
 namespace HodjNPodj {
 
+static BITMAPINFOHEADER getDIBInfoHeader(HDIB hDib) {
+	BITMAPINFOHEADER h;
+	h.biSize = 40;
+	h.biWidth = hDib->w;
+	h.biHeight = hDib->h;
+	h.biPlanes = 1;
+	h.biBitCount = 8;
+	h.biCompression = BI_RGB;
+	h.biSizeImage = 0;
+	h.biXPelsPerMeter = 0;
+	h.biYPelsPerMeter = 0;
+	h.biClrUsed = !hDib->hasPalette() ? 0 :
+		hDib->grabPalette()->size();
+	h.biClrImportant = 0;
+
+	return h;
+}
+
+static BITMAPINFO getDIBInfo(HDIB hDib) {
+	BITMAPINFO h;
+	h.bmiHeader = getDIBInfoHeader(hDib);
+
+	const Graphics::Palette *pal = hDib->grabPalette();
+	for (uint i = 0; i < h.bmiHeader.biClrUsed; ++i) {
+		auto &col = h.bmiColors[i];
+		pal->get(i, col.rgbRed, col.rgbGreen, col.rgbBlue);
+		col.rgbReserved = 0;
+	}
+
+	return h;
+}
+
 /*************************************************************************
  *
  * PaintDIB()
@@ -294,15 +326,11 @@ WORD DIBNumColors(HDIB lpDIB) {
 	return pal->size();
 }
 
-CBitmap *ConvertDIB(CDC *pDC,
-		HDIB hDIB, CPalette *pPal) {
-	LPSTR lpDIBHdr;            // Pointer to BITMAPINFOHEADER
-	//LPSTR    lpDIBBits;           // Pointer to DIB bits
-	//BOOL     bSuccess = FALSE;      // Success/fail flag
+CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 	HPALETTE hPal = nullptr;           // Our DIB's palette
 	HPALETTE hOldPal = nullptr;        // Previous palette
-	HDC      hDC;
-	HBITMAP  hBitmap = nullptr;
+	HDC hDC;
+	HBITMAP hBitmap = nullptr;
 	CBitmap *pBitmap = nullptr;
 
 	hDC = (*pDC).m_hDC;
@@ -316,15 +344,8 @@ CBitmap *ConvertDIB(CDC *pDC,
 		(void) RealizePalette(hDC);
 	}
 
-	/* Lock down the DIB, and get a pointer to the beginning of the bit
-	 *  buffer
-	 */
-	lpDIBHdr = (LPSTR) GlobalLock((HGLOBAL)hDIB);
-	/*lpDIBBits =*/(void)FindDIBBits(hDIB);
-
-	hBitmap = DIBtoBitmap(hDC, nullptr, (LPBITMAPINFO)lpDIBHdr);
-
-	GlobalUnlock((HGLOBAL)hDIB);
+	// Conver the bit buffer to a bitmap
+	hBitmap = DIBtoBitmap(hDC, nullptr, hDIB);
 
 	if (hBitmap != nullptr) {
 		pBitmap = new CBitmap();
@@ -339,36 +360,19 @@ CBitmap *ConvertDIB(CDC *pDC,
 	return (pBitmap);
 }
 
-HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette,
-		LPBITMAPINFO lpbih) {       // pointer to a packed DIB
-#ifdef TODO
-	BOOL     bRetry = FALSE;
-	HBITMAP  hBitmap;                                   // Handle to our DDB bitmap
-	LPSTR    lpbihBits;                                 // Pointer to DIB bits
+HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette, HDIB hDib) {
+	BOOL bRetry = FALSE;
+	BITMAPINFO info = getDIBInfo(hDib);
+	LPVOID lpbihBits = FindDIBBits(hDib);
+	HBITMAP hBitmap = CreateDIBitmap(hDC,
+		&info.bmiHeader,
+	    CBM_INIT,
+	    lpbihBits,
+	    &info,
+	    DIB_RGB_COLORS);
+	assert(hBitmap);
 
-	lpbihBits = FindDIBBits((LPSTR)lpbih);
-
-try_again:
-	hBitmap = CreateDIBitmap(hDC,
-	                         (LPBITMAPINFOHEADER)lpbih,
-	                         CBM_INIT,
-	                         lpbihBits,
-	                         (LPBITMAPINFO)lpbih,
-	                         DIB_RGB_COLORS);
-
-	if (hBitmap == nullptr) {
-		if (!bRetry) {
-			bRetry = TRUE;
-			(void)GlobalCompact(1000000L);
-			goto try_again;
-		}
-		ShowMemoryInfo("Unable to convert artwork", "Internal Problem");
-	}
-
-	return (hBitmap);
-#else
-	error("TODO: DIBtoBitmap");
-#endif
+	return hBitmap;
 }
 
 

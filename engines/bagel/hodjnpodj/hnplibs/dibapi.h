@@ -114,7 +114,7 @@ HANDLE    CopyHandle(HANDLE h);
  * @return		A handle to the DDB (HBITMAP).  If an error occurs, the return
  * value will be nullptr.
  */
-extern HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPal, LPBITMAPINFO lpbih);
+extern HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPal, HDIB hDib);
 
 /**
  * Convert a device-independent bitmap (DIB) to a device-dependent

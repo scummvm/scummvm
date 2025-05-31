@@ -461,11 +461,10 @@ BOOL CSprite::DuplicateSprite(CDC *pDC, CSprite *pSprite) {
  ************************************************************************/
 
 BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
-	CDibDoc     *myDib = nullptr;                          // pointer to our loaded DIB file
-	LPSTR       lpDIBHdr = nullptr;                        // pointer to our DIB's BITMAPINFOHEADER
-	BOOL        bHavePalette = FALSE;                   // whether or not we have a palette already
-	CPalette    *pPalOld = nullptr;                        // palette previously mapped to base context
-	HPALETTE    hPalette = nullptr;
+	CDibDoc *myDib = nullptr;                          // pointer to our loaded DIB file
+	BOOL bHavePalette = FALSE;                   // whether or not we have a palette already
+	CPalette *pPalOld = nullptr;                        // palette previously mapped to base context
+	HPALETTE hPalette = nullptr;
 
 	ClearImage();                                       // clear out any/all existing bitmaps, palettes,
 	ClearMask();                                        // ... and device contexts
@@ -488,13 +487,15 @@ BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
 			(void)(*pDC).RealizePalette();
 			hPalette = (HPALETTE)(*m_pPalette).m_hObject;
 		}
-		if (CreateImageContext(pDC)) {                  // create a context for the image
-			lpDIBHdr  = (LPSTR) GlobalLock((HGLOBAL)(*myDib).GetHDIB());
-			(*m_pImage).m_hObject = DIBtoBitmap((*pDC).m_hDC,   // convert the DIB to a DDB
-			                                    hPalette,
-			                                    (LPBITMAPINFO) lpDIBHdr);   // ... and store it in the sprite
-			GlobalUnlock((HGLOBAL)(*myDib).GetHDIB());
-			if ((*m_pImage).m_hObject != nullptr) {        // verify the conversion was sucessfull
+		if (CreateImageContext(pDC)) {
+			// Create a context for the image
+			HDIB hDib = (*myDib).GetHDIB();
+			(*m_pImage).m_hObject = DIBtoBitmap(
+				(*pDC).m_hDC,	// convert the DIB to a DDB
+			    hPalette,
+			    hDib);			// ... and store it in the sprite
+
+			if ((*m_pImage).m_hObject != nullptr) {        // verify the conversion was successful
 				if (pPalOld != nullptr)
 					(void)(*pDC).SelectPalette(pPalOld, FALSE);
 				if (!m_bRetainContexts)                  // release the context if not optimizing
@@ -507,7 +508,7 @@ BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
 				m_nCelCount = 0;
 				delete myDib;                           // discard the DIB
 				myDib = nullptr;
-				return (TRUE);                          // return success
+				return TRUE;                          // return success
 			}
 		}
 	}
@@ -631,11 +632,10 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const int resId) {
  ************************************************************************/
 
 BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
-	CDibDoc     *myDib = nullptr;                          // pointer to our loaded DIB file
-	LPSTR       lpDIBHdr = nullptr;                        // pointer to our DIB's BITMAPINFOHEADER
-	BOOL        bHavePalette = FALSE;                   // whether or not we have a palette already
-	CPalette    *pPalOld = nullptr;                        // palette previously mapped to base context
-	HPALETTE    hPalette = nullptr;
+	CDibDoc *myDib = nullptr;                          // pointer to our loaded DIB file
+	BOOL bHavePalette = FALSE;                   // whether or not we have a palette already
+	CPalette *pPalOld = nullptr;                        // palette previously mapped to base context
+	HPALETTE hPalette = nullptr;
 
 	ClearImage();                                       // clear out any/all existing bitmaps, palettes,
 	ClearMask();                                        // ... and device contexts
@@ -658,12 +658,12 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
 			(void)(*pDC).RealizePalette();
 			hPalette = (HPALETTE)(*m_pPalette).m_hObject;
 		}
-		if (CreateImageContext(pDC)) {                  // create a context for the image
-			lpDIBHdr  = (LPSTR) GlobalLock((HGLOBAL)(*myDib).GetHDIB());
+		if (CreateImageContext(pDC)) {
+			// Create a context for the image
+			HDIB hDib = (*myDib).GetHDIB();
 			(*m_pImage).m_hObject = DIBtoBitmap((*pDC).m_hDC,   // convert the DIB to a DDB
-			                                    hPalette,
-			                                    (LPBITMAPINFO) lpDIBHdr);   // ... and store it in the sprite
-			GlobalUnlock((HGLOBAL)(*myDib).GetHDIB());
+			    hPalette,
+			    hDib);   // ... and store it in the sprite
 			if ((*m_pImage).m_hObject != nullptr) {        // verify the conversion was sucessfull
 				if (pPalOld != nullptr)
 					(void)(*pDC).SelectPalette(pPalOld, FALSE);
