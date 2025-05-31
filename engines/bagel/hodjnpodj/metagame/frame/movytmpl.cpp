@@ -85,10 +85,14 @@ BOOL CMovieWindow::PlayMovie() {
 			screen->blitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), destRect);
 		}
 
-		while (app->pollEvents(event)) {
+		bool breakFlag = false;
+		while (app->pollEvents(event) && !app->shouldQuit() && !breakFlag) {
+			breakFlag = ((event.type == Common::EVENT_KEYDOWN &&
+				event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+				(event.type == Common::EVENT_LBUTTONDOWN));
 		}
-
-		g_system->delayMillis(10);
+		if (breakFlag)
+			break;
 	}
 
 	decoder.stop();
