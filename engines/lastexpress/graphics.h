@@ -76,7 +76,6 @@ public:
 	GraphicsManager(LastExpressEngine *engine);
 	~GraphicsManager();
 
-	bool goLockSurface();
 	bool acquireSurface();
 	void unlockSurface();
 	void burstAll();

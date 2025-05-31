@@ -34,13 +34,13 @@ namespace LastExpress {
 ArchiveManager::ArchiveManager(LastExpressEngine *engine) {
 	_engine = engine;
 
-	g_CDFilePointer = new Common::File();
-	g_HDFilePointer = new Common::File();
+	_cdFilePointer = new Common::File();
+	_hdFilePointer = new Common::File();
 }
 
 ArchiveManager::~ArchiveManager() {
-	SAFE_DELETE(g_CDFilePointer);
-	SAFE_DELETE(g_HDFilePointer);
+	SAFE_DELETE(_cdFilePointer);
+	SAFE_DELETE(_hdFilePointer);
 }
 
 HPF *ArchiveManager::search(const char *name, HPF *archive, int archiveSize) {
@@ -69,17 +69,17 @@ HPF *ArchiveManager::search(const char *name, HPF *archive, int archiveSize) {
 bool ArchiveManager::lockCD(int32 index) {
 	char filename[80];
 
-	if (g_CDFilePointer && g_CDArchiveIndex == index)
+	if (_cdFilePointer && _cdArchiveIndex == index)
 		return true;
 
 	// Not present in the original, but we need it since we're about to reopen a new file...
-	if (g_CDFilePointer && g_CDFilePointer->isOpen())
-		g_CDFilePointer->close();
+	if (_cdFilePointer && _cdFilePointer->isOpen())
+		_cdFilePointer->close();
 
 	if (!isCDAvailable(index, filename, sizeof(filename)) || !lockCache(filename))
 		return false;
 
-	g_CDArchiveIndex = index;
+	_cdArchiveIndex = index;
 	return true;
 }
 
@@ -93,21 +93,21 @@ bool ArchiveManager::lockCache(char *filename) {
 	uint32 curSubFilesNum;
 	uint32 archiveIndex = 0;
 
-	g_CDFilePosition = 0;
+	_cdFilePosition = 0;
 
-	if (!g_CDFilePointer || !g_CDFilePointer->open(filename))
+	if (!_cdFilePointer || !_cdFilePointer->open(filename))
 		return false;
 
-	g_CDArchiveNumFiles = g_CDFilePointer->readUint32LE();
+	_cdArchiveNumFiles = _cdFilePointer->readUint32LE();
 
-	if (g_CDFilePointer->err()) {
+	if (_cdFilePointer->err()) {
 		error("Error reading from file \"%s\"", filename);
 	}
 
-	remainingArchiveSize = g_CDArchiveNumFiles;
-	g_CDFilePosition += 4;
+	remainingArchiveSize = _cdArchiveNumFiles;
+	_cdFilePosition += 4;
 
-	if (g_CDArchiveNumFiles) {
+	if (_cdArchiveNumFiles) {
 		do {
 			curSubFilesNum = 500;
 
@@ -118,14 +118,14 @@ bool ArchiveManager::lockCache(char *filename) {
 			// This is not quite portable as the bytes are directly associated to the struct, which might
 			// have alignment differences, so instead we do it in the "ScummVM way"...
 			for (uint i = 0; i < curSubFilesNum; i++) {
-				g_CDFilePointer->read(g_CDArchive[archiveIndex + i].name, sizeof(g_CDArchive[archiveIndex + i].name));
-				g_CDArchive[archiveIndex + i].offset = g_CDFilePointer->readUint32LE();
-				g_CDArchive[archiveIndex + i].size = g_CDFilePointer->readUint16LE();
-				g_CDArchive[archiveIndex + i].currentPos = g_CDFilePointer->readUint16LE();
-				g_CDArchive[archiveIndex + i].status = g_CDFilePointer->readUint16LE();
+				_cdFilePointer->read(_cdArchive[archiveIndex + i].name, sizeof(_cdArchive[archiveIndex + i].name));
+				_cdArchive[archiveIndex + i].offset = _cdFilePointer->readUint32LE();
+				_cdArchive[archiveIndex + i].size = _cdFilePointer->readUint16LE();
+				_cdArchive[archiveIndex + i].currentPos = _cdFilePointer->readUint16LE();
+				_cdArchive[archiveIndex + i].status = _cdFilePointer->readUint16LE();
 			}
 
-			if (g_CDFilePointer->err()) {
+			if (_cdFilePointer->err()) {
 				error("Error reading from file \"%s\"", filename);
 			}
 
@@ -135,86 +135,86 @@ bool ArchiveManager::lockCache(char *filename) {
 		} while (remainingArchiveSize);
 	}
 
-	g_CDFilePosition += 22 * g_CDArchiveNumFiles;
+	_cdFilePosition += 22 * _cdArchiveNumFiles;
 
 	return true;
 }
 
 void ArchiveManager::initHPFS() {
-	g_HDFilePosition = 0;
+	_hdFilePosition = 0;
 
-	if (!g_HDFilePointer || !g_HDFilePointer->open(_engine->isDemo() ? "DEMO.HPF" : "HD.hpf")) {
+	if (!_hdFilePointer || !_hdFilePointer->open(_engine->isDemo() ? "DEMO.HPF" : "HD.hpf")) {
 		error("Hard drive cache not found (please reinstall)");
 	}
 
-	g_CDArchive = (HPF *)malloc(6500 * sizeof(HPF));
+	_cdArchive = (HPF *)malloc(6500 * sizeof(HPF));
 
-	if (!g_CDArchive) {
+	if (!_cdArchive) {
 		error("Out of memory");
 	}
 
-	g_HDArchiveNumFiles = g_HDFilePointer->readUint32LE();
+	_hdArchiveNumFiles = _hdFilePointer->readUint32LE();
 
-	if (g_HDFilePointer->err()) {
+	if (_hdFilePointer->err()) {
 		error("Error reading from file \"%s\"", _engine->isDemo() ? "DEMO.HPF" : "HD.hpf");
 	}
 
-	g_HDFilePosition += 4;
-	g_HDArchive = (HPF *)malloc(g_HDArchiveNumFiles * sizeof(HPF));
+	_hdFilePosition += 4;
+	_hdArchive = (HPF *)malloc(_hdArchiveNumFiles * sizeof(HPF));
 
-	if (!g_HDArchive) {
+	if (!_hdArchive) {
 		error("Out of memory");
 	}
 
-	for (int i = 0; i < g_HDArchiveNumFiles; i++) {
-		g_HDFilePointer->read(g_HDArchive[i].name, sizeof(g_HDArchive[i].name));
-		g_HDArchive[i].offset = g_HDFilePointer->readUint32LE();
-		g_HDArchive[i].size = g_HDFilePointer->readUint16LE();
-		g_HDArchive[i].currentPos = g_HDFilePointer->readUint16LE();
-		g_HDArchive[i].status = g_HDFilePointer->readUint16LE();
+	for (int i = 0; i < _hdArchiveNumFiles; i++) {
+		_hdFilePointer->read(_hdArchive[i].name, sizeof(_hdArchive[i].name));
+		_hdArchive[i].offset = _hdFilePointer->readUint32LE();
+		_hdArchive[i].size = _hdFilePointer->readUint16LE();
+		_hdArchive[i].currentPos = _hdFilePointer->readUint16LE();
+		_hdArchive[i].status = _hdFilePointer->readUint16LE();
 	}
 
-	if (g_HDFilePointer->err()) {
+	if (_hdFilePointer->err()) {
 		error("Error reading from file \"%s\"", _engine->isDemo() ? "DEMO.HPF" : "HD.hpf");
 	}
 
-	g_HDFilePosition += g_HDArchiveNumFiles;
+	_hdFilePosition += _hdArchiveNumFiles;
 }
 
 void ArchiveManager::shutDownHPFS() {
 	unlockCD();
 
-	if (g_HDFilePointer)
-		g_HDFilePointer->close();
+	if (_hdFilePointer)
+		_hdFilePointer->close();
 
-	if (g_HDFilePointer && g_HDFilePointer->isOpen()) {
+	if (_hdFilePointer && _hdFilePointer->isOpen()) {
 		error("Error closing file \"%s\"", "HD cache file");
 	}
 
-	if (g_HDArchive) {
-		free(g_HDArchive);
-		g_HDArchive = nullptr;
+	if (_hdArchive) {
+		free(_hdArchive);
+		_hdArchive = nullptr;
 	}
 
-	if (g_CDArchive) {
-		free(g_CDArchive);
-		g_CDArchive = nullptr;
+	if (_cdArchive) {
+		free(_cdArchive);
+		_cdArchive = nullptr;
 	}
 
-	delete g_HDFilePointer;
-	g_HDFilePointer = nullptr;
+	delete _hdFilePointer;
+	_hdFilePointer = nullptr;
 
-	g_HDArchiveNumFiles = 0;
-	g_HDFilePosition = 0;
+	_hdArchiveNumFiles = 0;
+	_hdFilePosition = 0;
 }
 
 void ArchiveManager::unlockCD() {
-	if (g_CDFilePointer)
-		g_CDFilePointer->close();
+	if (_cdFilePointer)
+		_cdFilePointer->close();
 
-	g_CDArchiveNumFiles = 0;
-	g_CDFilePosition = 0;
-	g_CDArchiveIndex = 0;
+	_cdArchiveNumFiles = 0;
+	_cdFilePosition = 0;
+	_cdArchiveIndex = 0;
 }
 
 HPF *ArchiveManager::openHPF(const char *filename) {
@@ -222,13 +222,13 @@ HPF *ArchiveManager::openHPF(const char *filename) {
 	Common::String filenameStr(filename);
 	filenameStr.toUppercase();
 
-	if (!g_HDFilePointer)
+	if (!_hdFilePointer)
 		return nullptr;
 
-	result = search(filenameStr.c_str(), g_HDArchive, g_HDArchiveNumFiles);
+	result = search(filenameStr.c_str(), _hdArchive, _hdArchiveNumFiles);
 	if (!result) {
-		if (g_CDArchiveNumFiles)
-			result = search(filenameStr.c_str(), g_CDArchive, g_CDArchiveNumFiles);
+		if (_cdArchiveNumFiles)
+			result = search(filenameStr.c_str(), _cdArchive, _cdArchiveNumFiles);
 
 		if (!result)
 			return nullptr;
@@ -244,36 +244,36 @@ HPF *ArchiveManager::openHPF(const char *filename) {
 }
 
 void ArchiveManager::readHD(void *dstBuf, int offset, uint32 size) {
-	if (g_HDFilePointer && g_HDFilePointer->isOpen()) {
-		if (offset != g_HDFilePosition) {	
-			if (!g_HDFilePointer->seek(offset * PAGE_SIZE, SEEK_SET)) {
+	if (_hdFilePointer && _hdFilePointer->isOpen()) {
+		if (offset != _hdFilePosition) {	
+			if (!_hdFilePointer->seek(offset * PAGE_SIZE, SEEK_SET)) {
 				error("Error seeking in file \"%s\"", "HD cache file");
 			}
 		}
 
-		uint32 readSize = g_HDFilePointer->read(dstBuf, size * PAGE_SIZE);
+		uint32 readSize = _hdFilePointer->read(dstBuf, size * PAGE_SIZE);
 		if (readSize != size * PAGE_SIZE) {
 			error("Error reading from file \"%s\"", "HD cache file");
 		}
 
-		g_HDFilePosition = (offset + size);
+		_hdFilePosition = (offset + size);
 	}
 }
 
 void ArchiveManager::readCD(void *dstBuf, int offset, uint32 size) {
-	if (g_CDFilePointer && g_CDFilePointer->isOpen()) {
-		if (offset != g_CDFilePosition) {
-			if (!g_CDFilePointer->seek(offset * PAGE_SIZE, SEEK_SET)) {
+	if (_cdFilePointer && _cdFilePointer->isOpen()) {
+		if (offset != _cdFilePosition) {
+			if (!_cdFilePointer->seek(offset * PAGE_SIZE, SEEK_SET)) {
 				error("Error seeking in file \"%s\"", "CD cache file");
 			}
 		}
 
-		uint32 readSize = g_CDFilePointer->read(dstBuf, size * PAGE_SIZE);
+		uint32 readSize = _cdFilePointer->read(dstBuf, size * PAGE_SIZE);
 		if (readSize != size * PAGE_SIZE) {
 			error("Error reading from file \"%s\"", "CD cache file");
 		}
 
-		g_CDFilePosition = (offset + readSize);
+		_cdFilePosition = (offset + readSize);
 	}
 }
 
