@@ -44,11 +44,11 @@ struct Polygon {
 	uint _index;
 	Common::Span<const Common::Point> _points;
 
-	bool contains(const Common::Point &query) const;
+	bool contains(Common::Point query) const;
 	bool intersectsEdge(uint startPointI, Common::Point a, Common::Point b) const;
-	EdgeDistances edgeDistances(uint startPointI, const Common::Point &query) const;
-	Common::Point closestPointTo(const Common::Point &query, float &distanceSqr) const;
-	inline Common::Point closestPointTo(const Common::Point &query) const {
+	EdgeDistances edgeDistances(uint startPointI, Common::Point query) const;
+	Common::Point closestPointTo(Common::Point query, float &distanceSqr) const;
+	inline Common::Point closestPointTo(Common::Point query) const {
 		float dummy;
 		return closestPointTo(query, dummy);
 	}
@@ -61,14 +61,14 @@ struct PathFindingPolygon : Polygon {
 
 	using SharedPoint = Common::Pair<uint, uint>;
 
-	float depthAt(const Common::Point &query) const;
+	float depthAt(Common::Point query) const;
 	uint findSharedPoints(const PathFindingPolygon &other, Common::Span<SharedPoint> sharedPoints) const;
 };
 
 struct FloorColorPolygon : Polygon {
 	Common::Span<const Color> _pointColors;
 
-	Color colorAt(const Common::Point &query) const;
+	Color colorAt(Common::Point query) const;
 };
 
 template<class TShape, typename TPolygon>
@@ -127,10 +127,10 @@ public:
 	inline iterator end() const { return { *this, polygonCount() }; }
 
 	Polygon at(uint index) const;
-	int32 polygonContaining(const Common::Point &query) const;
-	bool contains(const Common::Point &query) const;
-	Common::Point closestPointTo(const Common::Point &query, int32 &polygonI) const;
-	inline Common::Point closestPointTo(const Common::Point &query) const {
+	int32 polygonContaining(Common::Point query) const;
+	bool contains(Common::Point query) const;
+	Common::Point closestPointTo(Common::Point query, int32 &polygonI) const;
+	inline Common::Point closestPointTo(Common::Point query) const {
 		int32 dummy;
 		return closestPointTo(query, dummy);
 	}
@@ -166,11 +166,11 @@ public:
 	inline iterator end() const { return { *this, polygonCount() }; }
 
 	PathFindingPolygon at(uint index) const;
-	int8 orderAt(const Common::Point &query) const;
-	float depthAt(const Common::Point &query) const;
+	int8 orderAt(Common::Point query) const;
+	float depthAt(Common::Point query) const;
 	bool findPath(
-		const Common::Point &from,
-		const Common::Point &to,
+		Common::Point from,
+		Common::Point to,
 		Common::Stack<Common::Point> &path) const;
 	int32 edgeTarget(uint polygonI, uint pointI) const;
 	bool findEvadeTarget(
@@ -194,12 +194,12 @@ private:
 	void initializeFloydWarshall();
 	void calculateFloydWarshall();
 	bool canGoStraightThrough(
-		const Common::Point &from,
-		const Common::Point &to,
+		Common::Point from,
+		Common::Point to,
 		int32 fromContaining, int32 toContaining) const;
 	void floydWarshallPath(
-		const Common::Point &from,
-		const Common::Point &to,
+		Common::Point from,
+		Common::Point to,
 		int32 fromContaining, int32 toContaining,
 		Common::Stack<Common::Point> &path) const;
 
@@ -245,7 +245,7 @@ public:
 	inline iterator end() const { return { *this, polygonCount() }; }
 
 	FloorColorPolygon at(uint index) const;
-	OptionalColor colorAt(const Common::Point &query) const;
+	OptionalColor colorAt(Common::Point query) const;
 
 private:
 	Common::Array<Color> _pointColors;

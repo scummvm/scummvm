@@ -514,7 +514,7 @@ void WalkingCharacter::update() {
 	}
 }
 
-static Direction getDirection(const Point &from, const Point &to) {
+static Direction getDirection(Point from, Point to) {
 	Point delta = from - to;
 	if (from.x == to.x)
 		return from.y < to.y ? Direction::Down : Direction::Up;
@@ -622,7 +622,7 @@ void WalkingCharacter::stopWalking(Direction direction) {
 }
 
 void WalkingCharacter::walkTo(
-	const Point &target, Direction endDirection,
+	Point target, Direction endDirection,
 	ITriggerableObject *activateObject, const char *activateAction) {
 	// all the activation parameters are only relevant for MainCharacter
 
@@ -651,7 +651,7 @@ void WalkingCharacter::walkTo(
 	updateWalking();
 }
 
-void WalkingCharacter::setPosition(const Point &target) {
+void WalkingCharacter::setPosition(Point target) {
 	_isWalking = false;
 	_sourcePos = _currentPos = target;
 }
@@ -794,7 +794,7 @@ void MainCharacter::onArrived() {
 }
 
 void MainCharacter::walkTo(
-	const Point &target_, Direction endDirection,
+	Point target_, Direction endDirection,
 	ITriggerableObject *activateObject, const char *activateAction) {
 	_activateObject = activateObject;
 	_activateAction = activateAction;

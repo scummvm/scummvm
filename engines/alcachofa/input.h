@@ -38,8 +38,8 @@ public:
 	inline bool isMouseLeftDown() const { return _isMouseLeftDown; }
 	inline bool isMouseRightDown() const { return _isMouseRightDown; }
 	inline bool isAnyMouseDown() const { return _isMouseLeftDown || _isMouseRightDown; }
-	inline const Common::Point &mousePos2D() const { return _mousePos2D; }
-	inline const Common::Point &mousePos3D() const { return _mousePos3D; }
+	inline Common::Point mousePos2D() const { return _mousePos2D; }
+	inline Common::Point mousePos3D() const { return _mousePos3D; }
 	const Input &debugInput() const { scumm_assert(_debugInput != nullptr); return *_debugInput; }
 
 	void nextFrame();
