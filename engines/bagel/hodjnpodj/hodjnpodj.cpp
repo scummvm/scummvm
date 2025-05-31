@@ -79,7 +79,8 @@ Common::Error HodjNPodjEngine::run() {
 	_gameId = getGameId();
 	#endif
 	// Run the game
-	auto &app = Metagame::Frame::theApp;
+
+	Metagame::Frame::CTheApp app;
 	app.addResources("meta/hnpmeta.dll");
 	app.setDirectory("meta");
 	app.Run();

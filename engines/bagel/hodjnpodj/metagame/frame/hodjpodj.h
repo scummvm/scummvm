@@ -138,8 +138,6 @@ public:
 	int ExitInstance() override;
 };
 
-extern CTheApp theApp;
-
 } // namespace Frame
 } // namespace Metagame
 } // namespace HodjNPodj

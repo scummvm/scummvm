@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "bagel/afxwin.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/metagame/bgen/invent.h"
@@ -40,8 +41,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace Frame {
-
-CTheApp theApp;
 
 #define SAVEDLL         0
 
@@ -291,15 +290,12 @@ CHodjPodjWindow::CHodjPodjWindow() {
 
 	lpMetaGame = new CBfcMgr;                       // only allocate this once
 
-	// if user passes the /N command line switch,
-	//
-	//
-	if (StriStr(theApp.m_lpCmdLine, "-n") || StriStr(theApp.m_lpCmdLine, "/n")) {
-
-		// ...then do not play the into movie
+	// Check for skipping intro
+	if (ConfMan.getBool("skip_intro")) {
+		// Don't play the into movie
 		PostMessage(WM_COMMAND, IDC_MAINDLG);
 	} else {
-
+		// Play the intro movie
 		PostMessage(WM_COMMAND, IDC_PLAY_LOGO_MOVIE);
 	}
 }
