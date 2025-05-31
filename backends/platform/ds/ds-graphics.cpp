@@ -400,7 +400,7 @@ int16 OSystem_DS::getWidth() {
 	return _framebuffer.w;
 }
 
-void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
+void OSystem_DS::setPaletteIntern(const byte *colors, uint start, uint num) {
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
 		int green = *(colors + 1);
@@ -415,7 +415,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		_cursorDirty = true;
 }
 
-void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
+void OSystem_DS::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
@@ -428,14 +428,6 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 
 	_disableCursorPalette = false;
 	_cursorDirty = true;
-}
-
-void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const {
-	for (unsigned int r = start; r < start + num; r++) {
-		*colors++ = (_palette[r] & 0x001F) << 3;
-		*colors++ = (_palette[r] & 0x03E0) >> 5 << 3;
-		*colors++ = (_palette[r] & 0x7C00) >> 10 << 3;
-	}
 }
 
 void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {

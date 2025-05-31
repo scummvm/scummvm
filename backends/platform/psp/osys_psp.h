@@ -24,10 +24,10 @@
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
-#include "graphics/paletteman.h"
 #include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"
+#include "backends/graphics/default-palette.h"
 
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/default_display_client.h"
@@ -39,7 +39,7 @@
 #include "backends/platform/psp/audio.h"
 #include "backends/platform/psp/thread.h"
 
-class OSystem_PSP : public EventsBaseBackend, public PaletteManager {
+class OSystem_PSP : public EventsBaseBackend, public DefaultPaletteManager {
 private:
 
 	Audio::MixerImpl *_mixer;
@@ -85,14 +85,13 @@ public:
 	int16 getHeight();
 
 	// Palette related
-	PaletteManager *getPaletteManager() { return this; }
+	PaletteManager *getPaletteManager() override { return this; }
 protected:
-	// PaletteManager API
-	void setPalette(const byte *colors, uint start, uint num);
-	void grabPalette(byte *colors, uint start, uint num) const;
-public:
-	void setCursorPalette(const byte *colors, uint start, uint num);
+	// DefaultPaletteManager API
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
 
+public:
 	// Screen related
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	Graphics::Surface *lockScreen();

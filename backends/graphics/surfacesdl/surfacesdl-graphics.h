@@ -23,6 +23,7 @@
 #define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 
 #include "backends/graphics/graphics.h"
+#include "backends/graphics/default-palette.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
@@ -47,7 +48,7 @@ enum {
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public SdlGraphicsManager {
+class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public DefaultPaletteManager {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
@@ -84,10 +85,12 @@ public:
 	int16 getHeight() const override;
 	int16 getWidth() const override;
 
+	PaletteManager *getPaletteManager() override { return this; }
 protected:
-	// PaletteManager API
-	void setPalette(const byte *colors, uint start, uint num) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
+	// DefaultPaletteManager API
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
+
 	virtual void initGraphicsSurface();
 
 	/**
@@ -119,7 +122,6 @@ public:
 
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask, bool disableKeyColor);
-	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 #ifdef USE_OSD
 	void displayMessageOnOSD(const Common::U32String &msg) override;

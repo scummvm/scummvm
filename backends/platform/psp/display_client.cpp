@@ -201,46 +201,6 @@ void Palette::deallocate() {
 	_numOfEntries = 0;
 }
 
-// Copy some of the palette to an array of colors
-//
-void Palette::getPartial(byte *colors, uint start, uint num) const {
-	DEBUG_ENTER_FUNC();
-
-	assert(_values);
-	assert(_numOfEntries);
-
-	uint32 r, g, b, a;
-
-	if (start + num > _numOfEntries)	// Check boundary
-		num = _numOfEntries - start;
-
-	if (_pixelFormat.bitsPerPixel == 16) {
-		uint16 *palette = (uint16 *)_values;
-		palette += start;
-
-		for (uint32 i = start; i < start + num; i++) {
-			_pixelFormat.colorToRgba(*palette, r, g, b, a);
-
-			*colors++ = (byte)r;
-			*colors++ = (byte)g;
-			*colors++ = (byte)b;
-			palette++;
-		}
-	} else if (_pixelFormat.bitsPerPixel == 32) {
-		uint32 *palette = (uint32 *)_values;
-		palette += start;
-
-		for (uint32 i = start; i < start + num; i++) {
-			_pixelFormat.colorToRgba(*palette, r, g, b, a);
-
-			*colors++ = (byte)r;
-			*colors++ = (byte)g;
-			*colors++ = (byte)b;
-			palette++;
-		}
-	}
-}
-
 void Palette::setSingleColorRGBA(uint32 num, byte r, byte g, byte b, byte a) {
 	// DEBUG_ENTER_FUNC();
 	uint16 *shortValues;

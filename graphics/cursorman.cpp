@@ -20,6 +20,7 @@
  */
 
 #include "graphics/cursorman.h"
+#include "graphics/paletteman.h"
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -239,7 +240,7 @@ void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) 
 	_cursorPaletteStack.push(pal);
 
 	if (num)
-		g_system->setCursorPalette(colors, start, num);
+		g_system->getPaletteManager()->setCursorPalette(colors, start, num);
 	else
 		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 }
@@ -262,7 +263,7 @@ void CursorManager::popCursorPalette() {
 	pal = _cursorPaletteStack.top();
 
 	if (pal->_num && !pal->_disabled)
-		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
+		g_system->getPaletteManager()->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	else
 		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 }
@@ -291,7 +292,7 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 
 	if (num) {
 		memcpy(pal->_data, colors, size);
-		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
+		g_system->getPaletteManager()->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	} else {
 		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 	}

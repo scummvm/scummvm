@@ -23,6 +23,7 @@
 #define BACKENDS_GRAPHICS3D_OPENGLSDL_GRAPHICS3D_H
 
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/default-palette.h"
 
 #include "math/rect2d.h"
 
@@ -41,7 +42,7 @@ namespace OpenGL {
  *
  * Used when rendering games with OpenGL
  */
-class OpenGLSdlGraphics3dManager : public SdlGraphicsManager {
+class OpenGLSdlGraphics3dManager : public SdlGraphicsManager, public DefaultPaletteManager {
 public:
 	OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer);
 	virtual ~OpenGLSdlGraphics3dManager();
@@ -80,8 +81,6 @@ public:
 	// GraphicsManager API - Draw methods
 	void updateScreen() override;
 	// Following methods are not used by 3D graphics managers
-	void setPalette(const byte *colors, uint start, uint num) override {}
-	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
 	Graphics::Surface *lockScreen() override { return nullptr; }
 	void unlockScreen() override {}
@@ -104,8 +103,15 @@ public:
 	// GraphicsManager API - Mouse
 	bool showMouse(bool visible) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override {}
-	void setCursorPalette(const byte *colors, uint start, uint num) override {}
 
+	// GraphicsManager API - Palette
+	PaletteManager *getPaletteManager() override { return this; }
+protected:
+	// DefaultPaletteManager interface
+	void setPaletteIntern(const byte *colors, uint start, uint num) override {}
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override {}
+
+public:
 	// SdlGraphicsManager API
 	void notifyVideoExpose() override {};
 	void notifyResize(const int width, const int height) override;

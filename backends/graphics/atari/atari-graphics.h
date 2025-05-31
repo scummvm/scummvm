@@ -23,6 +23,7 @@
 #define BACKENDS_GRAPHICS_ATARI_H
 
 #include "backends/graphics/graphics.h"
+#include "backends/graphics/default-palette.h"
 #include "common/events.h"
 
 #include <mint/osbind.h>
@@ -38,7 +39,7 @@
 #define MAX_HZ_SHAKE 16 // Falcon only
 #define MAX_V_SHAKE  16
 
-class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
+class AtariGraphicsManager : public GraphicsManager, public DefaultPaletteManager, Common::EventObserver {
 	friend class Cursor;
 	friend class PendingScreenChanges;
 	friend class Screen;
@@ -73,8 +74,6 @@ public:
 
 	int16 getHeight() const override { return _currentState.height; }
 	int16 getWidth() const override { return _currentState.width; }
-	void setPalette(const byte *colors, uint start, uint num) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	Graphics::Surface *lockScreen() override;
 	void unlockScreen() override;
@@ -99,8 +98,14 @@ public:
 	void warpMouse(int x, int y) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor,
 						bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override;
-	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
+	PaletteManager *getPaletteManager() override { return this; }
+protected:
+	// DefaultPaletteManager interface
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
+
+public:
 	Common::Point getMousePosition() const {
 		if (isOverlayVisible()) {
 			return _screen[kOverlayBuffer]->cursor.getPosition();

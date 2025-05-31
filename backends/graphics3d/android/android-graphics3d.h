@@ -31,7 +31,7 @@
 #include "backends/platform/android/touchcontrols.h"
 
 class AndroidGraphics3dManager :
-	public GraphicsManager, public AndroidCommonGraphics, public TouchControlsDrawer {
+	public GraphicsManager, public PaletteManager, public AndroidCommonGraphics, public TouchControlsDrawer {
 public:
 	AndroidGraphics3dManager();
 	virtual ~AndroidGraphics3dManager();
@@ -86,9 +86,6 @@ public:
 	virtual int16 getHeight() const override;
 	virtual int16 getWidth() const override;
 
-	// PaletteManager API
-	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void grabPalette(byte *colors, uint start, uint num) const override;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
 	                              int w, int h) override;
 	virtual Graphics::Surface *lockScreen() override;
@@ -111,10 +108,16 @@ public:
 	                            int hotspotY, uint32 keycolor,
 	                            bool dontScale,
 	                            const Graphics::PixelFormat *format, const byte *mask) override;
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	float getHiDPIScreenFactor() const override;
 
+	PaletteManager *getPaletteManager() override { return this; }
+protected:
+	// DefaultPaletteManager API
+	void setPaletteIntern(const byte *colors, uint start, uint num) override;
+	void setCursorPaletteIntern(const byte *colors, uint start, uint num) override;
+
+public:
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;

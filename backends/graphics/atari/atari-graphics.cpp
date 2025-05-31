@@ -528,7 +528,7 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	return OSystem::kTransactionSuccess;
 }
 
-void AtariGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
+void AtariGraphicsManager::setPaletteIntern(const byte *colors, uint start, uint num) {
 	//atari_debug("setPalette: %d, %d", start, num);
 
 	if (_tt) {
@@ -550,28 +550,6 @@ void AtariGraphicsManager::setPalette(const byte *colors, uint start, uint num) 
 	}
 
 	_pendingScreenChanges.queuePalette();
-}
-
-void AtariGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
-	//atari_debug("grabPalette: %d, %d", start, num);
-
-	if (_tt) {
-		const uint16 *pal = &_palette.tt[start];
-		for (uint i = 0; i < num; ++i) {
-			// Bits 15-12    Bits 11-8     Bits 7-4      Bits 3-0
-			// Reserved      Red           Green         Blue
-			*colors++ = ((pal[i] >> 8) & 0x0f) << 4;
-			*colors++ = ((pal[i] >> 4) & 0x0f) << 4;
-			*colors++ = ((pal[i]     ) & 0x0f) << 4;
-		}
-	} else {
-		const _RGB *pal = &_palette.falcon[start];
-		for (uint i = 0; i < num; ++i) {
-			*colors++ = pal[i].red;
-			*colors++ = pal[i].green;
-			*colors++ = pal[i].blue;
-		}
-	}
 }
 
 void AtariGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
@@ -994,7 +972,7 @@ void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int h
 	}
 }
 
-void AtariGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
+void AtariGraphicsManager::setCursorPaletteIntern(const byte *colors, uint start, uint num) {
 	atari_debug("setCursorPalette: %d, %d", start, num);
 
 	// cursor palette is supported only in the overlay
