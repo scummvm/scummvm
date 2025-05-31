@@ -104,9 +104,45 @@ UINT RealizePalette(HDC hdc) {
 	return 256;
 }
 
-HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
-                       DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
-	error("TODO: CreateDIBitmap");
+HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, DWORD flInit,
+		CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
+	CBitmap::Impl *bitmap = new CBitmap::Impl();
+
+	// Figure out the pixel format
+	assert(pbmih->biSize == 40 && pbmih->biPlanes == 1);
+	Graphics::PixelFormat format;
+	if (pbmih->biBitCount == 8)
+		format = Graphics::PixelFormat::createFormatCLUT8();
+	else if (pbmih->biBitCount == 16)
+		format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	else if (pbmih->biBitCount == 32)
+		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	else
+		error("Unknown biBitCount");
+
+	// Create the bitmap
+	bitmap->create(pbmih->biWidth, pbmih->biHeight, format);
+
+	// Set the palette
+	if (pbmi && pbmih->biClrUsed) {
+		Graphics::Palette pal(pbmih->biClrUsed);
+		for (uint i = 0; i < pbmih->biClrUsed; ++i) {
+			const RGBQUAD &col = pbmi->bmiColors[i];
+			pal.set(i, col.rgbRed, col.rgbGreen, col.rgbBlue);
+		}
+
+		bitmap->setPalette(pal.data(), 0, pal.size());
+	}
+
+	// If pixels are provided, copy them over
+	if (pjBits) {
+		size_t size = bitmap->w * bitmap->h *
+			bitmap->format.bytesPerPixel;
+		Common::copy((const byte *)pjBits, (const byte *)pjBits + size,
+			(byte *)bitmap->getPixels());
+	}
+
+	return bitmap;
 }
 
 int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,

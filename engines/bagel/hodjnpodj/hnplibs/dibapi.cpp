@@ -44,13 +44,15 @@ static BITMAPINFOHEADER getDIBInfoHeader(HDIB hDib) {
 	return h;
 }
 
-static BITMAPINFO getDIBInfo(HDIB hDib) {
-	BITMAPINFO h;
-	h.bmiHeader = getDIBInfoHeader(hDib);
+static BITMAPINFO *getDIBInfo(HDIB hDib) {
+	BITMAPINFO *h = (BITMAPINFO *)malloc(
+		sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD));
+
+	h->bmiHeader = getDIBInfoHeader(hDib);
 
 	const Graphics::Palette *pal = hDib->grabPalette();
-	for (uint i = 0; i < h.bmiHeader.biClrUsed; ++i) {
-		auto &col = h.bmiColors[i];
+	for (uint i = 0; i < h->bmiHeader.biClrUsed; ++i) {
+		auto &col = h->bmiColors[i];
 		pal->get(i, col.rgbRed, col.rgbGreen, col.rgbBlue);
 		col.rgbReserved = 0;
 	}
@@ -361,17 +363,17 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 }
 
 HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette, HDIB hDib) {
-	BOOL bRetry = FALSE;
-	BITMAPINFO info = getDIBInfo(hDib);
+	BITMAPINFO *info = getDIBInfo(hDib);
 	LPVOID lpbihBits = FindDIBBits(hDib);
 	HBITMAP hBitmap = CreateDIBitmap(hDC,
-		&info.bmiHeader,
+		&info->bmiHeader,
 	    CBM_INIT,
 	    lpbihBits,
-	    &info,
+	    info,
 	    DIB_RGB_COLORS);
 	assert(hBitmap);
 
+	delete info;
 	return hBitmap;
 }
 

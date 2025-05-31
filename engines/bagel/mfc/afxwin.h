@@ -513,6 +513,11 @@ public:
 
 class CBitmap : public CGdiObject {
 public:
+	struct Impl : public CGdiObjectImpl,
+		public Graphics::ManagedSurface {
+		~Impl() override {}
+	};
+public:
 	~CBitmap() override {
 	}
 
