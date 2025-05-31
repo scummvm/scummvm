@@ -269,10 +269,12 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	if (_drawBottom < rect.bottom)
 		_drawBottom = rect.bottom;
 
+#if 0	// causes issues with HE games, temporarily disable until a decision has been made
 	if (_height + rect.top >= 256) {	// AkosRenderer didn't do this check
 		decode = false;
 		return 2;
 	}
+#endif
 
 	compData.width = _out.w;
 	compData.height = _out.h;
