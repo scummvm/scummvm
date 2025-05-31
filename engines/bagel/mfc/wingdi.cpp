@@ -234,15 +234,15 @@ BOOL LineDDA(int nXStart, int nYStart,
 }
 
 BYTE GetRValue(COLORREF color) {
-	error("TODO: GetRValue");
+	return  ((BYTE)(color & 0xFF));
 }
 
 BYTE GetGValue(COLORREF color) {
-	error("TODO: GetGValue");
+	return ((BYTE)((color >> 8) & 0xFF));
 }
 
 BYTE GetBValue(COLORREF color) {
-	error("TODO: GetBValue");
+	return ((BYTE)((color >> 16) & 0xFF));
 }
 
 HWND GetDlgItem(HWND hDlg, int nIDDlgItem) {
