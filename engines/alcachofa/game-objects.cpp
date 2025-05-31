@@ -106,7 +106,7 @@ void InteractableObject::trigger(const char *action) {
 
 void InteractableObject::toggle(bool isEnabled) {
 	ObjectBase::toggle(isEnabled);
-	ObjectBase *related = room()->getObjectByName(_relatedObject);
+	ObjectBase *related = room()->getObjectByName(_relatedObject.c_str());
 	if (related != nullptr)
 		related->toggle(isEnabled);
 }
@@ -254,9 +254,9 @@ void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) 
 		if (name.empty())
 			object = nullptr;
 		else {
-			object = room()->getObjectByName(name);
+			object = room()->getObjectByName(name.c_str());
 			if (object == nullptr)
-				object = room()->world().getObjectByName(name);
+				object = room()->world().getObjectByName(name.c_str());
 			if (object == nullptr)
 				error("Invalid object name \"%s\" saved for \"%s\" in \"%s\"",
 					name.c_str(), this->name().c_str(), room()->name().c_str());
@@ -872,7 +872,7 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 	String roomName = room()->name();
 	serializer.syncString(roomName);
 	if (serializer.isLoading()) {
-		room() = room()->world().getRoomByName(roomName);
+		room() = room()->world().getRoomByName(roomName.c_str());
 		if (room() == nullptr)
 			error("Invalid room name \"%s\" saved for \"%s\"", roomName.c_str(), name().c_str());
 	}
