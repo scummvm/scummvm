@@ -24,7 +24,7 @@
 
 namespace Alcachofa {
 
-static const char* const ScriptOpNames[] = {
+static const char *const ScriptOpNames[] = {
 	"Nop",
 	"Dup",
 	"PushAddr",

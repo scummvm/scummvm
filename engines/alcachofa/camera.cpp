@@ -20,8 +20,8 @@
  */
 
 #include "camera.h"
-#include "script.h"
 #include "alcachofa.h"
+#include "script.h"
 
 #include "common/system.h"
 #include "math/vector4d.h"
@@ -57,7 +57,7 @@ void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
 }
 
 void Camera::setPosition(Vector2d v) {
-	setPosition({ v.getX(), v.getY(), _cur._usedCenter.z() });
+	setPosition({v.getX(), v.getY(), _cur._usedCenter.z()});
 }
 
 void Camera::setPosition(Vector3d v) {
@@ -100,8 +100,7 @@ void Camera::setupMatricesAround(Vector3d center) {
 	_mat2Dto3D = matTemp * _mat2Dto3D;
 }
 
-void minmax(Vector3d &min, Vector3d &max, Vector3d val)
-{
+void minmax(Vector3d &min, Vector3d &max, Vector3d val) {
 	min.set(
 		MIN(min.x(), val.x()),
 		MIN(min.y(), val.y()),
@@ -157,8 +156,8 @@ Vector3d Camera::transform3Dto2D(Vector3d v3d) const {
 }
 
 Point Camera::transform3Dto2D(Point p3d) const {
-	auto v2d = transform3Dto2D({ (float)p3d.x, (float)p3d.y, kBaseScale });
-	return { (int16)v2d.x(), (int16)v2d.y() };
+	auto v2d = transform3Dto2D({(float)p3d.x, (float)p3d.y, kBaseScale});
+	return {(int16)v2d.x(), (int16)v2d.y()};
 }
 
 void Camera::update() {
@@ -172,8 +171,7 @@ void Camera::update() {
 		for (int i = 0; i < 4; i++)
 			updateFollowing(50.0f);
 		_catchUp = false;
-	}
-	else
+	} else
 		updateFollowing(deltaTime);
 	setAppliedCenter(_cur._usedCenter + Vector3d(_shake.getX(), _shake.getY(), 0.0f));
 }
@@ -224,8 +222,7 @@ void Camera::updateFollowing(float deltaTime) {
 			_cur._usedCenter = targetCenter;
 			_isChanging = false;
 			_cur._isBraking = false;
-		}
-		else {
+		} else {
 			Vector3d deltaCenter = targetCenter - _cur._usedCenter;
 			deltaCenter.z() = 0.0f;
 			_cur._usedCenter += deltaCenter * moveDistance / distanceToTarget;
@@ -297,8 +294,9 @@ protected:
 
 struct CamLerpPosScaleTask final : public CamLerpTask {
 	CamLerpPosScaleTask(Process &process,
-		Vector3d targetPos, float targetScale,
-		int32 duration, EasingType moveEasingType, EasingType scaleEasingType)
+						Vector3d targetPos, float targetScale,
+						int32 duration,
+						EasingType moveEasingType, EasingType scaleEasingType)
 		: CamLerpTask(process, duration, EasingType::Linear) // linear as we need different ones per component
 		, _fromPos(_camera._appliedCenter)
 		, _deltaPos(targetPos - _camera._appliedCenter)
@@ -352,8 +350,8 @@ private:
 };
 
 Task *Camera::lerpPos(Process &process,
-	Vector2d targetPos,
-	int32 duration, EasingType easingType) {
+					  Vector2d targetPos,
+					  int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -363,8 +361,8 @@ Task *Camera::lerpPos(Process &process,
 }
 
 Task *Camera::lerpPos(Process &process,
-	Vector3d targetPos,
-	int32 duration, EasingType easingType) {
+					  Vector3d targetPos,
+					  int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -374,8 +372,8 @@ Task *Camera::lerpPos(Process &process,
 }
 
 Task *Camera::lerpPosZ(Process &process,
-	float targetPosZ,
-	int32 duration, EasingType easingType) {
+					   float targetPosZ,
+					   int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -385,8 +383,8 @@ Task *Camera::lerpPosZ(Process &process,
 }
 
 Task *Camera::lerpScale(Process &process,
-	float targetScale,
-	int32 duration, EasingType easingType) {
+						float targetScale,
+						int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -395,8 +393,8 @@ Task *Camera::lerpScale(Process &process,
 }
 
 Task *Camera::lerpRotation(Process &process,
-	float targetRotation,
-	int32 duration, EasingType easingType) {
+						   float targetRotation,
+						   int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -405,8 +403,9 @@ Task *Camera::lerpRotation(Process &process,
 }
 
 Task *Camera::lerpPosScale(Process &process,
-	Vector3d targetPos, float targetScale,
-	int32 duration, EasingType moveEasingType, EasingType scaleEasingType) {
+						   Vector3d targetPos, float targetScale,
+						   int32 duration,
+						   EasingType moveEasingType, EasingType scaleEasingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -418,4 +417,4 @@ Task *Camera::waitToStop(Process &process) {
 	return new CamWaitToStopTask(process);
 }
 
-}
+} // namespace Alcachofa

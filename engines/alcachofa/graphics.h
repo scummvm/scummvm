@@ -109,8 +109,7 @@ public:
 		Color color = kDebugRed
 	);
 
-	inline void debugPolyline(Common::Point a, Common::Point b, Color color = kDebugRed)
-	{
+	inline void debugPolyline(Common::Point a, Common::Point b, Color color = kDebugRed) {
 		Math::Vector2d points[] = { { (float)a.x, (float)a.y }, { (float)b.x, (float)b.y } };
 		debugPolygon({ points, 2 }, color);
 	}

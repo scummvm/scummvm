@@ -81,7 +81,7 @@ private:
 
 struct DelayTask : public Task {
 	DelayTask(Process &process, uint32 millis);
-	virtual TaskReturn run() override; 
+	virtual TaskReturn run() override;
 	virtual void debugPrint() override;
 
 private:
