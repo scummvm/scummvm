@@ -91,13 +91,6 @@ private:
 	bool _highQuality = false;
 	const Graphics::PixelFormat _pixelFormat;
 
-	uint32 _index;
-	uint32 _sourceOffset, _destOffset;
-	uint32 _srcIndexXL, _srcIndexXR, _srcIndexYT, _srcIndexYB;
-	uint32 _rTL, _rTR, _rBL, _rBR, _rF;
-	uint32 _gTL, _gTR, _gBL, _gBR, _gF;
-	uint32 _bTL, _bTR, _bBL, _bBR, _bF;
-
 	inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
 		// NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
 		r = color & 0x001f;

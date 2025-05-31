@@ -82,12 +82,12 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 		int16 y = CLIP<int16>(point.y, 0, (int16)_numRows);
 		return Common::Point(x, y);
 	}
-
-	_index = point.y * _numColumns + point.x;
+	
+	uint32 index = point.y * _numColumns + point.x;
 
 	Common::Point newPoint(point);
-	newPoint.x += (_internalBuffer[_index]._xDir ? _internalBuffer[_index]._Src.right : _internalBuffer[_index]._Src.left);
-	newPoint.y += (_internalBuffer[_index]._yDir ? _internalBuffer[_index]._Src.bottom : _internalBuffer[_index]._Src.top);
+	newPoint.x += (_internalBuffer[index]._xDir ? _internalBuffer[index]._Src.right : _internalBuffer[index]._Src.left);
+	newPoint.y += (_internalBuffer[index]._yDir ? _internalBuffer[index]._Src.bottom : _internalBuffer[index]._Src.top);
 
 	return newPoint;
 }
@@ -131,7 +131,9 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 // */
 
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
-	_destOffset = 0;
+	uint32 destOffset = 0;
+	uint32 sourceOffset = 0;
+	uint32 srcIndexXL, srcIndexYT;
 
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
@@ -140,39 +142,45 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 		generateRenderTable();
 	}
 	uint32 mutationTime = _system->getMillis();
+
 	if (_highQuality) {
 		// Apply bilinear interpolation
-		FilterPixel _curP;
+		uint32 srcIndexYB, srcIndexXR;
+		uint32 rTL, rTR, rBL, rBR, rF;
+		uint32 gTL, gTR, gBL, gBR, gF;
+		uint32 bTL, bTR, bBL, bBR, bF;
+		FilterPixel curP;
 		for (int16 y = 0; y < srcBuf->h; ++y) {
-			_sourceOffset = y * _numColumns;
+			sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
-				_curP = _internalBuffer[_sourceOffset + x];
-				_srcIndexYT = y + _curP._Src.top;
-				_srcIndexYB = y + _curP._Src.bottom;
-				_srcIndexXL = x + _curP._Src.left;
-				_srcIndexXR = x + _curP._Src.right;
-				splitColor(sourceBuffer[_srcIndexYT * _numColumns + _srcIndexXL], _rTL, _gTL, _bTL);
-				splitColor(sourceBuffer[_srcIndexYT * _numColumns + _srcIndexXR], _rTR, _gTR, _bTR);
-				splitColor(sourceBuffer[_srcIndexYB * _numColumns + _srcIndexXL], _rBL, _gBL, _bBL);
-				splitColor(sourceBuffer[_srcIndexYB * _numColumns + _srcIndexXR], _rBR, _gBR, _bBR);
-				_rF = _curP._fTL * _rTL + _curP._fTR * _rTR + _curP._fBL * _rBL + _curP._fBR * _rBR;
-				_gF = _curP._fTL * _gTL + _curP._fTR * _gTR + _curP._fBL * _gBL + _curP._fBR * _gBR;
-				_bF = _curP._fTL * _bTL + _curP._fTR * _bTR + _curP._fBL * _bBL + _curP._fBR * _bBR;
-				destBuffer[_destOffset] = mergeColor(_rF, _gF, _bF);
-				_destOffset++;
+				curP = _internalBuffer[sourceOffset + x];
+				srcIndexYT = y + curP._Src.top;
+				srcIndexYB = y + curP._Src.bottom;
+				srcIndexXL = x + curP._Src.left;
+				srcIndexXR = x + curP._Src.right;
+				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], rTL, gTL, bTL);
+				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXR], rTR, gTR, bTR);
+				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], rBL, gBL, bBL);
+				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXR], rBR, gBR, bBR);
+				rF = curP._fTL * rTL + curP._fTR * rTR + curP._fBL * rBL + curP._fBR * rBR;
+				gF = curP._fTL * gTL + curP._fTR * gTR + curP._fBL * gBL + curP._fBR * gBR;
+				bF = curP._fTL * bTL + curP._fTR * bTR + curP._fBL * bBL + curP._fBR * bBR;
+				destBuffer[destOffset] = mergeColor(rF, gF, bF);
+				destOffset++;
 			}
 		}
 	} else {
 		// Apply nearest-neighbour interpolation
+		uint32 index;
 		for (int16 y = 0; y < srcBuf->h; ++y) {
-			_sourceOffset = y * _numColumns;
+			sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
-				_index = _sourceOffset + x;
+				index = sourceOffset + x;
 				// RenderTable only stores offsets from the original coordinates
-				_srcIndexXL = x + (_internalBuffer[_index]._xDir ? _internalBuffer[_index]._Src.right : _internalBuffer[_index]._Src.left);
-				_srcIndexYT = y + (_internalBuffer[_index]._yDir ? _internalBuffer[_index]._Src.bottom : _internalBuffer[_index]._Src.top);
-				destBuffer[_destOffset] = sourceBuffer[_srcIndexYT * _numColumns + _srcIndexXL];
-				_destOffset++;
+				srcIndexXL = x + (_internalBuffer[index]._xDir ? _internalBuffer[index]._Src.right : _internalBuffer[index]._Src.left);
+				srcIndexYT = y + (_internalBuffer[index]._yDir ? _internalBuffer[index]._Src.bottom : _internalBuffer[index]._Src.top);
+				destBuffer[destOffset] = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
+				destOffset++;
 			}
 		}
 	}
