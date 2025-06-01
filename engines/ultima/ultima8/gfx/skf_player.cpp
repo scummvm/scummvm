@@ -27,7 +27,6 @@
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/gfx/shape.h"
 #include "ultima/ultima8/gfx/texture.h"
-#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
@@ -280,8 +279,6 @@ void SKFPlayer::run() {
 
 	_curFrame++;
 
-	PaletteManager *palman = PaletteManager::get_instance();
-
 	uint16 objecttype = 0;
 	do {
 		_curObject++;
@@ -301,13 +298,13 @@ void SKFPlayer::run() {
 
 		switch (objecttype) {
 		case 1:
-			palman->load(PaletteManager::Pal_Movie, *object);
+			_palette.load(*object);
+			_palette.updateNativeMap(_buffer->getRawSurface()->format);
 			break;
 		case 2: {
 			object->seek(0);
 			Shape *shape = new Shape(object, &U8SKFShapeFormat);
-			Palette *pal = palman->getPalette(PaletteManager::Pal_Movie);
-			shape->setPalette(pal);
+			shape->setPalette(&_palette);
 			_buffer->BeginPainting();
 			_buffer->Paint(shape, 0, 0, 0);
 			_buffer->EndPainting();

@@ -25,6 +25,7 @@
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/gfx/movie_player.h"
 #include "ultima/ultima8/gfx/render_surface.h"
+#include "ultima/ultima8/gfx/palette.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -64,6 +65,7 @@ private:
 	unsigned int _frameRate;
 	uint8 _fadeColour, _fadeLevel;
 	RenderSurface *_buffer;
+	Palette _palette;
 	RenderedText *_subs;
 	int _subtitleY;
 	bool _introMusicHack;
