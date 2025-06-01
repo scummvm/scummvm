@@ -131,12 +131,13 @@ void PopUpDialog::reflowLayout() {
 void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
+	int16 x = _x;
 	if (g_gui.useRTL()) {
-		_x = g_system->getOverlayWidth() - _x - _w + g_gui.getOverlayOffset();
+		x = g_system->getOverlayWidth() - _x - _w;
 	}
 
 	// Draw the menu border
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(x, _y, x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
 	/*if (_twoColumns)
 		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/
@@ -405,11 +406,10 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	int pad = _leftPadding;
 
 	if (g_gui.useRTL()) {
-		if (_twoColumns) {
-			r1.translate(this->getWidth() - w, 0);		// Shift the line-separator to the "first" col of RTL popup
-		}
-
-		r2.left = g_system->getOverlayWidth() - r2.left - w + g_gui.getOverlayOffset();
+		const int16 screenW = g_system->getOverlayWidth();
+		r1.left = screenW - r1.left - w;
+		r1.right = r1.left + w;
+		r2.left = screenW - r2.left - w;
 		r2.right = r2.left + w;
 
 		alignment = Graphics::kTextAlignRight;

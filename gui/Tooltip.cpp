@@ -58,9 +58,6 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	_x = MIN<int16>(parent->_x + x + _xdelta + _xpadding, g_system->getOverlayWidth() - _w - _xpadding * 2);
 	_y = MIN<int16>(parent->_y + y + _ydelta + _ypadding, g_system->getOverlayHeight() - _h - _ypadding * 2);
 
-	if (g_gui.useRTL())
-		_x = g_system->getOverlayWidth() - _w - _x + g_gui.getOverlayOffset();
-
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -76,7 +73,11 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 
 	Dialog::drawDialog(layerToDraw);
 
-	int16 textX = g_gui.useRTL() ? _x - 1 - _xpadding : _x + 1 + _xpadding;
+	int16 textX = _x + 1 + _xpadding;
+	if (g_gui.useRTL()) {
+		textX = g_system->getOverlayWidth() - _w - textX;
+	}
+
 	int16 textY = _y + 1 + _ypadding;
 
 	Graphics::TextAlign textAlignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
