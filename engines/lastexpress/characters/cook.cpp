@@ -48,7 +48,7 @@ void LogicManager::CONS_Cook(int chapter) {
 		CONS_Cook_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -71,12 +71,17 @@ void LogicManager::CONS_Cook_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterCook).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterCook, _functionsAbbot[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
 		fedEx(kCharacterCook, kCharacterCook, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterCook, (char *)&getCharacterCurrentParams(kCharacterCook)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -93,12 +98,17 @@ void LogicManager::CONS_Cook_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterCook).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterCook, _functionsAbbot[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
 		fedEx(kCharacterCook, kCharacterCook, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterCook, (char *)&getCharacterCurrentParams(kCharacterCook)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -113,7 +123,8 @@ void LogicManager::CONS_Cook_UptrainVersion(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_UptrainVersion(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		startCycOtis(kCharacterCook, "308A");
 		blockView(kCharacterCook, kCarRestaurant, 75);
 		blockView(kCharacterCook, kCarRestaurant, 78);
@@ -128,7 +139,9 @@ void LogicManager::HAND_Cook_UptrainVersion(HAND_PARAMS) {
 			getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 3;
 			CookCall(&LogicManager::CONS_Cook_DoSeqOtis, "308B", 0, 0, 0);
 		}
-	} else if (msg->action == 17) {
+
+		break;
+	case 17:
 		if (!inKitchen(kCharacterCath)) {
 			endGraphics(kCharacterCook);
 			getCharacter(kCharacterCook).currentCall--;
@@ -147,7 +160,7 @@ void LogicManager::HAND_Cook_UptrainVersion(HAND_PARAMS) {
 							fedEx(kCharacterCook, kCharacterCook, 18, 0);
 						}
 
-						return;
+						break;
 					}
 
 					playDialog(kCharacterCook, "KIT1011A", -1, 0);
@@ -165,7 +178,9 @@ void LogicManager::HAND_Cook_UptrainVersion(HAND_PARAMS) {
 				}
 			}
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8]) {
 			if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] > 2) {
 				if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 3) {
@@ -179,6 +194,10 @@ void LogicManager::HAND_Cook_UptrainVersion(HAND_PARAMS) {
 				CookCall(&LogicManager::CONS_Cook_DoSeqOtis, "308B", 0, 0, 0);
 			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -193,7 +212,8 @@ void LogicManager::CONS_Cook_DowntrainVersion(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_DowntrainVersion(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		startCycOtis(kCharacterCook, "308A");
 		blockView(kCharacterCook, kCarRestaurant, 75);
 		blockView(kCharacterCook, kCarRestaurant, 78);
@@ -209,13 +229,14 @@ void LogicManager::HAND_Cook_DowntrainVersion(HAND_PARAMS) {
 			getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 3;
 			CookCall(&LogicManager::CONS_Cook_DoSeqOtis, "308B", 0, 0, 0);
 		}
-	} else if (msg->action == 17) {
+
+		break;
+	case 17:
 		if (!inKitchen(kCharacterCath)) {
 			endGraphics(kCharacterCath);
 			getCharacter(kCharacterCook).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(8, _functionsCook[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
 			fedEx(kCharacterCook, kCharacterCook, 18, 0);
-			return;
 		} else {
 			if (checkCathDir(kCarRestaurant, 80)) {
 				startCycOtis(kCharacterCook, "308D");
@@ -229,7 +250,7 @@ void LogicManager::HAND_Cook_DowntrainVersion(HAND_PARAMS) {
 							fedEx(kCharacterCook, kCharacterCook, 18, 0);
 						}
 
-						return;
+						break;
 					}
 
 					playDialog(kCharacterCook, "KIT1011A", -1, 0);
@@ -247,7 +268,9 @@ void LogicManager::HAND_Cook_DowntrainVersion(HAND_PARAMS) {
 				}
 			}
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8]) {
 			if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] > 2) {
 				if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 3) {
@@ -261,6 +284,10 @@ void LogicManager::HAND_Cook_DowntrainVersion(HAND_PARAMS) {
 				CookCall(&LogicManager::CONS_Cook_DoSeqOtis, "308B", 0, 0, 0);
 			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -275,16 +302,22 @@ void LogicManager::CONS_Cook_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_Birth(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterCook)[0]) {
 			getCharacterCurrentParams(kCharacterCook)[0] = 1;
 			CONS_Cook_InKitchenDinner(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterCook).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
 		getCharacter(kCharacterCook).characterPosition.location = 0;
 		_gameProgress[kProgressField4C] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -330,6 +363,7 @@ void LogicManager::HAND_Cook_InKitchenDinner(HAND_PARAMS) {
 				CookCall(&LogicManager::CONS_Cook_DoDialog, "ZFX1012", 0, 0, 0);
 			}
 		}
+
 		break;
 	case 18:
 		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 1) {
@@ -337,6 +371,7 @@ void LogicManager::HAND_Cook_InKitchenDinner(HAND_PARAMS) {
 		} else if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] >= 2 && getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] <= 3) {
 			getCharacterCurrentParams(kCharacterCook)[2] = getCharacterCurrentParams(kCharacterCook)[2] == 0;
 		}
+
 		break;
 	case 101632192:
 		CONS_Cook_LockUp(0, 0, 0, 0);
@@ -361,14 +396,19 @@ void LogicManager::CONS_Cook_LockUp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_LockUp(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 1;
 		CookCall(&LogicManager::CONS_Cook_DoDialog, "WAT1200", 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterCook).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterCook).characterPosition.position = 3650;
 		getCharacter(kCharacterCook).characterPosition.location = 0;
 		endGraphics(kCharacterCook);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -383,15 +423,20 @@ void LogicManager::CONS_Cook_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_StartPart2(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Cook_InKitchenBreakfast(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterCook);
 		getCharacter(kCharacterCook).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
 		getCharacter(kCharacterCook).characterPosition.location = 0;
 		getCharacter(kCharacterCook).inventoryItem = kItemNone;
 		_gameProgress[kProgressField4C] = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -406,43 +451,41 @@ void LogicManager::CONS_Cook_InKitchenBreakfast(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_InKitchenBreakfast(HAND_PARAMS) {
-	if (msg->action <= 18) {
-		switch (msg->action) {
-		case 0:
-			if (getCharacterCurrentParams(kCharacterCook)[2] || (getCharacterCurrentParams(kCharacterCook)[2] = _gameTime + getCharacterCurrentParams(kCharacterCook)[0], _gameTime + getCharacterCurrentParams(kCharacterCook)[0] != 0)) {
-				if (getCharacterCurrentParams(kCharacterCook)[2] >= _gameTime)
-					return;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterCook)[2] || (getCharacterCurrentParams(kCharacterCook)[2] = _gameTime + getCharacterCurrentParams(kCharacterCook)[0], _gameTime + getCharacterCurrentParams(kCharacterCook)[0] != 0)) {
+			if (getCharacterCurrentParams(kCharacterCook)[2] >= _gameTime)
+				break;
 
-				getCharacterCurrentParams(kCharacterCook)[2] = 0x7FFFFFFF;
-			}
-
-			playDialog(0, "LIB122", getVolume(kCharacterCook), 0);
-			getCharacterCurrentParams(kCharacterCook)[0] = 225 * (4 * rnd(30) + 120);
-			getCharacterCurrentParams(kCharacterCook)[2] = 0;
-			break;
-		case 12:
-			getCharacterCurrentParams(kCharacterCook)[0] = 225 * (4 * rnd(30) + 120);
-			break;
-		case 17:
-			if (inKitchen(kCharacterCath)) {
-				if (getCharacterCurrentParams(kCharacterCook)[1]) {
-					getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 1;
-					CookCall(&LogicManager::CONS_Cook_DoDialog, "ZFX1011", 0, 0, 0);
-				} else {
-					getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 2;
-					CookCall(&LogicManager::CONS_Cook_DoDialog, "ZFX1012", 0, 0, 0);
-				}
-			}
-
-			break;
-		case 18:
-			if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] && getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] <= 2)
-				getCharacterCurrentParams(kCharacterCook)[1] = getCharacterCurrentParams(kCharacterCook)[1] == 0;
-
-			break;
-		default:
-			return;
+			getCharacterCurrentParams(kCharacterCook)[2] = 0x7FFFFFFF;
 		}
+
+		playDialog(0, "LIB122", getVolume(kCharacterCook), 0);
+		getCharacterCurrentParams(kCharacterCook)[0] = 225 * (4 * rnd(30) + 120);
+		getCharacterCurrentParams(kCharacterCook)[2] = 0;
+		break;
+	case 12:
+		getCharacterCurrentParams(kCharacterCook)[0] = 225 * (4 * rnd(30) + 120);
+		break;
+	case 17:
+		if (inKitchen(kCharacterCath)) {
+			if (getCharacterCurrentParams(kCharacterCook)[1]) {
+				getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 1;
+				CookCall(&LogicManager::CONS_Cook_DoDialog, "ZFX1011", 0, 0, 0);
+			} else {
+				getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 2;
+				CookCall(&LogicManager::CONS_Cook_DoDialog, "ZFX1012", 0, 0, 0);
+			}
+		}
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] && getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] <= 2)
+			getCharacterCurrentParams(kCharacterCook)[1] = getCharacterCurrentParams(kCharacterCook)[1] == 0;
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -457,13 +500,18 @@ void LogicManager::CONS_Cook_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_StartPart3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Cook_InKitchenLunch(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterCook);
 		getCharacter(kCharacterCook).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
 		_gameProgress[kProgressField4C] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -487,7 +535,7 @@ void LogicManager::HAND_Cook_InKitchenLunch(HAND_PARAMS) {
 					getCharacterCurrentParams(kCharacterCook)[0] = 0;
 				}
 
-				return;
+				break;
 			}
 
 			getCharacterCurrentParams(kCharacterCook)[3] = 0x7FFFFFFF;
@@ -551,15 +599,20 @@ void LogicManager::CONS_Cook_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_StartPart4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Cook_InKitchenDinner2(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterCook);
 		getCharacter(kCharacterCook).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
 		getCharacter(kCharacterCook).characterPosition.location = 0;
 		getCharacter(kCharacterCook).inventoryItem = kItemNone;
 		_gameProgress[kProgressField4C] = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -578,7 +631,7 @@ void LogicManager::HAND_Cook_InKitchenDinner2(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterCook)[2] || (getCharacterCurrentParams(kCharacterCook)[2] = _gameTime + getCharacterCurrentParams(kCharacterCook)[0], _gameTime + getCharacterCurrentParams(kCharacterCook)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterCook)[2] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterCook)[2] = 0x7FFFFFFF;
 		}
@@ -623,8 +676,13 @@ void LogicManager::CONS_Cook_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Cook_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterCook);
+		break;
+	default:
+		break;
+	}
 }
 
 void (LogicManager::*LogicManager::_functionsCook[])(HAND_PARAMS) = {
