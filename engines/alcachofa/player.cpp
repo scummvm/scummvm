@@ -182,7 +182,9 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 	auto &script = g_engine->script();
 	if (script.createProcess(activeCharacterKind(), object->name(), action, ScriptFlags::AllowMissing) != nullptr)
 		return;
-	else if (scumm_stricmp(action, "MIRAR") == 0)
+
+	_activeCharacter->currentlyUsing() = nullptr;
+	if (scumm_stricmp(action, "MIRAR") == 0)
 		script.createProcess(activeCharacterKind(), "DefectoMirar");
 	//else if (action[0] == 'i' && object->name()[0] == 'i')
 	// This case can happen if you combine two objects without procedure, the original engine
