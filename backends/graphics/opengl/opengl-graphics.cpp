@@ -237,7 +237,11 @@ int OpenGLGraphicsManager::getGraphicsMode() const {
 
 #ifdef USE_RGB_COLOR
 Graphics::PixelFormat OpenGLGraphicsManager::getScreenFormat() const {
-	return _currentState.gameFormat;
+	if (_renderer3d) {
+		return _defaultFormatAlpha;
+	} else {
+		return _currentState.gameFormat;
+	}
 }
 
 Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats() const {
