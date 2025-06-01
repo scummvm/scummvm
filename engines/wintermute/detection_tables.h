@@ -876,36 +876,36 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Dead City (Czech) (25.06.2004)
 	WME_WINENTRY("deadcity", "v1.0.1",
-		WME_ENTRY1s("data.dcp", "6860a4aa55576cbee1a0f2a04f2c8810", 9132626), Common::CS_CZE, ADGF_UNSTABLE, WME_1_2_43),
+		WME_ENTRY1s("data.dcp", "6860a4aa55576cbee1a0f2a04f2c8810", 9132626), Common::CS_CZE, ADGF_NO_FLAGS, WME_1_2_43),
 
 	// Dead City (Czech)
 	WME_WINENTRY("deadcity", "",
-		WME_ENTRY1s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::CS_CZE, ADGF_UNSTABLE, WME_1_4_1),
+		WME_ENTRY1s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::CS_CZE, ADGF_NO_FLAGS, WME_1_4_1),
 
 	// Dead City (English)
 	WME_WINENTRY("deadcity", "",
 		WME_ENTRY2s("english.dcp", "c591046d6de7e381d76f70e0787b2b1f", 415935,
-					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::EN_ANY, ADGF_UNSTABLE, WME_1_4_1),
+					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_4_1),
 
 	// Dead City (Italian)
 	WME_WINENTRY("deadcity", "",
 		WME_ENTRY2s("italian.dcp", "92d8efb94436bec7bd1b7fe0b548192e", 454037,
-					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::IT_ITA, ADGF_UNSTABLE, WME_1_4_1),
+					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::IT_ITA, ADGF_NO_FLAGS, WME_1_4_1),
 
 	// Dead City (Russian)
 	WME_WINENTRY("deadcity", "",
 		WME_ENTRY2s("russian.dcp", "a0ae71e9e1185596fffb07ad2c951eb9", 653317,
-					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::RU_RUS, ADGF_UNSTABLE, WME_1_4_1),
+					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_4_1),
 
 	// Dead City (Polish) (18.11.2012)
 	WME_WINENTRY("deadcity", "",
 		WME_ENTRY2s("string.tab", "9c997f0d58fd7aa6ba9baf3fbfbaba90", 42087,
-					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::PL_POL, ADGF_UNSTABLE, WME_1_4_1),
+					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::PL_POL, ADGF_NO_FLAGS, WME_1_4_1),
 
 	// Dead City (Polish) (08.06.2013)
 	WME_WINENTRY("deadcity", "",
 		WME_ENTRY2s("string.tab", "9c997f0d58fd7aa6ba9baf3fbfbaba90", 42085,
-					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::PL_POL, ADGF_UNSTABLE, WME_1_4_1),
+					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::PL_POL, ADGF_NO_FLAGS, WME_1_4_1),
 
 	// Devil In The Capital (Hayoola) (Persian)
 	WME_WINENTRY("devilincapital", "",
