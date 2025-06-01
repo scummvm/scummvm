@@ -152,13 +152,10 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (_fadeBackground) {
-		// TODO: This should be handled on renderer side
-		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
-		byte fadeR, fadeG, fadeB, fadeA;
-		// First convert from the internal format to the screen-format
-		uint32 fadeColor = format.ARGBToColor(RGBCOLGetA(_fadeColor), RGBCOLGetR(_fadeColor), RGBCOLGetG(_fadeColor), RGBCOLGetB(_fadeColor));
-		// Then get components
-		format.colorToARGB(fadeColor, fadeA, fadeR, fadeG, fadeB);
+		byte fadeR = RGBCOLGetR(_fadeColor);
+		byte fadeG = RGBCOLGetG(_fadeColor);
+		byte fadeB = RGBCOLGetB(_fadeColor);
+		byte fadeA = RGBCOLGetA(_fadeColor);
 		_gameRef->_renderer->fadeToColor(fadeR, fadeG, fadeB, fadeA);
 	}
 
