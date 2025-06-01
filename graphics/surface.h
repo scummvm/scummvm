@@ -566,8 +566,9 @@ public:
 	 * @param newWidth   The resulting width.
 	 * @param newHeight  The resulting height.
 	 * @param filtering  Whether or not to use bilinear filtering.
+	 * @param flip       The flipping flags to use (see Graphics::FLIP_FLAGS).
 	 */
-	Graphics::Surface *scale(int16 newWidth, int16 newHeight, bool filtering = false) const;
+	Graphics::Surface *scale(int16 newWidth, int16 newHeight, bool filtering = false, byte flip = 0) const;
 
 	/**
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and

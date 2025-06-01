@@ -538,15 +538,15 @@ AlphaType Surface::detectAlpha() const {
 	return alphaType;
 }
 
-Graphics::Surface *Surface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
+Graphics::Surface *Surface::scale(int16 newWidth, int16 newHeight, bool filtering, byte flip) const {
 	Graphics::Surface *target = new Graphics::Surface();
 
 	target->create(newWidth, newHeight, format);
 
 	if (filtering) {
-		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, flip);
 	} else {
-		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, flip);
 	}
 
 	return target;
