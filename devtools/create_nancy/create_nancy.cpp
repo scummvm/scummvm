@@ -32,11 +32,12 @@
 #include "nancy8_data.h"
 #include "nancy9_data.h"
 #include "nancy10_data.h"
+#include "nancy11_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 1
 #define NANCYDAT_MINOR_VERSION 1
 
-#define NANCYDAT_NUM_GAMES 11
+#define NANCYDAT_NUM_GAMES 12
 
 /**
  * Format specifications for nancy.dat:
@@ -75,7 +76,8 @@
  * 		Nancy Drew: The Haunted Carousel
  * 		Nancy Drew: Danger on Deception Island
  * 		Nancy Drew: The Secret of Shadow Ranch
-*/
+ * 		Nancy Drew: Curse of Blackmoor Manor
+ */
 
 // Add the offset to the next tagged section before the section itself for easier navigation
 #define WRAPWITHOFFSET(x) beginOffset = output.pos();\
@@ -331,6 +333,16 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy10Goodbyes))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy8TelephoneRinging)) // same as 8
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy10EventFlagNames))
+
+	// Nancy Drew: Curse of Blackmoor Manor
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _nancy11Constants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3andUpSoundChannelInfo)) // same as 3
+	WRAPWITHOFFSET(writeLanguages(output, _nancy8LanguagesOrder))            // same as 8
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy11ConditionalDialogue))
+	WRAPWITHOFFSET(writeGoodbyes(output, _nancy11Goodbyes))
+	WRAPWITHOFFSET(writeRingingTexts(output, _nancy8TelephoneRinging)) // same as 8
+	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy11EventFlagNames))
 
 	// Write the offsets for each game in the header
 	output.seek(offsetsOffset);
