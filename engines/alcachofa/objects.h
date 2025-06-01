@@ -316,6 +316,7 @@ public:
 	Item(Room *room, Common::ReadStream &stream);
 	Item(const Item &other);
 
+	virtual void draw() override;
 	virtual const char *typeName() const;
 	void trigger();
 };
