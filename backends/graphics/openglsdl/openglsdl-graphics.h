@@ -60,7 +60,7 @@ public:
 #endif
 
 protected:
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) override;
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) override;
 
 	void refreshScreen() override;
 

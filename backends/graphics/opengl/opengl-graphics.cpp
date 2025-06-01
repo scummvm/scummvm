@@ -482,21 +482,16 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		// If loadVideoMode fails, we won't consider that shader was the error
 		bool shaderOK = true;
 
-		if (!loadVideoMode(requestedWidth, requestedHeight,
-#ifdef USE_RGB_COLOR
-		                   _currentState.gameFormat,
-#else
-		                   Graphics::PixelFormat::createFormatCLUT8(),
-#endif
-				  renderToFrameBuffer || engineSupportsArbitraryResolutions,
-		                  renderToFrameBuffer ? 0 : antialiasing)
-			|| !(shaderOK = loadShader(_currentState.shader))
+		if (  !loadVideoMode(requestedWidth, requestedHeight,
+		                     renderToFrameBuffer || engineSupportsArbitraryResolutions,
+		                     renderToFrameBuffer ? 0 : antialiasing)
+		   || !(shaderOK = loadShader(_currentState.shader))
 		   // HACK: This is really nasty but we don't have any guarantees of
 		   // a context existing before, which means we don't know the maximum
 		   // supported texture size before this. Thus, we check whether the
 		   // requested game resolution is supported over here.
 		   || (   _currentState.gameWidth  > (uint)OpenGLContext.maxTextureSize
-		       || _currentState.gameHeight > (uint)OpenGLContext.maxTextureSize)) {
+		   || _currentState.gameHeight > (uint)OpenGLContext.maxTextureSize)) {
 			if (_transactionMode == kTransactionActive) {
 				// If the shader failed, it means that loadVideoMode succeeded
 				// Mark the error and continue without it

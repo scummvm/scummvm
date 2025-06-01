@@ -463,7 +463,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 #endif
 }
 
-bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) {
+bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) {
 	// This function should never be called from notifyResize thus we know
 	// that the requested size came from somewhere else.
 	_gotResize = false;

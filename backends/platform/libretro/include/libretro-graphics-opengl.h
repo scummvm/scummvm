@@ -28,7 +28,7 @@ class Surface;
 class LibretroOpenGLGraphics : public OpenGL::OpenGLGraphicsManager {
 public:
 	LibretroOpenGLGraphics(OpenGL::ContextType contextType);
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) override {
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) override {
 		return true;
 	}
 	void refreshScreen() override;

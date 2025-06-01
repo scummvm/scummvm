@@ -218,7 +218,7 @@ float AndroidGraphicsManager::getHiDPIScreenFactor() const {
 	return dpi[2] / 1.2f;
 }
 
-bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) {
+bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) {
 	ENTER("%d, %d, %s", requestedWidth, requestedHeight, format.toString().c_str());
 
 	// As GLES2 provides FBO, OpenGL graphics manager must ask us for a resizable surface

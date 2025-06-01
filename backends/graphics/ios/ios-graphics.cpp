@@ -60,7 +60,7 @@ void iOSGraphicsManager::notifyResize(const int width, const int height) {
 	handleResize(width, height);
 }
 
-bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format, bool resizable, int antialiasing) {
+bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) {
 	// As GLES2 provides FBO, OpenGL graphics manager must ask us for a resizable surface
 	assert(resizable);
 	if (antialiasing != 0) {
