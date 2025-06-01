@@ -126,9 +126,12 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x5D] = "Papierdrache";
 	ObjectNames[0x5E] = "Blecheimer";
 	ObjectNames[0x61] = "Schnapsflasche";
+	ObjectNames[0x62] = "Kerze"; // mit Flamme
+	ObjectNames[0x65] = "Spitzhacke";
 	ObjectNames[0x66] = "Kerze";
 	ObjectNames[0x67] = "Kerzen";
 	ObjectNames[0x6B] = "Korkenzieher";
+	ObjectNames[0x6A] = "Holzkohle";
 	ObjectNames[0x6B] = "Korkenzieher";
 	ObjectNames[0x6C] = "Kronleuchter"; // ohne Schirme
 	ObjectNames[0x6D] = "Kronleuchter"; // mit Schirmen
