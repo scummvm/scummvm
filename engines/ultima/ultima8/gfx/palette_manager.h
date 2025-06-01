@@ -89,8 +89,6 @@ public:
 	bool loadTransforms(Common::ReadStream &rs);
 	void saveTransforms(Common::WriteStream &ws);
 
-	void createNativePalette(Palette *palette, int maxindex, const Graphics::PixelFormat &format);
-
 private:
 	Std::vector<Palette *> _palettes;
 	Graphics::PixelFormat _format;

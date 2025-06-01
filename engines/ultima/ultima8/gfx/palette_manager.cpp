@@ -54,7 +54,7 @@ void PaletteManager::reset() {
 void PaletteManager::updatedPalette(PalIndex index, int maxindex) {
 	Palette *pal = getPalette(index);
 	if (pal)
-		createNativePalette(pal, maxindex, _format);
+		pal->updateNativeMap(_format, maxindex);
 }
 
 // Reset all the transforms back to default
@@ -70,7 +70,7 @@ void PaletteManager::resetTransforms() {
 		pal->_transform = Transform_None;
 		for (int j = 0; j < 12; j++)
 			pal->_matrix[j] = matrix[j];
-		createNativePalette(pal, 0, _format); // convert to native format
+		pal->updateNativeMap(_format);
 	}
 }
 
@@ -103,7 +103,7 @@ void PaletteManager::PixelFormatChanged(const Graphics::PixelFormat &format) {
 	// Create native _palettes for all currently loaded _palettes
 	for (unsigned int i = 0; i < _palettes.size(); ++i)
 		if (_palettes[i])
-			createNativePalette(_palettes[i], 0, _format);
+			_palettes[i]->updateNativeMap(_format);
 }
 
 void PaletteManager::load(PalIndex index, Common::ReadStream &rs, Common::ReadStream &xformrs) {
@@ -115,7 +115,7 @@ void PaletteManager::load(PalIndex index, Common::ReadStream &rs, Common::ReadSt
 
 	Palette *pal = new Palette;
 	pal->load(rs, xformrs);
-	createNativePalette(pal, 0, _format); // convert to native format
+	pal->updateNativeMap(_format);
 
 	_palettes[index] = pal;
 }
@@ -129,7 +129,7 @@ void PaletteManager::load(PalIndex index, Common::ReadStream &rs) {
 
 	Palette *pal = new Palette;
 	pal->load(rs);
-	createNativePalette(pal, 0, _format); // convert to native format
+	pal->updateNativeMap(_format);
 
 	_palettes[index] = pal;
 }
@@ -142,7 +142,7 @@ void PaletteManager::duplicate(PalIndex src, PalIndex dest) {
 	if (srcpal)
 		*newpal = *srcpal;
 
-	createNativePalette(newpal, 0, _format); // convert to native format
+	newpal->updateNativeMap(_format);
 	if (_palettes.size() <= static_cast<unsigned int>(dest))
 		_palettes.resize(dest + 1);
 	_palettes[dest] = newpal;
@@ -157,12 +157,11 @@ Palette *PaletteManager::getPalette(PalIndex index) {
 
 void PaletteManager::transformPalette(PalIndex index, const int16 matrix[12]) {
 	Palette *pal = getPalette(index);
-
-	if (!pal) return;
-
-	for (int i = 0; i < 12; i++)
-		pal->_matrix[i] = matrix[i];
-	createNativePalette(pal, 0, _format); // convert to native format
+	if (pal) {
+		for (int i = 0; i < 12; i++)
+			pal->_matrix[i] = matrix[i];
+		pal->updateNativeMap(_format);
+	}
 }
 
 void PaletteManager::untransformPalette(PalIndex index) {
@@ -353,87 +352,6 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], uint32 col32) {
 	matrix[9]  = 0;
 	matrix[10] = (static_cast<int32>(TEX32_A(col32)) * 0x800) / 255;
 	matrix[11] = (static_cast<int32>(TEX32_B(col32)) * 0x800) / 255;
-}
-
-void PaletteManager::createNativePalette(Palette *palette, int maxindex, const Graphics::PixelFormat &format) {
-	if (maxindex == 0)
-		maxindex = 256;
-	for (int i = 0; i < maxindex; i++) {
-		int32 r, g, b;
-		byte sr, sg, sb;
-
-		// Normal palette
-		palette->get(i, sr, sg, sb);
-		palette->_native_untransformed[i] = format.RGBToColor(sr, sg, sb);
-
-		r = palette->_matrix[0] * sr +
-			palette->_matrix[1] * sg +
-			palette->_matrix[2] * sb +
-			palette->_matrix[3] * 255;
-		if (r < 0)
-			r = 0;
-		if (r > 0x7F800)
-			r = 0x7F800;
-
-		g = palette->_matrix[4] * sr +
-			palette->_matrix[5] * sg +
-			palette->_matrix[6] * sb +
-			palette->_matrix[7] * 255;
-		if (g < 0)
-			g = 0;
-		if (g > 0x7F800)
-			g = 0x7F800;
-
-		b = palette->_matrix[8] * sr +
-			palette->_matrix[9] * sg +
-			palette->_matrix[10] * sb +
-			palette->_matrix[11] * 255;
-		if (b < 0)
-			b = 0;
-		if (b > 0x7F800)
-			b = 0x7F800;
-
-		// Transformed normal palette
-		palette->_native[i] = format.RGBToColor(static_cast<uint8>(r >> 11),
-												static_cast<uint8>(g >> 11),
-												static_cast<uint8>(b >> 11));
-
-		// Transformed XFORM palette (Uses the TEX32 format)
-		if (TEX32_A(palette->_xform_untransformed[i])) {
-			r = palette->_matrix[0] * TEX32_R(palette->_xform_untransformed[i]) +
-				palette->_matrix[1] * TEX32_G(palette->_xform_untransformed[i]) +
-				palette->_matrix[2] * TEX32_B(palette->_xform_untransformed[i]) +
-				palette->_matrix[3] * 255;
-			if (r < 0)
-				r = 0;
-			if (r > 0x7F800)
-				r = 0x7F800;
-
-			g = palette->_matrix[4] * TEX32_R(palette->_xform_untransformed[i]) +
-				palette->_matrix[5] * TEX32_G(palette->_xform_untransformed[i]) +
-				palette->_matrix[6] * TEX32_B(palette->_xform_untransformed[i]) +
-				palette->_matrix[7] * 255;
-			if (g < 0)
-				g = 0;
-			if (g > 0x7F800)
-				g = 0x7F800;
-
-			b = palette->_matrix[8] * TEX32_R(palette->_xform_untransformed[i]) +
-				palette->_matrix[9] * TEX32_G(palette->_xform_untransformed[i]) +
-				palette->_matrix[10] * TEX32_B(palette->_xform_untransformed[i]) +
-				palette->_matrix[11] * 255;
-			if (b < 0)
-				b = 0;
-			if (b > 0x7F800)
-				b = 0x7F800;
-
-			palette->_xform[i] = TEX32_PACK_RGBA(static_cast<uint8>(r >> 11),
-												 static_cast<uint8>(g >> 11),
-												 static_cast<uint8>(b >> 11),
-												 TEX32_A(palette->_xform_untransformed[i]));
-		} else
-			palette->_xform[i] = 0;
-	}
 }
 
 } // End of namespace Ultima8

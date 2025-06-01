@@ -23,6 +23,7 @@
 #define ULTIMA8_GFX_PALETTE_H
 
 #include "graphics/palette.h"
+#include "graphics/pixelformat.h"
 #include "ultima/ultima8/gfx/pal_transforms.h"
 
 namespace Common {
@@ -42,6 +43,9 @@ public:
 	// Transform a single set of rgb values based on the current matrix.
 	// Not designed for speed - just useful for one-offs.
 	void transformRGB(int &r, int &g, int &b) const;
+
+	// Update the palette maps based on the pixel format and the current transformation matrix
+	void updateNativeMap(const Graphics::PixelFormat &format, int maxindex = 0);
 
 	// Untransformed pixel format palette map
 	uint32 _native_untransformed[256];
