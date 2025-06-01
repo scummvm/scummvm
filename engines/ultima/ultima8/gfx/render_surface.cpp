@@ -426,7 +426,7 @@ void RenderSurface::FadedBlit(const Graphics::ManagedSurface &src, const Common:
 			fadedBlitLogic<uint32, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		}
 		else {
-			error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("FadedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	} else if (_surface->format.bytesPerPixel == 2) {
 		if (src.format.bytesPerPixel == 4) {
@@ -436,11 +436,11 @@ void RenderSurface::FadedBlit(const Graphics::ManagedSurface &src, const Common:
 			fadedBlitLogic<uint16, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		}
 		else {
-			error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("FadedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	}
 	else {
-		error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		error("FadedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 	}
 }
 
@@ -552,7 +552,7 @@ void RenderSurface::MaskedBlit(const Graphics::ManagedSurface &src, const Common
 		} else if (src.format.bytesPerPixel == 2) {
 			maskedBlitLogic<uint32, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		} else {
-			error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("MaskedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	} else if (_surface->format.bytesPerPixel == 2) {
 		if (src.format.bytesPerPixel == 4) {
@@ -560,10 +560,10 @@ void RenderSurface::MaskedBlit(const Graphics::ManagedSurface &src, const Common
 		} else if (src.format.bytesPerPixel == 2) {
 			maskedBlitLogic<uint16, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		} else {
-			error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("MaskedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	} else {
-		error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		error("MaskedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 	}
 }
 
@@ -867,6 +867,8 @@ void RenderSurface::Paint(const Shape *s, uint32 framenum, int32 x, int32 y, boo
 		paintLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
+	else
+		error("Paint not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -886,6 +888,8 @@ void RenderSurface::PaintTranslucent(const Shape *s, uint32 framenum, int32 x, i
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, 0, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, 0, map, xform_map);
+	else
+		error("PaintTranslucent not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -905,6 +909,8 @@ void RenderSurface::PaintInvisible(const Shape *s, uint32 framenum, int32 x, int
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, 0, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, 0, map, xform_map);
+	else
+		error("PaintInvisible not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -924,6 +930,8 @@ void RenderSurface::PaintHighlight(const Shape *s, uint32 framenum, int32 x, int
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, col32, map, xform_map);
+	else
+		error("PaintHighlight not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -943,6 +951,8 @@ void RenderSurface::PaintHighlightInvis(const Shape *s, uint32 framenum, int32 x
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, col32, map, xform_map);
+	else
+		error("PaintHighlightInvis not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 } // End of namespace Ultima8
