@@ -22,6 +22,7 @@
 #ifndef BAGEL_MFC_LIBS_RESOURCES_H
 #define BAGEL_MFC_LIBS_RESOURCES_H
 
+#include "common/list.h"
 #include "common/path.h"
 #include "common/stack.h"
 #include "common/formats/winexe.h"

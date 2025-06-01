@@ -26,7 +26,7 @@ namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
-CDialogTemplate::CDialogTemplate(const DLGTEMPLATE *pTemplate) {
+CDialogTemplate::CDialogTemplate(LPCDLGTEMPLATE pTemplate) {
 }
 
 CDialogTemplate::CDialogTemplate(HGLOBAL hGlobal) {
@@ -58,7 +58,7 @@ void CDialogTemplate::GetSizeInDialogUnits(SIZE *pSize) const {
 void CDialogTemplate::GetSizeInPixels(SIZE *pSize) const {
 }
 
-BOOL CDialogTemplate::GetFont(const DLGTEMPLATE *pTemplate,
+BOOL CDialogTemplate::GetFont(LPCDLGTEMPLATE pTemplate,
 	CString &strFaceName, WORD &nFontSize) {
 	return false;
 }

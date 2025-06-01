@@ -543,7 +543,6 @@ BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 		hInst = AfxGetInstanceHandle();
 
 	HGLOBAL hTemplate = nullptr;
-	HWND hWnd = nullptr;
 
 	// If no font specified, set the system font.
 	CString strFace;
@@ -566,7 +565,7 @@ BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 
 #ifdef TODO
 	// Create modeless dialog
-	hWnd = ::CreateDialogIndirect(hInst, lpDialogTemplate,
+	HWND hWnd = ::CreateDialogIndirect(hInst, lpDialogTemplate,
 		pParentWnd->GetSafeHwnd(), AfxDlgProc);
 #else
 	error("Create the dialog contents here");

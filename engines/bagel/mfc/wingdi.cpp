@@ -178,8 +178,12 @@ WORD GetWindowWord(HWND hWnd, int nIndex) {
 	error("TODO: GetWindowWord");
 }
 
-int WINAPI AddFontResource(LPCSTR fontName) {
-	error("TODO: AddFontResource");
+int AddFontResource(LPCSTR fontName) {
+	return AfxGetApp()->addFontResource(fontName);
+}
+
+bool RemoveFontResource(LPCSTR fontName) {
+	return AfxGetApp()->removeFontResource(fontName);
 }
 
 int SetScrollPos(HWND hWnd, int nBar,

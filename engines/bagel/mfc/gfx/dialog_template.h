@@ -34,23 +34,27 @@ class CWnd;
 namespace Gfx {
 
 
-typedef struct {
+struct DialogTemplateData {
 	DWORD style;
 	DWORD dwExtendedStyle;
 	WORD cdit;
-	short x;
-	short y;
-	short cx;
-	short cy;
-} DLGTEMPLATE;
-typedef CONST DLGTEMPLATE *LPCDLGTEMPLATE;
-typedef DLGTEMPLATE *LPDLGTEMPLATE;
+	int16 x;
+	int16 y;
+	int16 cx;
+	int16 cy;
+};
+
+// Template data pointers. Note that they're
+// void * because in ScummVM we do endian-safe
+// loading of the data being pointed to
+typedef const void *LPCDLGTEMPLATE;
+typedef void *LPDLGTEMPLATE;
 
 class CDialogTemplate {
 protected:
-	static BYTE *AFX_CDECL GetFontSizeField(const DLGTEMPLATE *pTemplate);
-	static UINT AFX_CDECL GetTemplateSize(const DLGTEMPLATE *pTemplate);
-	BOOL SetTemplate(const DLGTEMPLATE *pTemplate, UINT cb);
+	static BYTE *AFX_CDECL GetFontSizeField(LPCDLGTEMPLATE pTemplate);
+	static UINT AFX_CDECL GetTemplateSize(LPCDLGTEMPLATE *pTemplate);
+	BOOL SetTemplate(LPCDLGTEMPLATE pTemplate, UINT cb);
 
 public:
 	HGLOBAL m_hTemplate;
@@ -58,7 +62,7 @@ public:
 	BOOL m_bSystemFont;
 
 public:
-	CDialogTemplate(const DLGTEMPLATE *pTemplate = NULL);
+	CDialogTemplate(LPCDLGTEMPLATE pTemplate = NULL);
 	CDialogTemplate(HGLOBAL hGlobal);
 	~CDialogTemplate();
 
@@ -69,7 +73,7 @@ public:
 	void GetSizeInDialogUnits(SIZE *pSize) const;
 	void GetSizeInPixels(SIZE *pSize) const;
 
-	static BOOL GetFont(const DLGTEMPLATE *pTemplate,
+	static BOOL GetFont(LPCDLGTEMPLATE pTemplate,
 		CString &strFaceName, WORD &nFontSize);
 
 	// Operations

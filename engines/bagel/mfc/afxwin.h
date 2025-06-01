@@ -35,6 +35,7 @@
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/dialog_template.h"
+#include "bagel/mfc/gfx/fonts.h"
 #include "bagel/mfc/gfx/surface_dc.h"
 #include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/libs/settings.h"
@@ -1347,6 +1348,7 @@ private:
 	Libs::Resources _resources;
 	Libs::Settings _settings;
 	Gfx::Cursors _cursors;
+	Gfx::Fonts _fonts;
 	Graphics::Screen _screen;
 	uint32 _nextFrameTime = 0;
 	int m_nWaitCursorCount = 0;
@@ -1442,6 +1444,13 @@ public:
 	LPVOID lockResource(HGLOBAL hResData);
 	void unlockResource(HGLOBAL hResData);
 	BOOL freeResource(HGLOBAL hResData);
+	// Fonts
+	int addFontResource(LPCSTR fontName) {
+		return _fonts.addFontResource(fontName);
+	}
+	bool removeFontResource(LPCSTR fontName) {
+		return _fonts.removeFontResource(fontName);
+	}
 };
 
 extern CWinApp *AfxGetApp();

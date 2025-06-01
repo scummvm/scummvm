@@ -38,7 +38,8 @@ IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 CWinApp *CWinApp::_activeApp = nullptr;
 
 CWinApp::CWinApp(const char *appName) :
-	CWinThread(), _cursors(_resources) {
+		CWinThread(), _cursors(_resources),
+		_fonts(_resources) {
 	assert(!_activeApp);    // Only one app per engine
 	_activeApp = this;
 	Libs::Event::init();
