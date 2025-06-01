@@ -222,27 +222,28 @@ byte CWinApp::getColor(COLORREF color) const {
 	);
 }
 
-HRSRC CWinApp::FindResource(LPCSTR lpName, LPCSTR lpType) {
-	return nullptr;
+HRSRC CWinApp::findResource(LPCSTR lpName, LPCSTR lpType) {
+	return _resources.findResource(lpName, lpType);
 }
 
-size_t CWinApp::SizeofResource(HRSRC hResInfo) {
-	return 0;
+size_t CWinApp::sizeofResource(HRSRC hResInfo) {
+	return _resources.resourceSize(hResInfo);
 }
 
-HGLOBAL CWinApp::LoadResource(HRSRC hResInfo) {
-	return 0;
+HGLOBAL CWinApp::loadResource(HRSRC hResInfo) {
+	return _resources.loadResource(hResInfo);
 }
 
-LPVOID CWinApp::LockResource(HGLOBAL hResData) {
-	return nullptr;
+LPVOID CWinApp::lockResource(HGLOBAL hResData) {
+	return GlobalLock(hResData);
 }
 
-void CWinApp::UnlockResource(HGLOBAL hResData) {
-	return;
+void CWinApp::unlockResource(HGLOBAL hResData) {
+	GlobalUnlock(hResData);
 }
 
-BOOL CWinApp::FreeResource(HGLOBAL hResData) {
+BOOL CWinApp::freeResource(HGLOBAL hResData) {
+	GlobalFree(hResData);
 	return true;
 }
 

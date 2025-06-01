@@ -32,8 +32,21 @@ namespace MFC {
 namespace Libs {
 
 class Resources {
+	struct Resource {
+		Common::WinResourceID _type;
+		Common::WinResourceID _id;
+		size_t _size = 0;
+
+		Resource() {}
+		Resource(const Common::WinResourceID &type,
+			Common::WinResourceID &id, size_t size) :
+			_type(type), _id(id), _size(size) {}
+	};
+	typedef Common::List<Resource> ResCache;
+
 private:
 	Common::Stack<Common::WinResources *> _resources;
+	ResCache _cache;
 
 public:
 	~Resources();
@@ -48,6 +61,26 @@ public:
 	 */
 	void popResources();
 
+	/**
+	 * Find a resource
+	 */
+	HRSRC findResource(LPCSTR lpName, LPCSTR lpType);
+
+	/**
+	 * Return the size of a resource
+	 */
+	size_t resourceSize(HRSRC res) const {
+		return ((Resource *)res)->_size;
+	}
+
+	/**
+	 * Return a resource as a memory block
+	 */
+	HGLOBAL loadResource(HRSRC hResInfo);
+
+	/**
+	 * Get the current resources
+	 */
 	Common::WinResources *getResources() const;
 };
 

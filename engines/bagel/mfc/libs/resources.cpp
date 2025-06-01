@@ -19,8 +19,10 @@
  *
  */
 
+#include "common/stream.h"
 #include "common/formats/winexe_ne.h"
 #include "bagel/mfc/libs/resources.h"
+#include "bagel/mfc/global_functions.h"
 
 namespace Bagel {
 namespace MFC {
@@ -37,17 +39,63 @@ void Resources::addResources(const Common::Path &file) {
 		error("Could not load %s", file.baseName().c_str());
 
 	_resources.push(res);
+	_cache.clear();
 }
 
 void Resources::popResources() {
+	_cache.clear();
 	delete _resources.pop();
 }
 
 Common::WinResources *Resources::getResources() const {
 	if (_resources.empty())
 		error("Use CWinApp::addResources to register "
-		      "an .exe or .dll file containing the resources");
+			"an .exe or .dll file containing the resources");
 	return _resources.top();
+}
+
+HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
+	Common::WinResourceID type =
+		(HIWORD(lpType) == 0) ?
+		Common::WinResourceID((intptr)lpType) :
+		Common::WinResourceID(lpType);
+	Common::WinResourceID id =
+		(HIWORD(lpName) == 0) ?
+		Common::WinResourceID((intptr)lpName) :
+		Common::WinResourceID(lpName);
+
+	// First check the cache
+	for (auto &it : _cache) {
+		if (it._type == type && it._id == id)
+			return (HRSRC)&it;
+	}
+
+	// Get the resource
+	Common::WinResources &res = *getResources();
+	Common::SeekableReadStream *rs = res.getResource(type, id);
+	if (!rs)
+		return nullptr;
+
+	// Add it to the cache, since we'll use
+	// a pointer to it's entry as the return
+	_cache.push_back(Resource(type, id, rs->size()));
+
+	delete rs;
+	return (HRSRC)&_cache.back();
+}
+
+HGLOBAL Resources::loadResource(HRSRC hResInfo) {
+	Resource *ptr = ((Resource *)hResInfo);
+	Common::SeekableReadStream *rs =
+		getResources()->getResource(ptr->_type, ptr->_id);
+
+	HGLOBAL h = GlobalAlloc(GPTR, ptr->_size);
+	byte *data = (byte *)GlobalLock(h);
+	rs->read(data, ptr->_size);
+	GlobalUnlock(rs);
+
+	delete rs;
+	return h;
 }
 
 } // namespace Libs

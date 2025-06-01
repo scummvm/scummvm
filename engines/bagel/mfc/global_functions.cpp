@@ -195,27 +195,27 @@ HINSTANCE AfxFindResourceHandle(LPCSTR lpszName, LPCSTR lpszType) {
 
 HRSRC FindResource(HMODULE hModule,
         LPCSTR lpName, LPCSTR lpType) {
-	return AfxGetApp()->FindResource(lpName, lpType);
+	return AfxGetApp()->findResource(lpName, lpType);
 }
 
 size_t SizeofResource(HMODULE hModule, HRSRC hResInfo) {
-	return AfxGetApp()->SizeofResource(hResInfo);
+	return AfxGetApp()->sizeofResource(hResInfo);
 }
 
 HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo) {
-	return AfxGetApp()->LoadResource(hResInfo);
+	return AfxGetApp()->loadResource(hResInfo);
 }
 
 LPVOID LockResource(HGLOBAL hResData) {
-	return AfxGetApp()->LockResource(hResData);
+	return AfxGetApp()->lockResource(hResData);
 }
 
 void UnlockResource(HGLOBAL hResData) {
-	return AfxGetApp()->UnlockResource(hResData);
+	return AfxGetApp()->unlockResource(hResData);
 }
 
 BOOL FreeResource(HGLOBAL hResData) {
-	return AfxGetApp()->FreeResource(hResData);
+	return AfxGetApp()->freeResource(hResData);
 }
 
 } // namespace MFC

@@ -1429,12 +1429,12 @@ public:
 	void removeResources() {
 		_resources.popResources();
 	}
-	HRSRC FindResource(LPCSTR lpName, LPCSTR lpType);
-	size_t SizeofResource(HRSRC hResInfo);
-	HGLOBAL LoadResource(HRSRC hResInfo);
-	LPVOID LockResource(HGLOBAL hResData);
-	void UnlockResource(HGLOBAL hResData);
-	BOOL FreeResource(HGLOBAL hResData);
+	HRSRC findResource(LPCSTR lpName, LPCSTR lpType);
+	size_t sizeofResource(HRSRC hResInfo);
+	HGLOBAL loadResource(HRSRC hResInfo);
+	LPVOID lockResource(HGLOBAL hResData);
+	void unlockResource(HGLOBAL hResData);
+	BOOL freeResource(HGLOBAL hResData);
 };
 
 extern CWinApp *AfxGetApp();
