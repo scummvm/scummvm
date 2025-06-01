@@ -41,7 +41,7 @@ bool enumerateIniSections(Common::INIFile& ini, const Common::Path &fname, Commo
 	return true;
 }
 
-const Common::String getIniKey(Common::INIFile ini, const Common::Path &fname, const char *section, const char *key) {
+const Common::String getIniKey(Common::INIFile& ini, const Common::Path &fname, const char *section, const char *key) {
 	Common::String buf;
 
 	bool hasValue = ini.getKey(key, section, buf);
