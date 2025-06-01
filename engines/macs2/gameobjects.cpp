@@ -145,6 +145,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x77] = "Lampenschirme";
 	ObjectNames[0x78] = "Messingschlüssel";
 	ObjectNames[0x7C] = "Schüssel"; // mit Schwefel
+	ObjectNames[0x7E] = "Schwarzpulver";
 	ObjectNames[0x7F] = "Schwefel";
 	ObjectNames[0x82] = "Seil";
 	ObjectNames[0x83] = "Socken";
@@ -155,6 +156,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x88] = "Tasse"; // mit Öl
 	ObjectNames[0x89] = "Teig";
 	ObjectNames[0x8A] = "Topflappen";
+	ObjectNames[0x8B] = "Windlicht";
 	ObjectNames[0x8C] = "Wolle";
 	ObjectNames[0x8D] = "Wolle"; // mit Alkohol
 	ObjectNames[0x8E] = "Holzwürfel";
