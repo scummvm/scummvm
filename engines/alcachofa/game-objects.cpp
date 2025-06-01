@@ -45,6 +45,14 @@ Item::Item(const Item &other)
 	new (&_graphic) Graphic(other._graphic);
 }
 
+void Item::draw() {
+	if (!isEnabled())
+		return;
+	Item* heldItem = g_engine->player().heldItem();
+	if (heldItem == nullptr || !heldItem->name().equalsIgnoreCase(name()))
+		GraphicObject::draw();
+}
+
 void Item::trigger() {
 	auto &player = g_engine->player();
 	auto &heldItem = player.heldItem();
