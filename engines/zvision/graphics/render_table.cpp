@@ -29,7 +29,7 @@
 
 namespace ZVision {
 
-RenderTable::RenderTable(ZVision *engine, uint numColumns, uint numRows, const Graphics::PixelFormat pixelFormat)
+RenderTable::RenderTable(ZVision *engine, uint16 numColumns, uint16 numRows, const Graphics::PixelFormat &pixelFormat)
 	: _engine(engine),
 	  _system(engine->_system),
 	  _numRows(numRows),
