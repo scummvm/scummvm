@@ -63,7 +63,7 @@ public:
 	 *
 	 * @return a BaseImage containing the current screen-buffer.
 	 */
-	virtual BaseImage *takeScreenshot() = 0;
+	virtual BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) = 0;
 	virtual bool setViewport(int left, int top, int right, int bottom);
 	virtual bool setViewport(Rect32 *rect);
 	virtual bool setScreenViewport();

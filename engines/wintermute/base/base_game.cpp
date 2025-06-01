@@ -1844,11 +1844,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_gameRef->displayContent(false);
 
 		bool ret = false;
-		BaseImage *image = _gameRef->_renderer->takeScreenshot();
+		BaseImage *image = _gameRef->_renderer->takeScreenshot(sizeX, sizeY);
 		if (image) {
-			ret = image->resize(sizeX, sizeY);
-			if (ret)
-				ret = image->saveBMPFile(filename);
+			ret = image->saveBMPFile(filename);
 			delete image;
 		}
 
