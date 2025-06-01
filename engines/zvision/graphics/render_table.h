@@ -70,7 +70,7 @@ public:
 
 class RenderTable {
 public:
-	RenderTable(ZVision *engine, uint numRows, uint numColumns, const Graphics::PixelFormat pixelFormat);
+	RenderTable(ZVision *engine, uint16 numRows, uint16 numColumns, const Graphics::PixelFormat &pixelFormat);
 	~RenderTable();
 
 // Common::Point testPixel = Common::Point(255,0);
@@ -84,7 +84,7 @@ public:
 private:
 	ZVision *_engine;
 	OSystem *_system;
-	uint _numRows, _numColumns, _halfRows, _halfColumns; // Working area width, height; half width, half height, in whole pixels
+	uint16 _numRows, _numColumns, _halfRows, _halfColumns; // Working area width, height; half width, half height, in whole pixels
 	float _halfWidth, _halfHeight;  // Centre axis to midpoint of outermost pixel
 	FilterPixel *_internalBuffer;
 	RenderState _renderState;

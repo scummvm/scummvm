@@ -144,7 +144,7 @@ uint8 VolumeManager::convert(uint8 inputValue, Math::Angle azimuth, uint8 direct
 	return convert(inputValue, _mode, azimuth, directionality);
 };
 
-uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle azimuth, uint8 directionality) {
+uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode, Math::Angle azimuth, uint8 directionality) {
 	uint8 index = abs(round(azimuth.getDegrees(-180)));
 	uint32 output = convert(inputValue, mode);
 	uint32 directionalOutput = (output * directionalAmplitude[index]) * directionality;
@@ -155,7 +155,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode, Math::Angle a
 	return output;
 };
 
-uint8 VolumeManager::convert(uint8 inputValue, volumeScaling mode) {
+uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode) {
 	if (inputValue > _scriptScale)
 		inputValue = _scriptScale;
 	uint32 scaledInput = inputValue * 0xFF;
