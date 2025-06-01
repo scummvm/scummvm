@@ -132,7 +132,7 @@ struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, t
 			syncWithSerializer(s, *entry.data);
 		} else if (s.isLoading()) {
 			if (s.getVersion() < 37) {
-				typename T::value_type dummy;
+				typename T::value_type dummy{};
 				syncWithSerializer(s, dummy);
 			}
 			entry.data = nullptr;
