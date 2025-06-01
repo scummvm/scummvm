@@ -34,6 +34,7 @@
 #include "bagel/mfc/atltypes.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/gfx/cursor.h"
+#include "bagel/mfc/gfx/dialog_template.h"
 #include "bagel/mfc/gfx/surface_dc.h"
 #include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/libs/settings.h"
@@ -442,18 +443,6 @@ struct CCreateContext {
 	CCreateContext();
 };
 
-typedef struct {
-	DWORD style;
-	DWORD dwExtendedStyle;
-	WORD cdit;
-	short x;
-	short y;
-	short cx;
-	short cy;
-} DLGTEMPLATE;
-typedef CONST DLGTEMPLATE *LPCDLGTEMPLATE;
-typedef DLGTEMPLATE *LPDLGTEMPLATE;
-
 /*============================================================================*/
 
 class CGdiObject : public CObject {
@@ -821,6 +810,16 @@ typedef struct tagCREATESTRUCTA {
 	DWORD       dwExStyle = 0;
 } CREATESTRUCT, *LPCREATESTRUCT;
 
+
+// CWnd::m_nFlags (generic to CWnd)
+#define WF_TOOLTIPS         0x0001  // window is enabled for tooltips
+#define WF_TEMPHIDE         0x0002  // window is temporarily hidden
+#define WF_STAYDISABLED     0x0004  // window should stay disabled
+#define WF_MODALLOOP        0x0008  // currently in modal loop
+#define WF_CONTINUEMODAL    0x0010  // modal loop should continue running
+#define WF_OLECTLCONTAINER  0x0100  // some descendant is an OLE control
+#define WF_TRACKINGTOOLTIPS 0x0400  // window is enabled for tracking tooltips
+
 class CWnd : public CCmdTarget {
 	DECLARE_DYNCREATE(CWnd)
 protected:
@@ -1009,6 +1008,13 @@ protected:
 		return 0;
 	}
 
+	BOOL CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+		CWnd *pParentWnd, HINSTANCE hInst);
+
+protected:
+	int m_nModalResult = 0;
+	int m_nFlags = 0;
+
 public:
 	// For ScummVM the m_hWnd just points to the window itself,
 	// so it'll be set up once in the constructor
@@ -1136,6 +1142,7 @@ private:
 	LPCSTR m_lpszTemplateName = nullptr;
 	UINT m_nIDHelp = 0;
 	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
+	HGLOBAL m_hDialogTemplate = 0;
 
 	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
 		void *lpDialogInit, HINSTANCE hInst);

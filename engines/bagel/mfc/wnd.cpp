@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/gfx/dialog_template.h"
 
 namespace Bagel {
 namespace MFC {
@@ -532,6 +533,50 @@ INT CWnd::GetScrollPosition() const {
 
 int CWnd::SetScrollPos(int nBar, int nPos, BOOL bRedraw) {
 	error("TODO: CWnd::SetScrollPos");
+}
+
+BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+		CWnd *pParentWnd, HINSTANCE hInst) {
+	assert(lpDialogTemplate != nullptr);
+
+	if (hInst == nullptr)
+		hInst = AfxGetInstanceHandle();
+
+	HGLOBAL hTemplate = nullptr;
+	HWND hWnd = nullptr;
+
+	// If no font specified, set the system font.
+	CString strFace;
+	WORD wSize = 0;
+	BOOL bSetSysFont = !CDialogTemplate::GetFont(lpDialogTemplate, strFace,
+		wSize);
+
+	if (bSetSysFont) {
+		CDialogTemplate dlgTemp(lpDialogTemplate);
+		dlgTemp.SetSystemFont(wSize);
+		hTemplate = dlgTemp.Detach();
+	}
+
+	if (hTemplate != nullptr)
+		lpDialogTemplate = (LPDLGTEMPLATE)GlobalLock(hTemplate);
+
+	// setup for modal loop and creation
+	m_nModalResult = -1;
+	m_nFlags |= WF_CONTINUEMODAL;
+
+#ifdef TODO
+	// Create modeless dialog
+	hWnd = ::CreateDialogIndirect(hInst, lpDialogTemplate,
+		pParentWnd->GetSafeHwnd(), AfxDlgProc);
+#else
+	error("Create the dialog contents here");
+#endif
+	if (hTemplate != nullptr) {
+		GlobalUnlock(hTemplate);
+		GlobalFree(hTemplate);
+	}
+
+	return TRUE;
 }
 
 } // namespace MFC

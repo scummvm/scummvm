@@ -63,6 +63,34 @@ BOOL CDialog::Create(UINT nIDTemplate, CWnd *pParentWnd) {
 }
 
 int CDialog::DoModal() {
+	// can be constructed with a resource template or InitModalIndirect
+	assert(m_lpszTemplateName != nullptr || m_hDialogTemplate != nullptr ||
+		m_lpDialogTemplate != nullptr);
+
+	// load resource as necessary
+	LPCDLGTEMPLATE lpDialogTemplate = m_lpDialogTemplate;
+	HGLOBAL hDialogTemplate = m_hDialogTemplate;
+	HINSTANCE hInst = AfxGetResourceHandle();
+
+	if (m_lpszTemplateName != nullptr) {
+		hInst = AfxFindResourceHandle(m_lpszTemplateName, RT_DIALOG);
+		HRSRC hResource = FindResource(hInst, m_lpszTemplateName, RT_DIALOG);
+		hDialogTemplate = LoadResource(hInst, hResource);
+	}
+
+	// Set up pointer to template data
+	if (hDialogTemplate != nullptr)
+		lpDialogTemplate = (LPCDLGTEMPLATE)LockResource(hDialogTemplate);
+
+	// Ensure the template is presenet
+	if (lpDialogTemplate == nullptr)
+		return -1;
+
+	if (CreateDlgIndirect(lpDialogTemplate,
+		m_pParentWnd, hInst)) {
+
+		// TODO
+	}
 	error("TODO: CDialog::DoModal");
 }
 
