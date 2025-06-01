@@ -122,9 +122,6 @@ public:
 	bool useRTL() const { return _useRTL; }
 	void setLanguageRTL();
 
-	void setDialogPaddings(int l, int r);
-	int getOverlayOffset() { return _topDialogRightPadding - _topDialogLeftPadding; }
-
 	const Graphics::Font &getFont(ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return *(_theme->getFont(style)); }
 	int getFontHeight(ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getFontHeight(style); }
 	int getStringWidth(const Common::String &str, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getStringWidth(str, style); }
@@ -183,9 +180,6 @@ protected:
 	bool		_useStdCursor;
 
 	bool		_useRTL;
-
-	int			_topDialogLeftPadding;
-	int			_topDialogRightPadding;
 
 	bool		_displayTopDialogOnly;
 

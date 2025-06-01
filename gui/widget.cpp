@@ -113,13 +113,6 @@ void Widget::draw() {
 		if (g_gui.useRTL()) {
 			_x = g_system->getOverlayWidth() - _x - _w;
 
-			if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions") || this->_name.contains("Browser") || this->_name.empty()) {
-				/** The dialogs named above are the stacked dialogs for which the left+right paddings need to be adjusted for RTL.
-					The _name is empty for some special widgets - like RemapWidgets, NavBars, ScrollBars and they need to be adjusted too.
-				*/
-				_x = _x + g_gui.getOverlayOffset();
-			}
-
 			clip.moveTo(_x, clip.top);
 			g_gui.theme()->swapClipRect(clip);
 		}

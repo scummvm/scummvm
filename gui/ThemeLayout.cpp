@@ -243,19 +243,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 			_w = g_gui.getGUIWidth()  * 8 / 10 * g_gui.getScaleFactor();
 			_h = g_gui.getGUIHeight() * 8 / 10 * g_gui.getScaleFactor();
 		}
-	}
 
-	if (g_gui.useRTL()) {
-		if (this->_name == "GameOptions" || this->_name == "GlobalOptions" || this->_name == "Browser") {
-			/** The dialogs named above are the stacked dialogs for which the left+right paddings need to be adjusted for RTL.
-				Whenever a stacked dialog is opened, the below code sets the left and right paddings and enables widgets to be
-				shifted by that amount. If any new stacked and padded dialogs are added in the future,
-				add them here and in Widget::draw() to enable RTL support for that particular dialog
-			*/
-			int oldX = _x;
-			_x = g_gui.getGUIWidth() * g_gui.getScaleFactor() - _w - _x;
-			g_gui.setDialogPaddings(oldX, _x);
-		}
 	}
 
 	if (_x >= 0) _x += _inset * g_gui.getScaleFactor();
