@@ -709,7 +709,7 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	setup2D(true);
 }
 
-BaseImage *BaseRenderOpenGL3DShader::takeScreenshot() {
+BaseImage *BaseRenderOpenGL3DShader::takeScreenshot(int newWidth, int newHeight) {
 	BaseImage *screenshot = new BaseImage();
 	Graphics::Surface *surface = new Graphics::Surface();
 #ifdef SCUMM_BIG_ENDIAN
@@ -722,11 +722,8 @@ BaseImage *BaseRenderOpenGL3DShader::takeScreenshot() {
 	glReadPixels(_viewportRect.left, _viewportRect.height() - _viewportRect.bottom,
 	             _viewportRect.width(), _viewportRect.height(),
 	             GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
-	flipVertical(surface);
-	Graphics::Surface *converted = surface->convertTo(getPixelFormat());
-	screenshot->copyFrom(converted);
+	screenshot->copyFrom(surface, newWidth, newHeight, Graphics::FLIP_V);
 	delete surface;
-	delete converted;
 	return screenshot;
 }
 

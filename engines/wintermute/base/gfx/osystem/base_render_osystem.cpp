@@ -511,10 +511,10 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseImage *BaseRenderOSystem::takeScreenshot() {
+BaseImage *BaseRenderOSystem::takeScreenshot(int newWidth, int newHeight) {
 	// TODO: Clip by viewport.
 	BaseImage *screenshot = new BaseImage();
-	screenshot->copyFrom(_renderSurface);
+	screenshot->copyFrom(_renderSurface, newWidth, newHeight);
 	return screenshot;
 }
 

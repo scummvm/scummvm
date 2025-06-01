@@ -101,11 +101,6 @@ byte BaseImage::getAlphaAt(int x, int y) const {
 	return a;
 }
 
-void BaseImage::copyFrom(const Graphics::Surface *surface) {
-	_surface = _deletableSurface = new Graphics::Surface();
-	_deletableSurface->copyFrom(*surface);
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::saveBMPFile(const Common::String &filename) const {
 	Common::WriteStream *stream = openSfmFileForWrite(filename);
@@ -115,19 +110,6 @@ bool BaseImage::saveBMPFile(const Common::String &filename) const {
 		return ret;
 	}
 	return false;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseImage::resize(int newWidth, int newHeight) {
-	Graphics::Surface *temp = _surface->scale((uint16)newWidth, (uint16)newHeight, true);
-	if (_deletableSurface) {
-		_deletableSurface->free();
-		delete _deletableSurface;
-		_deletableSurface = nullptr;
-	}
-	_surface = _deletableSurface = temp;
-	return true;
 }
 
 
@@ -142,15 +124,26 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
-	Graphics::Surface *temp = origImage->_surface->scale((uint16)newWidth, (uint16)newHeight, true);
+void BaseImage::copyFrom(const Graphics::Surface *surface, int newWidth, int newHeight, byte flip) {
+	if (newWidth == 0)
+		newWidth = surface->w;
+	if (newHeight == 0)
+		newHeight = surface->h;
+
+	Graphics::Surface *temp;
+	if (newWidth == surface->w && newHeight == surface->h && flip == 0) {
+		temp = new Graphics::Surface();
+		temp->copyFrom(*surface);
+	} else {
+		temp = surface->scale((uint16)newWidth, (uint16)newHeight, true, flip);
+	}
+
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
 		_deletableSurface = nullptr;
 	}
 	_surface = _deletableSurface = temp;
-	return true;
 }
 
 } // End of namespace Wintermute

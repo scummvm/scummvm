@@ -48,7 +48,6 @@ SaveThumbHelper::~SaveThumbHelper() {
 }
 
 BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
-	BaseImage *thumbnail = nullptr;
 	if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
 		if (doFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
@@ -60,22 +59,10 @@ BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 			_gameRef->_renderer->flip();
 		}
 
-		BaseImage *screenshot = _gameRef->_renderer->takeScreenshot();
-		if (!screenshot) {
-			return nullptr;
-		}
-
 		// normal thumbnail
-		if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
-			thumbnail = new BaseImage();
-			thumbnail->copyFrom(screenshot, width, height);
-		}
-
-
-		delete screenshot;
-		screenshot = nullptr;
+		return _gameRef->_renderer->takeScreenshot(width, height);
 	}
-	return thumbnail;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

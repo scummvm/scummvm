@@ -78,7 +78,7 @@ public:
 
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 
-	BaseImage *takeScreenshot() override;
+	BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) override;
 	void onWindowChange() override;
 	void setWindowed(bool windowed) override;
 

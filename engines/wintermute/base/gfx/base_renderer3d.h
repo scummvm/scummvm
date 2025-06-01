@@ -166,10 +166,6 @@ protected:
 	PostFilter _postFilterMode;
 
 	virtual void setAmbientLightRenderState() = 0;
-
-	// ScummVM specific methods -->
-	void flipVertical(Graphics::Surface *s);
-	// ScummVM specific methods <--
 };
 
 } // namespace Wintermute
