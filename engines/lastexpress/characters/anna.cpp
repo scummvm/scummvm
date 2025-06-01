@@ -48,7 +48,7 @@ void LogicManager::CONS_Anna(int chapter) {
 		CONS_Anna_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,23 +69,31 @@ void LogicManager::CONS_Anna_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 1) {
-			getCharacter(kCharacterAnna).clothes++;
-			if (getCharacter(kCharacterAnna).clothes > 3)
-				getCharacter(kCharacterAnna).clothes = 0;
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterAnna).characterPosition.position = 0;
-			getCharacter(kCharacterAnna).characterPosition.location = 0;
-			getCharacter(kCharacterAnna).characterPosition.car = kCarGreenSleeping;
-			getCharacter(kCharacterAnna).inventoryItem = 0x80;
-			getCharacterCurrentParams(kCharacterAnna)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterAnna, kCarGreenSleeping, getCharacterCurrentParams(kCharacterAnna)[0])) {
+			if (getCharacterCurrentParams(kCharacterAnna)[0] == 10000)
+				getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+			else
+				getCharacterCurrentParams(kCharacterAnna)[0] = 10000;
 		}
-	} else if (walk(kCharacterAnna, kCarGreenSleeping, getCharacterCurrentParams(kCharacterAnna)[0])) {
-		if (getCharacterCurrentParams(kCharacterAnna)[0] == 10000)
-			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-		else
-			getCharacterCurrentParams(kCharacterAnna)[0] = 10000;
+
+		break;
+	case 1:
+		getCharacter(kCharacterAnna).clothes++;
+		if (getCharacter(kCharacterAnna).clothes > 3)
+			getCharacter(kCharacterAnna).clothes = 0;
+
+		break;
+	case 12:
+		getCharacter(kCharacterAnna).characterPosition.position = 0;
+		getCharacter(kCharacterAnna).characterPosition.location = 0;
+		getCharacter(kCharacterAnna).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterAnna).inventoryItem = 0x80;
+		getCharacterCurrentParams(kCharacterAnna)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -102,12 +110,17 @@ void LogicManager::CONS_Anna_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -127,14 +140,19 @@ void LogicManager::CONS_Anna_DoBlockSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoBlockSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseView(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[3], getCharacterCurrentParams(kCharacterAnna)[4]);
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[0]);
 		blockView(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[3], getCharacterCurrentParams(kCharacterAnna)[4]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -153,14 +171,19 @@ void LogicManager::CONS_Anna_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[3]);
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[0]);
 		blockAtDoor(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -175,16 +198,22 @@ void LogicManager::CONS_Anna_FinishSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_FinishSeqOtis(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacter(kCharacterAnna).direction != 4) {
 			getCharacter(kCharacterAnna).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
 		}
-	} else if (msg->action == 3) {
+
+		break;
+	case 3:
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -221,6 +250,7 @@ void LogicManager::HAND_Anna_DoJoinedSeqOtis(HAND_PARAMS) {
 			fedEx(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[3], getCharacterCurrentParams(kCharacterAnna)[4], (char *)&getCharacterCurrentParams(kCharacterAnna)[5]);
 			getCharacterCurrentParams(kCharacterAnna)[8] = 1;
 		}
+
 		break;
 	case 12:
 		startSeqOtis(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[0]);
@@ -241,12 +271,17 @@ void LogicManager::CONS_Anna_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -261,16 +296,18 @@ void LogicManager::CONS_Anna_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_WaitRCClear(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
+	case 12:
 		if (rcClear()) {
 			getCharacter(kCharacterAnna).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
 		}
-	} else if (msg->action == 12 && rcClear()) {
-		getCharacter(kCharacterAnna).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
-		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -288,22 +325,25 @@ void LogicManager::CONS_Anna_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterAnna,
-				getCharacterCurrentParams(kCharacterAnna)[0],
-				getCharacterCurrentParams(kCharacterAnna)[1]
-			);
-
-			getCharacter(kCharacterAnna).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
-			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterAnna,
+			getCharacterCurrentParams(kCharacterAnna)[0],
+			getCharacterCurrentParams(kCharacterAnna)[1]
+		);
+
+		getCharacter(kCharacterAnna).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -343,7 +383,7 @@ void LogicManager::HAND_Anna_DoWalk(HAND_PARAMS) {
 		playChrExcuseMe(kCharacterAnna, kCharacterCath, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -360,11 +400,12 @@ void LogicManager::CONS_Anna_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterAnna)[1] ||
 			(getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + getCharacterCurrentParams(kCharacterAnna)[0], _gameTime + getCharacterCurrentParams(kCharacterAnna)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterAnna)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterAnna)[1] = 0x7FFFFFFF;
 		}
@@ -372,6 +413,9 @@ void LogicManager::HAND_Anna_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -390,38 +434,48 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 	case 0:
 		if (!getCharacterCurrentParams(kCharacterAnna)[1] && getCharacterParams(kCharacterAnna, 8)[0])
 			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-		if (!getCharacterCurrentParams(kCharacterAnna)[5])
-			goto LABEL_11;
-		if (!getCharacterCurrentParams(kCharacterAnna)[6]) {
-			getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75;
-			if (_currentGameSessionTicks == -75)
-				goto LABEL_10;
+
+		if (getCharacterCurrentParams(kCharacterAnna)[5]) {
+			bool skip = false; // Horrible way to unroll a goto...
+
+			if (!getCharacterCurrentParams(kCharacterAnna)[6]) {
+				getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75;
+				if (_currentGameSessionTicks == -75) {
+					skip = true;
+					send(kCharacterAnna, kCharacterAnna, 2, 0);
+					getCharacterCurrentParams(kCharacterAnna)[5] = 0;
+					getCharacterCurrentParams(kCharacterAnna)[6] = 0;
+				}
+			}
+
+			if (!skip && getCharacterCurrentParams(kCharacterAnna)[6] < _currentGameSessionTicks) {
+				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
+				send(kCharacterAnna, kCharacterAnna, 2, 0);
+				getCharacterCurrentParams(kCharacterAnna)[5] = 0;
+				getCharacterCurrentParams(kCharacterAnna)[6] = 0;
+			}
 		}
-		if (getCharacterCurrentParams(kCharacterAnna)[6] < _currentGameSessionTicks) {
-			getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
-		LABEL_10:
-			send(kCharacterAnna, kCharacterAnna, 2, 0);
-			getCharacterCurrentParams(kCharacterAnna)[5] = 0;
-			getCharacterCurrentParams(kCharacterAnna)[6] = 0;
-		}
-	LABEL_11:
+
 		if (getCharacterCurrentParams(kCharacterAnna)[3]) {
 			if (getCharacterCurrentParams(kCharacterAnna)[7] || (getCharacterCurrentParams(kCharacterAnna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[7] >= _currentGameSessionTicks)
-					return;
+					break;
+
 				getCharacterCurrentParams(kCharacterAnna)[7] = 0x7FFFFFFF;
 			}
+
 			getCharacterCurrentParams(kCharacterAnna)[3] = 0;
 			getCharacterCurrentParams(kCharacterAnna)[4] = 1;
 			setDoor(37, kCharacterAnna, 1, 0, 9);
 			setDoor(53, kCharacterAnna, 1, 0, 9);
-			--getCharacterCurrentParams(kCharacterAnna)[0];
+			getCharacterCurrentParams(kCharacterAnna)[0]--;
 			send(kCharacterAnna, kCharacterAnna, 2, 0);
 			getCharacterCurrentParams(kCharacterAnna)[7] = 0;
 		} else {
 			getCharacterCurrentParams(kCharacterAnna)[7] = 0;
 		}
-		return;
+
+		break;
 	case 2:
 		if (getCharacterCurrentParams(kCharacterAnna)[1]) {
 			getCharacter(kCharacterAnna).currentCall--;
@@ -431,7 +485,8 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterAnna)[0]++;
 			switch (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			case 1:
-				goto LABEL_21;
+				playDialog(kCharacterAnna, "ANN2135A", -1, 0);
+				break;
 			case 2:
 				playDialog(kCharacterAnna, "ANN2135B", -1, 0);
 				break;
@@ -468,14 +523,16 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 				fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
 				break;
 			default:
-				return;
+				break;
 			}
 		}
-		return;
+
+		break;
 	case 8:
 		if (getCharacterCurrentParams(kCharacterAnna)[3]) {
 			setDoor(37, kCharacterAnna, 1, 0, 9);
 			setDoor(53, kCharacterAnna, 1, 0, 9);
+
 			if (msg->param.intParam == 53) {
 				playDialog(kCharacterCath, getCathWCDialog(), -1, 0);
 			} else if (cathHasItem(kItemPassengerList)) {
@@ -488,7 +545,6 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 						playDialog(kCharacterCath, "CAT1506", -1, 0);
 					}
 				}
-				
 			} else {
 				playDialog(kCharacterCath, getCathSorryDialog(), -1, 0);
 			}
@@ -502,25 +558,29 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB012", 0, 0, 0);
 		}
-		return;
+
+		break;
 	case 9:
 		endDialog(kCharacterAnna);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
 		AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
-		return;
+		break;
 	case 12:
 		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
 		setDoor(37, kCharacterAnna, 1, 10, 9);
 		setDoor(53, kCharacterAnna, 1, 10, 9);
 		setDoor(45, kCharacterCath, 0, 255, 255);
+
 		if (checkCathDir(kCarRedSleeping, 78))
 			bumpCath(kCarRedSleeping, 49, 255);
+
 		startCycOtis(kCharacterAnna, "418C");
+
 		if (whoRunningDialog(kCharacterAnna))
 			fadeDialog(kCharacterAnna);
-	LABEL_21:
+
 		playDialog(kCharacterAnna, "ANN2135A", -1, 0);
-		return;
+		break;
 	case 17:
 		if (getCharacterCurrentParams(kCharacterAnna)[4] || getCharacterCurrentParams(kCharacterAnna)[3]) {
 			setDoor(37, kCharacterAnna, 1, 10, 9);
@@ -537,7 +597,7 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 			}
 		}
 
-		return;
+		break;
 	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
@@ -550,13 +610,16 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterAnna)[3] = 1;
 			break;
 		case 3:
-			if (whoRunningDialog(kCharacterMax))
-				goto LABEL_61;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
-			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+			if (whoRunningDialog(kCharacterMax)) {
+				getCharacterCurrentParams(kCharacterAnna)[0]--;
+				getCharacterCurrentParams(kCharacterAnna)[5] = 1;
+			} else {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+			}
+
 			break;
 		case 4:
-		LABEL_61:
 			getCharacterCurrentParams(kCharacterAnna)[0]--;
 			getCharacterCurrentParams(kCharacterAnna)[5] = 1;
 			break;
@@ -564,11 +627,11 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 			startCycOtis(kCharacterAnna, "418A");
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -588,13 +651,18 @@ void LogicManager::CONS_Anna_DoComplexSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoComplexSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[0]);
 		startSeqOtis(getCharacterCurrentParams(kCharacterAnna)[6], (char *)&getCharacterCurrentParams(kCharacterAnna)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -611,12 +679,13 @@ void LogicManager::CONS_Anna_DoWaitReal(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoWaitReal(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterAnna)[1] ||
 			(getCharacterCurrentParams(kCharacterAnna)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterAnna)[0],
 			_currentGameSessionTicks + getCharacterCurrentParams(kCharacterAnna)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterAnna)[1] >= _currentGameSessionTicks)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterAnna)[1] = 0x7FFFFFFF;
 		}
@@ -624,6 +693,9 @@ void LogicManager::HAND_Anna_DoWaitReal(HAND_PARAMS) {
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -642,129 +714,135 @@ void LogicManager::CONS_Anna_CompLogic(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_CompLogic(HAND_PARAMS) {
-	if (msg->action <= 18) {
-		switch (msg->action) {
-		case 0:
-			if (getCharacterCurrentParams(kCharacterAnna)[0] < _gameTime && !getCharacterCurrentParams(kCharacterAnna)[6]) {
-				getCharacterCurrentParams(kCharacterAnna)[6] = 1;
-				setDoor(37, kCharacterCath, 1, 10, 9);
-				setDoor(53, kCharacterCath, 1, 10, 9);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[0] < _gameTime && !getCharacterCurrentParams(kCharacterAnna)[6]) {
+			getCharacterCurrentParams(kCharacterAnna)[6] = 1;
+			setDoor(37, kCharacterCath, 1, 10, 9);
+			setDoor(53, kCharacterCath, 1, 10, 9);
 
-				getCharacter(kCharacterAnna).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
-				fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-				return;
+			getCharacter(kCharacterAnna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+			break;
+		}
+
+		if (getCharacterCurrentParams(kCharacterAnna)[4]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[7] || (getCharacterCurrentParams(kCharacterAnna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[7] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterAnna)[7] = 0x7FFFFFFF;
 			}
-			if (getCharacterCurrentParams(kCharacterAnna)[4]) {
-				if (getCharacterCurrentParams(kCharacterAnna)[7] || (getCharacterCurrentParams(kCharacterAnna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-					if (getCharacterCurrentParams(kCharacterAnna)[7] >= _currentGameSessionTicks)
-						return;
-					getCharacterCurrentParams(kCharacterAnna)[7] = 0x7FFFFFFF;
-				}
-				getCharacterCurrentParams(kCharacterAnna)[4] = 0;
-				getCharacterCurrentParams(kCharacterAnna)[5] = 1;
 
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[5] = 1;
+
+			setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+			setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+			getCharacterCurrentParams(kCharacterAnna)[7] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterAnna)[7] = 0;
+		}
+
+		break;
+	case 8:
+	case 9:
+		if (msg->action == 9 && inComp(kCharacterMax, kCarRedSleeping, 4070)) {
+			setDoor(37, kCharacterAnna, 1, 0, 0);
+			setDoor(53, kCharacterAnna, 1, 0, 0);
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
+		} else {
+			if (getCharacterCurrentParams(kCharacterAnna)[4]) {
 				setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
 				setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
-				getCharacterCurrentParams(kCharacterAnna)[7] = 0;
-			} else {
-				getCharacterCurrentParams(kCharacterAnna)[7] = 0;
-			}
-			break;
-		case 8:
-			goto LABEL_26;
-		case 9:
-			if (inComp(kCharacterMax, kCarRedSleeping, 4070)) {
-				setDoor(37, kCharacterAnna, 1, 0, 0);
-				setDoor(53, kCharacterAnna, 1, 0, 0);
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
-			} else {
-			LABEL_26:
-				if (getCharacterCurrentParams(kCharacterAnna)[4]) {
-					setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
-					setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
 
-					if (msg->param.intParam == 53) {
-						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
-						AnnaCall(&LogicManager::CONS_Anna_DoDialog, getCathWCDialog(), 0, 0, 0);
-					} else if (cathHasItem(kItemPassengerList)) {
-						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 7;
-						if (rnd(2)) {
-							AnnaCall(&LogicManager::CONS_Anna_DoDialog, getCathSorryDialog(), 0, 0, 0);
-						} else {
-							if (rnd(2) == 0) {
-								AnnaCall(&LogicManager::CONS_Anna_DoDialog, "CAT1506A", 0, 0, 0);
-							} else {
-								AnnaCall(&LogicManager::CONS_Anna_DoDialog, "CAT1506", 0, 0, 0);
-							}
-						}
-					} else {
-						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 8;
+				if (msg->param.intParam == 53) {
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
+					AnnaCall(&LogicManager::CONS_Anna_DoDialog, getCathWCDialog(), 0, 0, 0);
+				} else if (cathHasItem(kItemPassengerList)) {
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 7;
+					if (rnd(2)) {
 						AnnaCall(&LogicManager::CONS_Anna_DoDialog, getCathSorryDialog(), 0, 0, 0);
+					} else {
+						if (rnd(2) == 0) {
+							AnnaCall(&LogicManager::CONS_Anna_DoDialog, "CAT1506A", 0, 0, 0);
+						} else {
+							AnnaCall(&LogicManager::CONS_Anna_DoDialog, "CAT1506", 0, 0, 0);
+						}
 					}
 				} else {
-					setDoor(37, kCharacterAnna, 1, 0, 0);
-					setDoor(53, kCharacterAnna, 1, 0, 0);
-					if (msg->action == 8) {
-						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
-						AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB012", 0, 0, 0);
-					} else {
-						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
-						AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
-					}
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 8;
+					AnnaCall(&LogicManager::CONS_Anna_DoDialog, getCathSorryDialog(), 0, 0, 0);
+				}
+			} else {
+				setDoor(37, kCharacterAnna, 1, 0, 0);
+				setDoor(53, kCharacterAnna, 1, 0, 0);
+				if (msg->action == 8) {
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB012", 0, 0, 0);
+				} else {
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
 				}
 			}
-			return;
-		case 12:
+		}
+
+		break;
+	case 12:
+		setDoor(37, kCharacterAnna, 1, 10, 9);
+		setDoor(53, kCharacterAnna, 1, 10, 9);
+		startCycOtis(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[1]);
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterAnna)[5] || getCharacterCurrentParams(kCharacterAnna)[4]) {
 			setDoor(37, kCharacterAnna, 1, 10, 9);
 			setDoor(53, kCharacterAnna, 1, 10, 9);
-			startCycOtis(kCharacterAnna, (char *)&getCharacterCurrentParams(kCharacterAnna)[1]);
-			return;
-		case 17:
-			if (getCharacterCurrentParams(kCharacterAnna)[5] || getCharacterCurrentParams(kCharacterAnna)[4]) {
+			getCharacterCurrentParams(kCharacterAnna)[5] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+			if (whoRunningDialog(kCharacterMax)) {
 				setDoor(37, kCharacterAnna, 1, 10, 9);
 				setDoor(53, kCharacterAnna, 1, 10, 9);
-				getCharacterCurrentParams(kCharacterAnna)[5] = 0;
-				getCharacterCurrentParams(kCharacterAnna)[4] = 0;
-			}
-			return;
-		case 18:
-			switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-			case 1:
-				if (whoRunningDialog(kCharacterMax))
-					goto LABEL_25;
+			} else {
 				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
-				break;
-			case 2:
-			LABEL_25:
-				setDoor(37, kCharacterAnna, 1, 10, 9);
-				setDoor(53, kCharacterAnna, 1, 10, 9);
-				break;
-			case 3:
-			case 4:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
-				break;
-			case 5:
-				setDoor(37, kCharacterAnna, 1, 14, 0);
-				setDoor(53, kCharacterAnna, 1, 14, 0);
-				getCharacterCurrentParams(kCharacterAnna)[4] = 1;
-				break;
-			case 6:
-			case 7:
-			case 8:
-				getCharacterCurrentParams(kCharacterAnna)[4] = 0;
-				getCharacterCurrentParams(kCharacterAnna)[5] = 1;
-				break;
-			default:
-				return;
 			}
-			return;
+
+			break;
+		case 2:
+			setDoor(37, kCharacterAnna, 1, 10, 9);
+			setDoor(53, kCharacterAnna, 1, 10, 9);
+			break;
+		case 3:
+		case 4:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
+			break;
+		case 5:
+			setDoor(37, kCharacterAnna, 1, 14, 0);
+			setDoor(53, kCharacterAnna, 1, 14, 0);
+			getCharacterCurrentParams(kCharacterAnna)[4] = 1;
+			break;
+		case 6:
+		case 7:
+		case 8:
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[5] = 1;
+			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -779,21 +857,27 @@ void LogicManager::CONS_Anna_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			autoMessage(kCharacterAnna, 291662081, 0);
-			autoMessage(kCharacterAnna, 238936000, 1);
-			setDoor(37, kCharacterCath, 1, 10, 9);
-			setDoor(53, kCharacterCath, 1, 10, 9);
-			setDoor(45, kCharacterCath, 1, 255, 255);
-			getCharacter(kCharacterAnna).characterPosition.position = 8200;
-			getCharacter(kCharacterAnna).characterPosition.location = 1;
-			getCharacter(kCharacterAnna).characterPosition.car = kCarGreenSleeping;
-			getCharacter(kCharacterAnna).clothes = 0;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterAnna)[0]) {
+			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			CONS_Anna_FleeTyler(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterAnna)[0]) {
-		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-		CONS_Anna_FleeTyler(0, 0, 0, 0);
+
+		break;
+	case 12:
+		autoMessage(kCharacterAnna, 291662081, 0);
+		autoMessage(kCharacterAnna, 238936000, 1);
+		setDoor(37, kCharacterCath, 1, 10, 9);
+		setDoor(53, kCharacterCath, 1, 10, 9);
+		setDoor(45, kCharacterCath, 1, 255, 255);
+		getCharacter(kCharacterAnna).characterPosition.position = 8200;
+		getCharacter(kCharacterAnna).characterPosition.location = 1;
+		getCharacter(kCharacterAnna).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterAnna).clothes = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -827,7 +911,7 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
 		}
 
-		return;
+		break;
 	case 1:
 		if (msg->param.intParam == 8) {
 			getCharacter(kCharacterAnna).inventoryItem &= ~8;
@@ -839,7 +923,7 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventGotALight, 0, 0);
 		}
 
-		return;
+		break;
 	case 5:
 		if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction] || _gameProgress[kProgressChapter] >= 2) {
 			playDialog(kCharacterCath, "CAT1001", -1, 0);
@@ -847,10 +931,10 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 			playCathExcuseMe();
 		}
 
-		return;
+		break;
 	case 6:
 		playChrExcuseMe(kCharacterAnna, kCharacterCath, 0);
-		return;
+		break;
 	case 12:
 		getCharacter(kCharacterAnna).inventoryItem = 0;
 		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventGotALight] && !_gameEvents[kEventGotALightD] && !_gameEvents[kEventAugustPresentAnna] && !_gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
@@ -866,7 +950,8 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
 		}
-		return;
+
+		break;
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			if (_gameEvents[kEventAnnaGiveScarf] || _gameEvents[kEventAnnaGiveScarfDiner] || _gameEvents[kEventAnnaGiveScarfSalon] || _gameEvents[kEventAnnaGiveScarfMonogram] || _gameEvents[kEventAnnaGiveScarfDinerMonogram] || _gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
@@ -876,14 +961,13 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 			} else {
 				playNIS(kEventAnnaGiveScarf);
 			}
+
 			if (getCharacter(kCharacterAnna).direction != 1) {
-			LABEL_55:
 				bumpCathRx(getCharacter(kCharacterAnna).characterPosition.car, getCharacter(kCharacterAnna).characterPosition.position + 750);
-				return;
 			}
 		} else {
 			if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] != 2)
-				return;
+				break;
 
 			if (getCharacter(kCharacterAnna).direction == 1) {
 				playNIS(kEventGotALightD);
@@ -895,15 +979,18 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 
 			int32 tmp = getCharacterCurrentParams(kCharacterAnna)[2] & 0xFFFFFF7F;
 			getCharacterCurrentParams(kCharacterAnna)[2] = tmp;
-			if (_gameProgress[1] == 2 && !_gameEvents[204] && !_gameEvents[205] && !_gameEvents[206])
+			if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk])
 				getCharacterCurrentParams(kCharacterAnna)[2] = tmp | 8;
-			if (getCharacter(kCharacterAnna).direction != 1)
-				goto LABEL_55;
+
+			if (getCharacter(kCharacterAnna).direction != 1) {
+				bumpCathRx(getCharacter(kCharacterAnna).characterPosition.car, getCharacter(kCharacterAnna).characterPosition.position + 750);
+			}
 		}
+
 		bumpCathFx(getCharacter(kCharacterAnna).characterPosition.car, getCharacter(kCharacterAnna).characterPosition.position - 750);
-		return;
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -920,108 +1007,133 @@ void LogicManager::CONS_Anna_DiningLogic(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DiningLogic(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action <= 168046720) {
-			switch (msg->action) {
-			case 168046720:
-				getCharacter(kCharacterAnna).inventoryItem = 0;
-				getCharacterCurrentParams(kCharacterAnna)[3] = 1;
-				break;
-			case 17:
-				getCharacterCurrentParams(kCharacterAnna)[2] = checkCathDir(kCarRestaurant, 62);
-				break;
-			case 18:
-				if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-					if (_gameEvents[kEventAnnaGiveScarf] || _gameEvents[kEventAnnaGiveScarfDiner] || _gameEvents[kEventAnnaGiveScarfSalon] || _gameEvents[kEventAnnaGiveScarfMonogram] || _gameEvents[kEventAnnaGiveScarfDinerMonogram] || _gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
-						playNIS(kEventAnnaGiveScarfDinerAsk);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[0] && _gameTime > getCharacterCurrentParams(kCharacterAnna)[0] && rcClear()) {
+			getCharacter(kCharacterAnna).inventoryItem = 0;
+
+			getCharacter(kCharacterAnna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+			break;
+		}
+
+		if (getCharacterCurrentParams(kCharacterAnna)[4] && !getCharacterCurrentParams(kCharacterAnna)[3]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[5] || (getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 900, _gameTime != -900)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[5] >= _gameTime) {
+					if (getCharacterCurrentParams(kCharacterAnna)[2]) {
+						if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+								break;
+
+							getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
+						}
+
+						bumpCath(kCarRestaurant, 61, 255);
 					} else {
-						if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction])
-							playNIS(kEventAnnaGiveScarfDinerMonogram);
-						else
-							playNIS(kEventAnnaGiveScarfDiner);
-						getCharacterCurrentParams(kCharacterAnna)[4] = 1;
+						getCharacterCurrentParams(kCharacterAnna)[6] = 0;
 					}
-					int32 tmp = getCharacterCurrentParams(kCharacterAnna)[1] & 0xFFFFFFF7;
-					getCharacterCurrentParams(kCharacterAnna)[1] = tmp;
-					getCharacter(kCharacterAnna).inventoryItem = tmp;
-					bumpCath(kCarRestaurant, 61, 255);
-				} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
-					playNIS(kEventDinerMindJoin);
-					int32 tmp = getCharacterCurrentParams(kCharacterAnna)[1] & 0xFFFFFF7F;
-					getCharacterCurrentParams(kCharacterAnna)[1] = tmp;
-					if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
-						getCharacterCurrentParams(kCharacterAnna)[1] = tmp | 8;
-					}
-					getCharacter(kCharacterAnna).inventoryItem = getCharacterCurrentParams(kCharacterAnna)[1];
-					bumpCath(kCarRestaurant, 61, 255);
+
+					break;
 				}
-				break;
+
+				getCharacterCurrentParams(kCharacterAnna)[5] = 0x7FFFFFFF;
 			}
-			return;
+			getCharacterCurrentParams(kCharacterAnna)[1] |= 8;
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[5] = 0;
 		}
-		if (msg->action > 170016384) {
-			if (msg->action != 259136835 && msg->action != 268773672)
-				return;
-		} else if (msg->action != 170016384) {
-			if (msg->action == 168627977) {
-				getCharacter(kCharacterAnna).inventoryItem = getCharacterCurrentParams(kCharacterAnna)[1];
-				getCharacterCurrentParams(kCharacterAnna)[3] = 0;
+
+		if (getCharacterCurrentParams(kCharacterAnna)[2]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
 			}
-			return;
+
+			bumpCath(kCarRestaurant, 61, 255);
+		} else {
+			getCharacterCurrentParams(kCharacterAnna)[6] = 0;
 		}
-	LABEL_77:
+
+		break;
+	case 1:
+		if (msg->param.intParam == 8) {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaGiveScarf, 0, 0);
+		} else {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventDinerMindJoin, 0, 0);
+		}
+
+		break;
+	case 12:
+		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventDinerMindJoin] && !_gameEvents[kEventAugustPresentAnna] && !_gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+			getCharacterCurrentParams(kCharacterAnna)[1] |= 0x80;
+		}
+
+		if (_gameProgress[kProgressJacket] == 2 && !getCharacterCurrentParams(kCharacterAnna)[1] && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+			getCharacterCurrentParams(kCharacterAnna)[1] = 8;
+		}
+
+		getCharacter(kCharacterAnna).inventoryItem = getCharacterCurrentParams(kCharacterAnna)[1];
+		break;
+	case 17:
+		getCharacterCurrentParams(kCharacterAnna)[2] = checkCathDir(kCarRestaurant, 62);
+		break;
+	case 18:
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
+			if (_gameEvents[kEventAnnaGiveScarf] || _gameEvents[kEventAnnaGiveScarfDiner] || _gameEvents[kEventAnnaGiveScarfSalon] || _gameEvents[kEventAnnaGiveScarfMonogram] || _gameEvents[kEventAnnaGiveScarfDinerMonogram] || _gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
+				playNIS(kEventAnnaGiveScarfDinerAsk);
+			} else {
+				if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction])
+					playNIS(kEventAnnaGiveScarfDinerMonogram);
+				else
+					playNIS(kEventAnnaGiveScarfDiner);
+
+				getCharacterCurrentParams(kCharacterAnna)[4] = 1;
+			}
+
+			int32 tmp = getCharacterCurrentParams(kCharacterAnna)[1] & 0xFFFFFFF7;
+			getCharacterCurrentParams(kCharacterAnna)[1] = tmp;
+			getCharacter(kCharacterAnna).inventoryItem = tmp;
+			bumpCath(kCarRestaurant, 61, 255);
+		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
+			playNIS(kEventDinerMindJoin);
+			int32 tmp = getCharacterCurrentParams(kCharacterAnna)[1] & 0xFFFFFF7F;
+			getCharacterCurrentParams(kCharacterAnna)[1] = tmp;
+
+			if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+				getCharacterCurrentParams(kCharacterAnna)[1] = tmp | 8;
+			}
+
+			getCharacter(kCharacterAnna).inventoryItem = getCharacterCurrentParams(kCharacterAnna)[1];
+			bumpCath(kCarRestaurant, 61, 255);
+		}
+
+		break;
+	case 168046720:
+		getCharacter(kCharacterAnna).inventoryItem = 0;
+		getCharacterCurrentParams(kCharacterAnna)[3] = 1;
+		break;
+	case 168627977:
+		getCharacter(kCharacterAnna).inventoryItem = getCharacterCurrentParams(kCharacterAnna)[1];
+		getCharacterCurrentParams(kCharacterAnna)[3] = 0;
+		break;
+	case 170016384:
+	case 259136835:
+	case 268773672:
 		getCharacter(kCharacterAnna).inventoryItem = 0;
 
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-		return;
+		break;
+	default:
+		break;
 	}
-	if (msg->action == 12) {
-		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventDinerMindJoin] && !_gameEvents[kEventAugustPresentAnna] && !_gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
-			getCharacterCurrentParams(kCharacterAnna)[1] |= 0x80;
-		}
-		if (_gameProgress[kProgressJacket] == 2 && !getCharacterCurrentParams(kCharacterAnna)[1] && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
-			getCharacterCurrentParams(kCharacterAnna)[1] = 8;
-		}
-		getCharacter(kCharacterAnna).inventoryItem = getCharacterCurrentParams(kCharacterAnna)[1];
-		return;
-	}
-	if (msg->action) {
-		if (msg->action == 1) {
-			if (msg->param.intParam == 8) {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-				AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaGiveScarf, 0, 0);
-			} else {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-				AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventDinerMindJoin, 0, 0);
-			}
-		}
-		return;
-	}
-	if (getCharacterCurrentParams(kCharacterAnna)[0] && _gameTime > getCharacterCurrentParams(kCharacterAnna)[0] && rcClear())
-		goto LABEL_77;
-	if (getCharacterCurrentParams(kCharacterAnna)[4] && !getCharacterCurrentParams(kCharacterAnna)[3]) {
-		if (getCharacterCurrentParams(kCharacterAnna)[5] || (getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 900, _gameTime != -900)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[5] >= _gameTime)
-				goto LABEL_28;
-			getCharacterCurrentParams(kCharacterAnna)[5] = 0x7FFFFFFF;
-		}
-		getCharacterCurrentParams(kCharacterAnna)[1] |= 8;
-		getCharacterCurrentParams(kCharacterAnna)[4] = 0;
-		getCharacterCurrentParams(kCharacterAnna)[5] = 0;
-	}
-LABEL_28:
-	if (getCharacterCurrentParams(kCharacterAnna)[2]) {
-		if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
-				return;
-			getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
-		}
-		bumpCath(kCarRestaurant, 61, 255);
-	} else {
-		getCharacterCurrentParams(kCharacterAnna)[6] = 0;
-	}
+	return;
 }
 
 void LogicManager::CONS_Anna_FleeTyler(CONS_PARAMS) {
@@ -1035,10 +1147,12 @@ void LogicManager::CONS_Anna_FleeTyler(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_FleeTyler(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "618Ca", 1, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).characterPosition.location = 0;
@@ -1056,7 +1170,13 @@ void LogicManager::HAND_Anna_FleeTyler(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).characterPosition.location = 1;
 			CONS_Anna_WaitDinner(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1071,10 +1191,12 @@ void LogicManager::CONS_Anna_WaitDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_WaitDinner(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_CompLogic, 1093500, "NONE", 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "618Bf", 37, 0, 0);
@@ -1083,6 +1205,10 @@ void LogicManager::HAND_Anna_WaitDinner(HAND_PARAMS) {
 			send(kCharacterAnna, kCharacterMax, 71277948, 0);
 			CONS_Anna_GoDinner(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1097,10 +1223,12 @@ void LogicManager::CONS_Anna_GoDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GoDinner(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoWalkP1, 5, 850, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
@@ -1114,8 +1242,10 @@ void LogicManager::HAND_Anna_GoDinner(HAND_PARAMS) {
 			break;
 		case 3:
 			startSeqOtis(kCharacterAnna, "001B");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterAnna);
+
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
 			AnnaCall(&LogicManager::CONS_Anna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -1123,8 +1253,12 @@ void LogicManager::HAND_Anna_GoDinner(HAND_PARAMS) {
 			CONS_Anna_WaitHW(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1139,12 +1273,17 @@ void LogicManager::CONS_Anna_WaitHW(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_WaitHW(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		startCycOtis(kCharacterAnna, "001A");
 		send(kCharacterAnna, kCharacterHeadWait, 223262556, 0);
-	} else if (msg->action == 157370960) {
+		break;
+	case 157370960:
 		getCharacter(kCharacterAnna).characterPosition.location = 1;
 		CONS_Anna_WaitingDinner(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1159,13 +1298,15 @@ void LogicManager::CONS_Anna_WaitingDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_WaitingDinner(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		startCycOtis(kCharacterAnna, "001D");
 		send(kCharacterAnna, kCharacterWaiter1, 270410280, 0);
 		send(kCharacterAnna, kCharacterTableA, 136455232, 0);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DiningLogic, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			startCycOtis(kCharacterAnna, "001E");
@@ -1180,7 +1321,13 @@ void LogicManager::HAND_Anna_WaitingDinner(HAND_PARAMS) {
 			send(kCharacterAnna, kCharacterWaiter1, 203859488, 0);
 			CONS_Anna_WaitingDinner2(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1195,11 +1342,13 @@ void LogicManager::CONS_Anna_WaitingDinner2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_WaitingDinner2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		startCycOtis(kCharacterAnna, "001G");
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DiningLogic, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			startCycOtis(kCharacterAnna, "001H");
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
@@ -1208,6 +1357,10 @@ void LogicManager::HAND_Anna_WaitingDinner2(HAND_PARAMS) {
 			send(kCharacterAnna, kCharacterWaiter1, 136702400, 0);
 			CONS_Anna_EatingDinner(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1222,26 +1375,33 @@ void LogicManager::CONS_Anna_EatingDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_EatingDinner(HAND_PARAMS) {
-	if (msg->action > 18) {
-		if (msg->action == 122358304) {
-			startCycOtis(kCharacterAnna, "BLANK");
-		} else if (msg->action == 201437056) {
-			startCycOtis(kCharacterAnna, "001J");
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-			AnnaCall(&LogicManager::CONS_Anna_DiningLogic, 1138500, 0, 0, 0);
-		}
-	} else if (msg->action == 18) {
+	switch (msg->action) {
+	case 12:
+		startCycOtis(kCharacterAnna, "001J");
+		_gameProgress[kProgressField28] = 1;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+		AnnaCall(&LogicManager::CONS_Anna_DiningLogic, 0, 0, 0, 0);
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
 			AnnaCall(&LogicManager::CONS_Anna_WaitRCClear, 0, 0, 0, 0);
 		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 3) {
 			CONS_Anna_LeaveDinner(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 122358304:
+		startCycOtis(kCharacterAnna, "BLANK");
+		break;
+	case 201437056:
 		startCycOtis(kCharacterAnna, "001J");
-		_gameProgress[kProgressField28] = 1;
-		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-		AnnaCall(&LogicManager::CONS_Anna_DiningLogic, 0, 0, 0, 0);
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+		AnnaCall(&LogicManager::CONS_Anna_DiningLogic, 1138500, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1256,17 +1416,20 @@ void LogicManager::CONS_Anna_LeaveDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_LeaveDinner(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).characterPosition.location = 0;
 		blockView(kCharacterAnna, kCarRestaurant, 62);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoJoinedSeqOtis, "001L", 33, 103798704, "001M");
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			releaseView(kCharacterAnna, kCarRestaurant, 62);
 			send(kCharacterAnna, kCharacterWaiter1, 237485916, 0);
 			startSeqOtis(kCharacterAnna, "801DS");
+
 			if (inDiningRoom(kCharacterCath))
 				advanceFrame(kCharacterAnna);
 
@@ -1288,8 +1451,12 @@ void LogicManager::HAND_Anna_LeaveDinner(HAND_PARAMS) {
 			CONS_Anna_FreshenUp(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1304,11 +1471,13 @@ void LogicManager::CONS_Anna_FreshenUp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_FreshenUp(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		send(kCharacterAnna, kCharacterMax, 101687594, 0);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_CompLogic, 1156500, "NONE", 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1 ||
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
 			if (_gameProgress[kProgressField14] == 29) {
@@ -1324,6 +1493,10 @@ void LogicManager::HAND_Anna_FreshenUp(HAND_PARAMS) {
 			send(kCharacterAnna, kCharacterMax, 71277948, 0);
 			CONS_Anna_GoSalon(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1338,10 +1511,12 @@ void LogicManager::CONS_Anna_GoSalon(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GoSalon(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoWalkP1, 5, 850, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
@@ -1358,7 +1533,13 @@ void LogicManager::HAND_Anna_GoSalon(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).characterPosition.location = 1;
 			CONS_Anna_WaitAugust(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1373,94 +1554,120 @@ void LogicManager::CONS_Anna_WaitAugust(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_WaitAugust(HAND_PARAMS) {
-	if (msg->action > 12) {
-		switch (msg->action) {
-		case 17:
-			getCharacterCurrentParams(kCharacterAnna)[0] = checkCathDir(kCarRestaurant, 56);
-			break;
-		case 18:
-			if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-				if (_gameEvents[kEventAnnaGiveScarf] ||
-					_gameEvents[kEventAnnaGiveScarfDiner] ||
-					_gameEvents[kEventAnnaGiveScarfSalon] ||
-					_gameEvents[kEventAnnaGiveScarfMonogram] ||
-					_gameEvents[kEventAnnaGiveScarfDinerMonogram] ||
-					_gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
-					playNIS(kEventAnnaGiveScarfSalonAsk);
-				} else {
-					if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction])
-						playNIS(kEventAnnaGiveScarfSalonMonogram);
-					else
-						playNIS(kEventAnnaGiveScarfSalon);
-					getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-				}
-				getCharacter(kCharacterAnna).inventoryItem &= ~8;
-				bumpCath(kCarRestaurant, 51, 255);
-			} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
-				if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction])
-					playNIS(kEventAnnaConversationGoodNight);
-				else
-					playNIS(kEventAnnaIntroductionRejected);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[1]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime + 900, _gameTime != -900)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[2] >= _gameTime) {
+					if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+						if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks)
+								break;
 
-				getCharacter(kCharacterAnna).inventoryItem &= ~0x80;
-				if (_gameProgress[kProgressJacket] == 2 &&
-					!_gameEvents[kEventAnnaGiveScarfAsk] &&
-					!_gameEvents[kEventAnnaGiveScarfDinerAsk] &&
-					!_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
-					getCharacter(kCharacterAnna).inventoryItem |= kItemScarf;
+							getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+						}
+
+						bumpCath(kCarRestaurant, 55, 255);
+					} else {
+						getCharacterCurrentParams(kCharacterAnna)[3] = 0;
+					}
+
+					break;
 				}
-				bumpCath(kCarRestaurant, 51, 255);
+
+				getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
 			}
-			break;
-		case 123712592:
-			getCharacter(kCharacterAnna).inventoryItem = 0;
-			CONS_Anna_FlirtAugust(0, 0, 0, 0);
-			break;
+
+			getCharacter(kCharacterAnna).inventoryItem |= kItemScarf;
+			getCharacterCurrentParams(kCharacterAnna)[1] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[2] = 0;
 		}
-		return;
-	}
-	if (msg->action == 12) {
+
+		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+			}
+
+			bumpCath(kCarRestaurant, 55, 255);
+		} else {
+			getCharacterCurrentParams(kCharacterAnna)[3] = 0;
+		}
+
+		break;
+	case 1:
+		if (msg->param.intParam == 8) {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaGiveScarf, 0, 0);
+		} else {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaIntroductionRejected, 0, 0);
+		}
+
+		break;
+	case 12:
 		getCharacter(kCharacterAnna).inventoryItem = 0;
-		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[15] && !_gameEvents[14])
+
+		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventAnnaConversationGoodNight] && !_gameEvents[kEventAnnaIntroductionRejected])
 			getCharacter(kCharacterAnna).inventoryItem = 0x80;
+
 		if (_gameProgress[kProgressJacket] == 2 && !getCharacter(kCharacterAnna).inventoryItem && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
 			getCharacter(kCharacterAnna).inventoryItem = 8;
 		}
+
 		startCycOtis(kCharacterAnna, "104B");
-		return;
-	}
-	if (msg->action) {
-		if (msg->action == 1) {
-			if (msg->param.intParam == 8) {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-				AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaGiveScarf, 0, 0);
+		break;
+	case 17:
+		getCharacterCurrentParams(kCharacterAnna)[0] = checkCathDir(kCarRestaurant, 56);
+		break;
+	case 18:
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
+			if (_gameEvents[kEventAnnaGiveScarf] ||
+				_gameEvents[kEventAnnaGiveScarfDiner] ||
+				_gameEvents[kEventAnnaGiveScarfSalon] ||
+				_gameEvents[kEventAnnaGiveScarfMonogram] ||
+				_gameEvents[kEventAnnaGiveScarfDinerMonogram] ||
+				_gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
+				playNIS(kEventAnnaGiveScarfSalonAsk);
 			} else {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-				AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaIntroductionRejected, 0, 0);
+				if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+					playNIS(kEventAnnaGiveScarfSalonMonogram);
+				} else {
+					playNIS(kEventAnnaGiveScarfSalon);
+				}
+
+				getCharacterCurrentParams(kCharacterAnna)[1] = 1;
 			}
+
+			getCharacter(kCharacterAnna).inventoryItem &= ~8;
+			bumpCath(kCarRestaurant, 51, 255);
+		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
+			if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+				playNIS(kEventAnnaConversationGoodNight);
+			} else {
+				playNIS(kEventAnnaIntroductionRejected);
+			}
+
+			getCharacter(kCharacterAnna).inventoryItem &= ~0x80;
+			if (_gameProgress[kProgressJacket] == 2 &&
+				!_gameEvents[kEventAnnaGiveScarfAsk] &&
+				!_gameEvents[kEventAnnaGiveScarfDinerAsk] &&
+				!_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+				getCharacter(kCharacterAnna).inventoryItem |= kItemScarf;
+			}
+
+			bumpCath(kCarRestaurant, 51, 255);
 		}
-		return;
-	}
-	if (getCharacterCurrentParams(kCharacterAnna)[1]) {
-		if (getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime + 900, _gameTime != -900)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[2] >= _gameTime)
-				goto LABEL_16;
-			getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
-		}
-		getCharacter(kCharacterAnna).inventoryItem |= kItemScarf;
-		getCharacterCurrentParams(kCharacterAnna)[1] = 0;
-		getCharacterCurrentParams(kCharacterAnna)[2] = 0;
-	}
-LABEL_16:
-	if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-		if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks)
-				return;
-			getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
-		}
-		bumpCath(kCarRestaurant, 55, 255);
-	} else {
-		getCharacterCurrentParams(kCharacterAnna)[3] = 0;
+
+		break;
+	case 123712592:
+		getCharacter(kCharacterAnna).inventoryItem = 0;
+		CONS_Anna_FlirtAugust(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1477,62 +1684,76 @@ void LogicManager::CONS_Anna_FlirtAugust(CONS_PARAMS) {
 void LogicManager::HAND_Anna_FlirtAugust(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterAnna)[2] == 0x7FFFFFFF || !_gameTime)
-			goto LABEL_12;
-		if (_gameTime > 1188000)
-			goto LABEL_10;
-		if (!inSalon(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[2]) {
-			getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime + 450;
-			if (_gameTime == -450)
-				goto LABEL_11;
+		if (getCharacterCurrentParams(kCharacterAnna)[2] != 0x7FFFFFFF && _gameTime != 0) {
+			if (_gameTime <= 1188000) {
+				bool skip = false; // Horrible way to unroll a goto...
+
+				if (!inSalon(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[2]) {
+					getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime + 450;
+					if (_gameTime == -450) {
+						skip = true;
+						playDialog(kCharacterAnna, "AUG1004", -1, 0);
+					}
+				}
+
+				if (!skip && getCharacterCurrentParams(kCharacterAnna)[2] < _gameTime) {
+					getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
+					playDialog(kCharacterAnna, "AUG1004", -1, 0);
+				}
+			} else {
+				getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
+				playDialog(kCharacterAnna, "AUG1004", -1, 0);
+			}
 		}
-		if (getCharacterCurrentParams(kCharacterAnna)[2] < _gameTime) {
-		LABEL_10:
-			getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
-		LABEL_11:
-			playDialog(kCharacterAnna, "AUG1004", -1, 0);
+
+		if (getCharacterCurrentParams(kCharacterAnna)[1] != 0 && getCharacterCurrentParams(kCharacterAnna)[3] != 0x7FFFFFFF && _gameTime > 1179000) {
+			if (_gameTime <= 1192500) {
+				if (!inSalon(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
+					getCharacterCurrentParams(kCharacterAnna)[3] = _gameTime + 150;
+					if (_gameTime == -150) {
+						CONS_Anna_LeaveAugust(0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterAnna)[3] < _gameTime) {
+					getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+					CONS_Anna_LeaveAugust(0, 0, 0, 0);
+					break;
+				}
+			} else {
+				getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+				CONS_Anna_LeaveAugust(0, 0, 0, 0);
+				break;
+			}
 		}
-	LABEL_12:
-		if (!getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[3] == 0x7FFFFFFF || _gameTime <= 1179000)
-			goto LABEL_22;
-		if (_gameTime > 1192500)
-			goto LABEL_20;
-		if (!inSalon(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
-			getCharacterCurrentParams(kCharacterAnna)[3] = _gameTime + 150;
-			if (_gameTime == -150)
-				goto LABEL_21;
-		}
-		if (getCharacterCurrentParams(kCharacterAnna)[3] < _gameTime) {
-		LABEL_20:
-			getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
-		LABEL_21:
-			CONS_Anna_LeaveAugust(0, 0, 0, 0);
-			return;
-		}
-	LABEL_22:
+
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
-					return;
+					break;
+
 				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
 			}
+
 			bumpCath(kCarRestaurant, 55, 255);
 		} else {
 			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
 		}
+
 		break;
 	case 2:
 		getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-		return;
+		break;
 	case 12:
 		send(kCharacterAnna, kCharacterAugust, 122358304, 0);
 		startCycOtis(kCharacterAnna, "106B");
-		return;
+		break;
 	case 17:
 		getCharacterCurrentParams(kCharacterAnna)[0] = checkCathDir(kCarRestaurant, 56);
-		return;
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1547,10 +1768,12 @@ void LogicManager::CONS_Anna_LeaveAugust(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_LeaveAugust(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_WaitRCClear, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).characterPosition.location = 0;
@@ -1569,7 +1792,13 @@ void LogicManager::HAND_Anna_LeaveAugust(HAND_PARAMS) {
 			send(kCharacterAnna, kCharacterAugust, 159332865, 0);
 			CONS_Anna_ReturnComp(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1584,10 +1813,12 @@ void LogicManager::CONS_Anna_ReturnComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_ReturnComp(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoWalkP1, 4, 4070, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "618Af", 37, 0, 0);
@@ -1597,6 +1828,10 @@ void LogicManager::HAND_Anna_ReturnComp(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).characterPosition.location = 1;
 			CONS_Anna_ReadyForBed(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1611,14 +1846,22 @@ void LogicManager::CONS_Anna_ReadyForBed(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_ReadyForBed(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		send(kCharacterAnna, kCharacterMax, 101687594, 0);
 		getCharacterCurrentParams(kCharacterAnna)[0] = _gameTime + 4500;
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_CompLogic, getCharacterCurrentParams(kCharacterAnna)[0], "NONE", 0, 0);
-	} else if (msg->action == 18 && getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-		setModel(37, 1);
-		CONS_Anna_Asleep(0, 0, 0, 0);
+		break;
+	case 18:
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
+			setModel(37, 1);
+			CONS_Anna_Asleep(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1635,25 +1878,29 @@ void LogicManager::CONS_Anna_Asleep(CONS_PARAMS) {
 void LogicManager::HAND_Anna_Asleep(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterAnna)[0] || !checkCathDir(kCarRedSleeping, 60))
-			goto LABEL_18;
-		if (!getCharacterCurrentParams(kCharacterAnna)[1]) {
-			getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 150;
-			if (_gameTime == -150)
-				goto LABEL_9;
+		if (!getCharacterCurrentParams(kCharacterAnna)[0] && checkCathDir(kCarRedSleeping, 60)) {
+			if (!getCharacterCurrentParams(kCharacterAnna)[1]) {
+				getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 150;
+				if (_gameTime == -150) {
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+					AnnaCall(&LogicManager::CONS_Anna_DoSeqOtis, "419B", 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterAnna)[1] < _gameTime) {
+				getCharacterCurrentParams(kCharacterAnna)[1] = 0x7FFFFFFF;
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+				AnnaCall(&LogicManager::CONS_Anna_DoSeqOtis, "419B", 0, 0, 0);
+				break;
+			}
 		}
-		if (getCharacterCurrentParams(kCharacterAnna)[1] < _gameTime) {
-			getCharacterCurrentParams(kCharacterAnna)[1] = 0x7FFFFFFF;
-		LABEL_9:
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-			AnnaCall(&LogicManager::CONS_Anna_DoSeqOtis, "419B", 0, 0, 0);
-			return;
-		}
-	LABEL_18:
+
 		if (_gameTime > 1489500 && !getCharacterCurrentParams(kCharacterAnna)[2]) {
 			getCharacterCurrentParams(kCharacterAnna)[2] = 1;
 			CONS_Anna_WakeNight(0, 0, 0, 0);
 		}
+
 		break;
 	case 8:
 	case 9:
@@ -1666,7 +1913,8 @@ void LogicManager::HAND_Anna_Asleep(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
 			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
 		}
-		return;
+
+		break;
 	case 12:
 		setDoor(37, kCharacterAnna, 1, 10, 9);
 		setDoor(53, kCharacterAnna, 1, 10, 9);
@@ -1679,31 +1927,40 @@ void LogicManager::HAND_Anna_Asleep(HAND_PARAMS) {
 		getCharacter(kCharacterAnna).characterPosition.position = 4070;
 		getCharacter(kCharacterAnna).characterPosition.location = 0;
 		startCycOtis(kCharacterAnna, "419A");
-		return;
+		break;
 	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			startCycOtis(kCharacterAnna, "419C");
 			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-			goto LABEL_18;
+			if (_gameTime > 1489500 && !getCharacterCurrentParams(kCharacterAnna)[2]) {
+				getCharacterCurrentParams(kCharacterAnna)[2] = 1;
+				CONS_Anna_WakeNight(0, 0, 0, 0);
+			}
+
+			break;
 		case 2:
 		case 3:
-			if (whoRunningDialog(kCharacterMax))
-				goto LABEL_23;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
-			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+			if (whoRunningDialog(kCharacterMax)) {
+				setDoor(37, kCharacterAnna, 1, 10, 9);
+				setDoor(53, kCharacterAnna, 1, 10, 9);
+			} else {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+			}
+
 			break;
 		case 4:
-		LABEL_23:
 			setDoor(37, kCharacterAnna, 1, 10, 9);
 			setDoor(53, kCharacterAnna, 1, 10, 9);
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1718,37 +1975,47 @@ void LogicManager::CONS_Anna_WakeNight(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_WakeNight(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 18) {
-			if (msg->action == 226031488) {
-				if (whoRunningDialog(kCharacterAnna))
-					fadeDialog(kCharacterAnna);
-				send(kCharacterAnna, kCharacterMax, 71277948, 0);
-			} else if (msg->action == 238358920) {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-				AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "608Cf", 37, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[2] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
 			}
-		} else if (msg->action == 18) {
-			if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-				playNIS(kEventAnnaVisitToCompartmentGun);
-				playDialog(0, "LIB015", -1, 0);
-				getCharacter(kCharacterAnna).characterPosition.location = 0;
-				getCharacter(kCharacterAnna).characterPosition.position = 4840;
-				walk(kCharacterAnna, kCarRedSleeping, 8200);
-				bumpCathFDoor(37);
-				send(kCharacterAnna, kCharacterVassili, 339669520, 0);
-				send(kCharacterAnna, kCharacterTrainM, 339669520, 0);
-				send(kCharacterAnna, kCharacterCond2, 339669520, 0);
-				send(kCharacterAnna, kCharacterMax, 71277948, 0);
-				CONS_Anna_GoVassili(0, 0, 0, 0);
-			} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
-				CONS_Anna_GoVassili(0, 0, 0, 0);
+
+			switch (getCharacterCurrentParams(kCharacterAnna)[1]) {
+			case 0:
+				playDialog(kCharacterAnna, "ANN2135E", -1, 0);
+				break;
+			case 1:
+				playDialog(kCharacterAnna, "ANN2135F", -1, 0);
+				break;
+			case 2:
+				playDialog(kCharacterAnna, "ANN2135G", -1, 0);
+				break;
+			case 3:
+				playDialog(kCharacterAnna, "ANN2135D", -1, 0);
+				break;
+			default:
+				break;
 			}
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterAnna).clothes = 1;
-			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+
+			getCharacterCurrentParams(kCharacterAnna)[2] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 		}
-	} else if (msg->action >= 8) {
+
+		break;
+	case 2:
+		getCharacterCurrentParams(kCharacterAnna)[1]++;
+		if (getCharacterCurrentParams(kCharacterAnna)[1] > 3)
+			getCharacterCurrentParams(kCharacterAnna)[1] = 0;
+
+		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+		break;
+	case 8:
+	case 9:
 		if (whoRunningDialog(kCharacterAnna))
 			fadeDialog(kCharacterAnna);
 
@@ -1757,44 +2024,41 @@ void LogicManager::HAND_Anna_WakeNight(HAND_PARAMS) {
 
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaVisitToCompartmentGun, 0, 0);
-	} else if (msg->action) {
-		if (msg->action == 2) {
-			getCharacterCurrentParams(kCharacterAnna)[1]++;
-			if (getCharacterCurrentParams(kCharacterAnna)[1] > 3)
-				getCharacterCurrentParams(kCharacterAnna)[1] = 0;
-
-			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-		}
-	} else {
-		if (!getCharacterCurrentParams(kCharacterAnna)[0])
-			return;
-
-		if (getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[2] >= _currentGameSessionTicks)
-				return;
-
-			getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
-		}
-
-		switch (getCharacterCurrentParams(kCharacterAnna)[1]) {
-		case 0:
-			playDialog(kCharacterAnna, "ANN2135E", -1, 0);
-			break;
-		case 1:
-			playDialog(kCharacterAnna, "ANN2135F", -1, 0);
-			break;
-		case 2:
-			playDialog(kCharacterAnna, "ANN2135G", -1, 0);
-			break;
-		case 3:
-			playDialog(kCharacterAnna, "ANN2135D", -1, 0);
-			break;
-		default:
-			break;
+		break;
+	case 12:
+		getCharacter(kCharacterAnna).clothes = 1;
+		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+		break;
+	case 18:
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
+			playNIS(kEventAnnaVisitToCompartmentGun);
+			playDialog(0, "LIB015", -1, 0);
+			getCharacter(kCharacterAnna).characterPosition.location = 0;
+			getCharacter(kCharacterAnna).characterPosition.position = 4840;
+			walk(kCharacterAnna, kCarRedSleeping, 8200);
+			bumpCathFDoor(37);
+			send(kCharacterAnna, kCharacterVassili, 339669520, 0);
+			send(kCharacterAnna, kCharacterTrainM, 339669520, 0);
+			send(kCharacterAnna, kCharacterCond2, 339669520, 0);
+			send(kCharacterAnna, kCharacterMax, 71277948, 0);
+			CONS_Anna_GoVassili(0, 0, 0, 0);
+		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
+			CONS_Anna_GoVassili(0, 0, 0, 0);
 		}
 
-		getCharacterCurrentParams(kCharacterAnna)[2] = 0;
-		getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+		break;
+	case 226031488:
+		if (whoRunningDialog(kCharacterAnna))
+			fadeDialog(kCharacterAnna);
+
+		send(kCharacterAnna, kCharacterMax, 71277948, 0);
+		break;
+	case 238358920:
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+		AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "608Cf", 37, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1809,11 +2073,13 @@ void LogicManager::CONS_Anna_GoVassili(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GoVassili(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(37, kCharacterCath, 1, 10, 9);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoWalk, 4, 8200, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			setDoor(32, kCharacterCath, 1, 255, 255);
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
@@ -1824,6 +2090,10 @@ void LogicManager::HAND_Anna_GoVassili(HAND_PARAMS) {
 			endGraphics(kCharacterAnna);
 			CONS_Anna_AtSeizure(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1838,12 +2108,17 @@ void LogicManager::CONS_Anna_AtSeizure(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_AtSeizure(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterAnna).characterPosition.position = 8200;
 		getCharacter(kCharacterAnna).characterPosition.location = 0;
-	} else if (msg->action == 191477936) {
+		break;
+	case 191477936:
 		CONS_Anna_SpeakTatiana(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1858,13 +2133,21 @@ void LogicManager::CONS_Anna_SpeakTatiana(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_SpeakTatiana(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).characterPosition.position = 7500;
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1010", 0, 0, 0);
-	} else if (msg->action == 18 && getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-		playDialog(0, "MUS043", -1, 0);
-		CONS_Anna_LeaveTatiana(0, 0, 0, 0);
+		break;
+	case 18:
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
+			playDialog(0, "MUS043", -1, 0);
+			CONS_Anna_LeaveTatiana(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1884,8 +2167,22 @@ void LogicManager::CONS_Anna_DoWalk1019(CONS_PARAMS) {
 void LogicManager::HAND_Anna_DoWalk1019(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[0], getCharacterCurrentParams(kCharacterAnna)[1]))
-			goto LABEL_4;
+	case 12:
+		if (msg->action == 12) {
+			getCharacter(kCharacterAnna).inventoryItem = 0;
+
+			if (!_gameEvents[kEventAnnaGoodNight] && !_gameEvents[kEventAnnaGoodNightInverse])
+				getCharacter(kCharacterAnna).inventoryItem = 0x80;
+		}
+
+		if (walk(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[0], getCharacterCurrentParams(kCharacterAnna)[1])) {
+			getCharacter(kCharacterAnna).inventoryItem = 0;
+
+			getCharacter(kCharacterAnna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		}
+
 		break;
 	case 1:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
@@ -1894,31 +2191,20 @@ void LogicManager::HAND_Anna_DoWalk1019(HAND_PARAMS) {
 	case 6:
 		playDialog(kCharacterAnna, "ANN1107A", -1, 0);
 		break;
-	case 12:
-		getCharacter(kCharacterAnna).inventoryItem = 0;
-		if (!_gameEvents[kEventAnnaGoodNight] && !_gameEvents[kEventAnnaGoodNightInverse])
-			getCharacter(kCharacterAnna).inventoryItem = 0x80;
-		if (walk(kCharacterAnna, getCharacterCurrentParams(kCharacterAnna)[0], getCharacterCurrentParams(kCharacterAnna)[1])) {
-		LABEL_4:
-			getCharacter(kCharacterAnna).inventoryItem = 0;
-
-			getCharacter(kCharacterAnna).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
-			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-		}
-		break;
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			playNIS((kEventAnnaGoodNightInverse - (getCharacter(kCharacterAnna).direction == 1)));
 			getCharacter(kCharacterAnna).inventoryItem = 0;
+
 			if (getCharacter(kCharacterAnna).direction == 1)
 				bumpCathFx(getCharacter(kCharacterAnna).characterPosition.car, getCharacter(kCharacterAnna).characterPosition.position - 750);
 			else
 				bumpCathRx(getCharacter(kCharacterAnna).characterPosition.car, getCharacter(kCharacterAnna).characterPosition.position + 750);
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1933,10 +2219,12 @@ void LogicManager::CONS_Anna_LeaveTatiana(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_LeaveTatiana(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-		AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "608Cb", 0x21, 0, 0);
-	} else if (msg->action == 18) {
+		AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "608Cb", 33, 0, 0);
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).characterPosition.location = 0;
@@ -1992,8 +2280,12 @@ void LogicManager::HAND_Anna_LeaveTatiana(HAND_PARAMS) {
 			CONS_Anna_GoBackToSleep(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2012,7 +2304,7 @@ void LogicManager::HAND_Anna_GoBackToSleep(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterAnna)[1] || (getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 2700, _gameTime != -2700)) {
 			if (getCharacterCurrentParams(kCharacterAnna)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterAnna)[1] = 0x7FFFFFFF;
 		}
@@ -2029,13 +2321,17 @@ void LogicManager::HAND_Anna_GoBackToSleep(HAND_PARAMS) {
 			startCycOtis(kCharacterAnna, "419C");
 			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 			break;
+		default:
+			break;
 		}
+
 		getCharacterCurrentParams(kCharacterAnna)[1] = 0;
-		return;
+		break;
 	case 8:
 	case 9:
 		setDoor(37, kCharacterAnna, 1, 0, 0);
 		setDoor(53, kCharacterAnna, 1, 0, 0);
+
 		if (msg->action == 8) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB012", 0, 0, 0);
@@ -2043,30 +2339,33 @@ void LogicManager::HAND_Anna_GoBackToSleep(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
 		}
-		return;
+
+		break;
 	case 12:
 		send(kCharacterAnna, kCharacterMax, 101687594, 0);
 		setDoor(37, kCharacterAnna, 1, 10, 9);
 		setDoor(53, kCharacterAnna, 1, 10, 9);
 		startCycOtis(kCharacterAnna, "419C");
-		return;
+		break;
 	case 18:
-		if (!getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8])
-			return;
-		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] <= 2) {
-			if (!whoRunningDialog(kCharacterMax)) {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
-				return;
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+			if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] <= 2) {
+				if (!whoRunningDialog(kCharacterMax)) {
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+					break;
+				}
+			} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] != 3) {
+				break;
 			}
-		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] != 3) {
-			return;
+
+			setDoor(37, kCharacterAnna, 1, 10, 9);
+			setDoor(53, kCharacterAnna, 1, 10, 9);
 		}
-		setDoor(37, kCharacterAnna, 1, 10, 9);
-		setDoor(53, kCharacterAnna, 1, 10, 9);
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -2081,17 +2380,20 @@ void LogicManager::CONS_Anna_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterAnna);
-			getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterAnna).characterPosition.position = 4070;
-			getCharacter(kCharacterAnna).characterPosition.location = 1;
-			getCharacter(kCharacterAnna).inventoryItem = kItemNone;
-			getCharacter(kCharacterAnna).clothes = 1;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Anna_InPart2(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterAnna);
+		getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterAnna).characterPosition.position = 4070;
+		getCharacter(kCharacterAnna).characterPosition.location = 1;
+		getCharacter(kCharacterAnna).inventoryItem = kItemNone;
+		getCharacter(kCharacterAnna).clothes = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2106,11 +2408,13 @@ void LogicManager::CONS_Anna_InPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_InPart2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(45, kCharacterCath, 0, 255, 255);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_PracticeMusic, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
@@ -2133,8 +2437,12 @@ void LogicManager::HAND_Anna_InPart2(HAND_PARAMS) {
 			AnnaCall(&LogicManager::CONS_Anna_CompLogic, 15803100, "418C", 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2149,20 +2457,23 @@ void LogicManager::CONS_Anna_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterAnna);
-			getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterAnna).characterPosition.position = 4070;
-			getCharacter(kCharacterAnna).characterPosition.location = 1;
-			getCharacter(kCharacterAnna).clothes = 3;
-			getCharacter(kCharacterAnna).inventoryItem = 0;
-			setDoor(37, kCharacterCath, 1, 10, 9);
-			setDoor(45, kCharacterCath, 0, 255, 255);
-			setDoor(53, kCharacterCath, 1, 10, 9);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Anna_Practicing(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterAnna);
+		getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterAnna).characterPosition.position = 4070;
+		getCharacter(kCharacterAnna).characterPosition.location = 1;
+		getCharacter(kCharacterAnna).clothes = 3;
+		getCharacter(kCharacterAnna).inventoryItem = 0;
+		setDoor(37, kCharacterCath, 1, 10, 9);
+		setDoor(45, kCharacterCath, 0, 255, 255);
+		setDoor(53, kCharacterCath, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2191,6 +2502,7 @@ void LogicManager::HAND_Anna_ExitComp(HAND_PARAMS) {
 				send(kCharacterAnna, kCharacterCond2, 185737168, 0);
 			else
 				send(kCharacterAnna, kCharacterCond2, 185671840, 0);
+
 			playDialog(kCharacterAnna, "Ann3147", -1, 0);
 			startCycOtis(kCharacterAnna, "625EF");
 			softBlockAtDoor(kCharacterAnna, 37);
@@ -2201,10 +2513,13 @@ void LogicManager::HAND_Anna_ExitComp(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
 		}
+
 		break;
 	case 157894320:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 		AnnaCall(&LogicManager::CONS_Anna_DoWait, 75, 0, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -2220,12 +2535,15 @@ void LogicManager::CONS_Anna_Practicing(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Practicing(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		if (checkCathDir(kCarRedSleeping, 60))
 			bumpCath(kCarRedSleeping, 49, 255);
+
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_PracticeMusic, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1 ||
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
 			if (getCharacterParams(kCharacterAnna, 8)[0]) {
@@ -2235,6 +2553,10 @@ void LogicManager::HAND_Anna_Practicing(HAND_PARAMS) {
 				AnnaCall(&LogicManager::CONS_Anna_CompLogic, _gameTime + 4500, "418C", 0, 0);
 			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2249,12 +2571,14 @@ void LogicManager::CONS_Anna_GoLunch(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GoLunch(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(37, kCharacterCath, 1, 10, 9);
 		setDoor(53, kCharacterCath, 1, 10, 9);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "688Bf", 0x25, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).characterPosition.location = 0;
@@ -2288,8 +2612,12 @@ void LogicManager::HAND_Anna_GoLunch(HAND_PARAMS) {
 			CONS_Anna_Lunch(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2304,80 +2632,34 @@ void LogicManager::CONS_Anna_Lunch(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Lunch(HAND_PARAMS) {
-	if (msg->action > 12) {
-		switch (msg->action) {
-		case 18:
-			switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3137B", 0, 0, 0);
-				break;
-			case 2:
-				send(kCharacterAnna, kCharacterWaiter1, 218983616, 0);
-				break;
-			case 3:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3006A", 0, 0, 0);
-				break;
-			case 4:
-				goto LABEL_29;
-			case 5:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
-				AnnaCall(&LogicManager::CONS_Anna_DoWait, 900, 0, 0, 0);
-				break;
-			case 6:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 7;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3006", 0, 0, 0);
-				break;
-			case 7:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 8;
-				AnnaCall(&LogicManager::CONS_Anna_DoWait, 2700, 0, 0, 0);
-				break;
-			case 8:
-				startCycOtis(kCharacterAnna, "026H");
-				getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-				break;
-			default:
-				return;
-			}
-			break;
-		case 122288808:
-			startCycOtis(kCharacterAnna, "026C");
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
-			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3138A", 0, 0, 0);
-			break;
-		case 122358304:
-			startCycOtis(kCharacterAnna, "BLANK");
-			break;
-		}
-	} else {
-		if (msg->action == 12) {
-			startCycOtis(kCharacterAnna, "026c");
-			getCharacter(kCharacterAnna).characterPosition.location = 1;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-			AnnaCall(&LogicManager::CONS_Anna_DoWait, 450, 0, 0, 0);
-			return;
-		}
-		if (msg->action == 0 && getCharacterCurrentParams(kCharacterAnna)[0]) {
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			if (getCharacterCurrentParams(kCharacterAnna)[2] != 0x7FFFFFFF && _gameTime > 1969200) {
-				if (_gameTime > 1983600)
-					goto LABEL_18;
+				if (_gameTime > 1983600) {
+					getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
+					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3007A", 0, 0, 0);
+					break;
+				}
 
 				if (!inDiningRoom(kCharacterCath) || whoRunningDialog(kCharacterMonsieur) || !getCharacterCurrentParams(kCharacterAnna)[2]) {
 					getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime + 150;
-					if (_gameTime == -150)
-						goto LABEL_19;
+					if (_gameTime == -150) {
+						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+						AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3007A", 0, 0, 0);
+						break;
+					}
 				}
+
 				if (getCharacterCurrentParams(kCharacterAnna)[2] < _gameTime) {
-				LABEL_18:
 					getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
-				LABEL_19:
 					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
 					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3007A", 0, 0, 0);
-					return;
+					break;
 				}
 			}
-		LABEL_29:
+
 			if (getCharacterParams(kCharacterAnna, 8)[1]) {
 				if (!getCharacterCurrentParams(kCharacterAnna)[1])
 					getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 4500;
@@ -2386,20 +2668,98 @@ void LogicManager::HAND_Anna_Lunch(HAND_PARAMS) {
 					if (getCharacterCurrentParams(kCharacterAnna)[1] >= _gameTime) {
 						if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
 							getCharacterCurrentParams(kCharacterAnna)[3] = _gameTime + 450;
-							if (_gameTime == -450)
-								goto LABEL_40;
+							if (_gameTime == -450) {
+								CONS_Anna_LeaveLunch(0, 0, 0, 0);
+								break;
+							}
 						}
 
 						if (getCharacterCurrentParams(kCharacterAnna)[3] >= _gameTime)
-							return;
+							break;
 					}
 
 					getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
-				LABEL_40:
 					CONS_Anna_LeaveLunch(0, 0, 0, 0);
 				}
 			}
 		}
+
+		break;
+	case 12:
+		startCycOtis(kCharacterAnna, "026c");
+		getCharacter(kCharacterAnna).characterPosition.location = 1;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+		AnnaCall(&LogicManager::CONS_Anna_DoWait, 450, 0, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3137B", 0, 0, 0);
+			break;
+		case 2:
+			send(kCharacterAnna, kCharacterWaiter1, 218983616, 0);
+			break;
+		case 3:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3006A", 0, 0, 0);
+			break;
+		case 4:
+			if (getCharacterParams(kCharacterAnna, 8)[1]) {
+				if (!getCharacterCurrentParams(kCharacterAnna)[1])
+					getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 4500;
+
+				if (getCharacterCurrentParams(kCharacterAnna)[3] != 0x7FFFFFFF && _gameTime) {
+					if (getCharacterCurrentParams(kCharacterAnna)[1] >= _gameTime) {
+						if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
+							getCharacterCurrentParams(kCharacterAnna)[3] = _gameTime + 450;
+							if (_gameTime == -450) {
+								CONS_Anna_LeaveLunch(0, 0, 0, 0);
+								break;
+							}
+						}
+
+						if (getCharacterCurrentParams(kCharacterAnna)[3] >= _gameTime)
+							break;
+					}
+
+					getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+					CONS_Anna_LeaveLunch(0, 0, 0, 0);
+				}
+			}
+
+			break;
+		case 5:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
+			AnnaCall(&LogicManager::CONS_Anna_DoWait, 900, 0, 0, 0);
+			break;
+		case 6:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 7;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3006", 0, 0, 0);
+			break;
+		case 7:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 8;
+			AnnaCall(&LogicManager::CONS_Anna_DoWait, 2700, 0, 0, 0);
+			break;
+		case 8:
+			startCycOtis(kCharacterAnna, "026H");
+			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 122288808:
+		startCycOtis(kCharacterAnna, "026C");
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
+		AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3138A", 0, 0, 0);
+		break;
+	case 122358304:
+		startCycOtis(kCharacterAnna, "BLANK");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2414,17 +2774,22 @@ void LogicManager::CONS_Anna_DoOtis5026J(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_DoOtis5026J(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		send(kCharacterAnna, kCharacterTableD, 103798704, "010M");
 		endGraphics(kCharacterAugust);
 
 		getCharacter(kCharacterAnna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTableD, "026J3");
 		startSeqOtis(kCharacterAugust, "026J2");
 		startSeqOtis(kCharacterAnna, "026J1");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2439,10 +2804,12 @@ void LogicManager::CONS_Anna_LeaveLunch(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_LeaveLunch(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3141", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
@@ -2456,7 +2823,13 @@ void LogicManager::HAND_Anna_LeaveLunch(HAND_PARAMS) {
 		case 3:
 			CONS_Anna_AfterLunch(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2471,72 +2844,92 @@ void LogicManager::CONS_Anna_AfterLunch(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_AfterLunch(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action > 101169422) {
-			if (msg->action == 122288808) {
-				startCycOtis(kCharacterAnna, "112D");
-				send(kCharacterAnna, kCharacterKronos, 157159392, 0);
-			} else if (msg->action == 122358304) {
-				startCycOtis(kCharacterAnna, "BLANK");
-			}
-		} else if (msg->action == 101169422) {
-			if (_gameEvents[kEventKronosVisit]) {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
-				AnnaCall(&LogicManager::CONS_Anna_DoBlockSeqOtis, "112J", 5, 0x39, 0);
-			} else {
-			LABEL_22:
-				if (_gameTime >= 2047500) {
-				LABEL_28:
-					getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-				} else {
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
-					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3142A", 0, 0, 0);
-				}
-			}
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterAnna).characterPosition.location = 1;
-				startCycOtis(kCharacterAnna, "112B");
-				releaseView(kCharacterAnna, kCarRestaurant, 57);
-				send(kCharacterAnna, kCharacterWaiter2, 219377792, 0);
-				break;
-			case 2:
-				send(kCharacterAnna, kCharacterAugust, 122288808, 0);
-				CONS_Anna_ReturnComp3(0, 0, 0, 0);
-				break;
-			case 3:
-				startCycOtis(kCharacterAnna, "112D");
-				goto LABEL_22;
-			case 4:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
-				AnnaCall(&LogicManager::CONS_Anna_DoWait, 1800, 0, 0, 0);
-				break;
-			case 5:
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3007", 0, 0, 0);
-				break;
-			case 6:
-				goto LABEL_28;
-			default:
-				return;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+			if (rcClear()) {
+				playDialog(kCharacterAnna, "Aug3008", -1, 0);
+				getCharacter(kCharacterAnna).characterPosition.location = 0;
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+				AnnaCall(&LogicManager::CONS_Anna_DoComplexSeqOtis, "112E1", "112E2", 2, 0);
 			}
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		playDialog(kCharacterAnna, "Ann3142", -1, 30);
-		blockView(1, 5, 57);
+		blockView(kCharacterCath, kCarRestaurant, 57);
 		startSeqOtis(kCharacterAnna, "112A");
+
 		if (inDiningRoom(kCharacterCath))
 			advanceFrame(kCharacterAnna);
+
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_FinishSeqOtis, 0, 0, 0, 0);
-	} else if (msg->action == 0 && getCharacterCurrentParams(kCharacterAnna)[0]) {
-		if (rcClear()) {
-			playDialog(kCharacterAnna, "Aug3008", -1, 0);
-			getCharacter(kCharacterAnna).characterPosition.location = 0;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-			AnnaCall(&LogicManager::CONS_Anna_DoComplexSeqOtis, "112E1", "112E2", 2, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterAnna).characterPosition.location = 1;
+			startCycOtis(kCharacterAnna, "112B");
+			releaseView(kCharacterAnna, kCarRestaurant, 57);
+			send(kCharacterAnna, kCharacterWaiter2, 219377792, 0);
+			break;
+		case 2:
+			send(kCharacterAnna, kCharacterAugust, 122288808, 0);
+			CONS_Anna_ReturnComp3(0, 0, 0, 0);
+			break;
+		case 3:
+			startCycOtis(kCharacterAnna, "112D");
+
+			if (_gameTime >= 2047500) {
+				getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			} else {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3142A", 0, 0, 0);
+			}
+
+			break;
+		case 4:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
+			AnnaCall(&LogicManager::CONS_Anna_DoWait, 1800, 0, 0, 0);
+			break;
+		case 5:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3007", 0, 0, 0);
+			break;
+		case 6:
+			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 101169422:
+		if (_gameEvents[kEventKronosVisit]) {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+			AnnaCall(&LogicManager::CONS_Anna_DoBlockSeqOtis, "112J", 5, 0x39, 0);
+		} else {
+			if (_gameTime >= 2047500) {
+				getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			} else {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann3142A", 0, 0, 0);
+			}
+		}
+
+		break;
+	case 122288808:
+		startCycOtis(kCharacterAnna, "112D");
+		send(kCharacterAnna, kCharacterKronos, 157159392, 0);
+		break;
+	case 122358304:
+		startCycOtis(kCharacterAnna, "BLANK");
+		break;
+	
+	default:
+		break;
 	}
 }
 
@@ -2551,29 +2944,38 @@ void LogicManager::CONS_Anna_ReturnComp3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_ReturnComp3(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterAnna, 37);
 		getCharacter(kCharacterAnna).characterPosition.position = 4070;
 		getCharacter(kCharacterAnna).characterPosition.location = 1;
 		endGraphics(kCharacterAnna);
 		CONS_Anna_Dressing(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoWalk, 4, 4070, 0, 0);
-	} else if (msg->action == 18 && getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-		startSeqOtis(kCharacterAnna, "688Af");
-		blockAtDoor(kCharacterAnna, 37);
-		getCharacter(kCharacterAnna).characterPosition.location = 1;
-		if (inComp(kCharacterCath, kCarRedSleeping, 4070) || inComp(kCharacterCath, kCarRedSleeping, 4455)) {
-			if (isNight()) {
-				playNIS(kEventCathTurningNight);
-			} else {
-				playNIS(kEventCathTurningDay);
+		break;
+	case 18:
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
+			startSeqOtis(kCharacterAnna, "688Af");
+			blockAtDoor(kCharacterAnna, 37);
+			getCharacter(kCharacterAnna).characterPosition.location = 1;
+			if (inComp(kCharacterCath, kCarRedSleeping, 4070) || inComp(kCharacterCath, kCarRedSleeping, 4455)) {
+				if (isNight()) {
+					playNIS(kEventCathTurningNight);
+				} else {
+					playNIS(kEventCathTurningDay);
+				}
+
+				playDialog(0, "BUMP", -1, 0);
+				bumpCathRDoor(37);
 			}
-			
-			playDialog(0, "BUMP", -1, 0);
-			bumpCathRDoor(37);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2592,54 +2994,69 @@ void LogicManager::HAND_Anna_Dressing(HAND_PARAMS) {
 
 	switch (msg->action) {
 	case 0:
-		if (!_gameProgress[kProgressField48] || getCharacterCurrentParams(kCharacterAnna)[4] == 0x7FFFFFFF || !_gameTime)
-			goto LABEL_13;
-
-		if (_gameTime > 2065500)
-			goto LABEL_11;
-
-		if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterAnna)[4]) {
-			getCharacterCurrentParams(kCharacterAnna)[4] = _gameTime + 150;
-			if (_gameTime == -150)
-				goto LABEL_12;
-		}
-		if (getCharacterCurrentParams(kCharacterAnna)[4] < _gameTime) {
-		LABEL_11:
-			getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
-		LABEL_12:
-			CONS_Anna_GiveMaxToCond2(0, 0, 0, 0);
-			return;
-		}
-	LABEL_13:
-		if (!getCharacterCurrentParams(kCharacterAnna)[2])
-			goto LABEL_21;
-
-		if (!getCharacterCurrentParams(kCharacterAnna)[5]) {
-			getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 9000;
-			if (_gameTime == -9000)
-				goto LABEL_18;
-		}
-
-		if (getCharacterCurrentParams(kCharacterAnna)[5] < _gameTime) {
-			getCharacterCurrentParams(kCharacterAnna)[5] = 0x7FFFFFFF;
-		LABEL_18:
-			tmp = getCharacterCurrentParams(kCharacterAnna)[3] == 0;
-
-			getCharacterCurrentParams(kCharacterAnna)[3] = tmp ? 1 : 0;
-
-			if (!tmp) {
-				startCycOtis(kCharacterAnna, "417B");
-			} else {
-				startCycOtis(kCharacterAnna, "417A");
+		if (_gameProgress[kProgressField48] != 0 && getCharacterCurrentParams(kCharacterAnna)[4] != 0x7FFFFFFF && _gameTime != 0) {
+			if (_gameTime > 2065500) {
+				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
+				CONS_Anna_GiveMaxToCond2(0, 0, 0, 0);
+				break;
 			}
 
-			getCharacterCurrentParams(kCharacterAnna)[5] = 0;
+			if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterAnna)[4]) {
+				getCharacterCurrentParams(kCharacterAnna)[4] = _gameTime + 150;
+				if (_gameTime == -150) {
+					CONS_Anna_GiveMaxToCond2(0, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterAnna)[4] < _gameTime) {
+				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
+				CONS_Anna_GiveMaxToCond2(0, 0, 0, 0);
+				break;
+			}
 		}
-	LABEL_21:
+
+		if (getCharacterCurrentParams(kCharacterAnna)[2] != 0) {
+			bool skip = false; // Horrible way to unroll a goto...
+
+			if (!getCharacterCurrentParams(kCharacterAnna)[5]) {
+				getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 9000;
+				if (_gameTime == -9000) {
+					skip = true;
+					tmp = getCharacterCurrentParams(kCharacterAnna)[3] == 0;
+
+					getCharacterCurrentParams(kCharacterAnna)[3] = tmp ? 1 : 0;
+
+					if (!tmp) {
+						startCycOtis(kCharacterAnna, "417B");
+					} else {
+						startCycOtis(kCharacterAnna, "417A");
+					}
+
+					getCharacterCurrentParams(kCharacterAnna)[5] = 0;
+				}
+			}
+
+			if (!skip && getCharacterCurrentParams(kCharacterAnna)[5] < _gameTime) {
+				getCharacterCurrentParams(kCharacterAnna)[5] = 0x7FFFFFFF;
+				tmp = getCharacterCurrentParams(kCharacterAnna)[3] == 0;
+
+				getCharacterCurrentParams(kCharacterAnna)[3] = tmp ? 1 : 0;
+
+				if (!tmp) {
+					startCycOtis(kCharacterAnna, "417B");
+				} else {
+					startCycOtis(kCharacterAnna, "417A");
+				}
+
+				getCharacterCurrentParams(kCharacterAnna)[5] = 0;
+			}
+		}
+
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
 			}
@@ -2653,17 +3070,16 @@ void LogicManager::HAND_Anna_Dressing(HAND_PARAMS) {
 		} else {
 			getCharacterCurrentParams(kCharacterAnna)[6] = 0;
 		}
+
 		break;
 	case 8:
-		goto LABEL_50;
 	case 9:
-		if (inComp(kCharacterMax, kCarRedSleeping, 4070)) {
+		if (msg->action == 9 && inComp(kCharacterMax, kCarRedSleeping, 4070)) {
 			setDoor(37, kCharacterAnna, 1, 0, 0);
 			setDoor(53, kCharacterAnna, 1, 0, 0);
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
 		} else {
-		LABEL_50:
 			if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 				setDoor(37, kCharacterAnna, 1, 0, 0);
 				setDoor(53, kCharacterAnna, 1, 0, 0);
@@ -2700,13 +3116,14 @@ void LogicManager::HAND_Anna_Dressing(HAND_PARAMS) {
 				}
 			}
 		}
-		return;
+
+		break;
 	case 12:
 		send(kCharacterAnna, kCharacterMax, 101687594, 0);
 		setDoor(37, kCharacterAnna, 1, 10, 9);
 		setDoor(53, kCharacterAnna, 1, 10, 9);
 		getCharacter(kCharacterAnna).clothes = 2;
-		return;
+		break;
 	case 17:
 		if (getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[0]) {
 			setDoor(37, kCharacterAnna, 1, 10, 9);
@@ -2721,17 +3138,20 @@ void LogicManager::HAND_Anna_Dressing(HAND_PARAMS) {
 			AnnaCall(&LogicManager::CONS_Anna_DoSeqOtis, "416", 0, 0, 0);
 		}
 
-		return;
+		break;
 	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
-			if (whoRunningDialog(kCharacterMax))
-				goto LABEL_49;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+			if (whoRunningDialog(kCharacterMax)) {
+				setDoor(37, kCharacterAnna, 1, 10, 9);
+				setDoor(53, kCharacterAnna, 1, 10, 9);
+			} else {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+			}
+
 			break;
 		case 2:
-		LABEL_49:
 			setDoor(37, kCharacterAnna, 1, 10, 9);
 			setDoor(53, kCharacterAnna, 1, 10, 9);
 			break;
@@ -2752,20 +3172,23 @@ void LogicManager::HAND_Anna_Dressing(HAND_PARAMS) {
 				setDoor(37, kCharacterAnna, 1, 0, 9);
 				setDoor(53, kCharacterAnna, 1, 0, 9);
 			}
+
 			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
 			break;
 		case 9:
 			if (checkCathDir(kCarRedSleeping, 60))
 				bumpCath(kCarRedSleeping, 78, 255);
+
 			startCycOtis(kCharacterAnna, "417B");
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -2780,107 +3203,80 @@ void LogicManager::CONS_Anna_GiveMaxToCond2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GiveMaxToCond2(HAND_PARAMS) {
-	bool tmp;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[2] != 0) {
+			if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterAnna)[4]) {
+				getCharacterCurrentParams(kCharacterAnna)[4] = 1;
+				CONS_Anna_GoConcert(0, 0, 0, 0);
+				break;
+			}
 
-	if (msg->action > 8) {
-		if (msg->action > 12) {
-			if (msg->action > 123733488) {
-				if (msg->action == 156049968) {
-					startCycOtis(kCharacterAnna, "629DF");
-					softBlockAtDoor(kCharacterAnna, 37);
-				} else if (msg->action == 253868128) {
-					setDoor(53, kCharacterAnna, 1, 0, 0);
-				}
-			} else {
-				switch (msg->action) {
-				case 123733488:
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 9;
-					AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "629Ef", 37, 0, 0);
-					break;
-				case 17:
-					if (getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[0]) {
-						setDoor(37, kCharacterAnna, 1, 10, 9);
-						setDoor(53, kCharacterAnna, 1, 10, 9);
-						getCharacterCurrentParams(kCharacterAnna)[1] = 0;
-						getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-					}
+			if (getCharacterCurrentParams(kCharacterAnna)[5] || (getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 9000, _gameTime != -9000)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[5] >= _gameTime) {
+					if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+						if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+								break;
 
-					break;
-				case 18:
-					switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-					case 1:
-						if (whoRunningDialog(kCharacterMax))
-							goto LABEL_54;
-						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-						AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
-						break;
-					case 2:
-					LABEL_54:
-						setDoor(37, kCharacterAnna, 1, 10, 9);
-						setDoor(53, kCharacterAnna, 1, 10, 9);
-						break;
-					case 3:
-					case 4:
-						getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
-						AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
-						break;
-					case 5:
-						setDoor(37, kCharacterAnna, 1, 14, 0);
-						setDoor(53, kCharacterAnna, 1, 14, 0);
-						getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-						break;
-					case 6:
-					case 7:
-					case 8:
-						if (inComp(kCharacterMax, kCarRedSleeping, 4070)) {
-							setDoor(37, kCharacterAnna, 1, 0, 9);
-							setDoor(53, kCharacterAnna, 1, 0, 9);
+							getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
 						}
 
 						getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 						getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-						break;
-					case 9:
-						softReleaseAtDoor(kCharacterAnna, 37);
-						endGraphics(kCharacterAnna);
-						getCharacter(kCharacterAnna).characterPosition.location = kCharacterAnna;
-						getCharacter(kCharacterAnna).characterPosition.position = 4070;
-						getCharacterCurrentParams(kCharacterAnna)[2] = kCharacterAnna;
-						setDoor(45, kCharacterCath, 0, 255, 255);
-						setDoor(53, kCharacterAnna, kCharacterAnna, 10, 9);
 
-						if (checkCathDir(kCarRedSleeping, 78))
-							bumpCath(kCarRedSleeping, 49, 255);
-
-						startCycOtis(kCharacterAnna, "417B");
-						break;
-					default:
-						return;
+						setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+						setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+						getCharacterCurrentParams(kCharacterAnna)[6] = 0;
+					} else {
+						getCharacterCurrentParams(kCharacterAnna)[6] = 0;
 					}
+
 					break;
 				}
-			}
-			return;
-		}
-		if (msg->action == 12) {
-			setDoor(45, kCharacterCath, 1, 255, 255);
-			if (checkCathDir(kCarRedSleeping, 60))
-				bumpCath(kCarRedSleeping, 78, 255);
 
-			send(kCharacterAnna, kCharacterCond2, 189750912, 0);
-			return;
+				getCharacterCurrentParams(kCharacterAnna)[5] = 0x7FFFFFFF;
+			}
+
+			bool tmp = getCharacterCurrentParams(kCharacterAnna)[3] == 0;
+			getCharacterCurrentParams(kCharacterAnna)[3] = tmp ? 1 : 0;
+
+			if (!tmp) {
+				startCycOtis(kCharacterAnna, "417B");
+			} else {
+				startCycOtis(kCharacterAnna, "417A");
+			}
+
+			getCharacterCurrentParams(kCharacterAnna)[5] = 0;
 		}
-		if (msg->action != 9)
-			return;
-		if (inComp(kCharacterMax, kCarRedSleeping, 4070)) {
+
+		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
+			}
+
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+
+			setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+			setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+			getCharacterCurrentParams(kCharacterAnna)[6] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterAnna)[6] = 0;
+		}
+
+		break;
+	case 8:
+	case 9:
+		if (msg->action == 9 && inComp(kCharacterMax, kCarRedSleeping, 4070)) {
 			setDoor(37, kCharacterAnna, 1, 0, 0);
 			setDoor(53, kCharacterAnna, 1, 0, 0);
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
-			return;
-		}
-	LABEL_58:
-		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+		} else if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			setDoor(37, kCharacterAnna, 1, 0, 0);
 			setDoor(53, kCharacterAnna, 1, 0, 0);
 			if (msg->param.intParam == 53) {
@@ -2897,7 +3293,7 @@ void LogicManager::HAND_Anna_GiveMaxToCond2(HAND_PARAMS) {
 						AnnaCall(&LogicManager::CONS_Anna_DoDialog, "CAT1506", 0, 0, 0);
 					}
 				}
-				
+
 			} else {
 				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 8;
 				AnnaCall(&LogicManager::CONS_Anna_DoDialog, getCathSorryDialog(), 0, 0, 0);
@@ -2914,57 +3310,93 @@ void LogicManager::HAND_Anna_GiveMaxToCond2(HAND_PARAMS) {
 			}
 		}
 
-		return;
-	}
+		break;
+	case 12:
+		setDoor(45, kCharacterCath, 1, 255, 255);
+		if (checkCathDir(kCarRedSleeping, 60))
+			bumpCath(kCarRedSleeping, 78, 255);
 
-	if (msg->action == 8)
-		goto LABEL_58;
+		send(kCharacterAnna, kCharacterCond2, 189750912, 0);
+		break;
 
-	if (msg->action)
-		return;
-
-	if (!getCharacterCurrentParams(kCharacterAnna)[2])
-		goto LABEL_28;
-
-	if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterAnna)[4]) {
-		getCharacterCurrentParams(kCharacterAnna)[4] = 1;
-		CONS_Anna_GoConcert(0, 0, 0, 0);
-		return;
-	}
-
-	if (getCharacterCurrentParams(kCharacterAnna)[5] || (getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 9000, _gameTime != -9000)) {
-		if (getCharacterCurrentParams(kCharacterAnna)[5] >= _gameTime)
-			goto LABEL_28;
-		getCharacterCurrentParams(kCharacterAnna)[5] = 0x7FFFFFFF;
-	}
-
-	tmp = getCharacterCurrentParams(kCharacterAnna)[3] == 0;
-	getCharacterCurrentParams(kCharacterAnna)[3] = tmp ? 1 : 0;
-
-	if (!tmp) {
-		startCycOtis(kCharacterAnna, "417B");
-	} else {
-		startCycOtis(kCharacterAnna, "417A");
-	}
-
-	getCharacterCurrentParams(kCharacterAnna)[5] = 0;
-LABEL_28:
-	if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-		if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
-				return;
-
-			getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[0]) {
+			setDoor(37, kCharacterAnna, 1, 10, 9);
+			setDoor(53, kCharacterAnna, 1, 10, 9);
+			getCharacterCurrentParams(kCharacterAnna)[1] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 		}
 
-		getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-		getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+			if (whoRunningDialog(kCharacterMax)) {
+				setDoor(37, kCharacterAnna, 1, 10, 9);
+				setDoor(53, kCharacterAnna, 1, 10, 9);
+			} else {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "MAX1120", 0, 0, 0);
+			}
 
-		setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
-		setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
-		getCharacterCurrentParams(kCharacterAnna)[6] = 0;
-	} else {
-		getCharacterCurrentParams(kCharacterAnna)[6] = 0;
+			break;
+		case 2:
+			setDoor(37, kCharacterAnna, 1, 10, 9);
+			setDoor(53, kCharacterAnna, 1, 10, 9);
+			break;
+		case 3:
+		case 4:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
+			break;
+		case 5:
+			setDoor(37, kCharacterAnna, 1, 14, 0);
+			setDoor(53, kCharacterAnna, 1, 14, 0);
+			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			break;
+		case 6:
+		case 7:
+		case 8:
+			if (inComp(kCharacterMax, kCarRedSleeping, 4070)) {
+				setDoor(37, kCharacterAnna, 1, 0, 9);
+				setDoor(53, kCharacterAnna, 1, 0, 9);
+			}
+
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+			break;
+		case 9:
+			softReleaseAtDoor(kCharacterAnna, 37);
+			endGraphics(kCharacterAnna);
+			getCharacter(kCharacterAnna).characterPosition.location = kCharacterAnna;
+			getCharacter(kCharacterAnna).characterPosition.position = 4070;
+			getCharacterCurrentParams(kCharacterAnna)[2] = kCharacterAnna;
+			setDoor(45, kCharacterCath, 0, 255, 255);
+			setDoor(53, kCharacterAnna, kCharacterAnna, 10, 9);
+
+			if (checkCathDir(kCarRedSleeping, 78))
+				bumpCath(kCarRedSleeping, 49, 255);
+
+			startCycOtis(kCharacterAnna, "417B");
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 123733488:
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 9;
+		AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "629Ef", 37, 0, 0);
+		break;
+	case 156049968:
+		startCycOtis(kCharacterAnna, "629DF");
+		softBlockAtDoor(kCharacterAnna, 37);
+		break;
+	case 253868128:
+		setDoor(53, kCharacterAnna, 1, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2979,7 +3411,8 @@ void LogicManager::CONS_Anna_GoConcert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GoConcert(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(45, kCharacterCath, 2, 255, 255);
 		if (checkCathDir(kCarRedSleeping, 78))
 			bumpCath(kCarRedSleeping, 49, 255);
@@ -2989,7 +3422,8 @@ void LogicManager::HAND_Anna_GoConcert(HAND_PARAMS) {
 		dropItem(kItemKey, 1);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_ExitComp, 1, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			setDoor(37, kCharacterCath, 1, 10, 9);
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
@@ -2997,6 +3431,10 @@ void LogicManager::HAND_Anna_GoConcert(HAND_PARAMS) {
 		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
 			CONS_Anna_Concert(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3011,13 +3449,18 @@ void LogicManager::CONS_Anna_Concert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Concert(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterAnna);
 		getCharacter(kCharacterAnna).characterPosition.car = kCarKronos;
 		getCharacter(kCharacterAnna).characterPosition.position = 6000;
 		getCharacter(kCharacterAnna).characterPosition.location = 1;
-	} else if (msg->action == 191668032) {
+		break;
+	case 191668032:
 		COND_Anna_LeaveConcert(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3032,27 +3475,15 @@ void LogicManager::COND_Anna_LeaveConcert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_LeaveConcert(HAND_PARAMS) {
-	if (msg->action > 18) {
-		if (msg->action == 123712592) {
-			startCycOtis(kCharacterAnna, "628Af");
-		LABEL_16:
-			if (whoRunningDialog(kCharacterAugust)) {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
-				AnnaCall(&LogicManager::CONS_Anna_DoWait, 75, 0, 0, 0);
-			} else {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
-				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3009", 0, 0, 0);
-			}
-		} else if (msg->action == 192063264) {
-			if (inComp(kCharacterCath, kCarRedSleeping, 4070) || inComp(kCharacterCath, kCarRedSleeping, 4455)) {
-				softReleaseAtDoor(kCharacterAnna, 37);
-				CONS_Anna_LeaveConcertCathInComp(0, 0, 0, 0);
-			} else {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
-				AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "625Ff", 37, 0, 0);
-			}
-		}
-	} else if (msg->action == 18) {
+	switch (msg->action) {
+	case 12:
+		getCharacter(kCharacterAnna).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterAnna).characterPosition.position = 850;
+		getCharacter(kCharacterAnna).characterPosition.location = 0;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+		AnnaCall(&LogicManager::CONS_Anna_DoWalk, 3, 5790, 0, 0);
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			send(kCharacterAnna, kCharacterAugust, 191668032, 0);
@@ -3071,7 +3502,15 @@ void LogicManager::HAND_Anna_LeaveConcert(HAND_PARAMS) {
 			send(kCharacterAnna, kCharacterAugust, 169032608, 0);
 			break;
 		case 4:
-			goto LABEL_16;
+			if (whoRunningDialog(kCharacterAugust)) {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+				AnnaCall(&LogicManager::CONS_Anna_DoWait, 75, 0, 0, 0);
+			} else {
+				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
+				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3009", 0, 0, 0);
+			}
+
+			break;
 		case 5:
 			playDialog(kCharacterAnna, "Aug3009A", -1, 0);
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
@@ -3083,14 +3522,34 @@ void LogicManager::HAND_Anna_LeaveConcert(HAND_PARAMS) {
 			CONS_Anna_AfterConcert(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
-	} else if (msg->action == 12) {
-		getCharacter(kCharacterAnna).characterPosition.car = kCarGreenSleeping;
-		getCharacter(kCharacterAnna).characterPosition.position = 850;
-		getCharacter(kCharacterAnna).characterPosition.location = 0;
-		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-		AnnaCall(&LogicManager::CONS_Anna_DoWalk, 3, 5790, 0, 0);
+
+		break;
+	case 123712592:
+		startCycOtis(kCharacterAnna, "628Af");
+
+		if (whoRunningDialog(kCharacterAugust)) {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+			AnnaCall(&LogicManager::CONS_Anna_DoWait, 75, 0, 0, 0);
+		} else {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Aug3009", 0, 0, 0);
+		}
+
+		break;
+	case 192063264:
+		if (inComp(kCharacterCath, kCarRedSleeping, 4070) || inComp(kCharacterCath, kCarRedSleeping, 4455)) {
+			softReleaseAtDoor(kCharacterAnna, 37);
+			CONS_Anna_LeaveConcertCathInComp(0, 0, 0, 0);
+		} else {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+			AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "625Ff", 37, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3105,16 +3564,24 @@ void LogicManager::CONS_Anna_LeaveConcertCathInComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_LeaveConcertCathInComp(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaSearchingCompartment, 0, 0);
-	} else if (msg->action == 18 && getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-		playNIS(kEventAnnaSearchingCompartment);
-		endGraphics(kCharacterAnna);
-		bumpCath(kCarRedSleeping, 8, 255);
-		playDialog(kCharacterAnna, "lib015", -1, 0);
-		send(kCharacterAnna, kCharacterAugust, 122288808, 0);
-		CONS_Anna_AfterConcert(0, 0, 0, 0);
+		break;
+	case 18:
+		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
+			playNIS(kEventAnnaSearchingCompartment);
+			endGraphics(kCharacterAnna);
+			bumpCath(kCarRedSleeping, 8, 255);
+			playDialog(kCharacterAnna, "lib015", -1, 0);
+			send(kCharacterAnna, kCharacterAugust, 122288808, 0);
+			CONS_Anna_AfterConcert(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3129,72 +3596,55 @@ void LogicManager::CONS_Anna_AfterConcert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_AfterConcert(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			if (msg->action > 156622016) {
-				if (msg->action == 236241630) {
-					setDoor(37, 1, 1, 0, 0);
-					setDoor(53, 1, 1, 0, 0);
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 7;
-					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann1016A", 0, 0, 0);
-				} else if (msg->action == 236517970) {
-					getCharacterCurrentParams(kCharacterAnna)[2] = 1;
-					setDoor(37, 1, 1, 10, 9);
-					setDoor(53, 1, 1, 10, 9);
-				}
-			} else if (msg->action == 156622016) {
-				if (getCharacterCurrentParams(kCharacterAnna)[2]) {
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 8;
-					AnnaCall(&LogicManager::CONS_Anna_GiveMaxBack, 0, 0, 0, 0);
-				}
-			} else if (msg->action == 18) {
-				switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-				case 1:
-				case 2:
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
-					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
-					break;
-				case 3:
-					setDoor(37, kCharacterAnna, 1, 14, 0);
-					setDoor(53, kCharacterAnna, 1, 14, 0);
-					getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-					break;
-				case 4:
-				case 5:
-				case 6:
-					getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-					getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-					break;
-				case 7:
-					send(kCharacterAnna, kCharacterTatiana, 100906246, 0);
-					break;
-				default:
-					return;
-				}
+	switch (msg->action) {
+	case 0:
+		if (cathHasItem(kItemKey) && getCharacterCurrentParams(kCharacterAnna)[3] != 0x7FFFFFFF && _gameTime > 2218500) {
+			if (_gameTime > 2248200) {
+				getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+				CONS_Anna_GoBagg(0, 0, 0, 0);
+				break;
 			}
-		} else if (msg->action == 17) {
-			if (getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[0]) {
-				setDoor(37, kCharacterAnna, 1, 10, 9);
-				setDoor(53, kCharacterAnna, 1, 10, 9);
-				getCharacterCurrentParams(kCharacterAnna)[1] = 0;
-				getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-			}
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterAnna).characterPosition.position = 4070;
-			getCharacter(kCharacterAnna).characterPosition.location = 1;
-			endGraphics(kCharacterAnna);
-			setDoor(107, kCharacterCath, 2, 255, 255);
-			setDoor(45, kCharacterCath, 1, 255, 255);
-			setDoor(37, kCharacterAnna, 1, 10, 9);
-			setDoor(53, kCharacterAnna, 1, 10, 9);
 
-			if (checkCathDir(kCarRedSleeping, 60))
-				bumpCath(kCarRedSleeping, 78, 255);
+			if (!getCharacterCurrentParams(kCharacterAnna)[2] || !cathInCorridor(kCarRedSleeping) && !inSalon(kCharacterCath) && !inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
+				getCharacterCurrentParams(kCharacterAnna)[3] = _gameTime;
+				if (!getCharacterCurrentParams(kCharacterAnna)[3]) {
+					CONS_Anna_GoBagg(0, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterAnna)[3] < _gameTime) {
+				getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+				CONS_Anna_GoBagg(0, 0, 0, 0);
+				break;
+			}
 		}
-	} else if (msg->action >= 8) {
+
+		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
+			}
+
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+
+			setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+			setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+		}
+
+		break;
+	case 8:
+	case 9:
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			setDoor(37, kCharacterAnna, 1, 0, 0);
 			setDoor(53, kCharacterAnna, 1, 0, 0);
+
 			if (msg->param.intParam == 53) {
 				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
 				AnnaCall(&LogicManager::CONS_Anna_DoDialog, getCathWCDialog(), 0, 0, 0);
@@ -3225,45 +3675,76 @@ void LogicManager::HAND_Anna_AfterConcert(HAND_PARAMS) {
 				AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB013", 0, 0, 0);
 			}
 		}
-	} else {
-		if (msg->action)
-			return;
 
-		if (cathHasItem(kItemKey) && getCharacterCurrentParams(kCharacterAnna)[3] != 0x7FFFFFFF && _gameTime > 2218500) {
-			if (_gameTime > 2248200)
-				goto LABEL_27;
-			if (!getCharacterCurrentParams(kCharacterAnna)[2] || !cathInCorridor(kCarRedSleeping) && !inSalon(kCharacterCath) && !inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
-				getCharacterCurrentParams(kCharacterAnna)[3] = _gameTime;
-				if (!getCharacterCurrentParams(kCharacterAnna)[3])
-					goto LABEL_28;
-			}
+		break;
+	case 12:
+		getCharacter(kCharacterAnna).characterPosition.position = 4070;
+		getCharacter(kCharacterAnna).characterPosition.location = 1;
+		endGraphics(kCharacterAnna);
+		setDoor(107, kCharacterCath, 2, 255, 255);
+		setDoor(45, kCharacterCath, 1, 255, 255);
+		setDoor(37, kCharacterAnna, 1, 10, 9);
+		setDoor(53, kCharacterAnna, 1, 10, 9);
 
-			if (getCharacterCurrentParams(kCharacterAnna)[3] < _gameTime) {
-			LABEL_27:
-				getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
-			LABEL_28:
-				CONS_Anna_GoBagg(0, 0, 0, 0);
-				return;
-			}
+		if (checkCathDir(kCarRedSleeping, 60))
+			bumpCath(kCarRedSleeping, 78, 255);
+
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[0]) {
+			setDoor(37, kCharacterAnna, 1, 10, 9);
+			setDoor(53, kCharacterAnna, 1, 10, 9);
+			getCharacterCurrentParams(kCharacterAnna)[1] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 		}
 
-		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
-					return;
-
-				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
-			}
-
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+		case 2:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
+			break;
+		case 3:
+			setDoor(37, kCharacterAnna, 1, 14, 0);
+			setDoor(53, kCharacterAnna, 1, 14, 0);
+			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			break;
+		case 4:
+		case 5:
+		case 6:
 			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-
-			setDoor(37, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
-			setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
-			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+			break;
+		case 7:
+			send(kCharacterAnna, kCharacterTatiana, 100906246, 0);
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 156622016:
+		if (getCharacterCurrentParams(kCharacterAnna)[2]) {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 8;
+			AnnaCall(&LogicManager::CONS_Anna_GiveMaxBack, 0, 0, 0, 0);
+		}
+
+		break;
+	case 236241630:
+		setDoor(37, 1, 1, 0, 0);
+		setDoor(53, 1, 1, 0, 0);
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 7;
+		AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann1016A", 0, 0, 0);
+		break;
+	case 236517970:
+		getCharacterCurrentParams(kCharacterAnna)[2] = 1;
+		setDoor(37, 1, 1, 10, 9);
+		setDoor(53, 1, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3310,11 +3791,16 @@ void LogicManager::HAND_Anna_GiveMaxBack(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
 			break;
+		default:
+			break;
 		}
+
 		break;
 	case 156049968:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
 		AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "629EF", 37, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -3330,11 +3816,13 @@ void LogicManager::CONS_Anna_GoBagg(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GoBagg(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		_gameTimeTicksDelta = 3;
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 1, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			setDoor(53, kCharacterCath, 1, 10, 9);
@@ -3358,8 +3846,10 @@ void LogicManager::HAND_Anna_GoBagg(HAND_PARAMS) {
 			break;
 		case 5:
 			startSeqOtis(kCharacterAnna, "802UD");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterAnna);
+
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 6;
 			AnnaCall(&LogicManager::CONS_Anna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -3368,8 +3858,12 @@ void LogicManager::HAND_Anna_GoBagg(HAND_PARAMS) {
 			CONS_Anna_InBagg(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3384,17 +3878,24 @@ void LogicManager::CONS_Anna_InBagg(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_InBagg(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterAnna).characterPosition.car = kCarBaggage;
-			_gameProgress[kProgressField54] = 1;
-		} else if (msg->action == 235856512) {
-			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[0] && _gameTime > 2259000 && !getCharacterCurrentParams(kCharacterAnna)[1]) {
+			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+			send(kCharacterAnna, kCharacterVesna, 189299008, 0);
+			CONS_Anna_DeadBagg(0, 0, 0, 0);
 		}
-	} else if (getCharacterCurrentParams(kCharacterAnna)[0] && _gameTime > 2259000 && !getCharacterCurrentParams(kCharacterAnna)[1]) {
-		getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-		send(kCharacterAnna, kCharacterVesna, 189299008, 0);
-		CONS_Anna_DeadBagg(0, 0, 0, 0);
+
+		break;
+	case 12:
+		getCharacter(kCharacterAnna).characterPosition.car = kCarBaggage;
+		_gameProgress[kProgressField54] = 1;
+		break;
+	case 235856512:
+		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3416,7 +3917,7 @@ void LogicManager::HAND_Anna_DeadBagg(HAND_PARAMS) {
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			playNIS(kEventAnnaKilled);
-			endGame(1, 2250000, 58, 1);
+			endGame(1, 2250000, 58, true);
 		}
 
 		break;
@@ -3443,11 +3944,13 @@ void LogicManager::CONS_Anna_BaggageFight(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_BaggageFight(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterAnna);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaBaggageArgument, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
 			playNIS(kEventAnnaBaggageArgument);
@@ -3475,6 +3978,10 @@ void LogicManager::HAND_Anna_BaggageFight(HAND_PARAMS) {
 		default:
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3489,7 +3996,8 @@ void LogicManager::CONS_Anna_PrepareVienna(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_PrepareVienna(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterAnna).characterPosition.position = 4070;
 		getCharacter(kCharacterAnna).characterPosition.location = 1;
@@ -3498,6 +4006,9 @@ void LogicManager::HAND_Anna_PrepareVienna(HAND_PARAMS) {
 		setDoor(45, kCharacterCath, 1, 255, 255);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_CompLogic, 15803100, "NONE", 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3512,17 +4023,20 @@ void LogicManager::CONS_Anna_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterAnna);
-			getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterAnna).characterPosition.position = 4070;
-			getCharacter(kCharacterAnna).characterPosition.location = 1;
-			getCharacter(kCharacterAnna).clothes = 2;
-			getCharacter(kCharacterAnna).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Anna_Reading(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterAnna);
+		getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterAnna).characterPosition.position = 4070;
+		getCharacter(kCharacterAnna).characterPosition.location = 1;
+		getCharacter(kCharacterAnna).clothes = 2;
+		getCharacter(kCharacterAnna).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3537,61 +4051,65 @@ void LogicManager::CONS_Anna_Reading(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Reading(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			switch (msg->action) {
-			case 18:
-				switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-				case 1:
-					playNIS(kEventAnnaConversation_34);
-					playDialog(0, "LIB015", -1, 0);
-					bumpCath(kCarRedSleeping, 8, 255);
-					CONS_Anna_Sulking(0, 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (checkCathDir(kCarRedSleeping, 46)) {
+			if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 30, _currentGameSessionTicks != -30)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks) {
+					if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+						if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
+								break;
+
+							getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
+						}
+
+						getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+						getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+
+						setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+						getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+					} else {
+						getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+					}
+
 					break;
-				case 2:
-				case 3:
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
-					AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
-					break;
-				case 4:
-					setDoor(53, kCharacterAnna, 1, 14, 0);
-					getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-					break;
-				case 5:
-					getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-					getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-					break;
-				default:
-					return;
 				}
-				break;
-			case 191001984:
-				setDoor(37, kCharacterCath, 0, 10, 9);
-				getCharacter(kCharacterAnna).inventoryItem = 0;
-				CONS_Anna_GoSalon4(0, 0, 0, 0);
-				break;
-			case 219971920:
-				getCharacterCurrentParams(kCharacterAnna)[2] = 1;
-				getCharacter(kCharacterAnna).inventoryItem = 0x80;
-				break;
+
+				getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
 			}
-		} else if (msg->action == 17) {
-			if (getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[0]) {
-				setDoor(53, kCharacterAnna, 1, 10, 9);
-				getCharacterCurrentParams(kCharacterAnna)[1] = 0;
-				getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-			}
-		} else if (msg->action == 12) {
-			setDoor(37, kCharacterCath, 2, 0, 0);
-			setDoor(45, kCharacterCath, 1, 255, 255);
-			setDoor(53, kCharacterAnna, 1, 10, 9);
-			startCycOtis(kCharacterAnna, "511B");
+
+			bumpCath(kCarRedSleeping, 8, 255);
 		}
 
-		return;
-	}
+		getCharacterCurrentParams(kCharacterAnna)[3] = 0;
 
-	if (msg->action >= 8) {
+		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
+			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
+			}
+
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+
+			setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+		}
+
+		break;
+	case 1:
+		getCharacter(kCharacterAnna).inventoryItem = 0;
+		getCharacter(kCharacterCath).characterPosition.location = 1;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, 34, 0, 0);
+		break;
+	case 8:
+	case 9:
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			setDoor(53, kCharacterAnna, 1, 0, 0);
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
@@ -3608,48 +4126,58 @@ void LogicManager::HAND_Anna_Reading(HAND_PARAMS) {
 			}
 		}
 
-		return;
-	}
-
-	if (msg->action) {
-		if (msg->action == 1) {
-			getCharacter(kCharacterAnna).inventoryItem = 0;
-			getCharacter(kCharacterCath).characterPosition.location = 1;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, 34, 0, 0);
+		break;
+	case 12:
+		setDoor(37, kCharacterCath, 2, 0, 0);
+		setDoor(45, kCharacterCath, 1, 255, 255);
+		setDoor(53, kCharacterAnna, 1, 10, 9);
+		startCycOtis(kCharacterAnna, "511B");
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterAnna)[1] || getCharacterCurrentParams(kCharacterAnna)[0]) {
+			setDoor(53, kCharacterAnna, 1, 10, 9);
+			getCharacterCurrentParams(kCharacterAnna)[1] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
 		}
 
-		return;
-	}
-
-	if (checkCathDir(kCarRedSleeping, 46)) {
-		if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 30, _currentGameSessionTicks != -30)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks)
-				goto LABEL_21;
-
-			getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+			playNIS(kEventAnnaConversation_34);
+			playDialog(0, "LIB015", -1, 0);
+			bumpCath(kCarRedSleeping, 8, 255);
+			CONS_Anna_Sulking(0, 0, 0, 0);
+			break;
+		case 2:
+		case 3:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
+			AnnaCall(&LogicManager::CONS_Anna_DoDialog, "ANN1016", 0, 0, 0);
+			break;
+		case 4:
+			setDoor(53, kCharacterAnna, 1, 14, 0);
+			getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+			break;
+		case 5:
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0;
+			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
+			break;
+		default:
+			break;
 		}
 
-		bumpCath(kCarRedSleeping, 8, 255);
-	}
-
-	getCharacterCurrentParams(kCharacterAnna)[3] = 0;
-LABEL_21:
-	if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-		if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
-				return;
-
-			getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
-		}
-
-		getCharacterCurrentParams(kCharacterAnna)[0] = 0;
-		getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-
-		setDoor(53, kCharacterAnna, 1, 0, !inComp(kCharacterMax, kCarRedSleeping, 4070) ? 0 : 9);
-		getCharacterCurrentParams(kCharacterAnna)[4] = 0;
-	} else {
-		getCharacterCurrentParams(kCharacterAnna)[4] = 0;
+		break;
+	case 191001984:
+		setDoor(37, kCharacterCath, 0, 10, 9);
+		getCharacter(kCharacterAnna).inventoryItem = 0;
+		CONS_Anna_GoSalon4(0, 0, 0, 0);
+		break;
+	case 219971920:
+		getCharacterCurrentParams(kCharacterAnna)[2] = 1;
+		getCharacter(kCharacterAnna).inventoryItem = 0x80;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3664,24 +4192,30 @@ void LogicManager::CONS_Anna_Sulking(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Sulking(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action != 18) {
-			if (msg->action == 191001984) {
-				setDoor(37, kCharacterCath, 0, 10, 9);
-				CONS_Anna_GoSalon4(0, 0, 0, 0);
-			} else if (msg->action == 201431954) {
-				getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-			}
+	switch (msg->action) {
+	case 0:
+		if (!getCharacterCurrentParams(kCharacterAnna)[0]) {
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+			AnnaCall(&LogicManager::CONS_Anna_CompLogic, 2511900, "NONE", 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		setDoor(37, kCharacterCath, 1, 10, 9);
 		setDoor(53, kCharacterCath, 1, 10, 9);
 		getCharacter(kCharacterAnna).characterPosition.car = 4;
 		getCharacter(kCharacterAnna).characterPosition.position = 4070;
 		getCharacter(kCharacterAnna).characterPosition.location = 1;
-	} else if (msg->action == 0 && !getCharacterCurrentParams(kCharacterAnna)[0]) {
-		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-		AnnaCall(&LogicManager::CONS_Anna_CompLogic, 2511900, "NONE", 0, 0);
+		break;
+	case 191001984:
+		setDoor(37, kCharacterCath, 0, 10, 9);
+		CONS_Anna_GoSalon4(0, 0, 0, 0);
+		break;
+	case 201431954:
+		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3696,70 +4230,12 @@ void LogicManager::CONS_Anna_GoSalon4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_GoSalon4(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action > 100969180) {
-			if (msg->action == 122288808) {
-				startCycOtis(kCharacterAnna, "127E");
-				send(kCharacterAnna, kCharacterAbbot, 203073664, 0);
-			} else if (msg->action == 122358304) {
-				startCycOtis(kCharacterAnna, "BLANK");
-			}
-		} else {
-			switch (msg->action) {
-			case 100969180:
-				endGraphics(kCharacterAnna);
-				getCharacterCurrentParams(kCharacterAnna)[0] = 1;
-				break;
-			case 17:
-				if (getCharacterCurrentParams(kCharacterAnna)[0] && checkLoc(kCharacterCath, kCarRedSleeping)) {
-					getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
-					getCharacter(kCharacterAnna).characterPosition.position = 8200;
-					getCharacter(kCharacterAnna).characterPosition.location = 0;
-					CONS_Anna_ReturnToComp4(0, 0, 0, 0);
-				}
-				break;
-			case 18:
-				switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-				case 1:
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-					AnnaCall(&LogicManager::CONS_Anna_WaitRCClear, 0, 0, 0, 0);
-					break;
-				case 2:
-					getCharacter(kCharacterAnna).characterPosition.position = 1540;
-					getCharacter(kCharacterAnna).characterPosition.location = 0;
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
-					AnnaCall(&LogicManager::CONS_Anna_DoBlockSeqOtis, "127A", 5, 56, 0);
-					break;
-				case 3:
-					getCharacter(kCharacterAnna).characterPosition.location = 1;
-					startCycOtis(kCharacterAnna, "127B");
-					send(kCharacterAnna, kCharacterWaiter2, 258136010, 0);
-					break;
-				case 4:
-					getCharacter(kCharacterAnna).characterPosition.location = 0;
-					getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
-					AnnaCall(&LogicManager::CONS_Anna_DoBlockSeqOtis, "127G", 5, 56, 0);
-					break;
-				case 5:
-					CONS_Anna_ReturnToComp4(0, 0, 0, 0);
-					break;
-				default:
-					return;
-				}
-				break;
-			}
-		}
-	} else if (msg->action == 12) {
-		getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
-		getCharacter(kCharacterAnna).characterPosition.position = 4070;
-		getCharacter(kCharacterAnna).characterPosition.location = 0;
-		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-		AnnaCall(&LogicManager::CONS_Anna_DoWalk, 5, 850, 0, 0);
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
 			if (getCharacterCurrentParams(kCharacterAnna)[1] || (getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 4500, _gameTime != -4500)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[1] >= _gameTime)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[1] = 0x7FFFFFFF;
 			}
@@ -3773,6 +4249,67 @@ void LogicManager::HAND_Anna_GoSalon4(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
 			AnnaCall(&LogicManager::CONS_Anna_WaitRCClear, 0, 0, 0, 0);
 		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterAnna).characterPosition.position = 4070;
+		getCharacter(kCharacterAnna).characterPosition.location = 0;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+		AnnaCall(&LogicManager::CONS_Anna_DoWalk, 5, 850, 0, 0);
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterAnna)[0] && checkLoc(kCharacterCath, kCarRedSleeping)) {
+			getCharacter(kCharacterAnna).characterPosition.car = kCarRedSleeping;
+			getCharacter(kCharacterAnna).characterPosition.position = 8200;
+			getCharacter(kCharacterAnna).characterPosition.location = 0;
+			CONS_Anna_ReturnToComp4(0, 0, 0, 0);
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+			AnnaCall(&LogicManager::CONS_Anna_WaitRCClear, 0, 0, 0, 0);
+			break;
+		case 2:
+			getCharacter(kCharacterAnna).characterPosition.position = 1540;
+			getCharacter(kCharacterAnna).characterPosition.location = 0;
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+			AnnaCall(&LogicManager::CONS_Anna_DoBlockSeqOtis, "127A", 5, 56, 0);
+			break;
+		case 3:
+			getCharacter(kCharacterAnna).characterPosition.location = 1;
+			startCycOtis(kCharacterAnna, "127B");
+			send(kCharacterAnna, kCharacterWaiter2, 258136010, 0);
+			break;
+		case 4:
+			getCharacter(kCharacterAnna).characterPosition.location = 0;
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 5;
+			AnnaCall(&LogicManager::CONS_Anna_DoBlockSeqOtis, "127G", 5, 56, 0);
+			break;
+		case 5:
+			CONS_Anna_ReturnToComp4(0, 0, 0, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 100969180:
+		endGraphics(kCharacterAnna);
+		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
+		break;
+	case 122288808:
+		startCycOtis(kCharacterAnna, "127E");
+		send(kCharacterAnna, kCharacterAbbot, 203073664, 0);
+		break;
+	case 122358304:
+		startCycOtis(kCharacterAnna, "BLANK");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3787,10 +4324,12 @@ void LogicManager::CONS_Anna_ReturnToComp4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_ReturnToComp4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DoWalkCathFollowsAnna, 4, 4070, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_EnterCompCathFollowsAnna, 0, 0, 0, 0);
@@ -3799,6 +4338,10 @@ void LogicManager::HAND_Anna_ReturnToComp4(HAND_PARAMS) {
 			endGraphics(kCharacterAnna);
 			CONS_Anna_LetDownHair(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -3937,36 +4480,39 @@ void LogicManager::CONS_Anna_LetDownHair(CONS_PARAMS) {
 void LogicManager::HAND_Anna_LetDownHair(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterAnna)[2] == 0x7FFFFFFF || getCharacterCurrentParams(kCharacterAnna)[0] >= _gameTime)
-			return;
-		if (getCharacterCurrentParams(kCharacterAnna)[1] < _gameTime)
-			goto LABEL_11;
-		if ((cathInCorridor(kCarGreenSleeping) || cathInCorridor(kCarRedSleeping)) && getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime, _gameTime != 0)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[2] >= _gameTime)
-				return;
-		LABEL_11:
-			getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
+		if (getCharacterCurrentParams(kCharacterAnna)[2] != 0x7FFFFFFF && getCharacterCurrentParams(kCharacterAnna)[0] < _gameTime) {
+			if (getCharacterCurrentParams(kCharacterAnna)[1] < _gameTime) {
+				getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
+			} else if ((cathInCorridor(kCarGreenSleeping) || cathInCorridor(kCarRedSleeping)) && getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime, _gameTime != 0)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[2] >= _gameTime)
+					break;
+	
+				getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
+			}
+
+			if (!cathInCorridor(kCarGreenSleeping) && !cathInCorridor(kCarRedSleeping))
+				playDialog(0, "BUMP", -1, 0);
+
+			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventTrainHijacked, 0, 0);
 		}
-		if (!cathInCorridor(kCarGreenSleeping) && !cathInCorridor(kCarRedSleeping))
-			playDialog(0, "BUMP", -1, 0);
-		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventTrainHijacked, 0, 0);
+
 		break;
 	case 8:
 		setDoor(37, kCharacterAnna, 0, 0, 0);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 		AnnaCall(&LogicManager::CONS_Anna_DoDialog, "LIB012", 0, 0, 0);
-		return;
+		break;
 	case 9:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 4;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaKissTrainHijacked, 0, 0);
-		return;
+		break;
 	case 12:
 		setDoor(37, kCharacterAnna, 0, 10, 9);
 		_gameTimeTicksDelta = 1;
 		getCharacterCurrentParams(kCharacterAnna)[0] = _gameTime + 4500;
 		getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 9000;
-		return;
+		break;
 	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
 		case 1:
@@ -3985,11 +4531,12 @@ void LogicManager::HAND_Anna_LetDownHair(HAND_PARAMS) {
 			send(kCharacterAnna, kCharacterMaster, 139254416, 0);
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -4004,18 +4551,21 @@ void LogicManager::CONS_Anna_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterAnna);
-			getCharacter(kCharacterAnna).characterPosition.car = 1;
-			getCharacter(kCharacterAnna).characterPosition.position = 3969;
-			getCharacter(kCharacterAnna).characterPosition.location = 1;
-			getCharacter(kCharacterAnna).clothes = 3;
-			getCharacter(kCharacterAnna).inventoryItem = 0;
-			setDoor(45, kCharacterCath, 0, 255, 255);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Anna_TiedUp(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterAnna);
+		getCharacter(kCharacterAnna).characterPosition.car = 1;
+		getCharacter(kCharacterAnna).characterPosition.position = 3969;
+		getCharacter(kCharacterAnna).characterPosition.location = 1;
+		getCharacter(kCharacterAnna).clothes = 3;
+		getCharacter(kCharacterAnna).inventoryItem = 0;
+		setDoor(45, kCharacterCath, 0, 255, 255);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -4030,7 +4580,8 @@ void LogicManager::CONS_Anna_TiedUp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_TiedUp(HAND_PARAMS) {
-	if (msg->action == 18) {
+	switch (msg->action) {
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			if (_gameProgress[kProgressFieldC]) {
 				if (_gameEvents[kEventAnnaKissTrainHijacked]) {
@@ -4047,9 +4598,14 @@ void LogicManager::HAND_Anna_TiedUp(HAND_PARAMS) {
 			bumpCath(kCarBaggageRear, 88, 255);
 			CONS_Anna_Outside(0, 0, 0, 0);
 		}
-	} else if (msg->action == 272177921) {
+
+		break;
+	case 272177921:
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaBaggageTies, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -4064,8 +4620,13 @@ void LogicManager::CONS_Anna_Outside(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Outside(HAND_PARAMS) {
-	if (msg->action == 158480160)
+	switch (msg->action) {
+	case 158480160:
 		CONS_Anna_ReadyToScore(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Anna_ReadyToScore(CONS_PARAMS) {
@@ -4085,6 +4646,7 @@ void LogicManager::HAND_Anna_ReadyToScore(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
 			_gameTimeTicksDelta = 0;
 		}
+
 		break;
 	case 8:
 	case 9:
@@ -4105,6 +4667,7 @@ void LogicManager::HAND_Anna_ReadyToScore(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 1, 0, 0, 0);
 		}
+
 		break;
 	case 18:
 		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
@@ -4124,10 +4687,13 @@ void LogicManager::HAND_Anna_ReadyToScore(HAND_PARAMS) {
 		case 3:
 			CONS_Anna_Kidnapped(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -4142,26 +4708,33 @@ void LogicManager::CONS_Anna_Kidnapped(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_Kidnapped(HAND_PARAMS) {
-	if (msg->action == 17) {
-		if (inDiningRoom(kCharacterCath) && cathHasItem(kItemFirebird))
-			goto LABEL_6;
-		if (!inSalon(kCharacterCath))
-			return;
-		if (cathHasItem(kItemFirebird)) {
-		LABEL_6:
+	switch (msg->action) {
+	case 17:
+		if (inDiningRoom(kCharacterCath) && cathHasItem(kItemFirebird)) {
 			CONS_Anna_FinalSequence(0, 0, 0, 0);
-			return;
+			break;
+		}
+
+		if (!inSalon(kCharacterCath))
+			break;
+
+		if (cathHasItem(kItemFirebird)) {
+			CONS_Anna_FinalSequence(0, 0, 0, 0);
+			break;
 		}
 
 		_gameTime = 4920300;
-		if (_gameInventory[18].location == 4) {
+
+		if (_gameInventory[kItemFirebird].location == 4) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosHostageAnna, 0, 0);
 		} else {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosHostageAnnaNoFirebird, 0, 0);
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			playNIS(kEventKronosHostageAnnaNoFirebird);
 			endGame(3, 42, 0, 1);
@@ -4171,6 +4744,10 @@ void LogicManager::HAND_Anna_Kidnapped(HAND_PARAMS) {
 			playDialog(kCharacterAnna, "Mus024", 16, 0);
 			CONS_Anna_Waiting(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -4199,6 +4776,7 @@ void LogicManager::HAND_Anna_Waiting(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKahinaPunch, 0, 0);
 		}
+
 		break;
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
@@ -4213,11 +4791,15 @@ void LogicManager::HAND_Anna_Waiting(HAND_PARAMS) {
 			} else if (checkLoc(kCharacterCath, kCarBaggage)) {
 				playNIS(kEventKahinaPunchBaggageCar);
 			}
-			endGame(0, 1, 0, 1);
+
+			endGame(0, 1, 0, true);
 		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
 			playNIS(kEventKahinaPunch);
-			endGame(0, 1, 0, 1);
+			endGame(0, 1, 0, true);
 		}
+
+		break;
+	default:
 		break;
 	}
 }
@@ -4233,54 +4815,62 @@ void LogicManager::CONS_Anna_FinalSequence(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_FinalSequence(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
-			case 1:
-				if (whoRunningDialog(kCharacterAnna))
-					fadeDialog(kCharacterAnna);
-				playNIS(kEventKronosBringFirebird);
-				bumpCathCloseUp(kItemFirebird);
-				playDialog(1, "Mus025", 16, 0);
-				break;
-			case 2:
-				playNIS(kEventKahinaPunch);
-				endGame(0, 1, 0, 1);
-				break;
-			case 3:
-				_gameProgress[kProgressIsEggOpen] = 1;
-				if (whoRunningDialog(kCharacterAnna))
-					fadeDialog(kCharacterAnna);
-				playNIS(kEventKronosOpenFirebird);
-				bumpCath(kCarRestaurant, 3, 255);
-				CONS_Anna_OpenFirebird(0, 0, 0, 0);
-				break;
-			}
-		} else if (msg->action == 205294778) {
-			_gameTime = 4929300;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
-			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosOpenFirebird, 0, 0);
-		}
-	} else if (msg->action == 12) {
-		_gameTime = 4923000;
-		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosBringFirebird, 0, 0);
-	} else if (msg->action) {
-		if (msg->action == 2) {
-			playDialog(0, "Kro5002", 16, 0);
-			_gameTime = 4929300;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKahinaPunch, 0, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterAnna)[0] || (getCharacterCurrentParams(kCharacterAnna)[0] = _currentGameSessionTicks + 450, _currentGameSessionTicks != -450)) {
 			if (getCharacterCurrentParams(kCharacterAnna)[0] >= _currentGameSessionTicks)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterAnna)[0] = 0x7FFFFFFF;
 		}
 
 		playDialog(0, "Kro5001", 16, 0);
+		break;
+	case 2:
+		playDialog(0, "Kro5002", 16, 0);
+		_gameTime = 4929300;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKahinaPunch, 0, 0);
+		break;
+	case 12:
+		_gameTime = 4923000;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosBringFirebird, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8]) {
+		case 1:
+			if (whoRunningDialog(kCharacterAnna))
+				fadeDialog(kCharacterAnna);
+
+			playNIS(kEventKronosBringFirebird);
+			bumpCathCloseUp(kItemFirebird);
+			playDialog(1, "Mus025", 16, 0);
+			break;
+		case 2:
+			playNIS(kEventKahinaPunch);
+			endGame(0, 1, 0, true);
+			break;
+		case 3:
+			_gameProgress[kProgressIsEggOpen] = 1;
+
+			if (whoRunningDialog(kCharacterAnna))
+				fadeDialog(kCharacterAnna);
+
+			playNIS(kEventKronosOpenFirebird);
+			bumpCath(kCarRestaurant, 3, 255);
+			CONS_Anna_OpenFirebird(0, 0, 0, 0);
+			break;
+		}
+
+		break;
+	case 205294778:
+		_gameTime = 4929300;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
+		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosOpenFirebird, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -4295,20 +4885,19 @@ void LogicManager::CONS_Anna_OpenFirebird(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Anna_OpenFirebird(HAND_PARAMS) {
-	if (msg->action > 18) {
-		if (msg->action == 224309120) {
-			_gameProgress[kProgressIsEggOpen] = 0;
-			_gameTime = 4941000;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
-			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosGiveFirebird, 0, 0);
-		} else if (msg->action == 270751616) {
-			_gameProgress[kProgressIsEggOpen] = 0;
-			killGracePeriod();
-			_gameTime = 4941000;
-			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventFinalSequence, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAnna)[0] || (getCharacterCurrentParams(kCharacterAnna)[0] = _currentGameSessionTicks + 180, _currentGameSessionTicks != -180)) {
+			if (getCharacterCurrentParams(kCharacterAnna)[0] >= _currentGameSessionTicks)
+				break;
+
+			getCharacterCurrentParams(kCharacterAnna)[0] = 0x7FFFFFFF;
 		}
-	} else if (msg->action == 18) {
+
+		playDialog(kCharacterClerk, "LIB069", 16, 0);
+		endGame(0, 0, 0, true);
+		break;
+	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
 			playNIS(kEventCathCloseEggNoBackground);
 			playNIS(kEventKronosGiveFirebird);
@@ -4323,16 +4912,23 @@ void LogicManager::HAND_Anna_OpenFirebird(HAND_PARAMS) {
 			takeCathItem(kItemWhistle);
 			winGame();
 		}
-	} else if (msg->action == 0) {
-		if (getCharacterCurrentParams(kCharacterAnna)[0] || (getCharacterCurrentParams(kCharacterAnna)[0] = _currentGameSessionTicks + 180, _currentGameSessionTicks != -180)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[0] >= _currentGameSessionTicks)
-				return;
 
-			getCharacterCurrentParams(kCharacterAnna)[0] = 0x7FFFFFFF;
-		}
-
-		playDialog(kCharacterClerk, "LIB069", 16, 0);
-		endGame(0, 0, 0, true);
+		break;
+	case 224309120:
+		_gameProgress[kProgressIsEggOpen] = 0;
+		_gameTime = 4941000;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
+		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosGiveFirebird, 0, 0);
+		break;
+	case 270751616:
+		_gameProgress[kProgressIsEggOpen] = 0;
+		killGracePeriod();
+		_gameTime = 4941000;
+		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
+		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventFinalSequence, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
