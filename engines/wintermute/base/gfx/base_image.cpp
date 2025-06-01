@@ -133,89 +133,11 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
-	if (!_surface) {
+	if (!stream || !_surface) {
 		return false;
 	}
 
-	/* The following is just copied over and inverted to write-ops from the BMP-decoder */
-	stream->writeByte('B');
-	stream->writeByte('M');
-
-	/* Since we don't care during reads, we don't care during writes: */
-	/* uint32 fileSize = */
-	stream->writeUint32LE(54 + _surface->h * _surface->pitch);
-	/* uint16 res1 = */
-	stream->writeUint16LE(0);
-	/* uint16 res2 = */
-	stream->writeUint16LE(0);
-	const uint32 imageOffset = 54;
-	stream->writeUint32LE(imageOffset);
-
-	const uint32 infoSize = 40; /* Windows v3 BMP */
-	stream->writeUint32LE(infoSize);
-
-	uint32 width = _surface->w;
-	int32 height = _surface->h;
-	stream->writeUint32LE(width);
-	stream->writeUint32LE((uint32)height);
-
-	if (width == 0 || height == 0) {
-		return false;
-	}
-
-	if (height < 0) {
-		warning("Right-side up bitmaps not supported");
-		return false;
-	}
-
-	/* uint16 planes = */ stream->writeUint16LE(1);
-	const uint16 bitsPerPixel = 24;
-	stream->writeUint16LE(bitsPerPixel);
-
-	const uint32 compression = 0;
-	stream->writeUint32LE(compression);
-
-	/* uint32 imageSize = */
-	stream->writeUint32LE(_surface->h * _surface->pitch);
-	/* uint32 pixelsPerMeterX = */
-	stream->writeUint32LE(0);
-	/* uint32 pixelsPerMeterY = */
-	stream->writeUint32LE(0);
-	const uint32 paletteColorCount = 0;
-	stream->writeUint32LE(paletteColorCount);
-	/* uint32 colorsImportant = */
-	stream->writeUint32LE(0);
-
-	// Start us at the beginning of the image (54 bytes in)
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-
-	// BGRA for 24bpp
-	if (bitsPerPixel == 24) {
-		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
-	}
-
-	Graphics::Surface *surface = _surface->convertTo(format);
-
-	int srcPitch = width * (bitsPerPixel >> 3);
-	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
-
-	for (int32 i = height - 1; i >= 0; i--) {
-		for (uint32 j = 0; j < width; j++) {
-			byte b, g, r;
-			uint32 color = *(uint32 *)surface->getBasePtr(j, i);
-			surface->format.colorToRGB(color, r, g, b);
-			stream->writeByte(b);
-			stream->writeByte(g);
-			stream->writeByte(r);
-		}
-
-		for (int k = 0; k < extraDataLength; k++) {
-			stream->writeByte(0);
-		}
-	}
-	surface->free();
-	delete surface;
-	return true;
+	return Image::writeBMP(*stream, *_surface, _palette);
 }
 
 
