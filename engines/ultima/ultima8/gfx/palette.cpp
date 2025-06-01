@@ -90,7 +90,11 @@ void Palette::updateNativeMap(const Graphics::PixelFormat &format, int maxindex)
 
 		// Normal palette
 		get(i, sr, sg, sb);
-		_native_untransformed[i] = format.RGBToColor(sr, sg, sb);
+		if (format.isCLUT8()) {
+			_native_untransformed[i] = i;
+		} else {
+			_native_untransformed[i] = format.RGBToColor(sr, sg, sb);
+		}
 
 		r = _matrix[0] * sr +
 			_matrix[1] * sg +
@@ -100,6 +104,7 @@ void Palette::updateNativeMap(const Graphics::PixelFormat &format, int maxindex)
 			r = 0;
 		if (r > 0x7F800)
 			r = 0x7F800;
+		r = r >> 11;
 
 		g = _matrix[4] * sr +
 			_matrix[5] * sg +
@@ -109,6 +114,7 @@ void Palette::updateNativeMap(const Graphics::PixelFormat &format, int maxindex)
 			g = 0;
 		if (g > 0x7F800)
 			g = 0x7F800;
+		g = g >> 11;
 
 		b = _matrix[8] * sr +
 			_matrix[9] * sg +
@@ -118,11 +124,18 @@ void Palette::updateNativeMap(const Graphics::PixelFormat &format, int maxindex)
 			b = 0;
 		if (b > 0x7F800)
 			b = 0x7F800;
+		b = b >> 11;
 
 		// Transformed normal palette
-		_native[i] = format.RGBToColor(static_cast<uint8>(r >> 11),
-									   static_cast<uint8>(g >> 11),
-									   static_cast<uint8>(b >> 11));
+		if (format.isCLUT8()) {
+			_native[i] = findBestColor(static_cast<uint8>(r),
+									   static_cast<uint8>(g),
+									   static_cast<uint8>(b));
+		} else {
+			_native[i] = format.RGBToColor(static_cast<uint8>(r),
+										   static_cast<uint8>(g),
+										   static_cast<uint8>(b));
+		}
 
 		// Transformed XFORM palette (Uses the TEX32 format)
 		if (TEX32_A(_xform_untransformed[i])) {

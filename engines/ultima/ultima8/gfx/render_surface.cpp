@@ -897,6 +897,8 @@ void RenderSurface::Paint(const Shape *s, uint32 framenum, int32 x, int32 y, boo
 		paintLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
+	else if (_surface->format.isCLUT8())
+		paintLogic<uint8>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
 	else
 		error("Paint not supported for surface format: %s", _surface->format.toString().c_str());
 }
