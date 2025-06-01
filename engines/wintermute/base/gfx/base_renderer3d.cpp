@@ -132,7 +132,11 @@ DXViewport BaseRenderer3D::getViewPort() {
 }
 
 Graphics::PixelFormat BaseRenderer3D::getPixelFormat() const {
-	return g_system->getScreenFormat();
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
 }
 
 void BaseRenderer3D::flipVertical(Graphics::Surface *s) {
