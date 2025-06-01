@@ -157,6 +157,7 @@ static const char *const selectorNameTable[] = {
 	"fade",         // Longbow, Shivers
 	"enable",       // Longbow, SQ6
 	"alterEgo",     // LSL5
+	"ticks",        // LSL6
 	"normalize",    // Pepper, GK1, QFG4
 	"delete",       // EcoQuest 1
 	"size",         // EcoQuest 1
@@ -302,6 +303,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_fade,
 	SELECTOR_enable,
 	SELECTOR_alterEgo,
+	SELECTOR_ticks,
 	SELECTOR_normalize,
 	SELECTOR_delete,
 	SELECTOR_size,
@@ -9799,10 +9801,54 @@ static const uint16 larry6Room680ExitsPatch[] = {
 	PATCH_END
 };
 
+// After displaying a control panel help message and closing the control panel,
+//  the game can freeze for several seconds or until user input. Each message
+//  has a delay calculated by the Narrator class, even though these delays have
+//  no effect while the panel is displayed. If the panel is closed before the
+//  delay elapses then the game waits to close the hidden message.
+//
+// We fix this by resetting the help message's calculated delay to zero so that
+//  hidden messages are immediately closed as soon as the panel is closed.
+//
+// We make room for this patch by storing the result of a kScriptID call in an
+//  unused system global and overwriting a subsequent kScriptID call.
+//
+// Applies to: All versions
+// Responsible method: ll6ControlPanel:noClickMessage
+// Fixes bug: #14585
+static const uint16 larry6HelpMessageSignature[] = {
+	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x071d),           // pushi 071d
+	0x39, 0x20,                         // pushi 20
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ talkTitleNar ]
+	0x4a, 0x12,                         // send 12
+	SIG_ADDTOOFFSET(+17),
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x071d),           // pushi 071d
+	0x39, 0x20,                         // pushi 20
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ talkTitleNar ]
+	0x4a, 0x0c,                         // send 0c [ talkTitleNar x: -1 y: -1 ]
+	SIG_END
+};
+
+static const uint16 larry6HelpMessagePatch[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0xa1, 0x03,                         // sag 03 [ global3 = talkTitleNar ]
+	PATCH_GETORIGINALBYTES(9, +19),
+	0x38, PATCH_SELECTOR16(ticks),      // pushi ticks
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x03,                         // lag 03
+	0x4a, 0x12,                         // send 12 [ talkTitleNar x: -1 y: -1 ticks: 0 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                   patch
 static const SciScriptPatcherEntry larry6Signatures[] = {
 	{  true,    75, "fix help cursor",                             1, larry6HelpCursorSignature,  larry6HelpCursorPatch },
 	{  true,    82, "death dialog memory corruption",              1, larry6DeathDialogSignature, larry6DeathDialogPatch },
+	{  true,    94, "help message",                                1, larry6HelpMessageSignature, larry6HelpMessagePatch },
 	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,    sci11SpeedTestPatch },
 	{  true,   680, "room 680 exits",                              1, larry6Room680ExitsSignature,larry6Room680ExitsPatch },
 	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature, sciNarratorLockupPatch },
