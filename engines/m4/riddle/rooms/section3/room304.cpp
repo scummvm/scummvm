@@ -72,12 +72,12 @@ void Room304::init() {
 		player_set_commands_allowed(false);
 		ws_demand_location(_G(my_walker), 458, 263, 8);
 
-		if (_G(flags)[V084] == 2 || player_been_here(201)) {
+		if (_G(flags)[V084] == 2 || player_been_here(201))
 			_sword = series_show_sprite("one frame sword", 0, 0xa00);
-			kernel_timing_trigger(1, 51);
-		} else {
+		else
 			hotspot_set_active("SAMURAI SWORD", false);
-		}
+
+		kernel_timing_trigger(1, 51);
 		break;
 
 	default:

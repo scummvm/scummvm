@@ -116,7 +116,7 @@ enum Flag {
 	V081 =  81, // Room 303 Torso Tomato : first look animation played
 	V082 =  82,
 	V083 =  83,
-	V084 =  84,
+	V084 =  84, // Room 304: 1 if cobra is dead, 2 if cobra has been caught alive
 	V085 =  85,
 	V086 =  86,
 	V087 =  87,
