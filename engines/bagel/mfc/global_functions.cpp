@@ -184,29 +184,38 @@ LRESULT SendMessage(HWND hWnd, UINT Msg,
 	return wnd->SendMessage(Msg, wParam, lParam);
 }
 
+HINSTANCE AfxGetResourceHandle() {
+	// Can be left as a default value for ScummVM
+	return nullptr;
+}
+
+HINSTANCE AfxFindResourceHandle(LPCSTR lpszName, LPCSTR lpszType) {
+	return AfxGetResourceHandle();
+}
+
 HRSRC FindResource(HMODULE hModule,
-                   LPCSTR lpName, LPCSTR lpType) {
-	error("TODO: FindResource");
+        LPCSTR lpName, LPCSTR lpType) {
+	return AfxGetApp()->FindResource(lpName, lpType);
 }
 
 size_t SizeofResource(HMODULE hModule, HRSRC hResInfo) {
-	error("TODO: SizeofResource");
+	return AfxGetApp()->SizeofResource(hResInfo);
 }
 
 HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo) {
-	error("TODO: LoadResource");
+	return AfxGetApp()->LoadResource(hResInfo);
 }
 
 LPVOID LockResource(HGLOBAL hResData) {
-	error("TODO: LockResource");
+	return AfxGetApp()->LockResource(hResData);
 }
 
 void UnlockResource(HGLOBAL hResData) {
-	error("TODO: UnlockResource");
+	return AfxGetApp()->UnlockResource(hResData);
 }
 
 BOOL FreeResource(HGLOBAL hResData) {
-	error("TODO: FreeResource");
+	return AfxGetApp()->FreeResource(hResData);
 }
 
 } // namespace MFC

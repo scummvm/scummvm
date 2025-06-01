@@ -60,7 +60,6 @@ class CWnd;
 extern CWinApp *AfxGetApp();
 extern CWnd *AfxGetMainWnd();
 extern HINSTANCE AfxGetInstanceHandle();
-extern HINSTANCE AfxGetResourceHandle();
 extern int LoadString(HINSTANCE hInstance,
                       UINT uID, LPSTR lpBuffer, int cchBufferMax);
 extern HMODULE LoadLibrary(LPCSTR lpLibFileName);
@@ -127,6 +126,8 @@ extern BOOL PostMessage(HWND hWnd, UINT Msg,
 extern LRESULT SendMessage(HWND hWnd, UINT Msg,
                            WPARAM wParam, LPARAM lParam);
 
+extern HINSTANCE AfxGetResourceHandle();
+extern HINSTANCE AfxFindResourceHandle(LPCSTR lpszName, LPCSTR lpszType);
 extern HRSRC FindResource(HMODULE hModule,
                           LPCSTR lpName, LPCSTR lpType);
 extern size_t SizeofResource(HMODULE hModule, HRSRC hResInfo);

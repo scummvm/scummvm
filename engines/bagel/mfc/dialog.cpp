@@ -29,30 +29,38 @@ IMPLEMENT_DYNAMIC(CDialog, CWnd)
 BEGIN_MESSAGE_MAP(CDialog, CWnd)
 END_MESSAGE_MAP()
 
-void CDialog::OnOK() {
-	error("TODO: CDialog::OnOK");
-}
+CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
+	m_pParentWnd = pParentWnd;
+	m_lpszTemplateName = lpszTemplateName;
 
-void CDialog::OnCancel() {
-	error("TODO: CDialog::OnCancel");
-}
-
-CDialog::CDialog(LPCSTR lpszTemplateName,
-                 CWnd *pParentWnd) {
+	if (HIWORD(m_lpszTemplateName) == 0)
+		m_nIDHelp = LOWORD((DWORD)m_lpszTemplateName);
 }
 
 CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
+	m_pParentWnd = pParentWnd;
+	m_lpszTemplateName = MAKEINTRESOURCE(nIDTemplate);
+	m_nIDHelp = nIDTemplate;
 }
 
 BOOL CDialog::Create(LPCSTR lpszTemplateName,
-                     CWnd *pParentWnd) {
-	error("TODO: CDialog::Create");
-}
-BOOL CDialog::Create(UINT nIDTemplate,
-                     CWnd *pParentWnd) {
-	error("TODO: CDialog::Create");
+        CWnd *pParentWnd) {
+	m_lpszTemplateName = lpszTemplateName;  // used for help
+	if (HIWORD(m_lpszTemplateName) == 0 && m_nIDHelp == 0)
+		m_nIDHelp = LOWORD((DWORD)m_lpszTemplateName);
+
+	HINSTANCE hInst = AfxFindResourceHandle(lpszTemplateName, RT_DIALOG);
+	HRSRC hResource = FindResource(hInst, lpszTemplateName, RT_DIALOG);
+	HGLOBAL hTemplate = LoadResource(hInst, hResource);
+	BOOL bResult = CreateIndirect(hTemplate, pParentWnd, hInst);
+	FreeResource(hTemplate);
+
+	return bResult;
 }
 
+BOOL CDialog::Create(UINT nIDTemplate, CWnd *pParentWnd) {
+	return Create(MAKEINTRESOURCE(nIDTemplate), pParentWnd);
+}
 
 int CDialog::DoModal() {
 	error("TODO: CDialog::DoModal");
@@ -113,6 +121,23 @@ BOOL CDialog::UpdateData(BOOL bSaveAndValidate) {
 	error("TODO: CDialog::UpdateData");
 }
 
+void CDialog::OnOK() {
+	error("TODO: CDialog::OnOK");
+}
+
+void CDialog::OnCancel() {
+	error("TODO: CDialog::OnCancel");
+}
+
+BOOL CDialog::CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+		CWnd *pParentWnd, void *lpDialogInit, HINSTANCE hInst) {
+	error("TODO: CDialog::CreateIndirect");
+}
+
+BOOL CDialog::CreateIndirect(HGLOBAL hDialogTemplate,
+		CWnd *pParentWnd, HINSTANCE hInst) {
+	error("TODO: CDialog::CreateIndirect");
+}
 
 } // namespace MFC
 } // namespace Bagel

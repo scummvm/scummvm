@@ -222,6 +222,30 @@ byte CWinApp::getColor(COLORREF color) const {
 	);
 }
 
+HRSRC CWinApp::FindResource(LPCSTR lpName, LPCSTR lpType) {
+	return nullptr;
+}
+
+size_t CWinApp::SizeofResource(HRSRC hResInfo) {
+	return 0;
+}
+
+HGLOBAL CWinApp::LoadResource(HRSRC hResInfo) {
+	return 0;
+}
+
+LPVOID CWinApp::LockResource(HGLOBAL hResData) {
+	return nullptr;
+}
+
+void CWinApp::UnlockResource(HGLOBAL hResData) {
+	return;
+}
+
+BOOL CWinApp::FreeResource(HGLOBAL hResData) {
+	return true;
+}
+
 /*--------------------------------------------*/
 
 CWinApp *AfxGetApp() {
@@ -236,10 +260,6 @@ CWnd *AfxGetMainWnd() {
 HINSTANCE AfxGetInstanceHandle() {
 	// Unused in ScummVM
 	return 0;
-}
-
-HINSTANCE AfxGetResourceHandle() {
-	error("TODO: AfxGetResourceHandle");
 }
 
 int LoadString(HINSTANCE hInstance,
@@ -265,9 +285,8 @@ HMODULE GetModuleHandle(LPCSTR lpModuleName) {
 	error("TODO: GetModuleHandle");
 }
 
-
 LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
-                                  HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
+        HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
 	// Not currently handled
 	assert(!hCursor && !hbrBackground && !hIcon);
 

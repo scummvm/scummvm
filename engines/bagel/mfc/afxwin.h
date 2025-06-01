@@ -32,6 +32,7 @@
 #include "bagel/mfc/afxmsg.h"
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
+#include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/surface_dc.h"
 #include "bagel/mfc/libs/events.h"
@@ -440,6 +441,18 @@ struct CCreateContext {
 	// Implementation
 	CCreateContext();
 };
+
+typedef struct {
+	DWORD style;
+	DWORD dwExtendedStyle;
+	WORD cdit;
+	short x;
+	short y;
+	short cx;
+	short cy;
+} DLGTEMPLATE;
+typedef CONST DLGTEMPLATE *LPCDLGTEMPLATE;
+typedef DLGTEMPLATE *LPDLGTEMPLATE;
 
 /*============================================================================*/
 
@@ -999,7 +1012,7 @@ protected:
 public:
 	// For ScummVM the m_hWnd just points to the window itself,
 	// so it'll be set up once in the constructor
-	CWnd *const m_hWnd;
+	CWnd *const m_hWnd = nullptr;
 
 	CWnd *m_pParentWnd = nullptr;
 	bool _visible = false;
@@ -1119,6 +1132,16 @@ public:
 
 class CDialog : public CWnd {
 	DECLARE_DYNAMIC(CDialog)
+private:
+	LPCSTR m_lpszTemplateName = nullptr;
+	UINT m_nIDHelp = 0;
+	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
+
+	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
+		void *lpDialogInit, HINSTANCE hInst);
+	BOOL CreateIndirect(HGLOBAL hDialogTemplate, CWnd *pParentWnd,
+		HINSTANCE hInst);
+
 protected:
 	DECLARE_MESSAGE_MAP()
 
@@ -1126,7 +1149,7 @@ protected:
 	virtual void OnCancel();
 
 public:
-	CDialog();
+	CDialog() {}
 	explicit CDialog(LPCSTR lpszTemplateName,
 	                 CWnd *pParentWnd = nullptr);
 	explicit CDialog(UINT nIDTemplate,
@@ -1381,15 +1404,6 @@ public:
 	virtual void OnFilePrintSetup() {}
 
 	/*== ScummVM added functions ==*/
-	/**
-	 * Adds a Windows file containing resources
-	 */
-	void addResources(const Common::Path &file) {
-		_resources.addResources(file);
-	}
-	void removeResources() {
-		_resources.popResources();
-	}
 	void setDirectory(const char *folder);
 	Common::FSNode getDirectory() const;
 	void setPalette(const Graphics::Palette &pal);
@@ -1404,6 +1418,23 @@ public:
 		return &_screen;
 	}
 	bool pollEvents(Common::Event &event);
+
+	// resource functions
+	/**
+	 * Adds a Windows file containing resources
+	 */
+	void addResources(const Common::Path &file) {
+		_resources.addResources(file);
+	}
+	void removeResources() {
+		_resources.popResources();
+	}
+	HRSRC FindResource(LPCSTR lpName, LPCSTR lpType);
+	size_t SizeofResource(HRSRC hResInfo);
+	HGLOBAL LoadResource(HRSRC hResInfo);
+	LPVOID LockResource(HGLOBAL hResData);
+	void UnlockResource(HGLOBAL hResData);
+	BOOL FreeResource(HGLOBAL hResData);
 };
 
 extern CWinApp *AfxGetApp();
