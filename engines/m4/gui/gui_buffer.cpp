@@ -36,12 +36,11 @@ static void Buffer_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	ScreenContext *myScreen = (ScreenContext *)s;
 	RectList *myRectList = (RectList *)r;
 	Buffer *destBuffer = (Buffer *)b;
-	Buffer *myBuffer;
 	RectList *myRect;
 
 	// Parameter verification
 	if (!myScreen) return;
-	myBuffer = (Buffer *)(myScreen->scrnContent);
+	Buffer *myBuffer = (Buffer *)(myScreen->scrnContent);
 	if (!myBuffer)
 		return;
 
@@ -65,10 +64,8 @@ static void Buffer_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 }
 
 bool gui_buffer_register(int32 x1, int32 y1, Buffer *myBuf, uint32 scrnFlags, EventHandler evtHandler) {
-	int32 x2, y2;
-
-	x2 = x1 + myBuf->w - 1;
-	y2 = y1 + myBuf->h - 1;
+	int32 x2 = x1 + myBuf->w - 1;
+	int32 y2 = y1 + myBuf->h - 1;
 
 	if (!vmng_screen_create(x1, y1, x2, y2, SCRN_BUF, scrnFlags | SF_OFFSCRN, (void *)myBuf,
 		(RefreshFunc)Buffer_Show, evtHandler))
@@ -81,20 +78,18 @@ void GrBuff_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	ScreenContext *myScreen = (ScreenContext *)s;
 	RectList *myRectList = (RectList *)r;
 	Buffer *destBuffer = (Buffer *)b;
-	GrBuff *myGrBuffer;
-	Buffer *myBuffer;
 	RectList *myRect;
 
 	// Parameter verification
 	if (!myScreen)
 		return;
 
-	myGrBuffer = (GrBuff *)myScreen->scrnContent;
+	GrBuff *myGrBuffer = (GrBuff *)myScreen->scrnContent;
 
 	if (!myGrBuffer)
 		return;
 
-	myBuffer = myGrBuffer->get_buffer();
+	Buffer *myBuffer = myGrBuffer->get_buffer();
 	if (!myBuffer)
 		return;
 

@@ -59,12 +59,11 @@ static int32 screen_height(Buffer *grey_screen) {
 }
 
 static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32 steps, int32 delay) {
-	int i, j;
 	RGB8 *working = (RGB8 *)mem_alloc(sizeof(RGB8) * 256, STR_FADEPAL);
 
 	// perform the fade
-	for (i = 1; i < steps; i++) {
-		for (j = from; j <= to; j++) {
+	for (int i = 1; i < steps; i++) {
+		for (int j = from; j <= to; j++) {
 			if (to_from_flag == TO_GREY) {      	// fade to grey from full color
 				working[j].r = (Byte)((int)pal[j].r + ((((int)_GP(fadeToMe)[j].r - (int)pal[j].r) * i) / steps));
 				working[j].g = (Byte)((int)pal[j].g + ((((int)_GP(fadeToMe)[j].g - (int)pal[j].g) * i) / steps));
@@ -92,7 +91,7 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 	} else if (to_from_flag == TO_COLOR) {
 		gr_pal_set_range(pal, from, to - from + 1);   ///set pal 21-255
 	} else {
-		for (i = from; i <= to; i++) {
+		for (int i = from; i <= to; i++) {
 			pal[i].r = pal[i].g = pal[i].b = 0;
 		}
 		gr_pal_set_range(pal, from, to - from + 1);   ///set pal 21-255
@@ -119,11 +118,9 @@ static void create_luminance_map(RGB8 *pal) {
 // finds the best macthes for the in the greys in the grey ramp range using the free range greys
 // used to map greys out of the grey ramp area, and then again to map the grey ramp out of the grey ramp area!
 static void make_translation_table(RGB8 *pal) {
-	int32    i, j, bestMatch, minDist;
-
-	for (i = 0; i < NUM_GREYS; i++) {
-		bestMatch = FREE_START;  // assume the first of the free indexes is best match to start with
-		minDist = 255;	  // assume that it's really far away to start with
+	for (int32 i = 0; i < NUM_GREYS; i++) {
+		int32 bestMatch = FREE_START;  // assume the first of the free indexes is best match to start with
+		int32 minDist = 255;	  // assume that it's really far away to start with
 
 		if (!(i & 0x3ff)) {
 			digi_read_another_chunk();
@@ -133,7 +130,7 @@ static void make_translation_table(RGB8 *pal) {
 		// look for best match in the free indexes for the greys in GREY_START-GREY_END range (we need these available)
 		int32 matchGrey = pal[GREY_START + i].g;	  // Use green instead of red cause we're having a green screen
 
-		for (j = FREE_START; j <= FREE_END; j++) {
+		for (int32 j = FREE_START; j <= FREE_END; j++) {
 			int32 tryGrey = pal[j].g;
 			if (imath_abs(tryGrey - matchGrey) < minDist) {
 				minDist = imath_abs(tryGrey - matchGrey);
@@ -147,9 +144,6 @@ static void make_translation_table(RGB8 *pal) {
 }
 
 void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
-	int32 i, j, bestMatch, minDist;
-	uint8 *tempPtr;
-
 	if (_G(kernel).fading_to_grey) {
 		return;
 	}
@@ -168,11 +162,11 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 
 	// Make translation table to translate colors using entries 59-255 into 21-58 range
 
-	for (i = 0; i < 32; i++) {
-		bestMatch = 65;
-		minDist = 255;
+	for (int32 i = 0; i < 32; i++) {
+		int32 bestMatch = 65;
+		int32 minDist = 255;
 
-		for (j = 59; j <= 255; j++) {
+		for (int32 j = 59; j <= 255; j++) {
 			if (imath_abs((_GP(fadeToMe)[j].r >> 2) - i) < minDist) {
 				minDist = imath_abs((_GP(fadeToMe)[j].r >> 2) - i);
 				bestMatch = j;
@@ -188,10 +182,10 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 	// Palette now grey scale. Remap any pixels which are in the range 21-58 to the range 53-255
 	// because we need to use those palette entries soon
 
-	tempPtr = grey_screen->data;
+	uint8 *tempPtr = grey_screen->data;
 
 	// Note: this loop should be y0 to y1, x0 to x1, not a stride*h loop.
-	for (i = 0; i < (grey_screen->stride * grey_screen->h); i++) {
+	for (int32 i = 0; i < (grey_screen->stride * grey_screen->h); i++) {
 		if ((*tempPtr >= GREY_START) && (*tempPtr <= GREY_END)) {
 			// Must move the pixel index to the best match in FREE_START-FREE_END range with _GP(translation) table
 			*tempPtr = _GP(translation)[*tempPtr - GREY_START];
@@ -211,7 +205,7 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 	memcpy(_GP(trick), _GP(fadeToMe), sizeof(RGB8) * 256);	// trick pal is the greyed version plus the grey ramp overlayed on top
 	byte grey_step = 256 / NUM_GREYS;
 	byte grey_ramp = 0;
-	for (i = GREY_START; i <= GREY_END; i++) {
+	for (int32 i = GREY_START; i <= GREY_END; i++) {
 		_GP(trick)[i].g = grey_ramp;
 		_GP(trick)[i].r = _GP(trick)[i].b = IS_RIDDLE ? grey_ramp : 0;
 		grey_ramp += grey_step;
@@ -225,9 +219,6 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 }
 
 void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
-	uint8 *tempPtr;
-	int32 i;
-
 	if (!_G(kernel).fading_to_grey) {
 		return;
 	}
@@ -241,9 +232,9 @@ void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 	make_translation_table(_GP(trick)); // This is used in fade_to_grey too!
 
 	// for every pixel in the screen, move any pixel in the GREY_START-GREY_END range out in to the free range
-	tempPtr = grey_screen->data;
+	uint8 *tempPtr = grey_screen->data;
 	// note: this loop should be y0 to y1, x0 to x1, not a stride*h loop.
-	for (i = 0; i < (grey_screen->stride * grey_screen->h); ++i) {
+	for (int32 i = 0; i < (grey_screen->stride * grey_screen->h); ++i) {
 		if (!(i & 0x3ff)) {
 			_G(digi).task();
 			_G(midi).task();
@@ -256,9 +247,9 @@ void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 		tempPtr++;
 	}
 
-	// Term_message ("remaped indexes out of grey ramp");
+	// Remapped indexes out of grey ramp
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
-	// Term_message ("setting grey ramp indexes back to picture greys");
+	// Setting grey ramp indexes back to picture greys
 	gr_pal_set_range(_GP(fadeToMe), GREY_START, NUM_GREYS);   // get the rest of the original re-luminance colors
 
 	//recopy screenPicture to screen to restore original pixels
@@ -790,7 +781,6 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 	int32 i;
 	int32 r, g, b, dr, dg, db;
 	RGB8 color, targetColor;
-	int32 percent_r, percent_g, percent_b;
 
 	if ((firstPalEntry < 0) || (lastPalEntry > 255) || (firstPalEntry > lastPalEntry)) {
 		// This should generate an error
@@ -798,7 +788,7 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 		return;
 	}
 
-	term_message("Colour tint DAC to: %d %d %d, %d percent, range (%d - %d)",
+	term_message("Color tint DAC to: %d %d %d, %d percent, range (%d - %d)",
 		tintColor->r, tintColor->g, tintColor->b, percent, firstPalEntry, lastPalEntry);
 	percent = DivSF16(percent << 16, 100 << 16); // convert percent to frac16 format
 
@@ -844,9 +834,9 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 		for (i = firstPalEntry; i <= lastPalEntry; ++i) {
 			// Converting rgb to a frac16 ( << 16) dividing by 256 ( >> 8) 
 			// (the range of the palette values)
-			percent_r = (targetColor.r) << 8;
-			percent_g = (targetColor.g) << 8;
-			percent_b = (targetColor.b) << 8;
+			int32 percent_r = (targetColor.r) << 8;
+			int32 percent_g = (targetColor.g) << 8;
+			int32 percent_b = (targetColor.b) << 8;
 
 			// This is the difference between the color and the full effect
 			// of the filter at 100%, as a frac16.
