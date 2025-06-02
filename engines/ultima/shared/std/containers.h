@@ -87,9 +87,6 @@ public:
 		}
 	};
 public:
-	typedef T reference;
-	typedef const T const_reference;
-
 	vector() : Common::Array<T>() {}
 	vector(size_t newSize) : Common::Array<T>(newSize) {}
 	vector(size_t newSize, const T elem) : Common::Array<T>(newSize, elem) {}

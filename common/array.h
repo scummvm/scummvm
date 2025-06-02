@@ -56,6 +56,9 @@ public:
 
 	typedef T value_type; /*!< Value type of the array. */
 
+	typedef value_type &reference;
+	typedef const value_type &const_reference;
+
 	typedef uint size_type; /*!< Size type of the array. */
 
 protected:
