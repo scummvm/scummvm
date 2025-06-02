@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "bagel/mfc/gfx/dialog_template.h"
 #include "bagel/mfc/afxwin.h"
 
@@ -27,14 +28,27 @@ namespace MFC {
 namespace Gfx {
 
 CDialogTemplate::CDialogTemplate(LPCDLGTEMPLATE pTemplate) {
+	setTemplate(pTemplate);
 }
 
 CDialogTemplate::CDialogTemplate(HGLOBAL hGlobal) {
+	LPDLGTEMPLATE dlgTemplate = (LPDLGTEMPLATE)GlobalLock(hGlobal);
+	setTemplate(dlgTemplate);
+	GlobalUnlock(hGlobal);
 }
 
-CDialogTemplate::~CDialogTemplate() {
-}
+bool CDialogTemplate::setTemplate(LPCDLGTEMPLATE pTemplate) {
+	Common::MemoryReadStream src((const byte *)pTemplate, 99999);
+	_header.load(src);
 
+	_items.clear();
+	_items.resize(_header._itemCount);
+
+	for (auto &item : _items)
+		item.load(src);
+
+	return true;
+}
 
 BOOL CDialogTemplate::HasFont() const {
 	return false;
@@ -59,16 +73,82 @@ void CDialogTemplate::GetSizeInPixels(SIZE *pSize) const {
 }
 
 BOOL CDialogTemplate::GetFont(LPCDLGTEMPLATE pTemplate,
-	CString &strFaceName, WORD &nFontSize) {
+		CString &strFaceName, WORD &nFontSize) {
 	return false;
 }
 
-BOOL CDialogTemplate::Load(LPCSTR lpDialogTemplateID) {
-	return false;
+/*--------------------------------------------*/
+
+void CDialogTemplate::Header::load(Common::SeekableReadStream &src) {
+	byte bTerm;
+
+	_style = src.readUint16LE();
+	_itemCount = src.readByte();
+	_x = src.readSint16LE();
+	_y = src.readSint16LE();
+	_w = src.readSint16LE();
+	_h = src.readSint16LE();
+
+	bTerm = src.readByte();
+	if (!bTerm) {
+		src.skip(1);
+		_menuName.clear();
+	} else {
+		src.seek(-1, SEEK_CUR);
+		_menuName = src.readString();
+	}
+
+	bTerm = src.readByte();
+	if (!bTerm) {
+		src.skip(1);
+		_className.clear();
+	} else {
+		src.seek(-1, SEEK_CUR);
+		_className = src.readString();
+	}
+
+	_caption = src.readString();
+
+	if (_style & DS_SETFONT) {
+		_fontInfo._pointSize = src.readByte();
+		_fontInfo._fontName = src.readString();
+	} else {
+		_fontInfo._pointSize = 0;
+		_fontInfo._fontName.clear();
+	}
 }
 
-HGLOBAL CDialogTemplate::Detach() {
-	return 0;
+/*--------------------------------------------*/
+
+void CDialogTemplate::Item::load(Common::SeekableReadStream &src) {
+	byte bTerm;
+
+	_style = src.readUint16LE();
+	_x = src.readSint16LE();
+	_y = src.readSint16LE();
+	_w = src.readSint16LE();
+	_h = src.readSint16LE();
+	_id = src.readUint16LE();
+
+	bTerm = src.readByte();
+	if (bTerm == 0x80) {
+		_classNameId = ((int)bTerm << 8) | src.readByte();
+	} else {
+		src.seek(-1, SEEK_CUR);
+		_classNameStr = src.readString();
+	}
+
+	bTerm = src.readByte();
+	if (bTerm == 0x80) {
+		_titleId = ((int)bTerm << 8) | src.readByte();
+	} else {
+		src.seek(-1, SEEK_CUR);
+		_titleStr = src.readString();
+	}
+
+	_custom.resize(src.readUint16LE());
+	if (!_custom.empty())
+		src.read(&_custom[0], _custom.size());
 }
 
 } // namespace Gfx

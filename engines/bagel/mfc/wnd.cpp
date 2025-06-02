@@ -562,13 +562,13 @@ BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 	WORD wSize = 0;
 	BOOL bSetSysFont = !CDialogTemplate::GetFont(lpDialogTemplate, strFace,
 		wSize);
-
+#if 0
 	if (bSetSysFont) {
 		CDialogTemplate dlgTemp(lpDialogTemplate);
 		dlgTemp.SetSystemFont(wSize);
 		hTemplate = dlgTemp.Detach();
 	}
-
+#endif
 	if (hTemplate != nullptr)
 		lpDialogTemplate = (LPDLGTEMPLATE)GlobalLock(hTemplate);
 

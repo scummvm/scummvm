@@ -22,6 +22,8 @@
 #ifndef BAGEL_MFC_GFX_DIALOG_TEMPLATE_H
 #define BAGEL_MFC_GFX_DIALOG_TEMPLATE_H
 
+#include "common/array.h"
+#include "common/stream.h"
 #include "graphics/managed_surface.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/afxstr.h"
@@ -33,6 +35,17 @@ class CWnd;
 
 namespace Gfx {
 
+/*
+ * Dialog Styles
+ */
+#define DS_ABSALIGN         0x01L
+#define DS_SYSMODAL         0x02L
+#define DS_LOCALEDIT        0x20L   /* 16-bit: Edit items get Local storage. 32-bit and up: meaningless. */
+#define DS_SETFONT          0x40L   /* User specified font for Dlg controls */
+#define DS_MODALFRAME       0x80L   /* Can be combined with WS_CAPTION  */
+#define DS_NOIDLEMSG        0x100L  /* WM_ENTERIDLE message will not be sent */
+#define DS_SETFOREGROUND    0x200L  /* not in win3.1 */
+
 // Template data pointers. Note that they're
 // void * because in ScummVM we do endian-safe
 // loading of the data being pointed to
@@ -40,10 +53,46 @@ typedef const void *LPCDLGTEMPLATE;
 typedef void *LPDLGTEMPLATE;
 
 class CDialogTemplate {
+	struct FontInfo {
+		byte _pointSize;
+		Common::String _fontName;
+	};
+	struct Header {
+		uint16 _style = 0;
+		byte _itemCount = 0;
+		int16 _x = 0, _y = 0;
+		int16 _w = 0, _h = 0;
+		Common::String _menuName;
+		Common::String _className;
+		Common::String _caption;
+		FontInfo _fontInfo;
+
+		void load(Common::SeekableReadStream &src);
+	};
+	struct Item {
+		uint16 _style = 0;
+		int16 _x = 0;
+		int16 _y = 0;
+		int16 _w = 0;
+		int16 _h = 0;
+		uint16 _id = 0;
+
+		uint16 _classNameId = 0;
+		Common::String _classNameStr;
+		uint16 _titleId = 0;
+		Common::String _titleStr;
+		Common::Array<byte> _custom;
+
+		void load(Common::SeekableReadStream &src);
+	};
+private:
+	Header _header;
+	Common::Array<Item> _items;
+
 protected:
-	static BYTE *AFX_CDECL GetFontSizeField(LPCDLGTEMPLATE pTemplate);
-	static UINT AFX_CDECL GetTemplateSize(LPCDLGTEMPLATE *pTemplate);
-	BOOL SetTemplate(LPCDLGTEMPLATE pTemplate, UINT cb);
+	static BYTE *GetFontSizeField(LPCDLGTEMPLATE pTemplate);
+	static UINT GetTemplateSize(LPCDLGTEMPLATE *pTemplate);
+	bool setTemplate(LPCDLGTEMPLATE pTemplate);
 
 public:
 	HGLOBAL m_hTemplate;
@@ -53,7 +102,6 @@ public:
 public:
 	CDialogTemplate(LPCDLGTEMPLATE pTemplate = NULL);
 	CDialogTemplate(HGLOBAL hGlobal);
-	~CDialogTemplate();
 
 	BOOL HasFont() const;
 	BOOL SetFont(LPCSTR lpFaceName, WORD nFontSize);
@@ -64,10 +112,6 @@ public:
 
 	static BOOL GetFont(LPCDLGTEMPLATE pTemplate,
 		CString &strFaceName, WORD &nFontSize);
-
-	// Operations
-	BOOL Load(LPCSTR lpDialogTemplateID);
-	HGLOBAL Detach();
 };
 
 } // namespace Gfx
