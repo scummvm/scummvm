@@ -151,7 +151,7 @@ void ConverseInterpret::step() {
 void ConverseInterpret::add_text(unsigned char c) {
 	ConvScript *cs = converse->script;
 	do {
-		text.append(1, (unsigned char)cs->read());
+		text.push_back((unsigned char)cs->read());
 	} while (!cs->overflow() && is_print(cs->peek()));
 }
 
@@ -323,7 +323,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			        c_str[i + count] >= 'a' && c_str[i + count] <= 'z')
 				// NOTE: the above check might not work for non-english
 				count++;
-			if (show) output.append(count, c_str[i]);
+			if (show) output.append(Std::string(count, c_str[i]));
 			i += count;
 			break;
 		}
@@ -341,7 +341,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 					i++;
 				}
 			} else {
-				output.append(1, c_str[i]);
+				output.push_back(c_str[i]);
 				i += 1;
 			}
 			break;

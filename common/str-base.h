@@ -315,8 +315,22 @@ public:
 	void assign(const value_type *str);
 	void assign(const value_type *str, size_t count);
 
+	/**
+	 * Append another string to this one
+	 */
+	void append(const value_type *str);
+	void append(value_type c);
+	void append(const BaseString &str);
+
 	/** Appends a string containing the characters between beginP (including) and endP (excluding). */
 	void append(const value_type *begin, const value_type *end);
+
+	/**
+	 * Append a character to the string
+	 */
+	inline void push_back(value_type c) {
+		append(c);
+	}
 
 	/**
 	 * Wraps the text in the string to the given line maximum. Lines will be
@@ -374,9 +388,6 @@ protected:
 	void assignInsert(const value_type *str, uint32 p);
 	void assignInsert(value_type c, uint32 p);
 	void assignInsert(const BaseString &str, uint32 p);
-	void assignAppend(const value_type *str);
-	void assignAppend(value_type c);
-	void assignAppend(const BaseString &str);
 
 	bool pointerInOwnBuffer(const value_type *str) const;
 

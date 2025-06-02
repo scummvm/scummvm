@@ -962,7 +962,7 @@ TEMPLATE void BASESTRING::append(const value_type *beginP, const value_type *end
 
 	// Don't test endP as it must be in the same buffer
 	if (pointerInOwnBuffer(beginP)) {
-		assignAppend(BaseString(beginP, endP));
+		append(BaseString(beginP, endP));
 		return;
 	}
 
@@ -986,7 +986,7 @@ TEMPLATE void BASESTRING::assignInsert(value_type c, uint32 p) {
 	_size++;
 }
 
-TEMPLATE void BASESTRING::assignAppend(value_type c) {
+TEMPLATE void BASESTRING::append(value_type c) {
 	if (c == 0) {
 #ifndef SCUMMVM_UTIL
 		warning("Adding \\0 to String. This is permitted, but can have unwanted consequences. (This warning will be removed later.)");
@@ -1014,9 +1014,9 @@ TEMPLATE void BASESTRING::assignInsert(const BaseString &str, uint32 p) {
 	}
 }
 
-TEMPLATE void BASESTRING::assignAppend(const BaseString &str) {
+TEMPLATE void BASESTRING::append(const BaseString &str) {
 	if (&str == this) {
-		assignAppend(BaseString(str));
+		append(BaseString(str));
 		return;
 	}
 
@@ -1055,9 +1055,9 @@ TEMPLATE void BASESTRING::assignInsert(const value_type *str, uint32 p) {
 	}
 }
 
-TEMPLATE void BASESTRING::assignAppend(const value_type *str) {
+TEMPLATE void BASESTRING::append(const value_type *str) {
 	if (pointerInOwnBuffer(str)) {
-		assignAppend(BaseString(str));
+		append(BaseString(str));
 		return;
 	}
 

@@ -96,12 +96,12 @@ DBCSString &DBCSString::operator=(value_type c) {
 }
 
 DBCSString &DBCSString::operator+=(const DBCSString &str) {
-	assignAppend(str);
+	append(str);
 	return *this;
 }
 
 DBCSString &DBCSString::operator+=(value_type c) {
-	assignAppend(c);
+	push_back(c);
 	return *this;
 }
 
