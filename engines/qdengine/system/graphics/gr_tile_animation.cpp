@@ -54,6 +54,11 @@ void grTileAnimation::clear() {
 	_tileOffsets.clear();
 	TileOffsets(_tileOffsets).swap(_tileOffsets);
 
+	for (auto &i : _decompressedTiles) {
+		free((void *)i._value.data());
+	}
+	_decompressedTiles.clear();
+
 	_tileData.clear();
 	TileData(_tileData).swap(_tileData);
 }
@@ -128,6 +133,10 @@ grTileSprite grTileAnimation::getTile(int tile_index) const {
 	debugC(3, kDebugTemp, "The tile index is given by %d", tile_index);
 	static uint32 tile_buf[GR_TILE_SPRITE_SIZE];
 
+	if (_decompressedTiles.contains(tile_index)) {
+		return _decompressedTiles[tile_index];
+	}
+
 	switch (_compression) {
 	case TILE_UNCOMPRESSED:
 		return grTileSprite(&*_tileData.begin() + _tileOffsets[tile_index]);
@@ -145,7 +154,11 @@ grTileSprite grTileAnimation::getTile(int tile_index) const {
 		}
 	}
 
-	return grTileSprite(tile_buf);
+	uint32 *tempBuf = new uint32[GR_TILE_SPRITE_SIZE];
+	memcpy(tempBuf, tile_buf, GR_TILE_SPRITE_SIZE * sizeof(uint32));
+
+	_decompressedTiles[tile_index] = grTileSprite(tempBuf);
+	return _decompressedTiles[tile_index];
 }
 
 void grTileAnimation::addFrame(const uint32 *frame_data) {
