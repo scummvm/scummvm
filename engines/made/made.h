@@ -83,7 +83,8 @@ public:
 	const MadeGameDescription *_gameDescription;
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
-	uint16 getVersion() const;
+	uint8 getVersion() const;
+	uint8 getSubVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 

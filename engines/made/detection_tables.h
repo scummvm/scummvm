@@ -49,7 +49,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -67,7 +67,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -84,7 +84,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -101,7 +101,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -118,7 +118,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -136,7 +136,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -157,7 +157,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -175,7 +175,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -193,7 +193,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -211,7 +211,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -229,7 +229,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -247,7 +247,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -265,7 +265,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -288,7 +288,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -305,7 +305,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_FLOPPY,
-		3,
+		3, 0,
 	},
 
 	{
@@ -326,7 +326,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_DEMO,
-		3,
+		3, 0,
 	},
 
 	{
@@ -343,7 +343,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -361,7 +361,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -380,7 +380,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		3,
+		3, 0,
 	},
 
 	{
@@ -398,7 +398,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -416,7 +416,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -434,7 +434,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	// The Manhole: Masterpiece Edition is not a MADE engine and cannot be
@@ -453,7 +453,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE,
 		0,
 		GF_CD,
-		2,
+		2, 0,
 	},
 
 	// Bugreport #5855
@@ -470,7 +470,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE,
 		0,
 		GF_CD,
-		2,
+		2, 0,
 	},
 
 	{
@@ -487,7 +487,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE,
 		0,
 		GF_CD,
-		2,
+		2, 0,
 	},
 
 	{
@@ -504,7 +504,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE,
 		0,
 		GF_FLOPPY,
-		1,
+		1, 0,
 	},
 
 	{
@@ -521,7 +521,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE,
 		0,
 		GF_CD,
-		3,
+		3, 0,
 	},
 
 	{
@@ -540,7 +540,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE,
 		0,
 		GF_FLOPPY,
-		3,
+		3, 0,
 	},
 
 	{
@@ -557,7 +557,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_LGOP2,
 		0,
 		GF_FLOPPY,
-		2,
+		2, 0,
 	},
 
 	{
@@ -575,7 +575,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_LGOP2,
 		0,
 		GF_FLOPPY,
-		2,
+		2, 0,
 	},
 
 	{
@@ -593,7 +593,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_LGOP2,
 		0,
 		GF_FLOPPY,
-		2,
+		2, 0,
 	},
 
 	{
@@ -611,7 +611,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_LGOP2,
 		0,
 		GF_FLOPPY,
-		2,
+		2, 0,
 	},
 
 	{
@@ -629,10 +629,48 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RODNEY,
 		0,
 		GF_FLOPPY,
-		2,
+		2, 0,
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
+	{
+		// Richard Scarry's Best Neighborhood Disc Ever!
+		// Hybrid CD, this is the MS-DOS version
+		{
+			"rsbnde",
+			"",
+			{
+				{"best.dat", 0, "9c36e7ee85df0d049a106196683e0134", 38400},
+				{"best.prj", 0, "1aee8bb58c663fed120ff50856c83f16", 4316121},
+			 AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()},
+		GID_RSBNDE,
+		0,
+		0,
+		3, 1,
+	},
+
+	{
+		// Richard Scarry's Best Neighborhood Disc Ever! demo
+		// This is found on the Activision 1.1 RTZ CD-ROM for MS-DOS
+		{
+			"rsbnde",
+			"Demo",
+			AD_ENTRY1s("bestdemo.dat", "6ef50ec61799d37ed75eada90a76d0e7", 12800),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()},
+		GID_RSBNDE,
+		0,
+		GF_DEMO,
+		3, 1,
+	},
+
+	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, 0 }
 };
 
 /**
@@ -652,7 +690,7 @@ static MadeGameDescription g_fallbackDesc = {
 	0,
 	0,
 	0,
-	0,
+	0, 0,
 };
 
 } // End of namespace Made

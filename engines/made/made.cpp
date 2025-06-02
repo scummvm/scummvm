@@ -73,6 +73,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		_dat = new GameDatabaseV2(this);
 	} else if (getGameID() == GID_RTZ) {
 		_dat = new GameDatabaseV3(this);
+	} else if (getGameID() == GID_RSBNDE) {
+		_dat = new GameDatabaseV3_1(this);
 	} else {
 		error("Unknown GameID");
 	}
@@ -111,6 +113,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		_soundRate = 8000;
 		break;
 	case GID_RTZ:
+	case GID_RSBNDE:
 		// Return to Zork sets it itself via a script function
 		break;
 	default:
@@ -464,6 +467,14 @@ Common::Error MadeEngine::run() {
 
 				delete exe;
 			}
+		}
+	} else if (getGameID() == GID_RSBNDE) {
+		if (getFeatures() & GF_DEMO) {
+			_dat->open("bestdemo.dat");
+			_res->open("bestdemo.prj");
+		} else {
+			_dat->open("best.dat");
+			_res->open("best.prj");
 		}
 	} else {
 		error ("Unknown MADE game");

@@ -253,6 +253,50 @@ byte *ObjectV3::getData() {
 }
 
 
+int ObjectV3_1::load(Common::SeekableReadStream &source) {
+
+	if (_freeData && _objData)
+		delete[] _objData;
+
+	_freeData = true;
+
+	byte header[6];
+	source.read(header, 6);
+
+	// uint16 flags = READ_LE_UINT16(header);
+	uint16 type = READ_LE_UINT16(header + 2);
+	if (type == 0x7FFF) {
+		// array of Bytes
+		_objSize = READ_LE_UINT16(header + 4);
+	} else if (type == 0x7FFE) {
+		// array of Words
+		_objSize = READ_LE_UINT16(header + 4) * 2;
+	} else if (type < 0x7FFE) {
+		// Object (array of Word -> Word)
+		_objSize = READ_LE_UINT16(header + 4) * 4;
+	}
+	_objSize += 6;
+	_objData = new byte[_objSize];
+	memcpy(_objData, header, 6);
+	source.read(_objData + 6, _objSize - 6);
+
+	return _objSize;
+}
+
+int ObjectV3_1::load(byte *source) {
+	_objData = source;
+	_freeData = false;
+	if (getClass() < 0x7FFE) {
+		_objSize = getSize() * 2;
+	} else {
+		_objSize = getSize();
+	}
+	_objSize += 6;
+	return _objSize;
+}
+
+
+/* GameDatabase */
 
 GameDatabase::GameDatabase(MadeEngine *vm) : _vm(vm) {
 	_gameState = nullptr;
@@ -625,7 +669,7 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 	uint32 objectsSize = sourceS.readUint32LE();
 	_mainCodeObjectIndex = sourceS.readUint16LE();
 
-	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", objectIndexOffs, objectCount, _gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
+	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", objectIndexOffs, objectCount, _gameStateOffs, _gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
 
 	_gameState = new byte[_gameStateSize];
 	sourceS.seek(_gameStateOffs);
@@ -837,6 +881,100 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 
 const char *GameDatabaseV3::getString(uint16 offset) {
 	// Not used in version 3 games
+	return nullptr;
+}
+
+void GameDatabaseV3_1::load(Common::SeekableReadStream &sourceS) {
+	char header[6];
+	sourceS.read(header, 6);
+	if (strncmp(header, "ADVSYS", 6))
+		warning("Unexpected database header, expected ADVSYS");
+
+	uint16 version = sourceS.readUint16LE();
+	uint16 subVersion = sourceS.readUint16LE();
+	char dbName[19] = "";
+	sourceS.read(dbName, 18);
+	debug(2, "databaseVersion = %d, databaseSubVersion = %d, databaseName = %s", version, subVersion, dbName);
+
+	sourceS.readUint16LE(); // unknown, always 1?
+
+	uint32 objectIndexOffs = sourceS.readUint32LE();
+	uint16 objectCount = sourceS.readUint16LE();
+	_gameStateOffs = sourceS.readUint32LE();
+	_gameStateSize = sourceS.readUint32LE();
+	uint32 objectsOffs = sourceS.readUint32LE();
+	uint32 objectsSize = sourceS.readUint32LE();
+	_mainCodeObjectIndex = sourceS.readUint16LE();
+
+	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", objectIndexOffs, objectCount, _gameStateOffs, _gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
+
+	_gameState = new byte[_gameStateSize];
+	sourceS.seek(_gameStateOffs);
+	sourceS.read(_gameState, _gameStateSize);
+
+	Common::Array<uint32> objectOffsets;
+	sourceS.seek(objectIndexOffs);
+	for (uint32 i = 0; i < objectCount; i++)
+		objectOffsets.push_back(sourceS.readUint32LE());
+
+	for (uint32 i = 0; i < objectCount; i++) {
+		Object *obj = new ObjectV3_1();
+		// The LSB indicates if it's a constant or variable object.
+		// Constant objects are loaded from disk, while variable objects exist
+		// in the _gameState buffer.
+		if (objectOffsets[i] & 1) {
+			sourceS.seek(objectsOffs + objectOffsets[i] ^ 1);
+			obj->load(sourceS);
+		} else {
+			obj->load(_gameState + objectOffsets[i]);
+		}
+		_objects.push_back(obj);
+	}
+}
+
+int16 *GameDatabaseV3_1::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
+
+	debug(4, "findObjectProperty(%04X, %04X): Beginning search...", objectIndex, propertyId);
+
+	do {
+		Object *obj = getObject(objectIndex);
+
+		if (obj->getClass() >= 0x7FFE) {
+			error("GameDatabaseV3::findObjectProperty(%04X, %04X) Not an object (type=%04X)", objectIndex, propertyId, obj->getClass());
+		}
+
+		// 3.1 objects are a set of int16 (key) -> int16 (value) entries
+		uint16 count = obj->getSize();
+
+		// Check each "key" on the object for a match.
+		while (count-- > 0) {
+
+			int16 *prop = (int16 *)obj->getData() + (2 * count);
+			uint16 readProp = READ_LE_UINT16(prop);
+
+			if ((readProp & 0x3FFF) == propertyId) {
+				if (readProp & 0x4000) {
+					// A match w/ high-bit set indicates you go look in the Gamestate.
+					//  "Value" is an index into the gamestate... return a ptr into gamestate.
+					propertyFlag = 1;
+					return (int16 *)_gameState + READ_LE_UINT16(prop + 1);
+				} else {
+					// A match without high-bit indicates the value is right here (literal).
+					//  Return a ptr to the value.
+					propertyFlag = obj->getFlags() & 1;
+					return (prop + 1);
+				}
+			}
+			prop++;
+		}
+
+		// Objects are a hierarchy: if no match is found on the current object,
+		//  check its "class" (parent).
+		objectIndex = obj->getClass();
+	} while (objectIndex != 0);
+
+	debug(1, "findObjectProperty(%04X, %04X) Property not found", objectIndex, propertyId);
+
 	return nullptr;
 }
 
