@@ -337,6 +337,14 @@ public:
 	};
 
 	enum class MainMenuButtonIndex {
+		Talk = 0,
+		Look = 1,
+		Use = 2,
+		Walk = 3,
+		Inventory = 4,
+		InventoryUse = 5,
+		Help = 6,
+		Settings = 7,
 		Close = 8
 	};
 
