@@ -55,12 +55,14 @@ enum MusicType {
 	MT_TOWNS,			// FM-TOWNS
 	MT_PC98,			// PC98
 	MT_SEGACD,			// SegaCD
+	MT_MACINTOSH,		// Apple Macintosh
+
+	// All devices after this one are treated as MIDI devices
 	MT_GM,				// General MIDI
 	MT_MT32,			// MT-32
 	MT_GS,				// Roland GS
 	MT_MT540,			// Casio MT-540
-	MT_CT460,			// Casio CT-460 / CSM-1
-	MT_MACINTOSH		// Apple Macintosh
+	MT_CT460			// Casio CT-460 / CSM-1
 };
 
 /**

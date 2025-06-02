@@ -353,6 +353,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		} else if (flags & MDT_SEGACD) {
 			tp = MT_SEGACD;
 			flags &= ~MDT_SEGACD;
+		} else if (flags & MDT_MACINTOSH) {
+			tp = MT_MACINTOSH;
+			flags &= ~MDT_MACINTOSH;
 		} else if (flags & MDT_ADLIB) {
 			tp = MT_ADLIB;
 			flags &= ~MDT_ADLIB;
@@ -371,9 +374,6 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		} else if (flags & MDT_APPLEIIGS) {
 			tp = MT_APPLEIIGS;
 			flags &= ~MDT_APPLEIIGS;
-		} else if (flags & MDT_MACINTOSH) {
-			tp = MT_MACINTOSH;
-			flags &= ~MDT_MACINTOSH;
 		} else if (flags & MDT_MIDI) {
 			// If we haven't tried to find a MIDI device yet we do this now.
 			skipMidi = false;
