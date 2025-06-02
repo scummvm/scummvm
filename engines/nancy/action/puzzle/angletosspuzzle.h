@@ -43,6 +43,13 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "AngleTossPuzzle"; }
 	bool isViewportRelative() const override { return true; }
+
+	SoundDescription _powerSound;
+	SoundDescription _squeakSound;
+	SoundDescription _chainSound;
+
+	SceneChangeWithFlag _throwSquidScene;
+	SceneChangeWithFlag _exitScene;
 };
 
 } // End of namespace Action

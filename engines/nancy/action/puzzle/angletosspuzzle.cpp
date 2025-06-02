@@ -33,6 +33,13 @@ namespace Nancy {
 namespace Action {
 
 void AngleTossPuzzle::init() {
+	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	setTransparent(true);
+	setVisible(true);
+	moveTo(screenBounds);
+
 	// TODO
 }
 
@@ -53,8 +60,35 @@ void AngleTossPuzzle::execute() {
 }
 
 void AngleTossPuzzle::readData(Common::SeekableReadStream &stream) {
-	// TODO
-	stream.skip(stream.size() - stream.pos());
+	Common::Path tmp;
+	readFilename(stream, tmp);
+	stream.skip(12);	// TODO
+
+	for (uint i = 0; i < 22; ++i) {
+		Common::Rect r;
+		readRect(stream, r);
+
+		/*
+		Common::String desc = Common::String::format("AngleTossPuzzle rect %d", i);
+		debug("%s %d, %d, %d, %d", desc.c_str(), r.left, r.top, r.right, r.bottom);
+
+		Graphics::Surface *s = g_system->lockScreen();
+		s->fillRect(r, 255);
+		g_system->unlockScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+		*/
+	}
+
+	_powerSound.readNormal(stream);
+	_squeakSound.readNormal(stream);
+	_chainSound.readNormal(stream);
+
+	_throwSquidScene.readData(stream);
+	stream.skip(7); // TODO
+	_exitScene.readData(stream);
+
+	stream.skip(16); // TODO
 }
 
 void AngleTossPuzzle::handleInput(NancyInput &input) {
