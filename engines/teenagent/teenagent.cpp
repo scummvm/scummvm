@@ -548,7 +548,15 @@ Common::Error TeenAgentEngine::run() {
 
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {
-		ttsMan->setLanguage(ConfMan.get("language"));
+		// Currently, the Polish and Czech versions have all text in English
+		// Therefore, the TTS language should be English to match the text
+		// The Polish CD/Floppy versions also have no working voiceover, so they need full TTS
+		if (_gameDescription->language == Common::PL_POL || _gameDescription->language == Common::CS_CZE) {
+			ttsMan->setLanguage("en");
+		} else {
+			ttsMan->setLanguage(ConfMan.get("language"));
+		}
+		
 		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 	}
 
