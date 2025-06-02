@@ -74,7 +74,7 @@ typedef unsigned int UINT_PTR, *PUINT_PTR;
 
 typedef long LONG_PTR, *PLONG_PTR;
 typedef unsigned long ULONG_PTR, *PULONG_PTR;
-typedef ULONG_PTR DWORD_PTR;
+typedef uintptr DWORD_PTR;
 typedef uint32 COLORREF;
 typedef void *POSITION;
 
