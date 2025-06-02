@@ -48,7 +48,7 @@ void LogicManager::CONS_Monsieur(int chapter) {
 		CONS_Monsieur_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,19 +69,25 @@ void LogicManager::CONS_Monsieur_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterMonsieur).characterPosition.position = 0;
-			getCharacter(kCharacterMonsieur).characterPosition.location = 0;
-			getCharacter(kCharacterMonsieur).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterMonsieur)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterMonsieur, kCarGreenSleeping, getCharacterCurrentParams(kCharacterMonsieur)[0])) {
+			if (getCharacterCurrentParams(kCharacterMonsieur)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterMonsieur)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterMonsieur)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterMonsieur, kCarGreenSleeping, getCharacterCurrentParams(kCharacterMonsieur)[0])) {
-		if (getCharacterCurrentParams(kCharacterMonsieur)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterMonsieur)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterMonsieur)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterMonsieur).characterPosition.position = 0;
+		getCharacter(kCharacterMonsieur).characterPosition.location = 0;
+		getCharacter(kCharacterMonsieur).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterMonsieur)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -98,12 +104,17 @@ void LogicManager::CONS_Monsieur_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterMonsieur, (char *)&getCharacterCurrentParams(kCharacterMonsieur)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -120,12 +131,17 @@ void LogicManager::CONS_Monsieur_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMonsieur, (char *)&getCharacterCurrentParams(kCharacterMonsieur)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -142,10 +158,11 @@ void LogicManager::CONS_Monsieur_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMonsieur)[1] || (getCharacterCurrentParams(kCharacterMonsieur)[1] = _gameTime + getCharacterCurrentParams(kCharacterMonsieur)[0], _gameTime + getCharacterCurrentParams(kCharacterMonsieur)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMonsieur)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMonsieur)[1] = 0x7FFFFFFF;
 		}
@@ -153,6 +170,9 @@ void LogicManager::HAND_Monsieur_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -172,15 +192,20 @@ void LogicManager::CONS_Monsieur_DoBlockSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoBlockSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseView(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[3], getCharacterCurrentParams(kCharacterMonsieur)[4]);
 
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMonsieur, (char *)&getCharacterCurrentParams(kCharacterMonsieur)[0]);
 		blockView(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[3], getCharacterCurrentParams(kCharacterMonsieur)[4]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -199,15 +224,20 @@ void LogicManager::CONS_Monsieur_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[3]);
 
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMonsieur, (char *)&getCharacterCurrentParams(kCharacterMonsieur)[0]);
 		blockAtDoor(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -226,14 +256,16 @@ void LogicManager::CONS_Monsieur_DoEnterCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoEnterCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[3]);
 		getCharacter(kCharacterMonsieur).characterPosition.position = 6470;
 
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMonsieur, (char *)&getCharacterCurrentParams(kCharacterMonsieur)[0]);
 		blockAtDoor(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[3]);
 		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
@@ -242,6 +274,10 @@ void LogicManager::HAND_Monsieur_DoEnterCorrOtis(HAND_PARAMS) {
 			playDialog(0, "BUMP", -1, 0);
 			bumpCathFDoor(34);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -256,16 +292,22 @@ void LogicManager::CONS_Monsieur_FinishSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_FinishSeqOtis(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (getCharacter(kCharacterMonsieur).direction == 4)
-			return;
-		goto LABEL_5;
-	}
-	if (msg->action == 3) {
-	LABEL_5:
+	switch (msg->action) {
+	case 0:
+		if (getCharacter(kCharacterMonsieur).direction == 4) {
+			getCharacter(kCharacterMonsieur).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
+			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+		}
+
+		break;
+	case 3:
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -280,16 +322,18 @@ void LogicManager::CONS_Monsieur_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_WaitRCClear(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!rcClear())
-			return;
-		goto LABEL_7;
-	}
-	if (msg->action == 12 && rcClear()) {
-	LABEL_7:
-		getCharacter(kCharacterMonsieur).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
-		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterMonsieur).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
+			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -309,28 +353,28 @@ void LogicManager::CONS_Monsieur_DoWalk(CONS_PARAMS) {
 void LogicManager::HAND_Monsieur_DoWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[0], getCharacterCurrentParams(kCharacterMonsieur)[1]))
-			goto LABEL_11;
-		break;
-	case 5:
-		if (cathHasItem(kItemPassengerList) && _gameTime > 0x109DE8)
-			playDialog(kCharacterCath, "CAT1022", -1, 0);
-		else
-			playCathExcuseMe();
-		break;
-	case 6:
-		playChrExcuseMe(kCharacterMonsieur, kCharacterCath, 0);
-		break;
 	case 12:
 		if (walk(kCharacterMonsieur, getCharacterCurrentParams(kCharacterMonsieur)[0], getCharacterCurrentParams(kCharacterMonsieur)[1])) {
-		LABEL_11:
 			getCharacter(kCharacterMonsieur).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
 		}
+
 		break;
+	case 5:
+		if (cathHasItem(kItemPassengerList) && _gameTime > 1089000) {
+			playDialog(kCharacterCath, "CAT1022", -1, 0);
+		} else {
+			playCathExcuseMe();
+		}
+
+		break;
+	case 6:
+		playChrExcuseMe(kCharacterMonsieur, kCharacterCath, 0);
+		break;
+	
 	default:
-		return;
+		break;
 	}
 }
 
@@ -347,73 +391,83 @@ void LogicManager::CONS_Monsieur_GoDining(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_GoDining(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			if (getCharacter(kCharacterMonsieur).callParams[getCharacter(kCharacterMonsieur).currentCall].parameters[0]) {
-				if (_gameProgress[kProgressChapter] == 4) {
-					setDoor(34, kCharacterCath, 0, 10, 9);
-					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
-					MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Hc", 0x22, 0, 0);
-				} else {
-					setDoor(34, kCharacterCath, 1, 255, 255);
-					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
-					MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Dc", 0x22, 0, 0);
-				}
-			} else {
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Bc", 0x22, 0, 0);
-			}
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
-			case 1:
-				goto LABEL_15;
-			case 2:
-				setDoor(34, kCharacterCath, 2, 255, 255);
-				goto LABEL_15;
-			case 3:
-				setDoor(34, kCharacterCath, 0, 10, 9);
-			LABEL_15:
-				setDoor(50, kCharacterCath, 0, 10, 9);
-				getCharacter(kCharacterMonsieur).characterPosition.location = 0;
-				send(kCharacterMonsieur, kCharacterFrancois, 101107728, 0);
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoWalk, 5, 0x352, 0, 0);
-				break;
-			case 4:
-				endGraphics(kCharacterMonsieur);
-				break;
-			case 5:
-				getCharacter(kCharacterMonsieur).characterPosition.position = 1540;
-				getCharacter(kCharacterMonsieur).characterPosition.location = 0;
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 6;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoSeqOtis, "812US", 0, 0, 0);
-				break;
-			case 6:
-				if (_gameProgress[kProgressChapter] == 1) {
-					playDialog(kCharacterMonsieur, "MRB1075", -1, 60);
-				} else if (_gameProgress[kProgressChapter] == 3) {
-					playDialog(kCharacterMonsieur, "MRB3101", -1, 0);
-				}
-
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 7;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoOtis5008A, 0, 0, 0, 0);
-				break;
-			case 7:
-				getCharacter(kCharacterMonsieur).characterPosition.location = 1;
-
-				getCharacter(kCharacterMonsieur).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
-				fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-				break;
-			default:
-				return;
-			}
+	switch (msg->action) {
+	case 0:
+		if (getCharacterParams(kCharacterMonsieur, 8)[0] && getCharacterParams(kCharacterMonsieur, 8)[1]) {
+			getCharacterParams(kCharacterMonsieur, 8)[1] = 0;
+			getCharacterParams(kCharacterMonsieur, 8)[0] = 0;
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 5;
+			MonsieurCall(&LogicManager::CONS_Monsieur_WaitRCClear, 0, 0, 0, 0);
 		}
-	} else if (getCharacter(kCharacterMonsieur).callParams[8].parameters[0] && getCharacter(kCharacterMonsieur).callParams[8].parameters[1]) {
-		getCharacter(kCharacterMonsieur).callParams[8].parameters[1] = 0;
-		getCharacter(kCharacterMonsieur).callParams[8].parameters[0] = 0;
-		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 5;
-		MonsieurCall(&LogicManager::CONS_Monsieur_WaitRCClear, 0, 0, 0, 0);
+
+		break;
+	case 12:
+		if (getCharacterCurrentParams(kCharacterMonsieur)[0]) {
+			if (_gameProgress[kProgressChapter] == 4) {
+				setDoor(34, kCharacterCath, 0, 10, 9);
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
+				MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Hc", 34, 0, 0);
+			} else {
+				setDoor(34, kCharacterCath, 1, 255, 255);
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
+				MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Dc", 34, 0, 0);
+			}
+		} else {
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Bc", 34, 0, 0);
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
+		case 1:
+		case 2:
+		case 3:
+			if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] == 2) {
+				setDoor(34, kCharacterCath, 2, 255, 255);
+			} else if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] == 3) {
+				setDoor(34, kCharacterCath, 0, 10, 9);
+			}
+
+			setDoor(50, kCharacterCath, 0, 10, 9);
+			getCharacter(kCharacterMonsieur).characterPosition.location = 0;
+			send(kCharacterMonsieur, kCharacterFrancois, 101107728, 0);
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoWalk, 5, 0x352, 0, 0);
+			break;
+		case 4:
+			endGraphics(kCharacterMonsieur);
+			break;
+		case 5:
+			getCharacter(kCharacterMonsieur).characterPosition.position = 1540;
+			getCharacter(kCharacterMonsieur).characterPosition.location = 0;
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 6;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoSeqOtis, "812US", 0, 0, 0);
+			break;
+		case 6:
+			if (_gameProgress[kProgressChapter] == 1) {
+				playDialog(kCharacterMonsieur, "MRB1075", -1, 60);
+			} else if (_gameProgress[kProgressChapter] == 3) {
+				playDialog(kCharacterMonsieur, "MRB3101", -1, 0);
+			}
+
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 7;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoOtis5008A, 0, 0, 0, 0);
+			break;
+		case 7:
+			getCharacter(kCharacterMonsieur).characterPosition.location = 1;
+
+			getCharacter(kCharacterMonsieur).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
+			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -428,7 +482,8 @@ void LogicManager::CONS_Monsieur_DoOtis5008A(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoOtis5008A(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		endGraphics(kCharacterMadame);
 		send(kCharacterMonsieur, kCharacterTableC, 136455232, 0);
 		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
@@ -436,7 +491,8 @@ void LogicManager::HAND_Monsieur_DoOtis5008A(HAND_PARAMS) {
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTableC, "008A3");
 		startSeqOtis(kCharacterMadame, "008A2");
 		startSeqOtis(kCharacterMonsieur, "008A1");
@@ -445,6 +501,10 @@ void LogicManager::HAND_Monsieur_DoOtis5008A(HAND_PARAMS) {
 			getCharacter(kCharacterMadame).elapsedFrames = getCharacter(kCharacterMonsieur).elapsedFrames;
 			getCharacter(kCharacterTableC).elapsedFrames = getCharacter(kCharacterMonsieur).elapsedFrames;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -459,17 +519,22 @@ void LogicManager::CONS_Monsieur_DoOtis5008E(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoOtis5008E(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		send(kCharacterMonsieur, kCharacterTableC, 103798704, "008F");
 		endGraphics(kCharacterMadame);
 
 		getCharacter(kCharacterMonsieur).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 		fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTableC, "008E3");
 		startSeqOtis(kCharacterMadame, "008E2");
 		startSeqOtis(kCharacterMonsieur, "008E1");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -486,10 +551,12 @@ void LogicManager::CONS_Monsieur_ExitDining(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_ExitDining(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 		MonsieurCall(&LogicManager::CONS_Monsieur_WaitRCClear, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterMonsieur).characterPosition.location = 0;
@@ -526,13 +593,14 @@ void LogicManager::HAND_Monsieur_ExitDining(HAND_PARAMS) {
 			MonsieurCall(&LogicManager::CONS_Monsieur_DoWalk, 4, 6470, 0, 0);
 			break;
 		case 6:
-			if (getCharacter(kCharacterMonsieur).callParams[getCharacter(kCharacterMonsieur).currentCall].parameters[0]) {
+			if (getCharacterCurrentParams(kCharacterMonsieur)[0]) {
 				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 7;
 				MonsieurCall(&LogicManager::CONS_Monsieur_DoEnterCorrOtis, "607Gc", 34, 0, 0);
 			} else {
 				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 8;
 				MonsieurCall(&LogicManager::CONS_Monsieur_DoEnterCorrOtis, "607Ac", 34, 0, 0);
 			}
+
 			break;
 		case 7:
 		case 8:
@@ -544,8 +612,12 @@ void LogicManager::HAND_Monsieur_ExitDining(HAND_PARAMS) {
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -564,7 +636,8 @@ void LogicManager::CONS_Monsieur_GoSalon(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_GoSalon(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		if (getCharacterCurrentParams(kCharacterMonsieur)[0]) {
 			setDoor(34, kCharacterCath, 1, 255, 255);
 			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
@@ -573,14 +646,18 @@ void LogicManager::HAND_Monsieur_GoSalon(HAND_PARAMS) {
 			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
 			MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Bc", 34, 0, 0);
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
 		case 1:
 			setDoor(34, kCharacterCath, 2, 255, 255);
-			goto LABEL_10;
+			setDoor(50, kCharacterCath, 0, 10, 9);
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoWalk, 5, 850, 0, 0);
+			break;
 		case 2:
 			setDoor(34, kCharacterCath, 0, 10, 9);
-		LABEL_10:
 			setDoor(50, kCharacterCath, 0, 10, 9);
 			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
 			MonsieurCall(&LogicManager::CONS_Monsieur_DoWalk, 5, 850, 0, 0);
@@ -603,8 +680,12 @@ void LogicManager::HAND_Monsieur_GoSalon(HAND_PARAMS) {
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -623,10 +704,12 @@ void LogicManager::CONS_Monsieur_ReturnSalon(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_ReturnSalon(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 		MonsieurCall(&LogicManager::CONS_Monsieur_WaitRCClear, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterMonsieur).characterPosition.location = 0;
@@ -656,8 +739,12 @@ void LogicManager::HAND_Monsieur_ReturnSalon(HAND_PARAMS) {
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -676,31 +763,38 @@ void LogicManager::CONS_Monsieur_InSalon(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_InSalon(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			startCycOtis(kCharacterMonsieur, (char *)&getCharacterCurrentParams(kCharacterMonsieur)[1]);
-		} else if (msg->action == 17) {
-			getCharacterCurrentParams(kCharacterMonsieur)[4] = checkCathDir(kCarRestaurant, 52);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMonsieur)[0] < _gameTime && !getCharacterCurrentParams(kCharacterMonsieur)[5]) {
 			getCharacterCurrentParams(kCharacterMonsieur)[5] = 1;
 
 			getCharacter(kCharacterMonsieur).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-			return;
-		}
-		if (getCharacterCurrentParams(kCharacterMonsieur)[4]) {
-			if (getCharacterCurrentParams(kCharacterMonsieur)[6] || (getCharacterCurrentParams(kCharacterMonsieur)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-				if (getCharacterCurrentParams(kCharacterMonsieur)[6] >= _currentGameSessionTicks)
-					return;
-				getCharacterCurrentParams(kCharacterMonsieur)[6] = 0x7FFFFFFF;
-			}
-			bumpCath(kCarRestaurant, 51, 255);
 		} else {
-			getCharacterCurrentParams(kCharacterMonsieur)[6] = 0;
+			if (getCharacterCurrentParams(kCharacterMonsieur)[4]) {
+				if (getCharacterCurrentParams(kCharacterMonsieur)[6] || (getCharacterCurrentParams(kCharacterMonsieur)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
+					if (getCharacterCurrentParams(kCharacterMonsieur)[6] >= _currentGameSessionTicks)
+						break;
+
+					getCharacterCurrentParams(kCharacterMonsieur)[6] = 0x7FFFFFFF;
+				}
+
+				bumpCath(kCarRestaurant, 51, 255);
+			} else {
+				getCharacterCurrentParams(kCharacterMonsieur)[6] = 0;
+			}
 		}
+
+		break;
+	case 12:
+		startCycOtis(kCharacterMonsieur, (char *)&getCharacterCurrentParams(kCharacterMonsieur)[1]);
+		break;
+	case 18:
+		getCharacterCurrentParams(kCharacterMonsieur)[4] = checkCathDir(kCarRestaurant, 52);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -717,62 +811,42 @@ void LogicManager::CONS_Monsieur_CompLogic(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_CompLogic(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			switch (msg->action) {
-			case 18:
-				switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
-				case 1:
-				case 2:
-					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
-					if (rnd(2) == 0) {
-						MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1001A", 0, 0, 0);
-					} else {
-						MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1001", 0, 0, 0);
-					}
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterMonsieur)[0] < _gameTime && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
+			getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
+			setDoor(34, kCharacterCath, 0, 10, 9);
+			setDoor(50, kCharacterCath, 0, 10, 9);
 
-					break;
-				case 3:
-					setDoor(34, kCharacterMonsieur, 1, 14, 0);
-					setDoor(50, kCharacterMonsieur, 1, 14, 0);
-					getCharacterCurrentParams(kCharacterMonsieur)[1] = 1;
-					break;
-				case 4:
-				case 5:
-				case 6:
-					getCharacterCurrentParams(kCharacterMonsieur)[1] = 0;
-					getCharacterCurrentParams(kCharacterMonsieur)[2] = 1;
-					break;
-				case 7:
-					send(kCharacterMonsieur, kCharacterCond2, 123199584, 0);
-					break;
-				default:
-					return;
+			getCharacter(kCharacterMonsieur).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
+			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+		} else {
+			if (getCharacterCurrentParams(kCharacterMonsieur)[1]) {
+				if (getCharacterCurrentParams(kCharacterMonsieur)[4] || (getCharacterCurrentParams(kCharacterMonsieur)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+					if (getCharacterCurrentParams(kCharacterMonsieur)[4] >= _currentGameSessionTicks)
+						break;
+
+					getCharacterCurrentParams(kCharacterMonsieur)[4] = 0x7FFFFFFF;
 				}
-				break;
-			case 122865568:
-				send(kCharacterMonsieur, kCharacterCond2, 88652208, 0);
-				break;
-			case 221683008:
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 7;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "Mrb1001", 0, 0, 0);
-				break;
-			}
-		} else if (msg->action == 17) {
-			if (getCharacterCurrentParams(kCharacterMonsieur)[2] || getCharacterCurrentParams(kCharacterMonsieur)[1]) {
-				setDoor(34, kCharacterMonsieur, 1, 10, 9);
-				setDoor(50, kCharacterMonsieur, 1, 10, 9);
-				getCharacterCurrentParams(kCharacterMonsieur)[2] = 0;
+
 				getCharacterCurrentParams(kCharacterMonsieur)[1] = 0;
+				getCharacterCurrentParams(kCharacterMonsieur)[2] = 1;
+				setDoor(34, kCharacterMonsieur, 1, 0, 0);
+				setDoor(50, kCharacterMonsieur, 1, 0, 0);
+				getCharacterCurrentParams(kCharacterMonsieur)[4] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterMonsieur)[4] = 0;
 			}
-		} else if (msg->action == 12) {
-			setDoor(34, kCharacterMonsieur, 1, 10, 9);
-			setDoor(50, kCharacterMonsieur, 1, 10, 9);
 		}
-	} else if (msg->action >= 8) {
+
+		break;
+	case 8:
+	case 9:
 		if (getCharacterCurrentParams(kCharacterMonsieur)[1]) {
 			setDoor(34, kCharacterMonsieur, 1, 0, 0);
 			setDoor(50, kCharacterMonsieur, 1, 0, 0);
+
 			if (msg->param.intParam == 50) {
 				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
 				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, getCathWCDialog(), 0, 0, 0);
@@ -791,6 +865,7 @@ void LogicManager::HAND_Monsieur_CompLogic(HAND_PARAMS) {
 		} else {
 			setDoor(34, kCharacterMonsieur, 1, 0, 0);
 			setDoor(50, kCharacterMonsieur, 1, 0, 0);
+
 			if (msg->action == 8) {
 				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "LIB012", 0, 0, 0);
@@ -799,31 +874,61 @@ void LogicManager::HAND_Monsieur_CompLogic(HAND_PARAMS) {
 				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "LIB013", 0, 0, 0);
 			}
 		}
-	} else if (msg->action == 0) {
-		if (getCharacterCurrentParams(kCharacterMonsieur)[0] < _gameTime && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
-			getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
-			setDoor(34, kCharacterCath, 0, 10, 9);
-			setDoor(50, kCharacterCath, 0, 10, 9);
 
-			getCharacter(kCharacterMonsieur).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
-			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-			return;
+		break;
+	case 12:
+		setDoor(34, kCharacterMonsieur, 1, 10, 9);
+		setDoor(50, kCharacterMonsieur, 1, 10, 9);
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterMonsieur)[2] || getCharacterCurrentParams(kCharacterMonsieur)[1]) {
+			setDoor(34, kCharacterMonsieur, 1, 10, 9);
+			setDoor(50, kCharacterMonsieur, 1, 10, 9);
+			getCharacterCurrentParams(kCharacterMonsieur)[2] = 0;
+			getCharacterCurrentParams(kCharacterMonsieur)[1] = 0;
 		}
-		if (getCharacterCurrentParams(kCharacterMonsieur)[1]) {
-			if (getCharacterCurrentParams(kCharacterMonsieur)[4] || (getCharacterCurrentParams(kCharacterMonsieur)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMonsieur)[4] >= _currentGameSessionTicks)
-					return;
-				getCharacterCurrentParams(kCharacterMonsieur)[4] = 0x7FFFFFFF;
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
+		case 1:
+		case 2:
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
+			if (rnd(2) == 0) {
+				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1001A", 0, 0, 0);
+			} else {
+				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1001", 0, 0, 0);
 			}
+
+			break;
+		case 3:
+			setDoor(34, kCharacterMonsieur, 1, 14, 0);
+			setDoor(50, kCharacterMonsieur, 1, 14, 0);
+			getCharacterCurrentParams(kCharacterMonsieur)[1] = 1;
+			break;
+		case 4:
+		case 5:
+		case 6:
 			getCharacterCurrentParams(kCharacterMonsieur)[1] = 0;
 			getCharacterCurrentParams(kCharacterMonsieur)[2] = 1;
-			setDoor(34, kCharacterMonsieur, 1, 0, 0);
-			setDoor(50, kCharacterMonsieur, 1, 0, 0);
-			getCharacterCurrentParams(kCharacterMonsieur)[4] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterMonsieur)[4] = 0;
+			break;
+		case 7:
+			send(kCharacterMonsieur, kCharacterCond2, 123199584, 0);
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 122865568:
+		send(kCharacterMonsieur, kCharacterCond2, 88652208, 0);
+		break;
+	case 221683008:
+		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 7;
+		MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "Mrb1001", 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -838,20 +943,26 @@ void LogicManager::CONS_Monsieur_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			autoMessage(kCharacterMonsieur, 203520448, 0);
-			autoMessage(kCharacterMonsieur, 237889408, 1);
-			setDoor(34, kCharacterCath, 0, 10, 9);
-			setDoor(50, kCharacterCath, 0, 10, 9);
-			setDoor(42, kCharacterCath, 0, 255, 255);
-			getCharacter(kCharacterMonsieur).characterPosition.position = 1750;
-			getCharacter(kCharacterMonsieur).characterPosition.location = 1;
-			getCharacter(kCharacterMonsieur).characterPosition.car = kCarRestaurant;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterMonsieur)[0]) {
+			getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
+			CONS_Monsieur_InPart1(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterMonsieur)[0]) {
-		getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
-		CONS_Monsieur_InPart1(0, 0, 0, 0);
+
+		break;
+	case 12:
+		autoMessage(kCharacterMonsieur, 203520448, 0);
+		autoMessage(kCharacterMonsieur, 237889408, 1);
+		setDoor(34, kCharacterCath, 0, 10, 9);
+		setDoor(50, kCharacterCath, 0, 10, 9);
+		setDoor(42, kCharacterCath, 0, 255, 255);
+		getCharacter(kCharacterMonsieur).characterPosition.position = 1750;
+		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
+		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRestaurant;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -866,67 +977,86 @@ void LogicManager::CONS_Monsieur_DoDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_DoDinner(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action > 134466544) {
-			if (msg->action == 135854206) {
-				getCharacterCurrentParams(kCharacterMonsieur)[1] = 1;
-			} else if (msg->action == 168717392) {
-				getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
-				startCycOtis(kCharacterMonsieur, "008D");
-				if (!getCharacterCurrentParams(kCharacterMonsieur)[1]) {
-					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 5;
-					MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1078", 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterMonsieur)[0]) {
+			if (!getCharacterCurrentParams(kCharacterMonsieur)[1]) {
+				if (!getCharacterCurrentParams(kCharacterMonsieur)[2]) {
+					getCharacterCurrentParams(kCharacterMonsieur)[2] = _gameTime + 4500;
+					if (_gameTime == -4500) {
+						getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
+						MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1078A", 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterMonsieur)[2] < _gameTime) {
+					getCharacterCurrentParams(kCharacterMonsieur)[2] = 0x7FFFFFFF;
+					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
+					MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1078A", 0, 0, 0);
+					break;
 				}
 			}
-		} else if (msg->action == 134466544) {
-			getCharacterCurrentParams(kCharacterMonsieur)[1] = 0;
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
-			case 1:
-				startCycOtis(kCharacterMonsieur, "008B");
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1076", 0, 0, 0);
-				break;
-			case 2:
-				send(kCharacterMonsieur, kCharacterWaiter2, 256200848, 0);
-				break;
-			case 3:
-				goto LABEL_24;
-			case 4:
-				send(kCharacterMonsieur, kCharacterCook, 224849280, 0);
 
-				getCharacter(kCharacterMonsieur).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
-				fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
-				break;
-			default:
-				return;
+			if (_gameTime > 1138500 && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
+				getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
+				MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 0, 0, 0, 0);
 			}
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 		MonsieurCall(&LogicManager::CONS_Monsieur_GoDining, 0, 0, 0, 0);
-	} else if (msg->action == 0 && getCharacterCurrentParams(kCharacterMonsieur)[0]) {
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
+		case 1:
+			startCycOtis(kCharacterMonsieur, "008B");
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1076", 0, 0, 0);
+			break;
+		case 2:
+			send(kCharacterMonsieur, kCharacterWaiter2, 256200848, 0);
+			break;
+		case 3:
+			if (_gameTime > 1138500 && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
+				getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
+				MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 0, 0, 0, 0);
+			}
+
+			break;
+		case 4:
+			send(kCharacterMonsieur, kCharacterCook, 224849280, 0);
+
+			getCharacter(kCharacterMonsieur).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
+			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 134466544:
+		getCharacterCurrentParams(kCharacterMonsieur)[1] = 0;
+		break;
+	case 135854206:
+		getCharacterCurrentParams(kCharacterMonsieur)[1] = 1;
+		break;
+	case 168717392:
+		getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
+		startCycOtis(kCharacterMonsieur, "008D");
 		if (!getCharacterCurrentParams(kCharacterMonsieur)[1]) {
-			if (!getCharacterCurrentParams(kCharacterMonsieur)[2]) {
-				getCharacterCurrentParams(kCharacterMonsieur)[2] = _gameTime + 4500;
-				if (_gameTime == -4500)
-					goto LABEL_18;
-			}
-			if (getCharacterCurrentParams(kCharacterMonsieur)[2] < _gameTime) {
-				getCharacterCurrentParams(kCharacterMonsieur)[2] = 0x7FFFFFFF;
-			LABEL_18:
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1078A", 0, 0, 0);
-				return;
-			}
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 5;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB1078", 0, 0, 0);
 		}
-	LABEL_24:
-		if (_gameTime > 1138500 && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
-			getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
-			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
-			MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 0, 0, 0, 0);
-		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -941,10 +1071,12 @@ void LogicManager::CONS_Monsieur_InPart1(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_InPart1(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 		MonsieurCall(&LogicManager::CONS_Monsieur_InSalon, 1071000, "101A", 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
@@ -957,8 +1089,10 @@ void LogicManager::HAND_Monsieur_InPart1(HAND_PARAMS) {
 		case 3:
 			setDoor(34, kCharacterCath, 1, 0, 0);
 			setDoor(50, kCharacterCath, 1, 0, 0);
+
 			if (checkCathDir(kCarRedSleeping, 54) || checkCathDir(kCarRedSleeping, 44))
 				bumpCath(kCarRedSleeping, 10, 255);
+
 			blockView(kCharacterMonsieur, kCarRedSleeping, 54);
 			blockView(kCharacterMonsieur, kCarRedSleeping, 44);
 			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
@@ -994,8 +1128,12 @@ void LogicManager::HAND_Monsieur_InPart1(HAND_PARAMS) {
 			CONS_Monsieur_Asleep(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1010,13 +1148,17 @@ void LogicManager::CONS_Monsieur_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterMonsieur).characterPosition.position = 6470;
 		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
 		setDoor(34, kCharacterCath, 1, 10, 9);
 		setDoor(50, kCharacterCath, 1, 10, 9);
 		endGraphics(kCharacterMonsieur);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1031,18 +1173,21 @@ void LogicManager::CONS_Monsieur_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterMonsieur);
-			getCharacter(kCharacterMonsieur).characterPosition.position = 4689;
-			getCharacter(kCharacterMonsieur).characterPosition.location = 1;
-			getCharacter(kCharacterMonsieur).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterMonsieur).inventoryItem = 0;
-			setDoor(34, kCharacterCath, 0, 10, 9);
-			setDoor(50, kCharacterCath, 0, 10, 9);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Monsieur_AtBreakfast(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterMonsieur);
+		getCharacter(kCharacterMonsieur).characterPosition.position = 4689;
+		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
+		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterMonsieur).inventoryItem = 0;
+		setDoor(34, kCharacterCath, 0, 10, 9);
+		setDoor(50, kCharacterCath, 0, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1064,6 +1209,7 @@ void LogicManager::HAND_Monsieur_AtBreakfast(HAND_PARAMS) {
 			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 			MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 1, 0, 0, 0);
 		}
+
 		break;
 	case 12:
 		startCycOtis(kCharacterMonsieur, "008D");
@@ -1073,13 +1219,15 @@ void LogicManager::HAND_Monsieur_AtBreakfast(HAND_PARAMS) {
 			playDialog(kCharacterMonsieur, "MRB2001", -1, 0);
 			getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
 		}
+
 		break;
 	case 18:
 		if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] == 1)
 			CONS_Monsieur_InComp2(0, 0, 0, 0);
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1094,9 +1242,13 @@ void LogicManager::CONS_Monsieur_InComp2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_InComp2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(34, kCharacterCath, 2, 255, 255);
 		startCycOtis(kCharacterMonsieur, "510");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1111,18 +1263,21 @@ void LogicManager::CONS_Monsieur_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterMonsieur);
-			getCharacter(kCharacterMonsieur).characterPosition.location = 1;
-			getCharacter(kCharacterMonsieur).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterMonsieur).inventoryItem = 0;
-			getCharacter(kCharacterMonsieur).clothes = 0;
-			setDoor(34, kCharacterCath, 2, 255, 255);
-			setDoor(50, kCharacterCath, 1, 10, 9);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Monsieur_OpenComp3(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterMonsieur);
+		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
+		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterMonsieur).inventoryItem = 0;
+		getCharacter(kCharacterMonsieur).clothes = 0;
+		setDoor(34, kCharacterCath, 2, 255, 255);
+		setDoor(50, kCharacterCath, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1162,11 +1317,19 @@ void LogicManager::CONS_Monsieur_GoLunch(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_GoLunch(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 		MonsieurCall(&LogicManager::CONS_Monsieur_GoDining, 1, 0, 0, 0);
-	} else if (msg->action == 18 && getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] == 1) {
-		CONS_Monsieur_AtLunch(0, 0, 0, 0);
+		break;
+	case 18:
+		if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] == 1) {
+			CONS_Monsieur_AtLunch(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1181,63 +1344,111 @@ void LogicManager::CONS_Monsieur_AtLunch(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_AtLunch(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action != 18) {
-			if (msg->action == 122288808) {
-				startCycOtis(kCharacterMonsieur, "008D");
-				getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
-			} else if (msg->action == 122358304) {
-				startCycOtis(kCharacterMonsieur, "BLANK");
-			}
-			return;
-		}
-
-		if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] != 1) {
-			if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] == 2)
-				CONS_Monsieur_AfterLunchOpen(0, 0, 0, 0);
-			return;
-		}
-		goto LABEL_31;
-	}
-	if (msg->action == 12) {
-		startCycOtis(kCharacterMonsieur, "008B");
-		return;
-	}
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMonsieur)[1] || (getCharacterCurrentParams(kCharacterMonsieur)[1] = _gameTime + 450, _gameTime != -450)) {
 			if (getCharacterCurrentParams(kCharacterMonsieur)[1] >= _gameTime) {
-			LABEL_14:
 				if (!getCharacterCurrentParams(kCharacterMonsieur)[0])
-					return;
+					break;
+
 				if (inDiningRoom(kCharacterAnna) && inDiningRoom(kCharacterAugust) && !whoRunningDialog(kCharacterMonsieur) && getCharacterCurrentParams(kCharacterMonsieur)[2] != 0x7FFFFFFF && _gameTime) {
-					if (_gameTime > 1998000)
-						goto LABEL_25;
-					if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterMonsieur)[2]) {
-						getCharacterCurrentParams(kCharacterMonsieur)[2] = _gameTime + 450;
-						if (_gameTime == -450)
-							goto LABEL_26;
-					}
-					if (getCharacterCurrentParams(kCharacterMonsieur)[2] < _gameTime) {
-					LABEL_25:
+					if (_gameTime > 1998000) {
 						getCharacterCurrentParams(kCharacterMonsieur)[2] = 0x7FFFFFFF;
-					LABEL_26:
 						getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 						MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB3102", 0, 0, 0);
-						return;
+						break;
+					}
+
+					if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterMonsieur)[2]) {
+						getCharacterCurrentParams(kCharacterMonsieur)[2] = _gameTime + 450;
+						if (_gameTime == -450) {
+							getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
+							MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB3102", 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterMonsieur)[2] < _gameTime) {
+						getCharacterCurrentParams(kCharacterMonsieur)[2] = 0x7FFFFFFF;
+						getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
+						MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB3102", 0, 0, 0);
+						break;
 					}
 				}
-			LABEL_31:
+
 				if (_gameTime > 2002500 && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
 					getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
 					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
 					MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 1, 0, 0, 0);
 				}
-				return;
+
+				break;
 			}
+
 			getCharacterCurrentParams(kCharacterMonsieur)[1] = 0x7FFFFFFF;
 		}
+
 		send(kCharacterMonsieur, kCharacterWaiter2, 256200848, 0);
-		goto LABEL_14;
+
+		if (!getCharacterCurrentParams(kCharacterMonsieur)[0])
+			break;
+
+		if (inDiningRoom(kCharacterAnna) && inDiningRoom(kCharacterAugust) && !whoRunningDialog(kCharacterMonsieur) && getCharacterCurrentParams(kCharacterMonsieur)[2] != 0x7FFFFFFF && _gameTime) {
+			if (_gameTime > 1998000) {
+				getCharacterCurrentParams(kCharacterMonsieur)[2] = 0x7FFFFFFF;
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
+				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB3102", 0, 0, 0);
+				break;
+			}
+
+			if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterMonsieur)[2]) {
+				getCharacterCurrentParams(kCharacterMonsieur)[2] = _gameTime + 450;
+				if (_gameTime == -450) {
+					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
+					MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB3102", 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterMonsieur)[2] < _gameTime) {
+				getCharacterCurrentParams(kCharacterMonsieur)[2] = 0x7FFFFFFF;
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
+				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "MRB3102", 0, 0, 0);
+				break;
+			}
+		}
+
+		if (_gameTime > 2002500 && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
+			getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
+			MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 1, 0, 0, 0);
+		}
+
+		break;
+	case 12:
+		startCycOtis(kCharacterMonsieur, "008B");
+		break;
+	case 18:
+
+		if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] != 1) {
+			if (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] == 2)
+				CONS_Monsieur_AfterLunchOpen(0, 0, 0, 0);
+		} else if (_gameTime > 2002500 && !getCharacterCurrentParams(kCharacterMonsieur)[3]) {
+			getCharacterCurrentParams(kCharacterMonsieur)[3] = 1;
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
+			MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 1, 0, 0, 0);
+		}
+
+		break;
+	case 122288808:
+		startCycOtis(kCharacterMonsieur, "008D");
+		getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
+		break;
+	case 122358304:
+		startCycOtis(kCharacterMonsieur, "BLANK");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1277,19 +1488,22 @@ void LogicManager::CONS_Monsieur_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterMonsieur);
-			getCharacter(kCharacterMonsieur).characterPosition.position = 6470;
-			getCharacter(kCharacterMonsieur).characterPosition.location = 1;
-			getCharacter(kCharacterMonsieur).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterMonsieur).inventoryItem = 0;
-			getCharacter(kCharacterMonsieur).clothes = 0;
-			setDoor(34, kCharacterCath, 2, 255, 255);
-			setDoor(50, kCharacterCath, 1, 10, 9);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Monsieur_OpenComp4(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterMonsieur);
+		getCharacter(kCharacterMonsieur).characterPosition.position = 6470;
+		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
+		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterMonsieur).inventoryItem = 0;
+		getCharacter(kCharacterMonsieur).clothes = 0;
+		setDoor(34, kCharacterCath, 2, 255, 255);
+		setDoor(50, kCharacterCath, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1304,14 +1518,20 @@ void LogicManager::CONS_Monsieur_OpenComp4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_OpenComp4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			setDoor(34, kCarNone, 2, 255, 255);
-			startCycOtis(kCharacterMonsieur, "510");
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 2367000 && !getCharacterCurrentParams(kCharacterMonsieur)[0]) {
+			getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
+			CONS_Monsieur_Dinner4(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 2367000 && !getCharacterCurrentParams(kCharacterMonsieur)[0]) {
-		getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
-		CONS_Monsieur_Dinner4(0, 0, 0, 0);
+
+		break;
+	case 12:
+		setDoor(34, kCarNone, 2, 255, 255);
+		startCycOtis(kCharacterMonsieur, "510");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1326,38 +1546,46 @@ void LogicManager::CONS_Monsieur_Dinner4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_Dinner4(HAND_PARAMS) {
-	if (msg->action > 12) {
-		switch (msg->action) {
-		case 18:
-			switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
-			case 1:
-				startCycOtis(kCharacterMonsieur, "008B");
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoWait, 450, 0, 0, 0);
-				break;
-			case 2:
-				send(kCharacterMonsieur, kCharacterWaiter2, 256200848, 0);
-				break;
-			case 3:
-				CONS_Monsieur_ReturnComp4(0, 0, 0, 0);
-				break;
-			}
-			break;
-		case 122288808:
-			getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
-			startCycOtis(kCharacterMonsieur, "008D");
-			break;
-		case 122358304:
-			startCycOtis(kCharacterMonsieur, "BLANK");
-			break;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterMonsieur)[0] && _gameTime > 2389500 && !getCharacterCurrentParams(kCharacterMonsieur)[1]) {
+			getCharacterCurrentParams(kCharacterMonsieur)[1] = 1;
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
+			MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 		MonsieurCall(&LogicManager::CONS_Monsieur_GoDining, 1, 0, 0, 0);
-	} else if (msg->action == 0 && getCharacterCurrentParams(kCharacterMonsieur)[0] && _gameTime > 2389500 && !getCharacterCurrentParams(kCharacterMonsieur)[1]) {
-		getCharacterCurrentParams(kCharacterMonsieur)[1] = 1;
-		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
-		MonsieurCall(&LogicManager::CONS_Monsieur_ExitDining, 0, 0, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
+		case 1:
+			startCycOtis(kCharacterMonsieur, "008B");
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
+			MonsieurCall(&LogicManager::CONS_Monsieur_DoWait, 450, 0, 0, 0);
+			break;
+		case 2:
+			send(kCharacterMonsieur, kCharacterWaiter2, 256200848, 0);
+			break;
+		case 3:
+			CONS_Monsieur_ReturnComp4(0, 0, 0, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 122288808:
+		getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
+		startCycOtis(kCharacterMonsieur, "008D");
+		break;
+	case 122358304:
+		startCycOtis(kCharacterMonsieur, "BLANK");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1372,61 +1600,8 @@ void LogicManager::CONS_Monsieur_ReturnComp4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_ReturnComp4(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action > 122865568) {
-			if (msg->action == 125039808) {
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
-				MonsieurCall(&LogicManager::CONS_Monsieur_CompLogic, 2457000, 0, 0, 0);
-			} else if (msg->action == 221683008) {
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 9;
-				MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "Mrb1001", 0, 0, 0);
-			}
-		} else if (msg->action == 122865568) {
-			send(kCharacterMonsieur, kCharacterCond2, 88652208, 0);
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
-				MonsieurCall(&LogicManager::CONS_Monsieur_InSalon, 2479500, "102B", 0, 0);
-				break;
-			case 2:
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
-				MonsieurCall(&LogicManager::CONS_Monsieur_ReturnSalon, 0, "102C", 0, 0);
-				break;
-			case 3:
-			case 7:
-				goto LABEL_29;
-			case 4:
-			case 8:
-				if (_gameTime >= 2470500) {
-				LABEL_29:
-					CONS_Monsieur_Asleep4(0, 0, 0, 0);
-				} else if (_gameEvents[kEventAugustDrink]) {
-					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 5;
-					MonsieurCall(&LogicManager::CONS_Monsieur_GoSalon, 0, "102A", 0, 0);
-				} else {
-					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 8;
-					MonsieurCall(&LogicManager::CONS_Monsieur_CompLogic, _gameTime + 900, 0, 0, 0);
-				}
-				break;
-			case 5:
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 6;
-				MonsieurCall(&LogicManager::CONS_Monsieur_InSalon, 2479500, "102B", 0, 0);
-				break;
-			case 6:
-				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 7;
-				MonsieurCall(&LogicManager::CONS_Monsieur_ReturnSalon, 0, "102C", 0, 0);
-				break;
-			case 9:
-				send(kCharacterMonsieur, kCharacterCond2, 123199584, 0);
-				break;
-			default:
-				return;
-			}
-		}
-	} else if (msg->action == 12) {
-		send(kCharacterMonsieur, kCharacterAbbot, 101687594, 0);
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime <= 2470500 || getCharacterCurrentParams(kCharacterMonsieur)[0]) {
 			if (_gameTime > 2457000) {
 				if (_gameEvents[kEventAugustDrink]) {
@@ -1439,6 +1614,67 @@ void LogicManager::HAND_Monsieur_ReturnComp4(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterMonsieur)[0] = 1;
 			CONS_Monsieur_Asleep4(0, 0, 0, 0);
 		}
+
+		break;
+	case 12:
+		send(kCharacterMonsieur, kCharacterAbbot, 101687594, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 2;
+			MonsieurCall(&LogicManager::CONS_Monsieur_InSalon, 2479500, "102B", 0, 0);
+			break;
+		case 2:
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 3;
+			MonsieurCall(&LogicManager::CONS_Monsieur_ReturnSalon, 0, "102C", 0, 0);
+			break;
+		case 3:
+		case 7:
+			CONS_Monsieur_Asleep4(0, 0, 0, 0);
+			break;
+		case 4:
+		case 8:
+			if (_gameTime >= 2470500) {
+				CONS_Monsieur_Asleep4(0, 0, 0, 0);
+			} else if (_gameEvents[kEventAugustDrink]) {
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 5;
+				MonsieurCall(&LogicManager::CONS_Monsieur_GoSalon, 0, "102A", 0, 0);
+			} else {
+				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 8;
+				MonsieurCall(&LogicManager::CONS_Monsieur_CompLogic, _gameTime + 900, 0, 0, 0);
+			}
+
+			break;
+		case 5:
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 6;
+			MonsieurCall(&LogicManager::CONS_Monsieur_InSalon, 2479500, "102B", 0, 0);
+			break;
+		case 6:
+			getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 7;
+			MonsieurCall(&LogicManager::CONS_Monsieur_ReturnSalon, 0, "102C", 0, 0);
+			break;
+		case 9:
+			send(kCharacterMonsieur, kCharacterCond2, 123199584, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 122865568:
+		send(kCharacterMonsieur, kCharacterCond2, 88652208, 0);
+		break;
+	case 125039808:
+		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 4;
+		MonsieurCall(&LogicManager::CONS_Monsieur_CompLogic, 2457000, 0, 0, 0);
+		break;
+	case 221683008:
+		getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 9;
+		MonsieurCall(&LogicManager::CONS_Monsieur_DoDialog, "Mrb1001", 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1453,13 +1689,17 @@ void LogicManager::CONS_Monsieur_Asleep4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_Asleep4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterMonsieur).characterPosition.position = 6470;
 		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
 		endGraphics(kCharacterMonsieur);
 		setDoor(34, kCharacterCath, 1, 10, 9);
 		setDoor(50, kCharacterCath, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1474,17 +1714,20 @@ void LogicManager::CONS_Monsieur_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterMonsieur);
-			getCharacter(kCharacterMonsieur).characterPosition.position = 3969;
-			getCharacter(kCharacterMonsieur).characterPosition.location = 1;
-			getCharacter(kCharacterMonsieur).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterMonsieur).inventoryItem = 0;
-			getCharacter(kCharacterMonsieur).clothes = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Monsieur_Prisoner(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterMonsieur);
+		getCharacter(kCharacterMonsieur).characterPosition.position = 3969;
+		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
+		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterMonsieur).inventoryItem = 0;
+		getCharacter(kCharacterMonsieur).clothes = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1499,8 +1742,13 @@ void LogicManager::CONS_Monsieur_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_Monsieur_Hiding(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Monsieur_Hiding(CONS_PARAMS) {
@@ -1514,12 +1762,17 @@ void LogicManager::CONS_Monsieur_Hiding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Monsieur_Hiding(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMonsieur).characterPosition.position = 5790;
 		getCharacter(kCharacterMonsieur).characterPosition.location = 1;
 		getCharacter(kCharacterMonsieur).characterPosition.car = kCarRedSleeping;
-	} else if (msg->action == 135800432) {
+		break;
+	case 135800432:
 		CONS_Monsieur_Disappear(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
