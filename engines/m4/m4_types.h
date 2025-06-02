@@ -86,7 +86,7 @@ struct token {
 
 #include "common/pack-start.h"  // START STRUCT PACKING
 struct RGB8 {
-	byte r = 0, g = 0, b = 0;
+	byte r, g, b;
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
