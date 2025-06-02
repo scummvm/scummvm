@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/fonts/winfont.h"
 #include "bagel/mfc/gfx/fonts.h"
 
 namespace Bagel {
@@ -26,7 +27,7 @@ namespace MFC {
 namespace Gfx {
 
 Fonts::~Fonts() {
-
+	_fonts.clear();
 }
 
 int Fonts::addFontResource(const char *filename) {
@@ -46,6 +47,42 @@ bool Fonts::removeFontResource(const char *filename) {
 	} else {
 		return false;
 	}
+}
+
+HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
+		int nOrientation, int nWeight, byte bItalic, byte bUnderline,
+		byte cStrikeOut, byte nCharSet, byte nOutPrecision,
+		byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
+		const char *lpszFacename) {
+	// TODO: We don't really handle +/- heights properly
+	nHeight = ABS(nHeight);
+
+	// First scan for an existing cached copy of the font
+	for (auto &it : _fonts) {
+		if (it._faceName == lpszFacename &&
+				it._height == nHeight)
+			return (HFONT)it._font;
+	}
+
+	// Create the font
+	Graphics::WinFont *font = new Graphics::WinFont();
+
+	for (auto &filename : _fontResources) {
+		if (font->loadFromFON(filename, Graphics::WinFontDirEntry(
+			lpszFacename, nHeight))) {
+			// Created the font. Now wrap it in a BoldFont. For Hodj n Podj,
+			// doubling the character pixels horizontally produced
+			// a closer match to what it looks like in Windows
+			Graphics::Font *f = new BoldFont(font);
+
+			// Add to the font cache
+			_fonts.push_back(FontEntry());
+			_fonts.back().set(lpszFacename, nHeight, f);
+			return (HFONT)f;
+		}
+	}
+
+	return nullptr;
 }
 
 int Fonts::resIndexOf(const char *filename) const {

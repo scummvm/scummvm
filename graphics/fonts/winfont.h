@@ -23,6 +23,7 @@
 #define GRAPHICS_WINFONT_H
 
 #include "common/str.h"
+#include "common/path.h"
 #include "graphics/font.h"
 
 namespace Common {

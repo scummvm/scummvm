@@ -36,9 +36,25 @@ namespace Gfx {
  * Main fonts cache
  */
 class Fonts {
+	struct FontEntry {
+		Common::String _faceName;
+		int _height = 0;
+		Graphics::Font *_font = nullptr;
+
+		void set(const Common::String &faceName, int height,
+			Graphics::Font *font) {
+			_faceName = faceName;
+			_height = height;
+			_font = font;
+		}
+		~FontEntry() {
+			delete _font;
+		}
+	};
 private:
 	Libs::Resources &_res;
 	Common::Array<const char *> _fontResources;
+	Common::List<FontEntry> _fonts;
 
 	int resIndexOf(const char *filename) const;
 	bool resExists(const char *filename) const {
@@ -51,7 +67,11 @@ public:
 
 	int addFontResource(const char *filename);
 	bool removeFontResource(const char *filename);
-
+	HFONT createFont(int nHeight, int nWidth, int nEscapement,
+		int nOrientation, int nWeight, byte bItalic, byte bUnderline,
+		byte cStrikeOut, byte nCharSet, byte nOutPrecision,
+		byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
+		const char *lpszFacename);
 };
 
 /**

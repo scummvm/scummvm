@@ -510,10 +510,10 @@ public:
 	}
 
 	BOOL CreateFont(int nHeight, int nWidth, int nEscapement,
-	                int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
-	                BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
-	                BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
-	                LPCSTR lpszFacename);
+	    int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
+	    BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
+	    BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
+	    LPCSTR lpszFacename);
 };
 
 class CBitmap : public CGdiObject {
@@ -1450,6 +1450,17 @@ public:
 	}
 	bool removeFontResource(LPCSTR fontName) {
 		return _fonts.removeFontResource(fontName);
+	}
+	HFONT createFont(int nHeight, int nWidth, int nEscapement,
+			int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
+			BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
+			BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
+			LPCSTR lpszFacename) {
+		return _fonts.createFont(nHeight, nWidth,
+			nEscapement, nOrientation, nWeight, bItalic,
+			bUnderline, cStrikeOut, nCharSet, nOutPrecision,
+			nClipPrecision, nQuality, nPitchAndFamily,
+			lpszFacename);
 	}
 };
 
