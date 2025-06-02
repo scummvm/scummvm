@@ -332,6 +332,31 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO_FULL_GAME
 	},
 
+	// German fan translation Windows 95 8BPP
+	// NOTE: contains some 24BPP graphics
+	{
+		"buried",
+		"Fanmade/8BPP",
+		AD_ENTRY2s("BIT832.EXE", "ce7584b3d70a89fee8fdff7ba9d947c2", 1283072,
+				   "BIT8L32.DLL","cd7d536f7a9bcf5779461488568975ef", 2428416),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		GF_TRUECOLOR | GF_WIN95,
+		GUIO_FULL_GAME
+	},
+
+	// German fan translation Windows 95 24BPP
+	{
+		"buried",
+		"Fanmade/24BPP",
+		AD_ENTRY2s("BIT2432.EXE", "65514e68fc7f621bade8a194025314cb", 1277952,
+				   "BIT24L32.DLL","4aefe0a483ef304568f31efbf4575293", 6586368),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		GF_TRUECOLOR | GF_WIN95,
+		GUIO_FULL_GAME
+	},
+
 	// English Windows Demo 8BPP
 	{
 		"buried",
