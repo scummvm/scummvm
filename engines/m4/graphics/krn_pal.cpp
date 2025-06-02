@@ -115,7 +115,7 @@ static void create_luminance_map(RGB8 *pal) {
 	}
 }
 
-// finds the best macthes for the in the greys in the grey ramp range using the free range greys
+// finds the best matches for the in the greys in the grey ramp range using the free range greys
 // used to map greys out of the grey ramp area, and then again to map the grey ramp out of the grey ramp area!
 static void make_translation_table(RGB8 *pal) {
 	for (int32 i = 0; i < NUM_GREYS; i++) {
@@ -373,9 +373,6 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 // This is an inplace remap
 // fadeToMe must already have been set up to correspond to the image on the screen
 void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2) {
-	uint8 *ptr;
-	int32 x, y;
-
 	if ((!src) || (!src->data)) return;
 
 	// WORKAROUND: Fix original bounding that could result in buffer overruns on final y2 line
@@ -389,9 +386,9 @@ void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, 
 	x2 -= x1;
 	y2 -= y1;
 
-	for (y = 0; y <= y2; y++) {
-		ptr = &src->data[(y + y1) * src->stride + x1];
-		for (x = 0; x <= x2; x++) {
+	for (int32 y = 0; y <= y2; y++) {
+		uint8 *ptr = &src->data[(y + y1) * src->stride + x1];
+		for (int32 x = 0; x <= x2; x++) {
 			// Remap the greyed out pixel to the closest grey in GREY_START to GREY_END range
 			// shift right 3, takes a 255 value and makes it out of 32 (the number of greys in reduced grey ramp)
 			ptr[x] = (uint8)(GREY_START + (_GP(fadeToMe)[ptr[x]].g >> 3));	 // Use green instead of red cause we're having a green screen 
@@ -437,18 +434,15 @@ bool krn_GetGreyMode() {
 }
 
 void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY, int32 greyX1, int32 greyY1, int32 greyX2, int32 greyY2) {
-	bool        finished;
-	int32       x1, y1, x2, y2;
-
 	if ((!_GP(greyVideoMode)) || (!greyOutThisBuffer) || (!greyOutThisBuffer->data)) {
 		return;
 	}
-	x1 = imath_max(greyX1 + scrnX, _GP(greyAreaX1));
-	y1 = imath_max(greyY1 + scrnY, _GP(greyAreaY1));
-	x2 = imath_min(greyX2 + scrnX, _GP(greyAreaX2));
-	y2 = imath_min(greyY2 + scrnY, _GP(greyAreaY2));
+	int32 x1 = imath_max(greyX1 + scrnX, _GP(greyAreaX1));
+	int32 y1 = imath_max(greyY1 + scrnY, _GP(greyAreaY1));
+	int32 x2 = imath_min(greyX2 + scrnX, _GP(greyAreaX2));
+	int32 y2 = imath_min(greyY2 + scrnY, _GP(greyAreaY2));
 	if ((x1 > x2) || (y1 > y2)) return;
-	finished = false;
+	bool finished = false;
 	if (!finished) {
 		if (y1 < _GP(colorAreaY1)) {
 			remap_buffer_with_luminance_map(greyOutThisBuffer,
@@ -482,13 +476,9 @@ void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY, int
 }
 
 void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
-	int32 x, y, r, g, b, i;
-	uint8 *inverse_palette, *tempPtr;
-	frac16 fracPercent;
-	RGB8 *pal;
 	uint8 luminancePal[256];
 
-	// Paremeter verification
+	// Parameter verification
 	if ((!target) || (!target->data)) {
 		return;
 	}
@@ -503,28 +493,28 @@ void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
 	}
 
 	// Calculate the frac16 form of the percent
-	fracPercent = (percent * 255) / 100;
+	frac16 fracPercent = (percent * 255) / 100;
 
 	// Get the palette and the inverse palette
-	pal = &_G(master_palette)[0];
-	inverse_palette = _G(inverse_pal)->get_ptr();
+	RGB8 *pal = &_G(master_palette)[0];
+	uint8 *inverse_palette = _G(inverse_pal)->get_ptr();
 	if ((!pal) || (!inverse_palette)) {
 		return;
 	}
 
 	// Calculate the luminance Pal table
-	for (i = 0; i < 256; i++) {
-		r = ((((pal[i].r * fracPercent) >> 10) >> 1)) & 0x1f;
-		g = ((((pal[i].g * fracPercent) >> 10) >> 1)) & 0x1f;
-		b = ((((pal[i].b * fracPercent) >> 10) >> 1)) & 0x1f;
+	for (int32 i = 0; i < 256; i++) {
+		int32 r = ((((pal[i].r * fracPercent) >> 10) >> 1)) & 0x1f;
+		int32 g = ((((pal[i].g * fracPercent) >> 10) >> 1)) & 0x1f;
+		int32 b = ((((pal[i].b * fracPercent) >> 10) >> 1)) & 0x1f;
 		luminancePal[i] = inverse_palette[(r << 10) + (g << 5) + b];
 	}
 
 	// Note: this loop should be y0 to y1, x0 to x1, not a stride*h loop.
 	// Loop through every pixel replacing it with the index into the luminance table
-	tempPtr = target->data;
-	for (y = 0; y < target->h; y++) {
-		for (x = 0; x < target->stride; x++) {
+	uint8 *tempPtr = target->data;
+	for (int32 y = 0; y < target->h; y++) {
+		for (int32 x = 0; x < target->stride; x++) {
 			*tempPtr = luminancePal[*tempPtr];
 			tempPtr++;
 			//pixel = *tempPtr;
@@ -572,12 +562,10 @@ void disable_player_commands_and_fade_init(int trigger) {
 }
 
 static void pal_fade_update(RGB8 *origPalette) {
-	int32 i, currTime;
-	frac16	tempFrac, tempFrac2;
-
-	currTime = timer_read_60();
+	int32 currTime = timer_read_60();
 
 	if (currTime >= _GP(myFadeEndDelayTime)) {		// If the delay has expired, fade more
+		frac16 tempFrac2;
 		if (currTime >= _GP(myFadeEndTime)) {
 			tempFrac2 = _GP(myFadePercentFrac);
 			_GP(myFadeStartPercentFrac) = _GP(myFadePercentFrac);
@@ -585,13 +573,13 @@ static void pal_fade_update(RGB8 *origPalette) {
 		} else if (currTime <= _GP(myFadeStartTime)) {
 			return;
 		} else {
-			tempFrac = DivSF16((currTime - _GP(myFadeStartTime)) << 16, (_GP(myFadeEndTime) - _GP(myFadeStartTime)) << 16);
+			frac16 tempFrac = DivSF16((currTime - _GP(myFadeStartTime)) << 16, (_GP(myFadeEndTime) - _GP(myFadeStartTime)) << 16);
 			tempFrac2 = MulSF16(tempFrac, _GP(myFadePercentFrac) - _GP(myFadeStartPercentFrac)) + _GP(myFadeStartPercentFrac);
 		}
 
 		_GP(myFadeCurrPercentFrac) = tempFrac2;
 
-		for (i = _GP(myFadeStartIndex); i <= _GP(myFadeEndIndex); i++) {
+		for (int32 i = _GP(myFadeStartIndex); i <= _GP(myFadeEndIndex); i++) {
 			_GP(myFXPalette)[i].r = (Byte)(MulSF16(origPalette[i].r << 16, tempFrac2) >> 16);
 			_GP(myFXPalette)[i].g = (Byte)(MulSF16(origPalette[i].g << 16, tempFrac2) >> 16);
 			_GP(myFXPalette)[i].b = (Byte)(MulSF16(origPalette[i].b << 16, tempFrac2) >> 16);
@@ -600,7 +588,7 @@ static void pal_fade_update(RGB8 *origPalette) {
 		// Recalculate the end delay time again
 		_GP(myFadeEndDelayTime) = currTime + _GP(myFadeDelayTicks);		// Recalculate the end delay time again
 
-		// Must reresh the DAC
+		// Must refresh the DAC
 		_GP(myFadeDACrefresh) = true;
 	}
 }
@@ -670,10 +658,9 @@ void pal_cycle_resume() {
 }
 
 static void pal_cycle_update() {
-	int32 i, currTime;
-	RGB8 firstColour;
+	int32 i;
 
-	currTime = timer_read_60();		// Get current time
+	int32 currTime = timer_read_60();		// Get current time
 
 	if (_GP(myCycleNeverStopCycling) == false) { 			// If there is an end time to get to...  
 
@@ -682,39 +669,40 @@ static void pal_cycle_update() {
 			return;											// Return 
 		}
 	} else {
-		// See if we should colour cycle right now
-		if (currTime >= _GP(myCycleEndDelayTime)) {			// If the delay has expired, colour cycle
+		// See if we should color cycle right now
+		if (currTime >= _GP(myCycleEndDelayTime)) {			// If the delay has expired, color cycle
+			RGB8 firstColor;
 			// Cycle the master palette 
-			firstColour.r = _G(master_palette)[_GP(myCycleStartIndex)].r;		// Remember first colour
-			firstColour.g = _G(master_palette)[_GP(myCycleStartIndex)].g;
-			firstColour.b = _G(master_palette)[_GP(myCycleStartIndex)].b;
-			for (i = _GP(myCycleStartIndex); i < _GP(myCycleEndIndex); ++i) {	// Shift colours down one in palette
+			firstColor.r = _G(master_palette)[_GP(myCycleStartIndex)].r;		// Remember first color
+			firstColor.g = _G(master_palette)[_GP(myCycleStartIndex)].g;
+			firstColor.b = _G(master_palette)[_GP(myCycleStartIndex)].b;
+			for (i = _GP(myCycleStartIndex); i < _GP(myCycleEndIndex); ++i) {	// Shift colors down one in palette
 				_G(master_palette)[i].r = _G(master_palette)[i + 1].r;
 				_G(master_palette)[i].g = _G(master_palette)[i + 1].g;
 				_G(master_palette)[i].b = _G(master_palette)[i + 1].b;
 			}
-			_G(master_palette)[_GP(myCycleEndIndex)].r = firstColour.r; 		// Set last colour to the first colour
-			_G(master_palette)[_GP(myCycleEndIndex)].g = firstColour.g;
-			_G(master_palette)[_GP(myCycleEndIndex)].b = firstColour.b;
+			_G(master_palette)[_GP(myCycleEndIndex)].r = firstColor.r; 		// Set last color to the first color
+			_G(master_palette)[_GP(myCycleEndIndex)].g = firstColor.g;
+			_G(master_palette)[_GP(myCycleEndIndex)].b = firstColor.b;
 
 			// Then cycle the FX palette 
-			firstColour.r = _GP(myFXPalette)[_GP(myCycleStartIndex)].r;			// Remember first colour
-			firstColour.g = _GP(myFXPalette)[_GP(myCycleStartIndex)].g;
-			firstColour.b = _GP(myFXPalette)[_GP(myCycleStartIndex)].b;
-			for (i = _GP(myCycleStartIndex); i < _GP(myCycleEndIndex); ++i) {	// Shift colours down one in palette
+			firstColor.r = _GP(myFXPalette)[_GP(myCycleStartIndex)].r;			// Remember first color
+			firstColor.g = _GP(myFXPalette)[_GP(myCycleStartIndex)].g;
+			firstColor.b = _GP(myFXPalette)[_GP(myCycleStartIndex)].b;
+			for (i = _GP(myCycleStartIndex); i < _GP(myCycleEndIndex); ++i) {	// Shift colors down one in palette
 				_GP(myFXPalette)[i].r = _GP(myFXPalette)[i + 1].r;
 				_GP(myFXPalette)[i].g = _GP(myFXPalette)[i + 1].g;
 				_GP(myFXPalette)[i].b = _GP(myFXPalette)[i + 1].b;
 			}
-			_GP(myFXPalette)[_GP(myCycleEndIndex)].r = firstColour.r; 			// Set last colour to the first colour
-			_GP(myFXPalette)[_GP(myCycleEndIndex)].g = firstColour.g;
-			_GP(myFXPalette)[_GP(myCycleEndIndex)].b = firstColour.b;
+			_GP(myFXPalette)[_GP(myCycleEndIndex)].r = firstColor.r; 			// Set last color to the first color
+			_GP(myFXPalette)[_GP(myCycleEndIndex)].g = firstColor.g;
+			_GP(myFXPalette)[_GP(myCycleEndIndex)].b = firstColor.b;
 
 
 			// Recalculate the end delay time again
 			_GP(myCycleEndDelayTime) = currTime + _GP(myCycleDelayTicks);		// Recalculate the end delay time again
 
-			// must reresh the DAC
+			// must refresh the DAC
 			_GP(myCycleDACrefresh) = true;
 		}
 	}
@@ -812,18 +800,15 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 			b = _G(master_palette)[i].b + (MulSF16(percent, db) >> 16);
 
 			// Check for under/overflow
-			if (r > 255) r = 255;
-			if (r < 0) r = 0;
-			if (g > 255) g = 255;
-			if (g < 0) g = 0;
-			if (b > 255) b = 255;
-			if (b < 0) b = 0;
+			r = CLIP(r, 0, 255);
+			g = CLIP(g, 0, 255);
+			b = CLIP(b, 0, 255);
 
 			color.r = (byte)r;
 			color.g = (byte)g;
 			color.b = (byte)b;
 
-			gr_pal_set_entry(i, &color);	// Set the new colour to the DAC
+			gr_pal_set_entry(i, &color);	// Set the new color to the DAC
 		}
 
 	} else {
@@ -855,12 +840,9 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 			b = (_G(master_palette)[i].b - (db >> 16));
 
 			// Check for under/overflow
-			if (r > 255) r = 255;
-			if (r < 0) r = 0;
-			if (g > 255) g = 255;
-			if (g < 0) g = 0;
-			if (b > 255) b = 255;
-			if (b < 0) b = 0;
+			r = CLIP(r, 0, 255);
+			g = CLIP(g, 0, 255);
+			b = CLIP(b, 0, 255);
 
 			color.r = (byte)r;
 			color.g = (byte)g;
