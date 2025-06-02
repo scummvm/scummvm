@@ -84,31 +84,6 @@ public:
 			insertChar(c, pos);
 	}
 
-	/**
-	 * Append a given character a number of times to the string
-	 */
-	void append(size_t n, char c) {
-		string str(n, c);
-		*this += str;
-	}
-
-	/**
-	 * Append another string to this one
-	 */
-	void append(const string &str, size_t theSize = npos) {
-		if (theSize == npos)
-			*this += str;
-		else
-			*this += Common::String(str.c_str(), theSize);
-	}
-
-	/**
-	 * Append a character to the string
-	 */
-	void push_back(char c) {
-		*this += c;
-	}
-
 	reverse_iterator rbegin() {
 		return reverse_iterator(this, (int)size() - 1);
 	}

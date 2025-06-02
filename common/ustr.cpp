@@ -81,17 +81,17 @@ U32String &U32String::operator=(value_type c) {
 }
 
 U32String &U32String::operator+=(const value_type *str) {
-	assignAppend(str);
+	append(str);
 	return *this;
 }
 
 U32String &U32String::operator+=(const U32String &str) {
-	assignAppend(str);
+	append(str);
 	return *this;
 }
 
 U32String &U32String::operator+=(value_type c) {
-	assignAppend(c);
+	push_back(c);
 	return *this;
 }
 
