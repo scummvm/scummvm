@@ -112,9 +112,9 @@ public:
 	Common::String parseMessage(uint16 addr);
 
 	//event driven:
-	void displayMessage(uint16 addr, byte color = textColorMark, uint16 x = 0, uint16 y = 0);
-	void displayMessage(const Common::String &str, byte color = textColorMark, uint16 x = 0, uint16 y = 0);
-	void displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, byte color = textColorMark);
+	void displayMessage(uint16 addr, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
+	void displayMessage(const Common::String &str, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
+	void displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, CharacterID characterID = kMark);
 	void displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color = textColorMark);
 	void displayCredits(uint16 addr, uint16 timer = 0);
 	void displayCutsceneMessage(uint16 addr, uint16 x, uint16 y);
@@ -162,6 +162,7 @@ public:
 
 	void sayText(const Common::String &text);
 	void stopTextToSpeech();
+	void setTTSVoice(CharacterID characterID) const;
 	Common::String _previousSaid;
 	
 private:
