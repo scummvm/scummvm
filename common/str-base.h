@@ -180,12 +180,30 @@ public:
 	value_type firstChar() const    { return (_size > 0) ? _str[0] : 0; }
 	value_type lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
 
-	value_type operator[](int idx) const {
+	/**
+	 * String square brackets allows modifying characters
+	 */
+	value_type &operator[](size_t idx) {
 		assert(_str);
 		assert(idx >= 0);
-		assert(idx < (int)_size);
+		assert(idx < _size);
 		return _str[idx];
 	}
+
+	/**
+	 * Square brackets for const strings simply returns characters
+	 */
+	value_type operator[](size_t idx) const {
+		assert(_str);
+		assert(idx >= 0);
+		assert(idx < _size);
+		return _str[idx];
+	}
+
+	/**
+	 * Get a character at an index
+	 */
+	value_type at(size_t idx) const { return operator[](idx); }
 
 	/**
 	 * Checks if a given string is present in the internal string or not.

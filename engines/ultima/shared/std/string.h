@@ -86,26 +86,6 @@ public:
 			*this = string(s.c_str(), count);
 	}
 
-	/**
-	 * String square brackets allows modifying characters
-	 */
-	char &operator[](size_t idx) {
-		assert(idx < _size);
-		return _str[idx];
-	}
-
-	/**
-	 * Square brackets for const strings simply returns characters
-	 */
-	char operator[](size_t idx) const {
-		return Common::String::operator[](idx);
-	}
-
-	/**
-	 * Get a character at an index
-	 */
-	char at(size_t idx) { return operator[](idx); }
-
 	virtual int Compare(const string &s) const {
 		return compareTo(s);
 	}
