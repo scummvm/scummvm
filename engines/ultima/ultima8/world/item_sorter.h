@@ -61,7 +61,7 @@ public:
 	void AddItem(const Item *);                   // Add an Item. SetupLerp() MUST have been called
 
 	// Finishes the display list and Paints
-	void PaintDisplayList(RenderSurface *surf, bool item_highlight = false, bool showFootpads = false);
+	void PaintDisplayList(RenderSurface *surf, bool item_highlight = false, bool showFootpads = false, int gridlines = 0);
 
 	// Trace and find an object. Returns objid.
 	// If face is non-NULL, also return the face of the 3d bbox (x,y) is on
@@ -70,7 +70,7 @@ public:
 	void IncSortLimit(int count);
 
 private:
-	bool PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootpad);
+	bool PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootpad, int gridlines);
 };
 
 } // End of namespace Ultima8

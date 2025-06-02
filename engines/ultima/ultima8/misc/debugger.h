@@ -72,6 +72,7 @@ private:
 	bool cmdStopHighlightItems(int argc, const char **argv);
 	bool cmdToggleHighlightItems(int argc, const char **argv);
 	bool cmdToggleFootpads(int argc, const char **argv);
+	bool cmdGridlines(int argc, const char **argv);
 	bool cmdDumpMap(int argc, const char **argvv);
 	bool cmdDumpAllMaps(int argc, const char **argv);
 	bool cmdIncrementSortOrder(int argc, const char **argv);

@@ -45,6 +45,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(GameMapGump)
 
 bool GameMapGump::_highlightItems = false;
 bool GameMapGump::_showFootpads = false;
+int GameMapGump::_gridlines = 0;
 
 GameMapGump::GameMapGump() :
 	Gump(), _displayDragging(false), _displayList(0), _draggingShape(0),
@@ -162,8 +163,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		                      _draggingFlags, Item::EXT_TRANSPARENT);
 	}
 
-
-	_displayList->PaintDisplayList(surf, _highlightItems, _showFootpads);
+	_displayList->PaintDisplayList(surf, _highlightItems, _showFootpads, _gridlines);
 }
 
 // Trace a click, and return ObjId
@@ -576,6 +576,24 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		item->collideMove(_draggingPos.x, _draggingPos.y, _draggingPos.z,
 		                  true, true); // teleport item
 		item->fall();
+	}
+}
+
+void GameMapGump::setGridlines(int gridlines) {
+	if (gridlines >= 0) {
+		_gridlines = gridlines;
+	} else if (_gridlines > 0) {
+		_gridlines = 0;
+	} else {
+		World *world = World::get_instance();
+		if (!world)
+			return;
+
+		CurrentMap *map = world->getCurrentMap();
+		if (!map)
+			return;
+
+		_gridlines = map->getChunkSize();
 	}
 }
 

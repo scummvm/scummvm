@@ -96,6 +96,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("GameMapGump::stopHighlightItems", WRAP_METHOD(Debugger, cmdStopHighlightItems));
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
 	registerCmd("GameMapGump::toggleFootpads", WRAP_METHOD(Debugger, cmdToggleFootpads));
+	registerCmd("GameMapGump::gridlines", WRAP_METHOD(Debugger, cmdGridlines));	
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::dumpAllMaps", WRAP_METHOD(Debugger, cmdDumpAllMaps));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
@@ -628,6 +629,26 @@ bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 
 bool Debugger::cmdToggleFootpads(int argc, const char **argv) {
 	GameMapGump::toggleFootpads();
+	return false;
+}
+
+bool Debugger::cmdGridlines(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("usage: %s <number>\n", argv[0]);
+		return true;
+	}
+	
+	int gridlines = -1;
+	if (argc > 1) {
+		gridlines = atoi(argv[1]);
+	}
+
+	// ensure a sane minimum value
+	if (gridlines > 0 && gridlines < 8) {
+		gridlines = 8;
+	}
+
+	GameMapGump::setGridlines(gridlines);
 	return false;
 }
 

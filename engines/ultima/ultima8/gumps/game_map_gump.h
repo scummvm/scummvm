@@ -88,6 +88,7 @@ public:
 	static void toggleFootpads() {
 		_showFootpads = !_showFootpads;
 	}
+	static void setGridlines(int gridlines);
 
 	void        RenderSurfaceChanged() override;
 
@@ -100,6 +101,7 @@ protected:
 
 	static bool _highlightItems;
 	static bool _showFootpads;
+	static int _gridlines;
 };
 
 } // End of namespace Ultima8
