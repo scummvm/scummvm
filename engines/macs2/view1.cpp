@@ -574,12 +574,35 @@ View1::View1() : UIElement("View1") {
 					const Common::Rect &current = mainMenuButtonLocations[i];
 					if (current.contains(msg._pos)) {
 						switch (i) {
+						case static_cast<int>(MainMenuButtonIndex::Talk): {
+							g_engine->SetCursorMode(Script::MouseMode::Talk);
+							isShowingMainMenu = false;
+						} break;
+						case static_cast<int>(MainMenuButtonIndex::Look): {
+							g_engine->SetCursorMode(Script::MouseMode::Look);
+							isShowingMainMenu = false;
+						} break;
+						case static_cast<int>(MainMenuButtonIndex::Use): {
+							g_engine->SetCursorMode(Script::MouseMode::Use);
+							isShowingMainMenu = false;
+						} break;
+						case static_cast<int>(MainMenuButtonIndex::Walk): {
+							g_engine->SetCursorMode(Script::MouseMode::Walk);
+							isShowingMainMenu = false;
+						} break;
+						case static_cast<int>(MainMenuButtonIndex::Inventory): {
+							isShowingMainMenu = false;
+							_isShowingInventory = true;
+						} break;
+						
+
 						case static_cast<int>(MainMenuButtonIndex::Close): {
 							isShowingMainMenu = false;
 						} break;
 						}
 					}
 				}
+				UpdateCursor();
 			}
 
 			// Handle no other interactions during a script
