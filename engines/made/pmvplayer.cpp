@@ -126,7 +126,7 @@ bool PmvPlayer::play(const char *filename) {
 	_surface = nullptr;
 
 	_fd = new Common::File();
-	if (!_fd->open(filename)) {
+	if (!_fd->open(Common::Path(filename, '\\'))) {
 		delete _fd;
 		return false;
 	}

@@ -34,6 +34,9 @@ namespace Made {
 
 class MadeEngine;
 
+
+/* Object */
+
 class Object {
 public:
 
@@ -92,8 +95,8 @@ public:
 
 class ObjectV3 : public Object {
 public:
-	int load(Common::SeekableReadStream &source) override;
-	int load(byte *source) override;
+	virtual int load(Common::SeekableReadStream &source) override;
+	virtual int load(byte *source) override;
 	int save(Common::WriteStream &dest) override;
 	uint16 getFlags() override;
 	uint16 getClass() override;
@@ -107,6 +110,15 @@ public:
 	}
 
 };
+
+class ObjectV3_1 : public ObjectV3 {
+public:
+	int load(Common::SeekableReadStream &source) override;
+	int load(byte *source) override;
+};
+
+
+/* GameDatabase */
 
 class GameDatabase {
 public:
@@ -180,7 +192,7 @@ protected:
 class GameDatabaseV3 : public GameDatabase {
 public:
 	GameDatabaseV3(MadeEngine *vm);
-	int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) override;
+	virtual int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) override;
 	const char *getString(uint16 offset) override;
 	bool getSavegameDescription(const char *filename, Common::String &description, int16 version) override;
 	int16 savegame(const char *filename, const char *description, int16 version) override;
@@ -188,8 +200,16 @@ public:
 protected:
 	char *_gameText;
 	uint32 _gameStateOffs;
-	void load(Common::SeekableReadStream &sourceS) override;
+	virtual void load(Common::SeekableReadStream &sourceS) override;
 	void reloadFromStream(Common::SeekableReadStream &sourceS) override;
+};
+
+class GameDatabaseV3_1 : public GameDatabaseV3 {
+public:
+	GameDatabaseV3_1(MadeEngine *vm) : GameDatabaseV3(vm) {}
+	int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) override;
+protected:
+	void load(Common::SeekableReadStream &sourceS) override;
 };
 
 } // End of namespace Made
