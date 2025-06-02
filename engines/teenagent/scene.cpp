@@ -507,6 +507,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				_vm->playMusic(4);
 				_vm->loadScene(10, Common::Point(136, 153));
 				_vm->stopTextToSpeech();
+				_vm->setTTSVoice(kMark);
 				return true;
 			}
 
@@ -844,9 +845,11 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 					ttsMessage.replace('\n', ' ');
 				} else {
 					// Keep a newline character after the item name, so the TTS has an appropriate pause
-					int endOfItemName = ttsMessage.find('\n');
-					ttsMessage.replace('\n', ' ');
-					ttsMessage.replace(endOfItemName, 1, "\n");
+					uint32 endOfItemName = ttsMessage.find('\n');
+					if (endOfItemName != Common::String::npos) {
+						ttsMessage.replace('\n', ' ');
+						ttsMessage.replace(endOfItemName, 1, "\n");
+					}
 				}
 				_vm->sayText(ttsMessage);
 			}
@@ -992,6 +995,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kCreditsMessage:
 		case SceneEvent::kMessage: {
+			_vm->setTTSVoice((CharacterID)currentEvent.characterID);
 			message = currentEvent.message;
 			messageAnimation = NULL;
 			if (currentEvent.firstFrame) {
@@ -1277,6 +1281,13 @@ void Scene::clear() {
 void Scene::clearMessage() {
 	message.clear();
 	messageTimer = 0;
+
+	// Reset TTS voice to Mark's voice so that objects and items are always narrated
+	// with his voice
+	if (_messageColor != textColorMark) {
+		_vm->setTTSVoice(kMark);
+	}
+
 	_messageColor = textColorMark;
 	messageFirstFrame = 0;
 	messageLastFrame = 0;

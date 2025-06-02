@@ -90,6 +90,7 @@ struct SceneEvent {
 		byte lastFrame;
 	};
 	byte object;
+	int characterID;
 
 	SceneEvent(Type type_) :
 		type(type_), message(), color(textColorMark), slot(0), animation(0), timer(0), orientation(0), dst(),
