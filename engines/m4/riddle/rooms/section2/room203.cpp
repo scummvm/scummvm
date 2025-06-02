@@ -669,7 +669,7 @@ void Room203::daemon() {
 	case 76:
 		digi_preload("203r21");
 		_stream1 = series_stream("old lady gives helmet", 5, 1, 79);
-		series_stream_break_on_frame(_stream1, 77, 62);
+		series_stream_break_on_frame(_stream1, 62, 77);
 		break;
 
 	case 77:
