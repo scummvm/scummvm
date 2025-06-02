@@ -1077,13 +1077,20 @@ TEMPLATE void BASESTRING::assign(const value_type *str) {
 	memmove(_str, str, (len + 1) * sizeof(value_type));
 }
 
+TEMPLATE void BASESTRING::assign(const value_type *str, size_type count) {
+	uint32 len = MIN(count, cStrLen(str));
+	ensureCapacity(len, false);
+	_size = len;
+	memmove(_str, str, (len + 1) * sizeof(value_type));
+}
+
 TEMPLATE uint BASESTRING::getUnsignedValue(uint pos) const {
 	const int shift = (sizeof(uint) - sizeof(value_type)) * 8;
 	return ((uint)_str[pos]) << shift >> shift;
 }
 
-TEMPLATE uint32 BASESTRING::cStrLen(const value_type *str) {
-	uint32 len = 0;
+TEMPLATE size_t BASESTRING::cStrLen(const value_type *str) {
+	size_t len = 0;
 	while (str[len])
 		len++;
 
@@ -1133,8 +1140,8 @@ TEMPLATE uint BASESTRING::hash() const {
 }
 
 template<>
-uint32 BaseString<char>::cStrLen(const value_type *str) {
-	return static_cast<uint32>(strlen(str));
+size_t BaseString<char>::cStrLen(const value_type *str) {
+	return strlen(str);
 }
 
 template<>
