@@ -93,7 +93,7 @@ HCURSOR Cursors::loadCursor(LPCSTR cursorId) {
 	if (_cursors.contains(cursorId))
 		return (HCURSOR)_cursors[cursorId];
 
-	Cursor *c = new Cursor(*_resources.getResources(), cursorId);
+	Cursor *c = new Cursor(*_resources.getCoreResources(), cursorId);
 	_cursors[cursorId] = c;
 	return (HCURSOR)c;
 }

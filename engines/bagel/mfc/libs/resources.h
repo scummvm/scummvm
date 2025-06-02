@@ -24,7 +24,7 @@
 
 #include "common/list.h"
 #include "common/path.h"
-#include "common/stack.h"
+#include "common/hashmap.h"
 #include "common/formats/winexe.h"
 #include "bagel/mfc/minwindef.h"
 
@@ -34,19 +34,22 @@ namespace Libs {
 
 class Resources {
 	struct Resource {
+		Common::WinResources *_file;
 		Common::WinResourceID _type;
 		Common::WinResourceID _id;
 		size_t _size = 0;
 
 		Resource() {}
-		Resource(const Common::WinResourceID &type,
+		Resource(Common::WinResources *file,
+			const Common::WinResourceID &type,
 			Common::WinResourceID &id, size_t size) :
-			_type(type), _id(id), _size(size) {}
+			_file(file), _type(type), _id(id),
+			_size(size) {}
 	};
 	typedef Common::List<Resource> ResCache;
 
 private:
-	Common::Stack<Common::WinResources *> _resources;
+	Common::HashMap<Common::String, Common::WinResources *> _resources;
 	ResCache _cache;
 
 public:
@@ -58,9 +61,13 @@ public:
 	void addResources(const Common::Path &file);
 
 	/**
-	 * Pops a resources file from the stack
+	 * Removes a Windows file containing resources
 	 */
-	void popResources();
+	void removeResources(const Common::Path &file);
+
+	Common::WinResources *getCoreResources() const {
+		return _resources.begin()->_value;
+	}
 
 	/**
 	 * Find a resource
@@ -78,11 +85,6 @@ public:
 	 * Return a resource as a memory block
 	 */
 	HGLOBAL loadResource(HRSRC hResInfo);
-
-	/**
-	 * Get the current resources
-	 */
-	Common::WinResources *getResources() const;
 };
 
 } // namespace Libs

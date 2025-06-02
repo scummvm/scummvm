@@ -1441,8 +1441,8 @@ public:
 	void addResources(const Common::Path &file) {
 		_resources.addResources(file);
 	}
-	void removeResources() {
-		_resources.popResources();
+	void removeResources(const Common::Path &file) {
+		_resources.removeResources(file);
 	}
 	HRSRC findResource(LPCSTR lpName, LPCSTR lpType);
 	size_t sizeofResource(HRSRC hResInfo);

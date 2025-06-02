@@ -29,8 +29,8 @@ namespace MFC {
 namespace Libs {
 
 Resources::~Resources() {
-	while (!_resources.empty())
-		popResources();
+	for (auto &it : _resources)
+		delete it._value;
 }
 
 void Resources::addResources(const Common::Path &file) {
@@ -38,23 +38,20 @@ void Resources::addResources(const Common::Path &file) {
 	if (!res->loadFromEXE(file))
 		error("Could not load %s", file.baseName().c_str());
 
-	_resources.push(res);
+	_resources[file.baseName()] = res;
 	_cache.clear();
 }
 
-void Resources::popResources() {
+void Resources::removeResources(const Common::Path &file) {
+	_resources.erase(file.baseName());
 	_cache.clear();
-	delete _resources.pop();
-}
-
-Common::WinResources *Resources::getResources() const {
-	if (_resources.empty())
-		error("Use CWinApp::addResources to register "
-			"an .exe or .dll file containing the resources");
-	return _resources.top();
 }
 
 HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
+	if (_resources.empty())
+		error("Use CWinApp::addResources to register "
+			"an .exe or .dll file containing the resources");
+
 	Common::WinResourceID type =
 		(HIWORD(lpType) == 0) ?
 		Common::WinResourceID((intptr)lpType) :
@@ -71,23 +68,27 @@ HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
 	}
 
 	// Get the resource
-	Common::WinResources &res = *getResources();
-	Common::SeekableReadStream *rs = res.getResource(type, id);
-	if (!rs)
-		return nullptr;
+	for (auto &it : _resources) {
+		Common::WinResources *res = it._value;
+		Common::SeekableReadStream *rs = res->getResource(type, id);
 
-	// Add it to the cache, since we'll use
-	// a pointer to it's entry as the return
-	_cache.push_back(Resource(type, id, rs->size()));
+		if (rs) {
+			// Add it to the cache, since we'll use
+			// a pointer to it's entry as the return
+			_cache.push_back(Resource(res, type, id, rs->size()));
 
-	delete rs;
-	return (HRSRC)&_cache.back();
+			delete rs;
+			return (HRSRC)&_cache.back();
+		}
+	}
+
+	return nullptr;
 }
 
 HGLOBAL Resources::loadResource(HRSRC hResInfo) {
 	Resource *ptr = ((Resource *)hResInfo);
-	Common::SeekableReadStream *rs =
-		getResources()->getResource(ptr->_type, ptr->_id);
+	Common::SeekableReadStream *rs = ptr->_file->getResource(
+		ptr->_type, ptr->_id);
 
 	HGLOBAL h = GlobalAlloc(GPTR, ptr->_size);
 	byte *data = (byte *)GlobalLock(h);

@@ -75,6 +75,8 @@ int CDialog::DoModal() {
 	if (m_lpszTemplateName != nullptr) {
 		hInst = AfxFindResourceHandle(m_lpszTemplateName, RT_DIALOG);
 		HRSRC hResource = FindResource(hInst, m_lpszTemplateName, RT_DIALOG);
+		assert(hResource);
+
 		hDialogTemplate = LoadResource(hInst, hResource);
 	}
 
