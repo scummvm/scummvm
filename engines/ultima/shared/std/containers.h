@@ -182,20 +182,6 @@ public:
 	}
 };
 
-template<class VAL>
-class deque : public Common::List<VAL> {
-public:
-	VAL operator[](uint index) {
-		for (typename Common::List<VAL>::iterator it = this->begin();
-				it != this->end(); ++it, --index) {
-			if (index == 0)
-				return *it;
-		}
-
-		error("Invalid index");
-	}
-};
-
 template<class T>
 class list : public Common::List<T> {
 public:

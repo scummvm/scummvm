@@ -45,10 +45,13 @@ Map *Object::getMap() {
 
 void Object::remove() {
 	uint size = _maps.size();
-	for (uint i = 0; i < size; i++) {
+	uint i = 0;
+
+	for (auto *map : _maps) {
 		if (i == size - 1)
-			_maps[i]->removeObject(this);
-		else _maps[i]->removeObject(this, false);
+			map->removeObject(this);
+		else map->removeObject(this, false);
+		i++;
 	}
 }
 
