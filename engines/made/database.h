@@ -55,7 +55,6 @@ public:
 	void setString(const char *str);
 
 	bool isObject();
-	bool isVector();
 
 	int16 getVectorSize();
 	int16 getVectorItem(int16 index);
