@@ -37,7 +37,7 @@ MidiManager::MidiManager() {
 	} else {
 		Common::String driverName = MidiDriver::getDeviceString(dev, MidiDriver::DeviceStringType::kDriverName);
 		Common::String deviceName = MidiDriver::getDeviceString(dev, MidiDriver::DeviceStringType::kDeviceName);
-		_mt32 = driverName.contains("MT-32");
+		_mt32 = MidiDriver::getMusicType(dev) == MT_MT32;
 		debug(1, "MIDI opened, driver type: %s, device name: %s", driverName.c_str(), deviceName.c_str());
 		_available = true;
 		_maxChannels = _driver->MIDI_CHANNEL_COUNT;
