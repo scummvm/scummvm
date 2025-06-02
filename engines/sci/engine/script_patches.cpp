@@ -14004,6 +14004,33 @@ static const uint16 pepperPatchPuzzleBox[] = {
 	PATCH_END
 };
 
+// In Ben Franklin's workshop, clicking on the Special Edition immediately after
+//  entering from the attic causes Pepper to spin instead of walk. fromAtticScr
+//  initializes ego incorrectly by calling setLoop after normalize instead of
+//  setting the loop property. setLoop sets the kSignalDoesntTurn signal flag,
+//  and this prevents ego from cycling through loops.
+//
+// We fix this by replacing the setLoop selector with the loop selector.
+//
+// Applies to: All versions
+// Responsible method: fromAtticScr:changeState(0)
+// Fixes bug: #15247
+static const uint16 pepperSignatureWorkshopSpin[] = {
+	0x38, SIG_SELECTOR16(normalize), // pushi normalize
+	SIG_MAGICDWORD,
+	0x76,                            // push0
+	0x38, SIG_SELECTOR16(setLoop),   // pushi setLoop
+	0x78,                            // push1
+	0x7a,                            // push2
+	SIG_END
+};
+
+static const uint16 pepperPatchWorkshopSpin[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x38, PATCH_SELECTOR16(loop),    // pushi loop
+	PATCH_END
+};
+
 // In the maze, clicking on the dictionary word "musty" can display the wrong
 //  definition. The east doorway is missing a doVerb method, so unlike the
 //  other doorways, it does not update the dictionary word global.
@@ -14072,6 +14099,7 @@ static const uint16 pepperPatchKitchenLockup[] = {
 //          script, description,                                         signature                            patch
 static const SciScriptPatcherEntry pepperSignatures[] = {
 	{  true,   116, "puzzle box fix",                                 1, pepperSignaturePuzzleBox,            pepperPatchPuzzleBox },
+	{  true,   320, "workshop spin fix",                              1, pepperSignatureWorkshopSpin,         pepperPatchWorkshopSpin },
 	{  true,   380, "kitchen lockup fix",                             1, pepperSignatureKitchenLockup,        pepperPatchKitchenLockup },
 	{  true,   400, "musty message fix",                              1, pepperSignatureMustyMessage,         pepperPatchMustyMessage },
 	{  true,   894, "glass jar fix",                                  1, pepperSignatureGlassJar,             pepperPatchGlassJar },
