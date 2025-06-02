@@ -29,8 +29,6 @@ namespace Std {
 
 class string : public Common::String {
 public:
-	typedef size_t size_type;
-
 	struct reverse_iterator {
 	private:
 		string *_owner;

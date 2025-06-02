@@ -37,6 +37,7 @@ public:
 	typedef T          value_type;
 	typedef T *        iterator;
 	typedef const T *  const_iterator;
+	typedef size_t     size_type;
 
 protected:
 	/**
