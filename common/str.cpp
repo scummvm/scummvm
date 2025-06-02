@@ -52,7 +52,7 @@ String &String::operator=(String &&str) {
 }
 
 String &String::operator=(char c) {
-	assign(c);
+	assign(1, c);
 	return *this;
 }
 

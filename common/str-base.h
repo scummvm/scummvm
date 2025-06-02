@@ -86,6 +86,9 @@ public:
 	/** Construct a string consisting of the given character. */
 	explicit constexpr BaseString(value_type c) : _size((c == 0) ? 0 : 1), _str(_storage), _storage{c, 0} {}
 
+	/** Construct a string consisting of n copies of the given character. */
+	BaseString(size_t n, value_type c);
+
 	/** Construct a copy of the given string. */
 	BaseString(const BaseString &str);
 
@@ -311,7 +314,7 @@ public:
 	 */
 	void assign(const BaseString &str);
 	void assign(BaseString &&str);
-	void assign(value_type c);
+	void assign(size_t count, value_type c);
 	void assign(const value_type *str);
 	void assign(const value_type *str, size_t count);
 
@@ -319,7 +322,7 @@ public:
 	 * Append another string to this one
 	 */
 	void append(const value_type *str);
-	void append(value_type c);
+	void append(size_t count, value_type c);
 	void append(const BaseString &str);
 
 	/** Appends a string containing the characters between beginP (including) and endP (excluding). */
@@ -329,7 +332,7 @@ public:
 	 * Append a character to the string
 	 */
 	inline void push_back(value_type c) {
-		append(c);
+		append(1, c);
 	}
 
 	/**
@@ -383,6 +386,7 @@ protected:
 	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
+	void initWithValueTypeChar(size_t count, value_type c);
 	void initWithValueTypeStr(const value_type *str, uint32 len);
 
 	void assignInsert(const value_type *str, uint32 p);
@@ -399,6 +403,7 @@ protected:
 	static const value_type *cMemChr(const value_type *ptr, value_type c, size_t count);
 	static       value_type *cMemChr(value_type *ptr,       value_type c, size_t count);
 	static int cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count);
+	static void cMemSet(value_type *ptr, value_type c, size_t count);
 };
 }
 #endif

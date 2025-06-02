@@ -86,6 +86,9 @@ public:
 	/** Construct a string consisting of the given character. */
 	explicit constexpr String(value_type c) : BaseString<char>(c) {}
 
+	/** Construct a string consisting of n copies of the given character. */
+	String(size_t n, value_type c) : BaseString<char>(n, c) {}
+
 	/** Construct a new string from the given u32 string. */
 	String(const U32String &str, CodePage page = kUtf8);
 

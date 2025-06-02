@@ -65,7 +65,7 @@ public:
 	string(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
 	string(const String &str) : Common::String(str) {}
 	string(char c) : Common::String(c) {}
-	string(size_t n, char c);
+	string(size_t n, char c) : Common::String(n, c) {}
 	virtual ~string() {}
 
 	size_t length() const { return size(); }

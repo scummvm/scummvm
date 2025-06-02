@@ -91,7 +91,7 @@ DBCSString &DBCSString::operator=(const char *str) {
 }
 
 DBCSString &DBCSString::operator=(value_type c) {
-	assign(c);
+	assign(1, c);
 	return *this;
 }
 
