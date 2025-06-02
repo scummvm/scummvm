@@ -361,7 +361,7 @@ Std::string ConverseGump::strip_whitespace_after_break(Std::string s) {
 bool ConverseGump::parse_token(MsgText *token) {
 	int at_idx = token->s.findFirstOf('@', 0);
 	int i = 0;
-	int len = (int)token->s.length();
+	int len = (int)token->s.size();
 	while (at_idx != -1 && i < len) {
 		Std::string keyword = "";
 		for (i = at_idx + 1; i < len; i++) {
@@ -390,7 +390,7 @@ bool ConverseGump::parse_token(MsgText *token) {
 void ConverseGump::parse_fm_towns_token(MsgText *token) {
 	int at_idx = token->s.findFirstOf('+', 0);
 	int i = 0;
-	int len = (int)token->s.length();
+	int len = (int)token->s.size();
 	bool has_met = false;
 	while (at_idx != -1 && i < len) {
 		i = at_idx + 1;
@@ -483,7 +483,7 @@ Std::string ConverseGump::get_token_at_cursor() {
 			if (!is_permanent_keyword(keyword)) {
 				keyword_list->erase(iter);
 				if (permit_input)
-					keyword = keyword.at(2); // only return first char after " *"
+					keyword = Std::string(keyword.at(2)); // only return first char after " *"
 			}
 			return keyword;
 		}
@@ -501,8 +501,8 @@ bool ConverseGump::input_buf_add_char(char c) {
 }
 
 bool ConverseGump::input_buf_remove_char() {
-	if (input_buf.length()) {
-		input_buf.erase(input_buf.length() - 1, 1);
+	if (!input_buf.empty()) {
+		input_buf.deleteLastChar();
 		return true;
 	}
 
@@ -541,7 +541,7 @@ void ConverseGump::Display(bool full_redraw) {
 				screen->fill(CURSOR_COLOR, area.left + portrait_width / 2 + portrait_width + 16 + total_length, y + 4 + 8, token_len - 8, 1);
 			}
 			total_length += token_len;
-			//total_length += t.s.length();
+			//total_length += t.s.size();
 		}
 		y += 16;
 		font->drawString(screen, " *", area.left + portrait_width / 2 + portrait_width + 8, y, 0, 0);
@@ -558,7 +558,7 @@ void ConverseGump::Display(bool full_redraw) {
 		for (const MsgText *token : line->text) {
 			total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + frame_w + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
 
-			//token->s.length();
+			//token->s.size();
 			//token->font->drawChar(screen, ' ', area.left + portrait_width + 8 + total_length * 8, y, 0);
 			//total_length += 1;
 
@@ -711,7 +711,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	} else if (button == 1) { // left click == select word
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
-			if (token_str.length() > 0) {
+			if (!token_str.empty()) {
 				input_add_string(token_str);
 				set_input_mode(false);
 				clear_scroll();
@@ -732,7 +732,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 
 void ConverseGump::input_add_string(Std::string token_str) {
 	input_buf.clear();
-	for (uint16 i = 0; i < token_str.length(); i++) {
+	for (uint16 i = 0; i < token_str.size(); i++) {
 		if (Common::isAlnum(token_str[i]) && (!permit_input || strchr(permit_input, token_str[i])
 		                              || strchr(permit_input, tolower(token_str[i]))))
 			input_buf_add_char(token_str[i]);

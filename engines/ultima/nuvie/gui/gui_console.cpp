@@ -64,7 +64,7 @@ void GUI_Console:: Display(bool full_redraw) {
 }
 
 void GUI_Console::AddLine(const Std::string &line) {
-	uint16 len = line.length();
+	uint16 len = line.size();
 	uint16 i;
 
 	if (len > num_cols) {
