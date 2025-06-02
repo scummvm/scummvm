@@ -173,7 +173,9 @@ protected:
 	int16 sfSetSoundVolume(int16 argc, int16 *argv);
 	int16 sfGetSynthType(int16 argc, int16 *argv);
 	int16 sfIsSlowSystem(int16 argc, int16 *argv);
-
+	int16 sfMovieCall(int16 argc, int16 *argv);
+	int16 sfCursorXY(int16 argc, int16 *argv);
+	int16 sfSoundFile(int16 argc, int16 *argv);
 };
 
 } // End of namespace Made

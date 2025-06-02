@@ -27,10 +27,12 @@
 namespace Made {
 
 enum MadeGameID {
-	GID_RTZ		= 0,
-	GID_MANHOLE	= 1,
-	GID_LGOP2	= 2,
-	GID_RODNEY	= 3
+	GID_RTZ			= 0,
+	GID_MANHOLE		= 1,
+	GID_LGOP2		= 2,
+	GID_RODNEY		= 3,
+	GID_RSBESTNDE	= 4,
+	GID_RSBUSYNDE	= 5
 };
 
 enum MadeGameFeatures {
@@ -48,7 +50,8 @@ struct MadeGameDescription {
 	int gameID;
 	int gameType;
 	uint32 features;
-	uint16 version;
+	uint8 version;
+	uint8 subVersion;
 };
 
 #define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
