@@ -23,6 +23,7 @@
 #ifndef QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
 #define QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
 
+#include "common/hashmap.h"
 #include "common/path.h"
 
 #include "qdengine/xmath.h"
@@ -145,6 +146,8 @@ private:
 	typedef Std::vector<uint32> TileData;
 	/// данные тайлов
 	TileData _tileData;
+
+	mutable Common::HashMap<uint32, grTileSprite> _decompressedTiles;
 
 	Std::vector<Vect2i> _frameSizeArray;
 
