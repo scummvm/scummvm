@@ -48,7 +48,7 @@ void LogicManager::CONS_Vassili(int chapter) {
 		CONS_Vassili_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,19 +69,25 @@ void LogicManager::CONS_Vassili_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterVassili).characterPosition.position = 0;
-			getCharacter(kCharacterVassili).characterPosition.location = 0;
-			getCharacter(kCharacterVassili).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterVassili)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterVassili, kCarGreenSleeping, getCharacterCurrentParams(kCharacterVassili)[0])) {
+			if (getCharacterCurrentParams(kCharacterVassili)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterVassili)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterVassili)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterVassili, kCarGreenSleeping, getCharacterCurrentParams(kCharacterVassili)[0])) {
-		if (getCharacterCurrentParams(kCharacterVassili)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterVassili)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterVassili)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterVassili).characterPosition.position = 0;
+		getCharacter(kCharacterVassili).characterPosition.location = 0;
+		getCharacter(kCharacterVassili).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterVassili)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -98,12 +104,17 @@ void LogicManager::CONS_Vassili_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterVassili).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVassili, _functionsVassili[getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall]]);
 		fedEx(kCharacterVassili, kCharacterVassili, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterVassili, (char *)&getCharacterCurrentParams(kCharacterVassili)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -121,12 +132,14 @@ void LogicManager::CONS_Vassili_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_SaveGame(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterVassili).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVassili, _functionsVassili[getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall]]);
 
 		fedEx(kCharacterVassili, kCharacterVassili, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		save(
 			kCharacterVassili,
 			getCharacterCurrentParams(kCharacterVassili)[0],
@@ -137,6 +150,9 @@ void LogicManager::HAND_Vassili_SaveGame(HAND_PARAMS) {
 		_engine->getMessageManager()->setMessageHandle(kCharacterVassili, _functionsVassili[getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall]]);
 
 		fedEx(kCharacterVassili, kCharacterVassili, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -151,14 +167,20 @@ void LogicManager::CONS_Vassili_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_Birth(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterVassili)[0]) {
 			getCharacterCurrentParams(kCharacterVassili)[0] = 1;
 			CONS_Vassili_WithTatiana(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		setDoor(32, kCharacterCath, 0, 10, 9);
 		setDoor(40, kCharacterCath, 0, 255, 255);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -173,24 +195,32 @@ void LogicManager::CONS_Vassili_WithTatiana(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_WithTatiana(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterVassili)[0]) {
 			getCharacter(kCharacterVassili).characterPosition = getCharacter(kCharacterTatiana).characterPosition;
 		} else if (!getCharacterCurrentParams(kCharacterVassili)[2] &&
 			(getCharacterCurrentParams(kCharacterVassili)[2] = _gameTime + 450, _gameTime == -450) || getCharacterCurrentParams(kCharacterVassili)[2] < _gameTime) {
 			if (!getCharacterCurrentParams(kCharacterVassili)[1] && getModel(32) == 1) {
 				getCharacterCurrentParams(kCharacterVassili)[1] = 1;
-				startCycOtis(11, "303A");
+				startCycOtis(kCharacterVassili, "303A");
 				setDoor(32, kCharacterCath, 0, 10, 9);
 			}
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacterCurrentParams(kCharacterVassili)[0] = 1;
-	} else if (msg->action == 122732000) {
+		break;
+	case 122732000:
 		CONS_Vassili_InBed(0, 0, 0, 0);
-	} else if (msg->action == 168459827) {
+		break;
+	case 168459827:
 		getCharacterCurrentParams(kCharacterVassili)[0] = 0;
 		setDoor(32, kCharacterCath, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -205,8 +235,9 @@ void LogicManager::CONS_Vassili_InBed(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_InBed(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (inComp(0, 4, 8200)) {
+	switch (msg->action) {
+	case 0:
+		if (inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 			if (getCharacterCurrentParams(kCharacterVassili)[2] ||
 				((getCharacterCurrentParams(kCharacterVassili)[2] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0]),
 				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
@@ -215,49 +246,56 @@ void LogicManager::HAND_Vassili_InBed(HAND_PARAMS) {
 					getCharacterCurrentParams(kCharacterVassili)[2] = 0x7FFFFFFF;
 					getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] = 1;
 					VassiliCall(&LogicManager::CONS_Vassili_DoSeqOtis, "303B", 0, 0, 0);
-					return;
+					break;
 				}
 			} else {
 				getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] = 1;
 				VassiliCall(&LogicManager::CONS_Vassili_DoSeqOtis, "303B", 0, 0, 0);
-				return;
+				break;
 			}
 		} else {
 			getCharacterCurrentParams(kCharacterVassili)[2] = 0;
 			if (getCharacterCurrentParams(kCharacterVassili)[1])
-				startCycOtis(11, "303A");
+				startCycOtis(kCharacterVassili, "303A");
 		}
 
 		if (getCharacterCurrentParams(kCharacterVassili)[3] != 0x7FFFFFFF && _gameTime > 1489500) {
 			if (_gameTime <= 1503000) {
-				if (inComp(0, 4, 8200) || !getCharacterCurrentParams(kCharacterVassili)[3]) {
+				if (inComp(kCharacterCath, kCarRedSleeping, 8200) || !getCharacterCurrentParams(kCharacterVassili)[3]) {
 					getCharacterCurrentParams(kCharacterVassili)[3] = _gameTime;
 					if (!_gameTime) {
 						CONS_Vassili_InBed2(0, 0, 0, 0);
-						return;
+						break;
 					}
 				}
 
 				if (getCharacterCurrentParams(kCharacterVassili)[3] >= _gameTime)
-					return;
+					break;
 			}
 
 			getCharacterCurrentParams(kCharacterVassili)[3] = 0x7FFFFFFF;
 			CONS_Vassili_InBed2(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterVassili).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterVassili).characterPosition.location = 1;
 		getCharacter(kCharacterVassili).characterPosition.position = 8200;
-		setDoor(32, 0, 0, 10, 9);
+		setDoor(32, kCharacterCath, 0, 10, 9);
 		getCharacterCurrentParams(kCharacterVassili)[0] = 5 * (3 * rnd(25) + 15);
-		startCycOtis(11, "303A");
-	} else if (msg->action == 18) {
+		startCycOtis(kCharacterVassili, "303A");
+		break;
+	case 18:
 		if (getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] == 1) {
-			startCycOtis(11, "303C");
+			startCycOtis(kCharacterVassili, "303C");
 			getCharacterCurrentParams(kCharacterVassili)[1] = 1;
 			getCharacterCurrentParams(kCharacterVassili)[0] = 5 * (3 * rnd(25) + 15);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -275,24 +313,24 @@ void LogicManager::HAND_Vassili_InBed2(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterVassili)[0] == 0x7FFFFFFF || _gameTime <= 1503000)
-			return;
+			break;
 
 		if (_gameTime <= 1512000) {
 			if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterVassili)[0]) {
 				getCharacterCurrentParams(kCharacterVassili)[0] = _gameTime + 150;
 				if (_gameTime == -150) {
 					CONS_Vassili_HaveSeizureNow(0, 0, 0, 0);
-					return;
+					break;
 				}
 			}
 
 			if (getCharacterCurrentParams(kCharacterVassili)[0] >= _gameTime)
-				return;
+				break;
 		}
 
 		getCharacterCurrentParams(kCharacterVassili)[0] = 0x7FFFFFFF;
 		CONS_Vassili_HaveSeizureNow(0, 0, 0, 0);
-		return;
+		break;
 	case 12:
 		getCharacter(kCharacterVassili).characterPosition.car = 4;
 		getCharacter(kCharacterVassili).characterPosition.location = 1;
@@ -321,9 +359,11 @@ void LogicManager::CONS_Vassili_HaveSeizureNow(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_HaveSeizureNow(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		CONS_Vassili_HavingSeizure(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		if (!checkLoc(kCharacterCath, kCarRedSleeping)) {
 			playDialog(0, "BUMP", -1, 0);
 
@@ -338,6 +378,9 @@ void LogicManager::HAND_Vassili_HaveSeizureNow(HAND_PARAMS) {
 		send(kCharacterVassili, kCharacterTrainM, 226031488, 0);
 		send(kCharacterVassili, kCharacterCond2, 226031488, 0);
 		playDialog(kCharacterVassili, "VAS1027", 16, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -352,14 +395,16 @@ void LogicManager::CONS_Vassili_HavingSeizure(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_HavingSeizure(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		if (!nearChar(kCharacterVassili, kCharacterCath, 2500))
 			playDialog(0, "BUMP", -1, 0);
 
 		CONS_Vassili_CathArrives(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		if ((checkDoor(32) != 2 ||
-			!checkCathDir(4, 17)) &&
+			!checkCathDir(kCarRedSleeping, 17)) &&
 			!checkCathDir(kCarRedSleeping, 18) &&
 			!checkCathDir(kCarRedSleeping, 37) &&
 			!checkCathDir(kCarRedSleeping, 38) &&
@@ -369,7 +414,9 @@ void LogicManager::HAND_Vassili_HavingSeizure(HAND_PARAMS) {
 		} else {
 			CONS_Vassili_CathArrives(0, 0, 0, 0);
 		}
-	} else if (msg->action == 17) {
+
+		break;
+	case 17:
 		if (checkDoor(32) == 2 &&
 			checkCathDir(kCarRedSleeping, 17) ||
 			checkCathDir(kCarRedSleeping, 18) ||
@@ -380,6 +427,10 @@ void LogicManager::HAND_Vassili_HavingSeizure(HAND_PARAMS) {
 			fadeDialog(kCharacterVassili);
 			CONS_Vassili_CathArrives(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -394,7 +445,8 @@ void LogicManager::CONS_Vassili_CathArrives(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_CathArrives(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		if (_gameProgress[kProgressEventCorpseMovedFromFloor]) {
 			if (_gameProgress[kProgressEventCorpseThrown]) {
 				if (_gameProgress[kProgressJacket] == 1) {
@@ -414,17 +466,25 @@ void LogicManager::HAND_Vassili_CathArrives(HAND_PARAMS) {
 			playNIS(kEventMertensCorpseFloor);
 			endGame(0, 0, 0, true);
 		}
-	} else if (msg->action == 18 && getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] == 1) {
-		getCharacter(kCharacterCath).characterPosition.location = 1;
-		playNIS(kEventVassiliSeizure);
-		setDoor(32, kCharacterCath, 0, 10, 9);
-		setDoor(1, kCharacterCath, 0, 10, 9);
-		_gameProgress[kProgressField18] = 2;
-		send(kCharacterVassili, kCharacterAnna, 191477936, 0);
-		send(kCharacterVassili, kCharacterTrainM, 191477936, 0);
-		send(kCharacterVassili, kCharacterCond2, 191477936, 0);
-		bumpCathRDoor(32);
-		CONS_Vassili_AsleepAgain(0, 0, 0, 0);
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] == 1) {
+			getCharacter(kCharacterCath).characterPosition.location = 1;
+			playNIS(kEventVassiliSeizure);
+			setDoor(32, kCharacterCath, 0, 10, 9);
+			setDoor(1, kCharacterCath, 0, 10, 9);
+			_gameProgress[kProgressField18] = 2;
+			send(kCharacterVassili, kCharacterAnna, 191477936, 0);
+			send(kCharacterVassili, kCharacterTrainM, 191477936, 0);
+			send(kCharacterVassili, kCharacterCond2, 191477936, 0);
+			bumpCathRDoor(32);
+			CONS_Vassili_AsleepAgain(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -439,8 +499,13 @@ void LogicManager::CONS_Vassili_AsleepAgain(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_AsleepAgain(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		startCycOtis(kCharacterVassili, "303A");
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Vassili_StartPart2(CONS_PARAMS) {
@@ -454,9 +519,11 @@ void LogicManager::CONS_Vassili_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_StartPart2(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Vassili_InPart2(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterVassili);
 		getCharacter(kCharacterVassili).characterPosition.position = 8200;
 		getCharacter(kCharacterVassili).characterPosition.location = 1;
@@ -465,6 +532,9 @@ void LogicManager::HAND_Vassili_StartPart2(HAND_PARAMS) {
 		getCharacter(kCharacterVassili).clothes = 0;
 		setDoor(32, kCharacterCath, 0, 10, 9);
 		setModel(32, 1);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -479,7 +549,8 @@ void LogicManager::CONS_Vassili_InPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_InPart2(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 			if (getCharacterCurrentParams(kCharacterVassili)[2] ||
 				(getCharacterCurrentParams(kCharacterVassili)[2] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0],
@@ -493,17 +564,24 @@ void LogicManager::HAND_Vassili_InPart2(HAND_PARAMS) {
 		} else {
 			getCharacterCurrentParams(kCharacterVassili)[2] = 0;
 			if (getCharacterCurrentParams(kCharacterVassili)[1])
-				startCycOtis(11, "303A");
+				startCycOtis(kCharacterVassili, "303A");
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacterCurrentParams(kCharacterVassili)[0] = 5 * (3 * rnd(25) + 15);
 		startCycOtis(kCharacterVassili, "303A");
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] == 1) {
 			startCycOtis(kCharacterVassili, "303C");
 			getCharacterCurrentParams(kCharacterVassili)[1] = 1;
 			getCharacterCurrentParams(kCharacterVassili)[0] = 5 * (3 * rnd(25) + 15);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -518,9 +596,11 @@ void LogicManager::CONS_Vassili_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_StartPart3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Vassili_Asleep(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterVassili);
 		getCharacter(kCharacterVassili).characterPosition.position = 8200;
 		getCharacter(kCharacterVassili).characterPosition.location = 1;
@@ -528,6 +608,9 @@ void LogicManager::HAND_Vassili_StartPart3(HAND_PARAMS) {
 		getCharacter(kCharacterVassili).inventoryItem = kItemNone;
 		getCharacter(kCharacterVassili).clothes = 0;
 		setDoor(32, kCharacterCath, 0, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -550,7 +633,7 @@ void LogicManager::HAND_Vassili_Asleep(HAND_PARAMS) {
 				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
 
 				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _currentGameSessionTicks)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterVassili)[2] = 0x7FFFFFFF;
 			}
@@ -566,11 +649,11 @@ void LogicManager::HAND_Vassili_Asleep(HAND_PARAMS) {
 		break;
 	case 9:
 		getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] = 2;
-		VassiliCall(&LogicManager::CONS_Vassili_SaveGame, 2, 91, 0, 0);
+		VassiliCall(&LogicManager::CONS_Vassili_SaveGame, 2, kEventVassiliCompartmentStealEgg, 0, 0);
 		break;
 	case 12:
 		getCharacterCurrentParams(kCharacterVassili)[0] = 5 * (3 * rnd(25) + 15);
-		startCycOtis(11, "303A");
+		startCycOtis(kCharacterVassili, "303A");
 		break;
 	case 17:
 		if (inComp(kCharacterCath, kCarRedSleeping, 7850) && cathHasItem(kItemFirebird) && !_gameEvents[kEventVassiliCompartmentStealEgg]) {
@@ -607,9 +690,11 @@ void LogicManager::CONS_Vassili_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_StartPart4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Vassili_InPart4(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterVassili);
 		getCharacter(kCharacterVassili).characterPosition.position = 8200;
 		getCharacter(kCharacterVassili).characterPosition.location = 1;
@@ -618,6 +703,9 @@ void LogicManager::HAND_Vassili_StartPart4(HAND_PARAMS) {
 		getCharacter(kCharacterVassili).clothes = 0;
 		setDoor(32, kCharacterCath, 0, 10, 9);
 		setModel(32, 1);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -632,13 +720,14 @@ void LogicManager::CONS_Vassili_InPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_InPart4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 			if (getCharacterCurrentParams(kCharacterVassili)[2] ||
 				(getCharacterCurrentParams(kCharacterVassili)[2] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0],
 				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
 				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _currentGameSessionTicks)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterVassili)[2] = 0x7FFFFFFF;
 			}
@@ -648,17 +737,24 @@ void LogicManager::HAND_Vassili_InPart4(HAND_PARAMS) {
 		} else {
 			getCharacterCurrentParams(kCharacterVassili)[2] = 0;
 			if (getCharacterCurrentParams(kCharacterVassili)[1])
-				startCycOtis(11, "303A");
+				startCycOtis(kCharacterVassili, "303A");
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacterCurrentParams(kCharacterVassili)[0] = 5 * (3 * rnd(25) + 15);
-		startCycOtis(11, "303A");
-	} else if (msg->action == 18) {
+		startCycOtis(kCharacterVassili, "303A");
+		break;
+	case 18:
 		if (getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] == 1) {
-			startCycOtis(11, "303C");
+			startCycOtis(kCharacterVassili, "303C");
 			getCharacterCurrentParams(kCharacterVassili)[1] = 1;
 			getCharacterCurrentParams(kCharacterVassili)[0] = 5 * (3 * rnd(25) + 15);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -673,13 +769,17 @@ void LogicManager::CONS_Vassili_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vassili_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterVassili);
 		getCharacter(kCharacterVassili).characterPosition.location = 1;
 		getCharacter(kCharacterVassili).characterPosition.position = 3969;
 		getCharacter(kCharacterVassili).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterVassili).inventoryItem = kItemNone;
 		getCharacter(kCharacterVassili).clothes = 0;
+		break;
+	default:
+		break;
 	}
 }
 
