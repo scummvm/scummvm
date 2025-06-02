@@ -823,6 +823,9 @@ typedef struct tagCREATESTRUCTA {
 
 class CWnd : public CCmdTarget {
 	DECLARE_DYNCREATE(CWnd)
+private:
+	void createDialogIndirect(LPCDLGTEMPLATE dlgTemplate);
+
 protected:
 	static const MSG *GetCurrentMessage();
 
@@ -1013,6 +1016,7 @@ protected:
 		CWnd *pParentWnd, HINSTANCE hInst);
 
 protected:
+	Common::Array<CWnd *> _children;
 	int m_nModalResult = 0;
 	int m_nFlags = 0;
 
@@ -1042,6 +1046,7 @@ public:
 public:
 	CWnd();
 	~CWnd() override;
+	void clear();
 
 	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	                    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
@@ -1375,6 +1380,7 @@ public:
 	const char *m_lpCmdLine = "";
 	CWnd *m_pMainWnd = nullptr;
 	Graphics::Palette _palette;
+	MSG _currentMessage;
 
 public:
 	CWinApp(const char *appName = nullptr);

@@ -33,17 +33,6 @@ class CWnd;
 
 namespace Gfx {
 
-
-struct DialogTemplateData {
-	DWORD style;
-	DWORD dwExtendedStyle;
-	WORD cdit;
-	int16 x;
-	int16 y;
-	int16 cx;
-	int16 cy;
-};
-
 // Template data pointers. Note that they're
 // void * because in ScummVM we do endian-safe
 // loading of the data being pointed to

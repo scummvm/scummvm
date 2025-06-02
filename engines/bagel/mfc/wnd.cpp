@@ -36,6 +36,7 @@ CWnd::CWnd() : m_hWnd(this), _surface(this) {
 }
 
 CWnd::~CWnd() {
+	clear();
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
@@ -66,8 +67,14 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	return true;
 }
 
+void CWnd::clear() {
+	for (CWnd *ctl : _children)
+		delete ctl;
+	_children.clear();
+}
+
 const MSG *CWnd::GetCurrentMessage() {
-	return nullptr;
+	return &AfxGetApp()->_currentMessage;
 }
 
 void CWnd::DoDataExchange(CDataExchange *) {
@@ -158,6 +165,12 @@ BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+	auto &msg = AfxGetApp()->_currentMessage;
+	msg.hwnd = m_hWnd;
+	msg.message = message;
+	msg.wParam = wParam;
+	msg.lParam = lParam;
+
 	LRESULT lResult = 0;
 	if (!OnWndMsg(message, wParam, lParam, &lResult))
 		lResult = DefWindowProc(message, wParam, lParam);
@@ -563,19 +576,19 @@ BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 	m_nModalResult = -1;
 	m_nFlags |= WF_CONTINUEMODAL;
 
-#ifdef TODO
 	// Create modeless dialog
-	HWND hWnd = ::CreateDialogIndirect(hInst, lpDialogTemplate,
-		pParentWnd->GetSafeHwnd(), AfxDlgProc);
-#else
-	error("Create the dialog contents here");
-#endif
+	createDialogIndirect(lpDialogTemplate);
+
 	if (hTemplate != nullptr) {
 		GlobalUnlock(hTemplate);
 		GlobalFree(hTemplate);
 	}
 
 	return TRUE;
+}
+
+void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
+	error("TODO: createDialogIndirect");
 }
 
 } // namespace MFC
