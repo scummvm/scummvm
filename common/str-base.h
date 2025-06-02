@@ -306,6 +306,15 @@ public:
 	 */
 	void replace(value_type from, value_type to);
 
+	/**
+	 * Assign a new string
+	 */
+	void assign(const BaseString &str);
+	void assign(BaseString &&str);
+	void assign(value_type c);
+	void assign(const value_type *str);
+	void assign(const value_type *str, size_t count);
+
 	/** Appends a string containing the characters between beginP (including) and endP (excluding). */
 	void append(const value_type *begin, const value_type *end);
 
@@ -368,10 +377,6 @@ protected:
 	void assignAppend(const value_type *str);
 	void assignAppend(value_type c);
 	void assignAppend(const BaseString &str);
-	void assign(const BaseString &str);
-	void assign(BaseString &&str);
-	void assign(value_type c);
-	void assign(const value_type *str);
 
 	bool pointerInOwnBuffer(const value_type *str) const;
 
@@ -379,7 +384,7 @@ protected:
 
 	void toCase(int (*caseChangeFunc)(int));
 
-	static uint32 cStrLen(const value_type *str);
+	static size_t cStrLen(const value_type *str);
 	static const value_type *cMemChr(const value_type *ptr, value_type c, size_t count);
 	static       value_type *cMemChr(value_type *ptr,       value_type c, size_t count);
 	static int cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count);

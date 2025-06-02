@@ -70,22 +70,6 @@ public:
 
 	size_t length() const { return size(); }
 
-	/**
-	 * Assign a new string
-	 */
-	void assign(const char *s, size_t count = npos) {
-		if (count == npos)
-			*this = s;
-		else
-			*this = string(s, count);
-	}
-	void assign(const string &s, size_t count = npos) {
-		if (count == npos)
-			*this = s;
-		else
-			*this = string(s.c_str(), count);
-	}
-
 	virtual int Compare(const string &s) const {
 		return compareTo(s);
 	}
