@@ -74,8 +74,11 @@ public:
 	ScriptInterpreter(MadeEngine *vm);
 	~ScriptInterpreter();
 	void runScript(int16 scriptObjectIndex);
+#ifdef DUMP_SCRIPTS
 	void dumpScript(int16 objectIndex, int *opcodeStats, int *externStats);
+	void dumpObject(int16 objectIndex);
 	void dumpAllScripts();
+#endif
 protected:
 	MadeEngine *_vm;
 
