@@ -36,12 +36,6 @@ Common::String to_uppercase(const Common::String &s) {
 	return str;
 }
 
-string::string(size_t n, char c) : Common::String() {
-	ensureCapacity(n, false);
-	for (size_t idx = 0; idx < n; ++idx)
-		(*this) += c;
-}
-
 void string::resize(size_t count) {
 	if (count == 0)
 		clear();

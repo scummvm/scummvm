@@ -98,6 +98,9 @@ public:
 	/** Construct a string consisting of the given character. */
 	explicit constexpr U32String(value_type c) : BaseString<u32char_type_t>(c) {}
 
+	/** Construct a string consisting of n copies of the given character. */
+	U32String(size_t n, value_type c) : BaseString<u32char_type_t>(n, c) {}
+
 	/** Assign a given string to this string. */
 	U32String &operator=(const U32String &str);
 

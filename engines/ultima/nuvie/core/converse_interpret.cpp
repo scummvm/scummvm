@@ -323,7 +323,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			        c_str[i + count] >= 'a' && c_str[i + count] <= 'z')
 				// NOTE: the above check might not work for non-english
 				count++;
-			if (show) output.append(Std::string(count, c_str[i]));
+			if (show) output.append(count, c_str[i]);
 			i += count;
 			break;
 		}

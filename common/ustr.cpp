@@ -76,7 +76,7 @@ U32String &U32String::operator=(const char *str) {
 }
 
 U32String &U32String::operator=(value_type c) {
-	assign(c);
+	assign(1, c);
 	return *this;
 }
 
