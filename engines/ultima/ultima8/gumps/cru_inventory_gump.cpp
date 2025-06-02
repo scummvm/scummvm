@@ -117,7 +117,7 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 					_inventoryText->InitGump(this, false);
 				}
 			} else {
-				if (_inventoryText->getText().length() > 0) {
+				if (!_inventoryText->getText().empty()) {
 					resetText();
 				}
 			}

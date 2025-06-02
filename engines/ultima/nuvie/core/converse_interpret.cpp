@@ -1373,7 +1373,7 @@ converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring
 				free(item);
 				// match keywords format: clamp item to 4 characters
 				if (item_str.size() > 4)
-					item_str.resize(4);
+					item_str.erase(4);
 				if (check_keywords(item_str, find_str))
 					return i;
 			}

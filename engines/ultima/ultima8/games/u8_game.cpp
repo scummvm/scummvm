@@ -286,9 +286,8 @@ void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 }
 
 Std::string U8Game::getCreditText(Common::SeekableReadStream *rs) {
-	Std::string text;
 	unsigned int size = rs->size();
-	text.resize(size);
+	Std::string text(size, ' ');
 	for (unsigned int i = 0; i < size; ++i) {
 		uint8 c = rs->readByte();
 		int x;

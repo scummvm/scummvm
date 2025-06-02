@@ -27,7 +27,7 @@
 namespace Ultima {
 namespace Std {
 
-class string : public Common::String {
+class string final : public Common::String {
 public:
 	struct reverse_iterator {
 	private:
@@ -57,30 +57,13 @@ public:
 		}
 	};
 public:
-	string() : Common::String() {}
+	constexpr string() : Common::String() {}
 	string(const char *str) : Common::String(str) {}
 	string(const char *str, uint32 len) : Common::String(str, len) {}
 	string(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
 	string(const String &str) : Common::String(str) {}
-	string(char c) : Common::String(c) {}
+	explicit constexpr string(char c) : Common::String(c) {}
 	string(size_t n, char c) : Common::String(n, c) {}
-	virtual ~string() {}
-
-	size_t length() const { return size(); }
-
-	virtual int Compare(const string &s) const {
-		return compareTo(s);
-	}
-
-	/**
-	 * Resizes a string
-	 */
-	void resize(size_t count);
-
-	void insert(size_t pos, size_t n, char c) {
-		for (uint idx = 0; idx < n; ++idx)
-			insertChar(c, pos);
-	}
 
 	reverse_iterator rbegin() {
 		return reverse_iterator(this, (int)size() - 1);
@@ -88,27 +71,7 @@ public:
 	reverse_iterator rend() {
 		return reverse_iterator(this, -1);
 	}
-
-	bool operator==(const string &x) const {
-		return !Compare(x);
-	}
-
-	bool operator==(const char *x) const {
-		return !Compare(x);
-	}
-
-	bool operator!=(const string &x) const {
-		return Compare(x) != 0;
-	}
-
-	bool operator !=(const char *x) const {
-		return Compare(x) != 0;
-	}
 };
-
-extern const char *const endl;
-
-extern Common::String to_uppercase(const Common::String &s);
 
 } // End of namespace Std
 } // End of namespace Ultima

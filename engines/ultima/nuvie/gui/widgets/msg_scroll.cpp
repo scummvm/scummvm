@@ -61,7 +61,7 @@ void MsgText::copy(MsgText *msg_text) {
 }
 
 uint32 MsgText::length() {
-	return (uint32)s.length();
+	return (uint32)s.size();
 }
 
 uint16 MsgText::getDisplayWidth() {
@@ -80,7 +80,7 @@ void MsgLine::append(MsgText *new_text) {
 	if (text.size() > 0)
 		msg_text = text.back();
 
-	if (msg_text && msg_text->font == new_text->font && msg_text->color == new_text->color && new_text->s.length() == 1 && new_text->s[0] != ' ')
+	if (msg_text && msg_text->font == new_text->font && msg_text->color == new_text->color && new_text->s.size() == 1 && new_text->s[0] != ' ')
 		msg_text->s.append(new_text->s);
 	else {
 		msg_text = new MsgText();
@@ -88,7 +88,7 @@ void MsgLine::append(MsgText *new_text) {
 		text.push_back(msg_text);
 	}
 
-	total_length += new_text->s.length();
+	total_length += new_text->s.size();
 
 	return;
 }
@@ -101,9 +101,9 @@ void MsgLine::remove_char() {
 		return;
 
 	msg_text = text.back();
-	msg_text->s.erase(msg_text->s.length() - 1, 1);
+	msg_text->s.deleteLastChar();
 
-	if (msg_text->s.length() == 0) {
+	if (msg_text->s.empty()) {
 		text.pop_back();
 		delete msg_text;
 	}
@@ -125,10 +125,10 @@ MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 		return nullptr;
 
 	for (auto *t : text) {
-		if (i + t->s.length() >= pos)
+		if (i + t->s.size() >= pos)
 			return t;
 
-		i += t->s.length();
+		i += t->s.size();
 	}
 
 	return nullptr;
@@ -411,13 +411,13 @@ MsgText *MsgScroll::holding_buffer_get_token() {
 	if (i == 0) i++;
 
 	if (i == -1)
-		i = input->s.length();
+		i = input->s.size();
 
 	if (i > 0) {
 		token = new MsgText(input->s.substr(0, i), font); // FIX maybe a format flag. // input->font);
 		token->color = input->color;
 		input->s.erase(0, i);
-		if (input->s.length() == 0) {
+		if (input->s.empty()) {
 			holding_buffer.pop_front();
 			delete input;
 		}
@@ -438,7 +438,7 @@ bool MsgScroll::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) {
 bool MsgScroll::parse_token(MsgText *token) {
 	MsgLine *msg_line = nullptr;
 
-	if (!(token && token->s.length()))
+	if (!(token && token->s.size()))
 		return true;
 
 	if (!msg_buf.empty())
@@ -475,7 +475,7 @@ bool MsgScroll::parse_token(MsgText *token) {
 				msg_line = add_new_line();
 			}
 			// This adds extra newlines. (SB-X)
-			//                 if(msg_line->total_length + token->length() == scroll_width) //we add a new line but write to the old line.
+			//                 if(msg_line->total_length + token->size() == scroll_width) //we add a new line but write to the old line.
 			//                    add_new_line();
 
 			if (msg_line->total_length == 0 && token->s[0] == ' ' && discard_whitespace) // discard whitespace at the start of a line.
@@ -634,7 +634,7 @@ void MsgScroll::set_input_mode(bool state, const char *allowed, bool can_escape,
 		if (allowed && strlen(allowed))
 			set_permitted_input(allowed);
 		//FIXME SDL2 SDL_EnableUNICODE(1); // allow character translation
-		input_buf.erase(0, input_buf.length());
+		input_buf.erase(0, input_buf.size());
 	} else {
 		//FIXME SDL2 SDL_EnableUNICODE(0); // reduce translation overhead when not needed
 		if (callback_target)
@@ -869,7 +869,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 	if (button == 1) { // left click == select word
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
-			if (permit_input != nullptr && token_str.length()) {
+			if (permit_input != nullptr && !token_str.empty()) {
 				if (strchr(permit_input, token_str[0])
 				        || strchr(permit_input, tolower(token_str[0]))) {
 					input_buf_add_char(token_str[0]);
@@ -878,7 +878,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 				return GUI_YUM;
 			}
 
-			for (i = 0; i < token_str.length(); i++) {
+			for (i = 0; i < token_str.size(); i++) {
 				if (Common::isAlnum(token_str[i]))
 					input_buf_add_char(token_str[i]);
 			}
@@ -980,7 +980,7 @@ inline void MsgScroll::drawLine(Screen *theScreen, MsgLine *msg_line, uint16 lin
 
 	for (MsgText *token : msg_line->text) {
 		token->font->drawString(theScreen, token->s.c_str(), area.left + left_margin + total_length * 8, area.top + line_y * 8, token->color, font_highlight_color); //FIX for hardcoded font height
-		total_length += token->s.length();
+		total_length += token->s.size();
 	}
 }
 
@@ -1042,8 +1042,8 @@ bool MsgScroll::input_buf_add_char(char c) {
 }
 
 bool MsgScroll::input_buf_remove_char() {
-	if (input_buf.length()) {
-		input_buf.erase(input_buf.length() - 1, 1);
+	if (!input_buf.empty()) {
+		input_buf.deleteLastChar();
 		scroll_updated = true;
 		remove_char();
 

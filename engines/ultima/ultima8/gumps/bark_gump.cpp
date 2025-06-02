@@ -148,8 +148,8 @@ int BarkGump::calculateTicks() {
 	uint length = end - start;
 	int ticks = INT_MAX_VALUE;
 	if (length > 0) {
-		if (_speechLength && _barked.length()) {
-			ticks = (length * _speechLength) / (_barked.length() * MILLIS_PER_TICK);
+		if (_speechLength && !_barked.empty()) {
+			ticks = (length * _speechLength) / (_barked.size() * MILLIS_PER_TICK);
 		} else if (_talkSpeed) {
 			ticks = (length * NO_SPEECH_LENGTH) / _talkSpeed;
 		}
