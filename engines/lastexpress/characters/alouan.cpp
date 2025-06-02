@@ -48,7 +48,7 @@ void LogicManager::CONS_Alouan(int chapter) {
 		CONS_Alouan_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,18 +69,24 @@ void LogicManager::CONS_Alouan_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterAlouan).characterPosition.position = 0;
-			getCharacter(kCharacterAlouan).characterPosition.location = 0;
-			getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterAlouan)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterAlouan, kCarGreenSleeping, getCharacterCurrentParams(kCharacterAlouan)[0])) {
+			if (getCharacterCurrentParams(kCharacterAlouan)[0] == 10000)
+				getCharacterCurrentParams(kCharacterAlouan)[0] = 0;
+			else
+				getCharacterCurrentParams(kCharacterAlouan)[0] = 10000;
 		}
-	} else if (walk(kCharacterAlouan, kCarGreenSleeping, getCharacterCurrentParams(kCharacterAlouan)[0])) {
-		if (getCharacterCurrentParams(kCharacterAlouan)[0] == 10000)
-			getCharacterCurrentParams(kCharacterAlouan)[0] = 0;
-		else
-			getCharacterCurrentParams(kCharacterAlouan)[0] = 10000;
+
+		break;
+	case 12:
+		getCharacter(kCharacterAlouan).characterPosition.position = 0;
+		getCharacter(kCharacterAlouan).characterPosition.location = 0;
+		getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterAlouan)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -99,14 +105,19 @@ void LogicManager::CONS_Alouan_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterAlouan, getCharacterCurrentParams(kCharacterAlouan)[3]);
 		getCharacter(kCharacterAlouan).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAlouan, _functionsAlouan[getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall]]);
 		fedEx(kCharacterAlouan, kCharacterAlouan, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterAlouan, (char *)&getCharacterCurrentParams(kCharacterAlouan)[0]);
 		blockAtDoor(kCharacterAlouan, getCharacterCurrentParams(kCharacterAlouan)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -123,12 +134,17 @@ void LogicManager::CONS_Alouan_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterAlouan).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAlouan, _functionsAlouan[getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall]]);
 		fedEx(kCharacterAlouan, kCharacterAlouan, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterAlouan, (char *)&getCharacterCurrentParams(kCharacterAlouan)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -145,10 +161,11 @@ void LogicManager::CONS_Alouan_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterAlouan)[1] || (getCharacterCurrentParams(kCharacterAlouan)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlouan)[0], _gameTime + getCharacterCurrentParams(kCharacterAlouan)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterAlouan)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterAlouan)[1] = 0x7FFFFFFF;
 		}
@@ -156,6 +173,9 @@ void LogicManager::HAND_Alouan_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterAlouan).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterAlouan, _functionsAlouan[getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall]]);
 		fedEx(kCharacterAlouan, kCharacterAlouan, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -212,11 +232,13 @@ void LogicManager::CONS_Alouan_PeekF(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_PeekF(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAlouan).characterPosition.position = 4070;
 		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
 		AlouanCall(&LogicManager::CONS_Alouan_DoCorrOtis, "621Cf", 6, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] == 1) {
 			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
 			AlouanCall(&LogicManager::CONS_Alouan_DoCorrOtis, "621Df", 6, 0, 0);
@@ -227,6 +249,10 @@ void LogicManager::HAND_Alouan_PeekF(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterAlouan, _functionsAlouan[getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall]]);
 			fedEx(kCharacterAlouan, kCharacterAlouan, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -241,11 +267,13 @@ void LogicManager::CONS_Alouan_PeekH(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_PeekH(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAlouan).characterPosition.position = 2740;
 		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
 		AlouanCall(&LogicManager::CONS_Alouan_DoCorrOtis, "621Ch", 8, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] == 1) {
 			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
 			AlouanCall(&LogicManager::CONS_Alouan_DoCorrOtis, "621Dh", 8, 0, 0);
@@ -256,6 +284,10 @@ void LogicManager::HAND_Alouan_PeekH(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterAlouan, _functionsAlouan[getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall]]);
 			fedEx(kCharacterAlouan, kCharacterAlouan, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -270,12 +302,14 @@ void LogicManager::CONS_Alouan_GoFtoH(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_GoFtoH(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAlouan).characterPosition.position = 4070;
 		getCharacter(kCharacterAlouan).characterPosition.location = 0;
 		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
 		AlouanCall(&LogicManager::CONS_Alouan_DoCorrOtis, "621Bf", 6, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
@@ -293,7 +327,13 @@ void LogicManager::HAND_Alouan_GoFtoH(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterAlouan, _functionsAlouan[getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall]]);
 			fedEx(kCharacterAlouan, kCharacterAlouan, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -308,12 +348,14 @@ void LogicManager::CONS_Alouan_GoHtoF(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_GoHtoF(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterAlouan).characterPosition.position = 2740;
 		getCharacter(kCharacterAlouan).characterPosition.location = 0;
 		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
 		AlouanCall(&LogicManager::CONS_Alouan_DoCorrOtis, "621Bh", 8, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
@@ -331,7 +373,13 @@ void LogicManager::HAND_Alouan_GoHtoF(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterAlouan, _functionsAlouan[getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall]]);
 			fedEx(kCharacterAlouan, kCharacterAlouan, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -346,15 +394,21 @@ void LogicManager::CONS_Alouan_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterAlouan).characterPosition.position = 2740;
-			getCharacter(kCharacterAlouan).characterPosition.location = 1;
-			getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterAlouan)[0]) {
+			getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
+			CONS_Alouan_Part1(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterAlouan)[0]) {
-		getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
-		CONS_Alouan_Part1(0, 0, 0, 0);
+
+		break;
+	case 12:
+		getCharacter(kCharacterAlouan).characterPosition.position = 2740;
+		getCharacter(kCharacterAlouan).characterPosition.location = 1;
+		getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -369,27 +423,34 @@ void LogicManager::CONS_Alouan_Part1(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Part1(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action != 18 || getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] != 1)
-			return;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1096200 && !getCharacterCurrentParams(kCharacterAlouan)[0]) {
+			getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
+			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
+			AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
+		} else {
+			if (_gameTime > 1162800 && !getCharacterCurrentParams(kCharacterAlouan)[1]) {
+				getCharacterCurrentParams(kCharacterAlouan)[1] = 1;
+				send(kCharacterAlouan, kCharacterClerk, 191070912, 4070);
+				getCharacter(kCharacterAlouan).characterPosition.position = 4070;
+			}
+			if (_gameTime > 1179000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
+				getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
+				send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+				AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+			}
+		}
 
-		getCharacter(kCharacterAlouan).characterPosition.position = 4840;
-	} else if (_gameTime > 1096200 && !getCharacterCurrentParams(kCharacterAlouan)[0]) {
-		getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
-		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
-		AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
-		return;
-	}
-	if (_gameTime > 1162800 && !getCharacterCurrentParams(kCharacterAlouan)[1]) {
-		getCharacterCurrentParams(kCharacterAlouan)[1] = 1;
-		send(kCharacterAlouan, kCharacterClerk, 191070912, 4070);
-		getCharacter(kCharacterAlouan).characterPosition.position = 4070;
-	}
-	if (_gameTime > 1179000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
-		getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
-		send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
-		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
-		AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+		break;
+	case 18:
+		if (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] != 1)
+			getCharacter(kCharacterAlouan).characterPosition.position = 4840;
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -404,13 +465,17 @@ void LogicManager::CONS_Alouan_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(7, kCharacterCath, 3, 10, 9);
 		setDoor(5, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterAlouan).characterPosition.position = 4070;
 		getCharacter(kCharacterAlouan).characterPosition.location = 1;
 		getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
 		endGraphics(kCharacterAlouan);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -425,7 +490,8 @@ void LogicManager::CONS_Alouan_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterAlouan);
 		getCharacter(kCharacterAlouan).characterPosition.position = 2740;
 		getCharacter(kCharacterAlouan).characterPosition.location = 1;
@@ -433,6 +499,9 @@ void LogicManager::HAND_Alouan_StartPart2(HAND_PARAMS) {
 		getCharacter(kCharacterAlouan).clothes = 0;
 		getCharacter(kCharacterAlouan).inventoryItem = kItemNone;
 		CONS_Alouan_Part2(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -447,44 +516,29 @@ void LogicManager::CONS_Alouan_Part2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Part2(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8]) {
-			case 3:
-				getCharacterCurrentParams(kCharacterAlouan)[0] = 0;
-				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 4;
-				AlouanCall(&LogicManager::CONS_Alouan_DoDialog, "Har2011", 0, 0, 0);
-				break;
-			case 4:
-				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 5;
-				AlouanCall(&LogicManager::CONS_Alouan_DoWait, 900, 0, 0, 0);
-				break;
-			case 5:
-				send(kCharacterAlouan, kCharacterFrancois, 190219584, 0);
-				break;
-			}
-		} else if (msg->action == 189489753) {
-			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
-			AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
-		}
-	} else {
-		if (msg->action == 12) {
-			send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
-			getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
-			return;
-		}
-		if (msg->action == 0 && getCharacterCurrentParams(kCharacterAlouan)[1] != 0x7FFFFFFF && _gameTime) {
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterAlouan)[1] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime <= 1777500) {
 				if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[1]) {
 					getCharacterCurrentParams(kCharacterAlouan)[1] = _gameTime + 75;
-					if (_gameTime == -75)
-						goto LABEL_16;
+					if (_gameTime == -75) {
+						if (getCharacterCurrentParams(kCharacterAlouan)[0]) {
+							getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
+							AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
+						} else {
+							getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+							AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
+						}
+					}
 				}
+
 				if (getCharacterCurrentParams(kCharacterAlouan)[1] >= _gameTime)
-					return;
+					break;
 			}
+
 			getCharacterCurrentParams(kCharacterAlouan)[1] = 0x7FFFFFFF;
-		LABEL_16:
+
 			if (getCharacterCurrentParams(kCharacterAlouan)[0]) {
 				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
 				AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
@@ -493,6 +547,37 @@ void LogicManager::HAND_Alouan_Part2(HAND_PARAMS) {
 				AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
 			}
 		}
+
+		break;
+	case 12:
+		send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
+		getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8]) {
+		case 3:
+			getCharacterCurrentParams(kCharacterAlouan)[0] = 0;
+			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 4;
+			AlouanCall(&LogicManager::CONS_Alouan_DoDialog, "Har2011", 0, 0, 0);
+			break;
+		case 4:
+			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 5;
+			AlouanCall(&LogicManager::CONS_Alouan_DoWait, 900, 0, 0, 0);
+			break;
+		case 5:
+			send(kCharacterAlouan, kCharacterFrancois, 190219584, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 189489753:
+		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
+		AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -507,13 +592,18 @@ void LogicManager::CONS_Alouan_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_StartPart3(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Alouan_Part3(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterAlouan);
 		getCharacter(kCharacterAlouan).characterPosition.position = 2740;
 		getCharacter(kCharacterAlouan).characterPosition.location = 1;
 		getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -528,79 +618,155 @@ void LogicManager::CONS_Alouan_Part3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Part3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterAlouan).characterPosition.position = 4840;
-				goto LABEL_11;
-			case 2:
-				goto LABEL_20;
-			case 3:
-				goto LABEL_23;
-			case 4:
-				goto LABEL_26;
-			default:
-				return;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1984500 && !getCharacterCurrentParams(kCharacterAlouan)[0]) {
+			getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
+			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
+			AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
+			break;
+		}
+
+		if (getCharacterCurrentParams(kCharacterAlouan)[1] != 0x7FFFFFFF && _gameTime > 1989000) {
+			if (_gameTime > 2119500) {
+				getCharacterCurrentParams(kCharacterAlouan)[1] = 0x7FFFFFFF;
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+				AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
+				break;
+			}
+
+			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[1]) {
+				getCharacterCurrentParams(kCharacterAlouan)[1] = _gameTime + 75;
+				if (_gameTime == -75) {
+					getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+					AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterAlouan)[1] < _gameTime) {
+				getCharacterCurrentParams(kCharacterAlouan)[1] = 0x7FFFFFFF;
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+				AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
+				break;
 			}
 		}
-		return;
-	}
-	if (_gameTime > 1984500 && !getCharacterCurrentParams(kCharacterAlouan)[0]) {
-		getCharacterCurrentParams(kCharacterAlouan)[0] = 1;
-		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
-		AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
-		return;
-	}
-LABEL_11:
-	if (getCharacterCurrentParams(kCharacterAlouan)[1] != 0x7FFFFFFF && _gameTime > 1989000) {
-		if (_gameTime > 2119500)
-			goto LABEL_18;
-		if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[1]) {
-			getCharacterCurrentParams(kCharacterAlouan)[1] = _gameTime + 75;
-			if (_gameTime == -75)
-				goto LABEL_19;
+
+		if (_gameTime > 2052000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
+			getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
+			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
+			AlouanCall(&LogicManager::CONS_Alouan_DoDialog, "Har1005", 0, 0, 0);
+			break;
 		}
-		if (getCharacterCurrentParams(kCharacterAlouan)[1] < _gameTime) {
-		LABEL_18:
-			getCharacterCurrentParams(kCharacterAlouan)[1] = 0x7FFFFFFF;
-		LABEL_19:
-			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
-			AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
-			return;
+
+		if (_gameTime > 2133000 && !getCharacterCurrentParams(kCharacterAlouan)[3]) {
+			getCharacterCurrentParams(kCharacterAlouan)[3] = 1;
+			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 4;
+			AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+			break;
 		}
-	}
-LABEL_20:
-	if (_gameTime > 2052000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
-		getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
-		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
-		AlouanCall(&LogicManager::CONS_Alouan_DoDialog, "Har1005", 0, 0, 0);
-		return;
-	}
-LABEL_23:
-	if (_gameTime > 2133000 && !getCharacterCurrentParams(kCharacterAlouan)[3]) {
-		getCharacterCurrentParams(kCharacterAlouan)[3] = 1;
-		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 4;
-		AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
-		return;
-	}
-LABEL_26:
-	if (getCharacterCurrentParams(kCharacterAlouan)[4] != 0x7FFFFFFF && _gameTime > 2151000) {
-		if (_gameTime <= 2241000) {
-			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[4]) {
-				getCharacterCurrentParams(kCharacterAlouan)[4] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_34;
+
+		if (getCharacterCurrentParams(kCharacterAlouan)[4] != 0x7FFFFFFF && _gameTime > 2151000) {
+			if (_gameTime <= 2241000) {
+				if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[4]) {
+					getCharacterCurrentParams(kCharacterAlouan)[4] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 5;
+						AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterAlouan)[4] >= _gameTime)
+					break;
 			}
-			if (getCharacterCurrentParams(kCharacterAlouan)[4] >= _gameTime)
-				return;
+
+			getCharacterCurrentParams(kCharacterAlouan)[4] = 0x7FFFFFFF;
+			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 5;
+			AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
 		}
-		getCharacterCurrentParams(kCharacterAlouan)[4] = 0x7FFFFFFF;
-	LABEL_34:
-		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 5;
-		AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
+
+		break;
+	case 12:
+		send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterAlouan).characterPosition.position = 4840;
+			if (getCharacterCurrentParams(kCharacterAlouan)[1] != 0x7FFFFFFF && _gameTime > 1989000) {
+				if (_gameTime > 2119500) {
+					getCharacterCurrentParams(kCharacterAlouan)[1] = 0x7FFFFFFF;
+					getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+					AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
+					break;
+				}
+
+				if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[1]) {
+					getCharacterCurrentParams(kCharacterAlouan)[1] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+						AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterAlouan)[1] < _gameTime) {
+					getCharacterCurrentParams(kCharacterAlouan)[1] = 0x7FFFFFFF;
+					getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+					AlouanCall(&LogicManager::CONS_Alouan_PeekF, 0, 0, 0, 0);
+					break;
+				}
+			}
+
+			// fall through
+		case 2:
+			if (_gameTime > 2052000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
+				getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
+				AlouanCall(&LogicManager::CONS_Alouan_DoDialog, "Har1005", 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (_gameTime > 2133000 && !getCharacterCurrentParams(kCharacterAlouan)[3]) {
+				getCharacterCurrentParams(kCharacterAlouan)[3] = 1;
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 4;
+				AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 4:
+			if (getCharacterCurrentParams(kCharacterAlouan)[4] != 0x7FFFFFFF && _gameTime > 2151000) {
+				if (_gameTime <= 2241000) {
+					if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[4]) {
+						getCharacterCurrentParams(kCharacterAlouan)[4] = _gameTime + 75;
+						if (_gameTime == -75) {
+							getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 5;
+							AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterAlouan)[4] >= _gameTime)
+						break;
+				}
+
+				getCharacterCurrentParams(kCharacterAlouan)[4] = 0x7FFFFFFF;
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 5;
+				AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -615,13 +781,18 @@ void LogicManager::CONS_Alouan_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_StartPart4(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Alouan_Part4(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterAlouan);
 		getCharacter(kCharacterAlouan).characterPosition.position = 2740;
 		getCharacter(kCharacterAlouan).characterPosition.location = 1;
 		getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -638,49 +809,78 @@ void LogicManager::CONS_Alouan_Part4(CONS_PARAMS) {
 void LogicManager::HAND_Alouan_Part4(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterAlouan)[0] == 0x7FFFFFFF || !_gameTime)
-			goto LABEL_22;
+		if (getCharacterCurrentParams(kCharacterAlouan)[0] == 0x7FFFFFFF || !_gameTime) {
+			if (_gameTime > 2455200 && !getCharacterCurrentParams(kCharacterAlouan)[1]) {
+				getCharacterCurrentParams(kCharacterAlouan)[1] = 1;
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+				AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
+			} else if (_gameTime > 2475000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
+				getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
+				send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
+				AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+			}
+
+			break;
+		}
 
 		if (_gameTime <= 2443500) {
 			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterAlouan)[0]) {
 				getCharacterCurrentParams(kCharacterAlouan)[0] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_13;
+				if (_gameTime == -75) {
+					getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
+					AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
+					break;
+				}
 			}
 
-			if (getCharacterCurrentParams(kCharacterAlouan)[0] >= _gameTime)
-				goto LABEL_22;
+			if (getCharacterCurrentParams(kCharacterAlouan)[0] >= _gameTime) {
+				if (_gameTime > 2455200 && !getCharacterCurrentParams(kCharacterAlouan)[1]) {
+					getCharacterCurrentParams(kCharacterAlouan)[1] = 1;
+					getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+					AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
+				} else if (_gameTime > 2475000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
+					getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
+					send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
+					getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
+					AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+				}
+
+				break;
+			}
 		}
 
 		getCharacterCurrentParams(kCharacterAlouan)[0] = 0x7FFFFFFF;
-	LABEL_13:
 		getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 1;
 		AlouanCall(&LogicManager::CONS_Alouan_PeekH, 0, 0, 0, 0);
-		return;
+		break;
 	case 12:
 		send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
-		return;
+		break;
 	case 18:
 		if (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] != 1) {
 			if (getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] != 2)
-				return;
+				break;
 
 			send(kCharacterAlouan, kCharacterClerk, 191070912, 4070);
-			goto LABEL_18;
-		}
-	LABEL_22:
-		if (_gameTime > 2455200 && !getCharacterCurrentParams(kCharacterAlouan)[1]) {
-			getCharacterCurrentParams(kCharacterAlouan)[1] = 1;
-			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
-			AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
-			return;
-		}
-	LABEL_18:
-		if (_gameTime > 2475000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
-			getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
-			send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
-			getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
-			AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+
+			if (_gameTime > 2475000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
+				getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
+				send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
+				AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+			}
+		} else {
+			if (_gameTime > 2455200 && !getCharacterCurrentParams(kCharacterAlouan)[1]) {
+				getCharacterCurrentParams(kCharacterAlouan)[1] = 1;
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 2;
+				AlouanCall(&LogicManager::CONS_Alouan_GoHtoF, 0, 0, 0, 0);
+			} else if (_gameTime > 2475000 && !getCharacterCurrentParams(kCharacterAlouan)[2]) {
+				getCharacterCurrentParams(kCharacterAlouan)[2] = 1;
+				send(kCharacterAlouan, kCharacterClerk, 191070912, 4840);
+				getCharacter(kCharacterAlouan).callbacks[getCharacter(kCharacterAlouan).currentCall + 8] = 3;
+				AlouanCall(&LogicManager::CONS_Alouan_GoFtoH, 0, 0, 0, 0);
+			}
 		}
 
 		break;
@@ -698,13 +898,17 @@ void LogicManager::CONS_Alouan_Asleep4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Asleep4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(7, kCharacterCath, 3, 10, 9);
 		setDoor(5, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterAlouan).characterPosition.position = 2740;
 		getCharacter(kCharacterAlouan).characterPosition.location = 1;
 		getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
 		endGraphics(kCharacterAlouan);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -719,15 +923,20 @@ void LogicManager::CONS_Alouan_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_StartPart5(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		CONS_Alouan_Prisoner(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		endGraphics(kCharacterAlouan);
 		getCharacter(kCharacterAlouan).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterAlouan).characterPosition.position = 3969;
 		getCharacter(kCharacterAlouan).characterPosition.location = 1;
 		getCharacter(kCharacterAlouan).clothes = 0;
 		getCharacter(kCharacterAlouan).inventoryItem = kItemNone;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -742,8 +951,13 @@ void LogicManager::CONS_Alouan_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_Alouan_Free(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Alouan_Free(CONS_PARAMS) {
@@ -757,25 +971,31 @@ void LogicManager::CONS_Alouan_Free(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Alouan_Free(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterAlouan)[0] ||
 			(getCharacterCurrentParams(kCharacterAlouan)[0] = _gameTime + 2700, _gameTime != -2700)) {
 			if (getCharacterCurrentParams(kCharacterAlouan)[0] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterAlouan)[0] = 0x7FFFFFFF;
 		}
 
 		CONS_Alouan_Hiding(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterAlouan).characterPosition.car = kCarGreenSleeping;
 		getCharacter(kCharacterAlouan).characterPosition.position = 5000;
 		getCharacter(kCharacterAlouan).characterPosition.location = 0;
-
-	} else if (msg->action == 17) {
+		break;
+	case 17:
 		if (checkLoc(kCharacterCath, 3)) {
 			CONS_Alouan_Hiding(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -809,6 +1029,8 @@ void LogicManager::HAND_Alouan_Hiding(HAND_PARAMS) {
 		break;
 	case 135800432:
 		CONS_Alouan_Disappear(0, 0, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
