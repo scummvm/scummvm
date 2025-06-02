@@ -34,7 +34,7 @@ CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
 	m_lpszTemplateName = lpszTemplateName;
 
 	if (HIWORD(m_lpszTemplateName) == 0)
-		m_nIDHelp = LOWORD((DWORD)m_lpszTemplateName);
+		m_nIDHelp = LOWORD(m_lpszTemplateName);
 }
 
 CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
@@ -47,7 +47,7 @@ BOOL CDialog::Create(LPCSTR lpszTemplateName,
         CWnd *pParentWnd) {
 	m_lpszTemplateName = lpszTemplateName;  // used for help
 	if (HIWORD(m_lpszTemplateName) == 0 && m_nIDHelp == 0)
-		m_nIDHelp = LOWORD((DWORD)m_lpszTemplateName);
+		m_nIDHelp = LOWORD(m_lpszTemplateName);
 
 	HINSTANCE hInst = AfxFindResourceHandle(lpszTemplateName, RT_DIALOG);
 	HRSRC hResource = FindResource(hInst, lpszTemplateName, RT_DIALOG);
