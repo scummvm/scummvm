@@ -58,17 +58,6 @@ ScummVMRendererGraphicsDriver::~ScummVMRendererGraphicsDriver() {
 	ScummVMRendererGraphicsDriver::UnInit();
 }
 
-bool ScummVMRendererGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
-	if (mode.Width <= 0 || mode.Height <= 0 || mode.ColorDepth <= 0) {
-		warning("Invalid resolution parameters: %d x %d x %d",
-			mode.Width, mode.Height, mode.ColorDepth);
-		return false;
-	}
-
-	Graphics::PixelFormat format;
-	return ::AGS::g_vm->getPixelFormat(mode.ColorDepth, format);
-}
-
 int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_color_depth) const {
 	// TODO: check for device caps to know which depth is supported?
 	if (native_color_depth > 8)
@@ -113,9 +102,6 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 
 	if (_initGfxCallback != nullptr)
 		_initGfxCallback(nullptr);
-
-	if (!IsModeSupported(mode))
-		return false;
 
 	_capsVsync = true; // reset vsync flag, allow to try setting again
 	const int driver = GFX_SCUMMVM;

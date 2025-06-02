@@ -118,14 +118,9 @@ public:
 	}
 
 	/**
-	 * Returns a pixel format for the given color depth.
-	 */
-	bool getPixelFormat(int depth, Graphics::PixelFormat &format) const;
-
-	/**
 	 * Sets up the graphics mode
 	 */
-	void setGraphicsMode(size_t w, size_t h, int depth);
+	bool setGraphicsMode(size_t w, size_t h, int depth);
 
 	bool hasFeature(EngineFeature f) const override {
 		return

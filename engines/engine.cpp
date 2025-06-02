@@ -462,41 +462,50 @@ int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 	return candidate;
 }
 
-void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
+void initGraphics(int width, int height, const Graphics::PixelFormat *format, bool required) {
 	Graphics::ModeWithFormatList modes;
-	modes.push_back(Graphics::ModeWithFormat(width, height, format));
+	if (!format) {
+		// Use any pixel format
+		modes.push_back(Graphics::ModeWithFormat(width, height, nullptr));
+	} else if (required) {
+		// Try the provided format, and fail if it's not available
+		modes.push_back(Graphics::ModeWithFormat(width, height, format));
+	} else {
+		// Prefer the provided format if it's supported by the backend
+		const Common::List<Graphics::PixelFormat> backendList = g_system->getSupportedFormats();
+		if (Common::find(backendList.begin(), backendList.end(), *format) != backendList.end()) {
+			modes.push_back(Graphics::ModeWithFormat(width, height, format));
+		}
+		// Otherwise use any pixel format
+		modes.push_back(Graphics::ModeWithFormat(width, height, nullptr));
+	}
 	initGraphicsAny(modes);
 }
 
-/**
- * Determines the first matching format between two lists.
- *
- * @param backend	The higher priority list, meant to be a list of formats supported by the backend
- * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
- * @return			The first item on the backend list that also occurs on the frontend list
- *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
- */
-inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::PixelFormat> &backend, const Common::List<Graphics::PixelFormat> &frontend) {
-#ifdef USE_RGB_COLOR
-	for (const auto &back : backend) {
-		for (auto &front : frontend) {
-			if (back == front)
-				return back;
+void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList, bool required) {
+	Graphics::ModeWithFormatList modes;
+	if (required) {
+		// Try all provided formats, and fail if none are available
+		for (const auto &format : formatList) {
+			modes.push_back(Graphics::ModeWithFormat(width, height, format));
 		}
+	} else {
+		// Prefer any of the provided formats if it's supported by the backend
+		const Common::List<Graphics::PixelFormat> backendList = g_system->getSupportedFormats();
+		for (auto &format : formatList) {
+			if (Common::find(backendList.begin(), backendList.end(), format) != backendList.end()) {
+				modes.push_back(Graphics::ModeWithFormat(width, height, format));
+			}
+		}
+		// Otherwise use any pixel format
+		modes.push_back(Graphics::ModeWithFormat(width, height, nullptr));
 	}
-#endif
-	return Graphics::PixelFormat::createFormatCLUT8();
-}
-
-
-void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
-	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
-	initGraphics(width, height, &format);
+	initGraphicsAny(modes);
 }
 
 void initGraphics(int width, int height) {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(width, height, &format);
+	initGraphics(width, height, &format, true);
 }
 
 void initGraphics3d(int width, int height) {
