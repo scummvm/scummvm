@@ -557,12 +557,12 @@ BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 
 	HGLOBAL hTemplate = nullptr;
 
+#if 0
 	// If no font specified, set the system font.
 	CString strFace;
 	WORD wSize = 0;
 	BOOL bSetSysFont = !CDialogTemplate::GetFont(lpDialogTemplate, strFace,
 		wSize);
-#if 0
 	if (bSetSysFont) {
 		CDialogTemplate dlgTemp(lpDialogTemplate);
 		dlgTemp.SetSystemFont(wSize);
@@ -588,7 +588,9 @@ BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 }
 
 void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
-	error("TODO: createDialogIndirect");
+	Gfx::CDialogTemplate dt(dlgTemplate);
+
+	warning("TODO: Set up dialog controls");
 }
 
 } // namespace MFC
