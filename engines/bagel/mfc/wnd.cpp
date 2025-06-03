@@ -118,7 +118,7 @@ void CWnd::SetFocus() {
 }
 
 void CWnd::DestroyWindow() {
-	error("TODO: CWnd::DestroyWindow");
+	clear();
 }
 
 void CWnd::Invalidate(BOOL bErase) {
@@ -588,9 +588,28 @@ BOOL CWnd::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 }
 
 void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
+	// Parse the template and use it to load controls
 	Gfx::CDialogTemplate dt(dlgTemplate);
+	dt.loadTemplate(this);
+}
 
-	warning("TODO: Set up dialog controls");
+
+void CWnd::GetMessage(MSG &msg) {
+	Libs::Event ev;
+
+	// Check for any existing messages
+	if (!_messages.empty()) {
+		msg = _messages.pop();
+		return;
+	}
+
+	// Poll for event in ScummVM event manager
+	msg.hwnd = this;
+	if (AfxGetApp()->pollEvents(ev))
+		// Convert other event types
+		msg = ev;
+	else
+		msg.message = WM_NULL;
 }
 
 } // namespace MFC

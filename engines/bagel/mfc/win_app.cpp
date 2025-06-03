@@ -87,21 +87,7 @@ int CWinApp::Run() {
 }
 
 bool CWinApp::GetMessage(MSG &msg) {
-	Libs::Event ev;
-
-	// Check for any existing messages
-	if (!m_pMainWnd->_messages.empty()) {
-		msg = m_pMainWnd->_messages.pop();
-		return true;
-	}
-
-	// Poll for event in ScummVM event manager
-	if (pollEvents(ev)) {
-		// Convert other event types
-		msg = ev;
-		msg.hwnd = m_pMainWnd;
-	}
-
+	m_pMainWnd->GetMessage(msg);
 	return !_quitFlag;
 }
 

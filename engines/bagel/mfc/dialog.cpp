@@ -89,11 +89,30 @@ int CDialog::DoModal() {
 		return -1;
 
 	if (CreateDlgIndirect(lpDialogTemplate,
-		m_pParentWnd, hInst)) {
+		this /*m_pParentWnd*/, hInst)) {
 
-		// TODO
+		CWinApp *app = AfxGetApp();
+		MSG msg;
+		while (!app->shouldQuit()) {
+			GetMessage(msg);
+			if (!app->PreTranslateMessage(&msg)) {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
 	}
-	error("TODO: CDialog::DoModal");
+
+	// Finish the dialog
+	DestroyWindow();
+	PostModal();
+
+	// unlock/free resources as necessary
+	if (m_lpszTemplateName != NULL || m_hDialogTemplate != NULL)
+		UnlockResource(hDialogTemplate);
+	if (m_lpszTemplateName != NULL)
+		FreeResource(hDialogTemplate);
+
+	return m_nModalResult;
 }
 
 BOOL CDialog::OnInitDialog() {

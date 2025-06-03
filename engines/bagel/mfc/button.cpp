@@ -30,8 +30,9 @@ BEGIN_MESSAGE_MAP(CButton, CWnd)
 END_MESSAGE_MAP()
 
 BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
-                     const RECT &rect, CWnd *pParentWnd, UINT nID) {
-	error("TODO: CButton::Create");
+		const RECT &rect, CWnd *pParentWnd, UINT nID) {
+	return CWnd::Create("BUTTON", lpszCaption, dwStyle, rect,
+		pParentWnd, nID);
 }
 
 int CButton::GetCheck() const {

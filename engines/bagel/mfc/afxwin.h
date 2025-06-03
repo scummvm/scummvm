@@ -1109,6 +1109,9 @@ public:
 	                    LPINT lpMinPos, LPINT lpMaxPos) const;
 	INT GetScrollPosition() const;
 	int SetScrollPos(int nBar, int nPos, BOOL bRedraw = TRUE);
+
+	// ScummVM additions
+	void GetMessage(MSG &msg);
 };
 
 class CFrameWnd : public CWnd {
@@ -1149,6 +1152,7 @@ private:
 	UINT m_nIDHelp = 0;
 	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
 	HGLOBAL m_hDialogTemplate = 0;
+	int m_nModalResult = 0;
 
 	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
 		void *lpDialogInit, HINSTANCE hInst);
@@ -1160,6 +1164,8 @@ protected:
 
 	virtual void OnOK();
 	virtual void OnCancel();
+	virtual void PostModal() {
+	}
 
 public:
 	CDialog() {}
