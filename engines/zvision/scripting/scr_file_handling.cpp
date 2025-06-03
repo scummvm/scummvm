@@ -126,10 +126,10 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 					// run the player gets stuck in a dark room instead. We have
 					// to add the assignment action to the front, or it won't be
 					// reached because changing the location terminates the script.
-					// 
+					//
 					// Fixing it this way only keeps the bug from happening. It
 					// will not repair old savegames.
-					// 
+					//
 					// Note that the bug only affects the DVD version. The CD
 					// version doesn't have a separate room for the cutscene.
 					if (_engine->getFeatures() & ADGF_DVD)
@@ -272,7 +272,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		// than 10 units left, it will get stuck and never time out. We
 		// work around that by changing the condition from "greater than
 		// 10" to "greater than 0 but not 2 (the magic time-out value)".
-		// 
+		//
 		// I have a sneaking suspicion that there may be other timer
 		// glitches like this, but this one makes the game unplayable
 		// and is easy to trigger.
