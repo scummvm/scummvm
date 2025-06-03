@@ -63,6 +63,31 @@ void ValueReader::resetNibbleSwitch() {
 	_nibbleSwitch = false;
 }
 
+byte *rleDecompress(byte *source, const byte *end, const int maxSize) {
+	byte *dest = new byte[maxSize];
+	byte *o = dest;
+
+	while (source < end) {
+		byte val = *source;
+		source++;
+		if (val < 0x80) {
+			// copy
+			val++;
+			memcpy(o, source, val);
+			o += val;
+			source += val;
+		} else {
+			// repeat
+			val = 257 - val;
+			memset(o, *source, val);
+			o += val;
+			source++;
+		}
+	}
+
+	return dest;
+}
+
 void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, byte cmdFlags, byte pixelFlags, byte maskFlags, bool deltaFrame) {
 
 	const int offsets[] = {
@@ -189,16 +214,34 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 
 }
 
-void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize) {
+void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs,
+		uint16 cmdSize, uint16 pixelSize, uint16 maskSize, uint16 lineSize,
+		byte cmdFlags, byte pixelFlags, byte maskFlags) {
 
 	uint16 width = surface.w;
 	uint16 height = surface.h;
-	uint16 bx = 0, by = 0, bw = ((width + 3) / 4) * 4;
+	uint16 bx = 0, by = 0, bw = ((width + 3) / 4) * 4, bh = ((height + 3) / 4) * 4;
 
-	byte *cmdBuffer = source + cmdOffs;
-	byte *maskBuffer = source + maskOffs;
-	byte *pixelBuffer = source + pixelOffs;
+	// RLE decompress the buffers as needed (remember to free later!)
+	byte *cmdBuffer;
+	if (cmdFlags & 1)
+		cmdBuffer = rleDecompress(source + cmdOffs, source + cmdOffs + cmdSize, 4800);
+	else
+		cmdBuffer = source + cmdOffs;
 
+	byte *pixelBuffer;
+	if (pixelFlags & 1)
+		pixelBuffer = rleDecompress(source + pixelOffs, source + pixelOffs + pixelSize, bw * bh);
+	else
+		pixelBuffer = source + pixelOffs;
+
+	byte *maskBuffer;
+	if (maskFlags & 1)
+		maskBuffer = rleDecompress(source + maskOffs, source + maskOffs + maskSize, bw * bh);
+	else
+		maskBuffer = source + maskOffs;
+
+	//
 	byte *destPtr = (byte *)surface.getPixels();
 
 	byte bitBuf[40];
@@ -208,12 +251,13 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 	if (bitBufLastCount == 0)
 		bitBufLastCount = 8;
 
-	debug(1, "width = %d; bw = %d", width, bw);
-
+	byte *pCmdBuf = cmdBuffer;
+	byte *pPixelBuf = pixelBuffer;
+	byte *pMaskBuf = maskBuffer;
 	while (height > 0) {
 
-		memcpy(bitBuf, cmdBuffer, lineSize);
-		cmdBuffer += lineSize;
+		memcpy(bitBuf, pCmdBuf, lineSize);
+		pCmdBuf += lineSize;
 
 		for (uint16 bitBufOfs = 0; bitBufOfs < lineSize; bitBufOfs += 2) {
 
@@ -235,16 +279,16 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 				switch (cmd) {
 
 				case 0:
-					pixels[0] = *pixelBuffer++;
+					pixels[0] = *pPixelBuf++;
 					for (int i = 0; i < 16; i++)
 						block[i] = pixels[0];
 					break;
 
 				case 1:
-					pixels[0] = *pixelBuffer++;
-					pixels[1] = *pixelBuffer++;
-					mask = READ_LE_UINT16(maskBuffer);
-					maskBuffer += 2;
+					pixels[0] = *pPixelBuf++;
+					pixels[1] = *pPixelBuf++;
+					mask = READ_LE_UINT16(pMaskBuf);
+					pMaskBuf += 2;
 					for (int i = 0; i < 16; i++) {
 						block[i] = pixels[mask & 1];
 						mask >>= 1;
@@ -252,12 +296,12 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 					break;
 
 				case 2:
-					pixels[0] = *pixelBuffer++;
-					pixels[1] = *pixelBuffer++;
-					pixels[2] = *pixelBuffer++;
-					pixels[3] = *pixelBuffer++;
-					mask = READ_LE_UINT32(maskBuffer);
-					maskBuffer += 4;
+					pixels[0] = *pPixelBuf++;
+					pixels[1] = *pPixelBuf++;
+					pixels[2] = *pPixelBuf++;
+					pixels[3] = *pPixelBuf++;
+					mask = READ_LE_UINT32(pMaskBuf);
+					pMaskBuf += 4;
 					for (int i = 0; i < 16; i++) {
 						block[i] = pixels[mask & 3];
 						mask >>= 2;
@@ -297,6 +341,13 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 
 	}
 
+	// cleanup RLE buffers
+	if (cmdFlags & 1)
+		delete[] cmdBuffer;
+	if (maskFlags & 1)
+		delete[] maskBuffer;
+	if (pixelFlags & 1)
+		delete[] pixelBuffer;
 }
 
 } // End of namespace Made

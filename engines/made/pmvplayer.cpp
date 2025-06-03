@@ -223,19 +223,20 @@ bool PmvPlayer::play(const char *filename) {
 			break;
 
 		soundChunkOfs = READ_LE_UINT32(frameData + 8);
+		uint32 imageDataOfs = READ_LE_UINT32(frameData + 12) - 8;
 		palChunkOfs = READ_LE_UINT32(frameData + 16);
 
 		// Handle audio
 		if (soundChunkOfs) {
 			audioData = frameData + soundChunkOfs - 8;
-			chunkSize = READ_LE_UINT16(audioData + 4);
+			uint16 soundChunkSize = READ_LE_UINT16(audioData + 4);
 			chunkCount = READ_LE_UINT16(audioData + 6);
 
-			debug(1, "chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, chunkSize, chunkCount * chunkSize);
+			debug(1, "chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, soundChunkSize, chunkCount * soundChunkSize);
 
-			soundSize = chunkCount * chunkSize;
+			soundSize = chunkCount * soundChunkSize;
 			soundData = (byte *)malloc(soundSize);
-			decompressSound(audioData + 8, soundData, chunkSize, chunkCount, nullptr, soundDecoderData);
+			decompressSound(audioData + 8, soundData, soundChunkSize, chunkCount, nullptr, soundDecoderData);
 			_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
 
@@ -248,25 +249,36 @@ bool PmvPlayer::play(const char *filename) {
 		}
 
 		// Handle video
-		imageData = frameData + READ_LE_UINT32(frameData + 12) - 8;
+		imageData = frameData + imageDataOfs;
 
 		// frameNum @0
+		uint32 imageChunkSize = READ_LE_UINT32(imageData) + 4;
+		// uint32 unknown = READ_LE_UINT32(imageData); // zero?
 		width = READ_LE_UINT16(imageData + 8);
 		height = READ_LE_UINT16(imageData + 10);
+
 		cmdOffs = READ_LE_UINT16(imageData + 12);
+		uint16 cmdFlags = READ_LE_UINT16(imageData + 14);
+
 		pixelOffs = READ_LE_UINT16(imageData + 16);
+		uint16 pixelFlags = READ_LE_UINT16(imageData + 18);
+
 		maskOffs = READ_LE_UINT16(imageData + 20);
+		uint16 maskFlags = READ_LE_UINT16(imageData + 22);
+
 		lineSize = READ_LE_UINT16(imageData + 24);
 
-		debug(2, "width = %d; height = %d; cmdOffs = %04X; pixelOffs = %04X; maskOffs = %04X; lineSize = %d\n",
-			width, height, cmdOffs, pixelOffs, maskOffs, lineSize);
+		debug(2, "width = %d; height = %d; cmdOffs = %04X; cmdFlags = %04X; pixelOffs = %04X; pixelFlags = %04X; maskOffs = %04X; maskFlags = %04X; lineSize = %d\n",
+			width, height, cmdOffs, cmdFlags, pixelOffs, pixelFlags, maskOffs, maskFlags, lineSize);
 
 		if (!_surface) {
 			_surface = new Graphics::Surface();
 			_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		}
 
-		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize);
+		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs,
+							pixelOffs - cmdOffs, maskOffs - pixelOffs, imageChunkSize - maskOffs, lineSize,
+							cmdFlags, pixelFlags, maskFlags);
 
 		if (firstTime) {
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle, _audioStream);
