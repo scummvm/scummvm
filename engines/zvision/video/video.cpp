@@ -187,7 +187,7 @@ double ZVision::getVobAmplification(Common::String fileName) const {
 	// in the low-res ones. So we artificially boost the volume. This is an
 	// approximation, but I've tried to match the old volumes reasonably
 	// well.
-	// 
+	//
 	// Some of these will cause audio clipping. Hopefully not enough to be
 	// noticeable.
 	double amplification = 0.0;

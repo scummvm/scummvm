@@ -106,7 +106,7 @@ void ScriptManager::update(uint deltaTimeMillis) {
 		// triggered other scripts, so give them all one extra cycle to
 		// run. This fixes some missing scoring in ZGI, and quite
 		// possibly other minor glitches as well.
-		// 
+		//
 		// Another idea would be to change if there are pending scripts
 		// in the exec queues, but that could cause this to hang
 		// indefinitely.
