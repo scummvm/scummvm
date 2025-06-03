@@ -108,8 +108,9 @@ IntroBinData::~IntroBinData() {
 	_introGypsy.clear();
 }
 
-void IntroBinData::openFile(Shared::File &f, const Common::String &name) {
-	f.open(Common::Path(Common::String::format("data/intro/%s.dat", name.c_str())));
+void IntroBinData::openFile(Common::File &f, const Common::String &name) {
+	if (!f.open(Common::Path(Common::String::format("data/intro/%s.dat", name.c_str()))))
+		error("Could not load '%s'", name.c_str());
 }
 
 bool IntroBinData::load() {
@@ -127,7 +128,7 @@ bool IntroBinData::load() {
 		delete _sigData;
 	_sigData = new byte[533];
 
-	Shared::File f;
+	Common::File f;
 	openFile(f, "intro_sig");
 	f.read(_sigData, 533);
 

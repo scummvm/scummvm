@@ -20,17 +20,21 @@
  */
 
 #include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/shared/core/file.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 Std::vector<Common::String> u4read_stringtable(const Common::String &filename) {
-	Shared::File f(Common::Path(Common::String::format("data/text/%s.dat", filename.c_str())));
+	Common::File f;
+	if (!f.open(Common::Path(Common::String::format("data/text/%s.dat", filename.c_str()))))
+		error("Could not open string table '%s'", filename.c_str());
+
 	Std::vector<Common::String> strs;
 	Common::String line;
+	int64 filesize = f.size();
 
-	while (!f.eof())
+	while (f.pos() < filesize)
 		strs.push_back(f.readString());
 
 	return strs;

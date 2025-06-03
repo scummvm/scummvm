@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	metaengine.o \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o \
-	shared/core/file.o \
 	shared/engine/ultima.o \
 	shared/engine/data_archive.o \
 	shared/engine/debugger.o \
@@ -18,6 +17,7 @@ MODULE_OBJS += \
 	shared/actions/pass.o \
 	shared/core/base_object.o \
 	shared/core/character.o \
+	shared/core/file.o \
 	shared/core/lzw.o \
 	shared/core/map.o \
 	shared/core/message_target.o \

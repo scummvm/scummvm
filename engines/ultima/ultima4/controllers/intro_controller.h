@@ -29,7 +29,7 @@
 #include "ultima/ultima4/views/textview.h"
 #include "ultima/ultima4/views/imageview.h"
 #include "ultima/ultima4/views/tileview.h"
-#include "ultima/shared/core/file.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -45,7 +45,7 @@ private:
 	// disallow assignments, copy construction
 	IntroBinData(const IntroBinData &);
 	const IntroBinData &operator=(const IntroBinData &);
-	void openFile(Shared::File &f, const Common::String &name);
+	void openFile(Common::File &f, const Common::String &name);
 public:
 	IntroBinData();
 	~IntroBinData();
