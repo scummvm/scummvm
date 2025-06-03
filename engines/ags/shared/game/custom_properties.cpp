@@ -83,7 +83,7 @@ void WriteSchema(const PropertySchema &schema, Stream *out) {
 	}
 }
 
-PropertyError ReadValues(StringIMap &map, Stream *in) {
+PropertyError ReadValues(StringIMap &map, Stream *in, bool aligned) {
 	PropertyVersion version = (PropertyVersion)in->ReadInt32();
 	if (version < kPropertyVersion_Initial ||
 	        version > kPropertyVersion_Current) {
@@ -97,9 +97,16 @@ PropertyError ReadValues(StringIMap &map, Stream *in) {
 			map[name] = String::FromStream(in, LEGACY_MAX_CUSTOM_PROP_VALUE_LENGTH);
 		}
 	} else {
-		for (int i = 0; i < count; ++i) {
-			String name = StrUtil::ReadString(in);
-			map[name] = StrUtil::ReadString(in);
+		if (aligned) {
+			for (int i = 0; i < count; ++i) {
+				String name = StrUtil::ReadStringAligned(in);
+				map[name] = StrUtil::ReadStringAligned(in);
+			}
+		} else {
+			for (int i = 0; i < count; ++i) {
+				String name = StrUtil::ReadString(in);
+				map[name] = StrUtil::ReadString(in);
+			}
 		}
 	}
 	return kPropertyErr_NoError;

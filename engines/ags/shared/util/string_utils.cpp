@@ -150,6 +150,17 @@ void StrUtil::ReadString(char **cstr, Stream *in) {
 	(*cstr)[len] = 0;
 }
 
+String StrUtil::ReadStringAligned(Stream *in) {
+	String s = ReadString(in);
+	size_t rem = s.GetLength() % sizeof(int32_t);
+	if (rem > 0) {
+		size_t pad = sizeof(int32_t) - rem;
+		for (size_t i = 0; i < pad; ++i)
+			in->ReadByte();
+	}
+	return s;
+}
+
 void StrUtil::SkipString(Stream *in) {
 	size_t len = in->ReadInt32();
 	in->Seek(len);

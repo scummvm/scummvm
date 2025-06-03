@@ -95,7 +95,8 @@ void WriteSchema(const PropertySchema &schema, Stream *out);
 
 // Reads property values from the stream and assign them to map.
 // The non-matching existing map items, if any, are NOT erased.
-PropertyError ReadValues(StringIMap &map, Stream *in);
+// NOTE: "aligned" parameter is for legacy saves support only.
+PropertyError ReadValues(StringIMap &map, Stream *in, bool aligned = false);
 // Writes property values chunk to the stream
 void WriteValues(const StringIMap &map, Stream *out);
 
