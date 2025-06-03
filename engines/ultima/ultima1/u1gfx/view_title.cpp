@@ -27,7 +27,11 @@
 #include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/early/font_resources.h"
 #include "ultima/shared/early/ultima_early.h"
-#include "image/bmp.h"
+#include "graphics/blit.h"
+#include "image/xbm.h"
+
+#include "ultima/ultima1/u1gfx/flags.xbm"
+#include "ultima/ultima1/u1gfx/logo.xbm"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -50,39 +54,42 @@ void load16(Graphics::ManagedSurface &s, Common::ReadStream &in) {
 }
 
 ViewTitle::ViewTitle(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Title", Rect(0, 0, 320, 200), parent) {
+	// In XBM images, 0 is white and 1 is black.
+	// We need to remap this to the order required by the engine.
+	static const uint32  logo_map[] = {  1,  0 };
+	static const uint32 flags_map[] = { 11, 10 };
+
 	setMode(TITLEMODE_COPYRIGHT);
 
 	// Load the Origin logo
-	Shared::File f("data/logo.bmp");
-	Image::BitmapDecoder bmp;
-	if (!bmp.loadStream(f))
+	Image::XBMDecoder logo;
+	if (!logo.loadBits(logo_bits, logo_width, logo_height))
 		error("Couldn't load logo");
-	f.close();
 
-	const Graphics::Surface *src = bmp.getSurface();
+	const Graphics::Surface *src = logo.getSurface();
 	_logo.create(src->w, src->h);
-	_logo.blitFrom(*src);
+	Graphics::crossBlitMap((byte *)_logo.getPixels(), (const byte *)src->getPixels(),
+		_logo.pitch, src->pitch, _logo.w, _logo.h,
+		_logo.format.bytesPerPixel, logo_map);
 
 	// Load the Ultima castle bitmap
-	f.open("castle.16");
+	Shared::File f("castle.16");
 	_castle.create(320, 200);
 	load16(_castle, f);
 	f.close();
 
 	// Load the flags
-	f.open("data/flags.bmp");
-	Image::BitmapDecoder flags;
-	if (!flags.loadStream(f))
+	Image::XBMDecoder flags;
+	if (!flags.loadBits(flags_bits, flags_width, flags_height))
 		error("Could not load flags");
 
 	src = flags.getSurface();
 	for (int idx = 0; idx < 3; ++idx) {
 		_flags[idx].create(8, 8);
-		_flags[idx].blitFrom(*src,
-			Common::Rect(idx * 8, 0, (idx + 1) * 8, 8),
-			Common::Point(0, 0));
+		Graphics::crossBlitMap((byte *)_flags[idx].getPixels(), (const byte *)src->getBasePtr(idx * 8, 8),
+			_flags[idx].pitch, src->pitch, _flags[idx].w, _flags[idx].h,
+			_flags[idx].format.bytesPerPixel, flags_map);
 	}
-	f.close();
 }
 
 void ViewTitle::draw() {
