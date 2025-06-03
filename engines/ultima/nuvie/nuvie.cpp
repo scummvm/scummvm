@@ -24,7 +24,6 @@
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/core/debugger.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
@@ -105,9 +104,6 @@ bool NuvieEngine::initialize() {
 
 	// Setup savegame handler
 	_savegame = new SaveGame(_config);
-
-	// Setup debugger
-	setDebugger(new Debugger());
 
 	// Setup screen
 	_screen = new Screen(_config);
