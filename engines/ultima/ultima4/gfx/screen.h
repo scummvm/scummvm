@@ -22,13 +22,13 @@
 #ifndef ULTIMA4_GFX_SCREEN_H
 #define ULTIMA4_GFX_SCREEN_H
 
+#include "common/file.h"
 #include "graphics/screen.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/gfx/scale.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map_tile.h"
-#include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -134,7 +134,7 @@ private:
 	/**
 	 * Loads the data for a single cursor from the passed file
 	 */
-	MouseCursorSurface *loadMouseCursor(Shared::File &src);
+	MouseCursorSurface *loadMouseCursor(Common::File &src);
 
 	void screenLoadGraphicsFromConf();
 	Layout *screenLoadLayoutFromConf(const ConfigElement &conf);

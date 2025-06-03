@@ -28,7 +28,6 @@
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/shared/core/file.h"
 #include "audio/decoders/mp3.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/midiparser.h"
