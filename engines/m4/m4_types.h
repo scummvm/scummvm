@@ -89,7 +89,7 @@ struct RGB8 {
 	byte r = 0, g = 0, b = 0;
 
 	constexpr RGB8() = default;
-	constexpr RGB8(const byte r, const byte g, const byte b) : r(r), g(g), b(b) {}
+	constexpr RGB8(const byte red, const byte green, const byte blue) : r(red), g(green), b(blue) {}
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
