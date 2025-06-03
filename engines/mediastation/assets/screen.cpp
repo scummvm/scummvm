@@ -25,10 +25,7 @@
 namespace MediaStation {
 
 ScriptValue Screen::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	switch (methodId) {
-	default:
-		error("Screen::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
-	}
+	error("Screen::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 }
 
 } // End of namespace MediaStation
