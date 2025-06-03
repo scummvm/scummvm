@@ -102,6 +102,11 @@ public:
 	CDialogTemplate(LPCDLGTEMPLATE pTemplate = NULL);
 	CDialogTemplate(HGLOBAL hGlobal);
 
+	/**
+	 * Sets up window with parsed template data
+	 */
+	void loadTemplate(CWnd *parent);
+
 	BOOL HasFont() const;
 	BOOL SetFont(LPCSTR lpFaceName, WORD nFontSize);
 	BOOL SetSystemFont(WORD nFontSize = 0);

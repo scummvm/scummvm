@@ -160,6 +160,50 @@ void CDialogTemplate::Item::load(Common::SeekableReadStream &src) {
 		src.read(&_data[0], _data.size());
 }
 
+void CDialogTemplate::loadTemplate(CWnd *parent) {
+	// Set up the overall window
+	RECT bounds(_header._x, _header._style,
+		_header._x + _header._w,
+		_header._y + _header._h);
+	parent->Create(_header._className.c_str(),
+		_header._caption.c_str(),
+		_header._style,
+		bounds,
+		nullptr,
+		0
+	);
+
+	// Iterate through the controls
+	for (const auto &item : _items) {
+		CWnd *ctl;
+		if (item._className == "BUTTON")
+			ctl = new CButton();
+		else if (item._className == "EDIT")
+			ctl = new CEdit();
+		else if (item._className == "STATIC")
+			ctl = new CStatic();
+		else if (item._className == "LISTBOX")
+			ctl = new CListBox();
+		else if (item._className == "SCROLLBAR")
+			ctl = new CScrollBar();
+		else
+			error("Unhandle dialog item - %s",
+				item._className.c_str());
+
+		// Set up control
+		bounds = RECT(item._x, item._style,
+			item._x + item._w,
+			item._y + item._h);
+		ctl->Create(item._className.c_str(),
+			item._title.c_str(),
+			item._style,
+			bounds,
+			parent,
+			item._id
+		);
+	}
+}
+
 } // namespace Gfx
 } // namespace MFC
 } // namespace Bagel

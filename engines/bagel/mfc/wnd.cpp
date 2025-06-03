@@ -40,8 +40,8 @@ CWnd::~CWnd() {
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-                  DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
-                  CCreateContext *pContext) {
+        DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+        CCreateContext *pContext) {
 	assert(!strcmp(lpszClassName, "ScummVMWindow"));
 
 	// Set up create structure

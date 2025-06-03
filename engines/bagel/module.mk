@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	mfc/global_functions.o \
 	mfc/ifstream.o \
 	mfc/joystickapi.o \
+	mfc/listbox.o \
 	mfc/menu.o \
 	mfc/object.o \
 	mfc/paint_dc.o \
@@ -41,6 +42,7 @@ MODULE_OBJS = \
 	mfc/rgn.o \
 	mfc/scroll_view.o \
 	mfc/scrollbar.o \
+	mfc/static.o \
 	mfc/win_app.o \
 	mfc/win_thread.o \
 	mfc/wingdi.o \

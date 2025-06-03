@@ -1200,6 +1200,10 @@ public:
 
 class CStatic : public CWnd {
 	DECLARE_DYNAMIC(CStatic)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CStatic() override {
 	}
@@ -1224,6 +1228,10 @@ public:
 
 class CListBox : public CWnd {
 	DECLARE_DYNAMIC(CListBox)
+
+protected:
+	DECLARE_MESSAGE_MAP()
+
 public:
 	~CListBox() override {
 	}
