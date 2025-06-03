@@ -731,7 +731,6 @@ private:
 	PointerType           _pointer;
 	DisposeAfterUse::Flag _dispose;
 	SharedPtr<T>          _shared;
-	bool                  _isvalid;
 };
 
 
