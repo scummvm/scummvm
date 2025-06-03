@@ -168,6 +168,7 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 
 void MusicNode::setVolume(uint8 newVolume) {
 	if (_loaded) {
+		debug(4, "Changing volume of music node %d from %d to %d", _key, _volume, newVolume);
 		_volume = newVolume;
 		updateMixer();
 	}

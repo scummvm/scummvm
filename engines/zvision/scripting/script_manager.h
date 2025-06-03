@@ -267,6 +267,8 @@ public:
 	/** Mark next location */
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 	void changeLocation(const Location &_newLocation);
+	
+	bool changingLocation() const;
 
 	void serialize(Common::WriteStream *stream);
 	void deserialize(Common::SeekableReadStream *stream);
