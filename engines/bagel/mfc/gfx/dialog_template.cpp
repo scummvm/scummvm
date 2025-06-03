@@ -82,7 +82,7 @@ BOOL CDialogTemplate::GetFont(LPCDLGTEMPLATE pTemplate,
 void CDialogTemplate::Header::load(Common::SeekableReadStream &src) {
 	byte bTerm;
 
-	_style = src.readUint16LE();
+	_style = src.readUint32LE();
 	_itemCount = src.readByte();
 	_x = src.readSint16LE();
 	_y = src.readSint16LE();
@@ -90,27 +90,25 @@ void CDialogTemplate::Header::load(Common::SeekableReadStream &src) {
 	_h = src.readSint16LE();
 
 	bTerm = src.readByte();
-	if (!bTerm) {
-		src.skip(1);
+	switch (bTerm) {
+	case 0:
 		_menuName.clear();
-	} else {
+		break;
+	case 0xff:
+		// Int resource Id
+		src.skip(2);
+		break;
+	default:
 		src.seek(-1, SEEK_CUR);
 		_menuName = src.readString();
+		break;
 	}
 
-	bTerm = src.readByte();
-	if (!bTerm) {
-		src.skip(1);
-		_className.clear();
-	} else {
-		src.seek(-1, SEEK_CUR);
-		_className = src.readString();
-	}
-
+	_className = src.readString();
 	_caption = src.readString();
 
 	if (_style & DS_SETFONT) {
-		_fontInfo._pointSize = src.readByte();
+		_fontInfo._pointSize = src.readUint16LE();
 		_fontInfo._fontName = src.readString();
 	} else {
 		_fontInfo._pointSize = 0;
@@ -123,32 +121,43 @@ void CDialogTemplate::Header::load(Common::SeekableReadStream &src) {
 void CDialogTemplate::Item::load(Common::SeekableReadStream &src) {
 	byte bTerm;
 
-	_style = src.readUint16LE();
 	_x = src.readSint16LE();
 	_y = src.readSint16LE();
 	_w = src.readSint16LE();
 	_h = src.readSint16LE();
 	_id = src.readUint16LE();
+	_style = src.readUint32LE();
 
 	bTerm = src.readByte();
-	if (bTerm == 0x80) {
-		_classNameId = ((int)bTerm << 8) | src.readByte();
+	if (bTerm & 0x80) {
+		switch (bTerm) {
+		case 0x80: _className = "BUTTON"; break;
+		case 0x81: _className = "EDIT"; break;
+		case 0x82: _className = "STATIC"; break;
+		case 0x83: _className = "LISTBOX"; break;
+		case 0x84: _className = "SCROLLBAR"; break;
+		case 0x85: _className = "COMBOBOX"; break;
+		default:
+			_className.clear();
+			break;
+		}
 	} else {
 		src.seek(-1, SEEK_CUR);
-		_classNameStr = src.readString();
+		_className = src.readString();
 	}
 
 	bTerm = src.readByte();
-	if (bTerm == 0x80) {
-		_titleId = ((int)bTerm << 8) | src.readByte();
+	if (bTerm == 0xff) {
+		// Integer id, not documented
+		src.skip(2);
 	} else {
 		src.seek(-1, SEEK_CUR);
-		_titleStr = src.readString();
+		_title = src.readString();
 	}
 
-	_custom.resize(src.readUint16LE());
-	if (!_custom.empty())
-		src.read(&_custom[0], _custom.size());
+	_data.resize(src.readByte());
+	if (!_data.empty())
+		src.read(&_data[0], _data.size());
 }
 
 } // namespace Gfx

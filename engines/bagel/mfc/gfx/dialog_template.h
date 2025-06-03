@@ -77,11 +77,10 @@ class CDialogTemplate {
 		int16 _h = 0;
 		uint16 _id = 0;
 
-		uint16 _classNameId = 0;
-		Common::String _classNameStr;
+		Common::String _className;
 		uint16 _titleId = 0;
-		Common::String _titleStr;
-		Common::Array<byte> _custom;
+		Common::String _title;
+		Common::Array<byte> _data;
 
 		void load(Common::SeekableReadStream &src);
 	};
