@@ -213,7 +213,6 @@ public:
 	void ignoreEvents();
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-	void syncGameStream(Common::Serializer &s);
 
 	Common::Path convertPath(const Common::String &);
 	void playVideo(const Common::String &);
@@ -283,7 +282,6 @@ public:
 	void loadDossier();
 
 	// Police Bust
-	void policeBust();
 	bool _policeBustEnabled;
 	void startPoliceBust();
 	void checkPoliceBust();
