@@ -30,7 +30,6 @@
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/engine/ultima.h"
-#include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/core/mouse_cursor.h"
@@ -72,7 +71,6 @@ bool UltimaEarlyEngine::initialize() {
 	}
 	SearchMan.add("ultima", res);
 
-	setDebugger(new Debugger());
 	_events = new EventsManager(this);
 	_screen = new Gfx::Screen();
 

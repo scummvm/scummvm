@@ -25,7 +25,7 @@
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/core/debugger_actions.h"
-#include "ultima/shared/engine/debugger.h"
+#include "gui/debugger.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -33,7 +33,7 @@ namespace Ultima4 {
 /**
  * Debugger base class
  */
-class Debugger : public Shared::Debugger, public DebuggerActions {
+class Debugger : public GUI::Debugger, public DebuggerActions {
 private:
 	MapTile _horse, _ship, _balloon;
 	bool _dontEndTurn;
@@ -413,6 +413,16 @@ public:
 	 * user. Otherwise, a non-negative player number is expected
 	 */
 	void getChest(int player = -2);
+
+	/**
+	 * Executes the given command
+	 */
+	void executeCommand(const Common::String &cmd);
+
+	/**
+	 * Executes the given command
+	 */
+	void executeCommand(int argc, const char **argv);
 };
 
 extern Debugger *g_debugger;

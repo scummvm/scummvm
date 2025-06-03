@@ -23,7 +23,6 @@
 #include "common/system.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game_base.h"
-#include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/messages.h"
 #include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/gfx/font.h"

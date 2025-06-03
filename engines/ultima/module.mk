@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	shared/conf/xml_tree.o \
 	shared/engine/ultima.o \
 	shared/engine/data_archive.o \
-	shared/engine/debugger.o \
 	shared/engine/events.o \
 	shared/std/string.o
 
@@ -247,7 +246,6 @@ MODULE_OBJS += \
 	nuvie/core/converse_speech.o \
 	nuvie/core/cursor.o \
 	nuvie/core/debug.o \
-	nuvie/core/debugger.o \
 	nuvie/core/effect.o \
 	nuvie/core/effect_manager.o \
 	nuvie/core/egg_manager.o \

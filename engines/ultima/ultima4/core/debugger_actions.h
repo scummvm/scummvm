@@ -25,7 +25,6 @@
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/game/spell.h"
 #include "ultima/ultima4/core/types.h"
-#include "ultima/shared/engine/debugger.h"
 
 namespace Ultima {
 namespace Ultima4 {

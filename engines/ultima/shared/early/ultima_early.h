@@ -55,7 +55,6 @@ struct UltimaSavegameHeader {
 	int _totalFrames;
 };
 
-class Debugger;
 class Events;
 class Game;
 class GameBase;
