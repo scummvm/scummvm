@@ -1730,10 +1730,14 @@ void LogicManager::playNIS(int nisId) {
 		_engine->getGraphicsManager()->_renderBox1.x = 80;
 		_engine->getGraphicsManager()->_renderBox1.width = 480;
 
-		if (videoWithoutFade) {
-			_engine->getNISManager()->doNIS(filename, kNisFlagBaseFlag);
+		if (_engine->isGoldEdition()) {
+			warning("NIS support for Gold Edition is currently missing. Skipping cutscene");
 		} else {
-			_engine->getNISManager()->doNIS(filename, kNisFlagBaseFlag | kNisFlagSoundFade);
+			if (videoWithoutFade) {
+				_engine->getNISManager()->doNIS(filename, kNisFlagBaseFlag);
+			} else {
+				_engine->getNISManager()->doNIS(filename, kNisFlagBaseFlag | kNisFlagSoundFade);
+			}
 		}
 
 		if (dialogRunning("TIMER"))

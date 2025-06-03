@@ -22,6 +22,7 @@
 #include "lastexpress/lastexpress.h"
 
 #include "lastexpress/game/logic.h"
+#include "lastexpress/data/gold_archive.h"
 
 #include "lastexpress/menu/menu.h"
 #include "lastexpress/menu/clock.h"
@@ -51,7 +52,12 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
 
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+
+	if (isGoldEdition()) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "roms");
+	} else {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+	}
 
 	_soundMutex = new Common::Mutex();
 }
@@ -152,7 +158,11 @@ Common::Error LastExpressEngine::run() {
 	_otisMan = new OtisManager(this);
 
 	// Archive manager
-	_archiveMan = new ArchiveManager(this);
+	if (isGoldEdition()) {
+		_archiveMan = new GoldArchiveManager(this);
+	} else {
+		_archiveMan = new ArchiveManager(this);
+	}
 
 	// Memory manager
 	_memMan = new MemoryManager(this);

@@ -518,6 +518,9 @@ void NISManager::showNISStatus(int32 status) {
 }
 
 bool NISManager::doNIS(const char *name, int32 flags) {
+	if (_engine->isGoldEdition())
+		return true;
+
 	Slot *slot;
 
 	if (_engine->mouseHasRightClicked())
