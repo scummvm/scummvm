@@ -96,8 +96,12 @@ void ScriptManager::initialize(bool restarted) {
 		_engine->loadSettings();
 }
 
+bool ScriptManager::changingLocation() const {
+	return _currentLocation != _nextLocation;
+}
+
 void ScriptManager::update(uint deltaTimeMillis) {
-	if (_currentLocation != _nextLocation) {
+	if (changingLocation()) {
 		// The location is changing. The script that did that may have
 		// triggered other scripts, so give them all one extra cycle to
 		// run. This fixes some missing scoring in ZGI, and quite
@@ -253,6 +257,25 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	// Check each Criteria
 	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0) {
 		return true;
+	}
+	
+	// WORKAROUNDS:
+	switch (_engine->getGameId()) {
+	case GID_NEMESIS:
+		switch (puzzle->key) {
+		case 16418:
+			// WORKAROUND for script bug in Zork Nemesis, room mc30 (Monastery Entry)
+			// Rumble sound effect should cease upon changing location to me10 (Hall of Masks),
+			// but this puzzle erroneously restarted it immediately after.
+			if(changingLocation())
+				return true;
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
 	}
 
 	bool criteriaMet = false;
