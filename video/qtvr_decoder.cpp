@@ -118,10 +118,10 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readPanoSampleDesc(Common
 	entry->_hotSpotColorDepth = _fd->readSint16BE(); // must be 8
 
 	if (entry->_minimumZoom == 0.0)
-		entry->_minimumZoom = 5.0;
+		entry->_minimumZoom = 2.0;
 
 	if (entry->_maximumZoom == 0.0)
-		entry->_maximumZoom = 65.0;
+		entry->_maximumZoom = abs(entry->_vPanTop - entry->_vPanBottom);
 
 	debugC(2, kDebugLevelGVideo, "    version: %d.%d sceneTrackID: %d loResSceneTrackID: %d hotSpotTrackID: %d",
 		entry->_majorVersion, entry->_minorVersion, entry->_sceneTrackID, entry->_loResSceneTrackID, entry->_hotSpotTrackID);
