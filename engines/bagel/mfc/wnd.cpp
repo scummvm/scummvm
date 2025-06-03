@@ -42,8 +42,6 @@ CWnd::~CWnd() {
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
         DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
         CCreateContext *pContext) {
-	assert(!strcmp(lpszClassName, "ScummVMWindow"));
-
 	// Set up create structure
 	CREATESTRUCT cs;
 	cs.x = rect.left;
@@ -62,7 +60,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	_windowRect.bottom = cs.y + cs.cy;
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surface.create(cs.cx, cs.cy, format);
+	_surface.create(*AfxGetApp()->getScreen(), _windowRect);
 
 	return true;
 }
