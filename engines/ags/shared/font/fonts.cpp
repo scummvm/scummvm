@@ -218,6 +218,12 @@ int get_text_width_outlined(const char *text, size_t font_number) {
 	return MAX(self_width, outline_width);
 }
 
+int get_text_height(const char *text, size_t font_number) {
+	if (font_number >= _GP(fonts).size() || !_GP(fonts)[font_number].Renderer)
+		return 0;
+	return _GP(fonts)[font_number].Renderer->GetTextHeight(text, font_number);
+}
+
 int get_font_outline(size_t font_number) {
 	if (font_number >= _GP(fonts).size())
 		return FONT_OUTLINE_NONE;
