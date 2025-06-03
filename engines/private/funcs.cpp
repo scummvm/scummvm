@@ -120,7 +120,7 @@ static void fDiaryPageTurn(ArgArray args) {
 	if (args[0].u.val == 1) {
 		e.cursor = "kTurnRight";
 
-		if (g_private->_currentDiaryPage == g_private->_diaryPages.size() - 1) {
+		if ((uint)g_private->_currentDiaryPage == g_private->_diaryPages.size() - 1) {
 			e.nextSetting = "kDiaryLastPage";
 		}
 

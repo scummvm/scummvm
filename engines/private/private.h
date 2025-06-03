@@ -299,7 +299,7 @@ public:
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
 	bool _toTake;
 	DiaryPages _diaryPages;
-	uint _currentDiaryPage;
+	int _currentDiaryPage;
 	ExitInfo _diaryNextPageExit;
 	ExitInfo _diaryPrevPageExit;
 	bool selectDiaryNextPage(Common::Point mousePos);
