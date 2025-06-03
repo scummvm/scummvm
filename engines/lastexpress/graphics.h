@@ -68,6 +68,7 @@ class GraphicsManager {
 	friend class LogicManager;
 	friend class SubtitleManager;
 	friend class ArchiveManager;
+	friend class GoldArchiveManager;
 	friend class NISManager;
 	friend class Menu;
 	friend class SpriteManager;

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef LASTEXPRESS_HPF_H
-#define LASTEXPRESS_HPF_H
+#ifndef LASTEXPRESS_ARCHIVE_H
+#define LASTEXPRESS_ARCHIVE_H
 
 #include "lastexpress/lastexpress.h"
 
@@ -52,14 +52,20 @@ typedef struct HPF {
 	uint16 currentPos;
 	uint16 status;
 
+	// For Gold Edition only
+	Common::ArchiveMemberPtr archiveRef;
+	Common::String archiveName;
+
 	HPF() {
 		memset(name, 0, sizeof(name));
 		offset = 0;
 		size = 0;
 		currentPos = 0;
 		status = 0;
-	};
 
+		archiveRef = nullptr;
+		archiveName = "";
+	};
 } HPF;
 
 enum HPFFlags {
@@ -74,24 +80,24 @@ public:
 	~ArchiveManager();
 
 	HPF *search(const char *name, HPF *archive, int archiveSize);
-	bool lockCD(int32 index);
-	bool isCDAvailable(int cdNum, char *outPath, int pathSize);
-	bool lockCache(char *filename);
-	void initHPFS();
-	void shutDownHPFS();
+	virtual bool lockCD(int32 index);
+	virtual bool isCDAvailable(int cdNum, char *outPath, int pathSize);
+	virtual bool lockCache(char *filename);
+	virtual void initHPFS();
+	virtual void shutDownHPFS();
 	void unlockCD();
-	HPF *openHPF(const char *filename);
+	virtual HPF *openHPF(const char *filename);
 	void readHD(void *dstBuf, int offset, uint32 size);
 	void readCD(void *dstBuf, int offset, uint32 size);
-	void readHPF(HPF *archive, void *dstBuf, uint32 size);
+	virtual void readHPF(HPF *archive, void *dstBuf, uint32 size);
 	void seekHPF(HPF *archive, uint32 position);
 	void closeHPF(HPF *archive);
 
-	int loadBG(const char *filename);
+	virtual int loadBG(const char *filename);
 	Seq *loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRestart, int character);
 	void loadMice();
 
-private:
+protected:
 	LastExpressEngine *_engine = nullptr;
 
 	Common::File *_cdFilePointer = nullptr;
@@ -109,4 +115,4 @@ private:
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_HPF_H
+#endif // LASTEXPRESS_ARCHIVE_H

@@ -19,9 +19,6 @@
  *
  */
 
-// Based on the Xentax Wiki documentation:
-// http://wiki.xentax.com/index.php/The_Last_Express_SND
-
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/data/archive.h"
 

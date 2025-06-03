@@ -73,6 +73,7 @@ struct ADGameDescription;
 namespace LastExpress {
 
 class ArchiveManager;
+class GoldArchiveManager;
 class CBeetle;
 class CFight;
 class Clock;
@@ -547,6 +548,7 @@ public:
 	bool handleEvents();
 
 	bool isDemo() const;
+	bool isGoldEdition() const;
 
 	Common::String getTargetName() const;
 

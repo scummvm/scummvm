@@ -20,7 +20,7 @@
  */
 
 #include "lastexpress/data/archive.h"
-
+#include "lastexpress/data/gold_archive.h"
 #include "lastexpress/game/beetle.h"
 #include "lastexpress/game/logic.h"
 

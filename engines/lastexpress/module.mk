@@ -61,6 +61,7 @@ MODULE_OBJS := \
 	characters/yasmin.o \
 	data/archive.o \
 	data/cvcrfile.o \
+	data/gold_archive.o \
 	data/sprites.o \
 	fight/fight.o \
 	fight/fighter.o \
@@ -78,7 +79,6 @@ MODULE_OBJS := \
 	game/logic.o \
 	game/navigation.o \
 	game/nis.o \
-	game/object.o \
 	game/otis.o \
 	game/savegame.o \
 	game/vcr.o \
@@ -93,8 +93,7 @@ MODULE_OBJS := \
 	graphics.o \
 	lastexpress.o \
 	memory.o \
-	metaengine.o \
-	resource.o
+	metaengine.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_LASTEXPRESS), DYNAMIC_PLUGIN)

@@ -50,6 +50,7 @@ struct ConsCallParam;
 
 class LogicManager {
 	friend class ArchiveManager;
+	friend class GoldArchiveManager;
 	friend class CBeetle;
 	friend class LastExpressEngine;
 	friend class MemoryManager;

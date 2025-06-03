@@ -46,6 +46,10 @@ bool LastExpressEngine::isDemo() const {
 	return (bool)(_gameDescription->flags & ADGF_DEMO);
 }
 
+bool LastExpressEngine::isGoldEdition() const {
+	return (Common::String(_gameDescription->extra) == "Gold Edition");
+}
+
 bool LastExpressMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return f == kSupportsListSaves
 	    || f == kSupportsDeleteSave;
