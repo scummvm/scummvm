@@ -105,7 +105,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			parseResults(stream, puzzle->resultActions, puzzle->key);
 			// WORKAROUNDS:
 			switch (_engine->getGameId()) {
-			case GID_NEMESIS: {
+			case GID_NEMESIS:
 				// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
 				// fork box closeup). If the player leaves the screen while the
 				// box is open, puzzle 19398 shows the animation where the box
@@ -114,9 +114,8 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 				// Fixes bug #6803.
 				if (puzzle->key == 19398)
 					puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
-			}
-			break;
-			case GID_GRANDINQUISITOR: {
+				break;
+			case GID_GRANDINQUISITOR:
 				switch (puzzle->key) {
 				case 10836:
 					// WORKAROUND for bug #10604. If the player is looking at the
@@ -146,8 +145,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 				default:
 					break;
 				}
-			}
-			break;
+				break;
 			default:
 				break;
 			}
