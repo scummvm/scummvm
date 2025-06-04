@@ -111,7 +111,7 @@ int loadgamedialog() {
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
 				int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
-				if ((cursel >= _G(numsaves)) | (cursel < 0))
+				if ((cursel >= _G(numsaves)) || (cursel < 0))
 					_G(lpTemp) = nullptr;
 				else {
 					toret = _G(filenumbers)[cursel];

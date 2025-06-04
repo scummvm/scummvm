@@ -134,7 +134,7 @@ void FileRead(int32_t handle, char *toread) {
 
 	size_t lle = (uint32_t)in->ReadInt32();
 	// This tests for the legacy string (limited by 200 chars)
-	if ((lle >= 200) | (lle < 1)) {
+	if ((lle >= 200) || (lle < 1)) {
 		debug_script_warn("FileRead: file was not written by FileWrite");
 		return;
 	}

@@ -196,7 +196,7 @@ void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count) {
 }
 
 void SetGlobalInt(int index, int valu) {
-	if ((index < 0) | (index >= MAXGSVALUES))
+	if ((index < 0) || (index >= MAXGSVALUES))
 		quitprintf("!SetGlobalInt: invalid index %d, supported range is %d - %d", index, 0, MAXGSVALUES - 1);
 
 	if (_GP(play).globalscriptvars[index] != valu) {
@@ -208,20 +208,20 @@ void SetGlobalInt(int index, int valu) {
 
 
 int GetGlobalInt(int index) {
-	if ((index < 0) | (index >= MAXGSVALUES))
+	if ((index < 0) || (index >= MAXGSVALUES))
 		quitprintf("!GetGlobalInt: invalid index %d, supported range is %d - %d", index, 0, MAXGSVALUES - 1);
 	return _GP(play).globalscriptvars[index];
 }
 
 void SetGlobalString(int index, const char *newval) {
-	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
+	if ((index < 0) || (index >= MAXGLOBALSTRINGS))
 		quitprintf("!SetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
 	debug_script_log("GlobalString %d set to '%s'", index, newval);
 	snprintf(_GP(play).globalstrings[index], MAX_MAXSTRLEN, "%s", newval);
 }
 
 void GetGlobalString(int index, char *strval) {
-	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
+	if ((index < 0) || (index >= MAXGLOBALSTRINGS))
 		quitprintf("!GetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
 	snprintf(strval, MAX_MAXSTRLEN, "%s", _GP(play).globalstrings[index]);
 }
@@ -588,7 +588,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		return;
 	xxx = vpt.first.X;
 	yyy = vpt.first.Y;
-	if ((xxx >= _GP(thisroom).Width) | (xxx < 0) | (yyy < 0) | (yyy >= _GP(thisroom).Height))
+	if ((xxx >= _GP(thisroom).Width) || (xxx < 0) || (yyy < 0) || (yyy >= _GP(thisroom).Height))
 		return;
 
 	int onhs, aa;
@@ -658,7 +658,7 @@ int SaveScreenShot(const char *namm) {
 }
 
 void SetMultitasking(int mode) {
-	if ((mode < 0) | (mode > 1))
+	if ((mode < 0) || (mode > 1))
 		quit("!SetMultitasking: invalid mode parameter");
 	// Save requested setting
 	_GP(usetup).multitasking = mode != 0;

@@ -370,7 +370,7 @@ bool InventoryScreen::Run() {
 	int isonitem = ((my - bartop) / highest) * ICONSPERLINE + (mx - barxp) / widest;
 	if (my <= bartop) isonitem = -1;
 	else if (isonitem >= 0) isonitem += top_item;
-	if ((isonitem < 0) | (isonitem >= numitems) | (isonitem >= top_item + num_visible_items))
+	if ((isonitem < 0) || (isonitem >= numitems) || (isonitem >= top_item + num_visible_items))
 		isonitem = -1;
 
 	eAGSMouseButton mbut;
@@ -380,7 +380,7 @@ bool InventoryScreen::Run() {
 	}
 
 	if (mbut == kMouseLeft) {
-		if ((my < 0) | (my > windowhit) | (mx < 0) | (mx > windowwid))
+		if ((my < 0) || (my > windowhit) || (mx < 0) || (mx > windowwid))
 			return true; // continue inventory screen loop
 		if (my < buttonyp) {
 			int clickedon = isonitem;

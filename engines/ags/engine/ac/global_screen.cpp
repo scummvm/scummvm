@@ -43,7 +43,8 @@ using namespace AGS::Engine;
 
 
 void FlipScreen(int amount) {
-	if ((amount < 0) | (amount > 3)) quit("!FlipScreen: invalid argument (0-3)");
+	if ((amount < 0) || (amount > 3))
+		quit("!FlipScreen: invalid argument (0-3)");
 	_GP(play).screen_flipped = amount;
 }
 

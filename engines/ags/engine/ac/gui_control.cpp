@@ -219,7 +219,7 @@ int GUIControl_GetTransparency(GUIObject *guio) {
 }
 
 void GUIControl_SetTransparency(GUIObject *guio, int trans) {
-	if ((trans < 0) | (trans > 100))
+	if ((trans < 0) || (trans > 100))
 		quit("!SetGUITransparency: transparency value must be between 0 and 100");
 	guio->SetTransparency(GfxDef::Trans100ToLegacyTrans255(trans));
 }

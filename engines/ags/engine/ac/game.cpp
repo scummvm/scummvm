@@ -1127,7 +1127,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 		return 0;
 	xxx = vpt.first.X;
 	yyy = vpt.first.Y;
-	if ((xxx >= _GP(thisroom).Width) | (xxx < 0) | (yyy < 0) | (yyy >= _GP(thisroom).Height))
+	if ((xxx >= _GP(thisroom).Width) || (xxx < 0) || (yyy < 0) || (yyy >= _GP(thisroom).Height))
 		return 0;
 
 	// check characters, objects and walkbehinds, work out which is
@@ -1275,11 +1275,11 @@ void replace_tokens(const char *srcmes, char *destm, size_t maxlen) {
 			}
 			char tval[10];
 			if (tokentype == 1) {
-				if ((inx < 1) | (inx >= _GP(game).numinvitems))
+				if ((inx < 1) || (inx >= _GP(game).numinvitems))
 					quit("!Display: invalid inv item specified in @IN@");
 				snprintf(tval, sizeof(tval), "%d", _G(playerchar)->inv[inx]);
 			} else {
-				if ((inx < 0) | (inx >= MAXGSVALUES))
+				if ((inx < 0) || (inx >= MAXGSVALUES))
 					quit("!Display: invalid global int index speicifed in @GI@");
 				snprintf(tval, sizeof(tval), "%d", GetGlobalInt(inx));
 			}

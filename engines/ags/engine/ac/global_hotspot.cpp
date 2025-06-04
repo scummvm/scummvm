@@ -44,14 +44,14 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void DisableHotspot(int hsnum) {
-	if ((hsnum < 1) | (hsnum >= MAX_ROOM_HOTSPOTS))
+	if ((hsnum < 1) || (hsnum >= MAX_ROOM_HOTSPOTS))
 		quit("!DisableHotspot: invalid hotspot specified");
 	_G(croom)->hotspot[hsnum].Enabled = false;
 	debug_script_log("Hotspot %d disabled", hsnum);
 }
 
 void EnableHotspot(int hsnum) {
-	if ((hsnum < 1) | (hsnum >= MAX_ROOM_HOTSPOTS))
+	if ((hsnum < 1) || (hsnum >= MAX_ROOM_HOTSPOTS))
 		quit("!EnableHotspot: invalid hotspot specified");
 	_G(croom)->hotspot[hsnum].Enabled = true;
 	debug_script_log("Hotspot %d re-enabled", hsnum);

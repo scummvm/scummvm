@@ -193,7 +193,7 @@ void GUI_SetPopupYPos(ScriptGUI *tehgui, int newpos) {
 }
 
 void GUI_SetTransparency(ScriptGUI *tehgui, int trans) {
-	if ((trans < 0) | (trans > 100))
+	if ((trans < 0) || (trans > 100))
 		quit("!SetGUITransparency: transparency value must be between 0 and 100");
 
 	_GP(guis)[tehgui->id].SetTransparencyAsPercentage(trans);

@@ -313,14 +313,14 @@ void SetMusicVolume(int newvol) {
 void SetMusicMasterVolume(int newvol) {
 	const int min_volume = _G(loaded_game_file_version) < kGameVersion_330 ? 0 :
 	                       -LegacyMusicMasterVolumeAdjustment - (kRoomVolumeMax * LegacyRoomVolumeFactor);
-	if ((newvol < min_volume) | (newvol > 100))
+	if ((newvol < min_volume) || (newvol > 100))
 		quitprintf("!SetMusicMasterVolume: invalid volume - must be from %d to %d", min_volume, 100);
 	_GP(play).music_master_volume = newvol + LegacyMusicMasterVolumeAdjustment;
 	update_music_volume();
 }
 
 void SetSoundVolume(int newvol) {
-	if ((newvol < 0) | (newvol > 255))
+	if ((newvol < 0) || (newvol > 255))
 		quit("!SetSoundVolume: invalid volume - must be from 0-255");
 	_GP(play).sound_volume = newvol;
 	Game_SetAudioTypeVolume(AUDIOTYPE_LEGACY_AMBIENT_SOUND, (newvol * 100) / 255, VOL_BOTH);
@@ -346,7 +346,7 @@ void SetChannelVolume(int chan, int newvol) {
 }
 
 void SetDigitalMasterVolume(int newvol) {
-	if ((newvol < 0) | (newvol > 100))
+	if ((newvol < 0) || (newvol > 100))
 		quit("!SetDigitalMasterVolume: invalid volume - must be from 0-100");
 	_GP(play).digital_master_volume = newvol;
 #if !AGS_PLATFORM_SCUMMVM
@@ -422,7 +422,7 @@ void PlaySilentMIDI(int mnum) {
 }
 
 void SetSpeechVolume(int newvol) {
-	if ((newvol < 0) | (newvol > 255))
+	if ((newvol < 0) || (newvol > 255))
 		quit("!SetSpeechVolume: invalid volume - must be from 0-255");
 
 	auto *ch = AudioChans::GetChannel(SCHAN_SPEECH);
@@ -432,7 +432,7 @@ void SetSpeechVolume(int newvol) {
 }
 
 void SetVoiceMode(int newmod) {
-	if ((newmod < kSpeech_First) | (newmod > kSpeech_Last))
+	if ((newmod < kSpeech_First) || (newmod > kSpeech_Last))
 		quitprintf("!SetVoiceMode: invalid mode number %d", newmod);
 	_GP(play).speech_mode = (SpeechMode)newmod;
 }

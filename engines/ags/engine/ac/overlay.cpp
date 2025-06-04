@@ -283,7 +283,7 @@ void Overlay_SetTransparency(ScriptOverlay *scover, int trans) {
 	auto *over = get_overlay(scover->overlayId);
 	if (!over)
 		quit("!invalid overlay ID specified");
-	if ((trans < 0) | (trans > 100))
+	if ((trans < 0) || (trans > 100))
 		quit("!SetTransparency: transparency value must be between 0 and 100");
 
 	over->transparency = GfxDef::Trans100ToLegacyTrans255(trans);

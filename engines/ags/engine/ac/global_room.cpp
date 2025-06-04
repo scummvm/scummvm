@@ -148,7 +148,7 @@ void NewRoomNPC(int charid, int nrnum, int newx, int newy) {
 void ResetRoom(int nrnum) {
 	if (nrnum == _G(displayed_room))
 		quit("!ResetRoom: cannot reset current room");
-	if ((nrnum < 0) | (nrnum >= MAX_ROOMS))
+	if ((nrnum < 0) || (nrnum >= MAX_ROOMS))
 		quit("!ResetRoom: invalid room number");
 
 	if (isRoomStatusValid(nrnum)) {

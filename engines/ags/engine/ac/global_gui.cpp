@@ -62,7 +62,7 @@ int FindGUIID(const char *GUIName) {
 }
 
 void InterfaceOn(int ifn) {
-	if ((ifn < 0) | (ifn >= _GP(game).numgui))
+	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!GUIOn: invalid GUI specified");
 
 	EndSkippingUntilCharStops();
@@ -78,7 +78,8 @@ void InterfaceOn(int ifn) {
 }
 
 void InterfaceOff(int ifn) {
-	if ((ifn < 0) | (ifn >= _GP(game).numgui)) quit("!GUIOff: invalid GUI specified");
+	if ((ifn < 0) || (ifn >= _GP(game).numgui))
+		quit("!GUIOff: invalid GUI specified");
 	if (!_GP(guis)[ifn].IsVisible()) {
 		return;
 	}
@@ -146,14 +147,14 @@ void SetGUIClickable(int guin, int clickable) {
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
 void SetGUITransparency(int ifn, int trans) {
-	if ((ifn < 0) | (ifn >= _GP(game).numgui))
+	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!SetGUITransparency: invalid GUI number");
 
 	GUI_SetTransparency(&_GP(scrGui)[ifn], trans);
 }
 
 void CentreGUI(int ifn) {
-	if ((ifn < 0) | (ifn >= _GP(game).numgui))
+	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!CentreGUI: invalid GUI number");
 
 	GUI_Centre(&_GP(scrGui)[ifn]);
@@ -190,7 +191,7 @@ int GetFontLineSpacing(int fontnum) {
 }
 
 void SetGUIBackgroundPic(int guin, int slotn) {
-	if ((guin < 0) | (guin >= _GP(game).numgui))
+	if ((guin < 0) || (guin >= _GP(game).numgui))
 		quit("!SetGUIBackgroundPic: invalid GUI number");
 
 	GUI_SetBackgroundGraphic(&_GP(scrGui)[guin], slotn);
@@ -241,7 +242,7 @@ int GetGUIAt(int xx, int yy) {
 }
 
 void SetTextWindowGUI(int guinum) {
-	if ((guinum < -1) | (guinum >= _GP(game).numgui))
+	if ((guinum < -1) || (guinum >= _GP(game).numgui))
 		quit("!SetTextWindowGUI: invalid GUI number");
 
 	if (guinum < 0);  // disable it

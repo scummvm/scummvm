@@ -855,7 +855,8 @@ bool DialogOptions::Run() {
 				mouseison = i - 1; break;
 			}
 		}
-		if ((mouseison < 0) | (mouseison >= numdisp)) mouseison = -1;
+		if ((mouseison < 0) || (mouseison >= numdisp))
+			mouseison = -1;
 	}
 
 	if (parserInput != nullptr) {
