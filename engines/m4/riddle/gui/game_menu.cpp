@@ -243,8 +243,8 @@ void OptionsMenu::show() {
 		OPTIONS_MENU_X, OPTIONS_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	assert(_GM(opMenu));
 
-	int digiPercent = digi_get_overall_volume();
-	int midiPercent = midi_get_overall_volume();
+	const int digiPercent = digi_get_overall_volume();
+	const int midiPercent = midi_get_overall_volume();
 
 	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
 		OM_GAMEMENU_X, OM_GAMEMENU_Y, OM_GAMEMENU_W, OM_GAMEMENU_H,
@@ -336,9 +336,6 @@ void OptionsMenu::cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *
 #define SL_SCROLL_FIELD_H	139
 
 void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
-	ItemHandlerFunction	i_handler;
-	bool buttonGreyed;
-
 	if (!_G(menuSystemInitialized))
 		guiMenu::initialize(myPalette);
 
@@ -393,6 +390,8 @@ void SaveLoadMenu::show(RGB8 *myPalette, bool saveMenu) {
 
 	initializeSlotTables();
 
+	bool buttonGreyed;
+	ItemHandlerFunction i_handler;
 	if (_GM(currMenuIsSave)) {
 		buttonGreyed = false;
 		i_handler = (ItemHandlerFunction)menuItemButton::handler;
@@ -470,7 +469,7 @@ void SaveLoadMenu::destroyMenu(bool saveMenu) {
 
 bool SaveLoadMenu::load_Handler(M4::GUI::menuItemButton *myItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	// Handle the event just like any other button
-	bool handled = menuItemButton::handler(myItem, eventType, event, x, y, currItem);
+	const bool handled = menuItemButton::handler(myItem, eventType, event, x, y, currItem);
 
 	// If we've selected a slot, we want the thumbNail to remain on the menu permanently
 	if (_GM(slotSelected) >= 0) {
@@ -525,7 +524,7 @@ void SaveLoadMenu::cbSave(void *, M4::GUI::guiMenu *myMenu) {
 
 	// First make the textfield NORM
 	menuItemTextField *myText = (menuItemTextField *)guiMenu::getItem(2000, myMenu);
-	if (myText)
+	if (!myText)
 		return;
 
 	myText->itemFlags = menuItemTextField::TF_NORM;
@@ -535,8 +534,8 @@ void SaveLoadMenu::cbSave(void *, M4::GUI::guiMenu *myMenu) {
 	Common::strcpy_s(_GM(slotTitles)[_GM(slotSelected) - 1], 80, myText->prompt);
 
 	// Save the game
-	bool saveGameFailed = !g_engine->saveGameFromMenu(_GM(slotSelected),
-	                                                  myText->prompt, _GM(_thumbnail));
+	const bool saveGameFailed = !g_engine->saveGameFromMenu(_GM(slotSelected),
+	                                                        myText->prompt, _GM(_thumbnail));
 
 	// If the save game failed, bring up the err menu
 	if (saveGameFailed) {
@@ -598,10 +597,10 @@ void SaveLoadMenu::cbCancel(M4::GUI::menuItemButton *, M4::GUI::guiMenu *myMenu)
 
 		// Find the textfield and use it's coords to place the button
 		menuItem *myItem = guiMenu::getItem(2000, myMenu);
-		int32 x = myItem->x1;
-		int32 y = myItem->y1;
-		int32 w = myItem->x2 - myItem->x1 + 1;
-		int32 h = myItem->y2 - myItem->y1 + 1;
+		const int32 x = myItem->x1;
+		const int32 y = myItem->y1;
+		const int32 w = myItem->x2 - myItem->x1 + 1;
+		const int32 h = myItem->y2 - myItem->y1 + 1;
 
 		// Delete the textfield
 		guiMenu::itemDelete(myItem, 2000, myMenu);
@@ -658,15 +657,14 @@ void SaveLoadMenu::cbCancel(M4::GUI::menuItemButton *, M4::GUI::guiMenu *myMenu)
 }
 
 void SaveLoadMenu::cbSlot(M4::GUI::menuItemButton *myButton, M4::GUI::guiMenu *myMenu) {
-	char prompt[80];
-
 	// Verify params
 	if (!myMenu || !myButton)
 		return;
 
 	// Get the button
+	char prompt[80];
 	Common::strcpy_s(prompt, 80, myButton->prompt);
-	int32 specialTag = myButton->specialTag;
+	const int32 specialTag = myButton->specialTag;
 
 	// Set the globals
 	_GM(slotSelected) = myButton->specialTag;
@@ -681,10 +679,10 @@ void SaveLoadMenu::cbSlot(M4::GUI::menuItemButton *myButton, M4::GUI::guiMenu *m
 	}
 
 	// Get the slot coords, and delete it
-	int32 x = myButton->x1;
-	int32 y = myButton->y1;
-	int32 w = myButton->x2 - myButton->x1 + 1;
-	int32 h = myButton->y2 - myButton->y1 + 1;
+	const int32 x = myButton->x1;
+	const int32 y = myButton->y1;
+	const int32 w = myButton->x2 - myButton->x1 + 1;
+	const int32 h = myButton->y2 - myButton->y1 + 1;
 	guiMenu::itemDelete(myButton, -1, myMenu);
 
 	if (_GM(currMenuIsSave)) {
@@ -748,6 +746,9 @@ void SaveLoadMenu::cbVSlider(M4::GUI::menuItemVSlider *myItem, M4::GUI::guiMenu 
 				_GM(firstSlotIndex)++;
 				redraw = (DrawFunction)true;
 			}
+			break;
+
+		default:
 			break;
 		}
 
@@ -867,7 +868,7 @@ void ErrorMenu::destroyMenu() {
 /*-------------------- ACCESS METHODS --------------------*/
 
 void CreateGameMenu(RGB8 *myPalette) {
-	if ((!player_commands_allowed()) || (!INTERFACE_VISIBLE) ||
+	if (!player_commands_allowed() || !INTERFACE_VISIBLE ||
 		_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
@@ -877,7 +878,7 @@ void CreateGameMenu(RGB8 *myPalette) {
 
 
 void CreateF2SaveMenu(RGB8 *myPalette) {
-	if ((!player_commands_allowed()) || (!INTERFACE_VISIBLE) ||
+	if (!player_commands_allowed() || !INTERFACE_VISIBLE ||
 		_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
@@ -903,7 +904,7 @@ void CreateLoadMenuFromMain(RGB8 *myPalette) {
 }
 
 void CreateF3LoadMenu(RGB8 *myPalette) {
-	if ((!player_commands_allowed()) || (!INTERFACE_VISIBLE) ||
+	if (!player_commands_allowed() || !INTERFACE_VISIBLE ||
 		_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
