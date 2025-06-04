@@ -9844,14 +9844,36 @@ static const uint16 larry6HelpMessagePatch[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                   patch
+// There are six messages for clicking the hand cursor on Larry, but the script
+//  stops on the fifth. This appears to be an off-by-one bug in the script, so
+//  we patch the range check to include the final message.
+//
+// Applies to: All versions (including high-res versions)
+// Responsible method: ego:doVerb
+// Fixes bug: #15985
+static const uint16 larry6EgoHandMessageSignature[] = {
+	SIG_MAGICDWORD,
+	0x89, 0xa8,                         // lag a8
+	0x35, 0x05,                         // ldi 05
+	0x22,                               // lt?
+	SIG_END
+};
+
+static const uint16 larry6EgoHandMessagePatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x24,                               // le?
+	PATCH_END
+};
+
+//          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry larry6Signatures[] = {
-	{  true,    75, "fix help cursor",                             1, larry6HelpCursorSignature,  larry6HelpCursorPatch },
-	{  true,    82, "death dialog memory corruption",              1, larry6DeathDialogSignature, larry6DeathDialogPatch },
-	{  true,    94, "help message",                                1, larry6HelpMessageSignature, larry6HelpMessagePatch },
-	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,    sci11SpeedTestPatch },
-	{  true,   680, "room 680 exits",                              1, larry6Room680ExitsSignature,larry6Room680ExitsPatch },
-	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature, sciNarratorLockupPatch },
+	{  true,    75, "fix help cursor",                             1, larry6HelpCursorSignature,     larry6HelpCursorPatch },
+	{  true,    82, "death dialog memory corruption",              1, larry6DeathDialogSignature,    larry6DeathDialogPatch },
+	{  true,    90, "ego hand message",                            1, larry6EgoHandMessageSignature, larry6EgoHandMessagePatch },
+	{  true,    94, "help message",                                1, larry6HelpMessageSignature,    larry6HelpMessagePatch },
+	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,       sci11SpeedTestPatch },
+	{  true,   680, "room 680 exits",                              1, larry6Room680ExitsSignature,   larry6Room680ExitsPatch },
+	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,    sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -10205,6 +10227,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
 	{  true,    75, "fix help cursor",                             1, larry6HiresHelpCursorSignature,       larry6HiresHelpCursorPatch },
+	{  true,    90, "ego hand message",                            1, larry6EgoHandMessageSignature,        larry6EgoHandMessagePatch },
 	{  true,   100, "fix plane width",                             1, larry6HiresPlaneWidthSignature,       larry6HiresPlaneWidthPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
