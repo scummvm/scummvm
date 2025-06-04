@@ -446,7 +446,11 @@ BOOL CWnd::ValidateRect(LPCRECT lpRect) {
 }
 
 BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
-	_updateRect.extend(*lpRect);
+	if (lpRect)
+		_updateRect.extend(*lpRect);
+	else
+		_updateRect = _windowRect;
+
 	return true;
 }
 
@@ -589,6 +593,9 @@ void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
 	// Parse the template and use it to load controls
 	Gfx::CDialogTemplate dt(dlgTemplate);
 	dt.loadTemplate(this);
+
+	SendMessage(WM_INITDIALOG);
+	ShowWindow(SW_SHOWNORMAL);
 }
 
 
