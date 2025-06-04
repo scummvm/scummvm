@@ -97,6 +97,7 @@ private:
 	MacDialogButtonArray *_buttons;
 	uint _defaultButton;
 	bool _mouseOverPressedButton;
+	int _mouseOverButton;
 
 public:
 	int _pressedButton;

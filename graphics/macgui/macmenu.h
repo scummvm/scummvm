@@ -203,6 +203,7 @@ private:
 private:
 	bool checkCallback(bool unicode = false);
 	const Font *getMenuFont(int slant = kMacFontRegular);
+	Common::CodePage getMenuEncoding() const;
 	const Common::String getAcceleratorString(MacMenuItem *item, const char *prefix);
 	void processTabs();
 	void processSubmenuTabs(MacMenuSubMenu *submenu);
@@ -229,6 +230,8 @@ private:
 
 	int _lastActiveItem;
 	int _lastActiveSubItem;
+
+	int _selectedItem;
 
 	bool _scrollTimerActive;
 	int _scrollDirection;

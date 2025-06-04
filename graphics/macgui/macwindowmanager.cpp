@@ -21,6 +21,7 @@
 #include "common/array.h"
 #include "common/list.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
@@ -246,6 +247,8 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 		replaceCursor(kMacCursorArrow);
 		CursorMan.showMouse(true);
 	}
+
+	_ttsEnabled = false;
 
 	loadDataBundle();
 	setDesktopMode(mode);
@@ -1529,6 +1532,17 @@ const Common::U32String::value_type *readHex(uint16 *res, const Common::U32Strin
 	}
 
 	return s;
+}
+
+void MacWindowManager::sayText(const Common::U32String &text) const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && _ttsEnabled) {
+		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+	}
+}
+
+void MacWindowManager::setTTSEnabled(bool enabled) {
+	_ttsEnabled = enabled;
 }
 
 
