@@ -21,6 +21,28 @@
 
 namespace Sludge {
 
+static const PlainGameDescriptor sludgeGames[] = {
+	{ "sludge",			"Sludge Game" },
+	{ "welcome",		"Welcome Example" },
+	{ "verbcoin",		"Verb Coin" },
+	{ "verbcoin2",		"Verb Coin 2"},
+	{ "parallax",		"Parallax Demo" },
+	{ "robinsrescue",	"Robin's Rescue" },
+	{ "outoforder",		"Out Of Order" },
+	{ "frasse",			"Frasse and the Peas of Kejick" },
+	{ "interview",		"The Interview" },
+	{ "life",			"Life Flashes By" },
+	{ "tgttpoacs",		"The Game That Takes Place on a Cruise Ship" },
+	{ "mandy",			"Mandy Christmas Adventure" },
+	{ "cubert",			"Cubert Badbone, P.I." },
+	{ "gjgagsas",		"The Game Jam Game About Games, Secrets and Stuff" },
+	{ "tsotc",			"The Secret of Tremendous Corporation" },
+	{ "nsc",			"Nathan's Second Chance" },
+	{ "atw",			"Above The Waves" },
+	{ "leptonsquest",	"Lepton's Quest" },
+	{ 0, 0 }
+};
+
 #define GAME1l(t, e, f1, m1, s1, lang, pl, langId) 	{ { t, e, AD_ENTRY1s(f1, m1, s1), lang, pl, ADGF_UNSTABLE, GUIO1(GUIO_NOMIDI) }, langId }
 #define GAME1(t, e, f1, m1, s1) GAME1l(t, e, f1, m1, s1, Common::EN_ANY, Common::kPlatformUnknown, 0)
 #define GAME2l(t, e, f1, m1, s1, f2, m2, s2, lang, pl, langId) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), lang, pl, ADGF_UNSTABLE, GUIO1(GUIO_NOMIDI) }, langId }
