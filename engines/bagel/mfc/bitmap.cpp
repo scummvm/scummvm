@@ -38,7 +38,23 @@ HGDIOBJ CBitmap::Detach() {
 }
 
 BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
-	error("TODO: CBitmap::CreateCompatibleBitmap");
+	const CBitmap::Impl *src = new CBitmap::Impl();
+	BITMAPINFOHEADER h;
+	h.biSize = 40;
+	h.biWidth = src->w;
+	h.biHeight = src->h;
+	h.biPlanes = 1;
+	h.biBitCount = src->format.bpp();
+	h.biCompression = BI_RGB;
+	h.biSizeImage = 0;
+	h.biXPelsPerMeter = 0;
+	h.biYPelsPerMeter = 0;
+	h.biClrUsed = 0;
+	h.biClrImportant = 0;
+
+	m_hObject = CreateDIBitmap(nullptr, &h,
+		CBM_INIT, nullptr, nullptr, DIB_RGB_COLORS);
+	return true;
 }
 
 BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
@@ -64,11 +80,29 @@ BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 }
 
 int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
-	error("TODO: CBitmap::GetObject");
+	CBitmap::Impl *src = new CBitmap::Impl();
+	BITMAP *dest = (BITMAP *)lpObject;
+	assert(nCount == sizeof(BITMAP));
+
+	dest->bmType = 0;
+	dest->bmWidth = src->w;
+	dest->bmHeight = src->h;
+	dest->bmWidthBytes = src->pitch * src->format.bytesPerPixel;
+	dest->bmPlanes = 1;
+	dest->bmBitsPixel = src->format.bpp();
+	dest->bmBits = src->getPixels();
+
+	return sizeof(BITMAP);
 }
 
 LONG CBitmap::GetBitmapBits(LONG dwCount, LPVOID lpBits) const {
-	error("TODO: CBitmap::GetBitmapBits");
+	const CBitmap::Impl *src = new CBitmap::Impl();
+	dwCount = MIN((int)dwCount, src->pitch * src->h * src->format.bytesPerPixel);
+
+	Common::copy((const byte *)src->getPixels(),
+		(const byte *)src->getPixels() + dwCount,
+		(byte *)lpBits);
+	return dwCount;
 }
 
 } // namespace MFC
