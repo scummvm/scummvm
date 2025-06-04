@@ -1510,7 +1510,7 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 	backupSurface.copyFrom(surface);
 
 	// This loop tries to adapt the interline space to make all the text fit in the blocks
-	while (true) {
+	while (lineHeight > 0) {
 		_fontManager->setLineHeight(lineHeight);
 		_fontManager->setupBlock(blockContent1);
 		if (!_fontManager->displayBlockText(text)) {
