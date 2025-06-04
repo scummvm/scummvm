@@ -48,7 +48,7 @@ void LogicManager::CONS_Francois(int chapter) {
 		CONS_Francois_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,24 +69,32 @@ void LogicManager::CONS_Francois_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 1) {
-			getCharacter(kCharacterFrancois).clothes++;
-			if (getCharacter(kCharacterFrancois).clothes > 1)
-				getCharacter(kCharacterFrancois).clothes = 0;
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterFrancois).characterPosition.position = 0;
-			getCharacter(kCharacterFrancois).characterPosition.location = 0;
-			getCharacter(kCharacterFrancois).characterPosition.car = kCarGreenSleeping;
-			getCharacter(kCharacterFrancois).inventoryItem = 0x80;
-			getCharacterCurrentParams(kCharacterFrancois)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterFrancois, kCarGreenSleeping, getCharacterCurrentParams(kCharacterFrancois)[0])) {
+			if (getCharacterCurrentParams(kCharacterFrancois)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterFrancois)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterFrancois)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterFrancois, kCarGreenSleeping, getCharacterCurrentParams(kCharacterFrancois)[0])) {
-		if (getCharacterCurrentParams(kCharacterFrancois)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterFrancois)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterFrancois)[0] = 10000;
-		}
+
+		break;
+	case 1:
+		getCharacter(kCharacterFrancois).clothes++;
+		if (getCharacter(kCharacterFrancois).clothes > 1)
+			getCharacter(kCharacterFrancois).clothes = 0;
+
+		break;
+	case 12:
+		getCharacter(kCharacterFrancois).characterPosition.position = 0;
+		getCharacter(kCharacterFrancois).characterPosition.location = 0;
+		getCharacter(kCharacterFrancois).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterFrancois).inventoryItem = 0x80;
+		getCharacterCurrentParams(kCharacterFrancois)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -103,11 +111,12 @@ void LogicManager::CONS_Francois_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterFrancois)[1] ||
 			(getCharacterCurrentParams(kCharacterFrancois)[1] = _gameTime + getCharacterCurrentParams(kCharacterFrancois)[0], _gameTime + getCharacterCurrentParams(kCharacterFrancois)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterFrancois)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterFrancois)[1] = 0x7FFFFFFF;
 		}
@@ -115,6 +124,9 @@ void LogicManager::HAND_Francois_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterFrancois).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -131,12 +143,17 @@ void LogicManager::CONS_Francois_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterFrancois).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterFrancois, (char *)&getCharacterCurrentParams(kCharacterFrancois)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -155,15 +172,20 @@ void LogicManager::CONS_Francois_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[3]);
 
 		getCharacter(kCharacterFrancois).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterFrancois, (char *)&getCharacterCurrentParams(kCharacterFrancois)[0]);
 		blockAtDoor(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -182,14 +204,16 @@ void LogicManager::CONS_Francois_DoEnterCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_DoEnterCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[3]);
 		getCharacter(kCharacterFrancois).characterPosition.position = 5790;
 
 		getCharacter(kCharacterFrancois).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterFrancois, (char *)&getCharacterCurrentParams(kCharacterFrancois)[0]);
 		blockAtDoor(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[3]);
 		getCharacter(kCharacterFrancois).characterPosition.location = 1;
@@ -203,6 +227,10 @@ void LogicManager::HAND_Francois_DoEnterCorrOtis(HAND_PARAMS) {
 			playDialog(0, "BUMP", -1, 0);
 			bumpCathFDoor(35);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -219,12 +247,17 @@ void LogicManager::CONS_Francois_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterFrancois).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterFrancois, (char *)&getCharacterCurrentParams(kCharacterFrancois)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -242,22 +275,25 @@ void LogicManager::CONS_Francois_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterFrancois,
-				getCharacterCurrentParams(kCharacterFrancois)[0],
-				getCharacterCurrentParams(kCharacterFrancois)[1]
-			);
-
-			getCharacter(kCharacterFrancois).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
-			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterFrancois).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterFrancois,
+			getCharacterCurrentParams(kCharacterFrancois)[0],
+			getCharacterCurrentParams(kCharacterFrancois)[1]
+		);
+
+		getCharacter(kCharacterFrancois).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -301,6 +337,7 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 				FrancoisCall(&LogicManager::CONS_Francois_SaveGame, 2, kEventFrancoisTradeWhistle, 0, 0);
 			}
 		}
+
 		break;
 	case 1:
 		if (msg->param.intParam == 18) {
@@ -328,6 +365,7 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
 			FrancoisCall(&LogicManager::CONS_Francois_SaveGame, 2, kEventFrancoisShowBeetle, 0, 0);
 		}
+
 		break;
 	case 5:
 	case 6:
@@ -339,6 +377,7 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 		}
+
 		break;
 	case 18:
 		if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1) {
@@ -350,6 +389,7 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 
 			giveCathItem(kItemWhistle);
 			takeCathItem(kItemMatchBox);
+
 			_gameInventory[kItemBeetle].location = 2;
 
 			if (getCharacter(kCharacterFrancois).direction == 1) {
@@ -374,9 +414,10 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 
 			getCharacter(kCharacterFrancois).inventoryItem = 0;
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -391,31 +432,38 @@ void LogicManager::CONS_Francois_ExitComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_ExitComp(HAND_PARAMS) {
-	if (msg->action != 12) {
-		if (msg->action != 18)
-			return;
-
-		if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1) {
-			setDoor(35, kCharacterCath, 2, 255, 255);
-		} else if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] != 2) {
-			return;
+	switch (msg->action) {
+	case 12:
+		if (checkDoor(35) == 2) {
+			setDoor(35, kCharacterCath, 0, 255, 255);
+			send(kCharacterFrancois, kCharacterMadame, 134289824, 0);
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
+			FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Cd", 35, 0, 0);
+		} else {
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
+			FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Ed", 35, 0, 0);
 		}
 
-		getCharacter(kCharacterFrancois).characterPosition.location = 0;
+		break;
+	case 18:
+		if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1) {
+			setDoor(35, kCharacterCath, 2, 255, 255);
+			getCharacter(kCharacterFrancois).characterPosition.location = 0;
 
-		getCharacter(kCharacterFrancois).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
-		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-		return;
-	}
-	if (checkDoor(35) == 2) {
-		setDoor(35, kCharacterCath, 0, 255, 255);
-		send(kCharacterFrancois, kCharacterMadame, 134289824, 0);
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
-		FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Cd", 35, 0, 0);
-	} else {
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
-		FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Ed", 35, 0, 0);
+			getCharacter(kCharacterFrancois).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+		} else if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 2) {
+			getCharacter(kCharacterFrancois).characterPosition.location = 0;
+
+			getCharacter(kCharacterFrancois).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -430,32 +478,34 @@ void LogicManager::CONS_Francois_EnterComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_EnterComp(HAND_PARAMS) {
-	if (msg->action != 12) {
-		if (msg->action != 18)
-			return;
+	switch (msg->action) {
+	case 12:
+		if (checkDoor(35) == 2) {
+			setDoor(35, kCharacterCath, 0, 255, 255);
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
+			FrancoisCall(&LogicManager::CONS_Francois_DoEnterCorrOtis, "605Bd", 35, 0, 0);
+		} else {
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
+			FrancoisCall(&LogicManager::CONS_Francois_DoEnterCorrOtis, "605Dd", 35, 0, 0);
+		}
 
+		break;
+	case 18:
 		if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1) {
 			setDoor(35, kCharacterCath, 2, 255, 255);
 			send(kCharacterFrancois, kCharacterMadame, 102484312, 0);
-		} else if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] != 2) {
-			return;
+		} else if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 2) {
+			getCharacter(kCharacterFrancois).characterPosition.location = 1;
+			endGraphics(kCharacterFrancois);
+
+			getCharacter(kCharacterFrancois).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 		}
 
-		getCharacter(kCharacterFrancois).characterPosition.location = 1;
-		endGraphics(kCharacterFrancois);
-
-		getCharacter(kCharacterFrancois).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
-		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-		return;
-	}
-	if (checkDoor(35) == 2) {
-		setDoor(35, kCharacterCath, 0, 255, 255);
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
-		FrancoisCall(&LogicManager::CONS_Francois_DoEnterCorrOtis, "605Bd", 35, 0, 0);
-	} else {
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
-		FrancoisCall(&LogicManager::CONS_Francois_DoEnterCorrOtis, "605Dd", 35, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -472,193 +522,267 @@ void LogicManager::CONS_Francois_Rampage(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
-	if (msg->action > 5) {
-		if (msg->action > 18) {
-			if (msg->action == 102752636) {
-				endGraphics(kCharacterFrancois);
-				getCharacter(kCharacterFrancois).characterPosition.location = 1;
-				getCharacter(kCharacterFrancois).characterPosition.position = 5790;
+	switch (msg->action) {
+	case 0:
+		if (!whoRunningDialog(kCharacterFrancois)) {
+			bool skip = false; // Horrible way to unroll a goto...
+
+			if (!getCharacterCurrentParams(kCharacterFrancois)[8]) {
+				getCharacterCurrentParams(kCharacterFrancois)[8] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterFrancois)[5];
+				if (_currentGameSessionTicks + getCharacterCurrentParams(kCharacterFrancois)[5] == 0) {
+					skip = true;
+				}
+			}
+
+			if (skip || getCharacterCurrentParams(kCharacterFrancois)[8] < _currentGameSessionTicks) {
+				if (!skip) {
+					getCharacterCurrentParams(kCharacterFrancois)[8] = 0x7FFFFFFF;
+				}
+
+				switch (rnd(7)) {
+				case 0:
+					playDialog(kCharacterFrancois, "Fra1002A", -1, 0);
+					break;
+				case 1:
+					playDialog(kCharacterFrancois, "Fra1002B", -1, 0);
+					break;
+				case 2:
+					playDialog(kCharacterFrancois, "Fra1002C", -1, 0);
+					break;
+				case 3:
+					playDialog(kCharacterFrancois, "Fra1002D", -1, 0);
+					break;
+				case 4:
+					playDialog(kCharacterFrancois, "Fra1002E", -1, 0);
+					break;
+				case 5:
+				case 6:
+					playDialog(kCharacterFrancois, "Fra1002F", -1, 0);
+					break;
+				default:
+					break;
+				}
+
+				getCharacterCurrentParams(kCharacterFrancois)[5] = 15 * rnd(7);
+				getCharacterCurrentParams(kCharacterFrancois)[8] = 0;
+			}
+		}
+
+		if (!whoOnScreen(kCharacterFrancois) || !whoFacingCath(kCharacterFrancois))
+			getCharacter(kCharacterFrancois).inventoryItem = 0;
+
+		if (walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], getCharacterCurrentParams(kCharacterFrancois)[2])) {
+			getCharacterCurrentParams(kCharacterFrancois)[4] = 0;
+
+			if (getCharacterCurrentParams(kCharacterFrancois)[2] == 540) {
+				getCharacterCurrentParams(kCharacterFrancois)[1] = 4;
+
+				if (_gameProgress[kProgressChapter] != 1)
+					getCharacterCurrentParams(kCharacterFrancois)[1] = 3;
+
+				getCharacterCurrentParams(kCharacterFrancois)[2] = 9460;
+			} else {
+				getCharacterCurrentParams(kCharacterFrancois)[1] = 3;
+				getCharacterCurrentParams(kCharacterFrancois)[2] = 540;
+				getCharacterCurrentParams(kCharacterFrancois)[7] = 0;
+				getCharacterCurrentParams(kCharacterFrancois)[6] = 0;
+				send(kCharacterFrancois, kCharacterCond2, 225932896, 0);
+				send(kCharacterFrancois, kCharacterCond1, 225932896, 0);
+			}
+		}
+
+		if (!nearX(kCharacterFrancois, 2000, 500) || getCharacter(kCharacterFrancois).direction != 2) {
+			if (_gameProgress[kProgressChapter] == 1) {
+				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
+					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
+					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
+
+					if (getCharacter(kCharacterFrancois).direction == 2) {
+						send(kCharacterFrancois, kCharacterMadame, 202221040, 0);
+						getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
+						getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
+					} else if (getCharacterCurrentParams(kCharacterFrancois)[3] && nearChar(kCharacterFrancois, kCharacterMadame, 1000)) {
+						send(kCharacterFrancois, kCharacterMadame, 168986720, 0);
+						getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
+					}
+				}
+			} else if (getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime) {
 				getCharacter(kCharacterFrancois).clothes = 0;
 				getCharacter(kCharacterFrancois).walkStepSize = 30;
 				getCharacter(kCharacterFrancois).inventoryItem = 0;
 
-				getCharacter(kCharacterFrancois).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
-				fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-			} else if (msg->action == 205346192) {
-				if (msg->sender == 4) {
-					getCharacterCurrentParams(kCharacterFrancois)[7] = 1;
-				} else if (msg->sender == 3) {
-					getCharacterCurrentParams(kCharacterFrancois)[6] = 1;
-				}
+				if (whoRunningDialog(kCharacterFrancois))
+					fadeDialog(kCharacterFrancois);
+
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
+				FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
 			}
+
+			break;
+		}
+
+		if (checkLoc(kCharacterFrancois, kCarRedSleeping) && getCharacterCurrentParams(kCharacterFrancois)[7]) {
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
+			FrancoisCall(&LogicManager::CONS_Francois_DoSeqOtis, "605A", 0, 0, 0);
+			break;
+		}
+
+		if (checkLoc(kCharacterFrancois, kCarGreenSleeping) && getCharacterCurrentParams(kCharacterFrancois)[6]) {
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
+			FrancoisCall(&LogicManager::CONS_Francois_DoSeqOtis, "605A", 0, 0, 0);
 		} else {
-			if (msg->action == 18) {
-				switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
-				case 1:
-					getCharacter(kCharacterFrancois).clothes = 1;
-					getCharacter(kCharacterFrancois).walkStepSize = 100;
-					getCharacter(kCharacterFrancois).inventoryItem = 0;
-					getCharacterCurrentParams(kCharacterFrancois)[1] = 3;
-					getCharacterCurrentParams(kCharacterFrancois)[2] = 540;
-					walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], 540);
-					getCharacterCurrentParams(kCharacterFrancois)[5] = 15 * rnd(7);
-					return;
-				case 2:
-					send(kCharacterFrancois, kCharacterCond2, 168253822, 0);
-					goto LABEL_56;
-				case 3:
-				LABEL_56:
-					getCharacterCurrentParams(kCharacterFrancois)[4] = 0;
-					getCharacterCurrentParams(kCharacterFrancois)[1] = 4;
-					getCharacterCurrentParams(kCharacterFrancois)[2] = 9460;
-					getCharacter(kCharacterFrancois).characterPosition.position = 2088;
-					walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], getCharacterCurrentParams(kCharacterFrancois)[2]);
-					goto LABEL_57;
-				case 4:
-					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 5;
-					FrancoisCall(&LogicManager::CONS_Francois_EnterComp, 0, 0, 0, 0);
-					return;
-				case 5:
-					getCharacter(kCharacterFrancois).currentCall--;
-					_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
-					fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-					return;
-				case 6:
-					if (_gameProgress[kProgressJacket] == 2) {
-						if (!isNight()) {
-							if (getCharacter(kCharacterFrancois).characterPosition.position <= getCharacter(kCharacterCath).characterPosition.position) {
-								playNIS(kEventFrancoisWhistleD);
-							} else {
-								playNIS(kEventFrancoisWhistle);
-							}
-						} else if (getCharacter(kCharacterFrancois).characterPosition.position <= getCharacter(kCharacterCath).characterPosition.position) {
-							playNIS(kEventFrancoisWhistleNightD);
-						} else {
-							playNIS(kEventFrancoisWhistleNight);
-						}
+			if (_gameProgress[kProgressChapter] == 1) {
+				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
+					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
+					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
+
+					if (getCharacter(kCharacterFrancois).direction == 2) {
+						send(kCharacterFrancois, kCharacterMadame, 202221040, 0);
+						getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
+						getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
+					} else if (getCharacterCurrentParams(kCharacterFrancois)[3] && nearChar(kCharacterFrancois, kCharacterMadame, 1000)) {
+						send(kCharacterFrancois, kCharacterMadame, 168986720, 0);
+						getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
 					}
-					if (getCharacter(kCharacterFrancois).direction == 1) {
-						bumpCathFx(getCharacter(kCharacterFrancois).characterPosition.car, getCharacter(kCharacterFrancois).characterPosition.position - 750);
-					} else {
-						bumpCathRx(getCharacter(kCharacterFrancois).characterPosition.car, getCharacter(kCharacterFrancois).characterPosition.position + 750);
-					}
-					return;
-				default:
-					return;
 				}
-			}
-			if (msg->action == 12) {
-				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
-				FrancoisCall(&LogicManager::CONS_Francois_ExitComp, 0, 0, 0, 0);
+			} else if (getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime) {
+				getCharacter(kCharacterFrancois).clothes = 0;
+				getCharacter(kCharacterFrancois).walkStepSize = 30;
+				getCharacter(kCharacterFrancois).inventoryItem = 0;
+
+				if (whoRunningDialog(kCharacterFrancois))
+					fadeDialog(kCharacterFrancois);
+
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
+				FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
 			}
 		}
-		return;
-	}
-	if (msg->action == 5) {
+
+		break;
+	case 1:
+		getCharacter(kCharacterFrancois).inventoryItem = 0;
+
+		if (whoRunningDialog(kCharacterFrancois))
+			fadeDialog(kCharacterFrancois);
+
+		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+		FrancoisCall(&LogicManager::CONS_Francois_SaveGame, 2, kEventFrancoisWhistle, 0, 0);
+		break;
+	case 5:
 		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventFrancoisWhistle] && !_gameEvents[kEventFrancoisWhistleD] && !_gameEvents[kEventFrancoisWhistleNight] && !_gameEvents[kEventFrancoisWhistleNightD]) {
 			getCharacter(kCharacterFrancois).inventoryItem = 0x80;
 		}
-		return;
-	}
-	if (msg->action) {
-		if (msg->action == 1) {
+
+		break;
+	case 12:
+		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
+		FrancoisCall(&LogicManager::CONS_Francois_ExitComp, 0, 0, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterFrancois).clothes = 1;
+			getCharacter(kCharacterFrancois).walkStepSize = 100;
 			getCharacter(kCharacterFrancois).inventoryItem = 0;
-			if (whoRunningDialog(kCharacterFrancois))
-				fadeDialog(kCharacterFrancois);
-			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
-			FrancoisCall(&LogicManager::CONS_Francois_SaveGame, 2, kEventFrancoisWhistle, 0, 0);
-		}
-		return;
-	}
-	if (!whoRunningDialog(kCharacterFrancois)) {
-		if (!getCharacterCurrentParams(kCharacterFrancois)[8]) {
-			getCharacterCurrentParams(kCharacterFrancois)[8] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterFrancois)[5];
-			if (_currentGameSessionTicks + getCharacterCurrentParams(kCharacterFrancois)[5] == 0)
-				goto LABEL_18;
-		}
-		if (getCharacterCurrentParams(kCharacterFrancois)[8] < _currentGameSessionTicks) {
-			getCharacterCurrentParams(kCharacterFrancois)[8] = 0x7FFFFFFF;
-		LABEL_18:
-			switch (rnd(7)) {
-			case 0:
-				playDialog(kCharacterFrancois, "Fra1002A", -1, 0);
-				break;
-			case 1:
-				playDialog(kCharacterFrancois, "Fra1002B", -1, 0);
-				break;
-			case 2:
-				playDialog(kCharacterFrancois, "Fra1002C", -1, 0);
-				break;
-			case 3:
-				playDialog(kCharacterFrancois, "Fra1002D", -1, 0);
-				break;
-			case 4:
-				playDialog(kCharacterFrancois, "Fra1002E", -1, 0);
-				break;
-			case 5:
-			case 6:
-				playDialog(kCharacterFrancois, "Fra1002F", -1, 0);
-				break;
-			default:
-				break;
-			}
-			getCharacterCurrentParams(kCharacterFrancois)[5] = 15 * rnd(7);
-			getCharacterCurrentParams(kCharacterFrancois)[8] = 0;
-		}
-	}
-	if (!whoOnScreen(kCharacterFrancois) || !whoFacingCath(20))
-		getCharacter(kCharacterFrancois).inventoryItem = 0;
-	if (walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], getCharacterCurrentParams(kCharacterFrancois)[2])) {
-		getCharacterCurrentParams(kCharacterFrancois)[4] = 0;
-		if (getCharacterCurrentParams(kCharacterFrancois)[2] == 540) {
-			getCharacterCurrentParams(kCharacterFrancois)[1] = 4;
-			if (_gameProgress[kProgressChapter] != 1)
-				getCharacterCurrentParams(kCharacterFrancois)[1] = 3;
-			getCharacterCurrentParams(kCharacterFrancois)[2] = 9460;
-		} else {
 			getCharacterCurrentParams(kCharacterFrancois)[1] = 3;
 			getCharacterCurrentParams(kCharacterFrancois)[2] = 540;
-			getCharacterCurrentParams(kCharacterFrancois)[7] = 0;
-			getCharacterCurrentParams(kCharacterFrancois)[6] = 0;
-			send(kCharacterFrancois, kCharacterCond2, 225932896, 0);
-			send(kCharacterFrancois, kCharacterCond1, 225932896, 0);
-		}
-	}
-	if (!nearX(kCharacterFrancois, 2000, 500) || getCharacter(kCharacterFrancois).direction != 2)
-		goto LABEL_57;
-	if (checkLoc(kCharacterFrancois, kCarRedSleeping) && getCharacterCurrentParams(kCharacterFrancois)[7]) {
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
-		FrancoisCall(&LogicManager::CONS_Francois_DoSeqOtis, "605A", 0, 0, 0);
-		return;
-	}
-	if (checkLoc(kCharacterFrancois, kCarGreenSleeping) && getCharacterCurrentParams(kCharacterFrancois)[6]) {
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
-		FrancoisCall(&LogicManager::CONS_Francois_DoSeqOtis, "605A", 0, 0, 0);
-	} else {
-	LABEL_57:
-		if (_gameProgress[kProgressChapter] == 1) {
-			if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
-				(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
-				!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
-				if (getCharacter(kCharacterFrancois).direction == 2) {
-					send(kCharacterFrancois, kCharacterMadame, 202221040, 0);
-					getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
-					getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
-				} else if (getCharacterCurrentParams(kCharacterFrancois)[3] && nearChar(kCharacterFrancois, kCharacterMadame, 0x3E8)) {
-					send(kCharacterFrancois, kCharacterMadame, 168986720, 0);
-					getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
+			walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], 540);
+			getCharacterCurrentParams(kCharacterFrancois)[5] = 15 * rnd(7);
+			break;
+		case 2:
+			send(kCharacterFrancois, kCharacterCond2, 168253822, 0);
+
+			// fall through
+		case 3:
+			getCharacterCurrentParams(kCharacterFrancois)[4] = 0;
+			getCharacterCurrentParams(kCharacterFrancois)[1] = 4;
+			getCharacterCurrentParams(kCharacterFrancois)[2] = 9460;
+			getCharacter(kCharacterFrancois).characterPosition.position = 2088;
+			walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], getCharacterCurrentParams(kCharacterFrancois)[2]);
+
+			if (_gameProgress[kProgressChapter] == 1) {
+				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
+					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
+					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
+
+					if (getCharacter(kCharacterFrancois).direction == 2) {
+						send(kCharacterFrancois, kCharacterMadame, 202221040, 0);
+						getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
+						getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
+					} else if (getCharacterCurrentParams(kCharacterFrancois)[3] && nearChar(kCharacterFrancois, kCharacterMadame, 1000)) {
+						send(kCharacterFrancois, kCharacterMadame, 168986720, 0);
+						getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
+					}
+				}
+			} else if (getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime) {
+				getCharacter(kCharacterFrancois).clothes = 0;
+				getCharacter(kCharacterFrancois).walkStepSize = 30;
+				getCharacter(kCharacterFrancois).inventoryItem = 0;
+				if (whoRunningDialog(kCharacterFrancois))
+					fadeDialog(kCharacterFrancois);
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
+				FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
+			}
+
+			break;
+		case 4:
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 5;
+			FrancoisCall(&LogicManager::CONS_Francois_EnterComp, 0, 0, 0, 0);
+			break;
+		case 5:
+			getCharacter(kCharacterFrancois).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+			break;
+		case 6:
+			if (_gameProgress[kProgressJacket] == 2) {
+				if (!isNight()) {
+					if (getCharacter(kCharacterFrancois).characterPosition.position <= getCharacter(kCharacterCath).characterPosition.position) {
+						playNIS(kEventFrancoisWhistleD);
+					} else {
+						playNIS(kEventFrancoisWhistle);
+					}
+				} else if (getCharacter(kCharacterFrancois).characterPosition.position <= getCharacter(kCharacterCath).characterPosition.position) {
+					playNIS(kEventFrancoisWhistleNightD);
+				} else {
+					playNIS(kEventFrancoisWhistleNight);
 				}
 			}
-		} else if (getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime) {
-			getCharacter(kCharacterFrancois).clothes = 0;
-			getCharacter(kCharacterFrancois).walkStepSize = 30;
-			getCharacter(kCharacterFrancois).inventoryItem = 0;
-			if (whoRunningDialog(kCharacterFrancois))
-				fadeDialog(kCharacterFrancois);
-			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
-			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
+
+			if (getCharacter(kCharacterFrancois).direction == 1) {
+				bumpCathFx(getCharacter(kCharacterFrancois).characterPosition.car, getCharacter(kCharacterFrancois).characterPosition.position - 750);
+			} else {
+				bumpCathRx(getCharacter(kCharacterFrancois).characterPosition.car, getCharacter(kCharacterFrancois).characterPosition.position + 750);
+			}
+
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 102752636:
+		endGraphics(kCharacterFrancois);
+		getCharacter(kCharacterFrancois).characterPosition.location = 1;
+		getCharacter(kCharacterFrancois).characterPosition.position = 5790;
+		getCharacter(kCharacterFrancois).clothes = 0;
+		getCharacter(kCharacterFrancois).walkStepSize = 30;
+		getCharacter(kCharacterFrancois).inventoryItem = 0;
+
+		getCharacter(kCharacterFrancois).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+		fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+		break;
+	case 205346192:
+		if (msg->sender == 4) {
+			getCharacterCurrentParams(kCharacterFrancois)[7] = 1;
+		} else if (msg->sender == 3) {
+			getCharacterCurrentParams(kCharacterFrancois)[6] = 1;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -673,10 +797,12 @@ void LogicManager::CONS_Francois_TakeWalk(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_TakeWalk(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
 		FrancoisCall(&LogicManager::CONS_Francois_ExitComp, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
@@ -708,8 +834,12 @@ void LogicManager::HAND_Francois_TakeWalk(HAND_PARAMS) {
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -755,11 +885,15 @@ void LogicManager::HAND_Francois_HaremVisit(HAND_PARAMS) {
 		case 6:
 			getCharacter(kCharacterFrancois).characterPosition.location = 0;
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 7;
-			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 0x12E8, 0, 0);
+			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 4840, 0, 0);
 			break;
 		case 7:
-			if (cathHasItem(kItemWhistle) || _gameInventory[kItemWhistle].location == 3)
-				goto LABEL_20;
+			if (cathHasItem(kItemWhistle) || _gameInventory[kItemWhistle].location == 3) {
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 10;
+				FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
+				break;
+			}
+
 			startCycOtis(kCharacterFrancois, "605He");
 			softBlockAtDoor(kCharacterFrancois, 36);
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
@@ -777,7 +911,6 @@ void LogicManager::HAND_Francois_HaremVisit(HAND_PARAMS) {
 			break;
 		case 9:
 			softReleaseAtDoor(kCharacterFrancois, 36);
-		LABEL_20:
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 10;
 			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
 			break;
@@ -791,12 +924,15 @@ void LogicManager::HAND_Francois_HaremVisit(HAND_PARAMS) {
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
 		break;
 	case 190219584:
 		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
 		FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Ef", 6, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -817,12 +953,14 @@ void LogicManager::CONS_Francois_ChaseBeetle(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_ChaseBeetle(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterFrancois)[5], 12, "605H");
 		Common::strcat_s((char *)&getCharacterCurrentParams(kCharacterFrancois)[5], 12, (char *)&getCharacterCurrentParams(kCharacterFrancois)[2]);
 		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
 		FrancoisCall(&LogicManager::CONS_Francois_ExitComp, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
@@ -904,8 +1042,12 @@ void LogicManager::HAND_Francois_ChaseBeetle(HAND_PARAMS) {
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -920,10 +1062,12 @@ void LogicManager::CONS_Francois_FindCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_FindCath(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
 		FrancoisCall(&LogicManager::CONS_Francois_ExitComp, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
 		case 1:
 			if (getCharacter(kCharacterCath).characterPosition.position <= getCharacter(kCharacterFrancois).characterPosition.position) {
@@ -933,6 +1077,7 @@ void LogicManager::HAND_Francois_FindCath(HAND_PARAMS) {
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
 				FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 9460, 0, 0);
 			}
+
 			break;
 		case 2:
 		case 3:
@@ -952,20 +1097,28 @@ void LogicManager::HAND_Francois_FindCath(HAND_PARAMS) {
 			FrancoisCall(&LogicManager::CONS_Francois_DoWait, 900, 0, 0, 0);
 			break;
 		case 7:
-			if (!inComp(kCharacterMadame, kCarRedSleeping, 5790))
-				goto LABEL_15;
-			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
-			FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2012", 0, 0, 0);
+			if (!inComp(kCharacterMadame, kCarRedSleeping, 5790)) {
+				getCharacter(kCharacterFrancois).currentCall--;
+				_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+				fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+			} else {
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
+				FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2012", 0, 0, 0);
+			}
+
 			break;
 		case 8:
-		LABEL_15:
 			getCharacter(kCharacterFrancois).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -980,48 +1133,54 @@ void LogicManager::CONS_Francois_LetsGo(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_LetsGo(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterFrancois).characterPosition.location = 0;
-				getCharacter(kCharacterFrancois).characterPosition.position = 5890;
-				send(kCharacterFrancois, kCharacterMadame, 101107728, 0);
-				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
-				FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 5, 850, 0, 0);
-				break;
-			case 2:
-				endGraphics(kCharacterFrancois);
-				send(kCharacterFrancois, kCharacterMonsieur, 237889408, 0);
-				break;
-			case 3:
-				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
-				FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Id", 35, 0, 0);
-				break;
-			case 4:
-				setDoor(35, kCharacterCath, 2, 255, 255);
-				send(kCharacterFrancois, kCharacterMadame, 100957716, 0);
-				getCharacter(kCharacterFrancois).characterPosition.position = 5790;
-				getCharacter(kCharacterFrancois).characterPosition.location = 1;
-				endGraphics(kCharacterFrancois);
-
-				getCharacter(kCharacterFrancois).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
-				fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
-				break;
-			default:
-				return;
-			}
-		} else if (msg->action == 100901266) {
-			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
-			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
-		}
-	} else if (msg->action == 12) {
+	switch (msg->action) {
+	case 0:
+		getCharacter(kCharacterFrancois).characterPosition = getCharacter(kCharacterMonsieur).characterPosition;
+		break;
+	case 12:
 		setDoor(35, kCharacterCath, 0, 0, 0);
 		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
 		FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Cd", 35, 0, 0);
-	} else if (msg->action == 0) {
-		getCharacter(kCharacterFrancois).characterPosition = getCharacter(kCharacterMonsieur).characterPosition;
+		break;
+	case 18:
+		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterFrancois).characterPosition.location = 0;
+			getCharacter(kCharacterFrancois).characterPosition.position = 5890;
+			send(kCharacterFrancois, kCharacterMadame, 101107728, 0);
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
+			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 5, 850, 0, 0);
+			break;
+		case 2:
+			endGraphics(kCharacterFrancois);
+			send(kCharacterFrancois, kCharacterMonsieur, 237889408, 0);
+			break;
+		case 3:
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
+			FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Id", 35, 0, 0);
+			break;
+		case 4:
+			setDoor(35, kCharacterCath, 2, 255, 255);
+			send(kCharacterFrancois, kCharacterMadame, 100957716, 0);
+			getCharacter(kCharacterFrancois).characterPosition.position = 5790;
+			getCharacter(kCharacterFrancois).characterPosition.location = 1;
+			endGraphics(kCharacterFrancois);
+
+			getCharacter(kCharacterFrancois).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
+			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 100901266:
+		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
+		FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1036,15 +1195,21 @@ void LogicManager::CONS_Francois_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterFrancois).characterPosition.position = 5790;
-			getCharacter(kCharacterFrancois).characterPosition.location = 1;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
+			getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
+			CONS_Francois_StartPart1(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
-		getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
-		CONS_Francois_StartPart1(0, 0, 0, 0);
+
+		break;
+	case 12:
+		getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterFrancois).characterPosition.position = 5790;
+		getCharacter(kCharacterFrancois).characterPosition.location = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1059,13 +1224,22 @@ void LogicManager::CONS_Francois_StartPart1(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_StartPart1(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18 && getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1)
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1075500 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
+			getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
+			FrancoisCall(&LogicManager::CONS_Francois_Rampage, 1093500, 0, 0, 0);
+		}
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1)
 			CONS_Francois_InComp(0, 0, 0, 0);
-	} else if (_gameTime > 1075500 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
-		getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
-		FrancoisCall(&LogicManager::CONS_Francois_Rampage, 1093500, 0, 0, 0);
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1080,15 +1254,21 @@ void LogicManager::CONS_Francois_InComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_InComp(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 101107728) {
-			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
-			FrancoisCall(&LogicManager::CONS_Francois_LetsGo, 0, 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1161000 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
+			getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
+			FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1161000 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
-		getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
-		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
-		FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+
+		break;
+	case 101107728:
+		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
+		FrancoisCall(&LogicManager::CONS_Francois_LetsGo, 0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1103,11 +1283,15 @@ void LogicManager::CONS_Francois_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterFrancois).characterPosition.position = 5790;
 		getCharacter(kCharacterFrancois).characterPosition.location = 1;
 		endGraphics(kCharacterFrancois);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1122,17 +1306,20 @@ void LogicManager::CONS_Francois_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterFrancois);
-			getCharacter(kCharacterFrancois).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterFrancois).characterPosition.position = 4689;
-			getCharacter(kCharacterFrancois).characterPosition.location = 1;
-			getCharacter(kCharacterFrancois).clothes = 0;
-			getCharacter(kCharacterFrancois).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Francois_AtBreakfast(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterFrancois);
+		getCharacter(kCharacterFrancois).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterFrancois).characterPosition.position = 4689;
+		getCharacter(kCharacterFrancois).characterPosition.location = 1;
+		getCharacter(kCharacterFrancois).clothes = 0;
+		getCharacter(kCharacterFrancois).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1147,7 +1334,8 @@ void LogicManager::CONS_Francois_AtBreakfast(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_AtBreakfast(HAND_PARAMS) {
-	if (msg->action == 18) {
+	switch (msg->action) {
+	case 18:
 		if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1) {
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
 			FrancoisCall(&LogicManager::CONS_Francois_DoCorrOtis, "605Id", 35, 0, 0);
@@ -1159,9 +1347,14 @@ void LogicManager::HAND_Francois_AtBreakfast(HAND_PARAMS) {
 			endGraphics(kCharacterFrancois);
 			CONS_Francois_WithMama(0, 0, 0, 0);
 		}
-	} else if (msg->action == 100901266) {
+
+		break;
+	case 100901266:
 		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
 		FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1176,103 +1369,243 @@ void LogicManager::CONS_Francois_WithMama(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if ((_gameEvents[kEventFrancoisShowBeetle] || _gameEvents[kEventFrancoisShowBeetleD]) &&
 			!_gameEvents[kEventFrancoisTradeWhistle] && !_gameEvents[kEventFrancoisTradeWhistleD]) {
 			getCharacterParams(kCharacterFrancois, 8)[0] = 1;
 		}
+
 		if (getCharacterParams(kCharacterFrancois, 8)[0] && cathInCorridor(kCarRedSleeping)) {
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
 			FrancoisCall(&LogicManager::CONS_Francois_FindCath, 0, 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_17:
+
 		if (_gameTime > 1764000 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
 			getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
 			FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2011", 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_20:
+
 		if (_gameTime > 1800000 && !getCharacterCurrentParams(kCharacterFrancois)[1]) {
 			getCharacterCurrentParams(kCharacterFrancois)[1] = 1;
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
 			FrancoisCall(&LogicManager::CONS_Francois_HaremVisit, 0, 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_23:
+
 		if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
 			if (_gameTime > 1768500 && !getCharacterCurrentParams(kCharacterFrancois)[2]) {
 				getCharacterCurrentParams(kCharacterFrancois)[2] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
 				FrancoisCall(&LogicManager::CONS_Francois_Rampage, 1773000, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_28:
+
 			if (_gameTime > 1827000 && !getCharacterCurrentParams(kCharacterFrancois)[3]) {
 				getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 5;
 				FrancoisCall(&LogicManager::CONS_Francois_Rampage, 1831500, 0, 0, 0);
-				return;
+				break;
 			}
 		}
-	LABEL_31:
+
 		if (_gameInventory[kItemBeetle].location != 3) {
 			cathHasItem(kItemWhistle);
-			return;
+			break;
 		}
+
 		if (getCharacterCurrentParams(kCharacterFrancois)[4] != 2147483647 && _gameTime) {
-			if (_gameTime > 15803100)
-				goto LABEL_39;
-			if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[4]) {
-				getCharacterCurrentParams(kCharacterFrancois)[4] = _gameTime + 75;
-				if (_gameTime == -75)
-					goto LABEL_40;
-			}
-			if (getCharacterCurrentParams(kCharacterFrancois)[4] < _gameTime) {
-			LABEL_39:
+			if (_gameTime > 15803100) {
 				getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
-			LABEL_40:
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
 				FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
-				return;
+				break;
+			}
+
+			if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[4]) {
+				getCharacterCurrentParams(kCharacterFrancois)[4] = _gameTime + 75;
+				if (_gameTime == -75) {
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+					FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+					break;
+				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterFrancois)[4] < _gameTime) {
+				getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+				FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+				break;
 			}
 		}
-	LABEL_14:
-		if (_gameTime <= 1782000 || getCharacterCurrentParams(kCharacterFrancois)[5]) {
-		LABEL_41:
+
+		if (_gameTime > 1782000 && !getCharacterCurrentParams(kCharacterFrancois)[5]) {
+			getCharacterCurrentParams(kCharacterFrancois)[5] = 1;
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 7;
+			FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
+			break;
+		}
+
+		if (_gameTime > 1813500 && !getCharacterCurrentParams(kCharacterFrancois)[6]) {
+			getCharacterCurrentParams(kCharacterFrancois)[6] = 1;
+			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
+			FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 34, 6470, "c", 0);
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
+		case 1:
+			if (_gameTime > 1764000 && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
+				getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
+				FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2011", 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 2:
+			if (_gameTime > 1800000 && !getCharacterCurrentParams(kCharacterFrancois)[1]) {
+				getCharacterCurrentParams(kCharacterFrancois)[1] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
+				FrancoisCall(&LogicManager::CONS_Francois_HaremVisit, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
+				if (_gameTime > 1768500 && !getCharacterCurrentParams(kCharacterFrancois)[2]) {
+					getCharacterCurrentParams(kCharacterFrancois)[2] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
+					FrancoisCall(&LogicManager::CONS_Francois_Rampage, 1773000, 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1827000 && !getCharacterCurrentParams(kCharacterFrancois)[3]) {
+					getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 5;
+					FrancoisCall(&LogicManager::CONS_Francois_Rampage, 1831500, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (_gameInventory[kItemBeetle].location != 3) {
+				cathHasItem(kItemWhistle);
+				break;
+			}
+
+			if (getCharacterCurrentParams(kCharacterFrancois)[4] != 2147483647 && _gameTime) {
+				if (_gameTime > 15803100) {
+					getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+					FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+					break;
+				}
+
+				if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[4]) {
+					getCharacterCurrentParams(kCharacterFrancois)[4] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterFrancois)[4] < _gameTime) {
+					getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+					FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+					break;
+				}
+			}
+
+			if (_gameTime > 1782000 && !getCharacterCurrentParams(kCharacterFrancois)[5]) {
+				getCharacterCurrentParams(kCharacterFrancois)[5] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 7;
+				FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
+				break;
+			}
+
 			if (_gameTime > 1813500 && !getCharacterCurrentParams(kCharacterFrancois)[6]) {
 				getCharacterCurrentParams(kCharacterFrancois)[6] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
 				FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 34, 6470, "c", 0);
 			}
-		} else {
-			getCharacterCurrentParams(kCharacterFrancois)[5] = 1;
-			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 7;
-			FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
-		}
-		return;
-	}
-	if (msg->action == 18) {
-		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
-		case 1:
-			goto LABEL_17;
-		case 2:
-			goto LABEL_20;
-		case 3:
-			goto LABEL_23;
+
+			break;
 		case 4:
-			goto LABEL_28;
+			if (_gameTime > 1827000 && !getCharacterCurrentParams(kCharacterFrancois)[3]) {
+				getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 5;
+				FrancoisCall(&LogicManager::CONS_Francois_Rampage, 1831500, 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 5:
-			goto LABEL_31;
+			if (_gameInventory[kItemBeetle].location != 3) {
+				cathHasItem(kItemWhistle);
+				break;
+			}
+
+			if (getCharacterCurrentParams(kCharacterFrancois)[4] != 2147483647 && _gameTime) {
+				if (_gameTime > 15803100) {
+					getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+					FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+					break;
+				}
+
+				if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[4]) {
+					getCharacterCurrentParams(kCharacterFrancois)[4] = _gameTime + 75;
+					if (_gameTime == -75) {
+						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterFrancois)[4] < _gameTime) {
+					getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+					FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+					break;
+				}
+			}
+
+			// fall through
 		case 6:
-			_gameProgress[kProgressField9C] = 1;
-			goto LABEL_14;
+			if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 6) {
+				_gameProgress[kProgressField9C] = 1;
+			}
+
+			if (_gameTime > 1782000 && !getCharacterCurrentParams(kCharacterFrancois)[5]) {
+				getCharacterCurrentParams(kCharacterFrancois)[5] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 7;
+				FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
+				break;
+			}
+
+			// fall through
 		case 7:
-			goto LABEL_41;
+			if (_gameTime > 1813500 && !getCharacterCurrentParams(kCharacterFrancois)[6]) {
+				getCharacterCurrentParams(kCharacterFrancois)[6] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
+				FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 34, 6470, "c", 0);
+			}
+
+			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1287,17 +1620,20 @@ void LogicManager::CONS_Francois_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterFrancois);
-			getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterFrancois).characterPosition.position = 5790;
-			getCharacter(kCharacterFrancois).characterPosition.location = 1;
-			getCharacter(kCharacterFrancois).clothes = 0;
-			getCharacter(kCharacterFrancois).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Francois_InPart3(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterFrancois);
+		getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterFrancois).characterPosition.position = 5790;
+		getCharacter(kCharacterFrancois).characterPosition.location = 1;
+		getCharacter(kCharacterFrancois).clothes = 0;
+		getCharacter(kCharacterFrancois).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1312,172 +1648,380 @@ void LogicManager::CONS_Francois_InPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
-	if (msg->action > 18) {
-		switch (msg->action) {
-		case 101107728:
-			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
-			FrancoisCall(&LogicManager::CONS_Francois_LetsGo, 0, 0, 0, 0);
-			break;
-		case 189872836:
-			getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
-			break;
-		case 190390860:
-			getCharacterCurrentParams(kCharacterFrancois)[0] = 0;
-			break;
-		}
-	} else if (msg->action == 18) {
-		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
-		case 1:
-			getCharacterCurrentParams(kCharacterFrancois)[1] = 1;
-			break;
-		case 2:
-			goto LABEL_26;
-		case 3:
-			goto LABEL_29;
-		case 4:
-			goto LABEL_32;
-		case 5:
-			goto LABEL_35;
-		case 6:
-			goto LABEL_38;
-		case 7:
-			goto LABEL_41;
-		case 8:
-			goto LABEL_44;
-		case 9:
-			goto LABEL_47;
-		case 10:
-			goto LABEL_52;
-		case 11:
-			goto LABEL_55;
-		case 12:
-			_gameProgress[kProgressField9C] = 1;
-			goto LABEL_23;
-		case 13:
-			goto LABEL_65;
-		case 14:
-			goto LABEL_68;
-		default:
-			return;
-		}
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if ((_gameEvents[kEventFrancoisShowBeetle] || _gameEvents[kEventFrancoisShowBeetleD]) && !_gameEvents[kEventFrancoisTradeWhistle] && !_gameEvents[kEventFrancoisTradeWhistleD]) {
 			getCharacterParams(kCharacterFrancois, 8)[0] = 1;
 		}
+
 		if (getCharacterCurrentParams(kCharacterFrancois)[1] && inComp(kCharacterMadame, kCarRedSleeping, 5790) && !getCharacterCurrentParams(kCharacterFrancois)[0]) {
 			if (getCharacterParams(kCharacterFrancois, 8)[0] && cathInCorridor(kCarRedSleeping)) {
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 2;
 				FrancoisCall(&LogicManager::CONS_Francois_FindCath, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_26:
+
 			if (_gameTime > 2025000 && !getCharacterCurrentParams(kCharacterFrancois)[2]) {
 				getCharacterCurrentParams(kCharacterFrancois)[2] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
 				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_29:
+
 			if (_gameTime > 2052000 && !getCharacterCurrentParams(kCharacterFrancois)[3]) {
 				getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
 				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_32:
+
 			if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterFrancois)[4]) {
 				getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 5;
 				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_35:
+
 			if (_gameTime > 2092500 && !getCharacterCurrentParams(kCharacterFrancois)[5]) {
 				getCharacterCurrentParams(kCharacterFrancois)[5] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
 				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_38:
+
 			if (_gameTime > 2173500 && !getCharacterCurrentParams(kCharacterFrancois)[6]) {
 				getCharacterCurrentParams(kCharacterFrancois)[6] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 7;
 				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_41:
+
 			if (_gameTime > 2182500 && !getCharacterCurrentParams(kCharacterFrancois)[7]) {
 				getCharacterCurrentParams(kCharacterFrancois)[7] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
 				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_44:
+
 			if (_gameTime > 2241000 && !getCharacterCurrentParams(kCharacterFrancois)[8]) {
 				getCharacterCurrentParams(kCharacterFrancois)[8] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 9;
 				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_47:
+
 			if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
 				if (_gameTime > 2011500 && !getCharacterCurrentParams(kCharacterFrancois)[9]) {
 					getCharacterCurrentParams(kCharacterFrancois)[9] = 1;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 10;
 					FrancoisCall(&LogicManager::CONS_Francois_Rampage, 2016000, 0, 0, 0);
-					return;
+					break;
 				}
-			LABEL_52:
+
 				if (_gameTime > 2115000 && !getCharacterCurrentParams(kCharacterFrancois)[10]) {
 					getCharacterCurrentParams(kCharacterFrancois)[10] = 1;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 11;
 					FrancoisCall(&LogicManager::CONS_Francois_Rampage, 2119500, 0, 0, 0);
-					return;
+					break;
 				}
 			}
-		LABEL_55:
+
 			if (_gameInventory[kItemBeetle].location == 3) {
 				if (getCharacterCurrentParams(kCharacterFrancois)[11] != 0x7FFFFFFF && _gameTime) {
-					if (_gameTime > 15803100)
-						goto LABEL_63;
-					if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[11]) {
-						getCharacterCurrentParams(kCharacterFrancois)[11] = _gameTime + 75;
-						if (_gameTime == -75)
-							goto LABEL_64;
-					}
-					if (getCharacterCurrentParams(kCharacterFrancois)[11] < _gameTime) {
-					LABEL_63:
+					if (_gameTime > 15803100) {
 						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
-					LABEL_64:
 						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
 						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
-						return;
+						break;
+					}
+
+					if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[11]) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = _gameTime + 75;
+						if (_gameTime == -75) {
+							getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+							FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterFrancois)[11] < _gameTime) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
+						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+						break;
 					}
 				}
-			LABEL_23:
-				if (_gameTime <= 2040300 || getCharacterCurrentParams(kCharacterFrancois)[12]) {
-				LABEL_65:
-					if (_gameTime <= 2146500 || getCharacterCurrentParams(kCharacterFrancois)[13]) {
-					LABEL_68:
-						if (_gameTime > 2218500 && !getCharacterCurrentParams(kCharacterFrancois)[14]) {
-							getCharacterCurrentParams(kCharacterFrancois)[14] = 1;
-							getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 15;
-							FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 33, 7500, "b", 0);
-						}
-					} else {
-						getCharacterCurrentParams(kCharacterFrancois)[13] = 1;
-						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 14;
-						FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
-					}
-				} else {
+
+				if (_gameTime > 2040300 && !getCharacterCurrentParams(kCharacterFrancois)[12]) {
 					getCharacterCurrentParams(kCharacterFrancois)[12] = 1;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 13;
 					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 36, 4840, "e", 0);
+					break;
+				}
+
+				if (_gameTime > 2146500 && !getCharacterCurrentParams(kCharacterFrancois)[13]) {
+					getCharacterCurrentParams(kCharacterFrancois)[13] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 14;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
+					break;
+				}
+
+				if (_gameTime > 2218500 && !getCharacterCurrentParams(kCharacterFrancois)[14]) {
+					getCharacterCurrentParams(kCharacterFrancois)[14] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 15;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 33, 7500, "b", 0);
+					break;
 				}
 			} else {
 				cathHasItem(kItemWhistle);
 			}
 		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
+		case 1:
+			getCharacterCurrentParams(kCharacterFrancois)[1] = 1;
+			break;
+		case 2:
+			if (_gameTime > 2025000 && !getCharacterCurrentParams(kCharacterFrancois)[2]) {
+				getCharacterCurrentParams(kCharacterFrancois)[2] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
+				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (_gameTime > 2052000 && !getCharacterCurrentParams(kCharacterFrancois)[3]) {
+				getCharacterCurrentParams(kCharacterFrancois)[3] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
+				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 4:
+			if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterFrancois)[4]) {
+				getCharacterCurrentParams(kCharacterFrancois)[4] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 5;
+				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 5:
+			if (_gameTime > 2092500 && !getCharacterCurrentParams(kCharacterFrancois)[5]) {
+				getCharacterCurrentParams(kCharacterFrancois)[5] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
+				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 6:
+			if (_gameTime > 2173500 && !getCharacterCurrentParams(kCharacterFrancois)[6]) {
+				getCharacterCurrentParams(kCharacterFrancois)[6] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 7;
+				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 7:
+			if (_gameTime > 2182500 && !getCharacterCurrentParams(kCharacterFrancois)[7]) {
+				getCharacterCurrentParams(kCharacterFrancois)[7] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 8;
+				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 8:
+			if (_gameTime > 2241000 && !getCharacterCurrentParams(kCharacterFrancois)[8]) {
+				getCharacterCurrentParams(kCharacterFrancois)[8] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 9;
+				FrancoisCall(&LogicManager::CONS_Francois_TakeWalk, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 9:
+			if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
+				if (_gameTime > 2011500 && !getCharacterCurrentParams(kCharacterFrancois)[9]) {
+					getCharacterCurrentParams(kCharacterFrancois)[9] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 10;
+					FrancoisCall(&LogicManager::CONS_Francois_Rampage, 2016000, 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 2115000 && !getCharacterCurrentParams(kCharacterFrancois)[10]) {
+					getCharacterCurrentParams(kCharacterFrancois)[10] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 11;
+					FrancoisCall(&LogicManager::CONS_Francois_Rampage, 2119500, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (_gameInventory[kItemBeetle].location == 3) {
+				if (getCharacterCurrentParams(kCharacterFrancois)[11] != 0x7FFFFFFF && _gameTime) {
+					if (_gameTime > 15803100) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
+						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+						break;
+					}
+
+					if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[11]) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = _gameTime + 75;
+						if (_gameTime == -75) {
+							getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+							FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterFrancois)[11] < _gameTime) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
+						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+						break;
+					}
+				}
+
+				if (_gameTime > 2040300 && !getCharacterCurrentParams(kCharacterFrancois)[12]) {
+					getCharacterCurrentParams(kCharacterFrancois)[12] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 13;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 36, 4840, "e", 0);
+					break;
+				}
+
+				if (_gameTime > 2146500 && !getCharacterCurrentParams(kCharacterFrancois)[13]) {
+					getCharacterCurrentParams(kCharacterFrancois)[13] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 14;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
+					break;
+				}
+
+				if (_gameTime > 2218500 && !getCharacterCurrentParams(kCharacterFrancois)[14]) {
+					getCharacterCurrentParams(kCharacterFrancois)[14] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 15;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 33, 7500, "b", 0);
+					break;
+				}
+			} else {
+				cathHasItem(kItemWhistle);
+			}
+
+			break;
+		case 10:
+			if (_gameTime > 2115000 && !getCharacterCurrentParams(kCharacterFrancois)[10]) {
+				getCharacterCurrentParams(kCharacterFrancois)[10] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 11;
+				FrancoisCall(&LogicManager::CONS_Francois_Rampage, 2119500, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 11:
+			if (_gameInventory[kItemBeetle].location == 3) {
+				if (getCharacterCurrentParams(kCharacterFrancois)[11] != 0x7FFFFFFF && _gameTime) {
+					if (_gameTime > 15803100) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
+						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+						break;
+					}
+
+					if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) || !getCharacterCurrentParams(kCharacterFrancois)[11]) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = _gameTime + 75;
+						if (_gameTime == -75) {
+							getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+							FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterFrancois)[11] < _gameTime) {
+						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
+						getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 12;
+						FrancoisCall(&LogicManager::CONS_Francois_DoDialog, "Fra2010", 0, 0, 0);
+						break;
+					}
+				}
+
+				if (_gameTime > 2040300 && !getCharacterCurrentParams(kCharacterFrancois)[12]) {
+					getCharacterCurrentParams(kCharacterFrancois)[12] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 13;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 36, 4840, "e", 0);
+					break;
+				}
+
+				if (_gameTime > 2146500 && !getCharacterCurrentParams(kCharacterFrancois)[13]) {
+					getCharacterCurrentParams(kCharacterFrancois)[13] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 14;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
+					break;
+				}
+
+				if (_gameTime > 2218500 && !getCharacterCurrentParams(kCharacterFrancois)[14]) {
+					getCharacterCurrentParams(kCharacterFrancois)[14] = 1;
+					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 15;
+					FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 33, 7500, "b", 0);
+					break;
+				}
+			} else {
+				cathHasItem(kItemWhistle);
+			}
+
+			break;
+		case 12:
+			if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 12) {
+				_gameProgress[kProgressField9C] = 1;
+			}
+
+			if (_gameTime > 2040300 && !getCharacterCurrentParams(kCharacterFrancois)[12]) {
+				getCharacterCurrentParams(kCharacterFrancois)[12] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 13;
+				FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 36, 4840, "e", 0);
+				break;
+			}
+
+			// fall through
+		case 13:
+			if (_gameTime > 2146500 && !getCharacterCurrentParams(kCharacterFrancois)[13]) {
+				getCharacterCurrentParams(kCharacterFrancois)[13] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 14;
+				FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 37, 4070, "f", 0);
+				break;
+			}
+
+			// fall through
+		case 14:
+			if (_gameTime > 2218500 && !getCharacterCurrentParams(kCharacterFrancois)[14]) {
+				getCharacterCurrentParams(kCharacterFrancois)[14] = 1;
+				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 15;
+				FrancoisCall(&LogicManager::CONS_Francois_ChaseBeetle, 33, 7500, "b", 0);
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 101107728:
+		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
+		FrancoisCall(&LogicManager::CONS_Francois_LetsGo, 0, 0, 0, 0);
+		break;
+	case 189872836:
+		getCharacterCurrentParams(kCharacterFrancois)[0] = 1;
+		break;
+	case 190390860:
+		getCharacterCurrentParams(kCharacterFrancois)[0] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1492,17 +2036,20 @@ void LogicManager::CONS_Francois_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterFrancois);
-			getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterFrancois).characterPosition.position = 5790;
-			getCharacter(kCharacterFrancois).characterPosition.location = 1;
-			getCharacter(kCharacterFrancois).clothes = 0;
-			getCharacter(kCharacterFrancois).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Francois_InPart4(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterFrancois);
+		getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterFrancois).characterPosition.position = 5790;
+		getCharacter(kCharacterFrancois).characterPosition.location = 1;
+		getCharacter(kCharacterFrancois).clothes = 0;
+		getCharacter(kCharacterFrancois).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1517,9 +2064,13 @@ void LogicManager::CONS_Francois_InPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_InPart4(HAND_PARAMS) {
-	if (msg->action == 101107728) {
+	switch (msg->action) {
+	case 101107728:
 		getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 1;
 		FrancoisCall(&LogicManager::CONS_Francois_LetsGo, 0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1534,17 +2085,20 @@ void LogicManager::CONS_Francois_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterFrancois);
-			getCharacter(kCharacterFrancois).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterFrancois).characterPosition.position = 3969;
-			getCharacter(kCharacterFrancois).characterPosition.location = 1;
-			getCharacter(kCharacterFrancois).clothes = 0;
-			getCharacter(kCharacterFrancois).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Francois_Prisoner(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterFrancois);
+		getCharacter(kCharacterFrancois).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterFrancois).characterPosition.position = 3969;
+		getCharacter(kCharacterFrancois).characterPosition.location = 1;
+		getCharacter(kCharacterFrancois).clothes = 0;
+		getCharacter(kCharacterFrancois).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1559,10 +2113,15 @@ void LogicManager::CONS_Francois_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068) {
+	switch (msg->action) {
+	case 70549068:
 		if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3)
 			dropItem(kItemWhistle, 1);
+
 		CONS_Francois_Hiding(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1577,14 +2136,19 @@ void LogicManager::CONS_Francois_Hiding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Francois_Hiding(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterFrancois).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterFrancois).characterPosition.position = 5790;
 		getCharacter(kCharacterFrancois).characterPosition.location = 1;
 		getCharacter(kCharacterFrancois).clothes = 0;
 		getCharacter(kCharacterFrancois).inventoryItem = 0;
-	} else if (msg->action == 135800432) {
+		break;
+	case 135800432:
 		CONS_Francois_Disappear(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
