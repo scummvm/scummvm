@@ -78,6 +78,7 @@ MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, Ma
 	_bbox.bottom = (_screen->h + height) / 2;
 
 	_pressedButton = -1;
+	_mouseOverButton = -1;
 
 	_mouseOverPressedButton = false;
 
@@ -220,15 +221,22 @@ int MacDialog::matchButton(int x, int y) {
 }
 
 void MacDialog::mouseMove(int x, int y) {
-	if (_pressedButton != -1) {
-		int match = matchButton(x, y);
+	int match = matchButton(x, y);
 
+	if (_pressedButton != -1) {
 		if (_mouseOverPressedButton && match != _pressedButton) {
 			_mouseOverPressedButton = false;
 			_needsRedraw = true;
 		} else if (!_mouseOverPressedButton && match == _pressedButton) {
 			_mouseOverPressedButton = true;
 			_needsRedraw = true;
+		}
+	}
+
+	if (_mouseOverButton != match) {
+		_mouseOverButton = match;
+		if (match != -1) {
+			_wm->sayText(_buttons->operator[](match)->text);
 		}
 	}
 }
