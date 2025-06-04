@@ -151,10 +151,10 @@ bool Console::cmdInterface(int argc, const char **argv) {
 bool Console::cmdMusic(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("music <name>\n");
-		midi_play("ripthem1", 255, 0, -1, 999);
+		midi_play("ripthem1", 255, false, -1, 999);
 		return true;
 	} else {
-		midi_play(argv[1], 255, 0, -1, 999);
+		midi_play(argv[1], 255, false, -1, 999);
 		return false;
 	}
 }

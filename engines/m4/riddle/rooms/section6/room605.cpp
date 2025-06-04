@@ -800,7 +800,7 @@ bool Room605::parserMisc() {
 	switch (_G(kernel).trigger) {
 	case 555:
 		digi_stop(1);
-		midi_play("tensions", 255, 1, -1, 949);
+		midi_play("tensions", 255, true, -1, 949);
 		adv_kill_digi_between_rooms(false);
 		digi_play_loop("950_s28", 3, 90);
 		_G(game).setRoom(610);

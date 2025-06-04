@@ -133,7 +133,7 @@ void Room604::init() {
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V203] == 8)
-			midi_play("tensions", 255, 1, -1, 949);
+			midi_play("tensions", 255, true, -1, 949);
 
 		_shedDoor = series_show("SHED DOOR OPENS", 0xf00, 16);
 

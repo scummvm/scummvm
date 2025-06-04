@@ -1838,7 +1838,7 @@ void Room303::conv303a() {
 		} else if (who == 1) {
 			if ((node == 0 && entry != 0) || (node == 0 && entry == 1)) {
 				if (!_lonelyFlag) {
-					midi_play("ppstreet", 140, 1, -1, 949);
+					midi_play("ppstreet", 140, true, -1, 949);
 				}
 			}
 
@@ -1908,7 +1908,7 @@ void Room303::conv303b() {
 		} else if (who == 1) {
 			if ((node == 0 && entry == 0) || (node == 0 && entry == 1)) {
 				if (!_lonelyFlag) {
-					midi_play("lonelyme", 140, 1, -1, 949);
+					midi_play("lonelyme", 140, true, -1, 949);
 					_lonelyFlag = true;
 				}
 			}

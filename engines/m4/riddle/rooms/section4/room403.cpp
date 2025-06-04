@@ -1315,7 +1315,7 @@ void Room403::daemon() {
 		break;
 
 	case 322:
-		midi_play("DANZIG1", 255, 1, -1, 949);
+		midi_play("DANZIG1", 255, true, -1, 949);
 		sendWSMessage_120000(-1);
 		terminateMachineAndNull(_wolfie);
 
@@ -1393,7 +1393,7 @@ void Room403::daemon() {
 			triggerMachineByHashCallback, "Turtle POPUP");
 		sendWSMessage_10000(1, _wolfJustSo, _turtlePopup, 1, 46, -1,
 			_turtlePopup, 46, 46, 0);
-		midi_play("turtle", 255, 1, -1, 949);
+		midi_play("turtle", 255, true, -1, 949);
 		_ripleyMode = 1020;
 		_ripleyShould = 1330;
 		kernel_timing_trigger(1, 102);
@@ -1811,7 +1811,7 @@ void Room403::conv403a() {
 			case 17:
 				if (entry == 1) {
 					_val5 = 1;
-					midi_play("DANZIG1", 255, 1, -1, 949);
+					midi_play("DANZIG1", 255, true, -1, 949);
 				}
 
 				_wolfShould = 2250;

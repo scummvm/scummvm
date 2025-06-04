@@ -1064,7 +1064,7 @@ void Room608::daemon() {
 			487, 293, 9, triggerMachineByHashCallback3000, "ow walker");
 		sendWSMessage_10000(_ol, 417, 295, 9, 549, 0);
 		kernel_timing_trigger(300, 551);
-		midi_play("eastiswo", 255, 1, -1, 949);
+		midi_play("eastiswo", 255, true, -1, 949);
 		_G(player).disable_hyperwalk = true;
 		break;
 
@@ -1375,7 +1375,7 @@ void Room608::daemon() {
 		break;
 
 	case 771:
-		midi_play("thelook", 255, 0, -1, 949);
+		midi_play("thelook", 255, false, -1, 949);
 		break;
 
 	case 773:
@@ -1807,7 +1807,7 @@ void Room608::conv608a() {
 	} else if (sound) {
 		if (who <= 0) {
 			if (node == 4 && entry == 0)
-				midi_play("eastiswo", 255, 0, -1, 949);
+				midi_play("eastiswo", 255, false, -1, 949);
 			if ((node == 2 && entry == 1) || (node == 3 && entry == 2))
 				_oldShould = 7;
 			else if ((node == 2 && entry == 0) || (node == 3 && entry == 1))

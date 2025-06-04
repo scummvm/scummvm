@@ -529,7 +529,7 @@ void Room407::init() {
 		player_set_commands_allowed(true);
 
 	} else if (!_G(kittyScreaming)) {
-		midi_play("DRAMA1", 255, 0, -1, 949);
+		midi_play("DRAMA1", 255, false, -1, 949);
 		_ripEnters = series_load("407 RIP ENTERS");
 		_stair = series_load("407STAIR");
 		ws_demand_location(_G(my_walker), 250, 331, 3);
@@ -960,7 +960,7 @@ void Room407::daemon() {
 		hotspot_set_active("PERIODIC TABLE ", true);
 		_periodicTableState = 1120;
 
-		midi_play("EMERALD", 255, 0, 194, 949);
+		midi_play("EMERALD", 255, false, 194, 949);
 		kernel_examine_inventory_object("PING EMERALD/CORK",
 			_G(master_palette), 5, 1, 50, 200, 195, nullptr, -1);
 		break;

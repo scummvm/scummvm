@@ -605,7 +605,7 @@ void Room203::daemon() {
 		break;
 
 	case 66:
-		midi_play("HELMET", 255, 1, -1, 949);
+		midi_play("HELMET", 255, true, -1, 949);
 		break;
 
 	case 67:

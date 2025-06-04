@@ -80,7 +80,7 @@ void Room504::init() {
 	default:
 		player_set_commands_allowed(false);
 		ws_demand_location(_G(my_walker), 50, 226, 3);
-		midi_play("MOCAMO", 200, 0, -1, 949);
+		midi_play("MOCAMO", 200, false, -1, 949);
 
 		if (player_been_here(504)) {
 			inv_give_to_player("ROPE");

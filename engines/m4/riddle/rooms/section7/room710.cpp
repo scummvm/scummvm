@@ -125,7 +125,7 @@ void Room710::init() {
 	}
 
 	if (player_been_here(710))
-		midi_play("drama1", 127, 0, -1, 949);
+		midi_play("drama1", 127, false, -1, 949);
 
 	digi_play_loop("950_s41", 3, 255, -1, -1);
 }

@@ -36,7 +36,7 @@ private:
 public:
 	Midi(Audio::Mixer *mixer);
 
-	void midi_play(const char *name, int volume, int loop, int trigger, int roomNum);
+	void midi_play(const char *name, int volume, bool loop, int trigger, int roomNum);
 	void task();
 	void loop();
 	void set_overall_volume(int vol);
@@ -45,7 +45,7 @@ public:
 
 } // namespace Sound
 
-void midi_play(const char *name, int volume, int loop, int trigger, int roomNum);
+void midi_play(const char *name, int volume, bool loop, int trigger, int roomNum);
 void midi_loop();
 void midi_stop();
 void midi_set_overall_volume(int vol);

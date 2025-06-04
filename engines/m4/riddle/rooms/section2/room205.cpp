@@ -43,7 +43,7 @@ static const int16 SHADOW_DIRS2[] = {250, -1};
 static const char *SHADOW_NAMES2[] = {"shen guo shadow 12"};
 
 void Room205::init() {
-	midi_play("vines", 0, -1, -1, 949);
+	midi_play("vines", 0, true, -1, 949);
 	_ripTrekMedReachHandPos1Series = series_load("RIP TREK MED REACH HAND POS1", -1, nullptr);
 	_ripTrekLowReacherPos5Series = series_load("RIP TREK LOW REACHER POS5", -1, nullptr);
 	_ripTrekLowReachPos2Series = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
@@ -1307,7 +1307,7 @@ void Room205::daemon() {
 		break;
 
 	case 580:
-		midi_play("suspens2", 255, 0, 581, 949);
+		midi_play("suspens2", 255, false, 581, 949);
 		_205GunPointedMach = series_play("205 GUN POINTED", 0, 16, 582, 5, 0, 100, 0, 0, 0, 4);
 		break;
 
@@ -1555,7 +1555,7 @@ void Room205::daemon() {
 
 	case 1000:
 		_G(flags)[V029] = 1;
-		midi_play("vines", 191, -1, -1, 949);
+		midi_play("vines", 191, true, -1, 949);
 		digi_preload("205_s09", -1);
 		digi_preload("205_s10", -1);
 		digi_preload("205_s11", -1);

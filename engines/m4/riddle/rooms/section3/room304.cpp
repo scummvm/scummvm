@@ -60,7 +60,7 @@ void Room304::init() {
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V001])
-			midi_play("thinker2", 255, 1, -1, 949);
+			midi_play("thinker2", 255, true, -1, 949);
 
 		if (_G(flags)[V084] == 2 || player_been_here(201))
 			_sword = series_show_sprite("one frame sword", 0, 0xa00);
@@ -157,7 +157,7 @@ void Room304::daemon() {
 		break;
 
 	case 60:
-		midi_play("thinker2", 255, 1, -1, 949);
+		midi_play("thinker2", 255, true, -1, 949);
 		break;
 
 	default:

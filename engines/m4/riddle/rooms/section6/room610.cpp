@@ -78,7 +78,7 @@ void Room610::init() {
 
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
-		midi_play("tensions", 255, 1, -1, 949);
+		midi_play("tensions", 255, true, -1, 949);
 
 		if (_flag1)
 			ws_demand_location(_G(my_walker), 615, 364, 10);

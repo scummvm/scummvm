@@ -1264,7 +1264,7 @@ void Room402::daemon() {
 	case 300:
 		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 18, 302,
 			_wolfClippersDown, 18, 18, 0);
-		midi_play("DANZIG1", 1, 255, -1, 949);
+		midi_play("DANZIG1", 255, true, -1, 949);
 		break;
 
 	case 302:

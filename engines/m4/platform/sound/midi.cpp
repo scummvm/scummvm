@@ -43,18 +43,22 @@ Midi::Midi(Audio::Mixer *mixer) : _mixer(mixer) {
 	}
 }
 
-void Midi::midi_play(const char *name, int volume, int loop, int trigger, int roomNum) {
-	MemHandle workHandle;
-	int32 assetSize;
-
+void Midi::midi_play(const char *name, int volume, bool loop, int trigger, int roomNum) {
 	_midiEndTrigger = trigger;
 
 	// Load in the resource
 	Common::String fileName = expand_name_2_HMP(name, roomNum);
-	if ((workHandle = rget(fileName, &assetSize)) == nullptr)
+	int32 assetSize;
+	MemHandle workHandle = rget(fileName, &assetSize);
+	if (workHandle == nullptr)
 		error("Could not find music - %s", fileName.c_str());
 
 	HLock(workHandle);
+	Common::DumpFile dump;
+	dump.open(fileName.c_str());
+	dump.write(*workHandle, assetSize);
+	dump.close();
+	
 #ifdef TODO
 	byte *pSrc = (byte *)*workHandle;
 
@@ -100,7 +104,7 @@ int Midi::get_overall_volume() const {
 
 } // namespace Sound
 
-void midi_play(const char *name, int volume, int loop, int trigger, int roomNum) {
+void midi_play(const char *name, int volume, bool loop, int trigger, int roomNum) {
 	_G(midi).midi_play(name, volume, loop, trigger, roomNum);
 }
 

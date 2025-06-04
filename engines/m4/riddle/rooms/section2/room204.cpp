@@ -2410,7 +2410,7 @@ void Room204::daemon() {
 	case 675:
 		player_set_commands_allowed(false);
 		digi_preload("950_s34", -1);
-		midi_play("RIPTHEM1", 180, 0, -1, 949);
+		midi_play("RIPTHEM1", 180, false, -1, 949);
 		_204pu99Series = series_load("204PU99", -1, nullptr);
 		_ripSketchingInNotebookPos2Series = series_load("RIP SKETCHING IN NOTEBOOK POS 2", -1, nullptr);
 		setGlobals1(_ripSketchingInNotebookPos2Series, 1, 17, 17, 17, 0, 18, 39, 39, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
