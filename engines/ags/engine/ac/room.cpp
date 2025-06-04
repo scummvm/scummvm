@@ -516,7 +516,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		// if not restoring a game, always reset this room
 		reset_temp_room();
 	}
-	if ((newnum >= 0) & (newnum < MAX_ROOMS))
+	if ((newnum >= 0) && (newnum < MAX_ROOMS))
 		_G(croom) = getRoomStatus(newnum);
 	else _G(croom) = &_GP(troom);
 
@@ -705,7 +705,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_G(new_room_loop) = SCR_NO_VALUE;
 	_G(new_room_placeonwalkable) = false;
 
-	if ((_G(new_room_pos) > 0) & (forchar != nullptr)) {
+	if ((_G(new_room_pos) > 0) && (forchar != nullptr)) {
 		if (_G(new_room_pos) >= 4000) {
 			_GP(play).entered_edge = 3;
 			forchar->y = _GP(thisroom).Edges.Top + get_fixed_pixel_size(1);
@@ -943,7 +943,7 @@ void first_room_initialization() {
 
 void check_new_room() {
 	// if they're in a new room, run Player Enters Screen and on_event(ENTER_ROOM)
-	if ((_G(in_new_room) > 0) & (_G(in_new_room) != 3)) {
+	if ((_G(in_new_room) > 0) && (_G(in_new_room) != 3)) {
 		EventHappened evh(EV_RUNEVBLOCK, EVB_ROOM, 0, EVROM_BEFOREFADEIN, _GP(game).playercharacter);
 		// make sure that any script calls don't re-call enters screen
 		int newroom_was = _G(in_new_room);

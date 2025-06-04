@@ -163,7 +163,7 @@ bool GUIMain::IsInteractableAt(int x, int y) const {
 	}
 	if (!IsClickable())
 		return false;
-	if ((x >= X) & (y >= Y) & (x < X + Width) & (y < Y + Height))
+	if ((x >= X) && (y >= Y) && (x < X + Width) && (y < Y + Height))
 		return true;
 	return false;
 }

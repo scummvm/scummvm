@@ -84,7 +84,7 @@ void SetDialogOption(int dlg, int opt, int onoroff, bool dlg_script) {
 	opt--;
 
 	_G(dialog)[dlg].optionflags[opt] &= ~DFLG_ON;
-	if ((onoroff == 1) & ((_G(dialog)[dlg].optionflags[opt] & DFLG_OFFPERM) == 0))
+	if ((onoroff == 1) && ((_G(dialog)[dlg].optionflags[opt] & DFLG_OFFPERM) == 0))
 		_G(dialog)[dlg].optionflags[opt] |= DFLG_ON;
 	else if (onoroff == 2)
 		_G(dialog)[dlg].optionflags[opt] |= DFLG_OFFPERM;

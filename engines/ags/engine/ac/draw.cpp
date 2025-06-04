@@ -2238,7 +2238,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 		return;
 	// Don't render if we've just entered new room and are before fade-in
 	// TODO: find out why this is not skipped for 8-bit games
-	if ((_G(in_new_room) > 0) & (_GP(game).color_depth > 1))
+	if ((_G(in_new_room) > 0) && (_GP(game).color_depth > 1))
 		return;
 
 	// TODO: find out if it's okay to move shake to update function

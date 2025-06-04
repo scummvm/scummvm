@@ -166,7 +166,7 @@ static void on_mouse_wheel(const Common::Event &event) {
 static eAGSMouseButton mgetbutton() {
 	const int butis = mouse_button_poll();
 
-	if ((butis > 0) & (_G(butwas) > 0))
+	if ((butis > 0) && (_G(butwas) > 0))
 		return kMouseNone;  // don't allow holding button down
 
 	_G(butwas) = butis;

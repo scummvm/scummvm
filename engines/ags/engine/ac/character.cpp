@@ -488,10 +488,13 @@ int Character_IsCollidingWithChar(CharacterInfo *char1, CharacterInfo *char2) {
 	if (char2 == nullptr)
 		quit("!AreCharactersColliding: invalid char2");
 
-	if (char1->room != char2->room) return 0; // not colliding
+	if (char1->room != char2->room)
+		return 0; // not colliding
 
-	if ((char1->y > char2->y - 5) && (char1->y < char2->y + 5)) ;
-	else return 0;
+	if ((char1->y > char2->y - 5) && (char1->y < char2->y + 5))
+		;
+	else
+		return 0;
 
 	int w1 = game_to_data_coord(GetCharacterWidth(char1->index_id));
 	int w2 = game_to_data_coord(GetCharacterWidth(char2->index_id));
@@ -499,7 +502,9 @@ int Character_IsCollidingWithChar(CharacterInfo *char1, CharacterInfo *char2) {
 	int xps1 = char1->x - w1 / 2;
 	int xps2 = char2->x - w2 / 2;
 
-	if ((xps1 >= xps2 - w1) & (xps1 <= xps2 + w2)) return 1;
+	if ((xps1 >= xps2 - w1) && (xps1 <= xps2 + w2))
+		return 1;
+
 	return 0;
 }
 
@@ -663,7 +668,7 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 	if (chap->inv[inum] > 0)
 		chap->inv[inum]--;
 
-	if ((chap->activeinv == inum) & (chap->inv[inum] < 1)) {
+	if ((chap->activeinv == inum) && (chap->inv[inum] < 1)) {
 		chap->activeinv = -1;
 		if ((chap == _G(playerchar)) && (GetCursorMode() == MODE_USE))
 			set_cursor_mode(0);

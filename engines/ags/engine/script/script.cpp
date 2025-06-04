@@ -938,12 +938,12 @@ void run_unhandled_event(const ObjectEvent &obj_evt, int evnt) {
 		return;  // no unhandled_events for regions
 
 	// clicked Hotspot 0, so change the type code
-	if ((evtype == 1) & (evblocknum == 0) & (evnt != 0) & (evnt != 5) & (evnt != 6))
+	if ((evtype == 1) && (evblocknum == 0) && (evnt != 0) && (evnt != 5) && (evnt != 6))
 		evtype = 4;
-	if ((evtype == 1) & ((evnt == 0) || (evnt == 5) || (evnt == 6)))
+	if ((evtype == 1) && ((evnt == 0) || (evnt == 5) || (evnt == 6)))
 		;  // character stands on hotspot, mouse moves over hotspot, any click
-	else if ((evtype == 2) & (evnt == 4));  // any click on object
-	else if ((evtype == 3) & (evnt == 4));  // any click on character
+	else if ((evtype == 2) && (evnt == 4));  // any click on object
+	else if ((evtype == 3) && (evnt == 4));  // any click on character
 	else if (evtype > 0) {
 		can_run_delayed_command();
 		RuntimeScriptValue params[] = { evtype, evnt };

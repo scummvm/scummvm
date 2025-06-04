@@ -106,7 +106,7 @@ void NewRoom(int nrnum) {
 	} else if (_G(in_inv_screen)) {
 		_G(inv_screen_newroom) = nrnum;
 		return;
-	} else if ((_G(inside_script) == 0) & (_G(in_graph_script) == 0)) {
+	} else if ((_G(inside_script) == 0) && (_G(in_graph_script) == 0)) {
 		// Compatibility: old games had a *possibly unintentional* effect:
 		// if a character was walking, and a "change room" is called
 		// *NOT* from a script, but by some other trigger,

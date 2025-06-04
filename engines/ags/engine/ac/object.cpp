@@ -549,8 +549,10 @@ void get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2) 
 }
 
 int isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt) {
-	if ((mmx >= lf) & (mmx <= rt) & (mmy >= tp) & (mmy <= bt)) return TRUE;
-	else return FALSE;
+	if ((mmx >= lf) && (mmx <= rt) && (mmy >= tp) && (mmy <= bt))
+		return TRUE;
+	else
+		return FALSE;
 }
 
 // xx,yy is the position in room co-ordinates that we are checking

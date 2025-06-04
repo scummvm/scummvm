@@ -81,7 +81,7 @@ int get_area_scaling(int onarea, int xx, int yy) {
 			zoom_level = _GP(thisroom).WalkAreas[onarea].ScalingNear;
 		}
 		zoom_level += 100;
-	} else if ((onarea >= 0) & (onarea < MAX_WALK_AREAS))
+	} else if ((onarea >= 0) && (onarea < MAX_WALK_AREAS))
 		zoom_level = _GP(thisroom).WalkAreas[onarea].ScalingFar + 100;
 
 	if (zoom_level == 0)
