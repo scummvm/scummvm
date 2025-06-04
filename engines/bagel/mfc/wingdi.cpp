@@ -111,14 +111,22 @@ HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, DWORD flInit,
 	// Figure out the pixel format
 	assert(pbmih->biSize == 40 && pbmih->biPlanes == 1);
 	Graphics::PixelFormat format;
-	if (pbmih->biBitCount == 8)
+
+	switch (pbmih->biBitCount) {
+	case 1:	// ManagedSurface is 8bpp minimum
+	case 8:
 		format = Graphics::PixelFormat::createFormatCLUT8();
-	else if (pbmih->biBitCount == 16)
+		break;
+	case 16:
 		format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	else if (pbmih->biBitCount == 32)
+		break;
+	case 32:
 		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	else
+		break;
+	default:
 		error("Unknown biBitCount");
+		break;
+	}
 
 	// Create the bitmap
 	bitmap->create(pbmih->biWidth, pbmih->biHeight, format);
