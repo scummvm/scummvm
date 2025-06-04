@@ -490,10 +490,12 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	} else {
 		properties << "\t\t\t<Optimization>Disabled</Optimization>\n"
 		           << "\t\t\t<PreprocessorDefinitions>WIN32;" << (configuration == "LLVM" ? "_CRT_SECURE_NO_WARNINGS;" : "") << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-		           << "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
 		           << "\t\t\t<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n"
 		           << "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
 				   << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
+		if (configuration != "ASan") {
+			properties << "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n";
+		}
 		// Since MSVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
 		if (configuration != "ASan" && (arch == ARCH_X86 || (arch == ARCH_AMD64 && _version >= 14))) {
 			properties << "\t\t\t<DebugInformationFormat>EditAndContinue</DebugInformationFormat>\n";
