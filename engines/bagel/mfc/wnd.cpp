@@ -602,12 +602,13 @@ void CWnd::GetMessage(MSG &msg) {
 	}
 
 	// Poll for event in ScummVM event manager
-	msg.hwnd = this;
 	if (AfxGetApp()->pollEvents(ev))
 		// Convert other event types
 		msg = ev;
 	else
 		msg.message = WM_NULL;
+
+	msg.hwnd = this;
 }
 
 } // namespace MFC
