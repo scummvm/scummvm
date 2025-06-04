@@ -27,6 +27,10 @@
 
 #include "efh/efh.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/config-manager.h"
 #include "efh/constants.h"
 
@@ -182,13 +186,13 @@ void EfhEngine::handleEvents() {
 	case kActionMoveUpLeft:
 		goNorthWest();
 		break;
-	case kActionCharacter1Status:
+	case kActionShowCharacterPortraitsOne:
 		showCharacterStatus(0);
 		break;
-	case kActionCharacter2Status:
+	case kActionShowCharacterPortraitsTwo:
 		showCharacterStatus(1);
 		break;
-	case kActionCharacter3Status:
+	case kActionShowCharacterPortraitsThree:
 		showCharacterStatus(2);
 		break;
 	default:
@@ -2403,28 +2407,30 @@ bool EfhEngine::checkMonsterCollision() {
 
 			Common::KeyCode input = waitForKey();
 
-			switch (input) {
-			case Common::KEYCODE_a: // Attack
-				handleFight(monsterId);
-				endLoop = true;
-				break;
-			case Common::KEYCODE_ESCAPE:
-			case Common::KEYCODE_l: // Leave
-				endLoop = true;
-				break;
-			case Common::KEYCODE_s: // Status
-				handleStatusMenu(1, _teamChar[0]._id);
-				endLoop = true;
-				_tempTextPtr = nullptr;
-				drawGameScreenAndTempText(true);
-				break;
-			case Common::KEYCODE_t: // Talk
-				startTalkMenu(monsterId);
-				endLoop = true;
-				break;
-			default:
-				break;
+			switch (_customAction) {
+				case kActionA: // Attack
+					handleFight(monsterId);
+					endLoop = true;
+					break;
+				case kActionEscape:
+				case kActionL: // Leave
+					endLoop = true;
+					break;
+				case kActionS: // Status
+					handleStatusMenu(1, _teamChar[0]._id);
+					endLoop = true;
+					_tempTextPtr = nullptr;
+					drawGameScreenAndTempText(true);
+					break;
+				case kActionT: // Talk
+					startTalkMenu(monsterId);
+					endLoop = true;
+					break;
+				default:
+					break;
 			}
+			_customAction = kActionNone;
+
 		} while (!endLoop && !shouldQuit());
 		return false;
 	}
