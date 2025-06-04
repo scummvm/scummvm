@@ -119,6 +119,7 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_activeSubItem = -1;
 	_lastActiveItem = -1;
 	_lastActiveSubItem = -1;
+	_selectedItem = -1;
 
 	_ccallback = NULL;
 	_unicodeccallback = NULL;
@@ -1175,6 +1176,14 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
 			_screen.fillRect(trect, _wm->_colorBlack);
+
+			if (_selectedItem != i) {
+				if (menu->items[i]->unicode) {
+					_wm->sayText(menu->items[i]->unicodeText);
+				} else {
+					_wm->sayText(menu->items[i]->text);
+				}
+			}
 		}
 
 		if (!text.empty() || !unicodeText.empty()) {
@@ -1236,6 +1245,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 		y += _menuDropdownItemHeight;
 	}
+
+	_selectedItem = menu->highlight;
 
 	if (recursive && topMenuEnabled && menu->highlight != -1 && menu->items[menu->highlight]->enabled && menu->items[menu->highlight]->submenu != nullptr)
 		renderSubmenu(menu->items[menu->highlight]->submenu, false);
@@ -1356,6 +1367,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 				_activeItem = i;
 				_activeSubItem = -1;
+				_selectedItem = -1;
 				if (_items[_activeItem]->submenu != nullptr) {
 					_menustack.push_back(_items[_activeItem]->submenu);
 					_items[_activeItem]->submenu->highlight = -1;
@@ -1564,6 +1576,7 @@ void MacMenu::closeMenu() {
 
 	_activeItem = -1;
 	_activeSubItem = -1;
+	_selectedItem = -1;
 	_menustack.clear();
 
 	_wm->setFullRefresh(true);
