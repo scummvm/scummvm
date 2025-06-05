@@ -21,10 +21,14 @@
 #ifndef SLUDGE_LOADSAVE_H
 #define SLUDGE_LOADSAVE_H
 
+namespace Common {
+class OutSaveFile;
+}
+
 namespace Sludge {
 
 bool handleSaveLoad();
-bool saveGame(const Common::String &fname);
+bool saveGame(Common::OutSaveFile *saveFile);
 bool loadGame(const Common::String &fname);
 
 } // End of namespace Sludge

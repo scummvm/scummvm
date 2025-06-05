@@ -42,11 +42,17 @@ public:
 		return "sludge";
 	}
 
+	bool hasFeature(MetaEngineFeature f) const override;
+
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Sludge::SludgeGameDescription *desc) const override {
 		*engine = new Sludge::SludgeEngine(syst, desc);
 		return Common::kNoError;
 	}
 };
+
+bool SludgeMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return checkExtendedSaves(f) || (f == kSupportsLoadingDuringStartup);
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)
 	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
