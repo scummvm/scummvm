@@ -69,19 +69,25 @@ void LogicManager::CONS_Kahina_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterKahina).characterPosition.position = 0;
-			getCharacter(kCharacterKahina).characterPosition.location = 0;
-			getCharacter(kCharacterKahina).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterKahina)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterKahina, kCarGreenSleeping, getCharacterCurrentParams(kCharacterKahina)[0])) {
+			if (getCharacterCurrentParams(kCharacterKahina)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterKahina)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterKahina)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterKahina, kCarGreenSleeping, getCharacterCurrentParams(kCharacterKahina)[0])) {
-		if (getCharacterCurrentParams(kCharacterKahina)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterKahina)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterKahina)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterKahina).characterPosition.position = 0;
+		getCharacter(kCharacterKahina).characterPosition.location = 0;
+		getCharacter(kCharacterKahina).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterKahina)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -98,12 +104,17 @@ void LogicManager::CONS_Kahina_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterKahina).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterKahina, (char *)&getCharacterCurrentParams(kCharacterKahina)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -121,22 +132,25 @@ void LogicManager::CONS_Kahina_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterKahina,
-				getCharacterCurrentParams(kCharacterKahina)[0],
-				getCharacterCurrentParams(kCharacterKahina)[1]
-			);
-
-			getCharacter(kCharacterKahina).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
-			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterKahina).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterKahina,
+			getCharacterCurrentParams(kCharacterKahina)[0],
+			getCharacterCurrentParams(kCharacterKahina)[1]
+		);
+
+		getCharacter(kCharacterKahina).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -153,19 +167,12 @@ void LogicManager::CONS_Kahina_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_DoWait(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 137503360) {
-			getCharacterParams(kCharacterKahina, 8)[1] = 1;
-
-			getCharacter(kCharacterKahina).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
-			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterKahina)[1] || (getCharacterCurrentParams(kCharacterKahina)[1] = _gameTime + getCharacterCurrentParams(kCharacterKahina)[0],
 															   _gameTime + getCharacterCurrentParams(kCharacterKahina)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterKahina)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
 		}
@@ -173,6 +180,16 @@ void LogicManager::HAND_Kahina_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterKahina).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		break;
+	case 137503360:
+		getCharacterParams(kCharacterKahina, 8)[1] = 1;
+
+		getCharacter(kCharacterKahina).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -189,11 +206,12 @@ void LogicManager::CONS_Kahina_DoWaitReal(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_DoWaitReal(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterKahina)[1] || (getCharacterCurrentParams(kCharacterKahina)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterKahina)[0],
 															   _currentGameSessionTicks + getCharacterCurrentParams(kCharacterKahina)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterKahina)[1] >= _currentGameSessionTicks)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
 		}
@@ -201,6 +219,9 @@ void LogicManager::HAND_Kahina_DoWaitReal(HAND_PARAMS) {
 		getCharacter(kCharacterKahina).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -217,56 +238,8 @@ void LogicManager::CONS_Kahina_LookingForCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_LookingForCath(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
-			case 1:
-				if (getCharacterParams(kCharacterKahina, 8)[0] || getCharacterParams(kCharacterKahina, 8)[1]) {
-					goto LABEL_30;
-				}
-				goto LABEL_20;
-			case 2:
-			case 3:
-				if (getCharacterParams(kCharacterKahina, 8)[0] || getCharacterParams(kCharacterKahina, 8)[1]) {
-					goto LABEL_30;
-				}
-				endGraphics(kCharacterKahina);
-				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
-				KahinaCall(&LogicManager::CONS_Kahina_DoWait, 450, 0, 0, 0);
-				break;
-			case 4:
-				if (getCharacterParams(kCharacterKahina, 8)[1])
-					goto LABEL_30;
-				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
-				KahinaCall(&LogicManager::CONS_Kahina_DoWalkSearchingForCath, 4, 540, 0, 0);
-				break;
-			case 5:
-				if (getCharacterParams(kCharacterKahina, 8)[0] || getCharacterParams(kCharacterKahina, 8)[1]) {
-				LABEL_30:
-					getCharacter(kCharacterKahina).currentCall--;
-					_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
-					fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-				} else {
-				LABEL_20:
-					endGraphics(kCharacterKahina);
-				}
-				break;
-			default:
-				return;
-			}
-		} else if (msg->action == 137503360) {
-			getCharacterParams(kCharacterKahina, 8)[1] = 1;
-
-			getCharacter(kCharacterKahina).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
-			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-		}
-	} else if (msg->action == 12) {
-		getCharacterParams(kCharacterKahina, 8)[0] = 0;
-		getCharacterParams(kCharacterKahina, 8)[1] = 0;
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWalkSearchingForCath, 4, 540, 0, 0);
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterKahina)[0] >= _gameTime || getCharacterCurrentParams(kCharacterKahina)[1]) {
 			if (cathInCorridor(kCarGreenSleeping) || cathInCorridor(kCarRedSleeping)) {
 				if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
@@ -284,6 +257,73 @@ void LogicManager::HAND_Kahina_LookingForCath(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
 		}
+
+		break;
+	case 12:
+		getCharacterParams(kCharacterKahina, 8)[0] = 0;
+		getCharacterParams(kCharacterKahina, 8)[1] = 0;
+		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
+		KahinaCall(&LogicManager::CONS_Kahina_DoWalkSearchingForCath, 4, 540, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
+		case 1:
+			if (getCharacterParams(kCharacterKahina, 8)[0] || getCharacterParams(kCharacterKahina, 8)[1]) {
+				getCharacter(kCharacterKahina).currentCall--;
+				_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+				fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+			} else {
+				endGraphics(kCharacterKahina);
+			}
+
+			break;
+		case 2:
+		case 3:
+			if (getCharacterParams(kCharacterKahina, 8)[0] || getCharacterParams(kCharacterKahina, 8)[1]) {
+				getCharacter(kCharacterKahina).currentCall--;
+				_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+				fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+			} else {
+				endGraphics(kCharacterKahina);
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWait, 450, 0, 0, 0);
+			}
+
+			break;
+		case 4:
+			if (getCharacterParams(kCharacterKahina, 8)[1]) {
+				getCharacter(kCharacterKahina).currentCall--;
+				_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+				fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+			} else {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWalkSearchingForCath, 4, 540, 0, 0);
+			}
+
+			break;
+		case 5:
+			if (getCharacterParams(kCharacterKahina, 8)[0] || getCharacterParams(kCharacterKahina, 8)[1]) {
+				getCharacter(kCharacterKahina).currentCall--;
+				_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+				fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+			} else {
+				endGraphics(kCharacterKahina);
+			}
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 137503360:
+		getCharacterParams(kCharacterKahina, 8)[1] = 1;
+
+		getCharacter(kCharacterKahina).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -301,37 +341,42 @@ void LogicManager::CONS_Kahina_DoWalkSearchingForCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_DoWalkSearchingForCath(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action != 12) {
-			if (msg->action == 137503360) {
-				getCharacterParams(kCharacterKahina, 8)[1] = 1;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1])) {
+			getCharacter(kCharacterKahina).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+			break;
+		}
+
+		if (nearChar(kCharacterKahina, kCharacterCath, 1000) && !onLowPlatform(kCharacterCath) && !inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
+			if (getCharacter(kCharacterKahina).characterPosition.car == kCarGreenSleeping || getCharacter(kCharacterKahina).characterPosition.car == kCarRedSleeping) {
+				getCharacterParams(kCharacterKahina, 8)[0] = 1;
 
 				getCharacter(kCharacterKahina).currentCall--;
 				_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 				fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
 			}
-			return;
 		}
-
-		if (!walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1]))
-			return;
-	LABEL_6:
-
-		getCharacter(kCharacterKahina).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
-		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-		return;
-	}
-	if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1]))
-		goto LABEL_6;
-	if (nearChar(kCharacterKahina, kCharacterCath, 1000) && !onLowPlatform(kCharacterCath) && !inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
-		if (getCharacter(kCharacterKahina).characterPosition.car == kCarGreenSleeping || getCharacter(kCharacterKahina).characterPosition.car == kCarRedSleeping) {
-			getCharacterParams(kCharacterKahina, 8)[0] = 1;
-
+		break;
+	case 12:
+		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1])) {
 			getCharacter(kCharacterKahina).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
 		}
+
+		break;
+	case 137503360:
+		getCharacterParams(kCharacterKahina, 8)[1] = 1;
+
+		getCharacter(kCharacterKahina).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -351,8 +396,13 @@ void LogicManager::CONS_Kahina_DoWalk(CONS_PARAMS) {
 void LogicManager::HAND_Kahina_DoWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1]))
-			goto LABEL_13;
+	case 12:
+		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1])) {
+			getCharacter(kCharacterKahina).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		}
+
 		break;
 	case 5:
 		if (_gameEvents[kEventKronosConversation] || _gameEvents[kEventKronosConversationFirebird]) {
@@ -361,24 +411,16 @@ void LogicManager::HAND_Kahina_DoWalk(HAND_PARAMS) {
 			} else {
 				playDialog(kCharacterCath, "CAT1019", -1, 0);
 			}
-
 		} else {
 			playCathExcuseMe();
 		}
+
 		break;
 	case 6:
 		playChrExcuseMe(kCharacterKahina, kCharacterCath, 0);
 		break;
-	case 12:
-		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1])) {
-		LABEL_13:
-			getCharacter(kCharacterKahina).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
-			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-		}
-		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -397,15 +439,20 @@ void LogicManager::CONS_Kahina_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[3]);
 
 		getCharacter(kCharacterKahina).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterKahina, (char *)&getCharacterCurrentParams(kCharacterKahina)[0]);
 		blockAtDoor(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -420,16 +467,22 @@ void LogicManager::CONS_Kahina_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			setDoor(75, kCharacterCath, 1, 10, 9);
-			getCharacter(kCharacterKahina).characterPosition.position = 5000;
-			getCharacter(kCharacterKahina).characterPosition.location = 0;
-			getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterKahina)[0]) {
+			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+			CONS_Kahina_InSeclusion(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterKahina)[0]) {
-		getCharacterCurrentParams(kCharacterKahina)[0] = 1;
-		CONS_Kahina_InSeclusion(0, 0, 0, 0);
+
+		break;
+	case 12:
+		setDoor(75, kCharacterCath, 1, 10, 9);
+		getCharacter(kCharacterKahina).characterPosition.position = 5000;
+		getCharacter(kCharacterKahina).characterPosition.location = 0;
+		getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -444,13 +497,19 @@ void LogicManager::CONS_Kahina_InSeclusion(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_InSeclusion(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 1107000 && !getCharacterCurrentParams(kCharacterKahina)[0] && _gameProgress[kProgressJacket]) {
 			send(kCharacterKahina, kCharacterCond1, 238732837, 0);
 			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
 		}
+
 		if (_gameProgress[kProgressEventMertensChronosInvitation])
 			CONS_Kahina_AwaitingCath(0, 0, 0, 0);
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -465,40 +524,48 @@ void LogicManager::CONS_Kahina_AwaitingCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_AwaitingCath(HAND_PARAMS) {
-	if (msg->action <= 9) {
-		if (msg->action < 8) {
-			if (msg->action == 0 && _gameTime > 1485000 && !getCharacterCurrentParams(kCharacterKahina)[1]) {
-				getCharacterCurrentParams(kCharacterKahina)[1] = 1;
-				CONS_Kahina_CathDone(0, 0, 0, 0);
-			}
-			return;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1485000 && !getCharacterCurrentParams(kCharacterKahina)[1]) {
+			getCharacterCurrentParams(kCharacterKahina)[1] = 1;
+			CONS_Kahina_CathDone(0, 0, 0, 0);
 		}
+
+		break;
+	case 8:
+	case 9:
 		if (msg->action == 8)
 			playDialog(0, "LIB012", -1, 0);
+
 		if (!_gameEvents[kEventKronosGoingToInvitation]) {
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 			KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosGoingToInvitation, 0, 0);
-			return;
+			break;
 		}
+
 		if (msg->action == 9)
 			playDialog(0, "LIB014", -1, 0);
-	LABEL_21:
+
 		bumpCath(kCarKronos, 80, 255);
 		send(kCharacterKahina, kCharacterKronos, 171849314, 0);
 		getCharacterCurrentParams(kCharacterKahina)[0] = 1;
-		return;
-	}
-	switch (msg->action) {
+		break;
 	case 12:
 		setDoor(75, kCharacterKahina, 0, 10, 9);
-		return;
+		break;
 	case 18:
-		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] != 1)
-			return;
-		playNIS(kEventKronosGoingToInvitation);
-		goto LABEL_21;
+		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 1) {
+			playNIS(kEventKronosGoingToInvitation);
+			bumpCath(kCarKronos, 80, 255);
+			send(kCharacterKahina, kCharacterKronos, 171849314, 0);
+			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+		}
+
+		break;
 	case 137685712:
 		CONS_Kahina_CathDone(0, 0, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -514,31 +581,40 @@ void LogicManager::CONS_Kahina_CathDone(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_CathDone(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
-			getCharacter(kCharacterKahina).characterPosition.position = 5000;
-			getCharacter(kCharacterKahina).characterPosition.location = 0;
-			setDoor(75, kCharacterCath, 1, 10, 9);
-			getCharacterCurrentParams(kCharacterKahina)[0] = _gameTime + 1800;
-		}
-		return;
-	}
-	if (!_gameProgress[kProgressField14] && _gameTime < 1201500 && getCharacterCurrentParams(kCharacterKahina)[1] != 0x7FFFFFFF && getCharacterCurrentParams(kCharacterKahina)[0] < _gameTime) {
-		if (_gameTime <= 1197000) {
-			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterKahina)[1]) {
-				getCharacterCurrentParams(kCharacterKahina)[1] = _gameTime;
-				if (!_gameTime)
-					goto LABEL_14;
+	switch (msg->action) {
+	case 0:
+		if (!_gameProgress[kProgressField14] && _gameTime < 1201500 && getCharacterCurrentParams(kCharacterKahina)[1] != 0x7FFFFFFF && getCharacterCurrentParams(kCharacterKahina)[0] < _gameTime) {
+			if (_gameTime <= 1197000) {
+				if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterKahina)[1]) {
+					getCharacterCurrentParams(kCharacterKahina)[1] = _gameTime;
+					if (!_gameTime) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
+						KahinaCall(&LogicManager::CONS_Kahina_SearchTrain, 0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterKahina)[1] >= _gameTime)
+					break;
 			}
-			if (getCharacterCurrentParams(kCharacterKahina)[1] >= _gameTime)
-				return;
+
+			getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
+			KahinaCall(&LogicManager::CONS_Kahina_SearchTrain, 0, 0, 0, 0);
 		}
-		getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
-	LABEL_14:
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
-		KahinaCall(&LogicManager::CONS_Kahina_SearchTrain, 0, 0, 0, 0);
+
+		break;
+	case 12:
+		getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
+		getCharacter(kCharacterKahina).characterPosition.position = 5000;
+		getCharacter(kCharacterKahina).characterPosition.location = 0;
+		setDoor(75, kCharacterCath, 1, 10, 9);
+		getCharacterCurrentParams(kCharacterKahina)[0] = _gameTime + 1800;
+		break;
+	default:
+		break;
 	}
+	
 }
 
 void LogicManager::CONS_Kahina_DoDogBarkOtis(CONS_PARAMS) {
@@ -552,16 +628,22 @@ void LogicManager::CONS_Kahina_DoDogBarkOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_DoDogBarkOtis(HAND_PARAMS) {
-	if (msg->action == 3 || msg->action == 4) {
+	switch (msg->action) {
+	case 3:
+	case 4:
 		releaseAtDoor(kCharacterKahina, 37);
 
 		getCharacter(kCharacterKahina).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterKahina, "616Cf");
 		blockAtDoor(kCharacterKahina, 37);
 		send(kCharacterKahina, kCharacterMax, 158007856, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -578,32 +660,50 @@ void LogicManager::CONS_Kahina_SearchTrain(CONS_PARAMS) {
 void LogicManager::HAND_Kahina_SearchTrain(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterKahina)[1] == 0x7FFFFFFF || !_gameTime)
-			return;
-		if (getCharacterCurrentParams(kCharacterKahina)[0] >= _gameTime) {
-			if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterKahina)[1]) {
-				getCharacterCurrentParams(kCharacterKahina)[1] = _gameTime;
-				if (!_gameTime)
-					goto LABEL_13;
+		if (getCharacterCurrentParams(kCharacterKahina)[1] != 0x7FFFFFFF && _gameTime) {
+			if (getCharacterCurrentParams(kCharacterKahina)[0] >= _gameTime) {
+				if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterKahina)[1]) {
+					getCharacterCurrentParams(kCharacterKahina)[1] = _gameTime;
+					if (!_gameTime) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 9;
+						KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 4070, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterKahina)[1] >= _gameTime)
+					break;
 			}
-			if (getCharacterCurrentParams(kCharacterKahina)[1] >= _gameTime)
-				return;
+
+			getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 9;
+			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 4070, 0, 0);
 		}
-		getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
-	LABEL_13:
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 9;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 4070, 0, 0);
-		return;
+
+		break;
 	case 12:
-		_gameProgress[5] = 19;
+		_gameProgress[kProgressField14] = 19;
 		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 		KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 3, 8200, 0, 0);
 		break;
 	case 18:
 		switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
 		case 1:
-			if (!whoOnScreen(kCharacterKahina))
-				goto LABEL_39;
+			if (!whoOnScreen(kCharacterKahina)) {
+				if (inComp(kCharacterCath, kCarGreenSleeping, 8200) || cathOutHisWindow() || nearChar(kCharacterKahina, kCharacterCath, 2000)) {
+					if (_gameProgress[kProgressField14] == 19)
+						_gameProgress[kProgressField14] = 0;
+
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 8;
+					KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 3, 9460, 0, 0);
+				} else {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
+					KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 1, 0, 0);
+				}
+
+				break;
+			}
+
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 9460, 0, 0);
 			break;
@@ -616,12 +716,17 @@ void LogicManager::HAND_Kahina_SearchTrain(HAND_PARAMS) {
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 3, 8200, 0, 0);
 			break;
 		case 4:
-		LABEL_39:
 			if (inComp(kCharacterCath, kCarGreenSleeping, 8200) || cathOutHisWindow() || nearChar(kCharacterKahina, kCharacterCath, 2000)) {
-				goto LABEL_23;
+				if (_gameProgress[kProgressField14] == 19)
+					_gameProgress[kProgressField14] = 0;
+
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 8;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 3, 9460, 0, 0);
+			} else {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
+				KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 1, 0, 0);
 			}
-			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
-			KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 1, 0, 0);
+
 			break;
 		case 5:
 			getCharacter(kCharacterKahina).characterPosition.location = 1;
@@ -639,9 +744,10 @@ void LogicManager::HAND_Kahina_SearchTrain(HAND_PARAMS) {
 			break;
 		case 7:
 			getCharacter(kCharacterKahina).characterPosition.location = 0;
-		LABEL_23:
-			if (_gameProgress[5] == 19)
-				_gameProgress[5] = 0;
+
+			if (_gameProgress[kProgressField14] == 19)
+				_gameProgress[kProgressField14] = 0;
+
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 8;
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 3, 9460, 0, 0);
 			break;
@@ -658,10 +764,14 @@ void LogicManager::HAND_Kahina_SearchTrain(HAND_PARAMS) {
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 6470, 0, 0);
 			break;
 		case 11:
-			if (inSuite(kCharacterCath, kCarRedSleeping, 6130))
-				goto LABEL_35;
-			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 12;
-			KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ac", 34, 0, 0);
+			if (inSuite(kCharacterCath, kCarRedSleeping, 6130)) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 15;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 9460, 0, 0);
+			} else {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 12;
+				KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ac", 34, 0, 0);
+			}
+
 			break;
 		case 12:
 			getCharacter(kCharacterKahina).characterPosition.location = 1;
@@ -679,7 +789,6 @@ void LogicManager::HAND_Kahina_SearchTrain(HAND_PARAMS) {
 			break;
 		case 14:
 			getCharacter(kCharacterKahina).characterPosition.location = 0;
-		LABEL_35:
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 15;
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 9460, 0, 0);
 			break;
@@ -700,8 +809,11 @@ void LogicManager::HAND_Kahina_SearchTrain(HAND_PARAMS) {
 			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
 		break;
 	}
 }
@@ -717,18 +829,21 @@ void LogicManager::CONS_Kahina_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterKahina);
-			getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
-			getCharacter(kCharacterKahina).characterPosition.position = 6000;
-			getCharacter(kCharacterKahina).characterPosition.location = 0;
-			getCharacter(kCharacterKahina).inventoryItem = 0;
-			getCharacter(kCharacterKahina).clothes = 0;
-			setDoor(75, kCharacterKahina, 1, 10, 9);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Kahina_InSeclusionPart2(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterKahina);
+		getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
+		getCharacter(kCharacterKahina).characterPosition.position = 6000;
+		getCharacter(kCharacterKahina).characterPosition.location = 0;
+		getCharacter(kCharacterKahina).inventoryItem = 0;
+		getCharacter(kCharacterKahina).clothes = 0;
+		setDoor(75, kCharacterKahina, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -745,40 +860,55 @@ void LogicManager::CONS_Kahina_InSeclusionPart2(CONS_PARAMS) {
 void LogicManager::HAND_Kahina_InSeclusionPart2(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterKahina)[0])
-			goto LABEL_9;
-		if (!getCharacterCurrentParams(kCharacterKahina)[1]) {
-			getCharacterCurrentParams(kCharacterKahina)[1] = _gameTime + 9000;
-			if (_gameTime == -9000)
-				goto LABEL_8;
+		if (!getCharacterCurrentParams(kCharacterKahina)[0]) {
+			bool skip = false;
+
+			if (!getCharacterCurrentParams(kCharacterKahina)[1]) {
+				getCharacterCurrentParams(kCharacterKahina)[1] = _gameTime + 9000;
+				if (_gameTime == -9000) {
+					skip = true;
+					getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+					getCharacterCurrentParams(kCharacterKahina)[1] = 0;
+				}
+			}
+
+			if (!skip && getCharacterCurrentParams(kCharacterKahina)[1] < _gameTime) {
+				getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
+				getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+				getCharacterCurrentParams(kCharacterKahina)[1] = 0;
+			}
 		}
-		if (getCharacterCurrentParams(kCharacterKahina)[1] < _gameTime) {
-			getCharacterCurrentParams(kCharacterKahina)[1] = 0x7FFFFFFF;
-		LABEL_8:
-			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
-			getCharacterCurrentParams(kCharacterKahina)[1] = 0;
-		}
-	LABEL_9:
+
 		if (!_gameEvents[kEventKahinaAskSpeakFirebird] || _gameEvents[kEventKronosConversationFirebird] || !checkLoc(kCharacterCath, kCarKronos)) {
-			goto LABEL_46;
+			if (_gameTime > 1845000 && _gameEvents[kEventKronosConversationFirebird] && inOuterSanctum(kCharacterCath)) {
+				setDoor(75, kCharacterCath, 1, 10, 9);
+				bumpCath(kCarKronos, 87, 255);
+			}
+
+			break;
 		}
+
 		if (!getCharacterCurrentParams(kCharacterKahina)[2]) {
 			getCharacterCurrentParams(kCharacterKahina)[2] = _gameTime + 900;
-			if (_gameTime == -900)
-				goto LABEL_16;
+			if (_gameTime == -900) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
+				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
+				break;
+			}
 		}
+
 		if (getCharacterCurrentParams(kCharacterKahina)[2] < _gameTime) {
 			getCharacterCurrentParams(kCharacterKahina)[2] = 0x7FFFFFFF;
-		LABEL_16:
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 			KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
-			return;
+			break;
 		}
-	LABEL_46:
+
 		if (_gameTime > 1845000 && _gameEvents[kEventKronosConversationFirebird] && inOuterSanctum(kCharacterCath)) {
 			setDoor(75, kCharacterCath, 1, 10, 9);
 			bumpCath(kCarKronos, 87, 255);
 		}
+
 		break;
 	case 8:
 	case 9:
@@ -786,18 +916,22 @@ void LogicManager::HAND_Kahina_InSeclusionPart2(HAND_PARAMS) {
 			if (_gameEvents[kEventKahinaAskSpeakFirebird]) {
 				if (whoRunningDialog(kCharacterKahina))
 					fadeDialog(kCharacterKahina);
+
 				if (msg->action == 8)
 					playDialog(0, "LIB012", -1, 0);
+
 				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
 				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
 			} else if (_gameEvents[kEventMilosCompartmentVisitAugust] || _gameEvents[kEventTatianaGivePoem] || _gameEvents[kEventTatianaBreakfastGivePoem]) {
 				if (msg->action == 8)
 					playDialog(0, "LIB012", -1, 0);
+
 				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 7;
 				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKahinaAskSpeakFirebird, 0, 0);
 			} else if (getCharacterCurrentParams(kCharacterKahina)[0]) {
 				if (msg->action == 8)
 					playDialog(0, "LIB012", -1, 0);
+
 				playNIS(kEventKahinaAskSpeak);
 				cleanNIS();
 				setDoor(75, kCharacterKahina, 1, 0, 0);
@@ -805,6 +939,7 @@ void LogicManager::HAND_Kahina_InSeclusionPart2(HAND_PARAMS) {
 				KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "KRO3003", 0, 0, 0);
 			} else {
 				setDoor(75, kCharacterKahina, 1, 0, 0);
+
 				if (msg->action == 8) {
 					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 9;
 					KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "LIB012", 0, 0, 0);
@@ -814,11 +949,12 @@ void LogicManager::HAND_Kahina_InSeclusionPart2(HAND_PARAMS) {
 				}
 			}
 		}
-		return;
+
+		break;
 	case 12:
 		getCharacterCurrentParams(kCharacterKahina)[0] = 1;
 		setDoor(75, kCharacterKahina, 1, 10, 9);
-		return;
+		break;
 	case 18:
 		switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
 		case 1:
@@ -833,7 +969,12 @@ void LogicManager::HAND_Kahina_InSeclusionPart2(HAND_PARAMS) {
 			KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "KRO3005", 0, 0, 0);
 			break;
 		case 3:
-			goto LABEL_46;
+			if (_gameTime > 1845000 && _gameEvents[kEventKronosConversationFirebird] && inOuterSanctum(kCharacterCath)) {
+				setDoor(75, kCharacterCath, 1, 10, 9);
+				bumpCath(kCarKronos, 87, 255);
+			}
+
+			break;
 		case 4:
 			playNIS(kEventKronosConversationFirebird);
 			setDoor(75, kCharacterCath, 0, 10, 9);
@@ -859,11 +1000,12 @@ void LogicManager::HAND_Kahina_InSeclusionPart2(HAND_PARAMS) {
 			setDoor(75, kCharacterKahina, 1, 10, 9);
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -878,17 +1020,19 @@ void LogicManager::CONS_Kahina_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterKahina);
-			getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
-			getCharacter(kCharacterKahina).characterPosition.position = 5000;
-			getCharacter(kCharacterKahina).characterPosition.location = 0;
-			getCharacter(kCharacterKahina).inventoryItem = 0;
-			getCharacter(kCharacterKahina).clothes = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Kahina_BeforeConcert(0, 0, 0, 0);
+	case 12:
+		endGraphics(kCharacterKahina);
+		getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
+		getCharacter(kCharacterKahina).characterPosition.position = 5000;
+		getCharacter(kCharacterKahina).characterPosition.location = 0;
+		getCharacter(kCharacterKahina).inventoryItem = 0;
+		getCharacter(kCharacterKahina).clothes = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -910,8 +1054,13 @@ void LogicManager::HAND_Kahina_DoWalk1033(HAND_PARAMS) {
 	case 0:
 		if (_gameEvents[kEventAnnaBaggageArgument])
 			forceJump(kCharacterKahina, &LogicManager::CONS_Kahina_Finished);
-		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1]))
-			goto LABEL_15;
+
+		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1])) {
+			getCharacter(kCharacterKahina).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+		}
+
 		break;
 	case 5:
 		if (_gameEvents[kEventKronosConversation] || _gameEvents[kEventKronosConversationFirebird]) {
@@ -920,24 +1069,24 @@ void LogicManager::HAND_Kahina_DoWalk1033(HAND_PARAMS) {
 			} else {
 				playDialog(kCharacterCath, "CAT1019", -1, 0);
 			}
-
 		} else {
 			playCathExcuseMe();
 		}
+
 		break;
 	case 6:
 		playChrExcuseMe(kCharacterKahina, kCharacterCath, 0);
 		break;
 	case 12:
 		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[0], getCharacterCurrentParams(kCharacterKahina)[1])) {
-		LABEL_15:
 			getCharacter(kCharacterKahina).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -956,49 +1105,60 @@ void LogicManager::HAND_Kahina_BeforeConcert(HAND_PARAMS) {
 	case 0:
 		if (_gameEvents[kEventKronosVisit])
 			setDoor(75, kCharacterCath, 3, 10, 9);
+
 		if (inInnerSanctum(kCharacterCath)) {
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 			KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKahinaPunchSuite4, 0, 0);
-			return;
+			break;
 		}
-	LABEL_30:
+
 		if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterKahina)[1]) {
 			getCharacterCurrentParams(kCharacterKahina)[1] = 1;
 			if (_gameEvents[kEventKahinaAskSpeakFirebird] && !_gameEvents[kEventKronosConversationFirebird] && checkLoc(kCharacterCath, kCarKronos)) {
 				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
 				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
 			} else {
-			LABEL_51:
 				if (inOuterSanctum(kCharacterCath))
 					bumpCath(kCarKronos, 87, 255);
+
 				CONS_Kahina_Concert(0, 0, 0, 0);
 			}
-			return;
+
+			break;
 		}
-		if (getCharacterCurrentParams(kCharacterKahina)[0])
-			goto LABEL_42;
-		if (!getCharacterCurrentParams(kCharacterKahina)[2]) {
-			getCharacterCurrentParams(kCharacterKahina)[2] = _gameTime + 9000;
-			if (_gameTime == -9000)
-				goto LABEL_41;
+
+		if (!getCharacterCurrentParams(kCharacterKahina)[0]) {
+			bool skip = false;
+
+			if (!getCharacterCurrentParams(kCharacterKahina)[2]) {
+				getCharacterCurrentParams(kCharacterKahina)[2] = _gameTime + 9000;
+				if (_gameTime == -9000) {
+					skip = true;
+					getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+					getCharacterCurrentParams(kCharacterKahina)[2] = 0;
+				}
+			}
+
+			if (!skip && getCharacterCurrentParams(kCharacterKahina)[2] < _gameTime) {
+				getCharacterCurrentParams(kCharacterKahina)[2] = 0x7FFFFFFF;
+				getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+				getCharacterCurrentParams(kCharacterKahina)[2] = 0;
+			}
 		}
-		if (getCharacterCurrentParams(kCharacterKahina)[2] < _gameTime) {
-			getCharacterCurrentParams(kCharacterKahina)[2] = 0x7FFFFFFF;
-		LABEL_41:
-			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
-			getCharacterCurrentParams(kCharacterKahina)[2] = 0;
-		}
-	LABEL_42:
+
 		if (_gameEvents[kEventKahinaAskSpeakFirebird] && !_gameEvents[kEventKronosConversationFirebird] && checkLoc(kCharacterCath, kCarKronos)) {
 			if (getCharacterCurrentParams(kCharacterKahina)[3] || (getCharacterCurrentParams(kCharacterKahina)[3] = _gameTime + 900,
 																   _gameTime != -900)) {
 				if (getCharacterCurrentParams(kCharacterKahina)[3] >= _gameTime)
-					return;
+					break;
+
 				getCharacterCurrentParams(kCharacterKahina)[3] = 0x7FFFFFFF;
 			}
+
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
 			KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
 		}
+
 		break;
 	case 8:
 	case 9:
@@ -1006,16 +1166,19 @@ void LogicManager::HAND_Kahina_BeforeConcert(HAND_PARAMS) {
 			if (_gameEvents[kEventKahinaAskSpeakFirebird]) {
 				if (msg->action == 8)
 					playDialog(0, "LIB012", -1, 0);
+
 				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 6;
 				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
 			} else if (_gameEvents[kEventMilosCompartmentVisitAugust] || _gameEvents[kEventTatianaGivePoem] || _gameEvents[kEventTatianaBreakfastGivePoem]) {
 				if (msg->action == 8)
 					playDialog(0, "LIB012", -1, 0);
+
 				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 9;
 				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKahinaAskSpeakFirebird, 0, 0);
 			} else if (getCharacterCurrentParams(kCharacterKahina)[0]) {
 				if (msg->action == 8)
 					playDialog(0, "LIB012", -1, 0);
+
 				playNIS(kEventKahinaAskSpeak);
 				cleanNIS();
 				setDoor(75, kCharacterKahina, 1, 0, 0);
@@ -1023,6 +1186,7 @@ void LogicManager::HAND_Kahina_BeforeConcert(HAND_PARAMS) {
 				KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "KRO3003", 0, 0, 0);
 			} else {
 				setDoor(75, kCharacterKahina, 1, 0, 0);
+
 				if (msg->action == 8) {
 					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 11;
 					KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "LIB012", 0, 0, 0);
@@ -1032,7 +1196,8 @@ void LogicManager::HAND_Kahina_BeforeConcert(HAND_PARAMS) {
 				}
 			}
 		}
-		return;
+
+		break;
 	case 12:
 		if (_gameEvents[kEventKronosConversationFirebird]) {
 			setDoor(75, kCharacterCath, 3, 10, 9);
@@ -1045,12 +1210,65 @@ void LogicManager::HAND_Kahina_BeforeConcert(HAND_PARAMS) {
 		switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
 		case 1:
 			playNIS(kEventKahinaPunchSuite4);
-			endGame(3, 253, 0, 1);
-			goto LABEL_30;
+			endGame(3, 253, 0, true);
+
+			if (_gameTime > 2079000 && !getCharacterCurrentParams(kCharacterKahina)[1]) {
+				getCharacterCurrentParams(kCharacterKahina)[1] = 1;
+				if (_gameEvents[kEventKahinaAskSpeakFirebird] && !_gameEvents[kEventKronosConversationFirebird] && checkLoc(kCharacterCath, kCarKronos)) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
+					KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
+				} else {
+					if (inOuterSanctum(kCharacterCath))
+						bumpCath(kCarKronos, 87, 255);
+
+					CONS_Kahina_Concert(0, 0, 0, 0);
+				}
+
+				break;
+			}
+
+			if (!getCharacterCurrentParams(kCharacterKahina)[0]) {
+				bool skip = false;
+
+				if (!getCharacterCurrentParams(kCharacterKahina)[2]) {
+					getCharacterCurrentParams(kCharacterKahina)[2] = _gameTime + 9000;
+					if (_gameTime == -9000) {
+						skip = true;
+						getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+						getCharacterCurrentParams(kCharacterKahina)[2] = 0;
+					}
+				}
+
+				if (!skip && getCharacterCurrentParams(kCharacterKahina)[2] < _gameTime) {
+					getCharacterCurrentParams(kCharacterKahina)[2] = 0x7FFFFFFF;
+					getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+					getCharacterCurrentParams(kCharacterKahina)[2] = 0;
+				}
+			}
+
+			if (_gameEvents[kEventKahinaAskSpeakFirebird] && !_gameEvents[kEventKronosConversationFirebird] && checkLoc(kCharacterCath, kCarKronos)) {
+				if (getCharacterCurrentParams(kCharacterKahina)[3] || (getCharacterCurrentParams(kCharacterKahina)[3] = _gameTime + 900,
+																	   _gameTime != -900)) {
+					if (getCharacterCurrentParams(kCharacterKahina)[3] >= _gameTime)
+						break;
+
+					getCharacterCurrentParams(kCharacterKahina)[3] = 0x7FFFFFFF;
+				}
+
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKronosConversationFirebird, 0, 0);
+			}
+
+			break;
 		case 2:
 			playNIS(kEventKronosConversationFirebird);
 			bumpCath(kCarKronos, 87, 255);
-			goto LABEL_51;
+
+			if (inOuterSanctum(kCharacterCath))
+				bumpCath(kCarKronos, 87, 255);
+
+			CONS_Kahina_Concert(0, 0, 0, 0);
+			break;
 		case 3:
 			playNIS(kEventKronosConversationFirebird);
 			setDoor(75, kCharacterCath, 0, 10, 9);
@@ -1087,11 +1305,12 @@ void LogicManager::HAND_Kahina_BeforeConcert(HAND_PARAMS) {
 			setDoor(75, kCharacterKahina, 1, 10, 9);
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1106,52 +1325,92 @@ void LogicManager::CONS_Kahina_Concert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_Concert(HAND_PARAMS) {
-	if (msg->action <= 12) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
-			getCharacter(kCharacterKahina).characterPosition.position = 5000;
-			getCharacter(kCharacterKahina).characterPosition.location = 0;
-			startCycOtis(kCharacterKahina, "202a");
-			return;
-		}
-		if (msg->action)
-			return;
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterKahina)[0]) {
 			if (!getCharacterCurrentParams(kCharacterKahina)[2])
 				getCharacterCurrentParams(kCharacterKahina)[2] = _gameTime + 4500;
+
 			if (getCharacterCurrentParams(kCharacterKahina)[4] != 0x7FFFFFFF && _gameTime) {
-				if (getCharacterCurrentParams(kCharacterKahina)[2] < _gameTime)
-					goto LABEL_24;
-				if (checkCathDir(kCarKronos, 80) || checkCathDir(kCarKronos, 88) || !getCharacterCurrentParams(kCharacterKahina)[4]) {
-					getCharacterCurrentParams(kCharacterKahina)[4] = _gameTime;
-					if (!_gameTime)
-						goto LABEL_25;
-				}
-				if (getCharacterCurrentParams(kCharacterKahina)[4] < _gameTime) {
-				LABEL_24:
+				if (getCharacterCurrentParams(kCharacterKahina)[2] < _gameTime) {
 					getCharacterCurrentParams(kCharacterKahina)[4] = 0x7FFFFFFF;
-				LABEL_25:
 					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
 					KahinaCall(&LogicManager::CONS_Kahina_FindFirebird, 0, 0, 0, 0);
-					return;
+					break;
+				}
+
+				if (checkCathDir(kCarKronos, 80) || checkCathDir(kCarKronos, 88) || !getCharacterCurrentParams(kCharacterKahina)[4]) {
+					getCharacterCurrentParams(kCharacterKahina)[4] = _gameTime;
+					if (!_gameTime) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
+						KahinaCall(&LogicManager::CONS_Kahina_FindFirebird, 0, 0, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterKahina)[4] < _gameTime) {
+					getCharacterCurrentParams(kCharacterKahina)[4] = 0x7FFFFFFF;
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
+					KahinaCall(&LogicManager::CONS_Kahina_FindFirebird, 0, 0, 0, 0);
+					break;
 				}
 			}
 		}
-	LABEL_32:
-		if (!getCharacterCurrentParams(kCharacterKahina)[1])
-			goto LABEL_45;
+
+		if (!getCharacterCurrentParams(kCharacterKahina)[1]) {
+			if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+				if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+					KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+				} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+					KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+				}
+			}
+
+			break;
+		}
+
 		if (!getCharacterCurrentParams(kCharacterKahina)[3])
 			getCharacterCurrentParams(kCharacterKahina)[3] = _gameTime + 4500;
-		if (getCharacterCurrentParams(kCharacterKahina)[5] == 0x7FFFFFFF || !_gameTime)
-			goto LABEL_45;
+
+		if (getCharacterCurrentParams(kCharacterKahina)[5] == 0x7FFFFFFF || !_gameTime) {
+			if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+				if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+					KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+				} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+					KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+				}
+			}
+
+			break;
+		}
+
 		if (getCharacterCurrentParams(kCharacterKahina)[2] >= _gameTime) {
 			if (checkCathDir(kCarKronos, 80) || checkCathDir(kCarKronos, 88) || !getCharacterCurrentParams(kCharacterKahina)[5]) {
 				getCharacterCurrentParams(kCharacterKahina)[5] = _gameTime;
-				if (!_gameTime)
-					goto LABEL_44;
+				if (!_gameTime) {
+					playDialog(0, "LIB014", getVolume(kCharacterKahina), 0);
+					playDialog(0, "LIB015", getVolume(kCharacterKahina), 15);
+					startCycOtis(kCharacterKahina, "202a");
+					getCharacterCurrentParams(kCharacterKahina)[1] = 0;
+					if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+						if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+							getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+							KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+						} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+							getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+							KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+						}
+					}
+
+					break;
+				}
 			}
+
 			if (getCharacterCurrentParams(kCharacterKahina)[5] >= _gameTime) {
-			LABEL_45:
 				if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
 					if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
 						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
@@ -1161,50 +1420,153 @@ void LogicManager::HAND_Kahina_Concert(HAND_PARAMS) {
 						KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
 					}
 				}
-				return;
+
+				break;
 			}
 		}
+
 		getCharacterCurrentParams(kCharacterKahina)[5] = 0x7FFFFFFF;
-	LABEL_44:
 		playDialog(0, "LIB014", getVolume(kCharacterKahina), 0);
 		playDialog(0, "LIB015", getVolume(kCharacterKahina), 15);
 		startCycOtis(kCharacterKahina, "202a");
 		getCharacterCurrentParams(kCharacterKahina)[1] = 0;
-		goto LABEL_45;
-	}
-	if (msg->action > 92186062) {
-		switch (msg->action) {
-		case 134611040:
-			if (_gameEvents[kEventConcertLeaveWithBriefcase])
-				CONS_Kahina_SeekCath(0, 0, 0, 0);
-			break;
-		case 137503360:
-			CONS_Kahina_Finished(0, 0, 0, 0);
-			break;
-		case 237555748:
-			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+
+		if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+			if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+				KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+			} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+				KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+			}
+		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
+		getCharacter(kCharacterKahina).characterPosition.position = 5000;
+		getCharacter(kCharacterKahina).characterPosition.location = 0;
+		startCycOtis(kCharacterKahina, "202a");
+		break;
+	case 18:
+		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 1) {
+			getCharacterCurrentParams(kCharacterKahina)[0] = 0;
+			getCharacterCurrentParams(kCharacterKahina)[1] = 1;
 			break;
 		}
-		return;
-	}
-	if (msg->action == 92186062) {
+
+		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 2) {
+			getCharacterCurrentParams(kCharacterKahina)[0] = 0;
+			getCharacterCurrentParams(kCharacterKahina)[1] = 1;
+			if (!getCharacterCurrentParams(kCharacterKahina)[1]) {
+				if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+					if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+						KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+					} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+						KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+					}
+				}
+
+				break;
+			}
+
+			if (!getCharacterCurrentParams(kCharacterKahina)[3])
+				getCharacterCurrentParams(kCharacterKahina)[3] = _gameTime + 4500;
+
+			if (getCharacterCurrentParams(kCharacterKahina)[5] == 0x7FFFFFFF || !_gameTime) {
+				if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+					if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+						KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+					} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+						KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+					}
+				}
+
+				break;
+			}
+
+			if (getCharacterCurrentParams(kCharacterKahina)[2] >= _gameTime) {
+				if (checkCathDir(kCarKronos, 80) || checkCathDir(kCarKronos, 88) || !getCharacterCurrentParams(kCharacterKahina)[5]) {
+					getCharacterCurrentParams(kCharacterKahina)[5] = _gameTime;
+					if (!_gameTime) {
+						playDialog(0, "LIB014", getVolume(kCharacterKahina), 0);
+						playDialog(0, "LIB015", getVolume(kCharacterKahina), 15);
+						startCycOtis(kCharacterKahina, "202a");
+						getCharacterCurrentParams(kCharacterKahina)[1] = 0;
+						if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+							if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+								getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+								KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+							} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+								getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+								KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+							}
+						}
+
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterKahina)[5] >= _gameTime) {
+					if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+						if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+							getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+							KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+						} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+							getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+							KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+						}
+					}
+
+					break;
+				}
+			}
+
+			getCharacterCurrentParams(kCharacterKahina)[5] = 0x7FFFFFFF;
+			playDialog(0, "LIB014", getVolume(kCharacterKahina), 0);
+			playDialog(0, "LIB015", getVolume(kCharacterKahina), 15);
+			startCycOtis(kCharacterKahina, "202a");
+			getCharacterCurrentParams(kCharacterKahina)[1] = 0;
+
+			if (!_gameProgress[kProgressField44] && _gameTime > 2214000) {
+				if (_gameInventory[kProgressField48].location == 3 || _gameInventory[kProgressField48].location == 7) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+					KahinaCall(&LogicManager::CONS_Kahina_SearchCath, 0, 0, 0, 0);
+				} else if (_gameInventory[kProgressField48].location == 2 || _gameInventory[kProgressField48].location == 1) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+					KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
+				}
+			}
+
+			break;
+		}
+
+		break;
+	case 92186062:
 		if (getCharacterCurrentParams(kCharacterKahina)[0]) {
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 			KahinaCall(&LogicManager::CONS_Kahina_FindFirebird, 0, 0, 0, 0);
 		}
-		return;
-	}
-	if (msg->action == 18) {
-		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 1) {
-			getCharacterCurrentParams(kCharacterKahina)[0] = 0;
-			getCharacterCurrentParams(kCharacterKahina)[1] = 1;
-			return;
-		}
-		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 2) {
-			getCharacterCurrentParams(kCharacterKahina)[0] = 0;
-			getCharacterCurrentParams(kCharacterKahina)[1] = 1;
-			goto LABEL_32;
-		}
+
+		break;
+	case 134611040:
+		if (_gameEvents[kEventConcertLeaveWithBriefcase])
+			CONS_Kahina_SeekCath(0, 0, 0, 0);
+
+		break;
+	case 137503360:
+		CONS_Kahina_Finished(0, 0, 0, 0);
+		break;
+	case 237555748:
+		getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1230,6 +1592,7 @@ void LogicManager::HAND_Kahina_Finished(HAND_PARAMS) {
 				KahinaCall(&LogicManager::CONS_Kahina_SearchTatiana, 0, 0, 0, 0);
 			}
 		}
+
 		break;
 	case 12:
 		getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
@@ -1240,9 +1603,10 @@ void LogicManager::HAND_Kahina_Finished(HAND_PARAMS) {
 		if (getCharacter(kCharacterCath).characterPosition.car > kCarGreenSleeping || getCharacter(kCharacterCath).characterPosition.car == kCarGreenSleeping && getCharacter(kCharacterCath).characterPosition.position > 2740) {
 			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1257,7 +1621,8 @@ void LogicManager::CONS_Kahina_FindFirebird(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_FindFirebird(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		playDialog(0, "LIB014", getVolume(kCharacterKahina), 0);
 		playDialog(0, "LIB015", getVolume(kCharacterKahina), 15);
 		endGraphics(kCharacterKahina);
@@ -1265,13 +1630,18 @@ void LogicManager::HAND_Kahina_FindFirebird(HAND_PARAMS) {
 		getCharacter(kCharacterKahina).characterPosition.position = 540;
 		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 		KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 4070, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
 		case 1:
-			if (inSuite(kCharacterCath, kCarRedSleeping, 4455) || cathOutRebeccaWindow())
-				goto LABEL_12;
-			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
-			KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Cf", 37, 0, 0);
+			if (inSuite(kCharacterCath, kCarRedSleeping, 4455) || cathOutRebeccaWindow()) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 9460, 0, 0);
+			} else {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
+				KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Cf", 37, 0, 0);
+			}
+
 			break;
 		case 2:
 			getCharacter(kCharacterKahina).characterPosition.location = 1;
@@ -1290,7 +1660,6 @@ void LogicManager::HAND_Kahina_FindFirebird(HAND_PARAMS) {
 			break;
 		case 4:
 			getCharacter(kCharacterKahina).characterPosition.location = 0;
-		LABEL_12:
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 4, 9460, 0, 0);
 			break;
@@ -1311,8 +1680,12 @@ void LogicManager::HAND_Kahina_FindFirebird(HAND_PARAMS) {
 			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1327,69 +1700,80 @@ void LogicManager::CONS_Kahina_SeekCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_SeekCath(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] != 1) {
-				if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 2) {
-					if (getCharacter(kCharacterCath).characterPosition.position >= getCharacter(kCharacterKahina).characterPosition.position) {
-						playNIS((kEventKahinaGunBlue - (getCharacter(kCharacterKahina).characterPosition.car == kCarGreenSleeping)));
-					} else {
-						playNIS(kEventKahinaGun);
-					}
-					walk(kCharacterKahina, kCarKronos, 9270);
-					bumpCathRx(getCharacter(kCharacterKahina).characterPosition.car, getCharacter(kCharacterKahina).characterPosition.position + 750);
-					send(kCharacterKahina, kCharacterKronos, 235599361, 0);
-					playDialog(kCharacterKahina, "MUS016", 16, 0);
-					_gameProgress[kProgressField44] = 1;
-					getCharacterCurrentParams(kCharacterKahina)[0] = 1;
-					getCharacterCurrentParams(kCharacterKahina)[1] = 2;
-					getCharacterCurrentParams(kCharacterKahina)[2] = 9270;
-				}
-				return;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterKahina)[0]) {
+			if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[1], getCharacterCurrentParams(kCharacterKahina)[2])) {
+				endGraphics(kCharacterKahina);
+				getCharacterCurrentParams(kCharacterKahina)[0] = 0;
 			}
-			if (!getCharacterParams(kCharacterKahina, 8)[1]) {
-				if (getCharacterParams(kCharacterKahina, 8)[0]) {
-					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
-					KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKahinaGunYellow, 0, 0);
-					return;
-				}
-				goto LABEL_24;
-			}
-			endGraphics(kCharacterKahina);
-			if (whoRunningDialog(kCharacterKahina))
-				fadeDialog(kCharacterKahina);
-		} else {
-			if (msg->action != 137503360)
-				return;
-			endGraphics(kCharacterKahina);
-			if (whoRunningDialog(kCharacterKahina))
-				fadeDialog(kCharacterKahina);
 		}
-		_gameProgress[kProgressField44] = 0;
-		CONS_Kahina_Finished(0, 0, 0, 0);
-		return;
-	}
-	if (msg->action == 12) {
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
-		KahinaCall(&LogicManager::CONS_Kahina_LookingForCath, 2241000, 0, 0, 0);
-		return;
-	}
-	if (msg->action) {
-		if (msg->action != 2)
-			return;
+
+		break;
+	case 2:
 		if (checkLoc(kCharacterCath, kCarKronos)) {
 			send(kCharacterKahina, kCharacterKronos, 9, 0);
-			return;
+		} else {
+			CONS_Kahina_KillCathAnywhere(0, 0, 0, 0);
 		}
-	LABEL_24:
-		CONS_Kahina_KillCathAnywhere(0, 0, 0, 0);
-		return;
-	}
-	if (getCharacterCurrentParams(kCharacterKahina)[0]) {
-		if (walk(kCharacterKahina, getCharacterCurrentParams(kCharacterKahina)[1], getCharacterCurrentParams(kCharacterKahina)[2])) {
-			endGraphics(kCharacterKahina);
-			getCharacterCurrentParams(kCharacterKahina)[0] = 0;
+
+		break;
+	case 12:
+		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
+		KahinaCall(&LogicManager::CONS_Kahina_LookingForCath, 2241000, 0, 0, 0);
+		break;
+	case 18:
+		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] != 1) {
+			if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 2) {
+				if (getCharacter(kCharacterCath).characterPosition.position >= getCharacter(kCharacterKahina).characterPosition.position) {
+					playNIS((kEventKahinaGunBlue - (getCharacter(kCharacterKahina).characterPosition.car == kCarGreenSleeping)));
+				} else {
+					playNIS(kEventKahinaGun);
+				}
+
+				walk(kCharacterKahina, kCarKronos, 9270);
+				bumpCathRx(getCharacter(kCharacterKahina).characterPosition.car, getCharacter(kCharacterKahina).characterPosition.position + 750);
+				send(kCharacterKahina, kCharacterKronos, 235599361, 0);
+				playDialog(kCharacterKahina, "MUS016", 16, 0);
+				_gameProgress[kProgressField44] = 1;
+				getCharacterCurrentParams(kCharacterKahina)[0] = 1;
+				getCharacterCurrentParams(kCharacterKahina)[1] = 2;
+				getCharacterCurrentParams(kCharacterKahina)[2] = 9270;
+			}
+
+			break;
 		}
+
+		if (!getCharacterParams(kCharacterKahina, 8)[1]) {
+			if (getCharacterParams(kCharacterKahina, 8)[0]) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
+				KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKahinaGunYellow, 0, 0);
+			} else {
+				CONS_Kahina_KillCathAnywhere(0, 0, 0, 0);
+			}
+
+			break;
+		}
+
+		endGraphics(kCharacterKahina);
+
+		if (whoRunningDialog(kCharacterKahina))
+			fadeDialog(kCharacterKahina);
+
+		_gameProgress[kProgressField44] = 0;
+		CONS_Kahina_Finished(0, 0, 0, 0);
+		break;
+	case 137503360:
+		endGraphics(kCharacterKahina);
+
+		if (whoRunningDialog(kCharacterKahina))
+			fadeDialog(kCharacterKahina);
+
+		_gameProgress[kProgressField44] = 0;
+		CONS_Kahina_Finished(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1404,36 +1788,40 @@ void LogicManager::CONS_Kahina_SearchCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_SearchCath(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (getCharacterCurrentParams(kCharacterKahina)[0] == 0x7FFFFFFF || !_gameTime)
-			return;
-		if (_gameTime <= 2263500) {
-			if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterKahina)[0]) {
-				getCharacterCurrentParams(kCharacterKahina)[0] = _gameTime;
-				if (!_gameTime)
-					goto LABEL_13;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterKahina)[0] != 0x7FFFFFFF && _gameTime) {
+			if (_gameTime <= 2263500) {
+				if (!cathInCorridor(kCarGreenSleeping) || !getCharacterCurrentParams(kCharacterKahina)[0]) {
+					getCharacterCurrentParams(kCharacterKahina)[0] = _gameTime;
+					if (!_gameTime) {
+						getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 12;
+						KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ba", 1, 0, 0);
+						break;
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterKahina)[0] >= _gameTime)
+					break;
 			}
-			if (getCharacterCurrentParams(kCharacterKahina)[0] >= _gameTime)
-				return;
+
+			getCharacterCurrentParams(kCharacterKahina)[0] = 0x7FFFFFFF;
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 12;
+			KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ba", 1, 0, 0);
 		}
-		getCharacterCurrentParams(kCharacterKahina)[0] = 0x7FFFFFFF;
-	LABEL_13:
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 12;
-		KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ba", 1, 0, 0);
-		return;
-	}
-	if (msg->action == 12) {
+
+		break;
+	case 12:
 		if (!_gameEvents[kEventAnnaBaggageArgument]) {
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 3, 8200, 0, 0);
-			return;
+			break;
 		}
 
 		if (_gameInventory[kItemFirebird].location == 3) {
 			_gameProgress[kProgressField7C] = 1;
 		} else {
 			if (_gameInventory[kItemFirebird].location != 7) {
-			LABEL_20:
 				dropItem(kItemBriefcase, 2);
 				_gameProgress[kProgressField78] = 1;
 				getCharacterParams(kCharacterKahina, 8)[2] = 0;
@@ -1441,113 +1829,153 @@ void LogicManager::HAND_Kahina_SearchCath(HAND_PARAMS) {
 				getCharacter(kCharacterKahina).currentCall--;
 				_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 				fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-				return;
+				break;
 			}
+
 			_gameProgress[kProgressField80] = 1;
 		}
+
 		takeItem(kItemFirebird);
 		_gameInventory[kItemFirebird].location = 5;
 		send(kCharacterKahina, kCharacterKronos, 138085344, 0);
-		goto LABEL_20;
-	}
-	if (msg->action != 18)
-		return;
-
-	switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
-	case 1:
-		if (!cathInCorridor(kCarGreenSleeping))
-			goto LABEL_29;
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 3, 9460, 0, 0);
-		return;
-	case 2:
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWait, 1800, 0, 0, 0);
-		return;
-	case 3:
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 3, 8200, 0, 0);
-		return;
-	case 4:
-		if (cathInCorridor(kCarGreenSleeping)) {
-			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
-			KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 2, 9270, 0, 0);
-		} else {
-		LABEL_29:
-			if (inSuite(kCharacterCath, kCarGreenSleeping, 7850) || cathOutHisWindow()) {
-				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 6;
-				KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "LIB013", 0, 0, 0);
-			} else {
-				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 8;
-				KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 1, 0, 0);
-			}
-		}
-		return;
-	case 5:
-	case 7:
-	case 11:
-	case 13:
-		endGraphics(kCharacterKahina);
+		dropItem(kItemBriefcase, 2);
+		_gameProgress[kProgressField78] = 1;
+		getCharacterParams(kCharacterKahina, 8)[2] = 0;
 
 		getCharacter(kCharacterKahina).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
 		fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
-		return;
-	case 6:
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 7;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 2, 9270, 0, 0);
-		return;
-	case 8:
-		getCharacter(kCharacterKahina).characterPosition.location = 1;
-		endGraphics(kCharacterKahina);
-		setDoor(1, kCharacterCath, 0, 0, 0);
-		setDoor(17, kCharacterCath, 0, 0, 0);
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 9;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWait, 900, 0, 0, 0);
-		return;
-	case 9:
-		setDoor(1, kCharacterCath, 0, 10, 9);
-		setDoor(17, kCharacterCath, 0, 10, 9);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
+		case 1:
+			if (!cathInCorridor(kCarGreenSleeping)) {
+				if (inSuite(kCharacterCath, kCarGreenSleeping, 7850) || cathOutHisWindow()) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 6;
+					KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "LIB013", 0, 0, 0);
+				} else {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 8;
+					KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 1, 0, 0);
+				}
+			} else {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 3, 9460, 0, 0);
+			}
 
-		if (_gameInventory[kItemFirebird].location == 3) {
-			_gameProgress[kProgressField7C] = 1;
-			goto LABEL_41;
+			break;
+		case 2:
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
+			KahinaCall(&LogicManager::CONS_Kahina_DoWait, 1800, 0, 0, 0);
+			break;
+		case 3:
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 4;
+			KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 3, 8200, 0, 0);
+			break;
+		case 4:
+			if (cathInCorridor(kCarGreenSleeping)) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 2, 9270, 0, 0);
+			} else {
+				if (inSuite(kCharacterCath, kCarGreenSleeping, 7850) || cathOutHisWindow()) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 6;
+					KahinaCall(&LogicManager::CONS_Kahina_DoDialog, "LIB013", 0, 0, 0);
+				} else {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 8;
+					KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 1, 0, 0);
+				}
+			}
+
+			break;
+		case 5:
+		case 7:
+		case 11:
+		case 13:
+			endGraphics(kCharacterKahina);
+
+			getCharacter(kCharacterKahina).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterKahina, _functionsKahina[getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall]]);
+			fedEx(kCharacterKahina, kCharacterKahina, 18, 0);
+			break;
+		case 6:
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 7;
+			KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 2, 9270, 0, 0);
+			break;
+		case 8:
+			getCharacter(kCharacterKahina).characterPosition.location = 1;
+			endGraphics(kCharacterKahina);
+			setDoor(1, kCharacterCath, 0, 0, 0);
+			setDoor(17, kCharacterCath, 0, 0, 0);
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 9;
+			KahinaCall(&LogicManager::CONS_Kahina_DoWait, 900, 0, 0, 0);
+			break;
+		case 9:
+			setDoor(1, kCharacterCath, 0, 10, 9);
+			setDoor(17, kCharacterCath, 0, 10, 9);
+
+			if (_gameInventory[kItemFirebird].location == 3) {
+				_gameProgress[kProgressField7C] = 1;
+				takeItem(kItemFirebird);
+				_gameInventory[kItemFirebird].location = 5;
+				send(kCharacterKahina, kCharacterKronos, 138085344, 0);
+				dropItem(kItemBriefcase, 2);
+				_gameProgress[kProgressFieldC0] = _gameTime;
+				_gameProgress[kProgressField78] = 1;
+				getCharacterParams(kCharacterKahina, 8)[2] = 0;
+
+				if (_gameInventory[kItemFirebird].location != 18) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 10;
+					KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ba", 1, 0, 0);
+				}
+
+				break;
+			}
+
+			if (_gameInventory[kItemFirebird].location == 7) {
+				_gameProgress[kProgressField80] = 1;
+				takeItem(kItemFirebird);
+				_gameInventory[kItemFirebird].location = 5;
+				send(kCharacterKahina, kCharacterKronos, 138085344, 0);
+				dropItem(kItemBriefcase, 2);
+				_gameProgress[kProgressFieldC0] = _gameTime;
+				_gameProgress[kProgressField78] = 1;
+				getCharacterParams(kCharacterKahina, 8)[2] = 0;
+	
+				if (_gameInventory[kItemFirebird].location != 18) {
+					getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 10;
+					KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ba", 1, 0, 0);
+				}
+
+				break;
+			}
+
+			if (getCharacterParams(kCharacterKahina, 8)[2]) {
+				dropItem(kItemBriefcase, 2);
+				_gameProgress[kProgressField78] = 1;
+				getCharacterParams(kCharacterKahina, 8)[2] = 0;
+			}
+
+			if (_gameInventory[kItemFirebird].location != 18) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 10;
+				KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ba", 1, 0, 0);
+			}
+			break;
+		case 10:
+			getCharacter(kCharacterKahina).characterPosition.location = 0;
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 11;
+			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 2, 9270, 0, 0);
+			break;
+		case 12:
+			getCharacter(kCharacterKahina).characterPosition.location = 0;
+			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 13;
+			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 2, 9270, 0, 0);
+			break;
+		default:
+			break;
 		}
-		if (_gameInventory[kItemFirebird].location == 7) {
-			_gameProgress[kProgressField80] = 1;
-		LABEL_41:
-			takeItem(kItemFirebird);
-			_gameInventory[kItemFirebird].location = 5;
-			send(kCharacterKahina, kCharacterKronos, 138085344, 0);
-			dropItem(kItemBriefcase, 2);
-			_gameProgress[kProgressFieldC0] = _gameTime;
-			_gameProgress[kProgressField78] = 1;
-			goto LABEL_42;
-		}
-		if (!getCharacterParams(kCharacterKahina, 8)[2])
-			goto LABEL_43;
-		dropItem(kItemBriefcase, 2);
-		_gameProgress[kProgressField78] = 1;
-	LABEL_42:
-		getCharacterParams(kCharacterKahina, 8)[2] = 0;
-	LABEL_43:
-		if (_gameInventory[kItemFirebird].location != 18) {
-			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 10;
-			KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Ba", 1, 0, 0);
-		}
-		return;
-	case 10:
-		getCharacter(kCharacterKahina).characterPosition.location = 0;
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 11;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 2, 9270, 0, 0);
-		return;
-	case 12:
-		getCharacter(kCharacterKahina).characterPosition.location = 0;
-		getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 13;
-		KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 2, 9270, 0, 0);
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1562,7 +1990,8 @@ void LogicManager::CONS_Kahina_SearchTatiana(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_SearchTatiana(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		if (_gameEvents[kEventAnnaBaggageArgument]) {
 			takeItem(kItemFirebird);
 			_gameInventory[kItemFirebird].location = 5;
@@ -1577,13 +2006,19 @@ void LogicManager::HAND_Kahina_SearchTatiana(HAND_PARAMS) {
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 4, 8200, 0, 0);
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		switch (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8]) {
 		case 1:
-			if (!inSuite(kCharacterCath, kCarRedSleeping, 7850))
-				goto LABEL_14;
-			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
-			KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 4, 9460, 0, 0);
+			if (!inSuite(kCharacterCath, kCarRedSleeping, 7850)) {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 6;
+				KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 32, 0, 0);
+			} else {
+				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 2;
+				KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 4, 9460, 0, 0);
+			}
+
 			break;
 		case 2:
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 3;
@@ -1598,10 +2033,10 @@ void LogicManager::HAND_Kahina_SearchTatiana(HAND_PARAMS) {
 				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 5;
 				KahinaCall(&LogicManager::CONS_Kahina_DoWalk1033, 2, 9270, 0, 0);
 			} else {
-			LABEL_14:
 				getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 6;
 				KahinaCall(&LogicManager::CONS_Kahina_DoCorrOtis, "616Aa", 32, 0, 0);
 			}
+
 			break;
 		case 5:
 		case 9:
@@ -1640,8 +2075,12 @@ void LogicManager::HAND_Kahina_SearchTatiana(HAND_PARAMS) {
 			KahinaCall(&LogicManager::CONS_Kahina_DoWalk, 2, 9270, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1656,14 +2095,8 @@ void LogicManager::CONS_Kahina_KillCathAnywhere(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_KillCathAnywhere(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			_gameTimeTicksDelta = 0;
-		} else if (msg->action == 18 && getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 1) {
-			playNIS(getCharacterCurrentParams(kCharacterKahina)[0]);
-			endGame(0, 1, 0, 1);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (onLowPlatform(kCharacterCath)) {
 			getCharacterCurrentParams(kCharacterKahina)[0] = kEventKahinaPunchCar;
 		} else if (cathInCorridor(kCarGreenSleeping)) {
@@ -1681,10 +2114,25 @@ void LogicManager::HAND_Kahina_KillCathAnywhere(HAND_PARAMS) {
 		} else if (checkLoc(kCharacterCath, kCarBaggage)) {
 			getCharacterCurrentParams(kCharacterKahina)[0] = kEventKahinaPunchBaggageCar;
 		}
+
 		if (getCharacterCurrentParams(kCharacterKahina)[0]) {
 			getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] = 1;
 			KahinaCall(&LogicManager::CONS_Kahina_SaveGame, 2, kEventKahinaPunchBaggageCarEntrance, 0, 0);
 		}
+
+		break;
+	case 12:
+		_gameTimeTicksDelta = 0;
+		break;
+	case 18:
+		if (getCharacter(kCharacterKahina).callbacks[getCharacter(kCharacterKahina).currentCall + 8] == 1) {
+			playNIS(getCharacterCurrentParams(kCharacterKahina)[0]);
+			endGame(0, 1, 0, true);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1699,8 +2147,13 @@ void LogicManager::CONS_Kahina_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_StartPart4(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterKahina);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Kahina_StartPart5(CONS_PARAMS) {
@@ -1714,8 +2167,13 @@ void LogicManager::CONS_Kahina_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Kahina_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterKahina);
+		break;
+	default:
+		break;
+	}
 }
 
 void (LogicManager::*LogicManager::_functionsKahina[])(HAND_PARAMS) = {
