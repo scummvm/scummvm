@@ -48,7 +48,7 @@ void LogicManager::CONS_Waiter2(int chapter) {
 		CONS_Waiter2_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -71,11 +71,12 @@ void LogicManager::CONS_Waiter2_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterWaiter2)[1] ||
 			(getCharacterCurrentParams(kCharacterWaiter2)[1] = _gameTime + getCharacterCurrentParams(kCharacterWaiter2)[0], _gameTime + getCharacterCurrentParams(kCharacterWaiter2)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterWaiter2)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterWaiter2)[1] = 0x7FFFFFFF;
 		}
@@ -83,6 +84,9 @@ void LogicManager::HAND_Waiter2_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterWaiter2).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 		fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -110,9 +114,12 @@ void LogicManager::HAND_Waiter2_DoSeqOtis(HAND_PARAMS) {
 			playChrExcuseMe(kCharacterWaiter2, kCharacterCath, 0);
 			getCharacterCurrentParams(kCharacterWaiter2)[3] = 1;
 		}
+
 		break;
 	case 12:
 		startSeqOtis(kCharacterWaiter2, (char *)&getCharacterCurrentParams(kCharacterWaiter2)[0]);
+		break;
+	default:
 		break;
 	}
 }
@@ -152,6 +159,8 @@ void LogicManager::HAND_Waiter2_DoBlockSeqOtis(HAND_PARAMS) {
 		startSeqOtis(kCharacterWaiter2, (char *)&getCharacterCurrentParams(kCharacterWaiter2)[0]);
 		blockView(kCharacterWaiter2, getCharacterCurrentParams(kCharacterWaiter2)[3], getCharacterCurrentParams(kCharacterWaiter2)[4]);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -166,21 +175,29 @@ void LogicManager::CONS_Waiter2_FinishSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_FinishSeqOtis(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacter(kCharacterWaiter2).direction != 4) {
 			getCharacter(kCharacterWaiter2).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 		}
-	} else if (msg->action == 3) {
+
+		break;
+	case 3:
 		getCharacter(kCharacterWaiter2).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 		fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
-	} else if (msg->action == 5) {
+		break;
+	case 5:
 		if (!getCharacterCurrentParams(kCharacterWaiter2)[0]) {
 			playChrExcuseMe(kCharacterWaiter2, kCharacterCath, 0);
 			getCharacterCurrentParams(kCharacterWaiter2)[0] = 1;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -229,7 +246,7 @@ void LogicManager::HAND_Waiter2_DoJoinedSeqOtis(HAND_PARAMS) {
 		startSeqOtis(kCharacterWaiter2, (char *)&getCharacterCurrentParams(kCharacterWaiter2)[0]);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -246,12 +263,17 @@ void LogicManager::CONS_Waiter2_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterWaiter2).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 		fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterWaiter2, (char *)&getCharacterCurrentParams(kCharacterWaiter2)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -266,12 +288,14 @@ void LogicManager::CONS_Waiter2_MonsieurServeUs(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_MonsieurServeUs(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "924", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			send(kCharacterWaiter2, kCharacterMonsieur, 122358304, 0);
@@ -292,7 +316,13 @@ void LogicManager::HAND_Waiter2_MonsieurServeUs(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -307,25 +337,28 @@ void LogicManager::CONS_Waiter2_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			autoMessage(kCharacterWaiter2, 302203328, 5);
-			autoMessage(kCharacterWaiter2, 189688608, 6);
-			autoMessage(kCharacterWaiter2, 236237423, 7);
-			autoMessage(kCharacterWaiter2, 219377792, 8);
-			autoMessage(kCharacterWaiter2, 291721418, 10);
-			autoMessage(kCharacterWaiter2, 258136010, 11);
-			autoMessage(kCharacterWaiter2, 302996448, 2);
-			autoMessage(kCharacterWaiter2, 223002560, 0);
-			autoMessage(kCharacterWaiter2, 256200848, 9);
-			autoMessage(kCharacterWaiter2, 269485588, 3);
-			autoMessage(kCharacterWaiter2, 326144276, 4);
-			getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterWaiter2).characterPosition.location = 0;
-			getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Waiter2_ServingDinner(0, 0, 0, 0);
+		break;
+	case 12:
+		autoMessage(kCharacterWaiter2, 302203328, 5);
+		autoMessage(kCharacterWaiter2, 189688608, 6);
+		autoMessage(kCharacterWaiter2, 236237423, 7);
+		autoMessage(kCharacterWaiter2, 219377792, 8);
+		autoMessage(kCharacterWaiter2, 291721418, 10);
+		autoMessage(kCharacterWaiter2, 258136010, 11);
+		autoMessage(kCharacterWaiter2, 302996448, 2);
+		autoMessage(kCharacterWaiter2, 223002560, 0);
+		autoMessage(kCharacterWaiter2, 256200848, 9);
+		autoMessage(kCharacterWaiter2, 269485588, 3);
+		autoMessage(kCharacterWaiter2, 326144276, 4);
+		getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
+		getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -340,12 +373,14 @@ void LogicManager::CONS_Waiter2_MilosOrder(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_MilosOrder(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "924", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			startCycOtis(kCharacterMilos, "BLANK");
@@ -367,7 +402,13 @@ void LogicManager::HAND_Waiter2_MilosOrder(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -382,12 +423,14 @@ void LogicManager::CONS_Waiter2_MonsieurOrder(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_MonsieurOrder(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "924", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			startCycOtis(kCharacterMonsieur, "BLANK");
@@ -409,7 +452,13 @@ void LogicManager::HAND_Waiter2_MonsieurOrder(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -424,12 +473,14 @@ void LogicManager::CONS_Waiter2_ClearAlexei(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_ClearAlexei(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "919", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			blockView(kCharacterWaiter2, kCarRestaurant, 63);
@@ -451,7 +502,13 @@ void LogicManager::HAND_Waiter2_ClearAlexei(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -466,12 +523,14 @@ void LogicManager::CONS_Waiter2_ClearMilos(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_ClearMilos(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "923", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			send(kCharacterWaiter2, kCharacterTableC, 136455232, 0);
@@ -491,7 +550,13 @@ void LogicManager::HAND_Waiter2_ClearMilos(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -506,12 +571,14 @@ void LogicManager::CONS_Waiter2_ClearMonsieur(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_ClearMonsieur(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "923", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			send(kCharacterWaiter2, kCharacterTableC, 136455232, 0);
@@ -531,7 +598,13 @@ void LogicManager::HAND_Waiter2_ClearMonsieur(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -546,28 +619,37 @@ void LogicManager::CONS_Waiter2_ServingDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_ServingDinner(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18 && getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 5) {
+	switch (msg->action) {
+	case 0:
+		if (inKitchen(kCharacterWaiter2) && rcClear()) {
+			if (getCharacterParams(kCharacterWaiter2, 8)[0]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
+				Waiter2Call(&LogicManager::CONS_Waiter2_MilosOrder, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[9]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
+				Waiter2Call(&LogicManager::CONS_Waiter2_MonsieurOrder, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[2]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
+				Waiter2Call(&LogicManager::CONS_Waiter2_ClearAlexei, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[3]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 4;
+				Waiter2Call(&LogicManager::CONS_Waiter2_ClearMilos, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[4]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 5;
+				Waiter2Call(&LogicManager::CONS_Waiter2_ClearMonsieur, 0, 0, 0, 0);
+			}
+		}
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 5) {
 			send(kCharacterWaiter2, kCharacterHeadWait, 352768896, 0);
 			CONS_Waiter2_AfterDinner(0, 0, 0, 0);
 		}
-	} else if (inKitchen(kCharacterWaiter2) && rcClear()) {
-		if (getCharacterParams(kCharacterWaiter2, 8)[0]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
-			Waiter2Call(&LogicManager::CONS_Waiter2_MilosOrder, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[9]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
-			Waiter2Call(&LogicManager::CONS_Waiter2_MonsieurOrder, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[2]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
-			Waiter2Call(&LogicManager::CONS_Waiter2_ClearAlexei, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[3]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 4;
-			Waiter2Call(&LogicManager::CONS_Waiter2_ClearMilos, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[4]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 5;
-			Waiter2Call(&LogicManager::CONS_Waiter2_ClearMonsieur, 0, 0, 0, 0);
-		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -582,10 +664,15 @@ void LogicManager::CONS_Waiter2_AfterDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_AfterDinner(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
-	} else if (msg->action == 101632192) {
+		break;
+	case 101632192:
 		CONS_Waiter2_LockUp(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -600,11 +687,15 @@ void LogicManager::CONS_Waiter2_LockUp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_LockUp(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		endGraphics(kCharacterWaiter2);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -619,20 +710,23 @@ void LogicManager::CONS_Waiter2_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterWaiter2);
-			getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
-			getCharacter(kCharacterWaiter2).characterPosition.location = 0;
-			getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterWaiter2).clothes = 1;
-			getCharacter(kCharacterWaiter2).inventoryItem = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[5] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[6] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[7] = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Waiter2_InKitchen(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterWaiter2);
+		getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
+		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
+		getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterWaiter2).clothes = 1;
+		getCharacter(kCharacterWaiter2).inventoryItem = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[5] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[6] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[7] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -647,45 +741,58 @@ void LogicManager::CONS_Waiter2_InKitchen(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_InKitchen(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!inKitchen(kCharacterWaiter2) || !rcClear())
-			return;
+	switch (msg->action) {
+	case 0:
+		if (inKitchen(kCharacterWaiter2) && rcClear()) {
+			if (getCharacterParams(kCharacterWaiter2, 8)[5]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
+				Waiter2Call(&LogicManager::CONS_Waiter2_TatianaClearTableB, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[6]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
+				Waiter2Call(&LogicManager::CONS_Waiter2_IvoComeHere, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[7] || getCharacterParams(kCharacterWaiter2, 8)[4]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
+				Waiter2Call(&LogicManager::CONS_Waiter2_IvoClearTableC, 0, 0, 0, 0);
+			}
 
-		if (getCharacterParams(kCharacterWaiter2, 8)[5]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
-			Waiter2Call(&LogicManager::CONS_Waiter2_TatianaClearTableB, 0, 0, 0, 0);
-			return;
+			break;
 		}
-		goto LABEL_13;
-	}
-	if (msg->action != 18) {
-		if (msg->action == 101106391) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 4;
-			Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "975", 0, 0, 0);
-		}
-		return;
-	}
 
-	if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 1) {
-	LABEL_13:
-		if (getCharacterParams(kCharacterWaiter2, 8)[6]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
-			Waiter2Call(&LogicManager::CONS_Waiter2_IvoComeHere, 0, 0, 0, 0);
-			return;
+		break;
+	case 18:
+		if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 1) {
+			if (getCharacterParams(kCharacterWaiter2, 8)[6]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
+				Waiter2Call(&LogicManager::CONS_Waiter2_IvoComeHere, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[7] || getCharacterParams(kCharacterWaiter2, 8)[4]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
+				Waiter2Call(&LogicManager::CONS_Waiter2_IvoClearTableC, 0, 0, 0, 0);
+			}
+
+			break;
 		}
-		goto LABEL_15;
-	}
-	if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] != 2) {
-		if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 4) {
-			endGraphics(kCharacterWaiter2);
-			getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
+
+		if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] != 2) {
+			if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 4) {
+				endGraphics(kCharacterWaiter2);
+				getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
+			}
+
+			break;
 		}
-		return;
-	}
-LABEL_15:
-	if (getCharacterParams(kCharacterWaiter2, 8)[7] || getCharacterParams(kCharacterWaiter2, 8)[4]) {
-		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
-		Waiter2Call(&LogicManager::CONS_Waiter2_IvoClearTableC, 0, 0, 0, 0);
+
+		if (getCharacterParams(kCharacterWaiter2, 8)[7] || getCharacterParams(kCharacterWaiter2, 8)[4]) {
+			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
+			Waiter2Call(&LogicManager::CONS_Waiter2_IvoClearTableC, 0, 0, 0, 0);
+		}
+
+		break;
+	case 101106391:
+		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 4;
+		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "975", 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -700,12 +807,14 @@ void LogicManager::CONS_Waiter2_TatianaClearTableB(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_TatianaClearTableB(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "969", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			blockView(kCharacterWaiter2, kCarRestaurant, 63);
@@ -727,7 +836,13 @@ void LogicManager::HAND_Waiter2_TatianaClearTableB(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -742,19 +857,27 @@ void LogicManager::CONS_Waiter2_IvoComeHere(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_IvoComeHere(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "973", 0, 0, 0);
-	} else if (msg->action == 18 && getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 1) {
-		send(kCharacterWaiter2, kCharacterIvo, 123712592, 0);
-		startCycOtis(kCharacterWaiter2, "BLANK");
-		getCharacterParams(kCharacterWaiter2, 8)[6] = 0;
+		break;
+	case 18:
+		if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 1) {
+			send(kCharacterWaiter2, kCharacterIvo, 123712592, 0);
+			startCycOtis(kCharacterWaiter2, "BLANK");
+			getCharacterParams(kCharacterWaiter2, 8)[6] = 0;
 
-		getCharacter(kCharacterWaiter2).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
-		fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
+			getCharacter(kCharacterWaiter2).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
+			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -769,12 +892,14 @@ void LogicManager::CONS_Waiter2_IvoClearTableC(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_IvoClearTableC(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "974", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			send(kCharacterWaiter2, kCharacterTableC, 136455232, 0);
@@ -795,7 +920,13 @@ void LogicManager::HAND_Waiter2_IvoClearTableC(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterWaiter2, _functionsWaiter2[getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall]]);
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -810,19 +941,22 @@ void LogicManager::CONS_Waiter2_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterWaiter2);
-			getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
-			getCharacter(kCharacterWaiter2).characterPosition.location = 0;
-			getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterWaiter2).clothes = 1;
-			getCharacter(kCharacterWaiter2).inventoryItem = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[8] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[9] = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Waiter2_Serving3(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterWaiter2);
+		getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
+		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
+		getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterWaiter2).clothes = 1;
+		getCharacter(kCharacterWaiter2).inventoryItem = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[8] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[9] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -837,14 +971,21 @@ void LogicManager::CONS_Waiter2_Serving3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_Serving3(HAND_PARAMS) {
-	if (msg->action == 0 && inKitchen(kCharacterWaiter2) && rcClear()) {
-		if (getCharacterParams(kCharacterWaiter2, 8)[8]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
-			Waiter2Call(&LogicManager::CONS_Waiter2_AnnaBringTea3, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[9]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
-			Waiter2Call(&LogicManager::CONS_Waiter2_MonsieurServeUs, 0, 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (inKitchen(kCharacterWaiter2) && rcClear()) {
+			if (getCharacterParams(kCharacterWaiter2, 8)[8]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
+				Waiter2Call(&LogicManager::CONS_Waiter2_AnnaBringTea3, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[9]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
+				Waiter2Call(&LogicManager::CONS_Waiter2_MonsieurServeUs, 0, 0, 0, 0);
+			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -859,12 +1000,14 @@ void LogicManager::CONS_Waiter2_AnnaBringTea3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_AnnaBringTea3(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "816DD", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			startSeqOtis(kCharacterWaiter2, "927");
@@ -889,8 +1032,10 @@ void LogicManager::HAND_Waiter2_AnnaBringTea3(HAND_PARAMS) {
 			break;
 		case 4:
 			startSeqOtis(kCharacterWaiter2, "816UD");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterWaiter2);
+
 			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 5;
 			Waiter2Call(&LogicManager::CONS_Waiter2_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -904,8 +1049,12 @@ void LogicManager::HAND_Waiter2_AnnaBringTea3(HAND_PARAMS) {
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -920,21 +1069,24 @@ void LogicManager::CONS_Waiter2_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterWaiter2);
-			getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
-			getCharacter(kCharacterWaiter2).characterPosition.location = 0;
-			getCharacter(kCharacterWaiter2).inventoryItem = 0;
-			endGraphics(kCharacterWaiter2);
-			getCharacterParams(kCharacterWaiter2, 8)[10] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[12] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[11] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[9] = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Waiter2_Serving4(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterWaiter2);
+		getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
+		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
+		getCharacter(kCharacterWaiter2).inventoryItem = 0;
+		endGraphics(kCharacterWaiter2);
+		getCharacterParams(kCharacterWaiter2, 8)[10] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[12] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[11] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[9] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -949,47 +1101,59 @@ void LogicManager::CONS_Waiter2_Serving4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_Serving4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 1)
-				getCharacterCurrentParams(kCharacterWaiter2)[0] = 1;
-		} else if (msg->action == 201431954) {
-			getCharacter(kCharacterWaiter2).callParams[8].parameters[10] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[12] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[11] = 0;
-			getCharacterParams(kCharacterWaiter2, 8)[9] = 0;
-			getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
-			getCharacter(kCharacterWaiter2).characterPosition.location = 0;
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterWaiter2)[0]) {
+			bool skip = false;
+
+			if (!getCharacterCurrentParams(kCharacterWaiter2)[1]) {
+				getCharacterCurrentParams(kCharacterWaiter2)[1] = _gameTime + 900;
+				if (_gameTime == -900) {
+					skip = true;
+					getCharacterParams(kCharacterWaiter2, 8)[12] = 1;
+					getCharacterCurrentParams(kCharacterWaiter2)[0] = 0;
+				}
+			}
+
+			if (!skip && getCharacterCurrentParams(kCharacterWaiter2)[1] < _gameTime) {
+				getCharacterCurrentParams(kCharacterWaiter2)[1] = 0x7FFFFFFF;
+				getCharacterParams(kCharacterWaiter2, 8)[12] = 1;
+				getCharacterCurrentParams(kCharacterWaiter2)[0] = 0;
+			}
 		}
-		return;
-	}
-	if (getCharacterCurrentParams(kCharacterWaiter2)[0]) {
-		if (!getCharacterCurrentParams(kCharacterWaiter2)[1]) {
-			getCharacterCurrentParams(kCharacterWaiter2)[1] = _gameTime + 900;
-			if (_gameTime == -900)
-				goto LABEL_10;
+
+		if (inKitchen(kCharacterWaiter2) && rcClear()) {
+			if (getCharacterParams(kCharacterWaiter2, 8)[10]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
+				Waiter2Call(&LogicManager::CONS_Waiter2_AugustNeedsADrink, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[12]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
+				Waiter2Call(&LogicManager::CONS_Waiter2_ServeAugustADrink, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[11]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
+				Waiter2Call(&LogicManager::CONS_Waiter2_AnnaNeedsADrink, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterWaiter2, 8)[9]) {
+				getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 4;
+				Waiter2Call(&LogicManager::CONS_Waiter2_MonsieurServeUs, 0, 0, 0, 0);
+			}
 		}
-		if (getCharacterCurrentParams(kCharacterWaiter2)[1] < _gameTime) {
-			getCharacterCurrentParams(kCharacterWaiter2)[1] = 0x7FFFFFFF;
-		LABEL_10:
-			getCharacterParams(kCharacterWaiter2, 8)[12] = 1;
-			getCharacterCurrentParams(kCharacterWaiter2)[0] = 0;
-		}
-	}
-	if (inKitchen(kCharacterWaiter2) && rcClear()) {
-		if (getCharacterParams(kCharacterWaiter2, 8)[10]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
-			Waiter2Call(&LogicManager::CONS_Waiter2_AugustNeedsADrink, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[12]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 2;
-			Waiter2Call(&LogicManager::CONS_Waiter2_ServeAugustADrink, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[11]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 3;
-			Waiter2Call(&LogicManager::CONS_Waiter2_AnnaNeedsADrink, 0, 0, 0, 0);
-		} else if (getCharacterParams(kCharacterWaiter2, 8)[9]) {
-			getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 4;
-			Waiter2Call(&LogicManager::CONS_Waiter2_MonsieurServeUs, 0, 0, 0, 0);
-		}
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] == 1)
+			getCharacterCurrentParams(kCharacterWaiter2)[0] = 1;
+
+		break;
+	case 201431954:
+		getCharacter(kCharacterWaiter2).callParams[8].parameters[10] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[12] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[11] = 0;
+		getCharacterParams(kCharacterWaiter2, 8)[9] = 0;
+		getCharacter(kCharacterWaiter2).characterPosition.position = 5900;
+		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1004,12 +1168,14 @@ void LogicManager::CONS_Waiter2_AugustNeedsADrink(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_AugustNeedsADrink(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "816DD", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			startSeqOtis(kCharacterWaiter2, "929");
@@ -1048,8 +1214,12 @@ void LogicManager::HAND_Waiter2_AugustNeedsADrink(HAND_PARAMS) {
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1064,12 +1234,14 @@ void LogicManager::CONS_Waiter2_ServeAugustADrink(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_ServeAugustADrink(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "816DD", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			startSeqOtis(kCharacterWaiter2, "931");
@@ -1108,8 +1280,12 @@ void LogicManager::HAND_Waiter2_ServeAugustADrink(HAND_PARAMS) {
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1124,12 +1300,14 @@ void LogicManager::CONS_Waiter2_AnnaNeedsADrink(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_AnnaNeedsADrink(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterWaiter2).characterPosition.position = 5800;
 		getCharacter(kCharacterWaiter2).characterPosition.location = 0;
 		getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8] = 1;
 		Waiter2Call(&LogicManager::CONS_Waiter2_DoSeqOtis, "816DD", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterWaiter2).callbacks[getCharacter(kCharacterWaiter2).currentCall + 8]) {
 		case 1:
 			startSeqOtis(kCharacterWaiter2, "932");
@@ -1168,8 +1346,12 @@ void LogicManager::HAND_Waiter2_AnnaNeedsADrink(HAND_PARAMS) {
 			fedEx(kCharacterWaiter2, kCharacterWaiter2, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1184,16 +1366,19 @@ void LogicManager::CONS_Waiter2_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterWaiter2);
-			getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterWaiter2).characterPosition.position = 3969;
-			getCharacter(kCharacterWaiter2).characterPosition.location = 1;
-			getCharacter(kCharacterWaiter2).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Waiter2_Prisoner(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterWaiter2);
+		getCharacter(kCharacterWaiter2).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterWaiter2).characterPosition.position = 3969;
+		getCharacter(kCharacterWaiter2).characterPosition.location = 1;
+		getCharacter(kCharacterWaiter2).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1208,8 +1393,13 @@ void LogicManager::CONS_Waiter2_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Waiter2_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_Waiter2_Disappear(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Waiter2_Disappear(CONS_PARAMS) {
