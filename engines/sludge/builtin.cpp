@@ -24,6 +24,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "engines/metaengine.h"
+
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
@@ -38,6 +40,7 @@
 #include "sludge/people.h"
 #include "sludge/region.h"
 #include "sludge/savedata.h"
+#include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
@@ -244,6 +247,15 @@ builtIn(fileExists) {
 	Common::String aaaaa = encodeFilename(g_sludge->loadNow);
 	g_sludge->loadNow.clear();
 
+	uint extensionLength = aaaaa.size() - aaaaa.rfind('.');
+
+	if (aaaaa.size() != extensionLength) {
+		Common::String nameWithoutExtension = aaaaa.substr(0, aaaaa.size() - extensionLength);
+		if (g_sludge->_saveNameToSlot.contains(nameWithoutExtension)) {
+			aaaaa = g_sludge->getSaveStateName(g_sludge->_saveNameToSlot[nameWithoutExtension]);
+		}
+	}
+
 	if (failSecurityCheck(aaaaa))
 		return BR_ERROR;
 
@@ -269,6 +281,40 @@ builtIn(fileExists) {
 builtIn(loadGame) {
 	UNUSEDALL
 	Common::String aaaaa = fun->stack->thisVar.getTextFromAnyVar();
+
+	uint extensionLength = aaaaa.size() - aaaaa.rfind('.');
+	Common::String nameWithoutExtension = aaaaa.substr(0, aaaaa.size() - extensionLength);
+
+	if (g_sludge->_saveNameToSlot.contains(nameWithoutExtension)) {
+		aaaaa = g_sludge->getSaveStateName(g_sludge->_saveNameToSlot[nameWithoutExtension]);
+	} else {
+		// If the game uses only one save (like robinsrescue)
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		int maxSaveSlot = g_sludge->getMetaEngine()->getMaximumSaveSlot();
+		int autosaveSlot = g_sludge->getMetaEngine()->getAutosaveSlot();
+		for (int slot = 0; slot <= maxSaveSlot; ++slot) {
+			if (slot == autosaveSlot)
+				continue;
+			const Common::String filename = g_sludge->getMetaEngine()->getSavegameFile(slot, g_sludge->getTargetName().c_str());
+			if (saveFileMan->exists(filename)) {
+				ExtendedSavegameHeader header;
+				Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+
+				if (f && g_sludge->getMetaEngine()->readSavegameHeader(f, &header)) {
+					if (nameWithoutExtension == header.description) {
+						g_sludge->_saveNameToSlot[header.description] = slot;
+						aaaaa = g_sludge->getSaveStateName(slot);
+
+						delete f;
+						break;
+					}
+				}
+
+				delete f;
+			}
+		}
+	}
+
 	trimStack(fun->stack);
 	g_sludge->loadNow.clear();
 	g_sludge->loadNow = encodeFilename(aaaaa);
@@ -2426,6 +2472,13 @@ builtIn(showThumbnail) {
 
 	// Encode the name!Encode the name!
 	Common::String aaaaa = fun->stack->thisVar.getTextFromAnyVar();
+	uint extensionLength = aaaaa.size() - aaaaa.rfind('.');
+	aaaaa = aaaaa.substr(0, aaaaa.size() - extensionLength);
+
+	if (g_sludge->_saveNameToSlot.contains(aaaaa)) {
+		aaaaa = g_sludge->getSaveStateName(g_sludge->_saveNameToSlot[aaaaa]);
+	}
+
 	trimStack(fun->stack);
 	Common::String file = encodeFilename(aaaaa);
 	g_sludge->_gfxMan->showThumbnail(file, x, y);
