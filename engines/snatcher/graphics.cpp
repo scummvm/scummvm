@@ -54,7 +54,7 @@ GraphicsEngine::~GraphicsEngine() {
 }
 
 void GraphicsEngine::runScript(ResourcePointer res, int func) {
-	ResourcePointer sc = res.makePtr(READ_BE_INT32(res() + 4)).getDataFromTable(func);
+	ResourcePointer sc = res.getDataFromTable(func);
 
 	for (uint8 cmd = *sc++; cmd != 0xFF; cmd = *sc++) {
 		uint8 len = *sc++;
@@ -71,7 +71,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 			_state.setVar(8, 1);
 			break;
 		case 2:
-			_animator->initAnimations(sc, len);
+			_animator->initAnimations(sc, len, true);
 			break;
 		case 3: 
 		case 4:
@@ -107,8 +107,8 @@ bool GraphicsEngine::enqueueDrawCommands(ResourcePointer res) {
 	return _animator->enqueueDrawCommands(res);
 }
 
-void GraphicsEngine::initAnimations(ResourcePointer res, uint16 len) {
-	_animator->initAnimations(res, len);
+void GraphicsEngine::initAnimations(ResourcePointer res, uint16 len, bool dontUpdate) {
+	_animator->initAnimations(res, len, dontUpdate);
 }
 
 void GraphicsEngine::setScrollStep(uint8 mode, int16 step) {
@@ -120,6 +120,10 @@ void GraphicsEngine::setScrollStep(uint8 mode, int16 step) {
 
 void GraphicsEngine::transitionCommand(uint8 cmd) {
 	_trs->doCommand(cmd);
+}
+
+bool GraphicsEngine::transitionStateBusy() const {
+	return _trs->scroll_getState().busy;
 }
 
 void GraphicsEngine::setTextFont(const uint8 *font, uint32 fontSize, const uint8 *charWidthTable, uint32 charWidthTableSize) {
@@ -148,6 +152,18 @@ void GraphicsEngine::resetTextFields() {
 	_text->reset();
 }
 
+void GraphicsEngine::clearJordanInputField() {
+	_animator->clearJordanInputField();
+}
+
+uint8 GraphicsEngine::getVerbAreaType() const {
+	return _verbAreaType;
+}
+
+bool GraphicsEngine::isVerbsTabActive() const {
+	return _trs->scroll_getState().verbsTabVisible;
+}
+
 void GraphicsEngine::updateAnimations() {
 	_animator->updateAnimations();
 }
@@ -159,7 +175,7 @@ void GraphicsEngine::updateText() {
 
 void GraphicsEngine::nextFrame() {
 	_palette->processEventQueue();
-	_palette->updateSystemPalette();
+	_palette->update();
 	_animator->updateScreen(_screen);
 
 	_system->copyRectToScreen(_screen, _animator->screenWidth() * _bpp, 0, 0, _animator->screenWidth(), _animator->screenHeight());
@@ -235,10 +251,6 @@ bool GraphicsEngine::busy(int type) const {
 
 uint16 GraphicsEngine::frameCount() const {
 	return _state.frameCount();
-}
-
-uint8 GraphicsEngine::getVerbAreaType() const {
-	return _verbAreaType;
 }
 
 void GraphicsEngine::createMouseCursor(bool show) {

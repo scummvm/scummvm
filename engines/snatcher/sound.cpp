@@ -53,12 +53,17 @@ uint32 SoundEngine::cdaGetTime() const {
 	return _dev->cdaGetTime();
 }
 
-void SoundEngine::fmSendCommand(int cmd, int arg) {
-	_dev->fmSendCommand(cmd, arg);
+void SoundEngine::fmSendCommand(int cmd, int restoreVolume, int trackType) {
+	_dev->fmSendCommand(cmd, restoreVolume);
+
+	if (trackType == 1)
+		_fmStatus.music = (cmd == 0xFF) ? 0 : cmd;
+	else if (trackType == 2)
+		_fmStatus.sfx = (cmd == 61) ? 0 : cmd;
 }
 
-uint8 SoundEngine::fmGetStatus() const {
-	return _dev->fmGetStatus();
+const SoundEngine::FMStatus &SoundEngine::fmGetStatus() const {
+	return _fmStatus;
 }
 
 void SoundEngine::pcmSendCommand(int cmd, int arg) {
@@ -69,8 +74,8 @@ void SoundEngine::pcmInitSound(int sndId) {
 	_dev->pcmInitSound(sndId);
 }
 
-uint8 SoundEngine::pcmGetStatus() const {
-	return _dev->pcmGetStatus();
+const SoundEngine::PCMStatus &SoundEngine::pcmGetStatus() const {
+	return _pcmStatus;
 }
 
 void SoundEngine::pause(bool toggle) {
@@ -80,15 +85,17 @@ void SoundEngine::pause(bool toggle) {
 void SoundEngine::update() {
 	_dev->update();
 
-	uint8 fms = fmGetStatus();
-	if (_fmPlayingTracks.sync == (fms & 0x0F))
+	_pcmStatus.statusBits = _dev->pcmGetStatus();
+
+	uint8 fms = _dev->fmGetStatus();
+	if (_fmStatus.sync == (fms & 0x0F))
 		return;
 
 	if (fms & 0x80)
-		_fmPlayingTracks.music = 0;
+		_fmStatus.music = 0;
 	if (fms & 0x40)
-		_fmPlayingTracks.sfx = 0;
-	_fmPlayingTracks.sync = fms & 0x0F;
+		_fmStatus.sfx = 0;
+	_fmStatus.sync = fms & 0x0F;
 }
 
 void SoundEngine::setUnkCond(bool enable) {

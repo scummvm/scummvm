@@ -45,7 +45,7 @@ public:
 	virtual void processEventQueue() {}
 	virtual void clearEvents() {}
 	virtual void setDefaults(int mode) {}
-	virtual void updateSystemPalette() {}
+	virtual void update() {}
 	virtual void hINTCallback(void*) {}
 
 	virtual const uint8 *getSystemPalette() const { return nullptr; }

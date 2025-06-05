@@ -58,7 +58,6 @@ private:
 	uint8 _pscr_byt8;
 	int16 _pscr_wd;
 	const uint8 *_textPtr;
-	uint8 *_renderBuffer;
 	Animator *_animator;
 	const uint8 *_font;
 	uint32 _fontSize;
@@ -66,14 +65,11 @@ private:
 	uint32 _charWidthTableSize;
 };
 
-TextRenderer_SCD::TextRenderer_SCD(Animator *animator) : TextRenderer(), _animator(animator), _textPtr(nullptr), _renderBuffer(nullptr), _needDraw(false), _block(false), _printDelay(0), _printDelayCounter(0), _color(0),
+TextRenderer_SCD::TextRenderer_SCD(Animator *animator) : TextRenderer(), _animator(animator), _textPtr(nullptr), _needDraw(false), _block(false), _printDelay(0), _printDelayCounter(0), _color(0),
 	_curX(0), _curY(0), _fixedWith9(false), _font(nullptr), _fontSize(0), _charWidthTable(nullptr), _charWidthTableSize(0), _pscr_byt8(0), _pscr_wd(0), _pscr_byt1(0), _pscr_byt2(0), _pscr_byt3(0) {
-	_renderBuffer = new uint8[0x2000]();
-	assert(_renderBuffer);
 }
 
 TextRenderer_SCD::~TextRenderer_SCD() {
-	delete[] _renderBuffer;
 }
 
 void TextRenderer_SCD::setFont(const uint8 *font, uint32 fontSize) {
@@ -103,8 +99,6 @@ void TextRenderer_SCD::setColor(uint8 color) {
 void TextRenderer_SCD::draw() {
 	if (!_needDraw || _block)
 		return;
-
-	memset(_renderBuffer, 0, 0x2000);
 
 	int firstRow = -1;
 	int numRows = 0;
@@ -181,7 +175,7 @@ void TextRenderer_SCD::draw() {
 	}
 	_textPtr = s;
 	if (numRows)
-		_animator->renderTextBuffer(_renderBuffer, firstRow, numRows);
+		_animator->renderTextBuffer(firstRow, numRows);
 }
 
 void TextRenderer_SCD::drawGlyph(uint16 ch) {
@@ -190,8 +184,9 @@ void TextRenderer_SCD::drawGlyph(uint16 ch) {
 		++x;
 
 	const uint8 *src = _font + (ch << 3);
-	uint8 *dst = _renderBuffer + ((_curY & ~7) << 7) + ((_curY & 7) << 2) + ((x & ~7) << 2) + ((x & 7) >> 1);
-	assert(dst < _renderBuffer + 0x2000);
+	uint8 *renderBuffer = _animator->getTextRenderBuffer();
+	uint8 *dst = renderBuffer + ((_curY & ~7) << 7) + ((_curY & 7) << 2) + ((x & ~7) << 2) + ((x & 7) >> 1);
+	assert(dst < renderBuffer + 0x2000);
 
 	if ((uint)(ch << 3) >= _fontSize)
 		error("%s(): Invalid char %04X", __FUNCTION__, ch);
@@ -217,7 +212,7 @@ void TextRenderer_SCD::drawGlyph(uint16 ch) {
 				++d;
 			if (++dXX == 8)
 				d += 28;
-			assert(d < _renderBuffer + 0x2000);
+			assert(d < renderBuffer + 0x2000);
 		}
 
 		dst += 4;
@@ -225,7 +220,7 @@ void TextRenderer_SCD::drawGlyph(uint16 ch) {
 			dY = 0;
 			dst += 992;
 		}
-		assert(dst < _renderBuffer + 0x2000);
+		assert(dst < renderBuffer + 0x2000);
 	}
 }
 

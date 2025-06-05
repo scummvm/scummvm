@@ -87,7 +87,6 @@ SH_IMPL_UPDT(D2) {
 
 int _hasSaveSlotFlag = 15;
 int _saveFileCurID = 0;
-uint8 _bua3 = 0;
 uint8 _buram_0 = 0;
 bool _buram_2 = true;
 
@@ -107,7 +106,7 @@ SH_IMPL_FRM(D2, 00) {
 			state.frameState = 0;
 		} else {
 			_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
-			_vm->gfx()->runScript(_module->getPtr(0), 1); // RAM Cart select screen
+			_vm->gfx()->runScript(_module->getGfxData(), 1); // RAM Cart select screen
 			++state.frameState;
 		}
 		break;
@@ -118,7 +117,7 @@ SH_IMPL_FRM(D2, 00) {
 		}
 		if (_vm->input().controllerFlags & 0x80) {
 			state.counter = 10;
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
 			++state.frameState;
 		}
 		break;
@@ -147,7 +146,7 @@ SH_IMPL_FRM(D2, 02) {
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 	_vm->gfx()->transitionCommand(1);
 	_vm->gfx()->setScrollStep(GraphicsEngine::kVertA | GraphicsEngine::kSingleStep, 0x100);
-	_vm->gfx()->runScript(_module->getPtr(0), 0);
+	_vm->gfx()->runScript(_module->getGfxData(), 0);
 	state.counter = 24;
 	++state.frameNo;
 	state.frameState = 0;
@@ -165,7 +164,7 @@ SH_IMPL_FRM(D2, 03) {
 SH_IMPL_FRM(D2, 04) {
 	if (--state.counter)
 		return;
-	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x08E6));
+	_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x288E6));
 	state.counter = 86;
 	++state.frameNo;
 	state.frameState = 0;
@@ -185,7 +184,7 @@ SH_IMPL_FRM(D2, 06) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x0944));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x28944));
 			++state.frameState;
 			state.counter = 17;
 		}
@@ -194,7 +193,7 @@ SH_IMPL_FRM(D2, 06) {
 		if (--state.counter)
 			return;
 		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
-		_vm->gfx()->runScript(_module->getPtr(0), 2);
+		_vm->gfx()->runScript(_module->getGfxData(), 2);
 		++state.frameState;
 		break;
 	default:
@@ -230,7 +229,7 @@ SH_IMPL_FRM(D2, 08) {
 			++state.frameNo;
 			state.frameState = 0;
 		} else {
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x0944));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x28944));
 			state.counter = 17;
 			++state.frameState;
 		}
@@ -239,12 +238,10 @@ SH_IMPL_FRM(D2, 08) {
 		if (--state.counter)
 			return;
 		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
-		_vm->gfx()->runScript(_module->getPtr(0), 3);
+		_vm->gfx()->runScript(_module->getGfxData(), 3);
 		++state.frameState;
 		break;
 	default:
-		//if (_vm->_commandsFromMain & 0x80)
-		/**/
 		break;
 	}
 }
@@ -281,8 +278,7 @@ SH_IMPL_FRM(D2, 09) {
 	if (fin) {
 		++state.frameNo;
 		state.frameState = 0;
-		_bua3 = 56;
-		_vm->sound()->fmSendCommand(56, 0);
+		_vm->sound()->fmSendCommand(56, 0, 2);
 		_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 		_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 		_option = 0;
@@ -318,8 +314,7 @@ SH_IMPL_FRM(D2, 10) {
 		_vm->gfx()->setAnimParameter(25, GraphicsEngine::kAnimParaFrame, _saveFileCurID << 2);
 
 		if (_vm->input().controllerFlags & 0x80) {
-			_bua3 = 56;
-			_vm->sound()->fmSendCommand(56, 0);
+			_vm->sound()->fmSendCommand(56, 0, 2);
 			_loadCancelled = false;
 			fin = true;
 		} else if (_vm->input().controllerFlags & 0x10) {
@@ -434,7 +429,7 @@ SH_IMPL_FRM(D2, 11) {
 		if (--state.counter)
 			return;
 		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
-		_vm->gfx()->runScript(_module->getPtr(0), 7);
+		_vm->gfx()->runScript(_module->getGfxData(), 7);
 		_vm->gfx()->createMouseCursor(true);
 		++state.frameState;
 		break;
@@ -454,7 +449,7 @@ SH_IMPL_FRM(D2, 11) {
 		break;
 	case 3:
 		if (_vm->input().controllerFlags & 0x80) {
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
 			state.counter = 10;
 			++state.frameState;
 			_vm->allowLightGunInput(false);
@@ -494,7 +489,7 @@ SH_IMPL_FRM(D2, 11) {
 				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaAbsSpeedX, 0);
 				_vm->allowLightGunInput(false);
 				state.counter += 2;
-				_vm->sound()->fmSendCommand(29, 0);
+				_vm->sound()->fmSendCommand(29, 0, 2);
 			} else if (_vm->input().controllerFlags & 0x100) {
 				_vm->sound()->pcmSendCommand(57, -1);
 				state.counter++;
@@ -509,7 +504,7 @@ SH_IMPL_FRM(D2, 11) {
 			if (++_counter2 < 180)
 				return;
 			state.counter = 10;
-			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
+			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
 			++state.frameState;
 			break;
 		default:
@@ -520,7 +515,7 @@ SH_IMPL_FRM(D2, 11) {
 		if (--state.counter)
 			return;
 		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
-		_vm->gfx()->runScript(_module->getPtr(0), 8);
+		_vm->gfx()->runScript(_module->getGfxData(), 8);
 		state.frameState = 0;
 		break;
 	default:

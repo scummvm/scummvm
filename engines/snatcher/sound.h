@@ -45,12 +45,28 @@ public:
 	bool cdaIsPlaying() const;
 	uint32 cdaGetTime() const;
 
-	void fmSendCommand(int cmd, int arg);
-	uint8 fmGetStatus() const;
+	struct FMStatus {
+		FMStatus() : music(0), sfx(0), sync(0), blocked(0) {}
+		uint8 music;
+		uint8 sfx;
+		uint8 sync;
+		uint8 blocked;
+	};
+
+	void fmSendCommand(int cmd, int restoreVolume, int trackType = 0);
+	const FMStatus &fmGetStatus() const;
+	void fmBlock(int block) { _fmStatus.blocked = block; }
+
+	struct PCMStatus {
+		PCMStatus() : statusBits(0), blocked(0) {}
+		uint8 statusBits;
+		uint8 blocked;
+	};
 
 	void pcmSendCommand(int cmd, int arg);
 	void pcmInitSound(int sndId);
-	uint8 pcmGetStatus() const;
+	const PCMStatus &pcmGetStatus() const;
+	void pcmBlock(int block) { _pcmStatus.blocked = block; }
 
 	void pause(bool toggle);
 	void update();
@@ -60,16 +76,9 @@ public:
 	void setMusicVolume(int vol);
 	void setSoundEffectVolume(int vol);
 
-	struct FMPlayingTracks {
-		FMPlayingTracks() : music(0), sfx(0), sync(0) {}
-		uint8 music;
-		uint8 sfx;
-		uint8 sync;
-	};
-
-	FMPlayingTracks _fmPlayingTracks;
-
 private:
+	FMStatus _fmStatus;
+	PCMStatus _pcmStatus;
 	SoundDevice *_dev;
 };
 

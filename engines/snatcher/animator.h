@@ -19,8 +19,8 @@
 *
 */
 
-#ifndef SNATCHER_RENDER_H
-#define SNATCHER_RENDER_H
+#ifndef SNATCHER_ANIMATOR_H
+#define SNATCHER_ANIMATOR_H
 
 #include "common/platform.h"
 #include "snatcher/graphics.h"
@@ -36,13 +36,15 @@ public:
 	virtual bool enqueueDrawCommands(ResourcePointer &res) = 0;
 	virtual void clearDrawCommands() = 0;
 	virtual void initData(ResourcePointer &res, uint8 mode) = 0;
-	virtual void initAnimations(ResourcePointer &res, uint16 len) = 0;
+	virtual void initAnimations(ResourcePointer &res, uint16 len, bool dontUpdate) = 0;
 	virtual void linkAnimations(ResourcePointer &res, uint16 len) = 0;
 	virtual void clearAnimations(int mode = 0) = 0;
 	virtual void setPlaneMode(uint16 mode) = 0;
 
 	virtual void resetTextFields() = 0;
-	virtual void renderTextBuffer(const uint8 *textBuffer, uint16 firstLine, uint8 numLines) = 0;
+	virtual void clearJordanInputField() = 0;
+	virtual uint8 *getTextRenderBuffer() const = 0;
+	virtual void renderTextBuffer(uint16 firstLine, uint8 numLines) = 0;
 
 	virtual void updateScreen(uint8 *screen) = 0;
 	virtual void updateAnimations() = 0;
@@ -85,4 +87,4 @@ public:
 
 } // End of namespace Snatcher
 
-#endif // SNATCHER_RENDER_H
+#endif // SNATCHER_ANIMATOR_H

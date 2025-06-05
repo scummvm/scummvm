@@ -131,12 +131,12 @@ private:
 	uint8 _nextStepExt;
 	uint8 _lastStepExt;
 	int16 _trsFlagttt;
-	int16 _trsu_7;
 	int16 _hint_proc;
 	int16 _transitionType;
 	int16 _transitionState;
+	int16 _transitionState2;
 	int16 _transitionStep;
-	int16 _trsu_5;
+	int16 _tmpScrollOffset;
 	int16 _subPara;
 	uint32 _trs__DA;
 	uint16 _trs__DB;
@@ -157,16 +157,16 @@ private:
 	void trsUpdt_06(int arg);
 	void trsUpdt_screenShutter(int arg);
 	void trsUpdt_revealShutter(int arg);
-	void trsUpdt_13(int arg);
-	void trsUpdt_14(int arg);
-	void trsUpdt_showTextArea(int arg);
-	void trsUpdt_16(int arg);
-	void trsUpdt_17(int arg);
-	void trsUpdt_18(int arg);
-	void trsUpdt_19(int arg);
-	void trsUpdt_20(int arg);
-	void trsUpdt_21(int arg);
-	void trsUpdt_22(int arg);
+	void trsUpdt_showStdVerbsTab(int arg);
+	void trsUpdt_hideStdVerbsTab(int arg);
+	void trsUpdt_showDialogueTab1(int arg);
+	void trsUpdt_showVirtKeybTab(int arg);
+	void trsUpdt_hideVirtKeybTab(int arg);
+	void trsUpdt_showSmallVerbsTab(int arg);
+	void trsUpdt_hideSmallVerbsTab(int arg);
+	void trsUpdt_showDialogueTab2(int arg);
+	void trsUpdt_showMonitorTextField(int arg);
+	void trsUpdt_showDefaultTextScreen(int arg);
 	void trsUpdt_23(int arg);
 	void trsUpdt_24(int arg);
 	void trsUpdt_25(int arg);
@@ -175,20 +175,31 @@ private:
 	void trsUpdt_28(int arg);
 	void trsUpdt_29(int arg);
 
+	void textScreenTrsUpdate(int type, int hIntHandlerNo, int state);
+
 	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, TransitionManager_SCD> HINTFunc;
 	Common::Array<HINTFunc*> _hINTProcs;
 	const HINTFunc *_hINTHandler;
 
 	void setHINTHandler(uint8 num);
 
+	void hIntHandler_showVirtKeybTabStep1(Graphics::SegaRenderer *sr);
+	void hIntHandler_showVirtKeybTabStep2(Graphics::SegaRenderer *sr);
+	void hIntHandler_hideVirtKeybTabStep1(Graphics::SegaRenderer *sr);
+	void hIntHandler_hideVirtKeybTabStep2(Graphics::SegaRenderer *sr);
 	void hIntHandler_screenShutter(Graphics::SegaRenderer *sr);
 	void hIntHandler_revealShutter(Graphics::SegaRenderer *sr);
-	void hIntHandler_showTextArea(Graphics::SegaRenderer *sr);
+	void hIntHandler_toggleStdVerbsTab(Graphics::SegaRenderer *sr);
+	void hIntHandler_showDialogueTab1(Graphics::SegaRenderer *sr);
+	void hIntHandler_toggleSmallVerbsTab(Graphics::SegaRenderer *sr);
+	void hIntHandler_showDialogueTab2(Graphics::SegaRenderer *sr);
+	void hIntHandler_showMonitorTextField(Graphics::SegaRenderer *sr);
+	void hIntHandler_showDefaultTextScreen(Graphics::SegaRenderer *sr);
 };
 
 TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _hint_proc(0), _transitionStep(0),
 	_trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _trs__DA(0), _trs__DB(0), _trsCmd_0xff_0xfd_0xfc_or0to6_last(0), _trsFlagttt(0),
-	_trsu_7(0), _transitionType(0), _transitionState(0), _trsu_5(0), _subPara(0), useEngineScrollOffsets(false), _hINTHandler(nullptr) {
+		_transitionType(0), _transitionState(0), _transitionState2(0), _tmpScrollOffset(0), _subPara(0), useEngineScrollOffsets(false), _hINTHandler(nullptr) {
 	_internalState = new ScrollInternalState[4];
 	assert(_internalState);
 	_internalState[kVertA].setFactor(-1);
@@ -260,12 +271,12 @@ bool TransitionManager_SCD::nextFrame() {
 			} else {
 				resetVars(0x18);
 			}
-		} else if (_nextStepExt != 0 && (_nextStepExt != 15 || _lastStepExt != 23)) {
-			_lastStepExt = _nextStepExt;
-			resetVars(0x40);
-		} else if (_nextStepExt != 0) {
+		} else if (_nextStepExt == 15 && _lastStepExt == 23) {
 			_nextStepExt = 23;
 			_trsFlagttt = 1;
+		} else if (_nextStepExt != 0) {
+			_lastStepExt = _nextStepExt;
+			resetVars(0x40);	
 		}
 	}
 
@@ -289,12 +300,13 @@ bool TransitionManager_SCD::nextFrame() {
 	}
 
 	processCmdInternal();
+	_result.busy = _lastStepExt;
 
 	return changed || reset || _result.hInt.needUpdate;
 }
 
 void TransitionManager_SCD::hINTCallback(void *segaRenderer) {
-	if (_hINTHandler && _hINTHandler->isValid())
+	if (_result.hInt.enable && _hINTHandler && _hINTHandler->isValid())
 		(*_hINTHandler)(static_cast<Graphics::SegaRenderer *>(segaRenderer));
 }
 
@@ -352,17 +364,26 @@ void TransitionManager_SCD::processTransition() {
 		_result.hInt.counter = 7;
 		break;
 	case 7: case 8:
+		_result.hInt.counter = 0;
 		break;
 	case 9:
 		_result.hInt.counter = 7;
 		break;
 	case 10: case 11:
+		_result.hInt.counter = 0;
 		break;
 	case 12: case 13: case 14: case 15: case 16:
+		_result.hInt.counter = 7;
 		break;
 	case 17:
+		_result.hInt.counter = 7;
+		//_internalState[kVertA].setNextOffset(_scrollu9);
+		//_internalState[kVertB].setNextOffset(_scrollu9);
 		break;
 	case 18: case 19: case 20: case 21:
+		_result.hInt.counter = 7;
+		_internalState[kVertA].setNextOffset(0);
+		_internalState[kVertB].setNextOffset(_transitionState);
 		break;
 	case 22: case 23:
 		break;
@@ -383,7 +404,8 @@ void TransitionManager_SCD::resetVars(int groupFlags) {
 		_trs__DA = 0;
 		_trs__DB = 0;
 		_nextStepExt = 0;
-		_transitionType = _transitionState = _trsu_5 = _subPara = _trsu_7 = 0;
+		_transitionType = _transitionState = _tmpScrollOffset = _subPara = 0;
+		_result.verbsTabVisible = false;
 		_trsFlagttt = 0;
 
 	}
@@ -400,7 +422,8 @@ void TransitionManager_SCD::resetVars(int groupFlags) {
 	}
 	if (groupFlags & 0x10) {
 		_nextStepExt = _lastStepExt = 0;
-		_transitionType = _trsu_7 = 0;
+		_transitionType = 0;
+		_result.verbsTabVisible = false;
 	}
 	if (groupFlags & 0x20) {
 		_trsFlagttt = 0;
@@ -408,7 +431,7 @@ void TransitionManager_SCD::resetVars(int groupFlags) {
 		_internalState[kVertB].setNextOffset(0);
 	}
 	if (groupFlags & 0x40) {
-		_transitionState = _trsu_5 = _subPara = 0;
+		_transitionState = _tmpScrollOffset = _subPara = 0;
 	}
 }
 
@@ -430,16 +453,16 @@ void TransitionManager_SCD::makeFunctions() {
 		TF(revealShutter),
 		TF(revealShutter),
 		TF(revealShutter),
-		TF(13),
-		TF(14),
-		TF(showTextArea),
-		TF(16),
-		TF(17),
-		TF(18),
-		TF(19),
-		TF(20),
-		TF(21),
-		TF(22),
+		TF(showStdVerbsTab),
+		TF(hideStdVerbsTab),
+		TF(showDialogueTab1),
+		TF(showVirtKeybTab),
+		TF(hideVirtKeybTab),
+		TF(showSmallVerbsTab),
+		TF(hideSmallVerbsTab),
+		TF(showDialogueTab2),
+		TF(showMonitorTextField),
+		TF(showDefaultTextScreen),
 		TF(23),
 		TF(24),
 		TF(25),
@@ -454,10 +477,10 @@ void TransitionManager_SCD::makeFunctions() {
 
 	typedef void (TransitionManager_SCD::*HIFunc)(Graphics::SegaRenderer*);
 	static const HIFunc funcTbl2[] = {
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
+		HF(showVirtKeybTabStep1),
+		HF(showVirtKeybTabStep2),
+		HF(hideVirtKeybTabStep1),
+		HF(hideVirtKeybTabStep2),
 		nullptr,
 		nullptr,
 		nullptr,
@@ -467,9 +490,16 @@ void TransitionManager_SCD::makeFunctions() {
 		nullptr,
 		nullptr,
 		nullptr,
+		HF(toggleStdVerbsTab),
+		nullptr,
+		HF(showDialogueTab1),
 		nullptr,
 		nullptr,
-		HF(showTextArea)
+		HF(toggleSmallVerbsTab),
+		nullptr,
+		HF(showDialogueTab2),
+		HF(showMonitorTextField),
+		HF(showDefaultTextScreen)
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(funcTbl2); ++i) \
@@ -541,40 +571,170 @@ void TransitionManager_SCD::trsUpdt_revealShutter(int arg) {
 	}
 }
 
-void TransitionManager_SCD::trsUpdt_13(int arg) {
+void TransitionManager_SCD::trsUpdt_showStdVerbsTab(int arg) {
+	if (arg == 0) {
+		_transitionType = 7;
+		setHINTHandler(13);
+		_transitionState = 252;
+		_tmpScrollOffset = 144;
+		++_subPara;
+	} else if (arg == 1) {
+		_transitionState -= 19;
+		_tmpScrollOffset += 19;
+		if (_tmpScrollOffset > 255) {
+			_transitionState = 136;
+			_tmpScrollOffset = 256;
+			_result.verbsTabVisible = true;
+			++_subPara;
+		}
+	}
 }
 
-void TransitionManager_SCD::trsUpdt_14(int arg) {
+void TransitionManager_SCD::trsUpdt_hideStdVerbsTab(int arg) {
+	if (arg == 0) {
+		_transitionType = 8;
+		setHINTHandler(13);
+		_transitionState = 140;
+		_tmpScrollOffset = 256;
+		++_subPara;
+	} else if (arg == 1) {
+		_transitionState += 19;
+		_tmpScrollOffset -= 19;
+		if (_tmpScrollOffset < 144) {
+			_tmpScrollOffset = 144;
+			++_subPara;
+		}
+	} else {
+		resetVars(0x18);
+	}
 }
 
-void TransitionManager_SCD::trsUpdt_showTextArea(int arg) {
-	if (arg != 0)
-		return;
-	_transitionType = 9;
-	setHINTHandler(15);
-	_transitionState = 256;
-	++_subPara;
+void TransitionManager_SCD::trsUpdt_showDialogueTab1(int arg) {
+	if (arg == 0)
+		textScreenTrsUpdate(9, 15, 256);
 }
 
-void TransitionManager_SCD::trsUpdt_16(int arg) {
+void TransitionManager_SCD::trsUpdt_showVirtKeybTab(int arg) {
+	switch (arg) {
+	case 0:
+		_transitionType = 10;
+		setHINTHandler(0);
+		_transitionState = 100;
+		++_subPara;
+		break;
+	case 1:
+		_transitionState += 3;
+		if (_transitionState < 117)
+			return;
+		_transitionState = 117;
+		setHINTHandler(1);
+		++_subPara;
+		break;
+	case 2:
+		_transitionState = 0;
+		++_subPara;
+		break;
+	case 3:
+		_transitionState += 10;
+		if (_transitionState < 112)
+			return;
+		_transitionState = 112;
+		++_subPara;
+		break;
+	case 4:
+		_result.verbsTabVisible = true;
+		++_subPara;
+		break;
+	default:
+		break;
+	}
 }
 
-void TransitionManager_SCD::trsUpdt_17(int arg) {
+void TransitionManager_SCD::trsUpdt_hideVirtKeybTab(int arg) {
+	switch (arg) {
+	case 0:
+		_transitionType = 11;
+		setHINTHandler(2);
+		_transitionState = 112;
+		_transitionState2 = 117;
+		_tmpScrollOffset = 320;
+		++_subPara;
+		break;
+	case 1:
+		_transitionState2 -= 3;
+		_tmpScrollOffset += 3;
+		if (_transitionState2 < 101) {
+			_transitionState2 = 101;
+			++_subPara;
+		}
+		break;
+	case 2:
+		_transitionState = 112;
+		++_subPara;
+		break;
+	case 3:
+		setHINTHandler(3);
+		++_subPara;
+		break;
+	case 4:
+		_transitionState -= 10;
+		if (_transitionState < 0) {
+			_transitionState = 0;
+			++_subPara;
+		}
+		break;
+	default:
+		resetVars(0x18);
+		break;
+	}
 }
 
-void TransitionManager_SCD::trsUpdt_18(int arg) {
+void TransitionManager_SCD::trsUpdt_showSmallVerbsTab(int arg) {
+	if (arg == 0) {
+		_transitionType = 12;
+		setHINTHandler(18);
+		_transitionState = 144;
+		++_subPara;
+	} else if (arg == 1) {
+		_transitionState += 19;
+		if (_transitionState > 239) {
+			_transitionState = 240;
+			_result.verbsTabVisible = true;
+			++_subPara;
+		}
+	}
 }
 
-void TransitionManager_SCD::trsUpdt_19(int arg) {
+void TransitionManager_SCD::trsUpdt_hideSmallVerbsTab(int arg) {
+	if (arg == 0) {
+		_transitionType = 13;
+		setHINTHandler(18);
+		_transitionState = 240;
+		++_subPara;
+	} else if (arg == 1) {
+		_transitionState -= 19;
+		if (_transitionState < 144) {
+			_transitionState = 144;
+			++_subPara;
+		}
+	} else {
+		resetVars(0x18);
+	}
 }
 
-void TransitionManager_SCD::trsUpdt_20(int arg) {
+void TransitionManager_SCD::trsUpdt_showDialogueTab2(int arg) {
+	if (arg == 0)
+		textScreenTrsUpdate(14, 20, 240);
 }
 
-void TransitionManager_SCD::trsUpdt_21(int arg) {
+void TransitionManager_SCD::trsUpdt_showMonitorTextField(int arg) {
+	if (arg == 0)
+		textScreenTrsUpdate(15, 21, 328);
 }
 
-void TransitionManager_SCD::trsUpdt_22(int arg) {
+void TransitionManager_SCD::trsUpdt_showDefaultTextScreen(int arg) {
+	if (arg == 0)
+		textScreenTrsUpdate(16, 22, 232);
 }
 
 void TransitionManager_SCD::trsUpdt_23(int arg) {
@@ -598,11 +758,70 @@ void TransitionManager_SCD::trsUpdt_28(int arg) {
 void TransitionManager_SCD::trsUpdt_29(int arg) {
 }
 
+void TransitionManager_SCD::textScreenTrsUpdate(int type, int hIntHandlerNo, int state) {
+	_transitionType = type;
+	setHINTHandler(hIntHandlerNo);
+	_transitionState = state;
+	++_subPara;
+}
+
+
 void TransitionManager_SCD::setHINTHandler(uint8 num) {
 	if (num < _hINTProcs.size())
 		_hINTHandler = _hINTProcs[num];
 	 else
 		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
+}
+
+void TransitionManager_SCD::hIntHandler_showVirtKeybTabStep1(Graphics::SegaRenderer *sr) {
+	if (_transitionStep == 99) {
+		sr->writeUint16VSRAM(0, TO_BE_16(0x140));
+		sr->writeUint16VSRAM(2, TO_BE_16(0x140));
+	} else if (_transitionStep == _transitionState) {
+		sr->writeUint16VSRAM(0, TO_BE_16(_result.realOffsets[kVertA]));
+		sr->writeUint16VSRAM(2, TO_BE_16(_result.realOffsets[kVertB]));
+		_result.hInt.enable = false;
+	}
+	++_transitionStep;
+}
+
+void TransitionManager_SCD::hIntHandler_showVirtKeybTabStep2(Graphics::SegaRenderer *sr) {
+	if (_transitionStep == 99) {
+		sr->writeUint16VSRAM(0, TO_BE_16(0x140));
+		sr->writeUint16VSRAM(2, TO_BE_16(0x140));
+	} else if (_transitionStep == 117) {
+		sr->writeUint16VSRAM(0, TO_BE_16(_result.realOffsets[kVertA]));
+		sr->writeUint16VSRAM(2, TO_BE_16(_result.realOffsets[kVertB]));
+	} else if (_transitionStep == 143) {
+		sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
+		sr->writeUint16VSRAM(2, TO_BE_16(_transitionState));
+		_result.hInt.enable = false;
+	}
+	++_transitionStep;
+}
+
+void TransitionManager_SCD::hIntHandler_hideVirtKeybTabStep1(Graphics::SegaRenderer *sr) {
+	if (_transitionStep == 99) {
+		sr->writeUint16VSRAM(0, TO_BE_16(_tmpScrollOffset));
+		sr->writeUint16VSRAM(2, TO_BE_16(_tmpScrollOffset));
+	} else if (_transitionStep == 143) {
+		sr->writeUint16VSRAM(0, TO_BE_16(0x70));
+		sr->writeUint16VSRAM(2, TO_BE_16(0x70));
+		_result.hInt.enable = false;
+	} else if (_transitionStep == _transitionState2) {
+		sr->writeUint16VSRAM(0, TO_BE_16(_result.realOffsets[kVertA]));
+		sr->writeUint16VSRAM(2, TO_BE_16(_result.realOffsets[kVertB]));
+	}
+	++_transitionStep;
+}
+
+void TransitionManager_SCD::hIntHandler_hideVirtKeybTabStep2(Graphics::SegaRenderer *sr) {
+	if (_transitionStep == 143) {
+		sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
+		sr->writeUint16VSRAM(2, TO_BE_16(_transitionState));
+		_result.hInt.enable = false;
+	}
+	++_transitionStep;
 }
 
 void TransitionManager_SCD::hIntHandler_screenShutter(Graphics::SegaRenderer *sr) {
@@ -661,13 +880,54 @@ void TransitionManager_SCD::hIntHandler_revealShutter(Graphics::SegaRenderer *sr
 	++_transitionStep;
 }
 
-void TransitionManager_SCD::hIntHandler_showTextArea(Graphics::SegaRenderer *sr) {
+void TransitionManager_SCD::hIntHandler_toggleStdVerbsTab(Graphics::SegaRenderer *sr) {
+	if (_transitionStep++ != _transitionState)
+		return;
+	sr->writeUint16VSRAM(0, TO_BE_16(_tmpScrollOffset));
+	sr->writeUint16VSRAM(2, TO_BE_16(_tmpScrollOffset));
+	sr->writeUint16VRAM(0xF800, 0);
+	sr->writeUint16VRAM(0xF802, 0);
+	_result.hInt.enable = false;
+}
+
+void TransitionManager_SCD::hIntHandler_showDialogueTab1(Graphics::SegaRenderer *sr) {
 	if (_transitionStep++ != 17)
 		return;
 	sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
 	sr->writeUint16VSRAM(2, TO_BE_16(_transitionState));
 	sr->writeUint16VRAM(0xF800, 0);
 	sr->writeUint16VRAM(0xF802, 0);
+	_result.hInt.enable = false;
+}
+
+void TransitionManager_SCD::hIntHandler_toggleSmallVerbsTab(Graphics::SegaRenderer *sr) {
+	if (_transitionStep++ != 19)
+		return;
+	sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
+	sr->writeUint16VSRAM(2, TO_BE_16(_transitionState));
+	sr->writeUint16VRAM(0xF800, 0);
+	sr->writeUint16VRAM(0xF802, 0);
+	_result.hInt.enable = false;
+}
+
+void TransitionManager_SCD::hIntHandler_showDialogueTab2(Graphics::SegaRenderer *sr) {
+	if (_transitionStep++ != 19)
+		return;
+	sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
+	_result.hInt.enable = false;
+}
+
+void TransitionManager_SCD::hIntHandler_showMonitorTextField(Graphics::SegaRenderer *sr) {
+	if (_transitionStep++ != 8)
+		return;
+	sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
+	_result.hInt.enable = false;
+}
+
+void TransitionManager_SCD::hIntHandler_showDefaultTextScreen(Graphics::SegaRenderer *sr) {
+	if (_transitionStep++ != 20)
+		return;
+	sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
 	_result.hInt.enable = false;
 }
 
