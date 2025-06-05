@@ -150,18 +150,18 @@ IntegrityDialog::~IntegrityDialog() {
 bool IntegrityDialog::progressUpdate(int bytesProcessed) {
 	if (g_checksum_state->dialog->_close)
 		return false;
-	
+
 	g_checksum_state->calculatedSize += bytesProcessed;
 
 	if (g_system->getMillis() > g_checksum_state->lastUpdate + 500) {
-		g_checksum_state->lastUpdate = g_system->getMillis(); 
+		g_checksum_state->lastUpdate = g_system->getMillis();
 		g_checksum_state->dialog->sendCommand(kDownloadProgressCmd, 0);
 	}
 
 	Common::Event event;
 	if (g_system->getEventManager()->pollEvent(event)) {
-		if (g_system->getMillis() > g_checksum_state->dialog->_lastEventPoll + 16) { 
-			g_checksum_state->dialog->_lastEventPoll = g_system->getMillis(); 
+		if (g_system->getMillis() > g_checksum_state->dialog->_lastEventPoll + 16) {
+			g_checksum_state->dialog->_lastEventPoll = g_system->getMillis();
 			g_gui.processEvent(event, g_checksum_state->dialog);
 			g_system->updateScreen();
 		}
@@ -188,7 +188,7 @@ void IntegrityDialog::close() {
 		delete g_checksum_state;
 		g_checksum_state = nullptr;
 	}
-	
+
 	if (g_result) {
 		delete g_result;
 		g_result = nullptr;
@@ -336,8 +336,8 @@ void IntegrityDialog::calculateTotalSize(Common::Path gamePath) {
 	}
 }
 
-Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Path gamePath, Common::Array<Common::StringArray> &fileChecksums) {
-	const Common::FSNode dir(gamePath);
+Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Path currentPath, Common::Array<Common::StringArray> &fileChecksums, Common::Path gamePath) {
+	const Common::FSNode dir(currentPath);
 
 	if (!dir.exists() || !dir.isDirectory())
 		return {};
@@ -352,24 +352,20 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 	// Process the files and subdirectories in the current directory recursively
 	for (const auto &entry : fileList) {
 		if (entry.isDirectory())
-			generateChecksums(entry.getPath(), fileChecksums);
+			generateChecksums(entry.getPath(), fileChecksums, gamePath);
 		else {
-			const Common::Path filename(entry.getPath());
+			const Common::Path filename(entry.getPath().relativeTo(gamePath));
 			auto macFile = Common::MacResManager();
+
 			if (macFile.open(filename)) {
-				auto fileStream = macFile.openFileOrDataFork(filename);
-				Common::SeekableReadStream *dataForkStream;
-				if (macFile.isMacBinary(*fileStream))
-					dataForkStream = macFile.openDataForkFromMacBinary(fileStream);
-				else
-					dataForkStream = fileStream;
+				auto dataForkStream = macFile.openFileOrDataFork(filename);
 
 				Common::Array<Common::String> fileChecksum = {filename.toString()};
 
 				// Data fork
 				// Various checksizes
 				for (auto size : {0, 5000, 1024 * 1024}) {
-					fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size, progressUpdateCallback, this).c_str());
+					fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size, progressUpdateCallback, this));
 					dataForkStream->seek(0);
 				}
 				// Tail checksums with checksize 5000
@@ -380,18 +376,22 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 				if (macFile.hasResFork()) {
 					// Various checksizes
 					for (auto size : {0, 5000, 1024 * 1024}) {
-						fileChecksum.push_back(macFile.computeResForkMD5AsString(size, false, progressUpdateCallback, this).c_str());
+						fileChecksum.push_back(macFile.computeResForkMD5AsString(size, false, progressUpdateCallback, this));
 					}
 					// Tail checksums with checksize 5000
 					fileChecksum.push_back(macFile.computeResForkMD5AsString(5000, true, progressUpdateCallback, this).c_str());
 					fileChecksums.push_back(fileChecksum);
 				}
 
-				g_checksum_state->calculatedSize += fileStream->size();
+				g_checksum_state->calculatedSize += dataForkStream->size();
+
+				macFile.close();
+
+				continue;
 			}
 
 			Common::File file;
-			if (!file.open(entry))
+			if (!file.open(filename))
 				continue;
 
 			Common::Array<Common::String> fileChecksum = {filename.toString()};
@@ -415,7 +415,12 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 
 Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language) {
 	Common::Array<Common::StringArray> fileChecksums = {};
-	fileChecksums = generateChecksums(gamePath, fileChecksums);
+
+	// Add game path to SearchMan
+	SearchMan.addDirectory(gamePath.toString(), gamePath, 0, 20);
+
+	fileChecksums = generateChecksums(gamePath, fileChecksums, gamePath);
+
 	Common::JSONObject requestObject;
 
 	requestObject.setVal("gameid", new Common::JSONValue(gameid));
@@ -431,9 +436,8 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::Path gamePath, C
 		Common::Path relativePath = Common::Path(fileChecksum[0]).relativeTo(gamePath);
 		file.setVal("name", new Common::JSONValue(relativePath.toConfig()));
 
-		auto tempNode = Common::FSNode(Common::Path(fileChecksum[0]));
 		Common::File tempFile;
-		if (!tempFile.open(tempNode))
+		if (!tempFile.open(Common::Path(fileChecksum[0])))
 			continue;
 		uint64 fileSize = tempFile.size();
 		tempFile.close();
@@ -442,7 +446,7 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::Path gamePath, C
 
 		Common::JSONArray checksums;
 		Common::StringArray checkcodes;
-		if (fileChecksum.size() == 8)
+		if (fileChecksum.size() == 9)
 			checkcodes = {"md5-d", "md5-d-5000", "md5-d-1M", "md5-dt-5000", "md5-r", "md5-r-5000", "md5-r-1M", "md5-rt-5000"};
 		else
 			checkcodes = {"md5", "md5-5000", "md5-1M", "md5-t-5000"};
@@ -467,6 +471,8 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::Path gamePath, C
 	}
 
 	requestObject.setVal("files", new Common::JSONValue(filesObject));
+
+	SearchMan.remove(gamePath.toString());
 
 	Common::JSONValue *request = new Common::JSONValue(requestObject);
 	return request;
@@ -494,6 +500,7 @@ void IntegrityDialog::errorCallback(const Networking::ErrorResponse &error) {
 void IntegrityDialog::sendJSON() {
 	g_result = new ResultFormat();
 
+#if 1
 	auto conn = new Networking::PostRequest(g_checksum_state->endpoint,
 		new Common::Callback<IntegrityDialog, const Common::JSONValue *>(this, &IntegrityDialog::checksumResponseCallback),
 		new Common::Callback<IntegrityDialog, const Networking::ErrorResponse &>(this, &IntegrityDialog::errorCallback));
@@ -503,6 +510,11 @@ void IntegrityDialog::sendJSON() {
 	conn->setJSONData(json);
 	conn->setContentType("application/json");
 	conn->start();
+#else
+	Common::JSONValue *json = generateJSONRequest(
+		g_checksum_state->gamePath, g_checksum_state->gameid, g_checksum_state->engineid, g_checksum_state->extra, g_checksum_state->platform, g_checksum_state->language);
+	warning("%s", json->stringify(true).c_str());
+#endif
 	delete json;
 }
 
