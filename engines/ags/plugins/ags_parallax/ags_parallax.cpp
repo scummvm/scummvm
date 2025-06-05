@@ -43,6 +43,8 @@ void AGSParallax::AGS_EngineStartup(IAGSEngine *engine) {
 
 	SCRIPT_METHOD(pxDrawSprite, AGSParallax::pxDrawSprite);
 	SCRIPT_METHOD(pxDeleteSprite, AGSParallax::pxDeleteSprite);
+	SCRIPT_METHOD(pxAddSprite, AGSParallax::pxDrawSprite);
+	SCRIPT_METHOD(pxRemoveAllSprites, AGSParallax::pxRemoveAllSprites);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
 	_engine->RequestEventHook(AGSE_PRESCREENDRAW);
@@ -151,6 +153,13 @@ void AGSParallax::pxDeleteSprite(ScriptMethodParams &params) {
 		return;
 
 	_sprites[id].slot = -1;
+}
+
+void AGSParallax::pxRemoveAllSprites(ScriptMethodParams &params) {
+
+	for (int i = 0; i < MAX_SPRITES; i++) {
+		_sprites[i].slot = -1;
+	}
 }
 
 /*------------------------------------------------------------------*/

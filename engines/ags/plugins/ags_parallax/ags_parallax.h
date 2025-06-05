@@ -58,6 +58,7 @@ private:
 private:
 	void pxDrawSprite(ScriptMethodParams &params);
 	void pxDeleteSprite(ScriptMethodParams &params);
+	void pxRemoveAllSprites(ScriptMethodParams &params);
 
 	void syncGame(Serializer &s);
 	void Draw(bool foreground);
