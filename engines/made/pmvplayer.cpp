@@ -232,7 +232,7 @@ bool PmvPlayer::play(const char *filename) {
 			uint16 soundChunkSize = READ_LE_UINT16(audioData + 4);
 			chunkCount = READ_LE_UINT16(audioData + 6);
 
-			debug(1, "chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, soundChunkSize, chunkCount * soundChunkSize);
+			debug(2, "SOUND: chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, soundChunkSize, chunkCount * soundChunkSize);
 
 			soundSize = chunkCount * soundChunkSize;
 			soundData = (byte *)malloc(soundSize);

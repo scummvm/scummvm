@@ -30,6 +30,7 @@
 
 #include "backends/audiocd/audiocd.h"
 
+#include "common/file.h"
 #include "common/config-manager.h"
 
 #include "graphics/wincursor.h"
@@ -46,6 +47,39 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 ScriptFunctions::~ScriptFunctions() {
 	for (uint i = 0; i < _externalFuncs.size(); ++i)
 		delete _externalFuncs[i];
+}
+
+// An inner function for playing a sound resource, either from a resource file
+//  or loaded externally
+void ScriptFunctions::playSound(SoundResource *soundRes, bool externalFile) {
+	_vm->_autoStopSound = false;
+	stopSound();
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
+							soundRes->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
+	_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
+	_vm->_soundEnergyIndex = 0;
+	_soundStarted = true;
+	_soundWasPlaying = true;
+	_soundResource = soundRes;
+	_soundExternalFile = externalFile;
+
+	// The sound length in milliseconds for purpose of checking if the
+	// sound is still playing. This is 100 ms shorter than the actual
+	// length (see sfSoundPlaying).
+	uint32 soundLength = (_soundResource->getSoundSize() * 1000 / _vm->_soundRate);
+	_soundCheckLength = soundLength > 100 ? soundLength - 100 : 0;
+}
+
+void ScriptFunctions::stopSound() {
+	_vm->_mixer->stopHandle(_audioStreamHandle);
+	if (_soundStarted) {
+		if (_soundExternalFile)
+			delete _soundResource;
+		else
+			_vm->_res->freeResource(_soundResource);
+		_soundStarted = false;
+	}
 }
 
 typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctions> ExternalScriptFunc;
@@ -253,21 +287,10 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		soundNum = argv[1];
 		_vm->_autoStopSound = (argv[0] == 1);
 	}
-	_soundWasPlaying = true;
-	if (soundNum > 0) {
-		SoundResource *soundRes = _vm->_res->getSound(soundNum);
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
-			soundRes->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
-		_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
-		_vm->_soundEnergyIndex = 0;
-		_soundStarted = true;
-		_soundResource = soundRes;
-		// The sound length in milliseconds for purpose of checking if the
-		// sound is still playing. This is 100 ms shorter than the actual
-		// length (see sfSoundPlaying).
-		uint32 soundLength = (_soundResource->getSoundSize() * 1000 / _vm->_soundRate);
-		_soundCheckLength = soundLength > 100 ? soundLength - 100 : 0;
-	}
+
+	if (soundNum > 0)
+		playSound(_vm->_res->getSound(soundNum), false);
+
 	return 0;
 }
 
@@ -719,16 +742,6 @@ int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 
 }
 
-void ScriptFunctions::stopSound() {
-	_vm->_mixer->stopHandle(_audioStreamHandle);
-	if (_soundStarted) {
-		_vm->_res->freeResource(_soundResource);
-		_soundStarted = false;
-	}
-
-}
-
-
 int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
 	stopSound();
 	_vm->_autoStopSound = false;
@@ -1157,19 +1170,40 @@ int16 ScriptFunctions::sfIsSlowSystem(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
-	warning("Unimplemented opcode: sfMovieCall");
-
-	return 0;
+	warning("Unimplemented opcode: sfMovieCall (%d, %d)", argv[0], argv[1]);
+	// TODO: This is incorrect: it is supposed to play the movie in the _background_
+	//  rather than pausing the script and playing in the foreground
+	return sfPlayMovie(argc, argv);
 }
 
 int16 ScriptFunctions::sfCursorXY(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfCursorXY");
-
+	g_system->warpMouse(argv[1], argv[0]);
 	return 0;
 }
 
 int16 ScriptFunctions::sfSoundFile(int16 argc, int16 *argv) {
-	warning("Unimplemented opcode: sfSoundFile");
+	// Loads an external sound file (i.e. not from PRJ) and plays it
+	const char *soundName = _vm->_dat->getObjectString(argv[0]);
+
+	debug(1, "Playing external sound '%s'", soundName);
+
+	Common::File *_fd = new Common::File();
+	if (!_fd->open(Common::Path(soundName, '\\'))) {
+		delete _fd;
+		warning("Failed to open sound file '%s", soundName);
+		return 0;
+	}
+	byte *srcBuf = new byte[_fd->size()];
+	_fd->read(srcBuf, _fd->size());
+
+	// wrap this in a SoundResource
+	SoundResource *soundRes = new SoundResource();
+	soundRes->load(srcBuf, _fd->size());
+
+	// safe to free source now
+	delete[] srcBuf;
+
+	playSound(soundRes, true);
 
 	return 0;
 }
