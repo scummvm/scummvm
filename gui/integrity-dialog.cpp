@@ -35,6 +35,8 @@
 #include "gui/message.h"
 #include "gui/widget.h"
 
+#define TESTING 0
+
 namespace GUI {
 
 enum {
@@ -504,7 +506,7 @@ void IntegrityDialog::errorCallback(const Networking::ErrorResponse &error) {
 void IntegrityDialog::sendJSON() {
 	g_result = new ResultFormat();
 
-#if 1
+#if !TESTING
 	auto conn = new Networking::PostRequest(g_checksum_state->endpoint,
 		new Common::Callback<IntegrityDialog, const Common::JSONValue *>(this, &IntegrityDialog::checksumResponseCallback),
 		new Common::Callback<IntegrityDialog, const Networking::ErrorResponse &>(this, &IntegrityDialog::errorCallback));
