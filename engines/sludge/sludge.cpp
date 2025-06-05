@@ -166,7 +166,9 @@ Common::Error SludgeEngine::loadGameState(int slot) {
 }
 
 bool SludgeEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error SludgeEngine::run() {

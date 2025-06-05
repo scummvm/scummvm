@@ -136,6 +136,7 @@ void EventManager::checkInput() {
 			break;
 
 		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_weAreDoneSoQuit = 1;
 			// TODO: if _reallyWantToQuit, popup a message box to confirm
 			break;
