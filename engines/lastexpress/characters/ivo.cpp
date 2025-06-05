@@ -48,7 +48,7 @@ void LogicManager::CONS_Ivo(int chapter) {
 		CONS_Ivo_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,19 +69,25 @@ void LogicManager::CONS_Ivo_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterIvo).characterPosition.position = 0;
-			getCharacter(kCharacterIvo).characterPosition.location = 0;
-			getCharacter(kCharacterIvo).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterIvo)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterIvo, kCarGreenSleeping, getCharacterCurrentParams(kCharacterIvo)[0])) {
+			if (getCharacterCurrentParams(kCharacterIvo)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterIvo)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterIvo)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterIvo, kCarGreenSleeping, getCharacterCurrentParams(kCharacterIvo)[0])) {
-		if (getCharacterCurrentParams(kCharacterIvo)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterIvo)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterIvo)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		break;
+		getCharacter(kCharacterIvo).characterPosition.position = 0;
+		getCharacter(kCharacterIvo).characterPosition.location = 0;
+		getCharacter(kCharacterIvo).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterIvo)[0] = 10000;
+	default:
+		break;
 	}
 }
 
@@ -98,12 +104,17 @@ void LogicManager::CONS_Ivo_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterIvo, (char *)&getCharacterCurrentParams(kCharacterIvo)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -122,15 +133,20 @@ void LogicManager::CONS_Ivo_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterIvo, getCharacterCurrentParams(kCharacterIvo)[3]);
 
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterIvo, (char *)&getCharacterCurrentParams(kCharacterIvo)[0]);
 		blockAtDoor(kCharacterIvo, getCharacterCurrentParams(kCharacterIvo)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -147,11 +163,12 @@ void LogicManager::CONS_Ivo_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterIvo)[1] || (getCharacterCurrentParams(kCharacterIvo)[1] = _gameTime + getCharacterCurrentParams(kCharacterIvo)[0],
 															_gameTime + getCharacterCurrentParams(kCharacterIvo)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterIvo)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterIvo)[1] = 0x7FFFFFFF;
 		}
@@ -159,6 +176,9 @@ void LogicManager::HAND_Ivo_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -175,11 +195,12 @@ void LogicManager::CONS_Ivo_DoWaitReal(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DoWaitReal(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterIvo)[1] || (getCharacterCurrentParams(kCharacterIvo)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterIvo)[0],
 															_currentGameSessionTicks + getCharacterCurrentParams(kCharacterIvo)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterIvo)[1] >= _currentGameSessionTicks)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterIvo)[1] = 0x7FFFFFFF;
 		}
@@ -187,6 +208,9 @@ void LogicManager::HAND_Ivo_DoWaitReal(HAND_PARAMS) {
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -206,23 +230,20 @@ void LogicManager::CONS_Ivo_DoWalk(CONS_PARAMS) {
 void LogicManager::HAND_Ivo_DoWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterIvo, getCharacterCurrentParams(kCharacterIvo)[0], getCharacterCurrentParams(kCharacterIvo)[1]))
-			goto LABEL_7;
-		break;
-	case 5:
-	case 6:
-		playDialog(0, "CAT1127A", -1, 0);
-		break;
 	case 12:
 		if (walk(kCharacterIvo, getCharacterCurrentParams(kCharacterIvo)[0], getCharacterCurrentParams(kCharacterIvo)[1])) {
-		LABEL_7:
 			getCharacter(kCharacterIvo).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 			fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
 		}
+
+		break;
+	case 5:
+	case 6:
+		playDialog(kCharacterCath, "CAT1127A", -1, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -237,16 +258,22 @@ void LogicManager::CONS_Ivo_FinishSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_FinishSeqOtis(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacter(kCharacterIvo).direction != 4) {
 			getCharacter(kCharacterIvo).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 			fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
 		}
-	} else if (msg->action == 3) {
+
+		break;
+	case 3:
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -261,13 +288,18 @@ void LogicManager::CONS_Ivo_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		getCharacter(kCharacterIvo).inventoryItem = 0;
 		playDialog(kCharacterIvo, (char *)&getCharacterCurrentParams(kCharacterIvo)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -282,10 +314,18 @@ void LogicManager::CONS_Ivo_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_WaitRCClear(HAND_PARAMS) {
-	if ((msg->action == 0 && rcClear()) || (msg->action == 12 && rcClear())) {
-		getCharacter(kCharacterIvo).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
-		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterIvo).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
+			fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -303,22 +343,25 @@ void LogicManager::CONS_Ivo_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterIvo,
-				getCharacterCurrentParams(kCharacterIvo)[0],
-				getCharacterCurrentParams(kCharacterIvo)[1]
-			);
-
-			getCharacter(kCharacterIvo).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
-			fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterIvo,
+			getCharacterCurrentParams(kCharacterIvo)[0],
+			getCharacterCurrentParams(kCharacterIvo)[1]
+		);
+
+		getCharacter(kCharacterIvo).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
+		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -333,57 +376,67 @@ void LogicManager::CONS_Ivo_GoCompartment(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_GoCompartment(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			startSeqOtis(kCharacterIvo, "809DS");
-			if (inDiningRoom(kCharacterCath))
-				advanceFrame(kCharacterIvo);
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
-			IvoCall(&LogicManager::CONS_Ivo_FinishSeqOtis, 0, 0, 0, 0);
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8]) {
-			case 1:
-				send(kCharacterIvo, kCharacterSalko, 125242096, 0);
-				getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
-				IvoCall(&LogicManager::CONS_Ivo_DoWalk, 4, 2740, 0, 0);
-				break;
-			case 2:
-				if (nearChar(kCharacterIvo, kCharacterSalko, 750) || nearX(kCharacterSalko, 2740, 500)) {
-					send(kCharacterIvo, kCharacterSalko, 123668192, 0);
-					getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 3;
-					IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Ah", 39, 0, 0);
-				} else {
-					startCycOtis(kCharacterIvo, "613Hh");
-					softBlockAtDoor(kCharacterIvo, 39);
-				}
-				break;
-			case 3:
-				getCharacter(kCharacterIvo).characterPosition.position = 2740;
-				getCharacter(kCharacterIvo).characterPosition.location = 1;
-				endGraphics(kCharacterIvo);
-
-				getCharacter(kCharacterIvo).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
-				fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-				break;
-			case 4:
-				softReleaseAtDoor(kCharacterIvo, 39);
-				getCharacter(kCharacterIvo).characterPosition.position = 2740;
-				getCharacter(kCharacterIvo).characterPosition.location = 1;
-				endGraphics(kCharacterIvo);
-
-				getCharacter(kCharacterIvo).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
-				fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-				break;
-			default:
-				return;
-			}
+	switch (msg->action) {
+	case 0:
+		if (nearChar(kCharacterIvo, kCharacterSalko, 750) || nearX(kCharacterSalko, 2740, 500)) {
+			send(kCharacterIvo, kCharacterSalko, 123668192, 0);
+			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 4;
+			IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Ah", 39, 0, 0);
 		}
-	} else if (nearChar(kCharacterIvo, kCharacterSalko, 750) || nearX(kCharacterSalko, 2740, 500)) {
-		send(kCharacterIvo, kCharacterSalko, 123668192, 0);
-		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 4;
-		IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Ah", 39, 0, 0);
+		break;
+	case 12:
+		startSeqOtis(kCharacterIvo, "809DS");
+
+		if (inDiningRoom(kCharacterCath))
+			advanceFrame(kCharacterIvo);
+
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
+		IvoCall(&LogicManager::CONS_Ivo_FinishSeqOtis, 0, 0, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8]) {
+		case 1:
+			send(kCharacterIvo, kCharacterSalko, 125242096, 0);
+			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
+			IvoCall(&LogicManager::CONS_Ivo_DoWalk, 4, 2740, 0, 0);
+			break;
+		case 2:
+			if (nearChar(kCharacterIvo, kCharacterSalko, 750) || nearX(kCharacterSalko, 2740, 500)) {
+				send(kCharacterIvo, kCharacterSalko, 123668192, 0);
+				getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 3;
+				IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Ah", 39, 0, 0);
+			} else {
+				startCycOtis(kCharacterIvo, "613Hh");
+				softBlockAtDoor(kCharacterIvo, 39);
+			}
+
+			break;
+		case 3:
+			getCharacter(kCharacterIvo).characterPosition.position = 2740;
+			getCharacter(kCharacterIvo).characterPosition.location = 1;
+			endGraphics(kCharacterIvo);
+
+			getCharacter(kCharacterIvo).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
+			fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+			break;
+		case 4:
+			softReleaseAtDoor(kCharacterIvo, 39);
+			getCharacter(kCharacterIvo).characterPosition.position = 2740;
+			getCharacter(kCharacterIvo).characterPosition.location = 1;
+			endGraphics(kCharacterIvo);
+
+			getCharacter(kCharacterIvo).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
+			fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -398,17 +451,22 @@ void LogicManager::CONS_Ivo_DoSplitOtis023A(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DoSplitOtis023A(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		endGraphics(kCharacterSalko);
 		send(kCharacterIvo, kCharacterTableC, 136455232, 0);
 
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterIvo, "023A1");
 		startSeqOtis(kCharacterSalko, "023A2");
 		startSeqOtis(kCharacterTableC, "023A3");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -423,17 +481,22 @@ void LogicManager::CONS_Ivo_DoSplitOtis023D(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_DoSplitOtis023D(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		send(kCharacterIvo, kCharacterTableC, 103798704, "009E");
 		endGraphics(kCharacterSalko);
 
 		getCharacter(kCharacterIvo).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterIvo, _functionsIvo[getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall]]);
 		fedEx(kCharacterIvo, kCharacterIvo, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterIvo, "023D1");
 		startSeqOtis(kCharacterSalko, "023D2");
 		startSeqOtis(kCharacterTableC, "023D3");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -448,17 +511,23 @@ void LogicManager::CONS_Ivo_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			setDoor(39, kCharacterCath, 3, 10, 9);
-			setDoor(47, kCharacterCath, 0, 255, 255);
-			getCharacter(kCharacterIvo).characterPosition.position = 4691;
-			getCharacter(kCharacterIvo).characterPosition.location = 1;
-			getCharacter(kCharacterIvo).characterPosition.car = kCarRestaurant;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterIvo)[0]) {
+			getCharacterCurrentParams(kCharacterIvo)[0] = 1;
+			CONS_Ivo_ReturnComp(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterIvo)[0]) {
-		getCharacterCurrentParams(kCharacterIvo)[0] = 1;
-		CONS_Ivo_ReturnComp(0, 0, 0, 0);
+
+		break;
+	case 12:
+		setDoor(39, kCharacterCath, 3, 10, 9);
+		setDoor(47, kCharacterCath, 0, 255, 255);
+		getCharacter(kCharacterIvo).characterPosition.position = 4691;
+		getCharacter(kCharacterIvo).characterPosition.location = 1;
+		getCharacter(kCharacterIvo).characterPosition.car = kCarRestaurant;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -473,21 +542,26 @@ void LogicManager::CONS_Ivo_ReturnComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_ReturnComp(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1) {
-				getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
-				IvoCall(&LogicManager::CONS_Ivo_GoCompartment, 0, 0, 0, 0);
-			} else if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 2) {
-				send(kCharacterIvo, kCharacterMilos, 135024800, 0);
-				CONS_Ivo_InComp(0, 0, 0, 0);
-			}
-		} else if (msg->action == 125242096) {
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
-			IvoCall(&LogicManager::CONS_Ivo_DoWaitReal, 75, 0, 0, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterIvo).characterPosition = getCharacter(kCharacterMilos).characterPosition;
+		break;
+	case 18:
+		if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1) {
+			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
+			IvoCall(&LogicManager::CONS_Ivo_GoCompartment, 0, 0, 0, 0);
+		} else if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 2) {
+			send(kCharacterIvo, kCharacterMilos, 135024800, 0);
+			CONS_Ivo_InComp(0, 0, 0, 0);
+		}
+
+		break;
+	case 125242096:
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
+		IvoCall(&LogicManager::CONS_Ivo_DoWaitReal, 75, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -502,23 +576,15 @@ void LogicManager::CONS_Ivo_InComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_InComp(HAND_PARAMS) {
-	if (msg->action > 18) {
-		switch (msg->action) {
-		case 122865568:
-			getCharacter(kCharacterIvo).characterPosition.location = 0;
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
-			IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Bh", 39, 0, 0);
-			break;
-		case 123852928:
-			softReleaseAtDoor(kCharacterIvo, 39);
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
-			IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Dh", 39, 0, 0);
-			break;
-		case 221683008:
-			send(kCharacterIvo, kCharacterCond2, 123199584, 0);
-			break;
-		}
-	} else if (msg->action == 18) {
+	switch (msg->action) {
+	case 12:
+		getCharacter(kCharacterIvo).characterPosition.position = 2740;
+		getCharacter(kCharacterIvo).characterPosition.location = 1;
+		getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
+		setDoor(39, kCharacterCath, 3, 10, 9);
+		endGraphics(kCharacterIvo);
+		break;
+	case 18:
 		if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1) {
 			startCycOtis(kCharacterIvo, "613Ch");
 			softBlockAtDoor(kCharacterIvo, 39);
@@ -529,12 +595,23 @@ void LogicManager::HAND_Ivo_InComp(HAND_PARAMS) {
 			endGraphics(kCharacterIvo);
 			setDoor(39, kCharacterCath, 3, 10, 9);
 		}
-	} else if (msg->action == 12) {
-		getCharacter(kCharacterIvo).characterPosition.position = 2740;
-		getCharacter(kCharacterIvo).characterPosition.location = 1;
-		getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
-		setDoor(39, kCharacterCath, 3, 10, 9);
-		endGraphics(kCharacterIvo);
+
+		break;
+	case 122865568:
+		getCharacter(kCharacterIvo).characterPosition.location = 0;
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
+		IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Bh", 39, 0, 0);
+		break;
+	case 123852928:
+		softReleaseAtDoor(kCharacterIvo, 39);
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
+		IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Dh", 39, 0, 0);
+		break;
+	case 221683008:
+		send(kCharacterIvo, kCharacterCond2, 123199584, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -549,12 +626,16 @@ void LogicManager::CONS_Ivo_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
-		getCharacter(kCharacterIvo).characterPosition.car = 4;
+	switch (msg->action) {
+	case 12:
+		getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterIvo).characterPosition.position = 2740;
 		getCharacter(kCharacterIvo).characterPosition.location = 1;
 		endGraphics(kCharacterIvo);
 		setDoor(39, kCharacterCath, 3, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -569,20 +650,26 @@ void LogicManager::CONS_Ivo_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterIvo);
-			getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterIvo).characterPosition.position = 2740;
-			getCharacter(kCharacterIvo).characterPosition.location = 1;
-			getCharacter(kCharacterIvo).clothes = 0;
-			getCharacter(kCharacterIvo).inventoryItem = 0;
-			setDoor(39, kCharacterCath, 3, 10, 9);
-			setDoor(47, kCharacterCath, 1, 255, 255);
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1777500 && !getCharacterCurrentParams(kCharacterIvo)[0]) {
+			getCharacterCurrentParams(kCharacterIvo)[0] = 1;
+			CONS_Ivo_GoBreakfast(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1777500 && !getCharacterCurrentParams(kCharacterIvo)[0]) {
-		getCharacterCurrentParams(kCharacterIvo)[0] = 1;
-		CONS_Ivo_GoBreakfast(0, 0, 0, 0);
+
+		break;
+	case 12:
+		endGraphics(kCharacterIvo);
+		getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterIvo).characterPosition.position = 2740;
+		getCharacter(kCharacterIvo).characterPosition.location = 1;
+		getCharacter(kCharacterIvo).clothes = 0;
+		getCharacter(kCharacterIvo).inventoryItem = 0;
+		setDoor(39, kCharacterCath, 3, 10, 9);
+		setDoor(47, kCharacterCath, 1, 255, 255);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -606,8 +693,10 @@ void LogicManager::HAND_Ivo_GoBreakfast(HAND_PARAMS) {
 		switch (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterIvo).characterPosition.location = 0;
+
 			if (getCharacter(kCharacterIvo).characterPosition.position < 2087)
 				getCharacter(kCharacterIvo).characterPosition.position = 2088;
+
 			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
 			IvoCall(&LogicManager::CONS_Ivo_DoWalk, 5, 850, 0, 0);
 			break;
@@ -629,12 +718,15 @@ void LogicManager::HAND_Ivo_GoBreakfast(HAND_PARAMS) {
 			CONS_Ivo_AtBreakfast(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
 		break;
 	case 102675536:
 		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 3;
 		IvoCall(&LogicManager::CONS_Ivo_WaitRCClear, 0, 0, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -650,37 +742,48 @@ void LogicManager::CONS_Ivo_AtBreakfast(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_AtBreakfast(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8]) {
-			case 1:
-				send(kCharacterIvo, kCharacterWaiter2, 101106391, 0);
-				startCycOtis(kCharacterIvo, "023B");
-				getCharacterCurrentParams(kCharacterIvo)[0] = 1;
-				break;
-			case 2:
-				getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 3;
-				IvoCall(&LogicManager::CONS_Ivo_GoCompartment, 0, 0, 0, 0);
-				break;
-			case 3:
-				send(kCharacterIvo, kCharacterWaiter2, 236237423, 0);
-				CONS_Ivo_InComp2(0, 0, 0, 0);
-				break;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1809000 && getCharacterCurrentParams(kCharacterIvo)[0]) {
+			if (rcClear()) {
+				getCharacter(kCharacterIvo).characterPosition.location = 0;
+				getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
+				IvoCall(&LogicManager::CONS_Ivo_DoSplitOtis023D, 0, 0, 0, 0);
 			}
-		} else if (msg->action == 123712592) {
-			startCycOtis(kCharacterIvo, "023C2");
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
-			IvoCall(&LogicManager::CONS_Ivo_DoWait, 450, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		send(kCharacterIvo, kCharacterWaiter2, 189688608, 0);
 		startCycOtis(kCharacterIvo, "023B");
-	} else if (msg->action == 0 && _gameTime > 1809000 && getCharacterCurrentParams(kCharacterIvo)[0]) {
-		if (rcClear()) {
-			getCharacter(kCharacterIvo).characterPosition.location = 0;
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
-			IvoCall(&LogicManager::CONS_Ivo_DoSplitOtis023D, 0, 0, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8]) {
+		case 1:
+			send(kCharacterIvo, kCharacterWaiter2, 101106391, 0);
+			startCycOtis(kCharacterIvo, "023B");
+			getCharacterCurrentParams(kCharacterIvo)[0] = 1;
+			break;
+		case 2:
+			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 3;
+			IvoCall(&LogicManager::CONS_Ivo_GoCompartment, 0, 0, 0, 0);
+			break;
+		case 3:
+			send(kCharacterIvo, kCharacterWaiter2, 236237423, 0);
+			CONS_Ivo_InComp2(0, 0, 0, 0);
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 123712592:
+		startCycOtis(kCharacterIvo, "023C2");
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
+		IvoCall(&LogicManager::CONS_Ivo_DoWait, 450, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -695,11 +798,15 @@ void LogicManager::CONS_Ivo_InComp2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_InComp2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterIvo).characterPosition.position = 2740;
 		getCharacter(kCharacterIvo).characterPosition.location = 1;
 		getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
 		setDoor(39, kCharacterCath, 3, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -714,17 +821,20 @@ void LogicManager::CONS_Ivo_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterIvo);
-			getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterIvo).characterPosition.position = 2740;
-			getCharacter(kCharacterIvo).characterPosition.location = 1;
-			getCharacter(kCharacterIvo).clothes = 0;
-			getCharacter(kCharacterIvo).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Ivo_InComp3(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterIvo);
+		getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterIvo).characterPosition.position = 2740;
+		getCharacter(kCharacterIvo).characterPosition.location = 1;
+		getCharacter(kCharacterIvo).clothes = 0;
+		getCharacter(kCharacterIvo).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -739,8 +849,13 @@ void LogicManager::CONS_Ivo_InComp3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_InComp3(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		setDoor(39, kCharacterCath, 3, 10, 9);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Ivo_StartPart4(CONS_PARAMS) {
@@ -754,14 +869,17 @@ void LogicManager::CONS_Ivo_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterIvo).characterPosition.location = 1;
-			getCharacter(kCharacterIvo).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterIvo).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Ivo_AtDinner4(0, 0, 0, 0);
+		break;
+	case 12:
+		getCharacter(kCharacterIvo).characterPosition.location = 1;
+		getCharacter(kCharacterIvo).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterIvo).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -776,14 +894,20 @@ void LogicManager::CONS_Ivo_AtDinner4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_AtDinner4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			send(kCharacterIvo, kCharacterTableC, 136455232, 0);
-			startCycOtis(kCharacterIvo, "023B");
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 2361600 && rcClear()) {
+			getCharacter(kCharacterIvo).characterPosition.location = 0;
+			CONS_Ivo_ReturnComp4(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 2361600 && rcClear()) {
-		getCharacter(kCharacterIvo).characterPosition.location = 0;
-		CONS_Ivo_ReturnComp4(0, 0, 0, 0);
+
+		break;
+	case 12:
+		send(kCharacterIvo, kCharacterTableC, 136455232, 0);
+		startCycOtis(kCharacterIvo, "023B");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -798,16 +922,22 @@ void LogicManager::CONS_Ivo_ReturnComp4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_ReturnComp4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
 		IvoCall(&LogicManager::CONS_Ivo_DoSplitOtis023D, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1) {
 			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
 			IvoCall(&LogicManager::CONS_Ivo_GoCompartment, 0, 0, 0, 0);
 		} else if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 2) {
 			CONS_Ivo_InComp4(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -822,28 +952,18 @@ void LogicManager::CONS_Ivo_InComp4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_InComp4(HAND_PARAMS) {
-	if (msg->action > 18) {
-		if (msg->action > 122865568) {
-			if (msg->action == 123852928) {
-				getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 4;
-				IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Dh", 39, 0, 0);
-			} else if (msg->action == 221683008) {
-				send(kCharacterIvo, kCharacterCond2, 123199584, 0);
-			}
-		} else if (msg->action == 122865568) {
-			getCharacter(kCharacterIvo).characterPosition.location = 0;
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 3;
-			IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Bh", 39, 0, 0);
-		} else if (msg->action == 55996766) {
-			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
-			IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613FH", 39, 0, 0);
-		}
-	} else if (msg->action == 18) {
+	switch (msg->action) {
+	case 12:
+		setDoor(39, kCharacterCath, 3, 10, 9);
+		break;
+	case 18:
 		switch (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterIvo).characterPosition.location = 0;
+
 			if (getCharacter(kCharacterIvo).characterPosition.position < 2087)
 				getCharacter(kCharacterIvo).characterPosition.position = 2088;
+
 			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
 			IvoCall(&LogicManager::CONS_Ivo_DoWalk, 5, 850, 0, 0);
 			break;
@@ -863,10 +983,28 @@ void LogicManager::HAND_Ivo_InComp4(HAND_PARAMS) {
 			endGraphics(kCharacterIvo);
 			break;
 		default:
-			return;
+			break;
 		}
-	} else if (msg->action == 12) {
-		setDoor(39, kCharacterCath, 3, 10, 9);
+
+		break;
+	case 123852928:
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 4;
+		IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Dh", 39, 0, 0);
+		break;
+	case 221683008:
+		send(kCharacterIvo, kCharacterCond2, 123199584, 0);
+		break;
+	case 122865568:
+		getCharacter(kCharacterIvo).characterPosition.location = 0;
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 3;
+		IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613Bh", 39, 0, 0);
+		break;
+	case 55996766:
+		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
+		IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613FH", 39, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -881,19 +1019,26 @@ void LogicManager::CONS_Ivo_Hiding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_Hiding(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1) {
-				getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
-				IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613EH", 39, 0, 0);
-			} else if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 2) {
-				CONS_Ivo_EndPart4(0, 0, 0, 0);
-			}
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 2425500 && !getCharacterCurrentParams(kCharacterIvo)[0]) {
+			getCharacterCurrentParams(kCharacterIvo)[0] = 1;
+			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
+			IvoCall(&LogicManager::CONS_Ivo_DoWalk, 4, 2740, 0, 0);
 		}
-	} else if (_gameTime > 2425500 && !getCharacterCurrentParams(kCharacterIvo)[0]) {
-		getCharacterCurrentParams(kCharacterIvo)[0] = 1;
-		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
-		IvoCall(&LogicManager::CONS_Ivo_DoWalk, 4, 2740, 0, 0);
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1) {
+			getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 2;
+			IvoCall(&LogicManager::CONS_Ivo_DoCorrOtis, "613EH", 39, 0, 0);
+		} else if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 2) {
+			CONS_Ivo_EndPart4(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -908,13 +1053,17 @@ void LogicManager::CONS_Ivo_EndPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_EndPart4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterIvo);
 		setDoor(39, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterIvo).characterPosition.location = 1;
 		getCharacter(kCharacterIvo).characterPosition.position = 2740;
 		getCharacter(kCharacterIvo).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterIvo).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -929,16 +1078,19 @@ void LogicManager::CONS_Ivo_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterIvo);
-			getCharacter(kCharacterIvo).characterPosition.location = kCarBaggageRear;
-			getCharacter(kCharacterIvo).characterPosition.position = 540;
-			getCharacter(kCharacterIvo).characterPosition.car = kCarBaggageRear;
-			getCharacter(kCharacterIvo).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Ivo_GoofingOff(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterIvo);
+		getCharacter(kCharacterIvo).characterPosition.location = kCarBaggageRear;
+		getCharacter(kCharacterIvo).characterPosition.position = 540;
+		getCharacter(kCharacterIvo).characterPosition.car = kCarBaggageRear;
+		getCharacter(kCharacterIvo).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -953,8 +1105,13 @@ void LogicManager::CONS_Ivo_GoofingOff(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_GoofingOff(HAND_PARAMS) {
-	if (msg->action == 192637492)
+	switch (msg->action) {
+	case 192637492:
 		CONS_Ivo_FightCath(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Ivo_FightCath(CONS_PARAMS) {
@@ -968,14 +1125,16 @@ void LogicManager::CONS_Ivo_FightCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_FightCath(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterIvo).characterPosition.location = 0;
 		getCharacter(kCharacterIvo).characterPosition.position = 540;
 		getCharacter(kCharacterIvo).characterPosition.car = 1;
 		getCharacter(kCharacterIvo).inventoryItem = 0;
 		getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] = 1;
 		IvoCall(&LogicManager::CONS_Ivo_SaveGame, 2, kEventCathIvoFight, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1) {
 			playDialog(0, "LIB090", -1, 0);
 			playNIS(kEventCathIvoFight);
@@ -991,6 +1150,10 @@ void LogicManager::HAND_Ivo_FightCath(HAND_PARAMS) {
 				CONS_Ivo_KnockedOut(0, 0, 0, 0);
 			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1014,9 +1177,12 @@ void LogicManager::HAND_Ivo_KnockedOut(HAND_PARAMS) {
 	case 18:
 		if (getCharacter(kCharacterIvo).callbacks[getCharacter(kCharacterIvo).currentCall + 8] == 1)
 			setDoor(94, kCharacterCath, 2, 255, 255);
+
 		break;
 	case 135800432:
 		CONS_Ivo_Disappear(0, 0, 0, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -1032,8 +1198,13 @@ void LogicManager::CONS_Ivo_Disappear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Ivo_Disappear(HAND_PARAMS) {
-	if (msg->action == 12)
-		endGraphics(16);
+	switch (msg->action) {
+	case 12:
+		endGraphics(kCharacterIvo);
+		break;
+	default:
+		break;
+	}
 }
 
 void (LogicManager::*LogicManager::_functionsIvo[])(HAND_PARAMS) = {
