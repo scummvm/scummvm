@@ -214,6 +214,12 @@ public:
 	bool hasDataFork() const;
 
 	/**
+	 * Query whether the file is one of the Mac formats.
+	 * @return True if the file is in MacBinary format or has a resource fork
+	 */
+	bool isMacFile() const { return _mode != kResForkNone; }
+
+	/**
 	 * Read resource from the MacBinary file
 	 * @param typeID FourCC of the type
 	 * @param resID Resource ID to fetch
