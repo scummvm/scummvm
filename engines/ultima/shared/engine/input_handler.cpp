@@ -20,7 +20,6 @@
  */
 
 #include "ultima/shared/engine/input_handler.h"
-#include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/early/game_base.h"
 #include "ultima/shared/engine/messages.h"

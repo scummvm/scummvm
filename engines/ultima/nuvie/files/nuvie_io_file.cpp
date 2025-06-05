@@ -21,10 +21,10 @@
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/shared/engine/ultima.h"
 #include "engines/metaengine.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "engines/engine.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -186,7 +186,7 @@ void NuvieIOFileWrite::close() {
 	} else if (_saveFile) {
 		// Writing using savefile interface, so flush out data
 		_saveFile->write(_saveFileData.getData(), _saveFileData.size());
-		g_engine->getMetaEngine()->appendExtendedSave(_saveFile, Shared::g_ultima->getTotalPlayTime(), _description, _isAutosave);
+		g_engine->getMetaEngine()->appendExtendedSave(_saveFile, g_engine->getTotalPlayTime(), _description, _isAutosave);
 
 		_saveFile->finalize();
 		delete _saveFile;
