@@ -22,6 +22,8 @@
 #ifndef SLUDGE_SLUDGE_H
 #define SLUDGE_SLUDGE_H
 
+#include "common/hash-str.h"
+
 #include "engines/engine.h"
 
 namespace Common {
@@ -103,6 +105,7 @@ public:
 	uint getLanguageID() const;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
+	Common::String getTargetName() const { return _targetName; }
 	Common::Language getLanguage() const;
 	Graphics::PixelFormat *getScreenPixelFormat() const;
 	Graphics::PixelFormat *getOrigPixelFormat() const;
@@ -110,7 +113,17 @@ public:
 
 	const char *getGameFile() const;
 
+	bool hasFeature(EngineFeature f) const override;
+
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error loadGameState(int slot) override;
+
 	const SludgeGameDescription *_gameDescription;
+
+	Common::HashMap<Common::String, int> _saveNameToSlot;
 
 private:
 	Common::RandomSource *_rnd;

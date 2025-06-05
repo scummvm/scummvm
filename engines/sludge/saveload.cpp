@@ -23,6 +23,8 @@
 
 #include "common/savefile.h"
 
+#include "engines/metaengine.h"
+
 #include "sludge/cursors.h"
 #include "sludge/errors.h"
 #include "sludge/event.h"
@@ -63,7 +65,47 @@ extern bool allowAnyFilename;
 bool handleSaveLoad() {
 	if (!g_sludge->loadNow.empty()) {
 		if (g_sludge->loadNow[0] == ':') {
-			saveGame(g_sludge->loadNow.c_str() + 1);
+			Common::String saveName = g_sludge->loadNow.c_str() + 1;
+			uint extensionLength = saveName.size() - saveName.rfind('.');
+			saveName = saveName.substr(0, saveName.size() - extensionLength);
+
+			int slot = -1;
+			if (g_sludge->_saveNameToSlot.contains(saveName)) {
+				slot = g_sludge->_saveNameToSlot[saveName];
+			} else {
+				// Find next available save slot
+				Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+				int maxSaveSlot = g_sludge->getMetaEngine()->getMaximumSaveSlot();
+				int autosaveSlot = g_sludge->getMetaEngine()->getAutosaveSlot();
+				for (int i = 0; i <= maxSaveSlot; ++i) {
+					if (i == autosaveSlot)
+						continue;
+					const Common::String filename = g_sludge->getMetaEngine()->getSavegameFile(i, g_sludge->getTargetName().c_str());
+					if (!saveFileMan->exists(filename)) {
+						slot = i;
+						break;
+					} else {
+						// If the game uses only one save for everything (like robinsresque)
+						// use that save
+						Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(filename);
+						ExtendedSavegameHeader header;
+						if (MetaEngine::readSavegameHeader(fp, &header)) {
+							if (saveName == header.description) {
+								slot = i;
+								g_sludge->_saveNameToSlot[saveName] = slot;
+								delete fp;
+								break;
+							}
+						}
+						delete fp;
+					}
+				}
+				if (slot == -1) {
+					slot = g_sludge->getMetaEngine()->getMaximumSaveSlot();
+				}
+			}
+
+			g_sludge->saveGameState(slot, saveName, false);
 			saverFunc->reg.setVariable(SVT_INT, 1);
 		} else {
 			if (!loadGame(g_sludge->loadNow))
@@ -74,40 +116,38 @@ bool handleSaveLoad() {
 	return true;
 }
 
-bool saveGame(const Common::String &fname) {
-	Common::OutSaveFile *fp = g_system->getSavefileManager()->openForSaving(fname);
-
-	if (fp == NULL)
+bool saveGame(Common::OutSaveFile *saveFile) {
+	if (saveFile == NULL)
 		return false;
 
-	fp->writeString("SLUDSA");
-	fp->writeByte(0);
-	fp->writeByte(0);
-	fp->writeByte(MAJOR_VERSION);
-	fp->writeByte(MINOR_VERSION);
+	saveFile->writeString("SLUDSA");
+	saveFile->writeByte(0);
+	saveFile->writeByte(0);
+	saveFile->writeByte(MAJOR_VERSION);
+	saveFile->writeByte(MINOR_VERSION);
 
-	if (!g_sludge->_gfxMan->saveThumbnail(fp))
+	if (!g_sludge->_gfxMan->saveThumbnail(saveFile))
 		return false;
 
-	fp->write(&fileTime, sizeof(FILETIME));
+	saveFile->write(&fileTime, sizeof(FILETIME));
 
 	// DON'T ADD ANYTHING NEW BEFORE THIS POINT!
 
-	fp->writeByte(allowAnyFilename);
-	fp->writeByte(false); // deprecated captureAllKeys
-	fp->writeByte(true);
-	g_sludge->_txtMan->saveFont(fp);
+	saveFile->writeByte(allowAnyFilename);
+	saveFile->writeByte(false); // deprecated captureAllKeys
+	saveFile->writeByte(true);
+	g_sludge->_txtMan->saveFont(saveFile);
 
 	// Save backdrop
-	g_sludge->_gfxMan->saveBackdrop(fp);
+	g_sludge->_gfxMan->saveBackdrop(saveFile);
 
 	// Save event handlers
-	g_sludge->_evtMan->saveHandlers(fp);
+	g_sludge->_evtMan->saveHandlers(saveFile);
 
 	// Save regions
-	g_sludge->_regionMan->saveRegions(fp);
+	g_sludge->_regionMan->saveRegions(saveFile);
 
-	g_sludge->_cursorMan->saveCursor(fp);
+	g_sludge->_cursorMan->saveCursor(saveFile);
 
 	// Save functions
 	LoadedFunction *thisFunction = allRunningFunctions;
@@ -116,45 +156,41 @@ bool saveGame(const Common::String &fname) {
 		countFunctions++;
 		thisFunction = thisFunction->next;
 	}
-	fp->writeUint16BE(countFunctions);
+	saveFile->writeUint16BE(countFunctions);
 
 	thisFunction = allRunningFunctions;
 	while (thisFunction) {
-		saveFunction(thisFunction, fp);
+		saveFunction(thisFunction, saveFile);
 		thisFunction = thisFunction->next;
 	}
 
 	for (int a = 0; a < numGlobals; a++) {
-		globalVars[a].save(fp);
+		globalVars[a].save(saveFile);
 	}
 
-	g_sludge->_peopleMan->savePeople(fp);
+	g_sludge->_peopleMan->savePeople(saveFile);
 
-	g_sludge->_floorMan->save(fp);
+	g_sludge->_floorMan->save(saveFile);
 
-	g_sludge->_gfxMan->saveZBuffer(fp);
-	g_sludge->_gfxMan->saveLightMap(fp);
+	g_sludge->_gfxMan->saveZBuffer(saveFile);
+	g_sludge->_gfxMan->saveLightMap(saveFile);
 
-	g_sludge->_speechMan->save(fp);
-	g_sludge->_statusBar->saveStatusBars(fp);
-	g_sludge->_soundMan->saveSounds(fp);
+	g_sludge->_speechMan->save(saveFile);
+	g_sludge->_statusBar->saveStatusBars(saveFile);
+	g_sludge->_soundMan->saveSounds(saveFile);
 
-	fp->writeUint16BE(CustomSaveHelper::_saveEncoding);
+	saveFile->writeUint16BE(CustomSaveHelper::_saveEncoding);
 
-	g_sludge->_gfxMan->blur_saveSettings(fp);
+	g_sludge->_gfxMan->blur_saveSettings(saveFile);
 
-	g_sludge->_gfxMan->saveColors(fp);
+	g_sludge->_gfxMan->saveColors(saveFile);
 
-	g_sludge->_gfxMan->saveParallax(fp);
-	fp->writeByte(0);
+	g_sludge->_gfxMan->saveParallax(saveFile);
+	saveFile->writeByte(0);
 
-	g_sludge->_languageMan->saveLanguageSetting(fp);
+	g_sludge->_languageMan->saveLanguageSetting(saveFile);
 
-	g_sludge->_gfxMan->saveSnapshot(fp);
-
-	fp->flush();
-	fp->finalize();
-	delete fp;
+	g_sludge->_gfxMan->saveSnapshot(saveFile);
 
 	clearStackLib();
 	return true;
@@ -307,6 +343,10 @@ bool loadGame(const Common::String &fname) {
 				return false;
 		}
 	}
+
+	ExtendedSavegameHeader header;
+	if (MetaEngine::readSavegameHeader(fp, &header))
+		g_sludge->setTotalPlayTime(header.playtime);
 
 	delete fp;
 
