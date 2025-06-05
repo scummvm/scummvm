@@ -47,7 +47,7 @@ void LogicManager::CONS_Mahmud(int chapter) {
 		CONS_Mahmud_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -68,19 +68,26 @@ void LogicManager::CONS_Mahmud_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterMahmud).characterPosition.position = 0;
-			getCharacter(kCharacterMahmud).characterPosition.location = 0;
-			getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterMahmud)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterMahmud, kCarGreenSleeping, getCharacterCurrentParams(kCharacterMahmud)[0])) {
+			if (getCharacterCurrentParams(kCharacterMahmud)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterMahmud)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterMahmud)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterMahmud, kCarGreenSleeping, getCharacterCurrentParams(kCharacterMahmud)[0])) {
-		if (getCharacterCurrentParams(kCharacterMahmud)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterMahmud)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterMahmud)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterMahmud).characterPosition.position = 0;
+		getCharacter(kCharacterMahmud).characterPosition.location = 0;
+		getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterMahmud)[0] = 10000;
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -97,12 +104,17 @@ void LogicManager::CONS_Mahmud_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterMahmud).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
 		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMahmud, (char *)&getCharacterCurrentParams(kCharacterMahmud));
+		break;
+	default:
+		break;
 	}
 }
 
@@ -121,14 +133,19 @@ void LogicManager::CONS_Mahmud_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterMahmud, getCharacterCurrentParams(kCharacterMahmud)[3]);
 		getCharacter(kCharacterMahmud).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
 		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterMahmud, (char *)&getCharacter(kCharacterMahmud).callParams[getCharacter(kCharacterMahmud).currentCall]);
 		blockAtDoor(kCharacterMahmud, getCharacterCurrentParams(kCharacterMahmud)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -149,27 +166,32 @@ void LogicManager::CONS_Mahmud_DoBumpCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_DoBumpCorrOtis(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 3) {
-			releaseAtDoor(kCharacterMahmud, getCharacterCurrentParams(kCharacterMahmud)[3]);
-			getCharacter(kCharacterMahmud).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
-			fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
-		} else if (msg->action == 12) {
-			startSeqOtis(kCharacterMahmud, (char *)&getCharacter(kCharacterMahmud).callParams[getCharacter(kCharacterMahmud).currentCall]);
-			blockAtDoor(kCharacterMahmud, getCharacterCurrentParams(kCharacterMahmud)[3]);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMahmud)[6] ||
 			(getCharacterCurrentParams(kCharacterMahmud)[6] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMahmud)[4], _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMahmud)[4] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMahmud)[6] >= _currentGameSessionTicks)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMahmud)[6] = 0x7FFFFFFF;
 		}
 
 		if (!cathFacingUp())
 			bumpCathFDoor(getCharacterCurrentParams(kCharacterMahmud)[5]);
+
+		break;
+	case 3:
+		releaseAtDoor(kCharacterMahmud, getCharacterCurrentParams(kCharacterMahmud)[3]);
+		getCharacter(kCharacterMahmud).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
+		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
+		break;
+	case 12:
+		startSeqOtis(kCharacterMahmud, (char *)&getCharacter(kCharacterMahmud).callParams[getCharacter(kCharacterMahmud).currentCall]);
+		blockAtDoor(kCharacterMahmud, getCharacterCurrentParams(kCharacterMahmud)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -186,12 +208,17 @@ void LogicManager::CONS_Mahmud_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterMahmud).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
 		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterMahmud, (char *)&getCharacter(kCharacterMahmud).callParams[getCharacter(kCharacterMahmud).currentCall], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -208,12 +235,17 @@ void LogicManager::CONS_Mahmud_DoCondDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_DoCondDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterMahmud).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
 		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterMahmud, (char *)&getCharacter(kCharacterMahmud).callParams[getCharacter(kCharacterMahmud).currentCall], getVolume(kCharacterCond1), 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -230,11 +262,12 @@ void LogicManager::CONS_Mahmud_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterMahmud)[1] ||
 			(getCharacterCurrentParams(kCharacterMahmud)[1] = _gameTime + getCharacterCurrentParams(kCharacterMahmud)[0], _gameTime + getCharacterCurrentParams(kCharacterMahmud)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMahmud)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMahmud)[1] = 0x7FFFFFFF;
 		}
@@ -242,6 +275,9 @@ void LogicManager::HAND_Mahmud_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterMahmud).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
 		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -259,22 +295,25 @@ void LogicManager::CONS_Mahmud_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterMahmud,
-				getCharacterCurrentParams(kCharacterMahmud)[0],
-				getCharacterCurrentParams(kCharacterMahmud)[1]
-			);
-
-			getCharacter(kCharacterMahmud).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
-			fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterMahmud).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
 		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterMahmud,
+			getCharacterCurrentParams(kCharacterMahmud)[0],
+			getCharacterCurrentParams(kCharacterMahmud)[1]
+		);
+
+		getCharacter(kCharacterMahmud).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
+		fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -351,7 +390,7 @@ void LogicManager::HAND_Mahmud_CathKnockingHarem(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterMahmud)[5] || (getCharacterCurrentParams(kCharacterMahmud)[5] = _gameTime + 13500, _gameTime != -13500)) {
 			if (getCharacterCurrentParams(kCharacterMahmud)[5] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterMahmud)[5] = 0x7FFFFFFF;
 		}
@@ -411,6 +450,7 @@ void LogicManager::HAND_Mahmud_CathKnockingHarem(HAND_PARAMS) {
 				break;
 			}
 		}
+
 		if (getCharacterCurrentParams(kCharacterMahmud)[3]) {
 			if (_gameTime >= 2418300) {
 				getCharacterCurrentParams(kCharacterMahmud)[2] = 0;
@@ -437,9 +477,10 @@ void LogicManager::HAND_Mahmud_CathKnockingHarem(HAND_PARAMS) {
 				bumpCathFDoor(8);
 				break;
 			default:
-				return;
+				break;
 			}
 		}
+
 		break;
 	case 12:
 		if (!getCharacterCurrentParams(kCharacterMahmud)[1]) {
@@ -487,90 +528,14 @@ void LogicManager::CONS_Mahmud_CondKnocking(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_CondKnocking(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterMahmud).characterPosition.location = 0;
-				setDoor(4, kCharacterCath, 3, 10, 9);
-				startCycOtis(kCharacterMahmud, "614Kd");
-				softBlockAtDoor(kCharacterMahmud, 4);
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 2;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170A", 0, 0, 0);
-				break;
-			case 2:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 3;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170B", 0, 0, 0);
-				break;
-			case 3:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 4;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170C", 0, 0, 0);
-				break;
-			case 4:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 5;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170D", 0, 0, 0);
-				break;
-			case 5:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 6;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170E", 0, 0, 0);
-				break;
-			case 6:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 7;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170F", 0, 0, 0);
-				break;
-			case 7:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 8;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Ld", 4, 0, 0);
-				break;
-			case 8:
-				send(kCharacterMahmud, kCharacterCond1, 156567128, 0);
-				startCycOtis(kCharacterMahmud, "614Bd");
-				softBlockAtDoor(kCharacterMahmud, 4);
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 9;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170G", 0, 0, 0);
-				break;
-			case 9:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 10;
-				MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170H", 0, 0, 0);
-				break;
-			case 10:
-				setDoor(5, kCharacterMahmud, 3, 10, 9);
-				setDoor(6, kCharacterMahmud, 3, 10, 9);
-				setDoor(7, kCharacterMahmud, 3, 10, 9);
-				setDoor(8, kCharacterMahmud, 3, 10, 9);
-				break;
-			case 11:
-				softReleaseAtDoor(kCharacterMahmud, 4);
-				getCharacter(kCharacterMahmud).characterPosition.location = 1;
-				endGraphics(kCharacterMahmud);
-				setDoor(4, kCharacterMahmud, 3, 10, 9);
-
-				getCharacter(kCharacterMahmud).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
-				fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
-				break;
-			default:
-				return;
-			}
-		} else if (msg->action == 123852928) {
-			if (whoRunningDialog(kCharacterMahmud))
-				fadeDialog(kCharacterMahmud);
-			setDoor(5, kCharacterClerk, 3, 10, 9);
-			setDoor(6, kCharacterClerk, 3, 10, 9);
-			setDoor(7, kCharacterClerk, 3, 10, 9);
-			setDoor(8, kCharacterClerk, 3, 10, 9);
-			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 11;
-			MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Cd", 4, 0, 0);
-		}
-	} else if (msg->action == 12) {
-		send(kCharacterMahmud, kCharacterCond1, 102227384, 0);
-		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
-		MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Ad", 4, 0, 0);
-	} else if (msg->action >= 8 && msg->action <= 9) {
+	switch (msg->action) {
+	case 8:
+	case 9:
 		if (msg->action == 8)
 			playDialog(0, "LIB012", -1, 0);
 		else
 			playDialog(0, "LIB013", -1, 0);
+
 		if (!whoRunningDialog(kCharacterMahmud)) {
 			getCharacterCurrentParams(kCharacterMahmud)[0]++;
 			if (getCharacterCurrentParams(kCharacterMahmud)[0] == 1) {
@@ -581,6 +546,7 @@ void LogicManager::HAND_Mahmud_CondKnocking(HAND_PARAMS) {
 				playDialog(kCharacterMahmud, "MAH1174", -1, 0);
 			}
 		}
+
 		switch (checkCathDir()) {
 		case 55:
 			bumpCathFDoor(5);
@@ -595,8 +561,94 @@ void LogicManager::HAND_Mahmud_CondKnocking(HAND_PARAMS) {
 			bumpCathFDoor(8);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	case 12:
+		send(kCharacterMahmud, kCharacterCond1, 102227384, 0);
+		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
+		MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Ad", 4, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterMahmud).characterPosition.location = 0;
+			setDoor(4, kCharacterCath, 3, 10, 9);
+			startCycOtis(kCharacterMahmud, "614Kd");
+			softBlockAtDoor(kCharacterMahmud, 4);
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 2;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170A", 0, 0, 0);
+			break;
+		case 2:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 3;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170B", 0, 0, 0);
+			break;
+		case 3:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 4;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170C", 0, 0, 0);
+			break;
+		case 4:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 5;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170D", 0, 0, 0);
+			break;
+		case 5:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 6;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170E", 0, 0, 0);
+			break;
+		case 6:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 7;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170F", 0, 0, 0);
+			break;
+		case 7:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 8;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Ld", 4, 0, 0);
+			break;
+		case 8:
+			send(kCharacterMahmud, kCharacterCond1, 156567128, 0);
+			startCycOtis(kCharacterMahmud, "614Bd");
+			softBlockAtDoor(kCharacterMahmud, 4);
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 9;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1170G", 0, 0, 0);
+			break;
+		case 9:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 10;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoCondDialog, "MAH1170H", 0, 0, 0);
+			break;
+		case 10:
+			setDoor(5, kCharacterMahmud, 3, 10, 9);
+			setDoor(6, kCharacterMahmud, 3, 10, 9);
+			setDoor(7, kCharacterMahmud, 3, 10, 9);
+			setDoor(8, kCharacterMahmud, 3, 10, 9);
+			break;
+		case 11:
+			softReleaseAtDoor(kCharacterMahmud, 4);
+			getCharacter(kCharacterMahmud).characterPosition.location = 1;
+			endGraphics(kCharacterMahmud);
+			setDoor(4, kCharacterMahmud, 3, 10, 9);
+
+			getCharacter(kCharacterMahmud).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterMahmud, _functionsMahmud[getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall]]);
+			fedEx(kCharacterMahmud, kCharacterMahmud, 18, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 123852928:
+		if (whoRunningDialog(kCharacterMahmud))
+			fadeDialog(kCharacterMahmud);
+
+		setDoor(5, kCharacterClerk, 3, 10, 9);
+		setDoor(6, kCharacterClerk, 3, 10, 9);
+		setDoor(7, kCharacterClerk, 3, 10, 9);
+		setDoor(8, kCharacterClerk, 3, 10, 9);
+		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 11;
+		MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Cd", 4, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -611,10 +663,12 @@ void LogicManager::CONS_Mahmud_CheckF(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_CheckF(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
 		MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Gd", 4, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterMahmud).characterPosition.location = 0;
@@ -656,6 +710,10 @@ void LogicManager::HAND_Mahmud_CheckF(HAND_PARAMS) {
 		default:
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -670,10 +728,12 @@ void LogicManager::CONS_Mahmud_CheckH(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_CheckH(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
 		MahmudCall(&LogicManager::CONS_Mahmud_DoCorrOtis, "614Gd", 4, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterMahmud).characterPosition.location = 0;
@@ -714,6 +774,10 @@ void LogicManager::HAND_Mahmud_CheckH(HAND_PARAMS) {
 		default:
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -728,99 +792,49 @@ void LogicManager::CONS_Mahmud_Vigilant(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_Vigilant(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			switch (msg->action) {
-			case 18:
-				switch (getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8]) {
-				case 1:
-					setDoor(4, kCharacterMahmud, 3, 10, 9);
-					getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
-					getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
-					goto LABEL_42;
-				case 2:
-					setDoor(4, kCharacterMahmud, 3, 10, 9);
-					getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
-					getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
-					goto LABEL_47;
-				case 3:
-				case 4:
-					getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 5;
-					MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1175", 0, 0, 0);
-					return;
-				case 5:
-					if (_gameProgress[kProgressJacket] == 1 ||
-						_gameEvents[kEventMahmudWrongDoor] ||
-						_gameEvents[kEventMahmudWrongDoorOriginalJacket] ||
-						_gameEvents[kEventMahmudWrongDoorDay]) {
-						setDoor(4, kCharacterMahmud, 1, 14, 0);
-					} else {
-						setDoor(4, kCharacterMahmud, 1, 10, 9);
-					}
-
-					getCharacterCurrentParams(kCharacterMahmud)[4] = 1;
-					return;
-				case 6:
-				case 7:
-					goto LABEL_67;
-				case 8:
-				case 9:
-					getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 10;
-					MahmudCall(&LogicManager::CONS_Mahmud_SaveGame, 2, kEventMahmudWrongDoor, 0, 0);
-					return;
-				case 10:
-					if (_gameProgress[kProgressJacket] == 2) {
-						if (isNight()) {
-							playNIS(kEventMahmudWrongDoor);
-						} else {
-							playNIS(kEventMahmudWrongDoorDay);
-						}
-					} else {
-						playNIS(kEventMahmudWrongDoorOriginalJacket);
-					}
-					playDialog(0, "LIB015", -1, 0);
-					cleanNIS();
-				LABEL_67:
-					getCharacterCurrentParams(kCharacterMahmud)[3] = 1;
-					break;
-				case 11:
-					goto LABEL_39;
-				case 12:
-					setDoor(4, kCharacterMahmud, 3, 10, 9);
-					getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
-					getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
-					getCharacterCurrentParams(kCharacterMahmud)[1] = 0;
-					break;
-				default:
-					return;
-				}
-				break;
-			case 225563840:
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 12;
-				MahmudCall(&LogicManager::CONS_Mahmud_CondKnocking, 0, 0, 0, 0);
-				break;
-			case 290410610:
-				getCharacterCurrentParams(kCharacterMahmud)[2] = getCharacterCurrentParams(kCharacterMahmud)[2] == 0;
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 11;
-				MahmudCall(&LogicManager::CONS_Mahmud_CathKnockingHarem, msg->param, getCharacterCurrentParams(kCharacterMahmud)[2], 0, 0);
-				break;
-			}
-		} else if (msg->action == 17) {
-			if (getCharacterCurrentParams(kCharacterMahmud)[3] || getCharacterCurrentParams(kCharacterMahmud)[4]) {
-			LABEL_39:
-				setDoor(4, kCharacterMahmud, 3, 10, 9);
-				getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
-				getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
-			}
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterMahmud).characterPosition.car = 3;
-			getCharacter(kCharacterMahmud).characterPosition.position = 5790;
-			getCharacter(kCharacterMahmud).characterPosition.location = 1;
-			endGraphics(kCharacterMahmud);
-			getCharacterCurrentParams(kCharacterMahmud)[2] = 1;
-			setDoor(4, kCharacterMahmud, 3, 10, 9);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterParams(kCharacterMahmud, 8)[0]) {
+			getCharacterCurrentParams(kCharacterMahmud)[1] = 1;
+			send(kCharacterMahmud, kCharacterCond1, 204379649, 0);
+			getCharacterParams(kCharacterMahmud, 8)[0] = 0;
 		}
-	} else if (msg->action >= 8) {
+
+		if (!getCharacterCurrentParams(kCharacterMahmud)[1] && _gameProgress[kProgressChapter] == 1) {
+			if (_gameTime > 1098000 && !getCharacterCurrentParams(kCharacterMahmud)[5]) {
+				getCharacterCurrentParams(kCharacterMahmud)[5] = 1;
+				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
+				MahmudCall(&LogicManager::CONS_Mahmud_CheckH, 0, 0, 0, 0);
+				break;
+			}
+
+			if (!dialogRunning("HAR1104") && _gameTime > 1167300 && !getCharacterCurrentParams(kCharacterMahmud)[6]) {
+				getCharacterCurrentParams(kCharacterMahmud)[6] = 1;
+				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 2;
+				MahmudCall(&LogicManager::CONS_Mahmud_CheckF, 0, 0, 0, 0);
+				break;
+			}
+		}
+
+		if (getCharacterCurrentParams(kCharacterMahmud)[4]) {
+			if (getCharacterCurrentParams(kCharacterMahmud)[7] || (getCharacterCurrentParams(kCharacterMahmud)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterMahmud)[7] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterMahmud)[7] = 0x7FFFFFFF;
+			}
+
+			getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
+			getCharacterCurrentParams(kCharacterMahmud)[3] = 1;
+			setDoor(4, kCharacterMahmud, 3, 0, 0);
+			getCharacterCurrentParams(kCharacterMahmud)[7] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterMahmud)[7] = 0;
+		}
+
+		break;
+	case 8:
+	case 9:
 		if (getCharacterCurrentParams(kCharacterMahmud)[4]) {
 			setDoor(4, kCharacterMahmud, 3, 0, 0);
 			if (_gameProgress[kProgressJacket] == 1 || _gameEvents[kEventMahmudWrongDoor] || _gameEvents[kEventMahmudWrongDoorOriginalJacket] || _gameEvents[kEventMahmudWrongDoorDay]) {
@@ -836,7 +850,7 @@ void LogicManager::HAND_Mahmud_Vigilant(HAND_PARAMS) {
 						MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, getCathSorryDialog(), 0, 0, 0);
 						break;
 					}
-					
+
 				} else {
 					getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 7;
 					MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, getCathSorryDialog(), 0, 0, 0);
@@ -858,43 +872,132 @@ void LogicManager::HAND_Mahmud_Vigilant(HAND_PARAMS) {
 				MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "LIB013", 0, 0, 0);
 			}
 		}
-	} else if (msg->action == 0) {
-		if (getCharacterParams(kCharacterMahmud, 8)[0]) {
-			getCharacterCurrentParams(kCharacterMahmud)[1] = 1;
-			send(kCharacterMahmud, kCharacterCond1, 204379649, 0);
-			getCharacterParams(kCharacterMahmud, 8)[0] = 0;
+
+		break;
+	case 12:
+		getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterMahmud).characterPosition.position = 5790;
+		getCharacter(kCharacterMahmud).characterPosition.location = 1;
+		endGraphics(kCharacterMahmud);
+		getCharacterCurrentParams(kCharacterMahmud)[2] = 1;
+		setDoor(4, kCharacterMahmud, 3, 10, 9);
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterMahmud)[3] || getCharacterCurrentParams(kCharacterMahmud)[4]) {
+			setDoor(4, kCharacterMahmud, 3, 10, 9);
+			getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
+			getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
 		}
-		if (!getCharacterCurrentParams(kCharacterMahmud)[1] && _gameProgress[kProgressChapter] == 1) {
-			if (_gameTime > 1098000 && !getCharacterCurrentParams(kCharacterMahmud)[5]) {
-				getCharacterCurrentParams(kCharacterMahmud)[5] = 1;
-				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
-				MahmudCall(&LogicManager::CONS_Mahmud_CheckH, 0, 0, 0, 0);
-				return;
-			}
-		LABEL_42:
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8]) {
+		case 1:
+			setDoor(4, kCharacterMahmud, 3, 10, 9);
+			getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
+			getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
+
 			if (!dialogRunning("HAR1104") && _gameTime > 1167300 && !getCharacterCurrentParams(kCharacterMahmud)[6]) {
 				getCharacterCurrentParams(kCharacterMahmud)[6] = 1;
 				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 2;
 				MahmudCall(&LogicManager::CONS_Mahmud_CheckF, 0, 0, 0, 0);
-				return;
-			}
-		}
-	LABEL_47:
-		if (getCharacterCurrentParams(kCharacterMahmud)[4]) {
-			if (getCharacterCurrentParams(kCharacterMahmud)[7] || (getCharacterCurrentParams(kCharacterMahmud)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMahmud)[7] >= _currentGameSessionTicks)
-					return;
-
-				getCharacterCurrentParams(kCharacterMahmud)[7] = 0x7FFFFFFF;
+				break;
 			}
 
-			getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
+			// fall through
+		case 2:
+			if (getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] == 2) {
+				setDoor(4, kCharacterMahmud, 3, 10, 9);
+				getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
+				getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
+			}
+
+			if (getCharacterCurrentParams(kCharacterMahmud)[4]) {
+				if (getCharacterCurrentParams(kCharacterMahmud)[7] || (getCharacterCurrentParams(kCharacterMahmud)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+					if (getCharacterCurrentParams(kCharacterMahmud)[7] >= _currentGameSessionTicks)
+						break;
+
+					getCharacterCurrentParams(kCharacterMahmud)[7] = 0x7FFFFFFF;
+				}
+
+				getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
+				getCharacterCurrentParams(kCharacterMahmud)[3] = 1;
+				setDoor(4, kCharacterMahmud, 3, 0, 0);
+				getCharacterCurrentParams(kCharacterMahmud)[7] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterMahmud)[7] = 0;
+			}
+
+			break;
+		case 3:
+		case 4:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 5;
+			MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1175", 0, 0, 0);
+			break;
+		case 5:
+			if (_gameProgress[kProgressJacket] == 1 ||
+				_gameEvents[kEventMahmudWrongDoor] ||
+				_gameEvents[kEventMahmudWrongDoorOriginalJacket] ||
+				_gameEvents[kEventMahmudWrongDoorDay]) {
+				setDoor(4, kCharacterMahmud, 1, 14, 0);
+			} else {
+				setDoor(4, kCharacterMahmud, 1, 10, 9);
+			}
+
+			getCharacterCurrentParams(kCharacterMahmud)[4] = 1;
+			break;
+		case 6:
+		case 7:
 			getCharacterCurrentParams(kCharacterMahmud)[3] = 1;
-			setDoor(4, kCharacterMahmud, 3, 0, 0);
-			getCharacterCurrentParams(kCharacterMahmud)[7] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterMahmud)[7] = 0;
+			break;
+		case 8:
+		case 9:
+			getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 10;
+			MahmudCall(&LogicManager::CONS_Mahmud_SaveGame, 2, kEventMahmudWrongDoor, 0, 0);
+			break;
+		case 10:
+			if (_gameProgress[kProgressJacket] == 2) {
+				if (isNight()) {
+					playNIS(kEventMahmudWrongDoor);
+				} else {
+					playNIS(kEventMahmudWrongDoorDay);
+				}
+			} else {
+				playNIS(kEventMahmudWrongDoorOriginalJacket);
+			}
+
+			playDialog(0, "LIB015", -1, 0);
+			cleanNIS();
+
+			getCharacterCurrentParams(kCharacterMahmud)[3] = 1;
+			break;
+		case 11:
+			setDoor(4, kCharacterMahmud, 3, 10, 9);
+			getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
+			getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
+			break;
+		case 12:
+			setDoor(4, kCharacterMahmud, 3, 10, 9);
+			getCharacterCurrentParams(kCharacterMahmud)[3] = 0;
+			getCharacterCurrentParams(kCharacterMahmud)[4] = 0;
+			getCharacterCurrentParams(kCharacterMahmud)[1] = 0;
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 225563840:
+		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 12;
+		MahmudCall(&LogicManager::CONS_Mahmud_CondKnocking, 0, 0, 0, 0);
+		break;
+	case 290410610:
+		getCharacterCurrentParams(kCharacterMahmud)[2] = getCharacterCurrentParams(kCharacterMahmud)[2] == 0;
+		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 11;
+		MahmudCall(&LogicManager::CONS_Mahmud_CathKnockingHarem, msg->param, getCharacterCurrentParams(kCharacterMahmud)[2], 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -909,18 +1012,24 @@ void LogicManager::CONS_Mahmud_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			autoMessage(kCharacterMahmud, 170483072, 0);
-			getCharacter(kCharacterMahmud).characterPosition.position = 540;
-			getCharacter(kCharacterMahmud).characterPosition.location = 0;
-			getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
-			setDoor(4, kCharacterCath, 3, 10, 9);
-			setDoor(20, kCharacterCath, 3, 10, 9);
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterMahmud)[0]) {
+			getCharacterCurrentParams(kCharacterMahmud)[0] = 1;
+			CONS_Mahmud_Vigilant(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterMahmud)[0]) {
-		getCharacterCurrentParams(kCharacterMahmud)[0] = 1;
-		CONS_Mahmud_Vigilant(0, 0, 0, 0);
+
+		break;
+	case 12:
+		autoMessage(kCharacterMahmud, 170483072, 0);
+		getCharacter(kCharacterMahmud).characterPosition.position = 540;
+		getCharacter(kCharacterMahmud).characterPosition.location = 0;
+		getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
+		setDoor(4, kCharacterCath, 3, 10, 9);
+		setDoor(20, kCharacterCath, 3, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -935,12 +1044,16 @@ void LogicManager::CONS_Mahmud_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterMahmud).characterPosition.position = 5790;
 		getCharacter(kCharacterMahmud).characterPosition.location = 1;
 		getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
 		setDoor(4, kCharacterCath, 3, 10, 9);
 		endGraphics(kCharacterMahmud);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -955,17 +1068,20 @@ void LogicManager::CONS_Mahmud_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterMahmud);
-			getCharacter(kCharacterMahmud).characterPosition.position = 5790;
-			getCharacter(kCharacterMahmud).characterPosition.location = 1;
-			getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
-			getCharacter(kCharacterMahmud).clothes = 0;
-			getCharacter(kCharacterMahmud).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Mahmud_Vigilant(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterMahmud);
+		getCharacter(kCharacterMahmud).characterPosition.position = 5790;
+		getCharacter(kCharacterMahmud).characterPosition.location = 1;
+		getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterMahmud).clothes = 0;
+		getCharacter(kCharacterMahmud).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -980,17 +1096,20 @@ void LogicManager::CONS_Mahmud_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterMahmud);
-			getCharacter(kCharacterMahmud).characterPosition.position = 5790;
-			getCharacter(kCharacterMahmud).characterPosition.location = 1;
-			getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
-			getCharacter(kCharacterMahmud).clothes = 0;
-			getCharacter(kCharacterMahmud).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Mahmud_Vigilant(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterMahmud);
+		getCharacter(kCharacterMahmud).characterPosition.position = 5790;
+		getCharacter(kCharacterMahmud).characterPosition.location = 1;
+		getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterMahmud).clothes = 0;
+		getCharacter(kCharacterMahmud).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1005,16 +1124,19 @@ void LogicManager::CONS_Mahmud_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterMahmud);
-			getCharacter(kCharacterMahmud).characterPosition.position = 2740;
-			getCharacter(kCharacterMahmud).characterPosition.location = 1;
-			getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
-			getCharacter(kCharacterMahmud).clothes = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Mahmud_Vigilant(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterMahmud);
+		getCharacter(kCharacterMahmud).characterPosition.position = 2740;
+		getCharacter(kCharacterMahmud).characterPosition.location = 1;
+		getCharacter(kCharacterMahmud).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterMahmud).clothes = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1029,8 +1151,13 @@ void LogicManager::CONS_Mahmud_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Mahmud_StartPart5(HAND_PARAMS) {
-	if (msg->action == 12)
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterMahmud);
+		break;
+	default:
+		break;
+	}
 }
 
 void (LogicManager::*LogicManager::_functionsMahmud[])(HAND_PARAMS) = {
