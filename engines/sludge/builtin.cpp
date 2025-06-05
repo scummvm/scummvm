@@ -26,6 +26,8 @@
 
 #include "engines/metaengine.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
@@ -145,6 +147,11 @@ builtIn(freeze) {
 	g_sludge->_gfxMan->freeze();
 	freezeSubs();
 	fun->freezerLevel = 0;
+	Common::Keymapper *keymapper = g_sludge->getEventManager()->getKeymapper();
+	// Turn off keymapper in menus 
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	// Turn on keymapper for controller
+	keymapper->getKeymap("menu")->setEnabled(true);
 	return BR_CONTINUE;
 }
 
@@ -152,6 +159,11 @@ builtIn(unfreeze) {
 	UNUSEDALL
 	g_sludge->_gfxMan->unfreeze();
 	unfreezeSubs();
+	Common::Keymapper *keymapper = g_sludge->getEventManager()->getKeymapper();
+	// Turn on keymapper in menus 
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	// Turn off keymapper for controller
+	keymapper->getKeymap("menu")->setEnabled(false);
 	return BR_CONTINUE;
 }
 

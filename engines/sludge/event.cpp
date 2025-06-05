@@ -201,16 +201,16 @@ bool EventManager::handleInput() {
 	if (_input.keyPressed && _currentEvents->func[kSpace]) {
 		Common::String tempString = "";
 		switch (_input.keyPressed) {
-		case 127:
+		case Common::KEYCODE_DELETE:
 			tempString = "BACKSPACE";
 			break;
-		case 9:
+		case Common::KEYCODE_TAB:
 			tempString = "TAB";
 			break;
-		case 13:
+		case Common::KEYCODE_RETURN:
 			tempString = "ENTER";
 			break;
-		case 27:
+		case Common::KEYCODE_ESCAPE:
 			tempString = "ESCAPE";
 			break;
 			/*
@@ -229,68 +229,68 @@ bool EventManager::handleInput() {
 
 				case 2019:  tempString = copyString ("PAUSE");      break;
 				*/
-		case 63276:
+		case Common::KEYCODE_PAGEUP:
 			tempString = "PAGE UP";
 			break;
-		case 63277:
+		case Common::KEYCODE_PAGEDOWN:
 			tempString = "PAGE DOWN";
 			break;
-		case 63275:
+		case Common::KEYCODE_END:
 			tempString = "END";
 			break;
-		case 63273:
+		case Common::KEYCODE_HOME:
 			tempString = "HOME";
 			break;
-		case 63234:
+		case Common::KEYCODE_LEFT:
 			tempString = "LEFT";
 			break;
-		case 63232:
+		case Common::KEYCODE_UP:
 			tempString = "UP";
 			break;
-		case 63235:
+		case Common::KEYCODE_RIGHT:
 			tempString = "RIGHT";
 			break;
-		case 63233:
+		case Common::KEYCODE_DOWN:
 			tempString = "DOWN";
 			break;
 			/*
 				case 2045:   tempString = copyString ("INSERT");     break;
 				case 2046:   tempString = copyString ("DELETE");     break;
 				*/
-		case 63236:
+		case Common::KEYCODE_F1:
 			tempString = "F1";
 			break;
-		case 63237:
+		case Common::KEYCODE_F2:
 			tempString = "F2";
 			break;
-		case 63238:
+		case Common::KEYCODE_F3:
 			tempString = "F3";
 			break;
-		case 63239:
+		case Common::KEYCODE_F4:
 			tempString = "F4";
 			break;
-		case 63240:
+		case Common::KEYCODE_F5:
 			tempString = "F5";
 			break;
-		case 63241:
+		case Common::KEYCODE_F6:
 			tempString = "F6";
 			break;
-		case 63242:
+		case Common::KEYCODE_F7:
 			tempString = "F7";
 			break;
-		case 63243:
+		case Common::KEYCODE_F8:
 			tempString = "F8";
 			break;
-		case 63244:
+		case Common::KEYCODE_F9:
 			tempString = "F9";
 			break;
-		case 63245:
+		case Common::KEYCODE_F10:
 			tempString = "F10";
 			break;
-		case 63246:
+		case Common::KEYCODE_F11:
 			tempString = "F11";
 			break;
-		case 63247:
+		case Common::KEYCODE_F12:
 			tempString = "F12";
 			break;
 
