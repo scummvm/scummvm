@@ -289,28 +289,15 @@ builtIn(loadGame) {
 		aaaaa = g_sludge->getSaveStateName(g_sludge->_saveNameToSlot[nameWithoutExtension]);
 	} else {
 		// If the game uses only one save (like robinsrescue)
-		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		int maxSaveSlot = g_sludge->getMetaEngine()->getMaximumSaveSlot();
-		int autosaveSlot = g_sludge->getMetaEngine()->getAutosaveSlot();
-		for (int slot = 0; slot <= maxSaveSlot; ++slot) {
-			if (slot == autosaveSlot)
-				continue;
-			const Common::String filename = g_sludge->getMetaEngine()->getSavegameFile(slot, g_sludge->getTargetName().c_str());
-			if (saveFileMan->exists(filename)) {
-				ExtendedSavegameHeader header;
-				Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+		SaveStateList saves = g_sludge->getMetaEngine()->listSaves(g_sludge->getTargetName().c_str());
 
-				if (f && g_sludge->getMetaEngine()->readSavegameHeader(f, &header)) {
-					if (nameWithoutExtension == header.description) {
-						g_sludge->_saveNameToSlot[header.description] = slot;
-						aaaaa = g_sludge->getSaveStateName(slot);
-
-						delete f;
-						break;
-					}
-				}
-
-				delete f;
+		for (auto &savestate : saves) {
+			Common::String desc = savestate.getDescription();
+			if (nameWithoutExtension == desc) {
+				int slot = savestate.getSaveSlot();
+				g_sludge->_saveNameToSlot[desc] = slot;
+				aaaaa = g_sludge->getSaveStateName(slot);
+				break;
 			}
 		}
 	}
