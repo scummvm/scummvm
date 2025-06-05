@@ -48,7 +48,7 @@ void LogicManager::CONS_HeadWait(int chapter) {
 		CONS_HeadWait_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -82,9 +82,12 @@ void LogicManager::HAND_HeadWait_DoSeqOtis(HAND_PARAMS) {
 			playChrExcuseMe(kCharacterHeadWait, kCharacterCath, 0);
 			getCharacterCurrentParams(kCharacterHeadWait)[3] = 1;
 		}
+
 		break;
 	case 12:
 		startSeqOtis(kCharacterHeadWait, (char *)&getCharacterCurrentParams(kCharacterHeadWait)[0]);
+		break;
+	default:
 		break;
 	}
 }
@@ -100,18 +103,18 @@ void LogicManager::CONS_HeadWait_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_WaitRCClear(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!rcClear())
-			return;
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterHeadWait).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
+			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
+		}
 
-		getCharacter(kCharacterHeadWait).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
-		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-	}
-	if (msg->action == 12 && rcClear()) {
-		getCharacter(kCharacterHeadWait).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
-		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -126,23 +129,29 @@ void LogicManager::CONS_HeadWait_FinishSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_FinishSeqOtis(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (getCharacter(kCharacterHeadWait).direction == 4)
-			return;
+	switch (msg->action) {
+	case 0:
+		if (getCharacter(kCharacterHeadWait).direction != 4) {
+			getCharacter(kCharacterHeadWait).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
+			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
+		}
+
+		break;
+	case 3:
 		getCharacter(kCharacterHeadWait).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-		return;
-	}
-	if (msg->action == 3) {
-		getCharacter(kCharacterHeadWait).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
-		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-		return;
-	}
-	if (msg->action == 5 && !getCharacterCurrentParams(kCharacterHeadWait)[0]) {
-		playChrExcuseMe(kCharacterHeadWait, kCharacterCath, 0);
-		getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
+		break;
+	case 5:
+		if (!getCharacterCurrentParams(kCharacterHeadWait)[0]) {
+			playChrExcuseMe(kCharacterHeadWait, kCharacterCath, 0);
+			getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -159,10 +168,11 @@ void LogicManager::CONS_HeadWait_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterHeadWait)[1] || (getCharacterCurrentParams(kCharacterHeadWait)[1] = _gameTime + getCharacterCurrentParams(kCharacterHeadWait)[0], _gameTime + getCharacterCurrentParams(kCharacterHeadWait)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterHeadWait)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterHeadWait)[1] = 0x7FFFFFFF;
 		}
@@ -170,6 +180,9 @@ void LogicManager::HAND_HeadWait_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterHeadWait).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -202,10 +215,13 @@ void LogicManager::HAND_HeadWait_DoBlockSeqOtis(HAND_PARAMS) {
 			playChrExcuseMe(kCharacterHeadWait, kCharacterCath, 0);
 			getCharacterCurrentParams(kCharacterHeadWait)[5] = 1;
 		}
+
 		break;
 	case 12:
 		startSeqOtis(kCharacterHeadWait, (char *)&getCharacterCurrentParams(kCharacterHeadWait)[0]);
 		blockView(kCharacterHeadWait, getCharacterCurrentParams(kCharacterHeadWait)[3], getCharacterCurrentParams(kCharacterHeadWait)[4]);
+		break;
+	default:
 		break;
 	}
 }
@@ -223,12 +239,17 @@ void LogicManager::CONS_HeadWait_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterHeadWait).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterHeadWait, (char *)&getCharacterCurrentParams(kCharacterHeadWait)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -243,13 +264,18 @@ void LogicManager::CONS_HeadWait_DoComplexSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_DoComplexSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterHeadWait).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterHeadWait, (char *)&getCharacterCurrentParams(kCharacterHeadWait)[0]);
 		startSeqOtis(getCharacterCurrentParams(kCharacterHeadWait)[6], (char *)&getCharacterCurrentParams(kCharacterHeadWait)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -264,12 +290,14 @@ void LogicManager::CONS_HeadWait_RebeccaHereWeAre(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_RebeccaHereWeAre(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 850;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "901", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
 		case 1:
 			switch (_gameProgress[kProgressChapter]) {
@@ -282,7 +310,10 @@ void LogicManager::HAND_HeadWait_RebeccaHereWeAre(HAND_PARAMS) {
 			case 4:
 				playDialog(kCharacterHeadWait, "REB4001", -1, 30);
 				break;
+			default:
+				break;
 			}
+
 			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
 			HeadWaitCall(&LogicManager::CONS_HeadWait_DoOtis5012C, 0, 0, 0, 0);
 			break;
@@ -300,7 +331,13 @@ void LogicManager::HAND_HeadWait_RebeccaHereWeAre(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -315,14 +352,19 @@ void LogicManager::CONS_HeadWait_DoOtis5012C(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_DoOtis5012C(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterHeadWait).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterHeadWait, "012C1");
 		startSeqOtis(kCharacterRebecca, "012C2");
 		startSeqOtis(kCharacterTableD, "012C3");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -343,6 +385,7 @@ void LogicManager::HAND_HeadWait_DoSeatOtis(HAND_PARAMS) {
 			if (!whoRunningDialog(kCharacterHeadWait))
 				releaseView(kCharacterHeadWait, kCarRestaurant, 64);
 		}
+
 		break;
 	case 3:
 		if (!getCharacterCurrentParams(kCharacterHeadWait)[1]) {
@@ -361,6 +404,7 @@ void LogicManager::HAND_HeadWait_DoSeatOtis(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
 			playDialog(kCharacterHeadWait, "HED1001", -1, 0);
 		}
+
 		break;
 	case 12:
 		blockView(kCharacterHeadWait, kCarRestaurant, 64);
@@ -376,9 +420,10 @@ void LogicManager::HAND_HeadWait_DoSeatOtis(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -393,7 +438,8 @@ void LogicManager::CONS_HeadWait_SeatCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_SeatCath(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 5800;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		send(kCharacterHeadWait, kCharacterAugust, 168046720, 0);
@@ -402,7 +448,8 @@ void LogicManager::HAND_HeadWait_SeatCath(HAND_PARAMS) {
 		blockView(kCharacterHeadWait, kCarRestaurant, 55);
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeatOtis, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
 			send(kCharacterHeadWait, kCharacterAugust, 168627977, 0);
 			send(kCharacterHeadWait, kCharacterAnna, 168627977, 0);
@@ -418,6 +465,10 @@ void LogicManager::HAND_HeadWait_SeatCath(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -432,25 +483,28 @@ void LogicManager::CONS_HeadWait_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			autoMessage(kCharacterHeadWait, 239072064, 0);
-			autoMessage(kCharacterHeadWait, 257489762, 2);
-			autoMessage(kCharacterHeadWait, 207769280, 6);
-			autoMessage(kCharacterHeadWait, 101824388, 7);
-			autoMessage(kCharacterHeadWait, 136059947, 8);
-			autoMessage(kCharacterHeadWait, 223262556, 1);
-			autoMessage(kCharacterHeadWait, 269479296, 3);
-			autoMessage(kCharacterHeadWait, 352703104, 4);
-			autoMessage(kCharacterHeadWait, 352768896, 5);
-			autoMessage(kCharacterHeadWait, 191604416, 10);
-			autoMessage(kCharacterHeadWait, 190605184, 11);
-			getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterHeadWait).characterPosition.location = 0;
-			getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_HeadWait_ServingDinner(0, 0, 0, 0);
+		break;
+	case 12:
+		autoMessage(kCharacterHeadWait, 239072064, 0);
+		autoMessage(kCharacterHeadWait, 257489762, 2);
+		autoMessage(kCharacterHeadWait, 207769280, 6);
+		autoMessage(kCharacterHeadWait, 101824388, 7);
+		autoMessage(kCharacterHeadWait, 136059947, 8);
+		autoMessage(kCharacterHeadWait, 223262556, 1);
+		autoMessage(kCharacterHeadWait, 269479296, 3);
+		autoMessage(kCharacterHeadWait, 352703104, 4);
+		autoMessage(kCharacterHeadWait, 352768896, 5);
+		autoMessage(kCharacterHeadWait, 191604416, 10);
+		autoMessage(kCharacterHeadWait, 190605184, 11);
+		getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
+		getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -465,19 +519,21 @@ void LogicManager::CONS_HeadWait_GreetAugust(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_GreetAugust(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 5800;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "902", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
 			if (!getCharacterParams(kCharacterHeadWait, 8)[10]) {
 				startCycOtis(kCharacterHeadWait, "010E");
 				startCycOtis(kCharacterAugust, "BLANK");
 				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
 				HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "AUG1001", 0, 0, 0);
-				return;
+				break;
 			}
 		} else {
 			if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] != 2) {
@@ -492,7 +548,7 @@ void LogicManager::HAND_HeadWait_GreetAugust(HAND_PARAMS) {
 					fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 				}
 
-				return;
+				break;
 			}
 
 			startCycOtis(kCharacterAugust, "010B");
@@ -500,6 +556,9 @@ void LogicManager::HAND_HeadWait_GreetAugust(HAND_PARAMS) {
 
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "905", 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -514,16 +573,21 @@ void LogicManager::CONS_HeadWait_DoOtis5001C(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_DoOtis5001C(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseView(kCharacterHeadWait, kCarRestaurant, 62);
 		getCharacter(kCharacterHeadWait).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 		fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTableA, "001C3");
 		startSeqOtis(kCharacterAnna, "001C2");
 		startSeqOtis(kCharacterHeadWait, "001C1");
 		blockView(kCharacterHeadWait, kCarRestaurant, 62);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -538,12 +602,14 @@ void LogicManager::CONS_HeadWait_GreetAnna(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_GreetAnna(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 5800;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "901", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
 		case 1:
 			playDialog(kCharacterHeadWait, "ANN1047", -1, 0);
@@ -564,7 +630,13 @@ void LogicManager::HAND_HeadWait_GreetAnna(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -579,22 +651,26 @@ void LogicManager::CONS_HeadWait_GreetTatiana(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_GreetTatiana(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 5800;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "903", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
 		case 1:
 			send(kCharacterHeadWait, kCharacterTatiana, 122358304, 0);
 			startCycOtis(kCharacterHeadWait, "014B");
 			blockView(kCharacterHeadWait, kCarRestaurant, 67);
+
 			if (dialogRunning("TAT1069A")) {
 				fadeDialog("TAT1069A");
 			} else if (dialogRunning("TAT1069B")) {
 				fadeDialog("TAT1069B");
 			}
+
 			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
 			HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "TAT1066", 0, 0, 0);
 			break;
@@ -613,7 +689,13 @@ void LogicManager::HAND_HeadWait_GreetTatiana(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -628,67 +710,100 @@ void LogicManager::CONS_HeadWait_ServingDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_ServingDinner(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
-			case 1:
-				getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
-				getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
-				goto LABEL_23;
-			case 2:
-				goto LABEL_26;
-			case 3:
-				goto LABEL_28;
-			case 4:
-				goto LABEL_30;
-			default:
-				return;
-			}
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (!getCharacterCurrentParams(kCharacterHeadWait)[1]) {
 			if (checkCathDir(kCarRestaurant, 69) || checkCathDir(kCarRestaurant, 70) || checkCathDir(kCarRestaurant, 71)) {
 				getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
 			}
+
 			if (!getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61))
 				getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
 		}
+
 		if (inKitchen(kCharacterHeadWait)) {
 			if (getCharacterParams(kCharacterHeadWait, 8)[4] && getCharacterParams(kCharacterHeadWait, 8)[5]) {
 				CONS_HeadWait_AfterDinner(0, 0, 0, 0);
-				return;
+				break;
 			}
-			if (!rcClear())
-				goto LABEL_28;
-			if (getCharacterCurrentParams(kCharacterHeadWait)[0] && !getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61)) {
-				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
-				HeadWaitCall(&LogicManager::CONS_HeadWait_SeatCath, 0, 0, 0, 0);
-				return;
+
+			if (rcClear()) {
+				if (getCharacterCurrentParams(kCharacterHeadWait)[0] && !getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61)) {
+					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
+					HeadWaitCall(&LogicManager::CONS_HeadWait_SeatCath, 0, 0, 0, 0);
+					break;
+				}
+
+				if (getCharacterParams(kCharacterHeadWait, 8)[0] && !getCharacterParams(kCharacterHeadWait, 8)[10]) {
+					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+					HeadWaitCall(&LogicManager::CONS_HeadWait_GreetAugust, 0, 0, 0, 0);
+					break;
+				}
+
+				if (getCharacterParams(kCharacterHeadWait, 8)[2]) {
+					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
+					HeadWaitCall(&LogicManager::CONS_HeadWait_GreetTatiana, 0, 0, 0, 0);
+					break;
+				}
 			}
-		LABEL_23:
+
+			if (getCharacterParams(kCharacterHeadWait, 8)[1]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_GreetAnna, 0, 0, 0, 0);
+				break;
+			}
+
+			if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 5;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
+				break;
+			}
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
+		case 1:
+			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
+			getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
+
 			if (getCharacterParams(kCharacterHeadWait, 8)[0] && !getCharacterParams(kCharacterHeadWait, 8)[10]) {
 				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
 				HeadWaitCall(&LogicManager::CONS_HeadWait_GreetAugust, 0, 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_26:
+
+			// fall through
+		case 2:
 			if (getCharacterParams(kCharacterHeadWait, 8)[2]) {
 				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
 				HeadWaitCall(&LogicManager::CONS_HeadWait_GreetTatiana, 0, 0, 0, 0);
-			} else {
-			LABEL_28:
-				if (getCharacterParams(kCharacterHeadWait, 8)[1]) {
-					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
-					HeadWaitCall(&LogicManager::CONS_HeadWait_GreetAnna, 0, 0, 0, 0);
-				} else {
-				LABEL_30:
-					if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
-						getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 5;
-						HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
-					}
-				}
+				break;
 			}
+
+			// fall through
+		case 3:
+			if (getCharacterParams(kCharacterHeadWait, 8)[1]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_GreetAnna, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 4:
+			if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 5;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
+			}
+
+			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -703,13 +818,20 @@ void LogicManager::CONS_HeadWait_AfterDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_AfterDinner(HAND_PARAMS) {
-	if (msg->action == 0 && _gameTime > 1242000 && !getCharacterCurrentParams(kCharacterHeadWait)[0]) {
-		getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
-		send(kCharacterHeadWait, kCharacterWaiter1, 101632192, 0);
-		send(kCharacterHeadWait, kCharacterWaiter2, 101632192, 0);
-		send(kCharacterHeadWait, kCharacterCook, 101632192, 0);
-		send(kCharacterHeadWait, kCharacterTrainM, 101632192, 0);
-		CONS_HeadWait_LockUp(0, 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1242000 && !getCharacterCurrentParams(kCharacterHeadWait)[0]) {
+			getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
+			send(kCharacterHeadWait, kCharacterWaiter1, 101632192, 0);
+			send(kCharacterHeadWait, kCharacterWaiter2, 101632192, 0);
+			send(kCharacterHeadWait, kCharacterCook, 101632192, 0);
+			send(kCharacterHeadWait, kCharacterTrainM, 101632192, 0);
+			CONS_HeadWait_LockUp(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -724,22 +846,28 @@ void LogicManager::CONS_HeadWait_LockUp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_LockUp(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
-			getCharacter(kCharacterHeadWait).characterPosition.location = 0;
-			endGraphics(kCharacterHeadWait);
+	switch (msg->action) {
+	case 0:
+		if (!getCharacterCurrentParams(kCharacterHeadWait)[0] && getCharacter(kCharacterCath).characterPosition.position < 3650) {
+			setDoor(65, kCharacterCath, 1, 10, 9);
+			send(kCharacterHeadWait, kCharacterTableA, 103798704, "001P");
+			send(kCharacterHeadWait, kCharacterTableB, 103798704, "005J");
+			send(kCharacterHeadWait, kCharacterTableC, 103798704, "009G");
+			send(kCharacterHeadWait, kCharacterTableD, 103798704, "010M");
+			send(kCharacterHeadWait, kCharacterTableE, 103798704, "014F");
+			send(kCharacterHeadWait, kCharacterTableF, 103798704, "024D");
+			getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
 		}
-	} else if (!getCharacterCurrentParams(kCharacterHeadWait)[0] && getCharacter(kCharacterCath).characterPosition.position < 3650) {
-		setDoor(65, kCharacterCath, 1, 10, 9);
-		send(kCharacterHeadWait, kCharacterTableA, 103798704, "001P");
-		send(kCharacterHeadWait, kCharacterTableB, 103798704, "005J");
-		send(kCharacterHeadWait, kCharacterTableC, 103798704, "009G");
-		send(kCharacterHeadWait, kCharacterTableD, 103798704, "010M");
-		send(kCharacterHeadWait, kCharacterTableE, 103798704, "014F");
-		send(kCharacterHeadWait, kCharacterTableF, 103798704, "024D");
-		getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
+
+		break;
+	case 12:
+		getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
+		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
+		endGraphics(kCharacterHeadWait);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -754,7 +882,8 @@ void LogicManager::CONS_HeadWait_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_StartPart2(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterHeadWait);
 		getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
@@ -762,6 +891,9 @@ void LogicManager::HAND_HeadWait_StartPart2(HAND_PARAMS) {
 		getCharacter(kCharacterHeadWait).inventoryItem = 0;
 		getCharacter(kCharacterHeadWait).clothes = 1;
 		setDoor(65, kCharacterCath, 0, 0, 1);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -776,18 +908,21 @@ void LogicManager::CONS_HeadWait_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterHeadWait);
-			getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
-			getCharacter(kCharacterHeadWait).characterPosition.location = 0;
-			getCharacter(kCharacterHeadWait).inventoryItem = 0;
-			getCharacterParams(kCharacterHeadWait, 8)[6] = 0;
-			getCharacterParams(kCharacterHeadWait, 8)[3] = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_HeadWait_InPart3(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterHeadWait);
+		getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
+		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
+		getCharacter(kCharacterHeadWait).inventoryItem = 0;
+		getCharacterParams(kCharacterHeadWait, 8)[6] = 0;
+		getCharacterParams(kCharacterHeadWait, 8)[3] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -802,22 +937,30 @@ void LogicManager::CONS_HeadWait_InPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_InPart3(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!inKitchen(kCharacterHeadWait))
-			return;
-		if (getCharacterParams(kCharacterHeadWait, 8)[6]) {
-			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
-			HeadWaitCall(&LogicManager::CONS_HeadWait_AbbotSeatMe3, 0, 0, 0, 0);
-			return;
+	switch (msg->action) {
+	case 0:
+		if (inKitchen(kCharacterHeadWait)) {
+			if (getCharacterParams(kCharacterHeadWait, 8)[6]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_AbbotSeatMe3, 0, 0, 0, 0);
+			} else if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
+			}
 		}
-		goto LABEL_8;
-	}
-	if (msg->action == 18 && getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
-	LABEL_8:
-		if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
-			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
-			HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
+			if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
+			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -832,13 +975,15 @@ void LogicManager::CONS_HeadWait_AbbotSeatMe3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_AbbotSeatMe3(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 5800;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		blockView(kCharacterHeadWait, kCarRestaurant, 67);
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoOtis5029A, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
 			releaseView(kCharacterHeadWait, kCarRestaurant, 67);
 			send(kCharacterHeadWait, kCharacterAbbot, 122288808, 0);
@@ -853,6 +998,10 @@ void LogicManager::HAND_HeadWait_AbbotSeatMe3(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -873,6 +1022,7 @@ void LogicManager::HAND_HeadWait_DoOtis5029A(HAND_PARAMS) {
 			playDialog(kCharacterHeadWait, "ABB3015A", -1, 0);
 			getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
 		}
+
 		break;
 	case 3:
 		getCharacter(kCharacterHeadWait).currentCall--;
@@ -888,7 +1038,7 @@ void LogicManager::HAND_HeadWait_DoOtis5029A(HAND_PARAMS) {
 		startSeqOtis(kCharacterAbbot, "029A2");
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -903,20 +1053,23 @@ void LogicManager::CONS_HeadWait_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterHeadWait);
-			getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
-			getCharacter(kCharacterHeadWait).characterPosition.location = 0;
-			getCharacter(kCharacterHeadWait).inventoryItem = 0;
-			getCharacterParams(kCharacterHeadWait, 8)[7] = 0;
-			getCharacterParams(kCharacterHeadWait, 8)[8] = 0;
-			getCharacterParams(kCharacterHeadWait, 8)[3] = 0;
-			getCharacterParams(kCharacterHeadWait, 8)[9] = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_HeadWait_InPart4(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterHeadWait);
+		getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
+		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
+		getCharacter(kCharacterHeadWait).inventoryItem = 0;
+		getCharacterParams(kCharacterHeadWait, 8)[7] = 0;
+		getCharacterParams(kCharacterHeadWait, 8)[8] = 0;
+		getCharacterParams(kCharacterHeadWait, 8)[3] = 0;
+		getCharacterParams(kCharacterHeadWait, 8)[9] = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -931,94 +1084,157 @@ void LogicManager::CONS_HeadWait_InPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_InPart4(HAND_PARAMS) {
-	if (msg->action > 12) {
-		switch (msg->action) {
-		case 17:
-			if (!getCharacterCurrentParams(kCharacterHeadWait)[1]) {
-				if (checkCathDir(kCarRestaurant, 69) || checkCathDir(kCarRestaurant, 70) || checkCathDir(kCarRestaurant, 71)) {
-					getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
-				}
-				if (!getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61))
-					getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
-			}
-			break;
-		case 18:
-			if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
-			LABEL_34:
-				if (getCharacterParams(kCharacterHeadWait, 8)[9] && getCharacterParams(kCharacterHeadWait, 8)[11]) {
-					if (!getCharacterCurrentParams(kCharacterHeadWait)[2])
-						getCharacterCurrentParams(kCharacterHeadWait)[2] = _gameTime + 9000;
-					if (getCharacterCurrentParams(kCharacterHeadWait)[4] != 0x7FFFFFFF && _gameTime) {
-						if (getCharacterCurrentParams(kCharacterHeadWait)[2] < _gameTime)
-							goto LABEL_45;
-						if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterHeadWait)[4]) {
-							getCharacterCurrentParams(kCharacterHeadWait)[4] = _gameTime;
-							if (!_gameTime)
-								goto LABEL_46;
-						}
-						if (getCharacterCurrentParams(kCharacterHeadWait)[4] < _gameTime) {
-						LABEL_45:
-							getCharacterCurrentParams(kCharacterHeadWait)[4] = 0x7FFFFFFF;
-						LABEL_46:
-							getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
-							HeadWaitCall(&LogicManager::CONS_HeadWait_TellAug, 0, 0, 0, 0);
-							return;
-						}
-					}
-				}
-			LABEL_47:
-				if (getCharacterCurrentParams(kCharacterHeadWait)[0] && !getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61)) {
-					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
-					HeadWaitCall(&LogicManager::CONS_HeadWait_SeatCath, 0, 0, 0, 0);
-					return;
-				}
-				goto LABEL_32;
-			}
-			if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 2)
-				goto LABEL_47;
-			if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] != 3)
-				return;
-			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
-			getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
-		LABEL_32:
-			if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
-				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
-				HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
-			}
-			return;
-		case 201431954:
-			getCharacterParams(kCharacterHeadWait, 8)[7] = 0;
-			getCharacterParams(kCharacterHeadWait, 8)[3] = 0;
-			send(kCharacterHeadWait, kCharacterTableA, 103798704, "001P");
-			send(kCharacterHeadWait, kCharacterTableB, 103798704, "005J");
-			send(kCharacterHeadWait, kCharacterTableC, 103798704, "009G");
-			send(kCharacterHeadWait, kCharacterTableD, 103798704, "010M");
-			send(kCharacterHeadWait, kCharacterTableE, 103798704, "014F");
-			send(kCharacterHeadWait, kCharacterTableF, 103798704, "024D");
-			getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
-			getCharacter(kCharacterHeadWait).characterPosition.location = 0;
-			break;
-		}
-	} else if (msg->action == 12) {
-		if (checkCathDir(kCarRestaurant, 69) || checkCathDir(kCarRestaurant, 70) || checkCathDir(kCarRestaurant, 71)) {
-			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
-		}
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (_gameTime > 2511000 && !getCharacterCurrentParams(kCharacterHeadWait)[3]) {
 			getCharacterCurrentParams(kCharacterHeadWait)[3] = 1;
 			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
 		}
+
 		if (inKitchen(kCharacterHeadWait)) {
 			if (rcClear()) {
 				if (getCharacterParams(kCharacterHeadWait, 8)[7]) {
 					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 					HeadWaitCall(&LogicManager::CONS_HeadWait_MeetCond2, 0, 0, 0, 0);
-					return;
+					break;
 				}
-				goto LABEL_34;
+
+				if (getCharacterParams(kCharacterHeadWait, 8)[9] && getCharacterParams(kCharacterHeadWait, 8)[11]) {
+					if (!getCharacterCurrentParams(kCharacterHeadWait)[2])
+						getCharacterCurrentParams(kCharacterHeadWait)[2] = _gameTime + 9000;
+
+					if (getCharacterCurrentParams(kCharacterHeadWait)[4] != 0x7FFFFFFF && _gameTime) {
+						if (getCharacterCurrentParams(kCharacterHeadWait)[2] < _gameTime) {
+							getCharacterCurrentParams(kCharacterHeadWait)[4] = 0x7FFFFFFF;
+							getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+							HeadWaitCall(&LogicManager::CONS_HeadWait_TellAug, 0, 0, 0, 0);
+							break;
+						}
+
+						if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterHeadWait)[4]) {
+							getCharacterCurrentParams(kCharacterHeadWait)[4] = _gameTime;
+							if (!_gameTime) {
+								getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+								HeadWaitCall(&LogicManager::CONS_HeadWait_TellAug, 0, 0, 0, 0);
+								break;
+							}
+						}
+
+						if (getCharacterCurrentParams(kCharacterHeadWait)[4] < _gameTime) {
+							getCharacterCurrentParams(kCharacterHeadWait)[4] = 0x7FFFFFFF;
+							getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+							HeadWaitCall(&LogicManager::CONS_HeadWait_TellAug, 0, 0, 0, 0);
+							break;
+						}
+					}
+				}
+
+				if (getCharacterCurrentParams(kCharacterHeadWait)[0] && !getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61)) {
+					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
+					HeadWaitCall(&LogicManager::CONS_HeadWait_SeatCath, 0, 0, 0, 0);
+					break;
+				}
 			}
-			goto LABEL_32;
+
+			if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
+			}
+
+			break;
 		}
+
+		break;
+	case 12:
+		if (checkCathDir(kCarRestaurant, 69) || checkCathDir(kCarRestaurant, 70) || checkCathDir(kCarRestaurant, 71)) {
+			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
+		}
+
+		break;
+	case 17:
+		if (!getCharacterCurrentParams(kCharacterHeadWait)[1]) {
+			if (checkCathDir(kCarRestaurant, 69) || checkCathDir(kCarRestaurant, 70) || checkCathDir(kCarRestaurant, 71)) {
+				getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
+			}
+
+			if (!getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61))
+				getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
+		case 1:
+			if (getCharacterParams(kCharacterHeadWait, 8)[9] && getCharacterParams(kCharacterHeadWait, 8)[11]) {
+				if (!getCharacterCurrentParams(kCharacterHeadWait)[2])
+					getCharacterCurrentParams(kCharacterHeadWait)[2] = _gameTime + 9000;
+
+				if (getCharacterCurrentParams(kCharacterHeadWait)[4] != 0x7FFFFFFF && _gameTime) {
+					if (getCharacterCurrentParams(kCharacterHeadWait)[2] < _gameTime) {
+						getCharacterCurrentParams(kCharacterHeadWait)[4] = 0x7FFFFFFF;
+						getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+						HeadWaitCall(&LogicManager::CONS_HeadWait_TellAug, 0, 0, 0, 0);
+						break;
+					}
+
+					if (!inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterHeadWait)[4]) {
+						getCharacterCurrentParams(kCharacterHeadWait)[4] = _gameTime;
+						if (!_gameTime) {
+							getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+							HeadWaitCall(&LogicManager::CONS_HeadWait_TellAug, 0, 0, 0, 0);
+							break;
+						}
+					}
+
+					if (getCharacterCurrentParams(kCharacterHeadWait)[4] < _gameTime) {
+						getCharacterCurrentParams(kCharacterHeadWait)[4] = 0x7FFFFFFF;
+						getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+						HeadWaitCall(&LogicManager::CONS_HeadWait_TellAug, 0, 0, 0, 0);
+						break;
+					}
+				}
+			}
+
+			// fall through
+		case 2:
+			if (getCharacterCurrentParams(kCharacterHeadWait)[0] && !getCharacterCurrentParams(kCharacterHeadWait)[1] && checkCathDir(kCarRestaurant, 61)) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_SeatCath, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 3) {
+				getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
+				getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
+			}
+
+			if (getCharacterParams(kCharacterHeadWait, 8)[3]) {
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_RebeccaHereWeAre, 0, 0, 0, 0);
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 201431954:
+		getCharacterParams(kCharacterHeadWait, 8)[7] = 0;
+		getCharacterParams(kCharacterHeadWait, 8)[3] = 0;
+		send(kCharacterHeadWait, kCharacterTableA, 103798704, "001P");
+		send(kCharacterHeadWait, kCharacterTableB, 103798704, "005J");
+		send(kCharacterHeadWait, kCharacterTableC, 103798704, "009G");
+		send(kCharacterHeadWait, kCharacterTableD, 103798704, "010M");
+		send(kCharacterHeadWait, kCharacterTableE, 103798704, "014F");
+		send(kCharacterHeadWait, kCharacterTableF, 103798704, "024D");
+		getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
+		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1033,42 +1249,50 @@ void LogicManager::CONS_HeadWait_MeetCond2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_MeetCond2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
-			HeadWaitCall(&LogicManager::CONS_HeadWait_RSWalkDowntrain, 0, 0, 0, 0);
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
-			case 1:
-				endGraphics(kCharacterHeadWait);
-				break;
-			case 2:
-				send(kCharacterHeadWait, kCharacterCond2, 123712592, 0);
-				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
-				HeadWaitCall(&LogicManager::CONS_HeadWait_WaitRCClear, 0, 0, 0, 0);
-				break;
-			case 3:
-				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
-				HeadWaitCall(&LogicManager::CONS_HeadWait_RSWalkUptrain, 0, 0, 0, 0);
-				break;
-			case 4:
-				endGraphics(kCharacterHeadWait);
-				getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
-				getCharacterParams(kCharacterHeadWait, 8)[7] = 0;
-				getCharacterParams(kCharacterHeadWait, 8)[8] = 0;
-				getCharacterParams(kCharacterHeadWait, 8)[9] = 1;
-
-				getCharacter(kCharacterHeadWait).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
-				fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
-				break;
-			default:
-				return;
-			}
+	switch (msg->action) {
+	case 0:
+		if (getCharacterParams(kCharacterHeadWait, 8)[8]) {
+			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
+			HeadWaitCall(&LogicManager::CONS_HeadWait_DoWait, 450, 0, 0, 0);
 		}
-	} else if (getCharacterParams(kCharacterHeadWait, 8)[8]) {
-		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
-		HeadWaitCall(&LogicManager::CONS_HeadWait_DoWait, 0x1C2, 0, 0, 0);
+
+		break;
+	case 12:
+		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
+		HeadWaitCall(&LogicManager::CONS_HeadWait_RSWalkDowntrain, 0, 0, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
+		case 1:
+			endGraphics(kCharacterHeadWait);
+			break;
+		case 2:
+			send(kCharacterHeadWait, kCharacterCond2, 123712592, 0);
+			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 3;
+			HeadWaitCall(&LogicManager::CONS_HeadWait_WaitRCClear, 0, 0, 0, 0);
+			break;
+		case 3:
+			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
+			HeadWaitCall(&LogicManager::CONS_HeadWait_RSWalkUptrain, 0, 0, 0, 0);
+			break;
+		case 4:
+			endGraphics(kCharacterHeadWait);
+			getCharacter(kCharacterHeadWait).characterPosition.position = 5900;
+			getCharacterParams(kCharacterHeadWait, 8)[7] = 0;
+			getCharacterParams(kCharacterHeadWait, 8)[8] = 0;
+			getCharacterParams(kCharacterHeadWait, 8)[9] = 1;
+
+			getCharacter(kCharacterHeadWait).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
+			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1083,12 +1307,14 @@ void LogicManager::CONS_HeadWait_TellAug(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_TellAug(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 5800;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "902", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
 		case 1:
 			send(kCharacterHeadWait, kCharacterAugust, 122358304, 0);
@@ -1110,7 +1336,13 @@ void LogicManager::HAND_HeadWait_TellAug(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1125,16 +1357,20 @@ void LogicManager::CONS_HeadWait_RSWalkDowntrain(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_RSWalkDowntrain(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 1540;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "817DD", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
 			startSeqOtis(kCharacterHeadWait, "817DS");
+
 			if (inDiningRoom(kCharacterCath))
 				advanceFrame(kCharacterHeadWait);
+
 			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 2;
 			HeadWaitCall(&LogicManager::CONS_HeadWait_FinishSeqOtis, 0, 0, 0, 0);
 		} else if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 2) {
@@ -1144,6 +1380,10 @@ void LogicManager::HAND_HeadWait_RSWalkDowntrain(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1158,14 +1398,17 @@ void LogicManager::CONS_HeadWait_RSWalkUptrain(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_RSWalkUptrain(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterHeadWait).characterPosition.position = 9270;
 		getCharacter(kCharacterHeadWait).characterPosition.location = 0;
 		getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
 		HeadWaitCall(&LogicManager::CONS_HeadWait_DoSeqOtis, "817US", 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] == 1) {
 			startSeqOtis(kCharacterHeadWait, "817UD");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterHeadWait);
 
@@ -1178,6 +1421,10 @@ void LogicManager::HAND_HeadWait_RSWalkUptrain(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterHeadWait, _functionsHeadWait[getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall]]);
 			fedEx(kCharacterHeadWait, kCharacterHeadWait, 18, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1192,16 +1439,19 @@ void LogicManager::CONS_HeadWait_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterHeadWait);
-			getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterHeadWait).characterPosition.position = 3969;
-			getCharacter(kCharacterHeadWait).characterPosition.location = 1;
-			getCharacter(kCharacterHeadWait).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_HeadWait_Prisoner(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterHeadWait);
+		getCharacter(kCharacterHeadWait).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterHeadWait).characterPosition.position = 3969;
+		getCharacter(kCharacterHeadWait).characterPosition.location = 1;
+		getCharacter(kCharacterHeadWait).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1216,8 +1466,13 @@ void LogicManager::CONS_HeadWait_Prisoner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_Prisoner(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_HeadWait_Hiding(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_HeadWait_Hiding(CONS_PARAMS) {
@@ -1231,70 +1486,47 @@ void LogicManager::CONS_HeadWait_Hiding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_HeadWait_Hiding(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			switch (msg->action) {
-			case 18:
-				switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
-				case 1:
-					setDoor(38, kCharacterHeadWait, 1, 10, 9);
-					goto LABEL_30;
-				case 2:
-					setDoor(38, kCharacterHeadWait, 1, 10, 9);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterHeadWait)[3]) {
+			if (!getCharacterCurrentParams(kCharacterHeadWait)[4]) {
+				getCharacterCurrentParams(kCharacterHeadWait)[4] = _gameTime + 4500;
+				if (_gameTime == -4500) {
+					setDoor(38, kCharacterHeadWait, 1, 0, 0);
+					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
+					HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5010", 0, 0, 0);
 					break;
-				case 3:
-				case 4:
-					getCharacterCurrentParams(kCharacterHeadWait)[2]++;
-					if (getCharacterCurrentParams(kCharacterHeadWait)[2] == 1) {
-						setDoor(38, kCharacterHeadWait, 1, 0, 0);
-						getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 5;
-						HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5001", 0, 0, 0);
-					} else if (getCharacterCurrentParams(kCharacterHeadWait)[2] == 2) {
-						setDoor(38, kCharacterHeadWait, 1, 0, 0);
-						getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 6;
-						HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5001A", 0, 0, 0);
-					}
-					break;
-				case 5:
-					getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
-					setDoor(38, kCharacterHeadWait, 1, 14, 0);
-					break;
-				case 6:
-					getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
-					break;
-				case 7:
-					goto LABEL_48;
-				default:
-					return;
 				}
-				break;
-			case 135800432:
-				CONS_HeadWait_Disappear(0, 0, 0, 0);
-				break;
-			case 169750080:
-				if (whoRunningDialog(kCharacterHeadWait)) {
-				LABEL_48:
-					getCharacterCurrentParams(kCharacterHeadWait)[3] = 1;
-				} else {
-					getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 7;
-					HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5002", 0, 0, 0);
-				}
+			}
+
+			if (getCharacterCurrentParams(kCharacterHeadWait)[4] < _gameTime) {
+				getCharacterCurrentParams(kCharacterHeadWait)[4] = 0x7FFFFFFF;
+				setDoor(38, kCharacterHeadWait, 1, 0, 0);
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5010", 0, 0, 0);
 				break;
 			}
-		} else if (msg->action == 17) {
-			if (getCharacterCurrentParams(kCharacterHeadWait)[1] || getCharacterCurrentParams(kCharacterHeadWait)[0]) {
-				getCharacterCurrentParams(kCharacterHeadWait)[1] = 0;
-				getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
-				setDoor(38, kCharacterHeadWait, 1, 10, 9);
-				getCharacterCurrentParams(kCharacterHeadWait)[2] = 0;
-			}
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterHeadWait).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterHeadWait).characterPosition.position = 3050;
-			getCharacter(kCharacterHeadWait).characterPosition.location = 1;
-			setDoor(38, kCharacterHeadWait, 1, 10, 9);
 		}
-	} else if (msg->action >= 8) {
+
+		if (getCharacterCurrentParams(kCharacterHeadWait)[0]) {
+			if (getCharacterCurrentParams(kCharacterHeadWait)[5] || (getCharacterCurrentParams(kCharacterHeadWait)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterHeadWait)[5] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterHeadWait)[5] = 0x7FFFFFFF;
+			}
+
+			getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
+			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
+			setDoor(38, kCharacterHeadWait, 1, 0, 0);
+			getCharacterCurrentParams(kCharacterHeadWait)[5] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterHeadWait)[5] = 0;
+		}
+
+		break;
+	case 8:
+	case 9:
 		if (getCharacterCurrentParams(kCharacterHeadWait)[0]) {
 			setDoor(38, kCharacterHeadWait, 1, 0, 0);
 			getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
@@ -1307,40 +1539,91 @@ void LogicManager::HAND_HeadWait_Hiding(HAND_PARAMS) {
 			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 4;
 			HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "LIB013", 0, 0, 0);
 		}
-	} else {
-		if (msg->action)
-			return;
-		if (getCharacterCurrentParams(kCharacterHeadWait)[3]) {
-			if (!getCharacterCurrentParams(kCharacterHeadWait)[4]) {
-				getCharacterCurrentParams(kCharacterHeadWait)[4] = _gameTime + 4500;
-				if (_gameTime == -4500)
-					goto LABEL_18;
-			}
-			if (getCharacterCurrentParams(kCharacterHeadWait)[4] < _gameTime) {
-				getCharacterCurrentParams(kCharacterHeadWait)[4] = 0x7FFFFFFF;
-			LABEL_18:
-				setDoor(38, kCharacterHeadWait, 1, 0, 0);
-				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 1;
-				HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5010", 0, 0, 0);
-				return;
-			}
-		}
-	LABEL_30:
-		if (getCharacterCurrentParams(kCharacterHeadWait)[0]) {
-			if (getCharacterCurrentParams(kCharacterHeadWait)[5] || (getCharacterCurrentParams(kCharacterHeadWait)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterHeadWait)[5] >= _currentGameSessionTicks)
-					return;
 
-				getCharacterCurrentParams(kCharacterHeadWait)[5] = 0x7FFFFFFF;
-			}
-
+		break;
+	case 12:
+		getCharacter(kCharacterHeadWait).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterHeadWait).characterPosition.position = 3050;
+		getCharacter(kCharacterHeadWait).characterPosition.location = 1;
+		setDoor(38, kCharacterHeadWait, 1, 10, 9);
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterHeadWait)[1] || getCharacterCurrentParams(kCharacterHeadWait)[0]) {
+			getCharacterCurrentParams(kCharacterHeadWait)[1] = 0;
 			getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
-			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
-			setDoor(38, kCharacterHeadWait, 1, 0, 0);
-			getCharacterCurrentParams(kCharacterHeadWait)[5] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterHeadWait)[5] = 0;
+			setDoor(38, kCharacterHeadWait, 1, 10, 9);
+			getCharacterCurrentParams(kCharacterHeadWait)[2] = 0;
 		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
+		case 1:
+			setDoor(38, kCharacterHeadWait, 1, 10, 9);
+
+			if (getCharacterCurrentParams(kCharacterHeadWait)[0]) {
+				if (getCharacterCurrentParams(kCharacterHeadWait)[5] || (getCharacterCurrentParams(kCharacterHeadWait)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+					if (getCharacterCurrentParams(kCharacterHeadWait)[5] >= _currentGameSessionTicks)
+						break;
+
+					getCharacterCurrentParams(kCharacterHeadWait)[5] = 0x7FFFFFFF;
+				}
+
+				getCharacterCurrentParams(kCharacterHeadWait)[0] = 0;
+				getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
+				setDoor(38, kCharacterHeadWait, 1, 0, 0);
+				getCharacterCurrentParams(kCharacterHeadWait)[5] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterHeadWait)[5] = 0;
+			}
+
+			break;
+		case 2:
+			setDoor(38, kCharacterHeadWait, 1, 10, 9);
+			break;
+		case 3:
+		case 4:
+			getCharacterCurrentParams(kCharacterHeadWait)[2]++;
+			if (getCharacterCurrentParams(kCharacterHeadWait)[2] == 1) {
+				setDoor(38, kCharacterHeadWait, 1, 0, 0);
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 5;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5001", 0, 0, 0);
+			} else if (getCharacterCurrentParams(kCharacterHeadWait)[2] == 2) {
+				setDoor(38, kCharacterHeadWait, 1, 0, 0);
+				getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 6;
+				HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5001A", 0, 0, 0);
+			}
+
+			break;
+		case 5:
+			getCharacterCurrentParams(kCharacterHeadWait)[0] = 1;
+			setDoor(38, kCharacterHeadWait, 1, 14, 0);
+			break;
+		case 6:
+			getCharacterCurrentParams(kCharacterHeadWait)[1] = 1;
+			break;
+		case 7:
+			getCharacterCurrentParams(kCharacterHeadWait)[3] = 1;
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 135800432:
+		CONS_HeadWait_Disappear(0, 0, 0, 0);
+		break;
+	case 169750080:
+		if (whoRunningDialog(kCharacterHeadWait)) {
+			getCharacterCurrentParams(kCharacterHeadWait)[3] = 1;
+		} else {
+			getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8] = 7;
+			HeadWaitCall(&LogicManager::CONS_HeadWait_DoDialog, "Wat5002", 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
