@@ -802,7 +802,7 @@ private:
 	Common::String _currentHtmlFile;
 	HtmlContext *_currentHtmlContext;
 
-	void copyFile(const Common::String &sourceFile, bool sourceIsCd, const Common::String &destFile);
+	void copyFile(const Common::String &sourceFile, bool sourceIsCD, const Common::String &destFile);
 
 	bool setCurrentCDPath(const Common::String &dir);
 	Common::Array<uint32> getAdibou2InstalledApplications();

@@ -405,14 +405,14 @@ void Inter_v7::o7_loadFunctions() {
 	_vm->_game->loadFunctions(tot, flags);
 }
 
-void Inter_v7::copyFile(const Common::String &sourceFile, bool sourceIsCd, const Common::String &destFile) {
+void Inter_v7::copyFile(const Common::String &sourceFile, bool sourceIsCD, const Common::String &destFile) {
 	SaveLoad::SaveMode mode1 = _vm->_saveLoad->getSaveMode(sourceFile.c_str());
 	SaveLoad::SaveMode mode2 = _vm->_saveLoad->getSaveMode(destFile.c_str());
 
 	if (mode2 == SaveLoad::kSaveModeIgnore || mode2 == SaveLoad::kSaveModeExists)
 		return;
 	else if (mode2 == SaveLoad::kSaveModeSave) {
-		if (mode1 == SaveLoad::kSaveModeNone || sourceIsCd) {
+		if (mode1 == SaveLoad::kSaveModeNone || sourceIsCD) {
 			Common::SeekableReadStream *stream = _vm->_dataIO->getFile(sourceFile);
 			if (!stream)
 				return;
@@ -445,15 +445,15 @@ void Inter_v7::o7_copyFile() {
 
 	debugC(2, kDebugFileIO, "Copy file \"%s\" to \"%s", path1.c_str(), path2.c_str());
 
-	bool sourceIsCd = false;
-	Common::String file1 = getFile(path1.c_str(), true, &sourceIsCd);
+	bool sourceIsCD = false;
+	Common::String file1 = getFile(path1.c_str(), true, &sourceIsCD);
 	Common::String file2 = getFile(path2.c_str());
-	if (!sourceIsCd && file1.equalsIgnoreCase(file2)) {
+	if (!sourceIsCD && file1.equalsIgnoreCase(file2)) {
 		warning("o7_copyFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
 		return;
 	}
 
-	copyFile(file1, sourceIsCd, file2);
+	copyFile(file1, sourceIsCD, file2);
 }
 
 void Inter_v7::o7_deleteFile() {
@@ -503,16 +503,16 @@ void Inter_v7::o7_moveFile() {
 	Common::String path1 = _vm->_game->_script->evalString();
 	Common::String path2 = _vm->_game->_script->evalString();
 
-	bool sourceIsCd = false;
-	Common::String file1 = getFile(path1.c_str(), true, &sourceIsCd);
+	bool sourceIsCD = false;
+	Common::String file1 = getFile(path1.c_str(), true, &sourceIsCD);
 	Common::String file2 = getFile(path2.c_str());
 
-	if (!sourceIsCd && file1.equalsIgnoreCase(file2)) {
+	if (!sourceIsCD && file1.equalsIgnoreCase(file2)) {
 		warning("o7_moveFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
 		return;
 	}
 
-	copyFile(file1, sourceIsCd, file2);
+	copyFile(file1, sourceIsCD, file2);
 	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file1.c_str());
 	if (mode == SaveLoad::kSaveModeSave) {
 		_vm->_saveLoad->deleteFile(file1.c_str());
