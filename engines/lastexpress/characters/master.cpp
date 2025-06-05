@@ -584,14 +584,19 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (_gameProgress[kProgressIsTrainRunning] && _gameTime < 1458000) {
+			bool skip = false;
+
 			if (!getCharacterCurrentParams(kCharacterMaster)[5]) {
 				getCharacterCurrentParams(kCharacterMaster)[5] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[1];
-				if (getCharacterCurrentParams(kCharacterMaster)[5] == 0)
-					goto LABEL_19;
+				if (getCharacterCurrentParams(kCharacterMaster)[5] == 0) {
+					skip = true;
+				}
 			}
-			if (getCharacterCurrentParams(kCharacterMaster)[5] < _currentGameSessionTicks) {
-				getCharacterCurrentParams(kCharacterMaster)[5] = 0x7FFFFFFF;
-			LABEL_19:
+			if (skip || getCharacterCurrentParams(kCharacterMaster)[5] < _currentGameSessionTicks) {
+				if (!skip) {
+					getCharacterCurrentParams(kCharacterMaster)[5] = 0x7FFFFFFF;
+				}
+
 				switch (rnd(5)) {
 				case 0:
 					playDialog(0, "ZFX1005", rnd(15) + 2, 0);
@@ -616,67 +621,69 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterMaster)[5] = 0;
 			}
 		}
+
 		if (_gameTime > 1039500 && !getCharacterCurrentParams(kCharacterMaster)[6]) {
 			getCharacterCurrentParams(kCharacterMaster)[6] = 1;
 			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
 			MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_75:
+
 		if (_gameTime > 1147500 && !getCharacterCurrentParams(kCharacterMaster)[7]) {
 			getCharacterCurrentParams(kCharacterMaster)[7] = 1;
 			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
 			MasterCall(&LogicManager::CONS_Master_Arrive, "Epernay", 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_78:
+
 		if (_gameTime > 1150200 && !getCharacterCurrentParams(kCharacterMaster)[8]) {
 			getCharacterCurrentParams(kCharacterMaster)[8] = 1;
 			getCharacterCurrentParams(kCharacterMaster)[3] = 1;
 			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
 			MasterCall(&LogicManager::CONS_Master_Depart, "Epernay", 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_81:
+
 		if (getCharacterCurrentParams(kCharacterMaster)[4] && !getCharacterParams(kCharacterMaster, 8)[1]) {
 			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
 			MasterCall(&LogicManager::CONS_Master_Depart, "Unschedu", 0, 0, 0);
-			return;
+			break;
 		}
-	LABEL_57:
+
 		if (_gameTime > 1170000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
 			getCharacterCurrentParams(kCharacterMaster)[9] = 1;
 			_gameProgress[kProgressField18] = 2;
 		}
+
 		if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
 			if (_gameTime > 1170000 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
 				getCharacterCurrentParams(kCharacterMaster)[10] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
 				MasterCall(&LogicManager::CONS_Master_Arrive, "Chalons", 1, 0, 0);
-				return;
+				break;
 			}
-		LABEL_84:
+
 			if (_gameTime > 1173600 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
 				getCharacterCurrentParams(kCharacterMaster)[11] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
 				MasterCall(&LogicManager::CONS_Master_Depart, "Chalons", 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_87:
+
 			if (_gameTime > 1228500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
 				getCharacterCurrentParams(kCharacterMaster)[12] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
 				MasterCall(&LogicManager::CONS_Master_Arrive, "BarLeDuc", 2, 0, 0);
-				return;
+				break;
 			}
-		LABEL_90:
+
 			if (_gameTime > 1231200 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
 				getCharacterCurrentParams(kCharacterMaster)[13] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
 				MasterCall(&LogicManager::CONS_Master_Depart, "BarLeDuc", 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_93:
+
 			if (_gameTime > 1260000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
 				getCharacterCurrentParams(kCharacterMaster)[14] = 1;
 				_gameTimeTicksDelta = 1;
@@ -685,90 +692,90 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterMaster)[15] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
 				MasterCall(&LogicManager::CONS_Master_Arrive, "Nancy", 3, 0, 0);
-				return;
+				break;
 			}
-		LABEL_99:
+
 			if (_gameTime > 1307700 && !getCharacterCurrentParams(kCharacterMaster)[16]) {
 				getCharacterCurrentParams(kCharacterMaster)[16] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 10;
 				MasterCall(&LogicManager::CONS_Master_Depart, "Nancy", 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_102:
+
 			if (_gameTime > 1335600 && !getCharacterCurrentParams(kCharacterMaster)[17]) {
 				getCharacterCurrentParams(kCharacterMaster)[17] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 11;
 				MasterCall(&LogicManager::CONS_Master_Arrive, "Luneville", 4, 0, 0);
-				return;
+				break;
 			}
-		LABEL_105:
+
 			if (_gameTime > 1338300 && !getCharacterCurrentParams(kCharacterMaster)[18]) {
 				getCharacterCurrentParams(kCharacterMaster)[18] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 12;
 				MasterCall(&LogicManager::CONS_Master_Depart, "Luneville", 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_108:
+
 			if (_gameTime > 1359900 && !getCharacterCurrentParams(kCharacterMaster)[19]) {
 				getCharacterCurrentParams(kCharacterMaster)[19] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 13;
 				MasterCall(&LogicManager::CONS_Master_Arrive, "Avricourt", 5, 0, 0);
-				return;
+				break;
 			}
-		LABEL_111:
+
 			if (_gameTime > 1363500 && !getCharacterCurrentParams(kCharacterMaster)[20]) {
 				getCharacterCurrentParams(kCharacterMaster)[20] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 14;
 				MasterCall(&LogicManager::CONS_Master_Depart, "Avricourt", 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_114:
+
 			if (_gameTime > 1367100 && !getCharacterCurrentParams(kCharacterMaster)[21]) {
 				getCharacterCurrentParams(kCharacterMaster)[21] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 15;
 				MasterCall(&LogicManager::CONS_Master_Arrive, "DeutschA", 6, 0, 0);
-				return;
+				break;
 			}
-		LABEL_117:
+
 			if (_gameTime > 1370700 && !getCharacterCurrentParams(kCharacterMaster)[22]) {
 				getCharacterCurrentParams(kCharacterMaster)[22] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 16;
 				MasterCall(&LogicManager::CONS_Master_Depart, "DeutschA", 0, 0, 0);
-				return;
+				break;
 			}
-		LABEL_65:
+
 			if (_gameTime > 1490400 && !getCharacterCurrentParams(kCharacterMaster)[23]) {
 				getCharacterCurrentParams(kCharacterMaster)[23] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 17;
 				MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
-				return;
+				break;
 			}
 		}
-	LABEL_120:
-		if (_gameTime <= 1493100 || getCharacterCurrentParams(kCharacterMaster)[24]) {
-		LABEL_70:
-			if (_gameTime <= 1539000 || getCharacterCurrentParams(kCharacterMaster)[25]) {
-			LABEL_123:
-				if (_gameTime <= 1541700 || getCharacterCurrentParams(kCharacterMaster)[26]) {
-				LABEL_126:
-					if (_gameTime > 1674000 && !getCharacterCurrentParams(kCharacterMaster)[27]) {
-						getCharacterCurrentParams(kCharacterMaster)[27] = 1;
-						CONS_Master_SecondSleep(0, 0, 0, 0);
-					}
-				} else {
-					getCharacterCurrentParams(kCharacterMaster)[26] = 1;
-					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 21;
-					MasterCall(&LogicManager::CONS_Master_Depart, "BadenOos", 0, 0, 0);
-				}
-			} else {
-				getCharacterCurrentParams(kCharacterMaster)[25] = 1;
-				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 20;
-				MasterCall(&LogicManager::CONS_Master_Arrive, "BadenOos", 8, 0, 0);
-			}
-		} else {
+
+		if (_gameTime > 1493100 && !getCharacterCurrentParams(kCharacterMaster)[24]) {
 			getCharacterCurrentParams(kCharacterMaster)[24] = 1;
 			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 19;
 			MasterCall(&LogicManager::CONS_Master_Depart, "Strasbou", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1539000 && !getCharacterCurrentParams(kCharacterMaster)[25]) {
+			getCharacterCurrentParams(kCharacterMaster)[25] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 20;
+			MasterCall(&LogicManager::CONS_Master_Arrive, "BadenOos", 8, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1541700 && !getCharacterCurrentParams(kCharacterMaster)[26]) {
+			getCharacterCurrentParams(kCharacterMaster)[26] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 21;
+			MasterCall(&LogicManager::CONS_Master_Depart, "BadenOos", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1674000 && !getCharacterCurrentParams(kCharacterMaster)[27]) {
+			getCharacterCurrentParams(kCharacterMaster)[27] = 1;
+			CONS_Master_SecondSleep(0, 0, 0, 0);
 		}
 
 		break;
@@ -778,14 +785,23 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 			if (getCharacter(kCharacterCath).characterPosition.location == 2) {
 				if (cathOutHisWindow()) {
 					bumpCath(kCarGreenSleeping, 49, 255);
-					goto LABEL_44;
+					_engine->getSoundManager()->startAmbient();
+					_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
+					getCharacterParams(kCharacterMaster, 8)[1] = 0;
+					break;
 				}
+
 				if (cathOutRebeccaWindow()) {
 					bumpCath(kCarRedSleeping, 49, 255);
 				} else {
 					if (getCharacter(kCharacterCath).characterPosition.car < kCarRedSleeping || getCharacter(kCharacterCath).characterPosition.car > kCarCoalTender) {
-						if (!getCharacter(kCharacterCath).characterPosition.car || getCharacter(kCharacterCath).characterPosition.car > kCarGreenSleeping)
-							goto LABEL_44;
+						if (!getCharacter(kCharacterCath).characterPosition.car || getCharacter(kCharacterCath).characterPosition.car > kCarGreenSleeping) {
+							_engine->getSoundManager()->startAmbient();
+							_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
+							getCharacterParams(kCharacterMaster, 8)[1] = 0;
+							break;
+						}
+
 						if (checkCathDir(kCarGreenSleeping, 98)) {
 							playDialog(0, "LIB015", -1, 0);
 							bumpCath(kCarGreenSleeping, 71, 255);
@@ -793,17 +809,22 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 							bumpCath(kCarGreenSleeping, 82, 255);
 						}
 
-						goto LABEL_44;
+						_engine->getSoundManager()->startAmbient();
+						_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
+						getCharacterParams(kCharacterMaster, 8)[1] = 0;
+						break;
 					}
+
 					bumpCath(kCarRestaurant, 82, 255);
 				}
 			}
-		LABEL_44:
+
 			_engine->getSoundManager()->startAmbient();
 			_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
 			getCharacterParams(kCharacterMaster, 8)[1] = 0;
-			return;
+			break;
 		}
+
 		if (getCharacterParams(kCharacterMaster, 8)[2]) {
 			_engine->getSoundManager()->startAmbient();
 			getCharacterParams(kCharacterMaster, 8)[2] = 0;
@@ -812,6 +833,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 					send(kCharacterMaster, kCharacterTrainM, 168187490, 0);
 				else
 					send(kCharacterMaster, kCharacterCond1, 224122407, 0);
+
 				getCharacterCurrentParams(kCharacterMaster)[3] = 0;
 			}
 		}
@@ -844,53 +866,329 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8]) {
 		case 1:
-			goto LABEL_75;
+			if (_gameTime > 1147500 && !getCharacterCurrentParams(kCharacterMaster)[7]) {
+				getCharacterCurrentParams(kCharacterMaster)[7] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Epernay", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 2:
-			goto LABEL_78;
+			if (_gameTime > 1150200 && !getCharacterCurrentParams(kCharacterMaster)[8]) {
+				getCharacterCurrentParams(kCharacterMaster)[8] = 1;
+				getCharacterCurrentParams(kCharacterMaster)[3] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Epernay", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 3:
-			goto LABEL_81;
+			if (getCharacterCurrentParams(kCharacterMaster)[4] && !getCharacterParams(kCharacterMaster, 8)[1]) {
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Unschedu", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 4:
-			getCharacterCurrentParams(kCharacterMaster)[4] = 0;
-			goto LABEL_57;
+			if (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] == 4) {
+				getCharacterCurrentParams(kCharacterMaster)[4] = 0;
+			}
+
+			if (_gameTime > 1170000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
+				getCharacterCurrentParams(kCharacterMaster)[9] = 1;
+				_gameProgress[kProgressField18] = 2;
+			}
+
+			if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
+				if (_gameTime > 1170000 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
+					getCharacterCurrentParams(kCharacterMaster)[10] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
+					MasterCall(&LogicManager::CONS_Master_Arrive, "Chalons", 1, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1173600 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
+					getCharacterCurrentParams(kCharacterMaster)[11] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
+					MasterCall(&LogicManager::CONS_Master_Depart, "Chalons", 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1228500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+					getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
+					MasterCall(&LogicManager::CONS_Master_Arrive, "BarLeDuc", 2, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1231200 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+					getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
+					MasterCall(&LogicManager::CONS_Master_Depart, "BarLeDuc", 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1260000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+					getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+					_gameTimeTicksDelta = 1;
+				}
+				if (_gameTime > 1303200 && !getCharacterCurrentParams(kCharacterMaster)[15]) {
+					getCharacterCurrentParams(kCharacterMaster)[15] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
+					MasterCall(&LogicManager::CONS_Master_Arrive, "Nancy", 3, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1307700 && !getCharacterCurrentParams(kCharacterMaster)[16]) {
+					getCharacterCurrentParams(kCharacterMaster)[16] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 10;
+					MasterCall(&LogicManager::CONS_Master_Depart, "Nancy", 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1335600 && !getCharacterCurrentParams(kCharacterMaster)[17]) {
+					getCharacterCurrentParams(kCharacterMaster)[17] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 11;
+					MasterCall(&LogicManager::CONS_Master_Arrive, "Luneville", 4, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1338300 && !getCharacterCurrentParams(kCharacterMaster)[18]) {
+					getCharacterCurrentParams(kCharacterMaster)[18] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 12;
+					MasterCall(&LogicManager::CONS_Master_Depart, "Luneville", 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1359900 && !getCharacterCurrentParams(kCharacterMaster)[19]) {
+					getCharacterCurrentParams(kCharacterMaster)[19] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 13;
+					MasterCall(&LogicManager::CONS_Master_Arrive, "Avricourt", 5, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1363500 && !getCharacterCurrentParams(kCharacterMaster)[20]) {
+					getCharacterCurrentParams(kCharacterMaster)[20] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 14;
+					MasterCall(&LogicManager::CONS_Master_Depart, "Avricourt", 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1367100 && !getCharacterCurrentParams(kCharacterMaster)[21]) {
+					getCharacterCurrentParams(kCharacterMaster)[21] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 15;
+					MasterCall(&LogicManager::CONS_Master_Arrive, "DeutschA", 6, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1370700 && !getCharacterCurrentParams(kCharacterMaster)[22]) {
+					getCharacterCurrentParams(kCharacterMaster)[22] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 16;
+					MasterCall(&LogicManager::CONS_Master_Depart, "DeutschA", 0, 0, 0);
+					break;
+				}
+
+				if (_gameTime > 1490400 && !getCharacterCurrentParams(kCharacterMaster)[23]) {
+					getCharacterCurrentParams(kCharacterMaster)[23] = 1;
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 17;
+					MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
+					break;
+				}
+			}
+
+			if (_gameTime > 1493100 && !getCharacterCurrentParams(kCharacterMaster)[24]) {
+				getCharacterCurrentParams(kCharacterMaster)[24] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 19;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Strasbou", 0, 0, 0);
+				break;
+			}
+
+			if (_gameTime > 1539000 && !getCharacterCurrentParams(kCharacterMaster)[25]) {
+				getCharacterCurrentParams(kCharacterMaster)[25] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 20;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "BadenOos", 8, 0, 0);
+				break;
+			}
+
+			if (_gameTime > 1541700 && !getCharacterCurrentParams(kCharacterMaster)[26]) {
+				getCharacterCurrentParams(kCharacterMaster)[26] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 21;
+				MasterCall(&LogicManager::CONS_Master_Depart, "BadenOos", 0, 0, 0);
+				break;
+			}
+
+			if (_gameTime > 1674000 && !getCharacterCurrentParams(kCharacterMaster)[27]) {
+				getCharacterCurrentParams(kCharacterMaster)[27] = 1;
+				CONS_Master_SecondSleep(0, 0, 0, 0);
+			}
+
+			break;
 		case 5:
-			goto LABEL_84;
+			if (_gameTime > 1173600 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
+				getCharacterCurrentParams(kCharacterMaster)[11] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Chalons", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 6:
-			goto LABEL_87;
+			if (_gameTime > 1228500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+				getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "BarLeDuc", 2, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 7:
-			goto LABEL_90;
+			if (_gameTime > 1231200 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+				getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
+				MasterCall(&LogicManager::CONS_Master_Depart, "BarLeDuc", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 8:
-			goto LABEL_93;
+			if (_gameTime > 1260000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+				getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+				_gameTimeTicksDelta = 1;
+			}
+
+			if (_gameTime > 1303200 && !getCharacterCurrentParams(kCharacterMaster)[15]) {
+				getCharacterCurrentParams(kCharacterMaster)[15] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Nancy", 3, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 9:
-			goto LABEL_99;
+			if (_gameTime > 1307700 && !getCharacterCurrentParams(kCharacterMaster)[16]) {
+				getCharacterCurrentParams(kCharacterMaster)[16] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 10;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Nancy", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 10:
-			goto LABEL_102;
+			if (_gameTime > 1335600 && !getCharacterCurrentParams(kCharacterMaster)[17]) {
+				getCharacterCurrentParams(kCharacterMaster)[17] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 11;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Luneville", 4, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 11:
-			goto LABEL_105;
+			if (_gameTime > 1338300 && !getCharacterCurrentParams(kCharacterMaster)[18]) {
+				getCharacterCurrentParams(kCharacterMaster)[18] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 12;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Luneville", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 12:
-			goto LABEL_108;
+			if (_gameTime > 1359900 && !getCharacterCurrentParams(kCharacterMaster)[19]) {
+				getCharacterCurrentParams(kCharacterMaster)[19] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 13;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Avricourt", 5, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 13:
-			goto LABEL_111;
+			if (_gameTime > 1363500 && !getCharacterCurrentParams(kCharacterMaster)[20]) {
+				getCharacterCurrentParams(kCharacterMaster)[20] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 14;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Avricourt", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 14:
-			goto LABEL_114;
+			if (_gameTime > 1367100 && !getCharacterCurrentParams(kCharacterMaster)[21]) {
+				getCharacterCurrentParams(kCharacterMaster)[21] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 15;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "DeutschA", 6, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 15:
-			goto LABEL_117;
+			if (_gameTime > 1370700 && !getCharacterCurrentParams(kCharacterMaster)[22]) {
+				getCharacterCurrentParams(kCharacterMaster)[22] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 16;
+				MasterCall(&LogicManager::CONS_Master_Depart, "DeutschA", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 16:
-			_gameTime = 1424700;
-			goto LABEL_65;
+			if (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] == 16) {
+				_gameTime = 1424700;
+			}
+
+			if (_gameTime > 1490400 && !getCharacterCurrentParams(kCharacterMaster)[23]) {
+				getCharacterCurrentParams(kCharacterMaster)[23] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 17;
+				MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 17:
-			_gameProgress[kProgressField18] = 1;
-			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 18;
-			MasterCall(&LogicManager::CONS_Master_Arrive, "Strasbou", 7, 0, 0);
+			if (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] == 17) {
+				_gameProgress[kProgressField18] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 18;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Strasbou", 7, 0, 0);
+			}
+
 			break;
 		case 18:
-			goto LABEL_120;
+			if (_gameTime > 1493100 && !getCharacterCurrentParams(kCharacterMaster)[24]) {
+				getCharacterCurrentParams(kCharacterMaster)[24] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 19;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Strasbou", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 19:
-			_gameTimeTicksDelta = 1;
-			goto LABEL_70;
+			if (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] == 19) {
+				_gameTimeTicksDelta = 1;
+			}
+
+			if (_gameTime > 1539000 && !getCharacterCurrentParams(kCharacterMaster)[25]) {
+				getCharacterCurrentParams(kCharacterMaster)[25] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 20;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "BadenOos", 8, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 20:
-			goto LABEL_123;
+			if (_gameTime > 1541700 && !getCharacterCurrentParams(kCharacterMaster)[26]) {
+				getCharacterCurrentParams(kCharacterMaster)[26] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 21;
+				MasterCall(&LogicManager::CONS_Master_Depart, "BadenOos", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 21:
-			goto LABEL_126;
+			if (_gameTime > 1674000 && !getCharacterCurrentParams(kCharacterMaster)[27]) {
+				getCharacterCurrentParams(kCharacterMaster)[27] = 1;
+				CONS_Master_SecondSleep(0, 0, 0, 0);
+			}
+
+			break;
 		case 22:
 			getCharacterCurrentParams(kCharacterMaster)[4] = 1;
 			break;
@@ -1069,7 +1367,7 @@ void LogicManager::HAND_Master_MovingDay(HAND_PARAMS) {
 				(getCharacterCurrentParams(kCharacterMaster)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[0],
 				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[0] != 0)) {
 				if (getCharacterCurrentParams(kCharacterMaster)[1] >= _currentGameSessionTicks)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterMaster)[1] = 0x7FFFFFFF;
 			}
@@ -1205,16 +1503,22 @@ void LogicManager::CONS_Master_MovingAfternoon(CONS_PARAMS) {
 void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
+	{
 		if (_gameProgress[kProgressIsTrainRunning]) {
+			bool skip1 = false;
+
 			if (!getCharacterCurrentParams(kCharacterMaster)[3]) {
 				getCharacterCurrentParams(kCharacterMaster)[3] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[0];
-				if (getCharacterCurrentParams(kCharacterMaster)[3] == 0)
-					goto LABEL_7;
+				if (getCharacterCurrentParams(kCharacterMaster)[3] == 0) {
+					skip1 = true;
+				}
 			}
 
-			if (getCharacterCurrentParams(kCharacterMaster)[3] < _currentGameSessionTicks) {
-				getCharacterCurrentParams(kCharacterMaster)[3] = 0x7FFFFFFF;
-			LABEL_7:
+			if (skip1 || getCharacterCurrentParams(kCharacterMaster)[3] < _currentGameSessionTicks) {
+				if (!skip1) {
+					getCharacterCurrentParams(kCharacterMaster)[3] = 0x7FFFFFFF;
+				}
+
 				switch (rnd(5)) {
 				case 0:
 					playDialog(0, "ZFX1005", rnd(15) + 2, 0);
@@ -1240,16 +1544,20 @@ void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 			}
 		}
 
+		bool skip2 = false;
+
 		if (!getCharacterCurrentParams(kCharacterMaster)[4]) {
 			getCharacterCurrentParams(kCharacterMaster)[4] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[1];
 			if (getCharacterCurrentParams(kCharacterMaster)[4] == 0) {
-				goto LABEL_18;
+				skip2 = true;
 			}
 		}
 
-		if (getCharacterCurrentParams(kCharacterMaster)[4] < _currentGameSessionTicks) {
-			getCharacterCurrentParams(kCharacterMaster)[4] = 0x7FFFFFFF;
-		LABEL_18:
+		if (skip2 || getCharacterCurrentParams(kCharacterMaster)[4] < _currentGameSessionTicks) {
+			if (!skip2) {
+				getCharacterCurrentParams(kCharacterMaster)[4] = 0x7FFFFFFF;
+			}
+
 			switch (rnd(2)) {
 			case 0:
 				playDialog(0, "ZFX1008", rnd(15) + 2, 0);
@@ -1264,73 +1572,75 @@ void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterMaster)[4] = 0;
 		}
 
-		if (_gameTime <= 1982700 || getCharacterCurrentParams(kCharacterMaster)[5]) {
-		LABEL_49:
-			if (_gameTime <= 1989900 || getCharacterCurrentParams(kCharacterMaster)[6]) {
-			LABEL_52:
-				if (_gameTime <= 2047500 || getCharacterCurrentParams(kCharacterMaster)[7]) {
-				LABEL_55:
-					if (_gameTime <= 2052900 || getCharacterCurrentParams(kCharacterMaster)[8]) {
-					LABEL_58:
-						if (_gameTime <= 2073600 || getCharacterCurrentParams(kCharacterMaster)[9]) {
-						LABEL_61:
-							if (_gameTime <= 2079900 || getCharacterCurrentParams(kCharacterMaster)[10]) {
-							LABEL_64:
-								if (_gameTime <= 2099700 || getCharacterCurrentParams(kCharacterMaster)[11]) {
-								LABEL_67:
-									if (_gameTime <= 2105100 || getCharacterCurrentParams(kCharacterMaster)[12]) {
-									LABEL_70:
-										if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
-											getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-											_gameTimeTicksDelta = 5;
-										}
-										if (_gameTime > 2268000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
-											getCharacterCurrentParams(kCharacterMaster)[14] = 1;
-											getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
-											MasterCall(&LogicManager::CONS_Master_Arrive, "Vienna", 13, 0, 0);
-										}
-									} else {
-										getCharacterCurrentParams(kCharacterMaster)[12] = 1;
-										getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
-										MasterCall(&LogicManager::CONS_Master_Depart, "Linz", 0, 0, 0);
-									}
-								} else {
-									getCharacterCurrentParams(kCharacterMaster)[11] = 1;
-									getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
-									MasterCall(&LogicManager::CONS_Master_Arrive, "Linz", 12, 0, 0);
-								}
-							} else {
-								getCharacterCurrentParams(kCharacterMaster)[10] = 1;
-								getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
-								MasterCall(&LogicManager::CONS_Master_Depart, "Wels", 0, 0, 0);
-							}
-						} else {
-							getCharacterCurrentParams(kCharacterMaster)[9] = 1;
-							getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
-							MasterCall(&LogicManager::CONS_Master_Arrive, "Wels", 11, 0, 0);
-						}
-					} else {
-						getCharacterCurrentParams(kCharacterMaster)[8] = 1;
-						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
-						MasterCall(&LogicManager::CONS_Master_Depart, "Attnang", 0, 0, 0);
-					}
-				} else {
-					getCharacterCurrentParams(kCharacterMaster)[7] = 1;
-					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
-					MasterCall(&LogicManager::CONS_Master_Arrive, "Attnang", 10, 0, 0);
-				}
-			} else {
-				getCharacterCurrentParams(kCharacterMaster)[6] = 1;
-				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
-				MasterCall(&LogicManager::CONS_Master_Depart, "Salzburg", 0, 0, 0);
-			}
-		} else {
+		if (_gameTime > 1982700 && !getCharacterCurrentParams(kCharacterMaster)[5]) {
 			getCharacterCurrentParams(kCharacterMaster)[5] = 1;
 			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
 			MasterCall(&LogicManager::CONS_Master_Arrive, "Salzburg", 9, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 1989900 && !getCharacterCurrentParams(kCharacterMaster)[6]) {
+			getCharacterCurrentParams(kCharacterMaster)[6] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
+			MasterCall(&LogicManager::CONS_Master_Depart, "Salzburg", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2047500 && !getCharacterCurrentParams(kCharacterMaster)[7]) {
+			getCharacterCurrentParams(kCharacterMaster)[7] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
+			MasterCall(&LogicManager::CONS_Master_Arrive, "Attnang", 10, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2052900 && !getCharacterCurrentParams(kCharacterMaster)[8]) {
+			getCharacterCurrentParams(kCharacterMaster)[8] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
+			MasterCall(&LogicManager::CONS_Master_Depart, "Attnang", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2073600 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
+			getCharacterCurrentParams(kCharacterMaster)[9] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
+			MasterCall(&LogicManager::CONS_Master_Arrive, "Wels", 11, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2079900 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
+			getCharacterCurrentParams(kCharacterMaster)[10] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
+			MasterCall(&LogicManager::CONS_Master_Depart, "Wels", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2099700 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
+			getCharacterCurrentParams(kCharacterMaster)[11] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
+			MasterCall(&LogicManager::CONS_Master_Arrive, "Linz", 12, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2105100 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+			getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
+			MasterCall(&LogicManager::CONS_Master_Depart, "Linz", 0, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+			getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+			_gameTimeTicksDelta = 5;
+		}
+
+		if (_gameTime > 2268000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+			getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
+			MasterCall(&LogicManager::CONS_Master_Arrive, "Vienna", 13, 0, 0);
 		}
 
 		break;
+	}
 	case 2:
 		if (getCharacterParams(kCharacterMaster, 8)[1]) {
 			send(kCharacterMaster, kCharacterClerk, 191350523, 0);
@@ -1391,21 +1701,81 @@ void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8]) {
 		case 1:
-			goto LABEL_49;
+			if (_gameTime > 1989900 && !getCharacterCurrentParams(kCharacterMaster)[6]) {
+				getCharacterCurrentParams(kCharacterMaster)[6] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Salzburg", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 2:
-			goto LABEL_52;
+			if (_gameTime > 2047500 && !getCharacterCurrentParams(kCharacterMaster)[7]) {
+				getCharacterCurrentParams(kCharacterMaster)[7] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Attnang", 10, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 3:
-			goto LABEL_55;
+			if (_gameTime > 2052900 && !getCharacterCurrentParams(kCharacterMaster)[8]) {
+				getCharacterCurrentParams(kCharacterMaster)[8] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Attnang", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 4:
-			goto LABEL_58;
+			if (_gameTime > 2073600 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
+				getCharacterCurrentParams(kCharacterMaster)[9] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Wels", 11, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 5:
-			goto LABEL_61;
+			if (_gameTime > 2079900 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
+				getCharacterCurrentParams(kCharacterMaster)[10] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Wels", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 6:
-			goto LABEL_64;
+			if (_gameTime > 2099700 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
+				getCharacterCurrentParams(kCharacterMaster)[11] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Linz", 12, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 7:
-			goto LABEL_67;
+			if (_gameTime > 2105100 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+				getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Linz", 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 8:
-			goto LABEL_70;
+			if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+				getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+				_gameTimeTicksDelta = 5;
+			}
+
+			if (_gameTime > 2268000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+				getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Vienna", 13, 0, 0);
+			}
+
+			break;
 		case 9:
 			getCharacterCurrentParams(kCharacterMaster)[2] = 1;
 			break;
@@ -1623,269 +1993,109 @@ void LogicManager::CONS_Master_MovingSecondNight(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action > 139254416) {
-			if (msg->action > 158610240) {
-				if (msg->action > 190346110) {
-					switch (msg->action) {
-					case 191001984:
-						_gameTime = 2520000;
-						if (whoRunningDialog(kCharacterMaster))
-							endDialog(kCharacterMaster);
-						endGraphics(kCharacterMaster);
-						takeCathItem(kItemTelegram);
-						_gameTimeTicksDelta = 5;
-						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 10;
-						MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventDefuseBomb, 0, 0);
-						break;
-					case 201959744:
-						if (whoRunningDialog(kCharacterMaster))
-							endDialog(kCharacterMaster);
-						playDialog(kCharacterClerk, "ZFX4001", 16, 0);
-						endGame(0, 0, 0, 1);
-						break;
-					case 225367984:
-						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
-						MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventCathDefusingBomb, 0, 0);
-						break;
-					}
-				} else if (msg->action == 190346110) {
-					_gameProgress[6] = 3;
-					getCharacterCurrentParams(kCharacterMaster)[0] = 1;
-					if (getCharacterParams(kCharacterMaster, 8)[1] || getCharacterParams(kCharacterMaster, 8)[2]) {
-						endDialog(kCharacterMaster);
-						getCharacterParams(kCharacterMaster, 8)[1] = 0;
-						getCharacterParams(kCharacterMaster, 8)[2] = 0;
-					}
-					fadeToBlack();
-					playDialog(0, "MUS008", 16, 0);
-					_inventorySelectedItemIdx = 0;
-					fadeToBlack();
-					while (dialogRunning("MUS008"))
-						_engine->getSoundManager()->soundThread();
-					if (cathHasItem(kItemBomb)) {
-						forceJump(kCharacterAlexei,   &LogicManager::CONS_Alexei_Dead);
-						forceJump(kCharacterAnna,     &LogicManager::CONS_Anna_Sulking);
-						forceJump(kCharacterAugust,   &LogicManager::CONS_August_Asleep4);
-						forceJump(kCharacterCond1,    &LogicManager::CONS_Cond1_OnDuty4);
-						forceJump(kCharacterCond2,    &LogicManager::CONS_Cond2_OnDuty4);
-						forceJump(kCharacterWaiter1,  &LogicManager::CONS_Waiter1_Serving4);
-						forceJump(kCharacterWaiter2,  &LogicManager::CONS_Waiter2_Serving4);
-						forceJump(kCharacterHeadWait, &LogicManager::CONS_HeadWait_InPart4);
-						forceJump(kCharacterTrainM,   &LogicManager::CONS_TrainM_InOffice4);
-						forceJump(kCharacterTatiana,  &LogicManager::CONS_Tatiana_Asleep4);
-						forceJump(kCharacterAbbot,    &LogicManager::CONS_Abbot_Asleep4);
-						forceJump(kCharacterMilos,    &LogicManager::CONS_Milos_EndPart4);
-						forceJump(kCharacterVesna,    &LogicManager::CONS_Vesna_EndPart4);
-						forceJump(kCharacterIvo,      &LogicManager::CONS_Ivo_EndPart4);
-						forceJump(kCharacterSalko,    &LogicManager::CONS_Salko_EndPart4);
-						forceJump(kCharacterMadame,   &LogicManager::CONS_Madame_Asleep4);
-						forceJump(kCharacterMonsieur, &LogicManager::CONS_Monsieur_Asleep4);
-						forceJump(kCharacterRebecca,  &LogicManager::CONS_Rebecca_Asleep4);
-						forceJump(kCharacterSophie,   &LogicManager::CONS_Sophie_Asleep4);
-						forceJump(kCharacterYasmin,   &LogicManager::CONS_Yasmin_Asleep4);
-						forceJump(kCharacterHadija,   &LogicManager::CONS_Hadija_Asleep4);
-						forceJump(kCharacterAlouan,   &LogicManager::CONS_Alouan_Asleep4);
-						forceJump(kCharacterMax,      &LogicManager::CONS_Max_InCageFriendly);
-
-						send(kCharacterMaster, kCharacterAnna,     201431954, 0);
-						send(kCharacterMaster, kCharacterCond1,    201431954, 0);
-						send(kCharacterMaster, kCharacterCond2,    201431954, 0);
-						send(kCharacterMaster, kCharacterWaiter1,  201431954, 0);
-						send(kCharacterMaster, kCharacterWaiter2,  201431954, 0);
-						send(kCharacterMaster, kCharacterHeadWait, 201431954, 0);
-						send(kCharacterMaster, kCharacterTrainM,   201431954, 0);
-
-						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
-						MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTylerCastleDream, 0, 0);
-					} else {
-						_gameTime = 2520000;
-						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
-						MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTrainExplosionBridge, 0, 0);
-					}
-				} else if (msg->action == 169300225) {
-					if (_gameTime < 2519100)
-						_gameTime = 2519100;
-					getCharacterCurrentParams(kCharacterMaster)[2] = 1;
-					startSeqOtis(kCharacterMaster, "BOMB");
-				}
-			} else if (msg->action == 158610240) {
-				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
-				MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
-			} else if (msg->action == 156435676) {
-				send(kCharacterMaster, kCharacterTatiana, 169360385, 0);
-				send(kCharacterMaster, kCharacterCond2, 201431954, 0);
-				send(kCharacterMaster, kCharacterTrainM, 201431954, 0);
-				_gameTimeTicksDelta = 1;
-				_gameTime = 2511900;
-				dropItem(kItem2, 1);
-				getCharacter(kCharacterMaster).characterPosition.car = 4;
-				getCharacter(kCharacterMaster).characterPosition.position = 1500;
-				getCharacter(kCharacterMaster).characterPosition.location = 1;
-				playDialog(kCharacterMaster, "ZFX1001", -1, 0);
-			}
-		} else if (msg->action == 139254416) {
-			CONS_Master_StartPart5(0, 0, 0, 0);
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8]) {
-			case 1:
-				goto LABEL_82;
-			case 2:
-				goto LABEL_85;
-			case 3:
-				goto LABEL_93;
-			case 4:
-				goto LABEL_96;
-			case 5:
-				if (whoRunningDialog(kCharacterMaster))
-					endDialog(kCharacterMaster);
-				playNIS(kEventTrainExplosionBridge);
-				endGame(0, 1, 0, 1);
-				break;
-			case 6:
-				_engine->getSoundManager()->endAmbient();
-				playNIS(kEventTylerCastleDream);
-				_engine->getSoundManager()->startAmbient();
-				_gameProgress[kProgressField18] = 1;
-				bumpCathTylerComp();
-				send(kCharacterMaster, kCharacterTatiana, 169360385, 0);
-				_gameTimeTicksDelta = 1;
-				_gameTime = 2511900;
-				dropItem(kItem2, 1);
-				takeItem(kItem22);
-				getCharacter(kCharacterMaster).characterPosition.car = 4;
-				getCharacter(kCharacterMaster).characterPosition.position = 1500;
-				getCharacter(kCharacterMaster).characterPosition.location = 1;
-				playDialog(kCharacterMaster, "ZFX1001", -1, 0);
-				break;
-			case 7:
-				playNIS(kEventTrainExplosionBridge);
-				endGame(1, 2430000, 0, 1);
-				break;
-			case 8:
-				playDialog(0, "MUS022", -1, 0);
-				if (_gameTime < 2517300)
-					_gameTime = 2517300;
-				break;
-			case 9:
-				playNIS(kEventCathDefusingBomb);
-				bumpCath(kCarRedSleeping, 73, 255);
-				break;
-			case 10:
-				playNIS(kEventDefuseBomb);
-				forceJump(kCharacterAbbot, &LogicManager::CONS_Abbot_AfterBomb);
-				send(kCharacterMaster, kCharacterAnna, 191001984, 0);
-				send(kCharacterMaster, kCharacterCond2, 191001984, 0);
-				takeItem(kItem2);
-				_gameInventory[kItem2].location = 0;
-				getCharacterCurrentParams(kCharacterMaster)[1] = 1;
-				bumpCath(kCarRedSleeping, 2, 255);
-				break;
-			case 11:
-				bumpCath(kCarRedSleeping, 74, 255);
-				playDialog(kCharacterClerk, "ZFX4001", 16, 0);
-				endGame(0, 1, 0, 1);
-				break;
-			default:
-				return;
-			}
-		}
-		return;
-	}
-	if (msg->action == 12) {
-		getCharacterCurrentParams(kCharacterMaster)[3] = 225 * (4 * rnd(5) + 20);
-		getCharacterCurrentParams(kCharacterMaster)[4] = 225 * (4 * rnd(6) + 8);
-		return;
-	}
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
+	{
+		bool skip = false;
 		if (_gameProgress[kProgressIsTrainRunning]) {
 			if (getCharacterCurrentParams(kCharacterMaster)[5] ||
 				(getCharacterCurrentParams(kCharacterMaster)[5] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[3], _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[3] != 0)) {
-				if (getCharacterCurrentParams(kCharacterMaster)[5] >= _currentGameSessionTicks)
-					goto LABEL_35;
-				getCharacterCurrentParams(kCharacterMaster)[5] = 0x7FFFFFFF;
-			}
-			switch (rnd(5)) {
-			case 0:
-				playDialog(0, "ZFX1005", rnd(15) + 2, 0);
-				break;
-			case 1:
-				playDialog(0, "ZFX1006", rnd(15) + 2, 0);
-				break;
-			case 2:
-				playDialog(0, "ZFX1007", rnd(15) + 2, 0);
-				break;
-			case 3:
-				playDialog(0, "ZFX1007A", rnd(15) + 2, 0);
-				break;
-			case 4:
-				playDialog(0, "ZFX1007B", rnd(15) + 2, 0);
-				break;
-			default:
-				break;
+				if (getCharacterCurrentParams(kCharacterMaster)[5] >= _currentGameSessionTicks) {
+					skip = true;
+				}
+
+				if (!skip) {
+					getCharacterCurrentParams(kCharacterMaster)[5] = 0x7FFFFFFF;
+				}
 			}
 
-			getCharacterCurrentParams(kCharacterMaster)[3] = 225 * (4 * rnd(5) + 20);
-			getCharacterCurrentParams(kCharacterMaster)[5] = 0;
+			if (!skip) {
+				switch (rnd(5)) {
+				case 0:
+					playDialog(0, "ZFX1005", rnd(15) + 2, 0);
+					break;
+				case 1:
+					playDialog(0, "ZFX1006", rnd(15) + 2, 0);
+					break;
+				case 2:
+					playDialog(0, "ZFX1007", rnd(15) + 2, 0);
+					break;
+				case 3:
+					playDialog(0, "ZFX1007A", rnd(15) + 2, 0);
+					break;
+				case 4:
+					playDialog(0, "ZFX1007B", rnd(15) + 2, 0);
+					break;
+				default:
+					break;
+				}
+
+				getCharacterCurrentParams(kCharacterMaster)[3] = 225 * (4 * rnd(5) + 20);
+				getCharacterCurrentParams(kCharacterMaster)[5] = 0;
+			}
 		}
-	LABEL_35:
+
 		if (getCharacterCurrentParams(kCharacterMaster)[6] ||
 			(getCharacterCurrentParams(kCharacterMaster)[6] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[4], _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[4] != 0)) {
 			if (getCharacterCurrentParams(kCharacterMaster)[6] >= _currentGameSessionTicks) {
-			LABEL_45:
 				if (_gameTime > 2381400 && !getCharacterCurrentParams(kCharacterMaster)[7]) {
 					getCharacterCurrentParams(kCharacterMaster)[7] = 1;
 					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
 					MasterCall(&LogicManager::CONS_Master_Arrive, "Pozsony", 14, 0, 0);
-					return;
+					break;
 				}
-			LABEL_82:
+
 				if (_gameTime > 2386800 && !getCharacterCurrentParams(kCharacterMaster)[8]) {
 					getCharacterCurrentParams(kCharacterMaster)[8] = 1;
 					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
 					MasterCall(&LogicManager::CONS_Master_Depart, "Pozsony", 0, 0, 0);
-					return;
+					break;
 				}
-			LABEL_85:
+	
 				if (getModel(1) == 1 && _gameTime > 2403000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
 					getCharacterCurrentParams(kCharacterMaster)[9] = 1;
-					_gameProgress[6] = 2;
+					_gameProgress[kProgressField18] = 2;
 				}
-				if (getCharacterCurrentParams(kCharacterMaster)[0])
-					goto LABEL_96;
-				if (_gameTime > 2416500 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
-					getCharacterCurrentParams(kCharacterMaster)[10] = 1;
-					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
-					MasterCall(&LogicManager::CONS_Master_Arrive, "Galanta", 15, 0, 0);
-					return;
+
+				if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
+					if (_gameTime > 2416500 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
+						getCharacterCurrentParams(kCharacterMaster)[10] = 1;
+						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
+						MasterCall(&LogicManager::CONS_Master_Arrive, "Galanta", 15, 0, 0);
+						break;
+					}
+
+					if (_gameTime > 2421900 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
+						getCharacterCurrentParams(kCharacterMaster)[11] = 1;
+						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
+						MasterCall(&LogicManager::CONS_Master_Depart, "Galanta", 0, 0, 0);
+						break;
+					}
 				}
-			LABEL_93:
-				if (_gameTime <= 2421900 || getCharacterCurrentParams(kCharacterMaster)[11]) {
-				LABEL_96:
-					if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
-						getCharacterCurrentParams(kCharacterMaster)[12] = 1;
-						if (_gameProgress[kProgressField18] == 2)
-							_gameTimeTicksDelta = 1;
-					}
-					if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
-						getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-						if (_gameProgress[kProgressField18] == 2)
-							_gameProgress[kProgressField18] = 1;
-					}
-					if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
-						getCharacterCurrentParams(kCharacterMaster)[14] = 1;
-						if (!getCharacterCurrentParams(kCharacterMaster)[1] && !getCharacterCurrentParams(kCharacterMaster)[2]) {
-							getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
-							MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTrainExplosionBridge, 0, 0);
-						}
-					}
-				} else {
-					getCharacterCurrentParams(kCharacterMaster)[11] = 1;
-					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
-					MasterCall(&LogicManager::CONS_Master_Depart, "Galanta", 0, 0, 0);
+
+				if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+					getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+					if (_gameProgress[kProgressField18] == 2)
+						_gameTimeTicksDelta = 1;
 				}
-				return;
+
+				if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+					getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+					if (_gameProgress[kProgressField18] == 2)
+						_gameProgress[kProgressField18] = 1;
+				}
+
+				if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+					getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+					if (!getCharacterCurrentParams(kCharacterMaster)[1] && !getCharacterCurrentParams(kCharacterMaster)[2]) {
+						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
+						MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTrainExplosionBridge, 0, 0);
+					}
+				}
+
+				break;
 			}
+
 			getCharacterCurrentParams(kCharacterMaster)[6] = 0x7FFFFFFF;
 		}
 
@@ -1901,64 +2111,374 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 
 		getCharacterCurrentParams(kCharacterMaster)[4] = 225 * (4 * rnd(6) + 8);
 		getCharacterCurrentParams(kCharacterMaster)[6] = 0;
-		goto LABEL_45;
-	}
-	if (msg->action != 2) {
-		if (msg->action == 3) {
-			endGraphics(kCharacterMaster);
-			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 11;
-			MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
-		}
-		return;
-	}
-	if (getCharacterParams(kCharacterMaster, 8)[1]) {
-		send(kCharacterMaster, kCharacterClerk, 191350523, 0);
-		if (getCharacter(kCharacterCath).characterPosition.location == 2) {
-			if (cathOutHisWindow()) {
-				bumpCath(kCarGreenSleeping, 49, 255);
-				_engine->getSoundManager()->startAmbient();
-				_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
-				getCharacterParams(kCharacterMaster, 8)[1] = 0;
-				return;
-			}
-			if (cathOutRebeccaWindow()) {
-				bumpCath(kCarRedSleeping, 49, 255);
-			} else {
-				if (getCharacter(kCharacterCath).characterPosition.car < 4 || getCharacter(kCharacterCath).characterPosition.car > 7) {
-					if (!getCharacter(kCharacterCath).characterPosition.car || getCharacter(kCharacterCath).characterPosition.car > 3) {
-						_engine->getSoundManager()->startAmbient();
-						_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
-						getCharacterParams(kCharacterMaster, 8)[1] = 0;
-						return;
-					}
 
-					if (checkCathDir(kCarGreenSleeping, 98)) {
-						playDialog(0, "LIB015", -1, 0);
-						bumpCath(kCarGreenSleeping, 71, 255);
-					} else {
-						bumpCath(kCarGreenSleeping, 82, 255);
-					}
-					
+		if (_gameTime > 2381400 && !getCharacterCurrentParams(kCharacterMaster)[7]) {
+			getCharacterCurrentParams(kCharacterMaster)[7] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
+			MasterCall(&LogicManager::CONS_Master_Arrive, "Pozsony", 14, 0, 0);
+			break;
+		}
+
+		if (_gameTime > 2386800 && !getCharacterCurrentParams(kCharacterMaster)[8]) {
+			getCharacterCurrentParams(kCharacterMaster)[8] = 1;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
+			MasterCall(&LogicManager::CONS_Master_Depart, "Pozsony", 0, 0, 0);
+			break;
+		}
+
+		if (getModel(1) == 1 && _gameTime > 2403000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
+			getCharacterCurrentParams(kCharacterMaster)[9] = 1;
+			_gameProgress[kProgressField18] = 2;
+		}
+
+		if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
+			if (_gameTime > 2416500 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
+				getCharacterCurrentParams(kCharacterMaster)[10] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Galanta", 15, 0, 0);
+				break;
+			}
+
+			if (_gameTime > 2421900 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
+				getCharacterCurrentParams(kCharacterMaster)[11] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Galanta", 0, 0, 0);
+				break;
+			}
+		}
+
+		if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+			getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+			if (_gameProgress[kProgressField18] == 2)
+				_gameTimeTicksDelta = 1;
+		}
+
+		if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+			getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+			if (_gameProgress[kProgressField18] == 2)
+				_gameProgress[kProgressField18] = 1;
+		}
+
+		if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+			getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+			if (!getCharacterCurrentParams(kCharacterMaster)[1] && !getCharacterCurrentParams(kCharacterMaster)[2]) {
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
+				MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTrainExplosionBridge, 0, 0);
+			}
+		}
+
+		break;
+	}
+	case 2:
+		if (getCharacterParams(kCharacterMaster, 8)[1]) {
+			send(kCharacterMaster, kCharacterClerk, 191350523, 0);
+			if (getCharacter(kCharacterCath).characterPosition.location == 2) {
+				if (cathOutHisWindow()) {
+					bumpCath(kCarGreenSleeping, 49, 255);
 					_engine->getSoundManager()->startAmbient();
 					_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
 					getCharacterParams(kCharacterMaster, 8)[1] = 0;
-					return;
+					break;
 				}
 
-				bumpCath(kCarRestaurant, 82, 255);
+				if (cathOutRebeccaWindow()) {
+					bumpCath(kCarRedSleeping, 49, 255);
+				} else {
+					if (getCharacter(kCharacterCath).characterPosition.car < 4 || getCharacter(kCharacterCath).characterPosition.car > 7) {
+						if (!getCharacter(kCharacterCath).characterPosition.car || getCharacter(kCharacterCath).characterPosition.car > 3) {
+							_engine->getSoundManager()->startAmbient();
+							_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
+							getCharacterParams(kCharacterMaster, 8)[1] = 0;
+							break;
+						}
+
+						if (checkCathDir(kCarGreenSleeping, 98)) {
+							playDialog(0, "LIB015", -1, 0);
+							bumpCath(kCarGreenSleeping, 71, 255);
+						} else {
+							bumpCath(kCarGreenSleeping, 82, 255);
+						}
+
+						_engine->getSoundManager()->startAmbient();
+						_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
+						getCharacterParams(kCharacterMaster, 8)[1] = 0;
+						break;
+					}
+
+					bumpCath(kCarRestaurant, 82, 255);
+				}
 			}
+
+			_engine->getSoundManager()->startAmbient();
+			_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
+			getCharacterParams(kCharacterMaster, 8)[1] = 0;
+			break;
 		}
 
-		_engine->getSoundManager()->startAmbient();
-		_engine->getSoundManager()->startSteam(getCharacterParams(kCharacterMaster, 8)[3]);
-		getCharacterParams(kCharacterMaster, 8)[1] = 0;
-		return;
-	}
-	if (getCharacterParams(kCharacterMaster, 8)[2]) {
-		_engine->getSoundManager()->startAmbient();
-		getCharacterParams(kCharacterMaster, 8)[2] = 0;
-	} else if (!getCharacterCurrentParams(kCharacterMaster)[1] && !getCharacterCurrentParams(kCharacterMaster)[2]) {
+		if (getCharacterParams(kCharacterMaster, 8)[2]) {
+			_engine->getSoundManager()->startAmbient();
+			getCharacterParams(kCharacterMaster, 8)[2] = 0;
+		} else if (!getCharacterCurrentParams(kCharacterMaster)[1] && !getCharacterCurrentParams(kCharacterMaster)[2]) {
+			playDialog(kCharacterMaster, "ZFX1001", -1, 0);
+		}
+
+		break;
+	case 3:
+		endGraphics(kCharacterMaster);
+		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 11;
+		MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
+		break;
+	case 12:
+		getCharacterCurrentParams(kCharacterMaster)[3] = 225 * (4 * rnd(5) + 20);
+		getCharacterCurrentParams(kCharacterMaster)[4] = 225 * (4 * rnd(6) + 8);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8]) {
+		case 1:
+			if (_gameTime > 2386800 && !getCharacterCurrentParams(kCharacterMaster)[8]) {
+				getCharacterCurrentParams(kCharacterMaster)[8] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Pozsony", 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 2:
+			if (getModel(1) == 1 && _gameTime > 2403000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
+				getCharacterCurrentParams(kCharacterMaster)[9] = 1;
+				_gameProgress[kProgressField18] = 2;
+			}
+
+			if (getCharacterCurrentParams(kCharacterMaster)[0]) {
+				if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+					getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+					if (_gameProgress[kProgressField18] == 2)
+						_gameTimeTicksDelta = 1;
+				}
+
+				if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+					getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+					if (_gameProgress[kProgressField18] == 2)
+						_gameProgress[kProgressField18] = 1;
+				}
+
+				if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+					getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+					if (!getCharacterCurrentParams(kCharacterMaster)[1] && !getCharacterCurrentParams(kCharacterMaster)[2]) {
+						getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
+						MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTrainExplosionBridge, 0, 0);
+					}
+				}
+
+				break;
+			}
+
+			if (_gameTime > 2416500 && !getCharacterCurrentParams(kCharacterMaster)[10]) {
+				getCharacterCurrentParams(kCharacterMaster)[10] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 3;
+				MasterCall(&LogicManager::CONS_Master_Arrive, "Galanta", 15, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 3:
+			if (_gameTime > 2421900 && !getCharacterCurrentParams(kCharacterMaster)[11]) {
+				getCharacterCurrentParams(kCharacterMaster)[11] = 1;
+				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 4;
+				MasterCall(&LogicManager::CONS_Master_Depart, "Galanta", 0, 0, 0);
+				break;
+			}
+
+			// fall through
+		case 4:
+			if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
+				getCharacterCurrentParams(kCharacterMaster)[12] = 1;
+				if (_gameProgress[kProgressField18] == 2)
+					_gameTimeTicksDelta = 1;
+			}
+
+			if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
+				getCharacterCurrentParams(kCharacterMaster)[13] = 1;
+				if (_gameProgress[kProgressField18] == 2)
+					_gameProgress[kProgressField18] = 1;
+			}
+
+			if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
+				getCharacterCurrentParams(kCharacterMaster)[14] = 1;
+				if (!getCharacterCurrentParams(kCharacterMaster)[1] && !getCharacterCurrentParams(kCharacterMaster)[2]) {
+					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 5;
+					MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTrainExplosionBridge, 0, 0);
+				}
+			}
+
+			break;
+		case 5:
+			if (whoRunningDialog(kCharacterMaster))
+				endDialog(kCharacterMaster);
+
+			playNIS(kEventTrainExplosionBridge);
+			endGame(0, 1, 0, true);
+			break;
+		case 6:
+			_engine->getSoundManager()->endAmbient();
+			playNIS(kEventTylerCastleDream);
+			_engine->getSoundManager()->startAmbient();
+			_gameProgress[kProgressField18] = 1;
+			bumpCathTylerComp();
+			send(kCharacterMaster, kCharacterTatiana, 169360385, 0);
+			_gameTimeTicksDelta = 1;
+			_gameTime = 2511900;
+			dropItem(kItem2, 1);
+			takeItem(kItem22);
+			getCharacter(kCharacterMaster).characterPosition.car = 4;
+			getCharacter(kCharacterMaster).characterPosition.position = 1500;
+			getCharacter(kCharacterMaster).characterPosition.location = 1;
+			playDialog(kCharacterMaster, "ZFX1001", -1, 0);
+			break;
+		case 7:
+			playNIS(kEventTrainExplosionBridge);
+			endGame(1, 2430000, 0, true);
+			break;
+		case 8:
+			playDialog(0, "MUS022", -1, 0);
+			if (_gameTime < 2517300)
+				_gameTime = 2517300;
+
+			break;
+		case 9:
+			playNIS(kEventCathDefusingBomb);
+			bumpCath(kCarRedSleeping, 73, 255);
+			break;
+		case 10:
+			playNIS(kEventDefuseBomb);
+			forceJump(kCharacterAbbot, &LogicManager::CONS_Abbot_AfterBomb);
+			send(kCharacterMaster, kCharacterAnna, 191001984, 0);
+			send(kCharacterMaster, kCharacterCond2, 191001984, 0);
+			takeItem(kItem2);
+			_gameInventory[kItem2].location = 0;
+			getCharacterCurrentParams(kCharacterMaster)[1] = 1;
+			bumpCath(kCarRedSleeping, 2, 255);
+			break;
+		case 11:
+			bumpCath(kCarRedSleeping, 74, 255);
+			playDialog(kCharacterClerk, "ZFX4001", 16, 0);
+			endGame(0, 1, 0, true);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 139254416:
+		CONS_Master_StartPart5(0, 0, 0, 0);
+		break;
+	case 156435676:
+		send(kCharacterMaster, kCharacterTatiana, 169360385, 0);
+		send(kCharacterMaster, kCharacterCond2, 201431954, 0);
+		send(kCharacterMaster, kCharacterTrainM, 201431954, 0);
+		_gameTimeTicksDelta = 1;
+		_gameTime = 2511900;
+		dropItem(kItem2, 1);
+		getCharacter(kCharacterMaster).characterPosition.car = 4;
+		getCharacter(kCharacterMaster).characterPosition.position = 1500;
+		getCharacter(kCharacterMaster).characterPosition.location = 1;
 		playDialog(kCharacterMaster, "ZFX1001", -1, 0);
+		break;
+	case 158610240:
+		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 8;
+		MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
+		break;
+	case 169300225:
+		if (_gameTime < 2519100)
+			_gameTime = 2519100;
+
+		getCharacterCurrentParams(kCharacterMaster)[2] = 1;
+		startSeqOtis(kCharacterMaster, "BOMB");
+		break;
+	case 190346110:
+		_gameProgress[kProgressField18] = 3;
+		getCharacterCurrentParams(kCharacterMaster)[0] = 1;
+		if (getCharacterParams(kCharacterMaster, 8)[1] || getCharacterParams(kCharacterMaster, 8)[2]) {
+			endDialog(kCharacterMaster);
+			getCharacterParams(kCharacterMaster, 8)[1] = 0;
+			getCharacterParams(kCharacterMaster, 8)[2] = 0;
+		}
+
+		fadeToBlack();
+		playDialog(0, "MUS008", 16, 0);
+		_inventorySelectedItemIdx = 0;
+		fadeToBlack();
+
+		while (dialogRunning("MUS008"))
+			_engine->getSoundManager()->soundThread();
+
+		if (cathHasItem(kItemBomb)) {
+			forceJump(kCharacterAlexei, &LogicManager::CONS_Alexei_Dead);
+			forceJump(kCharacterAnna, &LogicManager::CONS_Anna_Sulking);
+			forceJump(kCharacterAugust, &LogicManager::CONS_August_Asleep4);
+			forceJump(kCharacterCond1, &LogicManager::CONS_Cond1_OnDuty4);
+			forceJump(kCharacterCond2, &LogicManager::CONS_Cond2_OnDuty4);
+			forceJump(kCharacterWaiter1, &LogicManager::CONS_Waiter1_Serving4);
+			forceJump(kCharacterWaiter2, &LogicManager::CONS_Waiter2_Serving4);
+			forceJump(kCharacterHeadWait, &LogicManager::CONS_HeadWait_InPart4);
+			forceJump(kCharacterTrainM, &LogicManager::CONS_TrainM_InOffice4);
+			forceJump(kCharacterTatiana, &LogicManager::CONS_Tatiana_Asleep4);
+			forceJump(kCharacterAbbot, &LogicManager::CONS_Abbot_Asleep4);
+			forceJump(kCharacterMilos, &LogicManager::CONS_Milos_EndPart4);
+			forceJump(kCharacterVesna, &LogicManager::CONS_Vesna_EndPart4);
+			forceJump(kCharacterIvo, &LogicManager::CONS_Ivo_EndPart4);
+			forceJump(kCharacterSalko, &LogicManager::CONS_Salko_EndPart4);
+			forceJump(kCharacterMadame, &LogicManager::CONS_Madame_Asleep4);
+			forceJump(kCharacterMonsieur, &LogicManager::CONS_Monsieur_Asleep4);
+			forceJump(kCharacterRebecca, &LogicManager::CONS_Rebecca_Asleep4);
+			forceJump(kCharacterSophie, &LogicManager::CONS_Sophie_Asleep4);
+			forceJump(kCharacterYasmin, &LogicManager::CONS_Yasmin_Asleep4);
+			forceJump(kCharacterHadija, &LogicManager::CONS_Hadija_Asleep4);
+			forceJump(kCharacterAlouan, &LogicManager::CONS_Alouan_Asleep4);
+			forceJump(kCharacterMax, &LogicManager::CONS_Max_InCageFriendly);
+
+			send(kCharacterMaster, kCharacterAnna, 201431954, 0);
+			send(kCharacterMaster, kCharacterCond1, 201431954, 0);
+			send(kCharacterMaster, kCharacterCond2, 201431954, 0);
+			send(kCharacterMaster, kCharacterWaiter1, 201431954, 0);
+			send(kCharacterMaster, kCharacterWaiter2, 201431954, 0);
+			send(kCharacterMaster, kCharacterHeadWait, 201431954, 0);
+			send(kCharacterMaster, kCharacterTrainM, 201431954, 0);
+
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 6;
+			MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTylerCastleDream, 0, 0);
+		} else {
+			_gameTime = 2520000;
+			getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 7;
+			MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventTrainExplosionBridge, 0, 0);
+		}
+
+		break;
+	case 191001984:
+		_gameTime = 2520000;
+
+		if (whoRunningDialog(kCharacterMaster))
+			endDialog(kCharacterMaster);
+
+		endGraphics(kCharacterMaster);
+		takeCathItem(kItemTelegram);
+		_gameTimeTicksDelta = 5;
+		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 10;
+		MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventDefuseBomb, 0, 0);
+		break;
+	case 201959744:
+		if (whoRunningDialog(kCharacterMaster))
+			endDialog(kCharacterMaster);
+
+		playDialog(kCharacterClerk, "ZFX4001", 16, 0);
+		endGame(0, 0, 0, true);
+		break;
+	case 225367984:
+		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 9;
+		MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventCathDefusingBomb, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
