@@ -360,7 +360,7 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 		const Common::Path filename(entry.getPath().relativeTo(gamePath));
 		auto macFile = Common::MacResManager();
 
-		if (macFile.open(filename)) {
+		if (macFile.open(filename) && macFile.isMacFile()) {
 			auto dataForkStream = macFile.openFileOrDataFork(filename);
 
 			Common::Array<Common::String> fileChecksum = {filename.toString()};
