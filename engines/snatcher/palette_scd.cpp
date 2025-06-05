@@ -46,7 +46,7 @@ public:
 	void processEventQueue() override;
 	void clearEvents() override;
 	void setDefaults(int mode) override;
-	void updateSystemPalette() override;
+	void update() override;
 	void hINTCallback(void *segaRenderer) override;
 	const uint8 *getSystemPalette() const override { return _sysPalette; }
 
@@ -57,6 +57,8 @@ public:
 	void adjustColor(int index, int8 r, int8 g, int8 b) override;
 
 private:
+	void updateSystemPalette();
+
 	typedef Common::Functor1Mem<PalEventSCD*, void, SCDPalette> EventProc;
 	Common::Array<EventProc*> _eventProcs;
 
@@ -88,12 +90,13 @@ private:
 
 	void setHINTHandler(uint8 num);
 
-	void hIntHandler_00(Graphics::SegaRenderer *sr);
+	void hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer *sr);
 	void hIntHandler_23(Graphics::SegaRenderer *sr);
+	int _transitionStep;
 };
 
 SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) : Palette(pxf, pm, state), _eventProcs(),
-	_eventQueue(nullptr), _eventCurPos(nullptr), _colors(nullptr), _colors2(nullptr), _sysPalette(nullptr), _hINTHandler(nullptr) {
+	_eventQueue(nullptr), _eventCurPos(nullptr), _colors(nullptr), _colors2(nullptr), _sysPalette(nullptr), _hINTHandler(nullptr), _transitionStep(0) {
 
 #define P_OP(a)	_eventProcs.push_back(new EventProc(this, &SCDPalette::event_##a));
 	_eventProcs.push_back(nullptr);
@@ -110,7 +113,7 @@ SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, Gra
 #undef P_OP
 
 	_hINTProcs.resize(24);
-	_hINTProcs[0] = new HINTFunc(this, &SCDPalette::hIntHandler_00);
+	_hINTProcs[0] = new HINTFunc(this, &SCDPalette::hIntHandler_characterChatPortraitPalette);
 	_hINTProcs[23] = new HINTFunc(this, &SCDPalette::hIntHandler_23);
 
 	_eventQueue = _eventCurPos = new PalEventSCD[12];
@@ -251,18 +254,22 @@ void SCDPalette::adjustColor(int index, int8 r, int8 g, int8 b) {
 	_gfxState.setFlag(7, 0);
 }
 
-void SCDPalette::updateSystemPalette() {
+void SCDPalette::update() {
 	if (!_gfxState.getVar(7) && !_gfxState.getVar(11))
 		return;
 
 	if (_gfxState.getVar(11) == 0xFF) {
 		_gfxState.setFlag(7, 0);
 		_gfxState.setVar(11, 0);
-		// hint set
+	} else if (_gfxState.getVar(11)) {
+		setHINTHandler(0);;
 	}
 
-	if (_gfxState.testFlag(7, 0))
+	bool palChanged = false;
+	if (_gfxState.testFlag(7, 0) || _gfxState.getVar(11)) {
 		Common::copy<const uint16*, uint16*>(_colors, &_colors[64], _colors2);
+		palChanged = true;
+	}
 
 	if (_gfxState.testFlag(7, 1))
 		Common::copy<const uint16*, uint16*>(&_colors[64], &_colors[128], &_colors2[64]);
@@ -274,15 +281,29 @@ void SCDPalette::updateSystemPalette() {
 		Common::fill<uint16*, uint16>(_colors2, &_colors2[64], 0xEEE);
 		_gfxState.setFlag(7, 0);
 		_gfxState.clearFlag(7, 2);
+		palChanged = true;
 	}
 
-	const uint16 *src = &_colors2[0 << 6];
+	if (palChanged)
+		updateSystemPalette();
+}
+
+void SCDPalette::hINTCallback(void *segaRenderer) {
+	Graphics::SegaRenderer *sr = static_cast<Graphics::SegaRenderer*>(segaRenderer);
+	if (_gfxState.getVar(11) && _hINTHandler && _hINTHandler->isValid()) {
+		(*_hINTHandler)(sr);
+		updateSystemPalette();
+		sr->setRenderColorTable(_sysPalette, 0, 64);
+	}
+}
+
+void SCDPalette::updateSystemPalette() {
+	const uint16 *src = _colors2;
 	uint8 *dst = _sysPalette;
 
 	// R: bits 1, 2, 3   G: bits 5, 6, 7   B: bits 9, 10, 11
 	for (int i = 0; i < 64; ++i) {
 		uint16 in = *src++;
-		//_segaCurPalette[dstPalID << 4 | i] = in;
 #if 0
 		static const uint8 col[8] = { 0, 52, 87, 116, 144, 172, 206, 255 };
 		*dst++ = col[(in & 0x00F) >> 1];
@@ -297,13 +318,6 @@ void SCDPalette::updateSystemPalette() {
 
 	if (_pixelFormat.bytesPerPixel == 1)
 		_palMan->setPalette(_sysPalette, 0, 256);
-}
-
-void SCDPalette::hINTCallback(void *segaRenderer) {
-	Graphics::SegaRenderer *sr = static_cast<Graphics::SegaRenderer *>(segaRenderer);
-
-
-	sr->setRenderColorTable(_sysPalette, 0, 64);
 }
 
 void SCDPalette::event_palSet(PalEventSCD *evt) {
@@ -485,13 +499,18 @@ void SCDPalette::setHINTHandler(uint8 num) {
 		_hINTHandler = _hINTProcs[num];
 	 else
 		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
+	_transitionStep = 0;
 }
 
-void SCDPalette::hIntHandler_00(Graphics::SegaRenderer *segaRenderer) {
-	
+void SCDPalette::hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer *sr) {
+	if (_transitionStep++ != 136)
+		return;
+	Common::copy<const uint16*, uint16*>(&_colors2[80], &_colors2[128], &_colors2[16]);
+	sr->hINT_setCounter(255);
+	sr->hINT_enable(false);
 }
 
-void SCDPalette::hIntHandler_23(Graphics::SegaRenderer *segaRenderer) {
+void SCDPalette::hIntHandler_23(Graphics::SegaRenderer *sr) {
 	
 }
 

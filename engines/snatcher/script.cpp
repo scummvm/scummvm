@@ -26,22 +26,20 @@
 #include "snatcher/script.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
+#include "snatcher/ui.h"
+#include "snatcher/util.h"
 
 
 namespace Snatcher {
 
-CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(0), _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0), _sceneId(0),
-	_textLineBreak(0), _counter(0), _opcodes(), _textBuffer(nullptr), _textColor(0), /*_makestrbt1(0),*/ _textY(0), _textY2(0), _sceneTextOffsCur(0), _textLineEnd(0),
-		_sceneInfo(0), _sceneTextOffset(0), _sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0) {
+CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(0), _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0),  _counter(0), _opcodes() {
 	_data = new uint16[256]();
-	_textBuffer = new uint8[0x100]();
 	makeFunctions();
 	reset();
 }
 
 CmdQueue::~CmdQueue() {
 	delete[] _data;
-	delete[] _textBuffer;
 	for (Common::Array<CmdQueOpcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++ i)
 		delete *i;
 }
@@ -62,7 +60,7 @@ void CmdQueue::writeUInt32(uint32 val) {
 	_writePos += 2;
 }
 
-void CmdQueue::run(GameState &state) {
+void CmdQueue::run() {
 	if (!_enable)
 		return;
 
@@ -73,7 +71,7 @@ void CmdQueue::run(GameState &state) {
 		}
 
 		if (_currentOpcode < _opcodes.size() && _opcodes[_currentOpcode]->isValid())
-			(*_opcodes[_currentOpcode])(state, _readPos);
+			(*_opcodes[_currentOpcode])(_readPos);
 		else
 			error("%s(): Invalid opcode %d", __FUNCTION__, _currentOpcode);
 	} while (_currentOpcode != 0 && _progress == -1);
@@ -81,7 +79,7 @@ void CmdQueue::run(GameState &state) {
 
 void CmdQueue::makeFunctions() {
 #define OP(x) &CmdQueue::m_##x
-	typedef void (CmdQueue::*SFunc)(GameState &state, const uint16*&);
+	typedef void (CmdQueue::*SFunc)(const uint16*&);
 	static const SFunc funcTbl[] = {
 		OP(end),
 		OP(initAnimations),
@@ -95,8 +93,8 @@ void CmdQueue::makeFunctions() {
 		OP(animOps),
 		OP(pcmWait),
 		OP(11),
-		OP(12),
-		OP(mmSeq),
+		OP(pcmSound),
+		OP(chatWithPortraitAnim),
 		OP(14),
 		OP(gfxReset),
 		OP(waitFrames),
@@ -104,21 +102,21 @@ void CmdQueue::makeFunctions() {
 		OP(gfxStart),
 		OP(fmMusicWait),
 		OP(20),
-		OP(21),
+		OP(invItemCloseUp),
 		OP(resetTextFields),
 		OP(23),
 		OP(24),
 		OP(25),
 		OP(26),
 		OP(27),
-		OP(28),
-		OP(29),
+		OP(fmSoundEffect),
+		OP(pcmBlock),
 		OP(30),
 		OP(31),
 		OP(32),
 		OP(33),
 		OP(palOps),
-		OP(35)
+		OP(clearJordanInputField)
 	};
 #undef OP
 
@@ -126,11 +124,11 @@ void CmdQueue::makeFunctions() {
 		_opcodes.push_back(new CmdQueOpcode(this, funcTbl[i]));
 }
 
-void CmdQueue::m_end(GameState &state, const uint16 *&data) {
+void CmdQueue::m_end(const uint16 *&data) {
 	reset();
 }
 
-void CmdQueue::m_initAnimations(GameState &state, const uint16 *&data) {
+void CmdQueue::m_initAnimations(const uint16 *&data) {
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
 	data += 2;
 	ResourcePointer in = (addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
@@ -149,24 +147,26 @@ void CmdQueue::m_initAnimations(GameState &state, const uint16 *&data) {
 		return;
 	}
 
-	_vm->gfx()->initAnimations(in, len);
+	_vm->gfx()->initAnimations(in, len, false);
 	_progress = -1;
 }
 
-void CmdQueue::m_02(GameState &state, const uint16 *&data) {
+void CmdQueue::m_02(const uint16 *&data) {
 }
 
-void CmdQueue::m_drawCommands(GameState &state, const uint16 *&data) {
+void CmdQueue::m_drawCommands(const uint16 *&data) {
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
 	data += 2;
 	_vm->gfx()->enqueueDrawCommands(addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
 	_progress = -1;
 }
 
-void CmdQueue::m_04(GameState &state, const uint16 *&data) {
+void CmdQueue::m_04(const uint16 *&data) {
+	_vm->sound()->fmBlock(true);
+	_progress = -1;
 }
 
-void CmdQueue::m_printText(GameState &state, const uint16 *&data) {
+void CmdQueue::m_printText(const uint16 *&data) {
 	if (_vm->gfx()->isTextInQueue())
 		return;
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
@@ -175,132 +175,23 @@ void CmdQueue::m_printText(GameState &state, const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_06(GameState &state, const uint16 *&data) {
+void CmdQueue::m_06(const uint16 *&data) {
 }
 
-void CmdQueue::m_fmMusicStart(GameState &state, const uint16 *&data) {
+void CmdQueue::m_fmMusicStart(const uint16 *&data) {
 	uint8 cmd = *data++;
-	_vm->sound()->fmSendCommand(cmd, 1);
-	_vm->sound()->_fmPlayingTracks.music = (cmd == 0xFF) ? 0 : cmd;
+	_vm->sound()->fmSendCommand(cmd, 1, 1);
 	_progress = -1;
 }
 
-int _gfxOps_var1 = 0;
-uint8  _gfxOps10_sub_974B = 0;
-uint8 _gfxOps10_sub_974E = 0;
-uint16 _gfxOps10_subword_974C = 0;
-
-//uint8 _c13Valu = 0;
-
-void CmdQueue::m_displayDialog(GameState &state, const uint16 *&data) {
-	if (_gfxOps_var1 || (_vm->input().controllerFlags & 0x100))
-		_vm->gfx()->setTextPrintDelay(0);
-
-	if (_vm->gfx()->isTextInQueue())
-		return;
-
-	switch (_progress) {
-	case 0:
-		for (int i = 5; i < 15; ++i)
-			_vm->gfx()->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
-		_vm->gfx()->setAnimParameter(0, GraphicsEngine::kAnimParaEnable, 0);
-		_vm->gfx()->enqueuePaletteEvent(_vm->_scd->makePtr(0x13622));
-		++_progress;
-		break;
-
-	case 1:
-		_vm->gfx()->setVar(11, 0xFF);
-		_progress = 9;
-		break;
-
-	case 2:
-		if (_sceneId == 0) {
-			_vm->gfx()->transitionCommand(21);
-			//_c13Valu = 0xFF;
-			_textY = _textY2;
-		} else if (_sceneId == 0xFF) {
-			_textY = _textY2;
-		} else {
-			printSceneEntryStringHead();
-		}
-		++_progress;
-		break;
-
-	case 3:
-		printSceneEntryStringBody(state);
-		if (checkStringProgress())
-			++_progress;
-		break;
-
-	case 4:
-		_waitCursorFrame = 0;
-		_waitCursorAnimDelay = 1;
-		if (!_sceneId)
-			_vm->gfx()->setAnimParameter(31, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide);
-		++_progress;
-		break;
-
-	case 5:
-		if (!waitWithCursorAnim())
-			return;
-		_vm->gfx()->transitionCommand(0xFE);
-		if (_textLineEnd) {
-			_progress = 6;
-			if (!_sceneId)
-				_vm->gfx()->setAnimParameter(31, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
-		} else {
-			_progress = 7;
-		}
-		break;
-
-	case 6:
-		_sceneTextOffset = _sceneInfo = 0;
-		//if (!_sceneId)
-		//	_c13Valu = 0xFF;
+void CmdQueue::m_displayDialog(const uint16 *&data) {
+	if (_vm->_ui->displayDialog(data[0], data[1], _vm->input().controllerFlagsRemapped)) {
 		_progress = -1;
-		break;
-
-	case 7:
-		_vm->gfx()->resetTextFields();
-		++_progress;
-		break;
-
-	case 8:
-		_vm->gfx()->transitionCommand(_vm->gfx()->getVerbAreaType() == 0 ? 15 : (_vm->gfx()->getVerbAreaType() == 1 ? 20 : 22));
-		_progress = 2;
-		break;
-
-	case 9:
-		_sceneInfo = *data++;
-		_sceneTextOffset = *data++;
-		_vm->gfx()->enqueueDrawCommands(_vm->_scd->makePtr(0xECB6));
-		++_progress;
-		break;
-
-	case 10:
-		_sceneTextOffsStart = _sceneTextOffset;
-		_vm->gfx()->resetTextFields();
-		_sceneId = (_sceneInfo & 0xFF) - 1;
-
-		_sceneTextOffsCur = _sceneTextOffsStart;
-		_textLineEnd = 0;
-		_gfxOps10_sub_974B = _gfxOps10_sub_974E = 0;
-		_gfxOps10_subword_974C = 0;
-
-		_textColor = 1;
-
-		_vm->gfx()->transitionCommand(_vm->gfx()->getVerbAreaType() == 0 ? 15 : (_vm->gfx()->getVerbAreaType() == 1 ? 20 : 22));
-		//_c13Valu = 0;
-		_progress = 2;
-		break;
-
-	default:
-		error("%s(): Unknown state %d", __FUNCTION__, _progress);
-		break;
+		data += 2;
 	}
 }
 
-void CmdQueue::m_animOps(GameState &state, const uint16 *&data) {
+void CmdQueue::m_animOps(const uint16 *&data) {
 	switch (data[0]) {
 	case 0:
 	case 1:
@@ -327,22 +218,25 @@ void CmdQueue::m_animOps(GameState &state, const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_pcmWait(GameState &state, const uint16 *&data) {
+void CmdQueue::m_pcmWait(const uint16 *&data) {
 	if (_progress == 0) {
 		_counter = 3600;
 		++_progress;
 	}
-	if (--_counter == 0 || !(_vm->sound()->pcmGetStatus() & 0x0F)) 
+	if (--_counter == 0 || !(_vm->sound()->pcmGetStatus().statusBits & 0x0F)) 
 		_progress = -1;
 }
 
-void CmdQueue::m_11(GameState &state, const uint16 *&data) {
+void CmdQueue::m_11(const uint16 *&data) {
 }
 
-void CmdQueue::m_12(GameState &state, const uint16 *&data) {
+void CmdQueue::m_pcmSound(const uint16 *&data) {
+	if (!_vm->sound()->pcmGetStatus().blocked && !(_vm->sound()->pcmGetStatus().statusBits & 0x07))
+		_vm->sound()->pcmSendCommand(*data++, -1);
+	_progress = -1;
 }
 
-void CmdQueue::m_mmSeq(GameState &state, const uint16 *&data) {
+void CmdQueue::m_chatWithPortraitAnim(const uint16 *&data) {
 	if (_progress == 0) {
 		_vm->sound()->pcmInitSound(*data);
 		//_c13Valu = 0xFF;
@@ -363,7 +257,7 @@ void CmdQueue::m_mmSeq(GameState &state, const uint16 *&data) {
 		uint8 f = _vm->_scd->makePtr(0x13FEC)[*data];
 		if (f != 0xFF) {
 			//_vm->gfx()->dataMode = 1;
-			_vm->gfx()->runScript(_vm->_module->getPtr(0), f);
+			_vm->gfx()->runScript(_vm->_module->getGfxData(), f);
 			//_vm->gfx()->dataMode = 0;
 		}
 		_progress = -1;
@@ -372,10 +266,10 @@ void CmdQueue::m_mmSeq(GameState &state, const uint16 *&data) {
 		++data;
 }
 
-void CmdQueue::m_14(GameState &state, const uint16 *&data) {
+void CmdQueue::m_14(const uint16 *&data) {
 }
 
-void CmdQueue::m_gfxReset(GameState &state, const uint16 *&data) {
+void CmdQueue::m_gfxReset(const uint16 *&data) {
 	if (_progress == 0) {
 		if (!_vm->gfx()->busy(2)) {
 			_vm->gfx()->reset(GraphicsEngine::kResetSetDefaults);
@@ -388,7 +282,7 @@ void CmdQueue::m_gfxReset(GameState &state, const uint16 *&data) {
 	}
 }
 
-void CmdQueue::m_waitFrames(GameState &state, const uint16 *&data) {
+void CmdQueue::m_waitFrames(const uint16 *&data) {
 	if (_progress == 0) {
 		_counter = 0;
 		++_progress;
@@ -400,7 +294,7 @@ void CmdQueue::m_waitFrames(GameState &state, const uint16 *&data) {
 	_progress = -1;
 	++data;
 }
-void CmdQueue::m_loadResource(GameState &state, const uint16 *&data) {
+void CmdQueue::m_loadResource(const uint16 *&data) {
 	if (_progress == 0) {
 		_vm->sound()->cdaStop();
 		++_progress;
@@ -411,10 +305,11 @@ void CmdQueue::m_loadResource(GameState &state, const uint16 *&data) {
 		++_progress;
 
 		if (dest == 0x1A800) {
+			delete[] _vm->_script->data;
 			_vm->_script->data = _vm->_fio->fileData(index, &_vm->_script->dataSize);
 			assert(_vm->_script->data);
-			_vm->_script->res = ResourcePointer(_vm->_script->data, 0, 0x1A800, true);
 			_vm->_script->curFileNo = index;
+			_vm->_ui->setScriptTextResource(_vm->_script->getTextResource());
 		} else if (dest == 0x28000) {
 			delete _vm->_module;
 			_vm->_module = _vm->_fio->loadModule(index);
@@ -429,235 +324,134 @@ void CmdQueue::m_loadResource(GameState &state, const uint16 *&data) {
 	}
 }
 
-void CmdQueue::m_gfxStart(GameState &state, const uint16 *&data) {
-	_vm->gfx()->runScript(_vm->_module->getPtr(0), *data++);
+void CmdQueue::m_gfxStart(const uint16 *&data) {
+	_vm->gfx()->runScript(_vm->_module->getGfxData(), *data++);
 	_progress = -1;
 }
 
-void CmdQueue::m_fmMusicWait(GameState &state, const uint16 *&data) {
+void CmdQueue::m_fmMusicWait(const uint16 *&data) {
 	if (_progress == 0) {
 		_counter = 2700;
 		++_progress;
 	}
-	if (--_counter == 0 || (_vm->sound()->_fmPlayingTracks.music == 0)) 
+	if (--_counter == 0 || (_vm->sound()->fmGetStatus().music == 0)) 
 		_progress = -1;
 }
 
-void CmdQueue::m_20(GameState &state, const uint16 *&data) {
+void CmdQueue::m_20(const uint16 *&data) {
 }
 
-void CmdQueue::m_21(GameState &state, const uint16 *&data) {
+void CmdQueue::m_invItemCloseUp(const uint16 *&data) {
+	if (_vm->gfx()->getVar(8))
+		return;
+
+	_vm->gfx()->runScript(_vm->_scd->makePtr(0x146CE), *data++);
+	ResourcePointer coords = _vm->_scd->makePtr(0x144C6) + ((*data++) << 2);
+	_vm->gfx()->setAnimParameter(1, GraphicsEngine::kAnimParaPosX, coords.readIncrSINT16());
+	_vm->gfx()->setAnimParameter(1, GraphicsEngine::kAnimParaPosY, coords.readIncrSINT16());
+
+	_progress = -1;
 }
 
-void CmdQueue::m_resetTextFields(GameState &state, const uint16 *&data) {
+void CmdQueue::m_resetTextFields(const uint16 *&data) {
 	_vm->gfx()->resetTextFields();
 	_progress = -1;
 }
 
-void CmdQueue::m_23(GameState &state, const uint16 *&data) {
+void CmdQueue::m_23(const uint16 *&data) {
 }
 
-void CmdQueue::m_24(GameState &state, const uint16 *&data) {
+void CmdQueue::m_24(const uint16 *&data) {
+//shooting practice
 }
 
-void CmdQueue::m_25(GameState &state, const uint16 *&data) {
+void CmdQueue::m_25(const uint16 *&data) {
 }
 
-void CmdQueue::m_26(GameState &state, const uint16 *&data) {
+void CmdQueue::m_26(const uint16 *&data) {
 }
 
-void CmdQueue::m_27(GameState &state, const uint16 *&data) {
+void CmdQueue::m_27(const uint16 *&data) {
 }
 
-void CmdQueue::m_28(GameState &state, const uint16 *&data) {
+void CmdQueue::m_fmSoundEffect(const uint16 *&data) {
+	uint8 cmd = *data++;
+	_vm->sound()->fmSendCommand(cmd, 0, 2);
+	_progress = -1;
 }
 
-void CmdQueue::m_29(GameState &state, const uint16 *&data) {
+void CmdQueue::m_pcmBlock(const uint16 *&data) {
+	_vm->sound()->pcmBlock(*data++);
+	_progress = -1;
 }
 
-void CmdQueue::m_30(GameState &state, const uint16 *&data) {
+void CmdQueue::m_30(const uint16 *&data) {
 }
 
-void CmdQueue::m_31(GameState &state, const uint16 *&data) {
+void CmdQueue::m_31(const uint16 *&data) {
 }
 
-void CmdQueue::m_32(GameState &state, const uint16 *&data) {
+void CmdQueue::m_32(const uint16 *&data) {
 }
 
-void CmdQueue::m_33(GameState &state, const uint16 *&data) {
+void CmdQueue::m_33(const uint16 *&data) {
 }
 
-void CmdQueue::m_palOps(GameState &state, const uint16 *&data) {
+void CmdQueue::m_palOps(const uint16 *&data) {
 	uint32 addr = *reinterpret_cast<const uint32*>(data);
 	_vm->gfx()->enqueuePaletteEvent(addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
 	data += 2;
 	_progress = -1;
 }
 
-void CmdQueue::m_35(GameState &state, const uint16 *&data) {
+void CmdQueue::m_clearJordanInputField(const uint16 *&data) {
+	_vm->gfx()->clearJordanInputField();
+	_progress = -1;
 }
 
-void CmdQueue::printSceneEntryStringHead() {
-	static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFB, 0x10, 0x00, 0xFE };
-	const uint8 *s = _vm->_scd->makePtr(0x13552).getDataFromTable(_sceneId)();
-	memcpy(_textBuffer, strHead, sizeof(strHead));
-	_textBuffer[6] = _textY2;
-	_textBuffer[8] = (*s & 0x80) ? 3 : (*s++ & 7);
-	uint8 *d = _textBuffer + 9;
-
-	for (int i = 0; i < 25; ++i) {
-		*d++ = *s;
-		if (*s++ == 0xFF)
-			break;
-	}
-
-	assert(*(d - 1) == 0xFF);
-
-	_vm->gfx()->printText(_textBuffer);
-	_textY = _textY2 + 9;
-}
-
-void CmdQueue::printSceneEntryStringBody(GameState &state) {
-	static const uint8 strHead[] = { 0xFC, 0x01, 0xF9, 0x01, 0xFE, 0x00, 0xFB };
-	static const uint8 buttonTable[3][6] = {
-		{ 'A', 'A', 'B', 'C', 'C', 'B' },
-		{ 'B', 'C', 'A', 'A', 'B', 'C' },
-		{ 'C', 'B', 'C', 'B', 'A', 'A' }
-	};
-
-	memcpy(_textBuffer, strHead, sizeof(strHead));
-	_textBuffer[5] = _textColor;
-	uint8 *d = _textBuffer + sizeof(strHead);
-	//_makestrbt1 = 0xFF;
-	*d++ = _sceneId ? 24 : 40;
-	*d++ = _textY;
-
-	_textLineBreak = 0;
-	const uint8 *s = _vm->_script->res.makePtr(0x1E000)() + _sceneTextOffsCur;
-	for (int i = 0; i < 50;++i) {
-		uint8 in = *s++;
-		++_sceneTextOffsCur;
-		switch (in) {
-		case 0xFF:
-			_textLineEnd = 1;
-			i = 49;
-			break;
-		case 0xF6:
-			_textLineBreak = 3;
-			i = 49;
-			break;;
-		case 0xF4:
-			_sceneInfo = 2;
-			break;
-		case 0xF2:
-			_textLineBreak = 1;
-			i = 49;
-			break;
-		case 0xF0:
-		case 0xEE:
-		case 0xEC:
-			*d++ = buttonTable[(in - 0xEC) >> 1][state.conf.controllerSetup];
-			break;
-		default:
-			if (in < 0xF8) {
-				*d++ = in;
-			} else {
-				*d++ = 0xFE;
-				*d++ = _textColor = in & 7;
-			}
-			break;
-		}
-	}
-
-	*d++ = 0xFF;
-	_vm->gfx()->printText(_textBuffer);
-}
-
-bool CmdQueue::checkStringProgress() {
-	if (_textLineEnd || _textLineBreak == 3)
-		return true;
-	_textY += 9;
-	return (_textY > 56);
-}
-
-bool CmdQueue::waitWithCursorAnim() {
-	if (_vm->input().controllerFlagsRemapped & 0x20)
-		return true;
-	if ((_waitCursorAnimDelay && --_waitCursorAnimDelay) || _sceneId == 0)
-		return false;
-	const uint8 *s = _vm->_scd->makePtr(0x1391C)() + _waitCursorFrame;
-
-	ResourcePointer drw = _vm->_scd->makePtr(_vm->gfx()->getVerbAreaType() == 0 ? 0x1387C : (_vm->gfx()->getVerbAreaType() == 1 ? 0x13894 : 0x138AC));
-
-	uint32 frm = 0x138C4 + _waitCursorFrame * 4;
-	(drw + 2).writeUINT32(frm);
-	(drw + 12).writeUINT32(frm + 4);
-
-	_vm->gfx()->enqueueDrawCommands(drw);
-
-	_waitCursorFrame += 2;
-	_waitCursorAnimDelay = s[1];
-	if (s[3])
-		return false;
-	if (_sceneInfo >> 8)
-		return true;
-	_waitCursorFrame = 0;
-	return false;
-}
-
-ScriptEngine::ScriptEngine(SnatcherEngine *vm, CmdQueue *que, ResourcePointer *scd) : _vm(vm), _que(que), _var(nullptr), _curPos(0), _op(0), /*_v1(0), _v2(0),*/ _v3(0), _v5(0), _buf352(nullptr) {
-	_var = new uint8[0x100]();
-	_arrays[0] = _var;
-	_arrays[1] = _var + 18;
-	_arrays[2] = _arrays[1] + 64;
-	_arrays[3] = _arrays[2] + 32;
-	_arrays[4] = _arrays[3] + 38;
-	_arrays[5] = _arrays[4] + 8;
-	_buf352 = new uint8[352]();
-
+ScriptEngine::ScriptEngine(CmdQueue *que, UI *ui, ResourcePointer *scd) : _que(que), _ui(ui), _arrayData(nullptr), _pos1(0), _pos2(0), _op(0), /*_v1(0), _v2(0), _v3(0),*/ _result(0), _flagsTable(nullptr) {
+	_flagsTable = new uint8[352]();
+	_arrayData = new uint8[0x100]();
 	makeOpcodeTable(scd);
+	resetArrays();
+	_ui->setScriptVerbsArray(&_arrays[1]);
+	_ui->setScriptSentenceArray(&_arrays[2]);
 }
 
 ScriptEngine::~ScriptEngine() {
-	delete[] _var;
-	delete[] _buf352;
+	delete[] _arrayData;
+	delete[] _flagsTable;
 }
 
 void ScriptEngine::resetArrays() {
-	static const uint8 arraySize[] = { 0x08, 0x1F, 0x0F, 0x12, 0x03, 0x10 };
-	memset(_var, 0, 0x100);
-	for (int i = 0; i < ARRAYSIZE(_arrays); ++i)
-		_arrays[i][0] = arraySize[i];
+	static const uint8 arraySizes[] = { 0x08, 0x1F, 0x0F, 0x12, 0x03, 0x10 };
+	memset(_arrayData, 0, 0x100);
+
+	uint8 *pos = _arrayData;
+	for (int i = 0; i < ARRAYSIZE(_arrays); ++i) {
+		_arrays[i] = ScriptArray(pos , arraySizes[i]);
+		pos += ((arraySizes[i] + 1) << 1);
+	}
 }
 
 void ScriptEngine::run(Script *script) {
 	assert(script);
 
-	_curPos = script->curPos;
-	script->sp = script->bp;
 	_script = script;
+	_pos1 = script->curPos;
+	//script->sp = script->bp;
+	script->sentenceDone = 0;
 
-	runOpcode(_curPos);
+	runOpcode();
 }
 
-#define S_FRAME(x) _script->sp += (x)
-#define S_WRBYTE(x, y) _script->sp[x] = (uint8)(y)
-#define S_INCBYTE(x) _script->sp[x]++
-#define S_DECBYTE(x) _script->sp[x]--
-#define S_ADDBYTE(x, y) _script->sp[x] += (uint8)(y)
-#define S_SUBBYTE(x, y) _script->sp[x] -= (uint8)(y)
-#define S_WRWORD(x, y) *(uint16*)(_script->sp + x) = (uint16)(y)
-#define S_RDBYTE(x) _script->sp[x]
-#define S_RDWORD(x) *(uint16*)(_script->sp + x)
-#define S_PUSH(x) S_FRAME(-2); S_WRWORD(0, x)
-#define S_POP() S_RDWORD(0); S_FRAME(2);
-#define ARR_SIZE(x)	_arrays[x][0]
-#define ARR_POS(x)	_arrays[x][1]
-#define ARR_READ(a, p) READ_BE_UINT16(_arrays[a] + 2 + 2 * (p))
-#define ARR_WRITE(a, p, v) WRITE_BE_UINT16(_arrays[a] + 2 + 2 * (p), v)
+#define ARR_SIZE(x) _arrays[x].size()
+#define ARR_POS(x) _arrays[x].pos()
+#define ARR_READ(x, y) _arrays[x].read(y)
+#define ARR_WRITE(x, y, z) _arrays[x].write(y, z)
 
 bool ScriptEngine::postProcess(Script *script) {
-	if (script->newPos != -1) {
+	if (script->newPos != 0xFFFF) {
 		if (ARR_SIZE(4) <= ARR_POS(4)) {
 			for (int i = 0; i < ARR_POS(4) - 1; ++i)
 				ARR_WRITE(4, i, ARR_READ(4, i + 1));
@@ -665,13 +459,14 @@ bool ScriptEngine::postProcess(Script *script) {
 		}
 		setArrayLastEntry(4, script->curPos);
 		script->curPos = script->newPos;
-		script->newPos = -1;
+		script->newPos = 0xFFFF;
+		_ui->resetVerbSelection();
 	}
 
 	if (ARR_POS(1) != 0)
 		return true;
 
-	int r0 = 0;
+	uint16 r0 = 0;
 	getArrayLastEntry(0, r0);
 	if (r0 < ARR_POS(2))
 		ARR_POS(2) = r0;
@@ -680,33 +475,54 @@ bool ScriptEngine::postProcess(Script *script) {
 	return false;
 }
 
-void ScriptEngine::runOpcode(int offset) {
-	uint8 op = getOpcode(offset);
+void ScriptEngine::processInput() {
+	uint16 val = 0;
+	if ((int8)_ui->getSelectedVerb() < 0) {
+		getArrayLastEntry(0, val);
+		if (ARR_POS(2) != val) {
+			if (ARR_POS(2))
+				--ARR_POS(2);
+		}
+	} else {
+		getArrayEntry(1, _ui->getSelectedVerb() - 1, val);
+		setArrayLastEntry(2, val);
+	}
+	ARR_POS(1) = 0;
+}
+
+void ScriptEngine::runOpcode() {
+	uint8 op = getOpcode(_pos1);
 	if (_opcodes[op].proc->isValid())
+#ifdef SNATCHER_SCRIPT_DEBUG
+		(*_opcodes[op].proc)(_pos1);
+#else
 		(*_opcodes[op].proc)();
+#endif
 	else
 		error("%s(): Invalid opcode %d", __FUNCTION__, op);
 }
 
-void ScriptEngine::getOpcodeProps(int offset, int &len, int &f1, int &f2) {
-	uint8 op = getOpcode(offset);
-	len = _opcodes[op].len;
-	f1 = _opcodes[op].flags >> 4;
-	f2 = _opcodes[op].flags & 0x0F;
+void ScriptEngine::getOpcodeProperties(uint16 &m1, uint16 &m2, uint16 &u) {
+	uint8 op = getOpcode(_pos2);
+	m1 = _opcodes[op].len;
+	m2 = _opcodes[op].flags >> 4;
+	u = _opcodes[op].flags & 0x0F;
 }
 
-void ScriptEngine::runOpcode(int &offset, int len, int &result) {
-	if (len == 4) {
-		runOpcode(offset);
-		stackOps_unkParseTo(offset);
-	} else if (len == 1) {
-		getFlag(READ_BE_UINT16(_script->data + offset), result);
-		offset += 2;
-	} else if (len == 3 || len == 5) {
-		result = READ_BE_UINT16(_script->data + offset);
-		offset += 2;
+void ScriptEngine::runOpcodeOrReadVar(uint16 mode, uint16 &result) {
+	if (mode == 4) {
+		int cpos = _pos1;
+		runOpcode();
+		_pos2 = cpos;
+		jump();
+	} else if (mode == 1) {
+		getFlags(READ_BE_UINT16(_script->data + _pos1), result);
+		_pos2 = _pos1 + 2;
+	} else if (mode == 3 || mode == 5) {
+		result = READ_BE_UINT16(_script->data + _pos1);
+		_pos2 = _pos1 + 2;
 	} else {
-		error("%s(): Invalid opcode length %d", __FUNCTION__, len);
+		error("%s(): Invalid opcode length %d", __FUNCTION__, mode);
 	}
 }
 
@@ -715,191 +531,180 @@ static const uint16 maskTable[] = {
 	0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
 };
 
-void ScriptEngine::getFlag(int pos, int &result) {
-	const uint8 *in = &_buf352[pos >> 7];
-	result = (in[0] << 24 | in[1] << 16 | in[2] << 8);
-	uint8 v2 = pos & 0x0F;
-	uint8 v1 = v2 + 1 + ((pos >> 4) & 7);
-	result = (((uint32)result << v1) | ((uint32)result >> (32 - v1))) & maskTable[v2];
+void ScriptEngine::getFlags(uint16 sel, uint16 &result) {
+	assert(sel < 0xAF80);
+	const uint8 *in = &_flagsTable[sel >> 7];
+	uint32 r = (in[0] << 24 | in[1] << 16 | in[2] << 8);
+	uint8 v2 = sel & 0x0F;
+	uint8 v1 = v2 + 1 + ((sel >> 4) & 7);
+	result = ((r << v1) | (r >> (32 - v1))) & maskTable[v2];
+	debug ("GETFLAGS: sel 0x%04X, 0x%02x%02x%02x", sel, *in, *(in+1), *(in+2));
 }
 
-void ScriptEngine::setFlag(int pos, int val) {
-	uint8 v2 = pos & 0x0F;
-	uint8 v1 = v2 + 1 + ((pos >> 4) & 7);
+void ScriptEngine::setFlags(uint16 sel, uint32 flags) {
+	uint8 v2 = sel & 0x0F;
+	uint8 v1 = v2 + 1 + ((sel >> 4) & 7);
 
-	uint16 msk = maskTable[v1];
-	val &= msk;
+	uint32 msk = maskTable[v2];
+	flags &= msk;
 	msk = ~msk;
 
-	uint8 *in = &_buf352[pos >> 7];
-	int cur = (in[0] << 24 | in[1] << 16 | in[2] << 8);
+	assert(sel < 0xAF80);
+	uint8 *in = &_flagsTable[sel >> 7];
+	uint32 cur = (in[0] << 24 | in[1] << 16 | in[2] << 8);
 
-	msk = (((uint32)msk << (32 - v1)) | ((uint32)msk >> v1));
-	val = (((uint32)val << (32 - v1)) | ((uint32)val >> v1));
+	msk = ((msk << (32 - v1)) | (msk >> v1));
+	flags = ((flags << (32 - v1)) | (flags >> v1));
 
-	val |= (cur & msk);
-	*in++ = (val >> 24) & 0xFF;
-	*in++ = (val >> 16) & 0xFF;
-	*in++ = (val >> 8) & 0xFF;
+	flags |= (cur & msk);
+	*in++ = (flags >> 24) & 0xFF;
+	*in++ = (flags >> 16) & 0xFF;
+	*in++ = (flags >> 8) & 0xFF;
+
+	debug ("SETVAR: sel 0x%04X, 0x%02x%02x%02x", sel, *(in-3), *(in-2), *(in-1));
 }
 
-uint8 ScriptEngine::countFunctionOps(int offset) {
-	S_FRAME(-2);
-	S_WRBYTE(0, 0);
-
-	int r1 = 0;
-	int r2 = 0;
-	int r3 = 0;
+uint8 ScriptEngine::countFunctionOps() {
+	uint8 cnt = 0;
+	uint16 r1 = 0;
+	uint16 r2 = 0;
+	uint16 r3 = 0;
 
 	for (bool lp = true; lp; ) {
-		S_INCBYTE(0);
-		if (!isExecFuncOpcode(offset))
+		++cnt;
+		if (!isExecFuncOpcode())
 			break;
-		if (stackOps_checkFor52(offset, r1))
-			S_ADDBYTE(0, r1 - 1);
-		getOpcodeProps(offset, r1, r2, r3);
+		if (stackOps_checkFor52(r1))
+			cnt += (r1 - 1);
+		getOpcodeProperties(r1, r2, r3);
 		if (r2 == 7)
 			break;
-		if (opcodeHasFlag8(offset)) {
-			offset = READ_BE_UINT16(_script->data + offset + 1);
+		if (opcodeHasFlag8()) {
+			_pos2 = READ_BE_UINT16(_script->data + _pos2 + 1);
 		} else {
-			++offset;
-			stackOps_unkParseTo(offset);
+			++_pos2;
+			jump();
 		}
 	}
 
-	uint8 res = S_RDBYTE(0);
-	S_FRAME(2);
-	return res;
+	return cnt;
 }
 
-void ScriptEngine::seekToFunctionOp(int &offset, int arg) {
-	S_FRAME(-2);
-	S_WRBYTE(0, arg);
-
-	int r1 = 0;
-	int r2 = 0;
-	int r3 = 0;
+void ScriptEngine::seekToFunctionOp(int num) {
+	uint16 r1 = 0;
+	uint16 r2 = 0;
+	uint16 r3 = 0;
 
 	for (bool lp = true; lp; ) {
-		if (!isExecFuncOpcode(offset))
+		if (!isExecFuncOpcode())
 			break;
-		if (stackOps_checkFor52(offset, r1))
-			S_SUBBYTE(0, r1 - 1);
-		S_SUBBYTE(0, 1);
-		if ((int8)S_RDBYTE(0) <= 0) {
-			skipOnFlag8(offset);
+		if (stackOps_checkFor52(r1))
+			num -= (r1 - 1);
+		--num;
+		if (num <= 0) {
+			skipOnFlag8();
 			break;
 		}
-		if (opcodeHasFlag8(offset)) {
-			offset = READ_BE_UINT16(_script->data + offset + 1);
+		if (opcodeHasFlag8()) {
+			_pos2 = READ_BE_UINT16(_script->data + _pos2 + 1);
 		} else {
-			getOpcodeProps(offset, r1, r2, r3);
-			if (r1 == 4)
-				stackOps_unkParseTo(++offset);
-			else
-				offset += 3;
+			getOpcodeProperties(r1, r2, r3);
+			if (r1 == 4) {
+				++_pos2;
+				jump();
+			} else {
+				_pos2 += 3;
+			}
 		}
 	}
-
-	S_FRAME(2);
 }
 
-bool ScriptEngine::isExecFuncOpcode(int offset) {
-	uint8 op = getOpcode(offset);
+bool ScriptEngine::isExecFuncOpcode() {
+	uint8 op = getOpcode(_pos2);
 	return (op >= 30 && op <= 39);
 }
 
-bool ScriptEngine::stackOps_checkFor52(int offset, int &result) {
-	S_PUSH(offset);
+bool ScriptEngine::stackOps_checkFor52(uint16 &result) {
+	uint16 m = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	int cpos = _pos2;
+	bool res = false;
 
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
-
-	getOpcodeProps(offset, len, f1, f2);
-	if (len == 4) {
-		skipOnFlag8(offset);
-		uint8 op = getOpcode(offset);
+	getOpcodeProperties(m, f1, f2);
+	if (m == 4) {
+		skipOnFlag8();
+		uint8 op = getOpcode(_pos2);
 		if (op == 52 || op == 53) {
-			result = READ_BE_UINT16(_script->data + offset + 1);
-			return true;
+			result = READ_BE_UINT16(_script->data + _pos2 + 1);
+			res = true;
 		}
 	}
-
-	S_FRAME(2);
-	return false;
+	_pos2 = cpos;
+	return res;
 }
 
-bool ScriptEngine::opcodeHasFlag8(int offset) {
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
-	getOpcodeProps(offset, len, f1, f2);
+bool ScriptEngine::opcodeHasFlag8() {
+	uint16 ln = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	getOpcodeProperties(ln, f1, f2);
 	return ((f1 | f2) & 8);
 }
 
-bool ScriptEngine::OPC_4_ss() {
-	if (ARR_POS(1) || _script->newPos != -1)
+bool ScriptEngine::evalFinished() {
+	if (ARR_POS(1) || _script->newPos != 0xFFFF)
 		return false;
-	if (_script->scriptStateByteUnk) {
-		int r1 = 0;
+	if (_script->sentenceDone) {
+		uint16 r1 = 0;
 		if (!getArrayLastEntry(0, r1))
 			return true;
-		return (_script->unkislp > r1);
+		return (_script->sentencePos > r1);
 	}
-	return (_script->unkislp == ARR_POS(2));
+	return (_script->sentencePos == ARR_POS(2));
 }
 
-void ScriptEngine::skipOnFlag8(int &offset) {
-	offset += (opcodeHasFlag8(offset) ? 3 : 1);
+void ScriptEngine::skipOnFlag8() {
+	_pos2 += (opcodeHasFlag8() ? 3 : 1);
 }
 
-void ScriptEngine::stackOps_unkParseTo(int &offset) {
+void ScriptEngine::jump() {
 	for (bool lp = true; lp; ) {
-		if (opcodeHasFlag8(offset)) {
-			offset = READ_BE_UINT16(_script->data + offset + 1);
+		if (opcodeHasFlag8()) {
+			_pos2 = READ_BE_UINT16(_script->data + _pos2 + 1);
 			continue;
 		}
-		S_FRAME(-4);
 		lp = false;
 
-		int len = 0;
-		int f1 = 0;
-		int f2 = 0;
-		getOpcodeProps(offset, len, f1, f2);
-		S_WRBYTE(0, len);
-		S_WRBYTE(1, f1);
-		S_WRBYTE(2, f2);
-		++offset;
+		uint16 len = 0;
+		uint16 f1 = 0;
+		uint16 f2 = 0;
+		getOpcodeProperties(len, f1, f2);
+		++_pos2;
 
 		if (len == 4)
-			stackOps_unkParseTo(offset);
+			jump();
 		else if (len != 0 && len != 7)
-			offset += 2;
+			_pos2 += 2;
 
-		uint8 b = S_RDBYTE(1);
-		if (b == 4)
-			stackOps_unkParseTo(offset);
-		else if (b != 0 && b != 7)
-			offset += 2;
+		if (f1 == 4)
+			jump();
+		else if (f1 != 0 && f1 != 7)
+			_pos2 += 2;
 
-		b = S_RDBYTE(2);
-		if (b == 4)
-			stackOps_unkParseTo(offset);
-		else if (b != 0 && b != 7)
-			offset += 2;
+		if (f2 == 4)
+			jump();
+		else if (f2 != 0 && f2 != 7)
+			_pos2 += 2;
 	}
-
-	S_FRAME(4);
 }
 
-bool ScriptEngine::getArrayLastEntry(int arrNo, int &result) {
+bool ScriptEngine::getArrayLastEntry(uint16 arrNo, uint16 &result) {
 	assert(arrNo < ARRAYSIZE(_arrays));
 	return getArrayEntry(arrNo, ARR_POS(arrNo) - 1, result);
 }
 
-bool ScriptEngine::popArrayLastEntry(int arrNo, int &result) {
+bool ScriptEngine::popArrayLastEntry(uint16 arrNo, uint16 &result) {
 	assert(arrNo < ARRAYSIZE(_arrays));
 	if (!ARR_POS(arrNo))
 		return false;
@@ -908,7 +713,7 @@ bool ScriptEngine::popArrayLastEntry(int arrNo, int &result) {
 	return true;
 }
 
-bool ScriptEngine::getArrayEntry(int arrNo, int pos, int &result) {
+bool ScriptEngine::getArrayEntry(uint16 arrNo, uint8 pos, uint16 &result) {
 	assert(arrNo < ARRAYSIZE(_arrays));
 	if (ARR_POS(arrNo) <= pos)
 		return false;
@@ -916,11 +721,11 @@ bool ScriptEngine::getArrayEntry(int arrNo, int pos, int &result) {
 	return true;
 }
 
-bool ScriptEngine::setArrayLastEntry(int arrNo, int val) {
+bool ScriptEngine::setArrayLastEntry(uint16 arrNo, uint16 val) {
 	assert(arrNo < ARRAYSIZE(_arrays));
 	if (ARR_SIZE(arrNo) <= ARR_POS(arrNo))
 		return false;
-	int pos = ARR_POS(arrNo)++;
+	uint8 pos = ARR_POS(arrNo)++;
 	if (ARR_POS(arrNo) <= pos)
 		return false;
 	ARR_WRITE(arrNo, pos, val);
@@ -936,6 +741,31 @@ uint8 ScriptEngine::getOpcode(int offset) {
 	return op;
 }
 
+void ScriptEngine::writeHostMemory(uint16 addr, uint16 val) {
+	// The scripts have the wonderful capability to directly write into the sub cpu memory.
+	// It is limited to 16bit addresses at least. I hope that in practice, this will only
+	// happen for some global variables. We will just have to catch every case whenever a
+	// new address comes up...
+	switch (addr) {
+	case 0x79F0:
+		break;
+	case 0x971a:
+		_ui->setInterpreterMode(val);
+		break;
+	case 0xFFFF:
+		// This is an exception that is caught even in the original code.
+		//_vm->sound()->setUnkCond(val);
+		val = val;
+		break;
+	default:
+		error("%s(): Unhandled address 0x%04X", __FUNCTION__, addr);
+	}
+}
+
+#ifdef SNATCHER_SCRIPT_DEBUG
+int ScriptEngine::ScriptEngineProc::_recursion = 0;
+#endif
+
 void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 #ifndef SNATCHER_SCRIPT_DEBUG
 	#define OP(x) &ScriptEngine::o_##x
@@ -949,33 +779,33 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 #endif
 	static const SFunc funcTbl[] = {
 		OP(animOps),
-		OP(01),
-		OP(01),
-		OP(01),
-		OP(mmSequence),
+		OP(eval_add),
+		OP(eval_add),
+		OP(eval_add),
+		OP(chatWithPortraitAnim),
 		OP(05),
-		OP(06),
-		OP(06),
-		OP(06),
-		OP(06),
+		OP(eval_and),
+		OP(eval_and),
+		OP(eval_and),
+		OP(eval_and),
 		OP(fmMusicStart),
-		OP(11),
+		OP(callSubRoutine),
 		OP(12),
 		OP(13),
 		OP(14),
-		OP(15),
-		OP(16),
-		OP(16),
-		OP(16),
-		OP(19),
-		OP(20),
+		OP(fmSoundEffect),
+		OP(eval_equal),
+		OP(eval_equal),
+		OP(eval_equal),
+		OP(clearFlags),
+		OP(setFlags),
 		OP(21),
-		OP(22),
+		OP(eval_greater),
 		OP(23),
 		OP(24),
 		OP(24),
-		OP(26),
-		OP(26),
+		OP(jumpIf),
+		OP(jumpIf),
 		OP(28),
 		OP(28),
 		OP(executeFunction),
@@ -994,27 +824,27 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(break),
 		OP(break),
 		OP(nop),
-		OP(46),
-		OP(46),
-		OP(startFunction),
-		OP(49),
-		OP(49),
-		OP(49),
+		OP(eval_true),
+		OP(eval_true),
+		OP(start),
+		OP(eval_or),
+		OP(eval_or),
+		OP(eval_or),
 		OP(52),
 		OP(52),
 		OP(54),
 		OP(54),
-		OP(56),
+		OP(verbOps),
 		OP(57),
-		OP(loadScript),
+		OP(returnFromSubRoutine),
 		OP(59),
 		OP(59),
 		OP(loadModuleAndStartGfx),
 		OP(62),
-		OP(63),
+		OP(switchToNextOp),
 		OP(64),
-		OP(subOps),
-		OP(subOps),
+		OP(sysOps),
+		OP(sysOps),
 		OP(displayDialog),
 		OP(displayDialog),
 		OP(animWait),
@@ -1042,46 +872,92 @@ void ScriptEngine::o_nop() {
 }
 
 void ScriptEngine::o_animOps() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x09);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 4));
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 2));
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4));
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 2));
 }
 
-void ScriptEngine::o_01() {
+void ScriptEngine::o_eval_add() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 f2 = 0;
 
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, f2);
+	runOpcodeOrReadVar(m1, _result);
+	f2 = _result;
+	_pos1 = _pos2;
+	runOpcodeOrReadVar(m2, _result);
+	_result += f2;
 }
 
-void ScriptEngine::o_mmSequence() {
-	if (!OPC_4_ss())
+void ScriptEngine::o_chatWithPortraitAnim() {
+	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x0D);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 1));
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
 void ScriptEngine::o_05() {
 }
 
-void ScriptEngine::o_06() {
+void ScriptEngine::o_eval_and() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 f2 = 0;
+
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, f2);
+	runOpcodeOrReadVar(m1, _result);
+	f2 = _result;
+	_pos1 = _pos2;
+	runOpcodeOrReadVar(m2, _result);
+	_result &= f2;
 }
 
 void ScriptEngine::o_fmMusicStart() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x07);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 1));
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
-void ScriptEngine::o_11() {
-	
+void ScriptEngine::o_callSubRoutine() {
+	if (!evalFinished())
+		return;
+	uint16 m = 0;
+	uint16 f1 = 0;
+	uint16 u = 0;
+
+	setArrayLastEntry(3, _script->curFileNo);
+
+	_pos2 = _pos1;
+	getOpcodeProperties(m, f1, u);
+	++_pos2;
+
+	if (m != 5) {
+		uint16 no = READ_BE_UINT16(_script->data + _pos2 + 1);
+		_que->writeUInt16(0x11);
+		_que->writeUInt32(0x1A800);
+		_que->writeUInt16(no);
+		_script->curFileNo = no;
+		_pos2 += 3;
+	}
+
+	if (!getArrayEntry(5, 0, u))
+		u = _script->curPos;
+	setArrayLastEntry(3, u);
+
+	_script->newPos = READ_BE_UINT16(_script->data + _pos2);
 }
 
 void ScriptEngine::o_12() {
-	int cp = _script->curPos;
+	uint16 cp = _script->curPos;
 	setArrayLastEntry(5, cp);
-	_curPos = _script->curPos = READ_BE_UINT16(_script->data + _curPos + 1);
-	runOpcode(_curPos);
+	_pos1 = _script->curPos = READ_BE_UINT16(_script->data + _pos1 + 1);
+	runOpcode();
 	popArrayLastEntry(5, cp);
 	_script->curPos = cp;
 }
@@ -1090,99 +966,129 @@ void ScriptEngine::o_13() {
 }
 
 void ScriptEngine::o_14() {
+	if (!evalFinished())
+		return;
+
+	uint16 r1 = 0;
+	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	getFlags(sel, r1);
+
+	uint16 r2 = (0xFFFFFFFF >> (15 - (sel & 0x0F))) & 0xFFFF;
+	if (r2 != r1)
+		setFlags(sel, r1 + 1);
 }
 
-void ScriptEngine::o_15() {
+void ScriptEngine::o_fmSoundEffect() {
+	if (!evalFinished())
+		return;
+	_que->writeUInt16(0x1C);
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
-void ScriptEngine::o_16() {
+void ScriptEngine::o_eval_equal() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 f2 = 0;
+
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, f2);
+	runOpcodeOrReadVar(m1, _result);
+	f2 = _result;
+	_pos1 = _pos2;
+	runOpcodeOrReadVar(m2, _result);
+	_result = (_result == f2) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_19() {
+void ScriptEngine::o_clearFlags() {
+	if (!evalFinished())
+		return;
+	setFlags(READ_BE_UINT16(_script->data + _pos1 + 1), 0);
 }
 
-void ScriptEngine::o_20() {
+void ScriptEngine::o_setFlags() {
+	if (!evalFinished())
+		return;
+	setFlags(READ_BE_UINT16(_script->data + _pos1 + 1), 0xFFFF);
 }
 
 void ScriptEngine::o_21() {
-
+	uint16 n = READ_BE_UINT16(_script->data + _pos1 + 1);
+	if (!getArrayEntry(4, ARR_POS(4) - n, _result))
+		_result = 0xFFFF;
 }
 
-void ScriptEngine::o_22() {
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
-
-	getOpcodeProps(_curPos, len, f1, f2);
-	++_curPos;
-	int r1 = 0;
-	runOpcode(_curPos, len, r1);
-	int r2 = 0;
-	runOpcode(_curPos, f1, r2);
-	_v5 = (r1 > r2) ? -1 : 0;
+void ScriptEngine::o_eval_greater() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 r1 = 0;
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, r1);
+	runOpcodeOrReadVar(m1, _result);
+	_pos1 = _pos2;
+	r1 = _result;
+	runOpcodeOrReadVar(m2, _result);
+	_result = (r1 > _result) ? 0xFFFF : 0;
 }
 
 void ScriptEngine::o_23() {
 }
 
 void ScriptEngine::o_24() {
+	uint16 mode = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1;
+	getOpcodeProperties(mode, f1, f2);
+	uint16 np = READ_BE_UINT16(_script->data + _pos1 + 1);
+	_pos1 += 3;
+	runOpcodeOrReadVar(mode, _result);
+	_pos1 = _result ? _pos2 : np;
+	runOpcode();
 }
 
-void ScriptEngine::o_26() {
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
-
-	getOpcodeProps(_curPos, len, f1, f2);
-
-	int pos = ++_curPos;
-	runOpcode(pos, len, _v5);
-	if (!_v5)
+void ScriptEngine::o_jumpIf() {
+	uint16 mode = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1++;
+	getOpcodeProperties(mode, f1, f2);
+	runOpcodeOrReadVar(mode, _result);
+	if (!_result)
 		return;
-
-	_curPos = pos;
-	runOpcode(pos);
+	_pos1 = _pos2;
+	runOpcode();
 }
 
 void ScriptEngine::o_28() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
 
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
-
-	getOpcodeProps(_curPos, len, f1, f2);
-	S_PUSH(READ_BE_UINT16(_script->data + _curPos + 1));
-	_curPos += 3;
-	int res = 0;
-	runOpcode(_curPos, f1, res);
-	int pos = S_POP();
-	setFlag(pos, res);
+	uint16 len = 0;
+	uint16 mode = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1;
+	getOpcodeProperties(len, mode, f2);
+	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	_pos1 += 3;
+	runOpcodeOrReadVar(mode, _result);
+	setFlags(sel, _result);
 }
 
-
 void ScriptEngine::o_executeFunction() {
-	S_FRAME(-4);
-
-	S_WRBYTE(0, countFunctionOps(_curPos));
-	S_WRBYTE(1, 1);
-	S_WRWORD(2, _curPos);
+	_pos2 = _pos1;
+	uint8 num = countFunctionOps();
+	uint8 cnt = 1;
+	int orig = _pos1;
 	
 	for (bool lp = true; lp; ) {
-		uint8 cnt = S_RDBYTE(1);
-		int offs = S_RDWORD(2);
-		seekToFunctionOp(offs, cnt);
-		_curPos = offs;
-		runOpcode(_curPos);
+		_pos2 = orig;
+		seekToFunctionOp(cnt);
+		_pos1 = _pos2;
+		runOpcode();
 
-		if (S_RDBYTE(0) == S_RDBYTE(1))
+		if (cnt++ == num)
 			lp = false;
-		else
-			S_INCBYTE(1);
 	}
-
-	S_FRAME(4);
 }
 
 void ScriptEngine::o_40() {
@@ -1193,18 +1099,19 @@ void ScriptEngine::o_42() {
 }
 
 void ScriptEngine::o_break() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
 
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
+	uint16 m = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1;
 
-	getOpcodeProps(_curPos, len, f1, f2);
-	int pos = _curPos + 1;
-	if (len != 5) {
-		int num = READ_BE_UINT16(_script->data + pos);
-		pos += 2;
+	getOpcodeProperties(m, f1, f2);
+	++_pos2;
+	if (m != 5) {
+		int num = READ_BE_UINT16(_script->data + _pos2 + 1);
+		_pos2 += 3;
 		if (_script->curFileNo != num) {
 			_script->curFileNo = num;
 			_que->writeUInt16(0x11);
@@ -1212,78 +1119,114 @@ void ScriptEngine::o_break() {
 			_que->writeUInt16(num);
 		}
 	}
-	_script->newPos = READ_BE_UINT16(_script->data + pos);
+	_script->newPos = READ_BE_UINT16(_script->data + _pos2);
 }
 
-void ScriptEngine::o_46() {
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
-	int pos = _curPos;
-	getOpcodeProps(_curPos, len, f1, f2);
-	runOpcode(_curPos, len, _v5);
-	_v5 = _v5 ? 0 : -1;
+void ScriptEngine::o_eval_true() {
+	uint16 mode = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1++;
+	getOpcodeProperties(mode, f1, f2);
+	runOpcodeOrReadVar(mode, _result);
+	_result = _result ? 0 : 0xFFFF;
 }
 
-void ScriptEngine::o_startFunction() {
-	runOpcode(++_curPos);
+void ScriptEngine::o_start() {
+	++_pos1;
+	runOpcode();
 }
 
-void ScriptEngine::o_49() {
+void ScriptEngine::o_eval_or() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 f2 = 0;
+
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, f2);
+	runOpcodeOrReadVar(m1, _result);
+	f2 = _result;
+	_pos1 = _pos2;
+	runOpcodeOrReadVar(m2, _result);
+	_result |= f2;
 }
 
 void ScriptEngine::o_52() {
+	uint16 ln = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	getOpcodeProperties(ln, f1, f2);
+	if (f1 == 7)
+		return;
+	_pos1 += 3;
+	runOpcode();
 }
 
 void ScriptEngine::o_54() {
-}
-
-void ScriptEngine::o_56() {
-	if (_script->newPos != -1)
+	if (!evalFinished())
 		return;
 
-	int pos = _curPos;
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 r = 0;
+	getArrayLastEntry(0, r);
 
-	if (ARR_POS(2) == _script->unkislp) {
-		int val = READ_BE_UINT16(_script->data + pos + 1);
+	if (_script->sentencePos <= r)
+		return;
+	setArrayLastEntry(0, _script->sentencePos);
 
-		if (ARR_SIZE(1) <= ARR_POS(1)) {
-			//_v1 = 0;
-			debug("Array 1 is full");
-		} else {
-			pos = ARR_POS(1)++;
-			if (ARR_POS(1) <= pos) {
-				//_v0 = 0;
-				debug("Array 1 is full");
-			} else {
-				ARR_WRITE(1, pos, val);
-				//_v1 = -1;
-			}
-		}
+	_pos2 = _pos1;
+	getOpcodeProperties(m1, m2, r);
+	if (m2 != 4)
+		return;
+
+	++_pos1;
+	runOpcode();
+}
+
+void ScriptEngine::o_verbOps() {
+	if (_script->newPos != 0xFFFF)
+		return;
+
+	_pos2 = _pos1;
+
+	if (ARR_POS(2) == _script->sentencePos) {
+		uint16 val = READ_BE_UINT16(_script->data + _pos2 + 1);
+
+		if (setArrayLastEntry(1, val))
+			debug("ADD verb %d", val);
+		else
+			debug("Verb array overflow");
 
 	} else {
-		getArrayEntry(2, _script->unkislp, _v3);
-		if (READ_BE_UINT16(_script->data + pos + 1) != _v3)
+		uint16 val = 0;
+		getArrayEntry(2, _script->sentencePos, val);
+		if (READ_BE_UINT16(_script->data + _pos2 + 1) != val)
 			return;
+		debug("PROCESS verb %d", val);
+		++_script->sentencePos;
+		_pos1 += 3;
 
-		++_script->unkislp;
-		_curPos += 3;
+		runOpcode();
 
-		runOpcode(_curPos);
-
-		if (ARR_POS(2) == _script->unkislp) {
-			if (ARR_POS(1))
-				_script->scriptStateByteUnk = 0xFF;
+		if (ARR_POS(2) == _script->sentencePos) {
+			if (ARR_POS(1) == 0)
+				_script->sentenceDone = 0xFF;
 		}
-		--_script->unkislp;
+		--_script->sentencePos;
 	}
 }
 
 void ScriptEngine::o_57() {
+	if (!evalFinished())
+		return;
+
+	if (ARR_POS(0))
+		--ARR_POS(0);
 }
 
-void ScriptEngine::o_loadScript() {
-	int res = 0;
+void ScriptEngine::o_returnFromSubRoutine() {
+	uint16 res = 0;
 	popArrayLastEntry(3, res);
 	_script->newPos = res;
 	popArrayLastEntry(3, res);
@@ -1295,12 +1238,31 @@ void ScriptEngine::o_loadScript() {
 }
 
 void ScriptEngine::o_59() {
+	uint16 m = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1;
+	getOpcodeProperties(m, f1, f2);
+	uint16 val = READ_BE_UINT16(_script->data + _pos2 + 1);
+	if (m == 5) {
+		_result = 0;
+		for (int i = 0; i < ARR_POS(5) && !_result; ++i) {
+			if (ARR_READ(5, i) == val)
+				_result = 1;
+		}
+	} else if (val != 0) {
+		uint8 e = -(val - ARR_POS(5));
+		if (!getArrayEntry(5, e, _result))
+			_result = 0xFFFF;
+	} else {
+		_result = _script->curPos;
+	}
 }
 
 void ScriptEngine::o_loadModuleAndStartGfx() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
-	int16 num = READ_BE_INT16(_script->data + _curPos + 1);
+	int16 num = READ_BE_INT16(_script->data + _pos1 + 1);
 
 	if (_script->curGfxScript == num)
 		return;
@@ -1320,34 +1282,54 @@ void ScriptEngine::o_loadModuleAndStartGfx() {
 }
 
 void ScriptEngine::o_62() {
+	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	_pos2 = _pos1 + 3;
+	uint16 f = Util::rngGetNumberFromRange(1, countFunctionOps()) & 0xFF;
+	_pos2 = _pos1 + 3;
+	seekToFunctionOp(f);
+	_pos1 = _pos2;
+	runOpcode();
+	setFlags(sel, f);
 }
 
-void ScriptEngine::o_63() {
+void ScriptEngine::o_switchToNextOp() {
+	_pos2 = _pos1 + 3;
+	uint16 cnt = countFunctionOps();
+	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
+	uint16 val = 0;
+	getFlags(sel, val);
+	_pos2 = _pos1 + 3;
+	seekToFunctionOp(++val);
+	_pos1 = _pos2;
+	runOpcode();
+	if (ARR_POS(1) == 0 && val != cnt)
+		setFlags(sel, val);
 }
 
 void ScriptEngine::o_64() {
 }
 
-void ScriptEngine::o_subOps() {
-	if (!OPC_4_ss())
+void ScriptEngine::o_sysOps() {
+	if (!evalFinished())
 		return;
 
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
-
-	getOpcodeProps(_curPos, len, f1, f2);
-	int op = READ_BE_UINT16(_script->data + _curPos + (len == 4 ? 2 : 1));
+	uint16 m = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1;
+	getOpcodeProperties(m, f1, f2);
+	_pos2 += (m == 4 ? 2 : 1);
+	uint16 sub = READ_BE_UINT16(_script->data + _pos2);
 	uint16 addr = 0;
 	uint16 val = 0;
 
-	switch (op) {
+	switch (sub) {
 	case 0:
 		_que->writeUInt16(0x04);
 		break;
 	case 1:
 		_que->writeUInt16(0x1E);
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 4));
+		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4));
 		//saveState_sub_14F12();
 		break;
 	case 2:
@@ -1357,64 +1339,62 @@ void ScriptEngine::o_subOps() {
 		_que->writeUInt16(0x1F);
 		break;
 	case 4:
-		//_scr_wd_00 = READ_BE_UINT16(_script->data + _curPos + 4);
+		//_scr_wd_00 = READ_BE_UINT16(_script->data + _pos1 + 4);
 		//_scr_wd_01 = _scr_wd_02 = _scr_wd_03 = _scr_wd_04 = 0;
 		//_scr_bt_00 = true;
 		_que->writeUInt16(0x18);
 		break;
 	case 5:
-		addr = READ_BE_UINT16(_script->data + _curPos + 4);
-		_v5 = 0;//READ_BE_UINT16(addr);
+		addr = READ_BE_UINT16(_script->data + _pos1 + 4);
+		_result = 0;//READ_BE_UINT16(addr);
 		debug ("READ VAR: Addr 0x%04x", addr);
 		break;
 	case 6:
-		addr = READ_BE_UINT16(_script->data + _curPos + 5);
-		val = READ_BE_UINT16(_script->data + _curPos + 7);
-		if (addr == 0xFFFF) // 79F0
-			_vm->sound()->setUnkCond(val);
-		else
-			debug ("WRITE VAR: Addr 0x%04x, Val 0x%04x", addr, val);
-		// WRITE_BE_UINT16(addr, val);
+		addr = READ_BE_UINT16(_script->data + _pos1 + 5);
+		val = READ_BE_UINT16(_script->data + _pos1 + 7);
+		writeHostMemory(addr, val);
 		break;
 	case 7:
 		_que->writeUInt16(0x1D);
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 4) ? 1 : 0);
+		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4) ? 1 : 0);
 		break;
 	case 8:
-		if (READ_BE_UINT16(_script->data + _curPos + 4) == 0) {
+		if (READ_BE_UINT16(_script->data + _pos1 + 4) == 0) {
 			_que->writeUInt16(0x09);
 			_que->writeUInt16(0x02);
 			_que->writeUInt16(0x01);
 		} else {
+			// Show inventory item close-up
 			_que->writeUInt16(0x15);
-			_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 8));
-			_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 10));
+			_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 8));
+			_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 10));
 		}
 		break;
 	case 9:
-		/*_vm->_gameState.chapter = */READ_BE_UINT16(_script->data + _curPos + 4) + 2;
+		val = /*_vm->_gameState.chapter = */READ_BE_UINT16(_script->data + _pos1 + 4) + 2;
 		break;
 	case 10:
-		/*_doTransition? = */READ_BE_UINT16(_script->data + _curPos + 4);
-		/*if (_doTransition == 1)
+		val = READ_BE_UINT16(_script->data + _pos1 + 4);
+		_ui->setVerbsTabLayout(val);
+		/*if (val == 1)
 			_transDW1 = _transDW2 = 0;*/
 		break;
 	case 11:
-		/*if (READ_BE_UINT16(_script->data + _curPos + 4))
+		/*if (READ_BE_UINT16(_script->data + _pos1 + 4))
 			restoreGfxAndSoundAfterLoad();
 		else
 			animSpecOther();
 			*/
 		break;
 	case 12:
-		_buf352[53] &= 0xF8;
-		memset(_buf352 + 54, 0, 298);
+		_flagsTable[53] &= 0xF8;
+		memset(_flagsTable + 54, 0, 298);
 		break;
 	case 13:
 		_que->writeUInt16(0x1B);
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 5));
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 8));
-		_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 10));
+		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 5));
+		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 8));
+		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 10));
 		break;
 	default:
 		break;
@@ -1422,41 +1402,42 @@ void ScriptEngine::o_subOps() {
 }
 
 void ScriptEngine::o_displayDialog() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
 
-	int len = 0;
-	int f1 = 0;
-	int f2 = 0;
+	uint16 m = 0;
+	uint16 f1 = 0;
+	uint16 f2 = 0;
+	_pos2 = _pos1;
 
-	getOpcodeProps(_curPos, len, f1, f2);
-	int pos = _curPos + 1;
+	getOpcodeProperties(m, f1, f2);
+	++_pos2;
 
 	_que->writeUInt16(0x08);
-	if (len == 4) {
-		_que->writeUInt16(READ_BE_UINT16(_script->data + pos + 1));
-		pos += 3;
+	if (m == 4) {
+		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos2 + 1));
+		_pos2 += 3;
 	} else {
 		_que->writeUInt16(0);
 	}
-	_que->writeUInt16(READ_BE_UINT16(_script->data + pos));
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos2));
 }
 
 void ScriptEngine::o_animWait() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x09);
 	_que->writeUInt16(0x03);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 1));
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
 void ScriptEngine::o_pcmSoundWait() {
-	if (OPC_4_ss())
+	if (evalFinished())
 		_que->writeUInt16(0x0A);
 }
 
 void ScriptEngine::o_fmMusicWait() {
-	if (OPC_4_ss())
+	if (evalFinished())
 		_que->writeUInt16(0x13);
 }
 
@@ -1467,26 +1448,15 @@ void ScriptEngine::o_73() {
 }
 
 void ScriptEngine::o_waitFrames() {
-	if (!OPC_4_ss())
+	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x10);
-	_que->writeUInt16(READ_BE_UINT16(_script->data + _curPos + 1));
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
-#undef S_FRAME
-#undef S_WRBYTE
-#undef S_WRWORD
-#undef S_RDBYTE
-#undef S_RDWORD
-#undef S_INCBYTE
-#undef S_DECBYTE
-#undef S_ADDBYTE
-#undef S_SUBBYTE
-#undef S_PUSH
-#undef S_POP
 #undef ARR_SIZE
 #undef ARR_POS
-#undef ARR_WRITE
 #undef ARR_READ
+#undef ARR_WRITE
 
 } // End of namespace Snatcher

@@ -22,16 +22,17 @@
 #ifndef SNATCHER_SCRIPT_H
 #define SNATCHER_SCRIPT_H
 
-
+#include "common/array.h"
+#include "common/func.h"
 #include "common/ptr.h"
-#include "snatcher/resource.h"
 
 #define		SNATCHER_SCRIPT_DEBUG
 
 namespace Snatcher {
 
-class FIO;
+class ResourcePointer;
 class SnatcherEngine;
+class UI;
 
 class CmdQueue {
 public:
@@ -42,7 +43,7 @@ public:
 	void writeUInt32(uint32 val);
 	void start() { _enable = true; }	
 	bool enabled() const { return _enable; }
-	void run(GameState &state);
+	void run();
 
 private:
 	const uint16 *_readPos;
@@ -58,178 +59,188 @@ private:
 private:
 	void makeFunctions();
 
-	void m_end(GameState &state, const uint16 *&data);
-	void m_initAnimations(GameState &state, const uint16 *&data);
-	void m_02(GameState &state, const uint16 *&data);
-	void m_drawCommands(GameState &state, const uint16 *&data);
-	void m_04(GameState &state, const uint16 *&data);
-	void m_printText(GameState &state, const uint16 *&data);
-	void m_06(GameState &state, const uint16 *&data);
-	void m_fmMusicStart(GameState &state, const uint16 *&data);
-	void m_displayDialog(GameState &state, const uint16 *&data);
-	void m_animOps(GameState &state, const uint16 *&data);
-	void m_pcmWait(GameState &state, const uint16 *&data);
-	void m_11(GameState &state, const uint16 *&data);
-	void m_12(GameState &state, const uint16 *&data);
-	void m_mmSeq(GameState &state, const uint16 *&data);
-	void m_14(GameState &state, const uint16 *&data);
-	void m_gfxReset(GameState &state, const uint16 *&data);
-	void m_waitFrames(GameState &state, const uint16 *&data);
-	void m_loadResource(GameState &state, const uint16 *&data);
-	void m_gfxStart(GameState &state, const uint16 *&data);
-	void m_fmMusicWait(GameState &state, const uint16 *&data);
-	void m_20(GameState &state, const uint16 *&data);
-	void m_21(GameState &state, const uint16 *&data);
-	void m_resetTextFields(GameState &state, const uint16 *&data);
-	void m_23(GameState &state, const uint16 *&data);
-	void m_24(GameState &state, const uint16 *&data);
-	void m_25(GameState &state, const uint16 *&data);
-	void m_26(GameState &state, const uint16 *&data);
-	void m_27(GameState &state, const uint16 *&data);
-	void m_28(GameState &state, const uint16 *&data);
-	void m_29(GameState &state, const uint16 *&data);
-	void m_30(GameState &state, const uint16 *&data);
-	void m_31(GameState &state, const uint16 *&data);
-	void m_32(GameState &state, const uint16 *&data);
-	void m_33(GameState &state, const uint16 *&data);
-	void m_palOps(GameState &state, const uint16 *&data);
-	void m_35(GameState &state, const uint16 *&data);
+	void m_end(const uint16 *&data);
+	void m_initAnimations(const uint16 *&data);
+	void m_02(const uint16 *&data);
+	void m_drawCommands(const uint16 *&data);
+	void m_04(const uint16 *&data);
+	void m_printText(const uint16 *&data);
+	void m_06(const uint16 *&data);
+	void m_fmMusicStart(const uint16 *&data);
+	void m_displayDialog(const uint16 *&data);
+	void m_animOps(const uint16 *&data);
+	void m_pcmWait(const uint16 *&data);
+	void m_11(const uint16 *&data);
+	void m_pcmSound(const uint16 *&data);
+	void m_chatWithPortraitAnim(const uint16 *&data);
+	void m_14(const uint16 *&data);
+	void m_gfxReset(const uint16 *&data);
+	void m_waitFrames(const uint16 *&data);
+	void m_loadResource(const uint16 *&data);
+	void m_gfxStart(const uint16 *&data);
+	void m_fmMusicWait(const uint16 *&data);
+	void m_20(const uint16 *&data);
+	void m_invItemCloseUp(const uint16 *&data);
+	void m_resetTextFields(const uint16 *&data);
+	void m_23(const uint16 *&data);
+	void m_24(const uint16 *&data);
+	void m_25(const uint16 *&data);
+	void m_26(const uint16 *&data);
+	void m_27(const uint16 *&data);
+	void m_fmSoundEffect(const uint16 *&data);
+	void m_pcmBlock(const uint16 *&data);
+	void m_30(const uint16 *&data);
+	void m_31(const uint16 *&data);
+	void m_32(const uint16 *&data);
+	void m_33(const uint16 *&data);
+	void m_palOps(const uint16 *&data);
+	void m_clearJordanInputField(const uint16 *&data);
 
-	typedef Common::Functor2Mem<GameState&, const uint16*&, void, CmdQueue> CmdQueOpcode;
-	Common::Array<CmdQueOpcode*> _opcodes;
-
-private:
-	void printSceneEntryStringHead();
-	void printSceneEntryStringBody(GameState &state);
-	bool checkStringProgress();
-	bool waitWithCursorAnim();
-
-	uint8 *_textBuffer;
-	uint8 _textColor;
-	uint8 _textY;
-	uint8 _textY2;
-	//uint8 _makestrbt1;
-	uint8 _sceneId;
-	uint8 _textLineBreak;
-	uint8 _textLineEnd;
-	uint16 _sceneTextOffsCur;
-	uint16 _sceneInfo;
-	uint16 _sceneTextOffset;
-	uint16 _sceneTextOffsStart;
-	uint8 _waitCursorFrame;
-	uint8 _waitCursorAnimDelay;
+	typedef Common::Functor1Mem<const uint16*&, void, CmdQueue> CmdQueOpcode;
+	Common::Array<CmdQueOpcode*> _opcodes;	
 };
 
 struct Script {
-	Script() : scriptStateByteUnk(0), unkislp(0), data(nullptr), dataSize(0), curPos(0), newPos(-1), curFileNo(0), curGfxScript(-1), stack(nullptr), stackSize(0x600), sp(nullptr), bp(nullptr), res() {
-		stack = new uint8[stackSize]();
-		sp = bp = &stack[stackSize];
+	Script(uint32 textResourceOffset) : sentenceDone(0), sentencePos(0), data(nullptr), dataSize(0), curPos(0), newPos(0xFFFF), curFileNo(0), curGfxScript(-1), textResOffset(textResourceOffset) /*,
+		stack(nullptr), stackSize(0x600), sp(nullptr), bp(nullptr)*/ {
+		// stack = new uint8[stackSize]();
+		// sp = bp = &stack[stackSize];
 	}
 	~Script() {
-		delete[] stack;
+		// delete[] stack;
+		delete[] data;
 	}
-	uint8 scriptStateByteUnk;
-	uint8 unkislp;
+	const uint8 *getTextResource() const {
+		return data + textResOffset;
+	}
+	uint8 sentenceDone;
+	uint8 sentencePos;
 	uint8 curFileNo;
 	int16 curGfxScript;
-	ResourcePointer res;
 	const uint8 *data;
 	uint32 dataSize;
-	int curPos;
-	int newPos;
-	uint8 *stack;
-	const uint32 stackSize;
-	uint8 *sp;
-	uint8 *bp;
+	uint16 curPos;
+	uint16 newPos;
+	//uint8 *stack;
+	//const uint32 stackSize;
+	const uint32 textResOffset;
+	//uint8 *sp;
+	//uint8 *bp;
+};
+
+class ScriptArray {
+public:
+	ScriptArray() : _data(nullptr) {}
+	ScriptArray(uint8 *data, uint8 size) : _data(data) {
+		*data = size;
+	}
+	uint8 size() const { return _data[0]; }
+	uint8 pos() const {	return _data[1]; }
+	uint8 &pos() { return _data[1]; }
+	uint16 read(uint8 entry) const {
+		if (entry >= size())
+			error("ScriptArrayEntry::read: entry %d out of bounds", entry);
+		return *((uint16*)&_data[2 + entry * 2]);
+	}
+	void write(uint8 entry, uint16 val) {
+		if (entry >= size())
+			error("ScriptArrayEntry::write: entry %d out of bounds", entry);
+		*((uint16*)&_data[2 + entry * 2]) = val;
+	}
+private:
+	uint8 *_data;
 };
 
 class ScriptEngine {
 public:
-	ScriptEngine(SnatcherEngine *vm, CmdQueue *que, ResourcePointer *scd);
+	ScriptEngine(CmdQueue *que, UI *ui, ResourcePointer *scd);
 	~ScriptEngine();
 
-	//void writeVar(uint16 arrayNo, uint16 pos, uint8 val);
 	void resetArrays();
 	void run(Script *script);
 	bool postProcess(Script *script);
+	void processInput();
 
 private:
-	SnatcherEngine *_vm;
 	CmdQueue *_que;
+	UI *_ui;
 	Script *_script;
 
-	uint8 *_var;
-	uint8 *_arrays[6];
-	uint8 *_buf352;
-	int _curPos;
-	int /*_v1, _v2, */_v3, _v5;
+	uint8 *_arrayData;
+	ScriptArray _arrays[6];
+	uint8 *_flagsTable;
+	int _pos1;
+	int _pos2;
+	uint16 /*_v1, _v2, _v3,*/ _result;
 	uint _op;
 
 private:
-	void runOpcode(int offset);
-	void getOpcodeProps(int offset, int &len, int &f1, int &f2);
-	void runOpcode(int &offset, int len, int &result);
-	void getFlag(int arg, int &result);
-	void setFlag(int arg, int val);
+	void runOpcode();
+	void getOpcodeProperties(uint16 &m1, uint16 &m2, uint16 &u);
+	void runOpcodeOrReadVar(uint16 mode, uint16 &result);
+	void getFlags(uint16 sel, uint16 &result);
+	void setFlags(uint16 sel, uint32 flags);
 
-	uint8 countFunctionOps(int offset);
-	void seekToFunctionOp(int &offset, int arg);
-	bool isExecFuncOpcode(int offset);
-	bool stackOps_checkFor52(int offset, int &result);
-	bool opcodeHasFlag8(int offset);
-	bool OPC_4_ss();
-	void skipOnFlag8(int &offset);
-	void stackOps_unkParseTo(int &offset);
+	uint8 countFunctionOps();
+	void seekToFunctionOp(int num);
+	bool isExecFuncOpcode();
+	bool stackOps_checkFor52(uint16 &result);
+	bool opcodeHasFlag8();
+	bool evalFinished();
+	void skipOnFlag8();
+	void jump();
 
-	bool getArrayLastEntry(int arrNo, int &result);
-	bool popArrayLastEntry(int arrNo, int &result);
-	bool getArrayEntry(int arrNo, int val, int &result);
-	bool setArrayLastEntry(int arrNo, int val);
+	bool getArrayLastEntry(uint16 arrNo, uint16 &result);
+	bool popArrayLastEntry(uint16 arrNo, uint16 &result);
+	bool getArrayEntry(uint16 arrNo, uint8 pos, uint16 &result);
+	bool setArrayLastEntry(uint16 arrNo, uint16 val);
 
 	uint8 getOpcode(int offset);
+
+	void writeHostMemory(uint16 addr, uint16 val);
 
 private:
 	void makeOpcodeTable(ResourcePointer *scd);
 
 	void o_nop();
 	void o_animOps();
-	void o_01();
-	void o_mmSequence();
+	void o_eval_add();
+	void o_chatWithPortraitAnim();
 	void o_05();
-	void o_06();
+	void o_eval_and();
 	void o_fmMusicStart();
-	void o_11();
+	void o_callSubRoutine();
 	void o_12();
 	void o_13();
 	void o_14();
-	void o_15();
-	void o_16();
-	void o_19();
-	void o_20();
+	void o_fmSoundEffect();
+	void o_eval_equal();
+	void o_clearFlags();
+	void o_setFlags();
 	void o_21();
-	void o_22();
+	void o_eval_greater();
 	void o_23();
 	void o_24();
-	void o_26();
+	void o_jumpIf();
 	void o_28();
 	void o_executeFunction();
 	void o_40();
 	void o_42();
 	void o_break();
-	void o_46();
-	void o_startFunction();
-	void o_49();
+	void o_eval_true();
+	void o_start();
+	void o_eval_or();
 	void o_52();
 	void o_54();
-	void o_56();
+	void o_verbOps();
 	void o_57();
-	void o_loadScript();
+	void o_returnFromSubRoutine();
 	void o_59();
 	void o_loadModuleAndStartGfx();
 	void o_62();
-	void o_63();
+	void o_switchToNextOp();
 	void o_64();
-	void o_subOps();
+	void o_sysOps();
 	void o_displayDialog();
 	void o_animWait();
 	void o_pcmSoundWait();
@@ -246,12 +257,19 @@ private:
 		typedef void (ScriptEngine::*ScrFunc)();
 		ScriptEngineProc(ScriptEngine *se, ScrFunc func, const char *desc, uint8 len, uint8 flg) : Common::Functor0Mem<void, ScriptEngine>(se, func), _desc(Common::String("o_") + desc) {
 			_desc += Common::String::format("() [len: %d, flags: 0x%02x]", len, flg);
+			_recursion = 0;
 		}
-		void operator()() {
-			debug("%s", _desc.c_str());
+		void operator()(int pos) {
+			Common::String spc;
+			for (int i = 0; i < _recursion; ++i)
+				spc += "|--";
+			debug("0x%04x: %s%s", pos, spc.c_str(), _desc.c_str());
+			++_recursion;
 			Functor0Mem<void, ScriptEngine>::operator()();
+			--_recursion;
 		}
 	private:
+		static int _recursion;
 		Common::String _desc;
 	};
 #endif

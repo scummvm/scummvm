@@ -66,4 +66,4 @@ public:
 
 } // End of namespace Snatcher
 
-#endif // SNATCHER_SOUND_H
+#endif // SNATCHER_TEXT_H

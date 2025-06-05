@@ -55,7 +55,7 @@ struct Config {
 };
 
 struct GameState {
-	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), chapter(0), conf(Config()) {}
+	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), chapter(0), chapterSub(0), conf(Config()) {}
 	int16 frameNo;
 	int16 frameState;
 	int16 finish;
@@ -66,6 +66,7 @@ struct GameState {
 	int16 menuSelect;
 	int16 prologue;
 	int16 chapter;
+	int16 chapterSub;
 	Config conf;
 };
 
@@ -126,6 +127,7 @@ public:
 	~SceneModule();
 
 	ResourcePointer getPtr(int offset) const;
+	ResourcePointer getGfxData() const;
 
 	void run(GameState &state);
 

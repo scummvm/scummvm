@@ -39,6 +39,7 @@ class ResourcePointer;
 class ScriptEngine;
 class SoundEngine;
 class SceneModule;
+class UI;
 
 struct GameState;
 struct Script;
@@ -90,6 +91,7 @@ private:
 	// Graphics
 	GraphicsEngine *_gfx;
 	VMInfo _gfxInfo;
+	UI *_ui;
 
 	// Sound
 	SoundEngine *_snd;

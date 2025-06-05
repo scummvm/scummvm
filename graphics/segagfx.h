@@ -267,7 +267,7 @@ private:
 	const renderFuncD *_renderLineFragmentD;
 
 	struct SegaPlane {
-		SegaPlane() : blockX(0), blockY(0), w(0), h(0), mod(0), nameTable(0), nameTableSize(0) {}
+		SegaPlane() : blockX(0), blockY(0), w(0), h(0), mod(0), pitch(0), nameTable(0), nameTableSize(0) {}
 		int blockX, blockY;
 		uint16 w, h, mod, pitch;
 		uint16 *nameTable;

@@ -25,6 +25,7 @@
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
 #include "snatcher/text.h"
+#include "snatcher/ui.h"
 #include "snatcher/util.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
@@ -44,7 +45,7 @@
 namespace Snatcher {
 
 SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
-	_scriptEngine(nullptr), _cmdQueue(nullptr), _script(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _gfxInfo(),
+	_scriptEngine(nullptr), _cmdQueue(nullptr), _script(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(),
 		_frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 }
@@ -58,6 +59,7 @@ SnatcherEngine::~SnatcherEngine() {
 	delete _scriptEngine;
 	delete _cmdQueue;
 	delete _script;
+	delete _ui;
 }
 
 Common::Error SnatcherEngine::run() {
@@ -120,8 +122,10 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 	}
 
 	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo, _snd);
+
 	if (_gfx) {
 		initGraphics(_gfx->screenWidth(), _gfx->screenHeight(), &pxf);
+		assert(_scd);
 		_gfx->setTextFont(_scd->makePtr(0x14B7C)(), 816, _scd->makePtr(0x14EAC)(), 102);
 		return true;
 	}
@@ -132,20 +136,34 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 bool SnatcherEngine::initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions) {
 	assert(_mixer);
 	assert(_fio);
+
 	_snd = new SoundEngine(_fio, platform, soundOptions);
-	return (_snd && _snd->init(mixer));
+	if (!_snd || !_snd->init(mixer))
+		return false;
+
+	syncSoundSettings();
+
+	return true;
 }
 
 bool SnatcherEngine::initScriptEngine() {
 	_cmdQueue = new CmdQueue(this);
 	if (!_cmdQueue)
 		return false;
-	_scriptEngine = new ScriptEngine(this, _cmdQueue, _scd);
+
+	assert(_scd);
+	_ui = new UI(_gfx, _cmdQueue, _scd);
+	if (!_ui)
+		return false;
+
+	_scriptEngine = new ScriptEngine(_cmdQueue, _ui, _scd);
 	if (!_scriptEngine)
 		return false;
-	_script = new Script();
+
+	_script = new Script(0x3800);
 	if (!_script)
 		return false;
+
 	return true;
 }
 
@@ -203,7 +221,7 @@ bool SnatcherEngine::start() {
 			if (!_gfx->busy(0)) {
 				bool blockedMod = _cmdQueue->enabled();
 				if (_cmdQueue->enabled()) {
-					_cmdQueue->run(state);
+					_cmdQueue->run();
 					blockedMod = _gfx->busy(0);
 				}
 				if (!blockedMod) {
@@ -254,13 +272,17 @@ struct InputEvent {
 static const InputEvent _defaultKeyEvents[] = {
 	// Arrow buttons
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_UP, 0x00, 0x01, false },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP8, Common::KBD_NUM, 0x01, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP8, 0x00, 0x01, false },
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_DOWN, 0x00, 0x02, false },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP2, Common::KBD_NUM, 0x02, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP2, 0x00, 0x02, false },
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_LEFT, 0x00, 0x04, false },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP4, Common::KBD_NUM, 0x04, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP4, 0x00, 0x04, false },
 	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RIGHT, 0x00, 0x08, false },
-	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, Common::KBD_NUM, 0x08, false},
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, 0x00, 0x08, false},
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP7, 0x00, 0x05, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP9, 0x00, 0x09, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP3, 0x00, 0x0A, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP1, 0x00, 0x06, false },
 	{ Common::EVENT_WHEELUP, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x01, false },
 	{ Common::EVENT_WHEELDOWN, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x02, false },
 
@@ -300,10 +322,12 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 			if (evt.type == k.pressType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
 				if (!(_lastKeys & k.internalEvent)) {
 					_input.controllerFlags |= k.internalEvent;
-					if (k.internalEvent & 0x70) // The A, B and C buttons can be reconfigured in the main menu. This applies the setting.
-						_input.controllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][k.internalEvent >> 5]);
-					else
-						_input.controllerFlagsRemapped |= k.internalEvent;
+					// The A, B and C buttons can be reconfigured in the main menu. This applies the setting.
+					for (int f = 0; f < 3; ++f) {
+						if (k.internalEvent & (f << 5)) 
+							_input.controllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
+					}
+					_input.controllerFlagsRemapped |= (k.internalEvent & ~0x70);
 					_lastKeys |= k.internalEvent;
 					if (_keyRepeat || k.releaseType == Common::EVENT_INVALID)
 						_releaseKeys |= k.internalEvent;
@@ -326,6 +350,18 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 }
 
 void SnatcherEngine::updateChapter(GameState &state) {
+	// The chapterSub variable is an invention to emulate the interaction between the main thread and the
+	// vertical interrupt handlers in the original code. It may complicate things a bit (e. g. I have to
+	// provide means to drop out of several involved functions and continue with them later), but I still
+	// like this better than making the code multi-threaded, using a timer proc.
+
+	if (state.chapterSub & 0x80) {
+		if (!(_cmdQueue->enabled() || (_snd->pcmGetStatus().statusBits & 7)))
+			state.chapterSub &= ~0x80;
+		else
+			return;
+	}
+
 	switch (state.chapter) {
 	case 0:
 		// Intro and main menu
@@ -347,7 +383,7 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		_cmdQueue->start();
 
 		++state.chapter;
-		state.chapter |= 0x80;
+		state.chapterSub |= 0x80;
 
 		break;
 
@@ -363,16 +399,38 @@ void SnatcherEngine::updateChapter(GameState &state) {
 			/* load savegame */
 		}
 
+		_ui->setControllerConfig(state.conf.controllerSetup);
+
 		_cmdQueue->start();
 		++state.chapter;
-		state.chapter |= 0x80;
+		state.chapterSub |= 0x80;
 		break;
 
 	case 2:
 		// Act I
-		_scriptEngine->run(_script);
-		_cmdQueue->start();
-		state.chapter |= 0xC0;
+		if (state.chapterSub & 0x40) {
+			if (_scriptEngine->postProcess(_script)) {
+				for (int i = 5; i < 15; ++i)
+					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
+				_cmdQueue->writeUInt16(0x22);
+				_cmdQueue->writeUInt32(0x139D0);
+				_cmdQueue->start();
+				state.chapterSub |= 0xA0;
+			}				
+			state.chapterSub &= ~0x40;
+		} else if (state.chapterSub & 0x20) {
+			_gfx->setVar(11, 0xFF);
+			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input.controllerFlagsRemapped)) {
+				state.chapterSub |= 0x80;
+			} else {
+				_scriptEngine->processInput();
+				state.chapterSub &= ~0x20;
+			}
+		} else if (state.chapterSub == 0) {
+			_scriptEngine->run(_script);
+			_cmdQueue->start();
+			state.chapterSub |= 0xC0;
+		}
 		break;
 
 	case 3:
@@ -385,27 +443,6 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		break;
 
 	default:
-		if (state.chapter & 0x80) {
-			if (!(_cmdQueue->enabled() || (_snd->pcmGetStatus() & 7)))
-				state.chapter &= ~0x80;
-		} else if (state.chapter & 0x40) {
-			//_unkScrByte = 0;
-			if (_scriptEngine->postProcess(_script)) {
-				for (int i = 5; i < 15; ++i)
-					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
-				_cmdQueue->writeUInt16(0x22);
-				_cmdQueue->writeUInt32(0x139D0);
-				_cmdQueue->start();
-				state.chapter |= 0xA0;
-			}				
-			state.chapter &= ~0x40;
-		} else if (state.chapter & 0x20) {
-			_gfx->setVar(11, 0xFF);
-			//unkPostScriptUpdt
-			//updt_mult_sub_11004
-			//scriptUnkProcess
-			state.chapter &= ~0x20;
-		}		
 		break;
 	}
 }
@@ -454,7 +491,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			_snd->pcmInitSound(30);
 			break;
 		case 1:
-			if (!(_snd->pcmGetStatus() & 0x0F))
+			if (!(_snd->pcmGetStatus().statusBits & 0x0F))
 				++state.modProcessSub;
 			break;
 		case 2:
