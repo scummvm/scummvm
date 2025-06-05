@@ -79,6 +79,9 @@ void AGSSpriteVideo::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(D3D_Video::Autoplay^0, AGSSpriteVideo::Autoplay);
 	SCRIPT_METHOD(D3D_Video::IsAutoplaying, AGSSpriteVideo::IsAutoplaying);
 	SCRIPT_METHOD(D3D_Video::StopAutoplay, AGSSpriteVideo::StopAutoplay);
+	SCRIPT_METHOD(D3D_Video::get_renderStage, AGSSpriteVideo::get_renderstage);
+	SCRIPT_METHOD(D3D_Video::set_renderStage, AGSSpriteVideo::set_renderstage);
+	SCRIPT_METHOD(D3D_Video::NextFrame^0, AGSSpriteVideo::NextFrame);
 }
 
 void AGSSpriteVideo::SetLoopsPerSecond(ScriptMethodParams &params) {
@@ -167,6 +170,18 @@ void AGSSpriteVideo::IsAutoplaying(ScriptMethodParams &params) {
 
 void AGSSpriteVideo::StopAutoplay(ScriptMethodParams &params) {
 	debug(0, "AGSSpriteVideo: STUB - D3D StopAutoplay");
+}
+
+void AGSSpriteVideo::get_renderstage(ScriptMethodParams &params) {
+	debug(0, "AGSSpriteVideo: STUB - D3D get_renderstage");
+}
+
+void AGSSpriteVideo::set_renderstage(ScriptMethodParams &params) {
+	debug(0, "AGSSpriteVideo: STUB - D3D set_renderstage");
+}
+
+void AGSSpriteVideo::NextFrame(ScriptMethodParams &params) {
+	debug(0, "AGSSpriteVideo: STUB - D3D NextFrame");
 }
 
 } // namespace AGSSpriteVideo
