@@ -153,6 +153,11 @@ Common::Error AGSEngine::run() {
 		return Common::kNoError;
 	}
 
+	if (isUnsupportedAGS4()) {
+		GUIErrorMessage(_("The selected game uses version 4 of the AGS engine, which is not supported."));
+		return Common::kNoError;
+	}
+
 	if (is64BitGame()) {
 		// If the game file was opened and the engine started, but the
 		// size is -1, then it must be a game like Strangeland where
@@ -309,7 +314,12 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
 
 bool AGSEngine::isUnsupportedPre25() const {
 	return _gameDescription->desc.extra &&
-		!strcmp(_gameDescription->desc.extra, "Pre 2.5");
+		   Common::String(_gameDescription->desc.extra).contains("Pre 2.5");
+}
+
+bool AGSEngine::isUnsupportedAGS4() const {
+	return _gameDescription->desc.extra &&
+		   Common::String(_gameDescription->desc.extra).contains("AGS 4");
 }
 
 bool AGSEngine::is64BitGame() const {

@@ -140,6 +140,11 @@ public:
 	 */
 	bool isUnsupportedPre25() const;
 
+	/**
+	 * Returns true if the selected game is built with AGS4
+	 */
+	bool isUnsupportedAGS4() const;
+
 	/*
 	 * Returns true if the game has data files greater than 2Gb
 	 */
