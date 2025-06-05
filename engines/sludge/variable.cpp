@@ -196,28 +196,18 @@ static int stringCompareToIgnoreCase(const Common::String &s1, const Common::Str
 
 bool StackHandler::getSavedGamesStack(const Common::String &ext) {
 	// Make pattern
-	Common::String realExtension = ".###";
 	//uint len = realExtension.size();
-	Common::String pattern = g_sludge->getTargetName();
-	pattern += realExtension;
 
 	// Get all saved files
-	Common::StringArray sa = g_system->getSavefileManager()->listSavefiles(pattern);
+	SaveStateList sa = g_sludge->getMetaEngine()->listSaves(g_sludge->getTargetName().c_str());
 	Common::StringArray realNames;
 
 	g_sludge->_saveNameToSlot.clear();
 
-	for (auto &fname : sa) {
-		ExtendedSavegameHeader header;
-		Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fname);
-
-		if (f && g_sludge->getMetaEngine()->readSavegameHeader(f, &header)) {
-			realNames.push_back(header.description);
-			int slot = atoi(fname.substr(fname.size() - 3, 3).c_str());
-			g_sludge->_saveNameToSlot[header.description] = slot;
-		}
-
-		delete f;
+	for (auto &savestate : sa) {
+		Common::String name = savestate.getDescription();
+		realNames.push_back(name);
+		g_sludge->_saveNameToSlot[name] = savestate.getSaveSlot();
 	}
 
 	Common::sort(realNames.begin(), realNames.end(), stringCompareToIgnoreCase);
