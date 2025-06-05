@@ -131,17 +131,20 @@ bool IntroBinData::load() {
 	Common::File f;
 	openFile(f, "intro_sig");
 	f.read(_sigData, 533);
+	f.close();
 
 	openFile(f, "intro_map");
 	_introMap.clear();
 	_introMap.resize(INTRO_MAP_WIDTH * INTRO_MAP_HEIGHT);
 	for (i = 0; i < INTRO_MAP_HEIGHT * INTRO_MAP_WIDTH; i++)
 		_introMap[i] = g_tileMaps->get("base")->translate(f.readByte());
+	f.close();
 
 	openFile(f, "intro_script");
 	_scriptTable = new byte[INTRO_SCRIPT_TABLE_SIZE];
 	for (i = 0; i < INTRO_SCRIPT_TABLE_SIZE; i++)
 		_scriptTable[i] = f.readByte();
+	f.close();
 
 	openFile(f, "intro_base_tile");
 	_baseTileTable = new Tile*[INTRO_BASETILE_TABLE_SIZE];
@@ -149,6 +152,7 @@ bool IntroBinData::load() {
 		MapTile tile = g_tileMaps->get("base")->translate(f.readByte());
 		_baseTileTable[i] = g_tileSets->get("base")->get(tile._id);
 	}
+	f.close();
 
 	/* --------------------------
 	   load beastie frame table 1
@@ -158,6 +162,7 @@ bool IntroBinData::load() {
 	for (i = 0; i < BEASTIE1_FRAMES; i++) {
 		_beastie1FrameTable[i] = f.readByte();
 	}
+	f.close();
 
 	/* --------------------------
 	   load beastie frame table 2
@@ -167,6 +172,7 @@ bool IntroBinData::load() {
 	for (i = 0; i < BEASTIE2_FRAMES; i++) {
 		_beastie2FrameTable[i] = f.readByte();
 	}
+	f.close();
 
 	return true;
 }
