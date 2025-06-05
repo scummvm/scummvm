@@ -43,6 +43,8 @@ public:
 		uint16 hScrollTableNumEntries;
 		bool disableVScroll;
 		bool lineScrollMode;
+		bool verbsTabVisible;
+		bool busy;
 		struct HINT {
 			bool needUpdate;
 			bool enable;
@@ -83,4 +85,4 @@ public:
 
 } // End of namespace Snatcher
 
-#endif // SNATCHER_RENDER_H
+#endif // SNATCHER_TRANSITION_H

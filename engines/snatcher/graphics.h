@@ -50,7 +50,7 @@ public:
 	void runScript(ResourcePointer res, int func);
 	void enqueuePaletteEvent(ResourcePointer res);
 	bool enqueueDrawCommands(ResourcePointer res);
-	void initAnimations(ResourcePointer res, uint16 len);
+	void initAnimations(ResourcePointer res, uint16 len, bool dontUpdate);
 
 	enum ScrollMode : uint8 {
 		kHorzA		= 0,
@@ -62,14 +62,17 @@ public:
 
 	void setScrollStep(uint8 mode, int16 step);
 	void transitionCommand(uint8 cmd);
+	bool transitionStateBusy() const;
 
 	void setTextFont(const uint8 *font, uint32 fontSize, const uint8 *charWidthTable, uint32 charWidthTableSize);
 	void printText(const uint8 *text);
 	void setTextPrintDelay(uint16 delay);
 	//void setTextColor(uint8 color);
 	bool isTextInQueue() const;
-
 	void resetTextFields();
+	void clearJordanInputField();
+	uint8 getVerbAreaType() const;
+	bool isVerbsTabActive() const;
 
 	void updateAnimations();
 	void updateText();
@@ -115,7 +118,7 @@ public:
 		kAnimParaAbsSpeedX,
 		kAnimParaAbsSpeedY,
 		kAnimParaScriptComFlags,
-		kAnimParaF4f
+		kAnimFreezeFlag
 	};
 
 	enum AnimFlags : int {
@@ -137,8 +140,6 @@ public:
 
 	bool busy(int type) const;
 	uint16 frameCount() const;
-
-	uint8 getVerbAreaType() const;
 
 	void createMouseCursor(bool show);
 

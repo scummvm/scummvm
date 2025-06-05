@@ -34,6 +34,7 @@ extern uint32 makeBCDTimeStamp(uint32 msecs);
 
 extern void rngReset();
 extern uint16 rngMakeNumber();
+extern uint16 rngGetNumberFromRange(uint16 min, uint16 range);
 
 } // End of namespace Util
 } // End of namespace Snatcher

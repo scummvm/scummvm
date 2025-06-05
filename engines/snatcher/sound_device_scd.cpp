@@ -25,7 +25,7 @@
 #include "common/array.h"
 #include "common/func.h"
 #include "common/ptr.h"
-#include "common/substream.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "snatcher/resource.h"
 #include "snatcher/sound_device.h"
@@ -87,7 +87,7 @@ public:
 	bool cdaIsPlaying() const override;
 	uint32 cdaGetTime() const override;
 
-	void fmSendCommand(int cmd, int arg) override;
+	void fmSendCommand(int cmd, int restoreVolume) override;
 	uint8 fmGetStatus() const override;
 	void pcmSendCommand(int cmd, int arg) override;
 	void pcmInitSound(int sndId) override;
@@ -128,7 +128,15 @@ private:
 	void pcmDelayedStart();
 
 	typedef Common::SharedPtr<Common::SeekableReadStream> SmpStrPtr;
-	SmpStrPtr createSamplesStream(uint32 addr) const;
+	struct PCMCacheEntry {
+		PCMCacheEntry(uint32 ad, int16 no, Common::SharedPtr<uint8> ptr, uint32 sz) : addr(ad), resNo(no), data(ptr), dataSize(sz) {}
+		uint32 addr;
+		int16 resNo;
+		Common::SharedPtr<const uint8> data;
+		uint32 dataSize;
+	};
+	Common::Array<PCMCacheEntry> _pcmCache;
+	SmpStrPtr createSamplesStream(uint32 addr);
 
 	struct PCMResourceInfo {
 		uint8 prio;
@@ -176,6 +184,7 @@ private:
 	PCMResidentDataInfo *_pcmResidentDataInfo;
 	PCMInstrumentInfo *_pcmInstrumentInfo;
 	PCMSound *_pcmSounds;
+
 	bool _pcmDisableStereo;
 	int16 _pcmResourceNumber;
 	uint8 _pcmState;
@@ -1793,13 +1802,15 @@ uint32 SegaSoundDevice::cdaGetTime() const {
 	return Util::makeBCDTimeStamp(relTime);
 }
 
-void SegaSoundDevice::fmSendCommand(int cmd, int arg) {
+void SegaSoundDevice::fmSendCommand(int cmd, int restoreVolume) {
 	if (cmd == 0xFF) {
 		_faderFlags |= 4;
 		return;
 	}
-	if (cmd < 241 && arg)
+	if (cmd < 241 && restoreVolume) {
 		_faderFlags &= ~4;
+		_fmVolume1 = 0xFF;
+	}
 
 	_fmCmdQueue[_fmCmdQueueWPos++] = cmd;
 	if (_fmCmdQueueWPos == 128)
@@ -2082,22 +2093,30 @@ void SegaSoundDevice::pcmStartSound(uint8 sndId, int8 unit, uint8 vol) {
 }
 
 void SegaSoundDevice::pcmCheckPlayStatus() {
-	int num = (_pcmMode == 2 || _pcmMode == 0x82) ? 4 : 2;
+	int nu = (_pcmMode == 2 || _pcmMode == 0x82) ? 1 : 2;
+	int nc = (_pcmMode == 2 || _pcmMode == 0x82) ? 4 : 2;
 	uint8 flg = (_pcmMode == 2 || _pcmMode == 0x82) ? 2 : 8;
 
-	if (_pcmMode == 2) {
-		_faderTimer2 = 0;
-		_faderFlags = (_faderFlags & ~1) | 2;
-	}
-	
-	for (int i = 0; i < num; ++i) {
+	if (_pcmState & 1)
+		return;
+
+	for (int i = 0; i < nu; ++i) {
 		PCMSound &s = _pcmSounds[i];
 		if (s.prio == 0)
 			continue;
-
 		s.flags &= ~2;
-		if (!_sai->isPCMChannelPlaying(i << 1) && !_sai->isPCMChannelPlaying(((i << 1) | 1))) {
+
+		bool finished = true;
+		for (int ii = 0; ii < nc; ++ii) {
+			if (_sai->isPCMChannelPlaying((i << 1) + ii))
+				finished = false;
+		}
+		if (finished) {
 			pcmResetUnit(i, s);
+			if (_pcmMode == 2) {
+				_faderTimer2 = 0;
+				_faderFlags = (_faderFlags & ~1) | 2;
+			}
 			_pcmState &= ~flg;
 			_pcmMode = 0;
 		}
@@ -2140,8 +2159,13 @@ void SegaSoundDevice::pcmDelayedStart() {
 	_pcmState &= ~4;
 }
 
-SegaSoundDevice::SmpStrPtr SegaSoundDevice::createSamplesStream(uint32 addr) const {
+SegaSoundDevice::SmpStrPtr SegaSoundDevice::createSamplesStream(uint32 addr) {
 	uint32 numSamples = 0;
+
+	for (Common::Array<PCMCacheEntry>::const_iterator i = _pcmCache.begin(); i != _pcmCache.end(); ++i) {
+		if (i->addr == addr && i->resNo == _pcmResourceNumber)
+			return SmpStrPtr(new Common::MemoryReadStream(i->data.get(), i->dataSize, DisposeAfterUse::NO));
+	}
 
 	Common::SeekableReadStream *str = _fio->readStream(addr < 0x65000 ? 54 : 55);
 	if (!str)
@@ -2172,10 +2196,15 @@ SegaSoundDevice::SmpStrPtr SegaSoundDevice::createSamplesStream(uint32 addr) con
 			error("%s(): Samples stream overflow", __FUNCTION__);
 	}
 
-	str->seek(0);
-	Common::SeekableSubReadStream *subStr = new Common::SeekableSubReadStream(str, start, start + numSamples, DisposeAfterUse::YES);
+	str->seek(start, SEEK_SET);
+	uint8 *buff = new uint8[numSamples]();
+	str->read(buff, numSamples);
 
-	return SmpStrPtr(subStr);
+	_pcmCache.push_back(PCMCacheEntry(addr, _pcmResourceNumber, Common::SharedPtr<uint8>(buff, Common::ArrayDeleter<const uint8>()), numSamples));
+	if (_pcmCache.size() > 10)
+		_pcmCache.erase(_pcmCache.begin());
+
+	return SmpStrPtr(new Common::MemoryReadStream(buff, numSamples, DisposeAfterUse::NO));
 }
 
 void SegaSoundDevice::pcmResetUnit(uint8 unit, PCMSound &s) {

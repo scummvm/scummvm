@@ -261,7 +261,7 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 		if (_planes[kWindowPlane].nameTableSize != 0) {
 			// With window plane, if available
 			for (int y1 = y; y1 < y2; ++y1) {
-				memset (_tempBufferPlanesPrio, 0, _screenW);
+				memset(_tempBufferPlanesPrio, 0, _screenW);
 				if (_displayEnabled) {					
 					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
 					if (y1 >= wY1 && y1 < wY2) {
@@ -290,7 +290,7 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 		} else {
 			// Without window plane
 			for (int y1 = y; y1 < y2; ++y1) {
-				memset (_tempBufferPlanesPrio, 0, _screenW);
+				memset(_tempBufferPlanesPrio, 0, _screenW);
 				if (_displayEnabled) {	
 					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
 					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneA, y1, x, w);
@@ -309,7 +309,7 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 	} else if (_planes[kWindowPlane].nameTableSize != 0) {
 		// Include window plane if available
 		for (int y1 = y; y1 < y2; ++y1) {
-			memset (_tempBufferPlanesPrio, 0, _screenW);
+			memset(_tempBufferPlanesPrio, 0, _screenW);
 			if (_displayEnabled) {
 				renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
 				if (y1 >= wY1 && y1 < wY2) {
@@ -334,7 +334,7 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 	} else {
 		// Only plane B
 		for (int y1 = y; y1 < y2; ++y1) {
-			memset (_tempBufferPlanesPrio, 0, _screenW);
+			memset(_tempBufferPlanesPrio, 0, _screenW);
 			if (_displayEnabled)
 				renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
 

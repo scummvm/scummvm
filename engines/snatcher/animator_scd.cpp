@@ -41,7 +41,7 @@ namespace Snatcher {
 struct AnimObject {
 	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), f16(0), f18(0), f1c(0),
 		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0),
-			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), f4f(0), blink(0), blinkCounter(0), blinkDuration(0) {}
+			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), freeze(0), blink(0), blinkCounter(0), blinkDuration(0) {}
 	
 	void clear() {
 		enable = blinkRate = drawFlags = 0;
@@ -62,7 +62,7 @@ struct AnimObject {
 		spriteData = nullptr;
 		absSpeedX = absSpeedY = 0;
 		parent = children = next = 0;
-		scriptComFlags = f4f = 0;
+		scriptComFlags = freeze = 0;
 		blink = blinkCounter = blinkDuration = 0;
 
 	}
@@ -100,7 +100,7 @@ struct AnimObject {
 	uint16 children;
 	uint16 next;
 	uint8 scriptComFlags;
-	uint8 f4f;
+	uint8 freeze;
 
 	const uint8 id;
 };
@@ -114,13 +114,15 @@ public:
 	bool enqueueDrawCommands(ResourcePointer &res) override;
 	void clearDrawCommands() override;
 	void initData(ResourcePointer &res, uint8 mode) override;
-	void initAnimations(ResourcePointer &res, uint16 len) override;
+	void initAnimations(ResourcePointer &res, uint16 len, bool dontUpdate) override;
 	void linkAnimations(ResourcePointer &res, uint16 len) override;
 	void clearAnimations(int mode = 0) override;
 	void setPlaneMode(uint16 mode) override;
 
 	void resetTextFields() override;
-	void renderTextBuffer(const uint8 *textBuffer, uint16 firstLine, uint8 numLines) override;
+	void clearJordanInputField() override;
+	uint8 *getTextRenderBuffer() const override;
+	void renderTextBuffer(uint16 firstLine, uint8 numLines) override;
 
 	void updateScreen(uint8 *screen) override;
 	void updateAnimations() override;
@@ -214,7 +216,7 @@ private:
 	int anim_setSpeedY(AnimObject &a, const uint8 *data);
 	int anim_palEvent(AnimObject &a, const uint8 *data);
 	int anim_palReset(AnimObject &a, const uint8 *data);
-	int anim_copyCmds(AnimObject &a, const uint8 *data);
+	int anim_drawCmds(AnimObject &a, const uint8 *data);
 	int anim_nop(AnimObject &a, const uint8 *data);
 	int anim_scrollSingleStepH(AnimObject &a, const uint8 *data);
 	int anim_scrollSingleStepV(AnimObject &a, const uint8 *data);
@@ -229,7 +231,7 @@ private:
 	int anim_audioSync(AnimObject &a, const uint8 *data);
 	int anim_27(AnimObject &a, const uint8 *data);
 	int anim_28(AnimObject &a, const uint8 *data);
-	int anim_29(AnimObject &a, const uint8 *data);
+	int anim_fmSoundEffect(AnimObject &a, const uint8 *data);
 	int anim_30(AnimObject &a, const uint8 *data);
 	int anim_pcmCommand(AnimObject &a, const uint8 *data);
 	int anim_setDrawFlags(AnimObject &a, const uint8 *data);
@@ -240,9 +242,9 @@ private:
 	int anim_38(AnimObject &a, const uint8 *data);
 	int anim_39(AnimObject &a, const uint8 *data);
 	int anim_40(AnimObject &a, const uint8 *data);
-	int anim_pcmSync(AnimObject &a, const uint8 *data);
+	int anim_speechSync(AnimObject &a, const uint8 *data);
 	int anim_42(AnimObject &a, const uint8 *data);
-	int anim_43(AnimObject &a, const uint8 *data);
+	int anim_toggleExtraPalette(AnimObject &a, const uint8 *data);
 	int anim_allowFrameDrop(AnimObject &a, const uint8 *data);
 	int anim_45(AnimObject &a, const uint8 *data);
 	int anim_46(AnimObject &a, const uint8 *data);
@@ -335,14 +337,14 @@ void Animator_SCD::initData(ResourcePointer &res, uint8 mode) {
 	_transferMode = mode;
 }
 
-void Animator_SCD::initAnimations(ResourcePointer &res, uint16 len) {
+void Animator_SCD::initAnimations(ResourcePointer &res, uint16 len, bool dontUpdate) {
 	ResourcePointer next = res + len;
 	ResourcePointer in = res;
 	while (in < next) {
 		assert(in[0] < 64);
 		AnimObject *a = _animations[*in++];
-		if (a->enable)
-			return;
+		//if (a->enable && dontUpdate)
+		//	return;
 
 		a->clear();
 		a->enable = 1;
@@ -418,27 +420,20 @@ void Animator_SCD::resetTextFields() {
 	_sr->loadToVRAM(s, 32, 0x1FE0);
 }
 
-void Animator_SCD::renderTextBuffer(const uint8 *textBuffer, uint16 firstLine, uint8 numLines) {
+void Animator_SCD::clearJordanInputField() {
+	// Clear the text line on the JORDAN monitor display
+	memset(_tempBuffer + 0x6C00, 0, 0x320);
+}
+
+
+uint8 *Animator_SCD::getTextRenderBuffer() const {
+	return _tempBuffer + 0x6000;
+}
+
+void Animator_SCD::renderTextBuffer(uint16 firstLine, uint8 numLines) {
 	uint16 start = firstLine << 10;
 	uint16 len = numLines << 10;
-	textBuffer += start;
-	uint8 *s = _tempBuffer + 0x6000 + start;
-	uint8 *d = s;
-	for (int i = 0; i < len; ++i) {
-		uint8 in = *textBuffer++;
-		uint8 h = in & 0xF0;
-		uint8 l = in & 0x0F;
-		if (h) {
-			if (l)
-				*d = in;
-			else
-				*d = (*d & 0x0F) | h;
-		} else if (l) {
-			*d = (*d & 0xF0) | l;
-		}
-		++d;
-	}	
-	_sr->loadToVRAM(s, len, start);
+	_sr->loadToVRAM(_tempBuffer + 0x6000 + start, len, start);
 }
 
 void Animator_SCD::updateScreen(uint8 *screen) {
@@ -448,9 +443,9 @@ void Animator_SCD::updateScreen(uint8 *screen) {
 	}
 
 	if (_clearFlags & 1)
-		_sr->memsetVRAM(0xE000, 0, 0x2000);
+		_sr->memsetVRAM(0xE000, 0, 0x1000);
 	if (_clearFlags & 2)
-		_sr->memsetVRAM(0xC000, 0, 0x2000);
+		_sr->memsetVRAM(0xC000, 0, 0x1000);
 	if (_clearFlags & 4)
 		_sr->memsetVRAM(0, 0, 0x1FE0);
 	_clearFlags = 0;
@@ -462,6 +457,11 @@ void Animator_SCD::updateScreen(uint8 *screen) {
 	executeDrawCommands();
 	drawAnimSprites();
 	updateScrollState();
+
+	if (!_trs->scroll_getState().hInt.enable && (_gfxState.getVar(11) != 0) && (_gfxState.getVar(11) != 0xFF)) {
+		_sr->hINT_setCounter(0);
+		_sr->hINT_enable(true);
+	}
 
 	_sr->setRenderColorTable(_pal->getSystemPalette(), 0, 64);
 	_sr->render(screen);
@@ -499,7 +499,6 @@ void Animator_SCD::updateAnimations() {
 		uint8 cmd = s->scriptData[(s->frame == 0xFFFF ? 0 : s->frame) << 2];
 		if (!(cmd & 0x80))
 			s->spriteData = reinterpret_cast<const uint16*>(s->res.makePtr(s->spriteTableLocation).getDataFromTable(cmd)());
-
 		if (!(s->controlFlags & GraphicsEngine::kAnimPause)) {
 			s->posX += s->absSpeedX;
 			s->posY += s->absSpeedY;
@@ -587,8 +586,8 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 	case GraphicsEngine::kAnimParaScriptComFlags:
 		a.scriptComFlags = value;
 		break;
-	case GraphicsEngine::kAnimParaF4f:
-		a.f4f = value;
+	case GraphicsEngine::kAnimFreezeFlag:
+		a.freeze = value;
 		break;
 
 	default:
@@ -658,8 +657,8 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 		return a.absSpeedY >> 16;
 	case GraphicsEngine::kAnimParaScriptComFlags:
 		return a.scriptComFlags;
-	case GraphicsEngine::kAnimParaF4f:
-		return a.f4f;
+	case GraphicsEngine::kAnimFreezeFlag:
+		return a.freeze;
 	default:
 		error("%s(): Unknown parameter %d", __FUNCTION__, param);
 		break;
@@ -701,15 +700,13 @@ void Animator_SCD::loadDataFromGfxScript() {
 	_transferDelay = _transferData.readIncrUINT16();
 	uint16 addr = _transferData.readIncrUINT16();
 
-	if (!_transferMode) {
+	//if (!_transferMode) {
 		uint32 len = READ_BE_UINT16(src);
 		if (len != Util::decodeSCDData(src + 2, _tempBuffer))
 			error("%s(): Decode size mismatch", __FUNCTION__);
 		_sr->loadToVRAM(_tempBuffer, len, addr);
 		return;
-	}
-
-	assert(0);
+	//}
 
 	// multi part transfer: not needed (this is just due to original hardware limitations with the word ram and dma transfer)
 
@@ -1000,7 +997,7 @@ void Animator_SCD::runAnimScript(AnimObject &a) {
 		return;
 	}
 
-	int incr = (a.f4f == 0) ? 1 : 0;
+	int incr = (a.freeze == 0) ? 1 : 0;
 
 	while (incr != -1) {
 		a.frame += incr;
@@ -1043,7 +1040,7 @@ void Animator_SCD::makeAnimFunctions() {
 		ANM(setSpeedY),
 		ANM(palEvent),
 		ANM(palReset),
-		ANM(copyCmds),
+		ANM(drawCmds),
 		ANM(nop),
 		ANM(scrollSingleStepH),
 		ANM(scrollSingleStepV),
@@ -1062,7 +1059,7 @@ void Animator_SCD::makeAnimFunctions() {
 		ANM(audioSync),
 		ANM(27),
 		ANM(28),
-		ANM(29),
+		ANM(fmSoundEffect),
 		ANM(30),
 		ANM(pcmCommand),
 		ANM(setDrawFlags),
@@ -1074,9 +1071,9 @@ void Animator_SCD::makeAnimFunctions() {
 		ANM(38),
 		ANM(39),
 		ANM(40),
-		ANM(pcmSync),
+		ANM(speechSync),
 		ANM(42),
-		ANM(43),
+		ANM(toggleExtraPalette),
 		ANM(allowFrameDrop),
 		ANM(45),
 		ANM(46),
@@ -1090,10 +1087,6 @@ void Animator_SCD::makeAnimFunctions() {
 		_animProcs.push_back(new GfxAnimFunc(this, funcTbl[i].func, funcTbl[i].desc));
 #endif
 #undef ANM
-}
-
-uint16 animRand(uint16 a, uint16 b) {
-	return ((b * Util::rngMakeNumber()) >> 16) + a;
 }
 
 int Animator_SCD::anim_terminate(AnimObject &a, const uint8 *data) {
@@ -1118,7 +1111,7 @@ int Animator_SCD::anim_seqSetFrame(AnimObject &a, const uint8 *data) {
 
 int Animator_SCD::anim_rndSeqSetFrame(AnimObject &a, const uint8 *data) {
 	if (a.frameSeqCounter == 0)
-		a.frameSeqCounter = animRand(2, (uint16)data[1] - data[0]) & 0xFF;
+		a.frameSeqCounter = Util::rngGetNumberFromRange(2, (uint16)data[1] - data[0]) & 0xFF;
 	if (a.frameSeqCounter == data[1]) {
 		a.frameSeqCounter = 0;
 		return 1;
@@ -1168,7 +1161,7 @@ int Animator_SCD::anim_palReset(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_copyCmds(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_drawCmds(AnimObject &a, const uint8 *data) {
 	ResourcePointer r = a.scriptData + READ_BE_INT16(data + 1);
 	return enqueueDrawCommands(r) ? 1 : -1;
 }
@@ -1252,7 +1245,9 @@ int Animator_SCD::anim_28(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_29(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_fmSoundEffect(AnimObject &a, const uint8 *data) {
+	if (!_snd->fmGetStatus().blocked)
+		_snd->fmSendCommand(*data, 0, 2);
 	return 1;
 }
 
@@ -1261,7 +1256,7 @@ int Animator_SCD::anim_30(AnimObject &a, const uint8 *data) {
 }
 
 int Animator_SCD::anim_pcmCommand(AnimObject &a, const uint8 *data) {
-	if (1/*!_byteUnkli*/ && !(_snd->pcmGetStatus() & 0x07))
+	if (!_snd->pcmGetStatus().blocked && !(_snd->pcmGetStatus().statusBits & 0x07))
 		_snd->pcmSendCommand(*data, -1);
 	return 1;
 }
@@ -1272,10 +1267,10 @@ int Animator_SCD::anim_setDrawFlags(AnimObject &a, const uint8 *data) {
 }
 
 int Animator_SCD::anim_34(AnimObject &a, const uint8 *data) {
-	a.f4f = 0;
+	a.freeze = 0;
 	if (_gfxState.getVar(8) == 0)
 		return 1;
-	a.f4f = 1;
+	a.freeze = 1;
 	return -1;
 }
 
@@ -1309,11 +1304,11 @@ int Animator_SCD::anim_40(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_pcmSync(AnimObject &a, const uint8 *data) {
-	a.f4f = 0;
-	if (_snd->pcmGetStatus() & 0x02)
+int Animator_SCD::anim_speechSync(AnimObject &a, const uint8 *data) {
+	a.freeze = 0;
+	if (_snd->pcmGetStatus().statusBits & 0x02)
 		return 1;
-	a.f4f = 1;
+	a.freeze = 1;
 	return -1;
 }
 
@@ -1322,7 +1317,8 @@ int Animator_SCD::anim_42(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_43(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_toggleExtraPalette(AnimObject &a, const uint8 *data) {
+	_gfxState.setVar(11, *data);
 	return 1;
 }
 
@@ -1349,7 +1345,7 @@ int Animator_SCD::anim_updateFrameDelay(AnimObject &a, const uint8 *data) {
 	if (*data++) {
 		uint16 v1 = *data++;
 		uint16 v2 = *data - v1;
-		a.frameDelay = animRand(v1, v2);
+		a.frameDelay = Util::rngGetNumberFromRange(v1, v2);
 	} else {
 		a.frameDelay = READ_BE_INT16(data);
 	}
@@ -1628,7 +1624,7 @@ int Animator_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 	if (_bootsSprTbl)
 		_sr->loadToVRAM(_bootsSprTbl, 64 * sizeof(uint16), 0xBE00);
 
-	_pal->updateSystemPalette();
+	_pal->update();
 	_sr->setRenderColorTable(_pal->getSystemPalette(), 0, 64);
 	_sr->render(screen);
 

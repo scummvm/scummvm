@@ -418,7 +418,7 @@ void SegaPCMChannel::stopInternal() {
 }
 
 void SegaPCMChannel::dataEndHandler() {
-	if (_stream.get() && _streamSamplesLeft)
+	if (_stream.get())
 		feed();
 }
 
@@ -428,13 +428,9 @@ void SegaPCMChannel::feed() {
 		_stream.get()->read(_streamTempBuff, readSize);
 		_streamSamplesLeft -= readSize;
 		_sai->loadPCMData(_streamStartAddr, _streamTempBuff, readSize);
-	} else {
-		delete[] _streamTempBuff;
-		_streamTempBuff = nullptr;
-		_stream.reset();
 	}
 	if (_playing)
-		setupLoop(_streamSamplesLeft ? _streamStartAddr : (_streamStartAddr + _streamFeedLen), readSize);
+		setupLoop(readSize ? _streamStartAddr : (_streamStartAddr + _streamFeedLen), readSize);
 }
 
 SegaPSG::SegaPSG(int samplingRate, int deviceVolume) : _intRate(3579545), _extRate(samplingRate), _deviceVolume(deviceVolume), _numChannels(3), _cr(-1),

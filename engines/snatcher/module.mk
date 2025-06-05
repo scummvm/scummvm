@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	palette_scd.o \
 	resource.o \
+	saveload.o \
 	scene/scene_d0.o \
 	scene/scene_d1.o \
 	scene/scene_d2.o \
@@ -16,6 +17,7 @@ MODULE_OBJS := \
 	staticres.o \
 	text_scd.o \
 	transition_scd.o \
+	ui.o \
 	util.o
 
 # This module can be built as a plugin

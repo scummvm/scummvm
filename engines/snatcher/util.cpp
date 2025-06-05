@@ -103,14 +103,9 @@ RNDC rndC2;
 uint8 rndH = 0;
 uint8 rndL = 1;
 
-//uint16 rndC1q = 0;
-//uint16 rndC2q = 0;
-
 void rngReset() {
 	rndC1.b = 0;
 	rndC2.b = 0;
-	//rndC1q = 0;
-	//rndC2q = 0;
 	rndH = FROM_BE_16(0x100) & 0xFF;
 	rndL = rndH ^ 1;
 }
@@ -125,18 +120,11 @@ uint16 rngMakeNumber() {
 	if (rndC2.b + 1 > 0xFFFF)
 		rndC1.b++;
 	rndC2.b++;
-
-	/*rndC1q += ((rndC1q & 0xFF) << 8);
-	rndC1q += rndC2q;
-	rndC1q += ((rndC2q << 8) | (rndC2q >> 8));
-	if ((rndC2q & 0xFF) + (rndC2q >> 8) > 0xFF)
-		rndC1q++;
-	rndC2q = (((rndC2q & 0xFF) + (rndC2q >> 8)) & 0xFF) | (rndC2q & 0xFF00);
-	if (rndC2q + 1 > 0xFFFF)
-		rndC1q++;
-	rndC2q++;
-		assert(rndC1q == rndC1.b);*/
 	return rndC1.b;
+}
+
+uint16 rngGetNumberFromRange(uint16 min, uint16 range) {
+	return ((range * rngMakeNumber()) >> 16) + min;
 }
 
 } // End of namespace Util
