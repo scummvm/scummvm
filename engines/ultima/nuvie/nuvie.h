@@ -23,7 +23,6 @@
 #define NUVIE_NUVIE_H
 
 #include "ultima/shared/engine/events.h"
-#include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "common/archive.h"
@@ -40,8 +39,9 @@ class Screen;
 class Script;
 class SoundManager;
 
-class NuvieEngine : public Ultima::Shared::UltimaEngine, public Ultima::Shared::EventsCallback {
+class NuvieEngine : public Engine, public Ultima::Shared::EventsCallback {
 private:
+	Common::RandomSource _randomSource;
 	Configuration *_config;
 	Screen *_screen;
 	Script *_script;
@@ -50,6 +50,8 @@ private:
 
 	SoundManager *_soundManager;
 	Ultima::Shared::EventsManager *_events;
+protected:
+	const UltimaGameDescription *_gameDescription;
 private:
 	void initConfig();
 	void assignGameConfigValues(uint8 game_type);
@@ -58,12 +60,12 @@ private:
 
 	bool playIntro();
 protected:
-	bool initialize() override;
+	bool initialize();
 
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) override;
+	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion);
 public:
 	const Std::string c_empty_string;
 public:
@@ -71,9 +73,30 @@ public:
 	~NuvieEngine() override;
 
 	/**
+	 * Returns the game type being played
+	 */
+	GameId getGameId() const;
+
+	/**
+	 * Returns true if the game is running an enhanced version
+	 * as compared to the original game
+	 */
+	bool isEnhanced() const;
+
+	/**
 	 * Play the game
 	 */
 	Common::Error run() override;
+
+	/**
+	 * Returns supported engine features
+	 */
+	bool hasFeature(EngineFeature f) const override;
+
+	/**
+	 * Get a random number
+	 */
+	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
 
 	/**
 	 * Synchronize sound settings
@@ -82,15 +105,13 @@ public:
 
 	/**
 	 * Indicates whether a game state can be loaded.
-	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	bool canLoadGameStateCurrently(bool isAutosave) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Indicates whether a game state can be saved.
-	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	bool canSaveGameStateCurrently(bool isAutosave) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Load a game state.

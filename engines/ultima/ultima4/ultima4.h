@@ -22,7 +22,9 @@
 #ifndef ULTIMA4_H
 #define ULTIMA4_H
 
-#include "ultima/shared/engine/ultima.h"
+#include "common/random.h"
+#include "engines/engine.h"
+#include "ultima/detection.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
@@ -50,8 +52,12 @@ class TileRules;
 class TileSets;
 class Weapons;
 
-class Ultima4Engine : public Shared::UltimaEngine {
+class Ultima4Engine : public Engine {
 private:
+	Common::RandomSource _randomSource;
+
+	const UltimaGameDescription *_gameDescription;
+
 	int _saveSlotToLoad;
 private:
 	void startup();
@@ -59,12 +65,12 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 
-	bool initialize() override;
+	bool initialize();
 
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) override;
+	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion);
 public:
 	Armors *_armors;
 	Codex *_codex;
@@ -93,14 +99,30 @@ public:
 	~Ultima4Engine() override;
 
 	/**
+	 * Returns supported engine features
+	 */
+	bool hasFeature(EngineFeature f) const override;
+
+	/**
+	 * Returns true if the game is running an enhanced version
+	 * as compared to the original game
+	 */
+	bool isEnhanced() const;
+
+	/**
+	 * Get a random number
+	 */
+	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
+
+	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	bool canLoadGameStateCurrently(bool isAutosave = false) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	bool canSaveGameStateCurrently(bool isAutosave = false) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Save a game state.

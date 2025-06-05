@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	metaengine.o \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o \
-	shared/engine/ultima.o \
 	shared/engine/data_archive.o \
 	shared/engine/events.o \
 	shared/std/string.o

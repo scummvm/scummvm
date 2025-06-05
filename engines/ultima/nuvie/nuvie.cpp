@@ -36,6 +36,7 @@
 #include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/save/save_game.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/shared/engine/data_archive.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/compression/unzip.h"
@@ -46,9 +47,9 @@ namespace Nuvie {
 NuvieEngine *g_engine;
 
 NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
+		Engine(syst), _gameDescription(gameDesc),  _config(nullptr), _savegame(nullptr),
 		_screen(nullptr), _script(nullptr), _game(nullptr), _soundManager(nullptr),
-		_events(nullptr) {
+		_events(nullptr), _randomSource("Nuvie") {
 	g_engine = this;
 }
 
@@ -70,14 +71,35 @@ bool NuvieEngine::isDataRequired(Common::Path &folder, int &majorVersion, int &m
 	return true;
 }
 
+GameId NuvieEngine::getGameId() const {
+	return _gameDescription->gameId;
+}
+
+bool NuvieEngine::isEnhanced() const {
+	return _gameDescription->features & GF_VGA_ENHANCED;
+}
 
 bool NuvieEngine::initialize() {
 	uint8 gameType;
 	bool playEnding = false;
 	bool showVirtueMsg = false;
 
-	if (!Ultima::Shared::UltimaEngine::initialize())
+	Common::Path folder;
+	int reqMajorVersion, reqMinorVersion;
+
+	// Call syncSoundSettings to get default volumes set
+	syncSoundSettings();
+
+	// Check if the game uses data from te ultima.dat archive
+	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
+		return true;
+
+	// Try and set up the data archive
+	Common::U32String errorMsg;
+	if (!Shared::UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
+		GUIErrorMessage(errorMsg);
 		return false;
+	}
 
 	// Get which game to play
 	switch (getGameId()) {
@@ -177,6 +199,14 @@ Common::Error NuvieEngine::run() {
 	return Common::kNoError;
 }
 
+bool NuvieEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsChangingOptionsDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 void NuvieEngine::initConfig() {
 	_config = new Configuration();
 	_config->load(_gameDescription->gameId, isEnhanced());
@@ -226,14 +256,14 @@ bool NuvieEngine::checkDataDir() {
 }
 
 void NuvieEngine::syncSoundSettings() {
-	Ultima::Shared::UltimaEngine::syncSoundSettings();
+	Engine::syncSoundSettings();
 	if (!_soundManager)
 		return;
 
 	_soundManager->syncSoundSettings();
 }
 
-bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {
+bool NuvieEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (_game == nullptr || !_game->isLoaded())
 		return false;
 
@@ -242,6 +272,7 @@ bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {
 	Events *events = static_cast<Events *>(_events);
 	MapWindow *mapWindow = _game->get_map_window();
 
+	const bool isAutosave = false;
 	if (isAutosave) {
 		return events->get_mode() == MOVE_MODE;
 
@@ -263,14 +294,15 @@ bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {
 	}
 }
 
-bool NuvieEngine::canSaveGameStateCurrently(bool isAutosave) {
-	if (!canLoadGameStateCurrently(isAutosave))
+bool NuvieEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (!canLoadGameStateCurrently(msg))
 		return false;
 
 	// Further checks against saving
 	Events *events = static_cast<Events *>(_events);
 	MsgScroll *scroll = _game->get_scroll();
 
+	const bool isAutosave = false;
 	if (_game->is_armageddon()) {
 		if (!isAutosave)
 			scroll->message("Can't save. You killed everyone!\n\n");
@@ -365,12 +397,12 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 	MsgScroll *scroll = _game->get_scroll();
 
 	if (isLoad) {
-		if (!canLoadGameStateCurrently(false))
+		if (!canLoadGameStateCurrently())
 			return false;
 
 		text = Common::convertFromU32String(_("loading quick save %d"));
 	} else {
-		if (!canSaveGameStateCurrently(false))
+		if (!canSaveGameStateCurrently())
 			return false;
 
 		text = Common::convertFromU32String(_("saving quick save %d"));

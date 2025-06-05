@@ -89,7 +89,7 @@ void Ultima1Game::starting(bool isLoading) {
 	_gameView->setView(isLoading ? "Game" : "Title");
 }
 
-bool Ultima1Game::canSaveGameStateCurrently() {
+bool Ultima1Game::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _currentView->getName() == "Game";
 }
 
