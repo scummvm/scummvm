@@ -351,62 +351,66 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 
 	// Process the files and subdirectories in the current directory recursively
 	for (const auto &entry : fileList) {
-		if (entry.isDirectory())
+		if (entry.isDirectory()) {
 			generateChecksums(entry.getPath(), fileChecksums, gamePath);
-		else {
-			const Common::Path filename(entry.getPath().relativeTo(gamePath));
-			auto macFile = Common::MacResManager();
 
-			if (macFile.open(filename)) {
-				auto dataForkStream = macFile.openFileOrDataFork(filename);
+			continue;
+		}
 
-				Common::Array<Common::String> fileChecksum = {filename.toString()};
+		const Common::Path filename(entry.getPath().relativeTo(gamePath));
+		auto macFile = Common::MacResManager();
 
-				// Data fork
-				// Various checksizes
-				for (auto size : {0, 5000, 1024 * 1024}) {
-					fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size, progressUpdateCallback, this));
-					dataForkStream->seek(0);
-				}
-				// Tail checksums with checksize 5000
-				dataForkStream->seek(-5000, SEEK_END);
-				fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, 0, progressUpdateCallback, this).c_str());
-
-				// Resource fork
-				if (macFile.hasResFork()) {
-					// Various checksizes
-					for (auto size : {0, 5000, 1024 * 1024}) {
-						fileChecksum.push_back(macFile.computeResForkMD5AsString(size, false, progressUpdateCallback, this));
-					}
-					// Tail checksums with checksize 5000
-					fileChecksum.push_back(macFile.computeResForkMD5AsString(5000, true, progressUpdateCallback, this).c_str());
-					fileChecksums.push_back(fileChecksum);
-				}
-
-				g_checksum_state->calculatedSize += dataForkStream->size();
-
-				macFile.close();
-
-				continue;
-			}
-
-			Common::File file;
-			if (!file.open(filename))
-				continue;
+		if (macFile.open(filename)) {
+			auto dataForkStream = macFile.openFileOrDataFork(filename);
 
 			Common::Array<Common::String> fileChecksum = {filename.toString()};
+
+			// Data fork
 			// Various checksizes
 			for (auto size : {0, 5000, 1024 * 1024}) {
-				fileChecksum.push_back(Common::computeStreamMD5AsString(file, size, progressUpdateCallback, this).c_str());
-				file.seek(0);
+				fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size, progressUpdateCallback, this));
+				dataForkStream->seek(0);
 			}
 			// Tail checksums with checksize 5000
-			file.seek(-5000, SEEK_END);
-			fileChecksum.push_back(Common::computeStreamMD5AsString(file, 0, progressUpdateCallback, this).c_str());
+			dataForkStream->seek(-5000, SEEK_END);
+			fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, 0, progressUpdateCallback, this).c_str());
 
-			file.close();
-			fileChecksums.push_back(fileChecksum);
+			// Resource fork
+			if (macFile.hasResFork()) {
+				// Various checksizes
+				for (auto size : {0, 5000, 1024 * 1024}) {
+					fileChecksum.push_back(macFile.computeResForkMD5AsString(size, false, progressUpdateCallback, this));
+				}
+				// Tail checksums with checksize 5000
+				fileChecksum.push_back(macFile.computeResForkMD5AsString(5000, true, progressUpdateCallback, this).c_str());
+				fileChecksums.push_back(fileChecksum);
+			}
+
+			g_checksum_state->calculatedSize += dataForkStream->size();
+
+			macFile.close();
+
+			continue;
 		}
+
+		Common::File file;
+		if (!file.open(filename)) {
+			warning("Failed to open file: %s", filename.toString().c_str());
+			continue;
+		}
+
+		Common::Array<Common::String> fileChecksum = {filename.toString()};
+		// Various checksizes
+		for (auto size : {0, 5000, 1024 * 1024}) {
+			fileChecksum.push_back(Common::computeStreamMD5AsString(file, size, progressUpdateCallback, this).c_str());
+			file.seek(0);
+		}
+		// Tail checksums with checksize 5000
+		file.seek(-5000, SEEK_END);
+		fileChecksum.push_back(Common::computeStreamMD5AsString(file, 0, progressUpdateCallback, this).c_str());
+
+		file.close();
+		fileChecksums.push_back(fileChecksum);
 	}
 
 	setState(kChecksumComplete);
