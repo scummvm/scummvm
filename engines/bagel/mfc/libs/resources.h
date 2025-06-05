@@ -34,7 +34,7 @@ namespace Libs {
 
 class Resources {
 	struct Resource {
-		Common::WinResources *_file;
+		Common::WinResources *_file = nullptr;
 		Common::WinResourceID _type;
 		Common::WinResourceID _id;
 		size_t _size = 0;
