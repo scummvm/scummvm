@@ -42,12 +42,12 @@ class VolumeManager {
 public:
 	VolumeManager(ZVision *engine, volumeScaling mode);
 	~VolumeManager() {};
-	volumeScaling getMode() {
+	volumeScaling getMode() const {
 		return _mode;
-	};
+	}
 	void setMode(volumeScaling mode) {
 		_mode = mode;
-	};
+	}
 	uint8 convert(uint8 inputValue);
 	uint8 convert(uint8 inputValue, volumeScaling &mode);
 	uint8 convert(uint8 inputValue, Math::Angle azimuth, uint8 directionality = 255);

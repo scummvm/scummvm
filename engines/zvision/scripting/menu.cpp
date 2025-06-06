@@ -280,7 +280,7 @@ MenuZGI::~MenuZGI() {
 	}
 }
 
-bool MenuZGI::inMenu(const Common::Point &Pos) {
+bool MenuZGI::inMenu(const Common::Point &Pos) const {
 	return _menuTriggerArea.contains(Pos) || (_menuFocus.front() != kFocusNone);
 }
 
@@ -575,7 +575,7 @@ MenuNemesis::~MenuNemesis() {
 
 }
 
-bool MenuNemesis::inMenu(const Common::Point &Pos) {
+bool MenuNemesis::inMenu(const Common::Point &Pos) const {
 	return _menuTriggerArea.contains(Pos) || (_menuFocus.front() != kFocusNone);
 }
 
