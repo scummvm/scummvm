@@ -36,6 +36,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("addItem", WRAP_METHOD(Console, Cmd_addItem));
 	registerCmd("removeItem", WRAP_METHOD(Console, Cmd_removeItem));
 	registerCmd("setOrientation", WRAP_METHOD(Console, Cmd_setOrientation));
+	registerCmd("dumpScript", WRAP_METHOD(Console, Cmd_dumpScript));
 }
 
 Console::~Console() {
@@ -112,6 +113,12 @@ bool Console::Cmd_setOrientation(int argc, const char **argv) {
 	}
 	GameObjects::instance().GetObjectByIndex(index)->Orientation = orientation;
 	
+	return true;
+}
+
+bool Console::Cmd_dumpScript(int argc, const char **argv) {
+
+	g_engine->_scriptExecutor->DumpWholeScript();
 	return true;
 }
 
