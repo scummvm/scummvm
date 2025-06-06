@@ -105,6 +105,8 @@ class GameObject;
 
 			private:
 
+			
+
 			inline void ScriptUnimplementedOpcode(const char *source, uint16 opcode) {
 				SIS_Debug("Unimplemented opcode (%s): %.2x.", source, opcode);
 			}
@@ -235,6 +237,11 @@ class GameObject;
 			
 
 			public:
+
+			int64 _streamDumpPosition;
+			void DumpWholeScript();
+
+
 			// This is where a secondary inventory was last opened,
 			// when it is closed, we need to execute from here
 			uint32 secondaryInventoryLocation;
