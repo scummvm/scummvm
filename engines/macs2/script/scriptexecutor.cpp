@@ -1129,6 +1129,90 @@ Common::Point ScriptExecutor::GetCharPosition() {
 	return protagonist->Position;
 }
 
+void ScriptExecutor::DumpWholeScript() {
+
+	// TODO: Probably should not hard code this, with this in place, the
+	// variable for saving the old position is superfluous
+	SetCurrentSceneScriptAt(0);
+	_streamDumpPosition = 0;
+	expectedEndLocation = _stream->pos();
+
+	// Disable buffering
+	lastOpcodeTriggeredSkip = false;
+	// The loop comprises the first labels in the file
+	// l0037_DB73:
+	for (;;) {
+		// TODO: Just for breaking out at the moment when end conditions fail to work
+		if (_stream->eos()) {
+			break;
+		}
+		// TODO: Probably only one of these is necessary
+		if (_stream->pos() >= _stream->size() - 1) {
+			break;
+		}
+
+		// Make sure we have read all the bytes we should have read
+		// TODO: Think about if we should also check this on exiting the function,
+		// maybe we miss some cases like this
+		assert(_stream->pos() == expectedEndLocation);
+
+		// Read an opcode and length
+		byte opcode1 = ReadByte(); // [bp - 1h]
+		// TODO: For the sake of easier reading the logs, jumping out if we
+		// read a 0 opcode.
+		if (opcode1 == 0x00) {
+			continue;
+		}
+		Common::String opcodeInfo;
+		if (opcode1 != 0x5) {
+			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, 0).c_str();
+		}
+		SIS_Debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
+		byte length = ReadByte(); // [bp-2h]
+		expectedEndLocation += length + 2;
+
+		if (opcode1 == 0x5) {
+			// l0037_DC66:
+			// [bp-3h]
+			uint8 opcode2 = ReadByte();
+			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, opcode2).c_str();
+			SIS_Debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
+			// [bp-7h]
+			uint16 v1;
+			// [bp-5h]
+			uint16 v2;
+			Func9F4D(v1, v2);
+			// [bp-0Bh]
+			uint16 v3;
+			// [bp-9h]
+			uint16 v4;
+			Func9F4D(v3, v4);
+
+			if (opcode2 == 0x0d) {
+				// Show a dialogue option
+				uint32 objectID = Func9F4D_32() - 0x400;
+				uint16 x = Func9F4D_16();
+				uint16 y = Func9F4D_16();
+				uint16 side = Func9F4D_16();
+				uint32 offset = ReadWord();
+				uint32 numLines = ReadWord();
+
+				// TODO: We are assuming that we are dumping the scene script, if not,
+				// we would have to check for the executing object as well
+				Common::Array<Common::String> strings;
+				strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+
+				for (Common::String& currentLine : strings) {
+					SIS_Debug("String: %s", currentLine.c_str());
+				}
+			}
+		}
+		_stream->seek(expectedEndLocation);
+		EndBuffering(false);
+	}
+		_stream->seek(_streamDumpPosition, SEEK_SET);
+	}
+
 bool ScriptExecutor::IsRelevantObject(const GameObject *obj) {
 	// It can be the protagonist
 	if (obj->Index == 1) {
