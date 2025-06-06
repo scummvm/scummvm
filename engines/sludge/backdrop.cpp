@@ -338,7 +338,7 @@ void GraphicsManager::drawBackDrop() {
 	// TODO: apply lightmap shader
 	drawParallax();
 
-	if (!_backdropExists)
+	if (!_backdropExists && !_backdropSurface.getPixels())
 		return;
 	// draw backdrop
 	Graphics::ManagedSurface tmp;
