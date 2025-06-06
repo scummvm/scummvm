@@ -68,9 +68,7 @@ void EventManager::kill() {
 
 void EventManager::checkInput() {
 	float cameraZoom = _vm->_gfxMan->getCamZoom();
-#if 0
 	static bool fakeRightclick = false;
-#endif
 	Common::Event event;
 
 	/* Check for events */
@@ -90,18 +88,16 @@ void EventManager::checkInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			_input.leftClick = true;
-			_input.mouseX = event.mouse.x * cameraZoom;
-			_input.mouseY = event.mouse.y * cameraZoom;
-#if 0
-			if (SDL_GetModState() & KMOD_CTRL) {
-				input.rightClick = true;
+			if (g_system->getEventManager()->getModifierState() & Common::KBD_CTRL) {
+				_input.rightClick = true;
 				fakeRightclick = true;
 			} else {
-				input.leftClick = true;
+				_input.leftClick = true;
 				fakeRightclick = false;
 			}
-#endif
+
+			_input.mouseX = event.mouse.x * cameraZoom;
+			_input.mouseY = event.mouse.y * cameraZoom;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
