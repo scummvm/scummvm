@@ -20,7 +20,6 @@
  */
 
 #include "common/scummsys.h"
-
 #include "zvision/file/lzss_read_stream.h"
 
 namespace ZVision {

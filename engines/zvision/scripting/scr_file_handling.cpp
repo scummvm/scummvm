@@ -19,28 +19,25 @@
  *
  */
 
+#include "common/file.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-
-#include "zvision/scripting/puzzle.h"
-#include "zvision/scripting/actions.h"
-#include "zvision/scripting/controls/push_toggle_control.h"
-#include "zvision/scripting/controls/lever_control.h"
-#include "zvision/scripting/controls/slot_control.h"
-#include "zvision/scripting/controls/save_control.h"
-#include "zvision/scripting/controls/input_control.h"
-#include "zvision/scripting/controls/safe_control.h"
-#include "zvision/scripting/controls/hotmov_control.h"
-#include "zvision/scripting/controls/fist_control.h"
-#include "zvision/scripting/controls/paint_control.h"
-#include "zvision/scripting/controls/titler_control.h"
-
 #include "common/textconsole.h"
-#include "common/file.h"
 #include "common/tokenizer.h"
+#include "zvision/zvision.h"
+#include "zvision/scripting/actions.h"
+#include "zvision/scripting/puzzle.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/fist_control.h"
+#include "zvision/scripting/controls/hotmov_control.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/scripting/controls/lever_control.h"
+#include "zvision/scripting/controls/paint_control.h"
+#include "zvision/scripting/controls/push_toggle_control.h"
+#include "zvision/scripting/controls/safe_control.h"
+#include "zvision/scripting/controls/save_control.h"
+#include "zvision/scripting/controls/slot_control.h"
+#include "zvision/scripting/controls/titler_control.h"
 
 namespace ZVision {
 

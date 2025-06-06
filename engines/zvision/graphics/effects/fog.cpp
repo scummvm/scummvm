@@ -20,11 +20,9 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/graphics/effects/fog.h"
-
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/effects/fog.h"
 #include "zvision/scripting/script_manager.h"
 
 namespace ZVision {

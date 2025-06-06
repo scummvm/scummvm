@@ -19,18 +19,17 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/system.h"
-#include "common/compression/unzip.h"
 #include "common/unicode-bidi.h"
 #include "common/ustr.h"
+#include "common/compression/unzip.h"
 #include "graphics/font.h"
-#include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
-
+#include "graphics/fonts/ttf.h"
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/text/truetype_font.h"

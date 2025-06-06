@@ -20,12 +20,10 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/effects/region_effect.h"
-
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/effects/region_effect.h"
 
 namespace ZVision {
 

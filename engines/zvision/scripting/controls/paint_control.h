@@ -22,12 +22,10 @@
 #ifndef ZVISION_PAINT_CONTROL_H
 #define ZVISION_PAINT_CONTROL_H
 
-#include "zvision/scripting/control.h"
-
-#include "graphics/surface.h"
-
-#include "common/rect.h"
 #include "common/list.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
+#include "zvision/scripting/control.h"
 
 namespace ZVision {
 

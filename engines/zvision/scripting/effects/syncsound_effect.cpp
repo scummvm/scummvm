@@ -19,18 +19,16 @@
  *
  */
 
+#include "audio/decoders/wave.h"
+#include "common/file.h"
 #include "common/scummsys.h"
-
-#include "zvision/scripting/effects/syncsound_effect.h"
-
+#include "common/stream.h"
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/effects/syncsound_effect.h"
 #include "zvision/sound/zork_raw.h"
 
-#include "common/stream.h"
-#include "common/file.h"
-#include "audio/decoders/wave.h"
 
 namespace ZVision {
 

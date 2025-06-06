@@ -20,19 +20,15 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/controls/input_control.h"
-#include "zvision/scripting/controls/save_control.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/text/string_manager.h"
-
-#include "zvision/file/save_manager.h"
-#include "zvision/text/subtitle_manager.h"
-
 #include "common/str.h"
 #include "common/stream.h"
+#include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/scripting/controls/save_control.h"
+#include "zvision/text/string_manager.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace ZVision {
 

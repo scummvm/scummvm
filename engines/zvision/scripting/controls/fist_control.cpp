@@ -19,20 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/scripting/controls/fist_control.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-#include "zvision/video/rlf_decoder.h"
-
-#include "common/stream.h"
 #include "common/file.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/fist_control.h"
+#include "zvision/video/rlf_decoder.h"
 
 namespace ZVision {
 

@@ -20,13 +20,11 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/controls/paint_control.h"
-
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/paint_control.h"
 
 namespace ZVision {
 

@@ -19,25 +19,20 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/file.h"
 #include "common/scummsys.h"
-
+#include "common/stream.h"
+#include "common/system.h"
+#include "engines/util.h"
+#include "graphics/blit.h"
+#include "image/tga.h"
 #include "zvision/zvision.h"
+#include "zvision/file/lzss_read_stream.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/text.h"
 
-#include "zvision/file/lzss_read_stream.h"
-
-#include "common/file.h"
-#include "common/system.h"
-#include "common/stream.h"
-
-#include "engines/util.h"
-
-#include "image/tga.h"
-
-#include "graphics/blit.h"
-#include "common/debug.h"
 namespace ZVision {
 
 RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const Graphics::PixelFormat pixelFormat, bool doubleFPS, bool widescreen)

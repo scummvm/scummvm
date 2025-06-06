@@ -22,11 +22,10 @@
 #ifndef ZVISION_LEVER_CONTROL_H
 #define ZVISION_LEVER_CONTROL_H
 
-#include "zvision/scripting/control.h"
-
 #include "common/list.h"
 #include "common/path.h"
 #include "common/rect.h"
+#include "zvision/scripting/control.h"
 
 namespace Video {
 	class VideoDecoder;

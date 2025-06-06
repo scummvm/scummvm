@@ -23,10 +23,10 @@
 #define ZVISION_MUSIC_NODE_H
 
 #include "audio/mixer.h"
-#include "zvision/scripting/scripting_effect.h"
-#include "zvision/text/subtitle_manager.h"
-#include "zvision/sound/volume_manager.h"
 #include "math/angle.h"
+#include "zvision/scripting/scripting_effect.h"
+#include "zvision/sound/volume_manager.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace Common {
 class String;

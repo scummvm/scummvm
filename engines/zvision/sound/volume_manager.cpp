@@ -19,9 +19,9 @@
  *
  */
 
-#include "zvision/sound/volume_manager.h"
-#include "zvision/scripting/script_manager.h"
 #include "common/debug.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/sound/volume_manager.h"
 
 namespace ZVision {
 
