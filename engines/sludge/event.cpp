@@ -21,8 +21,12 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
 
 #include "sludge/event.h"
+#include "sludge/fileset.h"
 #include "sludge/graphics.h"
 #include "sludge/freeze.h"
 #include "sludge/function.h"
@@ -132,10 +136,19 @@ void EventManager::checkInput() {
 			break;
 
 		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			_weAreDoneSoQuit = 1;
-			// TODO: if _reallyWantToQuit, popup a message box to confirm
+		case Common::EVENT_RETURN_TO_LAUNCHER: {
+			if (!_weAreDoneSoQuit) {
+				g_system->getEventManager()->resetQuit();
+				g_system->getEventManager()->resetReturnToLauncher();
+
+				GUI::MessageDialog dialog(_(g_sludge->_resMan->getNumberedString(2)), _("Yes"), _("No"));
+				if (dialog.runModal() == GUI::kMessageOK) {
+					_weAreDoneSoQuit = 1;
+					g_system->getEventManager()->pushEvent(event);
+				}
+			}
 			break;
+		}
 
 		default:
 			break;
