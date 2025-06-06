@@ -134,7 +134,6 @@ private:
 	RenderQueueIterator _lastFrameIter;
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
-	Graphics::Surface *_blankSurface;
 
 	int _borderLeft;
 	int _borderTop;
