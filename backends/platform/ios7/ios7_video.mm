@@ -510,38 +510,13 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	// available when running on iOS 11+ if it has been compiled on iOS 11+
 #ifdef __IPHONE_11_0
 	if ( @available(iOS 11, tvOS 11, *) ) {
-		CGRect newFrame = self.frame;
 #if TARGET_OS_IOS
-		CGRect screenSize = self.window.bounds;
 		UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
-		UIInterfaceOrientation orientation = [iOS7AppDelegate currentOrientation];
-
-		// The code below adjust the screen size according to what Apple calls
-		// the "safe area". It also cover the cases when the software keyboard
-		// is visible and has changed the frame height so the keyboard doesn't
-		// cover any part of the game screen.
-		if (orientation != _currentOrientation) {
-			// If the orientation is changed the keyboard will hide or show
-			// depending on the current orientation. The frame size must be
-			// "reset" again to "full" screen size dimension. The keyboard
-			// will then calculate the approriate height when becoming visible.
-			newFrame = screenSize;
-			_currentOrientation = orientation;
-		}
-		// Make sure the frame height (either full screen or resized due to
-		// visible keyboard) is within the safe area.
-		CGFloat safeAreaHeight = screenSize.size.height - inset.top;
-		CGFloat height = newFrame.size.height < safeAreaHeight ? newFrame.size.height : safeAreaHeight;
-
-		if ( orientation == UIInterfaceOrientationPortrait ) {
-			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, height);
-		} else if ( orientation == UIInterfaceOrientationPortraitUpsideDown ) {
-			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width, height);
-		} else if ( orientation == UIInterfaceOrientationLandscapeLeft ) {
-			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, height);
-		} else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
-			newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, height);
-		}
+		// Cheat a little and skip the safe area inset at the bottom.
+		// We want to utilize as much screen area as possible and few
+		// games and launcher elements are put at the very bottom of
+		// the screen.
+		iOS7_setSafeAreaInsets(inset.left, inset.right, inset.top, 0);
 
 		// Add margins to respect the iPhone and iPad safe areas. Use the right
 		// safe area inset if available since the position of the buttons are
@@ -557,7 +532,6 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		// Burger menu button below
 		[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width - margin, _toggleTouchModeButton.imageView.image.size.height + margin, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
 #endif
-		self.frame = newFrame;
 	}
 #endif
 }
