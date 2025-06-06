@@ -91,7 +91,7 @@ private:
 	bool _highQuality = false;
 	const Graphics::PixelFormat _pixelFormat;
 
-	inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) {
+	inline void splitColor(uint16 &color, uint32 &r, uint32 &g, uint32 &b) const {
 		// NB Left & right shifting unnecessary for interpolating & recombining, so not bothering in order to save cycles
 		r = color & 0x001f;
 		g = color & 0x03e0;
@@ -128,7 +128,7 @@ public:
 // void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
 	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool filter = false);
 	template <typename I>
-	Common::String pixelToBinary(const I &pixel, bool splitColors = true) {
+	Common::String pixelToBinary(const I &pixel, bool splitColors = true) const {
 		uint8 bits = sizeof(pixel) << 3;
 		Common::String str("0b");
 		I spaceMask = 0;
