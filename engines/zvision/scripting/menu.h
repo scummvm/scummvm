@@ -91,26 +91,26 @@ public:
 	virtual void onMouseDown(const Common::Point &Pos);
 	virtual void onMouseUp(const Common::Point &Pos);
 	virtual void process(uint32 deltaTimeInMillis);
-	bool inMenu() {
+	bool inMenu() const {
 		return _prevInMenu;
-	};
-	virtual bool inMenu(const Common::Point &Pos) {
+	}
+	virtual bool inMenu(const Common::Point &Pos) const {
 		return false;
-	}; // For widescreen mod; used to suspend panning, tilting & scripting triggers when the mouse is within the working window but also in the menu.
+	} // For widescreen mod; used to suspend panning, tilting & scripting triggers when the mouse is within the working window but also in the menu.
 
 	void mainMouseDown(const Common::Point &Pos); // Show clicked graphic under selected button
 	bool mainMouseMove(const Common::Point &Pos); // return true if selected button has changed
 
 	void setEnable(uint16 flags);
-	uint16 getEnable() {
+	uint16 getEnable() const {
 		return _menuBarFlag;
 	}
-	bool getEnable(uint8 flag) {
+	bool getEnable(uint8 flag) const {
 		return _enableFlags.get(flag);
 	}
 
 protected:
-	virtual void redrawAll() {};
+	virtual void redrawAll() {}
 	void redrawMain();
 	int mouseOverMain(const Common::Point &Pos);
 	void setFocus(int8 currentFocus);
@@ -146,7 +146,7 @@ public:
 	void onMouseMove(const Common::Point &Pos) override;  // NB Pos is in screen coordinates
 	void onMouseUp(const Common::Point &Pos) override;
 	void process(uint32 deltaTimeInMillis) override;
-	bool inMenu(const Common::Point &Pos) override;
+	bool inMenu(const Common::Point &Pos) const override;
 private:
 	void redrawAll() override;
 	Graphics::Surface _menuBack[3];
@@ -182,7 +182,7 @@ public:
 	MenuNemesis(ZVision *engine, Common::Rect menuArea);
 	~MenuNemesis() override;
 	void onMouseMove(const Common::Point &Pos) override;
-	bool inMenu(const Common::Point &Pos) override;
+	bool inMenu(const Common::Point &Pos) const override;
 private:
 	void redrawAll() override;
 };

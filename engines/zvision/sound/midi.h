@@ -40,9 +40,9 @@ public:
 	void setProgram(uint8 channel, uint8 prog);
 
 	int8 getFreeChannel();  // Negative if none available
-	bool isAvailable() {
+	bool isAvailable() const {
 		return _available;
-	};
+	}
 
 protected:
 	bool _available = false;
@@ -51,7 +51,7 @@ protected:
 		bool playing;
 		uint8 note;
 
-		chan() : playing(false), note(0) {};
+		chan() : playing(false), note(0) {}
 	};
 	void send(uint8 status, uint8 data1 = 0x00, uint8 data2 = 0x00);
 	uint8 _startChannel = 0;
