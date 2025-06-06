@@ -22,9 +22,8 @@
 #ifndef ZVISION_CURSOR_MANAGER_H
 #define ZVISION_CURSOR_MANAGER_H
 
-#include "zvision/graphics/cursors/cursor.h"
-
 #include "common/str.h"
+#include "zvision/graphics/cursors/cursor.h"
 
 namespace Graphics {
 struct PixelFormat;

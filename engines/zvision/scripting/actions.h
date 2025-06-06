@@ -23,8 +23,8 @@
 #define ZVISION_ACTIONS_H
 
 #include "common/path.h"
-#include "common/str.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace ZVision {
 

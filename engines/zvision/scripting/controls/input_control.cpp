@@ -19,23 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/controls/input_control.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/text/string_manager.h"
-#include "zvision/graphics/render_manager.h"
-
 #include "backends/keymapper/keymap.h"
-
+#include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/rect.h"
 #include "video/video_decoder.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/text/string_manager.h"
+
 
 namespace ZVision {
 

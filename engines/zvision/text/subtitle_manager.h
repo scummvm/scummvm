@@ -22,9 +22,9 @@
 #ifndef ZVISION_SUBTITLES_H
 #define ZVISION_SUBTITLES_H
 
+#include "audio/mixer.h"
 #include "zvision/zvision.h"
 #include "zvision/common/focus_list.h"
-#include "audio/mixer.h"
 
 namespace ZVision {
 
@@ -39,7 +39,7 @@ public:
 	bool update(int32 count); // Return true if necessary to redraw
 	virtual bool selfUpdate() {
 		return false;
-	};
+	}
 
 protected:
 	virtual bool process(int32 deltatime);  // Return true if to be deleted
@@ -67,7 +67,7 @@ protected:
 class AutomaticSubtitle : public Subtitle {
 public:
 	AutomaticSubtitle(ZVision *engine, const Common::Path &subname, Audio::SoundHandle handle);  // For scripted audio subtitles
-	~AutomaticSubtitle() {};
+	~AutomaticSubtitle() {}
 
 private:
 	bool process(int32 deltatime);  // Return true if to be deleted

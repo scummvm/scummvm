@@ -22,8 +22,8 @@
 #ifndef ZVISION_SAVE_MANAGER_H
 #define ZVISION_SAVE_MANAGER_H
 
-#include "common/savefile.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 
 namespace Common {
 class String;

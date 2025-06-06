@@ -19,17 +19,15 @@
  *
  */
 
+#include "backends/keymapper/keymap.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "engines/util.h"
+#include "graphics/surface.h"
 #include "video/video_decoder.h"
 #if defined(USE_MPEG2) && defined(USE_A52)
 #include "video/mpegps_decoder.h"
 #endif
-#include "engines/util.h"
-#include "graphics/surface.h"
-
-#include "backends/keymapper/keymap.h"
-
 #include "zvision/zvision.h"
 #include "zvision/core/clock.h"
 #include "zvision/graphics/render_manager.h"

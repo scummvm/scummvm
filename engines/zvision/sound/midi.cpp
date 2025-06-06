@@ -19,12 +19,11 @@
  *
  */
 
+#include "audio/mididrv.h"
+#include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/textconsole.h"
-#include "audio/mididrv.h"
-
 #include "zvision/sound/midi.h"
-#include "common/debug.h"
 
 namespace ZVision {
 

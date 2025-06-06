@@ -19,25 +19,21 @@
  *
  */
 
+#include "audio/mixer.h"
+#include "common/events.h"
 #include "common/scummsys.h"
-
+#include "common/system.h"
+#include "common/rational.h"
+#include "engines/util.h"
 #include "zvision/zvision.h"
-
 #include "zvision/core/console.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/text/subtitle_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/scripting/menu.h"
 #include "zvision/sound/zork_raw.h"
 #include "zvision/text/string_manager.h"
-
-#include "common/events.h"
-#include "common/system.h"
-#include "common/rational.h"
-#include "audio/mixer.h"
-
-#include "engines/util.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace ZVision {
 

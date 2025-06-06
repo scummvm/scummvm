@@ -19,23 +19,20 @@
  *
  */
 
+#include "common/algorithm.h"
+#include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/hashmap.h"
 #include "common/scummsys.h"
-
-#include "zvision/scripting/script_manager.h"
-
+#include "common/stream.h"
 #include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
-#include "zvision/file/save_manager.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/menu.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/scripting/effects/timer_effect.h"
-
-#include "common/algorithm.h"
-#include "common/hashmap.h"
-#include "common/debug.h"
-#include "common/stream.h"
-#include "common/config-manager.h"
 
 namespace ZVision {
 

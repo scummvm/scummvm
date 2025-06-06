@@ -22,9 +22,9 @@
 #ifndef ZVISION_RENDER_TABLE_H
 #define ZVISION_RENDER_TABLE_H
 
-#include "zvision/zvision.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "zvision/zvision.h"
 
 class OSystem;
 namespace ZVision {

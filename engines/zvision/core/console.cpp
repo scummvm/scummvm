@@ -18,26 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+ 
+#include "audio/mixer.h"
+#include "common/bufferedstream.h"
+#include "common/file.h"
 #include "common/scummsys.h"
-
-#include "zvision/core/console.h"
-
+#include "common/system.h"
+#include "gui/debugger.h"
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
+#include "zvision/core/console.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/sound/zork_raw.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/video/zork_avi_decoder.h"
-#include "zvision/sound/zork_raw.h"
-#include "zvision/graphics/cursors/cursor.h"
-
-#include "common/system.h"
-#include "common/file.h"
-#include "common/bufferedstream.h"
-
-#include "gui/debugger.h"
-
-#include "audio/mixer.h"
 
 namespace ZVision {
 

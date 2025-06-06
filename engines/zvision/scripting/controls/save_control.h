@@ -22,9 +22,8 @@
 #ifndef ZVISION_SAVE_CONTROL_H
 #define ZVISION_SAVE_CONTROL_H
 
-#include "zvision/scripting/control.h"
-
 #include "common/list.h"
+#include "zvision/scripting/control.h"
 
 namespace ZVision {
 

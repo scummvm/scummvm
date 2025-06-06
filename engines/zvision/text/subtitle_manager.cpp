@@ -19,12 +19,12 @@
  *
  */
 
-#include "zvision/graphics/render_manager.h"
-#include "zvision/text/subtitle_manager.h"
-#include "zvision/file/search_manager.h"
-#include "zvision/text/text.h"
 #include "common/system.h"
+#include "zvision/file/search_manager.h"
+#include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/text/subtitle_manager.h"
+#include "zvision/text/text.h"
 
 namespace ZVision {
 

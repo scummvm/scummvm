@@ -19,12 +19,11 @@
  *
  */
 
-#include "zvision/graphics/render_table.h"
-
 #include "common/rect.h"
 #include "common/scummsys.h"
-#include "math/utils.h"
 #include "common/system.h"
+#include "math/utils.h"
+#include "zvision/graphics/render_table.h"
 #include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
@@ -338,7 +337,7 @@ float RenderTable::getAngle() {
 	case PANORAMA:
 		return Math::rad2deg<float>(_panoramaOptions.verticalFOV);
 	default:
-		return 1.0;
+		return 1.0f;
 	}
 }
 
@@ -349,7 +348,7 @@ float RenderTable::getLinscale() {
 	case PANORAMA:
 		return _panoramaOptions.linearScale;
 	default:
-		return 1.0;
+		return 1.0f;
 	}
 }
 

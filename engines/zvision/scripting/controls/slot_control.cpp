@@ -20,15 +20,12 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/controls/slot_control.h"
-
+#include "common/stream.h"
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
-
-#include "common/stream.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/slot_control.h"
 
 namespace ZVision {
 

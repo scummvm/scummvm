@@ -22,15 +22,14 @@
 #ifndef ZVISION_MENU_H
 #define ZVISION_MENU_H
 
-#include "graphics/surface.h"
-#include "common/rect.h"
 #include "common/array.h"
 #include "common/bitarray.h"
-
+#include "common/rect.h"
+#include "graphics/surface.h"
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/common/scroller.h"
 #include "zvision/common/focus_list.h"
+#include "zvision/common/scroller.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 

@@ -20,15 +20,11 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "zvision/zvision.h"
-
 #include "common/system.h"
-
-#include "graphics/pixelformat.h"
 #include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 
 namespace ZVision {
 

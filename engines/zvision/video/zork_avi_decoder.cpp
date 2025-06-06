@@ -19,16 +19,12 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/video/zork_avi_decoder.h"
-
-#include "zvision/sound/zork_raw.h"
-
-#include "common/stream.h"
-
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
+#include "zvision/sound/zork_raw.h"
+#include "zvision/video/zork_avi_decoder.h"
 
 namespace ZVision {
 

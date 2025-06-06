@@ -19,23 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/zvision.h"
-#include "zvision/file/save_manager.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-
-#include "common/system.h"
-#include "common/translation.h"
-
-#include "graphics/surface.h"
-#include "graphics/thumbnail.h"
-
-#include "gui/message.h"
-#include "gui/saveload.h"
 
 #include "common/config-manager.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/translation.h"
+#include "graphics/surface.h"
+#include "graphics/thumbnail.h"
+#include "gui/message.h"
+#include "gui/saveload.h"
+#include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+
 namespace ZVision {
 
 const uint32 SaveManager::SAVEGAME_ID = MKTAG('Z', 'E', 'N', 'G');

@@ -19,18 +19,15 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/effects/ttytext_effect.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/text/text.h"
-
-#include "common/stream.h"
 #include "common/file.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/unicode-bidi.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/effects/ttytext_effect.h"
+#include "zvision/text/text.h"
 
 namespace ZVision {
 

@@ -22,7 +22,6 @@
 #include "common/debug.h"
 #include "common/fs.h"
 #include "common/stream.h"
-
 #include "zvision/file/search_manager.h"
 #include "zvision/file/zfs_archive.h"
 

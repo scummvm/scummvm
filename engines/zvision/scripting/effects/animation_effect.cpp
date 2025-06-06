@@ -20,15 +20,12 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/effects/animation_effect.h"
-
+#include "graphics/surface.h"
+#include "video/video_decoder.h"
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
-
-#include "graphics/surface.h"
-#include "video/video_decoder.h"
+#include "zvision/scripting/effects/animation_effect.h"
 
 namespace ZVision {
 

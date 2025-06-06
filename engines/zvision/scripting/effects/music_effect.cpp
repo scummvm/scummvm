@@ -19,23 +19,21 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/effects/music_effect.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/sound/midi.h"
-#include "zvision/sound/zork_raw.h"
-
-#include "zvision/sound/volume_manager.h"
-#include "common/stream.h"
-#include "common/file.h"
 #include "audio/decoders/wave.h"
-
+#include "common/file.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 #include "math/utils.h"
 #include "math/angle.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/effects/music_effect.h"
+#include "zvision/sound/midi.h"
+#include "zvision/sound/volume_manager.h"
+#include "zvision/sound/zork_raw.h"
+
+
 namespace ZVision {
 
 void MusicNodeBASE::setDirection(Math::Angle azimuth, uint8 magnitude) {

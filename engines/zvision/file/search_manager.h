@@ -22,12 +22,12 @@
 #ifndef ZVISION_SEARCH_MANAGER_H
 #define ZVISION_SEARCH_MANAGER_H
 
-#include "common/str.h"
-#include "common/hash-str.h"
-#include "common/hashmap.h"
 #include "common/archive.h"
 #include "common/file.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/list.h"
+#include "common/str.h"
 
 namespace ZVision {
 

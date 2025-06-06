@@ -19,15 +19,13 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/video/rlf_decoder.h"
-
-#include "common/str.h"
-#include "common/file.h"
-#include "common/textconsole.h"
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/file.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/textconsole.h"
+#include "zvision/video/rlf_decoder.h"
 
 namespace ZVision {
 

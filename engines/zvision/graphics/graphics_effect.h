@@ -22,10 +22,9 @@
 #ifndef GRAPHICS_EFFECT_H_INCLUDED
 #define GRAPHICS_EFFECT_H_INCLUDED
 
-#include "common/rect.h"
 #include "common/list.h"
+#include "common/rect.h"
 #include "graphics/surface.h"
-
 #include "zvision/zvision.h"
 
 namespace ZVision {

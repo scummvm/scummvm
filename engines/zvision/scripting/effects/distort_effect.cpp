@@ -20,15 +20,13 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/effects/distort_effect.h"
-
+#include "common/stream.h"
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/render_table.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/effects/distort_effect.h"
 
-#include "common/stream.h"
 
 namespace ZVision {
 

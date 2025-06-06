@@ -23,18 +23,14 @@
 #ifndef ZVISION_ZVISION_H
 #define ZVISION_ZVISION_H
 
-#include "zvision/core/clock.h"
-#include "zvision/file/search_manager.h"
-#include "zvision/detection.h"
-
 #include "common/random.h"
 #include "common/events.h"
-
 #include "engines/engine.h"
-
 #include "graphics/pixelformat.h"
-
 #include "gui/debugger.h"
+#include "zvision/detection.h"
+#include "zvision/core/clock.h"
+#include "zvision/file/search_manager.h"
 
 namespace Common {
 class Keymap;

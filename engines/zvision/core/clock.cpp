@@ -20,10 +20,8 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/core/clock.h"
-
 #include "common/system.h"
+#include "zvision/core/clock.h"
 
 namespace ZVision {
 

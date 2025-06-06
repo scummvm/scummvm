@@ -19,19 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/str.h"
-#include "common/stream.h"
-#include "common/memstream.h"
-#include "common/bufferedstream.h"
-#include "common/util.h"
-#include "common/tokenizer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-
-#include "zvision/sound/zork_raw.h"
+#include "common/bufferedstream.h"
+#include "common/file.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/stream.h"
+#include "common/tokenizer.h"
+#include "common/util.h"
 #include "zvision/zvision.h"
+#include "zvision/sound/zork_raw.h"
 
 namespace ZVision {
 

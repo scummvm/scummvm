@@ -20,7 +20,6 @@
  */
 
 #include "common/scummsys.h"
-
 #include "zvision/scripting/script_manager.h"
 
 namespace ZVision {

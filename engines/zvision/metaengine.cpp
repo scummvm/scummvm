@@ -19,22 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "engines/advancedDetector.h"
-
-#include "zvision/zvision.h"
-#include "zvision/file/save_manager.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/detection.h"
-
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
-
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
+#include "zvision/detection.h"
+#include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 
