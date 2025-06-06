@@ -100,7 +100,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_ENABLE_WIDESCREEN,
 		{
 			_s("Enable widescreen support"),
-			_s("Rearrange placement of menus & subtitles so as to make better use of modern wide aspect ratio displays."),
+			_s("Rearrange placement of menus & subtitles so as to make better use of modern wide aspect ratio displays"),
 			"widescreen",
 			true,
 			0,
@@ -112,7 +112,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_HQ_PANORAMA,
 		{
 			_s("Enable high quality panoramas"),
-			_s("Apply bilinear filtering to panoramic backgrounds."),
+			_s("Apply bilinear filtering to panoramic backgrounds"),
 			"highquality",
 			true,
 			0,
