@@ -891,6 +891,129 @@ void ManagedSurface::transBlitFromInner(const Surface &src, const Common::Rect &
 
 #undef HANDLE_BLIT
 
+void ManagedSurface::blendBlitFrom(const Surface &src, const int flipping, const uint colorMod,
+		const TSpriteBlendMode blend, const AlphaType alphaType) {
+	blendBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(0, 0, this->w, this->h),
+		flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFrom(const Surface &src, const Common::Point &destPos,
+		const int flipping, const uint colorMod, const TSpriteBlendMode blend, const
+		AlphaType alphaType) {
+	blendBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(destPos.x, destPos.y,
+		destPos.x + src.w, destPos.y + src.h), flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFrom(const Surface &src, const Common::Rect &srcRect,
+		const Common::Point &destPos, const int flipping, const uint colorMod,
+		const TSpriteBlendMode blend, const AlphaType alphaType) {
+	blendBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y,
+		destPos.x + srcRect.width(), destPos.y + srcRect.height()), flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFrom(const Surface &src, const Common::Rect &srcRect,
+		const Common::Rect &destRect, const int flipping, const uint colorMod,
+		const TSpriteBlendMode blend, const AlphaType alphaType) {
+	blendBlitFromInner(src, srcRect, destRect, flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFrom(const ManagedSurface &src, const int flipping, const uint colorMod,
+		const TSpriteBlendMode blend, const AlphaType alphaType) {
+	blendBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(0, 0, this->w, this->h),
+		flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Common::Point &destPos,
+		const int flipping, const uint colorMod, const TSpriteBlendMode blend, const
+		AlphaType alphaType) {
+	blendBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(destPos.x, destPos.y,
+		destPos.x + src.w, destPos.y + src.h), flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+		const Common::Point &destPos, const int flipping, const uint colorMod,
+		const TSpriteBlendMode blend, const AlphaType alphaType) {
+	blendBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y,
+		destPos.x + srcRect.width(), destPos.y + srcRect.height()), flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+		const Common::Rect &destRect, const int flipping, const uint colorMod,
+		const TSpriteBlendMode blend, const AlphaType alphaType) {
+	blendBlitFromInner(src._innerSurface, srcRect, destRect, flipping, colorMod, blend, alphaType);
+}
+
+void ManagedSurface::blendBlitFromInner(const Surface &src, const Common::Rect &srcRect,
+		const Common::Rect &destRect, const int flipping, const uint colorMod,
+		const TSpriteBlendMode blend, const AlphaType alphaType) {
+	Common::Rect srcRectC = srcRect;
+	Common::Rect destRectC = destRect;
+
+	if (!isBlendBlitPixelFormatSupported(src.format, format)) {
+		warning("ManagedSurface::blendBlitFrom only accepts RGBA32!");
+		return;
+	}
+
+	// Alpha is zero
+	if ((colorMod & MS_ARGB(255, 0, 0, 0)) == 0) return;
+
+	const int scaleX = BlendBlit::getScaleFactor(srcRectC.width(), destRectC.width());
+	const int scaleY = BlendBlit::getScaleFactor(srcRectC.height(), destRectC.height());
+	int scaleXoff = 0, scaleYoff = 0;
+
+	if (destRectC.left < 0) {
+		scaleXoff = (-destRectC.left * scaleX) % BlendBlit::SCALE_THRESHOLD;
+		srcRectC.left += -destRectC.left * scaleX / BlendBlit::SCALE_THRESHOLD;
+		destRectC.left = 0;
+	}
+
+	if (destRectC.top < 0) {
+		scaleYoff = (-destRectC.top * scaleY) % BlendBlit::SCALE_THRESHOLD;
+		srcRectC.top += -destRectC.top * scaleY / BlendBlit::SCALE_THRESHOLD;
+		destRectC.top = 0;
+	}
+
+	if (destRectC.right > w) {
+		srcRectC.right -= (destRectC.right - src.w) * scaleX / BlendBlit::SCALE_THRESHOLD;
+		destRectC.right = w;
+	}
+
+	if (destRectC.bottom > h) {
+		srcRectC.bottom -= (destRectC.bottom - src.h) * scaleY / BlendBlit::SCALE_THRESHOLD;
+		destRectC.bottom = h;
+	}
+
+	if (flipping & FLIP_H) {
+		int tmp_w = srcRectC.width();
+		srcRectC.left = src.w - srcRectC.right;
+		srcRectC.right = srcRectC.left + tmp_w;
+		scaleXoff = (BlendBlit::SCALE_THRESHOLD - (scaleXoff + destRectC.width() * scaleX)) % BlendBlit::SCALE_THRESHOLD;
+	}
+
+	if (flipping & FLIP_V) {
+		int tmp_h = srcRectC.height();
+		srcRectC.top = src.h - srcRectC.bottom;
+		srcRectC.bottom = srcRectC.top + tmp_h;
+		scaleYoff = (BlendBlit::SCALE_THRESHOLD - (scaleYoff + destRectC.height() * scaleY)) % BlendBlit::SCALE_THRESHOLD;
+	}
+
+	if (!destRectC.isEmpty() && !srcRectC.isEmpty()) {
+		BlendBlit::blit(
+			(byte *)getBasePtr(0, 0),
+			(const byte *)src.getBasePtr(srcRectC.left, srcRectC.top),
+			pitch, src.pitch,
+			destRectC.left, destRectC.top,
+			destRectC.width(), destRectC.height(),
+			scaleX, scaleY,
+			scaleXoff, scaleYoff,
+			colorMod, flipping,
+			blend, alphaType);
+
+		// Mark the affected area
+		addDirtyRect(destRectC);
+	}
+}
+
 Common::Rect ManagedSurface::blendBlitTo(ManagedSurface &target,
 										 const int posX, const int posY,
 										 const int flipping,
