@@ -310,6 +310,9 @@ void QuickTimeDecoder::setTargetSize(uint16 w, uint16 h) {
 void QuickTimeDecoder::setPanAngle(float angle) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 
+	float panRange = abs(desc->_hPanEnd - desc->_hPanStart);
+	angle = fmod(angle, panRange);
+
 	if (desc->_hPanStart != desc->_hPanEnd && (desc->_hPanStart != 0.0 || desc->_hPanEnd != 360.0)) {
 		if (angle < desc->_hPanStart + _hfov) {
 			angle = desc->_hPanStart + _hfov;
@@ -1172,7 +1175,8 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(uint8 scaleFactor,
 	float minProjectedY = topRightVector[1] / topRightVector[2];
 	float maxProjectedY = bottomRightVector[1] / bottomRightVector[2];
 
-	float angleT = fmod((360.0f - panAngle) / 360.0f, 1.0f);
+	float panRange = abs(desc->_hPanEnd - desc->_hPanStart);
+	float angleT = fmod((panRange - panAngle) / panRange, 1.0f);
 	if (angleT < 0.0f) {
 		angleT += 1.0f;
 	}
