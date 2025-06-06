@@ -25,11 +25,8 @@
 namespace M4 {
 
 void gr_vline_xor(Buffer *buf, int32 x, int32 y1, int32 y2) {
-	byte *start;
-	int32 i;
-
 	if (y1 > y2) {
-		i = y1; y1 = y2; y2 = i;
+		SWAP(y1, y2);
 	}
 
 	if ((x > buf->w) || (y1 > buf->h))
@@ -38,35 +35,29 @@ void gr_vline_xor(Buffer *buf, int32 x, int32 y1, int32 y2) {
 	if (y2 > buf->h)
 		y2 = buf->h;	// Don't draw past bottom
 
-	start = buf->data + x;
+	byte *start = buf->data + x;
 
-	for (i = y1; i < y2; i++, start += buf->stride)
+	for (int32 i = y1; i < y2; i++, start += buf->stride)
 		*start ^= 0xff;
 }
 
 void gr_hline_xor(Buffer *buf, int32 x1, int32 x2, int32 y) {
-	byte *start;
-	int32 i;
-
 	if (x1 > x2) {
-		i = x1; x1 = x2; x2 = i;
+		SWAP(x1, x2);
 	}
 
 	if ((y > buf->h) || (x1 > buf->w))
 		return;
 
-	start = gr_buffer_pointer(buf, x1, y);
+	byte *start = gr_buffer_pointer(buf, x1, y);
 
-	for (i = x1; i < x2; i++, start++)
+	for (int32 i = x1; i < x2; i++, start++)
 		*start ^= 0xff;
 }
 
 void gr_vline(Buffer *buf, int32 x, int32 y1, int32 y2) {
-	byte *start;
-	int32 i;
-
 	if (y1 > y2) {
-		i = y1; y1 = y2; y2 = i;
+		SWAP(y1, y2);
 	}
 
 	if ((x > buf->w) || (y1 > buf->h))
@@ -76,30 +67,27 @@ void gr_vline(Buffer *buf, int32 x, int32 y1, int32 y2) {
 	if (y2 > buf->h)
 		y2 = buf->h;	// don't draw past bottom
 
-	start = gr_buffer_pointer(buf, x, y1);
+	byte *start = gr_buffer_pointer(buf, x, y1);
 
-	for (i = y1; i < y2; i++, start += buf->stride)
+	for (int32 i = y1; i < y2; i++, start += buf->stride)
 		*start = _G(color);
 }
 
 void gr_hline(Buffer *buf, int32 x1, int32 x2, int32 y) {
-	byte *start;
-	int32 i;
-
 	if (x1 > x2) {
-		i = x1; x1 = x2; x2 = i;
+		SWAP(x1, x2);
 	}
 
 	if ((y > buf->h) || (x1 > buf->w))
 		return;
 
-	start = gr_buffer_pointer(buf, x1, y);
+	byte *start = gr_buffer_pointer(buf, x1, y);
 
 	x2++;
 	if (x2 > buf->w)
 		x2 = buf->w;
 
-	for (i = x1; i < x2; i++, start++)
+	for (int32 i = x1; i < x2; i++, start++)
 		*start = _G(color);
 }
 
@@ -123,9 +111,8 @@ void gr_line(int32 x1, int32 y1, int32 x2, int32 y2, int32 color, Buffer *screen
 
 	int32 error_term = 0;							// Initialize error term
 	if (xdiff > ydiff) {								// If difference is bigger in x dimension
-		int32 length = xdiff + 1;					// ...prepare to count off in x direction
-		int32 i;
-		for (i = 0; i < length; i++) {				// Loop through points in x direction
+		const int32 length = xdiff + 1;					// ...prepare to count off in x direction
+		for (int32 i = 0; i < length; i++) {				// Loop through points in x direction
 			myData[offset] = (char)color;			// Set the next pixel in the line to COLOR
 			offset += x_unit;						// Move offset to next pixel in x direction
 			error_term += ydiff;					// Check to see if move required in y direction
@@ -135,7 +122,7 @@ void gr_line(int32 x1, int32 y1, int32 x2, int32 y2, int32 color, Buffer *screen
 			}
 		}
 	} else {										// If difference is bigger in y dimension
-		int32 length = ydiff + 1;					// ...prepare to count off in y direction
+		const int32 length = ydiff + 1;					// ...prepare to count off in y direction
 		for (int32 i = 0; i < length; i++) {		// Loop through points in y direction
 			myData[offset] = (char)color;			// Set the next pixel in the line to COLOR
 			offset += y_unit;						// Move offset to next pixel in y direction

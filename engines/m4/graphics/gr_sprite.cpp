@@ -35,7 +35,6 @@ namespace M4 {
  * S and D are Raw encoded (unencoded!) buffers.
  */
 static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
-	uint16 ErrX, ErrY, i, j;
 	uint8 *pScaled, *pData = S->data;
 
 	if (!D)
@@ -60,12 +59,12 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	if (!(D->data = pScaled = (uint8 *)mem_alloc(D->h * D->stride, "scaled buffer")))
 		error_show(FL, 'OOM!', "scaled buffer h:%uld w:%uld", D->h, D->stride);
 
-	ErrY = 50;
-	for (i = 0; i < S->h; ++i) {
+	uint16 ErrY = 50;
+	for (uint16 i = 0; i < S->h; ++i) {
 		ErrY += ScaleY;
 		while (ErrY >= 100) {
-			ErrX = 50;
-			for (j = 0; j < S->w; ++j) {
+			uint16 ErrX = 50;
+			for (uint16 j = 0; j < S->w; ++j) {
 				ErrX += ScaleX;
 				while (ErrX >= 100) {
 					*pScaled++ = *pData;
@@ -157,7 +156,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		source = afterScaled;
 	}
 
-	bool shadow = (drawReq->Src->encoding & SHADOW) != 0;
+	const bool shadow = (drawReq->Src->encoding & SHADOW) != 0;
 	assert(!shadow || drawReq->ICT);
 
 	M4Surface dst(*drawReq->Dest);
@@ -190,10 +189,10 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 
 static uint16 EncodeScan(uint8 *pi, uint8 *po, uint16 scanlen, uint8 EndByte) {
 	uint8 *ps = pi + 1;
-	uint16 outlen = 0, limit, run;
+	uint16 outlen = 0, run;
 
 	while (scanlen) {
-		limit = (scanlen < 255) ? scanlen : 255;
+		uint16 limit = (scanlen < 255) ? scanlen : 255;
 		//imath_min(scanlen, 255);
 		for (run = 1; run < limit && *pi == *ps; ++run, ++ps) {}
 

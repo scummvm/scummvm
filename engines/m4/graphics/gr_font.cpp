@@ -21,7 +21,6 @@
 
 #include "m4/graphics/gr_font.h"
 #include "m4/graphics/gr_buff.h"
-#include "m4/graphics/gr_pal.h"
 #include "m4/mem/mem.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
@@ -240,7 +239,7 @@ int32 gr_font_string_width(char *out_string, int32 auto_spacing) {
 int32 gr_font_string_width(const Common::String &str, int32 auto_spacing) {
 	char *tmp = new char[str.size() + 1];
 	Common::copy(str.c_str(), str.c_str() + str.size() + 1, tmp);
-	int32 result = gr_font_string_width(tmp, auto_spacing);
+	const int32 result = gr_font_string_width(tmp, auto_spacing);
 	delete[] tmp;
 
 	return result;
@@ -263,7 +262,6 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 		_G(custom_ascii_converter)(out_string);	 // call it with the string
 	}
 
-	int32 i, j;
 	int32 target_w;
 	if (w)
 		target_w = imath_min(target->w, x + w);
@@ -282,7 +280,7 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	if (!height)
 		return x;
 
-	int32 bottom = y + height - 1;
+	const int32 bottom = y + height - 1;
 	if (bottom > (target->h - 1)) {
 		height -= imath_min((int32)height, (bottom - (target->h - 1)));
 	}
@@ -299,8 +297,8 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	short *offsetArray = _G(font)->offset;
 
 	while (*out_string) {
-		byte c = (*out_string++) & 0x7f;
-		int32 wdth = widthArray[c];
+		const byte c = (*out_string++) & 0x7f;
+		const int32 wdth = widthArray[c];
 
 		// if width is zero, nothing to draw
 
@@ -308,16 +306,16 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 			if ((cursX + wdth) >= target_w) 			// if character doesn't fit in buffer, abort
 				return cursX;
 
-			int32 offset = offsetArray[c];
+			const int32 offset = offsetArray[c];
 			Byte *charData = &fontPixData[offset];
 
-			int32 bytesInChar = (_G(font)->width[c] >> 2) + 1; // bytesPer[wdth];	// 2 bits per pixel
+			const int32 bytesInChar = (_G(font)->width[c] >> 2) + 1; // bytesPer[wdth];	// 2 bits per pixel
 			if (skipTop)
 				charData += bytesInChar * skipTop;
 
-			for (i = 0; i < height; i++) {
-				for (j = 0; j < bytesInChar; j++) {
-					Byte workByte = *charData++;
+			for (int32 i = 0; i < height; i++) {
+				for (int32 j = 0; j < bytesInChar; j++) {
+					const Byte workByte = *charData++;
 					if (workByte & 0xc0)
 						*target_ptr = font_colors[(workByte & 0xc0) >> 6];
 					target_ptr++;
@@ -350,25 +348,22 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 
 int32 gr_font_write(Buffer *target, const char *out_string, int32 x, int32 y, int32 w, int32 auto_spacing) {
 	char *tmp = mem_strdup(out_string);
-	int32 result = gr_font_write(target, tmp, x, y, w, auto_spacing);
+	const int32 result = gr_font_write(target, tmp, x, y, w, auto_spacing);
 	free(tmp);
 
 	return result;
 }
 
 Font *gr_font_load(const char *fontName) {
-	uint32 tag;
-	Font *newFont;
-
 	SysFile fontFile(fontName);
 	if (!fontFile.exists())
 		return nullptr;
 
-	tag = fontFile.readUint32LE();
+	uint32 tag = fontFile.readUint32LE();
 	if (tag != 'FONT')
 		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (const char *)fontName, 0);
 
-	newFont = (Font *)mem_alloc(sizeof(Font), STR_FONTSTRUCT);
+	Font *newFont = (Font *)mem_alloc(sizeof(Font), STR_FONTSTRUCT);
 	if (!newFont)
 		error_show(FL, 'OOM!', "_G(font) struct");
 

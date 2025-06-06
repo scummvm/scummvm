@@ -23,7 +23,6 @@
 #define M4_GRAPHICS_GR_SPRITE_H
 
 #include "m4/m4_types.h"
-#include "m4/gui/gui.h"
 
 namespace M4 {
 

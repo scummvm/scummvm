@@ -112,7 +112,7 @@ int32 gr_buffer_free(Buffer *buf) {
 byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
 	if (!buf || !buf->data || y < 0 || x < 0) {
 		error_show(FL, 'BUF!', "buffer_pointer x,y = %d,%d", x, y);
-		return 0;
+		return nullptr;
 	}
 
 	return (byte *)(buf->data + x + (y * buf->stride));
@@ -121,7 +121,7 @@ byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
 const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y) {
 	if (!buf || !buf->data || y < 0 || x < 0) {
 		error_show(FL, 'BUF!', "buffer_pointer x,y = %d,%d", x, y);
-		return 0;
+		return nullptr;
 	}
 
 	return (byte *)(buf->data + x + (y * buf->stride));
@@ -188,9 +188,7 @@ bool gr_buffer_rect_copy(Buffer *from, Buffer *to, int32 x, int32 y, int32 w, in
 }
 
 int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h) {
-	int32 i;
-	uint8 *start;
-	byte color = gr_color_get_current();
+	const byte color = gr_color_get_current();
 
 	// if no data, bad.
 	if (!target || !target->data)
@@ -209,8 +207,8 @@ int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h) 
 	if ((w < 1) || (h < 1))
 		return true;
 
-	start = target->data + y1 * target->stride + x1;
-	for (i = 0; i < h; i++, start += target->stride)
+	uint8 *start = target->data + y1 * target->stride + x1;
+	for (int32 i = 0; i < h; i++, start += target->stride)
 		memset(start, color, w);
 
 	return true;

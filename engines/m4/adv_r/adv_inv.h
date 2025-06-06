@@ -25,7 +25,6 @@
 
 #include "common/array.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 
 namespace M4 {
 

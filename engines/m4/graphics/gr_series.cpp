@@ -35,7 +35,7 @@ void Series::play(const char *seriesName, frac16 layer, uint32 flags,
 	_series = M4::series_play(seriesName, layer, flags, triggerNum, frameRate,
 		loopCount, s, x, y, firstFrame, lastFrame);
 
-	Common::String shadow = Common::String::format("%ss", seriesName);
+	const Common::String shadow = Common::String::format("%ss", seriesName);
 	_seriesS = M4::series_play(shadow.c_str(), layer + 1, flags, -1, frameRate,
 		loopCount, s, x, y, firstFrame, lastFrame);
 }
@@ -45,7 +45,7 @@ void Series::show(const char *seriesName, frac16 layer, uint32 flags,
 	_series = M4::series_show(seriesName, layer, flags, triggerNum, duration,
 		index, s, x, y);
 
-	Common::String shadow = Common::String::format("%ss", seriesName);
+	const Common::String shadow = Common::String::format("%ss", seriesName);
 	_seriesS = M4::series_show(shadow.c_str(), layer + 1, flags, -1, duration,
 		index, s, x, y);
 }
@@ -89,7 +89,7 @@ static void series_trigger_dispatch_callback(frac16 myMessage, machine * /*sende
 }
 
 int32 series_load(const char *seriesName, int32 assetIndex, RGB8 *myPal) {
-	int32 myAssetIndex = AddWSAssetCELS(seriesName, assetIndex, myPal);
+	const int32 myAssetIndex = AddWSAssetCELS(seriesName, assetIndex, myPal);
 
 	if ((myAssetIndex < 0) || (myAssetIndex >= 256))
 		error_show(FL, 'SPNF', seriesName);
@@ -102,7 +102,7 @@ void series_unload(int32 assetIndex) {
 }
 
 bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y) {
-	M4sprite srcSprite, *srcSpritePtr;
+	M4sprite srcSprite;
 	M4Rect clipRect, updateRect;
 
 	if (!destBuff) {
@@ -110,7 +110,7 @@ bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x
 		return false;
 	}
 
-	srcSpritePtr = &srcSprite;
+	M4sprite *srcSpritePtr = &srcSprite;
 	if ((srcSpritePtr = GetWSAssetSprite(nullptr, (uint32)spriteHash, (uint32)index, srcSpritePtr, nullptr)) == nullptr)
 		error_show(FL, 'SPNF', "hash: %d, index: %d", spriteHash, index);
 
@@ -161,7 +161,6 @@ bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, int32 x,
 }
 
 machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger) {
-	machine *m;
 	SysFile *sysFile = new SysFile(seriesName);
 
 	// Store the frameRate in g_temp1
@@ -177,7 +176,7 @@ machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int
 	// Set the layer
 	_G(globals)[GLB_TEMP_6] = layer << 16;
 
-	m = kernel_spawn_machine(seriesName, HASH_STREAM_MACHINE, series_trigger_dispatch_callback);
+	machine *m = kernel_spawn_machine(seriesName, HASH_STREAM_MACHINE, series_trigger_dispatch_callback);
 	return m;
 }
 
