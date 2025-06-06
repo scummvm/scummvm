@@ -92,10 +92,7 @@ bool RenderTicket::operator==(const RenderTicket &t) const {
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
-	Graphics::ManagedSurface src;
-	src.copyFrom(*getSurface());
-
+void RenderTicket::drawToSurface(Graphics::ManagedSurface *_targetSurface) const {
 	Common::Rect clipRect;
 	clipRect.setWidth(getSurface()->w);
 	clipRect.setHeight(getSurface()->h);
@@ -119,18 +116,15 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 	for (int ry = 0; ry < _transform._numTimesY; ++ry) {
 		int x = _dstRect.left;
 		for (int rx = 0; rx < _transform._numTimesX; ++rx) {
-			src.blendBlitTo(*_targetSurface, x, y, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height(),
-			                Graphics::BLEND_NORMAL, alphaMode);
+			_targetSurface->blendBlitFrom(*getSurface(), clipRect, Common::Point(x, y),
+				_transform._flip, _transform._rgbaMod, Graphics::BLEND_NORMAL, alphaMode);
 			x += w;
 		}
 		y += h;
 	}
 }
 
-void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
-	Graphics::ManagedSurface src;
-	src.copyFrom(*getSurface());
-
+void RenderTicket::drawToSurface(Graphics::ManagedSurface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
@@ -152,8 +146,8 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 	}
 
 	if (_transform._numTimesX * _transform._numTimesY == 1) {
-		src.blendBlitTo(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(),
-			clipRect->height(), _transform._blendMode, alphaMode);
+		_targetSurface->blendBlitFrom(*getSurface(), *clipRect, Common::Point(dstRect->left, dstRect->top),
+			_transform._flip, _transform._rgbaMod, _transform._blendMode, alphaMode);
 	} else {
 		// clipRect is a subrect of the full numTimesX*numTimesY rect
 		Common::Rect subRect;
@@ -178,8 +172,9 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 				if (subRect.intersects(*clipRect)) {
 					subRect.clip(*clipRect);
 					subRect.translate(-x, -y);
-					src.blendBlitTo(*_targetSurface, basex + x + subRect.left, basey + y + subRect.top, _transform._flip, &subRect,
-						_transform._rgbaMod, subRect.width(), subRect.height(), _transform._blendMode, alphaMode);
+					_targetSurface->blendBlitFrom(*getSurface(), subRect,
+						Common::Point(basex + x + subRect.left, basey + y + subRect.top),
+						_transform._flip, _transform._rgbaMod, _transform._blendMode, alphaMode);
 				}
 
 				x += w;

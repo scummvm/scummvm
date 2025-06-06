@@ -33,7 +33,7 @@
 #include "common/rect.h"
 #include "common/list.h"
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {
@@ -133,7 +133,7 @@ private:
 	bool _needsFlip;
 	RenderQueueIterator _lastFrameIter;
 	Common::Rect _renderRect;
-	Graphics::Surface *_renderSurface;
+	Graphics::ManagedSurface *_renderSurface;
 
 	int _borderLeft;
 	int _borderTop;
