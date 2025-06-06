@@ -785,7 +785,7 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 
 	uint32 alphac = MS_ARGB(alpha, 0xff, 0xff, 0xff);
 
-	_surface->blendBlitTo(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	g_nmi->_backgroundSurface.blendBlitFrom(*_surface, sub, Common::Point(x1, y1), _flipping, alphac);
 	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(x1, y1), g_nmi->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 

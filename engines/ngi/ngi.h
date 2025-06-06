@@ -30,7 +30,7 @@
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "engines/engine.h"
 #include "ngi/console.h"
@@ -140,7 +140,7 @@ public:
 
 	void updateEvents();
 
-	Graphics::Surface _backgroundSurface;
+	Graphics::ManagedSurface _backgroundSurface;
 	Graphics::PixelFormat _origFormat;
 
 	Common::ScopedPtr<GameLoader> _gameLoader;
