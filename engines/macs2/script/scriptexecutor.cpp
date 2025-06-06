@@ -1188,7 +1188,7 @@ void ScriptExecutor::DumpWholeScript() {
 			uint16 v4;
 			Func9F4D(v3, v4);
 
-			if (opcode2 == 0x0d) {
+			if (opcode1 == 0x0d) {
 				// Show a dialogue option
 				uint32 objectID = Func9F4D_32() - 0x400;
 				uint16 x = Func9F4D_16();
