@@ -165,16 +165,17 @@ bool BaseSurfaceOSystem::finishLoad() {
 	// Some Rosemary sprites have non-fully transparent pixels
 	// In original WME it wasn't seen because sprites were downscaled
 	// Let's set alpha to 0 if it is smaller then some treshold
-	if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") && _surface->format.bytesPerPixel == 4) {
-		uint8 treshold = 16;
+	if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") &&
+            _alphaType == Graphics::ALPHA_FULL && _surface->format.aBits() > 4) {
+		uint32 mask = _surface->format.ARGBToColor(255, 0, 0, 0);
+		uint32 treshold = _surface->format.ARGBToColor(16, 0, 0, 0);
+		uint32 blank = _surface->format.ARGBToColor(0, 0, 0, 0);
+
 		for (int x = 0; x < _surface->w; x++) {
 			for (int y = 0; y < _surface->h; y++) {
-				uint32 pixel = getPixelAt(_surface, x, y);
-				uint8 r, g, b, a;
-				_surface->format.colorToARGB(pixel, a, r, g, b);
-				if (a > 0 && a < treshold) {
-					uint32 *p = (uint32 *)_surface->getBasePtr(x, y);
-					*p = _surface->format.ARGBToColor(0, 0, 0, 0);
+				uint32 pixel = _surface->getPixel(x, y);
+				if ((pixel & mask) > blank && (pixel & mask) < treshold) {
+					_surface->setPixel(x, y, blank);
 				}
 			}
 		}
@@ -209,7 +210,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	bool hasTransparency = false;
 	for (int y = 0; y < surface->h; y++) {
 		for (int x = 0; x < surface->w; x++) {
-			uint32 pixel = getPixelAt(surface, x, y);
+			uint32 pixel = surface->getPixel(x, y);
 
 			uint8 r, g, b, a;
 			surface->format.colorToARGB(pixel, a, r, g, b);
@@ -230,41 +231,6 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 		delete[] _alphaMask;
 		_alphaMask = nullptr;
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) {
-	int bpp = surface->format.bytesPerPixel;
-	/* Here p is the address to the pixel we want to retrieve */
-	uint8 *p = (uint8 *)surface->getBasePtr(x, y);
-
-	switch (bpp) {
-	case 1:
-		return *p;
-		break;
-
-	case 2:
-		return *(uint16 *)p;
-		break;
-
-	case 3:
-#ifdef SCUMM_BIG_ENDIAN
-		//  if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-		return p[0] << 16 | p[1] << 8 | p[2];
-#else
-		//else
-		return p[0] | p[1] << 8 | p[2] << 16;
-#endif
-		break;
-
-	case 4:
-		return *(uint32 *)p;
-		break;
-
-	default:
-		return 0;       /* shouldn't happen, but avoids warnings */
-	}
-	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -290,18 +256,14 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 		return true;
 	}
 
-	if (_surface->format.bytesPerPixel == 4) {
-		uint32 pixel = *(uint32 *)_surface->getBasePtr(x, y);
-		uint8 r, g, b, a;
-		_surface->format.colorToARGB(pixel, a, r, g, b);
-		if (a <= 128) {
-			return true;
-		} else {
-			return false;
-		}
+	uint32 pixel = _surface->getPixel(x, y);
+	uint8 r, g, b, a;
+	_surface->format.colorToARGB(pixel, a, r, g, b);
+	if (a <= 128) {
+		return true;
+	} else {
+		return false;
 	}
-
-	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -422,10 +384,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 
 bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
-	if (surface.format == _surface->format && surface.pitch == _surface->pitch && surface.h == _surface->h) {
-		const byte *src = (const byte *)surface.getBasePtr(0, 0);
-		byte *dst = (byte *)_surface->getBasePtr(0, 0);
-		memcpy(dst, src, surface.pitch * surface.h);
+	if (surface.format == _surface->format && surface.w == _surface->w && surface.h == _surface->h) {
+		_surface->copyRectToSurface(surface, 0, 0, Common::Rect(surface.w, surface.h));
 	} else {
 		_surface->free();
 		_surface->copyFrom(surface);

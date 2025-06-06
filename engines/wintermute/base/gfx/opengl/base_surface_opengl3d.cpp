@@ -60,8 +60,7 @@ bool BaseSurfaceOpenGL3D::invalidate() {
 bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
 	prepareToDraw();
 
-	uint8 alpha = reinterpret_cast<uint8 *>(_imageData->getPixels())[y * _width * 4 + x * 4 + 3];
-	return alpha < 128;
+	return isTransparentAtLite(x, y);
 }
 
 bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {

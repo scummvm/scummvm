@@ -298,7 +298,9 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
 		uint32 *pixels = (uint32 *)surface->getPixels();
 
-		// This is a Surface we created ourselves, so no empty space between rows.
+		assert(surface->pitch == surface->w * 4);
+		assert(surface->format.bytesPerPixel == 4);
+
 		for (int i = 0; i < surface->w * surface->h; ++i) {
 			uint8 a, r, g, b;
 			format.colorToRGB(*pixels, r, g, b);
