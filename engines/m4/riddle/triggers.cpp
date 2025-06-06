@@ -65,9 +65,9 @@ void setGlobals3(int series, int val1, int val2) {
 
 void setGlobals4(int series, int val2, int val3, int val4) {
 	_G(globals)[GLB_TEMP_1] = series << 24;
-	_G(globals)[GLB_TEMP_2] = val2;
-	_G(globals)[GLB_TEMP_3] = val3;
-	_G(globals)[GLB_TEMP_4] = val4;
+	_G(globals)[GLB_TEMP_2] = val2 << 16;
+	_G(globals)[GLB_TEMP_3] = val3 << 16;
+	_G(globals)[GLB_TEMP_4] = val4 << 16;
 }
 
 machine *triggerMachineByHash_3000(int myHash, int dataHash, int normalDir, int shadowDir,
