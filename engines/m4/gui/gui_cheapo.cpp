@@ -28,6 +28,7 @@
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
+#include "m4/m4.h"
 #include "m4/mem/mem.h"
 #include "m4/mem/memman.h"
 #include "m4/vars.h"
@@ -137,9 +138,15 @@ void TextField::draw(GrBuff *myBuffer) {
 	Buffer *myBuff = myBuffer->get_buffer();
 	gr_color_set(__BLACK);
 	gr_buffer_rect_fill(myBuff, _x1, _y1, _x2 - _x1, _y2 - _y1);
+	
+	if (IS_RIDDLE) {
+		gr_font_set_color(gr_pal_get_ega_color(15) & 0xFF);
+		gr_font_set(_G(font_inter));
+	} else {
+		gr_font_set(_G(font_inter));
+		font_set_colors(1, 2, 3);
+	}
 
-	gr_font_set(_G(font_inter));
-	font_set_colors(1, 2, 3);
 	gr_font_write(myBuff, _string, _x1, _y1, 0, 1);
 	myBuffer->release();
 
