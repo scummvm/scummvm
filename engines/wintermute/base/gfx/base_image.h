@@ -58,7 +58,6 @@ public:
 	uint16 getPaletteCount() const {
 		return _paletteCount;
 	}
-	byte getAlphaAt(int x, int y) const;
 	bool writeBMPToStream(Common::WriteStream *stream) const;
 	bool saveBMPFile(const Common::String &filename) const;
 	void copyFrom(const Graphics::Surface *surface, int newWidth = 0, int newHeight = 0, byte flip = 0);

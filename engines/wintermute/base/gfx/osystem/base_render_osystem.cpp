@@ -143,14 +143,14 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 bool BaseRenderOSystem::indicatorFlip() {
 	if (_indicatorWidthDrawn > 0 && _indicatorHeight > 0) {
-		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
+		g_system->copyRectToScreen(_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
 		g_system->updateScreen();
 	}
 	return STATUS_OK;
 }
 
 bool BaseRenderOSystem::forcedFlip() {
-	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+	g_system->copyRectToScreen(_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 	g_system->updateScreen();
 	return STATUS_OK;
 }
@@ -196,9 +196,9 @@ bool BaseRenderOSystem::flip() {
 
 	if (_needsFlip || _disableDirtyRects || screenChanged) {
 		if (_disableDirtyRects || screenChanged) {
-			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+			g_system->copyRectToScreen(_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
-		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+		//  g_system->copyRectToScreen(_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		delete _dirtyRect;
 		_dirtyRect = nullptr;
 		_needsFlip = false;
@@ -452,7 +452,7 @@ void BaseRenderOSystem::drawTickets() {
 		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldn't become clear-color)
 		ticket->_wantsDraw = false;
 	}
-	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	g_system->copyRectToScreen(_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets
@@ -580,7 +580,7 @@ void BaseRenderOSystem::endSaveLoad() {
 	_lastFrameIter = _renderQueue.end();
 
 	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->w, _renderSurface->h), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
-	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+	g_system->fillScreen(Common::Rect(0, 0, _renderSurface->w, _renderSurface->h), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
 	g_system->updateScreen();
 }
 

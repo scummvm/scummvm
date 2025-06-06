@@ -83,7 +83,7 @@ public:
 			finishLoad();
 		}
 		if (_surface) {
-			uint32 pixel = getPixelAt(_surface, x, y);
+			uint32 pixel = _surface->getPixel(x, y);
 			_surface->format.colorToARGB(pixel, *a, *r, *g, *b);
 			return STATUS_OK;
 		}
@@ -97,7 +97,6 @@ private:
 	bool finishLoad();
 	bool drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transformStruct);
 	void genAlphaMask(Graphics::Surface *surface);
-	uint32 getPixelAt(Graphics::Surface *surface, int x, int y);
 
 	uint32 _rotation;
 	Graphics::AlphaType _alphaType;
