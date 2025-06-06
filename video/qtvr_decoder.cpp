@@ -173,6 +173,10 @@ void QuickTimeDecoder::setQuality(float quality) {
 }
 
 void QuickTimeDecoder::setWarpMode(int warpMode) {
+	// Curretnly the warp mode 1 is not implemented correctly
+	// So, forcing the warp mode 1 to warp mode 2
+	if (warpMode == 1) warpMode = 2;
+
 	_warpMode = CLIP(warpMode, 0, 2);
 
 	// 2 Two-dimensional warping. This produces perspectively correct
@@ -1234,7 +1238,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(uint8 scaleFactor,
 	cylinderProjectionRanges.resize(halfWidthRoundedUp * 2);
 	cylinderAngleOffsets.resize(halfWidthRoundedUp);
 
-	if (warpMode == 0.0f) {
+	if (warpMode == 0) {
 		for (uint16 x = 0; x < halfWidthRoundedUp; x++) {
 			float xFloat = (float) x;
 
