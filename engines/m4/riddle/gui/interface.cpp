@@ -27,7 +27,6 @@
 #include "m4/adv_r/other.h"
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
 
@@ -132,7 +131,7 @@ void Interface::freshen_sentence() {
 
 bool Interface::set_interface_palette(RGB8 *myPalette) {
 	gr_pal_set_RGB8(&myPalette[0], 0, 0, 0);
-	gr_pal_set_RGB8(&myPalette[1], 0, 68, 0);
+	gr_pal_set_RGB8(&myPalette[1], 0, 0, 0);
 	gr_pal_set_RGB8(&myPalette[2], 0, 0, 39);
 	gr_pal_set_RGB8(&myPalette[3], 0, 75, 71);
 	gr_pal_set_RGB8(&myPalette[4], 0, 107, 103);
