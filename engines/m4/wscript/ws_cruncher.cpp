@@ -919,6 +919,13 @@ static void op_SETCEL(Anim8 *myAnim8) {
 		myIndex = (*_GWS(myArg1) & 0xff0000) >> 16;
 	}
 
+	// WORKAROUND: There are a few places in the game,
+	// such as in room 303 at the start of the game,
+	// where a myIndex of -1 can be produced, resulting
+	// in "after-images" where Ripley isn't properly erased
+	if (myIndex < 0)
+		myIndex = 0;
+
 	if (!myAnim8->myCCB) {
 		// Allocate and initialize a CCB structure
 		if ((myAnim8->myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB")) == nullptr) {
