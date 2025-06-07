@@ -1175,6 +1175,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
 			_screen.fillRect(trect, _wm->_colorBlack);
+
+			_wm->sayText(menu->items[i]->text);
 		}
 
 		if (!text.empty() || !unicodeText.empty()) {
