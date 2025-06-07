@@ -1139,6 +1139,10 @@ void ScriptExecutor::DumpWholeScript() {
 
 	// Disable buffering
 	lastOpcodeTriggeredSkip = false;
+
+	// Keep track of the depth of the skipping
+	uint16 skipValue = 0; 
+
 	// The loop comprises the first labels in the file
 	// l0037_DB73:
 	for (;;) {
@@ -1167,16 +1171,21 @@ void ScriptExecutor::DumpWholeScript() {
 		if (opcode1 != 0x5) {
 			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, 0).c_str();
 		}
-		SIS_Debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
+		SIS_Debug("[%u] - First block opcode: %.2x %s", skipValue, opcode1, opcodeInfo.c_str());
 		byte length = ReadByte(); // [bp-2h]
 		expectedEndLocation += length + 2;
 
-		if (opcode1 == 0x5) {
+		if (opcode1 == 0x04) {
+			uint16 result1;
+			uint16 result2;
+			Func9F4D(result1, result2);
+		}
+		else if (opcode1 == 0x5) {
 			// l0037_DC66:
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
 			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, opcode2).c_str();
-			SIS_Debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
+			SIS_Debug("[%u] - Second block opcode: %.2x %s", skipValue, opcode2, opcodeInfo.c_str());
 			// [bp-7h]
 			uint16 v1;
 			// [bp-5h]
@@ -1187,24 +1196,40 @@ void ScriptExecutor::DumpWholeScript() {
 			// [bp-9h]
 			uint16 v4;
 			Func9F4D(v3, v4);
+		}
 
-			if (opcode1 == 0x0d) {
-				// Show a dialogue option
-				uint32 objectID = Func9F4D_32() - 0x400;
-				uint16 x = Func9F4D_16();
-				uint16 y = Func9F4D_16();
-				uint16 side = Func9F4D_16();
-				uint32 offset = ReadWord();
-				uint32 numLines = ReadWord();
+		
+		if (opcode1 >= 3) {
+			if (opcode1 <= 6) {
+				skipValue++;
+			}
+		}
+		if (opcode1 == 8) {
+			if (skipValue == 1) {
+				skipValue--;
+			}
+		}
+		if (opcode1 == 7) {
+			skipValue--;
+		}
 
-				// TODO: We are assuming that we are dumping the scene script, if not,
-				// we would have to check for the executing object as well
-				Common::Array<Common::String> strings;
-				strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
 
-				for (Common::String& currentLine : strings) {
-					SIS_Debug("String: %s", currentLine.c_str());
-				}
+		if (opcode1 == 0x0d) {
+			// Show a dialogue option
+			uint32 objectID = Func9F4D_32() - 0x400;
+			uint16 x = Func9F4D_16();
+			uint16 y = Func9F4D_16();
+			uint16 side = Func9F4D_16();
+			uint32 offset = ReadWord();
+			uint32 numLines = ReadWord();
+
+			// TODO: We are assuming that we are dumping the scene script, if not,
+			// we would have to check for the executing object as well
+			Common::Array<Common::String> strings;
+			strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+
+			for (Common::String &currentLine : strings) {
+				SIS_Debug("String: %s", currentLine.c_str());
 			}
 		}
 		_stream->seek(expectedEndLocation);

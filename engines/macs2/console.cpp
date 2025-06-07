@@ -37,6 +37,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("removeItem", WRAP_METHOD(Console, Cmd_removeItem));
 	registerCmd("setOrientation", WRAP_METHOD(Console, Cmd_setOrientation));
 	registerCmd("dumpScript", WRAP_METHOD(Console, Cmd_dumpScript));
+	registerCmd("set", WRAP_METHOD(Console, Cmd_set));
 }
 
 Console::~Console() {
@@ -122,4 +123,13 @@ bool Console::Cmd_dumpScript(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_set(int argc, const char **argv) {
+	int index = std::stoi(argv[1], nullptr, 16);
+	int v1 = std::stoi(argv[2], nullptr, 16);
+	int v2 = std::stoi(argv[3], nullptr, 16);
+	g_engine->_scriptExecutor->SetVariableValue(index, v1, v2);
+	return true;
+}
+
 } // End of namespace Macs2
+

@@ -36,6 +36,7 @@ private:
 	bool Cmd_removeItem(int argc, const char **argv);
 	bool Cmd_setOrientation(int argc, const char **argv);
 	bool Cmd_dumpScript(int argc, const char **argv);
+	bool Cmd_set(int argc, const char **argv);
 
 
 
