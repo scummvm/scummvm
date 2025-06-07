@@ -34,6 +34,9 @@
  *
  **************************************************/
 
+// Usage instructions
+// http://web.archive.org/web/19991008052339/http://www.penworks.com/xtras/rtk/about.cgi
+
 /*
 -- xtra Rollover_Toolkit
 -- Rollover Toolkit (tm)
