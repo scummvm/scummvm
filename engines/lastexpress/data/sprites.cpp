@@ -29,20 +29,20 @@ SpriteManager::SpriteManager(LastExpressEngine *engine) {
 }
 
 void SpriteManager::drawCycle() {
-	if (g_flag_drawSequences) {
+	if (_drawSequencesFlag) {
 		Extent extent = Extent(0, 480, 0, 0, 0, 0);
-		Sprite *queue = g_frameQueue;
+		Sprite *queue = _frameQueue;
 
 		int oldLeft = 640;
 		int oldRight = 0;
 		
-		if (g_flag_coordinates_set) {
-			if (g_eraseRect.right >= g_eraseRect.left &&
-				g_eraseRect.right < 640 &&
-				g_eraseRect.top <= g_eraseRect.bottom &&
-				g_eraseRect.bottom < 480) {
+		if (_coordinatesAreSet) {
+			if (_eraseRect.right >= _eraseRect.left &&
+				_eraseRect.right < 640 &&
+				_eraseRect.top <= _eraseRect.bottom &&
+				_eraseRect.bottom < 480) {
 
-				memcpy(&extent, &g_eraseRect, sizeof(extent));
+				memcpy(&extent, &_eraseRect, sizeof(extent));
 
 				oldRight = extent.right;
 				oldLeft = extent.left;
@@ -51,10 +51,10 @@ void SpriteManager::drawCycle() {
 					_engine->getGraphicsManager()->copy(
 						_engine->getGraphicsManager()->_screenBuffer,
 						(PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(),
-						g_eraseRect.left,
-						g_eraseRect.top,
-						g_eraseRect.right - g_eraseRect.left + 1,
-						g_eraseRect.bottom - g_eraseRect.top + 1);
+						_eraseRect.left,
+						_eraseRect.top,
+						_eraseRect.right - _eraseRect.left + 1,
+						_eraseRect.bottom - _eraseRect.top + 1);
 					_engine->getGraphicsManager()->unlockSurface();
 				}
 			}
@@ -67,7 +67,7 @@ void SpriteManager::drawCycle() {
 				_engine->getGraphicsManager()->eraseSprite(queue->eraseMask);
 		}
 
-		for (Sprite *i = g_frameQueue; i; i = i->nextSprite) {
+		for (Sprite *i = _frameQueue; i; i = i->nextSprite) {
 			if (i->rect.left < oldLeft)
 				oldLeft = i->rect.left;
 
@@ -143,12 +143,12 @@ void SpriteManager::drawCycle() {
 		if (oldLeft != 640)
 			_engine->getGraphicsManager()->burstBox(oldLeft, extent.top, oldRight - oldLeft + 1, extent.bottom - extent.top + 1);
 
-		g_flag_drawSequences = false;
+		_drawSequencesFlag = false;
 	}
 }
 
 void SpriteManager::drawCycleSimple(PixMap *pixels) {
-	for (Sprite *i = g_frameQueue; i; i = i->nextSprite) {
+	for (Sprite *i = _frameQueue; i; i = i->nextSprite) {
 		if (i->compType != 2 && i->compType != 3) {
 			switch (i->compBits) {
 			case 3:
@@ -172,42 +172,42 @@ void SpriteManager::drawCycleSimple(PixMap *pixels) {
 
 void SpriteManager::queueErase(Sprite *sprite) {
 	if (sprite && sprite->compType != 3) {
-		g_flag_coordinates_set = true;
+		_coordinatesAreSet = true;
 
-		if (g_eraseRect.left > sprite->rect.left)
-			g_eraseRect.left = sprite->rect.left;
+		if (_eraseRect.left > sprite->rect.left)
+			_eraseRect.left = sprite->rect.left;
 
-		if (g_eraseRect.top > sprite->rect.top)
-			g_eraseRect.top = sprite->rect.top;
+		if (_eraseRect.top > sprite->rect.top)
+			_eraseRect.top = sprite->rect.top;
 
-		if (g_eraseRect.right < sprite->rect.right)
-			g_eraseRect.right = sprite->rect.right;
+		if (_eraseRect.right < sprite->rect.right)
+			_eraseRect.right = sprite->rect.right;
 
-		if (g_eraseRect.bottom < sprite->rect.bottom)
-			g_eraseRect.bottom = sprite->rect.bottom;
+		if (_eraseRect.bottom < sprite->rect.bottom)
+			_eraseRect.bottom = sprite->rect.bottom;
 	}
 }
 
 void SpriteManager::resetEraseQueue() {
-	g_eraseRect.left = 640;
-	g_eraseRect.top = 480;
-	g_flag_coordinates_set = false;
-	g_eraseRect.right = 0;
-	g_eraseRect.bottom = 0;
+	_eraseRect.left = 640;
+	_eraseRect.top = 480;
+	_coordinatesAreSet = false;
+	_eraseRect.right = 0;
+	_eraseRect.bottom = 0;
 }
 
 void SpriteManager::killSpriteQueue() {
-	g_flag_drawSequences = true;
-	g_frameQueue = nullptr;
+	_drawSequencesFlag = true;
+	_frameQueue = nullptr;
 }
 
 void SpriteManager::touchSpriteQueue() {
-	g_flag_drawSequences = true;
+	_drawSequencesFlag = true;
 }
 
 void SpriteManager::drawSprite(Sprite *sprite) {
 	if (sprite) {
-		Sprite *queue = g_frameQueue;
+		Sprite *queue = _frameQueue;
 
 		while (queue) {
 			if (queue == sprite)
@@ -216,15 +216,15 @@ void SpriteManager::drawSprite(Sprite *sprite) {
 			queue = queue->nextSprite;
 		}
 
-		g_flag_drawSequences = true;
+		_drawSequencesFlag = true;
 
-		if (g_frameQueue) {
+		if (_frameQueue) {
 			bool insertedInQueue = false;
 
-			if (sprite->hotspotPriority <= g_frameQueue->hotspotPriority) {
-				queue = g_frameQueue;
+			if (sprite->hotspotPriority <= _frameQueue->hotspotPriority) {
+				queue = _frameQueue;
 
-				for (Sprite *i = g_frameQueue->nextSprite; !insertedInQueue && i; i = i->nextSprite) {
+				for (Sprite *i = _frameQueue->nextSprite; !insertedInQueue && i; i = i->nextSprite) {
 					if (sprite->hotspotPriority > i->hotspotPriority) {
 						queue->nextSprite = sprite;
 						sprite->nextSprite = i;
@@ -240,18 +240,18 @@ void SpriteManager::drawSprite(Sprite *sprite) {
 				}
 
 			} else {
-				sprite->nextSprite = g_frameQueue;
-				g_frameQueue = sprite;
+				sprite->nextSprite = _frameQueue;
+				_frameQueue = sprite;
 			}
 		} else {
-			g_frameQueue = sprite;
+			_frameQueue = sprite;
 			sprite->nextSprite = nullptr;
 		}
 	}
 }
 
 void SpriteManager::removeSprite(Sprite *sprite) {
-	Sprite *queue = g_frameQueue;
+	Sprite *queue = _frameQueue;
 	Sprite *spriteToRemove = nullptr;
 
 	if (sprite) {
@@ -264,10 +264,10 @@ void SpriteManager::removeSprite(Sprite *sprite) {
 			if (spriteToRemove) {
 				spriteToRemove->nextSprite = queue->nextSprite;
 			} else {
-				g_frameQueue = queue->nextSprite;
+				_frameQueue = queue->nextSprite;
 			}
 
-			g_flag_drawSequences = true;
+			_drawSequencesFlag = true;
 		}
 	}
 }

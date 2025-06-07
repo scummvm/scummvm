@@ -78,10 +78,10 @@ public:
 private:
 	LastExpressEngine *_engine = nullptr;
 
-	bool g_flag_drawSequences = false;
-	Sprite *g_frameQueue = nullptr;
-	bool g_flag_coordinates_set = false;
-	Extent g_eraseRect = Extent(640, 480, 0, 0, 0, 0);
+	bool _drawSequencesFlag = false;
+	Sprite *_frameQueue = nullptr;
+	bool _coordinatesAreSet = false;
+	Extent _eraseRect = Extent(640, 480, 0, 0, 0, 0);
 };
 
 } // End of namespace LastExpress
