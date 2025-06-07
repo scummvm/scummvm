@@ -300,6 +300,9 @@ void MPEGPSDecoder::MPEGPSDemuxer::close() {
 	delete _stream;
 	_stream = 0;
 
+	_firstAudioPacketPts = 0xFFFFFFFF;
+	_firstVideoPacketPts = 0xFFFFFFFF;
+
 	while (!_audioQueue.empty()) {
 		Packet packet = _audioQueue.pop();
 		delete packet._stream;
@@ -339,6 +342,7 @@ Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getNextPacket(uint32 c
 			// time stamp.
 			usePacket = true;
 		} else {
+			packet._pts -= _firstAudioPacketPts;
 			uint32 packetTime = packet._pts / 90;
 			if (packetTime <= currentTime || packetTime - currentTime < AUDIO_THRESHOLD || _videoQueue.empty()) {
 				// The packet is overdue, or will be soon.
@@ -364,6 +368,10 @@ Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getNextPacket(uint32 c
 	if (!_videoQueue.empty()) {
 		Packet packet = _videoQueue.pop();
 		startCode = packet._startCode;
+
+		if (packet._pts != 0xFFFFFFFF) {
+			packet._pts -= _firstVideoPacketPts;
+		}
 		pts = packet._pts;
 		dts = packet._dts;
 		return packet._stream;
@@ -406,12 +414,16 @@ bool MPEGPSDecoder::MPEGPSDemuxer::queueNextPacket() {
 		if (startCode == kStartCodePrivateStream1 || (startCode >= 0x1C0 && startCode <= 0x1DF)) {
 			// Audio packet
 			_audioQueue.push(Packet(stream, startCode, pts, dts));
+			if (_firstAudioPacketPts == 0xFFFFFFFF)
+				_firstAudioPacketPts = pts;
 			return true;
 		}
 
 		if (startCode >= 0x1E0 && startCode <= 0x1EF) {
 			// Video packet
 			_videoQueue.push(Packet(stream, startCode, pts, dts));
+			if (_firstVideoPacketPts == 0xFFFFFFFF)
+				_firstVideoPacketPts = pts;
 			return true;
 		}
 
