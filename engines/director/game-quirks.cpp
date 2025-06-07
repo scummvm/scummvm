@@ -125,7 +125,7 @@ static void quirkLimit15FPS() {
 	g_director->_fpsLimit = 15;
 }
 
-static void quirkVirtualNightclub() {
+static void quirkPretend16Bit() {
 	g_director->_colorDepth = 16;
 }
 
@@ -236,9 +236,11 @@ const struct Quirk {
 	// Pippin game that uses Unix path separators rather than Mac
 	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
 
-	// Virtual Nightclub pops up a nag mesasage if the color depth isn't
-	// exactly 16 bit.
-	{ "vnc", Common::kPlatformWindows, &quirkVirtualNightclub },
+	// Some games pop up a nag mesasage if the color depth isn't exactly 16 bit.
+	{ "vnc", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "vnc", Common::kPlatformMacintosh, &quirkPretend16Bit },
+	{ "finkletimes", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "finkletimes", Common::kPlatformMacintosh, &quirkPretend16Bit },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
