@@ -80,7 +80,7 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Std::string la
 	                     + slen + "\">\n";
 	header += "  <data encoding=\"csv\">\n";
 
-	tmx->writeBuf((const unsigned char *)header.c_str(), header.length());
+	tmx->writeBuf((const unsigned char *)header.c_str(), header.size());
 
 	uint16 mx, my;
 	for (my = 0; my < sideLength; my++) {
@@ -104,19 +104,19 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Std::string la
 	Std::string footer = "  </data>\n";
 	footer += " </layer>\n";
 
-	tmx->writeBuf((const unsigned char *)footer.c_str(), footer.length());
+	tmx->writeBuf((const unsigned char *)footer.c_str(), footer.size());
 }
 
 void TMXMap::writeObjectLayer(NuvieIOFileWrite *tmx, uint8 level) {
 	Std::string xml = "<objectgroup name=\"Object Layer\">\n";
-	tmx->writeBuf((const unsigned char *)xml.c_str(), xml.length());
+	tmx->writeBuf((const unsigned char *)xml.c_str(), xml.size());
 
 	writeObjects(tmx, level, true, false);
 	writeObjects(tmx, level, false, false);
 	writeObjects(tmx, level, false, true);
 
 	xml = "</objectgroup>\n";
-	tmx->writeBuf((const unsigned char *)xml.c_str(), xml.length());
+	tmx->writeBuf((const unsigned char *)xml.c_str(), xml.size());
 }
 
 bool TMXMap::canDrawTile(Tile *t, bool forceLower, bool toptile) {
@@ -178,7 +178,7 @@ void TMXMap::writeObjects(NuvieIOFileWrite *tmx, uint8 level, bool forceLower, b
 					if (t->dbl_width && t->dbl_height) {
 						s += writeObjectTile(obj, " -x,-y", t->tile_num - 3, x - 1, y - 1, forceLower, toptiles);
 					}
-					tmx->writeBuf((const unsigned char *)s.c_str(), s.length());
+					tmx->writeBuf((const unsigned char *)s.c_str(), s.size());
 				}
 			}
 		}
@@ -213,7 +213,7 @@ bool TMXMap::exportMapLevel(uint8 level) {
 		header += " </tileset>\n";
 	}
 
-	tmx.writeBuf((const unsigned char *)header.c_str(), header.length());
+	tmx.writeBuf((const unsigned char *)header.c_str(), header.size());
 
 	writeLayer(&tmx, width, "BaseLayer", 0, 8, mapdata);
 
@@ -226,7 +226,7 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	Std::string footer = "</map>\n";
 
 
-	tmx.writeBuf((const unsigned char *)footer.c_str(), footer.length());
+	tmx.writeBuf((const unsigned char *)footer.c_str(), footer.size());
 
 
 

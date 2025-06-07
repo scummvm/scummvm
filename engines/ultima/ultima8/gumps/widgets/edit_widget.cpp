@@ -151,8 +151,8 @@ void EditWidget::renderText() {
 		                               cv ? _cursor : Std::string::npos);
 
 		// Trim text to fit
-		if (remaining < _text.length()) {
-			_text.resize(remaining);
+		if (remaining < _text.size()) {
+			_text.erase(remaining);
 			_cursor = _text.size();
 		}
 	}
@@ -253,7 +253,7 @@ bool EditWidget::OnTextInput(int unicode) {
 	if (!c) return true;
 
 	Std::string newtext = _text;
-	newtext.insert(_cursor, 1, c);
+	newtext.insertChar(c, _cursor);
 
 	if (textFits(newtext)) {
 		_text = newtext;

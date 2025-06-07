@@ -37,6 +37,7 @@ public:
 	typedef T          value_type;
 	typedef T *        iterator;
 	typedef const T *  const_iterator;
+	typedef size_t     size_type;
 
 protected:
 	/**
@@ -85,6 +86,9 @@ public:
 
 	/** Construct a string consisting of the given character. */
 	explicit constexpr BaseString(value_type c) : _size((c == 0) ? 0 : 1), _str(_storage), _storage{c, 0} {}
+
+	/** Construct a string consisting of n copies of the given character. */
+	BaseString(size_t n, value_type c);
 
 	/** Construct a copy of the given string. */
 	BaseString(const BaseString &str);
@@ -180,12 +184,30 @@ public:
 	value_type firstChar() const    { return (_size > 0) ? _str[0] : 0; }
 	value_type lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
 
-	value_type operator[](int idx) const {
+	/**
+	 * String square brackets allows modifying characters
+	 */
+	value_type &operator[](size_t idx) {
 		assert(_str);
 		assert(idx >= 0);
-		assert(idx < (int)_size);
+		assert(idx < _size);
 		return _str[idx];
 	}
+
+	/**
+	 * Square brackets for const strings simply returns characters
+	 */
+	value_type operator[](size_t idx) const {
+		assert(_str);
+		assert(idx >= 0);
+		assert(idx < _size);
+		return _str[idx];
+	}
+
+	/**
+	 * Get a character at an index
+	 */
+	value_type at(size_t idx) const { return operator[](idx); }
 
 	/**
 	 * Checks if a given string is present in the internal string or not.
@@ -288,8 +310,31 @@ public:
 	 */
 	void replace(value_type from, value_type to);
 
+	/**
+	 * Assign a new string
+	 */
+	void assign(const BaseString &str);
+	void assign(BaseString &&str);
+	void assign(size_t count, value_type c);
+	void assign(const value_type *str);
+	void assign(const value_type *str, size_t count);
+
+	/**
+	 * Append another string to this one
+	 */
+	void append(const value_type *str);
+	void append(size_t count, value_type c);
+	void append(const BaseString &str);
+
 	/** Appends a string containing the characters between beginP (including) and endP (excluding). */
 	void append(const value_type *begin, const value_type *end);
+
+	/**
+	 * Append a character to the string
+	 */
+	inline void push_back(value_type c) {
+		append(1, c);
+	}
 
 	/**
 	 * Wraps the text in the string to the given line maximum. Lines will be
@@ -342,18 +387,12 @@ protected:
 	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
+	void initWithValueTypeChar(size_t count, value_type c);
 	void initWithValueTypeStr(const value_type *str, uint32 len);
 
 	void assignInsert(const value_type *str, uint32 p);
 	void assignInsert(value_type c, uint32 p);
 	void assignInsert(const BaseString &str, uint32 p);
-	void assignAppend(const value_type *str);
-	void assignAppend(value_type c);
-	void assignAppend(const BaseString &str);
-	void assign(const BaseString &str);
-	void assign(BaseString &&str);
-	void assign(value_type c);
-	void assign(const value_type *str);
 
 	bool pointerInOwnBuffer(const value_type *str) const;
 
@@ -361,10 +400,11 @@ protected:
 
 	void toCase(int (*caseChangeFunc)(int));
 
-	static uint32 cStrLen(const value_type *str);
+	static size_t cStrLen(const value_type *str);
 	static const value_type *cMemChr(const value_type *ptr, value_type c, size_t count);
 	static       value_type *cMemChr(value_type *ptr,       value_type c, size_t count);
 	static int cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count);
+	static void cMemSet(value_type *ptr, value_type c, size_t count);
 };
 }
 #endif

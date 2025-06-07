@@ -3143,7 +3143,7 @@ void Events::doAction() {
 			drop_select(input.obj);
 		} else if (!drop_qty) {
 			assert(input.str);
-			if (strncmp(input.str->c_str(), "", input.str->length()) == 0) {
+			if (input.str->empty()) {
 				char buf[6];
 				snprintf(buf, sizeof(buf), "%u", drop_obj->qty);
 				scroll->display_string(buf);
@@ -3163,7 +3163,7 @@ void Events::doAction() {
 			return;
 		}
 		assert(input.str);
-		if (strncmp(input.str->c_str(), "", input.str->length()) == 0) {
+		if (input.str->empty()) {
 			if (rest_time == 0)
 				scroll->display_string("0");
 			rest_input(0);
