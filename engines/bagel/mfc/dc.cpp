@@ -276,7 +276,24 @@ CFont *CDC::SelectObject(CFont *pFont) {
 }
 
 CBitmap *CDC::SelectObject(CBitmap *pBitmap) {
-	error("TODO: CDC::SelectObject");
+	// Attach new bitmap
+	HBITMAP oldBitmap = surface()->Attach((HBITMAP)pBitmap->m_hObject);
+
+	if (pBitmap->_isTemporary) {
+		delete pBitmap;
+		return nullptr;
+	}
+
+	if (!oldBitmap)
+		return nullptr;
+
+	// Create a new temporary CBitmap to
+	// encapsulate the returned HBITMAP
+	CBitmap *result = new CBitmap();
+	result->Attach(oldBitmap);
+	result->_isTemporary = true;
+
+	return result;
 }
 
 int CDC::SelectObject(CRgn *pRgn) {

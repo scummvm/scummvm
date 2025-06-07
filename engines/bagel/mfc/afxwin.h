@@ -523,6 +523,9 @@ public:
 		~Impl() override {}
 	};
 public:
+	bool _isTemporary = false;
+
+public:
 	~CBitmap() override {
 	}
 
