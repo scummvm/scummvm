@@ -1032,6 +1032,7 @@ public:
 	Common::Rect _windowRect;
 	Common::Rect _updateRect;
 	bool _updateErase = false;
+	CBitmap::Impl _surfaceBitmap;
 	Gfx::SurfaceDC _surface;
 	CDC _dc;
 

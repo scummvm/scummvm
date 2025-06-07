@@ -26,20 +26,36 @@ namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
-SurfaceDC::SurfaceDC(CWnd *owner) : _owner(owner) {
-	Graphics::Screen *screen = AfxGetApp()->getScreen();
-	create(*screen, Common::Rect(0, 0, screen->w, screen->h));
+SurfaceDC::SurfaceDC() {
+}
+
+SurfaceDC::~SurfaceDC() {
+	delete _bitmap;
+}
+
+HBITMAP SurfaceDC::Attach(HBITMAP bitmap) {
+	HBITMAP result = _bitmap;
+	_bitmap = bitmap;
+	return result;
+}
+
+void SurfaceDC::Detach() {
+	_bitmap = nullptr;
 }
 
 HPALETTE SurfaceDC::selectPalette(HPALETTE pal) {
 	HPALETTE oldPal = _palette;
 	_palette = pal;
 
+	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
+
 	if (pal) {
 		auto *newPal = static_cast<CPalette::Impl *>(pal);
-		setPalette(newPal->data(), 0, newPal->size());
+		if (bitmap)
+			bitmap->setPalette(newPal->data(), 0, newPal->size());
 	} else {
-		clearPalette();
+		if (bitmap)
+			bitmap->clearPalette();
 	}
 
 	return oldPal;
@@ -60,11 +76,20 @@ UINT SurfaceDC::realizePalette() {
 }
 
 COLORREF SurfaceDC::GetNearestColor(COLORREF crColor) const {
+	if (crColor <= 255)
+		return crColor;
+
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
 	return pal->findBestColor(
 		GetRValue(crColor),
 		GetGValue(crColor),
 		GetBValue(crColor));
+}
+
+void SurfaceDC::fillRect(const Common::Rect &r, COLORREF crColor) {
+	assert(_bitmap);
+	static_cast<CBitmap::Impl *>(_bitmap)->fillRect(r,
+		GetNearestColor(crColor));
 }
 
 

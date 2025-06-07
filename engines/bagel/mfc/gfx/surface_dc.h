@@ -33,19 +33,25 @@ class CPalette;
 
 namespace Gfx {
 
-class SurfaceDC : public Graphics::ManagedSurface {
+class SurfaceDC {
 public:
-	CWnd *_owner = nullptr;
+	HBITMAP _bitmap = nullptr;
 	HPALETTE _palette = nullptr;
 	CPalette *_cPalette = nullptr;
 
 public:
-	SurfaceDC(CWnd *owner);
+	SurfaceDC();
+	~SurfaceDC();
+
+	HBITMAP Attach(HBITMAP bitmap);
+	void Detach();
 
 	HPALETTE selectPalette(HPALETTE pal);
 	CPalette *selectPalette(CPalette *pal);
 	UINT realizePalette();
 	COLORREF GetNearestColor(COLORREF crColor) const;
+
+	void fillRect(const Common::Rect &r, COLORREF crColor);
 };
 
 } // namespace Gfx

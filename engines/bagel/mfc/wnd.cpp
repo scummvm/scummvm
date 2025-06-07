@@ -31,11 +31,13 @@ IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 END_MESSAGE_MAP()
 
-CWnd::CWnd() : m_hWnd(this), _surface(this) {
+CWnd::CWnd() : m_hWnd(this) {
+	_surface.Attach(&_surfaceBitmap);
 	_dc.Attach(&_surface);
 }
 
 CWnd::~CWnd() {
+	_surface.Detach();
 	clear();
 }
 
@@ -60,7 +62,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	_windowRect.bottom = cs.y + cs.cy;
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surface.create(*AfxGetApp()->getScreen(), _windowRect);
+	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
 
 	return true;
 }
