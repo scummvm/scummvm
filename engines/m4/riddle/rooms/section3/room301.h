@@ -47,6 +47,7 @@ private:
 	int _agentTalk = 0;
 	int _agentSalutes = 0;
 	int _georgeMode = 0;
+	int _georgeRandomActionCounter = 0;
 	int _georgeShould = 0;
 	int _georgeTrigger = 0;
 	int _marshalMatt = 0;
@@ -58,16 +59,14 @@ private:
 	int _ripTrekTalker3 = 0;
 	int _ripTrekTravel = 0;
 
-	int _val2 = 0;
-	int _val8 = 0;
 	int _val12 = 0;
-	int _val17 = 0;
-	int _val18 = 0;
+	int _marshallShould = 0;
+	int _marshallMode = 0;
 
-	machine *_george = nullptr;
-	machine *_machine2 = nullptr;
-	machine *_machine3 = nullptr;
-	machine *_ripley = nullptr;
+	machine *_georgeMach = nullptr;
+	machine *_marshallMach = nullptr;
+	machine *_ripleyMach = nullptr;
+	machine *_shadowMach = nullptr;
 
 	const char *_digiSound1 = nullptr;
 	const char *_digiSound2 = nullptr;
