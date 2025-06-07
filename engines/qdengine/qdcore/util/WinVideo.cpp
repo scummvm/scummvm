@@ -87,6 +87,14 @@ bool winVideo::open_file(const Common::Path &fname) {
 		return false;
 	}
 
+	// WORKAROUND: Fix lagging audio in mng and rybalka
+	// videos by setting specific number of prebuffered packets
+	// for MPEG-PS demuxer.
+	Common::String gameId = g_engine->getGameId();
+	if (gameId == "mng" || gameId == "rybalka") {
+		_decoder->setPrebufferedPackets(600);
+	}
+
 	if (!_decoder->loadStream(_videostream)) {
 		warning("WinVideo::open: Failed to Load Stream for file '%s'", filename.c_str());
 		_videostream = nullptr;
