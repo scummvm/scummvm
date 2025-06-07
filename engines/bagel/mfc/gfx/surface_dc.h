@@ -28,6 +28,7 @@
 namespace Bagel {
 namespace MFC {
 
+class CDC;
 class CWnd;
 class CPalette;
 
@@ -45,6 +46,7 @@ public:
 
 	HBITMAP Attach(HBITMAP bitmap);
 	void Detach();
+	Graphics::ManagedSurface *getSurface() const;
 
 	HPALETTE selectPalette(HPALETTE pal);
 	CPalette *selectPalette(CPalette *pal);
@@ -52,6 +54,10 @@ public:
 	COLORREF GetNearestColor(COLORREF crColor) const;
 
 	void fillRect(const Common::Rect &r, COLORREF crColor);
+	void bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+		int xSrc, int ySrc, DWORD dwRop);
+	void stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+		int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
 };
 
 } // namespace Gfx

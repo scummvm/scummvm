@@ -181,13 +181,16 @@ BOOL CDC::LPtoDP(RECT *lpRect) {
 }
 
 BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-                 int xSrc, int ySrc, DWORD dwRop) {
-	error("TODO: CDC::BitBlt");
+        int xSrc, int ySrc, DWORD dwRop) {
+	surface()->bitBlt(x, y, nWidth, nHeight, pSrcDC, xSrc, ySrc, dwRop);
+	return true;
 }
 
 BOOL CDC::StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-                     int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
-	error("TODO: CDC::StretchBlt");
+        int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
+	surface()->stretchBlt(x, y, nWidth, nHeight, pSrcDC,
+		xSrc, ySrc, nSrcWidth, nSrcHeight, dwRop);
+	return true;
 }
 
 void CDC::Ellipse(LPCRECT lpRect) {

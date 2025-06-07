@@ -43,6 +43,11 @@ void SurfaceDC::Detach() {
 	_bitmap = nullptr;
 }
 
+Graphics::ManagedSurface *SurfaceDC::getSurface() const {
+	assert(_bitmap);
+	return static_cast<CBitmap::Impl *>(_bitmap);
+}
+
 HPALETTE SurfaceDC::selectPalette(HPALETTE pal) {
 	HPALETTE oldPal = _palette;
 	_palette = pal;
@@ -92,6 +97,23 @@ void SurfaceDC::fillRect(const Common::Rect &r, COLORREF crColor) {
 		GetNearestColor(crColor));
 }
 
+void SurfaceDC::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+		int xSrc, int ySrc, DWORD dwRop) {
+	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
+	getSurface()->blitFrom(*src,
+		Common::Rect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight),
+		Common::Point(x, y)
+	);
+}
+
+void SurfaceDC::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+		int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
+	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
+	getSurface()->blitFrom(*src,
+		Common::Rect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight),
+		Common::Rect(x, y, x + nWidth, y + nHeight)
+	);
+}
 
 } // namespace Gfx
 } // namespace MFC

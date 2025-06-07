@@ -581,11 +581,6 @@ public:
 class CDC : public CObject {
 	DECLARE_DYNAMIC(CDC)
 
-protected:
-	Gfx::SurfaceDC *surface() const {
-		return static_cast<Gfx::SurfaceDC *>(m_hDC);
-	}
-
 public:
 	HDC m_hDC = nullptr;
 
@@ -597,6 +592,10 @@ public:
 	operator HDC() const {
 		return m_hDC;
 	}
+	Gfx::SurfaceDC *surface() const {
+		return static_cast<Gfx::SurfaceDC *>(m_hDC);
+	}
+
 	BOOL CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
 	              LPCSTR lpszOutput, const void *lpInitData);
 	BOOL CreateCompatibleDC(CDC *pDC);
