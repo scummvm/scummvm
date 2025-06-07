@@ -50,50 +50,48 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 std::string MSVCProvider::getLibraryFromFeature(const char *feature, const BuildSetup &setup, bool isRelease) const {
 	static const MSVCLibrary s_libraries[] = {
 		// Libraries
-		{       "sdl", "SDL.lib",                   "SDLd.lib",        "winmm.lib imm32.lib version.lib setupapi.lib"    },
-		{      "sdl2", "SDL2.lib",                  "SDL2d.lib",       "winmm.lib imm32.lib version.lib setupapi.lib"    },
-		{      "zlib", "zlib.lib",                  "zlibd.lib",       nullptr                                           },
-		{       "mad", "mad.lib",                   nullptr,           nullptr                                           },
-		{   "fribidi", "fribidi.lib",               nullptr,           nullptr                                           },
-		{       "ogg", "ogg.lib",                   nullptr,           nullptr                                           },
-		{    "vorbis", "vorbis.lib vorbisfile.lib", nullptr,           nullptr                                           },
-		{    "tremor", "vorbisidec.lib",            nullptr,           nullptr                                           },
-		{      "flac", "FLAC.lib",                  nullptr,           nullptr                                           },
-		{       "png", "libpng16.lib",              "libpng16d.lib",   nullptr                                           },
-		{       "gif", "gif.lib",                   nullptr,           nullptr                                           },
-		{      "faad", "faad.lib",                  nullptr,           nullptr                                           },
-		{    "mikmod", "mikmod.lib",                nullptr,           nullptr                                           },
-		{   "openmpt", "openmpt.lib",               nullptr,           nullptr                                           },
-		{     "mpeg2", "mpeg2.lib",                 nullptr,           nullptr                                           },
-		{ "theoradec", "theora.lib",                nullptr,           nullptr                                           },
-		{       "vpx", "vpx.lib",                   nullptr,           nullptr                                           },
-		{ "freetype2", "freetype.lib",              "freetyped.lib",   nullptr                                           },
-		{      "jpeg", "jpeg.lib",                  nullptr,           nullptr                                           },
-		{"fluidsynth", "fluidsynth.lib",            nullptr,           nullptr                                           },
-		{ "fluidlite", "fluidlite.lib",             nullptr,           nullptr                                           },
-		{   "libcurl", "libcurl.lib",               "libcurl-d.lib",   "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib" },
-		{    "sdlnet", "SDL_net.lib",               nullptr,           "iphlpapi.lib"                                    },
-		{   "sdl2net", "SDL2_net.lib",              "SDL2_netd.lib",   "iphlpapi.lib"                                    },
-		{   "discord", "discord-rpc.lib",           nullptr,           nullptr                                           },
-		{ "retrowave", "RetroWave.lib",             nullptr,           nullptr                                           },
-		{       "a52", "a52.lib",                   nullptr,           nullptr                                           },
-		{       "mpc", "libmpcdec.lib",             "libmpcdec_d.lib", nullptr                                           },
+		{       "sdl", "SDL.lib",                   "SDLd.lib",        kSDLVersion1,   "winmm.lib imm32.lib version.lib setupapi.lib"    },
+		{       "sdl", "SDL2.lib",                  "SDL2d.lib",       kSDLVersion2,   "winmm.lib imm32.lib version.lib setupapi.lib"    },
+		{       "sdl", "SDL3.lib",                  "SDL3d.lib",       kSDLVersion3,   "winmm.lib imm32.lib version.lib setupapi.lib"    },
+		{      "zlib", "zlib.lib",                  "zlibd.lib",       kSDLVersionAny, nullptr                                           },
+		{       "mad", "mad.lib",                   nullptr,           kSDLVersionAny, nullptr                                           },
+		{   "fribidi", "fribidi.lib",               nullptr,           kSDLVersionAny, nullptr                                           },
+		{       "ogg", "ogg.lib",                   nullptr,           kSDLVersionAny, nullptr                                           },
+		{    "vorbis", "vorbis.lib vorbisfile.lib", nullptr,           kSDLVersionAny, nullptr                                           },
+		{    "tremor", "vorbisidec.lib",            nullptr,           kSDLVersionAny, nullptr                                           },
+		{      "flac", "FLAC.lib",                  nullptr,           kSDLVersionAny, nullptr                                           },
+		{       "png", "libpng16.lib",              "libpng16d.lib",   kSDLVersionAny, nullptr                                           },
+		{       "gif", "gif.lib",                   nullptr,           kSDLVersionAny, nullptr                                           },
+		{      "faad", "faad.lib",                  nullptr,           kSDLVersionAny, nullptr                                           },
+		{    "mikmod", "mikmod.lib",                nullptr,           kSDLVersionAny, nullptr                                           },
+		{   "openmpt", "openmpt.lib",               nullptr,           kSDLVersionAny, nullptr                                           },
+		{     "mpeg2", "mpeg2.lib",                 nullptr,           kSDLVersionAny, nullptr                                           },
+		{ "theoradec", "theora.lib",                nullptr,           kSDLVersionAny, nullptr                                           },
+		{       "vpx", "vpx.lib",                   nullptr,           kSDLVersionAny, nullptr                                           },
+		{ "freetype2", "freetype.lib",              "freetyped.lib",   kSDLVersionAny, nullptr                                           },
+		{      "jpeg", "jpeg.lib",                  nullptr,           kSDLVersionAny, nullptr                                           },
+		{"fluidsynth", "fluidsynth.lib",            nullptr,           kSDLVersionAny, nullptr                                           },
+		{ "fluidlite", "fluidlite.lib",             nullptr,           kSDLVersionAny, nullptr                                           },
+		{   "libcurl", "libcurl.lib",               "libcurl-d.lib",   kSDLVersionAny, "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib" },
+		{    "sdlnet", "SDL_net.lib",               nullptr,           kSDLVersion1,   "iphlpapi.lib"                                    },
+		{    "sdlnet", "SDL2_net.lib",              "SDL2_netd.lib",   kSDLVersion2,   "iphlpapi.lib"                                    },
+		{    "sdlnet", "SDL3_net.lib",              "SDL3_netd.lib",   kSDLVersion3,   "iphlpapi.lib"                                    },
+		{   "discord", "discord-rpc.lib",           nullptr,           kSDLVersionAny, nullptr                                           },
+		{ "retrowave", "RetroWave.lib",             nullptr,           kSDLVersionAny, nullptr                                           },
+		{       "a52", "a52.lib",                   nullptr,           kSDLVersionAny, nullptr                                           },
+		{       "mpc", "libmpcdec.lib",             "libmpcdec_d.lib", kSDLVersionAny, nullptr                                           },
 		// Feature flags with library dependencies
-		{   "updates", "WinSparkle.lib",            nullptr,           nullptr                                           },
-		{       "tts", nullptr,                     nullptr,           "sapi.lib"                                        },
-		{    "opengl", nullptr,                     nullptr,           nullptr                                           },
-		{      "enet", nullptr,                     nullptr,           "winmm.lib ws2_32.lib"                            }
+		{   "updates", "WinSparkle.lib",            nullptr,           kSDLVersionAny, nullptr                                           },
+		{       "tts", nullptr,                     nullptr,           kSDLVersionAny, "sapi.lib"                                        },
+		{    "opengl", nullptr,                     nullptr,           kSDLVersionAny, nullptr                                           },
+		{      "enet", nullptr,                     nullptr,           kSDLVersionAny, "winmm.lib ws2_32.lib"                            }
 	};
-
-	// HACK for switching SDL_net to SDL2_net
-	const char *sdl2net = "sdl2net";
-	if (std::strcmp(feature, "sdlnet") == 0 && setup.useSDL2) {
-		feature = sdl2net;
-	}
 
 	const MSVCLibrary *library = nullptr;
 	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
-		if (std::strcmp(feature, s_libraries[i].feature) == 0) {
+		if (std::strcmp(feature, s_libraries[i].feature) == 0 &&
+			((s_libraries[i].sdl == kSDLVersionAny) ||
+			(s_libraries[i].sdl == setup.useSDL))) {
 			library = &s_libraries[i];
 			break;
 		}
@@ -126,11 +124,8 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 std::string MSVCProvider::outputLibraryDependencies(const BuildSetup &setup, bool isRelease) const {
 	std::string libs;
 
-	if (setup.useSDL2) {
-		libs += getLibraryFromFeature("sdl2", setup, isRelease);
-	} else {
-		libs += getLibraryFromFeature("sdl", setup, isRelease);
-	}
+	// SDL is always enabled
+	libs += getLibraryFromFeature("sdl", setup, isRelease);
 	libs += " ";
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable) {
@@ -284,7 +279,7 @@ std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildS
 	          "echo.\n"
 	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
 
-	cmdLine += (setup.useSDL2) ? "SDL2" : "SDL";
+	cmdLine += setup.getSDLName();
 
 	if (setup.useVcpkg) {
 		cmdLine += " &quot;$(_ZVcpkgCurrentInstalledDir)";

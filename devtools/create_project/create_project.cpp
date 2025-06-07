@@ -300,7 +300,11 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
 		} else if (!std::strcmp(argv[i], "--sdl1")) {
-			setup.useSDL2 = false;
+			setup.useSDL = kSDLVersion1;
+		} else if (!std::strcmp(argv[i], "--sdl2")) {
+			setup.useSDL = kSDLVersion2;
+		} else if (!std::strcmp(argv[i], "--sdl3")) {
+			setup.useSDL = kSDLVersion3;
 		} else if (!std::strcmp(argv[i], "--use-canonical-lib-names")) {
 			// Deprecated: Kept here so it doesn't error
 		} else if (!std::strcmp(argv[i], "--use-windows-unicode")) {
@@ -476,11 +480,17 @@ int main(int argc, char *argv[]) {
 	}
 
 	setup.defines.push_back("SDL_BACKEND");
-	if (!setup.useSDL2) {
+	if (setup.useSDL == kSDLVersion1) {
 		cout << "\nBuilding against SDL 1.2\n\n";
-	} else {
-		cout << "\nBuilding against SDL 2.0\n\n";
+	} else if (setup.useSDL == kSDLVersion2) {
+		cout << "\nBuilding against SDL 2\n\n";
 		setup.defines.push_back("USE_SDL2");
+	} else if (setup.useSDL == kSDLVersion3) {
+		cout << "\nBuilding against SDL 3\n\n";
+		setup.defines.push_back("USE_SDL3");
+	} else {
+		std::cerr << "ERROR: Unsupported SDL version\n";
+		return -1;
 	}
 
 	if (setup.useStaticDetection) {
@@ -492,9 +502,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	// HACK: Add IMGUI SDL Renderer support
-	// This needs SDL 2.0.18+
 	if (getFeatureBuildState("imgui", setup.features)) {
-		setup.defines.push_back("USE_IMGUI_SDLRENDERER2");
+		// This needs SDL 2.0.18+
+		if (setup.useSDL == kSDLVersion2) {
+			setup.defines.push_back("USE_IMGUI_SDLRENDERER2");
+		} else if (setup.useSDL == kSDLVersion3) {
+			setup.defines.push_back("USE_IMGUI_SDLRENDERER3");
+		}
 	}
 
 	// List of global warnings and map of project-specific warnings
@@ -803,6 +817,7 @@ void displayHelp(const char *exe) {
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
 	        "                            (default: false)\n"
 	        " --use-windows-subsystem    Use Windows subsystem instead of Console\n"
+	        "                            (default: false)\n"
 	        " --libs-path path           Specify the path of pre-built libraries instead of using the\n"
 			"                            " LIBS_DEFINE " environment variable\n "
 	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"
@@ -820,7 +835,9 @@ void displayHelp(const char *exe) {
 	        " --disable-<name>           disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        "SDL settings:\n"
-	        " --sdl1                     link to SDL 1.2, instead of SDL 2.0\n"
+	        " --sdl1                     link to SDL 1.2\n"
+			" --sdl2                     link to SDL 2 (default)\n"
+			" --sdl3                     link to SDL 3\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -1292,8 +1309,8 @@ static void fixupFeatures(ProjectType projectType, BuildSetup &setup) {
 	// Check IMGUI dependencies
 	if (!getFeatureBuildState("opengl", setup.features) ||
 		!getFeatureBuildState("freetype2", setup.features) ||
-		!setup.useSDL2) {
-		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2\n";
+		setup.useSDL == kSDLVersion1) {
+		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2+\n";
 		setFeatureBuildState("imgui", setup.features, false);
 	}
 	// IMGUI is not available on Xcode
@@ -2714,4 +2731,12 @@ Feature BuildSetup::getFeature(const std::string &feature) const {
 	}
 
 	return *itr;
+}
+
+const char *BuildSetup::getSDLName() const {
+	switch (useSDL) {
+	case kSDLVersion2: return "SDL2";
+	case kSDLVersion3: return "SDL3";
+	default:           return "SDL";
+	}
 }

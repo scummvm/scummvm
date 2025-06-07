@@ -356,7 +356,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	if (setup.runBuildEvents)
 		definesList += REVISION_DEFINE ";";
 
-	std::string includeSDL = (setup.useSDL2 ? "SDL2" : "SDL");
+	std::string includeSDL = setup.getSDLName();
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 			   << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
@@ -433,7 +433,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
 		includeDirsList += convertPathToWin(*i) + ';';
 
-	std::string includeSDL = (setup.useSDL2 ? "SDL2" : "SDL");
+	std::string includeSDL = setup.getSDLName();
 
 	std::string libraryDirsList;
 	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)

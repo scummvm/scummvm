@@ -496,6 +496,8 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("SystemConfiguration");
 	DEF_SYSTBD("libiconv");
 
+	std::string libSDL = setup.getSDLName();
+
 	// Local libraries
 	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 		DEF_LOCALLIB_STATIC("libfaad");
@@ -597,14 +599,21 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		DEF_LOCALXCFRAMEWORK("mpcdec", projectOutputDirectory);
 	}
 
-	if (setup.useSDL2) {
+	if (setup.useSDL == kSDLVersion3) {
+		DEF_LOCALLIB_STATIC("libSDL3main");
+		DEF_LOCALLIB_STATIC("libSDL3");
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+			DEF_LOCALLIB_STATIC("libSDL3_net");
+			DEF_LOCALXCFRAMEWORK("SDL3_net", projectOutputDirectory);
+		}
+	} else if (setup.useSDL == kSDLVersion2) {
 		DEF_LOCALLIB_STATIC("libSDL2main");
 		DEF_LOCALLIB_STATIC("libSDL2");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
 			DEF_LOCALLIB_STATIC("libSDL2_net");
 			DEF_LOCALXCFRAMEWORK("SDL2_net", projectOutputDirectory);
 		}
-	} else {
+	} else if (setup.useSDL == kSDLVersion1) {
 		DEF_LOCALLIB_STATIC("libSDLmain");
 		DEF_LOCALLIB_STATIC("libSDL");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
@@ -721,11 +730,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_iOS.push_back("Security.framework");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
-		if (setup.useSDL2) {
-			frameworks_iOS.push_back(getLibString("SDL2_net", setup.useXCFramework));
-		} else {
-			frameworks_iOS.push_back(getLibString("SDL_net", setup.useXCFramework));
-		}
+		frameworks_iOS.push_back(getLibString(libSDL + "_net", setup.useXCFramework));
 	}
 
 	for (ValueList::iterator framework = frameworks_iOS.begin(); framework != frameworks_iOS.end(); framework++) {
@@ -841,17 +846,10 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_osx.push_back(getLibString("mpcdec", setup.useXCFramework));
 	}
 
-	if (setup.useSDL2) {
-		frameworks_osx.push_back(getLibString("SDL2main", setup.useXCFramework));
-		frameworks_osx.push_back(getLibString("SDL2", setup.useXCFramework));
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
-			frameworks_osx.push_back(getLibString("SDL2_net", setup.useXCFramework));
-	} else {
-		frameworks_osx.push_back(getLibString("SDLmain", setup.useXCFramework));
-		frameworks_osx.push_back(getLibString("SDL", setup.useXCFramework));
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
-			frameworks_osx.push_back(getLibString("SDL_net", setup.useXCFramework));
-	}
+	frameworks_osx.push_back(getLibString(libSDL + "main", setup.useXCFramework));
+	frameworks_osx.push_back(getLibString(libSDL, setup.useXCFramework));
+	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		frameworks_osx.push_back(getLibString(libSDL + "_net", setup.useXCFramework));
 
 	order = 0;
 	for (ValueList::iterator framework = frameworks_osx.begin(); framework != frameworks_osx.end(); framework++) {
@@ -964,11 +962,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_tvOS.push_back("Security.framework");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
-		if (setup.useSDL2) {
-			frameworks_tvOS.push_back(getLibString("SDL2_net", setup.useXCFramework));
-		} else {
-			frameworks_tvOS.push_back(getLibString("SDL_net", setup.useXCFramework));
-		}
+		frameworks_tvOS.push_back(getLibString(libSDL + "_net", setup.useXCFramework));
 	}
 
 	for (ValueList::iterator framework = frameworks_tvOS.begin(); framework != frameworks_tvOS.end(); framework++) {
@@ -1304,6 +1298,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	projectOutputDirectory = rp;
 #endif
 
+	std::string libSDL = setup.getSDLName();
+
 	/****************************************
 	 * ScummVM - Project Level
 	 ****************************************/
@@ -1419,10 +1415,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	if (!setup.useXCFramework) {
 		iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
-			if (setup.useSDL2)
-				iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include/SDL2\"");
-			else
-				iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "include/SDL\"");
+			iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include/" + libSDL + "\"");
 		}
 	}
 	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, kSettingsAsList | kSettingsQuoteVariable, 5);
@@ -1505,13 +1498,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ValueList scummvmOSX_HeaderPaths;
 	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
 		scummvmOSX_HeaderPaths.push_back("\"" + *i + "\"");
-	if (setup.useSDL2) {
-		scummvmOSX_HeaderPaths.push_back("/usr/local/include/SDL2");
-		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL2");
-	} else {
-		scummvmOSX_HeaderPaths.push_back("/usr/local/include/SDL");
-		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
-	}
+	scummvmOSX_HeaderPaths.push_back("/usr/local/include/" + libSDL);
+	scummvmOSX_HeaderPaths.push_back("/opt/local/include/" + libSDL);
 	scummvmOSX_HeaderPaths.push_back("/usr/local/include");
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include");
 	scummvmOSX_HeaderPaths.push_back("/usr/local/include/freetype2");
@@ -1584,10 +1572,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
 	tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
 	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
-		if (setup.useSDL2)
-			tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include/SDL2\"");
-		else
-			tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "include/SDL\"");
+		tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include/" + libSDL + "\"");
 	}
 	ADD_SETTING_LIST(tvOS_Debug, "HEADER_SEARCH_PATHS", tvOS_HeaderSearchPaths, kSettingsAsList | kSettingsQuoteVariable, 5);
 	ADD_SETTING_QUOTE(tvOS_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/tvos/Info.plist");
