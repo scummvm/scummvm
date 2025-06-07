@@ -20,6 +20,7 @@
  */
 
 #include "bagel/mfc/gfx/surface_dc.h"
+#include "bagel/mfc/gfx/blitter.h"
 #include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
@@ -100,19 +101,25 @@ void SurfaceDC::fillRect(const Common::Rect &r, COLORREF crColor) {
 void SurfaceDC::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, DWORD dwRop) {
 	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
-	getSurface()->blitFrom(*src,
-		Common::Rect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight),
-		Common::Point(x, y)
-	);
+	Graphics::ManagedSurface *dest = getSurface();
+	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
+	const Common::Point destPos(x, y);
+
+	if (dwRop == SRCCOPY) {
+		dest->blitFrom(*src, srcRect, destPos);
+	} else {
+		blit(src, dest, srcRect, destPos, dwRop);
+	}
 }
 
 void SurfaceDC::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
 	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
-	getSurface()->blitFrom(*src,
-		Common::Rect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight),
-		Common::Rect(x, y, x + nWidth, y + nHeight)
-	);
+	Graphics::ManagedSurface *dest = getSurface();
+	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);
+	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
+
+	stretchBlit(src, dest, srcRect, destRect, dwRop);
 }
 
 } // namespace Gfx
