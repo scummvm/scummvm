@@ -91,16 +91,6 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	return true;
 }
 
-byte BaseImage::getAlphaAt(int x, int y) const {
-	if (!_surface) {
-		return 0xFF;
-	}
-	uint32 color = *(const uint32 *)_surface->getBasePtr(x, y);
-	byte r, g, b, a;
-	_surface->format.colorToARGB(color, a, r, g, b);
-	return a;
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::saveBMPFile(const Common::String &filename) const {
 	Common::WriteStream *stream = openSfmFileForWrite(filename);

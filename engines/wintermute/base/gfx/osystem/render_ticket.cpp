@@ -45,14 +45,12 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 	        _wantsDraw(true),
 	        _transform(transform) {
 	if (surf) {
-		_surface = new Graphics::Surface();
-		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
-		assert(_surface->format.bytesPerPixel == 4);
-		// Get a clipped copy of the surface
-		for (int i = 0; i < _surface->h; i++) {
-			memcpy(_surface->getBasePtr(0, i), surf->getBasePtr(srcRect->left, srcRect->top + i), srcRect->width() * _surface->format.bytesPerPixel);
-		}
-		// Then scale it if necessary
+		assert(surf->format.bytesPerPixel == 4);
+
+		// Get a clipped view of the surface
+		const Graphics::Surface temp = surf->getSubArea(*srcRect);
+
+		// Then copy and scale it as necessary
 		//
 		// NB: The numTimesX/numTimesY properties don't yet mix well with
 		// scaling and rotation, but there is no need for that functionality at
@@ -61,17 +59,14 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		// (Mirroring should most likely be done before rotation. See also
 		// TransformTools.)
 		if (_transform._angle != Graphics::kDefaultAngle) {
-			Graphics::Surface *temp = _surface->rotoscale(transform, owner->_gameRef->getBilinearFiltering());
-			_surface->free();
-			delete _surface;
-			_surface = temp;
+			_surface = temp.rotoscale(transform, owner->_gameRef->getBilinearFiltering());
 		} else if ((dstRect->width() != srcRect->width() ||
 					dstRect->height() != srcRect->height()) &&
 					_transform._numTimesX * _transform._numTimesY == 1) {
-			Graphics::Surface *temp = _surface->scale(dstRect->width(), dstRect->height(), owner->_gameRef->getBilinearFiltering());
-			_surface->free();
-			delete _surface;
-			_surface = temp;
+			_surface = temp.scale(dstRect->width(), dstRect->height(), owner->_gameRef->getBilinearFiltering());
+		} else {
+			_surface = new Graphics::Surface();
+			_surface->copyFrom(temp);
 		}
 	} else {
 		_surface = nullptr;
