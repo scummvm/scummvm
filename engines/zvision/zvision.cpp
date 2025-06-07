@@ -19,44 +19,42 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/zvision.h"
-#include "zvision/core/console.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-#include "zvision/file/save_manager.h"
-#include "zvision/text/string_manager.h"
-#include "zvision/scripting/menu.h"
-#include "zvision/file/search_manager.h"
-#include "zvision/text/text.h"
-#include "zvision/text/truetype_font.h"
-#include "zvision/sound/midi.h"
-
+#include "audio/mixer.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
-
 #include "common/config-manager.h"
-#include "common/str.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
+#include "common/file.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/timer.h"
 #include "common/translation.h"
-#include "common/error.h"
-#include "common/system.h"
-#include "common/file.h"
-
-#include "gui/message.h"
 #include "engines/util.h"
-#include "audio/mixer.h"
+#include "gui/message.h"
+#include "zvision/zvision.h"
+#include "zvision/core/console.h"
+#include "zvision/file/save_manager.h"
+#include "zvision/file/search_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/menu.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/sound/midi.h"
+#include "zvision/sound/volume_manager.h"
+#include "zvision/text/string_manager.h"
+#include "zvision/text/subtitle_manager.h"
+#include "zvision/text/text.h"
+#include "zvision/text/truetype_font.h"
 
 namespace ZVision {
 
 #define ZVISION_SETTINGS_KEYS_COUNT 12
 
-struct zvisionIniSettings {
+struct ZvisionIniSettings {
 	const char *name;
 	int16 slot;
 	int16 defaultValue;	// -1: use the bool value
@@ -64,16 +62,16 @@ struct zvisionIniSettings {
 	bool allowEditing;
 } settingsKeys[ZVISION_SETTINGS_KEYS_COUNT] = {
 	// Hardcoded settings
-	{"countrycode", StateKey_CountryCode, 0, false, false},	// always 0 = US, subtitles are shown for codes 0 - 4, unused
-	{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false},	// video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
-	{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, checked by universe.scr
-	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality, unused
-	{"qsoundenabled", StateKey_Qsound, -1, true, false},	// 1 = enable QSound - TODO: not supported yet
-	{"debugcheats", StateKey_DebugCheats, -1, true, false},	// always start with the GOxxxx cheat enabled
+	{"countrycode", StateKey_CountryCode, 0, false, false}, // always 0 = US, subtitles are shown for codes 0 - 4, unused
+	{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false}, // video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
+	{"installlevel", StateKey_InstallLevel, 0, false, false},   // 0 = full, checked by universe.scr
+	{"debugcheats", StateKey_DebugCheats, -1, true, false}, // always start with the GOxxxx cheat enabled
 	// Editable settings
+	{"qsoundenabled", StateKey_Qsound, -1, true, true}, // 1 = enable generic directional audio and non-linear volume scaling.  Genuine Qsound is copyright & unlikely to be implemented.
 	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
-	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
-	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
+	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},    // checked by universe.scr
+	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},   // toggle playing animations during pana rotation
+	{"highquality", StateKey_HighQuality, -1, true, false}, // high panorama quality; enables bilinear filtering in RenderTable
 	{"venusenabled", StateKey_VenusEnable, -1, true, true},
 	{"subtitles", StateKey_Subtitles, -1, true, true},
 	{"mpegmovies", StateKey_MPEGMovies, -1, true, true}		// Zork: Grand Inquisitor DVD hi-res MPEG movies (0 = normal, 1 = hires, 2 = disable option)
@@ -88,7 +86,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _gameDescription(gameDesc),
 	  _resourcePixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /* RGB 555 */
 	  _screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /* RGB 565 */
-	  _desiredFrameTime(33), /* ~30 fps */
 	  _clock(_system),
 	  _scriptManager(nullptr),
 	  _renderManager(nullptr),
@@ -98,9 +95,12 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _midiManager(nullptr),
 	  _rnd(nullptr),
 	  _menu(nullptr),
+	  _subtitleManager(nullptr),
+	  _volumeManager(nullptr),
 	  _searchManager(nullptr),
 	  _textRenderer(nullptr),
 	  _doubleFPS(false),
+	  _widescreen(false),
 	  _audioId(0),
 	  _frameRenderDelay(2),
 	  _keyboardVelocity(0),
@@ -123,9 +123,10 @@ ZVision::~ZVision() {
 	delete _saveManager;
 	delete _scriptManager;
 	delete _renderManager;	// should be deleted after the script manager
+	delete _subtitleManager;
 	delete _rnd;
 	delete _midiManager;
-
+	delete _volumeManager;
 	getTimerManager()->removeTimerProc(&fpsTimerCallback);
 }
 
@@ -175,34 +176,35 @@ void ZVision::saveSettings() {
 }
 
 void ZVision::initialize() {
+	// File Paths
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	_searchManager = new SearchManager(ConfMan.getPath("path"), 6);
 
 	_searchManager->addDir("FONTS");
 	_searchManager->addDir("addon");
-
-	if (getGameId() == GID_GRANDINQUISITOR) {
+	switch (getGameId()) {
+	case GID_GRANDINQUISITOR:
 		if (!_searchManager->loadZix("INQUIS.ZIX"))
 			error("Unable to load file INQUIS.ZIX");
-	} else if (getGameId() == GID_NEMESIS) {
-		if (!_searchManager->loadZix("NEMESIS.ZIX")) {
+		break;
+	case GID_NEMESIS:
+		if (!_searchManager->loadZix("NEMESIS.ZIX"))
 			// The game might not be installed, try MEDIUM.ZIX instead
 			if (!_searchManager->loadZix("ZNEMSCR/MEDIUM.ZIX"))
 				error("Unable to load the file ZNEMSCR/MEDIUM.ZIX");
-		}
+		break;
+	case GID_NONE:
+	default:
+		error("Unknown/unspecified GameId");
+		break;
 	}
 
-	Graphics::ModeList modes;
-	modes.push_back(Graphics::Mode(WINDOW_WIDTH, WINDOW_HEIGHT));
-#if defined(USE_MPEG2) && defined(USE_A52)
-	// For the DVD version of ZGI we can play high resolution videos
-	if (getGameId() == GID_GRANDINQUISITOR && (getFeatures() & ADGF_DVD))
-		modes.push_back(Graphics::Mode(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT));
-#endif
-	initGraphicsModes(modes);
+	// Graphics
+	_widescreen = ConfMan.getBool("widescreen");
+	_doubleFPS = ConfMan.getBool("doublefps");
 
-	initScreen();
+	// Keymaps
 
 	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
 	_gameKeymap = keymapper->getKeymap(gameKeymapId);
@@ -214,20 +216,34 @@ void ZVision::initialize() {
 	_rnd = new Common::RandomSource("zvision");
 
 	// Create managers
+	switch (getGameId()) {
+	case GID_NEMESIS:
+		_renderManager = new RenderManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
+		_menu = new MenuNemesis(this, _renderManager->getMenuArea());
+		_subtitleManager = new SubtitleManager(this, nemesisLayout, _resourcePixelFormat, _doubleFPS);
+		_volumeManager = new VolumeManager(this, kVolumePowerLaw);
+		break;
+	case GID_GRANDINQUISITOR:
+		_renderManager = new RenderManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS, _widescreen);
+		_menu = new MenuZGI(this, _renderManager->getMenuArea());
+		_subtitleManager = new SubtitleManager(this, zgiLayout, _resourcePixelFormat, _doubleFPS);
+		_volumeManager = new VolumeManager(this, kVolumeLogAmplitude);
+		break;
+	case GID_NONE:
+	default:
+		error("Unknown/unspecified GameId");
+		break;
+	}
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _resourcePixelFormat, _doubleFPS);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, _resourcePixelFormat);
 	_textRenderer = new TextRenderer(this);
 	_midiManager = new MidiManager();
 
-	if (getGameId() == GID_GRANDINQUISITOR)
-		_menu = new MenuZGI(this);
-	else
-		_menu = new MenuNemesis(this);
 
 	// Initialize the managers
+	_renderManager->initialize();
 	_cursorManager->initialize();
 	_scriptManager->initialize();
 	_stringManager->initialize(getGameId());
@@ -243,10 +259,11 @@ void ZVision::initialize() {
 
 	// Create debugger console. It requires GFX to be initialized
 	setDebugger(new Console(this));
-	_doubleFPS = ConfMan.getBool("doublefps");
 
 	// Initialize FPS timer callback
 	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
+	// Ensure a new game is launched with correct panorama quality setting
+	_scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
 }
 
 extern const FontStyle getSystemFont(int fontIndex);
@@ -312,45 +329,49 @@ Common::Error ZVision::run() {
 		quitGame();
 		return Common::kUnknownError;
 	}
+	if (getGameId() == GID_NEMESIS && !_midiManager->isAvailable()) {
+		GUI::MessageDialog MIDIdialog(_(
+		                                  "MIDI playback is not available, or else improperly configured. "
+		                                  "Zork Nemesis contains several music puzzles which require "
+		                                  "MIDI audio in order to be solved.  These puzzles may alternatively "
+		                                  "be solved using subtitles, if supported. Continue launching game?"
+		                              ),
+		                              _("Yes"),
+		                              _("No")
+		                             );
+		if (MIDIdialog.runModal() != GUI::kMessageOK)
+			quitGame();
+	}
 
 	// Main loop
 	while (!shouldQuit()) {
+		debug(5, "\nInitiating new game cycle");
+		debug(5, "Timers");
+		// Timers
 		_clock.update();
-		uint32 currentTime = _clock.getLastMeasuredTime();
 		uint32 deltaTime = _clock.getDeltaTime();
-
+		debug(5, "Logic");
+		// Process game logic & update backbuffers as necessary
+		debug(5, "Cursor");
 		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
-
-		processEvents();
+		debug(5, "Events");
+		processEvents();  // NB rotateTo or playVideo event will pause clock & call renderSceneToScreen() directly.
+		debug(5, "Rotation");
 		_renderManager->updateRotation();
-
+		debug(5, "Scripts");
 		_scriptManager->update(deltaTime);
+		debug(5, "Menu");
 		_menu->process(deltaTime);
-
+		debug(5, "Subtitles");
+		_subtitleManager->process(deltaTime);
+		debug(5, "Render");
 		// Render the backBuffer to the screen
 		_renderManager->prepareBackground();
-		_renderManager->renderMenuToScreen();
-		_renderManager->processSubs(deltaTime);
-		_renderManager->renderSceneToScreen();
-
-		// Update the screen
-		if (canRender()) {
-			_system->updateScreen();
+		if (_renderManager->renderSceneToScreen()) {
 			_renderedFrameCount++;
 		} else {
 			_frameRenderDelay--;
 		}
-
-		// Calculate the frame delay based off a desired frame time
-		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
-		// Ensure non-negative
-		delay = delay < 0 ? 0 : delay;
-
-		if (_doubleFPS) {
-			delay >>= 1;
-		}
-
-		_system->delayMillis(delay);
 	}
 
 	return Common::kNoError;
@@ -367,6 +388,7 @@ void ZVision::pauseEngineIntern(bool pause) {
 }
 
 void ZVision::setRenderDelay(uint delay) {
+	debug(2, "Setting framerenderdelay to %d", delay);
 	_frameRenderDelay = delay;
 }
 
@@ -387,25 +409,6 @@ void ZVision::fpsTimerCallback(void *refCon) {
 void ZVision::fpsTimer() {
 	_fps = _renderedFrameCount;
 	_renderedFrameCount = 0;
-}
-
-void ZVision::initScreen() {
-	uint16 workingWindowWidth = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH : ZGI_WORKING_WINDOW_WIDTH;
-	uint16 workingWindowHeight = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
-	_workingWindow = Common::Rect(
-						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
-						 (WINDOW_HEIGHT - workingWindowHeight) / 2,
-						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
-						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
-					 );
-
-	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, &_screenPixelFormat);
-}
-
-void ZVision::initHiresScreen() {
-	_renderManager->upscaleRect(_workingWindow);
-
-	initGraphics(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, &_screenPixelFormat);
 }
 
 } // End of namespace ZVision

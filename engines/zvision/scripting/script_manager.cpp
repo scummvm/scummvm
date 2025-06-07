@@ -19,23 +19,20 @@
  *
  */
 
+#include "common/algorithm.h"
+#include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/hashmap.h"
 #include "common/scummsys.h"
-
-#include "zvision/scripting/script_manager.h"
-
+#include "common/stream.h"
 #include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
-#include "zvision/file/save_manager.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/menu.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/scripting/effects/timer_effect.h"
-
-#include "common/algorithm.h"
-#include "common/hashmap.h"
-#include "common/debug.h"
-#include "common/stream.h"
-#include "common/config-manager.h"
 
 namespace ZVision {
 
@@ -46,34 +43,62 @@ ScriptManager::ScriptManager(ZVision *engine)
 }
 
 ScriptManager::~ScriptManager() {
-	cleanScriptScope(universe);
-	cleanScriptScope(world);
-	cleanScriptScope(room);
-	cleanScriptScope(nodeview);
+	cleanScriptScope(_universe);
+	cleanScriptScope(_world);
+	cleanScriptScope(_room);
+	cleanScriptScope(_nodeview);
 	_controlEvents.clear();
 }
 
-void ScriptManager::initialize() {
-	cleanScriptScope(universe);
-	cleanScriptScope(world);
-	cleanScriptScope(room);
-	cleanScriptScope(nodeview);
-
+void ScriptManager::initialize(bool restarted) {
+	if (restarted) {
+		_globalState.clear();
+		_globalStateFlags.clear();
+	}
+	cleanScriptScope(_universe);
+	cleanScriptScope(_world);
+	cleanScriptScope(_room);
+	cleanScriptScope(_nodeview);
 	_currentLocation.node = 0;
 	_currentLocation.world = 0;
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
 
 	_changeLocationDelayCycles = 0;
-
-	parseScrFile("universe.scr", universe);
+	if (restarted) {
+		for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
+			delete (*iter);
+		_activeSideFx.clear();
+		_referenceTable.clear();
+		switch (_engine->getGameId()) {
+		case GID_GRANDINQUISITOR:
+			// Bypass logo video
+			setStateValue(16966, 1);
+			// Ensure post-logo screen redraw is not inhibited in CD version
+			setStateValue(5813, 1);
+			// Bypass additional logo videos in DVD version
+			setStateValue(19810, 1);
+			setStateValue(19848, 1);
+			break;
+		case GID_NEMESIS:
+		default:
+			break;
+		}
+	}
+	parseScrFile("universe.scr", _universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
 
 	_controlEvents.clear();
+	if (restarted)
+		_engine->loadSettings();
+}
+
+bool ScriptManager::changingLocation() const {
+	return _currentLocation != _nextLocation;
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
-	if (_currentLocation != _nextLocation) {
+	if (changingLocation()) {
 		// The location is changing. The script that did that may have
 		// triggered other scripts, so give them all one extra cycle to
 		// run. This fixes some missing scoring in ZGI, and quite
@@ -82,22 +107,24 @@ void ScriptManager::update(uint deltaTimeMillis) {
 		// Another idea would be to change if there are pending scripts
 		// in the exec queues, but that could cause this to hang
 		// indefinitely.
+		// TODO - this causes noticeable pauses on location change; see if these can be reduced by improving this functionality.
 		if (_changeLocationDelayCycles-- <= 0) {
 			ChangeLocationReal(false);
 		}
 	}
 
 	updateNodes(deltaTimeMillis);
-	if (!execScope(nodeview)) {
+	debug(5, "Script nodes updated");
+	if (!execScope(_nodeview)) {
 		return;
 	}
-	if (!execScope(room)) {
+	if (!execScope(_room)) {
 		return;
 	}
-	if (!execScope(world)) {
+	if (!execScope(_world)) {
 		return;
 	}
-	if (!execScope(universe)) {
+	if (!execScope(_universe)) {
 		return;
 	}
 	updateControls(deltaTimeMillis);
@@ -227,6 +254,25 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	// Check each Criteria
 	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0) {
 		return true;
+	}
+	
+	// WORKAROUNDS:
+	switch (_engine->getGameId()) {
+	case GID_NEMESIS:
+		switch (puzzle->key) {
+		case 16418:
+			// WORKAROUND for script bug in Zork Nemesis, room mc30 (Monastery Entry)
+			// Rumble sound effect should cease upon changing location to me10 (Hall of Masks),
+			// but this puzzle erroneously restarted it immediately after.
+			if(changingLocation())
+				return true;
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
 	}
 
 	bool criteriaMet = false;
@@ -487,6 +533,7 @@ void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	debug(1, "Mouse panorama/script coordinates %d x %d", backgroundImageSpacePos.x, backgroundImageSpacePos.y);
 	if (!_activeControls) {
 		return;
 	}
@@ -548,13 +595,13 @@ void ScriptManager::changeLocation(const Location &_newLocation) {
 	changeLocation(_newLocation.world, _newLocation.room, _newLocation.node, _newLocation.view, _newLocation.offset);
 }
 
-void ScriptManager::changeLocation(char _world, char _room, char _node, char _view, uint32 offset) {
+void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
 	_changeLocationDelayCycles = 1;
 
-	_nextLocation.world = _world;
-	_nextLocation.room = _room;
-	_nextLocation.node = _node;
-	_nextLocation.view = _view;
+	_nextLocation.world = world;
+	_nextLocation.room = room;
+	_nextLocation.node = node;
+	_nextLocation.view = view;
 	_nextLocation.offset = offset;
 	// If next location is 0000, return to the previous location.
 	if (_nextLocation == "0000") {
@@ -576,7 +623,7 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 
 void ScriptManager::ChangeLocationReal(bool isLoading) {
 	assert(_nextLocation.world != 0);
-	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
+	debug(1, "\tChanging location to: World %c, Room %c, Node %c, View %c, Offset %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
 	const bool enteringMenu = (_nextLocation.world == 'g' && _nextLocation.room == 'j');
 	const bool leavingMenu = (_currentLocation.world == 'g' && _currentLocation.room == 'j');
@@ -606,7 +653,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		}
 	}
 
-	_engine->setRenderDelay(2);
+	// _engine->setRenderDelay(2); // TODO: Uncertain if this is necessary; doesn't seem to cause any problems when disabled, but keep an eye on it.
 
 	if (!leavingMenu) {
 		if (!isLoading && !enteringMenu) {
@@ -641,52 +688,52 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	setStateValue(StateKey_ViewPos, _nextLocation.offset);
 
 	_referenceTable.clear();
-	addPuzzlesToReferenceTable(universe);
+	addPuzzlesToReferenceTable(_universe);
 
-	_engine->getMenuHandler()->setEnable(0xFFFF);
+	_engine->getMenuManager()->setEnable(0xFFFF);
 
 	if (_nextLocation.world != _currentLocation.world) {
-		cleanScriptScope(nodeview);
-		cleanScriptScope(room);
-		cleanScriptScope(world);
+		cleanScriptScope(_nodeview);
+		cleanScriptScope(_room);
+		cleanScriptScope(_world);
 
 		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, nodeview);
-		addPuzzlesToReferenceTable(nodeview);
+		parseScrFile(fileName, _nodeview);
+		addPuzzlesToReferenceTable(_nodeview);
 
 		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
-		parseScrFile(fileName, room);
-		addPuzzlesToReferenceTable(room);
+		parseScrFile(fileName, _room);
+		addPuzzlesToReferenceTable(_room);
 
 		fileName = Common::Path(Common::String::format("%c.scr", _nextLocation.world));
-		parseScrFile(fileName, world);
-		addPuzzlesToReferenceTable(world);
+		parseScrFile(fileName, _world);
+		addPuzzlesToReferenceTable(_world);
 	} else if (_nextLocation.room != _currentLocation.room) {
-		cleanScriptScope(nodeview);
-		cleanScriptScope(room);
+		cleanScriptScope(_nodeview);
+		cleanScriptScope(_room);
 
-		addPuzzlesToReferenceTable(world);
+		addPuzzlesToReferenceTable(_world);
 
 		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, nodeview);
-		addPuzzlesToReferenceTable(nodeview);
+		parseScrFile(fileName, _nodeview);
+		addPuzzlesToReferenceTable(_nodeview);
 
 		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
-		parseScrFile(fileName, room);
-		addPuzzlesToReferenceTable(room);
+		parseScrFile(fileName, _room);
+		addPuzzlesToReferenceTable(_room);
 
 	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
-		cleanScriptScope(nodeview);
+		cleanScriptScope(_nodeview);
 
-		addPuzzlesToReferenceTable(room);
-		addPuzzlesToReferenceTable(world);
+		addPuzzlesToReferenceTable(_room);
+		addPuzzlesToReferenceTable(_world);
 
 		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, nodeview);
-		addPuzzlesToReferenceTable(nodeview);
+		parseScrFile(fileName, _nodeview);
+		addPuzzlesToReferenceTable(_nodeview);
 	}
 
-	_activeControls = &nodeview.controls;
+	_activeControls = &_nodeview.controls;
 
 	// Revert to the idle cursor
 	_engine->getCursorManager()->changeCursor(CursorIndex_Idle);
@@ -696,20 +743,20 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 
 	if (_currentLocation == "0000") {
 		_currentLocation = _nextLocation;
-		execScope(world);
-		execScope(room);
-		execScope(nodeview);
+		execScope(_world);
+		execScope(_room);
+		execScope(_nodeview);
 	} else if (_nextLocation.world != _currentLocation.world) {
 		_currentLocation = _nextLocation;
-		execScope(room);
-		execScope(nodeview);
+		execScope(_room);
+		execScope(_nodeview);
 	} else if (_nextLocation.room != _currentLocation.room) {
 		_currentLocation = _nextLocation;
-		execScope(room);
-		execScope(nodeview);
+		execScope(_room);
+		execScope(_nodeview);
 	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
 		_currentLocation = _nextLocation;
-		execScope(nodeview);
+		execScope(_nodeview);
 	}
 
 	_engine->getRenderManager()->checkBorders();
@@ -733,10 +780,9 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 
 	stream->writeUint32BE(MKTAG('F', 'L', 'A', 'G'));
 
-	int32 slots = 20000;
-	if (_engine->getGameId() == GID_NEMESIS) {
-		slots = 30000;
-	}
+	int32 slots = _engine->getGameId() == GID_NEMESIS ? 31000 : 21000;
+	// Original games use key values up to 29500 and 19737, respectively
+	// Values 30001~31000 and 20001~21000 are now set aside for auxiliary scripting to add extra directional audio effects.
 
 	stream->writeUint32LE(slots * 2);
 
@@ -758,9 +804,9 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	_globalState.clear();
 	_globalStateFlags.clear();
 
-	cleanScriptScope(nodeview);
-	cleanScriptScope(room);
-	cleanScriptScope(world);
+	cleanScriptScope(_nodeview);
+	cleanScriptScope(_room);
+	cleanScriptScope(_world);
 
 	_currentLocation.node = 0;
 	_currentLocation.world = 0;
@@ -892,27 +938,27 @@ void ScriptManager::trimCommentsAndWhiteSpace(Common::String *string) const {
 
 ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):
 	_scriptManager(scriptManager) {
-	value = 0;
-	slot = false;
+	_value = 0;
+	_slot = false;
 	const char *isSlot = strstr(slotValue, "[");
 	if (isSlot) {
-		slot = true;
-		value = atoi(isSlot + 1);
+		_slot = true;
+		_value = atoi(isSlot + 1);
 	} else {
-		slot = false;
-		value = atoi(slotValue);
+		_slot = false;
+		_value = atoi(slotValue);
 	}
 }
 int16 ValueSlot::getValue() {
-	if (slot) {
-		if (value >= 0) {
-			return _scriptManager->getStateValue(value);
+	if (_slot) {
+		if (_value >= 0) {
+			return _scriptManager->getStateValue(_value);
 		}
 		else {
 			return 0;
 		}
 	} else {
-		return value;
+		return _value;
 	}
 }
 

@@ -19,10 +19,13 @@
  *
  */
 
+#include "audio/mixer.h"
+#include "common/events.h"
 #include "common/scummsys.h"
-
+#include "common/system.h"
+#include "common/rational.h"
+#include "engines/util.h"
 #include "zvision/zvision.h"
-
 #include "zvision/core/console.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
@@ -30,33 +33,23 @@
 #include "zvision/scripting/menu.h"
 #include "zvision/sound/zork_raw.h"
 #include "zvision/text/string_manager.h"
-
-#include "common/events.h"
-#include "common/system.h"
-#include "common/rational.h"
-#include "audio/mixer.h"
-
-#include "engines/util.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace ZVision {
 
 void ZVision::pushKeyToCheatBuf(uint8 key) {
 	for (int i = 0; i < KEYBUF_SIZE - 1; i++)
 		_cheatBuffer[i] = _cheatBuffer[i + 1];
-
 	_cheatBuffer[KEYBUF_SIZE - 1] = key;
 }
 
 bool ZVision::checkCode(const char *code) {
 	int codeLen = strlen(code);
-
 	if (codeLen > KEYBUF_SIZE)
 		return false;
-
 	for (int i = 0; i < codeLen; i++)
 		if (code[i] != _cheatBuffer[KEYBUF_SIZE - codeLen + i] && code[i] != '?')
 			return false;
-
 	return true;
 }
 
@@ -78,15 +71,15 @@ void ZVision::cheatCodes(uint8 key) {
 	if (getGameId() == GID_GRANDINQUISITOR) {
 		if (checkCode("IMNOTDEAF")) {
 			// Unknown cheat
-			_renderManager->showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
+			_subtitleManager->showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
 		}
 
 		if (checkCode("3100OPB")) {
-			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
-			                                    _scriptManager->getStateValue(StateKey_World),
-			                                    _scriptManager->getStateValue(StateKey_Room),
-			                                    _scriptManager->getStateValue(StateKey_Node),
-			                                    _scriptManager->getStateValue(StateKey_View)));
+			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			                               _scriptManager->getStateValue(StateKey_World),
+			                               _scriptManager->getStateValue(StateKey_Room),
+			                               _scriptManager->getStateValue(StateKey_Node),
+			                               _scriptManager->getStateValue(StateKey_View)));
 		}
 
 		if (checkCode("KILLMENOW")) {
@@ -109,11 +102,11 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		if (checkCode("77MASSAVE")) {
-			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
-			                                    _scriptManager->getStateValue(StateKey_World),
-			                                    _scriptManager->getStateValue(StateKey_Room),
-			                                    _scriptManager->getStateValue(StateKey_Node),
-			                                    _scriptManager->getStateValue(StateKey_View)));
+			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			                               _scriptManager->getStateValue(StateKey_World),
+			                               _scriptManager->getStateValue(StateKey_Room),
+			                               _scriptManager->getStateValue(StateKey_Node),
+			                               _scriptManager->getStateValue(StateKey_View)));
 		}
 
 		if (checkCode("IDKFA")) {
@@ -139,11 +132,11 @@ void ZVision::cheatCodes(uint8 key) {
 
 	if (checkCode("FRAME")) {
 		Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
-		_renderManager->showDebugMsg(fpsStr);
+		_subtitleManager->showDebugMsg(fpsStr);
 	}
 
 	if (checkCode("COMPUTERARCH"))
-		_renderManager->showDebugMsg("COMPUTERARCH: var-viewer not implemented");
+		_subtitleManager->showDebugMsg("COMPUTERARCH: var-viewer not implemented");
 
 	// This cheat essentially toggles the GOxxxx cheat below
 	if (checkCode("XYZZY"))
@@ -167,29 +160,35 @@ void ZVision::processEvents() {
 		switch (_event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			_cursorManager->cursorDown(true);
-			_scriptManager->setStateValue(StateKey_LMouse, 1);
 			_menu->onMouseDown(_event.mouse);
-			_scriptManager->addEvent(_event);
+			if (!_menu->inMenu() || !_widescreen) {
+				_scriptManager->setStateValue(StateKey_LMouse, 1);
+				_scriptManager->addEvent(_event);
+			}
 			break;
 
 		case Common::EVENT_LBUTTONUP:
 			_cursorManager->cursorDown(false);
-			_scriptManager->setStateValue(StateKey_LMouse, 0);
 			_menu->onMouseUp(_event.mouse);
-			_scriptManager->addEvent(_event);
+			if (!_menu->inMenu() || !_widescreen) {
+				_scriptManager->setStateValue(StateKey_LMouse, 0);
+				_scriptManager->addEvent(_event);
+			}
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
 			_cursorManager->cursorDown(true);
-			_scriptManager->setStateValue(StateKey_RMouse, 1);
-
-			if (getGameId() == GID_NEMESIS)
-				_scriptManager->inventoryCycle();
+			if (!_menu->inMenu() || !_widescreen) {
+				_scriptManager->setStateValue(StateKey_RMouse, 1);
+				if (getGameId() == GID_NEMESIS)
+					_scriptManager->inventoryCycle();
+			}
 			break;
 
 		case Common::EVENT_RBUTTONUP:
 			_cursorManager->cursorDown(false);
-			_scriptManager->setStateValue(StateKey_RMouse, 0);
+			if (!_menu->inMenu() || !_widescreen)
+				_scriptManager->setStateValue(StateKey_RMouse, 0);
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -215,30 +214,30 @@ void ZVision::processEvents() {
 				break;
 
 			case kZVisionActionSave:
-				if (_menu->getEnable() & kMenubarSave)
+				if (_menu->getEnable(kMainMenuSave))
 					_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
 				break;
 
 			case kZVisionActionRestore:
-				if (_menu->getEnable() & kMenubarRestore)
+				if (_menu->getEnable(kMainMenuLoad))
 					_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
 				break;
 
 			case kZVisionActionPreferences:
-				if (_menu->getEnable() & kMenubarSettings)
+				if (_menu->getEnable(kMainMenuPrefs))
 					_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
 				break;
 
 			case kZVisionActionQuit:
-				if (_menu->getEnable() & kMenubarExit)
+				if (_menu->getEnable(kMainMenuExit))
 					ifQuit();
 				break;
 
 			case kZVisionActionShowFPS: {
 				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
-				_renderManager->showDebugMsg(fpsStr);
-				}
-				break;
+				_subtitleManager->showDebugMsg(fpsStr);
+			}
+			break;
 			default:
 				break;
 			}
@@ -263,9 +262,7 @@ void ZVision::processEvents() {
 
 		case Common::EVENT_KEYDOWN: {
 			uint8 vkKey = getZvisionKey(_event.kbd.keycode);
-
 			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
-
 			_scriptManager->addEvent(_event);
 			cheatCodes(vkKey);
 		}
@@ -280,9 +277,10 @@ void ZVision::processEvents() {
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
+	debug(6, "ZVision::onMouseMove()");
 	_menu->onMouseMove(pos);
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
-
+	Common::Rect workingArea = _renderManager->getWorkingArea();
 	bool cursorWasChanged = false;
 
 	// Graph of the function governing rotation velocity:
@@ -316,72 +314,58 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	//               ^
 
 	// Clip the horizontal mouse position to the working window
+	debug(6, "Mouse pos.x, %d, clipping with %d+1, %d+1", pos.x, workingArea.left, workingArea.right);
 	Common::Point clippedPos = pos;
-	clippedPos.x = CLIP<int16>(pos.x, _workingWindow.left + 1, _workingWindow.right - 1);
-
-	if (_workingWindow.contains(clippedPos)) {
+	clippedPos.x = CLIP<int16>(pos.x, workingArea.left + 1, workingArea.right - 1);
+	if (workingArea.contains(clippedPos) && !_menu->inMenu()) {
 		cursorWasChanged = _scriptManager->onMouseMove(clippedPos, imageCoord);
-
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
-		if (renderState == RenderTable::PANORAMA) {
-			if (clippedPos.x >= _workingWindow.left && clippedPos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
-
+		switch (renderState) {
+		case RenderTable::PANORAMA:
+			if (clippedPos.x >= workingArea.left && clippedPos.x < workingArea.left + ROTATION_SCREEN_EDGE_OFFSET) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0) {
+				if (mspeed <= 0)
 					mspeed = 25;
-				}
-				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.left)) - mspeed).toInt(), -1);
-
-
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - workingArea.left)) - mspeed).toInt(), -1);
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
-			} else if (clippedPos.x <= _workingWindow.right && clippedPos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
-
+			} else if (clippedPos.x <= workingArea.right && clippedPos.x > workingArea.right - ROTATION_SCREEN_EDGE_OFFSET) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0) {
+				if (mspeed <= 0)
 					mspeed = 25;
-				}
-				_mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
-
+				_mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - workingArea.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
 				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
-			} else {
+			} else
 				_mouseVelocity = 0;
-			}
-		} else if (renderState == RenderTable::TILT) {
-			if (clippedPos.y >= _workingWindow.top && clippedPos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
-
+			break;
+		case RenderTable::TILT:
+			if (clippedPos.y >= workingArea.top && clippedPos.y < workingArea.top + ROTATION_SCREEN_EDGE_OFFSET) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0) {
+				if (mspeed <= 0)
 					mspeed = 25;
-				}
-				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - mspeed).toInt(), -1);
-
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - workingArea.top)) - mspeed).toInt(), -1);
 				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;
-			} else if (clippedPos.y <= _workingWindow.bottom && clippedPos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
-
+			} else if (clippedPos.y <= workingArea.bottom && clippedPos.y > workingArea.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0) {
+				if (mspeed <= 0)
 					mspeed = 25;
-				}
-				_mouseVelocity = MAX((Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.bottom + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
-
+				_mouseVelocity = MAX((Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - workingArea.bottom + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
 				_cursorManager->changeCursor(CursorIndex_DownArr);
 				cursorWasChanged = true;
-			} else {
+			} else
 				_mouseVelocity = 0;
-			}
-		} else {
+			break;
+		case RenderTable::FLAT:
+		default:
 			_mouseVelocity = 0;
+			break;
 		}
-	} else {
+	} else
 		_mouseVelocity = 0;
-	}
-
-	if (!cursorWasChanged) {
+	if (!cursorWasChanged)
 		_cursorManager->changeCursor(CursorIndex_Idle);
-	}
 }
 
 uint8 ZVision::getZvisionKey(Common::KeyCode scummKeyCode) {
@@ -487,7 +471,7 @@ uint8 ZVision::getZvisionKey(Common::KeyCode scummKeyCode) {
 }
 
 bool ZVision::ifQuit() {
-	if (_renderManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
+	if (_subtitleManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
 		quitGame();
 		return true;
 	}

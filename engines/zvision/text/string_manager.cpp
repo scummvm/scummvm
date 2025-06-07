@@ -19,12 +19,11 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/tokenizer.h"
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/scummsys.h"
+#include "common/tokenizer.h"
 #include "graphics/fontman.h"
-
 #include "zvision/zvision.h"
 #include "zvision/file/search_manager.h"
 #include "zvision/text/string_manager.h"

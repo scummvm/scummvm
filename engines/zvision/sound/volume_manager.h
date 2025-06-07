@@ -19,35 +19,45 @@
  *
  */
 
-#ifndef ZVISION_SUBTITLES_H
-#define ZVISION_SUBTITLES_H
-
+#include "common/scummsys.h"
+#include "math/angle.h"
 #include "zvision/zvision.h"
+
+#ifndef ZVISION_VOLUME_MANAGER
+#define ZVISION_VOLUME_MANAGER
 
 namespace ZVision {
 
-class ZVision;
-
-class Subtitle {
-public:
-	Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToHires = false);
-	~Subtitle();
-
-	void process(int32 time);
-private:
-	ZVision *_engine;
-	int32 _areaId;
-	int16 _subId;
-
-	struct sub {
-		int start;
-		int stop;
-		Common::String subStr;
-	};
-
-	Common::Array<sub> _subs;
+enum volumeScaling {
+	kVolumeLinear,
+	kVolumePowerLaw,
+	kVolumeParabolic,
+	kVolumeCubic,
+	kVolumeQuartic,
+	kVolumeLogPower,
+	kVolumeLogAmplitude
 };
 
-}
+class VolumeManager {
+public:
+	VolumeManager(ZVision *engine, volumeScaling mode);
+	~VolumeManager() {};
+	volumeScaling getMode() const {
+		return _mode;
+	}
+	void setMode(volumeScaling mode) {
+		_mode = mode;
+	}
+	uint8 convert(uint8 inputValue);
+	uint8 convert(uint8 inputValue, volumeScaling &mode);
+	uint8 convert(uint8 inputValue, Math::Angle azimuth, uint8 directionality = 255);
+	uint8 convert(uint8 inputValue, volumeScaling &mode, Math::Angle azimuth, uint8 directionality = 255);
+private:
+	ZVision *_engine;
+	uint _scriptScale = 100; // Z-Vision scripts internally use a volume scale of 0-100; ScummVM uses a scale of 0-255.
+	volumeScaling _mode = kVolumeLinear;
+};
+
+} // End of namespace ZVision
 
 #endif

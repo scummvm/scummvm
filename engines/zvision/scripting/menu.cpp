@@ -25,125 +25,291 @@
 namespace ZVision {
 
 enum {
-	kMainMenuSave = 0,
-	kMainMenuLoad = 1,
-	kMainMenuPrefs = 2,
-	kMainMenuExit = 3
+	kFocusNone = -1,
+	kFocusItems = 0,
+	kFocusMagic = 1,
+	kFocusMain = 2
 };
 
-enum {
-	kMenuItem = 0,
-	kMenuMagic = 1,
-	kMenuMain = 2
-};
+MenuManager::MenuManager(ZVision *engine, const Common::Rect menuArea, const MenuParams params) :
+	_engine(engine),
+	_params(params),
+	_menuBarFlag(0xFFFF),
+	_menuArea(menuArea),
+	_menuOrigin(menuArea.origin()),
+	_menuTriggerArea(_menuOrigin, _menuArea.width(), _params.triggerHeight),
+	_mainScroller(params.activePos, params.idlePos, params.period) {
 
-MenuHandler::MenuHandler(ZVision *engine) {
-	_engine = engine;
-	menuBarFlag = 0xFFFF;
+	_enableFlags.set_size(6);
+	for (int8 i = 0; i < 4; i++) {
+		// Generate button hotspot areas
+		_menuHotspots[i] = Common::Rect(_params.wxButs[i][1], _menuArea.top, _params.wxButs[i][1] + _params.wxButs[i][0], _menuArea.bottom);
+		// Initialise button animation frames
+		_mainFrames[i] = _params.idleFrame;
+	}
+	for (int i = 0; i < 4; i++)
+		_buttonAnim[i] = new LinearScroller(_params.activeFrame, _params.idleFrame, _params.buttonPeriod);
+	setFocus(kFocusNone); // Ensure focus list is initialised
+	_mainArea = Common::Rect(_params.wMain, _hMainMenu);
+	_mainArea.moveTo(_menuOrigin + _mainScroller._pos);
 }
 
-MenuZGI::MenuZGI(ZVision *engine) :
-	MenuHandler(engine) {
-	menuMouseFocus = -1;
-	inMenu = false;
-	scrolled[0] = false;
-	scrolled[1] = false;
-	scrolled[2] = false;
-	scrollPos[0] = 0;
-	scrollPos[1] = 0;
-	scrollPos[2] = 0;
-	mouseOnItem = -1;
-	redraw = false;
-	clean = false;
+MenuManager::~MenuManager() {
+	for (int i = 0; i < 4; i++)
+		delete _buttonAnim[i];
+	_mainBack.free();
+}
+
+void MenuManager::setEnable(uint16 flags) {
+	static const uint16 flagMasks[6] = {0x8, 0x4, 0x2, 0x1, 0x100, 0x200}; // Enum order: save,restore,prefs,quit,items,magic
+	_menuBarFlag = flags;
+	for (uint i = 0; i <= 5; i++) {
+		if (_menuBarFlag & flagMasks[i])
+			_enableFlags.set(i);
+		else
+			_enableFlags.unset(i);
+	}
+}
+
+void MenuManager::onMouseUp(const Common::Point &Pos) {
+	if (_menuFocus.front() == kFocusMain) {
+		_mouseOnItem = mouseOverMain(Pos);
+		if (_mouseOnItem == _mainClicked)
+			// Activate clicked action from main menu
+			switch (_mouseOnItem) {
+			case kMainMenuSave:
+				_engine->getScriptManager()->changeLocation('g', 'j', 's', 'e', 0);
+				setFocus(kFocusNone);
+				_mainScroller.reset();
+				_redraw = true;
+				break;
+			case kMainMenuLoad:
+				_engine->getScriptManager()->changeLocation('g', 'j', 'r', 'e', 0);
+				setFocus(kFocusNone);
+				_mainScroller.reset();
+				_redraw = true;
+				break;
+			case kMainMenuPrefs:
+				_engine->getScriptManager()->changeLocation('g', 'j', 'p', 'e', 0);
+				setFocus(kFocusNone);
+				_mainScroller.reset();
+				_redraw = true;
+				break;
+			case kMainMenuExit:
+				_engine->ifQuit();
+				break;
+			default:
+				break;
+			}
+	}
+	_mainClicked = -1;
+}
+
+void MenuManager::onMouseDown(const Common::Point &Pos) {
+	if (_menuFocus.front() == kFocusMain) {
+		_mouseOnItem = mouseOverMain(Pos);
+		// Show clicked graphic
+		if ((_mouseOnItem >= 0) && (_mouseOnItem < 4))
+			if (_enableFlags.get(_mouseOnItem)) {
+				_mainClicked = _mouseOnItem;
+				_redraw = true;
+			}
+	}
+	debug(1, "mouse position %d %d", Pos.x, Pos.y);
+	debug(1, "panorama position %d %d", Pos.x, Pos.y);
+}
+
+void MenuManager::onMouseMove(const Common::Point &Pos) {
+	bool nowInMenu = inMenu(Pos);
+	if (nowInMenu != _prevInMenu)
+		_redraw = true;
+	_prevInMenu = nowInMenu;
+
+	int lastItem = _mouseOnItem;
+
+	switch (_menuFocus.front()) {
+	case kFocusMain:
+		// Inform game scripting engine that mouse is in main menu
+		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 2)
+			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 2);
+		_mouseOnItem = mouseOverMain(Pos);
+		break;
+	case kFocusNone:
+		// Inform game scripting engine that mouse is not in any menu
+		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 0)
+			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 0);
+		_mouseOnItem = -1;
+		break;
+	}
+	_mainScroller.setActive(_menuFocus.front() == kFocusMain);
+	// Update button animation status
+	for (int i = 0; i < 4; i++)
+		if (_menuFocus[0] == kFocusMain && _mouseOnItem == i)
+			_buttonAnim[i]->setActive(true);
+		else
+			_buttonAnim[i]->setActive(false);
+	if (lastItem != _mouseOnItem)
+		_redraw = true;
+}
+
+int MenuManager::mouseOverMain(const Common::Point &Pos) {
+	// Common::Rect mainHotspot(28,_hSideMenu);
+	// mainHotspot.moveTo(mainOrigin + _mainScroller._pos);
+	for (int8 i = 0; i < 4; i++) {
+		if (_enableFlags.get(i) && _menuHotspots[i].contains(Pos))
+			return i;
+	}
+	return -1;
+}
+
+void MenuManager::process(uint32 deltatime) {
+	if (_mainScroller.update(deltatime)) {
+		_mainArea.moveTo(_menuOrigin + _mainScroller._pos);
+		for (int i = 0; i < 4; i++)
+			_menuHotspots[i].moveTo(_menuOrigin + Common::Point(_params.wxButs[i][1], _mainScroller._pos.y));
+		_redraw = true;
+	}
+	// Update button highlight animation frame
+	for (int i = 0; i < 4; i++)
+		if (_buttonAnim[i]->update(deltatime)) {
+			_mainFrames[i] = _buttonAnim[i]->_pos;
+			_redraw = true;
+		}
+	if (_redraw) {
+		_engine->getRenderManager()->clearMenuSurface();
+		redrawAll();
+		_redraw = false;
+	}
+}
+
+void MenuNemesis::redrawAll() {
+	redrawMain();
+}
+
+void MenuManager::redrawMain() {
+	// Draw menu background
+	_engine->getRenderManager()->blitSurfaceToMenu(_mainBack, _mainScroller._pos.x, _mainScroller._pos.y, 0);
+	// Draw buttons
+	if (_menuFocus.front() == kFocusMain)
+		for (int8 i = 0; i < 4; i++) {
+			if (_enableFlags.get(i) && (_mainFrames[i] >= 0)) {
+				if (_mainClicked == i)
+					_engine->getRenderManager()->blitSurfaceToMenu(_mainButtons[i][_params.clickedFrame], _params.wxButs[i][1], _mainScroller._pos.y, 0);
+				else
+					_engine->getRenderManager()->blitSurfaceToMenu(_mainButtons[i][_mainFrames[i]], _params.wxButs[i][1], _mainScroller._pos.y, 0);
+			}
+		}
+	_clean = false;
+}
+
+void MenuManager::setFocus(int8 currentFocus) {
+	_menuFocus.set(currentFocus);
+	assert(_menuFocus.size() <= 4);
+}
+
+MenuZGI::MenuZGI(ZVision *engine, const Common::Rect menuArea) :
+	MenuManager(engine, menuArea, zgiParams),
+	_itemsScroller(Common::Point(0, 0), Common::Point(_wSideMenuTab - _wSideMenu, 0), _sideMenuPeriod),
+	_magicScroller(Common::Point(-_wSideMenu, 0), Common::Point(-_wSideMenuTab, 0), _sideMenuPeriod),
+	_itemsOrigin(menuArea.left, menuArea.top),
+	_magicOrigin(menuArea.right, menuArea.top) {
+
+	_magicArea = Common::Rect(_magicOrigin + _magicScroller._pos, _wSideMenu, _hSideMenu);
+	_itemsArea = Common::Rect(_itemsOrigin + _itemsScroller._pos, _wSideMenu, _hSideMenu);
+
+	// Buffer main menu background
+	_engine->getRenderManager()->readImageToSurface("gmzau031.tga", _mainBack, false);
 
 	char buf[24];
-	for (int i = 1; i < 4; i++) {
-		Common::sprintf_s(buf, "gmzau%2.2x1.tga", i);
-		_engine->getRenderManager()->readImageToSurface(buf, menuBack[i - 1][0], false);
-		Common::sprintf_s(buf, "gmzau%2.2x1.tga", i + 0x10);
-		_engine->getRenderManager()->readImageToSurface(buf, menuBack[i - 1][1], false);
-	}
 	for (int i = 0; i < 4; i++) {
+		// Buffer menu buttons
 		Common::sprintf_s(buf, "gmzmu%2.2x1.tga", i);
-		_engine->getRenderManager()->readImageToSurface(buf, menuBar[i][0], false);
+		_engine->getRenderManager()->readImageToSurface(buf, _mainButtons[i][0], false);
 		Common::sprintf_s(buf, "gmznu%2.2x1.tga", i);
-		_engine->getRenderManager()->readImageToSurface(buf, menuBar[i][1], false);
+		_engine->getRenderManager()->readImageToSurface(buf, _mainButtons[i][1], false);
 	}
-
+	for (int i = 1; i < 4; i++) {
+		// Buffer full menu backgrounds
+		Common::sprintf_s(buf, "gmzau%2.2x1.tga", i);
+		_engine->getRenderManager()->readImageToSurface(buf, _menuBack[i - 1], false);
+	}
 	for (int i = 0; i < 50; i++) {
-		items[i][0] = NULL;
-		items[i][1] = NULL;
-		itemId[i] = 0;
+		_items[i][0] = NULL;
+		_items[i][1] = NULL;
+		_itemId[i] = 0;
 	}
-
 	for (int i = 0; i < 12; i++) {
-		magic[i][0] = NULL;
-		magic[i][1] = NULL;
-		magicId[i] = 0;
+		_magic[i][0] = NULL;
+		_magic[i][1] = NULL;
+		_magicId[i] = 0;
 	}
+	// Initialise focus sequence
+	setFocus(kFocusMain);
+	setFocus(kFocusMagic);
+	setFocus(kFocusItems);
+	setFocus(kFocusNone);
 }
 
 MenuZGI::~MenuZGI() {
 	for (int i = 0; i < 3; i++) {
-		menuBack[i][0].free();
-		menuBack[i][1].free();
+		_menuBack[i].free();
 	}
 	for (int i = 0; i < 4; i++) {
-		menuBar[i][0].free();
-		menuBar[i][1].free();
+		for (int j = 0; j < 2; j++)
+			_mainButtons[i][j].free();
 	}
 	for (int i = 0; i < 50; i++) {
-		if (items[i][0]) {
-			items[i][0]->free();
-			delete items[i][0];
+		if (_items[i][0]) {
+			_items[i][0]->free();
+			delete _items[i][0];
 		}
-		if (items[i][1]) {
-			items[i][1]->free();
-			delete items[i][1];
+		if (_items[i][1]) {
+			_items[i][1]->free();
+			delete _items[i][1];
 		}
 	}
 	for (int i = 0; i < 12; i++) {
-		if (magic[i][0]) {
-			magic[i][0]->free();
-			delete magic[i][0];
+		if (_magic[i][0]) {
+			_magic[i][0]->free();
+			delete _magic[i][0];
 		}
-		if (magic[i][1]) {
-			magic[i][1]->free();
-			delete magic[i][1];
+		if (_magic[i][1]) {
+			_magic[i][1]->free();
+			delete _magic[i][1];
 		}
 	}
 }
 
+bool MenuZGI::inMenu(const Common::Point &Pos) const {
+	return _menuTriggerArea.contains(Pos) || (_menuFocus.front() != kFocusNone);
+}
+
 void MenuZGI::onMouseUp(const Common::Point &Pos) {
-	if (Pos.y < 40) {
-		switch (menuMouseFocus) {
-		case kMenuItem:
-			if (menuBarFlag & kMenubarItems) {
+	if (inMenu(Pos))
+		// _redraw = true;
+		switch (_menuFocus.front()) {
+		case kFocusItems:
+			if (_enableFlags.get(kItemsMenu)) {
 				int itemCount = _engine->getScriptManager()->getStateValue(StateKey_Inv_TotalSlots);
 				if (itemCount == 0)
 					itemCount = 20;
-
-				for (int i = 0; i < itemCount; i++) {
-					int itemspace = (600 - 28) / itemCount;
-
-					if (Common::Rect(scrollPos[kMenuItem] + itemspace * i, 0,
-					                 scrollPos[kMenuItem] + itemspace * i + 28, 32).contains(Pos)) {
-						int32 mouseItem = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
-						if (mouseItem >= 0  && mouseItem < 0xE0) {
-							_engine->getScriptManager()->inventoryDrop(mouseItem);
-							_engine->getScriptManager()->inventoryAdd(_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + i));
-							_engine->getScriptManager()->setStateValue(StateKey_Inv_StartSlot + i, mouseItem);
-
-							redraw = true;
-						}
+				int i = mouseOverItem(Pos, itemCount);
+				if (i != -1) {
+					int32 mouseItem = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
+					if (mouseItem >= 0  && mouseItem < 0xE0) {
+						_engine->getScriptManager()->inventoryDrop(mouseItem);
+						_engine->getScriptManager()->inventoryAdd(_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + i));
+						_engine->getScriptManager()->setStateValue(StateKey_Inv_StartSlot + i, mouseItem);
+						_redraw = true;
 					}
 				}
 			}
 			break;
 
-		case kMenuMagic:
-			if (menuBarFlag & kMenubarMagic) {
-				for (int i = 0; i < 12; i++) {
+		case kFocusMagic:
+			if (_enableFlags.get(kMagicMenu)) {
+				int i = mouseOverMagic(Pos);
+				if (i != -1) {
 
 					uint itemnum = _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + i);
 					if (itemnum != 0) {
@@ -154,610 +320,273 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 					}
 					if (itemnum)
 						if (_engine->getScriptManager()->getStateValue(StateKey_InventoryItem) == 0 || _engine->getScriptManager()->getStateValue(StateKey_InventoryItem) >= 0xE0)
-							if (Common::Rect(668 + 47 * i - scrollPos[kMenuMagic], 0,
-							                 668 + 47 * i - scrollPos[kMenuMagic] + 28, 32).contains(Pos))
-								_engine->getScriptManager()->setStateValue(StateKey_Active_Spell, itemnum);
+							_engine->getScriptManager()->setStateValue(StateKey_Active_Spell, itemnum);
 				}
 
 			}
 			break;
 
-		case kMenuMain:
-
-			// Exit
-			if (menuBarFlag & kMenubarExit)
-				if (Common::Rect(320 + 135,
-				                 scrollPos[kMenuMain],
-				                 320 + 135 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					_engine->ifQuit();
-				}
-
-			// Settings
-			if (menuBarFlag & kMenubarSettings)
-				if (Common::Rect(320 ,
-				                 scrollPos[kMenuMain],
-				                 320 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					_engine->getScriptManager()->changeLocation('g', 'j', 'p', 'e', 0);
-				}
-
-			// Load
-			if (menuBarFlag & kMenubarRestore)
-				if (Common::Rect(320 - 135,
-				                 scrollPos[kMenuMain],
-				                 320,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					_engine->getScriptManager()->changeLocation('g', 'j', 'r', 'e', 0);
-				}
-
-			// Save
-			if (menuBarFlag & kMenubarSave)
-				if (Common::Rect(320 - 135 * 2,
-				                 scrollPos[kMenuMain],
-				                 320 - 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					_engine->getScriptManager()->changeLocation('g', 'j', 's', 'e', 0);
-				}
+		case kFocusMain:
+			MenuManager::onMouseUp(Pos);
 			break;
 
 		default:
 			break;
 		}
-	}
 }
 
 void MenuZGI::onMouseMove(const Common::Point &Pos) {
-	if (Pos.y < 40) {
+	if (!inMenu(Pos)) {
+		_mainScroller.reset();
+		_magicScroller.reset();
+		_itemsScroller.reset();
+	}
 
-		if (!inMenu)
-			redraw = true;
-		inMenu = true;
-		switch (menuMouseFocus) {
-		case kMenuItem:
-			if (menuBarFlag & kMenubarItems) {
+	// Set focus to topmost layer of menus that mouse is currently over
+	for (uint8 i = 0; i < _menuFocus.size(); i++) {
+		switch (_menuFocus[i]) {
+		case kFocusItems:
+			if (_itemsArea.contains(Pos)) {
+				setFocus(kFocusItems);
+				i = _menuFocus.size() + 1;
+			}
+			break;
+		case kFocusMagic:
+			if (_magicArea.contains(Pos)) {
+				setFocus(kFocusMagic);
+				i = _menuFocus.size() + 1;
+			}
+			break;
+		case kFocusMain:
+			if (_mainArea.contains(Pos)) {
+				setFocus(kFocusMain);
+				i = _menuFocus.size() + 1;
+			}
+			break;
+		default:
+			setFocus(kFocusNone);
+			break;
+		}
+	}
+	_itemsScroller.setActive(_menuFocus.front() == kFocusItems);
+	_magicScroller.setActive(_menuFocus.front() == kFocusMagic);
+	if (_menuFocus.front() != kFocusNone) {
+		switch (_menuFocus.front()) {
+		case kFocusItems:
+			if (_enableFlags.get(kItemsMenu)) {
 				int itemCount = _engine->getScriptManager()->getStateValue(StateKey_Inv_TotalSlots);
 				if (itemCount == 0)
 					itemCount = 20;
 				else if (itemCount > 50)
 					itemCount = 50;
-
-				int lastItem = mouseOnItem;
-
-				mouseOnItem = -1;
-
-				for (int i = 0; i < itemCount; i++) {
-					int itemspace = (600 - 28) / itemCount;
-
-					if (Common::Rect(scrollPos[kMenuItem] + itemspace * i, 0,
-					                 scrollPos[kMenuItem] + itemspace * i + 28, 32).contains(Pos)) {
-						mouseOnItem = i;
-						break;
-					}
-				}
-
-				if (lastItem != mouseOnItem)
-					if (_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + mouseOnItem) ||
-					        _engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + lastItem))
-						redraw = true;
+				int lastItem = _mouseOnItem;
+				_mouseOnItem = mouseOverItem(Pos, itemCount);
+				if (lastItem != _mouseOnItem)
+					if (_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + _mouseOnItem) || _engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + lastItem))
+						_redraw = true;
 			}
 			break;
 
-		case kMenuMagic:
-			if (menuBarFlag & kMenubarMagic) {
-				int lastItem = mouseOnItem;
-				mouseOnItem = -1;
-				for (int i = 0; i < 12; i++) {
-					if (Common::Rect(668 + 47 * i - scrollPos[kMenuMagic], 0,
-					                 668 + 47 * i - scrollPos[kMenuMagic] + 28, 32).contains(Pos)) {
-						mouseOnItem = i;
-						break;
-					}
-				}
+		case kFocusMagic:
+			if (_enableFlags.get(kMagicMenu)) {
+				int lastItem = _mouseOnItem;
+				_mouseOnItem = mouseOverMagic(Pos);
 
-				if (lastItem != mouseOnItem)
-					if (_engine->getScriptManager()->getStateValue(StateKey_Spell_1 + mouseOnItem) ||
-					        _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + lastItem))
-						redraw = true;
+				if (lastItem != _mouseOnItem)
+					if (_engine->getScriptManager()->getStateValue(StateKey_Spell_1 + _mouseOnItem) || _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + lastItem))
+						_redraw = true;
 
 			}
 			break;
-
-		case kMenuMain: {
-			int lastItem = mouseOnItem;
-			mouseOnItem = -1;
-
-			// Exit
-			if (menuBarFlag & kMenubarExit)
-				if (Common::Rect(320 + 135,
-				                 scrollPos[kMenuMain],
-				                 320 + 135 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					mouseOnItem = kMainMenuExit;
-				}
-
-			// Settings
-			if (menuBarFlag & kMenubarSettings)
-				if (Common::Rect(320 ,
-				                 scrollPos[kMenuMain],
-				                 320 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					mouseOnItem = kMainMenuPrefs;
-				}
-
-			// Load
-			if (menuBarFlag & kMenubarRestore)
-				if (Common::Rect(320 - 135,
-				                 scrollPos[kMenuMain],
-				                 320,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					mouseOnItem = kMainMenuLoad;
-				}
-
-			// Save
-			if (menuBarFlag & kMenubarSave)
-				if (Common::Rect(320 - 135 * 2,
-				                 scrollPos[kMenuMain],
-				                 320 - 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
-					mouseOnItem = kMainMenuSave;
-				}
-
-			if (lastItem != mouseOnItem)
-				redraw = true;
-		}
-		break;
-
-		default:
-			int cur_menu = menuMouseFocus;
-			if (Common::Rect(64, 0, 64 + 512, 8).contains(Pos)) { // Main
-				menuMouseFocus = kMenuMain;
-				scrolled[kMenuMain]  = false;
-				scrollPos[kMenuMain] = menuBack[kMenuMain][1].h - menuBack[kMenuMain][0].h;
-				_engine->getScriptManager()->setStateValue(StateKey_MenuState, 2);
-			}
-
-			if (menuBarFlag & kMenubarMagic)
-				if (Common::Rect(640 - 28, 0, 640, 32).contains(Pos)) { // Magic
-					menuMouseFocus = kMenuMagic;
-					scrolled[kMenuMagic]  = false;
-					scrollPos[kMenuMagic] = 28;
-					_engine->getScriptManager()->setStateValue(StateKey_MenuState, 3);
-				}
-
-			if (menuBarFlag & kMenubarItems)
-				if (Common::Rect(0, 0, 28, 32).contains(Pos)) { // Items
-					menuMouseFocus = kMenuItem;
-					scrolled[kMenuItem]  = false;
-					scrollPos[kMenuItem] = 28 - 600;
-					_engine->getScriptManager()->setStateValue(StateKey_MenuState, 1);
-				}
-
-			if (cur_menu != menuMouseFocus)
-				clean = true;
-
+		case kFocusMain:
 			break;
 		}
-	} else {
-		if (inMenu)
-			clean = true;
-		inMenu = false;
-		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 0)
-			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 0);
-		menuMouseFocus = -1;
 	}
+	MenuManager::onMouseMove(Pos);
+}
+
+int MenuZGI::mouseOverItem(const Common::Point &Pos, int itemCount) {
+	int itemWidth = (_wSideMenu - 28) / itemCount;
+	Common::Rect itemHotspot = Common::Rect(28, _hSideMenu);
+	itemHotspot.moveTo(_itemsOrigin + _itemsScroller._pos);
+	for (int i = 0; i < itemCount; i++) {
+		if (itemHotspot.contains(Pos))
+			return i;
+		itemHotspot.translate(itemWidth, 0);
+	}
+	return -1;
+}
+
+int MenuZGI::mouseOverMagic(const Common::Point &Pos) {
+	Common::Rect magicHotspot(28, _hSideMenu);
+	magicHotspot.moveTo(_magicOrigin + _magicScroller._pos);
+	magicHotspot.translate(28, 0); // Offset from end of menu
+	for (int i = 0; i < 12; i++) {
+		if (magicHotspot.contains(Pos))
+			return i;
+		magicHotspot.translate(_magicWidth, 0);
+	}
+	return -1;
 }
 
 void MenuZGI::process(uint32 deltatime) {
-	if (clean) {
-		_engine->getRenderManager()->clearMenuSurface();
-		clean = false;
+	if (_itemsScroller.update(deltatime)) {
+		_itemsArea.moveTo(_itemsOrigin + _itemsScroller._pos);
+		_redraw = true;
 	}
-	switch (menuMouseFocus) {
-	case kMenuItem:
-		if (menuBarFlag & kMenubarItems)
-			if (!scrolled[kMenuItem]) {
-				redraw = true;
-				float scrl = 600.0 * (deltatime / 1000.0);
-
-				if (scrl == 0)
-					scrl = 1.0;
-
-				scrollPos[kMenuItem] += (int)scrl;
-
-				if (scrollPos[kMenuItem] >= 0) {
-					scrolled[kMenuItem] = true;
-					scrollPos[kMenuItem] = 0;
-				}
-			}
-		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuItem][0], scrollPos[kMenuItem], 0);
-
-			int itemCount = _engine->getScriptManager()->getStateValue(StateKey_Inv_TotalSlots);
-			if (itemCount == 0)
-				itemCount = 20;
-			else if (itemCount > 50)
-				itemCount = 50;
-
-			for (int i = 0; i < itemCount; i++) {
-				int itemspace = (600 - 28) / itemCount;
-
-				bool inrect = false;
-
-				if (mouseOnItem == i)
-					inrect = true;
-
-				uint curItemId = _engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + i);
-
-				if (curItemId != 0) {
-					if (itemId[i] != curItemId) {
-						char buf[16];
-						Common::sprintf_s(buf, "gmzwu%2.2x1.tga", curItemId);
-						items[i][0] = _engine->getRenderManager()->loadImage(buf, false);
-						Common::sprintf_s(buf, "gmzxu%2.2x1.tga", curItemId);
-						items[i][1] = _engine->getRenderManager()->loadImage(buf, false);
-						itemId[i] = curItemId;
-					}
-
-					if (inrect)
-						_engine->getRenderManager()->blitSurfaceToMenu(*items[i][1], scrollPos[kMenuItem] + itemspace * i, 0, 0);
-					else
-						_engine->getRenderManager()->blitSurfaceToMenu(*items[i][0], scrollPos[kMenuItem] + itemspace * i, 0, 0);
-
-				} else {
-					if (items[i][0]) {
-						items[i][0]->free();
-						delete items[i][0];
-						items[i][0] = NULL;
-					}
-					if (items[i][1]) {
-						items[i][1]->free();
-						delete items[i][1];
-						items[i][1] = NULL;
-					}
-					itemId[i] = 0;
-				}
-			}
-
-			redraw = false;
-		}
-		break;
-
-	case kMenuMagic:
-		if (menuBarFlag & kMenubarMagic)
-			if (!scrolled[kMenuMagic]) {
-				redraw = true;
-				float scrl = 600.0 * (deltatime / 1000.0);
-
-				if (scrl == 0)
-					scrl = 1.0;
-
-				scrollPos[kMenuMagic] += (int)scrl;
-
-				if (scrollPos[kMenuMagic] >= 600) {
-					scrolled[kMenuMagic] = true;
-					scrollPos[kMenuMagic] = 600;
-				}
-			}
-		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMagic][0], 640 - scrollPos[kMenuMagic], 0);
-
-			for (int i = 0; i < 12; i++) {
-				bool inrect = false;
-
-				if (mouseOnItem == i)
-					inrect = true;
-
-				uint curItemId = _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + i);
-				if (curItemId) {
-					if (_engine->getScriptManager()->getStateValue(StateKey_Reversed_Spellbooc) == 1)
-						curItemId = 0xEE + i;
-					else
-						curItemId = 0xE0 + i;
-				}
-
-				if (curItemId != 0) {
-					if (itemId[i] != curItemId) {
-						char buf[16];
-						Common::sprintf_s(buf, "gmzwu%2.2x1.tga", curItemId);
-						magic[i][0] = _engine->getRenderManager()->loadImage(buf, false);
-						Common::sprintf_s(buf, "gmzxu%2.2x1.tga", curItemId);
-						magic[i][1] = _engine->getRenderManager()->loadImage(buf, false);
-						magicId[i] = curItemId;
-					}
-
-					if (inrect)
-						_engine->getRenderManager()->blitSurfaceToMenu(*magic[i][1], 668 + 47 * i - scrollPos[kMenuMagic], 0, 0);
-					else
-						_engine->getRenderManager()->blitSurfaceToMenu(*magic[i][0], 668 + 47 * i - scrollPos[kMenuMagic], 0, 0);
-
-				} else {
-					if (magic[i][0]) {
-						magic[i][0]->free();
-						delete magic[i][0];
-						magic[i][0] = NULL;
-					}
-					if (magic[i][1]) {
-						magic[i][1]->free();
-						delete magic[i][1];
-						magic[i][1] = NULL;
-					}
-					magicId[i] = 0;
-				}
-			}
-			redraw = false;
-		}
-		break;
-
-	case kMenuMain:
-		if (!scrolled[kMenuMain]) {
-			redraw = true;
-			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
-
-			if (scrl == 0)
-				scrl = 1.0;
-
-			scrollPos[kMenuMain] += (int)scrl;
-
-			if (scrollPos[kMenuMain] >= 0) {
-				scrolled[kMenuMain] = true;
-				scrollPos[kMenuMain] = 0;
-			}
-		}
-		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMain][0], 30, scrollPos[kMenuMain]);
-
-			if (menuBarFlag & kMenubarExit) {
-				if (mouseOnItem == kMainMenuExit)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuExit][1], 320 + 135, scrollPos[kMenuMain]);
-				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuExit][0], 320 + 135, scrollPos[kMenuMain]);
-			}
-			if (menuBarFlag & kMenubarSettings) {
-				if (mouseOnItem == kMainMenuPrefs)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuPrefs][1], 320, scrollPos[kMenuMain]);
-				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuPrefs][0], 320, scrollPos[kMenuMain]);
-			}
-			if (menuBarFlag & kMenubarRestore) {
-				if (mouseOnItem == kMainMenuLoad)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuLoad][1], 320 - 135, scrollPos[kMenuMain]);
-				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuLoad][0], 320 - 135, scrollPos[kMenuMain]);
-			}
-			if (menuBarFlag & kMenubarSave) {
-				if (mouseOnItem == kMainMenuSave)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuSave][1], 320 - 135 * 2, scrollPos[kMenuMain]);
-				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuSave][0], 320 - 135 * 2, scrollPos[kMenuMain]);
-			}
-			redraw = false;
-		}
-		break;
-	default:
-		if (redraw) {
-			if (inMenu) {
-				_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMain][1], 30, 0);
-
-				if (menuBarFlag & kMenubarItems)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuItem][1], 0, 0);
-
-				if (menuBarFlag & kMenubarMagic)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMagic][1], 640 - 28, 0);
-			}
-			redraw = false;
-		}
-		break;
+	if (_magicScroller.update(deltatime)) {
+		_magicArea.moveTo(_magicOrigin + _magicScroller._pos);
+		_redraw = true;
 	}
+	MenuManager::process(deltatime);
 }
 
-MenuNemesis::MenuNemesis(ZVision *engine) :
-	MenuHandler(engine) {
-	inMenu = false;
-	scrolled = false;
-	scrollPos = 0;
-	mouseOnItem = -1;
-	redraw = false;
-	delay = 0;
+void MenuZGI::redrawAll() {
+	if (MenuManager::inMenu())
+		for (int8 i = _menuFocus.size() - 1; i >= 0; i--)
+			switch (_menuFocus[i]) {
+			case kFocusItems:
+				if (_enableFlags.get(kItemsMenu)) {
+					redrawItems();
+				}
+				break;
+			case kFocusMagic:
+				if (_enableFlags.get(kMagicMenu)) {
+					redrawMagic();
+				}
+				break;
+			case kFocusMain:
+				redrawMain();
+				break;
+			default:
+				break;
+			}
+}
+
+void MenuZGI::redrawMagic() {
+	const int16 yOrigin = _menuArea.width();
+	_engine->getRenderManager()->blitSurfaceToMenu(_menuBack[kFocusMagic], yOrigin + _magicScroller._pos.x, 0, 0);
+	for (int i = 0; i < 12; i++) {
+		bool inrect = false;
+		if (_mouseOnItem == i)
+			inrect = true;
+		uint curItemId = _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + i);
+		if (curItemId) {
+			if (_engine->getScriptManager()->getStateValue(StateKey_Reversed_Spellbooc) == 1)
+				curItemId = 0xEE + i;
+			else
+				curItemId = 0xE0 + i;
+		}
+		if (curItemId != 0) {
+			if (_itemId[i] != curItemId) {
+				char buf[16];
+				Common::sprintf_s(buf, "gmzwu%2.2x1.tga", curItemId);
+				_magic[i][0] = _engine->getRenderManager()->loadImage(buf, false);
+				Common::sprintf_s(buf, "gmzxu%2.2x1.tga", curItemId);
+				_magic[i][1] = _engine->getRenderManager()->loadImage(buf, false);
+				_magicId[i] = curItemId;
+			}
+			if (inrect)
+				_engine->getRenderManager()->blitSurfaceToMenu(*_magic[i][1], yOrigin + _magicScroller._pos.x + 28 + _magicWidth * i, 0, 0);
+			else
+				_engine->getRenderManager()->blitSurfaceToMenu(*_magic[i][0], yOrigin + _magicScroller._pos.x + 28 + _magicWidth * i, 0, 0);
+		} else {
+			if (_magic[i][0]) {
+				_magic[i][0]->free();
+				delete _magic[i][0];
+				_magic[i][0] = NULL;
+			}
+			if (_magic[i][1]) {
+				_magic[i][1]->free();
+				delete _magic[i][1];
+				_magic[i][1] = NULL;
+			}
+			_magicId[i] = 0;
+		}
+	}
+	_clean = false;
+}
+
+void MenuZGI::redrawItems() {
+	_engine->getRenderManager()->blitSurfaceToMenu(_menuBack[kFocusItems], _itemsScroller._pos.x, 0, 0);
+	int itemCount = _engine->getScriptManager()->getStateValue(StateKey_Inv_TotalSlots);
+	if (itemCount == 0)
+		itemCount = 20;
+	else if (itemCount > 50)
+		itemCount = 50;
+	int itemWidth = (_wSideMenu - 28) / itemCount;
+
+	for (int i = 0; i < itemCount; i++) {
+		bool inrect = false;
+		if (_mouseOnItem == i)
+			inrect = true;
+		uint curItemId = _engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + i);
+
+		if (curItemId != 0) {
+			if (_itemId[i] != curItemId) {
+				char buf[16];
+				Common::sprintf_s(buf, "gmzwu%2.2x1.tga", curItemId);
+				_items[i][0] = _engine->getRenderManager()->loadImage(buf, false);
+				Common::sprintf_s(buf, "gmzxu%2.2x1.tga", curItemId);
+				_items[i][1] = _engine->getRenderManager()->loadImage(buf, false);
+				_itemId[i] = curItemId;
+			}
+			if (inrect)
+				_engine->getRenderManager()->blitSurfaceToMenu(*_items[i][1], _itemsScroller._pos.x + itemWidth * i, 0, 0);
+			else
+				_engine->getRenderManager()->blitSurfaceToMenu(*_items[i][0], _itemsScroller._pos.x + itemWidth * i, 0, 0);
+		} else {
+			if (_items[i][0]) {
+				_items[i][0]->free();
+				delete _items[i][0];
+				_items[i][0] = NULL;
+			}
+			if (_items[i][1]) {
+				_items[i][1]->free();
+				delete _items[i][1];
+				_items[i][1] = NULL;
+			}
+			_itemId[i] = 0;
+		}
+	}
+	_clean = false;
+}
+
+MenuNemesis::MenuNemesis(ZVision *engine, const Common::Rect menuArea) :
+	MenuManager(engine, menuArea, nemesisParams) {
+
+	// Buffer menu background image
+	_engine->getRenderManager()->readImageToSurface("bar.tga", _mainBack, false);
 
 	char buf[24];
 	for (int i = 0; i < 4; i++)
+		// Buffer menu buttons
 		for (int j = 0; j < 6; j++) {
 			Common::sprintf_s(buf, "butfrm%d%d.tga", i + 1, j);
-			_engine->getRenderManager()->readImageToSurface(buf, but[i][j], false);
+			_engine->getRenderManager()->readImageToSurface(buf, _mainButtons[i][j], false);
 		}
 
-	_engine->getRenderManager()->readImageToSurface("bar.tga", menuBar, false);
-
-	frm = 0;
 }
 
 MenuNemesis::~MenuNemesis() {
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 6; j++)
-			but[i][j].free();
+			_mainButtons[i][j].free();
 
-	menuBar.free();
 }
 
-static const int16 buts[4][2] = { {120 , 64}, {144, 184}, {128, 328}, {120, 456} };
-
-void MenuNemesis::onMouseUp(const Common::Point &Pos) {
-	if (Pos.y < 40) {
-		// Exit
-		if (menuBarFlag & kMenubarExit)
-			if (Common::Rect(buts[3][1],
-			                 scrollPos,
-			                 buts[3][0] + buts[3][1],
-			                 scrollPos + 32).contains(Pos)) {
-				_engine->ifQuit();
-				frm = 5;
-				redraw = true;
-			}
-
-		// Settings
-		if (menuBarFlag & kMenubarSettings)
-			if (Common::Rect(buts[2][1],
-			                 scrollPos,
-			                 buts[2][0] + buts[2][1],
-			                 scrollPos + 32).contains(Pos)) {
-				_engine->getScriptManager()->changeLocation('g', 'j', 'p', 'e', 0);
-				frm = 5;
-				redraw = true;
-			}
-
-		// Load
-		if (menuBarFlag & kMenubarRestore)
-			if (Common::Rect(buts[1][1],
-			                 scrollPos,
-			                 buts[1][0] + buts[1][1],
-			                 scrollPos + 32).contains(Pos)) {
-				_engine->getScriptManager()->changeLocation('g', 'j', 'r', 'e', 0);
-				frm = 5;
-				redraw = true;
-			}
-
-		// Save
-		if (menuBarFlag & kMenubarSave)
-			if (Common::Rect(buts[0][1],
-			                 scrollPos,
-			                 buts[0][0] + buts[0][1],
-			                 scrollPos + 32).contains(Pos)) {
-				_engine->getScriptManager()->changeLocation('g', 'j', 's', 'e', 0);
-				frm = 5;
-				redraw = true;
-			}
-	}
+bool MenuNemesis::inMenu(const Common::Point &Pos) const {
+	return _menuTriggerArea.contains(Pos) || (_menuFocus.front() != kFocusNone);
 }
 
 void MenuNemesis::onMouseMove(const Common::Point &Pos) {
-	if (Pos.y < 40) {
-
-		inMenu = true;
-
-		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 2)
-			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 2);
-
-		int lastItem = mouseOnItem;
-		mouseOnItem = -1;
-
-		// Exit
-		if (menuBarFlag & kMenubarExit)
-			if (Common::Rect(buts[3][1],
-			                 scrollPos,
-			                 buts[3][0] + buts[3][1],
-			                 scrollPos + 32).contains(Pos)) {
-				mouseOnItem = kMainMenuExit;
-			}
-
-		// Settings
-		if (menuBarFlag & kMenubarSettings)
-			if (Common::Rect(buts[2][1],
-			                 scrollPos,
-			                 buts[2][0] + buts[2][1],
-			                 scrollPos + 32).contains(Pos)) {
-				mouseOnItem = kMainMenuPrefs;
-			}
-
-		// Load
-		if (menuBarFlag & kMenubarRestore)
-			if (Common::Rect(buts[1][1],
-			                 scrollPos,
-			                 buts[1][0] + buts[1][1],
-			                 scrollPos + 32).contains(Pos)) {
-				mouseOnItem = kMainMenuLoad;
-			}
-
-		// Save
-		if (menuBarFlag & kMenubarSave)
-			if (Common::Rect(buts[0][1],
-			                 scrollPos,
-			                 buts[0][0] + buts[0][1],
-			                 scrollPos + 32).contains(Pos)) {
-				mouseOnItem = kMainMenuSave;
-			}
-
-		if (lastItem != mouseOnItem) {
-			redraw = true;
-			frm = 0;
-			delay = 200;
-		}
-	} else {
-		inMenu = false;
-		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 0)
-			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 0);
-		mouseOnItem = -1;
-	}
-}
-
-void MenuNemesis::process(uint32 deltatime) {
-	if (inMenu) {
-		if (!scrolled) {
-			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
-
-			if (scrl == 0)
-				scrl = 1.0;
-
-			scrollPos += (int)scrl;
-			redraw = true;
-		}
-
-		if (scrollPos >= 0) {
-			scrolled = true;
-			scrollPos = 0;
-		}
-
-		if (mouseOnItem != -1) {
-			delay -= deltatime;
-			if (delay <= 0 && frm < 4) {
-				delay = 200;
-				frm++;
-				redraw = true;
-			}
-		}
-
-		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, 64, scrollPos);
-
-			if (menuBarFlag & kMenubarExit)
-				if (mouseOnItem == kMainMenuExit)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[3][frm], buts[3][1], scrollPos);
-
-			if (menuBarFlag & kMenubarSettings)
-				if (mouseOnItem == kMainMenuPrefs)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[2][frm], buts[2][1], scrollPos);
-
-			if (menuBarFlag & kMenubarRestore)
-				if (mouseOnItem == kMainMenuLoad)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[1][frm], buts[1][1], scrollPos);
-
-			if (menuBarFlag & kMenubarSave)
-				if (mouseOnItem == kMainMenuSave)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[0][frm], buts[0][1], scrollPos);
-
-			redraw = false;
-		}
-	} else {
-		scrolled = false;
-		if (scrollPos > -32) {
-			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
-
-			if (scrl == 0)
-				scrl = 1.0;
-
-			Common::Rect cl(64, (int16)(32 + scrollPos - scrl), 64 + 512, 32 + scrollPos + 1);
-			_engine->getRenderManager()->clearMenuSurface(cl);
-
-			scrollPos -= (int)scrl;
-			redraw = true;
-		} else
-			scrollPos = -32;
-
-		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, 64, scrollPos);
-			redraw = false;
-		}
-	}
+	// Trigger main menu scrolldown to get mouse over main trigger area
+	// Set focus to topmost layer of menus that mouse is currently over
+	if (_mainArea.contains(Pos) || _menuTriggerArea.contains(Pos))
+		setFocus(kFocusMain);
+	else
+		setFocus(kFocusNone);
+	MenuManager::onMouseMove(Pos);
 }
 
 } // End of namespace ZVision

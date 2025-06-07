@@ -19,18 +19,17 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/system.h"
-#include "common/compression/unzip.h"
 #include "common/unicode-bidi.h"
 #include "common/ustr.h"
+#include "common/compression/unzip.h"
 #include "graphics/font.h"
-#include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
-
+#include "graphics/fonts/ttf.h"
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/text/truetype_font.h"
@@ -112,7 +111,7 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 	Common::File *file = new Common::File();
 	Graphics::Font *newFont;
 	if (!file->open(Common::Path(newFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(newFontName)) &&
-		!file->open(Common::Path(liberationFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(liberationFontName))) {
+	        !file->open(Common::Path(liberationFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(liberationFontName))) {
 		newFont = Graphics::loadTTFFontFromArchive(liberationFontName, point, Graphics::kTTFSizeModeCell, 0, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 		delete file;
 	} else {

@@ -23,8 +23,10 @@
 #define ZVISION_MUSIC_NODE_H
 
 #include "audio/mixer.h"
+#include "math/angle.h"
 #include "zvision/scripting/scripting_effect.h"
-#include "zvision/text/subtitles.h"
+#include "zvision/sound/volume_manager.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace Common {
 class String;
@@ -47,11 +49,21 @@ public:
 	bool process(uint32 deltaTimeInMillis) override = 0;
 
 	virtual void setVolume(uint8 volume) = 0;
-	virtual uint8 getVolume() = 0;
-	virtual void setDeltaVolume(uint8 volume) = 0;
-	virtual void setBalance(int8 balance) = 0;
-
+	uint8 getVolume() {
+		return _volume;
+	}
 	virtual void setFade(int32 time, uint8 target) = 0;
+	virtual void setBalance(int8 balance);  // NB Overrides effects of setDirection()
+	void setDirection(Math::Angle azimuth, uint8 magnitude = 255);  // NB Overrides effects of setBalance()
+protected:
+	void updateMixer();
+	virtual void outputMixer() = 0;
+
+	uint8 _volume = 0;
+	int8 _balance = 0;
+	Math::Angle _azimuth;
+	uint8 _directionality;  // 0 = fully ambient, 255 = fully directional
+	uint8 _volumeOut = 0;
 };
 
 class MusicNode : public MusicNodeBASE {
@@ -69,30 +81,27 @@ public:
 	bool process(uint32 deltaTimeInMillis) override;
 
 	void setVolume(uint8 volume) override;
-	uint8 getVolume() override;
-	void setDeltaVolume(uint8 volume) override;
-	void setBalance(int8 balance) override;
 
 	void setFade(int32 time, uint8 target) override;
 
 private:
-	uint8 _volume;
-	uint8 _deltaVolume;
-	int8 _balance;
+	void outputMixer() override;
 	bool _loop;
-	bool _crossfade;
-	uint8 _crossfadeTarget;
-	int32 _crossfadeTime;
+	bool _fade;
+	uint8 _fadeStartVol;
+	uint8 _fadeEndVol;
+	uint32 _fadeTime;
+	uint32 _fadeElapsed; // Cumulative time since fade start
 	bool _stereo;
 	Audio::SoundHandle _handle;
-	Subtitle *_sub;
+	uint16 _sub;
 	bool _loaded;
 };
 
 // Only used by Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well as vr)
 class MusicMidiNode : public MusicNodeBASE {
 public:
-	MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume);
+	MusicMidiNode(ZVision *engine, uint32 key, uint8 program, uint8 note, uint8 volume);
 	~MusicMidiNode() override;
 
 	/**
@@ -105,30 +114,31 @@ public:
 	bool process(uint32 deltaTimeInMillis) override;
 
 	void setVolume(uint8 volume) override;
-	uint8 getVolume() override;
-	void setDeltaVolume(uint8 volume) override;
-	void setBalance(int8 balance) override;
 
 	void setFade(int32 time, uint8 target) override;
 
 private:
+	void outputMixer() override;
 	int8 _chan;
-	int8 _noteNumber;
+	uint8 _noteNumber;
 	int8 _pan;
-	int8 _volume;
-	int8 _prog;
+	uint8 _prog;
 };
 
 class PanTrackNode : public ScriptingEffect {
 public:
-	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos);
+	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag = 255, bool resetMixerOnDelete = false, bool staticScreen = false);
 	~PanTrackNode() override;
 
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	uint32 _slot;
-	int16 _position;
+	int16 _width, _pos;
+	Math::Angle _sourcePos, _viewPos;
+	uint8 _mag;
+	bool _resetMixerOnDelete;
+	bool _staticScreen;
 };
 
 } // End of namespace ZVision

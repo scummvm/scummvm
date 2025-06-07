@@ -19,14 +19,10 @@
  *
  */
 
-#include "common/scummsys.h"
-
 #include "base/plugins.h"
-
-#include "engines/advancedDetector.h"
-
+#include "common/scummsys.h"
 #include "common/str-array.h"
-
+#include "engines/advancedDetector.h"
 #include "zvision/detection.h"
 #include "zvision/detection_tables.h"
 

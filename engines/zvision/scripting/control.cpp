@@ -19,23 +19,23 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/scummsys.h"
-
-#include "zvision/scripting/control.h"
-#include "zvision/scripting/script_manager.h"
-
+#include "common/stream.h"
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-
-#include "common/stream.h"
+#include "zvision/scripting/control.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 
 void Control::parseFlatControl(ZVision *engine) {
+	debug(1, "Setting render state to FLAT");
 	engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
 }
 
 void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream) {
+	debug(1, "Setting render state to PANORAMA");
 	RenderTable *renderTable = engine->getRenderManager()->getRenderTable();
 	renderTable->setRenderState(RenderTable::PANORAMA);
 
@@ -73,6 +73,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 
 // Only used in Zork Nemesis, handles tilt controls (ZGI doesn't have a tilt view)
 void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream) {
+	debug(1, "Setting render state to TILT");
 	RenderTable *renderTable = engine->getRenderManager()->getRenderTable();
 	renderTable->setRenderState(RenderTable::TILT);
 

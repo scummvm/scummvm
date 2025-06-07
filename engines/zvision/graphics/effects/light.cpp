@@ -20,11 +20,9 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/graphics/effects/light.h"
-
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/effects/light.h"
 
 namespace ZVision {
 

@@ -21,28 +21,27 @@
 
 #include "common/scummsys.h"
 #include "video/video_decoder.h"
-
-#include "zvision/scripting/actions.h"
-
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
 #include "zvision/file/save_manager.h"
-#include "zvision/scripting/menu.h"
-#include "zvision/scripting/effects/timer_effect.h"
-#include "zvision/scripting/effects/music_effect.h"
-#include "zvision/scripting/effects/syncsound_effect.h"
-#include "zvision/scripting/effects/animation_effect.h"
-#include "zvision/scripting/effects/distort_effect.h"
-#include "zvision/scripting/effects/ttytext_effect.h"
-#include "zvision/scripting/effects/region_effect.h"
-#include "zvision/scripting/controls/titler_control.h"
-#include "zvision/graphics/render_table.h"
 #include "zvision/graphics/graphics_effect.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/render_table.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/effects/fog.h"
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/menu.h"
+#include "zvision/scripting/actions.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/titler_control.h"
+#include "zvision/scripting/effects/animation_effect.h"
+#include "zvision/scripting/effects/distort_effect.h"
+#include "zvision/scripting/effects/music_effect.h"
+#include "zvision/scripting/effects/region_effect.h"
+#include "zvision/scripting/effects/syncsound_effect.h"
+#include "zvision/scripting/effects/timer_effect.h"
+#include "zvision/scripting/effects/ttytext_effect.h"
+#include "zvision/sound/volume_manager.h"
 
 namespace ZVision {
 
@@ -94,6 +93,7 @@ ActionAssign::~ActionAssign() {
 }
 
 bool ActionAssign::execute() {
+	debug(2, "[%d] = %d", _key, _value->getValue());
 	_scriptManager->setStateValue(_key, _value->getValue());
 	return true;
 }
@@ -102,19 +102,26 @@ bool ActionAssign::execute() {
 // ActionAttenuate
 //////////////////////////////////////////////////////////////////////////////
 
+// TODO: the effects of this seem permanent until the music node is deleted; check if they should only be applied on a per-cycle basis!
+
 ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
 	_attenuation = 0;
 
 	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
+	debug(3, "Created Action: Attenuate, slotKey %d", _slotKey);
+	debug(3, "Attenuate script: %s", line.c_str());
+	debug(3, "Attenuate parameters: key1 %d, attenuation %d", _key, _attenuation);
 }
 
 bool ActionAttenuate::execute() {
+	debug(3, "Executing Action: Attenuate, slotkey %d", _slotKey);
 	ScriptingEffect *fx = _scriptManager->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
-		mus->setVolume(255 * (10000 - abs(_attenuation)) / 10000 );
+		mus->setVolume((10000 - abs(_attenuation)) / 100);  // TODO - verify that this is working correctly
+		// Given that the scripts specify this effect in negative values of several, thousand, it is possible the original system may have multiplied by a factor defined in milli-decibels or similar.  Further investigation & comparison with the audio output in various locations from the original executables could shed more light on this.
 	}
 	return true;
 }
@@ -157,17 +164,20 @@ ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotKey, const Common::S
 	sscanf(line.c_str(),
 	       "%u %u %d %d %d %d %d",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
+	debug(3, "Created Action: CrossFade, slotKey %d", _slotKey);
+	debug(3, "Crossfade script: %s", line.c_str());
+	debug(3, "Crossfade parameters: key1 %u, key2 %u, startVol1 %d, startVol2 %d, endVol1 %d, endVol2 %d, time %dms", _keyOne, _keyTwo, _oneStartVolume, _twoStartVolume, _oneEndVolume, _twoEndVolume, _timeInMillis);
 }
 
 bool ActionCrossfade::execute() {
+	debug(3, "Executing Action: CrossFade, slotkey %d", _slotKey);
 	if (_keyOne) {
 		ScriptingEffect *fx = _scriptManager->getSideFX(_keyOne);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_oneStartVolume >= 0)
-				mus->setVolume((_oneStartVolume * 255) / 100);
-
-			mus->setFade(_timeInMillis, (_oneEndVolume * 255) / 100);
+				mus->setVolume(_oneStartVolume);
+			mus->setFade(_timeInMillis, _oneEndVolume);
 		}
 	}
 
@@ -176,9 +186,9 @@ bool ActionCrossfade::execute() {
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_twoStartVolume >= 0)
-				mus->setVolume((_twoStartVolume * 255) / 100);
+				mus->setVolume(_twoStartVolume);
 
-			mus->setFade(_timeInMillis, (_twoEndVolume * 255) / 100);
+			mus->setFade(_timeInMillis, _twoEndVolume);
 		}
 	}
 	return true;
@@ -230,6 +240,7 @@ ActionDelayRender::ActionDelayRender(ZVision *engine, int32 slotKey, const Commo
 }
 
 bool ActionDelayRender::execute() {
+	debug(3, "Executing Action: DelayRender");
 	_engine->setRenderDelay(_framesToDelay);
 	return true;
 }
@@ -277,11 +288,14 @@ bool ActionDisplayMessage::execute() {
 
 ActionDissolve::ActionDissolve(ZVision *engine) :
 	ResultAction(engine, 0) {
+	debug(3, "Created action: Dissolve");
 }
 
 bool ActionDissolve::execute() {
+	debug(3, "Executing action: Dissolve");
 	// Cause black screen flick
-	// _engine->getRenderManager()->bkgFill(0, 0, 0);
+	// Not ideal.  Original engine used a softer dissolve effect; simply turning the screen black is jarring, so disabled for now.
+	// _engine->getRenderManager()->bkgFill(0, 0, 0); // TODO - reimplement this?
 	return true;
 }
 
@@ -306,6 +320,7 @@ ActionDistort::~ActionDistort() {
 }
 
 bool ActionDistort::execute() {
+	debug(3, "Executing Action: Distort");
 	if (_scriptManager->getSideFX(_distSlot))
 		return true;
 
@@ -425,13 +440,16 @@ ActionKill::ActionKill(ZVision *engine, int32 slotKey, const Common::String &lin
 			_type = ScriptingEffect::SCRIPTING_EFFECT_ALL;
 	} else
 		_key = atoi(keytype);
+	debug(3, "Created Action: Kill, slotKey %d, type %s, target slotKey %d", _slotKey, keytype, _key);
 }
 
 bool ActionKill::execute() {
 	if (_type)
 		_scriptManager->killSideFxType((ScriptingEffect::ScriptingEffectType)_type);
-	else
+	else {
+		debug(2, "Executing Action: Kill, slotKey %d, target slotKey %d", _slotKey, _key);
 		_scriptManager->killSideFx(_key);
+	}
 	return true;
 }
 
@@ -447,7 +465,7 @@ ActionMenuBarEnable::ActionMenuBarEnable(ZVision *engine, int32 slotKey, const C
 }
 
 bool ActionMenuBarEnable::execute() {
-	_engine->getMenuHandler()->setEnable(_menus);
+	_engine->getMenuManager()->setEnable(_menus);
 	return true;
 }
 
@@ -473,26 +491,29 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	// Type 4 actions are MIDI commands, not files. These are only used by
 	// Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well
 	// as vr)
-	if (type == 4) {
+	switch (type) {
+	case 4:
 		_midi = true;
 		int note;
 		int prog;
 		sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer);
-		_volume = new ValueSlot(_scriptManager, volumeBuffer);
 		_note = note;
 		_prog = prog;
-	} else {
+		_loop = false;
+		break;
+	default:
 		_midi = false;
 		_fileName = Common::String(fileNameBuffer);
 		_loop = loop == 1 ? true : false;
-		if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
-			// I thought I saw a case like this in Zork Nemesis, so
-			// let's guard against it.
-			warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
-			Common::strcpy_s(volumeBuffer, "100");
-		}
-		_volume = new ValueSlot(_scriptManager, volumeBuffer);
+		break;
 	}
+	if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
+		// I thought I saw a case like this in Zork Nemesis, so
+		// let's guard against it.
+		warning("\tActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
+		Common::strcpy_s(volumeBuffer, "100");
+	}
+	_volume = new ValueSlot(_scriptManager, volumeBuffer);
 
 	// WORKAROUND for a script bug in Zork Nemesis, rooms mq70/mq80.
 	// Fixes an edge case where the player goes to the dark room with the grue
@@ -501,30 +522,40 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && _scriptManager->getStateValue(_slotKey) == 2)
 		_scriptManager->setStateValue(_slotKey, 0);
 
+	// Ensure MusicNodes that were active when game was saved are recreated when it is loaded.
+	// Certain game scripts can become locked-up if this is not the case.
+	if (_engine->getScriptManager()->getStateValue(_slotKey) == 1)
+		if (!_scriptManager->getSideFX(_slotKey)) {
+			debug(1, "Recreating missing musicnode, slotkey %d", _slotKey);
+			execute();
+		}
+
+	debug(2, "Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d, %s", _slotKey, type, fileNameBuffer, _note, _volume->getValue(), _loop ? "looping" : "");
+	debug(4, "Music script: %s", line.c_str());
 }
 
 ActionMusic::~ActionMusic() {
 	if (!_universe)
 		_scriptManager->killSideFx(_slotKey);
 	delete _volume;
+	debug(2, "Destroyed Action: %sMusic, slotkey %d", _universe ? "Universe_" : "", _slotKey);
 }
 
 bool ActionMusic::execute() {
+	debug(2, "Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
 	if (_scriptManager->getSideFX(_slotKey)) {
 		_scriptManager->killSideFx(_slotKey);
 		_scriptManager->setStateValue(_slotKey, 2);
 	}
 
 	uint volume = _volume->getValue();
-
 	if (_midi) {
 		_scriptManager->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, volume));
 	} else {
 		if (!_engine->getSearchManager()->hasFile(_fileName))
 			return true;
 
-		// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
-		_scriptManager->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume * 255 / 100));
+		_scriptManager->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume));
 	}
 
 	return true;
@@ -537,20 +568,42 @@ bool ActionMusic::execute() {
 ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey),
 	_pos(0),
+	_mag(255),
+	_resetMusicNode(true),
+	_resetMixerOnDelete(false),
+	_staticScreen(false),
 	_musicSlot(0) {
-
-	sscanf(line.c_str(), "%u %d", &_musicSlot, &_pos);
+	uint mag = 255;  // Original game scripts do not specify this, but require it to be 255 to work correctly.
+	uint resetMusicNode = 1;  // Original game scripts do not specify this, but require it to be true to work correctly.
+	uint resetMixerOnDelete = 0;  // Original game scripts do not specify this, but require it to be false to work correctly.
+	uint staticScreen = 0;  // Original game scripts do not specify this, but require it to be false to work correctly.
+	sscanf(line.c_str(), "%u %d %u %u %u %u", &_musicSlot, &_pos, &mag, &resetMusicNode, &resetMixerOnDelete, &staticScreen);
+	_resetMusicNode = resetMusicNode > 0;
+	_resetMixerOnDelete = resetMixerOnDelete > 0;
+	_staticScreen = staticScreen > 0;
+	_mag = mag;
+	if (_resetMusicNode) {
+		if (_scriptManager->getStateValue(_musicSlot) != 2) {
+			debug(3, "Forcing musicSlot %d to 2", _musicSlot);
+			_scriptManager->setStateValue(_musicSlot, 2); // Not all original game pan_track scripts trigger correctly unless this is set!
+		} else
+			debug(3, "musicSlot %d already set to 2", _musicSlot);
+	} else
+		debug(3, "NOT forcing musicSlot %d to 2", _musicSlot);
+	debug(3, "Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 }
 
 ActionPanTrack::~ActionPanTrack() {
 	_scriptManager->killSideFx(_slotKey);
+	debug(3, "Destroyed Action: PanTrack, slotkey %d", _slotKey);
 }
 
 bool ActionPanTrack::execute() {
+	debug(3, "Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 
-	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos));
+	_scriptManager->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos, _mag, _resetMixerOnDelete, _staticScreen));
 
 	return true;
 }
@@ -711,6 +764,29 @@ ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 sl
 	sscanf(line.c_str(),
 	       "%u %u %u %u %u %u %u %u",
 	       &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
+	       
+	// WORKAROUND for script bug in Zork Nemesis, room tl9e
+	// Original script gives wrong coordinates & frames
+	if (engine->getGameId() == GID_NEMESIS)
+		switch (_slotKey) {
+		case 1282:
+			_x1 = 146;
+			_y1 = 142;
+			_x2 = 298;
+			_y2 = 236;
+			_startFrame = 16;
+			_endFrame = 31;
+			break;
+		case 1289:
+			_x1 = 146;
+			_y1 = 142;
+			_x2 = 298;
+			_y2 = 236;
+			_endFrame = 15;
+			break;
+		default:
+			break;
+		}
 }
 
 bool ActionPlayPreloadAnimation::execute() {
@@ -759,6 +835,7 @@ ActionRegion::~ActionRegion() {
 }
 
 bool ActionRegion::execute() {
+	debug(2, "Executing Action: Region");
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 
@@ -937,6 +1014,7 @@ ActionStop::ActionStop(ZVision *engine, int32 slotKey, const Common::String &lin
 }
 
 bool ActionStop::execute() {
+	debug(2, "Executing Action: Stop, key %d", _key);
 	_scriptManager->stopSideFx(_key);
 	return true;
 }
@@ -954,7 +1032,7 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotKey, const Commo
 	_flags = 0;
 
 	char fileName[25];
-	uint skipline = 0;    //skipline - render video with skip every second line, not skippable.
+	uint skipline = 0;    // skipline - render video with skip every second line, not skippable.
 
 	sscanf(line.c_str(), "%24s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
 
@@ -963,8 +1041,11 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotKey, const Commo
 }
 
 bool ActionStreamVideo::execute() {
+	debug(3, "Executing video stream");
 	Video::VideoDecoder *decoder;
 	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
+	Common::Rect srcRect = Common::Rect(0, 0);
+	debug(3, "Streaming video original scripted destination left=%d, top=%d, right=%d, bottom=%d", destRect.left, destRect.top, destRect.right, destRect.bottom);
 	Common::String subname = _fileName.baseName();
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);
@@ -995,16 +1076,16 @@ bool ActionStreamVideo::execute() {
 #endif
 
 	decoder = _engine->loadAnimation(_fileName);
-	Subtitle *sub = (subtitleExists) ? new Subtitle(_engine, subpath, switchToHires) : NULL;
+	uint16 sub = (subtitleExists) ? _engine->getSubtitleManager()->create(subpath, switchToHires) : 0;
 
 	_engine->getCursorManager()->showMouse(false);
 
 	if (switchToHires) {
-		_engine->initHiresScreen();
-		destRect = Common::Rect(40, -40, 760, 440);
-		Common::Rect workingWindow = _engine->_workingWindow;
-		workingWindow.translate(0, -40);
-		_engine->getRenderManager()->initSubArea(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, workingWindow);
+		_engine->getRenderManager()->initialize(true);
+		srcRect = Common::Rect(Common::Point(0, 69), 720, 344);
+		// ZGI hi-res video resolution = 720x480, with baked-in letterboxing around content at 720x344 (origin 0,69), interestingly conforming to playfield vertical resolution of 344
+		destRect = _engine->getRenderManager()->getWorkingArea(); // Game scripts only give destRect for normal resolution; we must manually override them for HD videos
+		destRect.moveTo(0, 0);
 	}
 
 	// WORKAROUND for what appears to be a script bug. When riding with
@@ -1023,21 +1104,20 @@ bool ActionStreamVideo::execute() {
 		_engine->_mixer->pauseAll(true);
 	}
 
-	_engine->playVideo(*decoder, destRect, _skippable, sub);
+	_engine->playVideo(*decoder, destRect, _skippable, sub, srcRect);
 
 	if (pauseBackgroundMusic) {
 		_engine->_mixer->pauseAll(false);
 	}
 
 	if (switchToHires) {
-		_engine->initScreen();
-		_engine->getRenderManager()->initSubArea(WINDOW_WIDTH, WINDOW_HEIGHT, _engine->_workingWindow);
+		_engine->getRenderManager()->initialize(false);
 	}
 
 	_engine->getCursorManager()->showMouse(true);
-
-	delete decoder;
-	delete sub;
+	_engine->getSubtitleManager()->destroy(sub);
+	_engine->setRenderDelay(2); // Necessary for avoiding redraw of previous scene between sequential videos (eg totemization sequence in ZGI) & when changing location right after a video (e.g. opening temple door in Nemesis)
+	debug(3, "Completed executing video stream");
 
 	return true;
 }
@@ -1059,6 +1139,7 @@ ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotKey, const Common::S
 }
 
 bool ActionSyncSound::execute() {
+	debug(3, "Executing Action: SyncSound");
 	ScriptingEffect *fx = _scriptManager->getSideFX(_syncto);
 	if (!fx)
 		return true;
