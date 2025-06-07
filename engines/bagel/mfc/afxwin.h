@@ -586,10 +586,12 @@ public:
 		HBITMAP _bitmap = nullptr;
 		HPALETTE _palette = nullptr;
 		CPalette *_cPalette = nullptr;
+		Graphics::PixelFormat _format;
 
 	public:
 		HGDIOBJ Attach(HGDIOBJ gdiObj);
 		Graphics::ManagedSurface *getSurface() const;
+		const Graphics::PixelFormat &getFormat() const;
 
 		HPALETTE selectPalette(HPALETTE pal);
 		CPalette *selectPalette(CPalette *pal);
@@ -614,7 +616,7 @@ public:
 	operator HDC() const {
 		return m_hDC;
 	}
-	Impl *surface() const {
+	Impl *impl() const {
 		return static_cast<Impl *>(m_hDC);
 	}
 

@@ -41,7 +41,10 @@ BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
 }
 
 BOOL CDC::CreateCompatibleDC(CDC *pDC) {
-	m_hDC = pDC->m_hDC;
+	CDC::Impl *dc = new CDC::Impl();
+	dc->_format = pDC->impl()->getFormat();
+	m_hDC = dc;
+
 	return true;
 }
 
@@ -182,13 +185,13 @@ BOOL CDC::LPtoDP(RECT *lpRect) {
 
 BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
         int xSrc, int ySrc, DWORD dwRop) {
-	surface()->bitBlt(x, y, nWidth, nHeight, pSrcDC, xSrc, ySrc, dwRop);
+	impl()->bitBlt(x, y, nWidth, nHeight, pSrcDC, xSrc, ySrc, dwRop);
 	return true;
 }
 
 BOOL CDC::StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
         int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
-	surface()->stretchBlt(x, y, nWidth, nHeight, pSrcDC,
+	impl()->stretchBlt(x, y, nWidth, nHeight, pSrcDC,
 		xSrc, ySrc, nSrcWidth, nSrcHeight, dwRop);
 	return true;
 }
@@ -206,7 +209,7 @@ void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
 }
 
 void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
-	auto *surf = surface();
+	auto *surf = impl();
 	CBrush::Impl *brush = static_cast<CBrush::Impl *>(
 	                          pBrush->m_hObject);
 	assert(brush->_type == HS_HORIZONTAL ||
@@ -272,7 +275,7 @@ CPen *CDC::SelectObject(CPen *pPen) {
 
 CBrush *CDC::SelectObject(CBrush *pBrush) {
 	// Attach new brush
-	HBRUSH oldBrush = surface()->Attach((HBRUSH)pBrush->m_hObject);
+	HBRUSH oldBrush = impl()->Attach((HBRUSH)pBrush->m_hObject);
 
 	if (pBrush->_isTemporary) {
 		pBrush->Detach();
@@ -294,7 +297,7 @@ CBrush *CDC::SelectObject(CBrush *pBrush) {
 
 CFont *CDC::SelectObject(CFont *pFont) {
 	// Attach new font
-	HFONT oldFont = surface()->Attach((HFONT)pFont->m_hObject);
+	HFONT oldFont = impl()->Attach((HFONT)pFont->m_hObject);
 
 	if (pFont->_isTemporary) {
 		pFont->Detach();
@@ -316,7 +319,7 @@ CFont *CDC::SelectObject(CFont *pFont) {
 
 CBitmap *CDC::SelectObject(CBitmap *pBitmap) {
 	// Attach new bitmap
-	HBITMAP oldBitmap = surface()->Attach((HBITMAP)pBitmap->m_hObject);
+	HBITMAP oldBitmap = impl()->Attach((HBITMAP)pBitmap->m_hObject);
 
 	if (pBitmap->_isTemporary) {
 		pBitmap->Detach();
@@ -345,12 +348,12 @@ CGdiObject *CDC::SelectObject(CGdiObject *pObject) {
 }
 
 COLORREF CDC::GetNearestColor(COLORREF crColor) const {
-	return surface()->GetNearestColor(crColor);
+	return impl()->GetNearestColor(crColor);
 }
 
 CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
 	// Attach new palette
-	HPALETTE oldPalette = surface()->selectPalette((HPALETTE)pPalette->m_hObject);
+	HPALETTE oldPalette = impl()->selectPalette((HPALETTE)pPalette->m_hObject);
 
 	if (pPalette->_isTemporary) {
 		pPalette->Detach();
@@ -371,7 +374,7 @@ CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
 }
 
 UINT CDC::RealizePalette() {
-	return surface()->realizePalette();
+	return impl()->realizePalette();
 }
 
 void CDC::UpdateColors() {
@@ -504,6 +507,10 @@ Graphics::ManagedSurface *CDC::Impl::getSurface() const {
 	return static_cast<CBitmap::Impl *>(_bitmap);
 }
 
+const Graphics::PixelFormat &CDC::Impl::getFormat() const {
+	return _bitmap ? getSurface()->format : _format;
+}
+
 HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {
 	HPALETTE oldPal = _palette;
 	_palette = pal;
@@ -555,7 +562,7 @@ void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
 
 void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	int xSrc, int ySrc, DWORD dwRop) {
-	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
+	Graphics::ManagedSurface *src = pSrcDC->impl()->getSurface();
 	Graphics::ManagedSurface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
 	const Common::Point destPos(x, y);
@@ -569,7 +576,7 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 
 void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
-	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
+	Graphics::ManagedSurface *src = pSrcDC->impl()->getSurface();
 	Graphics::ManagedSurface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);
 	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
