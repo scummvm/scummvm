@@ -48,7 +48,7 @@ void LogicManager::CONS_Tatiana(int chapter) {
 		CONS_Tatiana_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,24 +69,32 @@ void LogicManager::CONS_Tatiana_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 1) {
-			getCharacter(kCharacterTatiana).clothes++;
-			if (getCharacter(kCharacterTatiana).clothes > 3)
-				getCharacter(kCharacterTatiana).clothes = 0;
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterTatiana).characterPosition.position = 0;
-			getCharacter(kCharacterTatiana).characterPosition.location = 0;
-			getCharacter(kCharacterTatiana).characterPosition.car = kCarGreenSleeping;
-			getCharacter(kCharacterTatiana).inventoryItem = 0x80;
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterTatiana, kCarGreenSleeping, getCharacterCurrentParams(kCharacterTatiana)[0])) {
+			if (getCharacterCurrentParams(kCharacterTatiana)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterTatiana)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterTatiana, kCarGreenSleeping, getCharacterCurrentParams(kCharacterTatiana)[0])) {
-		if (getCharacterCurrentParams(kCharacterTatiana)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 10000;
-		}
+
+		break;
+	case 1:
+		getCharacter(kCharacterTatiana).clothes++;
+		if (getCharacter(kCharacterTatiana).clothes > 3)
+			getCharacter(kCharacterTatiana).clothes = 0;
+
+		break;
+	case 12:
+		getCharacter(kCharacterTatiana).characterPosition.position = 0;
+		getCharacter(kCharacterTatiana).characterPosition.location = 0;
+		getCharacter(kCharacterTatiana).characterPosition.car = kCarGreenSleeping;
+		getCharacter(kCharacterTatiana).inventoryItem = 0x80;
+		getCharacterCurrentParams(kCharacterTatiana)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -103,12 +111,17 @@ void LogicManager::CONS_Tatiana_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -125,12 +138,17 @@ void LogicManager::CONS_Tatiana_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -150,15 +168,20 @@ void LogicManager::CONS_Tatiana_DoBlockSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoBlockSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseView(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[3], getCharacterCurrentParams(kCharacterTatiana)[4]);
 
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[0]);
 		blockView(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[3], getCharacterCurrentParams(kCharacterTatiana)[4]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -177,15 +200,20 @@ void LogicManager::CONS_Tatiana_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[3]);
 
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[0]);
 		blockAtDoor(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -204,22 +232,29 @@ void LogicManager::CONS_Tatiana_DoEnterCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoEnterCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[3]);
 		getCharacter(kCharacterTatiana).characterPosition.position = 7500;
 
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[0]);
 		blockAtDoor(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[3]);
 		getCharacter(kCharacterTatiana).characterPosition.location = 1;
+
 		if (inComp(kCharacterCath, kCarRedSleeping, 7500) || inComp(kCharacterCath, kCarRedSleeping, 7850)) {
 			playNIS((kEventCathTurningNight - !isNight()));
 			playDialog(0, "BUMP", -1, 0);
 			bumpCathRDoor(33);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -255,9 +290,12 @@ void LogicManager::HAND_Tatiana_DoJoinedSeqOtis(HAND_PARAMS) {
 			fedEx(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[3], getCharacterCurrentParams(kCharacterTatiana)[4], (char *)&getCharacterCurrentParams(kCharacterTatiana)[5]);
 			getCharacterCurrentParams(kCharacterTatiana)[8] = 1;
 		}
+
 		break;
 	case 12:
 		startSeqOtis(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[0]);
+		break;
+	default:
 		break;
 	}
 }
@@ -273,16 +311,22 @@ void LogicManager::CONS_Tatiana_FinishSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_FinishSeqOtis(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (getCharacter(kCharacterTatiana).direction == 4)
-			return;
-		goto LABEL_5;
-	}
-	if (msg->action == 3) {
-	LABEL_5:
+	switch (msg->action) {
+	case 0:
+		if (getCharacter(kCharacterTatiana).direction != 4) {
+			getCharacter(kCharacterTatiana).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
+			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		}
+
+		break;
+	case 3:
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -299,17 +343,22 @@ void LogicManager::CONS_Tatiana_DoWaitRealTime(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoWaitRealTime(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterTatiana)[1] || (getCharacterCurrentParams(kCharacterTatiana)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterTatiana)[0],
 																_currentGameSessionTicks + getCharacterCurrentParams(kCharacterTatiana)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[1] >= _currentGameSessionTicks)
-				return;
+				break;
+
 			getCharacterCurrentParams(kCharacterTatiana)[1] = 0x7FFFFFFF;
 		}
 
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -326,11 +375,12 @@ void LogicManager::CONS_Tatiana_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterTatiana)[1] || (getCharacterCurrentParams(kCharacterTatiana)[1] = _gameTime + getCharacterCurrentParams(kCharacterTatiana)[0],
 																_gameTime + getCharacterCurrentParams(kCharacterTatiana)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[1] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterTatiana)[1] = 0x7FFFFFFF;
 		}
@@ -338,6 +388,9 @@ void LogicManager::HAND_Tatiana_DoWait(HAND_PARAMS) {
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -352,16 +405,18 @@ void LogicManager::CONS_Tatiana_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_WaitRCClear(HAND_PARAMS) {
-	if (msg->action == 0) {
-		if (!rcClear())
-			return;
-		goto LABEL_7;
-	}
-	if (msg->action == 12 && rcClear()) {
-	LABEL_7:
-		getCharacter(kCharacterTatiana).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
-		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterTatiana).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
+			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -379,22 +434,25 @@ void LogicManager::CONS_Tatiana_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterTatiana,
-				getCharacterCurrentParams(kCharacterTatiana)[0],
-				getCharacterCurrentParams(kCharacterTatiana)[1]
-			);
-
-			getCharacter(kCharacterTatiana).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
-			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterTatiana,
+			getCharacterCurrentParams(kCharacterTatiana)[0],
+			getCharacterCurrentParams(kCharacterTatiana)[1]
+		);
+
+		getCharacter(kCharacterTatiana).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
+		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -414,8 +472,13 @@ void LogicManager::CONS_Tatiana_DoWalk(CONS_PARAMS) {
 void LogicManager::HAND_Tatiana_DoWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[0], getCharacterCurrentParams(kCharacterTatiana)[1]))
-			goto LABEL_14;
+	case 12:
+		if (walk(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[0], getCharacterCurrentParams(kCharacterTatiana)[1])) {
+			getCharacter(kCharacterTatiana).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
+			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		}
+
 		break;
 	case 5:
 		if (_gameEvents[kEventTatianaAskMatchSpeakRussian] || _gameEvents[kEventTatianaAskMatch] || _gameEvents[kEventVassiliSeizure]) {
@@ -432,16 +495,8 @@ void LogicManager::HAND_Tatiana_DoWalk(HAND_PARAMS) {
 	case 6:
 		playChrExcuseMe(kCharacterTatiana, kCharacterCath, 0);
 		break;
-	case 12:
-		if (walk(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[0], getCharacterCurrentParams(kCharacterTatiana)[1])) {
-		LABEL_14:
-			getCharacter(kCharacterTatiana).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
-			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-		}
-		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -479,6 +534,7 @@ void LogicManager::HAND_Tatiana_EnterComp(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
 		}
+
 		break;
 	case 69239528:
 		if (_gameProgress[kProgressChapter] == 1) {
@@ -488,6 +544,9 @@ void LogicManager::HAND_Tatiana_EnterComp(HAND_PARAMS) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "673Db", 33, 0, 0);
 		}
+
+		break;
+	default:
 		break;
 	}
 }
@@ -512,6 +571,7 @@ void LogicManager::HAND_Tatiana_ExitComp(HAND_PARAMS) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Bb", 33, 0, 0);
 		}
+
 		break;
 	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] &&
@@ -527,6 +587,7 @@ void LogicManager::HAND_Tatiana_ExitComp(HAND_PARAMS) {
 			
 			softBlockAtDoor(kCharacterTatiana, 33);
 		}
+
 		break;
 	case 69239528:
 		softReleaseAtDoor(kCharacterTatiana, 33);
@@ -535,6 +596,8 @@ void LogicManager::HAND_Tatiana_ExitComp(HAND_PARAMS) {
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -562,12 +625,13 @@ void LogicManager::HAND_Tatiana_CompLogic(HAND_PARAMS) {
 			getCharacter(kCharacterTatiana).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-			return;
+			break;
 		}
+
 		if (getCharacterCurrentParams(kCharacterTatiana)[1]) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[4] || (getCharacterCurrentParams(kCharacterTatiana)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
 				if (getCharacterCurrentParams(kCharacterTatiana)[4] >= _currentGameSessionTicks)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterTatiana)[4] = 0x7FFFFFFF;
 			}
@@ -580,12 +644,14 @@ void LogicManager::HAND_Tatiana_CompLogic(HAND_PARAMS) {
 		} else {
 			getCharacterCurrentParams(kCharacterTatiana)[4] = 0;
 		}
+
 		break;
 	case 8:
 	case 9:
 		if (getCharacterCurrentParams(kCharacterTatiana)[1]) {
 			setDoor(33, kCharacterTatiana, 1, 0, 0);
 			setDoor(49, kCharacterTatiana, 1, 0, 0);
+
 			if (msg->param.intParam == 49) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
 				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, getCathWCDialog(), 0, 0, 0);
@@ -612,6 +678,7 @@ void LogicManager::HAND_Tatiana_CompLogic(HAND_PARAMS) {
 				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "LIB013", 0, 0, 0);
 			}
 		}
+
 		break;
 	case 12:
 		setDoor(33, kCharacterTatiana, 1, 10, 9);
@@ -624,6 +691,7 @@ void LogicManager::HAND_Tatiana_CompLogic(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterTatiana)[2] = 0;
 			getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
 		}
+
 		break;
 	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
@@ -649,11 +717,12 @@ void LogicManager::HAND_Tatiana_CompLogic(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterTatiana)[2] = 1;
 			break;
 		default:
-			return;
+			break;
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -668,19 +737,25 @@ void LogicManager::CONS_Tatiana_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			autoMessage(kCharacterTatiana, 191198209, 0);
-			getCharacter(kCharacterTatiana).characterPosition.position = 5419;
-			getCharacter(kCharacterTatiana).characterPosition.location = 1;
-			getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
-			setDoor(33, kCharacterCath, 1, 10, 9);
-			setDoor(49, kCharacterCath, 1, 10, 9);
-			setDoor(41, kCharacterCath, 0, 255, 255);
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterTatiana)[0]) {
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+			CONS_Tatiana_AtDinner(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterTatiana)[0]) {
-		getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
-		CONS_Tatiana_AtDinner(0, 0, 0, 0);
+
+		break;
+	case 12:
+		autoMessage(kCharacterTatiana, 191198209, 0);
+		getCharacter(kCharacterTatiana).characterPosition.position = 5419;
+		getCharacter(kCharacterTatiana).characterPosition.location = 1;
+		getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
+		setDoor(33, kCharacterCath, 1, 10, 9);
+		setDoor(49, kCharacterCath, 1, 10, 9);
+		setDoor(41, kCharacterCath, 0, 255, 255);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -697,27 +772,33 @@ void LogicManager::CONS_Tatiana_DoSpecialSalonWalk(CONS_PARAMS) {
 void LogicManager::HAND_Tatiana_DoSpecialSalonWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterTatiana)[0])
-			goto LABEL_13;
-		if (_gameTime > 1143000 && !getCharacterCurrentParams(kCharacterTatiana)[1]) {
-			getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
-			startSeqOtis(kCharacterTatiana, "806DS");
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+		if (!getCharacterCurrentParams(kCharacterTatiana)[0]) {
+			if (_gameTime > 1143000 && !getCharacterCurrentParams(kCharacterTatiana)[1]) {
+				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
+				startSeqOtis(kCharacterTatiana, "806DS");
+				getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+			}
+
+			if (!getCharacterCurrentParams(kCharacterTatiana)[0]) {
+				bool skip = false;
+
+				if (!getCharacterCurrentParams(kCharacterTatiana)[2]) {
+					getCharacterCurrentParams(kCharacterTatiana)[2] = _gameTime + 4500;
+					if (_gameTime == -4500) {
+						skip = true;
+						startSeqOtis(kCharacterTatiana, "806DS");
+						getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+					}
+				}
+
+				if (!skip && getCharacterCurrentParams(kCharacterTatiana)[2] < _gameTime) {
+					getCharacterCurrentParams(kCharacterTatiana)[2] = 0x7FFFFFFF;
+					startSeqOtis(kCharacterTatiana, "806DS");
+					getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+				}
+			}
 		}
-		if (getCharacterCurrentParams(kCharacterTatiana)[0])
-			goto LABEL_13;
-		if (!getCharacterCurrentParams(kCharacterTatiana)[2]) {
-			getCharacterCurrentParams(kCharacterTatiana)[2] = _gameTime + 4500;
-			if (_gameTime == -4500)
-				goto LABEL_12;
-		}
-		if (getCharacterCurrentParams(kCharacterTatiana)[2] < _gameTime) {
-			getCharacterCurrentParams(kCharacterTatiana)[2] = 0x7FFFFFFF;
-		LABEL_12:
-			startSeqOtis(kCharacterTatiana, "806DS");
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
-		}
-	LABEL_13:
+
 		if (getCharacter(kCharacterTatiana).characterPosition.position <= 2330) {
 			send(kCharacterTatiana, kCharacterAlexei, 157159392, 0);
 			endGraphics(kCharacterTatiana);
@@ -726,6 +807,7 @@ void LogicManager::HAND_Tatiana_DoSpecialSalonWalk(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
 		}
+
 		break;
 	case 3:
 		send(kCharacterTatiana, kCharacterAlexei, 188784532, 0);
@@ -733,7 +815,7 @@ void LogicManager::HAND_Tatiana_DoSpecialSalonWalk(HAND_PARAMS) {
 		getCharacter(kCharacterTatiana).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 		fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-		return;
+		break;
 	case 12:
 		if (inSalon(kCharacterCath)) {
 			startSeqOtis(kCharacterTatiana, "806DS");
@@ -741,16 +823,18 @@ void LogicManager::HAND_Tatiana_DoSpecialSalonWalk(HAND_PARAMS) {
 		} else {
 			endGraphics(kCharacterTatiana);
 		}
-		return;
+
+		break;
 	case 17:
 		if (!getCharacterCurrentParams(kCharacterTatiana)[0] && inSalon(kCharacterCath)) {
 			startSeqOtis(kCharacterTatiana, "806DS");
 			advanceFrame(kCharacterTatiana);
 			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -765,68 +849,61 @@ void LogicManager::CONS_Tatiana_AtDinner(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_AtDinner(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action > 122288808) {
-			if (msg->action == 122358304) {
-				startCycOtis(kCharacterTatiana, "BLANK");
-			} else if (msg->action == 124973510) {
-				CONS_Tatiana_ExitDining(0, 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+	{
+		if (!whoRunningDialog(kCharacterTatiana) && getCharacterCurrentParams(kCharacterTatiana)[3] && getCharacterCurrentParams(kCharacterTatiana)[2] < 2 && !dialogRunning("TAT1066")) {
+			bool skip1 = false;
+
+			if (getCharacterCurrentParams(kCharacterTatiana)[4] || (getCharacterCurrentParams(kCharacterTatiana)[4] = _currentGameSessionTicks + 450, _currentGameSessionTicks != -450)) {
+				if (getCharacterCurrentParams(kCharacterTatiana)[4] >= _currentGameSessionTicks) {
+					skip1 = true;
+				}
+
+				if (!skip1) {
+					getCharacterCurrentParams(kCharacterTatiana)[4] = 0x7FFFFFFF;
+				}
 			}
-		} else if (msg->action == 122288808) {
-			startCycOtis(kCharacterTatiana, "014A");
-		} else if (msg->action == 17) {
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
-			if (!checkCathDir(kCarRestaurant, 67))
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
-			getCharacterCurrentParams(kCharacterTatiana)[3] = checkCathDir(kCarRestaurant, 69) || checkCathDir(kCarRestaurant, 70) || checkCathDir(kCarRestaurant, 71);
-		}
-		return;
-	}
-	if (msg->action == 12) {
-		send(kCharacterTatiana, kCharacterTableE, 136455232, 0);
-		startCycOtis(kCharacterTatiana, "014A");
-		return;
-	}
-	if (msg->action == 0) {
-		if (whoRunningDialog(kCharacterTatiana) || !getCharacterCurrentParams(kCharacterTatiana)[3] || getCharacterCurrentParams(kCharacterTatiana)[2] >= 2 || dialogRunning("TAT1066")) {
-			goto tatiana_chapter1_handler_goto;
+
+			if (!skip1) {
+				if (!getCharacterCurrentParams(kCharacterTatiana)[2]) {
+					playDialog(kCharacterTatiana, "TAT1069A", -1, 0);
+				} else {
+					playDialog(kCharacterTatiana, "TAT1069B", -1, 0);
+				}
+
+				_gameProgress[kProgressField64] = 1;
+				getCharacterCurrentParams(kCharacterTatiana)[2]++;
+				getCharacterCurrentParams(kCharacterTatiana)[4] = 0;
+			}
+
+			bool skip2 = false;
+
+			if (checkCathDir(kCarRestaurant, 71)) {
+				if (getCharacterCurrentParams(kCharacterTatiana)[5] || (getCharacterCurrentParams(kCharacterTatiana)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+					if (getCharacterCurrentParams(kCharacterTatiana)[5] >= _currentGameSessionTicks) {
+						skip2 = true;
+					}
+
+					if (!skip2) {
+						getCharacterCurrentParams(kCharacterTatiana)[5] = 0x7FFFFFFF;
+					}
+				}
+
+				if (!skip2) {
+					if (!getCharacterCurrentParams(kCharacterTatiana)[2]) {
+						playDialog(kCharacterTatiana, "TAT1069A", -1, 0);
+					} else {
+						playDialog(kCharacterTatiana, "TAT1069B", -1, 0);
+					}
+
+					_gameProgress[kProgressField64] = 1;
+					getCharacterCurrentParams(kCharacterTatiana)[2]++;
+					getCharacterCurrentParams(kCharacterTatiana)[5] = 0;
+				}
+			}
 		}
 
-		if (getCharacterCurrentParams(kCharacterTatiana)[4] || (getCharacterCurrentParams(kCharacterTatiana)[4] = _currentGameSessionTicks + 450, _currentGameSessionTicks != -450)) {
-			if (getCharacterCurrentParams(kCharacterTatiana)[4] >= _currentGameSessionTicks)
-				goto LABEL_23;
-			getCharacterCurrentParams(kCharacterTatiana)[4] = 0x7FFFFFFF;
-		}
-		
-		if (!getCharacterCurrentParams(kCharacterTatiana)[2]) {
-			playDialog(kCharacterTatiana, "TAT1069A", -1, 0);
-		} else {
-			playDialog(kCharacterTatiana, "TAT1069B", -1, 0);
-		}
-		
-		_gameProgress[kProgressField64] = 1;
-		getCharacterCurrentParams(kCharacterTatiana)[2]++;
-		getCharacterCurrentParams(kCharacterTatiana)[4] = 0;
-	LABEL_23:
-		if (checkCathDir(kCarRestaurant, 71)) {
-			if (getCharacterCurrentParams(kCharacterTatiana)[5] || (getCharacterCurrentParams(kCharacterTatiana)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterTatiana)[5] >= _currentGameSessionTicks)
-					goto tatiana_chapter1_handler_goto;
-				getCharacterCurrentParams(kCharacterTatiana)[5] = 0x7FFFFFFF;
-			}
-			
-			if (!getCharacterCurrentParams(kCharacterTatiana)[2]) {
-				playDialog(kCharacterTatiana, "TAT1069A", -1, 0);
-			} else {
-				playDialog(kCharacterTatiana, "TAT1069B", -1, 0);
-			}
-			
-			_gameProgress[kProgressField64] = 1;
-			getCharacterCurrentParams(kCharacterTatiana)[2]++;
-			getCharacterCurrentParams(kCharacterTatiana)[5] = 0;
-		}
-
-	tatiana_chapter1_handler_goto:
 		if (_gameTime > 1084500 && !getCharacterCurrentParams(kCharacterTatiana)[6]) {
 			getCharacterCurrentParams(kCharacterTatiana)[6] = 1;
 			send(kCharacterTatiana, kCharacterHeadWait, 257489762, 0);
@@ -835,7 +912,7 @@ void LogicManager::HAND_Tatiana_AtDinner(HAND_PARAMS) {
 		if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[7] || (getCharacterCurrentParams(kCharacterTatiana)[7] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
 				if (getCharacterCurrentParams(kCharacterTatiana)[7] >= _currentGameSessionTicks)
-					return;
+					break;
 
 				getCharacterCurrentParams(kCharacterTatiana)[7] = 0x7FFFFFFF;
 			}
@@ -844,6 +921,32 @@ void LogicManager::HAND_Tatiana_AtDinner(HAND_PARAMS) {
 		} else {
 			getCharacterCurrentParams(kCharacterTatiana)[7] = 0;
 		}
+
+		break;
+	}
+	case 12:
+		send(kCharacterTatiana, kCharacterTableE, 136455232, 0);
+		startCycOtis(kCharacterTatiana, "014A");
+		break;
+	case 17:
+		getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+
+		if (!checkCathDir(kCarRestaurant, 67))
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
+
+		getCharacterCurrentParams(kCharacterTatiana)[3] = (checkCathDir(kCarRestaurant, 69) || checkCathDir(kCarRestaurant, 70) || checkCathDir(kCarRestaurant, 71)) ? 1 : 0;
+		break;
+	case 122358304:
+		startCycOtis(kCharacterTatiana, "BLANK");
+		break;
+	case 124973510:
+		CONS_Tatiana_ExitDining(0, 0, 0, 0);
+		break;
+	case 122288808:
+		startCycOtis(kCharacterTatiana, "014A");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -858,10 +961,12 @@ void LogicManager::CONS_Tatiana_ExitDining(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_ExitDining(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_WaitRCClear, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterTatiana).characterPosition.location = 0;
@@ -881,7 +986,13 @@ void LogicManager::HAND_Tatiana_ExitDining(HAND_PARAMS) {
 			send(kCharacterTatiana, kCharacterAugust, 268620864, 0);
 			CONS_Tatiana_ReturnToComp(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -896,11 +1007,13 @@ void LogicManager::CONS_Tatiana_ReturnToComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_ReturnToComp(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).clothes = 1;
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 8513, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterTatiana).clothes = 0;
@@ -908,11 +1021,13 @@ void LogicManager::HAND_Tatiana_ReturnToComp(HAND_PARAMS) {
 			startSeqOtis(kCharacterTatiana, "604Aa");
 			blockAtDoor(kCharacterTatiana, 32);
 			getCharacter(kCharacterTatiana).characterPosition.location = 1;
+
 			if (inSuite(kCharacterCath, kCarRedSleeping, 7850)) {
 				playNIS((kEventCathTurningNight - !isNight()));
 				playDialog(0, "BUMP", -1, 0);
 				bumpCathFDoor(32);
 			}
+
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -923,9 +1038,9 @@ void LogicManager::HAND_Tatiana_ReturnToComp(HAND_PARAMS) {
 			send(kCharacterTatiana, kCharacterAlexei, 135854208, 0);
 			setDoor(32, kCharacterCath, 1, 0, 0);
 			setDoor(33, kCharacterCath, 1, 0, 0);
-			goto LABEL_10;
+
+			// fall through
 		case 3:
-		LABEL_10:
 			if (whoRunningDialog(kCharacterTatiana)) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 				TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 75, 0, 0, 0);
@@ -933,6 +1048,7 @@ void LogicManager::HAND_Tatiana_ReturnToComp(HAND_PARAMS) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
 				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "TAT1071A", 0, 0, 0);
 			}
+
 			break;
 		case 4:
 			getCharacter(kCharacterTatiana).characterPosition.position = 7500;
@@ -949,10 +1065,15 @@ void LogicManager::HAND_Tatiana_ReturnToComp(HAND_PARAMS) {
 				setDoor(49, kCharacterCath, 1, 10, 9);
 				CONS_Tatiana_GetSomeAir(0, 0, 0, 0);
 			}
+
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -969,52 +1090,90 @@ void LogicManager::CONS_Tatiana_GetSomeAir(CONS_PARAMS) {
 void LogicManager::HAND_Tatiana_GetSomeAir(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterTatiana)[0] == 0x7FFFFFFF || _gameTime <= 1179000)
-			goto LABEL_17;
-		if (_gameTime > 1233000)
-			goto LABEL_12;
-		if (!_gameEvents[kEventTatianaAskMatchSpeakRussian] && !_gameEvents[kEventTatianaAskMatch] || onLowPlatform(kCharacterCath) || !getCharacterCurrentParams(kCharacterTatiana)[0]) {
-			getCharacterCurrentParams(kCharacterTatiana)[0] = _gameTime;
-			if (!_gameTime)
-				goto LABEL_13;
-		}
-		if (getCharacterCurrentParams(kCharacterTatiana)[0] >= _gameTime) {
-		LABEL_17:
+		if (getCharacterCurrentParams(kCharacterTatiana)[0] == 0x7FFFFFFF || _gameTime <= 1179000) {
 			if (!_gameEvents[kEventTatianaAskMatchSpeakRussian] && !_gameEvents[kEventTatianaAskMatch] && cathHasItem(kItemMatchBox) && onLowPlatform(kCharacterCath)) {
 				setDoor(25, kCharacterTatiana, 1, 0, 1);
 				setDoor(23, kCharacterTatiana, 1, 0, 1);
 			}
-		} else {
-		LABEL_12:
+
+			break;
+		}
+
+		if (_gameTime > 1233000) {
 			getCharacterCurrentParams(kCharacterTatiana)[0] = 0x7FFFFFFF;
-		LABEL_13:
 			setDoor(25, kCharacterCath, 0, 255, 255);
 			setDoor(23, kCharacterCath, 0, 255, 255);
 			releaseView(kCharacterTatiana, kCarGreenSleeping, 70);
 			releaseView(kCharacterTatiana, kCarGreenSleeping, 71);
+
 			if (onLowPlatform(kCharacterCath)) {
 				playChrExcuseMe(kCharacterTatiana, kCharacterCath, 0);
 				if (checkCathDir(kCarGreenSleeping, 62))
 					bumpCath(kCarGreenSleeping, 72, 255);
 			}
+
+			getCharacter(kCharacterTatiana).inventoryItem = 0;
+			CONS_Tatiana_ReturnToCompAgain(0, 0, 0, 0);
+			break;
+		}
+
+		if (!_gameEvents[kEventTatianaAskMatchSpeakRussian] && !_gameEvents[kEventTatianaAskMatch] || onLowPlatform(kCharacterCath) || !getCharacterCurrentParams(kCharacterTatiana)[0]) {
+			getCharacterCurrentParams(kCharacterTatiana)[0] = _gameTime;
+			if (!_gameTime) {
+				setDoor(25, kCharacterCath, 0, 255, 255);
+				setDoor(23, kCharacterCath, 0, 255, 255);
+				releaseView(kCharacterTatiana, kCarGreenSleeping, 70);
+				releaseView(kCharacterTatiana, kCarGreenSleeping, 71);
+
+				if (onLowPlatform(kCharacterCath)) {
+					playChrExcuseMe(kCharacterTatiana, kCharacterCath, 0);
+					if (checkCathDir(kCarGreenSleeping, 62))
+						bumpCath(kCarGreenSleeping, 72, 255);
+				}
+
+				getCharacter(kCharacterTatiana).inventoryItem = 0;
+				CONS_Tatiana_ReturnToCompAgain(0, 0, 0, 0);
+				break;
+			}
+		}
+
+		if (getCharacterCurrentParams(kCharacterTatiana)[0] >= _gameTime) {
+			if (!_gameEvents[kEventTatianaAskMatchSpeakRussian] && !_gameEvents[kEventTatianaAskMatch] && cathHasItem(kItemMatchBox) && onLowPlatform(kCharacterCath)) {
+				setDoor(25, kCharacterTatiana, 1, 0, 1);
+				setDoor(23, kCharacterTatiana, 1, 0, 1);
+			}
+		} else {
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 0x7FFFFFFF;
+			setDoor(25, kCharacterCath, 0, 255, 255);
+			setDoor(23, kCharacterCath, 0, 255, 255);
+			releaseView(kCharacterTatiana, kCarGreenSleeping, 70);
+			releaseView(kCharacterTatiana, kCarGreenSleeping, 71);
+
+			if (onLowPlatform(kCharacterCath)) {
+				playChrExcuseMe(kCharacterTatiana, kCharacterCath, 0);
+				if (checkCathDir(kCarGreenSleeping, 62))
+					bumpCath(kCarGreenSleeping, 72, 255);
+			}
+
 			getCharacter(kCharacterTatiana).inventoryItem = 0;
 			CONS_Tatiana_ReturnToCompAgain(0, 0, 0, 0);
 		}
+
 		break;
 	case 1:
 		getCharacter(kCharacterTatiana).inventoryItem = 0;
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
 		TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaGivePoem, 0, 0);
-		return;
+		break;
 	case 9:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 		TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaAskMatchSpeakRussian, 0, 0);
-		return;
+		break;
 	case 12:
 		send(kCharacterTatiana, kCharacterVassili, 122732000, 0);
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_ExitComp, 0, 0, 0, 0);
-		return;
+		break;
 	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
@@ -1045,11 +1204,12 @@ void LogicManager::HAND_Tatiana_GetSomeAir(HAND_PARAMS) {
 			cleanNIS();
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1064,16 +1224,22 @@ void LogicManager::CONS_Tatiana_ReturnToCompAgain(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_ReturnToCompAgain(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_EnterComp, 0, 0, 0, 0);
 		} else if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 2) {
 			CONS_Tatiana_Asleep(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1088,7 +1254,8 @@ void LogicManager::CONS_Tatiana_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterTatiana).characterPosition.position = 7500;
 		getCharacter(kCharacterTatiana).characterPosition.location = 1;
@@ -1100,6 +1267,9 @@ void LogicManager::HAND_Tatiana_Asleep(HAND_PARAMS) {
 		setDoor(33, kCharacterCath, 1, 10, 9);
 		setDoor(49, kCharacterCath, 1, 10, 9);
 		setDoor(41, kCharacterCath, 0, 255, 255);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1114,19 +1284,22 @@ void LogicManager::CONS_Tatiana_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterTatiana);
-			getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterTatiana).characterPosition.position = 5420;
-			getCharacter(kCharacterTatiana).characterPosition.location = 1;
-			getCharacter(kCharacterTatiana).clothes = 2;
-			setDoor(33, kCharacterCath, 1, 10, 9);
-			setDoor(49, kCharacterCath, 1, 10, 9);
-			setDoor(41, kCharacterCath, 0, 255, 255);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Tatiana_EatingBreakfast(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterTatiana);
+		getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterTatiana).characterPosition.position = 5420;
+		getCharacter(kCharacterTatiana).characterPosition.location = 1;
+		getCharacter(kCharacterTatiana).clothes = 2;
+		setDoor(33, kCharacterCath, 1, 10, 9);
+		setDoor(49, kCharacterCath, 1, 10, 9);
+		setDoor(41, kCharacterCath, 0, 255, 255);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1141,27 +1314,35 @@ void LogicManager::CONS_Tatiana_EatingBreakfast(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_EatingBreakfast(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 17) {
-			if (checkCathDir(kCarRestaurant, 64) || checkCathDir(kCarRestaurant, 65)) {
-				getCharacter(kCharacterTatiana).inventoryItem = 0;
-				CONS_Tatiana_BreakfastClick(0, 0, 0, 0);
-			}
-		} else if (msg->action == 290869168) {
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1800000 && getCharacterCurrentParams(kCharacterTatiana)[0] && rcClear()) {
+			getCharacter(kCharacterTatiana).inventoryItem = 0;
+			CONS_Tatiana_JoinAlexei(0, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 1:
+		getCharacter(kCharacterTatiana).inventoryItem = 0;
+		CONS_Tatiana_BreakfastClick(0, 0, 0, 0);
+		break;
+	case 12:
 		startCycOtis(kCharacterTatiana, "024A");
 		send(kCharacterTatiana, kCharacterTableF, 136455232, 0);
 		getCharacter(kCharacterTatiana).inventoryItem = 0x80;
-	} else if (msg->action) {
-		if (msg->action == 1) {
+		break;
+	case 17:
+		if (checkCathDir(kCarRestaurant, 64) || checkCathDir(kCarRestaurant, 65)) {
 			getCharacter(kCharacterTatiana).inventoryItem = 0;
 			CONS_Tatiana_BreakfastClick(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1800000 && getCharacterCurrentParams(kCharacterTatiana)[0] && rcClear()) {
-		getCharacter(kCharacterTatiana).inventoryItem = 0;
-		CONS_Tatiana_JoinAlexei(0, 0, 0, 0);
+
+		break;
+	case 290869168:
+		getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1176,7 +1357,8 @@ void LogicManager::CONS_Tatiana_BreakfastClick(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_BreakfastClick(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		if (_gameEvents[kEventTatianaGivePoem]) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 			TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaBreakfastAlexei, 0, 0);
@@ -1184,7 +1366,9 @@ void LogicManager::HAND_Tatiana_BreakfastClick(HAND_PARAMS) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaBreakfast, 0, 0);
 		}
-	} else if (msg->action == 18) {
+
+		break;
+	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
 			forceJump(kCharacterAlexei, &LogicManager::CONS_Alexei_AtBreakfast);
 			playNIS(kEventTatianaBreakfastAlexei);
@@ -1194,14 +1378,20 @@ void LogicManager::HAND_Tatiana_BreakfastClick(HAND_PARAMS) {
 		} else if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 2) {
 			forceJump(kCharacterAlexei, &LogicManager::CONS_Alexei_AtBreakfast);
 			playNIS(kEventTatianaBreakfast);
+
 			if (cathHasItem(kItemParchemin)) {
 				playNIS(kEventTatianaBreakfastGivePoem);
 				takeCathItem(kItemParchemin);
 			} else {
 				playNIS(kEventTatianaAlexei);
 			}
+
 			CONS_Tatiana_JoinAlexei(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1216,27 +1406,34 @@ void LogicManager::CONS_Tatiana_JoinAlexei(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_JoinAlexei(HAND_PARAMS) {
-	if (msg->action > 18) {
-		if (msg->action == 123857088) {
-			startCycOtis(kCharacterTatiana, "018G");
-			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
-			TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 1800, 0, 0, 0);
-		} else if (msg->action == 156444784) {
-			getCharacter(kCharacterTatiana).characterPosition.location = 1;
-			startCycOtis(kCharacterTatiana, "BLANK");
-		}
-	} else if (msg->action == 18) {
+	switch (msg->action) {
+	case 8:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1)
 			CONS_Tatiana_LeaveBreakfast(0, 0, 0, 0);
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterTatiana).inventoryItem = 0;
 		getCharacter(kCharacterTatiana).characterPosition.location = 0;
 		send(kCharacterTatiana, kCharacterTableF, 103798704, "024D");
-		if (_gameEvents[kEventTatianaBreakfastAlexei] || (_gameEvents[kEventTatianaBreakfast], _gameEvents[kEventTatianaBreakfast])) {
+		if (_gameEvents[kEventTatianaBreakfastAlexei] || _gameEvents[kEventTatianaBreakfast]) {
 			send(kCharacterTatiana, kCharacterAlexei, 236053296, 69);
 		} else {
 			send(kCharacterTatiana, kCharacterAlexei, 236053296, 0);
 		}
+
+		break;
+	case 123857088:
+		startCycOtis(kCharacterTatiana, "018G");
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
+		TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 1800, 0, 0, 0);
+		break;
+	case 156444784:
+		getCharacter(kCharacterTatiana).characterPosition.location = 1;
+		startCycOtis(kCharacterTatiana, "BLANK");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1251,10 +1448,12 @@ void LogicManager::CONS_Tatiana_LeaveBreakfast(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_LeaveBreakfast(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_WaitRCClear, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterTatiana).characterPosition.location = 0;
@@ -1266,15 +1465,23 @@ void LogicManager::HAND_Tatiana_LeaveBreakfast(HAND_PARAMS) {
 			releaseView(kCharacterTatiana, kCarRestaurant, 63);
 			send(kCharacterTatiana, kCharacterWaiter2, 302203328, 0);
 			startSeqOtis(kCharacterTatiana, "805DS");
+
 			if (inDiningRoom(kCharacterCath))
 				advanceFrame(kCharacterTatiana);
+
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 			TatianaCall(&LogicManager::CONS_Tatiana_FinishSeqOtis, 0, 0, 0, 0);
 			break;
 		case 3:
 			CONS_Tatiana_ReturnComp(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1289,10 +1496,12 @@ void LogicManager::CONS_Tatiana_ReturnComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_ReturnComp(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_EnterComp, 0, 0, 0, 0);
@@ -1300,6 +1509,10 @@ void LogicManager::HAND_Tatiana_ReturnComp(HAND_PARAMS) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 			TatianaCall(&LogicManager::CONS_Tatiana_CompLogic, 15803100, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1314,23 +1527,28 @@ void LogicManager::CONS_Tatiana_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterTatiana);
-			getCharacter(kCharacterTatiana).characterPosition.position = 1750;
-			getCharacter(kCharacterTatiana).characterPosition.location = 1;
-			getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterTatiana).inventoryItem = 0;
-			getCharacter(kCharacterTatiana).clothes = 2;
-			setDoor(33, kCharacterCath, 1, 10, 9);
-			setDoor(49, kCharacterCath, 1, 10, 9);
-			_gameInventory[kItemFirebird].location = 2;
-			if (_gameEvents[kEventTatianaBreakfastGivePoem] || _gameEvents[kEventTatianaGivePoem] && !_gameEvents[kEventTatianaBreakfastAlexei]) {
-				_gameInventory[kItemParchemin].location = 2;
-			}
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Tatiana_PlayChess(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterTatiana);
+		getCharacter(kCharacterTatiana).characterPosition.position = 1750;
+		getCharacter(kCharacterTatiana).characterPosition.location = 1;
+		getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterTatiana).inventoryItem = 0;
+		getCharacter(kCharacterTatiana).clothes = 2;
+		setDoor(33, kCharacterCath, 1, 10, 9);
+		setDoor(49, kCharacterCath, 1, 10, 9);
+		_gameInventory[kItemFirebird].location = 2;
+
+		if (_gameEvents[kEventTatianaBreakfastGivePoem] || _gameEvents[kEventTatianaGivePoem] && !_gameEvents[kEventTatianaBreakfastAlexei]) {
+			_gameInventory[kItemParchemin].location = 2;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1345,76 +1563,21 @@ void LogicManager::CONS_Tatiana_PlayChess(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_PlayChess(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
-				send(kCharacterTatiana, kCharacterAlexei, 122288808, 0);
-				CONS_Tatiana_ReturnComp3(0, 0, 0, 0);
-			}
-		} else if (msg->action == 101169422) {
-			getCharacterCurrentParams(kCharacterTatiana)[3] = 1;
-		}
-	} else if (msg->action == 12) {
-		send(kCharacterTatiana, kCharacterAlexei, 122358304, 0);
-		send(kCharacterTatiana, kCharacterKronos, 157159392, 0);
-		startCycOtis(kCharacterTatiana, "110C");
-		playDialog(kCharacterTatiana, "Tat3160A", -1, 0);
-		getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
-	} else if (msg->action) {
-		if (msg->action == 2) {
-			getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
-			getCharacterCurrentParams(kCharacterTatiana)[2]++;
-			switch (getCharacterCurrentParams(kCharacterTatiana)[2]) {
-			case 1:
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 900;
-				startCycOtis(kCharacterTatiana, "110A");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160B");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110A");
-				return;
-			case 2:
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 9000;
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160C");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110C");
-				return;
-			case 3:
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 13500;
-				startCycOtis(kCharacterTatiana, "110B");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160D");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110D");
-				break;
-			case 4:
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 9000;
-				startCycOtis(kCharacterTatiana, "110B");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160E");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110D");
-				break;
-			case 5:
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 4500;
-				startCycOtis(kCharacterTatiana, "110B");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160G");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110D");
-				break;
-			case 6:
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 4500;
-				startCycOtis(kCharacterTatiana, "110B");
-				Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160F");
-				break;
-			default:
-				getCharacterCurrentParams(kCharacterTatiana)[4] = 1;
-				break;
-			}
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (!getCharacterCurrentParams(kCharacterTatiana)[1] && !getCharacterCurrentParams(kCharacterTatiana)[4]) {
 			getCharacterCurrentParams(kCharacterTatiana)[0] -= _gameTimeTicksDelta;
 			if (_gameTimeTicksDelta > getCharacterCurrentParams(kCharacterTatiana)[0]) {
 				startCycOtis(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[8]);
 				playDialog(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[5], -1, 0);
+
 				if (getCharacterCurrentParams(kCharacterTatiana)[2] == 4 && inSalon(kCharacterCath))
 					_gameProgress[kProgressField90] = 1;
+
 				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
 			}
 		}
+
 		if (getCharacterCurrentParams(kCharacterTatiana)[3] && getCharacterCurrentParams(kCharacterTatiana)[4]) {
 			if (!getCharacterCurrentParams(kCharacterTatiana)[11] && (getCharacterCurrentParams(kCharacterTatiana)[11] = _gameTime + 6300, _gameTime == -6300) || getCharacterCurrentParams(kCharacterTatiana)[11] < _gameTime) {
 				if (rcClear()) {
@@ -1424,6 +1587,72 @@ void LogicManager::HAND_Tatiana_PlayChess(HAND_PARAMS) {
 				}
 			}
 		}
+
+		break;
+	case 2:
+		getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
+		getCharacterCurrentParams(kCharacterTatiana)[2]++;
+
+		switch (getCharacterCurrentParams(kCharacterTatiana)[2]) {
+		case 1:
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 900;
+			startCycOtis(kCharacterTatiana, "110A");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160B");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110A");
+			break;
+		case 2:
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 9000;
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160C");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110C");
+			break;
+		case 3:
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 13500;
+			startCycOtis(kCharacterTatiana, "110B");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160D");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110D");
+			break;
+		case 4:
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 9000;
+			startCycOtis(kCharacterTatiana, "110B");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160E");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110D");
+			break;
+		case 5:
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 4500;
+			startCycOtis(kCharacterTatiana, "110B");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160G");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[8], 12, "110D");
+			break;
+		case 6:
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 4500;
+			startCycOtis(kCharacterTatiana, "110B");
+			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat3160F");
+			break;
+		default:
+			getCharacterCurrentParams(kCharacterTatiana)[4] = 1;
+			break;
+		}
+
+		break;
+	case 12:
+		send(kCharacterTatiana, kCharacterAlexei, 122358304, 0);
+		send(kCharacterTatiana, kCharacterKronos, 157159392, 0);
+		startCycOtis(kCharacterTatiana, "110C");
+		playDialog(kCharacterTatiana, "Tat3160A", -1, 0);
+		getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
+		break;
+	case 18:
+		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
+			send(kCharacterTatiana, kCharacterAlexei, 122288808, 0);
+			CONS_Tatiana_ReturnComp3(0, 0, 0, 0);
+		}
+
+		break;
+	case 101169422:
+		getCharacterCurrentParams(kCharacterTatiana)[3] = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1438,11 +1667,13 @@ void LogicManager::CONS_Tatiana_ReturnComp3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_ReturnComp3(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterTatiana);
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 75, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
@@ -1455,7 +1686,13 @@ void LogicManager::HAND_Tatiana_ReturnComp3(HAND_PARAMS) {
 		case 3:
 			CONS_Tatiana_BeforeConcert(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1470,15 +1707,19 @@ void LogicManager::CONS_Tatiana_BeforeConcert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_BeforeConcert(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_CompLogic, 2097000, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
 			_gameInventory[kItemFirebird].location = 1;
+
 			if (inSuite(kCharacterCath, kCarRedSleeping, 7850))
 				bumpCathRDoor(33);
+
 			setDoor(33, kCharacterCath, 1, 10, 9);
 			setDoor(49, kCharacterCath, 0, 10, 9);
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
@@ -1491,7 +1732,13 @@ void LogicManager::HAND_Tatiana_BeforeConcert(HAND_PARAMS) {
 		case 3:
 			CONS_Tatiana_Concert(0, 0, 0, 0);
 			break;
+		default:
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1506,41 +1753,49 @@ void LogicManager::CONS_Tatiana_Concert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Concert(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action != 18) {
-			if (msg->action != 191668032)
-				return;
-			goto LABEL_21;
+	switch (msg->action) {
+	case 0:
+		if (!getCharacterCurrentParams(kCharacterTatiana)[0] && cathHasItem(kItemFirebird) && inSuite(kCharacterCath, kCarRedSleeping, 7850) && (_gameTime < 2133000 || _gameProgress[16])) {
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
+			TatianaCall(&LogicManager::CONS_Tatiana_TrapCath, 0, 0, 0, 0);
+			break;
 		}
-		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] != 1)
-			return;
-		getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
-	LABEL_17:
+
 		if (_gameTime <= 2133000)
-			return;
+			break;
 
 		if (getCharacter(kCharacterAugust).characterPosition.car < kCarRedSleeping && (getCharacter(kCharacterAugust).characterPosition.car != kCarGreenSleeping || getCharacter(kCharacterAugust).characterPosition.position <= 5790))
-			return;
-	LABEL_21:
+			break;
+
 		CONS_Tatiana_LeaveConcert(0, 0, 0, 0);
-		return;
-	}
-	if (msg->action == 12) {
+		break;
+	case 12:
 		setDoor(33, kCharacterCath, 1, 10, 9);
 		setDoor(49, kCharacterCath, 0, 10, 9);
 		endGraphics(kCharacterTatiana);
 		getCharacter(kCharacterTatiana).characterPosition.car = kCarKronos;
 		getCharacter(kCharacterTatiana).characterPosition.position = 6000;
 		getCharacter(kCharacterTatiana).characterPosition.location = 1;
-		return;
-	}
-	if (msg->action == 0) {
-		if (!getCharacterCurrentParams(kCharacterTatiana)[0] && cathHasItem(kItemFirebird) && inSuite(kCharacterCath, kCarRedSleeping, 7850) && (_gameTime < 2133000 || _gameProgress[16])) {
-			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
-			TatianaCall(&LogicManager::CONS_Tatiana_TrapCath, 0, 0, 0, 0);
-			return;
-		}
-		goto LABEL_17;
+		break;
+	case 18:
+		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] != 1)
+			break;
+
+		getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+
+		if (_gameTime <= 2133000)
+			break;
+
+		if (getCharacter(kCharacterAugust).characterPosition.car < kCarRedSleeping && (getCharacter(kCharacterAugust).characterPosition.car != kCarGreenSleeping || getCharacter(kCharacterAugust).characterPosition.position <= 5790))
+			break;
+
+		CONS_Tatiana_LeaveConcert(0, 0, 0, 0);
+		break;
+	case 191668032:
+		CONS_Tatiana_LeaveConcert(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1555,21 +1810,22 @@ void LogicManager::CONS_Tatiana_LeaveConcert(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_LeaveConcert(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).characterPosition.car = kCarGreenSleeping;
 		getCharacter(kCharacterTatiana).characterPosition.position = 850;
 		getCharacter(kCharacterTatiana).characterPosition.location = 0;
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
-		return;
-	}
-	if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
 			if (!inSuite(kCharacterCath, kCarRedSleeping, 7850) || inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 				TatianaCall(&LogicManager::CONS_Tatiana_EnterComp, 0, 0, 0, 0);
-				return;
+				break;
 			}
+
 			if (cathHasItem(kItemFirebird)) {
 				playNIS(kEventTatianaCompartmentStealEgg);
 				takeCathItem(kItemFirebird);
@@ -1577,11 +1833,15 @@ void LogicManager::HAND_Tatiana_LeaveConcert(HAND_PARAMS) {
 			} else {
 				playNIS(kEventTatianaCompartment);
 			}
+
 			bumpCathRDoor(33);
-		} else if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] != 2) {
-			return;
+		} else if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 2) {
+			CONS_Tatiana_AfterConcert(0, 0, 0, 0);
 		}
-		CONS_Tatiana_AfterConcert(0, 0, 0, 0);
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1598,36 +1858,54 @@ void LogicManager::CONS_Tatiana_AfterConcert(CONS_PARAMS) {
 void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_gameInventory[kItemFirebird].location == 1 || _gameInventory[kItemFirebird].location == 2)
-			goto LABEL_17;
-		if (!getCharacterCurrentParams(kCharacterTatiana)[2])
-			getCharacterCurrentParams(kCharacterTatiana)[2] = _gameTime + 900;
-		if (getCharacterCurrentParams(kCharacterTatiana)[3] == 0x7FFFFFFF || getCharacterCurrentParams(kCharacterTatiana)[2] >= _gameTime)
-			goto LABEL_17;
-		if (_gameTime > 2227500)
-			goto LABEL_14;
-		if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterTatiana)[3]) {
-			getCharacterCurrentParams(kCharacterTatiana)[3] = _gameTime + 450;
-			if (_gameTime == -450)
-				goto LABEL_15;
-		}
-		if (getCharacterCurrentParams(kCharacterTatiana)[3] < _gameTime) {
-		LABEL_14:
-			getCharacterCurrentParams(kCharacterTatiana)[3] = 0x7FFFFFFF;
-		LABEL_15:
-			_gameProgress[23] = 1;
-			if (inComp(kCharacterAnna, kCarRedSleeping, 4070)) {
-				CONS_Tatiana_CryAnna(0, 0, 0, 0);
-				return;
+		if (_gameInventory[kItemFirebird].location != 1 && _gameInventory[kItemFirebird].location != 2) {
+			if (!getCharacterCurrentParams(kCharacterTatiana)[2])
+				getCharacterCurrentParams(kCharacterTatiana)[2] = _gameTime + 900;
+
+			if (getCharacterCurrentParams(kCharacterTatiana)[3] != 0x7FFFFFFF && getCharacterCurrentParams(kCharacterTatiana)[2] < _gameTime) {
+				if (_gameTime > 2227500) {
+					getCharacterCurrentParams(kCharacterTatiana)[3] = 0x7FFFFFFF;
+					_gameProgress[kProgressField5C] = 1;
+
+					if (inComp(kCharacterAnna, kCarRedSleeping, 4070)) {
+						CONS_Tatiana_CryAnna(0, 0, 0, 0);
+						break;
+					}
+				} else {
+					bool skip = false;
+					if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterTatiana)[3]) {
+						getCharacterCurrentParams(kCharacterTatiana)[3] = _gameTime + 450;
+						if (_gameTime == -450) {
+							skip = true;
+
+							_gameProgress[kProgressField5C] = 1;
+							if (inComp(kCharacterAnna, kCarRedSleeping, 4070)) {
+								CONS_Tatiana_CryAnna(0, 0, 0, 0);
+								break;
+							}
+						}
+					}
+
+					if (!skip && getCharacterCurrentParams(kCharacterTatiana)[3] < _gameTime) {
+						getCharacterCurrentParams(kCharacterTatiana)[3] = 0x7FFFFFFF;
+						_gameProgress[kProgressField5C] = 1;
+						if (inComp(kCharacterAnna, kCarRedSleeping, 4070)) {
+							CONS_Tatiana_CryAnna(0, 0, 0, 0);
+							break;
+						}
+					}
+				}
 			}
 		}
-	LABEL_17:
+
 		if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[4] || (getCharacterCurrentParams(kCharacterTatiana)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
 				if (getCharacterCurrentParams(kCharacterTatiana)[4] >= _currentGameSessionTicks)
-					return;
+					break;
+
 				getCharacterCurrentParams(kCharacterTatiana)[4] = 0x7FFFFFFF;
 			}
+
 			getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
 			getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
 			setDoor(33, kCharacterTatiana, 1, 0, 0);
@@ -1636,12 +1914,14 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 		} else {
 			getCharacterCurrentParams(kCharacterTatiana)[4] = 0;
 		}
+
 		break;
 	case 8:
 	case 9:
 		if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			setDoor(33, kCharacterTatiana, 1, 0, 0);
 			setDoor(49, kCharacterTatiana, 1, 0, 0);
+
 			if (msg->param.intParam == 49) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
 				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, getCathWCDialog(), 0, 0, 0);
@@ -1665,10 +1945,12 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 			} else {
 				playNIS(kEventTatianaCompartment);
 			}
+
 			bumpCathRDoor(33);
 		} else {
 			setDoor(33, kCharacterTatiana, 1, 0, 0);
 			setDoor(49, kCharacterTatiana, 1, 0, 0);
+
 			if (msg->action == 8) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "LIB012", 0, 0, 0);
@@ -1677,13 +1959,14 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "LIB013", 0, 0, 0);
 			}
 		}
-		return;
+
+		break;
 	case 12:
 		setDoor(33, kCharacterTatiana, 1, 10, 9);
 		setDoor(49, kCharacterTatiana, 1, 0, 9);
 		getCharacter(kCharacterTatiana).characterPosition.location = 1;
 		endGraphics(kCharacterTatiana);
-		return;
+		break;
 	case 17:
 		if (getCharacterCurrentParams(kCharacterTatiana)[1] || getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
@@ -1691,7 +1974,8 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 			setDoor(33, kCharacterTatiana, 1, 10, 9);
 			setDoor(49, kCharacterTatiana, 1, 0, 9);
 		}
-		return;
+
+		break;
 	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
@@ -1702,6 +1986,8 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 			} else {
 				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "TAT1133A", 0, 0, 0);
 			}
+
+			break;
 		case 3:
 			setDoor(33, kCharacterTatiana, 1, 14, 0);
 			setDoor(49, kCharacterTatiana, 1, 14, 0);
@@ -1714,11 +2000,12 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -1733,75 +2020,11 @@ void LogicManager::CONS_Tatiana_CryAnna(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_CryAnna(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterTatiana).characterPosition.location = 0;
-				setDoor(33, kCharacterCath, 0, 10, 9);
-				setDoor(49, kCharacterCath, 0, 10, 9);
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
-				TatianaCall(&LogicManager::CONS_Tatiana_WalkSniffle, 4, 4070, 0, 0);
-				break;
-			case 2:
-				startCycOtis(kCharacterTatiana, "673Gf");
-				softBlockAtDoor(kCharacterTatiana, 37);
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "Tat3164", 0, 0, 0);
-				break;
-			case 3:
-				send(kCharacterTatiana, kCharacterAnna, 236241630, 0);
-				break;
-			case 4:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 5;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "673Db", 0x21, 0, 0);
-				break;
-			case 5:
-			case 11:
-				getCharacter(kCharacterTatiana).characterPosition.location = 1;
-				endGraphics(kCharacterTatiana);
-				CONS_Tatiana_Upset(0, 0, 0, 0);
-				break;
-			case 6:
-				softReleaseAtDoor(kCharacterTatiana, 37);
-				endGraphics(kCharacterTatiana);
-				getCharacter(kCharacterTatiana).characterPosition.location = 1;
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 7;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "ANN3011", 0, 0, 0);
-				break;
-			case 7:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 8;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 900, 0, 0, 0);
-				break;
-			case 8:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 9;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Jf", 37, 0, 0);
-				break;
-			case 9:
-				getCharacter(kCharacterTatiana).characterPosition.location = 0;
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 10;
-				TatianaCall(&LogicManager::CONS_Tatiana_WalkSniffle, 4, 7500, 0, 0);
-				break;
-			case 10:
-				send(kCharacterTatiana, kCharacterAnna, 236517970, 0);
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 11;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "673Db", 33, 0, 0);
-				break;
-			default:
-				return;
-			}
-		} else if (msg->action == 100906246) {
-			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 6;
-			TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Df", 37, 0, 0);
-		}
-	} else if (msg->action == 12) {
-		getCharacter(kCharacterTatiana).clothes = 3;
-		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
-		TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Jb", 33, 0, 0);
-	} else if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterTatiana)[0] || (getCharacterCurrentParams(kCharacterTatiana)[0] = _gameTime + 450, _gameTime != -450)) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[0] >= _gameTime)
-				return;
+				break;
 
 			getCharacterCurrentParams(kCharacterTatiana)[0] = 0x7FFFFFFF;
 		}
@@ -1809,6 +2032,76 @@ void LogicManager::HAND_Tatiana_CryAnna(HAND_PARAMS) {
 		softReleaseAtDoor(kCharacterTatiana, 37);
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
 		TatianaCall(&LogicManager::CONS_Tatiana_WalkSniffle, 4, 7500, 0, 0);
+		break;
+	case 12:
+		getCharacter(kCharacterTatiana).clothes = 3;
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
+		TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Jb", 33, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterTatiana).characterPosition.location = 0;
+			setDoor(33, kCharacterCath, 0, 10, 9);
+			setDoor(49, kCharacterCath, 0, 10, 9);
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
+			TatianaCall(&LogicManager::CONS_Tatiana_WalkSniffle, 4, 4070, 0, 0);
+			break;
+		case 2:
+			startCycOtis(kCharacterTatiana, "673Gf");
+			softBlockAtDoor(kCharacterTatiana, 37);
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "Tat3164", 0, 0, 0);
+			break;
+		case 3:
+			send(kCharacterTatiana, kCharacterAnna, 236241630, 0);
+			break;
+		case 4:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 5;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "673Db", 0x21, 0, 0);
+			break;
+		case 5:
+		case 11:
+			getCharacter(kCharacterTatiana).characterPosition.location = 1;
+			endGraphics(kCharacterTatiana);
+			CONS_Tatiana_Upset(0, 0, 0, 0);
+			break;
+		case 6:
+			softReleaseAtDoor(kCharacterTatiana, 37);
+			endGraphics(kCharacterTatiana);
+			getCharacter(kCharacterTatiana).characterPosition.location = 1;
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 7;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "ANN3011", 0, 0, 0);
+			break;
+		case 7:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 8;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 900, 0, 0, 0);
+			break;
+		case 8:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 9;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Jf", 37, 0, 0);
+			break;
+		case 9:
+			getCharacter(kCharacterTatiana).characterPosition.location = 0;
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 10;
+			TatianaCall(&LogicManager::CONS_Tatiana_WalkSniffle, 4, 7500, 0, 0);
+			break;
+		case 10:
+			send(kCharacterTatiana, kCharacterAnna, 236517970, 0);
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 11;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "673Db", 33, 0, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 100906246:
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 6;
+		TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Df", 37, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1823,14 +2116,20 @@ void LogicManager::CONS_Tatiana_Upset(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Upset(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			setDoor(33, kCharacterCath, 1, 10, 9);
-			setDoor(49, kCharacterCath, 1, 10, 9);
+	switch (msg->action) {
+	case 0:
+		if (!getCharacterCurrentParams(kCharacterTatiana)[0] && nearChar(kCharacterTatiana, kCharacterCath, 1000)) {
+			playDialog(kCharacterTatiana, "Tat3164", -1, 0);
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
 		}
-	} else if (!getCharacterCurrentParams(kCharacterTatiana)[0] && nearChar(kCharacterTatiana, kCharacterCath, 1000)) {
-		playDialog(kCharacterTatiana, "Tat3164", -1, 0);
-		getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+
+		break;
+	case 12:
+		setDoor(33, kCharacterCath, 1, 10, 9);
+		setDoor(49, kCharacterCath, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1845,26 +2144,37 @@ void LogicManager::CONS_Tatiana_DoConcertWalk(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_DoConcertWalk(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 6) {
-			if (_gameEvents[kEventTatianaAskMatchSpeakRussian] || _gameEvents[kEventTatianaAskMatch] || _gameEvents[kEventVassiliSeizure]) {
-				if (rnd(2) == 0) {
-					playDialog(kCharacterCath, "CAT1010A", -1, 0);
-				} else{
-					playDialog(kCharacterCath, "CAT1010", -1, 0);
-				}
-				
-			} else {
-				playCathExcuseMe();
-			}
-		} else if (msg->action == 12 && walk(kCharacterTatiana, kCarKronos, 9270)) {
-		LABEL_18:
+	switch (msg->action) {
+	case 0:
+		if (checkLoc(kCharacterCath, kCarKronos) || getCharacter(kCharacterTatiana).characterPosition.car != getCharacter(kCharacterCath).characterPosition.car || walk(kCharacterTatiana, kCarKronos, 9270)) {
 			getCharacter(kCharacterTatiana).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
 		}
-	} else if (checkLoc(kCharacterCath, kCarKronos) || getCharacter(kCharacterTatiana).characterPosition.car != getCharacter(kCharacterCath).characterPosition.car || walk(kCharacterTatiana, kCarKronos, 9270)) {
-		goto LABEL_18;
+
+		break;
+	case 6:
+		if (_gameEvents[kEventTatianaAskMatchSpeakRussian] || _gameEvents[kEventTatianaAskMatch] || _gameEvents[kEventVassiliSeizure]) {
+			if (rnd(2) == 0) {
+				playDialog(kCharacterCath, "CAT1010A", -1, 0);
+			} else {
+				playDialog(kCharacterCath, "CAT1010", -1, 0);
+			}
+		} else {
+			playCathExcuseMe();
+		}
+
+		break;
+	case 12:
+		if (walk(kCharacterTatiana, kCarKronos, 9270)) {
+			getCharacter(kCharacterTatiana).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
+			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1879,80 +2189,91 @@ void LogicManager::CONS_Tatiana_TrapCath(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_TrapCath(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "Tat3161B", 0, 0, 0);
-				break;
-			case 2:
-				send(kCharacterTatiana, kCharacterCond2, 168316032, 0);
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
-				break;
-			case 3:
-			case 6:
-				endGraphics(kCharacterTatiana);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
+			if (inSuite(kCharacterCath, kCarRedSleeping, 7850) && !_gameEvents[kEventVassiliCompartmentStealEgg] && (_gameTime <= 2133000 || _gameProgress[kProgressField40])) {
+				if (inComp(kCharacterCath, kCarRedSleeping, 7500)) {
+					send(kCharacterTatiana, kCharacterCond2, 235061888, 0);
+					endGraphics(kCharacterTatiana);
+					softReleaseAtDoor(kCharacterTatiana, 33);
+					getCharacter(kCharacterTatiana).characterPosition.location = 1;
 
-				getCharacter(kCharacterTatiana).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
-				fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-				break;
-			case 4:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 5;
-				TatianaCall(&LogicManager::CONS_Tatiana_ExitComp, 0, 0, 0, 0);
-				break;
-			case 5:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 6;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoConcertWalk, 0, 0, 0, 0);
-				break;
-			default:
-				return;
+					if (cathHasItem(kItemFirebird)) {
+						playNIS(kEventTatianaCompartmentStealEgg);
+						takeCathItem(kItemFirebird);
+						_gameInventory[kItemFirebird].location = 2;
+					} else {
+						playNIS(kEventTatianaCompartment);
+					}
+
+					bumpCathRDoor(33);
+					getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
+					TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 150, 0, 0, 0);
+				}
+			} else {
+				softReleaseAtDoor(kCharacterTatiana, 33);
+				if (_gameTime < 2133000 || _gameProgress[16]) {
+					getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
+					TatianaCall(&LogicManager::CONS_Tatiana_DoConcertWalk, 0, 0, 0, 0);
+				} else {
+					endGraphics(kCharacterTatiana);
+
+					getCharacter(kCharacterTatiana).currentCall--;
+					_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
+					fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+				}
 			}
-		} else if (msg->action == 154071333) {
-			setDoor(33, kCharacterCath, 1, 0, 0);
-			setDoor(32, kCharacterCath, 1, 0, 0);
-			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
-			TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 1, 0, 0, 0);
 		}
-	} else if (msg->action == 12) {
+
+		break;
+	case 12:
 		getCharacter(kCharacterTatiana).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterTatiana).characterPosition.position = 7500;
 		getCharacter(kCharacterTatiana).characterPosition.location = 0;
 		forceJump(kCharacterCond2, &LogicManager::CONS_Cond2_TatianaComeHere);
 		startCycOtis(kCharacterTatiana, "673Fb");
 		softBlockAtDoor(kCharacterTatiana, 33);
-	} else if (msg->action == 0 && getCharacterCurrentParams(kCharacterTatiana)[0]) {
-		if (inSuite(kCharacterCath, kCarRedSleeping, 7850) && !_gameEvents[kEventVassiliCompartmentStealEgg] && (_gameTime <= 2133000 || _gameProgress[kProgressField40])) {
-			if (inComp(kCharacterCath, kCarRedSleeping, 7500)) {
-				send(kCharacterTatiana, kCharacterCond2, 235061888, 0);
-				endGraphics(kCharacterTatiana);
-				softReleaseAtDoor(kCharacterTatiana, 33);
-				getCharacter(kCharacterTatiana).characterPosition.location = 1;
-				if (cathHasItem(kItemFirebird)) {
-					playNIS(kEventTatianaCompartmentStealEgg);
-					takeCathItem(kItemFirebird);
-					_gameInventory[kItemFirebird].location = 2;
-				} else {
-					playNIS(kEventTatianaCompartment);
-				}
-				bumpCathRDoor(33);
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 150, 0, 0, 0);
-			}
-		} else {
-			softReleaseAtDoor(kCharacterTatiana, 33);
-			if (_gameTime < 2133000 || _gameProgress[16]) {
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoConcertWalk, 0, 0, 0, 0);
-			} else {
-				endGraphics(kCharacterTatiana);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoDialog, "Tat3161B", 0, 0, 0);
+			break;
+		case 2:
+			send(kCharacterTatiana, kCharacterCond2, 168316032, 0);
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
+			break;
+		case 3:
+		case 6:
+			endGraphics(kCharacterTatiana);
 
-				getCharacter(kCharacterTatiana).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
-				fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
-			}
+			getCharacter(kCharacterTatiana).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
+			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
+			break;
+		case 4:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 5;
+			TatianaCall(&LogicManager::CONS_Tatiana_ExitComp, 0, 0, 0, 0);
+			break;
+		case 5:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 6;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoConcertWalk, 0, 0, 0, 0);
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 154071333:
+		setDoor(33, kCharacterCath, 1, 0, 0);
+		setDoor(32, kCharacterCath, 1, 0, 0);
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
+		TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 1, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1972,23 +2293,20 @@ void LogicManager::CONS_Tatiana_WalkSniffle(CONS_PARAMS) {
 void LogicManager::HAND_Tatiana_WalkSniffle(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (walk(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[0], getCharacterCurrentParams(kCharacterTatiana)[1]))
-			goto LABEL_7;
-		break;
-	case 5:
-	case 6:
-		playDialog(0, "Tat3124", getVolume(kCharacterTatiana), 0);
-		break;
 	case 12:
 		if (walk(kCharacterTatiana, getCharacterCurrentParams(kCharacterTatiana)[0], getCharacterCurrentParams(kCharacterTatiana)[1])) {
-		LABEL_7:
 			getCharacter(kCharacterTatiana).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterTatiana, _functionsTatiana[getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall]]);
 			fedEx(kCharacterTatiana, kCharacterTatiana, 18, 0);
 		}
+
 		break;
+	case 5:
+	case 6:
+		playDialog(kCharacterCath, "Tat3124", getVolume(kCharacterTatiana), 0);
+		break;	
 	default:
-		return;
+		break;
 	}
 }
 
@@ -2003,20 +2321,23 @@ void LogicManager::CONS_Tatiana_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterTatiana);
-			getCharacter(kCharacterTatiana).characterPosition.position = 7500;
-			getCharacter(kCharacterTatiana).characterPosition.location = 1;
-			getCharacter(kCharacterTatiana).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterTatiana).inventoryItem = 0;
-			getCharacter(kCharacterTatiana).clothes = 2;
-			getCharacter(kCharacterTatiana).callParams[8].parameters[0] = 0;
-			setDoor(33, kCharacterCath, 1, 10, 9);
-			setDoor(49, kCharacterCath, 1, 10, 9);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Tatiana_InComp(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterTatiana);
+		getCharacter(kCharacterTatiana).characterPosition.position = 7500;
+		getCharacter(kCharacterTatiana).characterPosition.location = 1;
+		getCharacter(kCharacterTatiana).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterTatiana).inventoryItem = 0;
+		getCharacter(kCharacterTatiana).clothes = 2;
+		getCharacter(kCharacterTatiana).callParams[8].parameters[0] = 0;
+		setDoor(33, kCharacterCath, 1, 10, 9);
+		setDoor(49, kCharacterCath, 1, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2031,11 +2352,19 @@ void LogicManager::CONS_Tatiana_InComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_InComp(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_CompLogic, 2362500, 0, 0, 0);
-	} else if (msg->action == 18 && getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
-		CONS_Tatiana_MeetAlexei(0, 0, 0, 0);
+		break;
+	case 18:
+		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
+			CONS_Tatiana_MeetAlexei(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2050,24 +2379,32 @@ void LogicManager::CONS_Tatiana_MeetAlexei(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_MeetAlexei(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Bb", 33, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
-			setDoor(33, 0, 0, 10, 9);
+			setDoor(33, kCharacterCath, 0, 10, 9);
 			getCharacter(kCharacterTatiana).characterPosition.location = 0;
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 3, 540, 0, 0);
 		} else if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 2) {
 			if (onLowPlatform(kCharacterCath)) {
 				playChrExcuseMe(kCharacterTatiana, kCharacterCath, 0);
+
 				if (checkCathDir(kCarGreenSleeping, 62))
 					bumpCath(kCarGreenSleeping, 72, 255);
 			}
+
 			send(kCharacterTatiana, kCharacterAlexei, 123712592, 0);
 			CONS_Tatiana_WithAlexei(0, 0, 0, 0);
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2093,25 +2430,32 @@ void LogicManager::HAND_Tatiana_WithAlexei(HAND_PARAMS) {
 				} else if (getCharacterCurrentParams(kCharacterTatiana)[3] == 7 && nearChar(kCharacterTatiana, kCharacterCath, 2000)) {
 					_gameProgress[kProgressField88] = 1;
 				}
+
 				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
 			}
 		}
+
 		if (getCharacterCurrentParams(kCharacterTatiana)[8] == 0x7FFFFFFF || _gameTime <= 2394000)
-			return;
-		if (_gameTime > 2398500)
-			goto LABEL_20;
-		if (!onLowPlatform(kCharacterCath) && getCharacterCurrentParams(kCharacterTatiana)[8] ||
-			(getCharacterCurrentParams(kCharacterTatiana)[8] = _gameTime, _gameTime)) {
-			if (getCharacterCurrentParams(kCharacterTatiana)[8] >= _gameTime)
-				return;
-		LABEL_20:
+			break;
+
+		if (_gameTime > 2398500) {
 			getCharacterCurrentParams(kCharacterTatiana)[8] = 0x7FFFFFFF;
+		} else {
+			if (!onLowPlatform(kCharacterCath) && getCharacterCurrentParams(kCharacterTatiana)[8] ||
+				(getCharacterCurrentParams(kCharacterTatiana)[8] = _gameTime, _gameTime)) {
+				if (getCharacterCurrentParams(kCharacterTatiana)[8] >= _gameTime)
+					break;
+
+				getCharacterCurrentParams(kCharacterTatiana)[8] = 0x7FFFFFFF;
+			}
 		}
+
 		if (onLowPlatform(kCharacterCath)) {
 			playChrExcuseMe(kCharacterTatiana, kCharacterCath, 0);
 			if (checkCathDir(kCarGreenSleeping, 62))
 				bumpCath(kCarGreenSleeping, 72, 255);
 		}
+
 		send(kCharacterTatiana, kCharacterAlexei, 123536024, 0);
 		CONS_Tatiana_Thinking(0, 0, 0, 0);
 		break;
@@ -2151,12 +2495,13 @@ void LogicManager::HAND_Tatiana_WithAlexei(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterTatiana)[0] = 162000;
 			break;
 		}
-		return;
+
+		break;
 	case 12:
 		startCycOtis(kCharacterTatiana, "306E");
 		getCharacterCurrentParams(kCharacterTatiana)[0] = 450;
 		Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterTatiana)[5], 12, "Tat4165A");
-		return;
+		break;
 	case 17:
 		if (onLowPlatform(kCharacterCath)) {
 			getCharacterCurrentParams(kCharacterTatiana)[2] = 1;
@@ -2168,19 +2513,22 @@ void LogicManager::HAND_Tatiana_WithAlexei(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterTatiana)[2] = 0;
 			getCharacterCurrentParams(kCharacterTatiana)[4] = 0;
 		}
+
 		if (checkCathDir(kCarGreenSleeping, 62) && !getCharacterCurrentParams(kCharacterTatiana)[4]) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoSeqOtis, "306D", 0, 0, 0);
 		}
-		return;
+
+		break;
 	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
 			startCycOtis(kCharacterTatiana, "306E");
 			getCharacterCurrentParams(kCharacterTatiana)[4] = 1;
 		}
-		return;
+
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -2195,10 +2543,12 @@ void LogicManager::CONS_Tatiana_Thinking(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Thinking(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 		TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
@@ -2218,10 +2568,15 @@ void LogicManager::HAND_Tatiana_Thinking(HAND_PARAMS) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
 				TatianaCall(&LogicManager::CONS_Tatiana_CompLogic, 900, 0, 0, 0);
 			}
+
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2237,91 +2592,16 @@ void LogicManager::CONS_Tatiana_SeekCath(CONS_PARAMS) {
 
 void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 	int rndNum;
-
-	if (msg->action > 9) {
-		switch (msg->action) {
-		case 12:
-			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
-			TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Bb", 33, 0, 0);
-			break;
-		case 18:
-			switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
-			case 1:
-				setDoor(33, 0, 0, 10, 9);
-				getCharacter(kCharacterTatiana).characterPosition.location = 0;
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 3, 7500, 0, 0);
-				break;
-			case 2:
-			case 7:
-				startCycOtis(kCharacterTatiana, "673Fb");
-				softBlockAtDoor(kCharacterTatiana, 2);
-				break;
-			case 3:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "673Db", 33, 0, 0);
-				break;
-			case 4:
-				getCharacter(kCharacterTatiana).characterPosition.location = 1;
-				endGraphics(kCharacterTatiana);
-				CONS_Tatiana_Asleep4(0, 0, 0, 0);
-				break;
-			case 5:
-				setDoor(9, 0, 0, 255, 255);
-				playNIS(kEventTatianaTylerCompartment);
-				playDialog(0, "LIB015", -1, 0);
-				bumpCathTylerComp();
-				break;
-			case 6:
-				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 7;
-				TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 3, 7500, 0, 0);
-				break;
-			default:
-				return;
-			}
-			break;
-		case 238790488:
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
-			setDoor(1, 0, checkDoor(1), 10, 9);
-			softReleaseAtDoor(kCharacterTatiana, 2);
-			endGraphics(kCharacterTatiana);
-			getCharacter(kCharacterTatiana).characterPosition.car = 3;
-			getCharacter(kCharacterTatiana).characterPosition.position = 9460;
-			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 6;
-			TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 1800, 0, 0, 0);
-			break;
-		}
-		return;
-	}
-	if (msg->action == 9) {
-		getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
-		setDoor(1, 0, 0, 10, 9);
-		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 5;
-		TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaTylerCompartment, 0, 0);
-		return;
-	}
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (!getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			if (!_gameEvents[kEventTatianaTylerCompartment] && inComp(kCharacterCath, kCarGreenSleeping, 8200)) {
 				getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
 				_gameProgress[kProgressFieldE4] = 1;
 				setDoor(1, kCharacterTatiana, checkDoor(1), 0, 9);
 			}
-			if (!getCharacterCurrentParams(kCharacterTatiana)[0])
-				goto LABEL_23;
-		}
-		if (!inSuite(kCharacterCath, kCarGreenSleeping, 7850)) {
-			setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
-			getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
-		}
-		if (!getCharacterCurrentParams(kCharacterTatiana)[0] || whoRunningDialog(kCharacterTatiana))
-			goto LABEL_23;
 
-		rndNum = 5 * (3 * rnd(5) + 30);
-		if (getCharacterCurrentParams(kCharacterTatiana)[1] || (getCharacterCurrentParams(kCharacterTatiana)[1] = _currentGameSessionTicks + rndNum,
-																_currentGameSessionTicks + rndNum != 0)) {
-			if (getCharacterCurrentParams(kCharacterTatiana)[1] >= _currentGameSessionTicks) {
-			LABEL_23:
+			if (!getCharacterCurrentParams(kCharacterTatiana)[0]) {
 				if (_gameEvents[kEventTatianaTylerCompartment] || _gameTime > 2475000) {
 					if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
 						setDoor(1, 0, checkDoor(1), 10, 9);
@@ -2331,13 +2611,111 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 					getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 					TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
 				}
-				return;
+
+				break;
 			}
-			getCharacterCurrentParams(kCharacterTatiana)[1] = 0x7FFFFFFF;
 		}
-		playDialog(kCharacterTatiana, "LIB012", 16, 0);
-		getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
-		goto LABEL_23;
+
+		if (!inSuite(kCharacterCath, kCarGreenSleeping, 7850)) {
+			setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
+		}
+
+		if (getCharacterCurrentParams(kCharacterTatiana)[0] && !whoRunningDialog(kCharacterTatiana)) {
+			rndNum = 5 * (3 * rnd(5) + 30);
+			if (getCharacterCurrentParams(kCharacterTatiana)[1] || (getCharacterCurrentParams(kCharacterTatiana)[1] = _currentGameSessionTicks + rndNum,
+																	_currentGameSessionTicks + rndNum != 0)) {
+				if (getCharacterCurrentParams(kCharacterTatiana)[1] >= _currentGameSessionTicks) {
+					if (_gameEvents[kEventTatianaTylerCompartment] || _gameTime > 2475000) {
+						if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
+							setDoor(1, 0, checkDoor(1), 10, 9);
+						}
+						_gameProgress[kProgressFieldE4] = 0;
+						softReleaseAtDoor(kCharacterTatiana, 2);
+						getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
+						TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
+					}
+
+					break;
+				}
+
+				getCharacterCurrentParams(kCharacterTatiana)[1] = 0x7FFFFFFF;
+			}
+
+			playDialog(kCharacterTatiana, "LIB012", 16, 0);
+			getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
+		}
+
+		if (_gameEvents[kEventTatianaTylerCompartment] || _gameTime > 2475000) {
+			if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
+				setDoor(1, 0, checkDoor(1), 10, 9);
+			}
+			_gameProgress[kProgressFieldE4] = 0;
+			softReleaseAtDoor(kCharacterTatiana, 2);
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
+		}
+
+		break;
+	case 9:
+		getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
+		setDoor(1, kCharacterCath, 0, 10, 9);
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 5;
+		TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaTylerCompartment, 0, 0);
+		break;
+	case 12:
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
+		TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "673Bb", 33, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
+		case 1:
+			setDoor(33, 0, 0, 10, 9);
+			getCharacter(kCharacterTatiana).characterPosition.location = 0;
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 3, 7500, 0, 0);
+			break;
+		case 2:
+		case 7:
+			startCycOtis(kCharacterTatiana, "673Fb");
+			softBlockAtDoor(kCharacterTatiana, 2);
+			break;
+		case 3:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 4;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "673Db", 33, 0, 0);
+			break;
+		case 4:
+			getCharacter(kCharacterTatiana).characterPosition.location = 1;
+			endGraphics(kCharacterTatiana);
+			CONS_Tatiana_Asleep4(0, 0, 0, 0);
+			break;
+		case 5:
+			setDoor(9, kCharacterCath, 0, 255, 255);
+			playNIS(kEventTatianaTylerCompartment);
+			playDialog(0, "LIB015", -1, 0);
+			bumpCathTylerComp();
+			break;
+		case 6:
+			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 7;
+			TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 3, 7500, 0, 0);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case 238790488:
+		getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
+		setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
+		softReleaseAtDoor(kCharacterTatiana, 2);
+		endGraphics(kCharacterTatiana);
+		getCharacter(kCharacterTatiana).characterPosition.car = 3;
+		getCharacter(kCharacterTatiana).characterPosition.position = 9460;
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 6;
+		TatianaCall(&LogicManager::CONS_Tatiana_DoWait, 1800, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2352,14 +2730,19 @@ void LogicManager::CONS_Tatiana_Asleep4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Asleep4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterTatiana).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterTatiana).characterPosition.position = 7500;
 		getCharacter(kCharacterTatiana).characterPosition.location = 1;
 		setDoor(33, kCharacterCath, 1, 10, 9);
 		setDoor(49, kCharacterCath, 1, 10, 9);
-	} else if (msg->action == 169360385) {
+		break;
+	case 169360385:
 		CONS_Tatiana_AlexeiDead(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2380,12 +2763,15 @@ void LogicManager::HAND_Tatiana_AlexeiDead(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
 			CONS_Tatiana_Calm(0, 0, 0, 0);
 		}
+
 		break;
 	case 2:
-		goto LABEL_10;
+		playDialog(kCharacterTatiana, "Tat4166", -1, 0);
+		break;
 	case 8:
 		if (!cathRunningDialog("LIB012"))
 			playDialog(0, "LIB012", -1, 0);
+
 		break;
 	case 9:
 		playDialog(0, "LIB014", -1, 0);
@@ -2400,22 +2786,25 @@ void LogicManager::HAND_Tatiana_AlexeiDead(HAND_PARAMS) {
 		setDoor(49, kCharacterCath, 0, 10, 9);
 		setDoor(48, kCharacterTatiana, 0, 10, 9);
 		setDoor(32, kCharacterTatiana, 0, 10, 9);
+
 		if (!whoRunningDialog(kCharacterTatiana))
-		LABEL_10:
 			playDialog(kCharacterTatiana, "Tat4166", -1, 0);
+
 		break;
 	case 18:
 		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
 			if (dialogRunning("MUS013"))
 				fadeDialog("MUS013");
+
 			playNIS(kEventVassiliDeadAlexei);
 			send(kCharacterTatiana, kCharacterAbbot, 104060776, 0);
 			bumpCath(kCarRedSleeping, 38, 255);
 			CONS_Tatiana_Calm(0, 0, 0, 0);
 		}
+
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -2430,9 +2819,13 @@ void LogicManager::CONS_Tatiana_Calm(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Calm(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		setDoor(32, kCharacterCath, 1, 0, 0);
 		setDoor(48, kCharacterCath, 1, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2447,17 +2840,20 @@ void LogicManager::CONS_Tatiana_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterTatiana);
-			getCharacter(kCharacterTatiana).characterPosition.location = 1;
-			getCharacter(kCharacterTatiana).characterPosition.position = 3969;
-			getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterTatiana).inventoryItem = 0;
-			getCharacter(kCharacterTatiana).clothes = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Tatiana_Trapped(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterTatiana);
+		getCharacter(kCharacterTatiana).characterPosition.location = 1;
+		getCharacter(kCharacterTatiana).characterPosition.position = 3969;
+		getCharacter(kCharacterTatiana).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterTatiana).inventoryItem = 0;
+		getCharacter(kCharacterTatiana).clothes = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2472,8 +2868,13 @@ void LogicManager::CONS_Tatiana_Trapped(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Trapped(HAND_PARAMS) {
-	if (msg->action == 70549068)
+	switch (msg->action) {
+	case 70549068:
 		CONS_Tatiana_Autistic(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void LogicManager::CONS_Tatiana_Autistic(CONS_PARAMS) {
@@ -2487,72 +2888,87 @@ void LogicManager::CONS_Tatiana_Autistic(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Autistic(HAND_PARAMS) {
-	if (msg->action > 12) {
-		switch (msg->action) {
-		case 18:
-			if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
-				if (dialogRunning("MUS050"))
-					fadeDialog("MUS050");
-				if (whoRunningDialog(kCharacterTatiana))
-					fadeDialog(kCharacterTatiana);
-
-				playNIS((kEventTatianaVassiliTalkNight - !isNight()));
-				cleanNIS();
-				getCharacterCurrentParams(kCharacterTatiana)[0] = 4;
-				getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
-				getCharacterCurrentParams(kCharacterTatiana)[2] = 0;
-			}
-			break;
-		case 203078272:
-			startCycOtis(kCharacterTatiana, "033E");
-			break;
-		case 236060709:
-			getCharacter(kCharacterTatiana).inventoryItem = 0;
-			CONS_Tatiana_Asleep5(0, 0, 0, 0);
-			break;
-		}
-	} else if (msg->action == 12) {
-		startCycOtis(kCharacterTatiana, "033A");
-		getCharacter(kCharacterTatiana).inventoryItem = 0x80;
-	} else if (msg->action) {
-		if (msg->action == 1) {
-			getCharacter(kCharacterTatiana).inventoryItem = 0;
-			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
-			TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaVassiliTalk, 0, 0);
-		} else if (msg->action == 2) {
-			++getCharacterCurrentParams(kCharacterTatiana)[0];
-			getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		if (!getCharacterCurrentParams(kCharacterTatiana)[1]) {
 			switch (getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			case 0:
 				playDialog(kCharacterTatiana, "Tat5167A", -1, 0);
-				goto LABEL_17;
+				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
+				break;
 			case 1:
 				playDialog(kCharacterTatiana, "Tat5167B", -1, 0);
-				goto LABEL_17;
+				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
+				break;
 			case 2:
 				playDialog(kCharacterTatiana, "Tat5167C", -1, 0);
-				goto LABEL_17;
+				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
+				break;
 			case 3:
 				playDialog(kCharacterTatiana, "Tat5167D", -1, 0);
-			LABEL_17:
 				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
 				break;
 			default:
 				break;
 			}
 		}
+
 		if (getCharacterCurrentParams(kCharacterTatiana)[0] > 3) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[2] || (getCharacterCurrentParams(kCharacterTatiana)[2] = _currentGameSessionTicks + 225, _currentGameSessionTicks != -225)) {
 				if (getCharacterCurrentParams(kCharacterTatiana)[2] >= _currentGameSessionTicks)
-					return;
+					break;
+
 				getCharacterCurrentParams(kCharacterTatiana)[2] = 0x7FFFFFFF;
 			}
+
 			getCharacterCurrentParams(kCharacterTatiana)[0] = 0;
 			getCharacterCurrentParams(kCharacterTatiana)[2] = 0;
 		}
+
+		break;
+	case 1:
+		getCharacter(kCharacterTatiana).inventoryItem = 0;
+		getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
+		TatianaCall(&LogicManager::CONS_Tatiana_SaveGame, 2, kEventTatianaVassiliTalk, 0, 0);
+		break;
+	case 2:
+		getCharacterCurrentParams(kCharacterTatiana)[0]++;
+		getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
+		break;
+	case 12:
+		startCycOtis(kCharacterTatiana, "033A");
+		getCharacter(kCharacterTatiana).inventoryItem = 0x80;
+		break;
+	case 18:
+		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1) {
+			if (dialogRunning("MUS050"))
+				fadeDialog("MUS050");
+
+			if (whoRunningDialog(kCharacterTatiana))
+				fadeDialog(kCharacterTatiana);
+
+			if (isNight()) {
+				playNIS(kEventTatianaVassiliTalkNight);
+			} else {
+				playNIS(kEventTatianaVassiliTalk);
+			}
+			
+			cleanNIS();
+			getCharacterCurrentParams(kCharacterTatiana)[0] = 4;
+			getCharacterCurrentParams(kCharacterTatiana)[1] = 0;
+			getCharacterCurrentParams(kCharacterTatiana)[2] = 0;
+		}
+
+		break;
+	case 203078272:
+		startCycOtis(kCharacterTatiana, "033E");
+		break;
+	case 236060709:
+		getCharacter(kCharacterTatiana).inventoryItem = 0;
+		CONS_Tatiana_Asleep5(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2567,15 +2983,21 @@ void LogicManager::CONS_Tatiana_Asleep5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Tatiana_Asleep5(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterTatiana);
-		if (!checkCathDir(kCarRestaurant, 72))
-			return;
-		goto LABEL_7;
+		if (checkCathDir(kCarRestaurant, 72))
+			bumpCath(kCarRestaurant, 86, 255);
+
+		break;
+	case 17:
+		if (checkCathDir(kCarRestaurant, 72))
+			bumpCath(kCarRestaurant, 86, 255);
+
+		break;
+	default:
+		break;
 	}
-	if (msg->action == 17 && checkCathDir(kCarRestaurant, 72))
-	LABEL_7:
-		bumpCath(kCarRestaurant, 86, 255);
 }
 
 void (LogicManager::*LogicManager::_functionsTatiana[])(HAND_PARAMS) = {
