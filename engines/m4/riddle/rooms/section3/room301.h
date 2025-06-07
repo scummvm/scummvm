@@ -31,27 +31,14 @@ namespace Rooms {
 class Room301 : public Room {
 private:
 	int32 _travelDest = 0;
-	int _val2 = 0;
 	const char *_soundName = nullptr;
 	const char *_nextSound = nullptr;
-	int _trigger1 = -1;
-	KernelTriggerType _val6 = KT_DAEMON;
-	KernelTriggerType _val7 = KT_DAEMON;
-	int _val8 = 0;
+	KernelTriggerType _val6_triggerMode = KT_DAEMON;
+	KernelTriggerType _georgeTriggerMode = KT_DAEMON;
 	bool _showWalkerFlag = false;	// Value never seems to be set to true
 	bool _msgRipleyFlag = false;
 	bool _convResumeFlag = false;
-	int _val12 = 0;
-	int _georgeShould = 0;
-	int _georgeMode = 0;
-	int _ripleyShould = 0;
-	int _val16 = 0;
-	int _val17 = 0;
-	int _val18 = 0;
-	int _val19 = 0;
-	int _ripTrekHandTalk3 = 0;
-	int _ripTrekTalker3 = 0;
-	int _ripTrekTravel = 0;
+
 	int _agentStander = 0;
 	int _agentCheckingList = 0;
 	int _agentSlidesPaper = 0;
@@ -59,12 +46,29 @@ private:
 	int _agentTakesTelegram = 0;
 	int _agentTalk = 0;
 	int _agentSalutes = 0;
-	int _ripTrekArms = 0;
+	int _georgeMode = 0;
+	int _georgeShould = 0;
+	int _georgeTrigger = 0;
 	int _marshalMatt = 0;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
+	int _ripleyTrigger = -1;
+	int _ripTrekArms = 0;
+	int _ripTrekHandTalk3 = 0;
+	int _ripTrekTalker3 = 0;
+	int _ripTrekTravel = 0;
+
+	int _val2 = 0;
+	int _val8 = 0;
+	int _val12 = 0;
+	int _val17 = 0;
+	int _val18 = 0;
+
 	machine *_george = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
 	machine *_ripley = nullptr;
+
 	const char *_digiSound1 = nullptr;
 	const char *_digiSound2 = nullptr;
 	const char *_digiSound3 = nullptr;

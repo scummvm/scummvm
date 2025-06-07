@@ -30,6 +30,8 @@ namespace Rooms {
 void Room301::preload() {
 	_G(player).walker_type = WALKER_ALT;
 	_G(player).shadow_type = SHADOW_ALT;
+	_G(player).walker_in_this_scene = true;
+	
 	LoadWSAssets("OTHER SCRIPT");
 }
 
@@ -42,18 +44,15 @@ void Room301::init() {
 		_val2 = 0;
 		_soundName = nullptr;
 		_nextSound = nullptr;
-		_trigger1 = -1;
-		_val6 = KT_DAEMON;
-		_val7 = KT_DAEMON;
+		_ripleyTrigger = -1;
+		_val6_triggerMode = KT_DAEMON;
+		_georgeTriggerMode = KT_DAEMON;
 		_val8 = 0;
 		_showWalkerFlag = false;
 		_msgRipleyFlag = false;
 		_convResumeFlag = false;
 		_val12 = 0;
 	}
-
-	_georgeShould = 0;
-	_georgeMode = 0;
 
 	_ripTrekHandTalk3 = series_load("rip trek hand talk pos3");
 	_ripTrekTalker3 = series_load("RIP TREK TALKER POS3");
@@ -67,6 +66,8 @@ void Room301::init() {
 	_agentSalutes = series_load("agent salutes rip");
 	_george = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 		triggerMachineByHashCallback, "guy behind desk");
+	_georgeMode = 0;
+	_georgeShould = 0;
 
 	sendWSMessage(1, _george, _agentStander, 1, 1, 10, _agentStander, 1, 1, 0);
 
@@ -105,16 +106,16 @@ void Room301::daemon() {
 	case 9:
 		_george = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "guy behind desk");
-		_georgeShould = _georgeMode = 0;
+		_georgeMode = _georgeShould = 0;
 		sendWSMessage_10000(1, _george, _agentStander, 1,
 			1, 10, _agentStander, 1, 1, 0);
 		break;
 
 	case 10:
-		if (_georgeShould == 0 && _georgeMode == 0) {
-			if (_trigger1 != -1) {
-				kernel_trigger_dispatchx(_trigger1);
-				_trigger1 = -1;
+		if (_georgeMode == 0 && _georgeShould == 0) {
+			if (_ripleyTrigger != -1) {
+				kernel_trigger_dispatchx(_ripleyTrigger);
+				_ripleyTrigger = -1;
 
 				if (_showWalkerFlag) {
 					ws_unhide_walker(_G(my_walker));
@@ -140,9 +141,9 @@ void Room301::daemon() {
 		break;
 
 	case 11:
-		switch (_georgeShould) {
+		switch (_georgeMode) {
 		case 0:
-			switch (_georgeMode) {
+			switch (_georgeShould) {
 			case 0:
 				val = imath_ranged_rand(1, 3);
 				++_val8;
@@ -159,12 +160,12 @@ void Room301::daemon() {
 				case 2:
 					sendWSMessage_10000(1, _george, _agentStander, 1, 7, 10,
 						_agentStander, 7, 7, 0);
-					_georgeShould = _georgeMode = 3;
+					_georgeMode = _georgeShould = 3;
 					break;
 				case 3:
 					sendWSMessage_10000(1, _george, _agentTalk, 1, 6, 10,
 						_agentTalk, 6, 6, 0);
-					_georgeShould = _georgeMode = 7;
+					_georgeMode = _georgeShould = 7;
 					_val8 = 0;
 
 					digi_play((imath_ranged_rand(1, 2) == 1) ? "950_s06" : "950_s07",
@@ -179,7 +180,7 @@ void Room301::daemon() {
 			case 2:
 				sendWSMessage_10000(1, _george, _agentCheckingList,
 									1, 26, 10, _agentCheckingList, 27, 27, 0);
-				_georgeShould = 1;
+				_georgeMode = 1;
 				
 				break;
 
@@ -189,7 +190,7 @@ void Room301::daemon() {
 			case 6:
 				sendWSMessage_10000(1, _george, _agentStander, 1, 7, 10,
 					_agentStander, 7, 7, 0);
-				_georgeShould = 3;
+				_georgeMode = 3;
 				_val8 = 0;
 				break;
 
@@ -198,14 +199,14 @@ void Room301::daemon() {
 			case 9:
 				sendWSMessage_10000(1, _george, _agentTalk, 1, 6, 10,
 					_agentTalk, 6, 6, 0);
-				_georgeShould = 7;
+				_georgeMode = 7;
 				_val8 = 0;
 				break;
 
 			case 10:
 				sendWSMessage_10000(1, _george, _agentSalutes, 1, 28, 10,
 					_agentStander, 1, 1, 0);
-				_georgeShould = _georgeMode = 0;
+				_georgeMode = _georgeShould = 0;
 				_val8 = 0;
 				break;
 
@@ -215,7 +216,7 @@ void Room301::daemon() {
 				_convResumeFlag = true;
 				sendWSMessage_10000(1, _george, _agentTakesMoney, 1, 52, 13,
 					_agentStander, 1, 1, 0);
-				_georgeShould = _georgeMode = 0;
+				_georgeMode = _georgeShould = 0;
 				_val8 = 0;
 				_ripleyShould = 0;
 				break;
@@ -238,7 +239,7 @@ void Room301::daemon() {
 			break;
 
 		case 1:
-			switch (_georgeMode) {
+			switch (_georgeShould) {
 			case 1:
 				sendWSMessage_10000(1, _george, _agentCheckingList, 27, 27, 10,
 					_agentCheckingList, 27, 27, 0);
@@ -247,7 +248,7 @@ void Room301::daemon() {
 			case 2:
 				if (_soundName) {
 					_G(kernel).trigger_mode = KT_PARSE;
-					digi_play(_soundName, 1, 255, _val16);
+					digi_play(_soundName, 1, 255, _georgeTrigger);
 					_soundName = nullptr;
 					_G(kernel).trigger_mode = KT_DAEMON;
 				}
@@ -266,7 +267,7 @@ void Room301::daemon() {
 			break;
 
 		case 3:
-			switch (_georgeMode) {
+			switch (_georgeShould) {
 			case 3:
 				val = imath_ranged_rand(1, 2);
 				++_val8;
@@ -282,7 +283,7 @@ void Room301::daemon() {
 				} else if (val == 2) {
 					sendWSMessage_10000(1, _george, _agentStander, 7, 1, 10,
 						_agentStander, 1, 1, 0);
-					_georgeShould = _georgeMode = 0;
+					_georgeMode = _georgeShould = 0;
 					_val8 = 0;
 				}
 				break;
@@ -292,45 +293,45 @@ void Room301::daemon() {
 			case 6:
 				sendWSMessage_10000(1, _george, _agentStander, 8, 12, 10,
 					_agentStander, 12, 12, 0);
-				_georgeShould = 4;
+				_georgeMode = 4;
 				break;
 			default:
 				sendWSMessage_10000(1, _george, _agentStander, 7, 1, 10,
 					_agentStander, 1, 1, 0);
-				_georgeShould = 0;
+				_georgeMode = 0;
 				_val8 = 0;
 				break;
 			}
 			break;
 
 		case 4:
-			switch (_georgeMode) {
+			switch (_georgeShould) {
 			case 4:
 				sendWSMessage_10000(1, _george, _agentStander, 12,
 					12, 10, _agentStander, 12, 12, 0);
 				break;
 			case 5:
 				if (_soundName) {
-					_G(kernel).trigger_mode = _val7;
-					digi_play(_soundName, 1, 255, _val16);
+					_G(kernel).trigger_mode = _georgeTriggerMode;
+					digi_play(_soundName, 1, 255, _georgeTrigger);
 					_soundName = nullptr;
-					_val7 = KT_DAEMON;
+					_georgeTriggerMode = KT_DAEMON;
 					_G(kernel).trigger_mode = KT_DAEMON;
 				}
 
-				_G(kernel).trigger_mode = _val6;
+				_G(kernel).trigger_mode = _val6_triggerMode;
 				frame = imath_ranged_rand(12, 17);
 				sendWSMessage_10000(1, _george, _agentStander, frame, frame,
 					10, _agentStander, frame, frame, 1);
 				sendWSMessage_190000(_george, 13);
 				sendWSMessage_1a0000(_george, 13);
 				_G(kernel).trigger_mode = KT_DAEMON;
-				_val6 = KT_DAEMON;
+				_val6_triggerMode = KT_DAEMON;
 				break;
 			case 6:
 				if (_soundName) {
-					_G(kernel).trigger_mode = _val7;
-					digi_play(_soundName, 1, 255, _val16);
+					_G(kernel).trigger_mode = _georgeTriggerMode;
+					digi_play(_soundName, 1, 255, _georgeTrigger);
 					_soundName = nullptr;
 					_G(kernel).trigger_mode = KT_DAEMON;
 				}
@@ -344,14 +345,14 @@ void Room301::daemon() {
 			default:
 				sendWSMessage(1, _george, _agentStander, 12,
 					8, 10, _agentStander, 7, 7, 0);
-				_georgeShould = 3;
+				_georgeMode = 3;
 				_val8 = 0;
 				break;
 			}
 			break;
 
 		case 7:
-			switch (_georgeMode) {
+			switch (_georgeShould) {
 			case 7:
 				val = imath_ranged_rand(1, 2);
 				if (imath_ranged_rand(10, 40) <= _val8)
@@ -365,7 +366,7 @@ void Room301::daemon() {
 				} else if (val == 2) {
 					sendWSMessage_10000(1, _george, _agentTalk, 6, 1, 10,
 						_agentStander, 1, 1, 0);
-					_georgeShould = _georgeMode = 0;
+					_georgeMode = _georgeShould = 0;
 					_val8 = 0;
 
 					digi_play((imath_ranged_rand(1, 2) == 1) ? "950_s06" : "950_s07",
@@ -377,14 +378,14 @@ void Room301::daemon() {
 			case 9:
 				sendWSMessage_10000(1, _george, _agentTalk, 6, 15, 10,
 					_agentTalk, 15, 15, 0);
-				_georgeShould = 8;
+				_georgeMode = 8;
 				
 				break;
 
 			default:
 				sendWSMessage_10000(1, _george, _agentTalk, 6, 1, 10,
 					_agentStander, 1, 1, 0);
-				_georgeShould = 0;
+				_georgeMode = 0;
 				_val8 = 0;
 				
 				break;
@@ -392,7 +393,7 @@ void Room301::daemon() {
 			break;
 
 		case 8:
-			switch (_georgeMode) {
+			switch (_georgeShould) {
 			case 8:
 				sendWSMessage_10000(1, _george, _agentTalk, 15, 15, 10,
 					_agentTalk, 15, 15, 0);
@@ -400,19 +401,19 @@ void Room301::daemon() {
 				
 			case 9:
 				if (_soundName) {
-					digi_play(_soundName, 1, 255, _val16);
+					digi_play(_soundName, 1, 255, _georgeTrigger);
 					_soundName = nullptr;
 				}
 
 				sendWSMessage_10000(1, _george, _agentTalk, 16, 32, 10,
 					_agentTalk, 15, 15, 0);
-				_georgeShould = 8;
+				_georgeMode = 8;
 				
 				break;
 			default:
 				sendWSMessage_10000(1, _george, _agentTalk, 15, 6, 10,
 					_agentTalk, 6, 6, 0);
-				_georgeShould = 7;
+				_georgeMode = 7;
 				_val8 = 0;
 				
 				break;
@@ -420,10 +421,10 @@ void Room301::daemon() {
 			break;
 
 		case 14:
-			if (_georgeMode == 14) {
+			if (_georgeShould == 14) {
 				if (_soundName) {
 					_G(kernel).trigger_mode = KT_PARSE;
-					digi_play(_soundName, 1, 255, _val16);
+					digi_play(_soundName, 1, 255, _georgeTrigger);
 					_soundName = nullptr;
 					_G(kernel).trigger_mode = KT_DAEMON;
 				}
@@ -434,7 +435,7 @@ void Room301::daemon() {
 			} else {
 				sendWSMessage_10000(1, _george, _agentSlidesPaper, 57, 76, 10,
 					_agentSlidesPaper, 76, 76, 0);
-				_georgeShould = _georgeMode = 0;
+				_georgeMode = _georgeShould = 0;
 				_val8 = 0;
 				_msgRipleyFlag = true;
 				_convResumeFlag = true;
@@ -450,9 +451,9 @@ void Room301::daemon() {
 		_ripley = TriggerMachineByHash(triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripley, _ripTrekTravel, 10, 10, 20,
 			_ripTrekTravel, 10, 10, 0);
-		_ripleyShould = _val19 = 0;
+		_ripleyShould = _ripleyMode = 0;
 		kernel_timing_trigger(10, 10);
-		_georgeMode = 4;
+		_georgeShould = 4;
 		_val8 = 0;
 		conv_resume();
 		break;
@@ -462,7 +463,7 @@ void Room301::daemon() {
 			triggerMachineByHashCallback, "rip in conv");
 		sendWSMessage_10000(1, _ripley, _ripTrekTravel, 10, 10, 20,
 			_ripTrekTravel, 10, 10, 0);
-		_ripleyShould = _val19 = 0;
+		_ripleyShould = _ripleyMode = 0;
 		kernel_timing_trigger(10, 10);
 		break;
 
@@ -479,9 +480,9 @@ void Room301::daemon() {
 		break;
 
 	case 20:
-		if (!_val19 && _ripleyShould == 0 && _trigger1 != -1) {
-			kernel_trigger_dispatchx(_trigger1);
-			_trigger1 = -1;
+		if (!_ripleyMode && _ripleyShould == 0 && _ripleyTrigger != -1) {
+			kernel_trigger_dispatchx(_ripleyTrigger);
+			_ripleyTrigger = -1;
 
 			if (_showWalkerFlag) {
 				ws_unhide_walker();
@@ -497,7 +498,7 @@ void Room301::daemon() {
 		break;
 
 	case 21:
-		if (!_val19) {
+		if (!_ripleyMode) {
 			switch (_ripleyShould) {
 			case 0:
 				sendWSMessage_10000(1, _ripley, _ripTrekTravel,
@@ -573,8 +574,8 @@ void Room301::daemon() {
 	case 27:
 		sendWSMessage_10000(1, _george, _agentTakesMoney, 52, 9, 28,
 			_agentTakesMoney, 9, 9, 0);
-		_georgeMode = 4;
 		_georgeShould = 4;
+		_georgeMode = 4;
 		_val8 = 0;
 		_ripleyShould = 0;
 		break;
@@ -596,13 +597,13 @@ void Room301::daemon() {
 		break;
 
 	case 53:
-		_georgeMode = 6;
+		_georgeShould = 6;
 		_soundName = "301a01";
-		_val16 = 56;
+		_georgeTrigger = 56;
 		break;
 
 	case 56:
-		_georgeMode = 3;
+		_georgeShould = 3;
 		kernel_timing_trigger(1, 11);
 		player_set_commands_allowed(true);
 		break;
@@ -618,18 +619,18 @@ void Room301::daemon() {
 		break;
 
 	case 63:
-		_georgeMode = 6;
-		_val7 = KT_DAEMON;
+		_georgeShould = 6;
+		_georgeTriggerMode = KT_DAEMON;
 		_soundName = "301a01";
-		_val16 = 72;
+		_georgeTrigger = 72;
 		break;
 
 	case 64:
 		if (_val12) {
-			_georgeMode = 5;
+			_georgeShould = 5;
 			_soundName = (_val12 == 1) ? "301a03" : "301a04";
-			_val7 = KT_DAEMON;
-			_val16 = 71;
+			_georgeTriggerMode = KT_DAEMON;
+			_georgeTrigger = 71;
 		} else if (!player_been_here(401) && _G(flags)[V092] &&
 				!_G(flags)[V093]) {
 			kernel_timing_trigger(1, 1000);
@@ -640,7 +641,7 @@ void Room301::daemon() {
 		_G(global301) = 0;
 		setGlobals1(_ripTrekTalker3, 1, 1, 1, 5, 1);
 		sendWSMessage_110000(68);
-		_georgeMode = 8;
+		_georgeShould = 8;
 		digi_play("301r01a", 1, 255, 68);
 		break;
 
@@ -648,26 +649,26 @@ void Room301::daemon() {
 		if (_G(global301) >= 1) {
 			_G(global301) = 0;
 			sendWSMessage_140000(-1);
-			_georgeMode = 9;
+			_georgeShould = 9;
 			_soundName = "301a04a";
-			_val16 = 70;
+			_georgeTrigger = 70;
 		} else {
 			++_G(global301);
 		}
 		break;
 
 	case 70:
-		_georgeMode = 0;
+		_georgeShould = 0;
 		player_set_commands_allowed(true);
 		break;
 
 	case 71:
-		_georgeMode = 0;
+		_georgeShould = 0;
 		kernel_timing_trigger(1, 999);
 		break;
 
 	case 72:
-		_georgeMode = 4;
+		_georgeShould = 4;
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(1, 11);
 		_G(kernel).trigger_mode = KT_DAEMON;
@@ -677,16 +678,16 @@ void Room301::daemon() {
 	case 100:
 		sendWSMessage_10000(1, _george, _agentCheckingList, 8,
 			1, 10, _agentStander, 1, 1, 0);
-		_georgeShould = 0;
+		_georgeMode = 0;
 		
 		break;
 
 	case 200:
-		if (_val18 || _val17 || _trigger1 == -1) {
+		if (_val18 || _val17 || _ripleyTrigger == -1) {
 			kernel_timing_trigger(1, 201);
 		} else {
-			kernel_trigger_dispatchx(_trigger1);
-			_trigger1 = -1;
+			kernel_trigger_dispatchx(_ripleyTrigger);
+			_ripleyTrigger = -1;
 		}
 		break;
 
@@ -785,8 +786,8 @@ void Room301::daemon() {
 			10, 1, 324, _ripTrekTravel, 1, 1, 0);
 		_george = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, false,
 			triggerMachineByHashCallback, "guy behind desk");
-		_georgeShould = 0;
 		_georgeMode = 0;
+		_georgeShould = 0;
 		sendWSMessage_10000(1, _george, _agentStander, 1,
 			1, 10, _agentStander, 1, 1, 0);
 		break;
@@ -963,15 +964,15 @@ void Room301::parser() {
 				break;
 			case 3:
 				sendWSMessage_140000(-1);
-				_georgeMode = 5;
-				_val6 = KT_PARSE;
-				_val7 = KT_PARSE;
-				_val16 = 4;
+				_georgeShould = 5;
+				_val6_triggerMode = KT_PARSE;
+				_georgeTriggerMode = KT_PARSE;
+				_georgeTrigger = 4;
 				_soundName = "301a02";
 				break;
 			case 4:
-				_georgeMode = 0;
-				_trigger1 = kernel_trigger_create(5);
+				_georgeShould = 0;
+				_ripleyTrigger = kernel_trigger_create(5);
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(1, 11);
 				_G(kernel).trigger_mode = oldMode;
@@ -991,7 +992,7 @@ void Room301::parser() {
 		digi_play("301r29", 1);
 	} else if (_G(kernel).trigger == 747) {
 		player_set_commands_allowed(false);
-		_georgeMode = 0;
+		_georgeShould = 0;
 		_ripleyShould = 4;
 
 		if (_travelDest) {
@@ -1029,11 +1030,11 @@ void Room301::parser() {
 			triggerMachineByHashCallback, "rip");
 
 		_G(kernel).trigger_mode = KT_DAEMON;
-		_val19 = 0;
+		_ripleyMode = 0;
 		_ripleyShould = 5;
 		sendWSMessage_10000(1, _ripley, _ripTrekTravel, 1, 9, 20,
 			_ripTrekTravel, 10, 10, 0);
-		_georgeMode = 4;
+		_georgeShould = 4;
 	} else if (takeFlag && player_said("postcards")) {
 		digi_play("301r09", 1);
 	} else if (takeFlag && player_said("water cooler")) {
@@ -1062,13 +1063,13 @@ void Room301::conv301a() {
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0) {
 			if (node != 3) {
-				_georgeMode = 4;
+				_georgeShould = 4;
 				conv_resume();
 			}
 		} else if (who == 1) {
 			if (node == 11) {
 				// Take payment
-				_georgeMode = 12;
+				_georgeShould = 12;
 			} else if (node != 13) {
 				_ripleyShould = 0;
 				conv_resume();
@@ -1079,18 +1080,18 @@ void Room301::conv301a() {
 	} else if (sound) {
 		if (who <= 0) {
 			if (node == 3) {
-				_georgeMode = 15;
+				_georgeShould = 15;
 			} else if (node != 2) {
-				_georgeMode = imath_ranged_rand(5, 6);
+				_georgeShould = imath_ranged_rand(5, 6);
 			} else {
-				_georgeMode = 2;
+				_georgeShould = 2;
 				_soundName = sound;
-				_val16 = 1;
+				_georgeTrigger = 1;
 				return;
 			}
 		} else if (who == 1) {
 			if (node == 13)
-				_georgeMode = 13;
+				_georgeShould = 13;
 			else
 				_ripleyShould = 1;
 		}
