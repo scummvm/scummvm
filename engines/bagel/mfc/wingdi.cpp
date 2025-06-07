@@ -94,12 +94,12 @@ HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
 }
 
 HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {
-	auto *surf = static_cast<Gfx::SurfaceDC *>(hdc);
+	auto *surf = static_cast<CDC::Impl *>(hdc);
 	return surf->selectPalette(hPal);
 }
 
 UINT RealizePalette(HDC hdc) {
-	auto *surf = static_cast<Gfx::SurfaceDC *>(hdc);
+	auto *surf = static_cast<CDC::Impl *>(hdc);
 	surf->realizePalette();
 	return 256;
 }

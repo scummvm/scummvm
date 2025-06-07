@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
-#include "bagel/mfc/gfx/surface_dc.h"
+#include "bagel/mfc/gfx/blitter.h"
 
 namespace Bagel {
 namespace MFC {
@@ -30,7 +30,7 @@ namespace MFC {
 IMPLEMENT_DYNAMIC(CDC, CObject)
 
 CDC *CDC::FromHandle(HDC hDC) {
-//	Gfx::SurfaceDC *surf = static_cast<Gfx::SurfaceDC *>(hDC);
+//	Impl *surf = static_cast<Impl *>(hDC);
 //	return &wnd->_dc;
 	error("TODO: CDC::FromHandle");
 }
@@ -479,6 +479,102 @@ UINT CDC::SetTextAlign(UINT nFlags) {
 
 BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	error("TODO: CDC::GetTextMetrics");
+}
+
+/*--------------------------------------------*/
+
+HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
+	HBITMAP bitmap = dynamic_cast<HBITMAP>(gdiObj);
+	if (bitmap) {
+		HBITMAP result = _bitmap;
+		_bitmap = bitmap;
+		return result;
+	}
+#if 0
+	HBRUSH brush = dynamic_cast<HBRUSH>(gdiObj);
+	HFONT font = dynamic_cast<HFONT>(gdiObj);
+	HPEN pen = dynamic_cast<HPEN>(gdiObj);
+#endif
+	error("Unsupported gdi object");
+	return nullptr;
+}
+
+Graphics::ManagedSurface *CDC::Impl::getSurface() const {
+	assert(_bitmap);
+	return static_cast<CBitmap::Impl *>(_bitmap);
+}
+
+HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {
+	HPALETTE oldPal = _palette;
+	_palette = pal;
+
+	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
+
+	if (pal) {
+		auto *newPal = static_cast<CPalette::Impl *>(pal);
+		if (bitmap)
+			bitmap->setPalette(newPal->data(), 0, newPal->size());
+	} else {
+		if (bitmap)
+			bitmap->clearPalette();
+	}
+
+	return oldPal;
+}
+
+CPalette *CDC::Impl::selectPalette(CPalette *pal) {
+	CPalette *oldPal = _cPalette;
+	_cPalette = pal;
+	selectPalette((HPALETTE)_cPalette->m_hObject);
+	return oldPal;
+}
+
+
+UINT CDC::Impl::realizePalette() {
+	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
+	AfxGetApp()->setPalette(*pal);
+	return 256;
+}
+
+COLORREF CDC::Impl::GetNearestColor(COLORREF crColor) const {
+	if (crColor <= 255)
+		return crColor;
+
+	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
+	return pal->findBestColor(
+		GetRValue(crColor),
+		GetGValue(crColor),
+		GetBValue(crColor));
+}
+
+void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
+	assert(_bitmap);
+	static_cast<CBitmap::Impl *>(_bitmap)->fillRect(r,
+		GetNearestColor(crColor));
+}
+
+void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+	int xSrc, int ySrc, DWORD dwRop) {
+	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
+	Graphics::ManagedSurface *dest = getSurface();
+	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
+	const Common::Point destPos(x, y);
+
+	if (dwRop == SRCCOPY) {
+		dest->blitFrom(*src, srcRect, destPos);
+	} else {
+		Gfx::blit(src, dest, srcRect, destPos, dwRop);
+	}
+}
+
+void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+	int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
+	Graphics::ManagedSurface *src = pSrcDC->surface()->getSurface();
+	Graphics::ManagedSurface *dest = getSurface();
+	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);
+	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
+
+	Gfx::stretchBlit(src, dest, srcRect, destRect, dwRop);
 }
 
 } // namespace MFC

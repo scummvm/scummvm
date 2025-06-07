@@ -36,7 +36,6 @@
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/dialog_template.h"
 #include "bagel/mfc/gfx/fonts.h"
-#include "bagel/mfc/gfx/surface_dc.h"
 #include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/libs/settings.h"
 
@@ -582,6 +581,29 @@ class CDC : public CObject {
 	DECLARE_DYNAMIC(CDC)
 
 public:
+	class Impl {
+	public:
+		HBITMAP _bitmap = nullptr;
+		HPALETTE _palette = nullptr;
+		CPalette *_cPalette = nullptr;
+
+	public:
+		HGDIOBJ Attach(HGDIOBJ gdiObj);
+		Graphics::ManagedSurface *getSurface() const;
+
+		HPALETTE selectPalette(HPALETTE pal);
+		CPalette *selectPalette(CPalette *pal);
+		UINT realizePalette();
+		COLORREF GetNearestColor(COLORREF crColor) const;
+
+		void fillRect(const Common::Rect &r, COLORREF crColor);
+		void bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+			int xSrc, int ySrc, DWORD dwRop);
+		void stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+			int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
+	};
+
+public:
 	HDC m_hDC = nullptr;
 
 	static CDC *FromHandle(HDC hDC);
@@ -592,8 +614,8 @@ public:
 	operator HDC() const {
 		return m_hDC;
 	}
-	Gfx::SurfaceDC *surface() const {
-		return static_cast<Gfx::SurfaceDC *>(m_hDC);
+	Impl *surface() const {
+		return static_cast<Impl *>(m_hDC);
 	}
 
 	BOOL CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
@@ -1035,7 +1057,7 @@ public:
 	Common::Rect _updateRect;
 	bool _updateErase = false;
 	CBitmap::Impl _surfaceBitmap;
-	Gfx::SurfaceDC _surface;
+	CDC::Impl _surface;
 	CDC _dc;
 
 public:

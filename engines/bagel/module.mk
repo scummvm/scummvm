@@ -51,7 +51,6 @@ MODULE_OBJS = \
 	mfc/gfx/cursor.o \
 	mfc/gfx/dialog_template.o \
 	mfc/gfx/fonts.o \
-	mfc/gfx/surface_dc.o \
 	mfc/libs/events.o \
 	mfc/libs/resources.o \
 	mfc/libs/settings.o \
