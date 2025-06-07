@@ -339,20 +339,20 @@ bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransRotate(int x, int y, uint32 angle, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	Common::Point newHotspot;
 	Common::Rect oldRect(rect.left, rect.top, rect.right, rect.bottom);
-	Graphics::TransformStruct transform = Graphics::TransformStruct(zoomX, zoomY, angle, hotspotX, hotspotY, blendMode, TS_COLOR(alpha), mirrorX, mirrorY, 0, 0);
+	Graphics::TransformStruct transform = Graphics::TransformStruct(zoomX, zoomY, rotate, hotspotX, hotspotY, blendMode, TS_COLOR(alpha), mirrorX, mirrorY, 0, 0);
 	Rect32 newRect = Graphics::TransformTools::newRect(oldRect, transform, &newHotspot);
 
 	x -= newHotspot.x;
 	y -= newHotspot.y;
 
-	_rotation = (uint32)transform._angle;
+	_rotation = transform._angle;
 	if (transform._angle < 0.0f) {
-		warning("Negative rotation: %d %d", transform._angle, _rotation);
-		_rotation = (uint32)(360.0f + transform._angle);
-		warning("Negative post rotation: %d %d", transform._angle, _rotation);
+		warning("Negative rotation: %d %d", (int32)transform._angle, (int32)_rotation);
+		_rotation = 360.0f + transform._angle;
+		warning("Negative post rotation: %d %d", (int32)transform._angle, (int32)_rotation);
 	}
 	return drawSprite(x, y, &rect, &newRect, transform);
 }

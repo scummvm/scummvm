@@ -264,7 +264,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	}
 
 	if (rotate != Graphics::kDefaultAngle) {
-		res = _surface->displayTransRotate(x, y, (uint32)rotate, _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+		res = _surface->displayTransRotate(x, y, rotate, _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 	} else {
 		if (zoomX == Graphics::kDefaultZoomX && zoomY == Graphics::kDefaultZoomY) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);

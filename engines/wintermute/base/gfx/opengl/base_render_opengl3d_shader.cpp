@@ -466,7 +466,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	if (angle != 0) {
 		DXVector2 sc(1.0f, 1.0f);
 		DXVector2 rotation(rot.x, rot.y);
-		transformVertices(vertices, &rotation, &sc, degToRad(-angle));
+		transformVertices(vertices, &rotation, &sc, angle);
 	}
 
 	for (int i = 0; i < 4; i++) {

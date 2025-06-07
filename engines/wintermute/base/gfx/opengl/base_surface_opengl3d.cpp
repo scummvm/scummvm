@@ -28,6 +28,7 @@
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 
@@ -84,24 +85,20 @@ bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBl
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, uint32 angle, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
 
-	Common::Point newHotspot;
-	Common::Rect oldRect(rect.left, rect.top, rect.right, rect.bottom);
-	Graphics::TransformStruct transform = Graphics::TransformStruct(zoomX, zoomY, angle, hotspotX, hotspotY, blendMode, alpha, mirrorX, mirrorY, 0, 0);
-	Graphics::TransformTools::newRect(oldRect, transform, &newHotspot);
-
-	x -= newHotspot.x;
-	y -= newHotspot.y;
+	x -= hotspotX;
+	y -= hotspotY;
 
 	Vector2 position(x, y);
 	Vector2 rotation;
-	rotation.x = x + transform._hotspot.x * (transform._zoom.x / 100.0f);
-	rotation.y = y + transform._hotspot.y * (transform._zoom.y / 100.0f);
-	Vector2 scale(transform._zoom.x / 100.0f, transform._zoom.y / 100.0f);
+	rotation.x = x + hotspotX * (zoomX / 100.0f);
+	rotation.y = y + hotspotY * (zoomY / 100.0f);
+	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
+	float angle = degToRad(rotate);
 
-	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, position, rotation, scale, transform._angle, transform._rgbaMod, transform._alphaDisable, transform._blendMode, transform.getMirrorX(), transform.getMirrorY());
+	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, position, rotation, scale, angle, alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
