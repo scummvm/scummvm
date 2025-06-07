@@ -48,7 +48,7 @@ void LogicManager::CONS_Vesna(int chapter) {
 		CONS_Vesna_StartPart5(0, 0, 0, 0);
 		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -69,19 +69,25 @@ void LogicManager::CONS_Vesna_DebugWalks(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_DebugWalks(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterVesna).characterPosition.position = 0;
-			getCharacter(kCharacterVesna).characterPosition.location = 0;
-			getCharacter(kCharacterVesna).characterPosition.car = kCarGreenSleeping;
-			getCharacterCurrentParams(kCharacterVesna)[0] = 10000;
+	switch (msg->action) {
+	case 0:
+		if (walk(kCharacterVesna, kCarGreenSleeping, getCharacterCurrentParams(kCharacterVesna)[0])) {
+			if (getCharacterCurrentParams(kCharacterVesna)[0] == 10000) {
+				getCharacterCurrentParams(kCharacterVesna)[0] = 0;
+			} else {
+				getCharacterCurrentParams(kCharacterVesna)[0] = 10000;
+			}
 		}
-	} else if (walk(kCharacterVesna, kCarGreenSleeping, getCharacterCurrentParams(kCharacterVesna)[0])) {
-		if (getCharacterCurrentParams(kCharacterVesna)[0] == 10000) {
-			getCharacterCurrentParams(kCharacterVesna)[0] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterVesna)[0] = 10000;
-		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterVesna).characterPosition.position = 0;
+		getCharacter(kCharacterVesna).characterPosition.location = 0;
+		getCharacter(kCharacterVesna).characterPosition.car = kCarGreenSleeping;
+		getCharacterCurrentParams(kCharacterVesna)[0] = 10000;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -98,12 +104,17 @@ void LogicManager::CONS_Vesna_DoDialog(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_DoDialog(HAND_PARAMS) {
-	if (msg->action == 2) {
+	switch (msg->action) {
+	case 2:
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		playDialog(kCharacterVesna, (char *)&getCharacterCurrentParams(kCharacterVesna)[0], -1, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -122,15 +133,20 @@ void LogicManager::CONS_Vesna_DoCorrOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_DoCorrOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		releaseAtDoor(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[3]);
 
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterVesna, (char *)&getCharacterCurrentParams(kCharacterVesna)[0]);
 		blockAtDoor(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[3]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -147,12 +163,17 @@ void LogicManager::CONS_Vesna_DoSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_DoSeqOtis(HAND_PARAMS) {
-	if (msg->action == 3) {
+	switch (msg->action) {
+	case 3:
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
-	} else if (msg->action == 12) {
+		break;
+	case 12:
 		startSeqOtis(kCharacterVesna, (char *)&getCharacterCurrentParams(kCharacterVesna)[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -178,6 +199,7 @@ void LogicManager::HAND_Vesna_DoWalk(HAND_PARAMS) {
 			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
 		}
+
 		break;
 	case 5:
 		if (rnd(2) == 0) {
@@ -208,17 +230,22 @@ void LogicManager::CONS_Vesna_DoWait(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_DoWait(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacterCurrentParams(kCharacterVesna)[1] || (getCharacterCurrentParams(kCharacterVesna)[1] = _gameTime + getCharacterCurrentParams(kCharacterVesna)[0],
 															  _gameTime + getCharacterCurrentParams(kCharacterVesna)[0] != 0)) {
 			if (getCharacterCurrentParams(kCharacterVesna)[1] >= _gameTime)
-				return;
+				break;
+
 			getCharacterCurrentParams(kCharacterVesna)[1] = 0x7FFFFFFF;
 		}
 
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -236,32 +263,36 @@ void LogicManager::CONS_Vesna_DoWalkBehind(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_DoWalkBehind(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action != 12) {
-			if (msg->action == 123668192) {
-				getCharacter(kCharacterVesna).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
-				fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
-			}
-			return;
+	switch (msg->action) {
+	case 0:
+		getCharacterCurrentParams(kCharacterVesna)[2] = 0;
+
+		if (nearChar(kCharacterVesna, kCharacterMilos, 500) ||
+			(getCharacter(kCharacterVesna).direction == 1) &&
+				((getCharacter(kCharacterVesna).characterPosition.car > getCharacter(kCharacterMilos).characterPosition.car) ||
+				 getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position > getCharacter(kCharacterMilos).characterPosition.position) ||
+			getCharacter(kCharacterVesna).direction == 2 && ((getCharacter(kCharacterVesna).characterPosition.car < getCharacter(kCharacterMilos).characterPosition.car) ||
+															 getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position < getCharacter(kCharacterMilos).characterPosition.position)) {
+
+			getCharacter(kCharacterVesna).waitedTicksUntilCycleRestart = 0;
+			getCharacterCurrentParams(kCharacterVesna)[2] = 1;
 		}
 
-		walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1]);
-		return;
-	}
-	getCharacterCurrentParams(kCharacterVesna)[2] = 0;
-	if (nearChar(kCharacterVesna, kCharacterMilos, 500) ||
-		(getCharacter(kCharacterVesna).direction == 1) &&
-			((getCharacter(kCharacterVesna).characterPosition.car > getCharacter(kCharacterMilos).characterPosition.car) ||
-			 getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position > getCharacter(kCharacterMilos).characterPosition.position) ||
-		getCharacter(kCharacterVesna).direction == 2 && ((getCharacter(kCharacterVesna).characterPosition.car < getCharacter(kCharacterMilos).characterPosition.car) ||
-			getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position < getCharacter(kCharacterMilos).characterPosition.position)) {
+		if (!getCharacterCurrentParams(kCharacterVesna)[2]) {
+			walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1]);
+		}
 
-		getCharacter(kCharacterVesna).waitedTicksUntilCycleRestart = 0;
-		getCharacterCurrentParams(kCharacterVesna)[2] = 1;
-	}
-	if (!getCharacterCurrentParams(kCharacterVesna)[2]) {
+		break;
+	case 12:
 		walk(kCharacterVesna, getCharacterCurrentParams(kCharacterVesna)[0], getCharacterCurrentParams(kCharacterVesna)[1]);
+		break;
+	case 123668192:
+		getCharacter(kCharacterVesna).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
+		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -276,10 +307,18 @@ void LogicManager::CONS_Vesna_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_WaitRCClear(HAND_PARAMS) {
-	if ((msg->action == 0 && rcClear()) || (msg->action == 12 && rcClear())) {
-		getCharacter(kCharacterVesna).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
-		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterVesna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
+			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -294,16 +333,22 @@ void LogicManager::CONS_Vesna_FinishSeqOtis(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_FinishSeqOtis(HAND_PARAMS) {
-	if (msg->action == 0) {
+	switch (msg->action) {
+	case 0:
 		if (getCharacter(kCharacterVesna).direction != 4) {
 			getCharacter(kCharacterVesna).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
 		}
-	} else if (msg->action == 3) {
+
+		break;
+	case 3:
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -321,22 +366,25 @@ void LogicManager::CONS_Vesna_SaveGame(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_SaveGame(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			save(
-				kCharacterVesna,
-				getCharacterCurrentParams(kCharacterVesna)[0],
-				getCharacterCurrentParams(kCharacterVesna)[1]
-			);
-
-			getCharacter(kCharacterVesna).currentCall--;
-			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
-			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterVesna).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
 		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		break;
+	case 12:
+		save(
+			kCharacterVesna,
+			getCharacterCurrentParams(kCharacterVesna)[0],
+			getCharacterCurrentParams(kCharacterVesna)[1]
+		);
+
+		getCharacter(kCharacterVesna).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
+		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -351,48 +399,32 @@ void LogicManager::CONS_Vesna_HomeAlone(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_HomeAlone(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			if (msg->action == 18) {
-				switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
-				case 1:
-				case 2:
-					getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
-					VesnaCall(&LogicManager::CONS_Vesna_DoDialog, (char *)&getCharacterCurrentParams(kCharacterVesna)[3], 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (getCharacterCurrentParams(kCharacterVesna)[2]) {
+			if (getCharacterCurrentParams(kCharacterVesna)[6] || (getCharacterCurrentParams(kCharacterVesna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterVesna)[6] >= _currentGameSessionTicks)
 					break;
-				case 3:
-					setDoor(38, kCharacterVesna, 3, 14, 0);
-					getCharacterCurrentParams(kCharacterVesna)[2] = 1;
-					break;
-				case 4:
-					getCharacterCurrentParams(kCharacterVesna)[2] = 0;
-					getCharacterCurrentParams(kCharacterVesna)[1] = 1;
-					break;
-				default:
-					return;
-				}
-			} else if (msg->action == 55996766 || msg->action == 101687594) {
-				getCharacter(kCharacterVesna).currentCall--;
-				_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
-				fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+
+				getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
 			}
-		} else if (msg->action == 17) {
-			if (getCharacterCurrentParams(kCharacterVesna)[1] || getCharacterCurrentParams(kCharacterVesna)[2]) {
-				setDoor(38, kCharacterVesna, 1, 10, 9);
-				getCharacterCurrentParams(kCharacterVesna)[1] = 0;
-				getCharacterCurrentParams(kCharacterVesna)[2] = 0;
-			}
-		} else if (msg->action == 12) {
-			setDoor(38, kCharacterVesna, 3, 10, 9);
+
+			getCharacterCurrentParams(kCharacterVesna)[2] = 0;
+			getCharacterCurrentParams(kCharacterVesna)[1] = 1;
+			setDoor(38, kCharacterVesna, 1, 0, 0);
+			getCharacterCurrentParams(kCharacterVesna)[6] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterVesna)[6] = 0;
 		}
-		return;
-	}
-	if (msg->action >= 8) {
+
+		break;
+	case 8:
+	case 9:
 		if (getCharacterCurrentParams(kCharacterVesna)[2]) {
 			setDoor(38, kCharacterVesna, 3, 0, 0);
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 4;
 			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, getCathSorryDialog(), 0, 0, 0);
-			return;
+			break;
 		}
 
 		getCharacterCurrentParams(kCharacterVesna)[0]++;
@@ -415,22 +447,47 @@ void LogicManager::HAND_Vesna_HomeAlone(HAND_PARAMS) {
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
 			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "LIB012", 0, 0, 0);
 		}
-		return;
-	}
-	if (msg->action == 0) {
-		if (getCharacterCurrentParams(kCharacterVesna)[2]) {
-			if (getCharacterCurrentParams(kCharacterVesna)[6] || (getCharacterCurrentParams(kCharacterVesna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterVesna)[6] >= _currentGameSessionTicks)
-					return;
-				getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
-			}
+
+		break;
+	case 12:
+		setDoor(38, kCharacterVesna, 3, 10, 9);
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterVesna)[1] || getCharacterCurrentParams(kCharacterVesna)[2]) {
+			setDoor(38, kCharacterVesna, 1, 10, 9);
+			getCharacterCurrentParams(kCharacterVesna)[1] = 0;
+			getCharacterCurrentParams(kCharacterVesna)[2] = 0;
+		}
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
+		case 1:
+		case 2:
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
+			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, (char *)&getCharacterCurrentParams(kCharacterVesna)[3], 0, 0, 0);
+			break;
+		case 3:
+			setDoor(38, kCharacterVesna, 3, 14, 0);
+			getCharacterCurrentParams(kCharacterVesna)[2] = 1;
+			break;
+		case 4:
 			getCharacterCurrentParams(kCharacterVesna)[2] = 0;
 			getCharacterCurrentParams(kCharacterVesna)[1] = 1;
-			setDoor(38, kCharacterVesna, 1, 0, 0);
-			getCharacterCurrentParams(kCharacterVesna)[6] = 0;
-		} else {
-			getCharacterCurrentParams(kCharacterVesna)[6] = 0;
+			break;
+		default:
+			break;
 		}
+
+		break;
+	case 55996766:
+	case 101687594:
+		getCharacter(kCharacterVesna).currentCall--;
+		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
+		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -445,16 +502,22 @@ void LogicManager::CONS_Vesna_Birth(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_Birth(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			autoMessage(kCharacterVesna, 124190740, 0);
-			getCharacter(kCharacterVesna).characterPosition.position = 4689;
-			getCharacter(kCharacterVesna).characterPosition.location = 1;
-			getCharacter(kCharacterVesna).characterPosition.car = kCarRestaurant;
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterVesna)[0]) {
+			getCharacterCurrentParams(kCharacterVesna)[0] = 1;
+			CONS_Vesna_WithMilos(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 1062000 && !getCharacterCurrentParams(kCharacterVesna)[0]) {
-		getCharacterCurrentParams(kCharacterVesna)[0] = 1;
-		CONS_Vesna_WithMilos(0, 0, 0, 0);
+
+		break;
+	case 12:
+		autoMessage(kCharacterVesna, 124190740, 0);
+		getCharacter(kCharacterVesna).characterPosition.position = 4689;
+		getCharacter(kCharacterVesna).characterPosition.location = 1;
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRestaurant;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -469,18 +532,23 @@ void LogicManager::CONS_Vesna_WithMilos(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_WithMilos(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 1) {
-				endGraphics(kCharacterVesna);
-				CONS_Vesna_HomeTogether(0, 0, 0, 0);
-			}
-		} else if (msg->action == 204832737) {
-			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
-			VesnaCall(&LogicManager::CONS_Vesna_DoWalkBehind, 4, 3050, 0, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterVesna).characterPosition = getCharacter(kCharacterMilos).characterPosition;
+		break;
+	case 18:
+		if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 1) {
+			endGraphics(kCharacterVesna);
+			CONS_Vesna_HomeTogether(0, 0, 0, 0);
+		}
+
+		break;
+	case 204832737:
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
+		VesnaCall(&LogicManager::CONS_Vesna_DoWalkBehind, 4, 3050, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -495,13 +563,18 @@ void LogicManager::CONS_Vesna_HomeTogether(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_HomeTogether(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterVesna).characterPosition.position = 3050;
 		getCharacter(kCharacterVesna).characterPosition.location = 1;
-		getCharacter(kCharacterVesna).characterPosition.car = 4;
-	} else if (msg->action == 190412928) {
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
+		break;
+	case 190412928:
 		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
 		VesnaCall(&LogicManager::CONS_Vesna_HomeAlone, 0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -516,12 +589,16 @@ void LogicManager::CONS_Vesna_Asleep(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_Asleep(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterVesna).characterPosition.position = 3050;
 		getCharacter(kCharacterVesna).characterPosition.location = 1;
 		endGraphics(kCharacterVesna);
 		setDoor(38, kCharacterCath, 3, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -536,17 +613,20 @@ void LogicManager::CONS_Vesna_StartPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_StartPart2(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterVesna);
-			getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterVesna).characterPosition.position = 3050;
-			getCharacter(kCharacterVesna).characterPosition.location = 1;
-			getCharacter(kCharacterVesna).clothes = 0;
-			getCharacter(kCharacterVesna).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Vesna_InPart2(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterVesna);
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterVesna).characterPosition.position = 3050;
+		getCharacter(kCharacterVesna).characterPosition.location = 1;
+		getCharacter(kCharacterVesna).clothes = 0;
+		getCharacter(kCharacterVesna).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -561,14 +641,19 @@ void LogicManager::CONS_Vesna_InPart2(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_InPart2(HAND_PARAMS) {
-	if (msg->action != 18) {
-		if (msg->action == 135024800) {
-			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
-			VesnaCall(&LogicManager::CONS_Vesna_CheckTrain, 0, 0, 0, 0);
-		} else if (msg->action == 137165825) {
-			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
-			VesnaCall(&LogicManager::CONS_Vesna_HomeAlone, 0, 0, 0, 0);
-		}
+	switch (msg->action) {
+	case 18:
+		break;
+	case 135024800:
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
+		VesnaCall(&LogicManager::CONS_Vesna_CheckTrain, 0, 0, 0, 0);
+		break;
+	case 137165825:
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
+		VesnaCall(&LogicManager::CONS_Vesna_HomeAlone, 0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -583,15 +668,19 @@ void LogicManager::CONS_Vesna_CheckTrain(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_CheckTrain(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
 		VesnaCall(&LogicManager::CONS_Vesna_DoCorrOtis, "610BG", 38, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterVesna).characterPosition.location = 0;
+
 			if (getCharacter(kCharacterVesna).characterPosition.position < 2087)
 				getCharacter(kCharacterVesna).characterPosition.position = 2088;
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
 			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, 5, 850, 0, 0);
 			break;
@@ -607,8 +696,10 @@ void LogicManager::HAND_Vesna_CheckTrain(HAND_PARAMS) {
 			break;
 		case 4:
 			startSeqOtis(kCharacterVesna, "808UD");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterVesna);
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
 			VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -652,8 +743,12 @@ void LogicManager::HAND_Vesna_CheckTrain(HAND_PARAMS) {
 			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -668,17 +763,20 @@ void LogicManager::CONS_Vesna_StartPart3(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_StartPart3(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterVesna);
-			getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterVesna).characterPosition.position = 3050;
-			getCharacter(kCharacterVesna).characterPosition.location = 1;
-			getCharacter(kCharacterVesna).clothes = 0;
-			getCharacter(kCharacterVesna).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Vesna_InComp(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterVesna);
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterVesna).characterPosition.position = 3050;
+		getCharacter(kCharacterVesna).characterPosition.location = 1;
+		getCharacter(kCharacterVesna).clothes = 0;
+		getCharacter(kCharacterVesna).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -693,59 +791,54 @@ void LogicManager::CONS_Vesna_InComp(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_InComp(HAND_PARAMS) {
-	if (msg->action > 9) {
-		if (msg->action > 17) {
-			if (msg->action > 137165825) {
-				if (msg->action == 155913424) {
-					getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 6;
-					VesnaCall(&LogicManager::CONS_Vesna_TakeAWalk, 0, 0, 0, 0);
-				} else if (msg->action == 203663744) {
-					setDoor(38, kCharacterVesna, 3, 10, 9);
-				}
-			} else if (msg->action == 137165825) {
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
-				VesnaCall(&LogicManager::CONS_Vesna_HomeAlone, 0, 0, 0, 0);
-			} else if (msg->action == 18) {
-				switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
-				case 1:
-				case 2:
-					getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
-					VesnaCall(&LogicManager::CONS_Vesna_DoDialog, (char *)&getCharacterCurrentParams(kCharacterVesna)[3], 0, 0, 0);
+	switch (msg->action) {
+	case 0:
+		if (_gameProgress[kProgressField54] && getCharacterCurrentParams(kCharacterVesna)[6] != 0x7FFFFFFF && _gameTime) {
+			if (_gameTime > 2250000) {
+				getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
+				CONS_Vesna_KillAnna(0, 0, 0, 0);
+				break;
+			}
+
+			if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterVesna)[6]) {
+				getCharacterCurrentParams(kCharacterVesna)[6] = _gameTime;
+				if (!_gameTime) {
+					CONS_Vesna_KillAnna(0, 0, 0, 0);
 					break;
-				case 3:
-					setDoor(38, kCharacterVesna, 3, 14, 0);
-					getCharacterCurrentParams(kCharacterVesna)[1] = 1;
-					break;
-				case 4:
-					getCharacterCurrentParams(kCharacterVesna)[1] = 0;
-					getCharacterCurrentParams(kCharacterVesna)[0] = 1;
-					break;
-				default:
-					return;
 				}
 			}
-		} else if (msg->action == 17) {
-			if (getCharacterCurrentParams(kCharacterVesna)[0] || getCharacterCurrentParams(kCharacterVesna)[1]) {
-				setDoor(38, kCharacterVesna, 1, 10, 9);
-				getCharacterCurrentParams(kCharacterVesna)[0] = 0;
-				getCharacterCurrentParams(kCharacterVesna)[1] = 0;
+
+			if (getCharacterCurrentParams(kCharacterVesna)[6] < _gameTime) {
+				getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
+				CONS_Vesna_KillAnna(0, 0, 0, 0);
+				break;
 			}
-		} else if (msg->action == 12) {
-			getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterVesna).characterPosition.position = 3050;
-			getCharacter(kCharacterVesna).characterPosition.location = 1;
-			getCharacter(kCharacterVesna).clothes = 0;
-			getCharacter(kCharacterVesna).inventoryItem = 0;
-			endGraphics(kCharacterVesna);
 		}
-		return;
-	}
-	if (msg->action >= 8) {
+
+		if (getCharacterCurrentParams(kCharacterVesna)[1]) {
+			if (getCharacterCurrentParams(kCharacterVesna)[7] || (getCharacterCurrentParams(kCharacterVesna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
+				if (getCharacterCurrentParams(kCharacterVesna)[7] >= _currentGameSessionTicks)
+					break;
+
+				getCharacterCurrentParams(kCharacterVesna)[7] = 0x7FFFFFFF;
+			}
+
+			getCharacterCurrentParams(kCharacterVesna)[1] = 0;
+			getCharacterCurrentParams(kCharacterVesna)[0] = 1;
+			setDoor(38, kCharacterVesna, 1, 0, 0);
+			getCharacterCurrentParams(kCharacterVesna)[7] = 0;
+		} else {
+			getCharacterCurrentParams(kCharacterVesna)[7] = 0;
+		}
+
+		break;
+	case 8:
+	case 9:
 		if (getCharacterCurrentParams(kCharacterVesna)[1]) {
 			setDoor(38, kCharacterVesna, 3, 0, 0);
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 4;
 			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, getCathSorryDialog(), 0, 0, 0);
-			return;
+			break;
 		}
 
 		getCharacterCurrentParams(kCharacterVesna)[2]++;
@@ -768,39 +861,57 @@ void LogicManager::HAND_Vesna_InComp(HAND_PARAMS) {
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
 			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "LIB012", 0, 0, 0);
 		}
-		return;
-	}
-	if (msg->action)
-		return;
 
-	if (_gameProgress[kProgressField54] && getCharacterCurrentParams(kCharacterVesna)[6] != 0x7FFFFFFF && _gameTime) {
-		if (_gameTime > 2250000)
-			goto LABEL_24;
-		if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterVesna)[6]) {
-			getCharacterCurrentParams(kCharacterVesna)[6] = _gameTime;
-			if (!_gameTime)
-				goto LABEL_25;
+		break;
+	case 12:
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterVesna).characterPosition.position = 3050;
+		getCharacter(kCharacterVesna).characterPosition.location = 1;
+		getCharacter(kCharacterVesna).clothes = 0;
+		getCharacter(kCharacterVesna).inventoryItem = 0;
+		endGraphics(kCharacterVesna);
+		break;
+	case 17:
+		if (getCharacterCurrentParams(kCharacterVesna)[0] || getCharacterCurrentParams(kCharacterVesna)[1]) {
+			setDoor(38, kCharacterVesna, 1, 10, 9);
+			getCharacterCurrentParams(kCharacterVesna)[0] = 0;
+			getCharacterCurrentParams(kCharacterVesna)[1] = 0;
 		}
-		if (getCharacterCurrentParams(kCharacterVesna)[6] < _gameTime) {
-		LABEL_24:
-			getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
-		LABEL_25:
-			CONS_Vesna_KillAnna(0, 0, 0, 0);
-			return;
+
+		break;
+	case 18:
+		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
+		case 1:
+		case 2:
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
+			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, (char *)&getCharacterCurrentParams(kCharacterVesna)[3], 0, 0, 0);
+			break;
+		case 3:
+			setDoor(38, kCharacterVesna, 3, 14, 0);
+			getCharacterCurrentParams(kCharacterVesna)[1] = 1;
+			break;
+		case 4:
+			getCharacterCurrentParams(kCharacterVesna)[1] = 0;
+			getCharacterCurrentParams(kCharacterVesna)[0] = 1;
+			break;
+		default:
+			break;
 		}
-	}
-	if (getCharacterCurrentParams(kCharacterVesna)[1]) {
-		if (getCharacterCurrentParams(kCharacterVesna)[7] || (getCharacterCurrentParams(kCharacterVesna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-			if (getCharacterCurrentParams(kCharacterVesna)[7] >= _currentGameSessionTicks)
-				return;
-			getCharacterCurrentParams(kCharacterVesna)[7] = 0x7FFFFFFF;
-		}
-		getCharacterCurrentParams(kCharacterVesna)[1] = 0;
-		getCharacterCurrentParams(kCharacterVesna)[0] = 1;
-		setDoor(38, kCharacterVesna, 1, 0, 0);
-		getCharacterCurrentParams(kCharacterVesna)[7] = 0;
-	} else {
-		getCharacterCurrentParams(kCharacterVesna)[7] = 0;
+
+		break;
+	case 137165825:
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
+		VesnaCall(&LogicManager::CONS_Vesna_HomeAlone, 0, 0, 0, 0);
+		break;
+	case 155913424:
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 6;
+		VesnaCall(&LogicManager::CONS_Vesna_TakeAWalk, 0, 0, 0, 0);
+		break;
+	case 203663744:
+		setDoor(38, kCharacterVesna, 3, 10, 9);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -815,15 +926,19 @@ void LogicManager::CONS_Vesna_TakeAWalk(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_TakeAWalk(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
 		VesnaCall(&LogicManager::CONS_Vesna_DoCorrOtis, "610Bg", 38, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterVesna).characterPosition.location = 0;
+
 			if (getCharacter(kCharacterVesna).characterPosition.position < 2087)
 				getCharacter(kCharacterVesna).characterPosition.position = 2088;
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
 			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, 5, 850, 0, 0);
 			break;
@@ -839,8 +954,10 @@ void LogicManager::HAND_Vesna_TakeAWalk(HAND_PARAMS) {
 			break;
 		case 4:
 			startSeqOtis(kCharacterVesna, "808UD");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterVesna);
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
 			VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -863,8 +980,10 @@ void LogicManager::HAND_Vesna_TakeAWalk(HAND_PARAMS) {
 			break;
 		case 8:
 			startSeqOtis(kCharacterVesna, "808DS");
+
 			if (inDiningRoom(kCharacterCath))
 				advanceFrame(kCharacterVesna);
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 9;
 			VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -886,8 +1005,12 @@ void LogicManager::HAND_Vesna_TakeAWalk(HAND_PARAMS) {
 			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -912,8 +1035,10 @@ void LogicManager::HAND_Vesna_KillAnna(HAND_PARAMS) {
 		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterVesna).characterPosition.location = 0;
+
 			if (getCharacter(kCharacterVesna).characterPosition.position < 2087)
 				getCharacter(kCharacterVesna).characterPosition.position = 2088;
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
 			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, kCarRestaurant, 850, 0, 0);
 			break;
@@ -929,8 +1054,10 @@ void LogicManager::HAND_Vesna_KillAnna(HAND_PARAMS) {
 			break;
 		case 4:
 			startSeqOtis(kCharacterVesna, "808UD");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterVesna);
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
 			VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -948,8 +1075,10 @@ void LogicManager::HAND_Vesna_KillAnna(HAND_PARAMS) {
 			break;
 		case 7:
 			startSeqOtis(kCharacterVesna, "808DS");
+
 			if (inDiningRoom(kCharacterCath))
 				advanceFrame(kCharacterVesna);
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 8;
 			VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -968,8 +1097,9 @@ void LogicManager::HAND_Vesna_KillAnna(HAND_PARAMS) {
 			CONS_Vesna_KilledAnna(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
 		break;
 	case 189299008:
 		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 6;
@@ -989,44 +1119,43 @@ void LogicManager::CONS_Vesna_KilledAnna(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_KilledAnna(HAND_PARAMS) {
-	if (msg->action <= 12) {
-		if (msg->action == 12) {
-			getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterVesna).characterPosition.position = 3050;
-			getCharacter(kCharacterVesna).characterPosition.location = 1;
-			getCharacter(kCharacterVesna).clothes = 0;
-			getCharacter(kCharacterVesna).inventoryItem = 0;
-		} else if (msg->action >= 8 && msg->action <= 9) {
-			setDoor(38, kCharacterVesna, 3, 0, 0);
-			if (msg->action == 8) {
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
-				VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "LIB012", 0, 0, 0);
-			} else {
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
-				VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "LIB013", 0, 0, 0);
+	switch (msg->action) {
+	case 8:
+	case 9:
+		setDoor(38, kCharacterVesna, 3, 0, 0);
+		if (msg->action == 8) {
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
+			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "LIB012", 0, 0, 0);
+		} else {
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
+			VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "LIB013", 0, 0, 0);
+		}
+
+		break;
+	case 12:
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterVesna).characterPosition.position = 3050;
+		getCharacter(kCharacterVesna).characterPosition.location = 1;
+		getCharacter(kCharacterVesna).clothes = 0;
+		getCharacter(kCharacterVesna).inventoryItem = 0;
+		break;
+	case 18:
+		if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
+			if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] <= 2) {
+				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
+				VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "VES1015A", 0, 0, 0);
+			} else if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 3) {
+				setDoor(38, kCharacterVesna, 3, 10, 9);
 			}
 		}
-		return;
-	}
-	if (msg->action != 18) {
-		if (msg->action != 203663744)
-			return;
-	LABEL_18:
+
+		break;
+	case 203663744:
 		setDoor(38, kCharacterVesna, 3, 10, 9);
-		return;
+		break;
+	default:
+		break;
 	}
-
-	if (!getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8])
-		return;
-
-	if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] <= 2) {
-		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
-		VesnaCall(&LogicManager::CONS_Vesna_DoDialog, "VES1015A", 0, 0, 0);
-		return;
-	}
-
-	if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 3)
-		goto LABEL_18;
 }
 
 void LogicManager::CONS_Vesna_StartPart4(CONS_PARAMS) {
@@ -1040,20 +1169,27 @@ void LogicManager::CONS_Vesna_StartPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_StartPart4(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterVesna);
-			getCharacter(kCharacterVesna).characterPosition.position = 3050;
-			getCharacter(kCharacterVesna).characterPosition.location = 1;
-			getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
-			getCharacter(kCharacterVesna).inventoryItem = 0;
-			setDoor(38, kCharacterVesna, 3, 10, 9);
-		} else if (msg->action == 18 && getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 1) {
-			CONS_Vesna_Exit(0, 0, 0, 0);
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
 		VesnaCall(&LogicManager::CONS_Vesna_HomeAlone, 0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterVesna);
+		getCharacter(kCharacterVesna).characterPosition.position = 3050;
+		getCharacter(kCharacterVesna).characterPosition.location = 1;
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
+		getCharacter(kCharacterVesna).inventoryItem = 0;
+		setDoor(38, kCharacterVesna, 3, 10, 9);
+		break;
+	case 18:
+		if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 1) {
+			CONS_Vesna_Exit(0, 0, 0, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1068,50 +1204,62 @@ void LogicManager::CONS_Vesna_Exit(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_Exit(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			send(kCharacterVesna, kCharacterMilos, 135600432, 0);
-			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
-			VesnaCall(&LogicManager::CONS_Vesna_DoCorrOtis, "610BG", 38, 0, 0);
-		} else if (msg->action == 18) {
-			switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
-			case 1:
-				getCharacter(kCharacterVesna).characterPosition.location = 0;
-				if (getCharacter(kCharacterVesna).characterPosition.position < 2087)
-					getCharacter(kCharacterVesna).characterPosition.position = 2088;
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
-				VesnaCall(&LogicManager::CONS_Vesna_DoWalk, 5, 850, 0, 0);
-				break;
-			case 2:
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
-				VesnaCall(&LogicManager::CONS_Vesna_WaitRCClear, 0, 0, 0, 0);
-				break;
-			case 3:
-				getCharacter(kCharacterVesna).characterPosition.position = 1540;
-				getCharacter(kCharacterVesna).characterPosition.location = 0;
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 4;
-				VesnaCall(&LogicManager::CONS_Vesna_DoSeqOtis, "808US", 0, 0, 0);
-				break;
-			case 4:
-				startSeqOtis(kCharacterVesna, "808UD");
-				if (inSalon(kCharacterCath))
-					advanceFrame(kCharacterVesna);
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
-				VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
-				break;
-			case 5:
-				endGraphics(kCharacterVesna);
-				getCharacter(kCharacterVesna).characterPosition.position = 5900;
-				getCharacter(kCharacterVesna).characterPosition.location = 1;
-				endGraphics(kCharacterVesna);
-				break;
-			default:
-				return;
-			}
+	switch (msg->action) {
+	case 0:
+		if (_gameTime > 2428200 && !getCharacterCurrentParams(kCharacterVesna)[0]) {
+			getCharacterCurrentParams(kCharacterVesna)[0] = 1;
+			CONS_Vesna_Done(0, 0, 0, 0);
 		}
-	} else if (_gameTime > 2428200 && !getCharacterCurrentParams(kCharacterVesna)[0]) {
-		getCharacterCurrentParams(kCharacterVesna)[0] = 1;
-		CONS_Vesna_Done(0, 0, 0, 0);
+
+		break;
+	case 12:
+		send(kCharacterVesna, kCharacterMilos, 135600432, 0);
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
+		VesnaCall(&LogicManager::CONS_Vesna_DoCorrOtis, "610BG", 38, 0, 0);
+		break;
+	case 18:
+		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
+		case 1:
+			getCharacter(kCharacterVesna).characterPosition.location = 0;
+
+			if (getCharacter(kCharacterVesna).characterPosition.position < 2087)
+				getCharacter(kCharacterVesna).characterPosition.position = 2088;
+
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
+			VesnaCall(&LogicManager::CONS_Vesna_DoWalk, 5, 850, 0, 0);
+			break;
+		case 2:
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
+			VesnaCall(&LogicManager::CONS_Vesna_WaitRCClear, 0, 0, 0, 0);
+			break;
+		case 3:
+			getCharacter(kCharacterVesna).characterPosition.position = 1540;
+			getCharacter(kCharacterVesna).characterPosition.location = 0;
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 4;
+			VesnaCall(&LogicManager::CONS_Vesna_DoSeqOtis, "808US", 0, 0, 0);
+			break;
+		case 4:
+			startSeqOtis(kCharacterVesna, "808UD");
+
+			if (inSalon(kCharacterCath))
+				advanceFrame(kCharacterVesna);
+
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
+			VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
+			break;
+		case 5:
+			endGraphics(kCharacterVesna);
+			getCharacter(kCharacterVesna).characterPosition.position = 5900;
+			getCharacter(kCharacterVesna).characterPosition.location = 1;
+			endGraphics(kCharacterVesna);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1126,10 +1274,12 @@ void LogicManager::CONS_Vesna_Done(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_Done(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
 		VesnaCall(&LogicManager::CONS_Vesna_WaitRCClear, 0, 0, 0, 0);
-	} else if (msg->action == 18) {
+		break;
+	case 18:
 		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
 		case 1:
 			getCharacter(kCharacterVesna).characterPosition.car = kCarRestaurant;
@@ -1140,8 +1290,10 @@ void LogicManager::HAND_Vesna_Done(HAND_PARAMS) {
 			break;
 		case 2:
 			startSeqOtis(kCharacterVesna, "808DS");
+
 			if (inDiningRoom(kCharacterCath))
 				advanceFrame(kCharacterVesna);
+
 			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
 			VesnaCall(&LogicManager::CONS_Vesna_FinishSeqOtis, 0, 0, 0, 0);
 			break;
@@ -1157,8 +1309,12 @@ void LogicManager::HAND_Vesna_Done(HAND_PARAMS) {
 			CONS_Vesna_EndPart4(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1173,13 +1329,17 @@ void LogicManager::CONS_Vesna_EndPart4(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_EndPart4(HAND_PARAMS) {
-	if (msg->action == 12) {
+	switch (msg->action) {
+	case 12:
 		endGraphics(kCharacterVesna);
 		setDoor(38, kCharacterCath, 3, 10, 9);
 		getCharacter(kCharacterVesna).characterPosition.location = 1;
 		getCharacter(kCharacterVesna).characterPosition.position = 3050;
 		getCharacter(kCharacterVesna).characterPosition.car = kCarRedSleeping;
 		getCharacter(kCharacterVesna).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1194,15 +1354,18 @@ void LogicManager::CONS_Vesna_StartPart5(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_StartPart5(HAND_PARAMS) {
-	if (msg->action) {
-		if (msg->action == 12) {
-			endGraphics(kCharacterVesna);
-			getCharacter(kCharacterVesna).characterPosition.location = 1;
-			getCharacter(kCharacterVesna).characterPosition.car = kCarRestaurant;
-			getCharacter(kCharacterVesna).inventoryItem = 0;
-		}
-	} else {
+	switch (msg->action) {
+	case 0:
 		CONS_Vesna_Guarding(0, 0, 0, 0);
+		break;
+	case 12:
+		endGraphics(kCharacterVesna);
+		getCharacter(kCharacterVesna).characterPosition.location = 1;
+		getCharacter(kCharacterVesna).characterPosition.car = kCarRestaurant;
+		getCharacter(kCharacterVesna).inventoryItem = 0;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1217,21 +1380,27 @@ void LogicManager::CONS_Vesna_Guarding(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_Vesna_Guarding(HAND_PARAMS) {
-	if (msg->action > 12) {
-		if (msg->action == 18) {
-			if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 1) {
-				playNIS(kEventCathVesnaRestaurantKilled);
-				endGame(0, 1, 0, 1);
-			}
-		} else if (msg->action == 134427424) {
-			setDoor(64, kCharacterCath, 0, 0, 1);
-			CONS_Vesna_Climbing(0, 0, 0, 0);
-		}
-	} else if (msg->action == 12) {
-		setDoor(64, kCharacterVesna, 0, 0, 1);
-	} else if (msg->action == 9) {
+	switch (msg->action) {
+	case 9:
 		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
 		VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaRestaurantKilled, 0, 0);
+		break;
+	case 12:
+		setDoor(64, kCharacterVesna, 0, 0, 1);
+		break;
+	case 18:
+		if (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] == 1) {
+			playNIS(kEventCathVesnaRestaurantKilled);
+			endGame(0, 1, 0, true);
+		}
+
+		break;
+	case 134427424:
+		setDoor(64, kCharacterCath, 0, 0, 1);
+		CONS_Vesna_Climbing(0, 0, 0, 0);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1248,27 +1417,45 @@ void LogicManager::CONS_Vesna_Climbing(CONS_PARAMS) {
 void LogicManager::HAND_Vesna_Climbing(HAND_PARAMS) {
 	int fightOutcome;
 
-	if (msg->action > 18) {
-		if (msg->action == 167992577) {
-			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
-			VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaTrainTopFight, 0, 0);
-		} else if (msg->action == 202884544) {
-			if (getCharacterCurrentParams(kCharacterVesna)[0]) {
-				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
-				VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaTrainTopKilled, 0, 0);
-			} else {
+	switch (msg->action) {
+	case 0:
+	{
+		bool skip = false;
+
+		if (!getCharacterCurrentParams(kCharacterVesna)[0]) {
+			if (getCharacterCurrentParams(kCharacterVesna)[2] || (getCharacterCurrentParams(kCharacterVesna)[2] = _currentGameSessionTicks + 120, _currentGameSessionTicks != -120)) {
+				if (getCharacterCurrentParams(kCharacterVesna)[2] >= _currentGameSessionTicks) {
+					skip = true;
+				}
+
+				if (!skip) {
+					getCharacterCurrentParams(kCharacterVesna)[2] = 0x7FFFFFFF;
+				}
+			}
+
+			if (!skip) {
 				playDialog(kCharacterVesna, "Ves5001", 16, 0);
 				getCharacterCurrentParams(kCharacterVesna)[0] = 1;
 			}
 		}
-		return;
+
+		if (getCharacterCurrentParams(kCharacterVesna)[3] || (getCharacterCurrentParams(kCharacterVesna)[3] = _currentGameSessionTicks + 180, _currentGameSessionTicks != -180)) {
+			if (getCharacterCurrentParams(kCharacterVesna)[3] >= _currentGameSessionTicks)
+				break;
+
+			getCharacterCurrentParams(kCharacterVesna)[3] = 0x7FFFFFFF;
+		}
+
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
+		VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaTrainTopKilled, 0, 0);
+		break;
 	}
-	if (msg->action == 18) {
+	case 18:
 		switch (getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8]) {
 		case 1:
 		case 2:
 			playNIS(kEventCathVesnaTrainTopKilled);
-			endGame(0, 1, 0, 1);
+			endGame(0, 1, 0, true);
 			break;
 		case 3:
 			playNIS(kEventCathVesnaTrainTopFight);
@@ -1278,6 +1465,7 @@ void LogicManager::HAND_Vesna_Climbing(HAND_PARAMS) {
 		case 4:
 			fightOutcome = playFight(2005);
 			getCharacterCurrentParams(kCharacterVesna)[1] = fightOutcome;
+
 			if (fightOutcome) {
 				endGame(0, 0, 0, fightOutcome == 1);
 			} else {
@@ -1287,6 +1475,7 @@ void LogicManager::HAND_Vesna_Climbing(HAND_PARAMS) {
 				getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 5;
 				VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaTrainTopWin, 0, 0);
 			}
+
 			break;
 		case 5:
 			playNIS(kEventCathVesnaTrainTopWin);
@@ -1294,29 +1483,26 @@ void LogicManager::HAND_Vesna_Climbing(HAND_PARAMS) {
 			CONS_Vesna_Disappear(0, 0, 0, 0);
 			break;
 		default:
-			return;
+			break;
 		}
-		return;
-	}
-	if (msg->action)
-		return;
-	if (!getCharacterCurrentParams(kCharacterVesna)[0]) {
-		if (getCharacterCurrentParams(kCharacterVesna)[2] || (getCharacterCurrentParams(kCharacterVesna)[2] = _currentGameSessionTicks + 120, _currentGameSessionTicks != -120)) {
-			if (getCharacterCurrentParams(kCharacterVesna)[2] >= _currentGameSessionTicks)
-				goto LABEL_14;
-			getCharacterCurrentParams(kCharacterVesna)[2] = 0x7FFFFFFF;
+
+		break;
+	case 167992577:
+		getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 3;
+		VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaTrainTopFight, 0, 0);
+		break;
+	case 202884544:
+		if (getCharacterCurrentParams(kCharacterVesna)[0]) {
+			getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 2;
+			VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaTrainTopKilled, 0, 0);
+		} else {
+			playDialog(kCharacterVesna, "Ves5001", 16, 0);
+			getCharacterCurrentParams(kCharacterVesna)[0] = 1;
 		}
-		playDialog(kCharacterVesna, "Ves5001", 16, 0);
-		getCharacterCurrentParams(kCharacterVesna)[0] = 1;
+		break;
+	default:
+		break;
 	}
-LABEL_14:
-	if (getCharacterCurrentParams(kCharacterVesna)[3] || (getCharacterCurrentParams(kCharacterVesna)[3] = _currentGameSessionTicks + 180, _currentGameSessionTicks != -180)) {
-		if (getCharacterCurrentParams(kCharacterVesna)[3] >= _currentGameSessionTicks)
-			return;
-		getCharacterCurrentParams(kCharacterVesna)[3] = 0x7FFFFFFF;
-	}
-	getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall + 8] = 1;
-	VesnaCall(&LogicManager::CONS_Vesna_SaveGame, 2, kEventCathVesnaTrainTopKilled, 0, 0);
 }
 
 void LogicManager::CONS_Vesna_Disappear(CONS_PARAMS) {
