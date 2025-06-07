@@ -93,6 +93,381 @@ static const byte mouseCursorCross[] = {
 	0x03, 0x80, 0x03, 0x80, 0x03, 0x80, 0x00, 0x00
 };
 
+#ifdef USE_TTS
+
+// Most text on the copy protection screens are images, so they are transcribed here for TTS
+static const char *copyProtectionTextsFWDOS[] = {
+	// English
+	"Copy Protection\n"
+	"On the back cover of your \"Future Wars\" manual is a full color representation of the copy protection screen.\n"
+	"When the paint spots flash on-screen, indicate which color they are on the illustration. "
+	"You will be asked to do this twice.\n"
+	"Failure to do this correctly will result in a midnight visit to your house by the Copy-Protection Police!\n"
+	"Click on OK when ready.",
+	// French
+	"Protection\n"
+	"En vous basant sur l'illustration couleur figurant au dos de votre manuel \"Les Voyageurs du Temps\", "
+	"retroveuz la couleur de la t\203che clignotante \205 l'\202cran.\n"
+	"Il vous faudra r\202pondre correctement deux fois au test pour acc\202der au jeu.",
+	// German
+	"Kopierschutz\n"
+	"Auf der R\201ckseite des Einbandes der \"Future Wars\" Anleitung findest Du einen farbigen "
+	"Abdruck der Kopierschutzabfrage des Programmes.\n"
+	"Du mu\236t nur die richtige Farbe des blinkenden Ausschnitts auf dem Bildschirm gem\204\236 der "
+	"R\201ckseite der Anleitung angeben.\n"
+	"Du hast zwei Versuche.",
+	// Spanish
+	"Protecci\242n\n"
+	"Usando la ilustraci\242n a color de la contreportade del manuel de Future Wars, encuentra el "
+	"color que parpadea en la pantella.\n"
+	"Deberas responder correctamente dos veces para poder acceder el juego."
+};
+
+static const char *copyProtectionTextsFWAmigaAtari[] = {
+	// English
+	"Copy Protection\n"
+	"Place the grid you have been given on the page whose number will be indicated.\n"
+	"Then state which of the illustrations displayed on the screen is at the intersection of the column and "
+	"line requested.",
+	// French
+	"Protection\n"
+	"Placez la grille qui vous est fournie sur la page dont le numero vous sera indiqu\202.\n"
+	"D\202signez laquelle des vignettes affich\202es \205 l'\202cran se trouve \205 l'intersection de la colonne et "
+	"la ligne demand\202e.",
+	// German
+	"Sicherheitsabfrage\n"
+	"Bitte die Gitterfolie auf die Seite legen, die angezeigt wird!\n"
+	"Dann klicken Sie auf das entsprechende Feld.",
+	// Spanish
+	"Protecci\242n contra copia\n"
+	"Situa la rejilla de plastico que hay en el paquete sobre la p\240gina cuyo numero se indica.\n"
+	"Entonces identifica que ilustraci\242n es la que te solicita el programa "
+	"(columna y fila) ya pincha sobre ella.",
+	// Italian
+	"Protezione da copie illegali\n"
+	"Metti la griglia che hai trovato nella confezione sulla pagina del manuale il cui numero \212 indicato.\n"
+	"Poi indica quale delle illustrazioni visualizzate si trova all'intersezione della colonna e della linea richieste."
+};
+
+static const char *copyProtectionTextsOSEnglish[] = {
+	"Operation Stealth",
+	"The following information is classified: "
+	"Top Secret",
+	"To gain access to this file match the proper color codes from your color code card. Refer to your system "
+	"documentation for complete information on security procedures.",
+	"To gain access to this file match the flashing area displayed on your monitor with the proper color code "
+	"from the back of your system documentation."	// Alternative used by US Amiga and DOS (not 256 colors) versions
+};
+
+// Used by the GB Amiga/Atari versions
+static const char *copyProtectionTextsOSEnglishAlt[] = {
+	"Operation Stealth",
+	"The information enclosed in this file is classified: "
+	"Secret Defense",
+	"Please check with the color codes card to confirm your habilitation."
+};
+
+static const char *copyProtectionTextsOSFrench[] = {
+	"Operation Stealth",
+	"Les informations contenues dans ce dossier sont classees: "
+	"Secret Defense",
+	"Veuillez vous referer a la carte des codes de couleurs pour confirmer votre habilitation."
+};
+
+static const char *copyProtectionTextsOSGerman[] = {
+	"Operation Stealth",
+	"Die Informationen dieses Dossiers sind: "
+	"Streng Geheim",
+	"Bitte entnehmen Sie der Codekarte die zugeh\224rige Farbe, um Ihre Zugriffsberechtigung zu best\204tigen."
+};
+
+static const char *copyProtectionTextsOSSpanish[] = {
+	"Operation Stealth",
+	"Las informaciones contenidas en este dossier son claves: "
+	"Secretas",
+	"Consulta la carta de colores para confirmar tu autorizacion."
+};
+
+static const char *copyProtectionTextsOSItalian[] = {
+	"Operation Stealth",
+	"Le informazioni contenute in questo incartamento sono classificate: "
+	"Segreto Difesa",
+	"Vogliate fare riferimento alla scheda dei codici colori per confermare la vostra abilitazione."
+};
+
+static const char *copyProtectionFailTextsOS[] = {
+	"Sorry, the colors you just chose don't match.",                // English
+	"Les couleurs que vous avez choisies ne correspondent pas.",    // French
+	"Die Farben, die Sie gew\204hlt haben, sind falsch.",           // German
+	"Los colores elegidos no son correctos.",                       // Spanish
+	"I colori che avete scelto non corrispondono."                  // Italian
+};
+
+// Other text is also in the form of images, and transcribed here
+static const char *theEndTexts[] = {
+	"The End",      // English
+	"La Fin",       // French
+	"Das Ende",     // German
+	"El Fin",       // Spanish
+	"La Fine"       // Italian
+};
+
+static const char *openingCreditsFWEnglish[] = {
+	"Designed and programmed by Paul Cuisset",
+	"Visual design by Eric Chahi",
+	"Music composed by Jean Baudlot",
+	"Future Wars: Adventures in Time\nCopyright 1990 Delphine Software",    // DOS only (except for US version)
+	"Future Wars: Time Travellers",                                         // Amiga/Atari only
+	"IBM PC version by Daniel Morais"                                       // DOS only
+};
+
+static const char *openingCreditsFWFrench[] = {
+	"Conception et programme Paul Cuisset",
+	"Graphisme et animations Eric Chahi",
+	"Musique et bruitages Jean Baudlot",
+	"Les Voyageurs du Temps: La Menace\nCopyright 1990 Delphine Software",  // DOS only
+	"Les Voyageurs du Temps: La Menace",                                    // Amiga/Atari only
+	"Version IBM PC Daniel Morais"                                          // DOS only
+};
+
+// German, Spanish, and Italian credits are in English in-game, but are translated here
+// for TTS
+static const char *openingCreditsFWGerman[] = {
+	"Entwurf und Programm Paul Cuisset",
+	"Visuelle Gestaltung Eric Chahi",
+	"Musik Jean Baudlot",
+	"Future Wars: Adventures in Time\nCopyright 1990 Delphine Software",    // DOS only
+	"Future Wars: Time Travellers",                                         // Amiga/Atari only
+	"IBM PC Version Daniel Morais"                                          // DOS only
+};
+
+static const char *openingCreditsFWSpanish[] = {
+	"Dise\244o y programa Paul Cuisset",
+	"Visual dise\244o Eric Chahi",
+	"M\243sica Jean Baudlot",
+	"Future Wars: Adventures in Time\nCopyright 1990 Delphine Software",    // DOS only
+	"Future Wars: Time Travellers",                                         // Amiga/Atari only
+	"Versi\242n de IBM PC Daniel Morais"                                    // DOS only
+};
+
+static const char *openingCreditsFWItalian[] = {
+	"Design e programmazione di Paul Cuisset",
+	"Direzione grafica di Eric Chahi",
+	"Musica composta da Jean Baudlot",
+	"",									// DOS only (no DOS version exists)
+	"Future Wars: Time Travellers",		// Amiga/Atari only
+	""									// DOS only (no DOS version exists)
+};
+
+static const char *endCreditsFW[] = {
+	// English, first line
+	"Design: Paul Cuisset",
+	// English, second line DOS
+	"IBM PC Version: Daniel Morais",
+	// English, second line Amiga/Atari
+	"Program: Paul Cuisset",
+	// English, remainder of credits
+	"Graphics: Eric Chahi\n"
+	"Music: Jean Baudlot\n"
+	"Sound effects: Antoine O'Heix\n"
+	"Delphine Studio Midi: Marc Minier\n"
+	"Technical help: Philippe Chastel, Jesus Martinez\n"
+	"Digitized sounds sampling: Philippe Chastel, Paul Cuisset, Antoine O'Heix, Jesus Martinez\n"
+	"Cinematique interpreter: Paul Cuisset\n"
+	"Many thanks to: Philippe Delamarre, Emmanuel Lecoz, Michael Sportouch, Peter Stone, Matthew Tims, "
+	"Patricia Vermander",
+
+	// French, first line
+	"Scenario: Paul Cuisset",
+	// French, second line DOS
+	"Version IBM PC: Daniel Morais",
+	// French, second line Amiga/Atari
+	"Programmation: Paul Cuisset",
+	// French, remainder of credits
+	"Graphismes: Eric Chahi\n"
+	"Musiques: Jean Baudlot\n"
+	"Bruitages: Antoine O'Heix\n"
+	"Delphine Studio Midi: Marc Minier\n"
+	"Aide technique: Philippe Chastel, Jesus Martinez\n"
+	"Echantillonage sons numeriques: Philippe Chastel, Paul Cuisset, Antoine O'Heix, Jesus Martinez\n"
+	"Systeme Cinematique: Paul Cuisset\n"
+	"Nous tenons \205 remercier: Philippe Delamarre, Emmanuel Lecoz, Michael Sportouch, Peter Stone, Matthew Tims, "
+	"Patricia Vermander",
+
+	// German, first line
+	"Entwurf: Paul Cuisset",
+	// German, second line DOS
+	"IBM PC Version: Daniel Morais",
+	// German, second line Amiga/Atari
+	"Programmierung: Paul Cuisset",
+	// German, remainder of credits
+	"Grafiken: Eric Chahi\n"
+	"Musiken: Jean Baudlot\n"
+	"Soundeffekte: Antoine O'Heix\n"
+	"Delphine Studio Midi: Marc Minier\n"
+	"Technische Hilfe: Philippe Chastel, Jesus Martinez\n"
+	"Sampling digitalisierter Kl\204nge: Philippe Chastel, Paul Cuisset, Antoine O'Heix, Jesus Martinez\n"
+	"Cinematique System: Paul Cuisset\n"
+	"Wir danken: Philippe Delamarre, Emmanuel Lecoz, Michael Sportouch, Peter Stone, Matthew Tims, "
+	"Patricia Vermander",
+
+	// Spanish, first line
+	"Dise\244o: Paul Cuisset",
+	// Spanish, second line DOS
+	"Versi\242n de IBM PC: Daniel Morais",
+	// Spanish, second line Amiga/Atari
+	"Programaci\242n: Paul Cuisset",
+	// Spanish, remainder of credits
+	"Gr\240ficos: Eric Chahi\n"
+	"M\243sicas: Jean Baudlot\n"
+	"Efectos de sonido: Antoine O'Heix\n"
+	"Delphine Studio Midi: Marc Minier\n"
+	"Ayuda Tecnica: Philippe Chastel, Jesus Martinez\n"
+	"Muestreo de sonidos digitalizados: Philippe Chastel, Paul Cuisset, Antoine O'Heix, Jesus Martinez\n"
+	"Sistema Cinematique: Paul Cuisset\n"
+	"Muchas gracias a: Philippe Delamarre, Emmanuel Lecoz, Michael Sportouch, Peter Stone, Matthew Tims, "
+	"Patricia Vermander",
+
+	// Italian, first line
+	"Design: Paul Cuisset",
+	// Italian, second line DOS (no Italian DOS version exists)
+	"",
+	// Italian, second line Amiga/Atari
+	"Programmazione: Paul Cuisset",
+	// Italian, remainder of credits
+	"Grafica: Eric Chahi\n"
+	"Musiche: Jean Baudlot\n"
+	"Effetti sonori: Antoine O'Heix\n"
+	"Delphine Studio Midi: Marc Minier\n"
+	"Aiuto tecnico: Philippe Chastel, Jesus Martinez\n"
+	"Campionamento di suoni digitalizzati: Philippe Chastel, Paul Cuisset, Antoine O'Heix, Jesus Martinez\n"
+	"Sistema Cinematique: Paul Cuisset\n"
+	"Sentiti ringraziamenti a: Philippe Delamarre, Emmanuel Lecoz, Michael Sportouch, Peter Stone, Matthew Tims, "
+	"Patricia Vermander"
+};
+
+static const char *openingCreditsOSEnglish[] = {
+	"Script\nP. Cuisset\nP. Chastel",
+	"Illustrations\nImagex\nM. Bacque\nE. Lecoz",
+	"Programming\nP. Cuisset\nP. Chastel\nJ. Martinez",
+	"Music\nJ. Baudlot \nEffects\nM. Minier"
+};
+
+static const char *openingCreditsOSFrench[] = {
+	"Scenario\nP. Cuisset\nP. Chastel",
+	"Illustrations\nImagex\nM. Bacque\nE. Lecoz",
+	"Programme\nP. Cuisset\nP. Chastel\nJ. Martinez",
+	"Musique\nJ. Baudlot \nBruitages\nM. Minier"
+};
+
+static const char *openingCreditsOSGerman[] = {
+	"Skript\nP. Cuisset\nP. Chastel",
+	"Illustrationen\nImagex\nM. Bacque\nE. Lecoz",
+	"Programm\nP. Cuisset\nP. Chastel\nJ. Martinez",
+	"Musik\nJ. Baudlot \nSoundeffekte\nM. Minier"
+};
+
+static const char *openingCreditsOSSpanish[] = {
+	"Guion\nP. Cuisset\nP. Chastel",
+	"Ilustraciones\nImagex\nM. Bacque\nE. Lecoz",
+	"Programa\nP. Cuisset\nP. Chastel\nJ. Martinez",
+	"M\243sica\nJ. Baudlot \nEfectos\nM. Minier"
+};
+
+static const char *openingCreditsOSItalian[] = {
+	"Copione\nP. Cuisset\nP. Chastel",
+	"Illustrazioni\nImagex\nM. Bacque\nE. Lecoz",
+	"Programmazione\nP. Cuisset\nP. Chastel\nJ. Martinez",
+	"Musica\nJ. Baudlot \nEffetti\nM. Minier"
+};
+
+static const char *endCreditsOS[] = {
+	// English
+	"Script\n Paul Cuisset, Philippe Chastel\n"
+	"Programming\n Paul Cuisset, Philippe Chastel, J\202sus Martinez, Daniel Morais IBM PC\n"
+	"Illustrations\n Mich\212le Bacqu\202, Imagex, Emmanuel Lecoz\n"
+	"Music\n Jean Baudlot\n"
+	"Sound effects\n Marc Minier\n"
+	"User's manual\n Michael Sportouch\n"
+	"Illustration manual\n Jean-Pierre Fert\202\n"
+	"Packaging\n Philippe Delamarre\n"
+	"Our special thanks to\n Patricia Vermander, Claire Le Hello, Muriel Fraboni\n",
+	// English, final credits screen
+	"Delphine team hopes you had a great time with %s and we thank you for your support.\n"
+	"See you soon in our next adventure.",
+
+	// French
+	"Sc\202nario\n Paul Cuisset, Philippe Chastel\n"
+	"Programmation\n Paul Cuisset, Philippe Chastel, J\202sus Martinez, Daniel Morais IBM PC\n"
+	"Graphismes\n Mich\212le Bacqu\202, Imagex, Emmanuel Lecoz\n"
+	"Musique\n Jean Baudlot\n"
+	"Bruitages\n Marc Minier\n"
+	"Documentation notice\n Michael Sportouch\n"
+	"Illustration notice\n Jean-Pierre Fert\202\n"
+	"Packaging\n Philippe Delamarre\n"
+	"Remerciements\n Patricia Vermander, Claire Le Hello, Muriel Fraboni\n",
+	// French, final credits screen
+	"Toute l'\202quipe de Delphine esp\212re que John Glames vous a fait passer de bons moments, "
+	"et vous remercie de votre confiance.\n"
+	"A bient\223t pour une prochaine aventure.",
+
+	// German
+	"Skript\n Paul Cuisset, Philippe Chastel\n"
+	"Programmierung\n Paul Cuisset, Philippe Chastel, J\202sus Martinez, Daniel Morais IBM PC\n"
+	"Illustrationen\n Mich\212le Bacqu\202, Imagex, Emmanuel Lecoz\n"
+	"Musik\n Jean Baudlot\n"
+	"Soundeffekte\n Marc Minier\n"
+	"Bedienungsanleitung\n Michael Sportouch\n"
+	"Illustrationshandbuch\n Jean-Pierre Fert\202\n"
+	"Verpackung\n Philippe Delamarre\n"
+	"Unser Dank gilt\n Patricia Vermander, Claire Le Hello, Muriel Fraboni\n",
+	// German, final credits screen
+	"Delphine Team hofft, Sie hatten eine tolle Zeit mit John Glames und dankt Ihnen f\201r Ihre Unterst\201tzung.\n"
+	"Bis bald bei unserem n\204chsten Abenteuer.",
+
+	// Spanish
+	"Guion\n Paul Cuisset, Philippe Chastel\n"
+	"Programaci\242n\n Paul Cuisset, Philippe Chastel, J\202sus Martinez, Daniel Morais IBM PC\n"
+	"Ilustraciones\n Mich\212le Bacqu\202, Imagex, Emmanuel Lecoz\n"
+	"M\243sica\n Jean Baudlot\n"
+	"Efectos de sonido\n Marc Minier\n"
+	"Manual de usuario\n Michael Sportouch\n"
+	"Manual de ilustraciones\n Jean-Pierre Fert\202\n"
+	"Embalaje\n Philippe Delamarre\n"
+	"Gracias a\n Patricia Vermander, Claire Le Hello, Muriel Fraboni\n",
+	// Spanish, final credits screen
+	"Todo el equipo de Delphine espera que John Glames te haga pasar muy buenos ratos y agradecemos tu confianza.\n"
+	"Hasta la pr\242xima aventura.",
+
+	// Italian
+	"Copione\n Paul Cuisset, Philippe Chastel\n"
+	"Programmazione\n Paul Cuisset, Philippe Chastel, J\202sus Martinez, Daniel Morais IBM PC\n"
+	"Grafica\n Mich\212le Bacqu\202, Imagex, Emmanuel Lecoz\n"
+	"Musica\n Jean Baudlot\n"
+	"Effetti sonori\n Marc Minier\n"
+	"Manuale dell'utente\n Michael Sportouch\n"
+	"Illustrazioni del manuale\n Jean-Pierre Fert\202\n"
+	"Confezione\n Philippe Delamarre\n"
+	"Grazie a\n Patricia Vermander, Claire Le Hello, Muriel Fraboni\n",
+	// Italian, final credits screen
+	"Tutto il gruppo della Delphine spera che John Glames vi abbia fatto trascorrere dei momenti piacevoli "
+	"e vi ringrazia della fiducia accordata.\n"
+	"Appuntamento a presto per una nuova avventura."
+};
+
+static const int kDOSTitle = 3;
+static const int kAmigaAtariTitle = 4;
+static const int kIBMCredit = 5;
+
+enum OpeningCreditsOSIndex {
+	kScript = 0,
+	kIllustrations = 1,
+	kProgramming = 2,
+	kMusic = 3
+};
+
+#endif
+
 static const struct MouseCursor {
 	int hotspotX;
 	int hotspotY;
@@ -260,6 +635,32 @@ void FWRenderer::incrustSprite(const BGIncrust &incrust) {
 	width = g_cine->_animDataTable[obj.frame]._realWidth;
 	height = g_cine->_animDataTable[obj.frame]._height;
 
+	if (g_cine->_copyProtectionColorScreen && scumm_stricmp(currentPrcName, "TOTO.PRC") == 0) {
+		Common::String checkingText;
+
+		switch (g_cine->_ttsLanguage) {
+		case kEnglish:
+			checkingText = "Checking";
+			break;
+		case kFrench:
+		case kSpanish:
+			checkingText = "Test";
+			break;
+		case kGerman:
+			checkingText = "Pr\201fung";
+			break;
+		default:
+			checkingText = "Checking";
+			break;
+		}
+
+		if (obj.frame == 34) {
+			g_cine->sayText(checkingText + " #1", Common::TextToSpeechManager::QUEUE);
+		} else {
+			g_cine->sayText(checkingText + " #2", Common::TextToSpeechManager::QUEUE);
+		}
+	}
+
 	// There was an assert(mask) here before but it made savegame loading
 	// in Future Wars sometimes fail the assertion (e.g. see bug #3868).
 	// Not drawing sprites that have no mask seems to work, but not sure
@@ -283,6 +684,10 @@ void FWRenderer::drawCommand() {
 
 		x += 2;
 		y += 2;
+
+		if (!inMenu) {
+			g_cine->sayText(_cmd, Common::TextToSpeechManager::INTERRUPT);
+		}
 
 		for (unsigned int i = 0; i < _cmd.size(); i++) {
 			x = drawChar(_cmd[i], x, y);
@@ -340,6 +745,10 @@ void FWRenderer::drawString(const char *string, byte param) {
 int FWRenderer::drawMessage(const char *str, int x, int y, int width, int color, bool draw) {
 	// Keep a vertically overflowing message box inside the main screen (Fixes bug #11708).
 	if (draw) {
+		Common::String ttsMessage = str;
+		ttsMessage.replace('|', '\n');
+		g_cine->sayText(ttsMessage, Common::TextToSpeechManager::QUEUE);
+
 		int maxY = this->drawMessage(str, x, y, width, color, false);
 		if (maxY > 199) {
 			y -= (maxY - 199);
@@ -682,6 +1091,86 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 			memset(mask, 0, len);
 		}
 		remaskSprite(mask, it);
+
+#ifdef USE_TTS
+		if (g_cine->getGameType() == GType_FW) { 
+			// "The End" that appears at the end of the game
+			if (it->objIdx == 209 && scumm_stricmp(_bgName, "THE_END2.PI1") == 0) {
+				g_cine->sayText(theEndTexts[g_cine->_ttsLanguage], Common::TextToSpeechManager::INTERRUPT);
+			} else if (it->objIdx == 100 && scumm_stricmp(currentPrcName, "INTRO.PRC") == 0) {	// Opening credits
+				int16 frame = g_cine->_objectTable[it->objIdx].frame;
+
+				const char **creditsTexts;
+
+				switch (g_cine->_ttsLanguage) {
+				case kEnglish:
+					creditsTexts = openingCreditsFWEnglish;
+					break;
+				case kFrench:
+					creditsTexts = openingCreditsFWFrench;
+					break;
+				case kGerman:
+					creditsTexts = openingCreditsFWGerman;
+					break;
+				case kSpanish:
+					creditsTexts = openingCreditsFWSpanish;
+					break;
+				case kItalian:
+					creditsTexts = openingCreditsFWItalian;
+					break;
+				default:
+					creditsTexts = openingCreditsFWEnglish;
+					break;
+				}
+
+				if (frame == 117) {		// Only the DOS version has this extra IBM credit
+					g_cine->sayText(creditsTexts[kIBMCredit], Common::TextToSpeechManager::QUEUE);
+				} else {
+					frame -= 89;
+					if (frame == 3) {	// Title screen, which differs between DOS and Amiga/Atari versions
+						if (g_cine->getPlatform() == Common::kPlatformDOS || g_cine->getLanguage() == Common::EN_USA) {
+							g_cine->sayText(creditsTexts[kDOSTitle], Common::TextToSpeechManager::QUEUE);
+						} else {
+							g_cine->sayText(creditsTexts[kAmigaAtariTitle], Common::TextToSpeechManager::QUEUE);
+						}
+					} else {
+						g_cine->sayText(creditsTexts[frame], Common::TextToSpeechManager::QUEUE);
+					}
+				}
+			} else if (it->objIdx == 199 && scumm_strnicmp(_bgName, "GRID__", 6) == 0) { // Amiga/Atari copy protection grid screen
+				Common::String ttsMessage;
+				switch (g_cine->_ttsLanguage) {
+				case kEnglish:
+				case kFrench:
+					ttsMessage = "page ";
+					break;
+				case kGerman:
+					ttsMessage = "Seite ";
+					break;
+				case kSpanish:
+					ttsMessage = "p\240gina ";
+					break;
+				case kItalian:
+					ttsMessage = "pagina ";
+					break;
+				default:
+					ttsMessage = "page ";
+					break;
+				}
+				// Index 11 is left number of page; can be 0 (frame 26) or 1 (27)
+				ttsMessage += (char)(g_cine->_objectTable[11].frame + 0x16);
+				// Index 2 is right number of page; page number can be 0 (frame 26), 4 (30), 6 (32), or 7 (33)
+				ttsMessage += (char)(g_cine->_objectTable[2].frame + 0x16);
+				ttsMessage += '\n';
+				// Index 1 is left number of grid; ranges from A (frame 0) to D (3)
+				ttsMessage += (char)(g_cine->_objectTable[1].frame + 0x41);
+				// Index 12 is right number of grid; ranges from 1 (frame 27) to 5 (31)
+				ttsMessage += (char)(g_cine->_objectTable[12].frame + 0x16);
+				g_cine->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+			}
+		}
+#endif
+
 		drawMaskedSprite(g_cine->_objectTable[it->objIdx], mask);
 		delete[] mask;
 		break;
@@ -891,6 +1380,44 @@ int16 FWRenderer::addBackground(const char *bgName, uint16 bgIdx) {
  */
 void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	assert(idx == 0);
+
+#ifdef USE_TTS
+	if (scumm_stricmp(currentDatName, "SUITE23.DAT") == 0 && scumm_stricmp(currentPartName, "PART04B") == 0) {	// End credits
+		int languageIndex = g_cine->_ttsLanguage * 4;
+
+		// Voice the first line
+		g_cine->sayText(endCreditsFW[languageIndex], Common::TextToSpeechManager::QUEUE);
+
+		// Voice the second line, depending on the platform
+		if (g_cine->getPlatform() == Common::kPlatformDOS) {
+			g_cine->sayText(endCreditsFW[languageIndex + 1], Common::TextToSpeechManager::QUEUE);
+		} else {
+			g_cine->sayText(endCreditsFW[languageIndex + 2], Common::TextToSpeechManager::QUEUE);
+		}
+
+		// Voice the rest of the credits
+		g_cine->sayText(endCreditsFW[languageIndex + 3], Common::TextToSpeechManager::QUEUE);
+	} else if (scumm_stricmp(name, "PROTEC.PI1") == 0) {	// Copy protection screen
+		const char *text;
+
+		if (g_cine->getPlatform() == Common::kPlatformDOS || g_cine->getLanguage() == Common::EN_USA) {
+			text = copyProtectionTextsFWDOS[g_cine->_ttsLanguage];
+		} else {
+			text = copyProtectionTextsFWAmigaAtari[g_cine->_ttsLanguage];
+		}
+
+		g_cine->sayText(text, Common::TextToSpeechManager::QUEUE);
+		g_cine->_copyProtectionTextScreen = true;
+		g_cine->_copyProtectionColorScreen = false;
+	} else if ((g_cine->getPlatform() == Common::kPlatformDOS || g_cine->getLanguage() == Common::EN_USA) && 
+					scumm_stricmp(name, "FW.PI1") == 0) {	// Second copy protection screen
+		g_cine->_copyProtectionTextScreen = false;
+		g_cine->_copyProtectionColorScreen = true;
+	} else {
+		g_cine->_copyProtectionTextScreen = false;
+		g_cine->_copyProtectionColorScreen = false;
+	}
+#endif
 
 	if (!_background) {
 		_background = new byte[_screenSize];
@@ -1192,6 +1719,21 @@ void FWRenderer::fadeFromBlack() {
 		g_system->delayMillis(fadeDelayMs());
 	}
 
+#ifdef USE_TTS
+	if (g_cine->_copyProtectionColorScreen && scumm_stricmp(currentPrcName, "AUTO00.PRC") == 0 && g_cine->getGameType() == GType_OS) {
+		Common::List<overlay>::iterator it;
+		for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it) {
+			if (g_cine->_objectTable[it->objIdx].frame == 109) {		// Second copy protection test
+				g_cine->sayText("Test #2", Common::TextToSpeechManager::QUEUE);
+				break;
+			} else if (g_cine->_objectTable[it->objIdx].frame == 150) {		// Failed copy protection
+				g_cine->sayText(copyProtectionFailTextsOS[g_cine->_ttsLanguage], Common::TextToSpeechManager::QUEUE);
+				break;
+			}
+		}
+	}
+#endif
+
 	forbidBgPalReload = gfxFadeOutCompleted = 0;
 }
 
@@ -1261,6 +1803,17 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 
 			if (!top) {
 				color += (r.useTransparentDialogBoxes() ? r.transparentDialogBoxStartColor() : 0);
+			} else {
+				// In the USE menu (playerCommand 3), queue up the first inventory item after opening the menu
+				// This allows the USE command to be spoken if the player opens the use menu using F3
+				// Also queue up the first item when the save input menu is open, so that the player input will be voiced
+				if ((g_cine->_previousSaid == defaultActionCommand[3] && playerCommand == 3) 
+					|| (g_cine->_saveInputMenuOpen && _elements[i] == confirmMenu[0])) {
+					g_cine->sayText(_elements[i], Common::TextToSpeechManager::QUEUE);
+					g_cine->_saveInputMenuOpen = false;
+				} else {
+					g_cine->sayText(_elements[i], Common::TextToSpeechManager::INTERRUPT);
+				}
 			}
 
 			r.drawPlainBox(x + 2, lineY - 1, _width - 3, 9, color);
@@ -1472,6 +2025,100 @@ void OSRenderer::incrustSprite(const BGIncrust &incrust) {
 	height = g_cine->_animDataTable[incrust.frame]._height;
 
 	if (_bgTable[incrust.bgIdx].bg) {
+#ifdef USE_TTS
+		// Opening credits
+		if ((incrust.objIdx == 100 || incrust.frame == 10) && scumm_stricmp(currentPrcName, "INTRO3.PRC") == 0
+			&& scumm_stricmp(_bgTable[incrust.bgIdx].name, "") != 0) {
+			const char **openingCredits;
+			switch (g_cine->_ttsLanguage) {
+			case kEnglish:
+				openingCredits = openingCreditsOSEnglish;
+				break;
+			case kFrench:
+				openingCredits = openingCreditsOSFrench;
+				break;
+			case kGerman:
+				openingCredits = openingCreditsOSGerman;
+				break;
+			case kSpanish:
+				openingCredits = openingCreditsOSSpanish;
+				break;
+			case kItalian:
+				openingCredits = openingCreditsOSItalian;
+				break;
+			default:
+				openingCredits = openingCreditsOSEnglish;
+				break;
+			}
+
+			int index = -1;
+
+			if (scumm_stricmp(_bgTable[incrust.bgIdx].name, "I00.PI1") == 0) {
+				index = kScript;
+			} else if (scumm_stricmp(_bgTable[incrust.bgIdx].name, "SALLE02.PI1") == 0) {
+				index = kIllustrations;
+			} else if (scumm_stricmp(_bgTable[incrust.bgIdx].name, "BASE02.PI1") == 0) {
+				index = kProgramming;
+			} else if (scumm_stricmp(_bgTable[incrust.bgIdx].name, "PISTEA.PI1") == 0 || scumm_stricmp(_bgTable[incrust.bgIdx].name, "PISTEB.PI1") == 0) {
+				index = kMusic;
+			}
+
+			if (index != -1) {
+				g_cine->sayText(openingCredits[index], Common::TextToSpeechManager::QUEUE);
+			}
+		} else if (g_cine->_copyProtectionTextScreen && incrust.objIdx == 231) {	// Copy protection screen
+			const char **copyProtectionTexts;
+			switch (g_cine->_ttsLanguage) {
+			case kEnglish:
+				if (g_cine->getLanguage() == Common::EN_GRB && g_cine->getPlatform() != Common::kPlatformDOS) {
+					copyProtectionTexts = copyProtectionTextsOSEnglishAlt;
+				} else {
+					copyProtectionTexts = copyProtectionTextsOSEnglish;
+				}
+				break;
+			case kFrench:
+				copyProtectionTexts = copyProtectionTextsOSFrench;
+				break;
+			case kGerman:
+				copyProtectionTexts = copyProtectionTextsOSGerman;
+				break;
+			case kSpanish:
+				copyProtectionTexts = copyProtectionTextsOSSpanish;
+				break;
+			case kItalian:
+				copyProtectionTexts = copyProtectionTextsOSItalian;
+				break;
+			default:
+				copyProtectionTexts = copyProtectionTextsOSEnglish;
+				break;
+			}
+
+			int index = -1;
+
+			if (incrust.frame == 200) {
+				index = 0;
+			} else if (incrust.frame == 201) {
+				index = 1;
+			} else if (incrust.frame == 204) {
+				if (g_cine->getLanguage() == Common::EN_USA && (g_cine->getPlatform() == Common::kPlatformAmiga ||
+						(g_cine->getPlatform() == Common::kPlatformDOS && 
+						scumm_stricmp(g_cine->_gameDescription->desc.extra, "256 colors")))) {
+					index = 3;
+				} else {
+					index = 2;
+				}
+			}
+
+			if (index != -1) {
+				g_cine->sayText(copyProtectionTexts[index], Common::TextToSpeechManager::QUEUE);
+			}
+		} else if (incrust.objIdx == 20 && scumm_stricmp(currentPrcName, "FIN2.PRC") == 0) {	// "The End"
+			g_cine->sayText(theEndTexts[g_cine->_ttsLanguage], Common::TextToSpeechManager::QUEUE);
+		} else if (incrust.objIdx == 3 && scumm_stricmp(currentPrcName, "STARTA.PRC") == 0) {
+			g_cine->sayText("Santa Paragua", Common::TextToSpeechManager::QUEUE);
+		}
+#endif
+
 		// HACK: Fix transparency colors of shadings near walls
 		// in labyrinth scene in Operation Stealth after loading a savegame
 		// saved in the labyrinth.
@@ -1731,6 +2378,40 @@ int16 OSRenderer::addBackground(const char *bgName, uint16 bgIdx) {
  */
 void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	assert(idx < 9);
+
+#ifdef USE_TTS
+	if (scumm_stricmp(name, "GEN1.PI1") == 0) {	// Closing credits
+		int languageIndex = g_cine->_ttsLanguage * 2;
+		g_cine->sayText(endCreditsOS[languageIndex], Common::TextToSpeechManager::QUEUE);
+	} else if (scumm_stricmp(name, "GEN4.PI1") == 0) {	// Closing credits, last screen
+		int languageIndex = (g_cine->_ttsLanguage * 2) + 1;
+
+		if (g_cine->_ttsLanguage != kEnglish) {
+			g_cine->sayText(endCreditsOS[languageIndex], Common::TextToSpeechManager::QUEUE);
+		} else {
+			Common::String formattedText;
+
+			// James Bond in the USA version; John Glames in the British version
+			if (g_cine->getLanguage() == Common::EN_ANY || g_cine->getLanguage() == Common::EN_GRB) {
+				formattedText = Common::String::format(endCreditsOS[languageIndex], "John Glames");
+			} else {
+				formattedText = Common::String::format(endCreditsOS[languageIndex], "James Bond");
+			}
+
+			g_cine->sayText(formattedText, Common::TextToSpeechManager::QUEUE);
+		}
+	} else if (scumm_stricmp(name, "MASKD.PI1") == 0) {	// First copy protection screen
+		g_cine->_copyProtectionTextScreen = true;
+		g_cine->_copyProtectionColorScreen = false;
+	} else if (scumm_stricmp(name, "MASKB.PI1") == 0) {	// Second copy protection screen
+		g_cine->sayText("Test #1", Common::TextToSpeechManager::QUEUE);
+		g_cine->_copyProtectionTextScreen = false;
+		g_cine->_copyProtectionColorScreen = true;
+	} else {
+		g_cine->_copyProtectionTextScreen = false;
+		g_cine->_copyProtectionColorScreen = false;
+	}
+#endif
 
 	if (!_bgTable[idx].bg) {
 		_bgTable[idx].bg = new byte[_screenSize];

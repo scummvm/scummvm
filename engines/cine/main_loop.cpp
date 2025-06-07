@@ -68,6 +68,9 @@ static void processEvent(Common::Event &event) {
 		mouseLeft = mouseRight = 0;
 		break;
 	case Common::EVENT_MOUSEMOVE:
+#ifdef USE_TTS
+		g_cine->mouseOverButton();
+#endif
 		break;
 	case Common::EVENT_WHEELUP:
 		g_cine->_actionList.push_back(Common::CustomEventType(kActionMenuOptionUp));
@@ -103,12 +106,14 @@ static void processEvent(Common::Event &event) {
 		case kActionInventory:
 			if (allowPlayerInput && !inMenu) {
 				playerCommand = 2; // INVENTORY
+				g_cine->sayText(defaultActionCommand[playerCommand], Common::TextToSpeechManager::INTERRUPT);
 				makeCommandLine();
 			}
 			break;
 		case kActionUse:
 			if (allowPlayerInput && !inMenu) {
 				playerCommand = 3; // USE
+				g_cine->sayText(defaultActionCommand[playerCommand], Common::TextToSpeechManager::INTERRUPT);
 				makeCommandLine();
 			}
 			break;
@@ -533,6 +538,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 				_messageLen = 800;
 
 			manageEvents(MAIN_LOOP_WAIT_FOR_PLAYER_CLICK, UNTIL_MOUSE_BUTTON_UP_DOWN_UP);
+			stopTextToSpeech();
 			waitForPlayerClick = 0;
 		}
 
