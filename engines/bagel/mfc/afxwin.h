@@ -449,6 +449,8 @@ struct CCreateContext {
 class CGdiObject : public CObject {
 public:
 	HGDIOBJ m_hObject = nullptr;
+	bool _isTemporary = false;
+
 	operator HGDIOBJ() const {
 		return m_hObject;
 	}
@@ -522,8 +524,6 @@ public:
 		public Graphics::ManagedSurface {
 		~Impl() override {}
 	};
-public:
-	bool _isTemporary = false;
 
 public:
 	~CBitmap() override {

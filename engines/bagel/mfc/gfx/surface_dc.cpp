@@ -34,14 +34,20 @@ SurfaceDC::~SurfaceDC() {
 	delete _bitmap;
 }
 
-HBITMAP SurfaceDC::Attach(HBITMAP bitmap) {
-	HBITMAP result = _bitmap;
-	_bitmap = bitmap;
-	return result;
-}
-
-void SurfaceDC::Detach() {
-	_bitmap = nullptr;
+HGDIOBJ SurfaceDC::Attach(HGDIOBJ gdiObj) {
+	HBITMAP bitmap = dynamic_cast<HBITMAP>(gdiObj);
+	if (bitmap) {
+		HBITMAP result = _bitmap;
+		_bitmap = bitmap;
+		return result;
+	}
+#if 0
+	HBRUSH brush = dynamic_cast<HBRUSH>(gdiObj);
+	HFONT font = dynamic_cast<HFONT>(gdiObj);
+	HPEN pen = dynamic_cast<HPEN>(gdiObj);
+#endif
+	error("Unsupported gdi object");
+	return nullptr;
 }
 
 Graphics::ManagedSurface *SurfaceDC::getSurface() const {

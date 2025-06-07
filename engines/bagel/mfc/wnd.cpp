@@ -37,7 +37,6 @@ CWnd::CWnd() : m_hWnd(this) {
 }
 
 CWnd::~CWnd() {
-	_surface.Detach();
 	clear();
 }
 

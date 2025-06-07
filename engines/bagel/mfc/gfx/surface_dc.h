@@ -44,8 +44,7 @@ public:
 	SurfaceDC();
 	~SurfaceDC();
 
-	HBITMAP Attach(HBITMAP bitmap);
-	void Detach();
+	HGDIOBJ Attach(HGDIOBJ gdiObj);
 	Graphics::ManagedSurface *getSurface() const;
 
 	HPALETTE selectPalette(HPALETTE pal);

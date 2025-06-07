@@ -271,11 +271,47 @@ CPen *CDC::SelectObject(CPen *pPen) {
 }
 
 CBrush *CDC::SelectObject(CBrush *pBrush) {
-	error("TODO: CDC::SelectObject");
+	// Attach new brush
+	HBRUSH oldBrush = surface()->Attach((HBRUSH)pBrush->m_hObject);
+
+	if (pBrush->_isTemporary) {
+		pBrush->Detach();
+		delete pBrush;
+		return nullptr;
+	}
+
+	if (!oldBrush)
+		return nullptr;
+
+	// Create a new temporary CBrush to
+	// encapsulate the returned HBRUSH
+	CBrush *result = new CBrush();
+	result->Attach(oldBrush);
+	result->_isTemporary = true;
+
+	return result;
 }
 
 CFont *CDC::SelectObject(CFont *pFont) {
-	error("TODO: CDC::SelectObject");
+	// Attach new font
+	HFONT oldFont = surface()->Attach((HFONT)pFont->m_hObject);
+
+	if (pFont->_isTemporary) {
+		pFont->Detach();
+		delete pFont;
+		return nullptr;
+	}
+
+	if (!pFont)
+		return nullptr;
+
+	// Create a new temporary CFont to
+	// encapsulate the returned HFONT
+	CFont *result = new CFont();
+	result->Attach(oldFont);
+	result->_isTemporary = true;
+
+	return result;
 }
 
 CBitmap *CDC::SelectObject(CBitmap *pBitmap) {
@@ -283,6 +319,7 @@ CBitmap *CDC::SelectObject(CBitmap *pBitmap) {
 	HBITMAP oldBitmap = surface()->Attach((HBITMAP)pBitmap->m_hObject);
 
 	if (pBitmap->_isTemporary) {
+		pBitmap->Detach();
 		delete pBitmap;
 		return nullptr;
 	}
@@ -312,7 +349,25 @@ COLORREF CDC::GetNearestColor(COLORREF crColor) const {
 }
 
 CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
-	return surface()->selectPalette(pPalette);
+	// Attach new palette
+	HPALETTE oldPalette = surface()->selectPalette((HPALETTE)pPalette->m_hObject);
+
+	if (pPalette->_isTemporary) {
+		pPalette->Detach();
+		delete pPalette;
+		return nullptr;
+	}
+
+	if (!oldPalette)
+		return nullptr;
+
+	// Create a new temporary CPalette to
+	// encapsulate the returned HPALETTE
+	CPalette *result = new CPalette();
+	result->Attach(oldPalette);
+	result->_isTemporary = true;
+
+	return result;
 }
 
 UINT CDC::RealizePalette() {
