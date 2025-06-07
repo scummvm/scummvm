@@ -56,12 +56,6 @@ protected:
 private:
 	std::stringstream enginesStr;
 
-	enum SDLVersion {
-		kSDLVersionAny,
-		kSDLVersion1,
-		kSDLVersion2
-	};
-
 	/**
 	 * CMake properties for a library required by a feature
 	 */
@@ -85,7 +79,7 @@ private:
 		LibraryProps &WinLibraries(const char *libs) { winLibraries = libs; return *this; }
 	};
 
-	const Library *getLibraryFromFeature(const char *feature, bool useSDL2) const;
+	const Library *getLibraryFromFeature(const char *feature, SDLVersion useSDL) const;
 
 	void writeWarnings(std::ofstream &output) const;
 	void writeDefines(const BuildSetup &setup, std::ofstream &output) const;

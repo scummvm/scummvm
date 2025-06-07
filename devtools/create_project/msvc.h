@@ -46,6 +46,7 @@ protected:
 		const char *feature; ///< Feature ID.
 		const char *release; ///< Filename of the Release build of the library.
 		const char *debug;   ///< Filename of the Debug build of the library.
+		SDLVersion sdl;      ///< Required SDL version.
 		const char *depends; ///< Win32 libs this library must be linked against.
 	};
 
