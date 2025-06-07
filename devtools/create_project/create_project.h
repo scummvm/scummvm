@@ -254,6 +254,16 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
 bool getFeatureBuildState(const std::string &name, const FeatureList &features);
 
 /**
+ * Specifies the required SDL version of a feature.
+ */
+enum SDLVersion {
+	kSDLVersionAny = 0,
+	kSDLVersion1, ///< SDL 1.2
+	kSDLVersion2, ///< SDL 2
+	kSDLVersion3  ///< SDL 3
+};
+
+/**
  * Structure to describe a build setup.
  *
  * This includes various information about which engines to
@@ -284,7 +294,7 @@ struct BuildSetup {
 	bool tests = false;                ///< Generate project files for the tests
 	bool runBuildEvents = false;       ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
 	bool createInstaller = false;      ///< Create installer after the build
-	bool useSDL2 = true;               ///< Whether to use SDL2 or not.
+	SDLVersion useSDL = kSDLVersion2;  ///< Which version of SDL to use.
 	bool useStaticDetection = true;    ///< Whether to link detection features inside the executable or not.
 	bool useWindowsUnicode = true;     ///< Whether to use Windows Unicode APIs or ANSI APIs.
 	bool useWindowsSubsystem = false;  ///< Whether to use Windows subsystem or Console subsystem (default: Console)
@@ -294,6 +304,7 @@ struct BuildSetup {
 
 	bool featureEnabled(const std::string &feature) const;
 	Feature getFeature(const std::string &feature) const;
+	const char *getSDLName() const;
 };
 
 /**
