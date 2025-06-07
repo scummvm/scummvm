@@ -21,8 +21,12 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
 
 #include "sludge/event.h"
+#include "sludge/fileset.h"
 #include "sludge/graphics.h"
 #include "sludge/freeze.h"
 #include "sludge/function.h"
@@ -68,9 +72,7 @@ void EventManager::kill() {
 
 void EventManager::checkInput() {
 	float cameraZoom = _vm->_gfxMan->getCamZoom();
-#if 0
 	static bool fakeRightclick = false;
-#endif
 	Common::Event event;
 
 	/* Check for events */
@@ -90,18 +92,16 @@ void EventManager::checkInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			_input.leftClick = true;
-			_input.mouseX = event.mouse.x * cameraZoom;
-			_input.mouseY = event.mouse.y * cameraZoom;
-#if 0
-			if (SDL_GetModState() & KMOD_CTRL) {
-				input.rightClick = true;
+			if (g_system->getEventManager()->getModifierState() & Common::KBD_CTRL) {
+				_input.rightClick = true;
 				fakeRightclick = true;
 			} else {
-				input.leftClick = true;
+				_input.leftClick = true;
 				fakeRightclick = false;
 			}
-#endif
+
+			_input.mouseX = event.mouse.x * cameraZoom;
+			_input.mouseY = event.mouse.y * cameraZoom;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
@@ -136,9 +136,19 @@ void EventManager::checkInput() {
 			break;
 
 		case Common::EVENT_QUIT:
-			_weAreDoneSoQuit = 1;
-			// TODO: if _reallyWantToQuit, popup a message box to confirm
+		case Common::EVENT_RETURN_TO_LAUNCHER: {
+			if (!_weAreDoneSoQuit) {
+				g_system->getEventManager()->resetQuit();
+				g_system->getEventManager()->resetReturnToLauncher();
+
+				GUI::MessageDialog dialog(_(g_sludge->_resMan->getNumberedString(2)), _("Yes"), _("No"));
+				if (dialog.runModal() == GUI::kMessageOK) {
+					_weAreDoneSoQuit = 1;
+					g_system->getEventManager()->pushEvent(event);
+				}
+			}
 			break;
+		}
 
 		default:
 			break;
