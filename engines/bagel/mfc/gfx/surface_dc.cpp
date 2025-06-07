@@ -31,7 +31,6 @@ SurfaceDC::SurfaceDC() {
 }
 
 SurfaceDC::~SurfaceDC() {
-	delete _bitmap;
 }
 
 HGDIOBJ SurfaceDC::Attach(HGDIOBJ gdiObj) {
