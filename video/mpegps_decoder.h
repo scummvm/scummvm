@@ -60,6 +60,10 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
+	// Set the number of prebuffered packets in demuxer
+	// Used only by qdEngine
+	void setPrebufferedPackets(int packets);
+
 protected:
 	void readNextPacket();
 	bool useAudioSync() const { return false; }
@@ -75,6 +79,8 @@ private:
 
 		Common::SeekableReadStream *getFirstVideoPacket(int32 &startCode, uint32 &pts, uint32 &dts);
 		Common::SeekableReadStream *getNextPacket(uint32 currentTime, int32 &startCode, uint32 &pts, uint32 &dts);
+
+		void setPrebufferedPackets(int packets) { _prebufferedPackets = packets; }
 
 	private:
 		class Packet {
@@ -98,6 +104,8 @@ private:
 		Common::Queue<Packet> _audioQueue;
 		// If we come across a non-packetized elementary stream
 		bool _isESStream;
+
+		int _prebufferedPackets = 150;
 	};
 
 	// Base class for handling MPEG streams

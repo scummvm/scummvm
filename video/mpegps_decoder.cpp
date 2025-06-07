@@ -78,6 +78,10 @@ bool MPEGPSDecoder::loadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
+void MPEGPSDecoder::setPrebufferedPackets(int packets) {
+	_demuxer->setPrebufferedPackets(packets);
+}
+
 void MPEGPSDecoder::close() {
 	VideoDecoder::close();
 	_demuxer->close();
@@ -248,7 +252,6 @@ MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::
 // should start slightly before the video.
 // --------------------------------------------------------------------------
 
-#define PREBUFFERED_PACKETS 150
 #define AUDIO_THRESHOLD     100
 
 MPEGPSDecoder::MPEGPSDemuxer::MPEGPSDemuxer() {
@@ -286,7 +289,7 @@ bool MPEGPSDecoder::MPEGPSDemuxer::loadStream(Common::SeekableReadStream *stream
 	_stream = stream;
 
 	int queuedPackets = 0;
-	while (queueNextPacket() && queuedPackets < PREBUFFERED_PACKETS) {
+	while (queueNextPacket() && queuedPackets < _prebufferedPackets) {
 		queuedPackets++;
 	}
 
