@@ -91,13 +91,13 @@ public:
 	 */
 	virtual bool notifyMousePosition(Common::Point &mouse);
 
-	Common::RotationMode getRotationMode() const override;
-
 	virtual bool showMouse(bool visible) override;
 	bool lockMouse(bool lock) override;
 
 	virtual bool saveScreenshot(const Common::Path &filename) const { return false; }
 	void saveScreenshot() override;
+
+	bool setRotationMode(Common::RotationMode rotation) override { _rotationMode = rotation; return true; }
 
 	// Override from Common::EventObserver
 	bool notifyEvent(const Common::Event &event) override;
@@ -112,6 +112,7 @@ public:
 		bool fullscreen;
 		bool cursorPalette;
 		bool vsync;
+		Common::RotationMode rotation;
 
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat pixelFormat;

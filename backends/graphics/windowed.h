@@ -55,6 +55,7 @@ public:
 		_windowWidth(0),
 		_windowHeight(0),
 		_screenAlign(SCREEN_ALIGN_CENTER | SCREEN_ALIGN_MIDDLE),
+		_rotationMode(Common::kRotationNormal),
 		_overlayVisible(false),
 		_overlayInGUI(false),
 		_gameScreenShakeXOffset(0),
@@ -146,7 +147,7 @@ protected:
 		}
 
 		int windowX, windowY;
-		switch (getRotationMode()) {
+		switch (_rotationMode) {
 		default:
 		case Common::kRotationNormal:
 			windowX = targetX + (x * targetWidth + sourceWidth / 2) / sourceWidth;
@@ -193,7 +194,7 @@ protected:
 		y = CLIP<int>(y, sourceY, sourceMaxY);
 
 		int virtualX, virtualY;
-		switch (getRotationMode()) {
+		switch (_rotationMode) {
 		default:
 		case Common::kRotationNormal:
 			virtualX = ((x - sourceX) * targetWidth + sourceWidth / 2) / sourceWidth;
@@ -357,6 +358,11 @@ protected:
 	int _screenAlign;
 
 	/**
+	 * How the screens need to be rotated on the screen
+	 */
+	Common::RotationMode _rotationMode;
+
+	/**
 	 * Whether the overlay (i.e. launcher, including the out-of-game launcher)
 	 * is visible or not.
 	 */
@@ -444,11 +450,10 @@ protected:
 private:
 	void populateDisplayAreaDrawRect(const frac_t displayAspect, int originalWidth, int originalHeight, Common::Rect &drawRect) const {
 		int mode = getStretchMode();
-		Common::RotationMode rotation = getRotationMode();
 		int rotatedWindowWidth;
 		int rotatedWindowHeight;
 
-		if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 			rotatedWindowWidth = _windowHeight;
 			rotatedWindowHeight = _windowWidth;
 		} else {
@@ -533,7 +538,7 @@ private:
 		alignX += _gameScreenShakeXOffset * width / getWidth();
 		alignY += _gameScreenShakeYOffset * height / getHeight();
 
-		if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 			drawRect.top = alignX;
 			drawRect.left = alignY;
 			drawRect.setWidth(height);
