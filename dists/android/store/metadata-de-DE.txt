@@ -21,12 +21,11 @@ Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release (limit is 500 characters):
-2.9.1
+2.9.1.1
 
 *** Release notes:
-– Eine Funktion zum Sichern und Wiederherstellen von Konfigurationen und Spielständen wurde hinzugefügt
-– NEON-Unterstützung wurde standardmäßig aktiviert, was zu einer besseren Leistung auf den meisten älteren Android-Geräten führt
-– Ein Fehler in ARMv7a Android 6.0 und niedriger wurde behoben, der zum Fehlen einiger Spieloptionen führen konnte
-– Performance-Verbesserungen für einige Spiele-Engines
+– Fehler beim Importieren einer ScummVM-Sicherungsdatei (Konfiguration und Spielstände) behoben.
+– Lokalisierte GUI-Texte korrigiert.
+– Ein Absturzproblem beim Spiel „Galador“ wurde behoben.
 
 Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.9.1/ReleaseNotes.html
