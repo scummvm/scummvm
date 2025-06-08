@@ -71,9 +71,9 @@ void MenuManager::setEnable(uint16 flags) {
 	}
 }
 
-void MenuManager::onMouseUp(const Common::Point &Pos) {
+void MenuManager::onMouseUp(const Common::Point &pos) {
 	if (_menuFocus.front() == kFocusMain) {
-		_mouseOnItem = mouseOverMain(Pos);
+		_mouseOnItem = mouseOverMain(pos);
 		if (_mouseOnItem == _mainClicked)
 			// Activate clicked action from main menu
 			switch (_mouseOnItem) {
@@ -105,9 +105,9 @@ void MenuManager::onMouseUp(const Common::Point &Pos) {
 	_mainClicked = -1;
 }
 
-void MenuManager::onMouseDown(const Common::Point &Pos) {
+void MenuManager::onMouseDown(const Common::Point &pos) {
 	if (_menuFocus.front() == kFocusMain) {
-		_mouseOnItem = mouseOverMain(Pos);
+		_mouseOnItem = mouseOverMain(pos);
 		// Show clicked graphic
 		if ((_mouseOnItem >= 0) && (_mouseOnItem < 4))
 			if (_enableFlags.get(_mouseOnItem)) {
@@ -115,12 +115,12 @@ void MenuManager::onMouseDown(const Common::Point &Pos) {
 				_redraw = true;
 			}
 	}
-	debug(1, "mouse position %d %d", Pos.x, Pos.y);
-	debug(1, "panorama position %d %d", Pos.x, Pos.y);
+	debug(1, "mouse position %d %d", pos.x, pos.y);
+	debug(1, "panorama position %d %d", pos.x, pos.y);
 }
 
-void MenuManager::onMouseMove(const Common::Point &Pos) {
-	bool nowInMenu = inMenu(Pos);
+void MenuManager::onMouseMove(const Common::Point &pos) {
+	bool nowInMenu = inMenu(pos);
 	if (nowInMenu != _prevInMenu)
 		_redraw = true;
 	_prevInMenu = nowInMenu;
@@ -132,7 +132,7 @@ void MenuManager::onMouseMove(const Common::Point &Pos) {
 		// Inform game scripting engine that mouse is in main menu
 		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 2)
 			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 2);
-		_mouseOnItem = mouseOverMain(Pos);
+		_mouseOnItem = mouseOverMain(pos);
 		break;
 	case kFocusNone:
 		// Inform game scripting engine that mouse is not in any menu
@@ -152,11 +152,11 @@ void MenuManager::onMouseMove(const Common::Point &Pos) {
 		_redraw = true;
 }
 
-int MenuManager::mouseOverMain(const Common::Point &Pos) {
+int MenuManager::mouseOverMain(const Common::Point &pos) {
 	// Common::Rect mainHotspot(28,_hSideMenu);
 	// mainHotspot.moveTo(mainOrigin + _mainScroller._pos);
 	for (int8 i = 0; i < 4; i++) {
-		if (_enableFlags.get(i) && _menuHotspots[i].contains(Pos))
+		if (_enableFlags.get(i) && _menuHotspots[i].contains(pos))
 			return i;
 	}
 	return -1;
@@ -280,12 +280,12 @@ MenuZGI::~MenuZGI() {
 	}
 }
 
-bool MenuZGI::inMenu(const Common::Point &Pos) const {
-	return _menuTriggerArea.contains(Pos) || (_menuFocus.front() != kFocusNone);
+bool MenuZGI::inMenu(const Common::Point &pos) const {
+	return _menuTriggerArea.contains(pos) || (_menuFocus.front() != kFocusNone);
 }
 
-void MenuZGI::onMouseUp(const Common::Point &Pos) {
-	if (inMenu(Pos))
+void MenuZGI::onMouseUp(const Common::Point &pos) {
+	if (inMenu(pos))
 		// _redraw = true;
 		switch (_menuFocus.front()) {
 		case kFocusItems:
@@ -293,7 +293,7 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 				int itemCount = _engine->getScriptManager()->getStateValue(StateKey_Inv_TotalSlots);
 				if (itemCount == 0)
 					itemCount = 20;
-				int i = mouseOverItem(Pos, itemCount);
+				int i = mouseOverItem(pos, itemCount);
 				if (i != -1) {
 					int32 mouseItem = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
 					if (mouseItem >= 0  && mouseItem < 0xE0) {
@@ -308,7 +308,7 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 
 		case kFocusMagic:
 			if (_enableFlags.get(kMagicMenu)) {
-				int i = mouseOverMagic(Pos);
+				int i = mouseOverMagic(pos);
 				if (i != -1) {
 
 					uint itemnum = _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + i);
@@ -327,7 +327,7 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 			break;
 
 		case kFocusMain:
-			MenuManager::onMouseUp(Pos);
+			MenuManager::onMouseUp(pos);
 			break;
 
 		default:
@@ -335,8 +335,8 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 		}
 }
 
-void MenuZGI::onMouseMove(const Common::Point &Pos) {
-	if (!inMenu(Pos)) {
+void MenuZGI::onMouseMove(const Common::Point &pos) {
+	if (!inMenu(pos)) {
 		_mainScroller.reset();
 		_magicScroller.reset();
 		_itemsScroller.reset();
@@ -346,19 +346,19 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 	for (uint8 i = 0; i < _menuFocus.size(); i++) {
 		switch (_menuFocus[i]) {
 		case kFocusItems:
-			if (_itemsArea.contains(Pos)) {
+			if (_itemsArea.contains(pos)) {
 				setFocus(kFocusItems);
 				i = _menuFocus.size() + 1;
 			}
 			break;
 		case kFocusMagic:
-			if (_magicArea.contains(Pos)) {
+			if (_magicArea.contains(pos)) {
 				setFocus(kFocusMagic);
 				i = _menuFocus.size() + 1;
 			}
 			break;
 		case kFocusMain:
-			if (_mainArea.contains(Pos)) {
+			if (_mainArea.contains(pos)) {
 				setFocus(kFocusMain);
 				i = _menuFocus.size() + 1;
 			}
@@ -380,7 +380,7 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 				else if (itemCount > 50)
 					itemCount = 50;
 				int lastItem = _mouseOnItem;
-				_mouseOnItem = mouseOverItem(Pos, itemCount);
+				_mouseOnItem = mouseOverItem(pos, itemCount);
 				if (lastItem != _mouseOnItem)
 					if (_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + _mouseOnItem) || _engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + lastItem))
 						_redraw = true;
@@ -390,7 +390,7 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 		case kFocusMagic:
 			if (_enableFlags.get(kMagicMenu)) {
 				int lastItem = _mouseOnItem;
-				_mouseOnItem = mouseOverMagic(Pos);
+				_mouseOnItem = mouseOverMagic(pos);
 
 				if (lastItem != _mouseOnItem)
 					if (_engine->getScriptManager()->getStateValue(StateKey_Spell_1 + _mouseOnItem) || _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + lastItem))
@@ -402,27 +402,27 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 			break;
 		}
 	}
-	MenuManager::onMouseMove(Pos);
+	MenuManager::onMouseMove(pos);
 }
 
-int MenuZGI::mouseOverItem(const Common::Point &Pos, int itemCount) {
+int MenuZGI::mouseOverItem(const Common::Point &pos, int itemCount) {
 	int itemWidth = (_wSideMenu - 28) / itemCount;
 	Common::Rect itemHotspot = Common::Rect(28, _hSideMenu);
 	itemHotspot.moveTo(_itemsOrigin + _itemsScroller._pos);
 	for (int i = 0; i < itemCount; i++) {
-		if (itemHotspot.contains(Pos))
+		if (itemHotspot.contains(pos))
 			return i;
 		itemHotspot.translate(itemWidth, 0);
 	}
 	return -1;
 }
 
-int MenuZGI::mouseOverMagic(const Common::Point &Pos) {
+int MenuZGI::mouseOverMagic(const Common::Point &pos) {
 	Common::Rect magicHotspot(28, _hSideMenu);
 	magicHotspot.moveTo(_magicOrigin + _magicScroller._pos);
 	magicHotspot.translate(28, 0); // Offset from end of menu
 	for (int i = 0; i < 12; i++) {
-		if (magicHotspot.contains(Pos))
+		if (magicHotspot.contains(pos))
 			return i;
 		magicHotspot.translate(_magicWidth, 0);
 	}
@@ -575,18 +575,18 @@ MenuNemesis::~MenuNemesis() {
 
 }
 
-bool MenuNemesis::inMenu(const Common::Point &Pos) const {
-	return _menuTriggerArea.contains(Pos) || (_menuFocus.front() != kFocusNone);
+bool MenuNemesis::inMenu(const Common::Point &pos) const {
+	return _menuTriggerArea.contains(pos) || (_menuFocus.front() != kFocusNone);
 }
 
-void MenuNemesis::onMouseMove(const Common::Point &Pos) {
+void MenuNemesis::onMouseMove(const Common::Point &pos) {
 	// Trigger main menu scrolldown to get mouse over main trigger area
 	// Set focus to topmost layer of menus that mouse is currently over
-	if (_mainArea.contains(Pos) || _menuTriggerArea.contains(Pos))
+	if (_mainArea.contains(pos) || _menuTriggerArea.contains(pos))
 		setFocus(kFocusMain);
 	else
 		setFocus(kFocusNone);
-	MenuManager::onMouseMove(Pos);
+	MenuManager::onMouseMove(pos);
 }
 
 } // End of namespace ZVision
