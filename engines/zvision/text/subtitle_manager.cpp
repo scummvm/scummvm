@@ -250,63 +250,63 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 	_redraw(false) {
 	Common::File subFile;
 	Common::Point _textOffset = _engine->getSubtitleManager()->getTextOffset();
-	if (_engine->getSearchManager()->openFile(subFile, subname)) {
-		// Parse subtitle parameters from script
-		while (!subFile.eos()) {
-			Common::String str = subFile.readLine();
-			if (str.lastChar() == '~')
-				str.deleteLastChar();
-			if (str.matchString("*Initialization*", true)) {
-				// Not used
-			} else if (str.matchString("*Rectangle*", true)) {
-				int32 x1, y1, x2, y2;
-				sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
-				_textArea = Common::Rect(x1, y1, x2, y2);
-				debug(1, "Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
-				// Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
-				// To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
-				// This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
-				_textArea.translate(_textOffset.x, _textOffset.y);  // Convert working area coordinates to text area coordinates
-				debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
-			} else if (str.matchString("*TextFile*", true)) {
-				char filename[64];
-				sscanf(str.c_str(), "%*[^:]:%s", filename);
-				Common::File txtFile;
-				if (_engine->getSearchManager()->openFile(txtFile, Common::Path(filename))) {
-					while (!txtFile.eos()) {
-						Common::String txtline = readWideLine(txtFile).encode();
-						Line curLine;
-						curLine.start = -1;
-						curLine.stop = -1;
-						curLine.subStr = txtline;
-						_lines.push_back(curLine);
-					}
-					txtFile.close();
+	if (!_engine->getSearchManager()->openFile(subFile, subname)) {
+		warning("Failed to open subtitle %s", subname.toString().c_str());
+		_toDelete = true;
+		return;
+	}
+	// Parse subtitle parameters from script
+	while (!subFile.eos()) {
+		Common::String str = subFile.readLine();
+		if (str.lastChar() == '~')
+			str.deleteLastChar();
+		if (str.matchString("*Initialization*", true)) {
+			// Not used
+		} else if (str.matchString("*Rectangle*", true)) {
+			int32 x1, y1, x2, y2;
+			sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
+			_textArea = Common::Rect(x1, y1, x2, y2);
+			debug(1, "Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
+			// Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
+			// To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
+			// This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
+			_textArea.translate(_textOffset.x, _textOffset.y);  // Convert working area coordinates to text area coordinates
+			debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
+		} else if (str.matchString("*TextFile*", true)) {
+			char filename[64];
+			sscanf(str.c_str(), "%*[^:]:%s", filename);
+			Common::File txtFile;
+			if (_engine->getSearchManager()->openFile(txtFile, Common::Path(filename))) {
+				while (!txtFile.eos()) {
+					Common::String txtline = readWideLine(txtFile).encode();
+					Line curLine;
+					curLine.start = -1;
+					curLine.stop = -1;
+					curLine.subStr = txtline;
+					_lines.push_back(curLine);
 				}
-			} else {
-				int32 st; // Line start time
-				int32 en; // Line end time
-				int32 sb; // Line number
-				if (sscanf(str.c_str(), "%*[^:]:(%d,%d)=%d", &st, &en, &sb) == 3) {
-					if (sb <= (int32)_lines.size()) {
-						if (vob) {
-							// Convert frame number from 15FPS (AVI) to 29.97FPS (VOB) to synchronise with video
-							// st = st * 2997 / 1500;
-							// en = en * 2997 / 1500;
-							st = st * 2900 / 1500;  // TODO: Subtitles only synchronise correctly at 29fps, but vob files should be 29.97fps; check if video codec is rounding this value down!
-							en = en * 2900 / 1500;
-						}
-						_lines[sb].start = st;
-						_lines[sb].stop = en;
+				txtFile.close();
+			}
+		} else {
+			int32 st; // Line start time
+			int32 en; // Line end time
+			int32 sb; // Line number
+			if (sscanf(str.c_str(), "%*[^:]:(%d,%d)=%d", &st, &en, &sb) == 3) {
+				if (sb <= (int32)_lines.size()) {
+					if (vob) {
+						// Convert frame number from 15FPS (AVI) to 29.97FPS (VOB) to synchronise with video
+						// st = st * 2997 / 1500;
+						// en = en * 2997 / 1500;
+						st = st * 2900 / 1500;  // TODO: Subtitles only synchronise correctly at 29fps, but vob files should be 29.97fps; check if video codec is rounding this value down!
+						en = en * 2900 / 1500;
 					}
+					_lines[sb].start = st;
+					_lines[sb].stop = en;
 				}
 			}
 		}
-		subFile.close();
-	} else {
-		// TODO - add error message here
-		_toDelete = true;
 	}
+	subFile.close();
 }
 
 Subtitle::Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea) :
