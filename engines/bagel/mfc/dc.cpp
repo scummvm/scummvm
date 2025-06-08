@@ -420,6 +420,13 @@ BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 
 /*--------------------------------------------*/
 
+CDC::Impl::Impl() {
+	// By default the _bitmap will point to
+	// this dummy 1x1 bitmap
+	_bitmap1x1.create(1, 1,
+		Graphics::PixelFormat::createFormatCLUT8());
+}
+
 HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 	HBITMAP bitmap = dynamic_cast<HBITMAP>(gdiObj);
 	if (bitmap) {

@@ -587,13 +587,17 @@ class CDC : public CObject {
 
 public:
 	class Impl {
+	private:
+		CBitmap::Impl _bitmap1x1;
 	public:
-		HBITMAP _bitmap = nullptr;
+		HBITMAP _bitmap = &_bitmap1x1;
 		HPALETTE _palette = nullptr;
 		CPalette *_cPalette = nullptr;
 		Graphics::PixelFormat _format;
 
 	public:
+		Impl();
+
 		HGDIOBJ Attach(HGDIOBJ gdiObj);
 		Graphics::ManagedSurface *getSurface() const;
 		const Graphics::PixelFormat &getFormat() const;
