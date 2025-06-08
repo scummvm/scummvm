@@ -45,6 +45,9 @@ static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE) 
 	case NOTSRCCOPY:
 		*destP = ~*srcP;
 		break;
+	case DSTINVERT:
+		*destP = ~*destP;
+		break;
 	case BLACKNESS:
 		*destP = 0;
 		break;
