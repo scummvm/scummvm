@@ -182,7 +182,7 @@ int GetTextExtent(HDC hdc, LPCSTR text, size_t len) {
 	error("TODO: GetTextExtent");
 }
 
-WORD GetWindowWord(HWND hWnd, int nIndex) {
+intptr GetWindowWord(HWND hWnd, int nIndex) {
 	error("TODO: GetWindowWord");
 }
 

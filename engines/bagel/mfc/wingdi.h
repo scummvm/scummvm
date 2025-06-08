@@ -662,7 +662,7 @@ extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestH
                          int xSrc, int ySrc, int SrcWidth, int SrcHeight,
                          CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop);
 extern int GetTextExtent(HDC hdc, LPCSTR text, size_t len);
-extern WORD GetWindowWord(HWND hWnd, int nIndex);
+extern intptr GetWindowWord(HWND hWnd, int nIndex);
 extern int AddFontResource(LPCSTR fontName);
 extern bool RemoveFontResource(LPCSTR fontName);
 extern int SetScrollPos(HWND hWnd, int nBar,
