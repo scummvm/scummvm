@@ -299,7 +299,8 @@ CGdiObject *CDC::SelectObject(CGdiObject *pObject) {
 }
 
 CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
-	HPALETTE hOld = impl()->selectPalette(pPalette->m_hObject);
+	HPALETTE hOld = impl()->selectPalette(!pPalette ? nullptr :
+		pPalette->m_hObject);
 	return (CPalette *)CGdiObject::FromHandle(hOld);
 }
 
