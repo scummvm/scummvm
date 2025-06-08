@@ -1439,7 +1439,7 @@ void LogicManager::HAND_TrainM_InOffice(HAND_PARAMS) {
 			break;
 		}
 
-		if (_gameTime > 1089000 && !getCharacterCurrentParams(kCharacterTrainM)[7] && !(getCharacterCurrentParams(kCharacterTrainM)[7] = 1, getCharacterCurrentParams(kCharacterTrainM)[4])) {
+		if (_gameTime > 1089000 && !getCharacterCurrentParams(kCharacterTrainM)[7] && (getCharacterCurrentParams(kCharacterTrainM)[7] = 1, !getCharacterCurrentParams(kCharacterTrainM)[4])) {
 			getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 5;
 			TrainMCall(&LogicManager::CONS_TrainM_LeaveOffice, 0, 0, 0, 0);
 			break;
@@ -1499,7 +1499,7 @@ void LogicManager::HAND_TrainM_InOffice(HAND_PARAMS) {
 		break;
 	case 9:
 		getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 17;
-		TrainMCall(&LogicManager::CONS_TrainM_KickCathOut, msg->param.intParam == 105, 0, 0, 0);
+		TrainMCall(&LogicManager::CONS_TrainM_KickCathOut, (msg->param.intParam == 105) ? 1 : 0, 0, 0, 0);
 		break;
 	case 12:
 		getCharacter(kCharacterTrainM).characterPosition.car = kCarBaggage;
@@ -1563,7 +1563,7 @@ void LogicManager::HAND_TrainM_InOffice(HAND_PARAMS) {
 
 			// fall through
 		case 4:
-			if (_gameTime > 1089000 && !getCharacterCurrentParams(kCharacterTrainM)[7] && !(getCharacterCurrentParams(kCharacterTrainM)[7] = 1, getCharacterCurrentParams(kCharacterTrainM)[4])) {
+			if (_gameTime > 1089000 && !getCharacterCurrentParams(kCharacterTrainM)[7] && (getCharacterCurrentParams(kCharacterTrainM)[7] = 1, !getCharacterCurrentParams(kCharacterTrainM)[4])) {
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 5;
 				TrainMCall(&LogicManager::CONS_TrainM_LeaveOffice, 0, 0, 0, 0);
 				break;
@@ -1571,17 +1571,29 @@ void LogicManager::HAND_TrainM_InOffice(HAND_PARAMS) {
 
 			// fall through
 		case 5:
-			getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 6;
-			TrainMCall(&LogicManager::CONS_TrainM_DoWalk, 3, 2000, 0, 0);
-			break;
+			if (getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] == 5) {
+				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 6;
+				TrainMCall(&LogicManager::CONS_TrainM_DoWalk, 3, 2000, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 6:
-			getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 7;
-			TrainMCall(&LogicManager::CONS_TrainM_DoCond, 3, "TRA1202", 0, 0);
-			break;
+			if (getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] == 6) {
+				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 7;
+				TrainMCall(&LogicManager::CONS_TrainM_DoCond, 3, "TRA1202", 0, 0);
+				break;
+			}
+
+			// fall through
 		case 7:
-			getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 8;
-			TrainMCall(&LogicManager::CONS_TrainM_WalkBackToOffice, 0, 0, 0, 0);
-			break;
+			if (getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] == 7) {
+				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 8;
+				TrainMCall(&LogicManager::CONS_TrainM_WalkBackToOffice, 0, 0, 0, 0);
+				break;
+			}
+
+			// fall through
 		case 8:
 			if (_gameTime > 1107000 && !getCharacterCurrentParams(kCharacterTrainM)[8]) {
 				getCharacterCurrentParams(kCharacterTrainM)[8] = 1;
