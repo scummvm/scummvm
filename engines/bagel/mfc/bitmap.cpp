@@ -38,13 +38,15 @@ HGDIOBJ CBitmap::Detach() {
 }
 
 BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
-	const CBitmap::Impl *src = new CBitmap::Impl();
+	const CDC::Impl *dc = static_cast<CDC::Impl *>(pDC->m_hDC);
+	Graphics::ManagedSurface *src = dc->getSurface();
+
 	BITMAPINFOHEADER h;
 	h.biSize = 40;
 	h.biWidth = src->w;
 	h.biHeight = src->h;
 	h.biPlanes = 1;
-	h.biBitCount = src->format.bpp();
+	h.biBitCount = src->format.bytesPerPixel * 8;
 	h.biCompression = BI_RGB;
 	h.biSizeImage = 0;
 	h.biXPelsPerMeter = 0;
@@ -80,7 +82,7 @@ BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 }
 
 int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
-	CBitmap::Impl *src = new CBitmap::Impl();
+	CBitmap::Impl *src = static_cast<CBitmap::Impl *>(m_hObject);
 	BITMAP *dest = (BITMAP *)lpObject;
 	assert(nCount == sizeof(BITMAP));
 
@@ -96,7 +98,7 @@ int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
 }
 
 LONG CBitmap::GetBitmapBits(LONG dwCount, LPVOID lpBits) const {
-	const CBitmap::Impl *src = new CBitmap::Impl();
+	const CBitmap::Impl *src = static_cast<CBitmap::Impl *>(m_hObject);
 	dwCount = MIN((int)dwCount, src->pitch * src->h * src->format.bytesPerPixel);
 
 	Common::copy((const byte *)src->getPixels(),
