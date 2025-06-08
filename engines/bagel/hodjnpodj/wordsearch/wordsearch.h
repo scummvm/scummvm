@@ -152,7 +152,7 @@ private:
 	void OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainPackRatWindow )
 	afx_msg void OnPaint();

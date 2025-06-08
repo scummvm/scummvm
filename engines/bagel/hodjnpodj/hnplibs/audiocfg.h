@@ -43,8 +43,8 @@ public:
 protected:
 
 	virtual VOID DoDataExchange(CDataExchange *);
-	virtual BOOL OnCommand(WPARAM, LPARAM);
-	virtual BOOL OnInitDialog(VOID);
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual BOOL OnInitDialog(VOID) override;
 	VOID PutDlgData(VOID);
 	VOID GetDlgData(VOID);
 	VOID LoadIniSettings(VOID);

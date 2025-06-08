@@ -126,7 +126,7 @@ private:
 
 private:
 
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CMaskedButton )
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);

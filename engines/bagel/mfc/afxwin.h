@@ -1152,7 +1152,7 @@ class CFrameWnd : public CWnd {
 	DECLARE_DYNCREATE(CFrameWnd)
 
 protected:
-	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) {
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
 		return true;
 	}
 
@@ -1321,7 +1321,7 @@ class CView : public CWnd {
 protected:
 	CView *m_pDocument = nullptr;
 
-	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) {
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
 		return true;
 	}
 
