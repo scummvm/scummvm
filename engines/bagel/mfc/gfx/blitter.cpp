@@ -126,9 +126,6 @@ void blit(const Graphics::ManagedSurface *src,
 
 	switch (src->format.bytesPerPixel) {
 	case 1:
-		if (mode != SRCCOPY && mode != BLACKNESS && mode != WHITENESS)
-			error("Blitter doesn't support mode for paletted surfaces");
-
 		normalBlit<byte>(src, dest, srcRect, destPos, mode);
 		break;
 	case 2:
@@ -151,9 +148,6 @@ void stretchBlit(const Graphics::ManagedSurface *src,
 
 	switch (src->format.bytesPerPixel) {
 	case 1:
-		if (mode != SRCCOPY && mode != BLACKNESS && mode != WHITENESS)
-			error("Blitter doesn't support mode for paletted surfaces");
-
 		stretchBlit<byte>(src, dest, srcRect, destRect, mode);
 		break;
 	case 2:
