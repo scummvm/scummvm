@@ -22,12 +22,11 @@ ScummVM is open source software available under the term of the GPL v3.0 license
 The source code is available from https://github.com/scummvm/scummvm.
 
 *** Current release:
-2.9.1
+2.9.1.1
 
 *** Release notes (limit is 500 characters):
-- Added a feature to let users backup and restore their configuration and saves.
-- Enabled NEON support by default, resulting in better performance for the vast majority of older Android devices.
-- Worked around a bug in ARMv7a Android 6.0 and below, which could cause some game options to be missing, for example.
-- Increased stack allocation for Android Java thread, benefiting game engines that heavily use the stack.
+- Fixed importing a ScummVM (configuration and saves) backup file
+- Fixed localized GUI texts
+- Fixed a crash for the "The Prince and the Coward" game
 
 Full release notes: https://scummvm.org/frs/scummvm/2.9.1/ReleaseNotes.html
