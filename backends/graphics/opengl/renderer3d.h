@@ -50,6 +50,8 @@ public:
 	const Texture &getGLTexture() const { return _texture; }
 	bool hasTexture() const { return _texture.getGLTexture() != 0; }
 
+	void setRotation(Common::RotationMode rotation) { _texture.setRotation(rotation); }
+
 protected:
 	void setup();
 

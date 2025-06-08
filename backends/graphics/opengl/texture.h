@@ -30,6 +30,7 @@
 #include "graphics/surface.h"
 
 #include "common/rect.h"
+#include "common/rotationmode.h"
 
 class Scaler;
 
@@ -59,6 +60,13 @@ public:
 	 * @param enable true to enable and false to disable.
 	 */
 	virtual void enableLinearFiltering(bool enable) = 0;
+
+	/**
+	 * Sets the rotate parameter of the texture
+	 *
+	 * @param rotation How to rotate the texture
+	 */
+	virtual void setRotation(Common::RotationMode rotation) = 0;
 
 	/**
 	 * Allocate storage for surface.
@@ -170,6 +178,7 @@ public:
 	void recreate() override;
 
 	void enableLinearFiltering(bool enable) override;
+	void setRotation(Common::RotationMode rotation) override;
 
 	void allocate(uint width, uint height) override;
 
@@ -285,6 +294,7 @@ public:
 	void recreate() override;
 
 	void enableLinearFiltering(bool enable) override;
+	void setRotation(Common::RotationMode rotation) override;
 
 	void allocate(uint width, uint height) override;
 
