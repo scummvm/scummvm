@@ -107,6 +107,7 @@ bool CWinApp::GetMessage(MSG &msg) {
 
 bool CWinApp::pollEvents(Common::Event &event) {
 	if (!g_system->getEventManager()->pollEvent(event)) {
+		// Brief pauses and screen updates
 		g_system->delayMillis(10);
 
 		uint32 time = g_system->getMillis();
@@ -114,6 +115,9 @@ bool CWinApp::pollEvents(Common::Event &event) {
 			_nextFrameTime = time + (1000 / FRAME_RATE);
 			_screen.update();
 		}
+
+		// Cleanup any temporary handle wrapper
+		AfxUnlockTempMaps();
 
 		return false;
 	}
@@ -255,6 +259,19 @@ CHandleMap *CWinApp::afxMapHGDIOBJ(BOOL bCreate) {
 	}
 
 	return m_pmapHGDIOBJ;
+}
+
+void CWinApp::AfxUnlockTempMaps() {
+	if (m_pmapHWND)
+		m_pmapHWND->DeleteTemp();
+	if (m_pmapHMENU)
+		m_pmapHMENU->DeleteTemp();
+	if (m_pmapHDC)
+		m_pmapHDC->DeleteTemp();
+	if (m_pmapHGDIOBJ)
+		m_pmapHGDIOBJ->DeleteTemp();
+	if (m_pmapHIMAGELIST)
+		m_pmapHIMAGELIST->DeleteTemp();
 }
 
 /*--------------------------------------------*/

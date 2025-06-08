@@ -69,11 +69,13 @@ public:
 	void RemoveHandle(HANDLE h);
 
 	inline CObject *LookupPermanent(HANDLE h) const {
-		return m_permanentMap[(void *)h];
+		return m_permanentMap.contains((void *)h) ?
+			m_permanentMap[(void *)h] : nullptr;
 	}
 
 	inline CObject *LookupTemporary(HANDLE h) const {
-		return m_temporaryMap[(void *)h];
+		return m_temporaryMap.contains((void *)h) ?
+			m_temporaryMap[(void *)h] : nullptr;
 	}
 };
 

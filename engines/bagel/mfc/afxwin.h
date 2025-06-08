@@ -1470,6 +1470,7 @@ public:
 	virtual void OnFilePrintSetup() {}
 
 	CHandleMap *afxMapHGDIOBJ(BOOL bCreate);
+	void AfxUnlockTempMaps();
 
 	/*== ScummVM added functions ==*/
 	void setDirectory(const char *folder);
