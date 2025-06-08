@@ -260,8 +260,10 @@ protected:
 		populateDisplayAreaDrawRect(getDesiredGameAspectRatio(), getWidth() * getGameRenderScale(), getHeight() * getGameRenderScale(), _gameDrawRect);
 
 		if (getOverlayHeight()) {
-			const frac_t overlayAspect = intToFrac(getOverlayWidth()) / getOverlayHeight();
-			populateDisplayAreaDrawRect(overlayAspect, getOverlayWidth(), getOverlayHeight(), _overlayDrawRect);
+			const int16 overlayWidth = getOverlayWidth(),
+			            overlayHeight = getOverlayHeight();
+			const frac_t overlayAspect = intToFrac(overlayWidth) / overlayHeight;
+			populateDisplayAreaDrawRect(overlayAspect, overlayWidth, overlayHeight, _overlayDrawRect);
 		}
 
 		if (_overlayInGUI) {
