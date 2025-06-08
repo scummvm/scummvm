@@ -171,7 +171,7 @@ int GoldArchiveManager::loadBG(const char *filename) {
 
 	if (_engine->getLogicManager()->_doubleClickFlag &&
 		(_engine->mouseHasLeftClicked() || _engine->mouseHasRightClicked()) &&
-		_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].car != 128) {
+		_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].property != kNodeAutoWalk) {
 		return -1;
 	}
 
@@ -217,7 +217,7 @@ int GoldArchiveManager::loadBG(const char *filename) {
 
 		if (_engine->getLogicManager()->_doubleClickFlag &&
 			(_engine->mouseHasLeftClicked() || _engine->mouseHasRightClicked()) &&
-			_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].car != 128) {
+			_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].property != kNodeAutoWalk) {
 			return -1;
 		} else {
 			for (int32 i = _engine->getGraphicsManager()->_renderBox1.y - 1 + _engine->getGraphicsManager()->_renderBox1.height; i >= _engine->getGraphicsManager()->_renderBox1.y; i--) {
@@ -246,7 +246,7 @@ int GoldArchiveManager::loadBG(const char *filename) {
 
 			if (_engine->getLogicManager()->_doubleClickFlag &&
 				(_engine->mouseHasLeftClicked() || _engine->mouseHasRightClicked()) &&
-				_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].car != 128) {
+				_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].property != kNodeAutoWalk) {
 				return -1;
 
 			} else {

@@ -131,7 +131,7 @@ void LogicManager::HAND_DemoFrancois_Birth(HAND_PARAMS) {
 	case 0:
 		if (whoRunningDialog(kCharacterFrancois)) {
 			if (whoOnScreen(kCharacterFrancois) && whoFacingCath(kCharacterFrancois)) {
-				if (nearChar(kCharacterFrancois, kCharacterCath, 2500) && !_gameEvents[kEventFrancoisWhistleD])
+				if (nearChar(kCharacterFrancois, kCharacterCath, 2500) && !_doneNIS[kEventFrancoisWhistleD])
 					getCharacter(kCharacterFrancois).inventoryItem = 0x80;
 			} else {
 				getCharacter(kCharacterFrancois).inventoryItem = 0;
@@ -163,11 +163,11 @@ void LogicManager::HAND_DemoFrancois_Birth(HAND_PARAMS) {
 			return;
 		}
 
-		if (getCharacterCurrentParams(kCharacterFrancois)[5] || (getCharacterCurrentParams(kCharacterFrancois)[5] = getCharacterCurrentParams(kCharacterFrancois)[2] + _currentGameSessionTicks,
+		if (getCharacterCurrentParams(kCharacterFrancois)[5] || (getCharacterCurrentParams(kCharacterFrancois)[5] = getCharacterCurrentParams(kCharacterFrancois)[2] + _realTime,
 																 getCharacterCurrentParams(kCharacterFrancois)[5] != 0)) {
-			if (_currentGameSessionTicks <= getCharacterCurrentParams(kCharacterFrancois)[5]) {
+			if (_realTime <= getCharacterCurrentParams(kCharacterFrancois)[5]) {
 				if (whoOnScreen(kCharacterFrancois) && whoFacingCath(kCharacterFrancois)) {
-					if (nearChar(kCharacterFrancois, kCharacterCath, 2500) && !_gameEvents[kEventFrancoisWhistleD])
+					if (nearChar(kCharacterFrancois, kCharacterCath, 2500) && !_doneNIS[kEventFrancoisWhistleD])
 						getCharacter(kCharacterFrancois).inventoryItem = 0x80;
 				} else {
 					getCharacter(kCharacterFrancois).inventoryItem = 0;
@@ -212,7 +212,7 @@ void LogicManager::HAND_DemoFrancois_Birth(HAND_PARAMS) {
 		getCharacterCurrentParams(kCharacterFrancois)[2] = 15 * rnd(7);
 
 		if (whoOnScreen(kCharacterFrancois) && whoFacingCath(kCharacterFrancois)) {
-			if (nearChar(kCharacterFrancois, kCharacterCath, 2500) && !_gameEvents[kEventFrancoisWhistleD])
+			if (nearChar(kCharacterFrancois, kCharacterCath, 2500) && !_doneNIS[kEventFrancoisWhistleD])
 				getCharacter(kCharacterFrancois).inventoryItem = 0x80;
 		} else {
 			getCharacter(kCharacterFrancois).inventoryItem = 0;

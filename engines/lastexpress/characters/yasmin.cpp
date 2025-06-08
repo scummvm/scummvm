@@ -817,8 +817,8 @@ void LogicManager::HAND_Yasmin_Hiding(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (!whoRunningDialog(kCharacterYasmin)) {
-			if (getCharacterCurrentParams(kCharacterYasmin)[0] || (getCharacterCurrentParams(kCharacterYasmin)[0] = _currentGameSessionTicks + 450, _currentGameSessionTicks != -450)) {
-				if (getCharacterCurrentParams(kCharacterYasmin)[0] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterYasmin)[0] || (getCharacterCurrentParams(kCharacterYasmin)[0] = _realTime + 450, _realTime != -450)) {
+				if (getCharacterCurrentParams(kCharacterYasmin)[0] >= _realTime)
 					return;
 
 				getCharacterCurrentParams(kCharacterYasmin)[0] = 0x7FFFFFFF;

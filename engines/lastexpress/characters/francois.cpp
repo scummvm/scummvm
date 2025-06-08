@@ -322,11 +322,11 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 		} else {
 			if (!nearChar(kCharacterFrancois, kCharacterCath, 2000) ||
 				!cathHasItem(kItemFirebird) ||
-				_gameEvents[kEventFrancoisShowEgg] ||
-				_gameEvents[kEventFrancoisShowEggD] ||
-				_gameEvents[kEventFrancoisShowEggNight] ||
-				_gameEvents[kEventFrancoisShowEggNightD]) {
-				getCharacter(kCharacterFrancois).inventoryItem = nearChar(kCharacterFrancois, kCharacterCath, 2000) && _gameInventory[kItemBeetle].location == 1 && !_gameEvents[kEventFrancoisShowBeetle] && !_gameEvents[kEventFrancoisShowBeetleD];
+				_doneNIS[kEventFrancoisShowEgg] ||
+				_doneNIS[kEventFrancoisShowEggD] ||
+				_doneNIS[kEventFrancoisShowEggNight] ||
+				_doneNIS[kEventFrancoisShowEggNightD]) {
+				getCharacter(kCharacterFrancois).inventoryItem = nearChar(kCharacterFrancois, kCharacterCath, 2000) && _items[kItemBeetle].floating == 1 && !_doneNIS[kEventFrancoisShowBeetle] && !_doneNIS[kEventFrancoisShowBeetleD];
 			} else {
 				getCharacter(kCharacterFrancois).inventoryItem = kItemFirebird;
 			}
@@ -390,7 +390,7 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 			giveCathItem(kItemWhistle);
 			takeCathItem(kItemMatchBox);
 
-			_gameInventory[kItemBeetle].location = 2;
+			_items[kItemBeetle].floating = 2;
 
 			if (getCharacter(kCharacterFrancois).direction == 1) {
 				bumpCathFx(getCharacter(kCharacterFrancois).characterPosition.car, getCharacter(kCharacterFrancois).characterPosition.position - 750);
@@ -528,13 +528,13 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			bool skip = false; // Horrible way to unroll a goto...
 
 			if (!getCharacterCurrentParams(kCharacterFrancois)[8]) {
-				getCharacterCurrentParams(kCharacterFrancois)[8] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterFrancois)[5];
-				if (_currentGameSessionTicks + getCharacterCurrentParams(kCharacterFrancois)[5] == 0) {
+				getCharacterCurrentParams(kCharacterFrancois)[8] = _realTime + getCharacterCurrentParams(kCharacterFrancois)[5];
+				if (_realTime + getCharacterCurrentParams(kCharacterFrancois)[5] == 0) {
 					skip = true;
 				}
 			}
 
-			if (skip || getCharacterCurrentParams(kCharacterFrancois)[8] < _currentGameSessionTicks) {
+			if (skip || getCharacterCurrentParams(kCharacterFrancois)[8] < _realTime) {
 				if (!skip) {
 					getCharacterCurrentParams(kCharacterFrancois)[8] = 0x7FFFFFFF;
 				}
@@ -577,7 +577,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterFrancois)[2] == 540) {
 				getCharacterCurrentParams(kCharacterFrancois)[1] = 4;
 
-				if (_gameProgress[kProgressChapter] != 1)
+				if (_globals[kProgressChapter] != 1)
 					getCharacterCurrentParams(kCharacterFrancois)[1] = 3;
 
 				getCharacterCurrentParams(kCharacterFrancois)[2] = 9460;
@@ -592,7 +592,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 		}
 
 		if (!nearX(kCharacterFrancois, 2000, 500) || getCharacter(kCharacterFrancois).direction != 2) {
-			if (_gameProgress[kProgressChapter] == 1) {
+			if (_globals[kProgressChapter] == 1) {
 				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
 					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
 					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
@@ -631,7 +631,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
 			FrancoisCall(&LogicManager::CONS_Francois_DoSeqOtis, "605A", 0, 0, 0);
 		} else {
-			if (_gameProgress[kProgressChapter] == 1) {
+			if (_globals[kProgressChapter] == 1) {
 				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
 					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
 					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
@@ -669,7 +669,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 		FrancoisCall(&LogicManager::CONS_Francois_SaveGame, 2, kEventFrancoisWhistle, 0, 0);
 		break;
 	case 5:
-		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventFrancoisWhistle] && !_gameEvents[kEventFrancoisWhistleD] && !_gameEvents[kEventFrancoisWhistleNight] && !_gameEvents[kEventFrancoisWhistleNightD]) {
+		if (_globals[kProgressJacket] == 2 && !_doneNIS[kEventFrancoisWhistle] && !_doneNIS[kEventFrancoisWhistleD] && !_doneNIS[kEventFrancoisWhistleNight] && !_doneNIS[kEventFrancoisWhistleNightD]) {
 			getCharacter(kCharacterFrancois).inventoryItem = 0x80;
 		}
 
@@ -700,7 +700,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			getCharacter(kCharacterFrancois).characterPosition.position = 2088;
 			walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], getCharacterCurrentParams(kCharacterFrancois)[2]);
 
-			if (_gameProgress[kProgressChapter] == 1) {
+			if (_globals[kProgressChapter] == 1) {
 				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
 					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
 					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
@@ -735,7 +735,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 			break;
 		case 6:
-			if (_gameProgress[kProgressJacket] == 2) {
+			if (_globals[kProgressJacket] == 2) {
 				if (!isNight()) {
 					if (getCharacter(kCharacterFrancois).characterPosition.position <= getCharacter(kCharacterCath).characterPosition.position) {
 						playNIS(kEventFrancoisWhistleD);
@@ -888,7 +888,7 @@ void LogicManager::HAND_Francois_HaremVisit(HAND_PARAMS) {
 			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 4840, 0, 0);
 			break;
 		case 7:
-			if (cathHasItem(kItemWhistle) || _gameInventory[kItemWhistle].location == 3) {
+			if (cathHasItem(kItemWhistle) || _items[kItemWhistle].floating == 3) {
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 10;
 				FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, 5790, 0, 0);
 				break;
@@ -967,7 +967,7 @@ void LogicManager::HAND_Francois_ChaseBeetle(HAND_PARAMS) {
 			FrancoisCall(&LogicManager::CONS_Francois_DoWalk, 4, getCharacterCurrentParams(kCharacterFrancois)[1], 0, 0);
 			break;
 		case 2:
-			if (_gameInventory[kItemBeetle].location == 3) {
+			if (_items[kItemBeetle].floating == 3) {
 				startCycOtis(kCharacterFrancois, (char *)&getCharacterCurrentParams(kCharacterFrancois)[5]);
 				softBlockAtDoor(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[0]);
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
@@ -1371,8 +1371,8 @@ void LogicManager::CONS_Francois_WithMama(CONS_PARAMS) {
 void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if ((_gameEvents[kEventFrancoisShowBeetle] || _gameEvents[kEventFrancoisShowBeetleD]) &&
-			!_gameEvents[kEventFrancoisTradeWhistle] && !_gameEvents[kEventFrancoisTradeWhistleD]) {
+		if ((_doneNIS[kEventFrancoisShowBeetle] || _doneNIS[kEventFrancoisShowBeetleD]) &&
+			!_doneNIS[kEventFrancoisTradeWhistle] && !_doneNIS[kEventFrancoisTradeWhistleD]) {
 			getCharacterParams(kCharacterFrancois, 8)[0] = 1;
 		}
 
@@ -1396,7 +1396,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 			break;
 		}
 
-		if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
+		if (!cathHasItem(kItemWhistle) && _items[kItemWhistle].floating != 3) {
 			if (_gameTime > 1768500 && !getCharacterCurrentParams(kCharacterFrancois)[2]) {
 				getCharacterCurrentParams(kCharacterFrancois)[2] = 1;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
@@ -1412,7 +1412,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 			}
 		}
 
-		if (_gameInventory[kItemBeetle].location != 3) {
+		if (_items[kItemBeetle].floating != 3) {
 			cathHasItem(kItemWhistle);
 			break;
 		}
@@ -1477,7 +1477,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 
 			// fall through
 		case 3:
-			if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
+			if (!cathHasItem(kItemWhistle) && _items[kItemWhistle].floating != 3) {
 				if (_gameTime > 1768500 && !getCharacterCurrentParams(kCharacterFrancois)[2]) {
 					getCharacterCurrentParams(kCharacterFrancois)[2] = 1;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 4;
@@ -1493,7 +1493,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 				}
 			}
 
-			if (_gameInventory[kItemBeetle].location != 3) {
+			if (_items[kItemBeetle].floating != 3) {
 				cathHasItem(kItemWhistle);
 				break;
 			}
@@ -1547,7 +1547,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 
 			// fall through
 		case 5:
-			if (_gameInventory[kItemBeetle].location != 3) {
+			if (_items[kItemBeetle].floating != 3) {
 				cathHasItem(kItemWhistle);
 				break;
 			}
@@ -1580,7 +1580,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 			// fall through
 		case 6:
 			if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 6) {
-				_gameProgress[kProgressField9C] = 1;
+				_globals[kProgressField9C] = 1;
 			}
 
 			if (_gameTime > 1782000 && !getCharacterCurrentParams(kCharacterFrancois)[5]) {
@@ -1650,7 +1650,7 @@ void LogicManager::CONS_Francois_InPart3(CONS_PARAMS) {
 void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if ((_gameEvents[kEventFrancoisShowBeetle] || _gameEvents[kEventFrancoisShowBeetleD]) && !_gameEvents[kEventFrancoisTradeWhistle] && !_gameEvents[kEventFrancoisTradeWhistleD]) {
+		if ((_doneNIS[kEventFrancoisShowBeetle] || _doneNIS[kEventFrancoisShowBeetleD]) && !_doneNIS[kEventFrancoisTradeWhistle] && !_doneNIS[kEventFrancoisTradeWhistleD]) {
 			getCharacterParams(kCharacterFrancois, 8)[0] = 1;
 		}
 
@@ -1710,7 +1710,7 @@ void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 				break;
 			}
 
-			if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
+			if (!cathHasItem(kItemWhistle) && _items[kItemWhistle].floating != 3) {
 				if (_gameTime > 2011500 && !getCharacterCurrentParams(kCharacterFrancois)[9]) {
 					getCharacterCurrentParams(kCharacterFrancois)[9] = 1;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 10;
@@ -1726,7 +1726,7 @@ void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 				}
 			}
 
-			if (_gameInventory[kItemBeetle].location == 3) {
+			if (_items[kItemBeetle].floating == 3) {
 				if (getCharacterCurrentParams(kCharacterFrancois)[11] != 0x7FFFFFFF && _gameTime) {
 					if (_gameTime > 15803100) {
 						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
@@ -1847,7 +1847,7 @@ void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 
 			// fall through
 		case 9:
-			if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3) {
+			if (!cathHasItem(kItemWhistle) && _items[kItemWhistle].floating != 3) {
 				if (_gameTime > 2011500 && !getCharacterCurrentParams(kCharacterFrancois)[9]) {
 					getCharacterCurrentParams(kCharacterFrancois)[9] = 1;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 10;
@@ -1863,7 +1863,7 @@ void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 				}
 			}
 
-			if (_gameInventory[kItemBeetle].location == 3) {
+			if (_items[kItemBeetle].floating == 3) {
 				if (getCharacterCurrentParams(kCharacterFrancois)[11] != 0x7FFFFFFF && _gameTime) {
 					if (_gameTime > 15803100) {
 						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
@@ -1924,7 +1924,7 @@ void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 
 			// fall through
 		case 11:
-			if (_gameInventory[kItemBeetle].location == 3) {
+			if (_items[kItemBeetle].floating == 3) {
 				if (getCharacterCurrentParams(kCharacterFrancois)[11] != 0x7FFFFFFF && _gameTime) {
 					if (_gameTime > 15803100) {
 						getCharacterCurrentParams(kCharacterFrancois)[11] = 0x7FFFFFFF;
@@ -1977,7 +1977,7 @@ void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 			break;
 		case 12:
 			if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 12) {
-				_gameProgress[kProgressField9C] = 1;
+				_globals[kProgressField9C] = 1;
 			}
 
 			if (_gameTime > 2040300 && !getCharacterCurrentParams(kCharacterFrancois)[12]) {
@@ -2115,7 +2115,7 @@ void LogicManager::CONS_Francois_Prisoner(CONS_PARAMS) {
 void LogicManager::HAND_Francois_Prisoner(HAND_PARAMS) {
 	switch (msg->action) {
 	case 70549068:
-		if (!cathHasItem(kItemWhistle) && _gameInventory[kItemWhistle].location != 3)
+		if (!cathHasItem(kItemWhistle) && _items[kItemWhistle].floating != 3)
 			dropItem(kItemWhistle, 1);
 
 		CONS_Francois_Hiding(0, 0, 0, 0);

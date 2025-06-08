@@ -197,9 +197,9 @@ void LogicManager::CONS_Ivo_DoWaitReal(CONS_PARAMS) {
 void LogicManager::HAND_Ivo_DoWaitReal(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterIvo)[1] || (getCharacterCurrentParams(kCharacterIvo)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterIvo)[0],
-															_currentGameSessionTicks + getCharacterCurrentParams(kCharacterIvo)[0] != 0)) {
-			if (getCharacterCurrentParams(kCharacterIvo)[1] >= _currentGameSessionTicks)
+		if (getCharacterCurrentParams(kCharacterIvo)[1] || (getCharacterCurrentParams(kCharacterIvo)[1] = _realTime + getCharacterCurrentParams(kCharacterIvo)[0],
+															_realTime + getCharacterCurrentParams(kCharacterIvo)[0] != 0)) {
+			if (getCharacterCurrentParams(kCharacterIvo)[1] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterIvo)[1] = 0x7FFFFFFF;

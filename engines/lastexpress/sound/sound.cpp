@@ -267,7 +267,7 @@ void SoundManager::ambientAI(int id) {
 
 					if (_engine->getLogicManager()->inComp(kCharacterCath, getCharacter(kCharacterCath).characterPosition.car, positions[pos])) {
 						numLoops[0] = 1;
-						soundId = _engine->getLogicManager()->_gameObjects[objNum].door == kObjectLocation2 ? 6 : 1;
+						soundId = _engine->getLogicManager()->_doors[objNum].status == kObjectLocation2 ? 6 : 1;
 					}
 
 					objNum++;

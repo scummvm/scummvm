@@ -121,14 +121,14 @@ void LogicManager::HAND_DemoMaster_Birth(HAND_PARAMS) {
 		bool playSndFx = false;
 		bool doBumpCath = false;
 
-		if (_gameProgress[kProgressIsTrainRunning]) {
+		if (_globals[kProgressIsTrainRunning]) {
 			if (!getCharacterCurrentParams(kCharacterMaster)[3]) {
-				getCharacterCurrentParams(kCharacterMaster)[3] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[0];
+				getCharacterCurrentParams(kCharacterMaster)[3] = _realTime + getCharacterCurrentParams(kCharacterMaster)[0];
 				if (!getCharacterCurrentParams(kCharacterMaster)[3])
 					playSndFx = true;
 			}
 
-			if (!playSndFx && _currentGameSessionTicks > getCharacterCurrentParams(kCharacterMaster)[3]) {
+			if (!playSndFx && _realTime > getCharacterCurrentParams(kCharacterMaster)[3]) {
 				getCharacterCurrentParams(kCharacterMaster)[3] = 0x7FFFFFFF;
 				playSndFx = true;
 			}

@@ -83,7 +83,7 @@ int LastExpressEngine::doFight(int fightId) {
 		tbm = &getGraphicsManager()->_renderBox2;
 	}
 
-	getLogicManager()->_trainNodeIndex = fightNode;
+	getLogicManager()->_activeNode = fightNode;
 
 	(_characters->characters[kCharacterCath]).characterPosition = getLogicManager()->_trainData[fightNode].nodePosition;
 	getSoundManager()->_scanAnySoundLoopingSection = true;
@@ -230,12 +230,13 @@ void CFight::timer(Event *event, bool isProcessing) {
 	_engine->setEventTickInternal(false);
 
 	if (_engine->_gracePeriodTimer) {
-		if ((_engine->getLogicManager()->_gameProgress[kProgressJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
+		if ((_engine->getLogicManager()->_globals[kProgressJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
 			_eggIconBrightness = 0;
 			_eggIconBrightnessStep = 1;
 		}
 
-		_engine->_gracePeriodTimer--;
+		if (!_engine->_lockGracePeriod) // Gets set to true only by the debugger only...
+			_engine->_gracePeriodTimer--;
 
 		if (_engine->_gracePeriodTimer <= 500 ||
 			!(_engine->_gracePeriodTimer % 5)) {
@@ -279,7 +280,7 @@ void CFight::timer(Event *event, bool isProcessing) {
 		Link *link = nullptr;
 		uint8 location = 0;
 
-		for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].link; i; i = i->next) {
+		for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].link; i; i = i->next) {
 			if (_engine->getLogicManager()->pointIn(_engine->_cursorX, _engine->_cursorY, i) && location <= i->location) {
 				location = i->location;
 				link = i;
@@ -344,7 +345,7 @@ void CFight::mouse(Event *event) {
 			uint8 location = 0;
 			Link *link = nullptr;
 
-			for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].link; i; i = i->next) {
+			for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].link; i; i = i->next) {
 				if (_engine->getLogicManager()->pointIn(_engine->_cursorX, _engine->_cursorY, i) && location <= i->location) {
 					location = i->location;
 					link = i;

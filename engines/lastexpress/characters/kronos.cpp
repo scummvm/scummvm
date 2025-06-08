@@ -224,9 +224,9 @@ void LogicManager::CONS_Kronos_DoWaitReal(CONS_PARAMS) {
 void LogicManager::HAND_Kronos_DoWaitReal(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterKronos)[1] || (getCharacterCurrentParams(kCharacterKronos)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterKronos)[0],
-															   _currentGameSessionTicks + getCharacterCurrentParams(kCharacterKronos)[0] != 0)) {
-			if (getCharacterCurrentParams(kCharacterKronos)[1] >= _currentGameSessionTicks)
+		if (getCharacterCurrentParams(kCharacterKronos)[1] || (getCharacterCurrentParams(kCharacterKronos)[1] = _realTime + getCharacterCurrentParams(kCharacterKronos)[0],
+															   _realTime + getCharacterCurrentParams(kCharacterKronos)[0] != 0)) {
+			if (getCharacterCurrentParams(kCharacterKronos)[1] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterKronos)[1] = 0x7FFFFFFF;
@@ -291,9 +291,9 @@ void LogicManager::HAND_Kronos_AwaitingCath(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterKronos)[0] && checkLoc(kCharacterCath, kCarKronos)) {
-			if (getCharacterCurrentParams(kCharacterKronos)[2] || (getCharacterCurrentParams(kCharacterKronos)[2] = _currentGameSessionTicks + 150,
-																   _currentGameSessionTicks != -150)) {
-				if (getCharacterCurrentParams(kCharacterKronos)[2] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterKronos)[2] || (getCharacterCurrentParams(kCharacterKronos)[2] = _realTime + 150,
+																   _realTime != -150)) {
+				if (getCharacterCurrentParams(kCharacterKronos)[2] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterKronos)[2] = 0x7FFFFFFF;
@@ -507,14 +507,14 @@ void LogicManager::HAND_Kronos_WBWait(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterKronos)[0] && !inSalon(kCharacterMonsieur)) {
 			if (!getCharacterCurrentParams(kCharacterKronos)[1]) {
-				getCharacterCurrentParams(kCharacterKronos)[1] = _currentGameSessionTicks + 75;
-				if (_currentGameSessionTicks == -75) {
+				getCharacterCurrentParams(kCharacterKronos)[1] = _realTime + 75;
+				if (_realTime == -75) {
 					CONS_Kronos_VisitSalon(0, 0, 0, 0);
 					break;
 				}
 			}
 
-			if (getCharacterCurrentParams(kCharacterKronos)[1] < _currentGameSessionTicks) {
+			if (getCharacterCurrentParams(kCharacterKronos)[1] < _realTime) {
 				getCharacterCurrentParams(kCharacterKronos)[1] = 0x7FFFFFFF;
 				CONS_Kronos_VisitSalon(0, 0, 0, 0);
 				break;
@@ -715,7 +715,7 @@ void LogicManager::HAND_Kronos_StartConcert(HAND_PARAMS) {
 		setDoor(75, kCharacterCath, 1, 0, 0);
 		break;
 	case 17:
-		if (checkLoc(kCharacterCath, kCarKronos) && !inInnerSanctum(kCharacterCath) && !cathHasItem(kItemFirebird) && !_gameEvents[kEventConcertStart]) {
+		if (checkLoc(kCharacterCath, kCarKronos) && !inInnerSanctum(kCharacterCath) && !cathHasItem(kItemFirebird) && !_doneNIS[kEventConcertStart]) {
 			startCycOtis(kCharacterKronos, "201a");
 			getCharacter(kCharacterKronos).callbacks[getCharacter(kCharacterKronos).currentCall + 8] = 2;
 			KronosCall(&LogicManager::CONS_Kronos_SaveGame, 2, kEventConcertStart, 0, 0);
@@ -824,9 +824,9 @@ void LogicManager::HAND_Kronos_Concert(HAND_PARAMS) {
 		if (!getCharacterCurrentParams(kCharacterKronos)[0])
 			getCharacterCurrentParams(kCharacterKronos)[1] = getCharacterCurrentParams(kCharacterKronos)[2];
 
-		getCharacterCurrentParams(kCharacterKronos)[1] -= _gameTimeTicksDelta;
+		getCharacterCurrentParams(kCharacterKronos)[1] -= _timeSpeed;
 
-		if (_gameTimeTicksDelta > getCharacterCurrentParams(kCharacterKronos)[1]) {
+		if (_timeSpeed > getCharacterCurrentParams(kCharacterKronos)[1]) {
 			send(kCharacterKronos, kCharacterKahina, 92186062, 0);
 
 			getCharacterCurrentParams(kCharacterKronos)[3]++;
@@ -889,7 +889,7 @@ void LogicManager::HAND_Kronos_Concert(HAND_PARAMS) {
 		break;
 	case 12:
 		_gameTime = 2115000;
-		_gameTimeTicksDelta = 3;
+		_timeSpeed = 3;
 
 		if (checkCathDir(kCarKronos, 88) || checkCathDir(kCarKronos, 84) || checkCathDir(kCarKronos, 85) || checkCathDir(kCarKronos, 86) || checkCathDir(kCarKronos, 83)) {
 			getCharacterCurrentParams(kCharacterKronos)[0] = 1;
@@ -901,7 +901,7 @@ void LogicManager::HAND_Kronos_Concert(HAND_PARAMS) {
 			setDoor(75, kCharacterCath, 0, 10, 9);
 
 		setDoor(76, kCharacterKronos, 0, 10, 9);
-		_gameProgress[kProgressField40] = 1;
+		_globals[kProgressField40] = 1;
 		startCycOtis(kCharacterKronos, "201a");
 		getCharacterCurrentParams(kCharacterKronos)[2] = 2700;
 		getCharacterCurrentParams(kCharacterKronos)[1] = 2700;
@@ -969,11 +969,11 @@ void LogicManager::HAND_Kronos_AfterConcert(HAND_PARAMS) {
 
 		break;
 	case 12:
-		_gameProgress[kProgressField40] = 0;
+		_globals[kProgressField40] = 0;
 		setDoor(75, kCharacterCath, 3, 0, 0);
 		send(kCharacterKronos, kCharacterRebecca, 191668032, 0);
 
-		if (_gameEvents[kEventConcertLeaveWithBriefcase])
+		if (_doneNIS[kEventConcertLeaveWithBriefcase])
 			break;
 
 		CONS_Kronos_AwaitingCath3(0, 0, 0, 0);
@@ -1013,7 +1013,7 @@ void LogicManager::HAND_Kronos_AwaitingCath3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (inInnerSanctum(kCharacterCath)) {
-			if (_gameProgress[kProgressField44]) {
+			if (_globals[kProgressField44]) {
 				getCharacter(kCharacterKronos).callbacks[getCharacter(kCharacterKronos).currentCall + 8] = 5;
 				KronosCall(&LogicManager::CONS_Kronos_SaveGame, 2, kEventKahinaPunchBaggageCarEntrance, 0, 0);
 			} else {
@@ -1032,18 +1032,18 @@ void LogicManager::HAND_Kronos_AwaitingCath3(HAND_PARAMS) {
 			playDialog(0, "LIB013", -1, 0);
 		}
 
-		if (_gameEvents[kEventConcertLeaveWithBriefcase])
+		if (_doneNIS[kEventConcertLeaveWithBriefcase])
 			fedEx(kCharacterKronos, kCharacterKahina, 137503360, 0);
 		if (cathHasItem(kItemBriefcase)) {
 			getCharacter(kCharacterKronos).callbacks[getCharacter(kCharacterKronos).currentCall + 8] = 1;
 			KronosCall(&LogicManager::CONS_Kronos_SaveGame, 2, kEventKronosReturnBriefcase, 0, 0);
-		} else if (cathHasItem(kItemFirebird) && _gameEvents[kEventConcertLeaveWithBriefcase]) {
+		} else if (cathHasItem(kItemFirebird) && _doneNIS[kEventConcertLeaveWithBriefcase]) {
 			getCharacter(kCharacterKronos).callbacks[getCharacter(kCharacterKronos).currentCall + 8] = 2;
 			KronosCall(&LogicManager::CONS_Kronos_SaveGame, 2, kEventKronosBringEggCeiling, 0, 0);
 		} else if (cathHasItem(kItemFirebird)) {
 			getCharacter(kCharacterKronos).callbacks[getCharacter(kCharacterKronos).currentCall + 8] = 3;
 			KronosCall(&LogicManager::CONS_Kronos_SaveGame, 2, kEventKronosBringEggCeiling, 0, 0);
-		} else if (_gameEvents[kEventConcertLeaveWithBriefcase]) {
+		} else if (_doneNIS[kEventConcertLeaveWithBriefcase]) {
 			getCharacter(kCharacterKronos).callbacks[getCharacter(kCharacterKronos).currentCall + 8] = 4;
 			KronosCall(&LogicManager::CONS_Kronos_SaveGame, 2, kEventKronosBringNothing, 0, 0);
 		}
@@ -1065,12 +1065,12 @@ void LogicManager::HAND_Kronos_AwaitingCath3(HAND_PARAMS) {
 			playNIS(kEventKronosBringEggCeiling);
 			bumpCath(kCarKronos, 87, 255);
 			takeCathItem(kItemFirebird);
-			_gameInventory[kItemFirebird].location = 5;
+			_items[kItemFirebird].floating = 5;
 			CONS_Kronos_Finished(0, 0, 0, 0);
 			break;
 		case 3:
 			takeCathItem(kItemFirebird);
-			_gameInventory[kItemFirebird].location = 5;
+			_items[kItemFirebird].floating = 5;
 			playNIS(kEventKronosBringEgg);
 			bumpCath(kCarKronos, 87, 255);
 			giveCathItem(kItemBriefcase);

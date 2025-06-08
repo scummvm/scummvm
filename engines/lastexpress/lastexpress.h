@@ -95,46 +95,46 @@ class VCR;
 struct Extent;
 
 typedef struct Item {
-	uint8 cursor;
-	uint16 scene;
-	int8 isSelectable;
-	int8 isPresent;
-	int8 manualSelect;
-	int8 location;
+	uint8 mnum;
+	uint16 closeUp;
+	int8 useable;
+	int8 haveIt;
+	int8 inPocket;
+	int8 floating;
 
 	Item() {
 		clear();
 	}
 
 	void clear() {
-		cursor = 0;
-		scene = 0;
-		isSelectable = 0;
-		isPresent = 0;
-		manualSelect = 0;
-		location = 0;
+		mnum = 0;
+		closeUp = 0;
+		useable = 0;
+		haveIt = 0;
+		inPocket = 0;
+		floating = 0;
 	}
 } Item;
 
-typedef struct Object {
-	int8 character;
-	int8 door;
-	uint8 cursor;
-	uint8 cursor2;
+typedef struct Door {
+	int8 who;
+	int8 status;
+	uint8 windowCursor;
+	uint8 handleCursor;
 	int8 model;
 
-	Object() {
+	Door() {
 		clear();
 	}
 
 	void clear() {
-		character = 0;
-		door = 0;
-		cursor = 0;
-		cursor2 = 0;
+		who = 0;
+		status = 0;
+		windowCursor = 0;
+		handleCursor = 0;
 		model = 0;
 	}
-} Object;
+} Door;
 
 typedef struct Position {
 	uint16 position;
@@ -395,7 +395,7 @@ typedef struct Node {
 	char sceneFilename[9];
 	Position nodePosition;
 	uint8 cathDir;
-	uint8 car;
+	uint8 property;
 	uint8 parameter1;
 	uint8 parameter2;
 	uint8 parameter3;
@@ -404,7 +404,7 @@ typedef struct Node {
 	Node() {
 		memset(sceneFilename, 0, sizeof(sceneFilename));
 		cathDir = 0;
-		car = 0;
+		property = 0;
 		parameter1 = 0;
 		parameter2 = 0;
 		parameter3 = 0;
@@ -596,7 +596,7 @@ public:
 	bool _charactersUpdateRecursionFlag = false;
 	bool _mouseHasLeftClicked = false;
 	bool _mouseHasRightClicked = false;
-	bool _fastWalkIsActive = false;
+	bool _fastWalkJustDeactivated = false;
 
 	int32 _cursorX	= 320;
 	int32 _cursorY	= 240;
@@ -705,6 +705,8 @@ public:
 
 	// DEBUGGER
 	void showEngineInfo();
+
+	bool _lockGracePeriod = false;
 
 private:
 	const ADGameDescription *_gameDescription;

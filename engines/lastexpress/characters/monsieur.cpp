@@ -403,7 +403,7 @@ void LogicManager::HAND_Monsieur_GoDining(HAND_PARAMS) {
 		break;
 	case 12:
 		if (getCharacterCurrentParams(kCharacterMonsieur)[0]) {
-			if (_gameProgress[kProgressChapter] == 4) {
+			if (_globals[kProgressChapter] == 4) {
 				setDoor(34, kCharacterCath, 0, 10, 9);
 				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 				MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Hc", 34, 0, 0);
@@ -445,9 +445,9 @@ void LogicManager::HAND_Monsieur_GoDining(HAND_PARAMS) {
 			MonsieurCall(&LogicManager::CONS_Monsieur_DoSeqOtis, "812US", 0, 0, 0);
 			break;
 		case 6:
-			if (_gameProgress[kProgressChapter] == 1) {
+			if (_globals[kProgressChapter] == 1) {
 				playDialog(kCharacterMonsieur, "MRB1075", -1, 60);
-			} else if (_gameProgress[kProgressChapter] == 3) {
+			} else if (_globals[kProgressChapter] == 3) {
 				playDialog(kCharacterMonsieur, "MRB3101", -1, 0);
 			}
 
@@ -773,8 +773,8 @@ void LogicManager::HAND_Monsieur_InSalon(HAND_PARAMS) {
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
 		} else {
 			if (getCharacterCurrentParams(kCharacterMonsieur)[4]) {
-				if (getCharacterCurrentParams(kCharacterMonsieur)[6] || (getCharacterCurrentParams(kCharacterMonsieur)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-					if (getCharacterCurrentParams(kCharacterMonsieur)[6] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterMonsieur)[6] || (getCharacterCurrentParams(kCharacterMonsieur)[6] = _realTime + 90, _realTime != -90)) {
+					if (getCharacterCurrentParams(kCharacterMonsieur)[6] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterMonsieur)[6] = 0x7FFFFFFF;
@@ -823,8 +823,8 @@ void LogicManager::HAND_Monsieur_CompLogic(HAND_PARAMS) {
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);
 		} else {
 			if (getCharacterCurrentParams(kCharacterMonsieur)[1]) {
-				if (getCharacterCurrentParams(kCharacterMonsieur)[4] || (getCharacterCurrentParams(kCharacterMonsieur)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-					if (getCharacterCurrentParams(kCharacterMonsieur)[4] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterMonsieur)[4] || (getCharacterCurrentParams(kCharacterMonsieur)[4] = _realTime + 75, _realTime != -75)) {
+					if (getCharacterCurrentParams(kCharacterMonsieur)[4] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterMonsieur)[4] = 0x7FFFFFFF;
@@ -1604,7 +1604,7 @@ void LogicManager::HAND_Monsieur_ReturnComp4(HAND_PARAMS) {
 	case 0:
 		if (_gameTime <= 2470500 || getCharacterCurrentParams(kCharacterMonsieur)[0]) {
 			if (_gameTime > 2457000) {
-				if (_gameEvents[kEventAugustDrink]) {
+				if (_doneNIS[kEventAugustDrink]) {
 					send(kCharacterMonsieur, kCharacterAbbot, 159003408, 0);
 					getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 					MonsieurCall(&LogicManager::CONS_Monsieur_GoSalon, 0, "102A", 0, 0);
@@ -1637,7 +1637,7 @@ void LogicManager::HAND_Monsieur_ReturnComp4(HAND_PARAMS) {
 		case 8:
 			if (_gameTime >= 2470500) {
 				CONS_Monsieur_Asleep4(0, 0, 0, 0);
-			} else if (_gameEvents[kEventAugustDrink]) {
+			} else if (_doneNIS[kEventAugustDrink]) {
 				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 5;
 				MonsieurCall(&LogicManager::CONS_Monsieur_GoSalon, 0, "102A", 0, 0);
 			} else {

@@ -37,22 +37,22 @@ namespace LastExpress {
 #define CVCRMODE_RWB  2
 
 struct SVCRFileHeader {
-	int32 signature;
-	int32 numSavePoints;
-	int32 offset;
-	int32 savePointsOffset;
-	int32 skipSoundLoading;
-	int32 gammaLevel;
+	int32 magicNumber;
+	int32 numVCRGames;
+	int32 nextWritePos;
+	int32 realWritePos;
+	int32 lastIsTemporary;
+	int32 brightness;
 	int32 volume;
 	int32 saveVersion;
 };
 
 struct SVCRSavePointHeader {
-	int32 signature;
-	int32 saveType;
-	int32 gameTime;
-	int32 headerSize;
-	int32 chapter;
+	int32 magicNumber;
+	int32 type;
+	int32 time;
+	int32 size;
+	int32 partNumber;
 	int32 latestGameEvent;
 	int32 emptyField1;
 	int32 emptyField2;

@@ -100,7 +100,7 @@ bool OtisManager::fDirection(int nodeIdx) {
 	uint8 cathDir;
 
 	if (!nodeIdx)
-		nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
+		nodeIdx = _engine->getLogicManager()->_activeNode;
 
 	car = _engine->getLogicManager()->_trainData[nodeIdx].nodePosition.car;
 	if (car == kCarGreenSleeping || car == kCarRedSleeping) {
@@ -118,7 +118,7 @@ bool OtisManager::rDirection(int nodeIdx) {
 	uint8 cathDir;
 
 	if (!nodeIdx)
-		nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
+		nodeIdx = _engine->getLogicManager()->_activeNode;
 
 	car = _engine->getLogicManager()->_trainData[nodeIdx].nodePosition.car;
 	if (car == kCarGreenSleeping || car == kCarRedSleeping) {
@@ -135,7 +135,7 @@ bool OtisManager::doorView() {
 	uint16 car;
 	uint8 cathDir;
 
-	int32 nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
+	int32 nodeIdx = _engine->getLogicManager()->_activeNode;
 
 	car = _engine->getLogicManager()->_trainData[nodeIdx].nodePosition.car;
 	if (car == kCarGreenSleeping || car == kCarRedSleeping) {
@@ -156,7 +156,7 @@ bool OtisManager::corrRender(int nodeIdx) {
 	uint8 cathDir;
 
 	if (!nodeIdx)
-		nodeIdx = _engine->getLogicManager()->_trainNodeIndex;
+		nodeIdx = _engine->getLogicManager()->_activeNode;
 
 	car = _engine->getLogicManager()->_trainData[nodeIdx].nodePosition.car;
 	if (car == kCarGreenSleeping || car == kCarRedSleeping) {
@@ -173,8 +173,8 @@ bool OtisManager::corrRender(int nodeIdx) {
 }
 
 bool OtisManager::walkingRender() {
-	uint8 cathDir = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir;
-	uint16 car = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].nodePosition.car;
+	uint8 cathDir = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir;
+	uint16 car = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].nodePosition.car;
 
 	if (cathDir == 99)
 		return true;
@@ -511,7 +511,7 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 	int outSeqNameSize = sizeof(getCharacter(kCharacterCath).sequenceName);
 
 	if (direction == 2) {
-		switch (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir) {
+		switch (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir) {
 		case 1:
 			if (getCharacter(character).characterPosition.position > getCharacter(kCharacterCath).characterPosition.position)
 				Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-01d.seq", character, getCharacter(character).clothes);
@@ -537,7 +537,7 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-03d.seq", character, getCharacter(character).clothes);
 					getCharacter(character).field_4A9 = 1;
 				} else {
-					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-03d.seq", character, getCharacter(character).clothes);
 					getCharacter(character).field_4AA = 1;
 				}
@@ -572,10 +572,10 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 		case 39:
 			if (getCharacter(character).characterPosition.position > 850) {
 				if (getCharacter(character).characterPosition.position <= 2087) {
-					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 				} else {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-38d.seq", character, getCharacter(character).clothes);
-					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 					getCharacter(character).field_4A9 = 1;
 				}
 			}
@@ -591,9 +591,9 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 		}
 	} else if (direction >= 2) {
 		if (direction <= 4)
-			Common::sprintf_s(outSeqName, outSeqNameSize, "%s%02d.seq", getCharacter(character).sequenceNamePrefix, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+			Common::sprintf_s(outSeqName, outSeqNameSize, "%s%02d.seq", getCharacter(character).sequenceNamePrefix, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 	} else if (direction > 0) {
-		switch (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir) {
+		switch (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir) {
 		case 1:
 			if (getCharacter(character).characterPosition.position < 2587)
 				Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-01u.seq", character, getCharacter(character).clothes);
@@ -616,10 +616,10 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 		case 17:
 			if (getCharacter(character).characterPosition.position < 9270) {
 				if (getCharacter(character).characterPosition.position >= 8513) {
-					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 				} else {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-03u.seq", character, getCharacter(character).clothes);
-					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 					getCharacter(character).field_4A9 = 1;
 				}
 			}
@@ -656,7 +656,7 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-38u.seq", character, getCharacter(character).clothes);
 					getCharacter(character).field_4A9 = 1;
 				} else {
-					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-38u.seq", character, getCharacter(character).clothes);
 					getCharacter(character).field_4AA = 1;
 				}
@@ -708,8 +708,8 @@ void OtisManager::drawLooseSprites() {
 		}
 
 		for (int k = offset; k < offset + 8; ++k) {
-			if (_engine->getLogicManager()->_gameObjects[k].door == 2) {
-				Common::sprintf_s(seqName, "633X%c-%02d.seq", k - offset + 65, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+			if (_engine->getLogicManager()->_doors[k].status == 2) {
+				Common::sprintf_s(seqName, "633X%c-%02d.seq", k - offset + 65, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 				_engine->_doorSeqs[k - offset] = _engine->getArchiveManager()->loadSeq(seqName, 255, 0);
 				if (_engine->_doorSeqs[k - offset]) {
 					if (fDirection(0)) {
@@ -722,12 +722,12 @@ void OtisManager::drawLooseSprites() {
 				}
 			}
 		}
-	} else if (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].nodePosition.car == kCarRestaurant && _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir == 81) {
-		Common::sprintf_s(seqName, "SCLKH-%02d.seq", _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+	} else if (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].nodePosition.car == kCarRestaurant && _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir == 81) {
+		Common::sprintf_s(seqName, "SCLKH-%02d.seq", _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 		_engine->_clockHandsSeqs[0] = _engine->getArchiveManager()->loadSeq(seqName, 255, 0);
 		int32 hours = _engine->getLogicManager()->_gameTime % 1296000 % 54000 / 900;
 
-		Common::sprintf_s(seqName, "SCLKM-%02d.seq", _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir);
+		Common::sprintf_s(seqName, "SCLKM-%02d.seq", _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 		_engine->_clockHandsSeqs[1] = _engine->getArchiveManager()->loadSeq(seqName, 255, 0);
 
 		int32 period = _engine->getLogicManager()->_gameTime % 1296000 / 54000;
@@ -946,7 +946,7 @@ void OtisManager::initCurFrame(int character) {
 	} else {
 		if (getCharacter(character).direction < 3) {
 			if (getCharacter(character).direction) {
-				switch (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir) {
+				switch (_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir) {
 				case 1:
 				case 18:
 				case 22:
@@ -1180,10 +1180,10 @@ bool OtisManager::mainWalkTooFar(int character) {
 
 int OtisManager::getFudge() {
 	if (fDirection(0))
-		return _engine->_fudgePosition[_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir] - _engine->_fudgePosition[2];
+		return _engine->_fudgePosition[_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir] - _engine->_fudgePosition[2];
 
 	if (rDirection(0))
-		return _engine->_fudgePosition[_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].cathDir] - _engine->_fudgePosition[39];
+		return _engine->_fudgePosition[_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir] - _engine->_fudgePosition[39];
 
 	return 0;
 }

@@ -316,17 +316,17 @@ void LogicManager::HAND_Abbot_DoWaitReal(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterAbbot)[1]) {
-			if (getCharacterCurrentParams(kCharacterAbbot)[1] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAbbot)[1] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterAbbot)[1] = 0x7FFFFFFF;
 		} else {
-			getCharacterCurrentParams(kCharacterAbbot)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterAbbot)[0];
+			getCharacterCurrentParams(kCharacterAbbot)[1] = _realTime + getCharacterCurrentParams(kCharacterAbbot)[0];
 
-			if (_currentGameSessionTicks + getCharacterCurrentParams(kCharacterAbbot)[0] == 0)
+			if (_realTime + getCharacterCurrentParams(kCharacterAbbot)[0] == 0)
 				break;
 
-			if (getCharacterCurrentParams(kCharacterAbbot)[1] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAbbot)[1] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterAbbot)[1] = 0x7FFFFFFF;
@@ -437,7 +437,7 @@ void LogicManager::HAND_Abbot_DoWalk(HAND_PARAMS) {
 			break;
 		}
 
-		if (_gameEvents[kEventAbbotIntroduction]) {
+		if (_doneNIS[kEventAbbotIntroduction]) {
 			playDialog(kCharacterCath, "CAT1013", -1, 0);
 		} else {
 			playCathExcuseMe();
@@ -859,7 +859,7 @@ void LogicManager::HAND_Abbot_EatingLunch(HAND_PARAMS) {
 	case 12:
 		startCycOtis(kCharacterAbbot, "029E");
 
-		if (!_gameEvents[kEventAbbotIntroduction])
+		if (!_doneNIS[kEventAbbotIntroduction])
 			getCharacter(kCharacterAbbot).inventoryItem = kItemInvalid;
 
 		break;
@@ -1802,7 +1802,7 @@ void LogicManager::HAND_Abbot_DoWalkSearchingForCath(HAND_PARAMS) {
 			getCharacter(kCharacterAbbot).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterAbbot, _functionsAbbot[getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall]]);
 			fedEx(kCharacterAbbot, kCharacterAbbot, 18, 0);
-		} else if (!_gameEvents[kEventAbbotInvitationDrink] && nearChar(kCharacterAbbot, kCharacterCath, 1000) && !inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
+		} else if (!_doneNIS[kEventAbbotInvitationDrink] && nearChar(kCharacterAbbot, kCharacterCath, 1000) && !inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 			if (getCharacter(kCharacterAbbot).characterPosition.car == kCarGreenSleeping || getCharacter(kCharacterAbbot).characterPosition.car == kCarRedSleeping) {
 				getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall + 8] = 1;
 				AbbotCall(&LogicManager::CONS_Abbot_SaveGame, 2, kEventAbbotInvitationDrink, 0, 0);
@@ -1973,8 +1973,8 @@ void LogicManager::HAND_Abbot_InComp(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAbbot)[2]) {
-			if (getCharacterCurrentParams(kCharacterAbbot)[5] || (getCharacterCurrentParams(kCharacterAbbot)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAbbot)[5] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAbbot)[5] || (getCharacterCurrentParams(kCharacterAbbot)[5] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAbbot)[5] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAbbot)[5] = 0x7FFFFFFF;
@@ -2042,8 +2042,8 @@ void LogicManager::HAND_Abbot_InComp(HAND_PARAMS) {
 			}
 
 			if (getCharacterCurrentParams(kCharacterAbbot)[2]) {
-				if (getCharacterCurrentParams(kCharacterAbbot)[5] || (getCharacterCurrentParams(kCharacterAbbot)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-					if (getCharacterCurrentParams(kCharacterAbbot)[5] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterAbbot)[5] || (getCharacterCurrentParams(kCharacterAbbot)[5] = _realTime + 75, _realTime != -75)) {
+					if (getCharacterCurrentParams(kCharacterAbbot)[5] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterAbbot)[5] = 0x7FFFFFFF;
@@ -2310,7 +2310,7 @@ void LogicManager::HAND_Abbot_AfterBomb(HAND_PARAMS) {
 			startCycOtis(13, "126B");
 			break;
 		case 4:
-			if (!_gameEvents[kEventAbbotDrinkDefuse] && getCharacterParams(kCharacterAbbot, 8)[0])
+			if (!_doneNIS[kEventAbbotDrinkDefuse] && getCharacterParams(kCharacterAbbot, 8)[0])
 				getCharacter(kCharacterAbbot).inventoryItem = kItemInvalid;
 
 			startCycOtis(kCharacterAbbot, "126B");
@@ -2371,8 +2371,8 @@ void LogicManager::CONS_Abbot_CatchCath(CONS_PARAMS) {
 void LogicManager::HAND_Abbot_CatchCath(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterAbbot)[0] || (getCharacterCurrentParams(kCharacterAbbot)[0] = _currentGameSessionTicks + 150, _currentGameSessionTicks != -150)) {
-			if (getCharacterCurrentParams(kCharacterAbbot)[0] >= _currentGameSessionTicks)
+		if (getCharacterCurrentParams(kCharacterAbbot)[0] || (getCharacterCurrentParams(kCharacterAbbot)[0] = _realTime + 150, _realTime != -150)) {
+			if (getCharacterCurrentParams(kCharacterAbbot)[0] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterAbbot)[0] = 0x7FFFFFFF;
@@ -2545,10 +2545,10 @@ void LogicManager::HAND_Abbot_RunningTrain(HAND_PARAMS) {
 
 		break;
 	case 168646401:
-		if (!_gameEvents[kEventLocomotiveAbbotGetSomeRest]) {
+		if (!_doneNIS[kEventLocomotiveAbbotGetSomeRest]) {
 			getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall + 8] = 1;
 			AbbotCall(&LogicManager::CONS_Abbot_SaveGame, 2, kEventLocomotiveAbbotGetSomeRest, 0, 0);
-		} else if (!_gameEvents[kEventLocomotiveAbbotShoveling]) {
+		} else if (!_doneNIS[kEventLocomotiveAbbotShoveling]) {
 			getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall + 8] = 2;
 			AbbotCall(&LogicManager::CONS_Abbot_SaveGame, 2, kEventLocomotiveAbbotShoveling, 0, 0);
 		} else {

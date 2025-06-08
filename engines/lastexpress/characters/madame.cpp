@@ -334,10 +334,10 @@ void LogicManager::HAND_Madame_ComplainCond2(HAND_PARAMS) {
 		startCycOtis(kCharacterMadame, "606L");
 		playDialog(kCharacterMadame, (char *)&getCharacterCurrentParams(kCharacterMadame)[0], -1, 0);
 		if (whoOnScreen(kCharacterMadame) || nearChar(kCharacterMadame, kCharacterCath, 2000)) {
-			if (_gameProgress[kProgressChapter] == 1) {
-				_gameProgress[kProgressFieldA8] = 1;
-			} else if (_gameProgress[kProgressChapter] == 3) {
-				_gameProgress[kProgressFieldA4] = 1;
+			if (_globals[kProgressChapter] == 1) {
+				_globals[kProgressFieldA8] = 1;
+			} else if (_globals[kProgressChapter] == 3) {
+				_globals[kProgressFieldA4] = 1;
 			}
 		}
 
@@ -595,7 +595,7 @@ void LogicManager::HAND_Madame_OpenComp1(HAND_PARAMS) {
 		playDialog(kCharacterMadame, "MME1035A", -1, 0);
 
 		if (whoOnScreen(kCharacterMadame) || nearChar(kCharacterMadame, kCharacterCath, 2000))
-			_gameProgress[kProgressFieldAC] = 1;
+			_globals[kProgressFieldAC] = 1;
 
 		getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 2;
 		MadameCall(&LogicManager::CONS_Madame_DoCorrOtis, "606Ed", 35, 0, 0);
@@ -624,7 +624,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 				setDoor(51, kCharacterCath, 1, 0, 0);
 
 				if (nearChar(kCharacterMadame, kCharacterCath, 2000))
-					_gameProgress[kProgressFieldA0] = 1;
+					_globals[kProgressFieldA0] = 1;
 
 				getCharacterCurrentParams(kCharacterMadame)[4] = 1;
 				getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 1;
@@ -639,7 +639,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 					setDoor(51, kCharacterCath, 1, 0, 0);
 
 					if (nearChar(kCharacterMadame, kCharacterCath, 2000))
-						_gameProgress[kProgressFieldA0] = 1;
+						_globals[kProgressFieldA0] = 1;
 
 					getCharacterCurrentParams(kCharacterMadame)[4] = 1;
 					getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 1;
@@ -654,7 +654,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 				setDoor(51, kCharacterCath, 1, 0, 0);
 
 				if (nearChar(kCharacterMadame, kCharacterCath, 2000))
-					_gameProgress[kProgressFieldA0] = 1;
+					_globals[kProgressFieldA0] = 1;
 
 				getCharacterCurrentParams(kCharacterMadame)[4] = 1;
 				getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 1;
@@ -663,7 +663,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 			}
 		}
 
-		if (_gameProgress[kProgressField24] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
+		if (_globals[kProgressField24] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime > 1093500) {
 				getCharacterCurrentParams(kCharacterMadame)[6] = 0x7FFFFFFF;
 				getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 2;
@@ -695,9 +695,9 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterMadame)[3]) {
-			if (getCharacterCurrentParams(kCharacterMadame)[8] || (getCharacterCurrentParams(kCharacterMadame)[8] = _currentGameSessionTicks + 75,
-																   _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMadame)[8] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMadame)[8] || (getCharacterCurrentParams(kCharacterMadame)[8] = _realTime + 75,
+																   _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMadame)[8] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMadame)[8] = 0x7FFFFFFF;
@@ -768,7 +768,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 			setDoor(35, kCharacterMadame, 1, 10, 9);
 			setDoor(51, kCharacterMadame, 1, 10, 9);
 
-			if (_gameProgress[kProgressField24] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
+			if (_globals[kProgressField24] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
 				if (_gameTime > 1093500) {
 					getCharacterCurrentParams(kCharacterMadame)[6] = 0x7FFFFFFF;
 					getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 2;
@@ -800,9 +800,9 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 			}
 
 			if (getCharacterCurrentParams(kCharacterMadame)[3]) {
-				if (getCharacterCurrentParams(kCharacterMadame)[8] || (getCharacterCurrentParams(kCharacterMadame)[8] = _currentGameSessionTicks + 75,
-																	   _currentGameSessionTicks != -75)) {
-					if (getCharacterCurrentParams(kCharacterMadame)[8] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterMadame)[8] || (getCharacterCurrentParams(kCharacterMadame)[8] = _realTime + 75,
+																	   _realTime != -75)) {
+					if (getCharacterCurrentParams(kCharacterMadame)[8] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterMadame)[8] = 0x7FFFFFFF;
@@ -927,9 +927,9 @@ void LogicManager::HAND_Madame_InComp(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterMadame)[1]) {
-			if (getCharacterCurrentParams(kCharacterMadame)[4] || (getCharacterCurrentParams(kCharacterMadame)[4] = _currentGameSessionTicks + 75,
-																   _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMadame)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMadame)[4] || (getCharacterCurrentParams(kCharacterMadame)[4] = _realTime + 75,
+																   _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMadame)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMadame)[4] = 0x7FFFFFFF;
@@ -1019,9 +1019,9 @@ void LogicManager::HAND_Madame_InComp(HAND_PARAMS) {
 			setDoor(51, kCharacterMadame, 1, 10, 9);
 
 			if (getCharacterCurrentParams(kCharacterMadame)[1]) {
-				if (getCharacterCurrentParams(kCharacterMadame)[4] || (getCharacterCurrentParams(kCharacterMadame)[4] = _currentGameSessionTicks + 75,
-																	   _currentGameSessionTicks != -75)) {
-					if (getCharacterCurrentParams(kCharacterMadame)[4] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterMadame)[4] || (getCharacterCurrentParams(kCharacterMadame)[4] = _realTime + 75,
+																	   _realTime != -75)) {
+					if (getCharacterCurrentParams(kCharacterMadame)[4] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterMadame)[4] = 0x7FFFFFFF;
@@ -1468,9 +1468,9 @@ void LogicManager::HAND_Madame_ClosedComp4(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterMadame)[1]) {
-			if (getCharacterCurrentParams(kCharacterMadame)[4] || (getCharacterCurrentParams(kCharacterMadame)[4] = _currentGameSessionTicks + 75,
-																   _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMadame)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMadame)[4] || (getCharacterCurrentParams(kCharacterMadame)[4] = _realTime + 75,
+																   _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMadame)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMadame)[4] = 0x7FFFFFFF;
@@ -1665,9 +1665,9 @@ void LogicManager::HAND_Madame_Hiding(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterMadame)[0]) {
-			if (getCharacterCurrentParams(kCharacterMadame)[2] || (getCharacterCurrentParams(kCharacterMadame)[2] = _currentGameSessionTicks + 75,
-																   _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMadame)[2] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMadame)[2] || (getCharacterCurrentParams(kCharacterMadame)[2] = _realTime + 75,
+																   _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMadame)[2] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMadame)[2] = 0x7FFFFFFF;

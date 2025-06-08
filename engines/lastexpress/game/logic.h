@@ -40,7 +40,7 @@ class SaveLoad;
 struct Link;
 struct Node;
 struct Item;
-struct Object;
+struct Door;
 struct Character;
 struct ConsCallParam;
 
@@ -120,7 +120,7 @@ public:
 	bool whoWalking(int character);
 	int checkDoor(int object);
 	bool preventEnterComp(int object);
-	void setDoor(int object, int character, int door, int cursor, int cursor2);
+	void setDoor(int object, int character, int status, int cursor, int handleCursor);
 	void setModel(int object, int8 model);
 	int getModel(int object);
 	void blockView(int character, int car, int position);
@@ -128,10 +128,10 @@ public:
 	void releaseEverything(int character);
 	void release2Views(int character, int car, int pos1, int pos2);
 	void block2ViewsBump4(int character, int car, int pos1, int pos2, int pos3, int pos4);
-	void blockAtDoor(int character, int door);
-	void releaseAtDoor(int character, int door);
-	void softBlockAtDoor(int character, int door);
-	void softReleaseAtDoor(int character, int door);
+	void blockAtDoor(int character, int status);
+	void releaseAtDoor(int character, int status);
+	void softBlockAtDoor(int character, int status);
+	void softReleaseAtDoor(int character, int status);
 	int getBumpNode(int car, int position, int param);
 	void bumpCath(int car, int position, int param);
 	bool obstacleBetween(int character1, int character2);
@@ -203,8 +203,9 @@ public:
 
 	// DEBUGGER COMMANDS
 	int32 getGameTime();
-	int32 getGameTimeTicks();
-	int32 getGameTimeTicksDelta();
+	int32 getRealTime();
+	int32 getTimeSpeed();
+	Common::String translateNodeProperty(int property);
 	void showCurrentTrainNode();
 	void showCharacterDebugger();
 	const char *getCharacterName(int index) const;
@@ -231,25 +232,25 @@ private:
 	LastExpressEngine *_engine = nullptr;
 
 	Node *_trainData = nullptr;
-	int32 _trainNodeIndex = 0;
-	int8 _useLastSavedNodeIndex = 0;
-	int32 _lastNodeIndex = 0;
-	int32 _lastSavedNodeIndex = 0;
-	int32 _inventorySelectedItemIdx = 0;
+	int32 _activeNode = 0;
+	int8 _closeUp = 0;
+	int32 _nodeReturn = 0;
+	int32 _nodeReturn2 = 0;
+	int32 _activeItem = 0;
 	int32 _trainIndex = -1;
 	int32 _numberOfScenes = 0;
 
-	Item *_gameInventory = nullptr;
-	Object *_gameObjects = nullptr;
-	int32 *_positions = nullptr;
-	int32 *_blockedEntitiesBits = nullptr;
-	int32 *_softBlockedEntitiesBits = nullptr;
-	int32 *_gameProgress = nullptr;
-	byte *_gameEvents = nullptr;
+	Item *_items = nullptr;
+	Door *_doors = nullptr;
+	int32 *_blockedViews = nullptr;
+	int32 *_blockedX = nullptr;
+	int32 *_softBlockedX = nullptr;
+	int32 *_globals = nullptr;
+	byte *_doneNIS = nullptr;
 
 	int32 _gameTime = 0;
-	int32 _gameTimeTicksDelta = 1;
-	int32 _currentGameSessionTicks = 0;
+	int32 _timeSpeed = 1;
+	int32 _realTime = 0;
 	int32 _lastSavegameSessionTicks = 0;
 
 	int _objectPosition[8] = {

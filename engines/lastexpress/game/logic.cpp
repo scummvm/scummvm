@@ -217,11 +217,11 @@ void LogicManager::fadeToWhite() {
 }
 
 void LogicManager::restoreIcons() {
-	_engine->getGraphicsManager()->drawItemDim(_gameProgress[kProgressPortrait], 0, 0, 1);
+	_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
 	_engine->getGraphicsManager()->drawItemDim(_engine->_currentGameFileColorId + 39, 608, 448, 1);
 
-	if (_inventorySelectedItemIdx) {
-		_engine->getGraphicsManager()->drawItem(_gameInventory[_inventorySelectedItemIdx].cursor, 44, 0);
+	if (_activeItem) {
+		_engine->getGraphicsManager()->drawItem(_items[_activeItem].mnum, 44, 0);
 		_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 	}
 
@@ -231,8 +231,8 @@ void LogicManager::restoreIcons() {
 
 void LogicManager::dropItem(int item, int outLocation) {
 	if (item < 32) {
-		if (_gameInventory[item].location != outLocation) {
-			_gameInventory[item].location = outLocation;
+		if (_items[item].floating != outLocation) {
+			_items[item].floating = outLocation;
 			if (nodeHasItem(item)) {
 				if (!_doubleClickFlag)
 					cleanNIS();
@@ -245,48 +245,48 @@ void LogicManager::takeItem(int item) {
 	int cathDir;
 
 	if (item < 32) {
-		if (_gameInventory[item].location) {
-			_gameInventory[item].location = 0;
+		if (_items[item].floating) {
+			_items[item].floating = 0;
 
 			if (item == kItem3) {
 				if (checkLoc(kCharacterCath, kCarRestaurant)) {
 					cathDir = checkCathDir();
-					if (_useLastSavedNodeIndex)
-						cathDir = _trainData[_lastNodeIndex].cathDir;
+					if (_closeUp)
+						cathDir = _trainData[_nodeReturn].cathDir;
 
 					if (cathDir == 56) {
-						if (!_useLastSavedNodeIndex) {
+						if (!_closeUp) {
 							bumpCath(kCarRestaurant, 56, 255);
 							return;
 						}
 
-						_lastNodeIndex = getBumpNode(kCarRestaurant, 56, 255);
+						_nodeReturn = getBumpNode(kCarRestaurant, 56, 255);
 						return;
 					}
 				}
 			} else if (item == 5) {
 				if (checkLoc(kCharacterCath, kCarRedSleeping) && !_doubleClickFlag) {
 					cathDir = checkCathDir();
-					if (_useLastSavedNodeIndex)
-						cathDir = _trainData[_lastNodeIndex].cathDir;
+					if (_closeUp)
+						cathDir = _trainData[_nodeReturn].cathDir;
 					if (cathDir >= 23 && cathDir <= 32) {
-						if (!_useLastSavedNodeIndex) {
+						if (!_closeUp) {
 							bumpCath(kCarRedSleeping, cathDir, 255);
 							return;
 						}
 
-						_lastNodeIndex = getBumpNode(kCarRedSleeping, cathDir, 255);
+						_nodeReturn = getBumpNode(kCarRedSleeping, cathDir, 255);
 						return;
 					}
 				}
 			} else if (item == 7 && checkLoc(kCharacterCath, kCarGreenSleeping) && !_doubleClickFlag) {
 				cathDir = checkCathDir();
-				if (_useLastSavedNodeIndex)
-					cathDir = _trainData[_lastNodeIndex].cathDir;
+				if (_closeUp)
+					cathDir = _trainData[_nodeReturn].cathDir;
 
 				if (cathDir == 1 || cathDir >= 22 && cathDir <= 33) {
-					if (_useLastSavedNodeIndex) {
-						_lastNodeIndex = getBumpNode(kCarGreenSleeping, cathDir, 255);
+					if (_closeUp) {
+						_nodeReturn = getBumpNode(kCarGreenSleeping, cathDir, 255);
 						return;
 					}
 
@@ -299,13 +299,13 @@ void LogicManager::takeItem(int item) {
 
 void LogicManager::giveCathItem(int item) {
 	if (item < 32) {
-		_gameInventory[item].location = 0;
-		_gameInventory[item].isPresent = 1;
+		_items[item].floating = 0;
+		_items[item].haveIt = 1;
 
-		if (_gameInventory[item].cursor) {
-			if (!_gameInventory[item].manualSelect) {
-				_inventorySelectedItemIdx = item;
-				_engine->getGraphicsManager()->drawItem(_gameInventory[item].cursor, 44, 0);
+		if (_items[item].mnum) {
+			if (!_items[item].inPocket) {
+				_activeItem = item;
+				_engine->getGraphicsManager()->drawItem(_items[item].mnum, 44, 0);
 				_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 			}
 		}
@@ -314,11 +314,11 @@ void LogicManager::giveCathItem(int item) {
 
 void LogicManager::takeCathItem(int item) {
 	if (item < 32) {
-		_gameInventory[item].location = 0;
-		_gameInventory[item].isPresent = 0;
+		_items[item].floating = 0;
+		_items[item].haveIt = 0;
 
-		if (item == _inventorySelectedItemIdx) {
-			_inventorySelectedItemIdx = 0;
+		if (item == _activeItem) {
+			_activeItem = 0;
 			if (_engine->getGraphicsManager()->acquireSurface()) {
 				_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 				_engine->getGraphicsManager()->unlockSurface();
@@ -331,18 +331,18 @@ void LogicManager::takeCathItem(int item) {
 
 bool LogicManager::cathHasItem(int item) {
 	if (item && item < 32)
-		return _gameInventory[item].isPresent == 1;
+		return _items[item].haveIt == 1;
 	else
 		return false;
 }
 
 int LogicManager::findLargeItem() {
-	Item *inventory = _gameInventory;
+	Item *inventory = _items;
 
 	for (int i = kItemMatchBox; i < 32; i++) {
 		Item *item = &inventory[i];
 
-		if (item->isPresent && inventory[i - 1].isPresent && !item->manualSelect) {
+		if (item->haveIt && inventory[i - 1].haveIt && !item->inPocket) {
 			return i;
 		}
 	}
@@ -351,12 +351,12 @@ int LogicManager::findLargeItem() {
 }
 
 int LogicManager::checkCathDir() {
-	return _trainData[_trainNodeIndex].cathDir;
+	return _trainData[_activeNode].cathDir;
 }
 
 bool LogicManager::checkCathDir(int car, int position) {
 	return getCharacter(kCharacterCath).characterPosition.car == car &&
-		   _trainData[_trainNodeIndex].cathDir == position;
+		   _trainData[_activeNode].cathDir == position;
 }
 
 bool LogicManager::isFemale(int character) {
@@ -379,8 +379,8 @@ bool LogicManager::isSingleFemale(int character) {
 }
 
 bool LogicManager::isNight() {
-	int chapter = _gameProgress[kProgressChapter];
-	return chapter == 1 || chapter == 4 || chapter == 5 && !_gameProgress[kProgressIsDayTime];
+	int chapter = _globals[kProgressChapter];
+	return chapter == 1 || chapter == 4 || chapter == 5 && !_globals[kProgressIsDayTime];
 }
 
 bool LogicManager::whoOutside(int character) {
@@ -586,7 +586,7 @@ bool LogicManager::whoWalking(int character) {
 
 int LogicManager::checkDoor(int object) {
 	if (object < 128) {
-		return _gameObjects[object].door;
+		return _doors[object].status;
 	} else {
 		return 0;
 	}
@@ -630,37 +630,37 @@ bool LogicManager::preventEnterComp(int object) {
 	return false;	
 }
 
-void LogicManager::setDoor(int object, int character, int door, int cursor, int cursor2) {
+void LogicManager::setDoor(int object, int character, int status, int cursor, int handleCursor) {
 	if (object < 128) {
-		int oldDoor = _gameObjects[object].door;
-		_gameObjects[object].character = character;
-		_gameObjects[object].door = door;
+		int oldDoor = _doors[object].status;
+		_doors[object].who = character;
+		_doors[object].status = status;
 
-		if (cursor != 255 || cursor2 != 255) {
+		if (cursor != 255 || handleCursor != 255) {
 			if (cursor != 255)
-				_gameObjects[object].cursor = cursor;
+				_doors[object].windowCursor = cursor;
 
-			if (cursor2 != 255)
-				_gameObjects[object].cursor2 = cursor2;
+			if (handleCursor != 255)
+				_doors[object].handleCursor = handleCursor;
 
 			mouseStatus();
 		}
 
 		_engine->getSoundManager()->_scanAnySoundLoopingSection = true;
 
-		if (oldDoor != door && (oldDoor == 2 || door == 2) && (object && object <= 8 || object >= 32 && object <= 39))
+		if (oldDoor != status && (oldDoor == 2 || status == 2) && (object && object <= 8 || object >= 32 && object <= 39))
 			_engine->getOtisManager()->drawLooseSprites();
 	}
 }
 
 void LogicManager::setModel(int object, int8 model) {
 	if (object < 128)
-		_gameObjects[object].model = model;
+		_doors[object].model = model;
 }
 
 int LogicManager::getModel(int object) {
 	if (object < 128) {
-		return _gameObjects[object].model;
+		return _doors[object].model;
 	} else {
 		return 0;
 	}
@@ -671,7 +671,7 @@ void LogicManager::blockView(int character, int car, int position) {
 		character = kCharacterCath;
 
 	if (character <= 31) {
-		_positions[100 * car + position] |= 1 << character;
+		_blockedViews[100 * car + position] |= 1 << character;
 		if (checkCathDir(car, position) || (car == kCarRestaurant && position == 57 && checkCathDir(kCarRestaurant, 50))) {
 			playChrExcuseMe(character, kCharacterCath, 0);
 			smartBumpCath();
@@ -687,7 +687,7 @@ void LogicManager::releaseView(int character, int car, int position) {
 		character = kCharacterCath;
 
 	if (character <= 31) {
-		_positions[100 * car + position] &= ~(1 << character);
+		_blockedViews[100 * car + position] &= ~(1 << character);
 		mouseStatus();
 	}
 }
@@ -698,11 +698,11 @@ void LogicManager::releaseEverything(int character) {
 
 	if (character <= 31) {
 		for (int i = 0; i < 1000; i++) {
-			_positions[i] &= ~(1 << character);
+			_blockedViews[i] &= ~(1 << character);
 		}
 
-		for (int i = 0; i < 16; _softBlockedEntitiesBits[i - 1] &= ~(1 << character)) {
-			_blockedEntitiesBits[i++] &= ~(1 << character);
+		for (int i = 0; i < 16; _softBlockedX[i - 1] &= ~(1 << character)) {
+			_blockedX[i++] &= ~(1 << character);
 		}
 
 		mouseStatus();
@@ -714,8 +714,8 @@ void LogicManager::release2Views(int character, int car, int pos1, int pos2) {
 		character = kCharacterCath;
 
 	if (character <= 31) {
-		_positions[100 * car + pos1] &= ~(1 << character);
-		_positions[100 * car + pos2] &= ~(1 << character);
+		_blockedViews[100 * car + pos1] &= ~(1 << character);
+		_blockedViews[100 * car + pos2] &= ~(1 << character);
 		mouseStatus();
 	}
 }
@@ -725,8 +725,8 @@ void LogicManager::block2ViewsBump4(int character, int car, int pos1, int pos2, 
 		character = kCharacterCath;
 
 	if (character <= 31) {
-		_positions[100 * car + pos1] |= 1 << character;
-		_positions[100 * car + pos2] |= 1 << character;
+		_blockedViews[100 * car + pos1] |= 1 << character;
+		_blockedViews[100 * car + pos2] |= 1 << character;
 
 		if ((checkCathDir(car, pos1) || checkCathDir(car, pos2) || checkCathDir(car, pos3) || checkCathDir(car, pos4))) {
 			playChrExcuseMe(character, kCharacterCath, 0);
@@ -738,72 +738,72 @@ void LogicManager::block2ViewsBump4(int character, int car, int pos1, int pos2, 
 	}
 }
 
-void LogicManager::blockAtDoor(int character, int door) {
-	if (character <= 31 && (door - 1) <= 38) {
-		switch (door) {
+void LogicManager::blockAtDoor(int character, int status) {
+	if (character <= 31 && (status - 1) <= 38) {
+		switch (status) {
 		case 1:
 			block2ViewsBump4(character, kCarGreenSleeping, 41, 51, 17, 38);
-			_blockedEntitiesBits[0] |= 1 << character;
+			_blockedX[0] |= 1 << character;
 			break;
 		case 2:
 			block2ViewsBump4(character, kCarGreenSleeping, 42, 52, 15, 36);
-			_blockedEntitiesBits[1] |= 1 << character;
+			_blockedX[1] |= 1 << character;
 			break;
 		case 3:
 			block2ViewsBump4(character, kCarGreenSleeping, 43, 53, 13, 34);
-			_blockedEntitiesBits[2] |= 1 << character;
+			_blockedX[2] |= 1 << character;
 			break;
 		case 4:
 			block2ViewsBump4(character, kCarGreenSleeping, 44, 54, 11, 32);
-			_blockedEntitiesBits[3] |= 1 << character;
+			_blockedX[3] |= 1 << character;
 			break;
 		case 5:
 			block2ViewsBump4(character, kCarGreenSleeping, 45, 55, 9, 30);
-			_blockedEntitiesBits[4] |= 1 << character;
+			_blockedX[4] |= 1 << character;
 			break;
 		case 6:
 			block2ViewsBump4(character, kCarGreenSleeping, 46, 56, 7, 28);
-			_blockedEntitiesBits[5] |= 1 << character;
+			_blockedX[5] |= 1 << character;
 			break;
 		case 7:
 			block2ViewsBump4(character, kCarGreenSleeping, 47, 57, 5, 26);
-			_blockedEntitiesBits[6] |= 1 << character;
+			_blockedX[6] |= 1 << character;
 			break;
 		case 8:
 			block2ViewsBump4(character, kCarGreenSleeping, 48, 58, 3, 25);
-			_blockedEntitiesBits[7] |= 1 << character;
+			_blockedX[7] |= 1 << character;
 			break;
 		case 32:
 			block2ViewsBump4(character, kCarRedSleeping, 41, 51, 17, 38);
-			_blockedEntitiesBits[8] |= 1 << character;
+			_blockedX[8] |= 1 << character;
 			break;
 		case 33:
 			block2ViewsBump4(character, kCarRedSleeping, 42, 52, 15, 36);
-			_blockedEntitiesBits[9] |= 1 << character;
+			_blockedX[9] |= 1 << character;
 			break;
 		case 34:
 			block2ViewsBump4(character, kCarRedSleeping, 43, 53, 13, 34);
-			_blockedEntitiesBits[10] |= 1 << character;
+			_blockedX[10] |= 1 << character;
 			break;
 		case 35:
 			block2ViewsBump4(character, kCarRedSleeping, 44, 54, 11, 32);
-			_blockedEntitiesBits[11] |= 1 << character;
+			_blockedX[11] |= 1 << character;
 			break;
 		case 36:
 			block2ViewsBump4(character, kCarRedSleeping, 45, 55, 9, 30);
-			_blockedEntitiesBits[12] |= 1 << character;
+			_blockedX[12] |= 1 << character;
 			break;
 		case 37:
 			block2ViewsBump4(character, kCarRedSleeping, 46, 56, 7, 28);
-			_blockedEntitiesBits[13] |= 1 << character;
+			_blockedX[13] |= 1 << character;
 			break;
 		case 38:
 			block2ViewsBump4(character, kCarRedSleeping, 47, 57, 5, 26);
-			_blockedEntitiesBits[14] |= 1 << character;
+			_blockedX[14] |= 1 << character;
 			break;
 		case 39:
 			block2ViewsBump4(character, kCarRedSleeping, 48, 58, 3, 25);
-			_blockedEntitiesBits[15] |= 1 << character;
+			_blockedX[15] |= 1 << character;
 			break;
 		default:
 			return;
@@ -811,72 +811,72 @@ void LogicManager::blockAtDoor(int character, int door) {
 	}
 }
 
-void LogicManager::releaseAtDoor(int character, int door) {
-	if (character <= 31 && (door - 1) <= 38) {
-		switch (door) {
+void LogicManager::releaseAtDoor(int character, int status) {
+	if (character <= 31 && (status - 1) <= 38) {
+		switch (status) {
 		case 1:
 			release2Views(character, kCarGreenSleeping, 41, 51);
-			_blockedEntitiesBits[0] &= ~(1 << character);
+			_blockedX[0] &= ~(1 << character);
 			break;
 		case 2:
 			release2Views(character, kCarGreenSleeping, 42, 52);
-			_blockedEntitiesBits[1] &= ~(1 << character);
+			_blockedX[1] &= ~(1 << character);
 			break;
 		case 3:
 			release2Views(character, kCarGreenSleeping, 43, 53);
-			_blockedEntitiesBits[2] &= ~(1 << character);
+			_blockedX[2] &= ~(1 << character);
 			break;
 		case 4:
 			release2Views(character, kCarGreenSleeping, 44, 54);
-			_blockedEntitiesBits[3] &= ~(1 << character);
+			_blockedX[3] &= ~(1 << character);
 			break;
 		case 5:
 			release2Views(character, kCarGreenSleeping, 45, 55);
-			_blockedEntitiesBits[4] &= ~(1 << character);
+			_blockedX[4] &= ~(1 << character);
 			break;
 		case 6:
 			release2Views(character, kCarGreenSleeping, 46, 56);
-			_blockedEntitiesBits[5] &= ~(1 << character);
+			_blockedX[5] &= ~(1 << character);
 			break;
 		case 7:
 			release2Views(character, kCarGreenSleeping, 47, 57);
-			_blockedEntitiesBits[6] &= ~(1 << character);
+			_blockedX[6] &= ~(1 << character);
 			break;
 		case 8:
 			release2Views(character, kCarGreenSleeping, 48, 58);
-			_blockedEntitiesBits[7] &= ~(1 << character);
+			_blockedX[7] &= ~(1 << character);
 			break;
 		case 32:
 			release2Views(character, kCarRedSleeping, 41, 51);
-			_blockedEntitiesBits[8] &= ~(1 << character);
+			_blockedX[8] &= ~(1 << character);
 			break;
 		case 33:
 			release2Views(character, kCarRedSleeping, 42, 52);
-			_blockedEntitiesBits[9] &= ~(1 << character);
+			_blockedX[9] &= ~(1 << character);
 			break;
 		case 34:
 			release2Views(character, kCarRedSleeping, 43, 53);
-			_blockedEntitiesBits[10] &= ~(1 << character);
+			_blockedX[10] &= ~(1 << character);
 			break;
 		case 35:
 			release2Views(character, kCarRedSleeping, 44, 54);
-			_blockedEntitiesBits[11] &= ~(1 << character);
+			_blockedX[11] &= ~(1 << character);
 			break;
 		case 36:
 			release2Views(character, kCarRedSleeping, 45, 55);
-			_blockedEntitiesBits[12] &= ~(1 << character);
+			_blockedX[12] &= ~(1 << character);
 			break;
 		case 37:
 			release2Views(character, kCarRedSleeping, 46, 56);
-			_blockedEntitiesBits[13] &= ~(1 << character);
+			_blockedX[13] &= ~(1 << character);
 			break;
 		case 38:
 			release2Views(character, kCarRedSleeping, 47, 57);
-			_blockedEntitiesBits[14] &= ~(1 << character);
+			_blockedX[14] &= ~(1 << character);
 			break;
 		case 39:
 			release2Views(character, kCarRedSleeping, 48, 58);
-			_blockedEntitiesBits[15] &= ~(1 << character);
+			_blockedX[15] &= ~(1 << character);
 			break;
 		default:
 			return;
@@ -884,72 +884,72 @@ void LogicManager::releaseAtDoor(int character, int door) {
 	}
 }
 
-void LogicManager::softBlockAtDoor(int character, int door) {
-	if (character <= 31 && (door - 1) <= 38) {
-		switch (door) {
+void LogicManager::softBlockAtDoor(int character, int status) {
+	if (character <= 31 && (status - 1) <= 38) {
+		switch (status) {
 		case 1:
 			block2ViewsBump4(character, kCarGreenSleeping, 41, 51, 17, 38);
-			_softBlockedEntitiesBits[0] |= 1 << character;
+			_softBlockedX[0] |= 1 << character;
 			break;
 		case 2:
 			block2ViewsBump4(character, kCarGreenSleeping, 42, 52, 15, 36);
-			_softBlockedEntitiesBits[1] |= 1 << character;
+			_softBlockedX[1] |= 1 << character;
 			break;
 		case 3:
 			block2ViewsBump4(character, kCarGreenSleeping, 43, 53, 13, 34);
-			_softBlockedEntitiesBits[2] |= 1 << character;
+			_softBlockedX[2] |= 1 << character;
 			break;
 		case 4:
 			block2ViewsBump4(character, kCarGreenSleeping, 44, 54, 11, 32);
-			_softBlockedEntitiesBits[3] |= 1 << character;
+			_softBlockedX[3] |= 1 << character;
 			break;
 		case 5:
 			block2ViewsBump4(character, kCarGreenSleeping, 45, 55, 9, 30);
-			_softBlockedEntitiesBits[4] |= 1 << character;
+			_softBlockedX[4] |= 1 << character;
 			break;
 		case 6:
 			block2ViewsBump4(character, kCarGreenSleeping, 46, 56, 7, 28);
-			_softBlockedEntitiesBits[5] |= 1 << character;
+			_softBlockedX[5] |= 1 << character;
 			break;
 		case 7:
 			block2ViewsBump4(character, kCarGreenSleeping, 47, 57, 5, 26);
-			_softBlockedEntitiesBits[6] |= 1 << character;
+			_softBlockedX[6] |= 1 << character;
 			break;
 		case 8:
 			block2ViewsBump4(character, kCarGreenSleeping, 48, 58, 3, 25);
-			_softBlockedEntitiesBits[7] |= 1 << character;
+			_softBlockedX[7] |= 1 << character;
 			break;
 		case 32:
 			block2ViewsBump4(character, kCarRedSleeping, 41, 51, 17, 38);
-			_softBlockedEntitiesBits[8] |= 1 << character;
+			_softBlockedX[8] |= 1 << character;
 			break;
 		case 33:
 			block2ViewsBump4(character, kCarRedSleeping, 42, 52, 15, 36);
-			_softBlockedEntitiesBits[9] |= 1 << character;
+			_softBlockedX[9] |= 1 << character;
 			break;
 		case 34:
 			block2ViewsBump4(character, kCarRedSleeping, 43, 53, 13, 34);
-			_softBlockedEntitiesBits[10] |= 1 << character;
+			_softBlockedX[10] |= 1 << character;
 			break;
 		case 35:
 			block2ViewsBump4(character, kCarRedSleeping, 44, 54, 11, 32);
-			_softBlockedEntitiesBits[11] |= 1 << character;
+			_softBlockedX[11] |= 1 << character;
 			break;
 		case 36:
 			block2ViewsBump4(character, kCarRedSleeping, 45, 55, 9, 30);
-			_softBlockedEntitiesBits[12] |= 1 << character;
+			_softBlockedX[12] |= 1 << character;
 			break;
 		case 37:
 			block2ViewsBump4(character, kCarRedSleeping, 46, 56, 7, 28);
-			_softBlockedEntitiesBits[13] |= 1 << character;
+			_softBlockedX[13] |= 1 << character;
 			break;
 		case 38:
 			block2ViewsBump4(character, kCarRedSleeping, 47, 57, 5, 26);
-			_softBlockedEntitiesBits[14] |= 1 << character;
+			_softBlockedX[14] |= 1 << character;
 			break;
 		case 39:
 			block2ViewsBump4(character, kCarRedSleeping, 48, 58, 3, 25);
-			_softBlockedEntitiesBits[15] |= 1 << character;
+			_softBlockedX[15] |= 1 << character;
 			break;
 		default:
 			return;
@@ -957,72 +957,72 @@ void LogicManager::softBlockAtDoor(int character, int door) {
 	}
 }
 
-void LogicManager::softReleaseAtDoor(int character, int door) {
-	if (character <= 31 && (door - 1) <= 38) {
-		switch (door) {
+void LogicManager::softReleaseAtDoor(int character, int status) {
+	if (character <= 31 && (status - 1) <= 38) {
+		switch (status) {
 		case 1:
 			release2Views(character, kCarGreenSleeping, 41, 51);
-			_softBlockedEntitiesBits[0] &= ~(1 << character);
+			_softBlockedX[0] &= ~(1 << character);
 			break;
 		case 2:
 			release2Views(character, kCarGreenSleeping, 42, 52);
-			_softBlockedEntitiesBits[1] &= ~(1 << character);
+			_softBlockedX[1] &= ~(1 << character);
 			break;
 		case 3:
 			release2Views(character, kCarGreenSleeping, 43, 53);
-			_softBlockedEntitiesBits[2] &= ~(1 << character);
+			_softBlockedX[2] &= ~(1 << character);
 			break;
 		case 4:
 			release2Views(character, kCarGreenSleeping, 44, 54);
-			_softBlockedEntitiesBits[3] &= ~(1 << character);
+			_softBlockedX[3] &= ~(1 << character);
 			break;
 		case 5:
 			release2Views(character, kCarGreenSleeping, 45, 55);
-			_softBlockedEntitiesBits[4] &= ~(1 << character);
+			_softBlockedX[4] &= ~(1 << character);
 			break;
 		case 6:
 			release2Views(character, kCarGreenSleeping, 46, 56);
-			_softBlockedEntitiesBits[5] &= ~(1 << character);
+			_softBlockedX[5] &= ~(1 << character);
 			break;
 		case 7:
 			release2Views(character, kCarGreenSleeping, 47, 57);
-			_softBlockedEntitiesBits[6] &= ~(1 << character);
+			_softBlockedX[6] &= ~(1 << character);
 			break;
 		case 8:
 			release2Views(character, kCarGreenSleeping, 48, 58);
-			_softBlockedEntitiesBits[7] &= ~(1 << character);
+			_softBlockedX[7] &= ~(1 << character);
 			break;
 		case 32:
 			release2Views(character, kCarRedSleeping, 41, 51);
-			_softBlockedEntitiesBits[8] &= ~(1 << character);
+			_softBlockedX[8] &= ~(1 << character);
 			break;
 		case 33:
 			release2Views(character, kCarRedSleeping, 42, 52);
-			_softBlockedEntitiesBits[9] &= ~(1 << character);
+			_softBlockedX[9] &= ~(1 << character);
 			break;
 		case 34:
 			release2Views(character, kCarRedSleeping, 43, 53);
-			_softBlockedEntitiesBits[10] &= ~(1 << character);
+			_softBlockedX[10] &= ~(1 << character);
 			break;
 		case 35:
 			release2Views(character, kCarRedSleeping, 44, 54);
-			_softBlockedEntitiesBits[11] &= ~(1 << character);
+			_softBlockedX[11] &= ~(1 << character);
 			break;
 		case 36:
 			release2Views(character, kCarRedSleeping, 45, 55);
-			_softBlockedEntitiesBits[12] &= ~(1 << character);
+			_softBlockedX[12] &= ~(1 << character);
 			break;
 		case 37:
 			release2Views(character, kCarRedSleeping, 46, 56);
-			_softBlockedEntitiesBits[13] &= ~(1 << character);
+			_softBlockedX[13] &= ~(1 << character);
 			break;
 		case 38:
 			release2Views(character, kCarRedSleeping, 47, 57);
-			_softBlockedEntitiesBits[14] &= ~(1 << character);
+			_softBlockedX[14] &= ~(1 << character);
 			break;
 		case 39:
 			release2Views(character, kCarRedSleeping, 48, 58);
-			_softBlockedEntitiesBits[15] &= ~(1 << character);
+			_softBlockedX[15] &= ~(1 << character);
 			break;
 		default:
 			return;
@@ -1034,7 +1034,7 @@ int LogicManager::getBumpNode(int car, int position, int param) {
 	int i;
 
 	if (_numberOfScenes <= 1)
-		return _trainNodeIndex;
+		return _activeNode;
 
 	for (i = 1; i < _numberOfScenes; i++) {
 		Node *curNode = &_trainData[i];
@@ -1044,15 +1044,15 @@ int LogicManager::getBumpNode(int car, int position, int param) {
 
 		if ((param == 0xFF && curNode->parameter3 == 0) ||
 			curNode->parameter3 == param ||
-			curNode->car == kCarRestaurant)
+			curNode->property == kNodeHas3Items)
 			break;
 	}
 
 	if (i >= _numberOfScenes)
-		return _trainNodeIndex;
+		return _activeNode;
 
 
-	if (_positions[100 * _trainData[i].nodePosition.car + _trainData[i].cathDir]) {
+	if (_blockedViews[100 * _trainData[i].nodePosition.car + _trainData[i].cathDir]) {
 		return getSmartBumpNode(i);
 	} else {
 		return i;
@@ -1097,7 +1097,7 @@ bool LogicManager::obstacleBetween(int character1, int character2) {
 
 	if (i > -1 && j < 8) {
 		while (j <= i) {
-			if (_blockedEntitiesBits[j + offset] || _softBlockedEntitiesBits[j + offset])
+			if (_blockedX[j + offset] || _softBlockedX[j + offset])
 				return true;
 
 			j++;
@@ -1123,7 +1123,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 	if (getCharacter(kCharacterCath).characterPosition.car == getCharacter(kCharacterPolice).characterPosition.car &&
 		!getCharacter(kCharacterPolice).characterPosition.location && !obstacleBetween(kCharacterCath, kCharacterPolice)) {
 		if (playSound) {
-			if (_gameObjects[object].door == 1 || _gameObjects[object].door == 3 || preventEnterComp(object)) {
+			if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
 				queueSFX(kCharacterCath, 13, 0);
 			} else {
 				queueSFX(kCharacterCath, 14, 0);
@@ -1149,7 +1149,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 				(getCharacter(kCharacterTrainM).characterPosition.car != kCarGreenSleeping || getCharacter(kCharacterTrainM).characterPosition.position > 2740)) {
 
 				if (playSound) {
-					if (_gameObjects[object].door == 1 || _gameObjects[object].door == 3 || preventEnterComp(object)) {
+					if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
 						queueSFX(kCharacterCath, 13, 0);
 					} else {
 						queueSFX(kCharacterCath, 14, 0);
@@ -1174,7 +1174,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			getCharacter(kCharacterCond1).characterPosition.position < getCharacter(kCharacterCath).characterPosition.position) {
 
 			if (playSound) {
-				if (_gameObjects[object].door == 1 || _gameObjects[object].door == 3 || preventEnterComp(object)) {
+				if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
 					queueSFX(kCharacterCath, 13, 0);
 				} else {
 					queueSFX(kCharacterCath, 14, 0);
@@ -1201,7 +1201,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			getCharacter(kCharacterCond1).characterPosition.position > getCharacter(kCharacterCath).characterPosition.position) {
 
 			if (playSound) {
-				if (_gameObjects[object].door == 1 || _gameObjects[object].door == 3 || preventEnterComp(object)) {
+				if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
 					queueSFX(kCharacterCath, 13, 0);
 				} else {
 					queueSFX(kCharacterCath, 14, 0);
@@ -1239,7 +1239,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			(getCharacter(kCharacterMadame).characterPosition.car != kCarRedSleeping || getCharacter(kCharacterMadame).characterPosition.position > 2740)) {
 
 			if (playSound) {
-				if (_gameObjects[object].door == 1 || _gameObjects[object].door == 3 || preventEnterComp(object)) {
+				if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
 					queueSFX(kCharacterCath, 13, 0);
 				} else {
 					queueSFX(kCharacterCath, 14, 0);
@@ -1261,7 +1261,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 
 	if (!obstacleBetween(kCharacterCath, kCharacterCond2) && getCharacter(kCharacterCond2).direction == 1 && getCharacter(kCharacterCath).characterPosition.position > getCharacter(kCharacterCond2).characterPosition.position) {
 		if (playSound) {
-			if (_gameObjects[object].door == 1 || _gameObjects[object].door == 3 || preventEnterComp(object)) {
+			if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
 				queueSFX(kCharacterCath, 13, 0);
 			} else {
 				queueSFX(kCharacterCath, 14, 0);
@@ -1288,7 +1288,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 	}
 
 	if (playSound) {
-		if (_gameObjects[object].door == 1 || _gameObjects[object].door == 3 || preventEnterComp(object)) {
+		if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
 			queueSFX(kCharacterCath, 13, 0);
 		} else {
 			queueSFX(kCharacterCath, 14, 0);
@@ -1491,7 +1491,7 @@ int LogicManager::getSmartBumpNode(int node) {
 			if (effDir == 24)
 				effDir = 25;
 
-			if (_positions[100 * car + effDir]) {
+			if (_blockedViews[100 * car + effDir]) {
 				return node;
 			} else {
 				return getBumpNode(car, effDir, 255);
@@ -1500,49 +1500,49 @@ int LogicManager::getSmartBumpNode(int node) {
 			switch (_trainData[node].cathDir) {
 			case 41:
 			case 51:
-				if (!_positions[100 * car + 39])
+				if (!_blockedViews[100 * car + 39])
 					return getBumpNode(car, 39, 255);
 
 				// Fallthrough
 			case 42:
 			case 52:
-				if (!_positions[100 * car + 14])
+				if (!_blockedViews[100 * car + 14])
 					return getBumpNode(car, 14, 255);
 
 				// Fallthrough
 			case 43:
 			case 53:
-				if (!_positions[100 * car + 35])
+				if (!_blockedViews[100 * car + 35])
 					return getBumpNode(car, 35, 255);
 
 				// Fallthrough
 			case 44:
 			case 54:
-				if (!_positions[100 * car + 10])
+				if (!_blockedViews[100 * car + 10])
 					return getBumpNode(car, 10, 255);
 
 				// Fallthrough
 			case 45:
 			case 55:
-				if (!_positions[100 * car + 32])
+				if (!_blockedViews[100 * car + 32])
 					return getBumpNode(car, 32, 255);
 
 				// Fallthrough
 			case 46:
 			case 56:
-				if (!_positions[100 * car + 7])
+				if (!_blockedViews[100 * car + 7])
 					return getBumpNode(car, 7, 255);
 
 				// Fallthrough
 			case 47:
 			case 57:
-				if (!_positions[100 * car + 27])
+				if (!_blockedViews[100 * car + 27])
 					return getBumpNode(car, 27, 255);
 
 				// Fallthrough
 			case 48:
 			case 58:
-				if (!_positions[100 * car + 2])
+				if (!_blockedViews[100 * car + 2])
 					return getBumpNode(car, 2, 255);
 
 				// Fallthrough
@@ -1559,107 +1559,107 @@ int LogicManager::getSmartBumpNode(int node) {
 		case 56:
 		case 57:
 		case 58:
-			if (!_positions[555])
+			if (!_blockedViews[555])
 				return getBumpNode(kCarRestaurant, 55, 255);
 
-			if (!_positions[560])
+			if (!_blockedViews[560])
 				return getBumpNode(kCarRestaurant, 60, 255);
 
-			if (!_positions[559])
+			if (!_blockedViews[559])
 				return getBumpNode(kCarRestaurant, 59, 255);
 
-			if (!_positions[561])
+			if (!_blockedViews[561])
 				return getBumpNode(kCarRestaurant, 61, 255);
 
-			if (!_positions[565])
+			if (!_blockedViews[565])
 				return getBumpNode(kCarRestaurant, 65, 255);
 
-			if (!_positions[570])
+			if (!_blockedViews[570])
 				return getBumpNode(kCarRestaurant, 70, 255);
 
 			return node;
 		case 52:
 		case 53:
 		case 54:
-			if (!_positions[551])
+			if (!_blockedViews[551])
 				return getBumpNode(kCarRestaurant, 51, 255);
 
-			if (!_positions[555])
+			if (!_blockedViews[555])
 				return getBumpNode(kCarRestaurant, 55, 255);
 
-			if (!_positions[560])
+			if (!_blockedViews[560])
 				return getBumpNode(kCarRestaurant, 60, 255);
 
-			if (!_positions[559])
+			if (!_blockedViews[559])
 				return getBumpNode(kCarRestaurant, 59, 255);
 
-			if (!_positions[561])
+			if (!_blockedViews[561])
 				return getBumpNode(kCarRestaurant, 61, 255);
 
-			if (!_positions[565])
+			if (!_blockedViews[565])
 				return getBumpNode(kCarRestaurant, 65, 255);
 
-			if (!_positions[570])
+			if (!_blockedViews[570])
 				return getBumpNode(kCarRestaurant, 70, 255);
 
 			return node;
 		case 59:
-			if (!_positions[560])
+			if (!_blockedViews[560])
 				return getBumpNode(kCarRestaurant, 60, 255);
 
-			if (!_positions[559])
+			if (!_blockedViews[559])
 				return getBumpNode(kCarRestaurant, 59, 255);
 
-			if (!_positions[561])
+			if (!_blockedViews[561])
 				return getBumpNode(kCarRestaurant, 61, 255);
 
-			if (!_positions[565])
+			if (!_blockedViews[565])
 				return getBumpNode(kCarRestaurant, 65, 255);
 
-			if (!_positions[570])
+			if (!_blockedViews[570])
 				return getBumpNode(kCarRestaurant, 70, 255);
 
 			return node;
 		case 60:
-			if (!_positions[559])
+			if (!_blockedViews[559])
 				return getBumpNode(kCarRestaurant, 59, 255);
 
-			if (!_positions[561])
+			if (!_blockedViews[561])
 				return getBumpNode(kCarRestaurant, 61, 255);
 
-			if (!_positions[565])
+			if (!_blockedViews[565])
 				return getBumpNode(kCarRestaurant, 65, 255);
 
-			if (!_positions[570])
+			if (!_blockedViews[570])
 				return getBumpNode(kCarRestaurant, 70, 255);
 
 			return node;
 		case 62:
 		case 63:
 		case 64:
-			if (!_positions[561])
+			if (!_blockedViews[561])
 				return getBumpNode(kCarRestaurant, 61, 255);
 
-			if (!_positions[565])
+			if (!_blockedViews[565])
 				return getBumpNode(kCarRestaurant, 65, 255);
 
-			if (!_positions[570])
+			if (!_blockedViews[570])
 				return getBumpNode(kCarRestaurant, 70, 255);
 
 			return node;
 		case 66:
 		case 67:
 		case 68:
-			if (!_positions[565])
+			if (!_blockedViews[565])
 				return getBumpNode(kCarRestaurant, 65, 255);
 
-			if (!_positions[570])
+			if (!_blockedViews[570])
 				return getBumpNode(kCarRestaurant, 70, 255);
 
 			return node;
 		case 69:
 		case 71:
-			if (!_positions[570])
+			if (!_blockedViews[570])
 				return getBumpNode(kCarRestaurant, 70, 255);
 
 			return node;
@@ -1673,19 +1673,19 @@ int LogicManager::getSmartBumpNode(int node) {
 
 void LogicManager::smartBumpCath() {
 	if (!_engine->isDemo() || _engine->_navigationEngineIsRunning) {
-		bumpCathNode(getSmartBumpNode(_trainNodeIndex));
+		bumpCathNode(getSmartBumpNode(_activeNode));
 	}
 }
 
 void LogicManager::bumpCathCloseUp(int item) {
 	if (item < 32) {
-		if (_gameInventory[item].scene) {
-			if (!_useLastSavedNodeIndex) {
-				_useLastSavedNodeIndex = 1;
-				_lastNodeIndex = _trainNodeIndex;
+		if (_items[item].closeUp) {
+			if (!_closeUp) {
+				_closeUp = 1;
+				_nodeReturn = _activeNode;
 			}
 
-			bumpCathNode(_gameInventory[item].scene);
+			bumpCathNode(_items[item].closeUp);
 		}
 	}
 }
@@ -1749,32 +1749,32 @@ void LogicManager::playNIS(int nisId) {
 	_engine->getGraphicsManager()->_renderBox1.x = 80;
 	_engine->getGraphicsManager()->_renderBox1.y = 0;
 
-	_gameEvents[nisId] = 1;
+	_doneNIS[nisId] = 1;
 
-	_currentGameSessionTicks += _nisTicks[nisId];
-	_gameTime += _nisTicks[nisId] * _gameTimeTicksDelta;
+	_realTime += _nisTicks[nisId];
+	_gameTime += _nisTicks[nisId] * _timeSpeed;
 }
 
 void LogicManager::cleanNIS() {
 	if (_engine->isDemo() && !_engine->_navigationEngineIsRunning)
 		return;
 
-	if (_useLastSavedNodeIndex) {
+	if (_closeUp) {
 		int largeItem = findLargeItem();
-		_useLastSavedNodeIndex = 0;
-		if (largeItem && _inventorySelectedItemIdx != largeItem) {
-			_inventorySelectedItemIdx = largeItem;
-			_engine->getGraphicsManager()->drawItem(_gameInventory[largeItem].cursor, 44, 0);
+		_closeUp = 0;
+		if (largeItem && _activeItem != largeItem) {
+			_activeItem = largeItem;
+			_engine->getGraphicsManager()->drawItem(_items[largeItem].mnum, 44, 0);
 			_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 		}
 
-		if (_positions[100 * _trainData[_lastNodeIndex].nodePosition.car + _trainData[_lastNodeIndex].cathDir]) {
-			bumpCathNode(getSmartBumpNode(_lastNodeIndex));
+		if (_blockedViews[100 * _trainData[_nodeReturn].nodePosition.car + _trainData[_nodeReturn].cathDir]) {
+			bumpCathNode(getSmartBumpNode(_nodeReturn));
 		} else {
-			bumpCathNode(_lastNodeIndex);
+			bumpCathNode(_nodeReturn);
 		}
 	} else {
-		bumpCathNode(_trainNodeIndex);
+		bumpCathNode(_activeNode);
 	}
 }
 
@@ -2077,9 +2077,9 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 			return;
 		}
 
-		if (receivingCharacter == kCharacterCath && _gameProgress[kProgressJacket] == 2 && rnd(2) != 0) {
+		if (receivingCharacter == kCharacterCath && _globals[kProgressJacket] == 2 && rnd(2) != 0) {
 			if (isNight()) {	
-				if (_gameProgress[kProgressField18] != 2) {
+				if (_globals[kProgressField18] != 2) {
 					playDialog(0, "CON1110E", volume, 0);
 				} else {
 					playDialog(0, "CON1110F", volume, 0);
@@ -2105,7 +2105,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 	case kCharacterCond2:
 		if (isFemale(receivingCharacter)) {
 			playDialog(0, "JAC1111D", volume, 0);
-		} else if (!receivingCharacter && _gameProgress[kProgressJacket] == 2 && rnd(2)) {
+		} else if (!receivingCharacter && _globals[kProgressJacket] == 2 && rnd(2)) {
 			playDialog(0, "JAC1113B", volume, 0);
 		} else {
 			switch (rnd(4)) {
@@ -2282,7 +2282,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		playDialog(0, "MRB1104", volume, 0);
 
 		if (volume > 2)
-			_gameProgress[kProgressEventMetBoutarel] = 1;
+			_globals[kProgressEventMetBoutarel] = 1;
 
 		return;
 	case kCharacterRebecca:
@@ -2334,7 +2334,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		playDialog(0, "HAR1002", volume, 0);
 
 		if (volume > 2)
-			_gameProgress[kProgressEventMetYasmin] = 1;
+			_globals[kProgressEventMetYasmin] = 1;
 
 		return;
 	case kCharacterHadija:
@@ -2348,7 +2348,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		}
 
 		if (volume > 2)
-			_gameProgress[kProgressEventMetHadija] = 1;
+			_globals[kProgressEventMetHadija] = 1;
 
 		return;
 	case kCharacterAlouan:
@@ -2422,7 +2422,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 	if (character == kCharacterCond1) {
 		switch (situation) {
 		case 2:
-			if (_lastTickCondYellingComp2 + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingComp2 + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					switch (rnd(2)) {
@@ -2460,10 +2460,10 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 
-			_lastTickCondYellingComp2 = _currentGameSessionTicks;
+			_lastTickCondYellingComp2 = _realTime;
 			break;
 		case 3:
-			if (_lastTickCondYellingComp3 + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingComp3 + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					switch (rnd(2)) {
@@ -2497,10 +2497,10 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 			
-			_lastTickCondYellingComp3 = _currentGameSessionTicks;
+			_lastTickCondYellingComp3 = _realTime;
 			break;
 		case 4:
-			if (_lastTickCondYellingComp4 + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingComp4 + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					switch (rnd(2)) {
@@ -2538,7 +2538,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 			
-			_lastTickCondYellingComp4 = _currentGameSessionTicks;
+			_lastTickCondYellingComp4 = _realTime;
 			break;
 		case 5:
 		case 6:
@@ -2586,7 +2586,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 	if (character == kCharacterCond2) {
 		switch (situation) {
 		case 32:
-			if (_lastTickCondYellingCompA + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingCompA + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
@@ -2608,11 +2608,11 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 
-			_lastTickCondYellingCompA = _currentGameSessionTicks;
+			_lastTickCondYellingCompA = _realTime;
 			return;
 
 		case 33:
-			if (_lastTickCondYellingCompB + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingCompB + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
@@ -2622,17 +2622,17 @@ void LogicManager::playCondYelling(int character, int situation) {
 					playDialog(kCharacterCond2, "Jac1500", 16, 0);
 					break;
 				}
-			} else if (_gameProgress[kProgressField40] || _gameTime > 2101500 && _gameTime < 2133000) {
+			} else if (_globals[kProgressField40] || _gameTime > 2101500 && _gameTime < 2133000) {
 				playDialog(kCharacterCond2, "Jac1507A", 16, 0);
 			} else {
 				playDialog(kCharacterCond2, "Jac1507", 16, 0);
 			}
 
-			_lastTickCondYellingCompB = _currentGameSessionTicks;
+			_lastTickCondYellingCompB = _realTime;
 			return;
 
 		case 34:
-			if (_lastTickCondYellingCompC + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingCompC + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
@@ -2643,9 +2643,9 @@ void LogicManager::playCondYelling(int character, int situation) {
 					break;
 				}
 			} else {
-				if (_gameProgress[kProgressChapter] < 3) {
+				if (_globals[kProgressChapter] < 3) {
 					playDialog(kCharacterCond2, "Jac1506", 16, 0);
-					_lastTickCondYellingCompC = _currentGameSessionTicks;
+					_lastTickCondYellingCompC = _realTime;
 					return;
 				}
 
@@ -2660,11 +2660,11 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 
-			_lastTickCondYellingCompC = _currentGameSessionTicks;
+			_lastTickCondYellingCompC = _realTime;
 			return;
 
 		case 35:
-			if (_lastTickCondYellingCompD + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingCompD + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
@@ -2678,27 +2678,27 @@ void LogicManager::playCondYelling(int character, int situation) {
 				playDialog(kCharacterCond2, "Jac1505", 16, 0);
 			}
 
-			_lastTickCondYellingCompD = _currentGameSessionTicks;
+			_lastTickCondYellingCompD = _realTime;
 			return;
 
 		case 36:
-			if (_lastTickCondYellingCompE + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingCompE + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
-					_lastTickCondYellingCompE = _currentGameSessionTicks;
+					_lastTickCondYellingCompE = _realTime;
 					return;
 				case 1:
 				default:
 					playDialog(kCharacterCond2, "Jac1500", 16, 0);
-					_lastTickCondYellingCompE = _currentGameSessionTicks;
+					_lastTickCondYellingCompE = _realTime;
 					return;
 				}
 			}
 
-			if (_gameProgress[kProgressField40] || (_gameTime > 2115000 && _gameTime < 2133000)) {
+			if (_globals[kProgressField40] || (_gameTime > 2115000 && _gameTime < 2133000)) {
 				playDialog(kCharacterCond2, "Jac1504B", 16, 0);
-				_lastTickCondYellingCompE = _currentGameSessionTicks;
+				_lastTickCondYellingCompE = _realTime;
 				return;
 			}
 
@@ -2706,12 +2706,12 @@ void LogicManager::playCondYelling(int character, int situation) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
-					_lastTickCondYellingCompE = _currentGameSessionTicks;
+					_lastTickCondYellingCompE = _realTime;
 					return;
 				case 1:
 				default:
 					playDialog(kCharacterCond2, "Jac1500", 16, 0);
-					_lastTickCondYellingCompE = _currentGameSessionTicks;
+					_lastTickCondYellingCompE = _realTime;
 					return;
 				}
 			}
@@ -2726,11 +2726,11 @@ void LogicManager::playCondYelling(int character, int situation) {
 				break;
 			}
 
-			_lastTickCondYellingCompE = _currentGameSessionTicks;
+			_lastTickCondYellingCompE = _realTime;
 			return;
 
 		case 37:
-			if (_lastTickCondYellingCompF + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingCompF + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
@@ -2741,9 +2741,9 @@ void LogicManager::playCondYelling(int character, int situation) {
 					break;
 				}
 			} else {
-				if (_gameProgress[kProgressField40] || (_gameTime > 2083500 && _gameTime < 2133000)) {
+				if (_globals[kProgressField40] || (_gameTime > 2083500 && _gameTime < 2133000)) {
 					playDialog(kCharacterCond2, "Jac1503B", 16, 0);
-					_lastTickCondYellingCompF = _currentGameSessionTicks;
+					_lastTickCondYellingCompF = _realTime;
 					return;
 				}
 
@@ -2754,11 +2754,11 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 
-			_lastTickCondYellingCompF = _currentGameSessionTicks;
+			_lastTickCondYellingCompF = _realTime;
 			return;
 
 		case 38:
-			if (_lastTickCondYellingCompG + 450 >= _currentGameSessionTicks) {
+			if (_lastTickCondYellingCompG + 450 >= _realTime) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
@@ -2776,11 +2776,11 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 
-			_lastTickCondYellingCompG = _currentGameSessionTicks;
+			_lastTickCondYellingCompG = _realTime;
 			return;
 
 		case 39:
-			if (_lastTickCondYellingCompH + 450 >= _currentGameSessionTicks || inComp(kCharacterIvo, kCarRedSleeping, 2740)) {
+			if (_lastTickCondYellingCompH + 450 >= _realTime || inComp(kCharacterIvo, kCarRedSleeping, 2740)) {
 				switch (rnd(2)) {
 				case 0:
 					playDialog(kCharacterCond2, "Jac1500A", 16, 0);
@@ -2794,7 +2794,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 				playDialog(kCharacterCond2, "Jac1501", 16, 0);
 			}
 
-			_lastTickCondYellingCompH = _currentGameSessionTicks;
+			_lastTickCondYellingCompH = _realTime;
 			return;
 
 		default:
@@ -3126,15 +3126,15 @@ bool LogicManager::walk(int character, int car, int position) {
 				}
 
 				for (int i = 0; i < 8; i++) {
-					if ((_blockedEntitiesBits[offset + i] || _softBlockedEntitiesBits[offset + i]) && nearX(character, _objectPosition[i], 750) &&
+					if ((_blockedX[offset + i] || _softBlockedX[offset + i]) && nearX(character, _objectPosition[i], 750) &&
 						cathWillSeeOtis(_objectPosition[i]) && (getCharacter(character).direction == 1 && (getCharacter(character).characterPosition.position < _objectPosition[i]) &&
 							(car != getCharacter(character).characterPosition.car || position > _objectPosition[i]) ||
 							(getCharacter(character).direction == 2 && (getCharacter(character).characterPosition.position > _objectPosition[i]) &&
 								(car != getCharacter(character).characterPosition.car || position < _objectPosition[i])))) {
-						if (_blockedEntitiesBits[offset + i]) {
-							excuseMeCharacter = whoseBit(_blockedEntitiesBits[offset + i]);
+						if (_blockedX[offset + i]) {
+							excuseMeCharacter = whoseBit(_blockedX[offset + i]);
 						} else {
-							excuseMeCharacter = whoseBit(_softBlockedEntitiesBits[offset + i]);
+							excuseMeCharacter = whoseBit(_softBlockedX[offset + i]);
 						}
 
 						playChrExcuseMe(character, excuseMeCharacter, 0);
@@ -3287,7 +3287,7 @@ bool LogicManager::walk(int character, int car, int position) {
 				send(kCharacterCath, character, 6, 0);
 
 				if (_engine->getOtisManager()->doorView())
-					bumpCathFDoor(_trainData[_trainNodeIndex].parameter1);
+					bumpCathFDoor(_trainData[_activeNode].parameter1);
 
 				return false;
 			}
@@ -3304,7 +3304,7 @@ bool LogicManager::walk(int character, int car, int position) {
 					send(kCharacterCath, character, 6, 0);
 
 					if (_engine->getOtisManager()->doorView())
-						bumpCathRDoor(_trainData[_trainNodeIndex].parameter1);
+						bumpCathRDoor(_trainData[_activeNode].parameter1);
 				}
 
 				return false;
@@ -3457,12 +3457,12 @@ void LogicManager::makeAllJump(int chapter) {
 		}
 
 		for (int i = 0; i < 1000; i++) {
-			_positions[i] = 0;
+			_blockedViews[i] = 0;
 		}
 
 		for (int i = 0; i < 16; i++) {
-			_blockedEntitiesBits[i] = 0;
-			_softBlockedEntitiesBits[i] = 0;
+			_blockedX[i] = 0;
+			_softBlockedX[i] = 0;
 		}
 
 		// Originally the first edition of the game checked only for kSoundTagMenu;
@@ -3559,7 +3559,7 @@ void LogicManager::CONS_All(bool isFirstChapter, int character) {
 	}
 
 	if (!_flagBumpCathNode)
-		bumpCathNode(_trainNodeIndex);
+		bumpCathNode(_activeNode);
 
 	// Uncomment this to activate "debug walks" functions
 	// CONS_Master_WalkTest(0, 0, 0, 0);
@@ -3569,12 +3569,12 @@ int32 LogicManager::getGameTime() {
 	return _gameTime;
 }
 
-int32 LogicManager::getGameTimeTicks() {
-	return _currentGameSessionTicks;
+int32 LogicManager::getRealTime() {
+	return _realTime;
 }
 
-int32 LogicManager::getGameTimeTicksDelta() {
-	return _gameTimeTicksDelta;
+int32 LogicManager::getTimeSpeed() {
+	return _timeSpeed;
 }
 
 } // End of namespace LastExpress

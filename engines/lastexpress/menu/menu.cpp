@@ -84,7 +84,7 @@ void Menu::doEgg(bool doSaveGame, int type, int32 time) {
 		_currentHotspotLink = 0;
 		_engine->_doShowCredits = false;
 		_engine->setEventTickInternal(false);
-		_engine->getLogicManager()->_inventorySelectedItemIdx = 0;
+		_engine->getLogicManager()->_activeItem = 0;
 		_moveClockHandsFlag = _engine->getClock()->statusClock();
 		_engine->_navigationEngineIsRunning = false;
 
@@ -167,7 +167,7 @@ void Menu::eggMouse(Event *event) {
 			uint8 location = 0;
 			Link *foundLink = nullptr;
 
-			for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].link; i; i = i->next) {
+			for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].link; i; i = i->next) {
 				if (_engine->getLogicManager()->pointIn(_engine->_cursorX, _engine->_cursorY, i) && i->location >= location) {
 					location = i->location;
 					foundLink = i;
@@ -236,7 +236,7 @@ void Menu::updateEgg() {
 		Link *chosenLink = nullptr;
 		uint16 location = 0;
 
-		for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].link; i; i = i->next) {
+		for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].link; i; i = i->next) {
 			if (_engine->getLogicManager()->pointIn(_engine->_cursorX, _engine->_cursorY, i) && location <= i->location) {
 				location = i->location;
 				chosenLink = i;
@@ -335,8 +335,8 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		}
 
 		int whichCD = 1;
-		if (_engine->getLogicManager()->_gameProgress[kProgressChapter] > 1)
-			whichCD = (_engine->getLogicManager()->_gameProgress[kProgressChapter] > 3) + 2;
+		if (_engine->getLogicManager()->_globals[kProgressChapter] > 1)
+			whichCD = (_engine->getLogicManager()->_globals[kProgressChapter] > 3) + 2;
 
 		if (_engine->isDemo()) {
 			if (!_gameInNotStartedInFile) {
@@ -438,14 +438,14 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 								}
 
 								_engine->getNISManager()->doNIS("1601.NIS", 0x4000);
-								_engine->getLogicManager()->_gameEvents[kEventIntro] = 1;
+								_engine->getLogicManager()->_doneNIS[kEventIntro] = 1;
 							}
 						}
 					}
 				}
 
-				if (!_engine->getLogicManager()->_gameEvents[kEventIntro]) {
-					_engine->getLogicManager()->_gameEvents[kEventIntro] = 1;
+				if (!_engine->getLogicManager()->_doneNIS[kEventIntro]) {
+					_engine->getLogicManager()->_doneNIS[kEventIntro] = 1;
 					Slot *slot = _engine->getSoundManager()->_soundCache;
 					if (_engine->getSoundManager()->_soundCache) {
 						do {
@@ -978,7 +978,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		_engine->getGraphicsManager()->setGammaLevel(_engine->getGraphicsManager()->getGammaLevel() - 1);
 		_engine->getVCR()->storeSettings();
 
-		_engine->getArchiveManager()->loadBG(_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].sceneFilename);
+		_engine->getArchiveManager()->loadBG(_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].sceneFilename);
 
 		for (int i = 0; i < 8; i++) {
 			_engine->getSpriteManager()->destroySprite(&_startMenuFrames[i], false);
@@ -1025,7 +1025,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 					_engine->getGraphicsManager()->setGammaLevel(_engine->getGraphicsManager()->getGammaLevel() + 1);
 					_engine->getVCR()->storeSettings();
 
-					_engine->getArchiveManager()->loadBG(_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].sceneFilename);
+					_engine->getArchiveManager()->loadBG(_engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].sceneFilename);
 
 					for (int i = 0; i < 8; i++) {
 						_engine->getSpriteManager()->destroySprite(&_startMenuFrames[i], false);

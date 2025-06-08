@@ -66,8 +66,8 @@ void LogicManager::HAND_DemoTatiana_Birth(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (!getCharacterCurrentParams(kCharacterTatiana)[1] && !getCharacterCurrentParams(kCharacterTatiana)[3]) {
-			getCharacterCurrentParams(kCharacterTatiana)[0] -= _gameTimeTicksDelta;
-			if (getCharacterCurrentParams(kCharacterTatiana)[0] < _gameTimeTicksDelta) {
+			getCharacterCurrentParams(kCharacterTatiana)[0] -= _timeSpeed;
+			if (getCharacterCurrentParams(kCharacterTatiana)[0] < _timeSpeed) {
 				startCycOtis(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[7]);
 				playDialog(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[4], -1, 0);
 				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;

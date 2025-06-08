@@ -173,17 +173,17 @@ void LogicManager::HAND_TableC_Idling(HAND_PARAMS) {
 	getCharacterCurrentParams(kCharacterTableC);
 	switch (msg->action) {
 	case 0:
-		if (_gameProgress[kProgressChapter] == 1) {
+		if (_globals[kProgressChapter] == 1) {
 			if (_gameTime > 1165500 && !getCharacterCurrentParams(kCharacterTableC)[0]) {
 				getCharacterCurrentParams(kCharacterTableC)[0] = 1;
 				fadeDialog(kCharacterTableC);
 			}
-		} else if (_gameProgress[kProgressChapter] == 3) {
+		} else if (_globals[kProgressChapter] == 3) {
 			if (_gameTime > 2052000 && !getCharacterCurrentParams(kCharacterTableC)[1]) {
 				getCharacterCurrentParams(kCharacterTableC)[1] = 1;
 				fadeDialog(kCharacterTableC);
 			}
-		} else if (_gameProgress[kProgressChapter] == 4 && _gameTime > 2488500 && !getCharacterCurrentParams(kCharacterTableC)[2]) {
+		} else if (_globals[kProgressChapter] == 4 && _gameTime > 2488500 && !getCharacterCurrentParams(kCharacterTableC)[2]) {
 			getCharacterCurrentParams(kCharacterTableC)[2] = 1;
 			fadeDialog(kCharacterTableC);
 		}

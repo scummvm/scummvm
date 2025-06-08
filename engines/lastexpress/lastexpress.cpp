@@ -247,20 +247,20 @@ void LastExpressEngine::initGameData() {
 	getSpriteManager()->queueErase(&eraser);
 
 	for (int i = 0; i < 1000; i++) {
-		getLogicManager()->_positions[i] = 0;
+		getLogicManager()->_blockedViews[i] = 0;
 	}
 
 	for (int i = 0; i < 16; i++) {
-		getLogicManager()->_blockedEntitiesBits[i] = 0;
-		getLogicManager()->_softBlockedEntitiesBits[i] = 0;
+		getLogicManager()->_blockedX[i] = 0;
+		getLogicManager()->_softBlockedX[i] = 0;
 	}
 
 	for (int i = 0; i < 512; i++) {
-		getLogicManager()->_gameEvents[i] = 0;
+		getLogicManager()->_doneNIS[i] = 0;
 	}
 
 	for (int i = 0; i < 128; i++) {
-		getLogicManager()->_gameProgress[i] = 0;
+		getLogicManager()->_globals[i] = 0;
 	}
 
 	for (int i = 0; i < 128; i++) {
@@ -276,78 +276,78 @@ void LastExpressEngine::initGameData() {
 	}
 
 	for (int i = 0; i < 128; i++) {
-		getLogicManager()->_gameObjects[i].door = 0;
-		getLogicManager()->_gameObjects[i].character = 0;
-		getLogicManager()->_gameObjects[i].cursor = 10;
-		getLogicManager()->_gameObjects[i].cursor2 = 9;
-		getLogicManager()->_gameObjects[i].model = 0;
+		getLogicManager()->_doors[i].status = 0;
+		getLogicManager()->_doors[i].who = 0;
+		getLogicManager()->_doors[i].windowCursor = 10;
+		getLogicManager()->_doors[i].handleCursor = 9;
+		getLogicManager()->_doors[i].model = 0;
 	}
 
 	for (int i = 0; i < 32; i++) {
-		getLogicManager()->_gameInventory[i].cursor = 0;
-		getLogicManager()->_gameInventory[i].isPresent = 0;
-		getLogicManager()->_gameInventory[i].location = 0;
-		getLogicManager()->_gameInventory[i].manualSelect = 1;
+		getLogicManager()->_items[i].mnum = 0;
+		getLogicManager()->_items[i].haveIt = 0;
+		getLogicManager()->_items[i].floating = 0;
+		getLogicManager()->_items[i].inPocket = 1;
 	}
 
-	getLogicManager()->_gameInventory[kItemMatchBox].cursor = 16;
-	getLogicManager()->_gameInventory[kItemTelegram].cursor = 17;
-	getLogicManager()->_gameInventory[kItemPassengerList].cursor = 18;
-	getLogicManager()->_gameInventory[kItemArticle].cursor = 19;
-	getLogicManager()->_gameInventory[kItemScarf].cursor = 20;
-	getLogicManager()->_gameInventory[kItemPaper].cursor = 21;
-	getLogicManager()->_gameInventory[kItemParchemin].cursor = 22;
-	getLogicManager()->_gameInventory[kItemMatch].cursor = 23;
-	getLogicManager()->_gameInventory[kItemWhistle].cursor = 24;
-	getLogicManager()->_gameInventory[kItemKey].cursor = 25;
-	getLogicManager()->_gameInventory[kItemBomb].cursor = 26;
-	getLogicManager()->_gameInventory[kItemFirebird].cursor = 27;
-	getLogicManager()->_gameInventory[kItemBriefcase].cursor = 28;
-	getLogicManager()->_gameInventory[kItemCorpse].cursor = 29;
-	getLogicManager()->_gameInventory[kItemMatchBox].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemMatch].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemTelegram].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemWhistle].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemKey].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemFirebird].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemBriefcase].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemCorpse].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItemPassengerList].isSelectable = 1;
-	getLogicManager()->_gameInventory[kItem2].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItem3].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItem5].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItem7].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItem9].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItemBeetle].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItem11].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItem17].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItemFirebird].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItemBriefcase].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItemCorpse].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItemGreenJacket].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItem22].manualSelect = 0;
-	getLogicManager()->_gameInventory[kItemMatchBox].scene = 31;
-	getLogicManager()->_gameInventory[kItemTelegram].scene = 32;
-	getLogicManager()->_gameInventory[kItemPassengerList].scene = 33;
-	getLogicManager()->_gameInventory[kItemScarf].scene = 34;
-	getLogicManager()->_gameInventory[kItemParchemin].scene = 35;
-	getLogicManager()->_gameInventory[kItemFirebird].scene = 38;
-	getLogicManager()->_gameInventory[kItemBriefcase].scene = 39;
-	getLogicManager()->_gameInventory[kItemPaper].scene = 37;
-	getLogicManager()->_gameInventory[kItemArticle].scene = 36;
-	getLogicManager()->_gameInventory[kItemTelegram].isPresent = 1;
-	getLogicManager()->_gameInventory[kItemArticle].isPresent = 1;
-	getLogicManager()->_gameProgress[kProgressPortrait] = isDemo() ? 34: 32;
-	getLogicManager()->_gameProgress[kProgressChapter] = isDemo() ? 3 : 1;
+	getLogicManager()->_items[kItemMatchBox].mnum = 16;
+	getLogicManager()->_items[kItemTelegram].mnum = 17;
+	getLogicManager()->_items[kItemPassengerList].mnum = 18;
+	getLogicManager()->_items[kItemArticle].mnum = 19;
+	getLogicManager()->_items[kItemScarf].mnum = 20;
+	getLogicManager()->_items[kItemPaper].mnum = 21;
+	getLogicManager()->_items[kItemParchemin].mnum = 22;
+	getLogicManager()->_items[kItemMatch].mnum = 23;
+	getLogicManager()->_items[kItemWhistle].mnum = 24;
+	getLogicManager()->_items[kItemKey].mnum = 25;
+	getLogicManager()->_items[kItemBomb].mnum = 26;
+	getLogicManager()->_items[kItemFirebird].mnum = 27;
+	getLogicManager()->_items[kItemBriefcase].mnum = 28;
+	getLogicManager()->_items[kItemCorpse].mnum = 29;
+	getLogicManager()->_items[kItemMatchBox].useable = 1;
+	getLogicManager()->_items[kItemMatch].useable = 1;
+	getLogicManager()->_items[kItemTelegram].useable = 1;
+	getLogicManager()->_items[kItemWhistle].useable = 1;
+	getLogicManager()->_items[kItemKey].useable = 1;
+	getLogicManager()->_items[kItemFirebird].useable = 1;
+	getLogicManager()->_items[kItemBriefcase].useable = 1;
+	getLogicManager()->_items[kItemCorpse].useable = 1;
+	getLogicManager()->_items[kItemPassengerList].useable = 1;
+	getLogicManager()->_items[kItem2].inPocket = 0;
+	getLogicManager()->_items[kItem3].inPocket = 0;
+	getLogicManager()->_items[kItem5].inPocket = 0;
+	getLogicManager()->_items[kItem7].inPocket = 0;
+	getLogicManager()->_items[kItem9].inPocket = 0;
+	getLogicManager()->_items[kItemBeetle].inPocket = 0;
+	getLogicManager()->_items[kItem11].inPocket = 0;
+	getLogicManager()->_items[kItem17].inPocket = 0;
+	getLogicManager()->_items[kItemFirebird].inPocket = 0;
+	getLogicManager()->_items[kItemBriefcase].inPocket = 0;
+	getLogicManager()->_items[kItemCorpse].inPocket = 0;
+	getLogicManager()->_items[kItemGreenJacket].inPocket = 0;
+	getLogicManager()->_items[kItem22].inPocket = 0;
+	getLogicManager()->_items[kItemMatchBox].closeUp = 31;
+	getLogicManager()->_items[kItemTelegram].closeUp = 32;
+	getLogicManager()->_items[kItemPassengerList].closeUp = 33;
+	getLogicManager()->_items[kItemScarf].closeUp = 34;
+	getLogicManager()->_items[kItemParchemin].closeUp = 35;
+	getLogicManager()->_items[kItemFirebird].closeUp = 38;
+	getLogicManager()->_items[kItemBriefcase].closeUp = 39;
+	getLogicManager()->_items[kItemPaper].closeUp = 37;
+	getLogicManager()->_items[kItemArticle].closeUp = 36;
+	getLogicManager()->_items[kItemTelegram].haveIt = 1;
+	getLogicManager()->_items[kItemArticle].haveIt = 1;
+	getLogicManager()->_globals[kProgressPortrait] = isDemo() ? 34: 32;
+	getLogicManager()->_globals[kProgressChapter] = isDemo() ? 3 : 1;
 	getLogicManager()->_lastSavegameSessionTicks = 0;
-	getLogicManager()->_currentGameSessionTicks = 0;
-	getLogicManager()->_useLastSavedNodeIndex = 0;
-	getLogicManager()->_lastNodeIndex = 0;
-	getLogicManager()->_lastSavedNodeIndex = 0;
-	getLogicManager()->_inventorySelectedItemIdx = 0;
+	getLogicManager()->_realTime = 0;
+	getLogicManager()->_closeUp = 0;
+	getLogicManager()->_nodeReturn = 0;
+	getLogicManager()->_nodeReturn2 = 0;
+	getLogicManager()->_activeItem = 0;
 	getLogicManager()->_gameTime = isDemo() ? 2241000 : 1037700;
-	getLogicManager()->_gameTimeTicksDelta = 3;
-	getLogicManager()->_trainNodeIndex = 40;
+	getLogicManager()->_timeSpeed = 3;
+	getLogicManager()->_activeNode = 40;
 }
 
 void LastExpressEngine::startNewGame() {

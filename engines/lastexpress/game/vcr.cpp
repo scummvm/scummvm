@@ -41,12 +41,12 @@ void VCR::virginSaveFile() {
 
 	assert(_engine->_savegameFilename);
 
-	fileHeader.signature = 0x12001200;
-	fileHeader.numSavePoints = 0;
-	fileHeader.offset = sizeof(SVCRFileHeader);
-	fileHeader.savePointsOffset = sizeof(SVCRFileHeader);
-	fileHeader.skipSoundLoading = 0;
-	fileHeader.gammaLevel = _engine->getGraphicsManager()->getGammaLevel();
+	fileHeader.magicNumber = 0x12001200;
+	fileHeader.numVCRGames = 0;
+	fileHeader.nextWritePos = sizeof(SVCRFileHeader);
+	fileHeader.realWritePos = sizeof(SVCRFileHeader);
+	fileHeader.lastIsTemporary = 0;
+	fileHeader.brightness = _engine->getGraphicsManager()->getGammaLevel();
 	fileHeader.saveVersion = 9;
 	fileHeader.volume = _engine->_soundMan->getMasterVolume();
 
@@ -62,7 +62,7 @@ void VCR::writeSavePoint(int type, int entity, int event) {
 
 	CVCRFile *saveFile = new CVCRFile(_engine);
 
-	if (_engine->getLogicManager()->_trainNodeIndex <= 30) {
+	if (_engine->getLogicManager()->_activeNode <= 30) {
 		delete saveFile;
 		return;
 	}
@@ -80,41 +80,41 @@ void VCR::writeSavePoint(int type, int entity, int event) {
 		return;
 	}
 
-	saveFile->seek(fileHeader.offset, 0);
+	saveFile->seek(fileHeader.nextWritePos, 0);
 
-	if (fileHeader.numSavePoints > 0) {
-		saveFile->seek(fileHeader.savePointsOffset, 0);
+	if (fileHeader.numVCRGames > 0) {
+		saveFile->seek(fileHeader.realWritePos, 0);
 		saveFile->read(&savePointHeader, 32, 1, 0, 1);
 
 		if ((!_engine->getSaveManager()->checkSavePointHeader(&savePointHeader)) ||
-			(savePointHeader.gameTime > _engine->getLogicManager()->_gameTime) ||
-			(type == 5 && savePointHeader.gameTime == _engine->getLogicManager()->_gameTime)) {
+			(savePointHeader.time > _engine->getLogicManager()->_gameTime) ||
+			(type == 5 && savePointHeader.time == _engine->getLogicManager()->_gameTime)) {
 			saveFile->close();
 			delete saveFile;
 			return;
 		}
 
-		saveFile->seek(fileHeader.offset, 0);
-		if ((type == 1 || type == 2) && savePointHeader.saveType == 5 && (_engine->getLogicManager()->_gameTime - savePointHeader.gameTime) < 2700) {
-			saveFile->seek(fileHeader.savePointsOffset, 0);
-			fileHeader.numSavePoints--;
+		saveFile->seek(fileHeader.nextWritePos, 0);
+		if ((type == 1 || type == 2) && savePointHeader.type == 5 && (_engine->getLogicManager()->_gameTime - savePointHeader.time) < 2700) {
+			saveFile->seek(fileHeader.realWritePos, 0);
+			fileHeader.numVCRGames--;
 		}
 	}
 
 	if (type != 3 && type != 4)
-		fileHeader.savePointsOffset = saveFile->tell();
+		fileHeader.realWritePos = saveFile->tell();
 
 	_engine->getSaveManager()->writeSavePoint(saveFile, type, entity, event);
 
-	if (!fileHeader.skipSoundLoading)
-		++fileHeader.numSavePoints;
+	if (!fileHeader.lastIsTemporary)
+		++fileHeader.numVCRGames;
 
 	if (type == 3 || type == 4) {
-		fileHeader.skipSoundLoading = 1;
+		fileHeader.lastIsTemporary = 1;
 	} else {
-		fileHeader.skipSoundLoading = 0;
-		fileHeader.offset = saveFile->tell();
-		_engine->getLogicManager()->_lastSavegameSessionTicks = _engine->getLogicManager()->_currentGameSessionTicks;
+		fileHeader.lastIsTemporary = 0;
+		fileHeader.nextWritePos = saveFile->tell();
+		_engine->getLogicManager()->_lastSavegameSessionTicks = _engine->getLogicManager()->_realTime;
 	}
 
 	_engine->getSaveManager()->checkFileHeader(&fileHeader);
@@ -286,10 +286,10 @@ void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
 		} else {
 			chosenTime = 0;
 
-			if (_engine->getLogicManager()->_gameProgress[kProgressChapter] <= 1) {
+			if (_engine->getLogicManager()->_globals[kProgressChapter] <= 1) {
 				cdNum = 1;
 			} else {
-				cdNum = (_engine->getLogicManager()->_gameProgress[kProgressChapter] > 3) + 2;
+				cdNum = (_engine->getLogicManager()->_globals[kProgressChapter] > 3) + 2;
 			}
 
 			if (_engine->getArchiveManager()->isCDAvailable(cdNum, path, sizeof(path))) {
@@ -348,8 +348,8 @@ void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
 		error("Save game file \"%s\" is corrupt", _engine->_savegameFilename);
 	}
 
-	_engine->_lastSavePointIdInFile = header.numSavePoints;
-	_engine->_gameTimeOfLastSavePointInFile = _engine->_savePointHeaders[header.numSavePoints].gameTime;
+	_engine->_lastSavePointIdInFile = header.numVCRGames;
+	_engine->_gameTimeOfLastSavePointInFile = _engine->_savePointHeaders[header.numVCRGames].time;
 
 	if (flag)
 		_engine->_currentSavePoint = _engine->_lastSavePointIdInFile;
@@ -357,11 +357,11 @@ void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
 	if (!_engine->_gracePeriodTimer)
 		_engine->_gracePeriodIndex = 0;
 
-	if (!_engine->getLogicManager()->_gameProgress[kProgressChapter])
-		_engine->getLogicManager()->_gameProgress[kProgressChapter] = 1;
+	if (!_engine->getLogicManager()->_globals[kProgressChapter])
+		_engine->getLogicManager()->_globals[kProgressChapter] = 1;
 
-	_engine->getLogicManager()->_gameTime = _engine->_savePointHeaders[_engine->_currentSavePoint].gameTime;
-	_engine->getLogicManager()->_gameProgress[kProgressChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].chapter;
+	_engine->getLogicManager()->_gameTime = _engine->_savePointHeaders[_engine->_currentSavePoint].time;
+	_engine->getLogicManager()->_globals[kProgressChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].partNumber;
 
 	if (_engine->_gameTimeOfLastSavePointInFile >= 1061100) {
 		_engine->getClock()->startClock(_engine->getLogicManager()->_gameTime);
@@ -397,7 +397,7 @@ void VCR::autoRewind(int saveType, int32 time) {
 
 			selectedIdx = _engine->_currentSavePoint;
 			do {
-				if (_engine->_savePointHeaders[selectedIdx].gameTime <= time)
+				if (_engine->_savePointHeaders[selectedIdx].time <= time)
 					break;
 
 				selectedIdx--;
@@ -436,7 +436,7 @@ void VCR::autoRewind(int saveType, int32 time) {
 
 		if (selectedIdx) {
 			_currentSavePointInVCR = selectedIdx;
-			_engine->getClock()->setClock(_engine->_savePointHeaders[selectedIdx].gameTime);
+			_engine->getClock()->setClock(_engine->_savePointHeaders[selectedIdx].time);
 		}
 	}
 }
@@ -459,7 +459,7 @@ bool VCR::isVirgin(int savegameIndex) {
 	if (_engine->getSaveManager()->fileExists(_engine->_savegameNames[savegameIndex]) &&
 		file->open(_engine->_savegameNames[savegameIndex], CVCRMODE_RB)) {
 		if (file->read(&header, sizeof(SVCRFileHeader), 1, false, false) &&
-			_engine->getSaveManager()->checkFileHeader(&header) && header.numSavePoints > 0) {
+			_engine->getSaveManager()->checkFileHeader(&header) && header.numVCRGames > 0) {
 			file->close();
 			delete file;
 
@@ -477,7 +477,7 @@ bool VCR::currentEndsGame() {
 	SVCRSavePointHeader *header = &_engine->_savePointHeaders[_engine->_currentSavePoint];
 	int32 latestGameEvent = header->latestGameEvent;
 
-	return _engine->_lastSavePointIdInFile == _engine->_currentSavePoint && header->saveType == 2 && 
+	return _engine->_lastSavePointIdInFile == _engine->_currentSavePoint && header->type == 2 && 
 		(  latestGameEvent == kEventAnnaKilled
 		|| latestGameEvent == kEventKronosHostageAnnaNoFirebird
 		|| latestGameEvent == kEventKahinaPunchBaggageCarEntrance
@@ -565,7 +565,7 @@ void VCR::storeSettings() {
 			return;
 		}
 
-		header.gammaLevel = _engine->getGraphicsManager()->getGammaLevel();
+		header.brightness = _engine->getGraphicsManager()->getGammaLevel();
 		header.volume = _engine->getSoundManager()->getMasterVolume();
 
 		file->seek(0, SEEK_SET);
@@ -589,7 +589,7 @@ void VCR::loadSettings() {
 		if (file->read(&header, sizeof(SVCRFileHeader), 1, false, false) == 1) {
 			if (_engine->getSaveManager()->checkFileHeader(&header)) {
 				file->seek(0, SEEK_SET);
-				_engine->getGraphicsManager()->setGammaLevel(header.gammaLevel);
+				_engine->getGraphicsManager()->setGammaLevel(header.brightness);
 				_engine->getSoundManager()->setMasterVolume(header.volume);
 			}
 
@@ -607,28 +607,28 @@ void VCR::loadSettings() {
 void VCR::rewind() {
 	if (_engine->_currentSavePoint) {
 		_currentSavePointInVCR = 0;
-		_engine->getClock()->setClock(_engine->_savePointHeaders->gameTime);
+		_engine->getClock()->setClock(_engine->_savePointHeaders->time);
 	}
 }
 
 void VCR::forward() {
 	if (_engine->_lastSavePointIdInFile > _engine->_currentSavePoint) {
 		_currentSavePointInVCR = _engine->_lastSavePointIdInFile;
-		_engine->getClock()->setClock(_engine->_savePointHeaders[_engine->_lastSavePointIdInFile].gameTime);
+		_engine->getClock()->setClock(_engine->_savePointHeaders[_engine->_lastSavePointIdInFile].time);
 	}
 }
 
 void VCR::stop() {
 	_currentSavePointInVCR = _engine->_currentSavePoint;
-	_engine->getClock()->stopClock(_engine->_savePointHeaders[_engine->_currentSavePoint].gameTime);
+	_engine->getClock()->stopClock(_engine->_savePointHeaders[_engine->_currentSavePoint].time);
 }
 
 void VCR::seekToTime(int32 time) {
 	int bestIdx = 0;
-	int32 minDiff = ABS<int32>(_engine->_savePointHeaders[0].gameTime - time);
+	int32 minDiff = ABS<int32>(_engine->_savePointHeaders[0].time - time);
 
 	for (int i = 0; i <= _engine->_lastSavePointIdInFile; i++) {
-		int32 curDiff = ABS<int32>(_engine->_savePointHeaders[i].gameTime - time);
+		int32 curDiff = ABS<int32>(_engine->_savePointHeaders[i].time - time);
 		if (curDiff < minDiff) {
 			minDiff = curDiff;
 			bestIdx = i;
@@ -636,7 +636,7 @@ void VCR::seekToTime(int32 time) {
 	}
 
 	_currentSavePointInVCR = bestIdx;
-	_engine->getClock()->setClock(_engine->_savePointHeaders[bestIdx].gameTime);
+	_engine->getClock()->setClock(_engine->_savePointHeaders[bestIdx].time);
 }
 
 void VCR::updateCurGame(int32 fromTime, int32 toTime, bool searchEntry) {
@@ -649,7 +649,7 @@ void VCR::updateCurGame(int32 fromTime, int32 toTime, bool searchEntry) {
 		if (toTime >= fromTime) {
 			if (searchEntry) {
 				for (int idx = _engine->_currentSavePoint; idx >= 0; --idx) {
-					int32 gameTime = _engine->_savePointHeaders[idx].gameTime;
+					int32 gameTime = _engine->_savePointHeaders[idx].time;
 					if (gameTime <= fromTime && minTimeDiff >= fromTime - gameTime) {
 						minTimeDiff = fromTime - gameTime;
 						newMenuIdx = idx;
@@ -660,7 +660,7 @@ void VCR::updateCurGame(int32 fromTime, int32 toTime, bool searchEntry) {
 			}
 		} else if (searchEntry) {
 			for (int idx = _engine->_currentSavePoint; idx <= _engine->_lastSavePointIdInFile; ++idx) {
-				int32 gameTime = _engine->_savePointHeaders[idx].gameTime;
+				int32 gameTime = _engine->_savePointHeaders[idx].time;
 				if (gameTime >= fromTime && minTimeDiff > gameTime - fromTime) {
 					minTimeDiff = gameTime - fromTime;
 					newMenuIdx = idx;
@@ -675,8 +675,8 @@ void VCR::updateCurGame(int32 fromTime, int32 toTime, bool searchEntry) {
 	}
 
 	if (_engine->_currentSavePoint == _currentSavePointInVCR &&
-		_engine->_savePointHeaders[newMenuIdx].chapter != _engine->getLogicManager()->_gameProgress[kProgressChapter]) {
-		_engine->getLogicManager()->_gameProgress[kProgressChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].chapter;
+		_engine->_savePointHeaders[newMenuIdx].partNumber != _engine->getLogicManager()->_globals[kProgressChapter]) {
+		_engine->getLogicManager()->_globals[kProgressChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].partNumber;
 	}
 }
 

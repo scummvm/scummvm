@@ -300,7 +300,7 @@ void LogicManager::HAND_HeadWait_RebeccaHereWeAre(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
 		case 1:
-			switch (_gameProgress[kProgressChapter]) {
+			switch (_globals[kProgressChapter]) {
 			case 1:
 				playDialog(kCharacterHeadWait, "REB1198", -1, 30);
 				break;
@@ -1509,8 +1509,8 @@ void LogicManager::HAND_HeadWait_Hiding(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterHeadWait)[0]) {
-			if (getCharacterCurrentParams(kCharacterHeadWait)[5] || (getCharacterCurrentParams(kCharacterHeadWait)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterHeadWait)[5] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterHeadWait)[5] || (getCharacterCurrentParams(kCharacterHeadWait)[5] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterHeadWait)[5] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterHeadWait)[5] = 0x7FFFFFFF;
@@ -1562,8 +1562,8 @@ void LogicManager::HAND_HeadWait_Hiding(HAND_PARAMS) {
 			setDoor(38, kCharacterHeadWait, 1, 10, 9);
 
 			if (getCharacterCurrentParams(kCharacterHeadWait)[0]) {
-				if (getCharacterCurrentParams(kCharacterHeadWait)[5] || (getCharacterCurrentParams(kCharacterHeadWait)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-					if (getCharacterCurrentParams(kCharacterHeadWait)[5] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterHeadWait)[5] || (getCharacterCurrentParams(kCharacterHeadWait)[5] = _realTime + 75, _realTime != -75)) {
+					if (getCharacterCurrentParams(kCharacterHeadWait)[5] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterHeadWait)[5] = 0x7FFFFFFF;
