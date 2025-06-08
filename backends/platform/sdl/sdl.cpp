@@ -401,12 +401,10 @@ void OSystem_SDL::initBackend() {
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	_oglType = OpenGL::kContextNone;
-	_supportsFrameBuffer = false;
 	_supportsShaders = false;
 #if USE_FORCED_GLES2
 	// Framebuffers and shaders are always available with GLES2
 	_oglType = OpenGL::kContextGLES2;
-	_supportsFrameBuffer = true;
 	_supportsShaders = true;
 #else
 	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
@@ -452,7 +450,6 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	}
 
 	OpenGLContext.initialize(_oglType);
-	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
 	_supportsShaders = OpenGLContext.enginesShadersSupported;
 	OpenGLContext.reset();
 #if SDL_VERSION_ATLEAST(3, 0, 0)
@@ -468,7 +465,6 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	// SDL 1.2 only supports OpenGL
 	_oglType = OpenGL::kContextGL;
 	OpenGLContext.initialize(_oglType);
-	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
 	_supportsShaders = OpenGLContext.enginesShadersSupported;
 	OpenGLContext.reset();
 #endif

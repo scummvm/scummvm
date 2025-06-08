@@ -150,7 +150,6 @@ protected:
 	void detectAntiAliasingSupport();
 
 	OpenGL::ContextType _oglType;
-	bool _supportsFrameBuffer;
 	bool _supportsShaders;
 	Common::Array<uint> _antiAliasLevels;
 #endif
