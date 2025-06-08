@@ -104,18 +104,11 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
 	state.vsync         = getFeatureState(OSystem::kFeatureVSync);
+	state.rotation      = _rotationMode;
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
 	return state;
-}
-
-Common::RotationMode SdlGraphicsManager::getRotationMode() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	return Common::parseRotationMode(ConfMan.getInt("rotation_mode"));
-#else
-	return Common::kRotationNormal;
-#endif
 }
 
 bool SdlGraphicsManager::setState(const State &state) {
@@ -137,6 +130,7 @@ bool SdlGraphicsManager::setState(const State &state) {
 		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
 		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
 		setFeatureState(OSystem::kFeatureVSync, state.vsync);
+		setRotationMode(state.rotation);
 
 	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
 		return false;
@@ -341,13 +335,6 @@ void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint32 flags) {
 	if (!_window) {
 		return false;
-	}
-	Common::RotationMode rotation = getRotationMode();
-
-	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
-		int w = width, h = height;
-		width = h;
-		height = w;
 	}
 
 	// width *=3;

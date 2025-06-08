@@ -822,6 +822,7 @@ void OptionsDialog::apply() {
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 		g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
 		g_system->setScaler(ConfMan.get("scaler", _domain).c_str(), ConfMan.getInt("scale_factor", _domain));
+		g_system->setRotationMode(ConfMan.getInt("rotation_mode", _domain));
 		g_system->setShader(ConfMan.getPath("shader", _domain));
 
 		if (ConfMan.hasKey("aspect_ratio"))
@@ -832,10 +833,6 @@ void OptionsDialog::apply() {
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
 		if (ConfMan.hasKey("vsync"))
 			g_system->setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync", _domain));
-
-		if (g_system->hasFeature(OSystem::kFeatureRotationMode)) {
-			g_system->setFeatureState(OSystem::kFeatureRotationMode, ConfMan.hasKey("rotation_mode", _domain));
-		}
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 

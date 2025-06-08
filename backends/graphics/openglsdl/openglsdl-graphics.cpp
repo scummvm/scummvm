@@ -286,10 +286,6 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 		}
 		break;
 
-	case OSystem::kFeatureRotationMode:
-		notifyResize(getWindowWidth(), getWindowHeight());
-		break;
-
 	default:
 		OpenGLGraphicsManager::setFeatureState(f, enable);
 	}

@@ -100,6 +100,10 @@ int ModularGraphicsBackend::getStretchMode() const {
 	return _graphicsManager->getStretchMode();
 }
 
+bool ModularGraphicsBackend::setRotationMode(Common::RotationMode rotation) {
+	return _graphicsManager->setRotationMode(rotation);
+}
+
 uint ModularGraphicsBackend::getDefaultScaler() const {
 	return _graphicsManager->getDefaultScaler();
 }

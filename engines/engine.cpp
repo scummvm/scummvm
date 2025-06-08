@@ -253,6 +253,9 @@ void initCommonGFX(bool is3D) {
 	if (gameDomain->contains("stretch_mode"))
 		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 
+	if (gameDomain->contains("rotation_mode"))
+		g_system->setRotationMode(ConfMan.getInt("rotation_mode"));
+
 	if (gameDomain->contains("shader"))
 		g_system->setShader(ConfMan.getPath("shader"));
 

@@ -864,7 +864,6 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 
 	if (_osdMessageSurface) {
-		Common::RotationMode rotationMode = getRotationMode();
 		// Update alpha value.
 		const int diff = g_system->getMillis(false) - _osdMessageFadeStartTime;
 		if (diff > 0) {
@@ -882,7 +881,7 @@ void OpenGLGraphicsManager::updateScreen() {
 
 		int osdWidth = _osdMessageSurface->getWidth(),
 		    osdHeight = _osdMessageSurface->getHeight();
-		if (rotationMode == Common::kRotation90 || rotationMode == Common::kRotation270) {
+		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 			SWAP(osdWidth, osdHeight);
 		}
 
@@ -907,11 +906,10 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 
 	if (_osdIconSurface) {
-		Common::RotationMode rotationMode = getRotationMode();
 		int osdWidth = _osdIconSurface->getWidth(),
 		    osdHeight = _osdIconSurface->getHeight();
 		int dstX, dstY;
-		switch (rotationMode) {
+		switch (_rotationMode) {
 		default:
 		case Common::kRotationNormal:
 			dstX = _windowWidth - osdWidth - kOSDIconRightMargin;
@@ -1354,7 +1352,7 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	// readable in case it needs to be scaled and does not affect it
 	// otherwise.
 	_osdMessageSurface->enableLinearFiltering(true);
-	_osdMessageSurface->setRotation(getRotationMode());
+	_osdMessageSurface->setRotation(_rotationMode);
 
 	_osdMessageSurface->allocate(width, height);
 
@@ -1413,7 +1411,7 @@ void OpenGLGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *ic
 		// readable in case it needs to be scaled and does not affect it
 		// otherwise.
 		_osdIconSurface->enableLinearFiltering(true);
-		_osdIconSurface->setRotation(getRotationMode());
+		_osdIconSurface->setRotation(_rotationMode);
 
 		_osdIconSurface->allocate(converted->w, converted->h);
 
@@ -1450,14 +1448,13 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 	// Setup backbuffer size.
 	_targetBuffer->setSize(width, height);
 
-	int rotation = getRotationMode();
 	uint overlayWidth = width;
 	uint overlayHeight = height;
 
 	int rotatedWidth = _windowWidth;
 	int rotatedHeight = _windowHeight;
 
-	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+	if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 		overlayWidth = height;
 		overlayHeight = width;
 		rotatedWidth = _windowHeight;
@@ -1879,10 +1876,9 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 				     _gameDrawRect.width(),
 				     _gameDrawRect.height());
 
-	Common::RotationMode rotation = getRotationMode();
 	int rotatedWidth = _gameDrawRect.width();
 	int rotatedHeight = _gameDrawRect.height();
-	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+	if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 		SWAP(rotatedWidth, rotatedHeight);
 	}
 	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * rotatedWidth / (int)_currentState.gameWidth,
@@ -1919,8 +1915,6 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 		return;
 	}
 
-	Common::RotationMode rotation = getRotationMode();
-
 	uint cursorWidth = _cursor->getWidth();
 	uint cursorHeight = _cursor->getHeight();
 
@@ -1936,7 +1930,7 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 	if (!_cursorDontScale && _gameScreen) {
 		int rotatedWidth = _gameDrawRect.width();
 		int rotatedHeight = _gameDrawRect.height();
-		if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 			SWAP(rotatedWidth, rotatedHeight);
 		}
 
@@ -1950,7 +1944,7 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 		_cursorHeightScaled   = fracToDouble(cursorHeight       * screenScaleFactorY);
 	}
 
-	switch (rotation) {
+	switch (_rotationMode) {
 	default:
 	case Common::kRotationNormal:
 		// Nothing to do
@@ -1973,34 +1967,32 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 }
 
 void OpenGLGraphicsManager::updateTextureSettings() {
-	Common::RotationMode rotation = getRotationMode();
-
 #if !USE_FORCED_GLES
 	if (_libretroPipeline) {
 		_libretroPipeline->enableLinearFiltering(_currentState.filtering);
-		_libretroPipeline->setRotation(rotation);
+		_libretroPipeline->setRotation(_rotationMode);
 	}
 #endif
 
 	if (_gameScreen) {
 		_gameScreen->enableLinearFiltering(_currentState.filtering);
-		_gameScreen->setRotation(rotation);
+		_gameScreen->setRotation(_rotationMode);
 	}
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	if (_renderer3d) {
-		_renderer3d->setRotation(rotation);
+		_renderer3d->setRotation(_rotationMode);
 	}
 #endif
 
 	if (_cursor) {
 		_cursor->enableLinearFiltering(_currentState.filtering);
-		_cursor->setRotation(rotation);
+		_cursor->setRotation(_rotationMode);
 	}
 
 	if (_cursorMask) {
 		_cursorMask->enableLinearFiltering(_currentState.filtering);
-		_cursorMask->setRotation(rotation);
+		_cursorMask->setRotation(_rotationMode);
 	}
 
 	// The overlay UI should also obey the filtering choice (managed via the Filter Graphics checkbox in Graphics Tab).
@@ -2008,7 +2000,7 @@ void OpenGLGraphicsManager::updateTextureSettings() {
 	// It may look crude, but it should be crispier and it's left to user choice to enable filtering.
 	if (_overlay) {
 		_overlay->enableLinearFiltering(_currentState.filtering);
-		_overlay->setRotation(rotation);
+		_overlay->setRotation(_rotationMode);
 	}
 }
 
