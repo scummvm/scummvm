@@ -66,14 +66,14 @@ public:
 
 protected:
 
-	virtual void DoDataExchange(CDataExchange *);
-	virtual BOOL OnInitDialog(void);
+	virtual void DoDataExchange(CDataExchange *) override;
+	virtual BOOL OnInitDialog(void) override;
 
 	void OnClose();
 	void OnPaint();
 	void OnLButtonUp(UINT, CPoint);
-	void OnCancel();
-	void OnOK();
+	void OnCancel() override;
+	void OnOK() override;
 	DECLARE_MESSAGE_MAP()
 	void MyFocusRect(CDC*, CRect, int nDrawMode, COLORREF);
 

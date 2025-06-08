@@ -46,7 +46,7 @@ namespace MazeDoom {
 
 // Starting value defaults
 #define MAX_DIFFICULTY  10  //8
-#define MIN_DIFFICULTY   1  //0 
+#define MIN_DIFFICULTY   1  //0
 
 // Timer constants
 #define MIN_TIME             15                     //  15 Seconds
@@ -74,7 +74,7 @@ namespace MazeDoom {
 
 // Timer stuff
 #define GAME_TIMER      1
-#define CLICK_TIME   1000       // Every Second, update timer clock 
+#define CLICK_TIME   1000       // Every Second, update timer clock
 
 // Rules files
 #define RULES_TEXT      "MAZEOD.TXT"
@@ -123,7 +123,7 @@ private:
 	void OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();

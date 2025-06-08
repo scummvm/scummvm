@@ -42,7 +42,7 @@ public:
 
 protected:
 
-	virtual VOID DoDataExchange(CDataExchange *);
+	virtual VOID DoDataExchange(CDataExchange *) override;
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	virtual BOOL OnInitDialog(VOID) override;
 	VOID PutDlgData(VOID);

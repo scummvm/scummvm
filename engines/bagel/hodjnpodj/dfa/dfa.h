@@ -75,7 +75,7 @@ namespace DFA {
 #define BEE_WAV             ".\\SOUND\\BEE.WAV"
 #define WATCH_WAV           ".\\SOUND\\CUCKOO.WAV"
 
-#define NUM_HIT_SOUNDS      11      // Number of sounds available for a hit                                                    
+#define NUM_HIT_SOUNDS      11      // Number of sounds available for a hit
 #define NUM_MISS_SOUNDS     3       // Number of sounds available for a missed hit
 #define NUM_BEAVERS         7       // Number of beavers to hit
 
@@ -95,7 +95,7 @@ namespace DFA {
 #define FLOWERS_DX      82
 #define FLOWERS_DY      136
 
-#define WATCH_X         437         // 436              
+#define WATCH_X         437         // 436
 #define WATCH_Y         401         // 401
 #define WATCH_DX        70
 #define WATCH_DY        60
@@ -154,7 +154,7 @@ private:
 	void OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	BOOL LoadBeaverSounds();
 	void ReleaseBeaverSounds(void);
 	//

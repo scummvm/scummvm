@@ -51,14 +51,14 @@ private:
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(C1ButtonDialog)
 	afx_msg void OnPaint();
-	virtual void OnOK();
-	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG

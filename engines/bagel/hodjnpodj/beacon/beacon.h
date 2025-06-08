@@ -31,7 +31,7 @@ namespace Beacon {
 #define ABS(a)      ( (a > 0) ? (a) : (-a) )
 
 // Border info
-#define TOP_BORDER       24 //25     
+#define TOP_BORDER       24 //25
 #define BOTTOM_BORDER    16
 #define SIDE_BORDER      16
 
@@ -47,7 +47,7 @@ namespace Beacon {
 #define BUTTON_ENTRY    176     // First entry of the Button palette slots
 
 #define GRID_WIDTH        8     //5     // Number of pixels
-#define GRID_HEIGHT       8     //5 
+#define GRID_HEIGHT       8     //5
 
 // Game playing area
 #define ART_WIDTH       488
@@ -65,7 +65,7 @@ namespace Beacon {
 
 // Start area
 #define START_OFFSET_X      36      // GRID_WIDTH * 4.5
-#define START_OFFSET_Y      28      // GRID_HEIGHT * 3.5    
+#define START_OFFSET_Y      28      // GRID_HEIGHT * 3.5
 #define START_WIDTH         72      // GRID_WIDTH * 9
 #define START_HEIGHT        88      // GRID_HEIGHT * 11
 
@@ -73,7 +73,7 @@ namespace Beacon {
 #define BLOCK_SPACE_X         6
 #define BLOCK_SPACE_Y         6
 #define BLOCK_OFFSET_X      (ART_WIDTH + SIDE_BORDER + BLOCK_SPACE_X)
-#define BLOCK_OFFSET_Y       74         // TOP_BORDER + 50 
+#define BLOCK_OFFSET_Y       74         // TOP_BORDER + 50
 #define BLOCK_WIDTH          50
 #define BLOCK_HEIGHT         40
 
@@ -137,7 +137,7 @@ private:
 	void OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();

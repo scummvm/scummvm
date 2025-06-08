@@ -75,7 +75,7 @@ protected:
 	VOID        BallvsPaddle(VOID);
 	VOID        BallvsBrick(DOUBLE);
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	LONG        OnJoyStick(UINT, LONG);
 	VOID        OnPaint(VOID);
 	VOID        OnTimer(UINT);

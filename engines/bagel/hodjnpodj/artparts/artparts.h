@@ -62,8 +62,8 @@ namespace ArtParts {
 #define SHOW_TIMER              2
 #define MS_SCALE             1000       // Scale seconds to milliseconds
 
-#define CLICK_TIME           1000       // Every Second, update timer clock 
-#define PAUSE_TIME           3000       // Wait three seconds before erasing hint screen 
+#define CLICK_TIME           1000       // Every Second, update timer clock
+#define PAUSE_TIME           3000       // Wait three seconds before erasing hint screen
 
 // Sound files
 #define PICK_SOUND      ".\\sound\\pickart.wav"
@@ -132,7 +132,7 @@ private:
 	VOID        OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();

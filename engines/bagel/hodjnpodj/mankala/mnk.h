@@ -396,7 +396,7 @@ typedef class FAR CMnkData {
 
 #define SPRITE_COUNT    15  // maximum sprites to be displayed
 #define BUMPER_COUNT    5   // number of bumper sprites to display
-#define SPRITE_TIMER    50  // identifier for sprite timer 
+#define SPRITE_TIMER    50  // identifier for sprite timer
 #define SPRITE_INTERVAL 10      // time interval between sprite updates
 #define SPRITE_GENERATE 30    // number of updates per sprite creation
 
@@ -549,7 +549,7 @@ private: BOOL OptionsDialog(void) ;
 //    static    void MoveSprite(CDC *pDC,CSprite *pSprite);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	virtual long OnMCINotify(WPARAM W, LPARAM L);
 	virtual long OnMMIONotify(WPARAM W, LPARAM L);
 

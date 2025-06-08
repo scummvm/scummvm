@@ -112,15 +112,15 @@ private:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CNotebook)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	virtual BOOL OnInitDialog(void);
+	virtual BOOL OnInitDialog(void) override;
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	virtual void OnOK(void);
-	virtual void OnCancel(void);
+	virtual void OnOK(void) override;
+	virtual void OnCancel(void) override;
 	afx_msg void OnDestroy(void);
 	afx_msg void OnPaint(void);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);

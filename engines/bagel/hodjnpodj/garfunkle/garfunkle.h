@@ -128,7 +128,7 @@ namespace Garkfunkle {
 #define ANIM_TIMER      4       // time to change frames
 #define TIME_LIMIT      10000   // 10 seconds for player response
 #define PAUSE_TIME      50      // in milliseconds, so = 1/2 sec
-#define INCREMENT_RATE  5       // rate by which speed is increased     
+#define INCREMENT_RATE  5       // rate by which speed is increased
 
 #define RULES_TEXT      "GARFUNK.TXT"               // rules file
 
@@ -207,7 +207,7 @@ private:
 	void OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void OnDestroy();
 
 	//{{AFX_MSG( CMainWindow )

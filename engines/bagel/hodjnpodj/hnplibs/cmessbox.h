@@ -37,7 +37,7 @@ namespace HodjNPodj {
 #define MESSAGE_WIDTH       186             // standard message box dims
 #define MESSAGE_HEIGHT      20
 
-#define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )  // Row offset from first 
+#define MESSAGE2_ROW_OFFSET ( MESSAGE_HEIGHT + 4 )  // Row offset from first
 // message box
 
 #define IDD_GAMEOVER 201
@@ -61,14 +61,14 @@ public:
 
 protected:
 	// Implementation
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CMessageBox)
 	afx_msg void OnPaint();
-	virtual void OnOK();
-	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG

@@ -41,13 +41,13 @@ public:
 	CDFAOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);
 	void SetInitialOptions(int = 8, int = 1);    // Sets the private members
 	void ClearDialogImage();
-	BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 protected:
 	//{{AFX_MSG(COptions)
-	virtual void OnCancel(void);
-	virtual void OnOK(void);
-	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual void OnCancel(void) override;
+	virtual void OnOK(void) override;
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
@@ -68,13 +68,13 @@ public:
 	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MESSAGEBOX);
 	void SetInitialOptions(int, long);   // Sets the private members
 	void ClearDialogImage();
-	BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 protected:
 	//{{AFX_MSG(COptions)
-	virtual void OnCancel(void);
-	virtual void OnOK(void);
-	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual void OnCancel(void) override;
+	virtual void OnOK(void) override;
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG

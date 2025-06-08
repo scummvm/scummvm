@@ -45,8 +45,8 @@ public:
 
 protected:
 
-	virtual BOOL OnCommand(WPARAM, LPARAM);
-	virtual BOOL OnInitDialog(void);
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual BOOL OnInitDialog(void) override;
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void DispLimit(void);

@@ -90,10 +90,10 @@ public:
 
 protected:
 	void ClearDialogImage(void);
-	virtual void DoDataExchange(CDataExchange*);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual void DoDataExchange(CDataExchange*) override;    // DDX/DDV support
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	afx_msg void OnPrePlace();
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);

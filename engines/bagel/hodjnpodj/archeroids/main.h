@@ -81,7 +81,7 @@ protected:
 	VOID        OnSoundNotify(CSound *pSound);
 	POINT       GetLeftMostBadGuy(VOID);
 
-	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	VOID OnPaint(VOID);
 	VOID OnSysKeyDown(UINT, UINT, UINT);
 	VOID OnKeyDown(UINT, UINT, UINT);

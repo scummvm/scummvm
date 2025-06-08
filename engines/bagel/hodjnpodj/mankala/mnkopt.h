@@ -67,7 +67,7 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CMnkOpt)
@@ -101,15 +101,15 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	void ClearDialogImage(void);
 
 
 	// Generated message map functions
 	//{{AFX_MSG(CMnkUsr)
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnPaint();
 //	afx_msg void OnKillfocusUShells();
 //	afx_msg void OnKillfocusUStrength();
