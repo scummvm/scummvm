@@ -135,6 +135,10 @@ void TextureSurface::enableLinearFiltering(bool enable) {
 	_glTexture.enableLinearFiltering(enable);
 }
 
+void TextureSurface::setRotation(Common::RotationMode rotation) {
+	_glTexture.setRotation(rotation);
+}
+
 void TextureSurface::allocate(uint width, uint height) {
 	// Assure the texture can contain our user data.
 	_glTexture.setSize(width, height);
@@ -571,10 +575,14 @@ void TextureSurfaceCLUT8GPU::enableLinearFiltering(bool enable) {
 	_target->getTexture()->enableLinearFiltering(enable);
 }
 
+void TextureSurfaceCLUT8GPU::setRotation(Common::RotationMode rotation) {
+	_target->getTexture()->setRotation(rotation);
+}
+
 void TextureSurfaceCLUT8GPU::allocate(uint width, uint height) {
 	// Assure the texture can contain our user data.
 	_clut8Texture.setSize(width, height);
-	_target->setSize(width, height, Common::kRotationNormal);
+	_target->setSize(width, height);
 
 	// In case the needed texture dimension changed we will reinitialize the
 	// texture data buffer.

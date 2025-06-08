@@ -133,7 +133,7 @@ static const char *const g_compatFragment =
  * to the input coordinates space */
 class LibRetroTextureTarget : public TextureTarget {
 public:
-	bool setScaledSize(uint width, uint height, const Common::Rect &scalingRect) {
+	bool setScaledSize(uint width, uint height, const Common::Rect &scalingRect, Common::RotationMode rotation) {
 		Texture *texture = getTexture();
 		if (!texture->setSize(width, height)) {
 			return false;
@@ -151,27 +151,97 @@ public:
 		const float ratioW = (float)width  / scalingRect.width();
 		const float ratioH = (float)height / scalingRect.height();
 
-		// Setup scaling projection matrix.
+		// Setup scaling/rotating projection matrix.
 		// This projection takes window screen coordinates and converts it to input coordinates normalized
-		_projectionMatrix(0, 0) = 2.f * ratioW / texWidth;
-		_projectionMatrix(0, 1) = 0.f;
-		_projectionMatrix(0, 2) = 0.f;
-		_projectionMatrix(0, 3) = 0.f;
+		// The rotation is also inverted so 90° is in fact a -90° rotation.
+		// This is a resulting product of ROTATE * SCALE_TRANSLATE
+		switch (rotation) {
+		default:
+		case Common::kRotationNormal:
+			_projectionMatrix(0, 0) = 2.f * ratioW / texWidth;
+			_projectionMatrix(0, 1) = 0.f;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
 
-		_projectionMatrix(1, 0) = 0.f;
-		_projectionMatrix(1, 1) = 2.f * ratioH / texHeight;
-		_projectionMatrix(1, 2) = 0.f;
-		_projectionMatrix(1, 3) = 0.f;
+			_projectionMatrix(1, 0) = 0.f;
+			_projectionMatrix(1, 1) = 2.f * ratioH / texHeight;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
 
-		_projectionMatrix(2, 0) = 0.f;
-		_projectionMatrix(2, 1) = 0.f;
-		_projectionMatrix(2, 2) = 0.f;
-		_projectionMatrix(2, 3) = 0.f;
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
 
-		_projectionMatrix(3, 0) = -1.f - (2.f * scalingRect.left) * ratioW / texWidth;
-		_projectionMatrix(3, 1) = -1.f - (2.f * scalingRect.top) * ratioH / texHeight;
-		_projectionMatrix(3, 2) = 0.0f;
-		_projectionMatrix(3, 3) = 1.0f;
+			_projectionMatrix(3, 0) = -1.f - (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 1) = -1.f - (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		case Common::kRotation90:
+			_projectionMatrix(0, 0) = 0.f;
+			_projectionMatrix(0, 1) = -2.f * ratioW / texWidth;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
+
+			_projectionMatrix(1, 0) = 2.f * ratioH / texHeight;
+			_projectionMatrix(1, 1) = 0.f;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
+
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
+
+			_projectionMatrix(3, 0) = -1.f - (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 1) = 1.f + (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		case Common::kRotation180:
+			_projectionMatrix(0, 0) = -2.f * ratioW / texWidth;
+			_projectionMatrix(0, 1) = 0.f;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
+
+			_projectionMatrix(1, 0) = 0.f;
+			_projectionMatrix(1, 1) = -2.f * ratioH / texHeight;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
+
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
+
+			_projectionMatrix(3, 0) = 1.f + (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 1) = 1.f + (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		case Common::kRotation270:
+			_projectionMatrix(0, 0) = 0.f;
+			_projectionMatrix(0, 1) = 2.f * ratioW / texWidth;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
+
+			_projectionMatrix(1, 0) = -2.f * ratioH / texHeight;
+			_projectionMatrix(1, 1) = 0.f;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
+
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
+
+			_projectionMatrix(3, 0) = 1.f + (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 1) = -1.f - (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		}
 
 		// Directly apply changes when we are active.
 		if (isActive()) {
@@ -293,17 +363,62 @@ void LibRetroPipeline::finishScaling() {
 	 * so everything is flipped when we draw this texture.
 	 * Use custom coordinates to do the flipping. */
 	GLfloat coordinates[4*2];
-	coordinates[0] = _outputRect.left;
-	coordinates[1] = _outputRect.bottom;
 
-	coordinates[2] = _outputRect.right;
-	coordinates[3] = _outputRect.bottom;
+	switch (_rotation) {
+	default:
+	case Common::kRotationNormal:
+		coordinates[0] = _outputRect.left;
+		coordinates[1] = _outputRect.bottom;
 
-	coordinates[4] = _outputRect.left;
-	coordinates[5] = _outputRect.top;
+		coordinates[2] = _outputRect.right;
+		coordinates[3] = _outputRect.bottom;
 
-	coordinates[6] = _outputRect.right;
-	coordinates[7] = _outputRect.top;
+		coordinates[4] = _outputRect.left;
+		coordinates[5] = _outputRect.top;
+
+		coordinates[6] = _outputRect.right;
+		coordinates[7] = _outputRect.top;
+		break;
+	case Common::kRotation90:
+		coordinates[0] = _outputRect.left;
+		coordinates[1] = _outputRect.top;
+
+		coordinates[2] = _outputRect.left;
+		coordinates[3] = _outputRect.bottom;
+
+		coordinates[4] = _outputRect.right;
+		coordinates[5] = _outputRect.top;
+
+		coordinates[6] = _outputRect.right;
+		coordinates[7] = _outputRect.bottom;
+		break;
+	case Common::kRotation180:
+		coordinates[0] = _outputRect.right;
+		coordinates[1] = _outputRect.top;
+
+		coordinates[2] = _outputRect.left;
+		coordinates[3] = _outputRect.top;
+
+		coordinates[4] = _outputRect.right;
+		coordinates[5] = _outputRect.bottom;
+
+		coordinates[6] = _outputRect.left;
+		coordinates[7] = _outputRect.bottom;
+		break;
+	case Common::kRotation270:
+		coordinates[0] = _outputRect.right;
+		coordinates[1] = _outputRect.bottom;
+
+		coordinates[2] = _outputRect.right;
+		coordinates[3] = _outputRect.top;
+
+		coordinates[4] = _outputRect.left;
+		coordinates[5] = _outputRect.bottom;
+
+		coordinates[6] = _outputRect.left;
+		coordinates[7] = _outputRect.top;
+		break;
+	}
 
 	_outputPipeline.drawTexture(*_passes[_passes.size() - 1].target->getTexture(), coordinates);
 
@@ -635,7 +750,7 @@ void LibRetroPipeline::setPipelineState() {
 bool LibRetroPipeline::setupFBOs() {
 	// Setup the input targets sizes
 	for (auto &inputTarget : _inputTargets) {
-		if (!inputTarget.setScaledSize(_inputWidth, _inputHeight, _outputRect)) {
+		if (!inputTarget.setScaledSize(_inputWidth, _inputHeight, _outputRect, _rotation)) {
 			return false;
 		}
 	}
@@ -653,7 +768,7 @@ bool LibRetroPipeline::setupFBOs() {
 		pass.shaderPass->applyScale(sourceW, sourceH, viewportW, viewportH, &sourceW, &sourceH);
 
 		// Resize FBO to fit the output of the pass.
-		if (!pass.target->setSize((uint)sourceW, (uint)sourceH, Common::kRotationNormal)) {
+		if (!pass.target->setSize((uint)sourceW, (uint)sourceH)) {
 			return false;
 		}
 
