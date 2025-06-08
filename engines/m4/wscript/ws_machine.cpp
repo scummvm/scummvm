@@ -875,8 +875,13 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 	*pcOffset += (byte *)myPC - (byte *)oldPC;
 
 	if (myInstruction >= 64) {
+		if (myInstruction > 74)
+			error("Unexpected instruction %d", myInstruction);
 		condOpTable[myInstruction - 64](m, pcOffset);
 	} else if (myInstruction > 0) {
+		if (myInstruction > 15)
+			error("Unexpected instruction %d", myInstruction);
+		
 		bool keepProcessing = immOpTable[myInstruction](m, pcOffset);
 
 		if (!keepProcessing) {
