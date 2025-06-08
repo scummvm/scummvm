@@ -41,12 +41,12 @@ namespace M4 {
 
 #define IS_RIDDLE   g_engine->getGameType() == GType_Riddle
 #define GREY_START	(IS_RIDDLE ? 21 : 32)
-#define NUM_GREYS	(IS_RIDDLE ? 64 : 32)
 #define GREY_END	(IS_RIDDLE ? 58 : 63)
+#define NUM_GREYS   (1 + GREY_END - GREY_START)
 
-#define FREE_START	(IS_RIDDLE ? 59 : 64)
+#define FREE_START	(GREY_END + 1)
 #define FREE_END	255
-#define NUM_FREE	(IS_RIDDLE ? 255 - 59 + 1 : 255 - 64 + 1)
+#define NUM_FREE	(255 - FREE_START + 1)
 
 static HotkeyCB remember_esc_key;
 
@@ -162,7 +162,7 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 
 	// Make translation table to translate colors using entries 59-255 into 21-58 range
 
-	for (int32 i = 0; i < 32; i++) {
+	for (int32 i = 0; i < NUM_GREYS; i++) {
 		int32 bestMatch = 65;
 		int32 minDist = 255;
 

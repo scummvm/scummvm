@@ -68,7 +68,7 @@ struct KernelPal_Globals {
 	RGB8 *_picPal = nullptr;
 	int32 _seriesHash = 0;
 	machine *_seriesAnim8 = nullptr;
-	uint8 _translation[32];		// Only 32 greys in ramp
+	uint8 _translation[38];		// Only 32 greys in ramp for Orion, 38 for Riddle
 
 	int32 _colorAreaX1 = -1;
 	int32 _colorAreaY1 = -1;
