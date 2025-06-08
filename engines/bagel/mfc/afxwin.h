@@ -548,8 +548,6 @@ public:
 			public Graphics::Palette {
 		Impl(const LPLOGPALETTE pal);
 	};
-public:
-	HGDIOBJ m_hObject = nullptr;
 
 public:
 	~CPalette() override {
