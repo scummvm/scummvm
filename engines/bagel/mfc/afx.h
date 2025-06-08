@@ -78,6 +78,10 @@ struct CRuntimeClass {
 		m_pBaseClass = m_pBaseClass_;
 		m_pNextClass = m_pNextClass_;
 	}
+
+	CObject *CreateObject() const {
+		return m_pfnCreateObject();
+	}
 };
 
 class CDumpContext {

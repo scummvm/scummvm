@@ -44,6 +44,7 @@ MODULE_OBJS = \
 	mfc/scrollbar.o \
 	mfc/static.o \
 	mfc/win_app.o \
+	mfc/win_hand.o \
 	mfc/win_thread.o \
 	mfc/wingdi.o \
 	mfc/wnd.o \

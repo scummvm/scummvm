@@ -32,6 +32,7 @@
 #include "bagel/mfc/afxmsg.h"
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
+#include "bagel/mfc/win_hand.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/dialog_template.h"
@@ -446,13 +447,17 @@ struct CCreateContext {
 /*============================================================================*/
 
 class CGdiObject : public CObject {
+	DECLARE_DYNCREATE(CGdiObject)
+
 public:
 	HGDIOBJ m_hObject = nullptr;
-	bool _isTemporary = false;
 
 	operator HGDIOBJ() const {
 		return m_hObject;
 	}
+
+public:
+	static CGdiObject *FromHandle(HGDIOBJ h);
 
 public:
 	~CGdiObject() override {
@@ -1401,6 +1406,11 @@ private:
 	HCURSOR m_hcurWaitCursorRestore = 0;
 	Common::FSNode _currentDirectory;
 	bool _quitFlag = false;
+	CHandleMap *m_pmapHWND = nullptr;
+	CHandleMap *m_pmapHMENU = nullptr;
+	CHandleMap *m_pmapHDC = nullptr;
+	CHandleMap *m_pmapHGDIOBJ = nullptr;
+	CHandleMap *m_pmapHIMAGELIST = nullptr;
 
 private:
 	/**
@@ -1458,6 +1468,8 @@ public:
 	virtual void OnFileNew() {}
 	virtual void OnFileOpen() {}
 	virtual void OnFilePrintSetup() {}
+
+	CHandleMap *afxMapHGDIOBJ(BOOL bCreate);
 
 	/*== ScummVM added functions ==*/
 	void setDirectory(const char *folder);

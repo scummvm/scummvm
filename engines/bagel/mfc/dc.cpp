@@ -270,73 +270,23 @@ CGdiObject *CDC::SelectStockObject(int nIndex) {
 }
 
 CPen *CDC::SelectObject(CPen *pPen) {
-	error("TODO: CDC::SelectObject");
+	HPEN hOld = impl()->Attach(pPen->m_hObject);
+	return (CPen *)CPen::FromHandle(hOld);
 }
 
 CBrush *CDC::SelectObject(CBrush *pBrush) {
-	// Attach new brush
-	HBRUSH oldBrush = impl()->Attach((HBRUSH)pBrush->m_hObject);
-
-	if (pBrush->_isTemporary) {
-		pBrush->Detach();
-		delete pBrush;
-		return nullptr;
-	}
-
-	if (!oldBrush)
-		return nullptr;
-
-	// Create a new temporary CBrush to
-	// encapsulate the returned HBRUSH
-	CBrush *result = new CBrush();
-	result->Attach(oldBrush);
-	result->_isTemporary = true;
-
-	return result;
+	HBRUSH hOld = impl()->Attach(pBrush->m_hObject);
+	return (CBrush *)CBrush::FromHandle(hOld);
 }
 
 CFont *CDC::SelectObject(CFont *pFont) {
-	// Attach new font
-	HFONT oldFont = impl()->Attach((HFONT)pFont->m_hObject);
-
-	if (pFont->_isTemporary) {
-		pFont->Detach();
-		delete pFont;
-		return nullptr;
-	}
-
-	if (!pFont)
-		return nullptr;
-
-	// Create a new temporary CFont to
-	// encapsulate the returned HFONT
-	CFont *result = new CFont();
-	result->Attach(oldFont);
-	result->_isTemporary = true;
-
-	return result;
+	HFONT hOld = impl()->Attach(pFont->m_hObject);
+	return (CFont *)CFont::FromHandle(hOld);
 }
 
 CBitmap *CDC::SelectObject(CBitmap *pBitmap) {
-	// Attach new bitmap
-	HBITMAP oldBitmap = impl()->Attach((HBITMAP)pBitmap->m_hObject);
-
-	if (pBitmap->_isTemporary) {
-		pBitmap->Detach();
-		delete pBitmap;
-		return nullptr;
-	}
-
-	if (!oldBitmap)
-		return nullptr;
-
-	// Create a new temporary CBitmap to
-	// encapsulate the returned HBITMAP
-	CBitmap *result = new CBitmap();
-	result->Attach(oldBitmap);
-	result->_isTemporary = true;
-
-	return result;
+	HBITMAP hOld = impl()->Attach(pBitmap->m_hObject);
+	return (CBitmap *)CBitmap::FromHandle(hOld);
 }
 
 int CDC::SelectObject(CRgn *pRgn) {
@@ -344,33 +294,17 @@ int CDC::SelectObject(CRgn *pRgn) {
 }
 
 CGdiObject *CDC::SelectObject(CGdiObject *pObject) {
-	error("TODO: CDC::SelectObject");
+	HGDIOBJ hOld = impl()->Attach(pObject->m_hObject);
+	return CGdiObject::FromHandle(hOld);
+}
+
+CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
+	HPALETTE hOld = impl()->selectPalette(pPalette->m_hObject);
+	return (CPalette *)CGdiObject::FromHandle(hOld);
 }
 
 COLORREF CDC::GetNearestColor(COLORREF crColor) const {
 	return impl()->GetNearestColor(crColor);
-}
-
-CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
-	// Attach new palette
-	HPALETTE oldPalette = impl()->selectPalette((HPALETTE)pPalette->m_hObject);
-
-	if (pPalette->_isTemporary) {
-		pPalette->Detach();
-		delete pPalette;
-		return nullptr;
-	}
-
-	if (!oldPalette)
-		return nullptr;
-
-	// Create a new temporary CPalette to
-	// encapsulate the returned HPALETTE
-	CPalette *result = new CPalette();
-	result->Attach(oldPalette);
-	result->_isTemporary = true;
-
-	return result;
 }
 
 UINT CDC::RealizePalette() {

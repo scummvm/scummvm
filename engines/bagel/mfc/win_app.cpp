@@ -33,6 +33,14 @@ namespace MFC {
 
 #define FRAME_RATE 50
 
+/**
+ * Used for temporary handle wrapper objects
+ */
+class CTempGdiObject : public CGdiObject {
+	DECLARE_DYNCREATE(CTempGdiObject)
+};
+IMPLEMENT_DYNCREATE(CTempGdiObject, CGdiObject);
+
 IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 
 CWinApp *CWinApp::_activeApp = nullptr;
@@ -47,6 +55,12 @@ CWinApp::CWinApp(const char *appName) :
 
 CWinApp::~CWinApp() {
 	_activeApp = nullptr;
+
+	delete m_pmapHWND;
+	delete m_pmapHMENU;
+	delete m_pmapHDC;
+	delete m_pmapHGDIOBJ;
+	delete m_pmapHIMAGELIST;
 }
 
 BOOL CWinApp::InitApplication() {
@@ -232,6 +246,15 @@ void CWinApp::unlockResource(HGLOBAL hResData) {
 BOOL CWinApp::freeResource(HGLOBAL hResData) {
 	GlobalFree(hResData);
 	return true;
+}
+
+CHandleMap *CWinApp::afxMapHGDIOBJ(BOOL bCreate) {
+	if (m_pmapHGDIOBJ == NULL && bCreate) {
+		m_pmapHGDIOBJ = new CHandleMap(RUNTIME_CLASS(CTempGdiObject),
+			offsetof(CGdiObject, m_hObject));
+	}
+
+	return m_pmapHGDIOBJ;
 }
 
 /*--------------------------------------------*/
