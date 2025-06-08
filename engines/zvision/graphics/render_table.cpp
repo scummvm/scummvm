@@ -85,8 +85,8 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 	uint32 index = point.y * _numColumns + point.x;
 
 	Common::Point newPoint(point);
-	newPoint.x += (_internalBuffer[index]._xDir ? _internalBuffer[index]._Src.right : _internalBuffer[index]._Src.left);
-	newPoint.y += (_internalBuffer[index]._yDir ? _internalBuffer[index]._Src.bottom : _internalBuffer[index]._Src.top);
+	newPoint.x += (_internalBuffer[index]._xDir ? _internalBuffer[index]._src.right : _internalBuffer[index]._src.left);
+	newPoint.y += (_internalBuffer[index]._yDir ? _internalBuffer[index]._src.bottom : _internalBuffer[index]._src.top);
 
 	return newPoint;
 }
@@ -105,8 +105,8 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
               uint32 normalizedX = x - subRect.left;
               uint32 index = sourceOffset + x;
               // RenderTable only stores offsets from the original coordinates
-              sourceYIndex = y + _internalBuffer[index]._Src.top;
-              sourceXIndex = x + _internalBuffer[index]._Src.left;
+              sourceYIndex = y + _internalBuffer[index]._src.top;
+              sourceXIndex = x + _internalBuffer[index]._src.left;
               destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
           }
           destOffset += destWidth;
@@ -119,8 +119,8 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
               uint32 normalizedX = x - subRect.left;
               uint32 index = sourceOffset + x;
               // RenderTable only stores offsets from the original coordinates
-              sourceYIndex = y + _internalBuffer[index]._Src.top;
-              sourceXIndex = x + _internalBuffer[index]._Src.left;
+              sourceYIndex = y + _internalBuffer[index]._src.top;
+              sourceXIndex = x + _internalBuffer[index]._src.left;
               destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
           }
           destOffset += destWidth;
@@ -153,10 +153,10 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 			sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
 				curP = _internalBuffer[sourceOffset + x];
-				srcIndexYT = y + curP._Src.top;
-				srcIndexYB = y + curP._Src.bottom;
-				srcIndexXL = x + curP._Src.left;
-				srcIndexXR = x + curP._Src.right;
+				srcIndexYT = y + curP._src.top;
+				srcIndexYB = y + curP._src.bottom;
+				srcIndexXL = x + curP._src.left;
+				srcIndexXR = x + curP._src.right;
 				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], rTL, gTL, bTL);
 				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXR], rTR, gTR, bTR);
 				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], rBL, gBL, bBL);
@@ -176,8 +176,8 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 			for (int16 x = 0; x < srcBuf->w; ++x) {
 				index = sourceOffset + x;
 				// RenderTable only stores offsets from the original coordinates
-				srcIndexXL = x + (_internalBuffer[index]._xDir ? _internalBuffer[index]._Src.right : _internalBuffer[index]._Src.left);
-				srcIndexYT = y + (_internalBuffer[index]._yDir ? _internalBuffer[index]._Src.bottom : _internalBuffer[index]._Src.top);
+				srcIndexXL = x + (_internalBuffer[index]._xDir ? _internalBuffer[index]._src.right : _internalBuffer[index]._src.left);
+				srcIndexYT = y + (_internalBuffer[index]._yDir ? _internalBuffer[index]._src.bottom : _internalBuffer[index]._src.top);
 				destBuffer[destOffset] = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
 				destOffset++;
 			}

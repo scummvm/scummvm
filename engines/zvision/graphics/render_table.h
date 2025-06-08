@@ -32,39 +32,39 @@ namespace ZVision {
 class FilterPixel {
 public:
 	// Bitfields representing sequential direction of contraction
-	bool _xDir = 0; // 0 left, 1 right
-	bool _yDir = 0; // 0 up, 1 down
-	Common::Rect _Src = Common::Rect(0, 0); // Coordinates of four panorama image pixels around actual working window pixel
+	bool _xDir = false; // false left, true right
+	bool _yDir = false; // false up, true down
+	Common::Rect _src = Common::Rect(0, 0); // Coordinates of four panorama image pixels around actual working window pixel
 
 	float _fX, _fY, _fTL, _fTR, _fBL, _fBR;
 	
 	FilterPixel() {}
 	FilterPixel(float x, float y, bool highQuality = false) {
-		_Src.left = int16(floor(x));
-		_Src.right = int16(ceil(x));
-		_Src.top = int16(floor(y));
-		_Src.bottom = int16(ceil(y));
+		_src.left = int16(floor(x));
+		_src.right = int16(ceil(x));
+		_src.top = int16(floor(y));
+		_src.bottom = int16(ceil(y));
 		if (highQuality) {
-			_fX = x - (float)_Src.left;
-			_fY = y - (float)_Src.top;
+			_fX = x - (float)_src.left;
+			_fY = y - (float)_src.top;
 			_fTL = (1 - _fX) * (1 - _fY);
 			_fTR = _fX * (1 - _fY);
 			_fBL = (1 - _fX) * _fY;
 			_fBR = _fX * _fY;
 		} else {
 			// Nearest neighbour
-			_xDir = (x - _Src.left) > 0.5f;
-			_yDir = (y - _Src.top) > 0.5f;
+			_xDir = (x - _src.left) > 0.5f;
+			_yDir = (y - _src.top) > 0.5f;
 		}
 	}
 	~FilterPixel() {}
 	inline void flipH() {
-		_Src.left = -_Src.left;
-		_Src.right = -_Src.right;
+		_src.left = -_src.left;
+		_src.right = -_src.right;
 	}
 	inline void flipV() {
-		_Src.top = -_Src.top;
-		_Src.bottom = -_Src.bottom;
+		_src.top = -_src.top;
+		_src.bottom = -_src.bottom;
 	}
 };
 
