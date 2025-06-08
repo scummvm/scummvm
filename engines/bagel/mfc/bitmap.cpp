@@ -43,8 +43,8 @@ BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 
 	BITMAPINFOHEADER h;
 	h.biSize = 40;
-	h.biWidth = src->w;
-	h.biHeight = src->h;
+	h.biWidth = nWidth;
+	h.biHeight = nHeight;
 	h.biPlanes = 1;
 	h.biBitCount = src->format.bytesPerPixel * 8;
 	h.biCompression = BI_RGB;
