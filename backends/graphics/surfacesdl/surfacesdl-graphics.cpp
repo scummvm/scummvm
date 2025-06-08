@@ -3230,20 +3230,23 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	SDL_Rect viewport;
 
 	Common::Rect &drawRect = (_overlayVisible) ? _overlayDrawRect : _gameDrawRect;
-	viewport.x = drawRect.left;
-	viewport.y = drawRect.top;
+	Common::RotationMode rotation = getRotationMode();
 
-	int rotation = getRotationMode();
-	int rotangle = 0;
+	/* Destination rectangle represents the texture before rotation */
 	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
-		int delta = (drawRect.width() - drawRect.height()) / 2;
-		viewport.x = drawRect.top - delta;
-		viewport.y = drawRect.left + delta;
+		viewport.w = drawRect.height();
+		viewport.h = drawRect.width();
+		int delta = (viewport.w - viewport.h) / 2;
+		viewport.x = drawRect.left - delta;
+		viewport.y = drawRect.top + delta;
+	} else {
+		viewport.w = drawRect.width();
+		viewport.h = drawRect.height();
+		viewport.x = drawRect.left;
+		viewport.y = drawRect.top;
 	}
-	rotangle = rotation;
 
-	viewport.w = drawRect.width();
-	viewport.h = drawRect.height();
+	int rotangle = (int)rotation;
 
 	SDL_RenderClear(_renderer);
 
