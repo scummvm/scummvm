@@ -56,7 +56,10 @@ bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp) {
 	case Common::EVENT_LBUTTONDOWN:
 		x = event.mouse.x;
 		y = event.mouse.y;
-		dsp->handle_event(mouseDispatcher::EV_LEFT_DOWN, x, y, 0);
+		if (keyboardDispatcher::instance()->is_pressed(VK_LMENU))
+			dsp->handle_event(mouseDispatcher::EV_RIGHT_DOWN, x, y, 0);
+		else
+			dsp->handle_event(mouseDispatcher::EV_LEFT_DOWN, x, y, 0);
 		return true;
 	case Common::EVENT_RBUTTONDOWN:
 		x = event.mouse.x;
@@ -66,7 +69,10 @@ bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp) {
 	case Common::EVENT_LBUTTONUP:
 		x = event.mouse.x;
 		y = event.mouse.y;
-		dsp->handle_event(mouseDispatcher::EV_LEFT_UP, x, y, 0);
+		if (keyboardDispatcher::instance()->is_pressed(VK_LMENU))
+			dsp->handle_event(mouseDispatcher::EV_RIGHT_UP, x, y, 0);
+		else
+			dsp->handle_event(mouseDispatcher::EV_LEFT_UP, x, y, 0);
 		return true;
 	case Common::EVENT_RBUTTONUP:
 		x = event.mouse.x;
