@@ -155,7 +155,7 @@ void LogicManager::HAND_Master_Arrive(HAND_PARAMS) {
 		playDialog(kCharacterMaster, "ARRIVE", 8, 0);
 		_engine->getSoundManager()->endAmbient();
 
-		_gameProgress[kProgressIsTrainRunning] = 0;
+		_globals[kProgressIsTrainRunning] = 0;
 
 		getCharacterParams(kCharacterMaster, 8)[1] = 1;
 		getCharacterParams(kCharacterMaster, 8)[3] = getCharacterCurrentParams(kCharacterMaster)[3];
@@ -226,7 +226,7 @@ void LogicManager::HAND_Master_Depart(HAND_PARAMS) {
 		setDoor(26, kCharacterCath, 1, 0, 9);
 		setDoor(27, kCharacterCath, 1, 0, 9);
 
-		_gameProgress[kProgressIsTrainRunning] = 1;
+		_globals[kProgressIsTrainRunning] = 1;
 
 		getCharacterParams(kCharacterMaster, 8)[2] = 1;
 
@@ -400,24 +400,24 @@ void LogicManager::HAND_Master_FirstDream(HAND_PARAMS) {
 
 		playDialog(kCharacterCath, "MUS008", 16, 0);
 
-		_inventorySelectedItemIdx = 0;
+		_activeItem = 0;
 		fadeToBlack();
 
 		while (dialogRunning("MUS008"))
 			_engine->getSoundManager()->soundThread();
 
-		_gameProgress[kProgressField84] = 1;
+		_globals[kProgressField84] = 1;
 		bumpCath(kCarLocomotive, 75, 255);
 		restoreIcons();
 
 		_gameTime = 1492200;
-		_gameProgress[kProgressField18] = 4;
-		_gameTimeTicksDelta = 0;
+		_globals[kProgressField18] = 4;
+		_timeSpeed = 0;
 
 		setDoor(63, kCharacterMaster, 0, 0, 9);
 		send(kCharacterMaster, kCharacterClerk, 191350523, 0);
 
-		_gameProgress[kProgressIsTrainRunning] = 0;
+		_globals[kProgressIsTrainRunning] = 0;
 		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
 
 		MasterCall(&LogicManager::CONS_Master_SaveGame, 1, 0, 0, 0);
@@ -435,12 +435,12 @@ void LogicManager::HAND_Master_FirstDream(HAND_PARAMS) {
 
 			playNIS(kEventCathDream);
 
-			_gameTimeTicksDelta = 3;
-			_gameProgress[kProgressField18] = 1;
+			_timeSpeed = 3;
+			_globals[kProgressField18] = 1;
 
 			setDoor(63, kCharacterCath, 0, 10, 9);
 
-			_gameProgress[kProgressField84] = 0;
+			_globals[kProgressField84] = 0;
 
 			bumpCathTylerComp();
 
@@ -497,15 +497,15 @@ void LogicManager::CONS_Master_StartPart1(CONS_PARAMS) {
 void LogicManager::HAND_Master_StartPart1(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		_gameProgress[kProgressChapter] = 1;
+		_globals[kProgressChapter] = 1;
 
 		_engine->getSoundManager()->startAmbient();
 
 		_gameTime = 1061100;
-		_gameTimeTicksDelta = 0;
-		_gameProgress[kProgressIsTrainRunning] = 1;
-		_gameProgress[kProgressPortrait] = 32;
-		_gameProgress[kProgressField18] = 1;
+		_timeSpeed = 0;
+		_globals[kProgressIsTrainRunning] = 1;
+		_globals[kProgressPortrait] = 32;
+		_globals[kProgressField18] = 1;
 
 		giveCathItem(kItemTelegram);
 		giveCathItem(kItemArticle);
@@ -522,7 +522,7 @@ void LogicManager::HAND_Master_StartPart1(HAND_PARAMS) {
 		dropItem(kItem22, 1);
 		dropItem(kItemPaper, 1);
 
-		_gameProgress[kProgressField7C] = 1;
+		_globals[kProgressField7C] = 1;
 
 		setDoor(1, kCharacterCath, 0, 10, 9);
 		setDoor(9, kCharacterCath, 0, 255, 255);
@@ -583,16 +583,16 @@ void LogicManager::CONS_Master_MovingNight(CONS_PARAMS) {
 void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_gameProgress[kProgressIsTrainRunning] && _gameTime < 1458000) {
+		if (_globals[kProgressIsTrainRunning] && _gameTime < 1458000) {
 			bool skip = false;
 
 			if (!getCharacterCurrentParams(kCharacterMaster)[5]) {
-				getCharacterCurrentParams(kCharacterMaster)[5] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[1];
+				getCharacterCurrentParams(kCharacterMaster)[5] = _realTime + getCharacterCurrentParams(kCharacterMaster)[1];
 				if (getCharacterCurrentParams(kCharacterMaster)[5] == 0) {
 					skip = true;
 				}
 			}
-			if (skip || getCharacterCurrentParams(kCharacterMaster)[5] < _currentGameSessionTicks) {
+			if (skip || getCharacterCurrentParams(kCharacterMaster)[5] < _realTime) {
 				if (!skip) {
 					getCharacterCurrentParams(kCharacterMaster)[5] = 0x7FFFFFFF;
 				}
@@ -652,7 +652,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 
 		if (_gameTime > 1170000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
 			getCharacterCurrentParams(kCharacterMaster)[9] = 1;
-			_gameProgress[kProgressField18] = 2;
+			_globals[kProgressField18] = 2;
 		}
 
 		if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
@@ -686,7 +686,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 
 			if (_gameTime > 1260000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
 				getCharacterCurrentParams(kCharacterMaster)[14] = 1;
-				_gameTimeTicksDelta = 1;
+				_timeSpeed = 1;
 			}
 			if (_gameTime > 1303200 && !getCharacterCurrentParams(kCharacterMaster)[15]) {
 				getCharacterCurrentParams(kCharacterMaster)[15] = 1;
@@ -829,7 +829,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 			_engine->getSoundManager()->startAmbient();
 			getCharacterParams(kCharacterMaster, 8)[2] = 0;
 			if (getCharacterCurrentParams(kCharacterMaster)[3]) {
-				if (_gameProgress[kProgressField24])
+				if (_globals[kProgressField24])
 					send(kCharacterMaster, kCharacterTrainM, 168187490, 0);
 				else
 					send(kCharacterMaster, kCharacterCond1, 224122407, 0);
@@ -840,7 +840,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 
 		break;
 	case 190346110:
-		_gameProgress[kProgressField18] = 3;
+		_globals[kProgressField18] = 3;
 		if (_gameTime >= 1494000) {
 			CONS_Master_SecondSleep(0, 0, 0, 0);
 		} else {
@@ -859,7 +859,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 	case 17:
 		if (!getCharacterCurrentParams(kCharacterMaster)[2] && checkCathDir(kCarGreenSleeping, 1)) {
 			_gameTime = 1062000;
-			_gameTimeTicksDelta = 3;
+			_timeSpeed = 3;
 			getCharacterCurrentParams(kCharacterMaster)[2] = 1;
 		}
 		break;
@@ -899,7 +899,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 
 			if (_gameTime > 1170000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
 				getCharacterCurrentParams(kCharacterMaster)[9] = 1;
-				_gameProgress[kProgressField18] = 2;
+				_globals[kProgressField18] = 2;
 			}
 
 			if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
@@ -933,7 +933,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 
 				if (_gameTime > 1260000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
 					getCharacterCurrentParams(kCharacterMaster)[14] = 1;
-					_gameTimeTicksDelta = 1;
+					_timeSpeed = 1;
 				}
 				if (_gameTime > 1303200 && !getCharacterCurrentParams(kCharacterMaster)[15]) {
 					getCharacterCurrentParams(kCharacterMaster)[15] = 1;
@@ -1056,7 +1056,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 		case 8:
 			if (_gameTime > 1260000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
 				getCharacterCurrentParams(kCharacterMaster)[14] = 1;
-				_gameTimeTicksDelta = 1;
+				_timeSpeed = 1;
 			}
 
 			if (_gameTime > 1303200 && !getCharacterCurrentParams(kCharacterMaster)[15]) {
@@ -1145,7 +1145,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 			// fall through
 		case 17:
 			if (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] == 17) {
-				_gameProgress[kProgressField18] = 1;
+				_globals[kProgressField18] = 1;
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 18;
 				MasterCall(&LogicManager::CONS_Master_Arrive, "Strasbou", 7, 0, 0);
 			}
@@ -1162,7 +1162,7 @@ void LogicManager::HAND_Master_MovingNight(HAND_PARAMS) {
 			// fall through
 		case 19:
 			if (getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] == 19) {
-				_gameTimeTicksDelta = 1;
+				_timeSpeed = 1;
 			}
 
 			if (_gameTime > 1539000 && !getCharacterCurrentParams(kCharacterMaster)[25]) {
@@ -1224,7 +1224,7 @@ void LogicManager::HAND_Master_SecondSleep(HAND_PARAMS) {
 
 		playDialog(kCharacterCath, "MUS008", 16, 0);
 
-		_inventorySelectedItemIdx = 0;
+		_activeItem = 0;
 		fadeToBlack();
 
 		while (dialogRunning("MUS008")) {
@@ -1251,13 +1251,13 @@ void LogicManager::CONS_Master_StartPart2(CONS_PARAMS) {
 void LogicManager::HAND_Master_StartPart2(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_gameProgress[kProgressChapter] != 2) {
-			_gameProgress[kProgressChapter] = 2;
+		if (_globals[kProgressChapter] != 2) {
+			_globals[kProgressChapter] = 2;
 			makeAllJump(2);
 		}
 
 		_gameTime = 1750500;
-		_gameTimeTicksDelta = 5;
+		_timeSpeed = 5;
 
 		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
 
@@ -1292,18 +1292,18 @@ void LogicManager::CONS_Master_InitPart2(CONS_PARAMS) {
 void LogicManager::HAND_Master_InitPart2(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		_gameProgress[kProgressIsTrainRunning] = 1;
+		_globals[kProgressIsTrainRunning] = 1;
 		setDoor(26, kCharacterCath, 1, 0, 9);
 		setDoor(27, kCharacterCath, 1, 0, 9);
-		_gameProgress[kProgressField18] = 1;
+		_globals[kProgressField18] = 1;
 		giveCathItem(kItemGreenJacket);
 
-		_gameInventory[kItemCorpse].location = 0;
-		_gameInventory[kItemCorpse].isPresent = 0;
-		_gameProgress[kProgressJacket] = 2;
-		_gameProgress[kProgressPortrait] = 34;
-		_gameProgress[kProgressEventCorpseMovedFromFloor] = 1;
-		_gameProgress[kProgressEventFoundCorpse] = 1;
+		_items[kItemCorpse].floating = 0;
+		_items[kItemCorpse].haveIt = 0;
+		_globals[kProgressJacket] = 2;
+		_globals[kProgressPortrait] = 34;
+		_globals[kProgressEventCorpseMovedFromFloor] = 1;
+		_globals[kProgressEventFoundCorpse] = 1;
 		dropItem(kItemBeetle, 3);
 		dropItem(kItem3, 1);
 
@@ -1362,11 +1362,11 @@ void LogicManager::CONS_Master_MovingDay(CONS_PARAMS) {
 void LogicManager::HAND_Master_MovingDay(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_gameProgress[kProgressIsTrainRunning]) {
+		if (_globals[kProgressIsTrainRunning]) {
 			if (getCharacterCurrentParams(kCharacterMaster)[1] ||
-				(getCharacterCurrentParams(kCharacterMaster)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[0],
-				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[0] != 0)) {
-				if (getCharacterCurrentParams(kCharacterMaster)[1] >= _currentGameSessionTicks)
+				(getCharacterCurrentParams(kCharacterMaster)[1] = _realTime + getCharacterCurrentParams(kCharacterMaster)[0],
+				 _realTime + getCharacterCurrentParams(kCharacterMaster)[0] != 0)) {
+				if (getCharacterCurrentParams(kCharacterMaster)[1] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMaster)[1] = 0x7FFFFFFF;
@@ -1421,13 +1421,13 @@ void LogicManager::CONS_Master_StartPart3(CONS_PARAMS) {
 void LogicManager::HAND_Master_StartPart3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_gameProgress[kProgressChapter] != 3) {
-			_gameProgress[kProgressChapter] = 3;
+		if (_globals[kProgressChapter] != 3) {
+			_globals[kProgressChapter] = 3;
 			makeAllJump(3);
 		}
 
 		_gameTime = 1944000;
-		_gameTimeTicksDelta = 5;
+		_timeSpeed = 5;
 
 		CONS_Master_InitPart3(0, 0, 0, 0);
 		break;
@@ -1456,7 +1456,7 @@ void LogicManager::HAND_Master_InitPart3(HAND_PARAMS) {
 		send(kCharacterMaster, kCharacterTableE, 103798704, 0);
 		send(kCharacterMaster, kCharacterTableF, 103798704, 0);
 
-		_gameProgress[kProgressIsTrainRunning] = 1;
+		_globals[kProgressIsTrainRunning] = 1;
 
 		setDoor(26, kCharacterCath, 1, 0, 9);
 		setDoor(27, kCharacterCath, 1, 0, 9);
@@ -1504,17 +1504,17 @@ void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 	{
-		if (_gameProgress[kProgressIsTrainRunning]) {
+		if (_globals[kProgressIsTrainRunning]) {
 			bool skip1 = false;
 
 			if (!getCharacterCurrentParams(kCharacterMaster)[3]) {
-				getCharacterCurrentParams(kCharacterMaster)[3] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[0];
+				getCharacterCurrentParams(kCharacterMaster)[3] = _realTime + getCharacterCurrentParams(kCharacterMaster)[0];
 				if (getCharacterCurrentParams(kCharacterMaster)[3] == 0) {
 					skip1 = true;
 				}
 			}
 
-			if (skip1 || getCharacterCurrentParams(kCharacterMaster)[3] < _currentGameSessionTicks) {
+			if (skip1 || getCharacterCurrentParams(kCharacterMaster)[3] < _realTime) {
 				if (!skip1) {
 					getCharacterCurrentParams(kCharacterMaster)[3] = 0x7FFFFFFF;
 				}
@@ -1547,13 +1547,13 @@ void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 		bool skip2 = false;
 
 		if (!getCharacterCurrentParams(kCharacterMaster)[4]) {
-			getCharacterCurrentParams(kCharacterMaster)[4] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[1];
+			getCharacterCurrentParams(kCharacterMaster)[4] = _realTime + getCharacterCurrentParams(kCharacterMaster)[1];
 			if (getCharacterCurrentParams(kCharacterMaster)[4] == 0) {
 				skip2 = true;
 			}
 		}
 
-		if (skip2 || getCharacterCurrentParams(kCharacterMaster)[4] < _currentGameSessionTicks) {
+		if (skip2 || getCharacterCurrentParams(kCharacterMaster)[4] < _realTime) {
 			if (!skip2) {
 				getCharacterCurrentParams(kCharacterMaster)[4] = 0x7FFFFFFF;
 			}
@@ -1630,7 +1630,7 @@ void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 
 		if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
 			getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-			_gameTimeTicksDelta = 5;
+			_timeSpeed = 5;
 		}
 
 		if (_gameTime > 2268000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
@@ -1766,7 +1766,7 @@ void LogicManager::HAND_Master_MovingAfternoon(HAND_PARAMS) {
 		case 8:
 			if (_gameTime > 2187000 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
 				getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-				_gameTimeTicksDelta = 5;
+				_timeSpeed = 5;
 			}
 
 			if (_gameTime > 2268000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
@@ -1803,8 +1803,8 @@ void LogicManager::HAND_Master_EndVienna(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
 		getCharacter(kCharacterCath).characterPosition.car = kCarLocomotive;
-		if (_gameEvents[kEventAugustBringBriefcase]) {
-			if (_gameInventory[kItemFirebird].location == 5) {
+		if (_doneNIS[kEventAugustBringBriefcase]) {
+			if (_items[kItemFirebird].floating == 5) {
 				getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 2;
 				MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventViennaKronosFirebird, 0, 0);
 			} else if (getCharacterParams(kCharacterMaster, 8)[0]) {
@@ -1825,10 +1825,10 @@ void LogicManager::HAND_Master_EndVienna(HAND_PARAMS) {
 		case 1:
 			playNIS(kEventViennaAugustUnloadGuns);
 
-			if (_gameEvents[kEventConcertLeaveWithBriefcase]) {
+			if (_doneNIS[kEventConcertLeaveWithBriefcase]) {
 				endGame(1, 2187000, 0, true);
 			} else {
-				if (!_gameEvents[kEventCathJumpDownCeiling]) {
+				if (!_doneNIS[kEventCathJumpDownCeiling]) {
 					endGame(1, 2155500, 0, true);
 				} else {
 					endGame(2, 253, 0, true);
@@ -1839,20 +1839,20 @@ void LogicManager::HAND_Master_EndVienna(HAND_PARAMS) {
 		case 2:
 			playNIS(kEventViennaKronosFirebird);
 
-			if (_gameEvents[kEventKronosBringEggCeiling]) {
+			if (_doneNIS[kEventKronosBringEggCeiling]) {
 				endGame(3, 58, 60, true);
-			} else if (_gameEvents[kEventKronosBringEgg]) {
+			} else if (_doneNIS[kEventKronosBringEgg]) {
 				endGame(1, 2155500, 60, true);
 			} else {
-				if (_gameProgress[kProgressFieldC0]) {
-					if (_gameEvents[kEventKronosReturnBriefcase]) {
+				if (_globals[kProgressFieldC0]) {
+					if (_doneNIS[kEventKronosReturnBriefcase]) {
 						endGame(1, 61, 61, true);
 						return;
 					} else {
 						endGame(1, 2155500, 59, true);
 					}
 				} else {
-					if (_gameEvents[kEventKronosReturnBriefcase]) {
+					if (_doneNIS[kEventKronosReturnBriefcase]) {
 						endGame(2, 61, 59, true);
 						return;
 					} else {
@@ -1893,13 +1893,13 @@ void LogicManager::CONS_Master_StartPart4(CONS_PARAMS) {
 void LogicManager::HAND_Master_StartPart4(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_gameProgress[kProgressChapter] != 4) {
-			_gameProgress[kProgressChapter] = 4;
+		if (_globals[kProgressChapter] != 4) {
+			_globals[kProgressChapter] = 4;
 			makeAllJump(4);
 		}
 
 		_gameTime = 2353500;
-		_gameTimeTicksDelta = 5;
+		_timeSpeed = 5;
 
 		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
 
@@ -1937,7 +1937,7 @@ void LogicManager::HAND_Master_InitPart4(HAND_PARAMS) {
 		_engine->getSoundManager()->endAmbient();
 		_engine->getSoundManager()->startAmbient();
 
-		_gameProgress[kProgressIsTrainRunning] = 1;
+		_globals[kProgressIsTrainRunning] = 1;
 
 		setDoor(26, kCharacterCath, 1, 0, 9);
 		setDoor(27, kCharacterCath, 1, 0, 9);
@@ -1953,7 +1953,7 @@ void LogicManager::HAND_Master_InitPart4(HAND_PARAMS) {
 		takeItem(kItem3);
 		dropItem(kItemBomb, 1);
 
-		if (_gameInventory[kItemBeetle].location == 3)
+		if (_items[kItemBeetle].floating == 3)
 			takeItem(kItemBeetle);
 
 		setModel(25, 2);
@@ -1997,10 +1997,10 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 	case 0:
 	{
 		bool skip = false;
-		if (_gameProgress[kProgressIsTrainRunning]) {
+		if (_globals[kProgressIsTrainRunning]) {
 			if (getCharacterCurrentParams(kCharacterMaster)[5] ||
-				(getCharacterCurrentParams(kCharacterMaster)[5] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[3], _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[3] != 0)) {
-				if (getCharacterCurrentParams(kCharacterMaster)[5] >= _currentGameSessionTicks) {
+				(getCharacterCurrentParams(kCharacterMaster)[5] = _realTime + getCharacterCurrentParams(kCharacterMaster)[3], _realTime + getCharacterCurrentParams(kCharacterMaster)[3] != 0)) {
+				if (getCharacterCurrentParams(kCharacterMaster)[5] >= _realTime) {
 					skip = true;
 				}
 
@@ -2036,8 +2036,8 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterMaster)[6] ||
-			(getCharacterCurrentParams(kCharacterMaster)[6] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[4], _currentGameSessionTicks + getCharacterCurrentParams(kCharacterMaster)[4] != 0)) {
-			if (getCharacterCurrentParams(kCharacterMaster)[6] >= _currentGameSessionTicks) {
+			(getCharacterCurrentParams(kCharacterMaster)[6] = _realTime + getCharacterCurrentParams(kCharacterMaster)[4], _realTime + getCharacterCurrentParams(kCharacterMaster)[4] != 0)) {
+			if (getCharacterCurrentParams(kCharacterMaster)[6] >= _realTime) {
 				if (_gameTime > 2381400 && !getCharacterCurrentParams(kCharacterMaster)[7]) {
 					getCharacterCurrentParams(kCharacterMaster)[7] = 1;
 					getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 1;
@@ -2054,7 +2054,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 	
 				if (getModel(1) == 1 && _gameTime > 2403000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
 					getCharacterCurrentParams(kCharacterMaster)[9] = 1;
-					_gameProgress[kProgressField18] = 2;
+					_globals[kProgressField18] = 2;
 				}
 
 				if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
@@ -2075,14 +2075,14 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 
 				if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
 					getCharacterCurrentParams(kCharacterMaster)[12] = 1;
-					if (_gameProgress[kProgressField18] == 2)
-						_gameTimeTicksDelta = 1;
+					if (_globals[kProgressField18] == 2)
+						_timeSpeed = 1;
 				}
 
 				if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
 					getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-					if (_gameProgress[kProgressField18] == 2)
-						_gameProgress[kProgressField18] = 1;
+					if (_globals[kProgressField18] == 2)
+						_globals[kProgressField18] = 1;
 				}
 
 				if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
@@ -2128,7 +2128,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 
 		if (getModel(1) == 1 && _gameTime > 2403000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
 			getCharacterCurrentParams(kCharacterMaster)[9] = 1;
-			_gameProgress[kProgressField18] = 2;
+			_globals[kProgressField18] = 2;
 		}
 
 		if (!getCharacterCurrentParams(kCharacterMaster)[0]) {
@@ -2149,14 +2149,14 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 
 		if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
 			getCharacterCurrentParams(kCharacterMaster)[12] = 1;
-			if (_gameProgress[kProgressField18] == 2)
-				_gameTimeTicksDelta = 1;
+			if (_globals[kProgressField18] == 2)
+				_timeSpeed = 1;
 		}
 
 		if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
 			getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-			if (_gameProgress[kProgressField18] == 2)
-				_gameProgress[kProgressField18] = 1;
+			if (_globals[kProgressField18] == 2)
+				_globals[kProgressField18] = 1;
 		}
 
 		if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
@@ -2246,20 +2246,20 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 		case 2:
 			if (getModel(1) == 1 && _gameTime > 2403000 && !getCharacterCurrentParams(kCharacterMaster)[9]) {
 				getCharacterCurrentParams(kCharacterMaster)[9] = 1;
-				_gameProgress[kProgressField18] = 2;
+				_globals[kProgressField18] = 2;
 			}
 
 			if (getCharacterCurrentParams(kCharacterMaster)[0]) {
 				if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
 					getCharacterCurrentParams(kCharacterMaster)[12] = 1;
-					if (_gameProgress[kProgressField18] == 2)
-						_gameTimeTicksDelta = 1;
+					if (_globals[kProgressField18] == 2)
+						_timeSpeed = 1;
 				}
 
 				if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
 					getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-					if (_gameProgress[kProgressField18] == 2)
-						_gameProgress[kProgressField18] = 1;
+					if (_globals[kProgressField18] == 2)
+						_globals[kProgressField18] = 1;
 				}
 
 				if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
@@ -2293,14 +2293,14 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 		case 4:
 			if (_gameTime > 2470500 && !getCharacterCurrentParams(kCharacterMaster)[12]) {
 				getCharacterCurrentParams(kCharacterMaster)[12] = 1;
-				if (_gameProgress[kProgressField18] == 2)
-					_gameTimeTicksDelta = 1;
+				if (_globals[kProgressField18] == 2)
+					_timeSpeed = 1;
 			}
 
 			if (_gameTime > 2506500 && !getCharacterCurrentParams(kCharacterMaster)[13]) {
 				getCharacterCurrentParams(kCharacterMaster)[13] = 1;
-				if (_gameProgress[kProgressField18] == 2)
-					_gameProgress[kProgressField18] = 1;
+				if (_globals[kProgressField18] == 2)
+					_globals[kProgressField18] = 1;
 			}
 
 			if (_gameTime > 2520000 && !getCharacterCurrentParams(kCharacterMaster)[14]) {
@@ -2323,10 +2323,10 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 			_engine->getSoundManager()->endAmbient();
 			playNIS(kEventTylerCastleDream);
 			_engine->getSoundManager()->startAmbient();
-			_gameProgress[kProgressField18] = 1;
+			_globals[kProgressField18] = 1;
 			bumpCathTylerComp();
 			send(kCharacterMaster, kCharacterTatiana, 169360385, 0);
-			_gameTimeTicksDelta = 1;
+			_timeSpeed = 1;
 			_gameTime = 2511900;
 			dropItem(kItem2, 1);
 			takeItem(kItem22);
@@ -2355,7 +2355,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 			send(kCharacterMaster, kCharacterAnna, 191001984, 0);
 			send(kCharacterMaster, kCharacterCond2, 191001984, 0);
 			takeItem(kItem2);
-			_gameInventory[kItem2].location = 0;
+			_items[kItem2].floating = 0;
 			getCharacterCurrentParams(kCharacterMaster)[1] = 1;
 			bumpCath(kCarRedSleeping, 2, 255);
 			break;
@@ -2376,7 +2376,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 		send(kCharacterMaster, kCharacterTatiana, 169360385, 0);
 		send(kCharacterMaster, kCharacterCond2, 201431954, 0);
 		send(kCharacterMaster, kCharacterTrainM, 201431954, 0);
-		_gameTimeTicksDelta = 1;
+		_timeSpeed = 1;
 		_gameTime = 2511900;
 		dropItem(kItem2, 1);
 		getCharacter(kCharacterMaster).characterPosition.car = 4;
@@ -2396,7 +2396,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 		startSeqOtis(kCharacterMaster, "BOMB");
 		break;
 	case 190346110:
-		_gameProgress[kProgressField18] = 3;
+		_globals[kProgressField18] = 3;
 		getCharacterCurrentParams(kCharacterMaster)[0] = 1;
 		if (getCharacterParams(kCharacterMaster, 8)[1] || getCharacterParams(kCharacterMaster, 8)[2]) {
 			endDialog(kCharacterMaster);
@@ -2406,7 +2406,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 
 		fadeToBlack();
 		playDialog(0, "MUS008", 16, 0);
-		_inventorySelectedItemIdx = 0;
+		_activeItem = 0;
 		fadeToBlack();
 
 		while (dialogRunning("MUS008"))
@@ -2462,7 +2462,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 
 		endGraphics(kCharacterMaster);
 		takeCathItem(kItemTelegram);
-		_gameTimeTicksDelta = 5;
+		_timeSpeed = 5;
 		getCharacter(kCharacterMaster).callbacks[getCharacter(kCharacterMaster).currentCall + 8] = 10;
 		MasterCall(&LogicManager::CONS_Master_SaveGame, 2, kEventDefuseBomb, 0, 0);
 		break;
@@ -2495,13 +2495,13 @@ void LogicManager::CONS_Master_StartPart5(CONS_PARAMS) {
 void LogicManager::HAND_Master_StartPart5(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_gameProgress[kProgressChapter] != 5) {
-			_gameProgress[kProgressChapter] = 5;
+		if (_globals[kProgressChapter] != 5) {
+			_globals[kProgressChapter] = 5;
 			makeAllJump(5);
 		}
 
 		_gameTime = 2844000;
-		_gameTimeTicksDelta = 2;
+		_timeSpeed = 2;
 
 		CONS_Master_InitPart5(0, 0, 0, 0);
 		break;
@@ -2530,7 +2530,7 @@ void LogicManager::HAND_Master_InitPart5(HAND_PARAMS) {
 		endGraphics(kCharacterTableE);
 		endGraphics(kCharacterTableF);
 
-		_gameProgress[kProgressIsTrainRunning] = 1;
+		_globals[kProgressIsTrainRunning] = 1;
 
 		setDoor(26, kCharacterCath, 1, 0, 9);
 		setDoor(27, kCharacterCath, 1, 0, 9);
@@ -2565,10 +2565,10 @@ void LogicManager::HAND_Master_InitPart5(HAND_PARAMS) {
 		setDoor(26, kCharacterCath, 0, 10, 9);
 		setDoor(27, kCharacterCath, 0, 10, 9);
 
-		_gameProgress[kProgressField18] = 1;
-		_inventorySelectedItemIdx = 0;
-		_gameProgress[kProgressField84] = 1;
-		_gameProgress[kProgressPortrait] = 36;
+		_globals[kProgressField18] = 1;
+		_activeItem = 0;
+		_globals[kProgressField84] = 1;
+		_globals[kProgressPortrait] = 36;
 
 		takeCathItem(kItemKey);
 		takeCathItem(kItemBomb);
@@ -2630,7 +2630,7 @@ void LogicManager::HAND_Master_MovingPart5(HAND_PARAMS) {
 	case 0:
 		if (_gameTime > 2907000 && !getCharacterCurrentParams(kCharacterMaster)[1]) {
 			getCharacterCurrentParams(kCharacterMaster)[1] = 1;
-			if (!_gameProgress[kProgressIsDayTime]) {
+			if (!_globals[kProgressIsDayTime]) {
 				playDialog(kCharacterMaster, "ARRIVE", 8, 0);
 				_engine->getSoundManager()->endAmbient();
 			}
@@ -2638,7 +2638,7 @@ void LogicManager::HAND_Master_MovingPart5(HAND_PARAMS) {
 
 		if (_gameTime > 2943000 && !getCharacterCurrentParams(kCharacterMaster)[2]) {
 			getCharacterCurrentParams(kCharacterMaster)[2] = 1;
-			if (!_gameEvents[kEventLocomotiveMilosDay] && !_gameEvents[kEventLocomotiveMilosNight]) {
+			if (!_doneNIS[kEventLocomotiveMilosDay] && !_doneNIS[kEventLocomotiveMilosNight]) {
 				playDialog(kCharacterMaster, "ARRIVE", 8, 0);
 				_engine->getSoundManager()->endAmbient();
 			}
@@ -2665,7 +2665,7 @@ void LogicManager::HAND_Master_MovingPart5(HAND_PARAMS) {
 
 		break;
 	case 135800432:
-		_gameProgress[kProgressIsDayTime] = 1;
+		_globals[kProgressIsDayTime] = 1;
 		_gameTime = 2916000;
 
 		if (whoRunningDialog(kCharacterMaster))

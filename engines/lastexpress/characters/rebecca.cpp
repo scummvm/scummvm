@@ -605,7 +605,7 @@ void LogicManager::HAND_Rebecca_GotoDinner(HAND_PARAMS) {
 		case 5:
 			startCycOtis(kCharacterRebecca, "012A");
 
-			if (_gameProgress[kProgressChapter] == 3)
+			if (_globals[kProgressChapter] == 3)
 				playDialog(kCharacterRebecca, "REB3000", -1, 0);
 
 			send(kCharacterRebecca, kCharacterHeadWait, 269479296, 0);
@@ -676,7 +676,7 @@ void LogicManager::HAND_Rebecca_GotoSalon(HAND_PARAMS) {
 			getCharacter(kCharacterRebecca).characterPosition.position = 1540;
 			getCharacter(kCharacterRebecca).characterPosition.location = 0;
 
-			if (_gameProgress[kProgressChapter] == 3)
+			if (_globals[kProgressChapter] == 3)
 				playDialog(kCharacterRebecca, "Reb3005", -1, 75);
 
 			if (getCharacterCurrentParams(kCharacterRebecca)[0]) {
@@ -873,8 +873,8 @@ void LogicManager::HAND_Rebecca_CompLogic(HAND_PARAMS) {
 		bool skip = false;
 
 		if (getCharacterCurrentParams(kCharacterRebecca)[1]) {
-			if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _currentGameSessionTicks) {
+			if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _realTime) {
 					skip = true;
 				}
 
@@ -895,7 +895,7 @@ void LogicManager::HAND_Rebecca_CompLogic(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterRebecca)[5] = 0;
 		}
 
-		if (_gameProgress[kProgressChapter] == 1 && !getCharacterParams(kCharacterRebecca, 8)[2]) {
+		if (_globals[kProgressChapter] == 1 && !getCharacterParams(kCharacterRebecca, 8)[2]) {
 			if (getCharacterCurrentParams(kCharacterRebecca)[6] != 0x7FFFFFFF && _gameTime > 1174500) {
 				if (_gameTime > 1183500) {
 					getCharacterCurrentParams(kCharacterRebecca)[6] = 0x7FFFFFFF;
@@ -929,7 +929,7 @@ void LogicManager::HAND_Rebecca_CompLogic(HAND_PARAMS) {
 					break;
 				}
 			}
-		} else if (_gameProgress[kProgressChapter] == 3 && !getCharacterParams(kCharacterRebecca, 8)[3] && getCharacterCurrentParams(kCharacterRebecca)[7] != 0x7FFFFFFF && _gameTime > 2097000) {
+		} else if (_globals[kProgressChapter] == 3 && !getCharacterParams(kCharacterRebecca, 8)[3] && getCharacterCurrentParams(kCharacterRebecca)[7] != 0x7FFFFFFF && _gameTime > 2097000) {
 			if (_gameTime > 2106000) {
 				getCharacterCurrentParams(kCharacterRebecca)[7] = 0x7FFFFFFF;
 				getCharacterParams(kCharacterRebecca, 8)[3] = 1;
@@ -1198,7 +1198,7 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 			if (_gameTime > 1080000) {
 				getCharacterCurrentParams(kCharacterRebecca)[3] = 0x7FFFFFFF;
 				if (inSalon(kCharacterCath))
-					_gameProgress[kProgressFieldB8] = 1;
+					_globals[kProgressFieldB8] = 1;
 
 				getCharacter(kCharacterRebecca).callbacks[getCharacter(kCharacterRebecca).currentCall + 8] = 4;
 				RebeccaCall(&LogicManager::CONS_Rebecca_DoDialog, "REB1012", 0, 0, 0);
@@ -1209,7 +1209,7 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterRebecca)[3] = _gameTime + 150;
 				if (_gameTime == -150) {
 					if (inSalon(kCharacterCath))
-						_gameProgress[kProgressFieldB8] = 1;
+						_globals[kProgressFieldB8] = 1;
 
 					getCharacter(kCharacterRebecca).callbacks[getCharacter(kCharacterRebecca).currentCall + 8] = 4;
 					RebeccaCall(&LogicManager::CONS_Rebecca_DoDialog, "REB1012", 0, 0, 0);
@@ -1230,8 +1230,8 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 			}
 
 			if (getCharacterCurrentParams(kCharacterRebecca)[1]) {
-				if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-					if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _realTime + 90, _realTime != -90)) {
+					if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterRebecca)[5] = 0x7FFFFFFF;
@@ -1245,7 +1245,7 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterRebecca)[3] = 0x7FFFFFFF;
 
 			if (inSalon(kCharacterCath))
-				_gameProgress[kProgressFieldB8] = 1;
+				_globals[kProgressFieldB8] = 1;
 
 			getCharacter(kCharacterRebecca).callbacks[getCharacter(kCharacterRebecca).currentCall + 8] = 4;
 			RebeccaCall(&LogicManager::CONS_Rebecca_DoDialog, "REB1012", 0, 0, 0);
@@ -1285,8 +1285,8 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 			}
 
 			if (getCharacterCurrentParams(kCharacterRebecca)[1]) {
-				if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-					if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _realTime + 90, _realTime != -90)) {
+					if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterRebecca)[5] = 0x7FFFFFFF;
@@ -1299,12 +1299,12 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 
 			break;
 		case 5:
-			_gameProgress[kProgressFieldB4] = 1;
+			_globals[kProgressFieldB4] = 1;
 			getCharacterCurrentParams(kCharacterRebecca)[0] = 0;
 
 			if (getCharacterCurrentParams(kCharacterRebecca)[1]) {
-				if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-					if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterRebecca)[5] || (getCharacterCurrentParams(kCharacterRebecca)[5] = _realTime + 90, _realTime != -90)) {
+					if (getCharacterCurrentParams(kCharacterRebecca)[5] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterRebecca)[5] = 0x7FFFFFFF;
@@ -1483,7 +1483,7 @@ void LogicManager::HAND_Rebecca_GoDinner(HAND_PARAMS) {
 
 			break;
 		case 3:
-			_gameProgress[kProgressFieldBC] = 1;
+			_globals[kProgressFieldBC] = 1;
 
 			if (!inDiningRoom(kCharacterAnna)) {
 				getCharacter(kCharacterRebecca).callbacks[getCharacter(kCharacterRebecca).currentCall + 8] = 5;
@@ -1573,8 +1573,8 @@ void LogicManager::HAND_Rebecca_InSalon1B(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterRebecca)[0]) {
-			if (getCharacterCurrentParams(kCharacterRebecca)[2] || (getCharacterCurrentParams(kCharacterRebecca)[2] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-				if (getCharacterCurrentParams(kCharacterRebecca)[2] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterRebecca)[2] || (getCharacterCurrentParams(kCharacterRebecca)[2] = _realTime + 90, _realTime != -90)) {
+				if (getCharacterCurrentParams(kCharacterRebecca)[2] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterRebecca)[2] = 0x7FFFFFFF;
@@ -1715,7 +1715,7 @@ void LogicManager::HAND_Rebecca_InSalon2(HAND_PARAMS) {
 			if (_gameTime > 15803100) {
 				getCharacterCurrentParams(kCharacterRebecca)[3] = 0x7FFFFFFF;
 				playDialog(kCharacterRebecca, "Reb2001", -1, 0);
-				_gameProgress[kProgressFieldB0] = 1;
+				_globals[kProgressFieldB0] = 1;
 				getCharacterCurrentParams(kCharacterRebecca)[1] = 1;
 				skip = true;
 			}
@@ -1726,7 +1726,7 @@ void LogicManager::HAND_Rebecca_InSalon2(HAND_PARAMS) {
 					if (_gameTime == -450) {
 						skip = true;
 						playDialog(kCharacterRebecca, "Reb2001", -1, 0);
-						_gameProgress[kProgressFieldB0] = 1;
+						_globals[kProgressFieldB0] = 1;
 						getCharacterCurrentParams(kCharacterRebecca)[1] = 1;
 					}
 				}
@@ -1734,7 +1734,7 @@ void LogicManager::HAND_Rebecca_InSalon2(HAND_PARAMS) {
 				if (!skip && getCharacterCurrentParams(kCharacterRebecca)[3] < _gameTime) {
 					getCharacterCurrentParams(kCharacterRebecca)[3] = 0x7FFFFFFF;
 					playDialog(kCharacterRebecca, "Reb2001", -1, 0);
-					_gameProgress[kProgressFieldB0] = 1;
+					_globals[kProgressFieldB0] = 1;
 					getCharacterCurrentParams(kCharacterRebecca)[1] = 1;
 				}
 			}
@@ -2666,8 +2666,8 @@ void LogicManager::HAND_Rebecca_Hiding(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterRebecca)[0]) {
-			if (getCharacterCurrentParams(kCharacterRebecca)[2] || (getCharacterCurrentParams(kCharacterRebecca)[2] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterRebecca)[2] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterRebecca)[2] || (getCharacterCurrentParams(kCharacterRebecca)[2] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterRebecca)[2] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterRebecca)[2] = 0x7FFFFFFF;

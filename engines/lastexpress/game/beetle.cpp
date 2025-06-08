@@ -113,7 +113,7 @@ void CBeetle::tick() {
 		_mouseCooldown--;
 
 	if (!_currentSequence || _directions[_currentDirectionIndex] == 29) {
-		if (_engine->getLogicManager()->_gameInventory[kItemBeetle].location != 3 ||
+		if (_engine->getLogicManager()->_items[kItemBeetle].floating != 3 ||
 			((_spawnCounter || rnd(10)) && (_spawnCounter >= 3 || rnd(30)) && rnd(100))) {
 			return;
 		}
@@ -407,7 +407,7 @@ bool CBeetle::onTable() {
 }
 
 bool CBeetle::click() {
-	if (_engine->getLogicManager()->_inventorySelectedItemIdx == kItemMatchBox &&
+	if (_engine->getLogicManager()->_activeItem == kItemMatchBox &&
 		_engine->getLogicManager()->cathHasItem(12) &&
 		ABS<int16>(_engine->_cursorX - _coords.x) < 10 &&
 		ABS<int16>(_engine->_cursorY - _coords.y) < 10) {
@@ -421,8 +421,8 @@ bool CBeetle::click() {
 }
 
 void LastExpressEngine::doBeetle() {
-	int32 chapter = getLogicManager()->_gameProgress[11];
-	if (chapter >= 2 && chapter <= 3 && !_beetle && getLogicManager()->_gameInventory[kItemBeetle].location == 3) {
+	int32 chapter = getLogicManager()->_globals[11];
+	if (chapter >= 2 && chapter <= 3 && !_beetle && getLogicManager()->_items[kItemBeetle].floating == 3) {
 		_beetle = new CBeetle(this);
 	}
 }

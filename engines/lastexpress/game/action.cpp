@@ -30,98 +30,98 @@ int LogicManager::findCursor(Link *link) {
 		return link->cursor;
 
 	switch (link->action) {
-	case 1:
-		if (!_lastSavedNodeIndex && (_gameEvents[kEventKronosBringFirebird] || _gameProgress[kEventAugustBringEgg])) {
+	case kActionInventory:
+		if (!_nodeReturn2 && (_doneNIS[kEventKronosBringFirebird] || _globals[kEventAugustBringEgg])) {
 			result = kCursorNormal;
 		} else {
 			result = kCursorBackward;
 		}
 
 		break;
-	case 5:
+	case kActionKnock:
 		if (link->param1 >= 128) {
 			result = kCursorNormal;
 		} else {
-			result = _gameObjects[link->param1].cursor;
+			result = _doors[link->param1].windowCursor;
 		}
 
 		break;
-	case 6:
-	case 31:
+	case kActionCompartment:
+	case kActionExitCompartment:
 		if (link->param1 >= 128) {
 			result = kCursorNormal;
-		} else if (_inventorySelectedItemIdx != kItemKey || (_gameObjects[link->param1].character) || _gameObjects[link->param1].door != 1 || !_gameObjects[link->param1].cursor2 || inComp(kCharacterCath) || preventEnterComp(link->param1)) {
-			result = _gameObjects[link->param1].cursor2;
+		} else if (_activeItem != kItemKey || (_doors[link->param1].who) || _doors[link->param1].status != 1 || !_doors[link->param1].handleCursor || inComp(kCharacterCath) || preventEnterComp(link->param1)) {
+			result = _doors[link->param1].handleCursor;
 		} else {
-			result = _gameInventory[kItemKey].cursor;
+			result = _items[kItemKey].mnum;
 		}
 
 		break;
-	case 12:
+	case kActionKnockInside:
 		if (link->param1 >= 128) {
 			result = kCursorNormal;
 		} else {
-			if (_gameObjects[link->param1].character)
-				result = _gameObjects[link->param1].cursor;
+			if (_doors[link->param1].who)
+				result = _doors[link->param1].windowCursor;
 			else
 				result = kCursorNormal;
 		}
 
 		break;
-	case 13:
+	case kActionTakeItem:
 		if (link->param1 >= 32) {
 			result = kCursorNormal;
-		} else if ((!_inventorySelectedItemIdx || _gameInventory[_inventorySelectedItemIdx].manualSelect) && (link->param1 != 21 || _gameProgress[kProgressEventCorpseMovedFromFloor] == 1)) {
+		} else if ((!_activeItem || _items[_activeItem].inPocket) && (link->param1 != 21 || _globals[kProgressEventCorpseMovedFromFloor] == 1)) {
 			result = kCursorHand;
 		} else {
 			result = kCursorNormal;
 		}
 
 		break;
-	case 14:
+	case kActionDropItem:
 		if (link->param1 >= 32) {
 			result = kCursorNormal;
-		} else if (link->param1 != _inventorySelectedItemIdx || link->param1 == 20 && !_gameProgress[kProgressIsTrainRunning] && link->param2 == 4 || link->param1 == 18 && link->param2 == 1 && _gameProgress[kProgressField5C]) {
+		} else if (link->param1 != _activeItem || link->param1 == 20 && !_globals[kProgressIsTrainRunning] && link->param2 == 4 || link->param1 == 18 && link->param2 == 1 && _globals[kProgressField5C]) {
 			result = kCursorNormal;
 		} else {
-			result = _gameInventory[_inventorySelectedItemIdx].cursor;
+			result = _items[_activeItem].mnum;
 		}
 
 		break;
-	case 15:
+	case kActionLinkOnGlobal:
 		if (link->param1 >= 128) {
 			result = kCursorNormal;
-		} else if (_gameProgress[link->param1] == link->param2) {
+		} else if (_globals[link->param1] == link->param2) {
 			result = link->param3;
 		} else {
 			result = kCursorNormal;
 		}
 
 		break;
-	case 16:
-		if (_inventorySelectedItemIdx == kItemKey && !_gameObjects[kItemMatchBox].door || _gameObjects[kItemMatchBox].door == 1 && cathHasItem(kItemKey) && (_inventorySelectedItemIdx == kItemBriefcase || _inventorySelectedItemIdx == kItemFirebird)) {
-			result = _gameInventory[kItemKey].cursor;
+	case kActionRattle:
+		if (_activeItem == kItemKey && !_doors[kItemMatchBox].status || _doors[kItemMatchBox].status == 1 && cathHasItem(kItemKey) && (_activeItem == kItemBriefcase || _activeItem == kItemFirebird)) {
+			result = _items[kItemKey].mnum;
 		} else {
 			if (link->param1 >= 128) {
 				result = 0;
-			} else if (_inventorySelectedItemIdx != kItemKey ||
-				_gameObjects[link->param1].character ||
-				_gameObjects[link->param1].door != 1 ||
-				!_gameObjects[link->param1].cursor2 ||
+			} else if (_activeItem != kItemKey ||
+				_doors[link->param1].who ||
+				_doors[link->param1].status != 1 ||
+				!_doors[link->param1].handleCursor ||
 				inComp(kCharacterCath) || preventEnterComp(link->param1)) {
-				result = _gameObjects[link->param1].cursor2;
+				result = _doors[link->param1].handleCursor;
 			} else {
-				result = _gameInventory[kItemKey].cursor;
+				result = _items[kItemKey].mnum;
 			}
 		}
 
 		break;
-	case 18:
-		if (_gameProgress[kProgressJacket] == 2) {
-			if ((_gameEvents[kEventCathLookOutsideWindowDay] || _gameEvents[kEventCathLookOutsideWindowNight] || getModel(1) == 1) &&
-				_gameProgress[kProgressIsTrainRunning] &&
-				(link->param1 != 45 || !inComp(kCharacterRebecca, kCarRedSleeping, 4840) && _gameObjects[kObjectOutsideBetweenCompartments].door == 2) &&
-				_inventorySelectedItemIdx != kItemBriefcase && _inventorySelectedItemIdx != kItemFirebird) {
+	case kActionLeanOutWindow:
+		if (_globals[kProgressJacket] == 2) {
+			if ((_doneNIS[kEventCathLookOutsideWindowDay] || _doneNIS[kEventCathLookOutsideWindowNight] || getModel(1) == 1) &&
+				_globals[kProgressIsTrainRunning] &&
+				(link->param1 != 45 || !inComp(kCharacterRebecca, kCarRedSleeping, 4840) && _doors[kObjectOutsideBetweenCompartments].status == 2) &&
+				_activeItem != kItemBriefcase && _activeItem != kItemFirebird) {
 				result = kCursorForward;
 			} else {
 				result = getModel(1) == 1 ? kCursorNormal : kCursorMagnifier;
@@ -131,19 +131,19 @@ int LogicManager::findCursor(Link *link) {
 		}
 
 		break;
-	case 19:
-		result = _gameProgress[kProgressFieldC8] == 0 ? kCursorNormal : kCursorLeft;
+	case kActionAlmostFall:
+		result = _globals[kProgressFieldC8] == 0 ? kCursorNormal : kCursorLeft;
 		break;
-	case 21:
-		if (_gameProgress[kProgressIsTrainRunning] && _inventorySelectedItemIdx != kItemBriefcase && _inventorySelectedItemIdx != kItemFirebird &&
-			(_gameProgress[kProgressChapter] == 2 || _gameProgress[kProgressChapter] == 3 || _gameProgress[kProgressChapter] == 5)) {
+	case kActionClimbLadder:
+		if (_globals[kProgressIsTrainRunning] && _activeItem != kItemBriefcase && _activeItem != kItemFirebird &&
+			(_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3 || _globals[kProgressChapter] == 5)) {
 			result = kCursorUp;
 		} else {
 			result = kCursorNormal;
 		}
 
 		break;
-	case 23:
+	case kActionKronosSanctum:
 		if (link->param1 == 1) {
 			result = checkDoor(73) == 0 ? kCursorHand : kCursorNormal;
 		} else {
@@ -151,9 +151,9 @@ int LogicManager::findCursor(Link *link) {
 		}
 
 		break;
-	case 24:
+	case kActionEscapeBaggage:
 		if (link->param1 == 2) {
-			if (!_gameEvents[kEventCathStruggleWithBonds2] || _gameEvents[kEventCathBurnRope])
+			if (!_doneNIS[kEventCathStruggleWithBonds2] || _doneNIS[kEventCathBurnRope])
 				result = kCursorNormal;
 			else
 				result = kCursorHand;
@@ -162,11 +162,11 @@ int LogicManager::findCursor(Link *link) {
 		}
 
 		break;
-	case 30:
+	case kActionCatchBeetle:
 		if (_engine->_beetle) {
 			if (_engine->_beetle->onTable()) {
-				if (_inventorySelectedItemIdx == kItemMatchBox && cathHasItem(kItemMatch))
-					result = _gameInventory[kItemMatchBox].cursor;
+				if (_activeItem == kItemMatchBox && cathHasItem(kItemMatch))
+					result = _items[kItemMatchBox].mnum;
 				else
 					result = kCursorHandPointer;
 			} else {
@@ -177,10 +177,10 @@ int LogicManager::findCursor(Link *link) {
 		}
 
 		break;
-	case 33:
+	case kActionFirebirdPuzzle:
 		if (link->param1 == 3) {
-			if (_inventorySelectedItemIdx == kItemWhistle)
-				result = _gameInventory[kItemWhistle].cursor;
+			if (_activeItem == kItemWhistle)
+				result = _items[kItemWhistle].mnum;
 			else
 				result = kCursorNormal;
 		} else {
@@ -188,14 +188,14 @@ int LogicManager::findCursor(Link *link) {
 		}
 
 		break;
-	case 35:
-		result = _gameProgress[kProgressChapter] == 1 ? kCursorHand : kCursorNormal;
+	case kActionOpenBed:
+		result = _globals[kProgressChapter] == 1 ? kCursorHand : kCursorNormal;
 		break;
-	case 37:
+	case kActionHintDialog:
 		result = getHintDialog(link->param1) == 0 ? kCursorNormal : kCursorHandPointer;
 		break;
-	case 40:
-		if (_gameProgress[kProgressField18] == 2 && !_gameProgress[kProgressFieldE4] && (_gameTime > 1404000 || _gameProgress[kProgressEventMetAugust] && _gameProgress[kProgressFieldCC] && (!_gameProgress[kProgressField24] || _gameProgress[kProgressField3C]))) {
+	case kActionBed:
+		if (_globals[kProgressField18] == 2 && !_globals[kProgressFieldE4] && (_gameTime > 1404000 || _globals[kProgressEventMetAugust] && _globals[kProgressFieldCC] && (!_globals[kProgressField24] || _globals[kProgressField3C]))) {
 			result = kCursorSleep;
 		} else {
 			result = kCursorNormal;
@@ -211,41 +211,41 @@ int LogicManager::findCursor(Link *link) {
 }
 
 bool LogicManager::nodeHasItem(int item) {
-	switch (_trainData[_trainNodeIndex].car) {
-	case kCarKronos:
-		if (_trainData[_trainNodeIndex].parameter1 != item) {
+	switch (_trainData[_activeNode].property) {
+	case kNodeHasItem:
+		if (_trainData[_activeNode].parameter1 != item) {
 			return false;
 		} else {
 			return true;
 		}
 
 		break;
-	case kCarGreenSleeping:
-		if (_trainData[_trainNodeIndex].parameter1 != item && _trainData[_trainNodeIndex].parameter2 != item) {
+	case kNodeHas2Items:
+		if (_trainData[_activeNode].parameter1 != item && _trainData[_activeNode].parameter2 != item) {
 			return false;
 		} else {
 			return true;
 		}
 
 		break;
-	case kCarRedSleeping:
-		if (_trainData[_trainNodeIndex].parameter2 != item) {
+	case kNodeHasDoorItem:
+		if (_trainData[_activeNode].parameter2 != item) {
 			return false;
 		} else {
 			return true;
 		}
 
 		break;
-	case kCarRestaurant:
-		if (_trainData[_trainNodeIndex].parameter1 != item && _trainData[_trainNodeIndex].parameter2 != item && _trainData[_trainNodeIndex].parameter3 != item) {
+	case kNodeHas3Items:
+		if (_trainData[_activeNode].parameter1 != item && _trainData[_activeNode].parameter2 != item && _trainData[_activeNode].parameter3 != item) {
 			return false;
 		} else {
 			return true;
 		}
 
 		break;
-	case kCarLocomotive:
-		if (_trainData[_trainNodeIndex].parameter2 != item) {
+	case kNodeSoftPointItem:
+		if (_trainData[_activeNode].parameter2 != item) {
 			return false;
 		} else {
 			return true;
@@ -268,13 +268,13 @@ void LogicManager::doPreFunction(int *sceneOut) {
 	if (!*sceneOut || *sceneOut > 2500)
 		*sceneOut = 1;
 
-	switch (_trainData[*sceneOut].car) {
-	case kCarBaggageRear:
+	switch (_trainData[*sceneOut].property) {
+	case kNodeHasDoor:
 		if (_trainData[*sceneOut].parameter1 < 128) {
-			if (_gameObjects[_trainData[*sceneOut].parameter1].door) {
+			if (_doors[_trainData[*sceneOut].parameter1].status) {
 				link = _trainData[*sceneOut].link;
 				for (bool found = false; link && !found; link = link->next) {
-					if (_gameObjects[_trainData[*sceneOut].parameter1].door == link->location) {
+					if (_doors[_trainData[*sceneOut].parameter1].status == link->location) {
 						tmp.copyFrom(link);
 						doAction(&tmp);
 
@@ -290,12 +290,12 @@ void LogicManager::doPreFunction(int *sceneOut) {
 		}
 
 		break;
-	case kCarKronos:
+	case kNodeHasItem:
 		if (_trainData[*sceneOut].parameter1 < 32) {
-			if (_gameInventory[_trainData[*sceneOut].parameter1].location) {
+			if (_items[_trainData[*sceneOut].parameter1].floating) {
 				link = _trainData[*sceneOut].link;
 				for (bool found = false; link && !found; link = link->next) {
-					if (_gameInventory[_trainData[*sceneOut].parameter1].location == link->location) {
+					if (_items[_trainData[*sceneOut].parameter1].floating == link->location) {
 						tmp.copyFrom(link);
 						doAction(&tmp);
 
@@ -311,19 +311,19 @@ void LogicManager::doPreFunction(int *sceneOut) {
 		}
 
 		break;
-	case kCarGreenSleeping:
+	case kNodeHas2Items:
 		if (_trainData[*sceneOut].parameter1 < 32) {
 			if (_trainData[*sceneOut].parameter2 < 32) {
-				int locFlag = (_gameInventory[_trainData[*sceneOut].parameter1].location != 0) ? 1 : 0;
+				int locFlag = (_items[_trainData[*sceneOut].parameter1].floating != 0) ? 1 : 0;
 
-				if (_gameInventory[_trainData[*sceneOut].parameter2].location)
+				if (_items[_trainData[*sceneOut].parameter2].floating)
 					locFlag |= 2;
 
 				if (locFlag != 0) {
 					link = _trainData[*sceneOut].link;
 					for (bool found = false; link && !found; link = link->next) {
 						if (link->location == locFlag) {
-							if (_gameInventory[_trainData[*sceneOut].parameter1].location == link->param1 && _gameInventory[_trainData[*sceneOut].parameter2].location == link->param2) {
+							if (_items[_trainData[*sceneOut].parameter1].floating == link->param1 && _items[_trainData[*sceneOut].parameter2].floating == link->param2) {
 								tmp.copyFrom(link);
 								doAction(&tmp);
 
@@ -341,19 +341,19 @@ void LogicManager::doPreFunction(int *sceneOut) {
 		}
 
 		break;
-	case kCarRedSleeping:
+	case kNodeHasDoorItem:
 		if (_trainData[*sceneOut].parameter1 < 128) {
 			if (_trainData[*sceneOut].parameter2 < 32) {
-				int locFlag = (_gameObjects[_trainData[*sceneOut].parameter1].door == 2) ? 1 : 0;
+				int locFlag = (_doors[_trainData[*sceneOut].parameter1].status == 2) ? 1 : 0;
 
-				if (_gameInventory[_trainData[*sceneOut].parameter2].location)
+				if (_items[_trainData[*sceneOut].parameter2].floating)
 					locFlag |= 2;
 
 				if (locFlag != 0) {
 					link = _trainData[*sceneOut].link;
 					for (bool found = false; link && !found; link = link->next) {
 						if (link->location == locFlag) {
-							if (_gameObjects[_trainData[*sceneOut].parameter1].door == link->param1 && _gameInventory[_trainData[*sceneOut].parameter2].location == link->param2) {
+							if (_doors[_trainData[*sceneOut].parameter1].status == link->param1 && _items[_trainData[*sceneOut].parameter2].floating == link->param2) {
 								tmp.copyFrom(link);
 								doAction(&tmp);
 
@@ -371,22 +371,22 @@ void LogicManager::doPreFunction(int *sceneOut) {
 		}
 
 		break;
-	case kCarRestaurant:
+	case kNodeHas3Items:
 		if (_trainData[*sceneOut].parameter1 < 32 && _trainData[*sceneOut].parameter2 < 32) {
 			if (_trainData[*sceneOut].parameter3 < 32) {
-				int locFlag = (_gameInventory[_trainData[*sceneOut].parameter1].location != 0) ? 1 : 0;
+				int locFlag = (_items[_trainData[*sceneOut].parameter1].floating != 0) ? 1 : 0;
 
-				if (_gameInventory[_trainData[*sceneOut].parameter2].location)
+				if (_items[_trainData[*sceneOut].parameter2].floating)
 					locFlag |= 2;
 
-				if (_gameInventory[_trainData[*sceneOut].parameter3].location)
+				if (_items[_trainData[*sceneOut].parameter3].floating)
 					locFlag |= 4;
 
 				if (locFlag != 0) {
 					link = _trainData[*sceneOut].link;
 					for (bool found = false; link && !found; link = link->next) {
 						if (link->location == locFlag) {
-							if (_gameInventory[_trainData[*sceneOut].parameter1].location == link->param1 && _gameInventory[_trainData[*sceneOut].parameter2].location == link->param2 && _gameInventory[_trainData[*sceneOut].parameter3].location == link->param3) {
+							if (_items[_trainData[*sceneOut].parameter1].floating == link->param1 && _items[_trainData[*sceneOut].parameter2].floating == link->param2 && _items[_trainData[*sceneOut].parameter3].floating == link->param3) {
 								tmp.copyFrom(link);
 								doAction(&tmp);
 
@@ -404,13 +404,13 @@ void LogicManager::doPreFunction(int *sceneOut) {
 		}
 
 		break;
-	case kCarBaggage:
+	case kNodeModelPad:
 		if (_trainData[*sceneOut].parameter1 < 128) {
 			link = _trainData[*sceneOut].link;
 			bool found = false;
 			if (link) {
 				while (!found) {
-					if (_gameObjects[_trainData[*sceneOut].parameter1].model == link->location) {
+					if (_doors[_trainData[*sceneOut].parameter1].model == link->location) {
 						tmp.copyFrom(link);
 						doAction(&tmp);
 
@@ -453,11 +453,11 @@ void LogicManager::doPreFunction(int *sceneOut) {
 		}
 
 		break;
-	case kCarCoalTender:
+	case kNodeSoftPoint:
 		if (_trainData[*sceneOut].parameter1 < 16 &&
-			(_softBlockedEntitiesBits[_trainData[*sceneOut].parameter1] || _blockedEntitiesBits[_trainData[*sceneOut].parameter1])) {
-			if ((!_engine->getOtisManager()->fDirection(_trainNodeIndex) || !_engine->getOtisManager()->fDirection(*sceneOut) || _trainData[_trainNodeIndex].nodePosition.position >= _trainData[*sceneOut].nodePosition.position) &&
-				(!_engine->getOtisManager()->rDirection(_trainNodeIndex) || !_engine->getOtisManager()->rDirection(*sceneOut) || _trainData[_trainNodeIndex].nodePosition.position <= _trainData[*sceneOut].nodePosition.position)) {
+			(_softBlockedX[_trainData[*sceneOut].parameter1] || _blockedX[_trainData[*sceneOut].parameter1])) {
+			if ((!_engine->getOtisManager()->fDirection(_activeNode) || !_engine->getOtisManager()->fDirection(*sceneOut) || _trainData[_activeNode].nodePosition.position >= _trainData[*sceneOut].nodePosition.position) &&
+				(!_engine->getOtisManager()->rDirection(_activeNode) || !_engine->getOtisManager()->rDirection(*sceneOut) || _trainData[_activeNode].nodePosition.position <= _trainData[*sceneOut].nodePosition.position)) {
 				next = _trainData[*sceneOut].link->next;
 				scene = next->scene;
 				*sceneOut = (int)scene;
@@ -466,8 +466,8 @@ void LogicManager::doPreFunction(int *sceneOut) {
 				break;
 			}
 
-			if (whoseBit(_softBlockedEntitiesBits[_trainData[*sceneOut].parameter1]) != 30 &&
-				whoseBit(_blockedEntitiesBits[_trainData[*sceneOut].parameter1]) != 30) {
+			if (whoseBit(_softBlockedX[_trainData[*sceneOut].parameter1]) != 30 &&
+				whoseBit(_blockedX[_trainData[*sceneOut].parameter1]) != 30) {
 				playDialog(kCharacterCath, "CAT1126A", -1, 0);
 			}
 
@@ -477,17 +477,17 @@ void LogicManager::doPreFunction(int *sceneOut) {
 		}
 
 		break;
-	case kCarLocomotive:
+	case kNodeSoftPointItem:
 		if (_trainData[*sceneOut].parameter1 < (_engine->isDemo() ? 16 : 32)) {
-			if (_softBlockedEntitiesBits[_trainData[*sceneOut].parameter1] || _blockedEntitiesBits[_trainData[*sceneOut].parameter1]) {
-				if (_engine->getOtisManager()->fDirection(_trainNodeIndex) &&
+			if (_softBlockedX[_trainData[*sceneOut].parameter1] || _blockedX[_trainData[*sceneOut].parameter1]) {
+				if (_engine->getOtisManager()->fDirection(_activeNode) &&
 					_engine->getOtisManager()->fDirection(*sceneOut) &&
-					_trainData[_trainNodeIndex].nodePosition.position < _trainData[*sceneOut].nodePosition.position ||
-					_engine->getOtisManager()->rDirection(_trainNodeIndex) &&
+					_trainData[_activeNode].nodePosition.position < _trainData[*sceneOut].nodePosition.position ||
+					_engine->getOtisManager()->rDirection(_activeNode) &&
 					_engine->getOtisManager()->rDirection(*sceneOut) &&
-					_trainData[_trainNodeIndex].nodePosition.position > _trainData[*sceneOut].nodePosition.position) {
+					_trainData[_activeNode].nodePosition.position > _trainData[*sceneOut].nodePosition.position) {
 
-					if (whoseBit(_softBlockedEntitiesBits[_trainData[*sceneOut].parameter1]) != 30 && whoseBit(_blockedEntitiesBits[_trainData[*sceneOut].parameter1]) != 30) {
+					if (whoseBit(_softBlockedX[_trainData[*sceneOut].parameter1]) != 30 && whoseBit(_blockedX[_trainData[*sceneOut].parameter1]) != 30) {
 						playDialog(kCharacterCath, "CAT1126A", -1, 0);
 					}
 
@@ -501,10 +501,10 @@ void LogicManager::doPreFunction(int *sceneOut) {
 				doPreFunction(sceneOut);
 			} else {
 				if (_trainData[*sceneOut].parameter2 < 32) {
-					if (_gameInventory[_trainData[*sceneOut].parameter2].location) {
+					if (_items[_trainData[*sceneOut].parameter2].floating) {
 						link = _trainData[*sceneOut].link;
 						for (bool found = false; link && !found; link = link->next) {
-							if (_gameInventory[_trainData[*sceneOut].parameter2].location == link->location) {
+							if (_items[_trainData[*sceneOut].parameter2].floating == link->location) {
 								tmp.copyFrom(link);
 								doAction(&tmp);
 
@@ -527,12 +527,12 @@ void LogicManager::doPreFunction(int *sceneOut) {
 	}
 
 	if (whoRunningDialog(kCharacterTableE)) {
-		if (_trainData[*sceneOut].car != 132 || _trainData[*sceneOut].parameter1)
+		if (_trainData[*sceneOut].property != kNodeRebeccaDiary || _trainData[*sceneOut].parameter1)
 			fadeDialog(kCharacterTableE);
 	}
 
 	if (!_engine->isDemo() && _engine->_beetle) {
-		if (_trainData[*sceneOut].car != 130)
+		if (_trainData[*sceneOut].property != kNodeBeetle)
 			_engine->endBeetle();
 	}
 }
@@ -540,13 +540,13 @@ void LogicManager::doPreFunction(int *sceneOut) {
 void LogicManager::doPostFunction() {
 	Link tmp;
 
-	switch (_trainData[_trainNodeIndex].car) {
-	case 128:
+	switch (_trainData[_activeNode].property) {
+	case kNodeAutoWalk:
 	{
-		int32 delta = _trainData[_trainNodeIndex].parameter1 + 10;
-		_gameTime += delta * _gameTimeTicksDelta;
-		_currentGameSessionTicks += delta;
-		int32 delayedTicks = _engine->getSoundFrameCounter() + 4 * _trainData[_trainNodeIndex].parameter1;
+		int32 delta = _trainData[_activeNode].parameter1 + 10;
+		_gameTime += delta * _timeSpeed;
+		_realTime += delta;
+		int32 delayedTicks = _engine->getSoundFrameCounter() + 4 * _trainData[_activeNode].parameter1;
 
 		if (!_engine->mouseHasRightClicked() && delayedTicks > _engine->getSoundFrameCounter()) {
 			do {
@@ -557,17 +557,17 @@ void LogicManager::doPostFunction() {
 			} while (delayedTicks > _engine->getSoundFrameCounter());
 		}
 
-		tmp.copyFrom(_trainData[_trainNodeIndex].link);
+		tmp.copyFrom(_trainData[_activeNode].link);
 		doAction(&tmp);
 
-		if (_engine->mouseHasRightClicked() && _trainData[tmp.scene].car == 128) {
+		if (_engine->mouseHasRightClicked() && _trainData[tmp.scene].property == kNodeAutoWalk) {
 			do {
 				tmp.copyFrom(_trainData[tmp.scene].link);
 				doAction(&tmp);
-			} while (_trainData[tmp.scene].car == 128);
+			} while (_trainData[tmp.scene].property == kNodeAutoWalk);
 		}
 
-		if (getCharacter(kCharacterCath).characterPosition.car == 9 &&
+		if (getCharacter(kCharacterCath).characterPosition.car == kCarVestibule &&
 			(getCharacter(kCharacterCath).characterPosition.position == 4 ||
 			 getCharacter(kCharacterCath).characterPosition.position == 3)) {
 
@@ -578,11 +578,11 @@ void LogicManager::doPostFunction() {
 
 			for (int j = 1; j < 40; j++) {
 				if (getCharacter(kCharacterCath).characterPosition.position == 4) {
-					if (getCharacter(j).characterPosition.car == 4 && getCharacter(j).characterPosition.position > 9270 || getCharacter(j).characterPosition.car == 5 && getCharacter(j).characterPosition.position < 1540) {
+					if (getCharacter(j).characterPosition.car == kCarRedSleeping && getCharacter(j).characterPosition.position > 9270 || getCharacter(j).characterPosition.car == kCarRestaurant && getCharacter(j).characterPosition.position < 1540) {
 						charactersRndArray[characterIdx] = j;
 						characterIdx++;
 					}
-				} else if (getCharacter(j).characterPosition.car == 3 && getCharacter(j).characterPosition.position > 9270 || getCharacter(j).characterPosition.car == 4 && getCharacter(j).characterPosition.position < 850) {
+				} else if (getCharacter(j).characterPosition.car == kCarGreenSleeping && getCharacter(j).characterPosition.position > 9270 || getCharacter(j).characterPosition.car == kCarRedSleeping && getCharacter(j).characterPosition.position < 850) {
 					charactersRndArray[characterIdx] = j;
 					characterIdx++;
 				}
@@ -602,23 +602,23 @@ void LogicManager::doPostFunction() {
 
 		return;
 	}
-	case 129:
+	case kNodeSleepingOnBed:
 		if (_engine->isDemo())
 			break;
 
-		if (_gameProgress[kProgressField18] == 2)
+		if (_globals[kProgressField18] == 2)
 			send(kCharacterCath, kCharacterMaster, 190346110, 0);
 
 		return;
-	case 130:
+	case kNodeBeetle:
 		if (_engine->isDemo())
 			break;
 
 		_engine->doBeetle();
 		return;
-	case 131:
+	case kNodePullingStop:
 	{
-		if (_gameTime < 2418300 && _gameProgress[kProgressField18] != 4) {
+		if (_gameTime < 2418300 && _globals[kProgressField18] != 4) {
 			Slot *slot = _engine->getSoundManager()->_soundCache;
 			if (slot) {
 				do {
@@ -634,9 +634,9 @@ void LogicManager::doPostFunction() {
 
 			playDialog(kCharacterClerk, "LIB050", 16, 0);
 
-			if (_gameProgress[kProgressChapter] == 1) {
+			if (_globals[kProgressChapter] == 1) {
 				endGame(0, 0, 62, true);
-			} else if (_gameProgress[kProgressChapter] == 4) {
+			} else if (_globals[kProgressChapter] == 4) {
 				endGame(0, 0, 64, true);
 			} else {
 				endGame(0, 0, 63, true);
@@ -645,9 +645,9 @@ void LogicManager::doPostFunction() {
 
 		return;
 	}
-	case 132:
+	case kNodeRebeccaDiary:
 		if (!whoRunningDialog(kCharacterTableE)) {
-			switch (_trainData[_trainNodeIndex].parameter1) {
+			switch (_trainData[_activeNode].parameter1) {
 			case 1:
 				if (dialogRunning("TXT1001"))
 					endDialog("TXT1001");
@@ -747,7 +747,7 @@ void LogicManager::doPostFunction() {
 		}
 
 		return;
-	case 133:
+	case kNodeExitFastWalk:
 		if (_doubleClickFlag) {
 			_doubleClickFlag = false;
 			_engine->getGraphicsManager()->setMouseDrawable(true);
@@ -769,27 +769,27 @@ void LogicManager::doAction(Link *link) {
 	switch (link->action) {
 	case kActionInventory:
 	{
-		if (_useLastSavedNodeIndex) {
+		if (_closeUp) {
 			int bumpScene = 0;
-			if (_lastSavedNodeIndex) {
-				bumpScene = _lastSavedNodeIndex;
-				_lastSavedNodeIndex = 0;
+			if (_nodeReturn2) {
+				bumpScene = _nodeReturn2;
+				_nodeReturn2 = 0;
 				bumpCathNode(bumpScene);
 			} else {
-				_useLastSavedNodeIndex = 0;
+				_closeUp = 0;
 
-				if (_positions[100 * _trainData[_lastNodeIndex].nodePosition.car + _trainData[_lastNodeIndex].cathDir]) {
-					bumpCathNode(getSmartBumpNode(_lastNodeIndex));
+				if (_blockedViews[100 * _trainData[_nodeReturn].nodePosition.car + _trainData[_nodeReturn].cathDir]) {
+					bumpCathNode(getSmartBumpNode(_nodeReturn));
 				} else {
-					bumpCathNode(_lastNodeIndex);
+					bumpCathNode(_nodeReturn);
 				}
 			}
 
-			if (_inventorySelectedItemIdx && (!_gameInventory[_inventorySelectedItemIdx].isSelectable || (bumpScene == 0 && findLargeItem()))) {
-				_inventorySelectedItemIdx = findLargeItem();
+			if (_activeItem && (!_items[_activeItem].useable || (bumpScene == 0 && findLargeItem()))) {
+				_activeItem = findLargeItem();
 
-				if (_inventorySelectedItemIdx) {
-					_engine->getGraphicsManager()->drawItem(_gameInventory[_inventorySelectedItemIdx].cursor, 44, 0);
+				if (_activeItem) {
+					_engine->getGraphicsManager()->drawItem(_items[_activeItem].mnum, 44, 0);
 				} else if (_engine->getGraphicsManager()->acquireSurface()) {
 					_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 					_engine->getGraphicsManager()->unlockSurface();
@@ -813,14 +813,14 @@ void LogicManager::doAction(Link *link) {
 		break;
 	case kActionPlayMusic:
 		Common::sprintf_s(filename, "MUS%03d", link->param1);
-		if (!dialogRunning(filename) && (link->param1 != 50 || _gameProgress[kProgressChapter] == 5))
+		if (!dialogRunning(filename) && (link->param1 != 50 || _globals[kProgressChapter] == 5))
 			playDialog(kCharacterCath, filename, 16, link->param2);
 
 		break;
 	case kActionKnock:
 		if (link->param1 < 128) {
-			if (_gameObjects[link->param1].character) {
-				send(kCharacterCath, _gameObjects[link->param1].character, 8, link->param1);
+			if (_doors[link->param1].who) {
+				send(kCharacterCath, _doors[link->param1].who, 8, link->param1);
 				return;
 			}
 
@@ -835,7 +835,7 @@ void LogicManager::doAction(Link *link) {
 
 		break;
 	case kActionPlayAnimation:
-		if (!_gameEvents[link->param1]) {
+		if (!_doneNIS[link->param1]) {
 			playNIS(link->param1);
 
 			if (!link->scene)
@@ -843,11 +843,11 @@ void LogicManager::doAction(Link *link) {
 		}
 
 		break;
-	case kActionOpenCloseObject:
+	case kActionSetDoor:
 		if (link->param1 >= 128)
 			return;
 
-		setDoor(link->param1, _gameObjects[link->param1].character, link->param2, 255, 255);
+		setDoor(link->param1, _doors[link->param1].who, link->param2, 255, 255);
 		if ((link->param1 < 9 || link->param1 > 16) && (link->param1 < 40 || link->param1 > 47)) {
 			if (link->param2) {
 				if (link->param2 == 1) {
@@ -888,39 +888,39 @@ void LogicManager::doAction(Link *link) {
 			break;
 
 		if (link->param1 < 32) {
-			if (!_gameInventory[link->param1].isPresent) {
-				_gameInventory[link->param1].location = link->param2;
+			if (!_items[link->param1].haveIt) {
+				_items[link->param1].floating = link->param2;
 
 				if (link->param1 == kItemCorpse) {
-					_gameProgress[kProgressEventCorpseMovedFromFloor] = (_gameInventory[kItemCorpse].location == 3 || _gameInventory[kItemCorpse].location == 4) ? 1 : 0;
+					_globals[kProgressEventCorpseMovedFromFloor] = (_items[kItemCorpse].floating == 3 || _items[kItemCorpse].floating == 4) ? 1 : 0;
 				}
 			}
 		}
 
 		break;
-	case kActionPickItem:
+	case kActionTakeItem:
 		if (_engine->isDemo())
 			break;
 
 		if (link->param1 >= 32)
 			return;
 
-		if (!_gameInventory[link->param1].location)
+		if (!_items[link->param1].floating)
 			return;
 
 		if (link->param1 == kItemCorpse) {
 			takeTyler(link->scene == 0, link->param2);
 
 			if (link->param2 != 4) {
-				_gameInventory[kItemCorpse].isPresent = 1;
-				_gameInventory[kItemCorpse].location = 0;
-				_inventorySelectedItemIdx = kItemCorpse;
-				_engine->getGraphicsManager()->drawItem(_gameInventory[kItemCorpse].cursor, 44, 0);
+				_items[kItemCorpse].haveIt = 1;
+				_items[kItemCorpse].floating = 0;
+				_activeItem = kItemCorpse;
+				_engine->getGraphicsManager()->drawItem(_items[kItemCorpse].mnum, 44, 0);
 				_engine->getGraphicsManager()->burstBox(44u, 0, 32, 32);
 			}
 		} else {
-			_gameInventory[link->param1].isPresent = 1;
-			_gameInventory[link->param1].location = 0;
+			_items[link->param1].haveIt = 1;
+			_items[link->param1].floating = 0;
 
 			if (link->param1 == kItemGreenJacket) {
 				takeJacket(link->scene == 0);
@@ -931,9 +931,9 @@ void LogicManager::doAction(Link *link) {
 				}
 
 				if (link->param1 == kItemParchemin && link->param2 == 2) {
-					_gameInventory[kItemParchemin].isPresent = 1;
-					_gameInventory[kItemParchemin].location = 0;
-					_gameInventory[kItem11].location = 1;
+					_items[kItemParchemin].haveIt = 1;
+					_items[kItemParchemin].floating = 0;
+					_items[kItem11].floating = 1;
 					queueSFX(kCharacterCath, 9, 0);
 				} else if (link->param1 == kItemBomb) {
 					forceJump(kCharacterAbbot, &LogicManager::CONS_Abbot_CatchCath);
@@ -942,22 +942,22 @@ void LogicManager::doAction(Link *link) {
 				}
 			}
 
-			if (_gameInventory[link->param1].scene) {
-				if (!_useLastSavedNodeIndex) {
+			if (_items[link->param1].closeUp) {
+				if (!_closeUp) {
 					if (!link->scene)
-						link->scene = _trainNodeIndex;
+						link->scene = _activeNode;
 
-					_useLastSavedNodeIndex = 1;
-					_lastNodeIndex = link->scene;
+					_closeUp = 1;
+					_nodeReturn = link->scene;
 				}
 
-				bumpCathNode(_gameInventory[link->param1].scene);
+				bumpCathNode(_items[link->param1].closeUp);
 				link->scene = kSceneNone;
 			}
 
-			if (_gameInventory[link->param1].isSelectable) {
-				_inventorySelectedItemIdx = link->param1;
-				_engine->getGraphicsManager()->drawItem(_gameInventory[link->param1].cursor, 44, 0);
+			if (_items[link->param1].useable) {
+				_activeItem = link->param1;
+				_engine->getGraphicsManager()->drawItem(_items[link->param1].mnum, 44, 0);
 				_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 			}
 		}
@@ -967,33 +967,33 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if (link->param1 >= 32 || !_gameInventory[link->param1].isPresent || !link->param2)
+		if (link->param1 >= 32 || !_items[link->param1].haveIt || !link->param2)
 			return;
 
 		if (link->param1 == kItemBriefcase) {
 			queueSFX(kCharacterCath, 82, 0);
 
 			if (link->param2 == 2) {
-				if (!_gameProgress[kProgressField58]) {
+				if (!_globals[kProgressField58]) {
 					_engine->getVCR()->writeSavePoint(1, 0, 0);
-					_gameProgress[kProgressField58] = 1;
+					_globals[kProgressField58] = 1;
 				}
 
-				if (_gameInventory[kItemParchemin].location == 2) {
-					_gameInventory[kItemParchemin].isPresent = 1;
-					_gameInventory[kItemParchemin].location = 0;
-					_gameInventory[kItem11].location = 1;
+				if (_items[kItemParchemin].floating == 2) {
+					_items[kItemParchemin].haveIt = 1;
+					_items[kItemParchemin].floating = 0;
+					_items[kItem11].floating = 1;
 					queueSFX(kCharacterCath, 9, 0);
 				}
 			}
 		}
 
-		_gameInventory[link->param1].isPresent = 0;
-		_gameInventory[link->param1].location = link->param2;
+		_items[link->param1].haveIt = 0;
+		_items[link->param1].floating = link->param2;
 		if (link->param1 == 20)
 			dropTyler(link->scene == 0);
 
-		_inventorySelectedItemIdx = 0;
+		_activeItem = 0;
 
 		if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
@@ -1007,7 +1007,7 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if (!_gameEvents[kEventCathLookOutsideWindowDay] && !_gameEvents[kEventCathLookOutsideWindowNight] && getModel(1) != 1 || !_gameProgress[kProgressIsTrainRunning] || link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _gameObjects[kObjectOutsideBetweenCompartments].door != 2) || _inventorySelectedItemIdx == kItemBriefcase || _inventorySelectedItemIdx == kItemFirebird) {
+		if (!_doneNIS[kEventCathLookOutsideWindowDay] && !_doneNIS[kEventCathLookOutsideWindowNight] && getModel(1) != 1 || !_globals[kProgressIsTrainRunning] || link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _doors[kObjectOutsideBetweenCompartments].status != 2) || _activeItem == kItemBriefcase || _activeItem == kItemFirebird) {
 			if (link->param1 == 9 || link->param1 >= 44 && link->param1 <= 45) {
 				if (isNight()) {
 					playNIS(kEventCathLookOutsideWindowNight);
@@ -1023,7 +1023,7 @@ void LogicManager::doAction(Link *link) {
 
 		switch (link->param1) {
 		case 9:
-			_gameEvents[kEventCathLookOutsideWindowDay] = 1;
+			_doneNIS[kEventCathLookOutsideWindowDay] = 1;
 
 			if (isNight()) {
 				playNIS(kEventCathGoOutsideTylerCompartmentNight);
@@ -1031,10 +1031,10 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathGoOutsideTylerCompartmentDay);
 			}
 
-			_gameProgress[kProgressFieldC8] = 1;
+			_globals[kProgressFieldC8] = 1;
 			break;
 		case 44:
-			_gameEvents[kEventCathLookOutsideWindowDay] = 1;
+			_doneNIS[kEventCathLookOutsideWindowDay] = 1;
 
 			if (isNight()) {
 				playNIS(kEventCathGoOutsideNight);
@@ -1042,10 +1042,10 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathGoOutsideDay);
 			}
 
-			_gameProgress[kProgressFieldC8] = 1;
+			_globals[kProgressFieldC8] = 1;
 			break;
 		case 45:
-			_gameEvents[kEventCathLookOutsideWindowDay] = 1;
+			_doneNIS[kEventCathLookOutsideWindowDay] = 1;
 
 			if (isNight()) {
 				playNIS(kEventCathGetInsideNight);
@@ -1071,7 +1071,7 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathSlipTylerCompartmentDay);
 			}
 
-			_gameProgress[kProgressFieldC8] = 0;
+			_globals[kProgressFieldC8] = 0;
 
 			if (link->scene)
 				return;
@@ -1085,7 +1085,7 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathSlipDay);
 			}
 
-			_gameProgress[kProgressFieldC8] = 0;
+			_globals[kProgressFieldC8] = 0;
 
 			if (link->scene)
 				return;
@@ -1138,10 +1138,10 @@ void LogicManager::doAction(Link *link) {
 			break;
 
 		if (link->param1 == 1) {
-			if (_gameProgress[kProgressChapter] == 2 || _gameProgress[kProgressChapter] == 3) {
+			if (_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3) {
 				playNIS(kEventCathTopTrainGreenJacket);
-			} else if (_gameProgress[kProgressChapter] == 5) {
-				playNIS(kEventCathTopTrainNoJacketDay - (_gameProgress[kProgressIsDayTime] == kProgressField0));
+			} else if (_globals[kProgressChapter] == 5) {
+				playNIS(kEventCathTopTrainNoJacketDay - (_globals[kProgressIsDayTime] == kProgressField0));
 			}
 
 			if (link->scene)
@@ -1150,12 +1150,12 @@ void LogicManager::doAction(Link *link) {
 			if (link->param1 != 2)
 				return;
 
-			if (_gameProgress[kProgressChapter] == 2 || _gameProgress[kProgressChapter] == 3) {
+			if (_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3) {
 				playNIS(kEventCathClimbUpTrainGreenJacket);
 				playNIS(kEventCathTopTrainGreenJacket);
-			} else if (_gameProgress[kProgressChapter] == 5) {
-				playNIS(kEventCathClimbUpTrainNoJacketDay - (_gameProgress[kProgressIsDayTime] == 0));
-				playNIS(kEventCathTopTrainNoJacketDay - (_gameProgress[kProgressIsDayTime] == 0));
+			} else if (_globals[kProgressChapter] == 5) {
+				playNIS(kEventCathClimbUpTrainNoJacketDay - (_globals[kProgressIsDayTime] == 0));
+				playNIS(kEventCathTopTrainNoJacketDay - (_globals[kProgressIsDayTime] == 0));
 			}
 
 			if (link->scene)
@@ -1168,10 +1168,10 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if (_gameProgress[kProgressChapter] == 2 || _gameProgress[kProgressChapter] == 3) {
+		if (_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3) {
 			nisId = kEventCathClimbDownTrainGreenJacket;
-		} else if (_gameProgress[kProgressChapter] == 5) {
-			if (_gameProgress[kProgressIsDayTime] == 0) {
+		} else if (_globals[kProgressChapter] == 5) {
+			if (_globals[kProgressIsDayTime] == 0) {
 				nisId = kEventCathClimbDownTrainNoJacketNight;
 			} else {
 				nisId = kEventCathClimbDownTrainNoJacketDay;
@@ -1201,11 +1201,11 @@ void LogicManager::doAction(Link *link) {
 			send(kCharacterCath, 32, 338494260, 0);
 			break;
 		case 3:
-			if (_inventorySelectedItemIdx == kItemBriefcase) {
-				_gameInventory[kItemBriefcase].location = 3;
-				_gameInventory[kItemBriefcase].isPresent = 0;
+			if (_activeItem == kItemBriefcase) {
+				_items[kItemBriefcase].floating = 3;
+				_items[kItemBriefcase].haveIt = 0;
 				queueSFX(kCharacterCath, 82, 0);
-				_inventorySelectedItemIdx = 0;
+				_activeItem = 0;
 				if (_engine->getGraphicsManager()->acquireSurface()) {
 					_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 					_engine->getGraphicsManager()->unlockSurface();
@@ -1213,7 +1213,7 @@ void LogicManager::doAction(Link *link) {
 				_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 			}
 
-			if (_gameInventory[kItemBriefcase].location == 3) {
+			if (_items[kItemBriefcase].floating == 3) {
 				nisId = kEventCathJumpUpCeiling;
 			} else {
 				nisId = kEventCathJumpUpCeilingBriefcase;
@@ -1221,7 +1221,7 @@ void LogicManager::doAction(Link *link) {
 
 			break;
 		case 4:
-			if (_gameProgress[kProgressChapter] == 1)
+			if (_globals[kProgressChapter] == 1)
 				send(kCharacterCath, kCharacterKronos, 202621266, 0);
 			break;
 		default:
@@ -1248,16 +1248,16 @@ void LogicManager::doAction(Link *link) {
 			nisId = kEventCathBurnRope;
 			break;
 		case 3:
-			if (_gameEvents[kEventCathBurnRope]) {
+			if (_doneNIS[kEventCathBurnRope]) {
 				playNIS(kEventCathRemoveBonds);
-				_gameProgress[kProgressField84] = 0;
+				_globals[kProgressField84] = 0;
 				bumpCath(kCarBaggageRear, 89, 255);
 				link->scene = kSceneNone;
 			}
 
 			break;
 		case 4:
-			if (!_gameEvents[kEventCathStruggleWithBonds2]) {
+			if (!_doneNIS[kEventCathStruggleWithBonds2]) {
 				playNIS(kEventCathStruggleWithBonds2);
 				queueSFX(kCharacterCath, 101, 0);
 				dropItem(kItemMatch, 2);
@@ -1297,7 +1297,7 @@ void LogicManager::doAction(Link *link) {
 				link->scene = kSceneNone;
 			} else {
 				if (cathHasItem(kItemKey)) {
-					if (!_gameEvents[kEventAnnaBaggageArgument]) {
+					if (!_doneNIS[kEventAnnaBaggageArgument]) {
 						forceJump(kCharacterAnna, &LogicManager::CONS_Anna_BaggageFight);
 						link->scene = kSceneNone;
 					}
@@ -1318,7 +1318,7 @@ void LogicManager::doAction(Link *link) {
 			break;
 		case 2:
 			send(kCharacterCath, kCharacterMaster, 225367984, 0);
-			_inventorySelectedItemIdx = 0;
+			_activeItem = 0;
 
 			if (_engine->getGraphicsManager()->acquireSurface()) {
 				_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
@@ -1380,7 +1380,7 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		_gameProgress[kProgressFieldC] = 1;
+		_globals[kProgressFieldC] = 1;
 		queueSFX(kCharacterCath, link->param1, link->param2);
 		Common::sprintf_s(filename, "MUS%03d", link->param3);
 		if (!dialogRunning(filename))
@@ -1393,7 +1393,7 @@ void LogicManager::doAction(Link *link) {
 
 		if (_engine->_beetle && _engine->_beetle->click()) {
 			_engine->endBeetle();
-			_gameInventory[kItemBeetle].location = 1;
+			_items[kItemBeetle].floating = 1;
 			send(kCharacterCath, kCharacterClerk, 202613084, 0);
 		}
 
@@ -1401,28 +1401,28 @@ void LogicManager::doAction(Link *link) {
 
 	case kActionCompartment:
 	case kActionExitCompartment:
-	case kActionEnterCompartment:
+	case kActionRattle:
 	{
 		bool skipFlag = false;
 
 		if (link->action != kActionCompartment) {
 			if (!_engine->isDemo()) {
 				if (link->action == kActionExitCompartment) {
-					if (!_gameProgress[kProgressField30] && _gameProgress[kProgressJacket]) {
+					if (!_globals[kProgressField30] && _globals[kProgressJacket]) {
 						_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
-						_gameProgress[kProgressField30] = 1;
+						_globals[kProgressField30] = 1;
 					}
 
 					setModel(1, link->param2);
 				}
 
-				if (_gameObjects[kItemMatchBox].door != 1 && _gameObjects[kItemMatchBox].door != 3 && _inventorySelectedItemIdx != kItemKey) {
-					if (!_gameProgress[kProgressEventFoundCorpse]) {
+				if (_doors[kItemMatchBox].status != 1 && _doors[kItemMatchBox].status != 3 && _activeItem != kItemKey) {
+					if (!_globals[kProgressEventFoundCorpse]) {
 						_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
 						playDialog(kCharacterCath, "LIB014", -1, 0);
 						playNIS(kEventCathFindCorpse);
 						playDialog(kCharacterCath, "LIB015", -1, 0);
-						_gameProgress[kProgressEventFoundCorpse] = 1;
+						_globals[kProgressEventFoundCorpse] = 1;
 						link->scene = kSceneCompartmentCorpse;
 
 						return;
@@ -1435,12 +1435,12 @@ void LogicManager::doAction(Link *link) {
 			}
 		}
 
-		if (skipFlag || link->action == kActionCompartment || (link->action != kActionEnterCompartment || _gameInventory[kItemBriefcase].location != 2)) {
+		if (skipFlag || link->action == kActionCompartment || (link->action != kActionRattle || _items[kItemBriefcase].floating != 2)) {
 			if (link->param1 >= 128)
 				return;
 
-			if (_gameObjects[link->param1].character) {
-				send(kCharacterCath, _gameObjects[link->param1].character, 9, link->param1);
+			if (_doors[link->param1].who) {
+				send(kCharacterCath, _doors[link->param1].who, 9, link->param1);
 				link->scene = kSceneNone;
 				return;
 			}
@@ -1452,8 +1452,8 @@ void LogicManager::doAction(Link *link) {
 				}
 			}
 
-			if (_gameObjects[link->param1].door == 1 || _gameObjects[link->param1].door == 3 || preventEnterComp(link->param1)) {
-				if (_gameObjects[link->param1].door != 1 || preventEnterComp(link->param1) || _inventorySelectedItemIdx != 15 && (link->param1 != 1 || !cathHasItem(kItemKey) || _inventorySelectedItemIdx != kItemBriefcase && _inventorySelectedItemIdx != kItemFirebird)) {
+			if (_doors[link->param1].status == 1 || _doors[link->param1].status == 3 || preventEnterComp(link->param1)) {
+				if (_doors[link->param1].status != 1 || preventEnterComp(link->param1) || _activeItem != 15 && (link->param1 != 1 || !cathHasItem(kItemKey) || _activeItem != kItemBriefcase && _activeItem != kItemFirebird)) {
 					if (!cathRunningDialog("LIB013"))
 						queueSFX(kCharacterCath, 13, 0);
 
@@ -1467,13 +1467,13 @@ void LogicManager::doAction(Link *link) {
 					setDoor(link->param1, kCharacterCath, 0, 10, 9);
 
 				queueSFX(kCharacterCath, 15, 22);
-				_inventorySelectedItemIdx = 0;
+				_activeItem = 0;
 				if (_engine->getGraphicsManager()->acquireSurface()) {
 					_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 					_engine->getGraphicsManager()->unlockSurface();
 				}
 			} else {
-				if (link->action != 16 || _inventorySelectedItemIdx != kItemKey) {
+				if (link->action != 16 || _activeItem != kItemKey) {
 					if (link->param1 == 109) {
 						queueSFX(kCharacterCath, 26, 0);
 					} else {
@@ -1486,7 +1486,7 @@ void LogicManager::doAction(Link *link) {
 
 				setDoor(1, kCharacterCath, 1, 10, 9);
 				queueSFX(kCharacterCath, 16, 0);
-				_inventorySelectedItemIdx = 0;
+				_activeItem = 0;
 				link->scene = kSceneNone;
 
 				if (_engine->getGraphicsManager()->acquireSurface()) {
@@ -1503,9 +1503,9 @@ void LogicManager::doAction(Link *link) {
 			queueSFX(kCharacterCath, 14, 0);
 			queueSFX(kCharacterCath, 15, 22);
 
-			if (_gameProgress[kProgressField78] && !dialogRunning("MUS003")) {
+			if (_globals[kProgressField78] && !dialogRunning("MUS003")) {
 				playDialog(kCharacterCath, "MUS003", 16, 0);
-				_gameProgress[kProgressField78] = 0;
+				_globals[kProgressField78] = 0;
 			}
 
 			bumpCath(kCarGreenSleeping, 77, 255);
@@ -1527,7 +1527,7 @@ void LogicManager::doAction(Link *link) {
 			send(kCharacterCath, kCharacterVesna, 202884544, 0);
 			break;
 		case 3:
-			if (_gameProgress[kProgressChapter] == 5) {
+			if (_globals[kProgressChapter] == 5) {
 				send(kCharacterCath, kCharacterAbbot, 168646401, 0);
 				send(kCharacterCath, kCharacterMilos, 168646401, 0);
 			} else {
@@ -1554,7 +1554,7 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if (_gameEvents[kEventKronosBringFirebird]) {
+		if (_doneNIS[kEventKronosBringFirebird]) {
 			switch (link->param1) {
 			case 1:
 				send(kCharacterCath, kCharacterAnna, 205294778, 0);
@@ -1579,7 +1579,7 @@ void LogicManager::doAction(Link *link) {
 					nisId = kEventCathOpenEggNoBackground;
 				}
 
-				_gameProgress[kProgressIsEggOpen] = 1;
+				_globals[kProgressIsEggOpen] = 1;
 				break;
 			}
 			case 2:
@@ -1589,7 +1589,7 @@ void LogicManager::doAction(Link *link) {
 					nisId = kEventCathCloseEgg;
 				}
 
-				_gameProgress[kProgressIsEggOpen] = 0;
+				_globals[kProgressIsEggOpen] = 0;
 				break;
 			case 3:
 				if (!inComp(kCharacterCath, kCarGreenSleeping, 8200)) {
@@ -1614,9 +1614,9 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if (_gameInventory[kItemMatch].location && !_gameInventory[kItemMatch].isPresent) {
-			_gameInventory[kItemMatch].isPresent = 1;
-			_gameInventory[kItemMatch].location = 0;
+		if (_items[kItemMatch].floating && !_items[kItemMatch].haveIt) {
+			_items[kItemMatch].haveIt = 1;
+			_items[kItemMatch].floating = 0;
 			queueSFX(kCharacterCath, 102, 0);
 		}
 
@@ -1640,9 +1640,9 @@ void LogicManager::doAction(Link *link) {
 			break;
 
 		queueSFX(kCharacterCath, 43, 0);
-		if (_gameProgress[kProgressField7C] && !dialogRunning("MUS003")) {
+		if (_globals[kProgressField7C] && !dialogRunning("MUS003")) {
 			playDialog(kCharacterCath, "MUS003", 16, 0);
-			_gameProgress[kProgressField7C] = 0;
+			_globals[kProgressField7C] = 0;
 		}
 
 		break;
@@ -1651,9 +1651,9 @@ void LogicManager::doAction(Link *link) {
 			break;
 
 		queueSFX(kCharacterCath, 24, 0);
-		if (_gameProgress[kProgressField80] && !dialogRunning("MUS003")) {
+		if (_globals[kProgressField80] && !dialogRunning("MUS003")) {
 			playDialog(kCharacterCath, "MUS003", 16, 0);
-			_gameProgress[kProgressField80] = 0;
+			_globals[kProgressField80] = 0;
 		}
 
 		break;
@@ -1667,13 +1667,13 @@ void LogicManager::doAction(Link *link) {
 		}
 
 		if (link->param1 < 128) {
-			if (_gameObjects[link->param1].character)
-				send(kCharacterCath, _gameObjects[link->param1].character, 8, link->param1);
+			if (_doors[link->param1].who)
+				send(kCharacterCath, _doors[link->param1].who, 8, link->param1);
 		}
 
 		return;
 	case kActionPlayMusicChapter:
-		switch (_gameProgress[kProgressChapter]) {
+		switch (_globals[kProgressChapter]) {
 		case 1:
 			musId = link->param1;
 			break;
@@ -1698,7 +1698,7 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		switch (_gameProgress[kProgressChapter]) {
+		switch (_globals[kProgressChapter]) {
 		case 1:
 			musId = 1;
 			break;
@@ -1739,22 +1739,22 @@ void LogicManager::doAction(Link *link) {
 }
 
 void LogicManager::takeTyler(bool doCleanNIS, int8 bedPosition) {
-	if (!_gameProgress[kProgressJacket])
-		_gameProgress[kProgressJacket] = 1;
+	if (!_globals[kProgressJacket])
+		_globals[kProgressJacket] = 1;
 
-	if (_gameInventory[kItemCorpse].location == 1) {
+	if (_items[kItemCorpse].floating == 1) {
 		if (bedPosition == 4) {
-			if (_gameProgress[kProgressJacket])
+			if (_globals[kProgressJacket])
 				playNIS(kEventCorpsePickFloorOpenedBedOriginal);
 
-			_gameInventory[kItemCorpse].location = 5;
-		} else if (_gameProgress[kProgressJacket] == 2) {
+			_items[kItemCorpse].floating = 5;
+		} else if (_globals[kProgressJacket] == 2) {
 			playNIS(kEventCorpsePickFloorGreen);
 		} else {
 			playNIS(kEventCorpsePickFloorOriginal);
 		}
-	} else if (_gameInventory[kItemCorpse].location == 2) {
-		if (_gameProgress[kProgressJacket] == 2) {
+	} else if (_items[kItemCorpse].floating == 2) {
+		if (_globals[kProgressJacket] == 2) {
 			playNIS(kEventCorpsePickBedGreen);
 		} else {
 			playNIS(kEventCorpsePickBedOriginal);
@@ -1766,9 +1766,9 @@ void LogicManager::takeTyler(bool doCleanNIS, int8 bedPosition) {
 }
 
 void LogicManager::dropTyler(bool doCleanNIS) {
-	switch (_gameInventory[kItemCorpse].location) {
+	switch (_items[kItemCorpse].floating) {
 	case 1:
-		if (_gameProgress[kProgressJacket] == 2) {
+		if (_globals[kProgressJacket] == 2) {
 			playNIS(kEventCorpseDropFloorGreen);
 		} else {
 			playNIS(kEventCorpseDropFloorOriginal);
@@ -1776,7 +1776,7 @@ void LogicManager::dropTyler(bool doCleanNIS) {
 
 		break;
 	case 2:
-		if (_gameProgress[kProgressJacket] == 2) {
+		if (_globals[kProgressJacket] == 2) {
 			playNIS(kEventCorpseDropBedGreen);
 		} else {
 			playNIS(kEventCorpseDropBedOriginal);
@@ -1784,22 +1784,22 @@ void LogicManager::dropTyler(bool doCleanNIS) {
 
 		break;
 	case 4:
-		_gameInventory[kItemCorpse].location = 0;
-		_gameProgress[kProgressEventCorpseThrown] = 1;
+		_items[kItemCorpse].floating = 0;
+		_globals[kProgressEventCorpseThrown] = 1;
 
 		if (_gameTime <= 1138500) {
-			if (_gameProgress[kProgressJacket] == 2) {
+			if (_globals[kProgressJacket] == 2) {
 				playNIS(kEventCorpseDropWindowGreen);
 			} else {
 				playNIS(kEventCorpseDropWindowOriginal);
 			}
 
-			_gameProgress[kProgressField24] = 1;
+			_globals[kProgressField24] = 1;
 		} else {
 			playNIS(kEventCorpseDropBridge);
 		}
 
-		_gameProgress[kProgressEventCorpseMovedFromFloor] = 1;
+		_globals[kProgressEventCorpseMovedFromFloor] = 1;
 
 		break;
 	}
@@ -1809,13 +1809,13 @@ void LogicManager::dropTyler(bool doCleanNIS) {
 }
 
 void LogicManager::takeJacket(bool doCleanNIS) {
-	_gameProgress[kProgressJacket] = 2;
-	_gameInventory[kItemMatchBox].isPresent = 1;
-	_gameInventory[kItemMatchBox].location = 0;
+	_globals[kProgressJacket] = 2;
+	_items[kItemMatchBox].haveIt = 1;
+	_items[kItemMatchBox].floating = 0;
 	setDoor(9, kCharacterCath, 2, 255, 255);
 	playNIS(kEventPickGreenJacket);
-	_gameProgress[kProgressPortrait] = 34;
-	_engine->getGraphicsManager()->drawItemDim(_gameProgress[kProgressPortrait], 0, 0, 1);
+	_globals[kProgressPortrait] = 34;
+	_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
 	_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 
 	if (doCleanNIS)
@@ -1823,7 +1823,7 @@ void LogicManager::takeJacket(bool doCleanNIS) {
 }
 
 void LogicManager::takeScarf(bool doCleanNIS) {
-	if (_gameProgress[kProgressJacket] == 2) {
+	if (_globals[kProgressJacket] == 2) {
 		playNIS(kEventPickScarfGreen);
 	} else {
 		playNIS(kEventPickScarfOriginal);
@@ -1839,195 +1839,195 @@ const char *LogicManager::getHintDialog(int character) {
 
 	switch (character) {
 	case kCharacterAnna:
-		if (_gameEvents[kEventAnnaDialogGoToJerusalem]) {
+		if (_doneNIS[kEventAnnaDialogGoToJerusalem]) {
 			return "XANN12";
-		} else if (_gameEvents[kEventLocomotiveRestartTrain]) {
+		} else if (_doneNIS[kEventLocomotiveRestartTrain]) {
 			return "XANN11";
-		} else if (_gameEvents[kEventAnnaBaggageTies] ||
-				   _gameEvents[kEventAnnaBaggageTies2] ||
-				   _gameEvents[kEventAnnaBaggageTies3] ||
-				   _gameEvents[kEventAnnaBaggageTies4]) {
+		} else if (_doneNIS[kEventAnnaBaggageTies] ||
+				   _doneNIS[kEventAnnaBaggageTies2] ||
+				   _doneNIS[kEventAnnaBaggageTies3] ||
+				   _doneNIS[kEventAnnaBaggageTies4]) {
 			return "XANN10";
-		} else if (_gameEvents[kEventAnnaTired] ||
-				   _gameEvents[kEventAnnaTiredKiss]) {
+		} else if (_doneNIS[kEventAnnaTired] ||
+				   _doneNIS[kEventAnnaTiredKiss]) {
 			return "XANN9";
-		} else if (_gameEvents[kEventAnnaBaggageArgument]) {
+		} else if (_doneNIS[kEventAnnaBaggageArgument]) {
 			return "XANN8";
-		} else if (_gameEvents[kEventKronosVisit]) {
+		} else if (_doneNIS[kEventKronosVisit]) {
 			return "XANN7";
-		} else if (_gameEvents[kEventAbbotIntroduction]) {
+		} else if (_doneNIS[kEventAbbotIntroduction]) {
 			return "XANN6A";
-		} else if (_gameEvents[kEventVassiliSeizure]) {
+		} else if (_doneNIS[kEventVassiliSeizure]) {
 			return "XANN6";
-		} else if (_gameEvents[kEventAugustPresentAnna] ||
-				   _gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+		} else if (_doneNIS[kEventAugustPresentAnna] ||
+				   _doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 			return "XANN5";
-		} else if (_gameProgress[kProgressField60]) {
+		} else if (_globals[kProgressField60]) {
 			return "XANN4";
-		} else if (_gameEvents[kEventAnnaGiveScarf] ||
-				   _gameEvents[kEventAnnaGiveScarfDiner] ||
-				   _gameEvents[kEventAnnaGiveScarfSalon] ||
-				   _gameEvents[kEventAnnaGiveScarfMonogram] ||
-				   _gameEvents[kEventAnnaGiveScarfDinerMonogram] ||
-				   _gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
+		} else if (_doneNIS[kEventAnnaGiveScarf] ||
+				   _doneNIS[kEventAnnaGiveScarfDiner] ||
+				   _doneNIS[kEventAnnaGiveScarfSalon] ||
+				   _doneNIS[kEventAnnaGiveScarfMonogram] ||
+				   _doneNIS[kEventAnnaGiveScarfDinerMonogram] ||
+				   _doneNIS[kEventAnnaGiveScarfSalonMonogram]) {
 			return "XANN3";
-		} else if (_gameEvents[kEventDinerMindJoin]) {
+		} else if (_doneNIS[kEventDinerMindJoin]) {
 			return "XANN2";
-		} else if (_gameEvents[kEventGotALight] ||
-				   _gameEvents[kEventGotALightD]) {
+		} else if (_doneNIS[kEventGotALight] ||
+				   _doneNIS[kEventGotALightD]) {
 			return "XANN1";
 		}
 
 		break;
 	case kCharacterAugust:
-		if (_gameEvents[kEventAugustTalkCigar]) {
+		if (_doneNIS[kEventAugustTalkCigar]) {
 			return "XAUG6";
-		} else if (_gameEvents[kEventAugustBringBriefcase]) {
+		} else if (_doneNIS[kEventAugustBringBriefcase]) {
 			return "XAUG5";
-		} else if (_gameEvents[kEventAugustMerchandise]) {
+		} else if (_doneNIS[kEventAugustMerchandise]) {
 			if (_gameTime <= 2200500) {
 				return "XAUG4";
 			} else {
 				return "XAUG4A";
 			}
-		} else if (_gameEvents[kEventDinerAugust] ||
-				   _gameEvents[kEventDinerAugustAlexeiBackground] ||
-				   _gameEvents[kEventMeetAugustTylerCompartment] ||
-				   _gameEvents[kEventMeetAugustHisCompartment] ||
-				   _gameEvents[kEventMeetAugustTylerCompartmentBed] ||
-				   _gameEvents[kEventMeetAugustHisCompartmentBed]) {
+		} else if (_doneNIS[kEventDinerAugust] ||
+				   _doneNIS[kEventDinerAugustAlexeiBackground] ||
+				   _doneNIS[kEventMeetAugustTylerCompartment] ||
+				   _doneNIS[kEventMeetAugustHisCompartment] ||
+				   _doneNIS[kEventMeetAugustTylerCompartmentBed] ||
+				   _doneNIS[kEventMeetAugustHisCompartmentBed]) {
 			return "XAUG3";
-		} else if (_gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+		} else if (_doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 			return "XAUG2";
-		} else if (_gameProgress[kProgressEventMertensAugustWaiting]) {
+		} else if (_globals[kProgressEventMertensAugustWaiting]) {
 			return "XAUG1";
 		}
 
 		break;
 	case kCharacterTatiana:
-		if (_gameEvents[kEventTatianaTylerCompartment]) {
+		if (_doneNIS[kEventTatianaTylerCompartment]) {
 			return "XTAT6";
-		} else if (_gameEvents[kEventTatianaCompartmentStealEgg]) {
+		} else if (_doneNIS[kEventTatianaCompartmentStealEgg]) {
 			return "XTAT5";
-		} else if (_gameEvents[kEventTatianaGivePoem]) {
+		} else if (_doneNIS[kEventTatianaGivePoem]) {
 			return "XTAT3";
-		} else if (_gameProgress[kProgressField64]) {
+		} else if (_globals[kProgressField64]) {
 			return "XTAT1";
 		}
 
 		break;
 	case kCharacterVassili:
-		if (_gameEvents[kEventCathFreePassengers]) {
+		if (_doneNIS[kEventCathFreePassengers]) {
 			return "XVAS4";
-		} else if (_gameEvents[kEventVassiliCompartmentStealEgg]) {
+		} else if (_doneNIS[kEventVassiliCompartmentStealEgg]) {
 			return "XVAS3";
-		} else if (_gameEvents[kEventAbbotIntroduction]) {
+		} else if (_doneNIS[kEventAbbotIntroduction]) {
 			return "XVAS2";
-		} else if (_gameEvents[kEventVassiliSeizure]) {
+		} else if (_doneNIS[kEventVassiliSeizure]) {
 			return "XVAS1A";
-		} else if (_gameProgress[kProgressField64]) {
+		} else if (_globals[kProgressField64]) {
 			return "XVAS1";
 		}
 
 		break;
 	case kCharacterAlexei:
-		if (_gameProgress[kProgressField88]) {
+		if (_globals[kProgressField88]) {
 			return "XALX6";
-		} else if (_gameProgress[kProgressField8C]) {
+		} else if (_globals[kProgressField8C]) {
 			return "XALX5";
-		} else if (_gameProgress[kProgressField90]) {
+		} else if (_globals[kProgressField90]) {
 			return "XALX4A";
-		} else if (_gameProgress[kProgressField68]) {
+		} else if (_globals[kProgressField68]) {
 			return "XALX4";
-		} else if (_gameEvents[kEventAlexeiSalonPoem]) {
+		} else if (_doneNIS[kEventAlexeiSalonPoem]) {
 			return "XALX3";
-		} else if (_gameEvents[kEventAlexeiSalonVassili]) {
+		} else if (_doneNIS[kEventAlexeiSalonVassili]) {
 			return "XALX2";
-		} else if (_gameEvents[kEventAlexeiDiner] ||
-				   _gameEvents[kEventAlexeiDinerOriginalJacket]) {
+		} else if (_doneNIS[kEventAlexeiDiner] ||
+				   _doneNIS[kEventAlexeiDinerOriginalJacket]) {
 			return "XALX1";
 		}
 
 		break;
 	case kCharacterAbbot:
-		if (_gameEvents[kEventAbbotDrinkDefuse]) {
+		if (_doneNIS[kEventAbbotDrinkDefuse]) {
 			return "XABB4";
-		} else if (_gameEvents[kEventAbbotInvitationDrink] ||
-				   _gameEvents[kEventDefuseBomb]) {
+		} else if (_doneNIS[kEventAbbotInvitationDrink] ||
+				   _doneNIS[kEventDefuseBomb]) {
 			return "XABB3";
-		} else if (_gameEvents[kEventAbbotWrongCompartment] ||
-				   _gameEvents[kEventAbbotWrongCompartmentBed]) {
+		} else if (_doneNIS[kEventAbbotWrongCompartment] ||
+				   _doneNIS[kEventAbbotWrongCompartmentBed]) {
 			return "XABB2";
-		} else if (_gameEvents[kEventAbbotIntroduction]) {
+		} else if (_doneNIS[kEventAbbotIntroduction]) {
 			return "XABB1";
 		}
 
 		break;
 	case kCharacterMilos:
-		if (_gameEvents[kEventLocomotiveMilosDay] || _gameEvents[kEventLocomotiveMilosNight]) {
+		if (_doneNIS[kEventLocomotiveMilosDay] || _doneNIS[kEventLocomotiveMilosNight]) {
 			return "XMIL5";
-		} else if (_gameEvents[kEventMilosCompartmentVisitTyler] &&
-				  (_gameProgress[kProgressChapter] == 3 ||
-				   _gameProgress[kProgressChapter] == 4)) {
+		} else if (_doneNIS[kEventMilosCompartmentVisitTyler] &&
+				  (_globals[kProgressChapter] == 3 ||
+				   _globals[kProgressChapter] == 4)) {
 			return "XMIL4";
-		} else if (_gameEvents[kEventMilosCorridorThanks] ||
-				   _gameProgress[kProgressChapter] == 5) {
+		} else if (_doneNIS[kEventMilosCorridorThanks] ||
+				   _globals[kProgressChapter] == 5) {
 			return "XMIL3";
-		} else if (_gameEvents[kEventMilosCompartmentVisitAugust]) {
+		} else if (_doneNIS[kEventMilosCompartmentVisitAugust]) {
 			return "XMIL2";
-		} else if (_gameEvents[kEventMilosTylerCompartmentDefeat]) {
+		} else if (_doneNIS[kEventMilosTylerCompartmentDefeat]) {
 			return "XMIL1";
 		}
 
 		break;
 	case kCharacterVesna:
-		if (_gameProgress[kProgressField94]) {
+		if (_globals[kProgressField94]) {
 			return "XVES2";
-		} else if (_gameProgress[kProgressField98]) {
+		} else if (_globals[kProgressField98]) {
 			return "XVES1";
 		}
 
 		break;
 	case kCharacterKronos:
-		if (_gameEvents[kEventKronosReturnBriefcase])
+		if (_doneNIS[kEventKronosReturnBriefcase])
 			return "XKRO6";
-		if (_gameEvents[kEventKronosBringEggCeiling] ||
-			_gameEvents[kEventKronosBringEgg]) {
+		if (_doneNIS[kEventKronosBringEggCeiling] ||
+			_doneNIS[kEventKronosBringEgg]) {
 			return "XKRO5";
 		} else {
-			if (_gameEvents[kEventKronosConversation] ||
-				_gameEvents[kEventKronosConversationFirebird]) {
-				if (_gameInventory[kItemFirebird].location != 6 &&
-					_gameInventory[kItemFirebird].location != 5 &&
-					_gameInventory[kItemFirebird].location != 2 &&
-					_gameInventory[kItemFirebird].location != 1)
+			if (_doneNIS[kEventKronosConversation] ||
+				_doneNIS[kEventKronosConversationFirebird]) {
+				if (_items[kItemFirebird].floating != 6 &&
+					_items[kItemFirebird].floating != 5 &&
+					_items[kItemFirebird].floating != 2 &&
+					_items[kItemFirebird].floating != 1)
 					return "XKRO4A";
 			}
 
-			if (_gameEvents[kEventKronosConversationFirebird])
+			if (_doneNIS[kEventKronosConversationFirebird])
 				return "XKRO4";
 
-			if (_gameEvents[kEventMilosCompartmentVisitAugust]) {
-				if (_gameEvents[kEventKronosConversation])
+			if (_doneNIS[kEventMilosCompartmentVisitAugust]) {
+				if (_doneNIS[kEventKronosConversation])
 					return "XKRO3";
-			} else if (_gameEvents[kEventKronosConversation]) {
+			} else if (_doneNIS[kEventKronosConversation]) {
 				return "XKRO2";
 			}
 
-			if (_gameProgress[kProgressEventMertensChronosInvitation]) {
+			if (_globals[kProgressEventMertensChronosInvitation]) {
 				return "XKRO1";
 			}
 		}
 
 		break;
 	case kCharacterFrancois:
-		if (_gameProgress[kProgressField9C]) {
+		if (_globals[kProgressField9C]) {
 			return "XFRA3";
-		} else if (_gameProgress[kProgressFieldA0] ||
-				   _gameEvents[kEventFrancoisWhistle] ||
-				   _gameEvents[kEventFrancoisWhistleD] ||
-				   _gameEvents[kEventFrancoisWhistleNight] ||
-				   _gameEvents[kEventFrancoisWhistleNightD]) {
+		} else if (_globals[kProgressFieldA0] ||
+				   _doneNIS[kEventFrancoisWhistle] ||
+				   _doneNIS[kEventFrancoisWhistleD] ||
+				   _doneNIS[kEventFrancoisWhistleNight] ||
+				   _doneNIS[kEventFrancoisWhistleNightD]) {
 			return "XFRA2";
 		} else if (_gameTime <= 1075500) {
 			return "XFRA1";
@@ -2035,75 +2035,75 @@ const char *LogicManager::getHintDialog(int character) {
 
 		break;
 	case kCharacterMadame:
-		if (_gameProgress[kProgressFieldA4]) {
+		if (_globals[kProgressFieldA4]) {
 			return "XMME4";
-		} else if (_gameProgress[kProgressFieldA8]) {
+		} else if (_globals[kProgressFieldA8]) {
 			return "XMME3";
-		} else if (_gameProgress[kProgressFieldA0]) {
+		} else if (_globals[kProgressFieldA0]) {
 			return "XMME2";
-		} else  if (_gameProgress[kProgressFieldAC]) {
+		} else  if (_globals[kProgressFieldAC]) {
 			return "XMME1";
 		}
 
 		break;
 	case kCharacterMonsieur:
-		if (_gameProgress[kProgressEventMetBoutarel]) {
+		if (_globals[kProgressEventMetBoutarel]) {
 			return "XMRB1";
 		}
 
 		break;
 	case kCharacterRebecca:
-		if (_gameProgress[kProgressFieldB4]) {
+		if (_globals[kProgressFieldB4]) {
 			return "XREB1A";
-		} else if (_gameProgress[kProgressFieldB8]) {
+		} else if (_globals[kProgressFieldB8]) {
 			return "XREB1";
 		}
 
 		break;
 	case kCharacterSophie:
-		if (_gameProgress[kProgressFieldB0]) {
+		if (_globals[kProgressFieldB0]) {
 			return "XSOP2";
-		} else if (_gameProgress[kProgressFieldBC]) {
+		} else if (_globals[kProgressFieldBC]) {
 			return "XSOP1B";
-		} else if (_gameProgress[kProgressFieldB4]) {
+		} else if (_globals[kProgressFieldB4]) {
 			return "XSOP1A";
-		} else if (!_gameProgress[kProgressFieldB8]) {
+		} else if (!_globals[kProgressFieldB8]) {
 			return "XSOP1";
 		}
 
 		break;
 	case kCharacterMahmud:
-		if (_gameProgress[kProgressFieldC4]) {
+		if (_globals[kProgressFieldC4]) {
 			return "XMAH1";
 		}
 
 		break;
 	case kCharacterYasmin:
-		if (_gameProgress[kProgressEventMetYasmin]) {
+		if (_globals[kProgressEventMetYasmin]) {
 			return "XHAR2";
 		}
 
 		break;
 	case kCharacterHadija:
-		if (_gameProgress[kProgressEventMetHadija]) {
+		if (_globals[kProgressEventMetHadija]) {
 			return "XHAR1";
 		}
 
 		break;
 	case kCharacterAlouan:
-		if (_gameProgress[kProgressFieldDC]) {
+		if (_globals[kProgressFieldDC]) {
 			return "XHAR3";
 		}
 
 		break;
 	case kCharacterPolice:
-		if (_gameProgress[kProgressFieldE0]) {
+		if (_globals[kProgressFieldE0]) {
 			return "XHAR4";
 		}
 
 		break;
 	case kCharacterMaster:
-		if (_gameEvents[kEventCathDream] || _gameEvents[kEventCathWakingUp]) {
+		if (_doneNIS[kEventCathDream] || _doneNIS[kEventCathWakingUp]) {
 			return "XTYL3";
 		} else {
 			return "XTYL1";

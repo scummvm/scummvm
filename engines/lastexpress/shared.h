@@ -969,7 +969,7 @@ enum InventoryItem {
 };
 
 //////////////////////////////////////////////////////////////////////////
-// Object ID
+// Door ID
 //////////////////////////////////////////////////////////////////////////
 enum ObjectIndex {
 	kObjectNone,
@@ -1894,14 +1894,14 @@ enum Actions {
 	kActionCompartment,
 	kActionPlaySounds,
 	kActionPlayAnimation,
-	kActionOpenCloseObject,
+	kActionSetDoor,
 	kActionSetModel,       // 10
 	kActionSetItem,
 	kActionKnockInside,
-	kActionPickItem,
+	kActionTakeItem,
 	kActionDropItem,
-	kActionDummyAction1,   // 15
-	kActionEnterCompartment,
+	kActionLinkOnGlobal,   // 15
+	kActionRattle,
 	kActionDummyAction2,
 	kActionLeanOutWindow,
 	kActionAlmostFall,
@@ -1930,6 +1930,27 @@ enum Actions {
 	kActionPlayMusicChapterSetupTrain,
 	kActionSwitchChapter,
 	kActionEasterEggs
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Node properties
+//////////////////////////////////////////////////////////////////////////
+enum NodeProperties {
+	kNodeHasDoor = 1,
+	kNodeHasItem,
+	kNodeHas2Items,
+	kNodeHasDoorItem,
+	kNodeHas3Items,
+	kNodeModelPad,
+	kNodeSoftPoint,
+	kNodeSoftPointItem,
+
+	kNodeAutoWalk = 128,
+	kNodeSleepingOnBed,
+	kNodeBeetle,
+	kNodePullingStop,
+	kNodeRebeccaDiary,
+	kNodeExitFastWalk
 };
 
 //////////////////////////////////////////////////////////////////////////

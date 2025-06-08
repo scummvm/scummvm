@@ -380,7 +380,7 @@ void LogicManager::HAND_Alexei_DoWalk(HAND_PARAMS) {
 			break;
 		}
 
-		if (_gameEvents[kEventAlexeiSalonVassili] || _gameEvents[kEventTatianaAskMatchSpeakRussian] && cathHasItem(kItemPassengerList)) {
+		if (_doneNIS[kEventAlexeiSalonVassili] || _doneNIS[kEventTatianaAskMatchSpeakRussian] && cathHasItem(kItemPassengerList)) {
 			if (rnd(2) == 0) {
 				playDialog(kCharacterCath, "CAT1012A", -1, 0);
 			} else {
@@ -621,8 +621,8 @@ void LogicManager::HAND_Alexei_CompLogic(HAND_PARAMS) {
 			fedEx(kCharacterAlexei, kCharacterAlexei, 18, 0);
 		} else {
 			if (getCharacterCurrentParams(kCharacterAlexei)[4]) {
-				if (getCharacterCurrentParams(kCharacterAlexei)[8] || (getCharacterCurrentParams(kCharacterAlexei)[8] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-					if (getCharacterCurrentParams(kCharacterAlexei)[8] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterAlexei)[8] || (getCharacterCurrentParams(kCharacterAlexei)[8] = _realTime + 75, _realTime != -75)) {
+					if (getCharacterCurrentParams(kCharacterAlexei)[8] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterAlexei)[8] = 0x7FFFFFFF;
@@ -804,8 +804,8 @@ void LogicManager::HAND_Alexei_AtDinner(HAND_PARAMS) {
 			AlexeiCall(&LogicManager::CONS_Alexei_DoJoinedSeqOtis, "005D", 34, 103798704, "005E");
 		} else {
 			if (getCharacterCurrentParams(kCharacterAlexei)[0]) {
-				if (getCharacterCurrentParams(kCharacterAlexei)[2] || (getCharacterCurrentParams(kCharacterAlexei)[2] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-					if (getCharacterCurrentParams(kCharacterAlexei)[2] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterAlexei)[2] || (getCharacterCurrentParams(kCharacterAlexei)[2] = _realTime + 90, _realTime != -90)) {
+					if (getCharacterCurrentParams(kCharacterAlexei)[2] >= _realTime)
 						break;
 
 					getCharacterCurrentParams(kCharacterAlexei)[2] = 0x7FFFFFFF;
@@ -838,7 +838,7 @@ void LogicManager::HAND_Alexei_AtDinner(HAND_PARAMS) {
 			releaseView(kCharacterAlexei, kCarRestaurant, 63);
 			CONS_Alexei_ReturnComp(0, 0, 0, 0);
 		} else if (getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall + 8] == 2) {
-			if (_gameProgress[kProgressJacket] == 2)
+			if (_globals[kProgressJacket] == 2)
 				playNIS(kEventAlexeiDiner);
 			else
 				playNIS(kEventAlexeiDinerOriginalJacket);
@@ -847,7 +847,7 @@ void LogicManager::HAND_Alexei_AtDinner(HAND_PARAMS) {
 			getCharacter(kCharacterAlexei).characterPosition.position = 3650;
 			getCharacter(kCharacterAlexei).characterPosition.location = 0;
 			endGraphics(kCharacterAlexei);
-			_gameInventory[kItem17].location = 1;
+			_items[kItem17].floating = 1;
 			bumpCath(kCarRestaurant, 63, 255);
 			CONS_Alexei_ReturnComp(0, 0, 0, 0);
 		}
@@ -1026,7 +1026,7 @@ void LogicManager::HAND_Alexei_Sitting(HAND_PARAMS) {
 		startCycOtis(kCharacterAlexei, "103B");
 		getCharacterCurrentParams(kCharacterAlexei)[0] = 225 * (4 * rnd(3) + 4);
 
-		if (!_gameEvents[kEventAlexeiSalonPoem])
+		if (!_doneNIS[kEventAlexeiSalonPoem])
 			getCharacter(kCharacterAlexei).inventoryItem = 10;
 
 		break;
@@ -1111,7 +1111,7 @@ void LogicManager::HAND_Alexei_StandingAtWindow(HAND_PARAMS) {
 	case 12:
 		getCharacterCurrentParams(kCharacterAlexei)[0] = 225 * (4 * rnd(4) + 8);
 		startCycOtis(kCharacterAlexei, "103E");
-		if (!_gameEvents[kEventAlexeiSalonPoem])
+		if (!_doneNIS[kEventAlexeiSalonPoem])
 			getCharacter(kCharacterAlexei).inventoryItem = 10;
 
 		break;
@@ -1159,7 +1159,7 @@ void LogicManager::CONS_Alexei_WaitingForTat(CONS_PARAMS) {
 void LogicManager::HAND_Alexei_WaitingForTat(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!inDiningRoom(kCharacterTatiana) || _gameEvents[kEventAlexeiSalonPoem]) {
+		if (!inDiningRoom(kCharacterTatiana) || _doneNIS[kEventAlexeiSalonPoem]) {
 			getCharacter(kCharacterAlexei).inventoryItem = 0;
 		} else {
 			getCharacter(kCharacterAlexei).inventoryItem = 10;
@@ -1223,7 +1223,7 @@ void LogicManager::HAND_Alexei_Upset(HAND_PARAMS) {
 		AlexeiCall(&LogicManager::CONS_Alexei_SaveGame, 2, kEventAlexeiSalonCath, 0, 0);
 		break;
 	case 12:
-		if (_gameEvents[kEventAlexeiSalonVassili])
+		if (_doneNIS[kEventAlexeiSalonVassili])
 			getCharacter(kCharacterAlexei).inventoryItem = 0x80;
 
 		break;
@@ -1468,7 +1468,7 @@ void LogicManager::HAND_Alexei_AtBreakfast(HAND_PARAMS) {
 			startCycOtis(kCharacterAlexei, "018E");
 
 			if (inDiningRoom(kCharacterCath))
-				_gameProgress[kProgressField68] = 1;
+				_globals[kProgressField68] = 1;
 
 			getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall + 8] = 2;
 			AlexeiCall(&LogicManager::CONS_Alexei_DoDialog, "TAT2116", 0, 0, 0);
@@ -1789,9 +1789,9 @@ void LogicManager::HAND_Alexei_GoSalon3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (!getCharacterCurrentParams(kCharacterAlexei)[2] && !getCharacterCurrentParams(kCharacterAlexei)[1]) {
-			if (getCharacterCurrentParams(kCharacterAlexei)[3] || (getCharacterCurrentParams(kCharacterAlexei)[3] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterAlexei)[0],
-																   _currentGameSessionTicks + getCharacterCurrentParams(kCharacterAlexei)[0] != 0)) {
-				if (getCharacterCurrentParams(kCharacterAlexei)[3] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAlexei)[3] || (getCharacterCurrentParams(kCharacterAlexei)[3] = _realTime + getCharacterCurrentParams(kCharacterAlexei)[0],
+																   _realTime + getCharacterCurrentParams(kCharacterAlexei)[0] != 0)) {
+				if (getCharacterCurrentParams(kCharacterAlexei)[3] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAlexei)[3] = 0x7FFFFFFF;

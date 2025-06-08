@@ -447,8 +447,8 @@ void LogicManager::HAND_TrainM_DoAnnounceWalk(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterTrainM)[5]) {
-			if (getCharacterCurrentParams(kCharacterTrainM)[7] || (getCharacterCurrentParams(kCharacterTrainM)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterTrainM)[7] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterTrainM)[7] || (getCharacterCurrentParams(kCharacterTrainM)[7] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterTrainM)[7] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterTrainM)[7] = 0x7FFFFFFF;
@@ -658,11 +658,11 @@ void LogicManager::HAND_TrainM_KickCathOut(HAND_PARAMS) {
 		break;
 	case 18:
 		if (getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] == 1) {
-			if (_gameEvents[kEventVergesSuitcase] || _gameEvents[kEventVergesSuitcaseNight] || _gameEvents[kEventVergesSuitcaseOtherEntry] || _gameEvents[kEventVergesSuitcaseNightOtherEntry]) {
+			if (_doneNIS[kEventVergesSuitcase] || _doneNIS[kEventVergesSuitcaseNight] || _doneNIS[kEventVergesSuitcaseOtherEntry] || _doneNIS[kEventVergesSuitcaseNightOtherEntry]) {
 				getCharacterCurrentParams(kCharacterTrainM)[1] = 1;
 			}
 
-			if (isNight() && _gameProgress[kProgressChapter] != 1)
+			if (isNight() && _globals[kProgressChapter] != 1)
 				getCharacterCurrentParams(kCharacterTrainM)[1] = 1;
 
 			if (getCharacterCurrentParams(kCharacterTrainM)[0]) {
@@ -757,7 +757,7 @@ void LogicManager::HAND_TrainM_DoCond(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterTrainM)[4] && getCharacterCurrentParams(kCharacterTrainM)[5]) {
 			send(kCharacterTrainM, getCharacterCurrentParams(kCharacterTrainM)[0], 125499160, 0);
-			if (!checkCathDir(3, 2) && !checkCathDir(4, 2))
+			if (!checkCathDir(kCarGreenSleeping, 2) && !checkCathDir(kCarRedSleeping, 2))
 				getCharacter(kCharacterTrainM).characterPosition.position = 2088;
 
 			getCharacter(kCharacterTrainM).currentCall--;
@@ -805,7 +805,7 @@ void LogicManager::HAND_TrainM_DoCondDoubl(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterTrainM)[8] >= 2 && getCharacterCurrentParams(kCharacterTrainM)[7]) {
 			send(kCharacterTrainM, getCharacterCurrentParams(kCharacterTrainM)[0], 125499160, 0);
-			if (!checkCathDir(kCarGreenSleeping, 2) && !checkCathDir(4, 2))
+			if (!checkCathDir(kCarGreenSleeping, 2) && !checkCathDir(kCarRedSleeping, 2))
 				getCharacter(kCharacterTrainM).characterPosition.position = 2088;
 
 			getCharacter(kCharacterTrainM).currentCall--;
@@ -1105,7 +1105,7 @@ void LogicManager::HAND_TrainM_DoHWMessage(HAND_PARAMS) {
 			TrainMCall(&LogicManager::CONS_TrainM_DoWalk, 3, 2000, 0, 0);
 			break;
 		case 2:
-			if (_gameEvents[kEventMertensAskTylerCompartment] || _gameEvents[kEventMertensAskTylerCompartmentD] || _gameEvents[kEventMertensAugustWaiting]) {
+			if (_doneNIS[kEventMertensAskTylerCompartment] || _doneNIS[kEventMertensAskTylerCompartmentD] || _doneNIS[kEventMertensAugustWaiting]) {
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 3;
 				TrainMCall(&LogicManager::CONS_TrainM_DoCondDoubl, 3, "TRA1200", "TRA1201", 0);
 			} else {
@@ -1225,12 +1225,12 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 		case 1:
 			takeItem(kCharacterTrainM);
 			if (inOuterSanctum(kCharacterCath)) {
-				if (_gameEvents[kProgressFieldCC]) {
-					_gameProgress[kProgressField3C] = 1;
+				if (_doneNIS[kProgressFieldCC]) {
+					_globals[kProgressField3C] = 1;
 					getCharacter(kCharacterTrainM).characterPosition.car = kCarGreenSleeping;
 					getCharacter(kCharacterTrainM).characterPosition.position = 540;
 					getCharacter(kCharacterTrainM).characterPosition.location = 0;
-					_gameTimeTicksDelta = 3;
+					_timeSpeed = 3;
 					send(kCharacterTrainM, kCharacterMaster, 169629818, 0);
 					getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 3;
 					TrainMCall(&LogicManager::CONS_TrainM_DoPoliceDoneDialog, 0, 0, 0, 0);
@@ -1276,8 +1276,8 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 			}
 
 			send(kCharacterTrainM, kCharacterPolice, 169499649, 0);
-			_gameProgress[kProgressField3C] = 1;
-			_gameTimeTicksDelta = 1;
+			_globals[kProgressField3C] = 1;
+			_timeSpeed = 1;
 			if (getCharacter(kCharacterTrainM).characterPosition.car == kCarRedSleeping) {
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 6;
 				TrainMCall(&LogicManager::CONS_TrainM_DoAnnounceWalk, 3, 540, "TRA1005", 0);
@@ -1288,12 +1288,12 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 
 			break;
 		case 2:
-			if (_gameEvents[kProgressFieldCC]) {
-				_gameProgress[kProgressField3C] = 1;
+			if (_doneNIS[kProgressFieldCC]) {
+				_globals[kProgressField3C] = 1;
 				getCharacter(kCharacterTrainM).characterPosition.car = kCarGreenSleeping;
 				getCharacter(kCharacterTrainM).characterPosition.position = 540;
 				getCharacter(kCharacterTrainM).characterPosition.location = 0;
-				_gameTimeTicksDelta = 3;
+				_timeSpeed = 3;
 				send(kCharacterTrainM, kCharacterMaster, 169629818, 0);
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 3;
 				TrainMCall(&LogicManager::CONS_TrainM_DoPoliceDoneDialog, 0, 0, 0, 0);
@@ -1354,7 +1354,7 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 		getCharacter(kCharacterTrainM).characterPosition.position = 8200;
 		getCharacter(kCharacterTrainM).characterPosition.location = 0;
 
-		_gameTimeTicksDelta = 3;
+		_timeSpeed = 3;
 
 		getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 8;
 		TrainMCall(&LogicManager::CONS_TrainM_SaveGame, 1, 0, 0, 0);
@@ -1962,7 +1962,7 @@ void LogicManager::HAND_TrainM_DoDogProblem(HAND_PARAMS) {
 			TrainMCall(&LogicManager::CONS_TrainM_WalkBackToOffice, 0, 0, 0, 0);
 			break;
 		case 4:
-			_gameProgress[kItemFirebird] = 1;
+			_globals[kProgressField48] = 1;
 			getCharacterParams(kCharacterTrainM, 8)[3] = 0;
 
 			getCharacter(kCharacterTrainM).currentCall--;
@@ -2110,7 +2110,7 @@ void LogicManager::HAND_TrainM_OnRearPlatform(HAND_PARAMS) {
 			getCharacter(kCharacterTrainM).characterPosition.location = 1;
 			getCharacter(kCharacterTrainM).characterPosition.position = 5799;
 
-			if (!_gameProgress[kProgressField3C]) {
+			if (!_globals[kProgressField3C]) {
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 5;
 				TrainMCall(&LogicManager::CONS_TrainM_DoDialog, "Abb3035", 0, 0, 0);
 			} else {

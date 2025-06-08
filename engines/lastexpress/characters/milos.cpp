@@ -360,7 +360,7 @@ void LogicManager::HAND_Milos_DoWalk(HAND_PARAMS) {
 		break;
 	case 5:
 	case 6:
-		if (_gameEvents[kEventMilosTylerCompartmentDefeat]) {
+		if (_doneNIS[kEventMilosTylerCompartmentDefeat]) {
 			switch (rnd(3)) {
 			case 0:
 				playDialog(kCharacterCath, "CAT1014", -1, 0);
@@ -415,8 +415,8 @@ void LogicManager::HAND_Milos_CompLogic(HAND_PARAMS) {
 		}
 
 		if (!skip1 && !getCharacterCurrentParams(kCharacterMilos)[7]) {
-			getCharacterCurrentParams(kCharacterMilos)[7] = _currentGameSessionTicks + 75;
-			if (_currentGameSessionTicks == -75) {
+			getCharacterCurrentParams(kCharacterMilos)[7] = _realTime + 75;
+			if (_realTime == -75) {
 				getCharacterCurrentParams(kCharacterMilos)[1] = 0;
 				getCharacterCurrentParams(kCharacterMilos)[2] = 1;
 				setDoor(38, kCharacterMilos, 1, 0, 0);
@@ -425,7 +425,7 @@ void LogicManager::HAND_Milos_CompLogic(HAND_PARAMS) {
 			}
 		}
 
-		if (!skip1 && getCharacterCurrentParams(kCharacterMilos)[7] < _currentGameSessionTicks) {
+		if (!skip1 && getCharacterCurrentParams(kCharacterMilos)[7] < _realTime) {
 			getCharacterCurrentParams(kCharacterMilos)[7] = 0x7FFFFFFF;
 			getCharacterCurrentParams(kCharacterMilos)[1] = 0;
 			getCharacterCurrentParams(kCharacterMilos)[2] = 1;
@@ -433,7 +433,7 @@ void LogicManager::HAND_Milos_CompLogic(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterMilos)[7] = 0;
 		}
 
-		if (_gameProgress[kProgressChapter] == 1 && !getCharacterCurrentParams(kCharacterMilos)[4]) {
+		if (_globals[kProgressChapter] == 1 && !getCharacterCurrentParams(kCharacterMilos)[4]) {
 			bool skip2 = false;
 
 			if (getCharacterCurrentParams(kCharacterMilos)[5]) {
@@ -453,9 +453,9 @@ void LogicManager::HAND_Milos_CompLogic(HAND_PARAMS) {
 				}
 			}
 
-			if (!_gameProgress[kProgressFieldCC]) {
-				if (getCharacterParams(kCharacterMilos, 8)[2] && !_gameProgress[kProgressField14] && !getCharacterCurrentParams(kCharacterMilos)[5]) {
-					_gameProgress[kProgressField14] = 14;
+			if (!_globals[kProgressFieldCC]) {
+				if (getCharacterParams(kCharacterMilos, 8)[2] && !_globals[kProgressField14] && !getCharacterCurrentParams(kCharacterMilos)[5]) {
+					_globals[kProgressField14] = 14;
 					send(kCharacterMilos, kCharacterVesna, 190412928, 0);
 					getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 1;
 					MilosCall(&LogicManager::CONS_Milos_DoCorrOtis, "609Cg", 38, 0, 0);
@@ -473,7 +473,7 @@ void LogicManager::HAND_Milos_CompLogic(HAND_PARAMS) {
 						getCharacterCurrentParams(kCharacterMilos)[9] = _gameTime + 150;
 						if (_gameTime == -150) {
 							if (nearChar(kCharacterCath, kCharacterMilos, 2000))
-								_gameProgress[kProgressField98] = 1;
+								_globals[kProgressField98] = 1;
 
 							setDoor(38, kCharacterMilos, 3, 0, 0);
 							getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 6;
@@ -488,7 +488,7 @@ void LogicManager::HAND_Milos_CompLogic(HAND_PARAMS) {
 
 				getCharacterCurrentParams(kCharacterMilos)[9] = 0x7FFFFFFF;
 				if (nearChar(kCharacterCath, kCharacterMilos, 2000))
-					_gameProgress[kProgressField98] = 1;
+					_globals[kProgressField98] = 1;
 
 				setDoor(38, kCharacterMilos, 3, 0, 0);
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 6;
@@ -550,8 +550,8 @@ void LogicManager::HAND_Milos_CompLogic(HAND_PARAMS) {
 			MilosCall(&LogicManager::CONS_Milos_KnockTyler, 0, 0, 0, 0);
 			break;
 		case 3:
-			if (_gameProgress[kProgressField14] == 14)
-				_gameProgress[kProgressField14] = 0;
+			if (_globals[kProgressField14] == 14)
+				_globals[kProgressField14] = 0;
 
 			getCharacterCurrentParams(kCharacterMilos)[5] = 1;
 			getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 4;
@@ -702,7 +702,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 
 	switch (msg->action) {
 	case 0:
-		if (_gameProgress[kProgressField14] == 29 || _gameProgress[kProgressField14] == 3) {
+		if (_globals[kProgressField14] == 29 || _globals[kProgressField14] == 3) {
 			if (getCharacterCurrentParams(kCharacterMilos)[1]) {
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 1;
 				MilosCall(&LogicManager::CONS_Milos_DoCorrOtis, "609Ca", 1, 0, 0);
@@ -715,10 +715,10 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 				fedEx(kCharacterMilos, kCharacterMilos, 18, 0);
 			}
 		} else if (getCharacterCurrentParams(kCharacterMilos)[0]) {
-			if (!getCharacterCurrentParams(kCharacterMilos)[8] && (getCharacterCurrentParams(kCharacterMilos)[8] = _currentGameSessionTicks + 45, _currentGameSessionTicks == -45) || getCharacterCurrentParams(kCharacterMilos)[8] < _currentGameSessionTicks) {
+			if (!getCharacterCurrentParams(kCharacterMilos)[8] && (getCharacterCurrentParams(kCharacterMilos)[8] = _realTime + 45, _realTime == -45) || getCharacterCurrentParams(kCharacterMilos)[8] < _realTime) {
 				if (checkDoor(1) == 1) {
-					if (getCharacterCurrentParams(kCharacterMilos)[9] || (getCharacterCurrentParams(kCharacterMilos)[9] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-						if (getCharacterCurrentParams(kCharacterMilos)[9] >= _currentGameSessionTicks)
+					if (getCharacterCurrentParams(kCharacterMilos)[9] || (getCharacterCurrentParams(kCharacterMilos)[9] = _realTime + 75, _realTime != -75)) {
+						if (getCharacterCurrentParams(kCharacterMilos)[9] >= _realTime)
 							break;
 						getCharacterCurrentParams(kCharacterMilos)[9] = 0x7FFFFFFF;
 					}
@@ -759,7 +759,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 						getCharacterCurrentParams(kCharacterMilos)[9] = 0;
 						break;
 					}
-				} else if (!_gameProgress[kProgressEventCorpseMovedFromFloor] || _gameProgress[kProgressJacket] == 1) {
+				} else if (!_globals[kProgressEventCorpseMovedFromFloor] || _globals[kProgressJacket] == 1) {
 					setDoor(9, kCharacterCath, 0, 255, 255);
 					getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 2;
 					MilosCall(&LogicManager::CONS_Milos_SaveGame, 2, kEventMilosCorpseFloor, 0, 0);
@@ -773,15 +773,15 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 					MilosCall(&LogicManager::CONS_Milos_SaveGame, 2, kEventMilosTylerCompartmentVisit, 0, 0);
 				}
 			}
-		} else if (!getCharacterCurrentParams(kCharacterMilos)[10] && (getCharacterCurrentParams(kCharacterMilos)[10] = _currentGameSessionTicks + 75, _currentGameSessionTicks == -75) || getCharacterCurrentParams(kCharacterMilos)[10] < _currentGameSessionTicks) {
+		} else if (!getCharacterCurrentParams(kCharacterMilos)[10] && (getCharacterCurrentParams(kCharacterMilos)[10] = _realTime + 75, _realTime == -75) || getCharacterCurrentParams(kCharacterMilos)[10] < _realTime) {
 			if (!getCharacterCurrentParams(kCharacterMilos)[3]) {
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 12;
 				MilosCall(&LogicManager::CONS_Milos_DoDialog, "MIL1030C", 0, 0, 0);
 				break;
 			}
 
-			if (getCharacterCurrentParams(kCharacterMilos)[11] || (getCharacterCurrentParams(kCharacterMilos)[11] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMilos)[11] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMilos)[11] || (getCharacterCurrentParams(kCharacterMilos)[11] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMilos)[11] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMilos)[11] = 0x7FFFFFFF;
@@ -789,7 +789,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 
 			softReleaseAtDoor(kCharacterMilos, 1);
 
-			if (_gameProgress[kProgressEventCorpseMovedFromFloor]) {
+			if (_globals[kProgressEventCorpseMovedFromFloor]) {
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 13;
 				MilosCall(&LogicManager::CONS_Milos_DoCorrOtis, "609Ba", 1, 0, 0);
 			} else if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
@@ -817,7 +817,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 
 		break;
 	case 9:
-		if (!_gameProgress[kProgressEventCorpseMovedFromFloor] || _gameProgress[kProgressJacket] == 1) {
+		if (!_globals[kProgressEventCorpseMovedFromFloor] || _globals[kProgressJacket] == 1) {
 			setDoor(9, kCharacterCath, 0, 255, 255);
 			getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 16;
 			MilosCall(&LogicManager::CONS_Milos_SaveGame, 2, kEventMilosCorpseFloor, 0, 0);
@@ -870,7 +870,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 		case 2:
 			playDialog(0, "LIB014", -1, 0);
 			playNIS(kEventMilosCorpseFloor);
-			endGame(0, 1, _gameProgress[kProgressEventCorpseMovedFromFloor] == kProgressField0 ? 57 : 55, 1);
+			endGame(0, 1, _globals[kProgressEventCorpseMovedFromFloor] == kProgressField0 ? 57 : 55, 1);
 			break;
 		case 3:
 			setDoor(1, kCharacterCath, 0, 10, 9);
@@ -890,7 +890,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 			}
 
 			_gameTime += 1800;
-			_gameProgress[kProgressFieldCC] = 1;
+			_globals[kProgressFieldCC] = 1;
 			getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 5;
 			MilosCall(&LogicManager::CONS_Milos_SaveGame, 2, kEventMilosTylerCompartmentDefeat, 0, 0);
 			break;
@@ -926,15 +926,15 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 		case 12:
 			getCharacterCurrentParams(kCharacterMilos)[3] = 1;
 
-			if (getCharacterCurrentParams(kCharacterMilos)[11] || (getCharacterCurrentParams(kCharacterMilos)[11] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMilos)[11] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMilos)[11] || (getCharacterCurrentParams(kCharacterMilos)[11] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMilos)[11] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMilos)[11] = 0x7FFFFFFF;
 			}
 
 			softReleaseAtDoor(kCharacterMilos, 1);
-			if (_gameProgress[kProgressEventCorpseMovedFromFloor]) {
+			if (_globals[kProgressEventCorpseMovedFromFloor]) {
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 13;
 				MilosCall(&LogicManager::CONS_Milos_DoCorrOtis, "609Ba", 1, 0, 0);
 			} else if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
@@ -971,7 +971,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 			}
 			
 			playNIS(kEventMilosCorpseFloor);
-			endGame(0, 1, _gameProgress[kProgressEventCorpseMovedFromFloor] == 0 ? 57 : 55, true);
+			endGame(0, 1, _globals[kProgressEventCorpseMovedFromFloor] == 0 ? 57 : 55, true);
 			break;
 		case 17:
 			if (checkDoor(1) != 1) {
@@ -993,7 +993,7 @@ void LogicManager::HAND_Milos_KnockTyler(HAND_PARAMS) {
 				endGame(0, 0, 0, fightOutcome == 1);
 			} else {
 				_gameTime += 1800;
-				_gameProgress[kProgressFieldCC] = 1;
+				_globals[kProgressFieldCC] = 1;
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 19;
 				MilosCall(&LogicManager::CONS_Milos_SaveGame, 2, kEventMilosTylerCompartmentDefeat, 0, 0);
 			}
@@ -1044,13 +1044,13 @@ void LogicManager::HAND_Milos_AtDinner(HAND_PARAMS) {
 		}
 
 		if (checkCathDir(kCarRestaurant, 61) && !getCharacterCurrentParams(kCharacterMilos)[0]) {
-			if (getCharacterCurrentParams(kCharacterMilos)[3] || (getCharacterCurrentParams(kCharacterMilos)[3] = _currentGameSessionTicks + 45,
-																  _currentGameSessionTicks != -45)) {
-				if (getCharacterCurrentParams(kCharacterMilos)[3] >= _currentGameSessionTicks) {
+			if (getCharacterCurrentParams(kCharacterMilos)[3] || (getCharacterCurrentParams(kCharacterMilos)[3] = _realTime + 45,
+																  _realTime != -45)) {
+				if (getCharacterCurrentParams(kCharacterMilos)[3] >= _realTime) {
 					if (checkCathDir(kCarRestaurant, 70) && !getCharacterCurrentParams(kCharacterMilos)[1]) {
-						if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _currentGameSessionTicks + 45,
-																			  _currentGameSessionTicks != -45)) {
-							if (getCharacterCurrentParams(kCharacterMilos)[4] >= _currentGameSessionTicks)
+						if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _realTime + 45,
+																			  _realTime != -45)) {
+							if (getCharacterCurrentParams(kCharacterMilos)[4] >= _realTime)
 								break;
 
 							getCharacterCurrentParams(kCharacterMilos)[4] = 0x7FFFFFFF;
@@ -1071,9 +1071,9 @@ void LogicManager::HAND_Milos_AtDinner(HAND_PARAMS) {
 		}
 
 		if (checkCathDir(kCarRestaurant, 70) && !getCharacterCurrentParams(kCharacterMilos)[1]) {
-			if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _currentGameSessionTicks + 45,
-																  _currentGameSessionTicks != -45)) {
-				if (getCharacterCurrentParams(kCharacterMilos)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _realTime + 45,
+																  _realTime != -45)) {
+				if (getCharacterCurrentParams(kCharacterMilos)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMilos)[4] = 0x7FFFFFFF;
@@ -1101,9 +1101,9 @@ void LogicManager::HAND_Milos_AtDinner(HAND_PARAMS) {
 		getCharacterCurrentParams(kCharacterMilos)[0] = 1;
 
 		if (checkCathDir(kCarRestaurant, 70) && !getCharacterCurrentParams(kCharacterMilos)[1]) {
-			if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _currentGameSessionTicks + 45,
-																  _currentGameSessionTicks != -45)) {
-				if (getCharacterCurrentParams(kCharacterMilos)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _realTime + 45,
+																  _realTime != -45)) {
+				if (getCharacterCurrentParams(kCharacterMilos)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMilos)[4] = 0x7FFFFFFF;
@@ -1358,7 +1358,7 @@ void LogicManager::HAND_Milos_InPart2(HAND_PARAMS) {
 		setDoor(38, kCharacterMilos, 3, 10, 9);
 		break;
 	case 17:
-		if (!_gameEvents[kEventMilosCompartmentVisitAugust] && !checkLoc(kCharacterCath, kCarRedSleeping) && getCharacterCurrentParams(kCharacterMilos)[0]) {
+		if (!_doneNIS[kEventMilosCompartmentVisitAugust] && !checkLoc(kCharacterCath, kCarRedSleeping) && getCharacterCurrentParams(kCharacterMilos)[0]) {
 			CONS_Milos_OnRearPlat(0, 0, 0, 0);
 		}
 
@@ -1402,7 +1402,7 @@ void LogicManager::CONS_Milos_StartPart3(CONS_PARAMS) {
 void LogicManager::HAND_Milos_StartPart3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_gameEvents[kEventMilosCompartmentVisitAugust]) {
+		if (_doneNIS[kEventMilosCompartmentVisitAugust]) {
 			CONS_Milos_Unfriendly(0, 0, 0, 0);
 		} else {
 			CONS_Milos_OnRearPlat3(0, 0, 0, 0);
@@ -1518,9 +1518,9 @@ void LogicManager::HAND_Milos_Unfriendly(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterMilos)[0]) {
-			if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _currentGameSessionTicks + 75,
-																  _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMilos)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMilos)[4] || (getCharacterCurrentParams(kCharacterMilos)[4] = _realTime + 75,
+																  _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMilos)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMilos)[4] = 0x7FFFFFFF;
@@ -1560,7 +1560,7 @@ void LogicManager::HAND_Milos_Unfriendly(HAND_PARAMS) {
 		break;
 	case 9:
 		setDoor(38, kCharacterMilos, 3, 0, 0);
-		if (_gameEvents[kEventMilosCompartmentVisitAugust] || _gameTime >= 2106000) {
+		if (_doneNIS[kEventMilosCompartmentVisitAugust] || _gameTime >= 2106000) {
 			getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 12;
 			MilosCall(&LogicManager::CONS_Milos_DoDialog, "LIB013", 0, 0, 0);
 		} else {
@@ -1577,7 +1577,7 @@ void LogicManager::HAND_Milos_Unfriendly(HAND_PARAMS) {
 		setDoor(38, kCharacterMilos, 3, 10, 9);
 		break;
 	case 17:
-		if (_gameEvents[kEventMilosCompartmentVisitAugust] || checkLoc(kCharacterCath, kCarRedSleeping) || !getCharacterCurrentParams(kCharacterMilos)[2] || _gameTime >= 2106000) {
+		if (_doneNIS[kEventMilosCompartmentVisitAugust] || checkLoc(kCharacterCath, kCarRedSleeping) || !getCharacterCurrentParams(kCharacterMilos)[2] || _gameTime >= 2106000) {
 			if (getCharacterCurrentParams(kCharacterMilos)[1] || getCharacterCurrentParams(kCharacterMilos)[0]) {
 				setDoor(38, kCharacterMilos, 3, 10, 9);
 				getCharacterCurrentParams(kCharacterMilos)[1] = 0;
@@ -1639,7 +1639,7 @@ void LogicManager::HAND_Milos_Unfriendly(HAND_PARAMS) {
 			CONS_Milos_Friendly(0, 0, 0, 0);
 			break;
 		case 6:
-			if (_gameEvents[kEventMilosCompartmentVisitAugust] || _gameTime >= 2106000) {
+			if (_doneNIS[kEventMilosCompartmentVisitAugust] || _gameTime >= 2106000) {
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 8;
 				MilosCall(&LogicManager::CONS_Milos_DoDialog, "Mil1117A", 0, 0, 0);
 			} else {
@@ -1694,7 +1694,7 @@ void LogicManager::CONS_Milos_Friendly(CONS_PARAMS) {
 void LogicManager::HAND_Milos_Friendly(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!_gameEvents[kEventMilosCompartmentVisitTyler] && !_gameProgress[kProgressField54] && !getCharacterParams(kCharacterMilos, 8)[3]) {
+		if (!_doneNIS[kEventMilosCompartmentVisitTyler] && !_globals[kProgressField54] && !getCharacterParams(kCharacterMilos, 8)[3]) {
 			bool skip = false;
 
 			if (!getCharacterCurrentParams(kCharacterMilos)[2]) {
@@ -1714,9 +1714,9 @@ void LogicManager::HAND_Milos_Friendly(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterMilos)[0]) {
-			if (getCharacterCurrentParams(kCharacterMilos)[3] || (getCharacterCurrentParams(kCharacterMilos)[3] = _currentGameSessionTicks + 75,
-																	_currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterMilos)[3] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterMilos)[3] || (getCharacterCurrentParams(kCharacterMilos)[3] = _realTime + 75,
+																	_realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterMilos)[3] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterMilos)[3] = 0x7FFFFFFF;
@@ -1756,7 +1756,7 @@ void LogicManager::HAND_Milos_Friendly(HAND_PARAMS) {
 		break;
 	case 12:
 		setDoor(38, kCharacterMilos, 3, 10, 9);
-		if (!_gameEvents[kEventMilosCompartmentVisitTyler] && !_gameProgress[kProgressField54] && !getCharacterParams(kCharacterMilos, 8)[3]) {
+		if (!_doneNIS[kEventMilosCompartmentVisitTyler] && !_globals[kProgressField54] && !getCharacterParams(kCharacterMilos, 8)[3]) {
 			send(kCharacterMilos, kCharacterVesna, 155913424, 0);
 		}
 
@@ -1777,7 +1777,7 @@ void LogicManager::HAND_Milos_Friendly(HAND_PARAMS) {
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 3;
 				MilosCall(&LogicManager::CONS_Milos_DoDialog, "VES1015A", 0, 0, 0);
 			} else {
-				if (_gameEvents[kEventMilosCompartmentVisitTyler] || getCharacterParams(kCharacterMilos, 8)[3]) {
+				if (_doneNIS[kEventMilosCompartmentVisitTyler] || getCharacterParams(kCharacterMilos, 8)[3]) {
 					setDoor(38, kCharacterMilos, 1, 10, 9);
 					break;
 				}
@@ -1993,21 +1993,21 @@ void LogicManager::HAND_Milos_Conspiring(HAND_PARAMS) {
 					getCharacterCurrentParams(kCharacterMilos)[2] = 1;
 					playDialog(kCharacterMilos, "Mil4013", -1, 0);
 					if (nearChar(kCharacterMilos, kCharacterCath, 2000))
-						_gameProgress[kProgressField94] = 1;
+						_globals[kProgressField94] = 1;
 				}
 
 				if (_gameTime > 2360700 && !getCharacterCurrentParams(kCharacterMilos)[3]) {
 					getCharacterCurrentParams(kCharacterMilos)[3] = 1;
 					playDialog(kCharacterMilos, "Mil4014", -1, 0);
 					if (nearChar(kCharacterMilos, kCharacterCath, 2000))
-						_gameProgress[kProgressField94] = 1;
+						_globals[kProgressField94] = 1;
 				}
 
 				if (_gameTime > 2370600 && !getCharacterCurrentParams(kCharacterMilos)[4]) {
 					getCharacterCurrentParams(kCharacterMilos)[4] = 1;
 					playDialog(kCharacterMilos, "Mil4015", -1, 0);
 					if (nearChar(kCharacterMilos, kCharacterCath, 2000))
-						_gameProgress[kProgressField94] = 1;
+						_globals[kProgressField94] = 1;
 				}
 
 				if (_gameTime > 2407500 && !getCharacterCurrentParams(kCharacterMilos)[5]) {
@@ -2193,7 +2193,7 @@ void LogicManager::CONS_Milos_RunningTrain(CONS_PARAMS) {
 void LogicManager::HAND_Milos_RunningTrain(HAND_PARAMS) {
 	switch (msg->action) {
 	case 2:
-		if (_gameProgress[kProgressIsDayTime]) {
+		if (_globals[kProgressIsDayTime]) {
 			endGame(0, 0, 52, true);
 		} else {
 			getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 6;
@@ -2204,7 +2204,7 @@ void LogicManager::HAND_Milos_RunningTrain(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8]) {
 		case 1:
-			playNIS(((_gameProgress[kProgressIsDayTime] == kProgressField0) + kEventLocomotiveMilosShovelingDay));
+			playNIS(((_globals[kProgressIsDayTime] == kProgressField0) + kEventLocomotiveMilosShovelingDay));
 			cleanNIS();
 			break;
 		case 2:
@@ -2215,7 +2215,7 @@ void LogicManager::HAND_Milos_RunningTrain(HAND_PARAMS) {
 				endDialog("ARRIVE");
 
 			_engine->getSoundManager()->endAmbient();
-			playNIS(((_gameProgress[kProgressIsDayTime] == kProgressField0) + kEventLocomotiveMilosDay));
+			playNIS(((_globals[kProgressIsDayTime] == kProgressField0) + kEventLocomotiveMilosDay));
 			claimNISLink(kCharacterMilos);
 			bumpCath(kCarCoalTender, 1, 255);
 			break;
@@ -2246,9 +2246,9 @@ void LogicManager::HAND_Milos_RunningTrain(HAND_PARAMS) {
 
 		break;
 	case 168646401:
-		if (_gameEvents[kEventLocomotiveMilosShovelingDay] || _gameEvents[kEventLocomotiveMilosShovelingNight]) {
-			if (!_gameEvents[kEventLocomotiveMilosDay] && !_gameEvents[kEventLocomotiveMilosNight]) {
-				if (_gameProgress[kProgressIsDayTime] && _gameTime < 2943000)
+		if (_doneNIS[kEventLocomotiveMilosShovelingDay] || _doneNIS[kEventLocomotiveMilosShovelingNight]) {
+			if (!_doneNIS[kEventLocomotiveMilosDay] && !_doneNIS[kEventLocomotiveMilosNight]) {
+				if (_globals[kProgressIsDayTime] && _gameTime < 2943000)
 					_gameTime = 2943000;
 				getCharacter(kCharacterMilos).callbacks[getCharacter(kCharacterMilos).currentCall + 8] = 2;
 				MilosCall(&LogicManager::CONS_Milos_SaveGame, 2, kEventLocomotiveMilosDay, 0, 0);
@@ -2260,7 +2260,7 @@ void LogicManager::HAND_Milos_RunningTrain(HAND_PARAMS) {
 
 		break;
 	case 169773228:
-		if (_gameProgress[kProgressIsDayTime]) {
+		if (_globals[kProgressIsDayTime]) {
 			fadeDialog(kCharacterMilos);
 			if (_gameTime < 2949300)
 				_gameTime = 2949300;

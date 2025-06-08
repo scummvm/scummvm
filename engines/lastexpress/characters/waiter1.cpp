@@ -389,7 +389,7 @@ void LogicManager::HAND_Waiter1_AbbotCheckMe(HAND_PARAMS) {
 			startCycOtis(kCharacterWaiter1, "029D");
 			getCharacter(kCharacterWaiter1).callbacks[getCharacter(kCharacterWaiter1).currentCall + 8] = 2;
 
-			if (_gameProgress[kProgressChapter] != 3) {
+			if (_globals[kProgressChapter] != 3) {
 				Waiter1Call(&LogicManager::CONS_Waiter1_DoDialog, "Abb4001", 0, 0, 0);
 			} else {
 				Waiter1Call(&LogicManager::CONS_Waiter1_DoDialog, "Abb3016", 0, 0, 0);

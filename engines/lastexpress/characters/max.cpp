@@ -447,9 +447,9 @@ void LogicManager::HAND_Max_Escaped(HAND_PARAMS) {
 				if (!whoOnScreen(kCharacterMax) || !getCharacterCurrentParams(kCharacterMax)[1]) {
 					getCharacterCurrentParams(kCharacterMax)[1] = _gameTime;
 					if (!_gameTime) {
-						if (_gameProgress[kProgressChapter] == 3) {
+						if (_globals[kProgressChapter] == 3) {
 							CONS_Max_LetMeIn3(0, 0, 0, 0);
-						} else if (_gameProgress[kProgressChapter] == 4) {
+						} else if (_globals[kProgressChapter] == 4) {
 							CONS_Max_LetMeIn4(0, 0, 0, 0);
 						}
 					}
@@ -460,9 +460,9 @@ void LogicManager::HAND_Max_Escaped(HAND_PARAMS) {
 			}
 
 			getCharacterCurrentParams(kCharacterMax)[1] = 0x7FFFFFFF;
-			if (_gameProgress[kProgressChapter] == 3) {
+			if (_globals[kProgressChapter] == 3) {
 				CONS_Max_LetMeIn3(0, 0, 0, 0);
-			} else if (_gameProgress[kProgressChapter] == 4) {
+			} else if (_globals[kProgressChapter] == 4) {
 				CONS_Max_LetMeIn4(0, 0, 0, 0);
 			}
 		}
@@ -640,8 +640,8 @@ void LogicManager::HAND_Max_InCageMad(HAND_PARAMS) {
 		playDialog(kCharacterMax, "Max1122", -1, 0);
 		break;
 	case 9:
-		if (_gameEvents[kEventCathMaxCage]) {
-			if (!_gameEvents[kEventCathMaxFree]) {
+		if (_doneNIS[kEventCathMaxCage]) {
+			if (!_doneNIS[kEventCathMaxFree]) {
 				getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall + 8] = 2;
 				MaxCall(&LogicManager::CONS_Max_SaveGame, 2, kEventCathMaxFree, 0, 0);
 			}

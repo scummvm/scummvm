@@ -124,12 +124,12 @@ void GraphicsManager::goStepBG(int sceneIndex) {
 		chosenTbm = &_renderBox2;
 	}
 
-	_engine->getLogicManager()->_trainNodeIndex = sceneIndex;
+	_engine->getLogicManager()->_activeNode = sceneIndex;
 
-	if (_engine->getLogicManager()->_useLastSavedNodeIndex) {
-		getCharacter(kCharacterCath).characterPosition = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_lastNodeIndex].nodePosition;
+	if (_engine->getLogicManager()->_closeUp) {
+		getCharacter(kCharacterCath).characterPosition = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_nodeReturn].nodePosition;
 	} else {
-		getCharacter(kCharacterCath).characterPosition = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_trainNodeIndex].nodePosition;
+		getCharacter(kCharacterCath).characterPosition = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].nodePosition;
 	}
 
 	_engine->getSoundManager()->_scanAnySoundLoopingSection = true;

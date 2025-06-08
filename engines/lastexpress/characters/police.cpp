@@ -569,8 +569,8 @@ void LogicManager::HAND_Police_TrappedCath(HAND_PARAMS) {
 	case 0:
 	{
 		if (!getCharacterCurrentParams(kCharacterPolice)[4] &&
-				(getCharacterCurrentParams(kCharacterPolice)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks == -75) ||
-			getCharacterCurrentParams(kCharacterPolice)[4] < _currentGameSessionTicks) {
+				(getCharacterCurrentParams(kCharacterPolice)[4] = _realTime + 75, _realTime == -75) ||
+			getCharacterCurrentParams(kCharacterPolice)[4] < _realTime) {
 			if (!cathOutHisWindow() && checkDoor(getCharacterCurrentParams(kCharacterPolice)[2]) != 1) {
 				getCharacter(kCharacterPolice).callbacks[getCharacter(kCharacterPolice).currentCall + 8] = 2;
 				PoliceCall(&LogicManager::CONS_Police_SaveGame, 2, kEventGendarmesArrestation, 0, 0);
@@ -581,20 +581,20 @@ void LogicManager::HAND_Police_TrappedCath(HAND_PARAMS) {
 		bool skip = false; // Horrible way to unroll a goto...
 
 		if (!getCharacterCurrentParams(kCharacterPolice)[5]) {
-			getCharacterCurrentParams(kCharacterPolice)[5] = _currentGameSessionTicks + 150;
-			if (_currentGameSessionTicks == -150) {
+			getCharacterCurrentParams(kCharacterPolice)[5] = _realTime + 150;
+			if (_realTime == -150) {
 				skip = true;
 				playDialog(kCharacterPolice, "POL1046A", 16, 0);
 			}
 		}
 
-		if (!skip && getCharacterCurrentParams(kCharacterPolice)[5] < _currentGameSessionTicks) {
+		if (!skip && getCharacterCurrentParams(kCharacterPolice)[5] < _realTime) {
 			getCharacterCurrentParams(kCharacterPolice)[5] = 0x7FFFFFFF;
 			playDialog(kCharacterPolice, "POL1046A", 16, 0);
 		}
 
-		if (getCharacterCurrentParams(kCharacterPolice)[6] || (getCharacterCurrentParams(kCharacterPolice)[6] = _currentGameSessionTicks + 300, _currentGameSessionTicks != -300)) {
-			if (getCharacterCurrentParams(kCharacterPolice)[6] >= _currentGameSessionTicks)
+		if (getCharacterCurrentParams(kCharacterPolice)[6] || (getCharacterCurrentParams(kCharacterPolice)[6] = _realTime + 300, _realTime != -300)) {
+			if (getCharacterCurrentParams(kCharacterPolice)[6] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterPolice)[6] = 0x7FFFFFFF;
@@ -610,7 +610,7 @@ void LogicManager::HAND_Police_TrappedCath(HAND_PARAMS) {
 			if (cathOutHisWindow())
 				bumpCath(kCarGreenSleeping, 49, 255);
 			playDialog(kCharacterPolice, "LIB017", 16, 0);
-			if (_gameProgress[kProgressJacket] == 1) {
+			if (_globals[kProgressJacket] == 1) {
 				getCharacter(kCharacterPolice).callbacks[getCharacter(kCharacterPolice).currentCall + 8] = 3;
 				PoliceCall(&LogicManager::CONS_Police_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
 			} else {
@@ -715,7 +715,7 @@ void LogicManager::HAND_Police_SearchTrain(HAND_PARAMS) {
 		getCharacter(kCharacterPolice).characterPosition.car = kCarGreenSleeping;
 		getCharacter(kCharacterPolice).characterPosition.location = 0;
 		getCharacter(kCharacterPolice).characterPosition.position = 540;
-		_gameProgress[kProgressField14] = 29;
+		_globals[kProgressField14] = 29;
 		getCharacter(kCharacterPolice).callbacks[getCharacter(kCharacterPolice).currentCall + 8] = 1;
 		PoliceCall(&LogicManager::CONS_Police_DoWalk, 3, 5540, 0, 0);
 		break;
@@ -755,7 +755,7 @@ void LogicManager::HAND_Police_SearchTrain(HAND_PARAMS) {
 			break;
 		case 9:
 			if (getCharacter(kCharacterCath).characterPosition.car == 3) {
-				_gameProgress[kProgressField14] = 0;
+				_globals[kProgressField14] = 0;
 				endGraphics(kCharacterPolice);
 				send(kCharacterPolice, kCharacterTrainM, 168710784, 0);
 				CONS_Police_SearchDone(0, 0, 0, 0);
@@ -822,7 +822,7 @@ void LogicManager::HAND_Police_SearchTrain(HAND_PARAMS) {
 			PoliceCall(&LogicManager::CONS_Police_DoWalk, 4, 9460, 0, 0);
 			break;
 		case 24:
-			_gameProgress[kProgressField14] = 0;
+			_globals[kProgressField14] = 0;
 			endGraphics(kCharacterPolice);
 			send(kCharacterPolice, kCharacterTrainM, 168710784, 0);
 			CONS_Police_SearchDone(0, 0, 0, 0);

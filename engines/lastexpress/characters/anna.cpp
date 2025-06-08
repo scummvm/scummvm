@@ -372,7 +372,7 @@ void LogicManager::HAND_Anna_DoWalk(HAND_PARAMS) {
 
 		break;
 	case 5:
-		if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction] || _gameProgress[kProgressChapter] >= 2) {
+		if (_doneNIS[kEventAugustPresentAnna] || _doneNIS[kEventAugustPresentAnnaFirstIntroduction] || _globals[kProgressChapter] >= 2) {
 			playDialog(kCharacterCath, "CAT1001", -1, 0);
 		} else {
 			playCathExcuseMe();
@@ -439,8 +439,8 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 			bool skip = false; // Horrible way to unroll a goto...
 
 			if (!getCharacterCurrentParams(kCharacterAnna)[6]) {
-				getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75;
-				if (_currentGameSessionTicks == -75) {
+				getCharacterCurrentParams(kCharacterAnna)[6] = _realTime + 75;
+				if (_realTime == -75) {
 					skip = true;
 					send(kCharacterAnna, kCharacterAnna, 2, 0);
 					getCharacterCurrentParams(kCharacterAnna)[5] = 0;
@@ -448,7 +448,7 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 				}
 			}
 
-			if (!skip && getCharacterCurrentParams(kCharacterAnna)[6] < _currentGameSessionTicks) {
+			if (!skip && getCharacterCurrentParams(kCharacterAnna)[6] < _realTime) {
 				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
 				send(kCharacterAnna, kCharacterAnna, 2, 0);
 				getCharacterCurrentParams(kCharacterAnna)[5] = 0;
@@ -457,8 +457,8 @@ void LogicManager::HAND_Anna_PracticeMusic(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[3]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[7] || (getCharacterCurrentParams(kCharacterAnna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[7] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[7] || (getCharacterCurrentParams(kCharacterAnna)[7] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[7] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[7] = 0x7FFFFFFF;
@@ -682,9 +682,9 @@ void LogicManager::HAND_Anna_DoWaitReal(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterAnna)[1] ||
-			(getCharacterCurrentParams(kCharacterAnna)[1] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterAnna)[0],
-			_currentGameSessionTicks + getCharacterCurrentParams(kCharacterAnna)[0] != 0)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[1] >= _currentGameSessionTicks)
+			(getCharacterCurrentParams(kCharacterAnna)[1] = _realTime + getCharacterCurrentParams(kCharacterAnna)[0],
+			_realTime + getCharacterCurrentParams(kCharacterAnna)[0] != 0)) {
+			if (getCharacterCurrentParams(kCharacterAnna)[1] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterAnna)[1] = 0x7FFFFFFF;
@@ -728,8 +728,8 @@ void LogicManager::HAND_Anna_CompLogic(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[4]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[7] || (getCharacterCurrentParams(kCharacterAnna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[7] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[7] || (getCharacterCurrentParams(kCharacterAnna)[7] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[7] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[7] = 0x7FFFFFFF;
@@ -925,7 +925,7 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 
 		break;
 	case 5:
-		if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction] || _gameProgress[kProgressChapter] >= 2) {
+		if (_doneNIS[kEventAugustPresentAnna] || _doneNIS[kEventAugustPresentAnnaFirstIntroduction] || _globals[kProgressChapter] >= 2) {
 			playDialog(kCharacterCath, "CAT1001", -1, 0);
 		} else {
 			playCathExcuseMe();
@@ -937,11 +937,11 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 		break;
 	case 12:
 		getCharacter(kCharacterAnna).inventoryItem = 0;
-		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventGotALight] && !_gameEvents[kEventGotALightD] && !_gameEvents[kEventAugustPresentAnna] && !_gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+		if (_globals[kProgressJacket] == 2 && !_doneNIS[kEventGotALight] && !_doneNIS[kEventGotALightD] && !_doneNIS[kEventAugustPresentAnna] && !_doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 			getCharacterCurrentParams(kCharacterAnna)[2] = 128;
 		}
 
-		if (_gameProgress[kProgressJacket] == 2 && !getCharacterCurrentParams(kCharacterAnna)[2] && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+		if (_globals[kProgressJacket] == 2 && !getCharacterCurrentParams(kCharacterAnna)[2] && !_doneNIS[kEventAnnaGiveScarfAsk] && !_doneNIS[kEventAnnaGiveScarfDinerAsk] && !_doneNIS[kEventAnnaGiveScarfSalonAsk]) {
 			getCharacterCurrentParams(kCharacterAnna)[2] = 8;
 		}
 
@@ -954,9 +954,9 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 		break;
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-			if (_gameEvents[kEventAnnaGiveScarf] || _gameEvents[kEventAnnaGiveScarfDiner] || _gameEvents[kEventAnnaGiveScarfSalon] || _gameEvents[kEventAnnaGiveScarfMonogram] || _gameEvents[kEventAnnaGiveScarfDinerMonogram] || _gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
+			if (_doneNIS[kEventAnnaGiveScarf] || _doneNIS[kEventAnnaGiveScarfDiner] || _doneNIS[kEventAnnaGiveScarfSalon] || _doneNIS[kEventAnnaGiveScarfMonogram] || _doneNIS[kEventAnnaGiveScarfDinerMonogram] || _doneNIS[kEventAnnaGiveScarfSalonMonogram]) {
 				playNIS(kEventAnnaGiveScarfAsk);
-			} else if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+			} else if (_doneNIS[kEventAugustPresentAnna] || _doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 				playNIS(kEventAnnaGiveScarfMonogram);
 			} else {
 				playNIS(kEventAnnaGiveScarf);
@@ -979,7 +979,7 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 
 			int32 tmp = getCharacterCurrentParams(kCharacterAnna)[2] & 0xFFFFFF7F;
 			getCharacterCurrentParams(kCharacterAnna)[2] = tmp;
-			if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk])
+			if (_globals[kProgressJacket] == 2 && !_doneNIS[kEventAnnaGiveScarfAsk] && !_doneNIS[kEventAnnaGiveScarfDinerAsk] && !_doneNIS[kEventAnnaGiveScarfSalonAsk])
 				getCharacterCurrentParams(kCharacterAnna)[2] = tmp | 8;
 
 			if (getCharacter(kCharacterAnna).direction != 1) {
@@ -1022,8 +1022,8 @@ void LogicManager::HAND_Anna_DiningLogic(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterAnna)[5] || (getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 900, _gameTime != -900)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[5] >= _gameTime) {
 					if (getCharacterCurrentParams(kCharacterAnna)[2]) {
-						if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-							if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+						if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _realTime + 90, _realTime != -90)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[6] >= _realTime)
 								break;
 
 							getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
@@ -1045,8 +1045,8 @@ void LogicManager::HAND_Anna_DiningLogic(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[2]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _realTime + 90, _realTime != -90)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
@@ -1069,11 +1069,11 @@ void LogicManager::HAND_Anna_DiningLogic(HAND_PARAMS) {
 
 		break;
 	case 12:
-		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventDinerMindJoin] && !_gameEvents[kEventAugustPresentAnna] && !_gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+		if (_globals[kProgressJacket] == 2 && !_doneNIS[kEventDinerMindJoin] && !_doneNIS[kEventAugustPresentAnna] && !_doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 			getCharacterCurrentParams(kCharacterAnna)[1] |= 0x80;
 		}
 
-		if (_gameProgress[kProgressJacket] == 2 && !getCharacterCurrentParams(kCharacterAnna)[1] && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+		if (_globals[kProgressJacket] == 2 && !getCharacterCurrentParams(kCharacterAnna)[1] && !_doneNIS[kEventAnnaGiveScarfAsk] && !_doneNIS[kEventAnnaGiveScarfDinerAsk] && !_doneNIS[kEventAnnaGiveScarfSalonAsk]) {
 			getCharacterCurrentParams(kCharacterAnna)[1] = 8;
 		}
 
@@ -1084,10 +1084,10 @@ void LogicManager::HAND_Anna_DiningLogic(HAND_PARAMS) {
 		break;
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-			if (_gameEvents[kEventAnnaGiveScarf] || _gameEvents[kEventAnnaGiveScarfDiner] || _gameEvents[kEventAnnaGiveScarfSalon] || _gameEvents[kEventAnnaGiveScarfMonogram] || _gameEvents[kEventAnnaGiveScarfDinerMonogram] || _gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
+			if (_doneNIS[kEventAnnaGiveScarf] || _doneNIS[kEventAnnaGiveScarfDiner] || _doneNIS[kEventAnnaGiveScarfSalon] || _doneNIS[kEventAnnaGiveScarfMonogram] || _doneNIS[kEventAnnaGiveScarfDinerMonogram] || _doneNIS[kEventAnnaGiveScarfSalonMonogram]) {
 				playNIS(kEventAnnaGiveScarfDinerAsk);
 			} else {
-				if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction])
+				if (_doneNIS[kEventAugustPresentAnna] || _doneNIS[kEventAugustPresentAnnaFirstIntroduction])
 					playNIS(kEventAnnaGiveScarfDinerMonogram);
 				else
 					playNIS(kEventAnnaGiveScarfDiner);
@@ -1104,7 +1104,7 @@ void LogicManager::HAND_Anna_DiningLogic(HAND_PARAMS) {
 			int32 tmp = getCharacterCurrentParams(kCharacterAnna)[1] & 0xFFFFFF7F;
 			getCharacterCurrentParams(kCharacterAnna)[1] = tmp;
 
-			if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+			if (_globals[kProgressJacket] == 2 && !_doneNIS[kEventAnnaGiveScarfAsk] && !_doneNIS[kEventAnnaGiveScarfDinerAsk] && !_doneNIS[kEventAnnaGiveScarfSalonAsk]) {
 				getCharacterCurrentParams(kCharacterAnna)[1] = tmp | 8;
 			}
 
@@ -1378,7 +1378,7 @@ void LogicManager::HAND_Anna_EatingDinner(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
 		startCycOtis(kCharacterAnna, "001J");
-		_gameProgress[kProgressField28] = 1;
+		_globals[kProgressField28] = 1;
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_DiningLogic, 0, 0, 0, 0);
 
@@ -1480,7 +1480,7 @@ void LogicManager::HAND_Anna_FreshenUp(HAND_PARAMS) {
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1 ||
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
-			if (_gameProgress[kProgressField14] == 29) {
+			if (_globals[kProgressField14] == 29) {
 				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = _gameTime + 900;
 				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 				AnnaCall(&LogicManager::CONS_Anna_CompLogic, getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8], "NONE", 0, 0);
@@ -1560,8 +1560,8 @@ void LogicManager::HAND_Anna_WaitAugust(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime + 900, _gameTime != -900)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[2] >= _gameTime) {
 					if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-						if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-							if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks)
+						if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _realTime + 90, _realTime != -90)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[3] >= _realTime)
 								break;
 
 							getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
@@ -1584,8 +1584,8 @@ void LogicManager::HAND_Anna_WaitAugust(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _realTime + 90, _realTime != -90)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[3] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[3] = 0x7FFFFFFF;
@@ -1610,10 +1610,10 @@ void LogicManager::HAND_Anna_WaitAugust(HAND_PARAMS) {
 	case 12:
 		getCharacter(kCharacterAnna).inventoryItem = 0;
 
-		if (_gameProgress[kProgressJacket] == 2 && !_gameEvents[kEventAnnaConversationGoodNight] && !_gameEvents[kEventAnnaIntroductionRejected])
+		if (_globals[kProgressJacket] == 2 && !_doneNIS[kEventAnnaConversationGoodNight] && !_doneNIS[kEventAnnaIntroductionRejected])
 			getCharacter(kCharacterAnna).inventoryItem = 0x80;
 
-		if (_gameProgress[kProgressJacket] == 2 && !getCharacter(kCharacterAnna).inventoryItem && !_gameEvents[kEventAnnaGiveScarfAsk] && !_gameEvents[kEventAnnaGiveScarfDinerAsk] && !_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+		if (_globals[kProgressJacket] == 2 && !getCharacter(kCharacterAnna).inventoryItem && !_doneNIS[kEventAnnaGiveScarfAsk] && !_doneNIS[kEventAnnaGiveScarfDinerAsk] && !_doneNIS[kEventAnnaGiveScarfSalonAsk]) {
 			getCharacter(kCharacterAnna).inventoryItem = 8;
 		}
 
@@ -1624,15 +1624,15 @@ void LogicManager::HAND_Anna_WaitAugust(HAND_PARAMS) {
 		break;
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-			if (_gameEvents[kEventAnnaGiveScarf] ||
-				_gameEvents[kEventAnnaGiveScarfDiner] ||
-				_gameEvents[kEventAnnaGiveScarfSalon] ||
-				_gameEvents[kEventAnnaGiveScarfMonogram] ||
-				_gameEvents[kEventAnnaGiveScarfDinerMonogram] ||
-				_gameEvents[kEventAnnaGiveScarfSalonMonogram]) {
+			if (_doneNIS[kEventAnnaGiveScarf] ||
+				_doneNIS[kEventAnnaGiveScarfDiner] ||
+				_doneNIS[kEventAnnaGiveScarfSalon] ||
+				_doneNIS[kEventAnnaGiveScarfMonogram] ||
+				_doneNIS[kEventAnnaGiveScarfDinerMonogram] ||
+				_doneNIS[kEventAnnaGiveScarfSalonMonogram]) {
 				playNIS(kEventAnnaGiveScarfSalonAsk);
 			} else {
-				if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+				if (_doneNIS[kEventAugustPresentAnna] || _doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 					playNIS(kEventAnnaGiveScarfSalonMonogram);
 				} else {
 					playNIS(kEventAnnaGiveScarfSalon);
@@ -1644,17 +1644,17 @@ void LogicManager::HAND_Anna_WaitAugust(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).inventoryItem &= ~8;
 			bumpCath(kCarRestaurant, 51, 255);
 		} else if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
-			if (_gameEvents[kEventAugustPresentAnna] || _gameEvents[kEventAugustPresentAnnaFirstIntroduction]) {
+			if (_doneNIS[kEventAugustPresentAnna] || _doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 				playNIS(kEventAnnaConversationGoodNight);
 			} else {
 				playNIS(kEventAnnaIntroductionRejected);
 			}
 
 			getCharacter(kCharacterAnna).inventoryItem &= ~0x80;
-			if (_gameProgress[kProgressJacket] == 2 &&
-				!_gameEvents[kEventAnnaGiveScarfAsk] &&
-				!_gameEvents[kEventAnnaGiveScarfDinerAsk] &&
-				!_gameEvents[kEventAnnaGiveScarfSalonAsk]) {
+			if (_globals[kProgressJacket] == 2 &&
+				!_doneNIS[kEventAnnaGiveScarfAsk] &&
+				!_doneNIS[kEventAnnaGiveScarfDinerAsk] &&
+				!_doneNIS[kEventAnnaGiveScarfSalonAsk]) {
 				getCharacter(kCharacterAnna).inventoryItem |= kItemScarf;
 			}
 
@@ -1729,8 +1729,8 @@ void LogicManager::HAND_Anna_FlirtAugust(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 90, _currentGameSessionTicks != -90)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _realTime + 90, _realTime != -90)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
@@ -1978,8 +1978,8 @@ void LogicManager::HAND_Anna_WakeNight(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[2] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[2] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
@@ -2171,7 +2171,7 @@ void LogicManager::HAND_Anna_DoWalk1019(HAND_PARAMS) {
 		if (msg->action == 12) {
 			getCharacter(kCharacterAnna).inventoryItem = 0;
 
-			if (!_gameEvents[kEventAnnaGoodNight] && !_gameEvents[kEventAnnaGoodNightInverse])
+			if (!_doneNIS[kEventAnnaGoodNight] && !_doneNIS[kEventAnnaGoodNightInverse])
 				getCharacter(kCharacterAnna).inventoryItem = 0x80;
 		}
 
@@ -2597,7 +2597,7 @@ void LogicManager::HAND_Anna_GoLunch(HAND_PARAMS) {
 			AnnaCall(&LogicManager::CONS_Anna_DoSeqOtis, "801VS", 0, 0, 0);
 			break;
 		case 4:
-			if (!_gameEvents[kEventAugustLunch]) {
+			if (!_doneNIS[kEventAugustLunch]) {
 				playDialog(kCharacterAnna, "Ann3136A", -1, 30);
 			} else {
 				playDialog(kCharacterAnna, "Ann3136", -1, 30);
@@ -2907,7 +2907,7 @@ void LogicManager::HAND_Anna_AfterLunch(HAND_PARAMS) {
 
 		break;
 	case 101169422:
-		if (_gameEvents[kEventKronosVisit]) {
+		if (_doneNIS[kEventKronosVisit]) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
 			AnnaCall(&LogicManager::CONS_Anna_DoBlockSeqOtis, "112J", 5, 0x39, 0);
 		} else {
@@ -2994,7 +2994,7 @@ void LogicManager::HAND_Anna_Dressing(HAND_PARAMS) {
 
 	switch (msg->action) {
 	case 0:
-		if (_gameProgress[kProgressField48] != 0 && getCharacterCurrentParams(kCharacterAnna)[4] != 0x7FFFFFFF && _gameTime != 0) {
+		if (_globals[kProgressField48] != 0 && getCharacterCurrentParams(kCharacterAnna)[4] != 0x7FFFFFFF && _gameTime != 0) {
 			if (_gameTime > 2065500) {
 				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
 				CONS_Anna_GiveMaxToCond2(0, 0, 0, 0);
@@ -3054,8 +3054,8 @@ void LogicManager::HAND_Anna_Dressing(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
@@ -3215,8 +3215,8 @@ void LogicManager::HAND_Anna_GiveMaxToCond2(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterAnna)[5] || (getCharacterCurrentParams(kCharacterAnna)[5] = _gameTime + 9000, _gameTime != -9000)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[5] >= _gameTime) {
 					if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-						if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-							if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+						if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _realTime + 75, _realTime != -75)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[6] >= _realTime)
 								break;
 
 							getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
@@ -3251,8 +3251,8 @@ void LogicManager::HAND_Anna_GiveMaxToCond2(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[6] || (getCharacterCurrentParams(kCharacterAnna)[6] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[6] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[6] = 0x7FFFFFFF;
@@ -3621,8 +3621,8 @@ void LogicManager::HAND_Anna_AfterConcert(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
@@ -3818,7 +3818,7 @@ void LogicManager::CONS_Anna_GoBagg(CONS_PARAMS) {
 void LogicManager::HAND_Anna_GoBagg(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		_gameTimeTicksDelta = 3;
+		_timeSpeed = 3;
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 1, 0, 0, 0);
 		break;
@@ -3889,7 +3889,7 @@ void LogicManager::HAND_Anna_InBagg(HAND_PARAMS) {
 		break;
 	case 12:
 		getCharacter(kCharacterAnna).characterPosition.car = kCarBaggage;
-		_gameProgress[kProgressField54] = 1;
+		_globals[kProgressField54] = 1;
 		break;
 	case 235856512:
 		getCharacterCurrentParams(kCharacterAnna)[0] = 1;
@@ -3970,7 +3970,7 @@ void LogicManager::HAND_Anna_BaggageFight(HAND_PARAMS) {
 		case 3:
 			playNIS(kEventAnnaBagagePart2);
 			bumpCath(kCarBaggage, 96, 255);
-			_gameProgress[kProgressField54] = 0;
+			_globals[kProgressField54] = 0;
 			forceJump(kCharacterVesna, &LogicManager::CONS_Vesna_InComp);
 			_gameTime = 2266200;
 			CONS_Anna_PrepareVienna(0, 0, 0, 0);
@@ -4054,11 +4054,11 @@ void LogicManager::HAND_Anna_Reading(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (checkCathDir(kCarRedSleeping, 46)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _currentGameSessionTicks + 30, _currentGameSessionTicks != -30)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[3] >= _currentGameSessionTicks) {
+			if (getCharacterCurrentParams(kCharacterAnna)[3] || (getCharacterCurrentParams(kCharacterAnna)[3] = _realTime + 30, _realTime != -30)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[3] >= _realTime) {
 					if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-						if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-							if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
+						if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _realTime + 75, _realTime != -75)) {
+							if (getCharacterCurrentParams(kCharacterAnna)[4] >= _realTime)
 								break;
 
 							getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
@@ -4085,8 +4085,8 @@ void LogicManager::HAND_Anna_Reading(HAND_PARAMS) {
 		getCharacterCurrentParams(kCharacterAnna)[3] = 0;
 
 		if (getCharacterCurrentParams(kCharacterAnna)[0]) {
-			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterAnna)[4] || (getCharacterCurrentParams(kCharacterAnna)[4] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterAnna)[4] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterAnna)[4] = 0x7FFFFFFF;
@@ -4387,7 +4387,7 @@ void LogicManager::HAND_Anna_EnterCompCathFollowsAnna(HAND_PARAMS) {
 
 		break;
 	case 17:
-		if (!_gameEvents[kEventAnnaTiredKiss] && nearChar(kCharacterCath, kCharacterAnna, 2000) && whoOnScreen(kCharacterAnna) &&
+		if (!_doneNIS[kEventAnnaTiredKiss] && nearChar(kCharacterCath, kCharacterAnna, 2000) && whoOnScreen(kCharacterAnna) &&
 			getCharacter(kCharacterAnna).characterPosition.position < getCharacter(kCharacterCath).characterPosition.position) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventAnnaTiredKiss, 0, 0);
@@ -4422,7 +4422,7 @@ void LogicManager::CONS_Anna_DoWalkCathFollowsAnna(CONS_PARAMS) {
 void LogicManager::HAND_Anna_DoWalkCathFollowsAnna(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_gameEvents[kEventAnnaTired] || whoFacingCath(kCharacterAnna)) {
+		if (_doneNIS[kEventAnnaTired] || whoFacingCath(kCharacterAnna)) {
 			getCharacter(kCharacterAnna).inventoryItem = 0;
 		} else {
 			getCharacter(kCharacterAnna).inventoryItem = 0x80;
@@ -4447,7 +4447,7 @@ void LogicManager::HAND_Anna_DoWalkCathFollowsAnna(HAND_PARAMS) {
 			getCharacter(kCharacterAnna).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
 			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
-		} else if (!_gameEvents[kEventAnnaTired]) {
+		} else if (!_doneNIS[kEventAnnaTired]) {
 			getCharacter(kCharacterAnna).inventoryItem = 0x80;
 		}
 
@@ -4509,7 +4509,7 @@ void LogicManager::HAND_Anna_LetDownHair(HAND_PARAMS) {
 		break;
 	case 12:
 		setDoor(37, kCharacterAnna, 0, 10, 9);
-		_gameTimeTicksDelta = 1;
+		_timeSpeed = 1;
 		getCharacterCurrentParams(kCharacterAnna)[0] = _gameTime + 4500;
 		getCharacterCurrentParams(kCharacterAnna)[1] = _gameTime + 9000;
 		break;
@@ -4583,13 +4583,13 @@ void LogicManager::HAND_Anna_TiedUp(HAND_PARAMS) {
 	switch (msg->action) {
 	case 18:
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1) {
-			if (_gameProgress[kProgressFieldC]) {
-				if (_gameEvents[kEventAnnaKissTrainHijacked]) {
+			if (_globals[kProgressFieldC]) {
+				if (_doneNIS[kEventAnnaKissTrainHijacked]) {
 					playNIS(kEventAnnaBaggageTies2);
 				} else {
 					playNIS(kEventAnnaBaggageTies);
 				}
-			} else if (_gameEvents[kEventAnnaKissTrainHijacked]) {
+			} else if (_doneNIS[kEventAnnaKissTrainHijacked]) {
 				playNIS(kEventAnnaBaggageTies3);
 			} else {
 				playNIS(kEventAnnaBaggageTies4);
@@ -4644,7 +4644,7 @@ void LogicManager::HAND_Anna_ReadyToScore(HAND_PARAMS) {
 	case 0:
 		if (_gameTime > 3645000 && !getCharacterCurrentParams(kCharacterAnna)[1]) {
 			getCharacterCurrentParams(kCharacterAnna)[1] = 1;
-			_gameTimeTicksDelta = 0;
+			_timeSpeed = 0;
 		}
 
 		break;
@@ -4678,7 +4678,7 @@ void LogicManager::HAND_Anna_ReadyToScore(HAND_PARAMS) {
 			setDoor(106, kCharacterCath, 0, 10, 9);
 			playNIS(kEventAnnaDialogGoToJerusalem);
 			_gameTime = 4914000;
-			_gameTimeTicksDelta = 0;
+			_timeSpeed = 0;
 			send(kCharacterAnna, kCharacterTatiana, 236060709, 0);
 			bumpCath(kCarBaggage, 97, 1);
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
@@ -4725,7 +4725,7 @@ void LogicManager::HAND_Anna_Kidnapped(HAND_PARAMS) {
 
 		_gameTime = 4920300;
 
-		if (_gameInventory[kItemFirebird].location == 4) {
+		if (_items[kItemFirebird].floating == 4) {
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosHostageAnna, 0, 0);
 		} else {
@@ -4771,7 +4771,7 @@ void LogicManager::HAND_Anna_Waiting(HAND_PARAMS) {
 	case 17:
 		if (inDiningRoom(kCharacterCath) && cathHasItem(kItemFirebird)) {
 			CONS_Anna_FinalSequence(0, 0, 0, 0);
-		} else if (inSalon(kCharacterCath) && !_gameEvents[kEventKahinaPunch]) {
+		} else if (inSalon(kCharacterCath) && !_doneNIS[kEventKahinaPunch]) {
 			_gameTime = 4923000;
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
 			AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKahinaPunch, 0, 0);
@@ -4817,8 +4817,8 @@ void LogicManager::CONS_Anna_FinalSequence(CONS_PARAMS) {
 void LogicManager::HAND_Anna_FinalSequence(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterAnna)[0] || (getCharacterCurrentParams(kCharacterAnna)[0] = _currentGameSessionTicks + 450, _currentGameSessionTicks != -450)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[0] >= _currentGameSessionTicks)
+		if (getCharacterCurrentParams(kCharacterAnna)[0] || (getCharacterCurrentParams(kCharacterAnna)[0] = _realTime + 450, _realTime != -450)) {
+			if (getCharacterCurrentParams(kCharacterAnna)[0] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterAnna)[0] = 0x7FFFFFFF;
@@ -4852,7 +4852,7 @@ void LogicManager::HAND_Anna_FinalSequence(HAND_PARAMS) {
 			endGame(0, 1, 0, true);
 			break;
 		case 3:
-			_gameProgress[kProgressIsEggOpen] = 1;
+			_globals[kProgressIsEggOpen] = 1;
 
 			if (whoRunningDialog(kCharacterAnna))
 				fadeDialog(kCharacterAnna);
@@ -4887,8 +4887,8 @@ void LogicManager::CONS_Anna_OpenFirebird(CONS_PARAMS) {
 void LogicManager::HAND_Anna_OpenFirebird(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacterCurrentParams(kCharacterAnna)[0] || (getCharacterCurrentParams(kCharacterAnna)[0] = _currentGameSessionTicks + 180, _currentGameSessionTicks != -180)) {
-			if (getCharacterCurrentParams(kCharacterAnna)[0] >= _currentGameSessionTicks)
+		if (getCharacterCurrentParams(kCharacterAnna)[0] || (getCharacterCurrentParams(kCharacterAnna)[0] = _realTime + 180, _realTime != -180)) {
+			if (getCharacterCurrentParams(kCharacterAnna)[0] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterAnna)[0] = 0x7FFFFFFF;
@@ -4903,7 +4903,7 @@ void LogicManager::HAND_Anna_OpenFirebird(HAND_PARAMS) {
 			playNIS(kEventKronosGiveFirebird);
 			if (cathHasItem(kItemWhistle)) {
 				endGame(0, 1, 53, true);
-			} else if (_gameInventory[kItemWhistle].location == 1) {
+			} else if (_items[kItemWhistle].floating == 1) {
 				endGame(3, 208, 0, true);
 			} else {
 				endGame(3, 42, 54, true);
@@ -4915,13 +4915,13 @@ void LogicManager::HAND_Anna_OpenFirebird(HAND_PARAMS) {
 
 		break;
 	case 224309120:
-		_gameProgress[kProgressIsEggOpen] = 0;
+		_globals[kProgressIsEggOpen] = 0;
 		_gameTime = 4941000;
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 1;
 		AnnaCall(&LogicManager::CONS_Anna_SaveGame, 2, kEventKronosGiveFirebird, 0, 0);
 		break;
 	case 270751616:
-		_gameProgress[kProgressIsEggOpen] = 0;
+		_globals[kProgressIsEggOpen] = 0;
 		killGracePeriod();
 		_gameTime = 4941000;
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;

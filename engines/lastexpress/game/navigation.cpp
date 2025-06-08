@@ -74,7 +74,7 @@ void LogicManager::loadTrain(int cd) {
 				_trainData[0].nodePosition.location = trainDataStream->readUint16LE();
 				_trainData[0].nodePosition.car = trainDataStream->readUint16LE();
 				_trainData[0].cathDir = (uint8)trainDataStream->readByte();
-				_trainData[0].car = (uint8)trainDataStream->readByte();
+				_trainData[0].property = (uint8)trainDataStream->readByte();
 				_trainData[0].parameter1 = (uint8)trainDataStream->readByte();
 				_trainData[0].parameter2 = (uint8)trainDataStream->readByte();
 				_trainData[0].parameter3 = (uint8)trainDataStream->readByte();
@@ -91,7 +91,7 @@ void LogicManager::loadTrain(int cd) {
 					_trainData[i].nodePosition.location = trainDataStream->readUint16LE();
 					_trainData[i].nodePosition.car = trainDataStream->readUint16LE();
 					_trainData[i].cathDir = (uint8)trainDataStream->readByte();
-					_trainData[i].car = (uint8)trainDataStream->readByte();
+					_trainData[i].property = (uint8)trainDataStream->readByte();
 					_trainData[i].parameter1 = (uint8)trainDataStream->readByte();
 					_trainData[i].parameter2 = (uint8)trainDataStream->readByte();
 					_trainData[i].parameter3 = (uint8)trainDataStream->readByte();
@@ -196,15 +196,17 @@ void LogicManager::nodeStepTimer(Event *event) {
 	_actionJustPerformed = false;
 
 	if (_engine->_gracePeriodTimer && !_engine->getGraphicsManager()->_shouldDrawEggOrHourglass) {
-		if ((_gameProgress[kProgressJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
+		if ((_globals[kProgressJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
 			_navigationItemBrightness = 0;
 			_navigationItemBrighnessStep = 1;
 		}
 
-		if (_engine->_gracePeriodTimer <= ticks) {
-			_engine->_gracePeriodTimer = 0;
-		} else {
-			_engine->_gracePeriodTimer -= ticks;
+		if (!_engine->_lockGracePeriod) { // Gets set to true only by the debugger only...
+			if (_engine->_gracePeriodTimer <= ticks) {
+				_engine->_gracePeriodTimer = 0;
+			} else {
+				_engine->_gracePeriodTimer -= ticks;
+			}
 		}
 
 		bool shouldDraw = false;
@@ -253,17 +255,17 @@ void LogicManager::nodeStepTimer(Event *event) {
 	}
 
 	if (_engine->_navigationEngineIsRunning) {
-		_currentGameSessionTicks += ticks;
-		_gameTime += ticks * _gameTimeTicksDelta;
+		_realTime += ticks;
+		_gameTime += ticks * _timeSpeed;
 
-		if (_gameTimeTicksDelta) {
+		if (_timeSpeed) {
 			if (_engine->isDemo()) {
 				if (!_eventTicksSinceLastDemoSavegame--) {
 					_eventTicksSinceLastDemoSavegame = 150;
 					_engine->getVCR()->writeSavePoint(4, 31, 0);
 				}
 
-				if ((_currentGameSessionTicks - _lastSavegameSessionTicks) > 450)
+				if ((_realTime - _lastSavegameSessionTicks) > 450)
 					_engine->getVCR()->writeSavePoint(5, 31, 0);
 			} else {
 				if (!_eventTicksUntilNextSavePoint--) {
@@ -271,17 +273,17 @@ void LogicManager::nodeStepTimer(Event *event) {
 					_engine->getVCR()->writeSavePoint(4, 31, 0);
 				}
 
-				if ((_currentGameSessionTicks - _lastSavegameSessionTicks) > 2700)
+				if ((_realTime - _lastSavegameSessionTicks) > 2700)
 					_engine->getVCR()->writeSavePoint(5, 31, 0);
 			}
 		}
 	}
 
 	if (_doubleClickFlag && !_engine->mouseHasLeftClicked() && !_engine->mouseHasRightClicked()) {
-		if (_engine->getOtisManager()->walkingRender() && (!_positions[100 * _trainData[_trainNodeIndex].nodePosition.car + _trainData[_trainNodeIndex].cathDir])) {
+		if (_engine->getOtisManager()->walkingRender() && (!_blockedViews[100 * _trainData[_activeNode].nodePosition.car + _trainData[_activeNode].cathDir])) {
 			Link tmp;
 
-			tmp.copyFrom(_trainData[_trainNodeIndex].link);
+			tmp.copyFrom(_trainData[_activeNode].link);
 			doAction(&tmp);
 
 			if (tmp.scene) {
@@ -315,7 +317,7 @@ void LogicManager::nodeStepTimer(Event *event) {
 		int oldCursor = _engine->_cursorType;
 
 		if (foundCharacter && cathHasItem(getCharacter(foundCharacter).inventoryItem & 0x7F)) {
-			_engine->_cursorType = _gameInventory[getCharacter(foundCharacter).inventoryItem & 0x7F].cursor;
+			_engine->_cursorType = _items[getCharacter(foundCharacter).inventoryItem & 0x7F].mnum;
 		} else if (!foundCharacter || (getCharacter(foundCharacter).inventoryItem & 0x80) == 0) {
 			if (_engine->_cursorType >= 15) {
 				getNewMnum();
@@ -341,8 +343,8 @@ void LogicManager::getNewMnum() {
 
 	bool found = false;
 
-	if (_inventorySelectedItemIdx != kItemWhistle ||
-		_gameProgress[kProgressIsEggOpen] ||
+	if (_activeItem != kItemWhistle ||
+		_globals[kProgressIsEggOpen] ||
 		checkCathDir(kCarGreenSleeping, 59) ||
 		checkCathDir(kCarGreenSleeping, 76) ||
 		_inventoryFlag1 ||
@@ -350,15 +352,15 @@ void LogicManager::getNewMnum() {
 		_isEggHighlighted ||
 		_isMagnifierInUse) {
 
-		if (_inventorySelectedItemIdx != kItemMatch ||
+		if (_activeItem != kItemMatch ||
 			!cathInCorridor(kCarGreenSleeping) &&
 			!cathInCorridor(kCarRedSleeping) ||
-			_gameProgress[kProgressJacket] != 2 ||
+			_globals[kProgressJacket] != 2 ||
 			_inventoryFlag1 ||
 			_inventoryFlag2 ||
 			_isEggHighlighted ||
 			_isMagnifierInUse ||
-			_gameInventory[kItem2].location &&
+			_items[kItem2].floating &&
 			getCharacter(kCharacterCath).characterPosition.car == kCarRedSleeping &&
 			getCharacter(kCharacterCath).characterPosition.position == 2300) {
 
@@ -367,7 +369,7 @@ void LogicManager::getNewMnum() {
 			if (character && !_inventoryFlag1 && !_inventoryFlag2 && !_isEggHighlighted && !_isMagnifierInUse) {
 				if (cathHasItem(getCharacter(character).inventoryItem & 0x7F)) {
 					found = true;
-					_engine->_cursorType = _gameInventory[getCharacter(character).inventoryItem & 0x7F].cursor;
+					_engine->_cursorType = _items[getCharacter(character).inventoryItem & 0x7F].mnum;
 				} else if ((getCharacter(character).inventoryItem & 0x80) != 0) {
 					found = true;
 					_engine->_cursorType = 15;
@@ -378,10 +380,10 @@ void LogicManager::getNewMnum() {
 				location = 0;
 				Link *selectedLink = nullptr;
 
-				for (Link *i = _trainData[_trainNodeIndex].link; i; i = i->next) {
+				for (Link *i = _trainData[_activeNode].link; i; i = i->next) {
 					if (pointIn(_engine->_cursorX, _engine->_cursorY, i) && i->location >= location) {
 						if (findCursor(i)) {
-							if (!_positions[100 * _trainData[i->scene].nodePosition.car + _trainData[i->scene].cathDir] || i->cursor == 3 || i->cursor == 4) {
+							if (!_blockedViews[100 * _trainData[i->scene].nodePosition.car + _trainData[i->scene].cathDir] || i->cursor == 3 || i->cursor == 4) {
 								location = i->location;
 								selectedLink = i;
 							}
@@ -396,10 +398,10 @@ void LogicManager::getNewMnum() {
 				}
 			}
 		} else {
-			_engine->_cursorType = _gameInventory[kItemMatch].cursor;
+			_engine->_cursorType = _items[kItemMatch].mnum;
 		}
 	} else {
-		_engine->_cursorType = _gameInventory[kItemWhistle].cursor;
+		_engine->_cursorType = _items[kItemWhistle].mnum;
 	}
 
 	if (_isMagnifierInUse)
@@ -422,10 +424,10 @@ void LogicManager::nodeStepMouse(Event *event) {
 	_engine->mouseSetRightClicked(false);
 
 	if ((event->flags & 8) != 0) {
-		if ((event->flags & 0x20) != 0 && _engine->_fastWalkIsActive)
+		if ((event->flags & 0x20) != 0 && _engine->_fastWalkJustDeactivated)
 			event->flags &= ~0x20;
 
-		_engine->_fastWalkIsActive = false;
+		_engine->_fastWalkJustDeactivated = false;
 	}
 
 	if (_doubleClickFlag) {
@@ -433,7 +435,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 			_doubleClickFlag = false;
 			_engine->getGraphicsManager()->setMouseDrawable(true);
 			mouseStatus();
-			_engine->_fastWalkIsActive = true;
+			_engine->_fastWalkJustDeactivated = true;
 		}
 
 		return;
@@ -451,8 +453,8 @@ void LogicManager::nodeStepMouse(Event *event) {
 	checkInventory(event->flags);
 
 	if (!_engine->getMenu()->isShowingMenu()) {
-		if (_inventorySelectedItemIdx != kItemWhistle ||
-			_gameProgress[kProgressIsEggOpen] ||
+		if (_activeItem != kItemWhistle ||
+			_globals[kProgressIsEggOpen] ||
 			checkCathDir(kCarGreenSleeping, 59) ||
 			checkCathDir(kCarGreenSleeping, 76) ||
 			_inventoryFlag1 ||
@@ -460,15 +462,15 @@ void LogicManager::nodeStepMouse(Event *event) {
 			_isEggHighlighted ||
 			_isMagnifierInUse) {
 
-			if (_inventorySelectedItemIdx != kItemMatch ||
+			if (_activeItem != kItemMatch ||
 				!cathInCorridor(kCarGreenSleeping) &&
 				!cathInCorridor(kCarRedSleeping) ||
-				_gameProgress[kProgressJacket] != 2 ||
+				_globals[kProgressJacket] != 2 ||
 				_inventoryFlag1 ||
 				_inventoryFlag2 ||
 				_isEggHighlighted ||
 				_isMagnifierInUse ||
-				(_gameInventory[kItem2].location &&
+				(_items[kItem2].floating &&
 					getCharacter(kCharacterCath).characterPosition.car == kCarRedSleeping &&
 					getCharacter(kCharacterCath).characterPosition.position == 2300)) {
 
@@ -477,7 +479,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 				if (foundCharacter && !_inventoryFlag1 && !_inventoryFlag2 && !_isEggHighlighted && !_isMagnifierInUse) {
 					if (cathHasItem(getCharacter(foundCharacter).inventoryItem & 0x7F)) {
 						actionLink.left = 1;
-						_engine->_cursorType = _gameInventory[getCharacter(foundCharacter).inventoryItem & 0x7F].cursor;
+						_engine->_cursorType = _items[getCharacter(foundCharacter).inventoryItem & 0x7F].mnum;
 
 						if ((event->flags & 8) != 0)
 							send(kCharacterCath, foundCharacter, 1, getCharacter(foundCharacter).inventoryItem & 0x7F);
@@ -511,10 +513,10 @@ void LogicManager::nodeStepMouse(Event *event) {
 					uint8 location = 0;
 					Link *foundLink = nullptr;
 
-					for (Link *i = _trainData[_trainNodeIndex].link; i; i = i->next) {
+					for (Link *i = _trainData[_activeNode].link; i; i = i->next) {
 						if (pointIn(_engine->_cursorX, _engine->_cursorY, i) && i->location >= location) {
 							if (findCursor(i)) {
-								if (!_positions[100 * _trainData[i->scene].nodePosition.car + _trainData[i->scene].cathDir] || i->cursor == 3 || i->cursor == 4) {
+								if (!_blockedViews[100 * _trainData[i->scene].nodePosition.car + _trainData[i->scene].cathDir] || i->cursor == 3 || i->cursor == 4) {
 									location = i->location;
 									foundLink = i;
 								}
@@ -545,7 +547,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 							}
 
 							if (!_engine->isDemo() && actionLink.action == 43 &&
-								actionLink.param1 == _gameProgress[kProgressChapter] &&
+								actionLink.param1 == _globals[kProgressChapter] &&
 								(event->flags & 2) != 0) {
 								doF4();
 								return;
@@ -556,7 +558,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 					}
 				}
 			} else {
-				_engine->_cursorType = _gameInventory[kItemMatch].cursor;
+				_engine->_cursorType = _items[kItemMatch].mnum;
 
 				if ((event->flags & 8) != 0) {
 					if (isNight()) {
@@ -565,8 +567,8 @@ void LogicManager::nodeStepMouse(Event *event) {
 						playNIS(kEventCathSmokeDay);
 					}
 
-					if (!_useLastSavedNodeIndex) {
-						_inventorySelectedItemIdx = 0;
+					if (!_closeUp) {
+						_activeItem = 0;
 						if (_engine->getGraphicsManager()->acquireSurface()) {
 							_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 							_engine->getGraphicsManager()->unlockSurface();
@@ -579,7 +581,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 				}
 			}
 		} else {
-			_engine->_cursorType = _gameInventory[kItemWhistle].cursor;
+			_engine->_cursorType = _items[kItemWhistle].mnum;
 			if ((event->flags & 8) != 0 && !dialogRunning("LIB045")) {
 				queueSFX(kCharacterCath, 45, 0);
 
@@ -593,8 +595,8 @@ void LogicManager::nodeStepMouse(Event *event) {
 					send(kCharacterCath, kCharacterCond2, 226078300, 0);
 				}
 
-				if (!_useLastSavedNodeIndex) {
-					_inventorySelectedItemIdx = 0;
+				if (!_closeUp) {
+					_activeItem = 0;
 					if (_engine->getGraphicsManager()->acquireSurface()) {
 						_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 						_engine->getGraphicsManager()->unlockSurface();
@@ -626,7 +628,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 void LogicManager::doF4() {
 	_engine->getSoundManager()->killAllSlots();
 
-	switch (_gameProgress[kProgressChapter]) {
+	switch (_globals[kProgressChapter]) {
 	case 1:
 		giveCathItem(kItemParchemin);
 		giveCathItem(kProgressJacket);
@@ -637,9 +639,9 @@ void LogicManager::doF4() {
 		forceJump(kCharacterMaster, &LogicManager::CONS_Master_StartPart3);
 		break;
 	case 3:
-		_gameInventory[kItemFirebird].location = 4;
-		_gameInventory[kItemFirebird].isPresent = 0;
-		_gameInventory[kItem11].location = 1;
+		_items[kItemFirebird].floating = 4;
+		_items[kItemFirebird].haveIt = 0;
+		_items[kItem11].floating = 1;
 		giveCathItem(kItemWhistle);
 		giveCathItem(kItemKey);
 		forceJump(kCharacterMaster, &LogicManager::CONS_Master_StartPart4);
@@ -727,7 +729,7 @@ void LogicManager::checkInventory(int32 flags) {
 					int count = 0;
 
 					for (int i = 1; i < 32; i++) {
-						if (_gameInventory[i].isPresent && _gameInventory[i].manualSelect && count < 11) {
+						if (_items[i].haveIt && _items[i].inPocket && count < 11) {
 							count++;
 							if (count == _highlightedItem) {
 								selectedItemIdx = i;
@@ -738,7 +740,7 @@ void LogicManager::checkInventory(int32 flags) {
 					}
 
 					if (selectedItemIdx) {
-						_engine->getGraphicsManager()->drawItemDim(_gameInventory[selectedItemIdx].cursor, 0, 40 * _highlightedItem + 4, 1);
+						_engine->getGraphicsManager()->drawItemDim(_items[selectedItemIdx].mnum, 0, 40 * _highlightedItem + 4, 1);
 						_engine->getGraphicsManager()->burstBox(0, 40 * _highlightedItem + 4, 32, 32);
 						_highlightedItem = 0;
 					}
@@ -746,7 +748,7 @@ void LogicManager::checkInventory(int32 flags) {
 				return;
 			}
 
-			_engine->getGraphicsManager()->drawItemDim(_gameProgress[kProgressPortrait], 0, 0, 1);
+			_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
 
 			if (_engine->getGraphicsManager()->acquireSurface()) {
 				_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 0, 44, 32, 40 * _inventoryVerticalSlot);
@@ -756,10 +758,10 @@ void LogicManager::checkInventory(int32 flags) {
 			_engine->getGraphicsManager()->burstBox(0, 0, 32, 8 * (5 * _inventoryVerticalSlot + 5));
 			_inventoryFlag2 = false;
 
-			if (!_inventorySelectedItemIdx || _gameInventory[_inventorySelectedItemIdx].manualSelect) {
-				_inventorySelectedItemIdx = findLargeItem();
-				if (_inventorySelectedItemIdx) {
-					_engine->getGraphicsManager()->drawItem(_gameInventory[_inventorySelectedItemIdx].cursor, 44, 0);
+			if (!_activeItem || _items[_activeItem].inPocket) {
+				_activeItem = findLargeItem();
+				if (_activeItem) {
+					_engine->getGraphicsManager()->drawItem(_items[_activeItem].mnum, 44, 0);
 				} else if (_engine->getGraphicsManager()->acquireSurface()) {
 					_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 					_engine->getGraphicsManager()->unlockSurface();
@@ -768,16 +770,16 @@ void LogicManager::checkInventory(int32 flags) {
 				_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 			}
 
-			if (!_useLastSavedNodeIndex)
+			if (!_closeUp)
 				return;
 
-			if (!_lastSavedNodeIndex) {
-				if (!_gameEvents[kEventKronosBringFirebird] && !_gameProgress[kProgressIsEggOpen]) {
-					_useLastSavedNodeIndex = 0;
-					if (_positions[100 * _trainData[_lastNodeIndex].nodePosition.car + _trainData[_lastNodeIndex].cathDir]) {
-						bumpCathNode(getSmartBumpNode(_lastNodeIndex));
+			if (!_nodeReturn2) {
+				if (!_doneNIS[kEventKronosBringFirebird] && !_globals[kProgressIsEggOpen]) {
+					_closeUp = 0;
+					if (_blockedViews[100 * _trainData[_nodeReturn].nodePosition.car + _trainData[_nodeReturn].cathDir]) {
+						bumpCathNode(getSmartBumpNode(_nodeReturn));
 					} else {
-						bumpCathNode(_lastNodeIndex);
+						bumpCathNode(_nodeReturn);
 					}
 				}
 
@@ -785,39 +787,39 @@ void LogicManager::checkInventory(int32 flags) {
 			}
 		} else {
 			if (_inventoryFlag1) {
-				_engine->getGraphicsManager()->drawItemDim(_gameProgress[kProgressPortrait], 0, 0, 1);
+				_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
 				_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 				_inventoryFlag1 = false;
 			}
 
-			if (!_inventorySelectedItemIdx ||
-				!_gameInventory[_inventorySelectedItemIdx].scene ||
+			if (!_activeItem ||
+				!_items[_activeItem].closeUp ||
 				_engine->_cursorX < 44 ||
 				_engine->_cursorX >= 76 ||
 				_engine->_cursorY >= 32) {
 				return;
 			}
 
-			if (!_useLastSavedNodeIndex || _lastSavedNodeIndex && findLargeItem() == _inventorySelectedItemIdx) {
+			if (!_closeUp || _nodeReturn2 && findLargeItem() == _activeItem) {
 				_isMagnifierInUse = 1;
 			}
 
 			if ((flags & 8) == 0)
 				return;
 
-			if (!_useLastSavedNodeIndex) {
-				_lastNodeIndex = _trainNodeIndex;
-				_useLastSavedNodeIndex = 1;
-				bumpCathNode(_gameInventory[_inventorySelectedItemIdx].scene);
+			if (!_closeUp) {
+				_nodeReturn = _activeNode;
+				_closeUp = 1;
+				bumpCathNode(_items[_activeItem].closeUp);
 				return;
 			}
 
-			if (!_lastSavedNodeIndex || findLargeItem() != _inventorySelectedItemIdx)
+			if (!_nodeReturn2 || findLargeItem() != _activeItem)
 				return;
 		}
 
-		sceneIdx = _lastSavedNodeIndex;
-		_lastSavedNodeIndex = 0;
+		sceneIdx = _nodeReturn2;
+		_nodeReturn2 = 0;
 		bumpCathNode(sceneIdx);
 		return;
 	}
@@ -826,7 +828,7 @@ void LogicManager::checkInventory(int32 flags) {
 		selectedItemIdx = 0;
 		if (!_inventoryFlag2) {
 			if (_inventoryFlag1) {
-				_engine->getGraphicsManager()->drawItemDim(_gameProgress[kProgressPortrait], 0, 0, 1);
+				_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
 				_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 				_inventoryFlag1 = false;
 			}
@@ -841,7 +843,7 @@ void LogicManager::checkInventory(int32 flags) {
 				int count = 0;
 
 				for (int i = 1; i < 32; i++) {
-					if (_gameInventory[i].isPresent && _gameInventory[i].manualSelect && count < 11) {
+					if (_items[i].haveIt && _items[i].inPocket && count < 11) {
 						count++;
 						if (count == _highlightedItem) {
 							selectedItemIdx = i;
@@ -852,7 +854,7 @@ void LogicManager::checkInventory(int32 flags) {
 				}
 
 				if (selectedItemIdx) {
-					_engine->getGraphicsManager()->drawItemDim(_gameInventory[selectedItemIdx].cursor, 0, 40 * _highlightedItem + 4, 1);
+					_engine->getGraphicsManager()->drawItemDim(_items[selectedItemIdx].mnum, 0, 40 * _highlightedItem + 4, 1);
 					_engine->getGraphicsManager()->burstBox(0, 40 * _highlightedItem + 4, 32, 32);
 					_highlightedItem = 0;
 				}
@@ -863,7 +865,7 @@ void LogicManager::checkInventory(int32 flags) {
 				int count = 0;
 
 				for (int i = 1; i < 32; i++) {
-					if (_gameInventory[i].isPresent && _gameInventory[i].manualSelect && count < 11) {
+					if (_items[i].haveIt && _items[i].inPocket && count < 11) {
 						count++;
 						if (count == itemToHighlight) {
 							selectedItemIdx = i;
@@ -874,7 +876,7 @@ void LogicManager::checkInventory(int32 flags) {
 				}
 
 				if (selectedItemIdx) {
-					_engine->getGraphicsManager()->drawItem(_gameInventory[selectedItemIdx].cursor, 0, 40 * itemToHighlight + 4);
+					_engine->getGraphicsManager()->drawItem(_items[selectedItemIdx].mnum, 0, 40 * itemToHighlight + 4);
 					_engine->getGraphicsManager()->burstBox(0, 40 * itemToHighlight + 4, 32, 32);
 					_highlightedItem = itemToHighlight;
 				}
@@ -888,7 +890,7 @@ void LogicManager::checkInventory(int32 flags) {
 			int count = 0;
 
 			for (int i = 1; i < 32; i++) {
-				if (_gameInventory[i].isPresent && _gameInventory[i].manualSelect && count < 11) {
+				if (_items[i].haveIt && _items[i].inPocket && count < 11) {
 					count++;
 					if (count == _highlightedItem) {
 						selectedItemIdx = i;
@@ -899,7 +901,7 @@ void LogicManager::checkInventory(int32 flags) {
 			}
 		}
 
-		_engine->getGraphicsManager()->drawItemDim(_gameProgress[kProgressPortrait], 0, 0, 1);
+		_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
 		if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 0, 44, 32, 40 * _inventoryVerticalSlot);
 			_engine->getGraphicsManager()->unlockSurface();
@@ -910,26 +912,26 @@ void LogicManager::checkInventory(int32 flags) {
 		_inventoryVerticalSlot = 0;
 
 		if (selectedItemIdx) {
-			if (_gameInventory[selectedItemIdx].scene) {
-				if (_useLastSavedNodeIndex) {
-					if (findLargeItem() && !_lastSavedNodeIndex)
-						_lastSavedNodeIndex = _trainNodeIndex;
+			if (_items[selectedItemIdx].closeUp) {
+				if (_closeUp) {
+					if (findLargeItem() && !_nodeReturn2)
+						_nodeReturn2 = _activeNode;
 				} else {
-					_useLastSavedNodeIndex = 1;
-					_lastNodeIndex = _trainNodeIndex;
+					_closeUp = 1;
+					_nodeReturn = _activeNode;
 				}
 
-				bumpCathNode(_gameInventory[selectedItemIdx].scene);
+				bumpCathNode(_items[selectedItemIdx].closeUp);
 			}
 
-			if (_gameInventory[selectedItemIdx].isSelectable) {
-				_inventorySelectedItemIdx = selectedItemIdx;
-				_engine->getGraphicsManager()->drawItem(_gameInventory[selectedItemIdx].cursor, 44, 0);
+			if (_items[selectedItemIdx].useable) {
+				_activeItem = selectedItemIdx;
+				_engine->getGraphicsManager()->drawItem(_items[selectedItemIdx].mnum, 44, 0);
 				_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
-			} else if (!_inventorySelectedItemIdx || _gameInventory[_inventorySelectedItemIdx].manualSelect) {
-				_inventorySelectedItemIdx = findLargeItem();
-				if (_inventorySelectedItemIdx) {
-					_engine->getGraphicsManager()->drawItem(_gameInventory[_inventorySelectedItemIdx].cursor, 44, 0);
+			} else if (!_activeItem || _items[_activeItem].inPocket) {
+				_activeItem = findLargeItem();
+				if (_activeItem) {
+					_engine->getGraphicsManager()->drawItem(_items[_activeItem].mnum, 44, 0);
 				} else if (_engine->getGraphicsManager()->acquireSurface()) {
 					_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 					_engine->getGraphicsManager()->unlockSurface();
@@ -942,10 +944,10 @@ void LogicManager::checkInventory(int32 flags) {
 			return;
 		}
 
-		if (!_inventorySelectedItemIdx || _gameInventory[_inventorySelectedItemIdx].manualSelect) {
-			_inventorySelectedItemIdx = findLargeItem();
-			if (_inventorySelectedItemIdx) {
-				_engine->getGraphicsManager()->drawItem(_gameInventory[_inventorySelectedItemIdx].cursor, 44, 0);
+		if (!_activeItem || _items[_activeItem].inPocket) {
+			_activeItem = findLargeItem();
+			if (_activeItem) {
+				_engine->getGraphicsManager()->drawItem(_items[_activeItem].mnum, 44, 0);
 			} else if (_engine->getGraphicsManager()->acquireSurface()) {
 				_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 				_engine->getGraphicsManager()->unlockSurface();
@@ -954,24 +956,24 @@ void LogicManager::checkInventory(int32 flags) {
 			_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 		}
 
-		if (!_useLastSavedNodeIndex) {
+		if (!_closeUp) {
 			_inventoryFlag2 = false;
 			return;
 		}
 
-		if (_lastSavedNodeIndex) {
-			sceneIdx = _lastSavedNodeIndex;
-			_lastSavedNodeIndex = 0;
+		if (_nodeReturn2) {
+			sceneIdx = _nodeReturn2;
+			_nodeReturn2 = 0;
 		} else {
-			if (_gameEvents[kEventKronosBringFirebird] || _gameProgress[kProgressIsEggOpen]) {
+			if (_doneNIS[kEventKronosBringFirebird] || _globals[kProgressIsEggOpen]) {
 				_inventoryFlag2 = false;
 				return;
 			}
 
-			_useLastSavedNodeIndex = 0;
-			sceneIdx = _lastNodeIndex;
-			if (_positions[100 * _trainData[_lastNodeIndex].nodePosition.car + _trainData[_lastNodeIndex].cathDir]) {
-				sceneIdx = getSmartBumpNode(_lastNodeIndex);
+			_closeUp = 0;
+			sceneIdx = _nodeReturn;
+			if (_blockedViews[100 * _trainData[_nodeReturn].nodePosition.car + _trainData[_nodeReturn].cathDir]) {
+				sceneIdx = getSmartBumpNode(_nodeReturn);
 			}
 		}
 
@@ -980,22 +982,22 @@ void LogicManager::checkInventory(int32 flags) {
 		return;
 	}
 
-	if (_gameProgress[kProgressField84] ||
+	if (_globals[kProgressField84] ||
 		getCharacter(kCharacterCath).characterPosition.location == 2 ||
-		_gameProgress[kProgressField18] == 4 ||
-		(_inventorySelectedItemIdx && !_gameInventory[_inventorySelectedItemIdx].manualSelect && !_useLastSavedNodeIndex)) {
+		_globals[kProgressField18] == 4 ||
+		(_activeItem && !_items[_activeItem].inPocket && !_closeUp)) {
 		return;
 	}
 
 	if ((flags & 8) != 0) {
 		_inventoryFlag1 = false;
 		_inventoryFlag2 = true;
-		_engine->getGraphicsManager()->drawItem(_gameProgress[kProgressPortrait] + 1, 0, 0);
+		_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait] + 1, 0, 0);
 		_inventoryVerticalSlot = 0;
 
 		for (int i = 1; i < 32; i++) {
-			if (_gameInventory[i].isPresent && _gameInventory[i].manualSelect && _inventoryVerticalSlot < 11) {
-				_engine->getGraphicsManager()->drawItemDim(_gameInventory[i].cursor, 0, 40 * _inventoryVerticalSlot + 44, 1);
+			if (_items[i].haveIt && _items[i].inPocket && _inventoryVerticalSlot < 11) {
+				_engine->getGraphicsManager()->drawItemDim(_items[i].mnum, 0, 40 * _inventoryVerticalSlot + 44, 1);
 				_inventoryVerticalSlot++;
 			}
 		}
@@ -1005,7 +1007,7 @@ void LogicManager::checkInventory(int32 flags) {
 	}
 
 	if (!_inventoryFlag1 && !_inventoryFlag2) {
-		_engine->getGraphicsManager()->drawItem(_gameProgress[kProgressPortrait], 0, 0);
+		_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait], 0, 0);
 		_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 
 		_inventoryFlag1 = true;
@@ -1018,14 +1020,14 @@ void LogicManager::checkInventory(int32 flags) {
 				_engine->getGraphicsManager()->unlockSurface();
 			}
 
-			_engine->getGraphicsManager()->drawItem(_gameProgress[kProgressPortrait], 0, 0);
+			_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait], 0, 0);
 			_engine->getGraphicsManager()->burstBox(0, 0, 32, 8 * (5 * _inventoryVerticalSlot + 5));
 			_inventoryVerticalSlot = 0;
 
-			if (!_inventorySelectedItemIdx || _gameInventory[_inventorySelectedItemIdx].manualSelect) {
-				_inventorySelectedItemIdx = findLargeItem();
-				if (_inventorySelectedItemIdx) {
-					_engine->getGraphicsManager()->drawItem(_gameInventory[_inventorySelectedItemIdx].cursor, 44, 0);
+			if (!_activeItem || _items[_activeItem].inPocket) {
+				_activeItem = findLargeItem();
+				if (_activeItem) {
+					_engine->getGraphicsManager()->drawItem(_items[_activeItem].mnum, 44, 0);
 				} else if (_engine->getGraphicsManager()->acquireSurface()) {
 					_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 44, 0, 32, 32);
 					_engine->getGraphicsManager()->unlockSurface();
@@ -1033,23 +1035,23 @@ void LogicManager::checkInventory(int32 flags) {
 				_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 			}
 
-			if (_useLastSavedNodeIndex) {
-				if (_lastSavedNodeIndex) {
-					sceneIdx = _lastSavedNodeIndex;
-					_lastSavedNodeIndex = 0;
+			if (_closeUp) {
+				if (_nodeReturn2) {
+					sceneIdx = _nodeReturn2;
+					_nodeReturn2 = 0;
 					bumpCathNode(sceneIdx);
-				} else if (!_gameEvents[kEventKronosBringFirebird] && !_gameProgress[kProgressIsEggOpen]) {
-					_useLastSavedNodeIndex = 0;
-					if (_positions[100 * _trainData[_lastNodeIndex].nodePosition.car + _trainData[_lastNodeIndex].cathDir]) {
-						sceneIdx = getSmartBumpNode(_lastNodeIndex);
+				} else if (!_doneNIS[kEventKronosBringFirebird] && !_globals[kProgressIsEggOpen]) {
+					_closeUp = 0;
+					if (_blockedViews[100 * _trainData[_nodeReturn].nodePosition.car + _trainData[_nodeReturn].cathDir]) {
+						sceneIdx = getSmartBumpNode(_nodeReturn);
 						bumpCathNode(sceneIdx);
 					} else {
-						bumpCathNode(_lastNodeIndex);
+						bumpCathNode(_nodeReturn);
 					}
 				}
 			}
 		} else {
-			_engine->getGraphicsManager()->drawItem(_gameProgress[kProgressPortrait], 0, 0);
+			_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait], 0, 0);
 			_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 		}
 
@@ -1061,7 +1063,7 @@ void LogicManager::checkInventory(int32 flags) {
 		int count = 0;
 
 		for (int i = 1; i < 32; i++) {
-			if (_gameInventory[i].isPresent && _gameInventory[i].manualSelect && count < 11) {
+			if (_items[i].haveIt && _items[i].inPocket && count < 11) {
 				count++;
 				if (count == _highlightedItem) {
 					selectedItemIdx = i;
@@ -1072,7 +1074,7 @@ void LogicManager::checkInventory(int32 flags) {
 		}
 
 		if (selectedItemIdx) {
-			_engine->getGraphicsManager()->drawItemDim(_gameInventory[selectedItemIdx].cursor, 0, 40 * _highlightedItem + 4, 1);
+			_engine->getGraphicsManager()->drawItemDim(_items[selectedItemIdx].mnum, 0, 40 * _highlightedItem + 4, 1);
 			_engine->getGraphicsManager()->burstBox(0, 40 * _highlightedItem + 4, 32, 32);
 			_highlightedItem = 0;
 		}
@@ -1082,9 +1084,9 @@ void LogicManager::checkInventory(int32 flags) {
 void LogicManager::bumpCathNode(int sceneIndex) {
 	_doubleClickFlag = false;
 	_flagBumpCathNode = true;
-	if (_useLastSavedNodeIndex && _trainData[sceneIndex].parameter3 != 0xFF) {
-		_useLastSavedNodeIndex = 0;
-		_lastSavedNodeIndex = 0;
+	if (_closeUp && _trainData[sceneIndex].parameter3 != 0xFF) {
+		_closeUp = 0;
+		_nodeReturn2 = 0;
 	}
 
 	bool oldShouldRedraw = _engine->getGraphicsManager()->canDrawMouse();

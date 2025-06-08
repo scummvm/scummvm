@@ -402,8 +402,8 @@ void LogicManager::HAND_Vesna_HomeAlone(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterVesna)[2]) {
-			if (getCharacterCurrentParams(kCharacterVesna)[6] || (getCharacterCurrentParams(kCharacterVesna)[6] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterVesna)[6] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterVesna)[6] || (getCharacterCurrentParams(kCharacterVesna)[6] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterVesna)[6] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
@@ -793,7 +793,7 @@ void LogicManager::CONS_Vesna_InComp(CONS_PARAMS) {
 void LogicManager::HAND_Vesna_InComp(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_gameProgress[kProgressField54] && getCharacterCurrentParams(kCharacterVesna)[6] != 0x7FFFFFFF && _gameTime) {
+		if (_globals[kProgressField54] && getCharacterCurrentParams(kCharacterVesna)[6] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime > 2250000) {
 				getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
 				CONS_Vesna_KillAnna(0, 0, 0, 0);
@@ -816,8 +816,8 @@ void LogicManager::HAND_Vesna_InComp(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterVesna)[1]) {
-			if (getCharacterCurrentParams(kCharacterVesna)[7] || (getCharacterCurrentParams(kCharacterVesna)[7] = _currentGameSessionTicks + 75, _currentGameSessionTicks != -75)) {
-				if (getCharacterCurrentParams(kCharacterVesna)[7] >= _currentGameSessionTicks)
+			if (getCharacterCurrentParams(kCharacterVesna)[7] || (getCharacterCurrentParams(kCharacterVesna)[7] = _realTime + 75, _realTime != -75)) {
+				if (getCharacterCurrentParams(kCharacterVesna)[7] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterVesna)[7] = 0x7FFFFFFF;
@@ -1423,8 +1423,8 @@ void LogicManager::HAND_Vesna_Climbing(HAND_PARAMS) {
 		bool skip = false;
 
 		if (!getCharacterCurrentParams(kCharacterVesna)[0]) {
-			if (getCharacterCurrentParams(kCharacterVesna)[2] || (getCharacterCurrentParams(kCharacterVesna)[2] = _currentGameSessionTicks + 120, _currentGameSessionTicks != -120)) {
-				if (getCharacterCurrentParams(kCharacterVesna)[2] >= _currentGameSessionTicks) {
+			if (getCharacterCurrentParams(kCharacterVesna)[2] || (getCharacterCurrentParams(kCharacterVesna)[2] = _realTime + 120, _realTime != -120)) {
+				if (getCharacterCurrentParams(kCharacterVesna)[2] >= _realTime) {
 					skip = true;
 				}
 
@@ -1439,8 +1439,8 @@ void LogicManager::HAND_Vesna_Climbing(HAND_PARAMS) {
 			}
 		}
 
-		if (getCharacterCurrentParams(kCharacterVesna)[3] || (getCharacterCurrentParams(kCharacterVesna)[3] = _currentGameSessionTicks + 180, _currentGameSessionTicks != -180)) {
-			if (getCharacterCurrentParams(kCharacterVesna)[3] >= _currentGameSessionTicks)
+		if (getCharacterCurrentParams(kCharacterVesna)[3] || (getCharacterCurrentParams(kCharacterVesna)[3] = _realTime + 180, _realTime != -180)) {
+			if (getCharacterCurrentParams(kCharacterVesna)[3] >= _realTime)
 				break;
 
 			getCharacterCurrentParams(kCharacterVesna)[3] = 0x7FFFFFFF;

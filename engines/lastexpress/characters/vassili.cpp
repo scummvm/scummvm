@@ -239,10 +239,10 @@ void LogicManager::HAND_Vassili_InBed(HAND_PARAMS) {
 	case 0:
 		if (inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 			if (getCharacterCurrentParams(kCharacterVassili)[2] ||
-				((getCharacterCurrentParams(kCharacterVassili)[2] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0]),
-				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
+				((getCharacterCurrentParams(kCharacterVassili)[2] = _realTime + getCharacterCurrentParams(kCharacterVassili)[0]),
+				 _realTime + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
 
-				if (getCharacterCurrentParams(kCharacterVassili)[2] < _currentGameSessionTicks) {
+				if (getCharacterCurrentParams(kCharacterVassili)[2] < _realTime) {
 					getCharacterCurrentParams(kCharacterVassili)[2] = 0x7FFFFFFF;
 					getCharacter(kCharacterVassili).callbacks[getCharacter(kCharacterVassili).currentCall + 8] = 1;
 					VassiliCall(&LogicManager::CONS_Vassili_DoSeqOtis, "303B", 0, 0, 0);
@@ -447,9 +447,9 @@ void LogicManager::CONS_Vassili_CathArrives(CONS_PARAMS) {
 void LogicManager::HAND_Vassili_CathArrives(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_gameProgress[kProgressEventCorpseMovedFromFloor]) {
-			if (_gameProgress[kProgressEventCorpseThrown]) {
-				if (_gameProgress[kProgressJacket] == 1) {
+		if (_globals[kProgressEventCorpseMovedFromFloor]) {
+			if (_globals[kProgressEventCorpseThrown]) {
+				if (_globals[kProgressJacket] == 1) {
 					playNIS(kEventMertensBloodJacket);
 					endGame(0, 0, 0, true);
 				} else {
@@ -474,7 +474,7 @@ void LogicManager::HAND_Vassili_CathArrives(HAND_PARAMS) {
 			playNIS(kEventVassiliSeizure);
 			setDoor(32, kCharacterCath, 0, 10, 9);
 			setDoor(1, kCharacterCath, 0, 10, 9);
-			_gameProgress[kProgressField18] = 2;
+			_globals[kProgressField18] = 2;
 			send(kCharacterVassili, kCharacterAnna, 191477936, 0);
 			send(kCharacterVassili, kCharacterTrainM, 191477936, 0);
 			send(kCharacterVassili, kCharacterCond2, 191477936, 0);
@@ -553,9 +553,9 @@ void LogicManager::HAND_Vassili_InPart2(HAND_PARAMS) {
 	case 0:
 		if (inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 			if (getCharacterCurrentParams(kCharacterVassili)[2] ||
-				(getCharacterCurrentParams(kCharacterVassili)[2] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0],
-				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
-				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _currentGameSessionTicks)
+				(getCharacterCurrentParams(kCharacterVassili)[2] = _realTime + getCharacterCurrentParams(kCharacterVassili)[0],
+				 _realTime + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
+				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _realTime)
 					return;
 				getCharacterCurrentParams(kCharacterVassili)[2] = 0x7FFFFFFF;
 			}
@@ -629,10 +629,10 @@ void LogicManager::HAND_Vassili_Asleep(HAND_PARAMS) {
 	case 0:
 		if (inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 			if (getCharacterCurrentParams(kCharacterVassili)[2] ||
-				(getCharacterCurrentParams(kCharacterVassili)[2] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0],
-				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
+				(getCharacterCurrentParams(kCharacterVassili)[2] = _realTime + getCharacterCurrentParams(kCharacterVassili)[0],
+				 _realTime + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
 
-				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _currentGameSessionTicks)
+				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterVassili)[2] = 0x7FFFFFFF;
@@ -656,7 +656,7 @@ void LogicManager::HAND_Vassili_Asleep(HAND_PARAMS) {
 		startCycOtis(kCharacterVassili, "303A");
 		break;
 	case 17:
-		if (inComp(kCharacterCath, kCarRedSleeping, 7850) && cathHasItem(kItemFirebird) && !_gameEvents[kEventVassiliCompartmentStealEgg]) {
+		if (inComp(kCharacterCath, kCarRedSleeping, 7850) && cathHasItem(kItemFirebird) && !_doneNIS[kEventVassiliCompartmentStealEgg]) {
 			setDoor(48, kCharacterVassili, 0, 0, 9);
 		} else {
 			setDoor(48, kCharacterCath, 0, 0, 9);
@@ -724,9 +724,9 @@ void LogicManager::HAND_Vassili_InPart4(HAND_PARAMS) {
 	case 0:
 		if (inComp(kCharacterCath, kCarRedSleeping, 8200)) {
 			if (getCharacterCurrentParams(kCharacterVassili)[2] ||
-				(getCharacterCurrentParams(kCharacterVassili)[2] = _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0],
-				 _currentGameSessionTicks + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
-				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _currentGameSessionTicks)
+				(getCharacterCurrentParams(kCharacterVassili)[2] = _realTime + getCharacterCurrentParams(kCharacterVassili)[0],
+				 _realTime + getCharacterCurrentParams(kCharacterVassili)[0] != 0)) {
+				if (getCharacterCurrentParams(kCharacterVassili)[2] >= _realTime)
 					break;
 
 				getCharacterCurrentParams(kCharacterVassili)[2] = 0x7FFFFFFF;

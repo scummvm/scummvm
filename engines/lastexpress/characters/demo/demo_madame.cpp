@@ -100,10 +100,10 @@ void LogicManager::HAND_DemoMadame_Birth(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterMadame)[2]) {
 			if (getCharacterCurrentParams(kCharacterMadame)[3] ||
-				(getCharacterCurrentParams(kCharacterMadame)[3] = _currentGameSessionTicks + 75,
-					_currentGameSessionTicks != -75)) {
+				(getCharacterCurrentParams(kCharacterMadame)[3] = _realTime + 75,
+					_realTime != -75)) {
 
-				if (_currentGameSessionTicks <= getCharacterCurrentParams(kCharacterMadame)[3])
+				if (_realTime <= getCharacterCurrentParams(kCharacterMadame)[3])
 					return;
 
 				getCharacterCurrentParams(kCharacterMadame)[3] = 0x7FFFFFFF;

@@ -211,7 +211,7 @@ void LogicManager::CONS_DemoVesna_InComp(CONS_PARAMS) {
 void LogicManager::HAND_DemoVesna_InComp(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_gameProgress[kProgressField54] && getCharacterCurrentParams(kCharacterVesna)[0] != 0x7FFFFFFF && _gameTime) {
+		if (_globals[kProgressField54] && getCharacterCurrentParams(kCharacterVesna)[0] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime <= 2259000) {
 				if (!cathInCorridor(kCarRedSleeping) || !getCharacterCurrentParams(kCharacterVesna)[0]) {
 					getCharacterCurrentParams(kCharacterVesna)[0] = _gameTime;

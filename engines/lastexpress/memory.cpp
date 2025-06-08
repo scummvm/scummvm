@@ -62,31 +62,31 @@ void MemoryManager::initMem() {
 	_engine->getSubtitleManager()->_font = new FontData();
 	_engine->getSubtitleManager()->_subtitlesData = (uint16 *)malloc(0x4400 * sizeof(uint16));
 	_engine->getGraphicsManager()->_backgroundCompBuffer = (byte *)malloc(8 * PAGE_SIZE);
-	_engine->getLogicManager()->_gameInventory = (Item *)malloc(32 * sizeof(Item));
-	_engine->getLogicManager()->_gameObjects = (Object *)malloc(128 * sizeof(Object));
-	_engine->getLogicManager()->_positions = (int32 *)malloc(1000 * sizeof(int32));
-	_engine->getLogicManager()->_blockedEntitiesBits = (int32 *)malloc(16 * sizeof(int32));
-	_engine->getLogicManager()->_softBlockedEntitiesBits = (int32 *)malloc(16 * sizeof(int32));
-	_engine->getLogicManager()->_gameProgress = (int32 *)malloc(128 * sizeof(int32));
-	_engine->getLogicManager()->_gameEvents = (byte *)malloc(512);
+	_engine->getLogicManager()->_items = (Item *)malloc(32 * sizeof(Item));
+	_engine->getLogicManager()->_doors = (Door *)malloc(128 * sizeof(Door));
+	_engine->getLogicManager()->_blockedViews = (int32 *)malloc(1000 * sizeof(int32));
+	_engine->getLogicManager()->_blockedX = (int32 *)malloc(16 * sizeof(int32));
+	_engine->getLogicManager()->_softBlockedX = (int32 *)malloc(16 * sizeof(int32));
+	_engine->getLogicManager()->_globals = (int32 *)malloc(128 * sizeof(int32));
+	_engine->getLogicManager()->_doneNIS = (byte *)malloc(512);
 	_engine->getMessageManager()->_autoMessages = (Message *)malloc(128 * sizeof(Message));
 
 	for (int i = 0; i < 16; i++) {
-		_engine->getLogicManager()->_blockedEntitiesBits[i] = 0;
-		_engine->getLogicManager()->_softBlockedEntitiesBits[i] = 0;
+		_engine->getLogicManager()->_blockedX[i] = 0;
+		_engine->getLogicManager()->_softBlockedX[i] = 0;
 	}
 
 	for (int i = 0; i < 32; i++) {
-		_engine->getLogicManager()->_gameInventory[i].clear();
+		_engine->getLogicManager()->_items[i].clear();
 	}
 
 	for (int i = 0; i < 128; i++) {
-		_engine->getLogicManager()->_gameObjects[i].clear();
+		_engine->getLogicManager()->_doors[i].clear();
 		_engine->getMessageManager()->_autoMessages[i].clear();
 	}
 
-	memset(_engine->getLogicManager()->_gameProgress, 0, sizeof(128 * sizeof(int32)));
-	memset(_engine->getLogicManager()->_gameEvents, 0, sizeof(512));
+	memset(_engine->getLogicManager()->_globals, 0, sizeof(128 * sizeof(int32)));
+	memset(_engine->getLogicManager()->_doneNIS, 0, sizeof(512));
 
 	_engine->getGraphicsManager()->_cursorsDataHeader = (CursorHeader *)_engine->_cursorsMemoryPool;
 	_engine->getGraphicsManager()->_iconsBitmapData = (PixMap *)(_engine->_cursorsMemoryPool + sizeof(CursorHeader) * kCursorMAX);
@@ -161,13 +161,13 @@ void MemoryManager::releaseMemory() {
 	SAFE_DELETE(_engine->getSubtitleManager()->_font);
 	SAFE_FREE(_engine->getSubtitleManager()->_subtitlesData);
 	SAFE_FREE(_engine->getGraphicsManager()->_backgroundCompBuffer);
-	SAFE_FREE(_engine->getLogicManager()->_gameInventory);
-	SAFE_FREE(_engine->getLogicManager()->_gameObjects);
-	SAFE_FREE(_engine->getLogicManager()->_positions);
-	SAFE_FREE(_engine->getLogicManager()->_blockedEntitiesBits);
-	SAFE_FREE(_engine->getLogicManager()->_softBlockedEntitiesBits);
-	SAFE_FREE(_engine->getLogicManager()->_gameProgress);
-	SAFE_FREE(_engine->getLogicManager()->_gameEvents);
+	SAFE_FREE(_engine->getLogicManager()->_items);
+	SAFE_FREE(_engine->getLogicManager()->_doors);
+	SAFE_FREE(_engine->getLogicManager()->_blockedViews);
+	SAFE_FREE(_engine->getLogicManager()->_blockedX);
+	SAFE_FREE(_engine->getLogicManager()->_softBlockedX);
+	SAFE_FREE(_engine->getLogicManager()->_globals);
+	SAFE_FREE(_engine->getLogicManager()->_doneNIS);
 }
 
 void MemoryManager::freeFX() {
