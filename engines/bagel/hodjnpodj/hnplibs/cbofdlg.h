@@ -45,12 +45,12 @@ private:
 protected:
 	// Implementation
 	void EndDialog(int);
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CBmpDialog)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	virtual BOOL OnInitDialog() override;
+	BOOL OnInitDialog() override;
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();

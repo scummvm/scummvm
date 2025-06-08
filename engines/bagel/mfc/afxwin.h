@@ -1214,10 +1214,15 @@ public:
 	            CWnd *pParentWnd = nullptr);
 
 	int DoModal();
-	virtual BOOL OnInitDialog();
+	virtual void PreInitDialog() {}
+	virtual BOOL OnInitDialog() {
+		return true;
+	}
 
 	DWORD GetDefID();
 	void SetDefID(UINT nID);
+	LRESULT HandleInitDialog(WPARAM, LPARAM);
+	LRESULT HandleSetFont(WPARAM, LPARAM);
 	void AFXAPI DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl);
 	void AFXAPI DDX_Radio(CDataExchange *pDX,
 	                      int nIDCButton1, int &value);

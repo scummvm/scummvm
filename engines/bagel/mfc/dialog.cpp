@@ -29,6 +29,10 @@ constexpr uint32 MODAL_DEFAULT = MKTAG('S', 'C', 'V', 'M');
 
 IMPLEMENT_DYNAMIC(CDialog, CWnd)
 BEGIN_MESSAGE_MAP(CDialog, CWnd)
+ON_COMMAND(IDOK, OnOK)
+ON_COMMAND(IDCANCEL, OnCancel)
+ON_MESSAGE(WM_INITDIALOG, HandleInitDialog)
+ON_MESSAGE(WM_SETFONT, HandleSetFont)
 END_MESSAGE_MAP()
 
 CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
@@ -94,7 +98,6 @@ int CDialog::DoModal() {
 
 	if (CreateDlgIndirect(lpDialogTemplate,
 		this /*m_pParentWnd*/, hInst)) {
-
 		CWinApp *app = AfxGetApp();
 		MSG msg;
 
@@ -121,10 +124,6 @@ int CDialog::DoModal() {
 	return m_nModalResult;
 }
 
-BOOL CDialog::OnInitDialog() {
-	error("TODO: CDialog::OnInitDialog");
-}
-
 DWORD CDialog::GetDefID() {
 	error("TODO: CDialog::GetDefID");
 }
@@ -132,6 +131,18 @@ DWORD CDialog::GetDefID() {
 void CDialog::SetDefID(UINT nID) {
 	error("TODO: CDialog::SetDefID");
 }
+
+LRESULT CDialog::HandleInitDialog(WPARAM, LPARAM) {
+	PreInitDialog();
+
+	OnInitDialog();
+	return 0;
+}
+
+LRESULT CDialog::HandleSetFont(WPARAM, LPARAM) {
+	return 0;
+}
+
 
 void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
 	error("TODO: CDialog::DDX_Control");
