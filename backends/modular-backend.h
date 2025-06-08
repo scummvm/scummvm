@@ -77,6 +77,7 @@ public:
 	int getDefaultStretchMode() const override final;
 	bool setStretchMode(int mode) override final;
 	int getStretchMode() const override final;
+	bool setRotationMode(Common::RotationMode rotation) override final;
 	uint getDefaultScaler() const override final;
 	uint getDefaultScaleFactor() const override final;
 	using BaseBackend::setScaler;

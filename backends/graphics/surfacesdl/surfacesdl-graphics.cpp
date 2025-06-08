@@ -302,9 +302,6 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 		if (enable)
 			_window->iconifyWindow();
 		break;
-	case OSystem::kFeatureRotationMode:
-		notifyResize(getWindowWidth(), getWindowHeight());
-		break;
 	default:
 		break;
 	}
@@ -3230,10 +3227,9 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	SDL_Rect viewport;
 
 	Common::Rect &drawRect = (_overlayVisible) ? _overlayDrawRect : _gameDrawRect;
-	Common::RotationMode rotation = getRotationMode();
 
 	/* Destination rectangle represents the texture before rotation */
-	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+	if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 		viewport.w = drawRect.height();
 		viewport.h = drawRect.width();
 		int delta = (viewport.w - viewport.h) / 2;
@@ -3246,7 +3242,7 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 		viewport.y = drawRect.top;
 	}
 
-	int rotangle = (int)rotation;
+	int rotangle = (int)_rotationMode;
 
 	SDL_RenderClear(_renderer);
 

@@ -76,6 +76,8 @@ class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
 
+enum RotationMode : int;
+
 typedef Array<Keymap *> KeymapArray;
 }
 
@@ -991,6 +993,28 @@ public:
 	 * @return ID of the active stretch mode.
 	 */
 	virtual int getStretchMode() const { return 0; }
+
+	/**
+	 * Switch to the specified rotation
+	 *
+	 * If switching to the new rotation fails, this method returns false.
+	 *
+	 * @param rotation Rotation angle
+	 *
+	 * @return True if the switch was successful, false otherwise.
+	 */
+	virtual bool setRotationMode(Common::RotationMode rotation) { return false; }
+
+	/**
+	 * Switch to the specified rotation with the given int
+	 *
+	 * If switching to the new rotation fails, this method returns false.
+	 *
+	 * @param rotation Rotation angle
+	 *
+	 * @return True if the switch was successful, false otherwise.
+	 */
+	bool setRotationMode(int rotation);
 
 	/**
 	 * Return the ID of the 'default' scaler.

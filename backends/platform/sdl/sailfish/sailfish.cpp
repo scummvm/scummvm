@@ -75,7 +75,7 @@ Common::String OSystem_SDL_Sailfish::getAppSuffix() {
 
 void OSystem_SDL_Sailfish::initBackend() {
 	if (!ConfMan.hasKey("rotation_mode")) {
-		ConfMan.setPath("rotation_mode", "90");
+		ConfMan.setInt("rotation_mode", 90);
 	}
 
 	if (!ConfMan.hasKey("savepath")) {

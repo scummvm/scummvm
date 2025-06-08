@@ -30,6 +30,7 @@
 #include "common/taskbar.h"
 #include "common/updates.h"
 #include "common/dialogs.h"
+#include "common/rotationmode.h"
 #include "common/str-enc.h"
 #include "common/textconsole.h"
 #include "common/text-to-speech.h"
@@ -216,6 +217,10 @@ bool OSystem::setStretchMode(const char *name) {
 	}
 
 	return false;
+}
+
+bool OSystem::setRotationMode(int rotation) {
+	return setRotationMode(Common::parseRotationMode(rotation));
 }
 
 void OSystem::fatalError() {

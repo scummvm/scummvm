@@ -41,7 +41,7 @@ class String;
  * List of rotation modes.
  *
  */
-enum RotationMode {
+enum RotationMode : int {
 	kRotationNormal = 0,
 	kRotation90 = 90,
 	kRotation180 = 180,
