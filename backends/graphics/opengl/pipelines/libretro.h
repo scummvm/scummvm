@@ -60,6 +60,7 @@ public:
 
 	/* Called by OpenGLGraphicsManager */
 	void enableLinearFiltering(bool enabled) { _linearFiltering = enabled; }
+	void setRotation(Common::RotationMode rotation) { if (_rotation != rotation) { _rotation = rotation; setPipelineState(); } }
 	/* Called by OpenGLGraphicsManager to setup the internal objects sizes */
 	void setDisplaySizes(uint inputWidth, uint inputHeight, const Common::Rect &outputRect);
 	/* Called by OpenGLGraphicsManager to indicate that next draws need to be scaled. */
@@ -101,6 +102,7 @@ private:
 	Common::Rect _outputRect;
 
 	bool _linearFiltering;
+	Common::RotationMode _rotation;
 
 	/* Determines if preset depends on frameCount or from previous frames */
 	bool _isAnimated;
