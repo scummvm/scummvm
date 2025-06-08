@@ -36,8 +36,8 @@ namespace OpenGL {
 Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, bool autoCreate)
 	: _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
 	  _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
-	  _texCoords(), _glFilter(GL_NEAREST),
-	  _glTexture(0) {
+	  _flip(false), _rotation(Common::kRotationNormal),
+	  _texCoords(), _glFilter(GL_NEAREST), _glTexture(0) {
 	if (autoCreate)
 		create();
 }
@@ -150,7 +150,7 @@ bool Texture::bind() const {
 	return true;
 }
 
-bool Texture::setSize(uint width, uint height, bool flip) {
+bool Texture::setSize(uint width, uint height) {
 	const uint oldWidth  = _width;
 	const uint oldHeight = _height;
 
@@ -167,34 +167,7 @@ bool Texture::setSize(uint width, uint height, bool flip) {
 
 	// If a size is specified, allocate memory for it.
 	if (width != 0 && height != 0) {
-		const GLfloat texWidth = (GLfloat)width / _width;
-		const GLfloat texHeight = (GLfloat)height / _height;
-
-		if (flip) {
-			_texCoords[0] = 0;
-			_texCoords[1] = texHeight;
-
-			_texCoords[2] = texWidth;
-			_texCoords[3] = texHeight;
-
-			_texCoords[4] = 0;
-			_texCoords[5] = 0;
-
-			_texCoords[6] = texWidth;
-			_texCoords[7] = 0;
-		} else {
-			_texCoords[0] = 0;
-			_texCoords[1] = 0;
-
-			_texCoords[2] = texWidth;
-			_texCoords[3] = 0;
-
-			_texCoords[4] = 0;
-			_texCoords[5] = texHeight;
-
-			_texCoords[6] = texWidth;
-			_texCoords[7] = texHeight;
-		}
+		computeTexCoords();
 
 		// Allocate storage for OpenGL texture if necessary.
 		if (oldWidth != _width || oldHeight != _height) {
@@ -211,6 +184,66 @@ bool Texture::setSize(uint width, uint height, bool flip) {
 		}
 	}
 	return true;
+}
+
+void Texture::computeTexCoords() {
+	const GLfloat texWidth = (GLfloat)_logicalWidth / _width;
+	const GLfloat texHeight = (GLfloat)_logicalHeight / _height;
+
+	if (_flip) {
+		_texCoords[0] = 0;
+		_texCoords[1] = texHeight;
+
+		_texCoords[2] = texWidth;
+		_texCoords[3] = texHeight;
+
+		_texCoords[4] = 0;
+		_texCoords[5] = 0;
+
+		_texCoords[6] = texWidth;
+		_texCoords[7] = 0;
+	} else {
+		_texCoords[0] = 0;
+		_texCoords[1] = 0;
+
+		_texCoords[2] = texWidth;
+		_texCoords[3] = 0;
+
+		_texCoords[4] = 0;
+		_texCoords[5] = texHeight;
+
+		_texCoords[6] = texWidth;
+		_texCoords[7] = texHeight;
+	}
+
+	switch(_rotation) {
+	default:
+	case Common::kRotationNormal:
+		// Nothing to do
+		break;
+	case Common::kRotation90:
+		// LT -> LB and RB -> RT
+		SWAP(_texCoords[1], _texCoords[7]);
+		// RT -> LT and LB -> RB
+		SWAP(_texCoords[2], _texCoords[4]);
+		break;
+	case Common::kRotation180:
+		// LT -> RT and RT -> LT
+		SWAP(_texCoords[0], _texCoords[2]);
+		// RT -> RB and LB -> LT
+		SWAP(_texCoords[1], _texCoords[5]);
+		// LT -> LB and RB -> RT
+		SWAP(_texCoords[3], _texCoords[7]);
+		// LT -> RT and RT -> LT
+		SWAP(_texCoords[4], _texCoords[6]);
+		break;
+	case Common::kRotation270:
+		// LT -> RT and RB -> LB
+		SWAP(_texCoords[0], _texCoords[6]);
+		// RT -> RB and LB -> LT
+		SWAP(_texCoords[3], _texCoords[5]);
+		break;
+	}
 }
 
 void Texture::updateArea(const Common::Rect &area, const Graphics::Surface &src) {

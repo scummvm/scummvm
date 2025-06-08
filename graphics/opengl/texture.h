@@ -29,6 +29,7 @@
 #include "graphics/surface.h"
 
 #include "common/rect.h"
+#include "common/rotationmode.h"
 
 namespace OpenGL {
 
@@ -100,10 +101,23 @@ public:
 	 *
 	 * @param width  The desired logical width.
 	 * @param height The desired logical height.
-	 * @param flip   Whether to flip vertically the texture when displaying it.
 	 * @return Whether the call was successful
 	 */
-	bool setSize(uint width, uint height, bool flip = false);
+	bool setSize(uint width, uint height);
+
+	/**
+	 * Sets the flip and rotate parameters of the texture
+	 *
+	 * @param flip     Whether to flip vertically the texture when displaying it.
+	 */
+	void setFlip(bool flip) { if (_flip != flip) { _flip = flip; computeTexCoords(); } }
+
+	/**
+	 * Sets the rotate parameter of the texture
+	 *
+	 * @param rotation How to rotate the texture
+	 */
+	void setRotation(Common::RotationMode rotation) { if (_rotation != rotation) { _rotation = rotation; computeTexCoords(); } }
 
 	/**
 	 * Copy image data to the texture.
@@ -173,12 +187,17 @@ public:
 	}
 
 protected:
+	void computeTexCoords();
+
 	const GLenum _glIntFormat;
 	const GLenum _glFormat;
 	const GLenum _glType;
 
 	uint _width, _height;
 	uint _logicalWidth, _logicalHeight;
+	bool _flip;
+	Common::RotationMode _rotation;
+
 	GLfloat _texCoords[4*2];
 
 	GLint _glFilter;
