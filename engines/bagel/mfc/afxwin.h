@@ -1082,7 +1082,7 @@ public:
 	~CWnd() override;
 	void clear();
 
-	virtual BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	                    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
 	                    CCreateContext *pContext = nullptr);
 
