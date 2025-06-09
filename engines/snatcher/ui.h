@@ -26,6 +26,11 @@
 
 #include "common/scummsys.h"
 
+namespace Common {
+class SeekableReadStream;
+class SeekableWriteStream;
+} // namespace Common
+
 namespace Snatcher {
 
 class CmdQueue;
@@ -52,6 +57,9 @@ public:
 	void resetVerbSelection() { _prevSelectedVerb = 0; }
 	void setVerbsTabLayout(uint16 layout);
 	void setInterpreterMode(uint16 mode);
+
+	void loadState(Common::SeekableReadStream *in);
+	void saveState(Common::SeekableWriteStream *out);
 	
 private:
 	void printDialogStringHead();
@@ -97,10 +105,10 @@ private:
 	void virtKeybPrint();
 
 	uint16 _verbsInterpreterMode;
-	uint8 _una_6;
+	uint8 _lastVerbFirstPage;
 	uint8 _numVerbsFirstPage;
 	uint8 _numVerbsLastPage;
-	uint8 _una_3;
+	uint8 _lastVerbLastPage;
 	uint8 _prevSelectedVerb;
 	uint8 _numVerbsMax;
 	uint8 _una_rr_hi;

@@ -20,11 +20,11 @@
 */
 
 #include "snatcher/detection.h"
+#include "snatcher/saveload.h"
 #include "snatcher/snatcher.h"
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
-/*#include "common/translation.h"*/
 
 #include "engines/advancedDetector.h"
 
@@ -49,7 +49,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual int getAutosaveSlot() const override { return 999; }
+	int getAutosaveSlot() const override { return 0; }
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -65,6 +65,8 @@ bool SnatcherMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSimpleSavesNames);
 }
 
@@ -73,7 +75,7 @@ bool Snatcher::SnatcherEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsReturnToLauncher) ||
 	    (f == kSupportsLoadingDuringRuntime) ||
 	    (f == kSupportsSavingDuringRuntime) ||
-	    (f == kSupportsSubtitleOptions);
+	    (f == kSupportsChangingOptionsDuringRuntime);
 }
 
 Common::Error SnatcherMetaEngine::createInstance(OSystem *syst, Engine **engine, const SnatcherGameDescription *desc) const {
@@ -104,36 +106,28 @@ Common::Error SnatcherMetaEngine::createInstance(OSystem *syst, Engine **engine,
 }
 
 SaveStateList SnatcherMetaEngine::listSaves(const char *target) const {
-	/*Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Snatcher::SnatcherEngine::SaveHeader header;
-	Common::String pattern = target;
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Snatcher::SaveLoadManager::SaveHeader header;
+	Common::String pattern(target);
 	pattern += ".###";
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern);
-	*/
+	
 	SaveStateList saveList;
-	/*for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 999) {
+		int slot = atoi(file->substr(file->size() - 3, 3).c_str());
+		if (slot >= 0 && slot <= getMaximumSaveSlot()) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
-				if (Kyra::KyraEngine_v1::readSaveHeader(in, header) == Kyra::KyraEngine_v1::kRSHENoError) {
-					// WORKAROUND: Old savegames are using 'German' as description for kyra3 restart game save (slot 0),
-					// since that looks odd we replace it by "New Game".
-					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
-						header.description = "New Game";
-
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
-				}
+				if (Snatcher::SaveLoadManager::readSaveHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(this, slot, header.desc));
 				delete in;
 			}
 		}
-	}*/
+	}
 
-	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
@@ -143,49 +137,30 @@ int SnatcherMetaEngine::getMaximumSaveSlot() const {
 }
 
 bool SnatcherMetaEngine::removeSaveState(const char *target, int slot) const {
-	//Common::String filename = Snatcher::SnatcherEngine::getSavegameFilename(target, slot);
-	//g_system->getSavefileManager()->removeSavefile(filename);
+	Common::String filename = Snatcher::SaveLoadManager::getSavegameFilename(slot, target);
+	g_system->getSavefileManager()->removeSavefile(filename);
 	return true;
 }
 
 SaveStateDescriptor SnatcherMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	/*Common::String filename = Snatcher::SnatcherEngine::getSavegameFilename(target, slot);
+	Common::String filename = Snatcher::SaveLoadManager::getSavegameFilename(slot, target);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-	const bool nonKyraGame = ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("lol") || ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob") || ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob2");
 
-	if (in) {
-		Kyra::KyraEngine_v1::SaveHeader header;
-		Kyra::KyraEngine_v1::ReadSaveHeaderError error;
+	Common::String d;
+	SaveStateDescriptor desc(this, slot, d);
+	Snatcher::SaveLoadManager::SaveHeader header;
 
-		error = Kyra::KyraEngine_v1::readSaveHeader(in, header, false);
-		delete in;
+	if (in && Snatcher::SaveLoadManager::readSaveHeader(in, header)) {
+		desc.setDescription(header.desc);
+		desc.setThumbnail(header.thumbnail);
+		desc.setPlayTime(header.totalPlayTime * 1000);
+		desc.setSaveDate(header.td.tm_year + 1900, header.td.tm_mon + 1, header.td.tm_mday);
+		desc.setSaveTime(header.td.tm_hour, header.td.tm_min);
+	}
 
-		if (error == Kyra::KyraEngine_v1::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
-
-			// Slot 0 is used for the 'restart game' save in all three Kyrandia games, thus
-			// we prevent it from being deleted.
-			desc.setDeletableFlag(slot != 0 || nonKyraGame);
-
-			// We don't allow quick saves (slot 990 till 998) to be overwritten.
-			// The same goes for the 'Autosave', which is slot 999. Slot 0 will also
-			// be protected in Kyra 1-3, since it's the 'restart game' save.
-			desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
-			desc.setThumbnail(header.thumbnail);
-
-			return desc;
-		}
-	}*/
-
-	Common::String dmy;
-	SaveStateDescriptor desc(this, slot, dmy);
-
-	// We don't allow quick saves (slot 990 till 998) to be overwritten.
-	// The same goes for the 'Autosave', which is slot 999. Slot 0 will also
-	// be protected in Kyra 1-3, since it's the 'restart game' save.
-
-
-	//desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
+	// We don't allow the autosave slot to be overwritten.
+	desc.setWriteProtectedFlag(slot == getAutosaveSlot());
+	delete in;
 
 	return desc;
 }

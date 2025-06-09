@@ -26,7 +26,12 @@
 
 namespace Audio {
 class Mixer;
-}
+} // namespace Audio
+
+namespace Common {
+class SeekableReadStream;
+class SeekableWriteStream;
+} // namespace Common
 
 namespace Snatcher {
 
@@ -46,11 +51,12 @@ public:
 	uint32 cdaGetTime() const;
 
 	struct FMStatus {
-		FMStatus() : music(0), sfx(0), sync(0), blocked(0) {}
+		FMStatus() : music(0), sfx(0), sync(0), blocked(0), reduceVol2(0) {}
 		uint8 music;
 		uint8 sfx;
 		uint8 sync;
 		uint8 blocked;
+		uint8 reduceVol2;
 	};
 
 	void fmSendCommand(int cmd, int restoreVolume, int trackType = 0);
@@ -58,9 +64,11 @@ public:
 	void fmBlock(int block) { _fmStatus.blocked = block; }
 
 	struct PCMStatus {
-		PCMStatus() : statusBits(0), blocked(0) {}
+		PCMStatus() : statusBits(0), blocked(0), resourceId(-1), resourceId2(-1) {}
 		uint8 statusBits;
 		uint8 blocked;
+		int16 resourceId;
+		int16 resourceId2;
 	};
 
 	void pcmSendCommand(int cmd, int arg);
@@ -71,10 +79,13 @@ public:
 	void pause(bool toggle);
 	void update();
 
-	void setUnkCond(bool enable);
+	void reduceVolume2(bool enable);
 
 	void setMusicVolume(int vol);
 	void setSoundEffectVolume(int vol);
+
+	void loadState(Common::SeekableReadStream *in);
+	void saveState(Common::SeekableWriteStream *out);
 
 private:
 	FMStatus _fmStatus;

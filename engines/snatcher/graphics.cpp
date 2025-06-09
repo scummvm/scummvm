@@ -27,6 +27,7 @@
 #include "snatcher/text.h"
 #include "snatcher/transition.h"
 #include "common/endian.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
 
@@ -43,6 +44,8 @@ GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system
 	assert(_animator);
 	_screen = new uint8[_animator->screenWidth() * _animator->screenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
 	assert(_screen);
+	_animSaveLoadData = new uint8[64]();
+	assert(_animSaveLoadData);
 }
 
 GraphicsEngine::~GraphicsEngine() {
@@ -51,6 +54,7 @@ GraphicsEngine::~GraphicsEngine() {
 	delete _trs;
 	delete[] _screen;
 	delete _text;
+	delete[] _animSaveLoadData;
 }
 
 void GraphicsEngine::runScript(ResourcePointer res, int func) {
@@ -251,6 +255,58 @@ bool GraphicsEngine::busy(int type) const {
 
 uint16 GraphicsEngine::frameCount() const {
 	return _state.frameCount();
+}
+
+void GraphicsEngine::loadState(Common::SeekableReadStream *in) {
+	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
+		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+	in->read(_animSaveLoadData, 64);
+}
+
+void GraphicsEngine::saveState(Common::SeekableWriteStream *out) {
+	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
+	for (int i = 0; i < 64; ++i) {
+		uint8 v = 0;
+		if (getAnimParameter(i, kAnimParaEnable)) {
+			v |= 0x80;
+			uint8 cf = getAnimParameter(i, kAnimParaScriptComFlags);
+			if (cf & 0x80) {
+				v |= 0x40;
+			} else {
+				v |= (getAnimParameter(i, kAnimParaControlFlags) & 0x03);
+				v |= (getAnimParameter(i, kAnimParaF24) & 0x0C);
+				if (cf & 1)
+					v |= 0x10;
+				if (getAnimParameter(i, kAnimParaAllowFrameDrop))
+					v |= 0x20;
+			}
+		}
+		_animSaveLoadData[i] = v;
+	}
+	out->write(_animSaveLoadData, 64);
+}
+
+void GraphicsEngine::postLoadProcess() {
+	for (int i = 0; i < 64; ++i) {
+		if (!getAnimParameter(i, kAnimParaEnable))
+			continue;
+		uint8 v = _animSaveLoadData[i];
+		if (!(v & 0x80)) {
+			setAnimParameter(i, kAnimParaEnable, 0);
+			continue;
+		}
+		if (v & 0x40)
+			continue;
+		uint8 cf = getAnimParameter(i, kAnimParaControlFlags) & 0xFC;
+		setAnimParameter(i, kAnimParaControlFlags, cf | (v & 0x03));
+		cf = getAnimParameter(i, kAnimParaF24) & 0xF3;
+		setAnimParameter(i, kAnimParaF24, cf | (v & 0x0C));
+		if (v & 0x10)
+			setAnimParameter(i, kAnimParaScriptComFlags, getAnimParameter(i, kAnimParaScriptComFlags) | 1);
+		else 
+			setAnimParameter(i, kAnimParaScriptComFlags, getAnimParameter(i, kAnimParaScriptComFlags) & ~1);
+		setAnimParameter(i, kAnimParaAllowFrameDrop, (v & 0x20) ? 1 : 0);
+	}
 }
 
 void GraphicsEngine::createMouseCursor(bool show) {

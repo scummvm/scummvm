@@ -24,6 +24,7 @@
 #include "snatcher/resource.h"
 #include "snatcher/script.h"
 #include "snatcher/ui.h"
+#include "common/stream.h"
 
 
 namespace Snatcher {
@@ -31,7 +32,7 @@ namespace Snatcher {
 UI::UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd) : _gfx(gfx), _que(que), _scd(scd), _sceneId(0), _textLineBreak(0), _dialogTextBuffer(nullptr), _textColor(0),
 	_scriptTextResource(nullptr),/*_makestrbt1(0),*/ _textY(0), _textY2(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0), _sceneTextOffset(0), _transDW1(0), _transDW2(0),
 		_sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0), _progress(-1), _progress2(-1), _controllerCfg(0), _verbsTabLayout(0), _verbsInterpreterMode(0),
-			_una_6(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _una_3(0), _numVerbsMax(0), _una_rr_hi(0), _una_rr_lo(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _scriptVerbsArray(nullptr),
+			_lastVerbFirstPage(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _lastVerbLastPage(0), _numVerbsMax(0), _una_rr_hi(0), _una_rr_lo(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _scriptVerbsArray(nullptr),
 				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _transit_02(0), _textInputMarginLeft(0), _drawVerbsWd1(0),
 					_textInputColumnCur(0), _textInputColumnMax(0), _textInputCursorState(0), _textInputCursorBlinkCnt(0), _underscoreStr(nullptr), _textInputStr(nullptr), _vkeybPosTotal(0),
 						_vkeybColumnWidth(0), _verbsTabLayoutMap(nullptr), _verbsTabOffsX(0), _verbsTabOffsY(0), _hilitePosX(0), _hilitePosY(0), _vkeybVisible(false) {
@@ -170,16 +171,16 @@ bool UI::drawVerbs() {
 
 	if (_progress2 == 0) {
 		if (_gfx->getVerbAreaType()) {
-			_una_6 = 5;
+			_lastVerbFirstPage = 5;
 			_numVerbsFirstPage = 4;
 			_numVerbsLastPage = 3;
-			_una_3 = 4;
+			_lastVerbLastPage = 4;
 			_numVerbsMax = 6;
 		} else {
-			_una_6 = 6;
+			_lastVerbFirstPage = 6;
 			_numVerbsFirstPage = 5;
 			_numVerbsLastPage = 2;
-			_una_3 = 3;
+			_lastVerbLastPage = 3;
 			_numVerbsMax = 7;
 		}
 
@@ -218,12 +219,12 @@ bool UI::drawVerbs() {
 			bool sp7 = (_scriptVerbsArray->pos() == 7 && _gfx->getVerbAreaType() != 0);
 			if (sp7) {
 				_numVerbsLastPage = 2;
-				_una_3 = 3;
+				_lastVerbLastPage = 3;
 			}
 			if (_scriptVerbsArray->pos() == 8 || sp7) {
 				_verbsTabCurPage = 1;
 				if (_scriptSentenceArray->pos() == 0) {
-					if (_una_6 <= _prevSelectedVerb) {
+					if (_lastVerbFirstPage <= _prevSelectedVerb) {
 						_verbsTabCurPage = 2;
 						_prevSelectedVerb -= _numVerbsFirstPage;
 					}
@@ -484,6 +485,20 @@ void UI::setInterpreterMode(uint16 mode) {
 	_verbsInterpreterMode = mode;
 }
 
+void UI::loadState(Common::SeekableReadStream *in) {
+	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
+		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+	_verbsTabLayout = in->readUint16BE();
+	_verbsInterpreterMode = in->readUint16BE();
+	_progress = _progress2 = -1;
+}
+
+void UI::saveState(Common::SeekableWriteStream *out) {
+	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
+	out->writeUint16BE(_verbsTabLayout);
+	out->writeUint16BE(_verbsInterpreterMode);
+}
+
 void UI::printDialogStringHead() {
 	static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFB, 0x10, 0x00, 0xFE };
 	const uint8 *s = _scd->makePtr(0x13552).getDataFromTable(_sceneId)();
@@ -595,7 +610,7 @@ bool UI::waitWithCursorAnim(uint16 inputFlags) {
 
 uint8 UI::drawVerb(uint8 id) {
 	uint8 cid = id;
-	if (_verbsTabCurPage == 1 && _una_6 == id) {
+	if (_verbsTabCurPage == 1 && _lastVerbFirstPage == id) {
 		_que->writeUInt16(0x05);
 		_que->writeUInt32(_gfx->getVerbAreaType() ? 0x10F26 : 0x10F10);
 		return 0x80;
@@ -760,7 +775,7 @@ void UI::verbsTabHandleInput(uint16 inputFlags) {
 						continue;
 					}
 				}
-				if ((_hiliteVerb == _lastVerbDrawn) || (_verbsTabCurPage == 2 && _hiliteVerb == _una_3)) {
+				if ((_hiliteVerb == _lastVerbDrawn) || (_verbsTabCurPage == 2 && _hiliteVerb == _lastVerbLastPage)) {
 					_hiliteVerb = 0;
 					if (_verbsTabCurPage) {
 						if (_verbsTabCurPage == 1)
@@ -900,7 +915,7 @@ void UI::verbTabSwapPage() {
 }
 
 void UI::verbSelect() {
-	if ((_verbsTabCurPage == 1 && _hiliteVerb == _una_6) || (_verbsTabCurPage == 2 && _hiliteVerb == 0))
+	if ((_verbsTabCurPage == 1 && _hiliteVerb == _lastVerbFirstPage) || (_verbsTabCurPage == 2 && _hiliteVerb == 0))
 		return;
 
 	_selectedVerb = _hiliteVerb + 1;

@@ -22,6 +22,7 @@
 
 #include "snatcher/graphics.h"
 #include "snatcher/transition.h"
+#include "common/endian.h"
 #include "graphics/segagfx.h"
 
 namespace Snatcher {
@@ -127,7 +128,7 @@ private:
 
 	uint8 _nextStep;
 	uint8 _lastStep;
-	uint8 _trsCmd_0xff_0xfd_0xfc_or0to6_last;
+	uint8 _lineScrollOp;
 	uint8 _nextStepExt;
 	uint8 _lastStepExt;
 	int16 _trsFlagttt;
@@ -138,9 +139,14 @@ private:
 	int16 _transitionStep;
 	int16 _tmpScrollOffset;
 	int16 _subPara;
-	uint32 _trs__DA;
+	int16 _lineScrollOpState;
+	int16 _lineScrollTimer1;
+	int16 _lineScrollTimer2;
+	int16 _lineScrollTimer3;
+	int16 _lineScrollTimer4;
+	int16 _lineScrollTimer5;
 	uint16 _trs__DB;
-	bool useEngineScrollOffsets;
+	bool _useEngineScrollOffsets;
 
 private:
 	typedef Common::Functor1Mem<int, void, TransitionManager_SCD> TrsFunc;
@@ -151,9 +157,9 @@ private:
 
 	void trsUpdt_dummy(int arg);
 	void trsUpdt_engineScroll(int arg);
-	void trsUpdt_03(int arg);
+	void trsUpdt_skyParallaxScroll(int arg);
 	void trsUpdt_04(int arg);
-	void trsUpdt_05(int arg);
+	void trsUpdt_videoPhoneInterference(int arg);
 	void trsUpdt_06(int arg);
 	void trsUpdt_screenShutter(int arg);
 	void trsUpdt_revealShutter(int arg);
@@ -175,6 +181,9 @@ private:
 	void trsUpdt_28(int arg);
 	void trsUpdt_29(int arg);
 
+	void lineScrollInit();
+	void lineScrollTableFill(uint16 start, uint16 len, uint16 val);
+	void lineScrollTableDecr(uint16 start, uint16 len);
 	void textScreenTrsUpdate(int type, int hIntHandlerNo, int state);
 
 	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, TransitionManager_SCD> HINTFunc;
@@ -198,8 +207,8 @@ private:
 };
 
 TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _hint_proc(0), _transitionStep(0),
-	_trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _trs__DA(0), _trs__DB(0), _trsCmd_0xff_0xfd_0xfc_or0to6_last(0), _trsFlagttt(0),
-		_transitionType(0), _transitionState(0), _transitionState2(0), _tmpScrollOffset(0), _subPara(0), useEngineScrollOffsets(false), _hINTHandler(nullptr) {
+	_trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _lineScrollOpState(0), _lineScrollTimer1(0), _lineScrollTimer2(0), _lineScrollTimer3(0), _lineScrollTimer4(0),
+		_lineScrollTimer5(0), _trs__DB(0), _lineScrollOp(0), _trsFlagttt(0), _transitionType(0), _transitionState(0), _transitionState2(0), _tmpScrollOffset(0), _subPara(0), _useEngineScrollOffsets(false), _hINTHandler(nullptr) {
 	_internalState = new ScrollInternalState[4];
 	assert(_internalState);
 	_internalState[kVertA].setFactor(-1);
@@ -283,26 +292,29 @@ bool TransitionManager_SCD::nextFrame() {
 	processTransition();
 
 	bool changed = false;
-	bool reset = _nextStep == 0xFF || _nextStep == 0xFC;
+	bool reset = (_nextStep == 0xFF || _nextStep == 0xFC);
 
-	if (_scrollType != 0 && !reset) {
+	if (_scrollType && !reset) {
 		for (int i = 0; i < 4; ++i) {
 			if (_internalState[i].recalc(_scrollType & 0x10))
 				changed = true;
-			_result.realOffsets[i] = _internalState[i].getRealOffset(!(changed || useEngineScrollOffsets));
+			_result.realOffsets[i] = _internalState[i].getRealOffset(!(changed || _useEngineScrollOffsets));
 			_result.unmodifiedOffsets[i] = _internalState[i].getUnmodifiedOffset();
 			_internalState[i].setNextOffset(_result.realOffsets[i]);
 		}
-		_result.hScrollTable = _hScrollTable;
-		_result.hScrollTableNumEntries = _hScrollTableLen;
-		_result.disableVScroll = (_trsCmd_0xff_0xfd_0xfc_or0to6_last != 0);
 		_scrollType &= ~0x10;
 	}
 
 	processCmdInternal();
 	_result.busy = _lastStepExt;
 
-	return changed || reset || _result.hInt.needUpdate;
+	if (_result.hScrollTable != _hScrollTable || _result.hScrollTableNumEntries != _hScrollTableLen) {
+		_result.hScrollTable = _hScrollTable;
+		_result.hScrollTableNumEntries = _hScrollTableLen;
+		_result.disableVScroll = (_lineScrollOp != 0);
+	}
+
+	return changed || reset || _lastStep || _lastStepExt || _result.hInt.needUpdate;
 }
 
 void TransitionManager_SCD::hINTCallback(void *segaRenderer) {
@@ -316,24 +328,24 @@ void TransitionManager_SCD::processCmdInternal() {
 			resetVars(_nextStep == 0xFF ? 0x0F : 0x0E);
 			return;
 		} else if (_nextStep == 0xFD) {
-			_trsCmd_0xff_0xfd_0xfc_or0to6_last |= 0x80;
+			_lineScrollOp |= 0x80;
 		} else {
 			_lastStep = _nextStep;
 			if (_nextStep < 3) {
 				resetVars(0x08);
 			} else {
-				_trs__DA = 0;
-				_trsCmd_0xff_0xfd_0xfc_or0to6_last = 0;
+				_lineScrollOpState = 0;
+				_lineScrollOp = 0;
 			}
 		}
 	}
 
 	bool b = false;
-	if (_trsCmd_0xff_0xfd_0xfc_or0to6_last != 0) {
-		if (_trsCmd_0xff_0xfd_0xfc_or0to6_last & 0x80)
+	if (_lineScrollOp != 0) {
+		if (_lineScrollOp & 0x80)
 			b = true;
 		else
-			doCommandIntern(_trsCmd_0xff_0xfd_0xfc_or0to6_last, 0);
+			doCommandIntern(_lineScrollOp, 0);
 	}
 
 	if (!b && _nextStep != 0)
@@ -400,8 +412,8 @@ void TransitionManager_SCD::resetVars(int groupFlags) {
 		_result.hInt.needUpdate = true;
 	}
 	if (groupFlags & 0x02) {
-		_trsCmd_0xff_0xfd_0xfc_or0to6_last = 0;
-		_trs__DA = 0;
+		_lineScrollOp = 0;
+		_lineScrollOpState = 0;
 		_trs__DB = 0;
 		_nextStepExt = 0;
 		_transitionType = _transitionState = _tmpScrollOffset = _subPara = 0;
@@ -416,7 +428,7 @@ void TransitionManager_SCD::resetVars(int groupFlags) {
 			_internalState[i].setNextOffset(0);
 	}
 	if (groupFlags & 0x08) {
-		useEngineScrollOffsets = false;
+		_useEngineScrollOffsets = false;
 		//_trsoa = 0;
 		//_trsob = 0;
 	}
@@ -443,9 +455,9 @@ void TransitionManager_SCD::makeFunctions() {
 		TF(dummy),
 		TF(engineScroll),
 		TF(engineScroll),
-		TF(03),
+		TF(skyParallaxScroll),
 		TF(04),
-		TF(05),
+		TF(videoPhoneInterference),
 		TF(06),
 		TF(screenShutter),
 		TF(revealShutter),
@@ -520,16 +532,104 @@ void TransitionManager_SCD::trsUpdt_dummy(int arg) {
 
 void TransitionManager_SCD::trsUpdt_engineScroll(int arg) {
 	_result.lineScrollMode = false;
-	useEngineScrollOffsets = true;
+	_useEngineScrollOffsets = true;
 }
 
-void TransitionManager_SCD::trsUpdt_03(int arg) {
+void TransitionManager_SCD::trsUpdt_skyParallaxScroll(int arg) {
+	if (!_lineScrollOp) {
+		lineScrollInit();
+		return;
+	}
+
+	++_lineScrollTimer1;
+	++_lineScrollTimer2;
+	++_lineScrollTimer3;
+	++_lineScrollTimer4;
+	++_lineScrollTimer5;
+
+	uint16 f = _gfxState.frameCount();
+
+	if (!(f & 1)) {	
+		lineScrollTableDecr(0, 8);
+		_hScrollTableLen = 8;
+	}
+	if (!(f & 3)) {
+		lineScrollTableDecr(8, 9);
+		_hScrollTableLen = 17;
+	}
+	if (_lineScrollTimer1 == 6) {
+		_lineScrollTimer1 = 0;
+		lineScrollTableDecr(17, 12);
+		_hScrollTableLen = 29;
+	}
+	if (!(f & 7)) {
+		lineScrollTableDecr(29, 10);
+		_hScrollTableLen = 39;
+	}
+	if (_lineScrollTimer2 == 10) {
+		_lineScrollTimer2 = 0;
+		lineScrollTableDecr(39, 8);
+		_hScrollTableLen = 47;
+	}
+	if (_lineScrollTimer3 == 12) {
+		_lineScrollTimer3 = 0;
+		lineScrollTableDecr(47, 6);
+		_hScrollTableLen += 53;
+	}
+	if (_lineScrollTimer4 == 14) {
+		_lineScrollTimer4 = 0;
+		lineScrollTableDecr(53, 5);
+		_hScrollTableLen = 58;
+	}
+	if (!(f & 0x0F)) {
+		lineScrollTableDecr(58, 4);
+		_hScrollTableLen = 62;
+	}
+	if (_lineScrollTimer5 == 18) {
+		_lineScrollTimer5 = 0;
+		lineScrollTableDecr(62, 3);
+		_hScrollTableLen = 65;
+	}
 }
 
 void TransitionManager_SCD::trsUpdt_04(int arg) {
 }
 
-void TransitionManager_SCD::trsUpdt_05(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneInterference(int arg) {
+	switch (_lineScrollOpState) {
+		case 0:
+			++_lineScrollOpState;
+			lineScrollInit();
+			break;
+		case 1:
+			++_lineScrollOpState;
+			_hScrollTableLen = 112;
+			lineScrollTableFill(48, 3, 0x3F8);
+			lineScrollTableFill(51, 2, 0x3F4);
+			lineScrollTableFill(53, 3, 0x3F8);
+			lineScrollTableFill(72, 24, 2);
+			lineScrollTableFill(96, 16, 4);
+			break;
+		case 2:
+			if (++_lineScrollTimer1 < 8)
+				return;
+			_result.lineScrollMode = false;
+			++_lineScrollOpState;
+			break;
+		case 3:
+			if (++_lineScrollTimer2 < 13)
+				return;
+			_result.lineScrollMode = true;
+			++_lineScrollOpState;
+			break;
+		case 4:
+			if (++_lineScrollTimer3 == 7)
+				resetVars(0x0F);
+			break;
+		default:
+			error("%s(): Invalid state %d", __FUNCTION__, _lineScrollOpState);
+			break;
+	}
 }
 
 void TransitionManager_SCD::trsUpdt_06(int arg) {
@@ -756,6 +856,25 @@ void TransitionManager_SCD::trsUpdt_28(int arg) {
 }
 
 void TransitionManager_SCD::trsUpdt_29(int arg) {
+}
+
+void TransitionManager_SCD::lineScrollInit() {
+	_lineScrollOp = _nextStep;
+	_nextStep = 0;
+	_hScrollTableLen = 128;
+	_useEngineScrollOffsets = false;
+	_lineScrollTimer1 = _lineScrollTimer3 = _lineScrollTimer5 = 0;
+	Common::fill<int16*>(_hScrollTable, &_hScrollTable[0x100], 0);
+	_result.lineScrollMode = true;
+}
+
+void TransitionManager_SCD::lineScrollTableFill(uint16 start, uint16 len, uint16 val) {
+	Common::fill<int16*>(&_hScrollTable[start], &_hScrollTable[start + len], val);
+}
+
+void TransitionManager_SCD::lineScrollTableDecr(uint16 start, uint16 len) {
+	for (int16 *d = &_hScrollTable[start]; d < &_hScrollTable[start + len]; ++d)
+		*d = (*d - 1) & 0x3FF;
 }
 
 void TransitionManager_SCD::textScreenTrsUpdate(int type, int hIntHandlerNo, int state) {

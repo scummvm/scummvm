@@ -20,7 +20,9 @@
 */
 
 #include "snatcher/graphics.h"
+#include "snatcher/memory.h"
 #include "snatcher/resource.h"
+#include "snatcher/saveload.h"
 #include "snatcher/script.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
@@ -45,26 +47,25 @@
 namespace Snatcher {
 
 SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
-	_scriptEngine(nullptr), _cmdQueue(nullptr), _script(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(),
-		_frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
+	_scriptEngine(nullptr), _cmdQueue(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(false),
+		_memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 }
 
 SnatcherEngine::~SnatcherEngine() {
-	delete _module;
-	delete _gfx;
-	delete _snd;
+	delete _cmdQueue;
 	delete _fio;
+	delete _gfx;
+	delete _memHandler;	
+	delete _module;
+	delete _saveMan;
 	delete _scd;
 	delete _scriptEngine;
-	delete _cmdQueue;
-	delete _script;
+	delete _snd;
 	delete _ui;
 }
 
 Common::Error SnatcherEngine::run() {
-	registerDefaultSettings();
-
 	if (!initResource())
 		return Common::Error(Common::kReadingFailed);
 
@@ -74,10 +75,19 @@ Common::Error SnatcherEngine::run() {
 	if (!initGfx(_game.platform, SNATCHER_GFXMODE_8BIT))
 		return Common::Error(Common::kUnsupportedColorMode);
 
+	if (!initSaveLoad())
+		return Common::Error(Common::kUnknownError);
+
 	if (!initScriptEngine())
 		return Common::Error(Common::kUnknownError);
 
-	return Common::Error(start() ? Common::kNoError : Common::kUnknownError);
+	bool result = false;
+	while (!shouldQuit()) {
+		reset();
+		result = start();
+	}
+
+	return result ? Common::kNoError : Common::kUnknownError;
 }
 
 bool SnatcherEngine::initResource() {
@@ -133,6 +143,11 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 	return false;
 }
 
+bool SnatcherEngine::initSaveLoad() {
+	_saveMan = new SaveLoadManager(this);
+	return (_saveMan != nullptr);
+}
+
 bool SnatcherEngine::initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions) {
 	assert(_mixer);
 	assert(_fio);
@@ -156,21 +171,27 @@ bool SnatcherEngine::initScriptEngine() {
 	if (!_ui)
 		return false;
 
-	_scriptEngine = new ScriptEngine(_cmdQueue, _ui, _scd);
-	if (!_scriptEngine)
-		return false;
+	_memHandler = new MemAccessHandler(this, _ui, _saveMan);
+	assert(_memHandler);
 
-	_script = new Script(0x3800);
-	if (!_script)
+	_scriptEngine = new ScriptEngine(_cmdQueue, _ui, _memHandler, _scd);
+	if (!_scriptEngine)
 		return false;
 
 	return true;
 }
 
+void SnatcherEngine::reset() {
+	_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetAnimations | GraphicsEngine::kResetCopyCmds | GraphicsEngine::kResetScrollState);
+	_snd->fmSendCommand(0xF1, 1);
+	_snd->pcmSendCommand(0xFF, -1);
+	_snd->cdaStop();
+}
+
 void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
 	uint32 frameTimer = 0;
 	int curSeqState = 0;
-	_snd->fmSendCommand(242, -1);
+	_snd->fmSendCommand(0xF2, -1);
 
 	while (curSeqState != -1 && !shouldQuit()) {
 		frameTimer += _frameLen;
@@ -191,18 +212,20 @@ void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
 bool SnatcherEngine::start() {
 	Util::rngReset();
 	GameState state;
+	_saveMan->loadSettings(state.conf);
+	_saveMan->updateSaveSlotsState(state);
+	_memHandler->setGameState(&state);
 
 	//playBootLogoAnimation(state);
-	state.prologue = -1;
-	state.modProcessTop = 7;
-	state.modProcessSub = 4;
 
+	_reset = false;
 	uint32 frameTimer = 0;
+	uint32 playTimer = 0;
 
 	int16 countTo5 = 0;
 	int16 runspeed = 0;
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !_reset) {
 		frameTimer += _frameLen;
 		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
 		frameTimer &= 0x3FFF;
@@ -221,7 +244,7 @@ bool SnatcherEngine::start() {
 			if (!_gfx->busy(0)) {
 				bool blockedMod = _cmdQueue->enabled();
 				if (_cmdQueue->enabled()) {
-					_cmdQueue->run();
+					_cmdQueue->run(state);
 					blockedMod = _gfx->busy(0);
 				}
 				if (!blockedMod) {
@@ -245,9 +268,19 @@ bool SnatcherEngine::start() {
 
 		checkEvents(state);
 
+		_saveMan->handleSaveLoad(state);
+
 		_gfx->nextFrame();
 		_snd->update();
 		delayUntil(nextFrame);
+
+		if (state.modProcessTop == 5) {
+			playTimer += _frameLen;
+			if (playTimer >= (1000 << 14)) {
+				playTimer -= (1000 << 14);
+				++state.totalPlayTime;
+			}
+		}
 	}
 
 	return true;
@@ -373,6 +406,7 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		else
 			_gfx->setVar(5, 1);
 
+		_cmdQueue->reset();
 		_cmdQueue->writeUInt16(0x16);
 		_cmdQueue->writeUInt16(0x03);
 		_cmdQueue->writeUInt32(0xECB6);
@@ -389,14 +423,30 @@ void SnatcherEngine::updateChapter(GameState &state) {
 
 	case 1:
 		// Init first scene or load savegame
-		_scriptEngine->resetArrays();
+		_cmdQueue->writeUInt16(0x11);
+		_cmdQueue->writeUInt32(0x1A800);
 		if (state.menuSelect == 0) {
-			_cmdQueue->writeUInt16(0x11);
-			_cmdQueue->writeUInt32(0x1A800);
+			// Enter first scene	
 			_cmdQueue->writeUInt16(0x3F);
-			_cmdQueue->writeUInt16(15);
+			_cmdQueue->writeUInt16(0x0F);
 		} else {
-			/* load savegame */
+			// Restore saved state
+			_cmdQueue->writeUInt16(state.script.curFileNo);
+			_cmdQueue->writeUInt16(0x0F);
+			_cmdQueue->writeUInt16(0x11);
+			_cmdQueue->writeUInt32(0x28000);
+			_cmdQueue->writeUInt16(state.script.curGfxScript >> 8);
+			if (_snd->pcmGetStatus().resourceId2 != -1) {
+				_cmdQueue->writeUInt16(0x0D);
+				_cmdQueue->writeUInt16(_snd->pcmGetStatus().resourceId2);
+				_cmdQueue->writeUInt16(0x0A);
+			}
+			_cmdQueue->writeUInt16(0x20);
+			_cmdQueue->writeUInt16(state.script.curGfxScript & 0xFF);
+			_cmdQueue->writeUInt16(0x07);
+			_cmdQueue->writeUInt16(_snd->fmGetStatus().music);
+			_snd->pcmBlock(_snd->pcmGetStatus().blocked);
+			_snd->reduceVolume2(_snd->fmGetStatus().reduceVol2);
 		}
 
 		_ui->setControllerConfig(state.conf.controllerSetup);
@@ -409,7 +459,7 @@ void SnatcherEngine::updateChapter(GameState &state) {
 	case 2:
 		// Act I
 		if (state.chapterSub & 0x40) {
-			if (_scriptEngine->postProcess(_script)) {
+			if (_scriptEngine->postProcess(state.script)) {
 				for (int i = 5; i < 15; ++i)
 					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
 				_cmdQueue->writeUInt16(0x22);
@@ -427,7 +477,7 @@ void SnatcherEngine::updateChapter(GameState &state) {
 				state.chapterSub &= ~0x20;
 			}
 		} else if (state.chapterSub == 0) {
-			_scriptEngine->run(_script);
+			_scriptEngine->run(state.script);
 			_cmdQueue->start();
 			state.chapterSub |= 0xC0;
 		}
@@ -437,6 +487,10 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		break;
 
 	case 4:
+		// Reset
+		_cmdQueue->writeUInt16(0x02);
+		_cmdQueue->start();
+		_reset = true;
 		break;
 
 	case 5:
@@ -473,11 +527,9 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			++state.modProcessSub;
 			break;
 		case 3:
-			//if (*(uint16*)(&_wordRAM__TABLE48__word_B6400[0])) {
-				state.modProcessSub = 0;
-				state.finish = 0;
-				++state.modProcessTop;
-			//}
+			state.modProcessSub = 0;
+			state.finish = 0;
+			++state.modProcessTop;
 			break;
 		default:
 			break;
@@ -498,6 +550,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			if (_module)
 				_module->run(state);
 			if (state.finish) {
+				_saveMan->saveSettings(state.conf);
 				state.modProcessSub = 0;
 				state.finish = 0;
 				state.modProcessTop = state.menuSelect ? 7 : state.modProcessTop + 1;
@@ -651,9 +704,6 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 	}
 }
 
-void SnatcherEngine::registerDefaultSettings() {
-}
-
 void SnatcherEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
@@ -682,6 +732,24 @@ void SnatcherEngine::syncSoundSettings() {
 
 void SnatcherEngine::pauseEngineIntern(bool pause) {
 	_snd->pause(pause);
+}
+
+bool SnatcherEngine::canLoadGameStateCurrently(Common::U32String*) {
+	return true;
+}
+
+bool SnatcherEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return _saveMan->isSavingEnabled();
+}
+
+Common::Error SnatcherEngine::loadGameState(int slot) {
+	_saveMan->requestLoad(slot);
+	return Common::kNoError;
+}
+
+Common::Error SnatcherEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	_saveMan->requestSave(slot, desc);
+	return Common::kNoError;
 }
 
 void SnatcherEngine::calibrateLightGun(GameState &state) {
