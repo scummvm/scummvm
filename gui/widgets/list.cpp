@@ -183,8 +183,11 @@ void ListWidget::setSelected(int item) {
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
-		_currentPos = _selectedItem - _entriesPerPage / 2;
-		scrollToCurrent();
+		if (!isItemVisible(_selectedItem)) {
+			// scroll selected item to center if possible
+			_currentPos = _selectedItem - _entriesPerPage / 2;
+			scrollToCurrent();
+		}
 		markAsDirty();
 	}
 }
@@ -315,8 +318,7 @@ void ListWidget::handleMouseLeft(int button) {
 int ListWidget::findItem(int x, int y) const {
 	if (y < _topPadding) return -1;
 	int item = (y - _topPadding) / kLineHeight + _currentPos;
-	if (item >= _currentPos && item < _currentPos + _entriesPerPage &&
-		item < (int)_list.size())
+	if (isItemVisible(item) && item < (int)_list.size())
 		return item;
 	else
 		return -1;

@@ -121,6 +121,7 @@ public:
 	void scrollTo(int item);
 	void scrollToEnd();
 	int getCurrentScrollPos() const { return _currentPos; }
+	bool isItemVisible(int item) const { return _currentPos <= item && item < _currentPos + _entriesPerPage; }
 
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
 	Common::String getQuickSelectString() const { return _quickSelectStr; }
