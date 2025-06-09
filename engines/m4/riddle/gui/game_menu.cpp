@@ -27,7 +27,6 @@
 #include "m4/core/imath.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/hotkeys.h"
-#include "m4/graphics/gr_sprite.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"

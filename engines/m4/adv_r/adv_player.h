@@ -38,7 +38,7 @@ struct Player {
 	char verb[MAX_PLYR_STRING_LEN] = { 0 };
 	char noun[MAX_PLYR_STRING_LEN] = { 0 };
 	char prep[MAX_PLYR_STRING_LEN] = { 0 };
-	char object[MAX_PLYR_STRING_LEN];
+	char object[MAX_PLYR_STRING_LEN] = { 0 };
 	char ws_asset_name[32] = { 0 };		// Name of the walker sprite series holder
 	char ws_shadow_name[32] = { 0 };	// Name of the walker sprite series shadow holder
 	int16 walker_type = 0;		// Type of walker (ripley, mei_chin, safari, etc.)
@@ -109,7 +109,6 @@ void player_inform_walker_new_scale(int32 frontY, int32 backY, int32 frontS, int
 bool player_load_series(const char *walkerName, const char *shadowName, bool load_palette);
 void player_first_walk(int32 x1, int32 y1, int32 f1, int32 x2, int32 y2, int32 f2, bool enable_commands_at_destination);
 void player_set_defaults();
-void player_noun_becomes_verb(int32 spriteNum);
 
 void player_hotspot_walk_override(int32 x, int32 y, int32 facing = -1, int32 trigger = -1);
 void player_hotspot_walk_override_just_face(int32 facing, int32 trigger = -1);
