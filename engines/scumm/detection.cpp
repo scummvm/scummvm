@@ -239,6 +239,8 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 
 		game.setGUIOptions(customizeGuiOptions(*x));
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
+		game.appendGUIOptions(getGameGUIOptionsDescriptionPlatform(x->game.platform));
+
 
 		detectedGames.push_back(game);
 	}
