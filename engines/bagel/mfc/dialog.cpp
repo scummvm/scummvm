@@ -25,8 +25,6 @@
 namespace Bagel {
 namespace MFC {
 
-constexpr uint32 MODAL_DEFAULT = MKTAG('S', 'C', 'V', 'M');
-
 IMPLEMENT_DYNAMIC(CDialog, CWnd)
 BEGIN_MESSAGE_MAP(CDialog, CWnd)
 ON_COMMAND(IDOK, OnOK)
@@ -98,15 +96,12 @@ int CDialog::DoModal() {
 	if (!m_pParentWnd)
 		m_pParentWnd = AfxGetApp()->m_pMainWnd;
 
-	m_nModalResult = MODAL_DEFAULT;
-
 	if (CreateDlgIndirect(lpDialogTemplate,
 		this /*m_pParentWnd*/, hInst)) {
 		CWinApp *app = AfxGetApp();
 		MSG msg;
 
-		while (!app->shouldQuit() &&
-				m_nModalResult == MODAL_DEFAULT) {
+		while (!app->shouldQuit() && m_nModalResult == -1) {
 			GetMessage(msg);
 			if (!app->PreTranslateMessage(&msg)) {
 				TranslateMessage(&msg);
