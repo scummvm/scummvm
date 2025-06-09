@@ -1692,7 +1692,11 @@ void Actor_v7::turnToDirection(int newdir) {
 	newdir = remapDirection((newdir + 360) % 360, false);
 	_moving &= ~MF_TURN;
 
-	if (isInCurrentRoom() && !_ignoreBoxes) {
+	// This extra handling is only found in COMI. It is defintely needed there, since it prevents
+	// Guybrush from walking backwards in certain places. For DIG and FT, this code does not exist
+	// in the original engine and it also causes the same sort or glitches (but due to the presence
+	// of this code, not due to its absence).
+	if (_vm->_game.version == 8 && isInCurrentRoom() && !_ignoreBoxes) {
 		byte flags = _vm->getBoxFlags(_walkbox);
 		if ((flags & kBoxXFlip) || isInClass(kObjectClassXFlip))
 			newdir = 360 - newdir;
