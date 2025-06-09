@@ -104,7 +104,9 @@ void CWnd::ShowWindow(int nCmdShow) {
 }
 
 BOOL CWnd::EnableWindow(BOOL bEnable) {
-	error("TODO: CWnd::EnableWindow");
+	bool oldEnabled = _enabled;
+	_enabled = bEnable;
+	return oldEnabled;
 }
 
 void CWnd::UpdateWindow() {
