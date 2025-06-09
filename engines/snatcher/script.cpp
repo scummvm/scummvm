@@ -20,19 +20,21 @@
 */
 
 
-#include "common/endian.h"
 #include "snatcher/graphics.h"
+#include "snatcher/memory.h"
 #include "snatcher/resource.h"
+#include "snatcher/saveload.h"
 #include "snatcher/script.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
 #include "snatcher/ui.h"
 #include "snatcher/util.h"
-
+#include "common/savefile.h"
+#include "common/stream.h"
 
 namespace Snatcher {
 
-CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(0), _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0),  _counter(0), _opcodes() {
+CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(0), _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0),  _counter(0), _state(nullptr), _opcodes() {
 	_data = new uint16[256]();
 	makeFunctions();
 	reset();
@@ -60,9 +62,11 @@ void CmdQueue::writeUInt32(uint32 val) {
 	_writePos += 2;
 }
 
-void CmdQueue::run() {
+void CmdQueue::run(GameState &state) {
 	if (!_enable)
 		return;
+
+	_state = &state;
 
 	do {
 		if (_progress == -1) {
@@ -77,6 +81,16 @@ void CmdQueue::run() {
 	} while (_currentOpcode != 0 && _progress == -1);
 }
 
+void CmdQueue::loadState(Common::SeekableReadStream *in) {
+	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
+		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+}
+
+void CmdQueue::saveState(Common::SeekableWriteStream *out) {
+	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
+
+}
+
 void CmdQueue::makeFunctions() {
 #define OP(x) &CmdQueue::m_##x
 	typedef void (CmdQueue::*SFunc)(const uint16*&);
@@ -85,17 +99,17 @@ void CmdQueue::makeFunctions() {
 		OP(initAnimations),
 		OP(02),
 		OP(drawCommands),
-		OP(04),
+		OP(fmSfxBlock),
 		OP(printText),
 		OP(06),
 		OP(fmMusicStart),
 		OP(displayDialog),
 		OP(animOps),
 		OP(pcmWait),
-		OP(11),
+		OP(cdaWait),
 		OP(pcmSound),
 		OP(chatWithPortraitAnim),
-		OP(14),
+		OP(cdaPlay),
 		OP(gfxReset),
 		OP(waitFrames),
 		OP(loadResource),
@@ -106,14 +120,14 @@ void CmdQueue::makeFunctions() {
 		OP(resetTextFields),
 		OP(23),
 		OP(24),
-		OP(25),
+		OP(fmSfxWait),
 		OP(26),
 		OP(27),
 		OP(fmSoundEffect),
 		OP(pcmBlock),
-		OP(30),
+		OP(saveGame),
 		OP(31),
-		OP(32),
+		OP(gfxPostLoadProcess),
 		OP(33),
 		OP(palOps),
 		OP(clearJordanInputField)
@@ -152,6 +166,16 @@ void CmdQueue::m_initAnimations(const uint16 *&data) {
 }
 
 void CmdQueue::m_02(const uint16 *&data) {
+	if (_progress == 0) {
+		_vm->gfx()->reset(GraphicsEngine::kResetPalEvents);
+		for (int i = 0; i < 64; ++i)
+			_vm->gfx()->setAnimParameter(i, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause);
+		_vm->gfx()->enqueuePaletteEvent(_vm->_scd->makePtr(0x100D8));
+		_counter = 48;
+		++_progress;
+	} else if (--_counter == 0) {
+		_progress = -1;
+	}
 }
 
 void CmdQueue::m_drawCommands(const uint16 *&data) {
@@ -161,7 +185,7 @@ void CmdQueue::m_drawCommands(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_04(const uint16 *&data) {
+void CmdQueue::m_fmSfxBlock(const uint16 *&data) {
 	_vm->sound()->fmBlock(true);
 	_progress = -1;
 }
@@ -227,7 +251,9 @@ void CmdQueue::m_pcmWait(const uint16 *&data) {
 		_progress = -1;
 }
 
-void CmdQueue::m_11(const uint16 *&data) {
+void CmdQueue::m_cdaWait(const uint16 *&data) {
+	if (!_vm->sound()->cdaIsPlaying())
+		_progress = -1;
 }
 
 void CmdQueue::m_pcmSound(const uint16 *&data) {
@@ -266,7 +292,16 @@ void CmdQueue::m_chatWithPortraitAnim(const uint16 *&data) {
 		++data;
 }
 
-void CmdQueue::m_14(const uint16 *&data) {
+void CmdQueue::m_cdaPlay(const uint16 *&data) {
+	if (_progress == 0) {
+		_vm->sound()->cdaPlay(*data++);
+		++_progress;
+	} else if (_progress == 1) {
+		if (_vm->sound()->cdaIsPlaying())
+			++_progress;
+	} else {
+		_progress = -1;
+	}
 }
 
 void CmdQueue::m_gfxReset(const uint16 *&data) {
@@ -305,11 +340,11 @@ void CmdQueue::m_loadResource(const uint16 *&data) {
 		++_progress;
 
 		if (dest == 0x1A800) {
-			delete[] _vm->_script->data;
-			_vm->_script->data = _vm->_fio->fileData(index, &_vm->_script->dataSize);
-			assert(_vm->_script->data);
-			_vm->_script->curFileNo = index;
-			_vm->_ui->setScriptTextResource(_vm->_script->getTextResource());
+			delete[] _state->script.data;
+			_state->script.data = _vm->_fio->fileData(index, &_state->script.dataSize);
+			assert(_state->script.data);
+			_state->script.curFileNo = index;
+			_vm->_ui->setScriptTextResource(_state->script.getTextResource());
 		} else if (dest == 0x28000) {
 			delete _vm->_module;
 			_vm->_module = _vm->_fio->loadModule(index);
@@ -365,7 +400,13 @@ void CmdQueue::m_24(const uint16 *&data) {
 //shooting practice
 }
 
-void CmdQueue::m_25(const uint16 *&data) {
+void CmdQueue::m_fmSfxWait(const uint16 *&data) {
+	if (_progress == 0) {
+		_counter = 600;
+		++_progress;
+	}
+	if (--_counter == 0 || (_vm->sound()->fmGetStatus().sfx == 0)) 
+		_progress = -1;
 }
 
 void CmdQueue::m_26(const uint16 *&data) {
@@ -385,13 +426,21 @@ void CmdQueue::m_pcmBlock(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_30(const uint16 *&data) {
+void CmdQueue::m_saveGame(const uint16 *&data) {
+	int slot = *data++;
+	Common::String desc(Common::String::format("SNATCHER_%02d", slot));
+	_vm->saveGameState(slot, desc);
+	_progress = -1;
 }
 
 void CmdQueue::m_31(const uint16 *&data) {
 }
 
-void CmdQueue::m_32(const uint16 *&data) {
+void CmdQueue::m_gfxPostLoadProcess(const uint16 *&data) {
+	_vm->gfx()->runScript(_vm->_module->getGfxData(), *data++);
+	_vm->gfx()->updateAnimations();
+	_vm->gfx()->postLoadProcess();
+	_progress = -1;
 }
 
 void CmdQueue::m_33(const uint16 *&data) {
@@ -409,9 +458,9 @@ void CmdQueue::m_clearJordanInputField(const uint16 *&data) {
 	_progress = -1;
 }
 
-ScriptEngine::ScriptEngine(CmdQueue *que, UI *ui, ResourcePointer *scd) : _que(que), _ui(ui), _arrayData(nullptr), _pos1(0), _pos2(0), _op(0), /*_v1(0), _v2(0), _v3(0),*/ _result(0), _flagsTable(nullptr) {
+ScriptEngine::ScriptEngine(CmdQueue *que, UI *ui, MemAccessHandler *mem, ResourcePointer *scd) : _que(que), _ui(ui), _mem(mem), _arrayData(nullptr), _pos1(0), _pos2(0), _op(0), /*_v1(0), _v2(0), _v3(0),*/ _result(0), _flagsTable(nullptr) {
 	_flagsTable = new uint8[352]();
-	_arrayData = new uint8[0x100]();
+	_arrayData = new uint8[256]();
 	makeOpcodeTable(scd);
 	resetArrays();
 	_ui->setScriptVerbsArray(&_arrays[1]);
@@ -425,7 +474,7 @@ ScriptEngine::~ScriptEngine() {
 
 void ScriptEngine::resetArrays() {
 	static const uint8 arraySizes[] = { 0x08, 0x1F, 0x0F, 0x12, 0x03, 0x10 };
-	memset(_arrayData, 0, 0x100);
+	memset(_arrayData, 0, 256);
 
 	uint8 *pos = _arrayData;
 	for (int i = 0; i < ARRAYSIZE(_arrays); ++i) {
@@ -434,13 +483,10 @@ void ScriptEngine::resetArrays() {
 	}
 }
 
-void ScriptEngine::run(Script *script) {
-	assert(script);
-
-	_script = script;
-	_pos1 = script->curPos;
-	//script->sp = script->bp;
-	script->sentenceDone = 0;
+void ScriptEngine::run(Script &script) {
+	_script = &script;
+	_pos1 = script.curPos;
+	script.sentenceDone = 0;
 
 	runOpcode();
 }
@@ -450,16 +496,16 @@ void ScriptEngine::run(Script *script) {
 #define ARR_READ(x, y) _arrays[x].read(y)
 #define ARR_WRITE(x, y, z) _arrays[x].write(y, z)
 
-bool ScriptEngine::postProcess(Script *script) {
-	if (script->newPos != 0xFFFF) {
+bool ScriptEngine::postProcess(Script &script) {
+	if (script.newPos != 0xFFFF) {
 		if (ARR_SIZE(4) <= ARR_POS(4)) {
 			for (int i = 0; i < ARR_POS(4) - 1; ++i)
 				ARR_WRITE(4, i, ARR_READ(4, i + 1));
 			--ARR_POS(4);
 		}
-		setArrayLastEntry(4, script->curPos);
-		script->curPos = script->newPos;
-		script->newPos = 0xFFFF;
+		setArrayLastEntry(4, script.curPos);
+		script.curPos = script.newPos;
+		script.newPos = 0xFFFF;
 		_ui->resetVerbSelection();
 	}
 
@@ -488,6 +534,45 @@ void ScriptEngine::processInput() {
 		setArrayLastEntry(2, val);
 	}
 	ARR_POS(1) = 0;
+}
+
+void ScriptEngine::loadState(Common::SeekableReadStream *in, Script &script) {
+	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
+		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+
+	uint16 *d = reinterpret_cast<uint16*>(_arrayData);
+	for (int i = 0; i < 128; ++i)
+		d[i] = in->readUint16BE();
+	in->read(_flagsTable, 352);
+
+	script.sentenceDone = in->readByte();
+	script.sentencePos = in->readByte();
+	script.curFileNo = in->readByte();
+	script.curGfxScript = in->readSint16BE();
+	script.curPos = in->readUint16BE();
+
+	ARR_POS(0) = 0;
+	ARR_POS(1) = 0;
+	ARR_POS(2) = 0;
+	ARR_POS(3) = 0;
+	ARR_POS(5) = 0;
+}
+
+void ScriptEngine::saveState(Common::SeekableWriteStream *out, Script &script) {
+	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
+
+	const uint16 *s = reinterpret_cast<const uint16*>(_arrayData);
+	for (int i = 0; i < 128; ++i)
+		out->writeUint16BE(s[i]);
+	out->write(_flagsTable, 352);
+
+	out->writeByte(script.sentenceDone);
+	out->writeByte(script.sentencePos);
+	out->writeByte(script.curFileNo);
+	out->writeSint16BE(script.curGfxScript);
+	uint16 pos = script.curPos;
+	getArrayEntry(5, 0, pos);
+	out->writeUint16BE(pos);
 }
 
 void ScriptEngine::runOpcode() {
@@ -741,27 +826,6 @@ uint8 ScriptEngine::getOpcode(int offset) {
 	return op;
 }
 
-void ScriptEngine::writeHostMemory(uint16 addr, uint16 val) {
-	// The scripts have the wonderful capability to directly write into the sub cpu memory.
-	// It is limited to 16bit addresses at least. I hope that in practice, this will only
-	// happen for some global variables. We will just have to catch every case whenever a
-	// new address comes up...
-	switch (addr) {
-	case 0x79F0:
-		break;
-	case 0x971a:
-		_ui->setInterpreterMode(val);
-		break;
-	case 0xFFFF:
-		// This is an exception that is caught even in the original code.
-		//_vm->sound()->setUnkCond(val);
-		val = val;
-		break;
-	default:
-		error("%s(): Unhandled address 0x%04X", __FUNCTION__, addr);
-	}
-}
-
 #ifdef SNATCHER_SCRIPT_DEBUG
 int ScriptEngine::ScriptEngineProc::_recursion = 0;
 #endif
@@ -791,7 +855,7 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(fmMusicStart),
 		OP(callSubRoutine),
 		OP(12),
-		OP(13),
+		OP(cdaPlay),
 		OP(14),
 		OP(fmSoundEffect),
 		OP(eval_equal),
@@ -850,8 +914,8 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(animWait),
 		OP(pcmSoundWait),
 		OP(fmMusicWait),
-		OP(72),
-		OP(73),
+		OP(cdaWait),
+		OP(fmSfxWait),
 		OP(waitFrames)
 	};
 #undef OP
@@ -901,6 +965,10 @@ void ScriptEngine::o_chatWithPortraitAnim() {
 }
 
 void ScriptEngine::o_05() {
+	if (!evalFinished())
+		return;
+	_que->writeUInt16(0x0C);
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
 void ScriptEngine::o_eval_and() {
@@ -962,7 +1030,12 @@ void ScriptEngine::o_12() {
 	_script->curPos = cp;
 }
 
-void ScriptEngine::o_13() {
+void ScriptEngine::o_cdaPlay() {
+	if (!evalFinished())
+		return;
+	_que->writeUInt16(0x0E);
+	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
+
 }
 
 void ScriptEngine::o_14() {
@@ -1325,9 +1398,11 @@ void ScriptEngine::o_sysOps() {
 
 	switch (sub) {
 	case 0:
+		// Block fm music
 		_que->writeUInt16(0x04);
 		break;
 	case 1:
+		// Save game state
 		_que->writeUInt16(0x1E);
 		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4));
 		//saveState_sub_14F12();
@@ -1339,22 +1414,28 @@ void ScriptEngine::o_sysOps() {
 		_que->writeUInt16(0x1F);
 		break;
 	case 4:
+		// Start action sequence
 		//_scr_wd_00 = READ_BE_UINT16(_script->data + _pos1 + 4);
 		//_scr_wd_01 = _scr_wd_02 = _scr_wd_03 = _scr_wd_04 = 0;
 		//_scr_bt_00 = true;
 		_que->writeUInt16(0x18);
 		break;
 	case 5:
+		// The scripts have the wonderful capability to read from and write into
+		// the sub cpu memory. It is limited to 16bit addresses at least. I hope
+		// that in practice, this will only happen for some global variables. We
+		// will just have to catch every case whenever a new address comes up...
 		addr = READ_BE_UINT16(_script->data + _pos1 + 4);
-		_result = 0;//READ_BE_UINT16(addr);
-		debug ("READ VAR: Addr 0x%04x", addr);
+		_result = _mem->readWord(addr);
 		break;
 	case 6:
+		// See case 5
 		addr = READ_BE_UINT16(_script->data + _pos1 + 5);
 		val = READ_BE_UINT16(_script->data + _pos1 + 7);
-		writeHostMemory(addr, val);
+		_mem->writeWord(addr, val);
 		break;
 	case 7:
+		// Block pcm sounds
 		_que->writeUInt16(0x1D);
 		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4) ? 1 : 0);
 		break;
@@ -1371,7 +1452,7 @@ void ScriptEngine::o_sysOps() {
 		}
 		break;
 	case 9:
-		val = /*_vm->_gameState.chapter = */READ_BE_UINT16(_script->data + _pos1 + 4) + 2;
+		_script->chapter = READ_BE_UINT16(_script->data + _pos1 + 4) + 2;
 		break;
 	case 10:
 		val = READ_BE_UINT16(_script->data + _pos1 + 4);
@@ -1441,10 +1522,14 @@ void ScriptEngine::o_fmMusicWait() {
 		_que->writeUInt16(0x13);
 }
 
-void ScriptEngine::o_72() {
+void ScriptEngine::o_cdaWait() {
+	if (evalFinished())
+		_que->writeUInt16(0x0B);
 }
 
-void ScriptEngine::o_73() {
+void ScriptEngine::o_fmSfxWait() {
+	if (evalFinished())
+		_que->writeUInt16(0x19);
 }
 
 void ScriptEngine::o_waitFrames() {

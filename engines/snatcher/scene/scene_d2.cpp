@@ -49,8 +49,11 @@ void updateAnimBlink();
 
 // local vars
 int16 _option;
+uint16 _curSaveFile;
 uint16 _counter2;
 bool _loadCancelled;
+uint8 _buram0;
+bool _buram2;
 
 SH_HEAD_END(D2)
 
@@ -70,7 +73,7 @@ SH_IMP_FRMTBL(D2) {
 	SH_FRM(D2, 12)
 };
 
-SH_IMP_CTOR(D2), _option(0), _counter2(0), _loadCancelled(false) {
+SH_IMP_CTOR(D2), _option(0), _curSaveFile(0), _counter2(0), _loadCancelled(false), _buram2(true), _buram0(0) {
 	SH_CTOR_MAKEPROCS(D2);
 }
 
@@ -84,11 +87,6 @@ SH_IMPL_UPDT(D2) {
 	else
 		(*_frameProcs[state.frameNo])(state);
 }
-
-int _hasSaveSlotFlag = 15;
-int _saveFileCurID = 0;
-uint8 _buram_0 = 0;
-bool _buram_2 = true;
 
 // functions
 SH_IMPL_FRM(D2, 00) {
@@ -113,7 +111,7 @@ SH_IMPL_FRM(D2, 00) {
 	case 2:
 		if (_vm->input().controllerFlags & 3) {
 			_vm->gfx()->clearAnimParameterFlags(16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
-			_buram_0 ^= 1;
+			_buram0 ^= 1;
 		}
 		if (_vm->input().controllerFlags & 0x80) {
 			state.counter = 10;
@@ -124,8 +122,8 @@ SH_IMPL_FRM(D2, 00) {
 	default:
 		if (--state.counter)
 			return;
-		if (_buram_0)
-			state.conf.hasRAMCart = _buram_2;
+		if (_buram0)
+			state.conf.hasRAMCart = _buram2;
 		++state.frameNo;
 		state.frameState = 0;
 		break;
@@ -206,12 +204,11 @@ SH_IMPL_FRM(D2, 06) {
 SH_IMPL_FRM(D2, 07) {
 	switch (state.frameState) {
 	case 0:
-		// loadSaveFile();
 		++state.frameState;
 		break;
 	default:
 		++state.frameNo;
-		if (_hasSaveSlotFlag)
+		if (state.saveSlotUsage)
 			++state.frameNo;
 		state.frameState = 0;
 		break;
@@ -251,8 +248,8 @@ SH_IMPL_FRM(D2, 09) {
 	switch (state.frameState) {
 	case 0:
 		_vm->gfx()->transitionCommand(0xFF);
-		_vm->gfx()->clearAnimParameterFlags(_hasSaveSlotFlag ? 17 : 16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
-		state.frameState += (_hasSaveSlotFlag ? 1 : 2);
+		_vm->gfx()->clearAnimParameterFlags(state.saveSlotUsage ? 17 : 16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
+		state.frameState += (state.saveSlotUsage ? 1 : 2);
 		break;
 	case 1:
 		if (_vm->input().controllerFlags & 3)
@@ -304,14 +301,14 @@ SH_IMPL_FRM(D2, 10) {
 
 		do {
 			if (_vm->input().controllerFlags & 1)
-				--_saveFileCurID;
+				--_curSaveFile;
 			if (_vm->input().controllerFlags & 2)
-				++_saveFileCurID;
-			_saveFileCurID &= 3;
-		} while (!(_hasSaveSlotFlag & (1 << _saveFileCurID)));
+				++_curSaveFile;
+			_curSaveFile &= 3;
+		} while (!(state.saveSlotUsage & (1 << _curSaveFile)));
 
-		_vm->gfx()->setAnimParameter(24, GraphicsEngine::kAnimParaFrame, _saveFileCurID << 2);
-		_vm->gfx()->setAnimParameter(25, GraphicsEngine::kAnimParaFrame, _saveFileCurID << 2);
+		_vm->gfx()->setAnimParameter(24, GraphicsEngine::kAnimParaFrame, _curSaveFile << 2);
+		_vm->gfx()->setAnimParameter(25, GraphicsEngine::kAnimParaFrame, _curSaveFile << 2);
 
 		if (_vm->input().controllerFlags & 0x80) {
 			_vm->sound()->fmSendCommand(56, 0, 2);

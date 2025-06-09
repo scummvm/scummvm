@@ -50,11 +50,12 @@ public:
 	virtual void pcmSendCommand(int cmd, int arg) = 0;
 	virtual void pcmInitSound(int sndId) = 0;
 	virtual uint8 pcmGetStatus() const = 0;
+	virtual int16 pcmGetResourceId() const = 0;
 
 	virtual void pause(bool toggle) = 0;
 	virtual void update() = 0;
 
-	virtual void setUnkCond(bool enable) = 0;
+	virtual void reduceVolume2(bool enable) = 0;
 
 	virtual void setMusicVolume(int vol) = 0;
 	virtual void setSoundEffectVolume(int vol) = 0;
