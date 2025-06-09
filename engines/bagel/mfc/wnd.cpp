@@ -470,11 +470,17 @@ BOOL CWnd::GetClientRect(LPRECT lpRect) const {
 }
 
 void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
-	error("CWnd::MoveWindow is unsupported");
+	_windowRect = *lpRect;
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
+
+	if (bRepaint)
+		InvalidateRect(nullptr, true);
 }
 
 void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
-	error("CWnd::MoveWindow is unsupported");
+	const RECT r(x, y, x + nWidth, y + nHeight);
+	MoveWindow(&r, bRepaint);
 }
 
 HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {

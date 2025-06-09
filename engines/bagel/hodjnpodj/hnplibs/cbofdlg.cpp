@@ -165,7 +165,6 @@ BOOL CBmpDialog::OnInitDialog() {
 	// if we are saving the background
 	//
 	if (m_bSaveBackground) {
-
 		// save a copy of the background
 		m_pDlgBackground = FetchScreenBitmap(pDC, m_pPalette, 0, 0, iDlgWidth, iDlgHeight);
 	}
