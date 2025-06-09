@@ -37,6 +37,7 @@
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/dialog_template.h"
 #include "bagel/mfc/gfx/fonts.h"
+#include "bagel/mfc/libs/array.h"
 #include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/libs/settings.h"
 
@@ -870,7 +871,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	Common::Array<CWnd *> _ownedControls;
+	Libs::Array<CWnd *> _ownedControls;
 
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) {

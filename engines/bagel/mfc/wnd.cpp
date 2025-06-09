@@ -65,7 +65,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 
 	_controlId = nID;
 
-	assert(!m_pParentWnd);
+	assert(pParentWnd);
 	m_pParentWnd = pParentWnd;
 	m_pParentWnd->_children[nID] = this;
 
@@ -525,7 +525,28 @@ BOOL CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {
 }
 
 BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
-	error("TODO: CWnd::SubclassDlgItem");
+	// Validate we're replacing the same kind of control
+	assert(pParent->_children.contains(nID));
+	CWnd *oldControl = pParent->_children[nID];
+	assert(IsKindOf(oldControl->GetRuntimeClass()));
+
+	// Remove the old control from the window
+	pParent->_ownedControls.remove(oldControl);
+	pParent->_children.erase(oldControl->_controlId);
+
+	// Add the new control to the parent
+	pParent->_children[nID] = this;
+	m_pParentWnd = pParent;
+
+	// Copy over the properties to the new control
+	_windowText = oldControl->_windowText;
+	_windowRect = oldControl->_windowRect;
+	_controlId = oldControl->_controlId;
+
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
+
+	return true;
 }
 
 BOOL CWnd::SetDlgItemText(int nIDDlgItem, LPCSTR lpString) {
@@ -575,7 +596,6 @@ void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
 	SendMessage(WM_INITDIALOG);
 	ShowWindow(SW_SHOWNORMAL);
 }
-
 
 void CWnd::GetMessage(MSG &msg) {
 	Libs::Event ev;
