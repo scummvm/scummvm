@@ -98,10 +98,10 @@ bool InitWSAssets() {
 	if ((_GWS(globalMACHnames) = (char **)mem_alloc(sizeof(char *) * 256, "MACH resource table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalMACHHandles) = (MemHandle *)mem_alloc(sizeof(Handle) * 256, "CELS Handles table")) == nullptr) {
+	if ((_GWS(globalMACHHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalMACHoffsets) = (int32 *)mem_alloc(sizeof(int32 *) * 256, "MACH offsets table")) == nullptr) {
+	if ((_GWS(globalMACHoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "MACH offsets table")) == nullptr) {
 		return false;
 	}
 	for (i = 0; i < 256; i++) {
@@ -114,10 +114,10 @@ bool InitWSAssets() {
 	if ((_GWS(globalSEQUnames) = (char **)mem_alloc(sizeof(char *) * 256, "SEQU resource table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalSEQUHandles) = (MemHandle *)mem_alloc(sizeof(Handle) * 256, "CELS Handles table")) == nullptr) {
+	if ((_GWS(globalSEQUHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalSEQUoffsets) = (int32 *)mem_alloc(sizeof(int32 *) * 256, "SEQU offsets table")) == nullptr) {
+	if ((_GWS(globalSEQUoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "SEQU offsets table")) == nullptr) {
 		return false;
 	}
 	for (i = 0; i < 256; i++) {
@@ -130,10 +130,10 @@ bool InitWSAssets() {
 	if ((_GWS(globalDATAnames) = (char **)mem_alloc(sizeof(char *) * 256, "DATA resource table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalDATAHandles) = (MemHandle *)mem_alloc(sizeof(Handle) * 256, "CELS Handles table")) == nullptr) {
+	if ((_GWS(globalDATAHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalDATAoffsets) = (int32 *)mem_alloc(sizeof(int32 *) * 256, "DATA offsets table")) == nullptr) {
+	if ((_GWS(globalDATAoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "DATA offsets table")) == nullptr) {
 		return false;
 	}
 	for (i = 0; i < 256; i++) {
@@ -146,13 +146,13 @@ bool InitWSAssets() {
 	if ((_GWS(globalCELSnames) = (char **)mem_alloc(sizeof(char *) * 256, "CELS resource table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalCELSHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle *) * 256, "CELS Handles table")) == nullptr) {
+	if ((_GWS(globalCELSHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalCELSoffsets) = (int32 *)mem_alloc(sizeof(int32 *) * 256, "CELS offsets table")) == nullptr) {
+	if ((_GWS(globalCELSoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "CELS offsets table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalCELSPaloffsets) = (int32 *)mem_alloc(sizeof(int32 *) * 256, "CELS pal offsets table")) == nullptr) {
+	if ((_GWS(globalCELSPaloffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "CELS pal offsets table")) == nullptr) {
 		return false;
 	}
 	for (i = 0; i < 256; i++) {
