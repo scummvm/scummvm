@@ -274,7 +274,7 @@ bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
 
 	// Intialize the Anim8
 	myAnim8->switchTime = 0;
-	myAnim8->active = 1;
+	myAnim8->active = true;
 	myAnim8->eosReqOffset = -1;
 	myAnim8->sequHash = newSequHash;
 	myAnim8->returnStackIndex = 0;
@@ -425,7 +425,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 
 		case LOCAL_FMT_REG:
 			// Range check to make sure we don't index off into hyperspace
-			if ((myIndex >= IDX_COUNT + myAnim8->numLocalVars)) {
+			if (myIndex >= IDX_COUNT + myAnim8->numLocalVars) {
 				ws_LogErrorMsg(FL, "Register Index out of range - max: %d, requested %d.",
 					IDX_COUNT + myAnim8->numLocalVars, myIndex);
 				return false;
@@ -436,7 +436,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 
 		case LOCAL_FMT_DATA:
 			// Ensure we have a dataHandle
-			if ((!myAnim8->dataHandle) || (!*(myAnim8->dataHandle))) {
+			if (!myAnim8->dataHandle || !*(myAnim8->dataHandle)) {
 				ws_LogErrorMsg(FL, "Trying to access a DATA field when no DATA has been set");
 				return false;
 			}
@@ -449,6 +449,9 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			*argPtr = argValue;
 			prefix += Common::String::format("DATA %d", myIndex);
 			dbg_AddParamToCurrMachInstr(prefix.c_str());
+			break;
+
+		default:
 			break;
 		}
 	} else if (myFormat == FMT_GLOBAL_SRC) {
@@ -472,9 +475,9 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 		// 15 bits of the data segment are shifted left, so the value requested is in frac16 format.
 		// The value is stored in the frac16 (dataArg1), and...
 		if (myData & OP_DATA_SIGN) {
-			*argValue = -(myData & OP_DATA_VALUE) << (dataFormats[myFormat - 3]);
+			*argValue = -(myData & OP_DATA_VALUE) << dataFormats[myFormat - 3];
 		} else {
-			*argValue = (myData & OP_DATA_VALUE) << (dataFormats[myFormat - 3]);
+			*argValue = (myData & OP_DATA_VALUE) << dataFormats[myFormat - 3];
 		}
 
 		// myArg1 will point to this location
@@ -497,10 +500,10 @@ int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8) {
 	uint32 *myPC = *PC;
 
 	// Get the opCode
-	uint32 opCode = FROM_LE_32(*myPC++);
+	const uint32 opCode = FROM_LE_32(*myPC++);
 
 	// Get the instruction number
-	int32 myInstruction = (opCode & OP_INSTR) >> 25;
+	const int32 myInstruction = (opCode & OP_INSTR) >> 25;
 	dbg_AddOpcodeToMachineInstr(myInstruction);
 
 	// Get the format for the first arg 
@@ -879,7 +882,7 @@ static void op_BRANCH(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "check the CCR, arg1 is the branch type, arg2 is the PC offset");
 	}
-	int32 myOffset = *_GWS(myArg2) >> 14;
+	const int32 myOffset = *_GWS(myArg2) >> 14;
 	switch (*_GWS(myArg1) >> 16) {
 	case BRANCH_BR:
 		myAnim8->pcOffset += myOffset;
@@ -901,6 +904,8 @@ static void op_BRANCH(Anim8 *myAnim8) {
 		break;
 	case BRANCH_BGT:
 		if (_GWS(compareCCR) > 0) myAnim8->pcOffset += myOffset;
+		break;
+	default:
 		break;
 	}
 }
@@ -1058,8 +1063,8 @@ static void op_RETURN(Anim8 *myAnim8) {
 	}
 
 	myAnim8->returnStackIndex--;
-	uint32 returnSequHash = myAnim8->returnHashes[myAnim8->returnStackIndex];
-	uint32 returnOffset = myAnim8->returnOffsets[myAnim8->returnStackIndex];
+	const uint32 returnSequHash = myAnim8->returnHashes[myAnim8->returnStackIndex];
+	const uint32 returnOffset = myAnim8->returnOffsets[myAnim8->returnStackIndex];
 
 	// Find the sequence
 	int32 dummy, dummy2;
@@ -1107,15 +1112,15 @@ static void op_SET_LAYER(Anim8 *myAnim8) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: set_layer(arg1)");
 	}
 
-	int32 newLayer = *_GWS(myArg1) >> 16;
-	int32 myLayer = myAnim8->myLayer;
+	const int32 newLayer = *_GWS(myArg1) >> 16;
+	const int32 myLayer = myAnim8->myLayer;
 
 	if (myLayer == newLayer) {
 		return;
 	}
 
 	// If we are moving myAnim8 closer to the front (screen)	
-	if ((newLayer < myLayer) && (myAnim8->infront)) {
+	if ((newLayer < myLayer) && myAnim8->infront) {
 
 		//search "upward" to find the new position for myAnim8
 		tempAnim8 = myAnim8->infront;
@@ -1153,7 +1158,7 @@ static void op_SET_LAYER(Anim8 *myAnim8) {
 	}
 
 	// Else we are moving myAnim8 close to the back (further from the screen)
-	else if ((newLayer > myLayer) && (myAnim8->behind)) {
+	else if ((newLayer > myLayer) && myAnim8->behind) {
 
 		//search "downward" to find the new position for myAnim8
 		tempAnim8 = myAnim8->behind;
@@ -1329,7 +1334,6 @@ void (*pCodeJmpTable[])(Anim8 *myAnim8) = {
 bool CrunchAnim8(Anim8 *myAnim8) {
 	bool moveTheCel = false;
 	frac16 percentDist;
-	int32 myInstruction;
 	uint32 *myPC;
 
 	// Get the register set for myAnim8
@@ -1342,12 +1346,12 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 	_GWS(compareCCR) = 0;
 
 	//store the old values, so we can tell if we need to remap the Sprite
-	frac16 oldX = myRegs[IDX_X];
-	frac16 oldY = myRegs[IDX_Y];
-	frac16 oldS = myRegs[IDX_S];
-	int32 oldW = myRegs[IDX_W] >> 16;
-	int32 oldH = myRegs[IDX_H] >> 16;
-	int32 oldR = myRegs[IDX_R] >> 16;
+	const frac16 oldX = myRegs[IDX_X];
+	const frac16 oldY = myRegs[IDX_Y];
+	const frac16 oldS = myRegs[IDX_S];
+	const int32 oldW = myRegs[IDX_W] >> 16;
+	const int32 oldH = myRegs[IDX_H] >> 16;
+	const int32 oldR = myRegs[IDX_R] >> 16;
 
 	// Check to see if we are still in an execution loop, or if it is time to 
 	// Interpret further instructions
@@ -1368,7 +1372,8 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 
 		dbg_SetCurrMachInstr(myAnim8->myMachine, myAnim8->pcOffset, true);
 
-		if ((myInstruction = ws_PreProcessPcode(&myPC, myAnim8)) < 0) {
+		const int32 myInstruction = ws_PreProcessPcode(&myPC, myAnim8);
+		if (myInstruction < 0) {
 			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025c, nullptr);
 		}
 
@@ -1396,7 +1401,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 	}
 
 	if (myAnim8->flags) {
-		frac16 timeElapsed = (_GWS(ws_globals)[GLB_TIME] - myAnim8->startTime) << 16;
+		const frac16 timeElapsed = (_GWS(ws_globals)[GLB_TIME] - myAnim8->startTime) << 16;
 
 		// This must be checked before TAG_TARGS because a bez path can use a target scale and rotate
 		// And we don't want to accidentally set up a target x or y.
@@ -1441,7 +1446,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 				myAnim8->start_s = myRegs[IDX_S];
 				myAnim8->start_r = myRegs[IDX_R];
 			}
-			int32 tempAngle = (myRegs[IDX_THETA] >> 16) & 0xff;
+			const int32 tempAngle = (myRegs[IDX_THETA] >> 16) & 0xff;
 			myRegs[IDX_DELTA_X] = MulSF16(myRegs[IDX_VELOCITY], sinTable[tempAngle]);
 			myRegs[IDX_DELTA_Y] = MulSF16(myRegs[IDX_VELOCITY], -(int)cosTable[tempAngle]);
 			myAnim8->flags |= (TAG_DELTAS << 16);
@@ -1548,8 +1553,8 @@ void ws_CrunchEOSreqs(void) {
 		if (_GWS(EOSreqList)) {
 			_GWS(EOSreqList)->prev = nullptr;
 		}
-		int32 pcOffset = tempEOSreq->myAnim8->eosReqOffset;
-		int32 pcCount = tempEOSreq->myAnim8->eosReqCount;
+		const int32 pcOffset = tempEOSreq->myAnim8->eosReqOffset;
+		const int32 pcCount = tempEOSreq->myAnim8->eosReqCount;
 		machine *myXM = tempEOSreq->myAnim8->myMachine;
 		tempEOSreq->myAnim8->eosReqOffset = -1;
 		mem_free_to_stash((void *)tempEOSreq, _GWS(memtypeEOS));
