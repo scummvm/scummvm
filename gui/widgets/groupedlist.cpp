@@ -304,7 +304,7 @@ int GroupedListWidget::getNextPos(int oldSel) {
 	for (uint i = 0; i < _listIndex.size(); i++) {
 		if (_listIndex[i] == oldSel) {
 			return pos;
-		} else if (_listIndex[i] > 0) {
+		} else if (_listIndex[i] >= 0) { // skip headers
 			pos++;
 		}
 	}
