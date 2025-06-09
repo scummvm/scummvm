@@ -124,6 +124,45 @@ int CDialog::DoModal() {
 	return m_nModalResult;
 }
 
+BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+	CWnd *pParentWnd, HINSTANCE hInst) {
+	assert(lpDialogTemplate != nullptr);
+
+	if (hInst == nullptr)
+		hInst = AfxGetInstanceHandle();
+
+	HGLOBAL hTemplate = nullptr;
+
+#if 0
+	// If no font specified, set the system font.
+	CString strFace;
+	WORD wSize = 0;
+	BOOL bSetSysFont = !CDialogTemplate::GetFont(lpDialogTemplate, strFace,
+		wSize);
+	if (bSetSysFont) {
+		CDialogTemplate dlgTemp(lpDialogTemplate);
+		dlgTemp.SetSystemFont(wSize);
+		hTemplate = dlgTemp.Detach();
+	}
+#endif
+	if (hTemplate != nullptr)
+		lpDialogTemplate = (LPDLGTEMPLATE)GlobalLock(hTemplate);
+
+	// setup for modal loop and creation
+	m_nModalResult = -1;
+	m_nFlags |= WF_CONTINUEMODAL;
+
+	// Create modeless dialog
+	createDialogIndirect(lpDialogTemplate);
+
+	if (hTemplate != nullptr) {
+		GlobalUnlock(hTemplate);
+		GlobalFree(hTemplate);
+	}
+
+	return TRUE;
+}
+
 DWORD CDialog::GetDefID() {
 	error("TODO: CDialog::GetDefID");
 }

@@ -856,8 +856,6 @@ typedef struct tagCREATESTRUCTA {
 
 class CWnd : public CCmdTarget {
 	DECLARE_DYNCREATE(CWnd)
-private:
-	void createDialogIndirect(LPCDLGTEMPLATE dlgTemplate);
 
 protected:
 	static const MSG *GetCurrentMessage();
@@ -866,6 +864,7 @@ protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT &cs) {
 		return true;
 	}
+	void createDialogIndirect(LPCDLGTEMPLATE dlgTemplate);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -1045,12 +1044,8 @@ protected:
 		return 0;
 	}
 
-	BOOL CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
-		CWnd *pParentWnd, HINSTANCE hInst);
-
 protected:
 	Common::Array<CWnd *> _children;
-	int m_nModalResult = 0;
 	int m_nFlags = 0;
 
 public:
@@ -1192,6 +1187,8 @@ private:
 		void *lpDialogInit, HINSTANCE hInst);
 	BOOL CreateIndirect(HGLOBAL hDialogTemplate, CWnd *pParentWnd,
 		HINSTANCE hInst);
+	BOOL CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+		CWnd *pParentWnd, HINSTANCE hInst);
 
 protected:
 	DECLARE_MESSAGE_MAP()
