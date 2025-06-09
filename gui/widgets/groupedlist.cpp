@@ -206,7 +206,7 @@ void GroupedListWidget::setSelected(int item) {
 		item = filteredItem;
 	}
 
-	if (item < -1 || item >= (int)_list.size())
+	if (item < -1 || item >= (int)_dataList.size())
 		return;
 
 	// We only have to do something if the widget is enabled and the selection actually changes
