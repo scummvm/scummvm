@@ -1790,6 +1790,7 @@ void GfxOpenGLS::dimRegion(int xin, int yReal, int w, int h, float level) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	g_system->presentBuffer();
 	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xin, yin, w, h, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _dimRegionVBO);
@@ -2255,6 +2256,7 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 #endif
 		}
 	} else {
+		g_system->presentBuffer();
 		readPixels(0, 0, _screenWidth, _screenHeight, (uint8 *)src.getPixels());
 	}
 	bmp = createScreenshotBitmap(&src, w, h, true);
@@ -2263,6 +2265,7 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 }
 
 void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
+	g_system->presentBuffer();
 	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
 }

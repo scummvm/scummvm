@@ -42,6 +42,7 @@ public:
 
 	void leave3D();
 	void enter3D();
+	void presentBuffer();
 
 	void showOverlay(uint w, uint h);
 	void hideOverlay();

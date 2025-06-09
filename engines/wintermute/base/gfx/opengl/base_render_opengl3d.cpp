@@ -1020,7 +1020,7 @@ void BaseRenderOpenGL3D::postfilter() {
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
 
-
+		g_system->presentBuffer();
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
@@ -1040,6 +1040,7 @@ void BaseRenderOpenGL3D::postfilter() {
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+		g_system->presentBuffer();
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
@@ -1059,6 +1060,7 @@ void BaseRenderOpenGL3D::postfilter() {
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+		g_system->presentBuffer();
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
 		
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
@@ -1079,6 +1081,7 @@ void BaseRenderOpenGL3D::postfilter() {
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		if (_postFilterMode == kPostFilterSepia) {
+			g_system->presentBuffer();
 			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
 
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);

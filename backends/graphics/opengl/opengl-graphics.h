@@ -109,6 +109,7 @@ public:
 	void fillScreen(const Common::Rect &r, uint32 col) override;
 
 	void updateScreen() override;
+	void presentBuffer() override;
 
 	Graphics::Surface *lockScreen() override;
 	void unlockScreen() override;
