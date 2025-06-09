@@ -450,13 +450,13 @@ void LauncherDialog::removeGame(int item) {
 	MessageDialog alert(_("Do you really want to remove this game configuration?"), _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
-		int nextPos = -1;
-		if (_groupBy != kGroupByNone && getType() == kLauncherDisplayList) {
-			// Find the position of the next item in the sorted list.
-			nextPos = getNextPos(item);
-		} else if (_groupBy != kGroupByNone && getType() == kLauncherDisplayGrid) {
-			// Find the position of the next item in the sorted grid.
-			nextPos = getNextPos(item);
+		// Get position of game item if grouping is enabled.
+		// This will be used to select the next item.
+		// If grouping method is None then updateListing() will
+		// ignore selPos and use the current selection instead.
+		int selPos = -1;
+		if (_groupBy != kGroupByNone) {
+			selPos = getItemPos(item);
 		}
 
 		// Remove the currently selected game from the list
@@ -467,7 +467,7 @@ void LauncherDialog::removeGame(int item) {
 		ConfMan.flushToDisk();
 
 		// Update the ListWidget/GridWidget and force a redraw
-		updateListing(nextPos);
+		updateListing(selPos);
 		g_gui.scheduleTopDialogRedraw();
 	}
 }
@@ -995,7 +995,7 @@ public:
 
 protected:
 	void updateListing(int selPos = -1) override;
-	int getNextPos(int item) override;
+	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
 	void updateButtons() override;
 	void selectTarget(const Common::String &target) override;
@@ -1111,20 +1111,19 @@ void LauncherSimple::build() {
 
 void LauncherSimple::updateListing(int selPos) {
 	Common::U32StringArray l;
-	ThemeEngine::FontColor color;
-	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
+	const int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	bool scanEntries = numEntries == -1 ? true : ((int)domains.size() <= numEntries);
+	const bool scanEntries = (numEntries == -1) || ((int)domains.size() <= numEntries);
 
 	// Turn it into a sorted list of entries
 	Common::Array<LauncherEntry> domainList = generateEntries(domains);
 
 	// And fill out our structures
 	for (const auto &curDomain : domainList) {
-		color = ThemeEngine::kFontColorNormal;
+		ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
 
 		if (scanEntries) {
 			Common::String path;
@@ -1165,8 +1164,8 @@ void LauncherSimple::updateListing(int selPos) {
 	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
 
-int LauncherSimple::getNextPos(int item) {
-	return _list->getNextPos(item);
+int LauncherSimple::getItemPos(int item) {
+	return _list->getItemPos(item);
 }
 
 void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) {
@@ -1596,8 +1595,8 @@ void LauncherGrid::updateListing(int selPos) {
 	_grid->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
 
-int LauncherGrid::getNextPos(int oldSel) {
-	return _grid->getNextPos(oldSel);
+int LauncherGrid::getItemPos(int item) {
+	return _grid->getItemPos(item);
 }
 
 void LauncherGrid::updateButtons() {

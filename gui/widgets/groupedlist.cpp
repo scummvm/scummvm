@@ -297,12 +297,11 @@ void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	}
 }
 
-int GroupedListWidget::getNextPos(int oldSel) {
+int GroupedListWidget::getItemPos(int item) {
 	int pos = 0;
 
-	// Find the position of the new selection in the list. 
 	for (uint i = 0; i < _listIndex.size(); i++) {
-		if (_listIndex[i] == oldSel) {
+		if (_listIndex[i] == item) {
 			return pos;
 		} else if (_listIndex[i] >= 0) { // skip headers
 			pos++;
