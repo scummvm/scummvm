@@ -57,7 +57,8 @@ struct AnimObject {
 		frameDelay = 0;
 		f2c = f2d = 0;
 		spriteTableLocation = 0;
-		res = scriptData = ResourcePointer();
+		res = ResourcePointer();
+		scriptData = ResourcePointer();
 		spriteData = nullptr;
 		absSpeedX = absSpeedY = 0;
 		parent = children = next = 0;
@@ -117,6 +118,9 @@ public:
 	void linkAnimations(ResourcePointer &res, uint16 len) override;
 	void clearAnimations(int mode = 0) override;
 	void setPlaneMode(uint16 mode) override;
+
+	void resetTextFields() override;
+	void renderTextBuffer(const uint8 *textBuffer, uint16 firstLine, uint8 numLines) override;
 
 	void updateScreen(uint8 *screen) override;
 	void updateAnimations() override;
@@ -359,7 +363,7 @@ void Animator_SCD::initAnimations(ResourcePointer &res, uint16 len) {
 				assert(cmd != 0xA1 && cmd != 0xA7); // The original code would theoretically allow a deadlock here.
 			} else {
 				if (!(cmd & 0x80))
-					a->spriteData = reinterpret_cast<const uint16*>(res.makeAbsPtr(a->spriteTableLocation).getDataFromTable(cmd)());
+					a->spriteData = reinterpret_cast<const uint16*>(res.makePtr(a->spriteTableLocation).getDataFromTable(cmd)());
 				l = false;
 			}
 		}
@@ -398,6 +402,45 @@ void Animator_SCD::setPlaneMode(uint16 mode) {
 	_modeChange = mode & 0xFF;;
 }
 
+void Animator_SCD::resetTextFields() {
+	uint8 *s = _tempBuffer + 0x5000;
+	uint16 *d = reinterpret_cast<uint16*>(s);
+	for (int i = 0; i < 255; ++i)
+		*d++ = TO_BE_16(0x8000 + i);
+	*d = TO_BE_16(0x8000);
+	_sr->loadToVRAM(s, 512, 0xEC80);
+	_clearFlags |= 4;
+	memset(_tempBuffer + 0x6000, 0, 0x1FE0);
+	s = _tempBuffer + 0x7FE0;
+	d = reinterpret_cast<uint16*>(s);
+	for (int i = 0; i < 16; ++i)
+		*d++ = 0x7777;
+	_sr->loadToVRAM(s, 32, 0x1FE0);
+}
+
+void Animator_SCD::renderTextBuffer(const uint8 *textBuffer, uint16 firstLine, uint8 numLines) {
+	uint16 start = firstLine << 10;
+	uint16 len = numLines << 10;
+	textBuffer += start;
+	uint8 *s = _tempBuffer + 0x6000 + start;
+	uint8 *d = s;
+	for (int i = 0; i < len; ++i) {
+		uint8 in = *textBuffer++;
+		uint8 h = in & 0xF0;
+		uint8 l = in & 0x0F;
+		if (h) {
+			if (l)
+				*d = in;
+			else
+				*d = (*d & 0x0F) | h;
+		} else if (l) {
+			*d = (*d & 0xF0) | l;
+		}
+		++d;
+	}	
+	_sr->loadToVRAM(s, len, start);
+}
+
 void Animator_SCD::updateScreen(uint8 *screen) {
 	if (_gfxState.getVar(9)) {
 		_sr->setPlaneTableLocation(Graphics::SegaRenderer::kPlaneB, _gfxState.getVar(9) == 0xFF ? 0xE000 : 0xC000);
@@ -408,6 +451,8 @@ void Animator_SCD::updateScreen(uint8 *screen) {
 		_sr->memsetVRAM(0xE000, 0, 0x2000);
 	if (_clearFlags & 2)
 		_sr->memsetVRAM(0xC000, 0, 0x2000);
+	if (_clearFlags & 4)
+		_sr->memsetVRAM(0, 0, 0x1FE0);
 	_clearFlags = 0;
 
 	if (_modeChange)
@@ -453,7 +498,7 @@ void Animator_SCD::updateAnimations() {
 
 		uint8 cmd = s->scriptData[(s->frame == 0xFFFF ? 0 : s->frame) << 2];
 		if (!(cmd & 0x80))
-			s->spriteData = reinterpret_cast<const uint16*>(s->res.makeAbsPtr(s->spriteTableLocation).getDataFromTable(cmd)());
+			s->spriteData = reinterpret_cast<const uint16*>(s->res.makePtr(s->spriteTableLocation).getDataFromTable(cmd)());
 
 		if (!(s->controlFlags & GraphicsEngine::kAnimPause)) {
 			s->posX += s->absSpeedX;
@@ -632,7 +677,7 @@ void Animator_SCD::loadDataFromGfxScript() {
 	if (_gfxState.getVar(0)) {
 		if (_gfxState.getVar(0) == 1) {
 			_gfxState.setVar(0, 2);
-			_clearFlags = 3;
+			_clearFlags |= 3;
 		} else {
 			_gfxState.setVar(0, 0);
 		}
@@ -652,7 +697,7 @@ void Animator_SCD::loadDataFromGfxScript() {
 		return;
 	}
 
-	const uint8 *src = _transferData.makeAbsPtr(_transferData.readIncrUINT32() & 0xFFFFFF)();
+	const uint8 *src = _transferData.makePtr(_transferData.readIncrUINT32() & 0xFFFFFF)();
 	_transferDelay = _transferData.readIncrUINT16();
 	uint16 addr = _transferData.readIncrUINT16();
 
@@ -709,7 +754,7 @@ void Animator_SCD::executeDrawCommands() {
 		uint8 b = 0;
 
 		if ((it->cmd & 0x0F) < 5 && (it->cmd & 0x0F) != 2 && !(it->cmd & 0x80)) {
-			const uint8 *cmp = it->res.makeAbsPtr(READ_BE_UINT32(it->ptr))();
+			const uint8 *cmp = it->res.makePtr(READ_BE_UINT32(it->ptr))();
 			uint32 len = READ_BE_UINT16(cmp);
 			if (len != 0) {
 				if (len != Util::decodeSCDData(cmp + 2, s))
@@ -737,7 +782,7 @@ void Animator_SCD::executeDrawCommands() {
 			break;
 		case 2:
 			for (bool rept = true; rept; ) {
-				memcpy(s + READ_BE_INT16(it->ptr + 6), it->res.makeAbsPtr(READ_BE_UINT32(it->ptr))(), READ_BE_UINT16(it->ptr + 8));
+				memcpy(s + READ_BE_INT16(it->ptr + 6), it->res.makePtr(READ_BE_UINT32(it->ptr))(), READ_BE_UINT16(it->ptr + 8));
 				_sr->loadToVRAM(s + READ_BE_INT16(it->ptr + 6), READ_BE_UINT16(it->ptr + 8), READ_BE_UINT16(it->ptr + 4));
 				it->ptr += 10;
 				if (READ_BE_UINT16(it->ptr) == 0xFFFF) {
@@ -981,7 +1026,7 @@ void Animator_SCD::makeAnimFunctions() {
 	typedef int (Animator_SCD::*AnimFunc)(AnimObject&, const uint8*);
 	static const AnimFunc funcTbl[] = {
 #else
-	#define ANM(x) {&Renderer_SCD::anim_##x, #x}
+	#define ANM(x) {&Animator_SCD::anim_##x, #x}
 	struct FuncTblEntry {
 		GfxAnimFunc::AnimFunc func;
 		const char *desc;

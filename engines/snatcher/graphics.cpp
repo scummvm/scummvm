@@ -24,6 +24,7 @@
 #include "snatcher/palette.h"
 #include "snatcher/animator.h"
 #include "snatcher/resource.h"
+#include "snatcher/text.h"
 #include "snatcher/transition.h"
 #include "common/endian.h"
 #include "common/system.h"
@@ -32,12 +33,13 @@
 namespace Snatcher {
 
 GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd) : _system(system), _state(vmstate),
-	_animator(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0) {
+	_animator(nullptr), _text(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0), _verbAreaType(0) {
 	assert(system);
 	_palette = Palette::create(pxf, _system->getPaletteManager(), platform, _state);
 	assert(_palette);
 	_trs = TransitionManager::create(platform, _state);
 	_animator = Animator::create(pxf, platform, _state, _palette, _trs, snd);
+	_text = TextRenderer::create(platform, _animator);
 	assert(_animator);
 	_screen = new uint8[_animator->screenWidth() * _animator->screenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
 	assert(_screen);
@@ -48,12 +50,11 @@ GraphicsEngine::~GraphicsEngine() {
 	delete _palette;
 	delete _trs;
 	delete[] _screen;
+	delete _text;
 }
 
-uint8 _transitionType;
-
 void GraphicsEngine::runScript(ResourcePointer res, int func) {
-	ResourcePointer sc = ResourcePointer(res.dataStart, READ_BE_UINT32(res.dataStart + 4)).getDataFromTable(func);
+	ResourcePointer sc = res.makePtr(READ_BE_INT32(res() + 4)).getDataFromTable(func);
 
 	for (uint8 cmd = *sc++; cmd != 0xFF; cmd = *sc++) {
 		uint8 len = *sc++;
@@ -80,7 +81,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 		case 5:
 		case 6:
 		case 7:
-			_transitionType = sc[1];
+			_verbAreaType = sc[1];
 			break;
 		case 8:
 			_animator->setPlaneMode(sc.readUINT16());
@@ -106,6 +107,10 @@ bool GraphicsEngine::enqueueDrawCommands(ResourcePointer res) {
 	return _animator->enqueueDrawCommands(res);
 }
 
+void GraphicsEngine::initAnimations(ResourcePointer res, uint16 len) {
+	_animator->initAnimations(res, len);
+}
+
 void GraphicsEngine::setScrollStep(uint8 mode, int16 step) {
 	if (mode < 4)
 		_trs->scroll_setDirectionAndSpeed(mode, step);
@@ -117,8 +122,39 @@ void GraphicsEngine::transitionCommand(uint8 cmd) {
 	_trs->doCommand(cmd);
 }
 
+void GraphicsEngine::setTextFont(const uint8 *font, uint32 fontSize, const uint8 *charWidthTable, uint32 charWidthTableSize) {
+	_text->setFont(font, fontSize);
+	_text->setCharWidthTable(charWidthTable, charWidthTableSize);
+}
+
+void GraphicsEngine::printText(const uint8 *text) {
+	_text->enqueuePrintJob(text);
+}
+
+void GraphicsEngine::setTextPrintDelay(uint16 delay) {
+	_text->setPrintDelay(delay);
+}
+/*
+void GraphicsEngine::setTextColor(uint8 color) {
+	_text->setColor(color);
+}*/
+
+bool GraphicsEngine::isTextInQueue() const {
+	return _text->needsPrint();
+}
+
+void GraphicsEngine::resetTextFields() {
+	_animator->resetTextFields();
+	_text->reset();
+}
+
 void GraphicsEngine::updateAnimations() {
 	_animator->updateAnimations();
+}
+
+void GraphicsEngine::updateText() {
+	if (_text->needsPrint())
+		_text->draw();
 }
 
 void GraphicsEngine::nextFrame() {
@@ -199,6 +235,10 @@ bool GraphicsEngine::busy(int type) const {
 
 uint16 GraphicsEngine::frameCount() const {
 	return _state.frameCount();
+}
+
+uint8 GraphicsEngine::getVerbAreaType() const {
+	return _verbAreaType;
 }
 
 void GraphicsEngine::createMouseCursor(bool show) {

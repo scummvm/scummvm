@@ -22,6 +22,7 @@
 #ifndef SNATCHER_TRANSITION_H
 #define SNATCHER_TRANSITION_H
 
+#include "common/platform.h"
 #include "common/scummsys.h"
 
 namespace Snatcher {

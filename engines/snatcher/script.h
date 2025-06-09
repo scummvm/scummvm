@@ -40,9 +40,9 @@ public:
 	void reset();
 	void writeUInt16(uint16 val);
 	void writeUInt32(uint32 val);
-	void enable() { _enable = true; }	
-	bool running() const { return _enable; }
-	void run();
+	void start() { _enable = true; }	
+	bool enabled() const { return _enable; }
+	void run(GameState &state);
 
 private:
 	const uint16 *_readPos;
@@ -58,49 +58,70 @@ private:
 private:
 	void makeFunctions();
 
-	void m_end(const uint16 *&data);
-	void m_01(const uint16 *&data);
-	void m_02(const uint16 *&data);
-	void m_03(const uint16 *&data);
-	void m_04(const uint16 *&data);
-	void m_05(const uint16 *&data);
-	void m_06(const uint16 *&data);
-	void m_fmMusicStart(const uint16 *&data);
-	void m_gfxOps(const uint16 *&data);
-	void m_animOps(const uint16 *&data);
-	void m_pcmWait(const uint16 *&data);
-	void m_11(const uint16 *&data);
-	void m_12(const uint16 *&data);
-	void m_mmSeq(const uint16 *&data);
-	void m_14(const uint16 *&data);
-	void m_gfxReset(const uint16 *&data);
-	void m_waitFrames(const uint16 *&data);
-	void m_loadResource(const uint16 *&data);
-	void m_gfxStart(const uint16 *&data);
-	void m_fmMusicWait(const uint16 *&data);
-	void m_20(const uint16 *&data);
-	void m_21(const uint16 *&data);
-	void m_22(const uint16 *&data);
-	void m_23(const uint16 *&data);
-	void m_24(const uint16 *&data);
-	void m_25(const uint16 *&data);
-	void m_26(const uint16 *&data);
-	void m_27(const uint16 *&data);
-	void m_28(const uint16 *&data);
-	void m_29(const uint16 *&data);
-	void m_30(const uint16 *&data);
-	void m_31(const uint16 *&data);
-	void m_32(const uint16 *&data);
-	void m_33(const uint16 *&data);
-	void m_34(const uint16 *&data);
-	void m_35(const uint16 *&data);
+	void m_end(GameState &state, const uint16 *&data);
+	void m_initAnimations(GameState &state, const uint16 *&data);
+	void m_02(GameState &state, const uint16 *&data);
+	void m_drawCommands(GameState &state, const uint16 *&data);
+	void m_04(GameState &state, const uint16 *&data);
+	void m_printText(GameState &state, const uint16 *&data);
+	void m_06(GameState &state, const uint16 *&data);
+	void m_fmMusicStart(GameState &state, const uint16 *&data);
+	void m_displayDialog(GameState &state, const uint16 *&data);
+	void m_animOps(GameState &state, const uint16 *&data);
+	void m_pcmWait(GameState &state, const uint16 *&data);
+	void m_11(GameState &state, const uint16 *&data);
+	void m_12(GameState &state, const uint16 *&data);
+	void m_mmSeq(GameState &state, const uint16 *&data);
+	void m_14(GameState &state, const uint16 *&data);
+	void m_gfxReset(GameState &state, const uint16 *&data);
+	void m_waitFrames(GameState &state, const uint16 *&data);
+	void m_loadResource(GameState &state, const uint16 *&data);
+	void m_gfxStart(GameState &state, const uint16 *&data);
+	void m_fmMusicWait(GameState &state, const uint16 *&data);
+	void m_20(GameState &state, const uint16 *&data);
+	void m_21(GameState &state, const uint16 *&data);
+	void m_resetTextFields(GameState &state, const uint16 *&data);
+	void m_23(GameState &state, const uint16 *&data);
+	void m_24(GameState &state, const uint16 *&data);
+	void m_25(GameState &state, const uint16 *&data);
+	void m_26(GameState &state, const uint16 *&data);
+	void m_27(GameState &state, const uint16 *&data);
+	void m_28(GameState &state, const uint16 *&data);
+	void m_29(GameState &state, const uint16 *&data);
+	void m_30(GameState &state, const uint16 *&data);
+	void m_31(GameState &state, const uint16 *&data);
+	void m_32(GameState &state, const uint16 *&data);
+	void m_33(GameState &state, const uint16 *&data);
+	void m_palOps(GameState &state, const uint16 *&data);
+	void m_35(GameState &state, const uint16 *&data);
 
-	typedef Common::Functor1Mem<const uint16*&, void, CmdQueue> CmdQueOpcode;
+	typedef Common::Functor2Mem<GameState&, const uint16*&, void, CmdQueue> CmdQueOpcode;
 	Common::Array<CmdQueOpcode*> _opcodes;
+
+private:
+	void printSceneEntryStringHead();
+	void printSceneEntryStringBody(GameState &state);
+	bool checkStringProgress();
+	bool waitWithCursorAnim();
+
+	uint8 *_textBuffer;
+	uint8 _textColor;
+	uint8 _textY;
+	uint8 _textY2;
+	//uint8 _makestrbt1;
+	uint8 _sceneId;
+	uint8 _textLineBreak;
+	uint8 _textLineEnd;
+	uint16 _sceneTextOffsCur;
+	uint16 _sceneInfo;
+	uint16 _sceneTextOffset;
+	uint16 _sceneTextOffsStart;
+	uint8 _waitCursorFrame;
+	uint8 _waitCursorAnimDelay;
 };
 
 struct Script {
-	Script() : scriptStateByteUnk(0), unkislp(0), data(nullptr), dataSize(0), curPos(0), newPos(-1), curFileNo(0), curGfxScript(-1), stack(nullptr), stackSize(0x600), sp(nullptr), bp(nullptr) {
+	Script() : scriptStateByteUnk(0), unkislp(0), data(nullptr), dataSize(0), curPos(0), newPos(-1), curFileNo(0), curGfxScript(-1), stack(nullptr), stackSize(0x600), sp(nullptr), bp(nullptr), res() {
 		stack = new uint8[stackSize]();
 		sp = bp = &stack[stackSize];
 	}
@@ -111,6 +132,7 @@ struct Script {
 	uint8 unkislp;
 	uint8 curFileNo;
 	int16 curGfxScript;
+	ResourcePointer res;
 	const uint8 *data;
 	uint32 dataSize;
 	int curPos;
@@ -129,7 +151,7 @@ public:
 	//void writeVar(uint16 arrayNo, uint16 pos, uint8 val);
 	void resetArrays();
 	void run(Script *script);
-	void cleanupState();
+	bool postProcess(Script *script);
 
 private:
 	SnatcherEngine *_vm;
@@ -208,7 +230,7 @@ private:
 	void o_63();
 	void o_64();
 	void o_subOps();
-	void o_gfxOps();
+	void o_displayDialog();
 	void o_animWait();
 	void o_pcmSoundWait();
 	void o_fmMusicWait();

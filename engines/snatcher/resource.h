@@ -55,7 +55,7 @@ struct Config {
 };
 
 struct GameState {
-	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), introState(0), chapter(0), conf(Config()) {}
+	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), chapter(0), conf(Config()) {}
 	int16 frameNo;
 	int16 frameState;
 	int16 finish;
@@ -64,7 +64,7 @@ struct GameState {
 	int16 counter;
 	int16 modIndex;
 	int16 menuSelect;
-	int16 introState;
+	int16 prologue;
 	int16 chapter;
 	Config conf;
 };
@@ -80,40 +80,44 @@ protected:
 	FIO *_fio;
 };
 
-struct ResourcePointer {
-	ResourcePointer() : dataStart(0), offset(0), moduleLocation(0x28000), ownBuffer(false) {}
-	ResourcePointer(const uint8 *data, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false) : dataStart(data), offset(offs), moduleLocation(loc), ownBuffer(assignBufferOwnership) {
-		if (offset >= moduleLocation)
-			offset -= moduleLocation;
-	}
-	~ResourcePointer() {
-		if (ownBuffer && dataStart)
-			delete[] dataStart;
-	}
-	const uint8 *dataStart;
-	uint32 offset;
-	uint32 moduleLocation;
-	bool ownBuffer;
-	const uint8 *operator()() const { return dataStart + offset; }
-	const uint8 *operator++(int) { return dataStart + (offset++); }
-	const uint8 *operator++() { return dataStart + (++offset); }
-	uint16 readUINT16() { return READ_BE_UINT16(dataStart + offset); }
-	uint16 readSINT16() { return READ_BE_INT16(dataStart + offset); }
-	uint32 readUINT32() { return READ_BE_UINT32(dataStart + offset); }
-	uint32 readSINT32() { return READ_BE_INT32(dataStart + offset); }
-	uint16 readIncrUINT16() { uint16 r = READ_BE_UINT16(dataStart + offset); offset += 2; return r; }
-	uint16 readIncrSINT16() { int16 r = READ_BE_INT16(dataStart + offset); offset += 2; return r; }
-	uint32 readIncrUINT32() { uint32 r = READ_BE_UINT32(dataStart + offset); offset += 4; return r; }
-	uint32 readIncrSINT32() { int32 r = READ_BE_INT32(dataStart + offset); offset += 4; return r; }
-	ResourcePointer operator+(int inc) const { return ResourcePointer(dataStart, offset + moduleLocation + inc, moduleLocation); }
-	bool operator<(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart && moduleLocation == ptr.moduleLocation); return offset < ptr.offset; }
-	bool operator>(const ResourcePointer &ptr) const { assert(dataStart == ptr.dataStart && moduleLocation == ptr.moduleLocation); return offset > ptr.offset; }
-	bool operator==(const ResourcePointer &ptr) const { return dataStart == ptr.dataStart && offset == ptr.offset && moduleLocation == ptr.moduleLocation; }
-	void operator+=(int inc) { offset += inc; }
-	void operator=(const uint8 *ptr) { offset = ptr - dataStart; }
-	uint8 operator[](int index) const { return dataStart[offset + index]; }
-	ResourcePointer getDataFromTable(int tableEntry) const { return ResourcePointer(dataStart, offset + moduleLocation + READ_BE_UINT16(dataStart + offset + tableEntry * 2), moduleLocation); }
-	ResourcePointer makeAbsPtr(uint32 offs) const { return ResourcePointer(dataStart, offs, moduleLocation); }
+class ResourcePointer {
+public:
+	ResourcePointer();
+	explicit ResourcePointer(const uint8 *data, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
+	explicit ResourcePointer(uint8 *data, uint32 offs, uint32 loc = 0x28000, bool assignBufferOwnership = false);
+	ResourcePointer(const ResourcePointer &ptr);
+	ResourcePointer(ResourcePointer &&ptr) noexcept;
+	~ResourcePointer();
+
+	const uint8 *operator()() const;
+	const uint8 *operator++(int);
+	const uint8 *operator++();
+	uint16 readUINT16() const;
+	uint16 readSINT16() const;
+	uint32 readUINT32() const;
+	uint32 readSINT32() const;
+	uint16 readIncrUINT16();
+	uint16 readIncrSINT16();
+	uint32 readIncrUINT32();
+	uint32 readIncrSINT32();
+	void writeUINT32(uint32 value);
+	ResourcePointer operator+(int inc) const;
+	bool operator<(const ResourcePointer &ptr) const;
+	bool operator>(const ResourcePointer &ptr) const;
+	bool operator==(const ResourcePointer &ptr) const;
+	void operator+=(int inc);
+	void operator=(const uint8 *ptr);
+	void operator=(const ResourcePointer &ptr);
+	void operator=(ResourcePointer &&ptr) noexcept;
+	uint8 operator[](int index) const;
+	ResourcePointer getDataFromTable(int tableEntry) const;
+	ResourcePointer makePtr(uint32 offs) const;
+private:
+	const uint8 *_dataStart;
+	uint8 *_writeableDataStart;
+	uint32 _offset;
+	uint32 _moduleLocation;
+	bool _ownBuffer;
 };
 
 class SceneModule {
@@ -152,7 +156,7 @@ public:
 	};
 
 	SceneModule *loadModule(int index);
-	const uint8 *fileData(int index, uint32 *fileSize);
+	uint8 *fileData(int index, uint32 *fileSize);
 	uint8 *fileData(const Common::Path &file, uint32 *fileSize);
 	Common::SeekableReadStream *readStream(int index);
 	Common::SeekableReadStream *readStream(const Common::Path &file);
