@@ -94,6 +94,10 @@ int CDialog::DoModal() {
 	if (lpDialogTemplate == nullptr)
 		return -1;
 
+	// Set the dialog parent to be the app window
+	if (!m_pParentWnd)
+		m_pParentWnd = AfxGetApp()->m_pMainWnd;
+
 	m_nModalResult = MODAL_DEFAULT;
 
 	if (CreateDlgIndirect(lpDialogTemplate,

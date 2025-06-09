@@ -169,7 +169,7 @@ void CDialogTemplate::loadTemplate(CWnd *parent) {
 		_header._caption.c_str(),
 		_header._style,
 		bounds,
-		nullptr,
+		parent->m_pParentWnd,
 		0
 	);
 

@@ -65,9 +65,9 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 
 	_controlId = nID;
 
-	assert(pParentWnd);
 	m_pParentWnd = pParentWnd;
-	m_pParentWnd->_children[nID] = this;
+	if (m_pParentWnd)
+		m_pParentWnd->_children[nID] = this;
 
 	return true;
 }
