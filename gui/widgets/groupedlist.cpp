@@ -209,7 +209,7 @@ void GroupedListWidget::setSelected(int item) {
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
-		if (!isItemVisible(_selectedItem)) {
+		if (_selectedItem != -1 && !isItemVisible(_selectedItem)) {
 			// scroll selected item to center if possible
 			_currentPos = _selectedItem - _entriesPerPage / 2;
 			scrollToCurrent();
