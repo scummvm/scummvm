@@ -19,35 +19,37 @@
  *
  */
 
-#include "bagel/mfc/mfc.h"
+#include "common/textconsole.h"
+#include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
 
-const CRuntimeClass CObject::classCObject = {
-	"CObject", sizeof(CObject), 0xFFFF, // class name, size, schema
-	nullptr,                            // (null if DECLARE_DYNAMIC only)
-	nullptr,                            // pointer to base class's CRuntimeClass
-	nullptr
-};
-
-CObject::CObject() {
+CRuntimeClass::CRuntimeClass(const char *m_lpszClassName_, int m_nObjectSize_, UINT m_wSchema_,
+	CObject *(*m_pfnCreateObject_)(), const CRuntimeClass *m_pBaseClass_,
+	const CRuntimeClass *m_pNextClass_) {
+	m_lpszClassName = m_lpszClassName_;
+	m_nObjectSize = m_nObjectSize_;
+	m_wSchema = m_wSchema_;
+	m_pfnCreateObject = m_pfnCreateObject_;
+	m_pBaseClass = m_pBaseClass_;
+	m_pNextClass = m_pNextClass_;
 }
 
-CObject::CObject(const CObject &objectSrc) {
-	*this = objectSrc;
+CObject *CRuntimeClass::CreateObject() const {
+	return m_pfnCreateObject();
 }
 
-CObject::~CObject() {
-}
+bool CRuntimeClass::IsDerivedFrom(const CRuntimeClass *pBaseClass) const {
+	assert(pBaseClass != nullptr);
 
-const CRuntimeClass *CObject::GetRuntimeClass() const {
-	return &CObject::classCObject;
-}
+	for (const CRuntimeClass *rtClass = this;
+			rtClass; rtClass = rtClass->m_pBaseClass) {
+		if (rtClass == pBaseClass)
+			return true;
+	}
 
-bool CObject::IsKindOf(const CRuntimeClass *pClass) const {
-	const CRuntimeClass *pClassThis = GetRuntimeClass();
-	return pClassThis->IsDerivedFrom(pClass);
+	return false;
 }
 
 } // namespace MFC

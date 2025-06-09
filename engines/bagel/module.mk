@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	boflib/sound.o \
 	boflib/string.o \
 	boflib/string_functions.o \
+	mfc/afx.o \
 	mfc/bitmap.o \
 	mfc/bitmap_button.o \
 	mfc/brush.o \
