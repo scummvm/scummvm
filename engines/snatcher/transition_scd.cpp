@@ -159,7 +159,7 @@ private:
 	void trsUpdt_revealShutter(int arg);
 	void trsUpdt_13(int arg);
 	void trsUpdt_14(int arg);
-	void trsUpdt_15(int arg);
+	void trsUpdt_showTextArea(int arg);
 	void trsUpdt_16(int arg);
 	void trsUpdt_17(int arg);
 	void trsUpdt_18(int arg);
@@ -183,6 +183,7 @@ private:
 
 	void hIntHandler_screenShutter(Graphics::SegaRenderer *sr);
 	void hIntHandler_revealShutter(Graphics::SegaRenderer *sr);
+	void hIntHandler_showTextArea(Graphics::SegaRenderer *sr);
 };
 
 TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _hint_proc(0), _transitionStep(0),
@@ -243,8 +244,6 @@ bool TransitionManager_SCD::nextFrame() {
 		_nextStep = _resetCommand;
 		_resetCommand = 0;
 		_trsCommandExt = 0;
-		// _wordRAM__TABLE48__09 = 0;
-		// _wordRAM__TABLE48__0A = 0;
 	}
 
 	if (_nextStepExt != _lastStepExt || _lastStepExt == 0) {
@@ -258,6 +257,8 @@ bool TransitionManager_SCD::nextFrame() {
 				} else {
 					resetVars(0x18);
 				}
+			} else {
+				resetVars(0x18);
 			}
 		} else if (_nextStepExt != 0 && (_nextStepExt != 15 || _lastStepExt != 23)) {
 			_lastStepExt = _nextStepExt;
@@ -353,6 +354,7 @@ void TransitionManager_SCD::processTransition() {
 	case 7: case 8:
 		break;
 	case 9:
+		_result.hInt.counter = 7;
 		break;
 	case 10: case 11:
 		break;
@@ -430,7 +432,7 @@ void TransitionManager_SCD::makeFunctions() {
 		TF(revealShutter),
 		TF(13),
 		TF(14),
-		TF(15),
+		TF(showTextArea),
 		TF(16),
 		TF(17),
 		TF(18),
@@ -462,7 +464,12 @@ void TransitionManager_SCD::makeFunctions() {
 		HF(screenShutter),
 		HF(revealShutter),
 		nullptr,
-		nullptr
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		HF(showTextArea)
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(funcTbl2); ++i) \
@@ -540,7 +547,13 @@ void TransitionManager_SCD::trsUpdt_13(int arg) {
 void TransitionManager_SCD::trsUpdt_14(int arg) {
 }
 
-void TransitionManager_SCD::trsUpdt_15(int arg) {
+void TransitionManager_SCD::trsUpdt_showTextArea(int arg) {
+	if (arg != 0)
+		return;
+	_transitionType = 9;
+	setHINTHandler(15);
+	_transitionState = 256;
+	++_subPara;
 }
 
 void TransitionManager_SCD::trsUpdt_16(int arg) {
@@ -646,6 +659,16 @@ void TransitionManager_SCD::hIntHandler_revealShutter(Graphics::SegaRenderer *sr
 	}
 
 	++_transitionStep;
+}
+
+void TransitionManager_SCD::hIntHandler_showTextArea(Graphics::SegaRenderer *sr) {
+	if (_transitionStep++ != 17)
+		return;
+	sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
+	sr->writeUint16VSRAM(2, TO_BE_16(_transitionState));
+	sr->writeUint16VRAM(0xF800, 0);
+	sr->writeUint16VRAM(0xF802, 0);
+	_result.hInt.enable = false;
 }
 
 TransitionManager *TransitionManager::createSegaTransitionManager(GraphicsEngine::GfxState &state) {

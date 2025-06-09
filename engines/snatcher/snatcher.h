@@ -35,12 +35,12 @@ namespace Snatcher {
 class GraphicsEngine;
 class FIO;
 class CmdQueue;
+class ResourcePointer;
 class ScriptEngine;
 class SoundEngine;
 class SceneModule;
 
 struct GameState;
-struct ResourcePointer;
 struct Script;
 
 class SnatcherEngine : public Engine {
@@ -102,20 +102,23 @@ private:
 public:
 	// Input
 	struct Input {
-		Input() : controllerFlags(0), lightGunPos() {}
+		Input() : controllerFlags(0), controllerFlagsRemapped(0), lightGunPos() {}
 		uint16 controllerFlags;
+		uint16 controllerFlagsRemapped;
 		Common::Point lightGunPos;
 	};
 
 	const Input &input() const { return _input; }
 	void calibrateLightGun(GameState &state);
 	void toggleKeyRepeat(bool enableRepeat) { _keyRepeat = enableRepeat; }
+	void allowLightGunInput(bool enable) { _enableLightGun = enable; }
 
 private:
 	uint16 _lastKeys;
 	uint16 _releaseKeys;
 	Common::Point _realLightGunPos;
 	bool _keyRepeat;
+	bool _enableLightGun;
 	
 	Input _input;
 };

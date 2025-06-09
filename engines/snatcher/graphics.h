@@ -40,6 +40,7 @@ class TransitionManager;
 class Animator;
 class SceneModule;
 class SoundEngine;
+class TextRenderer;
 
 class GraphicsEngine {
 public:
@@ -49,6 +50,7 @@ public:
 	void runScript(ResourcePointer res, int func);
 	void enqueuePaletteEvent(ResourcePointer res);
 	bool enqueueDrawCommands(ResourcePointer res);
+	void initAnimations(ResourcePointer res, uint16 len);
 
 	enum ScrollMode : uint8 {
 		kHorzA		= 0,
@@ -61,7 +63,16 @@ public:
 	void setScrollStep(uint8 mode, int16 step);
 	void transitionCommand(uint8 cmd);
 
+	void setTextFont(const uint8 *font, uint32 fontSize, const uint8 *charWidthTable, uint32 charWidthTableSize);
+	void printText(const uint8 *text);
+	void setTextPrintDelay(uint16 delay);
+	//void setTextColor(uint8 color);
+	bool isTextInQueue() const;
+
+	void resetTextFields();
+
 	void updateAnimations();
+	void updateText();
 	void nextFrame();
 
 	enum ResetType : uint16 {
@@ -126,6 +137,8 @@ public:
 
 	bool busy(int type) const;
 	uint16 frameCount() const;
+
+	uint8 getVerbAreaType() const;
 
 	void createMouseCursor(bool show);
 
@@ -196,11 +209,13 @@ private:
 	GfxState _state;
 	const uint8 _bpp;
 	uint8 _dataMode;
+	uint8 _verbAreaType;
 	uint8 _flags;
 
 	uint8 *_screen;
 	Animator *_animator;
 	Palette *_palette;
+	TextRenderer *_text;
 	TransitionManager *_trs;
 	OSystem *_system;
 };

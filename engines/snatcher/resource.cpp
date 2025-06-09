@@ -60,7 +60,7 @@ SceneModule *FIO::loadModule(int index) {
 	return (index >= 0 && index < _resFileListSize) ? new SceneModule(_vm, this, _resFileList[index], index) : 0;
 }
 
-const uint8 *FIO::fileData(int index, uint32 *fileSize) {
+uint8 *FIO::fileData(int index, uint32 *fileSize) {
 	return (index >= 0 && index < _resFileListSize) ? fileData(_resFileList[index], fileSize) : nullptr;
 }
 
@@ -72,7 +72,7 @@ uint8 *FIO::fileData(const Common::Path &file, uint32 *fileSize) {
 		*fileSize = size;
 
 	if (!s) {
-		warning("%s(): Unable to open file %s", file.baseName().c_str());
+		warning("%s(): Unable to open file %s", __FUNCTION__, file.baseName().c_str());
 		return nullptr;
 	}
 
@@ -117,6 +117,149 @@ const char *FIO::_resFileList[97] = {
 };
 
 const int FIO::_resFileListSize = ARRAYSIZE(_resFileList);
+
+ResourcePointer::ResourcePointer() : _dataStart(nullptr), _writeableDataStart(nullptr), _offset(0), _moduleLocation(0x28000), _ownBuffer(false) {}
+
+ResourcePointer::ResourcePointer(const uint8 *data, uint32 offs, uint32 loc, bool assignBufferOwnership) : _dataStart(data), _writeableDataStart(nullptr), _offset(offs), _moduleLocation(loc), _ownBuffer(assignBufferOwnership) {
+	if (_offset >= _moduleLocation)
+		_offset -= _moduleLocation;
+}
+
+ResourcePointer::ResourcePointer(uint8 *data, uint32 offs, uint32 loc, bool assignBufferOwnership) : _dataStart(data), _writeableDataStart(data), _offset(offs), _moduleLocation(loc), _ownBuffer(assignBufferOwnership) {
+	if (_offset >= _moduleLocation)
+		_offset -= _moduleLocation;
+}
+
+ResourcePointer::ResourcePointer(const ResourcePointer &ptr) : _dataStart(ptr._dataStart), _offset(ptr._offset), _moduleLocation(ptr._moduleLocation), _writeableDataStart(ptr._writeableDataStart), _ownBuffer(false) {
+	assert(ptr._ownBuffer == false);
+}
+
+ResourcePointer::ResourcePointer(ResourcePointer &&ptr) noexcept : _dataStart(ptr._dataStart), _offset(ptr._offset), _moduleLocation(ptr._moduleLocation), _writeableDataStart(ptr._writeableDataStart), _ownBuffer(ptr._ownBuffer) {
+	ptr._ownBuffer = false;
+}
+
+ResourcePointer::~ResourcePointer() {
+	if (_ownBuffer && _dataStart)
+		delete[] _dataStart;
+}
+
+const uint8 *ResourcePointer::operator()() const {
+	return _dataStart + _offset;
+}
+
+const uint8 *ResourcePointer::operator++(int) {
+	return _dataStart + (_offset++);
+}
+
+const uint8 *ResourcePointer::ResourcePointer::operator++() {
+	return _dataStart + (++_offset);
+}
+
+uint16 ResourcePointer::readUINT16() const {
+	return READ_BE_UINT16(_dataStart + _offset);
+}
+
+uint16 ResourcePointer::readSINT16() const {
+	return READ_BE_INT16(_dataStart + _offset);
+}
+
+uint32 ResourcePointer::readUINT32() const {
+	return READ_BE_UINT32(_dataStart + _offset);
+}
+
+uint32 ResourcePointer::readSINT32() const {
+	return READ_BE_INT32(_dataStart + _offset);
+}
+
+uint16 ResourcePointer::readIncrUINT16() {
+	uint16 r = READ_BE_UINT16(_dataStart + _offset);
+	_offset += 2;
+	return r;
+}
+
+uint16 ResourcePointer::readIncrSINT16() {
+	int16 r = READ_BE_INT16(_dataStart + _offset);
+	_offset += 2;
+	return r;
+}
+
+uint32 ResourcePointer::readIncrUINT32() {
+	uint32 r = READ_BE_UINT32(_dataStart + _offset);
+	_offset += 4;
+	return r;
+}
+
+uint32 ResourcePointer::readIncrSINT32() {
+	int32 r = READ_BE_INT32(_dataStart + _offset);
+	_offset += 4;
+	return r;
+}
+
+void ResourcePointer::writeUINT32(uint32 value) {
+	assert(_writeableDataStart);
+	WRITE_BE_UINT32(_writeableDataStart + _offset, value);
+}
+
+ResourcePointer ResourcePointer::operator+(int inc) const {
+	return _writeableDataStart ?
+		ResourcePointer(_writeableDataStart, _offset + _moduleLocation + inc, _moduleLocation) :
+			ResourcePointer(_dataStart, _offset + _moduleLocation + inc, _moduleLocation);
+}
+
+bool ResourcePointer::operator<(const ResourcePointer &ptr) const {
+	assert(_dataStart == ptr._dataStart && _moduleLocation == ptr._moduleLocation);
+	return _offset < ptr._offset;
+}
+
+bool ResourcePointer::operator>(const ResourcePointer &ptr) const {
+	assert(_dataStart == ptr._dataStart && _moduleLocation == ptr._moduleLocation);
+	return _offset > ptr._offset;
+}
+
+bool ResourcePointer::operator==(const ResourcePointer &ptr) const {
+	return _dataStart == ptr._dataStart && _offset == ptr._offset && _moduleLocation == ptr._moduleLocation;
+}
+
+void ResourcePointer::operator+=(int inc) {
+	_offset += inc;
+}
+
+void ResourcePointer::operator=(const uint8 *ptr) {
+	_offset = ptr - _dataStart;
+}
+
+void ResourcePointer::operator=(const ResourcePointer &ptr) {
+	assert(ptr._ownBuffer == false);
+	_dataStart = ptr._dataStart;
+	_writeableDataStart = ptr._writeableDataStart;
+	_offset = ptr._offset;
+	_moduleLocation = ptr._moduleLocation;
+}
+
+void ResourcePointer::operator=(ResourcePointer &&ptr) noexcept {
+	_dataStart = ptr._dataStart;
+	_writeableDataStart = ptr._writeableDataStart;
+	_offset = ptr._offset;
+	_moduleLocation = ptr._moduleLocation;
+	_ownBuffer = ptr._ownBuffer;
+	ptr._ownBuffer = false;
+}
+
+uint8 ResourcePointer::operator[](int index) const {
+	return _dataStart[_offset + index];
+}
+
+ResourcePointer ResourcePointer::getDataFromTable(int tableEntry) const {
+	return _writeableDataStart ?
+		ResourcePointer(_writeableDataStart, _offset + _moduleLocation + READ_BE_INT16(_dataStart + _offset + tableEntry * 2), _moduleLocation) :
+			ResourcePointer(_dataStart, _offset + _moduleLocation + READ_BE_INT16(_dataStart + _offset + tableEntry * 2), _moduleLocation);
+}
+
+ResourcePointer ResourcePointer::makePtr(uint32 offs) const {
+	return _writeableDataStart ?
+		ResourcePointer(_writeableDataStart, offs, _moduleLocation) :
+			ResourcePointer(_dataStart, offs, _moduleLocation);
+}
 
 SceneModule::SceneModule(SnatcherEngine *vm, FIO *fio, const char *resFile, int index) : _vm(vm), _fio(fio), _resFile(resFile), _resIndex(index), _data(0), _dataSize(0), _updateHandler(0) {
 	assert(!_resFile.empty());

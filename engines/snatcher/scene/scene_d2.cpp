@@ -441,6 +441,7 @@ SH_IMPL_FRM(D2, 11) {
 	case 2:
 		state.counter  = 0;
 		_counter2 = 0;
+		_vm->allowLightGunInput(true);
 		_vm->gfx()->setAnimParameter(16, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 		for (int i = 0; i < 4; ++i)
 			_vm->gfx()->setAnimParameter(16 + i, GraphicsEngine::kAnimParaFrame, 0);
@@ -456,6 +457,7 @@ SH_IMPL_FRM(D2, 11) {
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x10F2));
 			state.counter = 10;
 			++state.frameState;
+			_vm->allowLightGunInput(false);
 			return;
 		}
 
@@ -490,6 +492,7 @@ SH_IMPL_FRM(D2, 11) {
 				_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaAbsSpeedX, 1);
 				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaBlink, 0);
 				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaAbsSpeedX, 0);
+				_vm->allowLightGunInput(false);
 				state.counter += 2;
 				_vm->sound()->fmSendCommand(29, 0);
 			} else if (_vm->input().controllerFlags & 0x100) {
