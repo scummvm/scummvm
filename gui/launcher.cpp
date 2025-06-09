@@ -1156,12 +1156,12 @@ void LauncherSimple::updateListing(int selPos) {
 		_list->setSelected(_list->getList().size() - 1);
 	updateButtons();
 
+	// Close groups that the user closed earlier
+	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
+
 	// Update the filter settings, those are lost when "setList"
 	// is called.
 	_list->setFilter(_searchWidget->getEditString());
-
-	// Close groups that the user closed earlier
-	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
 
 int LauncherSimple::getItemPos(int item) {
