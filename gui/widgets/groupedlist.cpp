@@ -190,22 +190,6 @@ void GroupedListWidget::saveClosedGroups(const Common::U32String &groupName) {
 }
 
 void GroupedListWidget::setSelected(int item) {
-	// HACK/FIXME: If our _listIndex has a non zero size,
-	// we will need to look up, whether the user selected
-	// item is present in that list
-	if (!_filter.empty()) {
-		int filteredItem = -1;
-
-		for (uint i = 0; i < _listIndex.size(); ++i) {
-			if (_listIndex[i] == item) {
-				filteredItem = i;
-				break;
-			}
-		}
-
-		item = filteredItem;
-	}
-
 	if (item < -1 || item >= (int)_dataList.size())
 		return;
 
@@ -214,15 +198,11 @@ void GroupedListWidget::setSelected(int item) {
 		if (_editMode)
 			abortEditMode();
 
-		if (!_filter.empty()) {
-			_selectedItem = item;
-		} else {
-			_selectedItem = -1;
-			for (uint i = 0; i < _listIndex.size(); ++i) {
-				if (_listIndex[i] == item) {
-					_selectedItem = i;
-					break;
-				}
+		_selectedItem = -1;
+		for (uint i = 0; i < _listIndex.size(); ++i) {
+			if (_listIndex[i] == item) {
+				_selectedItem = i;
+				break;
 			}
 		}
 
