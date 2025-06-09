@@ -1373,7 +1373,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 		dbg_SetCurrMachInstr(myAnim8->myMachine, myAnim8->pcOffset, true);
 
 		const int32 myInstruction = ws_PreProcessPcode(&myPC, myAnim8);
-		if (myInstruction < 0) {
+		if (myInstruction < 0 || myInstruction > 39) {
 			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025c, nullptr);
 		}
 
