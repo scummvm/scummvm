@@ -262,7 +262,7 @@ void GfxOpenGL::clearDepthBuffer() {
 void GfxOpenGL::flipBuffer(bool opportunistic) {
 	if (opportunistic) {
 		GLint fbo = 0;
-		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fbo);
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
 		if (fbo == 0) {
 			// Don't flip if we are not rendering on FBO
 			// Flipping without any draw is undefined
