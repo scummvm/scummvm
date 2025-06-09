@@ -1147,6 +1147,13 @@ void LauncherSimple::updateListing(int selPos) {
 
 	groupEntries(domainList);
 
+	// Close groups that the user closed earlier
+	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
+
+	// Update the filter settings, those are lost when "setList"
+	// is called.
+	_list->setFilter(_searchWidget->getEditString());
+
 	if (_groupBy != kGroupByNone && selPos != -1) {
 		_list->setSelected(_list->getNewSel(selPos));
 	} else if (oldSel < (int)l.size() && oldSel >= 0)
@@ -1155,13 +1162,6 @@ void LauncherSimple::updateListing(int selPos) {
 		// Select the last entry if the list has been reduced
 		_list->setSelected(_list->getList().size() - 1);
 	updateButtons();
-
-	// Close groups that the user closed earlier
-	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
-
-	// Update the filter settings, those are lost when "setList"
-	// is called.
-	_list->setFilter(_searchWidget->getEditString());
 }
 
 int LauncherSimple::getItemPos(int item) {
