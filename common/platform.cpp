@@ -124,6 +124,23 @@ const char *getPlatformDescription(Platform id) {
 	return l->description;
 }
 
+bool checkGameGUIOptionPlatform(Platform plat, const String &str) {
+	if (!str.contains("plat_")) // If no platforms are specified
+		return true;
+
+	if (str.contains(getGameGUIOptionsDescriptionPlatform(plat)))
+		return true;
+
+	return false;
+}
+
+const String getGameGUIOptionsDescriptionPlatform(Platform plat) {
+	if (plat == kPlatformUnknown)
+		return "";
+
+	return String("plat_") + getPlatformDescription(plat);
+}
+
 List<String> getPlatformList() {
 	List<String> list;
 

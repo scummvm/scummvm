@@ -102,6 +102,8 @@ extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
+extern const String getGameGUIOptionsDescriptionPlatform(Platform plat);
+extern bool checkGameGUIOptionPlatform(Platform plat, const String &str);
 
 List<String> getPlatformList();
 
