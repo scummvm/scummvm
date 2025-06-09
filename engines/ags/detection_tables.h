@@ -1090,6 +1090,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "cullfield", "The Cullfield Investigation" },  // aka Detective Ian Cullfield
 	{ "cursevampire", "The Curse of the Vampire" },
 	{ "cutman", "Cutman" },
+	{ "cyberdog2050", "Cyberdog 2050" },
 	{ "cyberjack", "cyberJACK" },
 	{ "cybermemory", "Cybermemory Not Found" },
 	{ "cyberpunk97ep1", "Cyberpunk '97 - Episode 1" },
@@ -6139,6 +6140,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("asporia", "rpg.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 7094164),  //Eng-Tur
 	GAME_ENTRY_EN("asterix", "asterix.exe", "06a03fe35791b0578068ab1873455463", 62405430),
 	GAME_ENTRY_EN("astralchapel", "The Astral Chapel.ags", "03160c6dd17b0ab7b1f08551c5c124f6", 14085171),
+	GAME_ENTRY_EN("astralchapel", "The Astral Chapel.ags", "abea242c977e87bef469482dfb932a9a", 14091129),  // v2.0
 	GAME_ENTRY_EN("astranded", "astranded.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1845395),
 	GAME_ENTRY_EN("astron", "astron.exe", "a0fd918609b9d139e4076fa7a0052ae1", 71101771),  // Windows
 	GAME_ENTRY_EN("astron", "astron.ags", "1ba214946cd17373ae8dbc2c4fbc1f7f", 68563771),  // Linux
@@ -6662,6 +6664,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("cullfield", "Detective Ian.exe", "7a3096ac0237cb6aa8e1718e28caf039", 7501660, "Prototype"),
 	GAME_ENTRY_EN("cursevampire", "MAGS_MARZO.exe", "06a03fe35791b0578068ab1873455463", 6973036),
 	GAME_ENTRY_EN("cutman", "cutman.exe", "0564de07d3fd5c16e6947a647061913c", 7962851),
+	GAME_ENTRY_EN("cyberdog2050", "Cyberdog.exe", "57386d527b1925eac52ec094f1681cb5", 17858869),
 	GAME_ENTRY_EN("cyberjack", "brewton24.exe", "e3962995a70923a8d5a8f1cf8f932eee", 3439339),
 	GAME_ENTRY_EN("daceyinthedark", "Darkness.exe", "27343924ddad3be0b97bdcaa71858b1b", 6353848),
 	GAME_ENTRY_EN("dada", "Dada.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3992871),
@@ -8474,6 +8477,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("paulromano", "Paul Romano.ags", "8af5fa84179b24bc84d78363eb5b0d25", 842261109),  // v1.0 Linux Eng-Ita
 	GAME_ENTRY("paulromano", "Paul Romano.exe", "165d69d396898d165a95b29f6e9770db", 845276527),  // v1.1 Android Eng-Ita
 	GAME_ENTRY("paulromano", "Paul Romano.ags", "baef5e71ad847c8f728f2f20c15208f0", 840055169),  // v1.2 Win/Linux Eng-Ita
+	GAME_ENTRY_EN("peakvalley1", "MOPV 1 The Lost Sonata.exe", "7c3c3d4b607946867e979a484d910ca0", 12249231),
 	GAME_ENTRY_EN("peakvalley1", "MOPV 1 The Lost Sonata.exe", "7c3c3d4b607946867e979a484d910ca0", 12249206),
 	GAME_ENTRY_EN("peakvalley2", "MOPV 2 The White Lady.exe", "55c5470f14317d5e806cd4f4271a2118", 44869592),
 	GAME_ENTRY_EN("peakvalley2", "MOPV 2 The White Lady.exe", "55c5470f14317d5e806cd4f4271a2118", 45221210),  // v1.0.3
