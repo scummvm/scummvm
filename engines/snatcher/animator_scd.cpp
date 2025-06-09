@@ -39,7 +39,7 @@ namespace Snatcher {
 //#define		ANIM_DEBUG
 
 struct AnimObject {
-	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), f16(0), f18(0), f1c(0),
+	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), f18(0), f1c(0),
 		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0),
 			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), freeze(0), blink(0), blinkCounter(0), blinkDuration(0) {}
 	
@@ -47,7 +47,7 @@ struct AnimObject {
 		enable = blinkRate = drawFlags = 0;
 		posX = posY = 0;
 		relSpeedX = relSpeedY = 0;
-		f16 = 0;
+		palette = 0;
 		f18 = 0;
 		f1c = 0;
 		timeStamp = 0;
@@ -72,10 +72,9 @@ struct AnimObject {
 	uint16 drawFlags;
 	int32 posX;
 	int32 posY;
-
 	int32 relSpeedX;
 	int32 relSpeedY;
-	uint8 f16;
+	uint8 palette;
 	uint16 f18;
 	uint8 f1c;
 	uint32 timeStamp;
@@ -240,13 +239,13 @@ private:
 	int anim_36(AnimObject &a, const uint8 *data);
 	int anim_37(AnimObject &a, const uint8 *data);
 	int anim_38(AnimObject &a, const uint8 *data);
-	int anim_39(AnimObject &a, const uint8 *data);
-	int anim_40(AnimObject &a, const uint8 *data);
+	int anim_setPalette(AnimObject &a, const uint8 *data);
+	int anim_transition(AnimObject &a, const uint8 *data);
 	int anim_speechSync(AnimObject &a, const uint8 *data);
 	int anim_42(AnimObject &a, const uint8 *data);
 	int anim_toggleExtraPalette(AnimObject &a, const uint8 *data);
 	int anim_allowFrameDrop(AnimObject &a, const uint8 *data);
-	int anim_45(AnimObject &a, const uint8 *data);
+	int anim_fmMusic(AnimObject &a, const uint8 *data);
 	int anim_46(AnimObject &a, const uint8 *data);
 	int anim_47(AnimObject &a, const uint8 *data);
 
@@ -291,8 +290,6 @@ Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::Gfx
 
 	_sr->setResolution(_screenWidth, _screenHeight);
 	_sr->setupWindowPlane(0, 0, Graphics::SegaRenderer::kWinToLeft, Graphics::SegaRenderer::kWinToTop);
-	_sr->setVScrollMode(Graphics::SegaRenderer::kVScrollFullScreen);
-	_sr->setHScrollMode(Graphics::SegaRenderer::kHScrollFullScreen);
 	_sr->hINT_setHandler(&_hINTClientProc);
 
 	reconfigPlanes();
@@ -342,10 +339,10 @@ void Animator_SCD::initAnimations(ResourcePointer &res, uint16 len, bool dontUpd
 	ResourcePointer in = res;
 	while (in < next) {
 		assert(in[0] < 64);
+		int dg = in[0];
 		AnimObject *a = _animations[*in++];
 		//if (a->enable && dontUpdate)
 		//	return;
-
 		a->clear();
 		a->enable = 1;
 		a->res = res;
@@ -360,7 +357,7 @@ void Animator_SCD::initAnimations(ResourcePointer &res, uint16 len, bool dontUpd
 		uint8 cmd = a->scriptData[0];
 		for (bool l = true; l; ) {
 			if (cmd == 0xA1 || cmd == 0xA7) {
-				a->f16 = a->scriptData[1];
+				a->palette = a->scriptData[1];
 				cmd = a->scriptData[4];
 				assert(cmd != 0xA1 && cmd != 0xA7); // The original code would theoretically allow a deadlock here.
 			} else {
@@ -533,7 +530,7 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 		a.relSpeedY = value << 16;
 		break;
 	case GraphicsEngine::kAnimParaF16:
-		a.f16 = value;
+		a.palette = value;
 		break;
 	case GraphicsEngine::kAnimParaF18:
 		a.f18 = value;
@@ -622,7 +619,7 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 	case GraphicsEngine::kAnimParaRelSpeedY:
 		return a.relSpeedY >> 16;
 	case GraphicsEngine::kAnimParaF16:
-		return a.f16;
+		return a.palette;
 	case GraphicsEngine::kAnimParaF18:
 		return a.f18;
 	case GraphicsEngine::kAnimParaF1c:
@@ -877,6 +874,13 @@ void Animator_SCD::reconfigPlanes() {
 		{0xE000, 0xC000, 0xF000, 0xFE00, 0xF800}
 	};
 
+	if (_mode == 0 || _modeChange != 0) {
+		_sr->memsetVRAM(0, 0, 0x10000);
+		_sr->setVScrollMode(Graphics::SegaRenderer::kVScrollFullScreen);
+		_sr->setHScrollMode(Graphics::SegaRenderer::kHScrollFullScreen);
+		_sr->hINT_enable(false);
+	}
+
 	_sr->setupPlaneAB(dimCfgData[_mode][0], dimCfgData[_mode][1]);
 
 	const uint16 *in = memCfgData[_mode];
@@ -909,15 +913,17 @@ void Animator_SCD::updateScrollState() {
 			_sr->enableDisplay(true);
 	}
 
-	if (!s.disableVScroll) {
+	//if (!s.disableVScroll) {
 		_sr->writeUint16VSRAM(0, TO_BE_16(s.realOffsets[TransitionManager::kVertA] & 0x3FF));
 		_sr->writeUint16VSRAM(2, TO_BE_16(s.realOffsets[TransitionManager::kVertB] & 0x3FF));
-	}
+	//}
 
 	if (s.lineScrollMode) {
+		_sr->setHScrollMode(Graphics::SegaRenderer::kHScroll1PixelRows);
 		for (int i = 0; i < s.hScrollTableNumEntries; ++i)
 			_sr->writeUint16VRAM(0xF822 + i * 4, TO_BE_16(s.hScrollTable[i] & 0x3FF));
 	} else {
+		_sr->setHScrollMode(Graphics::SegaRenderer::kHScrollFullScreen);
 		uint16 addr = _mode ? 0xF800 : 0xB800;
 		_sr->writeUint16VRAM(addr, TO_BE_16(s.realOffsets[TransitionManager::kHorzA] & 0x3FF));
 		_sr->writeUint16VRAM(addr + 2, TO_BE_16(s.realOffsets[TransitionManager::kHorzB] & 0x3FF));
@@ -960,8 +966,8 @@ void Animator_SCD::generateSpriteData(AnimObject &a, uint16 &spritesCurIndex, ui
 			origX = -origX - (((hw >> 7) & 0x18) + 8);
 
 		tl = (tl | p) ^ flip;
-		if (a.f16 & 0x80) {
-			uint16 v = (a.f16 & 3) << 13;
+		if (a.palette & 0x80) {
+			uint16 v = (a.palette & 3) << 13;
 			tl = (tl & 0x9FFF) | v;
 		}
 
@@ -1069,13 +1075,13 @@ void Animator_SCD::makeAnimFunctions() {
 		ANM(36),
 		ANM(37),
 		ANM(38),
-		ANM(39),
-		ANM(40),
+		ANM(setPalette),
+		ANM(transition),
 		ANM(speechSync),
 		ANM(42),
 		ANM(toggleExtraPalette),
 		ANM(allowFrameDrop),
-		ANM(45),
+		ANM(fmMusic),
 		ANM(46),
 		ANM(47)
 	};
@@ -1295,12 +1301,13 @@ int Animator_SCD::anim_38(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_39(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_setPalette(AnimObject &a, const uint8 *data) {
+	a.palette = *data;
 	return 1;
 }
 
-int Animator_SCD::anim_40(AnimObject &a, const uint8 *data) {
-	//gfxDoCommand_D0(*data);
+int Animator_SCD::anim_transition(AnimObject &a, const uint8 *data) {
+	_trs->doCommand(*data);
 	return 1;
 }
 
@@ -1327,7 +1334,8 @@ int Animator_SCD::anim_allowFrameDrop(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_45(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_fmMusic(AnimObject &a, const uint8 *data) {
+	_snd->fmSendCommand(*data, 1, 1);
 	return 1;
 }
 
@@ -1365,14 +1373,14 @@ void Animator_SCD::anim_setGroupParameter(AnimObject &a, int para, int16 val, bo
 			ta->posY += (val << 16);
 			break;
 		case 2:
-			a.absSpeedX = a.relSpeedX;
+			ta->absSpeedX = ta->relSpeedX;
 			if (ta->parent)
-				a.absSpeedX += _animations[ta->parent]->absSpeedX;
+				ta->absSpeedX += _animations[ta->parent]->absSpeedX;
 			break;
 		case 3:
-			a.absSpeedY = a.relSpeedY;
+			ta->absSpeedY = ta->relSpeedY;
 			if (ta->parent)
-				a.absSpeedY += _animations[ta->parent]->absSpeedY;
+				ta->absSpeedY += _animations[ta->parent]->absSpeedY;
 			break;
 		case 4:
 			ta->controlFlags &= GraphicsEngine::kAnimHide;
@@ -1432,8 +1440,10 @@ int Animator_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 
 	switch (frameNo) {
 	case 0:
-		_mode = 0;
+		_mode = 0; 
 		reconfigPlanes();
+		_bootsDelay = _bootsTotalFrames = 0;
+		_bootsHScroll = _bootsVScroll =  _bootsCol = 0;
 		len = READ_BE_UINT16(StaticRes_SCD::_bootSeqData[0]);
 		if (len != Util::decodeSCDData(StaticRes_SCD::_bootSeqData[0] + 2, _tempBuffer))
 			error("%s(): Decode size mismatch", __FUNCTION__);
@@ -1454,14 +1464,14 @@ int Animator_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 		_sr->loadToVRAM(&tmp[74], 22, 0xEA94);
 		_sr->loadToVRAM(&tmp[86], 42, 0xEB8C);
 
+		++frameNo;		
+		break;
+
+	case 1:
 		if (++_bootsDelay == 180) {
 			_bootsDelay = 0;
 			++frameNo;
 		}
-		break;
-
-	case 1:
-		++frameNo;
 		break;
 
 	case 2:

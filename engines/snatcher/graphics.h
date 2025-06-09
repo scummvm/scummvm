@@ -29,9 +29,13 @@
 
 class OSystem;
 
+namespace Common {
+class SeekableWriteStream;
+} // namespace Common
+
 namespace Graphics {
-	struct PixelFormat;
-}
+struct PixelFormat;
+} // namespace Graphics
 
 namespace Snatcher {
 
@@ -141,6 +145,10 @@ public:
 	bool busy(int type) const;
 	uint16 frameCount() const;
 
+	void loadState(Common::SeekableReadStream *in);
+	void saveState(Common::SeekableWriteStream *out);
+	void postLoadProcess();
+
 	void createMouseCursor(bool show);
 
 	int displayBootLogoFrame(int frameNo);
@@ -212,6 +220,8 @@ private:
 	uint8 _dataMode;
 	uint8 _verbAreaType;
 	uint8 _flags;
+
+	uint8 *_animSaveLoadData;
 
 	uint8 *_screen;
 	Animator *_animator;

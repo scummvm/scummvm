@@ -27,14 +27,13 @@
 #include "snatcher/detection.h"
 #include "snatcher/info.h"
 
-
 class SnatcherMetaEngine;
 
 namespace Snatcher {
 
 class GraphicsEngine;
 class FIO;
-class CmdQueue;
+class MemAccessHandler;
 class ResourcePointer;
 class ScriptEngine;
 class SoundEngine;
@@ -46,6 +45,7 @@ struct Script;
 
 class SnatcherEngine : public Engine {
 friend class CmdQueue;
+friend class SaveLoadManager;
 public:
 	SnatcherEngine(OSystem *system, GameDescription &dsc);
 	~SnatcherEngine() override;
@@ -58,8 +58,10 @@ private:
 	Common::Error run() override;
 	bool initResource();
 	bool initGfx(Common::Platform platform, bool use8BitColorMode);
+	bool initSaveLoad();
 	bool initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions);
 	bool initScriptEngine();
+	void reset();
 	void playBootLogoAnimation(const GameState &state);
 
 	// Main loop
@@ -71,13 +73,19 @@ private:
 	void updateModuleState(GameState &state);
 
 	const uint32 _frameLen;
+	bool _reset;
 
 	// ConfigManager sync
-	void registerDefaultSettings();
 	void syncSoundSettings() override;
 
-	// GMM
+	// GMM, Save, Load
 	void pauseEngineIntern(bool pause) override;
+	bool canLoadGameStateCurrently(Common::U32String*) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	SaveLoadManager *_saveMan;
 
 	// MetaEngine
 	bool hasFeature(EngineFeature f) const override;
@@ -98,8 +106,8 @@ private:
 
 	// Script
 	CmdQueue *_cmdQueue;
+	MemAccessHandler *_memHandler;
 	ScriptEngine *_scriptEngine;
-	Script *_script; 
 
 public:
 	// Input

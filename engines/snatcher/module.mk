@@ -3,6 +3,7 @@ MODULE := engines/snatcher
 MODULE_OBJS := \
 	animator_scd.o \
 	graphics.o \
+	memory.o \
 	metaengine.o \
 	palette_scd.o \
 	resource.o \

@@ -28,6 +28,11 @@
 
 #define		SNATCHER_SCRIPT_DEBUG
 
+namespace Common {
+class SeekableReadStream;
+class SeekableWriteStream;
+} // namespace Common
+
 namespace Snatcher {
 
 class ResourcePointer;
@@ -41,9 +46,12 @@ public:
 	void reset();
 	void writeUInt16(uint16 val);
 	void writeUInt32(uint32 val);
-	void start() { _enable = true; }	
+	void start() { _enable = (_writePos != _data); }
 	bool enabled() const { return _enable; }
-	void run();
+	void run(GameState &state);
+
+	void loadState(Common::SeekableReadStream *in);
+	void saveState(Common::SeekableWriteStream *out);
 
 private:
 	const uint16 *_readPos;
@@ -55,6 +63,7 @@ private:
 	bool _enable;
 
 	SnatcherEngine *_vm;
+	GameState *_state;
 
 private:
 	void makeFunctions();
@@ -63,17 +72,17 @@ private:
 	void m_initAnimations(const uint16 *&data);
 	void m_02(const uint16 *&data);
 	void m_drawCommands(const uint16 *&data);
-	void m_04(const uint16 *&data);
+	void m_fmSfxBlock(const uint16 *&data);
 	void m_printText(const uint16 *&data);
 	void m_06(const uint16 *&data);
 	void m_fmMusicStart(const uint16 *&data);
 	void m_displayDialog(const uint16 *&data);
 	void m_animOps(const uint16 *&data);
 	void m_pcmWait(const uint16 *&data);
-	void m_11(const uint16 *&data);
+	void m_cdaWait(const uint16 *&data);
 	void m_pcmSound(const uint16 *&data);
 	void m_chatWithPortraitAnim(const uint16 *&data);
-	void m_14(const uint16 *&data);
+	void m_cdaPlay(const uint16 *&data);
 	void m_gfxReset(const uint16 *&data);
 	void m_waitFrames(const uint16 *&data);
 	void m_loadResource(const uint16 *&data);
@@ -84,48 +93,20 @@ private:
 	void m_resetTextFields(const uint16 *&data);
 	void m_23(const uint16 *&data);
 	void m_24(const uint16 *&data);
-	void m_25(const uint16 *&data);
+	void m_fmSfxWait(const uint16 *&data);
 	void m_26(const uint16 *&data);
 	void m_27(const uint16 *&data);
 	void m_fmSoundEffect(const uint16 *&data);
 	void m_pcmBlock(const uint16 *&data);
-	void m_30(const uint16 *&data);
+	void m_saveGame(const uint16 *&data);
 	void m_31(const uint16 *&data);
-	void m_32(const uint16 *&data);
+	void m_gfxPostLoadProcess(const uint16 *&data);
 	void m_33(const uint16 *&data);
 	void m_palOps(const uint16 *&data);
 	void m_clearJordanInputField(const uint16 *&data);
 
 	typedef Common::Functor1Mem<const uint16*&, void, CmdQueue> CmdQueOpcode;
 	Common::Array<CmdQueOpcode*> _opcodes;	
-};
-
-struct Script {
-	Script(uint32 textResourceOffset) : sentenceDone(0), sentencePos(0), data(nullptr), dataSize(0), curPos(0), newPos(0xFFFF), curFileNo(0), curGfxScript(-1), textResOffset(textResourceOffset) /*,
-		stack(nullptr), stackSize(0x600), sp(nullptr), bp(nullptr)*/ {
-		// stack = new uint8[stackSize]();
-		// sp = bp = &stack[stackSize];
-	}
-	~Script() {
-		// delete[] stack;
-		delete[] data;
-	}
-	const uint8 *getTextResource() const {
-		return data + textResOffset;
-	}
-	uint8 sentenceDone;
-	uint8 sentencePos;
-	uint8 curFileNo;
-	int16 curGfxScript;
-	const uint8 *data;
-	uint32 dataSize;
-	uint16 curPos;
-	uint16 newPos;
-	//uint8 *stack;
-	//const uint32 stackSize;
-	const uint32 textResOffset;
-	//uint8 *sp;
-	//uint8 *bp;
 };
 
 class ScriptArray {
@@ -151,18 +132,23 @@ private:
 	uint8 *_data;
 };
 
+class MemAccessHandler;
 class ScriptEngine {
 public:
-	ScriptEngine(CmdQueue *que, UI *ui, ResourcePointer *scd);
+	ScriptEngine(CmdQueue *que, UI *ui, MemAccessHandler *mem, ResourcePointer *scd);
 	~ScriptEngine();
 
 	void resetArrays();
-	void run(Script *script);
-	bool postProcess(Script *script);
+	void run(Script &script);
+	bool postProcess(Script &script);
 	void processInput();
+
+	void loadState(Common::SeekableReadStream *in, Script &script);
+	void saveState(Common::SeekableWriteStream *out, Script &script);
 
 private:
 	CmdQueue *_que;
+	MemAccessHandler *_mem;
 	UI *_ui;
 	Script *_script;
 
@@ -171,7 +157,7 @@ private:
 	uint8 *_flagsTable;
 	int _pos1;
 	int _pos2;
-	uint16 /*_v1, _v2, _v3,*/ _result;
+	uint16 _result;
 	uint _op;
 
 private:
@@ -197,8 +183,6 @@ private:
 
 	uint8 getOpcode(int offset);
 
-	void writeHostMemory(uint16 addr, uint16 val);
-
 private:
 	void makeOpcodeTable(ResourcePointer *scd);
 
@@ -211,7 +195,7 @@ private:
 	void o_fmMusicStart();
 	void o_callSubRoutine();
 	void o_12();
-	void o_13();
+	void o_cdaPlay();
 	void o_14();
 	void o_fmSoundEffect();
 	void o_eval_equal();
@@ -245,8 +229,8 @@ private:
 	void o_animWait();
 	void o_pcmSoundWait();
 	void o_fmMusicWait();
-	void o_72();
-	void o_73();
+	void o_cdaWait();
+	void o_fmSfxWait();
 	void o_waitFrames();
 
 #ifndef SNATCHER_SCRIPT_DEBUG

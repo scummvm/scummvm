@@ -21,6 +21,7 @@
 
 #include "snatcher/sound_device.h"
 #include "snatcher/sound.h"
+#include "common/stream.h"
 
 namespace Snatcher {
 
@@ -86,6 +87,7 @@ void SoundEngine::update() {
 	_dev->update();
 
 	_pcmStatus.statusBits = _dev->pcmGetStatus();
+	_pcmStatus.resourceId = _dev->pcmGetResourceId();
 
 	uint8 fms = _dev->fmGetStatus();
 	if (_fmStatus.sync == (fms & 0x0F))
@@ -98,8 +100,9 @@ void SoundEngine::update() {
 	_fmStatus.sync = fms & 0x0F;
 }
 
-void SoundEngine::setUnkCond(bool enable) {
-	_dev->setUnkCond(enable);
+void SoundEngine::reduceVolume2(bool enable) {
+	_dev->reduceVolume2(enable);
+	_fmStatus.reduceVol2 = enable;
 }
 
 void SoundEngine::setMusicVolume(int vol) {
@@ -108,6 +111,23 @@ void SoundEngine::setMusicVolume(int vol) {
 
 void SoundEngine::setSoundEffectVolume(int vol) {
 	_dev->setSoundEffectVolume(vol);
+}
+
+void SoundEngine::loadState(Common::SeekableReadStream *in) {
+	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
+		error("%s(): Save file invalid or corrupt", __FUNCTION__);
+	_pcmStatus.resourceId = _pcmStatus.resourceId2 = in->readSint16BE();
+	_pcmStatus.blocked = in->readByte();
+	_fmStatus.music = in->readByte();
+	_fmStatus.reduceVol2 = in->readByte();
+}
+
+void SoundEngine::saveState(Common::SeekableWriteStream *out) {
+	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
+	out->writeSint16BE(_pcmStatus.resourceId);
+	out->writeByte(_pcmStatus.blocked);
+	out->writeByte(_fmStatus.music);
+	out->writeByte(_fmStatus.reduceVol2);
 }
 
 SoundDevice *SoundDevice::create(FIO *fio, Common::Platform platform, int soundOptions) {

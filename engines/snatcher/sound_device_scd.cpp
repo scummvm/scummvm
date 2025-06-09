@@ -92,11 +92,12 @@ public:
 	void pcmSendCommand(int cmd, int arg) override;
 	void pcmInitSound(int sndId) override;
 	uint8 pcmGetStatus() const override;
+	int16 pcmGetResourceId() const override;
 
 	void pause(bool toggle) override;
 	void update() override;
 
-	void setUnkCond(bool enable) override;
+	void reduceVolume2(bool enable) override;
 
 	void setMusicVolume(int vol) override;
 	void setSoundEffectVolume(int vol) override;
@@ -192,7 +193,7 @@ private:
 	uint8 _faderFlags;
 	uint8 _faderTimer1;
 	uint8 _faderTimer2;
-	bool _unkVolCond;
+	bool _reduceVolume2;
 	uint8 _pcmMsgFromDriver[4];
 	uint8 *_temp;
 
@@ -1740,7 +1741,7 @@ const uint8 *KonamiMCDAudioDriver::getTrack(uint32 index) const {
 }
 
 SegaSoundDevice::SegaSoundDevice(FIO *fio) : _fio(fio), SoundDevice(), _sai(nullptr), _lastTrack(-1), _pauseStartTime(0), _pcmResourceInfo(nullptr), _pcmResidentDataInfo(nullptr), _pcmInstrumentInfo(nullptr),
-	_pcmSounds(nullptr), _pcmDisableStereo(false), _temp(nullptr), _pcmResourceNumber(0), _pcmState(0), _pcmMode(0), _faderFlags(0), _faderTimer1(0), _faderTimer2(0), _unkVolCond(false), 
+	_pcmSounds(nullptr), _pcmDisableStereo(false), _temp(nullptr), _pcmResourceNumber(-1), _pcmState(0), _pcmMode(0), _faderFlags(0), _faderTimer1(0), _faderTimer2(0), _reduceVolume2(false), 
 		_fmVolume1(0xFF), _fmLastVolume1(0), _fmVolume2(0xFF), _fmLastVolume2(0), _fmCmdQueue(nullptr), _fmCmdQueueWPos(0), _fmCmdQueueRPos(0), _fmDriver(nullptr), _driverMsg()	{
 	_temp = new uint8[0x8000]();
 	assert(_temp);
@@ -1845,6 +1846,9 @@ void SegaSoundDevice::pcmSendCommand(int cmd, int arg) {
 
 void SegaSoundDevice::pcmInitSound(int sndId) {
 	_pcmResourceNumber = sndId;
+	if (sndId < 0)
+		return;
+
 	_pcmMode = _pcmResourceInfo[_pcmResourceNumber].mode;
 	if (_pcmMode == 1) {
 		_pcmState |= 4;
@@ -1859,6 +1863,10 @@ void SegaSoundDevice::pcmInitSound(int sndId) {
 
 uint8 SegaSoundDevice::pcmGetStatus() const {
 	return _pcmState;
+}
+
+int16 SegaSoundDevice::pcmGetResourceId() const {
+	return _pcmResourceNumber;
 }
 
 void SegaSoundDevice::pause(bool toggle) {	
@@ -1892,8 +1900,8 @@ void SegaSoundDevice::update() {
 	fmHandleCmdQueue();
 }
 
-void SegaSoundDevice::setUnkCond(bool enable) {
-	_unkVolCond = enable;
+void SegaSoundDevice::reduceVolume2(bool enable) {
+	_reduceVolume2 = enable;
 }
 
 void SegaSoundDevice::setMusicVolume(int vol) {
@@ -1937,7 +1945,7 @@ static const uint8 volTable[] = {
 };
 
 void SegaSoundDevice::fmUpdateVolumeFader() {
-	_fmVolume2 = _unkVolCond ? 112 : 255;
+	_fmVolume2 = _reduceVolume2 ? 112 : 255;
 	if (_faderFlags & 4) {
 		_faderFlags &= ~3;
 		if (++_faderTimer1 != 1)
@@ -2142,6 +2150,7 @@ void SegaSoundDevice::pcmHandleDriverMessage() {
 void SegaSoundDevice::pcmDelayedStart() {
 	if (_pcmState & 1) {
 		PCMSound &s = _pcmSounds[0];
+		assert(_pcmResourceNumber >= 0);
 		PCMResourceInfo &p = _pcmResourceInfo[_pcmResourceNumber];
 		s.addr = 0x65000;
 		s.prio = p.prio;
@@ -2155,6 +2164,7 @@ void SegaSoundDevice::pcmDelayedStart() {
 		pcmStartSoundInternal(0, 3, s);
 
 		_pcmState = (_pcmState & ~1) | 2;
+		_pcmResourceNumber = -1;
 	}
 	_pcmState &= ~4;
 }
@@ -2171,6 +2181,7 @@ SegaSoundDevice::SmpStrPtr SegaSoundDevice::createSamplesStream(uint32 addr) {
 	if (!str)
 		error("%s(): Error reading file", __FUNCTION__);
 
+	assert(addr < 0x65000 || _pcmResourceNumber >= 0);
 	uint32 start = addr < 0x65000 ? addr - 0x55000 : _pcmResourceInfo[_pcmResourceNumber].sector * 0x800 + addr - 0x65000;
 	uint32 max = addr < 0x65000 ? 0x10000 : _pcmResourceInfo[_pcmResourceNumber].numSectors * 0x800;
 
@@ -2246,7 +2257,7 @@ void SegaSoundDevice::pcmStartInstrument(uint8 unit, uint8 sndId, uint8 vol) {
 
 uint8 SegaSoundDevice::calcVolume(uint8 unit, PCMSound &s) const {
 	uint8 vol = s.volEff;
-	if (_unkVolCond)
+	if (_reduceVolume2)
 		vol = (vol * 112) >> 8;
 	if (unit >= 2 && _fmVolume1 != 0xFF)
 		vol = (vol * _fmVolume1) >> 8;

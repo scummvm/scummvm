@@ -22,12 +22,9 @@
 #ifndef SNATCHER_RESOURCE_H
 #define SNATCHER_RESOURCE_H
 
-#include "common/endian.h"
 #include "common/fs.h"
-#include "common/func.h"
-#include "common/rect.h"
 #include "common/scummsys.h"
-#include "common/str.h"
+#include "snatcher/state.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -39,36 +36,6 @@ namespace Snatcher {
 class SnatcherEngine;
 class SceneModule;
 class FIO;
-
-struct Config {
-	Config() : volumeMusic(0), volumeSFX(0), volumeSpeech(0), lightGunAvailable(1), useLightGun(0), controllerSetup(0), disableStereo(0), hasRAMCart(1), hasFreeBuram(1), lightGunBias(0, -16) {}
-	int16 volumeMusic;
-	int16 volumeSFX;
-	int16 volumeSpeech;
-	int16 lightGunAvailable;
-	int16 useLightGun;
-	int16 controllerSetup;
-	int16 disableStereo;
-	int16 hasRAMCart;
-	int16 hasFreeBuram;
-	Common::Point lightGunBias;
-};
-
-struct GameState {
-	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), chapter(0), chapterSub(0), conf(Config()) {}
-	int16 frameNo;
-	int16 frameState;
-	int16 finish;
-	int16 modProcessTop;
-	int16 modProcessSub;
-	int16 counter;
-	int16 modIndex;
-	int16 menuSelect;
-	int16 prologue;
-	int16 chapter;
-	int16 chapterSub;
-	Config conf;
-};
 
 class SceneHandler {
 public:
