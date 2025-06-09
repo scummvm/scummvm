@@ -1110,6 +1110,9 @@ void BaseRenderOpenGL3DShader::postfilter() {
 			_postfilterShader->setUniform1f("sepiaMode", false);
 		}
 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
