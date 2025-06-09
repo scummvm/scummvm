@@ -40,6 +40,10 @@ public:
 	virtual void linkAnimations(ResourcePointer &res, uint16 len) = 0;
 	virtual void clearAnimations(int mode = 0) = 0;
 	virtual void setPlaneMode(uint16 mode) = 0;
+
+	virtual void resetTextFields() = 0;
+	virtual void renderTextBuffer(const uint8 *textBuffer, uint16 firstLine, uint8 numLines) = 0;
+
 	virtual void updateScreen(uint8 *screen) = 0;
 	virtual void updateAnimations() = 0;
 

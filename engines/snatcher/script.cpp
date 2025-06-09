@@ -30,14 +30,18 @@
 
 namespace Snatcher {
 
-CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(0), _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0) {
+CmdQueue::CmdQueue(SnatcherEngine *vm) : _vm(vm), _data(nullptr), _readPos(0), _writePos(nullptr), _enable(false), _progress(-1), _currentOpcode(0), _sceneId(0),
+	_textLineBreak(0), _counter(0), _opcodes(), _textBuffer(nullptr), _textColor(0), /*_makestrbt1(0),*/ _textY(0), _textY2(0), _sceneTextOffsCur(0), _textLineEnd(0),
+		_sceneInfo(0), _sceneTextOffset(0), _sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0) {
 	_data = new uint16[256]();
+	_textBuffer = new uint8[0x100]();
 	makeFunctions();
 	reset();
 }
 
 CmdQueue::~CmdQueue() {
 	delete[] _data;
+	delete[] _textBuffer;
 	for (Common::Array<CmdQueOpcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++ i)
 		delete *i;
 }
@@ -58,34 +62,36 @@ void CmdQueue::writeUInt32(uint32 val) {
 	_writePos += 2;
 }
 
-void CmdQueue::run() {
+void CmdQueue::run(GameState &state) {
 	if (!_enable)
 		return;
 
-	if (_progress == -1) {
-		_currentOpcode = *_readPos++;
-		_progress = 0;
-	}
+	do {
+		if (_progress == -1) {
+			_currentOpcode = *_readPos++;
+			_progress = 0;
+		}
 
-	if (_currentOpcode < _opcodes.size() && _opcodes[_currentOpcode]->isValid())
-		(*_opcodes[_currentOpcode])(_readPos);
-	else
-		error("%s(): Invalid opcode %d", __FUNCTION__, _currentOpcode);
+		if (_currentOpcode < _opcodes.size() && _opcodes[_currentOpcode]->isValid())
+			(*_opcodes[_currentOpcode])(state, _readPos);
+		else
+			error("%s(): Invalid opcode %d", __FUNCTION__, _currentOpcode);
+	} while (_currentOpcode != 0 && _progress == -1);
 }
 
 void CmdQueue::makeFunctions() {
 #define OP(x) &CmdQueue::m_##x
-	typedef void (CmdQueue::*SFunc)(const uint16*&);
+	typedef void (CmdQueue::*SFunc)(GameState &state, const uint16*&);
 	static const SFunc funcTbl[] = {
 		OP(end),
-		OP(01),
+		OP(initAnimations),
 		OP(02),
-		OP(03),
+		OP(drawCommands),
 		OP(04),
-		OP(05),
+		OP(printText),
 		OP(06),
 		OP(fmMusicStart),
-		OP(gfxOps),
+		OP(displayDialog),
 		OP(animOps),
 		OP(pcmWait),
 		OP(11),
@@ -99,7 +105,7 @@ void CmdQueue::makeFunctions() {
 		OP(fmMusicWait),
 		OP(20),
 		OP(21),
-		OP(22),
+		OP(resetTextFields),
 		OP(23),
 		OP(24),
 		OP(25),
@@ -111,7 +117,7 @@ void CmdQueue::makeFunctions() {
 		OP(31),
 		OP(32),
 		OP(33),
-		OP(34),
+		OP(palOps),
 		OP(35)
 	};
 #undef OP
@@ -120,39 +126,181 @@ void CmdQueue::makeFunctions() {
 		_opcodes.push_back(new CmdQueOpcode(this, funcTbl[i]));
 }
 
-void CmdQueue::m_end(const uint16 *&data) {
+void CmdQueue::m_end(GameState &state, const uint16 *&data) {
 	reset();
 }
 
-void CmdQueue::m_01(const uint16 *&data) {
+void CmdQueue::m_initAnimations(GameState &state, const uint16 *&data) {
+	uint32 addr = *reinterpret_cast<const uint32*>(data);
+	data += 2;
+	ResourcePointer in = (addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
+	uint16 len = 0;
+	const uint8 *s = in();
+	int dbgTimeout = 0;
+
+	while (*s != 0xFF && dbgTimeout < 100) {
+		s += 12;
+		len += 12;
+		++dbgTimeout;
+	}
+
+	if (dbgTimeout >= 100) {
+		error("%s(): Error reading animation data", __FUNCTION__);
+		return;
+	}
+
+	_vm->gfx()->initAnimations(in, len);
+	_progress = -1;
 }
 
-void CmdQueue::m_02(const uint16 *&data) {
+void CmdQueue::m_02(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_03(const uint16 *&data) {
+void CmdQueue::m_drawCommands(GameState &state, const uint16 *&data) {
+	uint32 addr = *reinterpret_cast<const uint32*>(data);
+	data += 2;
+	_vm->gfx()->enqueueDrawCommands(addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
+	_progress = -1;
 }
 
-void CmdQueue::m_04(const uint16 *&data) {
+void CmdQueue::m_04(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_05(const uint16 *&data) {
+void CmdQueue::m_printText(GameState &state, const uint16 *&data) {
+	if (_vm->gfx()->isTextInQueue())
+		return;
+	uint32 addr = *reinterpret_cast<const uint32*>(data);
+	data += 2;
+	_vm->gfx()->printText(addr >= 0x28000 ? _vm->_module->getPtr(addr)() : _vm->_scd->makePtr(addr)());
+	_progress = -1;
 }
 
-void CmdQueue::m_06(const uint16 *&data) {
+void CmdQueue::m_06(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_fmMusicStart(const uint16 *&data) {
+void CmdQueue::m_fmMusicStart(GameState &state, const uint16 *&data) {
 	uint8 cmd = *data++;
 	_vm->sound()->fmSendCommand(cmd, 1);
 	_vm->sound()->_fmPlayingTracks.music = (cmd == 0xFF) ? 0 : cmd;
 	_progress = -1;
 }
 
-void CmdQueue::m_gfxOps(const uint16 *&data) {
+int _gfxOps_var1 = 0;
+uint8  _gfxOps10_sub_974B = 0;
+uint8 _gfxOps10_sub_974E = 0;
+uint16 _gfxOps10_subword_974C = 0;
+
+//uint8 _c13Valu = 0;
+
+void CmdQueue::m_displayDialog(GameState &state, const uint16 *&data) {
+	if (_gfxOps_var1 || (_vm->input().controllerFlags & 0x100))
+		_vm->gfx()->setTextPrintDelay(0);
+
+	if (_vm->gfx()->isTextInQueue())
+		return;
+
+	switch (_progress) {
+	case 0:
+		for (int i = 5; i < 15; ++i)
+			_vm->gfx()->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
+		_vm->gfx()->setAnimParameter(0, GraphicsEngine::kAnimParaEnable, 0);
+		_vm->gfx()->enqueuePaletteEvent(_vm->_scd->makePtr(0x13622));
+		++_progress;
+		break;
+
+	case 1:
+		_vm->gfx()->setVar(11, 0xFF);
+		_progress = 9;
+		break;
+
+	case 2:
+		if (_sceneId == 0) {
+			_vm->gfx()->transitionCommand(21);
+			//_c13Valu = 0xFF;
+			_textY = _textY2;
+		} else if (_sceneId == 0xFF) {
+			_textY = _textY2;
+		} else {
+			printSceneEntryStringHead();
+		}
+		++_progress;
+		break;
+
+	case 3:
+		printSceneEntryStringBody(state);
+		if (checkStringProgress())
+			++_progress;
+		break;
+
+	case 4:
+		_waitCursorFrame = 0;
+		_waitCursorAnimDelay = 1;
+		if (!_sceneId)
+			_vm->gfx()->setAnimParameter(31, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide);
+		++_progress;
+		break;
+
+	case 5:
+		if (!waitWithCursorAnim())
+			return;
+		_vm->gfx()->transitionCommand(0xFE);
+		if (_textLineEnd) {
+			_progress = 6;
+			if (!_sceneId)
+				_vm->gfx()->setAnimParameter(31, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
+		} else {
+			_progress = 7;
+		}
+		break;
+
+	case 6:
+		_sceneTextOffset = _sceneInfo = 0;
+		//if (!_sceneId)
+		//	_c13Valu = 0xFF;
+		_progress = -1;
+		break;
+
+	case 7:
+		_vm->gfx()->resetTextFields();
+		++_progress;
+		break;
+
+	case 8:
+		_vm->gfx()->transitionCommand(_vm->gfx()->getVerbAreaType() == 0 ? 15 : (_vm->gfx()->getVerbAreaType() == 1 ? 20 : 22));
+		_progress = 2;
+		break;
+
+	case 9:
+		_sceneInfo = *data++;
+		_sceneTextOffset = *data++;
+		_vm->gfx()->enqueueDrawCommands(_vm->_scd->makePtr(0xECB6));
+		++_progress;
+		break;
+
+	case 10:
+		_sceneTextOffsStart = _sceneTextOffset;
+		_vm->gfx()->resetTextFields();
+		_sceneId = (_sceneInfo & 0xFF) - 1;
+
+		_sceneTextOffsCur = _sceneTextOffsStart;
+		_textLineEnd = 0;
+		_gfxOps10_sub_974B = _gfxOps10_sub_974E = 0;
+		_gfxOps10_subword_974C = 0;
+
+		_textColor = 1;
+
+		_vm->gfx()->transitionCommand(_vm->gfx()->getVerbAreaType() == 0 ? 15 : (_vm->gfx()->getVerbAreaType() == 1 ? 20 : 22));
+		//_c13Valu = 0;
+		_progress = 2;
+		break;
+
+	default:
+		error("%s(): Unknown state %d", __FUNCTION__, _progress);
+		break;
+	}
 }
 
-void CmdQueue::m_animOps(const uint16 *&data) {
+void CmdQueue::m_animOps(GameState &state, const uint16 *&data) {
 	switch (data[0]) {
 	case 0:
 	case 1:
@@ -179,7 +327,7 @@ void CmdQueue::m_animOps(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_pcmWait(const uint16 *&data) {
+void CmdQueue::m_pcmWait(GameState &state, const uint16 *&data) {
 	if (_progress == 0) {
 		_counter = 3600;
 		++_progress;
@@ -188,13 +336,13 @@ void CmdQueue::m_pcmWait(const uint16 *&data) {
 		_progress = -1;
 }
 
-void CmdQueue::m_11(const uint16 *&data) {
+void CmdQueue::m_11(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_12(const uint16 *&data) {
+void CmdQueue::m_12(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_mmSeq(const uint16 *&data) {
+void CmdQueue::m_mmSeq(GameState &state, const uint16 *&data) {
 	if (_progress == 0) {
 		_vm->sound()->pcmInitSound(*data);
 		//_c13Valu = 0xFF;
@@ -202,7 +350,7 @@ void CmdQueue::m_mmSeq(const uint16 *&data) {
 	} else if (_progress == 1) {
 		++_progress;
 	} else if (_progress == 2) {
-		if (_vm->_scd->makeAbsPtr(0x13FEC)[*data] != 0xFF)
+		if (_vm->_scd->makePtr(0x13FEC)[*data] != 0xFF)
 			_vm->gfx()->setVar(11, 1);
 		if (!_vm->gfx()->getVar(11)) {
 			_progress = -1;
@@ -212,7 +360,7 @@ void CmdQueue::m_mmSeq(const uint16 *&data) {
 		}
 
 	} else {
-		uint8 f = _vm->_scd->makeAbsPtr(0x13FEC)[*data];
+		uint8 f = _vm->_scd->makePtr(0x13FEC)[*data];
 		if (f != 0xFF) {
 			//_vm->gfx()->dataMode = 1;
 			_vm->gfx()->runScript(_vm->_module->getPtr(0), f);
@@ -224,10 +372,10 @@ void CmdQueue::m_mmSeq(const uint16 *&data) {
 		++data;
 }
 
-void CmdQueue::m_14(const uint16 *&data) {
+void CmdQueue::m_14(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_gfxReset(const uint16 *&data) {
+void CmdQueue::m_gfxReset(GameState &state, const uint16 *&data) {
 	if (_progress == 0) {
 		if (!_vm->gfx()->busy(2)) {
 			_vm->gfx()->reset(GraphicsEngine::kResetSetDefaults);
@@ -236,12 +384,11 @@ void CmdQueue::m_gfxReset(const uint16 *&data) {
 			++_progress;
 		}
 	} else {
-		// original: is file done loading
 		_progress = -1;
 	}
 }
 
-void CmdQueue::m_waitFrames(const uint16 *&data) {
+void CmdQueue::m_waitFrames(GameState &state, const uint16 *&data) {
 	if (_progress == 0) {
 		_counter = 0;
 		++_progress;
@@ -253,7 +400,7 @@ void CmdQueue::m_waitFrames(const uint16 *&data) {
 	_progress = -1;
 	++data;
 }
-void CmdQueue::m_loadResource(const uint16 *&data) {
+void CmdQueue::m_loadResource(GameState &state, const uint16 *&data) {
 	if (_progress == 0) {
 		_vm->sound()->cdaStop();
 		++_progress;
@@ -264,10 +411,9 @@ void CmdQueue::m_loadResource(const uint16 *&data) {
 		++_progress;
 
 		if (dest == 0x1A800) {
-			assert(_vm->_script);
-			delete[] _vm->_script->data;
 			_vm->_script->data = _vm->_fio->fileData(index, &_vm->_script->dataSize);
 			assert(_vm->_script->data);
+			_vm->_script->res = ResourcePointer(_vm->_script->data, 0, 0x1A800, true);
 			_vm->_script->curFileNo = index;
 		} else if (dest == 0x28000) {
 			delete _vm->_module;
@@ -283,12 +429,12 @@ void CmdQueue::m_loadResource(const uint16 *&data) {
 	}
 }
 
-void CmdQueue::m_gfxStart(const uint16 *&data) {
+void CmdQueue::m_gfxStart(GameState &state, const uint16 *&data) {
 	_vm->gfx()->runScript(_vm->_module->getPtr(0), *data++);
 	_progress = -1;
 }
 
-void CmdQueue::m_fmMusicWait(const uint16 *&data) {
+void CmdQueue::m_fmMusicWait(GameState &state, const uint16 *&data) {
 	if (_progress == 0) {
 		_counter = 2700;
 		++_progress;
@@ -297,52 +443,166 @@ void CmdQueue::m_fmMusicWait(const uint16 *&data) {
 		_progress = -1;
 }
 
-void CmdQueue::m_20(const uint16 *&data) {
+void CmdQueue::m_20(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_21(const uint16 *&data) {
+void CmdQueue::m_21(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_22(const uint16 *&data) {
+void CmdQueue::m_resetTextFields(GameState &state, const uint16 *&data) {
+	_vm->gfx()->resetTextFields();
+	_progress = -1;
 }
 
-void CmdQueue::m_23(const uint16 *&data) {
+void CmdQueue::m_23(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_24(const uint16 *&data) {
+void CmdQueue::m_24(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_25(const uint16 *&data) {
+void CmdQueue::m_25(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_26(const uint16 *&data) {
+void CmdQueue::m_26(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_27(const uint16 *&data) {
+void CmdQueue::m_27(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_28(const uint16 *&data) {
+void CmdQueue::m_28(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_29(const uint16 *&data) {
+void CmdQueue::m_29(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_30(const uint16 *&data) {
+void CmdQueue::m_30(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_31(const uint16 *&data) {
+void CmdQueue::m_31(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_32(const uint16 *&data) {
+void CmdQueue::m_32(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_33(const uint16 *&data) {
+void CmdQueue::m_33(GameState &state, const uint16 *&data) {
 }
 
-void CmdQueue::m_34(const uint16 *&data) {
+void CmdQueue::m_palOps(GameState &state, const uint16 *&data) {
+	uint32 addr = *reinterpret_cast<const uint32*>(data);
+	_vm->gfx()->enqueuePaletteEvent(addr >= 0x28000 ? _vm->_module->getPtr(addr) : _vm->_scd->makePtr(addr));
+	data += 2;
+	_progress = -1;
 }
 
-void CmdQueue::m_35(const uint16 *&data) {
+void CmdQueue::m_35(GameState &state, const uint16 *&data) {
+}
+
+void CmdQueue::printSceneEntryStringHead() {
+	static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFB, 0x10, 0x00, 0xFE };
+	const uint8 *s = _vm->_scd->makePtr(0x13552).getDataFromTable(_sceneId)();
+	memcpy(_textBuffer, strHead, sizeof(strHead));
+	_textBuffer[6] = _textY2;
+	_textBuffer[8] = (*s & 0x80) ? 3 : (*s++ & 7);
+	uint8 *d = _textBuffer + 9;
+
+	for (int i = 0; i < 25; ++i) {
+		*d++ = *s;
+		if (*s++ == 0xFF)
+			break;
+	}
+
+	assert(*(d - 1) == 0xFF);
+
+	_vm->gfx()->printText(_textBuffer);
+	_textY = _textY2 + 9;
+}
+
+void CmdQueue::printSceneEntryStringBody(GameState &state) {
+	static const uint8 strHead[] = { 0xFC, 0x01, 0xF9, 0x01, 0xFE, 0x00, 0xFB };
+	static const uint8 buttonTable[3][6] = {
+		{ 'A', 'A', 'B', 'C', 'C', 'B' },
+		{ 'B', 'C', 'A', 'A', 'B', 'C' },
+		{ 'C', 'B', 'C', 'B', 'A', 'A' }
+	};
+
+	memcpy(_textBuffer, strHead, sizeof(strHead));
+	_textBuffer[5] = _textColor;
+	uint8 *d = _textBuffer + sizeof(strHead);
+	//_makestrbt1 = 0xFF;
+	*d++ = _sceneId ? 24 : 40;
+	*d++ = _textY;
+
+	_textLineBreak = 0;
+	const uint8 *s = _vm->_script->res.makePtr(0x1E000)() + _sceneTextOffsCur;
+	for (int i = 0; i < 50;++i) {
+		uint8 in = *s++;
+		++_sceneTextOffsCur;
+		switch (in) {
+		case 0xFF:
+			_textLineEnd = 1;
+			i = 49;
+			break;
+		case 0xF6:
+			_textLineBreak = 3;
+			i = 49;
+			break;;
+		case 0xF4:
+			_sceneInfo = 2;
+			break;
+		case 0xF2:
+			_textLineBreak = 1;
+			i = 49;
+			break;
+		case 0xF0:
+		case 0xEE:
+		case 0xEC:
+			*d++ = buttonTable[(in - 0xEC) >> 1][state.conf.controllerSetup];
+			break;
+		default:
+			if (in < 0xF8) {
+				*d++ = in;
+			} else {
+				*d++ = 0xFE;
+				*d++ = _textColor = in & 7;
+			}
+			break;
+		}
+	}
+
+	*d++ = 0xFF;
+	_vm->gfx()->printText(_textBuffer);
+}
+
+bool CmdQueue::checkStringProgress() {
+	if (_textLineEnd || _textLineBreak == 3)
+		return true;
+	_textY += 9;
+	return (_textY > 56);
+}
+
+bool CmdQueue::waitWithCursorAnim() {
+	if (_vm->input().controllerFlagsRemapped & 0x20)
+		return true;
+	if ((_waitCursorAnimDelay && --_waitCursorAnimDelay) || _sceneId == 0)
+		return false;
+	const uint8 *s = _vm->_scd->makePtr(0x1391C)() + _waitCursorFrame;
+
+	ResourcePointer drw = _vm->_scd->makePtr(_vm->gfx()->getVerbAreaType() == 0 ? 0x1387C : (_vm->gfx()->getVerbAreaType() == 1 ? 0x13894 : 0x138AC));
+
+	uint32 frm = 0x138C4 + _waitCursorFrame * 4;
+	(drw + 2).writeUINT32(frm);
+	(drw + 12).writeUINT32(frm + 4);
+
+	_vm->gfx()->enqueueDrawCommands(drw);
+
+	_waitCursorFrame += 2;
+	_waitCursorAnimDelay = s[1];
+	if (s[3])
+		return false;
+	if (_sceneInfo >> 8)
+		return true;
+	_waitCursorFrame = 0;
+	return false;
 }
 
 ScriptEngine::ScriptEngine(SnatcherEngine *vm, CmdQueue *que, ResourcePointer *scd) : _vm(vm), _que(que), _var(nullptr), _curPos(0), _op(0), /*_v1(0), _v2(0),*/ _v3(0), _v5(0), _buf352(nullptr) {
@@ -373,27 +633,11 @@ void ScriptEngine::resetArrays() {
 void ScriptEngine::run(Script *script) {
 	assert(script);
 
-	if (script->newPos != -1) {
-		script->curPos = script->newPos;
-		script->newPos = -1;
-	}
 	_curPos = script->curPos;
 	script->sp = script->bp;
 	_script = script;
 
 	runOpcode(_curPos);
-}
-
-void ScriptEngine::cleanupState() {
-
-}
-
-void ScriptEngine::runOpcode(int offset) {
-	uint8 op = getOpcode(offset);
-	if (_opcodes[op].proc->isValid())
-		(*_opcodes[op].proc)();
-	else
-		error("%s(): Invalid opcode %d", __FUNCTION__, op);
 }
 
 #define S_FRAME(x) _script->sp += (x)
@@ -409,8 +653,40 @@ void ScriptEngine::runOpcode(int offset) {
 #define S_POP() S_RDWORD(0); S_FRAME(2);
 #define ARR_SIZE(x)	_arrays[x][0]
 #define ARR_POS(x)	_arrays[x][1]
-#define ARR_WRITE(a, p, v) WRITE_BE_UINT16(_arrays[a] + 2 + 2 * p, v);
-#define ARR_READ(a, p) READ_BE_UINT16(_arrays[a] + 2 + 2 * p);
+#define ARR_READ(a, p) READ_BE_UINT16(_arrays[a] + 2 + 2 * (p))
+#define ARR_WRITE(a, p, v) WRITE_BE_UINT16(_arrays[a] + 2 + 2 * (p), v)
+
+bool ScriptEngine::postProcess(Script *script) {
+	if (script->newPos != -1) {
+		if (ARR_SIZE(4) <= ARR_POS(4)) {
+			for (int i = 0; i < ARR_POS(4) - 1; ++i)
+				ARR_WRITE(4, i, ARR_READ(4, i + 1));
+			--ARR_POS(4);
+		}
+		setArrayLastEntry(4, script->curPos);
+		script->curPos = script->newPos;
+		script->newPos = -1;
+	}
+
+	if (ARR_POS(1) != 0)
+		return true;
+
+	int r0 = 0;
+	getArrayLastEntry(0, r0);
+	if (r0 < ARR_POS(2))
+		ARR_POS(2) = r0;
+	ARR_POS(1) = 0;
+
+	return false;
+}
+
+void ScriptEngine::runOpcode(int offset) {
+	uint8 op = getOpcode(offset);
+	if (_opcodes[op].proc->isValid())
+		(*_opcodes[op].proc)();
+	else
+		error("%s(): Invalid opcode %d", __FUNCTION__, op);
+}
 
 void ScriptEngine::getOpcodeProps(int offset, int &len, int &f1, int &f2) {
 	uint8 op = getOpcode(offset);
@@ -739,8 +1015,8 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(64),
 		OP(subOps),
 		OP(subOps),
-		OP(gfxOps),
-		OP(gfxOps),
+		OP(displayDialog),
+		OP(displayDialog),
 		OP(animWait),
 		OP(pcmSoundWait),
 		OP(fmMusicWait),
@@ -750,7 +1026,7 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 	};
 #undef OP
 
-	const uint8 *in = scd->makeAbsPtr(0x16CDC)();
+	const uint8 *in = scd->makePtr(0x16CDC)();
 
 	for (uint i = 0; i < ARRAYSIZE(funcTbl); ++i) {
 #ifndef SNATCHER_SCRIPT_DEBUG
@@ -1145,7 +1421,7 @@ void ScriptEngine::o_subOps() {
 	}
 }
 
-void ScriptEngine::o_gfxOps() {
+void ScriptEngine::o_displayDialog() {
 	if (!OPC_4_ss())
 		return;
 

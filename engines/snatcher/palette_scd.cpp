@@ -180,8 +180,6 @@ void SCDPalette::processEventQueue() {
 		if (_eventProcs[p->cmd]->isValid())
 			(*_eventProcs[p->cmd])(p);
 	}
-
-	updateSystemPalette();
 }
 
 void SCDPalette::clearEvents() {
@@ -254,8 +252,14 @@ void SCDPalette::adjustColor(int index, int8 r, int8 g, int8 b) {
 }
 
 void SCDPalette::updateSystemPalette() {
-	if (!_gfxState.testFlag(7, 0) && !_gfxState.testFlag(7, 1))
+	if (!_gfxState.getVar(7) && !_gfxState.getVar(11))
 		return;
+
+	if (_gfxState.getVar(11) == 0xFF) {
+		_gfxState.setFlag(7, 0);
+		_gfxState.setVar(11, 0);
+		// hint set
+	}
 
 	if (_gfxState.testFlag(7, 0))
 		Common::copy<const uint16*, uint16*>(_colors, &_colors[64], _colors2);
@@ -265,6 +269,12 @@ void SCDPalette::updateSystemPalette() {
 
 	_gfxState.clearFlag(7, 0);
 	_gfxState.clearFlag(7, 1);
+
+	if (_gfxState.testFlag(7, 2)) {
+		Common::fill<uint16*, uint16>(_colors2, &_colors2[64], 0xEEE);
+		_gfxState.setFlag(7, 0);
+		_gfxState.clearFlag(7, 2);
+	}
 
 	const uint16 *src = &_colors2[0 << 6];
 	uint8 *dst = _sysPalette;
@@ -302,8 +312,7 @@ void SCDPalette::event_palSet(PalEventSCD *evt) {
 
 	uint16 *dst = &_colors[evt->destOffset];
 	uint32 srcOffs = READ_BE_UINT32(evt->srcOffsetCur);
-	assert(srcOffs >= 0x28000);
-	const uint16 *src = reinterpret_cast<const uint16*>(ResourcePointer(evt->res.dataStart, srcOffs)());
+	const uint16 *src = reinterpret_cast<const uint16*>(evt->res.makePtr(srcOffs)());
 	for (int i = 0; i < evt->len; ++i)
 		*dst++ = READ_BE_UINT16(src++);
 
@@ -367,8 +376,7 @@ void SCDPalette::event_palCycle(PalEventSCD *evt) {
 
 	uint16 *dst = &_colors[evt->destOffset];
 	uint32 srcOffs = READ_BE_UINT32(evt->srcOffsetCur);
-	assert(srcOffs >= 0x28000);
-	const uint16 *src = reinterpret_cast<const uint16*>(ResourcePointer(evt->res.dataStart, srcOffs)());
+	const uint16 *src = reinterpret_cast<const uint16*>(evt->res.makePtr(srcOffs)());
 	for (int i = 0; i < evt->len; ++i)
 		*dst++ = READ_BE_UINT16(src++);
 
@@ -382,8 +390,7 @@ void SCDPalette::event_palFadeToColor(PalEventSCD *evt) {
 
 	uint16 *dst = &_colors[evt->destOffset];
 	uint32 srcOffs = READ_BE_UINT32(evt->srcOffsetCur);
-	assert(srcOffs >= 0x28000);
-	uint16 col = READ_BE_UINT16(ResourcePointer(evt->res.dataStart, srcOffs)());
+	uint16 col = READ_BE_UINT16(evt->res.makePtr(srcOffs)());
 
 	for (int i = 0; i < evt->len; ++i)
 		fadeStep(dst++, col & 0xF, col & 0xF0, col & 0xF00);
@@ -398,8 +405,7 @@ void SCDPalette::event_palFadeToGrey(PalEventSCD *evt) {
 
 	uint16 *dst = &_colors[evt->destOffset];
 	uint32 srcOffs = READ_BE_UINT32(evt->srcOffsetCur);
-	assert(srcOffs >= 0x28000);
-	const uint16 *src = reinterpret_cast<const uint16*>(ResourcePointer(evt->res.dataStart, srcOffs)());
+	const uint16 *src = reinterpret_cast<const uint16*>(evt->res.makePtr(srcOffs)());
 
 	for (int i = 0; i < evt->len; ++i) {
 		uint16 col = READ_BE_UINT16(src++);
@@ -420,8 +426,7 @@ void SCDPalette::event_palFadeToPal(PalEventSCD *evt) {
 
 	uint16 *dst = &_colors[evt->destOffset];
 	uint32 srcOffs = READ_BE_UINT32(evt->srcOffsetCur);
-	assert(srcOffs >= 0x28000);
-	const uint16 *src = reinterpret_cast<const uint16*>(ResourcePointer(evt->res.dataStart, srcOffs)());
+	const uint16 *src = reinterpret_cast<const uint16*>(evt->res.makePtr(srcOffs)());
 
 	for (int i = 0; i < evt->len; ++i) {
 		uint16 col = READ_BE_UINT16(src++);

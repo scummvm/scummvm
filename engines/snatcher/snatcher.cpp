@@ -24,6 +24,7 @@
 #include "snatcher/script.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
+#include "snatcher/text.h"
 #include "snatcher/util.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
@@ -43,7 +44,8 @@
 namespace Snatcher {
 
 SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
-	_scriptEngine(nullptr), _cmdQueue(nullptr), _script(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _gfxInfo(), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
+	_scriptEngine(nullptr), _cmdQueue(nullptr), _script(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _gfxInfo(),
+		_frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 }
 
@@ -82,7 +84,7 @@ bool SnatcherEngine::initResource() {
 		return false;
 
 	uint32 size = 0;
-	const uint8 *data = _fio->fileData(96, &size);
+	uint8 *data = _fio->fileData(96, &size);
 	if (!data)
 		return false;
 	_scd = new ResourcePointer(data, 0, 0xD400, true);
@@ -120,6 +122,7 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo, _snd);
 	if (_gfx) {
 		initGraphics(_gfx->screenWidth(), _gfx->screenHeight(), &pxf);
+		_gfx->setTextFont(_scd->makePtr(0x14B7C)(), 816, _scd->makePtr(0x14EAC)(), 102);
 		return true;
 	}
 
@@ -171,7 +174,10 @@ bool SnatcherEngine::start() {
 	Util::rngReset();
 	GameState state;
 
-	playBootLogoAnimation(state);
+	//playBootLogoAnimation(state);
+	state.prologue = -1;
+	state.modProcessTop = 7;
+	state.modProcessSub = 4;
 
 	uint32 frameTimer = 0;
 
@@ -195,9 +201,9 @@ bool SnatcherEngine::start() {
 
 		for (int i = 0; i < numLoops; ++i) {
 			if (!_gfx->busy(0)) {
-				bool blockedMod = _cmdQueue->running();
-				if (_cmdQueue->running()) {
-					_cmdQueue->run();
+				bool blockedMod = _cmdQueue->enabled();
+				if (_cmdQueue->enabled()) {
+					_cmdQueue->run(state);
 					blockedMod = _gfx->busy(0);
 				}
 				if (!blockedMod) {
@@ -205,6 +211,8 @@ bool SnatcherEngine::start() {
 					_gfx->updateAnimations();
 				}
 			}
+
+			_gfx->updateText();
 
 			if (numLoops == 2) {
 				if (_gfx->busy(1)) {
@@ -217,9 +225,10 @@ bool SnatcherEngine::start() {
 			}
 		}
 
+		checkEvents(state);
+
 		_gfx->nextFrame();
 		_snd->update();
-		checkEvents(state);
 		delayUntil(nextFrame);
 	}
 
@@ -273,11 +282,17 @@ static const InputEvent _defaultKeyEvents[] = {
 	{ Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x200, false },
 };
 
+static const uint8 _scdKeyConfigs[6][3] = {
+	{ 6, 4, 5 }, { 6, 5, 4 },
+	{ 4, 6, 5 }, { 4, 5, 6 },
+	{ 5, 4, 6 }, { 5, 6, 4 }
+};
+
 void SnatcherEngine::checkEvents(const GameState &state) {
 	Common::Event evt;
 	_lastKeys &= ~_releaseKeys;
 	_releaseKeys = 0;
-	_input.controllerFlags = 0;
+	_input.controllerFlags = _input.controllerFlagsRemapped = 0;
 	Common::Point mouse;
 
 	while (_eventMan->pollEvent(evt)) {
@@ -285,6 +300,10 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 			if (evt.type == k.pressType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
 				if (!(_lastKeys & k.internalEvent)) {
 					_input.controllerFlags |= k.internalEvent;
+					if (k.internalEvent & 0x70) // The A, B and C buttons can be reconfigured in the main menu. This applies the setting.
+						_input.controllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][k.internalEvent >> 5]);
+					else
+						_input.controllerFlagsRemapped |= k.internalEvent;
 					_lastKeys |= k.internalEvent;
 					if (_keyRepeat || k.releaseType == Common::EVENT_INVALID)
 						_releaseKeys |= k.internalEvent;
@@ -301,14 +320,35 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 			}
 		}
 	}
+
+	if (_enableLightGun && _input.controllerFlags & 0x100)
+		_gfx->setVar(7, 4);
 }
 
 void SnatcherEngine::updateChapter(GameState &state) {
 	switch (state.chapter) {
 	case 0:
 		// Intro and main menu
-		if (state.introState == -1)
-			++state.chapter;
+		if (state.prologue != -1)
+			break;
+
+		if (state.menuSelect == 0)
+			_gfx->setVar(1, _gfx->getVar(1) | 2);
+		else
+			_gfx->setVar(5, 1);
+
+		_cmdQueue->writeUInt16(0x16);
+		_cmdQueue->writeUInt16(0x03);
+		_cmdQueue->writeUInt32(0xECB6);
+		_cmdQueue->writeUInt16(0x03);
+		_cmdQueue->writeUInt32(0xECC4);
+		_cmdQueue->writeUInt16(0x01);
+		_cmdQueue->writeUInt32(0xED0E);
+		_cmdQueue->start();
+
+		++state.chapter;
+		state.chapter |= 0x80;
+
 		break;
 
 	case 1:
@@ -323,15 +363,16 @@ void SnatcherEngine::updateChapter(GameState &state) {
 			/* load savegame */
 		}
 
-		_cmdQueue->enable();
+		_cmdQueue->start();
 		++state.chapter;
 		state.chapter |= 0x80;
 		break;
 
 	case 2:
+		// Act I
 		_scriptEngine->run(_script);
-		_cmdQueue->enable();
-		state.chapter |= 0x80;
+		_cmdQueue->start();
+		state.chapter |= 0xC0;
 		break;
 
 	case 3:
@@ -344,9 +385,27 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		break;
 
 	default:
-		if (_cmdQueue->running() || (_snd->pcmGetStatus() & 7))
-			return;
-		state.chapter &= ~0x80;
+		if (state.chapter & 0x80) {
+			if (!(_cmdQueue->enabled() || (_snd->pcmGetStatus() & 7)))
+				state.chapter &= ~0x80;
+		} else if (state.chapter & 0x40) {
+			//_unkScrByte = 0;
+			if (_scriptEngine->postProcess(_script)) {
+				for (int i = 5; i < 15; ++i)
+					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
+				_cmdQueue->writeUInt16(0x22);
+				_cmdQueue->writeUInt32(0x139D0);
+				_cmdQueue->start();
+				state.chapter |= 0xA0;
+			}				
+			state.chapter &= ~0x40;
+		} else if (state.chapter & 0x20) {
+			_gfx->setVar(11, 0xFF);
+			//unkPostScriptUpdt
+			//updt_mult_sub_11004
+			//scriptUnkProcess
+			state.chapter &= ~0x20;
+		}		
 		break;
 	}
 }
@@ -406,7 +465,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				state.finish = 0;
 				state.modProcessTop = state.menuSelect ? 7 : state.modProcessTop + 1;
 				state.modIndex = 0;
-				state.introState = 1;
+				state.prologue = 1;
 			}
 			break;
 		default:
@@ -431,8 +490,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 1:
 			if (!(_gfx->frameCount() & 0x1F)) {
-				// startup__runWithFileFunc(2)
-				//_unlCDREadSeekWord = 0;
+				// original: check whether file is loaded
 				state.frameNo = -1;
 				++state.modProcessSub;
 			}
@@ -444,7 +502,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				state.finish = 0;
 				state.counter = 10;
 				++state.modProcessSub;
-				_gfx->enqueuePaletteEvent(_scd->makeAbsPtr(0x14B1C));
+				_gfx->enqueuePaletteEvent(_scd->makePtr(0x14B1C));
 			} else if (state.finish) {
 				if (state.modIndex == 0) {
 					++state.modIndex;
@@ -456,7 +514,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 3:
 			if (--state.counter == 1) {
-				_gfx->enqueueDrawCommands(_scd->makeAbsPtr(0x14B4E));
+				_gfx->enqueueDrawCommands(_scd->makePtr(0x14B4E));
 			} else if (state.counter == 0) {
 				state.finish = -1;
 				state.modProcessSub = 0;
@@ -546,7 +604,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		case 4:
 			state.modProcessTop = 5;
 			state.modProcessSub = 0;
-			state.introState = -1;
+			state.prologue = -1;
 			break;
 		default:
 			break;
