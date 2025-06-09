@@ -210,7 +210,7 @@ public:
 	void scrollToEntry(int id, bool forceToTop);
 	void assignEntriesToItems();
 
-	int getNextPos(int oldSel);
+	int getItemPos(int item);
 	int getNewSel(int index);
 	int getScrollPos() const { return _scrollPos; }
 	int getSelected() const { return ((_selectedEntry == nullptr) ? -1 : _selectedEntry->entryID); }

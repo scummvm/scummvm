@@ -166,7 +166,7 @@ protected:
 	 */
 	virtual void updateListing(int selPos = -1) = 0;
 
-	virtual int getNextPos(int item) = 0;
+	virtual int getItemPos(int item) = 0;
 
 	virtual void updateButtons() = 0;
 
@@ -242,7 +242,7 @@ public:
 
 protected:
 	void updateListing(int selPos = -1) override;
-	int getNextPos(int item) override;
+	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
 	void updateButtons() override;
 	void selectTarget(const Common::String &target) override;
