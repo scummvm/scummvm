@@ -155,10 +155,12 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 		_palette.set(47, 0xE0, 0xE0, 0xE0);
 	} else {
 		pal_diff = 1;
-		byte r = stream.readByte() << 2;
-		byte g = stream.readByte() << 2;
-		byte b = stream.readByte() << 2;
-		_palette.set(239 - flag, r, g, b);
+		for (int i = flag; i != 0; --i) {
+			byte r = stream.readByte() << 2;
+			byte g = stream.readByte() << 2;
+			byte b = stream.readByte() << 2;
+			_palette.set(239 - i, r, g, b);
+		}
 	}
 
 	_numSections = stream.readByte();
