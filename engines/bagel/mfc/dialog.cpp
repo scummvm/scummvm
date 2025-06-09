@@ -27,10 +27,10 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CDialog, CWnd)
 BEGIN_MESSAGE_MAP(CDialog, CWnd)
-ON_COMMAND(IDOK, OnOK)
-ON_COMMAND(IDCANCEL, OnCancel)
-ON_MESSAGE(WM_INITDIALOG, HandleInitDialog)
-ON_MESSAGE(WM_SETFONT, HandleSetFont)
+ON_COMMAND(IDOK, CDialog::OnOK)
+ON_COMMAND(IDCANCEL, CDialog::OnCancel)
+ON_MESSAGE(WM_INITDIALOG, CDialog::HandleInitDialog)
+ON_MESSAGE(WM_SETFONT, CDialog::HandleSetFont)
 END_MESSAGE_MAP()
 
 CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
