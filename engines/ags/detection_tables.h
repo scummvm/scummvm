@@ -358,6 +358,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "nightmareframes", "Nightmare Frames" },
 	{ "odissea", "Odissea - An Almost True Story" },
 	{ "oldskies", "Old Skies" },
+	{ "onironauta", "Onironauta" },
 	{ "oott", "Order of the Thorne: The King's Challenge" },
 	{ "pepperodyssey", "Pepper Odyssey" },
 	{ "perfecttides", "Perfect Tides" },
@@ -429,19 +430,14 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zidjourney", "Zid Journey" },
 	{ "zniwadventure", "Zniw Adventure" },
 
-	// Commercial Italian games
-	{ "onironauta", "Onironauta" },
-
-	// AGDI games. They get their own grouping because they're just that awesome
+	// AGDI and Infamous Adventures remakes. They get their own grouping because they're just that awesome
 	{ "kq1agdi", "King's Quest I: Quest for the Crown Remake" },
 	{ "kq2agdi", "King's Quest II: Romancing the Stones Remake" },
 	{ "kq3agdi", "King's Quest III Redux: To Heir is Human" },
+	{ "kq3vga", "King's Quest III: To Heir is Human VGA Remake" },
 	{ "qfg2agdi", "Quest for Glory II: Trial by Fire Remake" },
-
-	// Infamous Adventures games. Likewise
 	{ "sq2fg", "Space Quest for Glory" },
 	{ "sq2vga", "Space Quest II - Vohaul's Revenge VGA Remake" },
-	{ "kq3vga", "King's Quest III: To Heir is Human VGA Remake" },
 
 	// Free post-2.5 games that are likely supported by the AGS engine
 	{ "10waysfromsunday", "10 Ways from Sunday" },
@@ -4834,6 +4830,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477379829, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 1.9a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oldskies", "OldSkies.ags", "4f356539cb679daf9c45cf592abddb47", 2477380102, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Win/Linux 2.0a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oldskies", "ac2game.dat", "4f356539cb679daf9c45cf592abddb47", 2477380102, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),  // Mac 2.0a?
+	GAME_ENTRY_LANG("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467845009, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("oott", "agsgame.dat", "ca8414acc5dc5687891db2d8ac5a0e76", 465662744, 0), // Linux
@@ -5203,16 +5200,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("zniwadventure", "ctgame.ags", "8f52737244a78a7d1e6acace8ced67a5", 97019184, 0), // 1.3.4 Linux
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("zniwadventure", "ac2game.dat", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067140, 0), // 1.3.4 macOS
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100010235),
-	// Commercial Italian games
-	GAME_ENTRY_LANG("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA),
 
-	// AGDI games. They get their own grouping because they're just that awesome
+	// AGDI and Infamous Adventures remakes. They get their own grouping because they're just that awesome
 	PRE_25_ENTRY_EN("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34298679),  // 1.0
 	PRE_25_ENTRY_EN("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34922340),  // 2.0
 	GAME_ENTRY("kq1agdi", "kqvga.exe", "888e2976e6659963af15df151b846540", 27083389),  // 3.0 Multilanguage
 	GAME_ENTRY_EN("kq1agdi", "kq1vga.exe", "4e590490776aea10db84db4a92e1c1bb", 8226850),  // 4.0
 	GAME_ENTRY_EN("kq1agdi", "kq1vga.exe", "688f1807c9d8df26fc0f174dc756054e", 8278611),  // 4.1c
-	UNSUPPORTED_GAME_ENTRY("kq1agdi", "kq1vga.ags", "4d8b4afa7d2d9ff3e3523b0798d6581d", 6967052),  // 4.2 RC1
+	UNSUPPORTED_GAME_ENTRY_EN("kq1agdi", "kq1vga.ags", "4d8b4afa7d2d9ff3e3523b0798d6581d", 6967052),  // 4.2 RC1
 	GAME_ENTRY_EN("kq2agdi", "kq2vga.exe", "308d35bc34e9df29d8acce615593e3e7", 64947213),  // 1.0
 	GAME_ENTRY_EN("kq2agdi", "kq2vga.exe", "3ee3a0166357ac37836f8908a371f2dc", 65743584),  // 2.0
 	GAME_ENTRY_EN("kq2agdi", "kq2vga.exe", "43e6294f8bfbba8a3f754fa742353845", 12507938),  // 3.0?
@@ -5222,14 +5217,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("kq2agdi", "Kq2vgaEsp.exe", "f964e5cb4d339432dd0302d67eb11105", 2490368, Common::ES_ESP), // Spanish translation
 	GAME_ENTRY_EN("kq3agdi", "kq3redux.exe", "4c2ea3f7b4974509c59546ca8761b040", 11890197),  // 1.0
 	GAME_ENTRY_EN("kq3agdi", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
-	GAME_ENTRY_EN("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20470902),  // 1.0
-	GAME_ENTRY_EN("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),  // 1.1
-	GAME_ENTRY_EN("qfg2agdi", "qfg2vga.exe", "582e26533cf784011c7565e89905d3c4", 18224373),  // 2.0
-
-	// Infamous Adventures games. Likewise
 	GAME_ENTRY_EN("kq3vga", "kq3.exe", "f120690b506dd63cd7d1112ea6af2f77", 4844298),  // 1.0
 	GAME_ENTRY_EN("kq3vga", "KQ3.exe", "f120690b506dd63cd7d1112ea6af2f77", 5883843),  // 2.0 - itch.io Windows
 	GAME_ENTRY_EN("kq3vga", "ac2game.dat", "f120690b506dd63cd7d1112ea6af2f77", 5883843), // 2.0 - itch.io Mac
+	GAME_ENTRY_EN("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20470902),  // 1.0
+	GAME_ENTRY_EN("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),  // 1.1
+	GAME_ENTRY_EN("qfg2agdi", "qfg2vga.exe", "582e26533cf784011c7565e89905d3c4", 18224373),  // 2.0
 	GAME_ENTRY_EN("sq2fg", "sq2fg.exe", "a524cbb1c51589903c4043b98917f1d9", 5329030),
 	PRE_25_DEMO_ENTRY_EN("sq2vga", "sq2vgademo.exe", "bf5f207aff574ca3612d40d1213d8668", 4007953),
 	GAME_ENTRY_EN("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
