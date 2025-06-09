@@ -42,7 +42,7 @@ void Spells::load() {
 		if (Common::RU_RUS == g_vm->getLanguage() && GType_Clouds == g_vm->getGameID()) {
 			f1.readString();
 			_spellNames.push_back(Res.CLOUDS_SPELLS[i++]);
-		} else 
+		} else
 			_spellNames.push_back(f1.readString());
 
 	}
@@ -943,7 +943,7 @@ void Spells::protectionFromElements() {
 			party._fireResistance = resist;
 			break;
 		case DT_ELECTRICAL:
-			party._fireResistance = resist;
+			party._electricityResistance = resist;
 			break;
 		case DT_COLD:
 			party._coldResistance = resist;
