@@ -198,6 +198,10 @@ void ModularGraphicsBackend::updateScreen() {
 #endif
 }
 
+void ModularGraphicsBackend::presentBuffer() {
+	_graphicsManager->presentBuffer();
+}
+
 void ModularGraphicsBackend::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_graphicsManager->setShakePos(shakeXOffset, shakeYOffset);
 }

@@ -393,6 +393,32 @@ void Renderer3D::enter3D() {
 	}
 }
 
+void Renderer3D::presentBuffer() {
+	if (!_frameBuffers[1]) {
+		// We are not using multisampling: contents are readily available
+		// The engine just has to read from the FBO or the backbuffer
+		return;
+	}
+
+	assert(_stackLevel == 0);
+	bool saveScissorTest = glIsEnabled(GL_SCISSOR_TEST);
+
+	// Frambuffer blit is impacted by scissor test, disable it
+	glDisable(GL_SCISSOR_TEST);
+	// Swap the framebuffers and blit
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffers[0]);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBuffers[1]);
+	const uint w = _texture.getLogicalWidth();
+	const uint h = _texture.getLogicalHeight();
+	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	// Put back things as they were before
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffers[1]);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBuffers[0]);
+
+	saveScissorTest ? glEnable(GL_SCISSOR_TEST) : glDisable(GL_SCISSOR_TEST);
+}
+
 void Renderer3D::showOverlay(uint w, uint h) {
 	_inOverlay = true;
 

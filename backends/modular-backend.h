@@ -103,6 +103,7 @@ public:
 	void fillScreen(uint32 col) override final;
 	void fillScreen(const Common::Rect &r, uint32 col) override final;
 	void updateScreen() override final;
+	void presentBuffer() override final;
 	void setShakePos(int shakeXOffset, int shakeYOffset) override final;
 	void setFocusRectangle(const Common::Rect& rect) override final;
 	void clearFocusRectangle() override final;

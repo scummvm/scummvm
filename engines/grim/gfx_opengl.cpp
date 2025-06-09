@@ -1879,6 +1879,7 @@ Bitmap *GfxOpenGL::getScreenshot(int w, int h, bool useStored) {
 	if (useStored) {
 		memcpy(src.getPixels(), _storedDisplay, _screenWidth * _screenHeight * 4);
 	} else {
+		g_system->presentBuffer();
 		glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getPixels());
 	}
 	Bitmap *bmp = createScreenshotBitmap(&src, w, h, false);
@@ -1887,6 +1888,7 @@ Bitmap *GfxOpenGL::getScreenshot(int w, int h, bool useStored) {
 }
 
 void GfxOpenGL::storeDisplay() {
+	g_system->presentBuffer();
 	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, _storedDisplay);
 }
 
@@ -1942,6 +1944,7 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 		glViewport(0, 0, _screenWidth, _screenHeight);
 
 		// copy the data over to the texture
+		g_system->presentBuffer();
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, w, h, 0);
 
@@ -1989,6 +1992,7 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	y = _screenHeight - yReal;
 
 	// collect the requested area and generate the dimmed version
+	g_system->presentBuffer();
 	glReadPixels(x, y - h, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	for (int ly = 0; ly < h; ly++) {
 		for (int lx = 0; lx < w; lx++) {
@@ -2233,6 +2237,7 @@ void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 }
 
 void GfxOpenGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
+	g_system->presentBuffer();
 	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
 }

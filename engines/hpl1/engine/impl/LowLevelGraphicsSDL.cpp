@@ -1361,6 +1361,7 @@ void cLowLevelGraphicsSDL::CopyContextToTexure(iTexture *apTex, const cVector2l 
 	// Log("ScreenOffset: %d %d (h: %d s: %d p: %d)\n",avPos.x,lScreenY,mvScreenSize.y,
 	//												avSize.y,avPos.y);
 
+	g_system->presentBuffer();
 	SetTexture(0, apTex);
 	GL_CHECK(glCopyTexSubImage2D(GetGLTextureTargetEnum(apTex->GetTarget()), 0,
 								 avTexOffset.x, lTexY, avPos.x, lScreenY, avSize.x, avSize.y));

@@ -929,6 +929,14 @@ void OpenGLGraphicsManager::updateScreen() {
 #endif
 }
 
+void OpenGLGraphicsManager::presentBuffer() {
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	assert(_renderer3d);
+
+	_renderer3d->presentBuffer();
+#endif
+}
+
 Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
 	assert(_gameScreen);
 	return _gameScreen->getSurface();

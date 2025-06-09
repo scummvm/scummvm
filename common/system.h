@@ -1272,6 +1272,11 @@ public:
 	virtual void updateScreen() = 0;
 
 	/**
+	 * When in 3D mode, forces a rendering pass to let the engine read back pixels.
+	 */
+	virtual void presentBuffer() {}
+
+	/**
 	 * Set current shake position, a feature needed for screen effects in some
 	 * engines.
 	 *
