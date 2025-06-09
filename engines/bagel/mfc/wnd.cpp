@@ -41,8 +41,8 @@ CWnd::~CWnd() {
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-        DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
-        CCreateContext *pContext) {
+        DWORD dwStyle, const RECT &rect, CWnd *pParentWnd,
+		UINT nID, CCreateContext *pContext) {
 	// Set up create structure
 	CREATESTRUCT cs;
 	cs.x = rect.left;
@@ -63,12 +63,22 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
 
+	_controlId = nID;
+
+	assert(!m_pParentWnd);
+	m_pParentWnd = pParentWnd;
+	m_pParentWnd->_children[nID] = this;
+
 	return true;
 }
 
 void CWnd::clear() {
-	for (CWnd *ctl : _children)
+	// Free any owned controls
+	for (CWnd *ctl : _ownedControls) {
+		_children.erase(ctl->_controlId);
 		delete ctl;
+	}
+
 	_children.clear();
 }
 

@@ -201,6 +201,10 @@ void CDialogTemplate::loadTemplate(CWnd *parent) {
 			parent,
 			item._id
 		);
+
+		// Register the control as needing to be
+		// freed when the dialog is closed
+		parent->_ownedControls.push_back(ctl);
 	}
 }
 

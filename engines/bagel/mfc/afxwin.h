@@ -856,6 +856,7 @@ typedef struct tagCREATESTRUCTA {
 
 class CWnd : public CCmdTarget {
 	DECLARE_DYNCREATE(CWnd)
+	friend class CDialogTemplate;
 
 protected:
 	static const MSG *GetCurrentMessage();
@@ -867,6 +868,9 @@ protected:
 	void createDialogIndirect(LPCDLGTEMPLATE dlgTemplate);
 
 	DECLARE_MESSAGE_MAP()
+
+protected:
+	Common::Array<CWnd *> _ownedControls;
 
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) {
@@ -1045,8 +1049,9 @@ protected:
 	}
 
 protected:
-	Common::Array<CWnd *> _children;
+	Common::HashMap<int, CWnd *> _children;
 	int m_nFlags = 0;
+	int _controlId = 0;
 
 public:
 	// For ScummVM the m_hWnd just points to the window itself,
