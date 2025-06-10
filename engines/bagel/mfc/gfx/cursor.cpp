@@ -150,6 +150,11 @@ void Cursor::showCursor() {
 
 	CursorMan.replaceCursor(_surface.getPixels(),
 	                        _surface.w, _surface.h, 0, 0, 0, true, &format);
+	CursorMan.showMouse(true);
+}
+
+void Cursor::hide() {
+	CursorMan.showMouse(false);
 }
 
 } // namespace Gfx

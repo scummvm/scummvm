@@ -57,6 +57,9 @@ private:
 	bool _isBuiltIn = false;
 
 public:
+	static void hide();
+
+public:
 	/**
 	 * Constructor for predefined cursors
 	 */

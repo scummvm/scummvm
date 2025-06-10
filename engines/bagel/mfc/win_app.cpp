@@ -152,17 +152,28 @@ HCURSOR CWinApp::LoadCursor(UINT nIDResource) {
 }
 
 HCURSOR CWinApp::SetCursor(HCURSOR hCursor) {
+	if (hCursor == _currentCursor)
+		return hCursor;
+
+	HCURSOR oldCursor = _currentCursor;
+	_currentCursor = hCursor;
+
 	Gfx::Cursor *c = (Gfx::Cursor *)hCursor;
-	c->showCursor();
-	return hCursor;
+	if (c) {
+		c->showCursor();
+	} else {
+		Gfx::Cursor::hide();
+	}
+
+	return oldCursor;
 }
 
 void CWinApp::BeginWaitCursor() {
-	error("TODO: CWinApp::BeginWaitCursor");
+	DoWaitCursor(1);
 }
 
 void CWinApp::EndWaitCursor() {
-	error("TODO: CWinApp::EndWaitCursor");
+	DoWaitCursor(-1);
 }
 
 void CWinApp::DoWaitCursor(int nCode) {

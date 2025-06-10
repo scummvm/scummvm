@@ -1414,7 +1414,8 @@ private:
 	Graphics::Screen _screen;
 	uint32 _nextFrameTime = 0;
 	int m_nWaitCursorCount = 0;
-	HCURSOR m_hcurWaitCursorRestore = 0;
+	HCURSOR m_hcurWaitCursorRestore = nullptr;
+	HCURSOR _currentCursor = nullptr;
 	Common::FSNode _currentDirectory;
 	bool _quitFlag = false;
 	CHandleMap *m_pmapHWND = nullptr;
