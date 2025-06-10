@@ -72,8 +72,8 @@ const char *BoardSpec[BOARD_COUNT] = {
 	".\\ART\\TRIANGLX.BMP"
 };
 
-char Moves [70][2]; // i.e. 2 pairs of coordinates (old, new) per
-// move, and 1 peg can be removed per move.
+// Move co-ordinates. 1 peg can be removed per move.
+static POINT Moves[70];
 
 CSprite *pCursorSprite = nullptr;
 
@@ -743,8 +743,8 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint myPoint) {
 			grid_loc = PointToGrid(sprite_loc);
 			if (fState [grid_loc.x][grid_loc.y] == PEGGED) {
 				counter += 1;
-				Moves [counter][1] = grid_loc.x;
-				Moves [counter][2] = grid_loc.y;
+				Moves[counter].x = grid_loc.x;
+				Moves[counter].y = grid_loc.y;
 				pDC = GetDC();
 				UpdatePegPosition(pDC, pTableSlot, grid_loc.x, grid_loc.y);
 				if (counter % 2)
@@ -759,8 +759,8 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint myPoint) {
 			}
 		}
 	} else { // this is the second click
-		oldx = Moves [counter][1];
-		oldy = Moves [counter][2];
+		oldx = Moves[counter].x;
+		oldy = Moves[counter].y;
 		pSprite = CSprite::Touched(myPoint);
 		if (pSprite != nullptr) {
 			sprite_loc = (*pSprite).GetPosition();
@@ -784,8 +784,8 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint myPoint) {
 						fState [newx][newy] = PEGGED ;
 						counter += 1;
 						bPegMoving = FALSE;
-						Moves [counter][1] = newx ;
-						Moves [counter][2] = newy ;
+						Moves[counter].x = newx ;
+						Moves[counter].y = newy ;
 						pDC = GetDC();
 
 						(*pCursorSprite).EraseSprite(pDC);
@@ -1050,13 +1050,13 @@ void CMainWindow::UndoTurn(void) {
 			sndPlaySound(WAV_UNDO, SND_ASYNC);
 		}
 		bPegMoving = FALSE;
-		newx = Moves [counter][1];
-		newy = Moves [counter][2];
+		newx = Moves[counter].x;
+		newy = Moves[counter].y;
 		counter -= 1;
 		pDC = GetDC();
 		(*pCursorSprite).EraseSprite(pDC);
-		oldx = Moves [counter][1];
-		oldy = Moves [counter][2];
+		oldx = Moves[counter].x;
+		oldy = Moves[counter].y;
 		neighborx = (oldx + newx) / 2 ;
 		neighbory = (oldy + newy) / 2 ;
 		fState [neighborx][neighbory] = PEGGED ;
@@ -1080,8 +1080,8 @@ void CMainWindow::UndoMove(CDC *pDC) {
 	CPoint  sprite_loc;
 	int     oldx, oldy;
 
-	oldx = Moves[counter][1];
-	oldy = Moves[counter][2];
+	oldx = Moves[counter].x;
+	oldy = Moves[counter].y;
 
 	counter -= 1;
 	bPegMoving = FALSE;
