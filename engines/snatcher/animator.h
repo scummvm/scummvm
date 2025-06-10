@@ -55,6 +55,8 @@ public:
 
 	virtual uint16 screenWidth() const = 0;
 	virtual uint16 screenHeight() const = 0;
+	virtual uint16 realScreenWidth() const = 0;
+	virtual uint16 realScreenHeight() const = 0;
 
 	// The original game does not have mouse control on any platform. But
 	// the Sega CD version supports a lightgun. So we do have some fundamentals

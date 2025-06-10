@@ -30,8 +30,12 @@ namespace Graphics {
 SegaRenderer::SegaRenderer(const PixelFormat *systemPixelFormat) : _pixelFormat(systemPixelFormat ? *systemPixelFormat : PixelFormat::createFormatCLUT8()),	_pitch(64), _hScrollMode(0),
 	_hScrollTable(0), _vScrollMode(0), _spriteTable(0), _numSpritesMax(0), _spriteMask(0), _spriteMaskPrio(0), _backgroundColor(0), _planes{SegaPlane(), SegaPlane(), SegaPlane()},
 	_vram(nullptr), _vsram(nullptr), _tempBufferSprites(nullptr), _tempBufferSpritesPrio(nullptr), _tempBufferPlanes(nullptr), _tempBufferPlanesPrio(nullptr), _renderColorTable(nullptr),
-	_rr(kUnspecified), _renderLineFragmentD(0), _renderLineFragmentM(0), _hINTEnable(false), _hINTCounter(0), _hINTCounterNext(0), _hINTHandler(nullptr), _destPitch(0), _displayEnabled(true) {
-
+	_rr(kUnspecified), _renderLineFragmentD(0), _renderLineFragmentM(0), _hINTEnable(false), _hINTCounter(0), _hINTCounterNext(0), _hINTHandler(nullptr), _destPitch(0), _displayEnabled(true),
+	_realW(0), _realH(0)
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	, _arcIncX(0), _arcCntX(0), _arcIncY(0), _arcCntY(0), _xyAspectRatio(1.0), _scaleFactor(1.0)
+#endif
+{
 	_vram = new uint8[0x10000]();
 	assert(_vram);
 	_vsram = new uint16[40]();
@@ -68,6 +72,9 @@ SegaRenderer::SegaRenderer(const PixelFormat *systemPixelFormat) : _pixelFormat(
 	_renderLineFragmentM = funcM;
 
 	setResolution(320, 224);
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	setAspectRatioCorrection();
+#endif
 }
 
 SegaRenderer::~SegaRenderer() {
@@ -113,6 +120,39 @@ void SegaRenderer::setResolution(int w, int h) {
 	assert(_spriteMask);
 	_spriteMaskPrio = new uint8[_screenW * _screenH]();
 	assert(_spriteMaskPrio);
+#if(!BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	_realW = _screenW;
+	_realH = _screenH;
+}
+#else
+	setAspectRatioCorrection(_xyAspectRatio, _scaleFactor);
+}
+
+void SegaRenderer::setAspectRatioCorrection(double xyAspectRatio, double scaleFactor) {
+	assert (xyAspectRatio > 0.0 || xyAspectRatio <= 2.0 || scaleFactor > 0.0 || scaleFactor <= 8.0);
+
+	_xyAspectRatio = xyAspectRatio;
+	_scaleFactor = scaleFactor;
+	_arcCntX = _arcIncY = 0;
+	_arcIncX = _arcIncY = trunc(scaleFactor * 0x10000);
+
+	double screenRatio = (double)_screenW / _screenH;
+
+	if (screenRatio > xyAspectRatio)
+		_arcIncY = trunc((scaleFactor * 0x10000) / xyAspectRatio);
+	else if (screenRatio < xyAspectRatio)
+		_arcIncX = trunc(xyAspectRatio * scaleFactor * 0x10000);
+
+	_realW = (_screenW * _arcIncX) >> 16;
+	_realH = (_screenH * _arcIncY) >> 16;
+
+	_destPitch = _realW * _pixelFormat.bytesPerPixel;
+}
+#endif
+
+void SegaRenderer::getRealResolution(int &w, int &h) {
+	w = _realW;
+	h = _realH;
 }
 
 void SegaRenderer::setPlaneTableLocation(int plane, uint16 addr) {
@@ -201,6 +241,32 @@ void SegaRenderer::clearPlanes() {
 	}
 }
 
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+#define MERGE_LINES \
+	(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, w); \
+	rd1 += _screenW; \
+	rd2 += _screenW; \
+	rd3 += _screenW; \
+	d += _destPitch; \
+	_arcCntY += (_arcIncY - 0x10000); \
+	while (_arcCntY >= 0x10000) { \
+		_arcCntY -= 0x10000; \
+		memcpy(d, d - _destPitch, w2); \
+		d += _destPitch; \
+	} \
+	hINTUpdate(); \
+	ml = getLineHandler()
+#else
+#define MERGE_LINES \
+	(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, w); \
+	rd1 += _screenW; \
+	rd2 += _screenW; \
+	rd3 += _screenW; \
+	d += _destPitch; \
+	hINTUpdate(); \
+	ml = getLineHandler()
+#endif
+
 void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 	if (x == -1)
 		x = 0;
@@ -213,6 +279,9 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 
 	_rr = kUnspecified;
 	int y2 = y + h;
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	int w2 = ((w * _arcIncX) >> 16) * _pixelFormat.bytesPerPixel;
+#endif
 
 	assert(dst);
 	assert(x >= 0 && x + w <= _screenW);
@@ -238,7 +307,14 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 	rd1 += (y * _screenW + x);
 	rd2 += (y * _screenW + x);
 	rd3 += (y * _screenW + x);
-	uint8 *d = reinterpret_cast<uint8*>(dst) + (y * _destPitch + x * _pixelFormat.bytesPerPixel);
+
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	uint8 *d = reinterpret_cast<uint8*>(dst) + (((y * _arcIncY) >> 16) * _destPitch + ((x * _arcIncX) >> 16) * _pixelFormat.bytesPerPixel);
+	_arcCntX = (x * _arcIncX) & 0xFFFF;
+	_arcCntY = (y * _arcIncY) & 0xFFFF;
+#else
+	uint8 *d = reinterpret_cast<uint8*>(dst) + y * _destPitch + x * _pixelFormat.bytesPerPixel;
+#endif
 
 	if (x == 0 && y == 0 && w == _screenW && h == _screenH) {
 		memset(rd1, _backgroundColor, _screenW * _screenH);
@@ -262,7 +338,7 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 			// With window plane, if available
 			for (int y1 = y; y1 < y2; ++y1) {
 				memset(_tempBufferPlanesPrio, 0, _screenW);
-				if (_displayEnabled) {					
+				if (_displayEnabled) {
 					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
 					if (y1 >= wY1 && y1 < wY2) {
 						renderPlaneLine<true>(rd1, _tempBufferPlanesPrio, kWindowPlane, y1, x, w);
@@ -278,32 +354,18 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 					}
 				}
 
-				(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
-				rd1 += _screenW;
-				rd2 += _screenW;
-				rd3 += _screenW;
-				d += _destPitch;
-
-				hINTUpdate();
-				ml = getLineHandler();
+				MERGE_LINES;
 			}
 		} else {
 			// Without window plane
 			for (int y1 = y; y1 < y2; ++y1) {
 				memset(_tempBufferPlanesPrio, 0, _screenW);
-				if (_displayEnabled) {	
+				if (_displayEnabled) {
 					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
 					renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneA, y1, x, w);
 				}
 
-				(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
-				rd1 += _screenW;
-				rd2 += _screenW;
-				rd3 += _screenW;
-				d += _destPitch;
-
-				hINTUpdate();
-				ml = getLineHandler();
+				MERGE_LINES;
 			}
 		}
 	} else if (_planes[kWindowPlane].nameTableSize != 0) {
@@ -322,14 +384,7 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 				}
 			}
 
-			(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
-			rd1 += _screenW;
-			rd2 += _screenW;
-			rd3 += _screenW;
-			d += _destPitch;
-
-			hINTUpdate();
-			ml = getLineHandler();
+			MERGE_LINES;
 		}
 	} else {
 		// Only plane B
@@ -338,17 +393,11 @@ void SegaRenderer::render(void *dst, int x, int y, int w, int h) {
 			if (_displayEnabled)
 				renderPlaneLine<false>(rd1, _tempBufferPlanesPrio, kPlaneB, y1, x, w);
 
-			(this->*ml)(d, rd1, rd2, _tempBufferPlanesPrio, rd3, x, w);
-			rd1 += _screenW;
-			rd2 += _screenW;
-			rd3 += _screenW;
-			d += _destPitch;
-
-			hINTUpdate();
-			ml = getLineHandler();
+			MERGE_LINES;
 		}
 	}
 }
+#undef MERGE_LINES
 
 void SegaRenderer::renderSprites(uint8 *dst, uint8 *dstPrio, int clipX, int clipY, int clipW, int clipH) {
 	if (clipX == -1)
@@ -420,7 +469,7 @@ void SegaRenderer::renderSprites(uint8 *dst, uint8 *dstPrio, int clipX, int clip
 
 			uint8 *dst2 = d;
 			uint8 *msk2 = msk;
-			
+
 			if (x > clipX - 8) {
 				SprTileProc tr = (x < 0 || x > _screenW - 8) ? &SegaRenderer::renderSpriteTileXClipped : &SegaRenderer::renderSpriteTileDef;
 				int y2 = y;
@@ -479,7 +528,7 @@ void SegaRenderer::setRenderColorTable(const uint8 *colors, uint16 first, uint16
 	if (_renderColorTable == nullptr)
 		return;
 
-	uint32 *dst = _renderColorTable + first; 
+	uint32 *dst = _renderColorTable + first;
 	while (num--) {
 		*dst++ = _pixelFormat.RGBToColor(colors[0], colors[1], colors[2]);
 		colors += 3;
@@ -577,7 +626,34 @@ template<bool isWindow> void SegaRenderer::renderPlaneLine(uint8 *planeBuffPos, 
 	}
 }
 
-template<typename T, bool withSprites, bool withPrioSprites> void SegaRenderer::mergeLines(void *dst, uint8 *bottomLayer, const uint8 *spriteLayer, const uint8 *prioLayer, const uint8 *prioSpriteLayer, int clipX, int clipW) {
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+#define ML_SETPIXEL \
+if (adjustAspectRatio) { \
+	arcCnt += _arcIncX; \
+	if (sizeof(T) > 1) { \
+		while (arcCnt >= 0x10000) { \
+			arcCnt -= 0x10000; \
+			*d++ = _renderColorTable[*bottomLayer]; \
+		} \
+	} else { \
+		arcCnt -= 0x10000; \
+		while (arcCnt >= 0x10000) { \
+			arcCnt -= 0x10000; \
+			bottomLayer[1] = bottomLayer[0]; \
+			++bottomLayer; \
+		} \
+	} \
+} else { \
+	if (sizeof(T) > 1) \
+		*d++ = _renderColorTable[*bottomLayer]; \
+}
+#else
+#define ML_SETPIXEL \
+	if (sizeof(T) > 1) \
+		*d++ = _renderColorTable[*bottomLayer];
+#endif
+
+template<typename T, bool withSprites, bool withPrioSprites, bool adjustAspectRatio> void SegaRenderer::mergeLines(void *dst, uint8 *bottomLayer, const uint8 *spriteLayer, const uint8 *prioLayer, const uint8 *prioSpriteLayer, int clipW) {
 	T *d = reinterpret_cast<T*>(dst);
 
 	if (sizeof(T) == 1) {
@@ -585,6 +661,10 @@ template<typename T, bool withSprites, bool withPrioSprites> void SegaRenderer::
 			bottomLayer = reinterpret_cast<uint8*>(dst);
 		assert(bottomLayer);
 	}
+
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	uint32 arcCnt = _arcCntX;
+#endif
 
 	if (withPrioSprites) {
 		if (withSprites) {
@@ -596,9 +676,7 @@ template<typename T, bool withSprites, bool withPrioSprites> void SegaRenderer::
 				else if (*spriteLayer)
 					*bottomLayer = *spriteLayer;
 
-				if (sizeof(T) > 1)
-					*d++ = _renderColorTable[*bottomLayer];
-
+				ML_SETPIXEL
 				++bottomLayer;
 				++spriteLayer;
 				++prioLayer;
@@ -611,9 +689,7 @@ template<typename T, bool withSprites, bool withPrioSprites> void SegaRenderer::
 				else if (*prioLayer)
 					*bottomLayer = *prioLayer;
 
-				if (sizeof(T) > 1)
-					*d++ = _renderColorTable[*bottomLayer];
-
+				ML_SETPIXEL
 				++bottomLayer;
 				++prioLayer;
 				++prioSpriteLayer;
@@ -626,9 +702,7 @@ template<typename T, bool withSprites, bool withPrioSprites> void SegaRenderer::
 			else if (*spriteLayer)
 				*bottomLayer = *spriteLayer;
 
-			if (sizeof(T) > 1)
-				*d++ = _renderColorTable[*bottomLayer];
-
+			ML_SETPIXEL
 			++bottomLayer;
 			++spriteLayer;
 			++prioLayer;
@@ -638,34 +712,52 @@ template<typename T, bool withSprites, bool withPrioSprites> void SegaRenderer::
 			if (*prioLayer)
 				*bottomLayer = *prioLayer;
 
-			if (sizeof(T) > 1)
-				*d++ = _renderColorTable[*bottomLayer];
-
+			ML_SETPIXEL
 			++bottomLayer;
 			++prioLayer;
 		}
 	}
 }
+#undef ML_SETPIXEL
 
 SegaRenderer::MergeLinesProc SegaRenderer::getLineHandler() const {
 	static const MergeLinesProc mpc[] = {
 		nullptr,
-		&SegaRenderer::mergeLines<uint8, false, false>,
-		&SegaRenderer::mergeLines<uint16, false, false>,
+		&SegaRenderer::mergeLines<uint8, false, false, false>,
+		&SegaRenderer::mergeLines<uint16, false, false, false>,
 		nullptr,
-		&SegaRenderer::mergeLines<uint32, false, false>,
-		&SegaRenderer::mergeLines<uint8, true, false>,
-		&SegaRenderer::mergeLines<uint16, true, false>,
+		&SegaRenderer::mergeLines<uint32, false, false, false>,
+		&SegaRenderer::mergeLines<uint8, true, false, false>,
+		&SegaRenderer::mergeLines<uint16, true, false, false>,
 		nullptr,
-		&SegaRenderer::mergeLines<uint32, true, false>,
-		&SegaRenderer::mergeLines<uint8, false, true>,
-		&SegaRenderer::mergeLines<uint16, false, true>,
+		&SegaRenderer::mergeLines<uint32, true, false, false>,
+		&SegaRenderer::mergeLines<uint8, false, true, false>,
+		&SegaRenderer::mergeLines<uint16, false, true, false>,
 		nullptr,
-		&SegaRenderer::mergeLines<uint32, false, true>,
-		&SegaRenderer::mergeLines<uint8, true, true>,
-		&SegaRenderer::mergeLines<uint16, true, true>,
+		&SegaRenderer::mergeLines<uint32, false, true, false>,
+		&SegaRenderer::mergeLines<uint8, true, true, false>,
+		&SegaRenderer::mergeLines<uint16, true, true, false>,
 		nullptr,
-		&SegaRenderer::mergeLines<uint32, true, true>
+		&SegaRenderer::mergeLines<uint32, true, true, false>,
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+		nullptr,
+		&SegaRenderer::mergeLines<uint8, false, false, true>,
+		&SegaRenderer::mergeLines<uint16, false, false, true>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, false, false, true>,
+		&SegaRenderer::mergeLines<uint8, true, false, true>,
+		&SegaRenderer::mergeLines<uint16, true, false, true>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, true, false, true>,
+		&SegaRenderer::mergeLines<uint8, false, true, true>,
+		&SegaRenderer::mergeLines<uint16, false, true, true>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, false, true, true>,
+		&SegaRenderer::mergeLines<uint8, true, true, true>,
+		&SegaRenderer::mergeLines<uint16, true, true, true>,
+		nullptr,
+		&SegaRenderer::mergeLines<uint32, true, true, true>
+#endif
 	};
 
 	uint index = _pixelFormat.bytesPerPixel;
@@ -674,6 +766,10 @@ SegaRenderer::MergeLinesProc SegaRenderer::getLineHandler() const {
 			index += 4;
 		if (_rr & kHasPrioSprites)
 			index += 8;
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+		if (_arcIncX != 0x10000)
+			index += 17;
+#endif
 	}
 
 	assert(index < ARRAYSIZE(mpc));
