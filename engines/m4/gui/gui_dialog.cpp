@@ -152,11 +152,6 @@ Dialog *DialogCreateAbsolute(int32 x1, int32 y1, int32 x2, int32 y2, uint32 scrn
 	dialog->h = y2 - y1 + 1;
 
 	dialog->dlgBuffer = new GrBuff(x2 - x1 + 1, y2 - y1 + 1);
-
-	if (!dialog->dlgBuffer) {
-		return nullptr;
-	}
-
 	dialog->num_items = 0;
 	dialog->itemList = nullptr;
 
@@ -1323,10 +1318,6 @@ TextScrn *TextScrn_Create(int32 x1, int32 y1, int32 x2, int32 y2, int32 luminanc
 	myTextScrn->hiliteItem = nullptr;
 
 	myTextScrn->textScrnBuffer = new GrBuff(myTextScrn->w, myTextScrn->h);
-
-	if (!myTextScrn->textScrnBuffer) {
-		return nullptr;
-	}
 
 	if (!vmng_screen_create(x1, y1, x2, y2, SCRN_TEXT, scrnFlags | SF_TRANSPARENT, (void *)myTextScrn, (RefreshFunc)TextScrn_Show, TextScrn_EventHandler)) {
 		return nullptr;

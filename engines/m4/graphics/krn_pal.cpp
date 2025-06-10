@@ -226,7 +226,7 @@ void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 	// Get the screen
 	Buffer *grey_screen = _G(gameDrawBuff)->get_buffer();
 
-	// load original faded greys into the free indexes (no pixels have these indexs yet)
+	// load original faded greys into the free indexes (no pixels have these indexes yet)
 	gr_pal_set_range(_GP(fadeToMe), FREE_START, NUM_FREE);   // Load fadeToMe colors into VGA
 
 	make_translation_table(_GP(trick)); // This is used in fade_to_grey too!

@@ -219,9 +219,6 @@ GrBuff *guiMenu::copyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int3
 
 	// Create a new grbuff struct
 	GrBuff *copyOfBackground = new GrBuff(w, h);
-	if (!copyOfBackground) {
-		return nullptr;
-	}
 
 	// Get the source and destination buffers
 	Buffer *srcBuff = myMenu->menuBuffer->get_buffer();

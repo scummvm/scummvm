@@ -240,10 +240,6 @@ GrBuff *load_codes(SysFile *code_file) {
 	const int16 y_size = code_file->readSint16LE();
 
 	GrBuff *temp = new GrBuff(x_size, y_size);
-	if (!temp) {
-		error_show(FL, 'OOM!', "load_codes: %d bytes", (int16)(x_size * y_size));
-	}
-
 	Buffer *myBuff = temp->get_buffer();
 	byte *bufferHandle = myBuff->data;
 
@@ -352,9 +348,7 @@ static void recreate_animation_draw_screen(GrBuff **loadBuf) {
 		_G(game_buff_ptr) = nullptr;
 	}
 	_G(gameDrawBuff) = new GrBuff((**loadBuf).w, (**loadBuf).h);
-	if (!_G(gameDrawBuff)) error_show(FL, 'OOM!', "no memory for GrBuff");
-	gui_GrBuff_register(_G(kernel).letter_box_x, _G(kernel).letter_box_y, _G(gameDrawBuff),
-		SF_BACKGRND | SF_GET_ALL | SF_BLOCK_NONE, nullptr);
+	gui_GrBuff_register(_G(kernel).letter_box_x, _G(kernel).letter_box_y, _G(gameDrawBuff), SF_BACKGRND | SF_GET_ALL | SF_BLOCK_NONE, nullptr);
 	gui_buffer_activate((Buffer *)_G(gameDrawBuff));
 	vmng_screen_to_back((void *)_G(gameDrawBuff));
 	_G(game_buff_ptr) = vmng_screen_find(_G(gameDrawBuff), nullptr);
@@ -370,15 +364,16 @@ static void recreate_animation_draw_screen(GrBuff **loadBuf) {
 
 static void troll_for_colors(RGB8 *newPal, uint8 minPalEntry, uint8 maxPalEntry) {
 	bool gotOne = false;
-	for (int16 pal_iter = minPalEntry; pal_iter <= maxPalEntry; pal_iter++)	// accept any colors that came with the background
-		if (gotOne || (newPal[pal_iter].r | newPal[pal_iter].g | newPal[pal_iter].b))
-		{
+	for (int16 pal_iter = minPalEntry; pal_iter <= maxPalEntry; pal_iter++) { // accept any colors that came with the background
+		if (gotOne || (newPal[pal_iter].r | newPal[pal_iter].g | newPal[pal_iter].b)) {
 			gotOne = true;
 			// colors are 6 bit...
 			_G(master_palette)[pal_iter].r = newPal[pal_iter].r << 2;
 			_G(master_palette)[pal_iter].g = newPal[pal_iter].g << 2;
 			_G(master_palette)[pal_iter].b = newPal[pal_iter].b << 2;
 		}
+	}
+	
 	if (gotOne) {
 		gr_pal_interface(&_G(master_palette)[0]); // enforce interface colors
 	}
@@ -392,10 +387,9 @@ Common::String expand_name_2_RAW(const Common::String &name, int32 room_num) {
 			room_num = extract_room_num(name);
 
 		return Common::String::format("%d\\%s", room_num, tempName.c_str());
-
-	} else {
-		return tempName;
 	}
+
+	return tempName;
 }
 
 Common::String expand_name_2_HMP(const Common::String &name, int32 room_num) {

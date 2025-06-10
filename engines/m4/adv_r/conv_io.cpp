@@ -24,7 +24,6 @@
 #include "m4/adv_r/conv.h"
 #include "m4/adv_r/chunk_ops.h"
 #include "m4/adv_r/db_env.h"
-#include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/vars.h"
 #include "m4/m4.h"
@@ -230,7 +229,6 @@ void conv_export_value_curr(int32 val, int index) {
 
 void conv_export_pointer(Conv *c, int32 *val, int index) {
 	int32 ent = 0, tag = 0, next;
-	decl_chunk *decl;
 	int32 ent_old = 0;
 	int	i = 0;
 
@@ -247,7 +245,7 @@ void conv_export_pointer(Conv *c, int32 *val, int index) {
 		switch (tag) {
 		case DECL_CHUNK:
 			if (i == index) {
-				decl = get_decl(c, ent);
+				decl_chunk *decl = get_decl(c, ent);
 
 				c->_pointers.push_back(val);
 				decl->addrIndex = c->_pointers.size() - 1;
@@ -271,8 +269,6 @@ void conv_export_pointer_curr(int32 *val, int index) {
 void conv_init(Conv *c) {
 	switch (c->exit_now) {
 	case CONV_OK:
-		break;
-
 	case CONV_QUIT:
 		break;
 
@@ -347,7 +343,7 @@ static void conv_save_state(Conv *c) {
 	int32 amt_to_write = 3 * sizeof(int32);	// Header size
 	int32 ent = 0;
 	int32 next, tag;	// receive conv_ops_get_entry results
-	int32 myCNode = c->myCNode;
+	const int32 myCNode = c->myCNode;
 	char fname[13];
 	memset(fname, 0, 13);
 
@@ -533,7 +529,7 @@ static void conv_save_state(Conv *c) {
 
 	} else {
 		// Append conversation
-		size_t oldSize = _GC(convSave).size();
+		const size_t oldSize = _GC(convSave).size();
 		file_size = amt_to_write + NAME_SIZE + sizeof(int32);
 
 		_GC(convSave).resize(_GC(convSave).size() + file_size);
@@ -546,15 +542,15 @@ static void conv_save_state(Conv *c) {
 
 static Conv *conv_restore_state(Conv *c) {
 	int32 ent = 0;
-	int32 tag, next, offset;
-
+	int32 tag, next;
+	int32 myCNode;
+	
 	entry_chunk *entry;
 	decl_chunk *decl;
 
 	short flag_index = 0;
 	int32 val;
 	int32 e_flags = 0;
-	int32 myCNode;
 
 	char fname[13];
 	int file_size = 0;
@@ -582,7 +578,7 @@ static Conv *conv_restore_state(Conv *c) {
 	// ------------------
 
 	Common::copy(&_GC(convSave)[0], &_GC(convSave)[0] + file_size, &conv_save_buff[0]);
-	offset = find_state(fname, conv_save_buff, file_size);
+	int32 offset = find_state(fname, conv_save_buff, file_size);
 
 	if (offset == -1)
 		goto i_am_so_done;
@@ -757,22 +753,13 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 		error_show(FL, 'CNVL', "couldn't conv_load %s", fullpathname);
 	}
 
-	int32 cSize = fp.size();
+	const int32 cSize = fp.size();
 
 	if (conv_get_handle() != nullptr) {
 		conv_unload();
 	}
 
 	Conv *convers = new Conv();
-
-	if (!convers) {
-		conv_set_handle(nullptr);
-		convers = nullptr;
-		fp.close();
-
-		return nullptr;
-	}
-
 	convers->chunkSize = cSize;
 	convers->conv = nullptr;
 	convers->myCNode = 0;

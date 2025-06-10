@@ -123,7 +123,7 @@ void ws_LogErrorMsg(const char *filename, uint32 line, const char *fmt, ...) {
 	va_list	argPtr;
 	va_start(argPtr, fmt);
 
-	Common::String msg = Common::String::vformat(fmt, argPtr);
+	const Common::String msg = Common::String::vformat(fmt, argPtr);
 	va_end(argPtr);
 
 	error("%s", msg.c_str());
@@ -201,10 +201,10 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff
 
 	Buffer *halScrnBuf = _G(gameDrawBuff)->get_buffer();
 
-	int32 scrnX1 = myScreen->x1;
-	int32 scrnY1 = myScreen->y1;
+	const int32 scrnX1 = myScreen->x1;
+	const int32 scrnY1 = myScreen->y1;
 
-	bool greyMode = krn_GetGreyMode();
+	const bool greyMode = krn_GetGreyMode();
 
 	// Initialize the drawRectList to the deadRectList
 	drawRectList = _GWS(deadRectList);
@@ -437,19 +437,19 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 }
 
 void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs) {
-	frac16 x0 = ctrlPoints[0];
-	frac16 x0mult3 = (x0 << 1) + x0;
-	frac16 x1mult3 = (ctrlPoints[2] << 1) + ctrlPoints[2];
-	frac16 x1mult6 = x1mult3 << 1;
-	frac16 x2mult3 = (ctrlPoints[4] << 1) + ctrlPoints[4];
-	frac16 x3 = ctrlPoints[6];
+	const frac16 x0 = ctrlPoints[0];
+	const frac16 x0mult3 = (x0 << 1) + x0;
+	const frac16 x1mult3 = (ctrlPoints[2] << 1) + ctrlPoints[2];
+	const frac16 x1mult6 = x1mult3 << 1;
+	const frac16 x2mult3 = (ctrlPoints[4] << 1) + ctrlPoints[4];
+	const frac16 x3 = ctrlPoints[6];
 
-	frac16 y0 = ctrlPoints[1];
-	frac16 y0mult3 = (y0 << 1) + y0;
-	frac16 y1mult3 = (ctrlPoints[3] << 1) + ctrlPoints[3];
-	frac16 y1mult6 = y1mult3 << 1;
-	frac16 y2mult3 = (ctrlPoints[5] << 1) + ctrlPoints[5];
-	frac16 y3 = ctrlPoints[7];
+	const frac16 y0 = ctrlPoints[1];
+	const frac16 y0mult3 = (y0 << 1) + y0;
+	const frac16 y1mult3 = (ctrlPoints[3] << 1) + ctrlPoints[3];
+	const frac16 y1mult6 = y1mult3 << 1;
+	const frac16 y2mult3 = (ctrlPoints[5] << 1) + ctrlPoints[5];
+	const frac16 y3 = ctrlPoints[7];
 
 	coeffs[0] = -(int)x0 + x1mult3 - x2mult3 + x3;
 	coeffs[2] = x0mult3 - x1mult6 + x2mult3;
@@ -611,7 +611,7 @@ void Cel_msr(Anim8 *myAnim8) {
 		error_show(FL, 'WSAI');
 	}
 
-	int32 scaler = FixedMul(myRegs[IDX_S], 100 << 16) >> 16;
+	const int32 scaler = FixedMul(myRegs[IDX_S], 100 << 16) >> 16;
 
 	myCCB->scaleX = myRegs[IDX_W] < 0 ? -scaler : scaler;
 	myCCB->scaleY = scaler;
