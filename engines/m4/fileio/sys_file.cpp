@@ -432,7 +432,7 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			local_name = local_hag_name;
 
 			if (!Common::File::exists(Common::Path(local_name))) {
-				found = 1;
+				found = true;
 				find_offset = offset;
 				break;
 			}
@@ -447,7 +447,7 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			}
 			if (next_record == offset) {
 				// only one record of fname in hash table
-				found = 1;
+				found = true;
 			} else {
 				offset = next_record;
 			}
