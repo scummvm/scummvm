@@ -945,7 +945,7 @@ void CMnkWindow::OnMButtonDblClk(UINT nFlags, CPoint point) {
 
 
 void CMnkWindow::OnRButtonDown(UINT nFlags, CPoint point) {
-	if (nFlags && MK_CONTROL) {
+	if (nFlags & MK_CONTROL) {
 		gbTurnSoundsOff = !gbTurnSoundsOff; //F12 is pressed, toggle sounds ON/OFF.
 		WritePrivateProfileString("Mankala", "MuteCrab", gbTurnSoundsOff ? "1" : "0", INI_FILENAME);
 	}
