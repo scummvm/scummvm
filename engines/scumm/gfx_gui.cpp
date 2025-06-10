@@ -1321,7 +1321,7 @@ void ScummEngine_v7::toggleVoiceMode() {
 void ScummEngine_v7::handleLoadDuringSmush() {
 	// Notify the SMUSH player that we want to load a game...
 	_saveLoadFlag = 2;
-	_saveLoadSlot = _mainMenuSavegameLabel - 1 + _curDisplayedSaveSlotPage * 9;
+	_saveLoadSlot = _mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9;
 
 	// Force screen to black to avoid glitches...
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
