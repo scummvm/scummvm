@@ -202,11 +202,11 @@ INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
 
 		/* count the frequency of the chars in 'mask' */
 		while (*mask != '\0')
-			nCount[*mask++] += 1;
+			nCount[(int)*mask++] += 1;
 
 		/* subtract off the frequency of the chars in 'test' */
 		while (*test != '\0')
-			nCount[*test++] -= 1;
+			nCount[(int)*test++] -= 1;
 
 		/*
 		* total all of the frequencies
@@ -384,7 +384,7 @@ INT StrCharCount(const CHAR *str, CHAR c) {
 *
 **/
 
-CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
+CHAR *StriStr(CHAR *s1, const CHAR *s2) {
 	CHAR *p, str1[80];
 	CHAR str2[80];
 
@@ -409,7 +409,7 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 
 	/* re-point to original string s1 */
 	if (p != nullptr) {
-		p = (char *)s1 + (p - str1);
+		p = s1 + (p - str1);
 	}
 
 	return (p);

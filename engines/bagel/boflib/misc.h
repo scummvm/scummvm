@@ -113,7 +113,7 @@ extern void ErrorLog(const char *logFile, const char *format, ...);
 extern INT          StrFreqMatch(const CHAR *, const CHAR *);
 extern BOOL         StrCompare(const CHAR *, const CHAR *, UINT);
 extern INT          StrCharCount(const CHAR *, CHAR);
-extern CHAR *StriStr(const CHAR *, const CHAR *);
+extern CHAR *StriStr(CHAR *, const CHAR *);
 extern VOID         StrUprStr(CHAR *, const CHAR *);
 extern VOID         StrCpyStripChar(CHAR *, const CHAR *, CHAR);
 extern CHAR *StrStripChar(CHAR *, CHAR);
