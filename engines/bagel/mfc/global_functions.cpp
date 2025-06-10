@@ -80,7 +80,7 @@ int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType) {
 }
 
 int MessageBox(LPCSTR lpText) {
-	error("%s %s", lpText);
+	error("%s", lpText);
 	return 0;
 }
 
