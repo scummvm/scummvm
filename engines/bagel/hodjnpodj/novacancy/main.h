@@ -49,7 +49,7 @@ protected:
 	VOID        GameReset(VOID);
 	VOID        GamePause(VOID);
 	VOID        GameResume(VOID);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	VOID        HandleError(ERROR_CODE);
 	VOID        DeleteSprite(CSprite *);
 

@@ -55,14 +55,14 @@ public:
 	void SetInitialOptions(CBfcMgr *);    // Sets the private members
 
 private:
-	BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	void ClearDialogImage(void);
 
 protected:
 	//{{AFX_MSG(COptions)
-	virtual void OnOK(void);
-	virtual void OnCancel(void);
-	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual void OnOK(void) override;
+	virtual void OnCancel(void) override;
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG

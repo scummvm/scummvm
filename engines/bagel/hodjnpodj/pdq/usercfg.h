@@ -19,12 +19,12 @@
  *
  */
 
+#ifndef HODJNPODJ_PDQ_USERCFG_H
+#define HODJNPODJ_PDQ_USERCFG_H
+
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
-
-#ifndef HODJNPODJ_PDQ_USERCFG_H
-#define HODJNPODJ_PDQ_USERCFG_H
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -45,9 +45,9 @@ public:
 
 protected:
 
-	virtual void DoDataExchange(CDataExchange*);
-	virtual BOOL OnCommand(WPARAM, LPARAM);
-	virtual BOOL OnInitDialog(void);
+	virtual void DoDataExchange(CDataExchange *) override;
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual BOOL OnInitDialog(void) override;
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void DispSpeed(void);

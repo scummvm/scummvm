@@ -47,9 +47,9 @@ public:
 
 protected:
 
-	virtual void DoDataExchange(CDataExchange *);
-	virtual BOOL OnCommand(WPARAM, LPARAM);
-	virtual BOOL OnInitDialog(void);
+	virtual void DoDataExchange(CDataExchange *) override;
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual BOOL OnInitDialog(void) override;
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void DispLimit(void);

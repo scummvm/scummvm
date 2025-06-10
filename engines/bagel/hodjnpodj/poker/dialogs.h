@@ -47,8 +47,8 @@ public:
 	void ClearDialogImage();
 
 protected:
-	virtual BOOL OnCommand(WPARAM, LPARAM);
-	virtual BOOL OnInitDialog(void);
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual BOOL OnInitDialog(void) override;
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnDestroy();
@@ -67,11 +67,11 @@ public:
 	CSetAmountDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_SETAMOUNT);
 	void SetInitialOptions(long = 0);    // Sets the private members
 	void ClearDialogImage();
-	BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 protected:
 	//{{AFX_MSG(COptions)
-	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
@@ -106,11 +106,11 @@ public:
 	void OnVegas(BOOL = TRUE);
 
 protected:
-	virtual void DoDataExchange(CDataExchange*);
-	virtual BOOL OnInitDialog(void);
+	virtual void DoDataExchange(CDataExchange *) override;
+	virtual BOOL OnInitDialog(void) override;
 	afx_msg void OnSetpayoffs();
-	virtual BOOL OnCommand(WPARAM, LPARAM);
-	afx_msg void OnCancel();
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	afx_msg void OnCancel() override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
@@ -125,14 +125,14 @@ private:
 	int m_nWinPhrase;
 
 public:
-	CUserWonDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERWON);
+	CUserWonDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERWON);
 	void SetInitialOptions(int = 0);
 	void ClearDialogImage();
-	BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 protected:
-	virtual void OnOK(void);
-	virtual BOOL OnCommand(WPARAM, LPARAM);
+	virtual void OnOK(void) override;
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()

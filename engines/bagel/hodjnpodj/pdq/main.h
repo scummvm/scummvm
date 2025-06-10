@@ -50,7 +50,7 @@ protected:
 	ERROR_CODE  LoadCategoryNames(VOID);
 	VOID        ReleaseCategoryNames(VOID);
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	VOID HandleError(ERROR_CODE);
 	VOID OnSoundNotify(CSound *pSound);
 

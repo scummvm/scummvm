@@ -42,8 +42,8 @@ public:
 	CString text;
 
 protected:
-	virtual void DoDataExchange(CDataExchange*);    // DDX/DDV support
-	BOOL OnInitDialog(void);
+	virtual void DoDataExchange(CDataExchange *) override;    // DDX/DDV support
+	BOOL OnInitDialog(void) override;
 	void OnTimer(UINT);
 	void OnPaint(VOID);
 	void OnSetFocus(CWnd *);

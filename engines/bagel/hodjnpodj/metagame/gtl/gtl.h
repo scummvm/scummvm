@@ -63,9 +63,9 @@ public:
 	BOOL m_bDumpGamePlay ;      // dump game play
 	char m_cEndData ;
 
-	virtual BOOL InitInstance();
+	virtual BOOL InitInstance() override;
 	#if GTLDLL
-	virtual int ExitInstance();
+	virtual int ExitInstance() override;
 	#endif
 
 	CGtlApp();  // constructor

@@ -256,7 +256,7 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 	//{{AFX_MSG(CAboutDlg)
 	// No message handlers
 	//}}AFX_MSG

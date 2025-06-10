@@ -41,15 +41,15 @@ protected:
 	void ClearDialogImage(void);
 
 	//{{AFX_MSG(COptions)
-	virtual BOOL OnCommand(WPARAM, LPARAM);
-	virtual void OnCancel(void);
+	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual void OnCancel(void) override;
 	afx_msg void OnDestroy(void);
 	afx_msg void OnPaint(void);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
-	BOOL OnInitDialog(void);
+	BOOL OnInitDialog(void) override;
 
 	CColorButton *m_pSlotButtons[MAX_SAVEGAMES];
 	CColorButton *m_pQuitButton;

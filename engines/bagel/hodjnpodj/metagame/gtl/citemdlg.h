@@ -49,7 +49,7 @@ namespace Gtl {
 #define ITEMDLG_BITMAP_DX   60
 #define ITEMDLG_BITMAP_DY   60
 
-#define ITEMDLG2_ROW_OFFSET ( ITEMDLG_DY - ITEMDLG_HEIGHT ) // Row offset from first 
+#define ITEMDLG2_ROW_OFFSET ( ITEMDLG_DY - ITEMDLG_HEIGHT ) // Row offset from first
 // message box
 
 #define IDD_ITEMMOVE        202
@@ -85,14 +85,14 @@ private:
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CItemDialog)
 	afx_msg void OnPaint();
-	virtual void OnOK();
-	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG

@@ -62,7 +62,7 @@ public:
 	#endif
 
 protected:
-	virtual BOOL OnNewDocument();
+	virtual BOOL OnNewDocument() override;
 
 // Generated message map functions
 protected:
@@ -76,15 +76,15 @@ protected:
 // gtldoc.cpp -- implementation of the CGtlDoc class
 
 public:
-	void DeleteContents() ;
+	void DeleteContents() override;
 protected:
 	//- InitDocument -- initialize document to specified file
-	void InitDocument(const char * xpszPathName) ;
-	virtual BOOL OnOpenDocument(const char* xpszPathName) ;
-	virtual BOOL OnSaveDocument(const char* xpszPathName) ;
+	void InitDocument(const char * xpszPathName);
+	virtual BOOL OnOpenDocument(const char* xpszPathName) override;
+	virtual BOOL OnSaveDocument(const char* xpszPathName);
 
 public:
-	virtual BOOL DoOnFileSaveAs(void) ;
+	virtual BOOL DoOnFileSaveAs(void);
 
 private:
 	//- OnChangedViewList -- called by MFC when a view is

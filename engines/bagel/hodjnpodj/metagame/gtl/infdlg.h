@@ -76,16 +76,16 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 	virtual void PostNcDestroy();
-	virtual void OnCancel();
+	virtual void OnCancel() override;
 
 	// Generated message map functions
 	//{{AFX_MSG(CInfDlg)
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
@@ -134,15 +134,15 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 	virtual void PostNcDestroy(void);
-	virtual void OnCancel();
+	virtual void OnCancel() override;
 
 	// Generated message map functions
 	//{{AFX_MSG(CCtlDlg)
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnClickedCtlPaintBkg();
 	afx_msg void OnClickedCtlShowNodes();
 	afx_msg void OnClickedCtlMetaGame();
@@ -209,15 +209,15 @@ public:
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 	virtual void PostNcDestroy(void);
-	virtual void OnCancel();
+	virtual void OnCancel() override;
 	//  BOOL EffectControl(BOOL bUpdate PDFT(TRUE)) ;
 
 	// Generated message map functions
 	//{{AFX_MSG(CNodeDlg)
 	afx_msg void OnClose();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDestroy();
 	//  afx_msg void OnNodeReloc();
 	afx_msg void OnNodeReset();
@@ -248,7 +248,7 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CActDlg)
@@ -298,7 +298,7 @@ public:
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX);
+	virtual void DoDataExchange(CDataExchange *pDX) override;
 	// DDX/DDV support
 
 	virtual void PostNcDestroy(void);
@@ -314,10 +314,10 @@ private:
 	afx_msg void OnMenuNode();
 	afx_msg void OnMenuOpen();
 	afx_msg void OnMenuSave();
-	virtual void OnCancel();
+	virtual void OnCancel() override;
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

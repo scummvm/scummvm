@@ -144,7 +144,7 @@ protected:
 	ERROR_CODE  ValidateRiddle(RIDDLE *);
 	ERROR_CODE  LoadMasterSprites(VOID);
 	VOID        GameReset(VOID);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	VOID        HandleError(ERROR_CODE);
 	VOID        DeleteSprite(CSprite *);
 
