@@ -2133,7 +2133,6 @@ bool Room603::takePole() {
 		case 3:
 			_ttShould = 17;
 			_val9 = 5000;
-			_val5 = 0;
 			kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
 			sendWSMessage_140000(5);
 			return true;
@@ -2193,7 +2192,6 @@ void Room603::enter() {
 		case 3:
 			_ttShould = 17;
 			_val9 = 5000;
-			_val5 = 0;
 			kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
 			sendWSMessage_140000(5);
 			break;
