@@ -342,7 +342,8 @@ Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getNextPacket(uint32 c
 			// time stamp.
 			usePacket = true;
 		} else {
-			packet._pts -= _firstAudioPacketPts;
+			if (packet._pts >= _firstAudioPacketPts)
+				packet._pts -= _firstAudioPacketPts;
 			uint32 packetTime = packet._pts / 90;
 			if (packetTime <= currentTime || packetTime - currentTime < AUDIO_THRESHOLD || _videoQueue.empty()) {
 				// The packet is overdue, or will be soon.
@@ -369,7 +370,7 @@ Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getNextPacket(uint32 c
 		Packet packet = _videoQueue.pop();
 		startCode = packet._startCode;
 
-		if (packet._pts != 0xFFFFFFFF) {
+		if (packet._pts != 0xFFFFFFFF && packet._pts >= _firstVideoPacketPts) {
 			packet._pts -= _firstVideoPacketPts;
 		}
 		pts = packet._pts;
