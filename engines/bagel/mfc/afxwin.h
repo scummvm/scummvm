@@ -32,7 +32,6 @@
 #include "bagel/mfc/afxmsg.h"
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/win_hand.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/dialog_template.h"
@@ -1394,6 +1393,8 @@ public:
 
 /*============================================================================*/
 
+template<class T>class CHandleMap;
+
 class CWinThread : public CCmdTarget {
 	DECLARE_DYNAMIC(CWinThread)
 public:
@@ -1418,11 +1419,8 @@ private:
 	HCURSOR _currentCursor = nullptr;
 	Common::FSNode _currentDirectory;
 	bool _quitFlag = false;
-	CHandleMap *m_pmapHWND = nullptr;
-	CHandleMap *m_pmapHMENU = nullptr;
-	CHandleMap *m_pmapHDC = nullptr;
-	CHandleMap *m_pmapHGDIOBJ = nullptr;
-	CHandleMap *m_pmapHIMAGELIST = nullptr;
+	CHandleMap<CDC> *m_pmapHDC = nullptr;
+	CHandleMap<CGdiObject> *m_pmapHGDIOBJ = nullptr;
 
 private:
 	/**
@@ -1481,7 +1479,7 @@ public:
 	virtual void OnFileOpen() {}
 	virtual void OnFilePrintSetup() {}
 
-	CHandleMap *afxMapHGDIOBJ(BOOL bCreate);
+	CHandleMap<CGdiObject> *afxMapHGDIOBJ(BOOL bCreate);
 	void AfxUnlockTempMaps();
 
 	/*== ScummVM added functions ==*/

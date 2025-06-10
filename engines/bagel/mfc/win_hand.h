@@ -23,13 +23,13 @@
 #define BAGEL_MFC_WIN_HAND_H
 
 #include "common/hashmap.h"
-#include "bagel/mfc/minwindef.h"
+#include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
 
-class CObject;
-struct CRuntimeClass;
+class CGdiObject;
+class CDC;
 
 struct VoidPtr_EqualTo {
 	bool operator()(const void *x, const void *y) const {
@@ -43,39 +43,99 @@ struct VoidPtr_Hash {
 	}
 };
 
-typedef Common::HashMap<void *, CObject *,
-	VoidPtr_Hash, VoidPtr_EqualTo> CMapPtrToPtr;
+template<typename T>
+struct HandleTraits;
 
+// Specialize for CGdiObject
+template<>
+struct HandleTraits<CGdiObject> {
+	static HANDLE &GetHandle(CGdiObject &obj) {
+		return *(HANDLE *)&obj.m_hObject;
+	}
+};
+
+// Specialize for CDC
+template<>
+struct HandleTraits<CDC> {
+	static HANDLE &GetHandle(CDC &obj) {
+		return *(HANDLE *)&obj.m_hDC;
+	}
+};
+
+template<class T>
 class CHandleMap {
+public:
+	typedef Common::HashMap<void *, T *,
+		VoidPtr_Hash, VoidPtr_EqualTo> CMapPtrToPtr;
+
 private:
-	CMapPtrToPtr m_permanentMap;
-	CMapPtrToPtr m_temporaryMap;
-	const CRuntimeClass *m_pClass;
-	size_t m_nOffset = 0;	// offset of handles in the object
-	int m_nHandles = 0;		// 1 or 2 (for CDC)
+	CMapPtrToPtr _permanentMap;
+	CMapPtrToPtr _temporaryMap;
 
 public:
-	// Constructor/Destructor
-	CHandleMap(const CRuntimeClass *pClass, size_t nOffset, int nHandles = 1);
 	~CHandleMap() {
 		DeleteTemp();
 	}
 
-public:
-	CObject *FromHandle(HANDLE h);
-	void DeleteTemp();
+	T *FromHandle(HANDLE h) {
+		if (h == nullptr)
+			return nullptr;
 
-	void SetPermanent(HANDLE h, CObject *permOb);
-	void RemoveHandle(HANDLE h);
+		// Check for permanent object, and return if present
+		T *pObject = LookupPermanent(h);
+		if (pObject != nullptr)
+			return pObject;
+		else if ((pObject = LookupTemporary(h)) != nullptr) {
+			assert(HandleTraits<T>::GetHandle(*pObject) == h ||
+				HandleTraits<T>::GetHandle(*pObject) == nullptr);
 
-	inline CObject *LookupPermanent(HANDLE h) const {
-		return m_permanentMap.contains((void *)h) ?
-			m_permanentMap[(void *)h] : nullptr;
+			HandleTraits<T>::GetHandle(*pObject) = h;
+			return pObject;
+		}
+
+		// This wasn't created by us, so create a temporary one.
+		T *pTemp = (T *)T::CreateObject();
+		assert(pTemp);
+
+		_temporaryMap[h] = pTemp;
+
+		// Now set the handle in the object and return it
+		HandleTraits<T>::GetHandle(*pTemp) = h;
+		return pTemp;
 	}
 
-	inline CObject *LookupTemporary(HANDLE h) const {
-		return m_temporaryMap.contains((void *)h) ?
-			m_temporaryMap[(void *)h] : nullptr;
+	void DeleteTemp() {
+		for (auto &entry : _temporaryMap) {
+			HANDLE h = entry._key;
+			T *pTemp = entry._value;
+
+			// Zero out the handle
+			assert(HandleTraits<T>::GetHandle(*pTemp) == h ||
+				HandleTraits<T>::GetHandle(*pTemp) == nullptr);
+			HandleTraits<T>::GetHandle(*pTemp) = nullptr;
+
+			delete pTemp;
+		}
+
+		_temporaryMap.clear();
+	}
+
+	void SetPermanent(HANDLE h, T *permOb) {
+		_permanentMap[(LPVOID)h] = permOb;
+	}
+
+	void RemoveHandle(HANDLE h) {
+		_permanentMap.erase((LPVOID)h);
+	}
+
+	inline T *LookupPermanent(HANDLE h) const {
+		return _permanentMap.contains((void *)h) ?
+			_permanentMap[(void *)h] : nullptr;
+	}
+
+	inline T *LookupTemporary(HANDLE h) const {
+		return _temporaryMap.contains((void *)h) ?
+			_temporaryMap[(void *)h] : nullptr;
 	}
 };
 

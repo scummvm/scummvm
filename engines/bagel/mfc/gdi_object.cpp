@@ -21,11 +21,12 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/win_hand.h"
 
 namespace Bagel {
 namespace MFC {
 
-IMPLEMENT_DYNAMIC(CGdiObject, CObject)
+IMPLEMENT_DYNCREATE(CGdiObject, CObject)
 
 BOOL CGdiObject::Attach(HGDIOBJ hObject) {
 	m_hObject = hObject;
@@ -45,10 +46,10 @@ BOOL CGdiObject::DeleteObject() {
 }
 
 CGdiObject *CGdiObject::FromHandle(HGDIOBJ h) {
-	CHandleMap *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
+	CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
 	assert(pMap != nullptr);
 
-	CGdiObject *pObject = (CGdiObject *)pMap->FromHandle(h);
+	CGdiObject *pObject = pMap->FromHandle(h);
 	assert(pObject == nullptr || pObject->m_hObject == h);
 	return pObject;
 }

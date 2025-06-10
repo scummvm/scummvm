@@ -26,6 +26,7 @@
 #include "graphics/paletteman.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/win_hand.h"
 #include "bagel/mfc/libs/events.h"
 
 namespace Bagel {
@@ -56,11 +57,8 @@ CWinApp::CWinApp(const char *appName) :
 CWinApp::~CWinApp() {
 	_activeApp = nullptr;
 
-	delete m_pmapHWND;
-	delete m_pmapHMENU;
 	delete m_pmapHDC;
 	delete m_pmapHGDIOBJ;
-	delete m_pmapHIMAGELIST;
 }
 
 BOOL CWinApp::InitApplication() {
@@ -263,26 +261,18 @@ BOOL CWinApp::freeResource(HGLOBAL hResData) {
 	return true;
 }
 
-CHandleMap *CWinApp::afxMapHGDIOBJ(BOOL bCreate) {
-	if (m_pmapHGDIOBJ == NULL && bCreate) {
-		m_pmapHGDIOBJ = new CHandleMap(RUNTIME_CLASS(CTempGdiObject),
-			offsetof(CGdiObject, m_hObject));
-	}
+CHandleMap<CGdiObject> *CWinApp::afxMapHGDIOBJ(BOOL bCreate) {
+	if (m_pmapHGDIOBJ == NULL && bCreate)
+		m_pmapHGDIOBJ = new CHandleMap<CGdiObject>();
 
 	return m_pmapHGDIOBJ;
 }
 
 void CWinApp::AfxUnlockTempMaps() {
-	if (m_pmapHWND)
-		m_pmapHWND->DeleteTemp();
-	if (m_pmapHMENU)
-		m_pmapHMENU->DeleteTemp();
 	if (m_pmapHDC)
 		m_pmapHDC->DeleteTemp();
 	if (m_pmapHGDIOBJ)
 		m_pmapHGDIOBJ->DeleteTemp();
-	if (m_pmapHIMAGELIST)
-		m_pmapHIMAGELIST->DeleteTemp();
 }
 
 /*--------------------------------------------*/
