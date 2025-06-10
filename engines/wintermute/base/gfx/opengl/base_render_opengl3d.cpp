@@ -126,10 +126,11 @@ bool BaseRenderOpenGL3D::flip() {
 	_lastTexture = nullptr;
 
 	// Store blend mode and cull face mode
-	GLboolean stateBlend, cullState;
+	GLboolean stateBlend, stateCullFace, stateAlpha;
 	glGetBooleanv(GL_BLEND, &stateBlend);
-	glGetBooleanv(GL_CULL_FACE, &cullState);
-	
+	glGetBooleanv(GL_CULL_FACE, &stateCullFace);
+	glGetBooleanv(GL_ALPHA_TEST, &stateAlpha);
+
 	postfilter();
 
 	// Disable blend mode and cull face to prevent interfere with backend renderer
@@ -144,10 +145,15 @@ bool BaseRenderOpenGL3D::flip() {
 	else
 		glDisable(GL_BLEND);
 
-	if (cullState)
+	if (stateCullFace)
 		glEnable(GL_CULL_FACE);
 	else
 		glDisable(GL_CULL_FACE);
+
+	if (stateAlpha)
+		glEnable(GL_ALPHA_TEST);
+	else
+		glDisable(GL_ALPHA_TEST);
 
 	_state = RSTATE_NONE;
 	return true;

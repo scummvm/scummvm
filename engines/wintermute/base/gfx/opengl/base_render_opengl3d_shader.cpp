@@ -210,9 +210,9 @@ bool BaseRenderOpenGL3DShader::flip() {
 	_lastTexture = nullptr;
 
 	// Store blend mode and cull face mode
-	GLboolean stateBlend, cullState;
+	GLboolean stateBlend, stateCullFace;
 	glGetBooleanv(GL_BLEND, &stateBlend);
-	glGetBooleanv(GL_CULL_FACE, &cullState);
+	glGetBooleanv(GL_CULL_FACE, &stateCullFace);
 
 	postfilter();
 
@@ -228,7 +228,7 @@ bool BaseRenderOpenGL3DShader::flip() {
 	else
 		glDisable(GL_BLEND);
 
-	if (cullState)
+	if (stateCullFace)
 		glEnable(GL_CULL_FACE);
 	else
 		glDisable(GL_CULL_FACE);
