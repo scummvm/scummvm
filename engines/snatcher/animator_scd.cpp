@@ -42,7 +42,7 @@ struct AnimObject {
 	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), f18(0), f1c(0),
 		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0),
 			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), freeze(0), blink(0), blinkCounter(0), blinkDuration(0) {}
-	
+
 	void clear() {
 		enable = blinkRate = drawFlags = 0;
 		posX = posY = 0;
@@ -132,6 +132,8 @@ public:
 
 	uint16 screenWidth() const override { return _screenWidth; }
 	uint16 screenHeight() const override { return _screenHeight; }
+	uint16 realScreenWidth() const override { return _realScreenWidth; }
+	uint16 realScreenHeight() const override { return _realScreenHeight; }
 
 	void createMouseCursor() override;
 
@@ -149,7 +151,8 @@ private:
 	bool reachedAudioTimeStamp(AnimObject &a) const;
 	void runAnimScript(AnimObject &a);
 
-	const uint16 _screenWidth, _screenHeight;
+	int _screenWidth, _screenHeight;
+	int _realScreenWidth, _realScreenHeight;
 
 	ResourcePointer _transferData;
 	uint8 *_tempBuffer;
@@ -263,8 +266,8 @@ private:
 
 Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd) : Animator(state), _pal(pal), _trs(scr), _snd(snd), _mode(1),
 	_modeChange(0), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0), _transferDelay(0), _clearFlags(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _frameCount3Dwn(0),
-		_animations(nullptr), _drawCommands(nullptr), _hINTClientProc(Graphics::SegaRenderer::HINTHandler(this, &Graphics::SegaRenderer::HINTClient::hINTCallback)), _bootsDelay(0), _bootsSprTbl(nullptr),
-			_bootsTotalFrames(0), _bootsHScroll(0), _bootsVScroll(0), _bootsCol(0) {
+		_animations(nullptr), _drawCommands(nullptr), _hINTClientProc(Graphics::SegaRenderer::HINTHandler(this, &Graphics::SegaRenderer::HINTClient::hINTCallback)), _realScreenWidth(0), _realScreenHeight(0),
+			_bootsDelay(0), _bootsSprTbl(nullptr), _bootsTotalFrames(0), _bootsHScroll(0), _bootsVScroll(0), _bootsCol(0) {
 
 	makeAnimFunctions();
 
@@ -289,6 +292,8 @@ Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::Gfx
 	}
 
 	_sr->setResolution(_screenWidth, _screenHeight);
+	_sr->toggleAspectRatioCorrection(true);
+	_sr->getRealResolution(_realScreenWidth, _realScreenHeight);
 	_sr->setupWindowPlane(0, 0, Graphics::SegaRenderer::kWinToLeft, Graphics::SegaRenderer::kWinToTop);
 	_sr->hINT_setHandler(&_hINTClientProc);
 
@@ -302,7 +307,7 @@ Animator_SCD::~Animator_SCD() {
 	delete[] _drawCommands;
 
 	if (_animations) {
-		for (int i = 0; i < 64; ++i) 
+		for (int i = 0; i < 64; ++i)
 			delete _animations[i];
 		delete[] _animations;
 	}
@@ -339,7 +344,6 @@ void Animator_SCD::initAnimations(ResourcePointer &res, uint16 len, bool dontUpd
 	ResourcePointer in = res;
 	while (in < next) {
 		assert(in[0] < 64);
-		int dg = in[0];
 		AnimObject *a = _animations[*in++];
 		//if (a->enable && dontUpdate)
 		//	return;
@@ -596,7 +600,7 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 void Animator_SCD::setAnimGroupParameter(uint8 animObjId, int groupOp, int32 value) {
 	assert(animObjId < 64);
 	AnimObject &a = *_animations[animObjId];
-	anim_setGroupParameter(a, groupOp, value);	
+	anim_setGroupParameter(a, groupOp, value);
 }
 
 int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
@@ -682,7 +686,7 @@ void Animator_SCD::loadDataFromGfxScript() {
 
 	if (!_gfxState.getVar(8))
 		return;
-	
+
 	if (_transferDelay) {
 		--_transferDelay;
 		return;
@@ -896,7 +900,7 @@ void Animator_SCD::reconfigPlanes() {
 	in += 2;
 	_sr->memsetVRAM(*in, 0, 0x200);
 	_sr->memsetVRAM(0, 0, _mode ? 0xC000 : 0xB000);
-	
+
 	_modeChange = 0;
 }
 
@@ -1410,7 +1414,7 @@ void Animator_SCD::createMouseCursor() {
 	// This will obviously only work when the necessary animation has been loaded.
 	//anim_setControlFlags(16, GraphicsEngine::kAnimPause);
 	//anim_setFrame(16, 0);
-	
+
 	memset(_tempBuffer, 0, 0x10000);
 	updateAnimations();
 	drawAnimSprites();
@@ -1440,7 +1444,7 @@ int Animator_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 
 	switch (frameNo) {
 	case 0:
-		_mode = 0; 
+		_mode = 0;
 		reconfigPlanes();
 		_bootsDelay = _bootsTotalFrames = 0;
 		_bootsHScroll = _bootsVScroll =  _bootsCol = 0;
@@ -1464,7 +1468,7 @@ int Animator_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 		_sr->loadToVRAM(&tmp[74], 22, 0xEA94);
 		_sr->loadToVRAM(&tmp[86], 42, 0xEB8C);
 
-		++frameNo;		
+		++frameNo;
 		break;
 
 	case 1:
@@ -1638,7 +1642,7 @@ int Animator_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 	_sr->setRenderColorTable(_pal->getSystemPalette(), 0, 64);
 	_sr->render(screen);
 
-	return frameNo;	
+	return frameNo;
 }
 
 
