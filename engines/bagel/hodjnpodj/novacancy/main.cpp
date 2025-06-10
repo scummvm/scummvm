@@ -1744,8 +1744,6 @@ VOID CMainWindow::OnClose() {
 	CBrush cbrBlack;
 	CRect crectSplashScr;
 	CDC *pDC;
-	char i,
-	     iDoor;
 
 	#ifdef _MCI_TEST
 	EM("On Close down");
@@ -1756,7 +1754,8 @@ VOID CMainWindow::OnClose() {
 	    (if the user hits quit when the scroll is first brought up, then the score is 1+2+...+9 because all
 	    doors are set to open in the constructor.
 	*/
-	for (iDoor = 1, pGameParams->lScore = 0x00L; pGameParams->bPlayingMetagame && iDoor < 10; iDoor++) {
+	pGameParams->lScore = 0x00L;
+	for (int iDoor = 1; pGameParams->bPlayingMetagame && iDoor < 10; iDoor++) {
 		if (m_iDoorStatus[iDoor] == OPEN) pGameParams->lScore += iDoor;
 	}
 
@@ -1764,7 +1763,7 @@ VOID CMainWindow::OnClose() {
 
 	CSound::clearSounds();   //ONLY A TEST; this works.
 
-	for (i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		if (pCLDieBmp[i]) {
 			delete pCLDieBmp[i];            //clear dice bmps.
 			pCLDieBmp[i] = nullptr;
@@ -1795,7 +1794,7 @@ VOID CMainWindow::OnClose() {
 		m_pGamePalette = nullptr;
 	}
 
-	for (i = 1; i < 10; i++) {
+	for (int i = 1; i < 10; i++) {
 		if (pCDoorBmp[i]) {
 			DeleteSprite(pCDoorBmp[i]); /* clear door sprites */
 			pCDoorBmp[i] = nullptr;
