@@ -346,7 +346,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 		(void) RealizePalette(hDC);
 	}
 
-	// Conver the bit buffer to a bitmap
+	// Convert the bit buffer to a bitmap
 	hBitmap = DIBtoBitmap(hDC, nullptr, hDIB);
 
 	if (hBitmap != nullptr) {

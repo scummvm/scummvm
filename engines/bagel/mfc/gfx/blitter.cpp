@@ -28,7 +28,7 @@ namespace MFC {
 namespace Gfx {
 
 template<typename T>
-static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE) {
+static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE, bool isDestMonochrome) {
 	switch (mode) {
 	case SRCCOPY:
 		*destP = *srcP;
@@ -55,18 +55,23 @@ static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE) 
 		*destP = WHITE;
 		break;
 	default:
-		error("Unsupport blit mode");
+		error("Unsupported blit mode");
 		break;
 	}
-}
 
+	if (isDestMonochrome)
+		*destP = *destP ? 255 : 0;
+}
 
 template<typename T>
 static void normalBlit(const Graphics::ManagedSurface *srcSurface,
 		Graphics::ManagedSurface *destSurface,
 		const Common::Rect &srcRect, const Common::Point &destPos,
 		int mode) {
-	const T WHITE = destSurface->format.RGBToColor(255, 255, 255);
+	const bool isDestMonochrome = destSurface->format.bytesPerPixel == 1 &&
+		destSurface->format.aLoss == 255;
+	const T WHITE = isDestMonochrome ? 255 :
+		destSurface->format.RGBToColor(255, 255, 255);
 
 	for (int y = 0; y < srcRect.height(); ++y) {
 		const T *srcP = (const T *)srcSurface->getBasePtr(
@@ -75,7 +80,7 @@ static void normalBlit(const Graphics::ManagedSurface *srcSurface,
 			destPos.x, destPos.y + y);
 
 		for (int x = 0; x < srcRect.width(); ++x, ++srcP, ++destP) {
-			copyPixel<T>(srcP, destP, mode, WHITE);
+			copyPixel<T>(srcP, destP, mode, WHITE, isDestMonochrome);
 		}
 	}
 }
@@ -85,7 +90,10 @@ static void stretchBlit(const Graphics::ManagedSurface *srcSurface,
 		Graphics::ManagedSurface *destSurface,
 		const Common::Rect &srcRect, const Common::Rect &dstRect,
 		int mode) {
-	const T WHITE = destSurface->format.RGBToColor(255, 255, 255);
+	const bool isDestMonochrome = destSurface->format.bytesPerPixel == 1 &&
+		destSurface->format.aLoss == 255;
+	const T WHITE = isDestMonochrome ? 255 :
+		destSurface->format.RGBToColor(255, 255, 255);
 
 	const int srcWidth = srcRect.right - srcRect.left;
 	const int srcHeight = srcRect.bottom - srcRect.top;
@@ -116,7 +124,7 @@ static void stretchBlit(const Graphics::ManagedSurface *srcSurface,
 			const T *srcP = (const T *)srcSurface->getBasePtr(srcX, srcY);
 			T *destP = (T *)destSurface->getBasePtr(dstX, dstY);
 
-			copyPixel<T>(srcP, destP, mode, WHITE);
+			copyPixel<T>(srcP, destP, mode, WHITE, isDestMonochrome);
 		}
 	}
 }

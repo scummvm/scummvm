@@ -113,7 +113,15 @@ HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, DWORD flInit,
 	Graphics::PixelFormat format;
 
 	switch (pbmih->biBitCount) {
-	case 1:	// ManagedSurface is 8bpp minimum
+	case 1:
+		// Monochrome. Since ScummVM doesn't support it directly,
+		// I use a standard 8bpp surface, but in the format's
+		// aLoss field, I use a value of 255 as a flag.
+		// This should be okay, as loss & shift aren't used for 8bpp.
+		format = Graphics::PixelFormat::createFormatCLUT8();
+		format.aLoss = 255;
+		break;
+
 	case 8:
 		format = Graphics::PixelFormat::createFormatCLUT8();
 		break;
