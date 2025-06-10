@@ -39,7 +39,7 @@ int CGenUtil::RandomInteger(int iLow, int iHigh)
 	int iRetval = 0;        // integer return value
 
 	// for first call, initialize the random number generator
-	if (!m_bRandomInit)
+	if (!m_bRandomInit) {
 		//srand((unsigned) time(&tTime)), m_bRandomInit = TRUE ;
 
 		// Note: since brand() returns a value uniform in [0, 2^15-1], the
@@ -49,6 +49,7 @@ int CGenUtil::RandomInteger(int iLow, int iHigh)
 			iRetval = iLow + (brand() % (iHigh - iLow + 1)) ;  // compute value
 		else        // invalid args
 			iRetval = iLow ;
+	}
 	JXELEAVE(CGenUtil::RandomInteger) ;
 	return (iRetval) ;
 }

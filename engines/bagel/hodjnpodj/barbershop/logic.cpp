@@ -134,19 +134,21 @@ BOOL CLogic::IsMoveOk(CCard *pCard, CStack *pStack) {
 		)
 			return TRUE;
 
-		if (pTopCard->GetPip() == ONE_CARD)
+		if (pTopCard->GetPip() == ONE_CARD) {
 			if (pCard->GetPip() == TWO_CARD) {
 				return TRUE;
 			} else {
 				return FALSE;
 			}
+		}
 
-		if (pTopCard->GetPip() == TEN_CARD)
+		if (pTopCard->GetPip() == TEN_CARD) {
 			if (pCard->GetPip() == NINE_CARD) {
 				return TRUE;
 			} else {
 				return FALSE;
 			}
+		}
 
 		if (
 		    (
