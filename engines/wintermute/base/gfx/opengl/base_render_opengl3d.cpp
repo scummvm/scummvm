@@ -124,6 +124,12 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 
 bool BaseRenderOpenGL3D::flip() {
 	_lastTexture = nullptr;
+
+	// Store blend mode and cull face mode
+	GLboolean stateBlend, cullState;
+	glGetBooleanv(GL_BLEND, &stateBlend);
+	glGetBooleanv(GL_CULL_FACE, &cullState);
+	
 	postfilter();
 
 	// Disable blend mode and cull face to prevent interfere with backend renderer
@@ -131,6 +137,17 @@ bool BaseRenderOpenGL3D::flip() {
 	glDisable(GL_CULL_FACE);
 
 	g_system->updateScreen();
+
+	// Restore blend mode and cull face state
+	if (stateBlend)
+		glEnable(GL_BLEND);
+	else
+		glDisable(GL_BLEND);
+
+	if (cullState)
+		glEnable(GL_CULL_FACE);
+	else
+		glDisable(GL_CULL_FACE);
 
 	_state = RSTATE_NONE;
 	return true;
@@ -408,7 +425,6 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
 
 	glVertexPointer(3, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].x);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].u);

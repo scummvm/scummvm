@@ -208,6 +208,12 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 bool BaseRenderOpenGL3DShader::flip() {
 	_lastTexture = nullptr;
+
+	// Store blend mode and cull face mode
+	GLboolean stateBlend, cullState;
+	glGetBooleanv(GL_BLEND, &stateBlend);
+	glGetBooleanv(GL_CULL_FACE, &cullState);
+
 	postfilter();
 
 	// Disable blend mode and cull face to prevent interfere with backend renderer
@@ -215,6 +221,17 @@ bool BaseRenderOpenGL3DShader::flip() {
 	glDisable(GL_CULL_FACE);
 
 	g_system->updateScreen();
+
+	// Restore blend mode and cull face state
+	if (stateBlend)
+		glEnable(GL_BLEND);
+	else
+		glDisable(GL_BLEND);
+
+	if (cullState)
+		glEnable(GL_CULL_FACE);
+	else
+		glDisable(GL_CULL_FACE);
 
 	_state = RSTATE_NONE;
 	return true;
