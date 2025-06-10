@@ -713,6 +713,15 @@ int16 Op_GetMouseButton() {
 
 	getMouseStatus(&dummy, &mouseX, &mouseButton, &mouseY);
 
+	// Stop TTS when progressing a dialog or switching screens with user input
+	// _mouseButtonDown is used to prevent cases where the mouse input in this function is repeated several times
+	// after a click, which sometimes immediately ends TTS for a message that just appeared on screen
+	if ((mouseButton == 1 || mouseButton == 2) && !userEnabled && _vm->_mouseButtonDown && 
+			strcmp(overlayTable[currentScriptPtr->overlayNumber].overlayName, "SHIP")) {
+		_vm->stopTextToSpeech();
+		_vm->_mouseButtonDown = false;
+	}
+
 	return mouseButton;
 }
 
@@ -819,6 +828,13 @@ int16 Op_AddMessage() {
 	}
 
 	createTextObject(&cellHead, overlayIdx, var_8, var_6, var_4, var_2, color, masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+	
+	// Interrupt for location names on the map to avoid a long queue if the user clicks a lot of locations
+	if (!strcmp(overlayTable[currentScriptPtr->overlayNumber].overlayName, "SHIP")) {
+		_vm->sayQueuedText(Common::TextToSpeechManager::INTERRUPT);
+	} else {
+		_vm->sayQueuedText(Common::TextToSpeechManager::QUEUE);
+	}
 
 	return 0;
 }

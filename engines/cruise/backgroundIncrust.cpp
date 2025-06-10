@@ -24,6 +24,22 @@
 
 namespace Cruise {
 
+static const char *endTexts[] = {
+	"The End",				// English
+	"Fin",					// French
+	"Ende",					// German
+	"El Fin",				// Spanish
+	"Fine"					// Italian
+};
+
+enum EndTextIndex {
+	kEnglish = 0,
+	kFrench = 1,
+	kGerman = 2,
+	kSpanish = 3,
+	kItalian = 4
+};
+
 backgroundIncrustStruct backgroundIncrustHead;
 
 void resetBackgroundIncrustList(backgroundIncrustStruct *pHead) {
@@ -139,6 +155,42 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	newElement->spriteId = filesDatabase[params.fileIdx].subData.index;
 	newElement->ptr = nullptr;
 	Common::strcpy_s(newElement->name, filesDatabase[params.fileIdx].subData.name);
+
+	if (_vm->getLanguage() != Common::RU_RUS && !strcmp(newElement->name, "FIN14.SET")) {	// "The End" (nothing for Russian version)
+		const char *text;
+
+		switch (_vm->getLanguage()) {
+		case Common::EN_GRB:
+		case Common::EN_ANY:
+			text = endTexts[kEnglish];
+			break;
+		case Common::FR_FRA:
+			text = endTexts[kFrench];
+			break;
+		case Common::DE_DEU:
+			text = endTexts[kGerman];
+			break;
+		case Common::ES_ESP:
+			text = endTexts[kSpanish];
+			break;
+		case Common::IT_ITA:
+			text = endTexts[kItalian];
+			break;
+		default:
+			text = endTexts[kEnglish];
+		}
+
+		_vm->sayText(text, Common::TextToSpeechManager::QUEUE);
+	} else if (!strcmp(newElement->name, "CFACSP02.SET")) {	// Title
+		if (_vm->getLanguage() == Common::FR_FRA) {
+			_vm->sayText("Croisi\212re pour un Cadavre", Common::TextToSpeechManager::QUEUE);
+		} else if (_vm->getLanguage() == Common::RU_RUS) {
+			// "Круиз для мертвеца"
+			_vm->sayText("\x8a\xe0\x93\xa8\xa7 \xa4\xab\xef \xac\xa5\xe0\xe2\xa2\xa5\xe6\xa0", Common::TextToSpeechManager::QUEUE);
+		} else {
+			_vm->sayText("Cruise for a Corpse", Common::TextToSpeechManager::QUEUE);
+		}
+	}
 
 	if (filesDatabase[params.fileIdx].subData.resourceType == OBJ_TYPE_SPRITE) {
 		// sprite

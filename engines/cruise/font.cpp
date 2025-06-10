@@ -270,6 +270,8 @@ void drawString(int32 x, int32 y, const char *string, uint8 *buffer, uint8 fontC
 	// Draw the message
 	drawMessage(s, x, y, rightBorder_X - x, fontColor, buffer);
 
+	_vm->sayText(string, Common::TextToSpeechManager::INTERRUPT);
+
 	// Free the data
 	delete s->imagePtr;
 	free(s);

@@ -712,7 +712,16 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 								*outObjOvl = linkedObjOvl;
 								*outObjIdx = linkedObjIdx;
 
+								// "Ok" button on the copy protection screen
+								if (!strcmp(overlayTable[currentObject->overlay].overlayName, "XX2") && 
+											(currentObject->idx == 1 || currentObject->idx == 0)) {
+									_vm->sayText("OK", Common::TextToSpeechManager::INTERRUPT);
+								}
+
 								return (currentObject->type);
+							} else if (!strcmp(overlayTable[currentObject->overlay].overlayName, "XX2") && 
+											(currentObject->idx == 1 || currentObject->idx == 0)) {
+								_vm->_previousSaid.clear();
 							}
 						} else {
 							// int numBitPlanes = filesDatabase[j].resType;
@@ -810,6 +819,8 @@ void buildInventory(int X, int Y) {
 	if (numObjectInInventory == 0) {
 		freeMenu(menuTable[1]);
 		menuTable[1] = nullptr;
+	} else {
+		_vm->sayText(_vm->langString(ID_INVENTORY), Common::TextToSpeechManager::INTERRUPT);
 	}
 }
 
@@ -835,6 +846,7 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 			currentMenuElementX = pMenuElement->x;
 			currentMenuElementY = pMenuElement->y;
 			currentMenuElement = pMenuElement;
+			_vm->stopTextToSpeech();
 
 			return pMenuElement->ptrSub;
 		}
@@ -957,6 +969,8 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
+	Common::String ttsMessage;
+
 	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
@@ -1009,6 +1023,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 							const char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
 
 							menuTable[0] = createMenu(x, y, ptrName);
+							ttsMessage = ptrName;
 							first = false;
 						}
 					}
@@ -1035,6 +1050,10 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 				}
 			}
 		}
+	}
+
+	if (found) {
+		_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
 	}
 
 	return found;
@@ -1191,6 +1210,8 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 							userEnabled = 0;
 							freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 						}
+					} else {
+						_vm->sayQueuedText(Common::TextToSpeechManager::QUEUE);
 					}
 				}
 			}
@@ -1339,6 +1360,8 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						userEnabled = 0;
 						freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 					}
+				} else {
+					_vm->sayQueuedText(Common::TextToSpeechManager::QUEUE);
 				}
 			}
 		} else {
@@ -1451,8 +1474,10 @@ int CruiseEngine::processInput() {
 
 	if (userWait) {
 		// Check for left mouse button click or Space to end user waiting
-		if ((action == kActionEndUserWaiting) || (button == CRS_MB_LEFT))
+		if ((action == kActionEndUserWaiting) || (button == CRS_MB_LEFT)) {
 			userWait = false;
+			stopTextToSpeech();
+		}
 
 		action = kActionNone;
 		return 0;
@@ -1493,6 +1518,8 @@ int CruiseEngine::processInput() {
 
 			if (menuTable[0]) {
 				if (dialogFound) {
+					sayText(menuTable[0]->stringPtr, Common::TextToSpeechManager::INTERRUPT);
+
 					currentActiveMenu = 0;
 				} else {
 					freeMenu(menuTable[0]);
@@ -1621,6 +1648,11 @@ int CruiseEngine::processInput() {
 							Common::strcat_s(text, ":");
 							Common::strcat_s(text, currentMenuElement->string);
 							linkedMsgList = renderText(320, (const char *)text);
+
+							Common::String ttsMessage = text;
+							Common::replace(ttsMessage, ":", ": ");
+							sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+
 							changeCursor(CURSOR_CROSS);
 						}
 					}
@@ -1686,6 +1718,7 @@ bool manageEvents() {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			currentMouseButton |= CRS_MB_LEFT;
+			_vm->_mouseButtonDown = true;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			currentMouseButton &= ~CRS_MB_LEFT;
@@ -1693,6 +1726,7 @@ bool manageEvents() {
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			currentMouseButton |= CRS_MB_RIGHT;
+			_vm->_mouseButtonDown = true;
 			break;
 		case Common::EVENT_RBUTTONUP:
 			currentMouseButton &= ~CRS_MB_RIGHT;
@@ -1942,6 +1976,7 @@ void CruiseEngine::mainLoop() {
 				if (isAnimFinished(narratorOvl, narratorIdx, &actorHead, ATP_MOUSE)) {
 					if (autoMsg != -1) {
 						freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
+						sayQueuedText(Common::TextToSpeechManager::QUEUE);
 
 						char* pText = getText(autoMsg, autoOvl);
 

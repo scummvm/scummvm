@@ -30,6 +30,8 @@ struct CRUISEGameDescription {
 	ADGameDescription desc;
 };
 
+#define GAMEOPTION_TTS                    GUIO_GAMEOPTIONS1
+
 } // End of namespace Cruise
 
 #endif // CRUISE_DETECTION_H
