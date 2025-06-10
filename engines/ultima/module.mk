@@ -594,6 +594,12 @@ MODULE_OBJS += \
 	ultima8/world/actors/targeted_anim_process.o \
 	ultima8/world/actors/teleport_to_egg_process.o \
 	ultima8/world/actors/u8_avatar_mover_process.o
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	ultima8/debugtools.o
+endif
+
 endif
 
 # This module can be built as a plugin
