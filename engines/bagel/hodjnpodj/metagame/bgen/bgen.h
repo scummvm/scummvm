@@ -63,7 +63,6 @@ typedef void *LPVOID ;
 //typedef WORD * XPWORD ;
 //typedef WORD * LPWORD ;
 
-#define HUGE
 typedef unsigned long ULONG ;
 
 // RGB colors

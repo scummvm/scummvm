@@ -48,24 +48,6 @@ namespace Mankala {
 
 typedef char *XPSTR;
 
-#if 0
-	typedef int BOOL ;
-	typedef char far *LPSTR ;
-	typedef LPSTR far *LPLPSTR ;
-	typedef int *XPINT ;
-	typedef int far *LPINT ;
-	typedef char *XPCHAR ;
-	#define VOID void
-	typedef void *XPVOID ;
-	typedef void far *LPVOID ;
-	//typedef unsigned int WORD ;
-	//typedef WORD * XPWORD ;
-	//typedef WORD far * LPWORD ;
-
-	#define HUGE __huge
-	typedef unsigned long ULONG ;
-#endif
-
 // RGB colors
 #define RGBCOLOR_RED        RGB(255,   0,   0)
 #define RGBCOLOR_GREEN      RGB(  0, 255,   0)
