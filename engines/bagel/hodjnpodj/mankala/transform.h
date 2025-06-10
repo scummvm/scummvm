@@ -35,6 +35,7 @@ typedef struct polar_tag {
 
 // CONSTANTS (borrowed from BORLANDC math.h include file
 
+#if 0
 /* Constants rounded for 21 decimals. */
 #define M_E         2.71828182845904523536
 #define M_LOG2E     1.44269504088896340736
@@ -50,7 +51,7 @@ typedef struct polar_tag {
 #define M_2_SQRTPI  1.12837916709551257390
 #define M_SQRT2     1.41421356237309504880
 #define M_SQRT_2    0.707106781186547524401
-
+#endif
 
 #define MAG(z)  (sqrt(((z).x)*((z).x)+((z).y)*((z).y)))     //note z is of type complex
 #define ANG(z)  (atan((z).y/(z).x))
