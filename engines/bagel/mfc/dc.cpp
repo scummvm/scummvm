@@ -49,7 +49,8 @@ BOOL CDC::CreateCompatibleDC(CDC *pDC) {
 }
 
 BOOL CDC::DeleteDC() {
-	delete m_hDC;
+	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
+	delete dc;
 	m_hDC = nullptr;
 	return true;
 }
