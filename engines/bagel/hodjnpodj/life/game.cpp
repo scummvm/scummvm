@@ -1344,7 +1344,7 @@ void CMainWindow::RefreshStats() {
 	// Colony left count box
 	// update colony count stat
 	if (bIsInfiniteLife == TRUE) {
-		Common::sprintf_s(buf, "Unlim", nLifeCounter);
+		Common::sprintf_s(buf, "Unlim");
 		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 

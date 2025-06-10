@@ -259,7 +259,7 @@ void CMsgDlg::OnPaint(void) {
 		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);
 		break;
 	case 5:
-		Common::sprintf_s(cDisplay, "Level Cleared!", m_nLevel);
+		Common::sprintf_s(cDisplay, "Level Cleared!");
 		txtLine1.DisplayString(pDC, cDisplay, 21, FW_BOLD);
 		Common::sprintf_s(cDisplay, "Final Score: %li", m_lCurrentScore);
 		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);

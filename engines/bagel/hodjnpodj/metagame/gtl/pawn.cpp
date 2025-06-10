@@ -736,7 +736,7 @@ void CPawnShop::OnMouseMove(UINT nFlags, CPoint point) {
 						else
 							Common::sprintf_s(chBuffer, "It can be sold for %d Crowns", nPrice);
 					} else if (nPrice == 1)
-						Common::sprintf_s(chBuffer, "One can be sold for 1 Crown", nPrice);
+						Common::sprintf_s(chBuffer, "One can be sold for 1 Crown");
 					else
 						Common::sprintf_s(chBuffer, "One can be sold for %d Crowns", nPrice);
 					hNewCursor = (*pMyApp).LoadCursor(IDC_PAWN_DOLLAR);
