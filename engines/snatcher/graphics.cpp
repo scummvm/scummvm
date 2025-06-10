@@ -42,7 +42,7 @@ GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system
 	_animator = Animator::create(pxf, platform, _state, _palette, _trs, snd);
 	_text = TextRenderer::create(platform, _animator);
 	assert(_animator);
-	_screen = new uint8[_animator->screenWidth() * _animator->screenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
+	_screen = new uint8[_animator->realScreenWidth() * _animator->realScreenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
 	assert(_screen);
 	_animSaveLoadData = new uint8[64]();
 	assert(_animSaveLoadData);
@@ -77,7 +77,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 		case 2:
 			_animator->initAnimations(sc, len, true);
 			break;
-		case 3: 
+		case 3:
 		case 4:
 			_animator->linkAnimations(sc, len);
 			break;
@@ -182,7 +182,7 @@ void GraphicsEngine::nextFrame() {
 	_palette->update();
 	_animator->updateScreen(_screen);
 
-	_system->copyRectToScreen(_screen, _animator->screenWidth() * _bpp, 0, 0, _animator->screenWidth(), _animator->screenHeight());
+	_system->copyRectToScreen(_screen, _animator->realScreenWidth() * _bpp, 0, 0, _animator->realScreenWidth(), _animator->realScreenHeight());
 	_system->updateScreen();
 
 	_state.nextFrame();
@@ -241,6 +241,14 @@ uint16 GraphicsEngine::screenWidth() const {
 
 uint16 GraphicsEngine::screenHeight() const {
 	return _animator ? _animator->screenHeight() : 0;
+}
+
+uint16 GraphicsEngine::realScreenWidth() const {
+	return _animator ? _animator->realScreenWidth() : 0;
+}
+
+uint16 GraphicsEngine::realScreenHeight() const {
+	return _animator ? _animator->realScreenHeight() : 0;
 }
 
 bool GraphicsEngine::busy(int type) const {
@@ -303,7 +311,7 @@ void GraphicsEngine::postLoadProcess() {
 		setAnimParameter(i, kAnimParaF24, cf | (v & 0x0C));
 		if (v & 0x10)
 			setAnimParameter(i, kAnimParaScriptComFlags, getAnimParameter(i, kAnimParaScriptComFlags) | 1);
-		else 
+		else
 			setAnimParameter(i, kAnimParaScriptComFlags, getAnimParameter(i, kAnimParaScriptComFlags) & ~1);
 		setAnimParameter(i, kAnimParaAllowFrameDrop, (v & 0x20) ? 1 : 0);
 	}
@@ -315,7 +323,7 @@ void GraphicsEngine::createMouseCursor(bool show) {
 
 int GraphicsEngine::displayBootLogoFrame(int frameNo) {
 	int res = _animator->drawBootLogoFrame(_screen, frameNo);
-	_system->copyRectToScreen(_screen, _animator->screenWidth() * _bpp, 0, 0, _animator->screenWidth(), _animator->screenHeight());
+	_system->copyRectToScreen(_screen, _animator->realScreenWidth() * _bpp, 0, 0, _animator->realScreenWidth(), _animator->realScreenHeight());
 	_system->updateScreen();
 	return res;
 }

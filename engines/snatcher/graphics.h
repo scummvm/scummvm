@@ -126,7 +126,7 @@ public:
 	};
 
 	enum AnimFlags : int {
-		kAnimNone 				=	0,
+		kAnimNone				=	0,
 		kAnimPause				=	1 << 0,
 		kAnimHide				=	1 << 1,
 		kAnimAudioSync			=	1 << 2
@@ -141,6 +141,8 @@ public:
 
 	uint16 screenWidth() const;
 	uint16 screenHeight() const;
+	uint16 realScreenWidth() const;
+	uint16 realScreenHeight() const;
 
 	bool busy(int type) const;
 	uint16 frameCount() const;
@@ -204,7 +206,7 @@ public:
 		uint16 frameCount2() const {
 			return vm.frameCounter;
 		}
-	
+
 	private:
 		uint8 vars[12];
 		uint16 frameCounter;

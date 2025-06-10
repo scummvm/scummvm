@@ -25,6 +25,9 @@
 #include "common/func.h"
 #include "graphics/pixelformat.h"
 
+// It could probably be disabled if the backend does this in satisfactory way
+#define BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT				true
+
 namespace Graphics {
 
 struct PixelFormat;
@@ -77,6 +80,29 @@ public:
 	 * @param h:		pixel height, 224 or 240 allowed
 	 */
 	void setResolution(int w, int h);
+
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	/**
+	 * Enable or disable aspect ratio correction. This can be achieved rather cost-effectively with a scale factor of 1.0 (no scaling).
+	 * Unfortunately, some of the relevant resolutions here aren't really made for this. While it may be visually bearable to correct a 320x224
+	 * image to 320x240, this will not be the case for Snatcher's 256x224 resolution. The text font glyphs will be distorted in a very ugly
+	 * and obvious way.That's why we have the scaling. Set it to 2.0 and the corrected image will be okay. Keep in mind though, how this will
+	 * interact with and/or impact a scaler or shader setting. So it might make sense not to overdo it with the scale factor (apart from
+	 * the obvious, that the aspect ratio correction will not come anywhere near as cheap any more).
+	 * 
+	 * @param xyAspectRatio:		desired x/y ratio. E. g., for 4 : 3, type '4.0 / 3.0'. To turn it off, use 1.0.
+	 * @param scaleFactor:			scale factor for the aspect ratio correction, e. g. 1.0 for no scaling, 2.0 for double size
+	 */
+	void setAspectRatioCorrection(double xyAspectRatio = 1.0, double scaleFactor = 1.0);
+#endif
+
+	/**
+	 * Get the screen pixel width and height required to init the backend. These will be the same values as passed to setResolution() if the aspect
+	 * ratio correction is set to off, but it will differ when that option is enabled.
+	 * @param w:		pixel width,
+	 * @param h:		pixel height
+	 */
+	void getRealResolution(int &w, int &h);
 
 	/**
 	 * Set address for a plane's nametable.
@@ -241,6 +267,7 @@ public:
 
 protected:
 	uint16 _screenW, _screenH, _blocksW, _blocksH;
+	uint16 _realW, _realH;
 	uint16 _destPitch;
 	uint8 *_vram;
 	uint16 *_vsram;
@@ -249,9 +276,9 @@ protected:
 private:
 	void fillBackground(uint8 *dst, int x, int y, int w, int h);
 	template<bool isWindow> void renderPlaneLine(uint8 *planeBuffPos, uint8 *planePrioBuffPos, int srcPlane, int y, int clipX, int clipW);
-	template<typename T, bool withSprites, bool withPrioSprites> void mergeLines(void *dst, uint8 *bottomLayer, const uint8 *spriteLayer, const uint8 *prioLayer, const uint8 *prioSpriteLayer, int clipX, int clipW);
+	template<typename T, bool withSprites, bool withPrioSprites, bool adjustAspectRatio> void mergeLines(void *dst, uint8 *bottomLayer, const uint8 *spriteLayer, const uint8 *prioLayer, const uint8 *prioSpriteLayer, int clipW);
 
-	typedef void (SegaRenderer::*MergeLinesProc)(void*, uint8*, const uint8*, const uint8*, const uint8*, int, int);
+	typedef void (SegaRenderer::*MergeLinesProc)(void*, uint8*, const uint8*, const uint8*, const uint8*, int);
 	MergeLinesProc getLineHandler() const;
 	void hINTUpdate();
 
@@ -305,6 +332,12 @@ private:
 	uint8 _hINTCounterNext;
 	uint8 _hINTCounter;
 	const HINTHandler *_hINTHandler;
+
+#if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
+	// Aspect ratio correction
+	uint32 _arcIncX, _arcIncY, _arcCntX, _arcCntY;
+	double _xyAspectRatio, _scaleFactor;
+#endif
 };
 
 } // End of namespace Graphics
