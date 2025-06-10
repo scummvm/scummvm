@@ -169,6 +169,25 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		_imageData->applyColorKey(ckRed, ckGreen, ckBlue, replaceAlpha, 0, 0, 0);
 	}
 
+	// Bug #6572 WME: Rosemary - Sprite flaw on going upwards
+	// Some Rosemary sprites have non-fully transparent pixels
+	// In original WME it wasn't seen because sprites were downscaled
+	// Let's set alpha to 0 if it is smaller then some treshold
+	if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") && _imageData->format.bytesPerPixel == 4) {
+		uint8 treshold = 16;
+		for (int x = 0; x < _imageData->w; x++) {
+			for (int y = 0; y < _imageData->h; y++) {
+				uint32 pixel = _imageData->getPixel(x, y);
+				uint8 r, g, b, a;
+				_imageData->format.colorToARGB(pixel, a, r, g, b);
+				if (a > 0 && a < treshold) {
+					uint32 *p = (uint32 *)_imageData->getBasePtr(x, y);
+					*p = _imageData->format.ARGBToColor(0, 0, 0, 0);
+				}
+			}
+		}
+	}
+
 	putSurface(*_imageData);
 
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
