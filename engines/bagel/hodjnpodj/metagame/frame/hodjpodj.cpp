@@ -344,11 +344,11 @@ BOOL CHodjPodjWindow::CheckConfig(CDC *pDC) {
 
 	nDevCaps = (*pDC).GetDeviceCaps(BITSPIXEL);
 	if (nDevCaps < 8) {
-		error("Please set your display to 256 colors before playing this game.", "Display Configuration");
+		error("Please set your display to 256 colors before playing this game");
 	} else {
 		nDevCaps = (*pDC).GetDeviceCaps(RASTERCAPS);
 		if (!(nDevCaps & RC_PALETTE))
-			error("It is recommended that your display be set to 256 colors before playing.");
+			error("It is recommended that your display be set to 256 colors before playing");
 	}
 
 	return true;
