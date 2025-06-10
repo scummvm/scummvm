@@ -92,8 +92,8 @@ UINT CPalette::GetNearestPaletteIndex(COLORREF crColor) {
 CPalette::Impl::Impl(const LPLOGPALETTE pal) :
 	CGdiObjectImpl(), Graphics::Palette(pal->palNumEntries) {
 	for (uint i = 0; i < size(); ++i) {
-		auto &e = pal->palPalEntry;
-		set(i, e->peRed, e->peGreen, e->peBlue);
+		const auto &e = pal->palPalEntry[i];
+		set(i, e.peRed, e.peGreen, e.peBlue);
 	}
 }
 
