@@ -1430,7 +1430,7 @@ BOOL CMainWindow::LoadArtWork() {
 	POINT ScrOne, ScrTwo;
 	int r, c;
 	int x, y;
-	BOOL bCheckGrid[MAX_COLUMNS][MAX_ROWS] = {0};   // Initialize all to zero
+	BOOL bCheckGrid[MAX_COLUMNS][MAX_ROWS] = {{0}};   // Initialize all to zero
 	BOOL bAssigning;                                // Flag for random assignment
 	for (c = 0; c < m_nColumns; c++) {               // Each step in X
 		for (r = 0; r < m_nRows; r++) {              // Each step in Y

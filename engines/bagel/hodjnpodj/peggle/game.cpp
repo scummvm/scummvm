@@ -60,9 +60,9 @@ static CSound   *pGameSound = nullptr;                 // Game theme song
 // Board Selection stuff
 BOOL bRandomBoard = FALSE;
 char BoardSelected = CROSS ;
-static char MaxPegs[4][2] = {
-	CROSS, CROSS_PLUS, TRIANGLE,   TRIANGLE_PLUS,
-	32,    36,         14,         20
+static char MaxPegs[2][4] = {
+	{CROSS, CROSS_PLUS, TRIANGLE,   TRIANGLE_PLUS},
+	{32,    36,         14,         20},
 } ;
 char fState [GRID_SIZE][GRID_SIZE];
 const char *BoardSpec[BOARD_COUNT] = {
@@ -270,10 +270,10 @@ void CMainWindow::SplashScreen() {
 	pDC = GetDC();
 	if (pDC && hDIB) {
 		GetClientRect(rcDest);
-		
+
 		int cxDIB = (int) DIBWidth(hDIB);
 		int cyDIB = (int) DIBHeight(hDIB);
-		
+
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
