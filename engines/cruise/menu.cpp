@@ -45,6 +45,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	entry->numElements = 0;
 	entry->ptrNextElement = nullptr;
 	entry->gfx = renderText(160, menuName);
+	_vm->_menuJustOpened = true;
 
 	return entry;
 }
@@ -124,6 +125,8 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 }
 
 void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
+	bool menuItemSelected = false;
+
 	if (pMenu) {
 		if (pMenu->gfx) {
 			int height = pMenu->gfx->height;	// rustine
@@ -138,6 +141,18 @@ void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 						if ((mouseY > pCurrentEntry->y) && ((pCurrentEntry->y + height) >= mouseY)) {
 							var_2 = 1;
 							pCurrentEntry->selected = true;
+
+							// Queue up the first selected item after opening the menu
+							// This allows the name of the menu to be always voiced, in cases where something
+							// is selected the instant the menu opens
+							if (_vm->_menuJustOpened) {
+								_vm->sayText(pCurrentEntry->string, Common::TextToSpeechManager::QUEUE);
+								_vm->_menuJustOpened = false;
+							} else {
+								_vm->sayText(pCurrentEntry->string, Common::TextToSpeechManager::INTERRUPT);
+							}
+
+							menuItemSelected = true;
 						}
 					}
 				}
@@ -145,6 +160,10 @@ void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 				pCurrentEntry = pCurrentEntry->next;
 			}
 		}
+	}
+
+	if (!menuItemSelected) {
+		_vm->_previousSaid.clear();
 	}
 }
 
@@ -248,6 +267,7 @@ int playerMenu(int menuX, int menuY) {
 
 		menuTable[0] = createMenu(menuX, menuY, _vm->langString(ID_PLAYER_MENU));
 		assert(menuTable[0]);
+		_vm->sayText(_vm->langString(ID_PLAYER_MENU), Common::TextToSpeechManager::INTERRUPT);
 
 		//addSelectableMenuEntry(0, 3, menuTable[0], 1, -1, "Save game disk");
 		if (userEnabled) {

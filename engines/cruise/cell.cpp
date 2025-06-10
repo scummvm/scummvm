@@ -22,6 +22,7 @@
 #include "cruise/cruise_main.h"
 #include "common/file.h"
 #include "cruise/cell.h"
+#include "cruise/cruise.h"
 
 namespace Cruise {
 
@@ -159,15 +160,34 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 	cx->prev = pNewElement;
 
 	ax = getText(messageIdx, overlayIdx);
+	Common::String ttsMessage;
 
 	if (ax) {
 		pNewElement->gfxPtr = renderText(width, ax);
+		ttsMessage = ax;
+		ttsMessage.replace('|', '\n');
 	}
 
-	// WORKAROUND: This is needed for the new dirty rect handling so as to properly refresh the screen
-	// when the copy protection screen is being shown
-	if ((messageIdx == 0) && !strcmp(overlayTable[overlayIdx].overlayName, "XX2"))
-		backgroundChanged[0] = true;
+	if (!strcmp(overlayTable[overlayIdx].overlayName, "XX2")) {
+		// The English DOS and Russian versions automatically skip past the copy protection screen, so don't voice
+		// any of its text
+		if ((_vm->getLanguage() != Common::EN_ANY && _vm->getLanguage() != Common::RU_RUS && _vm->getLanguage() != Common::EN_GRB) || 
+				_vm->getPlatform() != Common::kPlatformDOS) {
+			// Don't voice the "OK" button (index 32) here
+			if (messageIdx != 32) {
+				_vm->sayText(ttsMessage, Common::TextToSpeechManager::QUEUE);
+			}
+		}
+		
+		// WORKAROUND: This is needed for the new dirty rect handling so as to properly refresh the screen
+		// when the copy protection screen is being shown
+		if (messageIdx == 0) 
+			backgroundChanged[0] = true;
+	} else {
+		// Sometimes this text shows up on screen later, so queue it up to be spoken
+		_vm->_toSpeak = ttsMessage;
+		_vm->_previousSaid.clear();
+	}
 }
 
 void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, int backgroundPlane) {
