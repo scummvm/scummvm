@@ -42,7 +42,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ 0, 0 }
 };
 
-#define SUPPORT_STATUS ADGF_UNSTABLE
+#define SUPPORT_STATUS ADGF_TESTING
 
 #define GAMEelf(id,extra,md5,size,exefile,exemd5,exesize,lang,flags) { \
         id, \
