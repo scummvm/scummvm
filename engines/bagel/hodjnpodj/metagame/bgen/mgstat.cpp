@@ -358,7 +358,7 @@ const CLengthTable CMgStatic::cLengthTable[] =  {
 	{MG_LENGTH_SHORT, 1, 2, 0},
 	{MG_LENGTH_MEDIUM, 2, 5, 0},
 	{MG_LENGTH_LONG, 3, 8, 0},
-	{0, 0, 0}
+	{0, 0, 0, 0}
 } ;
 #endif
 
