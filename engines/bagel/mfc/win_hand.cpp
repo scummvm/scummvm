@@ -76,9 +76,6 @@ CObject *CHandleMap::FromHandle(HANDLE h) {
 }
 
 void CHandleMap::DeleteTemp() {
-	if (this == nullptr)
-		return;
-
 	for (auto &entry : m_temporaryMap) {
 		HANDLE h = entry._key;
 		CObject *pTemp = entry._value;
