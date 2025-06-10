@@ -234,9 +234,8 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 	//#endif
 
 
-	if (m_bGameOver = (!bStonesFound || !bOtherStonesFound))      // game is over if
+	if ((m_bGameOver = (!bStonesFound || !bOtherStonesFound))) {    // game is over if
 		// no stones found -- tally the results
-	{
 		/*
 		    depending upon who has no stones left,
 		    for each of the other player's pits, transfer the stones
@@ -1699,8 +1698,8 @@ int CMnk::ExtendedStaticEvaluation(MOVE* pMove, MOVE* pParentMove,  signed char 
 
 	for (iPit = 0 ; iPit < NUMPITS ; ++iPit) {
 
-		if (iNumStones = pMove->iNumRocks[iPit])    //  if there are stones in current pit,
-			++iNumMoves ;                                                                               //  ...(iNumStones being the #of stones in the current pit),
+		if ((iNumStones = pMove->iNumRocks[iPit]))    //  if there are stones in current pit,
+			++iNumMoves;                                                                               //  ...(iNumStones being the #of stones in the current pit),
 		// ... it's a legal move
 
 		/* If  this pit yields a free turn ...*/

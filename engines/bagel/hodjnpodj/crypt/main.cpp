@@ -370,7 +370,7 @@ void CMainWindow::SplashScreen() {
 
 	int cxDIB = (int) DIBWidth(hDIB);
 	int cyDIB = (int) DIBHeight(hDIB);
-	
+
 	rcDIB.top = rcDIB.left = 0;                         // setup the source rectangle from which
 	rcDIB.right = cxDIB;                                // ... we'll do the painting
 	rcDIB.bottom = cyDIB;
@@ -1029,7 +1029,7 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 
 		RefreshStats();
 
-		if ((m_nTimer == (MAX_HOURS - 1))) {
+		if (m_nTimer == (MAX_HOURS - 1)) {
 			GameLose();
 			if (m_lpGameStruct->bPlayingMetagame)
 				PostMessage(WM_CLOSE, 0, 0);
@@ -1093,7 +1093,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  ****************************************************************/
 void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	if ((nChar == VK_F1)) {                                  // F1 key is hit
+	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_OPTIONS_RULES, BN_CLICKED);  // Activate the Options dialog
 		(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L); // Reset scroll button to up state
 		m_bIgnoreScrollClick = FALSE;

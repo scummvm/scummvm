@@ -308,7 +308,7 @@ void CMainWindow::SplashScreen() {
 
 		int cxDIB = (int) DIBWidth(hDIB);
 		int cyDIB = (int) DIBHeight(hDIB);
-		
+
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
@@ -734,7 +734,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if (!bPlayingBackSeries) {
-		if ((nChar == VK_F1)) {                                  // F1 key is hit
+		if (nChar == VK_F1) {                                  // F1 key is hit
 			SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);      // Activate the Rules dialog
 		} else if (nChar == VK_F2) {                         // F2 key is hit
 			SendMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);         // Activate the Options dialog

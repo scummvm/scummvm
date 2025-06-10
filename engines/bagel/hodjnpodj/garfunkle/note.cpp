@@ -150,7 +150,7 @@ void CNote::UnLinkNote(void) {
 void CNote::FlushNoteList(void) {
 	CNote   *pNote;
 
-	while (pNote = CNote::GetNoteHead()) {
+	while ((pNote = CNote::GetNoteHead())) {
 		(*pNote).UnLinkNote();
 		delete pNote;
 	}

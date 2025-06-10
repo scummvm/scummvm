@@ -256,7 +256,7 @@ CMainWindow::CMainWindow(VOID) {
 
 		//       begin playing bckgnd music when the game begins
 		if (pGameParams->bMusicEnabled) {
-			if (m_psndBkgndMusic = new CSound(this, GetStringFromResource(IDS_MIDI_FILE), SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) {
+			if ((m_psndBkgndMusic = new CSound(this, GetStringFromResource(IDS_MIDI_FILE), SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END))) {
 				m_psndBkgndMusic->midiLoopPlaySegment(4000L, 31030L, 0L, FMT_MILLISEC);
 			}//end if m_psndBkgndMusic=new...
 		} else {
@@ -351,7 +351,7 @@ VOID CMainWindow::PaintScreen() {
 				rcDIB.top = rcDIB.left = 0;
 				rcDIB.right = (INT) DIBWidth(hDIB);
 				rcDIB.bottom = (INT) DIBHeight(hDIB);
-				
+
 				PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
 			}               //end-if (hDIB)
 
@@ -371,7 +371,7 @@ VOID CMainWindow::PaintScreen() {
 					if (m_iDoorStatus[ii] == OPEN) continue;         //don't need to paint an open door.
 					if (!m_bDoorBmpLoaded[ii]) {
 						if (!pCDoorBmp[ii])                              // the door bmp might have been freed, because the door was locked.
-							if (pCDoorBmp[ii] = new CSprite()) // ...in which case load a new CSprite.
+							if ((pCDoorBmp[ii] = new CSprite())) // ...in which case load a new CSprite.
 								pCDoorBmp[ii]->LoadCels(pDC, GetStringFromResource(IDS_D1 + ii - 1), NUM_DOOR_CELS);
 						//else errCode=ERR_MEMORY;
 						m_bDoorBmpLoaded[ii] = TRUE;
@@ -545,7 +545,7 @@ VOID CMainWindow::PlayGame() {
 				return ;
 			}  // end if m_pCLRollingDie
 
-			if (m_pCRRollingDie = new  CSprite) {
+			if ((m_pCRRollingDie = new CSprite)) {
 				m_pCRRollingDie->SetMobile(TRUE);
 				m_pCRRollingDie->SetMasked(FALSE);
 				if (m_pCRRollingDie->LoadCels(pDC, GetStringFromResource(IDS_ROLLING_RDIE_ANIMATION), NUM_RDIE_CELS))
@@ -608,7 +608,7 @@ VOID CMainWindow::PlayGame() {
 			rcDIB.top = rcDIB.left = 0;
 			rcDIB.right = (INT) DIBWidth(hDIB);
 			rcDIB.bottom = (INT) DIBHeight(hDIB);
-			
+
 			PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
 		}//end if (hDIB)
 

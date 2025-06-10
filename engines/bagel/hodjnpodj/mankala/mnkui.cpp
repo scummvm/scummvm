@@ -1141,8 +1141,8 @@ void CMnkWindow::ReleaseResources(void) {
 
 	for (int i = 0 ; i < NUMPLAYERS ; ++i)
 		for (int j = -2 ; j < NUMPITS ; ++j) {
-			if (xpcPitWnd = m_xpcPits[ i ][ j + 2])
-				delete  xpcPitWnd;
+			if ((xpcPitWnd = m_xpcPits[i][j + 2]))
+				delete xpcPitWnd;
 			xpcPitWnd = nullptr;
 		}
 
@@ -1237,9 +1237,8 @@ BOOL FAR PASCAL CMnkWindow::UserDialog(void)
 }
 
 ////* CallUserDialog --
-VOID CALLBACK CallUserDialog(CWnd * xpcWindow)
+VOID CALLBACK CallUserDialog(CWnd * xpcWindow) {
 // returns: TRUE if error, FALSE otherwise
-{
 	JXENTER(CallUserDialog) ;
 
 	CMnkWindow * xpcMnkWindow = (CMnkWindow *)xpcWindow->GetParent();
@@ -1249,9 +1248,8 @@ VOID CALLBACK CallUserDialog(CWnd * xpcWindow)
 }
 
 //* CMnkWindow::OptionsDialog -- call options dialog
-BOOL CMnkWindow::OptionsDialog(void)
+BOOL CMnkWindow::OptionsDialog(void) {
 // returns: TRUE if error, FALSE otherwise
-{
 	JXENTER(CMnkWindow::OptionsDialog) ;
 	int iError = 0 ;        // error code
 
@@ -1263,7 +1261,7 @@ BOOL CMnkWindow::OptionsDialog(void)
 
 	if (!m_bInMenu) {   // prevent recursion
 		m_bInMenu = TRUE ;  // in the options menu now
-		if (pDC = GetDC()) {
+		if ((pDC = GetDC())) {
 			m_cBmpScroll.m_xpcSprite->EraseSprite(pDC) ;
 			// hide the command scroll
 			ReleaseDC(pDC);
@@ -1333,4 +1331,3 @@ BOOL CMnkWindow::OptionsDialog(void)
 } // namespace Mankala
 } // namespace HodjNPodj
 } // namespace Bagel
-

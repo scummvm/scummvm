@@ -214,8 +214,8 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	ReleaseDC(pDC);
 
 	if ((*pGameInfo).bMusicEnabled) {
-		if (pGameSound = new CSound(this, GAME_THEME,
-		                            SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) {
+		if ((pGameSound = new CSound(this, GAME_THEME,
+		                            SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END))) {
 			(*pGameSound).midiLoopPlaySegment(1000, 30000, 0, FMT_MILLISEC);
 		} // end if pGameSound
 	}
@@ -496,7 +496,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	if ((nChar == VK_F1)) {                                  // F1 key is hit
+	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);  // Activate the Options dialog
 		(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
 		bIgnoreScroll = FALSE;

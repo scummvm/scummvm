@@ -173,7 +173,7 @@ CMnkWindow::CMnkWindow(void) {
 	}
 	delete xpDibDoc ;   // now discard the splash screen
 
-	if (pDC = GetDC()) {   // get a device context for our window
+	if ((pDC = GetDC())) {   // get a device context for our window
 
 		// determine where to place the game window
 		// ... so it is centered on the screen
@@ -644,8 +644,8 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 
 	if (bFound && (m_cCurrentMove.m_iNumStones[iPlayer][iPit + 2])) {
 
-		if (pDC = GetDC()) {
-			if (hlocShells = MFC::LocalAlloc(GHND, 16)) {
+		if ((pDC = GetDC())) {
+			if ((hlocShells = MFC::LocalAlloc(GHND, 16))) {
 				npszShells = (NPSTR)MFC::LocalLock(hlocShells);
 				Common::sprintf_s(npszShells, 16, "%2d shell%c", m_cCurrentMove.m_iNumStones[iPlayer][iPit + 2], (m_cCurrentMove.m_iNumStones[iPlayer][iPit + 2] > 1) ? 's' : 0x0);
 
@@ -658,7 +658,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 				/* the following values are arrived thru trial and error */
 				/* "Attach" the text  to the cursor */
 				crctTxt.SetRect(point.x + dxCursor - 20, point.y + dyCursor - 20, point.x + dxCursor + 40, point.y + dyCursor + 10);
-				if (m_pText = new CText(pDC, m_xpGamePalette, &crctTxt, JUSTIFY_CENTER)) {
+				if ((m_pText = new CText(pDC, m_xpGamePalette, &crctTxt, JUSTIFY_CENTER))) {
 					m_pText->DisplayString(pDC, npszShells, 20,  FW_NORMAL, CTEXT_COLOR);
 				}
 
@@ -749,8 +749,8 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				#endif
 				CSound::waitWaveSounds();
 				sndPlaySound(nullptr, 0);
-				if (pDC = GetDC()) {
-					if (pSpriteGlobe = new CSprite()) {
+				if ((pDC = GetDC())) {
+					if ((pSpriteGlobe = new CSprite())) {
 						hOldCur = MFC::SetCursor(hHourGlassCursor);
 
 						if (pSpriteGlobe->LoadCels(pDC, GLOBE_SPRITE, 25)) {
@@ -792,8 +792,8 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			else if ((point.x < Chair.right) && (point.x > Chair.left) && (point.y < Chair.bottom) && (point.y > Chair.top)) {
 				CSound::waitWaveSounds();
 				sndPlaySound(nullptr, 0);
-				if (pDC = GetDC()) {
-					if (pSpriteChair = new CSprite()) {
+				if ((pDC = GetDC())) {
+					if ((pSpriteChair = new CSprite())) {
 						hOldCur = MFC::SetCursor(hHourGlassCursor);
 						if (pSpriteChair->LoadCels(pDC, CHAIR_SPRITE, 25)) {
 							pSpriteChair->SetCel(-1);
@@ -874,7 +874,7 @@ void CMnkWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 
 	/*Delete any cText objects upon Mouse Click */
 	if (m_pText) {
-		if (pDC = GetDC()) {
+		if ((pDC = GetDC())) {
 			m_pText->RestoreBackground(pDC);
 			ReleaseDC(pDC);
 			pDC = nullptr;
@@ -1046,8 +1046,7 @@ void CMnkWindow::OnClose() {
 
 	KillTimer(SPRITE_TIMER) ;
 
-	if (pDC = GetDC()) {              // paint black
-
+	if ((pDC = GetDC())) {              // paint black
 		if (Brush.CreateStockObject(BLACK_BRUSH)) {
 			rctTmp.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 			pDC->FillRect(&rctTmp, &Brush);
