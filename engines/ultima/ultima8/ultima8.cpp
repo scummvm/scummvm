@@ -27,6 +27,7 @@
 #include "image/png.h"
 #include "engines/dialogs.h"
 #include "engines/util.h"
+#include "ultima/ultima.h"
 
  // TODO: !! a lot of these includes are just for some hacks... clean up sometime
 #include "ultima/ultima8/conf/config_file_manager.h"
@@ -96,6 +97,9 @@
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/metaengine.h"
+#ifdef USE_IMGUI
+#include "ultima/ultima8/debugtools.h"
+#endif
 
 //#define PAINT_TIMING 1
 
@@ -321,6 +325,16 @@ Common::Error Ultima8Engine::initialize() {
 		warning("game failed to initialize");
 	}
 	paint();
+
+#ifdef USE_IMGUI
+	ImGuiCallbacks callbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
+	callbacks.init = Ultima8::onImGuiInit;
+	callbacks.render = drawImGui ? Ultima8::onImGuiRender : nullptr;
+	callbacks.cleanup = Ultima8::onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
+#endif
+
 	return Common::kNoError;
 }
 
@@ -376,6 +390,10 @@ void Ultima8Engine::deinitialize() {
 	_configFileMan->clearRoot("monsters");
 	_configFileMan->clearRoot("game");
 	_gameInfo = nullptr;
+
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
 
 	debug(1, "-- Game Shutdown -- ");
 }

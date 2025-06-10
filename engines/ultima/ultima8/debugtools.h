@@ -19,21 +19,15 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA_H
-#define ULTIMA_ULTIMA_H
+#ifndef ULTIMA_ULTIMA8_DEBUGTOOLS_H
+#define ULTIMA_ULTIMA8_DEBUGTOOLS_H
 
 namespace Ultima {
-
-enum UltimaDebugChannels {
-	kDebugPath = 1,
-	kDebugGraphics,
-	kDebugVideo,
-	kDebugActor,
-	kDebugObject,
-	kDebugCollision,
-	kDebugImGui,
-};
-
+namespace Ultima8 {
+void onImGuiInit();
+void onImGuiRender();
+void onImGuiCleanup();
+} // End of namespace Ultima8
 } // End of namespace Ultima
 
-#endif
+#endif // ULTIMA_ULTIMA8_DEBUGTOOLS_H
