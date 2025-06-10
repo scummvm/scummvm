@@ -536,27 +536,25 @@ static void conv_save_state(Conv *c) {
 		Common::copy(conv_save_buff, conv_save_buff + file_size, &_GC(convSave)[oldSize]);
 	}
 
-	if (conv_save_buff)
-		mem_free(conv_save_buff);
+	mem_free(conv_save_buff);
 }
 
 static Conv *conv_restore_state(Conv *c) {
-	int32 ent = 0;
 	int32 tag, next;
-	int32 myCNode;
-	
+
 	entry_chunk *entry;
 	decl_chunk *decl;
 
 	short flag_index = 0;
 	int32 val;
 	int32 e_flags = 0;
-
+	int32 myCNode;
+	
 	char fname[13];
-	int file_size = 0;
-	char *conv_save_buff = nullptr;
+	int file_size;
 
-	ent = 0; c->myCNode = 0;
+	int32 ent = 0;
+	c->myCNode = 0;
 
 	find_and_set_conv_name(c);
 	Common::strcpy_s(fname, _GC(conv_name));
@@ -571,7 +569,7 @@ static Conv *conv_restore_state(Conv *c) {
 		return c;
 	}
 
-	conv_save_buff = (char *)mem_alloc(file_size, "conv save buff");
+	char *conv_save_buff = (char *)mem_alloc(file_size, "conv save buff");
 	if (!conv_save_buff)
 		error_show(FL, 'OOM!');
 
@@ -663,8 +661,8 @@ static Conv *conv_restore_state(Conv *c) {
 		c->exit_now = CONV_OK;
 
 i_am_so_done:
-	if (conv_save_buff)
-		mem_free(conv_save_buff);
+
+	mem_free(conv_save_buff);
 	return c;
 }
 

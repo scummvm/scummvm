@@ -24,7 +24,6 @@
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_event.h"
-#include "m4/gui/gui_vmng.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
 #include "m4/adv_r/other.h"
@@ -402,12 +401,11 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 		_G(player).click_x = x;
 		_G(player).click_y = y;
 
-		if (hotspot) {
-			if (hotspot->feet_x != 0x7fff)
-				_G(player).walk_x = hotspot->feet_x;
-			if (hotspot->feet_y != 0x7fff)
-				_G(player).walk_y = hotspot->feet_y;
-		}
+		if (hotspot->feet_x != 0x7fff)
+			_G(player).walk_x = hotspot->feet_x;
+
+		if (hotspot->feet_y != 0x7fff)
+			_G(player).walk_y = hotspot->feet_y;
 
 		_G(player).walk_facing = hotspot->facing;
 		_hotspot = nullptr;

@@ -315,22 +315,19 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 		_G(player).click_x = x;
 		_G(player).click_y = y;
 
-		if (hotspot) {
-			if (hotspot->feet_x != 0x7fff)
-				_G(player).walk_x = hotspot->feet_x;
-			if (hotspot->feet_y != 0x7fff)
-				_G(player).walk_y = hotspot->feet_y;
-		}
+		if (hotspot->feet_x != 0x7fff)
+			_G(player).walk_x = hotspot->feet_x;
+
+		if (hotspot->feet_y != 0x7fff)
+			_G(player).walk_y = hotspot->feet_y;
 
 		_G(player).walk_facing = hotspot->facing;
 		_hotspot = nullptr;
 
 		return SELECTED;
-	} else {
-		return IN_CONTROL;
 	}
 
-	return ControlStatus::NOTHING;
+	return IN_CONTROL;
 }
 
 void Interface::dispatch_command() {
