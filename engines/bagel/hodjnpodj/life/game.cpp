@@ -935,7 +935,7 @@ void CMainWindow::OnTimer(UINT nIDEvent) {
 			KillTimer(EVOLVE_TIMER_ID);
 			(*m_cLife).m_bIsEvolving = FALSE;
 			char buf[64];
-			Common::sprintf_s(buf, "Score:  %d", (long)(*m_cLife).m_dScore);
+			Common::sprintf_s(buf, "Score:  %ld", (long)(*m_cLife).m_dScore);
 			if (m_lpGameStruct->bSoundEffectsEnabled != FALSE)
 				sndPlaySound(WAV_GAMEOVER, SND_SYNC);   // When first starts up so
 			//  that u get to see the screen
@@ -1093,7 +1093,7 @@ void CMainWindow::SplashScreen() {
 
 		int cxDIB = (int) DIBWidth(hDIB);
 		int cyDIB = (int) DIBHeight(hDIB);
-		
+
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;

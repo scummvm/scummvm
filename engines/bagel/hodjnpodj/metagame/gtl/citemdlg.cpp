@@ -159,7 +159,7 @@ void CItemDialog::OnPaint() {
 	bSuccess = (*m_pTextMessage).DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
 	ASSERT(bSuccess);
 
-	Common::sprintf_s(buf, (*m_pItem).GetDescription((*m_pItem).GetID(), m_lAmount));
+	Common::sprintf_s(buf, "%s", (*m_pItem).GetDescription((*m_pItem).GetID(), m_lAmount));
 	while (buf[i] != 0) i++;
 	if (i > 20)
 		bSuccess = (*m_pTextDescription).DisplayString(pDC, buf, 13, FW_BOLD, ITEMDLG_TEXT_COLOR);

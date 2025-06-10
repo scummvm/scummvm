@@ -784,7 +784,7 @@ BOOL CMnk::UnmapConfiguration(CMove * xpcMove)
 	if (lConfigSave != xpcMove->m_lConfigIndex) { // if unmap/map failed
 		Common::sprintf_s(szDebugStr, "Config %ld changed to %ld.\n",
 		                  lConfigSave, xpcMove->m_lConfigIndex) ;
-		debug(szDebugStr) ;
+		debug("%s", szDebugStr) ;
 		DebugBreak();
 	}
 
@@ -2053,41 +2053,31 @@ BOOL CMnk::DumpPosition(CMove * xpcMove)
 {
 	JXENTER(CMnk::DumpPosition) ;
 	int iError = 0 ;        // error code
-	char szStr[200] ;   // output string
-	XPSTR xpStr = szStr ;   // pointer to output string
 
-	memset(szStr, 0, sizeof(szStr)) ;   // clear output
 	if (xpcMove->m_bRealMove)
-		Common::strcpy_s(xpStr, 200, "(REAL) "), xpStr += strlen(xpStr) ;
+		debugN("(REAL) ");
 
-	Common::sprintf_s(xpStr, 200, "P%d Cfg=%ld w/%d stones, %d moves, sow=%d, "
-	                              "best %d for %d.\n",
+	debug("P%d Cfg=%ld w/%d stones, %d moves, sow=%d, "
+	                              "best %d for %d.",
 	                  xpcMove->m_iPlayer, xpcMove->m_lConfigIndex,
 	                  xpcMove->m_iTotalStones, xpcMove->m_iNumMoves,
 	                  (xpcMove->m_xpcPit ? xpcMove->m_xpcPit->m_iPit : -1),
-	                  xpcMove->m_iBestMove, xpcMove->m_iBestWinValue) ;
+	                  xpcMove->m_iBestMove, xpcMove->m_iBestWinValue);
 
-	debug(szStr) ;
 
-	xpStr = szStr ;
-
-	Common::sprintf_s(xpStr, 200, "               "
-	                              "[%3d] %2d %2d %2d %2d %2d %2d              H=%d\n",
+	debug("               [%3d] %2d %2d %2d %2d %2d %2d              H=%d",
 	                  xpcMove->m_iNumStones[1][HOMEINDEX + 2],
 	                  xpcMove->m_iNumStones[1][2], xpcMove->m_iNumStones[1][3],
 	                  xpcMove->m_iNumStones[1][4], xpcMove->m_iNumStones[1][5],
 	                  xpcMove->m_iNumStones[1][6], xpcMove->m_iNumStones[1][7],
-	                  xpcMove->m_iNumStones[1][HANDINDEX + 2]) ;
-	debug(szStr) ;
+	                  xpcMove->m_iNumStones[1][HANDINDEX + 2]);
 
-	Common::sprintf_s(xpStr, 200, "               "
-	                              "      %2d %2d %2d %2d %2d %2d [%3d]        H=%d\n\n",
+	debug("                     %2d %2d %2d %2d %2d %2d [%3d]        H=%d\n",
 	                  xpcMove->m_iNumStones[0][7], xpcMove->m_iNumStones[0][6],
 	                  xpcMove->m_iNumStones[0][5], xpcMove->m_iNumStones[0][4],
 	                  xpcMove->m_iNumStones[0][3], xpcMove->m_iNumStones[0][2],
 	                  xpcMove->m_iNumStones[0][HOMEINDEX + 2],
-	                  xpcMove->m_iNumStones[0][HANDINDEX + 2]) ;
-	debug(szStr) ;
+	                  xpcMove->m_iNumStones[0][HANDINDEX + 2]);
 	DoPendingEvents() ;
 
 // cleanup:
@@ -2098,38 +2088,31 @@ BOOL CMnk::DumpPosition(CMove * xpcMove)
 
 //* CMnk::DumpBestWinTable -- dump fields of best win table
 BOOL CMnk::DumpBestWinTable(long lLow,
-                            long lHigh)
+                            long lHigh) {
 // lLow -- low end of configuration range
 // lHigh -- high end of configuration range
 // returns: TRUE if error, FALSE otherwise
-{
 	JXENTER(CMnk::DumpBestWinTable) ;
 	int iError = 0 ;        // error code
-	char szStr[200] ;   // output string
-	XPSTR xpStr = szStr ;   // pointer to output string
 	CMove cMove ;       // dummy move structure
 	long lEol ;     // config index at end of line
 
 	for (lEol = lLow + 23 ; lEol <= lHigh + 23 ; lEol += 24) {
-		xpStr = szStr ;
 		if (lEol > lHigh)
 			lEol = lHigh ;
-		Common::sprintf_s(xpStr, 200, "Table[%ld-%ld]:", lLow, lEol) ;
-		xpStr += strlen(xpStr) ;
+		debugN("Table[%ld-%ld]:", lLow, lEol) ;
 
 		while (lLow <= lEol) {      // loop thru values
 			cMove.m_lConfigIndex = lLow++ ;
 			GetBestWinCount(&cMove) ;
 			if (cMove.m_iBestWinValue == BESTWINUNDEF)
-				Common::strcat_s(xpStr, 200, " U") ;
+				debugN(" U") ;
 			else
-				Common::sprintf_s(xpStr, 200, " %d", cMove.m_iBestWinValue) ;
-			xpStr += strlen(xpStr) ;
+				debugN(" %d", cMove.m_iBestWinValue) ;
 		}
-		Common::strcpy_s(xpStr, 200, "\n") ;
-		debug(szStr) ;
+		debugN("\n") ;
 	}
-	debug("\n") ;
+	debugN("\n") ;
 
 // cleanup:
 
@@ -2140,4 +2123,3 @@ BOOL CMnk::DumpBestWinTable(long lLow,
 } // namespace Mankala
 } // namespace HodjNPodj
 } // namespace Bagel
-

@@ -237,9 +237,9 @@ void CMsgDlg::OnPaint(void) {
 		break;
 	case 2:
 		if (m_nWordsLeft == 1)
-			Common::sprintf_s(cDisplay, "You had %i word left.", m_nWordsLeft);
+			Common::sprintf_s(cDisplay, "You had %li word left.", m_nWordsLeft);
 		else
-			Common::sprintf_s(cDisplay, "You had %i words left.", m_nWordsLeft);
+			Common::sprintf_s(cDisplay, "You had %li words left.", m_nWordsLeft);
 
 		txtLine2.DisplayString(pDC, "Game over.", 21, FW_BOLD);
 		txtLine3.DisplayString(pDC, cDisplay, 21, FW_BOLD);

@@ -2128,7 +2128,7 @@ BOOL CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 				char blurb[128];
 				iLocationCode = (m_lpNodes + m_xpCurXodj->m_iCharNode)->m_iLocationCode;
 				xpLocTable = CMgStatic::FindLoc(iLocationCode);
-				Common::sprintf_s(blurb, (m_xpCurXodj->m_bHodj ? "Hodj needs %d more" : "Podj needs %d more"), xpLocTable->m_iCost - m_xpCurXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity());
+				Common::sprintf_s(blurb, (m_xpCurXodj->m_bHodj ? "Hodj needs %ld more" : "Podj needs %ld more"), xpLocTable->m_iCost - m_xpCurXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity());
 				C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", blurb, "crowns for the clue.");
 				(void) dlg1Button.DoModal();
 			} else if ((xpXodj->m_iWinInfoWon == xpXodj->m_iWinInfoNeed) &&

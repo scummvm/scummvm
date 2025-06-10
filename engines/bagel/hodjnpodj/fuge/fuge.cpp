@@ -1866,7 +1866,7 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length) {
 							// invalid index
 							//
 						} else {
-							TRACE("Invalid Index (%d)\n", nIndex);
+							warning("Invalid Index (%d)", nIndex);
 							assert(0);
 						}
 
