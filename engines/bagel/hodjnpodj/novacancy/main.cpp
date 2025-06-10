@@ -1387,7 +1387,7 @@ void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 			break;
 		}
 	}
-	(void *)pWndOther;
+	(void)pWndOther;
 }
 
 
@@ -1882,7 +1882,7 @@ void CMainWindow::AnimateDice(void) {
 	static int RDieLeft[NUM_RDIE_CELS] = {336, 595, 571, 527, 480, 442, 398, 373, 356, 341, 337};
 	static int RDieTop[NUM_RDIE_CELS] = {345, 374, 353, 324, 334, 387, 342, 349, 376, 357, 346};
 
-	register  int ii;
+	int ii;
 
 	// coordinates of where to place dice on splash screen from cell strips.
 	gnLDieLeftFinal = LDieLeft[0];

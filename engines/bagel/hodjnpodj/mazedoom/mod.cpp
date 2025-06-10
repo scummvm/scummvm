@@ -329,7 +329,7 @@ void CMainWindow::SplashScreen() {
 
 		int cxDIB = (int) DIBWidth(hDIB);
 		int cyDIB = (int) DIBHeight(hDIB);
-		
+
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
@@ -1497,7 +1497,7 @@ void SetInvisibleWalls() {
 
 
 void initialize_maze() {       /* draw the surrounding wall and start/end squares */
-	register int i, j, wall;
+	int i, j, wall;
 
 	_mazeSizeX = MAX_MAZE_SIZE_X;
 	_mazeSizeY = MAX_MAZE_SIZE_Y;
@@ -1573,7 +1573,7 @@ void initialize_maze() {       /* draw the surrounding wall and start/end square
 
 
 void create_maze() {           /* create a maze layout given the intiialized maze */
-	register int newdoor = 0;         // i,
+	int newdoor = 0;         // i,
 
 	do {
 		_moveList[_sqNum].x = _curSqX;
@@ -1615,7 +1615,7 @@ void create_maze() {           /* create a maze layout given the intiialized maz
 
 int choose_door() {                    /* pick a new path */
 	int candidates[3];
-	register int num_candidates;
+	int num_candidates;
 
 	num_candidates = 0;
 
