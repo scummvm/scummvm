@@ -26,7 +26,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
-#include "graphics/managed_surface.h"
 #include "graphics/paletteman.h"
 #include "m4/m4.h"
 #include "m4/adv_r/adv_control.h"
@@ -39,7 +38,6 @@
 #include "m4/detection.h"
 #include "m4/console.h"
 #include "m4/metaengine.h"
-#include "m4/core/param.h"
 
 namespace M4 {
 
@@ -144,7 +142,7 @@ void M4Engine::m4_inflight() {
 void M4Engine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	const int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
@@ -180,10 +178,10 @@ Common::Error M4Engine::loadGameStateDoIt(int slot) {
 
 	if (save) {
 		// Skip original description
-		int descSize = save->readUint32LE();
+		const int descSize = save->readUint32LE();
 		save->seek(descSize + 45, SEEK_CUR);
 
-		int thumbSize = save->readUint32LE();
+		const int thumbSize = save->readUint32LE();
 		save->seek(thumbSize, SEEK_CUR);
 
 		// We're now at data section, handle it
@@ -195,9 +193,9 @@ Common::Error M4Engine::loadGameStateDoIt(int slot) {
 
 		return result;
 
-	} else {
-		return Engine::loadGameState(slot);
 	}
+
+	return Engine::loadGameState(slot);
 }
 
 Common::InSaveFile *M4Engine::getOriginalSave(int slot) const {
@@ -210,7 +208,9 @@ Common::InSaveFile *M4Engine::getOriginalSave(int slot) const {
 				!strncmp(name, "MIRROR", 7)) {
 			save->seek(0);
 			return save;
-		} else if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
+		}
+
+		if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
 				!strncmp(name, "FAUCET ", 7)) {
 			save->seek(0);
 			return save;
@@ -230,7 +230,7 @@ Common::Error M4Engine::saveGameStream(Common::WriteStream *stream, bool isAutos
 }
 
 Common::Error M4Engine::loadGameStream(Common::SeekableReadStream *stream) {
-	byte version = stream->readByte();
+	const byte version = stream->readByte();
 	if (version > SAVEGAME_VERSION)
 		error("Tried to load unsupported savegame version");
 
@@ -301,9 +301,9 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 }
 
 bool M4Engine::autosaveExists() const {
-	Common::String slotName = getSaveStateName(getAutosaveSlot());
+	const Common::String slotName = getSaveStateName(getAutosaveSlot());
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
-	bool result = saveFile != nullptr;
+	const bool result = saveFile != nullptr;
 	delete saveFile;
 
 	return result;
@@ -318,7 +318,7 @@ bool M4Engine::savesExist() const {
 }
 
 bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
-	SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slotNum);
+	const SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slotNum);
 	if (!desc.isValid())
 		return false;
 
@@ -331,15 +331,18 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 	thumbnail->h = surf->h;
 	thumbnail->encoding = NO_COMPRESS;
 
+	thumbnail->sourceHandle = (MemHandle)malloc(sizeof(void *));
+	if (!thumbnail->sourceHandle)
+		error("loadSaveThumbnail - Unable to allocate sourceHandle");
+
 	byte *data = (byte *)malloc(surf->w * surf->h);
-	thumbnail->sourceHandle = (MemHandle)malloc(sizeof(MemHandle));
-	*thumbnail->sourceHandle = data;
+	*thumbnail->sourceHandle = (void *)data;
 	thumbnail->sourceOffset = 0;
 	thumbnail->data = data;
 
 	byte pal[Graphics::PALETTE_SIZE];
 	byte r, g, b;
-	int proximity, minProximity;
+
 	g_system->getPaletteManager()->grabPalette(pal, 0, Graphics::PALETTE_COUNT);
 
 	// Translate the 16-bit thumbnail to paletted
@@ -348,16 +351,16 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 		byte *destLine = data + surf->w * y;
 
 		for (int x = 0; x < surf->w; ++x, ++srcLine, ++destLine) {
-			proximity = minProximity = 0xffff;
+			int minProximity = 0xffff;
 			surf->format.colorToRGB(*srcLine, r, g, b);
 
 			const byte *palP = pal;
 			for (int palIdx = 0; palIdx < Graphics::PALETTE_COUNT; ++palIdx, palP += 3) {
-				proximity = ABS((int)r - (int)palP[0]) +
-					ABS((int)g - (int)palP[1]) +
-					ABS((int)b - (int)palP[2]);
+				const int proximity = ABS((int)r - (int)palP[0]) +
+				                      ABS((int)g - (int)palP[1]) +
+				                      ABS((int)b - (int)palP[2]);
 
-				if (proximity < minProximity) {
+				if (proximity < minProximity && destLine) {
 					minProximity = proximity;
 					*destLine = (byte)palIdx;
 				}
