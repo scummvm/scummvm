@@ -1667,10 +1667,19 @@ float qdGameObjectMoving::calc_scale(const Vect3f &r) const {
 	if (!check_flag(QD_OBJ_NO_SCALE_FLAG)) {
 		float scale;
 
-		if (!check_flag(QD_OBJ_INVERSE_PERSPECTIVE_FLAG))
+		if (!check_flag(QD_OBJ_INVERSE_PERSPECTIVE_FLAG)) {
 			scale = qdCamera::current_camera()->get_scale(r) * _scale;
-		else
-			scale = _scale / qdCamera::current_camera()->get_scale(r);
+		} else {
+			float scale1 = qdCamera::current_camera()->get_scale(r);
+
+			if (scale1) {
+				// Если инверсная перспектива, то масштабируем по инверсной формуле
+				scale = 1.0f / scale1;
+			} else {
+				// Если нулевой масштаб, то не масштабируем
+				scale = 1.0f;
+			}
+		}
 
 		return scale;
 	}
