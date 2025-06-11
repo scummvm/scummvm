@@ -253,6 +253,19 @@ builtIn(fileExists) {
 		Common::String nameWithoutExtension = aaaaa.substr(0, aaaaa.size() - extensionLength);
 		if (g_sludge->_saveNameToSlot.contains(nameWithoutExtension)) {
 			aaaaa = g_sludge->getSaveStateName(g_sludge->_saveNameToSlot[nameWithoutExtension]);
+		} else {
+			// If a game uses only one save
+			SaveStateList saves = g_sludge->getMetaEngine()->listSaves(g_sludge->getTargetName().c_str());
+
+			for (auto &savestate : saves) {
+				Common::String desc = savestate.getDescription();
+				if (nameWithoutExtension == desc) {
+					int slot = savestate.getSaveSlot();
+					g_sludge->_saveNameToSlot[desc] = slot;
+					aaaaa = g_sludge->getSaveStateName(slot);
+					break;
+				}
+			}
 		}
 	}
 
