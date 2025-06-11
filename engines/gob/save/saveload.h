@@ -63,7 +63,7 @@ public:
 	virtual SaveMode getSaveMode(const char *fileName) const;
 
 	/** Returns all files known by the saving system matching a pattern. */
-	virtual Common::List<Common::String> getFilesMatchingPattern(const char *pattern) const;
+	virtual Common::List<Common::Path> getFilesMatchingPattern(const Common::Path &pattern) const;
 
 	/** Returns the file's (virtual) size. */
 	int32 getSize(const char *fileName);
@@ -985,7 +985,7 @@ public:
 	~SaveLoad_v7() override;
 
 	SaveMode getSaveMode(const char *fileName) const override;
-	Common::List<Common::String> getFilesMatchingPattern(const char *pattern) const override;
+	Common::List<Common::Path> getFilesMatchingPattern(const Common::Path &pattern) const override;
 
 protected:
 	struct SaveFile {
@@ -1108,7 +1108,7 @@ protected:
 	FakeFileHandler             *_adibou2RelanceHandler;
 	FakeFileHandler             *_adibou2MemHandler;
 	GameFileHandler             *_adibou2AppProgressExtHandler[kAdibou2NbrOfApplications - 4][kChildrenCount];
-	GameFileHandler             *_adibou2AppliIniHandler[kAdibou2NbrOfApplications - 4];
+	GameFileHandler             *_adibou2AppliIniHandler[kAdibou2NbrOfApplications];
 
 	FakeFileHandler             *_addy4BaseHandler[2];
 	FakeFileHandler             *_addy4GrundschuleHandler[11];

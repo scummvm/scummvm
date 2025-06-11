@@ -796,8 +796,8 @@ private:
 	TranslationDatabases _translationDatabases;
 	Common::HashMap<Common::String, Database, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _databases;
 
-	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
-	Common::String _currentCDPath;
+	Common::List<Common::Path> _findFileMatches;
+	Common::Path _currentCDPath;
 
 	Common::String _currentHtmlFile;
 	HtmlContext *_currentHtmlContext;

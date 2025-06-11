@@ -457,45 +457,45 @@ void Inter_v7::o7_copyFile() {
 }
 
 void Inter_v7::o7_deleteFile() {
-	Common::String file =_vm->_game->_script->evalString();
+	Common::Path file(_vm->_game->_script->evalString(), '\\');
 
-	debugC(2, kDebugFileIO, "Delete file \"%s\"", file.c_str());
+	debugC(2, kDebugFileIO, "Delete file \"%s\"", file.toString().c_str());
 
-	bool isPattern = file.contains('*') || file.contains('?');
-	Common::List<Common::String> files;
+	bool isPattern = file.toString().contains('*') || file.toString().contains('?');
+	Common::List<Common::Path> files;
 	if (isPattern) {
-		files = _vm->_saveLoad->getFilesMatchingPattern(file.c_str());
-		debugC(2, kDebugFileIO, "Delete file matching pattern \"%s\" (%d matching file(s))", file.c_str(), files.size());
-		for (const Common::String &matchingFile : files)
-			debugC(5, kDebugFileIO, "Matching file: %s", matchingFile.c_str());
+		files = _vm->_saveLoad->getFilesMatchingPattern(file);
+		debugC(2, kDebugFileIO, "Delete file matching pattern \"%s\" (%d matching file(s))", file.toString().c_str(), files.size());
+		for (const Common::Path &matchingFile : files)
+			debugC(5, kDebugFileIO, "Matching file: %s", matchingFile.toString().c_str());
 	} else {
 		files.push_back(file);
-		debugC(2, kDebugFileIO, "Delete file \"%s\"", file.c_str());
+		debugC(2, kDebugFileIO, "Delete file \"%s\"", file.toString().c_str());
 	}
 
 	if (_vm->getGameType() == kGameTypeAdibou2
 		&& isPattern
-		&& file.hasPrefix("DATA\\??????")) {
+		&& file.toString().hasPrefix("DATA/??????")) {
 		// WORKAROUND a bug in original game: files APPLI_<N>.INF and CRITE_<N>.INF should not be deleted when removing character <N>
 		// Those files contain *application <N>* data, not "character <N>" data
-		for (Common::List<Common::String>::iterator it = files.begin(); it != files.end(); ++it) {
-			if (it->matchString("DATA\\\\appli_??.inf", true) || it->matchString("DATA\\\\crite_??.inf", true)) {
+		for (Common::List<Common::Path>::iterator it = files.begin(); it != files.end(); ++it) {
+			if (it->toString().matchString("DATA/appli_??.inf", true) || it->toString().matchString("DATA/crite_??.inf", true)) {
 				debugC(2, kDebugFileIO, "o7_deleteFile: ignoring deletion of file \"%s\" when processing pattern %s (delete character bug workaround)",
-					   it->c_str(),
-					   file.c_str());
+					   it->toString().c_str(),
+					   file.toString().c_str());
 				it = files.reverse_erase(it);
 			}
 		}
 	}
 
-	for (const Common::String &fileToDelete : files) {
-		SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(fileToDelete.c_str());
+	for (const Common::Path &fileToDelete : files) {
+		SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(fileToDelete.toString().c_str());
 		if (mode == SaveLoad::kSaveModeSave) {
-			if (!_vm->_saveLoad->deleteFile(fileToDelete.c_str())) {
-				warning("Cannot delete file \"%s\"", fileToDelete.c_str());
+			if (!_vm->_saveLoad->deleteFile(fileToDelete.toString().c_str())) {
+				warning("Cannot delete file \"%s\"", fileToDelete.toString().c_str());
 			}
 		} else if (mode == SaveLoad::kSaveModeNone)
-			warning("Attempted to delete file \"%s\"", fileToDelete.c_str());
+			warning("Attempted to delete file \"%s\"", fileToDelete.toString().c_str());
 	}
 }
 
@@ -803,11 +803,11 @@ void Inter_v7::o7_setActiveCD() {
 
 	Common::ArchiveMemberDetailsList files;
 	SearchMan.listMatchingMembers(files, Common::Path(str0, '\\'));
-	Common::String savedCDpath = _currentCDPath;
+	Common::Path savedCDpath = _currentCDPath;
 
 	for (Common::ArchiveMemberDetails file : files) {
 		if (setCurrentCDPath(file.arcName)) {
-			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s", savedCDpath.c_str(),  _currentCDPath.c_str());
+			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s", savedCDpath.toString().c_str(),  _currentCDPath.toString().c_str());
 			storeValue(1);
 			return;
 		}
@@ -833,56 +833,67 @@ void Inter_v7::o7_findFile() {
 	Common::ArchiveMemberList files;
 
 	SearchMan.listMatchingMembers(files, filePattern);
-	Common::ArchiveMemberList filesWithoutDuplicates;
+	Common::List<Common::Path> filePaths;
 	for (Common::ArchiveMemberPtr file : files) {
+		filePaths.push_back(file->getPathInArchive());
+	}
+
+	Common::List<Common::Path> matchingSaveFiles = _vm->_saveLoad->getFilesMatchingPattern(filePattern.toString().c_str());
+	for (Common::Path &filename : matchingSaveFiles) {
+		if (_vm->_saveLoad->getSize(filename.toString().c_str()) >= 0) {
+			filePaths.push_back(filename);
+		}
+	}
+
+	Common::List<Common::Path> filenamesWithoutDuplicates;
+	for (Common::Path &filename : filePaths) {
 		bool found = false;
-		for (Common::ArchiveMemberPtr fileWithoutDuplicates : filesWithoutDuplicates) {
-			if (file->getName() == fileWithoutDuplicates->getName()) {
+		for (Common::Path &filename2 : filenamesWithoutDuplicates) {
+			if (filename == filename2) {
 				found = true;
 				break;
 			}
 		}
 
 		if (!found)
-			filesWithoutDuplicates.push_back(file);
+			filenamesWithoutDuplicates.push_back(filename);
 	}
 
-	debugC(5, kDebugFileIO, "o7_findFile(%s): %d matches (%d including duplicates)",
+	debugC(5, kDebugFileIO, "o7_findFile(%s): %d matches after discarding duplicates",
 		   filePattern.toString().c_str(),
-		   filesWithoutDuplicates.size(),
-		   files.size());
+		   filenamesWithoutDuplicates.size());
 
-	if (filesWithoutDuplicates.empty()) {
+	if (filenamesWithoutDuplicates.empty()) {
 		storeString("");
 		storeValue(0);
 	} else {
-		Common::String file = files.front()->getName();
-		filesWithoutDuplicates.pop_front();
+		Common::Path file = filenamesWithoutDuplicates.front();
+		filenamesWithoutDuplicates.pop_front();
 		debugC(5, kDebugFileIO, "o7_findFile(%s): first match = %s",
 			   filePattern.toString().c_str(),
-			   file.c_str());
+			   file.toString().c_str());
 
-		storeString(file.c_str());
+		storeString(file.getLastComponent().toString().c_str());
 		storeValue(1);
 	}
 
-	_remainingFilesFromPreviousSearch = filesWithoutDuplicates;
+	_findFileMatches = filenamesWithoutDuplicates;
 }
 
 void Inter_v7::o7_findNextFile() {
 	uint16 type;
 	uint16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
 
-	Common::String file;
-	if (!_remainingFilesFromPreviousSearch.empty()) {
-		file = _remainingFilesFromPreviousSearch.front()->getName();
-		_remainingFilesFromPreviousSearch.pop_front();
+	Common::Path file;
+	if (!_findFileMatches.empty()) {
+		file = _findFileMatches.front();
+		_findFileMatches.pop_front();
 	}
 
 	debugC(5, kDebugFileIO, "o7_findNextFile: new match = %s",
-		   file.c_str());
+		   file.toString().c_str());
 
-	storeString(varIndex, type, file.c_str());
+	storeString(varIndex, type, file.getLastComponent().toString().c_str());
 	storeValue(file.empty() ? 0 : 1);
 }
 
@@ -1671,7 +1682,7 @@ bool Inter_v7::setCurrentCDPath(const Common::String &newDirName) {
 		return false;
 
 	if (!_currentCDPath.empty())
-		SearchMan.setPriority(_currentCDPath, 0);
+		SearchMan.setPriority(_currentCDPath.toString(), 0);
 
 	_currentCDPath = newDirName;
 	if (!_currentCDPath.empty())

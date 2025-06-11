@@ -929,6 +929,10 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA/GIE06_16.pho", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/GIE07_16.pho", kSaveModeSave, nullptr, "app progress" },
 
+	{"APPLIS/appli_01.ini", kSaveModeSave, nullptr, "app info" },
+	{"APPLIS/appli_02.ini", kSaveModeSave, nullptr, "app info" },
+	{"APPLIS/appli_03.ini", kSaveModeSave, nullptr, "app info" },
+	{"APPLIS/appli_04.ini", kSaveModeSave, nullptr, "app info" },
 	{"APPLIS/appli_05.ini", kSaveModeSave, nullptr, "app info" },
 	{"APPLIS/appli_06.ini", kSaveModeSave, nullptr, "app info" },
 	{"APPLIS/appli_07.ini", kSaveModeSave, nullptr, "app info" },
@@ -1468,10 +1472,10 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 		}
 	}
 
-	for (uint32 i = 4; i < kAdibou2NbrOfApplications; i++) {
-		_saveFiles[index++].handler = _adibou2AppliIniHandler[i - 4] = new GameFileHandler(_vm,
-																						   targetName,
-																						   Common::String::format("appli_%02d_ini", i + 1));
+	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
+		_saveFiles[index++].handler = _adibou2AppliIniHandler[i] = new GameFileHandler(_vm,
+																					   targetName,
+																					   Common::String::format("appli_%02d_ini", i + 1));
 	}
 
 	for (int i = 0; i < 2; i++)
@@ -1555,9 +1559,10 @@ SaveLoad_v7::~SaveLoad_v7() {
 		for (uint32 j = 0; j < kChildrenCount; j++) {
 			delete _adibou2AppProgressExtHandler[i - 4][j];
 		}
+	}
 
-
-		delete _adibou2AppliIniHandler[i - 4];
+	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
+		delete _adibou2AppliIniHandler[i];
 	}
 }
 
@@ -1605,13 +1610,12 @@ SaveLoad::SaveMode SaveLoad_v7::getSaveMode(const char *fileName) const {
 	return kSaveModeNone;
 }
 
-Common::List<Common::String> SaveLoad_v7::getFilesMatchingPattern(const char *pattern) const {
-	Common::List<Common::String> files;
-	Common::String patternNormalized = replacePathSeparators(pattern, '/');
+Common::List<Common::Path> SaveLoad_v7::getFilesMatchingPattern(const Common::Path &pattern) const {
+	Common::List<Common::Path> files;
 
 	for (const SaveFile &saveFile : _saveFiles) {
 		// Full path match only
-		if (Common::matchString(saveFile.sourceName, patternNormalized.c_str(), true))
+		if (Common::matchString(saveFile.sourceName, pattern.toString().c_str(), true))
 			files.push_back(saveFile.sourceName);
 	}
 
