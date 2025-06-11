@@ -76,6 +76,7 @@ protected:
 	void sortGroups();
 	void toggleGroup(int groupID);
 	void drawWidget() override;
+	int findDataIndex(int) const;
 };
 
 } // End of namespace GUI
