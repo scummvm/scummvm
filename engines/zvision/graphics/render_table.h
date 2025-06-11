@@ -97,7 +97,7 @@ private:
 		g = color & 0x03e0;
 		b = color & 0x7c00;
 	}
-	inline uint16 mergeColor(uint32 &r, uint32 &g, uint32 &b) const {
+	inline uint16 mergeColor(const uint32 &r, const uint32 &g, const uint32 &b) const {
 		// NB Red uses the lowest bits in RGB555 and so doesn't need its fractional bits masked away after averaging
 		return r | (g & 0x03e0) | (b & 0x7c00);
 	}
