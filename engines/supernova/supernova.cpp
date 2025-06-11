@@ -49,6 +49,8 @@
 #include "supernova/supernova2/state.h"
 #include "supernova/game-manager.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Supernova {
 
 ObjectType operator|(ObjectType a, ObjectType b) {
@@ -349,6 +351,11 @@ void SupernovaEngine::setColor63(byte value) {
 }
 
 void SupernovaEngine::setTextSpeed() {
+	// turn off keymapper so that we can select speed using Keys 1-5
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("menu")->setEnabled(true);
+
 	const Common::String &textSpeedString = getGameString(kStringTextSpeed);
 	int stringWidth = Screen::textWidth(textSpeedString);
 	int textX = (kScreenWidth - stringWidth) / 2;
@@ -358,11 +365,6 @@ void SupernovaEngine::setTextSpeed() {
 	int boxY = 97;
 	int boxWidth = stringWidth > 110 ? stringWidth : 110;
 	int boxHeight = 27;
-
-	// Disable improved mode temporarilly so that Key 1-5 are received below
-	// instead of being mapped to action selection.
-	bool hasImprovedMode = _improved;
-	_improved = false;
 
 	_gm->animationOff();
 	_gm->saveTime();
@@ -406,7 +408,9 @@ void SupernovaEngine::setTextSpeed() {
 	_gm->loadTime();
 	_gm->animationOn();
 
-	_improved = hasImprovedMode;
+	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("supernova-default")->setEnabled(true);
+	keymapper->getKeymap("improved-mode")->setEnabled(true);
 }
 
 void SupernovaEngine::showHelpScreen1() {
@@ -553,6 +557,10 @@ Common::Error SupernovaEngine::showTextReader(const char *extension) {
 	}
 	paletteFadeIn();
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("text-reader")->setEnabled(true);
+
 	const int linesPerPage = 19;
 	int lineNumber = 0;
 	bool exitReader = false;
@@ -569,21 +577,21 @@ Common::Error SupernovaEngine::showTextReader(const char *extension) {
 			_screen->renderText(line, 6, y, kColorWhite99);
 		}
 		_gm->getInput(true);
-		switch (_gm->_key.keycode) {
-		case Common::KEYCODE_ESCAPE:
+		switch (_gm->_action) {
+		case kActionExit:
 			exitReader = true;
 			break;
-		case Common::KEYCODE_UP:
+		case kActionUp:
 			lineNumber = lineNumber > 0 ? lineNumber - 1 : 0;
 			break;
-		case Common::KEYCODE_DOWN:
+		case kActionDown:
 			lineNumber = lineNumber < linesInFile - (linesPerPage + 1) ? lineNumber + 1
 			                                                           : linesInFile - linesPerPage;
 			break;
-		case Common::KEYCODE_PAGEUP:
+		case kActionPgUp:
 			lineNumber = lineNumber > linesPerPage ? lineNumber - linesPerPage : 0;
 			break;
-		case Common::KEYCODE_PAGEDOWN:
+		case kActionPgDown:
 			lineNumber = lineNumber < linesInFile - (linesPerPage * 2) ? lineNumber + linesPerPage
 			                                                           : linesInFile - linesPerPage;
 			break;
@@ -596,11 +604,19 @@ Common::Error SupernovaEngine::showTextReader(const char *extension) {
 	_gm->loadTime();
 	_gm->animationOn();
 
+	keymapper->getKeymap("text-reader")->setEnabled(false);
+	keymapper->getKeymap("supernova-default")->setEnabled(true);
+	keymapper->getKeymap("improved-mode")->setEnabled(true);
+
 	return Common::kNoError;
 }
 
 bool SupernovaEngine::quitGameDialog() {
 	bool quit = false;
+	
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("menu")->setEnabled(true);
 
 	GuiElement guiQuitBox;
 	guiQuitBox.setColor(kColorRed, kColorWhite99, kColorRed, kColorWhite99);
@@ -653,6 +669,10 @@ bool SupernovaEngine::quitGameDialog() {
 	_gm->resetInputState();
 	restoreScreen();
 	_gm->animationOn();
+
+	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("supernova-default")->setEnabled(true);
+	keymapper->getKeymap("improved-mode")->setEnabled(true);
 
 	return quit;
 }
