@@ -27,6 +27,7 @@
 #include "engines/util.h"
 #include "graphics/blit.h"
 #include "image/tga.h"
+#include "zvision/detection.h"
 #include "zvision/zvision.h"
 #include "zvision/file/lzss_read_stream.h"
 #include "zvision/graphics/render_manager.h"
@@ -52,7 +53,7 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	  _doubleFPS(doubleFPS),
 	  _widescreen(widescreen),
 	  _frameLimiter(engine->_system, doubleFPS ? 60 : 30) {
-	debug(1, "creating render manager");
+	debugC(1, kDebugGraphics, "creating render manager");
 	// Define graphics modes & screen subarea geometry
 	Graphics::ModeList modes;
 	_textOffset = _layout.workingArea.origin() - _layout.textArea.origin();
@@ -72,7 +73,7 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	_warpedSceneSurface.create(_workingArea.width(), _workingArea.height(), _pixelFormat);
 	_menuSurface.create(_menuArea.width(), _menuArea.height(), _pixelFormat);
 	_textSurface.create(_textArea.width(), _textArea.height(), _pixelFormat);
-	debug(1, "render manager created");
+	debugC(1, kDebugGraphics, "render manager created");
 	initialize(false);
 }
 
@@ -90,7 +91,7 @@ RenderManager::~RenderManager() {
 }
 
 void RenderManager::initialize(bool hiRes) {
-	debug(1, "Initializing render manager");
+	debugC(1, kDebugGraphics, "Initializing render manager");
 	_hiRes = hiRes;
 
 	_screenArea = _layout.screenArea;
@@ -110,26 +111,26 @@ void RenderManager::initialize(bool hiRes) {
 	// Screen
 #if defined(USE_MPEG2) && defined(USE_A52)
 	if (_hiRes) {
-		debug(1, "Switching to high resolution");
+		debugC(1, kDebugGraphics, "Switching to high resolution");
 		upscaleRect(_screenArea);
 		upscaleRect(_workingArea);
 		upscaleRect(_textArea);
 	} else
-		debug(1, "Switching to standard resolution");
+		debugC(1, kDebugGraphics, "Switching to standard resolution");
 #endif
 	_screen.create(_screenArea.width(), _screenArea.height(), _engine->_screenPixelFormat);
 	_screen.setTransparentColor(-1);
 	_screen.clear();
 
-	debug(1, "_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
+	debugC(1, kDebugGraphics, "_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
 
 	// Managed screen subsurfaces
 	_workingManagedSurface.create(_screen, _workingArea);
 	_menuManagedSurface.create(_screen, _menuArea);
 	_textManagedSurface.create(_screen, _textArea);
-	debug(2, "screen area: %d,%d,%d,%d", _screenArea.left, _screenArea.top, _screenArea.bottom, _screenArea.right);
-	debug(2, "working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
-	debug(2, "text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
+	debugC(2, kDebugGraphics, "screen area: %d,%d,%d,%d", _screenArea.left, _screenArea.top, _screenArea.bottom, _screenArea.right);
+	debugC(2, kDebugGraphics, "working area: %d,%d,%d,%d", _workingArea.left, _workingArea.top, _workingArea.bottom, _workingArea.right);
+	debugC(2, kDebugGraphics, "text area: %d,%d,%d,%d", _textArea.left, _textArea.top, _textArea.bottom, _textArea.right);
 
 	// Menu & text area dirty rectangles
 	_menuOverlay = _menuArea.findIntersectingRect(_workingArea);
@@ -144,31 +145,31 @@ void RenderManager::initialize(bool hiRes) {
 	else
 		_textLetterbox = _textArea;
 
-	debug(2, "text overlay area: %d,%d,%d,%d", _textOverlay.left, _textOverlay.top, _textOverlay.bottom, _textOverlay.right);
-	debug(2, "menu overlay area: %d,%d,%d,%d", _menuOverlay.left, _menuOverlay.top, _menuOverlay.bottom, _menuOverlay.right);
+	debugC(2, kDebugGraphics, "text overlay area: %d,%d,%d,%d", _textOverlay.left, _textOverlay.top, _textOverlay.bottom, _textOverlay.right);
+	debugC(2, kDebugGraphics, "menu overlay area: %d,%d,%d,%d", _menuOverlay.left, _menuOverlay.top, _menuOverlay.bottom, _menuOverlay.right);
 
-	debug(2, "Clearing backbuffers");
+	debugC(2, kDebugGraphics, "Clearing backbuffers");
 	// Clear backbuffer surfaces
 	clearMenuSurface(true);
 	clearTextSurface(true);
-	debug(2, "Backbuffers cleared");
+	debugC(2, kDebugGraphics, "Backbuffers cleared");
 
 	// Set hardware/window resolution
-	debug(1, "_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
+	debugC(1, kDebugGraphics, "_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
 	initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
 	_frameLimiter.initialize();
-	debug(1, "Render manager initialized");
+	debugC(1, kDebugGraphics, "Render manager initialized");
 }
 
 bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool preStream) {
-	debug(5, "\nrenderSceneToScreen%s%s%s", immediate ? ", immediate" : "", overlayOnly ? ", overlay only" : "", preStream ? ", pre-stream" : "");
+	debugC(5, kDebugGraphics, "\nrenderSceneToScreen%s%s%s", immediate ? ", immediate" : "", overlayOnly ? ", overlay only" : "", preStream ? ", pre-stream" : "");
 	uint32 startTime = _system->getMillis();
 	if (!overlayOnly) {
 		Graphics::Surface *inputSurface = &_backgroundSurface;
 		Common::Rect outWndDirtyRect;
 		// Apply graphical effects to temporary effects buffer and/or directly to current background image, as appropriate
 		if (!_effects.empty()) {
-			debug(6, "Rendering effects");
+			debugC(6, kDebugGraphics, "Rendering effects");
 			bool copied = false;
 			const Common::Rect windowRect(_workingArea.width(), _workingArea.height());
 			for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
@@ -189,7 +190,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 						post = (*it)->draw(_effectSurface.getSubArea(rect));
 					Common::Rect empty;
 					blitSurfaceToSurface(*post, empty, _effectSurface, screenSpaceLocation.left, screenSpaceLocation.top);
-					debug(1, "windowRect %d,%d,%d,%d, screenSpaceLocation %d,%d,%d,%d", windowRect.left, windowRect.top, windowRect.bottom, windowRect.right, screenSpaceLocation.left, screenSpaceLocation.top, screenSpaceLocation.bottom, screenSpaceLocation.right);
+					debugC(1, kDebugGraphics, "windowRect %d,%d,%d,%d, screenSpaceLocation %d,%d,%d,%d", windowRect.left, windowRect.top, windowRect.bottom, windowRect.right, screenSpaceLocation.left, screenSpaceLocation.top, screenSpaceLocation.bottom, screenSpaceLocation.right);
 					screenSpaceLocation.clip(windowRect);
 					if (_backgroundSurfaceDirtyRect.isEmpty())
 						_backgroundSurfaceDirtyRect = screenSpaceLocation;
@@ -197,13 +198,13 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 						_backgroundSurfaceDirtyRect.extend(screenSpaceLocation);
 				}
 			}
-			debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
+			debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		}
 		// Apply panorama/tilt warp to background image
 		switch (_renderTable.getRenderState()) {
 		case RenderTable::PANORAMA:
 		case RenderTable::TILT:
-			debug(5, "Rendering panorama");
+			debugC(5, kDebugGraphics, "Rendering panorama");
 			if (!_backgroundSurfaceDirtyRect.isEmpty()) {
 				_renderTable.mutateImage(&_warpedSceneSurface, inputSurface, _engine->getScriptManager()->getStateValue(StateKey_HighQuality));
 				_outputSurface = &_warpedSceneSurface;
@@ -215,39 +216,39 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 			outWndDirtyRect = _backgroundSurfaceDirtyRect;
 			break;
 		}
-		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
-		debug(5, "Rendering working area");
+		debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
+		debugC(5, kDebugGraphics, "Rendering working area");
 		_workingManagedSurface.simpleBlitFrom(*_outputSurface); // TODO - use member functions of managed surface to eliminate manual juggling of dirty rectangles, above.
-		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
+		debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 	}
 	if (preStream && !_hiRes) {
-		debug(5, "Pre-rendering text area for video stream");
+		debugC(5, kDebugGraphics, "Pre-rendering text area for video stream");
 		_workingManagedSurface.simpleBlitFrom(*_outputSurface, _textOverlay, _textOverlay.origin()); // Prevents subtitle visual corruption when streaming videos that don't fully overlap them, e.g. Nemesis sarcophagi
 		return false;
 	} else {
-		debug(5, "Rendering menu");
+		debugC(5, kDebugGraphics, "Rendering menu");
 		_menuManagedSurface.transBlitFrom(_menuSurface, -1);
-		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
-		debug(5, "Rendering text");
+		debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
+		debugC(5, kDebugGraphics, "Rendering text");
 		_textManagedSurface.transBlitFrom(_textSurface, -1);
-		debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
+		debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		if (immediate) {
 			_frameLimiter.startFrame();
-			debug(5, "Updating screen, immediate");
+			debugC(5, kDebugGraphics, "Updating screen, immediate");
 			_screen.update();
-			debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
-			debug(10, "~renderSceneToScreen, immediate");
+			debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
+			debugC(10, kDebugGraphics, "~renderSceneToScreen, immediate");
 			return true;
 		} else if (_engine->canRender()) {
 			_frameLimiter.delayBeforeSwap();
 			_frameLimiter.startFrame();
-			debug(5, "Updating screen, frame limited");
+			debugC(5, kDebugGraphics, "Updating screen, frame limited");
 			_screen.update();
-			debug(5, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
-			debug(10, "~renderSceneToScreen, frame limited");
+			debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
+			debugC(10, kDebugGraphics, "~renderSceneToScreen, frame limited");
 			return true;
 		} else {
-			debug(2, "Skipping screen update; engine forbids rendering at this time.");
+			debugC(2, kDebugGraphics, "Skipping screen update; engine forbids rendering at this time.");
 			return false;
 		}
 	}
@@ -256,7 +257,7 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 Graphics::ManagedSurface &RenderManager::getVidSurface(Common::Rect dstRect) {
 	dstRect.translate(_workingArea.left, _workingArea.top);  // Convert to screen coordinates
 	_vidManagedSurface.create(_screen, dstRect);
-	debug(1, "Obtaining managed video surface at %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
+	debugC(1, kDebugGraphics, "Obtaining managed video surface at %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 	return _vidManagedSurface;
 }
 
@@ -383,7 +384,7 @@ void RenderManager::readImageToSurface(const Common::Path &fileName, Graphics::S
 }
 
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
-	debug(9, "screenSpaceToImageSpace()");
+	debugC(9, kDebugGraphics, "screenSpaceToImageSpace()");
 	if (_workingArea.contains(point)) {
 		// Convert from screen space to working image space, i.e. panoramic background image or static image
 		Common::Point newPoint(point - _workingArea.origin());
@@ -410,10 +411,10 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
 			newPoint.x += _backgroundWidth;
 		if (newPoint.y < 0)
 			newPoint.y += _backgroundHeight;
-		debug(9, "~screenSpaceToImageSpace()");
+		debugC(9, kDebugGraphics, "~screenSpaceToImageSpace()");
 		return newPoint;
 	} else {
-		debug(9, "~screenSpaceToImageSpace()");
+		debugC(9, kDebugGraphics, "~screenSpaceToImageSpace()");
 		return Common::Point(0, 0);
 	}
 }
@@ -500,7 +501,7 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 }
 
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y) {
-	debug(9, "blitSurfaceToSurface");
+	debugC(9, kDebugGraphics, "blitSurfaceToSurface");
 	Common::Point dstPos = Common::Point(_x, _y);
 	// Default to using whole source surface
 	if (srcRect.isEmpty())
@@ -540,7 +541,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::R
 }
 
 void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
-	debug(9, "blitSurfaceToSurface");
+	debugC(9, kDebugGraphics, "blitSurfaceToSurface");
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
 	srcRect.clip(src.w, src.h);
@@ -667,7 +668,7 @@ void RenderManager::clearTextSurface(bool force, int32 colorkey) {
 }
 
 Graphics::Surface *RenderManager::getBkgRect(Common::Rect &rect) {
-	debug(11, "getBkgRect()");
+	debugC(11, kDebugGraphics, "getBkgRect()");
 	Common::Rect dst = rect;
 	dst.clip(_backgroundWidth, _backgroundHeight);
 
@@ -695,7 +696,7 @@ Graphics::Surface *RenderManager::loadImage(const Common::Path &file, bool trans
 }
 
 void RenderManager::prepareBackground() {
-	debug(5, "prepareBackground()");
+	debugC(5, kDebugGraphics, "prepareBackground()");
 	_backgroundDirtyRect.clip(_backgroundWidth, _backgroundHeight);
 	switch (_renderTable.getRenderState()) {
 	case RenderTable::PANORAMA: {
@@ -768,7 +769,7 @@ void RenderManager::prepareBackground() {
 	// Clear the dirty rect since everything is clean now
 	_backgroundDirtyRect = Common::Rect();
 	_backgroundSurfaceDirtyRect.clip(_workingArea.width(), _workingArea.height());
-	debug(11, "~prepareBackground()");
+	debugC(11, kDebugGraphics, "~prepareBackground()");
 }
 
 Common::Point RenderManager::getBkgSize() {
@@ -789,7 +790,7 @@ void RenderManager::deleteEffect(uint32 ID) {
 }
 
 Common::Rect RenderManager::transformBackgroundSpaceRectToScreenSpace(const Common::Rect &src) {
-	debug(10, "transformBackgroundSpaceRectToScreenSpace");
+	debugC(10, kDebugGraphics, "transformBackgroundSpaceRectToScreenSpace");
 	Common::Rect tmp = src;
 	switch (_renderTable.getRenderState()) {
 	case RenderTable::PANORAMA: {
@@ -1063,7 +1064,7 @@ void RenderManager::checkBorders() {
 void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 	if (_renderTable.getRenderState() != RenderTable::PANORAMA)
 		return;
-	debug(1, "Rotating panorama to %d", _toPos);
+	debugC(1, kDebugGraphics, "Rotating panorama to %d", _toPos);
 	if (_time == 0)
 		_time = 1;
 

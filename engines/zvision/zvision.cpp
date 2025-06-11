@@ -109,13 +109,13 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _renderedFrameCount(0),
 	  _fps(0) {
 
-	debug(1, "ZVision::ZVision");
+	debugC(1, kDebugLoop, "ZVision::ZVision");
 
 	memset(_cheatBuffer, 0, sizeof(_cheatBuffer));
 }
 
 ZVision::~ZVision() {
-	debug(1, "ZVision::~ZVision");
+	debugC(1, kDebugLoop, "ZVision::~ZVision");
 
 	// Dispose of resources
 	delete _cursorManager;
@@ -345,26 +345,26 @@ Common::Error ZVision::run() {
 
 	// Main loop
 	while (!shouldQuit()) {
-		debug(5, "\nInitiating new game cycle");
-		debug(5, "Timers");
+		debugC(1, kDebugLoop, "\nInitiating new game cycle");
+		debugC(5, kDebugLoop, "Timers");
 		// Timers
 		_clock.update();
 		uint32 deltaTime = _clock.getDeltaTime();
-		debug(5, "Logic");
+		debugC(5, kDebugLoop, "Logic");
 		// Process game logic & update backbuffers as necessary
-		debug(5, "Cursor");
+		debugC(5, kDebugLoop, "Cursor");
 		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
-		debug(5, "Events");
+		debugC(5, kDebugLoop, "Events");
 		processEvents();  // NB rotateTo or playVideo event will pause clock & call renderSceneToScreen() directly.
-		debug(5, "Rotation");
+		debugC(5, kDebugLoop, "Rotation");
 		_renderManager->updateRotation();
-		debug(5, "Scripts");
+		debugC(5, kDebugLoop, "Scripts");
 		_scriptManager->update(deltaTime);
-		debug(5, "Menu");
+		debugC(5, kDebugLoop, "Menu");
 		_menu->process(deltaTime);
-		debug(5, "Subtitles");
+		debugC(5, kDebugLoop, "Subtitles");
 		_subtitleManager->process(deltaTime);
-		debug(5, "Render");
+		debugC(5, kDebugLoop, "Render");
 		// Render the backBuffer to the screen
 		_renderManager->prepareBackground();
 		if (_renderManager->renderSceneToScreen()) {
@@ -388,7 +388,7 @@ void ZVision::pauseEngineIntern(bool pause) {
 }
 
 void ZVision::setRenderDelay(uint delay) {
-	debug(2, "Setting framerenderdelay to %d", delay);
+	debugC(2, kDebugGraphics, "Setting framerenderdelay to %d", delay);
 	_frameRenderDelay = delay;
 }
 

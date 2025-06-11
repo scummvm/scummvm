@@ -179,39 +179,42 @@ void FistControl::readDescFile(const Common::Path &fileName) {
 			_animation = _engine->loadAnimation(Common::Path(values));
 		} else if (param.matchString("anim_rect", true)) {
 			int left, top, right, bottom;
-			sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom);
-			_anmRect = Common::Rect(left, top, right, bottom);
+			if (sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom) == 4)
+				_anmRect = Common::Rect(left, top, right, bottom);
 		} else if (param.matchString("num_fingers", true)) {
-			sscanf(values.c_str(), "%d", &_fistnum);
-			_fistsUp.resize(_fistnum);
-			_fistsDwn.resize(_fistnum);
+			if (sscanf(values.c_str(), "%d", &_fistnum) == 1) {
+				_fistsUp.resize(_fistnum);
+				_fistsDwn.resize(_fistnum);
+			}
 		} else if (param.matchString("entries", true)) {
-			sscanf(values.c_str(), "%d", &_numEntries);
-			_entries.resize(_numEntries);
+			if (sscanf(values.c_str(), "%d", &_numEntries) == 1)
+				_entries.resize(_numEntries);
 		} else if (param.matchString("eval_order_ascending", true)) {
 			sscanf(values.c_str(), "%d", &_order);
 		} else if (param.matchString("up_hs_num_*", true)) {
 			int fist, num;
 			num = atoi(values.c_str());
 
-			sscanf(param.c_str(), "up_hs_num_%d", &fist);
-			_fistsUp[fist].resize(num);
+			if (sscanf(param.c_str(), "up_hs_num_%d", &fist) == 1)
+				_fistsUp[fist].resize(num);
 		} else if (param.matchString("up_hs_*", true)) {
 			int16 fist, box, x1, y1, x2, y2;
-			sscanf(param.c_str(), "up_hs_%hd_%hd", &fist, &box);
-			sscanf(values.c_str(), "%hd %hd %hd %hd", &x1, &y1, &x2, &y2);
-			(_fistsUp[fist])[box] = Common::Rect(x1, y1, x2, y2);
+			if (sscanf(param.c_str(), "up_hs_%hd_%hd", &fist, &box) == 2) {
+				if (sscanf(values.c_str(), "%hd %hd %hd %hd", &x1, &y1, &x2, &y2) == 4)
+					(_fistsUp[fist])[box] = Common::Rect(x1, y1, x2, y2);
+			}
 		} else if (param.matchString("down_hs_num_*", true)) {
 			int fist, num;
 			num = atoi(values.c_str());
 
-			sscanf(param.c_str(), "down_hs_num_%d", &fist);
-			_fistsDwn[fist].resize(num);
+			if (sscanf(param.c_str(), "down_hs_num_%d", &fist) == 1)
+				_fistsDwn[fist].resize(num);
 		} else if (param.matchString("down_hs_*", true)) {
 			int16 fist, box, x1, y1, x2, y2;
-			sscanf(param.c_str(), "down_hs_%hd_%hd", &fist, &box);
-			sscanf(values.c_str(), "%hd %hd %hd %hd", &x1, &y1, &x2, &y2);
-			(_fistsDwn[fist])[box] = Common::Rect(x1, y1, x2, y2);
+			if (sscanf(param.c_str(), "down_hs_%hd_%hd", &fist, &box) == 2) {
+				if (sscanf(values.c_str(), "%hd %hd %hd %hd", &x1, &y1, &x2, &y2) == 4)
+					(_fistsDwn[fist])[box] = Common::Rect(x1, y1, x2, y2);
+			}
 		} else {
 			int  entry, start, end, sound;
 			char bitsStart[33];

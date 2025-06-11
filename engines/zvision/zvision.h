@@ -52,6 +52,8 @@ class VideoDecoder;
  */
 namespace ZVision {
 
+struct ZvisionGameDescription;
+
 class Console;
 class ScriptManager;
 class RenderManager;

@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "zvision/detection.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/sound/volume_manager.h"
 
@@ -151,7 +152,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode, Math::Angle 
 	directionalOutput /= 0xFF;
 	output *= (0xFF - directionality);
 	output = (output + directionalOutput) / 0xFF;
-	debug(4, "Directionally converted output %d", output);
+	debugC(4, kDebugSound, "Directionally converted output %d", output);
 	return output;
 };
 
@@ -189,7 +190,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode) {
 		output = scaledInput;
 		break;
 	}
-	debug(4, "Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
+	debugC(4, kDebugSound, "Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
 	return output;
 };
 

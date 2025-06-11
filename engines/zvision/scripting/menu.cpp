@@ -19,6 +19,7 @@
  *
  */
 
+#include "zvision/detection.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/menu.h"
 
@@ -115,8 +116,8 @@ void MenuManager::onMouseDown(const Common::Point &pos) {
 				_redraw = true;
 			}
 	}
-	debug(1, "mouse position %d %d", pos.x, pos.y);
-	debug(1, "panorama position %d %d", pos.x, pos.y);
+	debugC(kDebugMouse, "mouse position %d %d", pos.x, pos.y);
+	debugC(kDebugMouse, "panorama position %d %d", pos.x, pos.y);
 }
 
 void MenuManager::onMouseMove(const Common::Point &pos) {

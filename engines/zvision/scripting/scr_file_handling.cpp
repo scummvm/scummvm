@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
+#include "zvision/detection.h"
 #include "zvision/zvision.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/puzzle.h"
@@ -52,7 +53,10 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 				continue;
 			if (line.matchString("puzzle:*", true)) {
 				Puzzle *puzzle = new Puzzle();
-				sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
+				if (sscanf(line.c_str(), "puzzle:%u", &(puzzle->key)) != 1) {
+					debugC(kDebugScript, "Malformed puzzle string: %s", line.c_str());
+					continue;
+				}
 				if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
 					setStateValue(puzzle->key, 0);
 				parsePuzzle(puzzle, file);
@@ -69,23 +73,23 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 	Common::File auxFile;
 	Common::String auxFileName = fileName.toString();
 	replace(auxFileName, Common::String(".scr"), Common::String(".aux"));
-	debug(1, "Auxiliary filename %s", auxFileName.c_str());
+	debugC(1, kDebugFile, "Auxiliary filename %s", auxFileName.c_str());
 	Common::Path auxFilePath(auxFileName);
-	debug(1, "Auxiliary path %s", auxFilePath.toString().c_str());
+	debugC(1, kDebugFile, "Auxiliary path %s", auxFilePath.toString().c_str());
 
 	if (!_engine->getSearchManager()->openFile(mainFile, fileName))
 		error("Script file not found: %s", fileName.toString().c_str());
 	else {
-		debug(1, "Parsing primary script file");
+		debugC(1, kDebugScript, "Parsing primary script file %s", fileName.toString().c_str());
 		parse(mainFile);
 		// TODO - add config option to disable/enable auxiliary scripting
 		if (auxFile.exists(auxFilePath)) {
-			debug(1, "Auxiliary script file found");
+			debugC(1, kDebugFile, "Auxiliary script file found");
 			if (auxFile.open(auxFilePath)) {
-				debug(1, "Parsing auxiliary script file %s", auxFilePath.toString().c_str());
+				debugC(1, kDebugScript, "Parsing auxiliary script file %s", auxFilePath.toString().c_str());
 				parse(auxFile);
 			} else
-				debug(1, "Unable to open auxiliary script file %s", auxFilePath.toString().c_str());
+				debugC(1, kDebugFile, "Unable to open auxiliary script file %s", auxFilePath.toString().c_str());
 		}
 	}
 	scope.procCount = 0;
@@ -225,7 +229,10 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 
 		// Parse the id out of the first token
 		token = tokenizer.nextToken();
-		sscanf(token.c_str(), "[%u]", &(entry.key));
+		if (sscanf(token.c_str(), "[%u]", &(entry.key)) != 1) {
+			debugC(kDebugScript, "Malformed criteria ID string %s", token.c_str());
+			return false;
+		}
 
 		// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
 		// Check for the state of animation 567 (left fist) when manipulating
@@ -257,10 +264,16 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
 		if (token.contains('[')) {
-			sscanf(token.c_str(), "[%u]", &(entry.argument));
+			if (sscanf(token.c_str(), "[%u]", &(entry.argument)) != 1) {
+				debugC(kDebugScript, "Malformed token string %s", token.c_str());
+				return false;
+			}
 			entry.argumentIsAKey = true;
 		} else {
-			sscanf(token.c_str(), "%u", &(entry.argument));
+			if (sscanf(token.c_str(), "%u", &(entry.argument)) != 1) {
+				debugC(kDebugScript, "Malformed token string %s", token.c_str());
+				return false;
+			}
 			entry.argumentIsAKey = false;
 		}
 
@@ -311,7 +324,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			line.toLowercase();
 			continue;
 		}
-		debug(4, "Result line: %s", line.c_str());
+		debugC(4, kDebugScript, "Result line: %s", line.c_str());
 		const char *chrs = line.c_str();
 		uint pos;
 		if (line.matchString("action:*", true))
@@ -329,7 +342,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				if (chrs[pos] == ':' || chrs[pos] == '(')
 					break;
 
-			debug(4, "startpos %d, pos %d, line.size %d", startpos, pos, line.size());
+			debugC(4, kDebugScript, "startpos %d, pos %d, line.size %d", startpos, pos, line.size());
 			int32 slot = 11;  // Non-setting default slot
 			Common::String args = "";
 			Common::String act(chrs + startpos, chrs + pos);
@@ -357,7 +370,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					args = Common::String(chrs + startpos, chrs + pos);
 				}
 			}
-			debug(4, "Action string: '%s', slot %d, arguments string '%s'", act.c_str(), slot, args.c_str());
+			debugC(4, kDebugScript, "Action string: '%s', slot %d, arguments string '%s'", act.c_str(), slot, args.c_str());
 
 				// Parse for the action type
 				if (act.matchString("add", true)) {
@@ -494,10 +507,12 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 	uint32 key;
 	char controlTypeBuffer[20];
 
-	sscanf(line.c_str(), "control:%u %s {", &key, controlTypeBuffer);
-
+	if (sscanf(line.c_str(), "control:%u %s {", &key, controlTypeBuffer) != 2) {
+		debugC(kDebugScript, "Malformed control string: %s", line.c_str());
+		return NULL;
+	}
+		
 	Common::String controlType(controlTypeBuffer);
-
 	if (controlType.equalsIgnoreCase("push_toggle")) {
 		// WORKAROUND for a script bug in ZGI: There is an invalid hotspot
 		// at scene em1h (bottom of tower), which points to a missing
