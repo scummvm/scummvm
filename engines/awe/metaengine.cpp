@@ -80,8 +80,7 @@ Common::Error AweMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 }
 
 bool AweMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+	return false;
 }
 
 Common::Array<Common::Keymap *> AweMetaEngine::initKeymaps(const char *target) const {
