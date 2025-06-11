@@ -290,14 +290,14 @@ bool BaseSoundBuffer::setPan(float pan) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
-	// This function was already stubbed out in WME Lite, and thus isn't reimplemented here either.
+	// This function was stubbed out in WME Lite.
 	switch (type) {
 	case SFX_ECHO:
-		//warning("BaseSoundBuffer::ApplyFX(SFX_ECHO, %f, %f, %f, %f)  - not implemented yet", param1, param2, param3, param4);
+		warning("BaseSoundBuffer::ApplyFX(SFX_ECHO, %f, %f, %f, %f)  - not implemented yet", param1, param2, param3, param4);
 		break;
 
 	case SFX_REVERB:
-		//warning("BaseSoundBuffer::ApplyFX(SFX_REVERB, %f, %f, %f, %f)  - not implemented yet", param1, param2, param3, param4);
+		warning("BaseSoundBuffer::ApplyFX(SFX_REVERB, %f, %f, %f, %f)  - not implemented yet", param1, param2, param3, param4);
 		break;
 
 	default:
