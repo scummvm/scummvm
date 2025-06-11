@@ -138,6 +138,37 @@ public:
 	void stopSound();
 };
 
+enum SUPERNOVAAction {
+	kActionNone,
+	kActionPause,
+	kActionQuit,
+	kActionSkip,
+	kActionSkipLine,
+	kActionHelp,
+	kActionInstr,
+	kActionInfo,
+	kActionSpeed,
+	kActionGo,
+	kActionLook,
+	kActionTake,
+	kActionOpen,
+	kActionClose,
+	kActionPush,
+	kActionPull,
+	kActionUse,
+	kActionTalk,
+	kActionGive,
+	kActionUp,
+	kActionDown,
+	kActionPgUp,
+	kActionPgDown,
+	kActionExit,
+	kActionOfficeManager,
+	kActionPhone,
+	kActionProText,
+	kActionCalculata,
+};
+
 }
 
 #endif
