@@ -97,7 +97,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 		}
 
 		if (_key != StateKey_NotSet) {
-			debug(3, "setting musicnode state value to 1");
+			debugC(3, kDebugSound, "setting musicnode state value to 1");
 			_engine->getScriptManager()->setStateValue(_key, 1);
 		}
 
@@ -114,7 +114,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 		_loaded = true;
 		updateMixer();
 	}
-	debug(3, "MusicNode: %d created", _key);
+	debugC(3, kDebugSound, "MusicNode: %d created", _key);
 }
 
 MusicNode::~MusicNode() {
@@ -124,7 +124,7 @@ MusicNode::~MusicNode() {
 		_engine->getScriptManager()->setStateValue(_key, 2);
 	if (_sub)
 		_engine->getSubtitleManager()->destroy(_sub);
-	debug(3, "MusicNode: %d destroyed", _key);
+	debugC(3, kDebugSound, "MusicNode: %d destroyed", _key);
 }
 
 void MusicNode::outputMixer() {
@@ -145,7 +145,7 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 		return stop();
 	else {
 		if (_fade) {
-			debug(3, "Fading music, endVol %d, startVol %d, current %d, fade time %d, elapsed time %dms", _fadeEndVol, _fadeStartVol, _volume, _fadeTime, _fadeElapsed);
+			debugC(3, kDebugSound, "Fading music, endVol %d, startVol %d, current %d, fade time %d, elapsed time %dms", _fadeEndVol, _fadeStartVol, _volume, _fadeTime, _fadeElapsed);
 			uint8 _newvol = 0;
 			_fadeElapsed += deltaTimeInMillis;
 			if ((_fadeTime <= 0) | (_fadeElapsed >= _fadeTime)) {
@@ -166,7 +166,7 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 
 void MusicNode::setVolume(uint8 newVolume) {
 	if (_loaded) {
-		debug(4, "Changing volume of music node %d from %d to %d", _key, _volume, newVolume);
+		debugC(4, kDebugSound, "Changing volume of music node %d from %d to %d", _key, _volume, newVolume);
 		_volume = newVolume;
 		updateMixer();
 	}
@@ -183,24 +183,24 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, 
 	  _pos(pos),
 	  _staticScreen(staticScreen),
 	  _resetMixerOnDelete(resetMixerOnDelete) {
-	debug(3, "Created PanTrackNode, key %d, slot %d", _key, _slot);
+	debugC(3, kDebugSound, "Created PanTrackNode, key %d, slot %d", _key, _slot);
 	process(0);     // Try to set pan value for music node immediately
 }
 
 PanTrackNode::~PanTrackNode() {
-	debug(1, "Deleting PanTrackNode, key %d, slot %d", _key, _slot);
+	debugC(1, kDebugSound, "Deleting PanTrackNode, key %d, slot %d", _key, _slot);
 	ScriptManager *scriptManager = _engine->getScriptManager();
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO && _resetMixerOnDelete) {
-		debug(1, "Resetting mixer, slot %d", _slot);
+		debugC(1, kDebugSound, "Resetting mixer, slot %d", _slot);
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		mus->setBalance(0);
 	} else
-		debug(1, "NOT resetting mixer, slot %d", _slot);
+		debugC(1, kDebugSound, "NOT resetting mixer, slot %d", _slot);
 }
 
 bool PanTrackNode::process(uint32 deltaTimeInMillis) {
-	debug(3, "Processing PanTrackNode, key %d", _key);
+	debugC(3, kDebugSound, "Processing PanTrackNode, key %d", _key);
 	ScriptManager *scriptManager = _engine->getScriptManager();
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
@@ -209,7 +209,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 			// Original game scripted behaviour
 			switch (_engine->getRenderManager()->getRenderTable()->getRenderState()) {
 			case RenderTable::PANORAMA:
-				debug(3, "PanTrackNode in panorama mode");
+				debugC(3, kDebugSound, "PanTrackNode in panorama mode");
 				_width = _engine->getRenderManager()->getBkgSize().x;
 				if (_width) {
 					_sourcePos.setDegrees(360 * _pos / _width);
@@ -221,7 +221,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 			case RenderTable::FLAT:
 			case RenderTable::TILT:
 			default:
-				debug(3, "PanTrackNode in FLAT/TILT mode");
+				debugC(3, kDebugSound, "PanTrackNode in FLAT/TILT mode");
 				_sourcePos.setDegrees(0);
 				_viewPos.setDegrees(0);
 				break;
@@ -232,7 +232,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 		}
 		Math::Angle azimuth;
 		azimuth = _sourcePos - _viewPos;
-		debug(3, "soundPos: %f, _viewPos: %f, azimuth: %f, width %d", _sourcePos.getDegrees(), _viewPos.getDegrees(), azimuth.getDegrees(), _width);
+		debugC(3, kDebugSound, "soundPos: %f, _viewPos: %f, azimuth: %f, width %d", _sourcePos.getDegrees(), _viewPos.getDegrees(), azimuth.getDegrees(), _width);
 		// azimuth is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
 		mus->setDirection(azimuth, _mag);
 	}

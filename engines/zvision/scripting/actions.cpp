@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "video/video_decoder.h"
+#include "zvision/detection.h"
 #include "zvision/zvision.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/graphics/graphics_effect.h"
@@ -61,7 +62,10 @@ ActionAdd::ActionAdd(ZVision *engine, int32 slotKey, const Common::String &line)
 
 	char buf[64];
 	memset(buf, 0, 64);
-	sscanf(line.c_str(), "%u,%s", &_key, buf);
+	if (sscanf(line.c_str(), "%u,%s", &_key, buf) != 2) {
+		debugC(kDebugScript, "Malformed ActionAdd line: %s", line.c_str());
+		return;
+	}
 	_value = new ValueSlot(_scriptManager, buf);
 }
 
@@ -84,7 +88,10 @@ ActionAssign::ActionAssign(ZVision *engine, int32 slotKey, const Common::String 
 
 	char buf[64];
 	memset(buf, 0, 64);
-	sscanf(line.c_str(), "%u, %s", &_key, buf);
+	if (sscanf(line.c_str(), "%u, %s", &_key, buf) != 2) {
+		debugC(kDebugScript, "Malformed ActionAssign line: %s", line.c_str());
+		return;
+	}
 	_value = new ValueSlot(_scriptManager, buf);
 }
 
@@ -93,7 +100,7 @@ ActionAssign::~ActionAssign() {
 }
 
 bool ActionAssign::execute() {
-	debug(2, "[%d] = %d", _key, _value->getValue());
+	debugC(kDebugAssign, "[%d] = %d", _key, _value->getValue());
 	_scriptManager->setStateValue(_key, _value->getValue());
 	return true;
 }
@@ -102,21 +109,20 @@ bool ActionAssign::execute() {
 // ActionAttenuate
 //////////////////////////////////////////////////////////////////////////////
 
-// TODO: the effects of this seem permanent until the music node is deleted; check if they should only be applied on a per-cycle basis!
-
 ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
 	_attenuation = 0;
 
-	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
-	debug(3, "Created Action: Attenuate, slotKey %d", _slotKey);
-	debug(3, "Attenuate script: %s", line.c_str());
-	debug(3, "Attenuate parameters: key1 %d, attenuation %d", _key, _attenuation);
+	if (sscanf(line.c_str(), "%u, %d", &_key, &_attenuation) != 2)
+		debugC(kDebugScript, "Malformed ActionAttenuate line: %s", line.c_str());
+	debugC(3, kDebugAction, "Created Action: Attenuate, slotKey %d", _slotKey);
+	debugC(3, kDebugAction, "Attenuate script: %s", line.c_str());
+	debugC(3, kDebugAction, "Attenuate parameters: key1 %d, attenuation %d", _key, _attenuation);
 }
 
 bool ActionAttenuate::execute() {
-	debug(3, "Executing Action: Attenuate, slotkey %d", _slotKey);
+	debugC(3, kDebugAction, "Executing Action: Attenuate, slotkey %d", _slotKey);
 	ScriptingEffect *fx = _scriptManager->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
@@ -138,7 +144,8 @@ ActionChangeLocation::ActionChangeLocation(ZVision *engine, int32 slotKey, const
 	_view = 'y';
 	_offset = 0;
 
-	sscanf(line.c_str(), "%c, %c, %c%c, %u", &_world, &_room, &_node, &_view, &_offset);
+	if (sscanf(line.c_str(), "%c, %c, %c%c, %u", &_world, &_room, &_node, &_view, &_offset) != 5)
+		debugC(kDebugScript, "Malformed ActionChangeLocation line: %s", line.c_str());
 }
 
 bool ActionChangeLocation::execute() {
@@ -161,16 +168,17 @@ ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotKey, const Common::S
 	_twoEndVolume = 0;
 	_timeInMillis = 0;
 
-	sscanf(line.c_str(),
+	if (sscanf(line.c_str(),
 	       "%u %u %d %d %d %d %d",
-	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
-	debug(3, "Created Action: CrossFade, slotKey %d", _slotKey);
-	debug(3, "Crossfade script: %s", line.c_str());
-	debug(3, "Crossfade parameters: key1 %u, key2 %u, startVol1 %d, startVol2 %d, endVol1 %d, endVol2 %d, time %dms", _keyOne, _keyTwo, _oneStartVolume, _twoStartVolume, _oneEndVolume, _twoEndVolume, _timeInMillis);
+	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis) != 7)
+		debugC(kDebugScript, "Malformed ActionCrossFade line: %s", line.c_str());
+	debugC(3, kDebugAction, "Created Action: CrossFade, slotKey %d", _slotKey);
+	debugC(3, kDebugAction, "Crossfade script: %s", line.c_str());
+	debugC(3, kDebugAction, "Crossfade parameters: key1 %u, key2 %u, startVol1 %d, startVol2 %d, endVol1 %d, endVol2 %d, time %dms", _keyOne, _keyTwo, _oneStartVolume, _twoStartVolume, _oneEndVolume, _twoEndVolume, _timeInMillis);
 }
 
 bool ActionCrossfade::execute() {
-	debug(3, "Executing Action: CrossFade, slotkey %d", _slotKey);
+	debugC(3, kDebugAction, "Executing Action: CrossFade, slotkey %d", _slotKey);
 	if (_keyOne) {
 		ScriptingEffect *fx = _scriptManager->getSideFX(_keyOne);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
@@ -233,14 +241,15 @@ bool ActionCursor::execute() {
 ActionDelayRender::ActionDelayRender(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_framesToDelay = 0;
-	sscanf(line.c_str(), "%u", &_framesToDelay);
+	if (sscanf(line.c_str(), "%u", &_framesToDelay) != 1)
+		debugC(kDebugScript, "Malformed ActionDelayRender line: %s", line.c_str());
 	// Limit to 10 frames maximum. This fixes the script bug in ZGI scene px10
 	// (outside Frobozz Electric building), where this is set to 100 (bug #6791).
 	_framesToDelay = MIN<uint32>(_framesToDelay, 10);
 }
 
 bool ActionDelayRender::execute() {
-	debug(3, "Executing Action: DelayRender");
+	debugC(3, kDebugAction, "Executing Action: DelayRender");
 	_engine->setRenderDelay(_framesToDelay);
 	return true;
 }
@@ -253,7 +262,8 @@ ActionDisableControl::ActionDisableControl(ZVision *engine, int32 slotKey, const
 	ResultAction(engine, slotKey) {
 	_key = 0;
 
-	sscanf(line.c_str(), "%u", &_key);
+	if (sscanf(line.c_str(), "%u", &_key) != 1)
+		debugC(kDebugScript, "Malformed ActionDisableControl line: %s", line.c_str());
 }
 
 bool ActionDisableControl::execute() {
@@ -270,7 +280,8 @@ ActionDisplayMessage::ActionDisplayMessage(ZVision *engine, int32 slotKey, const
 	_control = 0;
 	_msgid = 0;
 
-	sscanf(line.c_str(), "%hd %hd", &_control, &_msgid);
+	if (sscanf(line.c_str(), "%hd %hd", &_control, &_msgid) != 2)
+		debugC(kDebugScript, "Malformed ActionDisplayMessage line: %s", line.c_str());
 }
 
 bool ActionDisplayMessage::execute() {
@@ -288,11 +299,11 @@ bool ActionDisplayMessage::execute() {
 
 ActionDissolve::ActionDissolve(ZVision *engine) :
 	ResultAction(engine, 0) {
-	debug(3, "Created action: Dissolve");
+	debugC(3, kDebugAction, "Created action: Dissolve");
 }
 
 bool ActionDissolve::execute() {
-	debug(3, "Executing action: Dissolve");
+	debugC(3, kDebugAction, "Executing action: Dissolve");
 	// Cause black screen flick
 	// Not ideal.  Original engine used a softer dissolve effect; simply turning the screen black is jarring, so disabled for now.
 	// _engine->getRenderManager()->bkgFill(0, 0, 0); // TODO - reimplement this?
@@ -312,7 +323,8 @@ ActionDistort::ActionDistort(ZVision *engine, int32 slotKey, const Common::Strin
 	_startLineScale = 1.0;
 	_endLineScale = 1.0;
 
-	sscanf(line.c_str(), "%hd %hd %f %f %f %f", &_distSlot, &_speed, &_startAngle, &_endAngle, &_startLineScale, &_endLineScale);
+	if (sscanf(line.c_str(), "%hd %hd %f %f %f %f", &_distSlot, &_speed, &_startAngle, &_endAngle, &_startLineScale, &_endLineScale) != 6)
+		debugC(kDebugScript, "Malformed ActionDistort line: %s", line.c_str());
 }
 
 ActionDistort::~ActionDistort() {
@@ -320,7 +332,7 @@ ActionDistort::~ActionDistort() {
 }
 
 bool ActionDistort::execute() {
-	debug(3, "Executing Action: Distort");
+	debugC(3, kDebugAction, "Executing Action: Distort");
 	if (_scriptManager->getSideFX(_distSlot))
 		return true;
 
@@ -337,7 +349,8 @@ ActionEnableControl::ActionEnableControl(ZVision *engine, int32 slotKey, const C
 	ResultAction(engine, slotKey) {
 	_key = 0;
 
-	sscanf(line.c_str(), "%u", &_key);
+	if (sscanf(line.c_str(), "%u", &_key) != 1)
+		debugC(kDebugScript, "Malformed ActionEnableControl line: %s", line.c_str());
 }
 
 bool ActionEnableControl::execute() {
@@ -369,8 +382,10 @@ ActionInventory::ActionInventory(ZVision *engine, int32 slotKey, const Common::S
 	_key = 0;
 
 	char buf[25];
-	sscanf(line.c_str(), "%24s %d", buf, &_key);
-
+	if (sscanf(line.c_str(), "%24s %d", buf, &_key) != 2) {
+		debugC(kDebugScript, "Malformed ActionInventory line: %s", line.c_str());
+		return;
+	}
 	if (strcmp(buf, "add") == 0) {
 		_type = 0;
 	} else if (strcmp(buf, "addi") == 0) {
@@ -382,7 +397,6 @@ ActionInventory::ActionInventory(ZVision *engine, int32 slotKey, const Common::S
 	} else if (strcmp(buf, "cycle") == 0) {
 		_type = 4;
 	}
-
 }
 
 bool ActionInventory::execute() {
@@ -420,34 +434,37 @@ ActionKill::ActionKill(ZVision *engine, int32 slotKey, const Common::String &lin
 	_key = 0;
 	_type = 0;
 	char keytype[25];
-	sscanf(line.c_str(), "%24s", keytype);
-	if (keytype[0] == '"') {
-		if (!scumm_stricmp(keytype, "\"ANIM\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_ANIM;
-		else if (!scumm_stricmp(keytype, "\"AUDIO\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_AUDIO;
-		else if (!scumm_stricmp(keytype, "\"DISTORT\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_DISTORT;
-		else if (!scumm_stricmp(keytype, "\"PANTRACK\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_PANTRACK;
-		else if (!scumm_stricmp(keytype, "\"REGION\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_REGION;
-		else if (!scumm_stricmp(keytype, "\"TIMER\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_TIMER;
-		else if (!scumm_stricmp(keytype, "\"TTYTEXT\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_TTYTXT;
-		else if (!scumm_stricmp(keytype, "\"ALL\""))
-			_type = ScriptingEffect::SCRIPTING_EFFECT_ALL;
-	} else
-		_key = atoi(keytype);
-	debug(3, "Created Action: Kill, slotKey %d, type %s, target slotKey %d", _slotKey, keytype, _key);
+	if (sscanf(line.c_str(), "%24s", keytype) != 1) 
+		debugC(kDebugScript, "Malformed ActionKill line: %s", line.c_str());
+	else {
+		if (keytype[0] == '"') {
+			if (!scumm_stricmp(keytype, "\"ANIM\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_ANIM;
+			else if (!scumm_stricmp(keytype, "\"AUDIO\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_AUDIO;
+			else if (!scumm_stricmp(keytype, "\"DISTORT\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_DISTORT;
+			else if (!scumm_stricmp(keytype, "\"PANTRACK\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_PANTRACK;
+			else if (!scumm_stricmp(keytype, "\"REGION\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_REGION;
+			else if (!scumm_stricmp(keytype, "\"TIMER\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_TIMER;
+			else if (!scumm_stricmp(keytype, "\"TTYTEXT\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_TTYTXT;
+			else if (!scumm_stricmp(keytype, "\"ALL\""))
+				_type = ScriptingEffect::SCRIPTING_EFFECT_ALL;
+		} else
+			_key = atoi(keytype);
+	}
+	debugC(3, kDebugAction, "Created Action: Kill, slotKey %d, type %s, target slotKey %d", _slotKey, keytype, _key);
 }
 
 bool ActionKill::execute() {
 	if (_type)
 		_scriptManager->killSideFxType((ScriptingEffect::ScriptingEffectType)_type);
 	else {
-		debug(2, "Executing Action: Kill, slotKey %d, target slotKey %d", _slotKey, _key);
+		debugC(2, kDebugAction, "Executing Action: Kill, slotKey %d, target slotKey %d", _slotKey, _key);
 		_scriptManager->killSideFx(_key);
 	}
 	return true;
@@ -461,7 +478,8 @@ ActionMenuBarEnable::ActionMenuBarEnable(ZVision *engine, int32 slotKey, const C
 	ResultAction(engine, slotKey) {
 	_menus = 0xFFFF;
 
-	sscanf(line.c_str(), "%hu", &_menus);
+	if (sscanf(line.c_str(), "%hu", &_menus) != 1)
+		debugC(kDebugScript, "Malformed ActionMenuBarEnable line: %s", line.c_str());
 }
 
 bool ActionMenuBarEnable::execute() {
@@ -486,7 +504,10 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	// Volume is optional. If it doesn't appear, assume full volume
 	Common::strcpy_s(volumeBuffer, "100");
 
-	sscanf(line.c_str(), "%u %24s %u %14s", &type, fileNameBuffer, &loop, volumeBuffer);
+	if (sscanf(line.c_str(), "%u %24s %u %14s", &type, fileNameBuffer, &loop, volumeBuffer) < 3) {
+		debugC(kDebugScript, "Malformed ActionMusic line: %s", line.c_str());
+		return;
+	}
 
 	// Type 4 actions are MIDI commands, not files. These are only used by
 	// Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well
@@ -496,7 +517,10 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 		_midi = true;
 		int note;
 		int prog;
-		sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer);
+		if (sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer) != 4) {
+			debugC(kDebugScript, "Malformed ActionMusic MIDI line: %s", line.c_str());
+			break;
+		}
 		_note = note;
 		_prog = prog;
 		_loop = false;
@@ -510,7 +534,7 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
 		// I thought I saw a case like this in Zork Nemesis, so
 		// let's guard against it.
-		warning("\tActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
+		debugC(kDebugSound, "\tActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
 		Common::strcpy_s(volumeBuffer, "100");
 	}
 	_volume = new ValueSlot(_scriptManager, volumeBuffer);
@@ -526,23 +550,23 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	// Certain game scripts can become locked-up if this is not the case.
 	if (_engine->getScriptManager()->getStateValue(_slotKey) == 1)
 		if (!_scriptManager->getSideFX(_slotKey)) {
-			debug(1, "Recreating missing musicnode, slotkey %d", _slotKey);
+			debugC(1, kDebugAction, "Recreating missing musicnode, slotkey %d", _slotKey);
 			execute();
 		}
 
-	debug(2, "Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d, %s", _slotKey, type, fileNameBuffer, _note, _volume->getValue(), _loop ? "looping" : "");
-	debug(4, "Music script: %s", line.c_str());
+	debugC(2, kDebugAction, "Created Action: Music, slotKey %d, type %u, file %24s, note %u, volume %d, %s", _slotKey, type, fileNameBuffer, _note, _volume->getValue(), _loop ? "looping" : "");
+	debugC(4, kDebugAction, "Music script: %s", line.c_str());
 }
 
 ActionMusic::~ActionMusic() {
 	if (!_universe)
 		_scriptManager->killSideFx(_slotKey);
 	delete _volume;
-	debug(2, "Destroyed Action: %sMusic, slotkey %d", _universe ? "Universe_" : "", _slotKey);
+	debugC(2, kDebugAction, "Destroyed Action: %sMusic, slotkey %d", _universe ? "Universe_" : "", _slotKey);
 }
 
 bool ActionMusic::execute() {
-	debug(2, "Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
+	debugC(2, kDebugAction, "Executing Action: Music, slotKey %d, volume %d", _slotKey, _volume->getValue());
 	if (_scriptManager->getSideFX(_slotKey)) {
 		_scriptManager->killSideFx(_slotKey);
 		_scriptManager->setStateValue(_slotKey, 2);
@@ -577,29 +601,30 @@ ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotKey, const Common::Str
 	uint resetMusicNode = 1;  // Original game scripts do not specify this, but require it to be true to work correctly.
 	uint resetMixerOnDelete = 0;  // Original game scripts do not specify this, but require it to be false to work correctly.
 	uint staticScreen = 0;  // Original game scripts do not specify this, but require it to be false to work correctly.
-	sscanf(line.c_str(), "%u %d %u %u %u %u", &_musicSlot, &_pos, &mag, &resetMusicNode, &resetMixerOnDelete, &staticScreen);
+	if (sscanf(line.c_str(), "%u %d %u %u %u %u", &_musicSlot, &_pos, &mag, &resetMusicNode, &resetMixerOnDelete, &staticScreen) < 2)
+		debugC(kDebugScript, "Malformed ActionPanTrack line: %s", line.c_str());
 	_resetMusicNode = resetMusicNode > 0;
 	_resetMixerOnDelete = resetMixerOnDelete > 0;
 	_staticScreen = staticScreen > 0;
 	_mag = mag;
 	if (_resetMusicNode) {
 		if (_scriptManager->getStateValue(_musicSlot) != 2) {
-			debug(3, "Forcing musicSlot %d to 2", _musicSlot);
+			debugC(3, kDebugAction, "Forcing musicSlot %d to 2", _musicSlot);
 			_scriptManager->setStateValue(_musicSlot, 2); // Not all original game pan_track scripts trigger correctly unless this is set!
 		} else
-			debug(3, "musicSlot %d already set to 2", _musicSlot);
+			debugC(3, kDebugAction, "musicSlot %d already set to 2", _musicSlot);
 	} else
-		debug(3, "NOT forcing musicSlot %d to 2", _musicSlot);
-	debug(3, "Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
+		debugC(3, kDebugAction, "NOT forcing musicSlot %d to 2", _musicSlot);
+	debugC(3, kDebugAction, "Created Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 }
 
 ActionPanTrack::~ActionPanTrack() {
 	_scriptManager->killSideFx(_slotKey);
-	debug(3, "Destroyed Action: PanTrack, slotkey %d", _slotKey);
+	debugC(3, kDebugAction, "Destroyed Action: PanTrack, slotkey %d", _slotKey);
 }
 
 bool ActionPanTrack::execute() {
-	debug(3, "Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
+	debugC(3, kDebugAction, "Executing Action: PanTrack, slotkey %d, musicSlot %u, pos %d, mag %d", _slotKey, _musicSlot, _pos, _mag);
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 
@@ -641,8 +666,10 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotKey, c
 	char fileName[25];
 
 	// The two %*u are usually 0 and dont seem to have a use
-	sscanf(line.c_str(), "%24s %*u %*u %d %d", fileName, &_mask, &_framerate);
-
+	if (sscanf(line.c_str(), "%24s %*u %*u %d %d", fileName, &_mask, &_framerate) != 3) {
+		debugC(kDebugScript, "Malformed ActionPreloadAnimation line: %s", line.c_str());
+		return;
+	}
 	// Mask 0 means "no transparency" in this case. Since we use a common blitting
 	// code for images and animations, we set it to -1 to avoid confusion with
 	// color 0, which is used as a mask in some images
@@ -676,7 +703,8 @@ ActionUnloadAnimation::ActionUnloadAnimation(ZVision *engine, int32 slotKey, con
 	ResultAction(engine, slotKey) {
 	_key = 0;
 
-	sscanf(line.c_str(), "%u", &_key);
+	if (sscanf(line.c_str(), "%u", &_key) != 1)
+		debugC(kDebugScript, "Malformed ActionUnloadAnimation line: %s", line.c_str());
 }
 
 bool ActionUnloadAnimation::execute() {
@@ -707,9 +735,12 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotKey, const C
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
-	sscanf(line.c_str(),
-	       "%24s %u %u %u %u %u %u %d %*u %*u %d %d",
-	       fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate);
+	if (sscanf(line.c_str(),
+			"%24s %u %u %u %u %u %u %d %*u %*u %d %d",
+			fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate) != 10) {
+		debugC(kDebugScript, "Malformed ActionPlayAnimation line: %s", line.c_str());
+		return;
+	}
 
 	// Mask 0 means "no transparency" in this case. Since we use a common blitting
 	// code for images and animations, we set it to -1 to avoid confusion with
@@ -761,9 +792,10 @@ ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 sl
 	_endFrame = 0;
 	_loopCount = 0;
 
-	sscanf(line.c_str(),
-	       "%u %u %u %u %u %u %u %u",
-	       &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
+	if (sscanf(line.c_str(),
+			"%u %u %u %u %u %u %u %u",
+			&_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount) != 8)
+		debugC(kDebugScript, "Malformed ActionPlayPreloadAnimation line: %s", line.c_str());
 	       
 	// WORKAROUND for script bug in Zork Nemesis, room tl9e
 	// Original script gives wrong coordinates & frames
@@ -824,7 +856,10 @@ ActionRegion::ActionRegion(ZVision *engine, int32 slotKey, const Common::String 
 
 	int32 x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 
-	sscanf(line.c_str(), "%s %d %d %d %d %hu %hu %hu %hu %s", art, &x1, &y1, &x2, &y2, &_delay, &_type, &_unk1, &_unk2, custom);
+	if (sscanf(line.c_str(), "%s %d %d %d %d %hu %hu %hu %hu %s", art, &x1, &y1, &x2, &y2, &_delay, &_type, &_unk1, &_unk2, custom) != 10) {
+		debugC(kDebugScript, "Malformed ActionRegion line: %s", line.c_str());
+		return;
+	}
 	_art = Common::String(art);
 	_custom = Common::String(custom);
 	_rect = Common::Rect(x1, y1, x2 + 1, y2 + 1);
@@ -835,7 +870,7 @@ ActionRegion::~ActionRegion() {
 }
 
 bool ActionRegion::execute() {
-	debug(2, "Executing Action: Region");
+	debugC(2, kDebugAction, "Executing Action: Region");
 	if (_scriptManager->getSideFX(_slotKey))
 		return true;
 
@@ -844,16 +879,27 @@ bool ActionRegion::execute() {
 	case 0: {
 		uint16 centerX, centerY, frames;
 		double amplitude, waveln, speed;
-		sscanf(_custom.c_str(), "%hu,%hu,%hu,%lf,%lf,%lf,", &centerX, &centerY, &frames, &amplitude, &waveln, &speed);
+		if (sscanf(_custom.c_str(), "%hu,%hu,%hu,%lf,%lf,%lf,", &centerX, &centerY, &frames, &amplitude, &waveln, &speed) != 6) {
+			debugC(kDebugScript, "Malformed ActionRegion custom string: %s", _custom.c_str());
+			break;
+		}
 		effect = new WaveFx(_engine, _slotKey, _rect, _unk1, frames, centerX, centerY, amplitude, waveln, speed);
 	}
 	break;
 	case 1: {
 		uint16 aX, aY, aD;
-		if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
-			sscanf(_art.c_str(), "useart[%hu,%hu,%hu]", &aY, &aX, &aD);
-		else
-			sscanf(_art.c_str(), "useart[%hu,%hu,%hu]", &aX, &aY, &aD);
+		if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
+			if (sscanf(_art.c_str(), "useart[%hu,%hu,%hu]", &aY, &aX, &aD) != 3) {
+				debugC(kDebugScript, "Malformed ActionRegion art string: %s", _art.c_str());
+				break;
+			}
+		}
+		else {
+			if (sscanf(_art.c_str(), "useart[%hu,%hu,%hu]", &aX, &aY, &aD) != 3) {
+				debugC(kDebugScript, "Malformed ActionRegion art string: %s", _art.c_str());
+				break;
+			}
+		}
 		int8 minD;
 		int8 maxD;
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(Common::Point(aX, aY), aD, _rect, &minD, &maxD);
@@ -864,7 +910,10 @@ bool ActionRegion::execute() {
 		int16 dum1;
 		int32 dum2;
 		char buf[64];
-		sscanf(_custom.c_str(), "%hd,%d,%s", &dum1, &dum2, buf);
+		if (sscanf(_custom.c_str(), "%hd,%d,%s", &dum1, &dum2, buf) != 3) {
+				debugC(kDebugScript, "Malformed ActionRegion custom string: %s", _custom.c_str());
+			break;
+		}
 		Graphics::Surface tempMask;
 		_engine->getRenderManager()->readImageToSurface(Common::Path(_art), tempMask);
 		if (_rect.width() != tempMask.w)
@@ -897,7 +946,10 @@ ActionRandom::ActionRandom(ZVision *engine, int32 slotKey, const Common::String 
 	ResultAction(engine, slotKey) {
 	char maxBuffer[64];
 	memset(maxBuffer, 0, 64);
-	sscanf(line.c_str(), "%s", maxBuffer);
+	if (sscanf(line.c_str(), "%s", maxBuffer) != 1) {
+		debugC(kDebugScript, "Malformed ActionRandom line: %s", line.c_str());
+		return;
+	}
 	_max = new ValueSlot(_scriptManager, maxBuffer);
 }
 
@@ -918,7 +970,10 @@ bool ActionRandom::execute() {
 ActionRestoreGame::ActionRestoreGame(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	char buf[128];
-	sscanf(line.c_str(), "%s", buf);
+	if (sscanf(line.c_str(), "%s", buf) != 1) {
+		debugC(kDebugScript, "Malformed ActionRestoreGame line: %s", line.c_str());
+		return;
+	}
 	_fileName = Common::String(buf);
 }
 
@@ -936,7 +991,8 @@ ActionRotateTo::ActionRotateTo(ZVision *engine, int32 slotKey, const Common::Str
 	_time = 0;
 	_toPos = 0;
 
-	sscanf(line.c_str(), "%d, %d", &_toPos, &_time);
+	if (sscanf(line.c_str(), "%d, %d", &_toPos, &_time) != 2)
+		debugC(kDebugScript, "Malformed ActionRotateTo line: %s", line.c_str());
 }
 
 bool ActionRotateTo::execute() {
@@ -956,8 +1012,10 @@ ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotKey, c
 
 	char fileName[25];
 
-	sscanf(line.c_str(), "%u %u %24s %*u %d", &_x, &_y, fileName, &_backgroundColor);
-
+	if (sscanf(line.c_str(), "%u %u %24s %*u %d", &_x, &_y, fileName, &_backgroundColor) != 4) {
+		debugC(kDebugScript, "Malformed ActionSetPartialScreen line: %s", line.c_str());
+		return;
+	}
 	_fileName = Common::String(fileName);
 
 	if (_backgroundColor > 65535) {
@@ -992,8 +1050,10 @@ bool ActionSetPartialScreen::execute() {
 ActionSetScreen::ActionSetScreen(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	char fileName[25];
-	sscanf(line.c_str(), "%24s", fileName);
-
+	if (sscanf(line.c_str(), "%24s", fileName) != 1) {
+		debugC(kDebugScript, "Malformed ActionSetScreen line: %s", line.c_str());
+		return;
+	}
 	_fileName = Common::String(fileName);
 }
 
@@ -1010,11 +1070,12 @@ bool ActionSetScreen::execute() {
 ActionStop::ActionStop(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
-	sscanf(line.c_str(), "%u", &_key);
+	if (sscanf(line.c_str(), "%u", &_key) != 1)
+		debugC(kDebugScript, "Malformed ActionStop line: %s", line.c_str());
 }
 
 bool ActionStop::execute() {
-	debug(2, "Executing Action: Stop, key %d", _key);
+	debugC(2, kDebugAction, "Executing Action: Stop, key %d", _key);
 	_scriptManager->stopSideFx(_key);
 	return true;
 }
@@ -1033,19 +1094,21 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotKey, const Commo
 
 	char fileName[25];
 	uint skipline = 0;    // skipline - render video with skip every second line, not skippable.
-
-	sscanf(line.c_str(), "%24s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
-
-	_fileName = Common::String(fileName);
 	_skippable = true;
+	
+	if (sscanf(line.c_str(), "%24s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline) != 7) {
+		debugC(kDebugScript, "Malformed ActionStreamVideo line: %s", line.c_str());
+		return;
+	}
+	_fileName = Common::String(fileName);
 }
 
 bool ActionStreamVideo::execute() {
-	debug(3, "Executing video stream");
+	debugC(3, kDebugAction, "Executing video stream");
 	Video::VideoDecoder *decoder;
 	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
 	Common::Rect srcRect = Common::Rect(0, 0);
-	debug(3, "Streaming video original scripted destination left=%d, top=%d, right=%d, bottom=%d", destRect.left, destRect.top, destRect.right, destRect.bottom);
+	debugC(3, kDebugAction, "Streaming video original scripted destination left=%d, top=%d, right=%d, bottom=%d", destRect.left, destRect.top, destRect.right, destRect.bottom);
 	Common::String subname = _fileName.baseName();
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);
@@ -1117,7 +1180,7 @@ bool ActionStreamVideo::execute() {
 	_engine->getCursorManager()->showMouse(true);
 	_engine->getSubtitleManager()->destroy(sub);
 	_engine->setRenderDelay(2); // Necessary for avoiding redraw of previous scene between sequential videos (eg totemization sequence in ZGI) & when changing location right after a video (e.g. opening temple door in Nemesis)
-	debug(3, "Completed executing video stream");
+	debugC(3, kDebugAction, "Completed executing video stream");
 
 	return true;
 }
@@ -1133,13 +1196,15 @@ ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotKey, const Common::S
 	char fileName[25];
 	int notUsed = 0;
 
-	sscanf(line.c_str(), "%d %d %24s", &_syncto, &notUsed, fileName);
-
+	if (sscanf(line.c_str(), "%d %d %24s", &_syncto, &notUsed, fileName) != 3) {
+		debugC(kDebugScript, "Malformed ActionSyncSound line: %s", line.c_str());
+		return;
+	}
 	_fileName = Common::String(fileName);
 }
 
 bool ActionSyncSound::execute() {
-	debug(3, "Executing Action: SyncSound");
+	debugC(3, kDebugAction, "Executing Action: SyncSound");
 	ScriptingEffect *fx = _scriptManager->getSideFX(_syncto);
 	if (!fx)
 		return true;
@@ -1159,7 +1224,10 @@ ActionTimer::ActionTimer(ZVision *engine, int32 slotKey, const Common::String &l
 	ResultAction(engine, slotKey) {
 	char timeBuffer[64];
 	memset(timeBuffer, 0, 64);
-	sscanf(line.c_str(), "%s", timeBuffer);
+	if (sscanf(line.c_str(), "%s", timeBuffer) != 1) {
+		debugC(kDebugScript, "Malformed ActionTimer line: %s", line.c_str());
+		return;
+	}
 	_time = new ValueSlot(_scriptManager, timeBuffer);
 }
 
@@ -1185,7 +1253,10 @@ ActionTtyText::ActionTtyText(ZVision *engine, int32 slotKey, const Common::Strin
 
 	char filename[64];
 	int32 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-	sscanf(line.c_str(), "%d %d %d %d %63s %u", &x1, &y1, &x2, &y2, filename, &_delay);
+	if (sscanf(line.c_str(), "%d %d %d %d %63s %u", &x1, &y1, &x2, &y2, filename, &_delay) != 6) {
+		debugC(kDebugScript, "Malformed ActionTtyText line: %s", line.c_str());
+		return;
+	}
 	_r = Common::Rect(x1, y1, x2, y2);
 	_filename = Common::String(filename);
 }

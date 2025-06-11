@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "zvision/detection.h"
 #include "zvision/sound/midi.h"
 
 namespace ZVision {
@@ -37,7 +38,7 @@ MidiManager::MidiManager() {
 		Common::String driverName = MidiDriver::getDeviceString(dev, MidiDriver::DeviceStringType::kDriverName);
 		Common::String deviceName = MidiDriver::getDeviceString(dev, MidiDriver::DeviceStringType::kDeviceName);
 		_mt32 = MidiDriver::getMusicType(dev) == MT_MT32;
-		debug(1, "MIDI opened, driver type: %s, device name: %s", driverName.c_str(), deviceName.c_str());
+		debugC(1, kDebugSound, "MIDI opened, driver type: %s, device name: %s", driverName.c_str(), deviceName.c_str());
 		_available = true;
 		_maxChannels = _driver->MIDI_CHANNEL_COUNT;
 	}
@@ -67,7 +68,7 @@ void MidiManager::noteOn(uint8 channel, uint8 note, uint8 velocity) {
 	_activeChannels[channel].playing = true;
 	_activeChannels[channel].note = note;
 	send(0x90 | channel, note, velocity);
-	debug(1, "MIDI note on, channel %d, note %d, velocity %d", channel, note, velocity);
+	debugC(1, kDebugSound, "MIDI note on, channel %d, note %d, velocity %d", channel, note, velocity);
 }
 
 void MidiManager::noteOff(uint8 channel) {
@@ -89,21 +90,21 @@ int8 MidiManager::getFreeChannel() {
 
 void MidiManager::setVolume(uint8 channel, uint8 volume) {
 	assert(channel <= 15);
-	debug(1, "MIDI volume out %d", volume >> 1);
+	debugC(1, kDebugSound, "MIDI volume out %d", volume >> 1);
 	send(0xB0 | channel, 0x07, volume >> 1);
 }
 
 void MidiManager::setBalance(uint8 channel, int8 balance) {
 	assert(channel <= 15);
 	uint8 _balance = (uint8)(balance + 128);
-	debug(1, "MIDI balance out %d", _balance >> 1);
+	debugC(1, kDebugSound, "MIDI balance out %d", _balance >> 1);
 	send(0xB0 | channel, 0x08, _balance >> 1);
 }
 
 void MidiManager::setPan(uint8 channel, int8 pan) {
 	assert(channel <= 15);
 	uint8 _pan = (uint8)(pan + 128);
-	debug(1, "MIDI pan in %d, out %d", pan, _pan >> 1);
+	debugC(1, kDebugSound, "MIDI pan in %d, out %d", pan, _pan >> 1);
 	send(0xB0 | channel, 0x0A, _pan >> 1);
 }
 

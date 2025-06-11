@@ -114,7 +114,7 @@ void ScriptManager::update(uint deltaTimeMillis) {
 	}
 
 	updateNodes(deltaTimeMillis);
-	debug(5, "Script nodes updated");
+	debugC(5, kDebugLoop, "Script nodes updated");
 	if (!execScope(_nodeview)) {
 		return;
 	}
@@ -320,7 +320,7 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 
 	// criteriaList can be empty. Aka, the puzzle should be executed immediately
 	if (puzzle->criteriaList.empty() || criteriaMet) {
-		debug(1, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
+		debugC(1, kDebugPuzzle, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
 		// Set the puzzle as completed
 		setStateValue(puzzle->key, 1);
@@ -533,7 +533,7 @@ void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	debug(1, "Mouse panorama/script coordinates %d x %d", backgroundImageSpacePos.x, backgroundImageSpacePos.y);
+	debugC(1, kDebugMouse, "Mouse panorama/script coordinates %d x %d", backgroundImageSpacePos.x, backgroundImageSpacePos.y);
 	if (!_activeControls) {
 		return;
 	}
@@ -596,6 +596,7 @@ void ScriptManager::changeLocation(const Location &_newLocation) {
 }
 
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
+	debugC(1, kDebugScript, "\tPreparing to change location");
 	_changeLocationDelayCycles = 1;
 
 	_nextLocation.world = world;
@@ -623,7 +624,7 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 
 void ScriptManager::ChangeLocationReal(bool isLoading) {
 	assert(_nextLocation.world != 0);
-	debug(1, "\tChanging location to: World %c, Room %c, Node %c, View %c, Offset %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
+	debugC(1, kDebugScript, "\tChanging location to: World %c, Room %c, Node %c, View %c, Offset %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
 	const bool enteringMenu = (_nextLocation.world == 'g' && _nextLocation.room == 'j');
 	const bool leavingMenu = (_currentLocation.world == 'g' && _currentLocation.room == 'j');
@@ -760,6 +761,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	}
 
 	_engine->getRenderManager()->checkBorders();
+	debugC(1, kDebugScript, "\tLocation change complete");
 }
 
 void ScriptManager::serialize(Common::WriteStream *stream) {

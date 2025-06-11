@@ -50,9 +50,8 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 			uint width;
 			uint height;
 
-			sscanf(values.c_str(), "%u,%u,%u,%u", &x, &y, &width, &height);
-
-			_hotspots.push_back(Common::Rect(x, y, x + width + 1, y + height + 1));
+			if (sscanf(values.c_str(), "%u,%u,%u,%u", &x, &y, &width, &height) == 4)
+				_hotspots.push_back(Common::Rect(x, y, x + width + 1, y + height + 1));
 		} else if (param.matchString("cursor", true)) {
 			_cursor = _engine->getCursorManager()->getCursorId(values);
 		} else if (param.matchString("animation", true)) {

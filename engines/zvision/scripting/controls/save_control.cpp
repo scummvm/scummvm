@@ -46,13 +46,13 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 		if (param.matchString("savebox", true)) {
 			int saveId;
 			int inputId;
-
-			sscanf(values.c_str(), "%d %d", &saveId, &inputId);
-			saveElement elmnt;
-			elmnt.inputKey = inputId;
-			elmnt.saveId = saveId;
-			elmnt.exist = false;
-			_inputs.push_back(elmnt);
+			if (sscanf(values.c_str(), "%d %d", &saveId, &inputId) == 2) {
+				saveElement elmnt;
+				elmnt.inputKey = inputId;
+				elmnt.saveId = saveId;
+				elmnt.exist = false;
+				_inputs.push_back(elmnt);
+			}
 		} else if (param.matchString("control_type", true)) {
 			if (values.contains("save"))
 				_saveControl = true;

@@ -184,7 +184,7 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 		}
 	}
 	mutationTime = _system->getMillis() - mutationTime;
-	debug(5, "\tPanorama mutation time %dms, %s quality", mutationTime, _highQuality ? "high" : "low");
+	debugC(5, kDebugGraphics, "\tPanorama mutation time %dms, %s quality", mutationTime, _highQuality ? "high" : "low");
 }
 
 void RenderTable::generateRenderTable() {
@@ -205,9 +205,9 @@ void RenderTable::generateRenderTable() {
 }
 
 void RenderTable::generateLookupTable(bool tilt) {
-	debug(1, "Generating %s lookup table.", tilt ? "tilt" : "panorama");
-	debug(5, "_halfWidth %f, _halfHeight %f", _halfWidth, _halfHeight);
-	debug(5, "_halfRows %d, _halfColumns %d", _halfRows, _halfColumns);
+	debugC(1, kDebugGraphics, "Generating %s lookup table.", tilt ? "tilt" : "panorama");
+	debugC(5, kDebugGraphics, "_halfWidth %f, _halfHeight %f", _halfWidth, _halfHeight);
+	debugC(5, kDebugGraphics, "_halfRows %d, _halfColumns %d", _halfRows, _halfColumns);
 	uint32 generationTime = _system->getMillis();
 	float alpha, cosAlpha, polarCoordInCylinderCoords, linearCoordInCylinderCoords, cylinderRadius, xOffset, yOffset;
 	uint32 indexTL, indexBL, indexTR, indexBR;
@@ -278,8 +278,8 @@ void RenderTable::generateLookupTable(bool tilt) {
 		}
 	}
 	generationTime = _system->getMillis() - generationTime;
-	debug(1, "Render table generated, %s quality", _highQuality ? "high" : "low");
-	debug(1, "\tRender table generation time %dms", generationTime);
+	debugC(1, kDebugGraphics, "Render table generated, %s quality", _highQuality ? "high" : "low");
+	debugC(1, kDebugGraphics, "\tRender table generation time %dms", generationTime);
 }
 
 void RenderTable::setPanoramaFoV(float fov) {

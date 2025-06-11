@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/rational.h"
 #include "engines/util.h"
+#include "zvision/detection.h"
 #include "zvision/zvision.h"
 #include "zvision/core/console.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
@@ -277,7 +278,7 @@ void ZVision::processEvents() {
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
-	debug(6, "ZVision::onMouseMove()");
+	debugC(6, kDebugEvent, "ZVision::onMouseMove()");
 	_menu->onMouseMove(pos);
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 	Common::Rect workingArea = _renderManager->getWorkingArea();
@@ -314,7 +315,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	//               ^
 
 	// Clip the horizontal mouse position to the working window
-	debug(6, "Mouse pos.x, %d, clipping with %d+1, %d+1", pos.x, workingArea.left, workingArea.right);
+	debugC(6, kDebugEvent, "Mouse pos.x, %d, clipping with %d+1, %d+1", pos.x, workingArea.left, workingArea.right);
 	Common::Point clippedPos = pos;
 	clippedPos.x = CLIP<int16>(pos.x, workingArea.left + 1, workingArea.right - 1);
 	if (workingArea.contains(clippedPos) && !_menu->inMenu()) {

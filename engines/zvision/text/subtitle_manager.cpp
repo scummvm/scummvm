@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "zvision/detection.h"
 #include "zvision/file/search_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
@@ -56,7 +57,7 @@ void SubtitleManager::process(int32 deltatime) {
 			_redraw = true;
 		// Update all subtitles' respective deletion timers
 		if (it->_value->process(deltatime)) {
-			debug(4, "Deleting subtitle, subId=%d", it->_key);
+			debugC(4, kDebugSubtitle, "Deleting subtitle, subId=%d", it->_key);
 			_subsFocus.remove(it->_key);
 			delete it->_value;
 			_subsList.erase(it);
@@ -65,18 +66,18 @@ void SubtitleManager::process(int32 deltatime) {
 	}
 	if (_subsList.size() == 0)
 		if (_subId != 0) {
-			debug(4, "Resetting subId to 0");
+			debugC(4, kDebugSubtitle, "Resetting subId to 0");
 			_subId = 0;
 			_subsFocus.clear();
 		}
 	if (_redraw) {
-		debug(4, "Redrawing subtitles");
+		debugC(4, kDebugSubtitle, "Redrawing subtitles");
 		// Blank subtitle buffer
 		_renderManager->clearTextSurface();
 		// Render just the most recent subtitle
 		if (_subsFocus.size()) {
 			uint16 curSub = _subsFocus.front();
-			debug(4, "Rendering subtitle %d", curSub);
+			debugC(4, kDebugSubtitle, "Rendering subtitle %d", curSub);
 			Subtitle *sub = _subsList[curSub];
 			if (sub->_lineId >= 0) {
 				Graphics::Surface textSurface;
@@ -102,7 +103,7 @@ void SubtitleManager::update(int32 count, uint16 subid) {
 
 uint16 SubtitleManager::create(const Common::Path &subname, bool vob) {
 	_subId++;
-	debug(2, "Creating scripted subtitle, subId=%d", _subId);
+	debugC(2, kDebugSubtitle, "Creating scripted subtitle, subId=%d", _subId);
 	_subsList[_subId] = new Subtitle(_engine, subname, vob);
 	_subsFocus.set(_subId);
 	return _subId;
@@ -110,7 +111,7 @@ uint16 SubtitleManager::create(const Common::Path &subname, bool vob) {
 
 uint16 SubtitleManager::create(const Common::Path &subname, Audio::SoundHandle handle) {
 	_subId++;
-	debug(2, "Creating scripted subtitle, subId=%d", _subId);
+	debugC(2, kDebugSubtitle, "Creating scripted subtitle, subId=%d", _subId);
 	_subsList[_subId] = new AutomaticSubtitle(_engine, subname, handle);
 	_subsFocus.set(_subId);
 	return _subId;
@@ -118,7 +119,7 @@ uint16 SubtitleManager::create(const Common::Path &subname, Audio::SoundHandle h
 
 uint16 SubtitleManager::create(const Common::String &str) {
 	_subId++;
-	debug(2, "Creating simple subtitle, subId=%d, message %s", _subId, str.c_str());
+	debugC(2, kDebugSubtitle, "Creating simple subtitle, subId=%d, message %s", _subId, str.c_str());
 	_subsList[_subId] = new Subtitle(_engine, str, _textArea);
 	_subsFocus.set(_subId);
 	return _subId;
@@ -126,21 +127,21 @@ uint16 SubtitleManager::create(const Common::String &str) {
 
 void SubtitleManager::destroy(uint16 id) {
 	if (_subsList.contains(id)) {
-		debug(2, "Marking subtitle %d for immediate deletion", id);
+		debugC(2, kDebugSubtitle, "Marking subtitle %d for immediate deletion", id);
 		_subsList[id]->_toDelete = true;
 	}
 }
 
 void SubtitleManager::destroy(uint16 id, int16 delay) {
 	if (_subsList.contains(id)) {
-		debug(2, "Marking subtitle %d for deletion in %dms", id, delay);
+		debugC(2, kDebugSubtitle, "Marking subtitle %d for deletion in %dms", id, delay);
 		_subsList[id]->_timer = delay;
 	}
 }
 
 void SubtitleManager::timedMessage(const Common::String &str, uint16 milsecs) {
 	uint16 msgid = create(str);
-	debug(1, "initiating timed message: %s to subtitle id %d, time %d", str.c_str(), msgid, milsecs);
+	debugC(1, kDebugSubtitle, "initiating timed message: %s to subtitle id %d, time %d", str.c_str(), msgid, milsecs);
 	update(0, msgid);
 	process(0);
 	destroy(msgid, milsecs);
@@ -148,7 +149,7 @@ void SubtitleManager::timedMessage(const Common::String &str, uint16 milsecs) {
 
 bool SubtitleManager::askQuestion(const Common::String &str) {
 	uint16 msgid = create(str);
-	debug(1, "initiating user question: %s to subtitle id %d", str.c_str(), msgid);
+	debugC(1, kDebugSubtitle, "initiating user question: %s to subtitle id %d", str.c_str(), msgid);
 	update(0, msgid);
 	process(0);
 	_renderManager->renderSceneToScreen(true);
@@ -208,7 +209,7 @@ bool SubtitleManager::askQuestion(const Common::String &str) {
 
 void SubtitleManager::delayedMessage(const Common::String &str, uint16 milsecs) {
 	uint16 msgid = create(str);
-	debug(1, "initiating delayed message: %s to subtitle id %d, delay %dms", str.c_str(), msgid, milsecs);
+	debugC(1, kDebugSubtitle, "initiating delayed message: %s to subtitle id %d, delay %dms", str.c_str(), msgid, milsecs);
 	update(0, msgid);
 	process(0);
 	_renderManager->renderSceneToScreen(true);
@@ -236,7 +237,7 @@ void SubtitleManager::delayedMessage(const Common::String &str, uint16 milsecs) 
 
 void SubtitleManager::showDebugMsg(const Common::String &msg, int16 delay) {
 	uint16 msgid = create(msg);
-	debug(1, "initiating in-game debug message: %s to subtitle id %d, delay %dms", msg.c_str(), msgid, delay);
+	debugC(1, kDebugSubtitle, "initiating in-game debug message: %s to subtitle id %d, delay %dms", msg.c_str(), msgid, delay);
 	update(0, msgid);
 	process(0);
 	destroy(msgid, delay);
@@ -264,28 +265,30 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 			// Not used
 		} else if (str.matchString("*Rectangle*", true)) {
 			int32 x1, y1, x2, y2;
-			sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
-			_textArea = Common::Rect(x1, y1, x2, y2);
-			debug(1, "Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
-			// Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
-			// To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
-			// This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
-			_textArea.translate(_textOffset.x, _textOffset.y);  // Convert working area coordinates to text area coordinates
-			debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
+			if (sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2) == 4) {
+				_textArea = Common::Rect(x1, y1, x2, y2);
+				debugC(1, kDebugSubtitle, "Original subtitle script rectangle coordinates: l%d, t%d, r%d, b%d", x1, y1, x2, y2);
+				// Original game subtitle scripts appear to define subtitle rectangles relative to origin of working area.
+				// To allow arbitrary aspect ratios, we need to instead place these relative to origin of text area.
+				// This will allow the managed text area to then be arbitrarily placed on the screen to suit different aspect ratios.
+				_textArea.translate(_textOffset.x, _textOffset.y);  // Convert working area coordinates to text area coordinates
+				debugC(1, kDebugSubtitle, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
+			}
 		} else if (str.matchString("*TextFile*", true)) {
 			char filename[64];
-			sscanf(str.c_str(), "%*[^:]:%s", filename);
-			Common::File txtFile;
-			if (_engine->getSearchManager()->openFile(txtFile, Common::Path(filename))) {
-				while (!txtFile.eos()) {
-					Common::String txtline = readWideLine(txtFile).encode();
-					Line curLine;
-					curLine.start = -1;
-					curLine.stop = -1;
-					curLine.subStr = txtline;
-					_lines.push_back(curLine);
+			if (sscanf(str.c_str(), "%*[^:]:%s", filename) == 1) {
+				Common::File txtFile;
+				if (_engine->getSearchManager()->openFile(txtFile, Common::Path(filename))) {
+					while (!txtFile.eos()) {
+						Common::String txtline = readWideLine(txtFile).encode();
+						Line curLine;
+						curLine.start = -1;
+						curLine.stop = -1;
+						curLine.subStr = txtline;
+						_lines.push_back(curLine);
+					}
+					txtFile.close();
 				}
-				txtFile.close();
 			}
 		} else {
 			int32 st; // Line start time
@@ -316,7 +319,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::String &str, const Common::Rec
 	_toDelete(false),
 	_redraw(false) {
 	_textArea = textArea;
-	debug(1, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
+	debugC(1, kDebugSubtitle, "Text area coordinates: l%d, t%d, r%d, b%d", _textArea.left, _textArea.top, _textArea.right, _textArea.bottom);
 	Line curLine;
 	curLine.start = -1;
 	curLine.stop = 0;

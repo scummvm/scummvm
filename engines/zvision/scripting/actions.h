@@ -64,7 +64,7 @@ public:
 
 private:
 	uint32 _key;
-	ValueSlot *_value;
+	ValueSlot *_value = NULL;
 };
 
 class ActionAssign : public ResultAction {
@@ -75,7 +75,7 @@ public:
 
 private:
 	uint32 _key;
-	ValueSlot *_value;
+	ValueSlot *_value = NULL;
 };
 
 class ActionAttenuate : public ResultAction {

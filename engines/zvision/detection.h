@@ -26,6 +26,23 @@
 
 namespace ZVision {
 
+enum ZVisionDebugChannels {
+	kDebugScript = 1,
+	kDebugLoop,
+	kDebugPuzzle,
+	kDebugAction,
+	kDebugControl,
+	kDebugEffect,
+	kDebugGraphics,
+	kDebugVideo,
+	kDebugSound,
+	kDebugSubtitle,
+	kDebugFile,
+	kDebugMouse,
+	kDebugAssign,
+	kDebugEvent
+};
+
 enum ZVisionGameId {
 	GID_NONE = 0,
 	GID_NEMESIS = 1,

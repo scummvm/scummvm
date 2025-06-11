@@ -109,7 +109,7 @@ const Graphics::Surface *FogFx::draw(const Graphics::Surface &srcSubRect) {
 void FogFx::update() {
 	_pos += _engine->getScriptManager()->getStateValue(StateKey_EF9_Speed);
 	_pos %= _fog.w;
-	debug(2, "Updating fog effect");
+	debugC(2, kDebugEffect, "Updating fog effect");
 	uint8 dr = _engine->getScriptManager()->getStateValue(StateKey_EF9_R);
 	uint8 dg = _engine->getScriptManager()->getStateValue(StateKey_EF9_G);
 	uint8 db = _engine->getScriptManager()->getStateValue(StateKey_EF9_B);

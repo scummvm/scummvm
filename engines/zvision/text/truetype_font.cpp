@@ -101,7 +101,7 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 	}
 
 	if (newFontName.empty()) {
-		debug("Could not identify font: %s. Reverting to Arial", fontName.c_str());
+		warning("Could not identify font: %s. Reverting to Arial", fontName.c_str());
 		newFontName = "arial.ttf";
 		liberationFontName = "LiberationSans-Regular.ttf";
 	}

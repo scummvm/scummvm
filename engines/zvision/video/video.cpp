@@ -43,7 +43,7 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	tmpFileName.toLowercase();
 	Video::VideoDecoder *animation = NULL;
 
-	debug(1, "Loading animation %s", fileName.toString().c_str());
+	debugC(1, kDebugVideo, "Loading animation %s", fileName.toString().c_str());
 
 	if (tmpFileName.hasSuffix(".rlf"))
 		animation = new RLFDecoder();
@@ -88,30 +88,30 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 	bool scaled = false;
 	workingArea.moveTo(0, 0); // Set local origin system in this scope to origin of working area
 
-	debug(1, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", srcRect.left, srcRect.top, srcRect.right, srcRect.bottom, dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
+	debugC(1, kDebugVideo, "Playing video, source %d,%d,%d,%d, at destination %d,%d,%d,%d", srcRect.left, srcRect.top, srcRect.right, srcRect.bottom, dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 
 	if (dstRect.isEmpty())
 		dstRect = frameArea;
 	dstRect.clip(workingArea);
 
-	debug(2, "Clipped dstRect = %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
+	debugC(2, kDebugVideo, "Clipped dstRect = %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 
 	if (srcRect.isEmpty())
 		srcRect = frameArea;
 	else
 		srcRect.clip(frameArea);
 
-	debug(2, "Clipped srcRect = %d,%d,%d,%d", srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
+	debugC(2, kDebugVideo, "Clipped srcRect = %d,%d,%d,%d", srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
 
 	Graphics::ManagedSurface &outSurface = _renderManager->getVidSurface(dstRect);
 	dstRect.moveTo(0, 0);
 	dstRect.clip(Common::Rect(outSurface.w, outSurface.h));
 
-	debug(2, "dstRect clipped with outSurface = %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
+	debugC(2, kDebugVideo, "dstRect clipped with outSurface = %d,%d,%d,%d", dstRect.left, dstRect.top, dstRect.right, dstRect.bottom);
 
-	debug(1, "Final size %d x %d, at working window coordinates %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
+	debugC(1, kDebugVideo, "Final size %d x %d, at working window coordinates %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
 	if (srcRect.width() != dstRect.width() || srcRect.height() != dstRect.height()) {
-		debug(1, "Video will be scaled from %dx%d to %dx%d", srcRect.width(), srcRect.height(), dstRect.width(), dstRect.height());
+		debugC(1, kDebugVideo, "Video will be scaled from %dx%d to %dx%d", srcRect.width(), srcRect.height(), dstRect.width(), dstRect.height());
 		scaled = true;
 	}
 
@@ -155,10 +155,10 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 			if (frame) {
 				_renderManager->renderSceneToScreen(true, true, true); // Redraw text area to clean background of subtitles for videos that don't fill entire working area, e.g, Nemesis sarcophagi
 				if (scaled) {
-					debug(8, "Scaled blit from area %d x %d to video output surface at output surface position %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
+					debugC(8, kDebugVideo, "Scaled blit from area %d x %d to video output surface at output surface position %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
 					outSurface.blitFrom(*frame, srcRect, dstRect);
 				} else {
-					debug(8, "Simple blit from area %d x %d to video output surface at output surface position %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
+					debugC(8, kDebugVideo, "Simple blit from area %d x %d to video output surface at output surface position %d, %d", srcRect.width(), srcRect.height(), dstRect.left, dstRect.top);
 					outSurface.simpleBlitFrom(*frame, srcRect, dstRect.origin());
 				}
 				_subtitleManager->process(0);
@@ -177,7 +177,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 	_videoIsPlaying = false;
 	_clock.start();
 
-	debug(1, "Video playback complete");
+	debugC(1, kDebugVideo, "Video playback complete");
 }
 
 double ZVision::getVobAmplification(Common::String fileName) const {
