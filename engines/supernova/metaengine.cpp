@@ -30,6 +30,10 @@
 #include "supernova/supernova.h"
 #include "supernova/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_IMPROVED,
@@ -88,6 +92,8 @@ public:
 		else
 			return Common::String::format("%s.%03d", prefix, saveGameIdx);
 	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -199,6 +205,217 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray SupernovaMetaEngine::initKeymaps(const char *target) const {
+	
+	using namespace Common;
+	using namespace Supernova;
+
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	Keymap *engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "supernova-default", _("Default keymappings"));
+	Keymap *menuKeymap = new Keymap(Keymap::kKeymapTypeGame, "menu", _("Menu keymappings"));
+	Keymap *cutsceneKeymap = new Keymap(Keymap::kKeymapTypeGame, "cutscene", _("Cutscene keymappings"));
+	Keymap *improvedKeymap = new Keymap(Keymap::kKeymapTypeGame, "improved-mode", _("Improved mode keymappings"));
+	Keymap *textReaderKeymap = new Keymap(Keymap::kKeymapTypeGame, "text-reader", _("Text reader keymappings"));
+	Keymap *computerKeymap = new Keymap(Keymap::kKeymapTypeGame, "computer", _("Computer keymappings"));
+
+	Common::Action *act;
+	
+	act = new Common::Action(kStandardActionLeftClick, _("Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Perform Default Action"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("HELP", _("Help"));
+	act->setCustomEngineActionEvent(kActionHelp);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("INSTRUCTIONS", _("Instructions"));
+	act->setCustomEngineActionEvent(kActionInstr);
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("INFORMATION", _("Information"));
+	act->setCustomEngineActionEvent(kActionInfo);
+	act->addDefaultInputMapping("F3");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("TEXTSPEED", _("Text speed"));
+	act->setCustomEngineActionEvent(kActionSpeed);
+	act->addDefaultInputMapping("F4");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("PAUSE", _("Pause"));
+	act->setCustomEngineActionEvent(kActionPause);
+	act->addDefaultInputMapping("F5");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kActionQuit);
+	act->addDefaultInputMapping("A+x");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("UP", _("Up"));
+	act->setCustomEngineActionEvent(kActionUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	textReaderKeymap->addAction(act);
+
+	act = new Common::Action("DOWN", _("Down"));
+	act->setCustomEngineActionEvent(kActionDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	textReaderKeymap->addAction(act);
+
+	act = new Common::Action("PGUP", _("Page up"));
+	act->setCustomEngineActionEvent(kActionPgUp);
+	act->addDefaultInputMapping("PAGEUP");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	textReaderKeymap->addAction(act);
+
+	act = new Common::Action("PGDOWN", _("Page down"));
+	act->setCustomEngineActionEvent(kActionPgDown);
+	act->addDefaultInputMapping("PAGEDOWN");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	textReaderKeymap->addAction(act);
+
+	act = new Common::Action("EXIT", _("Exit"));
+	act->setCustomEngineActionEvent(kActionExit);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	textReaderKeymap->addAction(act);
+
+	act = new Common::Action("SELECT", _("Select"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	menuKeymap->addAction(act);
+
+	act = new Common::Action("SKIP", _("Skip cutscene"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	cutsceneKeymap->addAction(act);
+
+	act = new Common::Action("SKPL", _("Skip line"));
+	act->setCustomEngineActionEvent(kActionSkipLine);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_A");
+	cutsceneKeymap->addAction(act);
+
+	act = new Common::Action("GO", _("Go"));
+	act->setCustomEngineActionEvent(kActionGo);
+	act->addDefaultInputMapping("1");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionLook);
+	act->addDefaultInputMapping("2");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("TAKE", _("Take"));
+	act->setCustomEngineActionEvent(kActionTake);
+	act->addDefaultInputMapping("3");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("OPEN", _("Open"));
+	act->setCustomEngineActionEvent(kActionOpen);
+	act->addDefaultInputMapping("4");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("CLOSE", _("Close"));
+	act->setCustomEngineActionEvent(kActionClose);
+	act->addDefaultInputMapping("5");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("PUSH", _("Push"));
+	act->setCustomEngineActionEvent(kActionPush);
+	act->addDefaultInputMapping("6");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("PULL", _("Pull"));
+	act->setCustomEngineActionEvent(kActionPull);
+	act->addDefaultInputMapping("7");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("USE", _("Use"));
+	act->setCustomEngineActionEvent(kActionUse);
+	act->addDefaultInputMapping("8");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("TALK", _("Talk"));
+	act->setCustomEngineActionEvent(kActionTalk);
+	act->addDefaultInputMapping("9");
+	improvedKeymap->addAction(act);
+
+	act = new Common::Action("GIVE", _("Give"));
+	act->setCustomEngineActionEvent(kActionGive);
+	act->addDefaultInputMapping("0");
+	improvedKeymap->addAction(act);
+
+	if (gameId == "msn1") {
+
+		act = new Common::Action("EXIT", _("Exit"));
+		act->setCustomEngineActionEvent(kActionExit);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_B");
+		computerKeymap->addAction(act);
+		
+		act = new Common::Action("OFFICE", _("Office manager"));
+		act->setCustomEngineActionEvent(kActionOfficeManager);
+		act->addDefaultInputMapping("1");
+		act->addDefaultInputMapping("JOY_LEFT");
+		computerKeymap->addAction(act);
+
+		act = new Common::Action("PHONE", _("Phone"));
+		act->setCustomEngineActionEvent(kActionPhone);
+		act->addDefaultInputMapping("2");
+		act->addDefaultInputMapping("JOY_UP");
+		computerKeymap->addAction(act);
+
+		act = new Common::Action("PROTEXT", _("ProText"));
+		act->setCustomEngineActionEvent(kActionProText);
+		act->addDefaultInputMapping("3");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		computerKeymap->addAction(act);
+
+		act = new Common::Action("CALCULATA", _("Calculata"));
+		act->setCustomEngineActionEvent(kActionCalculata);
+		act->addDefaultInputMapping("4");
+		act->addDefaultInputMapping("JOY_DOWN");
+		computerKeymap->addAction(act);
+
+	}
+
+	Common::KeymapArray keymaps(6);
+	keymaps[0] = engineKeymap;
+	keymaps[1] = menuKeymap;
+	keymaps[2] = cutsceneKeymap;
+	keymaps[3] = improvedKeymap;
+	keymaps[4] = textReaderKeymap;
+	keymaps[5] = computerKeymap;
+
+	menuKeymap->setEnabled(false);
+	cutsceneKeymap->setEnabled(false);
+	textReaderKeymap->setEnabled(false);
+	computerKeymap->setEnabled(false);
+	
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SUPERNOVA)
