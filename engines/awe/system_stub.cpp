@@ -145,6 +145,9 @@ void SystemStubScummVM::processEvents() {
 			case KEYBIND_JUMP:
 				_pi.jump = true;
 				break;
+			case KEYBIND_CODE:
+				_pi.code = true;
+				break;
 			default:
 				break;
 			}
