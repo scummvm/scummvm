@@ -132,8 +132,6 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
 	uint32 destOffset = 0;
 	uint32 sourceOffset = 0;
-	uint32 srcIndexXL, srcIndexYT;
-
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
 	if (highQuality != _highQuality) {
@@ -141,44 +139,40 @@ void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcB
 		generateRenderTable();
 	}
 	uint32 mutationTime = _system->getMillis();
-
 	if (_highQuality) {
 		// Apply bilinear interpolation
-		uint32 srcIndexYB, srcIndexXR;
-		uint32 rTL, rTR, rBL, rBR, rF;
-		uint32 gTL, gTR, gBL, gBR, gF;
-		uint32 bTL, bTR, bBL, bBR, bF;
-		FilterPixel curP;
 		for (int16 y = 0; y < srcBuf->h; ++y) {
 			sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
-				curP = _internalBuffer[sourceOffset + x];
-				srcIndexYT = y + curP._src.top;
-				srcIndexYB = y + curP._src.bottom;
-				srcIndexXL = x + curP._src.left;
-				srcIndexXR = x + curP._src.right;
+				const FilterPixel &curP = _internalBuffer[sourceOffset + x];
+				const uint32 srcIndexYT = y + curP._src.top;
+				const uint32 srcIndexYB = y + curP._src.bottom;
+				const uint32 srcIndexXL = x + curP._src.left;
+				const uint32 srcIndexXR = x + curP._src.right;
+				uint32 rTL, rTR, rBL, rBR;
+				uint32 gTL, gTR, gBL, gBR;
+				uint32 bTL, bTR, bBL, bBR;
 				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], rTL, gTL, bTL);
 				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXR], rTR, gTR, bTR);
 				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], rBL, gBL, bBL);
 				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXR], rBR, gBR, bBR);
-				rF = curP._fTL * rTL + curP._fTR * rTR + curP._fBL * rBL + curP._fBR * rBR;
-				gF = curP._fTL * gTL + curP._fTR * gTR + curP._fBL * gBL + curP._fBR * gBR;
-				bF = curP._fTL * bTL + curP._fTR * bTR + curP._fBL * bBL + curP._fBR * bBR;
+				const uint32 rF = curP._fTL * rTL + curP._fTR * rTR + curP._fBL * rBL + curP._fBR * rBR;
+				const uint32 gF = curP._fTL * gTL + curP._fTR * gTR + curP._fBL * gBL + curP._fBR * gBR;
+				const uint32 bF = curP._fTL * bTL + curP._fTR * bTR + curP._fBL * bBL + curP._fBR * bBR;
 				destBuffer[destOffset] = mergeColor(rF, gF, bF);
 				destOffset++;
 			}
 		}
 	} else {
 		// Apply nearest-neighbour interpolation
-		uint32 index;
 		for (int16 y = 0; y < srcBuf->h; ++y) {
 			sourceOffset = y * _numColumns;
 			for (int16 x = 0; x < srcBuf->w; ++x) {
-				index = sourceOffset + x;
+				const uint32 index = sourceOffset + x;
 				// RenderTable only stores offsets from the original coordinates
-				srcIndexXL = x + (_internalBuffer[index]._xDir ? _internalBuffer[index]._src.right : _internalBuffer[index]._src.left);
-				srcIndexYT = y + (_internalBuffer[index]._yDir ? _internalBuffer[index]._src.bottom : _internalBuffer[index]._src.top);
-				destBuffer[destOffset] = sourceBuffer[srcIndexYT * _numColumns + srcIndexXL];
+				const uint32 srcIndexX = x + (_internalBuffer[index]._xDir ? _internalBuffer[index]._src.right : _internalBuffer[index]._src.left);
+				const uint32 srcIndexY = y + (_internalBuffer[index]._yDir ? _internalBuffer[index]._src.bottom : _internalBuffer[index]._src.top);
+				destBuffer[destOffset] = sourceBuffer[srcIndexY * _numColumns + srcIndexX];
 				destOffset++;
 			}
 		}
@@ -209,15 +203,13 @@ void RenderTable::generateLookupTable(bool tilt) {
 	debugC(5, kDebugGraphics, "_halfWidth %f, _halfHeight %f", _halfWidth, _halfHeight);
 	debugC(5, kDebugGraphics, "_halfRows %d, _halfColumns %d", _halfRows, _halfColumns);
 	uint32 generationTime = _system->getMillis();
-	float alpha, cosAlpha, polarCoordInCylinderCoords, linearCoordInCylinderCoords, cylinderRadius, xOffset, yOffset;
+	float cosAlpha, polarCoordInCylinderCoords, cylinderRadius, xOffset, yOffset;
 	uint32 indexTL, indexBL, indexTR, indexBR;
-	uint x = 0;
-	uint y = 0;
 	auto outerLoop = [&](uint & polarCoord, float & halfPolarSize, float & scale) {
 		// polarCoord is the coordinate of the working window pixel parallel to the direction of camera rotation
 		// halfPolarSize is the distance from the central axis to the outermost working window pixel in the direction of camera rotation
 		// alpha represents the angle in the direction of camera rotation between the view axis and the centre of a pixel at the given polar coordinate
-		alpha = atan(((float)polarCoord - halfPolarSize) / cylinderRadius);
+		const float alpha = atan(((float)polarCoord - halfPolarSize) / cylinderRadius);
 		// To map the polar coordinate to the cylinder surface coordinates, we just need to calculate the arc length
 		// We also scale it by linearScale
 		polarCoordInCylinderCoords = (cylinderRadius * scale * alpha) + halfPolarSize;
@@ -226,7 +218,7 @@ void RenderTable::generateLookupTable(bool tilt) {
 	auto innerLoop = [&](uint & polarCoord, uint & linearCoord, float & halfLinearSize,  float & polarOffset, float & linearOffset) {
 		// To calculate linear coordinate in cylinder coordinates, we can do similar triangles comparison,
 		// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
-		linearCoordInCylinderCoords = halfLinearSize + ((float)linearCoord - halfLinearSize) * cosAlpha;
+		const float linearCoordInCylinderCoords = halfLinearSize + ((float)linearCoord - halfLinearSize) * cosAlpha;
 		linearOffset = linearCoordInCylinderCoords - linearCoord;
 		polarOffset = polarCoordInCylinderCoords - polarCoord;
 		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality);
@@ -240,16 +232,15 @@ void RenderTable::generateLookupTable(bool tilt) {
 		_internalBuffer[indexBR].flipH();
 	};
 	if (tilt) {
-		uint32 columnIndexTL, columnIndexBL, columnIndexTR, columnIndexBR;
 		cylinderRadius = (_halfWidth + 0.5f) / tan(_tiltOptions.verticalFOV);
 		_tiltOptions.gap = cylinderRadius * atan2((float)(_halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
-		for (y = 0; y <= _halfRows; ++y) {
+		for (uint y = 0; y <= _halfRows; ++y) {
 			outerLoop(y, _halfHeight, _tiltOptions.linearScale);
-			columnIndexTL = y * _numColumns;
-			columnIndexBL = (_numRows - (y + 1)) * _numColumns;
-			columnIndexTR = columnIndexTL + (_numColumns - 1);
-			columnIndexBR = columnIndexBL + (_numColumns - 1);
-			for (x = 0; x <= _halfColumns; ++x) {
+			const uint32 columnIndexTL = y * _numColumns;
+			const uint32 columnIndexBL = (_numRows - (y + 1)) * _numColumns;
+			const uint32 columnIndexTR = columnIndexTL + (_numColumns - 1);
+			const uint32 columnIndexBR = columnIndexBL + (_numColumns - 1);
+			for (uint x = 0; x <= _halfColumns; ++x) {
 				indexTL = columnIndexTL + x;
 				indexBL = columnIndexBL + x;
 				indexTR = columnIndexTR - x;
@@ -258,15 +249,14 @@ void RenderTable::generateLookupTable(bool tilt) {
 			}
 		}
 	} else {
-		uint32 rowIndexT, rowIndexB, columnIndexL, columnIndexR;
 		cylinderRadius = (_halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
-		for (x = 0; x <= _halfColumns; ++x) {
-			columnIndexL = x;
-			columnIndexR = (_numColumns - 1) - x;
-			rowIndexT = 0;
-			rowIndexB = _numColumns * (_numRows - 1);
+		for (uint x = 0; x <= _halfColumns; ++x) {
+			const uint32 columnIndexL = x;
+			const uint32 columnIndexR = (_numColumns - 1) - x;
+			uint32 rowIndexT = 0;
+			uint32 rowIndexB = _numColumns * (_numRows - 1);
 			outerLoop(x, _halfWidth, _panoramaOptions.linearScale);
-			for (y = 0; y <= _halfRows; ++y) {
+			for (uint y = 0; y <= _halfRows; ++y) {
 				indexTL = rowIndexT + columnIndexL;
 				indexBL = rowIndexB + columnIndexL;
 				indexTR = rowIndexT + columnIndexR;
