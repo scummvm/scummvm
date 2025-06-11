@@ -192,7 +192,7 @@ bool Design::isInBounds(int x, int y) {
 		error("Design::isInBounds(): Surface is null");
 	if (_maskImage == nullptr)
 		return false;
-	if (x > _maskImage->w || y > _maskImage->h)
+	if (x >= _maskImage->w || y >= _maskImage->h)
 		return false;
 
 	byte pixel = ((byte *)_maskImage->getBasePtr(x, y))[0];
