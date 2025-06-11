@@ -54,30 +54,30 @@ public:
 	void quant(float dt);
 
 private:
-	int _gameSize;
-	int _angles;
+	int _gameSize = 0;
+	int _angles = 0;
 
-	int _globalAngle;
-	float _rotateTimePeriod;
-	float _nextRotateTime;
+	int _globalAngle = 0;
+	float _rotateTimePeriod = 0.f;
+	float _nextRotateTime = 0.f;
 
-	bool _singleSize;
+	bool _singleSize = false;
 	mgVect2f _size;
-	float depth_;
+	float _depth = 0.f;
 
 	Nodes _nodes;
 	/// Номер места с которого взяли фрагмент
-	int _prevPlace;
+	int _prevPlace = -1;
 	/// Индекс фрагмента на мыши
-	int _pickedItem;
+	int _pickedItem = -1;
 
-	int _inField;
+	int _inField = 0; // количество фрагментов на поле
 
-	float _nextObjTime;
-	int _mouseObjPose;
+	float _nextObjTime = 0.f;
+	int _mouseObjPose = -1; // индекс положения фрагмента на мыши в стеке
 
 	QDObject _stackBottom;
-	int _stackSize;
+	int _stackSize = 0;
 	mgVect2f _stackPlaceSize;
 
 	Indexes _stack;
@@ -85,9 +85,9 @@ private:
 
 	FlyQDObjects _flyObjs;
 	/// скорость падения новых в стек
-	float _flySpeed;
+	float _flySpeed = 0.f;
 	/// скорость возврата в стек
-	float _returnSpeed;
+	float _returnSpeed = -1.f;
 
 	Coords _positions;
 

@@ -149,7 +149,7 @@ Puzzle::Puzzle(MinigameManager *runtime) {
 	_size = _runtime->getSize(_nodes[0].obj);
 	debugC(2, kDebugMinigames, "size = (%6.2f,%6.2f)", _size.x, _size.y);
 
-	depth_ = _nodes[0].obj.depth(runtime);
+	_depth = _nodes[0].obj.depth(runtime);
 
 	_stackPlaceSize = _runtime->getParameter("inventory_place_size", _size * 1.2f);
 	assert(_stackPlaceSize.x > 0.f && _stackPlaceSize.x < 500.f && _stackPlaceSize.y > 0.f && _stackPlaceSize.y < 500.f);
