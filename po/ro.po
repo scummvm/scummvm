@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-11 01:41+0000\n"
+"POT-Creation-Date: 2025-06-11 22:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -3572,11 +3572,11 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:431
+#: engines/metaengine.cpp:439
 msgid "Autosave on"
 msgstr ""
 
-#: engines/metaengine.cpp:431
+#: engines/metaengine.cpp:439
 msgid "Autosave off"
 msgstr ""
 
