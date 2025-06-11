@@ -30,7 +30,12 @@ bool enumerateIniSections(Common::INIFile& ini, const Common::Path &fname, Commo
 
 	Common::Path iniFilePath(fname);
 	ini.allowNonEnglishCharacters();
-	ini.loadFromFile(iniFilePath);
+
+	if (!ini.loadFromFile(iniFilePath)) {
+		warning("Failed to load INI file: %s", iniFilePath.toString().c_str());
+		return false;
+	}
+
 	sectionList = ini.getSections();
 	int size = sectionList.size();
 
