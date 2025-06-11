@@ -92,8 +92,9 @@ namespace Wage {
 int WageEngine::getSceneIndex(Scene *scene) const {
 	assert(scene);
 	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
-	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
-		if (orderedScenes[i] == scene) return i-1;
+	for (int32 i = 0; i < (int)orderedScenes.size(); ++i) {
+		if (orderedScenes[i] == scene)
+			return i - 1;
 	}
 
 	warning("Scene's index not found");
