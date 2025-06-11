@@ -27,14 +27,7 @@ namespace Graphics {
 
 FrameLimiter::FrameLimiter(OSystem *system, const uint framerate, const bool deferToVsync) :
 	_system(system),
-	_deferToVsync(deferToVsync),
-	_frameStart(0),
-	_frameLimit(0),
-	_frameDuration(0),
-	_drawStart(0),
-	_drawDuration(0),
-	_loopDuration(0),
-	_delay(0) {
+	_deferToVsync(deferToVsync) {
 	initialize(framerate);
 }
 
