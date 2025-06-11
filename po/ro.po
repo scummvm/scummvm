@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-10 20:46+0000\n"
+"POT-Creation-Date: 2025-06-11 01:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -6154,7 +6154,7 @@ msgstr ""
 msgid "Enter Level Code"
 msgstr ""
 
-#: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
+#: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
 msgid "Game Keys"
 msgstr ""

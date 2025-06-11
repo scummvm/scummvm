@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-10 20:46+0000\n"
+"POT-Creation-Date: 2025-06-11 01:41+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -6315,7 +6315,7 @@ msgstr ""
 msgid "Enter Level Code"
 msgstr ""
 
-#: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
+#: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
 #, fuzzy
 #| msgid "Game Options"

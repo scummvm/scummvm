@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-10 20:46+0000\n"
+"POT-Creation-Date: 2025-06-11 01:41+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6958,7 +6958,7 @@ msgstr "Hopp"
 msgid "Enter Level Code"
 msgstr ""
 
-#: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
+#: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
 msgid "Game Keys"
 msgstr "Spilltaster"

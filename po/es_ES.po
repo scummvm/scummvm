@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-10 20:46+0000\n"
+"POT-Creation-Date: 2025-06-11 01:41+0000\n"
 "PO-Revision-Date: 2025-06-10 21:38+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -6955,7 +6955,7 @@ msgstr "Saltar"
 msgid "Enter Level Code"
 msgstr "Introducir código de nivel"
 
-#: engines/awe/metaengine.cpp:89 engines/dgds/metaengine.cpp:87
+#: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
 msgid "Game Keys"
 msgstr "Teclas del juego"
