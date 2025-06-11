@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-11 01:41+0000\n"
-"PO-Revision-Date: 2025-05-22 09:25+0000\n"
+"PO-Revision-Date: 2025-06-11 06:08+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -3607,10 +3607,8 @@ msgid "Could not apply filtering setting."
 msgstr "Kunde inte tillämpa filterinställningen."
 
 #: engines/engine.cpp:415
-#, fuzzy
-#| msgid "Could not apply filtering setting."
 msgid "Could not apply shader setting."
-msgstr "Kunde inte tillämpa filterinställningen."
+msgstr "Kunde inte tillämpa skuggningsinställningen."
 
 #: engines/engine.cpp:531
 msgid "Error"
@@ -6638,15 +6636,9 @@ msgstr ""
 "som inte stöds."
 
 #: engines/ags/ags.cpp:157
-#, fuzzy
-#| msgid ""
-#| "The selected game uses a pre-2.5 version of the AGS engine, which is not "
-#| "supported."
 msgid ""
 "The selected game uses version 4 of the AGS engine, which is not supported."
-msgstr ""
-"Det valda spelet använder en version av AGS-motorn som är äldre än 2.5 och "
-"som inte stöds."
+msgstr "Det valda spelet använder version 4 av AGS-motorn som inte stöds."
 
 #: engines/ags/ags.cpp:165
 msgid ""
