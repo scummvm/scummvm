@@ -35,11 +35,11 @@ public:
 
 	void quant(float dt);
 private:
-	int _gameSize;
-	int _angles;
+	int _gameSize = 0;
+	int _angles = 0;
 
-	float _rotateTimePeriod;
-	float _nextRotateTime;
+	float _rotateTimePeriod = 0.5f; // время поворота фишки
+	float _nextRotateTime = 0.f; // время следующего поворота
 
 	mgVect2f _size;
 
@@ -53,9 +53,9 @@ private:
 	Nodes _nodes;
 
 	// Индекс фрагмента на мыши
-	int _pickedItem;
+	int _pickedItem = -1;
 	// активные фрагменты после обмена
-	int _last1, _last2;
+	int _last1 = 0, _last2 = 0;
 
 	Coords _positions;
 
