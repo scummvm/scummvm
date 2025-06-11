@@ -40,8 +40,8 @@ public:
 	};
 
 private:
-	const char *controlName_;
-	const char *colorReaded_;
+	const char *_controlName;
+	const char *_colorReaded;
 
 	struct Node {
 		Node();
@@ -51,12 +51,12 @@ private:
 	};
 
 	typedef Std::vector<Node> Nodes;
-	Nodes nodes_;
+	Nodes _nodes;
 
-	float startTime_;
-	int startScreenTag_;
-	int currentTag_;
-	float startTagTime_;
+	float _startTime;
+	int _startScreenTag;
+	int _currentTag;
+	float _startTagTime;
 
 	MinigameManager *_runtime;
 };

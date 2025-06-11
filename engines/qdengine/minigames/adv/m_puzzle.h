@@ -54,42 +54,42 @@ public:
 	void quant(float dt);
 
 private:
-	int gameSize_;
-	int angles_;
+	int _gameSize;
+	int _angles;
 
-	int globalAngle_;
-	float rotateTimePeriod_;
-	float nextRotateTime_;
+	int _globalAngle;
+	float _rotateTimePeriod;
+	float _nextRotateTime;
 
-	bool singleSize_;
-	mgVect2f size_;
+	bool _singleSize;
+	mgVect2f _size;
 	float depth_;
 
-	Nodes nodes_;
+	Nodes _nodes;
 	/// Номер места с которого взяли фрагмент
-	int prevPlace_;
+	int _prevPlace;
 	/// Индекс фрагмента на мыши
-	int pickedItem_;
+	int _pickedItem;
 
-	int inField_;
+	int _inField;
 
-	float nextObjTime_;
-	int mouseObjPose_;
+	float _nextObjTime;
+	int _mouseObjPose;
 
-	QDObject stackBottom_;
-	int stackSize_;
-	mgVect2f stackPlaceSize_;
+	QDObject _stackBottom;
+	int _stackSize;
+	mgVect2f _stackPlaceSize;
 
-	Indexes stack_;
-	Indexes field_;
+	Indexes _stack;
+	Indexes _field;
 
-	FlyQDObjects flyObjs_;
+	FlyQDObjects _flyObjs;
 	/// скорость падения новых в стек
-	float flySpeed_;
+	float _flySpeed;
 	/// скорость возврата в стек
-	float returnSpeed_;
+	float _returnSpeed;
 
-	Coords positions_;
+	Coords _positions;
 
 	const char *getStateName(int angle, bool selected, bool small) const;
 	/// повернуть фишку

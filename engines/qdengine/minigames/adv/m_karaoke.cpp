@@ -44,12 +44,12 @@ Karaoke::Node::Node() {
 Karaoke::Karaoke(MinigameManager *runtime) {
 	_runtime = runtime;
 
-	controlName_ = _runtime->parameter("control_name", true);
-	if (!controlName_ || !*controlName_)
+	_controlName = _runtime->parameter("control_name", true);
+	if (!_controlName || !*_controlName)
 		return;
 
-	colorReaded_ = _runtime->parameter("color_first", true);
-	if (!colorReaded_ || !*colorReaded_)
+	_colorReaded = _runtime->parameter("color_first", true);
+	if (!_colorReaded || !*_colorReaded)
 		return;
 
 	struct Parse {
@@ -143,50 +143,50 @@ Karaoke::Karaoke(MinigameManager *runtime) {
 		return;
 	}
 
-	Parse(file, nodes_);
-	debugC(2, kDebugMinigames, "read %d tags", nodes_.size());
+	Parse(file, _nodes);
+	debugC(2, kDebugMinigames, "read %d tags", _nodes.size());
 
-	startScreenTag_ = 0;
-	currentTag_ = 0;
+	_startScreenTag = 0;
+	_currentTag = 0;
 
-	startTime_ = 0.001f * g_system->getMillis();
-	startTagTime_ = 0.f;
+	_startTime = 0.001f * g_system->getMillis();
+	_startTagTime = 0.f;
 
 	setState(MinigameInterface::RUNNING);
 
 }
 
 void Karaoke::quant(float dt) {
-	float curTime = 0.001f * g_system->getMillis() - startTime_;
+	float curTime = 0.001f * g_system->getMillis() - _startTime;
 	if (curTime < 0.f)
 		curTime = 0.f;
 
-	Node& node = nodes_[currentTag_];
+	Node& node = _nodes[_currentTag];
 	if (node.type == CLEAR) {
-		++currentTag_;
-		if ((uint)currentTag_ == nodes_.size())
+		++_currentTag;
+		if ((uint)_currentTag == _nodes.size())
 			setState(MinigameInterface::GAME_WIN);
-		startScreenTag_ = currentTag_;
+		_startScreenTag = _currentTag;
 		return;
 	}
 
 	Common::String outText;
-	outText += colorReaded_;
-	int idx = startScreenTag_;
-	while (idx < currentTag_) {
-		assert((uint)idx < nodes_.size());
-		assert(nodes_[idx].type == STRING);
-		outText += nodes_[idx].text.c_str();
+	outText += _colorReaded;
+	int idx = _startScreenTag;
+	while (idx < _currentTag) {
+		assert((uint)idx < _nodes.size());
+		assert(_nodes[idx].type == STRING);
+		outText += _nodes[idx].text.c_str();
 		++idx;
 	}
 
-	float phase = (curTime - startTagTime_) / node.time;
+	float phase = (curTime - _startTagTime) / node.time;
 	assert(phase >= 0.f);
 	if (phase >= 1.f) {
 		outText += node.text + "&>";
-		++currentTag_;
-		startTagTime_ += node.time;
-		if ((uint)currentTag_ == nodes_.size())
+		++_currentTag;
+		_startTagTime += node.time;
+		if ((uint)_currentTag == _nodes.size())
 			setState(MinigameInterface::GAME_WIN);
 	} else {
 		int part = phase * node.text.size();
@@ -195,17 +195,17 @@ void Karaoke::quant(float dt) {
 	}
 
 	++idx;
-	while ((uint)idx < nodes_.size()) {
-		if (nodes_[idx].type == CLEAR)
+	while ((uint)idx < _nodes.size()) {
+		if (_nodes[idx].type == CLEAR)
 			break;
-		outText += nodes_[idx].text.c_str();
+		outText += _nodes[idx].text.c_str();
 		++idx;
 	}
 
 	if (_runtime->mouseRightPressed())
 		debugC(2, kDebugMinigames, "%s", outText.c_str());
 
-	_runtime->setText(controlName_, outText.c_str());
+	_runtime->setText(_controlName, outText.c_str());
 }
 
 } // namespace QDEngine
