@@ -69,7 +69,7 @@ public:
 	uint _screenId = 0;
 
 private:
-	ScreenDeclarationSectionType getSectionType(Chunk& chunk);
+	ScreenDeclarationSectionType getSectionType(Chunk &chunk);
 };
 
 enum FileDeclarationSectionType {

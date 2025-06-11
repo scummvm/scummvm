@@ -367,7 +367,7 @@ bool Context::readHeaderSection(Chunk &chunk) {
 		// TODO: Avoid the copying here!
 		const uint PALETTE_ENTRIES = 256;
 		const uint PALETTE_BYTES = PALETTE_ENTRIES * 3;
-		byte* buffer = new byte[PALETTE_BYTES];
+		byte *buffer = new byte[PALETTE_BYTES];
 		chunk.read(buffer, PALETTE_BYTES);
 		_palette = new Graphics::Palette(buffer, PALETTE_ENTRIES);
 		delete[] buffer;

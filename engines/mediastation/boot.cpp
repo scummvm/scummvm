@@ -144,7 +144,7 @@ SubfileDeclarationSectionType SubfileDeclaration::getSectionType(Chunk &chunk) {
 #pragma endregion
 
 #pragma region CursorDeclaration
-CursorDeclaration::CursorDeclaration(Chunk& chunk) {
+CursorDeclaration::CursorDeclaration(Chunk &chunk) {
 	uint16 unk1 = chunk.readTypedUint16(); // Always 0x0001
 	_id = chunk.readTypedUint16();
 	_unk = chunk.readTypedUint16();
@@ -154,7 +154,7 @@ CursorDeclaration::CursorDeclaration(Chunk& chunk) {
 #pragma endregion
 
 #pragma region Boot
-Boot::Boot(const Common::Path &path) : Datafile(path){
+Boot::Boot(const Common::Path &path) : Datafile(path) {
 	Subfile subfile = getNextSubfile();
 	Chunk chunk = subfile.nextChunk();
 

@@ -46,4 +46,3 @@ ScriptValue Function::execute(Common::Array<ScriptValue> &args) {
 }
 
 } // End of namespace MediaStation
-

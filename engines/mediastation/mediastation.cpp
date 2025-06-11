@@ -149,11 +149,11 @@ Common::Error MediaStationEngine::run() {
 	}
 	_cursor->showCursor();
 
-    if (ConfMan.hasKey("entry_context")) {
+	if (ConfMan.hasKey("entry_context")) {
 		// For development purposes, we can choose to start at an arbitrary context
 		// in this title. This might not work in all cases.
-        uint entryContextId = ConfMan.get("entry_context").asUint64();
-        warning("Starting at user-requested context %d", entryContextId);
+		uint entryContextId = ConfMan.get("entry_context").asUint64();
+		warning("Starting at user-requested context %d", entryContextId);
 		_requestedScreenBranchId = entryContextId;
 	} else {
 		_requestedScreenBranchId = _boot->_entryContextId;

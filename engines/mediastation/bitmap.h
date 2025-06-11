@@ -63,6 +63,6 @@ private:
 	void decompress(Chunk &chunk);
 };
 
-}
+} // End of namespace MediaStation
 
 #endif

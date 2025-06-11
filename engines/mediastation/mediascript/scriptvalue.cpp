@@ -234,8 +234,7 @@ BuiltInMethod ScriptValue::asMethodId() const {
 
 bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &rhs) {
 	if (lhs.getType() != rhs.getType()) {
-		error("Attempt to compare mismatched types %s and %s",
-		      scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
+		error("Attempt to compare mismatched types %s and %s", scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
 	}
 
 	switch (lhs.getType()) {

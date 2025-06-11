@@ -115,7 +115,7 @@ public:
 
 	// ReadStream implementation
 	virtual bool eos() const { return _parentStream->eos(); };
-	virtual bool err() const {return _parentStream->err(); };
+	virtual bool err() const { return _parentStream->err(); };
 	virtual void clearErr() { _parentStream->clearErr(); };
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 	virtual int64 pos() const { return _parentStream->pos(); };

@@ -41,8 +41,7 @@ bool BitmapHeader::isCompressed() {
 	return (_compressionType != kUncompressedBitmap1) && (_compressionType != kUncompressedBitmap2);
 }
 
-Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :
-	_bitmapHeader(bitmapHeader) {
+Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) : _bitmapHeader(bitmapHeader) {
 	// The header must be constructed beforehand.
 	int16 width = _bitmapHeader->_dimensions.x;
 	int16 height = _bitmapHeader->_dimensions.y;
@@ -212,4 +211,4 @@ void Bitmap::decompress(Chunk &chunk) {
 	}
 }
 
-}
+} // End of namespace MediaStation

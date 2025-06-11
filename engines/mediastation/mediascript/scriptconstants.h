@@ -206,7 +206,7 @@ enum EventType {
 	kMovieStoppedEvent = 31,
 	kMovieBeginEvent = 32,
 
-	//SPRITE EVENTS.
+	// SPRITE EVENTS.
 	// Just "MovieEnd" in source.
 	kSpriteMovieEndEvent = 23,
 
