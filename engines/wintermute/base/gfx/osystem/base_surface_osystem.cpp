@@ -135,17 +135,16 @@ bool BaseSurfaceOSystem::finishLoad() {
 		_surface->copyFrom(*image->getSurface());
 	}
 
-	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+	if (_filename.hasSuffixIgnoreCase(".bmp")) {
+		// Ignores alpha channel for BMPs
+		needsColorKey = true;
+	} else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
 		// WME 1.x always use colorkey, even for images with transparency
 		needsColorKey = true;
 		replaceAlpha = false;
 	} else if (BaseEngine::instance().isFoxTail()) {
 		// FoxTail does not use colorkey
 		needsColorKey = false;
-	} else if (_filename.hasSuffix(".bmp")) {
-		// generic WME Lite ignores alpha channel for BMPs
-		needsColorKey = true;
-		replaceAlpha = false;
 	} else if (image->getSurface()->format.aBits() == 0) {
 		// generic WME Lite does not use colorkey for non-BMPs with transparency
 		needsColorKey = true;
