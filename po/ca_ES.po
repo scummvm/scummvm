@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-11 01:41+0000\n"
-"PO-Revision-Date: 2025-05-23 20:31+0000\n"
+"PO-Revision-Date: 2025-06-11 11:00+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3526,10 +3526,8 @@ msgid "Could not apply filtering setting."
 msgstr "No s'ha pogut aplicar la configuració de filtratge."
 
 #: engines/engine.cpp:415
-#, fuzzy
-#| msgid "Could not apply filtering setting."
 msgid "Could not apply shader setting."
-msgstr "No s'ha pogut aplicar la configuració de filtratge."
+msgstr "No s'ha pogut aplicar la configuració del «shader»."
 
 #: engines/engine.cpp:531
 msgid "Error"
@@ -6246,15 +6244,10 @@ msgstr ""
 "és compatible."
 
 #: engines/ags/ags.cpp:157
-#, fuzzy
-#| msgid ""
-#| "The selected game uses a pre-2.5 version of the AGS engine, which is not "
-#| "supported."
 msgid ""
 "The selected game uses version 4 of the AGS engine, which is not supported."
 msgstr ""
-"El joc seleccionat utilitza una versió anterior a 2.5 del motor AGS, que no "
-"és compatible."
+"El joc seleccionat utilitza la versió 4 del motor AGS, que no és compatible."
 
 #: engines/ags/ags.cpp:165
 msgid ""
