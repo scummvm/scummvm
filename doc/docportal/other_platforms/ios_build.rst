@@ -10,7 +10,7 @@ What you'll need
 
 - A Mac computer with Xcode installed. Xcode is a free App, available from the Mac App Store.
 - An Apple Developer account. You can sign up for a free account on the `Apple Developer Member Center <https://developer.apple.com/membercenter/>`_ with your Apple ID.
-- The ScummVM `iOS Libraries <https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v3.zip>`_ downloaded, and the zip file extracted.
+- The ScummVM `iOS Libraries <https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v4.zip>`_ downloaded, and the zip file extracted.
 
 .. note::
 
@@ -37,7 +37,7 @@ Create a new directory called ``build`` at the same level as the repository you 
 
     mkdir build
 
-Move the contents of the ``scummvm-ios7-libs-v3`` folder you extracted earlier into the ``build`` directory, using either the Finder, or the command line as follows:
+Move the contents of the ``scummvm-ios7-libs-v4`` folder you extracted earlier into the ``build`` directory, using either the Finder, or the command line as follows:
 
 .. code-block::
 
@@ -66,7 +66,7 @@ It's time to generate the Xcode project. Run the following on the command line:
 
 .. code::
 
-    ../scummvm/devtools/create_project/xcode/build/Release/create_project ../scummvm --xcode --use-xcframework --enable-faad --enable-fluidsynth --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-nasm --disable-taskbar --disable-tts
+    ../scummvm/devtools/create_project/xcode/build/Release/create_project ../scummvm --xcode --use-xcframework --enable-faad --enable-gif --enable-mikmod --enable-vpx --enable-mpc --disable-nasm --disable-taskbar --disable-tts
 
 The resulting directory structure looks like this:
 
