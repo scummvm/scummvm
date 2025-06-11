@@ -208,6 +208,14 @@ bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 //// Extended Saves
 /////////////////////////////////////////
 
+ExtendedSavegameHeader::~ExtendedSavegameHeader() {
+	if (thumbnail)
+		thumbnail->free();
+
+	delete thumbnail;
+}
+
+
 void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
 		Common::String desc, bool isAutosave) {
 	appendExtendedSaveToStream(saveFile, playtime, desc, isAutosave);
