@@ -19,6 +19,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Mom Don't Worry.
    - Added support for Dog-n-cat: In the Footsteps of Unprecedented Beasts.
    - Added support for Dog-n-cat: Island of Dr Ratiarty.
+   - Added support for Out of this World (Another World).
 
  Drascula:
    - Fixed displaying accented characters.
