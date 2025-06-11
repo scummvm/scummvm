@@ -101,6 +101,8 @@ Menu::Menu() {
 		_backoutY = 0;
 		_warpX = 0;
 		_warpY = 4;
+		_warpBackoutX = 0;
+		_warpBackoutY = 0;
 	} else {
 		_menuX = 48 * 8;
 		_menuY = 80;
