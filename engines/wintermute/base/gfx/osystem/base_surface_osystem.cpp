@@ -135,7 +135,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 		_surface->copyFrom(*image->getSurface());
 	}
 
-	if (_filename.hasSuffixIgnoreCase(".bmp")) {
+	if (_filename.hasSuffix(".bmp")) {
 		// Ignores alpha channel for BMPs
 		needsColorKey = true;
 	} else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {

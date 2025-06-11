@@ -147,7 +147,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette(), img.getPaletteCount());
 #endif
 
-	if (_filename.hasSuffixIgnoreCase(".bmp")) {
+	if (_filename.hasSuffix(".bmp")) {
 		// Ignores alpha channel for BMPs
 		needsColorKey = true;
 	} else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
