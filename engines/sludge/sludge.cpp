@@ -31,6 +31,7 @@
 #include "sludge/fileset.h"
 #include "sludge/fonttext.h"
 #include "sludge/floor.h"
+#include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/language.h"
 #include "sludge/main_loop.h"
@@ -46,6 +47,8 @@
 #include "sludge/timing.h"
 
 namespace Sludge {
+
+extern LoadedFunction *allRunningFunctions; // In function.cpp
 
 SludgeEngine *g_sludge;
 
@@ -138,7 +141,21 @@ bool SludgeEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 bool SludgeEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return !g_sludge->_evtMan->quit();
+	if (g_sludge->_evtMan->quit())
+		return false;
+
+	if (g_sludge->_gfxMan->isFrozen()) {
+		return false;
+	}
+
+	Sludge::LoadedFunction *thisFunction = allRunningFunctions;
+	while (thisFunction) {
+		if (thisFunction->freezerLevel)
+			return false;
+		thisFunction = thisFunction->next;
+	}
+
+	return true;
 }
 
 Common::Error SludgeEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
