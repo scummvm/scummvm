@@ -91,7 +91,7 @@ private:
 	int _selected = 0;
 	int _hovered = 0;
 
-	bool _quickReselect;
+	bool _quickReselect = false;
 
 	AnimationState _animationState = NO_ANIMATION;
 	int _animatedNodes[2] =  { 0 };
