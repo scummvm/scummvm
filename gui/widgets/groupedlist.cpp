@@ -239,8 +239,14 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		} else if (isGroupHeader(_listIndex[newSelectedItem])) {
 			int groupID = indexToGroupID(_listIndex[newSelectedItem]);
+			int oldSelection = getSelected();
 			_selectedItem = -1;
 			toggleGroup(groupID);
+			// Try to preserve the selection, but without scrolling
+			if (oldSelection != -1) {
+				_selectedItem = findDataIndex(oldSelection);
+				sendCommand(kListSelectionChangedCmd, _selectedItem);
+			}
 		}
 	}
 
