@@ -264,8 +264,12 @@ uint32 BaseSoundBuffer::getPosition() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setPosition(uint32 pos) {
-	if (isPlaying()) {
-		warning("BaseSoundBuffer::SetPosition - not implemented for playing sounds yet.");
+	if (_stream) {
+		_stream->seek(pos);
+	} else {
+		if (isPlaying()) {
+			warning("BaseSoundBuffer::SetPosition - not implemented for playing sounds yet.");
+		}
 	}
 	_startPos = pos;
 	return STATUS_OK;
