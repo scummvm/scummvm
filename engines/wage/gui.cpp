@@ -302,10 +302,8 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 		if (_engine->_defaultSaveSlot != -1) {
 			_engine->_isGameOver = false;
 
-			_engine->loadGameState(_engine->_defaultSaveSlot);
 			_engine->_world->_weaponMenuDisabled = false;
-			_engine->_gui->regenCommandsMenu();
-			_engine->_gui->regenWeaponsMenu();
+			_engine->loadGameState(_engine->_defaultSaveSlot);
 
 			_scene = nullptr; 	// To force current scene to be redrawn
 			_engine->redrawScene();
