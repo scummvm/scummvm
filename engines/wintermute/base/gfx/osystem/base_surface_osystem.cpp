@@ -110,12 +110,6 @@ bool BaseSurfaceOSystem::finishLoad() {
 	_width = image->getSurface()->w;
 	_height = image->getSurface()->h;
 
-	bool isSaveGameGrayscale = _filename.matchString("savegame:*g", true);
-	if (isSaveGameGrayscale) {
-		warning("grayscaleConversion not yet implemented");
-		// FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img); TODO
-	}
-
 	_surface->free();
 	delete _surface;
 
@@ -133,6 +127,17 @@ bool BaseSurfaceOSystem::finishLoad() {
 		_surface->copyFrom(*image->getSurface());
 	}
 
+	if (_filename.matchString("savegame:*g", true)) {
+		uint8 r, g, b, a;
+		for (int x = 0; x < _surface->w; x++) {
+			for (int y = 0; y < _surface->h; y++) {
+				_surface->format.colorToARGB(_surface->getPixel(x, y), a, r, g, b);
+				uint8 grey = (uint8)(0.2126f * r + 0.7152f * g + 0.0722f * b);
+				_surface->setPixel(x, y, _surface->format.ARGBToColor(a, grey, grey, grey));
+			}
+		}
+	}
+	
 	if (_filename.hasSuffix(".bmp")) {
 		// Ignores alpha channel for BMPs
 		needsColorKey = true;

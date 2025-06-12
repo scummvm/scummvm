@@ -146,6 +146,17 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette(), img.getPaletteCount());
 #endif
 
+	if (_filename.matchString("savegame:*g", true)) {
+		uint8 r, g, b, a;
+		for (int x = 0; x < _imageData->w; x++) {
+			for (int y = 0; y < _imageData->h; y++) {
+				_imageData->format.colorToARGB(_imageData->getPixel(x, y), a, r, g, b);
+				uint8 grey = (uint8)(0.2126f * r + 0.7152f * g + 0.0722f * b);
+				_imageData->setPixel(x, y, _imageData->format.ARGBToColor(a, grey, grey, grey));
+			}
+		}
+	}
+
 	if (_filename.hasSuffix(".bmp")) {
 		// Ignores alpha channel for BMPs
 		needsColorKey = true;
