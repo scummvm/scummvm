@@ -172,15 +172,15 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	// In original WME it wasn't seen because sprites were downscaled
 	// Let's set alpha to 0 if it is smaller then some treshold
 	if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") && _imageData->format.bytesPerPixel == 4) {
-		uint8 treshold = 16;
+		uint32 mask = _imageData->format.ARGBToColor(255, 0, 0, 0);
+		uint32 treshold = _imageData->format.ARGBToColor(16, 0, 0, 0);
+		uint32 blank = _imageData->format.ARGBToColor(0, 0, 0, 0);
+
 		for (int x = 0; x < _imageData->w; x++) {
 			for (int y = 0; y < _imageData->h; y++) {
 				uint32 pixel = _imageData->getPixel(x, y);
-				uint8 r, g, b, a;
-				_imageData->format.colorToARGB(pixel, a, r, g, b);
-				if (a > 0 && a < treshold) {
-					uint32 *p = (uint32 *)_imageData->getBasePtr(x, y);
-					*p = _imageData->format.ARGBToColor(0, 0, 0, 0);
+				if ((pixel & mask) > blank && (pixel & mask) < treshold) {
+					_imageData->setPixel(x, y, blank);
 				}
 			}
 		}
