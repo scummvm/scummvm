@@ -711,6 +711,9 @@ Common::Error WageEngine::loadGameState(int slot) {
 
 		sayText(_world->_player->_currentScene->_name, Common::TextToSpeechManager::QUEUE);
 
+		_gui->regenCommandsMenu();
+		_gui->regenWeaponsMenu();
+
 		return Common::kNoError;
 	} else {
 		return Common::kUnknownError;
