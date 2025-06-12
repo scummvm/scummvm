@@ -101,6 +101,7 @@ HWND CWnd::GetSafeHwnd() const {
 void CWnd::ShowWindow(int nCmdShow) {
 	assert(nCmdShow == SW_SHOWNORMAL);
 	Invalidate(false);
+	SendMessage(WM_SHOWWINDOW);
 }
 
 BOOL CWnd::EnableWindow(BOOL bEnable) {
