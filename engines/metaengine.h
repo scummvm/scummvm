@@ -111,8 +111,6 @@ struct ExtendedSavegameHeader {
 		thumbnail = nullptr;
 		isAutosave = false;
 	}
-
-	~ExtendedSavegameHeader();
 };
 
 /**
