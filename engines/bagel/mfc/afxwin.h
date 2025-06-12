@@ -1122,6 +1122,11 @@ public:
 	void GetWindowRect(LPRECT lpRect) const;
 	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
 	BOOL GetClientRect(LPRECT lpRect) const;
+	void ClientToScreen(LPPOINT lpPoint) const;
+	void ClientToScreen(LPRECT lpRect) const;
+	void ScreenToClient(LPPOINT lpPoint) const;
+	void ScreenToClient(LPRECT lpRect) const;
+
 	void MoveWindow(LPCRECT lpRect, BOOL bRepaint = true);
 	void MoveWindow(int x, int y, int nWidth, int nHeight,
 	                BOOL bRepaint = TRUE);

@@ -60,8 +60,12 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	_windowRect.right = cs.x + cs.cx;
 	_windowRect.bottom = cs.y + cs.cy;
 
+	// Get the screen area
+	RECT screenRect(0, 0, cs.cx, cs.cy);
+	ClientToScreen(&screenRect);
+
 	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
+	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
 
 	_controlId = nID;
 
@@ -493,14 +497,63 @@ BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
 }
 
 BOOL CWnd::GetClientRect(LPRECT lpRect) const {
-	GetWindowRect(lpRect);
+	lpRect->left = 0;
+	lpRect->top = 0;
+	lpRect->right = _windowRect.width();
+	lpRect->bottom = _windowRect.height();
+
 	return true;
+}
+
+void CWnd::ClientToScreen(LPPOINT lpPoint) const {
+	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+		lpPoint->x += wnd->_windowRect.left;
+		lpPoint->y += wnd->_windowRect.top;
+	}
+}
+
+void CWnd::ClientToScreen(LPRECT lpRect) const {
+	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+		lpRect->left += wnd->_windowRect.left;
+		lpRect->top += wnd->_windowRect.top;
+		lpRect->right += wnd->_windowRect.left;
+		lpRect->bottom += wnd->_windowRect.top;
+	}
+}
+
+void CWnd::ScreenToClient(LPPOINT lpPoint) const {
+	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+		lpPoint->x -= wnd->_windowRect.left;
+		lpPoint->y -= wnd->_windowRect.top;
+	}
+}
+
+void CWnd::ScreenToClient(LPRECT lpRect) const {
+	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+		lpRect->left -= wnd->_windowRect.left;
+		lpRect->top -= wnd->_windowRect.top;
+		lpRect->right -= wnd->_windowRect.left;
+		lpRect->bottom -= wnd->_windowRect.top;
+	}
 }
 
 void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 	_windowRect = *lpRect;
+
+	// Get the screen area
+	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
+	ClientToScreen(&screenRect);
+
 	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
+	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
+
+	// Iterate through all child controls. We won't
+	// change their relative position, but doing so will
+	// cause their screen surface area to be updated
+	for (auto &ctl : _children) {
+		RECT ctlRect = ctl._value->_windowRect;
+		ctl._value->MoveWindow(&ctlRect, false);
+	}
 
 	if (bRepaint)
 		InvalidateRect(nullptr, true);
