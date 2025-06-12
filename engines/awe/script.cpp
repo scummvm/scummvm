@@ -611,7 +611,7 @@ void Script::executeTask() {
 					::debug("Time = %d", _scriptVars[0xF7]);
 				}
 				continue;
-					
+
 			default:
 					break;
 				}
@@ -771,7 +771,7 @@ static uint8 getWavLooping(uint16 resNum) {
 	case 132:
 	case 139:
 		return 1;
-		
+
 	default:
 		break;
 	}
@@ -779,6 +779,10 @@ static uint8 getWavLooping(uint16 resNum) {
 }
 
 static int getSoundFreq(uint8 period) {
+	if (period > 39) {
+		warning("Script::getSoundFreq() invalid period %d", period);
+		period = 39;
+	}
 	return kPaulaFreq / (Script::PERIOD_TABLE[period] * 2);
 }
 
