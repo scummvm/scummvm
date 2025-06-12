@@ -149,8 +149,6 @@ struct LzHuffman {
 
 			if (i < kTableSize)
 				i = _child[i];
-
-			i = _child[i];
 		}
 		i -= kTableSize;
 		update(i);
