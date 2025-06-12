@@ -210,13 +210,16 @@ void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
 }
 
 void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
-	auto *surf = impl();
-	CBrush::Impl *brush = static_cast<CBrush::Impl *>(
-	                          pBrush->m_hObject);
+	CBrush::Impl *brush = static_cast<CBrush::Impl *>(pBrush->m_hObject);
 	assert(brush->_type == HS_HORIZONTAL ||
 	       brush->_type == HS_VERTICAL);
 
-	surf->fillRect(*lpRect, brush->getColor());
+	FillSolidRect(lpRect, brush->getColor());
+}
+
+void CDC::FillSolidRect(LPCRECT lpRect, COLORREF color) {
+	auto *surf = impl();
+	surf->fillRect(*lpRect, color);
 }
 
 BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {

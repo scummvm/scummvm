@@ -27,6 +27,7 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CButton, CWnd)
 BEGIN_MESSAGE_MAP(CButton, CWnd)
+ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
@@ -45,6 +46,17 @@ void CButton::SetCheck(int nCheck) {
 
 void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
 	error("TODO: CButton::SetButtonStyle");
+}
+
+void CButton::OnPaint() {
+	CPaintDC dc(this);
+
+	// Get the client rectangle of the window
+	CRect rect;
+	GetClientRect(&rect);
+
+	// Fill the background with light blue
+	dc.FillSolidRect(&rect, RGB(173, 216, 230));
 }
 
 } // namespace MFC

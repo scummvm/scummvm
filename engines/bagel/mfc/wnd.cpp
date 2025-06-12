@@ -191,8 +191,11 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	if (message == WM_PAINT || message == WM_SHOWWINDOW ||
 			message == WM_ENABLE) {
 		for (auto &ctl : _children) {
-			if (message == WM_PAINT)
+			if (message == WM_PAINT) {
+				if (!_updatingRect.intersects(ctl._value->_windowRect))
+					continue;
 				ctl._value->_updateRect = _updatingRect;
+			}
 
 			ctl._value->SendMessage(message, wParam, lParam);
 		}

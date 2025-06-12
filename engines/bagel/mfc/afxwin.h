@@ -672,6 +672,7 @@ public:
 	void Ellipse(int x1, int y1, int x2, int y2);
 	void FrameRect(LPCRECT lpRect, CBrush *pBrush);
 	void FillRect(LPCRECT lpRect, CBrush *pBrush);
+	void FillSolidRect(LPCRECT lpRect, COLORREF crColor);
 	BOOL FloodFill(int x, int y, COLORREF crColor);
 	BOOL FloodFill(int x, int y, COLORREF crColor,
 	               UINT nFillType);
@@ -1263,6 +1264,7 @@ class CButton : public CWnd {
 
 protected:
 	DECLARE_MESSAGE_MAP()
+	void OnPaint();
 
 public:
 	~CButton() override {
