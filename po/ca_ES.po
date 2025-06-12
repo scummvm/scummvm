@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-11 22:52+0000\n"
+"POT-Creation-Date: 2025-06-12 18:11+0000\n"
 "PO-Revision-Date: 2025-06-11 11:00+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -3768,11 +3768,11 @@ msgstr "Diàleg d'entrada predictiu"
 msgid "Confirm"
 msgstr "Confirma"
 
-#: engines/metaengine.cpp:439
+#: engines/metaengine.cpp:431
 msgid "Autosave on"
 msgstr "Desament automàtic activat"
 
-#: engines/metaengine.cpp:439
+#: engines/metaengine.cpp:431
 msgid "Autosave off"
 msgstr "Desament automàtic desactivat"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-11 22:52+0000\n"
+"POT-Creation-Date: 2025-06-12 18:11+0000\n"
 "PO-Revision-Date: 2025-05-06 12:03+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -3893,11 +3893,11 @@ msgstr "Vorausschauender Eingabe-Dialog"
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: engines/metaengine.cpp:439
+#: engines/metaengine.cpp:431
 msgid "Autosave on"
 msgstr "Automatisches Speichern aktiviert"
 
-#: engines/metaengine.cpp:439
+#: engines/metaengine.cpp:431
 msgid "Autosave off"
 msgstr "Automatisches Speichern deaktiviert"
 
