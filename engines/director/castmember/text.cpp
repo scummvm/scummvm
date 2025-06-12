@@ -644,6 +644,7 @@ bool TextCastMember::hasField(int field) {
 	case kTheBorder:
 	case kTheBoxDropShadow:
 	case kTheBoxType:
+	case kTheDropShadow:
 	case kTheEditable:
 	case kTheLineCount:
 	case kTheMargin:
@@ -704,6 +705,10 @@ Datum TextCastMember::getField(int field) {
 		break;
 	case kTheBoxDropShadow:
 		warning("STUB: TextCastMember::getField(): boxDropShadow not implemented");
+		d = 1;
+		break;
+	case kTheDropShadow:
+		warning("STUB: TextCastMember::getField(): dropShadow not implemented");
 		d = 1;
 		break;
 	case kTheEditable:
@@ -812,6 +817,9 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		return false;
 	case kTheBoxType:
 		warning("STUB: TextCastMember::setField(): boxType not implemented");
+		return false;
+	case kTheDropShadow:
+		warning("STUB: TextCastMember::setField(): dropShadow not implemented");
 		return false;
 	case kTheEditable:
 		_editable = d.asInt();
