@@ -22,6 +22,9 @@
 #include "common/system.h"
 
 #include "director/director.h"
+#include "director/movie.h"
+#include "director/score.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -112,6 +115,14 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
+class RolloverToolkitXtraState : public Object<RolloverToolkitXtraState>
+{
+public:
+	RolloverToolkitXtraState() : Object<RolloverToolkitXtraState>("Rollover_Toolkit") {};
+
+	int lastSprite = 0;
+};
+
 RolloverToolkitXtraObject::RolloverToolkitXtraObject(ObjectType ObjectType) :Object<RolloverToolkitXtraObject>("RolloverToolkit") {
 	_objType = ObjectType;
 }
@@ -134,6 +145,13 @@ void RolloverToolkitXtra::open(ObjectType type, const Common::Path &path) {
         g_lingo->_openXtras.push_back(xlibName);
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
+	if (!g_lingo->_openXtrasState.contains("Rollover_Toolkit")) {
+		RolloverToolkitXtraState *state = new RolloverToolkitXtraState();
+		g_lingo->_openXtrasState.setVal("Rollover_Toolkit", state);
+	}
+	// Add some extra mappings for event compatibility
+	g_lingo->_eventHandlerTypeIds["startRollover"] = kEventMouseEnter;
+	g_lingo->_eventHandlerTypeIds["endRollover"] = kEventMouseLeave;
 }
 
 void RolloverToolkitXtra::close(ObjectType type) {
@@ -148,7 +166,44 @@ void RolloverToolkitXtra::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(RolloverToolkitXtra::m_CheckForRollovers, 0)
+void RolloverToolkitXtra::m_CheckForRollovers(int nargs) {
+	// We don't need any hints about what the current rollover is
+	g_lingo->dropStack(nargs);
+
+	// check what the current rolled over sprite is
+	// if it's new
+	//  - check if there's an on endRollover handler, provide old sprite as arg 1
+	//	- check if there's a on startRollover handler, provide new sprite as arg 1
+	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
+
+	if (!score) {
+		warning("RolloverToolkitXtra::m_CheckForRollovers: Reference to an empty score");
+		return;
+	}
+
+	if (!g_lingo->_openXtrasState.contains("Rollover_Toolkit")) {
+		warning("RolloverToolkitXtra::m_CheckForRollovers: Missing state");
+		return;
+	}
+	RolloverToolkitXtraState *state = (RolloverToolkitXtraState *)g_lingo->_openXtrasState.getVal("Rollover_Toolkit");
+
+
+	Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+	int lastSprite = state->lastSprite;
+	int newSprite = score->getRollOverSpriteIDFromPos(pos);
+	if (newSprite != lastSprite && lastSprite != 0) {
+		// try and call endRollover(lastSprite)
+		movie->queueInputEvent(kEventMouseLeave, lastSprite, pos);
+	}
+	if (newSprite != lastSprite && newSprite != 0) {
+		// try and call startRollover(lastSprite)
+		movie->queueInputEvent(kEventMouseEnter, newSprite, pos);
+	}
+	state->lastSprite = newSprite;
+}
+
+
 XOBJSTUB(RolloverToolkitXtra::m_CurrentRollover, 0)
 XOBJSTUB(RolloverToolkitXtra::m_EndAnyRollovers, 0)
 XOBJSTUB(RolloverToolkitXtra::m_ResetRollovers, 0)

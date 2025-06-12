@@ -283,13 +283,13 @@ struct LingoEvent {
 		mousePos = mp;
 	}
 
-	LingoEvent (LEvent e, int ei, EventHandlerSourceType ehst, bool pass, Common::Point mp = Common::Point(-1, -1)) {
+	LingoEvent (LEvent e, int ei, EventHandlerSourceType ehst, bool pass, Common::Point mp = Common::Point(-1, -1), uint16 ci = 0) {
 		event = e;
 		eventId = ei;
 		eventHandlerSourceType = ehst;
 		scriptType = kNoneScript;
 		passByDefault = pass;
-		channelId = 0;
+		channelId = ci;
 		scriptId = CastMemberID();
 		mousePos = mp;
 	}
@@ -530,6 +530,7 @@ public:
 	OpenXLibsHash _openXLibs;
 	OpenXLibsStateHash _openXLibsState;
 	Common::StringArray _openXtras;
+	OpenXLibsStateHash _openXtrasState;
 
 	Common::String _floatPrecisionFormat;
 
