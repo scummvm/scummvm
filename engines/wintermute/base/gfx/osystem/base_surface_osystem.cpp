@@ -132,7 +132,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 		for (int x = 0; x < _surface->w; x++) {
 			for (int y = 0; y < _surface->h; y++) {
 				_surface->format.colorToARGB(_surface->getPixel(x, y), a, r, g, b);
-				uint8 grey = (uint8)(0.2126f * r + 0.7152f * g + 0.0722f * b);
+				uint8 grey = (uint8)((0.2126f * r + 0.7152f * g + 0.0722f * b) + 0.5f);
 				_surface->setPixel(x, y, _surface->format.ARGBToColor(a, grey, grey, grey));
 			}
 		}

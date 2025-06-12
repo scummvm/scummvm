@@ -151,7 +151,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		for (int x = 0; x < _imageData->w; x++) {
 			for (int y = 0; y < _imageData->h; y++) {
 				_imageData->format.colorToARGB(_imageData->getPixel(x, y), a, r, g, b);
-				uint8 grey = (uint8)(0.2126f * r + 0.7152f * g + 0.0722f * b);
+				uint8 grey = (uint8)((0.2126f * r + 0.7152f * g + 0.0722f * b) + 0.5f);
 				_imageData->setPixel(x, y, _imageData->format.ARGBToColor(a, grey, grey, grey));
 			}
 		}
