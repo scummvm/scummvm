@@ -57,9 +57,6 @@ public:
 	bool display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) override;
 	bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
-	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
-	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
-	    static long DLL_CALLCONV TellProc(fi_handle handle);*/
 	int getWidth() override {
 		if (!_loaded) {
 			finishLoad();
@@ -96,7 +93,6 @@ private:
 	bool _loaded;
 	bool finishLoad();
 	bool drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transformStruct);
-	void genAlphaMask(Graphics::Surface *surface);
 
 	float _rotation;
 	Graphics::AlphaType _alphaType;

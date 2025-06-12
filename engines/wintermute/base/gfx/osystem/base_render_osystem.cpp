@@ -198,7 +198,7 @@ bool BaseRenderOSystem::flip() {
 		if (_disableDirtyRects || screenChanged) {
 			g_system->copyRectToScreen(_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
-		//  g_system->copyRectToScreen(_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+		// g_system->copyRectToScreen(_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		delete _dirtyRect;
 		_dirtyRect = nullptr;
 		_needsFlip = false;
@@ -230,8 +230,8 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 		return STATUS_OK;
 	}
 	if (!rect) {
-// TODO: This should speed things up, but for some reason it misses the size by quite a bit.
-/*		if (r == 0 && g == 0 && b == 0) {
+		// TODO: This should speed things up, but for some reason it misses the size by quite a bit.
+		/*if (r == 0 && g == 0 && b == 0) {
 			// Simply memcpy from the buffered black-surface, way faster than Surface::fillRect.
 			memcpy(_renderSurface->pixels, _blankSurface->pixels, _renderSurface->pitch * _renderSurface->h);
 			return STATUS_OK;

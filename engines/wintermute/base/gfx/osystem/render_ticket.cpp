@@ -61,8 +61,8 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		if (_transform._angle != Graphics::kDefaultAngle) {
 			_surface = temp.rotoscale(transform, owner->_gameRef->getBilinearFiltering());
 		} else if ((dstRect->width() != srcRect->width() ||
-					dstRect->height() != srcRect->height()) &&
-					_transform._numTimesX * _transform._numTimesY == 1) {
+			    dstRect->height() != srcRect->height()) &&
+			    _transform._numTimesX * _transform._numTimesY == 1) {
 			_surface = temp.scale(dstRect->width(), dstRect->height(), owner->_gameRef->getBilinearFiltering());
 		} else {
 			_surface = new Graphics::Surface();
@@ -120,7 +120,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 		int x = _dstRect.left;
 		for (int rx = 0; rx < _transform._numTimesX; ++rx) {
 			src.blendBlitTo(*_targetSurface, x, y, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height(),
-				Graphics::BLEND_NORMAL, alphaMode);
+			                Graphics::BLEND_NORMAL, alphaMode);
 			x += w;
 		}
 		y += h;
@@ -152,12 +152,9 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 	}
 
 	if (_transform._numTimesX * _transform._numTimesY == 1) {
-
 		src.blendBlitTo(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(),
 			clipRect->height(), _transform._blendMode, alphaMode);
-
 	} else {
-
 		// clipRect is a subrect of the full numTimesX*numTimesY rect
 		Common::Rect subRect;
 
@@ -173,7 +170,6 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 		for (int ry = 0; ry < _transform._numTimesY; ++ry) {
 			int x = 0;
 			for (int rx = 0; rx < _transform._numTimesX; ++rx) {
-
 				subRect.left = x;
 				subRect.top = y;
 				subRect.setWidth(w);
@@ -184,7 +180,6 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 					subRect.translate(-x, -y);
 					src.blendBlitTo(*_targetSurface, basex + x + subRect.left, basey + y + subRect.top, _transform._flip, &subRect,
 						_transform._rgbaMod, subRect.width(), subRect.height(), _transform._blendMode, alphaMode);
-
 				}
 
 				x += w;

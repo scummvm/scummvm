@@ -75,9 +75,7 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	/*  BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer); */
 	_filename = filename;
-//	const Graphics::Surface *surface = image->getSurface();
 
 	if (defaultCK) {
 		ckRed   = 255;
@@ -166,7 +164,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	// In original WME it wasn't seen because sprites were downscaled
 	// Let's set alpha to 0 if it is smaller then some treshold
 	if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") &&
-            _alphaType == Graphics::ALPHA_FULL && _surface->format.aBits() > 4) {
+	    _alphaType == Graphics::ALPHA_FULL && _surface->format.aBits() > 4) {
 		uint32 mask = _surface->format.ARGBToColor(255, 0, 0, 0);
 		uint32 treshold = _surface->format.ARGBToColor(16, 0, 0, 0);
 		uint32 blank = _surface->format.ARGBToColor(0, 0, 0, 0);
@@ -184,53 +182,6 @@ bool BaseSurfaceOSystem::finishLoad() {
 	_loaded = true;
 
 	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
-	warning("BaseSurfaceOSystem::GenAlphaMask - Not ported yet");
-	return;
-	// TODO: Reimplement this
-	delete[] _alphaMask;
-	_alphaMask = nullptr;
-	if (!surface) {
-		return;
-	}
-
-	bool hasColorKey;
-	/* uint32 colorKey; */
-	uint8 ckRed, ckGreen, ckBlue;
-	/*  if (SDL_GetColorKey(surface, &colorKey) == 0) {
-	        hasColorKey = true;
-	        SDL_GetRGB(colorKey, surface->format, &ckRed, &ckGreen, &ckBlue);
-	    } else hasColorKey = false;
-	*/
-	_alphaMask = new byte[surface->w * surface->h];
-
-	bool hasTransparency = false;
-	for (int y = 0; y < surface->h; y++) {
-		for (int x = 0; x < surface->w; x++) {
-			uint32 pixel = surface->getPixel(x, y);
-
-			uint8 r, g, b, a;
-			surface->format.colorToARGB(pixel, a, r, g, b);
-			//SDL_GetRGBA(pixel, surface->format, &r, &g, &b, &a);
-
-			if (hasColorKey && r == ckRed && g == ckGreen && b == ckBlue) {
-				a = 0;
-			}
-
-			_alphaMask[y * surface->w + x] = a;
-			if (a < 255) {
-				hasTransparency = true;
-			}
-		}
-	}
-
-	if (!hasTransparency) {
-		delete[] _alphaMask;
-		_alphaMask = nullptr;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -268,7 +219,6 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::startPixelOp() {
-	//SDL_LockTexture(_texture, nullptr, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
@@ -277,7 +227,6 @@ bool BaseSurfaceOSystem::startPixelOp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::endPixelOp() {
-	//SDL_UnlockTexture(_texture);
 	return STATUS_OK;
 }
 
