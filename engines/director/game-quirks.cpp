@@ -103,6 +103,17 @@ struct CachedFile {
 		"PATH.INI",
 		(const byte *)"[cd-path]\r\npath=d:\\", -1
 	},
+	// Professor Finkle's Times Table Factory has an installer that copies a bunch of empty files,
+	// which the game gets upset about if they don't exist.
+	{"finkletimes", Common::kPlatformWindows, "finkle.ini", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "beatswch.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "fctrlist.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "gridscor.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "jokelist.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "lastplay.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "lernscor.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "namelist.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "userlist.txt", (const byte *)"", 0},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
