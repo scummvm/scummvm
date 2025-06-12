@@ -175,7 +175,10 @@ struct LzHuffman {
 				const int copySize = (i - index) * sizeof(int);
 				memmove(_freq + index + 1, _freq + index, copySize);
 				_freq[index] = f;
-				memmove(_child + index + 1, _child + index, copySize);
+
+				if (index + 1 < kTableSize)
+					memmove(_child + index + 1, _child + index, copySize);
+
 				_child[index] = j;
 			}
 			for (int i = 0; i < kTableSize; ++i) {
