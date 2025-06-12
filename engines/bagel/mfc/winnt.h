@@ -78,8 +78,9 @@ typedef uintptr DWORD_PTR;
 typedef uint32 COLORREF;
 typedef void *POSITION;
 
-#define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
-#define PALETTERGB(r,g,b)   (0x02000000 | RGB(r,g,b))
+#define RGB_COL(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
+#define PALETTERGB(r,g,b)   (0x02000000 | RGB_COL(r,g,b))
+#define RGB(r,g,b) PALETTERGB(r,g,b)
 #define IS_RGB(VAL) ((VAL & 0x02000000) != 0)
 
 #define PAL_DEFAULT 0x0000

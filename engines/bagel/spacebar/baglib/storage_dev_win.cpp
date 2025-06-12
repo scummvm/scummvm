@@ -1094,7 +1094,7 @@ ErrorCode CBagStorageDev::preFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<
 			fillRect = &viewPortRect;
 		}
 
-		pBmp->fillRect(fillRect, RGB(0, 0, 0));
+		pBmp->fillRect(fillRect, 0);
 	}
 
 	// Let pda know that we've been prefiltered
