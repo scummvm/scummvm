@@ -43,7 +43,7 @@ static const int MEMLIST_BMP[] = {
 
 Resource::Resource(Video *vid, DataType dataType) :
 		_vid(vid), _dataType(dataType) {
-	if (_dataType == DT_ATARI) {
+	if (_dataType == DT_AMIGA || _dataType == DT_ATARI) {
 		_amigaMemList = detectAmigaAtari();
 	} else
 		_amigaMemList = nullptr;
