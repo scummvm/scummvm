@@ -139,7 +139,8 @@ void CWnd::DestroyWindow() {
 
 void CWnd::Invalidate(BOOL bErase) {
 	// Mark the entire window for redrawing
-	_updateRect = _windowRect;
+	_updateRect = Common::Rect(0, 0,
+		_windowRect.width(), _windowRect.height());
 	_updateErase = bErase;
 
 	PostMessage(WM_PAINT);
@@ -198,7 +199,7 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 			if (message == WM_PAINT) {
 				if (!_updatingRect.intersects(ctl._value->_windowRect))
 					continue;
-				ctl._value->_updateRect = _updatingRect;
+				ctl._value->Invalidate(false);
 			}
 
 			ctl._value->SendMessage(message, wParam, lParam);
@@ -482,7 +483,8 @@ BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
 	if (lpRect)
 		_updateRect.extend(*lpRect);
 	else
-		_updateRect = _windowRect;
+		_updateRect = Common::Rect(0, 0,
+			_windowRect.width(), _windowRect.height());
 
 	return true;
 }
