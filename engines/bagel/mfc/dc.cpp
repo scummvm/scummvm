@@ -494,10 +494,14 @@ COLORREF CDC::Impl::GetNearestColor(COLORREF crColor) const {
 		return crColor;
 
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
-	return pal->findBestColor(
-		GetRValue(crColor),
-		GetGValue(crColor),
-		GetBValue(crColor));
+
+	if (pal)
+		return pal->findBestColor(
+			GetRValue(crColor),
+			GetGValue(crColor),
+			GetBValue(crColor));
+
+	return AfxGetApp()->getColor(crColor);
 }
 
 void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
