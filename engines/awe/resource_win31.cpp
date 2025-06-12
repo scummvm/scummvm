@@ -294,10 +294,13 @@ bool ResourceWin31::readEntries() {
 }
 
 uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
+	bool allocated = false;
+
 	if (num > 0 && num < _entriesCount) {
 		Win31BankEntry *e = &_entries[num];
 		*size = e->size;
 		if (!dst) {
+			allocated = true;
 			dst = (uint8 *)malloc(e->size);
 			if (!dst) {
 				warning("Unable to allocate %d bytes", e->size);
@@ -318,6 +321,10 @@ uint8 *ResourceWin31::loadFile(int num, uint8 *dst, uint32 *size) {
 		}
 	}
 	warning("Unable to load resource #%d", num);
+
+	if (allocated)
+		free(dst);
+
 	return nullptr;
 }
 
