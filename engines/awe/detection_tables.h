@@ -105,6 +105,20 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_20TH_EDITION
 	},
+	// This Amiga version is included as a bonus on both GOG and Steam.
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244868,
+					   "bank03", "2ef3440fd6205634b257d56b0bc3ea51", 127846),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		DT_AMIGA
+	},
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
