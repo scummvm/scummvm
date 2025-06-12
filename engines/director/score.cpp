@@ -1552,6 +1552,16 @@ bool Score::checkSpriteRollOver(uint16 spriteId, Common::Point pos) {
 	return false;
 }
 
+uint16 Score::getRollOverSpriteIDFromPos(Common::Point pos) {
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		if (_channels[i]->getRollOverBbox().contains(pos))
+			return i;
+	}
+
+	return 0;
+}
+
+
 Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
 	Common::List<Channel *> intersections;
 	Common::List<Channel *> appendix;
