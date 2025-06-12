@@ -146,6 +146,10 @@ struct LzHuffman {
 		int i = _child[kHuffmanRoot];
 		while (i < kTableSize) {
 			i += _stream.readBit();
+
+			if (i < kTableSize)
+				i = _child[i];
+
 			i = _child[i];
 		}
 		i -= kTableSize;
