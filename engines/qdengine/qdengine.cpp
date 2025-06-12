@@ -588,7 +588,7 @@ byte *transCyrillic(const Common::String &str) {
 	int i = 0;
 
 	for (const byte *p = s; *p; p++) {
-		if (i >= 10240 - 3)
+		if (i >= 10240 - 5)
 			break;
 
 		if (*p < 128) {
