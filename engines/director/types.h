@@ -483,6 +483,14 @@ struct Hash<Director::CastMemberID> {
 	}
 };
 
+template<>
+struct Hash<Director::LEvent> {
+	uint operator()(const Director::LEvent &event) const {
+		return event;
+	}
+};
+
+
 } // End of namespace Common
 
 #endif

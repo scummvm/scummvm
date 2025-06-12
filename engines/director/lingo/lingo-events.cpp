@@ -355,9 +355,10 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 }
 
 void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targetId, Common::Point pos) {
-	int eventId = _nextEventId++;
 	if (_nextEventId < 0)
 		_nextEventId = 0;
+	_nextEventId++;
+	int eventId = _nextEventId;
 
 	int oldQueueSize = queue.size();
 
@@ -490,7 +491,6 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 		// only one input event should be in flight at a time.
 		return;
 	}
-	int lastEventId = -1;
 	Movie *movie = _vm->getCurrentMovie();
 	Score *sc = movie->getScore();
 
@@ -510,7 +510,8 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 			continue;
 		}
 
-		if (lastEventId == el.eventId && !_passEvent) {
+		int lastEventId = movie->_lastEventId.getValOrDefault(el.event, 0);
+		if (lastEventId && lastEventId == el.eventId && !_passEvent) {
 			debugC(5, kDebugEvents, "Lingo::processEvents: swallowed event (%s, %s, %s, %d) because _passEvent was false",
 				_eventHandlerTypes[el.event], scriptType2str(el.scriptType), el.scriptId.asString().c_str(), el.channelId
 			);
@@ -523,6 +524,7 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 			_eventHandlerTypes[el.event], scriptType2str(el.scriptType), el.scriptId.asString().c_str(), el.channelId
 		);
 		bool completed = processEvent(el.event, el.scriptType, el.scriptId, el.channelId);
+		movie->_lastEventId[el.event] = el.eventId;
 
 		if (isInputEvent && !completed) {
 			debugC(5, kDebugEvents, "Lingo::processEvents: context frozen on an input event, stopping");
@@ -532,7 +534,7 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 			}
 			break;
 		}
-		lastEventId = el.eventId;
+
 	}
 }
 
