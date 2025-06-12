@@ -1217,6 +1217,7 @@ void ScriptExecutor::DumpWholeScript() {
 		if (opcode1 == 0x0d) {
 			// Show a dialogue option
 			uint32 objectID = Func9F4D_32() - 0x400;
+			SIS_Debug("Object ID of speaker: %.4x.\n", objectID);
 			uint16 x = Func9F4D_16();
 			uint16 y = Func9F4D_16();
 			uint16 side = Func9F4D_16();
@@ -2347,6 +2348,24 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 		} else if (opcode1 == 0x46) {
 			// TODO: Not yet identified opcode
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x48) {
+			// TODO: No idea yet
+			Func9F4D_Placeholder();
+			// Also functions inside A334
+			ReadByte();
+			ReadWord();
+		} else if (opcode1 == 0x49) {
+			// TODO: No idea yet but probably something like the inverse of opcode 48h
+			Func9F4D_Placeholder();
+			// Also functions inside A334
+			ReadByte();
+			ReadWord();
+
+		} else if (opcode1 == 0x4D) {
+			// TODO: No idea yet what this does - it does manipulate a value that is used during
+			// pathfinding/walkability calculations
+			Func9F4D_Placeholder();
 			Func9F4D_Placeholder();
 		}
 		else {
