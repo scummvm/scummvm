@@ -182,7 +182,7 @@ struct Resource15th : ResourceNth {
 							while (*p == ' ' || *p == '\t') {
 								++p;
 							}
-							if ((uint32)strNum < ARRAYSIZE(_stringsTable)) {
+							if (strNum > 0 && (uint32)strNum < ARRAYSIZE(_stringsTable)) {
 								_stringsTable[strNum] = p;
 							}
 						}
