@@ -1065,6 +1065,7 @@ public:
 	Common::String _windowText;
 	Common::Rect _windowRect;
 	Common::Rect _updateRect;
+	Common::Rect _updatingRect;
 	bool _updateErase = false;
 	CBitmap::Impl _surfaceBitmap;
 	CDC::Impl _surface;

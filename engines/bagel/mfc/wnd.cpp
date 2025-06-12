@@ -186,6 +186,18 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	LRESULT lResult = 0;
 	if (!OnWndMsg(message, wParam, lParam, &lResult))
 		lResult = DefWindowProc(message, wParam, lParam);
+
+	// Handle messages that get sent to child controls
+	if (message == WM_PAINT || message == WM_SHOWWINDOW ||
+			message == WM_ENABLE) {
+		for (auto &ctl : _children) {
+			if (message == WM_PAINT)
+				ctl._value->_updateRect = _updatingRect;
+
+			ctl._value->SendMessage(message, wParam, lParam);
+		}
+	}
+
 	return lResult;
 }
 
@@ -504,6 +516,8 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 	lpPaint->fIncUpdate = false;
 	Common::fill(lpPaint->rgbReserved,
 	             lpPaint->rgbReserved + 32, 0);
+
+	_updatingRect = _updateRect;
 
 	return lpPaint->hdc;
 }
