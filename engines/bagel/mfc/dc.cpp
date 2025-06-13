@@ -430,6 +430,9 @@ CDC::Impl::Impl() {
 	// this dummy 1x1 bitmap
 	_bitmap1x1.create(1, 1,
 		Graphics::PixelFormat::createFormatCLUT8());
+
+	// Set up the system font as default
+	_font = AfxGetApp()->getDefaultFont();
 }
 
 HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
@@ -437,6 +440,13 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 	if (bitmap) {
 		HBITMAP result = _bitmap;
 		_bitmap = bitmap;
+		return result;
+	}
+
+	HFONT font = dynamic_cast<HFONT>(font);
+	if (font) {
+		HFONT result = _font;
+		_font = font;
 		return result;
 	}
 #if 0

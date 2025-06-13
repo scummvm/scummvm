@@ -592,6 +592,7 @@ public:
 		HPALETTE _palette = nullptr;
 		CPalette *_cPalette = nullptr;
 		Graphics::PixelFormat _format;
+		HFONT _font;
 
 	public:
 		Impl();
@@ -1542,6 +1543,9 @@ public:
 	}
 	HFONT getFont(const char *lpszFacename, int nHeight) {
 		return _fonts.getFont(lpszFacename, nHeight);
+	}
+	HFONT getDefaultFont() {
+		return _fonts.getDefaultFont();
 	}
 };
 

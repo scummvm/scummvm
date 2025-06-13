@@ -56,7 +56,6 @@ protected:
 	Common::Error run() override;
 
 public:
-	Common::HashMap<int, Graphics::Font *> _fonts;
 	Common::String _gameId;
 	CBfcMgr _metaGame;
 //	Metagame::SCORESTRUCT _topScores[10];

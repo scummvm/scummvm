@@ -61,15 +61,6 @@ Common::Error HodjNPodjEngine::run() {
 
 	_midi = new MusicPlayer();
 
-	// Load the font
-	for (int size = 8; size <= 14; size += 2) {
-		Graphics::WinFont *font = new Graphics::WinFont();
-		if (!font->loadFromFON("msserif.fon",
-		                       Graphics::WinFontDirEntry("MS Sans Serif", size)))
-			error("Could not load msserif.fon");
-		_fonts[size] = new Gfx::BoldFont(font);
-	}
-
 	//_metaGame.initBFCInfo();
 	#if 0
 	_settings.load();
@@ -81,15 +72,12 @@ Common::Error HodjNPodjEngine::run() {
 	// Run the game
 
 	Metagame::Frame::CTheApp app;
+	app.addFontResource("msserif.fon");
 	app.addResources("meta/hodjpodj.exe");
 	app.addResources("meta/hnpmeta.dll");
 	app.setDirectory("meta");
 	app.Run();
 
-	for (int size = 8; size <= 14; size += 2)
-		delete _fonts[size];
-
-//	_settings.save();
 	return Common::kNoError;
 }
 

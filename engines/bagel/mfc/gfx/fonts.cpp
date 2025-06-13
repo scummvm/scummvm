@@ -21,6 +21,7 @@
 
 #include "graphics/fonts/winfont.h"
 #include "bagel/mfc/gfx/fonts.h"
+#include "bagel/mfc/wingdi.h"
 
 namespace Bagel {
 namespace MFC {
@@ -102,6 +103,10 @@ HFONT Fonts::getFont(const char *lpszFacename, int nHeight) {
 	}
 
 	error("Unknown font name - %s", lpszFacename);
+}
+
+HFONT Fonts::getDefaultFont() {
+	return createFont(12, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 }
 
 /*--------------------------------------------*/
