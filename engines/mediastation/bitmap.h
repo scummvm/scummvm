@@ -55,8 +55,8 @@ public:
 	Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader);
 	virtual ~Bitmap();
 
-	uint16 width();
-	uint16 height();
+	int16 width();
+	int16 height();
 	Graphics::ManagedSurface _surface;
 
 private:

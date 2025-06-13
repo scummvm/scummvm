@@ -44,8 +44,8 @@ bool BitmapHeader::isCompressed() {
 Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) :
 	_bitmapHeader(bitmapHeader) {
 	// The header must be constructed beforehand.
-	uint16 width = _bitmapHeader->_dimensions.x;
-	uint16 height = _bitmapHeader->_dimensions.y;
+	int16 width = _bitmapHeader->_dimensions.x;
+	int16 height = _bitmapHeader->_dimensions.y;
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_surface.setTransparentColor(0);
 	uint8 *pixels = (uint8 *)_surface.getPixels();
@@ -70,11 +70,11 @@ Bitmap::~Bitmap() {
 	_bitmapHeader = nullptr;
 }
 
-uint16 Bitmap::width() {
+int16 Bitmap::width() {
 	return _bitmapHeader->_dimensions.x;
 }
 
-uint16 Bitmap::height() {
+int16 Bitmap::height() {
 	return _bitmapHeader->_dimensions.y;
 }
 
@@ -104,9 +104,9 @@ void Bitmap::decompress(Chunk &chunk) {
 	// size_t transparencyRunTopYCoordinate = 0;
 	// size_t transparencyRunLeftXCoordinate = 0;
 	bool imageFullyRead = false;
-	size_t currentYCoordinate = 0;
+	int16 currentYCoordinate = 0;
 	while (currentYCoordinate < height()) {
-		size_t currentXCoordinate = 0;
+		int16 currentXCoordinate = 0;
 		bool readingTransparencyRun = false;
 		while (true) {
 			byte operation = chunk.readByte();
