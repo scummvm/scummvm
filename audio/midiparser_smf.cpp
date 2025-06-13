@@ -27,8 +27,6 @@
 #include "common/util.h"
 
 MidiParser_SMF::MidiParser_SMF(int8 source) : MidiParser(source) {
-	for (int i = 0; i < ARRAYSIZE(_noteChannelToTrack); i++)
-		_noteChannelToTrack[i] = -1;
 }
 
 void MidiParser_SMF::parseNextEvent(EventInfo &info) {
