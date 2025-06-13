@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-13 08:13+0000\n"
-"PO-Revision-Date: 2025-05-22 09:25+0000\n"
+"PO-Revision-Date: 2025-06-13 14:35+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -3372,10 +3372,8 @@ msgid "Could not apply filtering setting."
 msgstr ""
 
 #: engines/engine.cpp:415
-#, fuzzy
-#| msgid "Could not save screenshot"
 msgid "Could not apply shader setting."
-msgstr "ეკრანის ანაბეჭდის შენახვა შეუძლებელია"
+msgstr "დაჩრდილვის პარამეტრის გადატარება შეუძლებელია."
 
 #: engines/engine.cpp:531
 msgid "Error"
