@@ -360,7 +360,6 @@ void LastExpressEngine::engineEventHandler(Event *event) {
 	case 1:
 		//++g_numClicks;
 		getNISManager()->abortNIS();
-		warning("abortFight() missing from engineEventHandler");
 		abortFight();
 		abortCredits();
 		if (shouldQuit()) {
