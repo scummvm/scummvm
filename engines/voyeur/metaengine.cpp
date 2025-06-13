@@ -27,6 +27,10 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "graphics/surface.h"
 
 #include "voyeur/detection.h"
@@ -86,6 +90,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool VoyeurMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -169,6 +174,85 @@ SaveStateDescriptor VoyeurMetaEngine::querySaveMetaInfos(const char *target, int
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray VoyeurMetaEngine::initKeymaps(const char *target) const {
+
+	using namespace Common;
+	using namespace Voyeur;
+
+	Keymap *engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "voyeur-default", _("Default keymappings"));
+	Keymap *cutsceneKeymap = new Keymap(Keymap::kKeymapTypeGame, "cutscene", _("Cutscene keymappings"));
+	Keymap *roomKeymap = new Keymap(Keymap::kKeymapTypeGame, "room", _("Room keymappings"));
+	Keymap *cameraKeymap = new Keymap(Keymap::kKeymapTypeGame, "camera", _("Camera keymappings"));
+	Keymap *introKeymap = new Keymap(Keymap::kKeymapTypeGame, "intro", _("Intro keymappings"));
+
+	Common::Action *act;
+
+	act = new Common::Action(kStandardActionLeftClick, _("Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Exit"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Skip scene"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_A");
+	cutsceneKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionLeftClick, _("View evidence"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	roomKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Exit / Put away evidence"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	roomKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionLeftClick, _("Enter room"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	cameraKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Exit"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	cameraKeymap->addAction(act);
+
+	act = new Common::Action("SKIP", _("Skip intro"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_A");
+	introKeymap->addAction(act);
+
+	KeymapArray keymaps(5);
+	keymaps[0] = engineKeymap;
+	keymaps[1] = cutsceneKeymap;
+	keymaps[2] = roomKeymap;
+	keymaps[3] = cameraKeymap;
+	keymaps[4] = introKeymap;
+
+	cutsceneKeymap->setEnabled(false);
+	roomKeymap->setEnabled(false);
+	cameraKeymap->setEnabled(false);
+	introKeymap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(VOYEUR)
