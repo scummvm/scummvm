@@ -252,8 +252,8 @@ typedef struct Character {
 	int8 position2;
 	int8 car2;
 	int8 doProcessEntity;
-	int8 field_4A9;
-	int8 field_4AA;
+	int8 needsPosFudge;
+	int8 needsSecondaryPosFudge;
 	int8 directionSwitch;
 	char sequenceName[13];
 	char sequenceName2[13];
@@ -285,8 +285,8 @@ typedef struct Character {
 		position2 = 0;
 		car2 = 0;
 		doProcessEntity = 0;
-		field_4A9 = 0;
-		field_4AA = 0;
+		needsPosFudge = 0;
+		needsSecondaryPosFudge = 0;
 		directionSwitch = 0;
 
 		memset(sequenceName, 0, sizeof(sequenceName));
