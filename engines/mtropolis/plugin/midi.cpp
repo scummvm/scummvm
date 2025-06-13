@@ -129,7 +129,7 @@ void MidiParser_MTropolis::setMutedTracks(uint16 mutedTracks) {
 
 bool MidiParser_MTropolis::processEvent(const EventInfo &info, bool fireEvents) {
 	if ((info.event & 0xf0) == MidiDriver_BASE::MIDI_COMMAND_NOTE_ON) {
-		int track = _noteChannelToTrack[info.event & 0xf];
+		int track = info.subtrack;
 		if (track >= 0 && (_mutedTracks & (1 << track)))
 			return true;
 	}
