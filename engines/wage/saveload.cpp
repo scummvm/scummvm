@@ -706,6 +706,8 @@ Common::Error WageEngine::loadGameState(int slot) {
 	if (_isGameOver)
 		resetState();
 
+	_gui->_consoleWindow->clearText();
+
 	if (loadGame(slot) == 0) {
 		if (slot != getAutosaveSlot()) {
 			_defaultSaveSlot = slot;
@@ -717,6 +719,11 @@ Common::Error WageEngine::loadGameState(int slot) {
 
 		_gui->regenCommandsMenu();
 		_gui->regenWeaponsMenu();
+
+		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
+
+		Common::String input("look");
+		processTurn(&input, NULL);
 
 		return Common::kNoError;
 	} else {
