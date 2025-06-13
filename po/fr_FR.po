@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-12 18:11+0000\n"
+"POT-Creation-Date: 2025-06-13 08:13+0000\n"
 "PO-Revision-Date: 2025-06-11 06:08+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6219,7 +6219,7 @@ msgstr "Recherche des mises à jour..."
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
-#: engines/ultima/ultima8/ultima8.cpp:187
+#: engines/ultima/ultima8/ultima8.cpp:191
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
