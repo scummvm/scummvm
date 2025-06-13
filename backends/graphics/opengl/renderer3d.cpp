@@ -48,6 +48,7 @@ Renderer3D::Renderer3D() :
 	_samples(0), _stackLevel(0), _inOverlay(false),
 	_pendingScreenChangeWidth(-1), _pendingScreenChangeHeight(-1) {
 	_texture.enableLinearFiltering(true);
+	_texture.setFlip(true);
 }
 
 void Renderer3D::destroy() {
@@ -78,7 +79,7 @@ void Renderer3D::initSize(uint w, uint h, int samples, bool renderToFrameBuffer)
 		return;
 	}
 
-	_texture.setSize(w, h, true);
+	_texture.setSize(w, h);
 	recreate();
 }
 
@@ -98,7 +99,7 @@ void Renderer3D::resize(uint w, uint h) {
 		return;
 	}
 
-	_texture.setSize(w, h, true);
+	_texture.setSize(w, h);
 	setup();
 
 	// Rebind the framebuffer
@@ -428,7 +429,7 @@ void Renderer3D::showOverlay(uint w, uint h) {
 	}
 
 	_texture.create();
-	_texture.setSize(w, h, true);
+	_texture.setSize(w, h);
 	Graphics::Surface background;
 	background.create(w, h, Texture::getRGBAPixelFormat());
 	glReadPixels(0, 0, background.w, background.h, GL_RGBA, GL_UNSIGNED_BYTE, background.getPixels());

@@ -62,7 +62,7 @@ public:
 	virtual int getDefaultStretchMode() const { return 0; }
 	virtual bool setStretchMode(int mode) { return false; }
 	virtual int getStretchMode() const { return 0; }
-	virtual Common::RotationMode getRotationMode() const { return Common::kRotationNormal; }
+	virtual bool setRotationMode(Common::RotationMode rotation) { return false; }
 	virtual uint getDefaultScaler() const { return 0; }
 	virtual uint getDefaultScaleFactor() const { return 1; }
 	virtual bool setScaler(uint mode, int factor) { return false; }

@@ -104,18 +104,11 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
 	state.vsync         = getFeatureState(OSystem::kFeatureVSync);
+	state.rotation      = _rotationMode;
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
 	return state;
-}
-
-Common::RotationMode SdlGraphicsManager::getRotationMode() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	return Common::parseRotationMode(ConfMan.getInt("rotation_mode"));
-#else
-	return Common::kRotationNormal;
-#endif
 }
 
 bool SdlGraphicsManager::setState(const State &state) {
@@ -137,6 +130,7 @@ bool SdlGraphicsManager::setState(const State &state) {
 		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
 		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
 		setFeatureState(OSystem::kFeatureVSync, state.vsync);
+		setRotationMode(state.rotation);
 
 	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
 		return false;
@@ -255,28 +249,6 @@ bool SdlGraphicsManager::lockMouse(bool lock) {
 }
 
 bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
-	switch (getRotationMode()) {
-	case Common::kRotationNormal:
-		break;
-	case Common::kRotation90: {
-		int x0 = mouse.x, y0 = mouse.y;
-		mouse.x = CLIP<int16>(y0, 0, _windowHeight - 1);
-		mouse.y = CLIP<int16>(_windowWidth - 1 - x0, 0, _windowWidth - 1);
-		break;
-	}
-	case Common::kRotation180: {
-		mouse.x = CLIP<int16>(_windowWidth - 1 - mouse.x, 0, _windowWidth - 1);
-		mouse.y = CLIP<int16>(_windowHeight - 1 - mouse.y, 0, _windowHeight - 1);
-		break;
-	}
-	case Common::kRotation270: {
-		int x0 = mouse.x, y0 = mouse.y;
-		mouse.x = CLIP<int16>(_windowHeight - 1 - y0, 0, _windowHeight - 1);
-		mouse.y = CLIP<int16>(x0, 0, _windowWidth - 1);
-		break;
-	}
-	}
-
 	bool showCursor = false;
 	// Currently on macOS we need to scale the events for HiDPI screen, but on
 	// Windows we do not. We can find out if we need to do it by querying the
@@ -363,13 +335,6 @@ void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint32 flags) {
 	if (!_window) {
 		return false;
-	}
-	Common::RotationMode rotation = getRotationMode();
-
-	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
-		int w = width, h = height;
-		width = h;
-		height = w;
 	}
 
 	// width *=3;

@@ -336,7 +336,7 @@ protected:
 	void recalculateDisplayAreas() override;
 	void handleResizeImpl(const int width, const int height) override;
 
-	void updateLinearFiltering();
+	void updateTextureSettings();
 
 	Pipeline *getPipeline() const { return _pipeline; }
 

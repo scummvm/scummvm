@@ -149,7 +149,7 @@ public:
 	/**
 	 * Set the size of the target buffer.
 	 */
-	virtual bool setSize(uint width, uint height, Common::RotationMode rotation) = 0;
+	virtual bool setSize(uint width, uint height) = 0;
 
 	/**
 	 * Accessor to activate framebuffer for pipeline.
@@ -185,7 +185,7 @@ public:
 	/**
 	 * Set the size of the back buffer.
 	 */
-	bool setSize(uint width, uint height, Common::RotationMode rotation) override;
+	bool setSize(uint width, uint height) override;
 
 protected:
 	void activateInternal() override;
@@ -218,7 +218,7 @@ public:
 	/**
 	 * Set size of the texture target.
 	 */
-	bool setSize(uint width, uint height, Common::RotationMode rotation) override;
+	bool setSize(uint width, uint height) override;
 
 	/**
 	 * Query pointer to underlying GL texture.

@@ -348,6 +348,7 @@ static void setupGraphics(OSystem &system) {
 		system.setStretchMode(ConfMan.get("stretch_mode").c_str());
 		system.setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
 		system.setShader(ConfMan.getPath("shader"));
+		system.setRotationMode(ConfMan.getInt("rotation_mode"));
 
 #if defined(OPENDINGUX) || defined(MIYOO) || defined(MIYOOMINI) || defined(ATARI)
 		// 0, 0 means "autodetect" but currently only SDL supports
