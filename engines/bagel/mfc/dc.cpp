@@ -22,17 +22,21 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/win_hand.h"
 #include "bagel/mfc/gfx/blitter.h"
 
 namespace Bagel {
 namespace MFC {
 
-IMPLEMENT_DYNAMIC(CDC, CObject)
+IMPLEMENT_DYNCREATE(CDC, CObject)
 
 CDC *CDC::FromHandle(HDC hDC) {
-//	Impl *surf = static_cast<Impl *>(hDC);
-//	return &wnd->_dc;
-	error("TODO: CDC::FromHandle");
+	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
+	assert(pMap != nullptr);
+
+	CDC *pObject = pMap->FromHandle(hDC);
+	assert(pObject == nullptr || pObject->m_hDC == hDC);
+	return pObject;
 }
 
 BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,

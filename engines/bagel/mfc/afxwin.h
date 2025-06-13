@@ -598,7 +598,7 @@ public:
 };
 
 class CDC : public CObject {
-	DECLARE_DYNAMIC(CDC)
+	DECLARE_DYNCREATE(CDC)
 
 public:
 	class Impl {
@@ -1507,6 +1507,7 @@ public:
 	virtual void OnFilePrintSetup() {}
 
 	CHandleMap<CGdiObject> *afxMapHGDIOBJ(BOOL bCreate);
+	CHandleMap<CDC> *afxMapHDC(BOOL bCreate);
 	void AfxUnlockTempMaps();
 
 	/*== ScummVM added functions ==*/

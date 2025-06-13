@@ -262,10 +262,17 @@ BOOL CWinApp::freeResource(HGLOBAL hResData) {
 }
 
 CHandleMap<CGdiObject> *CWinApp::afxMapHGDIOBJ(BOOL bCreate) {
-	if (m_pmapHGDIOBJ == NULL && bCreate)
+	if (m_pmapHGDIOBJ == nullptr && bCreate)
 		m_pmapHGDIOBJ = new CHandleMap<CGdiObject>();
 
 	return m_pmapHGDIOBJ;
+}
+
+CHandleMap<CDC> *CWinApp::afxMapHDC(BOOL bCreate) {
+	if (m_pmapHDC == nullptr && bCreate)
+		m_pmapHDC = new CHandleMap<CDC>();
+
+	return m_pmapHDC;
 }
 
 void CWinApp::AfxUnlockTempMaps() {
