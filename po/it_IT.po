@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-13 08:13+0000\n"
-"PO-Revision-Date: 2025-06-11 18:49+0000\n"
+"PO-Revision-Date: 2025-06-13 10:32+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -859,7 +859,7 @@ msgstr "Apri client email"
 
 #: gui/integrity-dialog.cpp:214
 msgid "Calculation complete"
-msgstr "Elaborazione completata!"
+msgstr "Elaborazione completata"
 
 #: gui/integrity-dialog.cpp:297
 #, c-format
@@ -5699,7 +5699,7 @@ msgstr "Percorso Playlists"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
 msgid "Specifies where your playlist will be saved."
-msgstr "Specifica dove salvare le playlist"
+msgstr "Specifica dove salvare le playlist."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
 msgid "Playlist format:"
