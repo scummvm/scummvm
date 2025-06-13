@@ -2361,6 +2361,12 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// Also functions inside A334
 			ReadByte();
 			ReadWord();
+		} else if (opcode1 == 0x4B) {
+			// TODO: No idea yet but probably something like the inverse of opcode 48h
+			Func9F4D_Placeholder();
+			// Also functions inside A334
+			ReadByte();
+			ReadWord();
 
 		} else if (opcode1 == 0x4D) {
 			// TODO: No idea yet what this does - it does manipulate a value that is used during
