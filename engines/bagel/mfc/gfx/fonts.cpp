@@ -111,6 +111,12 @@ HFONT Fonts::getDefaultFont() {
 
 /*--------------------------------------------*/
 
+Fonts::FontEntry::~FontEntry() {
+	delete (CFont::Impl *)_font;
+}
+
+/*--------------------------------------------*/
+
 BoldFont::~BoldFont() {
 	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _font;

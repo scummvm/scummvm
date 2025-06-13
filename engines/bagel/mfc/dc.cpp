@@ -421,7 +421,7 @@ UINT CDC::SetTextAlign(UINT nFlags) {
 
 BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	TEXTMETRIC &tm = *lpMetrics;
-	Graphics::Font *font = (Graphics::Font *)impl()->_font;
+	Graphics::Font *font = *(CFont::Impl *)impl()->_font;
 
 	memset(&tm, 0, sizeof(TEXTMETRIC)); // Initialize to zero
 
@@ -494,7 +494,9 @@ CDC::Impl::Impl(HDC srcDc) {
 }
 
 HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
-	CBitmap::Impl *bitmap = dynamic_cast<CBitmap::Impl *>(gdiObj);
+	CGdiObjectImpl *obj = (CGdiObjectImpl *)gdiObj;
+
+	CBitmap::Impl *bitmap = dynamic_cast<CBitmap::Impl *>(obj);
 	if (bitmap) {
 		HBITMAP result = _bitmap;
 		_bitmap = bitmap;
@@ -503,7 +505,7 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 		return result;
 	}
 
-	CFont::Impl *font = dynamic_cast<CFont::Impl *>(gdiObj);
+	CFont::Impl *font = dynamic_cast<CFont::Impl *>(obj);
 	if (font) {
 		HFONT result = _font;
 		_font = font;

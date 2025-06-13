@@ -39,17 +39,14 @@ class Fonts {
 	struct FontEntry {
 		Common::String _faceName;
 		int _height = 0;
-		Graphics::Font *_font = nullptr;
+		HFONT _font = nullptr;
 
-		void set(const Common::String &faceName, int height,
-			Graphics::Font *font) {
+		void set(const Common::String &faceName, int height, HFONT font) {
 			_faceName = faceName;
 			_height = height;
 			_font = font;
 		}
-		~FontEntry() {
-			delete _font;
-		}
+		~FontEntry();
 	};
 private:
 	Libs::Resources &_res;

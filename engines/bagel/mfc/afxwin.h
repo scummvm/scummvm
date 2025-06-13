@@ -494,9 +494,11 @@ public:
 		Impl(COLORREF crColor);
 		Impl(int nIndex, COLORREF crColor);
 		Impl(CBitmap *pBitmap);
+		~Impl() override {}
 
 		byte getColor() const;
 	};
+
 public:
 	CBrush();
 	CBrush(CBitmap *pBitmap);
@@ -512,16 +514,22 @@ public:
 
 class CFont : public CGdiObject {
 public:
-	class Impl : public CGdiObjectImpl,
-			public Gfx::BoldFont {
+	struct Impl : public CGdiObjectImpl {
+	public:
+		Gfx::BoldFont *_font;
 	public:
 		Impl(Graphics::Font *font) :
-			Gfx::BoldFont(font) {
+			_font(new Gfx::BoldFont(font)) {}
+		~Impl() override {
+			delete _font;
+		}
+		operator Graphics::Font *() const {
+			return _font;
 		}
 	};
+
 public:
-	~CFont() override {
-	}
+	~CFont() override {}
 
 	BOOL CreateFont(int nHeight, int nWidth, int nEscapement,
 	    int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
@@ -555,6 +563,7 @@ public:
 	struct Impl : public CGdiObjectImpl,
 			public Graphics::Palette {
 		Impl(const LPLOGPALETTE pal);
+		~Impl() override {}
 	};
 
 public:
