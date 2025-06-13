@@ -22,12 +22,16 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/savefile.h"
+
+#include "engines/metaengine.h"
 
 #include "sludge/cursors.h"
 #include "sludge/event.h"
 #include "sludge/fileset.h"
 #include "sludge/fonttext.h"
 #include "sludge/floor.h"
+#include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/language.h"
 #include "sludge/main_loop.h"
@@ -35,6 +39,7 @@
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
+#include "sludge/saveload.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
@@ -42,6 +47,8 @@
 #include "sludge/timing.h"
 
 namespace Sludge {
+
+extern LoadedFunction *allRunningFunctions; // In function.cpp
 
 SludgeEngine *g_sludge;
 
@@ -127,6 +134,58 @@ SludgeEngine::~SludgeEngine() {
 	_fatalMan = nullptr;
 	delete _statusBar;
 	delete _timer;
+}
+
+bool SludgeEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return !g_sludge->_evtMan->quit();
+}
+
+bool SludgeEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (g_sludge->_evtMan->quit())
+		return false;
+
+	if (g_sludge->_gfxMan->isFrozen()) {
+		return false;
+	}
+
+	Sludge::LoadedFunction *thisFunction = allRunningFunctions;
+	while (thisFunction) {
+		if (thisFunction->freezerLevel)
+			return false;
+		thisFunction = thisFunction->next;
+	}
+
+	return true;
+}
+
+Common::Error SludgeEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(getSaveStateName(slot));
+
+	if (!saveFile)
+		return Common::kWritingFailed;
+
+	Common::Error result = saveGame(saveFile) ? Common::kNoError : Common::kWritingFailed;
+	if (result.getCode() == Common::kNoError) {
+		getMetaEngine()->appendExtendedSave(saveFile, getTotalPlayTime(), desc, isAutosave);
+
+		saveFile->finalize();
+	}
+
+	delete saveFile;
+	return result;
+}
+
+Common::Error SludgeEngine::loadGameState(int slot) {
+	saveAutosaveIfEnabled();
+
+	Common::Error result = loadGame(getSaveStateName(slot)) ? Common::kNoError : Common::kReadingFailed;
+	return result;
+}
+
+bool SludgeEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error SludgeEngine::run() {

@@ -126,7 +126,7 @@ bool GraphicsManager::skipThumbnail(Common::SeekableReadStream *stream) {
 
 	// Load image
 	Graphics::Surface tmp;
-	if (_thumbWidth & _thumbHeight) {
+	if (_thumbWidth && _thumbHeight) {
 		if (!ImgLoader::loadPNGImage(stream, &tmp))
 			return false;
 		else
