@@ -42,6 +42,134 @@
 
 namespace Cine {
 
+// The color names for the copy protection screens are images, so they are transcribed here for TTS
+static const char *copyProtectionColorsFWEnglish[] = {
+	"White",
+	"Yellow",
+	"Red",
+	"Orange",
+	"Black",
+	"Blue",
+	"Brown",
+	"Green"
+};
+
+static const char *copyProtectionColorsFWFrench[] = {
+	"Blanc",
+	"Jaune",
+	"Rouge",
+	"Orange",
+	"Noir",
+	"Bleu",
+	"Marron",
+	"Vert"
+};
+
+static const char *copyProtectionColorsFWGerman[] = {
+	"Wei\341",
+	"Gelb",
+	"Rot",
+	"Orange",
+	"Schwarz",
+	"Blau",
+	"Braun",
+	"Grun"
+};
+
+static const char *copyProtectionColorsFWSpanish[] = {
+	"Blanco",
+	"Amarillo",
+	"Rojo",
+	"Naranja",
+	"Negro",
+	"Azul",
+	"Marr\242n",
+	"Verde"
+};
+
+static const char *copyProtectionColorsOSEnglish[] = {
+	"Black",
+	"White",
+	"Yellow",
+	"Orange",
+	"Red",
+	"Brown",
+	"Grey",
+	"Pink",
+	"Purple",
+	"Light Blue",
+	"Dark Blue",
+	"Light Green",
+	"Dark Green"
+};
+
+static const char *copyProtectionColorsOSFrench[] = {
+	"Noir",
+	"Blanc",
+	"Jaune",
+	"Orange",
+	"Rouge",
+	"Marron",
+	"Gris",
+	"Rose",
+	"Violet",
+	"Bleu Clair",
+	"Bleu Fonc\202",
+	"Vert Clair",
+	"Vert Fonc\202"
+};
+
+static const char *copyProtectionColorsOSGerman[] = {
+	"Schwarz",
+	"Wei\341",
+	"Gelb",
+	"Orange",
+	"Rot",
+	"Braun",
+	"Grau",
+	"Pink",
+	"Violett",
+	"Hellblau",
+	"Dunkelblau",
+	"Hellgr\201n",
+	"Dunkelgr\201n"
+};
+
+static const char *copyProtectionColorsOSSpanish[] = {
+	"Negro",
+	"Blanco",
+	"Amarillo",
+	"Naranja",
+	"Rojo",
+	"Marr\242n",
+	"Gris",
+	"Rosa",
+	"Morado",
+	"Azul Claro",
+	"Azul Oscuro",
+	"Verde Claro",
+	"Verde Oscuro"
+};
+
+static const char *copyProtectionColorsOSItalian[] = {
+	"Nero",
+    "Bianco",
+    "Giallo",
+    "Arancione",
+    "Rosso",
+    "Marrone",
+    "Grigio",
+    "Rosa",
+    "Viola",
+    "Azzurro",
+    "Blu Scuro",
+    "Verde Chiaro",
+    "Verde Scuro"
+};
+
+static const int kNumOfFWColors = 8;
+static const int kNumOfOSColors = 13;
+
 Sound *g_sound = nullptr;
 
 CineEngine *g_cine = nullptr;
@@ -116,6 +244,38 @@ Common::Error CineEngine::run() {
 	}
 
 	_restartRequested = false;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+	}
+
+	switch (getLanguage()) {
+	case Common::EN_ANY:
+	case Common::EN_USA:
+	case Common::EN_GRB:
+		_ttsLanguage = kEnglish;
+		break;
+	case Common::FR_FRA:
+		_ttsLanguage = kFrench;
+		break;
+	case Common::DE_DEU:
+		_ttsLanguage = kGerman;
+		break;
+	case Common::ES_ESP:
+		_ttsLanguage = kSpanish;
+		break;
+	case Common::IT_ITA:
+		_ttsLanguage = kItalian;
+		break;
+	default:
+		_ttsLanguage = kEnglish;
+	}
+
+	_copyProtectionColorScreen = false;
+	_copyProtectionTextScreen = false;
+	_saveInputMenuOpen = false;
 
 	do {
 		initialize();
@@ -328,6 +488,111 @@ void CineEngine::showSplashScreen() {
 	}
 
 	decoder.destroy();
+}
+
+void CineEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop,
+	// for example when the cursor stays on a button. Without it when the text ends it would speak
+	// the same text again.
+	// _previousSaid is cleared when appropriate to allow for repeat requests
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && text != _previousSaid) {
+		ttsMan->say(text, action, Common::CodePage::kDos850);
+		_previousSaid = text;
+	}
+}
+
+void CineEngine::stopTextToSpeech() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+		_previousSaid.clear();
+	}
+}
+
+void CineEngine::mouseOverButton() {
+	if (!_copyProtectionTextScreen && !_copyProtectionColorScreen) {
+		return;
+	}
+
+	uint16 mouseX, mouseY, mouseButton;
+	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
+
+	int16 objIdx = getObjectUnderCursor(mouseX, mouseY);
+
+	if (objIdx != -1) {
+		if (_copyProtectionTextScreen) {
+			// Operation Stealth has other objects than just the "Ok" button in this screen
+			if (getGameType() == GType_OS && _objectTable[objIdx].frame != 151) {
+				return;
+			}
+
+			sayText("Ok", Common::TextToSpeechManager::INTERRUPT);
+		} else if (_copyProtectionColorScreen) {
+			const char **colors;
+
+			if (getGameType() == GType_FW) {
+				// The Amiga and Atari versions use a different copy protection screen from the DOS version
+				// and don't have these color buttons
+				if (getPlatform() != Common::kPlatformDOS) {
+					return;
+				}
+
+				int16 index = objIdx - 150;
+
+				if (index < 0 || index >= kNumOfFWColors) {
+					return;
+				}
+
+				switch (_ttsLanguage) {
+				case kEnglish:
+					colors = copyProtectionColorsFWEnglish;
+					break;
+				case kFrench:
+					colors = copyProtectionColorsFWFrench;
+					break;
+				case kGerman:
+					colors = copyProtectionColorsFWGerman;
+					break;
+				case kSpanish:
+					colors = copyProtectionColorsFWSpanish;
+					break;
+				default:
+					colors = copyProtectionColorsFWEnglish;
+				}
+				sayText(colors[index], Common::TextToSpeechManager::INTERRUPT);
+			} else {
+				int16 index = objIdx - 240;
+
+				if (index < 0 || index >= kNumOfOSColors) {
+					return;
+				}
+
+				switch (_ttsLanguage) {
+				case kEnglish:
+					colors = copyProtectionColorsOSEnglish;
+					break;
+				case kFrench:
+					colors = copyProtectionColorsOSFrench;
+					break;
+				case kItalian:
+					colors = copyProtectionColorsOSItalian;
+					break;
+				case kGerman:
+					colors = copyProtectionColorsOSGerman;
+					break;
+				case kSpanish:
+					colors = copyProtectionColorsOSSpanish;
+					break;
+				default:
+					colors = copyProtectionColorsOSEnglish;
+				}
+				sayText(colors[index], Common::TextToSpeechManager::INTERRUPT);
+			}
+		}
+	} else {
+		_previousSaid.clear();
+	}
 }
 
 } // End of namespace Cine

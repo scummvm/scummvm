@@ -395,6 +395,8 @@ void CineEngine::makeSystemMenu() {
 	int16 mouseX, mouseY, mouseButton;
 	int16 selectedSave;
 
+	g_cine->_previousSaid.clear();
+
 	if (disableSystemMenu != 1) {
 		inMenu = true;
 
@@ -508,9 +510,12 @@ void CineEngine::makeSystemMenu() {
 			if (selectedSave >= 0) {
 				CommandeType saveName;
 				saveName[0] = 0;
+				_saveInputMenuOpen = true;
 
-				if (!makeTextEntryMenu(otherMessages[6], saveName, sizeof(CommandeType), 120))
+				if (!makeTextEntryMenu(otherMessages[6], saveName, sizeof(CommandeType), 120)) {
+					_saveInputMenuOpen = false;
 					break;
+				}
 
 				Common::strlcpy(currentSaveName[selectedSave], saveName, sizeof(CommandeType));
 
@@ -583,8 +588,12 @@ void processInventory(int16 x, int16 y) {
 		return;
 
 	Common::StringArray list;
-	for (int i = 0; i < listSize; ++i)
+	for (int i = 0; i < listSize; ++i) {
 		list.push_back(objectListCommand[i]);
+		// Some items are duplicated in the inventory, so clear _previousSaid to make sure they are repeated
+		g_cine->_previousSaid.clear();
+		g_cine->sayText(objectListCommand[i], Common::TextToSpeechManager::QUEUE);
+	}
 	SelectionMenu *menu = new SelectionMenu(Common::Point(x, y), menuWidth, list);
 
 	inMenu = true;
@@ -598,6 +607,7 @@ void processInventory(int16 x, int16 y) {
 	manageEvents(PROCESS_INVENTORY, UNTIL_MOUSE_BUTTON_DOWN_UP);
 
 	inMenu = false;
+	g_cine->stopTextToSpeech();
 }
 
 int16 buildObjectListCommand(int16 param) {
@@ -804,6 +814,7 @@ void makeFWCommandLine() {
 
 	if (!disableSystemMenu) {
 		isDrawCommandEnabled = 1;
+		g_cine->_previousSaid.clear();
 		renderer->setCommand(g_cine->_commandBuffer);
 	}
 }
@@ -1001,6 +1012,8 @@ void makeActionMenu() {
 	uint16 mouseButton;
 	uint16 mouseX;
 	uint16 mouseY;
+
+	g_cine->_previousSaid.clear();
 
 	inMenu = true;
 
@@ -1899,6 +1912,8 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 	TextInputMenu *inputBox = new TextInputMenu(Common::Point(x - 16, y), width + 32, messagePtr);
 	renderer->pushMenu(inputBox);
 
+	g_cine->sayText(messagePtr, Common::TextToSpeechManager::INTERRUPT);
+
 	while (!quit) {
 		if (redraw) {
 			inputBox->setInput(inputString, inputPos);
@@ -1995,6 +2010,8 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 
 	renderer->popMenu();
 	delete inputBox;
+
+	g_cine->sayText(inputString, Common::TextToSpeechManager::QUEUE);
 
 	if (quit == kRightMouseButton)
 		return false;
