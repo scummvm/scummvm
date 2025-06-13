@@ -31,6 +31,8 @@
 #include "graphics/thumbnail.h"
 #include "video/mve_decoder.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Voyeur {
 
 VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc) : Engine(syst),
@@ -484,6 +486,10 @@ void VoyeurEngine::doOpening() {
 	decoder.loadRL2File("a2300100.rl2", false);
 	decoder.start();
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("voyeur-default")->setEnabled(false);
+	keymapper->getKeymap("cutscene")->setEnabled(true);
+
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
@@ -525,6 +531,9 @@ void VoyeurEngine::doOpening() {
 	if ((_voy->_RTVNum - _voy->_audioVisualStartTime) < 2)
 		_eventsManager->delay(60);
 
+	keymapper->getKeymap("cutscene")->setEnabled(false);
+	keymapper->getKeymap("voyeur-default")->setEnabled(true);
+
 	_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 	_voy->addVideoEventEnd();
 	_voy->_eventFlags &= ~EVTFLAG_RECORDING;
@@ -536,6 +545,10 @@ void VoyeurEngine::playRL2Video(const Common::Path &filename) {
 	RL2Decoder decoder;
 	decoder.loadRL2File(filename, false);
 	decoder.start();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("voyeur-default")->setEnabled(false);
+	keymapper->getKeymap("cutscene")->setEnabled(true);
 
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
@@ -551,6 +564,9 @@ void VoyeurEngine::playRL2Video(const Common::Path &filename) {
 		_eventsManager->getMouseInfo();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("cutscene")->setEnabled(false);
+	keymapper->getKeymap("voyeur-default")->setEnabled(true);
 }
 
 void VoyeurEngine::playAVideo(int videoId) {
@@ -580,6 +596,10 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	_eventsManager->getMouseInfo();
 	_eventsManager->startCursorBlink();
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("voyeur-default")->setEnabled(false);
+	keymapper->getKeymap("cutscene")->setEnabled(true);
+
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked &&
 			(decoder.getCurFrame() < endFrame)) {
 		if (decoder.needsUpdate()) {
@@ -599,6 +619,9 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 		_eventsManager->getMouseInfo();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("cutscene")->setEnabled(false);
+	keymapper->getKeymap("voyeur-default")->setEnabled(true);
 
 	// RL2 finished
 	_screen->screenReset();
@@ -871,6 +894,10 @@ void VoyeurEngine::showLogo8Intro() {
 	// The MVE movie data is appended to the end of the EXE
 	file.seek(exeLength, SEEK_SET);
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("voyeur-default")->setEnabled(false);
+	keymapper->getKeymap("intro")->setEnabled(true);
+
 	Video::MveDecoder *decoder = new Video::MveDecoder();
 	if (decoder->loadStream(&file)) {
 		decoder->setAudioTrack(0);
@@ -901,13 +928,10 @@ void VoyeurEngine::showLogo8Intro() {
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+					if (event.customType == kActionSkip) {
 						skipMovie = true;
 					}
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					skipMovie = true;
 					break;
 				default:
 					break;
@@ -915,6 +939,9 @@ void VoyeurEngine::showLogo8Intro() {
 			}
 		}
 	}
+
+	keymapper->getKeymap("intro")->setEnabled(false);
+	keymapper->getKeymap("voyeur-default")->setEnabled(true);
 
 	file.close();
 	delete decoder;

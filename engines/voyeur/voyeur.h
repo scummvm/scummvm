@@ -72,6 +72,11 @@ enum VoyeurArea { AREA_NONE, AREA_APARTMENT, AREA_INTERFACE, AREA_ROOM, AREA_EVI
 
 struct VoyeurGameDescription;
 
+enum VOYEURAction {
+	kActionNone,
+	kActionSkip,
+};
+
 class VoyeurEngine : public Engine {
 private:
 	const VoyeurGameDescription *_gameDescription;
