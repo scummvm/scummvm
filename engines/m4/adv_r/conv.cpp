@@ -441,78 +441,60 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 }
 
 static void find_true_ent(int entry_num, Conv *c) {
-	node_chunk *node = nullptr;
-	lnode_chunk *lnode = nullptr;
-	entry_chunk *entry = nullptr;
-	fall_chunk *fall = nullptr;
-	int32 offset = 0, ent = 0, n = 0;
+	int32 ent = 0, n = 0;
 	int32 next = 0, tag = 0, num_ents = 0;
-	int i = 0;
-	int32 sub_ent = 0;
-	int result = 1;
+	int i;
 
-	for (;;) {
-		// Start by getting the current NODE or LNODE
-		conv_ops_get_entry(ent, &next, &tag, c);
-		switch (tag) {
-		case LNODE_CHUNK:
-			lnode = get_lnode(c, ent);
-			ent += sizeof(lnode_chunk);
-			num_ents = lnode->num_entries;
-			entry_num = lnode->entry_num;
-			c->node_hash = lnode->hash;
-			break;
+	// Start by getting the current NODE or LNODE
+	node_chunk *node;
+	lnode_chunk *lnode;
+	conv_ops_get_entry(ent, &next, &tag, c);
+	switch (tag) {
+	case LNODE_CHUNK:
+		lnode = get_lnode(c, ent);
+		ent += sizeof(lnode_chunk);
+		num_ents = lnode->num_entries;
+		entry_num = lnode->entry_num;
+		c->node_hash = lnode->hash;
+		break;
 
-		case NODE_CHUNK:
-			node = get_node(c, ent);
-			ent += sizeof(node_chunk);
-			num_ents = node->num_entries;
-			c->node_hash = node->hash;
-			break;
+	case NODE_CHUNK:
+		node = get_node(c, ent);
+		ent += sizeof(node_chunk);
+		num_ents = node->num_entries;
+		c->node_hash = node->hash;
+		break;
 
-		default:
-			break;
-		}
+	default:
+		break;
+	}
 
-		// ent will now be pointing at an ENTRY or FALLTHROUGH
-		sub_ent = next;
-		conv_ops_get_entry(sub_ent, &next, &tag, c);
-		switch (tag) {
-		case FALL_CHUNK:
-			// We either want to jump to a new node
-			// or skip to the first offset.
+	// ent will now be pointing at an ENTRY or FALLTHROUGH
+	const int32 sub_ent = next;
+	conv_ops_get_entry(sub_ent, &next, &tag, c);
+	if (tag == FALL_CHUNK) {
+		// We either want to jump to a new node
+		// or skip to the first offset.
 
-			fall = get_fall(c, sub_ent);
-			assert(fall);
+		fall_chunk *fall = get_fall(c, sub_ent);
+		assert(fall);
 
-			//do this to skip the fall chunk and all will be fine.
-			ent += sizeof(int32); //was get_long, sizeof( fall_chunk )
-			n++; //don't increment i.
-			break;
-
-		case ENTRY_CHUNK:
-			//don't bother.... result is 1 if FALL_CHUNK not encountered.
-			break;
-
-		default:
-			break;
-		}
-
-		if (result)
-			break;
+		//do this to skip the fall chunk and all will be fine.
+		ent += sizeof(int32); //was get_long, sizeof( fall_chunk )
+		n++;                  //don't increment i.
 	}
 
 	_GC(ent) = 0;
 
 	// Not only i<entry_num, check to see entry->num_entries
 	for (i = 0, n = 0; n < num_ents; n++) {
-		offset = get_long(c, ent);
-		entry = get_entry(c, ent + offset);
+		const int32 offset = get_long(c, ent);
+		entry_chunk *entry = get_entry(c, ent + offset);
 
 		if (i == entry_num)
 			break;
 
-		if (((entry->status) & 0x00000003) && ok_status(entry)) //was 1
+		if ((entry->status & 0x00000003) && ok_status(entry)) //was 1
 			i++;
 
 		_GC(ent)++;
