@@ -144,7 +144,8 @@
 	</globals>
 
 	<dialog name = 'Launcher' overlays = 'screen'>
-		<layout type = 'vertical' align = 'center' padding = '4, 4, 2, 2' spacing = '2'>
+		<layout type = 'vertical' align = 'center' padding = '4, 4, 2, 2' spacing = '2'
+			inset = 'kLauncherSafeAreaInsetLeft, kLauncherSafeAreaInsetRight, kLauncherSafeAreaInsetTop, kLauncherSafeAreaInsetBottom'>
 			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 0'>
 				<widget name = 'HelpButton'
 						height = 'Globals.Button.Height'
@@ -224,7 +225,8 @@
 		</layout>
 	</dialog>
 	<dialog name = 'LauncherGrid' overlays = 'screen'>
-		<layout type = 'vertical' align = 'center' padding = '4, 4, 2, 2' spacing = '2'>
+		<layout type = 'vertical' align = 'center' padding = '4, 4, 2, 2' spacing = '2'
+			inset = 'kLauncherSafeAreaInsetLeft, kLauncherSafeAreaInsetRight, kLauncherSafeAreaInsetTop, kLauncherSafeAreaInsetBottom'>
 			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 0'>
 				<widget name = 'HelpButton'
 						height = 'Globals.Button.Height'
