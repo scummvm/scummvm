@@ -494,17 +494,16 @@ CDC::Impl::Impl(HDC srcDc) {
 }
 
 HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
-	HBITMAP bitmap = dynamic_cast<HBITMAP>(gdiObj);
+	CBitmap::Impl *bitmap = dynamic_cast<CBitmap::Impl *>(gdiObj);
 	if (bitmap) {
 		HBITMAP result = _bitmap;
 		_bitmap = bitmap;
 
-		CBitmap::Impl *bmap = (CBitmap::Impl *)bitmap;
-		_format = bmap->format;
+		_format = bitmap->format;
 		return result;
 	}
 
-	HFONT font = dynamic_cast<HFONT>(gdiObj);
+	CFont::Impl *font = dynamic_cast<CFont::Impl *>(gdiObj);
 	if (font) {
 		HFONT result = _font;
 		_font = font;

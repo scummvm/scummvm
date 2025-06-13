@@ -21,7 +21,7 @@
 
 #include "graphics/fonts/winfont.h"
 #include "bagel/mfc/gfx/fonts.h"
-#include "bagel/mfc/wingdi.h"
+#include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
@@ -74,12 +74,12 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 			// Created the font. Now wrap it in a BoldFont. For Hodj n Podj,
 			// doubling the character pixels horizontally produced
 			// a closer match to what it looks like in Windows
-			Graphics::Font *f = new BoldFont(font);
+			CFont::Impl *f = new CFont::Impl(font);
 
 			// Add to the font cache
 			_fonts.push_back(FontEntry());
 			_fonts.back().set(lpszFacename, nHeight, f);
-			return (HFONT)f;
+			return f;
 		}
 	}
 

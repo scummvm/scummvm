@@ -99,7 +99,8 @@ BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint) {
 }
 
 HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
-	error("TODO: SelectObject");
+	CDC::Impl *dc = (CDC::Impl *)hdc;
+	return dc->Attach(h);
 }
 
 HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {

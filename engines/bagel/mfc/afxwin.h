@@ -512,6 +512,14 @@ public:
 
 class CFont : public CGdiObject {
 public:
+	class Impl : public CGdiObjectImpl,
+			public Gfx::BoldFont {
+	public:
+		Impl(Graphics::Font *font) :
+			Gfx::BoldFont(font) {
+		}
+	};
+public:
 	~CFont() override {
 	}
 
