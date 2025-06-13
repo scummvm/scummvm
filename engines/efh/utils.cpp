@@ -208,6 +208,9 @@ Common::KeyCode EfhEngine::waitForKey() {
 			if (!event.kbd.flags)
 				retVal = event.kbd.keycode;
 		}
+
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)
+			_customAction = event.customType;
 	}
 
 	return retVal;
