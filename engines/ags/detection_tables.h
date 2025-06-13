@@ -4593,9 +4593,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159785509), // 1.07b Win
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160015617), // 1.10k Win
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160027639), // 1.10l Win
+	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "5277b25b5f93d59c02391b280d6a5d18", 160141434), // 1.10u Win
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 159579164), // Initial Release Mac
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 159785509), // 1.07b Mac
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 160015617), // 1.10k Mac
+	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "5277b25b5f93d59c02391b280d6a5d18", 160141434), // 1.10u Mac
 	GAME_ENTRY_EN_PLATFORM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159589239, "itch.io"), // 1.02b itch.io
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159920906), // 1.07b Win
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160015780), // 1.10k Win
@@ -4603,6 +4605,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "5277b25b5f93d59c02391b280d6a5d18", 160141597), // 1.10u3 Win
 	GAME_ENTRY_EN_GOG("crimsondiamond", "ac2game.dat", "38fb5c85b695ea0eb4efa062d17c46d8", 156738294), // 1.07b Mac
 	GAME_ENTRY_EN_GOG("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 160015780),    // 1.10k Mac
+	GAME_ENTRY_EN_GOG("crimsondiamond", "game.ags", "5277b25b5f93d59c02391b280d6a5d18", 160141597),    // 1.10u Mac
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713),  // Multilang
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.ags", "9b7610e4330a7aa2118bc3bdb8d2ce7e", 1935844),  // Multilang
 	GAME_ENTRY_GOG("crystalshardadventurebundle", "bundle.ags", "d969de02802ea5edb7a76537fec974ec", 1935846),  // Multilang
