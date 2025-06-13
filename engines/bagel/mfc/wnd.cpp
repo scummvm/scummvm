@@ -66,6 +66,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
+	_surface._format = format;
 
 	_controlId = nID;
 
@@ -169,7 +170,9 @@ CDC *CWnd::GetDC() {
 }
 
 int CWnd::ReleaseDC(CDC *pDC) {
-	// No implementation in ScummVM
+	// No implementation in ScummVM, since
+	// window created DCs are just internally
+	// pointers to the window itself
 	return 1;
 }
 
@@ -548,6 +551,7 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
+	_surface._format = format;
 
 	// Iterate through all child controls. We won't
 	// change their relative position, but doing so will
@@ -620,6 +624,7 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
+	_surface._format = format;
 
 	return true;
 }

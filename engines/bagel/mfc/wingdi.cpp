@@ -39,7 +39,12 @@ HDC CreateCompatibleDC(HDC hdc) {
 HDC GetDC(HWND hWnd) {
 	assert(!hWnd);
 	CWnd *wnd = AfxGetApp()->m_pMainWnd;
-	return CreateCompatibleDC(wnd->GetDC());
+
+	CDC *dc = wnd->GetDC();
+	HDC result = CreateCompatibleDC(dc->m_hDC);
+	wnd->ReleaseDC(dc);
+
+	return result;
 }
 
 int ReleaseDC(HWND hWnd, HDC hDC) {
