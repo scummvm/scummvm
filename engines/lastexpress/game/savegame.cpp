@@ -147,8 +147,8 @@ void SaveManager::writeSavePoint(CVCRFile *file, int saveType, int character, in
 		charactersBuffer[i * 1262 + offset++] = characterStruct.position2;
 		charactersBuffer[i * 1262 + offset++] = characterStruct.car2;
 		charactersBuffer[i * 1262 + offset++] = characterStruct.doProcessEntity;
-		charactersBuffer[i * 1262 + offset++] = characterStruct.field_4A9;
-		charactersBuffer[i * 1262 + offset++] = characterStruct.field_4AA;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.needsPosFudge;
+		charactersBuffer[i * 1262 + offset++] = characterStruct.needsSecondaryPosFudge;
 		charactersBuffer[i * 1262 + offset++] = characterStruct.directionSwitch;
 
 		// Copy string fields
@@ -346,8 +346,8 @@ void SaveManager::readSavePoint(CVCRFile *file, int *saveType, uint8 *character,
 				characterStruct->position2 = charactersBuffer[i * 1262 + offset]; offset++;
 				characterStruct->car2 = charactersBuffer[i * 1262 + offset]; offset++;
 				characterStruct->doProcessEntity = charactersBuffer[i * 1262 + offset]; offset++;
-				characterStruct->field_4A9 = charactersBuffer[i * 1262 + offset]; offset++;
-				characterStruct->field_4AA = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->needsPosFudge = charactersBuffer[i * 1262 + offset]; offset++;
+				characterStruct->needsSecondaryPosFudge = charactersBuffer[i * 1262 + offset]; offset++;
 				characterStruct->directionSwitch = charactersBuffer[i * 1262 + offset]; offset++;
 
 				// Copy string fields

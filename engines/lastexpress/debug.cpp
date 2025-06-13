@@ -194,7 +194,8 @@ void onImGuiRender() {
 		}
 		ImGui::EndChild();
 
-		// Top-right panels
+		// Top-right area
+
 		// Top-right is Clock
 		ImGui::SetCursorPos(ImVec2(mainAreaWidth + 8, 16));
 		ImGui::BeginChild("Clock", ImVec2(_state->_rightPanelWidth, _state->_rightTopPanelHeight), true);
@@ -255,7 +256,8 @@ void Clock::showCurrentTime() {
 	ImVec2 windowSize = ImGui::GetContentRegionAvail();
 	ImVec2 windowCenter = ImVec2(
 		windowPos.x + ImGui::GetWindowSize().x / 2,
-		windowPos.y + ImGui::GetWindowSize().y / 2);
+		windowPos.y + ImGui::GetWindowSize().y / 2
+	);
 
 	drawList->AddText(
 		ImGui::GetFont(),
@@ -460,18 +462,74 @@ void LogicManager::showTrainMapWindow() {
 		bool isSleeper;
 	};
 
-	CarInfo cars[] = {
-		{ kCarRestaurant,    "Restaurant Car",     restaurantColor,    1.6f, 6, false},
-		{ kCarRedSleeping,   "Red Sleeping Car",   redSleepingColor,   1.2f, 8, true },
-		{ kCarGreenSleeping, "Green Sleeping Car", greenSleepingColor, 1.2f, 8, true },
-		{ kCarVestibule,     "Vestibule",          vestibuleColor,     0.3f, 1, false},
-		{ kCarKronos,        "Kronos Car",         kronosColor,        1.0f, 3, false}
+	CarInfo carsChapter1[] = {
+		{ kCarRestaurant,    "Restaurant Car",     restaurantColor,    1.6f, 6, false },
+		{ kCarRedSleeping,   "Red Sleeping Car",   redSleepingColor,   1.2f, 8, true  },
+		{ kCarGreenSleeping, "Green Sleeping Car", greenSleepingColor, 1.2f, 8, true  },
+		{ kCarVestibule,     "Vestibule",          vestibuleColor,     0.3f, 1, false },
+		{ kCarKronos,        "Kronos Car",         kronosColor,        1.0f, 3, false }
 	};
 
-	const int carCount = sizeof(cars) / sizeof(cars[0]);
+	CarInfo carsChapters23[] = {
+		{ kCarLocomotive,    "Locomotive",         vestibuleColor,     0.5f, 1, false },
+		{ kCarCoalTender,    "Coal Tender",        voidColor,          1.0f, 1, false },
+		{ kCarBaggage,       "Baggage Car",        vestibuleColor,     1.0f, 1, false },
+		{ kCarRestaurant,    "Restaurant Car",     restaurantColor,    1.6f, 6, false },
+		{ kCarRedSleeping,   "Red Sleeping Car",   redSleepingColor,   1.2f, 8, true  },
+		{ kCarGreenSleeping, "Green Sleeping Car", greenSleepingColor, 1.2f, 8, true  },
+		{ kCarVestibule,     "Vestibule",          vestibuleColor,     0.3f, 1, false },
+		{ kCarKronos,        "Kronos Car",         kronosColor,        1.0f, 3, false },
+		{ kCarBaggageRear,   "Rear Baggage Car",   vestibuleColor,     1.0f, 1, false }
+	};
+
+	CarInfo carsChapter4[] = {
+		{ kCarLocomotive,    "Locomotive",         vestibuleColor,     0.5f, 1, false },
+		{ kCarCoalTender,    "Coal Tender",        voidColor,          1.0f, 1, false },
+		{ kCarBaggage,       "Baggage Car",        vestibuleColor,     1.0f, 1, false },
+		{ kCarRestaurant,    "Restaurant Car",     restaurantColor,    1.6f, 6, false },
+		{ kCarRedSleeping,   "Red Sleeping Car",   redSleepingColor,   1.2f, 8, true  },
+		{ kCarGreenSleeping, "Green Sleeping Car", greenSleepingColor, 1.2f, 8, true  },
+		{ kCarVestibule,     "Vestibule",          vestibuleColor,     0.3f, 1, false },
+		{ kCarBaggageRear,   "Rear Baggage Car",   vestibuleColor,     1.0f, 1, false }
+	};
+
+	CarInfo carsChapter5[] = {
+		{ kCarLocomotive,    "Locomotive",         vestibuleColor,     0.5f, 1, false },
+		{ kCarCoalTender,    "Coal Tender",        voidColor,          1.0f, 1, false },
+		{ kCarBaggage,       "Baggage Car",        vestibuleColor,     1.0f, 1, false },
+		{ kCarRestaurant,    "Restaurant Car",     restaurantColor,    1.6f, 6, false }
+	};
+
+	CarInfo *cars = nullptr;
+	int carCount = 0;
+
+	switch (_state->_engine->getLogicManager()->_globals[kProgressChapter]) {
+	case 1:
+		cars = carsChapter1;
+		carCount = ARRAYSIZE(carsChapter1);
+		break;
+	case 2:
+	case 3:
+	default:
+		cars = carsChapters23;
+		carCount = ARRAYSIZE(carsChapters23);
+		break;
+	case 4:
+	case 5:
+		if (_state->_engine->getLogicManager()->_globals[kProgressChapter] == 5 &&
+			(_state->_engine->getLogicManager()->_doneNIS[kEventAugustUnhookCars] || _state->_engine->getLogicManager()->_doneNIS[kEventAugustUnhookCarsBetrayal])) {
+			cars = carsChapter5;
+			carCount = ARRAYSIZE(carsChapter5);
+		} else {
+			cars = carsChapter4;
+			carCount = ARRAYSIZE(carsChapter4);
+		}
+
+		break;
+	}
 
 	// Calculate total relative width to scale properly...
-	float totalRelativeWidth = 0;
+	float totalRelativeWidth = 0.2f;
 	for (int i = 0; i < carCount; i++) {
 		totalRelativeWidth += cars[i].width;
 	}
@@ -538,7 +596,8 @@ void LogicManager::showTrainMapWindow() {
 			carMin,
 			carMax,
 			ImGui::ColorConvertFloat4ToU32(car.color),
-			5.0f);
+			5.0f
+		);
 
 		// Corridor position - default is center for non-sleeper cars...
 		float corridorY = carMin.y + (carHeight - corridorHeight) / 2;
@@ -567,7 +626,8 @@ void LogicManager::showTrainMapWindow() {
 				ImVec2(carMin.x, corridorY),
 				ImVec2(carMax.x, corridorY + corridorHeight),
 				ImGui::ColorConvertFloat4ToU32(corridorColor),
-				0.0f);
+				0.0f
+			);
 
 			// Draw corridor-colored areas on both sides of the compartments
 			// (where the compartements rooms end and the door to the next one is nearby)
@@ -577,14 +637,16 @@ void LogicManager::showTrainMapWindow() {
 				ImVec2(carMin.x, carMin.y),
 				ImVec2(compartmentLeftEdge, corridorY),
 				ImGui::ColorConvertFloat4ToU32(corridorColor),
-				0.0f);
+				0.0f
+			);
 
 			// Right side (beyond compartments)
 			drawList->AddRectFilled(
 				ImVec2(compartmentRightEdge, carMin.y),
 				ImVec2(carMax.x, corridorY),
 				ImGui::ColorConvertFloat4ToU32(corridorColor),
-				0.0f);
+				0.0f
+			);
 
 			// Calculate width of each compartment...
 			float compartmentWidth = (compartmentRightEdge - compartmentLeftEdge) / 8;
@@ -598,7 +660,8 @@ void LogicManager::showTrainMapWindow() {
 					ImVec2(x, carMin.y),
 					ImVec2(x, corridorY),
 					IM_COL32(0, 0, 0, 255),
-					1.0f);
+					1.0f
+				);
 			}
 		} else if (car.id == kCarRestaurant) {
 			// Restaurant car with two sections: lounge and restaurant
@@ -633,7 +696,8 @@ void LogicManager::showTrainMapWindow() {
 				ImVec2(carMin.x, corridorY),
 				ImVec2(carMax.x, corridorY + corridorHeight),
 				ImGui::ColorConvertFloat4ToU32(corridorColor),
-				0.0f);
+				0.0f
+			);
 
 			// Draw restaurant tables...
 			float tableWidth = restaurantWidth / 3;
@@ -701,15 +765,16 @@ void LogicManager::showTrainMapWindow() {
 
 		// Draw car name and ID...
 		char carName[32];
-		Common::sprintf_s(carName, "%s (%d)", car.name, car.id);
+		Common::sprintf_s(carName, "%s\n(%d)", car.name, car.id);
 		ImVec2 textSize = ImGui::CalcTextSize(carName);
 		drawList->AddText(
 			ImVec2(carMin.x + (carWidth / 2) - (textSize.x / 2), carMax.y + 5),
 			IM_COL32(255, 255, 255, 255),
-			carName);
+			carName
+		);
 
 		// Draw characters in this car...
-		for (int i = 0; i < charPositions.size(); i++) {
+		for (uint i = 0; i < charPositions.size(); i++) {
 			if (charPositions[i].car == car.id) {
 				float charX, charY;
 
@@ -767,7 +832,7 @@ void LogicManager::showTrainMapWindow() {
 						if (inLounge) {
 							// Lounge area (right side of car)...
 							charX = carMin.x + restaurantWidth + (loungeWidth / 2);
-							charY = restCorridorY + (compartment % 2 == 0 ? -restCorridorY / 2 : corridorHeight + restCorridorY / 2);
+							charY = carMin.y + carHeight / 2;
 						} else {
 							// Restaurant area (left side of car)...
 							float tableWidth = restaurantWidth / 3;
@@ -801,14 +866,16 @@ void LogicManager::showTrainMapWindow() {
 					ImVec2(charX, charY),
 					8.0f,
 					ImGui::ColorConvertFloat4ToU32(charPositions[i].charIndex == kCharacterCath ? cathColor : characterColor),
-					12);
+					12
+				);
 
 				char charId[8];
 				Common::sprintf_s(charId, "%d", charPositions[i].charIndex);
 				drawList->AddText(
 					ImVec2(charX - ImGui::CalcTextSize(charId).x / 2, charY - ImGui::CalcTextSize(charId).y / 2),
 					charPositions[i].charIndex == kCharacterCath ? IM_COL32(255, 255, 255, 255) : IM_COL32(0, 0, 0, 255),
-					charId);
+					charId
+				);
 
 				// Tooltip!
 				ImGui::SetCursorScreenPos(ImVec2(charX - 8, charY - 8));
@@ -819,7 +886,8 @@ void LogicManager::showTrainMapWindow() {
 					ImGui::Text("Car: %d, Loc: %d, Pos: %d",
 								charPositions[i].car,
 								getCharacter(charPositions[i].charIndex).characterPosition.location,
-								getCharacter(charPositions[i].charIndex).characterPosition.position);
+								getCharacter(charPositions[i].charIndex).characterPosition.position
+					);
 					ImGui::EndTooltip();
 				}
 			}
@@ -855,11 +923,12 @@ void LogicManager::showTrainMapWindow() {
 		drawList->AddText(
 			ImVec2(voidMin.x + 10, voidMin.y + 5),
 			IM_COL32(255, 255, 255, 255),
-			voidLabel);
+			voidLabel
+		);
 
 		// Character markers...
 		float charSpacing = (voidMax.x - voidMin.x - 20) / (voidCharPositions.size() + 1);
-		for (int i = 0; i < voidCharPositions.size(); i++) {
+		for (uint i = 0; i < voidCharPositions.size(); i++) {
 			float charX = voidMin.x + 10 + charSpacing * (i + 1);
 			float charY = voidMin.y + 35;
 
@@ -867,14 +936,16 @@ void LogicManager::showTrainMapWindow() {
 				ImVec2(charX, charY),
 				8.0f,
 				ImGui::ColorConvertFloat4ToU32(characterColor),
-				12);
+				12
+			);
 
 			char charId[16];
 			Common::sprintf_s(charId, "%d", voidCharPositions[i].charIndex);
 			drawList->AddText(
 				ImVec2(charX - ImGui::CalcTextSize(charId).x / 2, charY - ImGui::CalcTextSize(charId).y / 2),
 				IM_COL32(0, 0, 0, 255),
-				charId);
+				charId
+			);
 
 			// Tooltip! :-)
 			ImGui::SetCursorScreenPos(ImVec2(charX - 8, charY - 8));
@@ -884,7 +955,8 @@ void LogicManager::showTrainMapWindow() {
 				ImGui::Text("%s", getCharacterName(voidCharPositions[i].charIndex));
 				ImGui::Text("Car: 0, Loc: %d, Pos: %d",
 							getCharacter(voidCharPositions[i].charIndex).characterPosition.location,
-							getCharacter(voidCharPositions[i].charIndex).characterPosition.position);
+							getCharacter(voidCharPositions[i].charIndex).characterPosition.position
+				);
 				ImGui::EndTooltip();
 			}
 		}
@@ -943,7 +1015,7 @@ void LogicManager::renderCharacterGrid(bool onlyPinned, int &selectedCharacter) 
 		Common::StringArray funcNames = getCharacterFunctionNames(i);
 
 		Common::String funcCurrName = "NONE";
-		if (character->callbacks[character->currentCall] - 1 < funcNames.size())
+		if ((uint)(character->callbacks[character->currentCall] - 1) < funcNames.size())
 			funcCurrName = funcNames[character->callbacks[character->currentCall] - 1];
 
 		// Cath (the player) doesn't have logic functions...
@@ -974,7 +1046,8 @@ void LogicManager::renderCharacterGrid(bool onlyPinned, int &selectedCharacter) 
 
 	if (displayed == 0) {
 		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f),
-						   onlyPinned ? "No pinned characters match the filter" : "No characters match the filter");
+						   onlyPinned ? "No pinned characters match the filter" : "No characters match the filter"
+		);
 	}
 }
 
@@ -991,12 +1064,13 @@ void LogicManager::renderCharacterDetails(Character *character, int index) {
 	ImGui::Text("Position: Car %u, Location %u, Position %u",
 				character->characterPosition.car,
 				character->characterPosition.location,
-				character->characterPosition.position);
+				character->characterPosition.position
+	);
 
 	Common::StringArray funcNames = getCharacterFunctionNames(index);
 
 	Common::String funcCurrName = "NONE";
-	if (character->callbacks[character->currentCall] - 1 < funcNames.size())
+	if ((uint)(character->callbacks[character->currentCall] - 1) < funcNames.size())
 		funcCurrName = funcNames[character->callbacks[character->currentCall] - 1];
 
 	// Cath (the player) doesn't have logic functions...
@@ -1026,7 +1100,8 @@ void LogicManager::renderCharacterDetails(Character *character, int index) {
 				ImGui::BulletText("Level %d: %s (#%d)",
 								  currentDepth - i,
 								  funcNames[functionId - 1].c_str(),
-								  functionId);
+								  functionId
+				);
 
 				ImGui::Unindent(indentAmount);
 			}
@@ -1059,8 +1134,8 @@ void LogicManager::renderCharacterDetails(Character *character, int index) {
 		ImGui::Text("Process Entity: %d", character->doProcessEntity);
 		ImGui::Text("Previous Car: %d", character->car2);
 		ImGui::Text("Previous Position: %d", character->position2);
-		ImGui::Text("Field_4A9: %d", character->field_4A9);
-		ImGui::Text("Field_4AA: %d", character->field_4AA);
+		ImGui::Text("Position fudge flag: %d", character->needsPosFudge);
+		ImGui::Text("Position fudge flag (secondary): %d", character->needsSecondaryPosFudge);
 	}
 
 	if (ImGui::CollapsingHeader("Call Parameters", ImGuiTreeNodeFlags_DefaultOpen)) {

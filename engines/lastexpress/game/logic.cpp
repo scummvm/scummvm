@@ -584,40 +584,40 @@ bool LogicManager::whoWalking(int character) {
 	return direction == 1 || direction == 2;
 }
 
-int LogicManager::checkDoor(int object) {
-	if (object < 128) {
-		return _doors[object].status;
+int LogicManager::checkDoor(int door) {
+	if (door < 128) {
+		return _doors[door].status;
 	} else {
 		return 0;
 	}
 }
 
-bool LogicManager::preventEnterComp(int object) {
+bool LogicManager::preventEnterComp(int door) {
 	int car;
 	int position;
 
-	if (object && object <= 8) {
+	if (door && door <= 8) {
 		car = kCarGreenSleeping;
-		position = _objectPosition[object - 1];
+		position = _doorPositions[door - 1];
 
 		if (inComp(kCharacterCath, car, position))
 			return false;
 
-	} else if (object < 32 || object > 39) {
-		if (object < 17 || object > 22) {
-			if (object < 48 || object > 53)
+	} else if (door < 32 || door > 39) {
+		if (door < 17 || door > 22) {
+			if (door < 48 || door > 53)
 				return false;
 
 			car = kCarRedSleeping;
-			position = _objectPosition[object - 48];
+			position = _doorPositions[door - 48];
 		} else {
 			car = kCarGreenSleeping;
-			position = _objectPosition[object - 17];
+			position = _doorPositions[door - 17];
 		}
 
 	} else {
 		car = kCarRedSleeping;
-		position = _objectPosition[object - 32];
+		position = _doorPositions[door - 32];
 		if (inComp(kCharacterCath, car, position))
 			return false;
 	}
@@ -630,37 +630,37 @@ bool LogicManager::preventEnterComp(int object) {
 	return false;	
 }
 
-void LogicManager::setDoor(int object, int character, int status, int cursor, int handleCursor) {
-	if (object < 128) {
-		int oldDoor = _doors[object].status;
-		_doors[object].who = character;
-		_doors[object].status = status;
+void LogicManager::setDoor(int door, int character, int status, int windowCursor, int handleCursor) {
+	if (door < 128) {
+		int oldStatus = _doors[door].status;
+		_doors[door].who = character;
+		_doors[door].status = status;
 
-		if (cursor != 255 || handleCursor != 255) {
-			if (cursor != 255)
-				_doors[object].windowCursor = cursor;
+		if (windowCursor != 255 || handleCursor != 255) {
+			if (windowCursor != 255)
+				_doors[door].windowCursor = windowCursor;
 
 			if (handleCursor != 255)
-				_doors[object].handleCursor = handleCursor;
+				_doors[door].handleCursor = handleCursor;
 
 			mouseStatus();
 		}
 
 		_engine->getSoundManager()->_scanAnySoundLoopingSection = true;
 
-		if (oldDoor != status && (oldDoor == 2 || status == 2) && (object && object <= 8 || object >= 32 && object <= 39))
+		if (oldStatus != status && (oldStatus == 2 || status == 2) && (door && door <= 8 || door >= 32 && door <= 39))
 			_engine->getOtisManager()->drawLooseSprites();
 	}
 }
 
-void LogicManager::setModel(int object, int8 model) {
-	if (object < 128)
-		_doors[object].model = model;
+void LogicManager::setModel(int door, int8 model) {
+	if (door < 128)
+		_doors[door].model = model;
 }
 
-int LogicManager::getModel(int object) {
-	if (object < 128) {
-		return _doors[object].model;
+int LogicManager::getModel(int door) {
+	if (door < 128) {
+		return _doors[door].model;
 	} else {
 		return 0;
 	}
@@ -1091,9 +1091,9 @@ bool LogicManager::obstacleBetween(int character1, int character2) {
 		char2Pos = getCharacter(character2).characterPosition.position;
 	}
 
-	for (i = 7; i > -1 && _objectPosition[i] < (int)char1Pos; i--);
+	for (i = 7; i > -1 && _doorPositions[i] < (int)char1Pos; i--);
 
-	for (j = 0; j < 8 && _objectPosition[j] > (int)char2Pos; j++);
+	for (j = 0; j < 8 && _doorPositions[j] > (int)char2Pos; j++);
 
 	if (i > -1 && j < 8) {
 		while (j <= i) {
@@ -1115,15 +1115,15 @@ bool LogicManager::obstacleBetween(int character1, int character2) {
 	return false;
 }
 
-bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScene) {
-	if (getCharacter(kCharacterCath).characterPosition.location || (object < 2 || object > 8) && (object < 32 || object > 39)) {
+bool LogicManager::bumpCathTowardsCond(int door, bool playSound, bool loadScene) {
+	if (getCharacter(kCharacterCath).characterPosition.location || (door < 2 || door > 8) && (door < 32 || door > 39)) {
 		return false;
 	}
 
 	if (getCharacter(kCharacterCath).characterPosition.car == getCharacter(kCharacterPolice).characterPosition.car &&
 		!getCharacter(kCharacterPolice).characterPosition.location && !obstacleBetween(kCharacterCath, kCharacterPolice)) {
 		if (playSound) {
-			if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
+			if (_doors[door].status == 1 || _doors[door].status == 3 || preventEnterComp(door)) {
 				queueSFX(kCharacterCath, 13, 0);
 			} else {
 				queueSFX(kCharacterCath, 14, 0);
@@ -1132,7 +1132,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 		}
 
 		if (loadScene)
-			bumpCathRDoor(object);
+			bumpCathRDoor(door);
 
 		return true;
 	}
@@ -1149,7 +1149,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 				(getCharacter(kCharacterTrainM).characterPosition.car != kCarGreenSleeping || getCharacter(kCharacterTrainM).characterPosition.position > 2740)) {
 
 				if (playSound) {
-					if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
+					if (_doors[door].status == 1 || _doors[door].status == 3 || preventEnterComp(door)) {
 						queueSFX(kCharacterCath, 13, 0);
 					} else {
 						queueSFX(kCharacterCath, 14, 0);
@@ -1158,12 +1158,12 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 				}
 
 				if (!whoRunningDialog(kCharacterCond1))
-					playCondYelling(kCharacterCond1, object);
+					playCondYelling(kCharacterCond1, door);
 
 				send(kCharacterCath, kCharacterCond1, 305159806, 0);
 
 				if (loadScene)
-					bumpCathRDoor(object);
+					bumpCathRDoor(door);
 
 				return true;
 			}
@@ -1174,7 +1174,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			getCharacter(kCharacterCond1).characterPosition.position < getCharacter(kCharacterCath).characterPosition.position) {
 
 			if (playSound) {
-				if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
+				if (_doors[door].status == 1 || _doors[door].status == 3 || preventEnterComp(door)) {
 					queueSFX(kCharacterCath, 13, 0);
 				} else {
 					queueSFX(kCharacterCath, 14, 0);
@@ -1191,7 +1191,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			}
 
 			if (loadScene)
-				bumpCathRDoor(object);
+				bumpCathRDoor(door);
 
 			return true;
 		}
@@ -1201,7 +1201,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			getCharacter(kCharacterCond1).characterPosition.position > getCharacter(kCharacterCath).characterPosition.position) {
 
 			if (playSound) {
-				if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
+				if (_doors[door].status == 1 || _doors[door].status == 3 || preventEnterComp(door)) {
 					queueSFX(kCharacterCath, 13, 0);
 				} else {
 					queueSFX(kCharacterCath, 14, 0);
@@ -1218,7 +1218,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			}
 
 			if (loadScene)
-				bumpCathFDoor(object);
+				bumpCathFDoor(door);
 
 			return true;
 		}
@@ -1239,7 +1239,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			(getCharacter(kCharacterMadame).characterPosition.car != kCarRedSleeping || getCharacter(kCharacterMadame).characterPosition.position > 2740)) {
 
 			if (playSound) {
-				if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
+				if (_doors[door].status == 1 || _doors[door].status == 3 || preventEnterComp(door)) {
 					queueSFX(kCharacterCath, 13, 0);
 				} else {
 					queueSFX(kCharacterCath, 14, 0);
@@ -1248,12 +1248,12 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 			}
 
 			if (!whoRunningDialog(kCharacterCond2))
-				playCondYelling(kCharacterCond2, object);
+				playCondYelling(kCharacterCond2, door);
 
 			send(kCharacterCath, kCharacterCond2, 305159806, 0);
 
 			if (loadScene)
-				bumpCathRDoor(object);
+				bumpCathRDoor(door);
 
 			return true;
 		}
@@ -1261,7 +1261,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 
 	if (!obstacleBetween(kCharacterCath, kCharacterCond2) && getCharacter(kCharacterCond2).direction == 1 && getCharacter(kCharacterCath).characterPosition.position > getCharacter(kCharacterCond2).characterPosition.position) {
 		if (playSound) {
-			if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
+			if (_doors[door].status == 1 || _doors[door].status == 3 || preventEnterComp(door)) {
 				queueSFX(kCharacterCath, 13, 0);
 			} else {
 				queueSFX(kCharacterCath, 14, 0);
@@ -1278,7 +1278,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 		}
 
 		if (loadScene)
-			bumpCathRDoor(object);
+			bumpCathRDoor(door);
 
 		return true;
 	}
@@ -1288,7 +1288,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 	}
 
 	if (playSound) {
-		if (_doors[object].status == 1 || _doors[object].status == 3 || preventEnterComp(object)) {
+		if (_doors[door].status == 1 || _doors[door].status == 3 || preventEnterComp(door)) {
 			queueSFX(kCharacterCath, 13, 0);
 		} else {
 			queueSFX(kCharacterCath, 14, 0);
@@ -1305,7 +1305,7 @@ bool LogicManager::bumpCathTowardsCond(int object, bool playSound, bool loadScen
 	}
 
 	if (loadScene)
-		bumpCathFDoor(object);
+		bumpCathFDoor(door);
 
 	return true;
 }
@@ -1352,9 +1352,9 @@ void LogicManager::bumpCathRx(int car, int position) {
 	}
 }
 
-void LogicManager::bumpCathFDoor(int object) {
-	if ((object - 1) <= 38) {
-		switch (object) {
+void LogicManager::bumpCathFDoor(int door) {
+	if ((door - 1) <= 38) {
+		switch (door) {
 		case 1:
 			bumpCath(kCarGreenSleeping, 17, 255);
 			break;
@@ -1409,9 +1409,9 @@ void LogicManager::bumpCathFDoor(int object) {
 	}
 }
 
-void LogicManager::bumpCathRDoor(int object) {
-	if ((object - 1) <= 38) {
-		switch (object) {
+void LogicManager::bumpCathRDoor(int door) {
+	if ((door - 1) <= 38) {
+		switch (door) {
 		case 1:
 			bumpCath(kCarGreenSleeping, 38, 255);
 			break;
@@ -3117,7 +3117,7 @@ bool LogicManager::walk(int character, int car, int position) {
 		}
 
 		if (whoOnScreen(character)) {
-			if (getCharacter(character).field_4A9) {
+			if (getCharacter(character).needsPosFudge) {
 
 				if (getCharacter(character).characterPosition.car == kCarGreenSleeping) {
 					offset = 0;
@@ -3126,11 +3126,11 @@ bool LogicManager::walk(int character, int car, int position) {
 				}
 
 				for (int i = 0; i < 8; i++) {
-					if ((_blockedX[offset + i] || _softBlockedX[offset + i]) && nearX(character, _objectPosition[i], 750) &&
-						cathWillSeeOtis(_objectPosition[i]) && (getCharacter(character).direction == 1 && (getCharacter(character).characterPosition.position < _objectPosition[i]) &&
-							(car != getCharacter(character).characterPosition.car || position > _objectPosition[i]) ||
-							(getCharacter(character).direction == 2 && (getCharacter(character).characterPosition.position > _objectPosition[i]) &&
-								(car != getCharacter(character).characterPosition.car || position < _objectPosition[i])))) {
+					if ((_blockedX[offset + i] || _softBlockedX[offset + i]) && nearX(character, _doorPositions[i], 750) &&
+						cathWillSeeOtis(_doorPositions[i]) && (getCharacter(character).direction == 1 && (getCharacter(character).characterPosition.position < _doorPositions[i]) &&
+							(car != getCharacter(character).characterPosition.car || position > _doorPositions[i]) ||
+							(getCharacter(character).direction == 2 && (getCharacter(character).characterPosition.position > _doorPositions[i]) &&
+								(car != getCharacter(character).characterPosition.car || position < _doorPositions[i])))) {
 						if (_blockedX[offset + i]) {
 							excuseMeCharacter = whoseBit(_blockedX[offset + i]);
 						} else {
@@ -3430,7 +3430,7 @@ void LogicManager::endGraphics(int character) {
 		delete getCharacter(character).sequence2;
 		getCharacter(character).sequence2 = nullptr;
 		Common::strcpy_s(getCharacter(character).sequenceName2, "");
-		getCharacter(character).field_4AA = 0;
+		getCharacter(character).needsSecondaryPosFudge = 0;
 		getCharacter(character).directionSwitch = 0;
 	}
 
@@ -3439,7 +3439,7 @@ void LogicManager::endGraphics(int character) {
 		delete getCharacter(character).sequence1;
 		getCharacter(character).sequence1 = nullptr;
 		Common::strcpy_s(getCharacter(character).sequenceName, "");
-		getCharacter(character).field_4A9 = 0;
+		getCharacter(character).needsPosFudge = 0;
 		getCharacter(character).currentFrameSeq1 = -1;
 	}
 

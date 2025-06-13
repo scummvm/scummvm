@@ -118,11 +118,11 @@ public:
 	bool nearX(int character, int x, int maxDist);
 	bool whoFacingCath(int character);
 	bool whoWalking(int character);
-	int checkDoor(int object);
-	bool preventEnterComp(int object);
-	void setDoor(int object, int character, int status, int cursor, int handleCursor);
-	void setModel(int object, int8 model);
-	int getModel(int object);
+	int checkDoor(int door);
+	bool preventEnterComp(int door);
+	void setDoor(int door, int character, int status, int windowCursor, int handleCursor);
+	void setModel(int door, int8 model);
+	int getModel(int door);
 	void blockView(int character, int car, int position);
 	void releaseView(int character, int car, int position);
 	void releaseEverything(int character);
@@ -135,11 +135,11 @@ public:
 	int getBumpNode(int car, int position, int param);
 	void bumpCath(int car, int position, int param);
 	bool obstacleBetween(int character1, int character2);
-	bool bumpCathTowardsCond(int object, bool playSound, bool loadScene);
+	bool bumpCathTowardsCond(int door, bool playSound, bool loadScene);
 	void bumpCathFx(int car, int position);
 	void bumpCathRx(int car, int position);
-	void bumpCathFDoor(int object);
-	void bumpCathRDoor(int object);
+	void bumpCathFDoor(int door);
+	void bumpCathRDoor(int door);
 	void bumpCathTylerComp();
 	int getSmartBumpNode(int node);
 	void smartBumpCath();
@@ -253,7 +253,7 @@ private:
 	int32 _realTime = 0;
 	int32 _lastSavegameSessionTicks = 0;
 
-	int _objectPosition[8] = {
+	int _doorPositions[8] = {
 		8200, 7500, 6470, 5790,
 		4840, 4070, 3050, 2740 
 	};

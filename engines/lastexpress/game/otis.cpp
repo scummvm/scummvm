@@ -79,8 +79,8 @@ void OtisManager::wipeGSysInfo(int character) {
 		getCharacter(character).sequence2 = nullptr;
 	}
 
-	getCharacter(character).field_4A9 = 0;
-	getCharacter(character).field_4AA = 0;
+	getCharacter(character).needsPosFudge = 0;
+	getCharacter(character).needsSecondaryPosFudge = 0;
 	getCharacter(character).sequenceName[0] = '\0';
 	getCharacter(character).sequenceName2[0] = '\0';
 	getCharacter(character).sequenceNameCopy[0] = '\0';
@@ -253,7 +253,7 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 	else
 		ticksToWaitUntilRestartCycle = 15;
 
-	int8 field_4A9_flag = getCharacter(character).field_4A9;
+	int8 savedNeedsPosFudge = getCharacter(character).needsPosFudge;
 	getCharacter(character).doProcessEntity = 1;
 
 	if (getCharacter(kCharacterCath).characterPosition.car == getCharacter(character).characterPosition.car || direction == 4) {
@@ -329,9 +329,9 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 						}
 					}
 
-					getCharacter(character).field_4AA = getCharacter(character).field_4A9;
+					getCharacter(character).needsSecondaryPosFudge = getCharacter(character).needsPosFudge;
 
-					if ((direction == 1 || direction == 2) && !getCharacter(character).field_4AA && getCharacter(character).sequence2) {
+					if ((direction == 1 || direction == 2) && !getCharacter(character).needsSecondaryPosFudge && getCharacter(character).sequence2) {
 						getCharacter(character).currentFrameSeq2 = findFrame(character, getCharacter(character).sequence2, 0, false);
 
 						if (getCharacter(character).currentFrameSeq2 == -1) {
@@ -342,7 +342,7 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 						getCharacter(character).currentFrameSeq2 = 0;
 					}
 
-					getCharacter(character).field_4A9 = field_4A9_flag;
+					getCharacter(character).needsPosFudge = savedNeedsPosFudge;
 					getCharacter(character).waitedTicksUntilCycleRestart = getCharacter(character).frame1->ticksToWaitUntilCycleRestart;
 					getCharacter(character).currentFrameSeq1 = getCharacter(character).sequence1->numFrames - 1;
 					getCharacter(character).direction = 5;
@@ -357,13 +357,13 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 					getCharacter(character).sequence2 = _engine->getMemoryManager()->copySeq(getCharacter(character).sequence1);
 					Common::strcpy_s(getCharacter(character).sequenceName2, getCharacter(character).sequenceName);
 
-					getCharacter(character).field_4AA = getCharacter(character).field_4A9;
+					getCharacter(character).needsSecondaryPosFudge = getCharacter(character).needsPosFudge;
 					getCharacter(character).waitedTicksUntilCycleRestart = getCharacter(character).frame1->ticksToWaitUntilCycleRestart;
 					getCharacter(character).currentFrameSeq1 = getCharacter(character).sequence1->numFrames - 1;
 					getCharacter(character).direction = 5;
 					getCharacter(character).directionSwitch = direction;
 
-					if ((direction == 1 || direction == 2) && !getCharacter(character).field_4AA && getCharacter(character).sequence2) {
+					if ((direction == 1 || direction == 2) && !getCharacter(character).needsSecondaryPosFudge && getCharacter(character).sequence2) {
 						getCharacter(character).currentFrameSeq2 = findFrame(character, getCharacter(character).sequence2, 0, false);
 
 						if (getCharacter(character).currentFrameSeq2 == -1)
@@ -469,8 +469,8 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 			Common::strcpy_s(getCharacter(character).sequenceName, "");
 			Common::strcpy_s(getCharacter(character).sequenceName2, "");
 
-			getCharacter(character).field_4A9 = 0;
-			getCharacter(character).field_4AA = 0;
+			getCharacter(character).needsPosFudge = 0;
+			getCharacter(character).needsSecondaryPosFudge = 0;
 			getCharacter(character).directionSwitch = 0;
 			getCharacter(character).currentFrameSeq1 = -1;
 			getCharacter(character).currentFrameSeq2 = 0;
@@ -495,8 +495,8 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 		Common::strcpy_s(getCharacter(character).sequenceName, "");
 		Common::strcpy_s(getCharacter(character).sequenceName2, "");
 
-		getCharacter(character).field_4A9 = 0;
-		getCharacter(character).field_4AA = 0;
+		getCharacter(character).needsPosFudge = 0;
+		getCharacter(character).needsSecondaryPosFudge = 0;
 		getCharacter(character).directionSwitch = 0;
 		getCharacter(character).currentFrameSeq1 = -1;
 		getCharacter(character).currentFrameSeq2 = 0;
@@ -505,8 +505,8 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 }
 
 void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, char *outSecondarySeqName) {
-	getCharacter(character).field_4A9 = 0;
-	getCharacter(character).field_4AA = 0;
+	getCharacter(character).needsPosFudge = 0;
+	getCharacter(character).needsSecondaryPosFudge = 0;
 
 	int outSeqNameSize = sizeof(getCharacter(kCharacterCath).sequenceName);
 
@@ -535,11 +535,11 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 			if (getCharacter(character).characterPosition.position > getCharacter(kCharacterCath).characterPosition.position) {
 				if (getCharacter(character).characterPosition.position <= 8513) {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-03d.seq", character, getCharacter(character).clothes);
-					getCharacter(character).field_4A9 = 1;
+					getCharacter(character).needsPosFudge = 1;
 				} else {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-03d.seq", character, getCharacter(character).clothes);
-					getCharacter(character).field_4AA = 1;
+					getCharacter(character).needsSecondaryPosFudge = 1;
 				}
 			}
 
@@ -576,7 +576,7 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 				} else {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-38d.seq", character, getCharacter(character).clothes);
 					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-%02ded.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
-					getCharacter(character).field_4A9 = 1;
+					getCharacter(character).needsPosFudge = 1;
 				}
 			}
 
@@ -620,7 +620,7 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 				} else {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-03u.seq", character, getCharacter(character).clothes);
 					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
-					getCharacter(character).field_4A9 = 1;
+					getCharacter(character).needsPosFudge = 1;
 				}
 			}
 
@@ -654,11 +654,11 @@ void OtisManager::getNewSeqName(int character, int direction, char *outSeqName, 
 			if (getCharacter(character).characterPosition.position < getCharacter(kCharacterCath).characterPosition.position) {
 				if (getCharacter(character).characterPosition.position >= 2087) {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-38u.seq", character, getCharacter(character).clothes);
-					getCharacter(character).field_4A9 = 1;
+					getCharacter(character).needsPosFudge = 1;
 				} else {
 					Common::sprintf_s(outSeqName, outSeqNameSize, "%02d%01d-%02deu.seq", character, getCharacter(character).clothes, _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].cathDir);
 					Common::sprintf_s(outSecondarySeqName, outSeqNameSize, "%02d%01d-38u.seq", character, getCharacter(character).clothes);
-					getCharacter(character).field_4AA = 1;
+					getCharacter(character).needsSecondaryPosFudge = 1;
 				}
 			}
 
@@ -972,7 +972,7 @@ void OtisManager::initCurFrame(int character) {
 				case 15:
 				case 16:
 				case 17:
-					if (!getCharacter(character).field_4A9) {
+					if (!getCharacter(character).needsPosFudge) {
 						getCharacter(character).currentFrameSeq1 = findFrame(
 							character,
 							getCharacter(character).sequence1,
@@ -1013,7 +1013,7 @@ void OtisManager::initCurFrame(int character) {
 				case 37:
 				case 38:
 				case 39:
-					if (getCharacter(character).field_4A9) {
+					if (getCharacter(character).needsPosFudge) {
 						if (getCharacter(character).characterPosition.position >= getCharacter(kCharacterCath).characterPosition.position) {
 							getCharacter(character).currentFrameSeq1 = -1;
 						} else {
@@ -1222,7 +1222,7 @@ void OtisManager::updateCharacter(int character) {
 
 				getCharacter(character).currentFrameSeq1++;
 
-				if (getCharacter(character).currentFrameSeq1 > (getCharacter(character).sequence1->numFrames - 1) || getCharacter(character).field_4A9 && mainWalkTooFar(character)) {
+				if (getCharacter(character).currentFrameSeq1 > (getCharacter(character).sequence1->numFrames - 1) || getCharacter(character).needsPosFudge && mainWalkTooFar(character)) {
 					if (getCharacter(character).direction == 3) {
 						getCharacter(character).currentFrameSeq1 = 0;
 					} else {
@@ -1328,7 +1328,7 @@ void OtisManager::doNewSprite(int character, bool keepPreviousFrame, bool dontPl
 
 		if (newSprite->visibilityDist) {
 			getCharacter(character).characterPosition.position = newSprite->visibilityDist;
-			if (getCharacter(character).field_4A9)
+			if (getCharacter(character).needsPosFudge)
 				getCharacter(character).characterPosition.position += getFudge();
 		}
 
@@ -1383,14 +1383,14 @@ void OtisManager::doNewSprite(int character, bool keepPreviousFrame, bool dontPl
 void OtisManager::doSeqChange(int character) {
 	if (getCharacter(character).direction != 4 || (_engine->getLogicManager()->send(kCharacterCath, character, 3, 0), _engine->getMessageManager()->flush(), !_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity) {
 		if (_engine->getLogicManager()->whoWalking(character) && !getCharacter(character).sequence2 && corrRender(0) && getCharacter(kCharacterCath).characterPosition.car == getCharacter(character).characterPosition.car) {
-			if (getCharacter(character).field_4A9 && !_engine->getLogicManager()->whoFacingCath(character)) {
+			if (getCharacter(character).needsPosFudge && !_engine->getLogicManager()->whoFacingCath(character)) {
 				getCharacter(character).characterPosition.position = 8514;
 
 				if (getCharacter(character).direction != 1)
 					getCharacter(character).characterPosition.position = 2086;
 
 				startSeq(character, getCharacter(character).direction, 1);
-			} else if (!getCharacter(character).field_4A9 && _engine->getLogicManager()->whoFacingCath(character)) {
+			} else if (!getCharacter(character).needsPosFudge && _engine->getLogicManager()->whoFacingCath(character)) {
 				getCharacter(character).characterPosition.position = 2088;
 
 				if (getCharacter(character).direction != 1)
@@ -1408,17 +1408,17 @@ void OtisManager::doNextSeq(int character) {
 
 	getCharacter(character).sequence1 = getCharacter(character).sequence2;
 	Common::strcpy_s(getCharacter(character).sequenceName, getCharacter(character).sequenceName2);
-	getCharacter(character).field_4A9 = getCharacter(character).field_4AA;
+	getCharacter(character).needsPosFudge = getCharacter(character).needsSecondaryPosFudge;
 
 	if (getCharacter(character).directionSwitch)
 		getCharacter(character).direction = getCharacter(character).directionSwitch;
 
 	getCharacter(character).sequence2 = nullptr;
 	Common::strcpy_s(getCharacter(character).sequenceName2, "");
-	getCharacter(character).field_4AA = 0;
+	getCharacter(character).needsSecondaryPosFudge = 0;
 	getCharacter(character).directionSwitch = 0;
 
-	if (getCharacter(character).field_4A9) {
+	if (getCharacter(character).needsPosFudge) {
 		initCurFrame(character);
 
 		if (getCharacter(character).currentFrameSeq1 == -1)
@@ -1441,7 +1441,7 @@ void OtisManager::doNoSeq(int character) {
 		if (_engine->getLogicManager()->whoFacingCath(character)) {
 			getCharacter(character).characterPosition.position = getCharacter(0).characterPosition.position;
 		} else {
-			if (getCharacter(character).field_4A9) {
+			if (getCharacter(character).needsPosFudge) {
 				if (getCharacter(character).direction == 1) {
 					getCharacter(character).characterPosition.position = 8514;
 				} else {
@@ -1469,7 +1469,7 @@ void OtisManager::doNoSeq(int character) {
 	}
 
 	Common::strcpy_s(getCharacter(character).sequenceName, "");
-	getCharacter(character).field_4A9 = 0;
+	getCharacter(character).needsPosFudge = 0;
 
 	if (getCharacter(character).directionSwitch)
 		getCharacter(character).direction = getCharacter(character).directionSwitch;
