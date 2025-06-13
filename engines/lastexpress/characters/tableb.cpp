@@ -168,18 +168,18 @@ void LogicManager::HAND_TableB_Idling(HAND_PARAMS) {
 		getCharacter(kCharacterTableB).characterPosition.position = 3970;
 		getCharacter(kCharacterTableB).characterPosition.location = 1;
 		getCharacter(kCharacterTableB).characterPosition.car = kCarRestaurant;
-		_engine->getLogicManager()->startCycOtis(kCharacterTableB, "005J");
+		startCycOtis(kCharacterTableB, "005J");
 		break;
 	case 103798704:
 		if (msg->param.stringParam) {
-			_engine->getLogicManager()->startCycOtis(kCharacterTableB, msg->param.stringParam);
+			startCycOtis(kCharacterTableB, msg->param.stringParam);
 		} else {
-			_engine->getLogicManager()->startCycOtis(kCharacterTableB, "005J");
+			startCycOtis(kCharacterTableB, "005J");
 		}
 
 		break;
 	case 136455232:
-		_engine->getLogicManager()->startCycOtis(kCharacterTableB, "BLANK");
+		startCycOtis(kCharacterTableB, "BLANK");
 		break;
 	default:
 		break;

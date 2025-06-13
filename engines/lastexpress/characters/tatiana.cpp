@@ -2670,7 +2670,7 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8]) {
 		case 1:
-			setDoor(33, 0, 0, 10, 9);
+			setDoor(33, kCharacterCath, 0, 10, 9);
 			getCharacter(kCharacterTatiana).characterPosition.location = 0;
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 2;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 3, 7500, 0, 0);

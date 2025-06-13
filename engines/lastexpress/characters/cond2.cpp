@@ -1383,7 +1383,7 @@ void LogicManager::HAND_Cond2_MakeBedIvo(HAND_PARAMS) {
 			break;
 		case 7:
 			softReleaseAtDoor(kCharacterCond2, 39);
-			setDoor(39, 0, 2, 255, 255);
+			setDoor(39, kCharacterCath, 2, 255, 255);
 			getCharacter(kCharacterCond2).characterPosition.location = 1;
 			endGraphics(kCharacterCond2);
 			getCharacter(kCharacterCond2).callbacks[getCharacter(kCharacterCond2).currentCall + 8] = 8;
@@ -1391,7 +1391,7 @@ void LogicManager::HAND_Cond2_MakeBedIvo(HAND_PARAMS) {
 			break;
 		case 8:
 			playDialog(kCharacterCond2, "JAC1013A", -1, 0);
-			setDoor(39, 0, 1, 255, 255);
+			setDoor(39, kCharacterCath, 1, 255, 255);
 			getCharacter(kCharacterCond2).callbacks[getCharacter(kCharacterCond2).currentCall + 8] = 9;
 			Cond2Call(&LogicManager::CONS_Cond2_DoCorrOtis, "667Uh", 39, 0, 0);
 			break;
@@ -1487,7 +1487,7 @@ void LogicManager::HAND_Cond2_MakeBedMilos(HAND_PARAMS) {
 			break;
 		case 7:
 			softReleaseAtDoor(kCharacterCond2, 38);
-			setDoor(38, 0, 2, 255, 255);
+			setDoor(38, kCharacterCath, 2, 255, 255);
 			getCharacter(kCharacterCond2).characterPosition.location = 1;
 			endGraphics(kCharacterCond2);
 			getCharacter(kCharacterCond2).callbacks[getCharacter(kCharacterCond2).currentCall + 8] = 8;
@@ -1495,7 +1495,7 @@ void LogicManager::HAND_Cond2_MakeBedMilos(HAND_PARAMS) {
 			break;
 		case 8:
 			playDialog(kCharacterCond2, "JAC1030A", -1, 0);
-			setDoor(38, 0, 1, 255, 255);
+			setDoor(38, kCharacterCath, 1, 255, 255);
 			getCharacter(kCharacterCond2).callbacks[getCharacter(kCharacterCond2).currentCall + 8] = 9;
 			Cond2Call(&LogicManager::CONS_Cond2_DoCorrOtis, "627Ug", 38, 0, 0);
 			break;

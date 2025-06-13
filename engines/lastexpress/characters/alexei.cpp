@@ -525,7 +525,7 @@ void LogicManager::HAND_Alexei_ExitComp(HAND_PARAMS) {
 
 		break;
 	case 135664192:
-		setDoor(2, 0, 1, 10, 9);
+		setDoor(2, kCharacterCath, 1, 10, 9);
 		softReleaseAtDoor(kCharacterAlexei, 2);
 
 		getCharacter(kCharacterAlexei).currentCall--;
@@ -681,8 +681,8 @@ void LogicManager::HAND_Alexei_CompLogic(HAND_PARAMS) {
 		break;
 	case 17:
 		if (getCharacterCurrentParams(kCharacterAlexei)[5] || getCharacterCurrentParams(kCharacterAlexei)[4]) {
-			setDoor(2, 12, 1, 10, 9);
-			setDoor(18, 12, 1, 10, 9);
+			setDoor(2, kCharacterAlexei, 1, 10, 9);
+			setDoor(18, kCharacterAlexei, 1, 10, 9);
 			getCharacterCurrentParams(kCharacterAlexei)[5] = 0;
 			getCharacterCurrentParams(kCharacterAlexei)[4] = 0;
 		}
