@@ -230,6 +230,8 @@ private:
 	int _lastActiveItem;
 	int _lastActiveSubItem;
 
+	int _selectedItem;
+
 	bool _scrollTimerActive;
 	int _scrollDirection;
 
