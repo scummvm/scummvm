@@ -420,7 +420,53 @@ UINT CDC::SetTextAlign(UINT nFlags) {
 }
 
 BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
-	error("TODO: CDC::GetTextMetrics");
+	TEXTMETRIC &tm = *lpMetrics;
+	Graphics::Font *font = (Graphics::Font *)impl()->_font;
+
+	memset(&tm, 0, sizeof(TEXTMETRIC)); // Initialize to zero
+
+	tm.tmHeight = font->getFontHeight();
+	tm.tmAscent = tm.tmHeight;
+	tm.tmDescent = 0;
+	tm.tmInternalLeading = 0;
+	tm.tmExternalLeading = 0;
+
+	tm.tmAveCharWidth = 0;
+	int totalWidth = 0;
+	char first = (char)32;
+	char last = (char)127;
+
+	for (int c = first; c <= last; ++c)
+		totalWidth += font->getCharWidth(c);
+
+	tm.tmAveCharWidth = totalWidth / (last - first + 1);
+
+	tm.tmMaxCharWidth = font->getMaxCharWidth();
+	tm.tmWeight = FW_NORMAL;
+	tm.tmOverhang = 0;
+
+	tm.tmDigitizedAspectX = 1;
+	tm.tmDigitizedAspectY = 1;
+
+	tm.tmFirstChar = first;
+	tm.tmLastChar = last;
+	tm.tmDefaultChar = '?'; // Pick a fallback character
+	tm.tmBreakChar = ' ';   // Typically space is used for breaking
+
+	// Assume fixed-pitch if all characters have same width
+	bool fixedPitch = true;
+	int firstWidth = font->getCharWidth(first);
+	for (int c = first + 1; c <= last; ++c) {
+		if (font->getCharWidth(c) != firstWidth) {
+			fixedPitch = false;
+			break;
+		}
+	}
+
+	tm.tmPitchAndFamily = (fixedPitch ? TMPF_FIXED_PITCH : 0);
+	tm.tmCharSet = ANSI_CHARSET;
+
+	return true;
 }
 
 /*--------------------------------------------*/
@@ -428,11 +474,23 @@ BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 CDC::Impl::Impl() {
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
-	_bitmap1x1.create(1, 1,
-		Graphics::PixelFormat::createFormatCLUT8());
+	_format = Graphics::PixelFormat::createFormatCLUT8();
+	_bitmap1x1.create(1, 1, _format);
 
 	// Set up the system font as default
 	_font = AfxGetApp()->getDefaultFont();
+}
+
+CDC::Impl::Impl(HDC srcDc) {
+	const CDC::Impl *src = (CDC::Impl *)srcDc;
+
+	// By default the _bitmap will point to
+	// this dummy 1x1 bitmap
+	_format = Graphics::PixelFormat::createFormatCLUT8();
+	_bitmap1x1.create(1, 1, _format);
+
+	_font = src->_font;
+	_format = src->_format;
 }
 
 HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
@@ -440,10 +498,13 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 	if (bitmap) {
 		HBITMAP result = _bitmap;
 		_bitmap = bitmap;
+
+		CBitmap::Impl *bmap = (CBitmap::Impl *)bitmap;
+		_format = bmap->format;
 		return result;
 	}
 
-	HFONT font = dynamic_cast<HFONT>(font);
+	HFONT font = dynamic_cast<HFONT>(gdiObj);
 	if (font) {
 		HFONT result = _font;
 		_font = font;

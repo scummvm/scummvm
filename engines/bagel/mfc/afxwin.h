@@ -596,6 +596,7 @@ public:
 
 	public:
 		Impl();
+		Impl(HDC srcDc);
 
 		HGDIOBJ Attach(HGDIOBJ gdiObj);
 		Graphics::ManagedSurface *getSurface() const;

@@ -33,23 +33,33 @@ int GetDeviceCaps(HDC hdc, int index) {
 }
 
 HDC CreateCompatibleDC(HDC hdc) {
-	error("TODO: CreateCompatibleDC");
+	return new CDC::Impl(hdc);
+}
+
+HDC GetDC(HWND hWnd) {
+	assert(!hWnd);
+	CWnd *wnd = AfxGetApp()->m_pMainWnd;
+	return CreateCompatibleDC(wnd->GetDC());
 }
 
 int ReleaseDC(HWND hWnd, HDC hDC) {
-	error("TODO: ReleaseDC");
+	// In ScummVM all implementation of HWND
+	// is part of CWnd, and the HWND points to iself.
+	// So you shouldn't ever be trying to release
+	// a window DC. Only releasing temporary global
+	// screen DCs should be happening
+	assert(!hWnd && hDC);
+	delete (CDC::Impl *)hDC;
+	return 1;
 }
 
-BOOL DeleteDC(HDC hdc) {
-	error("TODO: DeleteDC");
+BOOL DeleteDC(HDC hDC) {
+	delete (CDC::Impl *)hDC;
+	return true;
 }
 
 BOOL DeleteObject(HGDIOBJ ho) {
 	error("TODO: DeleteObject");
-}
-
-HDC GetDC(HWND hWnd) {
-	error("TODO: GetDC");
 }
 
 int GetObject(HANDLE h, int c, LPVOID pv) {

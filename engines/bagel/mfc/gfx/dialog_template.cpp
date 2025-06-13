@@ -177,11 +177,12 @@ void CDialogTemplate::loadTemplate(CWnd *parent) {
 		_header._fontInfo._fontName.c_str(),
 		_header._fontInfo._pointSize);
 
-	HDC hdc = GetDC(NULL);
+	HDC hdc = GetDC(nullptr);
 	SelectObject(hdc, hFont);
 
 	TEXTMETRIC tm;
 	GetTextMetrics(hdc, &tm);
+	ReleaseDC(nullptr, hdc);
 
 	int base_unit_x = tm.tmAveCharWidth;
 	int base_unit_y = tm.tmHeight;

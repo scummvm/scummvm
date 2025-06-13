@@ -521,6 +521,14 @@ enum {
 // Constants for the biCompression field
 #define BI_RGB        0L
 
+/* tmPitchAndFamily flags */
+#define TMPF_FIXED_PITCH    0x01
+#define TMPF_VECTOR         0x02
+#define TMPF_DEVICE         0x08
+#define TMPF_TRUETYPE       0x04
+
+#define ANSI_CHARSET            0
+
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;
 	LONG       biWidth;
