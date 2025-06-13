@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-13 08:13+0000\n"
-"PO-Revision-Date: 2025-06-10 21:38+0000\n"
-"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
+"PO-Revision-Date: 2025-06-13 10:55+0000\n"
+"Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -7705,7 +7705,7 @@ msgstr "Página anterior"
 
 #: engines/crab/input/input.cpp:241
 msgid "Map"
-msgstr "Asignar"
+msgstr "Mapa"
 
 #: engines/crab/input/input.cpp:246
 msgid "Journal"
