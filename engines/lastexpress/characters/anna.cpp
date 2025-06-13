@@ -3491,7 +3491,7 @@ void LogicManager::HAND_Anna_LeaveConcert(HAND_PARAMS) {
 			AnnaCall(&LogicManager::CONS_Anna_DoWalk, 4, 4070, 0, 0);
 			break;
 		case 2:
-			setDoor(37, 0, 1, 0, 0);
+			setDoor(37, kCharacterAlexei, 1, 0, 0);
 			send(kCharacterAnna, kCharacterCond2, 205033696, 0);
 			startCycOtis(kCharacterAnna, "625Ef");
 			softBlockAtDoor(kCharacterAnna, 37);
@@ -3733,15 +3733,15 @@ void LogicManager::HAND_Anna_AfterConcert(HAND_PARAMS) {
 
 		break;
 	case 236241630:
-		setDoor(37, 1, 1, 0, 0);
-		setDoor(53, 1, 1, 0, 0);
+		setDoor(37, kCharacterAnna, 1, 0, 0);
+		setDoor(53, kCharacterAnna, 1, 0, 0);
 		getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 7;
 		AnnaCall(&LogicManager::CONS_Anna_DoDialog, "Ann1016A", 0, 0, 0);
 		break;
 	case 236517970:
 		getCharacterCurrentParams(kCharacterAnna)[2] = 1;
-		setDoor(37, 1, 1, 10, 9);
-		setDoor(53, 1, 1, 10, 9);
+		setDoor(37, kCharacterAnna, 1, 10, 9);
+		setDoor(53, kCharacterAnna, 1, 10, 9);
 		break;
 	default:
 		break;

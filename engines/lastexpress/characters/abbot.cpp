@@ -20,7 +20,6 @@
  */
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/game/logic.h"
 
 namespace LastExpress {
 
@@ -777,8 +776,8 @@ void LogicManager::HAND_Abbot_GoLunch(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall + 8]) {
 		case 1:
-			setDoor(34, getCharacter(kCharacterAbbot).currentCall, 0, 10, 9);
-			setDoor(50, getCharacter(kCharacterAbbot).currentCall, 0, 10, 9);
+			setDoor(34, kCharacterCath, 0, 10, 9);
+			setDoor(50, kCharacterCath, 0, 10, 9);
 			getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall + 8] = 2;
 			AbbotCall(&LogicManager::CONS_Abbot_DoCorrOtis, "617Mc", 34, 0, 0);
 			break;
@@ -799,8 +798,10 @@ void LogicManager::HAND_Abbot_GoLunch(HAND_PARAMS) {
 			break;
 		case 5:
 			startSeqOtis(kCharacterAbbot, "029J");
+
 			if (inSalon(kCharacterCath))
 				advanceFrame(kCharacterAbbot);
+
 			getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall + 8] = 6;
 			AbbotCall(&LogicManager::CONS_Abbot_FinishSeqOtis, 0, 0, 0, 0);
 			break;

@@ -491,16 +491,22 @@ void LogicManager::HAND_Francois_EnterComp(HAND_PARAMS) {
 
 		break;
 	case 18:
-		if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 1) {
+		switch (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8]) {
+		case 1:
 			setDoor(35, kCharacterCath, 2, 255, 255);
 			send(kCharacterFrancois, kCharacterMadame, 102484312, 0);
-		} else if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 2) {
+
+			// fall through
+		case 2:
 			getCharacter(kCharacterFrancois).characterPosition.location = 1;
 			endGraphics(kCharacterFrancois);
 
 			getCharacter(kCharacterFrancois).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterFrancois, _functionsFrancois[getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall]]);
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
+			break;
+		default:
+			break;
 		}
 
 		break;
@@ -1417,7 +1423,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 			break;
 		}
 
-		if (getCharacterCurrentParams(kCharacterFrancois)[4] != 2147483647 && _gameTime) {
+		if (getCharacterCurrentParams(kCharacterFrancois)[4] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime > 15803100) {
 				getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
 				getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
@@ -1498,7 +1504,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 				break;
 			}
 
-			if (getCharacterCurrentParams(kCharacterFrancois)[4] != 2147483647 && _gameTime) {
+			if (getCharacterCurrentParams(kCharacterFrancois)[4] != 0x7FFFFFFF && _gameTime) {
 				if (_gameTime > 15803100) {
 					getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;
@@ -1552,7 +1558,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 				break;
 			}
 
-			if (getCharacterCurrentParams(kCharacterFrancois)[4] != 2147483647 && _gameTime) {
+			if (getCharacterCurrentParams(kCharacterFrancois)[4] != 0x7FFFFFFF && _gameTime) {
 				if (_gameTime > 15803100) {
 					getCharacterCurrentParams(kCharacterFrancois)[4] = 0x7FFFFFFF;
 					getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 6;

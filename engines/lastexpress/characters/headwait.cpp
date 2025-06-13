@@ -1034,7 +1034,7 @@ void LogicManager::HAND_HeadWait_DoOtis5029A(HAND_PARAMS) {
 		break;
 	case 12:
 		playDialog(kCharacterHeadWait, "ABB3015", -1, 105);
-		startSeqOtis(kCharacterHeadWait, "029msg");
+		startSeqOtis(kCharacterHeadWait, "029A1");
 		startSeqOtis(kCharacterAbbot, "029A2");
 		break;
 	default:

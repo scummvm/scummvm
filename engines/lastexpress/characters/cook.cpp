@@ -74,7 +74,7 @@ void LogicManager::HAND_Cook_DoSeqOtis(HAND_PARAMS) {
 	switch (msg->action) {
 	case 3:
 		getCharacter(kCharacterCook).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterCook, _functionsAbbot[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
+		_engine->getMessageManager()->setMessageHandle(kCharacterCook, _functionsCook[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
 		fedEx(kCharacterCook, kCharacterCook, 18, 0);
 		break;
 	case 12:
@@ -101,7 +101,7 @@ void LogicManager::HAND_Cook_DoDialog(HAND_PARAMS) {
 	switch (msg->action) {
 	case 2:
 		getCharacter(kCharacterCook).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterCook, _functionsAbbot[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
+		_engine->getMessageManager()->setMessageHandle(kCharacterCook, _functionsCook[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
 		fedEx(kCharacterCook, kCharacterCook, 18, 0);
 		break;
 	case 12:
@@ -233,7 +233,7 @@ void LogicManager::HAND_Cook_DowntrainVersion(HAND_PARAMS) {
 		break;
 	case 17:
 		if (!inKitchen(kCharacterCath)) {
-			endGraphics(kCharacterCath);
+			endGraphics(kCharacterCook);
 			getCharacter(kCharacterCook).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(8, _functionsCook[getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall]]);
 			fedEx(kCharacterCook, kCharacterCook, 18, 0);
@@ -336,7 +336,8 @@ void LogicManager::HAND_Cook_InKitchenDinner(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterCook)[3] || (getCharacterCurrentParams(kCharacterCook)[3] = _gameTime + getCharacterCurrentParams(kCharacterCook)[1], _gameTime + getCharacterCurrentParams(kCharacterCook)[1] != 0)) {
 			if (getCharacterCurrentParams(kCharacterCook)[3] >= _gameTime)
-				return;
+				break;
+
 			getCharacterCurrentParams(kCharacterCook)[3] = 0x7FFFFFFF;
 		}
 
@@ -368,8 +369,8 @@ void LogicManager::HAND_Cook_InKitchenDinner(HAND_PARAMS) {
 	case 18:
 		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 1) {
 			getCharacterCurrentParams(kCharacterCook)[0] = 0;
-		} else if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] >= 2 && getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] <= 3) {
-			getCharacterCurrentParams(kCharacterCook)[2] = getCharacterCurrentParams(kCharacterCook)[2] == 0;
+		} else if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 2 || getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 3) {
+			getCharacterCurrentParams(kCharacterCook)[2] = (getCharacterCurrentParams(kCharacterCook)[2] == 0) ? 1 : 0;
 		}
 
 		break;
@@ -481,7 +482,7 @@ void LogicManager::HAND_Cook_InKitchenBreakfast(HAND_PARAMS) {
 		break;
 	case 18:
 		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] && getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] <= 2)
-			getCharacterCurrentParams(kCharacterCook)[1] = getCharacterCurrentParams(kCharacterCook)[1] == 0;
+			getCharacterCurrentParams(kCharacterCook)[1] = (getCharacterCurrentParams(kCharacterCook)[1] == 0) ? 1 : 0;
 
 		break;
 	default:
@@ -575,8 +576,8 @@ void LogicManager::HAND_Cook_InKitchenLunch(HAND_PARAMS) {
 	case 18:
 		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 1) {
 			getCharacterCurrentParams(kCharacterCook)[0] = 0;
-		} else if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] >= 2 && getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] <= 3) {
-			getCharacterCurrentParams(kCharacterCook)[2] = getCharacterCurrentParams(kCharacterCook)[2] == 0;
+		} else if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 2 || getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] == 3) {
+			getCharacterCurrentParams(kCharacterCook)[2] = (getCharacterCurrentParams(kCharacterCook)[2] == 0) ? 1 : 0;
 		}
 
 		break;
@@ -657,7 +658,7 @@ void LogicManager::HAND_Cook_InKitchenDinner2(HAND_PARAMS) {
 		break;
 	case 18:
 		if (getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] && getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] <= 2)
-			getCharacterCurrentParams(kCharacterCook)[1] = getCharacterCurrentParams(kCharacterCook)[1] == 0;
+			getCharacterCurrentParams(kCharacterCook)[1] = (getCharacterCurrentParams(kCharacterCook)[1] == 0) ? 1 : 0;
 
 		break;
 	default:

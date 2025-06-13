@@ -1484,7 +1484,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 
 			break;
 		case 4:
-			setDoor(1, 0, 0, 10, 9);
+			setDoor(1, kCharacterCath, 0, 10, 9);
 			playDialog(0, "LIB014", -1, 0);
 			endGraphics(kCharacterAugust);
 			getCharacter(kCharacterAugust).characterPosition.location = 1;
@@ -3124,7 +3124,7 @@ void LogicManager::HAND_August_AfterLunch(HAND_PARAMS) {
 		playDialog(kCharacterAugust, "AUG3102", -1, 15);
 		break;
 	case 12:
-		setDoor(3, 0, 2, 0, 0);
+		setDoor(3, kCharacterCath, 2, 0, 0);
 		startCycOtis(kCharacterAugust, "506A2");
 		getCharacter(kCharacterAugust).inventoryItem = 0x92;
 		break;
@@ -3725,7 +3725,7 @@ void LogicManager::HAND_August_StartPart4(HAND_PARAMS) {
 		getCharacter(kCharacterAugust).characterPosition.location = 1;
 		getCharacter(kCharacterAugust).inventoryItem = 0;
 		getCharacter(kCharacterAugust).clothes = 2;
-		setDoor(3, 0, 2, 0, 0);
+		setDoor(3, kCharacterCath, 2, 0, 0);
 		break;
 	default:
 		break;
@@ -3967,7 +3967,7 @@ void LogicManager::HAND_August_GoSalon4(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8]) {
 		case 1:
-			setDoor(3, 0, 0, 10, 9);
+			setDoor(3, kCharacterCath, 0, 10, 9);
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 2;
 			AugustCall(&LogicManager::CONS_August_DoWalk, 5, 850, 0, 0);
 			break;

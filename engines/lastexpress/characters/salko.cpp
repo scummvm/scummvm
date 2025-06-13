@@ -291,11 +291,11 @@ void LogicManager::HAND_Salko_DoWalkBehind(HAND_PARAMS) {
 		walk(kCharacterSalko, getCharacterCurrentParams(kCharacterSalko)[0], getCharacterCurrentParams(kCharacterSalko)[1]);
 		break;
 	case 123668192:
-		break;
-	default:
 		getCharacter(kCharacterSalko).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterSalko, _functionsSalko[getCharacter(kCharacterSalko).callbacks[getCharacter(kCharacterSalko).currentCall]]);
 		fedEx(kCharacterSalko, kCharacterSalko, 18, 0);
+		break;
+	default:
 		break;
 	}
 }
