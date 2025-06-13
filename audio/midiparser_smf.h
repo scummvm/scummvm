@@ -28,8 +28,6 @@
  * The Standard MIDI File version of MidiParser.
  */
 class MidiParser_SMF : public MidiParser {
-protected:
-	int8 _noteChannelToTrack[16];
 
 protected:
 	/**
