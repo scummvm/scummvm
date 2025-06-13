@@ -165,10 +165,12 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	default:
 		{
 			int cnt = 0;
-			for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt)
-				if (cnt == token)
+			for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt) {
+				if (cnt == token) {
 					performTake(npc, *it);
-			break;
+					break;
+				}
+			}
 		}
 	}
 
