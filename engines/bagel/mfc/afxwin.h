@@ -1540,6 +1540,9 @@ public:
 			nClipPrecision, nQuality, nPitchAndFamily,
 			lpszFacename);
 	}
+	HFONT getFont(const char *lpszFacename, int nHeight) {
+		return _fonts.getFont(lpszFacename, nHeight);
+	}
 };
 
 extern CWinApp *AfxGetApp();

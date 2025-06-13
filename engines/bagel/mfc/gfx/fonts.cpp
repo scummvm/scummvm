@@ -94,6 +94,16 @@ int Fonts::resIndexOf(const char *filename) const {
 	return -1;
 }
 
+HFONT Fonts::getFont(const char *lpszFacename, int nHeight) {
+	for (auto &it : _fonts) {
+		if (it._faceName == lpszFacename &&
+			it._height == nHeight)
+			return (HFONT)it._font;
+	}
+
+	error("Unknown font name - %s", lpszFacename);
+}
+
 /*--------------------------------------------*/
 
 BoldFont::~BoldFont() {

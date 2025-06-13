@@ -173,6 +173,19 @@ void CDialogTemplate::loadTemplate(CWnd *parent) {
 		0
 	);
 
+	HFONT hFont = AfxGetApp()->getFont(
+		_header._fontInfo._fontName.c_str(),
+		_header._fontInfo._pointSize);
+
+	HDC hdc = GetDC(NULL);
+	SelectObject(hdc, hFont);
+
+	TEXTMETRIC tm;
+	GetTextMetrics(hdc, &tm);
+
+	int base_unit_x = tm.tmAveCharWidth;
+	int base_unit_y = tm.tmHeight;
+
 	// Iterate through the controls
 	for (const auto &item : _items) {
 		CWnd *ctl;
@@ -190,10 +203,14 @@ void CDialogTemplate::loadTemplate(CWnd *parent) {
 			error("Unhandle dialog item - %s",
 				item._className.c_str());
 
+		// Convert dialog DLU to actual pixels
+		int x1 = SafeMulDiv(item._x, base_unit_x, 4);
+		int y1 = SafeMulDiv(item._y, base_unit_y, 8);
+		int x2 = SafeMulDiv(item._x + item._w, base_unit_x, 4);
+		int y2 = SafeMulDiv(item._y + item._h, base_unit_y, 8);
+
 		// Set up control
-		bounds = RECT(item._x, item._style,
-			item._x + item._w,
-			item._y + item._h);
+		bounds = RECT(x1, y1, x2, y2);
 		ctl->Create(item._className.c_str(),
 			item._title.c_str(),
 			item._style,

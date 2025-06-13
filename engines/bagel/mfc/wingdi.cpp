@@ -88,7 +88,6 @@ BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint) {
 	error("TODO: ScreenToClient");
 }
 
-
 HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
 	error("TODO: SelectObject");
 }
@@ -188,6 +187,11 @@ int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
 
 int GetTextExtent(HDC hdc, LPCSTR text, size_t len) {
 	error("TODO: GetTextExtent");
+}
+
+BOOL GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm) {
+	CDC *dc = CDC::FromHandle(hdc);
+	return dc->GetTextMetrics(lptm);
 }
 
 intptr GetWindowWord(HWND hWnd, int nIndex) {
