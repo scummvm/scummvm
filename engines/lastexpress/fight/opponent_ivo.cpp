@@ -95,7 +95,7 @@ void COpponent3::send(int action) {
 
 	switch (action) {
 	case 3:
-		if (_currentActionIdx != 3 && _currentActionIdx != 1 || (_currentSprite->flags & 4) != 0) {
+		if ((_currentActionIdx != 3 && _currentActionIdx != 1) || (_currentSprite->flags & 4) != 0) {
 			doAction(6, 1);
 			_opponent->doAction(6, 1);
 			_opponent->send(103);
@@ -103,7 +103,7 @@ void COpponent3::send(int action) {
 
 		break;
 	case 4:
-		if (_currentActionIdx != 3 && _currentActionIdx != 2 || (_currentSprite->flags & 4) != 0) {
+		if ((_currentActionIdx != 3 && _currentActionIdx != 2) || (_currentSprite->flags & 4) != 0) {
 			doAction(6, 1);
 			_opponent->doAction(5, 1);
 			_opponent->send(103);

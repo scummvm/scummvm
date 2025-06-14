@@ -57,7 +57,7 @@ void LastExpressEngine::doCredits() {
 			char currentTgaFilename[24];
 			memset(currentTgaFilename, 0, sizeof(currentTgaFilename));
 
-			Common::sprintf_s(currentTgaFilename, "map%05ld.tga", i + 1);
+			Common::sprintf_s(currentTgaFilename, "map%05d.tga", i + 1);
 			readTGAIntoMemory(currentTgaFilename, &mapTgas[i]);
 
 			handleEvents();

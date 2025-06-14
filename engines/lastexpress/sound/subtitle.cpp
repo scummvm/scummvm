@@ -354,7 +354,7 @@ void SubtitleManager::subThread() {
 			(slot->getStatusFlags() & kSoundFlagMute) != 0 ||
 			!slot->getTime() ||
 			((slot->getStatusFlags() & kSoundVolumeMask) < kVolume6) ||
-			(_engine->getNISManager()->getNISFlag() & kNisFlagSoundFade) != 0 && slot->getPriority() < 90) {
+			((_engine->getNISManager()->getNISFlag() & kNisFlagSoundFade) != 0 && slot->getPriority() < 90)) {
 
 			curPriority = 0;
 		} else {

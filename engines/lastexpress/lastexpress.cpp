@@ -369,7 +369,7 @@ void LastExpressEngine::engineEventHandler(Event *event) {
 			// AfxEndThread(0, 1);
 		}
 
-		if (getMenu()->isShowingMenu() || getMessageManager()->getEventHandle(1) == &LastExpressEngine::nodeStepMouseWrapper && !getVCR()->isVirgin(_currentGameFileColorId)) {
+		if (getMenu()->isShowingMenu() || (getMessageManager()->getEventHandle(1) == &LastExpressEngine::nodeStepMouseWrapper && !getVCR()->isVirgin(_currentGameFileColorId))) {
 			getMenu()->doEgg(1, 0, 0);
 			quitGame();
 		} else {
