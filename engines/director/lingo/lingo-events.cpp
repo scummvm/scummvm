@@ -560,11 +560,21 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 		error("processEvent: Unknown event %d", event);
 
 	ScriptContext *script = g_director->getCurrentMovie()->getScriptContext(st, scriptId);
+	int nargs = 0;
 
 	if (script && script->_eventHandlers.contains(event)) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %s): executing event handler", _eventHandlerTypes[event], scriptType2str(st), scriptId.asString().c_str());
 		g_debugger->eventHook(event);
-		LC::call(script->_eventHandlers[event], 0, false);
+
+		// Normally event handlers are called with no arguments, however RolloverToolkit expects
+		// the first argument to be the sprite number.
+		if ((event == kEventMouseEnter && script->_eventHandlers[event].name->equalsIgnoreCase("startRollover")) ||
+			(event == kEventMouseLeave && script->_eventHandlers[event].name->equalsIgnoreCase("endRollover"))) {
+			push(Datum(channelId));
+			nargs = 1;
+		}
+
+		LC::call(script->_eventHandlers[event], nargs, false);
 		return execute();
 	} else {
 		debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %s): no handler", _eventHandlerTypes[event], scriptType2str(st), scriptId.asString().c_str());
