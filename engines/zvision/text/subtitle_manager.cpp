@@ -43,11 +43,8 @@ SubtitleManager::SubtitleManager(ZVision *engine, const ScreenLayout layout, con
 
 SubtitleManager::~SubtitleManager() {
 	// Delete all subtitles referenced in subslist
-	for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
-		delete it->_value;
-		_subsList.erase(it);
-		_subsFocus.clear();
-	}
+	for (auto &it : _subsList)
+		delete it._value;
 }
 
 void SubtitleManager::process(int32 deltatime) {
