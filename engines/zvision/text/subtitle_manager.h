@@ -104,7 +104,7 @@ public:
 	// Update counter value of referenced subtitle id & set current line to display, if any.
 	void update(int32 count, uint16 subid);  // Count is milliseconds for sound & music; frames for video playback.
 
-	Common::Point getTextOffset() {
+	const Common::Point &getTextOffset() const {
 		return _textOffset;
 	}
 
