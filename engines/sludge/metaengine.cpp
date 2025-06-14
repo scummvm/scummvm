@@ -23,6 +23,7 @@
 
 #include "sludge/sludge.h"
 #include "sludge/detection.h"
+#include "sludge/keymapper_tables.h"
 
 namespace Sludge {
 
@@ -46,7 +47,14 @@ public:
 		*engine = new Sludge::SludgeEngine(syst, desc);
 		return Common::kNoError;
 	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+Common::KeymapArray SludgeMetaEngine::initKeymaps(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+	return Sludge::getSludgeKeymaps(target, gameId);
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)
 	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
