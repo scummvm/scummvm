@@ -152,12 +152,13 @@ void CWnd::Invalidate(BOOL bErase) {
 }
 
 int CWnd::GetWindowText(CString &rString) const {
-	error("TODO: CWnd::GetWindowText");
+	rString = _windowText;
+	return rString.size();
 }
 
 int CWnd::GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const {
 	Common::strcpy_s(lpszStringBuf, nMaxCount, _windowText.c_str());
-	error("TODO: CWnd::GetWindowText");
+	return strlen(lpszStringBuf);
 }
 
 BOOL CWnd::SetWindowText(LPCSTR lpszString) {

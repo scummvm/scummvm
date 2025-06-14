@@ -318,11 +318,11 @@ BOOL CDC::FrameRgn(CRgn *pRgn, CBrush *pBrush,
 }
 
 void CDC::MoveTo(int x, int y) {
-	error("TODO: CDC::MoveTo");
+	impl()->moveTo(x, y);
 }
 
 void CDC::LineTo(int x, int y) {
-	error("TODO: CDC::LineTo");
+	impl()->lineTo(x, y);
 }
 
 COLORREF CDC::GetPixel(int x, int y) const {
@@ -677,6 +677,27 @@ void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
 
 	Gfx::stretchBlit(src, dest, srcRect, destRect, dwRop);
+}
+
+void CDC::Impl::moveTo(int x, int y) {
+	_linePos.x = x;
+	_linePos.y = y;
+}
+
+void CDC::Impl::lineTo(int x, int y) {
+	Graphics::ManagedSurface *dest = getSurface();
+	uint color = getPenColor();
+
+	dest->drawLine(_linePos.x, _linePos.y, x, y, color);
+	_linePos.x = x;
+	_linePos.y = y;
+}
+
+uint CDC::Impl::getPenColor() const {
+	CPen::Impl *pen = (CPen::Impl *)_pen;
+	assert(pen->_penStyle == PS_SOLID);
+
+	return GetNearestColor(pen->_color);
 }
 
 } // namespace MFC

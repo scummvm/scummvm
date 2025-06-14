@@ -619,6 +619,10 @@ public:
 	class Impl {
 	private:
 		CBitmap::Impl _bitmap1x1;
+		Common::Point _linePos;
+
+		uint getPenColor() const;
+
 	public:
 		HBITMAP _bitmap = &_bitmap1x1;
 		HPALETTE _palette = nullptr;
@@ -645,6 +649,9 @@ public:
 			int xSrc, int ySrc, DWORD dwRop);
 		void stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 			int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
+
+		void moveTo(int x, int y);
+		void lineTo(int x, int y);
 	};
 
 public:
@@ -1100,7 +1107,7 @@ public:
 	CWnd *m_pParentWnd = nullptr;
 	bool _visible = false;
 	Libs::EventQueue _messages;
-	Common::String _windowText;
+	CString _windowText;
 	Common::Rect _windowRect;
 	Common::Rect _updateRect;
 	Common::Rect _updatingRect;
