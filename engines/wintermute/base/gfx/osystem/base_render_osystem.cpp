@@ -213,16 +213,12 @@ void BaseRenderOSystem::setWindowed(bool windowed) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
-	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
+bool BaseRenderOSystem::clear() {
 	if (!_disableDirtyRects) {
 		return STATUS_OK;
 	}
-	if (!rect) {
-		rect = &_renderRect;
-	}
 	// TODO: This doesn't work with dirty rects
-	_renderSurface->fillRect(*rect, _clearColor);
+	_renderSurface->fillRect(_renderRect, _clearColor);
 
 	return STATUS_OK;
 }

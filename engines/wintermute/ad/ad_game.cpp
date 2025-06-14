@@ -2064,8 +2064,8 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 		initLoop();
 	}
 
-	// fill black
-	_renderer->fill(0, 0, 0);
+	// clear screen
+	_renderer->clear();
 	if (!_editorMode) {
 		_renderer->setScreenViewport();
 	}

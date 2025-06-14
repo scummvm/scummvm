@@ -4296,8 +4296,8 @@ bool BaseGame::displayContent(bool doUpdate, bool displayAll) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayContentSimple() {
-	// fill black
-	_renderer->fill(0, 0, 0);
+	// clear screen
+	_renderer->clear();
 	_renderer->displayIndicator();
 
 	return STATUS_OK;
