@@ -189,7 +189,7 @@ void Object::createRotated() {
 		return;
 
 	Graphics::TransformStruct transform(100, 100, 90 * _rotation, _picture->w / 2, _picture->h / 2);
-	_rotatedPicture = new Graphics::ManagedSurface(getPicture()->surfacePtr()->rotoscale(transform));
+	_rotatedPicture = getPicture()->rotoscale(transform);
 }
 
 void Object::alive(bool value)

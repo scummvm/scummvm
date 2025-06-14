@@ -950,19 +950,25 @@ Graphics::Surface *AGDSEngine::createSurface(int w, int h) {
 	return surface;
 }
 
-Graphics::ManagedSurface *AGDSEngine::convertToTransparent(Graphics::Surface *surface) {
-	if (!surface)
+Graphics::ManagedSurface *AGDSEngine::convertToTransparent(Graphics::Surface *s) {
+	if (!s)
 		return NULL;
-	Graphics::ManagedSurface *t = new Graphics::ManagedSurface(surface);
+	Graphics::ManagedSurface *t = new Graphics::ManagedSurface(s->w, s->h, _pixelFormat);
+	assert(s->format.bytesPerPixel == 4);
 	assert(t->format.bytesPerPixel == 4);
-	uint32* pixels = static_cast<uint32 *>(t->getPixels());
+	uint8* dst = static_cast<uint8 *>(t->getPixels());
+	const uint8* src = static_cast<uint8 *>(s->getPixels());
 	uint8 shadowAlpha = 255 * _shadowIntensity / 100;
-	uint delta = t->pitch - t->w * t->format.bytesPerPixel;
-	for (uint16 i = 0; i < t->h; ++i, pixels = reinterpret_cast<uint32*>((reinterpret_cast<uint8*>(pixels) + delta))) {
-		for (uint16 j = 0; j < t->w; ++j, ++pixels) {
-			uint32 pix = *pixels;
+	auto &dstFormat = t->format;
+	auto &srcFormat = s->format;
+	auto dstBPP = dstFormat.bytesPerPixel;
+	auto srcBPP = srcFormat.bytesPerPixel;
+	uint dstDelta = t->pitch - t->w * dstBPP;
+	uint srcDelta = s->pitch - s->w * srcBPP;
+	for (uint16 i = 0; i < t->h; ++i, dst += dstDelta, src += srcDelta) {
+		for (uint16 j = 0; j < t->w; ++j, dst += dstBPP, src += srcBPP) {
 			uint8 r, g, b, a;
-			t->format.colorToARGB(pix, a, r, g, b);
+			srcFormat.colorToARGB(*reinterpret_cast<const uint32 *>(src), a, r, g, b);
 			if (r == _colorKey.r && g == _colorKey.g && b == _colorKey.b) {
 				r = g = b = a = 0;
 			} else if (
@@ -972,10 +978,8 @@ Graphics::ManagedSurface *AGDSEngine::convertToTransparent(Graphics::Surface *su
 			) {
 				r = g = b = 0;
 				a = shadowAlpha;
-			} else
-				continue;
-
-			*pixels = t->format.ARGBToColor(a, r, g, b);
+			}
+			*reinterpret_cast<uint32 *>(dst) = dstFormat.ARGBToColor(a, r, g, b);
 		}
 	}
 	return t;
