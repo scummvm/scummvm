@@ -620,6 +620,9 @@ public:
 	private:
 		CBitmap::Impl _bitmap1x1;
 		Common::Point _linePos;
+		COLORREF _bkColor = 0;
+		int _bkMode = TRANSPARENT;
+		COLORREF _textColor = RGB(255, 255, 255);
 
 		uint getPenColor() const;
 
@@ -652,6 +655,42 @@ public:
 
 		void moveTo(int x, int y);
 		void lineTo(int x, int y);
+
+		// Text functions
+		COLORREF setBkColor(COLORREF crColor);
+		int setBkMode(int nBkMode);
+		COLORREF setTextColor(COLORREF crColor);
+		BOOL textOut(int x, int y, LPCSTR lpszString, int nCount);
+		BOOL textOut(int x, int y, const CString &str);
+		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+			LPCSTR lpszString, UINT nCount, LPINT lpDxWidths);
+		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+			const CString &str, LPINT lpDxWidths);
+		CSize tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
+			int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+		CSize tabbedTextOut(int x, int y, const CString &str,
+			int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+		int drawText(LPCSTR lpszString, int nCount,
+			LPRECT lpRect, UINT nFormat);
+		int drawText(const CString &str, LPRECT lpRect, UINT nFormat);
+		CSize getTextExtent(LPCSTR lpszString, int nCount) const;
+		CSize getTextExtent(const CString &str) const;
+		CSize getOutputTextExtent(LPCSTR lpszString, int nCount) const;
+		CSize getOutputTextExtent(const CString &str) const;
+		CSize getTabbedTextExtent(LPCSTR lpszString, int nCount,
+			int nTabPositions, LPINT lpnTabStopPositions) const;
+		CSize getTabbedTextExtent(const CString &str,
+			int nTabPositions, LPINT lpnTabStopPositions) const;
+		CSize getOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
+			int nTabPositions, LPINT lpnTabStopPositions) const;
+		CSize getOutputTabbedTextExtent(const CString &str,
+			int nTabPositions, LPINT lpnTabStopPositions) const;
+		BOOL grayString(CBrush *pBrush,
+			BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+			int nCount, int x, int y, int nWidth, int nHeight);
+		UINT getTextAlign() const;
+		UINT setTextAlign(UINT nFlags);
+		BOOL getTextMetrics(LPTEXTMETRIC lpMetrics) const;
 	};
 
 public:

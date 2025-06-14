@@ -73,13 +73,12 @@ void CButton::OnPaint() {
 	} else {
 		dc.DrawEdge(&rect, EDGE_RAISED, BF_RECT);
 	}
-#ifdef TODO
+
 	// Draw text
 	CString text;
 	GetWindowText(text);
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(text, rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-#endif
 }
 
 } // namespace MFC

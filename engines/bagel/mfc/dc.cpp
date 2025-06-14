@@ -385,152 +385,113 @@ void CDC::UpdateColors() {
 }
 
 COLORREF CDC::SetBkColor(COLORREF crColor) {
-	error("TODO: CDC::SetBkColor");
+	return impl()->setBkColor(crColor);
 }
 
 int CDC::SetBkMode(int nBkMode) {
-	error("TODO: CDC::SetBkMode");
+	return impl()->setBkMode(nBkMode);
 }
 
 COLORREF CDC::SetTextColor(COLORREF crColor) {
-	error("TODO: CDC::SetTextColor");
+	return impl()->setTextColor(crColor);
 }
 
 BOOL CDC::TextOut(int x, int y, LPCSTR lpszString, int nCount) {
-	error("TODO: CDC::TextOut");
+	return impl()->textOut(x, y, lpszString, nCount);
 }
 
 BOOL CDC::TextOut(int x, int y, const CString &str) {
-	error("TODO: CDC::TextOut");
+	return impl()->textOut(x, y, str);
 }
 
 BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-                     LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
-	error("TODO: CDC::ExtTextOut");
+        LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
+	return impl()->extTextOut(x, y, nOptions, lpRect, lpszString, nCount, lpDxWidths);
 }
 
 BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-                     const CString &str, LPINT lpDxWidths) {
-	error("TODO: CDC::ExtTextOut");
+        const CString &str, LPINT lpDxWidths) {
+	return impl()->extTextOut(x, y, nOptions, lpRect, str, lpDxWidths);
 }
 
 CSize CDC::TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-                         int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
-	error("TODO: CDC::TabbedTextOut");
+        int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+	return impl()->tabbedTextOut(x, y, lpszString, nCount,
+		nTabPositions, lpnTabStopPositions, nTabOrigin);
 }
 
 CSize CDC::TabbedTextOut(int x, int y, const CString &str,
-                         int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
-	error("TODO: CDC::TabbedTextOut");
+        int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+	return impl()->tabbedTextOut(x, y, str, nTabPositions,
+		lpnTabStopPositions, nTabOrigin);
 }
 
 int CDC::DrawText(LPCSTR lpszString, int nCount,
-                  LPRECT lpRect, UINT nFormat) {
-	error("TODO: CDC::DrawText");
+        LPRECT lpRect, UINT nFormat) {
+	return impl()->drawText(lpszString, nCount, lpRect, nFormat);
 }
 
 int CDC::DrawText(const CString &str, LPRECT lpRect, UINT nFormat) {
-	error("TODO: CDC::DrawText");
+	return impl()->drawText(str, lpRect, nFormat);
 }
 
 CSize CDC::GetTextExtent(LPCSTR lpszString, int nCount) const {
-	error("TODO: CDC::GetTextExtent");
+	return impl()->getTextExtent(lpszString, nCount);
 }
 
 CSize CDC::GetTextExtent(const CString &str) const {
-	error("TODO: CDC::GetTextExtent");
+	return impl()->getTextExtent(str);
 }
 
 CSize CDC::GetOutputTextExtent(LPCSTR lpszString, int nCount) const {
-	error("TODO: CDC::GetOutputTextExtent");
+	return impl()->getOutputTextExtent(lpszString, nCount);
 }
 
 CSize CDC::GetOutputTextExtent(const CString &str) const {
-	error("TODO: CDC::GetOutputTextExtent");
+	return impl()->getOutputTextExtent(str);
 }
 
 CSize CDC::GetTabbedTextExtent(LPCSTR lpszString, int nCount,
-                               int nTabPositions, LPINT lpnTabStopPositions) const {
-	error("TODO: CDC::GetTabbedTextExtent");
+        int nTabPositions, LPINT lpnTabStopPositions) const {
+	return impl()->getTabbedTextExtent(lpszString, nCount,
+		nTabPositions, lpnTabStopPositions);
 }
 
 CSize CDC::GetTabbedTextExtent(const CString &str,
-                               int nTabPositions, LPINT lpnTabStopPositions) const {
-	error("TODO: CDC::GetTabbedTextExtent");
+        int nTabPositions, LPINT lpnTabStopPositions) const {
+	return impl()->getTabbedTextExtent(str, nTabPositions,
+		lpnTabStopPositions);
 }
 
 CSize CDC::GetOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
-                                     int nTabPositions, LPINT lpnTabStopPositions) const {
-	error("TODO: CDC::GetOutputTabbedTextExtent");
+		int nTabPositions, LPINT lpnTabStopPositions) const {
+	return impl()->getOutputTabbedTextExtent(lpszString, nCount,
+		nTabPositions, lpnTabStopPositions);
 }
 
 CSize CDC::GetOutputTabbedTextExtent(const CString &str,
-                                     int nTabPositions, LPINT lpnTabStopPositions) const {
-	error("TODO: CDC::GetOutputTabbedTextExtent");
+        int nTabPositions, LPINT lpnTabStopPositions) const {
+	return impl()->getOutputTabbedTextExtent(str,
+		nTabPositions, lpnTabStopPositions);
 }
 
 BOOL CDC::GrayString(CBrush *pBrush,
-                     BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
-                     int nCount, int x, int y, int nWidth, int nHeight) {
-	error("TODO: CDC::GrayString");
+        BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+        int nCount, int x, int y, int nWidth, int nHeight) {
+	return impl()->grayString(pBrush, lpfnOutput, lpData,
+		nCount, x, y, nWidth, nHeight);
 }
 
 UINT CDC::GetTextAlign() const {
-	error("TODO: CDC::GetTextAlign");
+	return impl()->getTextAlign();
 }
 
 UINT CDC::SetTextAlign(UINT nFlags) {
-	error("TODO: CDC::SetTextAlign");
+	return impl()->setTextAlign(nFlags);
 }
 
 BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
-	TEXTMETRIC &tm = *lpMetrics;
-	Graphics::Font *font = *(CFont::Impl *)impl()->_font;
-
-	memset(&tm, 0, sizeof(TEXTMETRIC)); // Initialize to zero
-
-	tm.tmHeight = font->getFontHeight();
-	tm.tmAscent = tm.tmHeight;
-	tm.tmDescent = 0;
-	tm.tmInternalLeading = 0;
-	tm.tmExternalLeading = 0;
-
-	tm.tmAveCharWidth = 0;
-	int totalWidth = 0;
-	char first = (char)32;
-	char last = (char)127;
-
-	for (int c = first; c <= last; ++c)
-		totalWidth += font->getCharWidth(c);
-
-	tm.tmAveCharWidth = totalWidth / (last - first + 1);
-
-	tm.tmMaxCharWidth = font->getMaxCharWidth();
-	tm.tmWeight = FW_NORMAL;
-	tm.tmOverhang = 0;
-
-	tm.tmDigitizedAspectX = 1;
-	tm.tmDigitizedAspectY = 1;
-
-	tm.tmFirstChar = first;
-	tm.tmLastChar = last;
-	tm.tmDefaultChar = '?'; // Pick a fallback character
-	tm.tmBreakChar = ' ';   // Typically space is used for breaking
-
-	// Assume fixed-pitch if all characters have same width
-	bool fixedPitch = true;
-	int firstWidth = font->getCharWidth(first);
-	for (int c = first + 1; c <= last; ++c) {
-		if (font->getCharWidth(c) != firstWidth) {
-			fixedPitch = false;
-			break;
-		}
-	}
-
-	tm.tmPitchAndFamily = (fixedPitch ? TMPF_FIXED_PITCH : 0);
-	tm.tmCharSet = ANSI_CHARSET;
-
-	return true;
+	return impl()->getTextMetrics(lpMetrics);
 }
 
 /*--------------------------------------------*/
@@ -698,6 +659,161 @@ uint CDC::Impl::getPenColor() const {
 	assert(pen->_penStyle == PS_SOLID);
 
 	return GetNearestColor(pen->_color);
+}
+
+COLORREF CDC::Impl::setBkColor(COLORREF crColor) {
+	COLORREF oldColor = _bkColor;
+	_bkColor = crColor;
+	return oldColor;
+}
+
+int CDC::Impl::setBkMode(int nBkMode) {
+	int oldMode = _bkMode;
+	_bkMode = nBkMode;
+	return oldMode;
+}
+
+COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
+	COLORREF oldColor = _textColor;
+	_textColor = crColor;
+	return oldColor;
+}
+
+BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount) {
+	error("TODO");
+}
+
+BOOL CDC::Impl::textOut(int x, int y, const CString &str) {
+	error("TODO");
+}
+
+BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+	LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
+	error("TODO");
+}
+
+BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+	const CString &str, LPINT lpDxWidths) {
+	error("TODO");
+}
+
+CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
+	int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+	error("TODO");
+}
+
+CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
+	int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+	error("TODO");
+}
+
+int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
+	LPRECT lpRect, UINT nFormat) {
+	error("TODO");
+}
+
+int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
+	error("TODO");
+}
+
+CSize CDC::Impl::getTextExtent(LPCSTR lpszString, int nCount) const {
+	error("TODO");
+}
+
+CSize CDC::Impl::getTextExtent(const CString &str) const {
+	error("TODO");
+}
+
+CSize CDC::Impl::getOutputTextExtent(LPCSTR lpszString, int nCount) const {
+	error("TODO");
+}
+
+CSize CDC::Impl::getOutputTextExtent(const CString &str) const {
+	error("TODO");
+}
+
+CSize CDC::Impl::getTabbedTextExtent(LPCSTR lpszString, int nCount,
+	int nTabPositions, LPINT lpnTabStopPositions) const {
+	error("TODO");
+}
+
+CSize CDC::Impl::getTabbedTextExtent(const CString &str,
+	int nTabPositions, LPINT lpnTabStopPositions) const {
+	error("TODO");
+}
+
+CSize CDC::Impl::getOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
+	int nTabPositions, LPINT lpnTabStopPositions) const {
+	error("TODO");
+}
+
+CSize CDC::Impl::getOutputTabbedTextExtent(const CString &str,
+	int nTabPositions, LPINT lpnTabStopPositions) const {
+	error("TODO");
+}
+
+BOOL CDC::Impl::grayString(CBrush *pBrush,
+	BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+	int nCount, int x, int y, int nWidth, int nHeight) {
+	error("TODO");
+}
+
+UINT CDC::Impl::getTextAlign() const {
+	error("TODO");
+}
+
+UINT CDC::Impl::setTextAlign(UINT nFlags) {
+	error("TODO");
+}
+
+BOOL CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
+	TEXTMETRIC &tm = *lpMetrics;
+	Graphics::Font *font = *(CFont::Impl *)_font;
+
+	memset(&tm, 0, sizeof(TEXTMETRIC)); // Initialize to zero
+
+	tm.tmHeight = font->getFontHeight();
+	tm.tmAscent = tm.tmHeight;
+	tm.tmDescent = 0;
+	tm.tmInternalLeading = 0;
+	tm.tmExternalLeading = 0;
+
+	tm.tmAveCharWidth = 0;
+	int totalWidth = 0;
+	char first = (char)32;
+	char last = (char)127;
+
+	for (int c = first; c <= last; ++c)
+		totalWidth += font->getCharWidth(c);
+
+	tm.tmAveCharWidth = totalWidth / (last - first + 1);
+
+	tm.tmMaxCharWidth = font->getMaxCharWidth();
+	tm.tmWeight = FW_NORMAL;
+	tm.tmOverhang = 0;
+
+	tm.tmDigitizedAspectX = 1;
+	tm.tmDigitizedAspectY = 1;
+
+	tm.tmFirstChar = first;
+	tm.tmLastChar = last;
+	tm.tmDefaultChar = '?'; // Pick a fallback character
+	tm.tmBreakChar = ' ';   // Typically space is used for breaking
+
+	// Assume fixed-pitch if all characters have same width
+	bool fixedPitch = true;
+	int firstWidth = font->getCharWidth(first);
+	for (int c = first + 1; c <= last; ++c) {
+		if (font->getCharWidth(c) != firstWidth) {
+			fixedPitch = false;
+			break;
+		}
+	}
+
+	tm.tmPitchAndFamily = (fixedPitch ? TMPF_FIXED_PITCH : 0);
+	tm.tmCharSet = ANSI_CHARSET;
+
+	return true;
 }
 
 } // namespace MFC
