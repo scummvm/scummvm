@@ -798,7 +798,7 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 	}
 
 	uint8 namelength = rs->readByte();
-	_name.resize(namelength);
+	_name.assign(namelength, ' ');
 	for (unsigned int i = 0; i < namelength; ++i)
 		_name[i] = rs->readByte();
 

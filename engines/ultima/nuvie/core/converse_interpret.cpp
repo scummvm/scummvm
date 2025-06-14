@@ -151,7 +151,7 @@ void ConverseInterpret::step() {
 void ConverseInterpret::add_text(unsigned char c) {
 	ConvScript *cs = converse->script;
 	do {
-		text.append(1, (unsigned char)cs->read());
+		text.push_back((unsigned char)cs->read());
 	} while (!cs->overflow() && is_print(cs->peek()));
 }
 
@@ -341,7 +341,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 					i++;
 				}
 			} else {
-				output.append(1, c_str[i]);
+				output.push_back(c_str[i]);
 				i += 1;
 			}
 			break;
@@ -1373,7 +1373,7 @@ converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring
 				free(item);
 				// match keywords format: clamp item to 4 characters
 				if (item_str.size() > 4)
-					item_str.resize(4);
+					item_str.erase(4);
 				if (check_keywords(item_str, find_str))
 					return i;
 			}

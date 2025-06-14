@@ -576,11 +576,12 @@ void KeyBinder::ParseLine(const char *line) {
 			i = s.findFirstOf(whitespace);
 			keycode = s.substr(0, i);
 			s.erase(0, i);
-			string t = Std::to_uppercase(keycode);
+			string t = keycode;
+			t.toUppercase();
 
 			if (t.empty()) {
 				::error("Keybinder: parse error in line: %s", s.c_str());
-			} else if (t.length() == 1) {
+			} else if (t.size() == 1) {
 				// translate 1-letter keys straight to Common::KeyCode
 				char c = t[0];
 				if (c >= 33 && c <= 122 && c != 37) {
@@ -613,7 +614,7 @@ void KeyBinder::ParseLine(const char *line) {
 	i = s.findFirstOf(whitespace);
 	string t = s.substr(0, i);
 	s.erase(0, i);
-	t = Std::to_uppercase(t);
+	t.toUppercase();
 
 	ParseActionMap::const_iterator action_index = _actions.find(t);
 	ActionType a;

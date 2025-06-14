@@ -1109,7 +1109,7 @@ void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
 	Std::set<Std::string> files = getCustomTileFilenames(datadir, "avatar_###_####.bmp");
 
 	for (const Std::string &filename : files) {
-		if (filename.length() != 19) { // avatar_nnn_nnnn.bmp
+		if (filename.size() != 19) { // avatar_nnn_nnnn.bmp
 			continue;
 		}
 		Std::string num_str = filename.substr(7, 3);
@@ -1137,7 +1137,7 @@ void ActorManager::loadNPCTiles(const Common::Path &datadir) {
 	Std::set<Std::string> files = getCustomTileFilenames(datadir, "actor_###_####.bmp");
 
 	for (const Std::string &filename : files) {
-		if (filename.length() != 18) { // actor_nnn_nnnn.bmp
+		if (filename.size() != 18) { // actor_nnn_nnnn.bmp
 			continue;
 		}
 		Std::string num_str = filename.substr(6, 3);

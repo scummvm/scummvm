@@ -248,7 +248,7 @@ protected:
 	void flush() {
 		in.resize(0);
 		in_start = 0;
-		text.resize(0);
+		text.clear();
 	}
 
 	/* operating on input */

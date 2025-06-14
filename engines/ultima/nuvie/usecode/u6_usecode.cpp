@@ -1428,7 +1428,7 @@ bool U6UseCode::use_rubber_ducky(Obj *obj, UseCodeEvent ev) {
 }
 
 sint16 U6UseCode::parseLatLongString(U6UseCodeLatLonEnum mode, Std::string *input) {
-	uint16 len = input->length();
+	uint16 len = input->size();
 	sint16 val = 0;
 	for (uint16 i = 0; i < len; i++) {
 		char c = (*input)[i];
