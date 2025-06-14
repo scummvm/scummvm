@@ -708,8 +708,9 @@ CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
 }
 
 int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
-	LPRECT lpRect, UINT nFormat) {
-	error("TODO");
+		LPRECT lpRect, UINT nFormat) {
+	return drawText(CString(lpszString, nCount),
+		lpRect, nFormat);
 }
 
 int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
@@ -723,6 +724,12 @@ int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
 	if (nFormat & DT_SINGLELINE) {
 		lines.push_back(str);
 	} else {
+		// We don't currently support prefix & characters
+		// on potentially multi-line text. If this is ever
+		// needed, we'll have to basically re-write the
+		// wordWrapText function to handle them.
+		assert((nFormat & DT_NOPREFIX) || !str.contains('&'));
+
 		// Perform word wrapping of the text as necessary
 		Common::String temp = str;
 		font->wordWrapText(temp, maxWidth, lines);
@@ -747,7 +754,12 @@ int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
 		if (textRect.top >= lpRect->bottom)
 			break;
 
-		const int lineWidth = font->getStringWidth(line);
+		Common::String tempLine = line;
+		int idx;
+		while ((idx = tempLine.findFirstOf('&')) != Common::String::npos)
+			tempLine.deleteChar(idx);
+
+		const int lineWidth = font->getStringWidth(tempLine);
 
 		// Form sub-rect for the single line
 		Common::Rect lineRect(textRect.left, textRect.top,
@@ -769,10 +781,37 @@ int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
 		if (_bkMode == OPAQUE)
 			fillRect(textRect, _bkColor);
 
-		// Write the actual text
-		font->drawString(dest, line,
-			textRect.left, textRect.top, textRect.width(),
-			textCol);
+		// Write the actual text. This is slightly
+		// complicated to detect '&' characters when
+		// DT_NOPREFIX isn't set
+		Common::String fragment;
+		tempLine = line;
+		while (!tempLine.empty()) {
+			if (!(nFormat & DT_NOPREFIX) && tempLine.firstChar() == '&') {
+				tempLine.deleteChar(0);
+
+				// Draw an underline
+				const int x1 = textRect.left;
+				const int x2 = x1 + font->getCharWidth(tempLine.firstChar());
+				const int y = textRect.top + font->getFontHeight() - 3;
+
+				dest->hLine(x1, y, x2, textCol);
+			}
+
+			idx = (nFormat & DT_NOPREFIX) ? Common::String::npos :
+				tempLine.findFirstOf('&');
+			if (idx == Common::String::npos) {
+				fragment = tempLine;
+				tempLine.clear();
+			} else {
+				fragment = Common::String(tempLine.c_str(), tempLine.c_str() + idx);
+				tempLine = Common::String(tempLine.c_str() + fragment.size());
+			}
+
+			font->drawString(dest, fragment, textRect.left, textRect.top,
+				textRect.width(), textCol);
+			textRect.left += font->getStringWidth(fragment);
+		}
 
 		// Move to next line
 		textRect.top += font->getFontHeight();

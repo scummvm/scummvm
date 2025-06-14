@@ -36,6 +36,9 @@ public:
 	}
 	CString(char c) : Common::String(c) {
 	}
+	CString(const char *s, int nCount) :
+		Common::String(s, s + nCount) {
+	}
 
 	char *GetBufferSetLength(size_t nNewLength) {
 		ensureCapacity(nNewLength + 1, false);
