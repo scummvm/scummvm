@@ -179,6 +179,8 @@ public:
 
 	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 	void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawAlphaChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawAlphaChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
 	bool _initialized;
@@ -209,8 +211,8 @@ private:
 	int computePointSize(int size, TTFSizeMode sizeMode) const;
 	int readPointSizeFromVDMXTable(int height) const;
 	int computePointSizeFromHeaders(int height) const;
-	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color,
-		const uint32 *transparentColor) const;
+	void drawCharIntern(Surface *dst, uint32 chr, int x, int y, uint32 color,
+		const uint32 *transparentColor, bool alpha) const;
 
 	FT_Int32 _loadFlags;
 	FT_Render_Mode _renderMode;
@@ -646,18 +648,40 @@ static void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos,
 	}
 }
 
+template<typename ColorType>
+static void renderAlphaGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos,
+		const int srcPitch, const int w, const int h, ColorType color,
+		const PixelFormat &dstFormat) {
+	uint8 sR, sG, sB;
+	dstFormat.colorToRGB(color, sR, sG, sB);
+
+	for (int y = 0; y < h; ++y) {
+		ColorType *rDst = (ColorType *)dstPos;
+		const uint8 *src = srcPos;
+
+		for (int x = 0; x < w; ++x) {
+			*rDst = dstFormat.ARGBToColor(*src, sR, sG, sB);
+			++rDst;
+			++src;
+		}
+
+		dstPos += dstPitch;
+		srcPos += srcPitch;
+	}
+}
+
 } // End of anonymous namespace
 
 void TTFFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-	drawChar(dst, chr, x, y, color, nullptr);
+	drawCharIntern(dst, chr, x, y, color, nullptr, false);
 }
 
 void TTFFont::drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const {
 	if (dst->hasTransparentColor()) {
 		uint32 transColor = dst->getTransparentColor();
-		drawChar(dst->surfacePtr(), chr, x, y, color, &transColor);
+		drawCharIntern(dst->surfacePtr(), chr, x, y, color, &transColor, false);
 	} else {
-		drawChar(dst->surfacePtr(), chr, x, y, color, nullptr);
+		drawCharIntern(dst->surfacePtr(), chr, x, y, color, nullptr, false);
 	}
 
 	Common::Rect charBox = getBoundingBox(chr);
@@ -665,8 +689,20 @@ void TTFFont::drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 col
 	dst->addDirtyRect(charBox);
 }
 
-void TTFFont::drawChar(Surface * dst, uint32 chr, int x, int y, uint32 color,
-		const uint32 *transparentColor) const {
+void TTFFont::drawAlphaChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	drawCharIntern(dst, chr, x, y, color, nullptr, true);
+}
+
+void TTFFont::drawAlphaChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const {
+	drawCharIntern(dst->surfacePtr(), chr, x, y, color, nullptr, true);
+
+	Common::Rect charBox = getBoundingBox(chr);
+	charBox.translate(x, y);
+	dst->addDirtyRect(charBox);
+}
+
+void TTFFont::drawCharIntern(Surface * dst, uint32 chr, int x, int y, uint32 color,
+		const uint32 *transparentColor, bool alpha) const {
 	assureCached(chr);
 	GlyphCache::const_iterator glyphEntry = _glyphs.find(chr);
 	if (glyphEntry == _glyphs.end())
@@ -714,30 +750,40 @@ void TTFFont::drawChar(Surface * dst, uint32 chr, int x, int y, uint32 color,
 
 	uint8 *dstPos = (uint8 *)dst->getBasePtr(x, y);
 
-	if (dst->format.isCLUT8()) {
-		for (int cy = 0; cy < h; ++cy) {
-			uint8 *rDst = dstPos;
-			const uint8 *src = srcPos;
-
-			for (int cx = 0; cx < w; ++cx) {
-				// We assume a 1Bpp mode is a color indexed mode, thus we can
-				// not take advantage of anti-aliasing here.
-				if (*src >= 0x80)
-					*rDst = color;
-
-				++rDst;
-				++src;
-			}
-
-			dstPos += dst->pitch;
-			srcPos += glyph.image.pitch;
+	if (alpha) {
+		if (dst->format.bytesPerPixel == 1) {
+			renderAlphaGlyph<uint8>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format);
+		} else if (dst->format.bytesPerPixel == 2) {
+			renderAlphaGlyph<uint16>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format);
+		} else if (dst->format.bytesPerPixel == 4) {
+			renderAlphaGlyph<uint32>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format);
 		}
-	} else if (dst->format.bytesPerPixel == 1) {
-		renderGlyph<uint8>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
-	} else if (dst->format.bytesPerPixel == 2) {
-		renderGlyph<uint16>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
-	} else if (dst->format.bytesPerPixel == 4) {
-		renderGlyph<uint32>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
+	} else {
+		if (dst->format.isCLUT8()) {
+			for (int cy = 0; cy < h; ++cy) {
+				uint8 *rDst = dstPos;
+				const uint8 *src = srcPos;
+
+				for (int cx = 0; cx < w; ++cx) {
+					// We assume a 1Bpp mode is a color indexed mode, thus we can
+					// not take advantage of anti-aliasing here.
+					if (*src >= 0x80)
+						*rDst = color;
+
+					++rDst;
+					++src;
+				}
+
+				dstPos += dst->pitch;
+				srcPos += glyph.image.pitch;
+			}
+		} else if (dst->format.bytesPerPixel == 1) {
+			renderGlyph<uint8>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
+		} else if (dst->format.bytesPerPixel == 2) {
+			renderGlyph<uint16>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
+		} else if (dst->format.bytesPerPixel == 4) {
+			renderGlyph<uint32>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
+		}
 	}
 }
 
