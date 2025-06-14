@@ -85,6 +85,8 @@ enum InventoryConstants {
   kStatusChangeTimeout = 500
 };
 
+static const int kCreditsMapID = 46;
+
 class GameObject {
 public:
 	int _absNum;
