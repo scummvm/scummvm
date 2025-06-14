@@ -44,6 +44,7 @@ M4MetaEngineDetection::M4MetaEngineDetection() : AdvancedMetaEngineDetection(M4:
 	_guiOptions = GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD);
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
+	_flags = kADFlagMatchFullPaths;
 }
 
 REGISTER_PLUGIN_STATIC(M4_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, M4MetaEngineDetection);
