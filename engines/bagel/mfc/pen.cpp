@@ -25,8 +25,13 @@
 namespace Bagel {
 namespace MFC {
 
+CPen::CPen(int nPenStyle, int nWidth, COLORREF crColor) {
+	CreatePen(nPenStyle, nWidth, crColor);
+}
+
 BOOL CPen::CreatePen(int nPenStyle, int nWidth, COLORREF crColor) {
-	error("TODO: CreatePen");
+	m_hObject = new Impl(nPenStyle, nWidth, crColor);
+	return true;
 }
 
 } // namespace MFC

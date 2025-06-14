@@ -37,11 +37,15 @@ BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
 }
 
 int CButton::GetCheck() const {
-	error("TODO: CButton::GetCheck");
+	return (_itemState & ODS_CHECKED) != 0 ?
+		BST_CHECKED : BST_UNCHECKED;
 }
 
 void CButton::SetCheck(int nCheck) {
-	error("TODO: CButton::SetChunk");
+	if (nCheck == BST_UNCHECKED)
+		_itemState &= ~ODS_CHECKED;
+	else
+		_itemState |= ODS_CHECKED;
 }
 
 void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
@@ -55,8 +59,26 @@ void CButton::OnPaint() {
 	CRect rect;
 	GetClientRect(&rect);
 
-	// Fill the background with light blue
-	dc.FillSolidRect(&rect, RGB(173, 216, 230));
+	// Determine state
+	bool isEnabled = IsWindowEnabled();
+	int checkState = GetCheck();
+
+	// Choose background color based on state
+	COLORREF bgColor = isEnabled ? RGB(240, 240, 240) : RGB(200, 200, 200);
+	dc.FillSolidRect(rect, bgColor);
+
+	// Draw checked state (e.g., highlight border or symbol)
+	if (checkState == BST_CHECKED) {
+		dc.DrawEdge(&rect, EDGE_SUNKEN, BF_RECT);
+	} else {
+		dc.DrawEdge(&rect, EDGE_RAISED, BF_RECT);
+	}
+
+	// Draw text
+	CString text;
+	GetWindowText(text);
+	dc.SetBkMode(TRANSPARENT);
+	dc.DrawText(text, rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 } // namespace MFC

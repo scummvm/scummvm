@@ -300,6 +300,10 @@ enum {
 	ODS_NOFOCUSRECT = 0x0200
 };
 
+enum {
+	BST_UNCHECKED = 0,
+	BST_CHECKED = 1
+};
 
 /* Stock Logical Objects */
 #define WHITE_BRUSH         0
@@ -528,6 +532,53 @@ enum {
 #define TMPF_TRUETYPE       0x04
 
 #define ANSI_CHARSET            0
+
+/* 3D border styles */
+#define BDR_RAISEDOUTER 0x0001
+#define BDR_SUNKENOUTER 0x0002
+#define BDR_RAISEDINNER 0x0004
+#define BDR_SUNKENINNER 0x0008
+
+#define BDR_OUTER       (BDR_RAISEDOUTER | BDR_SUNKENOUTER)
+#define BDR_INNER       (BDR_RAISEDINNER | BDR_SUNKENINNER)
+#define BDR_RAISED      (BDR_RAISEDOUTER | BDR_RAISEDINNER)
+#define BDR_SUNKEN      (BDR_SUNKENOUTER | BDR_SUNKENINNER)
+
+
+#define EDGE_RAISED     (BDR_RAISEDOUTER | BDR_RAISEDINNER)
+#define EDGE_SUNKEN     (BDR_SUNKENOUTER | BDR_SUNKENINNER)
+#define EDGE_ETCHED     (BDR_SUNKENOUTER | BDR_RAISEDINNER)
+#define EDGE_BUMP       (BDR_RAISEDOUTER | BDR_SUNKENINNER)
+
+/* Border flags */
+#define BF_LEFT         0x0001
+#define BF_TOP          0x0002
+#define BF_RIGHT        0x0004
+#define BF_BOTTOM       0x0008
+
+#define BF_TOPLEFT      (BF_TOP | BF_LEFT)
+#define BF_TOPRIGHT     (BF_TOP | BF_RIGHT)
+#define BF_BOTTOMLEFT   (BF_BOTTOM | BF_LEFT)
+#define BF_BOTTOMRIGHT  (BF_BOTTOM | BF_RIGHT)
+#define BF_RECT         (BF_LEFT | BF_TOP | BF_RIGHT | BF_BOTTOM)
+
+#define BF_DIAGONAL     0x0010
+
+
+// For diagonal lines, the BF_RECT flags specify the end point of the
+// vector bounded by the rectangle parameter.
+#define BF_DIAGONAL_ENDTOPRIGHT     (BF_DIAGONAL | BF_TOP | BF_RIGHT)
+#define BF_DIAGONAL_ENDTOPLEFT      (BF_DIAGONAL | BF_TOP | BF_LEFT)
+#define BF_DIAGONAL_ENDBOTTOMLEFT   (BF_DIAGONAL | BF_BOTTOM | BF_LEFT)
+#define BF_DIAGONAL_ENDBOTTOMRIGHT  (BF_DIAGONAL | BF_BOTTOM | BF_RIGHT)
+
+
+#define BF_MIDDLE       0x0800  /* Fill in the middle */
+#define BF_SOFT         0x1000  /* For softer buttons */
+#define BF_ADJUST       0x2000  /* Calculate the space left over */
+#define BF_FLAT         0x4000  /* For flat rather than 3D borders */
+#define BF_MONO         0x8000  /* For monochrome borders */
+
 
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;

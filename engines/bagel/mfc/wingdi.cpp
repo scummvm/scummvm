@@ -304,7 +304,17 @@ BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
 }
 
 DWORD GetSysColor(int nIndex) {
-	error("TODO: GetSysColor");
+	switch (nIndex) {
+	case COLOR_3DHIGHLIGHT:
+		return RGB(255, 255, 255);
+	case COLOR_3DSHADOW:
+		return RGB(128, 128, 128);
+	case COLOR_BTNFACE:
+		return RGB(192, 192, 192);
+	default:
+		error("Unknown GetSysColor value");
+		break;
+	}
 }
 
 BOOL DestroyMenu(HMENU hMenu) {

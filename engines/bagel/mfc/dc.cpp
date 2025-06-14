@@ -248,6 +248,66 @@ BOOL CDC::Pie(int x1, int y1, int x2, int y2,
 	error("TODO: CDC::Pie");
 }
 
+BOOL CDC::DrawEdge(LPRECT lpRect, UINT nEdge, UINT nFlags) {
+	CRect rect = *lpRect;
+
+	// Determine edge colors
+	COLORREF clrTL = GetSysColor(COLOR_3DHIGHLIGHT); // Top-left
+	COLORREF clrBR = GetSysColor(COLOR_3DSHADOW);    // Bottom-right
+
+	// Adjust for EDGE_SUNKEN
+	if (nEdge == EDGE_SUNKEN || nEdge == EDGE_ETCHED)
+		SWAP(clrTL, clrBR);
+
+	// Create pens
+	CPen penTL(PS_SOLID, 1, clrTL);
+	CPen penBR(PS_SOLID, 1, clrBR);
+	CPen *pOldPen = SelectObject(&penTL);
+
+	// Draw top and left
+	if (nFlags & BF_TOP) {
+		MoveTo(rect.left, rect.top);
+		LineTo(rect.right - 1, rect.top);
+	}
+	if (nFlags & BF_LEFT) {
+		MoveTo(rect.left, rect.top);
+		LineTo(rect.left, rect.bottom - 1);
+	}
+
+	// Draw bottom and right
+	SelectObject(&penBR);
+
+	if (nFlags & BF_BOTTOM) {
+		MoveTo(rect.left, rect.bottom - 1);
+		LineTo(rect.right, rect.bottom - 1);
+	}
+	if (nFlags & BF_RIGHT) {
+		MoveTo(rect.right - 1, rect.top);
+		LineTo(rect.right - 1, rect.bottom);
+	}
+
+	// Optionally fill the middle area
+	if (nFlags & BF_MIDDLE) {
+		COLORREF fill = GetSysColor(COLOR_BTNFACE);
+		CBrush brush(fill);
+		CRect inner = rect;
+		inner.DeflateRect(1, 1);
+		FillRect(&inner, &brush);
+	}
+
+	// Optionally modify the rect (like real DrawEdge)
+	if (!(nFlags & BF_ADJUST))
+		lpRect->left += (nFlags & BF_LEFT) ? 1 : 0,
+		lpRect->top += (nFlags & BF_TOP) ? 1 : 0,
+		lpRect->right -= (nFlags & BF_RIGHT) ? 1 : 0,
+		lpRect->bottom -= (nFlags & BF_BOTTOM) ? 1 : 0;
+
+	// Restore old pen
+	SelectObject(pOldPen);
+
+	return TRUE;
+}
+
 BOOL CDC::Pie(LPCRECT lpRect, const POINT &ptStart, const POINT &ptEnd) {
 	error("TODO: CDC::Pie");
 }

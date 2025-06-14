@@ -494,11 +494,11 @@ inline CRect::CRect(
 }
 
 inline CRect::CRect(const RECT &srcRect) {
-	*this = srcRect;
+	CopyRect(&srcRect);
 }
 
 inline CRect::CRect(LPCRECT lpSrcRect) {
-	*this = *lpSrcRect;
+	CopyRect(lpSrcRect);
 }
 
 inline CRect::CRect(const POINT &point, const SIZE &size) {
@@ -582,7 +582,10 @@ inline void CRect::SetRectEmpty() {
 }
 
 inline void CRect::CopyRect(LPCRECT lpSrcRect) {
-	*this = *lpSrcRect;
+	left = lpSrcRect->left;
+	top = lpSrcRect->top;
+	right = lpSrcRect->right;
+	bottom = lpSrcRect->bottom;
 }
 
 inline BOOL CRect::EqualRect(LPCRECT lpRect) const {

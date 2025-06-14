@@ -477,9 +477,23 @@ public:
 };
 
 class CPen : public CGdiObject {
+	class Impl : public CGdiObjectImpl {
+	public:
+		int _penStyle;
+		int _width;
+		COLORREF _color;
+
+	public:
+		Impl(int nPenStyle, int nWidth, COLORREF crColor) :
+			_penStyle(nPenStyle), _width(nWidth),
+			_color(crColor) {
+		}
+	};
+
 public:
-	~CPen() override {
-	}
+	CPen() {}
+	CPen(int nPenStyle, int nWidth, COLORREF crColor);
+	~CPen() override {}
 
 	BOOL CreatePen(int nPenStyle, int nWidth, COLORREF crColor);
 };
@@ -697,6 +711,8 @@ public:
 	               UINT nFillType);
 	void Rectangle(LPCRECT lpRect);
 	void Rectangle(int x1, int y1, int x2, int y2);
+	BOOL DrawEdge(LPRECT lpRect, UINT nEdge, UINT nFlags);
+
 	BOOL Pie(
 	    int x1, int y1,     // Upper-left corner of bounding rectangle
 	    int x2, int y2,     // Lower-right corner of bounding rectangle
@@ -1129,6 +1145,9 @@ public:
 	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
 	BOOL SetWindowText(LPCSTR lpszString);
 	UINT GetState() const;
+	bool IsWindowEnabled() const {
+		return (_itemState & ODS_DISABLED) == 0;
+	}
 
 	CDC *GetDC();
 	int ReleaseDC(CDC *pDC);
