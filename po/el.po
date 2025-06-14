@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-13 08:13+0000\n"
-"PO-Revision-Date: 2025-05-26 06:25+0000\n"
+"PO-Revision-Date: 2025-06-14 10:12+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -3720,10 +3720,8 @@ msgid "Could not apply filtering setting."
 msgstr "Αδυναμία εφαρμογής της ρύθμισης φιλτραρίσματος."
 
 #: engines/engine.cpp:415
-#, fuzzy
-#| msgid "Could not apply filtering setting."
 msgid "Could not apply shader setting."
-msgstr "Αδυναμία εφαρμογής της ρύθμισης φιλτραρίσματος."
+msgstr "Αδυναμία εφαρμογής της ρύθμισης σκιαστή (shader)."
 
 #: engines/engine.cpp:531
 msgid "Error"
@@ -5368,16 +5366,17 @@ msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Η επαναφορά ενός αντιγράφου ασφαλείας θα διαγράψει τις τρέχουσες ρυθμίσεις "
+"και θα αντικαταστήσει (overwrite) υπάρχοντα αρχεία αποθήκευσης παιχνιδιών. "
+"Θέλετε να συνεχίσετε;"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Επιλέξτε θέμα"
+msgstr "Επιλέξτε αντίγραφο ασφαλείας"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "Έγινε επαναφορά του αντιγράφου ασφαλείας επιτυχώς."
 
 #: backends/platform/android/options.cpp:315
 msgid "An error occured while restoring the backup."
@@ -5868,21 +5867,6 @@ msgid "Libretro playlist"
 msgstr "Playlist Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
-#, fuzzy
-#| msgid ""
-#| "## Libretro playlists for ScummVM core\n"
-#| "Playlists used in Libretro frontends (e.g. Retroarch) are plain text "
-#| "lists used to directly launch a game with a specific core from the user "
-#| "interface. Those lists are structured to pass to the core the path of a "
-#| "specific content file to be loaded (e.g. ROM).\n"
-#| "\n"
-#| "ScummVM core can accept as content the path to any of the files inside a "
-#| "valid game folder, the detection system will try to autodetect the game "
-#| "from the content file parent folder and run the game with default ScummVM "
-#| "options.\n"
-#| "\n"
-#| "The core also supports dedicated per game **hook** plain text files with "
-#| "**."
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
@@ -5904,11 +5888,11 @@ msgstr ""
 "χρήστη. Οι λίστες αυτές είναι δομημένες ώστε να παρέχουν στον πυρήνα το "
 "μονοπάτι προς ένα συγκεκριμένο αρχείο περιεχομένου προς φόρτωση (π.χ. ROM).\n"
 "\n"
-"Ο πυρήνας ScummVM μπορεί να δεχτεί ως περιεχόμενο το μονοπάτι προς "
-"οποιοδήποτε από τα αρχεία που περιέχονται σε έναν έγκυρο φάκελο παιχνιδιού. "
-"Το σύστημα ανίχνευσης θα προσπαθήσει να καθορίσει αυτόματα το παιχνίδι από "
-"τον γονικό φάκελο του αρχείου περιεχομένου και να εκτελέσει το παιχνίδι με "
-"τις προκαθορισμένες επιλογές του ScummVM.\n"
+"Ο πυρήνας ScummVM μπορεί να δεχτεί ως περιεχόμενο το μονοπάτι που παρέχει "
+"μια playlist προς οποιοδήποτε αρχείo σε έναν έγκυρο φάκελο παιχνιδιού. Το "
+"σύστημα ανίχνευσης θα προσπαθήσει να καθορίσει αυτόματα το παιχνίδι από τον "
+"γονικό φάκελο του αρχείου περιεχομένου και να εκτελέσει το παιχνίδι με τις "
+"προκαθορισμένες επιλογές του ScummVM.\n"
 "\n"
 "Ο πυρήνας υποστηρίζει επίσης **hook** αρχεία κειμένου, αποκλειστικά ανά "
 "παιχνίδι με **."
@@ -6739,10 +6723,8 @@ msgid "Turn right"
 msgstr "Στρίψε δεξιά"
 
 #: engines/agos/metaengine.cpp:315
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Εναλλαγή κατάστασης μάχης"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
@@ -6850,15 +6832,11 @@ msgstr ""
 "μηχανής, η οποία δεν υποστηρίζεται."
 
 #: engines/ags/ags.cpp:157
-#, fuzzy
-#| msgid ""
-#| "The selected game uses a pre-2.5 version of the AGS engine, which is not "
-#| "supported."
 msgid ""
 "The selected game uses version 4 of the AGS engine, which is not supported."
 msgstr ""
-"Το επιλεγμένο παιχνίδι χρησιμοποιεί μια παλιότερη από την 2.5 έκδοση της AGS "
-"μηχανής, η οποία δεν υποστηρίζεται."
+"Το επιλεγμένο παιχνίδι χρησιμοποιεί την έκδοση 4 της AGS μηχανής, η οποία "
+"δεν υποστηρίζεται."
 
 #: engines/ags/ags.cpp:165
 msgid ""
@@ -6947,13 +6925,15 @@ msgstr ""
 
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
-msgstr ""
+msgstr "Χρήση βίντεο χαμηλότερης ποιότητας μονής ταχύτητας CD-ROM"
 
 #: engines/alg/metaengine.cpp:35
 msgid ""
 "These videos are of lower quality, the default version uses double speed CD-"
 "ROM videos which are of better quality"
 msgstr ""
+"Αυτά τα βίντεο έχουν χαμηλότερη ποιότητα, ενώ η προεπιλεγμένη έκδοση "
+"χρησιμοποιεί βίντεο διπλής ταχύτητας CD-ROM που έχουν καλύτερη ποιότητα"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -7065,7 +7045,7 @@ msgstr "Φόρτωση όπως και να 'χει"
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
-msgstr ""
+msgstr "Επιλογή/Κλωτσιά/Τρέξιμο"
 
 #: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -7073,7 +7053,7 @@ msgstr "Άλμα"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
-msgstr ""
+msgstr "Εισάγετε Κωδικό Επιπέδου"
 
 #: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
@@ -7885,16 +7865,17 @@ msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "Αδυναμία εύρεσης του αρχείου παιχνιδιού darkseed.dat."
 
 #: engines/darkseed/metaengine.cpp:47
-#, fuzzy
-#| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
-msgstr "Χρήση μουσικών τέμπο της DOS έκδοσης"
+msgstr "Χρήση μουσικής από την έκδοση σε δισκέτες (floppy)"
 
 #: engines/darkseed/metaengine.cpp:48
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Χρησιμοποιεί την μουσική από την έκδοση σε δισκέτες (floppy). Τα αρχεία "
+"μουσικής αυτής της έκδοσης θα πρέπει να έχουν αντιγραφεί μέσα στον φάκελο "
+"SOUND."
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
@@ -13593,7 +13574,7 @@ msgstr "Ενεργοποίηση συστήματος κλειδώματος"
 
 #: engines/voyeur/metaengine.cpp:44
 msgid "Require a lockout code to start the game."
-msgstr "Απαιτεί ένα κωδικό ασφάλειας για την έναρξη του παιχνιδιού."
+msgstr "Απαιτεί ένα κωδικό ασφαλείας για την έναρξη του παιχνιδιού."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
