@@ -24,6 +24,8 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 
 #include "draci/draci.h"
 #include "draci/animation.h"
@@ -206,6 +208,8 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 }
 
 void Game::start() {
+	_vm->sayText("NoSense");
+
 	while (!gameShouldQuit()) {
 		// Reset the flag allowing to run the scripts.
 		_vm->_script->endCurrentProgram(false);
@@ -417,6 +421,7 @@ void Game::handleInventoryLoop() {
 		// If there is an inventory item under the cursor and we aren't
 		// holding any item, run its look GPL program
 		if (_itemUnderCursor && !getCurrentItem()) {
+			_vm->_previousSaid.clear();
 			_vm->_script->runWrapper(_itemUnderCursor->_program, _itemUnderCursor->_look, true, false);
 		// Otherwise, if we are holding an item, try to place it inside the
 		// inventory
@@ -461,15 +466,23 @@ void Game::handleDialogueLoop() {
 		return;
 	}
 
+	bool hoveringOverDialogueLine = false;
+
 	Text *text;
 	for (int i = 0; i < kDialogueLines; ++i) {
 		text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
 
 		if (_animUnderCursor == _dialogueAnims[i]) {
 			text->setColor(kLineActiveColor);
+			_vm->sayText(_dialogueBlocks[_lines[i]]._title);
+			hoveringOverDialogueLine = true;
 		} else {
 			text->setColor(kLineInactiveColor);
 		}
+	}
+
+	if (!hoveringOverDialogueLine) {
+		_vm->_previousSaid.clear();
 	}
 
 	if (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) {
@@ -519,10 +532,15 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	if (_loopSubstatus == kInnerWhileTalk) {
 		// If the current speech text has expired or the user clicked a mouse button,
 		// advance to the next line of text
-		if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) ||
-			(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
-
+		if (getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) {
 			setExitLoop(true);
+			_vm->stopTextToSpeech();
+		} else if ((_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
+			// Delay moving to the next line until TTS is done speaking if necessary
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (!ttsMan || !ttsMan->isSpeaking()) {
+				setExitLoop(true);
+			}
 		}
 		_vm->_mouse->lButtonSet(false);
 		_vm->_mouse->rButtonSet(false);
@@ -787,11 +805,23 @@ void Game::updateTitle(int x, int y) {
 	if (_loopStatus == kStatusInventory) {
 		// If there is no item under the cursor, delete the title.
 		// Otherwise, show the item's title.
-		title->setText(_itemUnderCursor ? _itemUnderCursor->_title : "");
+		if (_itemUnderCursor) {
+			title->setText(_itemUnderCursor->_title);
+			_vm->sayText(_itemUnderCursor->_title);
+		} else {
+			title->setText("");
+			_vm->_previousSaid.clear();
+		}
 	} else {
 		// If there is no object under the cursor, delete the title.
 		// Otherwise, show the object's title.
-		title->setText(_objUnderCursor ? _objUnderCursor->_title : "");
+		if (_objUnderCursor) {
+			title->setText(_objUnderCursor->_title);
+			_vm->sayText(_objUnderCursor->_title);
+		} else {
+			title->setText("");
+			_vm->_previousSaid.clear();
+		}
 	}
 
 	// Move the title to the correct place (just above the cursor)
