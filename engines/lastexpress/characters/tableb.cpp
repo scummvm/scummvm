@@ -1,0 +1,199 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "lastexpress/lastexpress.h"
+
+namespace LastExpress {
+
+void LogicManager::CONS_TableB(int chapter) {
+	switch (chapter) {
+	case 0:
+		_engine->getMessageManager()->setMessageHandle(
+			kCharacterTableB,
+			_functionsTableB[getCharacter(kCharacterTableB).callbacks[getCharacter(kCharacterTableB).currentCall]]
+		);
+
+		break;
+	case 1:
+		CONS_TableB_Birth(0, 0, 0, 0);
+		break;
+	case 2:
+		CONS_TableB_StartPart2(0, 0, 0, 0);
+		break;
+	case 3:
+		CONS_TableB_StartPart3(0, 0, 0, 0);
+		break;
+	case 4:
+		CONS_TableB_StartPart4(0, 0, 0, 0);
+		break;
+	case 5:
+		CONS_TableB_StartPart5(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
+}
+
+void LogicManager::CONS_TableB_Birth(CONS_PARAMS) {
+	CharacterCallParams *params = &getCharacter(kCharacterTableB).callParams[getCharacter(kCharacterTableB).currentCall];
+	_engine->getMessageManager()->setMessageHandle(kCharacterTableB, &LogicManager::HAND_TableB_Birth);
+	getCharacter(kCharacterTableB).callbacks[getCharacter(kCharacterTableB).currentCall] = 1;
+
+	params->clear();
+
+	fedEx(kCharacterTableB, kCharacterTableB, 12, 0);
+}
+
+void LogicManager::HAND_TableB_Birth(HAND_PARAMS) {
+	switch (msg->action) {
+	case 12:
+		CONS_TableB_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
+}
+
+void LogicManager::CONS_TableB_StartPart2(CONS_PARAMS) {
+	CharacterCallParams *params = &getCharacter(kCharacterTableB).callParams[getCharacter(kCharacterTableB).currentCall];
+	_engine->getMessageManager()->setMessageHandle(kCharacterTableB, &LogicManager::HAND_TableB_StartPart2);
+	getCharacter(kCharacterTableB).callbacks[getCharacter(kCharacterTableB).currentCall] = 2;
+
+	params->clear();
+
+	fedEx(kCharacterTableB, kCharacterTableB, 12, 0);
+}
+
+void LogicManager::HAND_TableB_StartPart2(HAND_PARAMS) {
+	switch (msg->action) {
+	case 12:
+		CONS_TableB_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
+}
+
+void LogicManager::CONS_TableB_StartPart3(CONS_PARAMS) {
+	CharacterCallParams *params = &getCharacter(kCharacterTableB).callParams[getCharacter(kCharacterTableB).currentCall];
+	_engine->getMessageManager()->setMessageHandle(kCharacterTableB, &LogicManager::HAND_TableB_StartPart3);
+	getCharacter(kCharacterTableB).callbacks[getCharacter(kCharacterTableB).currentCall] = 3;
+
+	params->clear();
+
+	fedEx(kCharacterTableB, kCharacterTableB, 12, 0);
+}
+
+void LogicManager::HAND_TableB_StartPart3(HAND_PARAMS) {
+	switch (msg->action) {
+	case 12:
+		CONS_TableB_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
+}
+
+void LogicManager::CONS_TableB_StartPart4(CONS_PARAMS) {
+	CharacterCallParams *params = &getCharacter(kCharacterTableB).callParams[getCharacter(kCharacterTableB).currentCall];
+	_engine->getMessageManager()->setMessageHandle(kCharacterTableB, &LogicManager::HAND_TableB_StartPart4);
+	getCharacter(kCharacterTableB).callbacks[getCharacter(kCharacterTableB).currentCall] = 4;
+
+	params->clear();
+
+	fedEx(kCharacterTableB, kCharacterTableB, 12, 0);
+}
+
+void LogicManager::HAND_TableB_StartPart4(HAND_PARAMS) {
+	switch (msg->action) {
+	case 12:
+		CONS_TableB_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
+}
+
+void LogicManager::CONS_TableB_StartPart5(CONS_PARAMS) {
+	CharacterCallParams *params = &getCharacter(kCharacterTableB).callParams[getCharacter(kCharacterTableB).currentCall];
+	_engine->getMessageManager()->setMessageHandle(kCharacterTableB, &LogicManager::HAND_TableB_StartPart5);
+	getCharacter(kCharacterTableB).callbacks[getCharacter(kCharacterTableB).currentCall] = 5;
+
+	params->clear();
+
+	fedEx(kCharacterTableB, kCharacterTableB, 12, 0);
+}
+
+void LogicManager::HAND_TableB_StartPart5(HAND_PARAMS) {
+	switch (msg->action) {
+	case 12:
+		CONS_TableB_Idling(0, 0, 0, 0);
+		break;
+	default:
+		break;
+	}
+}
+
+void LogicManager::CONS_TableB_Idling(CONS_PARAMS) {
+	CharacterCallParams *params = &getCharacter(kCharacterTableB).callParams[getCharacter(kCharacterTableB).currentCall];
+	_engine->getMessageManager()->setMessageHandle(kCharacterTableB, &LogicManager::HAND_TableB_Idling);
+	getCharacter(kCharacterTableB).callbacks[getCharacter(kCharacterTableB).currentCall] = 6;
+
+	params->clear();
+
+	fedEx(kCharacterTableB, kCharacterTableB, 12, 0);
+}
+
+void LogicManager::HAND_TableB_Idling(HAND_PARAMS) {
+	switch (msg->action) {
+	case 12:
+		getCharacter(kCharacterTableB).characterPosition.position = 3970;
+		getCharacter(kCharacterTableB).characterPosition.location = 1;
+		getCharacter(kCharacterTableB).characterPosition.car = kCarRestaurant;
+		startCycOtis(kCharacterTableB, "005J");
+		break;
+	case 103798704:
+		if (msg->param.stringParam) {
+			startCycOtis(kCharacterTableB, msg->param.stringParam);
+		} else {
+			startCycOtis(kCharacterTableB, "005J");
+		}
+
+		break;
+	case 136455232:
+		startCycOtis(kCharacterTableB, "BLANK");
+		break;
+	default:
+		break;
+	}
+}
+
+void (LogicManager::*LogicManager::_functionsTableB[])(HAND_PARAMS) = {
+	nullptr,
+	&LogicManager::HAND_TableB_Birth,
+	&LogicManager::HAND_TableB_StartPart2,
+	&LogicManager::HAND_TableB_StartPart3,
+	&LogicManager::HAND_TableB_StartPart4,
+	&LogicManager::HAND_TableB_StartPart5,
+	&LogicManager::HAND_TableB_Idling
+};
+
+} // End of namespace LastExpress
