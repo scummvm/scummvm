@@ -2168,6 +2168,7 @@ void LogicManager::HAND_Milos_StartPart5(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		CONS_Milos_RunningTrain(0, 0, 0, 0);
+		break;
 	case 12:
 		endGraphics(kCharacterMilos);
 		getCharacter(kCharacterMilos).characterPosition.location = 1;

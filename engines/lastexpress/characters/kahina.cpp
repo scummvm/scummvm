@@ -1023,6 +1023,7 @@ void LogicManager::HAND_Kahina_StartPart3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		CONS_Kahina_BeforeConcert(0, 0, 0, 0);
+		break;
 	case 12:
 		endGraphics(kCharacterKahina);
 		getCharacter(kCharacterKahina).characterPosition.car = kCarKronos;
