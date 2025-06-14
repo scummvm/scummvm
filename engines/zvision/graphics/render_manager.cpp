@@ -577,11 +577,10 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Common::R
 }
 
 void RenderManager::blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey) {
-	Common::Rect empt;
 	if (colorkey >= 0)
-		blitSurfaceToSurface(src, empt, _currentBackgroundImage, x, y, colorkey);
+		blitSurfaceToSurface(src, _currentBackgroundImage, x, y, colorkey);
 	else
-		blitSurfaceToSurface(src, empt, _currentBackgroundImage, x, y);
+		blitSurfaceToSurface(src, _currentBackgroundImage, x, y);
 	Common::Rect dirty(src.w, src.h);
 	dirty.translate(x, y);
 	if (_backgroundDirtyRect.isEmpty())
@@ -604,8 +603,7 @@ void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const C
 }
 
 void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey) {
-	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
+	blitSurfaceToSurface(src, _menuSurface, x, y, colorkey);
 	Common::Rect dirty(src.w, src.h);
 	dirty.moveTo(x, y);
 	if (_menuSurfaceDirtyRect.isEmpty())
@@ -636,8 +634,7 @@ void RenderManager::clearMenuSurface(bool force, int32 colorkey) {
 }
 
 void RenderManager::blitSurfaceToText(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey) {
-	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, _textSurface, x, y, colorkey);
+	blitSurfaceToSurface(src, _textSurface, x, y, colorkey);
 	Common::Rect dirty(src.w, src.h);
 	dirty.moveTo(x, y);
 	if (_textSurfaceDirtyRect.isEmpty())
