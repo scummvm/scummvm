@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-13 08:13+0000\n"
+"POT-Creation-Date: 2025-06-14 21:19+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3742,7 +3742,7 @@ msgstr "A játék betöltés jelenleg nem támogatott"
 msgid "Saving game is currently unavailable"
 msgstr "A játék mentés jelenleg nem támogatott"
 
-#: engines/game.cpp:203
+#: engines/game.cpp:199
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -3756,7 +3756,7 @@ msgstr ""
 "nevével együtt, amelyet megpróbált hozzáadni, valamint annak verzióját, "
 "nyelvét stb.:"
 
-#: engines/game.cpp:207
+#: engines/game.cpp:203
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Megfelelő játékazonosítók a %s motorhoz:"

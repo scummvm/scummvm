@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-13 08:13+0000\n"
+"POT-Creation-Date: 2025-06-14 21:19+0000\n"
 "PO-Revision-Date: 2025-05-19 20:25+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3688,7 +3688,7 @@ msgstr "현재는 게임을 불러올 수 없음"
 msgid "Saving game is currently unavailable"
 msgstr "현재는 게임을 저장할 수 없음"
 
-#: engines/game.cpp:203
+#: engines/game.cpp:199
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -3701,7 +3701,7 @@ msgstr ""
 "추가하려고 했던 게임의 이름, 버전, 언어 등과 함께 다음 데이터를 %s의 ScummVM "
 "팀에 보고해 주세요:"
 
-#: engines/game.cpp:207
+#: engines/game.cpp:203
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "%s 엔진에 일치하는 게임 ID:"

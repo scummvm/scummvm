@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-13 08:13+0000\n"
+"POT-Creation-Date: 2025-06-14 21:19+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -3629,7 +3629,7 @@ msgstr "读档目前不可用"
 msgid "Saving game is currently unavailable"
 msgstr "存档目前不可用"
 
-#: engines/game.cpp:203
+#: engines/game.cpp:199
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -3642,7 +3642,7 @@ msgstr ""
 "请使用 %s 将如下数据报告给 ScummVM 团队，同时附上尝试添加的游戏名称、版本、语"
 "言等信息："
 
-#: engines/game.cpp:207
+#: engines/game.cpp:203
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "%s 引擎匹配的游戏 ID："
