@@ -105,7 +105,7 @@ public:
 	virtual ~GameManager();
 
 	virtual void updateEvents();
-	void processInput(Common::KeyState &state);
+	void processInput(Common::CustomEventType action);
 	void processInput();
 	virtual void executeRoom();
 	virtual bool serialize(Common::WriteStream *out);
@@ -116,6 +116,7 @@ public:
 	SupernovaEngine *_vm;
 	Sound *_sound;
 	Common::KeyState _key;
+	Common::CustomEventType _action;
 	Common::EventType _mouseClickType;
 	bool _mouseClicked;
 	bool _keyPressed;
