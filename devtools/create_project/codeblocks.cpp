@@ -55,6 +55,10 @@ void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
 StringList getFeatureLibraries(const BuildSetup &setup) {
 	StringList libraries;
 
+	std::string libSDL = "lib";
+	libSDL += setup.getSDLName();
+	libraries.push_back(libSDL);
+
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable && i->library) {
 			std::string libname;
@@ -68,11 +72,7 @@ StringList getFeatureLibraries(const BuildSetup &setup) {
 			} else if (!std::strcmp(i->name, "png")) {
 				libname = "libpng16";
 			} else if (!std::strcmp(i->name, "sdlnet")) {
-				if (setup.useSDL2) {
-					libname = "libSDL2_net";
-				} else {
-					libname = "libSDL_net";
-				}
+				libname = libSDL + "_net";
 				libraries.push_back("iphlpapi");
 			} else {
 				libname = "lib";
@@ -80,12 +80,6 @@ StringList getFeatureLibraries(const BuildSetup &setup) {
 			}
 			libraries.push_back(libname);
 		}
-	}
-
-	if (setup.useSDL2) {
-		libraries.push_back("libSDL2");
-	} else {
-		libraries.push_back("libSDL");
 	}
 
 	// Win32 libraries
