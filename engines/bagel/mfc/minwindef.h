@@ -244,10 +244,10 @@ typedef struct tagMSG {
 	tagMSG() {
 		pt.x = pt.y = 0;
 	}
-	tagMSG(UINT message_, WPARAM wParam_ = 0,
+	tagMSG(HWND hwnd_, UINT message_, WPARAM wParam_ = 0,
 	       LPARAM lParam_ = 0) :
-		message(message_), wParam(wParam_),
-		lParam(lParam_) {
+			hwnd(hwnd_), message(message_), wParam(wParam_),
+			lParam(lParam_) {
 		pt.x = pt.y = 0;
 	}
 } MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;

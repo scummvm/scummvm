@@ -68,13 +68,13 @@ public:
 	MSG pop();
 
 	/**
-	 * Checks the queue for a WM_PAINT message,
-	 * and if found, removes it and returns true
-	 * @return  True if WM_PAINT message found
+	 * Checks the queue for a given message
 	 */
-	bool popPaint();
-
+	bool peekMessage(MSG *lpMsg, HWND hWnd,
+		UINT wMsgFilterMin, UINT wMsgFilterMax,
+		UINT wRemoveMsg);
 };
+
 } // namespace Libs
 } // namespace MFC
 } // namespace Bagel

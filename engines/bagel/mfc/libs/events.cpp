@@ -144,16 +144,24 @@ MSG EventQueue::pop() {
 	return result;
 }
 
-bool EventQueue::popPaint() {
+bool EventQueue::peekMessage(MSG *lpMsg, HWND hWnd,
+		UINT wMsgFilterMin, UINT wMsgFilterMax,
+		UINT wRemoveMsg) {
 	bool result = false;
 
 	for (uint i = 0; i < _queue.size(); ) {
 		const MSG &msg = _queue[i];
-		if (msg.message == WM_PAINT) {
-			_queue.remove_at(i);
-			result = true;
-		} else {
-			++i;
+		if ((hWnd == nullptr || hWnd == msg.hwnd) &&
+			((wMsgFilterMin == 0 && wMsgFilterMax == 0) ||
+				(msg.message >= wMsgFilterMin && msg.message <= wMsgFilterMax))) {
+			// Found a matching message
+			*lpMsg = msg;
+
+			if (wRemoveMsg == PM_REMOVE)
+				// Remove the message
+				_queue.remove_at(i);
+
+			return true;
 		}
 	}
 

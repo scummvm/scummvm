@@ -32,8 +32,6 @@
 namespace Bagel {
 namespace MFC {
 
-#define FRAME_RATE 50
-
 /**
  * Used for temporary handle wrapper objects
  */
@@ -46,7 +44,8 @@ IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 
 CWinApp *CWinApp::_activeApp = nullptr;
 
-CWinApp::CWinApp(const char *appName) : CWinThread(),
+CWinApp::CWinApp(const char *appName) :
+		CWinThread(), EventLoop(m_pMainWnd),
 		_cursors(_resources),
 		_fonts(_resources),
 		_defaultPen(PS_SOLID, 1, 0) {
@@ -85,56 +84,13 @@ BOOL CWinApp::SaveAllModified() {
 int CWinApp::Run() {
 	InitApplication();
 	InitInstance();
-	assert(m_pMainWnd);
 
-	MSG msg;
-	while (m_pMainWnd && GetMessage(msg)) {
-		if (!PreTranslateMessage(&msg)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+	runEventLoop();
 
 	ExitInstance();
 	SaveAllModified();
 
 	return 0;
-}
-
-bool CWinApp::GetMessage(MSG &msg) {
-	m_pMainWnd->GetMessage(msg);
-	return !_quitFlag;
-}
-
-bool CWinApp::pollEvents(Common::Event &event) {
-	if (!g_system->getEventManager()->pollEvent(event)) {
-		// Brief pauses and screen updates
-		g_system->delayMillis(10);
-
-		uint32 time = g_system->getMillis();
-		if (time >= _nextFrameTime) {
-			_nextFrameTime = time + (1000 / FRAME_RATE);
-			_screen.update();
-		}
-
-		// Cleanup any temporary handle wrapper
-		AfxUnlockTempMaps();
-
-		return false;
-	}
-
-	// Check for quit event
-	if ((event.type == Common::EVENT_QUIT) ||
-		(event.type == Common::EVENT_RETURN_TO_LAUNCHER)) {
-		_quitFlag = true;
-		return false;
-	}
-
-	return true;
-}
-
-BOOL CWinApp::PreTranslateMessage(MSG *pMsg) {
-	return FALSE;
 }
 
 void CWinApp::SetDialogBkColor() {

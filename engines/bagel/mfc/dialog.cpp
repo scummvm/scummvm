@@ -98,16 +98,7 @@ int CDialog::DoModal() {
 
 	if (CreateDlgIndirect(lpDialogTemplate,
 		this /*m_pParentWnd*/, hInst)) {
-		CWinApp *app = AfxGetApp();
-		MSG msg;
-
-		while (!app->shouldQuit() && m_nModalResult == -1) {
-			GetMessage(msg);
-			if (!app->PreTranslateMessage(&msg)) {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
+		AfxGetApp()->runEventLoop(this);
 	}
 
 	// Finish the dialog

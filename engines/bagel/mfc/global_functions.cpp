@@ -157,29 +157,25 @@ long FileLength(const char *filename) {
 BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
                  UINT wMsgFilterMin, UINT wMsgFilterMax,
                  UINT wRemoveMsg) {
-	error("TODO: PeekMessage");
+	return AfxGetApp()->PeekMessage(lpMsg, hWnd,
+		wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 }
 
 void TranslateMessage(LPMSG lpMsg) {
-	// No implementation
+	AfxGetApp()->TranslateMessage(lpMsg);
 }
 
 void DispatchMessage(LPMSG lpMsg) {
-	CWnd *wnd = CWnd::FromHandle(lpMsg->hwnd);
-	assert(wnd);
-
-	wnd->SendMessage(lpMsg->message,
-	                 lpMsg->wParam, lpMsg->lParam);
+	AfxGetApp()->DispatchMessage(lpMsg);
 }
 
 BOOL PostMessage(HWND hWnd, UINT Msg,
-                 WPARAM wParam, LPARAM lParam) {
-	CWnd *wnd = CWnd::FromHandle(hWnd);
-	return wnd->PostMessage(Msg, wParam, lParam);
+        WPARAM wParam, LPARAM lParam) {
+	return AfxGetApp()->PostMessage(hWnd, Msg, wParam, lParam);
 }
 
 LRESULT SendMessage(HWND hWnd, UINT Msg,
-                    WPARAM wParam, LPARAM lParam) {
+        WPARAM wParam, LPARAM lParam) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	return wnd->SendMessage(Msg, wParam, lParam);
 }

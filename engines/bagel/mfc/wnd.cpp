@@ -122,8 +122,11 @@ BOOL CWnd::EnableWindow(BOOL bEnable) {
 
 void CWnd::UpdateWindow() {
 	// If there's a pending paint, do it now
-	if (_messages.popPaint())
-		SendMessage(WM_PAINT);
+	MSG msg;
+	if (PeekMessage(&msg, nullptr, WM_PAINT, WM_PAINT, PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }
 
 BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
@@ -183,11 +186,7 @@ int CWnd::ReleaseDC(CDC *pDC) {
 }
 
 BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
-	MSG msg(message, wParam, lParam);
-	msg.hwnd = m_hWnd;
-
-	_messages.push(msg);
-	return true;
+	return AfxGetApp()->PostMessage(m_hWnd, message, wParam, lParam);
 }
 
 LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
@@ -681,25 +680,6 @@ void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
 
 	SendMessage(WM_INITDIALOG);
 	ShowWindow(SW_SHOWNORMAL);
-}
-
-void CWnd::GetMessage(MSG &msg) {
-	Libs::Event ev;
-
-	// Check for any existing messages
-	if (!_messages.empty()) {
-		msg = _messages.pop();
-		return;
-	}
-
-	// Poll for event in ScummVM event manager
-	if (AfxGetApp()->pollEvents(ev))
-		// Convert other event types
-		msg = ev;
-	else
-		msg.message = WM_NULL;
-
-	msg.hwnd = this;
 }
 
 } // namespace MFC

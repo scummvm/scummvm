@@ -37,6 +37,7 @@
 #include "bagel/mfc/gfx/dialog_template.h"
 #include "bagel/mfc/gfx/fonts.h"
 #include "bagel/mfc/libs/array.h"
+#include "bagel/mfc/libs/event_loop.h"
 #include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/libs/settings.h"
 
@@ -1141,8 +1142,8 @@ public:
 	CWnd *const m_hWnd = nullptr;
 
 	CWnd *m_pParentWnd = nullptr;
+	int m_nModalResult = -1;
 	bool _visible = false;
-	Libs::EventQueue _messages;
 	CString _windowText;
 	Common::Rect _windowRect;
 	Common::Rect _updateRect;
@@ -1234,9 +1235,6 @@ public:
 	                    LPINT lpMinPos, LPINT lpMaxPos) const;
 	INT GetScrollPosition() const;
 	int SetScrollPos(int nBar, int nPos, BOOL bRedraw = TRUE);
-
-	// ScummVM additions
-	void GetMessage(MSG &msg);
 };
 
 class CFrameWnd : public CWnd {
@@ -1277,7 +1275,6 @@ private:
 	UINT m_nIDHelp = 0;
 	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
 	HGLOBAL m_hDialogTemplate = 0;
-	int m_nModalResult = 0;
 
 	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
 		void *lpDialogInit, HINSTANCE hInst);
@@ -1495,7 +1492,7 @@ public:
 	virtual BOOL OnIdle(LONG lCount);
 };
 
-class CWinApp : public CWinThread {
+class CWinApp : public CWinThread, public Libs::EventLoop {
 	DECLARE_DYNAMIC(CWinApp)
 
 private:
@@ -1504,21 +1501,12 @@ private:
 	Gfx::Cursors _cursors;
 	Gfx::Fonts _fonts;
 	Graphics::Screen _screen;
-	uint32 _nextFrameTime = 0;
 	int m_nWaitCursorCount = 0;
 	HCURSOR m_hcurWaitCursorRestore = nullptr;
 	HCURSOR _currentCursor = nullptr;
 	Common::FSNode _currentDirectory;
-	bool _quitFlag = false;
 	CHandleMap<CDC> *m_pmapHDC = nullptr;
 	CHandleMap<CGdiObject> *m_pmapHGDIOBJ = nullptr;
-
-private:
-	/**
-	 * Get any pending event
-	 * @return      Returns false if app should quit
-	 */
-	bool GetMessage(MSG &msg);
 
 protected:
 	virtual BOOL InitApplication();
@@ -1544,7 +1532,6 @@ public:
 	 */
 	int Run();
 
-	virtual BOOL PreTranslateMessage(MSG *pMsg);
 	void SetDialogBkColor();
 	HCURSOR LoadStandardCursor(LPCSTR lpszCursorName);
 	HCURSOR LoadCursor(LPCSTR lpszResourceName);
@@ -1580,16 +1567,9 @@ public:
 	Common::FSNode getDirectory() const;
 	void setPalette(const Graphics::Palette &pal);
 	byte getColor(COLORREF color) const;
-	bool shouldQuit() const {
-		return _quitFlag;
-	}
-	void quit() {
-		_quitFlag = true;
-	}
 	Graphics::Screen *getScreen() {
 		return &_screen;
 	}
-	bool pollEvents(Common::Event &event);
 
 	// resource functions
 	/**
