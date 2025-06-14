@@ -260,7 +260,7 @@ public:
 	 * Blit from one surface to another surface
 	 *
 	 * @param src       Source surface
-	 * @param srcRect  Rectangle defining area of source surface to blit; if this rectangle is empty, entire source surface is blitted
+	 * @param srcRect  Rectangle defining area of source surface to blit; if this rectangle is empty or not supplied, entire source surface is blitted
 	 * @param dst       Destination surface
 	 * @param x         Destination surface x coordinate
 	 * @param y         Destination surface y coordinate
@@ -268,6 +268,8 @@ public:
 
 	void blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y);
 	void blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
+	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int _x, int _y) {blitSurfaceToSurface(src, Common::Rect(src.w, src.h), dst, _x, _y);}
+	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {blitSurfaceToSurface(src, Common::Rect(src.w, src.h), dst, _x, _y, colorkey);}
 
 	// Blitting surface-to-background methods
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
