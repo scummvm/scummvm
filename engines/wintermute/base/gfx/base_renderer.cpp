@@ -269,25 +269,8 @@ bool BaseRenderer::setup3D(Camera3D *camera, bool force) {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setupLines() {
+bool BaseRenderer::fillRect(int x, int y, int w, int h, uint32 color) {
 	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
-	for (int i = 0; i < width; i++) {
-		drawLine(x1 + i, y1 + i, x2 - i,     y1 + i, color); // up
-		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
-
-		drawLine(x1 + i, y1 + i, x1 + i, y2 - i,     color); // left
-		drawLine(x2 - i, y1 + i, x2 - i, y2 - i + 1, color); // right
-	}
-	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -369,7 +352,7 @@ bool BaseRenderer::displayIndicator() {
 	if (BaseEngine::instance().isFoxTail()) {
 		_hasDrawnSaveLoadImage = false;
 		clear();
-		displaySaveloadLines();
+		displaySaveloadRect();
 		displaySaveloadImage();
 		forcedFlip();
 		return STATUS_OK;
@@ -377,7 +360,7 @@ bool BaseRenderer::displayIndicator() {
 #endif
 
 	displaySaveloadImage();
-	displaySaveloadLines();
+	displaySaveloadRect();
 	indicatorFlip();
 	return STATUS_OK;
 }
@@ -400,17 +383,12 @@ bool BaseRenderer::displaySaveloadImage() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::displaySaveloadLines() {
+bool BaseRenderer::displaySaveloadRect() {
 	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) {
 		return STATUS_OK;
 	}
-	setupLines();
 	int curWidth = (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f));
-	for (int i = 0; i < _indicatorHeight; i++) {
-		drawLine(_indicatorX, _indicatorY + i, _indicatorX + curWidth, _indicatorY + i, _indicatorColor);
-	}
-
-	setup2D();
+	fillRect(_indicatorX, _indicatorY, curWidth, _indicatorHeight, _indicatorColor);
 	_indicatorWidthDrawn = curWidth;
 	return STATUS_OK;
 }

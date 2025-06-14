@@ -675,6 +675,16 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 	return true;
 }
 
+bool BaseRenderOpenGL3DShader::fillRect(int x, int y, int w, int h, uint32 color) {
+	// TODO: Use a simplified method for drawing rectangles with OpenGL
+	setupLines();
+	for (int i = 0; i < h; i++) {
+		drawLine(x, y + i, x + w, y + i, color);
+	}
+	setup2D();
+	return true;
+}
+
 void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	float left, right, bottom, top;
 
