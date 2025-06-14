@@ -46,9 +46,10 @@ IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 
 CWinApp *CWinApp::_activeApp = nullptr;
 
-CWinApp::CWinApp(const char *appName) :
-		CWinThread(), _cursors(_resources),
-		_fonts(_resources) {
+CWinApp::CWinApp(const char *appName) : CWinThread(),
+		_cursors(_resources),
+		_fonts(_resources),
+		_defaultPen(PS_SOLID, 1, 0) {
 	assert(!_activeApp);    // Only one app per engine
 	_activeApp = this;
 	Libs::Event::init();
@@ -56,6 +57,8 @@ CWinApp::CWinApp(const char *appName) :
 
 CWinApp::~CWinApp() {
 	_activeApp = nullptr;
+
+	_defaultPen.DeleteObject();
 
 	delete m_pmapHDC;
 	delete m_pmapHGDIOBJ;

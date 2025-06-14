@@ -543,6 +543,9 @@ CDC::Impl::Impl() {
 
 	// Set up the system font as default
 	_font = AfxGetApp()->getDefaultFont();
+
+	// Default pen
+	_pen = AfxGetApp()->_defaultPen.m_hObject;
 }
 
 CDC::Impl::Impl(HDC srcDc) {
@@ -555,6 +558,7 @@ CDC::Impl::Impl(HDC srcDc) {
 
 	_font = src->_font;
 	_format = src->_format;
+	_pen = src->_pen;
 }
 
 HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
@@ -575,10 +579,15 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 		_font = font;
 		return result;
 	}
+
+	CPen::Impl *pen = dynamic_cast<CPen::Impl *>(obj);
+	if (pen) {
+		HPEN result = _pen;
+		_pen = pen;
+		return result;
+	}
 #if 0
 	HBRUSH brush = dynamic_cast<HBRUSH>(gdiObj);
-	HFONT font = dynamic_cast<HFONT>(gdiObj);
-	HPEN pen = dynamic_cast<HPEN>(gdiObj);
 #endif
 	error("Unsupported gdi object");
 	return nullptr;

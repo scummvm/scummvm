@@ -477,6 +477,7 @@ public:
 };
 
 class CPen : public CGdiObject {
+public:
 	class Impl : public CGdiObjectImpl {
 	public:
 		int _penStyle;
@@ -621,6 +622,7 @@ public:
 	public:
 		HBITMAP _bitmap = &_bitmap1x1;
 		HPALETTE _palette = nullptr;
+		HPEN _pen;
 		CPalette *_cPalette = nullptr;
 		Graphics::PixelFormat _format;
 		HFONT _font;
@@ -1487,6 +1489,7 @@ public:
 	const char *m_lpCmdLine = "";
 	CWnd *m_pMainWnd = nullptr;
 	Graphics::Palette _palette;
+	CPen _defaultPen;
 	MSG _currentMessage;
 
 public:
