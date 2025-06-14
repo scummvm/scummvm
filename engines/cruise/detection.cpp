@@ -47,7 +47,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -58,7 +58,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -69,7 +69,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -80,7 +80,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -91,7 +91,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -102,7 +102,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -113,7 +113,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -124,7 +124,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Fanmade translation by old-games.ru
@@ -135,7 +135,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{
@@ -146,7 +146,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Amiga English US GOLD edition.
@@ -157,7 +157,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Amiga English US GOLD edition (Delphine Collection).
@@ -168,7 +168,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Amiga Italian US GOLD edition.
@@ -179,7 +179,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Amiga Spanish edition.
@@ -190,7 +190,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Amiga French edition.
@@ -201,7 +201,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Amiga French edition (alternate).
@@ -212,7 +212,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // Amiga Italian (Fanmade translation 1.0).
@@ -223,7 +223,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // AtariST English KixxXL edition.
@@ -234,7 +234,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{ // AtariST French edition. Bugreport #12824
@@ -245,7 +245,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 	},
 	{AD_TABLE_END_MARKER}

@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/random.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 
@@ -78,6 +79,8 @@ private:
 	bool _speedFlag;
 	PauseToken _gamePauseToken;
 
+	Common::CodePage _ttsTextEncoding;
+
 	void initialize();
 	void deinitialize();
 	bool loadLanguageStrings();
@@ -104,6 +107,9 @@ public:
 	PCSound &sound() { return *_sound; }
 	virtual void pauseEngine(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action);
+	void sayQueuedText(Common::TextToSpeechManager::Action action);
+	void stopTextToSpeech();
 
 	static const char *getSavegameFile(int saveGameIdx);
 	Common::Error loadGameState(int slot) override;
@@ -141,6 +147,11 @@ public:
 	Common::Array<CtStruct> *_polyStruct;
 
 	Common::File _PAL_file;
+
+	Common::String _toSpeak;
+	Common::String _previousSaid;
+	bool _mouseButtonDown;
+	bool _menuJustOpened;
 };
 
 extern CruiseEngine *_vm;
