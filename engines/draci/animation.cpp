@@ -263,6 +263,12 @@ void Animation::play() {
 	if (isPlaying()) {
 		return;
 	}
+	
+	// Title screen in the intro cutscene
+	if (getID() == 671 && _vm->_game->getMapID() == 42) {
+		_vm->setTTSVoice(kNarratorID);
+		_vm->sayText("Dra\x87\xa1 Historie");
+	}
 
 	// Mark the first frame dirty so it gets displayed
 	markDirtyRect(_vm->_screen->getSurface());
