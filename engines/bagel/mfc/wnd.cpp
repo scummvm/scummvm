@@ -110,8 +110,12 @@ void CWnd::ShowWindow(int nCmdShow) {
 }
 
 BOOL CWnd::EnableWindow(BOOL bEnable) {
-	bool oldEnabled = _enabled;
-	_enabled = bEnable;
+	bool oldEnabled = (_itemState & ODS_DISABLED) == 0;
+	if (bEnable)
+		_itemState &= ~ODS_DISABLED;
+	else
+		_itemState |= ODS_DISABLED;
+
 	return oldEnabled;
 }
 

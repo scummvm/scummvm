@@ -1071,8 +1071,8 @@ protected:
 protected:
 	Common::HashMap<int, CWnd *> _children;
 	int m_nFlags = 0;
+	int _itemState = 0;
 	int _controlId = 0;
-	bool _enabled = true;
 
 public:
 	// For ScummVM the m_hWnd just points to the window itself,
