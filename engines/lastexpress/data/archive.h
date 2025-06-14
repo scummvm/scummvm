@@ -77,7 +77,7 @@ enum HPFFlags {
 class ArchiveManager {
 public:
 	ArchiveManager(LastExpressEngine *engine);
-	~ArchiveManager();
+	virtual ~ArchiveManager();
 
 	HPF *search(const char *name, HPF *archive, int archiveSize);
 	virtual bool lockCD(int32 index);
