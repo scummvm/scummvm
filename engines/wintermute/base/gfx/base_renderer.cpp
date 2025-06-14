@@ -368,7 +368,7 @@ bool BaseRenderer::displayIndicator() {
 #ifdef ENABLE_FOXTAIL
 	if (BaseEngine::instance().isFoxTail()) {
 		_hasDrawnSaveLoadImage = false;
-		fill(0, 0, 0);
+		clear();
 		displaySaveloadLines();
 		displaySaveloadImage();
 		forcedFlip();

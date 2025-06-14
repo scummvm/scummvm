@@ -97,13 +97,9 @@ public:
 
 	virtual bool windowedBlt();
 	/**
-	 * Fill a portion of the screen with a specified color
-	 *
-	 * @param r the red component to fill with.
-	 * @param g the green component to fill with.
-	 * @param b the blue component to fill with.
+	 * Clear the screen
 	 */
-	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) = 0;
+	virtual bool clear() = 0;
 	virtual void onWindowChange();
 	virtual bool initRenderer(int width, int height, bool windowed);
 	/**

@@ -103,7 +103,7 @@ public:
 	BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) override;
 	void fadeToColor(byte r, byte g, byte b, byte a) override;
 	bool flip() override;
-	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
+	bool clear() override;
 
 	bool setViewport(int left, int top, int right, int bottom) override;
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
