@@ -59,6 +59,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	_windowRect.top = cs.y;
 	_windowRect.right = cs.x + cs.cx;
 	_windowRect.bottom = cs.y + cs.cy;
+	_windowText = lpszWindowName;
 
 	// Get the screen area
 	RECT screenRect(0, 0, cs.cx, cs.cy);

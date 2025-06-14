@@ -713,7 +713,72 @@ int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
 }
 
 int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
-	error("TODO");
+	Graphics::Font *font = *(CFont::Impl *)_font;
+	Graphics::ManagedSurface *dest = getSurface();
+	const int maxWidth = lpRect->right - lpRect->left;
+	Common::Rect textRect = *lpRect;
+	Common::StringArray lines;
+	uint textCol = GetNearestColor(_textColor);
+
+	if (nFormat & DT_SINGLELINE) {
+		lines.push_back(str);
+	} else {
+		// Perform word wrapping of the text as necessary
+		Common::String temp = str;
+		font->wordWrapText(temp, maxWidth, lines);
+	}
+
+	// Handle vertical alignment
+	const int linesHeight = lines.size() * font->getFontHeight();
+
+	if (nFormat & DT_BOTTOM) {
+		textRect.moveTo(textRect.left,
+			MAX<int16>(lpRect->top, textRect.bottom - linesHeight));
+	}
+	if (nFormat & DT_VCENTER) {
+		textRect.moveTo(textRect.left, MAX<int16>(lpRect->top,
+			lpRect->top + ((lpRect->bottom - lpRect->top) -
+				linesHeight) / 2));
+	}
+
+	// Iterate through the lines
+	for (const Common::String &line : lines) {
+		// Constrain within passed rect
+		if (textRect.top >= lpRect->bottom)
+			break;
+
+		const int lineWidth = font->getStringWidth(line);
+
+		// Form sub-rect for the single line
+		Common::Rect lineRect(textRect.left, textRect.top,
+			textRect.right, textRect.top + font->getFontHeight());
+
+		// Handle horizontal alignment
+		if (nFormat & DT_RIGHT) {
+			textRect.moveTo(MAX<int16>(textRect.left,
+				textRect.right - lineWidth),
+				textRect.top);
+		}
+		if (nFormat & DT_CENTER) {
+			textRect.moveTo(MAX<int16>(textRect.left,
+				textRect.left + (textRect.width() - lineWidth) / 2),
+				textRect.top);
+		}
+
+		// If the background is opaque, clear it
+		if (_bkMode == OPAQUE)
+			fillRect(textRect, _bkColor);
+
+		// Write the actual text
+		font->drawString(dest, line,
+			textRect.left, textRect.top, textRect.width(),
+			textCol);
+
+		// Move to next line
+		textRect.top += font->getFontHeight();
+	}
+
+	return lines.size() * font->getFontHeight();
 }
 
 CSize CDC::Impl::getTextExtent(LPCSTR lpszString, int nCount) const {
