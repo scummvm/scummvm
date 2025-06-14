@@ -25,6 +25,8 @@
 #include "voyeur/staticres.h"
 #include "common/config-manager.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Voyeur {
 
 int ThreadResource::_useCount[8];
@@ -1140,6 +1142,10 @@ void ThreadResource::doRoom() {
 	vm._soundManager->startVOCPlay(vm._currentVocId);
 	voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("voyeur-default")->setEnabled(false);
+	keymapper->getKeymap("room")->setEnabled(true);
+
 	bool breakFlag = false;
 	while (!vm.shouldQuit() && !breakFlag) {
 		_vm->_voyeurArea = AREA_ROOM;
@@ -1292,6 +1298,9 @@ void ThreadResource::doRoom() {
 		vm._currentVocId = -1;
 	}
 
+	keymapper->getKeymap("room")->setEnabled(false);
+	keymapper->getKeymap("voyeur-default")->setEnabled(true);
+
 	vm._eventsManager->hideCursor();
 	chooseSTAMPButton(0);
 }
@@ -1358,6 +1367,10 @@ int ThreadResource::doInterface() {
 	PictureResource *mangifyCursor = _vm->_bVoy->boltEntry(0x115)._picResource;
 
 	_vm->_eventsManager->setCursor(crosshairsCursor);
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("voyeur-default")->setEnabled(false);
+	keymapper->getKeymap("camera")->setEnabled(true);
 
 	// Main loop
 	int regionIndex = 0;
@@ -1480,6 +1493,9 @@ int ThreadResource::doInterface() {
 		}
 	} while (!_vm->_eventsManager->_rightClick && !_vm->shouldQuit() &&
 		(!_vm->_eventsManager->_leftClick || regionIndex == -1));
+
+	keymapper->getKeymap("camera")->setEnabled(false);
+	keymapper->getKeymap("voyeur-default")->setEnabled(true);
 
 	_vm->_eventsManager->hideCursor();
 	_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
