@@ -163,6 +163,8 @@ public:
 	void sayText(const Common::String &text);
 	void stopTextToSpeech();
 	void setTTSVoice(CharacterID characterID) const;
+	Common::U32String convertCyrillic(const Common::String &text) const;
+
 	Common::String _previousSaid;
 	
 private:

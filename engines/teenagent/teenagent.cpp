@@ -1091,8 +1091,13 @@ void TeenAgentEngine::sayText(const Common::String &text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	// _previousSaid is used to prevent the TTS from looping when sayText calls are inside loops
 	if (ttsMan && ConfMan.getBool("tts_enabled") && _previousSaid != text) {
+		if (_gameDescription->language == Common::RU_RUS) {
+			ttsMan->say(convertCyrillic(text));
+		} else {
+			ttsMan->say(text, Common::CodePage::kDos850);
+		}
+
 		_previousSaid = text;
-		ttsMan->say(text);
 	}
 }
 
@@ -1139,6 +1144,52 @@ void TeenAgentEngine::setTTSVoice(CharacterID characterID) const {
 
 		ttsMan->setPitch(pitch);
 	}
+}
+
+Common::U32String TeenAgentEngine::convertCyrillic(const Common::String &text) const {
+	const byte *bytes = (const byte *)text.c_str();
+	byte *convertedBytes = new byte[text.size() * 2 + 1];
+
+	int i = 0;
+	for (const byte *b = bytes; *b; ++b) {
+		if (*b == 0x26) {	// & needs to be converted to и
+			convertedBytes[i] = 0xd0;
+			convertedBytes[i + 1] = 0xb8;
+			i += 2;
+			continue;
+		}
+
+		if (*b == 0x3e) {	// For ё
+			convertedBytes[i] = 0xd1;
+			convertedBytes[i + 1] = 0x91;
+			i += 2;
+			continue;
+		}
+
+		if (*b > 0x3f) {
+			int translated = *b;
+
+			if (*b > 0x70) {
+				translated += 0xd10f;
+			} else {
+				translated += 0xd04f;
+			}
+
+			convertedBytes[i] = (translated >> 8) & 0xff;
+			convertedBytes[i + 1] = translated & 0xff;
+			i += 2;
+		} else {
+			convertedBytes[i] = *b;
+			i++;
+		}
+	}
+
+	convertedBytes[i] = 0;
+
+	Common::U32String result((char *)convertedBytes);
+	delete[] convertedBytes;
+
+	return result;
 }
 
 } // End of namespace TeenAgent
