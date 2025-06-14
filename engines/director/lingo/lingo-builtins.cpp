@@ -429,8 +429,11 @@ void LB::b_float(int nargs) {
 			// for some reason, float(str) will return str if it doesn't work
 			res = d;
 		}
-	} else {
+	} else if (d.type == INT || d.type == FLOAT) {
 		res = d.asFloat();
+	} else {
+		warning("b_float: Attempted to process invalid type %s, returning same value", d.type2str());
+		res = d;
 	}
 
 	g_lingo->push(res);

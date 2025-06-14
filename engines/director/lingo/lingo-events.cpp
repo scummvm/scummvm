@@ -131,37 +131,41 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 		_currentActiveSpriteId = _score->getActiveSpriteIDFromPos(event.mousePos); // the clickOn
 		_currentMouseSpriteId = _score->getMouseSpriteIDFromPos(event.mousePos);
 	}
-	event.channelId = spriteId;
+	// Very occasionally, we want to specify an event with a channel ID
+	// rather than infer it from the position. Allow it to override.
+	if (event.channelId == 0) {
+		event.channelId = spriteId;
+	}
 
 	// mouseDown/mouseUp events will have one of each of the source types queued.
 	// run these steps at the very beginning (i.e. before the first source type).
 	if (event.eventHandlerSourceType == kPrimaryHandler) {
 		if ((event.event == kEventMouseDown) || (event.event == kEventRightMouseDown)) {
-			if (!spriteId && _isBeepOn) {
+			if (!event.channelId && _isBeepOn) {
 				g_lingo->func_beep(1);
 			}
 
-			if (spriteId > 0) {
-				if (_score->_channels[spriteId]->_sprite->shouldHilite()) {
-					_currentHiliteChannelId = spriteId;
+			if (event.channelId > 0) {
+				if (_score->_channels[event.channelId]->_sprite->shouldHilite()) {
+					_currentHiliteChannelId = event.channelId;
 					g_director->_wm->_hilitingWidget = true;
 					g_director->getCurrentWindow()->setDirty(true);
 					g_director->getCurrentWindow()->addDirtyRect(_score->_channels[_currentHiliteChannelId]->getBbox());
 				}
 
-				CastMember *cast = getCastMember(_score->_channels[spriteId]->_sprite->_castId);
+				CastMember *cast = getCastMember(_score->_channels[event.channelId]->_sprite->_castId);
 				if (cast && cast->_type == kCastButton)
 					_mouseDownWasInButton = true;
 
-				if (_score->_channels[spriteId]->_sprite->_moveable) {
-					_draggingSpriteOffset = _score->_channels[spriteId]->getPosition() - event.mousePos;
-					_currentDraggedChannel = _score->_channels[spriteId];
+				if (_score->_channels[event.channelId]->_sprite->_moveable) {
+					_draggingSpriteOffset = _score->_channels[event.channelId]->getPosition() - event.mousePos;
+					_currentDraggedChannel = _score->_channels[event.channelId];
 				}
 
 				// In the case of clicking the mouse, it is possible for a mouseDown action to
 				// change the cast member underneath. on mouseUp should always load the cast
 				// script for the original cast member, not the new one.
-				_currentMouseDownCastID = _score->_channels[spriteId]->_sprite->_castId;
+				_currentMouseDownCastID = _score->_channels[event.channelId]->_sprite->_castId;
 
 			} else {
 				_currentHiliteChannelId = 0;
@@ -185,8 +189,8 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			// Now you might think, "Wait, we don't flip this flag in the mouseDown event.
 			// And why any button??? This doesn't make any sense."
 			// No, it doesn't make sense, but it's what Director does.
-			if (_mouseDownWasInButton && spriteId) {
-				CastMember *cast = getCastMember(_score->_channels[spriteId]->_sprite->_castId);
+			if (_mouseDownWasInButton && event.channelId) {
+				CastMember *cast = getCastMember(_score->_channels[event.channelId]->_sprite->_castId);
 				if (cast && cast->_type == kCastButton)
 					cast->_hilite = !cast->_hilite;
 			}
@@ -224,11 +228,11 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 	 * [D4 docs] */
 	case kSpriteHandler:
 		{
-			if (!spriteId)
+			if (!event.channelId)
 				return;
 			Frame *currentFrame = _score->_currentFrame;
 			assert(currentFrame != nullptr);
-			Sprite *sprite = _score->getSpriteById(spriteId);
+			Sprite *sprite = _score->getSpriteById(event.channelId);
 
 			// Sprite (score) script
 			if (sprite && sprite->_scriptId.member) {
@@ -267,9 +271,9 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			// so we have to do it too.
 			CastMemberID targetCast = _currentMouseDownCastID;
 			if ((event.event == kEventMouseDown) || (event.event == kEventRightMouseDown)) {
-				if (!spriteId)
+				if (!event.channelId)
 					return;
-				Sprite *sprite = _score->getSpriteById(spriteId);
+				Sprite *sprite = _score->getSpriteById(event.channelId);
 				targetCast = sprite->_castId;
 			}
 
@@ -355,11 +359,14 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 }
 
 void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targetId, Common::Point pos) {
-	int eventId = _nextEventId++;
 	if (_nextEventId < 0)
 		_nextEventId = 0;
+	_nextEventId++;
+	int eventId = _nextEventId;
 
 	int oldQueueSize = queue.size();
+
+	uint16 channelId = 0;
 
 	/* When an event occurs the message [...] is first sent to a
 	 * primary event handler: [... if exists it is executed] and the
@@ -393,6 +400,13 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 			if (getScriptContext(kEventScript, scriptID)) {
 				queue.push(LingoEvent(kEventGeneric, eventId, kEventScript, true, scriptID, pos));
 			}
+		}
+		break;
+	// For mouseEnter/mouseLeave events, we want to specify exactly what sprite channel to resolve to.
+	case kEventMouseEnter:
+	case kEventMouseLeave:
+		if (targetId != 0) {
+			channelId = targetId;
 		}
 		break;
 	default:
@@ -445,15 +459,17 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventRightMouseUp:
 		case kEventRightMouseDown:
 		case kEventBeginSprite:
-			queue.push(LingoEvent(event, eventId, kSpriteHandler, false, pos));
-			queue.push(LingoEvent(event, eventId, kCastHandler, false, pos));
+		case kEventMouseEnter:
+		case kEventMouseLeave:
+			queue.push(LingoEvent(event, eventId, kSpriteHandler, false, pos, channelId));
+			queue.push(LingoEvent(event, eventId, kCastHandler, false, pos, channelId));
 			// fall through
 
 		case kEventIdle:
 		case kEventEnterFrame:
 		case kEventExitFrame:
 		case kEventTimeout:
-			queue.push(LingoEvent(event, eventId, kFrameHandler, false, pos));
+			queue.push(LingoEvent(event, eventId, kFrameHandler, false, pos, channelId));
 			// fall through
 
 		case kEventStartUp:
@@ -461,7 +477,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventStepMovie:
 		case kEventStopMovie:
 		case kEventPrepareMovie:
-			queue.push(LingoEvent(event, eventId, kMovieHandler, false, pos));
+			queue.push(LingoEvent(event, eventId, kMovieHandler, false, pos, channelId));
 			break;
 
 		default:
@@ -490,7 +506,6 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 		// only one input event should be in flight at a time.
 		return;
 	}
-	int lastEventId = -1;
 	Movie *movie = _vm->getCurrentMovie();
 	Score *sc = movie->getScore();
 
@@ -510,7 +525,8 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 			continue;
 		}
 
-		if (lastEventId == el.eventId && !_passEvent) {
+		int lastEventId = movie->_lastEventId.getValOrDefault(el.event, 0);
+		if (lastEventId && lastEventId == el.eventId && !_passEvent) {
 			debugC(5, kDebugEvents, "Lingo::processEvents: swallowed event (%s, %s, %s, %d) because _passEvent was false",
 				_eventHandlerTypes[el.event], scriptType2str(el.scriptType), el.scriptId.asString().c_str(), el.channelId
 			);
@@ -523,6 +539,7 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 			_eventHandlerTypes[el.event], scriptType2str(el.scriptType), el.scriptId.asString().c_str(), el.channelId
 		);
 		bool completed = processEvent(el.event, el.scriptType, el.scriptId, el.channelId);
+		movie->_lastEventId[el.event] = el.eventId;
 
 		if (isInputEvent && !completed) {
 			debugC(5, kDebugEvents, "Lingo::processEvents: context frozen on an input event, stopping");
@@ -532,7 +549,7 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 			}
 			break;
 		}
-		lastEventId = el.eventId;
+
 	}
 }
 
@@ -543,11 +560,21 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 		error("processEvent: Unknown event %d", event);
 
 	ScriptContext *script = g_director->getCurrentMovie()->getScriptContext(st, scriptId);
+	int nargs = 0;
 
 	if (script && script->_eventHandlers.contains(event)) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %s): executing event handler", _eventHandlerTypes[event], scriptType2str(st), scriptId.asString().c_str());
 		g_debugger->eventHook(event);
-		LC::call(script->_eventHandlers[event], 0, false);
+
+		// Normally event handlers are called with no arguments, however RolloverToolkit expects
+		// the first argument to be the sprite number.
+		if ((event == kEventMouseEnter && script->_eventHandlers[event].name->equalsIgnoreCase("startRollover")) ||
+			(event == kEventMouseLeave && script->_eventHandlers[event].name->equalsIgnoreCase("endRollover"))) {
+			push(Datum(channelId));
+			nargs = 1;
+		}
+
+		LC::call(script->_eventHandlers[event], nargs, false);
 		return execute();
 	} else {
 		debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %s): no handler", _eventHandlerTypes[event], scriptType2str(st), scriptId.asString().c_str());

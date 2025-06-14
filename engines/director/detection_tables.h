@@ -168,6 +168,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "fctplayer",			"Felix Cartoon Player" },
 	{ "fff",				"Four Footed Friends" },
 	{ "finegardening",		"Fine Gardening Propagation" },
+	{ "finkletimes",		"Professor Finkle's Times Table Factory" },
 	{ "fishwish",			"The Fish Who Could Wish" },
 	{ "flipper",			"Flipper" },
 	{ "flipper1",           "The Three Worlds of Flipper & Lopaka" },
@@ -6761,6 +6762,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "PROGRAM/459MAIN.Dxr", "3868e98be38c2fbff814e2b8f1663fc9", 376868, 501),
 	WINGAME2("explorespace5", "", "WIN95.EXE",			 "1a7acbba10a7246ba58c1d53fc7203f5", 1411387,
 								  "PROGRAM/459MAIN.DXR", "3868e98be38c2fbff814e2b8f1663fc9", 376868, 501),
+
+	WINGAME1f("finkletimes", "", "TIMES_CD.EXE", "t:b425f8243195b71c03538cdc83319389", 1421421, 501, GF_32BPP),
+	MACGAME1f("finkletimes", "", "Times Table Factory", "r:3b8e9b13f6e0b81a4b03549930059af4", 705445, 501, GF_32BPP),
 
 	// Original filename is "ファースト ＰＣ"
 	MACGAME1t_l("firstpc", "", "xn-- -ceu6cuc2c5my703k7ca",	  "ea9e1c1489dee20fe0a949facbf62c0e", 719664, Common::JA_JPN, 501),

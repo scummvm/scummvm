@@ -103,6 +103,17 @@ struct CachedFile {
 		"PATH.INI",
 		(const byte *)"[cd-path]\r\npath=d:\\", -1
 	},
+	// Professor Finkle's Times Table Factory has an installer that copies a bunch of empty files,
+	// which the game gets upset about if they don't exist.
+	{"finkletimes", Common::kPlatformWindows, "finkle.ini", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "beatswch.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "fctrlist.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "gridscor.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "jokelist.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "lastplay.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "lernscor.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "namelist.txt", (const byte *)"", 0},
+	{"finkletimes", Common::kPlatformWindows, "userlist.txt", (const byte *)"", 0},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
@@ -125,7 +136,7 @@ static void quirkLimit15FPS() {
 	g_director->_fpsLimit = 15;
 }
 
-static void quirkVirtualNightclub() {
+static void quirkPretend16Bit() {
 	g_director->_colorDepth = 16;
 }
 
@@ -236,9 +247,11 @@ const struct Quirk {
 	// Pippin game that uses Unix path separators rather than Mac
 	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
 
-	// Virtual Nightclub pops up a nag mesasage if the color depth isn't
-	// exactly 16 bit.
-	{ "vnc", Common::kPlatformWindows, &quirkVirtualNightclub },
+	// Some games pop up a nag mesasage if the color depth isn't exactly 16 bit.
+	{ "vnc", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "vnc", Common::kPlatformMacintosh, &quirkPretend16Bit },
+	{ "finkletimes", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "finkletimes", Common::kPlatformMacintosh, &quirkPretend16Bit },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
