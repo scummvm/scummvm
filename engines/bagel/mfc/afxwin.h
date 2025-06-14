@@ -622,7 +622,7 @@ public:
 		Common::Point _linePos;
 		COLORREF _bkColor = 0;
 		int _bkMode = TRANSPARENT;
-		COLORREF _textColor = RGB(255, 255, 255);
+		COLORREF _textColor = 0;
 
 		uint getPenColor() const;
 
