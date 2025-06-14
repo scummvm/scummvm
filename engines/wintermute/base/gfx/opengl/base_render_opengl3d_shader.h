@@ -106,7 +106,7 @@ public:
 	bool clear() override;
 
 	bool setViewport(int left, int top, int right, int bottom) override;
-	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
+	bool fillRect(int x, int y, int w, int h, uint32 color) override;
 
 	DXMatrix *buildMatrix(DXMatrix* out, const DXVector2 *centre, const DXVector2 *scaling, float angle);
 	void transformVertices(struct SpriteVertex *vertices, const DXVector2 *centre, const DXVector2 *scaling, float angle);
@@ -120,7 +120,6 @@ public:
 	bool initRenderer(int width, int height, bool windowed) override;
 	bool setup2D(bool force = false) override;
 	bool setup3D(Camera3D *camera, bool force = false) override;
-	bool setupLines() override;
 
 	Common::String getName() const override {
 		return "OpenGL 3D renderer";
@@ -164,6 +163,9 @@ public:
 	OpenGL::Shader *_shadowMaskShader;
 
 private:
+	bool setupLines();
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
+
 	void displaySimpleShadow(BaseObject *object) override;
 
 	SimpleShadowVertex _simpleShadow[4];

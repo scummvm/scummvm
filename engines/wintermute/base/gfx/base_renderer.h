@@ -87,8 +87,7 @@ public:
 	 */
 	virtual void fadeToColor(byte r, byte g, byte b, byte a) = 0;
 
-	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); // Unused outside indicator-display
-	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); // Unused outside indicator-display
+	virtual bool fillRect(int x, int y, int w, int h, uint32 color); // Unused outside indicator-display
 	BaseRenderer(BaseGame *inGame = nullptr);
 	~BaseRenderer() override;
 	virtual bool setProjection() {
@@ -120,7 +119,6 @@ public:
 #ifdef ENABLE_WME3D
 	virtual bool setup3D(Camera3D *camera = nullptr, bool force = false);
 #endif
-	virtual bool setupLines();
 
 	/**
 	 * Get the name of the current renderer
@@ -226,7 +224,7 @@ protected:
 private:
 	Common::Array<BaseActiveRect *> _rectList;
 	bool displaySaveloadImage();
-	bool displaySaveloadLines();
+	bool displaySaveloadRect();
 };
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
