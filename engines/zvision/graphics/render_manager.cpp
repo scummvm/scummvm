@@ -957,12 +957,13 @@ void RenderManager::markDirty() {
 	_backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
 }
 
-// *
+/*
+//Only needed by ActionDissolve, which is disabled unless and until a better dissolve effect can be implemented.  Gameplay is not significantly effected.
 void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 	_currentBackgroundImage.fillRect(Common::Rect(_currentBackgroundImage.w, _currentBackgroundImage.h), _currentBackgroundImage.format.RGBToColor(r, g, b));
 	markDirty();
 }
-// */
+*/
 
 
 void RenderManager::updateRotation() {
