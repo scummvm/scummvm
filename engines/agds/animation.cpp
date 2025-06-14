@@ -124,11 +124,11 @@ void Animation::rescaleCurrentFrame() {
 		Graphics::TransformStruct transform(_scale * 100, _scale * 100, 90 * _rotation, _frame->w / 2, _frame->h / 2, Graphics::TSpriteBlendMode::BLEND_NORMAL, Graphics::kDefaultRgbaMod);
 		if (_scaledFrame)
 			delete _scaledFrame;
-		_scaledFrame = new Graphics::ManagedSurface(_frame->surfacePtr()->rotoscale(transform));
+		_scaledFrame = _frame->rotoscale(transform);
 	} else if (_scale != 1) {
 		if (_scaledFrame)
 			delete _scaledFrame;
-		_scaledFrame = new Graphics::ManagedSurface(_frame->surfacePtr()->scale(_frame->w * _scale, _frame->h * _scale, true));
+		_scaledFrame = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
 	}
 	auto *frame = _scaledFrame? _scaledFrame: _frame;
 	if (frame) {
