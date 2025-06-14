@@ -686,12 +686,13 @@ void AdvancedMetaEngineDetectionBase::dumpDetectionEntries() const {
 			int64 fsize = fileDesc->fileSize == AD_NO_SIZE ? -1ll : fileDesc->fileSize;
 			Common::String md5 = fileDesc->md5;
 			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
+			Common::String sizeSuffix = (md5prop & kMD5MacResFork) ? "-rd" : "";
 			Common::String md5Prefix = md5PropToGameFile(md5prop);
 			Common::String key = md5;
 			if (md5Prefix != "" && md5.find(':') == Common::String::npos)
 				key = md5Prefix + ':' + md5;
 
-			printf("\trom ( name \"%s\" size %lld md5-%d %s )\n", escapeString(fname).c_str(), static_cast<long long int>(fsize), _md5Bytes, key.c_str());
+			printf("\trom ( name \"%s\" size%s %lld md5-%d %s )\n", escapeString(fname).c_str(), sizeSuffix.c_str(), static_cast<long long int>(fsize), _md5Bytes, key.c_str());
 		}
 		printf(")\n\n"); // Closing for 'game ('
 	}
