@@ -725,7 +725,6 @@ void LogicManager::checkInventory(int32 flags) {
 		if (_inventoryFlag2) {
 			if ((flags & 1) != 0) {
 				if (_highlightedItem) {
-					bool found = false;
 					int count = 0;
 
 					for (int i = 1; i < 32; i++) {
@@ -733,7 +732,6 @@ void LogicManager::checkInventory(int32 flags) {
 							count++;
 							if (count == _highlightedItem) {
 								selectedItemIdx = i;
-								found = 1;
 								break;
 							}
 						}
@@ -839,7 +837,6 @@ void LogicManager::checkInventory(int32 flags) {
 		if ((flags & 1) != 0) {
 			int itemToHighlight = _engine->_cursorY / 40;
 			if (_highlightedItem && itemToHighlight != _highlightedItem) {
-				bool found = false;
 				int count = 0;
 
 				for (int i = 1; i < 32; i++) {
@@ -847,7 +844,6 @@ void LogicManager::checkInventory(int32 flags) {
 						count++;
 						if (count == _highlightedItem) {
 							selectedItemIdx = i;
-							found = 1;
 							break;
 						}
 					}
@@ -861,7 +857,6 @@ void LogicManager::checkInventory(int32 flags) {
 			}
 
 			if (itemToHighlight && itemToHighlight <= _inventoryVerticalSlot && itemToHighlight != _highlightedItem) {
-				bool found = false;
 				int count = 0;
 
 				for (int i = 1; i < 32; i++) {
@@ -869,7 +864,6 @@ void LogicManager::checkInventory(int32 flags) {
 						count++;
 						if (count == itemToHighlight) {
 							selectedItemIdx = i;
-							found = 1;
 							break;
 						}
 					}
@@ -886,7 +880,6 @@ void LogicManager::checkInventory(int32 flags) {
 		}
 
 		if (_highlightedItem) {
-			bool found = false;
 			int count = 0;
 
 			for (int i = 1; i < 32; i++) {
@@ -894,7 +887,6 @@ void LogicManager::checkInventory(int32 flags) {
 					count++;
 					if (count == _highlightedItem) {
 						selectedItemIdx = i;
-						found = 1;
 						break;
 					}
 				}
@@ -1059,7 +1051,6 @@ void LogicManager::checkInventory(int32 flags) {
 	}
 
 	if (_highlightedItem) {
-		bool found = false;
 		int count = 0;
 
 		for (int i = 1; i < 32; i++) {
@@ -1067,7 +1058,6 @@ void LogicManager::checkInventory(int32 flags) {
 				count++;
 				if (count == _highlightedItem) {
 					selectedItemIdx = i;
-					found = true;
 					break;
 				}
 			}

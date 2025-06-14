@@ -142,7 +142,6 @@ void CBeetle::tick() {
 		_currentFrame += 10;
 	}
 
-	bool sequenceEnded = false;
 	bool terminate = false;
 
 	if (_currentSequence->numFrames <= _currentFrame) {
@@ -158,8 +157,6 @@ void CBeetle::tick() {
 			_currentSequence = nullptr;
 			terminate = true;
 		}
-
-		sequenceEnded = true;
 	}
 
 	if (terminate) {

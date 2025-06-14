@@ -2380,6 +2380,7 @@ void LogicManager::HAND_Abbot_CatchCath(HAND_PARAMS) {
 		}
 
 		send(kCharacterAbbot, kCharacterAbbot, 157489665, 0);
+		break;
 	case 8:
 		if (!cathRunningDialog("LIB012"))
 			playDialog(0, "LIB012", -1, 0);

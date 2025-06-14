@@ -3987,9 +3987,9 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 				Cond1Call(&LogicManager::CONS_Cond1_Listen, 9, 0, 0, 0);
 				break;
 			}
-
-			// fall through
 		}
+
+		// fall through
 		case 9:
 			if (_globals[kProgressField14] != 29) {
 				if (getCharacterParams(kCharacterCond1, 8)[13]) {
