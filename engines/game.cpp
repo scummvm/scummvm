@@ -175,12 +175,8 @@ Common::String md5PropToCachePrefix(MD5Properties flags) {
 	}
 
 	switch (flags & kMD5MacMask) {
-	case kMD5MacDataFork: 
+	case kMD5MacDataFork:
 		res += 'd';
-		break;
-
-	case kMD5MacResOrDataFork:
-		res += 'm';
 		break;
 
 	case kMD5MacResFork:

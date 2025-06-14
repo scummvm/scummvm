@@ -491,7 +491,7 @@ static MD5Properties gameFileToMD5Props(const ADGameFileDescription *fileEntry, 
 	}
 
 	if (gameFlags & ADGF_MACRESFORK) {
-		ret = (MD5Properties)(ret | kMD5MacResOrDataFork);
+		ret = (MD5Properties)(ret | kMD5MacResFork);
 	}
 
 	if (gameFlags & ADGF_TAILMD5) {
@@ -507,10 +507,6 @@ Common::String md5PropToGameFile(MD5Properties flags) {
 	switch (flags & kMD5MacMask) {
 	case kMD5MacDataFork:
 		res = "d";
-		break;
-
-	case kMD5MacResOrDataFork:
-		res = "m";
 		break;
 
 	case kMD5MacResFork:
@@ -562,7 +558,7 @@ bool AdvancedMetaEngineBase::getFilePropertiesExtern(uint md5Bytes, const FileMa
 static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngineBase::FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) {
 	if (md5prop & (kMD5MacResFork | kMD5MacDataFork)) {
 		FileMapArchive fileMapArchive(allFiles);
-		bool is_legacy = ((md5prop & kMD5MacMask) == kMD5MacResOrDataFork);
+
 		if (md5prop & kMD5MacResFork) {
 			Common::MacResManager macResMan;
 
@@ -580,8 +576,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngineBase:
 
 		if (md5prop & kMD5MacDataFork) {
 			Common::SeekableReadStream *dataFork = Common::MacResManager::openFileOrDataFork(fname, fileMapArchive);
-			// Logically 0-sized data fork is valid but legacy code continues fallback
-			if (dataFork && (dataFork->size() || !is_legacy)) {
+			if (dataFork) {
 				fileProps.size = dataFork->size();
 				fileProps.md5 = Common::computeStreamMD5AsString(*dataFork, md5Bytes);
 				fileProps.md5prop = (MD5Properties)((md5prop & kMD5Tail) | kMD5MacDataFork);
@@ -591,9 +586,8 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngineBase:
 			delete dataFork;
 		}
 
-		// In modern case stop here
-		if (!is_legacy)
-			return false;
+		// We have no forks
+		return false;
 	}
 
 	Common::ScopedPtr<Common::SeekableReadStream> testFile;

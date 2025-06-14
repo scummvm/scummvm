@@ -296,7 +296,7 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		}
 	} else if (allFiles.contains("Data1")) {
 		// add Mac volumes
-		md5Prop = (MD5Properties)(md5Prop | kMD5MacResOrDataFork);
+		md5Prop = (MD5Properties)(md5Prop | kMD5MacResFork);
 		for (int i = 1; i <= 13; i++) {
 			Common::String volume = Common::String::format("Data%d", i);
 			addFileToDetectedGame(Common::Path(volume), allFiles, md5Prop, game);
