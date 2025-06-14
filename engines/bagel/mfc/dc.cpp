@@ -837,16 +837,20 @@ BOOL CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
 
 	memset(&tm, 0, sizeof(TEXTMETRIC)); // Initialize to zero
 
-	tm.tmHeight = font->getFontHeight();
-	tm.tmAscent = tm.tmHeight;
 	tm.tmDescent = 0;
 	tm.tmInternalLeading = 0;
 	tm.tmExternalLeading = 0;
-	tm.tmAveCharWidth = font->getAvgCharWidth();
+
+	tm.tmAveCharWidth = font->getCharWidth();
 	if (!tm.tmAveCharWidth) {
 		tm.tmAveCharWidth = font->getStringWidth(
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") / 52 + 1;
 	}
+
+	tm.tmHeight = font->getCharHeight();
+	if (!tm.tmHeight)
+		tm.tmHeight = font->getFontHeight();
+	tm.tmAscent = tm.tmHeight;
 
 	tm.tmMaxCharWidth = font->getMaxCharWidth();
 	tm.tmWeight = FW_NORMAL;

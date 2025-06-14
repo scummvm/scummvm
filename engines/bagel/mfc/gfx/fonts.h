@@ -46,7 +46,8 @@ private:
 		DisposeAfterUse::YES;
 	Common::String _faceName;
 	int _height;
-	int _avgCharWidth;
+	int _charWidth;
+	int _charHeight;
 
 public:
 	Font(Graphics::Font *font, const Common::String &faceName, int height,
@@ -70,8 +71,11 @@ public:
 	int getHeight() const {
 		return _height;
 	}
-	int getAvgCharWidth() const {
-		return _avgCharWidth;
+	int getCharWidth() const {
+		return _charWidth;
+	}
+	int getCharHeight() const {
+		return _charHeight;
 	}
 };
 

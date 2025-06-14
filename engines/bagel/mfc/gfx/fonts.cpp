@@ -31,10 +31,11 @@ struct AvgWidth {
 	const char *_faceName;
 	int _height;
 	int _avgWidth;
+	int _charHeight;
 };
 static const AvgWidth AVG_WIDTH[] = {
-	{ "MS Sans Serif", 12, 13 },
-	{ nullptr, 0, 0 }
+	{ "MS Sans Serif", 12, 13, 0 },
+	{ nullptr, 0, 0, 0 }
 };
 
 Fonts::~Fonts() {
@@ -129,10 +130,12 @@ Fonts::FontEntry::~FontEntry() {
 Font::Font(Graphics::Font *font, const Common::String &faceName, int height,
 		DisposeAfterUse::Flag disposeAfterUse) :
 		_font(font), _faceName(faceName), _height(height),
-		_avgCharWidth(0), _disposeAfterUse(disposeAfterUse) {
+		_charWidth(0), _charHeight(0),
+		_disposeAfterUse(disposeAfterUse) {
 	for (const AvgWidth *aw = AVG_WIDTH; aw->_faceName; ++aw) {
 		if (faceName == aw->_faceName && height == aw->_height) {
-			_avgCharWidth = aw->_avgWidth;
+			_charWidth = aw->_avgWidth;
+			_charHeight = aw->_charHeight;
 			return;
 		}
 	}
