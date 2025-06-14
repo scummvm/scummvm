@@ -374,7 +374,7 @@ void SoundManager::soundThread() {
 					ambientSlot2 = ambientSlot2->getNext();
 				} while (ambientSlot2);
 
-				if (!ambientSlot2 || _scanAnySoundLoopingSection || ambientSlot1 && ambientSlot1->getTime() > _loopingSoundDuration)
+				if (!ambientSlot2 || _scanAnySoundLoopingSection || (ambientSlot1 && ambientSlot1->getTime() > _loopingSoundDuration))
 					loopedPlaying = true;
 			}
 

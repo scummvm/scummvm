@@ -88,7 +88,7 @@ protected:
 		nullptr
 	};
 
-	const char _eggButtonsSeqNames[8][13] = {
+	char _eggButtonsSeqNames[8][13] = {
 		"helpnewr.seq",
 		"buttns.seq",
 		"quit.seq",

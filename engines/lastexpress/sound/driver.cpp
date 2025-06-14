@@ -39,9 +39,6 @@ void SoundManager::soundDriverInit() {
 void SoundManager::soundDriverCopyBuffersToDevice() {
 	_sound30HzCounter++;
 
-	if (_stream->numQueuedStreams() < 0 && _soundCacheCount > 0)
-		warning("Buffer underrun");
-
 	while (_stream->numQueuedStreams() < 4) {
 		byte *ptr = (byte *)malloc(1470 * sizeof(int16));
 		assert(ptr);
@@ -78,7 +75,7 @@ int SoundManager::soundDriverGetVolume() {
 		dsVolume = (2000 * log10((double)scummVMVolume / 255.0));
 	}
 
-	// Convert DirectSound format to app format (0-7)
+	// Convert DirectSound scale to game scale (0-7)
 	int engineVolume;
 	if (dsVolume <= -3000) {
 		engineVolume = 0;

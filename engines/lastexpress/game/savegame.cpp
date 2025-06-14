@@ -424,7 +424,7 @@ void SaveManager::validateSaveFile(bool flag) {
 	int fileSize = saveFile->tell();
 	saveFile->seek(0, SEEK_SET);
 
-	if (fileSize >= sizeof(SVCRFileHeader)) {
+	if (fileSize >= (int32)sizeof(SVCRFileHeader)) {
 		saveFile->read(&fileHeader, sizeof(SVCRFileHeader), 1, false, true);
 		if (checkFileHeader(&fileHeader)) {
 			if (flag) {
@@ -445,7 +445,7 @@ void SaveManager::validateSaveFile(bool flag) {
 				_engine->_savePointHeaders->partNumber = _engine->isDemo() ? 3 : 1;
 			}
 
-			for (int i = 0; fileSize >= sizeof(SVCRFileHeader) && i < fileHeader.numVCRGames; ++i) {
+			for (int i = 0; fileSize >= (int32)sizeof(SVCRFileHeader) && i < fileHeader.numVCRGames; ++i) {
 				_engine->getSoundManager()->soundThread();
 
 				saveFile->read(&savePointHeader, sizeof(SVCRSavePointHeader), 1, false, true);
@@ -487,7 +487,7 @@ void SaveManager::validateSaveFile(bool flag) {
 		fileSize = saveFile->tell();
 		saveFile->seek(0, SEEK_SET);
 
-		if (fileSize < sizeof(SVCRFileHeader)) {
+		if (fileSize < (int32)sizeof(SVCRFileHeader)) {
 			if (fileSize) {
 				error("Attempting to salvage corrupt save game file \"%s\"", _engine->_savegameFilename);
 			}
@@ -541,7 +541,7 @@ void SaveManager::validateSaveFile(bool flag) {
 		int numSavePoints = 0;
 
 		for (int j = 0; true; j++) {
-			if (fileSize < sizeof(SVCRFileHeader) || j >= fileHeader.numVCRGames) {
+			if (fileSize < (int32)sizeof(SVCRFileHeader) || j >= fileHeader.numVCRGames) {
 				saveFile->close();
 				fileHeader.numVCRGames = numSavePoints;
 				tempFile->open("temp.egg", CVCRMODE_RWB);
@@ -617,8 +617,8 @@ void SaveManager::validateSaveFile(bool flag) {
 bool SaveManager::checkFileHeader(SVCRFileHeader *fileHeader) {
 	if (fileHeader->magicNumber == 0x12001200 &&
 		fileHeader->numVCRGames >= 0 &&
-		fileHeader->nextWritePos >= sizeof(SVCRFileHeader) &&
-		fileHeader->realWritePos >= sizeof(SVCRFileHeader) &&
+		fileHeader->nextWritePos >= (int32)sizeof(SVCRFileHeader) &&
+		fileHeader->realWritePos >= (int32)sizeof(SVCRFileHeader) &&
 		fileHeader->lastIsTemporary < 2 &&
 		fileHeader->brightness <= 6 &&
 		fileHeader->volume < 8) {
@@ -636,7 +636,7 @@ bool SaveManager::checkFileHeader(SVCRFileHeader *fileHeader) {
 }
 
 bool SaveManager::checkSavePointHeader(SVCRSavePointHeader *savePointHeader) {
-	if (savePointHeader->magicNumber == 0xE660E660) {
+	if ((uint32)savePointHeader->magicNumber == 0xE660E660) {
 		if (savePointHeader->type > 0 && savePointHeader->type <= 5) {
 			if (savePointHeader->time >= 1061100 && savePointHeader->time <= 4941000) {
 				if (savePointHeader->size > 0 && (savePointHeader->size & 0xF) == 0 && savePointHeader->partNumber > 0)

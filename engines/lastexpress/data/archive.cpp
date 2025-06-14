@@ -81,7 +81,7 @@ bool ArchiveManager::lockCD(int32 index) {
 }
 
 bool ArchiveManager::isCDAvailable(int cdNum, char *outPath, int pathSize) {
-	Common::sprintf_s(outPath, pathSize, "CD%ld.hpf", cdNum);
+	Common::sprintf_s(outPath, pathSize, "CD%d.hpf", cdNum);
 	return true;
 }
 

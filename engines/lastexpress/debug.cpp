@@ -253,7 +253,6 @@ void Clock::showCurrentTime() {
 
 	ImDrawList *drawList = ImGui::GetWindowDrawList();
 	ImVec2 windowPos = ImGui::GetWindowPos();
-	ImVec2 windowSize = ImGui::GetContentRegionAvail();
 	ImVec2 windowCenter = ImVec2(
 		windowPos.x + ImGui::GetWindowSize().x / 2,
 		windowPos.y + ImGui::GetWindowSize().y / 2
@@ -919,7 +918,6 @@ void LogicManager::showTrainMapWindow() {
 
 		// Label...
 		const char *voidLabel = "THE VOID (id: 0)";
-		ImVec2 textSize = ImGui::CalcTextSize(voidLabel);
 		drawList->AddText(
 			ImVec2(voidMin.x + 10, voidMin.y + 5),
 			IM_COL32(255, 255, 255, 255),
