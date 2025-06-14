@@ -22,10 +22,10 @@
 #ifndef ZVISION_ANIMATION_NODE_H
 #define ZVISION_ANIMATION_NODE_H
 
-#include "zvision/scripting/scripting_effect.h"
+#include "common/list.h"
 #include "common/path.h"
 #include "common/rect.h"
-#include "common/list.h"
+#include "zvision/scripting/scripting_effect.h"
 
 namespace Graphics {
 struct Surface;

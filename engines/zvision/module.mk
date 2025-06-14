@@ -1,15 +1,16 @@
 MODULE := engines/zvision
 
 MODULE_OBJS := \
-	core/console.o \
+	common/scroller.o \
 	core/clock.o \
+	core/console.o \
 	core/events.o \
 	file/lzss_read_stream.o \
 	file/save_manager.o \
 	file/search_manager.o \
 	file/zfs_archive.o \
-	graphics/cursors/cursor_manager.o \
 	graphics/cursors/cursor.o \
+	graphics/cursors/cursor_manager.o \
 	graphics/effects/fog.o \
 	graphics/effects/light.o \
 	graphics/effects/wave.o \
@@ -28,10 +29,6 @@ MODULE_OBJS := \
 	scripting/controls/save_control.o \
 	scripting/controls/slot_control.o \
 	scripting/controls/titler_control.o \
-	scripting/inventory.o \
-	scripting/menu.o \
-	scripting/scr_file_handling.o \
-	scripting/script_manager.o \
 	scripting/effects/animation_effect.o \
 	scripting/effects/distort_effect.o \
 	scripting/effects/music_effect.o \
@@ -39,10 +36,15 @@ MODULE_OBJS := \
 	scripting/effects/syncsound_effect.o \
 	scripting/effects/timer_effect.o \
 	scripting/effects/ttytext_effect.o \
+	scripting/inventory.o \
+	scripting/menu.o \
+	scripting/scr_file_handling.o \
+	scripting/script_manager.o \
 	sound/midi.o \
+	sound/volume_manager.o \
 	sound/zork_raw.o \
 	text/string_manager.o \
-	text/subtitles.o \
+	text/subtitle_manager.o \
 	text/text.o \
 	text/truetype_font.o \
 	video/rlf_decoder.o \

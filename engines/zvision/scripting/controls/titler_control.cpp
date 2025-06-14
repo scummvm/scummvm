@@ -20,15 +20,12 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/controls/titler_control.h"
-
-#include "zvision/zvision.h"
-#include "zvision/text/text.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-
 #include "common/stream.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/titler_control.h"
+#include "zvision/text/text.h"
 
 namespace ZVision {
 
@@ -54,9 +51,8 @@ TitlerControl::TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 			int x2;
 			int y2;
 
-			sscanf(values.c_str(), "%d %d %d %d", &x, &y, &x2, &y2);
-
-			_rectangle = Common::Rect(x, y, x2, y2);
+			if (sscanf(values.c_str(), "%d %d %d %d", &x, &y, &x2, &y2) == 4)
+				_rectangle = Common::Rect(x, y, x2, y2);
 		}
 
 		line = stream.readLine();

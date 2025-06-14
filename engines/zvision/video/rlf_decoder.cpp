@@ -19,15 +19,14 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/video/rlf_decoder.h"
-
-#include "common/str.h"
-#include "common/file.h"
-#include "common/textconsole.h"
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/file.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/textconsole.h"
+#include "zvision/detection.h"
+#include "zvision/video/rlf_decoder.h"
 
 namespace ZVision {
 
@@ -229,7 +228,7 @@ void RLFDecoder::RLFVideoTrack::decodeMaskedRunLengthEncoding(int8 *source, int8
 				if (sourceOffset + 1 >= sourceSize) {
 					return;
 				} else if (destOffset + 1 >= destSize) {
-					debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					debugC(3, kDebugVideo, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 
@@ -246,7 +245,7 @@ void RLFDecoder::RLFVideoTrack::decodeMaskedRunLengthEncoding(int8 *source, int8
 			if (sourceOffset + 1 >= sourceSize) {
 				return;
 			} else if (destOffset + 1 >= destSize) {
-				debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+				debugC(3, kDebugVideo, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 				return;
 			}
 
@@ -273,7 +272,7 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 				if (sourceOffset + 1 >= sourceSize) {
 					return;
 				} else if (destOffset + 1 >= destSize) {
-					debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					debugC(3, kDebugVideo, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 
@@ -297,7 +296,7 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 			numberOfCopy = numberOfSamples + 2;
 			while (numberOfCopy > 0) {
 				if (destOffset + 1 >= destSize) {
-					debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					debugC(3, kDebugVideo, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 

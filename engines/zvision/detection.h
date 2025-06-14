@@ -26,6 +26,23 @@
 
 namespace ZVision {
 
+enum ZVisionDebugChannels {
+	kDebugScript = 1,
+	kDebugLoop,
+	kDebugPuzzle,
+	kDebugAction,
+	kDebugControl,
+	kDebugEffect,
+	kDebugGraphics,
+	kDebugVideo,
+	kDebugSound,
+	kDebugSubtitle,
+	kDebugFile,
+	kDebugMouse,
+	kDebugAssign,
+	kDebugEvent
+};
+
 enum ZVisionGameId {
 	GID_NONE = 0,
 	GID_NEMESIS = 1,
@@ -44,6 +61,8 @@ struct ZVisionGameDescription {
 #define GAMEOPTION_ENABLE_VENUS               GUIO_GAMEOPTIONS3
 #define GAMEOPTION_DISABLE_ANIM_WHILE_TURNING GUIO_GAMEOPTIONS4
 #define GAMEOPTION_USE_HIRES_MPEG_MOVIES      GUIO_GAMEOPTIONS5
+#define GAMEOPTION_ENABLE_WIDESCREEN          GUIO_GAMEOPTIONS6
+#define GAMEOPTION_HQ_PANORAMA                GUIO_GAMEOPTIONS7
 
 } // End of namespace ZVision
 

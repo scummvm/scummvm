@@ -19,24 +19,32 @@
  *
  */
 
-#include "zvision/graphics/render_table.h"
-
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "common/system.h"
 #include "math/utils.h"
+#include "zvision/graphics/render_table.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 
-RenderTable::RenderTable(uint numColumns, uint numRows)
-	: _numRows(numRows),
+RenderTable::RenderTable(ZVision *engine, uint16 numColumns, uint16 numRows, const Graphics::PixelFormat &pixelFormat)
+	: _engine(engine),
+	  _system(engine->_system),
+	  _numRows(numRows),
 	  _numColumns(numColumns),
-	  _renderState(FLAT) {
+	  _renderState(FLAT),
+	  _pixelFormat(pixelFormat) {
 	assert(numRows != 0 && numColumns != 0);
 
-	_internalBuffer = new Common::Point[numRows * numColumns];
+	_internalBuffer = new FilterPixel[numRows * numColumns];
 
 	memset(&_panoramaOptions, 0, sizeof(_panoramaOptions));
 	memset(&_tiltOptions, 0, sizeof(_tiltOptions));
+	_halfRows = floor((_numRows - 1) / 2);
+	_halfColumns = floor((_numColumns - 1) / 2);
+	_halfWidth = (float)_numColumns / 2.0f - 0.5f;
+	_halfHeight = (float)_numRows / 2.0f - 0.5f;
 }
 
 RenderTable::~RenderTable() {
@@ -48,13 +56,13 @@ void RenderTable::setRenderState(RenderState newState) {
 
 	switch (newState) {
 	case PANORAMA:
-		_panoramaOptions.fieldOfView = 27.0f;
+		_panoramaOptions.verticalFOV = Math::deg2rad<float>(27.0f);
 		_panoramaOptions.linearScale = 0.55f;
 		_panoramaOptions.reverse = false;
 		_panoramaOptions.zeroPoint = 0;
 		break;
 	case TILT:
-		_tiltOptions.fieldOfView = 27.0f;
+		_tiltOptions.verticalFOV = Math::deg2rad<float>(27.0f);
 		_tiltOptions.linearScale = 0.65f;
 		_tiltOptions.reverse = false;
 		break;
@@ -73,68 +81,116 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 		int16 y = CLIP<int16>(point.y, 0, (int16)_numRows);
 		return Common::Point(x, y);
 	}
-
+	
 	uint32 index = point.y * _numColumns + point.x;
 
 	Common::Point newPoint(point);
-	newPoint.x += _internalBuffer[index].x;
-	newPoint.y += _internalBuffer[index].y;
+	newPoint.x += (_internalBuffer[index]._xDir ? _internalBuffer[index]._src.right : _internalBuffer[index]._src.left);
+	newPoint.y += (_internalBuffer[index]._yDir ? _internalBuffer[index]._src.bottom : _internalBuffer[index]._src.top);
 
 	return newPoint;
 }
 
+// Disused at present; potentially useful for future rendering efficient improvements.
+/*/
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect) {
-	uint32 destOffset = 0;
-
-	for (int16 y = subRect.top; y < subRect.bottom; ++y) {
-		uint32 sourceOffset = y * _numColumns;
-
-		for (int16 x = subRect.left; x < subRect.right; ++x) {
-			uint32 normalizedX = x - subRect.left;
-			uint32 index = sourceOffset + x;
-
-			// RenderTable only stores offsets from the original coordinates
-			uint32 sourceYIndex = y + _internalBuffer[index].y;
-			uint32 sourceXIndex = x + _internalBuffer[index].x;
-
-			destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
-		}
-
-		destOffset += destWidth;
-	}
+    uint32 destOffset = 0;
+  uint32 sourceXIndex = 0;
+  uint32 sourceYIndex = 0;
+  if(highQuality) {
+    // TODO - convert to high quality pixel filtering
+      for (int16 y = subRect.top; y < subRect.bottom; ++y) {
+          uint32 sourceOffset = y * _numColumns;
+          for (int16 x = subRect.left; x < subRect.right; ++x) {
+              uint32 normalizedX = x - subRect.left;
+              uint32 index = sourceOffset + x;
+              // RenderTable only stores offsets from the original coordinates
+              sourceYIndex = y + _internalBuffer[index]._src.top;
+              sourceXIndex = x + _internalBuffer[index]._src.left;
+              destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+          }
+          destOffset += destWidth;
+      }
+  }
+  else {
+      for (int16 y = subRect.top; y < subRect.bottom; ++y) {
+          uint32 sourceOffset = y * _numColumns;
+          for (int16 x = subRect.left; x < subRect.right; ++x) {
+              uint32 normalizedX = x - subRect.left;
+              uint32 index = sourceOffset + x;
+              // RenderTable only stores offsets from the original coordinates
+              sourceYIndex = y + _internalBuffer[index]._src.top;
+              sourceXIndex = x + _internalBuffer[index]._src.left;
+              destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+          }
+          destOffset += destWidth;
+      }
+  }
 }
+// */
 
-void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf) {
+void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf, bool highQuality) {
 	uint32 destOffset = 0;
-
+	uint32 sourceOffset = 0;
 	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
 	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
-
-	for (int16 y = 0; y < srcBuf->h; ++y) {
-		uint32 sourceOffset = y * _numColumns;
-
-		for (int16 x = 0; x < srcBuf->w; ++x) {
-			uint32 index = sourceOffset + x;
-
-			// RenderTable only stores offsets from the original coordinates
-			uint32 sourceYIndex = y + _internalBuffer[index].y;
-			uint32 sourceXIndex = x + _internalBuffer[index].x;
-
-			destBuffer[destOffset] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
-			destOffset++;
+	if (highQuality != _highQuality) {
+		_highQuality = highQuality;
+		generateRenderTable();
+	}
+	uint32 mutationTime = _system->getMillis();
+	if (_highQuality) {
+		// Apply bilinear interpolation
+		for (int16 y = 0; y < srcBuf->h; ++y) {
+			sourceOffset = y * _numColumns;
+			for (int16 x = 0; x < srcBuf->w; ++x) {
+				const FilterPixel &curP = _internalBuffer[sourceOffset + x];
+				const uint32 srcIndexYT = y + curP._src.top;
+				const uint32 srcIndexYB = y + curP._src.bottom;
+				const uint32 srcIndexXL = x + curP._src.left;
+				const uint32 srcIndexXR = x + curP._src.right;
+				uint32 rTL, rTR, rBL, rBR;
+				uint32 gTL, gTR, gBL, gBR;
+				uint32 bTL, bTR, bBL, bBR;
+				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXL], rTL, gTL, bTL);
+				splitColor(sourceBuffer[srcIndexYT * _numColumns + srcIndexXR], rTR, gTR, bTR);
+				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXL], rBL, gBL, bBL);
+				splitColor(sourceBuffer[srcIndexYB * _numColumns + srcIndexXR], rBR, gBR, bBR);
+				const uint32 rF = curP._fTL * rTL + curP._fTR * rTR + curP._fBL * rBL + curP._fBR * rBR;
+				const uint32 gF = curP._fTL * gTL + curP._fTR * gTR + curP._fBL * gBL + curP._fBR * gBR;
+				const uint32 bF = curP._fTL * bTL + curP._fTR * bTR + curP._fBL * bBL + curP._fBR * bBR;
+				destBuffer[destOffset] = mergeColor(rF, gF, bF);
+				destOffset++;
+			}
+		}
+	} else {
+		// Apply nearest-neighbour interpolation
+		for (int16 y = 0; y < srcBuf->h; ++y) {
+			sourceOffset = y * _numColumns;
+			for (int16 x = 0; x < srcBuf->w; ++x) {
+				const uint32 index = sourceOffset + x;
+				// RenderTable only stores offsets from the original coordinates
+				const uint32 srcIndexX = x + (_internalBuffer[index]._xDir ? _internalBuffer[index]._src.right : _internalBuffer[index]._src.left);
+				const uint32 srcIndexY = y + (_internalBuffer[index]._yDir ? _internalBuffer[index]._src.bottom : _internalBuffer[index]._src.top);
+				destBuffer[destOffset] = sourceBuffer[srcIndexY * _numColumns + srcIndexX];
+				destOffset++;
+			}
 		}
 	}
+	mutationTime = _system->getMillis() - mutationTime;
+	debugC(5, kDebugGraphics, "\tPanorama mutation time %dms, %s quality", mutationTime, _highQuality ? "high" : "low");
 }
 
 void RenderTable::generateRenderTable() {
 	switch (_renderState) {
-	case ZVision::RenderTable::PANORAMA:
-		generatePanoramaLookupTable();
+	case RenderTable::PANORAMA: {
+		generateLookupTable(false);
 		break;
-	case ZVision::RenderTable::TILT:
-		generateTiltLookupTable();
+	}
+	case RenderTable::TILT:
+		generateLookupTable(true);
 		break;
-	case ZVision::RenderTable::FLAT:
+	case RenderTable::FLAT:
 		// Intentionally left empty
 		break;
 	default:
@@ -142,85 +198,84 @@ void RenderTable::generateRenderTable() {
 	}
 }
 
-void RenderTable::generatePanoramaLookupTable() {
-	for (uint y = 0; y < _numRows; y++) {
-		for (uint x = 0; x < _numColumns; x++) {
-			uint32 index = y * _numColumns + x;
-			_internalBuffer[index].x = 0;
-			_internalBuffer[index].y = 0;
+void RenderTable::generateLookupTable(bool tilt) {
+	debugC(1, kDebugGraphics, "Generating %s lookup table.", tilt ? "tilt" : "panorama");
+	debugC(5, kDebugGraphics, "_halfWidth %f, _halfHeight %f", _halfWidth, _halfHeight);
+	debugC(5, kDebugGraphics, "_halfRows %d, _halfColumns %d", _halfRows, _halfColumns);
+	uint32 generationTime = _system->getMillis();
+	float cosAlpha, polarCoordInCylinderCoords, cylinderRadius, xOffset, yOffset;
+	uint32 indexTL, indexBL, indexTR, indexBR;
+	auto outerLoop = [&](uint & polarCoord, float & halfPolarSize, float & scale) {
+		// polarCoord is the coordinate of the working window pixel parallel to the direction of camera rotation
+		// halfPolarSize is the distance from the central axis to the outermost working window pixel in the direction of camera rotation
+		// alpha represents the angle in the direction of camera rotation between the view axis and the centre of a pixel at the given polar coordinate
+		const float alpha = atan(((float)polarCoord - halfPolarSize) / cylinderRadius);
+		// To map the polar coordinate to the cylinder surface coordinates, we just need to calculate the arc length
+		// We also scale it by linearScale
+		polarCoordInCylinderCoords = (cylinderRadius * scale * alpha) + halfPolarSize;
+		cosAlpha = cos(alpha);
+	};
+	auto innerLoop = [&](uint & polarCoord, uint & linearCoord, float & halfLinearSize,  float & polarOffset, float & linearOffset) {
+		// To calculate linear coordinate in cylinder coordinates, we can do similar triangles comparison,
+		// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
+		const float linearCoordInCylinderCoords = halfLinearSize + ((float)linearCoord - halfLinearSize) * cosAlpha;
+		linearOffset = linearCoordInCylinderCoords - linearCoord;
+		polarOffset = polarCoordInCylinderCoords - polarCoord;
+		_internalBuffer[indexTL] = FilterPixel(xOffset, yOffset, _highQuality);
+		// Transformation is both horizontally and vertically symmetrical about the camera axis,
+		// We can thus save on trigonometric calculations by computing one quarter of the transformation matrix and then mirroring it in both X & Y:
+		_internalBuffer[indexBL] = _internalBuffer[indexTL];
+		_internalBuffer[indexBL].flipV();
+		_internalBuffer[indexTR] = _internalBuffer[indexTL];
+		_internalBuffer[indexTR].flipH();
+		_internalBuffer[indexBR] = _internalBuffer[indexBL];
+		_internalBuffer[indexBR].flipH();
+	};
+	if (tilt) {
+		cylinderRadius = (_halfWidth + 0.5f) / tan(_tiltOptions.verticalFOV);
+		_tiltOptions.gap = cylinderRadius * atan2((float)(_halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
+		for (uint y = 0; y <= _halfRows; ++y) {
+			outerLoop(y, _halfHeight, _tiltOptions.linearScale);
+			const uint32 columnIndexTL = y * _numColumns;
+			const uint32 columnIndexBL = (_numRows - (y + 1)) * _numColumns;
+			const uint32 columnIndexTR = columnIndexTL + (_numColumns - 1);
+			const uint32 columnIndexBR = columnIndexBL + (_numColumns - 1);
+			for (uint x = 0; x <= _halfColumns; ++x) {
+				indexTL = columnIndexTL + x;
+				indexBL = columnIndexBL + x;
+				indexTR = columnIndexTR - x;
+				indexBR = columnIndexBR - x;
+				innerLoop(y, x, _halfWidth, yOffset, xOffset);
+			}
+		}
+	} else {
+		cylinderRadius = (_halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
+		for (uint x = 0; x <= _halfColumns; ++x) {
+			const uint32 columnIndexL = x;
+			const uint32 columnIndexR = (_numColumns - 1) - x;
+			uint32 rowIndexT = 0;
+			uint32 rowIndexB = _numColumns * (_numRows - 1);
+			outerLoop(x, _halfWidth, _panoramaOptions.linearScale);
+			for (uint y = 0; y <= _halfRows; ++y) {
+				indexTL = rowIndexT + columnIndexL;
+				indexBL = rowIndexB + columnIndexL;
+				indexTR = rowIndexT + columnIndexR;
+				indexBR = rowIndexB + columnIndexR;
+				innerLoop(x, y, _halfHeight, xOffset, yOffset);
+				rowIndexT += _numColumns;
+				rowIndexB -= _numColumns;
+			}
 		}
 	}
-
-	float halfWidth = (float)_numColumns / 2.0f;
-	float halfHeight = (float)_numRows / 2.0f;
-
-	float fovInRadians = Math::deg2rad<float>(_panoramaOptions.fieldOfView);
-	float cylinderRadius = halfHeight / tan(fovInRadians);
-
-	for (uint x = 0; x < _numColumns; ++x) {
-		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
-		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and x
-		float alpha = atan(((float)x - halfWidth + 0.01f) / cylinderRadius);
-
-		// To get x in cylinder coordinates, we just need to calculate the arc length
-		// We also scale it by _panoramaOptions.linearScale
-		int32 xInCylinderCoords = int32(floor((cylinderRadius * _panoramaOptions.linearScale * alpha) + halfWidth));
-
-		float cosAlpha = cos(alpha);
-
-		for (uint y = 0; y < _numRows; ++y) {
-			// To calculate y in cylinder coordinates, we can do similar triangles comparison,
-			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
-			int32 yInCylinderCoords = int32(floor(halfHeight + ((float)y - halfHeight) * cosAlpha));
-
-			uint32 index = y * _numColumns + x;
-
-			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[index].x = xInCylinderCoords - x;
-			_internalBuffer[index].y = yInCylinderCoords - y;
-		}
-	}
-}
-
-void RenderTable::generateTiltLookupTable() {
-	float halfWidth = (float)_numColumns / 2.0f;
-	float halfHeight = (float)_numRows / 2.0f;
-
-	float fovInRadians = Math::deg2rad<float>(_tiltOptions.fieldOfView);
-	float cylinderRadius = halfWidth / tan(fovInRadians);
-	_tiltOptions.gap = cylinderRadius * atan2((float)(halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
-
-	for (uint y = 0; y < _numRows; ++y) {
-
-		// Add an offset of 0.01 to overcome zero tan/atan issue (horizontal line on half of screen)
-		// Alpha represents the vertical angle between the viewer at the center of a cylinder and y
-		float alpha = atan(((float)y - halfHeight + 0.01f) / cylinderRadius);
-
-		// To get y in cylinder coordinates, we just need to calculate the arc length
-		// We also scale it by _tiltOptions.linearScale
-		int32 yInCylinderCoords = int32(floor((cylinderRadius * _tiltOptions.linearScale * alpha) + halfHeight));
-
-		float cosAlpha = cos(alpha);
-		uint32 columnIndex = y * _numColumns;
-
-		for (uint x = 0; x < _numColumns; ++x) {
-			// To calculate x in cylinder coordinates, we can do similar triangles comparison,
-			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
-			int32 xInCylinderCoords = int32(floor(halfWidth + ((float)x - halfWidth) * cosAlpha));
-
-			uint32 index = columnIndex + x;
-
-			// Only store the (x,y) offsets instead of the absolute positions
-			_internalBuffer[index].x = xInCylinderCoords - x;
-			_internalBuffer[index].y = yInCylinderCoords - y;
-		}
-	}
+	generationTime = _system->getMillis() - generationTime;
+	debugC(1, kDebugGraphics, "Render table generated, %s quality", _highQuality ? "high" : "low");
+	debugC(1, kDebugGraphics, "\tRender table generation time %dms", generationTime);
 }
 
 void RenderTable::setPanoramaFoV(float fov) {
 	assert(fov > 0.0f);
 
-	_panoramaOptions.fieldOfView = fov;
+	_panoramaOptions.verticalFOV = Math::deg2rad<float>(fov);
 }
 
 void RenderTable::setPanoramaScale(float scale) {
@@ -248,7 +303,7 @@ uint16 RenderTable::getPanoramaZeroPoint() {
 void RenderTable::setTiltFoV(float fov) {
 	assert(fov > 0.0f);
 
-	_tiltOptions.fieldOfView = fov;
+	_tiltOptions.verticalFOV = Math::deg2rad<float>(fov);
 }
 
 void RenderTable::setTiltScale(float scale) {
@@ -266,21 +321,25 @@ float RenderTable::getTiltGap() {
 }
 
 float RenderTable::getAngle() {
-	if (_renderState == TILT)
-		return _tiltOptions.fieldOfView;
-	else if (_renderState == PANORAMA)
-		return _panoramaOptions.fieldOfView;
-	else
-		return 1.0;
+	switch (_renderState) {
+	case TILT:
+		return Math::rad2deg<float>(_tiltOptions.verticalFOV);
+	case PANORAMA:
+		return Math::rad2deg<float>(_panoramaOptions.verticalFOV);
+	default:
+		return 1.0f;
+	}
 }
 
 float RenderTable::getLinscale() {
-	if (_renderState == TILT)
+	switch (_renderState) {
+	case TILT:
 		return _tiltOptions.linearScale;
-	else if (_renderState == PANORAMA)
+	case PANORAMA:
 		return _panoramaOptions.linearScale;
-	else
-		return 1.0;
+	default:
+		return 1.0f;
+	}
 }
 
 } // End of namespace ZVision

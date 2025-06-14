@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,23 +20,24 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/scummsys.h"
-
-#include "zvision/scripting/control.h"
-#include "zvision/scripting/script_manager.h"
-
+#include "common/stream.h"
+#include "zvision/detection.h"
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-
-#include "common/stream.h"
+#include "zvision/scripting/control.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 
 void Control::parseFlatControl(ZVision *engine) {
+	debugC(1, kDebugGraphics, "Setting render state to FLAT");
 	engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
 }
 
 void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream) {
+	debugC(1, kDebugGraphics, "Setting render state to PANORAMA");
 	RenderTable *renderTable = engine->getRenderManager()->getRenderTable();
 	renderTable->setRenderState(RenderTable::PANORAMA);
 
@@ -46,22 +48,22 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
 			float fov;
-			sscanf(line.c_str(), "angle(%f)", &fov);
-			renderTable->setPanoramaFoV(fov);
+			if (sscanf(line.c_str(), "angle(%f)", &fov) == 1)
+				renderTable->setPanoramaFoV(fov);
 		} else if (line.matchString("linscale*", true)) {
 			float scale;
-			sscanf(line.c_str(), "linscale(%f)", &scale);
-			renderTable->setPanoramaScale(scale);
+			if (sscanf(line.c_str(), "linscale(%f)", &scale) == 1)
+				renderTable->setPanoramaScale(scale);
 		} else if (line.matchString("reversepana*", true)) {
-			uint reverse;
+			uint reverse = 0;
 			sscanf(line.c_str(), "reversepana(%u)", &reverse);
 			if (reverse == 1) {
 				renderTable->setPanoramaReverse(true);
 			}
 		} else if (line.matchString("zeropoint*", true)) {
 			uint point;
-			sscanf(line.c_str(), "zeropoint(%u)", &point);
-			renderTable->setPanoramaZeroPoint(point);
+			if (sscanf(line.c_str(), "zeropoint(%u)", &point) == 1)
+				renderTable->setPanoramaZeroPoint(point);
 		}
 
 		line = stream.readLine();
@@ -73,6 +75,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 
 // Only used in Zork Nemesis, handles tilt controls (ZGI doesn't have a tilt view)
 void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream) {
+	debugC(1, kDebugGraphics, "Setting render state to TILT");
 	RenderTable *renderTable = engine->getRenderManager()->getRenderTable();
 	renderTable->setRenderState(RenderTable::TILT);
 
@@ -83,14 +86,14 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
 			float fov;
-			sscanf(line.c_str(), "angle(%f)", &fov);
-			renderTable->setTiltFoV(fov);
+			if (sscanf(line.c_str(), "angle(%f)", &fov) == 1)
+				renderTable->setTiltFoV(fov);
 		} else if (line.matchString("linscale*", true)) {
 			float scale;
-			sscanf(line.c_str(), "linscale(%f)", &scale);
-			renderTable->setTiltScale(scale);
+			if (sscanf(line.c_str(), "linscale(%f)", &scale) == 1)
+				renderTable->setTiltScale(scale);
 		} else if (line.matchString("reversepana*", true)) {
-			uint reverse;
+			uint reverse = 0;
 			sscanf(line.c_str(), "reversepana(%u)", &reverse);
 			if (reverse == 1) {
 				renderTable->setTiltReverse(true);

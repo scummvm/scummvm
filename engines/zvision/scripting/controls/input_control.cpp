@@ -19,23 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/controls/input_control.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/text/string_manager.h"
-#include "zvision/graphics/render_manager.h"
-
 #include "backends/keymapper/keymap.h"
-
+#include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/rect.h"
 #include "video/video_decoder.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/text/string_manager.h"
+
 
 namespace ZVision {
 
@@ -58,35 +55,21 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("rectangle", true)) {
-			int x1;
-			int y1;
-			int x2;
-			int y2;
-
-			sscanf(values.c_str(), "%d %d %d %d", &x1, &y1, &x2, &y2);
-
-			_textRectangle = Common::Rect(x1, y1, x2, y2);
+			int x1, y1, x2, y2;
+			if (sscanf(values.c_str(), "%d %d %d %d", &x1, &y1, &x2, &y2) == 4)
+				_textRectangle = Common::Rect(x1, y1, x2, y2);
 		} else if (param.matchString("aux_hotspot", true)) {
-			int x1;
-			int y1;
-			int x2;
-			int y2;
-
-			sscanf(values.c_str(), "%d %d %d %d", &x1, &y1, &x2, &y2);
-
-			_headerRectangle = Common::Rect(x1, y1, x2, y2);
+			int x1, y1, x2, y2;
+			if (sscanf(values.c_str(), "%d %d %d %d", &x1, &y1, &x2, &y2) == 4)
+				_headerRectangle = Common::Rect(x1, y1, x2, y2);
 		} else if (param.matchString("string_init", true)) {
 			uint fontFormatNumber;
-
-			sscanf(values.c_str(), "%u", &fontFormatNumber);
-
-			_stringInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			if (sscanf(values.c_str(), "%u", &fontFormatNumber) == 1)
+				_stringInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("chooser_init_string", true)) {
 			uint fontFormatNumber;
-
-			sscanf(values.c_str(), "%u", &fontFormatNumber);
-
-			_stringChooserInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			if (sscanf(values.c_str(), "%u", &fontFormatNumber) == 1)
+				_stringChooserInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("next_tabstop", true)) {
 			sscanf(values.c_str(), "%u", &_nextTabstop);
 		} else if (param.matchString("cursor_dimensions", true)) {
@@ -95,11 +78,10 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 			// Ignore, use the frame count in the animation file
 		} else if (param.matchString("cursor_animation", true)) {
 			char fileName[25];
-
-			sscanf(values.c_str(), "%24s %*u", fileName);
-
-			_animation = _engine->loadAnimation(fileName);
-			_animation->start();
+			if (sscanf(values.c_str(), "%24s %*u", fileName) == 1) {
+				_animation = _engine->loadAnimation(fileName);
+				_animation->start();
+			}
 		} else if (param.matchString("focus", true)) {
 			_focused = true;
 			_engine->getScriptManager()->setFocusControlKey(_key);
