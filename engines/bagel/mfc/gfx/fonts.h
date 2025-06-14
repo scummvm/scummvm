@@ -33,6 +33,49 @@ namespace MFC {
 namespace Gfx {
 
 /**
+ * Font derived class that makes the
+ * original face name and height visible.
+ * It also bolds the font, which seems to
+ * more closely match plain text in the
+ * original Hodj n Podj
+ */
+class Font : public Graphics::Font {
+private:
+	Graphics::Font *_font;
+	DisposeAfterUse::Flag _disposeAfterUse =
+		DisposeAfterUse::YES;
+	Common::String _faceName;
+	int _height;
+	int _avgCharWidth;
+
+public:
+	Font(Graphics::Font *font, const Common::String &faceName, int height,
+		DisposeAfterUse::Flag disposeAfterUse =
+			DisposeAfterUse::YES);
+	~Font() override;
+
+	int getFontHeight() const override;
+	int getFontAscent() const override;
+	int getFontDescent() const override;
+	int getFontLeading() const override;
+	int getMaxCharWidth() const override;
+	int getCharWidth(uint32 chr) const override;
+	int getKerningOffset(uint32 left, uint32 right) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override;
+
+	const Common::String &getFaceName() const {
+		return _faceName;
+	}
+	int getHeight() const {
+		return _height;
+	}
+	int getAvgCharWidth() const {
+		return _avgCharWidth;
+	}
+};
+
+/**
  * Main fonts cache
  */
 class Fonts {
@@ -71,34 +114,6 @@ public:
 		const char *lpszFacename);
 	HFONT getFont(const char *lpszFacename, int nHeight);
 	HFONT getDefaultFont();
-};
-
-/**
- * Font wrapper for when a bold font
- * is requested
- */
-class BoldFont : public Graphics::Font {
-private:
-	Graphics::Font *_font;
-	DisposeAfterUse::Flag _disposeAfterUse =
-		DisposeAfterUse::YES;
-
-public:
-	BoldFont(Graphics::Font *font, DisposeAfterUse::Flag
-		disposeAfterUse = DisposeAfterUse::YES) :
-		_font(font), _disposeAfterUse(disposeAfterUse) {
-	}
-	~BoldFont() override;
-
-	int getFontHeight() const override;
-	int getFontAscent() const override;
-	int getFontDescent() const override;
-	int getFontLeading() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	int getKerningOffset(uint32 left, uint32 right) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override;
 };
 
 } // namespace Gfx

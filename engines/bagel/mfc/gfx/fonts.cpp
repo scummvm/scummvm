@@ -27,6 +27,16 @@ namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
+struct AvgWidth {
+	const char *_faceName;
+	int _height;
+	int _avgWidth;
+};
+static const AvgWidth AVG_WIDTH[] = {
+	{ "MS Sans Serif", 12, 13 },
+	{ nullptr, 0, 0 }
+};
+
 Fonts::~Fonts() {
 	_fonts.clear();
 }
@@ -71,10 +81,8 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 	for (auto &filename : _fontResources) {
 		if (font->loadFromFON(filename, Graphics::WinFontDirEntry(
 			lpszFacename, nHeight))) {
-			// Created the font. Now wrap it in a BoldFont. For Hodj n Podj,
-			// doubling the character pixels horizontally produced
-			// a closer match to what it looks like in Windows
-			CFont::Impl *f = new CFont::Impl(font);
+			Gfx::Font *gfxFont = new Gfx::Font(font, lpszFacename, nHeight);
+			CFont::Impl *f = new CFont::Impl(gfxFont);
 
 			// Add to the font cache
 			_fonts.push_back(FontEntry());
@@ -83,6 +91,7 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		}
 	}
 
+	delete font;
 	return nullptr;
 }
 
@@ -117,45 +126,57 @@ Fonts::FontEntry::~FontEntry() {
 
 /*--------------------------------------------*/
 
-BoldFont::~BoldFont() {
+Font::Font(Graphics::Font *font, const Common::String &faceName, int height,
+		DisposeAfterUse::Flag disposeAfterUse) :
+		_font(font), _faceName(faceName), _height(height),
+		_avgCharWidth(0), _disposeAfterUse(disposeAfterUse) {
+	for (const AvgWidth *aw = AVG_WIDTH; aw->_faceName; ++aw) {
+		if (faceName == aw->_faceName && height == aw->_height) {
+			_avgCharWidth = aw->_avgWidth;
+			return;
+		}
+	}
+}
+
+Font::~Font() {
 	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _font;
 }
 
-int BoldFont::getFontHeight() const {
+int Font::getFontHeight() const {
 	return _font->getFontHeight();
 }
 
-int BoldFont::getFontAscent() const {
+int Font::getFontAscent() const {
 	return _font->getFontAscent();
 }
 
-int BoldFont::getFontDescent() const {
+int Font::getFontDescent() const {
 	return _font->getFontDescent();
 }
 
-int BoldFont::getFontLeading() const {
+int Font::getFontLeading() const {
 	return _font->getFontLeading();
 }
 
-int BoldFont::getMaxCharWidth() const {
+int Font::getMaxCharWidth() const {
 	return _font->getMaxCharWidth() + 1;
 }
 
-int BoldFont::getCharWidth(uint32 chr) const {
+int Font::getCharWidth(uint32 chr) const {
 	return _font->getCharWidth(chr) + 1;
 }
 
-int BoldFont::getKerningOffset(uint32 left, uint32 right) const {
+int Font::getKerningOffset(uint32 left, uint32 right) const {
 	return _font->getKerningOffset(left, right);
 }
 
-void BoldFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	_font->drawChar(dst, chr, x, y, color);
 	_font->drawChar(dst, chr, x + 1, y, color);
 }
 
-void BoldFont::drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const {
+void Font::drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const {
 	_font->drawChar(dst, chr, x, y, color);
 	_font->drawChar(dst, chr, x + 1, y, color);
 }

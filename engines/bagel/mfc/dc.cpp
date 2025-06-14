@@ -833,7 +833,7 @@ UINT CDC::Impl::setTextAlign(UINT nFlags) {
 
 BOOL CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	TEXTMETRIC &tm = *lpMetrics;
-	Graphics::Font *font = *(CFont::Impl *)_font;
+	Gfx::Font *font = *(CFont::Impl *)_font;
 
 	memset(&tm, 0, sizeof(TEXTMETRIC)); // Initialize to zero
 
@@ -842,16 +842,11 @@ BOOL CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	tm.tmDescent = 0;
 	tm.tmInternalLeading = 0;
 	tm.tmExternalLeading = 0;
-
-	tm.tmAveCharWidth = 0;
-	int totalWidth = 0;
-	char first = (char)32;
-	char last = (char)127;
-
-	for (int c = first; c <= last; ++c)
-		totalWidth += font->getCharWidth(c);
-
-	tm.tmAveCharWidth = totalWidth / (last - first + 1);
+	tm.tmAveCharWidth = font->getAvgCharWidth();
+	if (!tm.tmAveCharWidth) {
+		tm.tmAveCharWidth = font->getStringWidth(
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") / 52 + 1;
+	}
 
 	tm.tmMaxCharWidth = font->getMaxCharWidth();
 	tm.tmWeight = FW_NORMAL;
@@ -860,6 +855,8 @@ BOOL CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	tm.tmDigitizedAspectX = 1;
 	tm.tmDigitizedAspectY = 1;
 
+	const char first = (char)32;
+	const char last = (char)127;
 	tm.tmFirstChar = first;
 	tm.tmLastChar = last;
 	tm.tmDefaultChar = '?'; // Pick a fallback character

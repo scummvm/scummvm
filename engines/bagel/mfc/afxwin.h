@@ -531,14 +531,11 @@ class CFont : public CGdiObject {
 public:
 	struct Impl : public CGdiObjectImpl {
 	public:
-		Gfx::BoldFont *_font;
+		Gfx::Font *_font;
 	public:
-		Impl(Graphics::Font *font) :
-			_font(new Gfx::BoldFont(font)) {}
-		~Impl() override {
-			delete _font;
-		}
-		operator Graphics::Font *() const {
+		Impl(Gfx::Font *font) : _font(font) {}
+		~Impl() override {}
+		operator Gfx::Font *() const {
 			return _font;
 		}
 	};
