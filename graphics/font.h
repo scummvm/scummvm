@@ -213,6 +213,34 @@ public:
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const = 0;
 	virtual void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const;
 
+	/**
+	 * Draw a character at a specific point on the surface.
+	 *
+	 * Unlike drawChar(), this stores the alpha channel for fonts
+	 * that would normally blend characters with the contents of
+	 * the surface. This is useful for 3D games, or for games that
+	 * require text on a separate surface to be blitted later.
+	 *
+	 * Note that the point describes the top left edge point where to draw
+	 * the character. This can be different from the top left edge point of the
+	 * character's bounding box. For example, TTF fonts sometimes move
+	 * characters like 't' by one (or more) pixels to the left to create better
+	 * visual results. To query the actual bounding box of a character, use
+	 * getBoundingBox.
+	 * @see getBoundingBox
+	 *
+	 * The Font implementation should take care of not drawing outside of the
+	 * specified surface.
+	 *
+	 * @param dst   The surface to draw on.
+	 * @param chr   The character to draw.
+	 * @param x     The x coordinate where to draw the character.
+	 * @param y     The y coordinate where to draw the character.
+	 * @param color The color of the character.
+	 */
+	virtual void drawAlphaChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	virtual void drawAlphaChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const;
+
 	/** @overload */
 
 	/**
@@ -236,6 +264,33 @@ public:
 	void drawString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
 	/** @overload */
 	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+
+	/**
+	 * Draw the given @p str string to the given @p dst surface.
+	 *
+	 * Unlike drawString(), this stores the alpha channel for fonts
+	 * that would normally blend characters with the contents of
+	 * the surface. This is useful for 3D games, or for games that
+	 * require text on a separate surface to be blitted later.
+	 *
+	 * @param dst     The surface on which to draw the string.
+	 * @param str     The string to draw.
+	 * @param x       The x position where to start drawing.
+	 * @param y       The y position where to start drawing.
+	 * @param w       Width of the text area.
+	 * @param color   The color with which to draw the string.
+	 * @param align   Text alignment. This can be used to center the string in the given area or to align it to the right.
+	 * @param deltax  Offset to the x starting position of the string.
+	 * @param useEllipsis  Use ellipsis if needed to fit the string in the area.
+	 *
+	 */
+	void drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	/** @overload */
+	void drawAlphaString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	/** @overload */
+	void drawAlphaString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	/** @overload */
+	void drawAlphaString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
 
 	/**
 	 * Compute and return the width of the string @p str when rendered using this font.
