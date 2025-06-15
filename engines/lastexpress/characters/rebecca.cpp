@@ -1220,7 +1220,7 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 
 		if (skip || getCharacterCurrentParams(kCharacterRebecca)[3] >= _gameTime) {
 			if (getCharacterCurrentParams(kCharacterRebecca)[0]) {
-				if (!getCharacterCurrentParams(kCharacterRebecca)[4] && (getCharacterCurrentParams(kCharacterRebecca)[4] = _gameTime + 900, _gameTime == -900) || getCharacterCurrentParams(kCharacterRebecca)[4] < _gameTime) {
+				if ((!getCharacterCurrentParams(kCharacterRebecca)[4] && (getCharacterCurrentParams(kCharacterRebecca)[4] = _gameTime + 900, _gameTime == -900)) || getCharacterCurrentParams(kCharacterRebecca)[4] < _gameTime) {
 					if (inSalon(kCharacterCath)) {
 						getCharacter(kCharacterRebecca).callbacks[getCharacter(kCharacterRebecca).currentCall + 8] = 5;
 						RebeccaCall(&LogicManager::CONS_Rebecca_DoDialog, "REB1013", 0, 0, 0);
@@ -1275,7 +1275,7 @@ void LogicManager::HAND_Rebecca_InSalon1A(HAND_PARAMS) {
 		case 4:
 			getCharacterCurrentParams(kCharacterRebecca)[0] = 1;
 			if (getCharacterCurrentParams(kCharacterRebecca)[0]) {
-				if (!getCharacterCurrentParams(kCharacterRebecca)[4] && (getCharacterCurrentParams(kCharacterRebecca)[4] = _gameTime + 900, _gameTime == -900) || getCharacterCurrentParams(kCharacterRebecca)[4] < _gameTime) {
+				if ((!getCharacterCurrentParams(kCharacterRebecca)[4] && (getCharacterCurrentParams(kCharacterRebecca)[4] = _gameTime + 900, _gameTime == -900)) || getCharacterCurrentParams(kCharacterRebecca)[4] < _gameTime) {
 					if (inSalon(kCharacterCath)) {
 						getCharacter(kCharacterRebecca).callbacks[getCharacter(kCharacterRebecca).currentCall + 8] = 5;
 						RebeccaCall(&LogicManager::CONS_Rebecca_DoDialog, "REB1013", 0, 0, 0);
