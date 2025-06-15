@@ -1117,7 +1117,7 @@ void LogicManager::HAND_Tatiana_GetSomeAir(HAND_PARAMS) {
 			break;
 		}
 
-		if (!_doneNIS[kEventTatianaAskMatchSpeakRussian] && !_doneNIS[kEventTatianaAskMatch] || onLowPlatform(kCharacterCath) || !getCharacterCurrentParams(kCharacterTatiana)[0]) {
+		if ((!_doneNIS[kEventTatianaAskMatchSpeakRussian] && !_doneNIS[kEventTatianaAskMatch]) || onLowPlatform(kCharacterCath) || !getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			getCharacterCurrentParams(kCharacterTatiana)[0] = _gameTime;
 			if (!_gameTime) {
 				setDoor(25, kCharacterCath, 0, 255, 255);
@@ -1542,7 +1542,7 @@ void LogicManager::HAND_Tatiana_StartPart3(HAND_PARAMS) {
 		setDoor(49, kCharacterCath, 1, 10, 9);
 		_items[kItemFirebird].floating = 2;
 
-		if (_doneNIS[kEventTatianaBreakfastGivePoem] || _doneNIS[kEventTatianaGivePoem] && !_doneNIS[kEventTatianaBreakfastAlexei]) {
+		if (_doneNIS[kEventTatianaBreakfastGivePoem] || (_doneNIS[kEventTatianaGivePoem] && !_doneNIS[kEventTatianaBreakfastAlexei])) {
 			_items[kItemParchemin].floating = 2;
 		}
 
@@ -1579,7 +1579,7 @@ void LogicManager::HAND_Tatiana_PlayChess(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterTatiana)[3] && getCharacterCurrentParams(kCharacterTatiana)[4]) {
-			if (!getCharacterCurrentParams(kCharacterTatiana)[11] && (getCharacterCurrentParams(kCharacterTatiana)[11] = _gameTime + 6300, _gameTime == -6300) || getCharacterCurrentParams(kCharacterTatiana)[11] < _gameTime) {
+			if ((!getCharacterCurrentParams(kCharacterTatiana)[11] && (getCharacterCurrentParams(kCharacterTatiana)[11] = _gameTime + 6300, _gameTime == -6300)) || getCharacterCurrentParams(kCharacterTatiana)[11] < _gameTime) {
 				if (rcClear()) {
 					getCharacter(kCharacterTatiana).characterPosition.location = 0;
 					getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
@@ -2441,7 +2441,7 @@ void LogicManager::HAND_Tatiana_WithAlexei(HAND_PARAMS) {
 		if (_gameTime > 2398500) {
 			getCharacterCurrentParams(kCharacterTatiana)[8] = 0x7FFFFFFF;
 		} else {
-			if (!onLowPlatform(kCharacterCath) && getCharacterCurrentParams(kCharacterTatiana)[8] ||
+			if ((!onLowPlatform(kCharacterCath) && getCharacterCurrentParams(kCharacterTatiana)[8]) ||
 				(getCharacterCurrentParams(kCharacterTatiana)[8] = _gameTime, _gameTime)) {
 				if (getCharacterCurrentParams(kCharacterTatiana)[8] >= _gameTime)
 					break;
