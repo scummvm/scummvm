@@ -34,6 +34,7 @@ class EventLoop {
 private:
 	CWnd *&_mainWindow;
 	CWnd *_modalDialog = nullptr;
+	HWND _highlightedWin = nullptr;
 	Libs::EventQueue _messages;
 	uint32 _nextFrameTime = 0;
 	bool _quitFlag = false;

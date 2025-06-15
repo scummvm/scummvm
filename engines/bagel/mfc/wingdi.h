@@ -579,6 +579,36 @@ enum {
 #define BF_FLAT         0x4000  /* For flat rather than 3D borders */
 #define BF_MONO         0x8000  /* For monochrome borders */
 
+/*
+ * WM_NCHITTEST and MOUSEHOOKSTRUCT Mouse Position Codes
+ */
+#define HTERROR             (-2)
+#define HTTRANSPARENT       (-1)
+#define HTNOWHERE           0
+#define HTCLIENT            1
+#define HTCAPTION           2
+#define HTSYSMENU           3
+#define HTGROWBOX           4
+#define HTSIZE              HTGROWBOX
+#define HTMENU              5
+#define HTHSCROLL           6
+#define HTVSCROLL           7
+#define HTMINBUTTON         8
+#define HTMAXBUTTON         9
+#define HTLEFT              10
+#define HTRIGHT             11
+#define HTTOP               12
+#define HTTOPLEFT           13
+#define HTTOPRIGHT          14
+#define HTBOTTOM            15
+#define HTBOTTOMLEFT        16
+#define HTBOTTOMRIGHT       17
+#define HTBORDER            18
+#define HTREDUCE            HTMINBUTTON
+#define HTZOOM              HTMAXBUTTON
+#define HTSIZEFIRST         HTLEFT
+#define HTSIZELAST          HTBOTTOMRIGHT
+
 
 typedef struct tagBITMAPINFOHEADER {
 	DWORD      biSize;

@@ -63,9 +63,19 @@ bool EventLoop::GetMessage(MSG &msg) {
 		} else {
 			HWND hWnd = nullptr;
 			setMessageWnd(ev, hWnd);
-
 			msg = ev;
 			msg.hwnd = hWnd;
+
+			// For mouse messages, if the highlighted control
+			// changes, generate a WM_SETCURSOR event
+			if (isMouseMsg(ev) && hWnd != _highlightedWin) {
+				_highlightedWin = hWnd;
+				PostMessage(
+					_modalDialog ? _modalDialog : _mainWindow,
+					WM_SETCURSOR, (WPARAM)hWnd,
+					MAKELPARAM(HTCLIENT, msg.message)
+				);
+			}
 		}
 	}
 
@@ -176,7 +186,7 @@ BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 }
 
 void EventLoop::TranslateMessage(LPMSG lpMsg) {
-	
+	// No implementation
 }
 
 void EventLoop::DispatchMessage(LPMSG lpMsg) {
