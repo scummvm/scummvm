@@ -1236,6 +1236,9 @@ public:
 	INT GetScrollPosition() const;
 	int SetScrollPos(int nBar, int nPos, BOOL bRedraw = TRUE);
 
+	void SetCapture();
+	void ReleaseCapture();
+
 	const Common::HashMap<int, CWnd *> &getChildren() const {
 		return _children;
 	}
@@ -1353,7 +1356,10 @@ class CButton : public CWnd {
 
 protected:
 	DECLARE_MESSAGE_MAP()
+
 	void OnPaint();
+	void OnLButtonDown(UINT nFlags, CPoint point);
+	void OnLButtonUp(UINT nFlags, CPoint point);
 
 public:
 	~CButton() override {

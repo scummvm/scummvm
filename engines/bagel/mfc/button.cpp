@@ -28,6 +28,8 @@ namespace MFC {
 IMPLEMENT_DYNAMIC(CButton, CWnd)
 BEGIN_MESSAGE_MAP(CButton, CWnd)
 ON_WM_PAINT()
+ON_WM_MBUTTONDOWN()
+ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
@@ -79,6 +81,27 @@ void CButton::OnPaint() {
 	GetWindowText(text);
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(text, rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+}
+
+void CButton::OnLButtonDown(UINT nFlags, CPoint point) {
+	SetCapture();
+	SetCheck(BST_CHECKED);
+	Invalidate();
+}
+
+void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
+	if (GetCapture() == this)
+		ReleaseCapture();
+
+	if (GetCheck()) {
+		SetCheck(BST_UNCHECKED);
+		Invalidate();  // redraw with normal look
+
+		RECT rect;
+		GetClientRect(&rect);
+		if (PtInRect(&rect, point))
+			GetParent()->SendMessage(WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(), BN_CLICKED), (LPARAM)m_hWnd);
+	}
 }
 
 } // namespace MFC

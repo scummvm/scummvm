@@ -35,6 +35,7 @@ private:
 	CWnd *&_mainWindow;
 	CWnd *_modalDialog = nullptr;
 	HWND _highlightedWin = nullptr;
+	CWnd *_captureWin = nullptr;
 	Libs::EventQueue _messages;
 	uint32 _nextFrameTime = 0;
 	bool _quitFlag = false;
@@ -62,6 +63,11 @@ private:
 	 * Returns true if the event is mouse related
 	 */
 	bool isMouseMsg(const Common::Event &ev) const;
+
+	/**
+	 * Converts a position to be relative to a given window
+	 */
+	bool mousePosToClient(CWnd *wnd, POINT &pt);
 
 public:
 	EventLoop(CWnd *&mainWin) : _mainWindow(mainWin) {
@@ -104,6 +110,10 @@ public:
 	void quit() {
 		_quitFlag = true;
 	}
+
+	void SetCapture(HWND hWnd);
+	void ReleaseCapture();
+	HWND GetCapture() const;
 };
 
 } // namespace Libs

@@ -763,8 +763,9 @@ extern BOOL SetScrollRange(HWND hWnd, int nBar,
 extern BOOL ClipCursor(const RECT *lpRect);
 extern BOOL GetCursorPos(LPPOINT lpPoint);
 extern BOOL SetCursorPos(int x, int y);
-extern BOOL SetCapture();
+extern BOOL SetCapture(HWND hWnd);
 extern BOOL ReleaseCapture();
+extern HWND GetCapture();
 extern HCURSOR LoadCursor(HINSTANCE hInstance,
                           LPCSTR lpCursorName);
 extern HCURSOR SetCursor(HCURSOR hCursor);

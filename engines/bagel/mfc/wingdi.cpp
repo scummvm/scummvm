@@ -245,12 +245,18 @@ BOOL SetCursorPos(int x, int y) {
 	return TRUE;
 }
 
-BOOL SetCapture() {
-	error("TODO: SetCapture");
+BOOL SetCapture(HWND hWnd) {
+	AfxGetApp()->SetCapture(hWnd);
+	return true;
 }
 
 BOOL ReleaseCapture() {
-	error("TODO: ReleaseCapture");
+	AfxGetApp()->ReleaseCapture();
+	return true;
+}
+
+HWND GetCapture() {
+	return AfxGetApp()->GetCapture();
 }
 
 HCURSOR LoadCursor(HINSTANCE hInstance,

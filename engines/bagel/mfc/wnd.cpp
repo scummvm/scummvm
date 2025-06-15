@@ -43,6 +43,8 @@ CWnd::~CWnd() {
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
         DWORD dwStyle, const RECT &rect, CWnd *pParentWnd,
 		UINT nID, CCreateContext *pContext) {
+	m_pParentWnd = pParentWnd;
+
 	// Set up create structure
 	CREATESTRUCT cs;
 	cs.x = rect.left;
@@ -71,7 +73,6 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 
 	_controlId = nID;
 
-	m_pParentWnd = pParentWnd;
 	if (m_pParentWnd)
 		m_pParentWnd->_children[nID] = this;
 
@@ -638,7 +639,7 @@ BOOL CWnd::SetDlgItemText(int nIDDlgItem, LPCSTR lpString) {
 }
 
 int CWnd::GetDlgCtrlID() const {
-	error("TODO: CWnd::GetDlgCtrlID");
+	return _controlId;
 }
 
 void CWnd::CheckDlgButton(int nIDButton, UINT nCheck) {
@@ -679,6 +680,14 @@ void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
 
 	SendMessage(WM_INITDIALOG);
 	ShowWindow(SW_SHOWNORMAL);
+}
+
+void CWnd::SetCapture() {
+	AfxGetApp()->SetCapture(m_hWnd);
+}
+
+void CWnd::ReleaseCapture() {
+	AfxGetApp()->ReleaseCapture();
 }
 
 } // namespace MFC

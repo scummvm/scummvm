@@ -97,6 +97,20 @@ void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
 }
 
 void EventLoop::setMouseMessageWnd(Common::Event &ev, HWND &hWnd) {
+	// Handle mouse capture
+	if (_captureWin) {
+		hWnd = _captureWin->m_hWnd;
+
+		POINT pt;
+		pt.x = ev.mouse.x;
+		pt.y = ev.mouse.y;
+		mousePosToClient(_captureWin, pt);
+
+		ev.mouse.x = pt.x;
+		ev.mouse.y = pt.y;
+		return;
+	}
+
 	// Special case for mouse moves: if there's an modal dialog,
 	// mouse moves will still be routed to the main window
 	// if the mouse is outside the dialog bounds
@@ -113,15 +127,10 @@ void EventLoop::setMouseMessageWnd(Common::Event &ev, HWND &hWnd) {
 
 HWND EventLoop::getMouseMessageWnd(Common::Event &ev, CWnd *parent) {
 	POINT pt;
-	RECT clientRect;
-
-	// Get the mouse position in passed window
 	pt.x = ev.mouse.x;
 	pt.y = ev.mouse.y;
-	parent->ScreenToClient(&pt);
-	parent->GetClientRect(&clientRect);
-	Common::Rect r = clientRect;
-	if (!r.contains(pt.x, pt.y))
+
+	if (!mousePosToClient(parent, pt))
 		return nullptr;
 
 	// Iterate through any children
@@ -135,6 +144,17 @@ HWND EventLoop::getMouseMessageWnd(Common::Event &ev, CWnd *parent) {
 	ev.mouse.x = pt.x;
 	ev.mouse.y = pt.y;
 	return parent;
+}
+
+bool EventLoop::mousePosToClient(CWnd *wnd, POINT &pt) {
+	RECT clientRect;
+
+	// Get the mouse position in passed window
+	wnd->ScreenToClient(&pt);
+	wnd->GetClientRect(&clientRect);
+
+	Common::Rect r = clientRect;
+	return r.contains(pt.x, pt.y);
 }
 
 bool EventLoop::pollEvents(Common::Event &event) {
@@ -207,6 +227,18 @@ bool EventLoop::isMouseMsg(const Common::Event &ev) const {
 		ev.type == Common::EVENT_WHEELDOWN ||
 		ev.type == Common::EVENT_MBUTTONDOWN ||
 		ev.type == Common::EVENT_MBUTTONUP;;
+}
+
+void EventLoop::SetCapture(HWND hWnd) {
+	_captureWin = hWnd;
+}
+
+void EventLoop::ReleaseCapture() {
+	_captureWin = nullptr;
+}
+
+HWND EventLoop::GetCapture() const {
+	return _captureWin;
 }
 
 } // namespace Libs
