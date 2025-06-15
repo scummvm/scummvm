@@ -380,7 +380,7 @@ void LogicManager::HAND_Alexei_DoWalk(HAND_PARAMS) {
 			break;
 		}
 
-		if (_doneNIS[kEventAlexeiSalonVassili] || _doneNIS[kEventTatianaAskMatchSpeakRussian] && cathHasItem(kItemPassengerList)) {
+		if (_doneNIS[kEventAlexeiSalonVassili] || (_doneNIS[kEventTatianaAskMatchSpeakRussian] && cathHasItem(kItemPassengerList))) {
 			if (rnd(2) == 0) {
 				playDialog(kCharacterCath, "CAT1012A", -1, 0);
 			} else {
@@ -550,7 +550,7 @@ void LogicManager::CONS_Alexei_PacingAtWindow(CONS_PARAMS) {
 void LogicManager::HAND_Alexei_PacingAtWindow(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0) ||
+		if ((!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0)) ||
 			getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
 			if (rcClear()) {
 				getCharacter(kCharacterAlexei).characterPosition.location = 0;
@@ -1007,7 +1007,7 @@ void LogicManager::CONS_Alexei_Sitting(CONS_PARAMS) {
 void LogicManager::HAND_Alexei_Sitting(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0) || getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
+		if ((!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0)) || getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
 			if (rcClear()) {
 				getCharacter(kCharacterAlexei).characterPosition.location = 0;
 				getCharacter(kCharacterAlexei).inventoryItem = 0;
@@ -1073,7 +1073,7 @@ void LogicManager::CONS_Alexei_StandingAtWindow(CONS_PARAMS) {
 void LogicManager::HAND_Alexei_StandingAtWindow(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0) ||
+		if ((!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0)) ||
 			getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
 			if (rcClear()) {
 				getCharacter(kCharacterAlexei).characterPosition.location = 0;
@@ -1092,7 +1092,7 @@ void LogicManager::HAND_Alexei_StandingAtWindow(HAND_PARAMS) {
 				break;
 			}
 
-			if ((inSalon(kCharacterCath) || inDiningRoom(kCharacterCath)) && getCharacterCurrentParams(kCharacterAlexei)[2] || (getCharacterCurrentParams(kCharacterAlexei)[2] = _gameTime, _gameTime)) {
+			if (((inSalon(kCharacterCath) || inDiningRoom(kCharacterCath)) && getCharacterCurrentParams(kCharacterAlexei)[2]) || (getCharacterCurrentParams(kCharacterAlexei)[2] = _gameTime, _gameTime)) {
 				if (getCharacterCurrentParams(kCharacterAlexei)[2] >= _gameTime)
 					break;
 
@@ -1702,7 +1702,7 @@ void LogicManager::HAND_Alexei_Pacing3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (inSalon(kCharacterCath)) {
-			if (!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + 2700, _gameTime == -2700) || getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
+			if ((!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + 2700, _gameTime == -2700)) || getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
 				getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall + 8] = 1;
 				AlexeiCall(&LogicManager::CONS_Alexei_WaitRCClear, 0, 0, 0, 0);
 				break;
@@ -1710,7 +1710,7 @@ void LogicManager::HAND_Alexei_Pacing3(HAND_PARAMS) {
 		} else {
 			getCharacterCurrentParams(kCharacterAlexei)[1] = 0;
 		}
-		if (!getCharacterCurrentParams(kCharacterAlexei)[2] && (getCharacterCurrentParams(kCharacterAlexei)[2] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0) || getCharacterCurrentParams(kCharacterAlexei)[2] < _gameTime) {
+		if ((!getCharacterCurrentParams(kCharacterAlexei)[2] && (getCharacterCurrentParams(kCharacterAlexei)[2] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0)) || getCharacterCurrentParams(kCharacterAlexei)[2] < _gameTime) {
 			if (rcClear()) {
 				getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall + 8] = 3;
 				AlexeiCall(&LogicManager::CONS_Alexei_PacingAtWindow, 0, 0, 0, 0);
@@ -2151,7 +2151,7 @@ void LogicManager::HAND_Alexei_Pacing(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (_gameTime < 1806300) {
-			if (!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0) || getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
+			if ((!getCharacterCurrentParams(kCharacterAlexei)[1] && (getCharacterCurrentParams(kCharacterAlexei)[1] = _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0], _gameTime + getCharacterCurrentParams(kCharacterAlexei)[0] == 0)) || getCharacterCurrentParams(kCharacterAlexei)[1] < _gameTime) {
 				if (rcClear()) {
 					getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall + 8] = 1;
 					AlexeiCall(&LogicManager::CONS_Alexei_PacingAtWindow, 0, 0, 0, 0);
