@@ -394,6 +394,9 @@ public:
 	MacMenu *getMenu();
 	MacMenu *getMenu(int id);
 
+	void sayText(const Common::U32String &text) const;
+	void setTTSEnabled(bool enabled);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
@@ -484,6 +487,8 @@ private:
 	Common::Archive *_dataBundle;
 
 	Common::U32String _clipboard;
+
+	bool _ttsEnabled;
 };
 
 const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len);

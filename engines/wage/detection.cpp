@@ -38,12 +38,13 @@ static const PlainGameDescriptor wageGames[] = {
 };
 
 #include "wage/detection_tables.h"
+#include "wage/detection.h"
 
 class WageMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	WageMetaEngineDetection() : AdvancedMetaEngineDetection(Wage::gameDescriptions, wageGames) {
 		_md5Bytes = 2 * 1024 * 1024;
-		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
+		_guiOptions = GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS);
 	}
 
 	const char *getName() const override {
