@@ -109,10 +109,10 @@ void LogicManager::HAND_Sophie_DoWalkBehind(HAND_PARAMS) {
 	case 0:
 		getCharacterCurrentParams(kCharacterSophie)[2] = 0;
 		if (nearChar(kCharacterSophie, kCharacterRebecca, 500) ||
-			(getCharacter(kCharacterSophie).direction == 1) && ((getCharacter(kCharacterSophie).characterPosition.car > getCharacter(kCharacterRebecca).characterPosition.car) ||
-																 getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position > getCharacter(kCharacterRebecca).characterPosition.position) ||
-			getCharacter(kCharacterSophie).direction == 2 && ((getCharacter(kCharacterSophie).characterPosition.car < getCharacter(kCharacterRebecca).characterPosition.car) ||
-															   getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position < getCharacter(kCharacterRebecca).characterPosition.position)) {
+			((getCharacter(kCharacterSophie).direction == 1) && ((getCharacter(kCharacterSophie).characterPosition.car > getCharacter(kCharacterRebecca).characterPosition.car) ||
+																 (getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position > getCharacter(kCharacterRebecca).characterPosition.position))) ||
+			(getCharacter(kCharacterSophie).direction == 2 && ((getCharacter(kCharacterSophie).characterPosition.car < getCharacter(kCharacterRebecca).characterPosition.car) ||
+															   (getCharacter(kCharacterSophie).characterPosition.car == getCharacter(kCharacterRebecca).characterPosition.car && getCharacter(kCharacterSophie).characterPosition.position < getCharacter(kCharacterRebecca).characterPosition.position)))) {
 
 			getCharacter(kCharacterSophie).waitedTicksUntilCycleRestart = 0;
 			getCharacterCurrentParams(kCharacterSophie)[2] = 1;
