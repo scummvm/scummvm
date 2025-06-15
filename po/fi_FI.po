@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-15 23:21+0000\n"
+"POT-Creation-Date: 2025-06-15 23:55+0000\n"
 "PO-Revision-Date: 2025-05-22 18:56+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6134,7 +6134,7 @@ msgstr "Tarkista päivitykset..."
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
-#: engines/ultima/ultima8/ultima8.cpp:191
+#: engines/ultima/ultima8/ultima8.cpp:192
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
@@ -7177,7 +7177,7 @@ msgstr "Vihjeen julkisuus päälle / pois"
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:206
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/pegasus/pegasus.cpp:2825 engines/ultima/ultima8/metaengine.cpp:45
 msgid "Save Game"
 msgstr "Tallenna peli"
 
@@ -7190,7 +7190,7 @@ msgstr "Tallenna peli"
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:211
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/pegasus/pegasus.cpp:2831 engines/ultima/ultima8/metaengine.cpp:46
 msgid "Load Game"
 msgstr "Lataa pelitallennus"
 
@@ -7576,6 +7576,7 @@ msgstr "Puhu/Vuorovaikuta"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
+#: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Attack"
 msgstr "Hyökkäys"
 
@@ -7637,6 +7638,7 @@ msgid "Traits"
 msgstr "Piirteet"
 
 #: engines/crab/input/input.cpp:266 engines/sludge/keymapper_tables.h:410
+#: engines/ultima/ultima8/metaengine.cpp:44
 msgid "Quick Save"
 msgstr "Pikatallennus"
 
@@ -8037,6 +8039,7 @@ msgstr "Kierrä oikealle"
 #: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
+#: engines/ultima/ultima8/metaengine.cpp:57
 msgid "Run"
 msgstr "Juokse"
 
@@ -8862,19 +8865,20 @@ msgstr "Eye of Beholder-tukea ei ole käännetty mukaan"
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
-#: engines/ultima/ultima8/metaengine.cpp:145
+#: engines/ultima/ultima8/metaengine.cpp:142
 msgid "Interact via Left Click"
 msgstr "Interaktio vasemmalla hiirennapilla"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
-#: engines/ultima/ultima8/metaengine.cpp:151
+#: engines/ultima/ultima8/metaengine.cpp:148
 msgid "Interact via Right Click"
 msgstr "Interaktio oikealla hiirennapilla"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
 #: engines/mohawk/riven.cpp:881 engines/twine/metaengine.cpp:332
+#: engines/ultima/ultima8/metaengine.cpp:51
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
@@ -8891,22 +8895,28 @@ msgid "Move Backwards"
 msgstr "Siirry taaksepäin"
 
 #: engines/kyra/engine/eobcommon.cpp:371
+#: engines/ultima/ultima8/metaengine.cpp:55
+#: engines/ultima/ultima8/metaengine.cpp:110
 msgid "Move Left"
 msgstr "Liiku vasemmalle"
 
 #: engines/kyra/engine/eobcommon.cpp:372
+#: engines/ultima/ultima8/metaengine.cpp:56
+#: engines/ultima/ultima8/metaengine.cpp:111
 msgid "Move Right"
 msgstr "Liiku oikealle"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
-#: engines/twine/metaengine.cpp:353 engines/zvision/metaengine.cpp:209
+#: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
+#: engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "Käänny vasemmalle"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
-#: engines/twine/metaengine.cpp:346 engines/zvision/metaengine.cpp:215
+#: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
+#: engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "Käänny oikealle"
 
@@ -13152,19 +13162,271 @@ msgstr "The Savage Empire"
 msgid "Transfer Character"
 msgstr "Siirrä hahmo"
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:47
+#, fuzzy
+#| msgid "Toggle Combat"
+msgid "Combat"
+msgstr "Taistelumoodi päälle / pois"
+
+#: engines/ultima/ultima8/metaengine.cpp:48
+#, fuzzy
+#| msgid "Game menu"
+msgid "Game Menu"
+msgstr "Pelivalikko"
+
+#: engines/ultima/ultima8/metaengine.cpp:52
+msgid "Move Back"
+msgstr "Liiku taaksepäin"
+
+#: engines/ultima/ultima8/metaengine.cpp:53
+#: engines/ultima/ultima8/metaengine.cpp:108
+#, fuzzy
+#| msgid "Move up"
+msgid "Move Up"
+msgstr "Liiku ylöspäin"
+
+#: engines/ultima/ultima8/metaengine.cpp:54
+#: engines/ultima/ultima8/metaengine.cpp:109
+#, fuzzy
+#| msgid "Move down"
+msgid "Move Down"
+msgstr "Liiku alaspäin"
+
+#: engines/ultima/ultima8/metaengine.cpp:58
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Highlight Items"
+msgstr "Korosta seuraavaa dialogia"
+
+#: engines/ultima/ultima8/metaengine.cpp:64
+msgid "Use Bedroll"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:65
+#, fuzzy
+#| msgid "Backspace"
+msgid "Use Backpack"
+msgstr "Askelpalautin"
+
+#: engines/ultima/ultima8/metaengine.cpp:66
+#, fuzzy
+#| msgid "Use RGB rendering"
+msgid "Use Keyring"
+msgstr "Käytä RGB-renderöintiä"
+
+#: engines/ultima/ultima8/metaengine.cpp:67
+#, fuzzy
+#| msgid "Open map"
+msgid "Open Minimap"
+msgstr "Avaa kartta"
+
+#: engines/ultima/ultima8/metaengine.cpp:68
+msgid "Use Recall"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:69
+#, fuzzy
+#| msgid "Open inventory"
+msgid "Open Inventory"
+msgstr "Avaa Inventaario"
+
+#: engines/ultima/ultima8/metaengine.cpp:70
+#, fuzzy
+#| msgid "Close popup"
+msgid "Close Gumps"
+msgstr "Sulje ponnahdusikkuna"
+
+#: engines/ultima/ultima8/metaengine.cpp:71
+msgid "Jump (fake both-button-click)"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:72
+#, fuzzy
+#| msgid "Side Step"
+msgid "Step"
+msgstr "Sivuaskel"
+
+#: engines/ultima/ultima8/metaengine.cpp:78
+#, fuzzy
+#| msgid "Next action"
+msgid "Next Weapon"
+msgstr "Seuraava toiminto"
+
+#: engines/ultima/ultima8/metaengine.cpp:79
+#, fuzzy
+#| msgid "Animated inventory items"
+msgid "Next Inventory Item"
+msgstr "Animoidut invenaarioesineet"
+
+#: engines/ultima/ultima8/metaengine.cpp:80
+#, fuzzy
+#| msgid "Inventory"
+msgid "Use Inventory Item"
+msgstr "Tavarat"
+
+#: engines/ultima/ultima8/metaengine.cpp:81
+msgid "Use Medical Kit"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:82
+msgid "Use Energy Cube"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:83
+msgid "Detonate Bomb"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:85
+#, fuzzy
+#| msgid "Drop page"
+msgid "Drop Weapon"
+msgstr "Pudota sivu"
+
+#: engines/ultima/ultima8/metaengine.cpp:86
+#, fuzzy
+#| msgid "Select a Theme"
+msgid "Select Item"
+msgstr "Valitse teema"
+
+#: engines/ultima/ultima8/metaengine.cpp:87
+#, fuzzy
+#| msgid "Next action"
+msgid "Use Selection"
+msgstr "Seuraava toiminto"
+
+#: engines/ultima/ultima8/metaengine.cpp:88
+msgid "Grab Items"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Camera moves with Silencer"
+msgid "Focus Camera on Silencer"
+msgstr "Kamera liikkuu hahmon mukana"
+
+#: engines/ultima/ultima8/metaengine.cpp:91
+msgid "Jump / Roll / Crouch"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:92
+#, fuzzy
+#| msgid "Shorty mode"
+msgid "Short Jump"
+msgstr "Pätkätila"
+
+#: engines/ultima/ultima8/metaengine.cpp:93
+#, fuzzy
+#| msgid "Slide Left"
+msgid "Sidestep Left"
+msgstr "Liu'u vasemmalle"
+
+#: engines/ultima/ultima8/metaengine.cpp:94
+#, fuzzy
+#| msgid "Slide Right"
+msgid "Sidestep Right"
+msgstr "Liu'u oikealle"
+
+#: engines/ultima/ultima8/metaengine.cpp:95
+#, fuzzy
+#| msgid "Face Forward"
+msgid "Step Forward"
+msgstr "Katse eteenpäin"
+
+#: engines/ultima/ultima8/metaengine.cpp:96
+#, fuzzy
+#| msgid "Step back"
+msgid "Step Back"
+msgstr "Astu taakse"
+
+#: engines/ultima/ultima8/metaengine.cpp:97
+#, fuzzy
+#| msgid "Roll left"
+msgid "Roll Left"
+msgstr "Kallista vasemmalle"
+
+#: engines/ultima/ultima8/metaengine.cpp:98
+#, fuzzy
+#| msgid "Roll right"
+msgid "Roll Right"
+msgstr "Kallista oikealle"
+
+#: engines/ultima/ultima8/metaengine.cpp:99
+#, fuzzy
+#| msgid "Toggle Clock"
+msgid "Toggle Crouch"
+msgstr "Kello päälle / pois"
+
+#: engines/ultima/ultima8/metaengine.cpp:100
+msgid "Side Step / Advance / Retreat"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:105
+#, fuzzy
+#| msgid "Toggle Clock"
+msgid "Toggle Clipping"
+msgstr "Kello päälle / pois"
+
+#: engines/ultima/ultima8/metaengine.cpp:106
+msgid "Ascend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:107
+msgid "Descend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:118
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show Touching Items"
+msgstr "Näytä vinkit"
+
+#: engines/ultima/ultima8/metaengine.cpp:119
+#, fuzzy
+#| msgid "Show quotes"
+msgid "Show Editor Items"
+msgstr "Näytä lainaukset"
+
+#: engines/ultima/ultima8/metaengine.cpp:120
+msgid "Decrement Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:121
+msgid "Increment Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:122
+#, fuzzy
+#| msgid "Toggle panel style"
+msgid "Toggle Frame By Frame"
+msgstr "Vaihda paneelin tyyliä"
+
+#: engines/ultima/ultima8/metaengine.cpp:123
+msgid "Advance Frame"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:124
+msgid "Toggle Avatar In Stasis"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:125
+#, fuzzy
+#| msgid "Image Viewer"
+msgid "Show Shape Viewer"
+msgstr "Kuvankatselu"
+
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/metaengine.cpp:181
+#: engines/ultima/ultima8/metaengine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Huijaukset"
 
-#: engines/ultima/ultima8/metaengine.cpp:196
+#: engines/ultima/ultima8/metaengine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Debug"
 
@@ -14090,9 +14352,6 @@ msgstr ""
 #~ msgid "Toggle sound effect on/off"
 #~ msgstr "Kytke äänitehoste päälle/pois"
 
-#~ msgid "Move Back"
-#~ msgstr "Liiku taaksepäin"
-
 #~ msgid "Move forward"
 #~ msgstr "Liiku eteenpäin"
 
@@ -14210,11 +14469,6 @@ msgstr ""
 #~| msgid "Previous action"
 #~ msgid "Pull action"
 #~ msgstr "Edellinen toiminto"
-
-#, fuzzy
-#~| msgid "Next action"
-#~ msgid "Use action"
-#~ msgstr "Seuraava toiminto"
 
 #~ msgid "Open 3DS Settings"
 #~ msgstr "Avaa 3DS asetukset"

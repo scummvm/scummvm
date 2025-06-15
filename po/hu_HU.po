@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-15 23:21+0000\n"
+"POT-Creation-Date: 2025-06-15 23:55+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6176,7 +6176,7 @@ msgstr "Frissítések keresése..."
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
-#: engines/ultima/ultima8/ultima8.cpp:191
+#: engines/ultima/ultima8/ultima8.cpp:192
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Nem található a(z) '%s' motor adat fájlja."
@@ -7219,7 +7219,7 @@ msgstr "Nyom publikálása"
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:206
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/pegasus/pegasus.cpp:2825 engines/ultima/ultima8/metaengine.cpp:45
 msgid "Save Game"
 msgstr "Játék mentés"
 
@@ -7232,7 +7232,7 @@ msgstr "Játék mentés"
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:211
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/pegasus/pegasus.cpp:2831 engines/ultima/ultima8/metaengine.cpp:46
 msgid "Load Game"
 msgstr "Játék betöltés"
 
@@ -7618,6 +7618,7 @@ msgstr "Beszélés/Interakció"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
+#: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Attack"
 msgstr "Támadás"
 
@@ -7679,6 +7680,7 @@ msgid "Traits"
 msgstr "Jellemzők"
 
 #: engines/crab/input/input.cpp:266 engines/sludge/keymapper_tables.h:410
+#: engines/ultima/ultima8/metaengine.cpp:44
 msgid "Quick Save"
 msgstr "Gyors Mentés"
 
@@ -8096,6 +8098,7 @@ msgstr "Forgatás Jobbra"
 #: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
+#: engines/ultima/ultima8/metaengine.cpp:57
 msgid "Run"
 msgstr "Futtatás"
 
@@ -8938,19 +8941,20 @@ msgstr "Eye of Beholder támogatás nincs lefordítva"
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
-#: engines/ultima/ultima8/metaengine.cpp:145
+#: engines/ultima/ultima8/metaengine.cpp:142
 msgid "Interact via Left Click"
 msgstr "Interakció bal kattintással"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
-#: engines/ultima/ultima8/metaengine.cpp:151
+#: engines/ultima/ultima8/metaengine.cpp:148
 msgid "Interact via Right Click"
 msgstr "Interakció jobb kattintással"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
 #: engines/mohawk/riven.cpp:881 engines/twine/metaengine.cpp:332
+#: engines/ultima/ultima8/metaengine.cpp:51
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
@@ -8967,22 +8971,28 @@ msgid "Move Backwards"
 msgstr "Mozgás hátrafelé"
 
 #: engines/kyra/engine/eobcommon.cpp:371
+#: engines/ultima/ultima8/metaengine.cpp:55
+#: engines/ultima/ultima8/metaengine.cpp:110
 msgid "Move Left"
 msgstr "Mozgás balra"
 
 #: engines/kyra/engine/eobcommon.cpp:372
+#: engines/ultima/ultima8/metaengine.cpp:56
+#: engines/ultima/ultima8/metaengine.cpp:111
 msgid "Move Right"
 msgstr "Mozgás jobbra"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
-#: engines/twine/metaengine.cpp:353 engines/zvision/metaengine.cpp:209
+#: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
+#: engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "Fordulás balra"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
-#: engines/twine/metaengine.cpp:346 engines/zvision/metaengine.cpp:215
+#: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
+#: engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "Fordulás jobbra"
 
@@ -13256,19 +13266,271 @@ msgstr "A Barbár Birodalom"
 msgid "Transfer Character"
 msgstr "Karakter átadása"
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:47
+#, fuzzy
+#| msgid "Toggle Combat"
+msgid "Combat"
+msgstr "Harcmodor Váltás"
+
+#: engines/ultima/ultima8/metaengine.cpp:48
+#, fuzzy
+#| msgid "Game menu"
+msgid "Game Menu"
+msgstr "Játék menü"
+
+#: engines/ultima/ultima8/metaengine.cpp:52
+msgid "Move Back"
+msgstr "Mozgás hátra"
+
+#: engines/ultima/ultima8/metaengine.cpp:53
+#: engines/ultima/ultima8/metaengine.cpp:108
+#, fuzzy
+#| msgid "Move up"
+msgid "Move Up"
+msgstr "Mozgás fel"
+
+#: engines/ultima/ultima8/metaengine.cpp:54
+#: engines/ultima/ultima8/metaengine.cpp:109
+#, fuzzy
+#| msgid "Move down"
+msgid "Move Down"
+msgstr "Mozgás le"
+
+#: engines/ultima/ultima8/metaengine.cpp:58
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Highlight Items"
+msgstr "Következő dialógus kiemelése"
+
+#: engines/ultima/ultima8/metaengine.cpp:64
+msgid "Use Bedroll"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:65
+#, fuzzy
+#| msgid "Backspace"
+msgid "Use Backpack"
+msgstr "Törlésgomb"
+
+#: engines/ultima/ultima8/metaengine.cpp:66
+#, fuzzy
+#| msgid "Use RGB rendering"
+msgid "Use Keyring"
+msgstr "RGB megjelenítés használata"
+
+#: engines/ultima/ultima8/metaengine.cpp:67
+#, fuzzy
+#| msgid "Open map"
+msgid "Open Minimap"
+msgstr "Térkép megnyitása"
+
+#: engines/ultima/ultima8/metaengine.cpp:68
+msgid "Use Recall"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:69
+#, fuzzy
+#| msgid "Open inventory"
+msgid "Open Inventory"
+msgstr "Felszerelés megnyitása"
+
+#: engines/ultima/ultima8/metaengine.cpp:70
+#, fuzzy
+#| msgid "Close popup"
+msgid "Close Gumps"
+msgstr "Felugró ablak bezárása"
+
+#: engines/ultima/ultima8/metaengine.cpp:71
+msgid "Jump (fake both-button-click)"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:72
+#, fuzzy
+#| msgid "Side Step"
+msgid "Step"
+msgstr "Oldallépés"
+
+#: engines/ultima/ultima8/metaengine.cpp:78
+#, fuzzy
+#| msgid "Next action"
+msgid "Next Weapon"
+msgstr "Következő művelet"
+
+#: engines/ultima/ultima8/metaengine.cpp:79
+#, fuzzy
+#| msgid "Animated inventory items"
+msgid "Next Inventory Item"
+msgstr "Animált felszerelés tárgyak"
+
+#: engines/ultima/ultima8/metaengine.cpp:80
+#, fuzzy
+#| msgid "Inventory"
+msgid "Use Inventory Item"
+msgstr "Felszerelés"
+
+#: engines/ultima/ultima8/metaengine.cpp:81
+msgid "Use Medical Kit"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:82
+msgid "Use Energy Cube"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:83
+msgid "Detonate Bomb"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:85
+#, fuzzy
+#| msgid "Drop page"
+msgid "Drop Weapon"
+msgstr "Oldal eldobás"
+
+#: engines/ultima/ultima8/metaengine.cpp:86
+#, fuzzy
+#| msgid "Select a Theme"
+msgid "Select Item"
+msgstr "Válassz témát"
+
+#: engines/ultima/ultima8/metaengine.cpp:87
+#, fuzzy
+#| msgid "Next action"
+msgid "Use Selection"
+msgstr "Következõ akció"
+
+#: engines/ultima/ultima8/metaengine.cpp:88
+msgid "Grab Items"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Camera moves with Silencer"
+msgid "Focus Camera on Silencer"
+msgstr "Kamera mozgatás hangtompítóval"
+
+#: engines/ultima/ultima8/metaengine.cpp:91
+msgid "Jump / Roll / Crouch"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:92
+#, fuzzy
+#| msgid "Shorty mode"
+msgid "Short Jump"
+msgstr "Rövid mód"
+
+#: engines/ultima/ultima8/metaengine.cpp:93
+#, fuzzy
+#| msgid "Slide Left"
+msgid "Sidestep Left"
+msgstr "Csúszás balra"
+
+#: engines/ultima/ultima8/metaengine.cpp:94
+#, fuzzy
+#| msgid "Slide Right"
+msgid "Sidestep Right"
+msgstr "Csúszás jobbra"
+
+#: engines/ultima/ultima8/metaengine.cpp:95
+#, fuzzy
+#| msgid "Face Forward"
+msgid "Step Forward"
+msgstr "Arccal előre"
+
+#: engines/ultima/ultima8/metaengine.cpp:96
+#, fuzzy
+#| msgid "Step back"
+msgid "Step Back"
+msgstr "Hátralép"
+
+#: engines/ultima/ultima8/metaengine.cpp:97
+#, fuzzy
+#| msgid "Move left"
+msgid "Roll Left"
+msgstr "Mozgás balra"
+
+#: engines/ultima/ultima8/metaengine.cpp:98
+#, fuzzy
+#| msgid "Move right"
+msgid "Roll Right"
+msgstr "Mozgás jobbra"
+
+#: engines/ultima/ultima8/metaengine.cpp:99
+#, fuzzy
+#| msgid "Toggle Clock"
+msgid "Toggle Crouch"
+msgstr "Óra ki/be kapcsolása"
+
+#: engines/ultima/ultima8/metaengine.cpp:100
+msgid "Side Step / Advance / Retreat"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:105
+#, fuzzy
+#| msgid "Toggle Clock"
+msgid "Toggle Clipping"
+msgstr "Óra ki/be kapcsolása"
+
+#: engines/ultima/ultima8/metaengine.cpp:106
+msgid "Ascend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:107
+msgid "Descend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:118
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show Touching Items"
+msgstr "Tippek mutatása"
+
+#: engines/ultima/ultima8/metaengine.cpp:119
+#, fuzzy
+#| msgid "Show quotes"
+msgid "Show Editor Items"
+msgstr "Idézetek megjelenítése"
+
+#: engines/ultima/ultima8/metaengine.cpp:120
+msgid "Decrement Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:121
+msgid "Increment Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:122
+#, fuzzy
+#| msgid "Toggle panel style"
+msgid "Toggle Frame By Frame"
+msgstr "Ablak stílus kapcsoló"
+
+#: engines/ultima/ultima8/metaengine.cpp:123
+msgid "Advance Frame"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:124
+msgid "Toggle Avatar In Stasis"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:125
+#, fuzzy
+#| msgid "Image Viewer"
+msgid "Show Shape Viewer"
+msgstr "Kép nézegető"
+
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Crusader"
 msgstr "Keresztes lovag"
 
-#: engines/ultima/ultima8/metaengine.cpp:181
+#: engines/ultima/ultima8/metaengine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Csalások"
 
-#: engines/ultima/ultima8/metaengine.cpp:196
+#: engines/ultima/ultima8/metaengine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII hibakereső"
 
@@ -14209,9 +14471,6 @@ msgstr ""
 #~ msgid "Toggle sound effect on/off"
 #~ msgstr "Speciális hangeffektusok hangereje"
 
-#~ msgid "Move Back"
-#~ msgstr "Mozgás hátra"
-
 #~ msgid "Move forward"
 #~ msgstr "Menj tovább"
 
@@ -14341,11 +14600,6 @@ msgstr ""
 #~| msgid "Previous action"
 #~ msgid "Pull action"
 #~ msgstr "Elõzõ akció"
-
-#, fuzzy
-#~| msgid "Next action"
-#~ msgid "Use action"
-#~ msgstr "Következõ akció"
 
 #~ msgid "Open 3DS Settings"
 #~ msgstr "3DS Beállítások megnyitása"

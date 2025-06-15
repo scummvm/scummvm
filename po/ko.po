@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-15 23:21+0000\n"
+"POT-Creation-Date: 2025-06-15 23:55+0000\n"
 "PO-Revision-Date: 2025-05-19 20:25+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6069,7 +6069,7 @@ msgstr "업데이트 확인 중..."
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
-#: engines/ultima/ultima8/ultima8.cpp:191
+#: engines/ultima/ultima8/ultima8.cpp:192
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다."
@@ -7093,7 +7093,7 @@ msgstr "단서 개인 정보 보호 전환"
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:206
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/pegasus/pegasus.cpp:2825 engines/ultima/ultima8/metaengine.cpp:45
 msgid "Save Game"
 msgstr "게임 저장"
 
@@ -7106,7 +7106,7 @@ msgstr "게임 저장"
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:211
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/pegasus/pegasus.cpp:2831 engines/ultima/ultima8/metaengine.cpp:46
 msgid "Load Game"
 msgstr "게임 불러오기"
 
@@ -7492,6 +7492,7 @@ msgstr "대화/상호작용"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
+#: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Attack"
 msgstr "공격"
 
@@ -7553,6 +7554,7 @@ msgid "Traits"
 msgstr "특성"
 
 #: engines/crab/input/input.cpp:266 engines/sludge/keymapper_tables.h:410
+#: engines/ultima/ultima8/metaengine.cpp:44
 msgid "Quick Save"
 msgstr "빠른 저장"
 
@@ -7949,6 +7951,7 @@ msgstr "오른쪽으로 회전"
 #: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
+#: engines/ultima/ultima8/metaengine.cpp:57
 msgid "Run"
 msgstr "달리기"
 
@@ -8765,19 +8768,20 @@ msgstr "주시자의 눈 지원이 컴파일되지 않았음"
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
-#: engines/ultima/ultima8/metaengine.cpp:145
+#: engines/ultima/ultima8/metaengine.cpp:142
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
-#: engines/ultima/ultima8/metaengine.cpp:151
+#: engines/ultima/ultima8/metaengine.cpp:148
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
 #: engines/mohawk/riven.cpp:881 engines/twine/metaengine.cpp:332
+#: engines/ultima/ultima8/metaengine.cpp:51
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
@@ -8794,22 +8798,28 @@ msgid "Move Backwards"
 msgstr "뒤로 이동"
 
 #: engines/kyra/engine/eobcommon.cpp:371
+#: engines/ultima/ultima8/metaengine.cpp:55
+#: engines/ultima/ultima8/metaengine.cpp:110
 msgid "Move Left"
 msgstr "왼쪽으로 이동"
 
 #: engines/kyra/engine/eobcommon.cpp:372
+#: engines/ultima/ultima8/metaengine.cpp:56
+#: engines/ultima/ultima8/metaengine.cpp:111
 msgid "Move Right"
 msgstr "오른쪽으로 이동"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
-#: engines/twine/metaengine.cpp:353 engines/zvision/metaengine.cpp:209
+#: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
+#: engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "왼쪽으로 회전"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
-#: engines/twine/metaengine.cpp:346 engines/zvision/metaengine.cpp:215
+#: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
+#: engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "오른쪽으로 회전"
 
@@ -12994,19 +13004,271 @@ msgstr "The Savage Empire"
 msgid "Transfer Character"
 msgstr "캐릭터 전송"
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:47
+#, fuzzy
+#| msgid "Toggle Combat"
+msgid "Combat"
+msgstr "전투 전환"
+
+#: engines/ultima/ultima8/metaengine.cpp:48
+#, fuzzy
+#| msgid "Game menu"
+msgid "Game Menu"
+msgstr "게임 메뉴"
+
+#: engines/ultima/ultima8/metaengine.cpp:52
+msgid "Move Back"
+msgstr "뒤로 이동"
+
+#: engines/ultima/ultima8/metaengine.cpp:53
+#: engines/ultima/ultima8/metaengine.cpp:108
+#, fuzzy
+#| msgid "Move up"
+msgid "Move Up"
+msgstr "위로 이동"
+
+#: engines/ultima/ultima8/metaengine.cpp:54
+#: engines/ultima/ultima8/metaengine.cpp:109
+#, fuzzy
+#| msgid "Move down"
+msgid "Move Down"
+msgstr "아래로 이동"
+
+#: engines/ultima/ultima8/metaengine.cpp:58
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Highlight Items"
+msgstr "다음 대화를 강조"
+
+#: engines/ultima/ultima8/metaengine.cpp:64
+msgid "Use Bedroll"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:65
+#, fuzzy
+#| msgid "Backspace"
+msgid "Use Backpack"
+msgstr "Backspace 키"
+
+#: engines/ultima/ultima8/metaengine.cpp:66
+#, fuzzy
+#| msgid "Use RGB rendering"
+msgid "Use Keyring"
+msgstr "RGB 렌더링 사용"
+
+#: engines/ultima/ultima8/metaengine.cpp:67
+#, fuzzy
+#| msgid "Open map"
+msgid "Open Minimap"
+msgstr "지도 열기"
+
+#: engines/ultima/ultima8/metaengine.cpp:68
+msgid "Use Recall"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:69
+#, fuzzy
+#| msgid "Open inventory"
+msgid "Open Inventory"
+msgstr "인벤토리 열기"
+
+#: engines/ultima/ultima8/metaengine.cpp:70
+#, fuzzy
+#| msgid "Close popup"
+msgid "Close Gumps"
+msgstr "팝업 닫기"
+
+#: engines/ultima/ultima8/metaengine.cpp:71
+msgid "Jump (fake both-button-click)"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:72
+#, fuzzy
+#| msgid "Side Step"
+msgid "Step"
+msgstr "사이드 스텝"
+
+#: engines/ultima/ultima8/metaengine.cpp:78
+#, fuzzy
+#| msgid "Next action"
+msgid "Next Weapon"
+msgstr "다음 행동"
+
+#: engines/ultima/ultima8/metaengine.cpp:79
+#, fuzzy
+#| msgid "Animated inventory items"
+msgid "Next Inventory Item"
+msgstr "애니메이션 인벤토리 항목"
+
+#: engines/ultima/ultima8/metaengine.cpp:80
+#, fuzzy
+#| msgid "Inventory"
+msgid "Use Inventory Item"
+msgstr "인벤토리"
+
+#: engines/ultima/ultima8/metaengine.cpp:81
+msgid "Use Medical Kit"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:82
+msgid "Use Energy Cube"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:83
+msgid "Detonate Bomb"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:85
+#, fuzzy
+#| msgid "Drop page"
+msgid "Drop Weapon"
+msgstr "페이지 삭제"
+
+#: engines/ultima/ultima8/metaengine.cpp:86
+#, fuzzy
+#| msgid "Select a Theme"
+msgid "Select Item"
+msgstr "테마 선택"
+
+#: engines/ultima/ultima8/metaengine.cpp:87
+#, fuzzy
+#| msgid "Next action"
+msgid "Use Selection"
+msgstr "다음 행동"
+
+#: engines/ultima/ultima8/metaengine.cpp:88
+msgid "Grab Items"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Camera moves with Silencer"
+msgid "Focus Camera on Silencer"
+msgstr "카메라는 사일런서와 이동"
+
+#: engines/ultima/ultima8/metaengine.cpp:91
+msgid "Jump / Roll / Crouch"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:92
+#, fuzzy
+#| msgid "Shorty mode"
+msgid "Short Jump"
+msgstr "쇼티 모드"
+
+#: engines/ultima/ultima8/metaengine.cpp:93
+#, fuzzy
+#| msgid "Slide Left"
+msgid "Sidestep Left"
+msgstr "왼쪽으로 슬라이드"
+
+#: engines/ultima/ultima8/metaengine.cpp:94
+#, fuzzy
+#| msgid "Slide Right"
+msgid "Sidestep Right"
+msgstr "오른쪽으로 슬라이드"
+
+#: engines/ultima/ultima8/metaengine.cpp:95
+#, fuzzy
+#| msgid "Face Forward"
+msgid "Step Forward"
+msgstr "얼굴 앞으로"
+
+#: engines/ultima/ultima8/metaengine.cpp:96
+#, fuzzy
+#| msgid "Step back"
+msgid "Step Back"
+msgstr "물러서기"
+
+#: engines/ultima/ultima8/metaengine.cpp:97
+#, fuzzy
+#| msgid "Roll left"
+msgid "Roll Left"
+msgstr "왼쪽으로 구르기"
+
+#: engines/ultima/ultima8/metaengine.cpp:98
+#, fuzzy
+#| msgid "Roll right"
+msgid "Roll Right"
+msgstr "오른쪽으로 구르기"
+
+#: engines/ultima/ultima8/metaengine.cpp:99
+#, fuzzy
+#| msgid "Toggle Clock"
+msgid "Toggle Crouch"
+msgstr "시계 전환"
+
+#: engines/ultima/ultima8/metaengine.cpp:100
+msgid "Side Step / Advance / Retreat"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:105
+#, fuzzy
+#| msgid "Toggle Clock"
+msgid "Toggle Clipping"
+msgstr "시계 전환"
+
+#: engines/ultima/ultima8/metaengine.cpp:106
+msgid "Ascend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:107
+msgid "Descend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:118
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show Touching Items"
+msgstr "힌트 표시"
+
+#: engines/ultima/ultima8/metaengine.cpp:119
+#, fuzzy
+#| msgid "Show quotes"
+msgid "Show Editor Items"
+msgstr "인용문 표시"
+
+#: engines/ultima/ultima8/metaengine.cpp:120
+msgid "Decrement Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:121
+msgid "Increment Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:122
+#, fuzzy
+#| msgid "Toggle panel style"
+msgid "Toggle Frame By Frame"
+msgstr "패널 스타일 전환"
+
+#: engines/ultima/ultima8/metaengine.cpp:123
+msgid "Advance Frame"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:124
+msgid "Toggle Avatar In Stasis"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:125
+#, fuzzy
+#| msgid "Image Viewer"
+msgid "Show Shape Viewer"
+msgstr "이미지 뷰어"
+
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Ultima VIII"
 msgstr "울티마 VIII"
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Crusader"
 msgstr "크루세이더"
 
-#: engines/ultima/ultima8/metaengine.cpp:181
+#: engines/ultima/ultima8/metaengine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr "울티마 VIII 치트"
 
-#: engines/ultima/ultima8/metaengine.cpp:196
+#: engines/ultima/ultima8/metaengine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr "울티마 VIII 디버그"
 
@@ -13926,9 +14188,6 @@ msgstr ""
 #~ msgid "Toggle sound effect on/off"
 #~ msgstr "사운드 효과 켜기/끄기 전환"
 
-#~ msgid "Move Back"
-#~ msgstr "뒤로 이동"
-
 #~ msgid "Move forward"
 #~ msgstr "앞으로 이동"
 
@@ -14034,11 +14293,6 @@ msgstr ""
 #~| msgid "Previous action"
 #~ msgid "Pull action"
 #~ msgstr "이전 행동"
-
-#, fuzzy
-#~| msgid "Next action"
-#~ msgid "Use action"
-#~ msgstr "다음 행동"
 
 #~ msgid "Open 3DS Settings"
 #~ msgstr "3DS 설정 열기"

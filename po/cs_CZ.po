@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-15 23:21+0000\n"
+"POT-Creation-Date: 2025-06-15 23:55+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5877,7 +5877,7 @@ msgstr "Zkontrolovat Aktualizace..."
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
-#: engines/ultima/ultima8/ultima8.cpp:191
+#: engines/ultima/ultima8/ultima8.cpp:192
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
@@ -6936,7 +6936,7 @@ msgstr "Povolit zachycování myši"
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:206
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/pegasus/pegasus.cpp:2825 engines/ultima/ultima8/metaengine.cpp:45
 msgid "Save Game"
 msgstr "Uložit hru"
 
@@ -6949,7 +6949,7 @@ msgstr "Uložit hru"
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:211
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/pegasus/pegasus.cpp:2831 engines/ultima/ultima8/metaengine.cpp:46
 msgid "Load Game"
 msgstr "Nahrát hru"
 
@@ -7375,6 +7375,7 @@ msgstr "Interakce"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
+#: engines/ultima/ultima8/metaengine.cpp:89
 #, fuzzy
 msgid "Attack"
 msgstr "Útok 1"
@@ -7444,6 +7445,7 @@ msgid "Traits"
 msgstr ""
 
 #: engines/crab/input/input.cpp:266 engines/sludge/keymapper_tables.h:410
+#: engines/ultima/ultima8/metaengine.cpp:44
 #, fuzzy
 msgid "Quick Save"
 msgstr "Režim kliknutí"
@@ -7903,6 +7905,7 @@ msgstr "Přesunout se Doprava"
 #: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
 #: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
 #: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
+#: engines/ultima/ultima8/metaengine.cpp:57
 msgid "Run"
 msgstr ""
 
@@ -8780,7 +8783,7 @@ msgstr "Zakompilované funkce:"
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
-#: engines/ultima/ultima8/metaengine.cpp:145
+#: engines/ultima/ultima8/metaengine.cpp:142
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "Levé Kliknutí"
@@ -8788,13 +8791,14 @@ msgstr "Levé Kliknutí"
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
-#: engines/ultima/ultima8/metaengine.cpp:151
+#: engines/ultima/ultima8/metaengine.cpp:148
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "Pravé kliknutí"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
 #: engines/mohawk/riven.cpp:881 engines/twine/metaengine.cpp:332
+#: engines/ultima/ultima8/metaengine.cpp:51
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
@@ -8812,22 +8816,28 @@ msgid "Move Backwards"
 msgstr "Vzad"
 
 #: engines/kyra/engine/eobcommon.cpp:371
+#: engines/ultima/ultima8/metaengine.cpp:55
+#: engines/ultima/ultima8/metaengine.cpp:110
 msgid "Move Left"
 msgstr "Přesunout se doleva"
 
 #: engines/kyra/engine/eobcommon.cpp:372
+#: engines/ultima/ultima8/metaengine.cpp:56
+#: engines/ultima/ultima8/metaengine.cpp:111
 msgid "Move Right"
 msgstr "Přesunout se doprava"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
-#: engines/twine/metaengine.cpp:353 engines/zvision/metaengine.cpp:209
+#: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
+#: engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "Otočit se doleva"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
-#: engines/twine/metaengine.cpp:346 engines/zvision/metaengine.cpp:215
+#: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
+#: engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "Otočit se doprava"
 
@@ -13120,19 +13130,250 @@ msgstr ""
 msgid "Transfer Character"
 msgstr "Zaměnit znaky"
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:47
+#, fuzzy
+msgid "Combat"
+msgstr "Povolit zachycování myši"
+
+#: engines/ultima/ultima8/metaengine.cpp:48
+#, fuzzy
+#| msgid "Game menu"
+msgid "Game Menu"
+msgstr "Menu hry"
+
+#: engines/ultima/ultima8/metaengine.cpp:52
+msgid "Move Back"
+msgstr "Vzad"
+
+#: engines/ultima/ultima8/metaengine.cpp:53
+#: engines/ultima/ultima8/metaengine.cpp:108
+#, fuzzy
+msgid "Move Up"
+msgstr "Vzad"
+
+#: engines/ultima/ultima8/metaengine.cpp:54
+#: engines/ultima/ultima8/metaengine.cpp:109
+#, fuzzy
+msgid "Move Down"
+msgstr "Zrušit stahování"
+
+#: engines/ultima/ultima8/metaengine.cpp:58
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Highlight Items"
+msgstr "Zvýraznit následující dialog"
+
+#: engines/ultima/ultima8/metaengine.cpp:64
+msgid "Use Bedroll"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:65
+#, fuzzy
+msgid "Use Backpack"
+msgstr "Vzad"
+
+#: engines/ultima/ultima8/metaengine.cpp:66
+msgid "Use Keyring"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:67
+#, fuzzy
+#| msgid "Open"
+msgid "Open Minimap"
+msgstr "Otevřít"
+
+#: engines/ultima/ultima8/metaengine.cpp:68
+msgid "Use Recall"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:69
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Open Inventory"
+msgstr "Otevřít/Zavřít Inventář"
+
+#: engines/ultima/ultima8/metaengine.cpp:70
+#, fuzzy
+#| msgid "Close"
+msgid "Close Gumps"
+msgstr "Zavřít"
+
+#: engines/ultima/ultima8/metaengine.cpp:71
+msgid "Jump (fake both-button-click)"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:72
+#, fuzzy
+#| msgid "Slide Left"
+msgid "Step"
+msgstr "Přesunout se Doleva"
+
+#: engines/ultima/ultima8/metaengine.cpp:78
+#, fuzzy
+msgid "Next Weapon"
+msgstr "~P~ředchozí"
+
+#: engines/ultima/ultima8/metaengine.cpp:79
+#, fuzzy
+#| msgid "Animated inventory items"
+msgid "Next Inventory Item"
+msgstr "Animované položky inventáře"
+
+#: engines/ultima/ultima8/metaengine.cpp:80
+#, fuzzy
+#| msgid "Inventory"
+msgid "Use Inventory Item"
+msgstr "Inventář"
+
+#: engines/ultima/ultima8/metaengine.cpp:81
+msgid "Use Medical Kit"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:82
+msgid "Use Energy Cube"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:83
+msgid "Detonate Bomb"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:85
+#, fuzzy
+msgid "Drop Weapon"
+msgstr "~Z~ahodit Stránku"
+
+#: engines/ultima/ultima8/metaengine.cpp:86
+#, fuzzy
+#| msgid "Select a Theme"
+msgid "Select Item"
+msgstr "Vyberte Vzhled"
+
+#: engines/ultima/ultima8/metaengine.cpp:87
+#, fuzzy
+msgid "Use Selection"
+msgstr "~P~ředchozí"
+
+#: engines/ultima/ultima8/metaengine.cpp:88
+msgid "Grab Items"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:90
+msgid "Focus Camera on Silencer"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:91
+msgid "Jump / Roll / Crouch"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:92
+#, fuzzy
+msgid "Short Jump"
+msgstr "Barevný režim"
+
+#: engines/ultima/ultima8/metaengine.cpp:93
+#, fuzzy
+#| msgid "Slide Left"
+msgid "Sidestep Left"
+msgstr "Přesunout se Doleva"
+
+#: engines/ultima/ultima8/metaengine.cpp:94
+#, fuzzy
+#| msgid "Slide Right"
+msgid "Sidestep Right"
+msgstr "Přesunout se Doprava"
+
+#: engines/ultima/ultima8/metaengine.cpp:95
+#, fuzzy
+#| msgid "Move Forward"
+msgid "Step Forward"
+msgstr "Vpřed"
+
+#: engines/ultima/ultima8/metaengine.cpp:96
+#, fuzzy
+#| msgid "Step back"
+msgid "Step Back"
+msgstr "Ustoupit"
+
+#: engines/ultima/ultima8/metaengine.cpp:97
+#, fuzzy
+msgid "Roll Left"
+msgstr "Přesunout se doleva"
+
+#: engines/ultima/ultima8/metaengine.cpp:98
+#, fuzzy
+msgid "Roll Right"
+msgstr "Přesunout se doprava"
+
+#: engines/ultima/ultima8/metaengine.cpp:99
+#, fuzzy
+msgid "Toggle Crouch"
+msgstr "Povolit zachycování myši"
+
+#: engines/ultima/ultima8/metaengine.cpp:100
+msgid "Side Step / Advance / Retreat"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:105
+#, fuzzy
+msgid "Toggle Clipping"
+msgstr "Povolit zachycování myši"
+
+#: engines/ultima/ultima8/metaengine.cpp:106
+msgid "Ascend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:107
+msgid "Descend"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:118
+#, fuzzy
+msgid "Show Touching Items"
+msgstr "Zobrazit skryté soubory"
+
+#: engines/ultima/ultima8/metaengine.cpp:119
+#, fuzzy
+msgid "Show Editor Items"
+msgstr "Pouze Řeč"
+
+#: engines/ultima/ultima8/metaengine.cpp:120
+msgid "Decrement Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:121
+msgid "Increment Map Sort Order"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:122
+#, fuzzy
+msgid "Toggle Frame By Frame"
+msgstr "Rychlý režim"
+
+#: engines/ultima/ultima8/metaengine.cpp:123
+msgid "Advance Frame"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:124
+msgid "Toggle Avatar In Stasis"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:125
+msgid "Show Shape Viewer"
+msgstr ""
+
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:138
+#: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:181
+#: engines/ultima/ultima8/metaengine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:196
+#: engines/ultima/ultima8/metaengine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr ""
 
@@ -14097,9 +14338,6 @@ msgstr ""
 #~ msgid "Toggle sound effect on/off"
 #~ msgstr "Hlasitost speciálních zvukových efektů"
 
-#~ msgid "Move Back"
-#~ msgstr "Vzad"
-
 #, fuzzy
 #~ msgid "Move forward"
 #~ msgstr "Vpřed"
@@ -14193,10 +14431,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Pull action"
-#~ msgstr "~P~ředchozí"
-
-#, fuzzy
-#~ msgid "Use action"
 #~ msgstr "~P~ředchozí"
 
 #~ msgid ""
