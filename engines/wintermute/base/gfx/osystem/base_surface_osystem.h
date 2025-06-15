@@ -45,6 +45,8 @@ public:
 	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
 	bool create(int width, int height) override;
 
+	bool setAlphaImage(const Common::String &filename) override;
+
 	bool isTransparentAt(int x, int y) override;
 	bool isTransparentAtLite(int x, int y) override;
 
@@ -93,12 +95,14 @@ private:
 	bool _loaded;
 	bool finishLoad();
 	bool drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transformStruct);
+	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
 
 	float _rotation;
 	Graphics::AlphaType _alphaType;
 	void *_lockPixels;
 	int _lockPitch;
-	byte *_alphaMask;
+	Graphics::Surface *_alphaMask;
+	Graphics::AlphaType _alphaMaskType;
 };
 
 } // End of namespace Wintermute
