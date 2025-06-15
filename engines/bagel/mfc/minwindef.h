@@ -157,26 +157,6 @@ DECLARE_HANDLE(HTASK);
 DECLARE_HANDLE(HWINSTA);
 DECLARE_HANDLE(HKL);
 
-typedef struct tagRECT {
-	LONG    left = 0;
-	LONG    top = 0;
-	LONG    right = 0;
-	LONG    bottom = 0;
-
-	tagRECT() {}
-	tagRECT(LONG x1, LONG y1, LONG x2, LONG y2) :
-		left(x1), top(y1), right(x2), bottom(y2) {
-	}
-	tagRECT(const Common::Rect &r) :
-		left(r.left), top(r.top), right(r.right), bottom(r.bottom) {
-	}
-	operator Common::Rect() const {
-		return Common::Rect(left, top, right, bottom);
-	}
-} RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
-
-typedef const RECT FAR *LPCRECT;
-
 typedef struct tagPOINT {
 	int  x;
 	int  y;
@@ -204,6 +184,34 @@ typedef struct tagPOINTS {
 	SHORT   x;
 	#endif
 } POINTS, *PPOINTS, *LPPOINTS;
+
+typedef struct tagRECT {
+	LONG    left = 0;
+	LONG    top = 0;
+	LONG    right = 0;
+	LONG    bottom = 0;
+
+	tagRECT() {}
+	tagRECT(LONG x1, LONG y1, LONG x2, LONG y2) :
+		left(x1), top(y1), right(x2), bottom(y2) {
+	}
+	tagRECT(const Common::Rect &r) :
+		left(r.left), top(r.top), right(r.right), bottom(r.bottom) {
+	}
+	operator Common::Rect() const {
+		return Common::Rect(left, top, right, bottom);
+	}
+	bool contains(int x, int y) const {
+		Common::Rect r = *this;
+		return r.contains(x, y);
+	}
+	bool contains(const POINT &pt) const {
+		Common::Rect r = *this;
+		return r.contains(pt.x, pt.y);
+	}
+} RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
+
+typedef const RECT FAR *LPCRECT;
 
 typedef struct _FILETIME {
 	DWORD dwLowDateTime;

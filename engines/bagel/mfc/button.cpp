@@ -30,6 +30,7 @@ BEGIN_MESSAGE_MAP(CButton, CWnd)
 ON_WM_PAINT()
 ON_WM_LBUTTONDOWN()
 ON_WM_LBUTTONUP()
+ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
@@ -51,10 +52,33 @@ void CButton::SetCheck(int nCheck) {
 }
 
 void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
-	error("TODO: CButton::SetButtonStyle");
+	m_nStyle = (m_nStyle & ~0xf) | nStyle;
+	Invalidate();
+}
+
+UINT CButton::GetButtonStyle() const {
+	return GetStyle() & 0xf;
 }
 
 void CButton::OnPaint() {
+	switch (GetButtonStyle()) {
+	case BS_PUSHBUTTON:
+	case BS_DEFPUSHBUTTON:
+		OnPushButtonPaint();
+		break;
+
+	default: {
+		// Fallback for unhandled button types
+		RECT clientRect;
+		GetClientRect(&clientRect);
+		CPaintDC dc(this);
+		dc.FillSolidRect(&clientRect, RGB(255, 255, 255));
+		break;
+	}
+	}
+}
+
+void CButton::OnPushButtonPaint() {
 	CPaintDC dc(this);
 
 	// Get the client rectangle of the window
@@ -63,14 +87,12 @@ void CButton::OnPaint() {
 
 	// Determine state
 	bool isEnabled = IsWindowEnabled();
-	int checkState = GetCheck();
 
 	// Choose background color based on state
 	COLORREF bgColor = isEnabled ? RGB(240, 240, 240) : RGB(200, 200, 200);
 	dc.FillSolidRect(rect, bgColor);
 
-	// Draw checked state (e.g., highlight border or symbol)
-	if (checkState == BST_CHECKED) {
+	if (_pressed) {
 		dc.DrawEdge(&rect, EDGE_SUNKEN, BF_RECT);
 	} else {
 		dc.DrawEdge(&rect, EDGE_RAISED, BF_RECT);
@@ -85,22 +107,42 @@ void CButton::OnPaint() {
 
 void CButton::OnLButtonDown(UINT nFlags, CPoint point) {
 	SetCapture();
-	SetCheck(BST_CHECKED);
+	_pressed = true;
 	Invalidate();
 }
 
 void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 	if (GetCapture() == this)
 		ReleaseCapture();
+	if (!_pressed)
+		return;
+	_pressed = false;
 
-	if (GetCheck()) {
-		SetCheck(BST_UNCHECKED);
-		Invalidate();  // redraw with normal look
+	switch (GetButtonStyle()) {
+	case BS_PUSHBUTTON:
+	case BS_DEFPUSHBUTTON:
+		GetParent()->SendMessage(WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(), BN_CLICKED), (LPARAM)m_hWnd);
+		break;
 
-		RECT rect;
-		GetClientRect(&rect);
-		if (PtInRect(&rect, point))
-			GetParent()->SendMessage(WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(), BN_CLICKED), (LPARAM)m_hWnd);
+	case BS_CHECKBOX:
+		SetCheck(GetCheck() == BST_CHECKED ?
+			BST_UNCHECKED : BST_CHECKED);
+		break;
+
+	default:
+		error("Unhandled button type");
+		break;
+	}
+
+	Invalidate();
+}
+
+void CButton::OnMouseMove(UINT nFlags, CPoint point) {
+	if (GetCapture() == this) {
+		if (_pressed != PointInClientRect(point)) {
+			_pressed = !_pressed;
+			Invalidate();
+		}
 	}
 }
 

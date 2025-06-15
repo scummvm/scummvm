@@ -44,6 +44,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
         DWORD dwStyle, const RECT &rect, CWnd *pParentWnd,
 		UINT nID, CCreateContext *pContext) {
 	m_pParentWnd = pParentWnd;
+	m_nStyle = dwStyle;
 
 	// Set up create structure
 	CREATESTRUCT cs;
@@ -513,6 +514,13 @@ BOOL CWnd::GetClientRect(LPRECT lpRect) const {
 	lpRect->bottom = _windowRect.height();
 
 	return true;
+}
+
+bool CWnd::PointInClientRect(const POINT &pt) const {
+	RECT clientRect;
+	GetClientRect(&clientRect);
+
+	return clientRect.contains(pt);
 }
 
 void CWnd::ClientToScreen(LPPOINT lpPoint) const {

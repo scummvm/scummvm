@@ -1142,6 +1142,7 @@ public:
 	CWnd *const m_hWnd = nullptr;
 
 	CWnd *m_pParentWnd = nullptr;
+	int m_nStyle = 0;
 	int m_nModalResult = -1;
 	bool _visible = false;
 	CString _windowText;
@@ -1191,6 +1192,9 @@ public:
 	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
 	BOOL SetWindowText(LPCSTR lpszString);
 	UINT GetState() const;
+	DWORD GetStyle() const {
+		return m_nStyle;
+	}
 	bool IsWindowEnabled() const {
 		return (_itemState & ODS_DISABLED) == 0;
 	}
@@ -1206,6 +1210,7 @@ public:
 	void GetWindowRect(LPRECT lpRect) const;
 	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
 	BOOL GetClientRect(LPRECT lpRect) const;
+	bool PointInClientRect(const POINT &pt) const;
 	void ClientToScreen(LPPOINT lpPoint) const;
 	void ClientToScreen(LPRECT lpRect) const;
 	void ScreenToClient(LPPOINT lpPoint) const;
@@ -1354,12 +1359,18 @@ public:
 class CButton : public CWnd {
 	DECLARE_DYNAMIC(CButton)
 
+private:
+	bool _pressed = false;
+
+	void OnPushButtonPaint();
+
 protected:
 	DECLARE_MESSAGE_MAP()
 
 	void OnPaint();
 	void OnLButtonDown(UINT nFlags, CPoint point);
 	void OnLButtonUp(UINT nFlags, CPoint point);
+	void OnMouseMove(UINT nFlags, CPoint point);
 
 public:
 	~CButton() override {
@@ -1370,6 +1381,7 @@ public:
 	int GetCheck() const;
 	void SetCheck(int nCheck);
 	void SetButtonStyle(UINT nStyle, BOOL bRedraw = TRUE);
+	UINT GetButtonStyle() const;
 };
 
 class CListBox : public CWnd {
