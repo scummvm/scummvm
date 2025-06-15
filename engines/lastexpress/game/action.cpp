@@ -81,7 +81,7 @@ int LogicManager::findCursor(Link *link) {
 	case kActionDropItem:
 		if (link->param1 >= 32) {
 			result = kCursorNormal;
-		} else if (link->param1 != _activeItem || link->param1 == 20 && !_globals[kProgressIsTrainRunning] && link->param2 == 4 || link->param1 == 18 && link->param2 == 1 && _globals[kProgressField5C]) {
+		} else if (link->param1 != _activeItem || (link->param1 == 20 && !_globals[kProgressIsTrainRunning] && link->param2 == 4) || (link->param1 == 18 && link->param2 == 1 && _globals[kProgressField5C])) {
 			result = kCursorNormal;
 		} else {
 			result = _items[_activeItem].mnum;
@@ -99,7 +99,7 @@ int LogicManager::findCursor(Link *link) {
 
 		break;
 	case kActionRattle:
-		if (_activeItem == kItemKey && !_doors[kItemMatchBox].status || _doors[kItemMatchBox].status == 1 && cathHasItem(kItemKey) && (_activeItem == kItemBriefcase || _activeItem == kItemFirebird)) {
+		if ((_activeItem == kItemKey && !_doors[kItemMatchBox].status) || (_doors[kItemMatchBox].status == 1 && cathHasItem(kItemKey) && (_activeItem == kItemBriefcase || _activeItem == kItemFirebird))) {
 			result = _items[kItemKey].mnum;
 		} else {
 			if (link->param1 >= 128) {
@@ -120,7 +120,7 @@ int LogicManager::findCursor(Link *link) {
 		if (_globals[kProgressJacket] == 2) {
 			if ((_doneNIS[kEventCathLookOutsideWindowDay] || _doneNIS[kEventCathLookOutsideWindowNight] || getModel(1) == 1) &&
 				_globals[kProgressIsTrainRunning] &&
-				(link->param1 != 45 || !inComp(kCharacterRebecca, kCarRedSleeping, 4840) && _doors[kObjectOutsideBetweenCompartments].status == 2) &&
+				(link->param1 != 45 || (!inComp(kCharacterRebecca, kCarRedSleeping, 4840) && _doors[kObjectOutsideBetweenCompartments].status == 2)) &&
 				_activeItem != kItemBriefcase && _activeItem != kItemFirebird) {
 				result = kCursorForward;
 			} else {
@@ -195,7 +195,7 @@ int LogicManager::findCursor(Link *link) {
 		result = getHintDialog(link->param1) == 0 ? kCursorNormal : kCursorHandPointer;
 		break;
 	case kActionBed:
-		if (_globals[kProgressField18] == 2 && !_globals[kProgressFieldE4] && (_gameTime > 1404000 || _globals[kProgressEventMetAugust] && _globals[kProgressFieldCC] && (!_globals[kProgressField24] || _globals[kProgressField3C]))) {
+		if (_globals[kProgressField18] == 2 && !_globals[kProgressFieldE4] && (_gameTime > 1404000 || (_globals[kProgressEventMetAugust] && _globals[kProgressFieldCC] && (!_globals[kProgressField24] || _globals[kProgressField3C])))) {
 			result = kCursorSleep;
 		} else {
 			result = kCursorNormal;
@@ -480,12 +480,12 @@ void LogicManager::doPreFunction(int *sceneOut) {
 	case kNodeSoftPointItem:
 		if (_trainData[*sceneOut].parameter1 < (_engine->isDemo() ? 16 : 32)) {
 			if (_softBlockedX[_trainData[*sceneOut].parameter1] || _blockedX[_trainData[*sceneOut].parameter1]) {
-				if (_engine->getOtisManager()->fDirection(_activeNode) &&
+				if ((_engine->getOtisManager()->fDirection(_activeNode) &&
 					_engine->getOtisManager()->fDirection(*sceneOut) &&
-					_trainData[_activeNode].nodePosition.position < _trainData[*sceneOut].nodePosition.position ||
-					_engine->getOtisManager()->rDirection(_activeNode) &&
+					_trainData[_activeNode].nodePosition.position < _trainData[*sceneOut].nodePosition.position) ||
+					(_engine->getOtisManager()->rDirection(_activeNode) &&
 					_engine->getOtisManager()->rDirection(*sceneOut) &&
-					_trainData[_activeNode].nodePosition.position > _trainData[*sceneOut].nodePosition.position) {
+					_trainData[_activeNode].nodePosition.position > _trainData[*sceneOut].nodePosition.position)) {
 
 					if (whoseBit(_softBlockedX[_trainData[*sceneOut].parameter1]) != 30 && whoseBit(_blockedX[_trainData[*sceneOut].parameter1]) != 30) {
 						playDialog(kCharacterCath, "CAT1126A", -1, 0);
@@ -578,11 +578,11 @@ void LogicManager::doPostFunction() {
 
 			for (int j = 1; j < 40; j++) {
 				if (getCharacter(kCharacterCath).characterPosition.position == 4) {
-					if (getCharacter(j).characterPosition.car == kCarRedSleeping && getCharacter(j).characterPosition.position > 9270 || getCharacter(j).characterPosition.car == kCarRestaurant && getCharacter(j).characterPosition.position < 1540) {
+					if ((getCharacter(j).characterPosition.car == kCarRedSleeping && getCharacter(j).characterPosition.position > 9270) || (getCharacter(j).characterPosition.car == kCarRestaurant && getCharacter(j).characterPosition.position < 1540)) {
 						charactersRndArray[characterIdx] = j;
 						characterIdx++;
 					}
-				} else if (getCharacter(j).characterPosition.car == kCarGreenSleeping && getCharacter(j).characterPosition.position > 9270 || getCharacter(j).characterPosition.car == kCarRedSleeping && getCharacter(j).characterPosition.position < 850) {
+				} else if ((getCharacter(j).characterPosition.car == kCarGreenSleeping && getCharacter(j).characterPosition.position > 9270) || (getCharacter(j).characterPosition.car == kCarRedSleeping && getCharacter(j).characterPosition.position < 850)) {
 					charactersRndArray[characterIdx] = j;
 					characterIdx++;
 				}
@@ -1007,8 +1007,8 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if (!_doneNIS[kEventCathLookOutsideWindowDay] && !_doneNIS[kEventCathLookOutsideWindowNight] && getModel(1) != 1 || !_globals[kProgressIsTrainRunning] || link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _doors[kObjectOutsideBetweenCompartments].status != 2) || _activeItem == kItemBriefcase || _activeItem == kItemFirebird) {
-			if (link->param1 == 9 || link->param1 >= 44 && link->param1 <= 45) {
+		if ((!_doneNIS[kEventCathLookOutsideWindowDay] && !_doneNIS[kEventCathLookOutsideWindowNight] && getModel(1) != 1) || !_globals[kProgressIsTrainRunning] || (link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _doors[kObjectOutsideBetweenCompartments].status != 2)) || _activeItem == kItemBriefcase || _activeItem == kItemFirebird) {
+			if (link->param1 == 9 || (link->param1 >= 44 && link->param1 <= 45)) {
 				if (isNight()) {
 					playNIS(kEventCathLookOutsideWindowNight);
 				} else {
@@ -1453,7 +1453,7 @@ void LogicManager::doAction(Link *link) {
 			}
 
 			if (_doors[link->param1].status == 1 || _doors[link->param1].status == 3 || preventEnterComp(link->param1)) {
-				if (_doors[link->param1].status != 1 || preventEnterComp(link->param1) || _activeItem != 15 && (link->param1 != 1 || !cathHasItem(kItemKey) || _activeItem != kItemBriefcase && _activeItem != kItemFirebird)) {
+				if (_doors[link->param1].status != 1 || preventEnterComp(link->param1) || (_activeItem != 15 && (link->param1 != 1 || !cathHasItem(kItemKey) || (_activeItem != kItemBriefcase && _activeItem != kItemFirebird)))) {
 					if (!cathRunningDialog("LIB013"))
 						queueSFX(kCharacterCath, 13, 0);
 
@@ -1463,7 +1463,7 @@ void LogicManager::doAction(Link *link) {
 
 				queueSFX(kCharacterCath, 32, 0);
 
-				if (link->param1 != 0 && link->param1 <= 3 || link->param1 >= 32 && link->param1 <= 37)
+				if ((link->param1 != 0 && link->param1 <= 3) || (link->param1 >= 32 && link->param1 <= 37))
 					setDoor(link->param1, kCharacterCath, 0, 10, 9);
 
 				queueSFX(kCharacterCath, 15, 22);
