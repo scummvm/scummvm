@@ -98,7 +98,7 @@ void CWnd::DoDataExchange(CDataExchange *) {
 }
 
 CWnd *CWnd::GetParent() const {
-	error("TODO: CWnd::GetParent");
+	return m_pParentWnd;
 }
 
 HWND CWnd::GetSafeHwnd() const {
