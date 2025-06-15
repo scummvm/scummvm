@@ -69,6 +69,8 @@ protected:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 
+	Common::Mutex _speechTimerMutex;
+
 	int16 _midiQueuePos, _midiQueue[0x100];
 	int16 _soundQueuePos;
 

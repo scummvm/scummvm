@@ -902,6 +902,7 @@ int IMuseDigital::diMUSEGetParam(int soundId, int paramId) {
 }
 
 int IMuseDigital::diMUSEFadeParam(int soundId, int opcode, int destValue, int fadeLength) {
+	Common::StackLock lock(*_mutex);
 	return cmdsHandleCmd(DIMUSE_C_FADE_PARAM, nullptr, soundId, opcode, destValue, fadeLength);
 }
 

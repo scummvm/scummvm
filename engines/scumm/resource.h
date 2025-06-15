@@ -82,6 +82,7 @@ class ResourceManager {
 	//friend class ScummEngine;
 protected:
 	ScummEngine *_vm;
+	Common::Mutex *_mutex;
 
 public:
 	class Resource {

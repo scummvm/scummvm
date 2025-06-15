@@ -818,7 +818,10 @@ void ResourceManager::increaseResourceCounters() {
 	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
 		ResId idx = _types[type].size();
 		while (idx-- > 0) {
+			_mutex->lock();
 			byte counter = _types[type][idx].getResourceCounter();
+			_mutex->unlock();
+
 			if (counter && counter < RF_USAGE_MAX) {
 				setResourceCounter(type, idx, counter + 1);
 			}
@@ -827,6 +830,7 @@ void ResourceManager::increaseResourceCounters() {
 }
 
 void ResourceManager::setResourceCounter(ResType type, ResId idx, byte counter) {
+	Common::StackLock lock(*_mutex);
 	_types[type][idx].setResourceCounter(counter);
 }
 
@@ -909,6 +913,7 @@ ResourceManager::ResTypeData::~ResTypeData() {
 }
 
 ResourceManager::ResourceManager(ScummEngine *vm) : _vm(vm) {
+	_mutex = &vm->_resourceAccessMutex;
 	_allocatedSize = 0;
 	_maxHeapThreshold = 0;
 	_minHeapThreshold = 0;
@@ -935,6 +940,7 @@ bool ResourceManager::validateResource(const char *str, ResType type, ResId idx)
 }
 
 void ResourceManager::nukeResource(ResType type, ResId idx) {
+	Common::StackLock lock(*_mutex);
 	byte *ptr = _types[type][idx]._address;
 	if (ptr != nullptr) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", nameOfResType(type), idx);
@@ -969,18 +975,21 @@ int ScummEngine::getResourceDataSize(const byte *ptr) const {
 }
 
 void ResourceManager::lock(ResType type, ResId idx) {
+	Common::StackLock lock(*_mutex);
 	if (!validateResource("Locking", type, idx))
 		return;
 	_types[type][idx].lock();
 }
 
 void ResourceManager::unlock(ResType type, ResId idx) {
+	Common::StackLock lock(*_mutex);
 	if (!validateResource("Unlocking", type, idx))
 		return;
 	_types[type][idx].unlock();
 }
 
 bool ResourceManager::isLocked(ResType type, ResId idx) const {
+	Common::StackLock lock(*_mutex);
 	if (!validateResource("isLocked", type, idx))
 		return false;
 	return _types[type][idx].isLocked();

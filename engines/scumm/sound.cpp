@@ -377,7 +377,7 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
-			if (_vm->_game.id == GID_CMI) {
+			if (_vm->_game.id == GID_CMI) { // No mutex lock here, COMI doesn't use the speech timer thread
 #if defined(ENABLE_SCUMM_7_8)
 				_curSoundPos = _vm->_imuseDigital->getSoundElapsedTimeInMs(kTalkSoundID) * 60 / 1000;
 #endif
@@ -392,6 +392,8 @@ void Sound::processSfxQueues() {
 			((uint)act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim)))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
+				_speechTimerMutex.lock();
+
 				if (finished || (isMouthSyncOff(_curSoundPos) && _mouthSyncMode)) {
 					a->runActorTalkScript(a->_talkStopFrame);
 					_mouthSyncMode = 0;
@@ -399,6 +401,8 @@ void Sound::processSfxQueues() {
 					a->runActorTalkScript(a->_talkStartFrame);
 					_mouthSyncMode = 1;
 				}
+
+				_speechTimerMutex.unlock();
 			}
 #if defined(ENABLE_SCUMM_7_8)
 			if (_vm->_imuseDigital && !_vm->_imuseDigital->isFTSoundEngine()) {
@@ -1205,11 +1209,14 @@ bool Sound::isSfxFinished() const {
 }
 
 void Sound::incrementSpeechTimer() {
+	Common::StackLock lock(_speechTimerMutex);
+
 	if (!_soundsPaused)
 		_curSoundPos++;
 }
 
 void Sound::resetSpeechTimer() {
+	Common::StackLock lock(_speechTimerMutex);
 	_curSoundPos = 0;
 }
 

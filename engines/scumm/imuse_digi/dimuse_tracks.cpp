@@ -483,6 +483,8 @@ int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed,
 }
 
 void IMuseDigital::tracksClear(IMuseDigiTrack *trackPtr) {
+	Common::StackLock lock(*_mutex);
+
 	if (_vm->_game.id == GID_CMI) {
 		if (trackPtr->syncPtr_0) {
 			trackPtr->syncSize_0 = 0;
