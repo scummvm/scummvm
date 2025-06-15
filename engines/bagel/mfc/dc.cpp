@@ -45,8 +45,9 @@ BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
 }
 
 BOOL CDC::CreateCompatibleDC(CDC *pDC) {
+	assert(!m_hDC);
 	CDC::Impl *dc = new CDC::Impl();
-	dc->_format = pDC->impl()->getFormat();
+	dc->setFormat(pDC->impl()->getFormat());
 	m_hDC = dc;
 
 	return true;
@@ -60,6 +61,7 @@ BOOL CDC::DeleteDC() {
 }
 
 BOOL CDC::Attach(HDC hDC) {
+	assert(!m_hDC);
 	m_hDC = hDC;
 	return true;
 }
@@ -74,7 +76,6 @@ int CDC::SetStretchBltMode(int nStretchMode) {
 
 int CDC::GetDeviceCaps(int nIndex) const {
 	CDC::Impl *dc = impl();
-	const Graphics::PixelFormat format = dc->_format;
 	const CBitmap::Impl *bitmap = (CBitmap::Impl *)dc->_bitmap;
 
 	switch (nIndex) {
@@ -83,9 +84,9 @@ int CDC::GetDeviceCaps(int nIndex) const {
 	case VERTRES:
 		return bitmap->h;
 	case BITSPIXEL:
-		return format.bytesPerPixel * 8;
+		return bitmap->format.bytesPerPixel * 8;
 	case RASTERCAPS:
-		return (format.bytesPerPixel == 1 ? RC_PALETTE : 0) |
+		return (bitmap->format.bytesPerPixel == 1 ? RC_PALETTE : 0) |
 		       RC_BITBLT |
 		       RC_BITMAP64 |
 		       RC_DI_BITMAP |
@@ -371,6 +372,10 @@ CGdiObject *CDC::SelectObject(CGdiObject *pObject) {
 	return CGdiObject::FromHandle(hOld);
 }
 
+HGDIOBJ CDC::SelectObject(HGDIOBJ hGdiObj) {
+	return impl()->Attach(hGdiObj);
+}
+
 CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
 	HPALETTE hOld = impl()->selectPalette(!pPalette ? nullptr :
 		pPalette->m_hObject);
@@ -504,8 +509,8 @@ BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 CDC::Impl::Impl() {
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
-	_format = Graphics::PixelFormat::createFormatCLUT8();
-	_bitmap1x1.create(1, 1, _format);
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	_defaultBitmap.create(1, 1, format);
 
 	// Set up the system font as default
 	_font = AfxGetApp()->getDefaultFont();
@@ -519,11 +524,10 @@ CDC::Impl::Impl(HDC srcDc) {
 
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
-	_format = Graphics::PixelFormat::createFormatCLUT8();
-	_bitmap1x1.create(1, 1, _format);
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	_defaultBitmap.create(1, 1, format);
 
 	_font = src->_font;
-	_format = src->_format;
 	_pen = src->_pen;
 }
 
@@ -534,8 +538,6 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 	if (bitmap) {
 		HBITMAP result = _bitmap;
 		_bitmap = bitmap;
-
-		_format = bitmap->format;
 		return result;
 	}
 
@@ -565,7 +567,24 @@ Graphics::ManagedSurface *CDC::Impl::getSurface() const {
 }
 
 const Graphics::PixelFormat &CDC::Impl::getFormat() const {
-	return _bitmap ? getSurface()->format : _format;
+	return getSurface()->format;
+}
+
+void CDC::Impl::setFormat(const Graphics::PixelFormat &format) {
+	_defaultBitmap.create(1, 1, format);
+	_bitmap = &_defaultBitmap;
+}
+
+void CDC::Impl::setScreenRect() {
+	Graphics::Screen *scr = AfxGetApp()->getScreen();
+	_defaultBitmap.create(*scr, Common::Rect(0, 0, scr->w, scr->h));
+	_bitmap = &_defaultBitmap;
+}
+
+void CDC::Impl::setScreenRect(const Common::Rect &r) {
+	Graphics::Screen *scr = AfxGetApp()->getScreen();
+	_defaultBitmap.create(*scr, r);
+	_bitmap = &_defaultBitmap;
 }
 
 HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {

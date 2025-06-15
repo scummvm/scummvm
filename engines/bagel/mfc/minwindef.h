@@ -265,6 +265,19 @@ inline bool PtInRect(const RECT *lprc, POINT &pt) {
 	       pt.y >= lprc->top && pt.y < lprc->bottom;
 }
 
+typedef struct tagWNDCLASS {
+	UINT        style;
+	WNDPROC     lpfnWndProc;
+	int         cbClsExtra;
+	int         cbWndExtra;
+	HINSTANCE   hInstance;
+	HICON       hIcon;
+	HCURSOR     hCursor;
+	HBRUSH      hbrBackground;
+	LPCSTR      lpszMenuName;
+	LPCSTR      lpszClassName;
+} WNDCLASS, *PWNDCLASS, *NPWNDCLASS, *LPWNDCLASS;
+
 } // namespace MFC
 } // namespace Bagel
 

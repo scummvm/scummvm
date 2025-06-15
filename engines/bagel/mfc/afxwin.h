@@ -616,7 +616,7 @@ class CDC : public CObject {
 public:
 	class Impl {
 	private:
-		CBitmap::Impl _bitmap1x1;
+		CBitmap::Impl _defaultBitmap;
 		Common::Point _linePos;
 		COLORREF _bkColor = 0;
 		int _bkMode = TRANSPARENT;
@@ -625,11 +625,10 @@ public:
 		uint getPenColor() const;
 
 	public:
-		HBITMAP _bitmap = &_bitmap1x1;
+		HBITMAP _bitmap = &_defaultBitmap;
 		HPALETTE _palette = nullptr;
 		HPEN _pen;
 		CPalette *_cPalette = nullptr;
-		Graphics::PixelFormat _format;
 		HFONT _font;
 
 	public:
@@ -639,6 +638,9 @@ public:
 		HGDIOBJ Attach(HGDIOBJ gdiObj);
 		Graphics::ManagedSurface *getSurface() const;
 		const Graphics::PixelFormat &getFormat() const;
+		void setFormat(const Graphics::PixelFormat &format);
+		void setScreenRect();
+		void setScreenRect(const Common::Rect &r);
 
 		HPALETTE selectPalette(HPALETTE pal);
 		CPalette *selectPalette(CPalette *pal);
@@ -785,6 +787,7 @@ public:
 	CBitmap *SelectObject(CBitmap *pBitmap);
 	int SelectObject(CRgn *pRgn);       // special return for regions
 	CGdiObject *SelectObject(CGdiObject *pObject);
+	HGDIOBJ SelectObject(HGDIOBJ hGdiObj);
 
 	COLORREF GetNearestColor(COLORREF crColor) const;
 	CPalette *SelectPalette(CPalette *pPalette, BOOL bForceBackground);
@@ -1142,6 +1145,7 @@ public:
 	CWnd *const m_hWnd = nullptr;
 
 	CWnd *m_pParentWnd = nullptr;
+	int m_nClassStyle = 0;
 	int m_nStyle = 0;
 	int m_nModalResult = -1;
 	bool _visible = false;
@@ -1150,9 +1154,7 @@ public:
 	Common::Rect _updateRect;
 	Common::Rect _updatingRect;
 	bool _updateErase = false;
-	CBitmap::Impl _surfaceBitmap;
-	CDC::Impl _surface;
-	CDC _dc;
+	CDC *_dc = nullptr;
 
 public:
 	static CWnd *FromHandle(HWND hWnd) {
@@ -1633,6 +1635,11 @@ public:
 	HFONT getDefaultFont() {
 		return _fonts.getDefaultFont();
 	}
+
+	LPCSTR AfxRegisterWndClass(UINT nClassStyle,
+		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon);
+	BOOL GetClassInfo(HINSTANCE hInstance,
+		LPCSTR   lpClassName, LPWNDCLASS lpWndClass);
 };
 
 extern CWinApp *AfxGetApp();

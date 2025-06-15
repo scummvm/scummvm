@@ -70,6 +70,8 @@ extern HMODULE GetModuleHandle(LPCSTR lpModuleName);
 
 extern LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
         HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
+extern BOOL GetClassInfo(HINSTANCE hInstance,
+	LPCSTR lpClassName, LPWNDCLASS lpWndClass);
 extern int GetSystemMetrics(int nIndex);
 
 extern HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes);

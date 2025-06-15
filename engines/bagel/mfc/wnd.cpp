@@ -32,10 +32,16 @@ BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 END_MESSAGE_MAP()
 
 CWnd::CWnd() : m_hWnd(this) {
-	_dc.Attach(&_surface);
 }
 
 CWnd::~CWnd() {
+	// Although we check the flag here, currently it's
+	// hardcoded to be on for ScummVM
+	if (m_nClassStyle & CS_OWNDC) {
+		_dc->DeleteDC();
+		delete _dc;
+	}
+
 	clear();
 }
 
@@ -44,6 +50,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 		UINT nID, CCreateContext *pContext) {
 	m_pParentWnd = pParentWnd;
 	m_nStyle = dwStyle;
+	_controlId = nID;
 
 	// Set up create structure
 	CREATESTRUCT cs;
@@ -67,11 +74,16 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	RECT screenRect(0, 0, cs.cx, cs.cy);
 	ClientToScreen(&screenRect);
 
-	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
-	_surface.Attach(&_surfaceBitmap);
+	// Get the class details
+	WNDCLASS wc;
+	GetClassInfo(nullptr, lpszClassName, &wc);
+	m_nClassStyle = wc.style;
 
-	_controlId = nID;
+	// Create the client DC
+	CDC::Impl *dcImpl = new CDC::Impl();
+	dcImpl->setScreenRect(screenRect);
+	_dc = new CDC();
+	_dc->Attach(dcImpl);
 
 	if (m_pParentWnd)
 		m_pParentWnd->_children[nID] = this;
@@ -181,13 +193,18 @@ UINT CWnd::GetState() const {
 }
 
 CDC *CWnd::GetDC() {
-	return &_dc;
+	if (_dc == nullptr) {
+		HDC hDC = MFC::GetDC(nullptr);
+		return CDC::FromHandle(hDC);
+	} else {
+		return _dc;
+	}
 }
 
 int CWnd::ReleaseDC(CDC *pDC) {
-	// No implementation in ScummVM, since
-	// window created DCs are just internally
-	// pointers to the window itself
+	// As far as I can tell, this doesn't need to do anything.
+	// The CWnd's _dc itself isn't freed when you release it.
+	// And temporary DCs will be freed by the handle map
 	return 1;
 }
 
@@ -565,10 +582,7 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 	// Get the screen area
 	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
 	ClientToScreen(&screenRect);
-
-	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
-	_surface.Attach(&_surfaceBitmap);
+	_dc->impl()->setScreenRect(screenRect);
 
 	// Iterate through all child controls. We won't
 	// change their relative position, but doing so will
@@ -588,7 +602,8 @@ void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
 }
 
 HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
-	lpPaint->hdc = &_surface;
+	assert(_dc);
+	lpPaint->hdc = _dc->m_hDC;
 	lpPaint->fErase = _updateErase;
 	lpPaint->rcPaint = _updateRect;
 	lpPaint->fRestore = false;
@@ -638,13 +653,16 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	_windowText = oldControl->_windowText;
 	_windowRect = oldControl->_windowRect;
 	_controlId = oldControl->_controlId;
+	m_nClassStyle = oldControl->m_nClassStyle;
 
 	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
 	ClientToScreen(&screenRect);
 
-	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
-	_surface.Attach(&_surfaceBitmap);
+	// Create the client DC
+	CDC::Impl *dcImpl = new CDC::Impl();
+	dcImpl->setScreenRect(screenRect);
+	_dc = new CDC();
+	_dc->Attach(dcImpl);
 
 	return true;
 }

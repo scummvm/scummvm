@@ -243,6 +243,21 @@ void CWinApp::AfxUnlockTempMaps() {
 		m_pmapHGDIOBJ->DeleteTemp();
 }
 
+LPCSTR CWinApp::AfxRegisterWndClass(UINT nClassStyle,
+		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
+	return "ScummVMWindow";
+}
+
+BOOL CWinApp::GetClassInfo(HINSTANCE hInstance,
+		LPCSTR lpClassName, LPWNDCLASS lpWndClass) {
+	assert(lpWndClass);
+
+	WNDCLASS &wc = *lpWndClass;
+	memset(lpWndClass, 0, sizeof(WNDCLASS));
+	wc.style = CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC;
+	return true;
+}
+
 /*--------------------------------------------*/
 
 CWinApp *AfxGetApp() {
@@ -282,13 +297,15 @@ HMODULE GetModuleHandle(LPCSTR lpModuleName) {
 	error("TODO: GetModuleHandle");
 }
 
-LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
+LPCSTR AfxRegisterWndClass(UINT nClassStyle,
         HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
-	// Not currently handled
-	assert(!hCursor && !hbrBackground && !hIcon);
+	return AfxGetApp()->AfxRegisterWndClass(nClassStyle,
+		hCursor, hbrBackground, hIcon);
+}
 
-	// Common class name for all ScummVM windows
-	return "ScummVMWindow";
+BOOL GetClassInfo(HINSTANCE hInstance,
+		LPCSTR lpClassName, LPWNDCLASS lpWndClass) {
+	return AfxGetApp()->GetClassInfo(hInstance, lpClassName, lpWndClass);
 }
 
 int GetSystemMetrics(int nIndex) {

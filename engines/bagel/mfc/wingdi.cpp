@@ -38,21 +38,16 @@ HDC CreateCompatibleDC(HDC hdc) {
 
 HDC GetDC(HWND hWnd) {
 	assert(!hWnd);
-	CWnd *wnd = AfxGetApp()->m_pMainWnd;
 
-	CDC *dc = wnd->GetDC();
-	HDC result = CreateCompatibleDC(dc->m_hDC);
-	wnd->ReleaseDC(dc);
-
-	return result;
+	CDC::Impl *dc = new CDC::Impl();
+	dc->setScreenRect();
+	return dc;
 }
 
-int ReleaseDC(HWND hWnd, HDC hDC) {
-	// In ScummVM all implementation of HWND
-	// is part of CWnd, and the HWND points to iself.
-	// So you shouldn't ever be trying to release
-	// a window DC. Only releasing temporary global
-	// screen DCs should be happening
+int ReleaseDC(HWND hWnd, HDC hDC) {	
+	// In ScummVM window creation is hard-coded with CS_OWNDC.
+	// Which means, the only DCs passed here should be global
+	// temporary DCs that can be immediately deleted
 	assert(!hWnd && hDC);
 	delete (CDC::Impl *)hDC;
 	return 1;
