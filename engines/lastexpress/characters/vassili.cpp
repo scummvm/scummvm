@@ -199,8 +199,8 @@ void LogicManager::HAND_Vassili_WithTatiana(HAND_PARAMS) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterVassili)[0]) {
 			getCharacter(kCharacterVassili).characterPosition = getCharacter(kCharacterTatiana).characterPosition;
-		} else if (!getCharacterCurrentParams(kCharacterVassili)[2] &&
-			(getCharacterCurrentParams(kCharacterVassili)[2] = _gameTime + 450, _gameTime == -450) || getCharacterCurrentParams(kCharacterVassili)[2] < _gameTime) {
+		} else if ((!getCharacterCurrentParams(kCharacterVassili)[2] &&
+			(getCharacterCurrentParams(kCharacterVassili)[2] = _gameTime + 450, _gameTime == -450)) || getCharacterCurrentParams(kCharacterVassili)[2] < _gameTime) {
 			if (!getCharacterCurrentParams(kCharacterVassili)[1] && getModel(32) == 1) {
 				getCharacterCurrentParams(kCharacterVassili)[1] = 1;
 				startCycOtis(kCharacterVassili, "303A");
@@ -417,8 +417,8 @@ void LogicManager::HAND_Vassili_HavingSeizure(HAND_PARAMS) {
 
 		break;
 	case 17:
-		if (checkDoor(32) == 2 &&
-			checkCathDir(kCarRedSleeping, 17) ||
+		if ((checkDoor(32) == 2 &&
+			checkCathDir(kCarRedSleeping, 17)) ||
 			checkCathDir(kCarRedSleeping, 18) ||
 			checkCathDir(kCarRedSleeping, 37) ||
 			checkCathDir(kCarRedSleeping, 38) ||
