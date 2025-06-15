@@ -171,8 +171,8 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(Graphics::Surface &surface);
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
+	virtual int16 getOverlayHeight() const;
+	virtual int16 getOverlayWidth() const;
 	virtual Graphics::PixelFormat getOverlayFormat() const {
 		return Graphics::PixelFormat(2, 5, 5, 5, 0, 11, 6, 1, 0);
 	}

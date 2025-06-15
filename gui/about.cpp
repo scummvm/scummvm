@@ -379,15 +379,16 @@ void AboutDialog::handleKeyUp(Common::KeyState state) {
 void AboutDialog::reflowLayout() {
 	Dialog::reflowLayout();
 	int i;
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+
+	int16 screenW, screenH;
+	const Common::Rect screenArea = g_system->getSafeOverlayArea(&screenW, &screenH);
 
 	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 5);
 	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 5);
 	int outerBorder = g_gui.xmlEval()->getVar("Globals.About.OuterBorder");
 
-	_w = screenW - 2 * outerBorder;
-	_h = screenH - 2 * outerBorder;
+	_w = screenArea.width() - 2 * outerBorder;
+	_h = screenArea.height() - 2 * outerBorder;
 
 	_lineHeight = g_gui.getFontHeight() + 3;
 
@@ -402,9 +403,12 @@ void AboutDialog::reflowLayout() {
 	}
 	_w += 2*_xOff;
 
-	// Center the dialog
+	// Center the dialog in the screen
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
+
+	// Make it fit in the safe area
+	screenArea.constrain(_x, _y, _w, _h);
 }
 
 

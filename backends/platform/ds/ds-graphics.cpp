@@ -588,11 +588,11 @@ void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int
 	_overlay.copyRectToSurface(buf, pitch, x, y, w, h);
 }
 
-int16 OSystem_DS::getOverlayHeight() {
+int16 OSystem_DS::getOverlayHeight() const {
 	return _overlay.h;
 }
 
-int16 OSystem_DS::getOverlayWidth() {
+int16 OSystem_DS::getOverlayWidth() const {
 	return _overlay.w;
 }
 

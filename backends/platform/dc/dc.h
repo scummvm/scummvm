@@ -151,8 +151,8 @@ public:
   void quit();
 
   // Overlay
-  int16 getOverlayHeight();
-  int16 getOverlayWidth();
+  int16 getOverlayHeight() const;
+  int16 getOverlayWidth() const;
   bool isOverlayVisible() const { return _overlay_visible; }
   void showOverlay(bool inGUI);
   void hideOverlay();
