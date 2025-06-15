@@ -59,7 +59,7 @@ BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
 	_camera = nullptr; // ref only
 	glDeleteBuffers(1, &_spriteVBO);
 	glDeleteBuffers(1, &_fadeVBO);
-	glDeleteBuffers(1, &_lineVBO);
+	glDeleteBuffers(1, &_rectangleVBO);
 	glDeleteBuffers(1, &_simpleShadowVBO);
 	glDeleteBuffers(1, &_postfilterVBO);
 }
@@ -151,21 +151,21 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	glGenBuffers(1, &_fadeVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(LineVertex), nullptr, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(RectangleVertex), nullptr, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *fadeAttributes[] = { "position", nullptr };
 	_fadeShader = OpenGL::Shader::fromFiles("wme_fade", fadeAttributes);
-	_fadeShader->enableVertexAttribute("position", _fadeVBO, 3, GL_FLOAT, false, sizeof(LineVertex), 0);
+	_fadeShader->enableVertexAttribute("position", _fadeVBO, 3, GL_FLOAT, false, sizeof(RectangleVertex), 0);
 
-	glGenBuffers(1, &_lineVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
-	glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(LineVertex), nullptr, GL_STATIC_DRAW);
+	glGenBuffers(1, &_rectangleVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _rectangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(RectangleVertex), nullptr, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *lineAttributes[] = { "position", nullptr };
 	_lineShader = OpenGL::Shader::fromFiles("wme_line", lineAttributes);
-	_lineShader->enableVertexAttribute("position", _lineVBO, 3, GL_FLOAT, false, sizeof(LineVertex), 0);
+	_lineShader->enableVertexAttribute("position", _rectangleVBO, 3, GL_FLOAT, false, sizeof(RectangleVertex), 0);
 
 	const GLfloat quadVertices[] = {
 		-1.0f, -1.0f, 0.0f, 0.0f,
@@ -282,8 +282,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		_alphaRef = 8 / 255.0f;
 
 		setAmbientLightRenderState();
-
-
 
 		if (camera)
 			_camera = camera;
@@ -632,24 +630,30 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	return setProjectionTransform(matProj);
 }
 
-bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	x1 += _drawOffsetX;
-	x2 += _drawOffsetX;
-	y1 += _drawOffsetY;
-	y2 += _drawOffsetY;
+bool BaseRenderOpenGL3DShader::fillRect(int x, int y, int w, int h, uint32 color) {
+	setupLines();
+
+	x += _drawOffsetX;
+	y += _drawOffsetY;
 
 	// position coords
-	LineVertex vertices[2];
-	vertices[0].x = x1;
-	vertices[0].y = y1;
+	RectangleVertex vertices[4];
+	vertices[0].x = x;
+	vertices[0].y = y + h;
 	vertices[0].z = 0.9f;
-	vertices[1].x = x2;
-	vertices[1].y = y2;
+	vertices[1].x = x;
+	vertices[1].y = y;
 	vertices[1].z = 0.9f;
+	vertices[2].x = x + w;
+	vertices[2].y = y + h;
+	vertices[2].z = 0.9f;
+	vertices[3].x = x + w;
+	vertices[3].y = y;
+	vertices[3].z = 0.9f;
 
-	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _rectangleVBO);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * sizeof(LineVertex), vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(RectangleVertex), vertices);
 
 	byte a = RGBCOLGetA(color);
 	byte r = RGBCOLGetR(color);
@@ -666,21 +670,12 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 	_lineShader->setUniform("color", colorValue);
 
 	glViewport(0, 0, _width, _height);
-
 	setProjection2D(_lineShader);
 
-	glDrawArrays(GL_LINES, 0, 2);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	return true;
-}
 
-bool BaseRenderOpenGL3DShader::fillRect(int x, int y, int w, int h, uint32 color) {
-	// TODO: Use a simplified method for drawing rectangles with OpenGL
-	setupLines();
-	for (int i = 0; i < h; i++) {
-		drawLine(x, y + i, x + w, y + i, color);
-	}
 	setup2D();
 	return true;
 }
@@ -694,7 +689,7 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	top = _viewportRect.top;
 
 	// position coords
-	LineVertex vertices[4];
+	RectangleVertex vertices[4];
 	vertices[0].x = left;
 	vertices[0].y = bottom;
 	vertices[0].z = 0.0f;
@@ -729,10 +724,12 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	_fadeShader->setUniform("color", color);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(LineVertex), vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(RectangleVertex), vertices);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
 	setup2D(true);
 }
 

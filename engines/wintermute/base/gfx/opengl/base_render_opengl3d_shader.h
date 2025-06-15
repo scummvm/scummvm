@@ -56,7 +56,7 @@ class BaseRenderOpenGL3DShader : public BaseRenderer3D {
 		float a;
 	};
 
-	struct LineVertex {
+	struct RectangleVertex {
 		float x;
 		float y;
 		float z;
@@ -164,8 +164,6 @@ public:
 
 private:
 	bool setupLines();
-	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
-
 	void displaySimpleShadow(BaseObject *object) override;
 
 	SimpleShadowVertex _simpleShadow[4];
@@ -179,7 +177,7 @@ private:
 
 	GLuint _spriteVBO{};
 	GLuint _fadeVBO{};
-	GLuint _lineVBO{};
+	GLuint _rectangleVBO{};
 	GLuint _simpleShadowVBO{};
 	GLuint _postfilterVBO{};
 	OpenGL::Shader *_spriteShader{};

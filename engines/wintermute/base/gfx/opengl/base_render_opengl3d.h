@@ -55,7 +55,7 @@ class BaseRenderOpenGL3D : public BaseRenderer3D {
 		float a;
 	};
 
-	struct LineVertex {
+	struct RectangleVertex {
 		float x;
 		float y;
 		float z;
@@ -161,8 +161,6 @@ public:
 
 private:
 	bool setupLines();
-	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
-
 	void displaySimpleShadow(BaseObject *object) override;
 
 	SimpleShadowVertex _simpleShadow[4];
