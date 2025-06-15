@@ -1407,11 +1407,6 @@ void LogicManager::CONS_Tatiana_JoinAlexei(CONS_PARAMS) {
 
 void LogicManager::HAND_Tatiana_JoinAlexei(HAND_PARAMS) {
 	switch (msg->action) {
-	case 8:
-		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1)
-			CONS_Tatiana_LeaveBreakfast(0, 0, 0, 0);
-
-		break;
 	case 12:
 		getCharacter(kCharacterTatiana).inventoryItem = 0;
 		getCharacter(kCharacterTatiana).characterPosition.location = 0;
@@ -1421,6 +1416,11 @@ void LogicManager::HAND_Tatiana_JoinAlexei(HAND_PARAMS) {
 		} else {
 			send(kCharacterTatiana, kCharacterAlexei, 236053296, 0);
 		}
+
+		break;
+	case 18:
+		if (getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] == 1)
+			CONS_Tatiana_LeaveBreakfast(0, 0, 0, 0);
 
 		break;
 	case 123857088:
