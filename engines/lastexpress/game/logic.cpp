@@ -3009,7 +3009,7 @@ bool LogicManager::walk(int character, int car, int position) {
 	int excuseMeCharacter;
 	uint32 characterPosition;
 	bool canTeleportToTarget = false;
-	bool negativeWalkCounter = false;
+	bool moveCharacterByOffset = false;
 	bool walkCounterUpdated = false;
 	int offset = 0;
 	
@@ -3024,7 +3024,7 @@ bool LogicManager::walk(int character, int car, int position) {
 	if (getCharacter(character).walkCounter) {
 		getCharacter(character).walkCounter--;
 
-		if (getCharacter(character).walkCounter == 128)
+		if (getCharacter(character).walkCounter == 0x80)
 			getCharacter(character).walkCounter = 0;
 
 		if ((getCharacter(character).walkCounter & 0x7F) != 8) {
@@ -3034,8 +3034,8 @@ bool LogicManager::walk(int character, int car, int position) {
 
 		walkCounterUpdated = true;
 
-		if (getCharacter(character).walkCounter < 0)
-			negativeWalkCounter = true;
+		if ((getCharacter(character).walkCounter & 0x80) != 0)
+			moveCharacterByOffset = true;
 	}
 
 	if (car == getCharacter(character).characterPosition.car) {
@@ -3138,7 +3138,7 @@ bool LogicManager::walk(int character, int car, int position) {
 						}
 
 						playChrExcuseMe(character, excuseMeCharacter, 0);
-						getCharacter(character).walkCounter = 144;
+						getCharacter(character).walkCounter = 0x80 | 0x10;
 
 						break;
 					}
@@ -3171,8 +3171,8 @@ bool LogicManager::walk(int character, int car, int position) {
 								   (getCharacter(character).direction == 2 && (getCharacter(character).characterPosition.position > getCharacter(j).characterPosition.position))) {
 							getCharacter(character).waitedTicksUntilCycleRestart = 0;
 							getCharacter(j).waitedTicksUntilCycleRestart = 0;
-							getCharacter(character).walkCounter = 16;
-							getCharacter(j).walkCounter = 16;
+							getCharacter(character).walkCounter = 0x10;
+							getCharacter(j).walkCounter = 0x10;
 							playChrExcuseMe(character, j, 0);
 							playChrExcuseMe(j, character, 0);
 
@@ -3317,7 +3317,7 @@ bool LogicManager::walk(int character, int car, int position) {
 
 	if (walkCounterUpdated) {
 		if (seqDirection == 1) {
-			if (negativeWalkCounter) {
+			if (moveCharacterByOffset) {
 				if (getCharacter(character).characterPosition.position < 8800)
 					getCharacter(character).characterPosition.position += 1200;
 			} else if (getCharacter(character).characterPosition.position < 9250) {
@@ -3331,7 +3331,7 @@ bool LogicManager::walk(int character, int car, int position) {
 				return true;
 			}
 		} else {
-			if (negativeWalkCounter) {
+			if (moveCharacterByOffset) {
 				if (getCharacter(character).characterPosition.position > 1200)
 					getCharacter(character).characterPosition.position -= 1200;
 			} else if (getCharacter(character).characterPosition.position > 750) {
