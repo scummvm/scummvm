@@ -407,7 +407,7 @@ void LogicManager::HAND_Mahmud_CathKnockingHarem(HAND_PARAMS) {
 		if (!whoRunningDialog(kCharacterMahmud)) {
 			if (getCharacter(kCharacterCath).characterPosition.position < 1500 ||
 				getCharacter(kCharacterCath).characterPosition.position >= 5790 ||
-				getCharacter(kCharacterCath).characterPosition.position > 4455 && getCharacterCurrentParams(kCharacterMahmud)[4] != 5) {
+				(getCharacter(kCharacterCath).characterPosition.position > 4455 && getCharacterCurrentParams(kCharacterMahmud)[4] != 5)) {
 				setDoor(5, kCharacterClerk, 3, 10, 9);
 				setDoor(6, kCharacterClerk, 3, 10, 9);
 				setDoor(7, kCharacterClerk, 3, 10, 9);
