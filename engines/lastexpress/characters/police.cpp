@@ -568,8 +568,8 @@ void LogicManager::HAND_Police_TrappedCath(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 	{
-		if (!getCharacterCurrentParams(kCharacterPolice)[4] &&
-				(getCharacterCurrentParams(kCharacterPolice)[4] = _realTime + 75, _realTime == -75) ||
+		if ((!getCharacterCurrentParams(kCharacterPolice)[4] &&
+				(getCharacterCurrentParams(kCharacterPolice)[4] = _realTime + 75, _realTime == -75)) ||
 			getCharacterCurrentParams(kCharacterPolice)[4] < _realTime) {
 			if (!cathOutHisWindow() && checkDoor(getCharacterCurrentParams(kCharacterPolice)[2]) != 1) {
 				getCharacter(kCharacterPolice).callbacks[getCharacter(kCharacterPolice).currentCall + 8] = 2;
