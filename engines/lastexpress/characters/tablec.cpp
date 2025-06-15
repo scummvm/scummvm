@@ -170,7 +170,6 @@ void LogicManager::CONS_TableC_Idling(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_TableC_Idling(HAND_PARAMS) {
-	getCharacterCurrentParams(kCharacterTableC);
 	switch (msg->action) {
 	case 0:
 		if (_globals[kProgressChapter] == 1) {
