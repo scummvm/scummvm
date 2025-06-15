@@ -295,6 +295,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			// This got moved in nancy9
 			return new SetVolume();
 		}
+		return nullptr;
 	case 150:
 		return new PlaySound();
 	case 151:
