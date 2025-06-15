@@ -500,8 +500,8 @@ void Slot::devirtualize() {
 
 					_engine->_soundMutex->lock();
 
-					_size = _soundBuffer[0];
-					_blockCount = _soundBuffer[2] - 1;
+					_size = READ_LE_UINT32(&_soundBuffer[0]);
+					_blockCount = READ_LE_UINT32(&_soundBuffer[4]) - 1;
 					_blockCount -= _time;
 				}
 
