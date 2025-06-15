@@ -103,6 +103,8 @@ HCURSOR Cursors::loadCursor(LPCSTR cursorId) {
 Cursor::Cursor(const byte *pixels) : _isBuiltIn(true) {
 	_surface.create(CURSOR_W, CURSOR_H,
 	                Graphics::PixelFormat::createFormatCLUT8());
+	byte *dest = (byte *)_surface.getPixels();
+	Common::copy(pixels, pixels + CURSOR_W * CURSOR_H, dest);
 }
 
 Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) :

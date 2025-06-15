@@ -236,7 +236,6 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		error(#MSG " not currently supported")
 	UNHANDLED(WM_NOTIFY);
 	UNHANDLED(WM_ACTIVATE);
-	UNHANDLED(WM_SETCURSOR);
 	UNHANDLED(WM_SETTINGCHANGE);
 #undef UNHANDLED
 

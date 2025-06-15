@@ -85,6 +85,8 @@ int CWinApp::Run() {
 	InitApplication();
 	InitInstance();
 
+	SetCursor(LoadCursor(IDC_ARROW));
+
 	runEventLoop();
 
 	ExitInstance();
