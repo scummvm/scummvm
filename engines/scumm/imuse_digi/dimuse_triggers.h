@@ -33,6 +33,7 @@ class IMuseDigiTriggersHandler {
 
 private:
 	IMuseDigital *_engine;
+	Common::Mutex *_mutex;
 	IMuseDigiTrigger _trigs[DIMUSE_MAX_TRIGGERS] = {};
 	IMuseDigiDefer _defers[DIMUSE_MAX_DEFERS] = {};
 
@@ -42,7 +43,7 @@ private:
 	char _emptyMarker[1] = {};
 
 public:
-	IMuseDigiTriggersHandler(IMuseDigital *engine);
+	IMuseDigiTriggersHandler(IMuseDigital *engine, Common::Mutex *mutex);
 	~IMuseDigiTriggersHandler();
 
 	int  init();

@@ -24,8 +24,9 @@
 
 namespace Scumm {
 
-IMuseDigiFadesHandler::IMuseDigiFadesHandler(IMuseDigital *engine) {
+IMuseDigiFadesHandler::IMuseDigiFadesHandler(IMuseDigital *engine, Common::Mutex *mutex) {
 	_engine = engine;
+	_mutex = mutex;
 }
 
 IMuseDigiFadesHandler::~IMuseDigiFadesHandler() {}
@@ -36,8 +37,11 @@ int IMuseDigiFadesHandler::init() {
 }
 
 int IMuseDigiFadesHandler::fadeParam(int soundId, int opcode, int destinationValue, int fadeLength) {
+	Common::StackLock lock(*_mutex);
+
 	if (!soundId || fadeLength < 0)
 		return -5;
+
 	if (opcode != DIMUSE_P_PRIORITY && opcode != DIMUSE_P_VOLUME && opcode != DIMUSE_P_PAN && opcode != DIMUSE_P_DETUNE && opcode != DIMUSE_P_UNKNOWN && opcode != 17)
 		return -5;
 
@@ -95,6 +99,7 @@ void IMuseDigiFadesHandler::clearFadeStatus(int soundId, int opcode) {
 void IMuseDigiFadesHandler::loop() {
 	if (!_fadesOn)
 		return;
+
 	_fadesOn = 0;
 
 	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
@@ -152,6 +157,8 @@ void IMuseDigiFadesHandler::saveLoad(Common::Serializer &ser) {
 }
 
 void IMuseDigiFadesHandler::clearAllFades() {
+	Common::StackLock lock(*_mutex);
+
 	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
 		_fades[l].status = 0;
 		_fades[l].sound = 0;
@@ -164,6 +171,7 @@ void IMuseDigiFadesHandler::clearAllFades() {
 		_fades[l].modOvfloCounter = 0;
 		_fades[l].nudge = 0;
 	}
+
 	_fadesOn = 0;
 }
 

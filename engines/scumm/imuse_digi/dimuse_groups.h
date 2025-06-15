@@ -35,10 +35,11 @@ class IMuseDigiGroupsHandler {
 
 private:
 	IMuseDigital *_engine;
+	Common::Mutex *_mutex;
 	int _effVols[DIMUSE_MAX_GROUPS] = {};
 	int _vols[DIMUSE_MAX_GROUPS] = {};
 public:
-	IMuseDigiGroupsHandler(IMuseDigital *engine);
+	IMuseDigiGroupsHandler(IMuseDigital *engine, Common::Mutex *mutex);
 	~IMuseDigiGroupsHandler();
 	int init();
 	int setGroupVol(int id, int volume);

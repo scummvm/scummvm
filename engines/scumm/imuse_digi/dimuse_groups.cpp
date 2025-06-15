@@ -24,8 +24,9 @@
 
 namespace Scumm {
 
-IMuseDigiGroupsHandler::IMuseDigiGroupsHandler(IMuseDigital *engine) {
+IMuseDigiGroupsHandler::IMuseDigiGroupsHandler(IMuseDigital *engine, Common::Mutex *mutex) {
 	_engine = engine;
+	_mutex = mutex;
 }
 
 IMuseDigiGroupsHandler::~IMuseDigiGroupsHandler() {}
@@ -39,6 +40,8 @@ int IMuseDigiGroupsHandler::init() {
 }
 
 int IMuseDigiGroupsHandler::setGroupVol(int id, int volume) {
+	Common::StackLock lock(*_mutex);
+
 	int l;
 
 	if (id >= DIMUSE_MAX_GROUPS) {
@@ -69,6 +72,8 @@ int IMuseDigiGroupsHandler::setGroupVol(int id, int volume) {
 }
 
 int IMuseDigiGroupsHandler::getGroupVol(int id) {
+	Common::StackLock lock(*_mutex);
+
 	if (id >= DIMUSE_MAX_GROUPS) {
 		return -5;
 	}
