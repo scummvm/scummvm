@@ -353,16 +353,16 @@ void LogicManager::getNewMnum() {
 		_isMagnifierInUse) {
 
 		if (_activeItem != kItemMatch ||
-			!cathInCorridor(kCarGreenSleeping) &&
-			!cathInCorridor(kCarRedSleeping) ||
+			(!cathInCorridor(kCarGreenSleeping) &&
+			!cathInCorridor(kCarRedSleeping)) ||
 			_globals[kProgressJacket] != 2 ||
 			_inventoryFlag1 ||
 			_inventoryFlag2 ||
 			_isEggHighlighted ||
 			_isMagnifierInUse ||
-			_items[kItem2].floating &&
+			(_items[kItem2].floating &&
 			getCharacter(kCharacterCath).characterPosition.car == kCarRedSleeping &&
-			getCharacter(kCharacterCath).characterPosition.position == 2300) {
+			getCharacter(kCharacterCath).characterPosition.position == 2300)) {
 
 			character = _engine->getOtisManager()->checkMouse(_engine->_cursorX, _engine->_cursorY);
 
@@ -463,8 +463,8 @@ void LogicManager::nodeStepMouse(Event *event) {
 			_isMagnifierInUse) {
 
 			if (_activeItem != kItemMatch ||
-				!cathInCorridor(kCarGreenSleeping) &&
-				!cathInCorridor(kCarRedSleeping) ||
+				(!cathInCorridor(kCarGreenSleeping) &&
+				!cathInCorridor(kCarRedSleeping)) ||
 				_globals[kProgressJacket] != 2 ||
 				_inventoryFlag1 ||
 				_inventoryFlag2 ||
@@ -798,7 +798,7 @@ void LogicManager::checkInventory(int32 flags) {
 				return;
 			}
 
-			if (!_closeUp || _nodeReturn2 && findLargeItem() == _activeItem) {
+			if (!_closeUp || (_nodeReturn2 && findLargeItem() == _activeItem)) {
 				_isMagnifierInUse = 1;
 			}
 
