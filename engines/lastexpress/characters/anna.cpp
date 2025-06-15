@@ -3605,7 +3605,7 @@ void LogicManager::HAND_Anna_AfterConcert(HAND_PARAMS) {
 				break;
 			}
 
-			if (!getCharacterCurrentParams(kCharacterAnna)[2] || !cathInCorridor(kCarRedSleeping) && !inSalon(kCharacterCath) && !inDiningRoom(kCharacterCath) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
+			if (!getCharacterCurrentParams(kCharacterAnna)[2] || (!cathInCorridor(kCarRedSleeping) && !inSalon(kCharacterCath) && !inDiningRoom(kCharacterCath)) || !getCharacterCurrentParams(kCharacterAnna)[3]) {
 				getCharacterCurrentParams(kCharacterAnna)[3] = _gameTime;
 				if (!getCharacterCurrentParams(kCharacterAnna)[3]) {
 					CONS_Anna_GoBagg(0, 0, 0, 0);
@@ -4483,7 +4483,7 @@ void LogicManager::HAND_Anna_LetDownHair(HAND_PARAMS) {
 		if (getCharacterCurrentParams(kCharacterAnna)[2] != 0x7FFFFFFF && getCharacterCurrentParams(kCharacterAnna)[0] < _gameTime) {
 			if (getCharacterCurrentParams(kCharacterAnna)[1] < _gameTime) {
 				getCharacterCurrentParams(kCharacterAnna)[2] = 0x7FFFFFFF;
-			} else if ((cathInCorridor(kCarGreenSleeping) || cathInCorridor(kCarRedSleeping)) && getCharacterCurrentParams(kCharacterAnna)[2] || (getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime, _gameTime != 0)) {
+			} else if (((cathInCorridor(kCarGreenSleeping) || cathInCorridor(kCarRedSleeping)) && getCharacterCurrentParams(kCharacterAnna)[2]) || (getCharacterCurrentParams(kCharacterAnna)[2] = _gameTime, _gameTime != 0)) {
 				if (getCharacterCurrentParams(kCharacterAnna)[2] >= _gameTime)
 					break;
 	
