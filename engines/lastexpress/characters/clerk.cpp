@@ -512,8 +512,8 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 				endDialog("ZFX1001");
 		}
 
-		if ((getCharacterCurrentParams(kCharacterClerk)[2] && (getCharacter(kCharacterCath).characterPosition.car != getCharacterCurrentParams(kCharacterClerk)[0]) ||
-			 (isNight() != (getCharacterCurrentParams(kCharacterClerk)[1] != 0 ? true : false)))) {
+		if ((getCharacterCurrentParams(kCharacterClerk)[2] && (getCharacter(kCharacterCath).characterPosition.car != getCharacterCurrentParams(kCharacterClerk)[0])) ||
+			 (isNight() != (getCharacterCurrentParams(kCharacterClerk)[1] != 0 ? true : false))) {
 
 			switch (getCharacter(kCharacterCath).characterPosition.car) {
 			case 1:
