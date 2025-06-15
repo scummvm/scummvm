@@ -264,14 +264,14 @@ void LogicManager::HAND_Salko_DoWalkBehind(HAND_PARAMS) {
 	case 0:
 		getCharacterCurrentParams(kCharacterSalko)[2] = 0;
 		if (nearChar(kCharacterSalko, kCharacterIvo, 500) ||
-			(getCharacter(kCharacterSalko).direction == 1) &&
+			((getCharacter(kCharacterSalko).direction == 1) &&
 				((getCharacter(kCharacterSalko).characterPosition.car > getCharacter(kCharacterIvo).characterPosition.car) ||
-				 getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
-					 getCharacter(kCharacterSalko).characterPosition.position > getCharacter(kCharacterIvo).characterPosition.position) ||
-			getCharacter(kCharacterSalko).direction == 2 &&
+				 (getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
+					 getCharacter(kCharacterSalko).characterPosition.position > getCharacter(kCharacterIvo).characterPosition.position))) ||
+			(getCharacter(kCharacterSalko).direction == 2 &&
 				((getCharacter(kCharacterSalko).characterPosition.car < getCharacter(kCharacterIvo).characterPosition.car) ||
-				 getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
-					 getCharacter(kCharacterSalko).characterPosition.position < getCharacter(kCharacterIvo).characterPosition.position)) {
+				 (getCharacter(kCharacterSalko).characterPosition.car == getCharacter(kCharacterIvo).characterPosition.car &&
+					 getCharacter(kCharacterSalko).characterPosition.position < getCharacter(kCharacterIvo).characterPosition.position)))) {
 
 			getCharacter(kCharacterSalko).waitedTicksUntilCycleRestart = 0;
 			getCharacterCurrentParams(kCharacterSalko)[2] = 1;
