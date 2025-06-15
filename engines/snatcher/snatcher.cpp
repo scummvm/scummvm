@@ -19,6 +19,7 @@
 *
 */
 
+#include "snatcher/action.h"
 #include "snatcher/graphics.h"
 #include "snatcher/memory.h"
 #include "snatcher/resource.h"
@@ -47,16 +48,17 @@
 namespace Snatcher {
 
 SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
-	_scriptEngine(nullptr), _cmdQueue(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(false),
+	_scriptEngine(nullptr), _cmdQueue(nullptr), _aseq(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(false),
 		_memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 }
 
 SnatcherEngine::~SnatcherEngine() {
+	delete _aseq;
 	delete _cmdQueue;
 	delete _fio;
 	delete _gfx;
-	delete _memHandler;	
+	delete _memHandler;
 	delete _module;
 	delete _saveMan;
 	delete _scd;
@@ -131,10 +133,10 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 			error("%s(): No suitable color mode found", __FUNCTION__);
 	}
 
-	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo, _snd);
+	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo, _snd, ConfMan.getBool("aspect_ratio"));
 
 	if (_gfx) {
-		initGraphics(_gfx->screenWidth(), _gfx->screenHeight(), &pxf);
+		initGraphics(_gfx->realScreenWidth(), _gfx->realScreenHeight(), &pxf);
 		assert(_scd);
 		_gfx->setTextFont(_scd->makePtr(0x14B7C)(), 816, _scd->makePtr(0x14EAC)(), 102);
 		return true;
@@ -171,10 +173,14 @@ bool SnatcherEngine::initScriptEngine() {
 	if (!_ui)
 		return false;
 
-	_memHandler = new MemAccessHandler(this, _ui, _saveMan);
+	_aseq = new ActionSequenceHandler(this, _scd);
+	if (!_aseq)
+		return false;
+
+	_memHandler = new MemAccessHandler(this, _ui, _aseq, _saveMan);
 	assert(_memHandler);
 
-	_scriptEngine = new ScriptEngine(_cmdQueue, _ui, _memHandler, _scd);
+	_scriptEngine = new ScriptEngine(_cmdQueue, _ui, _aseq, _memHandler, _scd);
 	if (!_scriptEngine)
 		return false;
 
@@ -347,38 +353,60 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 	Common::Event evt;
 	_lastKeys &= ~_releaseKeys;
 	_releaseKeys = 0;
-	_input.controllerFlags = _input.controllerFlagsRemapped = 0;
+	_input.singleFrameControllerFlags = _input.singleFrameControllerFlagsRemapped = 0;
 	Common::Point mouse;
 
 	while (_eventMan->pollEvent(evt)) {
 		for (const InputEvent &k : _defaultKeyEvents) {
 			if (evt.type == k.pressType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
-				if (!(_lastKeys & k.internalEvent)) {
-					_input.controllerFlags |= k.internalEvent;
+				if (k.kc != Common::KEYCODE_INVALID && k.releaseType != Common::EVENT_INVALID) {
+					_input.sustainedControllerFlags |= k.internalEvent;
 					// The A, B and C buttons can be reconfigured in the main menu. This applies the setting.
 					for (int f = 0; f < 3; ++f) {
-						if (k.internalEvent & (f << 5)) 
-							_input.controllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
+						if (k.internalEvent & ((1 << f) << 4))
+							_input.sustainedControllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
 					}
-					_input.controllerFlagsRemapped |= (k.internalEvent & ~0x70);
+					_input.sustainedControllerFlagsRemapped |= (k.internalEvent & ~0x70);
+				}
+
+				if (!(_lastKeys & k.internalEvent)) {
+					_input.singleFrameControllerFlags |= k.internalEvent;
+					// The A, B and C buttons can be reconfigured in the main menu. This applies the setting.
+					for (int f = 0; f < 3; ++f) {
+						if (k.internalEvent & ((1 << f) << 4))
+							_input.singleFrameControllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
+					}
+					_input.singleFrameControllerFlagsRemapped |= (k.internalEvent & ~0x70);
 					_lastKeys |= k.internalEvent;
 					if (_keyRepeat || k.releaseType == Common::EVENT_INVALID)
 						_releaseKeys |= k.internalEvent;
 					if (k.updateCoords) {
 						_realLightGunPos = evt.mouse;
+						// Revert aspect ratio correction, if necessary.
+						_realLightGunPos.x = (_realLightGunPos.x * _gfx->screenWidth()) / _gfx->realScreenWidth();
+						_realLightGunPos.y = (_realLightGunPos.y * _gfx->screenHeight()) / _gfx->realScreenHeight();
 						// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
 						// the screen center. I solve this by always adding the diff to the y-bias.
 						_input.lightGunPos.x = CLIP<int>(_realLightGunPos.x - state.conf.lightGunBias.x, 0, 255);
 						_input.lightGunPos.y = CLIP<int>(_realLightGunPos.y - state.conf.lightGunBias.y, 0, 255);
 					}
 				}
+
 			} else if ((evt.type == k.releaseType) && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
 				_lastKeys &= ~k.internalEvent;
+				if (k.kc != Common::KEYCODE_INVALID && k.releaseType != Common::EVENT_INVALID) {
+					_input.sustainedControllerFlags &= ~k.internalEvent;
+					for (int f = 0; f < 3; ++f) {
+						if (k.internalEvent & ((1 << f) << 4))
+							_input.sustainedControllerFlagsRemapped &= ~(1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
+					}
+					_input.sustainedControllerFlagsRemapped &= ~(k.internalEvent & ~0x70);
+				}
 			}
 		}
 	}
 
-	if (_enableLightGun && _input.controllerFlags & 0x100)
+	if (_enableLightGun && _input.singleFrameControllerFlags & 0x100)
 		_gfx->setVar(7, 4);
 }
 
@@ -426,7 +454,7 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		_cmdQueue->writeUInt16(0x11);
 		_cmdQueue->writeUInt32(0x1A800);
 		if (state.menuSelect == 0) {
-			// Enter first scene	
+			// Enter first scene
 			_cmdQueue->writeUInt16(0x3F);
 			_cmdQueue->writeUInt16(0x0F);
 		} else {
@@ -466,11 +494,11 @@ void SnatcherEngine::updateChapter(GameState &state) {
 				_cmdQueue->writeUInt32(0x139D0);
 				_cmdQueue->start();
 				state.chapterSub |= 0xA0;
-			}				
+			}
 			state.chapterSub &= ~0x40;
 		} else if (state.chapterSub & 0x20) {
 			_gfx->setVar(11, 0xFF);
-			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input.controllerFlagsRemapped)) {
+			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input.singleFrameControllerFlagsRemapped)) {
 				state.chapterSub |= 0x80;
 			} else {
 				_scriptEngine->processInput();
@@ -758,6 +786,11 @@ void SnatcherEngine::calibrateLightGun(GameState &state) {
 	// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
 	// the screen center. I just add the diff to the y-bias...
 	state.conf.lightGunBias.y -= ((256 - _gfx->screenHeight()) / 2);
+}
+
+void SnatcherEngine::allowLightGunInput(bool enable) {
+	_enableLightGun = enable;
+	_system->showMouse(enable);
 }
 
 } // End of namespace Snatcher

@@ -215,7 +215,7 @@ void SaveLoadManager::saveState(int slot, GameState &state) {
 	_vm->sound()->saveState(out);
 
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
-	
+
 	out->finalize();
 	delete out;
 
@@ -253,7 +253,7 @@ Common::OutSaveFile *SaveLoadManager::openFileForSaving(int slot, const Common::
 		error("%s(): Unable to create thumbnail", __FUNCTION__);
 
 	Graphics::saveThumbnail(*out, tn);
-	
+
 	TimeDate td;
 	_vm->_system->getTimeAndDate(td);
 

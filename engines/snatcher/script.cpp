@@ -20,6 +20,7 @@
 */
 
 
+#include "snatcher/action.h"
 #include "snatcher/graphics.h"
 #include "snatcher/memory.h"
 #include "snatcher/resource.h"
@@ -119,14 +120,14 @@ void CmdQueue::makeFunctions() {
 		OP(invItemCloseUp),
 		OP(resetTextFields),
 		OP(23),
-		OP(24),
+		OP(shooterSequenceRun),
 		OP(fmSfxWait),
 		OP(26),
 		OP(27),
 		OP(fmSoundEffect),
 		OP(pcmBlock),
 		OP(saveGame),
-		OP(31),
+		OP(shooterSequenceResetScore),
 		OP(gfxPostLoadProcess),
 		OP(33),
 		OP(palOps),
@@ -209,7 +210,7 @@ void CmdQueue::m_fmMusicStart(const uint16 *&data) {
 }
 
 void CmdQueue::m_displayDialog(const uint16 *&data) {
-	if (_vm->_ui->displayDialog(data[0], data[1], _vm->input().controllerFlagsRemapped)) {
+	if (_vm->_ui->displayDialog(data[0], data[1], _vm->input().singleFrameControllerFlagsRemapped)) {
 		_progress = -1;
 		data += 2;
 	}
@@ -247,7 +248,7 @@ void CmdQueue::m_pcmWait(const uint16 *&data) {
 		_counter = 3600;
 		++_progress;
 	}
-	if (--_counter == 0 || !(_vm->sound()->pcmGetStatus().statusBits & 0x0F)) 
+	if (--_counter == 0 || !(_vm->sound()->pcmGetStatus().statusBits & 0x0F))
 		_progress = -1;
 }
 
@@ -369,7 +370,7 @@ void CmdQueue::m_fmMusicWait(const uint16 *&data) {
 		_counter = 2700;
 		++_progress;
 	}
-	if (--_counter == 0 || (_vm->sound()->fmGetStatus().music == 0)) 
+	if (--_counter == 0 || (_vm->sound()->fmGetStatus().music == 0))
 		_progress = -1;
 }
 
@@ -396,8 +397,9 @@ void CmdQueue::m_resetTextFields(const uint16 *&data) {
 void CmdQueue::m_23(const uint16 *&data) {
 }
 
-void CmdQueue::m_24(const uint16 *&data) {
-//shooting practice
+void CmdQueue::m_shooterSequenceRun(const uint16 *&data) {
+	if (!_vm->_aseq->run(/*_state->conf.useLightGun*/0))
+		_progress = -1;
 }
 
 void CmdQueue::m_fmSfxWait(const uint16 *&data) {
@@ -405,7 +407,7 @@ void CmdQueue::m_fmSfxWait(const uint16 *&data) {
 		_counter = 600;
 		++_progress;
 	}
-	if (--_counter == 0 || (_vm->sound()->fmGetStatus().sfx == 0)) 
+	if (--_counter == 0 || (_vm->sound()->fmGetStatus().sfx == 0))
 		_progress = -1;
 }
 
@@ -433,7 +435,9 @@ void CmdQueue::m_saveGame(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_31(const uint16 *&data) {
+void CmdQueue::m_shooterSequenceResetScore(const uint16 *&data) {
+	if (!_vm->_aseq->resetScore())
+		_progress = -1;
 }
 
 void CmdQueue::m_gfxPostLoadProcess(const uint16 *&data) {
@@ -458,7 +462,7 @@ void CmdQueue::m_clearJordanInputField(const uint16 *&data) {
 	_progress = -1;
 }
 
-ScriptEngine::ScriptEngine(CmdQueue *que, UI *ui, MemAccessHandler *mem, ResourcePointer *scd) : _que(que), _ui(ui), _mem(mem), _arrayData(nullptr), _pos1(0), _pos2(0), _op(0), /*_v1(0), _v2(0), _v3(0),*/ _result(0), _flagsTable(nullptr) {
+ScriptEngine::ScriptEngine(CmdQueue *que, UI *ui, ActionSequenceHandler *aseq, MemAccessHandler *mem, ResourcePointer *scd) : _que(que), _ui(ui), _aseq(aseq), _mem(mem), _arrayData(nullptr), _pos1(0), _pos2(0), _op(0), /*_v1(0), _v2(0), _v3(0),*/ _result(0), _flagsTable(nullptr) {
 	_flagsTable = new uint8[352]();
 	_arrayData = new uint8[256]();
 	makeOpcodeTable(scd);
@@ -623,7 +627,6 @@ void ScriptEngine::getFlags(uint16 sel, uint16 &result) {
 	uint8 v2 = sel & 0x0F;
 	uint8 v1 = v2 + 1 + ((sel >> 4) & 7);
 	result = ((r << v1) | (r >> (32 - v1))) & maskTable[v2];
-	debug ("GETFLAGS: sel 0x%04X, 0x%02x%02x%02x", sel, *in, *(in+1), *(in+2));
 }
 
 void ScriptEngine::setFlags(uint16 sel, uint32 flags) {
@@ -645,8 +648,6 @@ void ScriptEngine::setFlags(uint16 sel, uint32 flags) {
 	*in++ = (flags >> 24) & 0xFF;
 	*in++ = (flags >> 16) & 0xFF;
 	*in++ = (flags >> 8) & 0xFF;
-
-	debug ("SETVAR: sel 0x%04X, 0x%02x%02x%02x", sel, *(in-3), *(in-2), *(in-1));
 }
 
 uint8 ScriptEngine::countFunctionOps() {
@@ -864,12 +865,12 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(clearFlags),
 		OP(setFlags),
 		OP(21),
-		OP(eval_greater),
-		OP(23),
-		OP(24),
-		OP(24),
-		OP(jumpIf),
-		OP(jumpIf),
+		OP(eval_less),
+		OP(eval_lessOrSame),
+		OP(do_either_or),
+		OP(do_either_or),
+		OP(do_if),
+		OP(do_if),
 		OP(28),
 		OP(28),
 		OP(executeFunction),
@@ -1090,7 +1091,7 @@ void ScriptEngine::o_21() {
 		_result = 0xFFFF;
 }
 
-void ScriptEngine::o_eval_greater() {
+void ScriptEngine::o_eval_less() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 r1 = 0;
@@ -1100,13 +1101,23 @@ void ScriptEngine::o_eval_greater() {
 	_pos1 = _pos2;
 	r1 = _result;
 	runOpcodeOrReadVar(m2, _result);
-	_result = (r1 > _result) ? 0xFFFF : 0;
+	_result = (_result < r1) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_23() {
+void ScriptEngine::o_eval_lessOrSame() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 r1 = 0;
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, r1);
+	runOpcodeOrReadVar(m1, _result);
+	_pos1 = _pos2;
+	r1 = _result;
+	runOpcodeOrReadVar(m2, _result);
+	_result = (_result <= r1) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_24() {
+void ScriptEngine::o_do_either_or() {
 	uint16 mode = 0;
 	uint16 f1 = 0;
 	uint16 f2 = 0;
@@ -1119,7 +1130,7 @@ void ScriptEngine::o_24() {
 	runOpcode();
 }
 
-void ScriptEngine::o_jumpIf() {
+void ScriptEngine::o_do_if() {
 	uint16 mode = 0;
 	uint16 f1 = 0;
 	uint16 f2 = 0;
@@ -1152,7 +1163,7 @@ void ScriptEngine::o_executeFunction() {
 	uint8 num = countFunctionOps();
 	uint8 cnt = 1;
 	int orig = _pos1;
-	
+
 	for (bool lp = true; lp; ) {
 		_pos2 = orig;
 		seekToFunctionOp(cnt);
@@ -1405,7 +1416,6 @@ void ScriptEngine::o_sysOps() {
 		// Save game state
 		_que->writeUInt16(0x1E);
 		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 4));
-		//saveState_sub_14F12();
 		break;
 	case 2:
 		_que->writeUInt16(0x21);
@@ -1415,9 +1425,7 @@ void ScriptEngine::o_sysOps() {
 		break;
 	case 4:
 		// Start action sequence
-		//_scr_wd_00 = READ_BE_UINT16(_script->data + _pos1 + 4);
-		//_scr_wd_01 = _scr_wd_02 = _scr_wd_03 = _scr_wd_04 = 0;
-		//_scr_bt_00 = true;
+		_aseq->setup(READ_BE_UINT16(_script->data + _pos1 + 4));
 		_que->writeUInt16(0x18);
 		break;
 	case 5:

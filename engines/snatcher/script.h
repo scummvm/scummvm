@@ -35,6 +35,7 @@ class SeekableWriteStream;
 
 namespace Snatcher {
 
+class ActionSequenceHandler;
 class ResourcePointer;
 class SnatcherEngine;
 class UI;
@@ -92,21 +93,21 @@ private:
 	void m_invItemCloseUp(const uint16 *&data);
 	void m_resetTextFields(const uint16 *&data);
 	void m_23(const uint16 *&data);
-	void m_24(const uint16 *&data);
+	void m_shooterSequenceRun(const uint16 *&data);
 	void m_fmSfxWait(const uint16 *&data);
 	void m_26(const uint16 *&data);
 	void m_27(const uint16 *&data);
 	void m_fmSoundEffect(const uint16 *&data);
 	void m_pcmBlock(const uint16 *&data);
 	void m_saveGame(const uint16 *&data);
-	void m_31(const uint16 *&data);
+	void m_shooterSequenceResetScore(const uint16 *&data);
 	void m_gfxPostLoadProcess(const uint16 *&data);
 	void m_33(const uint16 *&data);
 	void m_palOps(const uint16 *&data);
 	void m_clearJordanInputField(const uint16 *&data);
 
 	typedef Common::Functor1Mem<const uint16*&, void, CmdQueue> CmdQueOpcode;
-	Common::Array<CmdQueOpcode*> _opcodes;	
+	Common::Array<CmdQueOpcode*> _opcodes;
 };
 
 class ScriptArray {
@@ -135,7 +136,7 @@ private:
 class MemAccessHandler;
 class ScriptEngine {
 public:
-	ScriptEngine(CmdQueue *que, UI *ui, MemAccessHandler *mem, ResourcePointer *scd);
+	ScriptEngine(CmdQueue *que, UI *ui, ActionSequenceHandler *aseq, MemAccessHandler *mem, ResourcePointer *scd);
 	~ScriptEngine();
 
 	void resetArrays();
@@ -149,6 +150,7 @@ public:
 private:
 	CmdQueue *_que;
 	MemAccessHandler *_mem;
+	ActionSequenceHandler *_aseq;
 	UI *_ui;
 	Script *_script;
 
@@ -202,10 +204,10 @@ private:
 	void o_clearFlags();
 	void o_setFlags();
 	void o_21();
-	void o_eval_greater();
-	void o_23();
-	void o_24();
-	void o_jumpIf();
+	void o_eval_less();
+	void o_eval_lessOrSame();
+	void o_do_either_or();
+	void o_do_if();
 	void o_28();
 	void o_executeFunction();
 	void o_40();

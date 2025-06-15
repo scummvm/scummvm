@@ -27,6 +27,7 @@
 
 namespace Snatcher {
 
+class ActionSequenceHandler;
 class SaveLoadManager;
 class SnatcherEngine;
 class UI;
@@ -38,7 +39,7 @@ struct GameState;
 
 class MemAccessHandler {
 public:
-	MemAccessHandler(SnatcherEngine *vm, UI *ui, SaveLoadManager *saveMan) : _vm(vm), _ui(ui), _saveMan(saveMan) {}
+	MemAccessHandler(SnatcherEngine *vm, UI *ui, ActionSequenceHandler *aseq, SaveLoadManager *saveMan) : _vm(vm), _ui(ui), _aseq(aseq), _saveMan(saveMan) {}
 	~MemAccessHandler() {}
 
 	uint16 readWord(uint16 addr);
@@ -49,6 +50,7 @@ public:
 private:
 	SnatcherEngine *_vm;
 	UI *_ui;
+	ActionSequenceHandler *_aseq;
 	SaveLoadManager *_saveMan;
 	GameState *_state;
 };

@@ -68,6 +68,7 @@ public:
 	uint16 readIncrSINT16();
 	uint32 readIncrUINT32();
 	uint32 readIncrSINT32();
+	void writeUINT16(uint16 value);
 	void writeUINT32(uint32 value);
 	ResourcePointer operator+(int inc) const;
 	bool operator<(const ResourcePointer &ptr) const;
@@ -131,7 +132,7 @@ public:
 	Common::SeekableReadStream *readStream(const Common::Path &file);
 	Common::SeekableReadStreamEndian *readStreamEndian(int index, EndianMode em = kPlatformEndianness);
 	Common::SeekableReadStreamEndian *readStreamEndian(const Common::Path &file, EndianMode em = kPlatformEndianness);
-	
+
 
 private:
 	Common::SearchSet _files;
