@@ -120,8 +120,8 @@ private:
 
 	bool _avatarInStasis;    //!< If this is set to true, Avatar can't move,
 	//!< nor can Avatar start more usecode
-	bool _paintEditorItems;  //!< If true, paint items with the SI_EDITOR flag
-	bool _showTouching;          //!< If true, highlight items touching Avatar
+	bool _showEditorItems;   //!< If true, paint items with the SI_EDITOR flag
+	bool _showTouching;      //!< If true, highlight items touching Avatar
 	int32 _timeOffset;
 	bool _hasCheated;
 	bool _cheatsEnabled;
@@ -236,20 +236,18 @@ public:
 	bool isAvatarInStasis() const {
 		return _avatarInStasis;
 	}
-	void toggleAvatarInStasis() {
-		_avatarInStasis = !_avatarInStasis;
+	bool isAvatarControlled() const;
+	bool isShowEditorItems() const {
+		return _showEditorItems;
 	}
-	bool isPaintEditorItems() const {
-		return _paintEditorItems;
-	}
-	void togglePaintEditorItems() {
-		_paintEditorItems = !_paintEditorItems;
+	void setShowEditorItems(bool flag) {
+		_showEditorItems = flag;
 	}
 	bool isShowTouchingItems() const {
 		return _showTouching;
 	}
-	void toggleShowTouchingItems() {
-		_showTouching = !_showTouching;
+	void setShowTouchingItems(bool flag) {
+		_showTouching = flag;
 	}
 
 	bool isCrusaderTeleporting() const {

@@ -274,21 +274,21 @@ bool Debugger::cmdSetVideoMode(int argc, const char **argv) {
 
 bool Debugger::cmdToggleAvatarInStasis(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->toggleAvatarInStasis();
+	g->setAvatarInStasis(!g->isAvatarInStasis());
 	debugPrintf("avatarInStasis = %s\n", strBool(g->isAvatarInStasis()));
 	return true;
 }
 
 bool Debugger::cmdTogglePaintEditorItems(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->togglePaintEditorItems();
-	debugPrintf("paintEditorItems = %s\n", strBool(g->isPaintEditorItems()));
+	g->setShowEditorItems(!g->isShowEditorItems());
+	debugPrintf("showEditorItems = %s\n", strBool(g->isShowEditorItems()));
 	return false;
 }
 
 bool Debugger::cmdToggleShowTouchingItems(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->toggleShowTouchingItems();
+	g->setShowTouchingItems(!g->isShowTouchingItems());
 	debugPrintf("ShowTouchingItems = %s\n", strBool(g->isShowTouchingItems()));
 	return false;
 }
@@ -1039,19 +1039,13 @@ bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 	return false;
 }
 
-static bool _isAvatarControlled() {
-	World *world = World::get_instance();
-	return (world && world->getControlledNPCNum() == 1);
-}
-
 bool Debugger::cmdNextInventory(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't use inventory: avatarInStasis");
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1066,8 +1060,7 @@ bool Debugger::cmdNextWeapon(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1082,8 +1075,7 @@ bool Debugger::cmdUseInventoryItem(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1104,8 +1096,7 @@ bool Debugger::cmdUseMedikit(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1120,8 +1111,7 @@ bool Debugger::cmdUseEnergyCube(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1136,8 +1126,7 @@ bool Debugger::cmdDetonateBomb(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1152,8 +1141,7 @@ bool Debugger::cmdDropWeapon(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1228,8 +1216,7 @@ bool Debugger::cmdStartSelection(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1248,8 +1235,7 @@ bool Debugger::cmdUseSelection(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 
@@ -1265,8 +1251,7 @@ bool Debugger::cmdGrabItems(int argc, const char **argv) {
 		return false;
 	}
 
-	// Only if controlling avatar.
-	if (!_isAvatarControlled()) {
+	if (!Ultima8Engine::get_instance()->isAvatarControlled()) {
 		return false;
 	}
 

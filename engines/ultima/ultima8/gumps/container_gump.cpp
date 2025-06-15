@@ -163,12 +163,12 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	int32 gameframeno = Kernel::get_instance()->getFrameNum();
 
 	//!! TODO: check these painting commands (flipped? translucent?)
-	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
+	bool showEditorItems = Ultima8Engine::get_instance()->isShowEditorItems();
 
 	for (auto *item : c->_contents) {
 		item->setupLerp(gameframeno);
 
-		if (!paintEditorItems && item->getShapeInfo()->is_editor())
+		if (!showEditorItems && item->getShapeInfo()->is_editor())
 			continue;
 
 		int32 itemx, itemy;
@@ -204,7 +204,7 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 	if (!c)
 		return 0; // Container gone!?
 
-	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
+	bool showEditorItems = Ultima8Engine::get_instance()->isShowEditorItems();
 
 	Std::list<Item *> &contents = c->_contents;
 	Std::list<Item *>::reverse_iterator iter;
@@ -212,7 +212,7 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 	// iterate backwards, since we're painting from begin() to end()
 	for (iter = contents.rbegin(); iter != contents.rend(); ++iter) {
 		Item *item = *iter;
-		if (!paintEditorItems && item->getShapeInfo()->is_editor())
+		if (!showEditorItems && item->getShapeInfo()->is_editor())
 			continue;
 
 		int32 itemx, itemy;

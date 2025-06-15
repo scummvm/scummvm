@@ -32,6 +32,7 @@ struct WeaponOverlayFrame;
 
 class MainActor : public Actor {
 	friend class Debugger;
+	friend class Ultima8Engine;
 public:
 	enum CruBatteryType {
 		NoBattery = 0,
