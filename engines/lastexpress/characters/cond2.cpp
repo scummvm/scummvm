@@ -2111,8 +2111,8 @@ void LogicManager::HAND_Cond2_CathBuzzing(HAND_PARAMS) {
 			break;
 		case 2:
 			if (inSuite(kCharacterCath, kCarRedSleeping, getCharacterCurrentParams(kCharacterCond2)[2]) ||
-				(getCharacterCurrentParams(kCharacterCond2)[0] == 36 || getCharacterCurrentParams(kCharacterCond2)[0] == 37) &&
-				cathOutRebeccaWindow()) {
+				((getCharacterCurrentParams(kCharacterCond2)[0] == 36 || getCharacterCurrentParams(kCharacterCond2)[0] == 37) &&
+				cathOutRebeccaWindow())) {
 				setDoor(getCharacterCurrentParams(kCharacterCond2)[0], 0, checkDoor(getCharacterCurrentParams(kCharacterCond2)[0]), 0, 0);
 				getCharacterCurrentParams(kCharacterCond2)[4] = 1;
 			}
