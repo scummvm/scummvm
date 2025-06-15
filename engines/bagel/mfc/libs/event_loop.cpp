@@ -58,14 +58,73 @@ bool EventLoop::GetMessage(MSG &msg) {
 
 	} else {
 		// Poll for event in ScummVM event manager
-		if (pollEvents(ev))
-			// Convert other event types
-			msg = ev;
-		else
+		if (!pollEvents(ev)) {
 			msg.message = WM_NULL;
+		} else {
+			HWND hWnd = nullptr;
+			setMessageWnd(ev, hWnd);
+
+			msg = ev;
+			msg.hwnd = hWnd;
+		}
 	}
 
 	return !g_engine->shouldQuit();
+}
+
+void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
+	if (isMouseMsg(ev)) {
+		setMouseMessageWnd(ev, hWnd);
+		return;
+	}
+
+	// Fallback, send message to any active dialog,
+	// or worst case to the main application window
+	if (_modalDialog)
+		hWnd = _modalDialog->m_hWnd;
+	else
+		hWnd = _mainWindow->m_hWnd;
+}
+
+void EventLoop::setMouseMessageWnd(Common::Event &ev, HWND &hWnd) {
+	// Special case for mouse moves: if there's an modal dialog,
+	// mouse moves will still be routed to the main window
+	// if the mouse is outside the dialog bounds
+	if (_modalDialog && ev.type == Common::EVENT_MOUSEMOVE &&
+		!_modalDialog->_windowRect.contains(ev.mouse)) {
+		hWnd = _mainWindow->m_hWnd;
+		return;
+	}
+
+	CWnd *wnd = _modalDialog ? _modalDialog : _mainWindow;
+	hWnd = getMouseMessageWnd(ev, wnd);
+	assert(hWnd);
+}
+
+HWND EventLoop::getMouseMessageWnd(Common::Event &ev, CWnd *parent) {
+	POINT pt;
+	RECT clientRect;
+
+	// Get the mouse position in passed window
+	pt.x = ev.mouse.x;
+	pt.y = ev.mouse.y;
+	parent->ScreenToClient(&pt);
+	parent->GetClientRect(&clientRect);
+	Common::Rect r = clientRect;
+	if (!r.contains(pt.x, pt.y))
+		return nullptr;
+
+	// Iterate through any children
+	for (const auto &node : parent->getChildren()) {
+		HWND child = getMouseMessageWnd(ev, node._value);
+		if (child)
+			return child;
+	}
+
+	// Final control under mouse
+	ev.mouse.x = pt.x;
+	ev.mouse.y = pt.y;
+	return parent;
 }
 
 bool EventLoop::pollEvents(Common::Event &event) {
@@ -126,6 +185,18 @@ void EventLoop::DispatchMessage(LPMSG lpMsg) {
 
 	wnd->SendMessage(lpMsg->message,
 		lpMsg->wParam, lpMsg->lParam);
+}
+
+bool EventLoop::isMouseMsg(const Common::Event &ev) const {
+	return ev.type == Common::EVENT_MOUSEMOVE ||
+		ev.type == Common::EVENT_LBUTTONDOWN ||
+		ev.type == Common::EVENT_LBUTTONUP ||
+		ev.type == Common::EVENT_RBUTTONDOWN ||
+		ev.type == Common::EVENT_RBUTTONUP ||
+		ev.type == Common::EVENT_WHEELUP ||
+		ev.type == Common::EVENT_WHEELDOWN ||
+		ev.type == Common::EVENT_MBUTTONDOWN ||
+		ev.type == Common::EVENT_MBUTTONUP;;
 }
 
 } // namespace Libs

@@ -1235,6 +1235,10 @@ public:
 	                    LPINT lpMinPos, LPINT lpMaxPos) const;
 	INT GetScrollPosition() const;
 	int SetScrollPos(int nBar, int nPos, BOOL bRedraw = TRUE);
+
+	const Common::HashMap<int, CWnd *> &getChildren() const {
+		return _children;
+	}
 };
 
 class CFrameWnd : public CWnd {

@@ -44,6 +44,24 @@ private:
 	 */
 	bool GetMessage(MSG &msg);
 
+	/**
+	 * Gets the destination window for a message
+	*/
+	void setMessageWnd(Common::Event &ev, HWND &hWnd);
+
+	/**
+	 * Determine the window to send a mouse message to,
+	 * and translates the event mouse position to be
+	 * relative to the control's client rect
+	 */
+	void setMouseMessageWnd(Common::Event &ev, HWND &hWnd);
+	HWND getMouseMessageWnd(Common::Event &ev, CWnd *parent);
+
+	/**
+	 * Returns true if the event is mouse related
+	 */
+	bool isMouseMsg(const Common::Event &ev) const;
+
 public:
 	EventLoop(CWnd *&mainWin) : _mainWindow(mainWin) {
 	}
