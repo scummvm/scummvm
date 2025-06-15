@@ -1242,13 +1242,13 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 				break;
 			}
 
-			if (getCharacter(kCharacterCath).characterPosition.car > kCarRedSleeping || getCharacter(kCharacterCath).characterPosition.car == kCarRedSleeping && getCharacter(kCharacterCath).characterPosition.position > 9270) {
+			if (getCharacter(kCharacterCath).characterPosition.car > kCarRedSleeping || (getCharacter(kCharacterCath).characterPosition.car == kCarRedSleeping && getCharacter(kCharacterCath).characterPosition.position > 9270)) {
 				playDialog(0, "BUMP", -1, 0);
 				bumpCath(kCarRedSleeping, 40, 255);
 				getCharacter(kCharacterTrainM).characterPosition.car = kCarRedSleeping;
 				getCharacter(kCharacterTrainM).characterPosition.position = 9270;
 			} else {
-				if (getCharacter(kCharacterCath).characterPosition.car < kCarGreenSleeping || getCharacter(kCharacterCath).characterPosition.car == kCarGreenSleeping && getCharacter(kCharacterCath).characterPosition.position < 4840) {
+				if (getCharacter(kCharacterCath).characterPosition.car < kCarGreenSleeping || (getCharacter(kCharacterCath).characterPosition.car == kCarGreenSleeping && getCharacter(kCharacterCath).characterPosition.position < 4840)) {
 					playDialog(0, "BUMP", -1, 0);
 					bumpCathFDoor(5);
 				}
