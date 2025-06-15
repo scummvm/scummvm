@@ -268,11 +268,11 @@ void LogicManager::HAND_Vesna_DoWalkBehind(HAND_PARAMS) {
 		getCharacterCurrentParams(kCharacterVesna)[2] = 0;
 
 		if (nearChar(kCharacterVesna, kCharacterMilos, 500) ||
-			(getCharacter(kCharacterVesna).direction == 1) &&
+			(getCharacter(kCharacterVesna).direction == 1 &&
 				((getCharacter(kCharacterVesna).characterPosition.car > getCharacter(kCharacterMilos).characterPosition.car) ||
-				 getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position > getCharacter(kCharacterMilos).characterPosition.position) ||
-			getCharacter(kCharacterVesna).direction == 2 && ((getCharacter(kCharacterVesna).characterPosition.car < getCharacter(kCharacterMilos).characterPosition.car) ||
-															 getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position < getCharacter(kCharacterMilos).characterPosition.position)) {
+				 (getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position > getCharacter(kCharacterMilos).characterPosition.position))) ||
+			((getCharacter(kCharacterVesna).direction == 2 && getCharacter(kCharacterVesna).characterPosition.car < getCharacter(kCharacterMilos).characterPosition.car) ||
+															 (getCharacter(kCharacterVesna).characterPosition.car == getCharacter(kCharacterMilos).characterPosition.car && getCharacter(kCharacterVesna).characterPosition.position < getCharacter(kCharacterMilos).characterPosition.position))) {
 
 			getCharacter(kCharacterVesna).waitedTicksUntilCycleRestart = 0;
 			getCharacterCurrentParams(kCharacterVesna)[2] = 1;
