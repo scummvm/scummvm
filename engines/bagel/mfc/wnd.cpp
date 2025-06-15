@@ -88,6 +88,11 @@ void CWnd::clear() {
 	}
 
 	_children.clear();
+
+	if (m_pParentWnd) {
+		m_pParentWnd->_ownedControls.remove(this);
+		m_pParentWnd->_children.erase(_controlId);
+	}
 }
 
 const MSG *CWnd::GetCurrentMessage() {
