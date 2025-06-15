@@ -50,9 +50,11 @@ public:
 	// Resource names
 	void readResourceNames(Common::SeekableReadStream *readStream);
 	const Common::String resourceNameFromNum(int i);
-	bool hasResourceNames() { return !_allResourceNames.empty(); }
+	bool hasResourceNames() const { return !_allResourceNames.empty(); }
+	int getResourceNameCount() const { return _allResourceNames.size(); }
 
 	void dumpFile(int num, const char *pattern);
+	bool dumpFileFromName(const char *name);
 
 private:
 	bool _sliceBusy;
