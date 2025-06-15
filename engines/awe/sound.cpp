@@ -65,11 +65,18 @@ void Sound::playSoundRaw(byte channel, const byte *data, size_t size,
 		int freq, byte volume) {
 	assert(channel < MAX_CHANNELS);
 
+	uint length = READ_BE_UINT16(data) * 2;
+
+	if (length > size - 8) {
+		warning("playSoundRaw: Length %d exceeds resource data length %ld", length, size);
+		length = size - 8;
+	}
+
 	Common::MemoryReadStream *stream =
-		new Common::MemoryReadStream(data, size);
+		new Common::MemoryReadStream(data + 8, length);
 	Audio::AudioStream *sound =
 		Audio::makeRawStream(stream, freq,
-			Audio::FLAG_16BITS,
+			0,
 			DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[channel],
 		sound, -1, 255, 0, DisposeAfterUse::YES);
