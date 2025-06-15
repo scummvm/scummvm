@@ -548,7 +548,7 @@ void LogicManager::HAND_Cond1_DoWalk(HAND_PARAMS) {
 		playChrExcuseMe(kCharacterCond1, kCharacterCath, 0);
 		break;
 	case 12:
-		if (!_globals[kProgressEventFoundCorpse] && !_doneNIS[kEventMertensAskTylerCompartment] && !_doneNIS[kEventMertensAskTylerCompartmentD] || getCharacterParams(kCharacterCond1, 8)[3] && _globals[kProgressJacket] == 2 && !_doneNIS[kEventMertensDontMakeBed] && !_globals[kProgressEventCorpseThrown]) {
+		if ((!_globals[kProgressEventFoundCorpse] && !_doneNIS[kEventMertensAskTylerCompartment] && !_doneNIS[kEventMertensAskTylerCompartmentD]) || (getCharacterParams(kCharacterCond1, 8)[3] && _globals[kProgressJacket] == 2 && !_doneNIS[kEventMertensDontMakeBed] && !_globals[kProgressEventCorpseThrown])) {
 			getCharacterCurrentParams(kCharacterCond1)[2] = 1;
 		}
 
@@ -871,7 +871,7 @@ void LogicManager::HAND_Cond1_Passing(HAND_PARAMS) {
 			break;
 		}
 
-		if (_globals[kProgressChapter] == 3 && !getCharacterCurrentParams(kCharacterCond1)[0] && _gameTime < 2173500 && (_gameTime > 2106000 || getCharacterCurrentParams(kCharacterCond1)[1] && _gameTime > 2079000)) {
+		if (_globals[kProgressChapter] == 3 && !getCharacterCurrentParams(kCharacterCond1)[0] && _gameTime < 2173500 && (_gameTime > 2106000 || (getCharacterCurrentParams(kCharacterCond1)[1] && _gameTime > 2079000))) {
 			if (getCharacterCurrentParams(kCharacterCond1)[1] == 2) {
 				playDialog(kCharacterCond1, "CON3052", -1, 0);
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 3;
@@ -3723,8 +3723,8 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 					break;
 				}
 
-				if (!cathInCorridor(kCarGreenSleeping) &&
-						!cathInCorridor(kCarRedSleeping) ||
+				if ((!cathInCorridor(kCarGreenSleeping) &&
+						!cathInCorridor(kCarRedSleeping)) ||
 					dialogRunning("REB1205") ||
 					!inComp(kCharacterMadame, kCarRedSleeping, 5790) ||
 					!getCharacterCurrentParams(kCharacterCond1)[3]) {
@@ -3882,7 +3882,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
 				Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensKronosInvitation, 0, 0);
 			} else if (!checkCathDir(kCarGreenSleeping, 23) || _globals[kProgressEventMertensChronosInvitation] || _doneNIS[kEventMertensLastCar] || _doneNIS[kEventMertensLastCarOriginalJacket]) {
-				if (!checkCathDir(kCarGreenSleeping, 1) && !checkCathDir(kCarGreenSleeping, 23) || getCharacterParams(kCharacterCond1, 8)[0] || getCharacterParams(kCharacterCond1, 8)[16]) {
+				if ((!checkCathDir(kCarGreenSleeping, 1) && !checkCathDir(kCarGreenSleeping, 23)) || getCharacterParams(kCharacterCond1, 8)[0] || getCharacterParams(kCharacterCond1, 8)[16]) {
 					if (cathInCorridor(kCarGreenSleeping) && getCharacter(kCharacterCond1).characterPosition.position < getCharacter(kCharacterCath).characterPosition.position && (_globals[1] == 1 || getCharacterParams(kCharacterCond1, 8)[6])) {
 						getCharacter(kCharacterCond1).inventoryItem = kItemNone;
 						getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 7;
@@ -3922,7 +3922,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 		case 2:
 		case 4:
 			startCycOtis(kCharacterCond1, "601B");
-			if (!checkCathDir(kCarGreenSleeping, 1) && !checkCathDir(kCarGreenSleeping, 23) || getCharacterParams(kCharacterCond1, 8)[0] || getCharacterParams(kCharacterCond1, 8)[16]) {
+			if ((!checkCathDir(kCarGreenSleeping, 1) && !checkCathDir(kCarGreenSleeping, 23)) || getCharacterParams(kCharacterCond1, 8)[0] || getCharacterParams(kCharacterCond1, 8)[16]) {
 				if (cathInCorridor(kCarGreenSleeping) && getCharacter(kCharacterCond1).characterPosition.position < getCharacter(kCharacterCath).characterPosition.position && (_globals[1] == 1 || getCharacterParams(kCharacterCond1, 8)[6])) {
 					getCharacter(kCharacterCond1).inventoryItem = kItemNone;
 					getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 7;
