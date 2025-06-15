@@ -506,7 +506,7 @@ void CreateEdge(int32 node1, int32 node2, Buffer *walkCodes) {
 			scanY = y1;
 			for (i = 0; ((i <= yDiff) && valid && (!finished)); i++) {
 				// Check if we have scanned off the edge of the buffer
-				if (scanX >= width || (y_unit > 0) && (scanY >= height) || ((y_unit < 0) && (scanY < 0))) {
+				if (scanX >= width || ((y_unit > 0) && (scanY >= height)) || ((y_unit < 0) && (scanY < 0))) {
 					finished = true;
 				} else {
 					// Else we either haven't yet reached the buffer, or we are on it
