@@ -19,12 +19,10 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/graphics/cursors/cursor.h"
-
-#include "common/str.h"
 #include "common/file.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "zvision/graphics/cursors/cursor.h"
 
 namespace ZVision {
 

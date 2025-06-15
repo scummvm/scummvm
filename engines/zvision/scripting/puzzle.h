@@ -22,10 +22,9 @@
 #ifndef ZVISION_PUZZLE_H
 #define ZVISION_PUZZLE_H
 
-#include "zvision/scripting/actions.h"
-
 #include "common/list.h"
 #include "common/ptr.h"
+#include "zvision/scripting/actions.h"
 
 namespace ZVision {
 

@@ -19,20 +19,19 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/tokenizer.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/tokenizer.h"
+#include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
-#include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
-
-#include "zvision/text/text.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/text/truetype_font.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/text/text.h"
+#include "zvision/text/truetype_font.h"
 
 namespace ZVision {
 
@@ -277,12 +276,17 @@ void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 }
 
 void TextRenderer::drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification justify) {
-	if (justify == TEXT_JUSTIFY_LEFT)
+	switch (justify) {
+	case TEXT_JUSTIFY_LEFT :
 		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignLeft);
-	else if (justify == TEXT_JUSTIFY_CENTER)
+		break;
+	case TEXT_JUSTIFY_CENTER :
 		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignCenter);
-	else if (justify == TEXT_JUSTIFY_RIGHT)
+		break;
+	case TEXT_JUSTIFY_RIGHT :
 		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignRight);
+		break;
+	}
 }
 
 int32 TextRenderer::drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest) {
@@ -307,7 +311,7 @@ struct TextSurface {
 	uint _lineNumber;
 };
 
-void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest) {
+void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest, bool blackFrame) {
 	Common::Array<TextSurface> textSurfaces;
 	Common::Array<uint> lineWidths;
 	Common::Array<TextJustification> lineJustifications;
@@ -337,7 +341,9 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	uint i = 0u;
 	uint stringlen = text.size();
 
+	// Parse entirety of supplied text
 	while (i < stringlen) {
+		// Style tag encountered?
 		if (text[i] == '<') {
 			// Flush the currentWord to the currentSentence
 			currentSentence += currentWord;
@@ -489,15 +495,21 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 
 	for (Common::Array<TextSurface>::iterator iter = textSurfaces.begin(); iter != textSurfaces.end(); ++iter) {
 		Common::Rect empty;
-
-		if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_LEFT) {
-			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
-		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_CENTER) {
-			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, ((dest.w - lineWidths[iter->_lineNumber]) / 2) + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
-		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_RIGHT) {
-			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, dest.w - lineWidths[iter->_lineNumber]  + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
+		int16 Xpos = iter->_surfaceOffset.x;
+		switch (lineJustifications[iter->_lineNumber]) {
+		case TEXT_JUSTIFY_LEFT :
+			break;
+		case TEXT_JUSTIFY_CENTER :
+			Xpos += ((dest.w - lineWidths[iter->_lineNumber]) / 2);
+			break;
+		case TEXT_JUSTIFY_RIGHT :
+			Xpos += dest.w - lineWidths[iter->_lineNumber];
+			break;
 		}
-
+		if (blackFrame)
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y);
+		else
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, Xpos, iter->_surfaceOffset.y, 0);
 		// Release memory
 		iter->_surface->free();
 		delete iter->_surface;

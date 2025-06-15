@@ -19,21 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/controls/lever_control.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "common/stream.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/tokenizer.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/lever_control.h"
 
 namespace ZVision {
 
@@ -63,14 +60,12 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("descfile", true)) {
 			char levFileName[25];
-			sscanf(values.c_str(), "%24s", levFileName);
-
-			parseLevFile(levFileName);
+			if (sscanf(values.c_str(), "%24s", levFileName) == 1)
+				parseLevFile(levFileName);
 		} else if (param.matchString("cursor", true)) {
 			char cursorName[25];
-			sscanf(values.c_str(), "%24s", cursorName);
-
-			_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
+			if (sscanf(values.c_str(), "%24s", cursorName) == 1)
+				_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
 		}
 
 		line = stream.readLine();
@@ -111,35 +106,33 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 			// Not used
 		} else if (param.matchString("anim_coords", true)) {
 			int left, top, right, bottom;
-			sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom);
-
-			_animationCoords.left = left;
-			_animationCoords.top = top;
-			_animationCoords.right = right;
-			_animationCoords.bottom = bottom;
+			if (sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom) == 4) {
+				_animationCoords.left = left;
+				_animationCoords.top = top;
+				_animationCoords.right = right;
+				_animationCoords.bottom = bottom;
+			}
 		} else if (param.matchString("mirrored", true)) {
 			uint mirrored;
-			sscanf(values.c_str(), "%u", &mirrored);
-
-			_mirrored = mirrored == 0 ? false : true;
+			if (sscanf(values.c_str(), "%u", &mirrored) == 1)
+				_mirrored = mirrored == 0 ? false : true;
 		} else if (param.matchString("frames", true)) {
-			sscanf(values.c_str(), "%u", &_frameCount);
-
-			_frameInfo = new FrameInfo[_frameCount];
+			if (sscanf(values.c_str(), "%u", &_frameCount) == 1)
+				_frameInfo = new FrameInfo[_frameCount];
 		} else if (param.matchString("elsewhere", true)) {
 			// Not used
 		} else if (param.matchString("out_of_control", true)) {
 			// Not used
 		} else if (param.matchString("start_pos", true)) {
-			sscanf(values.c_str(), "%u", &_startFrame);
-			_currentFrame = _startFrame;
+			if (sscanf(values.c_str(), "%u", &_startFrame) == 1)
+				_currentFrame = _startFrame;
 		} else if (param.matchString("hotspot_deltas", true)) {
 			uint x;
 			uint y;
-			sscanf(values.c_str(), "%u %u", &x, &y);
-
-			_hotspotDelta.x = x;
-			_hotspotDelta.y = y;
+			if (sscanf(values.c_str(), "%u %u", &x, &y) == 2) {
+				_hotspotDelta.x = x;
+				_hotspotDelta.y = y;
+			}
 		} else if (param.matchString("venus_id", true)) {
 			_venusId = atoi(values.c_str());
 		} else {
@@ -166,9 +159,8 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 
 					uint angle;
 					uint toFrame;
-					sscanf(token.c_str(), "%u,%u", &toFrame, &angle);
-
-					_frameInfo[frameNumber].directions.push_back(Direction(angle, toFrame));
+					if (sscanf(token.c_str(), "%u,%u", &toFrame, &angle) == 2)
+						_frameInfo[frameNumber].directions.push_back(Direction(angle, toFrame));
 				} else if (token.hasPrefix("p")) {
 					// Format: P(<from> to <to>)
 					tokenizer.nextToken();

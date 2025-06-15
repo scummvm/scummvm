@@ -19,11 +19,11 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/memstream.h"
 #include "common/debug.h"
 #include "common/file.h"
-
+#include "common/memstream.h"
+#include "common/scummsys.h"
+#include "zvision/detection.h"
 #include "zvision/file/zfs_archive.h"
 
 namespace ZVision {
@@ -39,17 +39,17 @@ ZfsArchive::ZfsArchive(const Common::Path &fileName) : _fileName(fileName) {
 
 	readHeaders(&zfsFile);
 
-	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.toString(Common::Path::kNativeSeparator).c_str(), _entryHeaders.size());
+	debugC(1, kDebugFile, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.toString(Common::Path::kNativeSeparator).c_str(), _entryHeaders.size());
 }
 
 ZfsArchive::ZfsArchive(const Common::Path &fileName, Common::SeekableReadStream *stream) : _fileName(fileName) {
 	readHeaders(stream);
 
-	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.toString(Common::Path::kNativeSeparator).c_str(), _entryHeaders.size());
+	debugC(1, kDebugFile, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.toString(Common::Path::kNativeSeparator).c_str(), _entryHeaders.size());
 }
 
 ZfsArchive::~ZfsArchive() {
-	debug(1, "ZfsArchive Destructor Called");
+	debugC(1, kDebugFile, "ZfsArchive Destructor Called");
 	ZfsEntryHeaderMap::iterator it = _entryHeaders.begin();
 	for (; it != _entryHeaders.end(); ++it) {
 		delete it->_value;

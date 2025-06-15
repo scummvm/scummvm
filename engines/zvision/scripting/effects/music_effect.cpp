@@ -19,52 +19,59 @@
  *
  */
 
+#include "audio/decoders/wave.h"
+#include "common/file.h"
 #include "common/scummsys.h"
-
-#include "zvision/scripting/effects/music_effect.h"
-
+#include "common/stream.h"
+#include "math/utils.h"
+#include "math/angle.h"
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/effects/music_effect.h"
 #include "zvision/sound/midi.h"
+#include "zvision/sound/volume_manager.h"
 #include "zvision/sound/zork_raw.h"
 
-#include "common/stream.h"
-#include "common/file.h"
-#include "audio/decoders/wave.h"
 
 namespace ZVision {
 
-// FIXME: This is wrong, and not what the original is doing.
-// Using actual linear volume values fixes bug #7176.
-/*static const uint8 dbMapLinear[256] =
-{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2,
-2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
-4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
-8, 8, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13, 14,
-14, 15, 15, 16, 16, 17, 18, 18, 19, 20, 21, 21, 22, 23, 24, 25,
-26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 43, 45,
-46, 48, 50, 52, 53, 55, 57, 60, 62, 64, 67, 69, 72, 74, 77, 80,
-83, 86, 89, 92, 96, 99, 103, 107, 111, 115, 119, 123, 128, 133, 137, 143,
-148, 153, 159, 165, 171, 177, 184, 191, 198, 205, 212, 220, 228, 237, 245, 255};*/
+void MusicNodeBASE::setDirection(Math::Angle azimuth, uint8 magnitude) {
+	if (_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1) {
+		_azimuth = azimuth;
+		_directionality = magnitude;
+		_balance = ((int)(127 * _azimuth.getSine()) * _directionality) / 255;
+	} else
+		setBalance(0);
+	updateMixer();
+}
+
+void MusicNodeBASE::setBalance(int8 balance) {
+	_balance = balance;
+	_azimuth.setDegrees(0);
+	_directionality = 255;
+	updateMixer();
+}
+
+void MusicNodeBASE::updateMixer() {
+	if (_engine->getScriptManager()->getStateValue(StateKey_Qsound) >= 1)
+		_volumeOut = _engine->getVolumeManager()->convert(_volume, _azimuth, _directionality);  // Apply game-specific volume profile and then attenuate according to azimuth
+	else
+		_volumeOut = _engine->getVolumeManager()->convert(_volume);  // Apply game-specific volume profile and ignore azimuth
+	outputMixer();
+}
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool loop, uint8 volume)
 	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_loop = loop;
 	_volume = volume;
-	_deltaVolume = 0;
 	_balance = 0;
-	_crossfade = false;
-	_crossfadeTarget = 0;
-	_crossfadeTime = 0;
-	_sub = NULL;
+	_fade = false;
+	_fadeStartVol = volume;
+	_fadeEndVol = 0;
+	_fadeTime = 0;
+	_fadeElapsed = 0;
+	_sub = 0;
 	_stereo = false;
 	_loaded = false;
 
@@ -84,13 +91,15 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 
 		if (_loop) {
 			Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume /*dbMapLinear[_volume]*/);
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume);
 		} else {
-			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume /*dbMapLinear[_volume]*/);
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume);
 		}
 
-		if (_key != StateKey_NotSet)
+		if (_key != StateKey_NotSet) {
+			debugC(3, kDebugSound, "setting musicnode state value to 1");
 			_engine->getScriptManager()->setStateValue(_key, 1);
+		}
 
 		// Change filename.raw into filename.sub
 		Common::String subname = filename.baseName();
@@ -100,10 +109,12 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 
 		Common::Path subpath(filename.getParent().appendComponent(subname));
 		if (_engine->getSearchManager()->hasFile(subpath))
-			_sub = new Subtitle(_engine, subpath);
+			_sub = _engine->getSubtitleManager()->create(subpath, _handle); // NB automatic subtitle!
 
 		_loaded = true;
+		updateMixer();
 	}
+	debugC(3, kDebugSound, "MusicNode: %d created", _key);
 }
 
 MusicNode::~MusicNode() {
@@ -112,138 +123,123 @@ MusicNode::~MusicNode() {
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
 	if (_sub)
-		delete _sub;
-	debug(1, "MusicNode: %d destroyed", _key);
+		_engine->getSubtitleManager()->destroy(_sub);
+	debugC(3, kDebugSound, "MusicNode: %d destroyed", _key);
 }
 
-void MusicNode::setDeltaVolume(uint8 volume) {
-	_deltaVolume = volume;
-	setVolume(_volume);
-}
-
-void MusicNode::setBalance(int8 balance) {
-	_balance = balance;
+void MusicNode::outputMixer() {
 	_engine->_mixer->setChannelBalance(_handle, _balance);
+	_engine->_mixer->setChannelVolume(_handle, _volumeOut);
 }
 
 void MusicNode::setFade(int32 time, uint8 target) {
-	_crossfadeTarget = target;
-	_crossfadeTime = time;
-	_crossfade = true;
+	_fadeStartVol = _volume;
+	_fadeEndVol = target;
+	_fadeElapsed = 0;
+	_fadeTime = time <= 0 ? 0 : (uint32)time;
+	_fade = true;
 }
 
 bool MusicNode::process(uint32 deltaTimeInMillis) {
 	if (!_loaded || ! _engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
-		uint8 _newvol = _volume;
-
-		if (_crossfade) {
-			if (_crossfadeTime > 0) {
-				if ((int32)deltaTimeInMillis > _crossfadeTime)
-					deltaTimeInMillis = _crossfadeTime;
-				_newvol += (int)(floor(((float)(_crossfadeTarget - _newvol) / (float)_crossfadeTime)) * (float)deltaTimeInMillis);
-				_crossfadeTime -= deltaTimeInMillis;
+		if (_fade) {
+			debugC(3, kDebugSound, "Fading music, endVol %d, startVol %d, current %d, fade time %d, elapsed time %dms", _fadeEndVol, _fadeStartVol, _volume, _fadeTime, _fadeElapsed);
+			uint8 _newvol = 0;
+			_fadeElapsed += deltaTimeInMillis;
+			if ((_fadeTime <= 0) | (_fadeElapsed >= _fadeTime)) {
+				_newvol = _fadeEndVol;
+				_fade = false;
 			} else {
-				_crossfade = false;
-				_newvol = _crossfadeTarget;
+				if (_fadeEndVol > _fadeStartVol)
+					_newvol = _fadeStartVol + (_fadeElapsed * (_fadeEndVol - _fadeStartVol)) / _fadeTime;
+				else
+					_newvol = _fadeStartVol - (_fadeElapsed * (_fadeStartVol - _fadeEndVol)) / _fadeTime;
 			}
+			if (_volume != _newvol)
+				setVolume(_newvol);
 		}
-
-		if (_volume != _newvol)
-			setVolume(_newvol);
-
-		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
-			_sub->process(_engine->_mixer->getSoundElapsedTime(_handle) / 100);
 	}
 	return false;
 }
 
 void MusicNode::setVolume(uint8 newVolume) {
-	if (!_loaded)
-		return;
-
-	_volume = newVolume;
-
-	if (_deltaVolume >= _volume)
-		_engine->_mixer->setChannelVolume(_handle, 0);
-	else
-		_engine->_mixer->setChannelVolume(_handle, _volume - _deltaVolume /*dbMapLinear[_volume - _deltaVolume]*/);
+	if (_loaded) {
+		debugC(4, kDebugSound, "Changing volume of music node %d from %d to %d", _key, _volume, newVolume);
+		_volume = newVolume;
+		updateMixer();
+	}
 }
 
-uint8 MusicNode::getVolume() {
-	return _volume;
-}
 
-PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
-	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK) {
-	_slot = slot;
-	_position = pos;
-
-	// Try to set pan value for music node immediately
-	process(0);
+PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag, bool resetMixerOnDelete, bool staticScreen)
+	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK),
+	  _slot(slot),
+	  _sourcePos(0),
+	  _viewPos(0),
+	  _mag(mag),
+	  _width(0),
+	  _pos(pos),
+	  _staticScreen(staticScreen),
+	  _resetMixerOnDelete(resetMixerOnDelete) {
+	debugC(3, kDebugSound, "Created PanTrackNode, key %d, slot %d", _key, _slot);
+	process(0);     // Try to set pan value for music node immediately
 }
 
 PanTrackNode::~PanTrackNode() {
+	debugC(1, kDebugSound, "Deleting PanTrackNode, key %d, slot %d", _key, _slot);
+	ScriptManager *scriptManager = _engine->getScriptManager();
+	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
+	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO && _resetMixerOnDelete) {
+		debugC(1, kDebugSound, "Resetting mixer, slot %d", _slot);
+		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
+		mus->setBalance(0);
+	} else
+		debugC(1, kDebugSound, "NOT resetting mixer, slot %d", _slot);
 }
 
 bool PanTrackNode::process(uint32 deltaTimeInMillis) {
-	ScriptManager * scriptManager = _engine->getScriptManager();
+	debugC(3, kDebugSound, "Processing PanTrackNode, key %d", _key);
+	ScriptManager *scriptManager = _engine->getScriptManager();
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
-
-		int curPos = scriptManager->getStateValue(StateKey_ViewPos);
-		int16 _width = _engine->getRenderManager()->getBkgSize().x;
-		int16 _halfWidth = _width / 2;
-		int16 _quarterWidth = _width / 4;
-
-		int tmp = 0;
-		if (curPos <= _position)
-			tmp = _position - curPos;
-		else
-			tmp = _position - curPos + _width;
-
-		int balance = 0;
-
-		if (tmp > _halfWidth)
-			tmp -= _width;
-
-		if (tmp > _quarterWidth) {
-			balance = 1;
-			tmp = _halfWidth - tmp;
-		} else if (tmp < -_quarterWidth) {
-			balance = -1;
-			tmp = -_halfWidth - tmp;
+		if (!_staticScreen)
+			// Original game scripted behaviour
+			switch (_engine->getRenderManager()->getRenderTable()->getRenderState()) {
+			case RenderTable::PANORAMA:
+				debugC(3, kDebugSound, "PanTrackNode in panorama mode");
+				_width = _engine->getRenderManager()->getBkgSize().x;
+				if (_width) {
+					_sourcePos.setDegrees(360 * _pos / _width);
+					_viewPos.setDegrees(360 * scriptManager->getStateValue(StateKey_ViewPos) / _width);
+				} else {
+					warning("Encountered zero background width whilst processing PanTrackNode in panoramic mode!");
+				}
+				break;
+			case RenderTable::FLAT:
+			case RenderTable::TILT:
+			default:
+				debugC(3, kDebugSound, "PanTrackNode in FLAT/TILT mode");
+				_sourcePos.setDegrees(0);
+				_viewPos.setDegrees(0);
+				break;
+			} else {
+			// Used for auxiliary scripts only
+			_sourcePos.setDegrees(_pos);
+			_viewPos.setDegrees(0);
 		}
-
-		// Originally it's value -90...90 but we use -127...127 and therefore 360 replaced by 508
-		mus->setBalance( (508 * tmp) / _width );
-
-		tmp = (360 * tmp) / _width;
-
-		int deltaVol = balance;
-
-		// This value sets how fast volume goes off than sound source back of you
-		// By this value we can hack some "bugs" have place in original game engine like beat sound in ZGI-dc10
-		int volumeCorrection = 2;
-
-		if (_engine->getGameId() == GID_GRANDINQUISITOR) {
-			if (scriptManager->getCurrentLocation() == "dc10")
-				volumeCorrection = 5;
-		}
-
-		if (deltaVol != 0)
-			deltaVol = (mus->getVolume() * volumeCorrection) * (90 - tmp * balance) / 90;
-		if (deltaVol > 255)
-			deltaVol = 255;
-
-		mus->setDeltaVolume(deltaVol);
+		Math::Angle azimuth;
+		azimuth = _sourcePos - _viewPos;
+		debugC(3, kDebugSound, "soundPos: %f, _viewPos: %f, azimuth: %f, width %d", _sourcePos.getDegrees(), _viewPos.getDegrees(), azimuth.getDegrees(), _width);
+		// azimuth is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
+		mus->setDirection(azimuth, _mag);
 	}
 	return false;
 }
 
-MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume)
+MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, uint8 program, uint8 note, uint8 volume)
 	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_volume = volume;
 	_prog = program;
@@ -253,8 +249,7 @@ MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 not
 	_chan = _engine->getMidiManager()->getFreeChannel();
 
 	if (_chan >= 0) {
-		_engine->getMidiManager()->setVolume(_chan, _volume);
-		_engine->getMidiManager()->setPan(_chan, _pan);
+		updateMixer();
 		_engine->getMidiManager()->setProgram(_chan, _prog);
 		_engine->getMidiManager()->noteOn(_chan, _noteNumber, _volume);
 	}
@@ -271,12 +266,6 @@ MusicMidiNode::~MusicMidiNode() {
 		_engine->getScriptManager()->setStateValue(_key, 2);
 }
 
-void MusicMidiNode::setDeltaVolume(uint8 volume) {
-}
-
-void MusicMidiNode::setBalance(int8 balance) {
-}
-
 void MusicMidiNode::setFade(int32 time, uint8 target) {
 }
 
@@ -286,13 +275,15 @@ bool MusicMidiNode::process(uint32 deltaTimeInMillis) {
 
 void MusicMidiNode::setVolume(uint8 newVolume) {
 	if (_chan >= 0) {
-		_engine->getMidiManager()->setVolume(_chan, newVolume);
+		_volume = newVolume;
+		updateMixer();
 	}
-	_volume = newVolume;
 }
 
-uint8 MusicMidiNode::getVolume() {
-	return _volume;
+void MusicMidiNode::outputMixer() {
+	_engine->getMidiManager()->setBalance(_chan, _balance);
+	_engine->getMidiManager()->setPan(_chan, _pan);
+	_engine->getMidiManager()->setVolume(_chan, _volumeOut);
 }
 
 } // End of namespace ZVision

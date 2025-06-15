@@ -20,19 +20,15 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/controls/input_control.h"
-#include "zvision/scripting/controls/save_control.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/text/string_manager.h"
-
-#include "zvision/file/save_manager.h"
-#include "zvision/graphics/render_manager.h"
-
 #include "common/str.h"
 #include "common/stream.h"
+#include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/scripting/controls/save_control.h"
+#include "zvision/text/string_manager.h"
+#include "zvision/text/subtitle_manager.h"
 
 namespace ZVision {
 
@@ -50,13 +46,13 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 		if (param.matchString("savebox", true)) {
 			int saveId;
 			int inputId;
-
-			sscanf(values.c_str(), "%d %d", &saveId, &inputId);
-			saveElement elmnt;
-			elmnt.inputKey = inputId;
-			elmnt.saveId = saveId;
-			elmnt.exist = false;
-			_inputs.push_back(elmnt);
+			if (sscanf(values.c_str(), "%d %d", &saveId, &inputId) == 2) {
+				saveElement elmnt;
+				elmnt.inputKey = inputId;
+				elmnt.saveId = saveId;
+				elmnt.exist = false;
+				_inputs.push_back(elmnt);
+			}
 		} else if (param.matchString("control_type", true)) {
 			if (values.contains("save"))
 				_saveControl = true;
@@ -97,16 +93,16 @@ bool SaveControl::process(uint32 deltaTimeInMillis) {
 					if (inp->getText().size() > 0) {
 						bool toSave = true;
 						if (iter->exist)
-							if (!_engine->getRenderManager()->askQuestion(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEXIST)))
+							if (!_engine->getSubtitleManager()->askQuestion(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEXIST)))
 								toSave = false;
 
 						if (toSave) {
 							_engine->getSaveManager()->saveGame(iter->saveId, inp->getText(), true);
-							_engine->getRenderManager()->delayedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVED), 2000);
+							_engine->getSubtitleManager()->delayedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVED), 2000);
 							_engine->getScriptManager()->changeLocation(_engine->getScriptManager()->getLastMenuLocation());
 						}
 					} else {
-						_engine->getRenderManager()->timedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEMPTY), 2000);
+						_engine->getSubtitleManager()->timedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEMPTY), 2000);
 					}
 				} else {
 					_engine->getSaveManager()->loadGame(iter->saveId);

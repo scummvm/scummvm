@@ -20,11 +20,9 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/graphics/effects/fog.h"
-
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/effects/fog.h"
 #include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
@@ -111,7 +109,7 @@ const Graphics::Surface *FogFx::draw(const Graphics::Surface &srcSubRect) {
 void FogFx::update() {
 	_pos += _engine->getScriptManager()->getStateValue(StateKey_EF9_Speed);
 	_pos %= _fog.w;
-
+	debugC(2, kDebugEffect, "Updating fog effect");
 	uint8 dr = _engine->getScriptManager()->getStateValue(StateKey_EF9_R);
 	uint8 dg = _engine->getScriptManager()->getStateValue(StateKey_EF9_G);
 	uint8 db = _engine->getScriptManager()->getStateValue(StateKey_EF9_B);

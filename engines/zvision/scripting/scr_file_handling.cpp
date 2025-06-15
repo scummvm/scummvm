@@ -19,58 +19,77 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-
-#include "zvision/scripting/puzzle.h"
-#include "zvision/scripting/actions.h"
-#include "zvision/scripting/controls/push_toggle_control.h"
-#include "zvision/scripting/controls/lever_control.h"
-#include "zvision/scripting/controls/slot_control.h"
-#include "zvision/scripting/controls/save_control.h"
-#include "zvision/scripting/controls/input_control.h"
-#include "zvision/scripting/controls/safe_control.h"
-#include "zvision/scripting/controls/hotmov_control.h"
-#include "zvision/scripting/controls/fist_control.h"
-#include "zvision/scripting/controls/paint_control.h"
-#include "zvision/scripting/controls/titler_control.h"
-
-#include "common/textconsole.h"
 #include "common/file.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/textconsole.h"
 #include "common/tokenizer.h"
+#include "zvision/detection.h"
+#include "zvision/zvision.h"
+#include "zvision/scripting/actions.h"
+#include "zvision/scripting/puzzle.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/fist_control.h"
+#include "zvision/scripting/controls/hotmov_control.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/scripting/controls/lever_control.h"
+#include "zvision/scripting/controls/paint_control.h"
+#include "zvision/scripting/controls/push_toggle_control.h"
+#include "zvision/scripting/controls/safe_control.h"
+#include "zvision/scripting/controls/save_control.h"
+#include "zvision/scripting/controls/slot_control.h"
+#include "zvision/scripting/controls/titler_control.h"
 
 namespace ZVision {
 
 void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scope) {
-	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		error("Script file not found: %s", fileName.toString().c_str());
-	}
-
-	while (!file.eos()) {
-		Common::String line = file.readLine();
-		if (file.err()) {
-			error("Error parsing scr file: %s", fileName.toString().c_str());
+	auto parse = [&](Common::File & file) {
+		while (!file.eos()) {
+			Common::String line = file.readLine();
+			if (file.err())
+				error("Error parsing scr file: %s", fileName.toString().c_str());
+			trimCommentsAndWhiteSpace(&line);
+			if (line.empty())
+				continue;
+			if (line.matchString("puzzle:*", true)) {
+				Puzzle *puzzle = new Puzzle();
+				if (sscanf(line.c_str(), "puzzle:%u", &(puzzle->key)) != 1) {
+					debugC(kDebugScript, "Malformed puzzle string: %s", line.c_str());
+					continue;
+				}
+				if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
+					setStateValue(puzzle->key, 0);
+				parsePuzzle(puzzle, file);
+				scope.puzzles.push_back(puzzle);
+			} else if (line.matchString("control:*", true)) {
+				Control *ctrl = parseControl(line, file);
+				if (ctrl)
+					scope.controls.push_back(ctrl);
+			}
 		}
+	};
 
-		trimCommentsAndWhiteSpace(&line);
-		if (line.empty())
-			continue;
+	Common::File mainFile;
+	Common::File auxFile;
+	Common::String auxFileName = fileName.toString();
+	replace(auxFileName, Common::String(".scr"), Common::String(".aux"));
+	debugC(1, kDebugFile, "Auxiliary filename %s", auxFileName.c_str());
+	Common::Path auxFilePath(auxFileName);
+	debugC(1, kDebugFile, "Auxiliary path %s", auxFilePath.toString().c_str());
 
-		if (line.matchString("puzzle:*", true)) {
-			Puzzle *puzzle = new Puzzle();
-			sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
-			if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
-				setStateValue(puzzle->key, 0);
-			parsePuzzle(puzzle, file);
-			scope.puzzles.push_back(puzzle);
-
-		} else if (line.matchString("control:*", true)) {
-			Control *ctrl = parseControl(line, file);
-			if (ctrl)
-				scope.controls.push_back(ctrl);
+	if (!_engine->getSearchManager()->openFile(mainFile, fileName))
+		error("Script file not found: %s", fileName.toString().c_str());
+	else {
+		debugC(1, kDebugScript, "Parsing primary script file %s", fileName.toString().c_str());
+		parse(mainFile);
+		// TODO - add config option to disable/enable auxiliary scripting
+		if (auxFile.exists(auxFilePath)) {
+			debugC(1, kDebugFile, "Auxiliary script file found");
+			if (auxFile.open(auxFilePath)) {
+				debugC(1, kDebugScript, "Parsing auxiliary script file %s", auxFilePath.toString().c_str());
+				parse(auxFile);
+			} else
+				debugC(1, kDebugFile, "Unable to open auxiliary script file %s", auxFilePath.toString().c_str());
 		}
 	}
 	scope.procCount = 0;
@@ -84,33 +103,53 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 		if (line.matchString("criteria {", true)) {
 			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
 		} else if (line.matchString("results {", true)) {
-			parseResults(stream, puzzle->resultActions);
-
-			// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
-			// fork box closeup). If the player leaves the screen while the
-			// box is open, puzzle 19398 shows the animation where the box
-			// closes, but the box state (state variable 19397) is not updated.
-			// We insert the missing assignment for the box state here.
-			// Fixes bug #6803.
-			if (_engine->getGameId() == GID_NEMESIS && puzzle->key == 19398)
-				puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
-
-			// WORKAROUND for bug #10604. If the player is looking at the
-			// cigar box when Antharia Jack returns to examine the lamp,
-			// pp1f_video_flag remains 1. Later, when the player returns
-			// to pick up the lantern, the game will try to play the
-			// cutscene again, but since that script has already been
-			// run the player gets stuck in a dark room instead. We have
-			// to add the assignment action to the front, or it won't be
-			// reached because changing the location terminates the script.
-			//
-			// Fixing it this way only keeps the bug from happening. It
-			// will not repair old savegames.
-			//
-			// Note that the bug only affects the DVD version. The CD
-			// version doesn't have a separate room for the cutscene.
-			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD) && puzzle->key == 10836)
-				puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
+			parseResults(stream, puzzle->resultActions, puzzle->key);
+			// WORKAROUNDS:
+			switch (_engine->getGameId()) {
+			case GID_NEMESIS:
+				// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
+				// fork box closeup). If the player leaves the screen while the
+				// box is open, puzzle 19398 shows the animation where the box
+				// closes, but the box state (state variable 19397) is not updated.
+				// We insert the missing assignment for the box state here.
+				// Fixes bug #6803.
+				if (puzzle->key == 19398)
+					puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
+				break;
+			case GID_GRANDINQUISITOR:
+				switch (puzzle->key) {
+				case 10836:
+					// WORKAROUND for bug #10604. If the player is looking at the
+					// cigar box when Antharia Jack returns to examine the lamp,
+					// pp1f_video_flag remains 1. Later, when the player returns
+					// to pick up the lantern, the game will try to play the
+					// cutscene again, but since that script has already been
+					// run the player gets stuck in a dark room instead. We have
+					// to add the assignment action to the front, or it won't be
+					// reached because changing the location terminates the script.
+					//
+					// Fixing it this way only keeps the bug from happening. It
+					// will not repair old savegames.
+					//
+					// Note that the bug only affects the DVD version. The CD
+					// version doesn't have a separate room for the cutscene.
+					if (_engine->getFeatures() & ADGF_DVD)
+						puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
+					break;
+				// WORKAROUND for a script bug in Zork: Grand Inquisitor, room dc10.
+				// Background heartbeat sound effect never terminates upon location change.
+				case 2341:
+				case 2344:
+				case 17545:
+					puzzle->resultActions.push_front(new ActionKill(_engine, 11, "02310"));
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
 		} else if (line.matchString("flags {", true)) {
 			setStateFlag(puzzle->key, parseFlags(stream));
 		}
@@ -142,35 +181,43 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	// Create a new List to hold the CriteriaEntries
 	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
 
-	// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
-	// Since we patch the script that triggers when manipulating the left fist
-	// (below), we add an additional check for the left fist sound, so that it
-	// doesn't get killed immediately when the left fist animation starts.
-	// Together with the workaround below, it fixes bug #6783.
-	if (_engine->getGameId() == GID_NEMESIS && key == 3594) {
-		Puzzle::CriteriaEntry entry;
-		entry.key = 567;
-		entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
-		entry.argumentIsAKey = false;
-		entry.argument = 1;
+	// WORKAROUNDS
+	switch (_engine->getGameId()) {
+	case GID_NEMESIS:
+		// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
+		// Since we patch the script that triggers when manipulating the left fist
+		// (below), we add an additional check for the left fist sound, so that it
+		// doesn't get killed immediately when the left fist animation starts.
+		// Together with the workaround below, it fixes bug #6783.
+		if (key == 3594) {
+			Puzzle::CriteriaEntry entry;
+			entry.key = 567;
+			entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
+			entry.argumentIsAKey = false;
+			entry.argument = 1;
 
-		criteriaList.back().push_back(entry);
-	}
+			criteriaList.back().push_back(entry);
+		}
+		break;
+	case GID_GRANDINQUISITOR:
+		// WORKAROUND for a script bug in Zork: Grand Inquisitor, room me2j
+		// (Closing the Time Tunnels). When the time tunnel is open the game
+		// shows a close-up of only the tunnel, instead of showing the entire
+		// booth. However, the scripts that draw the lever in its correct
+		// state do not test this flag, causing it to be drawn when it should
+		// not be. This fixes bug #6770.
+		if (key == 9536) {
+			Puzzle::CriteriaEntry entry;
+			entry.key = 9404; // me2j_time_tunnel_open
+			entry.criteriaOperator = Puzzle::EQUAL_TO;
+			entry.argumentIsAKey = false;
+			entry.argument = 0;
 
-	// WORKAROUND for a script bug in Zork: Grand Inquisitor, room me2j
-	// (Closing the Time Tunnels). When the time tunnel is open the game
-	// shows a close-up of only the tunnel, instead of showing the entire
-	// booth. However, the scripts that draw the lever in its correct
-	// state do not test this flag, causing it to be drawn when it should
-	// not be. This fixes bug #6770.
-	if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 9536) {
-		Puzzle::CriteriaEntry entry;
-		entry.key = 9404; // me2j_time_tunnel_open
-		entry.criteriaOperator = Puzzle::EQUAL_TO;
-		entry.argumentIsAKey = false;
-		entry.argument = 0;
-
-		criteriaList.back().push_back(entry);
+			criteriaList.back().push_back(entry);
+		}
+		break;
+	default:
+		break;
 	}
 
 	while (!stream.eos() && !line.contains('}')) {
@@ -182,7 +229,10 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 
 		// Parse the id out of the first token
 		token = tokenizer.nextToken();
-		sscanf(token.c_str(), "[%u]", &(entry.key));
+		if (sscanf(token.c_str(), "[%u]", &(entry.key)) != 1) {
+			debugC(kDebugScript, "Malformed criteria ID string %s", token.c_str());
+			return false;
+		}
 
 		// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
 		// Check for the state of animation 567 (left fist) when manipulating
@@ -214,10 +264,16 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
 		if (token.contains('[')) {
-			sscanf(token.c_str(), "[%u]", &(entry.argument));
+			if (sscanf(token.c_str(), "[%u]", &(entry.argument)) != 1) {
+				debugC(kDebugScript, "Malformed token string %s", token.c_str());
+				return false;
+			}
 			entry.argumentIsAKey = true;
 		} else {
-			sscanf(token.c_str(), "%u", &(entry.argument));
+			if (sscanf(token.c_str(), "%u", &(entry.argument)) != 1) {
+				debugC(kDebugScript, "Malformed token string %s", token.c_str());
+				return false;
+			}
 			entry.argumentIsAKey = false;
 		}
 
@@ -252,39 +308,46 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	return true;
 }
 
-void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {
+void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList, uint32 key) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 	line.toLowercase();
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
+	// While within results block
 	while (!stream.eos() && !line.contains('}')) {
+		// Skip empty lines
 		if (line.empty()) {
 			line = stream.readLine();
 			trimCommentsAndWhiteSpace(&line);
 			line.toLowercase();
 			continue;
 		}
-
+		debugC(4, kDebugScript, "Result line: %s", line.c_str());
 		const char *chrs = line.c_str();
 		uint pos;
-		for (pos = 0; pos < line.size(); pos++)
-			if (chrs[pos] == ':')
-				break;
-
-		if (pos < line.size()) {
-
-			uint startpos = pos + 1;
-
+		if (line.matchString("action:*", true))
+			pos = 6;
+		else if (line.matchString("event:*", true))
+			pos = 5;
+		else if (line.matchString("background:*", true))
+			pos = 10;
+		else
+			continue;
+		if (pos < line.size()) {  // Stuff left
+			uint startpos = pos + 1;  // first character after colon
+			// Scan for next colon or opening bracket
 			for (pos = startpos; pos < line.size(); pos++)
 				if (chrs[pos] == ':' || chrs[pos] == '(')
 					break;
 
+			debugC(4, kDebugScript, "startpos %d, pos %d, line.size %d", startpos, pos, line.size());
+			int32 slot = 11;  // Non-setting default slot
+			Common::String args = "";
+			Common::String act(chrs + startpos, chrs + pos);
+			// Extract arguments, if any
 			if (pos < line.size()) {
-				int32 slot = 11;
-				Common::String args = "";
-				Common::String act(chrs + startpos, chrs + pos);
 
 				startpos = pos + 1;
 
@@ -292,6 +355,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == '(')
 							break;
+					// Extract slotkey, if specified
 					Common::String strSlot(chrs + startpos, chrs + pos);
 					slot = atoi(strSlot.c_str());
 
@@ -305,6 +369,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 
 					args = Common::String(chrs + startpos, chrs + pos);
 				}
+			}
+			debugC(4, kDebugScript, "Action string: '%s', slot %d, arguments string '%s'", act.c_str(), slot, args.c_str());
 
 				// Parse for the action type
 				if (act.matchString("add", true)) {
@@ -319,6 +385,12 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("attenuate", true)) {
 					actionList.push_back(new ActionAttenuate(_engine, slot, args));
 				} else if (act.matchString("assign", true)) {
+				if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 17761) {
+					// WORKAROUND for a script bug in Zork: Grand Inquisitor, room tp1e.
+					// Background looping sound effect continuously restarts on every game cycle.
+					// This is caused by resetting itself to zero as a result of itself.
+					// Simple fix is to simply not generate this result assignment action at all.
+				} else
 					actionList.push_back(new ActionAssign(_engine, slot, args));
 				} else if (act.matchString("change_location", true)) {
 					actionList.push_back(new ActionChangeLocation(_engine, slot, args));
@@ -397,7 +469,6 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					// Not used. Purposely left empty
 				} else {
 					warning("Unhandled result action type: %s", line.c_str());
-				}
 			}
 		}
 
@@ -436,10 +507,12 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 	uint32 key;
 	char controlTypeBuffer[20];
 
-	sscanf(line.c_str(), "control:%u %s {", &key, controlTypeBuffer);
-
+	if (sscanf(line.c_str(), "control:%u %s {", &key, controlTypeBuffer) != 2) {
+		debugC(kDebugScript, "Malformed control string: %s", line.c_str());
+		return NULL;
+	}
+		
 	Common::String controlType(controlTypeBuffer);
-
 	if (controlType.equalsIgnoreCase("push_toggle")) {
 		// WORKAROUND for a script bug in ZGI: There is an invalid hotspot
 		// at scene em1h (bottom of tower), which points to a missing

@@ -24,7 +24,6 @@
 
 #include "common/rect.h"
 #include "graphics/surface.h"
-
 #include "zvision/scripting/scripting_effect.h"
 #include "zvision/text/text.h"
 #include "zvision/text/truetype_font.h"

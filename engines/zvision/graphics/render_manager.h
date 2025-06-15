@@ -22,15 +22,15 @@
 #ifndef ZVISION_RENDER_MANAGER_H
 #define ZVISION_RENDER_MANAGER_H
 
+#include "common/hashmap.h"
+#include "common/rect.h"
+#include "graphics/framelimiter.h"
+#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
+#include "graphics/surface.h"
+#include "zvision/graphics/graphics_effect.h"
 #include "zvision/graphics/render_table.h"
 #include "zvision/text/truetype_font.h"
-
-#include "common/rect.h"
-#include "common/hashmap.h"
-
-#include "graphics/surface.h"
-
-#include "zvision/graphics/graphics_effect.h"
 
 class OSystem;
 
@@ -47,37 +47,43 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow, const Graphics::PixelFormat &pixelFormat, bool doubleFPS);
+	RenderManager(ZVision *engine, const ScreenLayout layout, const Graphics::PixelFormat pixelFormat, bool doubleFPS, bool widescreen = false);
 	~RenderManager();
 
-private:
-	struct OneSubtitle {
-		Common::Rect r;
-		Common::String txt;
-		int16  timer;
-		bool todelete;
-		bool redraw;
-	};
 
-	typedef Common::HashMap<uint16, OneSubtitle> SubtitleMap;
 	typedef Common::List<GraphicsEffect *> EffectsList;
 
 private:
 	ZVision *_engine;
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
+	const ScreenLayout _layout;
+	bool _hiRes = false;
+	Graphics::FrameLimiter _frameLimiter;
 
 	/**
-	 * A Rectangle centered inside the actual window. All in-game coordinates
+	 * A Rectangle representing the screen/window resolution.
+	 */
+	Common::Rect _screenArea;
+
+	Common::Rect _HDscreenArea = Common::Rect(800, 600);
+	Common::Rect _HDscreenAreaWide = Common::Rect(720, 377);
+
+	Common::Point _textOffset;  //Position vector of text area origin relative to working window origin
+
+	/**
+	 * A Rectangle placed inside _screenArea All in-game coordinates
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
 	 */
-	Common::Rect _workingWindow;
+	Common::Rect _workingArea;
 
-	// Center of the screen in the x direction
-	const int _screenCenterX;
-	// Center of the screen in the y direction
-	const int _screenCenterY;
+	Common::Point _workingAreaCenter; //Center of the working area in working area coordinates
+
+	/**
+	Managed surface representing physical screen; dirty rectangles will be handled automatically by this from now on
+	*/
+	Graphics::Screen _screen;
 
 	/** A buffer for background image that's being used to create the background */
 	Graphics::Surface _currentBackgroundImage;
@@ -97,20 +103,41 @@ private:
 	// If it's a normal scene, the pixels will be blitted directly to the screen
 	// If it's a panorma / tilt scene, the pixels will be first warped to _warpedSceneSurface
 	Graphics::Surface _backgroundSurface;
+	Graphics::ManagedSurface _workingManagedSurface;
 	Common::Rect _backgroundSurfaceDirtyRect;
 
-	// A buffer for subtitles
-	Graphics::Surface _subtitleSurface;
+//TODO: Migrate this functionality to SubtitleManager to improve encapsulation
+//*
+	// Buffer for drawing subtitles & other messages
+	Graphics::Surface _textSurface;
+	Graphics::ManagedSurface _textManagedSurface;
+	Common::Rect _textSurfaceDirtyRect;
+//*/
 
-	// Rectangle for subtitles area
-	Common::Rect _subtitleArea;
+	// Rectangle for subtitles & other messages
+	Common::Rect _textArea; //NB Screen coordinates
+	Common::Rect _textLetterbox;  //Section of text area outside working window, to be filled with black when blanked
+	Common::Rect _textOverlay;  //Section of text area to be filled with colorkey when blanked (may potentially intersect text letterbox area if screen/window is wider than working area!)
 
-	// A buffer for menu drawing
+	// Buffer for drawing menu
 	Graphics::Surface _menuSurface;
-	Common::Rect _menuSurfaceDirtyRect;
+	Graphics::ManagedSurface _menuManagedSurface;
+	Common::Rect _menuSurfaceDirtyRect;  //subrectangle of menu area outside working area
 
 	// Rectangle for menu area
-	Common::Rect _menuArea;
+	Common::Rect _menuArea; //Screen coordinates
+	Common::Rect _menuLetterbox; //Section of menu area to be filled with black when blanked
+	Common::Rect _menuOverlay;  //Section of menu area to be filled with colorkey when blanked (may potentially intersect menu letterbox area if screen/window is wider than working area!)
+
+	//Buffer for streamed video playback
+//*
+	Graphics::ManagedSurface _vidManagedSurface;
+	/*/
+	  Graphics::Surface _vidSurface;
+	//*/
+
+	//Area of streamed video playback
+	Common::Rect _vidArea;
 
 	// A buffer used for apply graphics effects
 	Graphics::Surface _effectSurface;
@@ -122,26 +149,34 @@ private:
 	/** Used to warp the background image */
 	RenderTable _renderTable;
 
-	// Internal subtitles counter
-	uint16 _subid;
 
-	// Subtitle list
-	SubtitleMap _subsList;
 
 	// Visual effects list
 	EffectsList _effects;
 
+	//Pointer to currently active backbuffer output surface
+	Graphics::Surface *_outputSurface;
 	bool _doubleFPS;
+	bool _widescreen;
 
 public:
-	void initialize();
+	void initialize(bool hiRes = false);
 
 	/**
 	 * Renders the scene to the screen
+	 * Returns true if screen was updated
+	 * If streamMode is set true, all background processing is skipped and the previous framebuffer is used
 	 */
-	void renderSceneToScreen();
+	bool renderSceneToScreen(bool immediate = false, bool overlayOnly = false, bool preStream = false);
 
-	void copyToScreen(const Graphics::Surface &surface, Common::Rect &rect, int16 srcLeft, int16 srcTop);
+	Graphics::ManagedSurface &getVidSurface(Common::Rect dstRect);  //dstRect is defined relative to working area origin
+
+	const Common::Rect &getMenuArea() const {
+		return _menuArea;
+	}
+	const Common::Rect &getWorkingArea() const {
+		return _workingArea;
+	}
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -221,36 +256,44 @@ public:
 	// Scale buffer (nearest)
 	void scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight);
 
-	// Blitting surface-to-surface methods
-	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int x, int y);
-	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
+	/**
+	 * Blit from one surface to another surface
+	 *
+	 * @param src       Source surface
+	 * @param srcRect  Rectangle defining area of source surface to blit; if this rectangle is empty or not supplied, entire source surface is blitted
+	 * @param dst       Destination surface
+	 * @param x         Destination surface x coordinate
+	 * @param y         Destination surface y coordinate
+	 */
+
+	void blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y);
+	void blitSurfaceToSurface(const Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
+	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int _x, int _y) {blitSurfaceToSurface(src, Common::Rect(src.w, src.h), dst, _x, _y);}
+	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {blitSurfaceToSurface(src, Common::Rect(src.w, src.h), dst, _x, _y, colorkey);}
 
 	// Blitting surface-to-background methods
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
 
 	// Blitting surface-to-background methods with scale
-	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey = -1);
+	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &dstRect, int32 colorkey = -1);
 
-	// Blitting surface-to-menu methods
-	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
+	/**
+	 * Blit from source surface to menu area
+	 *
+	 * @param src       Source surface
+	 * @param x         x coordinate relative to menu area origin
+	 * @param y         y coordinate relative to menu area origin
+	 */
+	void blitSurfaceToMenu(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = 0);
 
-	// Subtitles methods
-
-	void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow);
-
-	// Create subtitle area and return ID
-	uint16 createSubArea(const Common::Rect &area);
-	uint16 createSubArea();
-
-	// Delete subtitle by ID
-	void deleteSubArea(uint16 id);
-	void deleteSubArea(uint16 id, int16 delay);
-
-	// Update subtitle area
-	void updateSubArea(uint16 id, const Common::String &txt);
-
-	// Processing subtitles
-	void processSubs(uint16 deltatime);
+	/**
+	 * Blit from source surface to text area
+	 *
+	 * @param src       Source surface
+	 * @param x         x coordinate relative to text area origin
+	 * @param y         y coordinate relative to text area origin
+	 */
+	void blitSurfaceToText(const Graphics::Surface &src, int16 x, int16 y, int32 colorkey = 0);
 
 	// Return background size
 	Common::Point getBkgSize();
@@ -262,14 +305,13 @@ public:
 	Graphics::Surface *loadImage(const Common::Path &file);
 	Graphics::Surface *loadImage(const Common::Path &file, bool transposed);
 
-	// Clear whole/area of menu surface
-	void clearMenuSurface();
-	void clearMenuSurface(const Common::Rect &r);
+	// Clear whole/area of menu backbuffer
+	void clearMenuSurface(bool force = false, int32 colorkey = -1);
 
-	// Copy menu buffer to screen
-	void renderMenuToScreen();
+	// Clear whole/area of subtitle backbuffer
+	void clearTextSurface(bool force = false, int32 colorkey = -1);
 
-	// Copy needed portion of background surface to workingWindow surface
+	// Copy needed portion of background surface to workingArea surface
 	void prepareBackground();
 
 	/**
@@ -318,20 +360,14 @@ public:
 	// Mark whole background surface as dirty
 	void markDirty();
 
-#if 0
+/*
 	// Fill background surface by color
 	void bkgFill(uint8 r, uint8 g, uint8 b);
-#endif
-
-	bool askQuestion(const Common::String &str);
-	void delayedMessage(const Common::String &str, uint16 milsecs);
-	void timedMessage(const Common::String &str, uint16 milsecs);
-	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
+*/
 
 	void checkBorders();
 	void rotateTo(int16 to, int16 time);
 	void updateRotation();
-
 	void upscaleRect(Common::Rect &rect);
 };
 

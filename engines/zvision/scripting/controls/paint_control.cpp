@@ -20,13 +20,11 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/controls/paint_control.h"
-
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/paint_control.h"
 
 namespace ZVision {
 
@@ -54,9 +52,8 @@ PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 			int width;
 			int height;
 
-			sscanf(values.c_str(), "%d %d %d %d", &x, &y, &width, &height);
-
-			_rectangle = Common::Rect(x, y, width + x, height + y);
+			if (sscanf(values.c_str(), "%d %d %d %d", &x, &y, &width, &height) == 4)
+				_rectangle = Common::Rect(x, y, width + x, height + y);
 		} else if (param.matchString("cursor", true)) {
 			_cursor = _engine->getCursorManager()->getCursorId(values);
 		} else if (param.matchString("brush_file", true)) {
