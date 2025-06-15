@@ -284,7 +284,7 @@ void LogicManager::takeItem(int item) {
 				if (_closeUp)
 					cathDir = _trainData[_nodeReturn].cathDir;
 
-				if (cathDir == 1 || cathDir >= 22 && cathDir <= 33) {
+				if (cathDir == 1 || (cathDir >= 22 && cathDir <= 33)) {
 					if (_closeUp) {
 						_nodeReturn = getBumpNode(kCarGreenSleeping, cathDir, 255);
 						return;
@@ -380,7 +380,7 @@ bool LogicManager::isSingleFemale(int character) {
 
 bool LogicManager::isNight() {
 	int chapter = _globals[kProgressChapter];
-	return chapter == 1 || chapter == 4 || chapter == 5 && !_globals[kProgressIsDayTime];
+	return chapter == 1 || chapter == 4 || (chapter == 5 && !_globals[kProgressIsDayTime]);
 }
 
 bool LogicManager::whoOutside(int character) {
@@ -648,7 +648,7 @@ void LogicManager::setDoor(int door, int character, int status, int windowCursor
 
 		_engine->getSoundManager()->_scanAnySoundLoopingSection = true;
 
-		if (oldStatus != status && (oldStatus == 2 || status == 2) && (door && door <= 8 || door >= 32 && door <= 39))
+		if (oldStatus != status && (oldStatus == 2 || status == 2) && ((door && door <= 8) || (door >= 32 && door <= 39)))
 			_engine->getOtisManager()->drawLooseSprites();
 	}
 }
@@ -1116,7 +1116,7 @@ bool LogicManager::obstacleBetween(int character1, int character2) {
 }
 
 bool LogicManager::bumpCathTowardsCond(int door, bool playSound, bool loadScene) {
-	if (getCharacter(kCharacterCath).characterPosition.location || (door < 2 || door > 8) && (door < 32 || door > 39)) {
+	if (getCharacter(kCharacterCath).characterPosition.location || ((door < 2 || door > 8) && (door < 32 || door > 39))) {
 		return false;
 	}
 
@@ -1706,7 +1706,7 @@ void LogicManager::playNIS(int nisId) {
 
 	bool videoWithoutFade = false;
 
-	if (nisId >= kEventCorpseDropFloorOriginal ||
+	if (nisId >= (int)kEventCorpseDropFloorOriginal ||
 		nisId == kEventCathWakingUp ||
 		nisId == kEventConcertCough ||
 		nisId == kEventConcertSit ||
@@ -2622,7 +2622,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 					playDialog(kCharacterCond2, "Jac1500", 16, 0);
 					break;
 				}
-			} else if (_globals[kProgressField40] || _gameTime > 2101500 && _gameTime < 2133000) {
+			} else if (_globals[kProgressField40] || (_gameTime > 2101500 && _gameTime < 2133000)) {
 				playDialog(kCharacterCond2, "Jac1507A", 16, 0);
 			} else {
 				playDialog(kCharacterCond2, "Jac1507", 16, 0);
@@ -3000,8 +3000,8 @@ bool LogicManager::cathWillSeeOtis(int position) {
 		return true;
 	}
 
-	return _engine->getOtisManager()->fDirection(0) && _engine->_fudgePosition[param1] >= getCharacter(kCharacterCath).characterPosition.position ||
-		   _engine->getOtisManager()->rDirection(0) && _engine->_fudgePosition[param2] <= getCharacter(kCharacterCath).characterPosition.position;
+	return (_engine->getOtisManager()->fDirection(0) && _engine->_fudgePosition[param1] >= getCharacter(kCharacterCath).characterPosition.position) ||
+		   (_engine->getOtisManager()->rDirection(0) && _engine->_fudgePosition[param2] <= getCharacter(kCharacterCath).characterPosition.position);
 }
 
 bool LogicManager::walk(int character, int car, int position) {
@@ -3093,7 +3093,7 @@ bool LogicManager::walk(int character, int car, int position) {
 				getCharacter(character).attachedConductor = 0;
 			}
 		} else if (!getCharacter(character).attachedConductor) {
-			if (getCharacter(character).direction != 1 || position <= 2000 && car == getCharacter(character).characterPosition.car) {
+			if (getCharacter(character).direction != 1 || (position <= 2000 && car == getCharacter(character).characterPosition.car)) {
 				if (getCharacter(character).direction == 2 &&
 					(position < 1500 || car != getCharacter(character).characterPosition.car) &&
 					getCharacter(character).characterPosition.position > 1500) {
