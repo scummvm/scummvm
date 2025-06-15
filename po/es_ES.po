@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-15 20:19+0000\n"
-"PO-Revision-Date: 2025-06-13 10:55+0000\n"
-"Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
+"PO-Revision-Date: 2025-06-15 20:50+0000\n"
+"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -12222,40 +12222,28 @@ msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr "AVISO: Este motor no permite borrar el espacio de autoguardado."
 
 #: engines/sludge/keymapper_tables.h:34
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Debug keymappings"
-msgstr "Asignaciones predeterminadas"
+msgstr "Asignaciones de depuración"
 
 #: engines/sludge/keymapper_tables.h:35
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Menu keymappings"
-msgstr "Asignaciones del juego"
+msgstr "Asignaciones del menú"
 
 #: engines/sludge/keymapper_tables.h:36
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Minigame keymappings"
-msgstr "Asignaciones del juego"
+msgstr "Asignaciones de minijuegos"
 
 #: engines/sludge/keymapper_tables.h:46
-#, fuzzy
-#| msgid "Change game options"
 msgid "Change action"
-msgstr "Cambia las opciones del juego"
+msgstr "Cambiar acción"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Speed up dialogue"
-msgstr "Seleccionar diálogo"
+msgstr "Acelerar diálogos"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down virtual mouse"
 msgid "Slow down dialogue"
-msgstr "Reducir velocidad de ratón virtual"
+msgstr "Ralentizar diálogos"
 
 #: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
 #: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
@@ -12263,95 +12251,71 @@ msgstr "Reducir velocidad de ratón virtual"
 #: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
 #: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
 #: engines/sludge/keymapper_tables.h:529
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Move / Interact"
-msgstr "Mover/Seleccionar"
+msgstr "Mover/Interactuar"
 
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Load auto save"
-msgstr "Autoguardado sin nombre"
+msgstr "Cargar autoguardado"
 
 #: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
 msgid "Load save"
-msgstr "Cargar partida"
+msgstr "Cargar partida guardada"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
 msgid "DEBUG: Show floor"
-msgstr ""
+msgstr "DEPURACIÓN: mostrar suelo"
 
 #: engines/sludge/keymapper_tables.h:205 engines/sludge/keymapper_tables.h:440
 #: engines/sludge/keymapper_tables.h:547
 msgid "DEBUG: Show boxes"
-msgstr ""
+msgstr "DEPURACIÓN: mostrar cuadros"
 
 #: engines/sludge/keymapper_tables.h:237
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory / Examine"
-msgstr "Inventario"
+msgstr "Inventario/Examinar"
 
 #: engines/sludge/keymapper_tables.h:281
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Examine / Skip dialogue"
-msgstr "Omitir diálogo"
+msgstr "Examinar/Omitir diálogo"
 
 #: engines/sludge/keymapper_tables.h:287 engines/sludge/keymapper_tables.h:398
 #: engines/sludge/keymapper_tables.h:522
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Pause / Skip cutscene"
-msgstr "Omitir escena"
+msgstr "Pausar/Omitir escena"
 
 #: engines/sludge/keymapper_tables.h:328
 msgid "Smell"
-msgstr ""
+msgstr "Oler"
 
 #: engines/sludge/keymapper_tables.h:338
 msgid "Consume"
-msgstr ""
+msgstr "Consumir"
 
 #: engines/sludge/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast earth spell"
-msgstr "Invocar hechizo"
+msgstr "Lanzar hechizo de tierra"
 
 #: engines/sludge/keymapper_tables.h:367
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast air spell"
-msgstr "Invocar hechizo"
+msgstr "Lanzar hechizo de aire"
 
 #: engines/sludge/keymapper_tables.h:373
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast fire spell"
-msgstr "Invocar hechizo"
+msgstr "Lanzar hechizo de fuego"
 
 #: engines/sludge/keymapper_tables.h:379
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast water spell"
-msgstr "Invocar hechizo"
+msgstr "Lanzar hechizo de agua"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip dialogue"
-msgstr "Ir al diálogo siguiente"
+msgstr "Mover/Interactuar/Omitir diálogo"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Inventory / Skip dialogue"
-msgstr "Omitir diálogo"
+msgstr "Inventario/Omitir diálogo"
 
 #: engines/sludge/keymapper_tables.h:573
 msgid "Pause Game"
