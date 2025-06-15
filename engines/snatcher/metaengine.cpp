@@ -113,7 +113,7 @@ SaveStateList SnatcherMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern);
-	
+
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot

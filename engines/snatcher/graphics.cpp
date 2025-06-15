@@ -33,13 +33,13 @@
 
 namespace Snatcher {
 
-GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd) : _system(system), _state(vmstate),
+GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd, bool enableAspectRatioCorrection) : _system(system), _state(vmstate),
 	_animator(nullptr), _text(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0), _verbAreaType(0) {
 	assert(system);
 	_palette = Palette::create(pxf, _system->getPaletteManager(), platform, _state);
 	assert(_palette);
 	_trs = TransitionManager::create(platform, _state);
-	_animator = Animator::create(pxf, platform, _state, _palette, _trs, snd);
+	_animator = Animator::create(pxf, platform, _state, _palette, _trs, snd, enableAspectRatioCorrection);
 	_text = TextRenderer::create(platform, _animator);
 	assert(_animator);
 	_screen = new uint8[_animator->realScreenWidth() * _animator->realScreenHeight() * (pxf ? pxf->bytesPerPixel : 1)]();
@@ -142,10 +142,6 @@ void GraphicsEngine::printText(const uint8 *text) {
 void GraphicsEngine::setTextPrintDelay(uint16 delay) {
 	_text->setPrintDelay(delay);
 }
-/*
-void GraphicsEngine::setTextColor(uint8 color) {
-	_text->setColor(color);
-}*/
 
 bool GraphicsEngine::isTextInQueue() const {
 	return _text->needsPrint();
@@ -223,6 +219,10 @@ int32 GraphicsEngine::getAnimParameter(uint8 animObjId, int param) const {
 	return _animator->getAnimParameter(animObjId, param);
 }
 
+uint8 GraphicsEngine::getAnimScriptByte(uint8 animObjId, uint16 offset) const {
+	return _animator->getAnimScriptByte(animObjId, offset);
+}
+
 void GraphicsEngine::addAnimParameterFlags(uint8 animObjId, int param, int flags) {
 	setAnimParameter(animObjId, param, getAnimParameter(animObjId, param) | flags);
 }
@@ -233,6 +233,10 @@ void GraphicsEngine::clearAnimParameterFlags(uint8 animObjId, int param, int fla
 
 bool GraphicsEngine::testAnimParameterFlags(uint8 animObjId, int param, int flags) const {
 	return (getAnimParameter(animObjId, param) & flags);
+}
+
+void GraphicsEngine::animCopySpec(uint8 srcAnimObjId, uint8 dstAnimObjId) {
+	_animator->animCopySpec(srcAnimObjId, dstAnimObjId);
 }
 
 uint16 GraphicsEngine::screenWidth() const {

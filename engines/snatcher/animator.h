@@ -52,6 +52,8 @@ public:
 	virtual void setAnimParameter(uint8 animObjId, int param, int32 value) = 0;
 	virtual void setAnimGroupParameter(uint8 animObjId, int groupOp, int32 value = 0) = 0;
 	virtual int32 getAnimParameter(uint8 animObjId, int param) const = 0;
+	virtual uint8 getAnimScriptByte(uint8 animObjId, uint16 offset) const = 0;
+	virtual void animCopySpec(uint8 srcAnimObjId, uint8 dstAnimObjId) = 0;
 
 	virtual uint16 screenWidth() const = 0;
 	virtual uint16 screenHeight() const = 0;
@@ -73,13 +75,13 @@ protected:
 	GraphicsEngine::GfxState &_gfxState;
 
 private:
-	static Animator *createSCDAnimator(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd);
+	static Animator *createSCDAnimator(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection);
 
 public:
-	static Animator *create(const Graphics::PixelFormat *pxf, Common::Platform platform, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd) {
+	static Animator *create(const Graphics::PixelFormat *pxf, Common::Platform platform, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection) {
 		switch (platform) {
 		case Common::kPlatformSegaCD:
-			return createSCDAnimator(pxf, state, pal, scr, snd);
+			return createSCDAnimator(pxf, state, pal, scr, snd, enableAspectRatioCorrection);
 		default:
 			break;
 		};

@@ -48,7 +48,7 @@ class TextRenderer;
 
 class GraphicsEngine {
 public:
-	GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd);
+	GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd, bool enableAspectRatioCorrection);
 	~GraphicsEngine();
 
 	void runScript(ResourcePointer res, int func);
@@ -71,7 +71,6 @@ public:
 	void setTextFont(const uint8 *font, uint32 fontSize, const uint8 *charWidthTable, uint32 charWidthTableSize);
 	void printText(const uint8 *text);
 	void setTextPrintDelay(uint16 delay);
-	//void setTextColor(uint8 color);
 	bool isTextInQueue() const;
 	void resetTextFields();
 	void clearJordanInputField();
@@ -104,7 +103,8 @@ public:
 		kAnimParaPosY,
 		kAnimParaRelSpeedX,
 		kAnimParaRelSpeedY,
-		kAnimParaF16,
+		kAnimParaPalette,
+		kAnimParaF17,
 		kAnimParaF18,
 		kAnimParaF1c,
 		kAnimParaTimeStamp,
@@ -135,9 +135,11 @@ public:
 	void setAnimParameter(uint8 animObjId, int param, int32 value);
 	void setAnimGroupParameter(uint8 animObjId, int groupOp, int32 value = 0);
 	int32 getAnimParameter(uint8 animObjId, int param) const;
+	uint8 getAnimScriptByte(uint8 animObjId, uint16 offset) const;
 	void addAnimParameterFlags(uint8 animObjId, int param, int flags);
 	void clearAnimParameterFlags(uint8 animObjId, int param, int flags);
 	bool testAnimParameterFlags(uint8 animObjId, int param, int flags) const;
+	void animCopySpec(uint8 srcAnimObjId, uint8 dstAnimObjId);
 
 	uint16 screenWidth() const;
 	uint16 screenHeight() const;

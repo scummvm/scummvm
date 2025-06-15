@@ -20,6 +20,7 @@
 */
 
 
+#include "snatcher/action.h"
 #include "snatcher/memory.h"
 #include "snatcher/saveload.h"
 #include "snatcher/snatcher.h"
@@ -33,8 +34,29 @@ uint16 MemAccessHandler::readWord(uint16 addr) {
 	int result = 0;
 
 	switch (addr) {
+	case 0x7908:
+		result = _aseq->getResult().shotsFired;
+		break;
+	case 0x790A:
+		result = _aseq->getResult().enemiesShot;
+		break;
+	case 0x790C:
+		result = _aseq->getResult().civiliansShot;
+		break;
+	case 0x790E:
+		result = _aseq->getResult().shotsMissed;
+		break;
+	case 0x7910:
+		result = _aseq->getResult().hitsTaken;
+		break;
+	case 0x7916:
+		result = _aseq->getResult().allCiviliansShot;
+		break;
+	case 0x7918:
+		result = _aseq->getResult().weaponDrawn;
+		break;
 	case 0x7972:
-		result = _state->conf.useLightGun ? 1 : 0;
+		result = /*_state->conf.useLightGun ? 1 :*/ 0;
 		break;
 	case 0x79E0:
 		// BURAM status

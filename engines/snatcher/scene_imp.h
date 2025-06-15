@@ -34,7 +34,7 @@ namespace Snatcher {
 		typedef Common::Functor1Mem<GameState&, void, Scene_##id> FrameProc; \
 		typedef void(Scene_##id::*FrameProcTblEntry)(GameState&); \
 		Common::Array<FrameProc*> _frameProcs; \
-		static const FrameProcTblEntry frameProcTable[];		
+		static const FrameProcTblEntry frameProcTable[];
 
 #define SH_HEAD_END(id) }; \
 	SceneHandler *createSceneHandler_##id(SnatcherEngine *vm, SceneModule *scn, FIO *fio) { return new Scene_##id(vm, scn, fio); }

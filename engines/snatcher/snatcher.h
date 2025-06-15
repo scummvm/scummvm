@@ -31,6 +31,7 @@ class SnatcherMetaEngine;
 
 namespace Snatcher {
 
+class ActionSequenceHandler;
 class GraphicsEngine;
 class FIO;
 class MemAccessHandler;
@@ -99,6 +100,9 @@ private:
 	// Graphics
 	GraphicsEngine *_gfx;
 	VMInfo _gfxInfo;
+
+	// Interface
+	ActionSequenceHandler *_aseq;
 	UI *_ui;
 
 	// Sound
@@ -112,16 +116,18 @@ private:
 public:
 	// Input
 	struct Input {
-		Input() : controllerFlags(0), controllerFlagsRemapped(0), lightGunPos() {}
-		uint16 controllerFlags;
-		uint16 controllerFlagsRemapped;
+		Input() : singleFrameControllerFlags(0), sustainedControllerFlags(0), singleFrameControllerFlagsRemapped(0), sustainedControllerFlagsRemapped(0), lightGunPos() {}
+		uint16 singleFrameControllerFlags;
+		uint16 sustainedControllerFlags;
+		uint16 singleFrameControllerFlagsRemapped;
+		uint16 sustainedControllerFlagsRemapped;
 		Common::Point lightGunPos;
 	};
 
 	const Input &input() const { return _input; }
 	void calibrateLightGun(GameState &state);
 	void toggleKeyRepeat(bool enableRepeat) { _keyRepeat = enableRepeat; }
-	void allowLightGunInput(bool enable) { _enableLightGun = enable; }
+	void allowLightGunInput(bool enable);
 
 private:
 	uint16 _lastKeys;
@@ -129,7 +135,7 @@ private:
 	Common::Point _realLightGunPos;
 	bool _keyRepeat;
 	bool _enableLightGun;
-	
+
 	Input _input;
 };
 

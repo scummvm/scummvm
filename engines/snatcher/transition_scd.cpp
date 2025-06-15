@@ -244,7 +244,7 @@ void TransitionManager_SCD::doCommand(int cmd) {
 }
 
 void TransitionManager_SCD::clear() {
-	for (int i = 0; i < 4; ++i) 
+	for (int i = 0; i < 4; ++i)
 		_internalState[i].clear();
 	memset(&_result, 0, sizeof(_result));
 	_scrollType = 0;
@@ -285,7 +285,7 @@ bool TransitionManager_SCD::nextFrame() {
 			_trsFlagttt = 1;
 		} else if (_nextStepExt != 0) {
 			_lastStepExt = _nextStepExt;
-			resetVars(0x40);	
+			resetVars(0x40);
 		}
 	}
 
@@ -549,7 +549,7 @@ void TransitionManager_SCD::trsUpdt_skyParallaxScroll(int arg) {
 
 	uint16 f = _gfxState.frameCount();
 
-	if (!(f & 1)) {	
+	if (!(f & 1)) {
 		lineScrollTableDecr(0, 8);
 		_hScrollTableLen = 8;
 	}
