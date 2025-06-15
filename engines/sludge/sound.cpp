@@ -21,6 +21,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
+#include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/mods/universaltracker.h"
@@ -336,9 +337,11 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 		stream = Audio::makeVorbisStream(readStream->readStream(length), DisposeAfterUse::NO);
 #endif
 
-	if (!stream) {
-		warning("SoundManager::makeSoundAudioStream(): Unsupported sound format %s", tag2str(tag));
-	}
+#ifdef USE_MAD
+	// TODO: Detect this correctly
+	if (!stream)
+		stream = Audio::makeMP3Stream(readStream->readStream(length), DisposeAfterUse::NO);
+#endif
 
 	g_sludge->_resMan->finishAccess();
 
@@ -349,7 +352,7 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 		setResourceForFatal(-1);
 	} else {
 		audiostream = nullptr;
-		warning(ERROR_SOUND_ODDNESS);
+		warning("SoundManager::makeSoundAudioStream(): Unsupported sound format %s", tag2str(tag));
 		_soundCache[a].fileLoaded = -1;
 		_soundCache[a].looping = false;
 		return -1;
