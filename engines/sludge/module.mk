@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	bg_effects.o \
 	builtin.o \
 	cursors.o \
+	debugger.o \
 	event.o \
 	fileset.o \
 	floor.o \

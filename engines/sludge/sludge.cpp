@@ -27,6 +27,7 @@
 #include "engines/metaengine.h"
 
 #include "sludge/cursors.h"
+#include "sludge/debugger.h"
 #include "sludge/event.h"
 #include "sludge/fileset.h"
 #include "sludge/fonttext.h"
@@ -191,6 +192,8 @@ bool SludgeEngine::hasFeature(EngineFeature f) const {
 Common::Error SludgeEngine::run() {
 	// set global variable
 	g_sludge = this;
+
+	setDebugger(new Debugger(this));
 
 	// debug log
 	main_loop(getGameFile());
