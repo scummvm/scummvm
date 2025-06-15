@@ -181,6 +181,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/frame/restdlg.o \
 	hodjnpodj/metagame/frame/restgame.o \
 	hodjnpodj/metagame/grand_tour/dllinit.o \
+	hodjnpodj/metagame/grand_tour/dialogs.o \
 	hodjnpodj/metagame/grand_tour/grand_tour.o \
 	hodjnpodj/metagame/gtl/citemdlg.o \
 	hodjnpodj/metagame/gtl/cmapdlg.o \

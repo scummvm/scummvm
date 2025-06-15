@@ -32,8 +32,10 @@
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
 #include "bagel/hodjnpodj/metagame/frame/restgame.h"
 #include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/metagame/grand_tour/dllinit.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/gtstruct.h"
 #include "bagel/hodjnpodj/metagame/bgen/c1btndlg.h"
+#include "bagel/hodjnpodj/metagame/zoom/dllinit.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
@@ -1007,111 +1009,30 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 
 void CHodjPodjWindow::FreeCurrentDLL(void) {
-	if (strcmp(pszTest, "Corruption Test")) {
-		MessageBox("Data Segment is Corrupt.  Go get Brian!", MB_OK);
-	}
-
-	if (hDllInst > HINSTANCE_ERROR) {
-		if (hDllInst != hMetaInst)
-			FreeLibrary(hDllInst);
-		hDllInst = nullptr;
-		hwndGame = m_hWnd;
-	}
+	// No DLLs under ScummVM
 }
 
 
 BOOL CHodjPodjWindow::LoadMetaDLL(void) {
-	FPMETAFUNCT lpfnMeta;
-
-	FreeCurrentDLL();
-
-	if (((nInstallCode <= INSTALL_MINIMAL) && PositionAtCDPath()) || PositionAtHomePath()) {
-		if (bMetaLoaded)
-			hDllInst = hMetaInst;
-		else if (FileExists("hnpmeta.dll"))
-			hDllInst = LoadLibrary("hnpmeta.dll");
-		else
-			goto punt;
-
-		if (hDllInst > HINSTANCE_ERROR) {
-			lpfnMeta = (FPMETAFUNCT)GetProcAddress(hDllInst, "RunMeta");
-			if (lpfnMeta != nullptr) {
-				hwndGame = nullptr;
-				#if RETAIN_META_DLL
-				hwndGame = lpfnMeta(m_hWnd, lpMetaGame, bMetaLoaded);
-				hMetaInst = hDllInst;
-				bMetaLoaded = TRUE;
-				#else
-				hwndGame = lpfnMeta(m_hWnd, lpMetaGame, FALSE);
-				#endif
-				bReturnToMeta = TRUE;
-				return (TRUE);
-			}
-		}
-	}
-
-punt:
-
-	(void) PositionAtHomePath();
-
-	bReturnToMeta = FALSE;
-	if (!bHaveCDROM) {
-		MessageBox("Unable to find the Hodj 'n' Podj CDROM!!!");
-		MessageBox("Please place the game disc in your CDROM drive.");
-		(void) GetCDPath();
-	} else {
-		MessageBox("Unable to find or load the Hodj 'n' Podj game!!!");
-		MessageBox("Verify proper game installation and try again.");
-	}
-
-	return (FALSE);
+	// No DLLs under ScummVM
+	bReturnToMeta = TRUE;
+	return TRUE;
 }
 
-
 BOOL CHodjPodjWindow::LoadZoomDLL(void) {
-	FPZOOMFUNCT lpfnZoom;
+	hwndGame = nullptr;
 
-	FreeCurrentDLL();
+	if (nChallengePhase == 0)
+		hwndGame = Metagame::Zoom::RunZoomMap(m_hWnd, TRUE);
+	else
+		hwndGame = Metagame::Zoom::RunZoomMap(m_hWnd, FALSE);
 
-	if ((((nInstallCode <= INSTALL_MINIMAL) && PositionAtCDPath()) || PositionAtHomePath()) &&
-	        FileExists("hnpzm.dll")) {
-
-		hDllInst = LoadLibrary("hnpzm.dll");
-		if (hDllInst > HINSTANCE_ERROR) {
-			lpfnZoom = (FPZOOMFUNCT)GetProcAddress(hDllInst, "RunZoomMap");
-			if (lpfnZoom != nullptr) {
-				hwndGame = nullptr;
-
-				if (nChallengePhase == 0)
-					hwndGame = lpfnZoom(m_hWnd, TRUE);
-				else
-					hwndGame = lpfnZoom(m_hWnd, FALSE);
-
-				bReturnToZoom = TRUE;
-				return (TRUE);
-			}
-		}
-	}
-
-	bReturnToZoom = FALSE;
-	if ((nInstallCode <= INSTALL_MINIMAL) && !bHaveCDROM) {
-		MessageBox("Unable to find the Hodj 'n' Podj CDROM!!!");
-		MessageBox("Please place the game disc in your CDROM drive.");
-		(void) GetCDPath();
-	} else {
-		MessageBox("Unable to load the game selection map!!!");
-		MessageBox("Verify proper game installation and try again.");
-	}
-
-	return (FALSE);
+	bReturnToZoom = TRUE;
+	return TRUE;
 }
 
 
 BOOL CHodjPodjWindow::LoadGrandTourDLL(void) {
-	FPGTFUNCT lpfnGT;
-
-	FreeCurrentDLL();
-
 	if (lpGrandTour == nullptr) {
 		int i;
 
@@ -1141,39 +1062,17 @@ BOOL CHodjPodjWindow::LoadGrandTourDLL(void) {
 		lpGrandTour->stMiniGame.bMusicEnabled = bMusicEnabled;
 		lpGrandTour->stMiniGame.bPlayingMetagame = TRUE;
 		lpGrandTour->stMiniGame.bPlayingHodj = TRUE;
-
 	}
 
-	if ((((nInstallCode <= INSTALL_MINIMAL) && PositionAtCDPath()) || PositionAtHomePath()) &&
-	        FileExists("hnpgt.dll")) {
-
-		hDllInst = LoadLibrary("hnpgt.dll");
-		if (hDllInst > HINSTANCE_ERROR) {
-			lpfnGT = (FPGTFUNCT)GetProcAddress(hDllInst, "RunGrandTour");
-			if (lpfnGT != nullptr) {
-				hwndGame = nullptr;
-				hwndGame = lpfnGT(m_hWnd, lpGrandTour);
-				bReturnToGrandTour = TRUE;
-				return (TRUE);
-			}
-		}
-	}
-
-	bReturnToGrandTour = FALSE;
-	if ((nInstallCode <= INSTALL_MINIMAL) && !bHaveCDROM) {
-		MessageBox("Unable to find the Hodj 'n' Podj CDROM!!!");
-		MessageBox("Please place the game disc in your CDROM drive.");
-		(void) GetCDPath();
-	} else {
-		MessageBox("Unable to load the Grand Tour!!!");
-		MessageBox("Verify proper game installation and try again.");
-	}
-
-	return (FALSE);
+	hwndGame = nullptr;
+	hwndGame = Metagame::GrandTour::RunGrandTour(m_hWnd, lpGrandTour);
+	bReturnToGrandTour = TRUE;
+	return TRUE;
 }
 
 
 void CHodjPodjWindow::UpdateDLLRouting() {
+	// No DLLs under ScummVM
 }
 
 

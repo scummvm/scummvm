@@ -22,6 +22,7 @@
 #ifndef BAGEL_METAGAME_GTR_DLLINIT_H
 #define BAGEL_METAGAME_GTR_DLLINIT_H
 
+#include "bagel/hodjnpodj/metagame/grand_tour/gtstruct.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 
 namespace Bagel {
