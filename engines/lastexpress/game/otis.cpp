@@ -183,7 +183,7 @@ bool OtisManager::walkingRender() {
 		return true;
 
 	if (car == kCarRestaurant) {
-		if (cathDir >= 73 && cathDir <= 76 || cathDir >= 77 && cathDir <= 80)
+		if ((cathDir >= 73 && cathDir <= 76) || (cathDir >= 77 && cathDir <= 80))
 			return true;
 
 		if (cathDir == 10 || cathDir == 11)
@@ -272,8 +272,8 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 
 				if (_engine->getLogicManager()->checkLoc(character, kCarGreenSleeping) || _engine->getLogicManager()->checkLoc(character, kCarRedSleeping)) {
 					if (getCharacter(kCharacterCath).characterPosition.car > getCharacter(character).characterPosition.car ||
-						getCharacter(kCharacterCath).characterPosition.car == getCharacter(character).characterPosition.car &&
-						getCharacter(kCharacterCath).characterPosition.position > getCharacter(character).characterPosition.position) {
+						(getCharacter(kCharacterCath).characterPosition.car == getCharacter(character).characterPosition.car &&
+						getCharacter(kCharacterCath).characterPosition.position > getCharacter(character).characterPosition.position)) {
 						Common::strcat_s(effSeqName1, "R.SEQ");
 					} else {
 						Common::strcat_s(effSeqName1, "F.SEQ");
@@ -291,8 +291,8 @@ void OtisManager::startSeq(int character, int direction, bool loadSequence) {
 
 					if (_engine->getLogicManager()->checkLoc(character, 3) || _engine->getLogicManager()->checkLoc(character, 4)) {
 						if (getCharacter(kCharacterCath).characterPosition.car > getCharacter(character).characterPosition.car ||
-							getCharacter(kCharacterCath).characterPosition.car == getCharacter(character).characterPosition.car &&
-							getCharacter(kCharacterCath).characterPosition.position > getCharacter(character).characterPosition.position) {
+							(getCharacter(kCharacterCath).characterPosition.car == getCharacter(character).characterPosition.car &&
+							getCharacter(kCharacterCath).characterPosition.position > getCharacter(character).characterPosition.position)) {
 							Common::strcat_s(effSeqName2, "R.SEQ");
 						} else {
 							Common::strcat_s(effSeqName2, "F.SEQ");
@@ -815,8 +815,8 @@ void OtisManager::refreshSequences() {
 
 							if (_engine->getLogicManager()->checkLoc(j, 3) || _engine->getLogicManager()->checkLoc(j, 4)) {
 								if (getCharacter(j).characterPosition.car < getCharacter(kCharacterCath).characterPosition.car ||
-									getCharacter(j).characterPosition.car == getCharacter(kCharacterCath).characterPosition.car &&
-									getCharacter(kCharacterCath).characterPosition.position > getCharacter(j).characterPosition.position) {
+									(getCharacter(j).characterPosition.car == getCharacter(kCharacterCath).characterPosition.car &&
+									getCharacter(kCharacterCath).characterPosition.position > getCharacter(j).characterPosition.position)) {
 									Common::strcat_s(seqName, "R.SEQ");
 								} else {
 									Common::strcat_s(seqName, "F.SEQ");
@@ -849,8 +849,8 @@ void OtisManager::refreshSequences() {
 
 							if (_engine->getLogicManager()->checkLoc(j, 3) || _engine->getLogicManager()->checkLoc(j, 4)) {
 								if (getCharacter(j).characterPosition.car < getCharacter(kCharacterCath).characterPosition.car ||
-									getCharacter(j).characterPosition.car == getCharacter(kCharacterCath).characterPosition.car &&
-									getCharacter(kCharacterCath).characterPosition.position > getCharacter(j).characterPosition.position) {
+									(getCharacter(j).characterPosition.car == getCharacter(kCharacterCath).characterPosition.car &&
+									getCharacter(kCharacterCath).characterPosition.position > getCharacter(j).characterPosition.position)) {
 									Common::strcat_s(seqName2, "R.SEQ");
 								} else {
 									Common::strcat_s(seqName2, "F.SEQ");
@@ -1214,7 +1214,7 @@ void OtisManager::updateCharacter(int character) {
 
 		if (getCharacter(character).frame1 && getCharacter(character).direction && getCharacter(character).sequence1) {
 			if (getCharacter(character).waitedTicksUntilCycleRestart < getCharacter(character).frame1->ticksToWaitUntilCycleRestart - 1 ||
-				getCharacter(character).direction == 3 && getCharacter(character).sequence1->numFrames == 1) {
+				(getCharacter(character).direction == 3 && getCharacter(character).sequence1->numFrames == 1)) {
 				getCharacter(character).waitedTicksUntilCycleRestart++;
 			} else if (getCharacter(character).waitedTicksUntilCycleRestart >= getCharacter(character).frame1->ticksToWaitUntilCycleRestart || getCharacter(character).frame1->spritesUnk3) {
 				if (getCharacter(character).frame1->spritesUnk3 == 1)
@@ -1222,7 +1222,7 @@ void OtisManager::updateCharacter(int character) {
 
 				getCharacter(character).currentFrameSeq1++;
 
-				if (getCharacter(character).currentFrameSeq1 > (getCharacter(character).sequence1->numFrames - 1) || getCharacter(character).needsPosFudge && mainWalkTooFar(character)) {
+				if (getCharacter(character).currentFrameSeq1 > (getCharacter(character).sequence1->numFrames - 1) || (getCharacter(character).needsPosFudge && mainWalkTooFar(character))) {
 					if (getCharacter(character).direction == 3) {
 						getCharacter(character).currentFrameSeq1 = 0;
 					} else {
@@ -1289,7 +1289,7 @@ void OtisManager::updateCharacter(int character) {
 
 		getCharacter(character).doProcessEntity = 0;
 
-		if (getCharacter(character).direction == 4 || getCharacter(character).direction == 5 && getCharacter(character).directionSwitch == 4)
+		if (getCharacter(character).direction == 4 || (getCharacter(character).direction == 5 && getCharacter(character).directionSwitch == 4))
 			getCharacter(character).elapsedFrames++;
 	} else {
 		if (getCharacter(character).position2) {
@@ -1303,7 +1303,7 @@ void OtisManager::updateCharacter(int character) {
 
 		getCharacter(character).doProcessEntity = 0;
 
-		if (getCharacter(character).direction == 4 || getCharacter(character).direction == 5 && getCharacter(character).directionSwitch == 4)
+		if (getCharacter(character).direction == 4 || (getCharacter(character).direction == 5 && getCharacter(character).directionSwitch == 4))
 			getCharacter(character).elapsedFrames++;
 	}
 }
@@ -1345,8 +1345,8 @@ void OtisManager::doNewSprite(int character, bool keepPreviousFrame, bool dontPl
 		if ((newSprite->flags & 1) != 0)
 			_engine->getLogicManager()->send(kCharacterCath, character, 5, 0);
 
-		if ((newSprite->flags & 2) == 0 || (_engine->getLogicManager()->send(kCharacterCath, character, 10, 0), _engine->getMessageManager()->flush(), !_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity) {
-			if ((newSprite->flags & 0x10) == 0 || (_engine->getLogicManager()->send(kCharacterCath, character, 4, 0), _engine->getMessageManager()->flush(), !_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity) {
+		if ((newSprite->flags & 2) == 0 || ((_engine->getLogicManager()->send(kCharacterCath, character, 10, 0), _engine->getMessageManager()->flush(), !_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity)) {
+			if ((newSprite->flags & 0x10) == 0 || ((_engine->getLogicManager()->send(kCharacterCath, character, 4, 0), _engine->getMessageManager()->flush(), !_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity)) {
 				if (getCharacter(character).position2) {
 					_engine->getLogicManager()->releaseView(character, getCharacter(character).car2, getCharacter(character).position2);
 					getCharacter(character).car2 = 0;
@@ -1354,9 +1354,9 @@ void OtisManager::doNewSprite(int character, bool keepPreviousFrame, bool dontPl
 				}
 
 				if (!newSprite->position ||
-					(getCharacter(character).car2 = getCharacter(character).characterPosition.car, getCharacter(character).position2 = newSprite->position,
+					((getCharacter(character).car2 = getCharacter(character).characterPosition.car, getCharacter(character).position2 = newSprite->position,
 						_engine->getLogicManager()->blockView(character, getCharacter(character).car2, getCharacter(character).position2),
-						!_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity) {
+						!_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity)) {
 					if (newSprite->soundAction && !dontPlaySound)
 						_engine->getLogicManager()->queueSFX(character, newSprite->soundAction, newSprite->soundDelay);
 
@@ -1381,7 +1381,7 @@ void OtisManager::doNewSprite(int character, bool keepPreviousFrame, bool dontPl
 }
 
 void OtisManager::doSeqChange(int character) {
-	if (getCharacter(character).direction != 4 || (_engine->getLogicManager()->send(kCharacterCath, character, 3, 0), _engine->getMessageManager()->flush(), !_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity) {
+	if (getCharacter(character).direction != 4 || ((_engine->getLogicManager()->send(kCharacterCath, character, 3, 0), _engine->getMessageManager()->flush(), !_engine->_stopUpdatingCharacters) && !getCharacter(character).doProcessEntity)) {
 		if (_engine->getLogicManager()->whoWalking(character) && !getCharacter(character).sequence2 && corrRender(0) && getCharacter(kCharacterCath).characterPosition.car == getCharacter(character).characterPosition.car) {
 			if (getCharacter(character).needsPosFudge && !_engine->getLogicManager()->whoFacingCath(character)) {
 				getCharacter(character).characterPosition.position = 8514;
