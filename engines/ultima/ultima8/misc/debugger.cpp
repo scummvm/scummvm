@@ -65,8 +65,6 @@ Debugger *g_debugger;
 Debugger::Debugger() : GUI::Debugger() {
 	g_debugger = this;
 
-	// WARNING: Not only can the methods below be executed directly in the debugger,
-	// they also act as the methods keybindings are made to. So be wary of changing names
 	registerCmd("quit", WRAP_METHOD(Debugger, cmdQuit));
 	registerCmd("Ultima8Engine::quit", WRAP_METHOD(Debugger, cmdQuit));
 	registerCmd("Ultima8Engine::saveGame", WRAP_METHOD(Debugger, cmdSaveGame));
@@ -92,8 +90,6 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("Cheat::items", WRAP_METHOD(Debugger, cmdCheatItems));
 	registerCmd("Cheat::equip", WRAP_METHOD(Debugger, cmdCheatEquip));
 
-	registerCmd("GameMapGump::startHighlightItems", WRAP_METHOD(Debugger, cmdStartHighlightItems));
-	registerCmd("GameMapGump::stopHighlightItems", WRAP_METHOD(Debugger, cmdStopHighlightItems));
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
 	registerCmd("GameMapGump::toggleFootpads", WRAP_METHOD(Debugger, cmdToggleFootpads));
 	registerCmd("GameMapGump::gridlines", WRAP_METHOD(Debugger, cmdGridlines));	
@@ -133,18 +129,6 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
 
-	registerCmd("QuickAvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartQuickMoveUp));
-	registerCmd("QuickAvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartQuickMoveDown));
-	registerCmd("QuickAvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartQuickMoveLeft));
-	registerCmd("QuickAvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartQuickMoveRight));
-	registerCmd("QuickAvatarMoverProcess::startAscend", WRAP_METHOD(Debugger, cmdStartQuickMoveAscend));
-	registerCmd("QuickAvatarMoverProcess::startDescend", WRAP_METHOD(Debugger, cmdStartQuickMoveDescend));
-	registerCmd("QuickAvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopQuickMoveUp));
-	registerCmd("QuickAvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopQuickMoveDown));
-	registerCmd("QuickAvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopQuickMoveLeft));
-	registerCmd("QuickAvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopQuickMoveRight));
-	registerCmd("QuickAvatarMoverProcess::stopAscend", WRAP_METHOD(Debugger, cmdStopQuickMoveAscend));
-	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopQuickMoveDescend));
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
 
@@ -613,15 +597,6 @@ bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
 	return true;
 }
 
-
-bool Debugger::cmdStartHighlightItems(int argc, const char **argv) {
-	GameMapGump::Set_highlightItems(true);
-	return false;
-}
-bool Debugger::cmdStopHighlightItems(int argc, const char **argv) {
-	GameMapGump::Set_highlightItems(false);
-	return false;
-}
 bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 	GameMapGump::Set_highlightItems(!GameMapGump::is_highlightItems());
 	return false;
@@ -1294,88 +1269,6 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	}
 
 	return true;
-}
-
-static bool _quickMoveKey(uint32 flag, const char *debugname) {
-	Ultima8Engine *engine = Ultima8Engine::get_instance();
-	if (engine->isAvatarInStasis()) {
-		g_debugger->debugPrintf("Can't %s: avatarInStasis", debugname);
-		return true;
-	}
-	if (!engine->areCheatsEnabled()) {
-		g_debugger->debugPrintf("Can't %s: Cheats aren't enabled", debugname);
-		return true;
-	}
-
-	QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-	if (proc) {
-		proc->setMovementFlag(flag);
-	}
-	return false;
-}
-
-static bool _quickMoveKeyEnd(uint32 flag) {
-	Ultima8Engine *engine = Ultima8Engine::get_instance();
-	if (engine->isAvatarInStasis()) {
-		return false;
-	}
-	if (!engine->areCheatsEnabled()) {
-		return false;
-	}
-
-	QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-	if (proc) {
-		proc->clearMovementFlag(flag);
-	}
-	return false;
-}
-
-bool Debugger::cmdStartQuickMoveUp(int argc, const char **argv) {
-	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_UP, "move up");
-}
-
-bool Debugger::cmdStartQuickMoveDown(int argc, const char **argv) {
-	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_DOWN, "move down");
-}
-
-bool Debugger::cmdStartQuickMoveLeft(int argc, const char **argv) {
-	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_LEFT, "move left");
-}
-
-bool Debugger::cmdStartQuickMoveRight(int argc, const char **argv) {
-	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_RIGHT, "move right");
-}
-
-bool Debugger::cmdStartQuickMoveAscend(int argc, const char **argv) {
-	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_ASCEND, "move ascend");
-}
-
-bool Debugger::cmdStartQuickMoveDescend(int argc, const char **argv) {
-	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_DESCEND, "move descend");
-}
-
-bool Debugger::cmdStopQuickMoveUp(int argc, const char **argv) {
-	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_UP);
-}
-
-bool Debugger::cmdStopQuickMoveDown(int argc, const char **argv) {
-	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_DOWN);
-}
-
-bool Debugger::cmdStopQuickMoveLeft(int argc, const char **argv) {
-	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_LEFT);
-}
-
-bool Debugger::cmdStopQuickMoveRight(int argc, const char **argv) {
-	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_RIGHT);
-}
-
-bool Debugger::cmdStopQuickMoveAscend(int argc, const char **argv) {
-	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_ASCEND);
-}
-
-bool Debugger::cmdStopQuickMoveDescend(int argc, const char **argv) {
-	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_DESCEND);
 }
 
 bool Debugger::cmdToggleQuarterSpeed(int argc, const char **argv) {

@@ -68,8 +68,6 @@ private:
 	bool cmdToggleInvincibility(int argc, const char **argv);
 
 	// Game Map Gump
-	bool cmdStartHighlightItems(int argc, const char **argv);
-	bool cmdStopHighlightItems(int argc, const char **argv);
 	bool cmdToggleHighlightItems(int argc, const char **argv);
 	bool cmdToggleFootpads(int argc, const char **argv);
 	bool cmdGridlines(int argc, const char **argv);
@@ -113,18 +111,6 @@ private:
 	bool cmdObjectInfo(int argc, const char **argv);
 
 	// Quick Avatar Mover Process
-	bool cmdStartQuickMoveUp(int argc, const char **argv);
-	bool cmdStartQuickMoveDown(int argc, const char **argv);
-	bool cmdStartQuickMoveLeft(int argc, const char **argv);
-	bool cmdStartQuickMoveRight(int argc, const char **argv);
-	bool cmdStartQuickMoveAscend(int argc, const char **argv);
-	bool cmdStartQuickMoveDescend(int argc, const char **argv);
-	bool cmdStopQuickMoveUp(int argc, const char **argv);
-	bool cmdStopQuickMoveDown(int argc, const char **argv);
-	bool cmdStopQuickMoveLeft(int argc, const char **argv);
-	bool cmdStopQuickMoveRight(int argc, const char **argv);
-	bool cmdStopQuickMoveAscend(int argc, const char **argv);
-	bool cmdStopQuickMoveDescend(int argc, const char **argv);
 	bool cmdToggleQuarterSpeed(int argc, const char **argv);
 	bool cmdToggleClipping(int argc, const char **argv);
 
