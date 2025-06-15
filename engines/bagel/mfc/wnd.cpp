@@ -627,8 +627,11 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	_windowRect = oldControl->_windowRect;
 	_controlId = oldControl->_controlId;
 
+	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
+	ClientToScreen(&screenRect);
+
 	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_surfaceBitmap.create(*AfxGetApp()->getScreen(), _windowRect);
+	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
 	_surface._format = format;
 
 	return true;
