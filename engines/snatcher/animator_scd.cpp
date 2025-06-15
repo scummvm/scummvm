@@ -39,7 +39,7 @@ namespace Snatcher {
 //#define		ANIM_DEBUG
 
 struct AnimObject {
-	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), f18(0), f1c(0),
+	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), f17(0), f18(0), f1c(0),
 		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0),
 			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), freeze(0), blink(0), blinkCounter(0), blinkDuration(0) {}
 
@@ -48,7 +48,7 @@ struct AnimObject {
 		posX = posY = 0;
 		relSpeedX = relSpeedY = 0;
 		palette = 0;
-		f18 = 0;
+		f17 = f18 = 0;
 		f1c = 0;
 		timeStamp = 0;
 		f24 = 0;
@@ -75,6 +75,7 @@ struct AnimObject {
 	int32 relSpeedX;
 	int32 relSpeedY;
 	uint8 palette;
+	uint16 f17;
 	uint16 f18;
 	uint8 f1c;
 	uint32 timeStamp;
@@ -107,7 +108,7 @@ struct AnimObject {
 class GraphicsEngine;
 class Animator_SCD : public Animator, public Graphics::SegaRenderer::HINTClient {
 public:
-	Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd);
+	Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection);
 	~Animator_SCD() override;
 
 	bool enqueueDrawCommands(ResourcePointer &res) override;
@@ -129,6 +130,8 @@ public:
 	void setAnimParameter(uint8 animObjId, int param, int32 value) override;
 	void setAnimGroupParameter(uint8 animObjId, int groupOp, int32 value = 0) override;
 	int32 getAnimParameter(uint8 animObjId, int param) const override;
+	uint8 getAnimScriptByte(uint8 animObjId, uint16 offset) const override;
+	void animCopySpec(uint8 srcAnimObjId, uint8 dstAnimObjId) override;
 
 	uint16 screenWidth() const override { return _screenWidth; }
 	uint16 screenHeight() const override { return _screenHeight; }
@@ -240,8 +243,8 @@ private:
 	int anim_34(AnimObject &a, const uint8 *data);
 	int anim_35(AnimObject &a, const uint8 *data);
 	int anim_36(AnimObject &a, const uint8 *data);
-	int anim_37(AnimObject &a, const uint8 *data);
-	int anim_38(AnimObject &a, const uint8 *data);
+	int anim_fadeOut(AnimObject &a, const uint8 *data);
+	int anim_fadeIn(AnimObject &a, const uint8 *data);
 	int anim_setPalette(AnimObject &a, const uint8 *data);
 	int anim_transition(AnimObject &a, const uint8 *data);
 	int anim_speechSync(AnimObject &a, const uint8 *data);
@@ -264,7 +267,7 @@ private:
 	uint8 *_bootsSprTbl;
 };
 
-Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd) : Animator(state), _pal(pal), _trs(scr), _snd(snd), _mode(1),
+Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection) : Animator(state), _pal(pal), _trs(scr), _snd(snd), _mode(1),
 	_modeChange(0), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0), _transferDelay(0), _clearFlags(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _frameCount3Dwn(0),
 		_animations(nullptr), _drawCommands(nullptr), _hINTClientProc(Graphics::SegaRenderer::HINTHandler(this, &Graphics::SegaRenderer::HINTClient::hINTCallback)), _realScreenWidth(0), _realScreenHeight(0),
 			_bootsDelay(0), _bootsSprTbl(nullptr), _bootsTotalFrames(0), _bootsHScroll(0), _bootsVScroll(0), _bootsCol(0) {
@@ -292,7 +295,8 @@ Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::Gfx
 	}
 
 	_sr->setResolution(_screenWidth, _screenHeight);
-	_sr->toggleAspectRatioCorrection(true);
+	if (enableAspectRatioCorrection)
+		_sr->setAspectRatioCorrection(4.0 / 3.0, 2.0);
 	_sr->getRealResolution(_realScreenWidth, _realScreenHeight);
 	_sr->setupWindowPlane(0, 0, Graphics::SegaRenderer::kWinToLeft, Graphics::SegaRenderer::kWinToTop);
 	_sr->hINT_setHandler(&_hINTClientProc);
@@ -533,8 +537,11 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 	case GraphicsEngine::kAnimParaRelSpeedY:
 		a.relSpeedY = value << 16;
 		break;
-	case GraphicsEngine::kAnimParaF16:
+	case GraphicsEngine::kAnimParaPalette:
 		a.palette = value;
+		break;
+	case GraphicsEngine::kAnimParaF17:
+		a.f17 = value;
 		break;
 	case GraphicsEngine::kAnimParaF18:
 		a.f18 = value;
@@ -622,8 +629,10 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 		return a.relSpeedX >> 16;
 	case GraphicsEngine::kAnimParaRelSpeedY:
 		return a.relSpeedY >> 16;
-	case GraphicsEngine::kAnimParaF16:
+	case GraphicsEngine::kAnimParaPalette:
 		return a.palette;
+	case GraphicsEngine::kAnimParaF17:
+		return a.f17;
 	case GraphicsEngine::kAnimParaF18:
 		return a.f18;
 	case GraphicsEngine::kAnimParaF1c:
@@ -664,6 +673,22 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 		error("%s(): Unknown parameter %d", __FUNCTION__, param);
 		break;
 	}
+}
+
+uint8 Animator_SCD::getAnimScriptByte(uint8 animObjId, uint16 offset) const {
+	assert(animObjId < 64);
+	return _animations[animObjId]->scriptData[offset];
+}
+
+void Animator_SCD::animCopySpec(uint8 srcAnimObjId, uint8 dstAnimObjId) {
+	assert(srcAnimObjId < 64 && dstAnimObjId < 64);
+	AnimObject &src = *_animations[srcAnimObjId];
+	AnimObject &dst = *_animations[dstAnimObjId];
+	dst.palette = src.palette;
+	dst.frameDelay = src.frameDelay;
+	dst.spriteTableLocation = src.spriteTableLocation;
+	dst.scriptData = src.scriptData;
+	dst.spriteData = src.spriteData;
 }
 
 void Animator_SCD::hINTCallback(Graphics::SegaRenderer *sr) {
@@ -1077,8 +1102,8 @@ void Animator_SCD::makeAnimFunctions() {
 		ANM(34),
 		ANM(35),
 		ANM(36),
-		ANM(37),
-		ANM(38),
+		ANM(fadeOut),
+		ANM(fadeIn),
 		ANM(setPalette),
 		ANM(transition),
 		ANM(speechSync),
@@ -1294,14 +1319,17 @@ int Animator_SCD::anim_36(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_37(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_fadeOut(AnimObject &a, const uint8 *data) {
 	static const uint8 cmd[] = { 0x25, 0x00 };
 	ResourcePointer r(cmd, 0);
 	enqueueDrawCommands(r);
 	return 1;
 }
 
-int Animator_SCD::anim_38(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_fadeIn(AnimObject &a, const uint8 *data) {
+	static const uint8 cmd[] = { 0xA4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x20 };
+	ResourcePointer r(cmd, 0);
+	enqueueDrawCommands(r);
 	return 1;
 }
 
@@ -1415,7 +1443,7 @@ void Animator_SCD::createMouseCursor() {
 	//anim_setControlFlags(16, GraphicsEngine::kAnimPause);
 	//anim_setFrame(16, 0);
 
-	memset(_tempBuffer, 0, 0x10000);
+	/*memset(_tempBuffer, 0, 0x10000);
 	updateAnimations();
 	drawAnimSprites();
 	_sr->renderSprites(_tempBuffer, nullptr);
@@ -1426,7 +1454,7 @@ void Animator_SCD::createMouseCursor() {
 
 	g_system->setMouseCursor(_tempBuffer, 24, 24, 12, 12, 4);
 	g_system->setCursorPalette(_pal->getSystemPalette(), 0, 64);
-	g_system->showMouse(true);
+	g_system->showMouse(true);*/
 }
 
 // Boot logo sequence code. This has nothing to do with the engine graphics code, so I put it at the end, to keep the ugly mess out of sight...
@@ -1646,8 +1674,8 @@ int Animator_SCD::drawBootLogoFrame(uint8 *screen, int frameNo)  {
 }
 
 
-Animator *Animator::createSCDAnimator(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd) {
-	return new Animator_SCD(pxf, state, pal, scr, snd);
+Animator *Animator::createSCDAnimator(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection) {
+	return new Animator_SCD(pxf, state, pal, scr, snd, enableAspectRatioCorrection);
 }
 
 } // End of namespace Snatcher

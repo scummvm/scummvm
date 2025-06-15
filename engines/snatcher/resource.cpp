@@ -197,6 +197,11 @@ uint32 ResourcePointer::readIncrSINT32() {
 	return r;
 }
 
+void ResourcePointer::writeUINT16(uint16 value) {
+	assert(_writeableDataStart);
+	WRITE_BE_UINT16(_writeableDataStart + _offset, value);
+}
+
 void ResourcePointer::writeUINT32(uint32 value) {
 	assert(_writeableDataStart);
 	WRITE_BE_UINT32(_writeableDataStart + _offset, value);

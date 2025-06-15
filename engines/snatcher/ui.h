@@ -60,7 +60,7 @@ public:
 
 	void loadState(Common::SeekableReadStream *in);
 	void saveState(Common::SeekableWriteStream *out);
-	
+
 private:
 	void printDialogStringHead();
 	void printDialogStringBody();
@@ -128,7 +128,7 @@ private:
 	uint8 _vkeybColumnWidth;
 	uint8 _verbsTabOffsX;
 	uint8 _verbsTabOffsY;
-	
+
 	int8 _lastHiliteVerb;
 	int8 _hiliteVerb;
 	uint8 _lastVerbDrawn;

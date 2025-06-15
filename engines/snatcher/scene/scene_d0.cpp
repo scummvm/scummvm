@@ -132,7 +132,7 @@ SH_IMPL_UPDT(D0) {
 	} else if (_vm->sound()->cdaGetTime() >= _timeStamp[state.frameNo]) {
 		(*_frameProcs[state.frameNo])(state);
 		++state.frameNo;
-	} else if (_vm->input().controllerFlags & 0x80) {
+	} else if (_vm->input().singleFrameControllerFlags & 0x80) {
 		state.finish = -1;
 		state.frameNo = 0;
 	}

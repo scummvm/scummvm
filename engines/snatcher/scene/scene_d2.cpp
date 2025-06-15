@@ -109,11 +109,11 @@ SH_IMPL_FRM(D2, 00) {
 		}
 		break;
 	case 2:
-		if (_vm->input().controllerFlags & 3) {
+		if (_vm->input().singleFrameControllerFlags & 3) {
 			_vm->gfx()->clearAnimParameterFlags(16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
 			_buram0 ^= 1;
 		}
-		if (_vm->input().controllerFlags & 0x80) {
+		if (_vm->input().singleFrameControllerFlags & 0x80) {
 			state.counter = 10;
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
 			++state.frameState;
@@ -137,7 +137,7 @@ SH_IMPL_FRM(D2, 01) {
 	} else if (_vm->sound()->cdaIsPlaying()) {
 		++state.frameNo;
 		state.frameState = 0;
-	}	
+	}
 }
 
 SH_IMPL_FRM(D2, 02) {
@@ -252,9 +252,9 @@ SH_IMPL_FRM(D2, 09) {
 		state.frameState += (state.saveSlotUsage ? 1 : 2);
 		break;
 	case 1:
-		if (_vm->input().controllerFlags & 3)
+		if (_vm->input().singleFrameControllerFlags & 3)
 			_vm->gfx()->clearAnimParameterFlags(17, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
-		if (_vm->input().controllerFlags & 0x80) {
+		if (_vm->input().singleFrameControllerFlags & 0x80) {
 			_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 			state.menuSelect = 1;
 			if (_vm->gfx()->getAnimParameter(17, GraphicsEngine::kAnimParaFrame) == 3) {
@@ -265,7 +265,7 @@ SH_IMPL_FRM(D2, 09) {
 		}
 		break;
 	default:
-		if (_vm->input().controllerFlags & 0x80) {
+		if (_vm->input().singleFrameControllerFlags & 0x80) {
 			++state.frameNo;
 			state.frameState = 0;
 			fin = true;
@@ -297,12 +297,12 @@ SH_IMPL_FRM(D2, 10) {
 			return;
 		}
 		_vm->gfx()->clearAnimParameterFlags(24, GraphicsEngine::kAnimParaControlFlags, 0xFF);
-		_vm->gfx()->clearAnimParameterFlags(25, GraphicsEngine::kAnimParaControlFlags, 0xFF);		
+		_vm->gfx()->clearAnimParameterFlags(25, GraphicsEngine::kAnimParaControlFlags, 0xFF);
 
 		do {
-			if (_vm->input().controllerFlags & 1)
+			if (_vm->input().singleFrameControllerFlags & 1)
 				--_curSaveFile;
-			if (_vm->input().controllerFlags & 2)
+			if (_vm->input().singleFrameControllerFlags & 2)
 				++_curSaveFile;
 			_curSaveFile &= 3;
 		} while (!(state.saveSlotUsage & (1 << _curSaveFile)));
@@ -310,11 +310,11 @@ SH_IMPL_FRM(D2, 10) {
 		_vm->gfx()->setAnimParameter(24, GraphicsEngine::kAnimParaFrame, _curSaveFile << 2);
 		_vm->gfx()->setAnimParameter(25, GraphicsEngine::kAnimParaFrame, _curSaveFile << 2);
 
-		if (_vm->input().controllerFlags & 0x80) {
+		if (_vm->input().singleFrameControllerFlags & 0x80) {
 			_vm->sound()->fmSendCommand(56, 0, 2);
 			_loadCancelled = false;
 			fin = true;
-		} else if (_vm->input().controllerFlags & 0x10) {
+		} else if (_vm->input().singleFrameControllerFlags & 0x10) {
 			_loadCancelled = true;
 			fin = true;
 		}
@@ -373,9 +373,9 @@ SH_IMPL_FRM(D2, 11) {
 			_vm->gfx()->clearAnimParameterFlags(i, GraphicsEngine::kAnimParaControlFlags, 0xFF);
 
 		do {
-			if (_vm->input().controllerFlags & 1)
+			if (_vm->input().singleFrameControllerFlags & 1)
 				--_option;
-			if (_vm->input().controllerFlags & 2)
+			if (_vm->input().singleFrameControllerFlags & 2)
 				++_option;
 			_option = (_option + 5) % 5;
 		} while (_option == 3 && !state.conf.useLightGun);
@@ -387,18 +387,18 @@ SH_IMPL_FRM(D2, 11) {
 		}
 
 		if (_option == 0) {
-			if (state.conf.lightGunAvailable && _vm->input().controllerFlags & 0x0C)
+			if (state.conf.lightGunAvailable && _vm->input().singleFrameControllerFlags & 0x0C)
 				state.conf.useLightGun ^= 1;
 		} else if (_option == 1) {
-			if (_vm->input().controllerFlags & 8)
+			if (_vm->input().singleFrameControllerFlags & 8)
 				++state.conf.controllerSetup;
-			if (_vm->input().controllerFlags & 4)
+			if (_vm->input().singleFrameControllerFlags & 4)
 				--state.conf.controllerSetup;
 			state.conf.controllerSetup = (state.conf.controllerSetup + 5) % 5;
 		} else if (_option == 2) {
-			if (_vm->input().controllerFlags & 0x0C)
+			if (_vm->input().singleFrameControllerFlags & 0x0C)
 				state.conf.disableStereo ^= 1;
-		}		
+		}
 
 		_vm->gfx()->setAnimParameter(32, GraphicsEngine::kAnimParaFrame, _option << 2);
 		_vm->gfx()->setAnimParameter(33, GraphicsEngine::kAnimParaFrame, ((_option ? 2 : 0) + state.conf.useLightGun) << 1);
@@ -406,9 +406,9 @@ SH_IMPL_FRM(D2, 11) {
 		_vm->gfx()->setAnimParameter(34, GraphicsEngine::kAnimParaFrame, ((_option != 1 ? 6 : 0) + state.conf.controllerSetup) << 1);
 		_vm->gfx()->setAnimParameter(35, GraphicsEngine::kAnimParaFrame, ((_option != 2 ? 2 : 0) + state.conf.disableStereo) << 1);
 
-		if (_vm->input().controllerFlags & 0x80)
+		if (_vm->input().singleFrameControllerFlags & 0x80)
 			fin = (_option != 3) ? 1 : 3;
-		else if (_vm->input().controllerFlags & 0x70)
+		else if (_vm->input().singleFrameControllerFlags & 0x70)
 			fin = (_option == 4) ? 1 : (_option == 3 ? 3 : 0);
 		if (fin) {
 			_vm->sound()->pcmSendCommand(55 + fin, -1);
@@ -445,7 +445,7 @@ SH_IMPL_FRM(D2, 11) {
 		++state.frameState;
 		break;
 	case 3:
-		if (_vm->input().controllerFlags & 0x80) {
+		if (_vm->input().singleFrameControllerFlags & 0x80) {
 			_vm->gfx()->enqueuePaletteEvent(_module->getPtr(0x290F2));
 			state.counter = 10;
 			++state.frameState;
@@ -462,7 +462,7 @@ SH_IMPL_FRM(D2, 11) {
 			++state.counter;
 			break;
 		case 1:
-			if (_vm->input().controllerFlags & 0x100) {
+			if (_vm->input().singleFrameControllerFlags & 0x100) {
 				_vm->sound()->pcmSendCommand(57, -1);
 				_vm->gfx()->setAnimParameter(18, GraphicsEngine::kAnimParaBlink, 0);
 				_vm->gfx()->setAnimParameter(18, GraphicsEngine::kAnimParaAbsSpeedX, 0);
@@ -479,7 +479,7 @@ SH_IMPL_FRM(D2, 11) {
 			++state.counter;
 			break;
 		case 3:
-			if (_vm->input().controllerFlags & 0x200) {
+			if (_vm->input().singleFrameControllerFlags & 0x200) {
 				_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaBlink, 1);
 				_vm->gfx()->setAnimParameter(17, GraphicsEngine::kAnimParaAbsSpeedX, 1);
 				_vm->gfx()->setAnimParameter(19, GraphicsEngine::kAnimParaBlink, 0);
@@ -487,7 +487,7 @@ SH_IMPL_FRM(D2, 11) {
 				_vm->allowLightGunInput(false);
 				state.counter += 2;
 				_vm->sound()->fmSendCommand(29, 0, 2);
-			} else if (_vm->input().controllerFlags & 0x100) {
+			} else if (_vm->input().singleFrameControllerFlags & 0x100) {
 				_vm->sound()->pcmSendCommand(57, -1);
 				state.counter++;
 			}

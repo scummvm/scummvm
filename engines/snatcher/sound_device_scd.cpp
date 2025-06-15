@@ -391,7 +391,7 @@ private:
 	};
 #else
 	typedef Common::Functor1Mem<const uint8*&, void, KonamiMCDSndChannel> ChanOpcode;
-#endif	
+#endif
 	Common::Array<Common::SharedPtr<ChanOpcode> > _opcodes;
 
 	static const uint8 _carrier[8];
@@ -514,7 +514,7 @@ void KonamiMCDSndChannel::initSound(const uint8 *data, const uint8 *dataEnd, uin
 		_flags |= 1;
 	}
 
-	_pbExtSpeed = _volSlideDuration = _panEffectRateCounter = _section2RepeatCounter = _section1RepeatCounter = _noteTimer = _eventDelay = _noteDuration = 
+	_pbExtSpeed = _volSlideDuration = _panEffectRateCounter = _section2RepeatCounter = _section1RepeatCounter = _noteTimer = _eventDelay = _noteDuration =
 		_lastNoteDuration = _regB4 = _lfoSensitivityDelay = _ampModSensitivityDelay = _pitchBendDuration = _vbrDepthModulationRate = _vbrDepth = _pitchBendSteps = _volTotal = 0;
 	_transposeMSB = 0;
 	_section1VolAdjust = _section2VolAdjust = _section1Transpose = _vbrDepthCur = _decayRate = _freqLast = 0;
@@ -782,7 +782,7 @@ void KonamiMCDSndChannel::runOpcode(uint8 opcode, const uint8 *&data) {
 
 void KonamiMCDSndChannel::addToMessage(uint8 cmd, const uint8 *&data) {
 	if (_id == 7)
-		_state.msg[1] |= (cmd << 3); 
+		_state.msg[1] |= (cmd << 3);
 	else
 		_state.msg[0] |= cmd;
 
@@ -868,7 +868,7 @@ void KonamiMCDSndChannel::applyVolumeSlide() {
 
 void KonamiMCDSndChannel::keyOff() {
 	if (blockedBySfx() || _id > 5)
- 		return;
+		return;
 	_sai->writeReg(0, 0x28, _id + (_id > 2 ? 1 : 0));
 }
 
@@ -1524,7 +1524,7 @@ void KonamiMCDAudioDriver::doCommand(int cmd, int arg) {
 		_comList[_comListWritePos++] = cmd;
 		if (_comListWritePos == sizeof(_comList))
 			_comListWritePos = 0;
-	}	
+	}
 }
 
 void KonamiMCDAudioDriver::setVolume(uint8 vol1, uint8 vol2) {
@@ -1611,7 +1611,7 @@ void KonamiMCDAudioDriver::nextTick() {
 		if (!(_state.flags & SndDriverState::kSndFadeoutDone)) {
 			_state.flags |= SndDriverState::kSndFadeoutDone;
 			stopChannels(1);
-		}			
+		}
 	} else {
 		_state.flags &= ~SndDriverState::kSndFadeoutDone;
 		if (!(_state.flags & SndDriverState::kSndBlockChannels)) {
@@ -1741,7 +1741,7 @@ const uint8 *KonamiMCDAudioDriver::getTrack(uint32 index) const {
 }
 
 SegaSoundDevice::SegaSoundDevice(FIO *fio) : _fio(fio), SoundDevice(), _sai(nullptr), _lastTrack(-1), _pauseStartTime(0), _pcmResourceInfo(nullptr), _pcmResidentDataInfo(nullptr), _pcmInstrumentInfo(nullptr),
-	_pcmSounds(nullptr), _pcmDisableStereo(false), _temp(nullptr), _pcmResourceNumber(-1), _pcmState(0), _pcmMode(0), _faderFlags(0), _faderTimer1(0), _faderTimer2(0), _reduceVolume2(false), 
+	_pcmSounds(nullptr), _pcmDisableStereo(false), _temp(nullptr), _pcmResourceNumber(-1), _pcmState(0), _pcmMode(0), _faderFlags(0), _faderTimer1(0), _faderTimer2(0), _reduceVolume2(false),
 		_fmVolume1(0xFF), _fmLastVolume1(0), _fmVolume2(0xFF), _fmLastVolume2(0), _fmCmdQueue(nullptr), _fmCmdQueueWPos(0), _fmCmdQueueRPos(0), _fmDriver(nullptr), _driverMsg()	{
 	_temp = new uint8[0x8000]();
 	assert(_temp);
@@ -1841,7 +1841,7 @@ void SegaSoundDevice::pcmSendCommand(int cmd, int arg) {
 	} else {
 		_pcmState |= 8;
 		pcmStartSound(cmd, arg);
-	}	
+	}
 }
 
 void SegaSoundDevice::pcmInitSound(int sndId) {
@@ -1869,7 +1869,7 @@ int16 SegaSoundDevice::pcmGetResourceId() const {
 	return _pcmResourceNumber;
 }
 
-void SegaSoundDevice::pause(bool toggle) {	
+void SegaSoundDevice::pause(bool toggle) {
 	if (toggle) {
 		if (_pauseStartTime == 0) {
 			if (cdaIsPlaying()) {
@@ -1953,7 +1953,7 @@ void SegaSoundDevice::fmUpdateVolumeFader() {
 		_faderTimer1 = 0;
 		if (_fmVolume1 >= 3)
 			_fmVolume1 -= 3;
-		
+
 	} else if (_faderFlags & 1) {
 		if (++_faderTimer2 != 2)
 			return;

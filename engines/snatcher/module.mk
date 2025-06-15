@@ -1,6 +1,7 @@
 MODULE := engines/snatcher
 
 MODULE_OBJS := \
+	action.o \
 	animator_scd.o \
 	graphics.o \
 	memory.o \

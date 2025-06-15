@@ -54,7 +54,7 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 	if (_progress == -1)
 		_progress = 0;
 
-	if (/*_gfxOps_var1 || */(inputFlags & 0x100))
+	if (inputFlags & 0x100)
 		_gfx->setTextPrintDelay(0);
 
 	if (_gfx->isTextInQueue())
@@ -166,7 +166,7 @@ bool UI::drawVerbs() {
 	if (_progress2 == -1)
 		_progress2 = 0;
 
-	if (_verbsInterpreterMode == 2) 
+	if (_verbsInterpreterMode == 2)
 		_progress2 |= 0x80;
 
 	if (_progress2 == 0) {
@@ -550,7 +550,7 @@ void UI::printDialogStringBody() {
 			i = 49;
 			break;;
 		case 0xF4:
-			_sceneInfo = 2;
+			_sceneInfo = (_sceneInfo & 0xFF) | 0x200;
 			break;
 		case 0xF2:
 			_textLineBreak = 1;

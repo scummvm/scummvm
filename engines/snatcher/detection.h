@@ -40,7 +40,7 @@ struct GameDescription {
 	// language overwrites of fan translations (only needed for multilingual games)
 	Common::Language fanLang;
 	Common::Language replacedLang;
-	
+
 };
 
 } // End of namespace Snatcher

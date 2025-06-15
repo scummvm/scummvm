@@ -42,7 +42,7 @@ uint32 decodeSCDData(const uint8 *src, uint8 *dst) {
 			bits = 7;
 		}
 
-		op = code & 1; 
+		op = code & 1;
 		code >>= 1;
 
 		if (op == 0) {

@@ -331,7 +331,7 @@ void SCDPalette::event_palSet(PalEventSCD *evt) {
 		*dst++ = READ_BE_UINT16(src++);
 
 	if (READ_BE_UINT16(++evt->srcOffsetCur) == 0xFFFF)
-		evt->cmd = 0;	
+		evt->cmd = 0;
 }
 
 void SCDPalette::event_palFadeFromBlack(PalEventSCD *evt) {
@@ -426,7 +426,7 @@ void SCDPalette::event_palFadeToGrey(PalEventSCD *evt) {
 		uint8 r = col & 0xF;
 		uint8 g = (col & 0xF0) >> 4;
 		uint8 b = (col & 0xF00) >> 8;
-		col = ((r + g + b) / 3) & 0xFFFE;		
+		col = ((r + g + b) / 3) & 0xFFFE;
 		fadeStep(dst++, col & 0xF, (col << 4) & 0xF0, (col << 8) & 0xF00);
 	}
 
@@ -511,7 +511,7 @@ void SCDPalette::hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer
 }
 
 void SCDPalette::hIntHandler_23(Graphics::SegaRenderer *sr) {
-	
+
 }
 
 Palette *Palette::createSegaPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) {
