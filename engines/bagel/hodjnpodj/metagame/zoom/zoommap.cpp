@@ -165,16 +165,13 @@ CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, BOOL bShowExit) {
 // this adds a bit to our app size but avoids hangs/freezes/lockups.
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               hGameCursor, nullptr, nullptr);
+	    hGameCursor, nullptr, nullptr);
 
 	m_hCallAppWnd = hCallingWnd;
 	m_bShowExit = bShowExit;
 
-// set the seed for the random number generator
-//srand( (unsigned)time( nullptr ));
-
-// load splash screen
-	pDC = GetDC();                                  // get a device context for our window
+	// get a device context for our window
+	pDC = GetDC();
 
 // set window coordinates to center game on screeen
 	MainRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
@@ -372,18 +369,22 @@ void CMainZoomWindow::OnMouseMove(UINT nFlags, CPoint point) {
 				return;
 			}
 
-			if (x != nLastRect) {                    // then hilight it and flash the
-				CRect   rTemp(arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
-				              arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10);
+			if (x != nLastRect) {
+				// then highlight it
 				CDC *pDC = GetDC();
-				CBrush  brshCyanBrush(RGB(0, 255, 255));
-				CBrush  brshBlackBrush(RGB(0, 0, 0));
-				CRect   rTemp1((arGameRect[x].left - 5 + 2), (arGameRect[x].top - 5 + 2),
-				               (arGameRect[x].right + 5 + 2), (arGameRect[x].bottom + 5 + 2));
-				CRect   rTemp2((arGameRect[x].left - 5), (arGameRect[x].top - 5),
-				               (arGameRect[x].right + 5), (arGameRect[x].bottom + 5));
+				CBrush brshCyanBrush(RGB(0, 255, 255));
+				CBrush brshBlackBrush(RGB(0, 0, 0));
+				CRect rTemp1((arGameRect[x].left - 5 + 2), (arGameRect[x].top - 5 + 2),
+				    (arGameRect[x].right + 5 + 2), (arGameRect[x].bottom + 5 + 2));
+				CRect rTemp2((arGameRect[x].left - 5), (arGameRect[x].top - 5),
+				    (arGameRect[x].right + 5), (arGameRect[x].bottom + 5));
 
-				RedrawWindow(&rTemp);
+				if (nLastRect != -1) {
+					CRect rTemp(arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
+						arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10);
+					RedrawWindow(&rTemp);
+				}
+
 				pDC->FrameRect(&rTemp1, &brshBlackBrush);
 				pDC->FrameRect(&rTemp2, &brshCyanBrush);
 

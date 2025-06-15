@@ -141,7 +141,7 @@ BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
 }
 
 void CWnd::SetActiveWindow() {
-	error("TODO: CWnd::SetActiveWindow");
+	AfxGetApp()->SetActiveWindow(this);
 }
 
 void CWnd::SetFocus() {

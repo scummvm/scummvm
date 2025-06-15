@@ -114,6 +114,13 @@ public:
 	void SetCapture(HWND hWnd);
 	void ReleaseCapture();
 	HWND GetCapture() const;
+
+	void SetActiveWindow(CWnd *wnd) {
+		// FIXME: modals are blocking, this shouldn't.
+		// Which may become an issue if anything opened
+		// multiple independent windows
+		runEventLoop(wnd);
+	}
 };
 
 } // namespace Libs

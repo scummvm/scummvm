@@ -65,7 +65,7 @@ BOOL CDC::Attach(HDC hDC) {
 }
 
 void CDC::Detach() {
-	error("TODO: CDC::Detach");
+	m_hDC = nullptr;
 }
 
 int CDC::SetStretchBltMode(int nStretchMode) {
@@ -73,14 +73,15 @@ int CDC::SetStretchBltMode(int nStretchMode) {
 }
 
 int CDC::GetDeviceCaps(int nIndex) const {
-	const Graphics::PixelFormat format =
-	    g_system->getScreenFormat();
+	CDC::Impl *dc = impl();
+	const Graphics::PixelFormat format = dc->_format;
+	const CBitmap::Impl *bitmap = (CBitmap::Impl *)dc->_bitmap;
 
 	switch (nIndex) {
 	case HORZRES:
-		return g_system->getWidth();
+		return bitmap->w;
 	case VERTRES:
-		return g_system->getHeight();
+		return bitmap->h;
 	case BITSPIXEL:
 		return format.bytesPerPixel * 8;
 	case RASTERCAPS:
