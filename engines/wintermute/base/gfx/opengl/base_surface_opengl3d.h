@@ -48,6 +48,7 @@ public:
 	bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) override;
 	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
 	bool create(int width, int height) override;
+	bool setAlphaImage(const Common::String &filename) override;
 	bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
 	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) override;
 	bool startPixelOp() override;
@@ -72,8 +73,11 @@ private:
 	GLuint _tex;
 	BaseRenderer3D *_renderer;
 	Graphics::Surface *_imageData;
+	Graphics::Surface *_maskData;
 	uint _texWidth;
 	uint _texHeight;
+
+	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
 };
 
 } // End of namespace Wintermute
