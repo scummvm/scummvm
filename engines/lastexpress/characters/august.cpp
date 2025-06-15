@@ -1294,8 +1294,8 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 		}
 
 		if (!getCharacterCurrentParams(kCharacterAugust)[1]) {
-			if (!getCharacterCurrentParams(kCharacterAugust)[10] &&
-				(getCharacterCurrentParams(kCharacterAugust)[10] = _realTime + 75, _realTime == -75) ||
+			if ((!getCharacterCurrentParams(kCharacterAugust)[10] &&
+				(getCharacterCurrentParams(kCharacterAugust)[10] = _realTime + 75, _realTime == -75)) ||
 				getCharacterCurrentParams(kCharacterAugust)[10] < _realTime) {
 				if (!getCharacterCurrentParams(kCharacterAugust)[4]) {
 					getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 8;
@@ -1354,7 +1354,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 			break;
 		}
 
-		if (!getCharacterCurrentParams(kCharacterAugust)[8] && (getCharacterCurrentParams(kCharacterAugust)[8] = _realTime + 45, _realTime == -45) || getCharacterCurrentParams(kCharacterAugust)[8] < _realTime) {
+		if ((!getCharacterCurrentParams(kCharacterAugust)[8] && (getCharacterCurrentParams(kCharacterAugust)[8] = _realTime + 45, _realTime == -45)) || getCharacterCurrentParams(kCharacterAugust)[8] < _realTime) {
 			if (checkDoor(1) == 1) {
 				if (getCharacterCurrentParams(kCharacterAugust)[9] || (getCharacterCurrentParams(kCharacterAugust)[9] = _realTime + 75, _realTime != -75)) {
 					if (getCharacterCurrentParams(kCharacterAugust)[9] >= _realTime)
@@ -4108,7 +4108,7 @@ void LogicManager::CONS_August_Drunk(CONS_PARAMS) {
 void LogicManager::HAND_August_Drunk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!getCharacterCurrentParams(kCharacterAugust)[0] && (getCharacterCurrentParams(kCharacterAugust)[0] = _gameTime + 1800, _gameTime == -1800) || getCharacterCurrentParams(kCharacterAugust)[0] < _gameTime) {
+		if ((!getCharacterCurrentParams(kCharacterAugust)[0] && (getCharacterCurrentParams(kCharacterAugust)[0] = _gameTime + 1800, _gameTime == -1800)) || getCharacterCurrentParams(kCharacterAugust)[0] < _gameTime) {
 			if (_gameTime > 2430000) {
 				if (rcClear()) {
 					getCharacter(kCharacterAugust).characterPosition.location = 0;
