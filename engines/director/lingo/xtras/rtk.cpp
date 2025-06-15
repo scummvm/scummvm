@@ -115,8 +115,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-class RolloverToolkitXtraState : public Object<RolloverToolkitXtraState>
-{
+class RolloverToolkitXtraState : public Object<RolloverToolkitXtraState> {
 public:
 	RolloverToolkitXtraState() : Object<RolloverToolkitXtraState>("Rollover_Toolkit") {};
 
@@ -139,12 +138,12 @@ Datum RolloverToolkitXtraObject::getProp(const Common::String &propName) {
 }
 
 void RolloverToolkitXtra::open(ObjectType type, const Common::Path &path) {
-    RolloverToolkitXtraObject::initMethods(xlibMethods);
-    RolloverToolkitXtraObject *xobj = new RolloverToolkitXtraObject(type);
-    if (type == kXtraObj)
-        g_lingo->_openXtras.push_back(xlibName);
-    g_lingo->exposeXObject(xlibName, xobj);
-    g_lingo->initBuiltIns(xlibBuiltins);
+	RolloverToolkitXtraObject::initMethods(xlibMethods);
+	RolloverToolkitXtraObject *xobj = new RolloverToolkitXtraObject(type);
+	if (type == kXtraObj)
+		g_lingo->_openXtras.push_back(xlibName);
+	g_lingo->exposeXObject(xlibName, xobj);
+	g_lingo->initBuiltIns(xlibBuiltins);
 	if (!g_lingo->_openXtrasState.contains("Rollover_Toolkit")) {
 		RolloverToolkitXtraState *state = new RolloverToolkitXtraState();
 		g_lingo->_openXtrasState.setVal("Rollover_Toolkit", state);
@@ -155,9 +154,8 @@ void RolloverToolkitXtra::open(ObjectType type, const Common::Path &path) {
 }
 
 void RolloverToolkitXtra::close(ObjectType type) {
-    RolloverToolkitXtraObject::cleanupMethods();
-    g_lingo->_globalvars[xlibName] = Datum();
-
+	RolloverToolkitXtraObject::cleanupMethods();
+	g_lingo->_globalvars[xlibName] = Datum();
 }
 
 void RolloverToolkitXtra::m_new(int nargs) {
