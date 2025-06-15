@@ -77,6 +77,10 @@ int CDC::GetDeviceCaps(int nIndex) const {
 	    g_system->getScreenFormat();
 
 	switch (nIndex) {
+	case HORZRES:
+		return g_system->getWidth();
+	case VERTRES:
+		return g_system->getHeight();
 	case BITSPIXEL:
 		return format.bytesPerPixel * 8;
 	case RASTERCAPS:
