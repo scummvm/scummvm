@@ -57,6 +57,9 @@ public:
 	virtual bool restore();
 	virtual bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
 	virtual bool create(int width, int height);
+	virtual bool setAlphaImage(const Common::String &filename) {
+		return STATUS_FAILED;
+	}
 	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
 		return STATUS_FAILED;
 	}

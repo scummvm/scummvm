@@ -51,6 +51,7 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
 	_alphaType = Graphics::ALPHA_FULL;
+	_alphaMaskType = Graphics::ALPHA_OPAQUE;
 	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
@@ -65,8 +66,11 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 		_surface = nullptr;
 	}
 
-	delete[] _alphaMask;
-	_alphaMask = nullptr;
+	if (_alphaMask) {
+		_alphaMask->free();
+		delete _alphaMask;
+		_alphaMask = nullptr;
+	}
 
 	_gameRef->addMem(-_width * _height * 4);
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
@@ -110,8 +114,11 @@ bool BaseSurfaceOSystem::finishLoad() {
 	_width = image->getSurface()->w;
 	_height = image->getSurface()->h;
 
-	_surface->free();
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
 
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
@@ -330,7 +337,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 
 	// Optimize by not doing alpha-blits if we lack alpha
 	// If angle is not 0, then transparent regions are added near the corners
-	if (_alphaType == Graphics::ALPHA_OPAQUE && transform._angle == 0) {
+	if (_alphaType == Graphics::ALPHA_OPAQUE && _alphaMaskType == Graphics::ALPHA_OPAQUE &&
+			transform._angle == 0) {
 		transform._alphaDisable = true;
 	}
 
@@ -346,15 +354,69 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 		_surface->free();
 		_surface->copyFrom(surface);
 	}
+
+	writeAlpha(_surface, _alphaMask);
+
 	if (hasAlpha) {
-		_alphaType = Graphics::ALPHA_FULL;
+		_alphaType = _surface->detectAlpha();
 	} else {
-		_alphaType = Graphics::ALPHA_OPAQUE;
+		_alphaType = _alphaMaskType;
 	}
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 
 	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurfaceOSystem::setAlphaImage(const Common::String &filename) {
+	BaseImage *alphaImage = new BaseImage();
+	if (!alphaImage->loadFile(filename)) {
+		delete alphaImage;
+		return false;
+	}
+
+	if (_alphaMask) {
+		_alphaMask->free();
+		delete _alphaMask;
+		_alphaMask = nullptr;
+	}
+
+	_alphaMaskType = alphaImage->getSurface()->detectAlpha();
+	if (_alphaMaskType != Graphics::ALPHA_OPAQUE) {
+		_alphaMask = alphaImage->getSurface()->convertTo(g_system->getScreenFormat());
+	}
+
+	delete alphaImage;
+
+	return true;
+}
+
+void BaseSurfaceOSystem::writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask) {
+	if (mask && surface->w == mask->w && surface->h == mask->h) {
+		assert(mask->pitch == mask->w * 4);
+		assert(mask->format.bytesPerPixel == 4);
+		assert(surface->pitch == surface->w * 4);
+		assert(surface->format.bytesPerPixel == 4);
+		const byte *alphaData = (const byte *)mask->getPixels();
+#ifdef SCUMM_LITTLE_ENDIAN
+		int alphaPlace = (mask->format.aShift / 8);
+#else
+		int alphaPlace = 3 - (mask->format.aShift / 8);
+#endif
+		alphaData += alphaPlace;
+		byte *imgData = (byte *)surface->getPixels();
+#ifdef SCUMM_LITTLE_ENDIAN
+		imgData += (surface->format.aShift / 8);
+#else
+		imgData += 3 - (surface->format.aShift / 8);
+#endif
+		for (int i = 0; i < surface->w * surface->h; i++) {
+			*imgData = *alphaData;
+			alphaData += 4;
+			imgData += 4;
+		}
+	}
 }
 
 } // End of namespace Wintermute
