@@ -36,97 +36,95 @@ struct KeybindingRecord {
 	KeybindingAction _action;
 	const char *_id;
 	const char *_desc;
-	const char *_pressMethod;
-	const char *_releaseMethod;
 	const char *_input1;
 	const char *_input2;
 };
 
 static const KeybindingRecord COMMON_KEYS[] = {
-	{ ACTION_QUICKSAVE, "QUICKSAVE", "Quick Save", nullptr, nullptr, "F1", nullptr },
-	{ ACTION_SAVE, "SAVE", "Save Game", nullptr, nullptr, "F5", nullptr },
-	{ ACTION_LOAD, "LOAD", "Load Game", nullptr, nullptr, "F7", nullptr },
-	{ ACTION_COMBAT, "COMBAT", "Combat", nullptr, nullptr, "c", "JOY_X" },
-	{ ACTION_MENU, "MENU", "Game Menu", nullptr, nullptr, "ESCAPE", "JOY_Y" },
-	{ ACTION_TURN_LEFT, "TURN_LEFT", "Turn Left", nullptr, nullptr, "LEFT", "KP4" },
-	{ ACTION_TURN_RIGHT, "TURN_RIGHT", "Turn Right", nullptr, nullptr, "RIGHT", "KP6" },
-	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", "Move Forward", nullptr, nullptr, "UP", "KP8" },
-	{ ACTION_MOVE_BACK, "MOVE_BACK", "Move Back", nullptr, nullptr, "DOWN", "KP2" },
-	{ ACTION_MOVE_UP, "MOVE_UP", "Move Up", nullptr, nullptr, nullptr, "JOY_UP" },
-	{ ACTION_MOVE_DOWN, "MOVE_DOWN", "Move Down", nullptr, nullptr, nullptr, "JOY_DOWN" },
-	{ ACTION_MOVE_LEFT, "MOVE_LEFT", "Move Left", nullptr, nullptr, nullptr, "JOY_LEFT" },
-	{ ACTION_MOVE_RIGHT, "MOVE_RIGHT", "Move Right", nullptr, nullptr, nullptr, "JOY_RIGHT" },
-	{ ACTION_MOVE_RUN, "MOVE_RUN", "Run", nullptr, nullptr, "LSHIFT", "JOY_RIGHT_TRIGGER" },
-	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", "Highlight Items", nullptr, nullptr, "h", nullptr },
+	{ ACTION_QUICKSAVE, "QUICKSAVE", _s("Quick Save"), "F1", nullptr },
+	{ ACTION_SAVE, "SAVE", _s("Save Game"), "F5", nullptr },
+	{ ACTION_LOAD, "LOAD", _s("Load Game"), "F7", nullptr },
+	{ ACTION_COMBAT, "COMBAT", _s("Combat"), "c", "JOY_X" },
+	{ ACTION_MENU, "MENU", _s("Game Menu"), "ESCAPE", "JOY_Y" },
+	{ ACTION_TURN_LEFT, "TURN_LEFT", _s("Turn Left"), "LEFT", "KP4" },
+	{ ACTION_TURN_RIGHT, "TURN_RIGHT", _s("Turn Right"), "RIGHT", "KP6" },
+	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", _s("Move Forward"), "UP", "KP8" },
+	{ ACTION_MOVE_BACK, "MOVE_BACK", _s("Move Back"), "DOWN", "KP2" },
+	{ ACTION_MOVE_UP, "MOVE_UP", _s("Move Up"), nullptr, "JOY_UP" },
+	{ ACTION_MOVE_DOWN, "MOVE_DOWN", _s("Move Down"), nullptr, "JOY_DOWN" },
+	{ ACTION_MOVE_LEFT, "MOVE_LEFT", _s("Move Left"), nullptr, "JOY_LEFT" },
+	{ ACTION_MOVE_RIGHT, "MOVE_RIGHT", _s("Move Right"), nullptr, "JOY_RIGHT" },
+	{ ACTION_MOVE_RUN, "MOVE_RUN", _s("Run"), "LSHIFT", "JOY_RIGHT_TRIGGER" },
+	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", _s("Highlight Items"), "h", nullptr },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord U8_KEYS[] = {
-	{ ACTION_BEDROLL, "BEDROLL", "Bedroll", nullptr, nullptr, "b", nullptr },
-	{ ACTION_BACKPACK, "BACKPACK", "Use Backpack", nullptr, nullptr, "i", "JOY_LEFT_SHOULDER" },
-	{ ACTION_KEYRING, "KEYRING", "Keyring", nullptr, nullptr, "k", "JOY_RIGHT_STICK" },
-	{ ACTION_MINIMAP, "MINIMAP", "Toggle Minimap", nullptr, nullptr, "m", "JOY_BACK" },
-	{ ACTION_RECALL, "RECALL", "Use Recall", nullptr, nullptr, "r", nullptr },
-	{ ACTION_INVENTORY, "INVENTORY", "Inventory", nullptr, nullptr, "z", "JOY_LEFT_STICK" },
-	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", "Close Gumps", nullptr, nullptr, "BACKSPACE", nullptr },
-	{ ACTION_JUMP, "JUMP", "Jump (fake both-button-click)", nullptr, nullptr, "SPACE", nullptr },
-	{ ACTION_MOVE_STEP, "MOVE_STEP", "Step", nullptr, nullptr, "LCTRL", "JOY_LEFT_TRIGGER" },
+	{ ACTION_BEDROLL, "BEDROLL", _s("Use Bedroll"), "b", nullptr },
+	{ ACTION_BACKPACK, "BACKPACK", _s("Use Backpack"), "i", "JOY_LEFT_SHOULDER" },
+	{ ACTION_KEYRING, "KEYRING", _s("Use Keyring"), "k", "JOY_RIGHT_STICK" },
+	{ ACTION_MINIMAP, "MINIMAP", _s("Open Minimap"), "m", "JOY_BACK" },
+	{ ACTION_RECALL, "RECALL", _s("Use Recall"), "r", nullptr },
+	{ ACTION_INVENTORY, "INVENTORY", _s("Open Inventory"), "z", "JOY_LEFT_STICK" },
+	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", _s("Close Gumps"), "BACKSPACE", nullptr },
+	{ ACTION_JUMP, "JUMP", _s("Jump (fake both-button-click)"), "SPACE", nullptr },
+	{ ACTION_MOVE_STEP, "MOVE_STEP", _s("Step"), "LCTRL", "JOY_LEFT_TRIGGER" },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CRUSADER_KEYS[] = {
-	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", "Next Weapon", nullptr, nullptr, "w", "KP_MULTIPLY" },
-	{ ACTION_NEXT_INVENTORY, "NEXT_INVENTORY", "Next Inventory Item", nullptr, nullptr, "i", "KP_MINUS" },
-	{ ACTION_USE_INVENTORY, "USE_INVENTORY", "Use Inventroy Item", nullptr, nullptr, "u", "KP_PERIOD" },
-	{ ACTION_USE_MEDIKIT, "USE_MEDIKIT", "Use Medical Kit", nullptr, nullptr, "m", nullptr },
-	{ ACTION_USE_ENERGYCUBE, "USE_ENERGYCUBE", "Use Energy Cube", nullptr, nullptr, "e", nullptr },
-	{ ACTION_DETONATE_BOMB, "DETONATE_BOMB", "Detonate Bomb", nullptr, nullptr, "b", nullptr },
+	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", _s("Next Weapon"), "w", "KP_MULTIPLY" },
+	{ ACTION_NEXT_INVENTORY, "NEXT_INVENTORY", _s("Next Inventory Item"), "i", "KP_MINUS" },
+	{ ACTION_USE_INVENTORY, "USE_INVENTORY", _s("Use Inventory Item"), "u", "KP_PERIOD" },
+	{ ACTION_USE_MEDIKIT, "USE_MEDIKIT", _s("Use Medical Kit"), "m", nullptr },
+	{ ACTION_USE_ENERGYCUBE, "USE_ENERGYCUBE", _s("Use Energy Cube"), "e", nullptr },
+	{ ACTION_DETONATE_BOMB, "DETONATE_BOMB", _s("Detonate Bomb"), "b", nullptr },
 	// TODO: The same key should be "use datalink" in no regret.
-	{ ACTION_DROP_WEAPON, "DROP_WEAPON", "Drop Weapon", nullptr, nullptr, "C+d", nullptr },
-	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", "Select Item", nullptr, nullptr, "s", "KP_PLUS" },
-	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", nullptr, nullptr, "RETURN", "KP_ENTER" },
-	{ ACTION_GRAB_ITEMS, "GRAB_ITEM", "Grab Items", nullptr, nullptr, "g", nullptr },
-	{ ACTION_ATTACK, "ATTACK", "Attack", nullptr, nullptr, "SPACE", "KP0" },
-	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", nullptr, nullptr, "z", nullptr },
-	{ ACTION_JUMP, "JUMP", "Jump / Roll / Crouch", nullptr, nullptr, "LCTRL", nullptr },
-	{ ACTION_SHORT_JUMP, "SHORT_JUMP", "Short Jump", nullptr, nullptr, "TAB", "j" },
-	{ ACTION_STEP_LEFT, "STEP_LEFT", "Sidestep Left", nullptr, nullptr, "DELETE", "KP7" },
-	{ ACTION_STEP_RIGHT, "STEP_RIGHT", "Sidestep Rgiht", nullptr, nullptr, "PAGEDOWN", "KP9" },
-	{ ACTION_STEP_FORWARD, "STEP_FORWARD", "Step Forward", nullptr, nullptr, "HOME", "KP_DIVIDE" },
-	{ ACTION_STEP_BACK, "STEP_BACK", "Step Back", nullptr, nullptr, "END", "KP2" },
-	{ ACTION_ROLL_LEFT, "ROLL_LEFT", "Roll Left", nullptr, nullptr, "INSERT", "KP1" },
-	{ ACTION_ROLL_RIGHT, "ROLL_RIGHT", "Roll Right", nullptr, nullptr, "PAGEUP", "KP3" },
-	{ ACTION_TOGGLE_CROUCH, "TOGGLE_CROUCH", "Toggle Crouch", nullptr, nullptr, "KP5", nullptr },
-	{ ACTION_MOVE_STEP, "MOVE_STEP", "Side Step / Advance / Retreat", nullptr, nullptr, "LALT", "JOY_RIGHT_SHOULDER" },
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_DROP_WEAPON, "DROP_WEAPON", _s("Drop Weapon"), "C+d", nullptr },
+	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", _s("Select Item"), "s", "KP_PLUS" },
+	{ ACTION_USE_SELECTION, "USE_SELECTION", _s("Use Selection"), "RETURN", "KP_ENTER" },
+	{ ACTION_GRAB_ITEMS, "GRAB_ITEM", _s("Grab Items"), "g", nullptr },
+	{ ACTION_ATTACK, "ATTACK", _s("Attack"), "SPACE", "KP0" },
+	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", _s("Focus Camera on Silencer"), "z", nullptr },
+	{ ACTION_JUMP, "JUMP", _s("Jump / Roll / Crouch"), "LCTRL", nullptr },
+	{ ACTION_SHORT_JUMP, "SHORT_JUMP", _s("Short Jump"), "TAB", "j" },
+	{ ACTION_STEP_LEFT, "STEP_LEFT", _s("Sidestep Left"), "DELETE", "KP7" },
+	{ ACTION_STEP_RIGHT, "STEP_RIGHT", _s("Sidestep Right"), "PAGEDOWN", "KP9" },
+	{ ACTION_STEP_FORWARD, "STEP_FORWARD", _s("Step Forward"), "HOME", "KP_DIVIDE" },
+	{ ACTION_STEP_BACK, "STEP_BACK", _s("Step Back"), "END", "KP2" },
+	{ ACTION_ROLL_LEFT, "ROLL_LEFT", _s("Roll Left"), "INSERT", "KP1" },
+	{ ACTION_ROLL_RIGHT, "ROLL_RIGHT", _s("Roll Right"), "PAGEUP", "KP3" },
+	{ ACTION_TOGGLE_CROUCH, "TOGGLE_CROUCH", _s("Toggle Crouch"), "KP5", nullptr },
+	{ ACTION_MOVE_STEP, "MOVE_STEP", _s("Side Step / Advance / Retreat"), "LALT", "JOY_RIGHT_SHOULDER" },
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
-	{ ACTION_CLIPPING, "CLIPPING", "Toggle Clipping", nullptr, nullptr, "M+INSERT", nullptr },
-	{ ACTION_QUICK_MOVE_ASCEND, "ASCEND", "Ascend", nullptr, nullptr, "M+HOME", nullptr },
-	{ ACTION_QUICK_MOVE_DESCEND, "DESCEND", "Descend", nullptr, nullptr, "M+END", nullptr },
-	{ ACTION_QUICK_MOVE_UP, "MOVE_UP", "Move Up", nullptr, nullptr, "M+UP", nullptr },
-	{ ACTION_QUICK_MOVE_DOWN, "MOVE_DOWN", "Move Down", nullptr, nullptr, "M+DOWN", nullptr },
-	{ ACTION_QUICK_MOVE_LEFT, "MOVE_LEFT", "Move Left", nullptr, nullptr, "M+LEFT", nullptr },
-	{ ACTION_QUICK_MOVE_RIGHT, "MOVE_RIGHT", "Move Right", nullptr, nullptr, "M+RIGHT", nullptr },
+	{ ACTION_CLIPPING, "CLIPPING", _s("Toggle Clipping"), "M+INSERT", nullptr },
+	{ ACTION_QUICK_MOVE_ASCEND, "ASCEND", _s("Ascend"), "M+HOME", nullptr },
+	{ ACTION_QUICK_MOVE_DESCEND, "DESCEND", _s("Descend"), "M+END", nullptr },
+	{ ACTION_QUICK_MOVE_UP, "MOVE_UP", _s("Move Up"), "M+UP", nullptr },
+	{ ACTION_QUICK_MOVE_DOWN, "MOVE_DOWN", _s("Move Down"), "M+DOWN", nullptr },
+	{ ACTION_QUICK_MOVE_LEFT, "MOVE_LEFT", _s("Move Left"), "M+LEFT", nullptr },
+	{ ACTION_QUICK_MOVE_RIGHT, "MOVE_RIGHT", _s("Move Right"), "M+RIGHT", nullptr },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 #ifndef RELEASE_BUILD
 static const KeybindingRecord DEBUG_KEYS[] = {
-	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", "Show Touching Items", nullptr, nullptr, "C+h", nullptr },
-	{ ACTION_TOGGLE_PAINT, "TOGGLE_PAINT", "Show Editor Items", nullptr, nullptr, "F9", nullptr },
-	{ ACTION_DEC_SORT_ORDER, "DEC_SORT_ORDER", "Decrement Map Sort Order", nullptr, nullptr, "LEFTBRACKET", nullptr },
-	{ ACTION_INC_SORT_ORDER, "INC_SORT_ORDER", "Increment Map Sort Order", nullptr, nullptr, "RIGHTBRACKET", nullptr },
-	{ ACTION_FRAME_BY_FRAME, "FRAME_BY_FRAME", "Toggle Frame By Frame", nullptr, nullptr, "F12", nullptr },
-	{ ACTION_ADVANCE_FRAME, "ADVANCE_FRAME", "Advance Frame", nullptr, nullptr, "f", nullptr },
-	{ ACTION_TOGGLE_STASIS, "TOGGLE_STASIS", "Toggle Avatar In Stasis", nullptr, nullptr, "F10", nullptr },
-	{ ACTION_SHAPE_VIEWER, "SHAPE_VIEWER", "Show Shape Viewer", nullptr, nullptr, "F11", nullptr },
+	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", _s("Show Touching Items"), "C+h", nullptr },
+	{ ACTION_TOGGLE_PAINT, "TOGGLE_PAINT", _s("Show Editor Items"), "F9", nullptr },
+	{ ACTION_DEC_SORT_ORDER, "DEC_SORT_ORDER", _s("Decrement Map Sort Order"), "LEFTBRACKET", nullptr },
+	{ ACTION_INC_SORT_ORDER, "INC_SORT_ORDER", _s("Increment Map Sort Order"), "RIGHTBRACKET", nullptr },
+	{ ACTION_FRAME_BY_FRAME, "FRAME_BY_FRAME", _s("Toggle Frame By Frame"), "F12", nullptr },
+	{ ACTION_ADVANCE_FRAME, "ADVANCE_FRAME", _s("Advance Frame"), "f", nullptr },
+	{ ACTION_TOGGLE_STASIS, "TOGGLE_STASIS", _s("Toggle Avatar In Stasis"), "F10", nullptr },
+	{ ACTION_SHAPE_VIEWER, "SHAPE_VIEWER", _s("Show Shape Viewer"), "F11", nullptr },
 
-	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 #endif
 
@@ -207,24 +205,6 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 #endif
 
 	return keymapArray;
-}
-
-Common::String MetaEngine::getMethod(KeybindingAction keyAction, bool isPress) {
-#ifdef RELEASE_BUILD
-	const KeybindingRecord *KEY_ARRAYS[] = { COMMON_KEYS, U8_KEYS, CRUSADER_KEYS, CHEAT_KEYS, nullptr };
-#else
-	const KeybindingRecord *KEY_ARRAYS[] = { COMMON_KEYS, U8_KEYS, CRUSADER_KEYS, CHEAT_KEYS, DEBUG_KEYS, nullptr };
-#endif
-
-	for (const KeybindingRecord **arr = KEY_ARRAYS; *arr; ++arr) {
-		for (const KeybindingRecord *r = *arr; r->_id; ++r) {
-			if (r->_action == keyAction) {
-				return Common::String(isPress ? r->_pressMethod : r->_releaseMethod);
-			}
-		}
-	}
-
-	return Common::String();
 }
 
 bool MetaEngine::querySaveMetaInfos(const Common::String &filename, SaveStateDescriptor& desc) {

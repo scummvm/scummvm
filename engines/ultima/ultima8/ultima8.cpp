@@ -1170,9 +1170,6 @@ void Ultima8Engine::handleActionDown(KeybindingAction action) {
 		}
 		break;
 	default:
-		Common::String methodName = MetaEngine::getMethod(action, true);
-		if (!methodName.empty())
-			g_debugger->executeCommand(methodName);
 		break;
 	}
 }
@@ -1236,9 +1233,6 @@ void Ultima8Engine::handleActionUp(KeybindingAction action) {
 		}
 		break;
 	default:
-		Common::String methodName = MetaEngine::getMethod(action, false);
-		if (!methodName.empty())
-			g_debugger->executeCommand(methodName);
 		break;
 	}
 }

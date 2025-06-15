@@ -62,11 +62,6 @@ public:
 	static Common::KeymapArray initKeymaps(const Common::String &gameId);
 
 	/**
-	 * Get the method to execute
-	 */
-	static Common::String getMethod(KeybindingAction keyAction, bool isPress);
-
-	/**
 	 * Return meta information from the specified save state for saves that do not have ExtendedSavegameHeader
 	 */
 	static bool querySaveMetaInfos(const Common::String &filename, SaveStateDescriptor &desc);
