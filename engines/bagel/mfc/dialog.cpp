@@ -209,7 +209,7 @@ void CDialog::DDV_MinMaxInt(CDataExchange *pDX,
 }
 
 void CDialog::EndDialog(int nResult) {
-	error("TODO: CDialog::EndDialog");
+	m_nModalResult = nResult;
 }
 
 BOOL CDialog::UpdateData(BOOL bSaveAndValidate) {

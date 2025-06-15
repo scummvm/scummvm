@@ -121,10 +121,12 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 	switch (GetButtonStyle()) {
 	case BS_PUSHBUTTON:
 	case BS_DEFPUSHBUTTON:
-		GetParent()->SendMessage(WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(), BN_CLICKED), (LPARAM)m_hWnd);
+		GetParent()->SendMessage(WM_COMMAND, GetDlgCtrlID(),
+			MAKELPARAM(0, BN_CLICKED));
 		break;
 
 	case BS_CHECKBOX:
+	case BS_AUTORADIOBUTTON:
 		SetCheck(GetCheck() == BST_CHECKED ?
 			BST_UNCHECKED : BST_CHECKED);
 		break;
