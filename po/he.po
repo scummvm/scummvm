@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-15 11:22+0000\n"
+"POT-Creation-Date: 2025-06-15 20:19+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -990,7 +990,7 @@ msgstr "ממשק משתמש"
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
-#: engines/mohawk/riven.cpp:853
+#: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
 msgid "Interact"
 msgstr "פעולה"
 
@@ -3181,6 +3181,10 @@ msgstr "מנוע משחק הרפתקה גרפי"
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
+#: engines/sludge/keymapper_tables.h:95 engines/sludge/keymapper_tables.h:144
+#: engines/sludge/keymapper_tables.h:223 engines/sludge/keymapper_tables.h:343
+#: engines/sludge/keymapper_tables.h:355 engines/sludge/keymapper_tables.h:416
+#: engines/sludge/keymapper_tables.h:429 engines/sludge/keymapper_tables.h:541
 #: engines/tinsel/metaengine.cpp:335 engines/zvision/metaengine.cpp:272
 #: engines/zvision/metaengine.cpp:290
 msgid "Quit"
@@ -3678,6 +3682,7 @@ msgstr "מיפוי מקלדת"
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
 #: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
 #: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:278
+#: engines/sludge/keymapper_tables.h:561 engines/sludge/keymapper_tables.h:580
 #: engines/stark/metaengine.cpp:189 engines/sword1/metaengine.cpp:271
 #: engines/tinsel/metaengine.cpp:246 engines/toon/metaengine.cpp:86
 #: engines/touche/metaengine.cpp:122 engines/trecision/metaengine.cpp:125
@@ -3705,7 +3710,8 @@ msgstr "לחיצה אמצעית"
 #: engines/illusions/metaengine.cpp:101 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
 #: engines/mtropolis/metaengine.cpp:167 engines/parallaction/metaengine.cpp:118
-#: engines/saga/metaengine.cpp:289 engines/stark/metaengine.cpp:195
+#: engines/saga/metaengine.cpp:289 engines/sludge/keymapper_tables.h:567
+#: engines/sludge/keymapper_tables.h:586 engines/stark/metaengine.cpp:195
 #: engines/sword1/metaengine.cpp:277 engines/tinsel/metaengine.cpp:252
 #: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:128
 #: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
@@ -3720,8 +3726,11 @@ msgstr "לחיצה ימנית"
 #: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
-#: engines/tucker/metaengine.cpp:184 engines/twine/metaengine.cpp:223
-#: engines/wintermute/keymapper_tables.h:1608
+#: engines/sludge/keymapper_tables.h:52 engines/sludge/keymapper_tables.h:125
+#: engines/sludge/keymapper_tables.h:187 engines/sludge/keymapper_tables.h:243
+#: engines/sludge/keymapper_tables.h:262 engines/sludge/keymapper_tables.h:459
+#: engines/sludge/keymapper_tables.h:490 engines/tucker/metaengine.cpp:184
+#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr "השהיה"
 
@@ -4608,6 +4617,7 @@ msgstr "בחירה"
 #: backends/platform/sdl/miyoo/miyoo.cpp:96
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:48
+#: engines/sludge/keymapper_tables.h:349
 msgid "Start"
 msgstr "התחלה"
 
@@ -6121,10 +6131,11 @@ msgstr ""
 #: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
 #: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
 #: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
-#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
-#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
-#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
+#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
+#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
+#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
+#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
+#: engines/tucker/metaengine.cpp:168
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -6419,11 +6430,16 @@ msgstr ""
 msgid "Show version"
 msgstr "הצגת גרסה"
 
-#: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
+#: engines/asylum/metaengine.cpp:120 engines/sludge/keymapper_tables.h:308
+#: engines/sludge/keymapper_tables.h:471 engines/sludge/keymapper_tables.h:502
+#: engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "טעינה מהירה"
 
-#: engines/asylum/metaengine.cpp:125 engines/wintermute/keymapper_tables.h:930
+#: engines/asylum/metaengine.cpp:125 engines/sludge/keymapper_tables.h:64
+#: engines/sludge/keymapper_tables.h:303 engines/sludge/keymapper_tables.h:465
+#: engines/sludge/keymapper_tables.h:496
+#: engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
 msgstr "שמירה מהירה"
 
@@ -6625,8 +6641,9 @@ msgstr "מדברים"
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
 #: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
 #: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
-#: engines/sky/metaengine.cpp:95 engines/tsage/metaengine.cpp:211
-#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
+#: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
+#: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "להשתמש"
@@ -6793,7 +6810,11 @@ msgstr "דילוג על סרטוני מעבר"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
-#: engines/bladerunner/metaengine.cpp:242 engines/toltecs/metaengine.cpp:228
+#: engines/bladerunner/metaengine.cpp:242 engines/sludge/keymapper_tables.h:89
+#: engines/sludge/keymapper_tables.h:138 engines/sludge/keymapper_tables.h:194
+#: engines/sludge/keymapper_tables.h:268 engines/sludge/keymapper_tables.h:392
+#: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
+#: engines/sludge/keymapper_tables.h:535 engines/toltecs/metaengine.cpp:228
 msgid "Skip dialogue"
 msgstr "דילוג על שיחה"
 
@@ -6976,7 +6997,8 @@ msgstr "דילוג"
 #: engines/efh/metaengine.cpp:219 engines/hopkins/metaengine.cpp:236
 #: engines/hugo/metaengine.cpp:128 engines/lure/metaengine.cpp:191
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
-#: engines/saga/metaengine.cpp:442 engines/stark/metaengine.cpp:208
+#: engines/saga/metaengine.cpp:442 engines/sludge/keymapper_tables.h:107
+#: engines/sludge/keymapper_tables.h:156 engines/stark/metaengine.cpp:208
 #: engines/toltecs/metaengine.cpp:234 engines/toon/metaengine.cpp:112
 #: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
 #: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
@@ -7172,7 +7194,7 @@ msgstr "מהירות סרט מהירה"
 
 #: engines/cine/metaengine.cpp:314 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
-#: engines/scumm/help.cpp:250
+#: engines/scumm/help.cpp:250 engines/sludge/keymapper_tables.h:313
 msgid "Examine"
 msgstr "בדיקה"
 
@@ -7190,7 +7212,10 @@ msgstr "להמריא"
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
-#: engines/scumm/help.cpp:252 engines/stark/metaengine.cpp:267
+#: engines/scumm/help.cpp:252 engines/sludge/keymapper_tables.h:58
+#: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
+#: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
+#: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
 #: engines/tinsel/metaengine.cpp:313 engines/twine/metaengine.cpp:370
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
@@ -7344,13 +7369,13 @@ msgstr "הצגת יומן"
 msgid "Traits"
 msgstr ""
 
-#: engines/crab/input/input.cpp:266
+#: engines/crab/input/input.cpp:266 engines/sludge/keymapper_tables.h:410
 #, fuzzy
 #| msgid "Quick save"
 msgid "Quick Save"
 msgstr "שמירה מהירה"
 
-#: engines/crab/input/input.cpp:271
+#: engines/crab/input/input.cpp:271 engines/sludge/keymapper_tables.h:404
 #, fuzzy
 #| msgid "Quick load"
 msgid "Quick Load"
@@ -10134,14 +10159,16 @@ msgstr "להסתכל על"
 #: engines/saga/metaengine.cpp:359 engines/scumm/help.cpp:144
 #: engines/scumm/help.cpp:169 engines/scumm/help.cpp:198
 #: engines/scumm/help.cpp:213 engines/scumm/help.cpp:230
-#: engines/twp/metaengine.cpp:181 engines/wintermute/keymapper_tables.h:134
+#: engines/sludge/keymapper_tables.h:318 engines/twp/metaengine.cpp:181
+#: engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
 msgstr "לאסוף"
 
 #: engines/saga/metaengine.cpp:364 engines/scumm/help.cpp:199
 #: engines/scumm/help.cpp:215 engines/scumm/help.cpp:251
-#: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
+#: engines/sludge/keymapper_tables.h:323 engines/twp/metaengine.cpp:183
+#: engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
 msgstr "לדבר ל"
@@ -11953,6 +11980,144 @@ msgstr "השתמש במבוא גרסת התקליטונים (גרסת CD בלב�
 #: engines/sky/metaengine.cpp:235
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr "אזהרה: מחיקת משבצת השמירה האוטומטית אינה נתמכת במנוע זה"
+
+#: engines/sludge/keymapper_tables.h:34
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Debug keymappings"
+msgstr "מיפוי מקלדת"
+
+#: engines/sludge/keymapper_tables.h:35
+#, fuzzy
+#| msgid "Game Options"
+msgid "Menu keymappings"
+msgstr "א~פ~שרויות משחק"
+
+#: engines/sludge/keymapper_tables.h:36
+#, fuzzy
+#| msgid "Game Options"
+msgid "Minigame keymappings"
+msgstr "א~פ~שרויות משחק"
+
+#: engines/sludge/keymapper_tables.h:46
+#, fuzzy
+#| msgid "Change game options"
+msgid "Change action"
+msgstr "שינוי אפשרויות המשחק"
+
+#: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Speed up dialogue"
+msgstr "דילוג על שיחה"
+
+#: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
+#, fuzzy
+#| msgid "Slow down virtual mouse"
+msgid "Slow down dialogue"
+msgstr "האטת עכבר מדומה"
+
+#: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
+#: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
+#: engines/sludge/keymapper_tables.h:231 engines/sludge/keymapper_tables.h:250
+#: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
+#: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
+#: engines/sludge/keymapper_tables.h:529
+#, fuzzy
+#| msgid "Move left"
+msgid "Move / Interact"
+msgstr "תזוזה שמאלה"
+
+#: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
+#, fuzzy
+#| msgid "Unnamed autosave"
+msgid "Load auto save"
+msgstr "שמירה אומטית ללא שם"
+
+#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
+#, fuzzy
+#| msgid "Load Game"
+msgid "Load save"
+msgstr "טעינת משחק"
+
+#: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
+#: engines/sludge/keymapper_tables.h:552
+msgid "DEBUG: Show floor"
+msgstr ""
+
+#: engines/sludge/keymapper_tables.h:205 engines/sludge/keymapper_tables.h:440
+#: engines/sludge/keymapper_tables.h:547
+msgid "DEBUG: Show boxes"
+msgstr ""
+
+#: engines/sludge/keymapper_tables.h:237
+#, fuzzy
+#| msgid "Inventory"
+msgid "Inventory / Examine"
+msgstr "מלאי"
+
+#: engines/sludge/keymapper_tables.h:281
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Examine / Skip dialogue"
+msgstr "דילוג על שיחה"
+
+#: engines/sludge/keymapper_tables.h:287 engines/sludge/keymapper_tables.h:398
+#: engines/sludge/keymapper_tables.h:522
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Pause / Skip cutscene"
+msgstr "דילוג על סרטוני מעבר"
+
+#: engines/sludge/keymapper_tables.h:328
+msgid "Smell"
+msgstr ""
+
+#: engines/sludge/keymapper_tables.h:338
+msgid "Consume"
+msgstr ""
+
+#: engines/sludge/keymapper_tables.h:361
+#, fuzzy
+#| msgid "Cast Spell"
+msgid "Cast earth spell"
+msgstr "להטיל כישוף"
+
+#: engines/sludge/keymapper_tables.h:367
+#, fuzzy
+#| msgid "Cast Spell"
+msgid "Cast air spell"
+msgstr "להטיל כישוף"
+
+#: engines/sludge/keymapper_tables.h:373
+#, fuzzy
+#| msgid "Cast Spell"
+msgid "Cast fire spell"
+msgstr "להטיל כישוף"
+
+#: engines/sludge/keymapper_tables.h:379
+#, fuzzy
+#| msgid "Cast Spell"
+msgid "Cast water spell"
+msgstr "להטיל כישוף"
+
+#: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Move / Interact / Skip dialogue"
+msgstr "הדגש את הדיאלוג הבא"
+
+#: engines/sludge/keymapper_tables.h:516
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Inventory / Skip dialogue"
+msgstr "דילוג על שיחה"
+
+#: engines/sludge/keymapper_tables.h:573
+#, fuzzy
+#| msgid "Pause game"
+msgid "Pause Game"
+msgstr "השהה משחק"
 
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
@@ -14089,11 +14254,6 @@ msgstr ""
 #~| msgid "Special sound effects volume"
 #~ msgid "Toggle Sound effect on/off"
 #~ msgstr "עוצמת אפקטים קוליים מיוחדים"
-
-#, fuzzy
-#~| msgid "Pause game"
-#~ msgid "Pause Game"
-#~ msgstr "השהה משחק"
 
 #~ msgid "Minimal Volume"
 #~ msgstr "נפח מזערי"
