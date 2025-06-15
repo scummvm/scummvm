@@ -1601,7 +1601,7 @@ void LogicManager::HAND_Kahina_Finished(HAND_PARAMS) {
 		getCharacter(kCharacterKahina).characterPosition.location = 0;
 		break;
 	case 17:
-		if (getCharacter(kCharacterCath).characterPosition.car > kCarGreenSleeping || getCharacter(kCharacterCath).characterPosition.car == kCarGreenSleeping && getCharacter(kCharacterCath).characterPosition.position > 2740) {
+		if (getCharacter(kCharacterCath).characterPosition.car > kCarGreenSleeping || (getCharacter(kCharacterCath).characterPosition.car == kCarGreenSleeping && getCharacter(kCharacterCath).characterPosition.position > 2740)) {
 			getCharacterCurrentParams(kCharacterKahina)[0] = 1;
 		}
 
