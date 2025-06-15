@@ -72,7 +72,7 @@ void EventManager::kill() {
 
 void EventManager::checkInput() {
 	float cameraZoom = _vm->_gfxMan->getCamZoom();
-	static bool fakeRightclick = false;
+	//static bool fakeRightclick = false;
 	Common::Event event;
 
 	/* Check for events */
@@ -94,10 +94,10 @@ void EventManager::checkInput() {
 		case Common::EVENT_LBUTTONDOWN:
 			if (g_system->getEventManager()->getModifierState() & Common::KBD_CTRL) {
 				_input.rightClick = true;
-				fakeRightclick = true;
+				//fakeRightclick = true;
 			} else {
 				_input.leftClick = true;
-				fakeRightclick = false;
+				//fakeRightclick = false;
 			}
 
 			_input.mouseX = event.mouse.x * cameraZoom;
