@@ -706,5 +706,13 @@ void CWnd::ReleaseCapture() {
 	AfxGetApp()->ReleaseCapture();
 }
 
+void CWnd::OnClose() {
+	if (this == AfxGetApp()->m_pMainWnd) {
+		// Remove the window from the app,
+		// signifying that it can close
+		AfxGetApp()->m_pMainWnd = nullptr;
+	}
+}
+
 } // namespace MFC
 } // namespace Bagel

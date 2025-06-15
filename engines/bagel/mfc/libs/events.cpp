@@ -45,6 +45,13 @@ Event::operator MSG() const {
 	msg.wParam = msg.lParam = 0;
 	msg.time = g_system->getMillis();
 
+	// Handle quit messages
+	if (type == Common::EVENT_QUIT ||
+		type == Common::EVENT_RETURN_TO_LAUNCHER) {
+		msg.message = WM_QUIT;
+		return msg;
+	}
+
 	// For mouse events, set the position
 	if (type >= Common::EVENT_MOUSEMOVE &&
 	        type <= Common::EVENT_MBUTTONUP) {

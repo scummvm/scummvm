@@ -35,7 +35,7 @@ void EventLoop::runEventLoop(CWnd *modalDialog) {
 
 	MSG msg;
 
-	while (!g_engine->shouldQuit() &&
+	while (!g_engine->shouldQuit() && _mainWindow &&
 			(!_modalDialog || _modalDialog->m_nModalResult == -1)) {
 		if (!GetMessage(msg))
 			break;
@@ -79,7 +79,7 @@ bool EventLoop::GetMessage(MSG &msg) {
 		}
 	}
 
-	return !g_engine->shouldQuit();
+	return !g_engine->shouldQuit() && msg.message != WM_QUIT;
 }
 
 void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
