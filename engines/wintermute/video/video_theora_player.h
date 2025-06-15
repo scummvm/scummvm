@@ -47,7 +47,6 @@ private:
 		THEORA_STATE_FINISHED = 3
 	};
 	Video::VideoDecoder *_theoraDecoder;
-	Graphics::Surface _surface;
 public:
 	DECLARE_PERSISTENT(VideoTheoraPlayer, BaseClass)
 
@@ -86,10 +85,8 @@ public:
 	BaseSurface *getTexture() const;
 
 	// alpha related
-	BaseImage *_alphaImage;
 	Common::String _alphaFilename;
 	bool setAlphaImage(const Common::String &filename);
-	void writeAlpha();
 
 	bool seekToTime(uint32 Time);
 
@@ -131,7 +128,7 @@ private:
 	bool _videoFrameReady;
 	float _videobufTime;
 
-	bool writeVideo();
+	bool writeVideo(const Graphics::Surface *decodedFrame);
 
 	bool _playbackStarted;
 

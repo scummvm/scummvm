@@ -35,23 +35,31 @@
 namespace Wintermute {
 
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderer3D *renderer)
-	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _texWidth(0), _texHeight(0) {
+	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _maskData(nullptr), _texWidth(0), _texHeight(0) {
 }
 
 BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
 	glDeleteTextures(1, &_tex);
 	_renderer->invalidateTexture(this);
 	_tex = 0;
-	delete[] _imageData;
+
+	if (_imageData) {
+		_imageData->free();
+		delete _imageData;
+		_imageData = nullptr;
+	}
+
+	if (_maskData) {
+		_maskData->free();
+		delete _maskData;
+		_maskData = nullptr;
+	}
 }
 
 bool BaseSurfaceOpenGL3D::invalidate() {
 	glDeleteTextures(1, &_tex);
 	_renderer->invalidateTexture(this);
 	_tex = 0;
-	_imageData->free();
-	delete[] _imageData;
-	_imageData = nullptr;
 
 	_valid = false;
 	return true;
@@ -138,6 +146,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	if (_imageData) {
 		_imageData->free();
 		delete _imageData;
+		_imageData = nullptr;
 	}
 
 #ifdef SCUMM_BIG_ENDIAN
@@ -234,6 +243,7 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 
 	if (_imageData && _imageData != &surface) {
 		_imageData->copyFrom(surface);
+		writeAlpha(_imageData, _maskData);
 	}
 
 	_width = surface.w;
@@ -252,7 +262,7 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, const_cast<void *>(surface.getPixels()));
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, _imageData->getPixels());
 	glBindTexture(GL_TEXTURE_2D, 0);
 	_valid = true;
 
@@ -304,6 +314,61 @@ void BaseSurfaceOpenGL3D::setTexture() {
 	prepareToDraw();
 
 	glBindTexture(GL_TEXTURE_2D, _tex);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurfaceOpenGL3D::setAlphaImage(const Common::String &filename) {
+	BaseImage *alphaImage = new BaseImage();
+	if (!alphaImage->loadFile(filename)) {
+		delete alphaImage;
+		return false;
+	}
+
+	if (_maskData) {
+		_maskData->free();
+		delete _maskData;
+		_maskData = nullptr;
+	}
+
+	Graphics::AlphaType type = alphaImage->getSurface()->detectAlpha();
+	if (type != Graphics::ALPHA_OPAQUE) {
+#ifdef SCUMM_BIG_ENDIAN
+		_maskData = alphaImage->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+		_maskData = alphaImage->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
+	}
+
+	delete alphaImage;
+
+	return true;
+}
+
+void BaseSurfaceOpenGL3D::writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask) {
+	if (mask && surface->w == mask->w && surface->h == mask->h) {
+		assert(mask->pitch == mask->w * 4);
+		assert(mask->format.bytesPerPixel == 4);
+		assert(surface->pitch == surface->w * 4);
+		assert(surface->format.bytesPerPixel == 4);
+		const byte *alphaData = (const byte *)mask->getPixels();
+#ifdef SCUMM_LITTLE_ENDIAN
+		int alphaPlace = (mask->format.aShift / 8);
+#else
+		int alphaPlace = 3 - (mask->format.aShift / 8);
+#endif
+		alphaData += alphaPlace;
+		byte *imgData = (byte *)surface->getPixels();
+#ifdef SCUMM_LITTLE_ENDIAN
+		imgData += (surface->format.aShift / 8);
+#else
+		imgData += 3 - (surface->format.aShift / 8);
+#endif
+		for (int i = 0; i < surface->w * surface->h; i++) {
+			*imgData = *alphaData;
+			alphaData += 4;
+			imgData += 4;
+		}
+	}
 }
 
 } // End of namespace Wintermute
