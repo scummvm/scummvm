@@ -32,7 +32,6 @@ BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 END_MESSAGE_MAP()
 
 CWnd::CWnd() : m_hWnd(this) {
-	_surface.Attach(&_surfaceBitmap);
 	_dc.Attach(&_surface);
 }
 
@@ -70,7 +69,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
-	_surface._format = format;
+	_surface.Attach(&_surfaceBitmap);
 
 	_controlId = nID;
 
@@ -569,7 +568,7 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
-	_surface._format = format;
+	_surface.Attach(&_surfaceBitmap);
 
 	// Iterate through all child controls. We won't
 	// change their relative position, but doing so will
@@ -645,7 +644,7 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	_surfaceBitmap.create(*AfxGetApp()->getScreen(), screenRect);
-	_surface._format = format;
+	_surface.Attach(&_surfaceBitmap);
 
 	return true;
 }
