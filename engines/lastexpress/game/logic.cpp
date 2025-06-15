@@ -3127,8 +3127,8 @@ bool LogicManager::walk(int character, int car, int position) {
 
 				for (int i = 0; i < 8; i++) {
 					if ((_blockedX[offset + i] || _softBlockedX[offset + i]) && nearX(character, _doorPositions[i], 750) &&
-						cathWillSeeOtis(_doorPositions[i]) && (getCharacter(character).direction == 1 && (getCharacter(character).characterPosition.position < _doorPositions[i]) &&
-							(car != getCharacter(character).characterPosition.car || position > _doorPositions[i]) ||
+						cathWillSeeOtis(_doorPositions[i]) && ((getCharacter(character).direction == 1 && getCharacter(character).characterPosition.position < _doorPositions[i] &&
+							(car != getCharacter(character).characterPosition.car || position > _doorPositions[i])) ||
 							(getCharacter(character).direction == 2 && (getCharacter(character).characterPosition.position > _doorPositions[i]) &&
 								(car != getCharacter(character).characterPosition.car || position < _doorPositions[i])))) {
 						if (_blockedX[offset + i]) {
