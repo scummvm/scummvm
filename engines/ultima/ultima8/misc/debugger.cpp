@@ -161,39 +161,6 @@ Debugger::~Debugger() {
 	g_debugger = nullptr;
 }
 
-
-void Debugger::executeCommand(const Common::String &args) {
-	Common::Array<Common::String> argv;
-	StringToArgv(args, argv);
-
-	executeCommand(argv);
-}
-
-void Debugger::executeCommand(const Common::Array<Common::String> &argv) {
-	if (argv.empty())
-		return;
-
-	Common::String commandName = argv[0];
-	if (commandName.hasPrefix("GUIApp::"))
-		commandName = "Ultima8Engine::" + Common::String(commandName.c_str() + 8);
-
-	Common::Array<const char *> cArgs;
-	cArgs.push_back(commandName.c_str());
-	for (uint idx = 1; idx < argv.size(); ++idx)
-		cArgs.push_back(argv[idx].c_str());
-
-	bool keepRunning = false;
-	if (!handleCommand(argv.size(), &cArgs[0], keepRunning)) {
-		debugPrintf("Unknown command - %s\n", commandName.c_str());
-		keepRunning = true;
-	}
-
-	// If any message occurred, then we need to ensure the debugger is opened if it isn't already
-	if (keepRunning)
-		attach();
-}
-
-
 bool Debugger::cmdSaveGame(int argc, const char **argv) {
 	if (argc == 2) {
 		if (!Ultima8Engine::get_instance()->canSaveGameStateCurrently()) {

@@ -142,9 +142,6 @@ private:
 public:
 	Debugger();
 	~Debugger() override;
-
-	void executeCommand(const Common::String &args);
-	void executeCommand(const Common::Array<Common::String> &argv);
 };
 
 extern Debugger *g_debugger;
