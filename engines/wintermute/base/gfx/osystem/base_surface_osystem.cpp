@@ -154,7 +154,9 @@ bool BaseSurfaceOSystem::finishLoad() {
 	}
 
 	if (needsColorKey) {
-		_surface->applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
+		// We set the pixel color to transparent black,
+		// like D3DX, if it matches the color key.
+		_surface->applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha, 0, 0, 0);
 	}
 
 	_alphaType = _surface->detectAlpha();
