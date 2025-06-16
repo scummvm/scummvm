@@ -682,14 +682,14 @@ TOKEN_DEF_START
 	TOKEN_DEF(FRAME)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool XModel::parseAnim(byte *buffer) {
+bool XModel::parseAnim(char *buffer) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(NAME)
 		TOKEN_TABLE(LOOPING)
 		TOKEN_TABLE(EVENT)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
@@ -697,10 +697,10 @@ bool XModel::parseAnim(byte *buffer) {
 	bool looping = false;
 	bool loopingSet = false;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME: {
-			BaseUtils::setString(&name, (char *)params);
+			BaseUtils::setString(&name, params);
 
 			AnimationSet *anim = getAnimationSetByName(name);
 			if (!anim) {
@@ -710,7 +710,7 @@ bool XModel::parseAnim(byte *buffer) {
 		}
 
 		case TOKEN_LOOPING:
-			parser.scanStr((char *)params, "%b", &looping);
+			parser.scanStr(params, "%b", &looping);
 			loopingSet = true;
 			break;
 
@@ -746,13 +746,13 @@ bool XModel::parseAnim(byte *buffer) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::parseEvent(AnimationSet *anim, byte *buffer) {
+bool XModel::parseEvent(AnimationSet *anim, char *buffer) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(NAME)
 		TOKEN_TABLE(FRAME)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
@@ -761,14 +761,14 @@ bool XModel::parseEvent(AnimationSet *anim, byte *buffer) {
 		return false;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
-			BaseUtils::setString(&event->_eventName, (char *)params);
+			BaseUtils::setString(&event->_eventName, params);
 			break;
 
 		case TOKEN_FRAME:
-			parser.scanStr((char *)params, "%d", &event->_frame);
+			parser.scanStr(params, "%d", &event->_frame);
 			break;
 		}
 	}

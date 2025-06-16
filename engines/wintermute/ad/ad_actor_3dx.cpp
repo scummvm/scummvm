@@ -851,7 +851,7 @@ bool AdActor3DX::turnToStep(float velocity) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdActor3DX::LoadFile failed for file '%s'", filename);
@@ -911,7 +911,7 @@ TOKEN_DEF_START
 	TOKEN_DEF(MATERIAL)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
+bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(ACTOR3DX)
 		TOKEN_TABLE(X)
@@ -950,12 +950,12 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		TOKEN_TABLE(EFFECT)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTOR3DX) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ACTOR3DX) {
 			_gameRef->LOG(0, "'ACTOR3DX' keyword expected.");
 			return false;
 		}
@@ -968,39 +968,39 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 	delete _shadowModel;
 	_shadowModel = nullptr;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (!loadFile((char *)params)) {
+			if (!loadFile(params)) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_X:
-			parser.scanStr((char *)params, "%f", &_posVector._x);
+			parser.scanStr(params, "%f", &_posVector._x);
 			break;
 
 		case TOKEN_Y:
-			parser.scanStr((char *)params, "%f", &_posVector._y);
+			parser.scanStr(params, "%f", &_posVector._y);
 			break;
 
 		case TOKEN_Z:
-			parser.scanStr((char *)params, "%f", &_posVector._z);
+			parser.scanStr(params, "%f", &_posVector._z);
 			break;
 
 		case TOKEN_ANGLE:
-			parser.scanStr((char *)params, "%f", &_angle);
+			parser.scanStr(params, "%f", &_angle);
 			BaseUtils::normalizeAngle(_angle);
 			break;
 
 		case TOKEN_SHADOW_SIZE:
-			parser.scanStr((char *)params, "%f", &_shadowSize);
+			parser.scanStr(params, "%f", &_shadowSize);
 			_shadowSize = MAX(_shadowSize, 0.0f);
 			break;
 
 		case TOKEN_SIMPLE_SHADOW: {
 			bool simpleShadow;
-			parser.scanStr((char *)params, "%b", &simpleShadow);
+			parser.scanStr(params, "%b", &simpleShadow);
 			if (simpleShadow) {
 				_shadowType = SHADOW_SIMPLE;
 			}
@@ -1010,19 +1010,19 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_SHADOW_COLOR: {
 			int r, g, b, a;
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &r, &g, &b, &a);
+			parser.scanStr(params, "%d,%d,%d,%d", &r, &g, &b, &a);
 			_shadowColor = BYTETORGBA(r, g, b, a);
 
 			break;
 		}
 
 		case TOKEN_LIGHT_POSITION:
-			parser.scanStr((char *)params, "%f,%f,%f", &_shadowLightPos._x, &_shadowLightPos._y, &_shadowLightPos._z);
+			parser.scanStr(params, "%f,%f,%f", &_shadowLightPos._x, &_shadowLightPos._y, &_shadowLightPos._z);
 			break;
 
 		case TOKEN_SHADOW: {
 			bool shadowEnabled;
-			parser.scanStr((char *)params, "%b", &shadowEnabled);
+			parser.scanStr(params, "%b", &shadowEnabled);
 			if (!shadowEnabled) {
 				_shadowType = SHADOW_NONE;
 			}
@@ -1031,49 +1031,49 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		}
 
 		case TOKEN_DRAW_BACKFACES:
-			parser.scanStr((char *)params, "%b", &_drawBackfaces);
+			parser.scanStr(params, "%b", &_drawBackfaces);
 			break;
 
 		case TOKEN_VELOCITY:
-			parser.scanStr((char *)params, "%f", &_velocity);
+			parser.scanStr(params, "%f", &_velocity);
 			break;
 
 		case TOKEN_ANGULAR_VELOCITY:
-			parser.scanStr((char *)params, "%f", &_angVelocity);
+			parser.scanStr(params, "%f", &_angVelocity);
 			break;
 
 		case TOKEN_SCALE:
-			parser.scanStr((char *)params, "%f", &_scale3D);
+			parser.scanStr(params, "%f", &_scale3D);
 			_scale3D /= 100.0f;
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_FONT:
-			setFont((char *)params);
+			setFont(params);
 			break;
 
 		case TOKEN_REGISTRABLE:
 		case TOKEN_INTERACTIVE:
-			parser.scanStr((char *)params, "%b", &_registrable);
+			parser.scanStr(params, "%b", &_registrable);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.scanStr((char *)params, "%b", &_active);
+			parser.scanStr(params, "%b", &_active);
 			break;
 
 		case TOKEN_DROP_TO_FLOOR:
-			parser.scanStr((char *)params, "%b", &_dropToFloor);
+			parser.scanStr(params, "%b", &_dropToFloor);
 			break;
 
 		case TOKEN_SHADOW_TYPE: {
-			char *typeName = (char *)params;
+			char *typeName = params;
 			if (scumm_stricmp(typeName, "none") == 0) {
 				_shadowType = SHADOW_NONE;
 			} else if (scumm_stricmp(typeName, "simple") == 0) {
@@ -1098,13 +1098,13 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			if (!_xmodel) {
 				_xmodel = new XModel(_gameRef, this);
 
-				if (!_xmodel || !_xmodel->loadFromFile((char *)params)) {
+				if (!_xmodel || !_xmodel->loadFromFile(params)) {
 					delete _xmodel;
 					_xmodel = nullptr;
 					cmd = PARSERR_GENERIC;
 				}
 			} else {
-				if (!_xmodel->mergeFromFile((char *)params)) {
+				if (!_xmodel->mergeFromFile(params)) {
 					cmd = PARSERR_GENERIC;
 				}
 			}
@@ -1115,7 +1115,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 				delete _shadowModel;
 				_shadowModel = new XModel(_gameRef, this);
 
-				if (!_shadowModel || !_shadowModel->loadFromFile((char *)params, _xmodel)) {
+				if (!_shadowModel || !_shadowModel->loadFromFile(params, _xmodel)) {
 					delete _shadowModel;
 					_shadowModel = nullptr;
 					cmd = PARSERR_GENERIC;
@@ -1128,7 +1128,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new BaseSprite(_gameRef);
-			if (!_cursor || !_cursor->loadFile((char *)params)) {
+			if (!_cursor || !_cursor->loadFile(params)) {
 				delete _cursor;
 				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -1136,15 +1136,15 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_PROPERTY:
-			parseProperty((char *)params, false);
+			parseProperty(params, false);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			parseEditorProperty((char *)params, false);
+			parseEditorProperty(params, false);
 			break;
 
 		case TOKEN_ANIMATION:
@@ -1167,7 +1167,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 				_gameRef->_surfaceStorage->removeSurface(_shadowImage);
 			_shadowImage = nullptr;
 
-			_shadowImage = _gameRef->_surfaceStorage->addSurface((char *)params);
+			_shadowImage = _gameRef->_surfaceStorage->addSurface(params);
 			break;
 
 		case TOKEN_BLOCKED_REGION: {
@@ -1177,7 +1177,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			_currentBlockRegion = nullptr;
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
-			if (!rgn || !crgn || !rgn->loadBuffer((char *)params, false)) {
+			if (!rgn || !crgn || !rgn->loadBuffer(params, false)) {
 				delete rgn;
 				delete crgn;
 				cmd = PARSERR_GENERIC;
@@ -1196,7 +1196,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			_currentWptGroup = nullptr;
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
-			if (!wpt || !cwpt || !wpt->loadBuffer((char *)params, false)) {
+			if (!wpt || !cwpt || !wpt->loadBuffer(params, false)) {
 				delete wpt;
 				delete cwpt;
 				cmd = PARSERR_GENERIC;
@@ -2392,18 +2392,18 @@ bool AdActor3DX::mergeAnimations2(const char *filename) {
 		TOKEN_TABLE(ANIMATION)
 	TOKEN_TABLE_END
 
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		return false;
 	}
 
-	byte *bufferOrig = buffer;
+	char *bufferOrig = buffer;
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ANIMATION:
 			if (!_xmodel->parseAnim(params)) {
@@ -2496,27 +2496,27 @@ bool AdActor3DX::updatePartEmitter() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdActor3DX::parseEffect(byte *buffer) {
+bool AdActor3DX::parseEffect(char *buffer) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(MATERIAL)
 		TOKEN_TABLE(EFFECT_FILE)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	char *effectFile = nullptr;
 	char *material = nullptr;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_EFFECT_FILE:
-			BaseUtils::setString(&effectFile, (char *)params);
+			BaseUtils::setString(&effectFile, params);
 			break;
 
 		case TOKEN_MATERIAL:
-			BaseUtils::setString(&material, (char *)params);
+			BaseUtils::setString(&material, params);
 			break;
 		}
 	}

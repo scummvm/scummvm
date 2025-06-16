@@ -56,7 +56,7 @@ TOKEN_DEF_START
 	TOKEN_DEF(RECEIVE_SHADOWS)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExtNode::loadBuffer(byte *buffer, bool complete) {
+bool AdGeomExtNode::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(NODE)
 		TOKEN_TABLE(NAME)
@@ -66,12 +66,12 @@ bool AdGeomExtNode::loadBuffer(byte *buffer, bool complete) {
 		TOKEN_TABLE(RECEIVE_SHADOWS)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd = 2;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_NODE) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_NODE) {
 			_gameRef->LOG(0, "'NODE' keyword expected.");
 			return false;
 		}
@@ -79,19 +79,19 @@ bool AdGeomExtNode::loadBuffer(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
-			BaseUtils::setString(&_namePattern, (char *)params);
+			BaseUtils::setString(&_namePattern, params);
 			break;
 
 		case TOKEN_RECEIVE_SHADOWS:
-			parser.scanStr((char *)params, "%b", &_receiveShadows);
+			parser.scanStr(params, "%b", &_receiveShadows);
 			break;
 
 		case TOKEN_WALKPLANE: {
 			bool isWalkplane = false;
-			parser.scanStr((char *)params, "%b", &isWalkplane);
+			parser.scanStr(params, "%b", &isWalkplane);
 			if (isWalkplane) {
 				_type = GEOM_WALKPLANE;
 			}
@@ -100,7 +100,7 @@ bool AdGeomExtNode::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BLOCKED: {
 			bool isBlocked = false;
-			parser.scanStr((char *)params, "%b", &isBlocked);
+			parser.scanStr(params, "%b", &isBlocked);
 			if (isBlocked) {
 				_type = GEOM_BLOCKED;
 			}
@@ -109,7 +109,7 @@ bool AdGeomExtNode::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WAYPOINT: {
 			bool isWaypoint = false;
-			parser.scanStr((char *)params, "%b", &isWaypoint);
+			parser.scanStr(params, "%b", &isWaypoint);
 			if (isWaypoint) {
 				_type = GEOM_WAYPOINT;
 			}
