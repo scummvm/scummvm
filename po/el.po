@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-16 09:55+0000\n"
-"PO-Revision-Date: 2025-06-14 10:12+0000\n"
+"PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7960,26 +7960,23 @@ msgstr ""
 
 #: engines/director/metaengine.cpp:70 engines/scumm/dialogs.cpp:1188
 #: engines/scumm/metaengine.cpp:792
-#, fuzzy
-#| msgid "Enabled aspect ratio correction"
 msgid "Enable gamma correction"
-msgstr "Ενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
+msgstr "Χρήση διόρθωσης φωτεινότητας"
 
 #: engines/director/metaengine.cpp:71
 msgid "Brighten the graphics to simulate a Macintosh monitor"
 msgstr ""
+"Ενισχύει τη φωτεινότητα των γραφικών για να προσομοιάσει μια οθόνη Macintosh"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
-msgstr ""
+msgstr "Επιβολή true color"
 
 #: engines/director/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
-"Χρήση εξομάλυνσης για τη σχεδίαση κειμένου ακόμα κι αν το παιχνίδι δεν το "
-"απαιτεί"
+"Χρήση λειτουργίας true color (περισσότερων χρωμάτων), ακόμα κι αν το "
+"παιχνίδι δεν σχεδιάστηκε με τέτοια υποστήριξη"
 
 #: engines/draci/metaengine.cpp:153
 msgid "Skip intro/Exit map or inventory"
@@ -8081,56 +8078,40 @@ msgstr ""
 "Αφήγηση κειμένου για Αντικείμενα, Επιλογές, και το Απόφθευγμα της Βίβλου"
 
 #: engines/efh/metaengine.cpp:207
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left click"
-msgstr "Αριστερό Click"
+msgstr "Αριστερό click"
 
 #: engines/efh/metaengine.cpp:213
 msgid "Right click"
 msgstr "Δεξί click"
 
 #: engines/efh/metaengine.cpp:255
-#, fuzzy
-#| msgid "Move up-left"
 msgid "Move up left"
-msgstr "Κίνηση πάνω-αριστερά"
+msgstr "Κίνηση πάνω αριστερά"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Move up-right"
 msgid "Move up right"
-msgstr "Κίνηση πάνω-δεξιά"
+msgstr "Κίνηση πάνω δεξιά"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Move down-left"
 msgid "Move down left"
-msgstr "Κίνηση κάτω-αριστερά"
+msgstr "Κίνηση κάτω αριστερά"
 
 #: engines/efh/metaengine.cpp:270
-#, fuzzy
-#| msgid "Move down-right"
 msgid "Move down right"
-msgstr "Κίνηση κάτω-δεξιά"
+msgstr "Κίνηση κάτω δεξιά"
 
 #: engines/efh/metaengine.cpp:275
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 1 status"
-msgstr "Προβολή πορτρέτων χαρακτήρων"
+msgstr "Υπόσταση Χαρακτήρα 1"
 
 #: engines/efh/metaengine.cpp:280
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 2 status"
-msgstr "Προβολή πορτρέτων χαρακτήρων"
+msgstr "Υπόσταση Χαρακτήρα 2"
 
 #: engines/efh/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 3 status"
-msgstr "Προβολή πορτρέτων χαρακτήρων"
+msgstr "Υπόσταση Χαρακτήρα 3"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -8291,32 +8272,24 @@ msgstr "Μέτωπο μπροστά"
 
 #: engines/freescape/games/dark/dark.cpp:222
 #: engines/freescape/games/driller/driller.cpp:198
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Κίνηση αριστερά"
+msgstr "Κύληση αριστερά"
 
 #: engines/freescape/games/dark/dark.cpp:227
 #: engines/freescape/games/driller/driller.cpp:203
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Κίνηση δεξιά"
+msgstr "Κύληση δεξιά"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:233
 #: engines/freescape/games/driller/driller.cpp:170
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Αύξηση Έντασης"
+msgstr "Αύξηση Γωνίας Στροφής"
 
 #: engines/freescape/games/dark/dark.cpp:238
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Μείωση Έντασης"
+msgstr "Μείωση Γωνίας Στροφής"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:244
@@ -8496,17 +8469,15 @@ msgstr "Πυροβόλησε"
 
 #: engines/got/metaengine.cpp:60
 msgid "Magic"
-msgstr ""
+msgstr "Μαγεία"
 
 #: engines/got/metaengine.cpp:64
 msgid "Thor Dies"
-msgstr ""
+msgstr "Πεθαίνει ο Thor"
 
 #: engines/got/got.cpp:188 engines/got/got.cpp:198
-#, fuzzy
-#| msgid "Saving game is currently unavailable"
 msgid "Savegames are not available in demo mode"
-msgstr "Η αποθήκευση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
+msgstr "Τα αποθηκευμένα παιχνίδια δεν είναι διαθέσιμα στη λειτουργία demo"
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
@@ -10258,10 +10229,8 @@ msgstr ""
 "Πρόκειται για μια επίσημη διόρθωση από την HeR Interactive."
 
 #: engines/nancy/state/loadsave.cpp:154
-#, fuzzy
-#| msgid "Would you like to save or restore a game?"
 msgid "Would you like to load or save a game?"
-msgstr "Θέλετε να αποθηκεύσετε ή να φορτώσετε ένα παιχνίδι;"
+msgstr "Θέλετε να επαναφέρετε ή να αποθηκεύσετε ένα παιχνίδι;"
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -10405,10 +10374,8 @@ msgid "Switch test"
 msgstr "Μετάβαση στο Παιχνίδι"
 
 #: engines/playground3d/metaengine.cpp:61
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable fog"
-msgstr "Απ/ενεργοποίηση Jetpack"
+msgstr "Απ/ενεργοποίηση ομίχλης"
 
 #: engines/playground3d/metaengine.cpp:67
 #, fuzzy
@@ -10422,14 +10389,14 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "Η έκδοση του Plumbers για 3DO απαιτεί υποστήριξη RGB."
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Ενεργοποίηση της λειτουργίας αποσφαλμάτωσης (debug)"
+msgstr "Ενεργοποίηση λειτουργίας 16 bits ανά pixel"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
+"Ενεργοποιήστε αυτή τη ρύθμιση αν η πλατφόρμα σας δεν υποστηρίζει 32 bits ανα "
+"pixel ή/και για την αποσφαλμάτωση των γραφικών"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -11195,10 +11162,11 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:793
 msgid "Brighten the graphics to simulate a Macintosh monitor."
 msgstr ""
+"Αύξηση της φωτεινότητας των γραφικών για εξομοίωση μιας οθόνης Macintosh."
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Προσομοίωση χρωμάτων Sega"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
@@ -11206,6 +11174,9 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"Αντί να χρησιμοποιηθούν τα χρώματα όπως ορίζονται από το παιχνίδι, θα "
+"προσομοιωθούν τα χρώματα όπως εμφανίζονται σε πραγματική συσκευή Sega. Αυτά "
+"είναι αρκετά σκοτεινότερα, ενώ είναι αβέβαιο αν αυτό ήταν σκόπιμο."
 
 #: engines/scumm/dialogs.cpp:1312
 msgid "Overture Timing:"
