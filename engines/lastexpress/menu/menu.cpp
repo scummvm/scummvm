@@ -310,6 +310,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			endEgg();
 
 			_engine->quitGame();
+			_engine->_exitFromMenuButton = true;
 		} else {
 			setSprite(2, 10, true);
 			return true;

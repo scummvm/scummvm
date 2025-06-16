@@ -537,8 +537,11 @@ bool LastExpressEngine::handleEvents() {
 
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
-			getMessageManager()->addEvent(4, 0, 0, 1);
-			_pendingExitEvent = true;
+			if (!_exitFromMenuButton) {
+				getMessageManager()->addEvent(4, 0, 0, 1);
+				_pendingExitEvent = true;
+			}
+
 			break;
 
 		default:

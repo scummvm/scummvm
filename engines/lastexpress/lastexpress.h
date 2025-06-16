@@ -609,6 +609,7 @@ public:
 	Common::Point _systemEventLastMouseCoords;
 
 	bool _pendingExitEvent = false;
+	bool _exitFromMenuButton = false;
 
 	Seq *_doorSeqs[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	Seq *_clockHandsSeqs[2] = { nullptr, nullptr };
