@@ -49,7 +49,7 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
-	_renderSurface = new Graphics::Surface();
+	_renderSurface = new Graphics::ManagedSurface();
 	_lastFrameIter = _renderQueue.end();
 	_needsFlip = true;
 	_skipThisFrame = false;
@@ -479,7 +479,7 @@ bool BaseRenderOSystem::fillRect(int x, int y, int w, int h, uint32 color) {
 BaseImage *BaseRenderOSystem::takeScreenshot(int newWidth, int newHeight) {
 	// TODO: Clip by viewport.
 	BaseImage *screenshot = new BaseImage();
-	screenshot->copyFrom(_renderSurface, newWidth, newHeight);
+	screenshot->copyFrom(_renderSurface->surfacePtr(), newWidth, newHeight);
 	return screenshot;
 }
 
