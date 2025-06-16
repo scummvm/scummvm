@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-15 23:55+0000\n"
-"PO-Revision-Date: 2025-06-11 06:08+0000\n"
+"PO-Revision-Date: 2025-06-16 09:33+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -12056,40 +12056,28 @@ msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr "VARNING: Att ta bort autosparposter stöds inte av denna motor"
 
 #: engines/sludge/keymapper_tables.h:34
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Debug keymappings"
-msgstr "Standardtangentmappningar"
+msgstr "Felsök tangentmappningar"
 
 #: engines/sludge/keymapper_tables.h:35
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Menu keymappings"
-msgstr "Tangentmappningar för spel"
+msgstr "Tangentmappningar för meny"
 
 #: engines/sludge/keymapper_tables.h:36
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Minigame keymappings"
-msgstr "Tangentmappningar för spel"
+msgstr "Tangentmappningar för minispel"
 
 #: engines/sludge/keymapper_tables.h:46
-#, fuzzy
-#| msgid "Change game options"
 msgid "Change action"
-msgstr "Redigera spelalternativen"
+msgstr "Byt åtgärd"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Speed up dialogue"
-msgstr "Välj dialog"
+msgstr "Snabba upp dialog"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down virtual mouse"
 msgid "Slow down dialogue"
-msgstr "Sakta ner virtuell mus"
+msgstr "Sakta ner dialog"
 
 #: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
 #: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
@@ -12097,99 +12085,73 @@ msgstr "Sakta ner virtuell mus"
 #: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
 #: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
 #: engines/sludge/keymapper_tables.h:529
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Move / Interact"
-msgstr "Flytta / Välj"
+msgstr "Flytta / Interagera"
 
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Load auto save"
-msgstr "Namnlös autosparning"
+msgstr "Läs in autosparning"
 
 #: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
 msgid "Load save"
-msgstr "Läs in spel"
+msgstr "Läs in sparat spel"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
 msgid "DEBUG: Show floor"
-msgstr ""
+msgstr "FELSÖK: Visa golv"
 
 #: engines/sludge/keymapper_tables.h:205 engines/sludge/keymapper_tables.h:440
 #: engines/sludge/keymapper_tables.h:547
 msgid "DEBUG: Show boxes"
-msgstr ""
+msgstr "FELSÖK: Visa rutor"
 
 #: engines/sludge/keymapper_tables.h:237
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory / Examine"
-msgstr "Inventarie"
+msgstr "Inventarier / Utforska"
 
 #: engines/sludge/keymapper_tables.h:281
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Examine / Skip dialogue"
-msgstr "Hoppa över dialog"
+msgstr "Utforska / Hoppa över dialog"
 
 #: engines/sludge/keymapper_tables.h:287 engines/sludge/keymapper_tables.h:398
 #: engines/sludge/keymapper_tables.h:522
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Pause / Skip cutscene"
-msgstr "Hoppa över scen"
+msgstr "Pausa / Hoppa över scen"
 
 #: engines/sludge/keymapper_tables.h:328
 msgid "Smell"
-msgstr ""
+msgstr "Lukta"
 
 #: engines/sludge/keymapper_tables.h:338
 msgid "Consume"
-msgstr ""
+msgstr "Konsumera"
 
 #: engines/sludge/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast earth spell"
-msgstr "Kasta besvärjelse"
+msgstr "Kasta jordbesvärjelse"
 
 #: engines/sludge/keymapper_tables.h:367
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast air spell"
-msgstr "Kasta besvärjelse"
+msgstr "Kasta luftbesvärjelse"
 
 #: engines/sludge/keymapper_tables.h:373
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast fire spell"
-msgstr "Kasta besvärjelse"
+msgstr "Kasta eldbesvärjelse"
 
 #: engines/sludge/keymapper_tables.h:379
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast water spell"
-msgstr "Kasta besvärjelse"
+msgstr "Kasta vattenbesvärjelse"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip dialogue"
-msgstr "Gå till nästa dialog"
+msgstr "Flytta / Interagera / Hoppa över dialog"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Inventory / Skip dialogue"
-msgstr "Hoppa över dialog"
+msgstr "Inventarier / Hoppa över dialog"
 
 #: engines/sludge/keymapper_tables.h:573
-#, fuzzy
-#| msgid "Pause game"
 msgid "Pause Game"
 msgstr "Pausa spelet"
 
@@ -13171,14 +13133,10 @@ msgid "Transfer Character"
 msgstr "Överför karaktär"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Combat"
-msgstr "Växla strid"
+msgstr "Strid"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Menu"
 msgstr "Spelmeny"
 
@@ -13188,238 +13146,181 @@ msgstr "Steg bakåt"
 
 #: engines/ultima/ultima8/metaengine.cpp:53
 #: engines/ultima/ultima8/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move up"
 msgid "Move Up"
 msgstr "Flytta uppåt"
 
 #: engines/ultima/ultima8/metaengine.cpp:54
 #: engines/ultima/ultima8/metaengine.cpp:109
-#, fuzzy
-#| msgid "Move down"
 msgid "Move Down"
 msgstr "Flytta neråt"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Highlight Items"
-msgstr "Markera nästa dialog"
+msgstr "Markera objekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Use Bedroll"
-msgstr ""
+msgstr "Använd sovsäck"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Backspace"
 msgid "Use Backpack"
-msgstr "Backsteg"
+msgstr "Använd ryggsäck"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
-#, fuzzy
-#| msgid "Use RGB rendering"
 msgid "Use Keyring"
-msgstr "Använd RGB-rendering"
+msgstr "Använd nyckelring"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
-#, fuzzy
-#| msgid "Open map"
 msgid "Open Minimap"
-msgstr "Öppna karta"
+msgstr "Öppna minikarta"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
 msgid "Use Recall"
-msgstr ""
+msgstr "Använd återkallning"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Open Inventory"
-msgstr "Öppna översikt"
+msgstr "Öppna inventarier"
 
 #: engines/ultima/ultima8/metaengine.cpp:70
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Gumps"
-msgstr "Stäng popup"
+msgstr "Stäng Gumps"
 
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Jump (fake both-button-click)"
-msgstr ""
+msgstr "Hoppa (fejka båda-knappar-klick)"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
-#, fuzzy
-#| msgid "Side Step"
 msgid "Step"
-msgstr "Sidosteg"
+msgstr "Stega"
 
 #: engines/ultima/ultima8/metaengine.cpp:78
-#, fuzzy
-#| msgid "Next action"
 msgid "Next Weapon"
-msgstr "Nästa handling"
+msgstr "Nästa vapen"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Next Inventory Item"
-msgstr "Animerade delar i inventariet"
+msgstr "Nästa objekt i inventariet"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Inventory"
 msgid "Use Inventory Item"
-msgstr "Inventarie"
+msgstr "Använd inventarieobjekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Medical Kit"
-msgstr ""
+msgstr "Använd medicinlåda"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use Energy Cube"
-msgstr ""
+msgstr "Använd energikub"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Detonate Bomb"
-msgstr ""
+msgstr "Detonera bomb"
 
 #: engines/ultima/ultima8/metaengine.cpp:85
-#, fuzzy
-#| msgid "Drop page"
 msgid "Drop Weapon"
-msgstr "Släpp sida"
+msgstr "Släpp vapen"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select Item"
-msgstr "Välj ett tema"
+msgstr "Välj objekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
 msgid "Use Selection"
-msgstr "~F~öregående"
+msgstr "Använd val"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Grab Items"
-msgstr ""
+msgstr "Ta objekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Camera moves with Silencer"
 msgid "Focus Camera on Silencer"
-msgstr "Kameran följer efter Silencer"
+msgstr "Fokusera kameran på Silencer"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
 msgid "Jump / Roll / Crouch"
-msgstr ""
+msgstr "Hoppa / Rulla / Kryp"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
-#, fuzzy
-#| msgid "Shorty mode"
 msgid "Short Jump"
-msgstr "Kortväxt läge"
+msgstr "Kort hopp"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Sidestep Left"
-msgstr "Glid vänster"
+msgstr "Sidosteg åt vänster"
 
 #: engines/ultima/ultima8/metaengine.cpp:94
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Sidestep Right"
-msgstr "Glid höger"
+msgstr "Sidosteg åt höger"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-#, fuzzy
-#| msgid "Face Forward"
 msgid "Step Forward"
-msgstr "Vänd framåt"
+msgstr "Stega framåt"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
-#, fuzzy
-#| msgid "Step back"
 msgid "Step Back"
-msgstr "Steg bakåt"
+msgstr "Stega bakåt"
 
 #: engines/ultima/ultima8/metaengine.cpp:97
-#, fuzzy
-#| msgid "Roll left"
 msgid "Roll Left"
 msgstr "Rulla åt vänster"
 
 #: engines/ultima/ultima8/metaengine.cpp:98
-#, fuzzy
-#| msgid "Roll right"
 msgid "Roll Right"
 msgstr "Rulla åt höger"
 
 #: engines/ultima/ultima8/metaengine.cpp:99
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Crouch"
-msgstr "Växla klocka"
+msgstr "Växla krypning"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
 msgid "Side Step / Advance / Retreat"
-msgstr ""
+msgstr "Sidosteg / Avancera framåt / Retirera"
 
 #: engines/ultima/ultima8/metaengine.cpp:105
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Clipping"
-msgstr "Växla klocka"
+msgstr "Växla klippning"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
 msgid "Ascend"
-msgstr ""
+msgstr "Stig uppåt"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Descend"
-msgstr ""
+msgstr "Stig neråt"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show Touching Items"
-msgstr "Visa ledtrådar"
+msgstr "Visa rörande objekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show Editor Items"
-msgstr "Visa citat"
+msgstr "Visa redigerarobjekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Decrement Map Sort Order"
-msgstr ""
+msgstr "Minska sorteringsordning på karta"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Increment Map Sort Order"
-msgstr ""
+msgstr "Öka sorteringsordning på karta"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
-#, fuzzy
-#| msgid "Toggle panel style"
 msgid "Toggle Frame By Frame"
-msgstr "Växla panelstil"
+msgstr "Växla bildruta efter bildruta"
 
 #: engines/ultima/ultima8/metaengine.cpp:123
 msgid "Advance Frame"
-msgstr ""
+msgstr "Avancera bildruta"
 
 #: engines/ultima/ultima8/metaengine.cpp:124
 msgid "Toggle Avatar In Stasis"
-msgstr ""
+msgstr "Växla avatar i stasis"
 
 #: engines/ultima/ultima8/metaengine.cpp:125
-#, fuzzy
-#| msgid "Image Viewer"
 msgid "Show Shape Viewer"
-msgstr "Bildvisare"
+msgstr "Visa formvisare"
 
 #: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Ultima VIII"
