@@ -55,7 +55,6 @@ public:
 	~VideoTheoraPlayer() override;
 
 	// external objects
-	Common::SeekableReadStream *_file;
 	Common::String _filename;
 
 	BaseSurface *_texture;

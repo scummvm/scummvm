@@ -49,7 +49,6 @@ VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 void VideoTheoraPlayer::SetDefaults() {
 
-	_file = nullptr;
 	_filename = "";
 	_startTime = 0;
 	_looping = false;
@@ -96,11 +95,6 @@ VideoTheoraPlayer::~VideoTheoraPlayer() {
 
 //////////////////////////////////////////////////////////////////////////
 void VideoTheoraPlayer::cleanup() {
-	if (_file) {
-		BaseFileManager::getEngineInstance()->closeFile(_file);
-		_file = nullptr;
-	}
-
 	_surface.free();
 	if (_theoraDecoder) {
 		_theoraDecoder->close();
@@ -118,21 +112,22 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	cleanup();
 
 	_filename = filename;
-	_file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
-	if (!_file) {
+
+#if defined (USE_THEORADEC)
+	// Load a file, but avoid having the File-manager handle the disposal of it.
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
+	if (!file) {
 		return STATUS_FAILED;
 	}
 
-#if defined (USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
+	_theoraDecoder->loadStream(file);
 #else
 	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped: %s", filename.c_str());
 	return STATUS_FAILED;
 #endif
 
 	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
-
-	_theoraDecoder->loadStream(_file);
 
 	if (!_theoraDecoder->isVideoLoaded()) {
 		return STATUS_FAILED;
@@ -160,17 +155,18 @@ bool VideoTheoraPlayer::resetStream() {
 	delete _theoraDecoder;
 	_theoraDecoder = nullptr;
 
-	_file = BaseFileManager::getEngineInstance()->openFile(_filename, true, false);
-	if (!_file) {
+#if defined (USE_THEORADEC)
+	// Load a file, but avoid having the File-manager handle the disposal of it.
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_filename, true, false);
+	if (!file) {
 		return STATUS_FAILED;
 	}
 
-#if defined (USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
+	_theoraDecoder->loadStream(file);
 #else
 	return STATUS_FAILED;
 #endif
-	_theoraDecoder->loadStream(_file);
 
 	if (!_theoraDecoder->isVideoLoaded()) {
 		return STATUS_FAILED;
