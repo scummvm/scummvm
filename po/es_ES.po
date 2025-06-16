@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-15 23:55+0000\n"
-"PO-Revision-Date: 2025-06-15 20:50+0000\n"
+"PO-Revision-Date: 2025-06-16 09:33+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -9323,7 +9323,7 @@ msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
-"Al activar esta opción el juego utilizará una música digital durante la "
+"Al activar esta opción, el juego utilizará una música digital durante la "
 "secuencia de introducción. En caso contrario, reproducirá una pista de "
 "música en formato MIDI."
 
@@ -13327,14 +13327,10 @@ msgid "Transfer Character"
 msgstr "Transferir personaje"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Combat"
-msgstr "Entrar en combate"
+msgstr "Combatir"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Menu"
 msgstr "Menú del juego"
 
@@ -13344,239 +13340,181 @@ msgstr "Retroceder"
 
 #: engines/ultima/ultima8/metaengine.cpp:53
 #: engines/ultima/ultima8/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move up"
 msgid "Move Up"
 msgstr "Mover hacia arriba"
 
 #: engines/ultima/ultima8/metaengine.cpp:54
 #: engines/ultima/ultima8/metaengine.cpp:109
-#, fuzzy
-#| msgid "Move down"
 msgid "Move Down"
 msgstr "Mover hacia abajo"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Highlight Items"
-msgstr "Seleccionar diálogo siguiente"
+msgstr "Resaltar objetos"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Use Bedroll"
-msgstr ""
+msgstr "Usar petate"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Backspace"
 msgid "Use Backpack"
-msgstr "Retroceso"
+msgstr "Usar mochila"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
-#, fuzzy
-#| msgid "Use RGB rendering"
 msgid "Use Keyring"
-msgstr "Renderizado RGB"
+msgstr "Usar llavero"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
-#, fuzzy
-#| msgid "Open map"
 msgid "Open Minimap"
-msgstr "Abrir mapa"
+msgstr "Abrir minimapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
 msgid "Use Recall"
-msgstr ""
+msgstr "Usar memoria"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Open Inventory"
 msgstr "Abrir inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:70
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Gumps"
-msgstr "Cerrar ventana"
+msgstr "Cerrar todos los GUMP"
 
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Jump (fake both-button-click)"
-msgstr ""
+msgstr "Saltar (simular pulsar ambos botones)"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
-#, fuzzy
-#| msgid "Side Step"
 msgid "Step"
-msgstr "Moverse hacia los lados"
+msgstr "Dar un paso"
 
 #: engines/ultima/ultima8/metaengine.cpp:78
-#, fuzzy
-#| msgid "Next action"
 msgid "Next Weapon"
-msgstr "Siguiente acción"
+msgstr "Siguiente arma"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Next Inventory Item"
-msgstr "Objetos de inventario animados"
+msgstr "Siguiente objeto del inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Inventory"
 msgid "Use Inventory Item"
-msgstr "Inventario"
+msgstr "Usar objeto del inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Medical Kit"
-msgstr ""
+msgstr "Usar Medikit"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use Energy Cube"
-msgstr ""
+msgstr "Usar cubo de energía"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Detonate Bomb"
-msgstr ""
+msgstr "Detonar bomba"
 
 #: engines/ultima/ultima8/metaengine.cpp:85
-#, fuzzy
-#| msgid "Drop page"
 msgid "Drop Weapon"
-msgstr "~T~irar página"
+msgstr "Tirar arma"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select Item"
-msgstr "Selecciona un tema"
+msgstr "Seleccionar objeto"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Use action"
 msgid "Use Selection"
-msgstr "Acción de usar"
+msgstr "Usar selección"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Grab Items"
-msgstr ""
+msgstr "Tomar objetos"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Camera moves with Silencer"
 msgid "Focus Camera on Silencer"
-msgstr "Cámara de seguimiento"
+msgstr "Centrar cámara en Silenciador"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
 msgid "Jump / Roll / Crouch"
-msgstr ""
+msgstr "Saltar/Rodar/Agacharse"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
-#, fuzzy
-#| msgid "Shorty mode"
 msgid "Short Jump"
-msgstr "Modo enano"
+msgstr "Salto corto"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Sidestep Left"
-msgstr "Deslizarse a la izquierda"
+msgstr "Moverse a la izquierda"
 
 #: engines/ultima/ultima8/metaengine.cpp:94
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Sidestep Right"
-msgstr "Deslizarse a la derecha"
+msgstr "Moverse a la derecha"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-#, fuzzy
-#| msgid "Face Forward"
 msgid "Step Forward"
-msgstr "Mirar hacia delante"
+msgstr "Moverse hacia delante"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
-#, fuzzy
-#| msgid "Step back"
 msgid "Step Back"
-msgstr "Retroceder"
+msgstr "Moverse hacia atrás"
 
 #: engines/ultima/ultima8/metaengine.cpp:97
-#, fuzzy
-#| msgid "Roll left"
 msgid "Roll Left"
-msgstr "Inclinar hacia la izquierda"
+msgstr "Rodar hacia la izquierda"
 
 #: engines/ultima/ultima8/metaengine.cpp:98
-#, fuzzy
-#| msgid "Roll right"
 msgid "Roll Right"
-msgstr "Inclinar hacia la derecha"
+msgstr "Rodar hacia la derecha"
 
 #: engines/ultima/ultima8/metaengine.cpp:99
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Crouch"
-msgstr "Alternar reloj"
+msgstr "Agacharse/Levantarse"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
 msgid "Side Step / Advance / Retreat"
-msgstr ""
+msgstr "Mover a lados/Avanzar/Retroceder"
 
 #: engines/ultima/ultima8/metaengine.cpp:105
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Clipping"
-msgstr "Alternar reloj"
+msgstr "Alternar «clipping»"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
 msgid "Ascend"
-msgstr ""
+msgstr "Ascender"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Descend"
-msgstr ""
+msgstr "Descender"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show Touching Items"
-msgstr "Mostrar pistas"
+msgstr "Mostrar objetos en contacto"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show Editor Items"
-msgstr "Mostrar citas"
+msgstr "Mostrar objetos del editor"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Decrement Map Sort Order"
-msgstr ""
+msgstr "Decrementar orden de visibilidad del mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Increment Map Sort Order"
-msgstr ""
+msgstr "Incrementar orden de visibilidad del mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
-#, fuzzy
-#| msgid "Toggle panel style"
 msgid "Toggle Frame By Frame"
-msgstr "Alternar estilo del panel"
+msgstr "Alternar modo fotograma a fotograma"
 
 #: engines/ultima/ultima8/metaengine.cpp:123
 msgid "Advance Frame"
-msgstr ""
+msgstr "Avanzar fotograma"
 
 #: engines/ultima/ultima8/metaengine.cpp:124
 msgid "Toggle Avatar In Stasis"
-msgstr ""
+msgstr "Alternar congelado de avatar"
 
 #: engines/ultima/ultima8/metaengine.cpp:125
-#, fuzzy
-#| msgid "Image Viewer"
 msgid "Show Shape Viewer"
-msgstr "Visualizador de imágenes"
+msgstr "Mostrar visualizador de formas"
 
 #: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Ultima VIII"
