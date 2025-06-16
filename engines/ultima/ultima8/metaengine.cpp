@@ -67,6 +67,7 @@ static const KeybindingRecord U8_KEYS[] = {
 	{ ACTION_MINIMAP, "MINIMAP", _s("Open Minimap"), "m", "JOY_BACK" },
 	{ ACTION_RECALL, "RECALL", _s("Use Recall"), "r", nullptr },
 	{ ACTION_INVENTORY, "INVENTORY", _s("Open Inventory"), "z", "JOY_LEFT_STICK" },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", _s("Close Gumps"), "BACKSPACE", nullptr },
 	{ ACTION_JUMP, "JUMP", _s("Jump (fake both-button-click)"), "SPACE", nullptr },
 	{ ACTION_MOVE_STEP, "MOVE_STEP", _s("Step"), "LCTRL", "JOY_LEFT_TRIGGER" },
