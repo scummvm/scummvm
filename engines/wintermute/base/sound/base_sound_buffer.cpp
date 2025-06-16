@@ -56,7 +56,6 @@ BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 
 	_streamed = false;
 	_filename = "";
-	_file = nullptr;
 	_privateVolume = 255;
 	_volume = 255;
 	_pan = 0;
@@ -96,8 +95,8 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 	debugC(kWintermuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename.c_str(), forceReload);
 
 	// Load a file, but avoid having the File-manager handle the disposal of it.
-	_file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
-	if (!_file) {
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
+	if (!file) {
 		_gameRef->LOG(0, "Error opening sound file '%s'", filename.c_str());
 		return STATUS_FAILED;
 	}
@@ -105,7 +104,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 	strFilename.toLowercase();
 	if (strFilename.hasSuffix(".ogg")) {
 #ifdef USE_VORBIS
-		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
+		_stream = Audio::makeVorbisStream(file, DisposeAfterUse::YES);
 #else
 		error("BSoundBuffer::LoadFromFile - Ogg Vorbis not supported by this version of ScummVM (please report as this shouldn't trigger)");
 #endif
@@ -114,11 +113,11 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 		byte waveFlags;
 		uint16 waveType;
 
-		if (Audio::loadWAVFromStream(*_file, waveSize, waveRate, waveFlags, &waveType)) {
+		if (Audio::loadWAVFromStream(*file, waveSize, waveRate, waveFlags, &waveType)) {
 			if (waveType == 1) {
 				// We need to wrap the file in a substream to make sure the size is right.
-				_file = new Common::SeekableSubReadStream(_file, _file->pos(), waveSize + _file->pos(), DisposeAfterUse::YES);
-				_stream = Audio::makeRawStream(_file, waveRate, waveFlags, DisposeAfterUse::YES);
+				file = new Common::SeekableSubReadStream(file, file->pos(), waveSize + file->pos(), DisposeAfterUse::YES);
+				_stream = Audio::makeRawStream(file, waveRate, waveFlags, DisposeAfterUse::YES);
 			} else {
 				error("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename.c_str(), waveType);
 			}
