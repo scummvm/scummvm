@@ -54,7 +54,7 @@ void OpenGLSSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &d
 
 	_shader->use();
 	_shader->setUniform1f("fadeLevel", _fadeLevel);
-	_shader->setUniform1f("snapToGrid", _snapToGrid);
+	_shader->setUniform("snapToGrid", _snapToGrid ? 1 : 0);
 	_shader->setUniform("verOffsetXY", normalizeOriginalCoordinates(dest.x, dest.y));
 	if (_noScalingOverride) {
 		_shader->setUniform("verSizeWH", normalizeCurrentCoordinates(width, height));
@@ -78,7 +78,7 @@ void OpenGLSSurfaceRenderer::fill(const Color &color, const Common::Point &dest,
 
 	_shaderFill->use();
 	_shaderFill->setUniform1f("fadeLevel", _fadeLevel);
-	_shaderFill->setUniform1f("snapToGrid", _snapToGrid);
+	_shaderFill->setUniform("snapToGrid", _snapToGrid ? 1 : 0);
 	_shaderFill->setUniform("verOffsetXY", normalizeOriginalCoordinates(dest.x, dest.y));
 	if (_noScalingOverride) {
 		_shaderFill->setUniform("verSizeWH", normalizeCurrentCoordinates(width, height));
