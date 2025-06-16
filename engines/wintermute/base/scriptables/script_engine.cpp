@@ -220,7 +220,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 	}
 
 	// needs to be compiled?
-	if (FROM_LE_32(*(uint32 *)buffer) == SCRIPT_MAGIC) {
+	if (READ_LE_UINT32(buffer) == SCRIPT_MAGIC) {
 		compBuffer = buffer;
 		compSize = size;
 	} else {

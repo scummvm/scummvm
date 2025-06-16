@@ -478,19 +478,7 @@ uint32 ScScript::getDWORD() {
 //////////////////////////////////////////////////////////////////////////
 double ScScript::getFloat() {
 	_scriptStream->seek((int32)_iP);
-	byte buffer[8];
-	_scriptStream->read(buffer, 8);
-
-#ifdef SCUMM_BIG_ENDIAN
-	// TODO: For lack of a READ_LE_UINT64
-	SWAP(buffer[0], buffer[7]);
-	SWAP(buffer[1], buffer[6]);
-	SWAP(buffer[2], buffer[5]);
-	SWAP(buffer[3], buffer[4]);
-#endif
-
-	double ret;
-	memcpy(&ret, buffer, sizeof(double));
+	double ret = _scriptStream->readDoubleLE();
 	_iP += 8; // Hardcode the double-size used originally.
 	return ret;
 }
