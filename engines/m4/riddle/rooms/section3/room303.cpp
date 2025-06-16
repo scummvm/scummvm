@@ -303,7 +303,7 @@ void Room303::init() {
 
 void Room303::daemon() {
 	int frame;
-
+	
 	switch (_G(kernel).trigger) {
 	case 3:
 		sendWSMessage_120000(4);
@@ -532,7 +532,7 @@ void Room303::daemon() {
 
 	case 124:
 		_G(globals)[GLB_TEMP_1] = 0;
-		_G(globals)[GLB_TEMP_2] = (int)-1 << 16;
+		_G(globals)[GLB_TEMP_2] = (int)-1 & ~0xFFFF;
 		sendWSMessage(0x200000, 0, _priestTalk, 0, nullptr, 1);
 		break;
 
@@ -1644,7 +1644,7 @@ void Room303::parser() {
 		_ripGesture = series_load("RIP HNDS HIPS GEST TALK");
 		player_update_info();
 		ws_hide_walker();
-
+		
 		_ripsh2 = series_show("ripsh2", 0xf00, 128, -1, -1, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
