@@ -34,9 +34,7 @@ GoldArchiveManager::GoldArchiveManager(LastExpressEngine *engine) : ArchiveManag
 }
 
 GoldArchiveManager::~GoldArchiveManager() {
-	ArchiveManager::~ArchiveManager();
 }
-
 
 bool GoldArchiveManager::lockCD(int32 index) {
 	return true;
