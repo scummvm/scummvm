@@ -577,6 +577,18 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		if (_shouldQuit)
 			return;
 
+		// WORKAROUND: The original Java codebase did not have this check and
+		// called gameOver() only in onMove() method. However, this leads to a crash in
+		// Gui::redraw(), when _engine->_world->_player->_currentScene is equal to _world->_storageScene.
+		// The crash happens because storage scene's _designBounds member is NULL.
+		// Therefore, to fix this, we check and call gameOver() here if needed.
+		if (_world->_player->_currentScene == _world->_storageScene) {
+			if (!_isGameOver) {
+				_isGameOver = true;
+				gameOver();
+			}
+		}
+
 		redrawScene();
 		_temporarilyHidden = false;
 	} else if (_loopCount == 1) {
