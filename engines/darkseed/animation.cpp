@@ -1328,7 +1328,7 @@ void Animation::libAnim(bool pickingUpReservedBook) {
 void Animation::wonGame() {
 	_player->loadAnimations("libparts.nsp");
 	g_engine->_room->loadLocationSprites("libmorph.nsp");
-	g_engine->showFullscreenPic("lib_babe.pic");
+	g_engine->showFullscreenPic(g_engine->isCdVersion() ? "lib_babe.pic" : "lib-babe.pic");
 
 	g_engine->_cursor.showCursor(false);
 	g_engine->_console->printTosText(925);
