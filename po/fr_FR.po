@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-15 23:55+0000\n"
-"PO-Revision-Date: 2025-06-14 09:53+0000\n"
-"Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
+"PO-Revision-Date: 2025-06-16 09:33+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -11466,7 +11466,7 @@ msgstr "Touche Haut"
 
 #: engines/scumm/help.cpp:220
 msgid "Highlight prev dialogue"
-msgstr "Sélectionner le dialogue précédent"
+msgstr "Surligner le dialogue précédent"
 
 #: engines/scumm/help.cpp:221
 msgid "KeyDown"
@@ -11474,7 +11474,7 @@ msgstr "Touche Bas"
 
 #: engines/scumm/help.cpp:221
 msgid "Highlight next dialogue"
-msgstr "Sélectionner le dialogue suivant"
+msgstr "Surligner le dialogue suivant"
 
 #: engines/scumm/help.cpp:229
 msgid "Object"
@@ -12262,40 +12262,28 @@ msgstr ""
 "auto"
 
 #: engines/sludge/keymapper_tables.h:34
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Debug keymappings"
-msgstr "Touches par défaut"
+msgstr "Conf. des touches de débuggage"
 
 #: engines/sludge/keymapper_tables.h:35
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Menu keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches des menus"
 
 #: engines/sludge/keymapper_tables.h:36
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Minigame keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches des mini-jeux"
 
 #: engines/sludge/keymapper_tables.h:46
-#, fuzzy
-#| msgid "Change game options"
 msgid "Change action"
-msgstr "Change les options du jeu"
+msgstr "Changer l'action"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Speed up dialogue"
-msgstr "Sélectionner la réplique"
+msgstr "Accélérer les dialogues"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down virtual mouse"
 msgid "Slow down dialogue"
-msgstr "Ralentir la souris virtuelle"
+msgstr "Ralentir les dialogues"
 
 #: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
 #: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
@@ -12303,95 +12291,71 @@ msgstr "Ralentir la souris virtuelle"
 #: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
 #: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
 #: engines/sludge/keymapper_tables.h:529
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Move / Interact"
-msgstr "Se déplacer / Sélectionner"
+msgstr "Se déplacer / Interagir"
 
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Load auto save"
-msgstr "Sauvegarde auto sans nom"
+msgstr "Charger la sauvegarde auto"
 
 #: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
 msgid "Load save"
-msgstr "Charger"
+msgstr "Charger la sauvegarde"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
 msgid "DEBUG: Show floor"
-msgstr ""
+msgstr "DEBUG : Afficher le sol"
 
 #: engines/sludge/keymapper_tables.h:205 engines/sludge/keymapper_tables.h:440
 #: engines/sludge/keymapper_tables.h:547
 msgid "DEBUG: Show boxes"
-msgstr ""
+msgstr "DEBUG : Afficher les boites"
 
 #: engines/sludge/keymapper_tables.h:237
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory / Examine"
-msgstr "Inventaire"
+msgstr "Inventaire / Examiner"
 
 #: engines/sludge/keymapper_tables.h:281
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Examine / Skip dialogue"
-msgstr "Passer les dialogues"
+msgstr "Examiner / Passer les dialogues"
 
 #: engines/sludge/keymapper_tables.h:287 engines/sludge/keymapper_tables.h:398
 #: engines/sludge/keymapper_tables.h:522
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Pause / Skip cutscene"
-msgstr "Passer la séquence"
+msgstr "Pause / Passer la séquence"
 
 #: engines/sludge/keymapper_tables.h:328
 msgid "Smell"
-msgstr ""
+msgstr "Sentir"
 
 #: engines/sludge/keymapper_tables.h:338
 msgid "Consume"
-msgstr ""
+msgstr "Consumer"
 
 #: engines/sludge/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast earth spell"
-msgstr "Lancer un Sort"
+msgstr "Lancer Sort de terre"
 
 #: engines/sludge/keymapper_tables.h:367
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast air spell"
-msgstr "Lancer un Sort"
+msgstr "Lancer Sort d'air"
 
 #: engines/sludge/keymapper_tables.h:373
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast fire spell"
-msgstr "Lancer un Sort"
+msgstr "Lancer Sort de feu"
 
 #: engines/sludge/keymapper_tables.h:379
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast water spell"
-msgstr "Lancer un Sort"
+msgstr "Lancer Sort d'eau"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip dialogue"
-msgstr "Réplique suivante"
+msgstr "Se déplacer / Interagir / Passer les dialogues"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Inventory / Skip dialogue"
-msgstr "Passer les dialogues"
+msgstr "Inventaire / Passer les dialogues"
 
 #: engines/sludge/keymapper_tables.h:573
 msgid "Pause Game"
@@ -13407,14 +13371,10 @@ msgid "Transfer Character"
 msgstr "Transfert de personnage"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Combat"
-msgstr "Act./Désact. Combat"
+msgstr "Combattre"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Menu"
 msgstr "Menu du jeu"
 
@@ -13424,71 +13384,53 @@ msgstr "Reculer"
 
 #: engines/ultima/ultima8/metaengine.cpp:53
 #: engines/ultima/ultima8/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move up"
 msgid "Move Up"
 msgstr "Se déplacer vers le haut"
 
 #: engines/ultima/ultima8/metaengine.cpp:54
 #: engines/ultima/ultima8/metaengine.cpp:109
-#, fuzzy
-#| msgid "Move down"
 msgid "Move Down"
 msgstr "Se déplacer vers le bas"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Highlight Items"
-msgstr "Sélectionner le dialogue suivant"
+msgstr "Surligner les items"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Use Bedroll"
-msgstr ""
+msgstr "Utiliser le sac de couchage"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Backspace"
 msgid "Use Backpack"
-msgstr "Retour arrière"
+msgstr "Utiliser la besace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
-#, fuzzy
-#| msgid "Use RGB rendering"
 msgid "Use Keyring"
-msgstr "Utiliser le rendu RGB"
+msgstr "Utiliser le trousseau de clés"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
-#, fuzzy
-#| msgid "Open map"
 msgid "Open Minimap"
-msgstr "Ouvrir la carte"
+msgstr "Ouvrir la mini-carte"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
 msgid "Use Recall"
-msgstr ""
+msgstr "Utiliser le rappel"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Open Inventory"
 msgstr "Ouvrir l'inventaire"
 
 #: engines/ultima/ultima8/metaengine.cpp:70
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Gumps"
-msgstr "Fermer popup"
+msgstr "Fermer la fenêtre active"
 
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Jump (fake both-button-click)"
-msgstr ""
+msgstr "Sauter (simule \"clic gauche+clic droit\")"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
-#, fuzzy
-#| msgid "Side Step"
 msgid "Step"
-msgstr "Pas de côté"
+msgstr "Marcher"
 
 #: engines/ultima/ultima8/metaengine.cpp:78
 #, fuzzy
