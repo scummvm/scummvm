@@ -43,6 +43,7 @@ enum AssetType {
 	kAssetTypeSprite = 0x000e, // SPR
 	kAssetTypeLKZazu = 0x000f,
 	kAssetTypeLKConstellations = 0x0010,
+	kAssetTypeDocument = 0x0011,
 	kAssetTypeImageSet = 0x001d,
 	kAssetTypeCursor = 0x000c, // CSR
 	kAssetTypePrinter = 0x0019, // PRT

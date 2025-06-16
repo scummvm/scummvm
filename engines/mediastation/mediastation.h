@@ -82,13 +82,14 @@ public:
 
 	void setPalette(Asset *palette);
 	void registerAsset(Asset *assetToAdd);
+	void scheduleScreenBranch(uint screenId);
+	void scheduleContextRelease(uint contextId);
 
 	Asset *getAssetById(uint assetId);
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
 
-	ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args);
 	ScriptValue callBuiltInFunction(BuiltInFunction function, Common::Array<ScriptValue> &args);
 	Common::RandomSource _randomSource;
 

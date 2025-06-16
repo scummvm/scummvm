@@ -513,15 +513,7 @@ ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount)
 	ScriptValue returnValue;
 	switch (target.getType()) {
 	case kScriptValueTypeAssetId: {
-		if (target.asAssetId() == 1) {
-			// This is a "document" method that we need to handle specially.
-			// The document (@doc) accepts engine-level methods like changing the
-			// active screen.
-			// HACK: This is so we don't have to implement a separate document class
-			// just to house these methods. Rather, we just call in the engine.
-			returnValue = g_engine->callMethod(method, args);
-			return returnValue;
-		} else if (target.asAssetId() == 0) {
+		if (target.asAssetId() == 0) {
 			// It seems to be valid to call a method on a null asset ID, in
 			// which case nothing happens. Still issue warning for traceability.
 			warning("Attempt to call method on a null asset ID");

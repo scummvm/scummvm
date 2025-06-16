@@ -3,6 +3,7 @@ MODULE := engines/mediastation
 MODULE_OBJS = \
 	asset.o \
 	assets/canvas.o \
+	assets/document.o \
 	assets/font.o \
 	assets/hotspot.o \
 	assets/image.o \

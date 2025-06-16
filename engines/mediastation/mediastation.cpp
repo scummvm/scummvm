@@ -28,6 +28,7 @@
 #include "mediastation/boot.h"
 #include "mediastation/context.h"
 #include "mediastation/asset.h"
+#include "mediastation/assets/document.h"
 #include "mediastation/assets/movie.h"
 #include "mediastation/assets/screen.h"
 #include "mediastation/assets/palette.h"
@@ -66,6 +67,9 @@ MediaStationEngine::~MediaStationEngine() {
 		delete it->_value;
 	}
 	_loadedContexts.clear();
+
+	// Delete the document actor. The rest are deleted from their contexts.
+	delete _assets[0];
 }
 
 Asset *MediaStationEngine::getAssetById(uint assetId) {
@@ -148,6 +152,9 @@ Common::Error MediaStationEngine::run() {
 		error("MediaStationEngine::run(): Attempted to use unsupported platform %s", Common::getPlatformDescription(getPlatform()));
 	}
 	_cursor->showCursor();
+
+	Document *document = new Document;
+	_assets.push_back(document);
 
 	if (ConfMan.hasKey("entry_context")) {
 		// For development purposes, we can choose to start at an arbitrary context
@@ -389,31 +396,12 @@ void MediaStationEngine::registerAsset(Asset *assetToAdd) {
 	}
 }
 
-ScriptValue MediaStationEngine::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	ScriptValue returnValue;
+void MediaStationEngine::scheduleScreenBranch(uint screenId) {
+	_requestedScreenBranchId = screenId;
+}
 
-	switch (methodId) {
-	case kBranchToScreenMethod: {
-		assert(args.size() >= 1);
-		if (args.size() > 1) {
-			// TODO: Figure out what the rest of the args can be.
-			warning("MediaStationEngine::callMethod(): branchToScreen got more than one arg");
-		}
-		uint32 contextId = args[0].asAssetId();
-		_requestedScreenBranchId = contextId;
-		return returnValue;
-	}
-
-	case kReleaseContextMethod: {
-		assert(args.size() == 1);
-		uint32 contextId = args[0].asAssetId();
-		_requestedContextReleaseId.push_back(contextId);
-		return returnValue;
-	}
-
-	default:
-		error("MediaStationEngine::callMethod(): Got unimplemented method ID %s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
-	}
+void MediaStationEngine::scheduleContextRelease(uint contextId) {
+	_requestedContextReleaseId.push_back(contextId);
 }
 
 void MediaStationEngine::doBranchToScreen() {
