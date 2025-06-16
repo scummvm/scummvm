@@ -223,8 +223,8 @@ public:
 	Rect32 _boundingRect;
 	BaseObject *_owner{};
 
-	bool parseAnim(byte *buffer);
-	bool parseEvent(AnimationSet *anim, byte *buffer);
+	bool parseAnim(char *buffer);
+	bool parseEvent(AnimationSet *anim, char *buffer);
 	AnimationSet *getAnimationSetByName(const Common::String &name);
 
 	bool stopAnim(int channel, uint32 transitionTime);
