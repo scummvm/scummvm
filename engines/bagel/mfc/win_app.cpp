@@ -48,7 +48,8 @@ CWinApp::CWinApp(const char *appName) :
 		CWinThread(), EventLoop(m_pMainWnd),
 		_cursors(_resources),
 		_fonts(_resources),
-		_defaultPen(PS_SOLID, 1, 0) {
+		_defaultPen(PS_SOLID, 1, 0),
+		_defaultBrush(RGB(255, 255, 255)) {
 	assert(!_activeApp);    // Only one app per engine
 	_activeApp = this;
 	Libs::Event::init();

@@ -216,7 +216,7 @@ void CDC::Ellipse(int x1, int y1, int x2, int y2) {
 }
 
 void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
-	error("TODO: CDC::FrameRect");
+	impl()->frameRect(*lpRect, pBrush);
 }
 
 void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
@@ -512,11 +512,11 @@ CDC::Impl::Impl() {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	_defaultBitmap.create(1, 1, format);
 
-	// Set up the system font as default
-	_font = AfxGetApp()->getDefaultFont();
-
-	// Default pen
-	_pen = AfxGetApp()->_defaultPen.m_hObject;
+	// Defaults
+	CWinApp *app = AfxGetApp();
+	_font = app->getDefaultFont();
+	_pen = app->getDefaultPen();
+	_brush = app->getDefaultBrush();
 }
 
 CDC::Impl::Impl(HDC srcDc) {
@@ -554,9 +554,14 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 		_pen = pen;
 		return result;
 	}
-#if 0
-	HBRUSH brush = dynamic_cast<HBRUSH>(gdiObj);
-#endif
+
+	CBrush::Impl *brush = dynamic_cast<CBrush::Impl *>(obj);
+	if (brush) {
+		HBRUSH result = _brush;
+		_brush = brush;
+		return result;
+	}
+
 	error("Unsupported gdi object");
 	return nullptr;
 }
@@ -635,9 +640,17 @@ COLORREF CDC::Impl::GetNearestColor(COLORREF crColor) const {
 }
 
 void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
-	assert(_bitmap);
 	static_cast<CBitmap::Impl *>(_bitmap)->fillRect(r,
 		GetNearestColor(crColor));
+}
+
+void CDC::Impl::frameRect(const Common::Rect &r, CBrush *brush) {
+	CBrush::Impl *b = (CBrush::Impl *)brush->m_hObject;
+	assert(b->_type == HS_HORIZONTAL ||
+		b->_type == HS_VERTICAL);
+
+	static_cast<CBitmap::Impl *>(_bitmap)->frameRect(r,
+		GetNearestColor(b->getColor()));
 }
 
 void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,

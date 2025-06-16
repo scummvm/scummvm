@@ -626,10 +626,11 @@ public:
 
 	public:
 		HBITMAP _bitmap = &_defaultBitmap;
-		HPALETTE _palette = nullptr;
 		HPEN _pen;
-		CPalette *_cPalette = nullptr;
 		HFONT _font;
+		HBRUSH _brush;
+		HPALETTE _palette = nullptr;
+		CPalette *_cPalette = nullptr;
 
 	public:
 		Impl();
@@ -648,6 +649,7 @@ public:
 		COLORREF GetNearestColor(COLORREF crColor) const;
 
 		void fillRect(const Common::Rect &r, COLORREF crColor);
+		void frameRect(const Common::Rect &r, CBrush *brush);
 		void bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 			int xSrc, int ySrc, DWORD dwRop);
 		void stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
@@ -1545,6 +1547,7 @@ public:
 	CWnd *m_pMainWnd = nullptr;
 	Graphics::Palette _palette;
 	CPen _defaultPen;
+	CBrush _defaultBrush;
 	MSG _currentMessage;
 
 public:
@@ -1634,6 +1637,12 @@ public:
 	}
 	HFONT getDefaultFont() {
 		return _fonts.getDefaultFont();
+	}
+	HPEN getDefaultPen() const {
+		return (HPEN)_defaultPen.m_hObject;
+	}
+	HBRUSH getDefaultBrush() {
+		return (HBRUSH)_defaultBrush.m_hObject;
 	}
 
 	LPCSTR AfxRegisterWndClass(UINT nClassStyle,
