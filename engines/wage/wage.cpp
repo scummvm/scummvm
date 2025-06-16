@@ -357,10 +357,10 @@ void WageEngine::aboutDialog() {
 
 	buttons.push_back(new Graphics::MacDialogButton("OK", 191, 167, 68, 28));
 
-	Graphics::MacText aboutMessage(_world->_aboutMessage, _gui->_wm, _gui->_consoleWindow->getTextWindowFont(), Graphics::kColorBlack,
+	Graphics::MacText aboutMessage(Common::U32String(_world->_aboutMessage, Common::kMacRoman), _gui->_wm, _gui->_consoleWindow->getTextWindowFont(), Graphics::kColorBlack,
 											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
 
-	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n© Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.");
+	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n\xA9 Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.", Common::kMacRoman);
 
 	sayText(_world->_aboutMessage);
 	sayText(disclaimer, Common::TextToSpeechManager::QUEUE);
