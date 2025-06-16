@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -7037,7 +7037,6 @@ msgstr "राइट क्लिक इंटरैक्ट"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr ""
 
@@ -12509,7 +12508,7 @@ msgid "Transfer Character"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
+msgid "Draw Weapon / Combat"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
@@ -12549,7 +12548,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "बैकस्पेस"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -12568,32 +12567,29 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "नीचे देखो"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close"
-msgid "Close Gumps"
-msgstr "बंद करें"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-msgid "Step"
-msgstr "दाहिने"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-msgid "Next Weapon"
+msgid "Cycle through Weapon Inventory"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-msgid "Next Inventory Item"
+msgid "Cycle through Item Inventory"
 msgstr "नीचे देखो"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
@@ -12601,7 +12597,7 @@ msgid "Use Inventory Item"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -12619,7 +12615,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "एक थीम सेलेक्ट करें"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -12631,8 +12627,12 @@ msgstr "पिछला (P)"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+msgid "Fire Weapon"
+msgstr ""
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -13603,6 +13603,19 @@ msgstr ""
 "हैं। आपको अपने चुने पैकेज के सारे फॉन्ट की आवश्यकता होगी, यानी की Liberation fonts से "
 "LiberationMono, LiberationSans और LiberationSerif, या GNU FreeFont से "
 "FreeMono, FreeSans और FreeSerif."
+
+#, fuzzy
+#~| msgid "Close"
+#~ msgid "Close Gumps"
+#~ msgstr "बंद करें"
+
+#, fuzzy
+#~ msgid "Step"
+#~ msgstr "दाहिने"
+
+#, fuzzy
+#~ msgid "Next Inventory Item"
+#~ msgstr "नीचे देखो"
 
 #~ msgctxt "Options menu"
 #~ msgid "Language selection"

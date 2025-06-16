@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -7375,7 +7375,6 @@ msgstr "Interakce"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 #, fuzzy
 msgid "Attack"
 msgstr "Útok 1"
@@ -13131,9 +13130,8 @@ msgid "Transfer Character"
 msgstr "Zaměnit znaky"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-msgid "Combat"
-msgstr "Povolit zachycování myši"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13169,7 +13167,7 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Vzad"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13189,36 +13187,31 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open/Close Inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Otevřít/Zavřít Inventář"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close"
-msgid "Close Gumps"
-msgstr "Zavřít"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Slide Left"
-msgid "Step"
-msgstr "Přesunout se Doleva"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-msgid "Next Weapon"
-msgstr "~P~ředchozí"
+msgid "Cycle through Weapon Inventory"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Animované položky inventáře"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Přepínat mezi režimy roztažení"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13227,7 +13220,7 @@ msgid "Use Inventory Item"
 msgstr "Inventář"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13246,7 +13239,7 @@ msgstr "~Z~ahodit Stránku"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Vyberte Vzhled"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13258,8 +13251,13 @@ msgstr "~P~ředchozí"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+msgid "Fire Weapon"
+msgstr "~P~ředchozí"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14283,6 +14281,25 @@ msgid ""
 "from the font package you choose, i.e., LiberationMono, LiberationSans and "
 "LiberationSerif."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Combat"
+#~ msgstr "Povolit zachycování myši"
+
+#, fuzzy
+#~| msgid "Close"
+#~ msgid "Close Gumps"
+#~ msgstr "Zavřít"
+
+#, fuzzy
+#~| msgid "Slide Left"
+#~ msgid "Step"
+#~ msgstr "Přesunout se Doleva"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Animované položky inventáře"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "Nelze nalézt žádné jádro schopné vybranou hru spustit"

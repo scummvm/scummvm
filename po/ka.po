@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2025-06-13 14:35+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -6875,7 +6875,6 @@ msgstr "საუბარი/ურთიერთობა"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "შეტევა"
 
@@ -12052,10 +12051,8 @@ msgid "Transfer Character"
 msgstr "გმირის გადაყვანა"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "ბრძოლის გადართვა"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -12094,7 +12091,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Backspace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -12116,37 +12113,31 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "ინვენტარის გახსნა"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "მხტუნარას დახურვა"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Side Step"
-msgid "Step"
-msgstr "ნაბიჯი გვერდით"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "შემდეგი ქმედება"
+msgid "Cycle through Weapon Inventory"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "ანიმირებული ინვენტარის ელემენტები"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "გადართვა გაწელვის რეჟიმებს შორის"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -12155,7 +12146,7 @@ msgid "Use Inventory Item"
 msgstr "ინვენტარი"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -12175,7 +12166,7 @@ msgstr "გვერდის დაგდება"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "აირჩიეთ თემა"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -12188,8 +12179,14 @@ msgstr "ქმედება"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "შემდეგი ქმედება"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -13122,6 +13119,26 @@ msgid ""
 "from the font package you choose, i.e., LiberationMono, LiberationSans and "
 "LiberationSerif."
 msgstr ""
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "ბრძოლის გადართვა"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "მხტუნარას დახურვა"
+
+#, fuzzy
+#~| msgid "Side Step"
+#~ msgid "Step"
+#~ msgstr "ნაბიჯი გვერდით"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "ანიმირებული ინვენტარის ელემენტები"
 
 #~ msgid "Show memory consumption"
 #~ msgstr "მეხსიერების ხარჯვის ჩვენება"

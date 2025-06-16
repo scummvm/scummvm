@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -7309,7 +7309,6 @@ msgstr "Interagir"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Atacar"
 
@@ -13081,10 +13080,8 @@ msgid "Transfer Character"
 msgstr "Transferir Personagem"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "Ativar/desativar combate"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13121,7 +13118,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backend"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Sistema"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13140,37 +13137,31 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open/Close Inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Abrir/Fechar inventário"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close"
-msgid "Close Gumps"
-msgstr "Fechar"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Slide Left"
-msgid "Step"
-msgstr "Deslizar à esquerda"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "Ação seguinte"
+msgid "Cycle through Weapon Inventory"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Itens do inventário animados"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Percorrer modos de redimensionamento"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13178,7 +13169,7 @@ msgid "Use Inventory Item"
 msgstr "Mostrar inventário"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13197,7 +13188,7 @@ msgstr "Primeira página"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Selecione um tema"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13210,8 +13201,14 @@ msgstr "Ação seguinte"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "Ação seguinte"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14192,6 +14189,26 @@ msgid ""
 "from the font package you choose, i.e., LiberationMono, LiberationSans and "
 "LiberationSerif."
 msgstr ""
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "Ativar/desativar combate"
+
+#, fuzzy
+#~| msgid "Close"
+#~ msgid "Close Gumps"
+#~ msgstr "Fechar"
+
+#, fuzzy
+#~| msgid "Slide Left"
+#~ msgid "Step"
+#~ msgstr "Deslizar à esquerda"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Itens do inventário animados"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr ""

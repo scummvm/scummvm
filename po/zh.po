@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -6956,7 +6956,6 @@ msgstr "互动"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr ""
 
@@ -12398,7 +12397,7 @@ msgid "Transfer Character"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
+msgid "Draw Weapon / Combat"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
@@ -12437,7 +12436,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "退格"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -12455,30 +12454,28 @@ msgid "Use Recall"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "关闭弹出窗口"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-msgid "Step"
+msgid "Careful Step"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-msgid "Next Weapon"
+msgid "Cycle through Weapon Inventory"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-msgid "Next Inventory Item"
+msgid "Cycle through Item Inventory"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:81
@@ -12486,7 +12483,7 @@ msgid "Use Inventory Item"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -12504,7 +12501,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select shader"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "选择着色器"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -12517,8 +12514,12 @@ msgstr "無偵測到此語言"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+msgid "Fire Weapon"
+msgstr ""
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -13475,6 +13476,11 @@ msgstr ""
 "载 Liberation Fonts 或 GNU FreeFont 这两套字体包，并二选一。你会需要用到其中"
 "任意一套中的全部字体，也就是：LiberationMono，LiberationSans 和"
 "LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "关闭弹出窗口"
 
 #, fuzzy
 #~| msgid "Special sound effects volume"

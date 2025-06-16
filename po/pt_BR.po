@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -7661,7 +7661,6 @@ msgstr "Falar/Interagir"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Atacar"
 
@@ -13364,10 +13363,8 @@ msgid "Transfer Character"
 msgstr "Transferir Personagem"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "Alternar Modo de Combate"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13406,7 +13403,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Retroceder"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13428,37 +13425,33 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Abrir inventário"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "Fechar caixa de diálogo"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Side Step"
-msgid "Step"
-msgstr "Passo Lateral"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
 #, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "Próxima ação"
+#| msgid "Cycle back through inventory cursor items"
+msgid "Cycle through Weapon Inventory"
+msgstr "Voltar para os itens anteriores no inventário usando o cursor"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Inventário de itens animado"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Percorrer entre os modos de redimensionamento"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13467,7 +13460,7 @@ msgid "Use Inventory Item"
 msgstr "Inventário"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13487,7 +13480,7 @@ msgstr "Soltar página"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Selecione um Tema"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13500,10 +13493,16 @@ msgstr "Próxima ação"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "Próxima ação"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
 #, fuzzy
 #| msgid "Camera moves with Silencer"
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "Câmera acompanha Jogador"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14481,6 +14480,26 @@ msgstr ""
 "do GNU. Você precisará de todas as fontes do pacote de fontes que você "
 "escolher, ex., LiberationMono, LiberationSans e LiberationSerif, ou "
 "FreeMono, FreeSans e FreeSerif respectivamente."
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "Alternar Modo de Combate"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "Fechar caixa de diálogo"
+
+#, fuzzy
+#~| msgid "Side Step"
+#~ msgid "Step"
+#~ msgstr "Passo Lateral"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Inventário de itens animado"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2025-06-16 18:26+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7486,7 +7486,6 @@ msgstr "대화/소통"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "공격"
 
@@ -12961,8 +12960,8 @@ msgid "Transfer Character"
 msgstr "캐릭터 전송"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
-msgstr "전투"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -12991,7 +12990,9 @@ msgid "Use Bedroll"
 msgstr "침낭 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-msgid "Use Backpack"
+#, fuzzy
+#| msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "백팩 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13007,36 +13008,44 @@ msgid "Use Recall"
 msgstr "리콜 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-msgid "Open Inventory"
+#, fuzzy
+#| msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "인벤토리 열기"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-msgid "Close Gumps"
-msgstr "검프 닫기"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr "점프 (가짜 두 버튼 클릭)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-msgid "Step"
-msgstr "단계"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-msgid "Next Weapon"
-msgstr "다음 무기"
+#, fuzzy
+#| msgid "Cycle back through inventory cursor items"
+msgid "Cycle through Weapon Inventory"
+msgstr "인벤토리 커서 아이템 뒤로 순환"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-msgid "Next Inventory Item"
-msgstr "다음 인벤토리 아이템"
+#, fuzzy
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "늘리기 모드간 순환"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "인벤토리 아이템 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+#, fuzzy
+#| msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr "의료 키트 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13052,7 +13061,9 @@ msgid "Drop Weapon"
 msgstr "무기 버리기"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-msgid "Select Item"
+#, fuzzy
+#| msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "아이템 선택"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13063,8 +13074,16 @@ msgstr "선택 사용"
 msgid "Grab Items"
 msgstr "아이템 획득"
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next Weapon"
+msgid "Fire Weapon"
+msgstr "다음 무기"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+#, fuzzy
+#| msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "소음기에 카메라 초점 맞추기"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14005,6 +14024,18 @@ msgstr ""
 "합니다. 또는 Liberation Fonts 패키지를 다운로드할 수 있습니다. 선택한 글꼴 패"
 "키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, LiberationSerif가 필요합"
 "니다."
+
+#~ msgid "Combat"
+#~ msgstr "전투"
+
+#~ msgid "Close Gumps"
+#~ msgstr "검프 닫기"
+
+#~ msgid "Step"
+#~ msgstr "단계"
+
+#~ msgid "Next Inventory Item"
+#~ msgstr "다음 인벤토리 아이템"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "선택한 게임을 실행할 수 있는 엔진을 찾을 수 없음"

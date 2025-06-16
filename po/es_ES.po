@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2025-06-16 09:33+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7680,7 +7680,6 @@ msgstr "Hablar/Interactuar"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Atacar"
 
@@ -13327,8 +13326,8 @@ msgid "Transfer Character"
 msgstr "Transferir personaje"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
-msgstr "Combatir"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -13357,7 +13356,9 @@ msgid "Use Bedroll"
 msgstr "Usar petate"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-msgid "Use Backpack"
+#, fuzzy
+#| msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Usar mochila"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13373,36 +13374,44 @@ msgid "Use Recall"
 msgstr "Usar memoria"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-msgid "Open Inventory"
+#, fuzzy
+#| msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Abrir inventario"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-msgid "Close Gumps"
-msgstr "Cerrar todos los GUMP"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr "Saltar (simular pulsar ambos botones)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-msgid "Step"
-msgstr "Dar un paso"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-msgid "Next Weapon"
-msgstr "Siguiente arma"
+#, fuzzy
+#| msgid "Cycle back through inventory cursor items"
+msgid "Cycle through Weapon Inventory"
+msgstr "Objeto anterior del cursor de inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-msgid "Next Inventory Item"
-msgstr "Siguiente objeto del inventario"
+#, fuzzy
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Cambiar modo de ajuste"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "Usar objeto del inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+#, fuzzy
+#| msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr "Usar Medikit"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13418,7 +13427,9 @@ msgid "Drop Weapon"
 msgstr "Tirar arma"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-msgid "Select Item"
+#, fuzzy
+#| msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Seleccionar objeto"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13429,8 +13440,16 @@ msgstr "Usar selección"
 msgid "Grab Items"
 msgstr "Tomar objetos"
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next Weapon"
+msgid "Fire Weapon"
+msgstr "Siguiente arma"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+#, fuzzy
+#| msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "Centrar cámara en Silenciador"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14385,6 +14404,18 @@ msgstr ""
 "puedes descargar el paquete de fuentes Liberation. Necesitarás todas las "
 "fuentes del paquete que prefieras, por ejemplo, LiberationMono, "
 "LiberationSans y LiberationSerif."
+
+#~ msgid "Combat"
+#~ msgstr "Combatir"
+
+#~ msgid "Close Gumps"
+#~ msgstr "Cerrar todos los GUMP"
+
+#~ msgid "Step"
+#~ msgstr "Dar un paso"
+
+#~ msgid "Next Inventory Item"
+#~ msgstr "Siguiente objeto del inventario"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "No se ha encontrado ningún motor capaz de ejecutar este juego"

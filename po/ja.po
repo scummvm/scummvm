@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2025-05-01 16:19+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -7380,7 +7380,6 @@ msgstr "会話/作用"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "攻撃"
 
@@ -13157,10 +13156,8 @@ msgid "Transfer Character"
 msgstr "キャラクターを転送"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "モードの切替"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13199,7 +13196,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "バックスペース"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13221,37 +13218,31 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "インベントリーを開く"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "ポップアップを閉じる"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Side Step"
-msgid "Step"
-msgstr "横ステップ"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "次の行動"
+msgid "Cycle through Weapon Inventory"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "アニメーション化された在庫アイテム"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "ストレッチモードを繰り返し切り替える"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13260,7 +13251,7 @@ msgid "Use Inventory Item"
 msgstr "インベントリー"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13280,7 +13271,7 @@ msgstr "ページをドロップ"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "テーマを選ぶ"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13293,10 +13284,16 @@ msgstr "次の行動"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "次の行動"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
 #, fuzzy
 #| msgid "Camera moves with Silencer"
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "カメラをSilencerに追随させる"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14255,6 +14252,26 @@ msgstr ""
 "使用する場合、Times New Roman、Century Schoolbook、Garamond、Courier New、"
 "Arialが必要です。Liberation Fontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。"
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "モードの切替"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "ポップアップを閉じる"
+
+#, fuzzy
+#~| msgid "Side Step"
+#~ msgid "Step"
+#~ msgstr "横ステップ"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "アニメーション化された在庫アイテム"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "選択されたゲームに対応するエンジンが見つかりません"

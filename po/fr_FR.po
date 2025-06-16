@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2025-06-16 18:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -7681,7 +7681,6 @@ msgstr "Parler/Interagir"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Attaque"
 
@@ -13371,8 +13370,8 @@ msgid "Transfer Character"
 msgstr "Transfert de personnage"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
-msgstr "Combattre"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -13401,7 +13400,9 @@ msgid "Use Bedroll"
 msgstr "Utiliser le sac de couchage"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-msgid "Use Backpack"
+#, fuzzy
+#| msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Utiliser la besace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13417,36 +13418,44 @@ msgid "Use Recall"
 msgstr "Utiliser le rappel"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-msgid "Open Inventory"
+#, fuzzy
+#| msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Ouvrir l'inventaire"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-msgid "Close Gumps"
-msgstr "Fermer la fenêtre active"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr "Sauter (simule \"clic gauche+clic droit\")"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-msgid "Step"
-msgstr "Marcher"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-msgid "Next Weapon"
-msgstr "Arme suivante"
+#, fuzzy
+#| msgid "Cycle back through inventory cursor items"
+msgid "Cycle through Weapon Inventory"
+msgstr "Faire défiler les objets de l'inventaire du bas vers le haut"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-msgid "Next Inventory Item"
-msgstr "Item d'inventaire suivant"
+#, fuzzy
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Changer le mode d'étirement"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "Utiliser l'item d'inventaire"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+#, fuzzy
+#| msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr "Utiliser le kit médical"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13462,7 +13471,9 @@ msgid "Drop Weapon"
 msgstr "Déposer l'arme"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-msgid "Select Item"
+#, fuzzy
+#| msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Sélectionner l'item"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13473,8 +13484,16 @@ msgstr "Utiliser la sélection"
 msgid "Grab Items"
 msgstr "Ramasser les items"
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next Weapon"
+msgid "Fire Weapon"
+msgstr "Arme suivante"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+#, fuzzy
+#| msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "Centrer la caméra sur le Silencer"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14436,6 +14455,18 @@ msgstr ""
 "de polices Liberation . Vous aurez besoin de toutes les polices du paquet de "
 "polices que vous avez choisi, par exemple LiberationMono, LiberationSans et "
 "LiberationSerif."
+
+#~ msgid "Combat"
+#~ msgstr "Combattre"
+
+#~ msgid "Close Gumps"
+#~ msgstr "Fermer la fenêtre active"
+
+#~ msgid "Step"
+#~ msgstr "Marcher"
+
+#~ msgid "Next Inventory Item"
+#~ msgstr "Item d'inventaire suivant"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "Impossible de trouver un moteur pour exécuter le jeu sélectionné"

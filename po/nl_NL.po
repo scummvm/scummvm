@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7317,7 +7317,6 @@ msgstr "Spreek/Interactie"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Aanval"
 
@@ -13212,10 +13211,8 @@ msgid "Transfer Character"
 msgstr "Zet personage over"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "Schakel Vechtmodus in/uit"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13254,7 +13251,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Backspace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13276,37 +13273,32 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open/Close Inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Open/Sluit Inventaris"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "Popup sluiten"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Side Step"
-msgid "Step"
-msgstr "Zijstap"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "Volgende actie"
+msgid "Cycle through Weapon Inventory"
+msgstr ""
 
+# can this be changed into "Could not switch to video mode '%s'"?
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Geanimeerde inventaris"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Loop door uitrekmodi"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13315,7 +13307,7 @@ msgid "Use Inventory Item"
 msgstr "Inventaris"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13335,7 +13327,7 @@ msgstr "Laat pagina vallen"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Selecteer een thema"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13348,10 +13340,16 @@ msgstr "Volgende actie"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "Volgende actie"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
 #, fuzzy
 #| msgid "Camera moves with Silencer"
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "Camera beweegt met Silencer mee"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14318,6 +14316,26 @@ msgstr ""
 "alle lettertypes van de collectie nodig die u selecteert, dus "
 "LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
 "FreeSerif respectievelijk."
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "Schakel Vechtmodus in/uit"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "Popup sluiten"
+
+#, fuzzy
+#~| msgid "Side Step"
+#~ msgid "Step"
+#~ msgstr "Zijstap"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Geanimeerde inventaris"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr ""

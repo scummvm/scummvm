@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7618,7 +7618,6 @@ msgstr "Beszélés/Interakció"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Támadás"
 
@@ -13267,10 +13266,8 @@ msgid "Transfer Character"
 msgstr "Karakter átadása"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "Harcmodor Váltás"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13309,7 +13306,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Törlésgomb"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13331,37 +13328,33 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Felszerelés megnyitása"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "Felugró ablak bezárása"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Side Step"
-msgid "Step"
-msgstr "Oldallépés"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
 #, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "Következő művelet"
+#| msgid "Cycle back through inventory cursor items"
+msgid "Cycle through Weapon Inventory"
+msgstr "Visszalapozás a felszerelésben"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Animált felszerelés tárgyak"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Kinyújtási módok közötti váltás"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13370,7 +13363,7 @@ msgid "Use Inventory Item"
 msgstr "Felszerelés"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13390,7 +13383,7 @@ msgstr "Oldal eldobás"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Válassz témát"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13403,10 +13396,16 @@ msgstr "Következõ akció"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "Következő művelet"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
 #, fuzzy
 #| msgid "Camera moves with Silencer"
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "Kamera mozgatás hangtompítóval"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14374,6 +14373,26 @@ msgstr ""
 "Schoolbook, Garamond, Courier New és Arial. Esetlegesen letöltheti a "
 "Liberation Betűtípusok csomagot. Minden betűtípusra szükség van a választott "
 "csomagból pl: LiberationMono, LiberationSans és LiberationSerif."
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "Harcmodor Váltás"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "Felugró ablak bezárása"
+
+#, fuzzy
+#~| msgid "Side Step"
+#~ msgid "Step"
+#~ msgstr "Oldallépés"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Animált felszerelés tárgyak"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "Nem található olyan játékmotor ami a választott játékot támogatja"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-16 23:13+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -7417,7 +7417,6 @@ msgstr "Elkarreragin"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 #, fuzzy
 msgid "Attack"
 msgstr "1 erasoa"
@@ -13176,9 +13175,8 @@ msgid "Transfer Character"
 msgstr "Pertsonaia aldatu"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-msgid "Combat"
-msgstr "Mututu/Ez-mututu"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13214,7 +13212,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Ezabatu"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13233,36 +13231,30 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Inbentarioa"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "Itxi laster-leihoa"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Slide Left"
-msgid "Step"
-msgstr "Ezkerrera irristatu"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-msgid "Next Weapon"
-msgstr "~A~urrekoa"
+msgid "Cycle through Weapon Inventory"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Inventory"
-msgid "Next Inventory Item"
-msgstr "Inbentarioa"
+msgid "Cycle through Item Inventory"
+msgstr "Ezin izan da aldatu bideo modura : '"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13271,7 +13263,7 @@ msgid "Use Inventory Item"
 msgstr "Inbentarioa"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13290,7 +13282,7 @@ msgstr "Orria ~b~ota"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Gaia aukeratu"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13302,8 +13294,13 @@ msgstr "~A~urrekoa"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+msgid "Fire Weapon"
+msgstr "~A~urrekoa"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14341,6 +14338,25 @@ msgstr ""
 "ditzazkezu. Aukeratutako paketeko letra-tipo guztiak beharko dituzu, hau da, "
 "LiberationMono, LiberationSans eta LiberationSerif, edo FreeMono, FreeSans "
 "eta FreeSerif hurrenez hurren."
+
+#, fuzzy
+#~ msgid "Combat"
+#~ msgstr "Mututu/Ez-mututu"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "Itxi laster-leihoa"
+
+#, fuzzy
+#~| msgid "Slide Left"
+#~ msgid "Step"
+#~ msgstr "Ezkerrera irristatu"
+
+#, fuzzy
+#~| msgid "Inventory"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Inbentarioa"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr ""
