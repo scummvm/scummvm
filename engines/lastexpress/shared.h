@@ -175,6 +175,16 @@ enum SoundDriverFlag : uint {
 	kSoundDriverStarted              = 0x8000
 };
 
+enum MouseFlags : int {
+	kMouseFlagLeftButton  = 0x1,
+	kMouseFlagRightButton = 0x2,
+	kMouseFlagLeftDown    = 0x8,
+	kMouseFlagRightDown   = 0x10,
+	kMouseFlagDoubleClick = 0x20,
+	kMouseFlagLeftUp      = 0x80,
+	kMouseFlagRightUp     = 0x100
+};
+
 enum NisFlags : uint {
 	kNisFlagHasSound            = 0x1,     // Set when a valid NIS sound exists
 	kNisFlagDataChunksAvailable = 0x100,   // Used during initialization and chunk loading
