@@ -16,6 +16,6 @@ void main() {
 		outColor.b = dot(vec3(r, g, b), vec3(0.272, 0.534, 0.131));
 	} else {
 		float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
-		outColor = vec4(vec3(gray), 1.0f);
+		outColor = vec4(vec3(gray), 1.0);
 	}
 }
