@@ -80,19 +80,28 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 	Graphics::WinFont *font = new Graphics::WinFont();
 
 	for (auto &filename : _fontResources) {
-		if (font->loadFromFON(filename, Graphics::WinFontDirEntry(
-			lpszFacename, nHeight))) {
-			Gfx::Font *gfxFont = new Gfx::Font(font, lpszFacename, nHeight);
-			CFont::Impl *f = new CFont::Impl(gfxFont);
+		// FIXME: Windows does some rounding up or down to
+		// the closest size for a given face name if the
+		// requested size isn't available. For now,
+		// for Hodj n Podj, I'll just have a single + 2 fallback
+		for (int h = nHeight; h <= (nHeight + 2); h += 2) {
+			if (font->loadFromFON(filename, Graphics::WinFontDirEntry(
+				lpszFacename, h))) {
+				Gfx::Font *gfxFont = new Gfx::Font(font, lpszFacename, nHeight);
+				CFont::Impl *f = new CFont::Impl(gfxFont);
 
-			// Add to the font cache
-			_fonts.push_back(FontEntry());
-			_fonts.back().set(lpszFacename, nHeight, f);
-			return f;
+				// Add to the font cache
+				_fonts.push_back(FontEntry());
+				_fonts.back().set(lpszFacename, nHeight, f);
+				return f;
+			}
 		}
 	}
 
 	delete font;
+
+	error("Could not locate font %s - size %d",
+		lpszFacename, nHeight);
 	return nullptr;
 }
 
@@ -106,17 +115,11 @@ int Fonts::resIndexOf(const char *filename) const {
 }
 
 HFONT Fonts::getFont(const char *lpszFacename, int nHeight) {
-	for (auto &it : _fonts) {
-		if (it._faceName == lpszFacename &&
-			it._height == nHeight)
-			return (HFONT)it._font;
-	}
-
-	error("Unknown font name - %s", lpszFacename);
+	return createFont(nHeight, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, lpszFacename);
 }
 
 HFONT Fonts::getDefaultFont() {
-	return createFont(12, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
+	return createFont(8, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 }
 
 /*--------------------------------------------*/

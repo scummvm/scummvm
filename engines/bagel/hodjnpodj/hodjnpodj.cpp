@@ -72,7 +72,7 @@ Common::Error HodjNPodjEngine::run() {
 	// Run the game
 
 	Metagame::Frame::CTheApp app;
-	app.addFontResource("msserif.fon");
+	app.addFontResource("meta/msserif.fon");
 	app.addResources("meta/hodjpodj.exe");
 	app.addResources("meta/hnpmeta.dll");
 	app.setDirectory("meta");
