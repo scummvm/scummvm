@@ -717,31 +717,55 @@ COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
 }
 
 BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount) {
-	error("TODO");
+	Graphics::ManagedSurface *dest = getSurface();
+	RECT r;
+	r.left = x;
+	r.top = y;
+	r.right = dest->w;
+	r.bottom = dest->h;
+
+	CString str(lpszString, nCount);
+	drawText(str, &r, DT_SINGLELINE | DT_NOPREFIX);
+	return true;
 }
 
 BOOL CDC::Impl::textOut(int x, int y, const CString &str) {
-	error("TODO");
+	Graphics::ManagedSurface *dest = getSurface();
+	RECT r;
+	r.left = x;
+	r.top = y;
+	r.right = dest->w;
+	r.bottom = dest->h;
+
+	drawText(str, &r, DT_SINGLELINE | DT_NOPREFIX);
+	return true;
 }
 
 BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-	LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
-	error("TODO");
+		LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
+	error("TODO: extTextOut");
 }
 
 BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-	const CString &str, LPINT lpDxWidths) {
-	error("TODO");
+		const CString &str, LPINT lpDxWidths) {
+	error("TODO: extTextOut");
 }
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-	int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
-	error("TODO");
+		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+	Graphics::Font *font = *(CFont::Impl *)_font;
+	Common::String str(lpszString, nCount);
+	assert(!str.contains('\t'));	// TODO: tab support
+	textOut(x, y, str.c_str(), str.size());
+	return x + font->getStringWidth(str);
 }
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
-	int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
-	error("TODO");
+		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+	Graphics::Font *font = *(CFont::Impl *)_font;
+	assert(!str.contains('\t'));	// TODO: tab support
+	textOut(x, y, str);
+	return x + font->getStringWidth(str);
 }
 
 int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
@@ -858,24 +882,38 @@ int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
 }
 
 CSize CDC::Impl::getTextExtent(LPCSTR lpszString, int nCount) const {
-	error("TODO");
+	Common::String str(lpszString, lpszString + nCount);
+	Graphics::Font *font = *(CFont::Impl *)_font;
+
+	CSize s;
+	s.cx = font->getStringWidth(str);
+	s.cy = font->getFontHeight();
+	return s;
 }
 
 CSize CDC::Impl::getTextExtent(const CString &str) const {
-	error("TODO");
+	Graphics::Font *font = *(CFont::Impl *)_font;
+
+	CSize s;
+	s.cx = font->getStringWidth(str);
+	s.cy = font->getFontHeight();
+	return s;
 }
 
 CSize CDC::Impl::getOutputTextExtent(LPCSTR lpszString, int nCount) const {
-	error("TODO");
+	// TODO: Proper implementation that handles tabs, etc.
+	return getTextExtent(lpszString, nCount);
 }
 
 CSize CDC::Impl::getOutputTextExtent(const CString &str) const {
-	error("TODO");
+	// TODO: Proper implementation that handles tabs, etc.
+	return getTextExtent(str);
 }
 
 CSize CDC::Impl::getTabbedTextExtent(LPCSTR lpszString, int nCount,
-	int nTabPositions, LPINT lpnTabStopPositions) const {
-	error("TODO");
+		int nTabPositions, LPINT lpnTabStopPositions) const {
+	// TODO: Proper implementation that handles tabs, etc.
+	return getTextExtent(lpszString, nCount);
 }
 
 CSize CDC::Impl::getTabbedTextExtent(const CString &str,

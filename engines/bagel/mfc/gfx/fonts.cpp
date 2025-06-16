@@ -83,8 +83,8 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		// FIXME: Windows does some rounding up or down to
 		// the closest size for a given face name if the
 		// requested size isn't available. For now,
-		// for Hodj n Podj, I'll just have a single + 2 fallback
-		for (int h = nHeight; h <= (nHeight + 2); h += 2) {
+		// for Hodj n Podj, I'll just have a single - 2 fallback
+		for (int h = nHeight; h >= (nHeight - 2); h -= 2) {
 			if (font->loadFromFON(filename, Graphics::WinFontDirEntry(
 				lpszFacename, h))) {
 				Gfx::Font *gfxFont = new Gfx::Font(font, lpszFacename, nHeight);
