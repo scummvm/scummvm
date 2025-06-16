@@ -68,48 +68,48 @@ void MessageManager::addEvent(int channel, int x, int y, int flags) {
 	if (channel == 3) {
 		_engine->setEventTickInternal(true);
 	} else if (channel == 1) {
-		if ((flags & 1) != 0) {
+		if ((flags & kMouseFlagLeftButton) != 0) {
 			// Originally _engine->mouseSetLeftClicked(true); was called from here,
 			// but it's been moved under the "if" because this lead to fake double
 			// clicks when registering mouse movement events (which are re-paired
 			// with RMOUSE and LMOUSE flags when sent to the engine via this function).
 			if (!_systemEventLeftMouseDown) {
 				_engine->mouseSetLeftClicked(true);
-				flags |= 0x8;
+				flags |= kMouseFlagLeftDown;
 				_systemEventLeftMouseDown = true;
 	
 				if (_doubleClickMaxFrames + _latestTickLeftMousePressed > _engine->getSoundFrameCounter())
-					flags |= (0x20 | 0x8);
+					flags |= (kMouseFlagDoubleClick | kMouseFlagLeftDown);
 	
 				_latestTickLeftMousePressed = _engine->getSoundFrameCounter();
 			}
 		} else {
 			if (_systemEventLeftMouseDown)
-				flags |= 0x80;
+				flags |= kMouseFlagLeftUp;
 	
 			_systemEventLeftMouseDown = false;
 		}
 	
-		if ((flags & 2) != 0) {
+		if ((flags & kMouseFlagRightButton) != 0) {
 			// Originally _engine->mouseSetRightClicked(true); was called from here,
 			// but it's been moved under the "if" because this lead to fake double
 			// clicks when registering mouse movement events (which are re-paired
 			// with RMOUSE and LMOUSE flags when sent to the engine via this function).
 			if (!_systemEventRightMouseDown) {
 				_engine->mouseSetRightClicked(true);
-				flags |= 0x10;
+				flags |= kMouseFlagRightDown;
 				_systemEventRightMouseDown = true;
 			}
 		} else {
 			if (_systemEventRightMouseDown)
-				flags |= 0x100;
+				flags |= kMouseFlagRightUp;
 	
 			_systemEventRightMouseDown = false;
 		}
 
 		// Originally "if (!flags)"; this tames slowdowns when dragging the mouse
 		// with one of the buttons pressed. Hopefully it doesn't break anything...
-		if (!flags || ((flags & 0x01) != 0 || (flags & 0x02) != 0)) {
+		if (!flags || ((flags & kMouseFlagLeftButton) != 0 || (flags & kMouseFlagRightButton) != 0)) {
 			if (_lastEventIndex != 128)
 				_events[_lastEventIndex].channel = 0;
 		

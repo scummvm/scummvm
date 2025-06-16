@@ -145,16 +145,16 @@ void Menu::eggMouse(Event *event) {
 		_engine->getGraphicsManager()->burstMouseArea(false); // The original updated the screen, we don't to avoid flickering...
 		_engine->_cursorX = event->x;
 		_engine->_cursorY = event->y;
-		_eggCurrentMouseFlags = (event->flags & 1) != 0;
+		_eggCurrentMouseFlags = (event->flags & kMouseFlagLeftButton) != 0;
 		_engine->_cursorType = 0;
 
 		if (_engine->_doShowCredits) {
-			if ((event->flags & 0x10) != 0) {
+			if ((event->flags & kMouseFlagRightDown) != 0) {
 				setSprite(7, -1, true);
 				_engine->_doShowCredits = false;
 			}
 
-			if ((event->flags & 8) != 0) {
+			if ((event->flags & kMouseFlagLeftDown) != 0) {
 				if (_eggCreditsIndex == _menuSeqs[7]->numFrames - 1) {
 					setSprite(7, -1, true);
 					_engine->_doShowCredits = false;
@@ -174,10 +174,10 @@ void Menu::eggMouse(Event *event) {
 				}
 			}
 
-			if (foundLink != _currentHotspotLink || (event->flags & 8) != 0 || (event->flags & 0x80) != 0) {
+			if (foundLink != _currentHotspotLink || (event->flags & kMouseFlagLeftDown) != 0 || (event->flags & kMouseFlagLeftUp) != 0) {
 				_currentHotspotLink = foundLink;
 
-				if ((event->flags & 0x80) != 0 && !_moveClockHandsFlag && _engine->getClock()->statusClock())
+				if ((event->flags & kMouseFlagLeftUp) != 0 && !_moveClockHandsFlag && _engine->getClock()->statusClock())
 					_engine->getVCR()->stop();
 
 				if (foundLink) {
@@ -259,7 +259,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 8) != 0) {
+		if ((flags & kMouseFlagLeftDown) != 0) {
 			setSprite(1, 6, true);
 			setSprite(0, -1, true);
 
@@ -278,7 +278,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 			return true;
 		} else {
-			if ((flags & 0x80) != 0)
+			if ((flags & kMouseFlagLeftUp) != 0)
 				return true;
 
 			setSprite(1, 5, true);
@@ -289,7 +289,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 	case kMenuActionQuit:
 		setSprite(0, 12, true);
 
-		if ((flags & 8) != 0) {
+		if ((flags & kMouseFlagLeftDown) != 0) {
 			setSprite(2, 11, true);
 
 			_engine->getSoundManager()->killAllSlots();
@@ -326,7 +326,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				return true;
 			}
 
-			if ((flags & 8) != 0)
+			if ((flags & kMouseFlagLeftDown) != 0)
 				_engine->_currentSavePoint = 0;
 		}
 
@@ -353,7 +353,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				}
 			}
 
-			if ((flags & 8) == 0)
+			if ((flags & kMouseFlagLeftDown) == 0)
 				return true;
 
 			_engine->getLogicManager()->loadTrain(whichCD);
@@ -399,7 +399,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				setSprite(0, whichCD - 1, true);
 			}
 
-			if ((flags & 8) == 0)
+			if ((flags & kMouseFlagLeftDown) == 0)
 				return true;
 
 			if (!_engine->getArchiveManager()->lockCD(whichCD))
@@ -495,15 +495,14 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		}
 
 		if (_engine->isDemo()) {
-			// Demo: simplified implementation
-			if ((flags & 0x88) != 0)
+			if ((flags & (kMouseFlagLeftDown | kMouseFlagLeftUp)) != 0)
 				return true;
 
 			setSprite(3, 0, true);
 			setSprite(0, 7, true);
 			return true;
 		} else {
-			if ((flags & 8) != 0) {
+			if ((flags & kMouseFlagLeftDown) != 0) {
 				setSprite(3, 1, true);
 				setSprite(0, -1, true);
 
@@ -515,7 +514,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				return true;
 			}
 
-			if ((flags & 0x80) != 0)
+			if ((flags & kMouseFlagLeftUp) != 0)
 				return true;
 
 			setSprite(3, 0, true);
@@ -559,8 +558,8 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 1) != 0) {
-			if ((flags & 8) == 0)
+		if ((flags & kMouseFlagLeftButton) != 0) {
+			if ((flags & kMouseFlagLeftDown) == 0)
 				return true;
 
 			if (_engine->getClock()->statusClock())
@@ -581,7 +580,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		} else {
 			setSprite(1, 1, true);
 
-			if ((flags & 0x80) == 0)
+			if ((flags & kMouseFlagLeftUp) == 0)
 				setSprite(0, 34, true);
 		}
 
@@ -597,8 +596,8 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 1) != 0) {
-			if ((flags & 8) == 0)
+		if ((flags & kMouseFlagLeftButton) != 0) {
+			if ((flags & kMouseFlagLeftDown) == 0)
 				return true;
 
 			if (_engine->getClock()->statusClock())
@@ -619,7 +618,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		} else {
 			setSprite(1, 3, true);
 
-			if ((flags & 0x80) == 0)
+			if ((flags & kMouseFlagLeftUp) == 0)
 				setSprite(0, 33, true);
 		}
 
@@ -634,13 +633,13 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		if (_engine->isDemo()) {
 			// Demo doesn't implement time seeking...
-			if ((flags & 0x88) != 0)
+			if ((flags & (kMouseFlagLeftDown | kMouseFlagLeftUp)) != 0)
 				return true;
 
 			setSprite(0, 13, true);
 			return true;
 		} else {
-			if ((flags & 8) != 0) {
+			if ((flags & kMouseFlagLeftDown) != 0) {
 				setSprite(0, -1, true);
 
 				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
@@ -650,7 +649,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				return true;
 			}
 
-			if ((flags & 0x80) != 0)
+			if ((flags & kMouseFlagLeftUp) != 0)
 				return true;
 
 			setSprite(0, 13, true);
@@ -667,7 +666,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		if (_engine->isDemo()) {
 			// Demo doesn't implement time seeking...
-			if ((flags & 0x88) != 0)
+			if ((flags & (kMouseFlagLeftDown | kMouseFlagLeftUp)) != 0)
 				return true;
 
 			if (_engine->getClock()->getTimeShowing() <= 1490400) {
@@ -678,7 +677,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 			return true;
 		} else {
-			if ((flags & 8) != 0) {
+			if ((flags & kMouseFlagLeftDown) != 0) {
 				setSprite(0, -1, true);
 
 				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
@@ -688,7 +687,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				return true;
 			}
 
-			if ((flags & 0x80) != 0)
+			if ((flags & kMouseFlagLeftUp) != 0)
 				return true;
 
 			if (_engine->getClock()->getTimeShowing() <= 1490400) {
@@ -709,7 +708,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		if (_engine->isDemo()) {
 			// Demo doesn't implement time seeking...
-			if ((flags & 0x88) != 0)
+			if ((flags & (kMouseFlagLeftDown | kMouseFlagLeftUp)) != 0)
 				return true;
 
 			if (_engine->getClock()->getTimeShowing() <= 1852200) {
@@ -720,7 +719,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 			return true;
 		} else {
-			if ((flags & 8) != 0) {
+			if ((flags & kMouseFlagLeftDown) != 0) {
 				setSprite(0, -1, true);
 
 				_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
@@ -730,7 +729,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 				return true;
 			}
 
-			if ((flags & 0x80) != 0)
+			if ((flags & kMouseFlagLeftUp) != 0)
 				return true;
 
 			if (_engine->getClock()->getTimeShowing() <= 1852200) {
@@ -754,7 +753,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setCity(3);
 
-		if ((flags & 8) != 0) {
+		if ((flags & kMouseFlagLeftDown) != 0) {
 			setSprite(0, -1, true);
 
 			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
@@ -764,7 +763,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 0x80) != 0)
+		if ((flags & kMouseFlagLeftUp) != 0)
 			return true;
 
 		if (_engine->getClock()->getTimeShowing() <= 2268000) {
@@ -787,7 +786,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setCity(4);
 
-		if ((flags & 8) != 0) {
+		if ((flags & kMouseFlagLeftDown) != 0) {
 			setSprite(0, -1, true);
 
 			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
@@ -797,7 +796,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 0x80) != 0)
+		if ((flags & kMouseFlagLeftUp) != 0)
 			return true;
 
 		if (_engine->getClock()->getTimeShowing() <= 2551500) {
@@ -820,7 +819,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setCity(5);
 
-		if ((flags & 8) != 0) {
+		if ((flags & kMouseFlagLeftDown) != 0) {
 			setSprite(0, -1, true);
 
 			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
@@ -830,7 +829,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 0x80) != 0)
+		if ((flags & kMouseFlagLeftUp) != 0)
 			return true;
 
 		if (_engine->getClock()->getTimeShowing() <= 2952000) {
@@ -853,7 +852,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setCity(6);
 
-		if ((flags & 8) != 0) {
+		if ((flags & kMouseFlagLeftDown) != 0) {
 			setSprite(0, -1, true);
 
 			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
@@ -863,7 +862,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			return true;
 		}
 
-		if ((flags & 0x80) != 0)
+		if ((flags & kMouseFlagLeftUp) != 0)
 			return true;
 
 		setSprite(0, 24, true);
@@ -883,7 +882,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setSprite(0, 9, true);
 
-		if ((flags & 8) == 0) {
+		if ((flags & kMouseFlagLeftDown) == 0) {
 			setSprite(2, 1, true);
 			return true;
 		}
@@ -922,7 +921,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		} else {
 			setSprite(0, 8, true);
 
-			if ((flags & 8) != 0) {
+			if ((flags & kMouseFlagLeftDown) != 0) {
 				if (_engine->isDemo()) {
 					_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
 				} else {
@@ -963,7 +962,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		setSprite(0, 11, true);
 
-		if ((flags & 8) == 0) {
+		if ((flags & kMouseFlagLeftDown) == 0) {
 			setSprite(2, 6, true);
 			return true;
 		}
@@ -1014,7 +1013,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			} else {
 				setSprite(0, 10, true);
 
-				if ((flags & 8) != 0) {
+				if ((flags & kMouseFlagLeftDown) != 0) {
 					setSprite(2, 9, true);
 
 					if (_engine->isDemo()) {

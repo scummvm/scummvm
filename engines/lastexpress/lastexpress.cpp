@@ -481,10 +481,10 @@ bool LastExpressEngine::handleEvents() {
 
 		case Common::EVENT_LBUTTONDOWN:
 			_systemEventLeftMouseDown = true;
-			curFlags |= 1;
+			curFlags |= kMouseFlagLeftButton;
 
 			if (_systemEventRightMouseDown)
-				curFlags |= 2;
+				curFlags |= kMouseFlagRightButton;
 
 			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
@@ -492,17 +492,17 @@ bool LastExpressEngine::handleEvents() {
 			_systemEventLeftMouseDown = false;
 
 			if (_systemEventRightMouseDown)
-				curFlags |= 2;
+				curFlags |= kMouseFlagRightButton;
 
 			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
 			_systemEventRightMouseDown = true;
-			curFlags |= 2;
+			curFlags |= kMouseFlagRightButton;
 
 			if (_systemEventLeftMouseDown)
-				curFlags |= 1;
+				curFlags |= kMouseFlagLeftButton;
 
 			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
@@ -510,7 +510,7 @@ bool LastExpressEngine::handleEvents() {
 			_systemEventRightMouseDown = false;
 
 			if (_systemEventLeftMouseDown)
-				curFlags |= 1;
+				curFlags |= kMouseFlagLeftButton;
 
 			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
@@ -523,10 +523,10 @@ bool LastExpressEngine::handleEvents() {
 			// works out nicely for them...
 			if (!getLogicManager()->_doubleClickFlag) {
 				if (_systemEventLeftMouseDown)
-					curFlags |= 1;
+					curFlags |= kMouseFlagLeftButton;
 			
 				if (_systemEventRightMouseDown)
-					curFlags |= 2;
+					curFlags |= kMouseFlagRightButton;
 			}
 
 			_systemEventLastMouseCoords.x = ev.mouse.x;

@@ -423,15 +423,15 @@ void LogicManager::nodeStepMouse(Event *event) {
 	_engine->mouseSetLeftClicked(false);
 	_engine->mouseSetRightClicked(false);
 
-	if ((event->flags & 8) != 0) {
-		if ((event->flags & 0x20) != 0 && _engine->_fastWalkJustDeactivated)
-			event->flags &= ~0x20;
+	if ((event->flags & kMouseFlagLeftDown) != 0) {
+		if ((event->flags & kMouseFlagDoubleClick) != 0 && _engine->_fastWalkJustDeactivated)
+			event->flags &= ~kMouseFlagDoubleClick;
 
 		_engine->_fastWalkJustDeactivated = false;
 	}
 
 	if (_doubleClickFlag) {
-		if ((event->flags & 0x18) != 0) {
+		if ((event->flags & (kMouseFlagRightDown | kMouseFlagLeftDown)) != 0) {
 			_doubleClickFlag = false;
 			_engine->getGraphicsManager()->setMouseDrawable(true);
 			mouseStatus();
@@ -441,7 +441,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 		return;
 	}
 
-	if ((event->flags & 0x20) != 0 && _engine->getOtisManager()->walkingRender() && _engine->_cursorType == 1) {
+	if ((event->flags & kMouseFlagDoubleClick) != 0 && _engine->getOtisManager()->walkingRender() && _engine->_cursorType == kCursorForward) {
 		_engine->getGraphicsManager()->setMouseDrawable(false);
 		_engine->getGraphicsManager()->burstMouseArea();
 		_doubleClickFlag = true;
@@ -481,13 +481,13 @@ void LogicManager::nodeStepMouse(Event *event) {
 						actionLink.left = 1;
 						_engine->_cursorType = _items[getCharacter(foundCharacter).inventoryItem & 0x7F].mnum;
 
-						if ((event->flags & 8) != 0)
+						if ((event->flags & kMouseFlagLeftDown) != 0)
 							send(kCharacterCath, foundCharacter, 1, getCharacter(foundCharacter).inventoryItem & 0x7F);
 					} else if ((getCharacter(foundCharacter).inventoryItem & 0x80) != 0) {
 						actionLink.left = 1;
 						_engine->_cursorType = 15;
 
-						if ((event->flags & 8) != 0)
+						if ((event->flags & kMouseFlagLeftDown) != 0)
 							send(kCharacterCath, foundCharacter, 1, 0);
 					}
 				}
@@ -529,7 +529,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 
 						actionLink.copyFrom(foundLink);
 
-						if ((event->flags & 8) != 0 && !_actionJustPerformed) {
+						if ((event->flags & kMouseFlagLeftDown) != 0 && !_actionJustPerformed) {
 							_actionJustPerformed = true;
 							doAction(&actionLink);
 
@@ -548,7 +548,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 
 							if (!_engine->isDemo() && actionLink.action == 43 &&
 								actionLink.param1 == _globals[kProgressChapter] &&
-								(event->flags & 2) != 0) {
+								(event->flags & kMouseFlagRightButton) != 0) {
 								doF4();
 								return;
 							}
@@ -560,7 +560,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 			} else {
 				_engine->_cursorType = _items[kItemMatch].mnum;
 
-				if ((event->flags & 8) != 0) {
+				if ((event->flags & kMouseFlagLeftDown) != 0) {
 					if (isNight()) {
 						playNIS(kEventCathSmokeNight);
 					} else {
@@ -582,7 +582,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 			}
 		} else {
 			_engine->_cursorType = _items[kItemWhistle].mnum;
-			if ((event->flags & 8) != 0 && !dialogRunning("LIB045")) {
+			if ((event->flags & kMouseFlagLeftDown) != 0 && !dialogRunning("LIB045")) {
 				queueSFX(kCharacterCath, 45, 0);
 
 				if (checkCathDir(kCarGreenSleeping, 26) ||
@@ -706,14 +706,14 @@ void LogicManager::checkInventory(int32 flags) {
 			_isEggHighlighted = true;
 		}
 
-		if ((flags & 8) != 0) {
+		if ((flags & kMouseFlagLeftDown) != 0) {
 			_isEggHighlighted = false;
 			_inventoryFlag1 = false;
 			_inventoryFlag2 = false;
 
 			_engine->getSoundManager()->playSoundFile("LIB039.SND", kSoundTypeMenu | kVolumeFull, 0, 0);
 			_engine->getMenu()->doEgg(true, 0, 0);
-		} else if ((flags & 0x10) != 0 && _engine->_gracePeriodTimer) {
+		} else if ((flags & kMouseFlagRightDown) != 0 && _engine->_gracePeriodTimer) {
 			if (dialogRunning("TIMER"))
 				endDialog("TIMER");
 
@@ -723,7 +723,7 @@ void LogicManager::checkInventory(int32 flags) {
 
 	if (_engine->_cursorX >= 32) {
 		if (_inventoryFlag2) {
-			if ((flags & 1) != 0) {
+			if ((flags & kMouseFlagLeftButton) != 0) {
 				if (_highlightedItem) {
 					int count = 0;
 
@@ -802,7 +802,7 @@ void LogicManager::checkInventory(int32 flags) {
 				_isMagnifierInUse = 1;
 			}
 
-			if ((flags & 8) == 0)
+			if ((flags & kMouseFlagLeftDown) == 0)
 				return;
 
 			if (!_closeUp) {
@@ -834,7 +834,7 @@ void LogicManager::checkInventory(int32 flags) {
 			return;
 		}
 
-		if ((flags & 1) != 0) {
+		if ((flags & kMouseFlagLeftButton) != 0) {
 			int itemToHighlight = _engine->_cursorY / 40;
 			if (_highlightedItem && itemToHighlight != _highlightedItem) {
 				int count = 0;
@@ -981,7 +981,7 @@ void LogicManager::checkInventory(int32 flags) {
 		return;
 	}
 
-	if ((flags & 8) != 0) {
+	if ((flags & kMouseFlagLeftDown) != 0) {
 		_inventoryFlag1 = false;
 		_inventoryFlag2 = true;
 		_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait] + 1, 0, 0);
@@ -1003,7 +1003,7 @@ void LogicManager::checkInventory(int32 flags) {
 		_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 
 		_inventoryFlag1 = true;
-	} else if (_inventoryFlag2 && (flags & 1) == 0) {
+	} else if (_inventoryFlag2 && (flags & kMouseFlagLeftButton) == 0) {
 		if (_inventoryFlag2) {
 			_inventoryFlag2 = false;
 
