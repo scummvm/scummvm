@@ -148,8 +148,31 @@ void CWnd::UpdateWindow() {
 }
 
 BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
-                        CRgn *prgnUpdate, UINT flags) {
-	error("TODO: CWnd::RedrawWindow");
+		CRgn *prgnUpdate, UINT flags) {
+	if (flags & RDW_INVALIDATE) {
+		// Invalidate the region or rectangle
+		if (prgnUpdate != nullptr) {
+			error("TODO: InvalidateRgn");
+		} else {
+			InvalidateRect(lpRectUpdate, !(flags & RDW_NOERASE));
+		}
+	}
+
+	if (flags & RDW_VALIDATE) {
+		// Optionally validate instead
+		if (prgnUpdate != nullptr) {
+			error("TODO: ValidateRgn");
+		} else {
+			ValidateRect(lpRectUpdate);
+		}
+	}
+
+	if (flags & RDW_UPDATENOW) {
+		// Send WM_PAINT immediately
+		UpdateWindow();
+	}
+
+	return true;
 }
 
 void CWnd::SetActiveWindow() {
