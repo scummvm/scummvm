@@ -800,9 +800,9 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 			b = _G(master_palette)[i].b + (MulSF16(percent, db) >> 16);
 
 			// Check for under/overflow
-			r = CLIP(r, 0, 255);
-			g = CLIP(g, 0, 255);
-			b = CLIP(b, 0, 255);
+			r = CLIP(r, int32(0), int32(255));
+			g = CLIP(g, int32(0), int32(255));
+			b = CLIP(b, int32(0), int32(255));
 
 			color.r = (byte)r;
 			color.g = (byte)g;
@@ -840,9 +840,9 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 			b = (_G(master_palette)[i].b - (db >> 16));
 
 			// Check for under/overflow
-			r = CLIP(r, 0, 255);
-			g = CLIP(g, 0, 255);
-			b = CLIP(b, 0, 255);
+			r = CLIP(r, int32(0), int32(255));
+			g = CLIP(g, int32(0), int32(255));
+			b = CLIP(b, int32(0), int32(255));
 
 			color.r = (byte)r;
 			color.g = (byte)g;
