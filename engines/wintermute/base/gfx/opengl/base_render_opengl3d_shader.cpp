@@ -1123,9 +1123,9 @@ void BaseRenderOpenGL3DShader::postfilter() {
 		glUniform1i(_postfilterShader->getUniformLocation("tex"), 0);
 
 		if (_postFilterMode == kPostFilterSepia) {
-			_postfilterShader->setUniform1f("sepiaMode", true);
+			_postfilterShader->setUniform("sepiaMode", true);
 		} else {
-			_postfilterShader->setUniform1f("sepiaMode", false);
+			_postfilterShader->setUniform("sepiaMode", false);
 		}
 
 		g_system->presentBuffer();
