@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-15 23:55+0000\n"
+"POT-Creation-Date: 2025-06-16 09:55+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7614,7 +7614,7 @@ msgstr "Говорити/Взаємодіятя"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:89
+#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Атака"
 
@@ -8924,14 +8924,14 @@ msgstr "Підтримку для Eye of Beholder не скомпільован�
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
-#: engines/ultima/ultima8/metaengine.cpp:142
+#: engines/ultima/ultima8/metaengine.cpp:143
 msgid "Interact via Left Click"
 msgstr "Взаємодія через лівий клік"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
-#: engines/ultima/ultima8/metaengine.cpp:148
+#: engines/ultima/ultima8/metaengine.cpp:149
 msgid "Interact via Right Click"
 msgstr "Взаємодія через правий клік"
 
@@ -8955,13 +8955,13 @@ msgstr "Рухатись назад"
 
 #: engines/kyra/engine/eobcommon.cpp:371
 #: engines/ultima/ultima8/metaengine.cpp:55
-#: engines/ultima/ultima8/metaengine.cpp:110
+#: engines/ultima/ultima8/metaengine.cpp:111
 msgid "Move Left"
 msgstr "Рухатись наліво"
 
 #: engines/kyra/engine/eobcommon.cpp:372
 #: engines/ultima/ultima8/metaengine.cpp:56
-#: engines/ultima/ultima8/metaengine.cpp:111
+#: engines/ultima/ultima8/metaengine.cpp:112
 msgid "Move Right"
 msgstr "Рухатись направо"
 
@@ -13247,14 +13247,14 @@ msgid "Move Back"
 msgstr "Рухатись назад"
 
 #: engines/ultima/ultima8/metaengine.cpp:53
-#: engines/ultima/ultima8/metaengine.cpp:108
+#: engines/ultima/ultima8/metaengine.cpp:109
 #, fuzzy
 #| msgid "Move up"
 msgid "Move Up"
 msgstr "Рухатись уверх"
 
 #: engines/ultima/ultima8/metaengine.cpp:54
-#: engines/ultima/ultima8/metaengine.cpp:109
+#: engines/ultima/ultima8/metaengine.cpp:110
 #, fuzzy
 #| msgid "Move down"
 msgid "Move Down"
@@ -13298,203 +13298,204 @@ msgstr ""
 msgid "Open Inventory"
 msgstr "Відкрити інвентар"
 
-#: engines/ultima/ultima8/metaengine.cpp:70
+#. I18N: gump is Graphical User Menu Pop-up
+#: engines/ultima/ultima8/metaengine.cpp:71
 #, fuzzy
 #| msgid "Close popup"
 msgid "Close Gumps"
 msgstr "Закрити вискакуючий список"
 
-#: engines/ultima/ultima8/metaengine.cpp:71
+#: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:72
+#: engines/ultima/ultima8/metaengine.cpp:73
 #, fuzzy
 #| msgid "Side Step"
 msgid "Step"
 msgstr "Крок в сторону"
 
-#: engines/ultima/ultima8/metaengine.cpp:78
+#: engines/ultima/ultima8/metaengine.cpp:79
 #, fuzzy
 #| msgid "Next action"
 msgid "Next Weapon"
 msgstr "Наступна дія"
 
-#: engines/ultima/ultima8/metaengine.cpp:79
+#: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
 #| msgid "Animated inventory items"
 msgid "Next Inventory Item"
 msgstr "Анімований інвентар"
 
-#: engines/ultima/ultima8/metaengine.cpp:80
+#: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
 #| msgid "Inventory"
 msgid "Use Inventory Item"
 msgstr "Інвентар"
 
-#: engines/ultima/ultima8/metaengine.cpp:81
+#: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use Medical Kit"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:82
+#: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Use Energy Cube"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:83
+#: engines/ultima/ultima8/metaengine.cpp:84
 msgid "Detonate Bomb"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:85
+#: engines/ultima/ultima8/metaengine.cpp:86
 #, fuzzy
 #| msgid "Drop page"
 msgid "Drop Weapon"
 msgstr "Викинути сторінку"
 
-#: engines/ultima/ultima8/metaengine.cpp:86
+#: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
 msgid "Select Item"
 msgstr "Виберіть тему"
 
-#: engines/ultima/ultima8/metaengine.cpp:87
+#: engines/ultima/ultima8/metaengine.cpp:88
 #, fuzzy
 #| msgid "Next action"
 msgid "Use Selection"
 msgstr "Наступна дія"
 
-#: engines/ultima/ultima8/metaengine.cpp:88
+#: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Grab Items"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:90
+#: engines/ultima/ultima8/metaengine.cpp:91
 #, fuzzy
 #| msgid "Camera moves with Silencer"
 msgid "Focus Camera on Silencer"
 msgstr "Камера переміщується разом з Сайленсером"
 
-#: engines/ultima/ultima8/metaengine.cpp:91
+#: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:92
+#: engines/ultima/ultima8/metaengine.cpp:93
 #, fuzzy
 #| msgid "Shorty mode"
 msgid "Short Jump"
 msgstr "Режим ліліпутів"
 
-#: engines/ultima/ultima8/metaengine.cpp:93
+#: engines/ultima/ultima8/metaengine.cpp:94
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Sidestep Left"
 msgstr "Ковзати наліво"
 
-#: engines/ultima/ultima8/metaengine.cpp:94
+#: engines/ultima/ultima8/metaengine.cpp:95
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Sidestep Right"
 msgstr "Ковзати направо"
 
-#: engines/ultima/ultima8/metaengine.cpp:95
+#: engines/ultima/ultima8/metaengine.cpp:96
 #, fuzzy
 #| msgid "Face Forward"
 msgid "Step Forward"
 msgstr "Повернутись уперед"
 
-#: engines/ultima/ultima8/metaengine.cpp:96
+#: engines/ultima/ultima8/metaengine.cpp:97
 #, fuzzy
 #| msgid "Step back"
 msgid "Step Back"
 msgstr "Крок назад"
 
-#: engines/ultima/ultima8/metaengine.cpp:97
+#: engines/ultima/ultima8/metaengine.cpp:98
 #, fuzzy
 #| msgid "Move left"
 msgid "Roll Left"
 msgstr "Рухатись наліво"
 
-#: engines/ultima/ultima8/metaengine.cpp:98
+#: engines/ultima/ultima8/metaengine.cpp:99
 #, fuzzy
 #| msgid "Move right"
 msgid "Roll Right"
 msgstr "Рухатись направо"
 
-#: engines/ultima/ultima8/metaengine.cpp:99
+#: engines/ultima/ultima8/metaengine.cpp:100
 #, fuzzy
 #| msgid "Toggle Clock"
 msgid "Toggle Crouch"
 msgstr "Перемкнути годинник"
 
-#: engines/ultima/ultima8/metaengine.cpp:100
+#: engines/ultima/ultima8/metaengine.cpp:101
 msgid "Side Step / Advance / Retreat"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:105
+#: engines/ultima/ultima8/metaengine.cpp:106
 #, fuzzy
 #| msgid "Toggle Clock"
 msgid "Toggle Clipping"
 msgstr "Перемкнути годинник"
 
-#: engines/ultima/ultima8/metaengine.cpp:106
+#: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:107
+#: engines/ultima/ultima8/metaengine.cpp:108
 msgid "Descend"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:118
+#: engines/ultima/ultima8/metaengine.cpp:119
 #, fuzzy
 #| msgid "Show hints"
 msgid "Show Touching Items"
 msgstr "Показувати підказки"
 
-#: engines/ultima/ultima8/metaengine.cpp:119
+#: engines/ultima/ultima8/metaengine.cpp:120
 #, fuzzy
 #| msgid "Show quotes"
 msgid "Show Editor Items"
 msgstr "Показувати цитати"
 
-#: engines/ultima/ultima8/metaengine.cpp:120
+#: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Decrement Map Sort Order"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:121
+#: engines/ultima/ultima8/metaengine.cpp:122
 msgid "Increment Map Sort Order"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:122
+#: engines/ultima/ultima8/metaengine.cpp:123
 #, fuzzy
 #| msgid "Toggle panel style"
 msgid "Toggle Frame By Frame"
 msgstr "Перемикання стилю панелі"
 
-#: engines/ultima/ultima8/metaengine.cpp:123
+#: engines/ultima/ultima8/metaengine.cpp:124
 msgid "Advance Frame"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:124
+#: engines/ultima/ultima8/metaengine.cpp:125
 msgid "Toggle Avatar In Stasis"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:125
+#: engines/ultima/ultima8/metaengine.cpp:126
 #, fuzzy
 #| msgid "Image Viewer"
 msgid "Show Shape Viewer"
 msgstr "Переглядач зображень"
 
-#: engines/ultima/ultima8/metaengine.cpp:135
+#: engines/ultima/ultima8/metaengine.cpp:136
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/metaengine.cpp:135
+#: engines/ultima/ultima8/metaengine.cpp:136
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/metaengine.cpp:178
+#: engines/ultima/ultima8/metaengine.cpp:179
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Чіти"
 
-#: engines/ultima/ultima8/metaengine.cpp:193
+#: engines/ultima/ultima8/metaengine.cpp:194
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Відладка"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-15 23:55+0000\n"
+"POT-Creation-Date: 2025-06-16 09:55+0000\n"
 "PO-Revision-Date: 2025-06-16 09:33+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7680,7 +7680,7 @@ msgstr "Hablar/Interactuar"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:89
+#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Atacar"
 
@@ -8994,14 +8994,14 @@ msgstr "No se ha incluido el soporte para Eye of Beholder."
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
-#: engines/ultima/ultima8/metaengine.cpp:142
+#: engines/ultima/ultima8/metaengine.cpp:143
 msgid "Interact via Left Click"
 msgstr "Interactuar con clic izquierdo"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
-#: engines/ultima/ultima8/metaengine.cpp:148
+#: engines/ultima/ultima8/metaengine.cpp:149
 msgid "Interact via Right Click"
 msgstr "Interactuar con clic derecho"
 
@@ -9025,13 +9025,13 @@ msgstr "Retroceder"
 
 #: engines/kyra/engine/eobcommon.cpp:371
 #: engines/ultima/ultima8/metaengine.cpp:55
-#: engines/ultima/ultima8/metaengine.cpp:110
+#: engines/ultima/ultima8/metaengine.cpp:111
 msgid "Move Left"
 msgstr "Mover a la izquierda"
 
 #: engines/kyra/engine/eobcommon.cpp:372
 #: engines/ultima/ultima8/metaengine.cpp:56
-#: engines/ultima/ultima8/metaengine.cpp:111
+#: engines/ultima/ultima8/metaengine.cpp:112
 msgid "Move Right"
 msgstr "Mover a la derecha"
 
@@ -13339,12 +13339,12 @@ msgid "Move Back"
 msgstr "Retroceder"
 
 #: engines/ultima/ultima8/metaengine.cpp:53
-#: engines/ultima/ultima8/metaengine.cpp:108
+#: engines/ultima/ultima8/metaengine.cpp:109
 msgid "Move Up"
 msgstr "Mover hacia arriba"
 
 #: engines/ultima/ultima8/metaengine.cpp:54
-#: engines/ultima/ultima8/metaengine.cpp:109
+#: engines/ultima/ultima8/metaengine.cpp:110
 msgid "Move Down"
 msgstr "Mover hacia abajo"
 
@@ -13376,159 +13376,160 @@ msgstr "Usar memoria"
 msgid "Open Inventory"
 msgstr "Abrir inventario"
 
-#: engines/ultima/ultima8/metaengine.cpp:70
+#. I18N: gump is Graphical User Menu Pop-up
+#: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Close Gumps"
 msgstr "Cerrar todos los GUMP"
 
-#: engines/ultima/ultima8/metaengine.cpp:71
+#: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr "Saltar (simular pulsar ambos botones)"
 
-#: engines/ultima/ultima8/metaengine.cpp:72
+#: engines/ultima/ultima8/metaengine.cpp:73
 msgid "Step"
 msgstr "Dar un paso"
 
-#: engines/ultima/ultima8/metaengine.cpp:78
+#: engines/ultima/ultima8/metaengine.cpp:79
 msgid "Next Weapon"
 msgstr "Siguiente arma"
 
-#: engines/ultima/ultima8/metaengine.cpp:79
+#: engines/ultima/ultima8/metaengine.cpp:80
 msgid "Next Inventory Item"
 msgstr "Siguiente objeto del inventario"
 
-#: engines/ultima/ultima8/metaengine.cpp:80
+#: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "Usar objeto del inventario"
 
-#: engines/ultima/ultima8/metaengine.cpp:81
+#: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use Medical Kit"
 msgstr "Usar Medikit"
 
-#: engines/ultima/ultima8/metaengine.cpp:82
+#: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Use Energy Cube"
 msgstr "Usar cubo de energía"
 
-#: engines/ultima/ultima8/metaengine.cpp:83
+#: engines/ultima/ultima8/metaengine.cpp:84
 msgid "Detonate Bomb"
 msgstr "Detonar bomba"
 
-#: engines/ultima/ultima8/metaengine.cpp:85
+#: engines/ultima/ultima8/metaengine.cpp:86
 msgid "Drop Weapon"
 msgstr "Tirar arma"
 
-#: engines/ultima/ultima8/metaengine.cpp:86
+#: engines/ultima/ultima8/metaengine.cpp:87
 msgid "Select Item"
 msgstr "Seleccionar objeto"
 
-#: engines/ultima/ultima8/metaengine.cpp:87
+#: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Use Selection"
 msgstr "Usar selección"
 
-#: engines/ultima/ultima8/metaengine.cpp:88
+#: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Grab Items"
 msgstr "Tomar objetos"
 
-#: engines/ultima/ultima8/metaengine.cpp:90
+#: engines/ultima/ultima8/metaengine.cpp:91
 msgid "Focus Camera on Silencer"
 msgstr "Centrar cámara en Silenciador"
 
-#: engines/ultima/ultima8/metaengine.cpp:91
+#: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
 msgstr "Saltar/Rodar/Agacharse"
 
-#: engines/ultima/ultima8/metaengine.cpp:92
+#: engines/ultima/ultima8/metaengine.cpp:93
 msgid "Short Jump"
 msgstr "Salto corto"
 
-#: engines/ultima/ultima8/metaengine.cpp:93
+#: engines/ultima/ultima8/metaengine.cpp:94
 msgid "Sidestep Left"
 msgstr "Moverse a la izquierda"
 
-#: engines/ultima/ultima8/metaengine.cpp:94
+#: engines/ultima/ultima8/metaengine.cpp:95
 msgid "Sidestep Right"
 msgstr "Moverse a la derecha"
 
-#: engines/ultima/ultima8/metaengine.cpp:95
+#: engines/ultima/ultima8/metaengine.cpp:96
 msgid "Step Forward"
 msgstr "Moverse hacia delante"
 
-#: engines/ultima/ultima8/metaengine.cpp:96
+#: engines/ultima/ultima8/metaengine.cpp:97
 msgid "Step Back"
 msgstr "Moverse hacia atrás"
 
-#: engines/ultima/ultima8/metaengine.cpp:97
+#: engines/ultima/ultima8/metaengine.cpp:98
 msgid "Roll Left"
 msgstr "Rodar hacia la izquierda"
 
-#: engines/ultima/ultima8/metaengine.cpp:98
+#: engines/ultima/ultima8/metaengine.cpp:99
 msgid "Roll Right"
 msgstr "Rodar hacia la derecha"
 
-#: engines/ultima/ultima8/metaengine.cpp:99
+#: engines/ultima/ultima8/metaengine.cpp:100
 msgid "Toggle Crouch"
 msgstr "Agacharse/Levantarse"
 
-#: engines/ultima/ultima8/metaengine.cpp:100
+#: engines/ultima/ultima8/metaengine.cpp:101
 msgid "Side Step / Advance / Retreat"
 msgstr "Mover a lados/Avanzar/Retroceder"
 
-#: engines/ultima/ultima8/metaengine.cpp:105
+#: engines/ultima/ultima8/metaengine.cpp:106
 msgid "Toggle Clipping"
 msgstr "Alternar «clipping»"
 
-#: engines/ultima/ultima8/metaengine.cpp:106
+#: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
 msgstr "Ascender"
 
-#: engines/ultima/ultima8/metaengine.cpp:107
+#: engines/ultima/ultima8/metaengine.cpp:108
 msgid "Descend"
 msgstr "Descender"
 
-#: engines/ultima/ultima8/metaengine.cpp:118
+#: engines/ultima/ultima8/metaengine.cpp:119
 msgid "Show Touching Items"
 msgstr "Mostrar objetos en contacto"
 
-#: engines/ultima/ultima8/metaengine.cpp:119
+#: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Show Editor Items"
 msgstr "Mostrar objetos del editor"
 
-#: engines/ultima/ultima8/metaengine.cpp:120
+#: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Decrement Map Sort Order"
 msgstr "Decrementar orden de visibilidad del mapa"
 
-#: engines/ultima/ultima8/metaengine.cpp:121
+#: engines/ultima/ultima8/metaengine.cpp:122
 msgid "Increment Map Sort Order"
 msgstr "Incrementar orden de visibilidad del mapa"
 
-#: engines/ultima/ultima8/metaengine.cpp:122
+#: engines/ultima/ultima8/metaengine.cpp:123
 msgid "Toggle Frame By Frame"
 msgstr "Alternar modo fotograma a fotograma"
 
-#: engines/ultima/ultima8/metaengine.cpp:123
+#: engines/ultima/ultima8/metaengine.cpp:124
 msgid "Advance Frame"
 msgstr "Avanzar fotograma"
 
-#: engines/ultima/ultima8/metaengine.cpp:124
+#: engines/ultima/ultima8/metaengine.cpp:125
 msgid "Toggle Avatar In Stasis"
 msgstr "Alternar congelado de avatar"
 
-#: engines/ultima/ultima8/metaengine.cpp:125
+#: engines/ultima/ultima8/metaengine.cpp:126
 msgid "Show Shape Viewer"
 msgstr "Mostrar visualizador de formas"
 
-#: engines/ultima/ultima8/metaengine.cpp:135
+#: engines/ultima/ultima8/metaengine.cpp:136
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/metaengine.cpp:135
+#: engines/ultima/ultima8/metaengine.cpp:136
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/metaengine.cpp:178
+#: engines/ultima/ultima8/metaengine.cpp:179
 msgid "Ultima VIII Cheats"
 msgstr "Trucos de Ultima VIII"
 
-#: engines/ultima/ultima8/metaengine.cpp:193
+#: engines/ultima/ultima8/metaengine.cpp:194
 msgid "Ultima VIII Debug"
 msgstr "Depuración de Ultima VIII"
 
