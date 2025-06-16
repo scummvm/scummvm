@@ -608,6 +608,8 @@ public:
 	bool _systemEventRightMouseDown = false;
 	Common::Point _systemEventLastMouseCoords;
 
+	bool _pendingExitEvent = false;
+
 	Seq *_doorSeqs[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	Seq *_clockHandsSeqs[2] = { nullptr, nullptr };
 	int32 _clockHandsValues[2] = { 0, 0 };

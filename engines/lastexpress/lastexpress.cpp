@@ -225,6 +225,11 @@ Common::Error LastExpressEngine::run() {
 		elapsedMs += 4 * 17;
 	}
 
+	bool haveEvent = true;
+	while (_pendingExitEvent && haveEvent) {
+		haveEvent = getMessageManager()->process();
+	}
+
 	getTimerManager()->removeTimerProc(soundTimerHandler);
 
 	shutDown();
@@ -357,44 +362,36 @@ void LastExpressEngine::startNewGame() {
 
 void LastExpressEngine::engineEventHandler(Event *event) {
 	switch (event->flags) {
-	case 1:
-		//++g_numClicks;
+	case 1: // Quit signal request
 		getNISManager()->abortNIS();
 		abortFight();
 		abortCredits();
-		if (shouldQuit()) {
-			// g_flag_running = 0;
-			// PostMessageA(g_engine_state->hwnd, WM_CLOSE, 0, 0);
-			// g_flag_main_thread_running = 0;
-			// AfxEndThread(0, 1);
-		}
 
-		if (getMenu()->isShowingMenu() || (getMessageManager()->getEventHandle(1) == &LastExpressEngine::nodeStepMouseWrapper && !getVCR()->isVirgin(_currentGameFileColorId))) {
-			getMenu()->doEgg(1, 0, 0);
-			quitGame();
-		} else {
-			getMessageManager()->addEvent(4, 0, 0, 2);
-		}
-
-		if (shouldQuit() /* || g_numClicks > 100*/) {
-			//g_flag_running = 0;
-			//PostMessageA(g_engine_state->hwnd, WM_CLOSE, 0, 0);
-			//g_flag_main_thread_running = 0;
-			//AfxEndThread(0, 1);
+		if (_pendingExitEvent) {
+			if (getMenu()->isShowingMenu() || (getMessageManager()->getEventHandle(1) == &LastExpressEngine::nodeStepMouseWrapper && !getVCR()->isVirgin(_currentGameFileColorId))) {
+				getMenu()->doEgg(true, 0, 0); // Save!
+				_pendingExitEvent = false; // We're done, we can quit
+			} else {
+				getMessageManager()->addEvent(4, 0, 0, 2); // Give the engine the actual chance to abort NIS, fights and credits by running process()
+				_pendingExitEvent = true;
+			}
 		}
 
 		break;
-	case 2:
+	case 2: // Quit signal handler
 		getNISManager()->abortNIS();
 		abortFight();
-		warning("abortFight() missing from engineEventHandler");
 		abortCredits();
-		if (!shouldQuit() && !getMenu()->isShowingMenu()) {
-			if (getMessageManager()->getEventHandle(1) != &LastExpressEngine::nodeStepMouseWrapper || getVCR()->isVirgin(_currentGameFileColorId))
-				getMessageManager()->addEvent(4, 0, 0, 2);
-			else
-				getMenu()->doEgg(true, 0, 0);
+
+		if (_pendingExitEvent && !getMenu()->isShowingMenu()) {
+			if (getMessageManager()->getEventHandle(1) != &LastExpressEngine::nodeStepMouseWrapper || getVCR()->isVirgin(_currentGameFileColorId)) {
+				_pendingExitEvent = true;
+			} else {
+				getMenu()->doEgg(true, 0, 0); // Save!
+				_pendingExitEvent = false; // We're done, we can quit
+			}
 		}
+
 		break;
 	case 3:
 		// Originally handled WM_PAINT events and triggered burstBox on the screen rectangle
@@ -408,9 +405,8 @@ void LastExpressEngine::engineEventHandler(Event *event) {
 		break;
 	}
 	default:
-		return;
+		break;
 	}
-
 }
 
 int32 LastExpressEngine::getSoundFrameCounter() {
@@ -540,8 +536,9 @@ bool LastExpressEngine::handleEvents() {
 			break;
 
 		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			getMessageManager()->addEvent(4, 0, 0, 1);
-			quitGame();
+			_pendingExitEvent = true;
 			break;
 
 		default:
