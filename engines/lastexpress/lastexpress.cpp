@@ -213,8 +213,6 @@ Common::Error LastExpressEngine::run() {
 	getVCR()->loadSettings();
 	getMenu()->doEgg(false, kSavegameTypeIndex, 0);
 
-	int32 elapsedMs = 0;
-
 	while (!shouldQuit()) {
 		do {
 			getSoundManager()->soundThread();
@@ -222,7 +220,6 @@ Common::Error LastExpressEngine::run() {
 		} while (getMessageManager()->process());
 
 		waitForTimer(4); // Wait 4 ticks (tick duration: 17 ms dictated by the sound timer)
-		elapsedMs += 4 * 17;
 	}
 
 	bool haveEvent = true;
