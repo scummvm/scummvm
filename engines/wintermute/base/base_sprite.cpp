@@ -132,17 +132,13 @@ bool BaseSprite::isFinished() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
-	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename);
-	if (!file) {
+	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
 		BaseEngine::LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename.c_str());
 		if (_gameRef->_debugDebugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		} else {
 			return loadFile("invalid.bmp", lifeTime, cacheType);
 		}
-	} else {
-		BaseFileManager::getEngineInstance()->closeFile(file);
-		file = nullptr;
 	}
 
 	bool ret = STATUS_FAILED;

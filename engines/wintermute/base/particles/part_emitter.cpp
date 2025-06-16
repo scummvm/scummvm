@@ -128,12 +128,9 @@ bool PartEmitter::addSprite(const char *filename) {
 	}
 
 	// check if file exists
-	Common::SeekableReadStream *File = BaseFileManager::getEngineInstance()->openFile(filename);
-	if (!File) {
+	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
 		BaseEngine::LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
-	} else {
-		BaseFileManager::getEngineInstance()->closeFile(File);
 	}
 
 	size_t filenameSize = strlen(filename) + 1;
