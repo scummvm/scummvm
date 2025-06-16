@@ -52,22 +52,22 @@ String &String::operator=(String &&str) {
 }
 
 String &String::operator=(char c) {
-	assign(c);
+	assign(1, c);
 	return *this;
 }
 
 String &String::operator+=(const char *str) {
-	assignAppend(str);
+	append(str);
 	return *this;
 }
 
 String &String::operator+=(const String &str) {
-	assignAppend(str);
+	append(str);
 	return *this;
 }
 
 String &String::operator+=(char c) {
-	assignAppend(c);
+	push_back(c);
 	return *this;
 }
 

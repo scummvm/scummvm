@@ -1525,8 +1525,8 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 		*x += space_width;
 	}
 
-	if (start < str.length()) {
-		Std::string token = str.substr(start, str.length() - start);
+	if (start < str.size()) {
+		Std::string token = str.substr(start, str.size() - start);
 		if (len + font->getStringWidth(token.c_str()) > width) {
 			*y += 8;
 			*x = startx;
@@ -1675,7 +1675,7 @@ void ScriptCutscene::Display(bool full_redraw) {
 					screen->blit(x_off + s->x - x, y_off + s->y - y, s->image->shp->get_data(), 8, w, h, w, true, s->clip_rect.width() != 0 ? &s->clip_rect : &clip_rect, s->opacity);
 				}
 
-				if (s->text.length() > 0) {
+				if (!s->text.empty()) {
 					if (s->text_align != 0) {
 						display_wrapped_text(s);
 					} else {

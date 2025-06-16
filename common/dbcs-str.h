@@ -75,6 +75,9 @@ public:
 	/** Construct a string consisting of the given character. */
 	explicit constexpr DBCSString(value_type c) : BaseString<uint16>(c) {}
 
+	/** Construct a string consisting of n copies of the given character. */
+	DBCSString(size_t n, value_type c) : BaseString<uint16>(n, c) {}
+
 	/** Assign a given string to this string. */
 	DBCSString &operator=(const DBCSString &str);
 

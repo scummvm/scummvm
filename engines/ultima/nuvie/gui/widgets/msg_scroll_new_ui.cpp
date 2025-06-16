@@ -115,8 +115,8 @@ void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool includ
 	}
 
 	if (i > 0) {
-		trailing_whitespace = s.substr(s.length() - i, i);
-		s = s.substr(0, s.length() - i);
+		trailing_whitespace = s.substr(s.size() - i, i);
+		s = s.substr(0, s.size() - i);
 	}
 
 	if (!s.empty()) {
