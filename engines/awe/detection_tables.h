@@ -115,7 +115,7 @@ const AweGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_AMIGA
 	},
