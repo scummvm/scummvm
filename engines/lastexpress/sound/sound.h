@@ -34,7 +34,7 @@ class AudioStream;
 class Mixer;
 class QueuingAudioStream;
 class SoundHandle;
-}; // namespace Audio
+} // namespace Audio
 
 namespace LastExpress {
 
