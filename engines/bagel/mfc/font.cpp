@@ -35,6 +35,8 @@ BOOL CFont::CreateFont(int nHeight, int nWidth, int nEscapement,
 		bUnderline, cStrikeOut, nCharSet, nOutPrecision,
 		nClipPrecision, nQuality, nPitchAndFamily,
 		lpszFacename);
+	assert(m_hObject);
+
 	return true;
 }
 

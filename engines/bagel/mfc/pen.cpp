@@ -30,7 +30,7 @@ CPen::CPen(int nPenStyle, int nWidth, COLORREF crColor) {
 }
 
 BOOL CPen::CreatePen(int nPenStyle, int nWidth, COLORREF crColor) {
-	m_hObject = new Impl(nPenStyle, nWidth, crColor);
+	_pen = new Impl(nPenStyle, nWidth, crColor);
 	return true;
 }
 

@@ -27,7 +27,7 @@ namespace MFC {
 
 BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
 	DeleteObject();
-	m_hObject = new Impl(lpLogPalette);
+	_palette = new Impl(lpLogPalette);
 	return true;
 }
 
@@ -78,9 +78,7 @@ BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
 }
 
 UINT CPalette::GetNearestPaletteIndex(COLORREF crColor) {
-	const Impl *src = static_cast<const Impl *>(m_hObject);
-
-	return src->findBestColor(
+	return _palette->findBestColor(
 		GetRValue(crColor),
 		GetGValue(crColor),
 		GetBValue(crColor)

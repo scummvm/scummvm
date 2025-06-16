@@ -492,6 +492,8 @@ public:
 		}
 	};
 
+	Impl *&_pen = *(Impl **)&m_hObject;
+
 public:
 	CPen() {}
 	CPen(int nPenStyle, int nWidth, COLORREF crColor);
@@ -514,6 +516,8 @@ public:
 
 		byte getColor() const;
 	};
+
+	Impl *&_brush = *(Impl **)&m_hObject;
 
 public:
 	CBrush();
@@ -541,6 +545,8 @@ public:
 		}
 	};
 
+	Impl *&_font = *(Impl **)&m_hObject;
+
 public:
 	~CFont() override {}
 
@@ -558,15 +564,17 @@ public:
 		~Impl() override {}
 	};
 
+	Impl *&_bitmap = *(Impl **)&m_hObject;
+
 public:
 	~CBitmap() override {
 	}
 
-	BOOL Attach(HGDIOBJ hObject);
-	HGDIOBJ Detach();
+	BOOL Attach(HBITMAP hObject);
+	HBITMAP Detach();
 	BOOL CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
 	BOOL CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
-	                  UINT nBitcount, const void *lpBits);
+	    UINT nBitcount, const void *lpBits);
 	int GetObject(int nCount, LPVOID lpObject) const;
 	LONG GetBitmapBits(LONG dwCount, LPVOID lpBits) const;
 };
@@ -578,6 +586,8 @@ public:
 		Impl(const LPLOGPALETTE pal);
 		~Impl() override {}
 	};
+
+	Impl *&_palette = *(Impl **)&m_hObject;
 
 public:
 	~CPalette() override {

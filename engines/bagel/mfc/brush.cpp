@@ -29,7 +29,7 @@ CBrush::CBrush() {
 }
 
 CBrush::CBrush(CBitmap *pBitmap) {
-	m_hObject = new Impl(pBitmap);
+	_brush = new Impl(pBitmap);
 }
 
 CBrush::CBrush(COLORREF crColor) {
@@ -37,19 +37,19 @@ CBrush::CBrush(COLORREF crColor) {
 }
 
 CBrush::CBrush(int nIndex, COLORREF crColor) {
-	m_hObject = new Impl(nIndex, crColor);
+	_brush = new Impl(nIndex, crColor);
 }
 
 BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
 	DeleteObject();
-	m_hObject = new Impl(crColor);
+	_brush = new Impl(crColor);
 	return true;
 }
 
 BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 	DeleteObject();
-	m_hObject = new Impl(lpLogBrush->lbStyle,
-	                     lpLogBrush->lbColor);
+	_brush = new Impl(lpLogBrush->lbStyle,
+	    lpLogBrush->lbColor);
 	return true;
 }
 

@@ -361,8 +361,11 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 		m_bHaveBackground = TRUE;
 	}
 
-	m_pFont = new CFont();                          // create an instance of the specified font
-	(*m_pFont).CreateFont(nSize, 0, 0, 0, nWeight, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
+	// Create an instance of the specified font
+	m_pFont = new CFont();
+	(*m_pFont).CreateFont(nSize, 0, 0, 0, nWeight,
+		0, 0, 0, 0, OUT_RASTER_PRECIS, 0,
+		PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 
 	pFontOld = (*m_pWorkDC).SelectObject(m_pFont);  // select it into our context
 	(*m_pWorkDC).GetTextMetrics(&fontMetrics);      // get some info about the font

@@ -25,13 +25,13 @@
 namespace Bagel {
 namespace MFC {
 
-BOOL CBitmap::Attach(HGDIOBJ hObject) {
+BOOL CBitmap::Attach(HBITMAP hObject) {
 	DeleteObject();
 	m_hObject = hObject;
 	return true;
 }
 
-HGDIOBJ CBitmap::Detach() {
+HBITMAP CBitmap::Detach() {
 	HGDIOBJ result = m_hObject;
 	m_hObject = nullptr;
 	return result;
