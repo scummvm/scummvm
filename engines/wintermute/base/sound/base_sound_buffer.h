@@ -40,7 +40,6 @@ class SoundHandle;
 
 namespace Wintermute {
 
-class BaseFile;
 class BaseSoundBuffer : public BaseClass {
 public:
 

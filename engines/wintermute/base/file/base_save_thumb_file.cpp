@@ -27,32 +27,14 @@
 
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
+#include "engines/wintermute/base/base.h"
+#include "common/memstream.h"
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-BaseSaveThumbFile::BaseSaveThumbFile() {
-	_data = nullptr;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-BaseSaveThumbFile::~BaseSaveThumbFile() {
-	close();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbFile::open(const Common::String &filename) {
-	close();
-
+Common::SeekableReadStream *openThumbFile(const Common::String &filename) {
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) {
-		return STATUS_FAILED;
+		return nullptr;
 	}
 
 	size_t filenameSize = strlen(filename.c_str()) - 9 + 1;
@@ -71,85 +53,27 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (!pm) {
-		return STATUS_FAILED;
+		return nullptr;
 	}
 
 	Common::String slotFilename = pm->getFilenameForSlot(slot);
 
 	if (DID_FAIL(pm->initLoad(slotFilename))) {
 		delete pm;
-		return STATUS_FAILED;
+		return nullptr;
 	}
 
-	bool res;
-
-	if (pm->_thumbnailDataSize != 0) {
-		_data = new byte[pm->_thumbnailDataSize];
-		memcpy(_data, pm->_thumbnailData, pm->_thumbnailDataSize);
-		_size = pm->_thumbnailDataSize;
-		res = STATUS_OK;
-	} else {
-		res = STATUS_FAILED;
+	if (pm->_thumbnailDataSize == 0) {
+		delete pm;
+		return nullptr;
 	}
+
+	uint32 size = pm->_thumbnailDataSize;
+	byte *data = (byte *)malloc(size);
+	memcpy(data, pm->_thumbnailData, size);
 	delete pm;
 
-	return res;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbFile::close() {
-	delete[] _data;
-	_data = nullptr;
-
-	_pos = 0;
-	_size = 0;
-
-	return STATUS_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbFile::read(void *buffer, uint32 size) {
-	if (!_data || _pos + size > _size) {
-		return STATUS_FAILED;
-	}
-
-	memcpy(buffer, (byte *)_data + _pos, size);
-	_pos += size;
-
-	return STATUS_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbFile::seek(uint32 pos, int whence) {
-	if (!_data) {
-		return STATUS_FAILED;
-	}
-
-	uint32 newPos = 0;
-
-	switch (whence) {
-	case SEEK_SET:
-	default:
-		newPos = pos;
-		break;
-	case SEEK_END:
-		newPos = _size + pos;
-		break;
-	case SEEK_CUR:
-		newPos = _pos + pos;
-		break;
-	}
-
-	if (newPos > _size) {
-		return STATUS_FAILED;
-	} else {
-		_pos = newPos;
-	}
-
-	return STATUS_OK;
+	return new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
 
 } // End of namespace Wintermute
