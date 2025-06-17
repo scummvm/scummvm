@@ -73,14 +73,14 @@ protected:
 
 class CCath : public CFighter {
 public:
-	using CFighter::CFighter;
+	CCath(LastExpressEngine *engine, CFight *fight) : CFighter(engine, fight) {}
 
 	virtual void timer() override;
 };
 
 class COpponent : public CFighter {
 public:
-	using CFighter::CFighter;
+	COpponent(LastExpressEngine *engine, CFight *fight) : CFighter(engine, fight) {}
 
 	virtual void timer() override;
 };
