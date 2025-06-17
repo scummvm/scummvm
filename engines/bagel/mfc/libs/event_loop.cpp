@@ -68,8 +68,8 @@ bool EventLoop::GetMessage(MSG &msg) {
 
 			// For mouse messages, if the highlighted control
 			// changes, generate a WM_SETCURSOR event
-			if (isMouseMsg(ev) && hWnd != _highlightedWin) {
-				_highlightedWin = hWnd;
+			if (isMouseMsg(ev) && CWnd::FromHandle(hWnd) != _highlightedWin) {
+				_highlightedWin = CWnd::FromHandle(hWnd);
 				PostMessage(
 					_modalDialog ? _modalDialog : _mainWindow,
 					WM_SETCURSOR, (WPARAM)hWnd,
@@ -213,6 +213,12 @@ void EventLoop::DispatchMessage(LPMSG lpMsg) {
 	CWnd *wnd = CWnd::FromHandle(lpMsg->hwnd);
 	assert(wnd);
 
+	// FIXME: This goes in hand with our currently
+	// calling the runEventLoop for non-modal windows.
+	// It ensures closing the window breaks the modal event loop
+	if (wnd == _modalDialog && lpMsg->message == WM_CLOSE)
+		_modalDialog = nullptr;
+
 	wnd->SendMessage(lpMsg->message,
 		lpMsg->wParam, lpMsg->lParam);
 }
@@ -239,6 +245,11 @@ void EventLoop::ReleaseCapture() {
 
 HWND EventLoop::GetCapture() const {
 	return _captureWin;
+}
+
+bool EventLoop::validateDestroyedWnd(HWND hWnd) {
+	MSG msg;
+	return !_messages.peekMessage(&msg, hWnd, 0, 0, false);
 }
 
 } // namespace Libs

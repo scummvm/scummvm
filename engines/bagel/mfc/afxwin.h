@@ -1177,7 +1177,6 @@ public:
 public:
 	CWnd();
 	~CWnd() override;
-	void clear();
 
 	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	                    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,

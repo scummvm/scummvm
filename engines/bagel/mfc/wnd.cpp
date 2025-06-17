@@ -29,6 +29,7 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
+ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 CWnd::CWnd() : m_hWnd(this) {
@@ -42,7 +43,7 @@ CWnd::~CWnd() {
 		delete _dc;
 	}
 
-	clear();
+	DestroyWindow();
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
@@ -89,21 +90,6 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 		m_pParentWnd->_children[nID] = this;
 
 	return true;
-}
-
-void CWnd::clear() {
-	// Free any owned controls
-	for (CWnd *ctl : _ownedControls) {
-		_children.erase(ctl->_controlId);
-		delete ctl;
-	}
-
-	_children.clear();
-
-	if (m_pParentWnd) {
-		m_pParentWnd->_ownedControls.remove(this);
-		m_pParentWnd->_children.erase(_controlId);
-	}
 }
 
 const MSG *CWnd::GetCurrentMessage() {
@@ -184,7 +170,31 @@ void CWnd::SetFocus() {
 }
 
 void CWnd::DestroyWindow() {
-	clear();
+	// Flush any other pending events
+	auto *app = AfxGetApp();
+	MSG msg;
+	while (app->PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
+	}
+
+	assert(AfxGetApp()->validateDestroyedWnd(m_hWnd));
+
+	// Clear the children array
+	for (auto &node : _children)
+		node._value->m_pParentWnd = nullptr;
+	_children.clear();
+
+	// Free any owned controls
+	for (CWnd *ctl : _ownedControls) {
+		_children.erase(ctl->_controlId);
+		delete ctl;
+	}
+
+	if (m_pParentWnd) {
+		m_pParentWnd->_ownedControls.remove(this);
+		m_pParentWnd->_children.erase(_controlId);
+	}
+
+	SendMessage(WM_DESTROY);
 }
 
 void CWnd::Invalidate(BOOL bErase) {
@@ -752,6 +762,8 @@ void CWnd::OnClose() {
 		// signifying that it can close
 		AfxGetApp()->m_pMainWnd = nullptr;
 	}
+
+	DestroyWindow();
 }
 
 } // namespace MFC

@@ -34,7 +34,7 @@ class EventLoop {
 private:
 	CWnd *&_mainWindow;
 	CWnd *_modalDialog = nullptr;
-	HWND _highlightedWin = nullptr;
+	CWnd *_highlightedWin = nullptr;
 	CWnd *_captureWin = nullptr;
 	Libs::EventQueue _messages;
 	uint32 _nextFrameTime = 0;
@@ -121,6 +121,12 @@ public:
 		// multiple independent windows
 		runEventLoop(wnd);
 	}
+
+	/**
+	 * Checked that the passed HWND doesn't
+	 * have any future messages pending for it
+	 */
+	bool validateDestroyedWnd(HWND hWnd);
 };
 
 } // namespace Libs

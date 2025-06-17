@@ -156,7 +156,7 @@ bool EventQueue::peekMessage(MSG *lpMsg, HWND hWnd,
 		UINT wRemoveMsg) {
 	bool result = false;
 
-	for (uint i = 0; i < _queue.size(); ) {
+	for (uint i = 0; i < _queue.size(); ++i) {
 		const MSG &msg = _queue[i];
 		if ((hWnd == nullptr || hWnd == msg.hwnd) &&
 			((wMsgFilterMin == 0 && wMsgFilterMax == 0) ||
