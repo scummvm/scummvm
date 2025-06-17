@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-16 23:13+0000\n"
-"PO-Revision-Date: 2025-06-16 18:26+0000\n"
+"PO-Revision-Date: 2025-06-17 12:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -13371,7 +13371,7 @@ msgstr "Transfert de personnage"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Draw Weapon / Combat"
-msgstr ""
+msgstr "Dégainer arme / Combattre"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -13400,10 +13400,8 @@ msgid "Use Bedroll"
 msgstr "Utiliser le sac de couchage"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Use Backpack"
 msgid "Open Backpack"
-msgstr "Utiliser la besace"
+msgstr "Ouvrir la besace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
 msgid "Use Keyring"
@@ -13418,15 +13416,13 @@ msgid "Use Recall"
 msgstr "Utiliser le rappel"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open Inventory"
 msgid "Open Inventory & Statistics"
-msgstr "Ouvrir l'inventaire"
+msgstr "Ouvrir l'inventaire et les statistiques"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Close All Displays"
-msgstr ""
+msgstr "Fermer toutes les fenêtres"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
@@ -13434,29 +13430,23 @@ msgstr "Sauter (simule \"clic gauche+clic droit\")"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
 msgid "Careful Step"
-msgstr ""
+msgstr "Pas prudent"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Cycle back through inventory cursor items"
 msgid "Cycle through Weapon Inventory"
-msgstr "Faire défiler les objets de l'inventaire du bas vers le haut"
+msgstr "Faire défiler l'inventaire des armes"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through stretch modes"
 msgid "Cycle through Item Inventory"
-msgstr "Changer le mode d'étirement"
+msgstr "Faire défiler l'inventaire des items"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "Utiliser l'item d'inventaire"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use Medical Kit"
 msgid "Use Medikit"
-msgstr "Utiliser le kit médical"
+msgstr "Utiliser le médikit"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Use Energy Cube"
@@ -13471,10 +13461,8 @@ msgid "Drop Weapon"
 msgstr "Déposer l'arme"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select Item"
 msgid "Search / Select Item"
-msgstr "Sélectionner l'item"
+msgstr "Chercher / Sélectionner l'item"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Use Selection"
@@ -13485,16 +13473,12 @@ msgid "Grab Items"
 msgstr "Ramasser les items"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Next Weapon"
 msgid "Fire Weapon"
-msgstr "Arme suivante"
+msgstr "Tirer avec l'arme"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
-#, fuzzy
-#| msgid "Focus Camera on Silencer"
 msgid "Center screen on Silencer"
-msgstr "Centrer la caméra sur le Silencer"
+msgstr "Centrer l'écran sur le Silencer"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
