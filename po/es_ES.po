@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-16 23:13+0000\n"
-"PO-Revision-Date: 2025-06-16 09:33+0000\n"
+"PO-Revision-Date: 2025-06-17 13:11+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -13327,7 +13327,7 @@ msgstr "Transferir personaje"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Draw Weapon / Combat"
-msgstr ""
+msgstr "Desenfundar arma/Combatir"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -13356,10 +13356,8 @@ msgid "Use Bedroll"
 msgstr "Usar petate"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Use Backpack"
 msgid "Open Backpack"
-msgstr "Usar mochila"
+msgstr "Abrir mochila"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
 msgid "Use Keyring"
@@ -13374,15 +13372,13 @@ msgid "Use Recall"
 msgstr "Usar memoria"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open Inventory"
 msgid "Open Inventory & Statistics"
-msgstr "Abrir inventario"
+msgstr "Abrir inventario y estadísticas"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Close All Displays"
-msgstr ""
+msgstr "Cerrar todas las ventanas"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
@@ -13390,27 +13386,21 @@ msgstr "Saltar (simular pulsar ambos botones)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
 msgid "Careful Step"
-msgstr ""
+msgstr "Avanzar con cuidado"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Cycle back through inventory cursor items"
 msgid "Cycle through Weapon Inventory"
-msgstr "Objeto anterior del cursor de inventario"
+msgstr "Recorrer inventario de armas"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through stretch modes"
 msgid "Cycle through Item Inventory"
-msgstr "Cambiar modo de ajuste"
+msgstr "Recorrer inventario de objetos"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "Usar objeto del inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use Medical Kit"
 msgid "Use Medikit"
 msgstr "Usar Medikit"
 
@@ -13427,10 +13417,8 @@ msgid "Drop Weapon"
 msgstr "Tirar arma"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select Item"
 msgid "Search / Select Item"
-msgstr "Seleccionar objeto"
+msgstr "Registrar/Seleccionar objeto"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Use Selection"
@@ -13441,16 +13429,12 @@ msgid "Grab Items"
 msgstr "Tomar objetos"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Next Weapon"
 msgid "Fire Weapon"
-msgstr "Siguiente arma"
+msgstr "Disparar arma"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
-#, fuzzy
-#| msgid "Focus Camera on Silencer"
 msgid "Center screen on Silencer"
-msgstr "Centrar cámara en Silenciador"
+msgstr "Centrar pantalla en Silenciador"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
