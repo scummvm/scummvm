@@ -40,7 +40,6 @@ public:
 
 	bool invalidate() override;
 
-	bool isTransparentAt(int x, int y) override;
 	bool displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) override;
@@ -50,10 +49,10 @@ public:
 	bool create(int width, int height) override;
 	bool setAlphaImage(const Common::String &filename) override;
 	bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
-	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) override;
+	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) const override;
 	bool startPixelOp() override;
 	bool endPixelOp() override;
-	bool isTransparentAtLite(int x, int y) override;
+	bool isTransparentAtLite(int x, int y) const override;
 
 	void setTexture();
 
@@ -76,6 +75,7 @@ private:
 	Graphics::Surface *_maskData;
 	uint _texWidth;
 	uint _texHeight;
+	bool _pixelOpReady;
 
 	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
 };

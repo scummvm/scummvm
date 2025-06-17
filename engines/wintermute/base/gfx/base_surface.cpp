@@ -39,8 +39,6 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 
 	_filename = "";
 
-	_pixelOpReady = false;
-
 	_ckDefault = true;
 	_ckRed = _ckGreen = _ckBlue = 0;
 	_lifeTime = 0;
@@ -52,9 +50,6 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface::~BaseSurface() {
-	if (_pixelOpReady) {
-		endPixelOp();
-	}
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -64,7 +59,13 @@ bool BaseSurface::restore() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSurface::isTransparentAt(int x, int y) {
-	return false;
+	if (startPixelOp()) {
+		bool retval = isTransparentAtLite(x, y);
+		endPixelOp();
+		return retval;
+	} else {
+		return false;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -75,36 +76,6 @@ bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::create(int width, int height) {
 	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::startPixelOp() {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::endPixelOp() {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool BaseSurface::isTransparentAtLite(int x, int y) {
-	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

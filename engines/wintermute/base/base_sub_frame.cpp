@@ -463,9 +463,14 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 		byte r, g, b, a;
-		if (_surface && _surface->getPixel(x, y, &r, &g, &b, &a)) {
-			uint32 pixel = BYTETORGBA(r, g, b, a);
-			stack->pushInt(pixel);
+		if (_surface && _surface->startPixelOp()) {
+			if (_surface->getPixel(x, y, &r, &g, &b, &a)) {
+				uint32 pixel = BYTETORGBA(r, g, b, a);
+				stack->pushInt(pixel);
+			} else {
+				stack->pushNULL();
+			}
+			_surface->endPixelOp();
 		} else {
 			stack->pushNULL();
 		}

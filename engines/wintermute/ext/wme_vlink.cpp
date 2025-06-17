@@ -127,9 +127,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 					if (_updateNeeded) {
 						{
 							Common::StackLock lock(_frameMutex);
-							texture->startPixelOp();
 							texture->putSurface(_surface, false);
-							texture->endPixelOp();
 						}
 						texture->display(0, 0, Rect32(texture->getWidth(), texture->getHeight()));
 						_updateNeeded = false;
