@@ -121,6 +121,16 @@ const uint8 Gfx::FONT[] = {
 	0x38, 0x44, 0x82, 0x82, 0x44, 0x28, 0xEE, 0x00, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA
 };
 
+const StrEntry Video::STRINGS_TABLE_AMIGA_CODES[] = {
+	{ 0x15E, "EDJI" }, { 0x15F, "HICI" }, { 0x160, "FLLD" },
+	{ 0x161, "EDIL" }, { 0x162, "FADK" }, { 0x163, "CCAL" },
+	{ 0x164, "LIBC" }, { 0x165, "KCIJ" }, { 0x166, "LDCI" },
+	{ 0x167, "ICAH" }, { 0x168, "LDIJ" }, { 0x169, "LALD" },
+	{ 0x16A, "KJIA" }, { 0x16B, "LFEK" }, { 0x16C, "FLAK" },
+	{ 0x16D, "LAEA" }, { 0x16E, "FIEI" }, { 0x16F, "GABK" },
+	{ 0x170, "KCGB" }, { 0xFFFF, nullptr }
+};
+
 const StrEntry Video::STRINGS_TABLE_FR[] = {
 	{ 0x001, "P E A N U T  3000" },
 	{ 0x002, "Copyright  } 1990 Peanut Computer, Inc.\nAll rights reserved.\n\nCDOS Version 5.01" },

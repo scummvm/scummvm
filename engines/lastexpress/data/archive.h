@@ -19,56 +19,100 @@
  *
  */
 
-#ifndef LASTEXPRESS_HPFARCHIVE_H
-#define LASTEXPRESS_HPFARCHIVE_H
+#ifndef LASTEXPRESS_ARCHIVE_H
+#define LASTEXPRESS_ARCHIVE_H
 
-/*
-	Archive file format (.HPF)
+#include "lastexpress/lastexpress.h"
 
-	uint32 {4}   - number of files
-
-	// for each file
-	    char {12}    - name (zero-terminated)
-	    uint32 {4}   - offset (expressed in sectors of 2048 bytes)
-	    uint32 {4}   - size (expressed in sectors of 2048 bytes)
-	    byte {2}     - file status: 1 = on disk (ie. in HD.HPF), 0 = on CD
-*/
-
-#include "common/archive.h"
-#include "common/hash-str.h"
-#include "common/hashmap.h"
-#include "common/str.h"
+#include "common/file.h"
 
 namespace LastExpress {
 
-class HPFArchive : public Common::Archive {
-public:
-	HPFArchive(const Common::Path &path);
+struct Seq;
 
-	bool hasFile(const Common::Path &path) const override;
-	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+/*
+ *  HPF Archive Format
+ *
+ *  * uint32 {4}   Number of files
+ *
+ *  For each file:
+ *  	* char {12}    Name (zero-terminated)
+ *  	* uint32 {4}   Offset (expressed in sectors of 2048 bytes)
+ *  	* uint16 {2}   Size (expressed in sectors of 2048 bytes)
+ *  	* uint16 {2}   Current position (expressed in sectors of 2048 bytes)
+ *  	* uint16 {2}   File status flags:
+ *  				   - Bit 0: "Is on CD"
+ *  				   - Bit 1: "Is loaded"
+ */
 
-	int count() { return _files.size(); }
+typedef struct HPF {
+	char name[12];
+	uint32 offset;
+	uint16 size;
+	uint16 currentPos;
+	uint16 status;
 
-private:
-	static const unsigned int _archiveNameSize = 12;
-	static const unsigned int _archiveSectorSize = 2048;
+	// For Gold Edition only
+	Common::ArchiveMemberPtr archiveRef;
+	Common::String archiveName;
 
-	// File entry
-	struct HPFEntry {
-		uint32 offset;          ///< Offset (in sectors of 2048 bytes)
-		uint32 size;            ///< Size (in sectors of 2048 bytes)
-		uint16 isOnHD;          ///< File location (1: on HD; 0: on CD)
+	HPF() {
+		memset(name, 0, sizeof(name));
+		offset = 0;
+		size = 0;
+		currentPos = 0;
+		status = 0;
+
+		archiveRef = nullptr;
+		archiveName = "";
 	};
+} HPF;
 
-	typedef Common::HashMap<Common::String, HPFEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+enum HPFFlags {
+	kHPFFileIsOnCD   = 1 << 0,
+	kHPFFileIsLoaded = 1 << 1,
+};
 
-	FileMap _files;             ///< List of files
-	Common::Path _filename;   ///< Filename of the archive
+
+class ArchiveManager {
+public:
+	ArchiveManager(LastExpressEngine *engine);
+	virtual ~ArchiveManager();
+
+	HPF *search(const char *name, HPF *archive, int archiveSize);
+	virtual bool lockCD(int32 index);
+	virtual bool isCDAvailable(int cdNum, char *outPath, int pathSize);
+	virtual bool lockCache(char *filename);
+	virtual void initHPFS();
+	virtual void shutDownHPFS();
+	void unlockCD();
+	virtual HPF *openHPF(const char *filename);
+	void readHD(void *dstBuf, int offset, uint32 size);
+	void readCD(void *dstBuf, int offset, uint32 size);
+	virtual void readHPF(HPF *archive, void *dstBuf, uint32 size);
+	void seekHPF(HPF *archive, uint32 position);
+	void closeHPF(HPF *archive);
+
+	virtual int loadBG(const char *filename);
+	Seq *loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRestart, int character);
+	void loadMice();
+
+protected:
+	LastExpressEngine *_engine = nullptr;
+
+	Common::File *_cdFilePointer = nullptr;
+	int32 _cdFilePosition = 0;
+	int32 _cdArchiveNumFiles = 0;
+
+	Common::File *_hdFilePointer = nullptr;
+	int32 _hdFilePosition = 0;
+	int32 _hdArchiveNumFiles = 0;
+
+	HPF *_cdArchive = nullptr;
+	HPF *_hdArchive = nullptr;
+	int32 _cdArchiveIndex = 0;
 };
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_HPFARCHIVE_H
+#endif // LASTEXPRESS_ARCHIVE_H

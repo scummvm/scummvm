@@ -49,7 +49,7 @@ AdGeomExt::~AdGeomExt() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGeomExt::loadFile(char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdGeomExt::LoadFile failed for file '%s'", filename);
 		return false;
@@ -70,24 +70,24 @@ TOKEN_DEF_START
 	TOKEN_DEF(NODE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExt::loadBuffer(byte *buffer) {
+bool AdGeomExt::loadBuffer(char *buffer) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(GEOMETRY)
 		TOKEN_TABLE(NODE)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
-	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GEOMETRY) {
+	if (parser.getCommand(&buffer, commands, &params) != TOKEN_GEOMETRY) {
 		_gameRef->LOG(0, "'GEOMETRY' keyword expected.");
 		return false;
 	}
 
 	buffer = params;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NODE: {
 			AdGeomExtNode *node = new AdGeomExtNode(_gameRef);

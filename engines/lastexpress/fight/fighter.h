@@ -24,94 +24,162 @@
 
 #include "lastexpress/fight/fight.h"
 
-#include "common/array.h"
-
 namespace LastExpress {
 
-class Fight;
-class Sequence;
-class SequenceFrame;
+class LastExpressEngine;
+class CFight;
 
-class Fighter {
+struct Seq;
+struct Sprite;
+
+class CFighter {
+
 public:
-	enum FightAction {
-		kFightActionNone       = 0,
-		kFightAction1          = 1,
-		kFightAction2          = 2,
-		kFightAction3          = 3,
-		kFightAction4          = 4,
-		kFightAction5          = 5,
-		kFightAction101        = 101,
-		kFightActionResetFrame = 102,
-		kFightAction103        = 103,
-		kFightActionWin        = 104,
-		kFightActionLost       = 105,
-		kFightAction128        = 128,
-		kFightAction129        = 129,
-		kFightAction130        = 130,
-		kFightAction131        = 131,
-		kFightAction132        = 132
-	};
+	CFighter(LastExpressEngine *engine, CFight *fight);
+	virtual ~CFighter();
 
-	enum FightSequenceType {
-		kFightSequenceType0 = 0,
-		kFightSequenceType1 = 1,
-		kFightSequenceType2 = 2
-	};
-
-	Fighter(LastExpressEngine *engine);
-	virtual ~Fighter();
-
-	// Default functions
-	virtual void handleAction(FightAction action);
-	virtual void update();
-	virtual bool canInteract(FightAction action = kFightActionNone);
-
-	// Drawing
-	void setSequenceAndDraw(uint32 sequenceIndex, FightSequenceType type);
-
-	// Accessors
-	void setOpponent(Fighter *opponent) { _opponent = opponent; }
-	void setCountdown(int32 countdown) { _countdown = countdown; }
-	void setFight(Fight *fight) { _fight = fight; }
-
-	int getCountdown() { return _countdown; }
-	uint32 getSequenceIndex() { return _sequenceIndex; }
-	uint32 getField34() { return _field_34; }
+	virtual void timer();
+	void doAction(int sequenceIndex, int action);
+	void newSeq();
+	bool init(CFighter *opponent);
+	virtual bool actionAvailable(int action);
+	int getAction();
+	int getDodges();
+	int getHitPoints();
+	void setHitPoints(int hitPoints);
+	bool isDead();
+	virtual void send(int action);
 
 protected:
-	LastExpressEngine         *_engine;
-	Fight                     *_fight;
-	Fighter                   *_opponent;
-	Sequence                  *_sequence;
-	SequenceFrame             *_frame;
-	uint32                     _sequenceIndex;
-	Common::Array<Sequence *>  _sequences;
-	uint32                     _frameIndex;
-	uint32                     _field_24;
-	FightAction                _action;
-	uint32                     _sequenceIndex2;
-	int32                      _countdown;  // countdown before losing ?
-	uint32                     _field_34;
+	LastExpressEngine *_engine = nullptr;
 
-	// Drawing and processing
-	void draw();
-	void process();
-
-	// Helpers
-	bool checkFrame(uint32 val);
+	CFight *_fight = nullptr;
+	CFighter *_opponent = nullptr;
+	Seq *_seqs[10];
+	int _numSeqs = 0;
+	int _currentActionIdx = 0;
+	Seq *_currentSeq = nullptr;
+	Sprite *_currentSprite = nullptr;
+	int _currentSpriteIdx = 0;
+	int _unusedFlag = 0;
+	int _nextMessage = 0;
+	int _nextSequenceIdx = 0;
+	int _hitPoints = 0;
+	int _dodges = 0;
+	int _timer = 0;
 };
 
-class Opponent : public Fighter {
+// Generic fighters
+
+class CCath : public CFighter {
 public:
-	Opponent(LastExpressEngine *engine) : Fighter(engine) {
-		_field_38 = 0;
-	}
+	CCath(LastExpressEngine *engine, CFight *fight) : CFighter(engine, fight) {}
 
-	void update() override;
+	virtual void timer() override;
+};
 
-protected:
-	int32 _field_38;
+class COpponent : public CFighter {
+public:
+	COpponent(LastExpressEngine *engine, CFight *fight) : CFighter(engine, fight) {}
+
+	virtual void timer() override;
+};
+
+
+// First fight: Cath vs Milos
+
+class CCath1 : public CCath {
+public:
+	CCath1(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	bool actionAvailable(int action) override;
+	void send(int action) override;
+};
+
+class COpponent1 : public COpponent {
+public:
+	COpponent1(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	void send(int action) override;
+};
+
+
+// Second fight: Cath vs Vesna (when saving Anna)
+
+class CCath2 : public CCath {
+public:
+	CCath2(LastExpressEngine *engine, CFight *fight);
+
+	void send(int action) override;
+};
+
+class COpponent2 : public COpponent {
+public:
+	COpponent2(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+};
+
+
+// Third fight: Cath vs Ivo
+
+class CCath3 : public CCath {
+public:
+	CCath3(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	bool actionAvailable(int action) override;
+	void send(int action) override;
+};
+
+class COpponent3 : public COpponent {
+public:
+	COpponent3(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	void send(int action) override;
+};
+
+
+// Fourth fight: Cath vs Salko
+
+class CCath4 : public CCath {
+public:
+	CCath4(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	bool actionAvailable(int action) override;
+	void send(int action) override;
+};
+
+class COpponent4 : public COpponent {
+public:
+	COpponent4(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	void send(int action) override;
+};
+
+
+// Fifth fight: Cath vs Vesna (final fight)
+
+class CCath5 : public CCath {
+public:
+	CCath5(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	bool actionAvailable(int action) override;
+	void send(int action) override;
+};
+
+class COpponent5 : public COpponent {
+public:
+	COpponent5(LastExpressEngine *engine, CFight *fight);
+
+	void timer() override;
+	void send(int action) override;
 };
 
 } // End of namespace LastExpress

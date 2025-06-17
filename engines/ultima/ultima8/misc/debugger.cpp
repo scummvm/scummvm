@@ -72,9 +72,9 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("Ultima8Engine::newGame", WRAP_METHOD(Debugger, cmdNewGame));
 	registerCmd("Ultima8Engine::engineStats", WRAP_METHOD(Debugger, cmdEngineStats));
 	registerCmd("Ultima8Engine::setVideoMode", WRAP_METHOD(Debugger, cmdSetVideoMode));
-	registerCmd("Ultima8Engine::toggleAvatarInStasis", WRAP_METHOD(Debugger, cmdToggleAvatarInStasis));
-	registerCmd("Ultima8Engine::togglePaintEditorItems", WRAP_METHOD(Debugger, cmdTogglePaintEditorItems));
-	registerCmd("Ultima8Engine::toggleShowTouchingItems", WRAP_METHOD(Debugger, cmdToggleShowTouchingItems));
+	registerCmd("Ultima8Engine::toggleAvatarInStasis", WRAP_METHOD(Debugger, cmdAvatarInStasis));
+	registerCmd("Ultima8Engine::togglePaintEditorItems", WRAP_METHOD(Debugger, cmdShowEditorItems));
+	registerCmd("Ultima8Engine::toggleShowTouchingItems", WRAP_METHOD(Debugger, cmdShowTouchingItems));
 	registerCmd("Ultima8Engine::closeItemGumps", WRAP_METHOD(Debugger, cmdCloseItemGumps));
 
 	registerCmd("CameraProcess::moveToAvatar", WRAP_METHOD(Debugger, cmdCameraOnAvatar));
@@ -83,15 +83,15 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
 	registerCmd("AudioProcess::stopSFX", WRAP_METHOD(Debugger, cmdStopSFX));
 
-	registerCmd("Cheat::toggle", WRAP_METHOD(Debugger, cmdToggleCheatMode));
+	registerCmd("Cheat::toggle", WRAP_METHOD(Debugger, cmdCheatMode));
 	registerCmd("Cheat::maxstats", WRAP_METHOD(Debugger, cmdMaxStats));
 	registerCmd("Cheat::heal", WRAP_METHOD(Debugger, cmdHeal));
-	registerCmd("Cheat::toggleInvincibility", WRAP_METHOD(Debugger, cmdToggleInvincibility));
+	registerCmd("Cheat::toggleInvincibility", WRAP_METHOD(Debugger, cmdInvincibility));
 	registerCmd("Cheat::items", WRAP_METHOD(Debugger, cmdCheatItems));
 	registerCmd("Cheat::equip", WRAP_METHOD(Debugger, cmdCheatEquip));
 
-	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
-	registerCmd("GameMapGump::toggleFootpads", WRAP_METHOD(Debugger, cmdToggleFootpads));
+	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdHighlightItems));
+	registerCmd("GameMapGump::toggleFootpads", WRAP_METHOD(Debugger, cmdFootpads));
 	registerCmd("GameMapGump::gridlines", WRAP_METHOD(Debugger, cmdGridlines));	
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::dumpAllMaps", WRAP_METHOD(Debugger, cmdDumpAllMaps));
@@ -101,7 +101,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("Kernel::processTypes", WRAP_METHOD(Debugger, cmdProcessTypes));
 	registerCmd("Kernel::processInfo", WRAP_METHOD(Debugger, cmdProcessInfo));
 	registerCmd("Kernel::listProcesses", WRAP_METHOD(Debugger, cmdListProcesses));
-	registerCmd("Kernel::toggleFrameByFrame", WRAP_METHOD(Debugger, cmdToggleFrameByFrame));
+	registerCmd("Kernel::toggleFrameByFrame", WRAP_METHOD(Debugger, cmdFrameByFrame));
 	registerCmd("Kernel::advanceFrame", WRAP_METHOD(Debugger, cmdAdvanceFrame));
 
 	registerCmd("MainActor::teleport", WRAP_METHOD(Debugger, cmdTeleport));
@@ -121,7 +121,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("MainActor::useEnergyCube", WRAP_METHOD(Debugger, cmdUseEnergyCube));
 	registerCmd("MainActor::detonateBomb", WRAP_METHOD(Debugger, cmdDetonateBomb));
 	registerCmd("MainActor::dropWeapon", WRAP_METHOD(Debugger, cmdDropWeapon));
-	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
+	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdCombat));
 	registerCmd("ItemSelectionProcess::startSelection", WRAP_METHOD(Debugger, cmdStartSelection));
 	registerCmd("ItemSelectionProcess::useSelectedItem", WRAP_METHOD(Debugger, cmdUseSelection));
 	registerCmd("ItemSelectionProcess::grabItems", WRAP_METHOD(Debugger, cmdGrabItems));
@@ -129,8 +129,8 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
 
-	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
-	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
+	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdQuarterSpeed));
+	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdClipping));
 
 	registerCmd("UCMachine::getGlobal", WRAP_METHOD(Debugger, cmdGetGlobal));
 	registerCmd("UCMachine::setGlobal", WRAP_METHOD(Debugger, cmdSetGlobal));
@@ -223,24 +223,63 @@ bool Debugger::cmdSetVideoMode(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdToggleAvatarInStasis(int argc, const char **argv) {
+bool Debugger::cmdAvatarInStasis(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->setAvatarInStasis(!g->isAvatarInStasis());
-	debugPrintf("avatarInStasis = %s\n", strBool(g->isAvatarInStasis()));
+	bool flag = !g->isAvatarInStasis();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	g->setAvatarInStasis(flag);
+	debugPrintf("avatarInStasis = %s\n", strBool(flag));
 	return true;
 }
 
-bool Debugger::cmdTogglePaintEditorItems(int argc, const char **argv) {
+bool Debugger::cmdShowEditorItems(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->setShowEditorItems(!g->isShowEditorItems());
-	debugPrintf("showEditorItems = %s\n", strBool(g->isShowEditorItems()));
+	bool flag = !g->isShowEditorItems();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	g->setShowEditorItems(flag);
+	debugPrintf("showEditorItems = %s\n", strBool(flag));
 	return false;
 }
 
-bool Debugger::cmdToggleShowTouchingItems(int argc, const char **argv) {
+bool Debugger::cmdShowTouchingItems(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->setShowTouchingItems(!g->isShowTouchingItems());
-	debugPrintf("ShowTouchingItems = %s\n", strBool(g->isShowTouchingItems()));
+	bool flag = !g->isShowTouchingItems();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	g->setShowTouchingItems(flag);
+	debugPrintf("showTouchingItems = %s\n", strBool(flag));
 	return false;
 }
 
@@ -303,10 +342,23 @@ bool Debugger::cmdPlaySFX(int argc, const char **argv) {
 }
 
 
-bool Debugger::cmdToggleCheatMode(int argc, const char **argv) {
+bool Debugger::cmdCheatMode(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	g->setCheatMode(!g->areCheatsEnabled());
-	debugPrintf("Cheats = %s\n", strBool(g->areCheatsEnabled()));
+	bool flag = !g->areCheatsEnabled();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	g->setCheatMode(flag);
+	debugPrintf("Cheats = %s\n", strBool(flag));
 	return true;
 }
 
@@ -546,43 +598,88 @@ bool Debugger::cmdHeal(int argc, const char **argv) {
 	return false;
 }
 
-bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+bool Debugger::cmdInvincibility(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
+	Ultima8Engine *g = Ultima8Engine::get_instance();
+	if (!g->areCheatsEnabled()) {
 		debugPrintf("Cheats are disabled\n");
 		return true;
 	}
-	MainActor *av = getMainActor();
 
-	if (av->hasActorFlags(Actor::ACT_INVINCIBLE)) {
-		av->clearActorFlag(Actor::ACT_INVINCIBLE);
-		debugPrintf("Avatar is no longer invincible.\n");
-	} else {
+	MainActor *av = getMainActor();
+	bool flag = !av->hasActorFlags(Actor::ACT_INVINCIBLE);
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	if (flag) {
 		av->setActorFlag(Actor::ACT_INVINCIBLE);
 		debugPrintf("Avatar invincible.\n");
+	} else {
+		av->clearActorFlag(Actor::ACT_INVINCIBLE);
+		debugPrintf("Avatar is no longer invincible.\n");
 	}
 
 	return true;
 }
 
-bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
-	GameMapGump::Set_highlightItems(!GameMapGump::is_highlightItems());
+bool Debugger::cmdHighlightItems(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
+	bool flag = !GameMapGump::is_highlightItems();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	GameMapGump::Set_highlightItems(flag);
 	return false;
 }
 
-bool Debugger::cmdToggleFootpads(int argc, const char **argv) {
-	GameMapGump::toggleFootpads();
+bool Debugger::cmdFootpads(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
+	bool flag = !GameMapGump::getShowFootpads();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	GameMapGump::setShowFootpads(flag);
 	return false;
 }
 
 bool Debugger::cmdGridlines(int argc, const char **argv) {
 	if (argc > 2) {
-		debugPrintf("usage: %s <number>\n", argv[0]);
+		debugPrintf("usage: %s [on|off|<number>]\n", argv[0]);
 		return true;
 	}
 	
-	int gridlines = -1;
+	int gridlines = GameMapGump::getGridlines() == 0 ? -1 : 0;
 	if (argc > 1) {
-		gridlines = atoi(argv[1]);
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			gridlines = -1;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			gridlines = 0;
+		else
+			gridlines = atoi(argv[1]);
 	}
 
 	// ensure a sane minimum value
@@ -829,13 +926,25 @@ bool Debugger::cmdProcessInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdToggleFrameByFrame(int argc, const char **argv) {
-	Kernel *kern = Kernel::get_instance();
-	bool fbf = !kern->isFrameByFrame();
-	kern->setFrameByFrame(fbf);
-	debugPrintf("FrameByFrame = %s\n", strBool(fbf));
+bool Debugger::cmdFrameByFrame(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
 
-	if (fbf)
+	Kernel *kern = Kernel::get_instance();
+	bool flag = !kern->isFrameByFrame();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	kern->setFrameByFrame(flag);
+	debugPrintf("FrameByFrame = %s\n", strBool(flag));
+
+	if (flag)
 		kern->pause();
 	else
 		kern->unpause();
@@ -1141,14 +1250,30 @@ bool Debugger::cmdCameraOnAvatar(int argc, const char **argv) {
 	return false;
 }
 
-bool Debugger::cmdToggleCombat(int argc, const char **argv) {
+bool Debugger::cmdCombat(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't toggle combat: avatarInStasis");
 		return false;
 	}
 
 	MainActor *av = getMainActor();
-	av->toggleInCombat();
+	bool flag = !av->isInCombat();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+	if (flag)
+		av->setInCombat(0);
+	else
+		av->clearInCombat();
+
 	return false;
 }
 
@@ -1238,19 +1363,45 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdToggleQuarterSpeed(int argc, const char **argv) {
-	QuickAvatarMoverProcess::setQuarterSpeed(!QuickAvatarMoverProcess::isQuarterSpeed());
+bool Debugger::cmdQuarterSpeed(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
+	bool flag = !QuickAvatarMoverProcess::isQuarterSpeed();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	QuickAvatarMoverProcess::setQuarterSpeed(flag);
 	return false;
 }
 
-bool Debugger::cmdToggleClipping(int argc, const char **argv) {
-	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		QuickAvatarMoverProcess::toggleClipping();
-		debugPrintf("QuickAvatarMoverProcess::_clipping = %s\n",
-			strBool(QuickAvatarMoverProcess::isClipping()));
-	} else {
-		debugPrintf("Cheats aren't enabled\n");
+bool Debugger::cmdClipping(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
 	}
+
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+
+	bool flag = !QuickAvatarMoverProcess::isClipping();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	QuickAvatarMoverProcess::setClipping(flag);
+	debugPrintf("QuickAvatarMoverProcess::_clipping = %s\n", strBool(flag));
 	return true;
 }
 

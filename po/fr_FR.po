@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
-"PO-Revision-Date: 2025-06-16 09:33+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
+"PO-Revision-Date: 2025-06-17 12:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -872,7 +872,7 @@ msgstr "Calcul terminé"
 msgid "Calculated %s %S / %s %S"
 msgstr "Calculé %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -886,14 +886,14 @@ msgstr ""
 "Si vous êtes sûr qu'il s'agit d'une variante inconnue valide, merci "
 "d'envoyer l'e-mail suivant à integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Le jeu ne semble pas contenir de fichiers. Êtes-vous sûr que le chemin "
 "d'accès est correct ?"
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -902,7 +902,7 @@ msgstr ""
 "possible d'établir une correspondance. Merci de saisir les métadonnées "
 "correctes pour le jeu."
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr "Tous les fichiers sont OK"
 
@@ -7681,7 +7681,6 @@ msgstr "Parler/Interagir"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Attaque"
 
@@ -13371,8 +13370,8 @@ msgid "Transfer Character"
 msgstr "Transfert de personnage"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
-msgstr "Combattre"
+msgid "Draw Weapon / Combat"
+msgstr "Dégainer arme / Combattre"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -13401,8 +13400,8 @@ msgid "Use Bedroll"
 msgstr "Utiliser le sac de couchage"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-msgid "Use Backpack"
-msgstr "Utiliser la besace"
+msgid "Open Backpack"
+msgstr "Ouvrir la besace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
 msgid "Use Keyring"
@@ -13417,189 +13416,153 @@ msgid "Use Recall"
 msgstr "Utiliser le rappel"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-msgid "Open Inventory"
-msgstr "Ouvrir l'inventaire"
+msgid "Open Inventory & Statistics"
+msgstr "Ouvrir l'inventaire et les statistiques"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-msgid "Close Gumps"
-msgstr "Fermer la fenêtre active"
+msgid "Close All Displays"
+msgstr "Fermer toutes les fenêtres"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr "Sauter (simule \"clic gauche+clic droit\")"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-msgid "Step"
-msgstr "Marcher"
+msgid "Careful Step"
+msgstr "Pas prudent"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "Action suivante"
+msgid "Cycle through Weapon Inventory"
+msgstr "Faire défiler l'inventaire des armes"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Éléments d'inventaire animés"
+msgid "Cycle through Item Inventory"
+msgstr "Faire défiler l'inventaire des items"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
-#, fuzzy
-#| msgid "Inventory"
 msgid "Use Inventory Item"
-msgstr "Inventaire"
+msgstr "Utiliser l'item d'inventaire"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
-msgstr ""
+msgid "Use Medikit"
+msgstr "Utiliser le médikit"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Use Energy Cube"
-msgstr ""
+msgstr "Utiliser le cube d'énergie"
 
 #: engines/ultima/ultima8/metaengine.cpp:84
 msgid "Detonate Bomb"
-msgstr ""
+msgstr "Faire exploser la bombe"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
-#, fuzzy
-#| msgid "Drop page"
 msgid "Drop Weapon"
-msgstr "Lâcher la Page"
+msgstr "Déposer l'arme"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select a Theme"
-msgid "Select Item"
-msgstr "Sélectionnez un Thème"
+msgid "Search / Select Item"
+msgstr "Chercher / Sélectionner l'item"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
-#, fuzzy
-#| msgid "Next action"
 msgid "Use Selection"
-msgstr "Action suivante"
+msgstr "Utiliser la sélection"
 
 #: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Grab Items"
-msgstr ""
+msgstr "Ramasser les items"
+
+#: engines/ultima/ultima8/metaengine.cpp:90
+msgid "Fire Weapon"
+msgstr "Tirer avec l'arme"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
-#, fuzzy
-#| msgid "Camera moves with Silencer"
-msgid "Focus Camera on Silencer"
-msgstr "La caméra se déplace avec le Silencer"
+msgid "Center screen on Silencer"
+msgstr "Centrer l'écran sur le Silencer"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
-msgstr ""
+msgstr "Sauter / Rouler / S'accroupir"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
-#, fuzzy
-#| msgid "Shorty mode"
 msgid "Short Jump"
-msgstr "Mode Minus"
+msgstr "Saut court"
 
 #: engines/ultima/ultima8/metaengine.cpp:94
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Sidestep Left"
-msgstr "Faire un pas vers la Gauche"
+msgstr "Pas de côté à gauche"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Sidestep Right"
-msgstr "Faire un pas vers la Droite"
+msgstr "Pas de côté à droite"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
-#, fuzzy
-#| msgid "Face Forward"
 msgid "Step Forward"
-msgstr "Marcher vers l'avant"
+msgstr "Pas vers l'avant"
 
 #: engines/ultima/ultima8/metaengine.cpp:97
-#, fuzzy
-#| msgid "Step back"
 msgid "Step Back"
-msgstr "Pas en arrière"
+msgstr "Pas vers l'arrière"
 
 #: engines/ultima/ultima8/metaengine.cpp:98
-#, fuzzy
-#| msgid "Roll left"
 msgid "Roll Left"
 msgstr "Rouler à gauche"
 
 #: engines/ultima/ultima8/metaengine.cpp:99
-#, fuzzy
-#| msgid "Roll right"
 msgid "Roll Right"
 msgstr "Rouler à droite"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Crouch"
-msgstr "Act./Désact. Horloge"
+msgstr "S'accroupir / Se relever"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
 msgid "Side Step / Advance / Retreat"
-msgstr ""
+msgstr "Pas de côté / Avancer / Reculer"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Clipping"
-msgstr "Act./Désact. Horloge"
+msgstr "Act./Désact. le clipping"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
-msgstr ""
+msgstr "Monter"
 
 #: engines/ultima/ultima8/metaengine.cpp:108
 msgid "Descend"
-msgstr ""
+msgstr "Descendre"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show Touching Items"
-msgstr "Afficher les indices"
+msgstr "Afficher les items manipulables"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show Editor Items"
-msgstr "Afficher les citations"
+msgstr "Afficher les Editor items"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Decrement Map Sort Order"
-msgstr ""
+msgstr "Ordre de tri de carte décroissant"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
 msgid "Increment Map Sort Order"
-msgstr ""
+msgstr "Ordre de tri de carte croissant"
 
 #: engines/ultima/ultima8/metaengine.cpp:123
-#, fuzzy
-#| msgid "Toggle panel style"
 msgid "Toggle Frame By Frame"
-msgstr "Basculer entre styles de panneau"
+msgstr "Act./Désact. Image par image"
 
 #: engines/ultima/ultima8/metaengine.cpp:124
 msgid "Advance Frame"
-msgstr ""
+msgstr "Image suivante"
 
 #: engines/ultima/ultima8/metaengine.cpp:125
 msgid "Toggle Avatar In Stasis"
-msgstr ""
+msgstr "Act./Désact. l'Avatar en stase"
 
 #: engines/ultima/ultima8/metaengine.cpp:126
-#, fuzzy
-#| msgid "Image Viewer"
 msgid "Show Shape Viewer"
-msgstr "Visionneuse d'images"
+msgstr "Afficher la visionneuse de forme"
 
 #: engines/ultima/ultima8/metaengine.cpp:136
 msgid "Ultima VIII"
@@ -14476,6 +14439,18 @@ msgstr ""
 "de polices Liberation . Vous aurez besoin de toutes les polices du paquet de "
 "polices que vous avez choisi, par exemple LiberationMono, LiberationSans et "
 "LiberationSerif."
+
+#~ msgid "Combat"
+#~ msgstr "Combattre"
+
+#~ msgid "Close Gumps"
+#~ msgstr "Fermer la fenêtre active"
+
+#~ msgid "Step"
+#~ msgstr "Marcher"
+
+#~ msgid "Next Inventory Item"
+#~ msgstr "Item d'inventaire suivant"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "Impossible de trouver un moteur pour exécuter le jeu sélectionné"

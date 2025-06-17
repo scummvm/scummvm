@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
 "PO-Revision-Date: 2025-05-22 18:56+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -864,7 +864,7 @@ msgstr "Laskenta valmis"
 msgid "Calculated %s %S / %s %S"
 msgstr "Laskettu %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -879,14 +879,14 @@ msgstr ""
 "pelistä, ole hyvä ja lähetä seuraava sähköposti osoitteeseen "
 "integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Pelillä ei vaikuta olevan laisinkaan tiedostoja. Oletko varma että polku on "
 "oikea?"
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -894,7 +894,7 @@ msgstr ""
 "Peliin ei näytä olevan liittetty mitään metadataa, joten emme kykene "
 "tunnistamaan sitä. Ole hyvä ja täytä tarvittu metadata tälle pelillle."
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr "Kaikki tiedostot OK"
 
@@ -7576,7 +7576,6 @@ msgstr "Puhu/Vuorovaikuta"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Hyökkäys"
 
@@ -13163,10 +13162,8 @@ msgid "Transfer Character"
 msgstr "Siirrä hahmo"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "Taistelumoodi päälle / pois"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13205,7 +13202,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Askelpalautin"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13227,37 +13224,33 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Avaa Inventaario"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "Sulje ponnahdusikkuna"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Side Step"
-msgid "Step"
-msgstr "Sivuaskel"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
 #, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "Seuraava toiminto"
+#| msgid "Cycle back through inventory cursor items"
+msgid "Cycle through Weapon Inventory"
+msgstr "Siirry takaisinpäin inventaariossa"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Animoidut invenaarioesineet"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Selaa läpi venytystiloja"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13266,7 +13259,7 @@ msgid "Use Inventory Item"
 msgstr "Tavarat"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13286,7 +13279,7 @@ msgstr "Pudota sivu"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Valitse teema"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13299,10 +13292,16 @@ msgstr "Seuraava toiminto"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "Seuraava toiminto"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
 #, fuzzy
 #| msgid "Camera moves with Silencer"
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "Kamera liikkuu hahmon mukana"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14275,6 +14274,26 @@ msgstr ""
 "ladata Liberation Fonts -paketin. Tarvitset kaikki fontit paketista jonka "
 "valitset, i.e. LiberationMono, LiberationSans ja LiberationSerif riippuen "
 "valinnastasi."
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "Taistelumoodi päälle / pois"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "Sulje ponnahdusikkuna"
+
+#, fuzzy
+#~| msgid "Side Step"
+#~ msgid "Step"
+#~ msgstr "Sivuaskel"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Animoidut invenaarioesineet"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "Pelimoottoria joka tukisi valittua peliä ei löytynyt"

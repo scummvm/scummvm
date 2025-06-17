@@ -4360,7 +4360,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("gigglevania", "", "Pantsylvania", "r:d9082ba24e164f376ffb3090c43fa997", 303893, 404),
 	WINGAME2("gigglevania", "", "PANTS.EXE",	"t:2c22991e2349ff5fc6f4f23940ae6487", 697317,
-								"INTRO.DXR",	"h:41101e9d94da0a627e75f5b93ae22f48", 5008606, 404),
+								"INTRO.DXR",	"f:41101e9d94da0a627e75f5b93ae22f48", 5008606, 404),
 	// Found on Elroy Goes Bugzerk CD
 	MACDEMO1("gigglevania", "Demo", "Pantsylvania Demo", "r:da1e2ceef5a0013fa068e9a3ad013336", 502075, 400),
 	WINDEMO1("gigglevania", "Demo", "PANTDEMO.EXE", "t:ad83c38a5bbf3ce654dc27641cd505cc", 8422605, 400),
@@ -5963,7 +5963,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Earlier demos are D3; the Great Big Demo is from Spaceship Warlock AV (1996)
 	// Great Big Windows demo is also on this disc, despite it being HFS and Mac-only
 	MACGAME1("totaldistortion", "",	"Installer Files/xn--TD MACPPC-qa02c",	 "r:17efee018a660458fae80de4364021ac", 485818, 404),
-	WINGAME1("totaldistortion", "", "TOTAL_DN.EXE",							 "h:461b407c321e80487ae4882056310f9f", 700747, 404),
+	WINGAME1("totaldistortion", "", "TOTAL_DN.EXE",							 "t:f1adf50f829a148bbae442ee5cca0bd3", 700747, 404),
 	MACDEMO1("totaldistortion", "Great Big Demo", "TD Demo 12 Meg",			 "r:17efee018a660458fae80de4364021ac", 485818, 404),
 	WINDEMO1("totaldistortion", "Great Big Demo", "TD_DEMO.EXE",			 "t:028063f8a752f5ffda7477f328500d82", 700447, 404),
 	WINDEMO1("totaldistortion", "Great Big Demo", "TD_DEMON.EXE",			 "t:028063f8a752f5ffda7477f328500d82", 700447, 400),
@@ -6390,9 +6390,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// From Ultra Gameplayers #98
 	MACDEMO2("aol", "", "WELCOME",	   "r:06ed90580400cd9e263525f84c8075fd", 705417,
-						"Installer",   "h:b5b0f62a80b345e4e25063bffbdb9f0a", 5854464, 500),
+						"Installer",   "f:b5b0f62a80b345e4e25063bffbdb9f0a", 5854464, 500),
 	WINDEMO2("aol", "", "WELCOME.EXE", "t:9ba379aef91e4ad2c8c8a66f78a33db8", 5417967,
-						"SETUP.EXE",   "h:26b91350fc6ba73a6f76b73f3c781415", 21106117, 501),
+						"SETUP.EXE",   "f:26b91350fc6ba73a6f76b73f3c781415", 21106117, 501),
 
 	MACDEMO1("aptesampler", "", "Product Sampler", "aa6a527c1314eae56f00d9b9fb587683", 719033, 501),
 	WINDEMO1t("aptesampler", "", "APTE32.EXE", "a42cd36dd6224f4382f676f946e48914", 1410355, 501),
@@ -6821,7 +6821,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2f_l("gadgetpaf", "",		 "GADGET/GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
 									 "DATA/TEXT_E.Cxt", "056ab5419f65fab51fa50c28ad360e76", 561824, Common::ES_ESP, 501, GF_32BPP),
 	WINDEMO2f_l("gadgetpaf", "Demo", "GADGET.exe", "t:7e393434e06153a6413baf1b448f440e", 1647502,
-									 "TEXT_E.Cxt", "h:f2efb64dc4e3e1ea705309426fff7824", 152776, Common::ES_ESP, 501, GF_32BPP),
+									 "TEXT_E.Cxt", "f:f2efb64dc4e3e1ea705309426fff7824", 152776, Common::ES_ESP, 501, GF_32BPP),
 
 	MACGAME1("gamingmegapac", "", "Gaming MegaPac", "b861188374e80b1184e7f96dcab4fc9b", 719005, 501),
 
@@ -7502,13 +7502,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac version requires installation, 'Install Secrets of the Minds', Installer VISE Lite 3.6
 	MACGAME2("secretmind", "Disc 1", "Secrets of the Minds", "r:575bc118621e964630087984e463c283", 90895,
-									 "XBITEMOV/ANAD01.DIR",	 "h:ed02ee44b196363709d3be9b00623fce", 124730, 500),
+									 "XBITEMOV/ANAD01.DIR",	 "f:ed02ee44b196363709d3be9b00623fce", 124730, 500),
 	WINGAME2("secretmind", "Disc 1", "Install Secrets of the Mind/Mind.exe", "t:e9cfac3e743c99605893a1b5e90a821d", 1412092,
-									 "XBITEMOV/ANAD01.DIR",	 "h:ed02ee44b196363709d3be9b00623fce", 124730, 500),
+									 "XBITEMOV/ANAD01.DIR",	 "f:ed02ee44b196363709d3be9b00623fce", 124730, 500),
 	MACGAME2("secretmind", "Disc 2", "Secrets of the Minds", "r:575bc118621e964630087984e463c283", 90895,
-									 "XBITEMOV/BLDE01.DIR",	 "h:e137bdd5e7afe3b68ad8309e78edeb43", 87132, 500),
+									 "XBITEMOV/BLDE01.DIR",	 "f:e137bdd5e7afe3b68ad8309e78edeb43", 87132, 500),
 	WINGAME2("secretmind", "Disc 2", "Install Secrets of the Mind/Mind.exe", "t:e9cfac3e743c99605893a1b5e90a821d", 1412092,
-									 "XBITEMOV/BLDE01.DIR",	 "h:e137bdd5e7afe3b68ad8309e78edeb43", 87132, 500),
+									 "XBITEMOV/BLDE01.DIR",	 "f:e137bdd5e7afe3b68ad8309e78edeb43", 87132, 500),
 
 	// Both versions require installation
 	MACGAME1("secretpaths1", "", "Secret Paths in the Forest",	   "r:4f0fb528e9c495fd2822ad400178e7a8",  716771, 501),
@@ -7752,9 +7752,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	},
 
 	MACGAME2("ultragameplayers", "#98", "Start PPC",   "r:b69f9cb79da512852ed383a1cfef14b9", 718097,
-										"NEW_UGP.Dxr", "h:b6c7ab2e81611d3cf3daa7d4f62b7a9b", 8931668, 501),
+										"NEW_UGP.Dxr", "f:b6c7ab2e81611d3cf3daa7d4f62b7a9b", 8931668, 501),
 	WINGAME2("ultragameplayers", "#98", "START95.EXE", "t:3504faad6bcbf5eef2ca88be1f618b9e", 1034041,
-										"NEW_UGP.Dxr", "h:b6c7ab2e81611d3cf3daa7d4f62b7a9b", 8931668, 501),
+										"NEW_UGP.Dxr", "f:b6c7ab2e81611d3cf3daa7d4f62b7a9b", 8931668, 501),
 
 	MACGAME1_l("ursaminorblue", "Hybrid release", "URSA (PPC)", "08166af62693ceab79b28d90d2f6c86b", 106927, Common::JA_JPN, 501),
 	WINGAME1_l("ursaminorblue", "Hybrid release", "START/UMB_32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1405383, Common::JA_JPN, 501),
@@ -8621,7 +8621,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Requires installation, Setup.exe/Setup, Installer VISE Lite 3.6
 	MACGAME1("rockettmilkss", "", "xn--Rockett's got milk-cba45j", "r:b0b0e36586489ca6070d20feeff52fa5", 1194536, 600),
 	WINGAME2("rockettmilkss", "", "SETUP.EXE", "t:4623015fc4f068dce16877798eff3599", 5299185,
-								  "SETUP.SCR", "h:6cf2d7908884109d915caba5c2671168", 354934, 600),
+								  "SETUP.SCR", "f:6cf2d7908884109d915caba5c2671168", 354934, 600),
 
 	WINGAME1t_l("rymdjakten", "Romjakten", "ROMJAKT.EXE", "c4259b2ecfd421bd28f29b8a6ddf42f3", 1522656, Common::NB_NOR, 602),
 	MACGAME1t_l("rymdjakten", "Romjakten", "Romjakten", "960f8041921e1ca6c0781cb0f17abc25", 1032378, Common::NB_NOR, 602),
@@ -9972,7 +9972,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 						   "unwrap.dxr", "69dd7f79e76af5b0eab89d5ae589f836", 50599487, 800),
 
 	WINGAME2("urubonus", "", "DEMO.EXE", "t:e1d0f97d43f0c5cd7a489100ba35f447", 2861430,
-							 "MOF.DXR",	 "h:cea5b508833dea38abe41b743b3676cd", 1416050, 850),
+							 "MOF.DXR",	 "f:cea5b508833dea38abe41b743b3676cd", 1416050, 850),
 
 	MACGAME1("vug2005", "", "VUGames.osx", "a171b7a952d1ac68ae3cd419d6dfc674", 262042, 850),
 	WINGAME1("vug2005", "", "VUG_2005.exe", "c163f36141579ee374f7b4b2bddee95a", 2823410, 850),

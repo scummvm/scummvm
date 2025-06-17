@@ -37,7 +37,7 @@ class AdGeomExtNode : public BaseClass {
 public:
 	AdGeomExtNode(BaseGame *inGame);
 	virtual ~AdGeomExtNode();
-	bool loadBuffer(byte *buffer, bool complete);
+	bool loadBuffer(char *buffer, bool complete);
 
 	bool setupNode(const char *namePattern, TGeomNodeType type = GEOM_GENERIC, bool receiveShadows = false);
 	bool matchesName(const char *name);

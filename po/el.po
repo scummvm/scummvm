@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -875,7 +875,7 @@ msgstr "Ο υπολογισμός ολοκληρώθηκε"
 msgid "Calculated %s %S / %s %S"
 msgstr "Υπολογίστηκε %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -889,14 +889,14 @@ msgstr ""
 "Αν είστε βέβαιοι ότι πρόκειται για έγκυρη άγνωστη έκδοση, παρακαλούμε να "
 "στείλετε το ακόλουθο e-mail στο integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Το παιχνίδι δεν φαίνεται να έχει καθόλου αρχεία. Είστε βέβαιοι πως δώσατε το "
 "σωστό μονοπάτι;"
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -905,7 +905,7 @@ msgstr ""
 "συνεπώς είναι αδύνατο να γίνει αντιστοίχιση. Παρακαλούμε να συμπληρώσετε τα "
 "σωστά μεταδεδομένα για το παιχνίδι."
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr "Τα αρχεία είναι εντάξει"
 
@@ -7789,7 +7789,6 @@ msgstr "Μίλα/Αλληλεπίδρασε"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Επίθεση"
 
@@ -13546,10 +13545,8 @@ msgid "Transfer Character"
 msgstr "Μεταφορά Χαρακτήρα"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Toggle Combat"
-msgid "Combat"
-msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
+msgid "Draw Weapon / Combat"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 #, fuzzy
@@ -13588,7 +13585,7 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:65
 #, fuzzy
 #| msgid "Backspace"
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr "Backspace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -13610,37 +13607,33 @@ msgstr ""
 #: engines/ultima/ultima8/metaengine.cpp:69
 #, fuzzy
 #| msgid "Open inventory"
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr "Άνοιγμα υπαρχόντων"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close popup"
-msgid "Close Gumps"
-msgstr "Κλείσιμο αναδυόμενου παραθύρου"
+msgid "Close All Displays"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Side Step"
-msgid "Step"
-msgstr "Βήμα πλάγια"
+msgid "Careful Step"
+msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
 #, fuzzy
-#| msgid "Next action"
-msgid "Next Weapon"
-msgstr "Επόμενη ενέργεια"
+#| msgid "Cycle back through inventory cursor items"
+msgid "Cycle through Weapon Inventory"
+msgstr "Ανάποδο πέρασμα από όλα τα αντικείμενα υπαρχόντων στο δρομέα"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
 #, fuzzy
-#| msgid "Animated inventory items"
-msgid "Next Inventory Item"
-msgstr "Κινούμενα αντικείμενα στα υπάρχοντα"
+#| msgid "Cycle through stretch modes"
+msgid "Cycle through Item Inventory"
+msgstr "Κυκλική περιήγηση στις λειτουργίες εξάπλωσης εικόνας"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 #, fuzzy
@@ -13649,7 +13642,7 @@ msgid "Use Inventory Item"
 msgstr "Υπάρχοντα"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13669,7 +13662,7 @@ msgstr "Ρίξιμο σελίδας"
 #: engines/ultima/ultima8/metaengine.cpp:87
 #, fuzzy
 #| msgid "Select a Theme"
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr "Επιλέξτε θέμα"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -13682,10 +13675,16 @@ msgstr "Επόμενη ενέργεια"
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+#, fuzzy
+#| msgid "Next action"
+msgid "Fire Weapon"
+msgstr "Επόμενη ενέργεια"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
 #, fuzzy
 #| msgid "Camera moves with Silencer"
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr "Η κάμερα ακολουθεί τον Silencer"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
@@ -14682,6 +14681,26 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#, fuzzy
+#~| msgid "Toggle Combat"
+#~ msgid "Combat"
+#~ msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
+
+#, fuzzy
+#~| msgid "Close popup"
+#~ msgid "Close Gumps"
+#~ msgstr "Κλείσιμο αναδυόμενου παραθύρου"
+
+#, fuzzy
+#~| msgid "Side Step"
+#~ msgid "Step"
+#~ msgstr "Βήμα πλάγια"
+
+#, fuzzy
+#~| msgid "Animated inventory items"
+#~ msgid "Next Inventory Item"
+#~ msgstr "Κινούμενα αντικείμενα στα υπάρχοντα"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr ""

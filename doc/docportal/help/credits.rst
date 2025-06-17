@@ -235,6 +235,17 @@ Avalanche
    * - Arnaud Boutonné
      -
 
+awe
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gregory Montoir
+     -
+   * - Paul Gilbert
+     -
+
 Bagel
 ^^^^^
 
@@ -596,6 +607,8 @@ Got
      -
    * - Arnaud Boutonné
      -
+   * - Coen Rampen
+     -
 
 Griffon
 ^^^^^^^
@@ -792,6 +805,8 @@ Lastexpress
 .. list-table::
    :widths: 35 65
 
+   * - Andrea Boscarino
+     - Engine rewrite
    * - Matthew Hoops
      - (retired)
    * - Jordi Vilalta Prat
@@ -2397,6 +2412,8 @@ CGE
 .. list-table::
    :widths: 35 65
 
+   * - Arnaud Boutonné
+     - Soltys English translation
    * - Dan Serban
      - Soltys English translation
    * - Víctor González
@@ -2434,6 +2451,8 @@ Mortevielle
 .. list-table::
    :widths: 35 65
 
+   * - Arnaud Boutonné
+     - First English translation, improve German translation
    * - Hugo Labrande
      - Improve English translation
    * - Thierry Crozat
@@ -2893,4 +2912,6 @@ Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine, and avoidin
 Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from.
 
 Fabrizio Lagorio from Trecision S.p.A., for finding and providing the source code of many of their games.
+
+Ron Davis for releasing the sources and generously giving away the three chapters of God of Thunder.
 

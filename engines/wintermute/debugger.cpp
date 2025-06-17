@@ -325,15 +325,12 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	Common::DumpFile *outFile = new Common::DumpFile();
 	outFile->open(Common::Path(outFileName, Common::Path::kNativeSeparator));
 
-	byte *data = new byte[inFile->size()];
-	inFile->read(data, inFile->size());
-	outFile->write(data, inFile->size());
+	outFile->writeStream(inFile);
 	outFile->finalize();
 	outFile->close();
-	delete[] data;
 
 	delete outFile;
-	delete inFile;
+	fileManager->closeFile(inFile);
 
 	debugPrintf("Resource file '%s' dumped to file '%s'\n", argv[1], argv[2]);
 	return true;

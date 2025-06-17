@@ -322,7 +322,12 @@ void Video::drawString(uint8 color, uint16 x, uint16 y, uint16 strId) {
 	} else if (_res->getDataType() == DT_ATARI_DEMO && strId == 0x194) {
 		str = _str0x194AtariDemo;
 	} else {
-		str = findString(_stringsTable, strId);
+		if (_res->getDataType() == DT_AMIGA || _res->getDataType() == DT_ATARI) {
+			str = findString(STRINGS_TABLE_AMIGA_CODES, strId);
+		}
+		if (!str) {
+			str = findString(_stringsTable, strId);
+		}
 		if (!str && _res->getDataType() == DT_DOS) {
 			str = findString(STRINGS_TABLE_DEMO, strId);
 		}

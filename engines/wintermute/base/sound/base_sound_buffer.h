@@ -40,7 +40,6 @@ class SoundHandle;
 
 namespace Wintermute {
 
-class BaseFile;
 class BaseSoundBuffer : public BaseClass {
 public:
 
@@ -93,7 +92,6 @@ private:
 	uint32 _startPos;
 	Common::String _filename;
 	bool _streamed;
-	Common::SeekableReadStream *_file;
 	int32 _volume;
 	int8 _pan;
 };

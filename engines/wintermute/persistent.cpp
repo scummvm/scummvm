@@ -177,7 +177,6 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(SXSteamAPI, false)
 	REGISTER_CLASS(SXWMEGalaxyAPI, false)
 	REGISTER_CLASS(SXCommandLineHelper, false)
-	REGISTER_CLASS(SXVlink, false)
 
 	REGISTER_CLASS(UIButton, false)
 	REGISTER_CLASS(UIEdit, false)
@@ -200,6 +199,7 @@ void SystemClassRegistry::register3DClasses() {
 	REGISTER_CLASS(XModel, false)
 	REGISTER_CLASS(SXBlackAndWhite, false)
 	REGISTER_CLASS(SXShadowManager, false)
+	REGISTER_CLASS(SXVlink, false)
 }
 #endif
 

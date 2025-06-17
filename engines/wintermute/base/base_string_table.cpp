@@ -206,7 +206,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	_filenames.push_back(Common::String(filename));
 
 	uint32 size;
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
 	if (buffer == nullptr) {
 		BaseEngine::LOG(0, "BaseStringTable::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -214,7 +214,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 
 	uint32 pos = 0;
 
-	if (size > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
+	if (size > 3 && buffer[0] == '\xEF' && buffer[1] == '\xBB' && buffer[2] == '\xBF') {
 		pos += 3;
 		if (_gameRef->_textEncoding != TEXT_UTF8) {
 			_gameRef->_textEncoding = TEXT_UTF8;
@@ -234,7 +234,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 
 		uint32 realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
 		char *line = new char[realLength + 1];
-		Common::strlcpy(line, (char *)&buffer[pos], realLength + 1);
+		Common::strlcpy(line, &buffer[pos], realLength + 1);
 		char *value = strchr(line, '\t');
 		if (value == nullptr) {
 			value = strchr(line, ' ');

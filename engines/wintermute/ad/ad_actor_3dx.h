@@ -107,7 +107,7 @@ public:
 	AdPath3D *_path3D;
 	AdPath *_path2D;
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	float dirToAngle(TDirection dir);
 	TDirection angleToDir(float angle);
 
@@ -121,7 +121,7 @@ public:
 	const char *scToString() override;
 
 private:
-	bool parseEffect(byte *buffer);
+	bool parseEffect(char *buffer);
 	BaseArray<AdAttach3DX *> _attachments;
 	bool turnToStep(float velocity);
 	bool prepareTurn(float targetAngle);

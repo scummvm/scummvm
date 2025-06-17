@@ -77,7 +77,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 	_filename = filename;
-	Common::SeekableReadStream *file = _fileManager->openFile(filename.c_str());
+	Common::SeekableReadStream *file = _fileManager->openFile(filename);
 	if (!file) {
 		return false;
 	}

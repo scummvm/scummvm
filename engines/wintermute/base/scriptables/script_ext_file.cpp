@@ -364,6 +364,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			return STATUS_OK;
 		}
 		bool val;
+		STATIC_ASSERT(sizeof(val) == 1, bool_is_not_1_byte);
 		if (_readFile->read(&val, sizeof(bool)) == sizeof(bool)) {
 			stack->pushBool(val);
 		} else {
@@ -442,8 +443,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			stack->pushNULL();
 			return STATUS_OK;
 		}
-		float val;
-		WRITE_UINT32(&val, _readFile->readUint32LE());
+		float val = _readFile->readFloatLE();
 		if (!_readFile->err()) {
 			stack->pushFloat(val);
 		} else {
@@ -464,8 +464,8 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			stack->pushNULL();
 			return STATUS_OK;
 		}
-		double val;
-		if (_readFile->read(&val, sizeof(double)) == sizeof(double)) {
+		double val = _readFile->readDoubleLE();
+		if (!_readFile->err()) {
 			stack->pushFloat(val);
 		} else {
 			stack->pushNULL();

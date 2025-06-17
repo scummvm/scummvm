@@ -48,6 +48,9 @@ public:
 	static void setQuarterSpeed(bool q) {
 		_quarter = q;
 	}
+	static void setClipping(bool value) {
+		_clipping = value;
+	}
 	static void toggleClipping() {
 		_clipping = !_clipping;
 	}

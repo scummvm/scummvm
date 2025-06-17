@@ -60,7 +60,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -79,7 +79,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 	//   express.exe  ???
 	{
 		"lastexpress",
-		"",
+		"Interplay Release",
 		{
 			{"HD.HPF",  0, "bcc32d977f92bb52c060a0b4e8589cac", 30715904},
 			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},
@@ -98,7 +98,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -114,7 +114,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -133,7 +133,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -152,7 +152,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -171,7 +171,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -190,7 +190,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -209,7 +209,29 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::RU_RUS,
 		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+	},
+
+	// The Last Express (Multilanguage) - Gold Edition by DotEmu (Steam)
+	{
+		"lastexpress",
+		"Gold Edition",
+		{
+			{"BG.zip",                  0, "f7aa689629280e464293dd674126cfe6", 844756591},
+			{"DATA.zip",                0, "bd1602f10cf20a7f4add620fb6e5571f", 587488},
+			{"LNK.zip",                 0, "b281b3332a88e514543efd533643e627", 21296565},
+			{"NIS.zip",                 0, "bc108966f7142135f661cde4563390f3", 671323510},
+			{"SBE.zip",                 0, "a0345b2c6e6fa5d811767fd12283d0f8", 1380014},
+			{"SEQ.zip",                 0, "a6a6cb45b976e2ba4af546a31312afe3", 170652650},
+			{"SND.zip",                 0, "9c39b2b997f1d2504538c0b5fd1ff05f", 1160618591},
+			{"TGA.zip",                 0, "66c7c74553f635a86fad8f333825ad7d", 833177},
+			{"TheLastExpressSteam.exe", 0, "9173ea82f613b007479be0ca194ece39", 2060288},
+			AD_LISTEND
+		},
+		Common::UNK_LANG,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_REMASTERED,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -218,6 +240,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 static const char *const directoryGlobs[] = {
 		"data", // GOG release
+		"roms", // Gold Edition
 		nullptr
 };
 

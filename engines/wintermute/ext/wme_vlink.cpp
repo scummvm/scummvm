@@ -103,69 +103,66 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		_gameRef->freeze();
 		((WintermuteEngine *)g_engine)->savingEnable(false);
 
-		Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(path);
+		// Load a file, but avoid having the File-manager handle the disposal of it.
+		Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(path, true, false);
 		if (file) {
-			Common::SeekableReadStream *bink = new Common::SeekableSubReadStream(file, 0, file->size(), DisposeAfterUse::NO);
-			if (bink) {
-				_videoDecoder = new Video::BinkDecoder();
-				if (_videoDecoder && _videoDecoder->loadStream(bink) && _videoDecoder->isVideoLoaded()) {
-					_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(_gameRef->_renderer->getPixelFormat()));
-					BaseSurface *texture = _gameRef->_renderer->createSurface();
-					texture->create(_videoDecoder->getWidth(), _videoDecoder->getHeight());
+			_videoDecoder = new Video::BinkDecoder();
+			if (_videoDecoder && _videoDecoder->loadStream(file) && _videoDecoder->isVideoLoaded()) {
+				_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(_gameRef->_renderer->getPixelFormat()));
+				BaseSurface *texture = _gameRef->_renderer->createSurface();
+				texture->create(_videoDecoder->getWidth(), _videoDecoder->getHeight());
 
-					_gameRef->_renderer->setup2D();
+				_gameRef->_renderer->setup2D();
 
-					_frame = -1;
-					_updateNeeded = false;
-					_videoFinished = false;
+				_frame = -1;
+				_updateNeeded = false;
+				_videoFinished = false;
 
-					_videoDecoder->start();
-					_videoDecoder->setVolume(_volume);
+				_videoDecoder->start();
+				_videoDecoder->setVolume(_volume);
 
-					g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, this, "movieLoop");
+				g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, this, "movieLoop");
 
-					do {
-						if (_updateNeeded) {
-							{
-								Common::StackLock lock(_frameMutex);
-								texture->startPixelOp();
-								texture->putSurface(_surface, false);
-								texture->endPixelOp();
-							}
-							texture->display(0, 0, Rect32(texture->getWidth(), texture->getHeight()));
-							_updateNeeded = false;
-							_gameRef->_renderer->flip();
+				do {
+					if (_updateNeeded) {
+						{
+							Common::StackLock lock(_frameMutex);
+							texture->startPixelOp();
+							texture->putSurface(_surface, false);
+							texture->endPixelOp();
 						}
-						g_system->delayMillis(10);
-
-						Common::Event event;
-						while (g_system->getEventManager()->pollEvent(event)) {
-							if (event.type == Common::EVENT_KEYDOWN) {
-								if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-									_videoFinished = true;
-									g_system->getEventManager()->purgeKeyboardEvents();
-								}
-							} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-								_videoFinished = true;
-							} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
-								_gameRef->_renderer->onWindowChange();
-							}
-						}
-					} while (!g_engine->shouldQuit() && !_videoFinished);
-
-					g_system->getTimerManager()->removeTimerProc(&timerCallback);
-
-					{
-						Common::StackLock lock(_frameMutex);
-						_videoDecoder->stop();
-						_videoDecoder->close();
+						texture->display(0, 0, Rect32(texture->getWidth(), texture->getHeight()));
+						_updateNeeded = false;
+						_gameRef->_renderer->flip();
 					}
+					g_system->delayMillis(10);
 
-					delete texture;
+					Common::Event event;
+					while (g_system->getEventManager()->pollEvent(event)) {
+						if (event.type == Common::EVENT_KEYDOWN) {
+							if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+								_videoFinished = true;
+								g_system->getEventManager()->purgeKeyboardEvents();
+							}
+						} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+							_videoFinished = true;
+						} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
+							_gameRef->_renderer->onWindowChange();
+						}
+					}
+				} while (!g_engine->shouldQuit() && !_videoFinished);
+
+				g_system->getTimerManager()->removeTimerProc(&timerCallback);
+
+				{
+					Common::StackLock lock(_frameMutex);
+					_videoDecoder->stop();
+					_videoDecoder->close();
 				}
-				delete _videoDecoder;
+
+				delete texture;
 			}
-			BaseFileManager::getEngineInstance()->closeFile(file);
+			delete _videoDecoder;
 		}
 
 		((WintermuteEngine *)g_engine)->savingEnable(true);

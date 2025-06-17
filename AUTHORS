@@ -104,6 +104,10 @@ ScummVM Team
        Peter Bozso
        Arnaud Boutonne
 
+    awe:
+       Gregory Montoir
+       Paul Gilbert
+
     Bagel:
        Arnaud Boutonne
        Daniel Albano
@@ -242,6 +246,7 @@ ScummVM Team
     Got:
        Paul Gilbert
        Arnaud Boutonne
+       Coen Rampen
 
     Griffon:
        Eugene Sandulenko
@@ -316,6 +321,7 @@ ScummVM Team
        Eugene Sandulenko
 
     Lastexpress:
+       Andrea Boscarino               - Engine rewrite
        Matthew Hoops                  - (retired)
        Jordi Vilalta Prat
        Julien Templier
@@ -949,6 +955,7 @@ Other contributions
   Game Translations
   -----------------
     CGE:
+       Arnaud Boutonne                - Soltys English translation
        Dan Serban                     - Soltys English translation
        Victor Gonzalez                - Soltys Spanish translation
        Alejandro Gomez de la Munoza   - Soltys Spanish translation
@@ -963,6 +970,8 @@ Other contributions
        Thierry Crozat                 - Improve French translation
 
     Mortevielle:
+       Arnaud Boutonne                - First English translation, improve
+                                        German translation
        Hugo Labrande                  - Improve English translation
        Thierry Crozat                 - Improve English translation
 
@@ -1285,4 +1294,7 @@ Special thanks to
 
    Fabrizio Lagorio from Trecision S.p.A., for finding and providing the
    source code of many of their games.
+
+   Ron Davis for releasing the sources and generously giving away the three
+   chapters of God of Thunder.
 

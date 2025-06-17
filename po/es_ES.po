@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
-"PO-Revision-Date: 2025-06-16 09:33+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
+"PO-Revision-Date: 2025-06-17 13:11+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -864,7 +864,7 @@ msgstr "Cálculos completados"
 msgid "Calculated %s %S / %s %S"
 msgstr "Calculado: %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -878,12 +878,12 @@ msgstr ""
 "Si tienes la certeza de que esta es una variante desconocida y válida, envía "
 "el siguiente email a integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr "Este juego no parece tener archivos. ¿Seguro que la ruta es correcta?"
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -891,7 +891,7 @@ msgstr ""
 "Este juego no parece tener metadatos asociados, así que no se pueden buscar "
 "coincidencias. Introduce los metadatos correctos del juego."
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr "Todos los archivos validados"
 
@@ -7680,7 +7680,6 @@ msgstr "Hablar/Interactuar"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr "Atacar"
 
@@ -13327,8 +13326,8 @@ msgid "Transfer Character"
 msgstr "Transferir personaje"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
-msgstr "Combatir"
+msgid "Draw Weapon / Combat"
+msgstr "Desenfundar arma/Combatir"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -13357,8 +13356,8 @@ msgid "Use Bedroll"
 msgstr "Usar petate"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-msgid "Use Backpack"
-msgstr "Usar mochila"
+msgid "Open Backpack"
+msgstr "Abrir mochila"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
 msgid "Use Keyring"
@@ -13373,36 +13372,36 @@ msgid "Use Recall"
 msgstr "Usar memoria"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-msgid "Open Inventory"
-msgstr "Abrir inventario"
+msgid "Open Inventory & Statistics"
+msgstr "Abrir inventario y estadísticas"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-msgid "Close Gumps"
-msgstr "Cerrar todos los GUMP"
+msgid "Close All Displays"
+msgstr "Cerrar todas las ventanas"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
 msgstr "Saltar (simular pulsar ambos botones)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-msgid "Step"
-msgstr "Dar un paso"
+msgid "Careful Step"
+msgstr "Avanzar con cuidado"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-msgid "Next Weapon"
-msgstr "Siguiente arma"
+msgid "Cycle through Weapon Inventory"
+msgstr "Recorrer inventario de armas"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-msgid "Next Inventory Item"
-msgstr "Siguiente objeto del inventario"
+msgid "Cycle through Item Inventory"
+msgstr "Recorrer inventario de objetos"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "Usar objeto del inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr "Usar Medikit"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -13418,8 +13417,8 @@ msgid "Drop Weapon"
 msgstr "Tirar arma"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-msgid "Select Item"
-msgstr "Seleccionar objeto"
+msgid "Search / Select Item"
+msgstr "Registrar/Seleccionar objeto"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Use Selection"
@@ -13429,9 +13428,13 @@ msgstr "Usar selección"
 msgid "Grab Items"
 msgstr "Tomar objetos"
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+msgid "Fire Weapon"
+msgstr "Disparar arma"
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
-msgstr "Centrar cámara en Silenciador"
+msgid "Center screen on Silencer"
+msgstr "Centrar pantalla en Silenciador"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
@@ -14385,6 +14388,18 @@ msgstr ""
 "puedes descargar el paquete de fuentes Liberation. Necesitarás todas las "
 "fuentes del paquete que prefieras, por ejemplo, LiberationMono, "
 "LiberationSans y LiberationSerif."
+
+#~ msgid "Combat"
+#~ msgstr "Combatir"
+
+#~ msgid "Close Gumps"
+#~ msgstr "Cerrar todos los GUMP"
+
+#~ msgid "Step"
+#~ msgstr "Dar un paso"
+
+#~ msgid "Next Inventory Item"
+#~ msgstr "Siguiente objeto del inventario"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr "No se ha encontrado ningún motor capaz de ejecutar este juego"

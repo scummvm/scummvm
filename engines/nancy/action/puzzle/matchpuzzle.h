@@ -43,6 +43,25 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "MatchPuzzle"; }
 	bool isViewportRelative() const override { return true; }
+
+	Graphics::ManagedSurface _image;
+	//Common::Rect _displayBounds;
+
+	Common::Rect _shuffleButtonRect;
+	Common::Array<Common::Rect> _flagRects;
+
+	Common::Path _overlayName;
+	Common::Path _flagPointBackgroundName;
+
+	Common::StringArray _flagNames;
+
+	SoundDescription _slotWinSound;
+	SoundDescription _shuffleSound;
+	SoundDescription _cardPlaceSound;
+	SoundDescription _matchSuccessSound;
+
+	SceneChangeWithFlag _solveSceneChange;
+	SceneChangeWithFlag _exitSceneChange;
 };
 
 } // End of namespace Action

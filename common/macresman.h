@@ -267,6 +267,18 @@ public:
 	 */
 	uint32 getResForkDataSize() const;
 
+	uint32 getResForkSize() const {
+		if (!hasResFork())
+			return 0;
+		return _resForkSize;
+	}
+
+	uint32 getDataForkSize() const {
+		if (!hasDataFork())
+			return 0;
+		return _dataLength;
+	}
+
 	/**
 	 * Calculate the MD5 checksum of the resource fork
 	 * @param length The maximum length to compute for

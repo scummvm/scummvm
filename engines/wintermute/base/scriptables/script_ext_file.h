@@ -34,8 +34,6 @@
 
 namespace Wintermute {
 
-class BaseFile;
-
 class SXFile : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SXFile, BaseScriptable)

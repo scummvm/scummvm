@@ -42,6 +42,7 @@ struct Video {
 		BITMAP_H = 200
 	};
 
+	static const StrEntry STRINGS_TABLE_AMIGA_CODES[];
 	static const StrEntry STRINGS_TABLE_FR[];
 	static const StrEntry STRINGS_TABLE_ENG[];
 	static const StrEntry STRINGS_TABLE_DEMO[];

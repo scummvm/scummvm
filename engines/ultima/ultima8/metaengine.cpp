@@ -44,7 +44,7 @@ static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_QUICKSAVE, "QUICKSAVE", _s("Quick Save"), "F1", nullptr },
 	{ ACTION_SAVE, "SAVE", _s("Save Game"), "F5", nullptr },
 	{ ACTION_LOAD, "LOAD", _s("Load Game"), "F7", nullptr },
-	{ ACTION_COMBAT, "COMBAT", _s("Combat"), "c", "JOY_X" },
+	{ ACTION_COMBAT, "COMBAT", _s("Draw Weapon / Combat"), "c", "JOY_X" },
 	{ ACTION_MENU, "MENU", _s("Game Menu"), "ESCAPE", "JOY_Y" },
 	{ ACTION_TURN_LEFT, "TURN_LEFT", _s("Turn Left"), "LEFT", "KP4" },
 	{ ACTION_TURN_RIGHT, "TURN_RIGHT", _s("Turn Right"), "RIGHT", "KP6" },
@@ -62,33 +62,33 @@ static const KeybindingRecord COMMON_KEYS[] = {
 
 static const KeybindingRecord U8_KEYS[] = {
 	{ ACTION_BEDROLL, "BEDROLL", _s("Use Bedroll"), "b", nullptr },
-	{ ACTION_BACKPACK, "BACKPACK", _s("Use Backpack"), "i", "JOY_LEFT_SHOULDER" },
+	{ ACTION_BACKPACK, "BACKPACK", _s("Open Backpack"), "i", "JOY_LEFT_SHOULDER" },
 	{ ACTION_KEYRING, "KEYRING", _s("Use Keyring"), "k", "JOY_RIGHT_STICK" },
 	{ ACTION_MINIMAP, "MINIMAP", _s("Open Minimap"), "m", "JOY_BACK" },
 	{ ACTION_RECALL, "RECALL", _s("Use Recall"), "r", nullptr },
-	{ ACTION_INVENTORY, "INVENTORY", _s("Open Inventory"), "z", "JOY_LEFT_STICK" },
+	{ ACTION_INVENTORY, "INVENTORY", _s("Open Inventory & Statistics"), "z", "JOY_LEFT_STICK" },
 	// I18N: gump is Graphical User Menu Pop-up
-	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", _s("Close Gumps"), "BACKSPACE", nullptr },
+	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", _s("Close All Displays"), "BACKSPACE", nullptr },
 	{ ACTION_JUMP, "JUMP", _s("Jump (fake both-button-click)"), "SPACE", nullptr },
-	{ ACTION_MOVE_STEP, "MOVE_STEP", _s("Step"), "LCTRL", "JOY_LEFT_TRIGGER" },
+	{ ACTION_MOVE_STEP, "MOVE_STEP", _s("Careful Step"), "LCTRL", "JOY_LEFT_TRIGGER" },
 
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CRUSADER_KEYS[] = {
-	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", _s("Next Weapon"), "w", "KP_MULTIPLY" },
-	{ ACTION_NEXT_INVENTORY, "NEXT_INVENTORY", _s("Next Inventory Item"), "i", "KP_MINUS" },
+	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", _s("Cycle through Weapon Inventory"), "w", "KP_MULTIPLY" },
+	{ ACTION_NEXT_INVENTORY, "NEXT_INVENTORY", _s("Cycle through Item Inventory"), "i", "KP_MINUS" },
 	{ ACTION_USE_INVENTORY, "USE_INVENTORY", _s("Use Inventory Item"), "u", "KP_PERIOD" },
-	{ ACTION_USE_MEDIKIT, "USE_MEDIKIT", _s("Use Medical Kit"), "m", nullptr },
+	{ ACTION_USE_MEDIKIT, "USE_MEDIKIT", _s("Use Medikit"), "m", nullptr },
 	{ ACTION_USE_ENERGYCUBE, "USE_ENERGYCUBE", _s("Use Energy Cube"), "e", nullptr },
 	{ ACTION_DETONATE_BOMB, "DETONATE_BOMB", _s("Detonate Bomb"), "b", nullptr },
 	// TODO: The same key should be "use datalink" in no regret.
 	{ ACTION_DROP_WEAPON, "DROP_WEAPON", _s("Drop Weapon"), "C+d", nullptr },
-	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", _s("Select Item"), "s", "KP_PLUS" },
+	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", _s("Search / Select Item"), "s", "KP_PLUS" },
 	{ ACTION_USE_SELECTION, "USE_SELECTION", _s("Use Selection"), "RETURN", "KP_ENTER" },
 	{ ACTION_GRAB_ITEMS, "GRAB_ITEM", _s("Grab Items"), "g", nullptr },
-	{ ACTION_ATTACK, "ATTACK", _s("Attack"), "SPACE", "KP0" },
-	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", _s("Focus Camera on Silencer"), "z", nullptr },
+	{ ACTION_ATTACK, "ATTACK", _s("Fire Weapon"), "SPACE", "KP0" },
+	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", _s("Center screen on Silencer"), "z", nullptr },
 	{ ACTION_JUMP, "JUMP", _s("Jump / Roll / Crouch"), "LCTRL", nullptr },
 	{ ACTION_SHORT_JUMP, "SHORT_JUMP", _s("Short Jump"), "TAB", "j" },
 	{ ACTION_STEP_LEFT, "STEP_LEFT", _s("Sidestep Left"), "DELETE", "KP7" },

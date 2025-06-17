@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/file/base_savefile_manager_file.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_package.h"
+#include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/algorithm.h"
@@ -476,12 +477,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		if (!BaseEngine::instance().getGameRef()) {
 			error("Attempt to load filename: %s without BaseEngine-object, this is unsupported", filename.c_str());
 		}
-		BaseSaveThumbFile *saveThumbFile = new BaseSaveThumbFile();
-		if (DID_SUCCEED(saveThumbFile->open(filename))) {
-			ret = saveThumbFile->getMemStream();
-		}
-		delete saveThumbFile;
-		return ret;
+		return openThumbFile(filename);
 	}
 
 	ret = openSfmFile(filename);

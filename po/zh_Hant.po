@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 09:55+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -837,7 +837,7 @@ msgstr ""
 msgid "Calculated %s %S / %s %S"
 msgstr ""
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -846,18 +846,18 @@ msgid ""
 "following e-mail to integrity@scummvm.org"
 msgstr ""
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr ""
 
@@ -6843,7 +6843,6 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
-#: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Attack"
 msgstr ""
 
@@ -11982,7 +11981,7 @@ msgid "Transfer Character"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-msgid "Combat"
+msgid "Draw Weapon / Combat"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
@@ -12012,7 +12011,7 @@ msgid "Use Bedroll"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-msgid "Use Backpack"
+msgid "Open Backpack"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:66
@@ -12028,12 +12027,12 @@ msgid "Use Recall"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-msgid "Open Inventory"
+msgid "Open Inventory & Statistics"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-msgid "Close Gumps"
+msgid "Close All Displays"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:72
@@ -12041,15 +12040,15 @@ msgid "Jump (fake both-button-click)"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-msgid "Step"
+msgid "Careful Step"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-msgid "Next Weapon"
+msgid "Cycle through Weapon Inventory"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-msgid "Next Inventory Item"
+msgid "Cycle through Item Inventory"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:81
@@ -12057,7 +12056,7 @@ msgid "Use Inventory Item"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-msgid "Use Medical Kit"
+msgid "Use Medikit"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:83
@@ -12073,7 +12072,7 @@ msgid "Drop Weapon"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-msgid "Select Item"
+msgid "Search / Select Item"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:88
@@ -12084,8 +12083,12 @@ msgstr ""
 msgid "Grab Items"
 msgstr ""
 
+#: engines/ultima/ultima8/metaengine.cpp:90
+msgid "Fire Weapon"
+msgstr ""
+
 #: engines/ultima/ultima8/metaengine.cpp:91
-msgid "Focus Camera on Silencer"
+msgid "Center screen on Silencer"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:92

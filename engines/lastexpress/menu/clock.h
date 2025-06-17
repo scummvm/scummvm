@@ -27,24 +27,69 @@
 namespace LastExpress {
 
 class LastExpressEngine;
-class SequenceFrame;
+
+struct Seq;
+struct Sprite;
 
 class Clock {
 public:
-	explicit Clock(LastExpressEngine *engine);
+	Clock(LastExpressEngine *engine);
 	~Clock();
 
-	void draw(uint32 time);
-	void clear();
+	void startClock(int32 time);
+	void endClock();
+	void eraseAllSprites();
+	void setClock(int32 time);
+	void stopClock(int32 time);
+	void turnOnClock(bool draw);
+	void drawHands(int32 time);
+	void drawTrainPosition(int32 time);
+	void tickClock();
+	bool statusClock();
+	int32 getTimeShowing();
+	int32 getTimeTo();
+
+	// Debugger
+	void showCurrentTime();
 
 private:
 	LastExpressEngine *_engine;
 
-	// Frames
-	SequenceFrame *_frameMinutes;
-	SequenceFrame *_frameHour;
-	SequenceFrame *_frameSun;
-	SequenceFrame *_frameDate;
+	int32 _timeTo = 0;
+	int32 _timeShowing = 0;
+	int32 _clockTickDelta = 0;
+
+	Seq *_seqMinutes = nullptr;
+	Seq *_seqHour = nullptr;
+	Seq *_seqSun = nullptr;
+	Seq *_seqDate = nullptr;
+	Seq *_seqLine1 = nullptr;
+	Seq *_seqLine2 = nullptr;
+
+	Sprite *_clockHour = nullptr;
+	Sprite *_clockMinutes = nullptr;
+	Sprite *_clockSun = nullptr;
+	Sprite *_clockDate = nullptr;
+	Sprite *_trainLine1 = nullptr;
+	Sprite *_trainLine2 = nullptr;
+
+	int32 _trainLineTimes[31] = {
+		1037700, 1148400, 1170900, 1228500, 1303200, 1335600,
+		1359900, 1367100, 1490400, 1539000, 1563300, 1656000,
+		1713600, 1739700, 1809900, 1852200, 1984500, 2049300,
+		2075400, 2101500, 2154600, 2268000, 2383200, 2418300,
+		2551500, 2952000, 3205800, 3492000, 3690000, 4320900,
+		4941000
+	};
+
+	int32 _trainCitiesIndex[31] = {
+		  0,   9,  11,  16,  21,  25,
+		 35,  37,  40,  53,  56,  60,
+		 63,  66,  68,  73,  84,  89,
+		 97, 100, 104, 111, 120, 124,
+		132, 148, 157, 165, 174, 198,
+		210
+	};
 };
 
 } // End of namespace LastExpress

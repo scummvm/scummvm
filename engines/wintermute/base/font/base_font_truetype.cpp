@@ -563,6 +563,7 @@ bool BaseFontTT::initFont() {
 		fallbackFilename = "LiberationSans-Regular.ttf";
 	}
 
+	// Load a file, but avoid having the File-manager handle the disposal of it.
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile, true, false);
 	if (!file) {
 		if (Common::String(_fontFile) != "arial.ttf") {
