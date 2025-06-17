@@ -1069,7 +1069,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"amazingwriting",
 			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
-			AD_ENTRY1s("system.dat", "h:6d65aa2cc7d437bb352aa18c0d63e332", 131),
+			AD_ENTRY1s("system.dat", "f:6d65aa2cc7d437bb352aa18c0d63e332", 131),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_UNSUPPORTED,
