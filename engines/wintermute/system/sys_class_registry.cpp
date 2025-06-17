@@ -236,6 +236,15 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 		gameRef->_renderer->setIndicatorVal((int)(50.0f / (float)((float)numClasses / (float)(i + 1))));
 
 		Common::String className = persistMgr->getStringObj();
+
+		// WA to be removed later
+		// This allow load save games from 2D games where SXVlink class reference is stored
+		if (!gameRef->_is3D && className == "SXVlink") {
+			persistMgr->getDWORD(); // saveId
+			persistMgr->getDWORD(); // numInstances
+			continue;
+		}
+
 		NameMap::iterator mapIt = _nameMap.find(className);
 		if (mapIt != _nameMap.end()) {
 			(*mapIt)._value->loadTable(gameRef,  persistMgr);
