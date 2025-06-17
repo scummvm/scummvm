@@ -65,15 +65,12 @@ void Sound::playSoundRaw(byte channel, const byte *data, size_t size,
 		int freq, byte volume) {
 	assert(channel < MAX_CHANNELS);
 
-	uint length = READ_BE_UINT16(data) * 2;
-
-	if (length > size - 8) {
-		warning("playSoundRaw: Length %d exceeds resource data length %ld", length, size);
-		length = size - 8;
-	}
+	// Used for looping sounds, e.g. the waterfall
+	// uint16 length = READ_BE_UINT16(data) * 2;
+	// uint16 loopLength = READ_BE_UINT16(data + 2) * 2;
 
 	Common::MemoryReadStream *stream =
-		new Common::MemoryReadStream(data + 8, length);
+		new Common::MemoryReadStream(data + 8, size - 8);
 	Audio::AudioStream *sound =
 		Audio::makeRawStream(stream, freq,
 			0,
