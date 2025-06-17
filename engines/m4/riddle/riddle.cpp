@@ -104,31 +104,30 @@ void RiddleEngine::global_daemon() {
 }
 
 void RiddleEngine::global_parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool talkFlag = player_said_any("talk", "talk to");
-	bool takeFlag = player_said("take");
-	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
-	bool npcFlag = player_said("MEI CHEN") ||
-		player_said("FENG LI") ||
-		player_said("TWELVETREES") ||
-		player_said("WOLF") ||
-		player_said("PERSON IN PIT") ||
-		player_said("TWELVETREES ") ||
-		player_said("OLD WOMAN") ||
-		player_said("OLD LADY") ||
-		player_said("AGENT") ||
-		player_said("BUTLER") ||
-		player_said("ACOLYTE") ||
-		player_said("OFFICIAL") ||
-		player_said("GATEKEEPER") ||
-		player_said("PEASANT") ||
-		player_said("ACOLYTE") ||
-		player_said("MENENDEZ") ||
-		player_said("GUARD") ||
-		player_said("FARMER");
-	bool combineFlag = inv_player_has(_G(player).verb) &&
-		inv_player_has(_G(player).noun);
-	bool splitFlag = useFlag && inv_player_has(_G(player).noun);
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool npcFlag = player_said("MEI CHEN") ||
+	                     player_said("FENG LI") ||
+	                     player_said("TWELVETREES") ||
+	                     player_said("WOLF") ||
+	                     player_said("PERSON IN PIT") ||
+	                     player_said("TWELVETREES ") ||
+	                     player_said("OLD WOMAN") ||
+	                     player_said("OLD LADY") ||
+	                     player_said("AGENT") ||
+	                     player_said("BUTLER") ||
+	                     player_said("ACOLYTE") ||
+	                     player_said("OFFICIAL") ||
+	                     player_said("GATEKEEPER") ||
+	                     player_said("PEASANT") ||
+	                     player_said("MENENDEZ") ||
+	                     player_said("GUARD") ||
+	                     player_said("FARMER");
+	const bool combineFlag = inv_player_has(_G(player).verb) &&
+	                         inv_player_has(_G(player).noun);
+	const bool splitFlag = useFlag && inv_player_has(_G(player).noun);
 
 	if (npcFlag && inv_player_has(_G(player).verb)) {
 		digi_play("com017", 1);
