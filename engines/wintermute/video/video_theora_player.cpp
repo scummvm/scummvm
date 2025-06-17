@@ -346,12 +346,9 @@ bool VideoTheoraPlayer::writeVideo(const Graphics::Surface *decodedFrame) {
 		return STATUS_FAILED;
 	}
 
-	_texture->startPixelOp();
-
 	_texture->putSurface(*decodedFrame, false);
 	//RenderFrame(_texture, &yuv);
 
-	_texture->endPixelOp();
 	_videoFrameReady = true;
 	return STATUS_OK;
 }

@@ -47,9 +47,7 @@ public:
 
 	bool setAlphaImage(const Common::String &filename) override;
 
-	bool isTransparentAt(int x, int y) override;
-	bool isTransparentAtLite(int x, int y) override;
-
+	bool isTransparentAtLite(int x, int y) const override;
 	bool startPixelOp() override;
 	bool endPixelOp() override;
 
@@ -77,9 +75,9 @@ public:
 		}
 		return _height;
 	}
-	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) override {
-		if (!_loaded) {
-			finishLoad();
+	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) const override {
+		if (!_pixelOpReady) {
+			return STATUS_FAILED;
 		}
 		if (_surface) {
 			uint32 pixel = _surface->getPixel(x, y);
@@ -97,10 +95,9 @@ private:
 	bool drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transformStruct);
 	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
 
+	bool _pixelOpReady;
 	float _rotation;
 	Graphics::AlphaType _alphaType;
-	void *_lockPixels;
-	int _lockPitch;
 	Graphics::Surface *_alphaMask;
 	Graphics::AlphaType _alphaMaskType;
 };

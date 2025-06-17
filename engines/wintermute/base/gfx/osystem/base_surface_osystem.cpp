@@ -49,11 +49,10 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
+	_pixelOpReady = false;
 	_alphaMask = nullptr;
 	_alphaType = Graphics::ALPHA_FULL;
 	_alphaMaskType = Graphics::ALPHA_OPAQUE;
-	_lockPixels = nullptr;
-	_lockPitch = 0;
 	_loaded = false;
 	_rotation = 0;
 }
@@ -210,13 +209,13 @@ bool BaseSurfaceOSystem::create(int width, int height) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::isTransparentAt(int x, int y) {
-	return isTransparentAtLite(x, y);
-}
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
+bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) const {
+	if (!_pixelOpReady) {
+		return false;
+	}
+
 	if (x < 0 || x >= _surface->w || y < 0 || y >= _surface->h) {
 		return true;
 	}
@@ -233,14 +232,18 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::startPixelOp() {
-	// Any pixel-op makes the caching useless:
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-	renderer->invalidateTicketsFromSurface(this);
+	if (!_loaded) {
+		if (DID_FAIL(finishLoad())) {
+			return STATUS_FAILED;
+		}
+	}
+	_pixelOpReady = true;
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::endPixelOp() {
+	_pixelOpReady = false;
 	return STATUS_OK;
 }
 
