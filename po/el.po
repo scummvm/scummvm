@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 23:13+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -875,7 +875,7 @@ msgstr "Ο υπολογισμός ολοκληρώθηκε"
 msgid "Calculated %s %S / %s %S"
 msgstr "Υπολογίστηκε %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -889,14 +889,14 @@ msgstr ""
 "Αν είστε βέβαιοι ότι πρόκειται για έγκυρη άγνωστη έκδοση, παρακαλούμε να "
 "στείλετε το ακόλουθο e-mail στο integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Το παιχνίδι δεν φαίνεται να έχει καθόλου αρχεία. Είστε βέβαιοι πως δώσατε το "
 "σωστό μονοπάτι;"
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -905,7 +905,7 @@ msgstr ""
 "συνεπώς είναι αδύνατο να γίνει αντιστοίχιση. Παρακαλούμε να συμπληρώσετε τα "
 "σωστά μεταδεδομένα για το παιχνίδι."
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr "Τα αρχεία είναι εντάξει"
 

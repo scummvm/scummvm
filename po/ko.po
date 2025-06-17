@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 23:13+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
 "PO-Revision-Date: 2025-06-16 18:26+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -860,7 +860,7 @@ msgstr "계산 완료"
 msgid "Calculated %s %S / %s %S"
 msgstr "%s %S / %s %S 계산됨"
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -874,12 +874,12 @@ msgstr ""
 "이것이 유효한 알려지지 않은 변형이라고 확신하는 경우 다음 이메일을 "
 "integrity@scummvm.org로 보내주세요"
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr "게임에 파일이 없는 것 같습니다. 경로가 올바른지 확인하였습니까?"
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -887,7 +887,7 @@ msgstr ""
 "이 게임에는 연관된 메타데이터가 없는 듯하므로, 매치할 수 없습니다. 게임에 대"
 "한 올바른 메타데이터를 입력해 주세요."
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr "모든 파일 정상"
 

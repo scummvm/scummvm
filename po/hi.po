@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-16 23:13+0000\n"
+"POT-Creation-Date: 2025-06-17 18:49+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -857,7 +857,7 @@ msgstr "गणना पूर्ण"
 msgid "Calculated %s %S / %s %S"
 msgstr "गणना पूरी हुई: %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:558
+#: gui/integrity-dialog.cpp:566
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -871,12 +871,12 @@ msgstr ""
 "यदि आप सुनिश्चित हैं कि यह एक मान्य अज्ञात संस्करण है, तो कृपया निम्नलिखित ईमेल "
 "integrity@scummvm.org पर भेजें"
 
-#: gui/integrity-dialog.cpp:582
+#: gui/integrity-dialog.cpp:590
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr "ऐसा लगता है कि इस गेम में कोई फ़ाइल नहीं है। क्या आप सुनिश्चित हैं कि पथ सही है?"
 
-#: gui/integrity-dialog.cpp:587
+#: gui/integrity-dialog.cpp:595
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -884,7 +884,7 @@ msgstr ""
 "ऐसा लगता है कि इस गेम से कोई मेटाडेटा जुड़ा नहीं है, इसलिए इसका मिलान नहीं हो पा रहा "
 "है। कृपया गेम के लिए सही मेटाडेटा भरें।"
 
-#: gui/integrity-dialog.cpp:614
+#: gui/integrity-dialog.cpp:622
 msgid "Files all OK"
 msgstr "सभी फ़ाइलें ठीक हैं"
 
