@@ -1557,7 +1557,7 @@ VOID CRiddlesWindow::OnClose() {
 
 //////////// Additional Sound Notify routines //////////////
 
-long CRiddlesWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CRiddlesWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -1567,7 +1567,7 @@ long CRiddlesWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-long CRiddlesWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CRiddlesWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

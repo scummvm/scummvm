@@ -3699,7 +3699,7 @@ VOID CBFishWindow::OnClose() {
 
 //////////// Additional Sound Notify routines //////////////
 
-long CBFishWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CBFishWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -3709,7 +3709,7 @@ long CBFishWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-long CBFishWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CBFishWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

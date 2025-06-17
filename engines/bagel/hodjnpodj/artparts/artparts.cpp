@@ -1890,7 +1890,7 @@ void CALLBACK GetSubOptions(CWnd* pParentWind) {
 
 //////////// Additional Sound Notify routines //////////////
 
-long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -1900,7 +1900,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

@@ -121,7 +121,7 @@ protected:
 	afx_msg void OnMouseMove(UINT, CPoint);
 	afx_msg void OnLButtonDown(UINT, CPoint);
 	afx_msg void OnRButtonDown(UINT, CPoint);
-	afx_msg long OnMCINotify(WPARAM, LPARAM);
+	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg BOOL OnEraseBkgnd(CDC *);
 	afx_msg void OnParentNotify(UINT, LPARAM);
 	afx_msg void OnActivate(UINT, CWnd *, BOOL);

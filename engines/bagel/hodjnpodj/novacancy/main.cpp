@@ -1200,7 +1200,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 *
 ***********************************************************************************************************************************
 */
-long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 	#ifdef _MCI_TEST
 	EM("On MCI Notify #1");
@@ -1220,7 +1220,7 @@ long CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	return (0L);
 }
 
-long CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	#ifdef _MACROS

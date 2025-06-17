@@ -114,8 +114,8 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnDestroy();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg long OnMCINotify(WPARAM, LPARAM);
-	afx_msg long OnMMIONotify(WPARAM, LPARAM);
+	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
+	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	afx_msg void OnTimer(UINT);
 	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
 	//}}AFX_MSG

@@ -69,11 +69,11 @@ typedef int INT;
 typedef unsigned int UINT;
 typedef unsigned int *PUINT;
 
-typedef int INT_PTR, *PINT_PTR;
-typedef unsigned int UINT_PTR, *PUINT_PTR;
+typedef intptr INT_PTR, *PINT_PTR;
+typedef uintptr UINT_PTR, *PUINT_PTR;
 
-typedef long LONG_PTR, *PLONG_PTR;
-typedef unsigned long ULONG_PTR, *PULONG_PTR;
+typedef intptr LONG_PTR, *PLONG_PTR;
+typedef uintptr ULONG_PTR, *PULONG_PTR;
 typedef uintptr DWORD_PTR;
 typedef uint32 COLORREF;
 typedef void *POSITION;

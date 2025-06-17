@@ -50,8 +50,8 @@ public:
 	VOID        LoadIniSettings(VOID);
 	VOID        SaveIniSettings(VOID);
 	void        FlushInputEvents();
-	long        OnMCINotify(WPARAM, LPARAM);
-	long        OnMMIONotify(WPARAM, LPARAM);
+	LRESULT     OnMCINotify(WPARAM, LPARAM);
+	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 
 protected:
 	VOID        GameReset(VOID);

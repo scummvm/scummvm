@@ -844,7 +844,7 @@ void CHodjPodjWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-long CHodjPodjWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CHodjPodjWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	(void) CSound::OnMCIStopped(wParam, lParam);
 	return (0L);
 }

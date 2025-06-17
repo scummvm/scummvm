@@ -1188,7 +1188,7 @@ void CMainDFAWindow::FlushInputEvents(void) {
 
 //////////// Additional Sound Notify routines //////////////
 
-long CMainDFAWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainDFAWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -1198,7 +1198,7 @@ long CMainDFAWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-long CMainDFAWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainDFAWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

@@ -93,8 +93,8 @@ protected:
 	VOID OnLButtonDown(UINT, CPoint);
 	VOID OnRButtonUp(UINT, CPoint);
 	VOID OnMouseMove(UINT, CPoint);
-	long OnMCINotify(WPARAM, LPARAM);
-	long OnMMIONotify(WPARAM, LPARAM);
+	LRESULT OnMCINotify(WPARAM, LPARAM);
+	LRESULT OnMMIONotify(WPARAM, LPARAM);
 
 	DECLARE_MESSAGE_MAP()
 

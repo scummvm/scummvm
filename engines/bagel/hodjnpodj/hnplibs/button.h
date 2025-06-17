@@ -220,8 +220,8 @@ private:
 
 	//{{AFX_MSG( CCheckButton )
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg long OnSetCheck(WPARAM, LPARAM);
-	afx_msg long OnGetCheck(WPARAM, LPARAM);
+	afx_msg LRESULT OnSetCheck(WPARAM, LPARAM);
+	afx_msg LRESULT OnGetCheck(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -267,8 +267,8 @@ private:
 
 	//{{AFX_MSG( CRadioButton )
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg long OnSetCheck(WPARAM, LPARAM);
-	afx_msg long OnGetCheck(WPARAM, LPARAM);
+	afx_msg LRESULT OnSetCheck(WPARAM, LPARAM);
+	afx_msg LRESULT OnGetCheck(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

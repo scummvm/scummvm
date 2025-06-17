@@ -2301,7 +2301,7 @@ void CMainPokerWindow::FlushInputEvents(void) {
 	}
 }
 
-long CMainPokerWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainPokerWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -2311,7 +2311,7 @@ long CMainPokerWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-long CMainPokerWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainPokerWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

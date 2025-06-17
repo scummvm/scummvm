@@ -154,8 +154,8 @@ protected:
 	VOID        OnClose();
 	VOID        OnSetFocus(CWnd *);
 	VOID        OnTimer(UINT);
-	long        OnMCINotify(WPARAM, LPARAM);
-	long        OnMMIONotify(WPARAM, LPARAM);
+	LRESULT     OnMCINotify(WPARAM, LPARAM);
+	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	HBRUSH      OnCtlColor(CDC *, CWnd *, UINT);
 
 	DECLARE_MESSAGE_MAP()

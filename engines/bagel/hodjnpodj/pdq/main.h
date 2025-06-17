@@ -64,8 +64,8 @@ protected:
 	void OnActivate(UINT, CWnd *, BOOL);
 	void OnSetFocus(CWnd *);
 	void OnClose(void);
-	long OnMCINotify(WPARAM, LPARAM);
-	long OnMMIONotify(WPARAM, LPARAM);
+	LRESULT OnMCINotify(WPARAM, LPARAM);
+	LRESULT OnMMIONotify(WPARAM, LPARAM);
 
 	DECLARE_MESSAGE_MAP()
 

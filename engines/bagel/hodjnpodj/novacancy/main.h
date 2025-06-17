@@ -63,8 +63,8 @@ protected:
 	virtual VOID        OnKeyDown(UINT, UINT, UINT);
 	VOID        OnActivate(UINT, CWnd *, BOOL);
 	VOID        OnClose(VOID);
-	virtual long        OnMCINotify(WPARAM, LPARAM);
-	virtual long        OnMMIONotify(WPARAM, LPARAM);
+	virtual LRESULT     OnMCINotify(WPARAM, LPARAM);
+	virtual LRESULT     OnMMIONotify(WPARAM, LPARAM);
 
 	DECLARE_MESSAGE_MAP()
 

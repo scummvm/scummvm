@@ -1324,7 +1324,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
  *
  ************************************************************************/
 
-long CCheckButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
+LRESULT CCheckButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
 	CRect   controlRect;
 
 	m_bCheckState = wParam;                         // set the new state value
@@ -1355,7 +1355,7 @@ long CCheckButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
  *
  ************************************************************************/
 
-long CCheckButton::OnGetCheck(WPARAM wParam, LPARAM lParam) {
+LRESULT CCheckButton::OnGetCheck(WPARAM wParam, LPARAM lParam) {
 	return (m_bCheckState);                         // return the current state value
 }
 
@@ -1690,7 +1690,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
  *
  ************************************************************************/
 
-long CRadioButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
+LRESULT CRadioButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
 	CRect   controlRect;
 	CWnd    *pBase, *pWnd, *pParent;
 
@@ -1733,7 +1733,7 @@ long CRadioButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
  *
  ************************************************************************/
 
-long CRadioButton::OnGetCheck(WPARAM wParam, LPARAM lParam) {
+LRESULT CRadioButton::OnGetCheck(WPARAM wParam, LPARAM lParam) {
 	return (m_bCheckState);                         // return the current state value
 }
 

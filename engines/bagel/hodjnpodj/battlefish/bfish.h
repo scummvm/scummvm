@@ -93,8 +93,8 @@ protected:
 	VOID        RemoveTurnHarpoon(VOID);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	LONG        OnMCINotify(WPARAM, LPARAM);
-	LONG        OnMMIONotify(WPARAM, LPARAM);
+	LRESULT     OnMCINotify(WPARAM, LPARAM);
+	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	VOID        OnSoundNotify(CSound *);
 	VOID        OnPaint(VOID);
 	VOID        OnMouseMove(UINT, CPoint);

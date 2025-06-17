@@ -878,7 +878,7 @@ void CGtlView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 #endif
 
 
-long CGtlView::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CGtlView::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -888,7 +888,7 @@ long CGtlView::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-long CGtlView::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CGtlView::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

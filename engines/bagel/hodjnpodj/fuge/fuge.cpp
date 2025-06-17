@@ -2762,7 +2762,7 @@ void CFugeWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
 }
 
 
-LONG CFugeWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CFugeWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -2773,7 +2773,7 @@ LONG CFugeWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-LONG CFugeWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CFugeWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

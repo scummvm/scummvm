@@ -137,8 +137,8 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnClose();
-	afx_msg long OnMCINotify(WPARAM, LPARAM);
-	afx_msg long OnMMIONotify(WPARAM, LPARAM);
+	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
+	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

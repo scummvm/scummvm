@@ -3571,7 +3571,7 @@ void CMainPackRatWindow::FlushInputEvents(void) {
 
 //////////// Additional Sound Notify routines //////////////
 
-long CMainPackRatWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainPackRatWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
@@ -3581,7 +3581,7 @@ long CMainPackRatWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-long CMainPackRatWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
+LRESULT CMainPackRatWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);

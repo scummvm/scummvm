@@ -86,8 +86,8 @@ protected:
 	VOID        OnSysKeyDown(UINT, UINT, UINT);
 	VOID        OnKeyDown(UINT, UINT, UINT);
 	VOID        OnActivate(UINT, CWnd *, BOOL);
-	LONG        OnMCINotify(WPARAM, LPARAM);
-	LONG        OnMMIONotify(WPARAM, LPARAM);
+	LRESULT     OnMCINotify(WPARAM, LPARAM);
+	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	VOID        OnSoundNotify(CSound *);
 	VOID        OnClose(VOID);
 

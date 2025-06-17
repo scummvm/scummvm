@@ -94,8 +94,8 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnActivateApp(BOOL bActive, HTASK hTask);
-	afx_msg long OnMCINotify(WPARAM, LPARAM);
-	afx_msg long OnMMIONotify(WPARAM, LPARAM);
+	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
+	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

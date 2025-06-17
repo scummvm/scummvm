@@ -550,8 +550,8 @@ private: BOOL OptionsDialog(void) ;
 
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	virtual long OnMCINotify(WPARAM W, LPARAM L);
-	virtual long OnMMIONotify(WPARAM W, LPARAM L);
+	virtual LRESULT OnMCINotify(WPARAM W, LPARAM L);
+	virtual LRESULT OnMMIONotify(WPARAM W, LPARAM L);
 
 	//{{AFX_MSG( CMnkWindow )
 	afx_msg void OnPaint();
