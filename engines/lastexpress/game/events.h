@@ -29,25 +29,18 @@ namespace LastExpress {
 class LastExpressEngine;
 class LogicManager;
 
-typedef struct ConsCallParam {
+struct ConsCallParam {
+	ConsCallParam() : intParam(0), stringParam(nullptr) {}
+
+	template<typename T>
+	ConsCallParam(T param) : intParam(static_cast<int32>(param)), stringParam(nullptr) {}
+
+	ConsCallParam(const char *param) : intParam(0), stringParam(param) {}
+	ConsCallParam(char *param) : intParam(0), stringParam(param) {}
+
 	int32 intParam;
 	const char *stringParam;
-
-	ConsCallParam() {
-		intParam = 0;
-		stringParam = nullptr;
-	}
-
-	ConsCallParam(int32 param) {
-		intParam = param;
-		stringParam = nullptr;
-	}
-
-	ConsCallParam(const char *param) {
-		intParam = 0;
-		stringParam = param;
-	}
-} ConsCallParam;
+};
 
 #include "common/pack-start.h"
 
