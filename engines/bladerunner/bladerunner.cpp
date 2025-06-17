@@ -371,18 +371,6 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kNoGameDataFoundError, missingFileStr);
 	}
 
-	Common::List<Graphics::PixelFormat> tmpSupportedFormatsList = g_system->getSupportedFormats();
-	if (!tmpSupportedFormatsList.empty()) {
-		_screenPixelFormat = tmpSupportedFormatsList.front();
-	} else {
-		// Workaround for some devices which return an empty supported formats list.
-		// TODO: A better fix for getSupportedFormats() - maybe figure why in only some device it might return an empty list
-		//
-		// Use this as a fallback format - Should be a format supported
-		_screenPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
-	}
-	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
-
 	int16 gameBRWidth = kOriginalGameWidth;
 	int16 gameBRHeight = kOriginalGameHeight;
 	if (_isNonInteractiveDemo) {
@@ -395,7 +383,10 @@ Common::Error BladeRunnerEngine::run() {
 		}
 	}
 
-	initGraphics(gameBRWidth, gameBRHeight, &_screenPixelFormat);
+	initGraphics(gameBRWidth, gameBRHeight, nullptr);
+	_screenPixelFormat = g_system->getScreenFormat();
+	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
+
 	_system->showMouse(_isNonInteractiveDemo ? false : true);
 
 	bool hasSavegames = !SaveFileManager::list(getMetaEngine(), _targetName).empty();
