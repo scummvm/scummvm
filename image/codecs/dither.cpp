@@ -137,7 +137,7 @@ const Graphics::Surface *DitherCodec::decodeFrame(Common::SeekableReadStream &st
 	else if (frame->format == Graphics::PixelFormat(2, 5, 5, 4, 0, 9, 4, 0, 0))
 		ditherQuickTimeFrame<uint16>(*frame, *_ditherFrame, _ditherTable, readQT_RGB554);
 	else if (frame->format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0) ||
-	         frame->format == Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 1))
+	         frame->format == Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15))
 		ditherQuickTimeFrame<uint16>(*frame, *_ditherFrame, _ditherTable, readQT_RGB555);
 	else if (frame->format.bytesPerPixel == 2)
 		ditherQuickTimeFrame<uint16>(*frame, *_ditherFrame, _ditherTable, readQT_RGB);
