@@ -34,6 +34,15 @@ namespace Action {
 
 void MatchPuzzle::init() {
 	// TODO
+	//_screenPosition = _displayBounds;
+
+	//_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
+	//_drawSurface.clear(g_nancy->_graphics->getTransColor());
+
+	setTransparent(true);
+
+	g_nancy->_resource->loadImage(_overlayName, _image);
+	RenderActionRecord::init();
 }
 
 void MatchPuzzle::execute() {
@@ -46,15 +55,37 @@ void MatchPuzzle::execute() {
 	// TODO
 	// Stub - return to the main menu
 	warning("STUB - Nancy 8 flag game");
-	SceneChangeDescription scene;
-	scene.sceneID = 4111;
-	NancySceneState.resetStateToInit();
-	NancySceneState.changeScene(scene);
+	_exitSceneChange.execute();
 }
 
 void MatchPuzzle::readData(Common::SeekableReadStream &stream) {
-	// TODO
-	stream.skip(stream.size() - stream.pos());
+	readFilename(stream, _overlayName);
+	readFilename(stream, _flagPointBackgroundName);
+
+	stream.skip(2);   // TODO (value: 5)
+	stream.skip(2);   // TODO (value: 7)
+	stream.skip(2);   // 26 flags
+
+	readRect(stream,_shuffleButtonRect);
+	readRectArray(stream, _flagRects, 26);
+
+	stream.skip(103); // TODO (mostly zeroes)
+
+	readFilenameArray(stream, _flagNames, 26);
+
+	stream.skip(132); // TODO (zeroes)
+	stream.skip(173); // TODO
+
+	_slotWinSound.readNormal(stream);
+	_shuffleSound.readNormal(stream);
+	_cardPlaceSound.readNormal(stream);
+
+	_solveSceneChange.readData(stream);
+	stream.skip(2);
+	_matchSuccessSound.readNormal(stream);
+	_exitSceneChange.readData(stream);
+
+	stream.skip(16); // TODO
 }
 
 void MatchPuzzle::handleInput(NancyInput &input) {
