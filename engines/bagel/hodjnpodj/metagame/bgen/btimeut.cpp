@@ -69,7 +69,7 @@ cleanup:
 
 ///* DelayMsCallback -- SetTimer callback routine for DelayMs
 void CTimeUtil::DelayMsCallback(HWND /* hWnd */,
-                                UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */)
+                                UINT /* uMsg */, UINT_PTR /* uTimerId */, DWORD /* dwTime */)
 // hWnd -- handle of window (always nullptr in this case)
 // uMsg -- WM_TIMER message
 // uTimerId -- timer identifier

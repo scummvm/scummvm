@@ -923,9 +923,9 @@ void CGtlView::FlushInputEvents(void) {
 
 extern CBgbMgr *gpBgbMgr;
 
-void CGtlView::OnTimer(UINT nEventId) {
+void CGtlView::OnTimer(UINT_PTR nEventID) {
 	// there can only be one animation timer going
-	assert(nEventId == ANIMATION_TIMER_ID);
+	assert(nEventID == ANIMATION_TIMER_ID);
 
 	if (gpBgbMgr->AnimationsActive()) {
 

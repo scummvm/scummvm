@@ -57,7 +57,7 @@ BOOL CGuessDlg::OnInitDialog(void) {
 	return (TRUE);
 }
 
-void CGuessDlg::OnTimer(UINT nEventID) {
+void CGuessDlg::OnTimer(UINT_PTR nEventID) {
 	char buf[MAX_PLENGTH_S + 2];
 	CEdit *pEdit;
 
