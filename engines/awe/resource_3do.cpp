@@ -101,6 +101,7 @@ static const uint8 _ccb_bppTable[8] = {
 };
 
 static uint16 *decodeShapeCcb(Common::File *f, int dataSize, int *w, int *h) {
+	// TODO: Can this reuse code from Image::Cel3DODecoder?
 	const uint32 flags = f->readUint32BE();
 	f->seek(4, SEEK_CUR);
 	const uint32 celData = f->readUint32BE();

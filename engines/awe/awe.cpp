@@ -144,7 +144,8 @@ Common::Error AweEngine::run() {
 
 	if (graphicsType != GRAPHICS_GL && dataType == DT_3DO) {
 		graphicsType = GRAPHICS_SOFTWARE;
-		Gfx::_format = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
+		// TODO: Select the best pixel format at runtime
+		Gfx::_format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	}
 
 	Gfx *graphics = createGraphics(graphicsType);

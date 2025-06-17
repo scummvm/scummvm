@@ -614,7 +614,7 @@ void Video::drawBitmap3DO(const char *name, SystemStub *stub) {
 		s.setPixels(data);
 		s.w = s.pitch = w;
 		s.h = h;
-		s.format = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
+		s.format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 
 		_graphics->drawBitmapOverlay(s, FMT_RGB555, stub);
 		free(data);
