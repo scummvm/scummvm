@@ -461,9 +461,7 @@ public:
 	static CGdiObject *FromHandle(HGDIOBJ h);
 
 public:
-	~CGdiObject() override {
-		DeleteObject();
-	}
+	~CGdiObject() override {}
 
 	BOOL Attach(HGDIOBJ hObject);
 	HGDIOBJ Detach();
