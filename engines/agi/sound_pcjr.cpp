@@ -273,8 +273,8 @@ int SoundGenPCJr::getNextNote_v2(int ch) {
 			break;
 		}
 
-		_tchannel[ch].genTypePrev = -1;
-		_tchannel[ch].freqCountPrev = -1;
+		tpcm->genTypePrev = tpcm->genType;
+		tpcm->freqCountPrev = tpcm->freqCount;
 
 		// only tone channels dissolve
 		if ((ch != 3) && (_dissolveMethod != 0))    // != noise??
@@ -481,7 +481,7 @@ int SoundGenPCJr::fillSquare(ToneChan *t, int16 *buf, int len) {
 	if (t->freqCount != t->freqCountPrev) {
 		//t->scale = (int)( (double)t->samp->freq*t->freqCount/FREQ_DIV * MULT + 0.5);
 		t->scale = (SAMPLE_RATE / 2) * t->freqCount;
-		t->count = t->scale;
+		//t->count = t->scale;
 		t->freqCountPrev = t->freqCount;
 	}
 
