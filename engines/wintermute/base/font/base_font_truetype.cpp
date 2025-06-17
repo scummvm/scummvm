@@ -287,6 +287,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	}
 
 	BaseSurface *retSurface = _gameRef->_renderer->createSurface();
+	retSurface->create(surface->w, surface->h);
 	retSurface->putSurface(*surface, true);
 	surface->free();
 	delete surface;
