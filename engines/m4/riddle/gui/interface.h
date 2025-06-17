@@ -37,8 +37,6 @@ using M4::GUI::ControlStatus;
 
 struct Interface : public M4::Interface {
 	class BackpackClass : public ButtonClass {
-	private:
-		//int _field32 = 0;
 
 	public:
 		BackpackClass(const RectClass &r, const Common::String &btnName, int16 tag,
@@ -66,7 +64,6 @@ public:
 	GUI::ButtonClass *_btnBinky = nullptr;
 
 	int _sprite = 22; // main_interface_sprite;
-	bool _shown = false;
 	const HotSpotRec *_hotspot = nullptr;
 	int _savedX = 0, _savedY = 0;
 	char _prepText[40] = { 0 };

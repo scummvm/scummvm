@@ -353,8 +353,8 @@ void Interface::dispatch_command() {
 }
 
 void Interface::handleState(ControlStatus status) {
-	int highlight = _inventory->_highlight;
-	int index = _inventory->_scroll + highlight;
+	const int highlight = _inventory->_highlight;
+	const int index = _inventory->_scroll + highlight;
 
 	switch (status) {
 	case NOTHING:
