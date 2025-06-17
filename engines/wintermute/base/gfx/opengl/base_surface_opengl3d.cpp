@@ -61,6 +61,12 @@ bool BaseSurfaceOpenGL3D::invalidate() {
 	_renderer->invalidateTexture(this);
 	_tex = 0;
 
+	if (_imageData) {
+		_imageData->free();
+		delete _imageData;
+		_imageData = nullptr;
+	}
+
 	_valid = false;
 	return true;
 }
@@ -208,6 +214,8 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 
 	putSurface(*_imageData);
 
+	/* TODO: Delete _imageData if we no longer need to access the pixel data? */
+
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
 		_lifeTime = lifeTime;
 	}
@@ -216,8 +224,6 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	if (_keepLoaded) {
 		_lifeTime = -1;
 	}
-
-	_valid = true;
 
 	return true;
 }
@@ -228,7 +234,9 @@ bool BaseSurfaceOpenGL3D::create(int width, int height) {
 	_texWidth = Common::nextHigher2(width);
 	_texHeight = Common::nextHigher2(height);
 
-	glGenTextures(1, &_tex);
+	if (!_valid) {
+		glGenTextures(1, &_tex);
+	}
 	glBindTexture(GL_TEXTURE_2D, _tex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -251,11 +259,9 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	_texWidth = Common::nextHigher2(_width);
 	_texHeight = Common::nextHigher2(_height);
 
-	if (_valid) {
-		invalidate();
+	if (!_valid) {
+		glGenTextures(1, &_tex);
 	}
-
-	glGenTextures(1, &_tex);
 	glBindTexture(GL_TEXTURE_2D, _tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
