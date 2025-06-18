@@ -194,6 +194,24 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
+	// The Last Express (Italian 1998 Rerelease)
+	//   expressw.exe 1997-09-15 12:11:56
+	//   express.exe  1997-09-15 12:41:46
+	{
+		"lastexpress",
+		"1998 Re-Release",
+		{
+			{"HD.HPF",  0, "5539e78fd7eecb70bc858e86b5709fe9", 29548544},   // 1998-01-21 08:39:32
+			{"CD1.HPF", 0, "f6840f4b809ab259be1d93494e6fcae3", 522979328},  // 1998-01-16 16:12:28
+			{"CD2.HPF", 0, "66b34839c1400fb72ac11a470cb1ebe1", 665171968},  // 1998-01-22 12:19:00
+			{"CD3.HPF", 0, "eb542814a6bed3fe89308c9d77c9dc5e", 637612032},  // 1998-01-21 08:36:48
+			AD_LISTEND
+		},
+		Common::IT_ITA,
+		Common::kPlatformUnknown,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+	},
 	// The Last Express (Russian)
 	//   expressw.exe 1999-04-05 15:33:56
 	//   express.exe  ???
