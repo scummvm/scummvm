@@ -88,6 +88,12 @@ void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
 		return;
 	}
 
+	if (_focusedWin && (ev.type == Common::EVENT_KEYDOWN ||
+			ev.type == Common::EVENT_KEYUP)) {
+		hWnd = _focusedWin->m_hWnd;
+		return;
+	}
+
 	// Fallback, send message to any active dialog,
 	// or worst case to the main application window
 	if (_modalDialog)
@@ -245,6 +251,25 @@ void EventLoop::ReleaseCapture() {
 
 HWND EventLoop::GetCapture() const {
 	return _captureWin;
+}
+
+void EventLoop::SetFocus(CWnd *wnd) {
+	if (wnd != _focusedWin) {
+		CWnd *oldFocus = _focusedWin;
+
+		if (_focusedWin) {
+			_focusedWin->_hasFocus = false;
+			_focusedWin->SendMessage(WM_KILLFOCUS,
+				wnd ? (WPARAM)wnd->m_hWnd : (WPARAM)nullptr);
+		}
+
+		_focusedWin = wnd;
+		if (_focusedWin) {
+			_focusedWin->_hasFocus = true;
+			_focusedWin->SendMessage(WM_SETFOCUS,
+				oldFocus ? (WPARAM)oldFocus->m_hWnd : (WPARAM)nullptr);
+		}
+	}
 }
 
 bool EventLoop::validateDestroyedWnd(HWND hWnd) {

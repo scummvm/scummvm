@@ -1159,6 +1159,7 @@ public:
 	int m_nStyle = 0;
 	int m_nModalResult = -1;
 	bool _visible = false;
+	bool _hasFocus = false;
 	CString _windowText;
 	Common::Rect _windowRect;
 	Common::Rect _updateRect;

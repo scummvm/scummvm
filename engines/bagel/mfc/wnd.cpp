@@ -166,12 +166,16 @@ void CWnd::SetActiveWindow() {
 }
 
 void CWnd::SetFocus() {
-	error("TODO: CWnd::SetFocus");
+	AfxGetApp()->SetFocus(this);
 }
 
 void CWnd::DestroyWindow() {
-	// Flush any other pending events
+	// Lose focus if it currently has it
 	auto *app = AfxGetApp();
+	if (app->GetFocus() == this)
+		app->SetFocus(nullptr);
+
+	// Flush any other pending events
 	MSG msg;
 	while (app->PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
 	}

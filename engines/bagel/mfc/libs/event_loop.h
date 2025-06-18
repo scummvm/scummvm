@@ -36,6 +36,7 @@ private:
 	CWnd *_modalDialog = nullptr;
 	CWnd *_highlightedWin = nullptr;
 	CWnd *_captureWin = nullptr;
+	CWnd *_focusedWin = nullptr;
 	Libs::EventQueue _messages;
 	uint32 _nextFrameTime = 0;
 	bool _quitFlag = false;
@@ -120,6 +121,11 @@ public:
 		// Which may become an issue if anything opened
 		// multiple independent windows
 		runEventLoop(wnd);
+	}
+
+	void SetFocus(CWnd *wnd);
+	CWnd *GetFocus() const {
+		return _focusedWin;
 	}
 
 	/**
