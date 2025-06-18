@@ -47,7 +47,7 @@ typedef struct ImGuiState {
 	LastExpressEngine *_engine = nullptr;
 	ImGuiTextFilter _filter;
 	int _currentTab = 0;
-	int _selectedCharacter = -1;
+	int _selectedCharacter = 0;
 	bool _forceReturnToListView = false;
 	float _rightPanelWidth = 0.0f;
 	float _bottomPanelHeight = 0.0f;
