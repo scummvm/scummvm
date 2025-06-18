@@ -516,6 +516,12 @@ void SoundManager::saveSoundInfo(CVCRFile *file) {
 			saveSlot->priority = j->_priority;
 			strncpy(saveSlot->name1, j->_name1, sizeof(saveSlot->name1));
 			strncpy(saveSlot->name2, j->_name2, sizeof(saveSlot->name2));
+
+			// I have verified that ANY possible name in here won't be longer than 12 characters,
+			// so it's safe to put this here, like Coverity asked to...
+			saveSlot->name1[15] = '\0';
+			saveSlot->name2[15] = '\0';
+
 			file->writeRLE(saveSlot, sizeof(SaveSlot), 1);
 		}
 	}

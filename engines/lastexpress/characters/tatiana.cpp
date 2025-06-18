@@ -2603,9 +2603,12 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 
 			if (!getCharacterCurrentParams(kCharacterTatiana)[0]) {
 				if (_doneNIS[kEventTatianaTylerCompartment] || _gameTime > 2475000) {
-					if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
-						setDoor(1, 0, checkDoor(1), 10, 9);
-					}
+					// Dead-code, byproduct of unrolling a goto...
+					// 
+					// if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
+					// 	setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
+					// }
+
 					_globals[kProgressFieldE4] = 0;
 					softReleaseAtDoor(kCharacterTatiana, 2);
 					getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
@@ -2628,7 +2631,7 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 				if (getCharacterCurrentParams(kCharacterTatiana)[1] >= _realTime) {
 					if (_doneNIS[kEventTatianaTylerCompartment] || _gameTime > 2475000) {
 						if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
-							setDoor(1, 0, checkDoor(1), 10, 9);
+							setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
 						}
 						_globals[kProgressFieldE4] = 0;
 						softReleaseAtDoor(kCharacterTatiana, 2);
@@ -2648,7 +2651,7 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 
 		if (_doneNIS[kEventTatianaTylerCompartment] || _gameTime > 2475000) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
-				setDoor(1, 0, checkDoor(1), 10, 9);
+				setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
 			}
 			_globals[kProgressFieldE4] = 0;
 			softReleaseAtDoor(kCharacterTatiana, 2);

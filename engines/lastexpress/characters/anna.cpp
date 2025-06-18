@@ -1481,9 +1481,9 @@ void LogicManager::HAND_Anna_FreshenUp(HAND_PARAMS) {
 		if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 1 ||
 			getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] == 2) {
 			if (_globals[kProgressField14] == 29) {
-				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = _gameTime + 900;
+				getCharacterCurrentParams(kCharacterAnna)[0] = _gameTime + 900;
 				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 2;
-				AnnaCall(&LogicManager::CONS_Anna_CompLogic, getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8], "NONE", 0, 0);
+				AnnaCall(&LogicManager::CONS_Anna_CompLogic, getCharacterCurrentParams(kCharacterAnna)[0], "NONE", 0, 0);
 			} else {
 				getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] = 3;
 				AnnaCall(&LogicManager::CONS_Anna_DoCorrOtis, "618Bf", 37, 0, 0);

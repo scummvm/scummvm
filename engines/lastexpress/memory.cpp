@@ -85,8 +85,8 @@ void MemoryManager::initMem() {
 		_engine->getMessageManager()->_autoMessages[i].clear();
 	}
 
-	memset(_engine->getLogicManager()->_globals, 0, sizeof(128 * sizeof(int32)));
-	memset(_engine->getLogicManager()->_doneNIS, 0, sizeof(512));
+	memset(_engine->getLogicManager()->_globals, 0, 128 * sizeof(int32));
+	memset(_engine->getLogicManager()->_doneNIS, 0, 512);
 
 	_engine->getGraphicsManager()->_cursorsDataHeader = (CursorHeader *)_engine->_cursorsMemoryPool;
 	_engine->getGraphicsManager()->_iconsBitmapData = (PixMap *)(_engine->_cursorsMemoryPool + sizeof(CursorHeader) * kCursorMAX);

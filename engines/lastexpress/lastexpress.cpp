@@ -77,6 +77,7 @@ LastExpressEngine::~LastExpressEngine() {
 	SAFE_DELETE(_saveMan);
 	SAFE_DELETE(_clock);
 	SAFE_DELETE(_vcr);
+	SAFE_DELETE(_soundMutex);
 
 	//_debugger is deleted by Engine
 

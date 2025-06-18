@@ -413,7 +413,7 @@ void LogicManager::renderCharacterList(int &selectedCharacter) {
 	// Right panel: Character details
 	ImGui::BeginChild("CharacterDetails", ImVec2(0, 0), true);
 
-	if (selectedCharacter >= 0 && selectedCharacter < 40) {
+	if (selectedCharacter < 40) {
 		Character *character = &getCharacter(selectedCharacter);
 		if (character) {
 			renderCharacterDetails(character, selectedCharacter);

@@ -37,6 +37,10 @@ CFighter::CFighter(LastExpressEngine *engine, CFight *fight) {
 	_nextSequenceIdx = 0;
 	_hitPoints = 1;
 	_dodges = 0;
+
+	for (int i = 0; i < ARRAYSIZE(_seqs); i++) {
+		_seqs[i] = nullptr;
+	}
 }
 
 CFighter::~CFighter() {
@@ -61,9 +65,12 @@ void CFighter::timer() {
 	if (!_currentSeq) {
 		if (_currentSprite) {
 			_engine->getSpriteManager()->removeSprite(_currentSprite);
-			if (!sprite || !sprite->copyScreenAndRedrawFlag)
-				_engine->getSpriteManager()->queueErase(_currentSprite);
+
+			// The original did this, but at this point sprite is necessarily nullptr...
+			// if (!sprite || !sprite->copyScreenAndRedrawFlag)
+			_engine->getSpriteManager()->queueErase(_currentSprite);
 		}
+
 		_currentSprite = sprite;
 		return;
 	}

@@ -372,12 +372,6 @@ void static decodeSamples(int32 volumeLevel, int32 stepSizeIdx, int32 initSample
 		// Process and write the first sample...
 		idx = (compressedBuffer[count] >> 4);
 
-		// This check SHOULDN'T be needed, but I don't want to risk out of bounds accesses...
-		if (idx + (stepSize >> 2) > 1424) {
-			warning("invalid stepSize %d >> 2 == %d", stepSize, (stepSize >> 2));
-			stepSize = 0;
-		}
-
 		int32 sample1 = adpcmDeltaTable[idx + (stepSize >> 2)] + initialPredictor;
 		int32 newStepSize = adpcmStepSizeTable[idx + (stepSize >> 2)];
 
