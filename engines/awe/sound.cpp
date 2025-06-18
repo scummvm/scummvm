@@ -38,7 +38,7 @@ void Sound::playMusic(const char *path, int loops) {
 }
 
 void Sound::playSfxMusic(int num) {
-	warning("TODO: playSfxMusic");
+	_sfx->play(_mixer->getOutputRate());
 }
 
 void Sound::playAifcMusic(const char *path, uint32 offset) {
