@@ -373,7 +373,7 @@ void LastExpressEngine::creditsMouse(Event *event) {
 }
 
 void LastExpressEngine::creditsTimer(Event *event) {
-	setEventTickInternal(0);
+	setEventTickInternal(false);
 }
 
 int32 LastExpressEngine::readTGAIntoMemory(const char *filename, TGAHeader *tgaHeader) {
