@@ -128,7 +128,7 @@ void LastExpressEngine::soundTimerHandler(void *refCon) {
 			return;
 		}
 
-		engine->getMessageManager()->addEvent(3, 0, 0, 0);
+		engine->getMessageManager()->addEvent(kEventChannelTimer, 0, 0, 0);
 	}
 
 	engine->_soundFrameCounter++;
@@ -204,7 +204,7 @@ Common::Error LastExpressEngine::run() {
 	_system->setImGuiCallbacks(callbacks);
 #endif
 
-	getMessageManager()->setEventHandle(4, &LastExpressEngine::engineEventHandlerWrapper);
+	getMessageManager()->setEventHandle(kEventChannelEngine, &LastExpressEngine::engineEventHandlerWrapper);
 
 	getTimerManager()->installTimerProc(soundTimerHandler, 17000, this, "LastExpressEngine");
 
@@ -373,7 +373,7 @@ void LastExpressEngine::engineEventHandler(Event *event) {
 				getMenu()->doEgg(true, 0, 0); // Save!
 				_pendingExitEvent = false; // We're done, we can quit
 			} else {
-				getMessageManager()->addEvent(4, 0, 0, 2); // Give the engine the actual chance to abort NIS, fights and credits by running process()
+				getMessageManager()->addEvent(kEventChannelEngine, 0, 0, 2); // Give the engine the actual chance to abort NIS, fights and credits by running process()
 				_pendingExitEvent = true;
 			}
 		}
@@ -481,7 +481,7 @@ bool LastExpressEngine::handleEvents() {
 			if (_systemEventRightMouseDown)
 				curFlags |= kMouseFlagRightButton;
 
-			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
+			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
 		case Common::EVENT_LBUTTONUP:
 			_systemEventLeftMouseDown = false;
@@ -489,7 +489,7 @@ bool LastExpressEngine::handleEvents() {
 			if (_systemEventRightMouseDown)
 				curFlags |= kMouseFlagRightButton;
 
-			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
+			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
@@ -499,7 +499,7 @@ bool LastExpressEngine::handleEvents() {
 			if (_systemEventLeftMouseDown)
 				curFlags |= kMouseFlagLeftButton;
 
-			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
+			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
 		case Common::EVENT_RBUTTONUP:
 			_systemEventRightMouseDown = false;
@@ -507,7 +507,7 @@ bool LastExpressEngine::handleEvents() {
 			if (_systemEventLeftMouseDown)
 				curFlags |= kMouseFlagLeftButton;
 
-			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
+			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -527,13 +527,13 @@ bool LastExpressEngine::handleEvents() {
 			_systemEventLastMouseCoords.x = ev.mouse.x;
 			_systemEventLastMouseCoords.y = ev.mouse.y;
 
-			getMessageManager()->addEvent(1, ev.mouse.x, ev.mouse.y, curFlags);
+			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
 			break;
 
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			if (!_exitFromMenuButton) {
-				getMessageManager()->addEvent(4, 0, 0, 1);
+				getMessageManager()->addEvent(kEventChannelEngine, 0, 0, 1);
 				_pendingExitEvent = true;
 			}
 

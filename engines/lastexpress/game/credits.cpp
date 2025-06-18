@@ -88,8 +88,8 @@ void LastExpressEngine::doCredits() {
 			_savedMouseEventHandle = getMessageManager()->getEventHandle(1);
 			_savedTimerEventHandle = getMessageManager()->getEventHandle(3);
 
-			getMessageManager()->setEventHandle(1, &LastExpressEngine::creditsMouseWrapper);
-			getMessageManager()->setEventHandle(3, &LastExpressEngine::creditsTimerWrapper);
+			getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::creditsMouseWrapper);
+			getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::creditsTimerWrapper);
 
 			do {
 				getSoundManager()->soundThread();
@@ -330,8 +330,8 @@ void LastExpressEngine::doCredits() {
 			if (nextTga)
 				getMemoryManager()->lockFX();
 
-			getMessageManager()->setEventHandle(1, _savedMouseEventHandle);
-			getMessageManager()->setEventHandle(3, _savedTimerEventHandle);
+			getMessageManager()->setEventHandle(kEventChannelMouse, _savedMouseEventHandle);
+			getMessageManager()->setEventHandle(kEventChannelTimer, _savedTimerEventHandle);
 
 			_doCredits = 0;
 
@@ -360,15 +360,15 @@ void LastExpressEngine::creditsMouse(Event *event) {
 
 	mouseSetRightClicked(false);
 	
-	if ((event->flags & 8) != 0)
+	if ((event->flags & kMouseFlagLeftDown) != 0)
 		_savedFrameCounter = getSoundFrameCounter();
 
-	if (_savedFrameCounter && (event->flags & 0x80) != 0) {
+	if (_savedFrameCounter && (event->flags & kMouseFlagLeftUp) != 0) {
 		_savedFrameInterval += getSoundFrameCounter() - _savedFrameCounter;
 		_savedFrameCounter = 0;
 	}
 
-	if ((event->flags & 0x10) != 0)
+	if ((event->flags & kMouseFlagRightDown) != 0)
 		abortCredits();
 }
 
@@ -478,12 +478,12 @@ bool LastExpressEngine::demoEnding(bool wonGame) {
 		"BONDAGE", "KILL", "HIGHFITE", "1315GUNS", "BOOM2", "ISTANBUL", "LASTSHOT"};
 
 	if (wonGame) {
-		getMessageManager()->setEventHandle(1, &LastExpressEngine::emptyHandler);
+		getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::emptyHandler);
 	} else {
-		getMessageManager()->setEventHandle(1, &LastExpressEngine::demoEndingMouseWrapper);
+		getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::demoEndingMouseWrapper);
 	}
 
-	getMessageManager()->setEventHandle(3, &LastExpressEngine::demoEndingTimerWrapper);
+	getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::demoEndingTimerWrapper);
 	getGraphicsManager()->setMouseDrawable(false);
 
 	mouseSetRightClicked(false);

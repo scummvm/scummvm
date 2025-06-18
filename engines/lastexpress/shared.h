@@ -185,6 +185,12 @@ enum MouseFlags : int {
 	kMouseFlagRightUp     = 0x100
 };
 
+enum EventChannel : int {
+	kEventChannelMouse  = 1,
+	kEventChannelTimer  = 3,
+	kEventChannelEngine = 4
+};
+
 enum NisFlags : uint {
 	kNisFlagHasSound            = 0x1,     // Set when a valid NIS sound exists
 	kNisFlagDataChunksAvailable = 0x100,   // Used during initialization and chunk loading

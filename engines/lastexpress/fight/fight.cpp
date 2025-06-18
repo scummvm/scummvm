@@ -183,8 +183,8 @@ CFight::CFight(LastExpressEngine *engine, int fightId) {
 	_savedMouseEventHandle = _engine->getMessageManager()->getEventHandle(1);
 	_savedTimerEventHandle = _engine->getMessageManager()->getEventHandle(3);
 
-	_engine->getMessageManager()->setEventHandle(1, &LastExpressEngine::fightMouseWrapper);
-	_engine->getMessageManager()->setEventHandle(3, &LastExpressEngine::fightTimerWrapper);
+	_engine->getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::fightMouseWrapper);
+	_engine->getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::fightTimerWrapper);
 
 	_engine->setEventTickInternal(false);
 }
@@ -200,8 +200,8 @@ CFight::~CFight() {
 		_opponent = nullptr;
 	}
 
-	_engine->getMessageManager()->setEventHandle(1, _savedMouseEventHandle);
-	_engine->getMessageManager()->setEventHandle(3, _savedTimerEventHandle);
+	_engine->getMessageManager()->setEventHandle(kEventChannelMouse, _savedMouseEventHandle);
+	_engine->getMessageManager()->setEventHandle(kEventChannelTimer, _savedTimerEventHandle);
 }
 
 int CFight::process() {
@@ -323,7 +323,7 @@ void CFight::mouse(Event *event) {
 		_engine->_cursorY = event->y;
 
 		if (_engine->_cursorX < 608 || _engine->_cursorY < 448 || _engine->_cursorX >= 640 || _engine->_cursorY >= 480) {
-			if ((event->flags & 0x10) != 0) {
+			if ((event->flags & kMouseFlagRightDown) != 0) {
 				_engine->getLogicManager()->endDialog(kCharacterTableA);
 				_engine->abortFight();
 
@@ -359,7 +359,7 @@ void CFight::mouse(Event *event) {
 				_engine->_cursorType = link->cursor;
 
 				if (_cath->actionAvailable(link->action)) {
-					if ((event->flags & 8) != 0)
+					if ((event->flags & kMouseFlagLeftDown) != 0)
 						_cath->send(link->action);
 				} else {
 					_engine->_cursorType = 0;
@@ -377,11 +377,11 @@ void CFight::mouse(Event *event) {
 				_lowIconToggle = true;
 			}
 
-			if ((event->flags & 8) != 0) {
+			if ((event->flags & kMouseFlagLeftDown) != 0) {
 				_lowIconToggle = false;
 				_engine->getLogicManager()->endDialog(kCharacterTableA);
 				endFight(2);
-			} else if ((event->flags & 0x10) != 0 && _engine->_gracePeriodTimer) {
+			} else if ((event->flags & kMouseFlagRightDown) != 0 && _engine->_gracePeriodTimer) {
 				if (_engine->getLogicManager()->dialogRunning("TIMER"))
 					_engine->getLogicManager()->endDialog("TIMER");
 

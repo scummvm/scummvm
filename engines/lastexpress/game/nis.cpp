@@ -331,7 +331,7 @@ void NISManager::abortNIS() {
 }
 
 void NISManager::nisMouse(Event *event) {
-	if ((event->flags & 0x10) != 0)
+	if ((event->flags & kMouseFlagRightDown) != 0)
 		abortNIS();
 }
 
@@ -546,8 +546,8 @@ bool NISManager::doNIS(const char *name, int32 flags) {
 	_savedMouseEventHandle = _engine->getMessageManager()->getEventHandle(1);
 	_savedTimerEventHandle = _engine->getMessageManager()->getEventHandle(3);
 
-	_engine->getMessageManager()->setEventHandle(1, &LastExpressEngine::nisMouseWrapper);
-	_engine->getMessageManager()->setEventHandle(3, &LastExpressEngine::nisTimerWrapper);
+	_engine->getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::nisMouseWrapper);
+	_engine->getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::nisTimerWrapper);
 
 	_engine->getSoundManager()->setSoundDriverTicks(0);
 
@@ -658,8 +658,8 @@ bool NISManager::doNIS(const char *name, int32 flags) {
 	if (_currentNISSound && !_currentNISSound->getTime())
 		_currentNISSound->addStatusFlag(kSoundFlagCloseRequested);
 
-	_engine->getMessageManager()->setEventHandle(1, _savedMouseEventHandle);
-	_engine->getMessageManager()->setEventHandle(3, _savedTimerEventHandle);
+	_engine->getMessageManager()->setEventHandle(kEventChannelMouse, _savedMouseEventHandle);
+	_engine->getMessageManager()->setEventHandle(kEventChannelTimer, _savedTimerEventHandle);
 
 	if (_currentNISSound && (_flags & kNisFlagAbortRequested) != 0)
 		_currentNISSound->addStatusFlag(kSoundFlagCloseRequested);

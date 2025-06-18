@@ -100,22 +100,22 @@ void Menu::doEgg(bool doSaveGame, int type, int32 time) {
 		_engine->getGraphicsManager()->newMouseLoc();
 		_engine->getGraphicsManager()->setMouseDrawable(oldShouldRedraw);
 
-		_engine->getMessageManager()->setEventHandle(1, &LastExpressEngine::eggMouseWrapper);
-		_engine->getMessageManager()->setEventHandle(3, &LastExpressEngine::eggTimerWrapper);
+		_engine->getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::eggMouseWrapper);
+		_engine->getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::eggTimerWrapper);
 
 		_menuSeqs[1] = _engine->getArchiveManager()->loadSeq("buttns.seq", 15, 0);
 		_menuSeqs[0] = _engine->getArchiveManager()->loadSeq("helpnewr.seq", 15, 0);
 		switchEggs(_engine->_currentGameFileColorId);
 		updateEgg();
 
-		_engine->getMessageManager()->setEventHandle(1, &LastExpressEngine::eggMouseWrapper);
-		_engine->getMessageManager()->setEventHandle(3, &LastExpressEngine::eggTimerWrapper);
+		_engine->getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::eggMouseWrapper);
+		_engine->getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::eggTimerWrapper);
 	}
 }
 
 void Menu::endEgg() {
-	_engine->getMessageManager()->setEventHandle(1, &LastExpressEngine::nodeStepMouseWrapper);
-	_engine->getMessageManager()->setEventHandle(3, &LastExpressEngine::nodeStepTimerWrapper);
+	_engine->getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::nodeStepMouseWrapper);
+	_engine->getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::nodeStepTimerWrapper);
 
 	eggFree();
 	_engine->getVCR()->free();
