@@ -36,7 +36,7 @@ Menu::Menu(LastExpressEngine *engine) {
 	_engine = engine;
 
 	if (_engine->isDemo())
-		_eggTimerDelta = 2700;
+		_eggTimerDelta = DEMO_TIMEOUT;
 }
 
 void Menu::doEgg(bool doSaveGame, int type, int32 time) {
@@ -44,7 +44,7 @@ void Menu::doEgg(bool doSaveGame, int type, int32 time) {
 		_isShowingMenu = true;
 
 		if (_engine->isDemo())
-			_eggTimerDelta = 2700;
+			_eggTimerDelta = DEMO_TIMEOUT;
 
 		_engine->getOtisManager()->wipeAllGSysInfo();
 
@@ -136,7 +136,7 @@ void Menu::eggFree() {
 
 void Menu::eggMouse(Event *event) {
 	if (_engine->isDemo())
-		_eggTimerDelta = 2700;
+		_eggTimerDelta = DEMO_TIMEOUT;
 
 	if (_engine->getGraphicsManager()->canDrawMouse()) {
 		bool redrawMouse = true;
@@ -207,7 +207,7 @@ void Menu::eggTimer(Event *event) {
 		_moveClockHandsFlag = false;
 	}
 
-	if (!_eggTimerDelta--) {
+	if (!--_eggTimerDelta) {
 		if (_engine->isDemo()) {
 			endEgg();
 

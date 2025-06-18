@@ -544,14 +544,14 @@ bool LastExpressEngine::demoEnding(bool wonGame) {
 	}
 
 	getGraphicsManager()->setMouseDrawable(savedMouseState);
-	getMenu()->setEggTimerDelta(2700);
+	getMenu()->setEggTimerDelta(DEMO_TIMEOUT);
 
 	return exitFlag;
 }
 
 void LastExpressEngine::demoEndingMouse(Event *event) {
 	if (event->flags || ABS<int32>((int32)event->x - _cursorX) > 5 || ABS<int32>((int32)event->y - _cursorY) > 5)
-		getMenu()->setEggTimerDelta(2700);
+		getMenu()->setEggTimerDelta(DEMO_TIMEOUT);
 }
 
 void LastExpressEngine::demoEndingTimer(Event *event) {
