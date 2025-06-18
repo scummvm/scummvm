@@ -62,7 +62,7 @@ protected:
 	VOID        DeleteSprite(CSprite *);
 
 	VOID        OnPaint(VOID);
-	VOID        OnTimer(UINT);
+	VOID        OnTimer(UINT_PTR);
 	VOID        OnMouseMove(UINT, CPoint);
 	VOID        OnLButtonDown(UINT, CPoint);
 	VOID        OnLButtonDblClk(UINT, CPoint);

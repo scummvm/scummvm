@@ -1015,7 +1015,7 @@ void CMainWindow::OnRButtonDblClk(UINT nFlags, CPoint point) {
  *      n/a
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT nIDEvent) {
+void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
 	if ((nIDEvent == STAT_TIMER_ID) && (m_bPause == FALSE)) {
 		// move pointer to next hour glass formation
 		//

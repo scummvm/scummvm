@@ -1076,7 +1076,7 @@ ERROR_CODE CRiddlesWindow::RepaintSpriteList() {
 }
 
 
-VOID CRiddlesWindow::OnTimer(UINT nEvent) {
+VOID CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
 	CDC *pDC;
 
 	// there should be only one timer

@@ -428,7 +428,7 @@ void CMainZoomWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainZoomWindow::OnTimer(UINT nWhichTimer) {
+void CMainZoomWindow::OnTimer(UINT_PTR nWhichTimer) {
 	return;
 }
 

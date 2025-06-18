@@ -504,7 +504,7 @@ VOID CMainWindow::GameReset(VOID) {
 
 
 
-VOID CMainWindow::OnTimer(UINT nEvent) {
+VOID CMainWindow::OnTimer(UINT_PTR nEvent) {
 	//CDC *pDC;
 
 	// continue as long as there is a currently active non-paused game

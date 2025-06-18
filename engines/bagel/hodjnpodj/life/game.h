@@ -170,7 +170,7 @@ protected:
 	afx_msg void OnSysKeyDown(UINT, UINT, UINT);
 	afx_msg void OnSysChar(UINT, UINT, UINT);
 	afx_msg void OnKeyDown(UINT, UINT, UINT);
-	afx_msg void OnTimer(UINT);
+	afx_msg void OnTimer(UINT_PTR);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);

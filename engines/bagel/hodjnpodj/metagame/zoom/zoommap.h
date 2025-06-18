@@ -69,7 +69,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnTimer(UINT);
+	afx_msg void OnTimer(UINT_PTR);
 	afx_msg void OnLButtonDown(UINT, CPoint);
 	afx_msg void OnLButtonUp(UINT, CPoint);
 	afx_msg void OnMouseMove(UINT, CPoint);

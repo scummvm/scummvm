@@ -835,7 +835,7 @@ void CMainWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT nIDEvent) {
+void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
 	CDC     *pDC = nullptr;
 	CSound  *pEffect = nullptr;
 

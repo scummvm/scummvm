@@ -857,7 +857,7 @@ void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT nIDEvent) {
+void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
 	CDC *pDC;
 
 	switch (nIDEvent) {

@@ -78,7 +78,7 @@ protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	LONG        OnJoyStick(UINT, LONG);
 	VOID        OnPaint(VOID);
-	VOID        OnTimer(UINT);
+	VOID        OnTimer(UINT_PTR);
 	VOID        OnMouseMove(UINT, CPoint);
 	VOID        OnRButtonUp(UINT, CPoint);
 	VOID        OnLButtonDown(UINT, CPoint);

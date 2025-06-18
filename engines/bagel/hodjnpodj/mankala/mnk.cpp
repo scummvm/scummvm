@@ -995,7 +995,7 @@ void CMnkWindow::OnRButtonDblClk(UINT nFlags, CPoint point) {
  *
  ****************************************************************/
 
-void CMnkWindow::OnTimer(UINT nIDEvent) {
+void CMnkWindow::OnTimer(UINT_PTR nIDEvent) {
 //   CDC    *m_xpcDC ;
 
 

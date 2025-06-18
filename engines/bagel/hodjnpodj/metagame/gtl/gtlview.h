@@ -116,7 +116,7 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
-	afx_msg void OnTimer(UINT);
+	afx_msg void OnTimer(UINT_PTR);
 	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

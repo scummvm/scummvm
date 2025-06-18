@@ -1367,7 +1367,7 @@ void CMainWSWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainWSWindow::OnTimer(UINT nWhichTimer) {
+void CMainWSWindow::OnTimer(UINT_PTR nWhichTimer) {
 	if (nWhichTimer == GAMETIMER) {
 		if (lCurrentTimer == (TIMERSPRITECELS - 1)) {        //> ( TIMERSPRITECELS - 1 ) ) {
 			CDC *pDC = GetDC();

@@ -2373,7 +2373,7 @@ VOID CFugeWindow::GameReset(VOID) {
 }
 
 
-VOID CFugeWindow::OnTimer(UINT nEvent) {
+VOID CFugeWindow::OnTimer(UINT_PTR nEvent) {
 	// there should be only one timer
 	assert(nEvent == TIMER_ID);
 

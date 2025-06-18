@@ -864,7 +864,7 @@ void CMainDFAWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainDFAWindow::OnTimer(UINT nWhichTimer) {
+void CMainDFAWindow::OnTimer(UINT_PTR nWhichTimer) {
 	CSound  *pEffect = nullptr;
 
 	if (nWhichTimer == GAMETIMER) {

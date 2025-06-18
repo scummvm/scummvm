@@ -712,7 +712,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT nIDEvent) {
+void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
 	CDC     *pDC;
 	CSound  *pEffect = nullptr;
 	char    msg[64];

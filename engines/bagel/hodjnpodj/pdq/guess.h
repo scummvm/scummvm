@@ -44,7 +44,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange *) override;    // DDX/DDV support
 	BOOL OnInitDialog(void) override;
-	void OnTimer(UINT);
+	void OnTimer(UINT_PTR);
 	void OnPaint(VOID);
 	void OnSetFocus(CWnd *);
 	void OnActivate(UINT, CWnd *, BOOL);

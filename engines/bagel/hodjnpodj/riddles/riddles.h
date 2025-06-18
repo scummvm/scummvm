@@ -153,7 +153,7 @@ protected:
 	VOID        OnLButtonDown(UINT, CPoint);
 	VOID        OnClose();
 	VOID        OnSetFocus(CWnd *);
-	VOID        OnTimer(UINT);
+	VOID        OnTimer(UINT_PTR);
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	HBRUSH      OnCtlColor(CDC *, CWnd *, UINT);

@@ -2996,7 +2996,7 @@ void CMainPackRatWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainPackRatWindow::OnTimer(UINT nWhichTimer) {
+void CMainPackRatWindow::OnTimer(UINT_PTR nWhichTimer) {
 	if (nWhichTimer == PACKRATTIMER) {
 		KillTimer(PACKRATTIMER);
 		bEndGame = FALSE;

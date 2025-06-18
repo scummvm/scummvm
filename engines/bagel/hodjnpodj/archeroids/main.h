@@ -86,7 +86,7 @@ protected:
 	VOID OnSysKeyDown(UINT, UINT, UINT);
 	VOID OnKeyDown(UINT, UINT, UINT);
 	VOID OnSysChar(UINT, UINT, UINT);
-	VOID OnTimer(UINT);
+	VOID OnTimer(UINT_PTR);
 	VOID OnClose(void);
 	LONG OnJoyStick(UINT, LONG);
 	VOID OnActivate(UINT, CWnd *, BOOL);
