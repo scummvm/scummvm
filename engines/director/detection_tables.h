@@ -265,6 +265,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "isaslm",				"I Saw A Strange Little Man" },
 	{ "isis",				"Isis" },
 	{ "ispy",				"I Spy" },
+	{ "ispymystery",		"I Spy Mystery" },
 	{ "ispyschool",			"I Spy School Days" },
 	{ "ispyspooky",			"I Spy Spooky Mansion" },
 	{ "jewels1",			"Jewels of the Oracle" },
@@ -447,6 +448,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sajaklucky",			"Pat Sajak's Lucky Letters" },
 	{ "screamingmetal",		"Screaming Metal" },
 	{ "searchlearn",		"Search & Learn Adventures" },
+	{ "seasidesam",			"Seaside Sam" },	// Danish game, available in English and German
 	{ "secretkeys",			"Search for the Secret Keys with Mickey" },
 	{ "secretpaths1",		"Secret Paths in the Forest" },
 	{ "selfish",			"Oscar Wilde's The Selfish Giant" },
@@ -1528,6 +1530,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "creativenursery",	"创意学前华文(一)" },						// Creative Nursery Chinese
 
 	// Titles containing Director extras
+	{ "acrosstherhine",		"Across the Rhine" }, // Lou Reda documentary from disc 2 of "Across the Rhine" (Microprose)
 	{ "amgpremiere",		"The American Girls Premiere" },
 	{ "aquazonedx",			"Aquazone Deluxe" },
 	{ "darylfgates",		"Police Quest Q&A with Daryl F. Gates" },
@@ -1629,6 +1632,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ilearn",				"iLearn" },
 	{ "imagineers",			"The Imagineers" },
 	{ "imaginopolis",		"Microsoft Imaginopolis" },
+	{ "impactguy",			"Impact! Guy" },	// Promo for Claris software
 	{ "incoming",			"iNCOMING from iNSCAPE" },
 	{ "iona",				"Iona Software Demo CD" },
 	{ "ipc",				"About InterActive Publishing" },
@@ -1638,6 +1642,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "learningsystem",		"The Learning System" },
 	{ "maxissampler",		"Maxis CD-ROM Sampler" },
 	{ "mcdonaldland",		"Mission to McDonaldland" },    // Promo game distributed by McDonald's fastfood chain (AU/NZ only)
+	{ "meccsampler",		"MECC Sampler" },
 	{ "msgfromapple",		"Message from Apple" },
 	{ "newton",				"World of Newton" },
 	{ "optimumrsrc",		"Optimum Resource Sampler" },
@@ -1661,8 +1666,9 @@ static const PlainGameDescriptor directorGames[] = {
 	// Promos for Non-Director titles
 	{ "3datlas97",			"3D Atlas 97" },
 	{ "3datlas98",			"3D Atlas 98" },
-	{ "adobedimensions",	"Professional Tips for Adobe Dimensions" },
 	{ "adisystem",			"Adi's Comprehensive Learning System" },
+	{ "adobedimensions",	"Professional Tips for Adobe Dimensions" },
+	{ "africatrail",		"Africa Trail" },
 	{ "agfa",				"AgfaType" },
 	{ "aol",				"America Online" },
 	{ "aquazone",			"Aquazone" },
@@ -1718,14 +1724,16 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "macos85",			"Mac OS 8.5" },
 	{ "macportable",		"Your Apple Tour of the Macintosh Portable" },
 	{ "mathblasterjr",		"Math Blaster Jr." },
+	{ "mathmunchersdx",		"Math Munchers Deluxe" },
 	{ "mathsworkshop",		"Maths Workshop" },
 	{ "mavisbeacon",		"Mavis Beacon Teaches Typing" },
+	{ "mayaquest",			"MayaQuest" },
 	{ "mechwarrior2",		"MechWarrior 2" },
 	{ "meetingmaker",		"Meeting Maker" },
 	{ "mindbrain",			"The Lost Mind of Dr. Brain" },
+	{ "mmaction",			"MacroMind Action!" },
 	{ "mothergoosehires",	"Mixed-Up Mother Goose Deluxe" },
 	{ "mousebasics",		"Mouse Basics" },
-	{ "mmaction",			"MacroMind Action!" },
 	{ "msaccess",			"Microsoft Access" },
 	{ "msarcade",			"Microsoft Arcade" },
 	{ "msartgallery",		"Microsoft Art Gallery" },
@@ -1765,6 +1773,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "nightsky",			"Night Sky Interactive" },
 	{ "ofoto",				"Light Source Ofoto" },
 	{ "onevolution",		"Stephen Jay Gould: On Evolution" },
+	{ "openingnight",		"Opening Night" },
+	{ "oregontrail2",		"Oregon Trail II" },
 	{ "orly",				"Orly's Draw-A-Story" },
 	{ "pagemaker",			"Aldus PageMaker" },
 	{ "panicpark",			"Panic in the Park" },
@@ -1783,6 +1793,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "spycraft",			"Spycraft: The Great Game" },
 	{ "statusmac",			"STATUS*Mac" },
 	{ "system7smash",		"System 7 is a SMASH!" },
+	{ "tesselmaniadx",		"TesselMania! Deluxe" },
 	{ "texturescape",		"Specular TextureScape" },
 	{ "thetowerxmas",		"TOWER/CD ~Christmas Disc~" },
 	{ "thisisspinaltap",	"This Is Spinal Tap" },
@@ -1801,6 +1812,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wwaldocircus",		"Where's Waldo? At the Circus" },
 	{ "wwaldogeo",			"Where's Waldo? Exploring Geography" },
 	{ "xfiles",				"The X-Files" },
+	{ "yellowstone",		"Explore Yellowstone" },
 	{ "znemesis",			"Zork Nemesis: The Forbidden Lands" },
 	{ "zoombini",			"Logical Journey of the Zoombinis" },
 
@@ -3473,6 +3485,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("abrapalabra", "", "STUFF/ABRAPALABRA", "r:bcd3c718db258701496b3c5bcb827ef2", 483518, Common::ES_ESP, 404),
 	WINGAME1_l("abrapalabra", "", "STUFF/PALABRA.EXE", "t:87ecfa89c0a78bedd277930c267dd07d", 862425, Common::ES_ESP, 404),
 
+	WINGAME1("acrosstherhine", "", "ATRVIDEO.EXE", "t:0b08e069237da81d77f1b9ef4206933a", 1309113, 404),
+
 	// from Activision Spring '96 Demos and Preview CD
 	// Menu to demos of "Action Packs 1, 2 & 3", "Commodore 64 15 Pack", "Earthworm Jim", "MechWarrior 2",
 	// "Pitfall: The Mayan Adventure" and "Shanghai: Great Moments"
@@ -3533,6 +3547,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Actual games are not Director
 	WINDEMO2("adisystem", "Non-Interactive Demo", "ADIDEMO2.EXE", "t:48309ca0f1e61c2485315d68a15a784e", 684191,
 												  "ADI25.DXR",	  "d:353a7f4bb04ce565e39ee2b8d1b63a22", 11784138, 404),
+
+	// Full game is not Director
+	// Found on Oregon Trail (Mac/Win)
+	MACDEMO1("africatrail", "Demo", "Africa Trail", "r:17efee018a660458fae80de4364021ac", 483518, 404),
+	WINDEMO1("africatrail", "Demo", "AFRICA.EXE", "t:6f906add3fdaaf282c98cefe065dcfb7", 8715731, 404),
 
 	// CD serial SYHB-002
 	MACGAME1("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304458, 400),
@@ -3659,7 +3678,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("atbat", "2.0", "At Bat", "ea553e3f3fa123ad38fa5249621e8c8b", 292906, 403),
 	WINGAME1t("atbat", "2.0", "ATBAT.EXE", "de8a2b4f91c1e7a22e36f394a3a64af5", 842033, 404),
-	WINDEMO1t("atbat", "", "ATBATDMO.EXE", "2000eefeb4bf68749dad55e101cbd318", 3266657, 400),
+	WINDEMO1t("atbat", "Demo", "ATBATDMO.EXE", "2000eefeb4bf68749dad55e101cbd318", 3266657, 400),
 
 	MACGAME2("athletics", "", "ATHLETICS",   "17efee018a660458fae80de4364021ac", 482610,
 							  "FIRSTMOV",	 "f2d6cb666b17905bbccc332ddb60dc07", 16198, 404),
@@ -3728,13 +3747,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Demo is from covermount of PC Guide (UK) Feb 1997
 	MACGAME1("bht", "",   "A Brief History Of Time 16megs", "8719de9c083aca942fc0e5c0a127b6dc", 486726, 404),
-	MACGAME1_l("bht", "", "Eine kurze Geschichte der Zeit", "8719de9c083aca942fc0e5c0a127b6dc", 486726, Common::DE_DEU, 404),
 	WINGAME2("bht", "",		"BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
 							"PLAY_BHT.DIR", "663acc406405b6fcac7e2d89230c4cc2", 8398, 404),
-	WINDEMO2("bht", "Demo", "BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
-							"PLAY_BHT.DIR", "9417d6ebe716c963a4424a1611aaa2ca", 3522, 404),
+	MACGAME1_l("bht", "", "Eine kurze Geschichte der Zeit", "8719de9c083aca942fc0e5c0a127b6dc", 486726, Common::DE_DEU, 404),
 	WINGAME2_l("bht", "",	"BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
 							"PLAY_BHT.DIR", "a11fe20066d9e84423df6c3ef4966636", 69068, Common::DE_DEU, 404),
+	WINDEMO2("bht", "Demo", "BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
+							"PLAY_BHT.DIR", "9417d6ebe716c963a4424a1611aaa2ca", 3522, 404),
 
 	WINDEMO2t("baseballhits", "Demo", "BASEBALL.EXE", "008d1690b0b764f8a75e4f4c6542b739", 3569928,
 									  "WINDEMO.DIR", "e8e44e90e25c0efe74ddb77df545db1e", 2958900, 400),
@@ -4259,8 +4278,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("frankenstein", "Demo", "FRNKDEMO.EXE", "ed00aa67138b715a8bee6f41756852c5", 7365699, 400),
 
 	MACDEMO1("frankrw", "Demo", "Franklin's Reading World Demo", "b66a5580d7b10e365241932e941b1dda", 483490, 404),
-	WINDEMO2("frankrw", "Demo", "TITLE.EXE", "8879c4196154261cba4cba13fd8e6497", 696855,
-								"TITLE.DXR", "e2b2e3bdf7d87ecd98e9bb768b7ed555", 2371220, 404),
+	WINDEMO2("frankrw", "Demo", "TITLE.EXE", "t:8879c4196154261cba4cba13fd8e6497", 696855,
+								"TITLE.DXR", "t:e2b2e3bdf7d87ecd98e9bb768b7ed555", 2371220, 404),
 
 	// Mac demo from CD Loisirs Nº6
 	MACGAME1("freakshow", "D4", "FreakShow Projector", "dc5a87dda7a0daf46604515f7d2cca66", 300388, 404),
@@ -4638,6 +4657,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  "source/main.dir",  "d:0b20d6b771b4f5fd50e823c3773aecdd", 3526788, 404),
 
 	MACGAME1("imision369", "v2.1", "ImIsion 369", "5830ee2b9ecc97ce8026d00e0977f555", 296780, 404),
+
+	MACGAME1("impactguy", "", "Impact Guy", "r:01be45e7241194dad07938e7059b88e3", 481254, 404),
 
 	// Play as either Shirley (disc 1) or Dolan (disc 2)
 	MACGAME2("improv", "Shirley", "IMPROV/IMPROV (PowerPC)", "r:096e0aacbc1670c80a354c3c49b3fabe", 60068,
@@ -5019,8 +5040,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("mastermansion", "Art Explorer", "EXPLORER.EXE",  "7a335c6571e359b56453edb78e6fdc53", 36685767,
 											  "MOVS/CARM.AIF", "adbfaa083d5bc24c33f533298f2708ed", 965436, 404),
 
-	WINDEMO1t_l("mathmystery", "Demo", "LB_DEMO.EXE", "32f5a6d9ad00ece84526e1fe23965524", 698539, Common::NB_NOR, 404),
-
 	MACGAME1("martian", "", "The Martian Chronicles PPC CD", "db9b7f11aea52a294d2986a94a184000", 60072, 404),
 	WINGAME2t("martian", "", "MC.EXE",			 "55e0837d623be4218b317370abc5fc3b", 1764151,
 							 "BUTTONS/MAIN.QTW", "06a9aab09811715e8ec2cc553c4bdcb4", 1391726, 404),
@@ -5029,6 +5048,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("mathblasterjr", "Preview v1.0c", "MBSTART.EXE",				 "t:ac78baf4e736b3363dae2a7136d07049", 690041, 404),
 	// from Great Adventures by Fisher-Price: Castle (1995)
 	MACDEMO1("mathblasterjr", "Preview v1.0c", "Math Blst Jr. Pwr Mac", "602e61f10c158183218405dd30a09b3f", 60068, 404),
+
+	// Full game is not Director
+	// Found on Oregon Trail (Mac/Win)
+	MACDEMO1("mathmunchersdx", "Demo", "MathMunchers DELUXE", "r:cbce20666bfe47a9533331c6be1e6039", 285282, 404),
+
+	WINDEMO1t_l("mathmystery", "Demo", "LB_DEMO.EXE", "32f5a6d9ad00ece84526e1fe23965524", 698539, Common::NB_NOR, 404),
 
 	MACGAME1("mathtest", "", "mathtest (mac)", "r:cdb27c916044ae4dceb4b7326063fa03", 301669, 404),
 
@@ -5078,6 +5103,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("maxissampler", "", "Maxis Power Mac CD-ROM Sampler", "r:01be45e7241194dad07938e7059b88e3", 483490, 404),
 	WINGAME2("maxissampler", "", "SAMPLER.EXE", "t:5d0ee796571b99d402a06438ae2f3d56", 696815,
 								 "HOMECRE.DIR", "t:c01c5736dd1a49f52169c01e8d39a998", 1313276, 404),
+
+	// Full game is not Director
+	// Found on Oregon Trail (Mac/Win)
+	MACDEMO1("mayaquest", "Demo", "MayaQuest", "r:1ca0b4ef06814a8d26925917f8c63e34", 483430, 404),
+	WINDEMO1("mayaquest", "Demo", "MAYAQ.EXE", "t:c3c032999723bc7c2823da49be0b7bfa", 12056115, 404),
 
 	WINGAME1("mckenzie", "", "MCKFRAME.EXE", "581608fa7224b0b62e11e397d2aa76c1", 3217950, 404),
 	WINDEMO1("mckenzie", "November 16 Demo", "MCKDEMO.EXE", "f2bc8c75f8df853780619583ba216beb", 8634631, 404),
@@ -5400,6 +5430,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From CD Loisirs Nº6
 	MACDEMO1("onevolution", "Demo", "Stephen Jay Gould", "r:77f4098988d5386794d1530065f514cd", 301669, 400),
 
+	// Full game is not Director
+	// Found on Oregon Trail (Mac/Win)
+	MACDEMO1("openingnight", "Demo", "Opening Night", "r:cbce20666bfe47a9533331c6be1e6039", 285282, 404),
+	WINDEMO1("openingnight", "Demo", "OPN.EXE", "t:2b31be5e4d57745e1c6859cfff485209", 14762491, 404),
+
 	MACGAME2("operafatal", "",	 "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
 								 "Opera/SPRINT.Dxr", "3e86f01eeac5fa3349c5177378997a7f", 694912, 400),
 	WINGAME2("operafatal", "",	 "OPERA.EXE",		 "t:1708e82d4b297a1e74fe683f86521dc4", 697739,
@@ -5410,6 +5445,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Windows version is identical to regular Windows version
 	MACGAME2("operafatal", "Hybrid release", "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
 											 "Opera/SPRINT.Dxr", "26c83c0cac1d40e91487e3a142d29733", 479390, 404),
+
+	// Full game is not Director
+	// Found on Oregon Trail (Mac/Win)
+	MACDEMO1("oregontrail2", "Demo", "Oregon Trail II", "r:ea646eccc9a53f44ce082459d4809a06", 482582, 404),
+	WINDEMO1("oregontrail2", "Demo", "OREGONII.EXE", "t:7a24eed984ba064d5f354ebb2bf7fc70", 10288091, 404),
 
 	MACDEMO1("orgotto", "Demo", "ORGOTTO",	   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484095, 404),
 	WINDEMO1("orgotto", "Demo", "ORGOTTO.EXE", "t:46a65dad38808f407277b933b707289e", 760137, 404),
@@ -5739,6 +5779,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2("searchlearn", "Demo", "SEARCH.EXE",		 "t:0543fbdba26d35e6778abbf339a6fb57", 8088823,
 									"SHARED/CWLOGO.DIR", "f:efb5c1918f5637bf9228ffc24f89ef72",  652996, 404),
 
+	MACDEMO1("seasidesam", "Demo", "SeaSide Sam Demo", "r:3a0c62a46f36157434c4204e50f22886", 502142, 404),
+
 	MACGAME1("sensei", "", "Sensei", "r:6ab7bac3d8fe6bcf4da81750d7ca286c", 284374, 404),
 
 	// Both versions require installation
@@ -5894,6 +5936,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("terapreviews", "", "TeraMedia Previews", 	 "rt:9e4c0af102f40d2ae8ec4a131b5d9c3a",  483490, 404),
 	WINGAME2("terapreviews", "", "PREVIEWS.EXE",	  	 "t:9289cacef6dcea38e69554ac27ff59f1",   866108,
 								 "PREVIEWS/ACUPPRV.DIR", "f:110eb12d196fd1d51ed0093cb0310d88",  5379742, 404),
+
+	// Full game is not Director
+	// Found on Oregon Trail (Mac/Win)
+	MACDEMO1("tesselmaniadx", "Demo", "TesselMania! Deluxe", "r:cbce20666bfe47a9533331c6be1e6039", 285310, 404),
+	WINDEMO1("tesselmaniadx", "Demo", "TESLMNIA.EXE", "t:0be1771498c5ef17105f10322a9ade67", 9157917, 404),
 
 	// From MacFormat #42
 	MACDEMO1("texturescape", "", "TextureScape Show", "77f4098988d5386794d1530065f514cd", 303961, 400),
@@ -6288,6 +6335,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("ybr2", "",	   "xn-- YBR2 -",   "r:b797956eb3a4dabcc15bfadf6fc66591", 503897, Common::JA_JPN, 404),
 	WINGAME1_l("ybr2", "",	   "YBR2/YBR2.EXE", "t:6a2cea5a937c41a1076d88759e266926", 860579, Common::JA_JPN, 404),
 	WINDEMO1_l("ybr2", "Demo", "YBR2DEMO.EXE",  "t:18d27efd0bb8b9a0e2611ab10bd8f4ea", 900973, Common::JA_JPN, 404),
+
+	// Full game is not Director
+	// Found on Oregon Trail (Mac/Win)
+	MACDEMO1("yellowstone", "Demo", "Yellowstone", "r:4c3f4ac399791a08f26d622669ed98be", 483430, 404),
+	WINDEMO1("yellowstone", "Demo", "YELLOW.EXE", "t:4bcfd3c98428483a6ba483cae110bdb8", 8690539, 404),
 
 	// From Yeti Girls "Squeeeze"
 	// https://www.discogs.com/release/6771241
@@ -7082,6 +7134,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of the above filename
 	MACGAME1_l("mecadrill", "", "xn--2bk5af5f2e0ctd/xn--2bk9a5e9d0bg", "16f51fc148898582fcdb6f58456ceb52", 719636, Common::JA_JPN, 501),
 	WINGAME1t_l("mecadrill", "", "MECA/MECA95.EXE", "ff76ffa3616a1acb82f6b12bc94bec64", 1390011, Common::JA_JPN, 505),
+
+	// Found on Oregon Trail II (Mac/Win)
+	MACGAME1("meccsampler", "", "MECC Sampler", "r:35dbf55e70f69e00ca016e3663379970", 704537, 501),
+	WINGAME1("meccsampler", "", "SAMPLER.EXE", "t:94699dcc278f8d65595ef22506230457", 917479, 501),
 
 	MACGAME1f_l("microphonefiend", "8", "MF8/Microphone Fiend8", "tr:b2229850cb4e8ccb977c2f7c25650d6c", 719785, Common::JA_JPN, 501, GF_DESKTOP|GF_640x480),
 	MACGAME1f_l("microphonefiend", "16", "MF16/Microphone Fiend16", "tr:f2cb0ca9bce3a7fad18ba9f7c8c9f400", 117830, Common::JA_JPN, 501, GF_DESKTOP|GF_640x480),
@@ -10296,6 +10352,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("informaticus", "", "Informaticus.exe", "t:45c105b1322aa8d61d715485f2224cfb", 2650986, Common::DE_DEU, 1010),
 
+	// Requires installation, "Install I SPY Mystery"/"I SPY Mystery Setup.EXE", Installer VISE 8.5
+	// Mac installer fails with error opening CODE.cct but succeeds when trying again
+	MACGAME1("ispymystery", "", "I SPY Mystery", "r:997f924008ac0b053f5651bafed06f5e", 271192, 1010),
+	WINGAME1("ispymystery", "", "ispy_mystery.exe", "t:2bc3e637030a1695cdea94c70b1d0c0a", 2650050, 1000),
+
 	WINGAME2("jsworldp", "",		 "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627915,
 									 "LevelData.utd",		"093b8127750b4762ede83231b3085a46", 81284, 1000),
 	WINGAME2("jsworldk", "",		 "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627885,
@@ -10403,6 +10464,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 // Adobe Director v11
 //
 //////////////////////////////////////////////////
+
+	// simplified version of I Spy Mystery, packaged with Wendy's Kid's Meal
+	// Disc's partition table has HFS partition but the data is invalid
+	// Full game is Director 10
+	WINGAME1("ispymystery", "Mini Game", "ISPYMYST.EXE", "t:6a8a1cf2f7a34de7e6b3dfc928b4d895", 7672342, 1150),
 
 	WINGAME1("mentalmaths", "", "Mental Maths.exe", "b162d633891f0ab2e2fc6ba6164df337", 5017068, 1100),
 
