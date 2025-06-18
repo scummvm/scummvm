@@ -1104,7 +1104,8 @@ bool LogicManager::obstacleBetween(int character1, int character2) {
 		}
 	}
 
-	for (int k = 1; k <= 40; ++k) {
+	// The original code went for "k <= 40" here, but that would trigger a bad memory access...
+	for (int k = 1; k < 40; ++k) {
 		if (k != character1 && k != character2 && whoWalking(k) &&
 			getCharacter(k).characterPosition.car == getCharacter(character1).characterPosition.car &&
 			getCharacter(k).characterPosition.position > char1Pos && getCharacter(k).characterPosition.position < char2Pos) {

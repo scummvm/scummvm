@@ -381,6 +381,7 @@ void SoundManager::soundThread() {
 			if (loopedPlaying) {
 				ambientAI(kAmbientLooping);
 			} else if (_soundAmbientFadeTime && getSoundDriver30HzCounter() >= _soundAmbientFadeTime) {
+				assert(ambientSlot1);
 				ambientSlot1->setFade(_soundAmbientFadeLevel);
 				_soundAmbientFadeTime = 0;
 			}

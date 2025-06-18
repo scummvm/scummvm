@@ -366,10 +366,8 @@ void Slot::setSub(const char *filename) {
 	_subtitle = new Subtitle(_engine, filename, this);
 
 	if ((_subtitle->_status & kSubFlagStatusKilled) != 0) {
-		if (_subtitle) {
-			delete _subtitle;
-			_subtitle = nullptr;
-		}	
+		delete _subtitle;
+		_subtitle = nullptr;
 	} else {
 		_statusFlags |= kSoundFlagHasSubtitles;
 	}

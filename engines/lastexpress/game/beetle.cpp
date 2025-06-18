@@ -144,6 +144,8 @@ void CBeetle::tick() {
 
 	bool terminate = false;
 
+	assert(_currentSequence);
+
 	if (_currentSequence->numFrames <= _currentFrame) {
 		curDir = _directions[_currentDirectionIndex];
 		if (curDir != 0 && curDir != 3 && curDir != 6 && curDir != 9 && curDir != 12 && curDir != 15 && curDir != 18 && curDir != 21) {

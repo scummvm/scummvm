@@ -184,36 +184,40 @@ SubtitleManager::~SubtitleManager() {
 void SubtitleManager::initSubtitles() {
 	HPF *archive = _engine->getArchiveManager()->openHPF("FONT.DAT");
 
-	byte *fontData = (byte *)malloc(PAGE_SIZE * archive->size);
+	if (archive) {
+		byte *fontData = (byte *)malloc(PAGE_SIZE * archive->size);
 
-	if (archive && fontData) {
-		_engine->getArchiveManager()->readHPF(archive, fontData, archive->size);
-		_engine->getArchiveManager()->closeHPF(archive);
+		if (fontData) {
+			_engine->getArchiveManager()->readHPF(archive, fontData, archive->size);
+			_engine->getArchiveManager()->closeHPF(archive);
 
-		Common::MemoryReadStream *fontStream = new Common::MemoryReadStream(fontData, PAGE_SIZE * archive->size, DisposeAfterUse::YES);
+			Common::MemoryReadStream *fontStream = new Common::MemoryReadStream(fontData, PAGE_SIZE * archive->size, DisposeAfterUse::YES);
 
-		for (int i = 0; i < 16; i++) {
-			_font->palette[i] = fontStream->readUint16LE();
+			for (int i = 0; i < 16; i++) {
+				_font->palette[i] = fontStream->readUint16LE();
+			}
+
+			for (int i = 0; i < 256; i++) {
+				_font->charMap[i] = fontStream->readByte();
+			}
+
+			for (int i = 0; i < 256; i++) {
+				_font->charKerning[i] = fontStream->readByte();
+			}
+
+			uint32 sizeOfData = PAGE_SIZE * archive->size - (16 * sizeof(uint16) + 256 + 256);
+			_font->fontData = (byte *)malloc(sizeOfData);
+
+			assert(_font->fontData);
+
+			for (uint i = 0; !fontStream->eos() && i < sizeOfData; i++) {
+				_font->fontData[i] = fontStream->readByte();
+			}
+
+			delete fontStream;
+		} else {
+			_font->fontData = nullptr;
 		}
-
-		for (int i = 0; i < 256; i++) {
-			_font->charMap[i] = fontStream->readByte();
-		}
-
-		for (int i = 0; i < 256; i++) {
-			_font->charKerning[i] = fontStream->readByte();
-		}
-
-		uint32 sizeOfData = PAGE_SIZE * archive->size - (16 * sizeof(uint16) + 256 + 256);
-		_font->fontData = (byte *)malloc(sizeOfData);
-
-		assert(_font->fontData);
-
-		for (uint i = 0; !fontStream->eos() && i < sizeOfData; i++) {
-			_font->fontData[i] = fontStream->readByte();
-		}
-
-		delete fontStream;
 	} else {
 		_font->fontData = nullptr;
 	}

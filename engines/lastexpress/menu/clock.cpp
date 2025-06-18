@@ -192,6 +192,9 @@ void Clock::drawTrainPosition(int32 time) {
 		int i;
 		for (i = 1; _trainLineTimes[i] < time && i < 31; i++);
 
+		// In case i really has to go outside bounds, added to prevent Coverity issue...
+		i = CLIP<int>(i, 1, ARRAYSIZE(_trainLineTimes) - 1);
+
 		int cityTime = _trainLineTimes[i - 1];
 		int cityIndex = _trainCitiesIndex[i - 1];
 
