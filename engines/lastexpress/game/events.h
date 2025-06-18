@@ -98,7 +98,7 @@ public:
 	void flush();
 	void flushTime();
 	void forceMessage(Message *msg);
-	void reset();
+	void clearMessageQueue();
 	void clearEventQueue();
 	void clearClickEvents();
 	void saveMessages(CVCRFile *file);

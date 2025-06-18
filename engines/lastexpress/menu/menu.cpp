@@ -359,7 +359,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			_engine->getLogicManager()->loadTrain(whichCD);
 			setSprite(0, -1, true);
 			_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
-			_engine->getMessageManager()->reset();
+			_engine->getMessageManager()->clearMessageQueue();
 			endEgg();
 
 			Slot *slot = _engine->getSoundManager()->_soundCache;
@@ -410,7 +410,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			setSprite(0, -1, true);
 
 			_engine->getLogicManager()->playDialog(0, "LIB046", -1, 0);
-			_engine->getMessageManager()->reset();
+			_engine->getMessageManager()->clearMessageQueue();
 			endEgg();
 
 			if (!_engine->_currentSavePoint) {

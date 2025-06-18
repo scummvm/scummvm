@@ -116,7 +116,7 @@ void LogicManager::endGame(int type, int value, int sceneIndex, bool showScene) 
 	_engine->getOtisManager()->wipeAllGSysInfo();
 
 	_engine->_navigationEngineIsRunning = false;
-	_engine->getMessageManager()->reset();
+	_engine->getMessageManager()->clearMessageQueue();
 	_engine->_stopUpdatingCharacters = false;
 
 	if (showScene) {
@@ -163,7 +163,7 @@ void LogicManager::winGame() {
 	if (_engine->isDemo() && _engine->_navigationEngineIsRunning) {
 		_engine->getSoundManager()->endAmbient();
 		_engine->getOtisManager()->wipeAllGSysInfo();
-		_engine->getMessageManager()->reset();
+		_engine->getMessageManager()->clearMessageQueue();
 		_engine->_stopUpdatingCharacters = true;
 		_engine->demoEnding(true);
 		_engine->getMenu()->doEgg(false, 0, 0);
@@ -172,7 +172,7 @@ void LogicManager::winGame() {
 		playNIS(kEventFinalSequence);
 		_engine->doCredits();
 		_engine->getOtisManager()->wipeAllGSysInfo();
-		_engine->getMessageManager()->reset();
+		_engine->getMessageManager()->clearMessageQueue();
 		_engine->_stopUpdatingCharacters = true;
 		_engine->getMenu()->doEgg(false, 0, 0);
 	}

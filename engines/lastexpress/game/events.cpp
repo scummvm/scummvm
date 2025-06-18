@@ -223,7 +223,7 @@ void MessageManager::forceMessage(Message *msg) {
 		(_engine->getLogicManager()->*_messageHandles[msg->receiver])(msg);
 }
 
-void MessageManager::reset() {
+void MessageManager::clearMessageQueue() {
 	Common::StackLock lock(*_engine->_soundMutex);
 	_numMsgsInQueue = 0;
 	_nextMsgIndex = 0;
