@@ -99,7 +99,7 @@ void conv_resume() {
 	conv_resume(conv_get_handle());
 }
 
-int conv_is_event_ready(void) {
+int conv_is_event_ready() {
 	return _GC(event_ready);
 }
 
@@ -108,7 +108,7 @@ void conv_set_event(int e) {
 	_GC(event_ready) = 1;
 }
 
-int conv_get_event(void) {
+int conv_get_event() {
 	_GC(event_ready) = 0;
 	return _GC(event);
 }
@@ -140,15 +140,15 @@ void conv_reset(const char *filename) {
 }
 
 
-void conv_reset_all(void) {
+void conv_reset_all() {
 	_G(conversations).conv_reset_all();
 }
 
-const char *conv_sound_to_play(void) {
+const char *conv_sound_to_play() {
 	return _G(cdd).mesg_snd_file;
 }
 
-int32 conv_whos_talking(void) {
+int32 conv_whos_talking() {
 	return _G(cdd).player_non_player;
 }
 
@@ -169,38 +169,30 @@ int conv_toggle_flags(entry_chunk *entry) {
 }
 
 int32 conv_get_decl_val(Conv *c, decl_chunk *decl) {
-	switch (decl->flags) {
-	case DECL_POINTER:
+	if (decl->flags == DECL_POINTER)
 		return *c->_pointers[decl->addrIndex];
 
-	default:
-		return decl->val;
-	}
+	return decl->val;
 }
 
 void conv_set_decl_val(Conv *c, decl_chunk *decl, int32 val) {
-	switch (decl->flags) {
-	case DECL_POINTER:
+	if (decl->flags == DECL_POINTER) {
 		decl->val = val;
 		*c->_pointers[decl->addrIndex] = val;
-		break;
-
-	default:
+	} else {
 		decl->val = val;
-		break;
 	}
 }
 
 void conv_export_value(Conv *c, int32 val, int index) {
-	int32 ent = 0, tag = 0, next;
-	int32 ent_old = 0;
+	int32 tag = 0, next;
 	int i = 0;
 
 	if (!c)
 		return;
 
-	ent_old = c->myCNode;
-	ent = 0;
+	const int32 ent_old = c->myCNode;
+	int32 ent = 0;
 	c->myCNode = 0;
 
 	while (ent < c->chunkSize) {
@@ -228,15 +220,14 @@ void conv_export_value_curr(int32 val, int index) {
 }
 
 void conv_export_pointer(Conv *c, int32 *val, int index) {
-	int32 ent = 0, tag = 0, next;
-	int32 ent_old = 0;
+	int32 tag = 0, next;
 	int	i = 0;
 
 	if (!c)
 		return;
 
-	ent_old = c->myCNode;
-	ent = 0;
+	const int32 ent_old = c->myCNode;
+	int32 ent = 0;
 	c->myCNode = 0;
 
 	while (ent < c->chunkSize) {
@@ -313,22 +304,16 @@ handled:
 
 void find_and_set_conv_name(Conv *c) {
 	int32 ent = 0, tag = 0, next = 0;
-	conv_chunk *conv;
 
 	c->myCNode = 0;
 
 	while (ent < c->chunkSize) {
 		conv_ops_get_entry(ent, &next, &tag, c);
 
-		switch (tag) {
-		case CONV_CHUNK:
-			conv = get_conv(c, ent);
+		if (tag == CONV_CHUNK) {
+			conv_chunk *conv = get_conv(c, ent);
 			assert(conv);
 			Common::strcpy_s(_GC(conv_name), get_string(c, c->myCNode + ent + sizeof(conv_chunk)));
-			break;
-
-		default:
-			break;
 		}
 		ent = next;
 	}
@@ -549,7 +534,7 @@ static Conv *conv_restore_state(Conv *c) {
 	int32 val;
 	int32 e_flags = 0;
 	int32 myCNode;
-	
+
 	char fname[13];
 	int file_size;
 
@@ -716,7 +701,7 @@ static void conv_set_disp_default(void) {
 }
 
 Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box) {
-	char fullpathname[MAX_FILENAME_SIZE];
+	char fullPathname[MAX_FILENAME_SIZE];
 
 	term_message("conv_load");
 
@@ -741,14 +726,14 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	// if not in rooms.db, use actual filename
 	char *str = env_find(filename);
 	if (str)
-		Common::strcpy_s(fullpathname, str);
+		Common::strcpy_s(fullPathname, str);
 	else
-		Common::sprintf_s(fullpathname, "%s.chk", filename);
+		Common::sprintf_s(fullPathname, "%s.chk", filename);
 
-	SysFile fp(fullpathname);
+	SysFile fp(fullPathname);
 	if (!fp.exists()) {
 		// Force the file open
-		error_show(FL, 'CNVL', "couldn't conv_load %s", fullpathname);
+		error_show(FL, 'CNVL', "couldn't conv_load %s", fullPathname);
 	}
 
 	const int32 cSize = fp.size();

@@ -664,69 +664,55 @@ static int conv_next_node(Conv *c) {
 static int conv_process_entry(int entry_num, Conv *c, int mode) {
 	node_chunk *node;
 	lnode_chunk *lnode;
-	fall_chunk *fall;
 	int32 offset = 0, ent = 0, is_valid = 0, n = 0;
 	int32 next = 0, tag = 0, num_ents = 0;
 	int i = 0;
 	int	result = 1;
 
-	// Repeat fallthrough till done
-	for (;; ) {
-		// Start by getting the current NODE or LNODE
-		conv_ops_get_entry(ent, &next, &tag, c);
-		switch (tag) {
-		case LNODE_CHUNK:
-			lnode = get_lnode(c, ent);
-			ent += sizeof(lnode_chunk);
-			num_ents = lnode->num_entries;
-			entry_num = lnode->entry_num;
-			c->node_hash = lnode->hash;
-			break;
+	// Start by getting the current NODE or LNODE
+	conv_ops_get_entry(ent, &next, &tag, c);
+	switch (tag) {
+	case LNODE_CHUNK:
+		lnode = get_lnode(c, ent);
+		ent += sizeof(lnode_chunk);
+		num_ents = lnode->num_entries;
+		entry_num = lnode->entry_num;
+		c->node_hash = lnode->hash;
+		break;
 
-		case NODE_CHUNK:
-			node = get_node(c, ent);
-			ent += sizeof(node_chunk);
-			num_ents = node->num_entries;
-			c->node_hash = node->hash;
-			break;
+	case NODE_CHUNK:
+		node = get_node(c, ent);
+		ent += sizeof(node_chunk);
+		num_ents = node->num_entries;
+		c->node_hash = node->hash;
+		break;
 
-		default:
-			break;
-		}
-
-		// ent will now be pointing at an ENTRY or FALLTHROUGH
-		const int32 sub_ent = next;
-		conv_ops_get_entry(sub_ent, &next, &tag, c);
-		switch (tag) {
-		case FALL_CHUNK:
-			// We either want to jump to a new node
-			// or skip to the first offset.
-
-			fall = get_fall(c, sub_ent);
-			assert(fall);
-
-			// Do this to skip the fall chunk and all will be fine.
-			ent += sizeof(int32); //was get_long, sizeof( fall_chunk )
-			n++; //don't increment i.
-			break;
-
-		case ENTRY_CHUNK:
-			break;
-
-		default:
-			break;
-		}
-
-		if (result)
-			break;
+	default:
+		break;
 	}
+
+	// ent will now be pointing at an ENTRY or FALLTHROUGH
+	const int32 sub_ent = next;
+	conv_ops_get_entry(sub_ent, &next, &tag, c);
+	if (tag == FALL_CHUNK) {
+		// We either want to jump to a new node
+		// or skip to the first offset.
+
+		fall_chunk *fall = get_fall(c, sub_ent);
+		assert(fall);
+
+		// Do this to skip the fall chunk and all will be fine.
+		ent += sizeof(int32); //was get_long, sizeof( fall_chunk )
+		n++;                  //don't increment i.
+	}
+
 
 	// Not only i<entry_num, check to see entry->num_entries
 	while ((i < entry_num) && (n < num_ents)) {
 		offset = get_long(c, ent);
 		entry_chunk *entry = get_entry(c, ent + offset);
 
-		if (((entry->status) != 0) && ok_status(entry)) {
+		if ((entry->status != 0) && ok_status(entry)) {
 			i++;
 			is_valid = 1;
 		}
