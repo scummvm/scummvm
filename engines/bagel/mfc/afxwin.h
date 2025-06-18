@@ -657,8 +657,13 @@ public:
 		UINT realizePalette();
 		COLORREF GetNearestColor(COLORREF crColor) const;
 
+		void fillSolidRect(LPCRECT lpRect, COLORREF clr);
+		void fillSolidRect(int x, int y, int cx, int cy, COLORREF clr);
 		void fillRect(const Common::Rect &r, COLORREF crColor);
 		void frameRect(const Common::Rect &r, CBrush *brush);
+		void frameRect(const Common::Rect &r, COLORREF crColor);
+		void draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight);
+		void drawFocusRect(const CRect &rect);
 		void bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 			int xSrc, int ySrc, DWORD dwRop);
 		void stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
@@ -763,6 +768,8 @@ public:
 	void Ellipse(LPCRECT lpRect);
 	void Ellipse(int x1, int y1, int x2, int y2);
 	void FrameRect(LPCRECT lpRect, CBrush *pBrush);
+	void Draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight);
+	void DrawFocusRect(const CRect &rect);
 	void FillRect(LPCRECT lpRect, CBrush *pBrush);
 	void FillSolidRect(LPCRECT lpRect, COLORREF crColor);
 	BOOL FloodFill(int x, int y, COLORREF crColor);
@@ -1196,6 +1203,7 @@ public:
 	);
 	void SetActiveWindow();
 	void SetFocus();
+	CWnd *GetFocus() const;
 	BOOL IsWindowVisible() const {
 		return _visible;
 	}
@@ -1376,6 +1384,7 @@ private:
 	bool _pressed = false;
 
 	void OnPushButtonPaint();
+	void OnPushBoxPaint();
 
 protected:
 	DECLARE_MESSAGE_MAP()

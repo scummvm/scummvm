@@ -169,6 +169,10 @@ void CWnd::SetFocus() {
 	AfxGetApp()->SetFocus(this);
 }
 
+CWnd *CWnd::GetFocus() const {
+	return AfxGetApp()->GetFocus();
+}
+
 void CWnd::DestroyWindow() {
 	// Lose focus if it currently has it
 	auto *app = AfxGetApp();

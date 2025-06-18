@@ -219,6 +219,14 @@ void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
 	impl()->frameRect(*lpRect, pBrush);
 }
 
+void CDC::Draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight) {
+	impl()->draw3dRect(rect, clrTopLeft, clrBottomRight);
+}
+
+void CDC::DrawFocusRect(const CRect &rect) {
+	impl()->drawFocusRect(rect);
+}
+
 void CDC::FillRect(LPCRECT lpRect, CBrush *pBrush) {
 	CBrush::Impl *brush = static_cast<CBrush::Impl *>(pBrush->m_hObject);
 	assert(brush->_type == HS_HORIZONTAL ||
@@ -639,6 +647,14 @@ COLORREF CDC::Impl::GetNearestColor(COLORREF crColor) const {
 	return AfxGetApp()->getColor(crColor);
 }
 
+void CDC::Impl::fillSolidRect(LPCRECT lpRect, COLORREF clr) {
+	fillRect(*lpRect, clr);
+}
+
+void CDC::Impl::fillSolidRect(int x, int y, int cx, int cy, COLORREF clr) {
+	fillRect(Common::Rect(x, y, x + cx, y + cy), clr);
+}
+
 void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
 	static_cast<CBitmap::Impl *>(_bitmap)->fillRect(r,
 		GetNearestColor(crColor));
@@ -649,8 +665,22 @@ void CDC::Impl::frameRect(const Common::Rect &r, CBrush *brush) {
 	assert(b->_type == HS_HORIZONTAL ||
 		b->_type == HS_VERTICAL);
 
-	static_cast<CBitmap::Impl *>(_bitmap)->frameRect(r,
-		GetNearestColor(b->getColor()));
+	frameRect(r, GetNearestColor(b->getColor()));
+}
+
+void CDC::Impl::frameRect(const Common::Rect &r, COLORREF crColor) {
+	static_cast<CBitmap::Impl *>(_bitmap)->frameRect(r, crColor);
+}
+
+void CDC::Impl::draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight) {
+	fillSolidRect(rect.left, rect.top, rect.Width() - 1, 1, clrTopLeft);
+	fillSolidRect(rect.left, rect.top + 1, 1, rect.Height() - 2, clrTopLeft);
+	fillSolidRect(rect.left, rect.bottom - 1, rect.Width(), 1, clrBottomRight);
+	fillSolidRect(rect.right - 1, rect.top, 1, rect.Height() - 1, clrBottomRight);
+}
+
+void CDC::Impl::drawFocusRect(const CRect &rect) {
+	frameRect(rect, GetNearestColor(RGB(128, 128, 128)));
 }
 
 void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,

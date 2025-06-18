@@ -740,6 +740,7 @@ extern int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
                      LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage);
 
 extern HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h);
+extern HGDIOBJ GetStockObject(int i);
 extern HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd);
 extern UINT RealizePalette(HDC hdc);
 extern BOOL BitBlt(HDC hdc, int x, int y, int cx, int cy,

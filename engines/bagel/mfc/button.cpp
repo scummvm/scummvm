@@ -67,6 +67,10 @@ void CButton::OnPaint() {
 		OnPushButtonPaint();
 		break;
 
+	case BS_PUSHBOX:
+		OnPushBoxPaint();
+		break;
+
 	default: {
 		// Fallback for unhandled button types
 		RECT clientRect;
@@ -105,6 +109,55 @@ void CButton::OnPushButtonPaint() {
 	dc.DrawText(text, rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
+void CButton::OnPushBoxPaint() {
+	CPaintDC dc(this);
+
+	CRect rect;
+	GetClientRect(&rect);
+
+	// Choose colors
+	COLORREF clrFace = GetSysColor(COLOR_BTNFACE);
+	COLORREF clrHighlight = GetSysColor(COLOR_BTNHIGHLIGHT); // Top/left
+	COLORREF clrShadow = GetSysColor(COLOR_BTNSHADOW);       // Bottom/right
+	COLORREF clrText = GetSysColor(COLOR_BTNTEXT);
+
+	// Fill background
+	dc.FillSolidRect(rect, clrFace);
+
+	// Draw 3D border
+	if (_pressed) {
+		// Inset border (pressed look)
+		dc.Draw3dRect(rect, clrShadow, clrHighlight);
+		rect.DeflateRect(1, 1);
+		dc.Draw3dRect(rect, clrShadow, clrHighlight);
+	} else {
+		// Raised border (normal look)
+		dc.Draw3dRect(rect, clrHighlight, clrShadow);
+		rect.DeflateRect(1, 1);
+		dc.Draw3dRect(rect, clrHighlight, clrShadow);
+	}
+
+	// Adjust text position if pressed
+	CPoint offset = _pressed ? CPoint(1, 1) : CPoint(0, 0);
+
+	// Draw button text
+	dc.SetBkMode(TRANSPARENT);
+	dc.SetTextColor(clrText);
+	dc.SelectObject(GetStockObject(SYSTEM_FONT));
+
+	CRect textRect = rect;
+	textRect.OffsetRect(offset);
+
+	dc.DrawText(_windowText, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	// Draw focus rectangle
+	if (_hasFocus) {
+		CRect focusRect = rect;
+		focusRect.DeflateRect(3, 3);
+		dc.DrawFocusRect(&focusRect);
+	}
+}
+
 void CButton::OnLButtonDown(UINT nFlags, CPoint point) {
 	SetCapture();
 	_pressed = true;
@@ -121,6 +174,7 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 	switch (GetButtonStyle()) {
 	case BS_PUSHBUTTON:
 	case BS_DEFPUSHBUTTON:
+	case BS_PUSHBOX:
 		GetParent()->SendMessage(WM_COMMAND, GetDlgCtrlID(),
 			MAKELPARAM(0, BN_CLICKED));
 		break;

@@ -103,6 +103,17 @@ HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
 	return dc->Attach(h);
 }
 
+HGDIOBJ GetStockObject(int i) {
+	switch (i) {
+	case SYSTEM_FONT:
+		return AfxGetApp()->getDefaultFont();
+	default:
+		break;
+	}
+
+	error("TODO: GetStockObject value");
+}
+
 HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {
 	auto *surf = static_cast<CDC::Impl *>(hdc);
 	return surf->selectPalette(hPal);
