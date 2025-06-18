@@ -155,11 +155,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		_imageData = nullptr;
 	}
 
-#ifdef SCUMM_BIG_ENDIAN
-	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), img.getPalette(), img.getPaletteCount());
-#else
-	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette(), img.getPaletteCount());
-#endif
+	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32(), img.getPalette(), img.getPaletteCount());
 
 	if (_filename.matchString("savegame:*g", true)) {
 		uint8 r, g, b, a;
@@ -338,11 +334,7 @@ bool BaseSurfaceOpenGL3D::setAlphaImage(const Common::String &filename) {
 
 	Graphics::AlphaType type = alphaImage->getSurface()->detectAlpha();
 	if (type != Graphics::ALPHA_OPAQUE) {
-#ifdef SCUMM_BIG_ENDIAN
-		_maskData = alphaImage->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-		_maskData = alphaImage->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
+		_maskData = alphaImage->getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32());
 	}
 
 	delete alphaImage;

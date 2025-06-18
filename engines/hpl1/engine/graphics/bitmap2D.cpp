@@ -41,11 +41,7 @@ static Image::ImageDecoder *loadImage(const tString &filepath, Image::ImageDecod
 }
 
 Image::JPEGDecoder *setupJPEGDecoder(Image::JPEGDecoder *jpeg) {
-#ifdef SCUMM_BIG_ENDIAN
-	jpeg->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	jpeg->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
+	jpeg->setOutputPixelFormat(Graphics::PixelFormat::createFormatRGBA32());
 	return jpeg;
 }
 

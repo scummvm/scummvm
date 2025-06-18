@@ -54,11 +54,7 @@ static Common::Rect getGLViewport() {
 }
 
 static Graphics::PixelFormat getRGBAPixelFormat() {
-#ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
+	return Graphics::PixelFormat::createFormatRGBA32();
 }
 
 Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot() {
