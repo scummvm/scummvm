@@ -761,7 +761,7 @@ void ReahSoundMenuPage::addPageContents() {
 
 		Common::Point sliderSize(40, 60);
 
-		_sliderKeyGraphic.reset(new Graphics::ManagedSurface(sliderSize.x, sliderSize.y, Graphics::createPixelFormat<8888>()));
+		_sliderKeyGraphic.reset(new Graphics::ManagedSurface(sliderSize.x, sliderSize.y, Graphics::PixelFormat::createFormatRGBA32()));
 
 		Graphics::PixelFormat srcFormat = soundGraphics->format;
 		Graphics::PixelFormat dstFormat = _sliderKeyGraphic->format;
