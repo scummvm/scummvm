@@ -104,7 +104,7 @@ void ClearRails(void) {
 	}
 
 	if (_G(rails).myEdges) {
-		int32 edgeTableSize = (MAXRAILNODES * (MAXRAILNODES - 1)) >> 1;
+		const int32 edgeTableSize = (MAXRAILNODES * (MAXRAILNODES - 1)) >> 1;
 		for (i = 0; i < edgeTableSize; i++) {
 			_G(rails).myEdges[i] = 0;
 		}
@@ -141,7 +141,8 @@ noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 
 	newRect->y2 = y2;
 
 	// Add the alternate walkto node - this node must exist
-	if ((newRect->alternateWalkToNode = AddRailNode(altX, altY, walkCodes, false)) < 0) {
+	newRect->alternateWalkToNode = AddRailNode(altX, altY, walkCodes, false);
+	if (newRect->alternateWalkToNode < 0) {
 		error_show(FL, 'IADN', "could not add node. coord: %d %d", altX, altY);
 	}
 
@@ -449,8 +450,7 @@ void CreateEdge(int32 node1, int32 node2, Buffer *walkCodes) {
 			error_term = xDiff >> 1;
 
 			// Loop along the x axis and adjust scanY as necessary
-			scanX = x1;
-			for (i = 0; ((i <= xDiff) && valid && (!finished)); i++) {
+			for (i = 0; ((i <= xDiff) && valid && !finished); i++) {
 
 				// Check if we have scanned off the edge of the buffer
 				if ((scanX >= width) || ((y_unit > 0) && (scanY >= height)) || ((y_unit < 0) && (scanY < 0))) {
@@ -503,8 +503,7 @@ void CreateEdge(int32 node1, int32 node2, Buffer *walkCodes) {
 			error_term = yDiff >> 1;
 
 			// Loop along the y axis and adjust scanX as necessary
-			scanY = y1;
-			for (i = 0; ((i <= yDiff) && valid && (!finished)); i++) {
+			for (i = 0; ((i <= yDiff) && valid && !finished); i++) {
 				// Check if we have scanned off the edge of the buffer
 				if (scanX >= width || ((y_unit > 0) && (scanY >= height)) || ((y_unit < 0) && (scanY < 0))) {
 					finished = true;
@@ -525,7 +524,7 @@ void CreateEdge(int32 node1, int32 node2, Buffer *walkCodes) {
 					// Update the error term
 					error_term += xDiff;
 
-					// If the error_term has exceeded the xdiff, we need to move one unit along the y axis
+					// If the error_term has exceeded the xDiff, we need to move one unit along the y axis
 					if (error_term >= yDiff) {
 						// Reset the error term
 						error_term -= yDiff;
@@ -666,11 +665,15 @@ bool RailNodeExists(int32 nodeID, int32 *nodeX, int32 *nodeY) {
 }
 
 int16 GetEdgeLength(int32 node1, int32 node2) {
-	if (!_G(rails).myEdges) return 0;
-	if (node1 == node2) return 0;
-	if (node2 < node1) {
+	if (!_G(rails).myEdges)
+		return 0;
+
+	if (node1 == node2)
+		return 0;
+
+	if (node2 < node1)
 		SWAP(node1, node2);
-	}
+
 	// If node1 is y and node2 is x, first find table entry ie. tableWidth * y + x, the subtract
 	// n(n+1)/2  since only the upper triangle of the table is stored...
 	const int32 index = (MAXRAILNODES - 1) * node1 + node2 - 1 - (node1 * (node1 + 1) >> 1);
@@ -847,8 +850,8 @@ bool GetShortestPath(int32 origID, int32 destID, railNode **shortPath) {
 
 		// Yes it is, therefore, we have a valid path, maybe the shortest...
 		if (edgeDist > 0) {
-			// Check whether the pathweight of the second last node + the edge to get to the last
-			// is less than the pathweight of the previously found shortest path
+			// Check whether the pathWeight of the second last node + the edge to get to the last
+			// is less than the pathWeight of the previously found shortest path
 			if (currNode->pathWeight + edgeDist < _G(rails).myNodes[destID]->pathWeight) {
 				// If so, store the new shortest path weight, and complete the path link
 				_G(rails).myNodes[destID]->pathWeight = (int16)(currNode->pathWeight + edgeDist);
@@ -915,7 +918,7 @@ bool GetShortestPath(int32 origID, int32 destID, railNode **shortPath) {
 						// For each different valid node, check to see if the currNode is adjacent to it
 						edgeDist = GetEdgeLength(currNode->nodeID, i);
 
-						// If it is a neighbor, and the pathweight reaching it through currNode is
+						// If it is a neighbor, and the pathWeight reaching it through currNode is
 						// less than the weight of any previous path that reached the same neighbor...
 						if ((edgeDist > 0) && ((currNode->pathWeight + edgeDist) < _G(rails).myNodes[i]->pathWeight)) {
 							// Now see if that neighbor is already part of the current shortest path
@@ -952,7 +955,7 @@ bool GetShortestPath(int32 origID, int32 destID, railNode **shortPath) {
 								}
 							} else {
 								// Else we don't know whether we can reach the destID from node i
-								// Set the pathweight of node i to the smaller value, and place it on the stack
+								// Set the pathWeight of node i to the smaller value, and place it on the stack
 								_G(rails).myNodes[i]->pathWeight = (int16)(currNode->pathWeight + edgeDist);
 								*_G(rails).stackTop++ = _G(rails).myNodes[i];
 							}
