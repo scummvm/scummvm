@@ -344,7 +344,7 @@ Common::Error ZVision::run() {
 	}
 
 	// Main loop
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !_breakMainLoop) {
 		debugC(1, kDebugLoop, "\nInitiating new game cycle");
 		debugC(5, kDebugLoop, "Timers");
 		// Timers
@@ -359,7 +359,7 @@ Common::Error ZVision::run() {
 		debugC(5, kDebugLoop, "Rotation");
 		_renderManager->updateRotation();
 		debugC(5, kDebugLoop, "Scripts");
-		_scriptManager->update(deltaTime);
+		_scriptManager->process(deltaTime);
 		debugC(5, kDebugLoop, "Menu");
 		_menu->process(deltaTime);
 		debugC(5, kDebugLoop, "Subtitles");

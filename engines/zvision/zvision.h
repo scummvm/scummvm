@@ -169,6 +169,7 @@ private:
 	bool _doubleFPS;
 	bool _widescreen;
 	bool _videoIsPlaying;
+	bool _breakMainLoop = false;
 
 	uint8 _cheatBuffer[KEYBUF_SIZE];
 
@@ -268,8 +269,8 @@ public:
 	void loadSettings();
 	void saveSettings();
 
-	bool ifQuit();
-
+	bool quit(bool askFirst = true, bool streaming = false);
+	
 	// Engine features
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;

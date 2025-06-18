@@ -117,7 +117,7 @@ public:
 	void destroy(uint16 id);
 	void destroy(uint16 id, int16 delay);
 
-	bool askQuestion(const Common::String &str);
+	bool askQuestion(const Common::String &str, bool streaming = false, bool safeDefault = false);
 	void delayedMessage(const Common::String &str, uint16 milsecs);
 	void timedMessage(const Common::String &str, uint16 milsecs);
 	void showDebugMsg(const Common::String &msg, int16 delay = 3000);

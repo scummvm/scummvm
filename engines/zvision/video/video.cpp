@@ -123,7 +123,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 
 	_cutscenesKeymap->setEnabled(true);
 	_gameKeymap->setEnabled(false);
-
+	
 	// Only continue while the video is still playing
 	while (!shouldQuit() && !vid.endOfVideo() && vid.isPlaying()) {
 		// Check for engine quit and video stop key presses
@@ -132,7 +132,14 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				switch ((ZVisionAction)_event.customType) {
 				case kZVisionActionQuit:
-					quitGame();
+					if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
+						if (quit(true, true))
+							vid.stop();
+					}
+					else {
+						quit(false);
+						vid.stop();
+					}
 					break;
 				case kZVisionActionSkipCutscene:
 					if (skippable) {
