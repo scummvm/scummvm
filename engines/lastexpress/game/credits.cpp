@@ -530,10 +530,13 @@ bool LastExpressEngine::demoEnding(bool wonGame) {
 			}
 
 			if (!exitFlag) {
-				getMessageManager()->process();
+				bool haveMoreMessages = getMessageManager()->process();
 				getSoundManager()->soundThread();
 				getSubtitleManager()->subThread();
-				waitForTimer(5);
+
+				// Only wait and handle events if we've processed all messages, unlike the original which had a separate thread for input...
+				if (!haveMoreMessages)
+					waitForTimer(5);
 			}
 		}
 

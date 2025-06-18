@@ -208,8 +208,11 @@ int CFight::process() {
 	setOutcome(1);
 
 	while (_fightIsHappening) {
-		_engine->getMessageManager()->process();
-		_engine->getSoundManager()->soundThread();
+		do {
+			_engine->getSoundManager()->soundThread();
+		} while (_engine->getMessageManager()->process());
+
+		// Only wait and handle events if we've processed all messages, unlike the original which had a separate thread for input...
 		_engine->waitForTimer(5);
 	}
 

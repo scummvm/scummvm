@@ -614,8 +614,10 @@ bool NISManager::doNIS(const char *name, int32 flags) {
 
 				_engine->getSoundManager()->soundThread();
 				_engine->getSubtitleManager()->subThread();
-				_engine->getMessageManager()->process();
-				_engine->waitForTimer(5);
+				if (!_engine->getMessageManager()->process()) {
+					// Only wait and handle events if we've processed all messages, unlike the original which had a separate thread for input...
+					_engine->waitForTimer(5);
+				}
 
 				for (slot = _engine->getSoundManager()->_soundCache; slot; slot = slot->getNext()) {
 					if (slot->hasTag(kSoundTagNIS))
@@ -642,7 +644,7 @@ bool NISManager::doNIS(const char *name, int32 flags) {
 					if (!_engine->getMessageManager()->process())
 						break;
 
-					_engine->waitForTimer(5);
+					_engine->handleEvents();
 					_engine->getSubtitleManager()->subThread();
 					_engine->getSoundManager()->soundThread();
 
