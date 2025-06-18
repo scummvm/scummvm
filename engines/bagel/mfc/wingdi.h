@@ -288,6 +288,7 @@ enum FontWeight {
  */
 enum {
 	ODS_SELECTED = 0x0001,
+	ODS_ENABLED  = 0x0002,
 	ODS_DISABLED = 0x0004,
 	ODS_GRAYED = ODS_DISABLED,
 	ODS_CHECKED = 0x0008,
@@ -301,8 +302,11 @@ enum {
 };
 
 enum {
-	BST_UNCHECKED = 0,
-	BST_CHECKED = 1
+	BST_UNCHECKED     = 0,
+	BST_CHECKED       = 1,
+	BST_INDETERMINATE = 2,
+	BST_PUSHED        = 4,
+	BST_FOCUS         = 8
 };
 
 /* Stock Logical Objects */
@@ -350,6 +354,15 @@ enum {
 #define BM_GETIMAGE        0x00F6
 #define BM_SETIMAGE        0x00F7
 #define BM_SETDONTCLICK    0x00F8
+
+ /*
+  * Owner draw control types
+  */
+#define ODT_MENU        1
+#define ODT_LISTBOX     2
+#define ODT_COMBOBOX    3
+#define ODT_BUTTON      4
+#define ODT_STATIC      5
 
 /*
  * Owner draw actions

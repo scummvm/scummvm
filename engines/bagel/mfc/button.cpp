@@ -71,6 +71,10 @@ void CButton::OnPaint() {
 		OnPushBoxPaint();
 		break;
 
+	case BS_OWNERDRAW:
+		OnOwnerDrawPaint();
+		break;
+
 	default: {
 		// Fallback for unhandled button types
 		RECT clientRect;
@@ -156,6 +160,39 @@ void CButton::OnPushBoxPaint() {
 		focusRect.DeflateRect(3, 3);
 		dc.DrawFocusRect(&focusRect);
 	}
+}
+
+void CButton::OnOwnerDrawPaint() {
+	// Prepare the draw item struct
+	DRAWITEMSTRUCT dis = { 0 };
+	dis.CtlType = ODT_BUTTON;
+	dis.CtlID = GetDlgCtrlID();
+	dis.itemID = 0;
+	dis.itemAction = ODA_DRAWENTIRE;
+	dis.itemState = 0;
+
+	if (IsWindowEnabled())
+		dis.itemState |= ODS_ENABLED;
+	if (GetState() & BST_PUSHED)
+		dis.itemState |= ODS_SELECTED;
+	if (GetFocus() == this)
+		dis.itemState |= ODS_FOCUS;
+
+	dis.hwndItem = m_hWnd;
+
+	// Get the client rect for the button
+	GetClientRect(&dis.rcItem);
+
+	// Get a DC for drawing
+	PAINTSTRUCT paintStruct;
+	HDC hdc = BeginPaint(&paintStruct);
+	dis.hDC = hdc;
+
+	// Send WM_DRAWITEM to the parent window
+	GetParent()->SendMessage(WM_DRAWITEM,
+		dis.CtlID, (LPARAM)&dis);
+
+	EndPaint(&paintStruct);
 }
 
 void CButton::OnLButtonDown(UINT nFlags, CPoint point) {

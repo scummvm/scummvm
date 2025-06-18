@@ -1385,6 +1385,7 @@ private:
 
 	void OnPushButtonPaint();
 	void OnPushBoxPaint();
+	void OnOwnerDrawPaint();
 
 protected:
 	DECLARE_MESSAGE_MAP()

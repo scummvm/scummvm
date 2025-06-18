@@ -230,7 +230,8 @@ BOOL CWnd::SetWindowText(LPCSTR lpszString) {
 }
 
 UINT CWnd::GetState() const {
-	error("TODO: CWnd::GetState");
+	// TODO: CWnd::GetState
+	return 0;
 }
 
 CDC *CWnd::GetDC() {
