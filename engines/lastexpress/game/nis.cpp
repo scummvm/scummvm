@@ -615,7 +615,7 @@ bool NISManager::doNIS(const char *name, int32 flags) {
 				_engine->getSoundManager()->soundThread();
 				_engine->getSubtitleManager()->subThread();
 				_engine->getMessageManager()->process();
-				_engine->handleEvents();
+				_engine->waitForTimer(5);
 
 				for (slot = _engine->getSoundManager()->_soundCache; slot; slot = slot->getNext()) {
 					if (slot->hasTag(kSoundTagNIS))
@@ -642,7 +642,7 @@ bool NISManager::doNIS(const char *name, int32 flags) {
 					if (!_engine->getMessageManager()->process())
 						break;
 
-					_engine->handleEvents();
+					_engine->waitForTimer(5);
 					_engine->getSubtitleManager()->subThread();
 					_engine->getSoundManager()->soundThread();
 

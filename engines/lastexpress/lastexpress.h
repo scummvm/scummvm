@@ -636,7 +636,7 @@ public:
 	void startUp();
 	void shutDown();
 
-	void waitForTimer(int frames);
+	void waitForTimer(int millis);
 	void initGameData();
 	void startNewGame();
 	void engineEventHandler(Event *event);

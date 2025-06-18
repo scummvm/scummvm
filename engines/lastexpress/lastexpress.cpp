@@ -219,7 +219,11 @@ Common::Error LastExpressEngine::run() {
 			getSubtitleManager()->subThread();
 		} while (getMessageManager()->process());
 
-		waitForTimer(4); // Wait 4 ticks (tick duration: 17 ms dictated by the sound timer)
+		// Originally the game waited for at most four frames (17 * 4 ms).
+		// Since the game relies on the sound timer for actual engine pacing,
+		// we can reduce the time to 5 milliseconds of wait time, fetching
+		// input in the meanwhile, making the cursor a lot smoother.
+		waitForTimer(5);
 	}
 
 	bool haveEvent = true;
@@ -441,15 +445,9 @@ bool LastExpressEngine::mouseHasRightClicked() {
 	return _mouseHasRightClicked;
 }
 
-void LastExpressEngine::waitForTimer(int frames) {
-	uint32 startTime = _system->getMillis();
-	uint32 waitTime = 17;
-
-	for (int i = 0; i < frames; i++) {
-		while (_system->getMillis() - startTime < waitTime) {
-			handleEvents();
-		}
-	}
+void LastExpressEngine::waitForTimer(int millis) {
+	handleEvents();
+	_system->delayMillis(millis);
 }
 
 bool LastExpressEngine::handleEvents() {

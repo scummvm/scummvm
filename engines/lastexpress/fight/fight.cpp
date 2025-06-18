@@ -210,7 +210,7 @@ int CFight::process() {
 	while (_fightIsHappening) {
 		_engine->getMessageManager()->process();
 		_engine->getSoundManager()->soundThread();
-		_engine->handleEvents();
+		_engine->waitForTimer(5);
 	}
 
 	return _outcome;

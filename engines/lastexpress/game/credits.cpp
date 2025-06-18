@@ -93,8 +93,9 @@ void LastExpressEngine::doCredits() {
 
 			do {
 				getSoundManager()->soundThread();
-				handleEvents();
 			} while (getMessageManager()->process());
+
+			waitForTimer(5);
 
 			setEventTickInternal(false);
 			
@@ -104,8 +105,9 @@ void LastExpressEngine::doCredits() {
 			while (_doCredits) {
 				do {
 					getSoundManager()->soundThread();
-					handleEvents();
 				} while (_doCredits && getMessageManager()->process());
+
+				waitForTimer(5);
 
 				if (!_savedFrameCounter) {
 					// Handle the background map transition
@@ -531,7 +533,7 @@ bool LastExpressEngine::demoEnding(bool wonGame) {
 				getMessageManager()->process();
 				getSoundManager()->soundThread();
 				getSubtitleManager()->subThread();
-				handleEvents();
+				waitForTimer(5);
 			}
 		}
 
