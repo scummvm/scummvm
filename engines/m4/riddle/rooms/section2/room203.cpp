@@ -1557,7 +1557,7 @@ void Room203::daemon() {
 	case 126:
 		switch (_gkMode) {
 		case 3000:
-			if (_gkShould == 3000 && _gkMode == 3000 && _trigger1 != -1) {
+			if (_gkShould == 3000 && _trigger1 != -1) {
 				kernel_trigger_dispatchx(_trigger1);
 				_trigger1 = -1;
 			}

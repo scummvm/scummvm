@@ -137,7 +137,7 @@ void Room202::parser() {
 		_G(game).setRoom(203);
 	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
 		// No implementation
-	} else if (player_said("journal") && !takeFlag && !lookFlag) {
+	} else if (player_said("journal") && !lookFlag) {
 		digi_play("202r16", 1);
 	} else {
 		return;
