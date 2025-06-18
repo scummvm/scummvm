@@ -158,10 +158,18 @@ void LogicManager::CONS_DemoVesna_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_DemoVesna_WaitRCClear(HAND_PARAMS) {
-	if ((msg->action == 0 && rcClear()) || (msg->action == 12 && rcClear())) {
-		getCharacter(kCharacterVesna).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsDemoVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
-		fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterVesna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterVesna, _functionsDemoVesna[getCharacter(kCharacterVesna).callbacks[getCharacter(kCharacterVesna).currentCall]]);
+			fedEx(kCharacterVesna, kCharacterVesna, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 

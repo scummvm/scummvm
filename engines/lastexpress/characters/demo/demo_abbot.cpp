@@ -153,11 +153,19 @@ void LogicManager::CONS_DemoAbbot_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_DemoAbbot_WaitRCClear(HAND_PARAMS) {
-	if ((msg->action == 12 && rcClear()) || (msg->action == 0 && rcClear())) {
-		getCharacter(kCharacterAbbot).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterAbbot, _functionsDemoAbbot[getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall]]);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterAbbot).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAbbot, _functionsDemoAbbot[getCharacter(kCharacterAbbot).callbacks[getCharacter(kCharacterAbbot).currentCall]]);
 
-		fedEx(kCharacterAbbot, kCharacterAbbot, 18, 0);
+			fedEx(kCharacterAbbot, kCharacterAbbot, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 

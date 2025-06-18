@@ -144,10 +144,18 @@ void LogicManager::CONS_DemoAnna_WaitRCClear(CONS_PARAMS) {
 }
 
 void LogicManager::HAND_DemoAnna_WaitRCClear(HAND_PARAMS) {
-	if ((msg->action == 0 && rcClear()) && (msg->action == 12 && rcClear())) {
-		getCharacter(kCharacterAnna).currentCall--;
-		_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsDemoAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
-		fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+	switch (msg->action) {
+	case 0:
+	case 12:
+		if (rcClear()) {
+			getCharacter(kCharacterAnna).currentCall--;
+			_engine->getMessageManager()->setMessageHandle(kCharacterAnna, _functionsDemoAnna[getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall]]);
+			fedEx(kCharacterAnna, kCharacterAnna, 18, 0);
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
