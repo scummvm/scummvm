@@ -455,10 +455,12 @@ bool LastExpressEngine::handleEvents() {
 	Common::Event ev;
 	int32 curFlags = 0;
 
+#ifdef USE_IMGUI
 	// Allow the debugger to pick up the changes...
 	if (gDebugLevel >= 3) {
 		_system->updateScreen();
 	}
+#endif
 
 	while (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
