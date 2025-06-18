@@ -1702,11 +1702,7 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		// hope for this to change anytime soon) we use pixel format
 		// conversion to a supported texture format.
 		return new TextureSurfaceRGB555();
-#ifdef SCUMM_LITTLE_ENDIAN
-	} else if (format == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
-#else
-	} else if (format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
-#endif
+	} else if (format == Graphics::PixelFormat::createFormatABGR32()) {
 		return new TextureSurfaceRGBA8888Swap();
 	} else {
 		return new FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), format);

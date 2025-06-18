@@ -63,11 +63,7 @@ void PNGDecoder::destroy() {
 }
 
 Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat(bool isAlpha) const {
-#ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(4, 8, 8, 8, isAlpha ? 8 : 0, 24, 16, 8, 0);
-#else
-	return Graphics::PixelFormat(4, 8, 8, 8, isAlpha ? 8 : 0, 0, 8, 16, 24);
-#endif
+	return Graphics::PixelFormat::createFormatRGBA32(isAlpha);
 }
 
 #ifdef USE_PNG
@@ -300,11 +296,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette) {
 #ifdef USE_PNG
 	const Graphics::PixelFormat requiredFormat_3byte = Graphics::PixelFormat::createFormatRGB24();
-#ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
+	const Graphics::PixelFormat requiredFormat_4byte = Graphics::PixelFormat::createFormatRGBA32();
 
 	int colorType;
 	Graphics::Surface *tmp = NULL;

@@ -636,11 +636,7 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 BaseImage *BaseRenderOpenGL3D::takeScreenshot(int newWidth, int newHeight) {
 	BaseImage *screenshot = new BaseImage();
 	Graphics::Surface *surface = new Graphics::Surface();
-#ifdef SCUMM_BIG_ENDIAN
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatRGBA32();
 	surface->create(_viewportRect.width(), _viewportRect.height(), format);
 
 	glReadPixels(_viewportRect.left, _viewportRect.height() - _viewportRect.bottom,

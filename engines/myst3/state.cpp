@@ -479,11 +479,7 @@ Common::Error GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 }
 
 const Graphics::PixelFormat GameState::getThumbnailSavePixelFormat() {
-#ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0);
-#else
-	return Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24);
-#endif
+	return Graphics::PixelFormat::createFormatBGRA32(false);
 }
 
 Graphics::Surface *GameState::readThumbnail(Common::ReadStream *inStream) {

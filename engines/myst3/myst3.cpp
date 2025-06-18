@@ -1423,11 +1423,7 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	data->readUint32LE(); // unk 2
 	data->readUint32LE(); // unk 3
 
-#ifdef SCUMM_BIG_ENDIAN
-	Graphics::PixelFormat onDiskFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-#else
-	Graphics::PixelFormat onDiskFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
-#endif
+	Graphics::PixelFormat onDiskFormat = Graphics::PixelFormat::createFormatARGB32();
 
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(width, height, onDiskFormat);

@@ -203,6 +203,42 @@ struct PixelFormat {
 #endif
 	}
 
+	/** Define an endian-aware RGBA32 pixel format. */
+	static inline PixelFormat createFormatRGBA32(bool alpha = true) {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 24, 16, 8, 0);
+#else
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 0, 8, 16, 24);
+#endif
+	}
+
+	/** Define an endian-aware BGRA32 pixel format. */
+	static inline PixelFormat createFormatBGRA32(bool alpha = true) {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 8, 16, 24, 0);
+#else
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 16, 8, 0, 24);
+#endif
+	}
+
+	/** Define an endian-aware ABGR32 pixel format. */
+	static inline PixelFormat createFormatABGR32(bool alpha = true) {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 0, 8, 16, 24);
+#else
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 24, 16, 8, 0);
+#endif
+	}
+
+	/** Define an endian-aware ARGB32 pixel format. */
+	static inline PixelFormat createFormatARGB32(bool alpha = true) {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 16, 8, 0, 24);
+#else
+		return Graphics::PixelFormat(4, 8, 8, 8, alpha ? 8 : 0, 8, 16, 24, 0);
+#endif
+	}
+
 	/** Check if two pixel formats are the same */
 	inline bool operator==(const PixelFormat &fmt) const {
 		return bytesPerPixel == fmt.bytesPerPixel &&

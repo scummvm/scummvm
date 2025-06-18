@@ -309,11 +309,7 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	_data = new Graphics::Surface[_numImages];
 
 	Graphics::PixelFormat format_16bpp = Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15);
-#ifdef SCUMM_BIG_ENDIAN
-	Graphics::PixelFormat format_32bpp = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-	Graphics::PixelFormat format_32bpp = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
+	Graphics::PixelFormat format_32bpp = Graphics::PixelFormat::createFormatRGBA32();
 
 	int width = 256;
 	int height = 256;
