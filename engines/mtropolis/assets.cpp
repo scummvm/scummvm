@@ -1013,6 +1013,10 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 		return _imageCache;
 	}
 
+	ImageAsset::ImageFormat imageFormat = getImageFormat();
+	bool bottomUp = (imageFormat == ImageAsset::kImageFormatWindows);
+	bool isBigEndian = (imageFormat == ImageAsset::kImageFormatMac);
+
 	Graphics::PixelFormat pixelFmt;
 	switch (getColorDepth()) {
 	case kColorDepthMode1Bit:
@@ -1033,12 +1037,18 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 		break;
 	case kColorDepthMode16Bit:
 		bytesPerRow = (width * 2 + 3) / 4 * 4;
-		pixelFmt = Graphics::createPixelFormat<1555>();
+		pixelFmt = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		break;
 	case kColorDepthMode32Bit:
 		bytesPerRow = width * 4;
-		pixelFmt = Graphics::createPixelFormat<8888>();
-		break;
+		if (imageFormat == ImageAsset::kImageFormatMac) {
+			pixelFmt = Graphics::PixelFormat::createFormatARGB32(false);
+			break;
+		} else if (imageFormat == ImageAsset::kImageFormatWindows) {
+			pixelFmt = Graphics::PixelFormat::createFormatBGRA32(false);
+			break;
+		}
+		// fall through
 	default:
 		warning("Image asset has an unrecognizable pixel format");
 		return _imageCache;
@@ -1046,10 +1056,6 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 
 	Common::Array<uint8> rowBuffer;
 	rowBuffer.resize(bytesPerRow);
-
-	ImageAsset::ImageFormat imageFormat = getImageFormat();
-	bool bottomUp = (imageFormat == ImageAsset::kImageFormatWindows);
-	bool isBigEndian = (imageFormat == ImageAsset::kImageFormatMac);
 
 	Common::SharedPtr<Graphics::ManagedSurface> imageSurface;
 	imageSurface.reset(new Graphics::ManagedSurface());
@@ -1089,44 +1095,18 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 				if (isBigEndian) {
 					for (int x = 0; x < width; x++) {
 						uint16 packedPixel = inRowBytes[x * 2 + 1] + (inRowBytes[x * 2 + 0] << 8);
-						int r = ((packedPixel >> 10) & 0x1f);
-						int g = ((packedPixel >> 5) & 0x1f);
-						int b = (packedPixel & 0x1f);
-
-						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
-						static_cast<uint16 *>(outBase)[x] = repacked;
+						static_cast<uint16 *>(outBase)[x] = packedPixel;
 					}
 				} else {
 					for (int x = 0; x < width; x++) {
 						uint16 packedPixel = inRowBytes[x * 2 + 0] + (inRowBytes[x * 2 + 1] << 8);
-						int r = ((packedPixel >> 10) & 0x1f);
-						int g = ((packedPixel >> 5) & 0x1f);
-						int b = (packedPixel & 0x1f);
-
-						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
-						static_cast<uint16 *>(outBase)[x] = repacked;
+						static_cast<uint16 *>(outBase)[x] = packedPixel;
 					}
 				}
 			} break;
-		case kColorDepthMode32Bit: {
-				if (imageFormat == ImageAsset::kImageFormatMac) {
-					for (int x = 0; x < width; x++) {
-						uint8 r = inRowBytes[x * 4 + 1];
-						uint8 g = inRowBytes[x * 4 + 2];
-						uint8 b = inRowBytes[x * 4 + 3];
-						uint32 repacked = (255 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
-						static_cast<uint32 *>(outBase)[x] = repacked;
-					}
-				} else if (imageFormat == ImageAsset::kImageFormatWindows) {
-					for (int x = 0; x < width; x++) {
-						uint8 r = inRowBytes[x * 4 + 2];
-						uint8 g = inRowBytes[x * 4 + 1];
-						uint8 b = inRowBytes[x * 4 + 0];
-						uint32 repacked = (255 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
-						static_cast<uint32 *>(outBase)[x] = repacked;
-					}
-				}
-			} break;
+		case kColorDepthMode32Bit:
+			memcpy(outBase, inRowBytes, width * 4);
+			break;
 		default:
 			break;
 		}
