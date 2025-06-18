@@ -63,7 +63,6 @@ public:
 	virtual ~Renderer();
 
 	Graphics::PixelFormat _currentPixelFormat;
-	Graphics::PixelFormat _palettePixelFormat;
 	Graphics::PixelFormat _texturePixelFormat;
 	bool _isAccelerated;
 	bool _authenticGraphics;
