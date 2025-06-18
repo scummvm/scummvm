@@ -835,8 +835,7 @@ bool ActionPlayPreloadAnimation::execute() {
 //////////////////////////////////////////////////////////////////////////////
 
 bool ActionQuit::execute() {
-	_engine->quitGame();
-
+	_engine->quit(false);
 	return true;
 }
 

@@ -97,7 +97,7 @@ bool ScriptManager::changingLocation() const {
 	return _currentLocation != _nextLocation;
 }
 
-void ScriptManager::update(uint deltaTimeMillis) {
+void ScriptManager::process(uint deltaTimeMillis) {
 	if (changingLocation()) {
 		// The location is changing. The script that did that may have
 		// triggered other scripts, so give them all one extra cycle to

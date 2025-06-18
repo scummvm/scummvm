@@ -198,7 +198,7 @@ private:
 
 public:
 	void initialize(bool restarted = false);
-	void update(uint deltaTimeMillis);
+	void process(uint deltaTimeMillis);
 	void queuePuzzles(uint32 key);
 
 	int getStateValue(uint32 key);

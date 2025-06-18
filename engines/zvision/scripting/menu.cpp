@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "zvision/detection.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/menu.h"
@@ -97,7 +98,7 @@ void MenuManager::onMouseUp(const Common::Point &pos) {
 				_redraw = true;
 				break;
 			case kMainMenuExit:
-				_engine->ifQuit();
+				_engine->quit(true);
 				break;
 			default:
 				break;

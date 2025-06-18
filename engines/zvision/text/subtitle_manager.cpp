@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "zvision/detection.h"
 #include "zvision/file/search_manager.h"
@@ -78,6 +79,7 @@ void SubtitleManager::process(int32 deltatime) {
 			Subtitle *sub = _subsList[curSub];
 			if (sub->_lineId >= 0) {
 				Graphics::Surface textSurface;
+				//TODO - make this surface a persistent member of the manager; only call create() when currently displayed subtitle is changed.
 				textSurface.create(sub->_textArea.width(), sub->_textArea.height(), _engine->_resourcePixelFormat);
 				textSurface.fillRect(Common::Rect(sub->_textArea.width(), sub->_textArea.height()), -1); // TODO Unnecessary operation?  Check later.
 				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->_lines[sub->_lineId].subStr, textSurface, _engine->isWidescreen());
@@ -144,56 +146,75 @@ void SubtitleManager::timedMessage(const Common::String &str, uint16 milsecs) {
 	destroy(msgid, milsecs);
 }
 
-bool SubtitleManager::askQuestion(const Common::String &str) {
+bool SubtitleManager::askQuestion(const Common::String &str, bool streaming, bool safeDefault) {
 	uint16 msgid = create(str);
 	debugC(1, kDebugSubtitle, "initiating user question: %s to subtitle id %d", str.c_str(), msgid);
 	update(0, msgid);
 	process(0);
-	_renderManager->renderSceneToScreen(true);
+	if(streaming)
+		_renderManager->renderSceneToScreen(true,true,true);
+	else
+		_renderManager->renderSceneToScreen(true);
 	_engine->stopClock();
 	int result = 0;
 	while (result == 0) {
 		Common::Event evnt;
 		while (_engine->getEventManager()->pollEvent(evnt)) {
-			if (evnt.type == Common::EVENT_KEYDOWN) {
-				// English: yes/no
-				// German: ja/nein
-				// Spanish: si/no
-				// French Nemesis: F4/any other key  _engine(engine),
-				// French ZGI: oui/non
-				// TODO: Handle this using the keymapper
-				switch (evnt.kbd.keycode) {
-				case Common::KEYCODE_y:
-					if (_engine->getLanguage() == Common::EN_ANY)
-						result = 2;
+			switch (evnt.type) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+					if ((ZVisionAction)evnt.customType != kZVisionActionQuit)
+						break;
+					// fall through
+				case Common::EVENT_QUIT:
+					debugC(1, kDebugEvent, "Attempting to quit within quit dialog!");
+					_engine->quit(false);
+					return safeDefault;
 					break;
-				case Common::KEYCODE_j:
-					if (_engine->getLanguage() == Common::DE_DEU)
-						result = 2;
-					break;
-				case Common::KEYCODE_s:
-					if (_engine->getLanguage() == Common::ES_ESP)
-						result = 2;
-					break;
-				case Common::KEYCODE_o:
-					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_GRANDINQUISITOR)
-						result = 2;
-					break;
-				case Common::KEYCODE_F4:
-					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
-						result = 2;
-					break;
-				case Common::KEYCODE_n:
-					result = 1;
+				case Common::EVENT_KEYDOWN:
+					// English: yes/no
+					// German: ja/nein
+					// Spanish: si/no
+					// French Nemesis: F4/any other key  _engine(engine),
+					// French ZGI: oui/non
+					// TODO: Handle this using the keymapper
+					switch (evnt.kbd.keycode) {
+					case Common::KEYCODE_y:
+						if (_engine->getLanguage() == Common::EN_ANY)
+							result = 2;
+						break;
+					case Common::KEYCODE_j:
+						if (_engine->getLanguage() == Common::DE_DEU)
+							result = 2;
+						break;
+					case Common::KEYCODE_s:
+						if (_engine->getLanguage() == Common::ES_ESP)
+							result = 2;
+						break;
+					case Common::KEYCODE_o:
+						if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_GRANDINQUISITOR)
+							result = 2;
+						break;
+					case Common::KEYCODE_F4:
+						if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
+							result = 2;
+						break;
+					case Common::KEYCODE_n:
+						result = 1;
+						break;
+					default:
+						if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
+							result = 1;
+						break;
+					}
 					break;
 				default:
-					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
-						result = 1;
 					break;
-				}
 			}
 		}
-		_renderManager->renderSceneToScreen(true);
+		if(streaming)
+			_renderManager->renderSceneToScreen(true,true,false);
+		else
+			_renderManager->renderSceneToScreen(true);
 		if (_doubleFPS)
 			_system->delayMillis(33);
 		else
@@ -216,12 +237,34 @@ void SubtitleManager::delayedMessage(const Common::String &str, uint16 milsecs) 
 	while (_system->getMillis() < stopTime) {
 		Common::Event evnt;
 		while (_engine->getEventManager()->pollEvent(evnt)) {
-			if (evnt.type == Common::EVENT_KEYDOWN &&
-			        (evnt.kbd.keycode == Common::KEYCODE_SPACE ||
-			         evnt.kbd.keycode == Common::KEYCODE_RETURN ||
-			         evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
+			switch (evnt.type) {
+			case Common::EVENT_KEYDOWN:
+				switch (evnt.kbd.keycode) {
+				case Common::KEYCODE_SPACE:
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_ESCAPE:
+					goto skip_delayed_message;
+					break;
+				default:
+					break;
+				}
 				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if ((ZVisionAction)evnt.customType != kZVisionActionQuit)
+					break;
+				// fall through
+			case Common::EVENT_QUIT:
+				if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit"))
+					_engine->quit(true);
+				else
+					_engine->quit(false);
+				break;
+			default:
+				break;
+			}
 		}
+		skip_delayed_message:
+		
 		_renderManager->renderSceneToScreen(true);
 		if (_doubleFPS)
 			_system->delayMillis(17);

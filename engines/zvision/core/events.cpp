@@ -20,6 +20,7 @@
  */
 
 #include "audio/mixer.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -230,8 +231,12 @@ void ZVision::processEvents() {
 				break;
 
 			case kZVisionActionQuit:
-				if (_menu->getEnable(kMainMenuExit))
-					ifQuit();
+				if (_menu->getEnable(kMainMenuExit)) {
+					if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit"))
+						quit(true);
+					else
+						quit(false);
+				}
 				break;
 
 			case kZVisionActionShowFPS: {
@@ -471,12 +476,17 @@ uint8 ZVision::getZvisionKey(Common::KeyCode scummKeyCode) {
 	return 0;
 }
 
-bool ZVision::ifQuit() {
-	if (_subtitleManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
-		quitGame();
-		return true;
-	}
-	return false;
+bool ZVision::quit(bool askFirst, bool streaming) {
+	debugC(1, kDebugEvent, "ZVision::quit()");
+	if (askFirst)
+		if (!_subtitleManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT), streaming, true)) {
+			debugC(1, kDebugEvent, "~ZVision::quit()");
+			return false;
+		}
+	//quitGame();
+	_breakMainLoop = true;
+	debugC(1, kDebugEvent, "~ZVision::quit()");
+	return true;
 }
 
 } // End of namespace ZVision
