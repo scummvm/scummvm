@@ -66,15 +66,17 @@ bool EventLoop::GetMessage(MSG &msg) {
 			msg = ev;
 			msg.hwnd = hWnd;
 
-			// For mouse messages, if the highlighted control
-			// changes, generate a WM_SETCURSOR event
-			if (isMouseMsg(ev) && CWnd::FromHandle(hWnd) != _highlightedWin) {
-				_highlightedWin = CWnd::FromHandle(hWnd);
-				PostMessage(
-					_modalDialog ? _modalDialog : _mainWindow,
-					WM_SETCURSOR, (WPARAM)hWnd,
-					MAKELPARAM(HTCLIENT, msg.message)
-				);
+			if (hWnd) {
+				// For mouse messages, if the highlighted control
+				// changes, generate a WM_SETCURSOR event
+				if (isMouseMsg(ev) && CWnd::FromHandle(hWnd) != _highlightedWin) {
+					_highlightedWin = CWnd::FromHandle(hWnd);
+					PostMessage(
+						_modalDialog ? _modalDialog : _mainWindow,
+						WM_SETCURSOR, (WPARAM)hWnd,
+						MAKELPARAM(HTCLIENT, msg.message)
+					);
+				}
 			}
 		}
 	}
@@ -128,7 +130,6 @@ void EventLoop::setMouseMessageWnd(Common::Event &ev, HWND &hWnd) {
 
 	CWnd *wnd = _modalDialog ? _modalDialog : _mainWindow;
 	hWnd = getMouseMessageWnd(ev, wnd);
-	assert(hWnd);
 }
 
 HWND EventLoop::getMouseMessageWnd(Common::Event &ev, CWnd *parent) {

@@ -629,6 +629,7 @@ public:
 		COLORREF _bkColor = 0;
 		int _bkMode = TRANSPARENT;
 		COLORREF _textColor = 0;
+		uint _textAlign = TA_LEFT;
 
 		uint getPenColor() const;
 

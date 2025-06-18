@@ -719,13 +719,30 @@ COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
 BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount) {
 	Graphics::ManagedSurface *dest = getSurface();
 	RECT r;
-	r.left = x;
-	r.top = y;
-	r.right = dest->w;
-	r.bottom = dest->h;
+
+	if ((_textAlign & 6) == TA_RIGHT) {
+		r.left = 0;
+		r.right = x;
+	} else if ((_textAlign & 6) == TA_CENTER) {
+		r.left = 0;
+		r.right = dest->w;
+	} else {
+		// Left align
+		r.left = x;
+		r.right = dest->w;
+	}
+
+	if ((_textAlign & 24) == TA_BOTTOM) {
+		r.top = 0;
+		r.bottom = y;
+	} else {
+		r.top = y;
+		r.bottom = dest->h;
+	}
 
 	CString str(lpszString, nCount);
-	drawText(str, &r, DT_SINGLELINE | DT_NOPREFIX);
+	drawText(str, &r, DT_SINGLELINE | DT_NOPREFIX |
+		_textAlign);
 	return true;
 }
 
@@ -942,7 +959,9 @@ UINT CDC::Impl::getTextAlign() const {
 }
 
 UINT CDC::Impl::setTextAlign(UINT nFlags) {
-	error("TODO");
+	UINT oldAlign = _textAlign;
+	_textAlign = nFlags;
+	return oldAlign;
 }
 
 BOOL CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
