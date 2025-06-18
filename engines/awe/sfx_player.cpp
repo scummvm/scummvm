@@ -201,7 +201,7 @@ void SfxPlayer::handleEvents() {
 
 void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 	SfxPattern pat;
-
+	memset(&pat, 0, sizeof(SfxPattern));
 	pat.note_1 = READ_BE_UINT16(data + 0);
 	pat.note_2 = READ_BE_UINT16(data + 2);
 	if (pat.note_1 != 0xFFFD) {

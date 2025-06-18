@@ -41,6 +41,7 @@ Engine::Engine(Sound *sound, DataType dataType, int partNum) :
 		_sound(sound), _script(sound, &_res, &_ply, &_vid),
 		_res(&_vid, dataType), _ply(&_res), _vid(&_res),
 		_partNum(partNum) {
+	sound->setPlayer(&_ply);
 }
 
 void Engine::setSystemStub(SystemStub *stub, Gfx *graphics) {
