@@ -1001,7 +1001,13 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 
 	for (GameObject* currentInventoryObject : inventoryItems) {
 		AnimFrame* icon = GetInventoryIcon(currentInventoryObject);
-		maxWidthInventoryIcon = MAX(maxWidthInventoryIcon, icon->Width);
+		if (icon->Width < 250) {
+			// TODO: One of the items taken in chapter 4 during one of the first three
+			// screens seems to have a faulty width which
+			// throws off the calculation
+			maxWidthInventoryIcon = MAX(maxWidthInventoryIcon, icon->Width);
+		}
+		
 		// TODO: Not sure if this one is needed
 		maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->Height);
 	}
