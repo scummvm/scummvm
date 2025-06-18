@@ -84,6 +84,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "betterd",			"The Better Dead Ratification" },
 	{ "beyondthewall",		"Beyond the Wall of Stars" },
 	{ "biblechamps", 		"Bible Champions: The Birth of Jesus" },
+	{ "bibleland",			"BibleLand.com" },
 	{ "bidule1", 			"La Boîte à bidules de l'oncle Ernest" },
 	{ "bidule2", 			"Le Bidulo Trésor de l'oncle Ernest" },
 	{ "bidule3", 			"Big Bang Bidule chez l'oncle Ernest" },
@@ -6494,6 +6495,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"INTRO.dxr", "09a572dd9a5346708a529eaa3a0df400", 432698, 500),
 	WINGAME2("biblechamps", "", "Start32.EXE", "ecf9a4bf5fa21a6918b8c2a26fbe500a", 1508419,
 								"INTRO.dxr", "09a572dd9a5346708a529eaa3a0df400", 432698, 500),
+
+	MACGAME2("bibleland", "", "BibleLand.com", "r:6b82167b30f99bdfa6ee64fbde0b83fd",  721237,
+							  "BIBLELND.Dxr",  "d:d87ade22f3c2900fba710275148421fd", 3062290, 501),
+	WINGAME2("bibleland", "", "BIBLE32.EXE",   "t:4b00f50d0ddbe6d7a260c48b304961e9", 1675109,
+							  "BIBLELND.Dxr",  "f:d87ade22f3c2900fba710275148421fd", 3062290, 500),
 
 	WINGAME1_l("bigmax", "nº10", "BIG32.EXE", "3460ad87d2ba57104e2810a77b53c220", 4539109, Common::PT_BRA, 500),
 
