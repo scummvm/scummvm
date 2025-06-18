@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-17 18:49+0000\n"
-"PO-Revision-Date: 2025-06-13 14:35+0000\n"
+"PO-Revision-Date: 2025-06-18 12:25+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -10977,40 +10977,28 @@ msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
 
 #: engines/sludge/keymapper_tables.h:34
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Debug keymappings"
-msgstr "ნაგულისხმევი კლავიატურის მალსახმობები"
+msgstr "კლავიატურის მალსახმობების გამართვა"
 
 #: engines/sludge/keymapper_tables.h:35
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Menu keymappings"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "მენიუს კლავიატურის მალსახმობები"
 
 #: engines/sludge/keymapper_tables.h:36
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Minigame keymappings"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "მინითამაშის კლავიატურის მალსახმობები"
 
 #: engines/sludge/keymapper_tables.h:46
-#, fuzzy
-#| msgid "Change game options"
 msgid "Change action"
-msgstr "თამაშის პარამეტრების შეცვლა"
+msgstr "ქმედების შეცვლა"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Speed up dialogue"
-msgstr "აირჩიეთ დიალოგი"
+msgstr "დიალოგის აჩქარება"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down virtual mouse"
 msgid "Slow down dialogue"
-msgstr "ვირტუალური თაგუნას შენელება"
+msgstr "დიალოგის შენელება"
 
 #: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
 #: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
@@ -11018,22 +11006,16 @@ msgstr "ვირტუალური თაგუნას შენელე�
 #: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
 #: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
 #: engines/sludge/keymapper_tables.h:529
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Move / Interact"
-msgstr "გადაადგილება / მონიშვნა"
+msgstr "გადაადგილება / ურთიერთქმედება"
 
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Load auto save"
-msgstr "უსახელო ავტოშენახვა"
+msgstr "ავტოშენახვის ჩატვირთვა"
 
 #: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
 msgid "Load save"
-msgstr "თამაშის ჩატვირთვა"
+msgstr "შენახულის ჩატვირთვა"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
@@ -11046,71 +11028,51 @@ msgid "DEBUG: Show boxes"
 msgstr ""
 
 #: engines/sludge/keymapper_tables.h:237
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory / Examine"
-msgstr "ინვენტარი"
+msgstr "ინვენტარი / შემოწმება"
 
 #: engines/sludge/keymapper_tables.h:281
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Examine / Skip dialogue"
-msgstr "დიალოგის გამოტოვება"
+msgstr "შემოწმება / დიალოგის გამოტოვება"
 
 #: engines/sludge/keymapper_tables.h:287 engines/sludge/keymapper_tables.h:398
 #: engines/sludge/keymapper_tables.h:522
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Pause / Skip cutscene"
-msgstr "საწყისი ეკრანის გამოტოვება"
+msgstr "შეჩერება / საწყისი ეკრანის გამოტოვება"
 
 #: engines/sludge/keymapper_tables.h:328
 msgid "Smell"
-msgstr ""
+msgstr "სუნი"
 
 #: engines/sludge/keymapper_tables.h:338
 msgid "Consume"
-msgstr ""
+msgstr "შთანთქმა"
 
 #: engines/sludge/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast earth spell"
-msgstr "შელოცვის წარმოთქმა"
+msgstr "მიწის შელოცვის წარმოთქმა"
 
 #: engines/sludge/keymapper_tables.h:367
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast air spell"
-msgstr "შელოცვის წარმოთქმა"
+msgstr "ჰაერის შელოცვის წარმოთქმა"
 
 #: engines/sludge/keymapper_tables.h:373
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast fire spell"
-msgstr "შელოცვის წარმოთქმა"
+msgstr "ცეცხლის შელოცვის წარმოთქმა"
 
 #: engines/sludge/keymapper_tables.h:379
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast water spell"
-msgstr "შელოცვის წარმოთქმა"
+msgstr "წყლის შელოცვის წარმოთქმა"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip dialogue"
-msgstr "გადასვლა შემდეგ დიალოგზე"
+msgstr "გადაადგილება / ურთიერთქმედება / დიალოგის გამოტოვება"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Inventory / Skip dialogue"
-msgstr "დიალოგის გამოტოვება"
+msgstr "ინვენტარი / დიალოგის გამოტოვება"
 
 #: engines/sludge/keymapper_tables.h:573
-#, fuzzy
-#| msgid "Pause game"
 msgid "Pause Game"
 msgstr "თამაშის შეჩერება"
 
@@ -12055,8 +12017,6 @@ msgid "Draw Weapon / Combat"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:48
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Menu"
 msgstr "თამაშის მენიუ"
 
@@ -12066,55 +12026,41 @@ msgstr "უკან გადასვლა"
 
 #: engines/ultima/ultima8/metaengine.cpp:53
 #: engines/ultima/ultima8/metaengine.cpp:109
-#, fuzzy
-#| msgid "Move up"
 msgid "Move Up"
 msgstr "აწევა"
 
 #: engines/ultima/ultima8/metaengine.cpp:54
 #: engines/ultima/ultima8/metaengine.cpp:110
-#, fuzzy
-#| msgid "Move down"
 msgid "Move Down"
-msgstr "ქვემოთ ჩამოწევა"
+msgstr "ჩამოწევა"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Highlight Items"
-msgstr "შემდეგი დიალოგის გამოკვეთა"
+msgstr "ნივთების გამოკვეთა"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Use Bedroll"
-msgstr ""
+msgstr "დახვეული ქვეშაგების გამოყენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Backspace"
 msgid "Open Backpack"
-msgstr "Backspace"
+msgstr "რუგზაკის გახსნა"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
-#, fuzzy
-#| msgid "Use RGB rendering"
 msgid "Use Keyring"
-msgstr "RGB რენდერის გამოყენება"
+msgstr "ბრასლეტის გამოყენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
-#, fuzzy
-#| msgid "Open map"
 msgid "Open Minimap"
-msgstr "რუკის გახსნა"
+msgstr "მინირუკის გახსნა"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
 msgid "Use Recall"
-msgstr ""
+msgstr "გახსენების გამოყენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Open Inventory & Statistics"
-msgstr "ინვენტარის გახსნა"
+msgstr "ინვენტარის და სტატისტიკის გახსნა"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
@@ -12134,16 +12080,12 @@ msgid "Cycle through Weapon Inventory"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through stretch modes"
 msgid "Cycle through Item Inventory"
-msgstr "გადართვა გაწელვის რეჟიმებს შორის"
+msgstr "გადართვა ინვენტარის ნივთებს შორის"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
-#, fuzzy
-#| msgid "Inventory"
 msgid "Use Inventory Item"
-msgstr "ინვენტარი"
+msgstr "ინვენტარის ნივთის გამოყენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use Medikit"
@@ -12155,35 +12097,27 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:84
 msgid "Detonate Bomb"
-msgstr ""
+msgstr "ბომბის დეტონაცია"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
-#, fuzzy
-#| msgid "Drop page"
 msgid "Drop Weapon"
-msgstr "გვერდის დაგდება"
+msgstr "იარაღის დაგდება"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Search / Select Item"
-msgstr "აირჩიეთ თემა"
+msgstr "საგნის ძებნა / არჩევა"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
-#, fuzzy
-#| msgid "Action"
 msgid "Use Selection"
-msgstr "ქმედება"
+msgstr "მონიშნულის გამოყენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Grab Items"
-msgstr ""
+msgstr "ნივთების აღება"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Next action"
 msgid "Fire Weapon"
-msgstr "შემდეგი ქმედება"
+msgstr "იარაღის სროლა"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
 msgid "Center screen on Silencer"
@@ -12194,82 +12128,60 @@ msgid "Jump / Roll / Crouch"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:93
-#, fuzzy
-#| msgid "Shorty mode"
 msgid "Short Jump"
-msgstr "რეჟიმი Shorty"
+msgstr "მოკლე ნახტომი"
 
 #: engines/ultima/ultima8/metaengine.cpp:94
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Sidestep Left"
-msgstr "გასრიალება მარცხნივ"
+msgstr "ნაბიჯი მარცხნივ"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Sidestep Right"
-msgstr "გასრიალება მარჯვნივ"
+msgstr "ნაბიჯი მარჯვნივ"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
-#, fuzzy
-#| msgid "Face Forward"
 msgid "Step Forward"
-msgstr "სახე წინ"
+msgstr "ნაბიჯი წინ"
 
 #: engines/ultima/ultima8/metaengine.cpp:97
-#, fuzzy
-#| msgid "Step back"
 msgid "Step Back"
 msgstr "ნაბიჯი უკან"
 
 #: engines/ultima/ultima8/metaengine.cpp:98
-#, fuzzy
-#| msgid "Roll left"
 msgid "Roll Left"
 msgstr "გადაბრუნება მარცხნივ"
 
 #: engines/ultima/ultima8/metaengine.cpp:99
-#, fuzzy
-#| msgid "Roll right"
 msgid "Roll Right"
 msgstr "გადაბრუნება მარჯვნივ"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Crouch"
-msgstr "საათის გადართვა"
+msgstr "მიწაზე გართხმის გადართვა"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
 msgid "Side Step / Advance / Retreat"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:106
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Clipping"
-msgstr "საათის გადართვა"
+msgstr "ამოჭრის გადართვა"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
-msgstr ""
+msgstr "ასვლა"
 
 #: engines/ultima/ultima8/metaengine.cpp:108
 msgid "Descend"
-msgstr ""
+msgstr "ჩასვლა"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show Touching Items"
-msgstr "მინიშნებების ჩვენება"
+msgstr "შეხებული ნივთების ჩვენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show Editor Items"
-msgstr "ციტატების ჩვენება"
+msgstr "რედაქტორის ნივთების ჩვენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Decrement Map Sort Order"
@@ -12280,10 +12192,8 @@ msgid "Increment Map Sort Order"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:123
-#, fuzzy
-#| msgid "Toggle panel style"
 msgid "Toggle Frame By Frame"
-msgstr "პანელის სტილის გადართვა"
+msgstr "კადრკადრ ჩვენების გადართვა"
 
 #: engines/ultima/ultima8/metaengine.cpp:124
 msgid "Advance Frame"
@@ -12294,10 +12204,8 @@ msgid "Toggle Avatar In Stasis"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:126
-#, fuzzy
-#| msgid "Image Viewer"
 msgid "Show Shape Viewer"
-msgstr "სურათების გალერეა"
+msgstr "ფორმის ვიზუალიზაციის ჩვენება"
 
 #: engines/ultima/ultima8/metaengine.cpp:136
 msgid "Ultima VIII"
