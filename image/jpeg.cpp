@@ -57,11 +57,7 @@ JPEGDecoder::~JPEGDecoder() {
 }
 
 Graphics::PixelFormat JPEGDecoder::getByteOrderRgbPixelFormat() const {
-#ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#else
-	return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#endif
+	return Graphics::PixelFormat::createFormatRGB24();
 }
 
 const Graphics::Surface *JPEGDecoder::getSurface() const {

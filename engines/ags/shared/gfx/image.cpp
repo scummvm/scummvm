@@ -133,11 +133,7 @@ BITMAP *load_bitmap(PACKFILE *pf, color *pal) {
 }
 
 int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
-#ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#else
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#endif
+	const Graphics::PixelFormat requiredFormat_3byte = Graphics::PixelFormat::createFormatBGR24();
 	Graphics::ManagedSurface surface(bmp->w, bmp->h, requiredFormat_3byte);
 
 	Graphics::ManagedSurface &src = bmp->getSurface();

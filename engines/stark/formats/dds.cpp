@@ -179,11 +179,7 @@ bool DDS::detectFormat(const DDSPixelFormat &format) {
 	           (format.bitCount == 24) &&
 	           (format.rBitMask == 0x00FF0000) && (format.gBitMask == 0x0000FF00) &&
 	           (format.bBitMask == 0x000000FF)) {
-#ifdef SCUMM_BIG_ENDIAN
-		_format = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#else
-		_format = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#endif
+		_format = Graphics::PixelFormat::createFormatBGR24();
 		return true;
 	} else {
 		warning("Unsupported pixel format (%X, %X, %d, %X, %X, %X, %X) for %s",

@@ -749,11 +749,7 @@ OldTransparentSurface *OldTransparentSurface::scale(int16 newWidth, int16 newHei
 static int save_bitmap(const char *path, const Graphics::ManagedSurface *surf) {
 	Common::FSNode fileNode(path);
 	Common::SeekableWriteStream *out = fileNode.createWriteStream();
-#ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#else
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#endif
+	const Graphics::PixelFormat requiredFormat_3byte = Graphics::PixelFormat::createFormatBGR24();
 	Graphics::ManagedSurface surface(surf->w, surf->h, requiredFormat_3byte);
 
 	// Copy from the source surface without alpha transparency

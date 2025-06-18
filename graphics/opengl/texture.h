@@ -163,11 +163,7 @@ public:
 	GLuint getGLTexture() const { return _glTexture; }
 
 	static inline const Graphics::PixelFormat getRGBPixelFormat() {
-#ifdef SCUMM_BIG_ENDIAN
-		return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#else
-		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#endif
+		return Graphics::PixelFormat::createFormatRGB24();
 	}
 
 	static inline const Graphics::PixelFormat getRGBAPixelFormat() {

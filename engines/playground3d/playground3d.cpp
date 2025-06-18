@@ -58,11 +58,10 @@ bool Playground3dEngine::hasFeature(EngineFeature f) const {
 void Playground3dEngine::genTextures() {
 #if defined(SCUMM_LITTLE_ENDIAN)
 	Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 0, 8, 16, 0);
 #else
 	Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 16, 8, 0, 0);
 #endif
+	Graphics::PixelFormat pixelFormatRGB = Graphics::PixelFormat::createFormatRGB24();
 	Graphics::PixelFormat pixelFormatRGB565(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Graphics::PixelFormat pixelFormatRGB5551(2, 5, 5, 5, 1, 11, 6, 1, 0);
 	Graphics::PixelFormat pixelFormatRGB4444(2, 4, 4, 4, 4, 12, 8, 4, 0);

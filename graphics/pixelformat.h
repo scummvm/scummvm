@@ -185,6 +185,24 @@ struct PixelFormat {
 		return PixelFormat(1, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
+	/** Define an endian-aware RGB24 pixel format. */
+	static inline PixelFormat createFormatRGB24() {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#else
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#endif
+	}
+
+	/** Define an endian-aware BGR24 pixel format. */
+	static inline PixelFormat createFormatBGR24() {
+#ifdef SCUMM_BIG_ENDIAN
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
+	}
+
 	/** Check if two pixel formats are the same */
 	inline bool operator==(const PixelFormat &fmt) const {
 		return bytesPerPixel == fmt.bytesPerPixel &&

@@ -50,11 +50,10 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 }
 
 static void loadImage(Image::ImageDecoder *decoder, Texture *t) {
+	const Graphics::PixelFormat format_3bpp = Graphics::PixelFormat::createFormatRGB24();
 #ifdef SCUMM_BIG_ENDIAN
-	const Graphics::PixelFormat format_3bpp(3, 8, 8, 8, 0, 16, 8,  0, 0);
 	const Graphics::PixelFormat format_4bpp(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #else
-	const Graphics::PixelFormat format_3bpp(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	const Graphics::PixelFormat format_4bpp(4, 8, 8, 8, 8, 0, 8, 16, 24);
 #endif
 
