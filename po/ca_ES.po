@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-19 22:00+0000\n"
-"PO-Revision-Date: 2025-06-19 20:13+0000\n"
+"PO-Revision-Date: 2025-06-19 22:04+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -11541,10 +11541,8 @@ msgid "Cast water spell"
 msgstr "Llança encanteri d'aigua"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip dialogue"
-msgstr "Ves al diàleg següent"
+msgstr "Mou / Interactua / Omet el diàleg"
 
 #: engines/sludge/keymapper_tables.h:516
 #, fuzzy
