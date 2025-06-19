@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 22:00+0000\n"
+"POT-Creation-Date: 2025-06-19 22:04+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -991,7 +991,7 @@ msgstr "图形界面"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
 msgstr "互动"
 
@@ -6290,6 +6290,7 @@ msgstr ""
 #: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
 #: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
 #: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Game Options"
 msgid "Default keymappings"
@@ -11567,7 +11568,7 @@ msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
 
-#: engines/supernova/metaengine.cpp:219
+#: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
 #, fuzzy
 #| msgid "Game Options"
 msgid "Cutscene keymappings"
@@ -11625,6 +11626,7 @@ msgstr "向下"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
+#: engines/voyeur/metaengine.cpp:198 engines/voyeur/metaengine.cpp:229
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
@@ -11855,7 +11857,7 @@ msgstr "跳过自动保存"
 msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
-#: engines/toon/metaengine.cpp:98
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 #, fuzzy
 #| msgid "Show hints"
 msgid "Skip intro"
@@ -12866,14 +12868,50 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 
 #. I18N: lockout is code to start the game
-#: engines/voyeur/metaengine.cpp:43
+#: engines/voyeur/metaengine.cpp:47
 #, fuzzy
 #| msgid "Enable storage"
 msgid "Enable lockout system"
 msgstr "啟用儲存空間"
 
-#: engines/voyeur/metaengine.cpp:44
+#: engines/voyeur/metaengine.cpp:48
 msgid "Require a lockout code to start the game."
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:186
+#, fuzzy
+#| msgid "Game Options"
+msgid "Room keymappings"
+msgstr "遊戲選項"
+
+#: engines/voyeur/metaengine.cpp:187
+#, fuzzy
+#| msgid "Game Options"
+msgid "Camera keymappings"
+msgstr "遊戲選項"
+
+#: engines/voyeur/metaengine.cpp:188
+#, fuzzy
+#| msgid "Game Options"
+msgid "Intro keymappings"
+msgstr "遊戲選項"
+
+#: engines/voyeur/metaengine.cpp:204
+#, fuzzy
+#| msgid "Speech"
+msgid "Skip scene"
+msgstr "语音"
+
+#: engines/voyeur/metaengine.cpp:211
+msgid "View evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:217
+msgid "Exit / Put away evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:223
+msgid "Enter room"
 msgstr ""
 
 #: engines/wintermute/metaengine.cpp:42

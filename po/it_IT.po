@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 22:00+0000\n"
+"POT-Creation-Date: 2025-06-19 22:04+0000\n"
 "PO-Revision-Date: 2025-06-19 10:53+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -1013,7 +1013,7 @@ msgstr "Interfaccia"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
 msgstr "Interazione"
 
@@ -6977,6 +6977,7 @@ msgstr "Tasti Generali"
 #: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
 #: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
 #: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Mappe tasti predefinite"
 
@@ -12499,7 +12500,7 @@ msgstr ""
 "Rimuove alcune azioni ripetitive e aggiunge la possibilità di cambiare i "
 "verbi usando la tastiera"
 
-#: engines/supernova/metaengine.cpp:219
+#: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
 #, fuzzy
 #| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
@@ -12561,6 +12562,7 @@ msgstr "Ruota verso il basso"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
+#: engines/voyeur/metaengine.cpp:198 engines/voyeur/metaengine.cpp:229
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
@@ -12808,7 +12810,7 @@ msgstr "Salta spostamento a cavallo"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Variante del font non presente nel file dati del motore '%s'."
 
-#: engines/toon/metaengine.cpp:98
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Salta introduzione"
 
@@ -13760,13 +13762,51 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Rilevato un errore sconosciuto durante il caricamento del salvataggio."
 
 #. I18N: lockout is code to start the game
-#: engines/voyeur/metaengine.cpp:43
+#: engines/voyeur/metaengine.cpp:47
 msgid "Enable lockout system"
 msgstr "Abilita codice di blocco"
 
-#: engines/voyeur/metaengine.cpp:44
+#: engines/voyeur/metaengine.cpp:48
 msgid "Require a lockout code to start the game."
 msgstr "Richiede un codice di sicurezza all'avvio del gioco."
+
+#: engines/voyeur/metaengine.cpp:186
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Room keymappings"
+msgstr "Mappature tasti gioco"
+
+#: engines/voyeur/metaengine.cpp:187
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Camera keymappings"
+msgstr "Mappature tasti gioco"
+
+#: engines/voyeur/metaengine.cpp:188
+#, fuzzy
+#| msgid "Index keymappings"
+msgid "Intro keymappings"
+msgstr "Mappature tasti indice"
+
+#: engines/voyeur/metaengine.cpp:204
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Skip scene"
+msgstr "Salta scena di intermezzo"
+
+#: engines/voyeur/metaengine.cpp:211
+msgid "View evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:217
+msgid "Exit / Put away evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:223
+#, fuzzy
+#| msgid "Enter"
+msgid "Enter room"
+msgstr "Invio"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 22:00+0000\n"
+"POT-Creation-Date: 2025-06-19 22:04+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1024,7 +1024,7 @@ msgstr "ΓΔΧ"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
 msgstr "Αλληλεπίδραση"
 
@@ -7101,6 +7101,7 @@ msgstr "Γενικά Πλήκτρα"
 #: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
 #: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
 #: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Προκαθορισμένες αντιστοιχίσεις"
 
@@ -12736,7 +12737,7 @@ msgstr ""
 "Αφαιρεί κάποιες επαναλαμβανόμενες ενέργειες, προσθέτει δυνατότητα εναλλαγής "
 "ρημάτων από το πληκτρολόγιο"
 
-#: engines/supernova/metaengine.cpp:219
+#: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
 #, fuzzy
 #| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
@@ -12796,6 +12797,7 @@ msgstr "Περιστροφή προς τα κάτω"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
+#: engines/voyeur/metaengine.cpp:198 engines/voyeur/metaengine.cpp:229
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
@@ -13047,7 +13049,7 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 "H παραλλαγή γραμματοσειράς δεν υπάρχει στο αρχείο δεδομένων '%s' της μηχανής."
 
-#: engines/toon/metaengine.cpp:98
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Παράκαμψη εισαγωγής"
 
@@ -14064,13 +14066,51 @@ msgstr ""
 "παιχνιδιού."
 
 #. I18N: lockout is code to start the game
-#: engines/voyeur/metaengine.cpp:43
+#: engines/voyeur/metaengine.cpp:47
 msgid "Enable lockout system"
 msgstr "Ενεργοποίηση συστήματος κλειδώματος"
 
-#: engines/voyeur/metaengine.cpp:44
+#: engines/voyeur/metaengine.cpp:48
 msgid "Require a lockout code to start the game."
 msgstr "Απαιτεί ένα κωδικό ασφαλείας για την έναρξη του παιχνιδιού."
+
+#: engines/voyeur/metaengine.cpp:186
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Room keymappings"
+msgstr "Πλήκτρα παιχνιδιού"
+
+#: engines/voyeur/metaengine.cpp:187
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Camera keymappings"
+msgstr "Πλήκτρα παιχνιδιού"
+
+#: engines/voyeur/metaengine.cpp:188
+#, fuzzy
+#| msgid "Index keymappings"
+msgid "Intro keymappings"
+msgstr "Πλήκτρα επιλογής"
+
+#: engines/voyeur/metaengine.cpp:204
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Skip scene"
+msgstr "Παράλειψη ταινίας"
+
+#: engines/voyeur/metaengine.cpp:211
+msgid "View evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:217
+msgid "Exit / Put away evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:223
+#, fuzzy
+#| msgid "Enter"
+msgid "Enter room"
+msgstr "Πλήκτρο Enter"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"

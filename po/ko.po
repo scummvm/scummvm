@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 22:00+0000\n"
+"POT-Creation-Date: 2025-06-19 22:04+0000\n"
 "PO-Revision-Date: 2025-06-16 18:26+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1003,7 +1003,7 @@ msgstr "GUI"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
 msgstr "소통"
 
@@ -6821,6 +6821,7 @@ msgstr "일반 키"
 #: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
 #: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
 #: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "기본 키맵핑"
 
@@ -12181,7 +12182,7 @@ msgid ""
 msgstr ""
 "일부 반복적인 작업을 제거하고,키보드로 버브를 변경할 수 있는 기능을 추가함"
 
-#: engines/supernova/metaengine.cpp:219
+#: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
 #, fuzzy
 #| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
@@ -12243,6 +12244,7 @@ msgstr "아래로 회전"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
+#: engines/voyeur/metaengine.cpp:198 engines/voyeur/metaengine.cpp:229
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
@@ -12478,7 +12480,7 @@ msgstr "타는 것 건너뛰기"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "'%s' 엔진 데이터 파일에 글꼴 변형이 없습니다."
 
-#: engines/toon/metaengine.cpp:98
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "인트로 건너뛰기"
 
@@ -13426,13 +13428,51 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "저장된 게임을 불러오는 동안 알 수 없는 오류가 발생했습니다."
 
 #. I18N: lockout is code to start the game
-#: engines/voyeur/metaengine.cpp:43
+#: engines/voyeur/metaengine.cpp:47
 msgid "Enable lockout system"
 msgstr "잠금 시스템 활성화"
 
-#: engines/voyeur/metaengine.cpp:44
+#: engines/voyeur/metaengine.cpp:48
 msgid "Require a lockout code to start the game."
 msgstr "게임을 시작하려면 잠금 코드가 필요합니다."
+
+#: engines/voyeur/metaengine.cpp:186
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Room keymappings"
+msgstr "게임 키맵핑"
+
+#: engines/voyeur/metaengine.cpp:187
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Camera keymappings"
+msgstr "게임 키맵핑"
+
+#: engines/voyeur/metaengine.cpp:188
+#, fuzzy
+#| msgid "Index keymappings"
+msgid "Intro keymappings"
+msgstr "색인 키맵핑"
+
+#: engines/voyeur/metaengine.cpp:204
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Skip scene"
+msgstr "컷씬 건너뛰기"
+
+#: engines/voyeur/metaengine.cpp:211
+msgid "View evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:217
+msgid "Exit / Put away evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:223
+#, fuzzy
+#| msgid "Enter"
+msgid "Enter room"
+msgstr "엔터"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 22:00+0000\n"
+"POT-Creation-Date: 2025-06-19 22:04+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -991,7 +991,7 @@ msgstr "ממשק משתמש"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
 msgstr "פעולה"
 
@@ -6595,6 +6595,7 @@ msgstr "כללי"
 #: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
 #: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
 #: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -12335,7 +12336,7 @@ msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr "מסיר כמה פעולות שחוזרות על עצמן, מוסיף אפשרות לשנות פעלים לפי מקלדת"
 
-#: engines/supernova/metaengine.cpp:219
+#: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
 #, fuzzy
 #| msgid "Game Options"
 msgid "Cutscene keymappings"
@@ -12395,6 +12396,7 @@ msgstr "סובב"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
+#: engines/voyeur/metaengine.cpp:198 engines/voyeur/metaengine.cpp:229
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
@@ -12652,7 +12654,7 @@ msgstr "דילוג על שורה"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "גרסת גופן לא קיימת בקובץ נתוני המנוע של '%s'."
 
-#: engines/toon/metaengine.cpp:98
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 #, fuzzy
 #| msgid "Skip line"
 msgid "Skip intro"
@@ -13742,15 +13744,53 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "אירעה שגיאה פנימית בעת כתיבת נתוני המשחק שנשמר"
 
 #. I18N: lockout is code to start the game
-#: engines/voyeur/metaengine.cpp:43
+#: engines/voyeur/metaengine.cpp:47
 #, fuzzy
 #| msgid "Enable storage"
 msgid "Enable lockout system"
 msgstr "הפעלת אחסון"
 
-#: engines/voyeur/metaengine.cpp:44
+#: engines/voyeur/metaengine.cpp:48
 msgid "Require a lockout code to start the game."
 msgstr ""
+
+#: engines/voyeur/metaengine.cpp:186
+#, fuzzy
+#| msgid "Game Options"
+msgid "Room keymappings"
+msgstr "א~פ~שרויות משחק"
+
+#: engines/voyeur/metaengine.cpp:187
+#, fuzzy
+#| msgid "Game Options"
+msgid "Camera keymappings"
+msgstr "א~פ~שרויות משחק"
+
+#: engines/voyeur/metaengine.cpp:188
+#, fuzzy
+#| msgid "Game Options"
+msgid "Intro keymappings"
+msgstr "א~פ~שרויות משחק"
+
+#: engines/voyeur/metaengine.cpp:204
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Skip scene"
+msgstr "דילוג על סרטוני מעבר"
+
+#: engines/voyeur/metaengine.cpp:211
+msgid "View evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:217
+msgid "Exit / Put away evidence"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:223
+#, fuzzy
+#| msgid "Enter"
+msgid "Enter room"
+msgstr "להיכנס"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
