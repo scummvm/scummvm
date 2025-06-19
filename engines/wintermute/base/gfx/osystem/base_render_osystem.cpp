@@ -242,17 +242,11 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 
 	modTargetRect(&fillRect);
 
-	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
-
-	Graphics::Surface surf;
-	surf.create((uint16)fillRect.width(), (uint16)fillRect.height(), _renderSurface->format);
-	Common::Rect sizeRect(fillRect);
-	sizeRect.translate(-fillRect.top, -fillRect.left);
-	surf.fillRect(fillRect, col);
+	Common::Rect sizeRect(fillRect.width(), fillRect.height());
 	Graphics::TransformStruct temp = Graphics::TransformStruct();
-	temp._alphaDisable = false;
-	drawSurface(nullptr, &surf, &sizeRect, &fillRect, temp);
-	surf.free();
+	temp._rgbaMod = MS_ARGB(a, r, g, b);
+	temp._alphaDisable = (a == 0xff);
+	drawSurface(nullptr, nullptr, &sizeRect, &fillRect, temp);
 }
 
 Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
