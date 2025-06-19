@@ -124,12 +124,12 @@ BOOL UnhookWindowsHookEx(HHOOK hhk) {
 }
 
 LRESULT CallNextHookEx(HHOOK hhk, int nCode,
-                       WPARAM wParam, LPARAM lParam) {
+        WPARAM wParam, LPARAM lParam) {
 	error("TODO: CallNextHookEx");
 }
 
 UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT, DWORD)) {
+		void (CALLBACK * lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
 	error("TODO: SetTimer");
 }
 

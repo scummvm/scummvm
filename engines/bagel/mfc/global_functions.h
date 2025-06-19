@@ -110,7 +110,7 @@ extern BOOL UnhookWindowsHookEx(HHOOK hhk);
 extern LRESULT CallNextHookEx(HHOOK hhk, int nCode,
                               WPARAM wParam, LPARAM lParam);
 extern UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-                         void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
+    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
 extern BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
 extern void Sleep(UINT milli);
 extern DWORD GetTickCount();
