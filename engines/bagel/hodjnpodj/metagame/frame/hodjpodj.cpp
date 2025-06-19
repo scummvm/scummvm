@@ -76,16 +76,17 @@ VOID FreeBFCInfo(CBfcMgr *);
 
 using GrandTour::LPGRANDTRSTRUCT;
 
-typedef HWND (FAR PASCAL *FPDLLFUNCT)(HWND, LPGAMESTRUCT);
 typedef HWND (FAR PASCAL *FPZOOMFUNCT)(HWND, BOOL);
 typedef HWND (FAR PASCAL *FPGTFUNCT)(HWND, LPGRANDTRSTRUCT);
 typedef HWND (FAR PASCAL *FPMETAFUNCT)(HWND, CBfcMgr *, BOOL);
 typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO)(void);
 
 static FPGETFREEMEMINFO lpfnGetFreeMemInfo;
+// Flags when a .dll in the original is loaded
+static bool dllLoaded;
+
 
 HINSTANCE   hExeInst = nullptr;
-HINSTANCE   hDllInst = nullptr;
 HINSTANCE   hMetaInst = nullptr;
 
 BOOL        bMetaLoaded = FALSE;
@@ -198,6 +199,27 @@ static const CREDITS stCredits[MAX_CREDITS] = {
 void LoadFloatLib();
 
 /////////////////////////////////////////////////////////////////////////////
+
+
+// CHodjPodjWindow message map:
+// Associate messages with member functions.
+//
+BEGIN_MESSAGE_MAP(CHodjPodjWindow, CFrameWnd)
+	//{{AFX_MSG_MAP( CHodjPodjWindow )
+	ON_WM_DESTROY()
+	ON_WM_PAINT()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_RBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
+	ON_WM_CLOSE()
+	ON_WM_ERASEBKGND()
+	ON_WM_PARENTNOTIFY()
+	ON_WM_ACTIVATE()
+	ON_WM_KEYDOWN()
+	ON_MESSAGE(MM_MCINOTIFY, CHodjPodjWindow::OnMCINotify)
+	//    ON_MESSAGE( MM_MCINOTIFY, CHodjPodjWindow::OnMMNotify)
+		//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
 
 /*****************************************************************
  *
@@ -436,7 +458,7 @@ BOOL CHodjPodjWindow::CheckLowMemory(void) {
 void CHodjPodjWindow::OnPaint() {
 	CDC *pDC;
 
-	if (hDllInst > HINSTANCE_ERROR) {
+	if (dllLoaded) {
 		PAINTSTRUCT lpPaint;
 
 		Invalidate(FALSE);
@@ -932,15 +954,11 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 	StopBackgroundMidi();
 
-	if ((CMgStatic::cGameTable[ nWhichDLL ].m_lpszDllName != nullptr) &&
-	        (CMgStatic::cGameTable[ nWhichDLL ].m_lpszApiName != nullptr)) {
-
+	if (CMgStatic::cGameTable[ nWhichDLL ].initFn != nullptr) {
 		FPDLLFUNCT  lpfnGame;
-
 		Common::strcpy_s(chMiniPath, CMgStatic::cGameTable[ nWhichDLL ].m_lpszDllPath);
 
 		if (bReturnToZoom) {
-
 			if (lpGameStruct != nullptr) {
 				delete lpGameStruct;
 				lpGameStruct = nullptr;
@@ -957,12 +975,10 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 			lpGameStruct->bPlayingHodj = TRUE;
 		}
 
-		if ((CMgStatic::cGameTable[ nWhichDLL ].m_bLocalDLL && PositionAtHomePath()) ||
-		        (PositionAtMiniPath(nWhichDLL) && FileExists(CMgStatic::cGameTable[ nWhichDLL ].m_lpszDllName))) {
-			hDllInst = LoadLibrary(CMgStatic::cGameTable[ nWhichDLL ].m_lpszDllName);
+		if (CMgStatic::cGameTable[nWhichDLL].initFn) {
+			if (dllLoaded) {
+				lpfnGame = CMgStatic::cGameTable[nWhichDLL].initFn;
 
-			if (hDllInst > HINSTANCE_ERROR) {
-				lpfnGame = (FPDLLFUNCT)GetProcAddress(hDllInst, CMgStatic::cGameTable[ nWhichDLL ].m_lpszApiName);
 				if ((lpfnGame != nullptr) && PositionAtMiniPath(nWhichDLL)) {
 					if (bReturnToZoom) {
 						hwndGame = lpfnGame(m_hWnd, lpGameStruct);
@@ -1099,10 +1115,12 @@ LPARAM CHodjPodjWindow::UpdateChallengePhase(LPARAM lParam) {
 			int nGameIndex;
 			do {
 				nGameIndex = brand() % (MG_GAME_COUNT - 1);
-			} while (CMgStatic::cGameTable[nGameIndex].m_lpszDllName == nullptr);
+			} while (CMgStatic::cGameTable[nGameIndex].initFn == nullptr);
+
 			nGameID = (LPARAM)(nGameIndex + MG_GAME_BASE);
+
 			{
-				C1ButtonDialog  cMsgBox((CWnd *)this, pGamePalette, "&OK", "Podj chooses :", " ", CMgStatic::cGameTable[nGameIndex].m_lpszGameName);
+				C1ButtonDialog cMsgBox((CWnd *)this, pGamePalette, "&OK", "Podj chooses :", " ", CMgStatic::cGameTable[nGameIndex].m_lpszGameName);
 				cMsgBox.DoModal();
 			}
 			goto PHASE2;
@@ -1640,8 +1658,7 @@ void CHodjPodjWindow::OnParentNotify(UINT msg, LPARAM lParam) {
 
 		nGameReturn = lParam;
 
-		if (hDllInst > HINSTANCE_ERROR) {
-
+		if (dllLoaded) {
 			(void) PositionAtHomePath();
 
 			if (nGameReturn < 0) {
@@ -1677,7 +1694,7 @@ void CHodjPodjWindow::OnParentNotify(UINT msg, LPARAM lParam) {
 			}
 
 			LoadNewDLL(nGameReturn);
-			if (hDllInst == 0) {
+			if (!dllLoaded) {
 				UpdateWindow();
 				if (bMainDlg)
 					PostMessage(WM_COMMAND, IDC_MAINDLG);
@@ -1766,7 +1783,7 @@ void CHodjPodjWindow::OnDestroy() {
 
 
 void CHodjPodjWindow::OnClose() {
-	if (hDllInst > HINSTANCE_ERROR) {
+	if (dllLoaded) {
 		if (hwndGame != nullptr)
 			MFC::SetActiveWindow(hwndGame);
 		return;
@@ -2290,6 +2307,8 @@ VOID CHodjPodjWindow::ShowCredits(VOID) {
  ****************************************************************/
 
 BOOL CTheApp::InitInstance() {
+	dllLoaded = false;
+
 	m_pMainWnd = new CHodjPodjWindow();
 	m_pMainWnd->ShowWindow(SW_SHOWNORMAL);
 	m_pMainWnd->UpdateWindow();
@@ -2325,12 +2344,11 @@ BOOL CTheApp::InitInstance() {
  *
  ****************************************************************/
 int CTheApp::ExitInstance() {
-	if (hDllInst > HINSTANCE_ERROR) {
+	if (dllLoaded) {
 		if (hwndGame != nullptr)
 			SendMessage(hwndGame, WM_CLOSE, 0, 0L);
 
-		FreeLibrary(hDllInst);
-		hDllInst = nullptr;
+		dllLoaded = false;
 	}
 
 	if (hMetaInst > HINSTANCE_ERROR) {
@@ -2346,27 +2364,6 @@ int CTheApp::ExitInstance() {
 
 	return (0);
 }
-
-
-// CHodjPodjWindow message map:
-// Associate messages with member functions.
-//
-BEGIN_MESSAGE_MAP(CHodjPodjWindow, CFrameWnd)
-	//{{AFX_MSG_MAP( CHodjPodjWindow )
-	ON_WM_DESTROY()
-	ON_WM_PAINT()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_RBUTTONDOWN()
-	ON_WM_MOUSEMOVE()
-	ON_WM_CLOSE()
-	ON_WM_ERASEBKGND()
-	ON_WM_PARENTNOTIFY()
-	ON_WM_ACTIVATE()
-	ON_WM_KEYDOWN()
-	ON_MESSAGE(MM_MCINOTIFY, CHodjPodjWindow::OnMCINotify)
-//    ON_MESSAGE( MM_MCINOTIFY, CHodjPodjWindow::OnMMNotify)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
 
 } // namespace Frame
 } // namespace Metagame

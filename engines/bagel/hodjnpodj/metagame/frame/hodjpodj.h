@@ -62,8 +62,8 @@ class CHodjPodjWindow : public CFrameWnd {
 private:
 	CMovieWindow pMovie;
 	CBitmap *m_pCurrentBmp;
-	UINT     m_nFlags;
-	BOOL     m_bInCredits;
+	UINT m_nFlags;
+	BOOL m_bInCredits;
 
 public:
 	CHodjPodjWindow();

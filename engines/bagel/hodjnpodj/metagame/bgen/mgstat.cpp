@@ -21,14 +21,146 @@
 
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
+#include "bagel/hodjnpodj/archeroids/dllinit.h"
+#include "bagel/hodjnpodj/artparts/gamedll.h"
+#include "bagel/hodjnpodj/barbershop/gamedll.h"
+#include "bagel/hodjnpodj/battlefish/gamedll.h"
+#include "bagel/hodjnpodj/beacon/gamedll.h"
+#include "bagel/hodjnpodj/crypt/dllinit.h"
+#include "bagel/hodjnpodj/dfa/dllinit.h"
+#include "bagel/hodjnpodj/fuge/gamedll.h"
+#include "bagel/hodjnpodj/garfunkle/gamedll.h"
+#include "bagel/hodjnpodj/life/dllinit.h"
+#include "bagel/hodjnpodj/mankala/gamedll.h"
+#include "bagel/hodjnpodj/mazedoom/gamedll.h"
+#include "bagel/hodjnpodj/novacancy/gamedll.h"
+#include "bagel/hodjnpodj/packrat/dllinit.h"
+#include "bagel/hodjnpodj/pdq/gamedll.h"
+#include "bagel/hodjnpodj/peggle/dllinit.h"
+#include "bagel/hodjnpodj/poker/dllinit.h"
+#include "bagel/hodjnpodj/riddles/gamedll.h"
+#include "bagel/hodjnpodj/wordsearch/dllinit.h"
+#include "bagel/hodjnpodj/metagame/zoom/dllinit.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-///DEFS mgstat.h
+// Game table
 
-// #pragma data_seg ("mgstatxx_data", "data")
+const CGameTable CMgStatic::cGameTable[] = {
+	{
+		MG_GAME_ANAGRAMS, 0,
+		"Anagrams", nullptr, nullptr
+	},
+	{
+		MG_GAME_ARCHEROIDS, MG_WIN_INFO,
+		"Archeroids", "..\\arch", Archeroids::RunArch
+	},
+	{
+		MG_GAME_ARTPARTS, MG_WIN_INFO,
+		"Art Parts", "..\\artparts", ArtParts::RunArtp
+	},
+	{
+		MG_GAME_BARBERSHOP, MG_WIN_OBJECT,
+		"Barbershop Quintet", "..\\barb", Barbershop::RunBarb
+	},
+	{
+		MG_GAME_BATTLEFISH, MG_WIN_OBJECT,
+		"Battlefish", "..\\bfish", Battlefish::RunBFish
+	},
+	{
+		MG_GAME_BEACON, MG_WIN_MONEY,
+		"Beacon", "..\\beacon", Beacon::RunBeac
+	},
+	{
+		MG_GAME_CRYPTOGRAMS, MG_WIN_MONEY,
+		"Cryptograms", "..\\crypt", Crypt::RunCrypt
+	},
+	{
+		MG_GAME_DAMFURRY, MG_WIN_MONEY,
+		"Dam Furry Animals", "..\\dfa", DFA::RunDFA
+	},
+	{
+		MG_GAME_EVERYTHING, MG_WIN_INFO,
+		"Everything Under the Sun", nullptr, nullptr
+	},
+	{
+		MG_GAME_FUGE, MG_WIN_MONEY,
+		"Fuge", "..\\fuge", Fuge::RunFuge
+	},
+	{
+		MG_GAME_GARFUNKEL, MG_WIN_INFO,
+		"Garfunkel", "..\\garf", Garkfunkle::RunGarf
+	},
+	{
+		MG_GAME_LIFE, MG_WIN_INFO,
+		"Life", "..\\life", Life::RunLife
+	},
+	{
+		MG_GAME_MANKALA, MG_WIN_INFO,
+		"Mankala", "..\\mankala", Mankala::RunMank
+	},
+	{
+		MG_GAME_MAZEODOOM, MG_WIN_OBJECT,
+		"Maze o'Doom", "..\\mazedoom", MazeDoom::RunMaze
+	},
+	{
+		MG_GAME_NOVACANCY, MG_WIN_INFO,
+		"No Vacancy", "..\\novac", NoVacancy::RunNoVa
+	},
+	{
+		MG_GAME_PACRAT, MG_WIN_OBJECT,
+		"Pac-Rat", "..\\packrat", Packrat::RunPackRat
+	},
+	{
+		MG_GAME_PEGGLEBOZ, MG_WIN_MONEY,
+		"Peggleboz", "..\\peggle", Peggle::RunPeggle
+	},
+	{
+		MG_GAME_PINBALL, 0,
+		"Pinball", nullptr
+	},
+	{
+		MG_GAME_RIDDLES, MG_WIN_OBJECT,
+		"Riddles", "..\\riddles", Riddles::RunRiddles
+	},
+	{
+		MG_GAME_ROULETTE, 0,
+		"Roulette", nullptr
+	},
+	{
+		MG_GAME_SHOTMACHINE, 0,
+		"Shot Machine", nullptr
+	},
+	{
+		MG_GAME_SPINBALL, 0,
+		"Spinball", nullptr
+	},
+	{
+		MG_GAME_THGESNGGME, MG_WIN_MONEY,
+		"TH GESNG GME", "..\\pdq", PDQ::RunTGG
+	},
+	{
+		MG_GAME_TRIVIA, 0,
+		"Trivia", nullptr
+	},
+	{
+		MG_GAME_VIDEOPOKER, MG_WIN_MONEY,
+		"Video Poker", "..\\poker", Poker::RunPoker
+	},
+	{
+		MG_GAME_WORDSEARCH, MG_WIN_OBJECT,
+		"Word Search", "..\\wordsrch", WordSearch::RunWordSearch
+	},
+	{
+		MG_GAME_CHALLENGE, MG_WIN_MISHMOSH,
+		"Challenge", ".", nullptr /*Metagame::Zoom::RunZoomMap*/
+	},
+	{ 0, 0, nullptr, nullptr }
+};
+
+// =============================================
 
 // location to game (or other action) table
 #ifndef FRAME_EXE
@@ -224,124 +356,6 @@ const CLocTable CMgStatic::cLocTable[] = {
 	{0, 0, 0, nullptr, nullptr}
 } ;
 #endif
-
-
-// =============================================
-
-// Game table
-
-const CGameTable CMgStatic::cGameTable[] = {
-	{
-		MG_GAME_ANAGRAMS, 0,
-		"Anagrams", nullptr, nullptr, nullptr, true
-	},
-	{
-		MG_GAME_ARCHEROIDS, MG_WIN_INFO,
-		"Archeroids", "..\\arch", "hnparch.dll", "RunArch", true
-	},
-	{
-		MG_GAME_ARTPARTS, MG_WIN_INFO,
-		"Art Parts", "..\\artparts", "hnpartp.dll", "RunArtp", true
-	},
-	{
-		MG_GAME_BARBERSHOP, MG_WIN_OBJECT,
-		"Barbershop Quintet", "..\\barb", "hnpbarb.dll", "RunBarb", true
-	},
-	{
-		MG_GAME_BATTLEFISH, MG_WIN_OBJECT,
-		"Battlefish", "..\\bfish", "hnpbfish.dll", "RunBFish", true
-	},
-	{
-		MG_GAME_BEACON, MG_WIN_MONEY,
-		"Beacon", "..\\beacon", "hnpbeac.dll", "RunBeac", true
-	},
-	{
-		MG_GAME_CRYPTOGRAMS, MG_WIN_MONEY,
-		"Cryptograms", "..\\crypt", "hnpcrypt.dll", "RunCrypt", true
-	},
-	{
-		MG_GAME_DAMFURRY, MG_WIN_MONEY,
-		"Dam Furry Animals", "..\\dfa", "hnpdfa.dll", "RunDFA", true
-	},
-	{
-		MG_GAME_EVERYTHING, MG_WIN_INFO,
-		"Everything Under the Sun", nullptr, nullptr, nullptr, true
-	},
-	{
-		MG_GAME_FUGE, MG_WIN_MONEY,
-		"Fuge", "..\\fuge", "hnpfuge.dll", "RunFuge", true
-	},
-	{
-		MG_GAME_GARFUNKEL, MG_WIN_INFO,
-		"Garfunkel", "..\\garf", "hnpgarf.dll", "RunGarf", true
-	},
-	{
-		MG_GAME_LIFE, MG_WIN_INFO,
-		"Life", "..\\life", "hnplife.dll", "RunLife", true
-	},
-	{
-		MG_GAME_MANKALA, MG_WIN_INFO,
-		"Mankala", "..\\mankala", "hnpmank.dll", "RunMank", true
-	},
-	{
-		MG_GAME_MAZEODOOM, MG_WIN_OBJECT,
-		"Maze o'Doom", "..\\mazedoom", "hnpmaze.dll", "RunMaze", true
-	},
-	{
-		MG_GAME_NOVACANCY, MG_WIN_INFO,
-		"No Vacancy", "..\\novac", "hnpnova.dll", "RunNoVa", true
-	},
-	{
-		MG_GAME_PACRAT, MG_WIN_OBJECT,
-		"Pac-Rat", "..\\packrat", "hnppkrt.dll", "RunPackRat", true
-	},
-	{
-		MG_GAME_PEGGLEBOZ, MG_WIN_MONEY,
-		"Peggleboz", "..\\peggle", "hnppggl.dll", "RunPeggle", true
-	},
-	{
-		MG_GAME_PINBALL, 0,
-		"Pinball", nullptr, nullptr, nullptr, true
-	},
-	{
-		MG_GAME_RIDDLES, MG_WIN_OBJECT,
-		"Riddles", "..\\riddles", "hnpridl.dll", "RunRidl", true
-	},
-	{
-		MG_GAME_ROULETTE, 0,
-		"Roulette", nullptr, nullptr, nullptr, true
-	},
-	{
-		MG_GAME_SHOTMACHINE, 0,
-		"Shot Machine", nullptr, nullptr, nullptr, true
-	},
-	{
-		MG_GAME_SPINBALL, 0,
-		"Spinball", nullptr, nullptr, nullptr, true
-	},
-	{
-		MG_GAME_THGESNGGME, MG_WIN_MONEY,
-		"TH GESNG GME", "..\\pdq", "hnptgg.dll", "RunTGG", true
-	},
-	{
-		MG_GAME_TRIVIA, 0,
-		"Trivia", nullptr, nullptr, nullptr, true
-	},
-	{
-		MG_GAME_VIDEOPOKER, MG_WIN_MONEY,
-		"Video Poker", "..\\poker", "hnppkr.dll", "RunPoker", true
-	},
-	{
-		MG_GAME_WORDSEARCH, MG_WIN_OBJECT,
-		"Word Search", "..\\wordsrch", "hnpws.dll", "RunWordSearch", true
-	},
-	{
-		MG_GAME_CHALLENGE, MG_WIN_MISHMOSH,
-		"Challenge", ".", "hnpzm.dll", "RunZoom", true
-	},
-	{0, 0, nullptr, nullptr, nullptr, nullptr, false}
-} ;
-
 
 // ==================================================
 
