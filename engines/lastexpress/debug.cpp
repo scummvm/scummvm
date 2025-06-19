@@ -59,7 +59,6 @@ ImGuiState *_state = nullptr;
 
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
-	io.Fonts->AddFontDefault();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; 
 
 	_state = new ImGuiState();
@@ -67,6 +66,9 @@ void onImGuiInit() {
 }
 
 void onImGuiRender() {
+	if (_state->_engine->shouldQuit())
+		return;
+
 	if (!debugChannelSet(-1, kDebugConsole)) {
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
 		return;
