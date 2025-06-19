@@ -184,8 +184,8 @@ public:
 
 extern M4Engine *g_engine;
 #define SHOULD_QUIT ::M4::g_engine->shouldQuit()
-#define IS_BURGER g_engine->getGameType() == GType_Burger
-#define IS_RIDDLE g_engine->getGameType() == GType_Riddle
+#define IS_BURGER (g_engine->getGameType() == GType_Burger)
+#define IS_RIDDLE (g_engine->getGameType() == GType_Riddle)
 
 } // End of namespace M4
 

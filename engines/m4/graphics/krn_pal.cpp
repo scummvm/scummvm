@@ -39,7 +39,6 @@ namespace M4 {
 
 #define BACKGROUND_HEIGHT  (int32)639
 
-#define IS_RIDDLE   g_engine->getGameType() == GType_Riddle
 #define GREY_START	(IS_RIDDLE ? 21 : 32)
 #define GREY_END	(IS_RIDDLE ? 58 : 63)
 #define NUM_GREYS   (1 + GREY_END - GREY_START)
@@ -108,7 +107,7 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 
 static void create_luminance_map(RGB8 *pal) {
 	for (int i = GREY_START; i <= FREE_END; i++) {
-		Byte luminance = (Byte)((pal[i].r + pal[i].g + pal[i].b) / 3);
+		const Byte luminance = (Byte)((pal[i].r + pal[i].g + pal[i].b) / 3);
 		_GP(fadeToMe)[i].g = luminance;
 		// Orion Burger uses green shading, Riddle uses grey shading
 		_GP(fadeToMe)[i].r = _GP(fadeToMe)[i].b = IS_RIDDLE ? luminance : 0;
@@ -128,10 +127,10 @@ static void make_translation_table(RGB8 *pal) {
 		}
 
 		// look for best match in the free indexes for the greys in GREY_START-GREY_END range (we need these available)
-		int32 matchGrey = pal[GREY_START + i].g;	  // Use green instead of red cause we're having a green screen
+		const int32 matchGrey = pal[GREY_START + i].g;	  // Use green instead of red cause we're having a green screen
 
 		for (int32 j = FREE_START; j <= FREE_END; j++) {
-			int32 tryGrey = pal[j].g;
+			const int32 tryGrey = pal[j].g;
 			if (imath_abs(tryGrey - matchGrey) < minDist) {
 				minDist = imath_abs(tryGrey - matchGrey);
 				bestMatch = j;
@@ -203,7 +202,7 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 
 	// Make new trickPal with grey-scale ramp entries and load it into VGA registers
 	memcpy(_GP(trick), _GP(fadeToMe), sizeof(RGB8) * 256);	// trick pal is the greyed version plus the grey ramp overlayed on top
-	byte grey_step = 256 / NUM_GREYS;
+	const byte grey_step = 256 / NUM_GREYS;
 	byte grey_ramp = 0;
 	for (int32 i = GREY_START; i <= GREY_END; i++) {
 		_GP(trick)[i].g = grey_ramp;
@@ -439,7 +438,7 @@ void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY, int
 	}
 	int32 x1 = imath_max(greyX1 + scrnX, _GP(greyAreaX1));
 	int32 y1 = imath_max(greyY1 + scrnY, _GP(greyAreaY1));
-	int32 x2 = imath_min(greyX2 + scrnX, _GP(greyAreaX2));
+	const int32 x2 = imath_min(greyX2 + scrnX, _GP(greyAreaX2));
 	int32 y2 = imath_min(greyY2 + scrnY, _GP(greyAreaY2));
 	if ((x1 > x2) || (y1 > y2)) return;
 	bool finished = false;
@@ -448,7 +447,8 @@ void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY, int
 			remap_buffer_with_luminance_map(greyOutThisBuffer,
 				x1 - scrnX, y1 - scrnY, x2 - scrnX, imath_min(y2, _GP(colorAreaY1) - 1) - scrnY);
 			y1 = imath_min(y2, _GP(colorAreaY1));
-			if (y1 >= y2) finished = true;
+			if (y1 >= y2)
+				finished = true;
 		}
 	}
 	if (!finished) {
@@ -456,7 +456,8 @@ void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY, int
 			remap_buffer_with_luminance_map(greyOutThisBuffer,
 				x1 - scrnX, imath_max(y1, _GP(colorAreaY2) + 1) - scrnY, x2 - scrnX, y2 - scrnY);
 			y2 = imath_max(y1, _GP(colorAreaY2));
-			if (y1 >= y2) finished = true;
+			if (y1 >= y2)
+				finished = true;
 		}
 	}
 	if (!finished) {
@@ -464,7 +465,8 @@ void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY, int
 			remap_buffer_with_luminance_map(greyOutThisBuffer,
 				x1 - scrnX, y1 - scrnY, imath_min(x2, _GP(colorAreaX1) - 1) - scrnX, y2 - scrnY);
 			x1 = imath_min(x2, _GP(colorAreaX1));
-			if (x1 >= x2) finished = true;
+			if (x1 >= x2)
+				finished = true;
 		}
 	}
 	if (!finished) {
@@ -493,7 +495,7 @@ void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
 	}
 
 	// Calculate the frac16 form of the percent
-	frac16 fracPercent = (percent * 255) / 100;
+	const frac16 fracPercent = (percent * 255) / 100;
 
 	// Get the palette and the inverse palette
 	RGB8 *pal = &_G(master_palette)[0];
@@ -504,9 +506,9 @@ void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
 
 	// Calculate the luminance Pal table
 	for (int32 i = 0; i < 256; i++) {
-		int32 r = ((((pal[i].r * fracPercent) >> 10) >> 1)) & 0x1f;
-		int32 g = ((((pal[i].g * fracPercent) >> 10) >> 1)) & 0x1f;
-		int32 b = ((((pal[i].b * fracPercent) >> 10) >> 1)) & 0x1f;
+		const int32 r = ((((pal[i].r * fracPercent) >> 10) >> 1)) & 0x1f;
+		const int32 g = ((((pal[i].g * fracPercent) >> 10) >> 1)) & 0x1f;
+		const int32 b = ((((pal[i].b * fracPercent) >> 10) >> 1)) & 0x1f;
 		luminancePal[i] = inverse_palette[(r << 10) + (g << 5) + b];
 	}
 
@@ -562,7 +564,7 @@ void disable_player_commands_and_fade_init(int trigger) {
 }
 
 static void pal_fade_update(RGB8 *origPalette) {
-	int32 currTime = timer_read_60();
+	const int32 currTime = timer_read_60();
 
 	if (currTime >= _GP(myFadeEndDelayTime)) {		// If the delay has expired, fade more
 		frac16 tempFrac2;
@@ -573,7 +575,7 @@ static void pal_fade_update(RGB8 *origPalette) {
 		} else if (currTime <= _GP(myFadeStartTime)) {
 			return;
 		} else {
-			frac16 tempFrac = DivSF16((currTime - _GP(myFadeStartTime)) << 16, (_GP(myFadeEndTime) - _GP(myFadeStartTime)) << 16);
+			const frac16 tempFrac = DivSF16((currTime - _GP(myFadeStartTime)) << 16, (_GP(myFadeEndTime) - _GP(myFadeStartTime)) << 16);
 			tempFrac2 = MulSF16(tempFrac, _GP(myFadePercentFrac) - _GP(myFadeStartPercentFrac)) + _GP(myFadeStartPercentFrac);
 		}
 
@@ -658,9 +660,7 @@ void pal_cycle_resume() {
 }
 
 static void pal_cycle_update() {
-	int32 i;
-
-	int32 currTime = timer_read_60();		// Get current time
+	const int32 currTime = timer_read_60();		// Get current time
 
 	if (_GP(myCycleNeverStopCycling) == false) { 			// If there is an end time to get to...  
 
@@ -672,6 +672,7 @@ static void pal_cycle_update() {
 		// See if we should color cycle right now
 		if (currTime >= _GP(myCycleEndDelayTime)) {			// If the delay has expired, color cycle
 			RGB8 firstColor;
+			int32 i;
 			// Cycle the master palette 
 			firstColor.r = _G(master_palette)[_GP(myCycleStartIndex)].r;		// Remember first color
 			firstColor.g = _G(master_palette)[_GP(myCycleStartIndex)].g;
@@ -819,9 +820,9 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 		for (i = firstPalEntry; i <= lastPalEntry; ++i) {
 			// Converting rgb to a frac16 ( << 16) dividing by 256 ( >> 8) 
 			// (the range of the palette values)
-			int32 percent_r = (targetColor.r) << 8;
-			int32 percent_g = (targetColor.g) << 8;
-			int32 percent_b = (targetColor.b) << 8;
+			const int32 percent_r = (targetColor.r) << 8;
+			const int32 percent_g = (targetColor.g) << 8;
+			const int32 percent_b = (targetColor.b) << 8;
 
 			// This is the difference between the color and the full effect
 			// of the filter at 100%, as a frac16.
