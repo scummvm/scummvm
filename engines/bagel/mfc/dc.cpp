@@ -208,11 +208,11 @@ BOOL CDC::StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 }
 
 void CDC::Ellipse(LPCRECT lpRect) {
-	error("TODO: CDC::Ellipse");
+	impl()->ellipse(lpRect);
 }
 
 void CDC::Ellipse(int x1, int y1, int x2, int y2) {
-	error("TODO: CDC::Ellipse");
+	impl()->ellipse(x1, y1, x2, y2);
 }
 
 void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
@@ -663,32 +663,20 @@ void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
 }
 
 void CDC::Impl::frameRect(const Common::Rect &r, CBrush *brush) {
-	CBrush::Impl *b = (CBrush::Impl *)brush->m_hObject;
-	assert(b->_type == HS_HORIZONTAL ||
-		b->_type == HS_VERTICAL);
-
-	frameRect(r, GetNearestColor(b->getColor()));
+	frameRect(r, getBrushColor());
 }
 
 void CDC::Impl::frameRect(const Common::Rect &r, COLORREF crColor) {
-	static_cast<CBitmap::Impl *>(_bitmap)->frameRect(r, crColor);
+	static_cast<CBitmap::Impl *>(_bitmap)->frameRect(r,
+		GetNearestColor(crColor));
 }
 
 void CDC::Impl::rectangle(LPCRECT lpRect) {
-	CBrush::Impl *b = (CBrush::Impl *)_brush;
-	assert(b->_type == HS_HORIZONTAL ||
-		b->_type == HS_VERTICAL);
-
-	frameRect(*lpRect, GetNearestColor(b->getColor()));
+	frameRect(*lpRect, getBrushColor());
 }
 
 void CDC::Impl::rectangle(int x1, int y1, int x2, int y2) {
-	CBrush::Impl *b = (CBrush::Impl *)_brush;
-	assert(b->_type == HS_HORIZONTAL ||
-		b->_type == HS_VERTICAL);
-
-	frameRect(Common::Rect(x1, y1, x2, y2),
-		GetNearestColor(b->getColor()));
+	frameRect(Common::Rect(x1, y1, x2, y2), getBrushColor());
 }
 
 void CDC::Impl::floodFill(int x, int y, COLORREF crColor) {
@@ -709,6 +697,20 @@ void CDC::Impl::draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrB
 
 void CDC::Impl::drawFocusRect(const CRect &rect) {
 	frameRect(rect, GetNearestColor(RGB(128, 128, 128)));
+}
+
+void CDC::Impl::ellipse(const Common::Rect &r, COLORREF crColor) {
+	static_cast<CBitmap::Impl *>(_bitmap)->drawEllipse(
+		r.left, r.top, r.right, r.bottom,
+		GetNearestColor(crColor), false);
+}
+
+void CDC::Impl::ellipse(LPCRECT lpRect) {
+	ellipse(*lpRect, getBrushColor());
+}
+
+void CDC::Impl::ellipse(int x1, int y1, int x2, int y2) {
+	ellipse(Common::Rect(x1, y1, x2, y2), getBrushColor());
 }
 
 void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
@@ -754,6 +756,13 @@ uint CDC::Impl::getPenColor() const {
 	assert(pen->_penStyle == PS_SOLID);
 
 	return GetNearestColor(pen->_color);
+}
+
+uint CDC::Impl::getBrushColor() const {
+	CBrush::Impl *brush = static_cast<CBrush::Impl *>(_brush);
+	assert(brush->_type == HS_HORIZONTAL ||
+		brush->_type == HS_VERTICAL);
+	return brush->getColor();
 }
 
 COLORREF CDC::Impl::setBkColor(COLORREF crColor) {

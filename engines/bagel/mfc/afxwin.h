@@ -632,6 +632,7 @@ public:
 		uint _textAlign = TA_LEFT;
 
 		uint getPenColor() const;
+		uint getBrushColor() const;
 
 	public:
 		HBITMAP _bitmap = &_defaultBitmap;
@@ -669,6 +670,11 @@ public:
 		void rectangle(int x1, int y1, int x2, int y2);
 		void draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight);
 		void drawFocusRect(const CRect &rect);
+
+		void ellipse(const Common::Rect &r, COLORREF crColor);
+		void ellipse(LPCRECT lpRect);
+		void ellipse(int x1, int y1, int x2, int y2);
+
 		void bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 			int xSrc, int ySrc, DWORD dwRop);
 		void stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
