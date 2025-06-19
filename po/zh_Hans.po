@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 11:17+0000\n"
+"POT-Creation-Date: 2025-06-19 20:56+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -8079,7 +8079,7 @@ msgid "Failed to load saved game from file."
 msgstr "无法从文件载入存档。"
 
 #: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1590
-#: engines/gob/inter_v7.cpp:1917 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_v7.cpp:1928 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr "无法将游戏保存到文件。"
 
