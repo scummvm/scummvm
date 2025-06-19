@@ -84,7 +84,7 @@ public:
 	void mouseMove(const Point &mousePos) override;
 	void leftButtonDown(const Point &mousePos) override;
 	void leftButtonUp(const Point &mousePos) override;
-	void keyDown(Common::KeyState keyState) override;
+	void actionStart(Common::CustomEventType action) override;
 
 	/**
 	 * Add a savegame to the list to be displayed

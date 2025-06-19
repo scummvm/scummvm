@@ -27,6 +27,8 @@
 #include "titanic/core/tree_item.h"
 #include "titanic/support/strings.h"
 
+#include "common/events.h"
+
 namespace Titanic {
 
 enum MessageFlag {
@@ -237,17 +239,17 @@ public:
 	CLASSDEF;
 	CMovementMsg() : _movement(MOVE_NONE) {}
 	CMovementMsg(Movement move) : _movement(move) {}
-	CMovementMsg(Common::KeyCode key) :
-		_movement(getMovement(key)) {}
+	CMovementMsg(Common::CustomEventType action) :
+		_movement(getMovement(action)) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);
 	}
 
 	/**
-	 * Returns the movement associated with a given key, if any
+	 * Returns the movement associated with a given action, if any
 	 */
-	static Movement getMovement(Common::KeyCode keycode);
+	static Movement getMovement(Common::CustomEventType action);
 };
 
 
@@ -405,7 +407,7 @@ MESSAGE0(CTurnOn);
 MESSAGE1(CUse, CGameObject *, item, nullptr);
 MESSAGE1(CUseWithCharMsg, CCharacter *, character, nullptr);
 MESSAGE1(CUseWithOtherMsg, CGameObject *, other, 0);
-MESSAGE1(CVirtualKeyCharMsg, Common::KeyState, keyState, Common::KeyState());
+MESSAGE1(CActionMsg, Common::CustomEventType, action, 0);
 MESSAGE1(CVisibleMsg, bool, visible, true);
 MESSAGE1(CCheckCodeWheelsMsg, bool, isCorrect, true);
 

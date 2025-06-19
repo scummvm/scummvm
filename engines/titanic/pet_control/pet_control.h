@@ -116,7 +116,7 @@ protected:
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	bool MouseWheelMsg(CMouseWheelMsg *msg);
 	bool KeyCharMsg(CKeyCharMsg *msg);
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	bool ActionMsg(CActionMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 public:
 	PetArea _currentArea;

@@ -138,9 +138,9 @@ public:
 	virtual bool KeyCharMsg(int key) { return false; }
 
 	/**
-	 * Handles keypresses
+	 * Handles actions
 	 */
-	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
+	virtual bool ActionMsg(CActionMsg *msg) {return false; }
 
 	/**
 	 * Unhighlight any currently highlighted element
@@ -401,9 +401,9 @@ public:
 	bool KeyCharMsg(int key);
 
 	/**
-	 * Virtual key message
+	 * Action message
 	 */
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	bool ActionMsg(CActionMsg *msg);
 
 	/**
 	 * When the PET section is entered, passes onto the highlighted

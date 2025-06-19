@@ -95,7 +95,7 @@ public:
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg) override;
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) override;
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) override;
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) override;
+	bool ActionMsg(CActionMsg *msg) override;
 
 	/**
 	 * Check whether a drag drop can occur

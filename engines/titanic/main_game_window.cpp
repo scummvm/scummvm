@@ -345,21 +345,27 @@ void CMainGameWindow::mouseWheel(const Point &mousePos, bool wheelUp) {
 }
 
 void CMainGameWindow::keyDown(Common::KeyState keyState) {
-	if (keyState.keycode == Common::KEYCODE_c && (keyState.flags & Common::KBD_CTRL)) {
+	if (_inputAllowed) {
+		_gameManager->_inputTranslator.keyDown(keyState);
+	}
+}
+
+void CMainGameWindow::actionStart(Common::CustomEventType action) {
+	if (action == kActionCheat) {
 		// Cheat action
 		if (_project && g_vm->canLoadGameStateCurrently()) {
 			CViewItem *newView = _project->parseView("Cheat Room.Node 1.Cheat Rooms View");
 			_gameManager->_gameState.changeView(newView, nullptr);
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_F5) {
+	} else if (action == kActionSave) {
 		// Show the GMM save dialog
 		g_vm->saveGameDialog();
-	} else if (keyState.keycode == Common::KEYCODE_F7) {
+	} else if (action == kActionLoad) {
 		// Show the GMM load dialog
 		g_vm->loadGameDialog();
 	} else if (_inputAllowed) {
-		_gameManager->_inputTranslator.keyDown(keyState);
+		_gameManager->_inputTranslator.actionStart(action);
 	}
 }
 

@@ -65,6 +65,7 @@ public:
 	virtual void mouseWheel(const Point &mousePos, bool wheelUp) {}
 	virtual void keyDown(Common::KeyState keyState) {}
 	virtual void keyUp(Common::KeyState keyState) {}
+	virtual void actionStart(Common::CustomEventType action) {}
 };
 
 /**
@@ -109,7 +110,7 @@ private:
 	/**
 	 * Handles setting/resettings special buttons on key up/down
 	 */
-	void handleKbdSpecial(Common::KeyState keyState);
+	void handleKbdSpecial(Common::CustomEventType action);
 public:
 	Events(TitanicEngine *vm);
 	~Events() {}

@@ -162,8 +162,8 @@ bool CPetRemote::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 	return _items.MouseButtonDownMsg(msg->_mousePos);
 }
 
-bool CPetRemote::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _items.VirtualKeyCharMsg(msg);
+bool CPetRemote::ActionMsg(CActionMsg *msg) {
+	return _items.ActionMsg(msg);
 }
 
 bool CPetRemote::MouseWheelMsg(CMouseWheelMsg *msg) {
