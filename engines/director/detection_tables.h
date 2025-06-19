@@ -104,6 +104,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bodypark",			"Body Park" },
 	{ "brer",				"Brer Rabbit and the Wonderful Tar Baby" },
 	{ "buzz1",				"Buzz Lightyear 1st Grade" },
+	{ "capnco",				"A Case for Cap & Co" },
 	{ "carmenmath",			"Carmen Sandiego Math Detective" },
 	{ "casino",				"Casino!" },
 	{ "casino5p",			"Casino 5 Pack" },
@@ -398,6 +399,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "okayhenry",			"O!Kay! Henry in Love" },
 	{ "okaytruehero",		"O!Kay! A True Hero" },
 	{ "operafatal",			"Opera Fatal" },
+	{ "oscarballforest",	"Oscar the Balloonist and the Secrets of the Forest" },
 	{ "oslotg",				"Adventures with Oslo: Tools and Gadgets" },
 	{ "oztma",				"Oz: The Magical Adventure" },
 	{ "paparazzi",			"Paparazzi!: Tales of Tinseltown" },
@@ -1650,7 +1652,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "techiescom",			"techies.com Business Card" },
 	{ "terapreviews",		"TeraMedia Previews" },
 	{ "tivolaspring1997",	"Tivola Demo - Frühjahr '97" },
-	{ "tivolafall1998",		"Tivola Demo - Herbst 1998" },   // Contains D4, D5 and D6 executables
+	{ "tivolafall1998",		"Tivola Demo - Fall 1998" },   // Contains D4, D5 and D6 executables
 	{ "tivolaspring1999",	"Tivola Demo - Frühling 1999" }, // Contains D4, D5 and D6 executables
 	{ "tivolasummer2000",	"Tivola Demo - Sommer 2000" },
 	{ "tlc",				"The Learning Company Sampler" },
@@ -5950,7 +5952,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2_l("tivolaspring1997", "Sampler", "Tivola Demos",      "r:5debd53e3dd84431c9ca1e47f5e10c1b", 503636,
 											  "Demo/SAMPLECD.Dxr", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
 	WINGAME2_l("tivolaspring1997", "Sampler", "START.EXE",         "t:e38cb9f5acb91b498a7a6718385c82e2", 740011,
-											  "DEMO/SAMPLECD.DXR", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
+											  "DEMO/SAMPLECD.DXR", "f:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
+
+	// Found on "A Case for Cap & Co" (English)
+	MACGAME2("tivolafall1998", "Sampler", "Tivola Demos",      "r:5debd53e3dd84431c9ca1e47f5e10c1b",  503636,
+										  "Demo/SAMPLECD.Dxr", "d:da105c85715e489f73a384b7e63cb9ac", 6347750, 404),
+	WINGAME2("tivolafall1998", "Sampler", "START.EXE",		   "t:e38cb9f5acb91b498a7a6718385c82e2",  740011,
+										  "DEMO/SAMPLECD.DXR", "f:da105c85715e489f73a384b7e63cb9ac", 6347750, 404),
 
 	MACDEMO1_l("toeic", "Demo", "TOEIC", "r:77f4098988d5386794d1530065f514cd", 301681, Common::JA_JPN, 400),
 
@@ -6534,6 +6542,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Bilingual English and French
 	MACGAME1("canelect", "", "Elect", "6e7e31d05709e1d38d63f4df6a59eec0", 719289, 501),
 	WINGAME1("canelect", "", "ELECT_95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1479345, 501),
+
+	// Original German title: Ein Fall für Mütze & Co
+	// German Windows version requires installation
+	MACGAME2("capnco", "", "xn--Copy on the hard drive...-/A Case for Cap & Co", "r:622fd022d45f232f35967daad146035f", 719465,
+						   "DATA/BACKPACK.DXR", "f:f02da6a7ba372e2d1656dd7c12cb27d0", 626082, 501),
+	MACGAME1_l("capnco", "", "xn--Auf die Festplatte kopieren ...-/xn--Ein Fall fr Mtze & Co-iicd", "r:0c27fab8d2ebda608e6bb1a58bf15fe1", 718385, Common::DE_DEU, 501),
+	WINGAME2("capnco", "", "CAP95.EX_", "t:811b35b41ffa76e802afe55d490b50c3", 1559083,
+						   "DATA/BACKPACK.DXR", "f:f02da6a7ba372e2d1656dd7c12cb27d0", 626082, 501),
+	WINGAME1_l("capnco", "", "MUETZE95.EXE", "t:a04f2d4af18a04dd2a8343498435538f", 1559109, Common::DE_DEU, 501),
+	// Reported in TRAC #15845
+	WINGAME1_l("capnco", "", "MUETZE95.EXE", "t:a04f2d4af18a04dd2a8343498435538f", 1559137, Common::DE_DEU, 501),
 
 	// Available here: http://web.archive.org/web/20080412010505/http://www.beachware.com/download/
 	// Each shareware title plays one of several casino games until unlocked with registration code
@@ -7275,6 +7294,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 								 "MOVIE/BARGAIN.DIR",	 "d:8ef5ddeb3153adc23eeb864c49aaaada", 1880248, Common::JA_JPN, 501),
 	WINDEMO2_l("osaka2", "Demo", "OSAKA2.EXE",		  	 "t:a1b15df3e663f99b015753bc82e22bcd", 1410110,
 								 "WINMOVIE/BARGAIN.DIR", "d:949640df6d4db94e85b466da5e5d8470", 1880116, Common::JA_JPN, 501),
+
+	// Found on "A Case for Cap & Co"
+	MACGAME2("oscarballforest", "Demo", "Oscar Demo active",  "rt:1a0f4b8c982d1823a6953c1602e92d22", 705417,
+										"DACHS/DAFRUEHL.DIR", "d:4cfe5498828fb97d9d2152a3064154e3",  366052, 501),
+	WINDEMO2("oscarballforest", "Demo", "TIVOLA.EXE",		  "t:d13a9d569cd0b061ae572b8bea4e7966",  933683,
+										"DACHS/DAFRUEHL.DIR", "f:4cfe5498828fb97d9d2152a3064154e3",  366052, 501),
 
 	WINGAME1("parliament", "", "PARL/GUIDE.EXE", "t:6ada9911cbb5aaa010fa4f4115603ce9", 918871, 500),
 
