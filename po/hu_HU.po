@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-18 21:04+0000\n"
+"POT-Creation-Date: 2025-06-19 11:17+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -9945,7 +9945,7 @@ msgstr ""
 "A frissítések a következő helyről tölthetőek le:\n"
 "%s"
 
-#: engines/myst3/myst3.cpp:1640 engines/pegasus/pegasus.cpp:749
+#: engines/myst3/myst3.cpp:1636 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
 msgstr "Érvénytelen fájlnév a mentéshez"
 

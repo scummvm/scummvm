@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-18 21:04+0000\n"
+"POT-Creation-Date: 2025-06-19 11:17+0000\n"
 "PO-Revision-Date: 2025-06-17 13:11+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -10005,7 +10005,7 @@ msgstr ""
 "de tu copia del juego. Puedes descargar las actualizaciones aquí:\n"
 "%s"
 
-#: engines/myst3/myst3.cpp:1640 engines/pegasus/pegasus.cpp:749
+#: engines/myst3/myst3.cpp:1636 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
 msgstr "Nombre del archivo de partida inválido"
 
