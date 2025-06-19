@@ -93,6 +93,11 @@ bool RenderTicket::operator==(const RenderTicket &t) const {
 
 // Replacement for SDL2's SDL_RenderCopy
 void RenderTicket::drawToSurface(Graphics::ManagedSurface *_targetSurface) const {
+	if (!getSurface()) {
+		_targetSurface->blendFillRect(_dstRect, _transform._rgbaMod, Graphics::BLEND_NORMAL);
+		return;
+	}
+
 	Common::Rect clipRect;
 	clipRect.setWidth(getSurface()->w);
 	clipRect.setHeight(getSurface()->h);
@@ -125,6 +130,11 @@ void RenderTicket::drawToSurface(Graphics::ManagedSurface *_targetSurface) const
 }
 
 void RenderTicket::drawToSurface(Graphics::ManagedSurface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
+	if (!getSurface()) {
+		_targetSurface->blendFillRect(*dstRect, _transform._rgbaMod, _transform._blendMode);
+		return;
+	}
+
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
