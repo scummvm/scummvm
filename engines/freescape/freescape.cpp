@@ -1151,7 +1151,7 @@ Graphics::ManagedSurface *FreescapeEngine::loadAndConvertNeoImage(Common::Seekab
 	decoder.loadStream(*stream);
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*decoder.getSurface());
-	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette().data(), decoder.getPalette().size());
+	surface->convertToInPlace(_gfx->_texturePixelFormat, decoder.getPalette().data(), decoder.getPalette().size());
 	return surface;
 }
 
@@ -1160,18 +1160,18 @@ Graphics::ManagedSurface *FreescapeEngine::loadAndConvertDoodleImage(Common::See
 	decoder.loadStreams(*bitmap, *color1, *color2);
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*decoder.getSurface());
-	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette().data(), decoder.getPalette().size());
+	surface->convertToInPlace(_gfx->_texturePixelFormat, decoder.getPalette().data(), decoder.getPalette().size());
 	return surface;
 }
 
 
-Graphics::ManagedSurface *FreescapeEngine::loadAndCenterScrImage(Common::SeekableReadStream *stream) {
+Graphics::ManagedSurface *FreescapeEngine::loadAndConvertScrImage(Common::SeekableReadStream *stream) {
 	Image::ScrDecoder decoder;
 	decoder.loadStream(*stream);
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	const Graphics::Surface *decoded = decoder.getSurface();
-	surface->create(320, 200, decoded->format);
-	surface->copyRectToSurface(*decoded, (320 - decoded->w) / 2, (200 - decoded->h) / 2, Common::Rect(decoded->w, decoded->h));
+	surface->create(320, 200, _gfx->_texturePixelFormat);
+	surface->simpleBlitFrom(*decoded, Common::Point((320 - decoded->w) / 2, (200 - decoded->h) / 2), &decoder.getPalette());
 	return surface;
 }
 

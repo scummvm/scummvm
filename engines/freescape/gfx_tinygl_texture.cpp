@@ -42,7 +42,7 @@ TinyGL2DTexture::~TinyGL2DTexture() {
 }
 
 void TinyGL2DTexture::update(const Graphics::Surface *surface) {
-	uint32 keyColor = getRGBAPixelFormat().RGBToColor(0xA0, 0xA0, 0xA0);
+	uint32 keyColor = surface->format.RGBToColor(0xA0, 0xA0, 0xA0);
 	tglUploadBlitImage(_blitImage, *surface, keyColor, true);
 }
 

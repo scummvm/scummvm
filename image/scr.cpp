@@ -28,7 +28,26 @@
 
 namespace Image {
 
-ScrDecoder::ScrDecoder() : _surface(nullptr), _palette(0) {
+static const byte scrPalette[16 * 3] = {
+	0x00, 0x00, 0x00, /* black */
+	0x00, 0x00, 0xD8, /* blue */
+	0xD8, 0x00, 0x00, /* red */
+	0xD8, 0x00, 0xD8, /* magenta */
+	0x00, 0xD8, 0x00, /* green */
+	0x00, 0xD8, 0xD8, /* cyan */
+	0xD8, 0xD8, 0x00, /* yellow */
+	0xD8, 0xD8, 0xD8, /* white */
+	0x00, 0x00, 0x00, /* bright black */
+	0x00, 0x00, 0xFF, /* bright blue */
+	0xFF, 0x00, 0x00, /* bright red */
+	0xFF, 0x00, 0xFF, /* bright magenta */
+	0x00, 0xFF, 0x00, /* bright green */
+	0x00, 0xFF, 0xFF, /* bright cyan */
+	0xFF, 0xFF, 0x00, /* bright yellow */
+	0xFF, 0xFF, 0xFF, /* bright white */
+};
+
+ScrDecoder::ScrDecoder() : _surface(nullptr), _palette(scrPalette, 16) {
 }
 
 ScrDecoder::~ScrDecoder() {
@@ -69,12 +88,10 @@ bool ScrDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	int width = 256;
 	int height = 192;
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, format);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
-    for (int y = 0; y < height; y++) {
+	for (int y = 0; y < height; y++) {
 		for (int col = 0; col < width >> 3; col++) {
 			int x = col << 3;
 			byte byt = data[getPixelAddress(x, y)];
@@ -82,16 +99,10 @@ bool ScrDecoder::loadStream(Common::SeekableReadStream &stream) {
 			byte ink = attr & 0x07;
 			byte paper = (attr >> 3) & 0x07;
 			byte bright = (attr >> 6) & 1;
-			byte val = bright ? 0xff : 0xd8;
 			for (int bit = 0; bit < 8; bit++) {
 				bool set = (byt >> (7 - bit)) & 1;
-				int color = set ? ink : paper;
-
-				byte r = val * (color >> 1 & 1);
-				byte g = val * (color >> 2 & 1);
-				byte b = val * (color >> 0 & 1);
-
-				_surface->setPixel(x + bit, y, format.ARGBToColor(0xFF, r, g, b));
+				int color = (bright << 3) | (set ? ink : paper);
+				_surface->setPixel(x + bit, y, color);
 			}
 		}
 	}
