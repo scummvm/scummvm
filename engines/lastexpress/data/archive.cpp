@@ -551,8 +551,8 @@ void ArchiveManager::loadMice() {
 		}
 
 		for (int i = 0; i < 48; i++) {
-			_engine->getGraphicsManager()->_cursorsDataHeader->hotspotX = READ_LE_INT16(&_engine->getGraphicsManager()->_cursorsDataHeader->hotspotX);
-			_engine->getGraphicsManager()->_cursorsDataHeader->hotspotY = READ_LE_INT16(&_engine->getGraphicsManager()->_cursorsDataHeader->hotspotY);
+			_engine->getGraphicsManager()->_cursorsDataHeader[i].hotspotX = READ_LE_INT16(&_engine->getGraphicsManager()->_cursorsDataHeader[i].hotspotX);
+			_engine->getGraphicsManager()->_cursorsDataHeader[i].hotspotY = READ_LE_INT16(&_engine->getGraphicsManager()->_cursorsDataHeader[i].hotspotY);
 		}
 
 		_engine->getGraphicsManager()->modifyPalette(_engine->getGraphicsManager()->_iconsBitmapData, 0xC000);
