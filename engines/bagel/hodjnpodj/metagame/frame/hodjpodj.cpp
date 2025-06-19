@@ -954,9 +954,9 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 	StopBackgroundMidi();
 
-	if (CMgStatic::cGameTable[ nWhichDLL ].initFn != nullptr) {
+	if (CMgStatic::cGameTable[ nWhichDLL ]._initFn != nullptr) {
 		FPDLLFUNCT  lpfnGame;
-		Common::strcpy_s(chMiniPath, CMgStatic::cGameTable[ nWhichDLL ].m_lpszDllPath);
+		Common::strcpy_s(chMiniPath, CMgStatic::cGameTable[ nWhichDLL ]._path);
 
 		if (bReturnToZoom) {
 			if (lpGameStruct != nullptr) {
@@ -975,9 +975,9 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 			lpGameStruct->bPlayingHodj = TRUE;
 		}
 
-		if (CMgStatic::cGameTable[nWhichDLL].initFn) {
+		if (CMgStatic::cGameTable[nWhichDLL]._initFn) {
 			if (dllLoaded) {
-				lpfnGame = CMgStatic::cGameTable[nWhichDLL].initFn;
+				lpfnGame = CMgStatic::cGameTable[nWhichDLL]._initFn;
 
 				if ((lpfnGame != nullptr) && PositionAtMiniPath(nWhichDLL)) {
 					if (bReturnToZoom) {
@@ -1114,7 +1114,7 @@ LPARAM CHodjPodjWindow::UpdateChallengePhase(LPARAM lParam) {
 			int nGameIndex;
 			do {
 				nGameIndex = brand() % (MG_GAME_COUNT - 1);
-			} while (CMgStatic::cGameTable[nGameIndex].initFn == nullptr);
+			} while (CMgStatic::cGameTable[nGameIndex]._initFn == nullptr);
 
 			nGameID = (LPARAM)(nGameIndex + MG_GAME_BASE);
 
@@ -1738,6 +1738,10 @@ BOOL CHodjPodjWindow::PositionAtCDPath() {
 
 
 BOOL CHodjPodjWindow::PositionAtMiniPath(int nWhichDLL) {
+	AfxGetApp()->setDirectory(
+		CMgStatic::cGameTable[nWhichDLL]._path
+	);
+
 	return TRUE;
 }
 

@@ -460,11 +460,11 @@ typedef HWND(FAR PASCAL *FPDLLFUNCT)(HWND, LPGAMESTRUCT);
 
 class CGameTable {
 public:
-	int m_iGameCode ;           // MG_GAME_xxxx
-	int m_iWinCode ;            // MG_WIN_xxxx (win money, object, info)
-	LPCSTR m_lpszGameName ;      // full name of game
-	LPCSTR m_lpszDllPath ;       // path of DLL
-	FPDLLFUNCT initFn;
+	int m_iGameCode;		// MG_GAME_xxxx
+	int m_iWinCode;			// MG_WIN_xxxx (win money, object, info)
+	LPCSTR m_lpszGameName;	// full name of game
+	LPCSTR _path;			// game subfolder path
+	FPDLLFUNCT _initFn;
 } ;
 
 // CNoteTable

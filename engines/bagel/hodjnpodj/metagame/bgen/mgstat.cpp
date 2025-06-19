@@ -55,31 +55,31 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_ARCHEROIDS, MG_WIN_INFO,
-		"Archeroids", "..\\arch", Archeroids::RunArch
+		"Archeroids", "arch", Archeroids::RunArch
 	},
 	{
 		MG_GAME_ARTPARTS, MG_WIN_INFO,
-		"Art Parts", "..\\artparts", ArtParts::RunArtp
+		"Art Parts", "artparts", ArtParts::RunArtp
 	},
 	{
 		MG_GAME_BARBERSHOP, MG_WIN_OBJECT,
-		"Barbershop Quintet", "..\\barb", Barbershop::RunBarb
+		"Barbershop Quintet", "barb", Barbershop::RunBarb
 	},
 	{
 		MG_GAME_BATTLEFISH, MG_WIN_OBJECT,
-		"Battlefish", "..\\bfish", Battlefish::RunBFish
+		"Battlefish", "bfish", Battlefish::RunBFish
 	},
 	{
 		MG_GAME_BEACON, MG_WIN_MONEY,
-		"Beacon", "..\\beacon", Beacon::RunBeac
+		"Beacon", "beacon", Beacon::RunBeac
 	},
 	{
 		MG_GAME_CRYPTOGRAMS, MG_WIN_MONEY,
-		"Cryptograms", "..\\crypt", Crypt::RunCrypt
+		"Cryptograms", "crypt", Crypt::RunCrypt
 	},
 	{
 		MG_GAME_DAMFURRY, MG_WIN_MONEY,
-		"Dam Furry Animals", "..\\dfa", DFA::RunDFA
+		"Dam Furry Animals", "dfa", DFA::RunDFA
 	},
 	{
 		MG_GAME_EVERYTHING, MG_WIN_INFO,
@@ -87,35 +87,35 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_FUGE, MG_WIN_MONEY,
-		"Fuge", "..\\fuge", Fuge::RunFuge
+		"Fuge", "fuge", Fuge::RunFuge
 	},
 	{
 		MG_GAME_GARFUNKEL, MG_WIN_INFO,
-		"Garfunkel", "..\\garf", Garkfunkle::RunGarf
+		"Garfunkel", "garf", Garkfunkle::RunGarf
 	},
 	{
 		MG_GAME_LIFE, MG_WIN_INFO,
-		"Life", "..\\life", Life::RunLife
+		"Life", "life", Life::RunLife
 	},
 	{
 		MG_GAME_MANKALA, MG_WIN_INFO,
-		"Mankala", "..\\mankala", Mankala::RunMank
+		"Mankala", "mankala", Mankala::RunMank
 	},
 	{
 		MG_GAME_MAZEODOOM, MG_WIN_OBJECT,
-		"Maze o'Doom", "..\\mazedoom", MazeDoom::RunMaze
+		"Maze o'Doom", "mazedoom", MazeDoom::RunMaze
 	},
 	{
 		MG_GAME_NOVACANCY, MG_WIN_INFO,
-		"No Vacancy", "..\\novac", NoVacancy::RunNoVa
+		"No Vacancy", "novac", NoVacancy::RunNoVa
 	},
 	{
 		MG_GAME_PACRAT, MG_WIN_OBJECT,
-		"Pac-Rat", "..\\packrat", Packrat::RunPackRat
+		"Pac-Rat", "packrat", Packrat::RunPackRat
 	},
 	{
 		MG_GAME_PEGGLEBOZ, MG_WIN_MONEY,
-		"Peggleboz", "..\\peggle", Peggle::RunPeggle
+		"Peggleboz", "peggle", Peggle::RunPeggle
 	},
 	{
 		MG_GAME_PINBALL, 0,
@@ -123,7 +123,7 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_RIDDLES, MG_WIN_OBJECT,
-		"Riddles", "..\\riddles", Riddles::RunRiddles
+		"Riddles", "riddles", Riddles::RunRiddles
 	},
 	{
 		MG_GAME_ROULETTE, 0,
@@ -139,7 +139,7 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_THGESNGGME, MG_WIN_MONEY,
-		"TH GESNG GME", "..\\pdq", PDQ::RunTGG
+		"TH GESNG GME", "pdq", PDQ::RunTGG
 	},
 	{
 		MG_GAME_TRIVIA, 0,
@@ -147,11 +147,11 @@ const CGameTable CMgStatic::cGameTable[] = {
 	},
 	{
 		MG_GAME_VIDEOPOKER, MG_WIN_MONEY,
-		"Video Poker", "..\\poker", Poker::RunPoker
+		"Video Poker", "poker", Poker::RunPoker
 	},
 	{
 		MG_GAME_WORDSEARCH, MG_WIN_OBJECT,
-		"Word Search", "..\\wordsrch", WordSearch::RunWordSearch
+		"Word Search", "wordsrch", WordSearch::RunWordSearch
 	},
 	{
 		MG_GAME_CHALLENGE, MG_WIN_MISHMOSH,
