@@ -662,6 +662,11 @@ public:
 		void fillRect(const Common::Rect &r, COLORREF crColor);
 		void frameRect(const Common::Rect &r, CBrush *brush);
 		void frameRect(const Common::Rect &r, COLORREF crColor);
+		void floodFill(int x, int y, COLORREF crColor);
+		void floodFill(int x, int y, COLORREF crColor,
+			UINT nFillType);
+		void rectangle(LPCRECT lpRect);
+		void rectangle(int x1, int y1, int x2, int y2);
 		void draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight);
 		void drawFocusRect(const CRect &rect);
 		void bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,

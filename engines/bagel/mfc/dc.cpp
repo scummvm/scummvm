@@ -241,20 +241,22 @@ void CDC::FillSolidRect(LPCRECT lpRect, COLORREF color) {
 }
 
 BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {
-	error("TODO: CDC::FloodFill");
+	impl()->floodFill(x, y, crColor);
+	return true;
 }
 
 BOOL CDC::FloodFill(int x, int y, COLORREF crColor,
-                    UINT nFillType) {
-	error("TODO: CDC::FloodFill");
+        UINT nFillType) {
+	impl()->floodFill(x, y, crColor, nFillType);
+	return true;
 }
 
 void CDC::Rectangle(LPCRECT lpRect) {
-	error("TODO: CDC::Rectangle");
+	impl()->rectangle(lpRect);
 }
 
 void CDC::Rectangle(int x1, int y1, int x2, int y2) {
-	error("TODO: CDC::Rectangle");
+	impl()->rectangle(x1, y1, x2, y2);
 }
 
 BOOL CDC::Pie(int x1, int y1, int x2, int y2,
@@ -670,6 +672,32 @@ void CDC::Impl::frameRect(const Common::Rect &r, CBrush *brush) {
 
 void CDC::Impl::frameRect(const Common::Rect &r, COLORREF crColor) {
 	static_cast<CBitmap::Impl *>(_bitmap)->frameRect(r, crColor);
+}
+
+void CDC::Impl::rectangle(LPCRECT lpRect) {
+	CBrush::Impl *b = (CBrush::Impl *)_brush;
+	assert(b->_type == HS_HORIZONTAL ||
+		b->_type == HS_VERTICAL);
+
+	frameRect(*lpRect, GetNearestColor(b->getColor()));
+}
+
+void CDC::Impl::rectangle(int x1, int y1, int x2, int y2) {
+	CBrush::Impl *b = (CBrush::Impl *)_brush;
+	assert(b->_type == HS_HORIZONTAL ||
+		b->_type == HS_VERTICAL);
+
+	frameRect(Common::Rect(x1, y1, x2, y2),
+		GetNearestColor(b->getColor()));
+}
+
+void CDC::Impl::floodFill(int x, int y, COLORREF crColor) {
+	error("TODO: CDC::floodFill");
+}
+
+void CDC::Impl::floodFill(int x, int y, COLORREF crColor,
+		UINT nFillType) {
+	error("TODO: CDC::floodFill");
 }
 
 void CDC::Impl::draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight) {
