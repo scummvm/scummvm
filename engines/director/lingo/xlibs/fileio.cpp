@@ -122,6 +122,7 @@ delete object me -- deletes the open file
  */
 
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "image/pict.h"
@@ -264,13 +265,12 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 		_inStream = saves->openForLoading(filename);
 		if (!_inStream) {
 			// Maybe we're trying to read one of the game files
-			Common::File *f = new Common::File;
 			Common::Path location = findPath(origpath);
-			if (location.empty() || !f->open(location)) {
-				delete f;
+			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(location);
+			if (!file) {
 				return saveFileError();
 			}
-			_inStream = f;
+			_inStream = file;
 		}
 	} else if (option.equalsIgnoreCase("write")) {
 		// OutSaveFile is not seekable so create a separate seekable stream
@@ -283,13 +283,12 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 	} else if (option.equalsIgnoreCase("append")) {
 		Common::SeekableReadStream *inFile = saves->openForLoading(filename);
 		if (!inFile) {
-			Common::File *f = new Common::File;
-
-			if (!f->open(Common::Path(origpath, g_director->_dirSeparator))) {
-				delete f;
+			Common::Path location = findPath(origpath);
+			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(location);
+			if (!file) {
 				return saveFileError();
 			}
-			inFile = f;
+			inFile = file;
 		}
 		_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 		byte b = inFile->readByte();
