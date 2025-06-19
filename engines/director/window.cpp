@@ -61,6 +61,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 
 	_windowType = -1;
 	_isModal = false;
+	_skipFrameAdvance = false;
 
 	updateBorderType();
 
@@ -740,6 +741,8 @@ uint32 Window::frozenLingoRecursionCount() {
 
 	for (int i = (int)_frozenLingoStates.size() - 1; i >= 0; i--) {
 		LingoState *state = _frozenLingoStates[i];
+		if (state->callstack.empty())
+			continue;
 		CFrame *frame = state->callstack.front();
 		if (frame->sp.name->equalsIgnoreCase("enterFrame") ||
 				frame->sp.name->equalsIgnoreCase("stepMovie") ||

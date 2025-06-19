@@ -777,9 +777,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			// TODO: How is this handled with multiple casts in D5?
 			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
 			uint16 spriteId = score->getSpriteIDFromPos(pos);
-			d = score->getSpriteById(spriteId)->_castId.member;
-			if (d.u.i == 0)
-				d = -1;
+			if (spriteId) {
+				d = score->getSpriteById(spriteId)->_castId.toMultiplex();
+			} else {
+				d = 0;
+			}
 		}
 		break;
 	case kTheMouseChar:
