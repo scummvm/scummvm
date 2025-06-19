@@ -1701,9 +1701,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		{
 			CastMemberID castId = d.asMemberID();
 			if (field == kTheMemberNum) {
-				// Setting the cast ID as a number will preserve whatever is in castLib
-				// The member part will be demultiplexed if required, and the castLib portion ignored.
-				castId = CastMemberID(castId.member, sprite->_castId.castLib);
+				// If the number is multiplexed with a castLib 2 or higher, the castLib will be used.
+				// Otherwise the existing castLib will be preserved.
+				if (castId.castLib == 1) {
+					castId = CastMemberID(castId.member, sprite->_castId.castLib);
+				}
 			} else if (field == kTheCastLibNum) {
 				castId = CastMemberID(sprite->_castId.member, d.asInt());
 			}
