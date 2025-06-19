@@ -143,7 +143,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Fred Rogers - Terrorist", "8597a77619847efbce3f1f8b2ceb3258", 524199), // alt version
 	FANGAME("Galactic Warrior", "bf61d2344a63b597ab288ddaacfa402a", 89117),
 	FANGAMEN("get-a-mac", "get-a-mac 1.1", "e12a38d9b56ca62414b99cdb58aa3e1c", 144936),
-	// ??? crash at startup
 	FANGAMEN("Get out of MAZE", "Get out of MAZE 1.0", "cd9eb31e1178b0eec35ee84ff781647b", 53583),
 	FANGAME("Gold Bug!", "34a379231ae97150e336b91773e6dd47", 782645),
 	BIGGAME("grailquest", "", "GrailQuest", "6441d134c0aedd8cb3b6909107a22ee3", 739452),
