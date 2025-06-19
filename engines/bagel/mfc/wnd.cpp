@@ -30,6 +30,7 @@ namespace MFC {
 IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 ON_WM_CLOSE()
+ON_WM_DRAWITEM()
 END_MESSAGE_MAP()
 
 CWnd::CWnd() : m_hWnd(this) {
@@ -666,7 +667,7 @@ BOOL CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
 }
 
 CWnd *CWnd::GetDlgItem(int nID) const {
-	error("TODO: CWnd::GetDlgItem");
+	return _children.contains(nID) ? _children[nID] : nullptr;
 }
 
 CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
@@ -674,7 +675,13 @@ CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
 }
 
 BOOL CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {
-	error("TODO: CWnd::GotoDlgCtrl");
+	if (pWndCtrl != nullptr) {
+		pWndCtrl->SetFocus();            // Give it focus
+		SendMessage(WM_NEXTDLGCTL, (WPARAM)pWndCtrl->m_hWnd, TRUE);	// Update focus info
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
@@ -773,6 +780,12 @@ void CWnd::OnClose() {
 	}
 
 	DestroyWindow();
+}
+
+void CWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {
+	CWnd *pControl = GetDlgItem(nIDCtl);
+	if (pControl)
+		pControl->DrawItem(lpDrawItemStruct);
 }
 
 } // namespace MFC

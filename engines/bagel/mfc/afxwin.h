@@ -1139,7 +1139,7 @@ protected:
 	afx_msg void OnTimer(UINT_PTR nIDEvent) {}
 
 	// Control message handler member functions
-	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {}
+	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 	afx_msg UINT OnGetDlgCode() {
 		return 0;
 	}
@@ -1150,6 +1150,8 @@ protected:
 	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex) {
 		return 0;
 	}
+
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {}
 
 protected:
 	Common::HashMap<int, CWnd *> _children;
@@ -1166,7 +1168,7 @@ public:
 	int m_nClassStyle = 0;
 	int m_nStyle = 0;
 	int m_nModalResult = -1;
-	bool _visible = false;
+	bool _visible = true;
 	bool _hasFocus = false;
 	CString _windowText;
 	Common::Rect _windowRect;

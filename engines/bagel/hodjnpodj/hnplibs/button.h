@@ -89,7 +89,7 @@ private:
 
 private:
 
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CBmpButton )
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
@@ -171,7 +171,7 @@ private:
 
 private:
 
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CColorButton )
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
@@ -216,7 +216,7 @@ private:
 
 private:
 
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CCheckButton )
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
@@ -263,7 +263,7 @@ private:
 
 private:
 
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CRadioButton )
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
