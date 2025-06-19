@@ -690,7 +690,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int _L
 		stream = nullptr;
 	} else { // TGA
 		auto stream = workDirs.resolveFile(TextName);
-		auto image = ReadTgaImage(TextName, *stream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), 0); // TODO Flags
+		auto image = ReadTgaImage(TextName, *stream, Graphics::PixelFormat::createFormatRGBA32(), 0); // TODO Flags
 		SurfaceBackedTextureData texData(image);
 
 		texture->_texture->assignData(texData);
