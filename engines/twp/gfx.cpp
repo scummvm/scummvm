@@ -187,12 +187,11 @@ void Shader::setUniform4(const char *name, Color value) {
 }
 
 void Gfx::init() {
-	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	byte pixels[] = {0xFF, 0xFF, 0xFF, 0xFF};
 	Graphics::Surface empty;
 	empty.w = 1;
 	empty.h = 1;
-	empty.format = fmt;
+	empty.format = Graphics::PixelFormat::createFormatRGBA32();
 	empty.setPixels(pixels);
 	_emptyTexture.load(empty);
 
