@@ -412,8 +412,8 @@ void static decodeSamples(int32 volumeLevel, int32 stepSizeIdx, int32 initSample
 
 void SoundManager::mix(Slot *slot, int16 *outBuf) {
 	int16 *currentDataPtr = (int16 *)slot->_currentDataPtr;
-	int32 predictorValue = currentDataPtr[0];
-	uint32 stepSizeIndex = currentDataPtr[1] << 6;
+	int32 predictorValue = READ_LE_INT16(&currentDataPtr[0]);
+	uint32 stepSizeIndex = READ_LE_INT16(&currentDataPtr[1]) << 6;
 
 	if (stepSizeIndex > 5632) {
 		slot->_statusFlags |= kSoundFlagDecodeError;

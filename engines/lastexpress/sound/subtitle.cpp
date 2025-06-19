@@ -110,6 +110,10 @@ void Subtitle::load() {
 		_engine->getArchiveManager()->readHPF(archive, _engine->getSubtitleManager()->_subtitlesData, archive->size);
 		_engine->getArchiveManager()->closeHPF(archive);
 
+		for (int i = 0; i < (archive->size * PAGE_SIZE) / 2; i++) {
+			_engine->getSubtitleManager()->_subtitlesData[i] = READ_LE_UINT16(&_engine->getSubtitleManager()->_subtitlesData[i]);
+		}
+
 		if (_engine->getSubtitleManager()->_subtitlesData[0]) {
 			for (int i = 0; i < _engine->getSubtitleManager()->_subtitlesData[0]; i++) {
 				if (!_data[1])
