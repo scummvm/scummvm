@@ -30,37 +30,43 @@ TeInputMgr::TeInputMgr() {
 
 void TeInputMgr::handleEvent(const Common::Event &e) {
 	switch (e.type) {
-		case Common::EVENT_KEYDOWN:
-			_keyDownSignal.call(e.kbd);
-			break;
-		case Common::EVENT_KEYUP:
-			_keyUpSignal.call(e.kbd);
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			_mouseMoveSignal.call(e.mouse);
-			_lastMousePos = e.mouse;
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_mouseLDownSignal.call(e.mouse);
-			_lastMousePos = e.mouse;
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_mouseLUpSignal.call(e.mouse);
-			_lastMousePos = e.mouse;
-			break;
-		case Common::EVENT_RBUTTONDOWN:
-			_mouseRDownSignal.call(e.mouse);
-			_lastMousePos = e.mouse;
-			break;
-		case Common::EVENT_RBUTTONUP:
-			_mouseRUpSignal.call(e.mouse);
-			_lastMousePos = e.mouse;
-			break;
-		case Common::EVENT_MAINMENU:
-			g_engine->getGame()->_returnToMainMenu = true;
-			break;
-		default:
-			break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		_customActionStartSignal.call(e.customType);
+		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		_customActionEndSignal.call(e.customType);
+		break;
+	case Common::EVENT_KEYDOWN:
+		_keyDownSignal.call(e.kbd);
+		break;
+	case Common::EVENT_KEYUP:
+		_keyUpSignal.call(e.kbd);
+		break;
+	case Common::EVENT_MOUSEMOVE:
+		_mouseMoveSignal.call(e.mouse);
+		_lastMousePos = e.mouse;
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+		_mouseLDownSignal.call(e.mouse);
+		_lastMousePos = e.mouse;
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_mouseLUpSignal.call(e.mouse);
+		_lastMousePos = e.mouse;
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		_mouseRDownSignal.call(e.mouse);
+		_lastMousePos = e.mouse;
+		break;
+	case Common::EVENT_RBUTTONUP:
+		_mouseRUpSignal.call(e.mouse);
+		_lastMousePos = e.mouse;
+		break;
+	case Common::EVENT_MAINMENU:
+		g_engine->getGame()->_returnToMainMenu = true;
+		break;
+	default:
+		break;
 	}
 }
 

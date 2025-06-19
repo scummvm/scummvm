@@ -79,6 +79,44 @@ void TetraedgeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Tetraedge::TetraedgeEngine::getSavegameThumbnail(thumb);
 }
 
+Common::KeymapArray TetraedgeMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Tetraedge;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "tetraedge-default", _("Default keymappings"));
+
+	Common::Action *act;
+
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	act = new Common::Action(kStandardActionLeftClick, _("Move / Interact / Select"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SKIP", _("Skip dialog"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("l");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("s");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	return Common::Keymap::arrayOf(engineKeyMap);
+
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(TETRAEDGE)
 REGISTER_PLUGIN_DYNAMIC(TETRAEDGE, PLUGIN_TYPE_ENGINE, TetraedgeMetaEngine);
