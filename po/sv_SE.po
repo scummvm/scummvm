@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-19 11:17+0000\n"
-"PO-Revision-Date: 2025-06-16 09:33+0000\n"
+"PO-Revision-Date: 2025-06-19 20:18+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -13133,7 +13133,7 @@ msgstr "Överför karaktär"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Draw Weapon / Combat"
-msgstr ""
+msgstr "Dra vapen / Strid"
 
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game Menu"
@@ -13162,10 +13162,8 @@ msgid "Use Bedroll"
 msgstr "Använd sovsäck"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Use Backpack"
 msgid "Open Backpack"
-msgstr "Använd ryggsäck"
+msgstr "Öppna ryggsäck"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
 msgid "Use Keyring"
@@ -13180,15 +13178,13 @@ msgid "Use Recall"
 msgstr "Använd återkallning"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open Inventory"
 msgid "Open Inventory & Statistics"
-msgstr "Öppna inventarier"
+msgstr "Öppna inventarier och statistik"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Close All Displays"
-msgstr ""
+msgstr "Stäng alla skärmar"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
@@ -13196,27 +13192,21 @@ msgstr "Hoppa (fejka båda-knappar-klick)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
 msgid "Careful Step"
-msgstr ""
+msgstr "Försiktigt steg"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Cycle back through inventory cursor items"
 msgid "Cycle through Weapon Inventory"
-msgstr "Växla bakåt genom översiktens markörobjekt"
+msgstr "Växla genom vapeninventarier"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through stretch modes"
 msgid "Cycle through Item Inventory"
-msgstr "Byt till nästa utsträckningsläge"
+msgstr "Växla genom objektinventarier"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use Inventory Item"
 msgstr "Använd inventarieobjekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use Medical Kit"
 msgid "Use Medikit"
 msgstr "Använd medicinlåda"
 
@@ -13233,10 +13223,8 @@ msgid "Drop Weapon"
 msgstr "Släpp vapen"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select Item"
 msgid "Search / Select Item"
-msgstr "Välj objekt"
+msgstr "Sök / Välj objekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Use Selection"
@@ -13247,16 +13235,12 @@ msgid "Grab Items"
 msgstr "Ta objekt"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Next Weapon"
 msgid "Fire Weapon"
-msgstr "Nästa vapen"
+msgstr "Avfyra vapen"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
-#, fuzzy
-#| msgid "Focus Camera on Silencer"
 msgid "Center screen on Silencer"
-msgstr "Fokusera kameran på Silencer"
+msgstr "Centrera skärmen på Silencer"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
