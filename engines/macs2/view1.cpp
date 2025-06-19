@@ -104,6 +104,11 @@ View1::View1() : UIElement("View1") {
 		Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
 		// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 		stream.seek(23, SEEK_SET);
+		
+		uint16 offset = Macs2::BackgroundAnimationBlob::Func1480(gameObject->Blobs[index], true, 0);
+		offset += 6;
+		stream.seek(offset, SEEK_SET);
+		offset += 6;
 		result->ReadFromStream(&stream);
 		return result;
 		// TODO: Think about proper memory management
