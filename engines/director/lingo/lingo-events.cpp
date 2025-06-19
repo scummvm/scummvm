@@ -269,8 +269,11 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			// call, but it -does- get a mouseUp call.
 			// A bit unhinged, but we have a test that proves Director does this,
 			// so we have to do it too.
+			//
+			// mouseEnter and mouseLeave events should also defer to the value of channelId.
 			CastMemberID targetCast = _currentMouseDownCastID;
-			if ((event.event == kEventMouseDown) || (event.event == kEventRightMouseDown)) {
+			if ((event.event == kEventMouseDown) || (event.event == kEventRightMouseDown) ||
+				(event.event == kEventMouseEnter) || (event.event == kEventMouseLeave)) {
 				if (!event.channelId)
 					return;
 				Sprite *sprite = _score->getSpriteById(event.channelId);
