@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 21:38+0000\n"
+"POT-Creation-Date: 2025-06-19 21:56+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -319,7 +319,7 @@ msgstr "Et annet fillager er aktivt. Ønsker du å avbryte det?"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543
+#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:339
 msgid "Yes"
 msgstr "Ja"
 
@@ -332,7 +332,7 @@ msgstr "Ja"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543
+#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:340
 msgid "No"
 msgstr "Nei"
 
@@ -367,7 +367,7 @@ msgstr "Innholdet i JSON-koden er feilutformet."
 #: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
 #: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
-#: engines/zvision/file/save_manager.cpp:225
+#: engines/zvision/file/save_manager.cpp:210
 msgid "OK"
 msgstr "OK"
 
@@ -3285,8 +3285,8 @@ msgstr "Spillmotor for grafikkbaserte eventyr"
 #: engines/sludge/keymapper_tables.h:223 engines/sludge/keymapper_tables.h:343
 #: engines/sludge/keymapper_tables.h:355 engines/sludge/keymapper_tables.h:416
 #: engines/sludge/keymapper_tables.h:429 engines/sludge/keymapper_tables.h:541
-#: engines/tinsel/metaengine.cpp:335 engines/zvision/metaengine.cpp:272
-#: engines/zvision/metaengine.cpp:290
+#: engines/tinsel/metaengine.cpp:335 engines/zvision/metaengine.cpp:292
+#: engines/zvision/metaengine.cpp:310
 msgid "Quit"
 msgstr "Avslutt"
 
@@ -3511,7 +3511,7 @@ msgstr "~T~ilbake til oppstarter"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:48
+#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:46
 msgid "Save game:"
 msgstr "Lagret spill:"
 
@@ -3536,7 +3536,7 @@ msgstr "Lagret spill:"
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
 #: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:749
-#: engines/zvision/file/save_manager.cpp:48 engines/zvision/metaengine.cpp:262
+#: engines/zvision/file/save_manager.cpp:46 engines/zvision/metaengine.cpp:282
 msgid "Save"
 msgstr "Lagre"
 
@@ -3788,7 +3788,7 @@ msgstr "Spillets standard knappoppsett"
 #: engines/touche/metaengine.cpp:122 engines/trecision/metaengine.cpp:125
 #: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
 #: engines/vcruise/metaengine.cpp:158 engines/wintermute/keymapper_tables.h:42
-#: engines/zvision/metaengine.cpp:183
+#: engines/zvision/metaengine.cpp:203
 msgid "Left Click"
 msgstr "Venstreklikk"
 
@@ -3816,7 +3816,7 @@ msgstr "Midtklikk"
 #: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:128
 #: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
 #: engines/tucker/metaengine.cpp:178 engines/wintermute/keymapper_tables.h:48
-#: engines/zvision/metaengine.cpp:189
+#: engines/zvision/metaengine.cpp:209
 msgid "Right Click"
 msgstr "Høyreklikk"
 
@@ -5941,7 +5941,7 @@ msgstr "Minimer"
 #. ONLINE HELP
 #: backends/platform/sdl/macosx/appmenu_osx.mm:312
 #: engines/bladerunner/metaengine.cpp:321 engines/tucker/metaengine.cpp:215
-#: engines/zvision/metaengine.cpp:226
+#: engines/zvision/metaengine.cpp:246
 msgid "Help"
 msgstr "Hjelp"
 
@@ -6322,7 +6322,7 @@ msgstr ""
 #: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
 #: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:44
 #: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:52
-#: engines/zvision/metaengine.cpp:46
+#: engines/zvision/metaengine.cpp:42
 msgid "Use original save/load screens"
 msgstr "Bruk originale lagre/laste-skjermer"
 
@@ -6335,7 +6335,7 @@ msgstr "Bruk originale lagre/laste-skjermer"
 #: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
 #: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:45
 #: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:53
-#: engines/zvision/metaengine.cpp:47
+#: engines/zvision/metaengine.cpp:43
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Bruk de opprinnelige Lagre-/Laste-skjermene istedenfor ScummVMs egne"
 
@@ -6450,7 +6450,7 @@ msgstr "Dette spillet støtter ikke lagring"
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
-#: engines/zvision/file/save_manager.cpp:61
+#: engines/zvision/file/save_manager.cpp:59
 msgid "Restore game:"
 msgstr "Gjennopprett spill:"
 
@@ -6470,7 +6470,7 @@ msgstr "Gjennopprett spill:"
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
-#: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
+#: engines/zvision/file/save_manager.cpp:59 engines/zvision/metaengine.cpp:287
 msgid "Restore"
 msgstr "Gjenopprett"
 
@@ -6817,7 +6817,7 @@ msgstr ""
 "Bruk kantutjevning ved visning av tekst (selv når spillet ikke ber om det)"
 
 #: engines/ags/dialogs.cpp:85 engines/grim/metaengine.cpp:48
-#: engines/zvision/metaengine.cpp:221
+#: engines/zvision/metaengine.cpp:241
 msgid "Show FPS"
 msgstr "Vis antall bilder per sekund"
 
@@ -7214,7 +7214,7 @@ msgstr "Skru kampmodus av/på"
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
 #: engines/scumm/metaengine.cpp:1030 engines/toltecs/metaengine.cpp:246
-#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:284
+#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Hopp over mellomsekvens"
 
@@ -7616,7 +7616,7 @@ msgstr "Ta"
 #: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
 #: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
 #: engines/tinsel/metaengine.cpp:313 engines/twine/metaengine.cpp:370
-#: engines/zvision/metaengine.cpp:232
+#: engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr "Utstyrsliste"
 
@@ -9065,14 +9065,14 @@ msgstr "Gå til høyre"
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
-#: engines/zvision/metaengine.cpp:209
+#: engines/zvision/metaengine.cpp:229
 msgid "Turn Left"
 msgstr "Svin til Venstre"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
-#: engines/zvision/metaengine.cpp:215
+#: engines/zvision/metaengine.cpp:235
 msgid "Turn Right"
 msgstr "Sving til Høyre"
 
@@ -14530,7 +14530,7 @@ msgstr "F1"
 msgid "Key i"
 msgstr "i-tast"
 
-#: engines/zvision/file/save_manager.cpp:221
+#: engines/zvision/file/save_manager.cpp:206
 #, c-format
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
@@ -14540,69 +14540,93 @@ msgstr ""
 "opptil versjon %d. Du trenger en oppdatert versjon av spillmotoren for å "
 "bruke dette lagrede spillet."
 
-#: engines/zvision/metaengine.cpp:58
+#: engines/zvision/metaengine.cpp:54
 msgid "Double FPS"
 msgstr "Dobbel FPS"
 
-#: engines/zvision/metaengine.cpp:59
+#: engines/zvision/metaengine.cpp:55
 msgid "Increase framerate from 30 to 60 FPS"
 msgstr "Øk bilderate fra 30 til 60 FPS"
 
-#: engines/zvision/metaengine.cpp:70
+#: engines/zvision/metaengine.cpp:66
 msgid "Enable Venus"
 msgstr "Aktiver Venus"
 
-#: engines/zvision/metaengine.cpp:71
+#: engines/zvision/metaengine.cpp:67
 msgid "Enable the Venus help system"
 msgstr "Aktiver Venus-hjelpesystemet"
 
-#: engines/zvision/metaengine.cpp:82
+#: engines/zvision/metaengine.cpp:78
 msgid "Disable animation while turning"
 msgstr "Deaktiver animasjoner under snuing"
 
-#: engines/zvision/metaengine.cpp:83
+#: engines/zvision/metaengine.cpp:79
 msgid "Disable animation while turning in panorama mode"
 msgstr "Deaktiver animasjoner under snuing i panoramamodus"
 
-#: engines/zvision/metaengine.cpp:94
+#: engines/zvision/metaengine.cpp:90
 msgid "Use high resolution MPEG video"
 msgstr "Bruk høyoppløst MPEG-video"
 
-#: engines/zvision/metaengine.cpp:95
+#: engines/zvision/metaengine.cpp:91
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
 "Bruk MPEG-video fra DVD-versjonen istedenfor AVI-versjonen med lavere "
 "oppløsning"
 
-#: engines/zvision/metaengine.cpp:197
+#: engines/zvision/metaengine.cpp:102
+#, fuzzy
+#| msgid "Game id not supported"
+msgid "Enable widescreen support"
+msgstr "Spill-ID ikke støttet"
+
+#: engines/zvision/metaengine.cpp:103
+msgid ""
+"Rearrange placement of menus & subtitles so as to make better use of modern "
+"wide aspect ratio displays"
+msgstr ""
+
+#: engines/zvision/metaengine.cpp:114
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Enable high quality panoramas"
+msgstr "Aktiver hit point-bar grafer"
+
+#: engines/zvision/metaengine.cpp:115
+#, fuzzy
+#| msgid "Apply bilinear filtering to individual sprites"
+msgid "Apply bilinear filtering to panoramic backgrounds"
+msgstr "Bruk bilineært filter på individuelle grafikksprites"
+
+#: engines/zvision/metaengine.cpp:217
 msgid "Look Up"
 msgstr "Se opp"
 
-#: engines/zvision/metaengine.cpp:203
+#: engines/zvision/metaengine.cpp:223
 msgid "Look Down"
 msgstr "Se ned"
 
-#: engines/zvision/metaengine.cpp:238
+#: engines/zvision/metaengine.cpp:258
 msgid "Spellbook"
 msgstr "Formelbok"
 
-#: engines/zvision/metaengine.cpp:244
+#: engines/zvision/metaengine.cpp:264
 msgid "Score"
 msgstr "Poeng"
 
-#: engines/zvision/metaengine.cpp:250
+#: engines/zvision/metaengine.cpp:270
 msgid "Put away object"
 msgstr "Legg bort gjenstand"
 
-#: engines/zvision/metaengine.cpp:256
+#: engines/zvision/metaengine.cpp:276
 msgid "Extract coin"
 msgstr "Hent ut mynt"
 
-#: engines/zvision/metaengine.cpp:277
+#: engines/zvision/metaengine.cpp:297
 msgid "Preferences"
 msgstr "Preferanser"
 
-#: engines/zvision/zvision.cpp:302
+#: engines/zvision/zvision.cpp:319
 #, fuzzy
 #| msgid ""
 #| "Before playing this game, you'll need to copy the required fonts into "
@@ -14629,6 +14653,14 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#: engines/zvision/zvision.cpp:334
+msgid ""
+"MIDI playback is not available, or else improperly configured. Zork Nemesis "
+"contains several music puzzles which require MIDI audio in order to be "
+"solved.  These puzzles may alternatively be solved using subtitles, if "
+"supported. Continue launching game?"
+msgstr ""
 
 #, fuzzy
 #~| msgid "Toggle Combat"
