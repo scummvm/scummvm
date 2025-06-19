@@ -92,14 +92,14 @@ void CastleEngine::loadAssetsZXFullGame() {
 
 	file.open("castlemaster.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find castlemaster.zx.title");
 
 	file.close();
 	file.open("castlemaster.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find castlemaster.zx.border");
 	file.close();

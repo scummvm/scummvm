@@ -57,14 +57,14 @@ void EclipseEngine::loadAssetsZXFullGame() {
 
 	file.open("totaleclipse.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find totaleclipse.zx.title");
 
 	file.close();
 	file.open("totaleclipse.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find totaleclipse.zx.border");
 	file.close();
@@ -100,14 +100,14 @@ void EclipseEngine::loadAssetsZXDemo() {
 
 	file.open("totaleclipse.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find totaleclipse.zx.title");
 
 	file.close();
 	file.open("totaleclipse.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find totaleclipse.zx.border");
 	file.close();

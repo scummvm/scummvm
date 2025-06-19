@@ -41,7 +41,6 @@ const Graphics::PixelFormat getRGBAPixelFormat() {
 Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics) {
 	_screenW = screenW;
 	_screenH = screenH;
-	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	_keyColor = -1;
 	_inkColor = -1;
 	_paperColor = -1;
