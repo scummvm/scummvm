@@ -1417,6 +1417,10 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 	//error("Could not get font userdata");
 	const Font *font = text->getFont();
 
+	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatRGBA32();
+	const uint32 blackColor = format.RGBToColor(0, 0, 0);
+	const uint32 whiteColor = format.RGBToColor(0xff, 0xff, 0xff);
+
 	if (font->is8Bit())
 		return;
 
@@ -1427,8 +1431,8 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 	for (int i = 0; i < numLines; i++) {
 		Graphics::Surface surface;
 
-		font->render(surface, text->getLines()[i], Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
-			     0xFF000000, 0xFFFFFFFF, 0x00000000);
+		font->render(surface, text->getLines()[i], format,
+			     blackColor, whiteColor, 0);
 
 		byte *bitmap = (byte *)surface.getPixels();
 
