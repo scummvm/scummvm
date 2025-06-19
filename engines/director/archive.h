@@ -22,6 +22,7 @@
 #ifndef DIRECTOR_ARCHIVE_H
 #define DIRECTOR_ARCHIVE_H
 
+#include "common/hash-str.h"
 #include "common/file.h"
 
 namespace Common {
@@ -45,6 +46,9 @@ struct Resource {
 	uint32 castId;
 	uint32 libResourceId;
 	uint32 tag;
+	uint16 flags;
+	uint16 unk1;
+	uint32 nextFreeResourceID;
 	Common::String name;
 	Common::Array<Resource> children;
 	bool accessed;
@@ -57,7 +61,16 @@ public:
 
 	virtual bool openFile(const Common::Path &path);
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
+	virtual bool writeStream() { 
+		// Saving Director movies was introduced in Director 4
+		// However, from DirectorEngine::createArchive, it is evident that after Director 4 only RIFX Archives were written
+		error("Archive::writeStream was called on a non-RIFX Archive, which is not allowed");
+		return false;
+	} 
 	virtual void close();
+
+	/* Loading Functions for Cast */
+	bool loadConfig(Cast *cast);
 
 	Common::Path getPathName() const { return _pathName; }
 	Common::String getFileName() const;
@@ -134,6 +147,11 @@ public:
 	~RIFXArchive() override;
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
+	bool writeStream() override;
+	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream);
+	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);
+	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);
+
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint16 parentId) override;
@@ -147,6 +165,38 @@ private:
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
 	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
+
+	/* Memory Map data to save the file */
+	uint32 _metaTag;
+	uint32 _moreOffset;
+	uint32 _mapversion;
+	uint32 _mmapOffsetPos;
+	uint32 _mmapOffset;
+	uint32 _imapLength;
+	uint32 _version;
+	uint32 _size;
+
+	/* Key Table data to save the file */
+	uint16 _keyTableEntrySize;
+	uint16 _keyTableEntrySize2;
+	uint32 _keyTableEntryCount;
+	uint32 _keyTableUsedCount;
+	
+	/* AfterBurner data to save the file */
+	uint32 _fverLength;
+	uint32 _afterBurnerVersion;
+	uint32 _fcdrLength;
+	uint32 _abmpLength;
+	uint32 _abmpEnd;
+	uint32 _abmpCompressionType;
+	unsigned long _abmpUncompLength;
+	unsigned long _abmpActualUncompLength;
+
+	/* Config data to save the file */
+	Cast *_cast;
+
+	/* Movie Cast Lib Mapping data to save the file */
+	Movie *_movie;
 
 protected:
 	uint32 _rifxType;
