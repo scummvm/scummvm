@@ -1926,7 +1926,7 @@ void GraphicsManager::decompG(byte *data, int32 size) {
 
 			// Copy green component (bits 5-9) from previous output
 			for (int i = 0; i < count; i++) {
-				*((int16 *)outBuffer) |= (READ_LE_INT16(sourcePtr) & 0x3E0);
+				*((int16 *)outBuffer) |= (*sourcePtr & 0x3E0);
 				outBuffer += 2;
 				sourcePtr++;
 			}
@@ -2010,7 +2010,11 @@ bool GraphicsManager::decomp16(byte *data, int32 size) {
 
 	if (_bgDecompFlags == 0) {
 		_bgDecompFlags = 0x1000;
-		_bgDecompOutBufferTemp = (_bgDecompOutBuffer + 1);
+#ifdef SCUMM_LITTLE_ENDIAN
+		_bgDecompOutBufferTemp = (_bgDecompOutBuffer + 1); // High byte for red
+#else
+		_bgDecompOutBufferTemp = _bgDecompOutBuffer;       // Low byte for red on BE
+#endif
 		_bgDecompTargetRect->x = READ_LE_UINT32(data);
 		_bgDecompTargetRect->y = READ_LE_UINT32(data + 1 * sizeof(uint32));
 		_bgDecompTargetRect->width = READ_LE_UINT32(data + 2 * sizeof(uint32));
@@ -2048,9 +2052,15 @@ bool GraphicsManager::decomp16(byte *data, int32 size) {
 
 		if ((_bgDecompFlags & 0x100) != 0) {
 			_bgDecompFlags &= ~0x100;
-			_bgDecompFlags++; // Go to the next channel
 
 			_bgDecompOutBufferTemp = _bgDecompOutBuffer;
+
+#ifndef SCUMM_LITTLE_ENDIAN
+			if ((_bgDecompFlags & 3) == 0)
+				_bgDecompOutBufferTemp++;
+#endif
+
+			_bgDecompFlags++; // Go to the next channel
 
 			if ((_bgDecompFlags & 3) == 3)
 				return false;
