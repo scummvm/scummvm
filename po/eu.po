@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 22:04+0000\n"
+"POT-Creation-Date: 2025-06-19 22:25+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -3774,7 +3774,7 @@ msgstr ""
 #: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:264
-#: engines/composer/metaengine.cpp:113 engines/cruise/metaengine.cpp:147
+#: engines/composer/metaengine.cpp:113 engines/cruise/metaengine.cpp:173
 #: engines/draci/metaengine.cpp:141 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
@@ -3803,7 +3803,7 @@ msgstr "Erdiko klika"
 #: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:270
-#: engines/composer/metaengine.cpp:119 engines/cruise/metaengine.cpp:153
+#: engines/composer/metaengine.cpp:119 engines/cruise/metaengine.cpp:179
 #: engines/draci/metaengine.cpp:147 engines/groovie/metaengine.cpp:211
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:104
 #: engines/illusions/metaengine.cpp:101 engines/lure/metaengine.cpp:183
@@ -3821,7 +3821,7 @@ msgstr "Eskuin-klika"
 
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:96 engines/agos/metaengine.cpp:252
-#: engines/crab/input/input.cpp:261 engines/cruise/metaengine.cpp:191
+#: engines/crab/input/input.cpp:261 engines/cruise/metaengine.cpp:217
 #: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
@@ -6258,7 +6258,7 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
-#: engines/cine/metaengine.cpp:258 engines/cruise/metaengine.cpp:143
+#: engines/cine/metaengine.cpp:258 engines/cruise/metaengine.cpp:169
 #: engines/draci/metaengine.cpp:137 engines/efh/metaengine.cpp:203
 #: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
 #: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
@@ -6697,7 +6697,7 @@ msgid "General Keys"
 msgstr "Orokorra"
 
 #: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:257
-#: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:136
+#: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:136
 #: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
@@ -6718,7 +6718,7 @@ msgid "Escape keymappings"
 msgstr "~A~ukerak..."
 
 #. I18N: ESC key
-#: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
+#: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:101 engines/got/metaengine.cpp:63
 #: engines/hugo/metaengine.cpp:160 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
@@ -7095,17 +7095,18 @@ msgstr "Daltonikoentzako modua"
 msgid "Enable Color Blind Mode by default"
 msgstr "Gaitu daltonikoentzako modua lehenetsi modura"
 
-#: engines/cge/metaengine.cpp:56 engines/drascula/metaengine.cpp:51
-#: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
-#: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:45
-#: engines/wage/metaengine.cpp:51
+#: engines/cge/metaengine.cpp:56 engines/cruise/metaengine.cpp:45
+#: engines/drascula/metaengine.cpp:51 engines/glk/metaengine.cpp:193
+#: engines/griffon/metaengine.cpp:40 engines/mortevielle/metaengine.cpp:37
+#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
+#: engines/teenagent/metaengine.cpp:45 engines/wage/metaengine.cpp:51
 #, fuzzy
 msgid "Enable Text to Speech"
 msgstr "Testu eta ahotsa:"
 
-#: engines/cge/metaengine.cpp:57 engines/drascula/metaengine.cpp:52
-#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:46
+#: engines/cge/metaengine.cpp:57 engines/cruise/metaengine.cpp:46
+#: engines/drascula/metaengine.cpp:52 engines/mortevielle/metaengine.cpp:38
+#: engines/teenagent/metaengine.cpp:46
 #, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Erabili CD-ko audioa jokokoa beharrean, eskurarri badago"
@@ -7337,7 +7338,7 @@ msgstr "Kendu"
 
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:324 engines/crab/input/input.cpp:251
-#: engines/cruise/metaengine.cpp:166 engines/draci/metaengine.cpp:178
+#: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:178
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
@@ -7506,30 +7507,30 @@ msgid "Quick Load"
 msgstr "Klikatzeko modua"
 
 #. I18N: Game runs at faster speed
-#: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
+#: engines/cruise/metaengine.cpp:186 engines/tucker/metaengine.cpp:196
 #, fuzzy
 msgid "Fast mode"
 msgstr "Modu bizkorra"
 
 #. I18N: Opens menu with player commands
-#: engines/cruise/metaengine.cpp:173
+#: engines/cruise/metaengine.cpp:199
 #, fuzzy
 msgid "Player menu"
 msgstr "Denbora: "
 
-#: engines/cruise/metaengine.cpp:179
+#: engines/cruise/metaengine.cpp:205
 #, fuzzy
 #| msgid "Fast movie speed"
 msgid "Increase game speed"
 msgstr "Bideo abiadura azkarra"
 
-#: engines/cruise/metaengine.cpp:185
+#: engines/cruise/metaengine.cpp:211
 #, fuzzy
 #| msgid "Fast movie speed"
 msgid "Decrease game speed"
 msgstr "Bideo abiadura azkarra"
 
-#: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
+#: engines/cruise/metaengine.cpp:229 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
 #, fuzzy
 msgid "Exit game"
