@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 21:56+0000\n"
+"POT-Creation-Date: 2025-06-19 22:00+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -62,7 +62,7 @@ msgstr "Διαθέσιμες μηχανές:"
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
-#: engines/twp/metaengine.cpp:179
+#: engines/supernova/metaengine.cpp:341 engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "Κλείσιμο"
 
@@ -1024,6 +1024,7 @@ msgstr "ΓΔΧ"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
+#: engines/supernova/metaengine.cpp:226
 msgid "Interact"
 msgstr "Αλληλεπίδραση"
 
@@ -1033,9 +1034,9 @@ msgstr "Αλληλεπίδραση"
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:55
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:1004 engines/twine/metaengine.cpp:430
-#: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
-#: engines/wintermute/keymapper_tables.h:1290
+#: engines/scumm/metaengine.cpp:1004 engines/supernova/metaengine.cpp:273
+#: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
+#: engines/twp/metaengine.cpp:154 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -1049,9 +1050,9 @@ msgstr "Πάνω"
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:56
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:971 engines/twine/metaengine.cpp:437
-#: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
-#: engines/wintermute/keymapper_tables.h:1296
+#: engines/scumm/metaengine.cpp:971 engines/supernova/metaengine.cpp:279
+#: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
+#: engines/twp/metaengine.cpp:155 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -3367,8 +3368,8 @@ msgstr "Μηχανή παιχνιδιών περιπέτειας"
 #: engines/sludge/keymapper_tables.h:223 engines/sludge/keymapper_tables.h:343
 #: engines/sludge/keymapper_tables.h:355 engines/sludge/keymapper_tables.h:416
 #: engines/sludge/keymapper_tables.h:429 engines/sludge/keymapper_tables.h:541
-#: engines/tinsel/metaengine.cpp:335 engines/zvision/metaengine.cpp:292
-#: engines/zvision/metaengine.cpp:310
+#: engines/supernova/metaengine.cpp:267 engines/tinsel/metaengine.cpp:335
+#: engines/zvision/metaengine.cpp:292 engines/zvision/metaengine.cpp:310
 msgid "Quit"
 msgstr "Έξοδος"
 
@@ -3931,8 +3932,9 @@ msgstr "Δεξί Click"
 #: engines/sludge/keymapper_tables.h:52 engines/sludge/keymapper_tables.h:125
 #: engines/sludge/keymapper_tables.h:187 engines/sludge/keymapper_tables.h:243
 #: engines/sludge/keymapper_tables.h:262 engines/sludge/keymapper_tables.h:459
-#: engines/sludge/keymapper_tables.h:490 engines/tucker/metaengine.cpp:184
-#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:1608
+#: engines/sludge/keymapper_tables.h:490 engines/supernova/metaengine.cpp:262
+#: engines/tucker/metaengine.cpp:184 engines/twine/metaengine.cpp:223
+#: engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr "Παύση"
 
@@ -3956,6 +3958,7 @@ msgid "Skip"
 msgstr "Παράλειψη"
 
 #: engines/metaengine.cpp:116 engines/sky/metaengine.cpp:121
+#: engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Παράλειψη γραμμής"
 
@@ -4821,7 +4824,7 @@ msgstr "Y"
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
 #: engines/got/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:49
-#: engines/mm/mm1/metaengine.cpp:92
+#: engines/mm/mm1/metaengine.cpp:92 engines/supernova/metaengine.cpp:303
 msgid "Select"
 msgstr "Select"
 
@@ -6023,8 +6026,8 @@ msgstr "Ελαχιστοποίηση"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #: backends/platform/sdl/macosx/appmenu_osx.mm:312
-#: engines/bladerunner/metaengine.cpp:321 engines/tucker/metaengine.cpp:215
-#: engines/zvision/metaengine.cpp:246
+#: engines/bladerunner/metaengine.cpp:321 engines/supernova/metaengine.cpp:238
+#: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
 msgstr "Βοήθεια"
 
@@ -6313,7 +6316,7 @@ msgstr "Έλεγχος Ενημερώσεων..."
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:959
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
-#: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
 #: engines/ultima/ultima8/ultima8.cpp:192
 #, c-format
@@ -6322,7 +6325,7 @@ msgstr "Αδυναμία εύρεσης του αρχείου παιχνιδιο
 
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:975
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
-#: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:468
+#: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
 #: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5431
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -7094,10 +7097,10 @@ msgstr "Γενικά Πλήκτρα"
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
-#: engines/sword1/metaengine.cpp:266 engines/tinsel/metaengine.cpp:240
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
 msgid "Default keymappings"
 msgstr "Προκαθορισμένες αντιστοιχίσεις"
 
@@ -7125,12 +7128,14 @@ msgstr "Άνοιγμα υπαρχόντων"
 
 #: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:83
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
-#: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
+#: engines/supernova/metaengine.cpp:326 engines/tinsel/metaengine.cpp:300
+#: engines/tsage/metaengine.cpp:206
 msgid "Look"
 msgstr "Κοίταξε"
 
 #: engines/bbvs/metaengine.cpp:130 engines/scumm/help.cpp:174
-#: engines/scumm/help.cpp:226 engines/tsage/metaengine.cpp:216
+#: engines/scumm/help.cpp:226 engines/supernova/metaengine.cpp:361
+#: engines/tsage/metaengine.cpp:216
 msgid "Talk"
 msgstr "Μίλα"
 
@@ -7142,8 +7147,8 @@ msgstr "Μίλα"
 #: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
 #: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
 #: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
-#: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
-#: engines/wintermute/keymapper_tables.h:140
+#: engines/supernova/metaengine.cpp:356 engines/tsage/metaengine.cpp:211
+#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "Χρήση"
@@ -7319,8 +7324,9 @@ msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1030 engines/toltecs/metaengine.cpp:246
-#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
+#: engines/scumm/metaengine.cpp:1030 engines/supernova/metaengine.cpp:309
+#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
+#: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Παράλειψη ταινίας"
 
@@ -7493,7 +7499,7 @@ msgstr "Ενεργοποίηση λειτουργίας για Άτομα με �
 #: engines/cge/metaengine.cpp:56 engines/drascula/metaengine.cpp:51
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:49 engines/teenagent/metaengine.cpp:45
+#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:45
 #: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Χρήση Κειμένου σε Ομιλία"
@@ -7618,7 +7624,7 @@ msgstr "Αφήγηση κειμένου για Αντικείμενα και Ε�
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
 #: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
-#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
+#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:54
 #: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
@@ -7703,6 +7709,7 @@ msgid "Examine"
 msgstr "Εξέτασε"
 
 #: engines/cine/metaengine.cpp:319 engines/saga/metaengine.cpp:394
+#: engines/supernova/metaengine.cpp:331
 msgid "Take"
 msgstr "Πάρε"
 
@@ -10532,20 +10539,20 @@ msgstr "Μίλα με"
 #: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
-#: engines/twp/metaengine.cpp:178
+#: engines/supernova/metaengine.cpp:336 engines/twp/metaengine.cpp:178
 msgid "Open"
 msgstr "Άνοιξε"
 
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
 #: engines/scumm/help.cpp:200 engines/scumm/help.cpp:210
-#: engines/twp/metaengine.cpp:180
+#: engines/supernova/metaengine.cpp:366 engines/twp/metaengine.cpp:180
 msgid "Give"
 msgstr "Δώσε"
 
 #: engines/saga/metaengine.cpp:389 engines/scumm/help.cpp:122
 #: engines/scumm/help.cpp:137 engines/scumm/help.cpp:162
-#: engines/twp/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:346 engines/twp/metaengine.cpp:184
 msgid "Push"
 msgstr "Σπρώξε"
 
@@ -11487,7 +11494,8 @@ msgid "Main game controls:"
 msgstr "Κύριοι χειρισμοί παιχνιδιού:"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:185
+#: engines/scumm/help.cpp:163 engines/supernova/metaengine.cpp:351
+#: engines/twp/metaengine.cpp:185
 msgid "Pull"
 msgstr "Τράβηξε"
 
@@ -12395,7 +12403,7 @@ msgstr ""
 msgid "Debug keymappings"
 msgstr "Προκαθορισμένες αντιστοιχίσεις"
 
-#: engines/sludge/keymapper_tables.h:35
+#: engines/sludge/keymapper_tables.h:35 engines/supernova/metaengine.cpp:218
 #, fuzzy
 #| msgid "Game keymappings"
 msgid "Menu keymappings"
@@ -12678,13 +12686,13 @@ msgstr ""
 "Το 'game.exe' προτείνεται για να έχουν ξεχωριστό στιλ τα παράθυρα με "
 "διαλόγους επιβεβαίωσης."
 
-#: engines/supernova/supernova.cpp:191
+#: engines/supernova/supernova.cpp:193
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
 msgstr ""
 "Αδυναμία εύρεσης του κειμένου σε γλώσσα %s στο αρχείο δεδομένων της μηχανής."
 
-#: engines/supernova/supernova.cpp:475
+#: engines/supernova/supernova.cpp:479
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
@@ -12692,19 +12700,19 @@ msgstr ""
 "Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου μηχανής παιχνιδιού. Αναμενόμενη η "
 "%d αλλά βρέθηκε η %d."
 
-#: engines/supernova/supernova.cpp:485
+#: engines/supernova/supernova.cpp:489
 #, c-format
 msgid "Unable to find block for part %d"
 msgstr "Αδυναμία εύρεσης τμήματος για το μέρος %d"
 
-#: engines/supernova/supernova.cpp:528
+#: engines/supernova/supernova.cpp:532
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr ""
 "Αδυναμία εύρεσης αρχείου '%s' στο φάκελο παιχνιδιού ή το αρχείο δεδομένων "
 "μηχανής."
 
-#: engines/supernova/supernova.cpp:832
+#: engines/supernova/supernova.cpp:852
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
@@ -12713,20 +12721,109 @@ msgstr ""
 "φάκελος αποθήκευσης έχει οριστεί στο ScummVM και ότι έχετε δικαιώματα "
 "εγγραφής σε αυτόν."
 
-#: engines/supernova/supernova.cpp:833
+#: engines/supernova/supernova.cpp:853
 msgid "Failed to load temporary game state."
 msgstr "Αποτυχία φόρτωσης προσωρινής κατάστασης παιχνιδιού."
 
-#: engines/supernova/metaengine.cpp:37
+#: engines/supernova/metaengine.cpp:41
 msgid "Improved mode"
 msgstr "Βελτιωμένη λειτουργία"
 
-#: engines/supernova/metaengine.cpp:38
+#: engines/supernova/metaengine.cpp:42
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
 "Αφαιρεί κάποιες επαναλαμβανόμενες ενέργειες, προσθέτει δυνατότητα εναλλαγής "
 "ρημάτων από το πληκτρολόγιο"
+
+#: engines/supernova/metaengine.cpp:219
+#, fuzzy
+#| msgid "Exit screen keymappings"
+msgid "Cutscene keymappings"
+msgstr "Πλήκτρα για έξοδο από οθόνη"
+
+#: engines/supernova/metaengine.cpp:220
+#, fuzzy
+#| msgid "Index keymappings"
+msgid "Improved mode keymappings"
+msgstr "Πλήκτρα επιλογής"
+
+#: engines/supernova/metaengine.cpp:221
+#, fuzzy
+#| msgid "Exit screen keymappings"
+msgid "Text reader keymappings"
+msgstr "Πλήκτρα για έξοδο από οθόνη"
+
+#: engines/supernova/metaengine.cpp:222
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Computer keymappings"
+msgstr "Πλήκτρα παιχνιδιού"
+
+#: engines/supernova/metaengine.cpp:232
+msgid "Perform Default Action"
+msgstr ""
+
+#: engines/supernova/metaengine.cpp:244
+#, fuzzy
+#| msgid "Interpolation:"
+msgid "Instructions"
+msgstr "Παρεμβολή:"
+
+#: engines/supernova/metaengine.cpp:250
+#, fuzzy
+#| msgid "General Information"
+msgid "Information"
+msgstr "Γενικές Πληροφορίες"
+
+#: engines/supernova/metaengine.cpp:256
+#, fuzzy
+#| msgid "Text speed - Fast"
+msgid "Text speed"
+msgstr "Ταχύτητα κειμένου - Γρήγορη"
+
+#: engines/supernova/metaengine.cpp:285
+#, fuzzy
+#| msgid "Rotate up"
+msgid "Page up"
+msgstr "Περιστροφή προς τα πάνω"
+
+#: engines/supernova/metaengine.cpp:291
+#, fuzzy
+#| msgid "Rotate down"
+msgid "Page down"
+msgstr "Περιστροφή προς τα κάτω"
+
+#. I18N: Exits the game
+#: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
+#: engines/wintermute/keymapper_tables.h:720
+#: engines/wintermute/keymapper_tables.h:1849
+msgid "Exit"
+msgstr "Έξοδος"
+
+#: engines/supernova/metaengine.cpp:321
+#, fuzzy
+#| msgid "Good"
+msgid "Go"
+msgstr "Καλή"
+
+#: engines/supernova/metaengine.cpp:379
+#, fuzzy
+#| msgid "Open Files manager"
+msgid "Office manager"
+msgstr "Άνοιγμα διαχείρισης αρχείων"
+
+#: engines/supernova/metaengine.cpp:385
+msgid "Phone"
+msgstr ""
+
+#: engines/supernova/metaengine.cpp:391
+msgid "ProText"
+msgstr ""
+
+#: engines/supernova/metaengine.cpp:397
+msgid "Calculata"
+msgstr ""
 
 #: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
@@ -14274,12 +14371,6 @@ msgstr "Προβολή εργαλείου αποσφαλμάτωσης"
 #: engines/wintermute/keymapper_tables.h:1878
 msgid "Debug print"
 msgstr "Εκτύπωση πληροφορίας αποσφαλμάτωσης"
-
-#. I18N: Exits the game
-#: engines/wintermute/keymapper_tables.h:720
-#: engines/wintermute/keymapper_tables.h:1849
-msgid "Exit"
-msgstr "Έξοδος"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
