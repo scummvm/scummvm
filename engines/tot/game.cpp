@@ -101,7 +101,7 @@ int engine_start() {
 	playMidiFile("INTRODUC", true);
 	setMidiVolume(3, 3);
 
-	// firstIntroduction();
+	firstIntroduction();
 	setMousePos(1, xraton, yraton);
 	initialMenu(hechaprimeravez);
 	if (partidanueva && !g_engine->shouldQuit()) {

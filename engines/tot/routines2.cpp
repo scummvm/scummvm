@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -1873,19 +1874,12 @@ Lsalirpres:
 }
 
 void firstIntroduction() {
-	// untyped_file fichbanderapresentacion;
-	// byte basurilla;
-
-	// hechaprimeravez = false;
-	// assign(fichbanderapresentacion, "HECHO.DAT");
-	// /*$I-*/ reset(fichbanderapresentacion, 1); /*$I+*/
-	// if (ioresult != 0) {
-	// 	rewrite(fichbanderapresentacion, 1);
-	// 	blockwrite(fichbanderapresentacion, basurilla, 1);
-	introduction();
-	// hechaprimeravez = true;
-	// }
-	// close(fichbanderapresentacion);
+	if (!hechaprimeravez) {
+		introduction();
+		hechaprimeravez = true;
+		ConfMan.setBool("introSeen", true);
+		ConfMan.flushToDisk();
+	}
 }
 
 void initialLogo() {
