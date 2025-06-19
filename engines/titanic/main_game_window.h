@@ -109,6 +109,7 @@ public:
 	void middleButtonUp(const Point &mousePos) override;
 	void mouseWheel(const Point &mousePos, bool wheelUp) override;
 	void keyDown(Common::KeyState keyState) override;
+	void actionStart(Common::CustomEventType action) override;
 
 	/**
 	 * Called when the application starts

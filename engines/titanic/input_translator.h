@@ -22,6 +22,7 @@
 #ifndef TITANIC_INPUT_TRANSLATOR_H
 #define TITANIC_INPUT_TRANSLATOR_H
 
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "titanic/messages/mouse_messages.h"
 
@@ -36,11 +37,6 @@ private:
 	 */
 	int getButtons(int special) const;
 
-	/**
-	 * Returns true if a key down contains a special non-ascii key
-	 * that should still be passed onto the game
-	 */
-	bool isSpecialKey(Common::KeyCode key);
 public:
 	CInputHandler *_inputHandler;
 public:
@@ -55,6 +51,7 @@ public:
 	void middleButtonDoubleClick(int special, const Point &pt);
 	void mouseWheel(bool wheelUp, const Point &pt);
 	void keyDown(const Common::KeyState &keyState);
+	void actionStart(const Common::CustomEventType &action);
 
 	/**
 	 * Returns true if any mouse button is currently pressed

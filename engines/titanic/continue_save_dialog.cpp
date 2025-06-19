@@ -26,6 +26,8 @@
 #include "common/str-array.h"
 #include "graphics/screen.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Titanic {
 
 #define SAVEGAME_SLOTS_COUNT 5
@@ -68,6 +70,9 @@ Rect CContinueSaveDialog::getSlotBounds(int index) {
 }
 
 int CContinueSaveDialog::show() {
+	Common::Keymapper *keymapper = g_vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("cont-save")->setEnabled(true);
+
 	// Load images for the dialog
 	loadImages();
 
@@ -83,6 +88,8 @@ int CContinueSaveDialog::show() {
 	}
 	if (g_vm->shouldQuit())
 		_selectedSlot = -2;
+
+	keymapper->getKeymap("cont-save")->setEnabled(false);
 
 	return _selectedSlot;
 }
@@ -227,8 +234,8 @@ void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
 	}
 }
 
-void CContinueSaveDialog::keyDown(Common::KeyState keyState) {
-	if (keyState.keycode == Common::KEYCODE_ESCAPE)
+void CContinueSaveDialog::actionStart(Common::CustomEventType action) {
+	if (action == kActionQuit)
 		_selectedSlot = EXIT_GAME;
 }
 

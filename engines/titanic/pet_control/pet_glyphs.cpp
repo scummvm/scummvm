@@ -412,10 +412,10 @@ bool CPetGlyphs::KeyCharMsg(int key) {
 	return false;
 }
 
-bool CPetGlyphs::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
+bool CPetGlyphs::ActionMsg(CActionMsg *msg) {
 	if (_highlightIndex >= 0) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
-		if (glyph && glyph->VirtualKeyCharMsg(msg))
+		if (glyph && glyph->ActionMsg(msg))
 			return true;
 	}
 
