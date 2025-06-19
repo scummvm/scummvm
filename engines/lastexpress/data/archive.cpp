@@ -532,7 +532,7 @@ Seq *ArchiveManager::loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRe
 	uint16 *paletteAddr = (uint16 *)&seqDataRaw[8 + 68 * seq->numFrames]; 
 
 	for (int j = 0; j < 184; j++) {
-		paletteAddr[j] = FROM_LE_16(paletteAddr[j]);
+		paletteAddr[j] = READ_LE_UINT16(&paletteAddr[j]);
 	}
 
 	_engine->getGraphicsManager()->modifyPalette(paletteAddr, 184);

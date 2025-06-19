@@ -80,7 +80,7 @@ void NISManager::convertNSPR16(byte *spriteData, NisSprite *outSprite) {
 	WRITE_LE_UINT16(&outSprite->colorPalette[1], 0);
 
 	for (int i = 0; i < 128; ++i)
-		outSprite->colorPalette[i] = FROM_LE_16(outSprite->colorPalette[i]);
+		outSprite->colorPalette[i] = READ_LE_UINT16(&outSprite->colorPalette[i]);
 
 	_engine->getGraphicsManager()->modifyPalette((uint16 *)outSprite->colorPalette, 128);
 
@@ -228,17 +228,17 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 	_engine->getMemoryManager()->lockSeqMem((_totalBackgroundPages - 300) * PAGE_SIZE);
 	getStream((byte *)&_eventsCount, 4);
 
-	_eventsCount = FROM_LE_32(_eventsCount);
+	_eventsCount = READ_LE_INT32(&_eventsCount);
 
 	_eventsByteStream = (byte *)(_backgroundSurface + 2);
 
-	_background1Offset = FROM_LE_32(*((int32 *)_backgroundSurface + 2));
+	_background1Offset = READ_LE_INT32((int32 *)_backgroundSurface + 2);
 	_background1Offset += 16;
 	_background1Offset &= 0xFFFFFFF0;
 	_streamBufferSize -= _background1Offset;
 	_background1ByteStream = (byte *)((byte *)_backgroundSurface + _streamBufferSize);
 
-	_waneSpriteOffset = FROM_LE_32(*((int32 *)_backgroundSurface + 4));
+	_waneSpriteOffset = READ_LE_INT32((int32 *)_backgroundSurface + 4);
 	_waneSpriteOffset += 16;
 	_waneSpriteOffset &= 0xFFFFFFF0;
 	_streamBufferSize -= _waneSpriteOffset;
@@ -908,7 +908,7 @@ void NISManager::processNIS(NisEvents *event) {
 
 		if ((_flags & kNisFlagSoundInitialized) == 0) {
 			_flags |= kNisFlagSoundInitialized;
-			_currentNISSound->setBlockCount(FROM_LE_16(*((uint16 *)_currentNISSound->getDataStart() + 2) - 1));
+			_currentNISSound->setBlockCount(READ_LE_UINT16((uint16 *)_currentNISSound->getDataStart() + 2) - 1);
 			_currentNISSound->setSize(0x16000);
 		}
 
