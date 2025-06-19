@@ -49,9 +49,9 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		return;
 
 	Window *stage = _vm->getCurrentWindow();
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Score *score = stage->getCurrentMovie()->getScore();
 
-	_vm->_skipFrameAdvance = true;
+	stage->_skipFrameAdvance = true;
 
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
 	// freeze this script context. We'll return to it after entering the next frame.
@@ -110,34 +110,37 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 void Lingo::func_gotoloop() {
 	if (!_vm->getCurrentMovie())
 		return;
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotoloop(): looping frame %d", score->getCurrentFrameNum());
 
 	score->gotoLoop();
 
-	_vm->_skipFrameAdvance = true;
+	stage->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotonext() {
 	if (!_vm->getCurrentMovie())
 		return;
 
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
 	score->gotoNext();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotonext(): going to next frame %d", score->getNextFrame());
 
-	_vm->_skipFrameAdvance = true;
+	stage->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotoprevious() {
 	if (!_vm->getCurrentMovie())
 		return;
 
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
 	score->gotoPrevious();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotoprevious(): going to previous frame %d", score->getNextFrame());
 
-	_vm->_skipFrameAdvance = true;
+	stage->_skipFrameAdvance = true;
 }
 
 void Lingo::func_play(Datum &frame, Datum &movie) {
@@ -198,7 +201,8 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_cursor(Datum cursorDatum) {
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
 	if (cursorDatum.type == ARRAY){
 		score->_defaultCursor.readFromCast(cursorDatum);
 	} else {
@@ -219,14 +223,16 @@ int Lingo::func_marker(int m) 	{
 	if (!_vm->getCurrentMovie())
 		return 0;
 
-	int labelNumber = _vm->getCurrentMovie()->getScore()->getCurrentLabelNumber();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
+	int labelNumber = score->getCurrentLabelNumber();
 	if (m != 0) {
 		if (m < 0) {
 			for (int marker = 0; marker > m; marker--)
-				labelNumber = _vm->getCurrentMovie()->getScore()->getPreviousLabelNumber(labelNumber);
+				labelNumber = score->getPreviousLabelNumber(labelNumber);
 		} else {
 			for (int marker = 0; marker < m; marker++)
-				labelNumber = _vm->getCurrentMovie()->getScore()->getNextLabelNumber(labelNumber);
+				labelNumber = score->getNextLabelNumber(labelNumber);
 		}
 	}
 
@@ -234,7 +240,8 @@ int Lingo::func_marker(int m) 	{
 }
 
 uint16 Lingo::func_label(Datum &label) {
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
 
 	if (!score->_labels)
 		return 0;

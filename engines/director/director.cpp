@@ -156,7 +156,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	}
 
 	_playbackPaused = false;
-	_skipFrameAdvance = false;
 	_centerStage = true;
 
 	_surface = nullptr;
