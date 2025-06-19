@@ -12,6 +12,8 @@ certifi==2025.4.26
     # via requests
 charset-normalizer==3.4.2
     # via requests
+colorama==0.4.6
+    # via sphinx
 docutils==0.21.2
     # via
     #   sphinx
