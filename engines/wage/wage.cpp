@@ -353,10 +353,6 @@ bool WageEngine::saveDialog() {
 }
 
 void WageEngine::aboutDialog() {
-	Graphics::MacDialogButtonArray buttons;
-
-	buttons.push_back(new Graphics::MacDialogButton("OK", 191, 167, 68, 28));
-
 	Common::U32String messageText(_world->_aboutMessage, Common::kMacRoman);
 	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n\xA9 Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.", Common::kMacRoman);
 
@@ -367,6 +363,10 @@ void WageEngine::aboutDialog() {
 	Graphics::MacFont font(Graphics::kMacFontGeneva, 9, 0);
 	Graphics::MacText aboutMessage(messageText, _gui->_wm, &font, Graphics::kColorBlack,
 											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
+
+	Graphics::MacDialogButtonArray buttons;
+
+	buttons.push_back(new Graphics::MacDialogButton("OK", 191, aboutMessage.getTextHeight() + 30, 68, 28));
 
 	Graphics::MacDialog about(&_gui->_screen, _gui->_wm, 450, &aboutMessage, 400, &buttons, 0);
 
