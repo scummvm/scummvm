@@ -224,15 +224,18 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 
 	_engine->getMemoryManager()->lockSeqMem((_totalBackgroundPages - 300) * PAGE_SIZE);
 	getStream((byte *)&_eventsCount, 4);
+
+	_eventsCount = FROM_LE_32(_eventsCount);
+
 	_eventsByteStream = (byte *)(_backgroundSurface + 2);
 
-	_background1Offset = *((int32 *)_backgroundSurface + 2);
+	_background1Offset = FROM_LE_32(*((int32 *)_backgroundSurface + 2));
 	_background1Offset += 16;
 	_background1Offset &= 0xFFFFFFF0;
 	_streamBufferSize -= _background1Offset;
 	_background1ByteStream = (byte *)((byte *)_backgroundSurface + _streamBufferSize);
 
-	_waneSpriteOffset = *((int32 *)_backgroundSurface + 4);
+	_waneSpriteOffset = FROM_LE_32(*((int32 *)_backgroundSurface + 4));
 	_waneSpriteOffset += 16;
 	_waneSpriteOffset &= 0xFFFFFFF0;
 	_streamBufferSize -= _waneSpriteOffset;
@@ -902,7 +905,7 @@ void NISManager::processNIS(NisEvents *event) {
 
 		if ((_flags & kNisFlagSoundInitialized) == 0) {
 			_flags |= kNisFlagSoundInitialized;
-			_currentNISSound->setBlockCount(*((uint16 *)_currentNISSound->getDataStart() + 2) - 1);
+			_currentNISSound->setBlockCount(FROM_LE_16(*((uint16 *)_currentNISSound->getDataStart() + 2) - 1));
 			_currentNISSound->setSize(0x16000);
 		}
 
