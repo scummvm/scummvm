@@ -62,7 +62,7 @@ bool TePng::load(Common::SeekableReadStream &stream) {
 	if (!png.loadStream(stream))
 		return false;
 
-	_loadedSurface = png.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_loadedSurface = png.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32());
 
 	_height = _loadedSurface->h;
 
@@ -90,16 +90,6 @@ bool TePng::update(uint i, TeImage &imgout) {
 // TODO: should this return true if last frame was 7?
 bool TePng::isAtEnd() {
 	return false;
-}
-
-TeImage::Format TePng::imageFormat() {
-	if (_loadedSurface) {
-		if (_loadedSurface->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24))
-			return TeImage::RGBA8;
-		else if (_loadedSurface->format == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0))
-			return TeImage::RGB8;
-	}
-	return TeImage::INVALID;
 }
 
 } // end namespace Tetraedge

@@ -128,7 +128,7 @@ void TeVisualFade::init() {
 	Common::SharedPtr<TePalette> nullpal;
 	_image.destroy();
 	const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
-	_image.createImg((int)winSize.x(), (int)winSize.y(), nullpal, TeImage::RGBA8);
+	_image.createImg((int)winSize.x(), (int)winSize.y(), nullpal, Graphics::PixelFormat::createFormatRGBA32());
 	_texturePtr->load(_image);
 	g_engine->getRenderer()->enableTexture();
 	_texturePtr->load(_image);

@@ -46,7 +46,7 @@ bool TeTga::load(Common::SeekableReadStream &stream) {
 	if (!tga.loadStream(stream))
 		return false;
 
-	_loadedSurface = tga.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_loadedSurface = tga.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32());
 
 	return true;
 }

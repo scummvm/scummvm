@@ -40,7 +40,7 @@ TeIFont::GlyphData TeIFont::glyph(uint pxSize, uint charcode) {
 	Common::Rect bbox = font->getBoundingBox(charcode);
 	TeImage *img = new TeImage();
 	Common::SharedPtr<TePalette> nullpal;
-	img->createImg(bbox.width(), bbox.height(), nullpal, TeImage::RGBA8);
+	img->createImg(bbox.width(), bbox.height(), nullpal, Graphics::PixelFormat::createFormatRGBA32());
 	font->drawChar(img, charcode, 0, 0, 0xffffffff);
 	GlyphData retval;
 	retval._charcode = charcode;

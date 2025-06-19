@@ -44,7 +44,7 @@ bool TeTheora::load(const TetraedgeFSNode &node) {
 	_loadedNode = node;
 	if (!_decoder->loadStream(node.createReadStream()))
 		return false;
-	_decoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_decoder->setOutputPixelFormat(Graphics::PixelFormat::createFormatRGBA32());
 	return true;
 }
 
@@ -60,10 +60,8 @@ int TeTheora::nbFrames() {
 	return _decoder->getFrameCount();
 }
 
-TeImage::Format TeTheora::imageFormat() {
-	//const Graphics::PixelFormat format = _decoder->getPixelFormat();
-	// TODO: use format?
-	return TeImage::RGBA8;
+Graphics::PixelFormat TeTheora::pixelFormat() {
+	return _decoder->getPixelFormat();
 }
 
 void TeTheora::setLeftBorderSize(uint val) {
