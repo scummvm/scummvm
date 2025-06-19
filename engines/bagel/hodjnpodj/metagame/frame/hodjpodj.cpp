@@ -1038,10 +1038,9 @@ BOOL CHodjPodjWindow::LoadMetaDLL(void) {
 BOOL CHodjPodjWindow::LoadZoomDLL(void) {
 	hwndGame = nullptr;
 
-	if (nChallengePhase == 0)
-		hwndGame = Metagame::Zoom::RunZoomMap(m_hWnd, TRUE);
-	else
-		hwndGame = Metagame::Zoom::RunZoomMap(m_hWnd, FALSE);
+	dllLoaded = true;
+	hwndGame = Metagame::Zoom::RunZoomMap(m_hWnd,
+		nChallengePhase == 0);
 
 	bReturnToZoom = TRUE;
 	return TRUE;
