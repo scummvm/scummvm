@@ -70,7 +70,6 @@ CrabEngine::~CrabEngine() {
 
 	delete _thumbnail;
 	delete _screen;
-	delete _format;
 }
 
 uint32 CrabEngine::getFeatures() const {
@@ -82,10 +81,34 @@ Common::String CrabEngine::getGameId() const {
 }
 
 Common::Error CrabEngine::run() {
-	_format = new Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	initGraphics(1280, 720, _format);
-	_screen = new Graphics::Screen(1280, 720, *_format);
-	_thumbnail = new Graphics::ManagedSurface(1280, 720, *_format);
+	// Prefer this format to avoid converting PNG files.
+	const Graphics::PixelFormat bestFormat = Graphics::PixelFormat::createFormatRGBA32();
+
+	// Find a suitable 32-bit format with alpha, currently we don't support other color depths
+	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
+	for (Common::List<Graphics::PixelFormat>::iterator it = formats.begin(); it != formats.end(); ++it) {
+		if (it->bytesPerPixel != 4 || it->aBits() == 0) {
+			it = formats.reverse_erase(it);
+		} else if (*it == bestFormat) {
+			formats.clear();
+			formats.push_back(bestFormat);
+			break;
+		}
+	}
+
+	// Even if no formats are found, it's possible that the backend
+	// can handle software conversion.
+	if (formats.empty())
+		formats.push_back(bestFormat);
+
+	initGraphics(1280, 720, formats);
+
+	_format = g_system->getScreenFormat();
+	if (_format.bytesPerPixel != 4)
+		return Common::kUnsupportedColorMode;
+
+	_screen = new Graphics::Screen(1280, 720, _format);
+	_thumbnail = new Graphics::ManagedSurface(1280, 720, _format);
 
 	_imageManager = new pyrodactyl::image::ImageManager();
 	_textManager = new pyrodactyl::text::TextManager();

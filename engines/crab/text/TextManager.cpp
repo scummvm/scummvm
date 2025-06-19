@@ -113,19 +113,19 @@ int TextManager::findFreeSlot() {
 //------------------------------------------------------------------------
 Graphics::ManagedSurface *TextManager::renderTextBlended(const FontKey &fKey, const Common::String &text, const int &color) {
 	Color pooledColor = _colpool.get(color);
-	uint32 col = g_engine->_format->ARGBToColor(255, pooledColor.r, pooledColor.g, pooledColor.b);
+	uint32 col = g_engine->_format.ARGBToColor(255, pooledColor.r, pooledColor.g, pooledColor.b);
 
 	Graphics::ManagedSurface *surf = nullptr;
 
 	if (text.empty()) {
 		Common::Rect rec = getFont(fKey)->getBoundingBox(" ");
 		int h = rec.height();
-		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
+		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), g_engine->_format);
 		getFont(fKey)->drawString(surf, " ", 0, 0, rec.width(), col);
 	} else {
 		Common::Rect rec = getFont(fKey)->getBoundingBox(text);
 		int h = rec.height();
-		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
+		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), g_engine->_format);
 		getFont(fKey)->drawString(surf, text, 0, 0, rec.width(), col);
 	}
 
@@ -159,9 +159,9 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 		_rect.w = _cache[pos]._img.w() + (2 * _padBg.x);
 		_rect.h = _cache[pos]._img.h() + (2 * _padBg.y);
 
-		uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
+		uint32 col = g_engine->_format.ARGBToColor(128, 0, 0, 0);
 		Graphics::Surface surf;
-		surf.create(_rect.w, _rect.h, *g_engine->_format);
+		surf.create(_rect.w, _rect.h, g_engine->_format);
 		surf.fillRect(Common::Rect(_rect.w, _rect.h), col);
 
 		if (align == ALIGN_LEFT) {
