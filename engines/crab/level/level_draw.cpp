@@ -44,7 +44,7 @@ using namespace pyrodactyl::input;
 
 // Purpose: Pre render the terrain layer
 void Level::preDraw() {
-	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(_terrain.w(), _terrain.h(), *g_engine->_format);
+	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(_terrain.w(), _terrain.h(), g_engine->_format);
 	uint layerCount = 0u;
 	for (auto l = _terrain._layer.begin(); l != _terrain._layer.end(); ++l, ++layerCount) {
 		g_engine->_imageManager->_tileset.preDraw(*l, _terrain._tileSize, surf);
