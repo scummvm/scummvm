@@ -183,7 +183,7 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x = 0, y = 0;
 
-	Common::Array<uint> pixels;
+	Common::Array<byte> pixels;
 	// Unpacking bodges for D3 and below
 	bool skipCompression = false;
 	uint32 bytesNeed = _pitch * _surface->h;
@@ -201,10 +201,11 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 			skipCompression = stream.size() == bytesNeed;
 		}
 	}
+	skipCompression |= (stream.size() == bytesNeed);
 
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
-	if (stream.size() == bytesNeed || skipCompression) {
+	if (skipCompression) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
 			pixels.push_back((int)stream.readByte());
@@ -255,6 +256,11 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (offset)
 		offset = _surface->w % 2;
 
+	debugC(5, kDebugImages, "BITDDecoder::loadStream: unpacked %d bytes, width: %d, height: %d, pitch: %d, bitsPerPixel: %d", pixels.size(), _surface->w, _surface->h, _pitch, _bitsPerPixel);
+	if (debugChannelSet(8, kDebugImages)) {
+		Common::hexdump(pixels.data(), (int)pixels.size());
+	}
+
 	uint32 color;
 
 	if (pixels.size() > 0) {
@@ -285,7 +291,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-					if (_version < kFileVer400) {
+					if (skipCompression) {
 						color = (pixels[((y * _surface->w) * 2) + x * 2]) << 8 |
 							(pixels[((y * _surface->w) * 2) + x * 2 + 1]);
 					} else {
@@ -299,7 +305,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 				case 32:
 					// if we have the issue in D3 32bpp images, then the way to fix it should be the same as 16bpp images.
 					// check the code above, there is different behaviour between in D4 and D3. Currently we are only using D4.
-					if (_version < kFileVer400) {
+					if (skipCompression) {
 						color = pixels[(((y * _surface->w * 4)) + (x * 4 + 1))] << 16 |
 							pixels[(((y * _surface->w * 4)) + (x * 4 + 2))] << 8 |
 							pixels[(((y * _surface->w * 4)) + (x * 4 + 3))];
