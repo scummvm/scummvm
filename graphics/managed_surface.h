@@ -768,6 +768,15 @@ public:
 							 const AlphaType alphaType = ALPHA_FULL);
 
 	/**
+	 * Fill a rect with a given color and blending mode.
+	 *
+	 * @param r      The rectangle to fill.
+	 * @param color  The color to fill the rect with.
+	 * @param blend 		The blending mode to use.
+	 */
+	void blendFillRect(const Common::Rect r, const uint colorMod, const TSpriteBlendMode blend);
+
+	/**
 	 * Clear the entire surface.
 	 */
 	void clear(uint32 color = 0);
