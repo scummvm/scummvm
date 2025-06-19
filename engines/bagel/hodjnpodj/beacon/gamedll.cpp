@@ -27,8 +27,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Beacon {
 
-HWND FAR PASCAL RunBeac(HWND, LPGAMESTRUCT);
-
 HINSTANCE   hDLLInst;
 HINSTANCE hExeInst;
 

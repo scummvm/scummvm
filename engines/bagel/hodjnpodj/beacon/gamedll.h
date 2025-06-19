@@ -56,8 +56,10 @@ namespace Beacon {
  *
  ****************************************************************
  */
-extern HWND FAR PASCAL RunBeac(HWND hParentWnd, LPGAMESTRUCT lpGameInfo)
+extern HWND FAR PASCAL RunBeac(HWND hParentWnd, LPGAMESTRUCT lpGameInfo);
 
 } // namespace Beacon
 } // namespace HodjNPodj
 } // namespace Bagel
+
+#endif

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HODJNPODJ_MAZEDOOM_GAMEDLL_H
-#define HODJNPODJ_MAZEDOOM_GAMEDLL_H
+#ifndef HODJNPODJ_NOVACANCY_GAMEDLL_H
+#define HODJNPODJ_NOVACANCY_GAMEDLL_H
 
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 
