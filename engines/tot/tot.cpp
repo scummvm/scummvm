@@ -72,6 +72,7 @@ Common::Error TotEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 
+	ConfMan.registerDefault("introSeen", false);
 	//Static initializations
 
 	_screen = new Graphics::Screen();
@@ -85,6 +86,7 @@ Common::Error TotEngine::run() {
 	initGraph();
 	initPlayAnim();
 
+	hechaprimeravez = ConfMan.getBool("introSeen");
 	// _inventoryManager = new InventoryManager();
 	// _totGame = new TotGame();
 	// Set the engine's debugger console
