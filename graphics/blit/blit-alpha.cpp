@@ -203,8 +203,9 @@ BlendBlit::Args::Args(byte *dst, const byte *src,
 	outo = dst + posY * _dstPitch + posX * 4;
 }
 
-// Initialize this to nullptr at the start
+// Initialize these to nullptr at the start
 BlendBlit::BlitFunc BlendBlit::blitFunc = nullptr;
+BlendBlit::FillFunc BlendBlit::fillFunc = nullptr;
 
 // Only blits to and from 32bpp images
 // So this function is just here to jump to whatever function is in
@@ -238,6 +239,27 @@ void BlendBlit::blit(byte *dst, const byte *src,
 	
 	Args args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, scaleXsrcOff, scaleYsrcOff, colorMod, flipping);
 	blitFunc(args, blendMode, alphaType);
+}
+
+// Only fills 32bpp images
+// So this function is just here to jump to whatever function is in
+// BlendBlit::fillFunc. This way, we can detect at runtime whether or not
+// the cpu has certain SIMD feature enabled or not.
+void BlendBlit::fill(byte *dst, const uint dstPitch,
+					 const uint width, const uint height,
+					 const uint32 colorMod,
+					 const TSpriteBlendMode blendMode) {
+	if (width == 0 || height == 0) return;
+
+	// If no function has been selected yet, detect and select
+	if (!fillFunc) {
+		// Get the correct blit function
+		// TODO: Add SIMD variants
+		fillFunc = fillGeneric;
+	}
+
+	Args args(dst, nullptr, dstPitch, 0, 0, 0, width, height, 0, 0, 0, 0, colorMod, 0);
+	fillFunc(args, blendMode);
 }
 
 } // End of namespace Graphics
