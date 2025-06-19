@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-19 22:04+0000\n"
-"PO-Revision-Date: 2025-06-19 22:04+0000\n"
+"PO-Revision-Date: 2025-06-19 22:08+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -12626,10 +12626,8 @@ msgid "Move Down"
 msgstr "Mou avall"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Highlight Items"
-msgstr "Remarcar el diàleg següent"
+msgstr "Ressalta els objectes"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Use Bedroll"
