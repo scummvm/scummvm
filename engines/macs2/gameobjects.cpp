@@ -163,6 +163,10 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x8F] = "Brief";
 	ObjectNames[0x9C] = "Fackel"; // brennend
 	ObjectNames[0x9D] = "Fackel"; // erloschen
+	ObjectNames[0x98] = "Bohlen";
+	ObjectNames[0xA2] = "Haken";
+	ObjectNames[0xA2] = "Haken und Seil";
+	ObjectNames[0xAE] = "Seil";
 }
 
 // TODO: Add all to namespace?
