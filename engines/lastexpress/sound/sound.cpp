@@ -237,8 +237,8 @@ void SoundManager::ambientAI(int id) {
 	byte numLoops[9] = {0, 4, 2, 2, 2, 2, 2, 0, 0};
 
 	int positions[8] = {
-		kPosition_8200, kPosition_7500, kPosition_6470, kPosition_5790,
-		kPosition_4840, kPosition_4070, kPosition_3050, kPosition_2740
+		8200, 7500, 6470, 5790,
+		4840, 4070, 3050, 2740
 	};
 
 	char newAmbientSoundName[80];

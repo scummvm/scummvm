@@ -531,6 +531,10 @@ Seq *ArchiveManager::loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRe
 	// sprite data...
 	uint16 *paletteAddr = (uint16 *)&seqDataRaw[8 + 68 * seq->numFrames]; 
 
+	for (int j = 0; j < 184; j++) {
+		paletteAddr[j] = FROM_LE_16(paletteAddr[j]);
+	}
+
 	_engine->getGraphicsManager()->modifyPalette(paletteAddr, 184);
 	return seq;
 }
@@ -541,6 +545,16 @@ void ArchiveManager::loadMice() {
 	if (archive) {
 		readHPF(archive, _engine->_cursorsMemoryPool, archive->size);
 		closeHPF(archive);
+
+		for (int i = 0; i < 0xC000; i++) {
+			_engine->getGraphicsManager()->_iconsBitmapData[i] = FROM_LE_16(_engine->getGraphicsManager()->_iconsBitmapData[i]);
+		}
+
+		for (int i = 0; i < 48; i++) {
+			_engine->getGraphicsManager()->_cursorsDataHeader->hotspotX = FROM_LE_16(_engine->getGraphicsManager()->_cursorsDataHeader->hotspotX);
+			_engine->getGraphicsManager()->_cursorsDataHeader->hotspotY = FROM_LE_16(_engine->getGraphicsManager()->_cursorsDataHeader->hotspotY);
+		}
+
 		_engine->getGraphicsManager()->modifyPalette(_engine->getGraphicsManager()->_iconsBitmapData, 0xC000);
 	}
 }

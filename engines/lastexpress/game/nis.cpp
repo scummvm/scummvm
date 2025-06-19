@@ -79,10 +79,13 @@ void NISManager::convertNSPR16(byte *spriteData, NisSprite *outSprite) {
 	WRITE_LE_UINT16(&outSprite->colorPalette[0], 0);
 	WRITE_LE_UINT16(&outSprite->colorPalette[1], 0);
 
+	for (int i = 0; i < 128; ++i)
+		outSprite->colorPalette[i] = FROM_LE_16(outSprite->colorPalette[i]);
+
 	_engine->getGraphicsManager()->modifyPalette((uint16 *)outSprite->colorPalette, 128);
 
 	for (int i = 0; i < 128; i++)
-		outSprite->gammaPalette[i] = READ_LE_UINT16(spriteData + 2 * i + 36);
+		outSprite->gammaPalette[i] = READ_UINT16(spriteData + 2 * i + 36);
 
 	outSprite->compBits = spriteData[2 * 128 + 36];
 
