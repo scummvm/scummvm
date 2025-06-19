@@ -212,6 +212,7 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 	case BS_PUSHBUTTON:
 	case BS_DEFPUSHBUTTON:
 	case BS_PUSHBOX:
+	case BS_OWNERDRAW:
 		GetParent()->SendMessage(WM_COMMAND, GetDlgCtrlID(),
 			MAKELPARAM(0, BN_CLICKED));
 		break;
