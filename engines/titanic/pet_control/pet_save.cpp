@@ -49,13 +49,17 @@ bool CPetSave::MouseButtonUpMsg(const Point &pt) {
 }
 
 bool CPetSave::KeyCharMsg(int key) {
-	if (CPetLoadSave::KeyCharMsg(key))
-		return true;
-
 	if (_savegameSlotNum != -1)
 		_slotNames[_savegameSlotNum].handleKey(key);
 
 	return true;
+}
+
+bool CPetSave::ActionMsg(CActionMsg *msg) {
+	if (CPetLoadSave::ActionMsg(msg))
+		return true;
+
+	return false;
 }
 
 void CPetSave::highlightCurrent(const Point &pt) {

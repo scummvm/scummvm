@@ -223,8 +223,28 @@ bool CPetConversations::KeyCharMsg(CKeyCharMsg *msg) {
 	return handleKey(keyState);
 }
 
-bool CPetConversations::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return handleKey(msg->_keyState);
+bool CPetConversations::ActionMsg(CActionMsg *msg) {
+	Common::CustomEventType action;
+	action = msg->_action;
+
+	switch (action) {
+	case kActionPETScrollPageUp:
+		scrollUpPage();
+		return true;
+	case kActionPETScrollPageDown:
+		scrollDownPage();
+		return true;
+	case kActionPETScrollTop:
+		scrollToTop();
+		return true;
+	case kActionPeTScrollBottom:
+		scrollToBottom();
+		return true;
+	default:
+		break;
+	}
+
+	return false;
 }
 
 void CPetConversations::displayMessage(const CString &msg) {
@@ -464,32 +484,12 @@ TTnpcScript *CPetConversations::getNPCScript(const CString &name) const {
 }
 
 bool CPetConversations::handleKey(const Common::KeyState &keyState) {
-	switch (keyState.keycode) {
-	case Common::KEYCODE_PAGEUP:
-	case Common::KEYCODE_KP9:
-		scrollUpPage();
+	if (keyState.ascii > 0 && keyState.ascii <= 127
+			&& keyState.ascii != Common::KEYCODE_TAB) {
+		if (_textInput.handleKey(keyState.ascii))
+			// Text line finished, so process line
+			textLineEntered(_textInput.getText());
 		return true;
-	case Common::KEYCODE_PAGEDOWN:
-	case Common::KEYCODE_KP3:
-		scrollDownPage();
-		return true;
-	case Common::KEYCODE_HOME:
-	case Common::KEYCODE_KP7:
-		scrollToTop();
-		return true;
-	case Common::KEYCODE_END:
-	case Common::KEYCODE_KP1:
-		scrollToBottom();
-		return true;
-	default:
-		if (keyState.ascii > 0 && keyState.ascii <= 127
-				&& keyState.ascii != Common::KEYCODE_TAB) {
-			if (_textInput.handleKey(keyState.ascii))
-				// Text line finished, so process line
-				textLineEntered(_textInput.getText());
-			return true;
-		}
-		break;
 	}
 
 	return false;

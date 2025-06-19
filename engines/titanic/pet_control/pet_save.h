@@ -44,6 +44,11 @@ public:
 	bool KeyCharMsg(int key) override;
 
 	/**
+	 * Handles actions when the glyph is focused
+	 */
+	bool ActionMsg(CActionMsg *msg) override;
+
+	/**
 	 * Unhighlight any currently highlighted element
 	 */
 	void unhighlightCurrent() override { unhighlightSave(_savegameSlotNum); }

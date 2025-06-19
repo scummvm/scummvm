@@ -165,7 +165,7 @@ public:
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) override;
 	bool MouseWheelMsg(CMouseWheelMsg *msg) override;
 	bool KeyCharMsg(CKeyCharMsg *msg) override;
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) override;
+	bool ActionMsg(CActionMsg *msg) override;
 
 	/**
 	 * Display a message

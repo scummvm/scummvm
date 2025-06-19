@@ -107,7 +107,7 @@ public:
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) { return false; }
 	virtual bool MouseWheelMsg(CMouseWheelMsg *msg) { return false; }
 	virtual bool KeyCharMsg(CKeyCharMsg *msg) { return false; }
-	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
+	virtual bool ActionMsg(CActionMsg *msg) { return false; }
 
 	/**
 	 * Check whether a drag drop can occur

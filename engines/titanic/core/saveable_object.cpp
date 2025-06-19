@@ -954,7 +954,7 @@ DEFFN(CTurnOn);
 DEFFN(CUse);
 DEFFN(CUseWithCharMsg);
 DEFFN(CUseWithOtherMsg);
-DEFFN(CVirtualKeyCharMsg);
+DEFFN(CActionMsg);
 DEFFN(CVisibleMsg);
 DEFFN(CCheckCodeWheelsMsg);
 
@@ -1543,7 +1543,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CUse, CMessage);
 	ADDFN(CUseWithCharMsg, CMessage);
 	ADDFN(CUseWithOtherMsg, CMessage);
-	ADDFN(CVirtualKeyCharMsg, CMessage);
+	ADDFN(CActionMsg, CMessage);
 	ADDFN(CVisibleMsg, CMessage);
 	ADDFN(CCheckCodeWheelsMsg, CMessage);
 

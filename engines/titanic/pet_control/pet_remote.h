@@ -110,7 +110,7 @@ public:
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) override;
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) override;
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) override;
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) override;
+	bool ActionMsg(CActionMsg *msg) override;
 	bool MouseWheelMsg(CMouseWheelMsg *msg) override;
 
 	/**
