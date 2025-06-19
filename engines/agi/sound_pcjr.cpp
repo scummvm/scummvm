@@ -57,6 +57,7 @@
 #include "agi/agi.h"
 #include "agi/sound.h"
 #include "agi/sound_pcjr.h"
+#include "common/config-manager.h"
 
 namespace Agi {
 
@@ -101,6 +102,7 @@ const int8 dissolveDataV3[] = {
 	-100
 };
 
+int32 periodicNoiseMask = 0x08000; // default 15-bit periodic noise mask
 
 SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
 	_chanAllocated = 10240; // preallocate something which will most likely fit
@@ -119,6 +121,10 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 		_dissolveMethod = 2;
 	else
 		_dissolveMethod = 0;
+
+	Common::String cfgPCjrNoise = ConfMan.get("pcjr_noise");
+	if (cfgPCjrNoise == "16")
+		periodicNoiseMask = 0x10000;
 
 	memset(_channel, 0, sizeof(_channel));
 	memset(_tchannel, 0, sizeof(_tchannel));
@@ -387,7 +393,7 @@ void SoundGenPCJr::writeData(uint8 val) {
 // noise feedback for periodic noise mode
 // it is correct maybe (it was in the Megadrive sound manual)
 //#define FB_PNOISE 0x10000 // 16bit rorate
-#define FB_PNOISE 0x08000
+//#define FB_PNOISE 0x08000
 
 // noise generator start preset (for periodic noise)
 #define NG_PRESET 0x0f35
@@ -518,7 +524,7 @@ int SoundGenPCJr::fillNoise(ToneChan *t, int16 *buf, int len) {
 		t->count = t->scale;
 		t->freqCountPrev = t->freqCount;
 
-		t->feedback = (t->genType == kGenWhite) ? FB_WNOISE : FB_PNOISE;
+		t->feedback = (t->genType == kGenWhite) ? FB_WNOISE : periodicNoiseMask;
 		// reset noise shifter
 		t->noiseState = NG_PRESET;
 		t->sign = t->noiseState & 1;
