@@ -364,7 +364,8 @@ void WageEngine::aboutDialog() {
 	sayText(disclaimer, Common::TextToSpeechManager::QUEUE);
 	messageText += disclaimer;
 
-	Graphics::MacText aboutMessage(messageText, _gui->_wm, _gui->_consoleWindow->getTextWindowFont(), Graphics::kColorBlack,
+	Graphics::MacFont font(Graphics::kMacFontGeneva, 9, 0);
+	Graphics::MacText aboutMessage(messageText, _gui->_wm, &font, Graphics::kColorBlack,
 											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
 
 	Graphics::MacDialog about(&_gui->_screen, _gui->_wm, 450, &aboutMessage, 400, &buttons, 0);
