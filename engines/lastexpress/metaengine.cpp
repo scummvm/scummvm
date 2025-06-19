@@ -50,6 +50,10 @@ bool LastExpressEngine::isGoldEdition() const {
 	return (Common::String(_gameDescription->extra) == "Gold Edition");
 }
 
+bool LastExpressEngine::isCompressed() const {
+	return (bool)(_gameDescription->flags & GF_COMPRESSED);
+}
+
 bool LastExpressMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return f == kSupportsListSaves
 	    || f == kSupportsDeleteSave;

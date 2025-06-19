@@ -102,6 +102,23 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
+	{
+		"lastexpress",
+		"Interplay Release",
+		{
+			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},
+			{"CD2.HPF", 0, "58aa26e782d10ec5d2231e539d2fe6a2", 669581312},
+			{"CD3.HPF", 0, "00554fbf78a2ad391d98578fbbbe1c48", 641128448},
+			{"data1.cab", 0, "895ba6eec49346245e468553ba7a64fb", 42775756},
+			{"is:data1.cab:HD.HPF", 0, "A:bcc32d977f92bb52c060a0b4e8589cac", 30715904},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformUnknown,
+		ADGF_TESTING | GF_COMPRESSED,
+		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+	},
+
 	// The Last Express (Demo - English) - Broderbund
 	//   expressw.exe 1997-08-14 14:09:42
 	//   express.exe  1997-08-14 14:19:34
