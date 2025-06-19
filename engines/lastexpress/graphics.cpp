@@ -276,7 +276,7 @@ void GraphicsManager::bitBltSprite255(Sprite *sprite, PixMap *pixels) {
 	destEndPtr = pixels + (640 * 480);
 
 	while (destPtr < destEndPtr) {
-		cmd = *(uint16 *)compressedData;
+		cmd = FROM_LE_16(*(uint16 *)compressedData);
 
 		// Direct color lookup
 		if ((cmd & 0xFF) < 0x80) {
@@ -1709,13 +1709,13 @@ void GraphicsManager::doErase(byte *data) {
 
 	// Apply the old screen buffer on the erase mask
 	do {
-		if (*eraseMask) {
-			memcpy(screenSurface, previousScreenBuffer, 4 * *eraseMask);
-			previousScreenBuffer += 4 * *eraseMask;
-			screenSurface += 4 * *eraseMask;
+		if (FROM_LE_16(*eraseMask)) {
+			memcpy(screenSurface, previousScreenBuffer, 4 * FROM_LE_16(*eraseMask));
+			previousScreenBuffer += 4 * FROM_LE_16(*eraseMask);
+			screenSurface += 4 * FROM_LE_16(*eraseMask);
 		}
 	
-		int skipSize = *(eraseMask + 1) << 2;
+		int skipSize = FROM_LE_16(*(eraseMask + 1)) << 2;
 		screenSurface += skipSize;
 		previousScreenBuffer += skipSize;
 		eraseMask += 2;
@@ -1926,7 +1926,7 @@ void GraphicsManager::decompG(byte *data, int32 size) {
 
 			// Copy green component (bits 5-9) from previous output
 			for (int i = 0; i < count; i++) {
-				*((int16 *)outBuffer) |= (*sourcePtr & 0x3E0);
+				*((int16 *)outBuffer) |= (FROM_LE_16(*sourcePtr) & 0x3E0);
 				outBuffer += 2;
 				sourcePtr++;
 			}

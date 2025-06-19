@@ -718,6 +718,4 @@ int32 CVCRFile::tell() {
 	}
 }
 
-
-
 } // End of namespace LastExpress
