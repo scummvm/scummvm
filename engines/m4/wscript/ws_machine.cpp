@@ -498,7 +498,7 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 		ws_Error(m, ERR_MACH, 0x0263, "functionality: trigger mach arg1, arg2 instances");
 	}
 
-	int32 myHash = (*_GWS(myArg1)) >> 16;
+	const int32 myHash = (*_GWS(myArg1)) >> 16;
 	if (_GWS(myArg2)) {
 		if (_GWS(myArg3)) {
 			randFlag = true;
@@ -531,8 +531,8 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 		ws_Error(m, ERR_MACH, 0x0263, "trig_w instruction requires a data hash specified by a second pCode.");
 	}
 
-	int32 myDataHash = (int32)(*_GWS(myArg1)) >> 16;
-	int32 myDataCount = ws_GetDATACount(myDataHash);
+	const int32 myDataHash = (int32)(*_GWS(myArg1)) >> 16;
+	const int32 myDataCount = ws_GetDATACount(myDataHash);
 	if (_GWS(myArg2)) {
 		if (_GWS(myArg3)) {
 			minIndex = (*_GWS(myArg2)) >> 16;
@@ -645,7 +645,7 @@ void addPauseTime(int32 myTime) {
 void cycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
 		uint8 *myPalette, uint8 *ICT, bool updateVideo) {
 	dbg_DebugNextCycle();
-	int32 clockTime = timer_read_60();
+	const int32 clockTime = timer_read_60();
 
 	if (_GWS(enginesPaused)) {
 		_GWS(pauseTime) += clockTime - _GWS(oldTime);
@@ -854,7 +854,7 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 	int32 myInstruction;
 	uint32 *myPC;
 
-	uint32 machID = m->machID;
+	const uint32 machID = m->machID;
 	Anim8 *myAnim8 = m->myAnim8;
 
 	// Find the current PC and process it to get the current instruction
@@ -875,14 +875,14 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 	*pcOffset += (byte *)myPC - (byte *)oldPC;
 
 	if (myInstruction >= 64) {
-		if (myInstruction > 74)
+		if (myInstruction >= 74)
 			error("Unexpected instruction %d", myInstruction);
 		condOpTable[myInstruction - 64](m, pcOffset);
 	} else if (myInstruction > 0) {
 		if (myInstruction > 15)
 			error("Unexpected instruction %d", myInstruction);
-		
-		bool keepProcessing = immOpTable[myInstruction](m, pcOffset);
+
+		const bool keepProcessing = immOpTable[myInstruction](m, pcOffset);
 
 		if (!keepProcessing) {
 			// Does the machine still exist
@@ -904,12 +904,12 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount) {
 	// We are executing machine instructions after a conditional has been satisfied.
 	// Mark where we started
-	int32 oldPC = pcOffset;
+	const int32 oldPC = pcOffset;
 
 	// Increment and remember the recurseLevel and the machine ID
 	m->recurseLevel++;
-	uint32 recurseLevel = m->recurseLevel;
-	uint32 machID = m->machID;
+	const uint32 recurseLevel = m->recurseLevel;
+	const uint32 machID = m->machID;
 
 	// Execute instructions until the conditional count has been reached.
 	int32 myInstruction = -1;
@@ -947,8 +947,8 @@ void IntoTheState(machine *m) {
 
 	// Increment and remember the recurseLevel and the machine ID
 	m->recurseLevel++;
-	uint32 recurseLevel = m->recurseLevel;
-	uint32 machID = m->machID;
+	const uint32 recurseLevel = m->recurseLevel;
+	const uint32 machID = m->machID;
 
 	// Execute all instruction until an instruction (ie. OP_END) signals execution to stop
 	// by returning 0, or something has reset the recurseLevel (ie. op_GOTO)
@@ -961,7 +961,7 @@ void IntoTheState(machine *m) {
 	if (myInstruction != OP_KILL) {
 		// If the above loop executed without being modified (ie terminated) by a call to StepAt()
 		if ((m->machID == machID) && (m->recurseLevel == recurseLevel)) {
-			// Decriment the recurse counter
+			// Decrement the recurse counter
 			m->recurseLevel--;
 		}
 	}
@@ -1093,8 +1093,8 @@ static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine *recvM, int32
 			found = true;
 
 			// Find out where to begin executing from
-			int32 pcOffset = myMsg->pcOffset;
-			int32 pcCount = myMsg->pcCount;
+			const int32 pcOffset = myMsg->pcOffset;
+			const int32 pcCount = myMsg->pcCount;
 
 			// Remove the msg from the list, based on which list
 			switch (whichList) {
