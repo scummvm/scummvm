@@ -38,6 +38,7 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/timer.h"
+#include "common/compression/installshield_cab.h"
 
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
@@ -136,6 +137,14 @@ void LastExpressEngine::soundTimerHandler(void *refCon) {
 }
 
 Common::Error LastExpressEngine::run() {
+	// Allow HD.HPF to be read directly from the InstallShield archive
+	if (isCompressed()) {
+		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
+		if (cabinet) {
+			SearchMan.add("data1.cab", cabinet);
+		}
+	}
+
 	// Initialize the graphics
 	const Graphics::PixelFormat dataPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &dataPixelFormat);

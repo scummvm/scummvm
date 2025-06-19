@@ -94,6 +94,10 @@ class VCR;
 
 struct Extent;
 
+enum {
+	GF_COMPRESSED = 1 << 0
+};
+
 typedef struct Item {
 	uint8 mnum;
 	uint16 closeUp;
@@ -551,6 +555,7 @@ public:
 
 	bool isDemo() const;
 	bool isGoldEdition() const;
+	bool isCompressed() const;
 
 	Common::String getTargetName() const;
 
