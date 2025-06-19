@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 20:56+0000\n"
+"POT-Creation-Date: 2025-06-19 21:38+0000\n"
 "PO-Revision-Date: 2025-06-16 18:26+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -262,7 +262,7 @@ msgstr "클립보드에서 코드 붙여넣기"
 #: engines/parallaction/metaengine.cpp:125
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:737
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
 msgid "Load"
 msgstr "불러오기"
 
@@ -1489,7 +1489,7 @@ msgstr "검색:"
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:974
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:737
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
 msgid "Load game:"
 msgstr "게임 불러오기:"
 
@@ -3466,7 +3466,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:747 engines/zvision/file/save_manager.cpp:48
+#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
 msgstr "게임 저장:"
 
@@ -3490,7 +3490,7 @@ msgstr "게임 저장:"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
-#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:747
+#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:749
 #: engines/zvision/file/save_manager.cpp:48 engines/zvision/metaengine.cpp:262
 msgid "Save"
 msgstr "저장"
@@ -7196,6 +7196,7 @@ msgstr "기본적으로 색맹 모드 활성화"
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
 #: engines/supernova/metaengine.cpp:49 engines/teenagent/metaengine.cpp:45
+#: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "TTS 활성화"
 
@@ -7320,7 +7321,7 @@ msgstr "개체 및 옵션에 대한 TTS 활성화"
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
 #: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
-#: engines/twine/metaengine.cpp:145
+#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS가 가능한 경우)"
 

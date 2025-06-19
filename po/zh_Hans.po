@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 20:56+0000\n"
+"POT-Creation-Date: 2025-06-19 21:38+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -262,7 +262,7 @@ msgstr "从剪贴板粘贴代码"
 #: engines/parallaction/metaengine.cpp:125
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:737
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
 msgid "Load"
 msgstr "载入"
 
@@ -1469,7 +1469,7 @@ msgstr "搜索："
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:974
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:737
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
 msgid "Load game:"
 msgstr "载入游戏："
 
@@ -3413,7 +3413,7 @@ msgstr "回到启动器 (~R~)"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:747 engines/zvision/file/save_manager.cpp:48
+#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
 msgstr "保存游戏："
 
@@ -3437,7 +3437,7 @@ msgstr "保存游戏："
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
-#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:747
+#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:749
 #: engines/zvision/file/save_manager.cpp:48 engines/zvision/metaengine.cpp:262
 msgid "Save"
 msgstr "保存"
@@ -7108,6 +7108,7 @@ msgstr "默认启用色盲模式"
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
 #: engines/supernova/metaengine.cpp:49 engines/teenagent/metaengine.cpp:45
+#: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "启用文本转语音"
 
@@ -7232,7 +7233,7 @@ msgstr "为物品与设置启用文字转语音"
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
 #: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
-#: engines/twine/metaengine.cpp:145
+#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "使用 TTS 读出描述（若可用）"
 

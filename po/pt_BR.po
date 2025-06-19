@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 20:56+0000\n"
+"POT-Creation-Date: 2025-06-19 21:38+0000\n"
 "PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -265,7 +265,7 @@ msgstr "Cola código a partir da área de transferência"
 #: engines/parallaction/metaengine.cpp:125
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:737
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
 msgid "Load"
 msgstr "Carregar"
 
@@ -1513,7 +1513,7 @@ msgstr "Pesquisar:"
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:974
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:737
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
 msgid "Load game:"
 msgstr "Carregar jogo:"
 
@@ -3533,7 +3533,7 @@ msgstr "Volta~r~ ao Inicializador"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:747 engines/zvision/file/save_manager.cpp:48
+#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
 msgstr "Salvar jogo:"
 
@@ -3557,7 +3557,7 @@ msgstr "Salvar jogo:"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
-#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:747
+#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:749
 #: engines/zvision/file/save_manager.cpp:48 engines/zvision/metaengine.cpp:262
 msgid "Save"
 msgstr "Salvar"
@@ -7369,6 +7369,7 @@ msgstr "Habilita o Modo Daltônico por padrão"
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
 #: engines/supernova/metaengine.cpp:49 engines/teenagent/metaengine.cpp:45
+#: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Habilitar Texto para Fala"
 
@@ -7494,7 +7495,7 @@ msgstr "Habilita Texto para Fala para Objetos e Opções"
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
 #: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
-#: engines/twine/metaengine.cpp:145
+#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Utiliza TTS para ler as descrições (se o TTS estiver disponível)"
 
