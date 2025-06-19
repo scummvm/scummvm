@@ -908,7 +908,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			Graphics::Surface buffer;
-			buffer.create(bitmap->_width, bitmap->_height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+			buffer.create(bitmap->_width, bitmap->_height, Graphics::PixelFormat::createFormatRGBA32());
 			uint32 *buf = (uint32 *)buffer.getPixels();
 			const uint16 *bufPtr = (const uint16 *)(bitmap->getImageData(pic).getPixels());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
@@ -1167,7 +1167,7 @@ void GfxTinyGL::releaseMovieFrame() {
 
 void GfxTinyGL::loadEmergFont() {
 	Graphics::Surface characterSurface;
-	Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	Graphics::PixelFormat textureFormat = Graphics::PixelFormat::createFormatRGBA32();
 	characterSurface.create(8, 13, textureFormat);
 	uint32 color = textureFormat.ARGBToColor(255, 255, 255, 255);
 	uint32 colorTransparent = textureFormat.ARGBToColor(0, 255, 255, 255);

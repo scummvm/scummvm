@@ -69,7 +69,7 @@ public:
 
 			_binaryTransparent = false;
 		} else {
-			const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			const Graphics::PixelFormat textureFormat = Graphics::PixelFormat::createFormatRGBA32();
 			_surface.convertFrom(surface, textureFormat);
 
 			Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
