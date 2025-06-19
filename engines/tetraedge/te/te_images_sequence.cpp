@@ -162,8 +162,8 @@ bool TeImagesSequence::isAtEnd() {
 	return _curFrame >= _files.size();
 }
 
-TeImage::Format TeImagesSequence::imageFormat() {
-	return TeImage::RGBA8;
+Graphics::PixelFormat TeImagesSequence::pixelFormat() {
+	return Graphics::PixelFormat::createFormatRGBA32();
 }
 
 } // end namespace Tetraedge

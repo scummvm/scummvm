@@ -28,19 +28,13 @@
 
 namespace Tetraedge {
 
-Te3DTexture::Te3DTexture() : _createdTexture(false), _format(TeImage::INVALID),
+Te3DTexture::Te3DTexture() : _createdTexture(false),
 _loaded(false), _width(0), _height(0), _texHeight(0), _texWidth(0),
 _topBorder(0), _leftBorder(0), _rightBorder(0), _btmBorder(0),
 _flipY(false), _alphaOnly(false) {
 }
 
 Te3DTexture::~Te3DTexture() {
-}
-
-bool Te3DTexture::hasAlpha() const {
-	TeImage::Format format = getFormat();
-	return (format == TeImage::RGBA8 || format == 9
-			|| format == 0xb || format == 1 || format == 0);
 }
 
 /*static*/

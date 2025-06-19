@@ -48,12 +48,6 @@ public:
 		destroy();
 	};
 
-	enum Format {
-		RGB8 = 5,
-		RGBA8 = 6,
-		// GREY8 = 0xd,
-		INVALID = 0xe
-	};
 	enum SaveType {
 		PNG
 	};
@@ -62,11 +56,11 @@ public:
 			  const TeVector2s32 &vec3) const;
 	uint64 countPixelsOfColor(const TeColor &col) const;
 	// void create(); // never used?
-	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &palette, Format newformat) {
+	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &palette, const Graphics::PixelFormat &newformat) {
 		createImg(xsize, ysize, palette, newformat, xsize, ysize);
 	}
 	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
-				Format format, uint bufxsize, uint bufysize);
+				const Graphics::PixelFormat &format, uint bufxsize, uint bufysize);
 	void deserialize(Common::ReadStream &stream);
 	void destroy();
 	void drawPlot(int x, int y, const TeColor &col) {
@@ -84,10 +78,6 @@ public:
 	TeVector2s32 bufSize() const {
 		return TeVector2s32(pitch / format.bytesPerPixel, h);
 	}
-	Format teFormat() const { return _teFormat; }
-
-private:
-	Format _teFormat;
 };
 
 } // end namespace Tetraedge

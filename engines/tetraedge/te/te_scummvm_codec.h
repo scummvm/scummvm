@@ -37,7 +37,7 @@ public:
 	virtual uint width() override;
 	virtual uint height() override;
 	virtual int nbFrames() override { return 1; }
-	virtual TeImage::Format imageFormat() override;
+	virtual Graphics::PixelFormat pixelFormat() override;
 	virtual void setLeftBorderSize(uint val) override;
 	virtual uint leftBorderSize() override { return 0; }
 	virtual void setRightBorderSize(uint val) override;
