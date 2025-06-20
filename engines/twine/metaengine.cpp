@@ -381,7 +381,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SCENERYZOOM", _("Scenery Zoom"));
+		act = new Action("SCENERYZOOM", _("Scenery zoom"));
 		act->setCustomEngineActionEvent(TwinEActionType::SceneryZoom);
 		gameKeyMap->addAction(act);
 
