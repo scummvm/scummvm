@@ -204,7 +204,7 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("L1", _("Left Shoulder"));
+	act = new Action("L1", _("Left shoulder"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionL1);
 	act->addDefaultInputMapping("o");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
