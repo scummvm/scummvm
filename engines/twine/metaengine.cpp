@@ -322,7 +322,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("S+KP_ENTER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("THROWMAGICBALL", _("Throw Magic Ball"));
+		act = new Action("THROWMAGICBALL", _("Throw magic ball"));
 		act->setCustomEngineActionEvent(TwinEActionType::ThrowMagicBall);
 		act->addDefaultInputMapping("LALT");
 		act->addDefaultInputMapping("RALT");
