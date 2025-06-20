@@ -117,7 +117,12 @@ bool MacOSXTextToSpeechManager::startNextSpeech() {
 	if (_messageQueue.empty())
 		return false;
 
-	Common::String textToSpeak = _messageQueue.pop();
+	Common::String textToSpeak;
+	do {
+		textToSpeak = _messageQueue.pop();
+	} while (textToSpeak.empty() && !_messageQueue.empty());
+	if (textToSpeak.empty())
+		return false;
 
 	// Get current encoding
 	CFStringEncoding stringEncoding = kCFStringEncodingUTF8;
