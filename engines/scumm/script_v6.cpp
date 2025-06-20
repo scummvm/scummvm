@@ -3709,7 +3709,17 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 #pragma mark --- Enhancements & workarounds ---
 #pragma mark -
 
-void ScummEngine_v6::o6_animateActorApplyEnhancements(int act, int anim) {
+void ScummEngine_v6::o6_animateActorApplyEnhancements(int &act, int &anim) {
+	// WORKAROUND bug #15947: In the Human Show, with Laverne, the smiling
+	// contestant has an unused animation where she's winking. At this is
+	// mentioned by the judges ("She winked at me"), it makes sense to
+	// restore it.
+	if (_game.id == GID_TENTACLE && _roomResource == 54 && currentScriptSlotIs(80) &&
+		act == 5 && anim == 13 && enhancementEnabled(kEnhRestoredContent)) {
+		if (_rnd.getRandomBit())
+			anim = 14;
+	}
+
 	// WORKAROUND bug #2068 (Animation glitch at World of Fish).
 	// Before starting animation 14 of the fisherman, make sure he isn't
 	// talking anymore, otherwise the fishing line may appear twice when Max
