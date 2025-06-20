@@ -48,6 +48,7 @@ TestExitStatus testInterrupting();
 TestExitStatus testDroping();
 TestExitStatus testInterruptNoRepeat();
 TestExitStatus testQueueNoRepeat();
+TestExitStatus testQueueEmptyString();
 
 // Utility function to avoid dupplicated code
 void waitForSpeechEnd(Common::TextToSpeechManager *);

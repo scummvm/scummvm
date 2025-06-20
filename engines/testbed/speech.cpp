@@ -538,6 +538,36 @@ TestExitStatus Speechtests::testQueueNoRepeat() {
 	return kTestPassed;
 }
 
+TestExitStatus Speechtests::testQueueEmptyString() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	ttsMan->setLanguage("en");
+	ttsMan->setVolume(100);
+	ttsMan->setRate(0);
+	ttsMan->setPitch(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
+	Testsuite::clearScreen();
+	Common::String info = "Text to speech queue empty test. You should expect a voice to start say:\"This is the first sentence. This is the third sentence\"";
+
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Testing TTS Queue No Repeat", pt);
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : testQueueNoRepeat\n");
+		return kTestSkipped;
+	}
+
+	ttsMan->say("This is the first sentence.");
+	ttsMan->say("",  Common::TextToSpeechManager::QUEUE);
+	ttsMan->say("This is the third sentence.",  Common::TextToSpeechManager::QUEUE);
+	waitForSpeechEnd(ttsMan);
+	Common::String prompt = "Did you hear a voice say: \"This is the first sentence. This the third sentence\"?";
+	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
+		Testsuite::logDetailedPrintf("TTS QueueEmptyText failed\n");
+		return kTestFailed;
+	}
+	return kTestPassed;
+}
+
 SpeechTestSuite::SpeechTestSuite() {
 	_isTsEnabled = true;
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -559,6 +589,7 @@ SpeechTestSuite::SpeechTestSuite() {
 	addTest("testDroping", &Speechtests::testDroping, true);
 	addTest("testInterruptNoRepeat", &Speechtests::testInterruptNoRepeat, true);
 	addTest("testQueueNoRepeat", &Speechtests::testQueueNoRepeat, true);
+	addTest("testQueueEmptyString", &Speechtests::testQueueEmptyString, true);
 }
 
 } // End of namespace Testbed
