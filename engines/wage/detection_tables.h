@@ -65,6 +65,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("The Ashland Revolution", "Ashland Demo", "7a340e5ea03f7468717de408fb5b13fb", 149828), // alt version
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "de6fdfe2b9d9efc0ea842e2bde68673a", 144753), // alt version
 	FANGAME("The Axe-orcist", "9718b72e86a9727bbd68e12fa992b268", 308508),
+	FANGAME("Ben's Castle 1.5", "r:6e8d74405be3875fbb85cfe8c358e641", 187691),
 	FANGAMEN("Beyond Twilight Vale", "Beyond Twilight Vale 0.8", "ba67d80dc22d32f42446c891daf56fc8", 248089),
 	FANGAME("Brownie Saves the Day", "964d9cf87422c09c50fe294adf9a7571", 680145),
 	FANGAME("Brownie's Dream", "379f2c810efc18bad932049d331df1b6", 440448),
@@ -163,9 +164,11 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
 	FANGAMEN("Intruder", "INTRUDER 1.1", "7d819891784c79fef66ff3bd9d946d6d", 203105),
 	FANGAMEN("Intruder", "INTRUDER v1.2", "a7df3f4196e922153cd4345def774c29", 241007),
+	FANGAME("Intruder ][", "r:a35a5e110bb5e4a3a3b91db26deaa881", 697570),
 	FANGAME("Jack & Beanstalk Starring You", "2cd38be71d32892a83913c061a03aa19", 312646),
 	FANGAMEN("James Bond 007", "007", "2449924f2cb43454489a4ef91c0ee702", 50407),
 	FANGAME("Jamie the Demon Slayer", "ed054aa760569059c7ea554e822089a6", 232533),
+	FANGAME("Joe Wu Tse's Dungeon", "r:ea800af93f3886550d7c6c1687cfc9e1", 189764),
 	FANGAMEN("Journey", "The Journey 1.5", "4bbc047d21740f79f3f198628ba8f8bc", 665011),
 	FANGAMEN("Journey", "2 The Journey v1.5 (1992)", "4bbc047d21740f79f3f198628ba8f8bc", 665011), // alt version
 	FANGAMEN("Journey", "1 The Journey v1.6 (1992)", "cff7929abf284060c2070dfc1a2fa9cf", 765189),
@@ -269,6 +272,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Schmoozer", "7bbb3d317d2074870c72b28d07984ef8", 221244),
 	FANGAME("Schmoozer", "db31e320f286a5f4ab2c70022d24dcb2", 221244), // alt version
 	FANGAME("sMythWorld", "8224b15a910c9e7515923107d138de77", 472101),
+	FANGAME("Sorceror's Quest (Demo)", "r:ee8efbccea0807674af2bb53e6edf338", 531622),
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "3908c75d639989a28993c59931fbe1ec", 155100),
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155100), // alt version
@@ -314,6 +318,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Volcano", "Volcano 2.4", "d04eba23fe7d566fba0c9b34242d8f10", 227431),
 	FANGAMEN("Volcano II", "xn--Volcano II-0y6e", "7941c08b34bc2408b98c0004c7154aeb", 82735), // Original file name "Volcano II†"
 	FANGAMEN("Who Shot Brownie Dog?", "xn--Who Shot Brownie Dogv1.01-lba88n", "4e7a950567c73e98e4478e5683e943ca", 195923),
+	FANGAME("Widow's Sons", "r:1bfae1966acb268c947a4ba69e0f0693", 65796),
 	FANGAMEN("Wishing Well", "xn--Wishing Well -", "607a66461d65a73c1222d63dbde0175d", 103432), // original file name "Wishing Well "
 	FANGAMEN("Wishing Well", "xn--Wishing Well -", "5fcd9ac410bffd6369fb8723e86e6420", 103421), // original file name "Wishing Well ", alt version
 	FANGAME("The Wizard's Apprentice", "477c2d2d4672d968dfac1df2acef1dc9", 782568),
@@ -321,6 +326,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Wizard's Warehouse", "d0ab2d4b0009eb61cbff925f8c382379", 158846), // alt version
 	FANGAMEN("Wizard's Warehouse 2", "WizWarehouse 2.0", "e67ac67548236a73897a85cd12b30492", 230614),
 	FANGAMEN("Wizard's Warehouse 2", "WizWarehouse 2.0", "418cc7a44477a4408ea365c8de86f577", 230614), // alt version
+	FANGAME("Zhore's Xers 2.3", "r:a4d6748fc48988bd6d216468a56b14d6", 484867),
 	FANGAME("ZikTuria", "a91559e6f04a67dcb9023a98a0faed77", 52716),
 	FANGAMEN("Zoony", "xn--Zoony-j64b", "3f7418ea8672ea558521c178188cfce5", 154734), // original file name "Zoony™"
 	FANGAMEN("Zoony", "xn--Zoony-j64b", "55d3d42b5dca9630eb28ad464f343c67", 154734), // original file name "Zoony™", alt version
