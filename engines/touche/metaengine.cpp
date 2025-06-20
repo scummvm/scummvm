@@ -138,7 +138,7 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SKIPDILOG", _("Skip Dialogue"));
+		act = new Action("SKIPDILOG", _("Skip dialogue"));
 		act->setCustomEngineActionEvent(kToucheActionSkipDialogue);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("JOY_X");
