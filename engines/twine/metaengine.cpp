@@ -336,7 +336,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_UP");
 		gameKeyMap->addAction(act);
 
-		act = new Action("MOVEBACKWARD", _("Move Backwards"));
+		act = new Action("MOVEBACKWARD", _("Move backwards"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveBackward);
 		act->addDefaultInputMapping("DOWN");
 		act->addDefaultInputMapping("KP2");

@@ -508,7 +508,7 @@ Common::KeymapArray LoLEngine::initKeymaps() {
 	addKeymapAction(keyMap2, "AT3", _("Attack 3"), Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3), "F3", "JOY_LEFT_SHOULDER");
 	addKeymapAction(keyMap2, "MAP", _("Show Map"), Common::KeyState(Common::KEYCODE_m, 'm'), "m", "");
 	addKeymapAction(keyMap2, "MVF", _("Move forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
-	addKeymapAction(keyMap2, "MVB", _("Move Backwards"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
+	addKeymapAction(keyMap2, "MVB", _("Move backwards"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
 	addKeymapAction(keyMap2, "SLL", _("Slide Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
 	addKeymapAction(keyMap2, "SLR", _("Slide Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
 	addKeymapAction(keyMap2, "TL", _("Turn Left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
