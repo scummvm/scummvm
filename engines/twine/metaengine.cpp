@@ -292,7 +292,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGEBEHAVIOUR", _("Change Behaviour"));
+		act = new Action("CHANGEBEHAVIOUR", _("Change behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::BehaviourMenu);
 		act->addDefaultInputMapping("LCTRL");
 		act->addDefaultInputMapping("RCTRL");
