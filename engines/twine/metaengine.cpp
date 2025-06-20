@@ -261,7 +261,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("3");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETODISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act = new Action("CHANGETODISCREETBEHAVIOUR", _("Discreet behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourDiscreet);
 		act->addDefaultInputMapping("4");
 		gameKeyMap->addAction(act);
@@ -281,7 +281,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("F3");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act = new Action("DISCREETBEHAVIOUR", _("Discreet behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourDiscreet);
 		act->addDefaultInputMapping("F4");
 		gameKeyMap->addAction(act);
