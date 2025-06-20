@@ -216,7 +216,7 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("DEBUGGFX", _("Debug Graphics"));
+	act = new Action("DEBUGGFX", _("Debug graphics"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionDebugGfx);
 	act->addDefaultInputMapping("TAB");
 	engineKeyMap->addAction(act);
