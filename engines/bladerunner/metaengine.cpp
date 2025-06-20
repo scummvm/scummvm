@@ -293,7 +293,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	kiaOnlyKeymap->addAction(act);
 
 	// I18N: This keymap allows scrolling texts and lists upwards
-	act = new Action("KIASCROLLUP", _("Scroll Up"));
+	act = new Action("KIASCROLLUP", _("Scroll up"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionScrollUp);
 	act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 	act->addDefaultInputMapping("JOY_UP");
