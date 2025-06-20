@@ -2778,7 +2778,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TBI", _("Display/Hide Biochip Tray"));
+	act = new Action("TBI", _("Toggle biochip tray"));
 	act->setCustomEngineActionEvent(kPegasusActionShowBiochip);
 	act->addDefaultInputMapping("BACKSPACE");
 	act->addDefaultInputMapping("KP9");
