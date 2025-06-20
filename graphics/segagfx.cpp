@@ -28,10 +28,9 @@
 namespace Graphics {
 
 SegaRenderer::SegaRenderer(const PixelFormat *systemPixelFormat) : _pixelFormat(systemPixelFormat ? *systemPixelFormat : PixelFormat::createFormatCLUT8()),	_pitch(64), _hScrollMode(0),
-	_hScrollTable(0), _vScrollMode(0), _spriteTable(0), _numSpritesMax(0), _spriteMask(0), _spriteMaskPrio(0), _backgroundColor(0), _planes{SegaPlane(), SegaPlane(), SegaPlane()},
-	_vram(nullptr), _vsram(nullptr), _tempBufferSprites(nullptr), _tempBufferSpritesPrio(nullptr), _tempBufferPlanes(nullptr), _tempBufferPlanesPrio(nullptr), _renderColorTable(nullptr),
-	_rr(kUnspecified), _renderLineFragmentD(0), _renderLineFragmentM(0), _hINTEnable(false), _hINTCounter(0), _hINTCounterNext(0), _hINTHandler(nullptr), _destPitch(0), _displayEnabled(true),
-	_realW(0), _realH(0)
+	_hScrollTable(0), _vScrollMode(0), _spriteTable(0), _numSpritesMax(0), _spriteMask(0), _backgroundColor(0), _planes{SegaPlane(), SegaPlane(), SegaPlane()}, _vram(nullptr), _vsram(nullptr),
+	_tempBufferSprites(nullptr), _tempBufferSpritesPrio(nullptr), _tempBufferPlanes(nullptr), _tempBufferPlanesPrio(nullptr), _renderColorTable(nullptr), _rr(kUnspecified),
+	_renderLineFragmentD(0), _renderLineFragmentM(0), _hINTEnable(false), _hINTCounter(0), _hINTCounterNext(0), _hINTHandler(nullptr), _destPitch(0), _displayEnabled(true), _realW(0), _realH(0)
 #if(BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
 	, _arcIncX(0), _arcCntX(0), _arcIncY(0), _arcCntY(0), _xyAspectRatio(1.0), _scaleFactor(1.0)
 #endif
@@ -81,7 +80,6 @@ SegaRenderer::~SegaRenderer() {
 	delete[] _vram;
 	delete[] _vsram;
 	delete[] _spriteMask;
-	delete[] _spriteMaskPrio;
 	delete[] _tempBufferSprites;
 	delete[] _tempBufferSpritesPrio;
 	delete[] _tempBufferPlanes;
@@ -104,7 +102,6 @@ void SegaRenderer::setResolution(int w, int h) {
 	delete[] _tempBufferPlanes;
 	delete[] _tempBufferPlanesPrio;
 	delete[] _spriteMask;
-	delete[] _spriteMaskPrio;
 
 	if (_pixelFormat.bytesPerPixel > 1) {
 		_tempBufferPlanes = new uint8[_screenW * _screenH]();
@@ -118,8 +115,6 @@ void SegaRenderer::setResolution(int w, int h) {
 	assert(_tempBufferPlanesPrio);
 	_spriteMask = new uint8[_screenW * _screenH]();
 	assert(_spriteMask);
-	_spriteMaskPrio = new uint8[_screenW * _screenH]();
-	assert(_spriteMaskPrio);
 #if(!BUILD_SEGAGFX_ASPECT_RATIO_CORRECTION_SUPPORT)
 	_realW = _screenW;
 	_realH = _screenH;
@@ -410,7 +405,6 @@ void SegaRenderer::renderSprites(uint8 *dst, uint8 *dstPrio, int clipX, int clip
 		clipH = _screenH;
 
 	memset(_spriteMask, 0xFF, _screenW * _screenH);
-	memset(_spriteMaskPrio, 0xFF, _screenW * _screenH);
 	const uint16 *pos = _spriteTable;
 
 	int clipX2 = clipX + clipW;
@@ -437,7 +431,7 @@ void SegaRenderer::renderSprites(uint8 *dst, uint8 *dstPrio, int clipX, int clip
 		y = (y & 0x1FF) - 128;
 
 		uint8 *d = (dstPrio != nullptr && prio ? dstPrio : dst) + y * _screenW + x;
-		uint8 *msk = (dstPrio != nullptr && prio ? _spriteMaskPrio : _spriteMask) + y * _screenW + x;
+		uint8 *msk = _spriteMask + y * _screenW + x;
 
 		if (spriteMasking) {
 			int mH = MIN<int>(bH << 3, _screenH - y);
