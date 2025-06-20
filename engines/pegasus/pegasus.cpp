@@ -2771,7 +2771,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	// The original doesn't use KP7 for inventory, but we're using it as an alternative for
 	// num lock. KP9 is used for the biochip drawer to balance things out.
 
-	act = new Action("TIV", _("Display/Hide Inventory Tray"));
+	act = new Action("TIV", _("Toggle inventory tray"));
 	act->setCustomEngineActionEvent(kPegasusActionShowInventory);
 	act->addDefaultInputMapping("BACKQUOTE");
 	act->addDefaultInputMapping("KP7");
