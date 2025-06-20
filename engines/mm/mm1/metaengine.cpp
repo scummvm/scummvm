@@ -95,7 +95,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	// I18N: Party arrangement command in Might & Magic 1
 	{ KEYBIND_BACKWARDS, "BACKWARDS", _s("Backwards"), "DOWN", nullptr },
 	{ KEYBIND_TURN_LEFT, "TURN_LEFT", _s("Turn Left"), "LEFT", nullptr },
-	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", _s("Turn Right"), "RIGHT", nullptr },
+	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", _s("Turn right"), "RIGHT", nullptr },
 	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", _s("Strafe Left"), "C+LEFT", nullptr },
 	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", _s("Strafe Right"), "C+RIGHT", nullptr },
 
