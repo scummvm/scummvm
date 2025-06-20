@@ -281,7 +281,7 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		engineKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->addDefaultInputMapping("MOUSE_MIDDLE");
 		act->setMiddleClickEvent();
 		engineKeyMap->addAction(act);
