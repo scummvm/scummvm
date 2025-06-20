@@ -263,7 +263,7 @@ Common::Keymap* InputManager::getDefaultKeyMapsForHUD() {
 	act->addDefaultInputMapping("p");
 	hudKeymap->addAction(act);
 
-	act = new Action("QUICKSAVE", _("Quick Save"));
+	act = new Action("QUICKSAVE", _("Quick save"));
 	act->setCustomEngineActionEvent(IG_QUICKSAVE);
 	act->addDefaultInputMapping("F5");
 	hudKeymap->addAction(act);
