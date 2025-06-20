@@ -71,6 +71,8 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_rnd = new Common::RandomSource("prisoner");
 
+	_menuFunctionArray[MAIN_PANEL] = &PrisonerEngine::updateMainMenu;
+	_menuFunctionArray[OPTIONS_PANEL] = &PrisonerEngine::updateOptionsMenu;
 }
 
 PrisonerEngine::~PrisonerEngine() {
@@ -353,7 +355,10 @@ void PrisonerEngine::mainLoop() {
 			updateFrameTime();
 			updateAnimationFrameTicks();
 
-			updateMenu(67, 77);
+			if (_menuFunctionArray[_selectedMenuIndex]) {
+				(this->*_menuFunctionArray[_selectedMenuIndex])(67, 77);
+				// updateMainMenu(67, 77);
+			}
 			handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
 
 			updateMouseCursor();
@@ -705,6 +710,15 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 				// TODO CLEAR MENU (MAYBE VIA DIRTY RECTS?)
 				this->resumeGame();
 			}
+		} else if (keyState == Common::KEYCODE_F2) {
+			inpKeybSetWaitRelease(true);
+			saveGameDialog();
+		} else if (keyState == Common::KEYCODE_F3) {
+			inpKeybSetWaitRelease(true);
+			loadGameDialog();
+		} else if (keyState == Common::KEYCODE_F4) {
+			inpKeybSetWaitRelease(true);
+			//TODO: Options
 		} else if (keyState == Common::KEYCODE_p) {
 			inpKeybSetWaitRelease(true);
 			if (isPaused()) {
@@ -924,6 +938,7 @@ void PrisonerEngine::pauseGame() {
 
 void PrisonerEngine::resumeGame() {
 	_mainMenuRequested = false;
+	this->_screen->clear();
 	_pauseToken.clear();
 }
 

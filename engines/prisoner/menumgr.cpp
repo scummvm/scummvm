@@ -111,7 +111,8 @@ static const byte testfile_data[] = {
 	0x6B, 0x00, 0x00, 0x00, 0x00, 0x12, 0x3F, 0x07
 };
 
-Common::StringArray MenuIds = {"M_RETG", "M_NEWG", "M_LOADG", "M_SAVEG", "M_OPT", "EXIT_G", "MAINM"};
+Common::StringArray MainMenuIds = {"M_RETG", "M_NEWG", "M_LOADG", "M_SAVEG", "M_OPT", "EXIT_G", "MAINM"};
+Common::StringArray OptionMenuIds = {"M_RETG", "M_BACK", "M_SND", "M_DVOPT", "M_GFX", "BSAVOPT", "M_OPT"};
 
 
 extern void decryptBuffer(byte *buf, uint32 size);
@@ -167,7 +168,8 @@ void PrisonerEngine::loadMenuPanels() {
 
 	runMainMenu_initMessages();
 	runMainMenu_addClickBoxes(67, 77);
-	_selectedMenuIndex = _inGame ? 0 : 1;
+	_currMenuIndex = _inGame ? 0 : 1;
+	_selectedMenuIndex = MAIN_PANEL;
 	_menuMouseCursorActive = 1;
 	_menuMouseCursor = 13;
 }
@@ -176,7 +178,7 @@ void PrisonerEngine::loadOnscreenMenuText() {
 }
 
 void PrisonerEngine::runMainMenu_initMessages() {
-	for (Common::StringArray::iterator id = MenuIds.begin(); id != MenuIds.end(); id++) {
+	for (Common::StringArray::iterator id = MainMenuIds.begin(); id != MainMenuIds.end(); id++) {
 		_menuItems.push_back(getGlobalText(*id));
 	}
 
@@ -184,7 +186,7 @@ void PrisonerEngine::runMainMenu_initMessages() {
 }
 
 void PrisonerEngine::updateActiveMenuItems() {
-	_selectedMenuIndex = _inGame ? 0 : 1;
+	_currMenuIndex = _inGame ? 0 : 1;
 	_activeMenuItems.clear();
 
 	for (uint8 i = 0; i < _menuItems.size(); i++) {
@@ -237,19 +239,19 @@ void PrisonerEngine::handleMainMenuInput() {
 
 	if (keyState == Common::KEYCODE_DOWN) {
 		do {
-			_selectedMenuIndex = (_selectedMenuIndex + 1) % MAIN_MENU_SIZE;
-		} while (!_activeMenuItems[_selectedMenuIndex]);
+			_currMenuIndex = (_currMenuIndex + 1) % MAIN_MENU_SIZE;
+		} while (!_activeMenuItems[_currMenuIndex]);
 		inpKeybSetWaitRelease(true);
 	} else if (keyState == Common::KEYCODE_UP) {
 		do {
-			_selectedMenuIndex = (_selectedMenuIndex - 1) % MAIN_MENU_SIZE;
-			if (_selectedMenuIndex < 0) {
-				_selectedMenuIndex += MAIN_MENU_SIZE;
+			_currMenuIndex = (_currMenuIndex - 1) % MAIN_MENU_SIZE;
+			if (_currMenuIndex < 0) {
+				_currMenuIndex += MAIN_MENU_SIZE;
 			}
-		} while (!_activeMenuItems[_selectedMenuIndex]);
+		} while (!_activeMenuItems[_currMenuIndex]);
 		inpKeybSetWaitRelease(true);
 	} else if (keyState == Common::KEYCODE_RETURN) {
-		doMenuAction(_selectedMenuIndex);
+		doMenuAction(_currMenuIndex);
 	}
 
 	updateMouseCursor();
@@ -316,10 +318,16 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 		debug("CLICK ON = %d", clickBoxIndex);
 		break;
 	case LOAD_GAME:
+		inpKeybSetWaitRelease(true);
 		loadGameDialog();
 		break;
 	case SAVE_GAME:
+		inpKeybSetWaitRelease(true);
 		saveGameDialog();
+		break;
+	case OPTIONS:
+		inpKeybSetWaitRelease(true);
+		loadOptionsMenu();
 		break;
 	case EXIT:
 		inpKeybSetWaitRelease(true);
@@ -328,6 +336,10 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 	default:
 		break;
 	}
+}
+
+void PrisonerEngine::loadOptionsMenu() {
+	_selectedMenuIndex = OPTIONS_PANEL;
 }
 
 void PrisonerEngine::updateDialogMenu(int16 x, int16 y) {
@@ -344,7 +356,7 @@ void PrisonerEngine::updateDialogMenu(int16 x, int16 y) {
 	}
 }
 
-void PrisonerEngine::updateMenu(int16 x, int16 y) {
+void PrisonerEngine::updateMainMenu(int16 x, int16 y) {
 	AnimationResource *menuPanel;
 
 	menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[MAIN_PANEL]);
@@ -392,8 +404,19 @@ void PrisonerEngine::updateMenu(int16 x, int16 y) {
 	}
 
 	// TODO: Fix menu selection (figure out where it's being done in the asm)
-	const _MenuOffset *off = &(_mainMenuOffsets[_selectedMenuIndex]);
+	const _MenuOffset *off = &(_mainMenuOffsets[_currMenuIndex]);
 	_screen->frameRect(x + off->x1, y + off->y1, x + off->x2, y + off->y2, 1);
+}
+
+void PrisonerEngine::updateOptionsMenu(int16 x, int16 y) {
+	AnimationResource *menuPanel;
+
+	menuPanel = _res->get<AnimationResource>(_menuPanelResourceCacheSlots[OPTIONS_PANEL]);
+	_screen->drawAnimationElement(menuPanel, 0, x, y, 0);
+
+	_PakMenuDirectoryEntry optionsPanelData = _kPrisonerPanelData[OPTIONS_PANEL];
+	setFontColors(_menuFont, optionsPanelData.outlineColor, optionsPanelData.inkColor);
+	setActiveFont(_menuFont);
 }
 
 } // End of namespace Prisoner

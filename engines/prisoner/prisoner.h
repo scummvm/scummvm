@@ -569,7 +569,9 @@ public:
 	bool _mainMenuRequested;
 	bool _inGame;
 	bool _mainLoopDone;
+	int8 _currMenuIndex;
 	int8 _selectedMenuIndex;
+
 
 	Common::String _muxFilename;
 	bool _muxClearScreenAfter, _muxClearScreenBefore;
@@ -804,6 +806,8 @@ public:
 	int16 _menuPanelResourceCacheSlots[MENU_PANELS::PANEL_SIZE_END];
 	Common::StringArray _menuItems;
 	Common::Array<bool> _activeMenuItems;
+	typedef void (PrisonerEngine::*MenuFunction)(int16, int16);
+	MenuFunction _menuFunctionArray[MENU_PANELS::PANEL_SIZE_END];
 
 	/* Dialog */
 	Common::StringArray _dialogStrings;
@@ -1144,13 +1148,15 @@ public:
 	void displayDialog(DIALOG_TYPE type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
 	void loadDialogData();
 	void loadMenuPanels();
+	void loadOptionsMenu();
 	void loadOnscreenMenuText();
 	void runMainMenu_initMessages();
 	void runMainMenu_addClickBoxes(int16 x, int16 y);
 	void updateActiveMenuItems();
 	void handleMainMenuInput();
 	void drawClickBoxLabels();
-	void updateMenu(int16 x, int16 y);
+	void updateMainMenu(int16 x, int16 y);
+	void updateOptionsMenu(int16 x, int16 y);
 	void doMenuAction(uint8 clickBoxIndex);
 
 	/* Dialog */
