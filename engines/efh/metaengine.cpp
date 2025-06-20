@@ -257,7 +257,7 @@ Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("HOME");
 	keymap->addAction(act);
 
-	act = new Action("MOVEUPRIGHT", _("Move up right"));
+	act = new Action("MOVEUPRIGHT", _("Move up-right"));
 	act->setCustomEngineActionEvent(kActionMoveUpRight);
 	act->addDefaultInputMapping("PAGEUP");
 	keymap->addAction(act);
