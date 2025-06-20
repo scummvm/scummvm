@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-19 22:37+0000\n"
-"PO-Revision-Date: 2025-06-17 13:11+0000\n"
+"PO-Revision-Date: 2025-06-20 20:25+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -12533,64 +12533,44 @@ msgstr ""
 "Elimina ciertas acciones repetitivas, permite cambiar acciones con el teclado"
 
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
-msgstr "Asignaciones de la pantalla de salida"
+msgstr "Asignaciones de escenas cinemáticas"
 
 #: engines/supernova/metaengine.cpp:220
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Improved mode keymappings"
-msgstr "Asignaciones de índice"
+msgstr "Asignaciones del modo mejorado"
 
 #: engines/supernova/metaengine.cpp:221
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Text reader keymappings"
-msgstr "Asignaciones de la pantalla de salida"
+msgstr "Asignaciones del lector de textos"
 
 #: engines/supernova/metaengine.cpp:222
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Computer keymappings"
-msgstr "Asignaciones del juego"
+msgstr "Asignaciones del PC"
 
 #: engines/supernova/metaengine.cpp:232
-#, fuzzy
-#| msgid "Move / Perform Default Action"
 msgid "Perform Default Action"
-msgstr "Mover/Acción predeterminada"
+msgstr "Realizar acción predeterminada"
 
 #: engines/supernova/metaengine.cpp:244
-#, fuzzy
-#| msgid "Interpolation:"
 msgid "Instructions"
-msgstr "Interpolación:"
+msgstr "Instrucciones"
 
 #: engines/supernova/metaengine.cpp:250
-#, fuzzy
-#| msgid "General Information"
 msgid "Information"
-msgstr "Información general"
+msgstr "Información"
 
 #: engines/supernova/metaengine.cpp:256
-#, fuzzy
-#| msgid "Text speed - Fast"
 msgid "Text speed"
-msgstr "Velocidad de texto rápida"
+msgstr "Velocidad del texto"
 
 #: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
 msgid "Page up"
-msgstr "Rotar hacia arriba"
+msgstr "Subir página"
 
 #: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Page down"
-msgstr "Rotar hacia abajo"
+msgstr "Bajar página"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
@@ -12601,28 +12581,24 @@ msgid "Exit"
 msgstr "Salir"
 
 #: engines/supernova/metaengine.cpp:321
-#, fuzzy
-#| msgid "Good"
 msgid "Go"
-msgstr "Buena"
+msgstr "Empezar"
 
 #: engines/supernova/metaengine.cpp:379
-#, fuzzy
-#| msgid "Open Files manager"
 msgid "Office manager"
-msgstr "Abrir el administrador de archivos"
+msgstr "Administrador de la oficina"
 
 #: engines/supernova/metaengine.cpp:385
 msgid "Phone"
-msgstr ""
+msgstr "Teléfono"
 
 #: engines/supernova/metaengine.cpp:391
 msgid "ProText"
-msgstr ""
+msgstr "ProText"
 
 #: engines/supernova/metaengine.cpp:397
 msgid "Calculata"
-msgstr ""
+msgstr "Calculata"
 
 #: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
@@ -13796,42 +13772,32 @@ msgid "Require a lockout code to start the game."
 msgstr "Solicita un código de desbloqueo para poder empezar una partida."
 
 #: engines/voyeur/metaengine.cpp:186
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Room keymappings"
-msgstr "Asignaciones del juego"
+msgstr "Asignaciones de habitaciones"
 
 #: engines/voyeur/metaengine.cpp:187
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Camera keymappings"
-msgstr "Asignaciones del juego"
+msgstr "Asignaciones de la cámara"
 
 #: engines/voyeur/metaengine.cpp:188
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Intro keymappings"
-msgstr "Asignaciones de índice"
+msgstr "Asignaciones de introducción"
 
 #: engines/voyeur/metaengine.cpp:204
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip scene"
 msgstr "Omitir escena"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "Ver pruebas"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
-msgstr ""
+msgstr "Salir/Apartar pruebas"
 
 #: engines/voyeur/metaengine.cpp:223
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter room"
-msgstr "Enter"
+msgstr "Entrar en habitación"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
@@ -14479,28 +14445,24 @@ msgstr ""
 "resolución"
 
 #: engines/zvision/metaengine.cpp:102
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Enable widescreen support"
-msgstr "ID del juego no compatible"
+msgstr "Activar soporte para pantallas panorámicas"
 
 #: engines/zvision/metaengine.cpp:103
 msgid ""
 "Rearrange placement of menus & subtitles so as to make better use of modern "
 "wide aspect ratio displays"
 msgstr ""
+"Cambia la colocación de menús y subtítulos para aprovechar mejor las "
+"pantallas modernas con una relación de aspecto panorámica"
 
 #: engines/zvision/metaengine.cpp:114
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Enable high quality panoramas"
-msgstr "Activar las barras de energía"
+msgstr "Activar vistas de alta calidad"
 
 #: engines/zvision/metaengine.cpp:115
-#, fuzzy
-#| msgid "Apply bilinear filtering to individual sprites"
 msgid "Apply bilinear filtering to panoramic backgrounds"
-msgstr "Aplica un filtrado bilineal a cada sprite individual"
+msgstr "Aplica un filtrado bilineal a los fondos panorámicos"
 
 #: engines/zvision/metaengine.cpp:217
 msgid "Look Up"
@@ -14555,6 +14517,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+"La reproducción de MIDI no está disponible o está configurada "
+"incorrectamente. Zork Nemesis contiene varios acertijos musicales para los "
+"que es imprescindible tener audio en MIDI para poder resolverlos.  También "
+"se podrían resolver estos acertijos con subtítulos, si están disponibles. ¿"
+"Quieres seguir ejecutando el juego?"
 
 #~ msgid "Combat"
 #~ msgstr "Combatir"
