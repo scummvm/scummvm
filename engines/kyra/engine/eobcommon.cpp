@@ -372,8 +372,8 @@ Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	addKeymapAction(keyMap, "MVR", _("Move right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
 	addKeymapAction(keyMap, "TL", _("Turn left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
 	addKeymapAction(keyMap, "TR", _("Turn right"), Common::KeyState(Common::KEYCODE_PAGEUP), "PAGEUP", "JOY_RIGHT");
-	addKeymapAction(keyMap, "INV", _("Open/Close inventory"), Common::KeyState(Common::KEYCODE_i, 'i'), "i", "JOY_X");
-	addKeymapAction(keyMap, "SCE", _("Switch inventory/Character screen"), Common::KeyState(Common::KEYCODE_p, 'p'), "p", "JOY_Y");
+	addKeymapAction(keyMap, "INV", _("Open / Close inventory"), Common::KeyState(Common::KEYCODE_i, 'i'), "i", "JOY_X");
+	addKeymapAction(keyMap, "SCE", _("Switch inventory / Character screen"), Common::KeyState(Common::KEYCODE_p, 'p'), "p", "JOY_Y");
 	addKeymapAction(keyMap, "CMP", _("Camp"), Common::KeyState(Common::KEYCODE_c, 'c'), "c", "");
 	addKeymapAction(keyMap, "CSP", _("Cast spell"), Common::KeyState(Common::KEYCODE_SPACE, ' '), "SPACE", "JOY_LEFT_SHOULDER");
 	// TODO: Spell cursor, but this needs more thought, since different

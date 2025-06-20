@@ -116,7 +116,7 @@ Common::Keymap* InputManager::getDefaultKeyMapsForGame() {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	keymap->addAction(act);
 
-	act = new Action("TALK", _("Talk/Interact"));
+	act = new Action("TALK", _("Talk / Interact"));
 	act->setCustomEngineActionEvent(IG_TALK);
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("JOY_A");
