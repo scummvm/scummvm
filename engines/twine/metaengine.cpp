@@ -246,7 +246,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("c");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal Behaviour"));
+		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourNormal);
 		act->addDefaultInputMapping("1");
 		gameKeyMap->addAction(act);
@@ -266,7 +266,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("4");
 		gameKeyMap->addAction(act);
 
-		act = new Action("NORMALBEHAVIOUR", _("Normal Behaviour"));
+		act = new Action("NORMALBEHAVIOUR", _("Normal behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourNormal);
 		act->addDefaultInputMapping("F1");
 		gameKeyMap->addAction(act);
