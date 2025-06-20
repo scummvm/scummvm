@@ -375,7 +375,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("i");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SPECIALACTION", _("Special Action"));
+		act = new Action("SPECIALACTION", _("Special action"));
 		act->setCustomEngineActionEvent(TwinEActionType::SpecialAction);
 		act->addDefaultInputMapping("w");
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
