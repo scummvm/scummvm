@@ -298,7 +298,7 @@ Common::KeymapArray SwordMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_CENTER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MAINPANEL", _("Main Menu"));
+	act = new Action("MAINPANEL", _("Main menu"));
 	act->setCustomEngineActionEvent(kActionMainPanel);
 	act->addDefaultInputMapping("F5");
 	act->addDefaultInputMapping("JOY_Y");
