@@ -155,7 +155,7 @@ Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *targe
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "vcruise", "V-Cruise");
 	Common::Action *act;
 
-	act = new Common::Action(Common::kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");

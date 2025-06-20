@@ -558,7 +558,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		// Default keymap for other games
 		warning("Game-specific keymap is not defined. Using default SLUDGE engine keymap");
 
-		act = new Action(kStandardActionLeftClick, _("Left Click"));
+		act = new Action(kStandardActionLeftClick, _("Left click"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
@@ -577,7 +577,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		gameKeyMap->addAction(act);
 	}
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");

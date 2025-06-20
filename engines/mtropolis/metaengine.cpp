@@ -158,7 +158,7 @@ Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *tar
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "mtropolis", "mTropolis");
 	Common::Action *act;
 
-	act = new Common::Action(Common::kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
