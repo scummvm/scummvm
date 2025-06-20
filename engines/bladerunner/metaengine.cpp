@@ -217,7 +217,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// TOGGLE MCCOY'S COMBAT MODE
-	act = new Action("COMBAT", _("Toggle Combat"));
+	act = new Action("COMBAT", _("Toggle combat"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleCombat);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("MOUSE_MIDDLE");
