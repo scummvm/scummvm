@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-19 22:37+0000\n"
-"PO-Revision-Date: 2025-06-19 20:18+0000\n"
+"PO-Revision-Date: 2025-06-20 20:25+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -12374,40 +12374,28 @@ msgid "Computer keymappings"
 msgstr "Tangentmappningar för spel"
 
 #: engines/supernova/metaengine.cpp:232
-#, fuzzy
-#| msgid "Move / Perform Default Action"
 msgid "Perform Default Action"
-msgstr "Flytta / Genomför standardåtgärd"
+msgstr "Genomför standardåtgärd"
 
 #: engines/supernova/metaengine.cpp:244
-#, fuzzy
-#| msgid "Interpolation:"
 msgid "Instructions"
-msgstr "Interpolering:"
+msgstr "Instruktioner"
 
 #: engines/supernova/metaengine.cpp:250
-#, fuzzy
-#| msgid "General Information"
 msgid "Information"
-msgstr "Allmän information"
+msgstr "Information"
 
 #: engines/supernova/metaengine.cpp:256
-#, fuzzy
-#| msgid "Text speed - Fast"
 msgid "Text speed"
-msgstr "Texthastighet - Snabb"
+msgstr "Texthastighet"
 
 #: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
 msgid "Page up"
-msgstr "Rotera upp"
+msgstr "Sida upp"
 
 #: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Page down"
-msgstr "Rotera ner"
+msgstr "Sida ner"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
@@ -12418,10 +12406,8 @@ msgid "Exit"
 msgstr "Avsluta"
 
 #: engines/supernova/metaengine.cpp:321
-#, fuzzy
-#| msgid "Good"
 msgid "Go"
-msgstr "Bra"
+msgstr "Gå"
 
 #: engines/supernova/metaengine.cpp:379
 #, fuzzy
@@ -12431,11 +12417,11 @@ msgstr "Öppna filhanteraren"
 
 #: engines/supernova/metaengine.cpp:385
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: engines/supernova/metaengine.cpp:391
 msgid "ProText"
-msgstr ""
+msgstr "ProText"
 
 #: engines/supernova/metaengine.cpp:397
 msgid "Calculata"
@@ -13609,24 +13595,20 @@ msgid "Intro keymappings"
 msgstr "Tangentmappningar för index"
 
 #: engines/voyeur/metaengine.cpp:204
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip scene"
 msgstr "Hoppa över scen"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "Visa bevis"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
 msgstr ""
 
 #: engines/voyeur/metaengine.cpp:223
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter room"
-msgstr "Enter"
+msgstr "Gå in i rum"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
@@ -14267,10 +14249,8 @@ msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "Använd MPEG-video från DVD-versionen istället för lågupplöst AVI"
 
 #: engines/zvision/metaengine.cpp:102
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Enable widescreen support"
-msgstr "Detta spel-id stöds inte"
+msgstr "Aktivera bredbildsstöd"
 
 #: engines/zvision/metaengine.cpp:103
 msgid ""
@@ -14285,10 +14265,8 @@ msgid "Enable high quality panoramas"
 msgstr "Aktivera livmätare"
 
 #: engines/zvision/metaengine.cpp:115
-#, fuzzy
-#| msgid "Apply bilinear filtering to individual sprites"
 msgid "Apply bilinear filtering to panoramic backgrounds"
-msgstr "Tillämpa bilinjär filtrering för individuella sprites"
+msgstr "Tillämpa bilinjär filtrering för panoramabakgrunder"
 
 #: engines/zvision/metaengine.cpp:217
 msgid "Look Up"
@@ -14343,6 +14321,10 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+"MIDI-uppspelning är inte tillgänglig eller felaktigt konfigurerad. Zork "
+"Nemesis innehåller flera musikpussel som kräver MIDI-ljud för att kunna "
+"lösas. Dessa pussel kan alternativt lösas med hjälp av undertexter, om detta "
+"stöds. Vill du fortsätta spela?"
 
 #~ msgid "Combat"
 #~ msgstr "Strid"
