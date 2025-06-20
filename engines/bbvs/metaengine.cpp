@@ -102,7 +102,7 @@ Common::KeymapArray BbvsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Right Click"));
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
