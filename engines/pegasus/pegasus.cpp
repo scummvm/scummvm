@@ -2822,7 +2822,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	engineKeyMap->addAction(act);
 
 	// We support meta where available and control elsewhere
-	act = new Action(kStandardActionSave, _("Save Game"));
+	act = new Action(kStandardActionSave, _("Save game"));
 	act->setCustomEngineActionEvent(kPegasusActionSaveGameState);
 	act->addDefaultInputMapping("C+s");
 	act->addDefaultInputMapping("M+s");
