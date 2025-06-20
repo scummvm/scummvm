@@ -45,7 +45,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 	act->addDefaultInputMapping("JOY_A"); // extra joy
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT"); // original mouse
 	act->addDefaultInputMapping("JOY_B"); // extra joy

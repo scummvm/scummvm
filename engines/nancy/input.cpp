@@ -185,7 +185,7 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	act->addDefaultInputMapping("JOY_A");
 	mainKeymap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click Interact"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionRightClick);
 	act->addDefaultInputMapping("MOUSE_RIGHT");

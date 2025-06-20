@@ -164,7 +164,7 @@ Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *tar
 	act->addDefaultInputMapping("JOY_A");
 	keymap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionRightClick, _("Right Click"));
+	act = new Common::Action(Common::kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
