@@ -239,7 +239,7 @@ Common::KeymapArray CGEMetaEngine::initKeymaps(const char *target) const {
 
 	// I18N: This opens a Quit Prompt where you have to choose
 	// [Confirm] or [Continue Playing] lines with Left Click.
-	act = new Action("QUIT", _("Quit Prompt"));
+	act = new Action("QUIT", _("Quit prompt"));
 	act->setCustomEngineActionEvent(kActionQuit);
 	act->addDefaultInputMapping("A+x");
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
