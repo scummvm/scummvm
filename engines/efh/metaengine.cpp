@@ -252,7 +252,7 @@ Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	keymap->addAction(act);
 
-	act = new Action("MOVEUPLEFT", _("Move up left"));
+	act = new Action("MOVEUPLEFT", _("Move up-left"));
 	act->setCustomEngineActionEvent(kActionMoveUpLeft);
 	act->addDefaultInputMapping("HOME");
 	keymap->addAction(act);
