@@ -123,12 +123,12 @@ static void soundTimer(void *refCon) {
 		return;
 
 	if (engine->_soundQueue.empty()) {
-		if (scene->_soundType == Scene::PERIODIC && 0) {
+		if (scene->_soundType == Scene::PERIODIC) {
 			engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
 
 			uint32 nextRun = 60000 / scene->_soundFrequency;
 			g_system->getTimerManager()->installTimerProc(&soundTimer, nextRun * 1000, scene, "WageEngine::soundTimer");
-		} else if (scene->_soundType == Scene::RANDOM || 1) {
+		} else if (scene->_soundType == Scene::RANDOM) {
 			for (int i = 0; i < scene->_soundFrequency * 5; i++)
 				engine->_soundQueue.push_back(g_system->getMillis() + engine->_rnd->getRandomNumber(60000));
 

@@ -258,7 +258,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Radical Castle", "Radical Castle 2.0", "ff1e2292dc49622b53dc04f6fa2e3577", 357418),
 	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "328096d3c7ccb838956c42b273f17b8e", 1408260),
 	BIGGAME("raysmaze", "v1.5/alt", "Ray's Maze1.5", "401cd46df5e49fa4171ed398b3e0227b", 1408260),
-	// ??? crash at startup
 	FANGAMEN("Realms & Reality", "Realms & Reality 1.2", "13ee1c40855bdf666edafcf554ec35d6", 492358),
 	FANGAME("Ray's World Builder Demo", "eafea10db54530ac6e6128be31741542", 115800),
 	FANGAME("Robot Planet", "1066f6b2892cda16c2f365d1ec97537c", 107089),
