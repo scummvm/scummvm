@@ -78,7 +78,7 @@ Common::KeymapArray DarkseedMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("CHANGECOMMAND", _("Change Command"));
+	act = new Action("CHANGECOMMAND", _("Change command"));
 	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionChangeCommand);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
