@@ -75,31 +75,7 @@ int CDC::SetStretchBltMode(int nStretchMode) {
 }
 
 int CDC::GetDeviceCaps(int nIndex) const {
-	CDC::Impl *dc = impl();
-	const CBitmap::Impl *bitmap = (CBitmap::Impl *)dc->_bitmap;
-
-	switch (nIndex) {
-	case HORZRES:
-		return bitmap->w;
-	case VERTRES:
-		return bitmap->h;
-	case BITSPIXEL:
-		return bitmap->format.bytesPerPixel * 8;
-	case RASTERCAPS:
-		return (bitmap->format.bytesPerPixel == 1 ? RC_PALETTE : 0) |
-		       RC_BITBLT |
-		       RC_BITMAP64 |
-		       RC_DI_BITMAP |
-		       RC_DIBTODEV |
-		       RC_PALETTE |
-		       RC_STRETCHBLT;
-
-	default:
-		break;
-	}
-
-	error("TODO: CDC::GetDeviceCaps");
-	return 0;
+	return MFC::GetDeviceCaps(m_hDC, nIndex);
 }
 
 int CDC::GetMapMode() const {

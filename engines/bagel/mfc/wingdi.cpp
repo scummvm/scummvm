@@ -29,7 +29,31 @@ namespace Bagel {
 namespace MFC {
 
 int GetDeviceCaps(HDC hdc, int index) {
-	error("TODO: GetDeviceCaps");
+	CDC::Impl *dc = (CDC::Impl *)hdc;
+	const CBitmap::Impl *bitmap = (CBitmap::Impl *)dc->_bitmap;
+
+	switch (index) {
+	case HORZRES:
+		return bitmap->w;
+	case VERTRES:
+		return bitmap->h;
+	case BITSPIXEL:
+		return bitmap->format.bytesPerPixel * 8;
+	case RASTERCAPS:
+		return (bitmap->format.bytesPerPixel == 1 ? RC_PALETTE : 0) |
+			RC_BITBLT |
+			RC_BITMAP64 |
+			RC_DI_BITMAP |
+			RC_DIBTODEV |
+			RC_PALETTE |
+			RC_STRETCHBLT;
+
+	default:
+		break;
+	}
+
+	error("TODO: CDC::GetDeviceCaps");
+	return 0;
 }
 
 HDC CreateCompatibleDC(HDC hdc) {
@@ -202,8 +226,8 @@ int SetStretchBltMode(HDC hdc, int mode) {
 }
 
 int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
-                  int xSrc, int ySrc, int SrcWidth, int SrcHeight,
-                  CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop) {
+        int xSrc, int ySrc, int SrcWidth, int SrcHeight,
+        CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop) {
 	error("TODO: StretchDIBits");
 }
 

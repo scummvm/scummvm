@@ -90,31 +90,26 @@ static BITMAPINFO *getDIBInfo(HDIB hDib) {
  *
  ************************************************************************/
 
-BOOL PaintDIB(HDC     hDC,
-		LPRECT  lpDCRect,
-		HDIB    hDIB,
-		LPRECT  lpDIBRect,
-		CPalette *pPal) {
-#ifdef TODO
-	LPSTR    lpDIBHdr;            // Pointer to BITMAPINFOHEADER
-	LPSTR    lpDIBBits;           // Pointer to DIB bits
-	BOOL     bSuccess = FALSE;      // Success/fail flag
-	HPALETTE hPal = nullptr;           // Our DIB's palette
-	HPALETTE hOldPal = nullptr;        // Previous palette
-	HPALETTE hOldPal2 = nullptr;        // Previous palette
-	HBITMAP  hBitmap, hBitmapOld;
-	HDC      hdcMem;                     /* memory device context */
-	int      nDevCaps;
+BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
+		LPRECT lpDIBRect, CPalette *pPal) {
+	Graphics::ManagedSurface *surf;
+	void *lpDIBBits;			// Pointer to DIB bits
+	BOOL bSuccess = FALSE;      // Success/fail flag
+	HPALETTE hPal = nullptr;		// Our DIB's palette
+	HPALETTE hOldPal = nullptr;		// Previous palette
+	HPALETTE hOldPal2 = nullptr;	// Previous palette
+	HBITMAP hBitmap, hBitmapOld;
+	HDC hdcMem;                     // memory device context
+	int nDevCaps;
+	BITMAPINFO bInfo;
 
-	/* Check for valid DIB handle */
+	// Check for valid DIB handle
 	if (hDIB == nullptr)
 		return FALSE;
 
-	/* Lock down the DIB, and get a pointer to the beginning of the bit
-	 *  buffer
-	 */
-	lpDIBHdr = (LPSTR)GlobalLock((HGLOBAL)hDIB);
-	lpDIBBits = FindDIBBits(lpDIBHdr);
+	// Lock down the DIB, and get a pointer to it
+	surf = (Graphics::ManagedSurface *)hDIB;
+	lpDIBBits = surf->getPixels();
 
 	// Get the palette, then select it into DC
 	if (pPal != nullptr) {
@@ -122,89 +117,67 @@ BOOL PaintDIB(HDC     hDC,
 
 		// Select as foreground and realize it
 		hOldPal = SelectPalette(hDC, hPal, FALSE);
-		(void) RealizePalette(hDC);
+		(void)RealizePalette(hDC);
 	}
 
 	nDevCaps = GetDeviceCaps(hDC, RASTERCAPS);
 	if (!(nDevCaps & RC_STRETCHDIB)) {
-		hBitmap = DIBtoBitmap(hDC, nullptr, (LPBITMAPINFO)lpDIBHdr);
+		hBitmap = DIBtoBitmap(hDC, nullptr, hDIB);
 		if (hBitmap) {
 			hdcMem = CreateCompatibleDC(hDC);
 			if (hdcMem) {
 				hOldPal2 = SelectPalette(hdcMem, hPal, FALSE);
-				(void) RealizePalette(hdcMem);
+				(void)RealizePalette(hdcMem);
 				hBitmapOld = SelectBitmap(hdcMem, hBitmap);
 				if ((RECTWIDTH(lpDCRect) == RECTWIDTH(lpDIBRect)) &&
-				        (RECTHEIGHT(lpDCRect) == RECTHEIGHT(lpDIBRect)))
+					(RECTHEIGHT(lpDCRect) == RECTHEIGHT(lpDIBRect)))
 					bSuccess = BitBlt(hDC, lpDCRect->left, lpDCRect->top,
-					                  RECTWIDTH(lpDIBRect),
-					                  RECTHEIGHT(lpDIBRect),
-					                  hdcMem, lpDIBRect->left, lpDIBRect->top, SRCCOPY);
+						RECTWIDTH(lpDIBRect),
+						RECTHEIGHT(lpDIBRect),
+						hdcMem, lpDIBRect->left, lpDIBRect->top, SRCCOPY);
 				else if (nDevCaps & RC_STRETCHBLT)
 					bSuccess = StretchBlt(hDC, lpDCRect->left, lpDCRect->top, RECTWIDTH(lpDCRect), RECTHEIGHT(lpDCRect),
-					                      hdcMem, lpDIBRect->left, lpDIBRect->top, RECTWIDTH(lpDIBRect), RECTHEIGHT(lpDIBRect),
-					                      SRCCOPY);
+						hdcMem, lpDIBRect->left, lpDIBRect->top, RECTWIDTH(lpDIBRect), RECTHEIGHT(lpDIBRect),
+						SRCCOPY);
 				else
 					bSuccess = FALSE;
 				(void)SelectBitmap(hdcMem, hBitmapOld);
-				(void) SelectPalette(hdcMem, hOldPal2, FALSE);
+				(void)SelectPalette(hdcMem, hOldPal2, FALSE);
 				DeleteDC(hdcMem);
 			}
 		}
+
 		if (hBitmap != nullptr)
 			DeleteBitmap(hBitmap);
 		if (pPal != nullptr)
 			SelectPalette(hDC, hOldPal, FALSE);
-		GlobalUnlock((HGLOBAL)hDIB);
-		return (bSuccess);
+
+		return bSuccess;
 	}
 
-	/* Make sure to use the stretching mode best for color pictures */
+	// Make sure to use the stretching mode best for color pictures
 	SetStretchBltMode(hDC, COLORONCOLOR);
 
-	#ifdef HIDE // looks like some graphics cards do not support this to offscreen bitmaps
-	/* Determine whether to call StretchDIBits() or SetDIBitsToDevice() */
-	if ((RECTWIDTH(lpDCRect) == RECTWIDTH(lpDIBRect)) &&
-	        (RECTHEIGHT(lpDCRect) == RECTHEIGHT(lpDIBRect)))
-		bSuccess = ::SetDIBitsToDevice(hDC,                    // hDC
-		                               lpDCRect->left,             // DestX
-		                               lpDCRect->top,              // DestY
-		                               RECTWIDTH(lpDCRect),        // nDestWidth
-		                               RECTHEIGHT(lpDCRect),       // nDestHeight
-		                               lpDIBRect->left,            // SrcX
-		                               (int)DIBHeight(lpDIBHdr) -
-		                               lpDIBRect->top -
-		                               RECTHEIGHT(lpDIBRect),   // SrcY
-		                               0,                          // nStartScan
-		                               (WORD)DIBHeight(lpDIBHdr),  // nNumScans
-		                               lpDIBBits,                  // lpBits
-		                               (LPBITMAPINFO)lpDIBHdr,     // lpBitsInfo
-		                               DIB_RGB_COLORS);            // wUsage
-	else
-	#endif
-		bSuccess = StretchDIBits(hDC,                          // hDC
-		                         lpDCRect->left,                 // DestX
-		                         lpDCRect->top,                  // DestY
-		                         RECTWIDTH(lpDCRect),            // nDestWidth
-		                         RECTHEIGHT(lpDCRect),           // nDestHeight
-		                         lpDIBRect->left,                // SrcX
-		                         lpDIBRect->top,                 // SrcY
-		                         RECTWIDTH(lpDIBRect),           // wSrcWidth
-		                         RECTHEIGHT(lpDIBRect),          // wSrcHeight
-		                         lpDIBBits,                      // lpBits
-		                         (LPBITMAPINFO)lpDIBHdr,         // lpBitsInfo
-		                         DIB_RGB_COLORS,                 // wUsage
-		                         SRCCOPY);                       // dwROP
+	error("TODO: Populate binfo");
+
+	bSuccess = StretchDIBits(hDC,                          // hDC
+		lpDCRect->left,                 // DestX
+		lpDCRect->top,                  // DestY
+		RECTWIDTH(lpDCRect),            // nDestWidth
+		RECTHEIGHT(lpDCRect),           // nDestHeight
+		lpDIBRect->left,                // SrcX
+		lpDIBRect->top,                 // SrcY
+		RECTWIDTH(lpDIBRect),           // wSrcWidth
+		RECTHEIGHT(lpDIBRect),          // wSrcHeight
+		lpDIBBits,                      // lpBits
+		&bInfo,							// lpBitsInfo
+		DIB_RGB_COLORS,                 // wUsage
+		SRCCOPY);                       // dwROP
 
 	if (pPal != nullptr)
 		SelectPalette(hDC, hOldPal, FALSE);
 
-	GlobalUnlock((HGLOBAL)hDIB);
-
 	return bSuccess;
-#else
-	error("TODO: PaintDIB");
-#endif
 }
 
 BOOL CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
