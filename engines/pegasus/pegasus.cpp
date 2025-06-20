@@ -2721,7 +2721,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 
 	Action *act;
 
-	act = new Action(kStandardActionMoveUp, _("Up/Zoom In/Move Forward/Open Doors"));
+	act = new Action(kStandardActionMoveUp, _("Up/Zoom In/Move forward/Open Doors"));
 	act->setCustomEngineActionEvent(kPegasusActionUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("KP8");

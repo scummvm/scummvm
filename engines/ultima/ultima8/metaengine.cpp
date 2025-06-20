@@ -48,7 +48,7 @@ static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_MENU, "MENU", _s("Game Menu"), "ESCAPE", "JOY_Y" },
 	{ ACTION_TURN_LEFT, "TURN_LEFT", _s("Turn Left"), "LEFT", "KP4" },
 	{ ACTION_TURN_RIGHT, "TURN_RIGHT", _s("Turn Right"), "RIGHT", "KP6" },
-	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", _s("Move Forward"), "UP", "KP8" },
+	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", _s("Move forward"), "UP", "KP8" },
 	{ ACTION_MOVE_BACK, "MOVE_BACK", _s("Move Back"), "DOWN", "KP2" },
 	{ ACTION_MOVE_UP, "MOVE_UP", _s("Move Up"), nullptr, "JOY_UP" },
 	{ ACTION_MOVE_DOWN, "MOVE_DOWN", _s("Move Down"), nullptr, "JOY_DOWN" },

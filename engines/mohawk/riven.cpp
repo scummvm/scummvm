@@ -878,7 +878,7 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("SPACE");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveUp, _("Move Forward"));
+	act = new Action(kStandardActionMoveUp, _("Move forward"));
 	act->setCustomEngineActionEvent(kRivenActionMoveForward);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
