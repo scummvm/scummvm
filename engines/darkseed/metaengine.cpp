@@ -84,7 +84,7 @@ Common::KeymapArray DarkseedMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TIMEADVANCE", _("Time Advance"));
+	act = new Action("TIMEADVANCE", _("Time advance"));
 	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionTimeAdvance);
 	act->addDefaultInputMapping("t");
 	act->addDefaultInputMapping("JOY_Y");
