@@ -21,25 +21,26 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/joystickapi.h"
+#include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
 
-MMRESULT joySetCapture(HWND hwnd,
-                       UINT uJoyID, UINT uPeriod, BOOL fChanged) {
-	error("TODO: joySetCapture");
+MMRESULT joySetCapture(HWND hwnd, UINT uJoyID,
+		UINT uPeriod, BOOL fChanged) {
+	return AfxGetApp()->joySetCapture(hwnd, uJoyID, uPeriod, fChanged);
 }
 
 MMRESULT joySetThreshold(UINT uJoyID, UINT uThreshold) {
-	error("TODO: joySetThreshold");
+	return AfxGetApp()->joySetThreshold(uJoyID, uThreshold);
 }
 
 MMRESULT joyGetPos(UINT uJoyID, LPJOYINFO pji) {
-	error("TODO: joyGetPos");
+	return AfxGetApp()->joyGetPos(uJoyID, pji);
 }
 
 MMRESULT joyReleaseCapture(UINT uJoyID) {
-	error("TODO: joyReleaseCapture");
+	return AfxGetApp()->joyReleaseCapture(uJoyID);
 }
 
 } // namespace MFC

@@ -96,6 +96,31 @@ void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
 		return;
 	}
 
+	if (isJoystickMsg(ev)) {
+		if (_joystickWin) {
+			switch (ev.type) {
+			case Common::EVENT_JOYAXIS_MOTION:
+				if (ev.joystick.axis == 0)
+					_joystickPos.x = ev.joystick.position;
+				else
+					_joystickPos.y = ev.joystick.position;
+
+				_joystickWin->SendMessage(MM_JOY1MOVE, JOYSTICKID1,
+					MAKELPARAM(_joystickPos.x, _joystickPos.y));
+				break;
+
+			default:
+				_joystickButtons = ev.joystick.button;
+				_joystickWin->SendMessage(MM_JOY1MOVE, JOYSTICKID1,
+					MAKELPARAM(_joystickPos.x, _joystickPos.y));
+				break;
+			}
+		}
+
+		hWnd = nullptr;
+		return;
+	}
+
 	// Fallback, send message to any active dialog,
 	// or worst case to the main application window
 	if (_modalDialog)
@@ -242,6 +267,12 @@ bool EventLoop::isMouseMsg(const Common::Event &ev) const {
 		ev.type == Common::EVENT_MBUTTONUP;;
 }
 
+bool EventLoop::isJoystickMsg(const Common::Event &ev) const {
+	return ev.type == Common::EVENT_JOYAXIS_MOTION ||
+		ev.type == Common::EVENT_JOYBUTTON_DOWN ||
+		ev.type == Common::EVENT_JOYBUTTON_UP;
+}
+
 void EventLoop::SetCapture(HWND hWnd) {
 	_captureWin = hWnd;
 }
@@ -276,6 +307,34 @@ void EventLoop::SetFocus(CWnd *wnd) {
 bool EventLoop::validateDestroyedWnd(HWND hWnd) {
 	MSG msg;
 	return !_messages.peekMessage(&msg, hWnd, 0, 0, false);
+}
+
+MMRESULT EventLoop::joySetCapture(HWND hwnd, UINT uJoyID,
+		UINT uPeriod, BOOL fChanged) {
+	assert(uJoyID == JOYSTICKID1);
+	_joystickWin = CWnd::FromHandle(hwnd);
+	return JOYERR_NOERROR;
+}
+
+MMRESULT EventLoop::joySetThreshold(UINT uJoyID, UINT uThreshold) {
+	// No implementation
+	return JOYERR_NOERROR;
+}
+
+MMRESULT EventLoop::joyGetPos(UINT uJoyID, LPJOYINFO pji) {
+	assert(uJoyID == JOYSTICKID1);
+
+	pji->wXpos = _joystickPos.x;
+	pji->wYpos = _joystickPos.y;
+	pji->wZpos = 0;
+	pji->wButtons = _joystickButtons;
+
+	return JOYERR_NOERROR;
+}
+
+MMRESULT EventLoop::joyReleaseCapture(UINT uJoyID) {
+	assert(uJoyID == JOYSTICKID1);
+	return JOYERR_NOERROR;
 }
 
 } // namespace Libs

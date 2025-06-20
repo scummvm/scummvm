@@ -189,6 +189,15 @@ namespace MFC {
 #define WM_EXITMENULOOP                 0x0212
 #define UNICODE_NOCHAR                  0xFFFF
 
+#define MM_JOY1MOVE						0x3A0
+#define MM_JOY2MOVE						0x3A1
+#define MM_JOY1ZMOVE					0x3A2
+#define MM_JOY2ZMOVE					0x3A3
+#define MM_JOY1BUTTONDOWN				0x3B5
+#define MM_JOY2BUTTONDOWN				0x3B6
+#define MM_JOY1BUTTONUP					0x3B7
+#define MM_JOY2BUTTONUP					0x3B8
+
 #define MM_MCINOTIFY                    0x3B9           /* MCI */
 #define MM_WOM_OPEN                     0x3BB           /* waveform output */
 #define MM_WOM_CLOSE                    0x3BC

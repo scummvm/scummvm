@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/libs/events.h"
+#include "bagel/mfc/joystickapi.h"
 
 namespace Bagel {
 namespace MFC {
@@ -37,9 +38,12 @@ private:
 	CWnd *_highlightedWin = nullptr;
 	CWnd *_captureWin = nullptr;
 	CWnd *_focusedWin = nullptr;
+	CWnd *_joystickWin = nullptr;
 	Libs::EventQueue _messages;
 	uint32 _nextFrameTime = 0;
 	bool _quitFlag = false;
+	Common::Point _joystickPos;
+	uint _joystickButtons = 0;
 
 	/**
 	 * Get any pending event
@@ -64,6 +68,11 @@ private:
 	 * Returns true if the event is mouse related
 	 */
 	bool isMouseMsg(const Common::Event &ev) const;
+
+	/**
+	 * Returns true if the event is joystick related
+	 */
+	bool isJoystickMsg(const Common::Event &ev) const;
 
 	/**
 	 * Converts a position to be relative to a given window
@@ -127,6 +136,12 @@ public:
 	CWnd *GetFocus() const {
 		return _focusedWin;
 	}
+
+	MMRESULT joySetCapture(HWND hwnd, UINT uJoyID,
+		UINT uPeriod, BOOL fChanged);
+	MMRESULT joySetThreshold(UINT uJoyID, UINT uThreshold);
+	MMRESULT joyGetPos(UINT uJoyID, LPJOYINFO pji);
+	MMRESULT joyReleaseCapture(UINT uJoyID);
 
 	/**
 	 * Checked that the passed HWND doesn't
