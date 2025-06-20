@@ -267,7 +267,7 @@ Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("END");
 	keymap->addAction(act);
 
-	act = new Action("MOVEDOWNRIGHT", _("Move down right"));
+	act = new Action("MOVEDOWNRIGHT", _("Move down-right"));
 	act->setCustomEngineActionEvent(kActionMoveDownRight);
 	act->addDefaultInputMapping("PAGEDOWN");
 	keymap->addAction(act);
