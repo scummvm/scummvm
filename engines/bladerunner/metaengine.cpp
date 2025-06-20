@@ -300,7 +300,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	kiaOnlyKeymap->addAction(act);
 
 	// I18N: This keymap allows scrolling texts and lists downwards
-	act = new Action("KIASCROLLDOWN", _("Scroll Down"));
+	act = new Action("KIASCROLLDOWN", _("Scroll down"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionScrollDown);
 	act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
