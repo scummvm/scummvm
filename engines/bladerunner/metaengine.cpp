@@ -336,7 +336,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// LOAD GAME
-	act = new Action("KIALOAD", _("Load Game"));
+	act = new Action("KIALOAD", _("Load game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabLoadGame);
 	act->addDefaultInputMapping("F3");
 	commonKeymap->addAction(act);
