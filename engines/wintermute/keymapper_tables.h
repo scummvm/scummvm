@@ -253,7 +253,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 	} else if (gameId == "bookofgron") {
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
@@ -297,7 +297,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		gameKeyMap->addAction(act);
@@ -2163,7 +2163,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		gameKeyMap->addAction(act);
