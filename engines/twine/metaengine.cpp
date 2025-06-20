@@ -230,7 +230,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("s");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSDOWN", _("Debug Grid Camera Down"));
+		act = new Action("DEBUGGRIDCAMERAPRESSDOWN", _("Debug grid camera down"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressDown);
 		act->addDefaultInputMapping("x");
 		gameKeyMap->addAction(act);
