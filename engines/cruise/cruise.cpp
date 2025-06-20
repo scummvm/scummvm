@@ -95,7 +95,9 @@ Common::Error CruiseEngine::run() {
 		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 		ttsMan->setLanguage(ConfMan.get("language"));
 
-		if (getLanguage() == Common::RU_RUS) {
+		if (getLanguage() == Common::FR_FRA || getLanguage() == Common::IT_ITA) {
+			_ttsTextEncoding = Common::CodePage::kWindows1252;
+		} else if (getLanguage() == Common::RU_RUS) {
 			_ttsTextEncoding = Common::CodePage::kDos866;
 		} else {
 			_ttsTextEncoding = Common::CodePage::kDos850;
@@ -218,6 +220,10 @@ void CruiseEngine::pauseEngine(bool pause) {
 }
 
 void CruiseEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) {
+	if (text.empty() && action == Common::TextToSpeechManager::QUEUE) {
+		return;
+	}
+
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop,
 	// for example when the cursor stays on a menu item. Without it when the text ends it would speak
