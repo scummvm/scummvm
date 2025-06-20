@@ -304,7 +304,7 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("RCTRL");
 	gameKeyMap->addAction(act);
 
-	act = new Action("OPTIONSDIALOG", _("Options Dialog"));
+	act = new Action("OPTIONSDIALOG", _("Options menu"));
 	act->setCustomEngineActionEvent(kActionOptionsDialog);
 	act->addDefaultInputMapping("F1");
 	act->addDefaultInputMapping("1");
