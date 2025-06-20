@@ -1738,9 +1738,11 @@ BOOL CHodjPodjWindow::PositionAtCDPath() {
 
 
 BOOL CHodjPodjWindow::PositionAtMiniPath(int nWhichDLL) {
-	AfxGetApp()->setDirectory(
-		CMgStatic::cGameTable[nWhichDLL]._path
-	);
+	const auto &game = CMgStatic::cGameTable[nWhichDLL];
+
+	auto *app = AfxGetApp();
+	app->setDirectory(game._path);
+	app->addResources(game._dllName);
 
 	return TRUE;
 }

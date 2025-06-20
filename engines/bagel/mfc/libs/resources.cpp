@@ -56,10 +56,14 @@ HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
 		(HIWORD(lpType) == 0) ?
 		Common::WinResourceID((intptr)lpType) :
 		Common::WinResourceID(lpType);
-	Common::WinResourceID id =
-		(HIWORD(lpName) == 0) ?
-		Common::WinResourceID((intptr)lpName) :
-		Common::WinResourceID(lpName);
+
+	Common::WinResourceID id;
+	if (HIWORD(lpName) == 0)
+		id = Common::WinResourceID((intptr)lpName);
+	else if (*lpName == '#')
+		id = Common::WinResourceID(atol(lpName + 1));
+	else
+		id = Common::WinResourceID(lpName);
 
 	// First check the cache
 	for (auto &it : _cache) {
