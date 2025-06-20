@@ -233,7 +233,7 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	if (gameId == "nancy3" || gameId == "nancy6") {
 		Keymap *mazeKeymap = new Keymap(Keymap::kKeymapTypeGame, _mazeKeymapID, _("Nancy Drew - Maze"));
 
-		act = new Action("RAYCM", _("Show/hide maze map"));
+		act = new Action("RAYCM", _("Show / hide maze map"));
 		act->setCustomEngineActionEvent(kNancyActionShowRaycastMap);
 		act->addDefaultInputMapping("m");
 		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");

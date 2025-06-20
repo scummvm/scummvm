@@ -508,12 +508,12 @@ Common::KeymapArray GrimEngine::initKeymapsGrim(const char *target) {
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BUSE", _("Use/Talk"));
+	act = new Action("BUSE", _("Use / Talk"));
 	act->setKeyEvent(KeyState(KEYCODE_u, 'u'));
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("PICK", _("Pick up/Put away"));
+	act = new Action("PICK", _("Pick up / Put away"));
 	act->setKeyEvent(KeyState(KEYCODE_p, 'p'));
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
@@ -603,17 +603,17 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("EXAM", _("Examine/Look"));
+	act = new Action("EXAM", _("Examine / Look"));
 	act->setKeyEvent(KeyState(KEYCODE_e, 'e'));
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BUSE", _("Use/Talk"));
+	act = new Action("BUSE", _("Use / Talk"));
 	act->setKeyEvent(KeyState(KEYCODE_u, 'u'));
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("PICK", _("Pick up/Put away"));
+	act = new Action("PICK", _("Pick up / Put away"));
 	act->setKeyEvent(KeyState(KEYCODE_KP_PLUS, '+'));
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);

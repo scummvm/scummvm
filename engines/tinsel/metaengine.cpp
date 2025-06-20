@@ -338,25 +338,25 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("A+q");
 	gameKeyMap->addAction(act);
 
-	act = new Action("PGUPMENU", _("Page up in save/load menu"));
+	act = new Action("PGUPMENU", _("Page up in save / load menu"));
 	act->setCustomEngineActionEvent(kActionPageUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("KP9");
 	saveloadKeyMap->addAction(act);
 
-	act = new Action("PGDOWNMENU", _("Page down in save/load menu"));
+	act = new Action("PGDOWNMENU", _("Page down in save / load menu"));
 	act->setCustomEngineActionEvent(kActionPageDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	act->addDefaultInputMapping("KP3");
 	saveloadKeyMap->addAction(act);
 
-	act = new Action("STARTOFMENU", _("Go to start of save/load menu"));
+	act = new Action("STARTOFMENU", _("Go to start of save / load menu"));
 	act->setCustomEngineActionEvent(kActionHome);
 	act->addDefaultInputMapping("HOME");
 	act->addDefaultInputMapping("KP7");
 	saveloadKeyMap->addAction(act);
 
-	act = new Action("ENDOFMENU", _("Go to end of save/load menu"));
+	act = new Action("ENDOFMENU", _("Go to end of save / load menu"));
 	act->setCustomEngineActionEvent(kActionEnd);
 	act->addDefaultInputMapping("END");
 	act->addDefaultInputMapping("KP1");
