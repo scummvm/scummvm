@@ -221,7 +221,7 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("TAB");
 	engineKeyMap->addAction(act);
 
-	act = new Action("QUIT", _("Quit Game"));
+	act = new Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionQuit);
 	act->addDefaultInputMapping("C+q");
 	engineKeyMap->addAction(act);
