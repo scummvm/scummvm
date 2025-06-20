@@ -136,7 +136,7 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 
 	Common::Action *act;
 
-	act = new Common::Action(Common::kStandardActionLeftClick, _("Interact via Left Click"));
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");

@@ -178,7 +178,7 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "nancy-main", _("Nancy Drew"));
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click Interact"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionLeftClick);
 	act->addDefaultInputMapping("MOUSE_LEFT");
