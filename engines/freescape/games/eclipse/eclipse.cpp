@@ -228,7 +228,7 @@ void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
-	act = new Common::Action("SAVE", _("Save Game"));
+	act = new Common::Action("SAVE", _("Save game"));
 	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("s");
 	infoScreenKeyMap->addAction(act);

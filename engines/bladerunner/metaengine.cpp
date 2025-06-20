@@ -327,7 +327,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// SAVE GAME
-	act = new Action("KIASAVE", _("Save Game"));
+	act = new Action("KIASAVE", _("Save game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabSaveGame);
 	act->addDefaultInputMapping("F2");
 	commonKeymap->addAction(act);
