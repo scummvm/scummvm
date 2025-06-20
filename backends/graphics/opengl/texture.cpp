@@ -367,42 +367,6 @@ void TextureSurfaceRGB555::updateGLTexture() {
 	TextureSurface::updateGLTexture();
 }
 
-TextureSurfaceRGBA8888Swap::TextureSurfaceRGBA8888Swap()
-	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), Graphics::PixelFormat::createFormatABGR32())
-	  {
-}
-
-void TextureSurfaceRGBA8888Swap::updateGLTexture() {
-	if (!isDirty()) {
-		return;
-	}
-
-	// Convert color space.
-	Graphics::Surface *outSurf = TextureSurface::getSurface();
-
-	const Common::Rect dirtyArea = getDirtyArea();
-
-	uint32 *dst = (uint32 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
-	const uint dstAdd = outSurf->pitch - 4 * dirtyArea.width();
-
-	const uint32 *src = (const uint32 *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
-	const uint srcAdd = _rgbData.pitch - 4 * dirtyArea.width();
-
-	for (int height = dirtyArea.height(); height > 0; --height) {
-		for (int width = dirtyArea.width(); width > 0; --width) {
-			const uint32 color = *src++;
-
-			*dst++ = SWAP_BYTES_32(color);
-		}
-
-		src = (const uint32 *)((const byte *)src + srcAdd);
-		dst = (uint32 *)((byte *)dst + dstAdd);
-	}
-
-	// Do generic handling of updating the texture.
-	TextureSurface::updateGLTexture();
-}
-
 #ifdef USE_SCALERS
 
 ScaledTextureSurface::ScaledTextureSurface(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
