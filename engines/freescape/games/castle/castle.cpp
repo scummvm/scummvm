@@ -243,12 +243,12 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	act->addDefaultInputMapping("2");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("SAVE", _("Save Game"));
+	act = new Common::Action("SAVE", _("Save game"));
 	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("s");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("LOAD", _("Load Game"));
+	act = new Common::Action("LOAD", _("Load game"));
 	act->setCustomEngineActionEvent(kActionLoad);
 	if (_language == Common::ES_ESP)
 		act->addDefaultInputMapping("c");
@@ -256,7 +256,7 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 		act->addDefaultInputMapping("l");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("QUIT", _("Quit Game"));
+	act = new Common::Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(kActionQuit);
 	act->addDefaultInputMapping("q");
 	infoScreenKeyMap->addAction(act);

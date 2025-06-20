@@ -156,13 +156,13 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -223,7 +223,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
-	act = new Action("ANIMATE", _("Toggle animation on/off"));
+	act = new Action("ANIMATE", _("Toggle animation on / off"));
 	act->setCustomEngineActionEvent(kAsylumActionAnimate);
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("JOY_A");

@@ -178,14 +178,14 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "nancy-main", _("Nancy Drew"));
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click Interact"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionLeftClick);
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	mainKeymap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click Interact"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionRightClick);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
@@ -233,7 +233,7 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	if (gameId == "nancy3" || gameId == "nancy6") {
 		Keymap *mazeKeymap = new Keymap(Keymap::kKeymapTypeGame, _mazeKeymapID, _("Nancy Drew - Maze"));
 
-		act = new Action("RAYCM", _("Show/hide maze map"));
+		act = new Action("RAYCM", _("Show / hide maze map"));
 		act->setCustomEngineActionEvent(kNancyActionShowRaycastMap);
 		act->addDefaultInputMapping("m");
 		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");

@@ -2721,7 +2721,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 
 	Action *act;
 
-	act = new Action(kStandardActionMoveUp, _("Up/Zoom In/Move Forward/Open Doors"));
+	act = new Action(kStandardActionMoveUp, _("Up / Zoom in / Move forward / Open door"));
 	act->setCustomEngineActionEvent(kPegasusActionUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("KP8");
@@ -2729,7 +2729,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveDown, _("Down/Zoom Out"));
+	act = new Action(kStandardActionMoveDown, _("Down / Zoom out"));
 	act->setCustomEngineActionEvent(kPegasusActionDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("KP5");
@@ -2737,14 +2737,14 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
+	act = new Action(kStandardActionMoveLeft, _("Turn left"));
 	act->setCustomEngineActionEvent(kPegasusActionLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("KP4");
 	act->addDefaultInputMapping("JOY_LEFT");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveRight, _("Turn Right"));
+	act = new Action(kStandardActionMoveRight, _("Turn right"));
 	act->setCustomEngineActionEvent(kPegasusActionRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("KP6");
@@ -2771,14 +2771,14 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	// The original doesn't use KP7 for inventory, but we're using it as an alternative for
 	// num lock. KP9 is used for the biochip drawer to balance things out.
 
-	act = new Action("TIV", _("Display/Hide Inventory Tray"));
+	act = new Action("TIV", _("Display / Hide inventory tray"));
 	act->setCustomEngineActionEvent(kPegasusActionShowInventory);
 	act->addDefaultInputMapping("BACKQUOTE");
 	act->addDefaultInputMapping("KP7");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TBI", _("Display/Hide Biochip Tray"));
+	act = new Action("TBI", _("Display / Hide biochip tray"));
 	act->setCustomEngineActionEvent(kPegasusActionShowBiochip);
 	act->addDefaultInputMapping("BACKSPACE");
 	act->addDefaultInputMapping("KP9");
@@ -2786,21 +2786,21 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TMA", _("Toggle Center Data Display"));
+	act = new Action("TMA", _("Toggle center data display"));
 	act->setCustomEngineActionEvent(kPegasusActionToggleCenterDisplay);
 	act->addDefaultInputMapping("t");
 	act->addDefaultInputMapping("KP_EQUALS");
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TIN", _("Display/Hide Info Screen"));
+	act = new Action("TIN", _("Display / Hide info screen"));
 	act->setCustomEngineActionEvent(kPegasusActionShowInfoScreen);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("KP_DIVIDE");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionOpenMainMenu, _("Display/Hide Pause Menu"));
+	act = new Action(kStandardActionOpenMainMenu, _("Display / Hide pause menu"));
 	act->setCustomEngineActionEvent(kPegasusActionShowPauseMenu);
 	act->addDefaultInputMapping("p");
 	act->addDefaultInputMapping("ESCAPE");
@@ -2822,13 +2822,13 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	engineKeyMap->addAction(act);
 
 	// We support meta where available and control elsewhere
-	act = new Action(kStandardActionSave, _("Save Game"));
+	act = new Action(kStandardActionSave, _("Save game"));
 	act->setCustomEngineActionEvent(kPegasusActionSaveGameState);
 	act->addDefaultInputMapping("C+s");
 	act->addDefaultInputMapping("M+s");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionLoad, _("Load Game"));
+	act = new Action(kStandardActionLoad, _("Load game"));
 	act->setCustomEngineActionEvent(kPegasusActionLoadGameState);
 	act->addDefaultInputMapping("C+o"); // o for open (original)
 	act->addDefaultInputMapping("M+o");

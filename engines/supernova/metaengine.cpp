@@ -229,7 +229,7 @@ Common::KeymapArray SupernovaMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeymap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Perform Default Action"));
+	act = new Common::Action(kStandardActionRightClick, _("Perform default action"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");

@@ -252,22 +252,22 @@ Common::KeymapArray EfhMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	keymap->addAction(act);
 
-	act = new Action("MOVEUPLEFT", _("Move up left"));
+	act = new Action("MOVEUPLEFT", _("Move up-left"));
 	act->setCustomEngineActionEvent(kActionMoveUpLeft);
 	act->addDefaultInputMapping("HOME");
 	keymap->addAction(act);
 
-	act = new Action("MOVEUPRIGHT", _("Move up right"));
+	act = new Action("MOVEUPRIGHT", _("Move up-right"));
 	act->setCustomEngineActionEvent(kActionMoveUpRight);
 	act->addDefaultInputMapping("PAGEUP");
 	keymap->addAction(act);
 
-	act = new Action("MOVEDOWNLEFT", _("Move down left"));
+	act = new Action("MOVEDOWNLEFT", _("Move down-left"));
 	act->setCustomEngineActionEvent(kActionMoveDownLeft);
 	act->addDefaultInputMapping("END");
 	keymap->addAction(act);
 
-	act = new Action("MOVEDOWNRIGHT", _("Move down right"));
+	act = new Action("MOVEDOWNRIGHT", _("Move down-right"));
 	act->setCustomEngineActionEvent(kActionMoveDownRight);
 	act->addDefaultInputMapping("PAGEDOWN");
 	keymap->addAction(act);

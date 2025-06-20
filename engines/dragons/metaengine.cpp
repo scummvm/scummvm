@@ -139,7 +139,7 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("CHANGECOMMAND", _("Change Command"));
+	act = new Action("CHANGECOMMAND", _("Change command"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionChangeCommand);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -204,24 +204,24 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("L1", _("Left Shoulder"));
+	act = new Action("L1", _("Left shoulder"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionL1);
 	act->addDefaultInputMapping("o");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("R1", _("Right Shoulder"));
+	act = new Action("R1", _("Right shoulder"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionR1);
 	act->addDefaultInputMapping("p");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("DEBUGGFX", _("Debug Graphics"));
+	act = new Action("DEBUGGFX", _("Debug graphics"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionDebugGfx);
 	act->addDefaultInputMapping("TAB");
 	engineKeyMap->addAction(act);
 
-	act = new Action("QUIT", _("Quit Game"));
+	act = new Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionQuit);
 	act->addDefaultInputMapping("C+q");
 	engineKeyMap->addAction(act);

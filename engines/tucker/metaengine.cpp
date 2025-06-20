@@ -169,13 +169,13 @@ Common::KeymapArray TuckerMetaEngine::initKeymaps(const char *target) const {
 
 	Common::Action *act;
 
-	act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Right Click"));
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");

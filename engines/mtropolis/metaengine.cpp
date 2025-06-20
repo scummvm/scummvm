@@ -158,19 +158,19 @@ Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *tar
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "mtropolis", "mTropolis");
 	Common::Action *act;
 
-	act = new Common::Action(Common::kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	keymap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionRightClick, _("Right Click"));
+	act = new Common::Action(Common::kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
 	keymap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionMiddleClick, _("Middle Click"));
+	act = new Common::Action(Common::kStandardActionMiddleClick, _("Middle click"));
 	act->setMiddleClickEvent();
 	act->addDefaultInputMapping("MOUSE_MIDDLE");
 	act->addDefaultInputMapping("JOY_X");

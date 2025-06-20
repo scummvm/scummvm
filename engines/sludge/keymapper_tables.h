@@ -401,13 +401,13 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 
-		act = new Action("LOAD", _("Quick Load"));
+		act = new Action("LOAD", _("Quick load"));
 		act->setKeyEvent(KeyState(KEYCODE_l, 'l'));
 		act->addDefaultInputMapping("l");
 		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SAVE", _("Quick Save"));
+		act = new Action("SAVE", _("Quick save"));
 		act->setKeyEvent(KeyState(KEYCODE_s, 's'));
 		act->addDefaultInputMapping("s");
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
@@ -558,32 +558,32 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		// Default keymap for other games
 		warning("Game-specific keymap is not defined. Using default SLUDGE engine keymap");
 
-		act = new Action(kStandardActionLeftClick, _("Left Click"));
+		act = new Action(kStandardActionLeftClick, _("Left click"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Right Click"));
+		act = new Action(kStandardActionRightClick, _("Right click"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionPause, _("Pause Game"));
+		act = new Action(kStandardActionPause, _("Pause game"));
 		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 	}
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	menuKeymap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");

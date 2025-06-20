@@ -243,13 +243,13 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -304,7 +304,7 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("RCTRL");
 	gameKeyMap->addAction(act);
 
-	act = new Action("OPTIONSDIALOG", _("Options Dialog"));
+	act = new Action("OPTIONSDIALOG", _("Options menu"));
 	act->setCustomEngineActionEvent(kActionOptionsDialog);
 	act->addDefaultInputMapping("F1");
 	act->addDefaultInputMapping("1");
@@ -338,25 +338,25 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("A+q");
 	gameKeyMap->addAction(act);
 
-	act = new Action("PGUPMENU", _("Page Up in save/load menu"));
+	act = new Action("PGUPMENU", _("Page up in save / load menu"));
 	act->setCustomEngineActionEvent(kActionPageUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("KP9");
 	saveloadKeyMap->addAction(act);
 
-	act = new Action("PGDOWNMENU", _("Page down in save/load menu"));
+	act = new Action("PGDOWNMENU", _("Page down in save / load menu"));
 	act->setCustomEngineActionEvent(kActionPageDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	act->addDefaultInputMapping("KP3");
 	saveloadKeyMap->addAction(act);
 
-	act = new Action("STARTOFMENU", _("Go to start of save/load menu"));
+	act = new Action("STARTOFMENU", _("Go to start of save / load menu"));
 	act->setCustomEngineActionEvent(kActionHome);
 	act->addDefaultInputMapping("HOME");
 	act->addDefaultInputMapping("KP7");
 	saveloadKeyMap->addAction(act);
 
-	act = new Action("ENDOFMENU", _("Go to end of save/load menu"));
+	act = new Action("ENDOFMENU", _("Go to end of save / load menu"));
 	act->setCustomEngineActionEvent(kActionEnd);
 	act->addDefaultInputMapping("END");
 	act->addDefaultInputMapping("KP1");

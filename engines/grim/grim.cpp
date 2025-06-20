@@ -508,12 +508,12 @@ Common::KeymapArray GrimEngine::initKeymapsGrim(const char *target) {
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BUSE", _("Use/Talk"));
+	act = new Action("BUSE", _("Use / Talk"));
 	act->setKeyEvent(KeyState(KEYCODE_u, 'u'));
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("PICK", _("Pick up/Put away"));
+	act = new Action("PICK", _("Pick up / Put away"));
 	act->setKeyEvent(KeyState(KEYCODE_p, 'p'));
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
@@ -581,13 +581,13 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	engineKeyMap->addAction(act);
 
 	// I18N: Cycle means rotate through
-	act = new Action("COUP", _("Cycle Objects Up"));
+	act = new Action("COUP", _("Cycle objects up"));
 	act->setKeyEvent(KeyState(KEYCODE_PAGEUP));
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	engineKeyMap->addAction(act);
 
 	// I18N: Cycle means rotate through
-	act = new Action("CODW", _("Cycle Objects Down"));
+	act = new Action("CODW", _("Cycle objects down"));
 	act->setKeyEvent(KeyState(KEYCODE_PAGEDOWN));
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	engineKeyMap->addAction(act);
@@ -598,22 +598,22 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("QEXT", _("Quick Room Exit"));
+	act = new Action("QEXT", _("Quick room exit"));
 	act->setKeyEvent(KeyState(KEYCODE_o, 'o'));
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("EXAM", _("Examine/Look"));
+	act = new Action("EXAM", _("Examine / Look"));
 	act->setKeyEvent(KeyState(KEYCODE_e, 'e'));
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BUSE", _("Use/Talk"));
+	act = new Action("BUSE", _("Use / Talk"));
 	act->setKeyEvent(KeyState(KEYCODE_u, 'u'));
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("PICK", _("Pick up/Put away"));
+	act = new Action("PICK", _("Pick up / Put away"));
 	act->setKeyEvent(KeyState(KEYCODE_KP_PLUS, '+'));
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);

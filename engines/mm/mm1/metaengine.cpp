@@ -51,12 +51,12 @@ static const KeybindingRecord MENU_KEYS[] = {
 };
 
 static const KeybindingRecord PARTY_KEYS[] = {
-	{ KEYBIND_VIEW_PARTY1, "PARTY1", _s("View Party Member 1"), "1", nullptr },
-	{ KEYBIND_VIEW_PARTY2, "PARTY2", _s("View Party Member 2"), "2", nullptr },
-	{ KEYBIND_VIEW_PARTY3, "PARTY3", _s("View Party Member 3"), "3", nullptr },
-	{ KEYBIND_VIEW_PARTY4, "PARTY4", _s("View Party Member 4"), "4", nullptr },
-	{ KEYBIND_VIEW_PARTY5, "PARTY5", _s("View Party Member 5"), "5", nullptr },
-	{ KEYBIND_VIEW_PARTY6, "PARTY6", _s("View Party Member 6"), "6", nullptr },
+	{ KEYBIND_VIEW_PARTY1, "PARTY1", _s("View party member 1"), "1", nullptr },
+	{ KEYBIND_VIEW_PARTY2, "PARTY2", _s("View party member 2"), "2", nullptr },
+	{ KEYBIND_VIEW_PARTY3, "PARTY3", _s("View party member 3"), "3", nullptr },
+	{ KEYBIND_VIEW_PARTY4, "PARTY4", _s("View party member 4"), "4", nullptr },
+	{ KEYBIND_VIEW_PARTY5, "PARTY5", _s("View party member 5"), "5", nullptr },
+	{ KEYBIND_VIEW_PARTY6, "PARTY6", _s("View party member 6"), "6", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -72,7 +72,7 @@ static const KeybindingRecord COMBAT_KEYS[] = {
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_COMBAT_FIGHT, "COMBAT_FIGHT", _s("Fight"), "f", nullptr },
 	// I18N: Combat command in Might & Magic 1
-	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick Reference"), "q", nullptr },
+	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick reference"), "q", nullptr },
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_COMBAT_RETREAT, "COMBAT_RETREAT", _s("Retreat"), "r", nullptr },
 	// I18N: Combat command in Might & Magic 1
@@ -94,15 +94,15 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_FORWARDS, "FORWARDS", _s("Forwards"), "UP", nullptr },
 	// I18N: Party arrangement command in Might & Magic 1
 	{ KEYBIND_BACKWARDS, "BACKWARDS", _s("Backwards"), "DOWN", nullptr },
-	{ KEYBIND_TURN_LEFT, "TURN_LEFT", _s("Turn Left"), "LEFT", nullptr },
-	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", _s("Turn Right"), "RIGHT", nullptr },
-	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", _s("Strafe Left"), "C+LEFT", nullptr },
-	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", _s("Strafe Right"), "C+RIGHT", nullptr },
+	{ KEYBIND_TURN_LEFT, "TURN_LEFT", _s("Turn left"), "LEFT", nullptr },
+	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", _s("Turn right"), "RIGHT", nullptr },
+	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", _s("Strafe left"), "C+LEFT", nullptr },
+	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", _s("Strafe right"), "C+RIGHT", nullptr },
 
-	{ KEYBIND_SPELL, "CAST", _s("Cast Spell"), "c", nullptr },
-	{ KEYBIND_MAP, "MAP", _s("Show Map"), "m", nullptr },
-	{ KEYBIND_MINIMAP, "MINIMAP", _s("Toggle Minimap"), "=", nullptr },
-	{ KEYBIND_ORDER, "ORDER", _s("Reorder Party"), "o", nullptr },
+	{ KEYBIND_SPELL, "CAST", _s("Cast spell"), "c", nullptr },
+	{ KEYBIND_MAP, "MAP", _s("Show map"), "m", nullptr },
+	{ KEYBIND_MINIMAP, "MINIMAP", _s("Toggle minimap"), "=", nullptr },
+	{ KEYBIND_ORDER, "ORDER", _s("Reorder party"), "o", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_PROTECT, "PROTECT", _s("Protect"), "p", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
@@ -113,7 +113,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_BASH, "BASH", _s("Bash"), "b", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_UNLOCK, "UNLOCK", _s("Unlock"), "u", nullptr },
-	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick Reference"), "q", nullptr },
+	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick reference"), "q", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };

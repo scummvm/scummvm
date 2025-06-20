@@ -71,8 +71,8 @@ struct KeybindingRecord {
 
 Common::KeymapArray DgdsMetaEngine::initKeymaps(const char *target) const {
 	const KeybindingRecord DGDS_KEYS[] = {
-		{ Dgds::kDgdsKeyLoad, "LOAD", _("Load Game"), "F7", "C+l" },
-		{ Dgds::kDgdsKeySave, "SAVE", _("Save Game"), "F5", "C+s" },
+		{ Dgds::kDgdsKeyLoad, "LOAD", _("Load game"), "F7", "C+l" },
+		{ Dgds::kDgdsKeySave, "SAVE", _("Save game"), "F5", "C+s" },
 		{ Dgds::kDgdsKeyToggleMenu, "TOGGLE_MENU", _("Toggle Menu"), "ESCAPE", nullptr },
 		{ Dgds::kDgdsKeyToggleClock, "TOGGLE_CLOCK", _("Toggle Clock"), "c", nullptr },
 		{ Dgds::kDgdsKeyNextChoice, "NEXT_CHOICE", _("Next dialog / menu item"), "DOWN", "s" },

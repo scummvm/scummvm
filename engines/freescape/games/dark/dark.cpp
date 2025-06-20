@@ -183,17 +183,17 @@ void DarkEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoS
 	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
-	act = new Common::Action("SAVE", _("Save Game"));
+	act = new Common::Action("SAVE", _("Save game"));
 	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("s");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("LOAD", _("Load Game"));
+	act = new Common::Action("LOAD", _("Load game"));
 	act->setCustomEngineActionEvent(kActionLoad);
 	act->addDefaultInputMapping("l");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("QUIT", _("Quit Game"));
+	act = new Common::Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(kActionEscape);
 	if (isSpectrum())
 		act->addDefaultInputMapping("1");

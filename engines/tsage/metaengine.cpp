@@ -175,13 +175,13 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 	Common::String extra = ConfMan.get("extra", target);
 	const bool isDemo = extra.contains("Demo");
 
-	act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Right Click"));
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -275,14 +275,14 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 		act->allowKbdRepeats();
 		gameKeyMap->addAction(act);
 
-		act = new Common::Action("LEFT", _("Turn Left/Crawl West"));
+		act = new Common::Action("LEFT", _("Turn left/Crawl West"));
 		act->setCustomEngineActionEvent(kActionMoveLeftCrawlWest);
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
 		act->allowKbdRepeats();
 		gameKeyMap->addAction(act);
 
-		act = new Common::Action("RIGHT", _("Turn Right/Crawl East"));
+		act = new Common::Action("RIGHT", _("Turn right/Crawl East"));
 		act->setCustomEngineActionEvent(kActionMoveRightCrawlEast);
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");

@@ -208,19 +208,19 @@ Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("ESCAPE", _("Exit/Skip"));
+	act = new Action("ESCAPE", _("Exit / Skip"));
 	act->setCustomEngineActionEvent(kActionEscape);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_BACK");
@@ -245,7 +245,7 @@ Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("OPTIONS", _("Option dialog"));
+	act = new Action("OPTIONS", _("Options menu"));
 	act->setCustomEngineActionEvent(kActionOptions);
 	act->addDefaultInputMapping("o");
 	act->addDefaultInputMapping("F1");

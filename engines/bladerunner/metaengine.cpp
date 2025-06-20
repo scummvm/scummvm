@@ -217,7 +217,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// TOGGLE MCCOY'S COMBAT MODE
-	act = new Action("COMBAT", _("Toggle Combat"));
+	act = new Action("COMBAT", _("Toggle combat"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleCombat);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("MOUSE_MIDDLE");
@@ -250,7 +250,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// GAME OPTIONS
-	act = new Action("KIAOPTS", _("Game Options"));
+	act = new Action("KIAOPTS", _("Game options"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleKiaOptions);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
@@ -261,7 +261,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// ACTIVATE KIA CLUE DATABASE SYSTEM
-	act = new Action("KIADB", _("Open KIA Database"));
+	act = new Action("KIADB", _("Open KIA database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKiaDatabase);
 	act->addDefaultInputMapping("TAB");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
@@ -279,7 +279,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 
 	// I18N: This keymap works within the KIA Save Game screen
 	// and allows submitting a selected existing save game for deletion.
-	act = new Action("KIADELETESVDGAME", _("Delete Selected Saved Game"));
+	act = new Action("KIADELETESVDGAME", _("Delete selected saved game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpDeleteSelectedSvdGame);
 	act->addDefaultInputMapping("DELETE");
 	// TODO In the original KP_PERIOD with NUMLOCK on, would work as a normal '.' character.
@@ -293,14 +293,14 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	kiaOnlyKeymap->addAction(act);
 
 	// I18N: This keymap allows scrolling texts and lists upwards
-	act = new Action("KIASCROLLUP", _("Scroll Up"));
+	act = new Action("KIASCROLLUP", _("Scroll up"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionScrollUp);
 	act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 	act->addDefaultInputMapping("JOY_UP");
 	kiaOnlyKeymap->addAction(act);
 
 	// I18N: This keymap allows scrolling texts and lists downwards
-	act = new Action("KIASCROLLDOWN", _("Scroll Down"));
+	act = new Action("KIASCROLLDOWN", _("Scroll down"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionScrollDown);
 	act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
@@ -308,7 +308,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 
 	// I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 	// (only when the KIA is upgraded).
-	act = new Action("KIATOGGLECLUEPRIVACY", _("Toggle Clue Privacy"));
+	act = new Action("KIATOGGLECLUEPRIVACY", _("Toggle clue privacy"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleCluePrivacy);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
@@ -327,7 +327,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// SAVE GAME
-	act = new Action("KIASAVE", _("Save Game"));
+	act = new Action("KIASAVE", _("Save game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabSaveGame);
 	act->addDefaultInputMapping("F2");
 	commonKeymap->addAction(act);
@@ -336,7 +336,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// LOAD GAME
-	act = new Action("KIALOAD", _("Load Game"));
+	act = new Action("KIALOAD", _("Load game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabLoadGame);
 	act->addDefaultInputMapping("F3");
 	commonKeymap->addAction(act);
@@ -345,7 +345,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// CRIME SCENE DATABASE
-	act = new Action("KIACRIMES", _("Crime Scene Database"));
+	act = new Action("KIACRIMES", _("Crime scene database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabCrimeSceneDatabase);
 	act->addDefaultInputMapping("F4");
 	commonKeymap->addAction(act);
@@ -354,7 +354,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// SUSPECT DATABASE
-	act = new Action("KIASUSPECTS", _("Suspect Database"));
+	act = new Action("KIASUSPECTS", _("Suspect database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabSuspectDatabase);
 	act->addDefaultInputMapping("F5");
 	commonKeymap->addAction(act);
@@ -363,7 +363,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// CLUE DATABASE
-	act = new Action("KIACLUES", _("Clue Database"));
+	act = new Action("KIACLUES", _("Clue database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabClueDatabase);
 	act->addDefaultInputMapping("F6");
 	commonKeymap->addAction(act);
@@ -372,7 +372,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// QUIT GAME
-	act = new Action("KIAQUIT", _("Quit Game"));
+	act = new Action("KIAQUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabQuitGame);
 	act->addDefaultInputMapping("F10");
 	commonKeymap->addAction(act);

@@ -213,13 +213,13 @@ Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 
 	Common::Action *act;
 
-	act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	keymap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Right Click"));
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -245,7 +245,7 @@ Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 	keymap->addAction(act);
 
 	// I18N: 3-4 dialogs of game version info, (translation) credits, etc.
-	act = new Common::Action("INFO", _("Game Info"));
+	act = new Common::Action("INFO", _("Game info"));
 	act->setCustomEngineActionEvent(kActionInfo);
 	act->addDefaultInputMapping("F1");
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
@@ -253,7 +253,7 @@ Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 
 	// I18N: This opens a Quit Prompt where you have to choose
 	// [Confirm] or [Continue Playing] lines with Left Click.
-	act = new Common::Action("QUIT", _("Quit Prompt"));
+	act = new Common::Action("QUIT", _("Quit prompt"));
 	act->setCustomEngineActionEvent(kActionQuit);
 	act->addDefaultInputMapping("A+x");
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");

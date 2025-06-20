@@ -962,7 +962,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	if (gameId == "ft") {
 		Keymap *insaneKeymap = new Keymap(Keymap::kKeymapTypeGame, insaneKeymapId, "SCUMM - Bike Fights");
 
-		act = new Action("DOWNLEFT", _("Down Left"));
+		act = new Action("DOWNLEFT", _("Down left"));
 		act->setCustomEngineActionEvent(kScummActionInsaneDownLeft);
 		act->addDefaultInputMapping("KP1");
 		act->addDefaultInputMapping("END");
@@ -975,7 +975,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_DOWN");
 		insaneKeymap->addAction(act);
 
-		act = new Action("DOWNRIGHT", _("Down Right"));
+		act = new Action("DOWNRIGHT", _("Down right"));
 		act->setCustomEngineActionEvent(kScummActionInsaneDownRight);
 		act->addDefaultInputMapping("KP3");
 		act->addDefaultInputMapping("PAGEDOWN");
@@ -995,7 +995,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT");
 		insaneKeymap->addAction(act);
 
-		act = new Action("UPLEFT", _("Up Left"));
+		act = new Action("UPLEFT", _("Up left"));
 		act->setCustomEngineActionEvent(kScummActionInsaneUpLeft);
 		act->addDefaultInputMapping("KP7");
 		act->addDefaultInputMapping("INSERT");
@@ -1008,7 +1008,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_UP");
 		insaneKeymap->addAction(act);
 
-		act = new Action("UPRIGHT", _("Up Right"));
+		act = new Action("UPRIGHT", _("Up right"));
 		act->setCustomEngineActionEvent(kScummActionInsaneUpRight);
 		act->addDefaultInputMapping("KP9");
 		act->addDefaultInputMapping("PAGEUP");

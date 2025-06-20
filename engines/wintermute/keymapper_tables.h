@@ -39,13 +39,13 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT"); // original mouse
 	act->addDefaultInputMapping("JOY_A"); // extra joy
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT"); // original mouse
 	act->addDefaultInputMapping("JOY_B"); // extra joy
@@ -146,13 +146,13 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "lovmamuta" ||
 		gameId == "wmedemo3d"
 	) {
-		act = new Action(kStandardActionMoveUp, _("Move Forward"));
+		act = new Action(kStandardActionMoveUp, _("Move forward"));
 		act->setKeyEvent(KEYCODE_UP);
 		act->addDefaultInputMapping("UP"); // original keyboard
 		act->addDefaultInputMapping("JOY_UP"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMoveDown, _("Move Backwards"));
+		act = new Action(kStandardActionMoveDown, _("Move backwards"));
 		act->setKeyEvent(KEYCODE_DOWN);
 		act->addDefaultInputMapping("DOWN"); // original keyboard
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
@@ -253,7 +253,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 	} else if (gameId == "bookofgron") {
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
@@ -297,7 +297,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		gameKeyMap->addAction(act);
@@ -728,12 +728,12 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("C+F11"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMoveUp, _("Move Forward"));
+		act = new Action(kStandardActionMoveUp, _("Move forward"));
 		act->setKeyEvent(KEYCODE_UP);
 		act->addDefaultInputMapping("UP"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMoveDown, _("Move Backwards"));
+		act = new Action(kStandardActionMoveDown, _("Move backwards"));
 		act->setKeyEvent(KEYCODE_DOWN);
 		act->addDefaultInputMapping("DOWN"); // original keyboard
 		gameKeyMap->addAction(act);
@@ -2113,7 +2113,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMoveUp, _("Move Forward"));
+		act = new Action(kStandardActionMoveUp, _("Move forward"));
 		act->setKeyEvent(KEYCODE_UP);
 		act->addDefaultInputMapping("UP"); // original keyboard
 		act->addDefaultInputMapping("JOY_UP"); // extra joy
@@ -2163,7 +2163,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		gameKeyMap->addAction(act);
@@ -2213,7 +2213,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "rebeccacarlson1" ||
 		gameId == "rhiannon"
 	) {
-		act = new Action(kStandardActionMoveUp, _("Move Forward"));
+		act = new Action(kStandardActionMoveUp, _("Move forward"));
 		act->setCustomEngineActionEvent(kClickAtEntityNearestToCenter);
 		act->addDefaultInputMapping("UP"); // extra keyboard
 		act->addDefaultInputMapping("KP5"); // extra keyboard
@@ -2235,7 +2235,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		extraKeyMap->addAction(act);
 
 		if (gameId != "rhiannon") {
-			act = new Action(kStandardActionMoveDown, _("Move Backwards"));
+			act = new Action(kStandardActionMoveDown, _("Move backwards"));
 			act->setCustomEngineActionEvent(kClickAtBottom);
 			act->addDefaultInputMapping("DOWN"); // extra keyboard
 			act->addDefaultInputMapping("KP2"); // extra keyboard

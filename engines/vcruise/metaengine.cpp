@@ -155,7 +155,7 @@ Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *targe
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "vcruise", "V-Cruise");
 	Common::Action *act;
 
-	act = new Common::Action(Common::kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
@@ -198,12 +198,12 @@ Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *targe
 	keymap->addAction(act);
 
 
-	act = new Common::Action("VCRUISE_MUSIC_TOGGLE", _("Toggle music on/off"));
+	act = new Common::Action("VCRUISE_MUSIC_TOGGLE", _("Toggle music on / off"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventMusicToggle);
 	act->addDefaultInputMapping("F5");
 	keymap->addAction(act);
 
-	act = new Common::Action("VCRUISE_SOUND_TOGGLE", _("Toggle sound effects on/off"));
+	act = new Common::Action("VCRUISE_SOUND_TOGGLE", _("Toggle sound effects on / off"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventSoundToggle);
 	act->addDefaultInputMapping("F6");
 	keymap->addAction(act);

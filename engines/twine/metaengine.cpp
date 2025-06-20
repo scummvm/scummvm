@@ -225,74 +225,74 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("p");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSUP", _("Debug Grid Camera Up"));
+		act = new Action("DEBUGGRIDCAMERAPRESSUP", _("Debug grid camera up"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressUp);
 		act->addDefaultInputMapping("s");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSDOWN", _("Debug Grid Camera Down"));
+		act = new Action("DEBUGGRIDCAMERAPRESSDOWN", _("Debug grid camera down"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressDown);
 		act->addDefaultInputMapping("x");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSLEFT", _("Debug Grid Camera Left"));
+		act = new Action("DEBUGGRIDCAMERAPRESSLEFT", _("Debug grid camera left"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressLeft);
 		act->addDefaultInputMapping("y");
 		act->addDefaultInputMapping("z");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSRIGHT", _("Debug Grid Camera Right"));
+		act = new Action("DEBUGGRIDCAMERAPRESSRIGHT", _("Debug grid camera right"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressRight);
 		act->addDefaultInputMapping("c");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal Behaviour"));
+		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourNormal);
 		act->addDefaultInputMapping("1");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETOATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act = new Action("CHANGETOATHLETICBEHAVIOUR", _("Athletic behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAthletic);
 		act->addDefaultInputMapping("2");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETOAGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act = new Action("CHANGETOAGGRESSIVEBEHAVIOUR", _("Aggressive behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAggressive);
 		act->addDefaultInputMapping("3");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETODISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act = new Action("CHANGETODISCREETBEHAVIOUR", _("Discreet behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourDiscreet);
 		act->addDefaultInputMapping("4");
 		gameKeyMap->addAction(act);
 
-		act = new Action("NORMALBEHAVIOUR", _("Normal Behaviour"));
+		act = new Action("NORMALBEHAVIOUR", _("Normal behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourNormal);
 		act->addDefaultInputMapping("F1");
 		gameKeyMap->addAction(act);
 
-		act = new Action("ATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act = new Action("ATHLETICBEHAVIOUR", _("Athletic behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAthletic);
 		act->addDefaultInputMapping("F2");
 		gameKeyMap->addAction(act);
 
-		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAggressive);
 		act->addDefaultInputMapping("F3");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act = new Action("DISCREETBEHAVIOUR", _("Discreet behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourDiscreet);
 		act->addDefaultInputMapping("F4");
 		gameKeyMap->addAction(act);
 
-		act = new Action("BEHAVIOURACTION", _("Behaviour Action"));
+		act = new Action("BEHAVIOURACTION", _("Behaviour action"));
 		act->setCustomEngineActionEvent(TwinEActionType::ExecuteBehaviourAction);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGEBEHAVIOUR", _("Change Behaviour"));
+		act = new Action("CHANGEBEHAVIOUR", _("Change behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::BehaviourMenu);
 		act->addDefaultInputMapping("LCTRL");
 		act->addDefaultInputMapping("RCTRL");
@@ -304,7 +304,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setEvent(EVENT_MAINMENU);
 		gameKeyMap->addAction(act);
 
-		act = new Action("OPTIONSMENU", _("Options Menu"));
+		act = new Action("OPTIONSMENU", _("Options menu"));
 		act->setCustomEngineActionEvent(TwinEActionType::OptionsMenu);
 		act->addDefaultInputMapping("F6");
 		gameKeyMap->addAction(act);
@@ -316,41 +316,41 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT_STICK");
 		gameKeyMap->addAction(act);
 
-		act = new Action("USESELECTEDOBJECT", _("Use Selected Object"));
+		act = new Action("USESELECTEDOBJECT", _("Use selected object"));
 		act->setCustomEngineActionEvent(TwinEActionType::UseSelectedObject);
 		act->addDefaultInputMapping("S+RETURN");
 		act->addDefaultInputMapping("S+KP_ENTER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("THROWMAGICBALL", _("Throw Magic Ball"));
+		act = new Action("THROWMAGICBALL", _("Throw magic ball"));
 		act->setCustomEngineActionEvent(TwinEActionType::ThrowMagicBall);
 		act->addDefaultInputMapping("LALT");
 		act->addDefaultInputMapping("RALT");
 		act->addDefaultInputMapping("JOY_LEFT_STICK");
 		gameKeyMap->addAction(act);
 
-		act = new Action("MOVEFORWARD", _("Move Forward"));
+		act = new Action("MOVEFORWARD", _("Move forward"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveForward);
 		act->addDefaultInputMapping("UP");
 		act->addDefaultInputMapping("KP8");
 		act->addDefaultInputMapping("JOY_UP");
 		gameKeyMap->addAction(act);
 
-		act = new Action("MOVEBACKWARD", _("Move Backwards"));
+		act = new Action("MOVEBACKWARD", _("Move backwards"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveBackward);
 		act->addDefaultInputMapping("DOWN");
 		act->addDefaultInputMapping("KP2");
 		act->addDefaultInputMapping("JOY_DOWN");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TURNRIGHT", _("Turn Right"));
+		act = new Action("TURNRIGHT", _("Turn right"));
 		act->setCustomEngineActionEvent(TwinEActionType::TurnRight);
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TURNLEFT", _("Turn Left"));
+		act = new Action("TURNLEFT", _("Turn left"));
 		act->setCustomEngineActionEvent(TwinEActionType::TurnLeft);
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
@@ -375,13 +375,13 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("i");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SPECIALACTION", _("Special Action"));
+		act = new Action("SPECIALACTION", _("Special action"));
 		act->setCustomEngineActionEvent(TwinEActionType::SpecialAction);
 		act->addDefaultInputMapping("w");
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SCENERYZOOM", _("Scenery Zoom"));
+		act = new Action("SCENERYZOOM", _("Scenery zoom"));
 		act->setCustomEngineActionEvent(TwinEActionType::SceneryZoom);
 		gameKeyMap->addAction(act);
 
@@ -457,7 +457,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT");
 		uiKeyMap->addAction(act);
 
-		act = new Action("NEXTPAGE", _("Next Page"));
+		act = new Action("NEXTPAGE", _("Next page"));
 		act->setCustomEngineActionEvent(TwinEActionType::UINextPage);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("PAGEDOWN");
