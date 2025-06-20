@@ -361,7 +361,6 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff
 
 void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 		int16 *depth_table, Buffer *screenCodes, uint8 *myPalette, uint8 *ICT) {
-	uint8 myDepth;
 	Buffer drawSpriteBuff;
 	DrawRequest spriteDrawReq;
 
@@ -405,10 +404,13 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 				drawSpriteBuff.encoding = (uint8)myCCB->source->encoding;
 			drawSpriteBuff.data = myCCB->source->data;
 
-			if (!depth_table || !screenCodes || !screenCodes->data)
-				myDepth = 0;
-			else
-				myDepth = (uint8)(myCCB->layer >> 8);
+			if (!depth_table || !screenCodes || !screenCodes->data) {
+				spriteDrawReq.srcDepth = 0;
+				spriteDrawReq.depthCode = nullptr;
+			} else {
+				spriteDrawReq.srcDepth = (uint8)(myCCB->layer >> 8);
+				spriteDrawReq.depthCode = screenCodes->data;
+			}
 
 			spriteDrawReq.Src = (Buffer *)&drawSpriteBuff;
 			spriteDrawReq.Dest = halScrnBuf;
@@ -416,8 +418,6 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 			spriteDrawReq.y = myCCB->currLocation->y1;
 			spriteDrawReq.scaleX = myCCB->scaleX;
 			spriteDrawReq.scaleY = myCCB->scaleY;
-			spriteDrawReq.srcDepth = myDepth;
-			spriteDrawReq.depthCode = screenCodes->data;
 			spriteDrawReq.Pal = myPalette;
 			spriteDrawReq.ICT = ICT;
 
