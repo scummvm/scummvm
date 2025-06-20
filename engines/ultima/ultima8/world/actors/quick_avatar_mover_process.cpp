@@ -35,8 +35,8 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess)
 
 ProcId QuickAvatarMoverProcess::_amp = 0;
+bool QuickAvatarMoverProcess::_enabled = false;
 bool QuickAvatarMoverProcess::_clipping = false;
-bool QuickAvatarMoverProcess::_quarter = false;
 
 QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), _movementFlags(0) {
 	_amp = getPid();
@@ -46,7 +46,7 @@ QuickAvatarMoverProcess::~QuickAvatarMoverProcess() {
 }
 
 void QuickAvatarMoverProcess::run() {
-	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+	if (!isEnabled()) {
 		terminate();
 		return;
 	}
@@ -87,13 +87,18 @@ void QuickAvatarMoverProcess::run() {
 		return;
 	}
 
+	if (hasMovementFlags(MOVE_SLOW)) {
+		dx /= 4;
+		dy /= 4;
+		dz /= 4;
+	}
+
 	MainActor *avatar = getMainActor();
 	Point3 pt = avatar->getLocation();
 	int32 ixd, iyd, izd;
 	avatar->getFootpadWorld(ixd, iyd, izd);
 
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-
 	int32 dxv = dx;
 	int32 dyv = dy;
 	int32 dzv = dz;
@@ -108,12 +113,6 @@ void QuickAvatarMoverProcess::run() {
 				dxv = 0;
 			else if (j == 2)
 				dyv = 0;
-
-			if (_quarter) {
-				dxv /= 4;
-				dyv /= 4;
-				dzv /= 4;
-			}
 
 			bool ok = false;
 
@@ -188,6 +187,79 @@ QuickAvatarMoverProcess *QuickAvatarMoverProcess::get_instance() {
 
 	return p;
 }
+
+bool QuickAvatarMoverProcess::onActionDown(KeybindingAction action) {
+	if (!isEnabled()) {
+		return false;
+	}
+
+	bool handled = true;
+	switch (action) {
+	case ACTION_MOVE_ASCEND:
+		setMovementFlag(MOVE_ASCEND);
+		break;
+	case ACTION_MOVE_DESCEND:
+		setMovementFlag(MOVE_DESCEND);
+		break;
+	case ACTION_MOVE_UP:
+		setMovementFlag(MOVE_UP);
+		break;
+	case ACTION_MOVE_DOWN:
+		setMovementFlag(MOVE_DOWN);
+		break;
+	case ACTION_MOVE_LEFT:
+		setMovementFlag(MOVE_LEFT);
+		break;
+	case ACTION_MOVE_RIGHT:
+		setMovementFlag(MOVE_RIGHT);
+		break;
+	case ACTION_MOVE_STEP:
+		setMovementFlag(MOVE_SLOW);
+		// Allow others to handle as well
+		handled = false; 
+		break;
+	default:
+		handled = false;
+	}
+	return handled;
+}
+
+bool QuickAvatarMoverProcess::onActionUp(KeybindingAction action) {
+	if (!isEnabled()) {
+		return false;
+	}
+
+	bool handled = true;
+	switch (action) {
+	case ACTION_MOVE_ASCEND:
+		clearMovementFlag(MOVE_ASCEND);
+		break;
+	case ACTION_MOVE_DESCEND:
+		clearMovementFlag(MOVE_DESCEND);
+		break;
+	case ACTION_MOVE_UP:
+		clearMovementFlag(MOVE_UP);
+		break;
+	case ACTION_MOVE_DOWN:
+		clearMovementFlag(MOVE_DOWN);
+		break;
+	case ACTION_MOVE_LEFT:
+		clearMovementFlag(MOVE_LEFT);
+		break;
+	case ACTION_MOVE_RIGHT:
+		clearMovementFlag(MOVE_RIGHT);
+		break;
+	case ACTION_MOVE_STEP:
+		clearMovementFlag(MOVE_SLOW);
+		// Allow others to handle as well
+		handled = false; 
+		break;
+	default:
+		handled = false;
+	}
+	return handled;
+}
+
 
 void QuickAvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);

@@ -104,12 +104,8 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 
 static const KeybindingRecord CHEAT_KEYS[] = {
 	{ ACTION_CLIPPING, "CLIPPING", _s("Toggle Clipping"), "M+INSERT", nullptr },
-	{ ACTION_QUICK_MOVE_ASCEND, "ASCEND", _s("Ascend"), "M+HOME", nullptr },
-	{ ACTION_QUICK_MOVE_DESCEND, "DESCEND", _s("Descend"), "M+END", nullptr },
-	{ ACTION_QUICK_MOVE_UP, "MOVE_UP", _s("Move Up"), "M+UP", nullptr },
-	{ ACTION_QUICK_MOVE_DOWN, "MOVE_DOWN", _s("Move Down"), "M+DOWN", nullptr },
-	{ ACTION_QUICK_MOVE_LEFT, "MOVE_LEFT", _s("Move Left"), "M+LEFT", nullptr },
-	{ ACTION_QUICK_MOVE_RIGHT, "MOVE_RIGHT", _s("Move Right"), "M+RIGHT", nullptr },
+	{ ACTION_MOVE_ASCEND, "ASCEND", _s("Ascend"), "M+HOME", nullptr },
+	{ ACTION_MOVE_DESCEND, "DESCEND", _s("Descend"), "M+END", nullptr },
 
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };

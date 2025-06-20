@@ -111,7 +111,7 @@ private:
 	bool cmdObjectInfo(int argc, const char **argv);
 
 	// Quick Avatar Mover Process
-	bool cmdQuarterSpeed(int argc, const char **argv);
+	bool cmdQuickMover(int argc, const char **argv);
 	bool cmdClipping(int argc, const char **argv);
 
 	// UCMachine
