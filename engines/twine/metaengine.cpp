@@ -343,7 +343,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_DOWN");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TURNRIGHT", _("Turn Right"));
+		act = new Action("TURNRIGHT", _("Turn right"));
 		act->setCustomEngineActionEvent(TwinEActionType::TurnRight);
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");
