@@ -243,7 +243,7 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	act->addDefaultInputMapping("2");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("SAVE", _("Save Game"));
+	act = new Common::Action("SAVE", _("Save game"));
 	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("s");
 	infoScreenKeyMap->addAction(act);
