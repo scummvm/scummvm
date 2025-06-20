@@ -43,6 +43,11 @@ struct Surface;
  * This has to be kept in mind when writing the palette code for your engine. Also, there is no parsing of control
  * register opcodes to set up plane dimensions, table locations etc., since I didn't see any need for that. This has
  * to be done through the public setup methods of the renderer.
+ *
+ * Things that are currently not emulated:
+ * - The sprites-per-scanline limit (since I never saw a situation that would require it)
+ * - The sprite-masking implementation is not fully correct. I started to implement it, when I thought that I needed
+ *   it, but stopped fine-tuning it, when I realized that it actually wouldn't be used anywhere.
  */
 class SegaRenderer {
 public:
@@ -305,7 +310,7 @@ private:
 	uint16 *_hScrollTable;
 	uint16 *_spriteTable;
 	uint8 *_spriteMask;
-	uint8 *_spriteMaskPrio;
+	//uint8 *_spriteMaskPrio;
 	uint8 _hScrollMode;
 	uint8 _vScrollMode;
 	uint16 _numSpritesMax;
