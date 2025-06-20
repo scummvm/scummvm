@@ -1609,9 +1609,14 @@ public:
 	void CloseAllDocuments(BOOL bEndSession);
 
 	UINT GetProfileInt(LPCSTR lpszSection,
-	                   LPCSTR lpszEntry, int nDefault);
+	    LPCSTR lpszEntry, int nDefault);
 	void WriteProfileInt(LPCSTR lpszSection,
-	                     LPCSTR lpszEntry, int nValue);
+	    LPCSTR lpszEntry, int nValue);
+	CString GetProfileString(LPCSTR lpszSection,
+		LPCSTR lpszEntry, LPCSTR lpszDefault = nullptr) ;
+	BOOL WriteProfileString(LPCSTR lpszSection,
+		LPCSTR lpszEntry, LPCSTR lpszValue);
+
 
 	virtual void OnFileNew() {}
 	virtual void OnFileOpen() {}

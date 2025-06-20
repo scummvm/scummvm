@@ -170,6 +170,18 @@ void CWinApp::WriteProfileInt(LPCSTR lpszSection,
 	_settings[lpszSection].setInt(lpszEntry, nValue);
 }
 
+CString CWinApp::GetProfileString(LPCSTR lpszSection,
+		LPCSTR lpszEntry, LPCSTR lpszDefault) {
+	Common::String str = _settings[lpszSection].getString(lpszEntry, lpszDefault);
+	return CString(str.c_str());
+}
+
+BOOL CWinApp::WriteProfileString(LPCSTR lpszSection,
+		LPCSTR lpszEntry, LPCSTR lpszValue) {
+	_settings[lpszSection].setString(lpszEntry, lpszValue);
+	return true;
+}
+
 void CWinApp::setDirectory(const char *folder) {
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 

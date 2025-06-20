@@ -86,20 +86,25 @@ int MessageBox(LPCSTR lpText) {
 
 UINT GetPrivateProfileInt(LPCSTR lpAppName,
                           LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName) {
-	error("TODO: GetPrivateProfileInt");
+	return AfxGetApp()->GetProfileInt(lpAppName, lpKeyName, nDefault);
 }
 
 extern DWORD GetPrivateProfileString(LPCSTR lpAppName,
-                                     LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
-                                     DWORD  nSize, LPCSTR lpFileName) {
-	error("TODO: GetPrivateProfileString");
+        LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR lpReturnedString,
+        DWORD  nSize, LPCSTR lpFileName) {
+	CString str = AfxGetApp()->GetProfileString(lpAppName,
+		lpKeyName, lpDefault);
+	Common::strcpy_s(lpReturnedString, nSize, str.c_str());
+	return true;
 }
 
 
 BOOL WritePrivateProfileString(
-    LPCSTR lpAppName, LPCSTR lpKeyName,
-    LPCSTR lpString, LPCSTR lpFileName) {
-	error("TODO: WritePrivateProfileString");
+		LPCSTR lpAppName, LPCSTR lpKeyName,
+		LPCSTR lpString, LPCSTR lpFileName) {
+	AfxGetApp()->WriteProfileString(lpAppName,
+		lpKeyName, lpString);
+	return true;
 }
 
 HTASK GetCurrentTask() {
