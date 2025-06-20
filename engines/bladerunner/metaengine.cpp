@@ -345,7 +345,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// CRIME SCENE DATABASE
-	act = new Action("KIACRIMES", _("Crime Scene Database"));
+	act = new Action("KIACRIMES", _("Crime scene database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabCrimeSceneDatabase);
 	act->addDefaultInputMapping("F4");
 	commonKeymap->addAction(act);
