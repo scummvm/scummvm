@@ -1623,28 +1623,7 @@ void ScummEngine_v6::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
 
-	if (_game.id == GID_SAMNMAX && _roomResource == 35 && currentScriptSlotIs(202) &&
-		act == 4 && anim == 14 && enhancementEnabled(kEnhMinorBugFixes)) {
-		// WORKAROUND bug #2068 (Animation glitch at World of Fish).
-		// Before starting animation 14 of the fisherman, make sure he isn't
-		// talking anymore, otherwise the fishing line may appear twice when Max
-		// grabs it and subtitles (at a slow speed) and voices are both enabled.
-		// This bug exists in the original game as well.
-		if (getTalkingActor() == 4) {
-			stopTalk();
-		}
-	}
-
-	if (_game.id == GID_SAMNMAX && _roomResource == 47 && currentScriptSlotIs(202) &&
-		act == 2 && anim == 249 && enhancementEnabled(kEnhMinorBugFixes)) {
-		// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
-		// escapes Bumpusville with Trixie. Bruno (act. 11) and Trixie (act. 12) are
-		// properly removed from the scene by the script, but not the combined actor
-		// which is used by this animation (act. 6).
-		Actor *a = derefActorSafe(6, "o6_animateActor");
-		if (a && a->_costume == 243)
-			a->putActor(0, 0, 0);
-	}
+	o6_animateActorApplyEnhancements(act, anim);
 
 	// Since there have been cases of the scripts sending garbage data
 	// as the actor number (see bug #813), we handle these cases cleanly
@@ -3723,6 +3702,34 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		break;
 	default:
 		error("decodeParseString: default case 0x%x", b);
+	}
+}
+
+#pragma mark -
+#pragma mark --- Enhancements & workarounds ---
+#pragma mark -
+
+void ScummEngine_v6::o6_animateActorApplyEnhancements(int act, int anim) {
+	// WORKAROUND bug #2068 (Animation glitch at World of Fish).
+	// Before starting animation 14 of the fisherman, make sure he isn't
+	// talking anymore, otherwise the fishing line may appear twice when Max
+	// grabs it and subtitles (at a slow speed) and voices are both enabled.
+	// This bug exists in the original game as well.
+	if (_game.id == GID_SAMNMAX && _roomResource == 35 && currentScriptSlotIs(202) &&
+		act == 4 && anim == 14 && enhancementEnabled(kEnhMinorBugFixes)) {
+		if (getTalkingActor() == 4)
+			stopTalk();
+	}
+
+	// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
+	// escapes Bumpusville with Trixie. Bruno (act. 11) and Trixie (act. 12) are
+	// properly removed from the scene by the script, but not the combined actor
+	// which is used by this animation (act. 6).
+	if (_game.id == GID_SAMNMAX && _roomResource == 47 && currentScriptSlotIs(202) &&
+		act == 2 && anim == 249 && enhancementEnabled(kEnhMinorBugFixes)) {
+		Actor *a = derefActorSafe(6, "o6_animateActor");
+		if (a && a->_costume == 243)
+			a->putActor(0, 0, 0);
 	}
 }
 
