@@ -51,113 +51,113 @@ namespace Metagame {
 const CGameTable CMgStatic::cGameTable[] = {
 	{
 		MG_GAME_ANAGRAMS, 0,
-		"Anagrams", nullptr, nullptr
+		"Anagrams", nullptr, nullptr, nullptr
 	},
 	{
 		MG_GAME_ARCHEROIDS, MG_WIN_INFO,
-		"Archeroids", "arch", Archeroids::RunArch
+		"Archeroids", "arch", "hnparch.dll", Archeroids::RunArch
 	},
 	{
 		MG_GAME_ARTPARTS, MG_WIN_INFO,
-		"Art Parts", "artparts", ArtParts::RunArtp
+		"Art Parts", "artparts", "hnpartp.dll", ArtParts::RunArtp
 	},
 	{
 		MG_GAME_BARBERSHOP, MG_WIN_OBJECT,
-		"Barbershop Quintet", "barb", Barbershop::RunBarb
+		"Barbershop Quintet", "barb", "hnpbarb.dll", Barbershop::RunBarb
 	},
 	{
 		MG_GAME_BATTLEFISH, MG_WIN_OBJECT,
-		"Battlefish", "bfish", Battlefish::RunBFish
+		"Battlefish", "bfish", "hnpbfish.dll", Battlefish::RunBFish
 	},
 	{
 		MG_GAME_BEACON, MG_WIN_MONEY,
-		"Beacon", "beacon", Beacon::RunBeac
+		"Beacon", "beacon", "hnpbeac.dll", Beacon::RunBeac
 	},
 	{
 		MG_GAME_CRYPTOGRAMS, MG_WIN_MONEY,
-		"Cryptograms", "crypt", Crypt::RunCrypt
+		"Cryptograms", "crypt", "hnpcrypt.dll", Crypt::RunCrypt
 	},
 	{
 		MG_GAME_DAMFURRY, MG_WIN_MONEY,
-		"Dam Furry Animals", "dfa", DFA::RunDFA
+		"Dam Furry Animals", "dfa", "hnpdfa.dll", DFA::RunDFA
 	},
 	{
 		MG_GAME_EVERYTHING, MG_WIN_INFO,
-		"Everything Under the Sun", nullptr, nullptr
+		"Everything Under the Sun", nullptr, nullptr, nullptr
 	},
 	{
 		MG_GAME_FUGE, MG_WIN_MONEY,
-		"Fuge", "fuge", Fuge::RunFuge
+		"Fuge", "fuge", "hnpfuge.dll", Fuge::RunFuge
 	},
 	{
 		MG_GAME_GARFUNKEL, MG_WIN_INFO,
-		"Garfunkel", "garf", Garkfunkle::RunGarf
+		"Garfunkel", "garf", "hnpgarf.dll", Garkfunkle::RunGarf
 	},
 	{
 		MG_GAME_LIFE, MG_WIN_INFO,
-		"Life", "life", Life::RunLife
+		"Life", "life", "hnplife.dll", Life::RunLife
 	},
 	{
 		MG_GAME_MANKALA, MG_WIN_INFO,
-		"Mankala", "mankala", Mankala::RunMank
+		"Mankala", "mankala", "hnpmank.dll", Mankala::RunMank
 	},
 	{
 		MG_GAME_MAZEODOOM, MG_WIN_OBJECT,
-		"Maze o'Doom", "mazedoom", MazeDoom::RunMaze
+		"Maze o'Doom", "mazedoom", "hnpmaze.dll", MazeDoom::RunMaze
 	},
 	{
 		MG_GAME_NOVACANCY, MG_WIN_INFO,
-		"No Vacancy", "novac", NoVacancy::RunNoVa
+		"No Vacancy", "novac", "hnpnova.dll", NoVacancy::RunNoVa
 	},
 	{
 		MG_GAME_PACRAT, MG_WIN_OBJECT,
-		"Pac-Rat", "packrat", Packrat::RunPackRat
+		"Pac-Rat", "packrat", "hnppkrt.dll", Packrat::RunPackRat
 	},
 	{
 		MG_GAME_PEGGLEBOZ, MG_WIN_MONEY,
-		"Peggleboz", "peggle", Peggle::RunPeggle
+		"Peggleboz", "peggle", "hnppggl.dll", Peggle::RunPeggle
 	},
 	{
 		MG_GAME_PINBALL, 0,
-		"Pinball", nullptr
+		"Pinball", nullptr, nullptr, nullptr
 	},
 	{
 		MG_GAME_RIDDLES, MG_WIN_OBJECT,
-		"Riddles", "riddles", Riddles::RunRiddles
+		"Riddles", "riddles", "hnpridl.dll", Riddles::RunRiddles
 	},
 	{
 		MG_GAME_ROULETTE, 0,
-		"Roulette", nullptr
+		"Roulette", nullptr, nullptr, nullptr
 	},
 	{
 		MG_GAME_SHOTMACHINE, 0,
-		"Shot Machine", nullptr
+		"Shot Machine", nullptr, nullptr, nullptr
 	},
 	{
 		MG_GAME_SPINBALL, 0,
-		"Spinball", nullptr
+		"Spinball", nullptr, nullptr, nullptr
 	},
 	{
 		MG_GAME_THGESNGGME, MG_WIN_MONEY,
-		"TH GESNG GME", "pdq", PDQ::RunTGG
+		"TH GESNG GME", "pdq", "hnptgg.dll", PDQ::RunTGG
 	},
 	{
 		MG_GAME_TRIVIA, 0,
-		"Trivia", nullptr
+		"Trivia", nullptr, nullptr, nullptr
 	},
 	{
 		MG_GAME_VIDEOPOKER, MG_WIN_MONEY,
-		"Video Poker", "poker", Poker::RunPoker
+		"Video Poker", "poker", "hnppkr.dll", Poker::RunPoker
 	},
 	{
 		MG_GAME_WORDSEARCH, MG_WIN_OBJECT,
-		"Word Search", "wordsrch", WordSearch::RunWordSearch
+		"Word Search", "wordsrch", "hnpws.dll", WordSearch::RunWordSearch
 	},
 	{
 		MG_GAME_CHALLENGE, MG_WIN_MISHMOSH,
-		"Challenge", ".", nullptr /*Metagame::Zoom::RunZoomMap*/
+		"Challenge", ".", "hnpzm.dll", nullptr /*Metagame::Zoom::RunZoomMap*/
 	},
-	{ 0, 0, nullptr, nullptr }
+	{ 0, 0, nullptr, nullptr, nullptr, nullptr }
 };
 
 // =============================================
@@ -353,7 +353,7 @@ const CLocTable CMgStatic::cLocTable[] = {
 		MG_LOC_SECRET2, MG_VISIT_SECRET2, 0,
 		"Secret2", "Secret Passage 2"
 	},
-	{0, 0, 0, nullptr, nullptr}
+	{ 0, 0, 0, nullptr, nullptr }
 } ;
 #endif
 

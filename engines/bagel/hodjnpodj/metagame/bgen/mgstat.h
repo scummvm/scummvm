@@ -464,6 +464,7 @@ public:
 	int m_iWinCode;			// MG_WIN_xxxx (win money, object, info)
 	LPCSTR m_lpszGameName;	// full name of game
 	LPCSTR _path;			// game subfolder path
+	LPCSTR _dllName;		// dll filename
 	FPDLLFUNCT _initFn;
 } ;
 
