@@ -338,7 +338,7 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("A+q");
 	gameKeyMap->addAction(act);
 
-	act = new Action("PGUPMENU", _("Page Up in save/load menu"));
+	act = new Action("PGUPMENU", _("Page up in save/load menu"));
 	act->setCustomEngineActionEvent(kActionPageUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("KP9");
