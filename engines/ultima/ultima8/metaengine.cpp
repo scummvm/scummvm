@@ -98,7 +98,7 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_ROLL_LEFT, "ROLL_LEFT", _s("Roll Left"), "INSERT", "KP1" },
 	{ ACTION_ROLL_RIGHT, "ROLL_RIGHT", _s("Roll Right"), "PAGEUP", "KP3" },
 	{ ACTION_TOGGLE_CROUCH, "TOGGLE_CROUCH", _s("Toggle Crouch"), "KP5", nullptr },
-	{ ACTION_MOVE_STEP, "MOVE_STEP", _s("Side Step / Advance / Retreat"), "LALT", "JOY_RIGHT_SHOULDER" },
+	{ ACTION_MOVE_STEP, "MOVE_STEP", _s("Side step / Advance / Retreat"), "LALT", "JOY_RIGHT_SHOULDER" },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
