@@ -363,7 +363,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// CLUE DATABASE
-	act = new Action("KIACLUES", _("Clue Database"));
+	act = new Action("KIACLUES", _("Clue database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabClueDatabase);
 	act->addDefaultInputMapping("F6");
 	commonKeymap->addAction(act);
