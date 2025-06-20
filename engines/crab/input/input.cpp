@@ -223,7 +223,7 @@ Common::Keymap* InputManager::getDefaultKeyMapsForUI() {
 	act->addDefaultInputMapping("PERIOD");
 	uiKeymap->addAction(act);
 
-	act = new Action("PREVPAGE", _("Previous Page"));
+	act = new Action("PREVPAGE", _("Previous page"));
 	act->setCustomEngineActionEvent(IU_PAGE_PREV);
 	act->addDefaultInputMapping("COMMA");
 	uiKeymap->addAction(act);
