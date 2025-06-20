@@ -84,7 +84,8 @@ BOOL DeleteDC(HDC hDC) {
 }
 
 BOOL DeleteObject(HGDIOBJ ho) {
-	error("TODO: DeleteObject");
+	delete (CGdiObjectImpl *)ho;
+	return true;
 }
 
 int GetObject(HANDLE h, int c, LPVOID pv) {
