@@ -995,7 +995,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT");
 		insaneKeymap->addAction(act);
 
-		act = new Action("UPLEFT", _("Up Left"));
+		act = new Action("UPLEFT", _("Up left"));
 		act->setCustomEngineActionEvent(kScummActionInsaneUpLeft);
 		act->addDefaultInputMapping("KP7");
 		act->addDefaultInputMapping("INSERT");
