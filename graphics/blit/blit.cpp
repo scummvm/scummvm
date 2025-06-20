@@ -305,6 +305,10 @@ inline bool crossBlitHelper(byte *dst, const byte *src, const byte *mask, const 
 
 } // End of anonymous namespace
 
+bool fastBlit(byte *dst, const byte *src, const uint w, const uint h,
+							const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+							const uint srcPitch, const uint dstPitch);
+
 // Function to blit a rect from one color format to another
 bool crossBlit(byte *dst, const byte *src,
 				const uint dstPitch, const uint srcPitch,
@@ -318,6 +322,11 @@ bool crossBlit(byte *dst, const byte *src,
 	// Don't perform unnecessary conversion
 	if (srcFmt == dstFmt) {
 		copyBlit(dst, src, dstPitch, srcPitch, w, h, dstFmt.bytesPerPixel);
+		return true;
+	}
+
+	// Attempt to use a faster method if possible
+	if (fastBlit(dst, src, w, h, srcFmt, dstFmt, srcPitch, dstPitch)) {
 		return true;
 	}
 
