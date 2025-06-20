@@ -368,23 +368,23 @@ Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	addKeymapAction(keyMap, Common::kStandardActionRightClick, _("Right click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
 	addKeymapAction(keyMap, "MVF", _("Move forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
 	addKeymapAction(keyMap, "MVB", _("Move backwards"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
-	addKeymapAction(keyMap, "MVL", _("Move Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
-	addKeymapAction(keyMap, "MVR", _("Move Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
+	addKeymapAction(keyMap, "MVL", _("Move left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
+	addKeymapAction(keyMap, "MVR", _("Move right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
 	addKeymapAction(keyMap, "TL", _("Turn left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
 	addKeymapAction(keyMap, "TR", _("Turn right"), Common::KeyState(Common::KEYCODE_PAGEUP), "PAGEUP", "JOY_RIGHT");
-	addKeymapAction(keyMap, "INV", _("Open/Close Inventory"), Common::KeyState(Common::KEYCODE_i, 'i'), "i", "JOY_X");
-	addKeymapAction(keyMap, "SCE", _("Switch Inventory/Character screen"), Common::KeyState(Common::KEYCODE_p, 'p'), "p", "JOY_Y");
+	addKeymapAction(keyMap, "INV", _("Open/Close inventory"), Common::KeyState(Common::KEYCODE_i, 'i'), "i", "JOY_X");
+	addKeymapAction(keyMap, "SCE", _("Switch inventory/Character screen"), Common::KeyState(Common::KEYCODE_p, 'p'), "p", "JOY_Y");
 	addKeymapAction(keyMap, "CMP", _("Camp"), Common::KeyState(Common::KEYCODE_c, 'c'), "c", "");
-	addKeymapAction(keyMap, "CSP", _("Cast Spell"), Common::KeyState(Common::KEYCODE_SPACE, ' '), "SPACE", "JOY_LEFT_SHOULDER");
+	addKeymapAction(keyMap, "CSP", _("Cast spell"), Common::KeyState(Common::KEYCODE_SPACE, ' '), "SPACE", "JOY_LEFT_SHOULDER");
 	// TODO: Spell cursor, but this needs more thought, since different
 	// game versions use different keycodes.
-	addKeymapAction(keyMap, "SL1", _("Spell Level 1"), Common::KeyState(Common::KEYCODE_1, '1'), "1", "");
-	addKeymapAction(keyMap, "SL2", _("Spell Level 2"), Common::KeyState(Common::KEYCODE_2, '2'), "2", "");
-	addKeymapAction(keyMap, "SL3", _("Spell Level 3"), Common::KeyState(Common::KEYCODE_3, '3'), "3", "");
-	addKeymapAction(keyMap, "SL4", _("Spell Level 4"), Common::KeyState(Common::KEYCODE_4, '4'), "4", "");
-	addKeymapAction(keyMap, "SL5", _("Spell Level 5"), Common::KeyState(Common::KEYCODE_5, '5'), "5", "");
+	addKeymapAction(keyMap, "SL1", _("Spell level 1"), Common::KeyState(Common::KEYCODE_1, '1'), "1", "");
+	addKeymapAction(keyMap, "SL2", _("Spell level 2"), Common::KeyState(Common::KEYCODE_2, '2'), "2", "");
+	addKeymapAction(keyMap, "SL3", _("Spell level 3"), Common::KeyState(Common::KEYCODE_3, '3'), "3", "");
+	addKeymapAction(keyMap, "SL4", _("Spell level 4"), Common::KeyState(Common::KEYCODE_4, '4'), "4", "");
+	addKeymapAction(keyMap, "SL5", _("Spell level 5"), Common::KeyState(Common::KEYCODE_5, '5'), "5", "");
 	if (gameId == "eob2")
-		addKeymapAction(keyMap, "SL6", _("Spell Level 6"), Common::KeyState(Common::KEYCODE_6, '6'), "6", "");
+		addKeymapAction(keyMap, "SL6", _("Spell level 6"), Common::KeyState(Common::KEYCODE_6, '6'), "6", "");
 
 	return Common::Keymap::arrayOf(keyMap);
 }
