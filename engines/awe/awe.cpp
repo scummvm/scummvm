@@ -193,6 +193,8 @@ Common::Error AweEngine::run() {
 		e->run();
 	}
 
+	_mixer->stopAll();
+
 	e->finish();
 	delete e;
 	stub->fini();

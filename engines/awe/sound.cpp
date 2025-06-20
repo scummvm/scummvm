@@ -38,6 +38,7 @@ void Sound::playMusic(const char *path, int loops) {
 }
 
 void Sound::playSfxMusic(int num) {
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _sfxStream, -1, 255, 0, DisposeAfterUse::YES, true);
 	_sfx->play(_mixer->getOutputRate());
 }
 
@@ -53,8 +54,20 @@ void Sound::stopAifcMusic() {
 	warning("TODO: stopAifcMusic");
 }
 
+void Sound::stopAll() {
+	stopSfxMusic();
+	_mixer->stopAll();
+}
+
+void Sound::setPlayer(SfxPlayer *player) {
+	_sfx = player;
+	_sfxStream = new SfxMusicStream(player);
+}
+
 void Sound::stopSfxMusic() {
-	warning("TODO: stopSfxMusic");
+	if (_mixer->isSoundHandleActive(_musicHandle)) {
+		_mixer->stopHandle(_musicHandle);
+	}
 }
 
 void Sound::preloadSoundAiff(byte num, const byte *data) {

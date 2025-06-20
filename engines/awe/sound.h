@@ -66,15 +66,9 @@ public:
 	explicit Sound(Audio::Mixer *mixer) : _mixer(mixer) {
 	}
 
-	void setPlayer(SfxPlayer *player) {
-		_sfx = player;
-		_sfxStream = new SfxMusicStream(player);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _sfxStream, -1, 255, 0, DisposeAfterUse::YES, true);
-	}
+	void setPlayer(SfxPlayer *player);
 
-	void stopAll() {
-		_mixer->stopAll();
-	}
+	void stopAll();
 	void playMusic(const char *path, int loops);
 	void playAifcMusic(const char *path, uint32 offset);
 	void playSfxMusic(int num);
