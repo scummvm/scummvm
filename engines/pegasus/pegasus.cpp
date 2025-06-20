@@ -2737,7 +2737,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
+	act = new Action(kStandardActionMoveLeft, _("Turn left"));
 	act->setCustomEngineActionEvent(kPegasusActionLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("KP4");

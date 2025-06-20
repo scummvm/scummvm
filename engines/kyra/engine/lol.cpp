@@ -511,7 +511,7 @@ Common::KeymapArray LoLEngine::initKeymaps() {
 	addKeymapAction(keyMap2, "MVB", _("Move backwards"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
 	addKeymapAction(keyMap2, "SLL", _("Slide Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
 	addKeymapAction(keyMap2, "SLR", _("Slide Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
-	addKeymapAction(keyMap2, "TL", _("Turn Left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
+	addKeymapAction(keyMap2, "TL", _("Turn left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
 	addKeymapAction(keyMap2, "TR", _("Turn right"), Common::KeyState(Common::KEYCODE_PAGEUP), "PAGEUP", "JOY_RIGHT");
 	addKeymapAction(keyMap2, "RST", _("Rest"), Common::KeyState(Common::KEYCODE_r, 'r'), "r", "");
 	addKeymapAction(keyMap2, "OPT", _("Options"), Common::KeyState(Common::KEYCODE_o, 'o'), "o", "");
