@@ -1457,9 +1457,9 @@ void Ultima8Engine::applyGameSettings() {
 		_fontManager->loadTTFont(1, "VeraBd.ttf", 12, 0xFFFFFF, 0);
 		// GameWidget's version number information:
 		_fontManager->loadTTFont(2, "Vera.ttf", 8, 0xA0A0A0, 0);
-
-		_gameData->setupFontOverrides();
 	}
+
+	_gameData->setupFontOverrides();
 
 	_frameSkip = ConfMan.getBool("frameSkip");
 	_frameLimit = ConfMan.getBool("frameLimit");
