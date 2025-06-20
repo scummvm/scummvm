@@ -142,7 +142,7 @@ void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 		act->addDefaultInputMapping("l");
 		infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("QUIT", _("Quit Game"));
+		act = new Common::Action("QUIT", _("Quit game"));
 		act->setCustomEngineActionEvent(kActionEscape);
 		if (isSpectrum())
 			act->addDefaultInputMapping("1");
