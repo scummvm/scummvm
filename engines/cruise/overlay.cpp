@@ -143,10 +143,6 @@ int loadOverlay(const char *scriptName) {
 		scriptNotLoadedBefore = true;
 	}
 
-	if (!strcmp(scriptName, "LOGO")) {	// Logo when game is first booted up (or restarted)
-		_vm->sayText("Delphine Software\nCinematique", Common::TextToSpeechManager::QUEUE);
-	}
-
 	if (overlayTable[scriptIdx].alreadyLoaded) {
 		return (scriptIdx);
 	}
