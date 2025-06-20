@@ -500,7 +500,7 @@ Common::KeymapArray LoLEngine::initKeymaps() {
 	Common::KeymapArray res;
 
 	addKeymapAction(keyMap1, Common::kStandardActionLeftClick, _("Left click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
-	addKeymapAction(keyMap1, Common::kStandardActionRightClick, _("Interact via Right Click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
+	addKeymapAction(keyMap1, Common::kStandardActionRightClick, _("Right click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
 	res.push_back(keyMap1);
 
 	addKeymapAction(keyMap2, "AT1", _("Attack 1"), Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "F1", "JOY_X");

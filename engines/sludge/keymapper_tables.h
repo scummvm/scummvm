@@ -564,7 +564,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Right Click"));
+		act = new Action(kStandardActionRightClick, _("Right click"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -583,7 +583,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 	act->addDefaultInputMapping("JOY_A");
 	menuKeymap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
