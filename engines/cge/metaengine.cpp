@@ -231,7 +231,7 @@ Common::KeymapArray CGEMetaEngine::initKeymaps(const char *target) const {
 	keymap->addAction(act);
 
 	// I18N: 3-4 dialogs of game version info, (translation) credits, etc.
-	act = new Action("INFO", _("Game Info"));
+	act = new Action("INFO", _("Game info"));
 	act->setCustomEngineActionEvent(kActionInfo);
 	act->addDefaultInputMapping("F1");
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
