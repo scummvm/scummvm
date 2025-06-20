@@ -598,7 +598,7 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("QEXT", _("Quick Room Exit"));
+	act = new Action("QEXT", _("Quick room exit"));
 	act->setKeyEvent(KeyState(KEYCODE_o, 'o'));
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
