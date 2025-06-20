@@ -1008,7 +1008,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_UP");
 		insaneKeymap->addAction(act);
 
-		act = new Action("UPRIGHT", _("Up Right"));
+		act = new Action("UPRIGHT", _("Up right"));
 		act->setCustomEngineActionEvent(kScummActionInsaneUpRight);
 		act->addDefaultInputMapping("KP9");
 		act->addDefaultInputMapping("PAGEUP");
