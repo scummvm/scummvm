@@ -26,6 +26,8 @@
  */
 
 #include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/file/base_savefile_manager_file.h"
 
@@ -72,7 +74,9 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	} else if (_filename.hasSuffix(".tga")) {
 		_decoder = new Image::TGADecoder();
 	} else if (_filename.hasSuffix(".jpg")) {
-		_decoder = new Image::JPEGDecoder();
+		Image::JPEGDecoder *jpeg = new Image::JPEGDecoder();
+		jpeg->setOutputPixelFormat(BaseEngine::getRenderer()->getPixelFormat());
+		_decoder = jpeg;
 	} else {
 		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
