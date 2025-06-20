@@ -122,6 +122,22 @@ static const SludgeGameDescription gameDescriptions[] = {
 							"Mandy.exe", "7016ef8ab67133a1d6fce20b8b70cd1d", 83968,
 							Common::PL_POL, Common::kPlatformWindows, 3),
 
+	// August 4, 2002
+	GAME2l("cubert", "v1.1", "Gamedata",   "dfb7f8012a29631349a14351ba1cfd49", 27303861,
+							 "Cubert.exe", "055b5b5c30265ba32e4235b012eb90bb", 64000,
+							 Common::EN_ANY, Common::kPlatformWindows, 0),
+	// June 11, 2003
+	GAME2l("cubert", "v1.1", "Gamedata",		   "dfb7f8012a29631349a14351ba1cfd49", 27303861,
+							 "Cubert Badbone.exe", "055b5b5c30265ba32e4235b012eb90bb", 64000,
+							 Common::EN_ANY, Common::kPlatformWindows, 0),
+	// August 16, 2002
+	GAME2l("cubert", "v1.2", "Gamedata",   "245b043e4b2ade16f56118f8d98fb940", 27304149,
+							 "Cubert.exe", "055b5b5c30265ba32e4235b012eb90bb", 64000,
+							 Common::EN_ANY, Common::kPlatformWindows, 0),
+	// September 5, 2002
+	GAME2l("cubert", "v1.25", "gamedata",   "d1d9b27d0c43a37952c1bef7bc848623", 27306453,
+							  "Cubert.exe", "acc9fb7b4be7e7824a003c88942d778d", 67072,
+							  Common::EN_ANY, Common::kPlatformWindows, 0),
 	// Mar 9, 2004
 	GAME1l("cubert", "", "cubert.dat", "cabc424d4e39ecdba4b0afd4033b5ea8", 19696514, Common::EN_ANY, Common::kPlatformWindows, 0),
 	GAME1l("cubert", "", "cubert.dat", "cabc424d4e39ecdba4b0afd4033b5ea8", 19696514, Common::IT_ITA, Common::kPlatformWindows, 1),
