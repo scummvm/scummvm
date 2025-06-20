@@ -256,7 +256,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("2");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETOAGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act = new Action("CHANGETOAGGRESSIVEBEHAVIOUR", _("Aggressive behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAggressive);
 		act->addDefaultInputMapping("3");
 		gameKeyMap->addAction(act);
@@ -276,7 +276,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("F2");
 		gameKeyMap->addAction(act);
 
-		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAggressive);
 		act->addDefaultInputMapping("F3");
 		gameKeyMap->addAction(act);
