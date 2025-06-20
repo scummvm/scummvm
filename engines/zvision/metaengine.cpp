@@ -232,7 +232,7 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_LEFT");
 	gameKeymap->addAction(act);
 
-	act = new Action(kStandardActionMoveRight, _("Turn Right"));
+	act = new Action(kStandardActionMoveRight, _("Turn right"));
 	act->setCustomEngineActionEvent(kZVisionActionRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");

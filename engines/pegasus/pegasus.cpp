@@ -2744,7 +2744,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("JOY_LEFT");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveRight, _("Turn Right"));
+	act = new Action(kStandardActionMoveRight, _("Turn right"));
 	act->setCustomEngineActionEvent(kPegasusActionRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("KP6");
