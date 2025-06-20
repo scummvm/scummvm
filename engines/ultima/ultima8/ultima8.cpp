@@ -898,6 +898,13 @@ void Ultima8Engine::handleDelayedEvents() {
 }
 
 void Ultima8Engine::handleActionDown(KeybindingAction action) {
+	if (!isAvatarInStasis() && QuickAvatarMoverProcess::isEnabled()) {
+		QuickAvatarMoverProcess *moverProcess = QuickAvatarMoverProcess::get_instance();
+		if (moverProcess && moverProcess->onActionDown(action)) {
+			return;
+		}
+	}
+
 	if (!isAvatarInStasis()) {
 		if (_avatarMoverProcess && _avatarMoverProcess->onActionDown(action)) {
 			moveKeyEvent();
@@ -1121,60 +1128,19 @@ void Ultima8Engine::handleActionDown(KeybindingAction action) {
 			QuickAvatarMoverProcess::toggleClipping();
 		}
 		break;
-	case ACTION_QUICK_MOVE_ASCEND:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->setMovementFlag(QuickAvatarMoverProcess::MOVE_ASCEND);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_DESCEND:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->setMovementFlag(QuickAvatarMoverProcess::MOVE_DESCEND);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_UP:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->setMovementFlag(QuickAvatarMoverProcess::MOVE_UP);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_DOWN:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->setMovementFlag(QuickAvatarMoverProcess::MOVE_DOWN);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_LEFT:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->setMovementFlag(QuickAvatarMoverProcess::MOVE_LEFT);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_RIGHT:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->setMovementFlag(QuickAvatarMoverProcess::MOVE_RIGHT);
-			}
-		}
-		break;
 	default:
 		break;
 	}
 }
 
 void Ultima8Engine::handleActionUp(KeybindingAction action) {
+	if (QuickAvatarMoverProcess::isEnabled()) {
+		QuickAvatarMoverProcess *moverProcess = QuickAvatarMoverProcess::get_instance();
+		if (moverProcess && moverProcess->onActionUp(action)) {
+			return;
+		}
+	}
+
 	if (_avatarMoverProcess && _avatarMoverProcess->onActionUp(action)) {
 		moveKeyEvent();
 		return;
@@ -1183,54 +1149,6 @@ void Ultima8Engine::handleActionUp(KeybindingAction action) {
 	switch (action) {
 	case ACTION_HIGHLIGHT_ITEMS:
 		GameMapGump::Set_highlightItems(false);
-		break;
-	case ACTION_QUICK_MOVE_ASCEND:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->clearMovementFlag(QuickAvatarMoverProcess::MOVE_ASCEND);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_DESCEND:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->clearMovementFlag(QuickAvatarMoverProcess::MOVE_DESCEND);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_UP:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->clearMovementFlag(QuickAvatarMoverProcess::MOVE_UP);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_DOWN:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->clearMovementFlag(QuickAvatarMoverProcess::MOVE_DOWN);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_LEFT:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->clearMovementFlag(QuickAvatarMoverProcess::MOVE_LEFT);
-			}
-		}
-		break;
-	case ACTION_QUICK_MOVE_RIGHT:
-		if (!isAvatarInStasis() && areCheatsEnabled()) {
-			QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
-			if (proc) {
-				proc->clearMovementFlag(QuickAvatarMoverProcess::MOVE_RIGHT);
-			}
-		}
 		break;
 	default:
 		break;

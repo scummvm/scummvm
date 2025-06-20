@@ -22,6 +22,7 @@
 #ifndef WORLD_ACTORS_QUICKAVATARMOVERPROCESS_H
 #define WORLD_ACTORS_QUICKAVATARMOVERPROCESS_H
 
+#include "ultima/ultima8/metaengine.h"
 #include "ultima/ultima8/kernel/process.h"
 
 namespace Ultima {
@@ -39,14 +40,14 @@ public:
 	void run() override;
 	void terminate() override;
 
-	static bool isQuarterSpeed() {
-		return _quarter;
+	static bool isEnabled() {
+		return _enabled;
+	}
+	static void setEnabled(bool value) {
+		_enabled = value;
 	}
 	static bool isClipping() {
 		return _clipping;
-	}
-	static void setQuarterSpeed(bool q) {
-		_quarter = q;
 	}
 	static void setClipping(bool value) {
 		_clipping = value;
@@ -68,6 +69,10 @@ public:
 		_movementFlags = 0;
 	}
 
+	// Return true if handled, false if not.
+	bool onActionDown(KeybindingAction action);
+	bool onActionUp(KeybindingAction action);
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
@@ -78,6 +83,7 @@ public:
 		MOVE_DOWN = 0x08,
 		MOVE_ASCEND = 0x10,
 		MOVE_DESCEND = 0x20,
+		MOVE_SLOW = 0x40,
 
 		MOVE_ANY_DIRECTION = MOVE_LEFT | MOVE_RIGHT | MOVE_UP | MOVE_DOWN | MOVE_ASCEND | MOVE_DESCEND
 	};
@@ -85,8 +91,8 @@ public:
 protected:
 	uint32 _movementFlags;
 	static ProcId _amp;
+	static bool _enabled;
 	static bool _clipping;
-	static bool _quarter;
 };
 
 } // End of namespace Ultima8

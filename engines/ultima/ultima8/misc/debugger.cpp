@@ -129,7 +129,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
 
-	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdQuarterSpeed));
+	registerCmd("QuickAvatarMoverProcess::toggle", WRAP_METHOD(Debugger, cmdQuickMover));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdClipping));
 
 	registerCmd("UCMachine::getGlobal", WRAP_METHOD(Debugger, cmdGetGlobal));
@@ -1363,13 +1363,18 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdQuarterSpeed(int argc, const char **argv) {
+bool Debugger::cmdQuickMover(int argc, const char **argv) {
 	if (argc > 2) {
 		debugPrintf("Usage: %s [on|off]\n", argv[0]);
 		return true;
 	}
 
-	bool flag = !QuickAvatarMoverProcess::isQuarterSpeed();
+	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
+		debugPrintf("Cheats aren't enabled\n");
+		return true;
+	}
+
+	bool flag = !QuickAvatarMoverProcess::isEnabled();
 	if (argc > 1) {
 		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
 			flag = true;
@@ -1377,7 +1382,8 @@ bool Debugger::cmdQuarterSpeed(int argc, const char **argv) {
 			flag = false;
 	}
 
-	QuickAvatarMoverProcess::setQuarterSpeed(flag);
+	QuickAvatarMoverProcess::setEnabled(flag);
+	debugPrintf("QuickAvatarMoverProcess::_enabled = %s\n", strBool(flag));
 	return false;
 }
 
