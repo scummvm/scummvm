@@ -286,7 +286,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("F4");
 		gameKeyMap->addAction(act);
 
-		act = new Action("BEHAVIOURACTION", _("Behaviour Action"));
+		act = new Action("BEHAVIOURACTION", _("Behaviour action"));
 		act->setCustomEngineActionEvent(TwinEActionType::ExecuteBehaviourAction);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("JOY_A");
