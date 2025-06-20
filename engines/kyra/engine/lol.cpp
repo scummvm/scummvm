@@ -499,7 +499,7 @@ Common::KeymapArray LoLEngine::initKeymaps() {
 	Common::Keymap *keyMap2 = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeyboardKeymapName, "Lands of Lore - Keyboard");
 	Common::KeymapArray res;
 
-	addKeymapAction(keyMap1, Common::kStandardActionLeftClick, _("Interact via Left Click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
+	addKeymapAction(keyMap1, Common::kStandardActionLeftClick, _("Left click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
 	addKeymapAction(keyMap1, Common::kStandardActionRightClick, _("Interact via Right Click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
 	res.push_back(keyMap1);
 

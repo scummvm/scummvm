@@ -175,7 +175,7 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 	Common::String extra = ConfMan.get("extra", target);
 	const bool isDemo = extra.contains("Demo");
 
-	act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");

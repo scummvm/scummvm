@@ -174,7 +174,7 @@ Common::KeymapArray LureMetaEngine::initKeymaps(const char *target) const {
 	Common::Action *act;
 
 	{
-		act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
+		act = new Common::Action(kStandardActionLeftClick, _("Left click"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");

@@ -39,7 +39,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT"); // original mouse
 	act->addDefaultInputMapping("JOY_A"); // extra joy
