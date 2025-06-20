@@ -245,7 +245,7 @@ Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("OPTIONS", _("Option dialog"));
+	act = new Action("OPTIONS", _("Options menu"));
 	act->setCustomEngineActionEvent(kActionOptions);
 	act->addDefaultInputMapping("o");
 	act->addDefaultInputMapping("F1");
