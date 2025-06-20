@@ -422,12 +422,11 @@ bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool 
 	int32 i = 0;
 
 	while (dir_array[i] >= 0) {
-		int32 result = AddWSAssetCELS(name_array[i], dir_array[i],
-			(load_palette && !shadow_flag) ? _G(master_palette) : nullptr);
-		if (result < 0) {
+		const int32 result = AddWSAssetCELS(name_array[i], dir_array[i],
+		                                    (load_palette && !shadow_flag) ? _G(master_palette) : nullptr);
+		if (result < 0)
 			error_show(FL, 'W:-(');
-			return false;
-		}
+
 		i++;
 	}
 

@@ -32,13 +32,9 @@ namespace Riddle {
 namespace Rooms {
 
 const int16 OFFICIAL_NORMAL_DIRS[] = { 200, 201, 202, -1 };
-const char *OFFICIAL_NORMAL_NAMES[] = {
-	"official walk pos11", "official walk pos9", "official walk pos7"
-};
+const char *OFFICIAL_NORMAL_NAMES[] = { "official walk pos11", "official walk pos9", "official walk pos7" };
 const int16 OFFICIAL_SHADOW_DIRS[] = { 210, 211, 212, -1 };
-const char *OFFICIAL_SHADOW_NAMES[] = {
-	"203of09s", "203of04s", "203of12s"
-};
+const char *OFFICIAL_SHADOW_NAMES[] = { "203of09s", "203of04s", "203of12s" };
 
 const int16 SNORMAL1_DIRS[] = { 200, -1 };
 const char *SNORMAL1_NAMES[] = { "203s01" };
