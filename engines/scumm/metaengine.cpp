@@ -975,7 +975,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_DOWN");
 		insaneKeymap->addAction(act);
 
-		act = new Action("DOWNRIGHT", _("Down Right"));
+		act = new Action("DOWNRIGHT", _("Down right"));
 		act->setCustomEngineActionEvent(kScummActionInsaneDownRight);
 		act->addDefaultInputMapping("KP3");
 		act->addDefaultInputMapping("PAGEDOWN");
