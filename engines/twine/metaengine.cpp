@@ -329,7 +329,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT_STICK");
 		gameKeyMap->addAction(act);
 
-		act = new Action("MOVEFORWARD", _("Move Forward"));
+		act = new Action("MOVEFORWARD", _("Move forward"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveForward);
 		act->addDefaultInputMapping("UP");
 		act->addDefaultInputMapping("KP8");
