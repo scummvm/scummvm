@@ -218,7 +218,7 @@ Common::Keymap* InputManager::getDefaultKeyMapsForUI() {
 	act->addDefaultInputMapping("6");
 	uiKeymap->addAction(act);
 
-	act = new Action("NEXTPAGE", _("Next Page"));
+	act = new Action("NEXTPAGE", _("Next page"));
 	act->setCustomEngineActionEvent(IU_PAGE_NEXT);
 	act->addDefaultInputMapping("PERIOD");
 	uiKeymap->addAction(act);
