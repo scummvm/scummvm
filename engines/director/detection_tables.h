@@ -306,6 +306,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "legendsmyths",		"Legends & Myths" },
 	{ "letsdiscover",		"Let's Discover" },
 	{ "letters",			"Letters" },
+	{ "lostfoundvol1",		"Lost & Found: Volume 1" },
 	{ "louiscatorze",		"Louis Cat Orze: The Mystery of the Queen's Necklace" },
 	{ "luxor",				"Secrets of the Luxor" },
 	{ "madcc12",			"Madeline Classroom Companion: 1st & 2nd Grade" },
@@ -1232,6 +1233,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ukiukiitsudemo",		"ウキウキ釣り天国 ～いつでもどこでも海釣り三昧～" },		// Ukiuki Tsuri Tengoku: Itsudemo Dokodemo Umitsuri Zanmai
 	{ "ukiukistamp",		"うきうきスタンプ" },
 	{ "ukyo1",				"うきょー1" },
+	{ "umezma",				"UMEZMA ウメズマ" },
 	{ "ursaminorblue",		"銀河の魚 URSA minor BLUE" },				// Galaxy Fish: Ursa Minor Blue
 	{ "uruuruexcellent",	"うるうる The Excellent Edition" }, // Uruuru: The Excellent Edition
 	{ "victorianpark",		"Victorian Park" },
@@ -1399,6 +1401,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "businessmanager",	"琢磨 BusinessManager" },							// from Takuma Co.
 	{ "calling",			"Calling" },
 	{ "cnl",				"City Net Line" },
+	{ "cockpit",			"The Cockpit" },
 	{ "creativeeye",		"Creative EYE" },
 	{ "fontfriends",		"フォントフレンズ" },
 	{ "greetingstudio",		"Greeting STUDIO" },
@@ -3927,6 +3930,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is CityNetLine デモ版
 	MACDEMO1_l("cnl", "Demo", "CityNetLine Demo Version", "f5033f237ad1b1639fc46d01a82ac380", 286140, Common::JA_JPN, 404),
 
+	// Demo of "The Cockpit" CD based on the manga by Matsumoto
+	// Found on UMEZMA
+	MACDEMO1_l("cockpit", "Demo", "MANGAROM/COCKDEMO.APPL",		  "rt:e63337750ae3043299238d5868af8bb6", 502685, Common::JA_JPN, 404),
+	WINDEMO1_l("cockpit", "Demo", "MANGAROM/ISOIRE/COCKDEMO.EXE", "t:db1164fdd4d0580d70f427b6df2874fe",  748231, Common::JA_JPN, 404),
+
 	WINDEMO2t("compton", "Guided Tour", "TOURDEMO.EXE", "cb88f94bc905aeb3ef8717196c4b0be9", 688039,
 										"DEMO.DXR",		"7d87e2099fc0d3de8869a00f4a084f97", 1730688, 404),
 
@@ -4913,6 +4921,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("lion", "Demo", "Lion Demo", "r:01be45e7241194dad07938e7059b88e3", 484028, 400),
 
 	WINGAME1_l("lobomau", "", "LOBO.EXE", "162d4d1aaf42b6e8d7dfc520e5de2bed", 201828999, Common::PT_BRA, 400),
+
+	MACGAME1("lostfoundvol1", "", "Lost & Found Hidden Mag", "r:364b833a3c776779cce6a4b089c84a23",  304499, 404),
+	WINGAME1("lostfoundvol1", "", "LOSTFOND/LOST.EXE",		 "t:1fa1f969a7beb400709e23490316113a", 6180257, 404),
 
 	MACGAME1("louiscatorze", "", "Louis Cat Orze/Louis Catorze", "r:2c7d0c0d55cbe3f622c7d68cedb671e0", 486698, 404),
 	WINGAME2("louiscatorze", "", "LCO/LOUIS.EXE",	   "t:cf4ba6186525654f10baf9091358b9c1",  719433,
@@ -6061,6 +6072,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 人魚島のボート釣り
 	MACGAME1_l("ukiuki3", "", "xn--u9jwcxjzcuh504p22ubz0h51ra", "r:bcd3c718db258701496b3c5bcb827ef2", 487782, Common::JA_JPN, 404),
 
+	MACGAME1_l("umezma", "", "Copy To Hard Disk/UMEZMA", "rt:9a2a95f0887f224b1a73e45d86183947", 483518, Common::JA_JPN, 404),
+	WINGAME1_l("umezma", "", "WIN/UMEZMA.EXE",			 "t:111a5351db236155b0510b37f30731a6",  742039, Common::JA_JPN, 404),
+
 	// Bilingual Japanese/English
 	MACGAME1("undergroundaz", "", "SO_OUT/SO_OUT",	   "r:47e49b52d4c99ea6ea72c3dcbb57b34b",  290422, 400),
 	WINGAME1("undergroundaz", "", "SO_OUT/SO_OUT.EXE", "t:cbffbb52e532daf671a6398c25d6db1d", 4637941, 404),
@@ -6846,6 +6860,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 									 "DATA/TEXT_E.Cxt", "f:e74119685db701dea9f31f91521fd078", 2457643, 501, GF_32BPP),
 	WINGAME2f("gadgetpaf",	"",		 "GADGET/GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
 									 "DATA/TEXT_E.Cxt", "5f14330705974a22deb9a12cd8ae6e79", 691046, 501, GF_32BPP),
+	WINGAME2f("gadgetpaf",	"",		 "GADGET/GADGET.EXE", "t:c8a85e9a0eda2b7dd7974197c02d6469", 1411507,
+									 "DATA/TEXT_E.Cxt", "f:d6ec0787583dd1ad4dcd0513aaeb8cbc", 813491, 501, GF_32BPP),
 	WINGAME2f_l("gadgetpaf", "",		 "GADGET/GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
 									 "DATA/TEXT_E.Cxt", "056ab5419f65fab51fa50c28ad360e76", 561824, Common::ES_ESP, 501, GF_32BPP),
 	WINDEMO2f_l("gadgetpaf", "Demo", "GADGET.exe", "t:7e393434e06153a6413baf1b448f440e", 1647502,
