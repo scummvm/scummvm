@@ -145,13 +145,34 @@ DWORD GetTickCount() {
 	return g_system->getMillis();
 }
 
+Common::SeekableReadStream *OpenFile(const char *filename) {
+	Common::String fname(filename);
+	if (fname.hasPrefix(".\\"))
+		fname = Common::String(fname.c_str() + 2);
+
+	auto file = AfxGetApp()->getDirectory();
+	int idx;
+	while ((idx = fname.findFirstOf('\\')) != Common::String::npos) {
+		file = file.getChild(Common::String(fname.c_str(), fname.c_str() + idx));
+		fname = Common::String(fname.c_str() + idx + 1);
+	}
+	file = file.getChild(fname);
+
+	return file.createReadStream();
+}
+
 bool FileExists(const char *filename) {
-	return Common::File::exists(filename);
+	Common::SeekableReadStream *rs = OpenFile(filename);
+	bool result = rs != nullptr;
+	delete rs;
+	return result;
 }
 
 long FileLength(const char *filename) {
-	Common::File f;
-	return f.open(filename) ? f.size() : -1;
+	Common::SeekableReadStream *rs = OpenFile(filename);
+	long result = rs ? rs->size() : -1;
+	delete rs;
+	return result;
 }
 
 BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,

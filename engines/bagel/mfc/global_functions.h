@@ -115,6 +115,7 @@ extern BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
 extern void Sleep(UINT milli);
 extern DWORD GetTickCount();
 
+extern Common::SeekableReadStream *OpenFile(const char *filename);
 extern bool FileExists(const char *filename);
 extern long FileLength(const char *filename);
 

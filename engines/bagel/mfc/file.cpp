@@ -36,20 +36,12 @@ CFile::CFile(const char *lpszFileName, UINT nOpenFlags) {
 BOOL CFile::Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError) {
 	Close();
 
-	if (!strncmp(lpszFileName, ".\\", 2))
-		lpszFileName += 2;
+	Common::SeekableReadStream *rs = OpenFile(lpszFileName);
 
-	Common::FSNode file = AfxGetApp()->getDirectory();
-	file = file.getChild(lpszFileName);
-	Common::File *f = new Common::File();
+	if (rs)
+		_stream = rs;
 
-	if (f->open(file)) {
-		_stream = f;
-		return true;
-	} else {
-		delete f;
-		return false;
-	}
+	return rs != nullptr;
 }
 
 void CFile::Close() {
