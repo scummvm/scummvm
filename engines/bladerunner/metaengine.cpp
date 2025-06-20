@@ -250,7 +250,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// GAME OPTIONS
-	act = new Action("KIAOPTS", _("Game Options"));
+	act = new Action("KIAOPTS", _("Game options"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleKiaOptions);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
