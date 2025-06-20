@@ -83,6 +83,16 @@ template<typename T> inline T CLIP(T v, T amin, T amax)
  */
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
+/** Function to rotate the 32-bit integer @p x left by @p r bits */
+static inline uint32 ROTATE_LEFT_32(const uint32 x, const uint32 r) {
+	return (x >> (32 - r)) | (x << r);
+}
+
+/** Function to rotate the 32-bit integer @p x right by @p bits */
+static inline uint32 ROTATE_RIGHT_32(const uint32 x, const uint32 r) {
+	return (x << (32 - r)) | (x >> r);
+}
+
 #ifdef ARRAYSIZE
 #undef ARRAYSIZE
 #endif
