@@ -151,6 +151,9 @@ bool BaseSurfaceOSystem::finishLoad() {
 	if (_filename.hasSuffix(".bmp")) {
 		// Ignores alpha channel for BMPs
 		needsColorKey = true;
+	} else if (_filename.hasSuffix(".jpg")) {
+		// Ignores alpha channel for JPEGs
+		needsColorKey = true;
 	} else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
 		// WME 1.x always use colorkey, even for images with transparency
 		needsColorKey = true;
