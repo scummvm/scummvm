@@ -2828,7 +2828,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("M+s");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionLoad, _("Load Game"));
+	act = new Action(kStandardActionLoad, _("Load game"));
 	act->setCustomEngineActionEvent(kPegasusActionLoadGameState);
 	act->addDefaultInputMapping("C+o"); // o for open (original)
 	act->addDefaultInputMapping("M+o");

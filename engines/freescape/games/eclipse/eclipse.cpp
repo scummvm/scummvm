@@ -233,7 +233,7 @@ void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	act->addDefaultInputMapping("s");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("LOAD", _("Load Game"));
+	act = new Common::Action("LOAD", _("Load game"));
 	act->setCustomEngineActionEvent(kActionLoad);
 	act->addDefaultInputMapping("l");
 	infoScreenKeyMap->addAction(act);
