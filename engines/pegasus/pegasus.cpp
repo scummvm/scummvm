@@ -2729,7 +2729,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveDown, _("Down/Zoom Out"));
+	act = new Action(kStandardActionMoveDown, _("Down/Zoom out"));
 	act->setCustomEngineActionEvent(kPegasusActionDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("KP5");
