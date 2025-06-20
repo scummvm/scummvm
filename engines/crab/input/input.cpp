@@ -268,7 +268,7 @@ Common::Keymap* InputManager::getDefaultKeyMapsForHUD() {
 	act->addDefaultInputMapping("F5");
 	hudKeymap->addAction(act);
 
-	act = new Action("QUICKLOAD", _("Quick Load"));
+	act = new Action("QUICKLOAD", _("Quick load"));
 	act->setCustomEngineActionEvent(IG_QUICKLOAD);
 	act->addDefaultInputMapping("F9");
 	hudKeymap->addAction(act);
