@@ -40,7 +40,7 @@ struct KeybindingRecord {
 
 static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_INTERACT, "INTERACT", _s("Interact"), "interact", "RETURN", nullptr },
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Abort Action"), "", "ESCAPE", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Abort action"), "", "ESCAPE", nullptr },
 	{ KEYBIND_UP, "UP", _s("Up"), "move up", "UP", nullptr },
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "move down", "DOWN", nullptr },
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "move left", "LEFT", nullptr },
@@ -53,35 +53,35 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_ENTER, "ENTER", _s("Enter"), "enter", "e", nullptr },
 	{ KEYBIND_EXIT, "EXIT", _s("Exit"), "exit", "x", nullptr },
 	{ KEYBIND_FIRE, "FIRE", _s("Fire"), "fire", "f", nullptr },
-	{ KEYBIND_GET, "GET", _s("Get Chest"), "get", "g", nullptr },
-	{ KEYBIND_HOLE_UP, "HOLE-UP", _s("Hole Up & Camp"), "camp", "h", nullptr },
+	{ KEYBIND_GET, "GET", _s("Get chest"), "get", "g", nullptr },
+	{ KEYBIND_HOLE_UP, "HOLE-UP", _s("Hole up & camp"), "camp", "h", nullptr },
 	{ KEYBIND_JIMMY, "JIMMY", _s("Jimmy"), "jimmy", "j", nullptr },
 	{ KEYBIND_IGNITE, "IGNITE", _s("Ignite"), "ignite", "i", nullptr },
-	{ KEYBIND_LOCATE, "LOCATE", _s("Locate Position"), "locate", "l", nullptr },
-	{ KEYBIND_MIX, "MIX", _s("Mix Reagents"), "mix", "m", nullptr },
-	{ KEYBIND_NEW_ORDER, "NEW-ORDER", _s("New Order"), "order", "n", nullptr },
+	{ KEYBIND_LOCATE, "LOCATE", _s("Locate position"), "locate", "l", nullptr },
+	{ KEYBIND_MIX, "MIX", _s("Mix reagents"), "mix", "m", nullptr },
+	{ KEYBIND_NEW_ORDER, "NEW-ORDER", _s("New order"), "order", "n", nullptr },
 	{ KEYBIND_OPEN_DOOR, "OPEN-DOOR", _s("Open door"), "open", "o", nullptr },
 	{ KEYBIND_PASS, "PASS", _s("Pass"), "pass", "SPACE", nullptr },
 	{ KEYBIND_PEER, "PEER", _s("Peer"), "peer", "p", nullptr },
-	{ KEYBIND_QUIT_SAVE, "QUIT-SAVE", _s("Quit and Save"), "quitAndSave", "q", nullptr },
-	{ KEYBIND_READY_WEAPON, "READY-WEAPON", _s("Ready Weapon"), "ready", "r", nullptr },
+	{ KEYBIND_QUIT_SAVE, "QUIT-SAVE", _s("Quit and save"), "quitAndSave", "q", nullptr },
+	{ KEYBIND_READY_WEAPON, "READY-WEAPON", _s("Ready weapon"), "ready", "r", nullptr },
 	{ KEYBIND_SEARCH, "SEARCH", _s("Search"), "search", "s", nullptr },
 	{ KEYBIND_STATS, "STATS", _s("Stats"), "stats", "z", nullptr },
 	{ KEYBIND_TALK, "TALK", _s("Talk"), "talk", "t", nullptr },
 	{ KEYBIND_USE, "USE", _s("Use"), "use", "u", nullptr },
-	{ KEYBIND_WEAR, "WEAR", _s("Wear Armor"), "wear", "w", nullptr },
+	{ KEYBIND_WEAR, "WEAR", _s("Wear armor"), "wear", "w", nullptr },
 	{ KEYBIND_YELL, "YELL", _s("Yell"), "yell", "y", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CONFIG_KEYS[] = {
-	{ KEYBIND_SPEED_UP, "SPEED-UP", _s("Speed Up"), "speed up", "KP_PLUS", nullptr },
-	{ KEYBIND_SPEED_DOWN, "SPEED-DOWN", _s("Speed Down"), "speed down", "KP_MINUS", nullptr },
-	{ KEYBIND_SPEED_NORMAL, "SPEED-NORMAL", _s("Speed Normal"), "speed normal", "KP_ENTER", nullptr },
-	{ KEYBIND_COMBATSPEED_UP, "COMBATSPEED-UP", _s("Combat Speed Up"), "combat_speed up", "A+KP_PLUS", nullptr },
-	{ KEYBIND_COMBATSPEED_DOWN, "COMBATSPEED-DOWN", _s("Combat Speed Down"), "combat_speed down", "A+KP_MINUS", nullptr },
-	{ KEYBIND_COMBATSPEED_NORMAL, "COMBATSPEED-NORMAL", _s("Combat Speed Normal"), "combat_speed normal", "A+KP_ENTER", nullptr },
+	{ KEYBIND_SPEED_UP, "SPEED-UP", _s("Speed up"), "speed up", "KP_PLUS", nullptr },
+	{ KEYBIND_SPEED_DOWN, "SPEED-DOWN", _s("Speed down"), "speed down", "KP_MINUS", nullptr },
+	{ KEYBIND_SPEED_NORMAL, "SPEED-NORMAL", _s("Speed normal"), "speed normal", "KP_ENTER", nullptr },
+	{ KEYBIND_COMBATSPEED_UP, "COMBATSPEED-UP", _s("Combat speed up"), "combat_speed up", "A+KP_PLUS", nullptr },
+	{ KEYBIND_COMBATSPEED_DOWN, "COMBATSPEED-DOWN", _s("Combat speed down"), "combat_speed down", "A+KP_MINUS", nullptr },
+	{ KEYBIND_COMBATSPEED_NORMAL, "COMBATSPEED-NORMAL", _s("Combat speed normal"), "combat_speed normal", "A+KP_ENTER", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
@@ -101,33 +101,33 @@ static const KeybindingRecord PARTY_KEYS[] = {
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
-	{ KEYBIND_CHEAT_DESTROY_CREATURES, "CHEAT-DESTROY_CREATURES", _s("Destroy All Creatures"), "destroy_creatures", "A+a", nullptr },
-	{ KEYBIND_CHEAT_COLLISIONS, "CHEAT-COLLISIONS", _s("Toggle Collision Handling"), "collisions", "A+c", nullptr },
-	{ KEYBIND_CHEAT_DESTROY, "CHEAT-DESTROY", _s("Destroy Object"), "destroy", "A+d", nullptr },
-	{ KEYBIND_CHEAT_EQUIPMENT, "CHEAT-EQUIPMENT", _s("Full Equipment"), "equipment", "A+e", nullptr },
-	{ KEYBIND_CHEAT_FLEE, "CHEAT_FLEE", _s("Flee Combat"), "flee", "A+f", nullptr },
+	{ KEYBIND_CHEAT_DESTROY_CREATURES, "CHEAT-DESTROY_CREATURES", _s("Destroy all creatures"), "destroy_creatures", "A+a", nullptr },
+	{ KEYBIND_CHEAT_COLLISIONS, "CHEAT-COLLISIONS", _s("Toggle collision handling"), "collisions", "A+c", nullptr },
+	{ KEYBIND_CHEAT_DESTROY, "CHEAT-DESTROY", _s("Destroy object"), "destroy", "A+d", nullptr },
+	{ KEYBIND_CHEAT_EQUIPMENT, "CHEAT-EQUIPMENT", _s("Full equipment"), "equipment", "A+e", nullptr },
+	{ KEYBIND_CHEAT_FLEE, "CHEAT_FLEE", _s("Flee combat"), "flee", "A+f", nullptr },
 	{ KEYBIND_CHEAT_GOTO, "CHEAT-GOTO", _s("Goto location"), "goto", "A+g", nullptr },
 	{ KEYBIND_CHEAT_HELP, "CHEAT-HELP", _s("Help - Teleport to Lord British"), "goto", "A+h", nullptr },
-	{ KEYBIND_CHEAT_ITEMS, "CHEAT-ITEMS", _s("Give Items"), "items", "A+i", nullptr },
-	{ KEYBIND_CHEAT_KARMA, "CHEAT-KARMA", _s("List Karma"), "karma", "A+k", nullptr },
-	{ KEYBIND_CHEAT_LEAVE, "CHEAT-LEAVE", _s("Leave Location"), "leave", "A+l", nullptr },
-	{ KEYBIND_CHEAT_MIXTURES, "CHEAT-MIXTURES", _s("Give Mixtures"), "mixtures", "A+m", nullptr },
-	{ KEYBIND_CHEAT_NO_COMBAT, "CHEAT-NOCOMBAT", _s("Combat Encounters"), "combat", "A+n", nullptr },
-	{ KEYBIND_CHEAT_OVERHEAD, "CHEAT_OVERHEAD", _s("Toggle Overhead View"), "overhead", "A+o", nullptr },
-	{ KEYBIND_CHEAT_PARTY, "CHEAT-PARTY", _s("Full Party"), "companions", "A+p", nullptr },
-	{ KEYBIND_CHEAT_REAGENTS, "CHEAT-REAGENTS", _s("Give Reagents"), "reagents", "A+r", nullptr },
-	{ KEYBIND_CHEAT_STATS, "CHEAT-STATS", _s("Full Stats"), "fullstats", "A+s", nullptr },
-	{ KEYBIND_CHEAT_TRANSPORT, "CHEAT-TRANSPORT", _s("Create Transport"), "transport", "A+t", nullptr },
-	{ KEYBIND_CHEAT_UP, "CHEAT-UP", _s("Up Level"), "up", "A+UP", nullptr },
-	{ KEYBIND_CHEAT_DOWN, "CHEAT-DOWN", _s("Down Level"), "down", "A+DOWN", nullptr },
-	{ KEYBIND_CHEAT_VIRTUE, "CHEAT-VIRTUE", _s("Grant Virtue"), "virtue", "A+v", nullptr },
- 	{ KEYBIND_CHEAT_WIND, "CHEAT-WIND", _s("Change Wind"), "wind", "A+w", nullptr },
+	{ KEYBIND_CHEAT_ITEMS, "CHEAT-ITEMS", _s("Give items"), "items", "A+i", nullptr },
+	{ KEYBIND_CHEAT_KARMA, "CHEAT-KARMA", _s("List karma"), "karma", "A+k", nullptr },
+	{ KEYBIND_CHEAT_LEAVE, "CHEAT-LEAVE", _s("Leave location"), "leave", "A+l", nullptr },
+	{ KEYBIND_CHEAT_MIXTURES, "CHEAT-MIXTURES", _s("Give mixtures"), "mixtures", "A+m", nullptr },
+	{ KEYBIND_CHEAT_NO_COMBAT, "CHEAT-NOCOMBAT", _s("Combat encounters"), "combat", "A+n", nullptr },
+	{ KEYBIND_CHEAT_OVERHEAD, "CHEAT_OVERHEAD", _s("Toggle overhead view"), "overhead", "A+o", nullptr },
+	{ KEYBIND_CHEAT_PARTY, "CHEAT-PARTY", _s("Full party"), "companions", "A+p", nullptr },
+	{ KEYBIND_CHEAT_REAGENTS, "CHEAT-REAGENTS", _s("Give reagents"), "reagents", "A+r", nullptr },
+	{ KEYBIND_CHEAT_STATS, "CHEAT-STATS", _s("Full stats"), "fullstats", "A+s", nullptr },
+	{ KEYBIND_CHEAT_TRANSPORT, "CHEAT-TRANSPORT", _s("Create transport"), "transport", "A+t", nullptr },
+	{ KEYBIND_CHEAT_UP, "CHEAT-UP", _s("Up level"), "up", "A+UP", nullptr },
+	{ KEYBIND_CHEAT_DOWN, "CHEAT-DOWN", _s("Down level"), "down", "A+DOWN", nullptr },
+	{ KEYBIND_CHEAT_VIRTUE, "CHEAT-VIRTUE", _s("Grant virtue"), "virtue", "A+v", nullptr },
+ 	{ KEYBIND_CHEAT_WIND, "CHEAT-WIND", _s("Change wind"), "wind", "A+w", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord INPUT_KEYS[] = {
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Abort Action"), "", "ESCAPE", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Abort action"), "", "ESCAPE", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
