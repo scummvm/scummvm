@@ -119,6 +119,34 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_AMIGA
 	},
+	// Out of this World (USA)
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244822,
+					   "bank03", "b8cdbcd57e9953423a21dadeeca3cdfa", 128040),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_AMIGA
+	},
+	// Delphine Classic Collection (Kixx)
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244674,
+					   "bank03", "c2594927418291119c2996eabcf6d0f1", 128038),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_AMIGA
+	},
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
