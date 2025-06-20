@@ -581,7 +581,7 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	engineKeyMap->addAction(act);
 
 	// I18N: Cycle means rotate through
-	act = new Action("COUP", _("Cycle Objects Up"));
+	act = new Action("COUP", _("Cycle objects up"));
 	act->setKeyEvent(KeyState(KEYCODE_PAGEUP));
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	engineKeyMap->addAction(act);
