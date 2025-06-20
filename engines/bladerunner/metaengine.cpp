@@ -279,7 +279,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 
 	// I18N: This keymap works within the KIA Save Game screen
 	// and allows submitting a selected existing save game for deletion.
-	act = new Action("KIADELETESVDGAME", _("Delete Selected Saved Game"));
+	act = new Action("KIADELETESVDGAME", _("Delete selected saved game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpDeleteSelectedSvdGame);
 	act->addDefaultInputMapping("DELETE");
 	// TODO In the original KP_PERIOD with NUMLOCK on, would work as a normal '.' character.
