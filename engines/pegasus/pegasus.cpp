@@ -2786,7 +2786,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TMA", _("Toggle Center Data Display"));
+	act = new Action("TMA", _("Toggle center data display"));
 	act->setCustomEngineActionEvent(kPegasusActionToggleCenterDisplay);
 	act->addDefaultInputMapping("t");
 	act->addDefaultInputMapping("KP_EQUALS");
