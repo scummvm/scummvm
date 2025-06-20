@@ -354,7 +354,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// SUSPECT DATABASE
-	act = new Action("KIASUSPECTS", _("Suspect Database"));
+	act = new Action("KIASUSPECTS", _("Suspect database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabSuspectDatabase);
 	act->addDefaultInputMapping("F5");
 	commonKeymap->addAction(act);
