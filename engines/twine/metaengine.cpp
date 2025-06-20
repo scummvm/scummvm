@@ -251,7 +251,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("1");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETOATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act = new Action("CHANGETOATHLETICBEHAVIOUR", _("Athletic behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAthletic);
 		act->addDefaultInputMapping("2");
 		gameKeyMap->addAction(act);
@@ -271,7 +271,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("F1");
 		gameKeyMap->addAction(act);
 
-		act = new Action("ATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act = new Action("ATHLETICBEHAVIOUR", _("Athletic behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAthletic);
 		act->addDefaultInputMapping("F2");
 		gameKeyMap->addAction(act);
