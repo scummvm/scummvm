@@ -316,7 +316,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT_STICK");
 		gameKeyMap->addAction(act);
 
-		act = new Action("USESELECTEDOBJECT", _("Use Selected Object"));
+		act = new Action("USESELECTEDOBJECT", _("Use selected object"));
 		act->setCustomEngineActionEvent(TwinEActionType::UseSelectedObject);
 		act->addDefaultInputMapping("S+RETURN");
 		act->addDefaultInputMapping("S+KP_ENTER");
