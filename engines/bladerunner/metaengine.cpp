@@ -372,7 +372,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// QUIT GAME
-	act = new Action("KIAQUIT", _("Quit Game"));
+	act = new Action("KIAQUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabQuitGame);
 	act->addDefaultInputMapping("F10");
 	commonKeymap->addAction(act);

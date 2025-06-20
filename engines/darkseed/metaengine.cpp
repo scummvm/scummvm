@@ -90,7 +90,7 @@ Common::KeymapArray DarkseedMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
-	act = new Action("QUIT", _("Quit Game"));
+	act = new Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionQuit);
 	act->addDefaultInputMapping("C+q");
 	engineKeyMap->addAction(act);

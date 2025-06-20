@@ -292,7 +292,7 @@ Common::KeymapArray SwordMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_X");
 	gameKeyMap->addAction(act);
 
-	act = new Action("QUIT", _("Quit Game"));
+	act = new Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(kActionQuit);
 	act->addDefaultInputMapping("C+q");
 	act->addDefaultInputMapping("JOY_CENTER");
