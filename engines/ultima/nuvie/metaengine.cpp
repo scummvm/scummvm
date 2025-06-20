@@ -97,7 +97,7 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 	{ "TOGGLE_AUDIO", _s("Toggle audio"), "C+a", nullptr },
 	{ "TOGGLE_MUSIC", _s("Toggle music"), "C+m", nullptr },
 	{ "TOGGLE_SFX", _s("Toggle sfx"), "C+s", nullptr },
-	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", _s("Show/hide original style command bar"), nullptr, nullptr },
+	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", _s("Show / hide original style command bar"), nullptr, nullptr },
 	{ "DO_ACTION", _s("Do action"), "RETURN", "KP_ENTER" },
 	{ "CANCEL_ACTION", _s("Cancel action"), "SPACE", nullptr },
 	{ "MSG_SCROLL_UP", _s("Msg scroll up"), "PAGEUP", nullptr },

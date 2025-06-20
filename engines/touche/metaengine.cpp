@@ -132,7 +132,7 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	{
-		act = new Action("SKIPORQUIT", _("Skip sequence/open quit dialogue"));
+		act = new Action("SKIPORQUIT", _("Skip sequence / open quit dialogue"));
 		act->setCustomEngineActionEvent(kToucheActionSkipOrQuit);
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
@@ -170,7 +170,7 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT_STICK");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TGGLTALKTEXT", _("Toggle between voice/text/text and voice"));
+		act = new Action("TGGLTALKTEXT", _("Toggle between voice / text / text and voice"));
 		act->setCustomEngineActionEvent(kToucheActionToggleTalkTextMode);
 		act->addDefaultInputMapping("t");
 		act->addDefaultInputMapping("JOY_RIGHT");

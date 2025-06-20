@@ -280,7 +280,7 @@ Common::KeymapArray SwordMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("ESCAPE", _("Exit/Skip"));
+	act = new Action("ESCAPE", _("Exit / Skip"));
 	act->setCustomEngineActionEvent(kActionEscape);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_BACK");
