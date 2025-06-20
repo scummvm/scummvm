@@ -152,7 +152,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_UP"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMoveDown, _("Move Backwards"));
+		act = new Action(kStandardActionMoveDown, _("Move backwards"));
 		act->setKeyEvent(KEYCODE_DOWN);
 		act->addDefaultInputMapping("DOWN"); // original keyboard
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
@@ -733,7 +733,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("UP"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMoveDown, _("Move Backwards"));
+		act = new Action(kStandardActionMoveDown, _("Move backwards"));
 		act->setKeyEvent(KEYCODE_DOWN);
 		act->addDefaultInputMapping("DOWN"); // original keyboard
 		gameKeyMap->addAction(act);
@@ -2235,7 +2235,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		extraKeyMap->addAction(act);
 
 		if (gameId != "rhiannon") {
-			act = new Action(kStandardActionMoveDown, _("Move Backwards"));
+			act = new Action(kStandardActionMoveDown, _("Move backwards"));
 			act->setCustomEngineActionEvent(kClickAtBottom);
 			act->addDefaultInputMapping("DOWN"); // extra keyboard
 			act->addDefaultInputMapping("KP2"); // extra keyboard
