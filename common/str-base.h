@@ -189,7 +189,6 @@ public:
 	 */
 	value_type &operator[](size_t idx) {
 		assert(_str);
-		assert(idx >= 0);
 		assert(idx < _size);
 		return _str[idx];
 	}
@@ -199,7 +198,6 @@ public:
 	 */
 	value_type operator[](size_t idx) const {
 		assert(_str);
-		assert(idx >= 0);
 		assert(idx < _size);
 		return _str[idx];
 	}
