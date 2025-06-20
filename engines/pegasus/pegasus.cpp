@@ -2800,7 +2800,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionOpenMainMenu, _("Display/Hide Pause Menu"));
+	act = new Action(kStandardActionOpenMainMenu, _("Toggle pause menu"));
 	act->setCustomEngineActionEvent(kPegasusActionShowPauseMenu);
 	act->addDefaultInputMapping("p");
 	act->addDefaultInputMapping("ESCAPE");
