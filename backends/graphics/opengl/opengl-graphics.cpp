@@ -1702,8 +1702,6 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		// hope for this to change anytime soon) we use pixel format
 		// conversion to a supported texture format.
 		return new TextureSurfaceRGB555();
-	} else if (format == Graphics::PixelFormat::createFormatABGR32()) {
-		return new TextureSurfaceRGBA8888Swap();
 	} else {
 		return new FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), format);
 	}

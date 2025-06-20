@@ -243,14 +243,6 @@ public:
 	void updateGLTexture() override;
 };
 
-class TextureSurfaceRGBA8888Swap : public FakeTextureSurface {
-public:
-	TextureSurfaceRGBA8888Swap();
-	~TextureSurfaceRGBA8888Swap() override {}
-
-	void updateGLTexture() override;
-};
-
 #ifdef USE_SCALERS
 class ScaledTextureSurface : public FakeTextureSurface {
 public:
