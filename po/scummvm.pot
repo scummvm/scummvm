@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-19 22:37+0000\n"
+"POT-Creation-Date: 2025-06-20 23:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8072,14 +8072,14 @@ msgstr ""
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:222
-#: engines/ultima/ultima8/metaengine.cpp:143
+#: engines/ultima/ultima8/metaengine.cpp:139
 msgid "Interact via Left Click"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:228
-#: engines/ultima/ultima8/metaengine.cpp:149
+#: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Right Click"
 msgstr ""
 
@@ -8103,13 +8103,11 @@ msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:371
 #: engines/ultima/ultima8/metaengine.cpp:55
-#: engines/ultima/ultima8/metaengine.cpp:111
 msgid "Move Left"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:372
 #: engines/ultima/ultima8/metaengine.cpp:56
-#: engines/ultima/ultima8/metaengine.cpp:112
 msgid "Move Right"
 msgstr ""
 
@@ -12072,12 +12070,10 @@ msgid "Move Back"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:53
-#: engines/ultima/ultima8/metaengine.cpp:109
 msgid "Move Up"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:54
-#: engines/ultima/ultima8/metaengine.cpp:110
 msgid "Move Down"
 msgstr ""
 
@@ -12222,51 +12218,51 @@ msgstr ""
 msgid "Descend"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:119
+#: engines/ultima/ultima8/metaengine.cpp:115
 msgid "Show Touching Items"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:120
+#: engines/ultima/ultima8/metaengine.cpp:116
 msgid "Show Editor Items"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:121
+#: engines/ultima/ultima8/metaengine.cpp:117
 msgid "Decrement Map Sort Order"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:122
+#: engines/ultima/ultima8/metaengine.cpp:118
 msgid "Increment Map Sort Order"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:123
+#: engines/ultima/ultima8/metaengine.cpp:119
 msgid "Toggle Frame By Frame"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:124
+#: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Advance Frame"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:125
+#: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Toggle Avatar In Stasis"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:126
+#: engines/ultima/ultima8/metaengine.cpp:122
 msgid "Show Shape Viewer"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:136
+#: engines/ultima/ultima8/metaengine.cpp:132
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:136
+#: engines/ultima/ultima8/metaengine.cpp:132
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:179
+#: engines/ultima/ultima8/metaengine.cpp:175
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/metaengine.cpp:194
+#: engines/ultima/ultima8/metaengine.cpp:190
 msgid "Ultima VIII Debug"
 msgstr ""
 
