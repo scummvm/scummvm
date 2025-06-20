@@ -214,7 +214,7 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 
 	Keymap *gameKeymap = new Keymap(Keymap::kKeymapTypeGame, gameKeymapId, "Z-Vision - Game");
 
-	act = new Action(kStandardActionMoveUp, _("Look Up"));
+	act = new Action(kStandardActionMoveUp, _("Look up"));
 	act->setCustomEngineActionEvent(kZVisionActionUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
