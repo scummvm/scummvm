@@ -261,7 +261,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 	// ACTIVATE KIA CLUE DATABASE SYSTEM
-	act = new Action("KIADB", _("Open KIA Database"));
+	act = new Action("KIADB", _("Open KIA database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKiaDatabase);
 	act->addDefaultInputMapping("TAB");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
