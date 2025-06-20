@@ -457,7 +457,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT");
 		uiKeyMap->addAction(act);
 
-		act = new Action("NEXTPAGE", _("Next Page"));
+		act = new Action("NEXTPAGE", _("Next page"));
 		act->setCustomEngineActionEvent(TwinEActionType::UINextPage);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("PAGEDOWN");
