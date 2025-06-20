@@ -275,7 +275,7 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 		act->allowKbdRepeats();
 		gameKeyMap->addAction(act);
 
-		act = new Common::Action("LEFT", _("Turn Left/Crawl West"));
+		act = new Common::Action("LEFT", _("Turn left/Crawl West"));
 		act->setCustomEngineActionEvent(kActionMoveLeftCrawlWest);
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
