@@ -304,7 +304,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setEvent(EVENT_MAINMENU);
 		gameKeyMap->addAction(act);
 
-		act = new Action("OPTIONSMENU", _("Options Menu"));
+		act = new Action("OPTIONSMENU", _("Options menu"));
 		act->setCustomEngineActionEvent(TwinEActionType::OptionsMenu);
 		act->addDefaultInputMapping("F6");
 		gameKeyMap->addAction(act);
