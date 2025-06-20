@@ -220,7 +220,7 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_UP");
 	gameKeymap->addAction(act);
 
-	act = new Action(kStandardActionMoveDown, _("Look Down"));
+	act = new Action(kStandardActionMoveDown, _("Look down"));
 	act->setCustomEngineActionEvent(kZVisionActionDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
