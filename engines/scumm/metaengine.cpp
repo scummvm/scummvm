@@ -962,7 +962,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	if (gameId == "ft") {
 		Keymap *insaneKeymap = new Keymap(Keymap::kKeymapTypeGame, insaneKeymapId, "SCUMM - Bike Fights");
 
-		act = new Action("DOWNLEFT", _("Down Left"));
+		act = new Action("DOWNLEFT", _("Down left"));
 		act->setCustomEngineActionEvent(kScummActionInsaneDownLeft);
 		act->addDefaultInputMapping("KP1");
 		act->addDefaultInputMapping("END");
