@@ -2793,7 +2793,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TIN", _("Display/Hide Info Screen"));
+	act = new Action("TIN", _("Toggle info screen"));
 	act->setCustomEngineActionEvent(kPegasusActionShowInfoScreen);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("KP_DIVIDE");
