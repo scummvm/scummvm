@@ -756,8 +756,8 @@ extern HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h);
 extern HGDIOBJ GetStockObject(int i);
 extern HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd);
 extern UINT RealizePalette(HDC hdc);
-extern BOOL BitBlt(HDC hdc, int x, int y, int cx, int cy,
-                   HDC hdcSrc, int x1, int y1, DWORD rop);
+extern BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
+	HDC hdcSrc, int xSrc, int ySrc, DWORD rop);
 extern BOOL StretchBlt(HDC hdcDest, int xDest, int yDest,
                        int wDest, int hDest, HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop);
 extern int SetStretchBltMode(HDC hdc, int mode);

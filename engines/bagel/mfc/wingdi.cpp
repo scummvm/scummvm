@@ -24,6 +24,7 @@
 #include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/gfx/blitter.h"
 
 namespace Bagel {
 namespace MFC {
@@ -211,9 +212,18 @@ int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
 	error("TODO: GetDIBits");
 }
 
-BOOL BitBlt(HDC hdc, int x, int y, int cx, int cy,
-            HDC hdcSrc, int x1, int y1, DWORD rop) {
-	error("TODO: BitBlt");
+BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
+        HDC hdcSrc, int xSrc, int ySrc, DWORD rop) {
+	const CDC::Impl *srcDc = (const CDC::Impl *)hdcSrc;
+	CDC::Impl *destDc = (CDC::Impl *)hdc;
+	const CBitmap::Impl *src = (CBitmap::Impl *)srcDc->_bitmap;
+	CBitmap::Impl *dest = (CBitmap::Impl *)destDc->_bitmap;
+
+	Gfx::blit(src, dest,
+		Common::Rect(xSrc, ySrc, xSrc + width, ySrc + height),
+		Common::Point(xDest, yDest),
+		rop);
+	return true;
 }
 
 BOOL StretchBlt(HDC hdcDest, int xDest, int yDest, int wDest, int hDest,
