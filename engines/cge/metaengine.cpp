@@ -297,31 +297,31 @@ Common::KeymapArray CGEMetaEngine::initKeymaps(const char *target) const {
 	// I18N: There are 24 single-room/screen locations in the game.
 	// You switch between them from numbered buttons on interface.
 	// Sets the current access to only the first Location
-	act = new Action("DEBUGLOC1", _("DEBUG: Access to Location 1"));
+	act = new Action("DEBUGLOC1", _("DEBUG: Access to location 1"));
 	act->setCustomEngineActionEvent(kActionLevel0);
 	act->addDefaultInputMapping("A+0");
 	keymap->addAction(act);
 
 	// I18N: Sets the current access to Locations 1 to 8.
-	act = new Action("DEBUGLOC18", _("DEBUG: Access to Locations 1-8"));
+	act = new Action("DEBUGLOC18", _("DEBUG: Access to locations 1-8"));
 	act->setCustomEngineActionEvent(kActionLevel1);
 	act->addDefaultInputMapping("A+1");
 	keymap->addAction(act);
 
 	// I18N: Sets the current access to Locations 1 to 16.
-	act = new Action("DEBUGLOC116", _("DEBUG: Access to Locations 1-16"));
+	act = new Action("DEBUGLOC116", _("DEBUG: Access to locations 1-16"));
 	act->setCustomEngineActionEvent(kActionLevel2);
 	act->addDefaultInputMapping("A+2");
 	keymap->addAction(act);
 
 	// I18N: Sets the current access to Locations 1 to 23.
-	act = new Action("DEBUGLOC123", _("DEBUG: Access to Locations 1-23"));
+	act = new Action("DEBUGLOC123", _("DEBUG: Access to locations 1-23"));
 	act->setCustomEngineActionEvent(kActionLevel3);
 	act->addDefaultInputMapping("A+3");
 	keymap->addAction(act);
 
 	// I18N: Sets the current access to Locations 1 to 24.
-	act = new Action("DEBUGLOC124", _("DEBUG: Access to Locations 1-24"));
+	act = new Action("DEBUGLOC124", _("DEBUG: Access to locations 1-24"));
 	act->setCustomEngineActionEvent(kActionLevel4);
 	act->addDefaultInputMapping("A+4");
 	keymap->addAction(act);
