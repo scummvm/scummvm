@@ -401,7 +401,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 
-		act = new Action("LOAD", _("Quick Load"));
+		act = new Action("LOAD", _("Quick load"));
 		act->setKeyEvent(KeyState(KEYCODE_l, 'l'));
 		act->addDefaultInputMapping("l");
 		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
