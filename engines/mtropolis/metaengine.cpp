@@ -170,7 +170,7 @@ Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *tar
 	act->addDefaultInputMapping("JOY_B");
 	keymap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionMiddleClick, _("Middle Click"));
+	act = new Common::Action(Common::kStandardActionMiddleClick, _("Middle click"));
 	act->setMiddleClickEvent();
 	act->addDefaultInputMapping("MOUSE_MIDDLE");
 	act->addDefaultInputMapping("JOY_X");
