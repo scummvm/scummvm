@@ -570,7 +570,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_B");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionPause, _("Pause Game"));
+		act = new Action(kStandardActionPause, _("Pause game"));
 		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_RIGHT");
