@@ -112,7 +112,7 @@ Scores::Scores(MinigameManager *runtime) {
 		}
 		Common::sort(lvl.data.begin(), lvl.data.end());
 		levels_.push_back(lvl);
-		debugC(2, kDebugMinigames, "");
+		debugC(2, kDebugMinigames, "%s", "");
 	}
 
 	if (levels_.empty())
