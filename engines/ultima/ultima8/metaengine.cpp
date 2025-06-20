@@ -43,7 +43,7 @@ struct KeybindingRecord {
 static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_QUICKSAVE, "QUICKSAVE", _s("Quick Save"), "F1", nullptr },
 	{ ACTION_SAVE, "SAVE", _s("Save Game"), "F5", nullptr },
-	{ ACTION_LOAD, "LOAD", _s("Load Game"), "F7", nullptr },
+	{ ACTION_LOAD, "LOAD", _s("Load game"), "F7", nullptr },
 	{ ACTION_COMBAT, "COMBAT", _s("Draw Weapon / Combat"), "c", "JOY_X" },
 	{ ACTION_MENU, "MENU", _s("Game Menu"), "ESCAPE", "JOY_Y" },
 	{ ACTION_TURN_LEFT, "TURN_LEFT", _s("Turn left"), "LEFT", "KP4" },

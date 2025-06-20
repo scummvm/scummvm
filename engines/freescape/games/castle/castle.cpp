@@ -248,7 +248,7 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	act->addDefaultInputMapping("s");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("LOAD", _("Load Game"));
+	act = new Common::Action("LOAD", _("Load game"));
 	act->setCustomEngineActionEvent(kActionLoad);
 	if (_language == Common::ES_ESP)
 		act->addDefaultInputMapping("c");
