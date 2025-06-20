@@ -235,7 +235,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("x");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSLEFT", _("Debug Grid Camera Left"));
+		act = new Action("DEBUGGRIDCAMERAPRESSLEFT", _("Debug grid camera left"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressLeft);
 		act->addDefaultInputMapping("y");
 		act->addDefaultInputMapping("z");
