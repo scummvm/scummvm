@@ -43,6 +43,7 @@ private:
 	uint32 _nextFrameTime = 0;
 	bool _quitFlag = false;
 	Common::Point _joystickPos;
+	Common::Point _mousePos;
 	uint _joystickButtons = 0;
 
 	/**
@@ -124,6 +125,10 @@ public:
 	void SetCapture(HWND hWnd);
 	void ReleaseCapture();
 	HWND GetCapture() const;
+	Common::Point getMousePos() const {
+		return _mousePos;
+	}
+	void setMousePos(const Common::Point &pt);
 
 	void SetActiveWindow(CWnd *wnd) {
 		// FIXME: modals are blocking, this shouldn't.

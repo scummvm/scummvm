@@ -304,6 +304,11 @@ void EventLoop::SetFocus(CWnd *wnd) {
 	}
 }
 
+void EventLoop::setMousePos(const Common::Point &pt) {
+	_mousePos = pt;
+	g_system->warpMouse(pt.x, pt.y);
+}
+
 bool EventLoop::validateDestroyedWnd(HWND hWnd) {
 	MSG msg;
 	return !_messages.peekMessage(&msg, hWnd, 0, 0, false);

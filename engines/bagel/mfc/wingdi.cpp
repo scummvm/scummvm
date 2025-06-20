@@ -274,16 +274,20 @@ BOOL SetScrollRange(HWND hWnd, int nBar,
 }
 
 BOOL ClipCursor(const RECT *lpRect) {
-	error("TODO: ClipCursor");
+	// Ignored in ScummVM
+	return false;
 }
 
 BOOL GetCursorPos(LPPOINT lpPoint) {
-	error("TODO: GetCursorPos");
+	Common::Point mousePos = AfxGetApp()->getMousePos();
+	lpPoint->x = mousePos.x;
+	lpPoint->y = mousePos.y;
+	return true;
 }
 
 BOOL SetCursorPos(int x, int y) {
-	g_system->warpMouse(x, y);
-	return TRUE;
+	AfxGetApp()->setMousePos(Common::Point(x, y));
+	return true;
 }
 
 BOOL SetCapture(HWND hWnd) {
