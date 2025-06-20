@@ -30,13 +30,14 @@ namespace Libs {
 
 #define FRAME_RATE 50
 
-void EventLoop::runEventLoop(CWnd *modalDialog) {
-	_modalDialog = modalDialog;
-
+void EventLoop::runEventLoop() {
 	MSG msg;
 
-	while (!g_engine->shouldQuit() && _mainWindow &&
-			(!_modalDialog || _modalDialog->m_nModalResult == -1)) {
+	while (!g_engine->shouldQuit() && !_activeWindows.empty()) {
+		CWnd *activeWin = _activeWindows.top();
+		if (activeWin->m_nModalResult != -1)
+			break;
+
 		if (!GetMessage(msg))
 			break;
 
@@ -46,7 +47,13 @@ void EventLoop::runEventLoop(CWnd *modalDialog) {
 		}
 	}
 
-	_modalDialog = nullptr;
+	_activeWindows.pop();
+}
+
+void EventLoop::SetActiveWindow(CWnd *wnd) {
+	if (_activeWindows.empty())
+		_mainWindow = wnd;
+	_activeWindows.push(wnd);
 }
 
 bool EventLoop::GetMessage(MSG &msg) {
@@ -71,8 +78,8 @@ bool EventLoop::GetMessage(MSG &msg) {
 				// changes, generate a WM_SETCURSOR event
 				if (isMouseMsg(ev) && CWnd::FromHandle(hWnd) != _highlightedWin) {
 					_highlightedWin = CWnd::FromHandle(hWnd);
-					PostMessage(
-						_modalDialog ? _modalDialog : _mainWindow,
+					CWnd *activeWin = _activeWindows.top();
+					PostMessage(activeWin,
 						WM_SETCURSOR, (WPARAM)hWnd,
 						MAKELPARAM(HTCLIENT, msg.message)
 					);
@@ -121,12 +128,9 @@ void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
 		return;
 	}
 
-	// Fallback, send message to any active dialog,
-	// or worst case to the main application window
-	if (_modalDialog)
-		hWnd = _modalDialog->m_hWnd;
-	else
-		hWnd = _mainWindow->m_hWnd;
+	// Fallback, send message to active window
+	CWnd *activeWin = _activeWindows.top();
+	hWnd = activeWin->m_hWnd;
 }
 
 void EventLoop::setMouseMessageWnd(Common::Event &ev, HWND &hWnd) {
@@ -147,13 +151,14 @@ void EventLoop::setMouseMessageWnd(Common::Event &ev, HWND &hWnd) {
 	// Special case for mouse moves: if there's an modal dialog,
 	// mouse moves will still be routed to the main window
 	// if the mouse is outside the dialog bounds
-	if (_modalDialog && ev.type == Common::EVENT_MOUSEMOVE &&
-		!_modalDialog->_windowRect.contains(ev.mouse)) {
+	CWnd *activeWin = _activeWindows.top();
+	if (ev.type == Common::EVENT_MOUSEMOVE &&
+		!activeWin->_windowRect.contains(ev.mouse)) {
 		hWnd = _mainWindow->m_hWnd;
 		return;
 	}
 
-	CWnd *wnd = _modalDialog ? _modalDialog : _mainWindow;
+	CWnd *wnd = _activeWindows.top();
 	hWnd = getMouseMessageWnd(ev, wnd);
 }
 
@@ -245,11 +250,9 @@ void EventLoop::DispatchMessage(LPMSG lpMsg) {
 	CWnd *wnd = CWnd::FromHandle(lpMsg->hwnd);
 	assert(wnd);
 
-	// FIXME: This goes in hand with our currently
-	// calling the runEventLoop for non-modal windows.
-	// It ensures closing the window breaks the modal event loop
-	if (wnd == _modalDialog && lpMsg->message == WM_CLOSE)
-		_modalDialog = nullptr;
+	if (!_activeWindows.empty() && wnd == _activeWindows.top() &&
+			lpMsg->message == WM_CLOSE)
+		_activeWindows.pop();
 
 	wnd->SendMessage(lpMsg->message,
 		lpMsg->wParam, lpMsg->lParam);

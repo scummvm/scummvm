@@ -23,6 +23,7 @@
 #define BAGEL_MFC_LIBS_EVENT_LOOP_H
 
 #include "common/events.h"
+#include "common/stack.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/libs/events.h"
 #include "bagel/mfc/joystickapi.h"
@@ -33,8 +34,8 @@ namespace Libs {
 
 class EventLoop {
 private:
-	CWnd *&_mainWindow;
-	CWnd *_modalDialog = nullptr;
+	CWnd *_mainWindow = nullptr;
+	Common::Stack<CWnd *> _activeWindows;
 	CWnd *_highlightedWin = nullptr;
 	CWnd *_captureWin = nullptr;
 	CWnd *_focusedWin = nullptr;
@@ -81,10 +82,15 @@ private:
 	bool mousePosToClient(CWnd *wnd, POINT &pt);
 
 public:
-	EventLoop(CWnd *&mainWin) : _mainWindow(mainWin) {
-	}
+	EventLoop() {}
 
-	void runEventLoop(CWnd *modalDialog = nullptr);
+	void runEventLoop();
+	void SetActiveWindow(CWnd *wnd);
+
+	void doModal(CWnd *wnd) {
+		_activeWindows.push(wnd);
+		runEventLoop();
+	}
 
 	/**
 	 * Polls the ScummVM backend for any pending events.
@@ -129,13 +135,6 @@ public:
 		return _mousePos;
 	}
 	void setMousePos(const Common::Point &pt);
-
-	void SetActiveWindow(CWnd *wnd) {
-		// FIXME: modals are blocking, this shouldn't.
-		// Which may become an issue if anything opened
-		// multiple independent windows
-		runEventLoop(wnd);
-	}
 
 	void SetFocus(CWnd *wnd);
 	CWnd *GetFocus() const {

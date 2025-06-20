@@ -45,7 +45,7 @@ IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 CWinApp *CWinApp::_activeApp = nullptr;
 
 CWinApp::CWinApp(const char *appName) :
-		CWinThread(), EventLoop(m_pMainWnd),
+		CWinThread(), EventLoop(),
 		_cursors(_resources),
 		_fonts(_resources),
 		_defaultPen(PS_SOLID, 1, 0),
@@ -87,6 +87,9 @@ int CWinApp::Run() {
 	InitInstance();
 
 	SetCursor(LoadCursor(IDC_ARROW));
+
+	assert(m_pMainWnd);
+	SetActiveWindow(m_pMainWnd);
 
 	runEventLoop();
 

@@ -252,7 +252,8 @@ BOOL GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm) {
 }
 
 intptr GetWindowWord(HWND hWnd, int nIndex) {
-	error("TODO: GetWindowWord");
+	assert(nIndex == GWW_HINSTANCE);
+	return 0;
 }
 
 int AddFontResource(LPCSTR fontName) {
