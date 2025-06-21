@@ -38,7 +38,6 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 		_title = loadAndConvertNeoImage(&file, 0xce);
 
 		loadFonts(&file, 0x8940);
-
 		Common::Array<Graphics::ManagedSurface *> chars;
 		chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, &file, 0x8940 + 112 * 33 + 1, 100);
 		_fontSmall = Font(chars);
@@ -69,6 +68,11 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 			error("Failed to open 'driller' executable for Amiga");
 
 		loadFonts(&file, 0xa62);
+		Common::Array<Graphics::ManagedSurface *> chars;
+		chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, &file, 0xa62 + 112 * 33 + 1, 100);
+		_fontSmall = Font(chars);
+		_fontSmall.setCharWidth(5);
+
 		loadMessagesFixedSize(&file, 0x499a, 14, 20);
 		loadGlobalObjects(&file, 0x4098, 8);
 		load8bitBinary(&file, 0x21a3e, 16);
@@ -127,10 +131,15 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 		error("Failed to open 'driller' file");
 
 	if (_variant & GF_AMIGA_MAGAZINE_DEMO) {
-		loadFonts(&file, 0xa62);
 		loadMessagesFixedSize(&file, 0x3df0, 14, 20);
 		loadGlobalObjects(&file, 0x3ba6, 8);
 		_demoMode = false;
+
+		loadFonts(&file, 0xa62);
+		Common::Array<Graphics::ManagedSurface *> chars;
+		chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, &file, 0xa62 + 112 * 33 + 1, 100);
+		_fontSmall = Font(chars);
+		_fontSmall.setCharWidth(5);
 	} else {
 		loadFonts(&file, 0xa30);
 		loadMessagesFixedSize(&file, 0x3960, 14, 20);
