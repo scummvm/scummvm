@@ -142,11 +142,11 @@ void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int 
 		if ((opcode & 1) == 1) {
 			break;
 		}
-		cur_index = (unsigned int)(buf - save_buf);
-		if (cur_index >= packed_data_len) {
+		if ((unsigned int)(buf - save_buf) >= packed_data_len) {
 			break;
 		}
 	}
+	cur_index = (unsigned int)(buf - save_buf);
 	if (cur_index < packed_data_len) {
 		if ((packed_data_len - cur_index) > (*unpacked_data_size - (unpacked_data - save_unp))) {
 			debug("Data left are too large!");
