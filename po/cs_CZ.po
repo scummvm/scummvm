@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-20 23:17+0000\n"
+"POT-Creation-Date: 2025-06-21 21:37+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -272,7 +272,7 @@ msgstr "Vložit kód ze schránky"
 #: engines/parallaction/metaengine.cpp:125
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
 msgid "Load"
 msgstr "Nahrát"
 
@@ -1460,7 +1460,7 @@ msgstr "Hledat:"
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:974
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
 msgid "Load game:"
 msgstr "Nahrát hru:"
 
@@ -3470,7 +3470,7 @@ msgstr "~N~ávrat do Spouštěče"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:46
+#: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:46
 msgid "Save game:"
 msgstr "Uložit hru:"
 
@@ -3494,7 +3494,7 @@ msgstr "Uložit hru:"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
-#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:749
+#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
 #: engines/zvision/file/save_manager.cpp:46 engines/zvision/metaengine.cpp:282
 msgid "Save"
 msgstr "Uložit"

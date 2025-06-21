@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-20 23:17+0000\n"
+"POT-Creation-Date: 2025-06-21 21:37+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -262,7 +262,7 @@ msgstr "Επικόλληση κωδικού από το πρόχειρο"
 #: engines/parallaction/metaengine.cpp:125
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
 msgid "Load"
 msgstr "Φόρτωση"
 
@@ -1532,7 +1532,7 @@ msgstr "Αναζήτηση:"
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:974
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
 msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
 
@@ -3609,7 +3609,7 @@ msgstr "Επισ~τ~ρ. σε Πλοηγητή"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:46
+#: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:46
 msgid "Save game:"
 msgstr "Αποθήκευση παιχνιδιού:"
 
@@ -3633,7 +3633,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
-#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:749
+#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
 #: engines/zvision/file/save_manager.cpp:46 engines/zvision/metaengine.cpp:282
 msgid "Save"
 msgstr "Αποθήκευση"

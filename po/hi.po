@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-20 23:17+0000\n"
+"POT-Creation-Date: 2025-06-21 21:37+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -262,7 +262,7 @@ msgstr "क्लिपबोर्ड से कोड पेस्ट कर�
 #: engines/parallaction/metaengine.cpp:125
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
 msgid "Load"
 msgstr "लोड"
 
@@ -1450,7 +1450,7 @@ msgstr "तलाशें:"
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:974
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:739
+#: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
 msgid "Load game:"
 msgstr "गेम लोड करें:"
 
@@ -3377,7 +3377,7 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:749 engines/zvision/file/save_manager.cpp:46
+#: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:46
 msgid "Save game:"
 msgstr ""
 
@@ -3401,7 +3401,7 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
-#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:749
+#: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
 #: engines/zvision/file/save_manager.cpp:46 engines/zvision/metaengine.cpp:282
 msgid "Save"
 msgstr ""
