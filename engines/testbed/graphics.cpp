@@ -958,7 +958,7 @@ TestExitStatus GFXtests::maskedCursors() {
 			if (haveCursorAlpha) {
 				g_system->delayMillis(500);
 
-				Graphics::PixelFormat rgbaFormat = Graphics::createPixelFormat<8888>();
+				Graphics::PixelFormat rgbaFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 
 				uint32 rgbaCursorData[16 * 16];
 				for (uint i = 0; i < 16 * 16; i++) {
