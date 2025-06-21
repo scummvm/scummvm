@@ -32,8 +32,8 @@ static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2);
 static bool MoveScreen(ScreenContext *myScreen, int32 parmX, int32 parmY, bool deltaMove);
 
 bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *y2) {
-	ScreenContext *myScreen;
-	if ((myScreen = vmng_screen_find(scrnContent, nullptr)) == nullptr)
+	ScreenContext *myScreen = vmng_screen_find(scrnContent, nullptr);
+	if (myScreen == nullptr)
 		return false;
 
 	if (x1)
@@ -49,7 +49,6 @@ bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *
 }
 
 void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 updateY2) {
-	ScreenContext *myScreen, *tempScreen;
 	RectList *updateRectList, *scrnUpdateList, *tempRect;
 
 	if (!_G(vmng_Initted) || _G(system_shutting_down)) {
@@ -75,7 +74,7 @@ void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 update
 	updateRectList = vmng_CreateNewRect(updateX1, updateY1, updateX2, updateY2);
 
 	// First loop through the screens back to front, drawing only the transparent screens
-	myScreen = _G(backScreen);
+	ScreenContext *myScreen = _G(backScreen);
 
 	while (myScreen && updateRectList) {
 		// We only draw transparent screens on the first pass
@@ -87,7 +86,7 @@ void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 update
 			vmng_ClipRectList(&scrnUpdateList, myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
 
 			// Now remove the rects of all screens blocking the scrnUpdateList
-			tempScreen = myScreen->infront;
+			ScreenContext *tempScreen = myScreen->infront;
 
 			while (scrnUpdateList && tempScreen) {
 				vmng_RemoveRectFromRectList(&scrnUpdateList, tempScreen->x1, tempScreen->y1, tempScreen->x2, tempScreen->y2);
@@ -159,15 +158,13 @@ void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 update
 }
 
 void RestoreScreensInContext(int32 x1, int32 y1, int32 x2, int32 y2, ScreenContext *myScreen) {
-	ScreenContext *tempScreen;
-
 	//verify the gui has been initted
 	if (!_G(vmng_Initted)) {
 		return;
 	}
 
 	//verify parameters
-	tempScreen = _G(frontScreen);
+	ScreenContext *tempScreen = _G(frontScreen);
 	while (tempScreen && (tempScreen != myScreen)) {
 		tempScreen = tempScreen->behind;
 	}
@@ -186,22 +183,22 @@ void RestoreScreensInContext(int32 x1, int32 y1, int32 x2, int32 y2, ScreenConte
 }
 
 bool ResizeScreen(void *scrnContent, int32 newW, int32 newH) {
-	ScreenContext *myScreen;
-	int32 status, oldX2, oldY2;
-
 	if ((newW <= 0) || (newH <= 0))
 		return false;
-	if ((myScreen = vmng_screen_find(scrnContent, &status)) == nullptr)
+
+	int32 status;
+	ScreenContext *myScreen = vmng_screen_find(scrnContent, &status);
+	if (myScreen == nullptr)
 		return false;
 
-	oldX2 = myScreen->x2;
+	const int32 oldX2 = myScreen->x2;
 	myScreen->x2 = myScreen->x1 + newW - 1;
 
 	if (myScreen->x2 < oldX2) {
 		RestoreScreens(myScreen->x2 + 1, myScreen->y1, oldX2, myScreen->y2);
 	}
 
-	oldY2 = myScreen->y2;
+	const int32 oldY2 = myScreen->y2;
 	myScreen->y2 = myScreen->y1 + newH - 1;
 
 	if (myScreen->y2 < oldY2) {
@@ -217,13 +214,12 @@ static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2) {
 }
 
 bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback) {
-	ScreenContext *myScreen;
-	Hotkey *myHotkey;
-
-	if ((myScreen = vmng_screen_find(scrnContent, nullptr)) == nullptr)
+	ScreenContext *myScreen = vmng_screen_find(scrnContent, nullptr);
+	if (myScreen == nullptr)
 		return false;
 
-	if ((myHotkey = (Hotkey *)mem_alloc(sizeof(Hotkey), "hotkey")) == nullptr)
+	Hotkey *myHotkey = (Hotkey *)mem_alloc(sizeof(Hotkey), "hotkey");
+	if (myHotkey == nullptr)
 		return false;
 
 	myHotkey->myKey = myKey;
@@ -234,12 +230,11 @@ bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback) {
 }
 
 bool RemoveScreenHotkey(void *scrnContent, int32 myKey) {
-	ScreenContext *myScreen;
-	Hotkey *myHotkey, *tempHotkey;
-	if ((myScreen = vmng_screen_find(scrnContent, nullptr)) == nullptr)
+	ScreenContext *myScreen = vmng_screen_find(scrnContent, nullptr);
+	if (myScreen == nullptr)
 		return false;
 
-	myHotkey = myScreen->scrnHotkeys;
+	Hotkey *myHotkey = myScreen->scrnHotkeys;
 
 	if (myHotkey->myKey == myKey) {
 		myScreen->scrnHotkeys = myHotkey->next;
@@ -250,7 +245,7 @@ bool RemoveScreenHotkey(void *scrnContent, int32 myKey) {
 			myHotkey = myHotkey->next;
 		}
 		if (myHotkey->next) {
-			tempHotkey = myHotkey->next;
+			Hotkey *tempHotkey = myHotkey->next;
 			myHotkey->next = tempHotkey->next;
 			mem_free(tempHotkey);
 		} else {
@@ -274,15 +269,15 @@ bool MoveScreenDelta(int32 parmX, int32 parmY) {
 }
 
 void vmng_screen_to_back(void *scrnContent) {
-	ScreenContext *myScreen, *tempScreen;
-	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == nullptr) return;
+	ScreenContext *myScreen = ExtractScreen(scrnContent, SCRN_ANY);
+	if (myScreen == nullptr) return;
 	if (!_G(backScreen)) {
 		myScreen->infront = nullptr;
 		myScreen->behind = nullptr;
 		_G(frontScreen) = myScreen;
 		_G(backScreen) = myScreen;
 	} else {
-		tempScreen = _G(backScreen);
+		ScreenContext *tempScreen = _G(backScreen);
 		while (tempScreen &&
 			((tempScreen->scrnFlags & SF_LAYER) < (myScreen->scrnFlags & SF_LAYER))) {
 			tempScreen = tempScreen->infront;
@@ -309,14 +304,13 @@ void vmng_screen_to_back(void *scrnContent) {
 }
 
 static bool MoveScreen(ScreenContext *myScreen, int32 parmX, int32 parmY, bool deltaMove) {
-	int32 origX1, origY1, origX2, origY2;
 	if (!_G(vmng_Initted))
 		return false;
 
-	origX1 = myScreen->x1;
-	origY1 = myScreen->y1;
-	origX2 = myScreen->x2;
-	origY2 = myScreen->y2;
+	const int32 origX1 = myScreen->x1;
+	const int32 origY1 = myScreen->y1;
+	const int32 origX2 = myScreen->x2;
+	const int32 origY2 = myScreen->y2;
 
 	if (!deltaMove) {
 		parmX -= origX1;

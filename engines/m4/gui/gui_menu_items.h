@@ -27,6 +27,7 @@
 #include "m4/m4_types.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/gui/gui_univ.h"
+#include "m4/graphics/gr_font.h"
 
 namespace M4 {
 

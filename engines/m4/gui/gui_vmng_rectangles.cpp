@@ -49,38 +49,32 @@ RectList *vmng_CreateNewRect(int32 x1, int32 y1, int32 x2, int32 y2) {
 }
 
 void vmng_AddRectToRectList(RectList **theRectList, int32 rectX1, int32 rectY1, int32 rectX2, int32 rectY2) {
-	RectList *dirtyRect, *dirtyRectList;
-	RectList *endCleanRectList, *cleanRectList;
-	RectList *myRect, *myRectList;
-	RectList *newRect;
-	bool intersected;
-
 	// First make sure we have a valid rectangle
 	if ((rectX1 > rectX2) || (rectY1 > rectY2)) {
 		return;
 	}
 
-	// Intialize the dirty rect list
-	dirtyRectList = vmng_CreateNewRect(rectX1, rectY1, rectX2, rectY2);
+	// Initialize the dirty rect list
+	RectList *dirtyRectList = vmng_CreateNewRect(rectX1, rectY1, rectX2, rectY2);
 
-	// Intialize the clean rectList
-	cleanRectList = nullptr;
-	endCleanRectList = nullptr;
+	// Initialize the clean rectList
+	RectList *cleanRectList = nullptr;
+	RectList *endCleanRectList = nullptr;
 
 	// Use a local var for theRectlist
-	myRectList = *theRectList;
+	RectList *myRectList = *theRectList;
 
 	// Loop through all the dirtyRects
-	dirtyRect = dirtyRectList;
+	RectList *dirtyRect = dirtyRectList;
 	while (dirtyRect) {
 		// Remove dirtyRect from the head of the dirtyRectList
 		dirtyRectList = dirtyRectList->next;
 
 		// Set the intersected flag
-		intersected = false;
+		bool intersected = false;
 
 		// Loop on through
-		myRect = myRectList;
+		RectList *myRect = myRectList;
 		while (myRect) {
 
 			// If the two rectangles intersect
@@ -101,6 +95,7 @@ void vmng_AddRectToRectList(RectList **theRectList, int32 rectX1, int32 rectY1, 
 						myRect->next->prev = myRect->prev;
 					}
 
+					RectList *newRect;
 					// So now there is an intersection.
 					// If myRect sticks out above dirtyRect, chop it off and put it in the main rect list, to be recheck by other dirty rects
 					if (myRect->y1 < dirtyRect->y1) {
@@ -219,15 +214,14 @@ void vmng_AddRectToRectList(RectList **theRectList, int32 rectX1, int32 rectY1, 
 }
 
 RectList *vmng_DuplicateRectList(RectList *myRectList) {
-	RectList *newRectList, *tempRect, *myRect, *prevRect;
-
-	newRectList = nullptr;
-	prevRect = nullptr;
-	myRect = myRectList;
+	RectList *newRectList = nullptr;
+	RectList *prevRect = nullptr;
+	RectList *myRect = myRectList;
 	while (myRect) {
 
 		// Duplicate myRect and stick it on the newRectList
-		if ((tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectList")) == nullptr) {
+		RectList *tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectList");
+		if (tempRect == nullptr) {
 			error_show(FL, 'OOS!', "vmng_DuplicateRectList()");
 		}
 		tempRect->x1 = myRect->x1;
@@ -251,22 +245,19 @@ RectList *vmng_DuplicateRectList(RectList *myRectList) {
 }
 
 bool vmng_RectIntersectsRectList(RectList *myRectList, int32 x1, int32 y1, int32 x2, int32 y2) {
-	RectList *myRect;
-	int32 intrX1, intrY1, intrX2, intrY2;
-
 	// Parameter verification
 	if ((!myRectList) || (x1 > x2) || (y1 > y2)) {
 		return false;
 	}
 
 	// Loop through the list, and break as soon as there is an intersection
-	myRect = myRectList;
+	RectList *myRect = myRectList;
 	while (myRect) {
 		// Calculate the intersection
-		intrX1 = imath_max(myRect->x1, x1);
-		intrY1 = imath_max(myRect->y1, y1);
-		intrX2 = imath_min(myRect->x2, x2);
-		intrY2 = imath_min(myRect->y2, y2);
+		const int32 intrX1 = imath_max(myRect->x1, x1);
+		const int32 intrY1 = imath_max(myRect->y1, y1);
+		const int32 intrX2 = imath_min(myRect->x2, x2);
+		const int32 intrY2 = imath_min(myRect->y2, y2);
 
 		// If we intersected, return true
 		if ((intrX1 <= intrX2) && (intrY1 <= intrY2)) {
@@ -282,21 +273,18 @@ bool vmng_RectIntersectsRectList(RectList *myRectList, int32 x1, int32 y1, int32
 }
 
 bool vmng_ClipRectList(RectList **myRectList, int32 clipX1, int32 clipY1, int32 clipX2, int32 clipY2) {
-	RectList *nextRect, *myRect;
-	int32 x1, y1, x2, y2;
-
 	// Loop through myRect list
-	myRect = *myRectList;
+	RectList *myRect = *myRectList;
 	while (myRect) {
 
 		// Set the next rect
-		nextRect = myRect->next;
+		RectList *nextRect = myRect->next;
 
 		// Clip myRect
-		x1 = imath_max(myRect->x1, clipX1);
-		y1 = imath_max(myRect->y1, clipY1);
-		x2 = imath_min(myRect->x2, clipX2);
-		y2 = imath_min(myRect->y2, clipY2);
+		const int32 x1 = imath_max(myRect->x1, clipX1);
+		const int32 y1 = imath_max(myRect->y1, clipY1);
+		const int32 x2 = imath_min(myRect->x2, clipX2);
+		const int32 y2 = imath_min(myRect->y2, clipY2);
 
 		// If we have a valid rectangle
 		if ((x1 <= x2) && (y1 <= y2)) {
@@ -327,11 +315,9 @@ bool vmng_ClipRectList(RectList **myRectList, int32 clipX1, int32 clipY1, int32 
 }
 
 bool vmng_RectListValid(RectList *myRectList) {
-	RectList *myRect, *tempRectList;
-
-	myRect = myRectList;
+	RectList *myRect = myRectList;
 	while (myRect) {
-		tempRectList = myRect->next;
+		RectList *tempRectList = myRect->next;
 		if (vmng_RectIntersectsRectList(tempRectList, myRect->x1, myRect->y1, myRect->x2, myRect->y2)) {
 			return false;
 		}
@@ -342,10 +328,8 @@ bool vmng_RectListValid(RectList *myRectList) {
 }
 
 void vmng_DisposeRectList(RectList **rectList) {
-	RectList *myRect;
-
 	// Loop through the rect list
-	myRect = *rectList;
+	RectList *myRect = *rectList;
 	while (myRect) {
 		// Remove myRect from the head of the list
 		*rectList = myRect->next;
@@ -359,26 +343,22 @@ void vmng_DisposeRectList(RectList **rectList) {
 }
 
 void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2) {
-	RectList *myRect, *prevRect, *nextRect, *tempRect;
-	RectList *rectList, *unsortedRectList;
-	int32 tempX1, tempY1, tempX2, tempY2;
-	bool finished;
-
-	rectList = *scrnRectList;
+	RectList *tempRect;
+	RectList *rectList = *scrnRectList;
 
 	// Go through the rectList list breaking down any rects which intersect the given coords
-	unsortedRectList = nullptr;
-	myRect = rectList;
+	RectList *unsortedRectList = nullptr;
+	RectList *myRect = rectList;
 
 	while (myRect) {
 		// Set the nextRect pointer
-		nextRect = myRect->next;
+		RectList *nextRect = myRect->next;
 
 		// Check for an intersection
-		tempX1 = imath_max(x1, myRect->x1);
-		tempY1 = imath_max(y1, myRect->y1);
-		tempX2 = imath_min(x2, myRect->x2);
-		tempY2 = imath_min(y2, myRect->y2);
+		const int32 tempX1 = imath_max(x1, myRect->x1);
+		const int32 tempY1 = imath_max(y1, myRect->y1);
+		const int32 tempX2 = imath_min(x2, myRect->x2);
+		const int32 tempY2 = imath_min(y2, myRect->y2);
 
 		// If we have an intersection
 		if ((tempX1 <= tempX2) && (tempY1 <= tempY2)) {
@@ -386,7 +366,8 @@ void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, in
 			// Top edge
 			if (myRect->y1 < y1) {
 				// Create a new rect of just the part that extends beyond the top of myRect
-				if ((tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle")) == nullptr) {
+				tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle");
+				if (tempRect == nullptr) {
 					error_show(FL, 'OOS!', "vmng_AddRectToRectList");
 				}
 				tempRect->x1 = myRect->x1;
@@ -405,7 +386,8 @@ void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, in
 			// Bottom edge
 			if (myRect->y2 > y2) {
 				// Create a new rect of just the part that extends beyond the top of myRect
-				if ((tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle")) == nullptr) {
+				tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle");
+				if (tempRect == nullptr) {
 					error_show(FL, 'OOS!', "vmng_AddRectToRectList");
 				}
 				tempRect->x1 = myRect->x1;
@@ -424,7 +406,8 @@ void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, in
 			// Left edge
 			if (myRect->x1 < x1) {
 				// Create a new rect of just the part that extends beyond the top of myRect
-				if ((tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle")) == nullptr) {
+				tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle");
+				if (tempRect == nullptr) {
 					error_show(FL, 'OOS!', "vmng_AddRectToRectList");
 				}
 				tempRect->x1 = myRect->x1;
@@ -440,7 +423,8 @@ void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, in
 			// Right edge
 			if (myRect->x2 > x2) {
 				// Create a new rect of just the part that extends beyond the top of myRect
-				if ((tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle")) == nullptr) {
+				tempRect = (RectList *)mem_get_from_stash(_G(memtypeRECT), "+guiRectangle");
+				if (tempRect == nullptr) {
 					error_show(FL, 'OOS!', "vmng_AddRectToRectList");
 				}
 
@@ -476,8 +460,8 @@ void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, in
 	while (tempRect) {
 		unsortedRectList = unsortedRectList->next;
 		// For each unsorted rect, loop through the rect list until its place is found
-		finished = false;
-		prevRect = nullptr;
+		bool finished = false;
+		RectList *prevRect = nullptr;
 		myRect = rectList;
 
 		while (myRect && (!finished)) {

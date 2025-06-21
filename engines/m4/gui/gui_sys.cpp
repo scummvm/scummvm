@@ -23,7 +23,6 @@
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
-#include "m4/core/mouse.h"
 #include "m4/mem/memman.h"
 #include "m4/vars.h"
 
@@ -37,10 +36,8 @@ bool gui_system_init() {
 }
 
 void gui_system_shutdown() {
-	Hotkey *myHotkeys, *tempHotkey;
-
-	myHotkeys = _G(systemHotkeys);
-	tempHotkey = myHotkeys;
+	Hotkey *myHotkeys = _G(systemHotkeys);
+	Hotkey *tempHotkey = myHotkeys;
 
 	while (tempHotkey) {
 		myHotkeys = myHotkeys->next;
@@ -50,12 +47,9 @@ void gui_system_shutdown() {
 }
 
 void gui_system_event_handler() {
-	MouseEvent newMouseEvent;
-
 	ScreenContext *myScreen;
 	Hotkey *myHotkey;
 	int32 parm1 = 0;
-	bool handled;
 	bool blocked;
 	bool found;
 
@@ -76,7 +70,7 @@ void gui_system_event_handler() {
 	_G(mouseX) = _G(MouseState).CursorColumn;
 	_G(mouseY) = _G(MouseState).CursorRow;
 
-	newMouseEvent = mouse_get_event();
+	const MouseEvent newMouseEvent = mouse_get_event();
 
 	if (newMouseEvent != _ME_no_event) {	// We have a mouse event
 		gui_mouse_refresh();
@@ -125,7 +119,7 @@ void gui_system_event_handler() {
 		// a window which handles or blocks key events. The event is passed to the handler
 		// if found.
 		//
-		handled = false;
+		bool handled = false;
 		myScreen = _G(frontScreen);
 		found = false;
 		blocked = false;
@@ -183,13 +177,11 @@ void gui_system_event_handler() {
 }
 
 void AddSystemHotkey(int32 myKey, HotkeyCB callback) {
-	Hotkey *myHotkey;
-
 	if (!_G(vmng_Initted)) {
 		return;
 	}
 
-	myHotkey = _G(systemHotkeys);
+	Hotkey *myHotkey = _G(systemHotkeys);
 	while (myHotkey && (myHotkey->myKey != myKey)) {
 		myHotkey = myHotkey->next;
 	}
@@ -209,13 +201,11 @@ void AddSystemHotkey(int32 myKey, HotkeyCB callback) {
 }
 
 void RemoveSystemHotkey(int32 myKey) {
-	Hotkey *myHotkey, *tempHotkey;
-
 	if (!_G(vmng_Initted))
 		return;
 
-	myHotkey = _G(systemHotkeys);
-	tempHotkey = myHotkey;
+	Hotkey *myHotkey = _G(systemHotkeys);
+	Hotkey *tempHotkey = myHotkey;
 
 	while (myHotkey && (myHotkey->myKey != myKey)) {
 		if (tempHotkey != myHotkey) tempHotkey = tempHotkey->next;
@@ -233,12 +223,11 @@ void RemoveSystemHotkey(int32 myKey) {
 }
 
 HotkeyCB GetSystemHotkey(int32 myKey) {
-	Hotkey *myHotkey, *tempHotkey;
 	if (!_G(vmng_Initted))
 		return (nullptr);
 
-	myHotkey = _G(systemHotkeys);
-	tempHotkey = myHotkey;
+	Hotkey *myHotkey = _G(systemHotkeys);
+	Hotkey *tempHotkey = myHotkey;
 
 	while (myHotkey && (myHotkey->myKey != myKey)) {
 		if (tempHotkey != myHotkey)
