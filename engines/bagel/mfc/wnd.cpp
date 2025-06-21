@@ -568,8 +568,11 @@ void CWnd::GetWindowRect(LPRECT lpRect) const {
 }
 
 BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
-	*lpRect = _updateRect;
-	return true;
+	if (lpRect)
+		*lpRect = _updateRect;
+	_updateErase = bErase;
+
+	return IsWindowDirty();
 }
 
 BOOL CWnd::GetClientRect(LPRECT lpRect) const {
