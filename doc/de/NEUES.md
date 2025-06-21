@@ -4,7 +4,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 #### 2.10.0 (xx.xx.xxxx)
 
  Neue Spiele:
-   - Unterstützung für Another World hinzugefügt.
    - Unterstützung für Dark Seed hinzugefügt.
    - Unterstützung für God of Thunder hinzugefügt.
    - Unterstützung für The Adventures of Willy Beamish hinzugefügt.
@@ -12,6 +11,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Nancy Drew: Secret of the Scarlet Hand hinzugefügt.
    - Unterstützung für Nancy Drew: Ghost Dogs of Moon Lake hinzugefügt.
    - Unterstützung für Ripley's Believe It or Not!: The Riddle of Master Lu hinzugefügt.
+   - Unterstützung für Little Longnose hinzugefügt.
+   - Unterstützung für Pilot Brothers 3: Back Side of the Earth hinzugefügt.
+   - Unterstützung für Pilot Brothers 3D: The Case of Garden Pests hinzugefügt.
+   - Unterstützung für Pilot Brothers 3D-2: Kennel Club Secrets hinzugefügt.
+   - Unterstützung für Features of National Fishing hinzugefügt.
+   - Unterstützung für Mom Don't Worry hinzugefügt.
+   - Unterstützung für Dog-n-cat: In the Footsteps of Unprecedented Beasts hinzugefügt.
+   - Unterstützung für Dog-n-cat: Island of Dr Ratiarty hinzugefügt.
+   - Unterstützung für Out of this World (Another World) hinzugefügt.
 
  Drascula:
    - Hervorgehobene Charaktere werden jetzt korrekt dargestellt.
