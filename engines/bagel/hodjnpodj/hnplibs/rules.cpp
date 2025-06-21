@@ -160,6 +160,21 @@ static  BOOL        bBruteForce = FALSE;            // whether we can be clever
 /////////////////////////////////////////////////////////////////////////////
 // CRules dialog
 
+BEGIN_MESSAGE_MAP(CRules, CDialog)
+	//{{AFX_MSG_MAP(CRules)
+	ON_WM_CREATE()
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
+	ON_WM_SHOWWINDOW()
+	ON_WM_SIZE()
+	ON_WM_MOUSEMOVE()
+	ON_WM_SETCURSOR()
+	ON_WM_NCMOUSEMOVE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_DESTROY()
+	ON_WM_ACTIVATE()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
 
 
 BOOL CRules::SetupKeyboardHook(void) {
@@ -276,23 +291,6 @@ void CRules::DoDataExchange(CDataExchange* pDX) {
 	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
-
-BEGIN_MESSAGE_MAP(CRules, CDialog)
-	//{{AFX_MSG_MAP(CRules)
-	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
-	ON_WM_SHOWWINDOW()
-	ON_WM_SIZE()
-	ON_WM_MOUSEMOVE()
-	ON_WM_SETCURSOR()
-	ON_WM_NCMOUSEMOVE()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_DESTROY()
-	ON_WM_ACTIVATE()
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CRules message handlers

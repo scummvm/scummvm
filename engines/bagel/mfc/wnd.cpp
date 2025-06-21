@@ -90,6 +90,8 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	if (m_pParentWnd)
 		m_pParentWnd->_children[nID] = this;
 
+	SendMessage(WM_CREATE, 0, (LPARAM)&cs);
+
 	return true;
 }
 
