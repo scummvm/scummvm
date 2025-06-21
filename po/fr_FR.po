@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-20 23:17+0000\n"
-"PO-Revision-Date: 2025-06-17 12:25+0000\n"
+"PO-Revision-Date: 2025-06-21 13:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6521,7 +6521,7 @@ msgstr ""
 #: engines/agos/animation.cpp:576
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "Fichier de séquence '%s' non trouvé !"
+msgstr "Fichier de cinématique '%s' non trouvé !"
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
@@ -6597,7 +6597,7 @@ msgstr "Conf. des touches Oui/Non"
 
 #: engines/agos/metaengine.cpp:244
 msgid "Exit cutscene"
-msgstr "Quitter la séquence"
+msgstr "Quitter la cinématique"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:211
 msgid "Music volume down"
@@ -7176,7 +7176,7 @@ msgstr "Affiche les sous-titres pendant le défilement du texte"
 #: engines/bladerunner/metaengine.cpp:101
 msgid "During the intro cutscene, show subtitles during the text crawl"
 msgstr ""
-"Pendant la scène d'introduction, montre les sous-titres pendant le "
+"Pendant la cinématique d'introduction, montre les sous-titres pendant le "
 "défilement du texte"
 
 #: engines/bladerunner/metaengine.cpp:111
@@ -7225,7 +7225,7 @@ msgstr "Act./Désact. Combat"
 #: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
-msgstr "Passer la séquence"
+msgstr "Passer la cinématique"
 
 #. I18N: This keymap allows skipping the current line of dialogue.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -8388,7 +8388,7 @@ msgstr "Menu / Passer"
 
 #: engines/griffon/metaengine.cpp:159
 msgid "Speed Up Cutscene"
-msgstr "Accélérer la séquence vidéo"
+msgstr "Accélérer la cinématique"
 
 #: engines/grim/grim.cpp:361
 #, c-format
@@ -12331,7 +12331,7 @@ msgstr "Examiner / Passer les dialogues"
 #: engines/sludge/keymapper_tables.h:287 engines/sludge/keymapper_tables.h:398
 #: engines/sludge/keymapper_tables.h:522
 msgid "Pause / Skip cutscene"
-msgstr "Pause / Passer la séquence"
+msgstr "Pause / Passer la cinématique"
 
 #: engines/sludge/keymapper_tables.h:328
 msgid "Smell"
@@ -12567,64 +12567,44 @@ msgstr ""
 "sélectionner les verbes au clavier"
 
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
-msgstr "Conf. des touches Ecran de sortie"
+msgstr "Conf. des touches Cinématiques"
 
 #: engines/supernova/metaengine.cpp:220
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Improved mode keymappings"
-msgstr "Conf. des touches Index"
+msgstr "Conf. des touches Mode amélioré"
 
 #: engines/supernova/metaengine.cpp:221
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Text reader keymappings"
-msgstr "Conf. des touches Ecran de sortie"
+msgstr "Conf. des touches Lecteur de texte"
 
 #: engines/supernova/metaengine.cpp:222
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Computer keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches Ordinateur"
 
 #: engines/supernova/metaengine.cpp:232
-#, fuzzy
-#| msgid "Move / Perform Default Action"
 msgid "Perform Default Action"
-msgstr "Se déplacer / Exécuter l'action par défaut"
+msgstr "Exécuter l'action par défaut"
 
 #: engines/supernova/metaengine.cpp:244
-#, fuzzy
-#| msgid "Interpolation:"
 msgid "Instructions"
-msgstr "Interpolation :"
+msgstr "Instructions"
 
 #: engines/supernova/metaengine.cpp:250
-#, fuzzy
-#| msgid "General Information"
 msgid "Information"
-msgstr "Informations générales"
+msgstr "Information"
 
 #: engines/supernova/metaengine.cpp:256
-#, fuzzy
-#| msgid "Text speed - Fast"
 msgid "Text speed"
-msgstr "Vitesse du texte - Rapide"
+msgstr "Vitesse du texte"
 
 #: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
 msgid "Page up"
-msgstr "Pivoter haut"
+msgstr "Page préc."
 
 #: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Page down"
-msgstr "Pivoter bas"
+msgstr "Page suiv."
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
@@ -12635,28 +12615,24 @@ msgid "Exit"
 msgstr "Sortir"
 
 #: engines/supernova/metaengine.cpp:321
-#, fuzzy
-#| msgid "Good"
 msgid "Go"
-msgstr "Bonne"
+msgstr "Aller"
 
 #: engines/supernova/metaengine.cpp:379
-#, fuzzy
-#| msgid "Open Files manager"
 msgid "Office manager"
-msgstr "Ouvrir le gestionnaire de fichiers"
+msgstr "Gestionnaire de bureau"
 
 #: engines/supernova/metaengine.cpp:385
 msgid "Phone"
-msgstr ""
+msgstr "Téléphone"
 
 #: engines/supernova/metaengine.cpp:391
 msgid "ProText"
-msgstr ""
+msgstr "ProText"
 
 #: engines/supernova/metaengine.cpp:397
 msgid "Calculata"
-msgstr ""
+msgstr "Calculata"
 
 #: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
@@ -12668,7 +12644,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:573 engines/sword2/animation.cpp:468
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "Séquence '%s' non trouvée"
+msgstr "Cinématique '%s' non trouvée"
 
 #: engines/sword1/control.cpp:2814
 msgid ""
@@ -13839,42 +13815,32 @@ msgid "Require a lockout code to start the game."
 msgstr "Exige un code de protection pour lancer le jeu."
 
 #: engines/voyeur/metaengine.cpp:186
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Room keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches Pièce"
 
 #: engines/voyeur/metaengine.cpp:187
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Camera keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches Caméra"
 
 #: engines/voyeur/metaengine.cpp:188
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Intro keymappings"
-msgstr "Conf. des touches Index"
+msgstr "Conf. des touches Intro"
 
 #: engines/voyeur/metaengine.cpp:204
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip scene"
 msgstr "Passer la séquence"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "Voir les preuves"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
-msgstr ""
+msgstr "Sortir/ Ranger les preuves"
 
 #: engines/voyeur/metaengine.cpp:223
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter room"
-msgstr "Entrer"
+msgstr "Entrer dans la pièce"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
@@ -14525,28 +14491,24 @@ msgstr ""
 "résolution"
 
 #: engines/zvision/metaengine.cpp:102
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Enable widescreen support"
-msgstr "ID de jeu non supporté"
+msgstr "Activer le support Ecran large"
 
 #: engines/zvision/metaengine.cpp:103
 msgid ""
 "Rearrange placement of menus & subtitles so as to make better use of modern "
 "wide aspect ratio displays"
 msgstr ""
+"Réorganise l'emplacement des menus et des sous-titres afin de mieux utiliser "
+"les écrans modernes au format large"
 
 #: engines/zvision/metaengine.cpp:114
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Enable high quality panoramas"
-msgstr "Active les barres de points de vie (Hit Point)"
+msgstr "Activer les panoramas haute qualité"
 
 #: engines/zvision/metaengine.cpp:115
-#, fuzzy
-#| msgid "Apply bilinear filtering to individual sprites"
 msgid "Apply bilinear filtering to panoramic backgrounds"
-msgstr "Applique un filtrage bilinéaire à chaque image-objet"
+msgstr "Applique un filtrage bilinéaire aux arrière-plans panoramiques"
 
 #: engines/zvision/metaengine.cpp:217
 msgid "Look Up"
@@ -14602,6 +14564,10 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+"La lecture MIDI n'est pas disponible, ou alors mal configurée. Zork Nemesis "
+"contient plusieurs énigmes musicales qui nécessitent l'audio MIDI pour être "
+"résolues.  Ces puzzles peuvent également être résolus à l'aide de sous-"
+"titres, s'ils sont pris en charge. Continuer à lancer le jeu ?"
 
 #~ msgid "Combat"
 #~ msgstr "Combattre"
