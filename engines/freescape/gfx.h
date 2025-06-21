@@ -62,7 +62,6 @@ public:
 	Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics);
 	virtual ~Renderer();
 
-	Graphics::PixelFormat _currentPixelFormat;
 	Graphics::PixelFormat _texturePixelFormat;
 	bool _isAccelerated;
 	bool _authenticGraphics;
