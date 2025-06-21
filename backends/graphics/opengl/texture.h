@@ -28,6 +28,7 @@
 
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+#include "graphics/blit.h"
 
 #include "common/rect.h"
 #include "common/rotationmode.h"
@@ -231,6 +232,7 @@ protected:
 
 	Graphics::Surface _rgbData;
 	Graphics::PixelFormat _fakeFormat;
+	Graphics::FastBlitFunc _blitFunc;
 	uint32 *_palette;
 	uint8 *_mask;
 };
@@ -239,14 +241,6 @@ class TextureSurfaceRGB555 : public FakeTextureSurface {
 public:
 	TextureSurfaceRGB555();
 	~TextureSurfaceRGB555() override {}
-
-	void updateGLTexture() override;
-};
-
-class TextureSurfaceRGBA8888Swap : public FakeTextureSurface {
-public:
-	TextureSurfaceRGBA8888Swap();
-	~TextureSurfaceRGBA8888Swap() override {}
 
 	void updateGLTexture() override;
 };
