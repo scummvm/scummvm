@@ -30,6 +30,7 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
+#include "bladerunner/framelimiter.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -161,6 +162,8 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 				}
 			}
 		}
+
+		_vm->_framelimiter->wait();
 	}
 
 	if ((_vm->_vqaStopIsRequested || _vm->shouldQuit())
