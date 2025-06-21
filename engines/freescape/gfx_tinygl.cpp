@@ -335,7 +335,8 @@ void TinyGLRenderer::useStipple(bool enabled) {
 	_stippleEnabled = enabled;
 
 	if (enabled) {
-		assert(_variableStippleArray);
+		if (!_variableStippleArray)
+			_variableStippleArray = _defaultStippleArray;
 	} else {
 		_stippleTexture = nullptr;
 	}
