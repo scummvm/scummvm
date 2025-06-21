@@ -88,6 +88,15 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 			// Center and pad each area name so we do not have to do it at each frame
 			area._value->_name = centerAndPadString(area._value->_name, 14);
 	}
+
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_0"));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_1"));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_2"));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_3"));
+	_indicators.push_back(loadBundledImage("driller_ship_indicator"));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void DrillerEngine::loadAssetsAmigaDemo() {
@@ -142,6 +151,15 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 		error("Failed to open 'soundfx' executable for Amiga");
 
 	loadSoundsFx(&file, 0, 25);
+
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_0"));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_1"));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_2"));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_3"));
+	_indicators.push_back(loadBundledImage("driller_ship_indicator"));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 /*
@@ -255,6 +273,13 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 
 		energyBar = Common::Rect(11, 188, 74 - (_maxEnergy - energy), 190);
 		surface->fillRect(energyBar, yellow);
+	}
+
+	if (_indicators.size() > 0) {
+		if (_flyMode)
+			surface->copyRectToSurface(*_indicators[4], 106, 128, Common::Rect(_indicators[1]->w, _indicators[1]->h));
+		else
+			surface->copyRectToSurface(*_indicators[_playerHeightNumber], 106, 128, Common::Rect(_indicators[1]->w, _indicators[1]->h));
 	}
 }
 
