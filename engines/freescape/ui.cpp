@@ -182,8 +182,6 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 	return surface;
 }
 
-extern Common::String centerAndPadString(const Common::String &x, int y);
-
 void FreescapeEngine::borderScreen() {
 	if (!_border)
 		return;

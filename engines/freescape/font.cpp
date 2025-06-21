@@ -34,6 +34,28 @@ Common::String shiftStr(const Common::String &str, int shift) {
 	return result;
 }
 
+Common::String centerAndPadString(const Common::String &str, int size) {
+	Common::String result;
+
+	if (int(str.size()) >= size)
+		return str;
+
+	int padding = (size - str.size()) / 2;
+	for (int i = 0; i < padding; i++)
+		result += " ";
+
+	result += str;
+
+	if (int(result.size()) >= size)
+		return result;
+
+	padding = size - result.size();
+
+	for (int i = 0; i < padding; i++)
+		result += " ";
+	return result;
+}
+
 Font::Font() {
 	_backgroundColor = 0;
 	_secondaryColor = 0;

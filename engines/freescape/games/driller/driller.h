@@ -27,6 +27,11 @@
 
 namespace Freescape {
 
+enum DrillerFontSize {
+	kDrillerFontSmall,
+	kDrillerFontNormal,
+};
+
 class DrillerEngine : public FreescapeEngine {
 public:
 	DrillerEngine(OSystem *syst, const ADGameDescription *gd);
@@ -41,6 +46,10 @@ public:
 	bool _useAutomaticDrilling;
 
 	DrillerSIDPlayer *_playerSid;
+
+	// Only used for Amiga and Atari ST
+	Font _fontSmall;
+	void drawString(const DrillerFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface);
 
 	Common::HashMap<uint16, uint32> _drillStatusByArea;
 	Common::HashMap<uint16, uint32> _drillMaxScoreByArea;

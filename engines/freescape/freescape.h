@@ -137,6 +137,7 @@ struct CGAPaletteEntry {
 };
 
 extern Common::String shiftStr(const Common::String &str, int shift);
+extern Common::String centerAndPadString(const Common::String &str, int size);
 
 class EventManagerWrapper {
 public:

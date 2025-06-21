@@ -26,28 +26,6 @@
 
 namespace Freescape {
 
-Common::String centerAndPadString(const Common::String &str, int size) {
-	Common::String result;
-
-	if (int(str.size()) >= size)
-		return str;
-
-	int padding = (size - str.size()) / 2;
-	for (int i = 0; i < padding; i++)
-		result += " ";
-
-	result += str;
-
-	if (int(result.size()) >= size)
-		return result;
-
-	padding = size - result.size();
-
-	for (int i = 0; i < padding; i++)
-		result += " ";
-	return result;
-}
-
 void DarkEngine::loadAssetsAtariFullGame() {
 	Common::File file;
 	file.open("0.drk");

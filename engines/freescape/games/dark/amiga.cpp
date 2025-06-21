@@ -26,8 +26,6 @@
 
 namespace Freescape {
 
-extern Common::String centerAndPadString(const Common::String &str, int size);
-
 void DarkEngine::loadAssetsAmigaFullGame() {
 	Common::File file;
 	file.open("0.drk");
