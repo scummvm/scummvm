@@ -73,8 +73,8 @@ bool CPetRealLife::KeyCharMsg(CKeyCharMsg *msg) {
 	return _glyphs.KeyCharMsg(msg->_key);
 }
 
-bool CPetRealLife::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _glyphs.VirtualKeyCharMsg(msg);
+bool CPetRealLife::ActionMsg(CActionMsg *msg) {
+	return _glyphs.ActionMsg(msg);
 }
 
 void CPetRealLife::postLoad() {

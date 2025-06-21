@@ -33,7 +33,7 @@ namespace Titanic {
 BEGIN_MESSAGE_MAP(CStarControl, CGameObject)
 	ON_MESSAGE(MouseMoveMsg)
 	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(KeyCharMsg)
+	ON_MESSAGE(ActionMsg)
 	ON_MESSAGE(FrameMsg)
 	ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
@@ -102,10 +102,10 @@ bool CStarControl::MouseMoveMsg(CMouseMoveMsg *msg) {
 	}
 }
 
-bool CStarControl::KeyCharMsg(CKeyCharMsg *msg) {
+bool CStarControl::ActionMsg(CActionMsg *msg) {
 	if (_visible) {
 		CErrorCode errorCode;
-		_view.KeyCharMsg(msg->_key, &errorCode);
+		_view.ActionMsg(msg, &errorCode);
 		return errorCode.get();
 	}
 

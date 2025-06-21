@@ -34,7 +34,7 @@ class CStarControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
-	bool KeyCharMsg(CKeyCharMsg *msg);
+	bool ActionMsg(CActionMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
 	bool MovementMsg(CMovementMsg *msg);
 private:

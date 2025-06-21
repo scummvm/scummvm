@@ -92,8 +92,8 @@ bool CPetRooms::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 	return !_glyphs.MouseButtonDownMsg(msg->_mousePos);
 }
 
-bool CPetRooms::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _glyphs.VirtualKeyCharMsg(msg);
+bool CPetRooms::ActionMsg(CActionMsg *msg) {
+	return _glyphs.ActionMsg(msg);
 }
 
 bool CPetRooms::checkDragEnd(CGameObject *item) {

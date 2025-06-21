@@ -78,7 +78,7 @@ public:
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg) override;
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) override;
 	bool KeyCharMsg(CKeyCharMsg *msg) override;
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) override;
+	bool ActionMsg(CActionMsg *msg) override;
 
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any

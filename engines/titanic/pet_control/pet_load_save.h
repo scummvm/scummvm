@@ -25,6 +25,8 @@
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/gfx/text_control.h"
 
+#include "common/events.h"
+
 namespace Titanic {
 
 #define SAVEGAME_SLOTS_COUNT 5
@@ -88,9 +90,9 @@ public:
 	bool MouseButtonDownMsg(const Point &pt) override;
 
 	/**
-	 * Handles keypresses when the glyph is focused
+	 * Handles Actions when the glyph is focused
 	 */
-	bool KeyCharMsg(int key) override;
+	bool ActionMsg(CActionMsg *msg) override;
 
 	/**
 	 * Resets highlighting on the save slots

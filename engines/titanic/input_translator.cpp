@@ -90,17 +90,19 @@ void CInputTranslator::keyDown(const Common::KeyState &keyState) {
 		if (_inputHandler->handleMessage(msg))
 			return;
 	}
+}
 
-	if (CMovementMsg::getMovement(keyState.keycode) != MOVE_NONE) {
-		CMovementMsg msg(keyState.keycode);
+void CInputTranslator::actionStart(const Common::CustomEventType &action) {
+	if(action > kActionNone && action < kActionMovementNone) {
+		CActionMsg msg(action);
 		if (_inputHandler->handleMessage(msg))
 			return;
 	}
 
-	if (isSpecialKey(keyState.keycode)) {
-		CVirtualKeyCharMsg msg(keyState);
-		msg._keyState.ascii = 0;
-		_inputHandler->handleMessage(msg);
+	if (CMovementMsg::getMovement(action) != MOVE_NONE) {
+		CMovementMsg msg(action);
+		if (_inputHandler->handleMessage(msg))
+			return;
 	}
 }
 
@@ -108,18 +110,5 @@ bool CInputTranslator::isMousePressed() const {
 	return g_vm->_events->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
 }
 
-bool CInputTranslator::isSpecialKey(Common::KeyCode key) {
-	if ((key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F8) ||
-		(key >= Common::KEYCODE_KP1 && key <= Common::KEYCODE_KP9))
-		return true;
-
-	if (key == Common::KEYCODE_PAGEUP || key == Common::KEYCODE_PAGEDOWN ||
-		key == Common::KEYCODE_HOME || key == Common::KEYCODE_END ||
-		key == Common::KEYCODE_LEFT || key == Common::KEYCODE_RIGHT ||
-		key == Common::KEYCODE_UP || key == Common::KEYCODE_DOWN)
-		return true;
-
-	return false;
-}
 
 } // End of namespace Titanic
