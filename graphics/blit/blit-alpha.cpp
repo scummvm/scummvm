@@ -28,7 +28,7 @@ namespace Graphics {
 namespace {
 
 template<typename Size, bool overwriteAlpha>
-inline void applyColorKeyLogic(byte *dst, const byte *src, const uint w, const uint h,
+inline bool applyColorKeyLogic(byte *dst, const byte *src, const uint w, const uint h,
 							   const uint srcDelta, const uint dstDelta,
 							   const Graphics::PixelFormat &format,
 							   const uint8 rKey, const uint8 gKey, const uint8 bKey,
@@ -38,6 +38,7 @@ inline void applyColorKeyLogic(byte *dst, const byte *src, const uint w, const u
 	const uint32 newPix    = format.ARGBToColor(0,   rNew, gNew, bNew);
 	const uint32 rgbMask   = format.ARGBToColor(0,   255,  255,  255);
 	const uint32 alphaMask = format.ARGBToColor(255, 0,    0,    0);
+	bool applied = false;
 
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
@@ -45,6 +46,7 @@ inline void applyColorKeyLogic(byte *dst, const byte *src, const uint w, const u
 
 			if ((pix & rgbMask) == keyPix) {
 				*(Size *)dst = newPix;
+				applied = true;
 			} else if (overwriteAlpha) {
 				*(Size *)dst = pix | alphaMask;
 			}
@@ -56,6 +58,8 @@ inline void applyColorKeyLogic(byte *dst, const byte *src, const uint w, const u
 		src += srcDelta;
 		dst += dstDelta;
 	}
+
+	return applied;
 }
 
 template<typename Size, bool skipTransparent>
@@ -105,27 +109,25 @@ bool applyColorKey(byte *dst, const byte *src,
 
 	if (overwriteAlpha) {
 		if (format.bytesPerPixel == 1) {
-			applyColorKeyLogic<uint8, true>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
+			return applyColorKeyLogic<uint8, true>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
 		} else if (format.bytesPerPixel == 2) {
-			applyColorKeyLogic<uint16, true>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
+			return applyColorKeyLogic<uint16, true>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
 		} else if (format.bytesPerPixel == 4) {
-			applyColorKeyLogic<uint32, true>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
+			return applyColorKeyLogic<uint32, true>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
 		} else {
 			return false;
 		}
 	} else {
 		if (format.bytesPerPixel == 1) {
-			applyColorKeyLogic<uint8, false>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
+			return applyColorKeyLogic<uint8, false>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
 		} else if (format.bytesPerPixel == 2) {
-			applyColorKeyLogic<uint16, false>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
+			return applyColorKeyLogic<uint16, false>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
 		} else if (format.bytesPerPixel == 4) {
-			applyColorKeyLogic<uint32, false>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
+			return applyColorKeyLogic<uint32, false>(dst, src, w, h, srcDelta, dstDelta, format, rKey, gKey, bKey, rNew, gNew, bNew);
 		} else {
 			return false;
 		}
 	}
-
-	return true;
 }
 
 // Function to set the alpha channel for all pixels to the specified value

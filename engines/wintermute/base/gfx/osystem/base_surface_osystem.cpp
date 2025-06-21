@@ -169,10 +169,16 @@ bool BaseSurfaceOSystem::finishLoad() {
 	if (needsColorKey) {
 		// We set the pixel color to transparent black,
 		// like D3DX, if it matches the color key.
-		_surface->applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha, 0, 0, 0);
+		bool applied = _surface->applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha, 0, 0, 0);
+
+		if (replaceAlpha || image->getSurface()->format.aBits() == 0 || image->getSurface()->format.isCLUT8())
+			_alphaType = applied ? Graphics::ALPHA_BINARY : Graphics::ALPHA_OPAQUE;
+		else
+			_alphaType = _surface->detectAlpha();
+	} else {
+		_alphaType = image->getSurface()->detectAlpha();
 	}
 
-	_alphaType = _surface->detectAlpha();
 	_valid = true;
 
 	delete image;
