@@ -1281,6 +1281,9 @@ public:
 	const Common::HashMap<int, CWnd *> &getChildren() const {
 		return _children;
 	}
+	bool IsWindowDirty() const {
+		return !_updateRect.isEmpty();
+	}
 };
 
 class CFrameWnd : public CWnd {

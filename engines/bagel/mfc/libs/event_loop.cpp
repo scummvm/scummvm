@@ -59,6 +59,10 @@ void EventLoop::SetActiveWindow(CWnd *wnd) {
 bool EventLoop::GetMessage(MSG &msg) {
 	Libs::Event ev;
 
+	// Queue window repaints if needed and no messages pending
+	if (_messages.empty() && _activeWindows.top()->IsWindowDirty())
+		PostMessage(_activeWindows.top()->m_hWnd, WM_PAINT, 0, 0);
+
 	// Check for any existing messages
 	if (!_messages.empty()) {
 		msg = _messages.pop();
@@ -84,6 +88,8 @@ bool EventLoop::GetMessage(MSG &msg) {
 						MAKELPARAM(HTCLIENT, msg.message)
 					);
 				}
+			} else {
+				msg.message = WM_NULL;
 			}
 		}
 	}
@@ -238,6 +244,7 @@ BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
 
 BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam) {
+	assert(hWnd);
 	_messages.push(MSG(hWnd, Msg, wParam, lParam));
 	return true;
 }
