@@ -21,6 +21,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	// sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf	// used by sceClibPrintf()
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -34,10 +35,8 @@
 #include <sys/stat.h>
 
 #include <psp2/io/stat.h>
+#include <psp2/kernel/clib.h>
 
-#ifdef __PSP2_DEBUG__
-#include <psp2shell.h>
-#endif
 
 static const Common::HardwareInputTableEntry psp2JoystickButtons[] = {
 	{ "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("Cross")       },
@@ -156,7 +155,7 @@ bool OSystem_PSP2::hasFeature(Feature f) {
 
 void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
 #if __PSP2_DEBUG__
-	psp2shell_print(message);
+	sceClibPrintf(message);
 #endif
 }
 
