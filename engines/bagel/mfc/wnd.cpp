@@ -228,12 +228,18 @@ int CWnd::GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const {
 
 BOOL CWnd::SetWindowText(LPCSTR lpszString) {
 	_windowText = lpszString;
+	Invalidate();
 	return true;
 }
 
 UINT CWnd::GetState() const {
 	// TODO: CWnd::GetState
 	return 0;
+}
+
+void CWnd::SetStyle(DWORD nStyle) {
+	m_nStyle = nStyle;
+	Invalidate();
 }
 
 CDC *CWnd::GetDC() {
@@ -760,9 +766,12 @@ int CWnd::SetScrollPos(int nBar, int nPos, BOOL bRedraw) {
 }
 
 void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
+	CDialog *dialog = dynamic_cast<CDialog *>(this);
+	assert(dialog);
+
 	// Parse the template and use it to load controls
 	Gfx::CDialogTemplate dt(dlgTemplate);
-	dt.loadTemplate(this);
+	dt.loadTemplate(dialog);
 
 	SendMessage(WM_INITDIALOG);
 	ShowWindow(SW_SHOWNORMAL);

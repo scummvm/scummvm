@@ -160,12 +160,13 @@ void CDialogTemplate::Item::load(Common::SeekableReadStream &src) {
 		src.read(&_data[0], _data.size());
 }
 
-void CDialogTemplate::loadTemplate(CWnd *parent) {
+void CDialogTemplate::loadTemplate(CDialog *parent) {
 	// Set up the overall window
 	RECT bounds(_header._x, _header._style,
 		_header._x + _header._w,
 		_header._y + _header._h);
-	parent->Create(_header._className.c_str(),
+	CWnd *wndParent = static_cast<CWnd *>(parent);
+	wndParent->Create(_header._className.c_str(),
 		_header._caption.c_str(),
 		_header._style,
 		bounds,
@@ -223,6 +224,9 @@ void CDialogTemplate::loadTemplate(CWnd *parent) {
 		// Register the control as needing to be
 		// freed when the dialog is closed
 		parent->_ownedControls.push_back(ctl);
+
+		if (item._style & BS_DEFPUSHBUTTON)
+			parent->_defaultId = item._id;
 	}
 }
 

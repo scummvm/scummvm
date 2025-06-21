@@ -31,7 +31,7 @@
 namespace Bagel {
 namespace MFC {
 
-class CWnd;
+class CDialog;
 
 namespace Gfx {
 
@@ -105,7 +105,7 @@ public:
 	/**
 	 * Sets up window with parsed template data
 	 */
-	void loadTemplate(CWnd *parent);
+	void loadTemplate(CDialog *parent);
 
 	BOOL HasFont() const;
 	BOOL SetFont(LPCSTR lpFaceName, WORD nFontSize);

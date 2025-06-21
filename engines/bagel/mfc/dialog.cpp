@@ -155,12 +155,28 @@ BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 	return TRUE;
 }
 
-DWORD CDialog::GetDefID() {
-	error("TODO: CDialog::GetDefID");
+DWORD CDialog::GetDefID() const {
+	return _defaultId;
 }
 
 void CDialog::SetDefID(UINT nID) {
-	error("TODO: CDialog::SetDefID");
+	CWnd *oldBtn;
+
+	if (_defaultId && (oldBtn = GetDlgItem(_defaultId)) != nullptr) {
+		DWORD style = oldBtn->GetStyle();
+		style &= ~BS_DEFPUSHBUTTON;
+		oldBtn->SetStyle(style);
+	}
+
+	_defaultId = nID;
+
+	// Set new default
+	CWnd *newBtn = GetDlgItem(nID);
+	if (newBtn) {
+		DWORD style = newBtn->GetStyle();
+		style = (style & ~0xF) | BS_DEFPUSHBUTTON;
+		newBtn->SetStyle(style);
+	}
 }
 
 LRESULT CDialog::HandleInitDialog(WPARAM, LPARAM) {

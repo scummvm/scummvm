@@ -1001,7 +1001,6 @@ typedef struct tagCREATESTRUCTA {
 
 class CWnd : public CCmdTarget {
 	DECLARE_DYNCREATE(CWnd)
-	friend class CDialogTemplate;
 
 protected:
 	static const MSG *GetCurrentMessage();
@@ -1258,6 +1257,7 @@ public:
 	DWORD GetStyle() const {
 		return m_nStyle;
 	}
+	void SetStyle(DWORD nStyle);
 	bool IsWindowEnabled() const {
 		return (_itemState & ODS_DISABLED) == 0;
 	}
@@ -1348,11 +1348,14 @@ public:
 
 class CDialog : public CWnd {
 	DECLARE_DYNAMIC(CDialog)
+	friend class CDialogTemplate;
+
 private:
 	LPCSTR m_lpszTemplateName = nullptr;
 	UINT m_nIDHelp = 0;
 	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
 	HGLOBAL m_hDialogTemplate = 0;
+	int _defaultId = 0;
 
 	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
 		void *lpDialogInit, HINSTANCE hInst);
@@ -1387,7 +1390,7 @@ public:
 		return true;
 	}
 
-	DWORD GetDefID();
+	DWORD GetDefID() const;
 	void SetDefID(UINT nID);
 	LRESULT HandleInitDialog(WPARAM, LPARAM);
 	LRESULT HandleSetFont(WPARAM, LPARAM);
