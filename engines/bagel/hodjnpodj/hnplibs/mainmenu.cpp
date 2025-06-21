@@ -29,7 +29,6 @@
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
-//include <mmsystem.h>
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -40,6 +39,20 @@ static  CColorButton *pOptionsButton = nullptr;
 static  CColorButton *pAudioButton = nullptr;
 static  CColorButton *pReturnButton = nullptr;
 static  CColorButton *pQuitButton = nullptr;
+
+BEGIN_MESSAGE_MAP(CMainMenu, CBmpDialog)
+	//{{AFX_MSG_MAP(CMainMenu)
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
+	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_OPTIONS_RULES, CMainMenu::OnClickedRules)
+	ON_BN_CLICKED(IDC_OPTIONS_NEWGAME, CMainMenu::OnClickedNewgame)
+	ON_BN_CLICKED(IDC_OPTIONS_OPTIONS, CMainMenu::OnClickedOptions)
+	ON_BN_CLICKED(IDC_OPTIONS_AUDIO, CMainMenu::OnClickedAudio)
+	ON_BN_CLICKED(IDC_OPTIONS_RETURN, CMainMenu::OnClickedReturn)
+	ON_BN_CLICKED(IDC_OPTIONS_QUIT, CMainMenu::OnClickedQuit)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
 
 CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette,
                      UINT nFlags, FPFUNC pOptionsFunc, const char *pRulesFileName,
@@ -348,20 +361,6 @@ void CMainMenu::OnClickedQuit() {
 	ClearDialogImage();
 	EndDialog(IDC_OPTIONS_QUIT);
 }
-
-BEGIN_MESSAGE_MAP(CMainMenu, CBmpDialog)
-	//{{AFX_MSG_MAP(CMainMenu)
-	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
-	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_OPTIONS_RULES, CMainMenu::OnClickedRules)
-	ON_BN_CLICKED(IDC_OPTIONS_NEWGAME, CMainMenu::OnClickedNewgame)
-	ON_BN_CLICKED(IDC_OPTIONS_OPTIONS, CMainMenu::OnClickedOptions)
-	ON_BN_CLICKED(IDC_OPTIONS_AUDIO, CMainMenu::OnClickedAudio)
-	ON_BN_CLICKED(IDC_OPTIONS_RETURN, CMainMenu::OnClickedReturn)
-	ON_BN_CLICKED(IDC_OPTIONS_QUIT, CMainMenu::OnClickedQuit)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
 
 } // namespace HodjNPodj
 } // namespace Bagel

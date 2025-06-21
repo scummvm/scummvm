@@ -792,5 +792,15 @@ void CWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		pControl->DrawItem(lpDrawItemStruct);
 }
 
+BOOL CWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
+	UINT nID = LOWORD(wParam);
+	int nCode = HIWORD(wParam);
+
+	// TODO: Original does some stuff with reflecting
+	// the previous message to child control by default
+
+	return OnCmdMsg(nID, nCode, nullptr, nullptr);
+}
+
 } // namespace MFC
 } // namespace Bagel

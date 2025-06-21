@@ -446,6 +446,22 @@ struct CCreateContext {
 };
 
 /*============================================================================*/
+// Implementation of command routing
+
+struct AFX_CMDHANDLERINFO {
+	void (CCmdTarget::*pmf)();
+	CCmdTarget *pTarget;
+};
+
+/*============================================================================*/
+// WM_NOTIFY support
+
+struct AFX_NOTIFY {
+	LRESULT *pResult;
+	NMHDR *pNMHDR;
+};
+
+/*============================================================================*/
 
 class CGdiObject : public CObject {
 	DECLARE_DYNCREATE(CGdiObject)
@@ -882,6 +898,12 @@ class CCmdTarget : public CObject {
 
 protected:
 	const AFX_MSGMAP_ENTRY *LookupMessage(UINT message);
+	const AFX_MSGMAP_ENTRY *AfxFindMessageEntry(
+		const AFX_MSGMAP_ENTRY *lpEntry,
+		UINT nMsg, UINT nCode, UINT nID);
+	bool _AfxDispatchCmdMsg(CCmdTarget *pTarget,
+		UINT nID, int nCode, AFX_PMSG pfn, void *pExtra,
+		UINT nSig, AFX_CMDHANDLERINFO *pHandlerInfo);
 
 public:
 	~CCmdTarget() override {
@@ -900,6 +922,15 @@ public:
 	void BeginWaitCursor();
 	void EndWaitCursor();
 	void RestoreWaitCursor();
+
+	BOOL OnCmdMsg(UINT nID, int nCode, void *pExtra,
+		AFX_CMDHANDLERINFO *pHandlerInfo);
+};
+
+class CCmdUI {
+public:
+	bool m_bContinueRouting = false;
+	int m_nID = 0;
 };
 
 class CDocument : public CCmdTarget {
@@ -987,9 +1018,7 @@ protected:
 	Libs::Array<CWnd *> _ownedControls;
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) {
-		return false;
-	}
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
 		return false;
 	}
