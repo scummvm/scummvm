@@ -1911,6 +1911,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "legendofseththebard", "The Legend of Seth the Bard" },
 	{ "legendofskystones", "Legend Of Sky Stones" },
 	{ "legendsofmardaram", "Legends of Mardaram" },
+	{ "leisuresuitlarry1", "Leisure Suit Larry in the Land of the Lounge Lizards AGI+ Remake" },
 	{ "leisuresuitlarry2", "Leisure Suit Larry 2 - Point and Click Remake" },
 	{ "leisuresuitlarrylil", "Leisure Suit Larry: Lost in Love!" },
 	{ "lelac", "Le Lac" },
@@ -4263,6 +4264,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "08d7ab12e0844b2217171b9f16f87062", 11267330),  // Post-Jam
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "b9e0b0bbbb82a04d9c83efa455610eda", 11728709),  // Post-Jam v11
 	UNSUPPORTED_GAME_ENTRY_EN("burncloset", "BurnDownTheCLoset.ags", "adfdd31c0cfa9ae131da1f1071e75a7a", 4734045),
+	UNSUPPORTED_GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "dafcc09ca5a4f4d4ba721f905dc9f366", 79014256),  // v1.3
 	UNSUPPORTED_GAME_ENTRY_EN("weightgravity", "Weight of Gravity.ags", "d5532595b86ca80fb656d4343063ab15", 245545607),
 
 	// AGS 4 games
@@ -4769,12 +4771,15 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DETECTION_ENTRY_GUIO("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719, Common::UNK_LANG , "GOG.com", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP),
 	DETECTION_ENTRY_GUIO("kathyrain", "kathyrain.exe", "4bec9449bb53b0eea78cd5818b870f43", 197485875, Common::UNK_LANG , "Amazon Games", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP),
 	GAME_ENTRY_STEAM("killyourself", "ky.exe", "4e0d0aca04563b21a47e8a0cc56605fc", 18567658),  // En-De-Es-It-Nl
-	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("lamplightcity", "lamplight city.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178, 0), // Version 1.10  En-De
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("lamplightcity", "lamplight city.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178, 0), // v1.10  En-De
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("lamplightcity", "lamplight city.exe", "3df12ff26f3501f8e2018e431e96d257", 828000046, 0), // v1.13
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("lamplightcity", "lamplight city.ags", "70a52d0ba7e5975df40aef460142f770", 979393622, 0), // Linux
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "lamplight city.exe", "4b18403fd1d150321f50cff9232d7b28", 982468239, 0),
-	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "lamplight city.exe", "fc707a8a169b7beabacb4f246a3acfc9", 827966541, 0),
-	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "lamplight city.ags", "69936bd2263616bb0bd64fa6b4fe5a8d", 979409133, 0),
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "lamplight city.exe", "fc707a8a169b7beabacb4f246a3acfc9", 827966541, 0),  // v1.13
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "lamplight city.ags", "69936bd2263616bb0bd64fa6b4fe5a8d", 979409133, 0),  // Linux
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "lamplight city.ags", "9242eb3bf7fec4f14be4843a5d362928", 824764985, 0),  // Linux v1.13
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "ac2game.dat", "0cb636e2235e2b7cff4ece5898653e18", 981897178, 0), // Mac
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("lamplightcity", "ac2game.dat", "fc707a8a169b7beabacb4f246a3acfc9", 827966541, 0), // Mac v1.13
 	GAME_ENTRY_EN_STEAM("lancelothangover", "Lancelot.exe", "72df0ed89f7359b1466b0ea51f1f8ed4", 22506826),
 	GAME_ENTRY("larrylotter", "Warthogs.exe", "9c49b6fa0460f36d6e7558281f142683", 12448793),  // Multilang
 	GAME_ENTRY("larrylotter", "warthogs.exe", "cbe62572ed082a3063a49d594612ac0b", 12397280), // v1.7
@@ -7680,6 +7685,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("legendofskystones", "Ludum Dare 45.ags", "38cfb1d9b153efbd94528f3c711ca5a0", 8869946),  // Linux
 	GAME_ENTRY_EN("legendofskystones", "Ludum Dare 45.exe", "8aff96231ca059cd61fe5ce68b83f50f", 11356746),  // Windows
 	GAME_ENTRY_LANG("legendsofmardaram", "LOM.exe", "0710e2ec71042617f565c01824f0cf3c", 50183544, Common::DE_DEU),
+	GAME_ENTRY_EN("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "de742a8db461bab4b1abae44b052493f", 4364303),
 	GAME_ENTRY_EN("leisuresuitlarry2", "Larry 2.exe", "949f7440e3692b7366c2029979dee9a0", 11971760),
 	GAME_ENTRY_EN("lelac", "Le Lac - EN.exe", "4eed763ae52a4acd9c231f09ece7b914", 188867790),
 	GAME_ENTRY_LANG("lelac", "Le Lac.exe", "389f0ba58d77f1c203dc4c68b80dad44", 95040881, Common::FR_FRA),
