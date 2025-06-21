@@ -121,6 +121,7 @@ private:
 	bool _soundEngineToggle = false;
 	int32 _soundDriverTicks = 0;
 	int32 _soundDriverVolume = 0;
+	uint32 _maxQueuedStreams = 0;
 
 	const char *_cities[17] = {
 		"EPERNAY",
