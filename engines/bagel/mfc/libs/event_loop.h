@@ -46,6 +46,7 @@ private:
 	Common::Point _joystickPos;
 	Common::Point _mousePos;
 	uint _joystickButtons = 0;
+	HOOKPROC _kbdHookProc = nullptr;
 
 	/**
 	 * Get any pending event
@@ -152,6 +153,16 @@ public:
 	 * have any future messages pending for it
 	 */
 	bool validateDestroyedWnd(HWND hWnd);
+
+	HHOOK HookKeyboard(HOOKPROC proc) {
+		assert(!_kbdHookProc);
+		_kbdHookProc = proc;
+		return (HHOOK)proc;
+	}
+	void UnhookKeyboard(HHOOK hook) {
+		assert(_kbdHookProc && hook == (HHOOK)_kbdHookProc);
+		_kbdHookProc = nullptr;
+	}
 };
 
 } // namespace Libs

@@ -105,11 +105,14 @@ Event::operator MSG() const {
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
 		msg.message = (type == Common::EVENT_KEYDOWN) ?
-		              WM_KEYDOWN : WM_KEYUP;
+			WM_KEYDOWN : WM_KEYUP;
+		msg.wParam = kbd.keycode;
 		msg.lParam = (kbdRepeat ? 1 : 0) |
-		             ((uint)kbd.keycode << 16) |
-		             ((kbd.keycode >= 256 ? 1 : 0) << 24) |
-		             (((kbd.flags & Common::KBD_ALT) ? 1 : 0) << 29);
+		    ((uint)kbd.keycode << 16) |
+		    ((kbd.keycode >= 256 ? 1 : 0) << 24) |
+		    (((kbd.flags & Common::KBD_ALT) ? 1 : 0) << 29) |
+			((type == Common::EVENT_KEYUP ? 1 : 0) << 30) |
+			((type == Common::EVENT_KEYDOWN ? 1 : 0) << 31);
 		break;
 
 	case Common::EVENT_MOUSEMOVE:

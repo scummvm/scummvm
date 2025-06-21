@@ -88,6 +88,12 @@ bool EventLoop::GetMessage(MSG &msg) {
 						MAKELPARAM(HTCLIENT, msg.message)
 					);
 				}
+
+				if ((msg.message == WM_KEYDOWN || msg.message == WM_KEYUP) &&
+						_kbdHookProc) {
+					if (_kbdHookProc(HC_ACTION, msg.wParam, msg.lParam))
+						msg.message = WM_NULL;
+				}
 			} else {
 				msg.message = WM_NULL;
 			}

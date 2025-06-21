@@ -108,24 +108,29 @@ BOOL WritePrivateProfileString(
 }
 
 HTASK GetCurrentTask() {
-	error("TODO: GetCurrentTask");
+	return 0;
 }
 
 FARPROC MakeProcInstance(FARPROC lpProc, HINSTANCE hInstance) {
-	error("TODO: MakeProcInstance");
+	// Just return the passed proc as is
+	return lpProc;
 }
 
 void FreeProcInstance(FARPROC lpProc) {
-	error("TODO: FreeProcInstance");
+	// No implementation needed
 }
 
-HHOOK SetWindowsHookEx(int idHook,
-                       HOOKPROC lpfn, HINSTANCE hmod, HTASK dwThreadId) {
-	error("TODO: SetWindowsHookEx");
+HHOOK SetWindowsHookEx(int idHook, HOOKPROC lpfn,
+		HINSTANCE hmod, HTASK dwThreadId) {
+	// We only currently support keyboard in ScummVM
+	assert(idHook == WH_KEYBOARD);
+
+	return AfxGetApp()->HookKeyboard(lpfn);
 }
 
 BOOL UnhookWindowsHookEx(HHOOK hhk) {
-	error("TODO: UnhookWindowsHookEx");
+	AfxGetApp()->UnhookKeyboard(hhk);
+	return true;
 }
 
 LRESULT CallNextHookEx(HHOOK hhk, int nCode,

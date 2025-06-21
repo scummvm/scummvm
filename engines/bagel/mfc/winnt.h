@@ -666,6 +666,17 @@ typedef struct _GUID {
 #define COMPLEXREGION       3
 #define RGN_ERROR ERROR
 
+/*
+ * Hook Codes
+ */
+#define HC_ACTION           0
+#define HC_GETNEXT          1
+#define HC_SKIP             2
+#define HC_NOREMOVE         3
+#define HC_NOREM            HC_NOREMOVE
+#define HC_SYSMODALON       4
+#define HC_SYSMODALOFF      5
+
 
 typedef struct tagTEXTMETRICA {
 	LONG        tmHeight = 0;
