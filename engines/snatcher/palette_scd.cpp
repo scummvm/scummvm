@@ -91,7 +91,7 @@ private:
 	void setHINTHandler(uint8 num);
 
 	void hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer *sr);
-	void hIntHandler_23(Graphics::SegaRenderer *sr);
+	void hIntHandler_28(Graphics::SegaRenderer *sr);
 	int _transitionStep;
 };
 
@@ -112,9 +112,8 @@ SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, Gra
 	P_OP(palClear);
 #undef P_OP
 
-	_hINTProcs.resize(24);
-	_hINTProcs[0] = new HINTFunc(this, &SCDPalette::hIntHandler_characterChatPortraitPalette);
-	_hINTProcs[23] = new HINTFunc(this, &SCDPalette::hIntHandler_23);
+	_hINTProcs.push_back(new HINTFunc(this, &SCDPalette::hIntHandler_characterChatPortraitPalette));
+	_hINTProcs.push_back(new HINTFunc(this, &SCDPalette::hIntHandler_28));
 
 	_eventQueue = _eventCurPos = new PalEventSCD[12];
 	_colors = new uint16[128]();
@@ -510,7 +509,7 @@ void SCDPalette::hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer
 	sr->hINT_enable(false);
 }
 
-void SCDPalette::hIntHandler_23(Graphics::SegaRenderer *sr) {
+void SCDPalette::hIntHandler_28(Graphics::SegaRenderer *sr) {
 
 }
 

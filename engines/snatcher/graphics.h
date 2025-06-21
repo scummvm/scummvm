@@ -73,7 +73,7 @@ public:
 	void setTextPrintDelay(uint16 delay);
 	bool isTextInQueue() const;
 	void resetTextFields();
-	void clearJordanInputField();
+	void clearTextInputLine();
 	uint8 getVerbAreaType() const;
 	bool isVerbsTabActive() const;
 
@@ -153,7 +153,7 @@ public:
 	void saveState(Common::SeekableWriteStream *out);
 	void postLoadProcess();
 
-	void createMouseCursor(bool show);
+	void createMouseCursor();
 
 	int displayBootLogoFrame(int frameNo);
 

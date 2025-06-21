@@ -35,7 +35,9 @@ struct GameState;
 
 // The script engine has opcodes that allow reading and writing into memory, at least for 16-bit addresses.
 // We could just create a 64K buffer and let that happen, but eventually we would have to route the values
-// to the affected parts of the engine, anyway.
+// to the affected parts of the engine, anyway. For now, my impression is that the memory writes are mostly
+// used to configure the verb interface while the reads are mostly for evaluation of the action sequeunce
+// results and also for querying the savegame environment.
 
 class MemAccessHandler {
 public:
@@ -46,6 +48,9 @@ public:
 	void writeWord(uint16 addr, uint16 val);
 
 	void setGameState(GameState *state);
+
+	void saveTempState();
+	void restoreTempState();
 
 private:
 	SnatcherEngine *_vm;

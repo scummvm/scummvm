@@ -427,7 +427,6 @@ SH_IMPL_FRM(D2, 11) {
 			return;
 		_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 		_vm->gfx()->runScript(_module->getGfxData(), 7);
-		_vm->gfx()->createMouseCursor(true);
 		++state.frameState;
 		break;
 	case 2:
