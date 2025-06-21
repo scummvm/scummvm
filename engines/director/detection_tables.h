@@ -468,7 +468,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sinkha1",			"Sinkha: Hyleyn" },
 	{ "sinkha2",			"Sinkha: Atmosphere / Planet of the Clouds" },
 	{ "sitfarm",			"Sitting on the Farm" },
-	{ "skeeto10",			"Skipper & Skeeto: Fun in the Park" }, // Magnus & Myggen
+	{ "skeeto1",			"Skipper & Skeeto: Tales from Paradise Park" }, // Magnus & Myggen
+	{ "skeeto10",			"Skipper & Skeeto: Fun in the Park" },
 	{ "skippy",             "Skippy and the Curse of the Temple of Ock" },
 	{ "skyborg",			"SkyBorg: Into the Vortex" },
 	{ "slamdunktyping",		"Slam Dunk Typing" },
@@ -3196,6 +3197,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO2("sk8board", "Demo", "RIDE.EXE",  "65d06b5fef155a2473434571aff5bc29", 370013,
 								 "INTRO.MMM", "91195cec43e8a7bafe8b91d5e121b2e5", 273118, 310),
+
+	// Magnus & Myggen: Leg og Lær
+	// Original release. Other versions are D5 and above
+	WINGAME2_l("skeeto1", "", "MAGNUS.EXE",  "t:23965c54b1d788825fa2ef912f7a637b", 28609061,
+							  "MAGNUS0.DXR", "f:30dfa45352e90a7b070b21e8948934d8",	   3916, Common::DA_DNK, 404),
 
 	// Demo from Blender 1.5
 	// Version 1.2 onwards are D4
@@ -7629,6 +7635,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("sinkha", "Music and Animation", "Music&Animation", "08d6f6e39fbd8388faf57f602acaebcc", 705445, 500),
 	WINGAME2("sinkha", "Music and Animation", "MUSIC.EXE",		 "3460ad87d2ba57104e2810a77b53c220", 1393827,
 											  "MUS_ANIM.DXR",    "2e31baec8a4957593db517bbf46c6740", 1141212, 500),
+
+	// Multilanguage English/Spanish. Needs installation
+	WINGAME2("skeeto1", "",			  "START16.EXE",  "t:c19794b0e9df2c4e76c0d227ae4e4883",  1147041,
+									  "MAGNUSGB.CXT", "f:fbb5c96c52981b53a893f69275629bb4", 11087808, 501),
+	WINGAME2("skeeto1", "Tutorial",	  "TUTOR32.EXE",  "t:6eae78e010386eec6c540537e179457f",  1448025,
+									  "MMTUTOR.DXR",  "f:e3e670ee1545071c62373de6fd52ea86", 12223542, 501),
+	// Multilanguage Danish/Swedish/Norwegian/Finnish
+	WINGAME2_l("skeeto1", "",		  "START32.EXE", "t:789a64c2bb938610c3d3eca4cbd1a483",  1624983,
+									  "MAGNUS1.DXR", "f:9d9e1d7063775648445e93b5e2969b33",  6508488, Common::DA_DNK, 501),
+	WINGAME2_l("skeeto1", "Tutorial", "TUTOR32.EXE", "t:dab81d0fbcdcaa38f05858a99fa4298f",  1448069,
+									  "MMTUTOR.DXR", "f:1d8d4e8c4ebe9fa7d465f302644ab1c5", 26066084, Common::DA_DNK, 501),
 
 	// Developed by Mary Boies Software, published by Creative Wonders
 	// Windows version also found in Middle School Advantage 2001 bundle
