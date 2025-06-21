@@ -210,10 +210,13 @@ FakeTextureSurface::FakeTextureSurface(GLenum glIntFormat, GLenum glFormat, GLen
 	: TextureSurface(glIntFormat, glFormat, glType, format),
 	  _fakeFormat(fakeFormat),
 	  _rgbData(),
+	  _blitFunc(nullptr),
 	  _palette(nullptr),
 	  _mask(nullptr) {
 	if (_fakeFormat.isCLUT8()) {
 		_palette = new uint32[256]();
+	} else {
+		_blitFunc = Graphics::getFastBlitFunc(format, fakeFormat);
 	}
 }
 
@@ -299,6 +302,8 @@ void FakeTextureSurface::updateGLTexture() {
 void FakeTextureSurface::applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const {
 	if (_palette) {
 		Graphics::crossBlitMap(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat.bytesPerPixel, _palette);
+	} else if (_blitFunc) {
+		_blitFunc(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height());
 	} else {
 		Graphics::crossBlit(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat, srcFormat);
 	}

@@ -28,6 +28,7 @@
 
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+#include "graphics/blit.h"
 
 #include "common/rect.h"
 #include "common/rotationmode.h"
@@ -231,6 +232,7 @@ protected:
 
 	Graphics::Surface _rgbData;
 	Graphics::PixelFormat _fakeFormat;
+	Graphics::FastBlitFunc _blitFunc;
 	uint32 *_palette;
 	uint8 *_mask;
 };
