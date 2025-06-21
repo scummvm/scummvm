@@ -250,8 +250,6 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 }
 
 bool mouse_set_sprite(int32 spriteNum) {
-	M4sprite *tempSprite;
-
 	if (_G(mouseIsLocked)) {
 		_G(newMouseNum) = spriteNum;
 		return true;
@@ -264,13 +262,9 @@ bool mouse_set_sprite(int32 spriteNum) {
 	if (!_G(mouseSeriesHandle) || !*_G(mouseSeriesHandle))
 		return false;
 
-	int32 minX = _G(oldX) - _G(mouseX1offset);
-	int32 minY = _G(oldY) - _G(mouseY1offset);
-	int32 maxX = _G(oldX) + _G(mouseX2offset);
-	int32 maxY = _G(oldY) + _G(mouseY2offset);
-
-	if ((tempSprite = CreateSprite(_G(mouseSeriesHandle), _G(mouseSeriesOffset), spriteNum,
-			_G(mouseSprite), nullptr)) == nullptr)
+	M4sprite *tempSprite = CreateSprite(_G(mouseSeriesHandle), _G(mouseSeriesOffset), spriteNum,
+	                                    _G(mouseSprite), nullptr);
+	if (tempSprite == nullptr)
 		return false;
 
 	_G(mouseSprite) = tempSprite;
@@ -278,14 +272,6 @@ bool mouse_set_sprite(int32 spriteNum) {
 	_G(mouseY1offset) = _G(mouseSprite)->yOffset;
 	_G(mouseX2offset) = _G(mouseSprite)->w - _G(mouseX1offset) - 1;
 	_G(mouseY2offset) = _G(mouseSprite)->h - _G(mouseY1offset) - 1;
-	if (_G(mouseX) - _G(mouseX1offset) < minX)
-		minX = _G(mouseX) - _G(mouseX1offset);
-	if (_G(mouseY) - _G(mouseY1offset) < minY)
-		minY = _G(mouseY) - _G(mouseY1offset);
-	if (_G(mouseX) + _G(mouseX2offset) > maxX)
-		maxX = _G(mouseX) + _G(mouseX2offset);
-	if (_G(mouseY) + _G(mouseY2offset) > maxY)
-		maxY = _G(mouseY) + _G(mouseY2offset);
 
 	gui_mouse_refresh();
 	_G(currMouseNum) = spriteNum;
