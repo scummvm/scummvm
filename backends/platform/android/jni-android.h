@@ -56,6 +56,7 @@ public:
 	static bool virt_keyboard_state;
 
 	static int32 gestures_insets[4];
+	static int32 cutout_insets[4];
 
 	static jint onLoad(JavaVM *vm);
 

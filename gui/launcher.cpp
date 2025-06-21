@@ -912,9 +912,6 @@ void LauncherDialog::reflowLayout() {
 	addLayoutChooserButtons();
 #endif
 
-	_w = g_system->getOverlayWidth();
-	_h = g_system->getOverlayHeight();
-
 	Dialog::reflowLayout();
 }
 

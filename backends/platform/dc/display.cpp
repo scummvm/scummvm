@@ -702,12 +702,12 @@ void OSystem_Dreamcast::unlockScreen()
   _screen_dirty = true;
 }
 
-int16 OSystem_Dreamcast::getOverlayHeight()
+int16 OSystem_Dreamcast::getOverlayHeight() const
 {
   return OVL_H;
 }
 
-int16 OSystem_Dreamcast::getOverlayWidth()
+int16 OSystem_Dreamcast::getOverlayWidth() const
 {
   return OVL_W;
 }

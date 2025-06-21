@@ -107,8 +107,8 @@ public:
 	void clearOverlay();
 	void grabOverlay(Graphics::Surface &surface);
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-	int16 getOverlayHeight();
-	int16 getOverlayWidth();
+	int16 getOverlayHeight() const;
+	int16 getOverlayWidth() const;
 	Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12); }
 
 	// Mouse related
