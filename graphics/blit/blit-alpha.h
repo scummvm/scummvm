@@ -85,6 +85,41 @@ public:
 		}
 
 	}
+
+	inline void fill(byte *out) const {
+		uint32 ina = this->ca;
+
+		/* if (ina == 255) {
+			if (rgbmod) {
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = this->cb;
+				out[BlendBlit::kGIndex] = this->cg;
+				out[BlendBlit::kRIndex] = this->cr;
+			} else {
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = 255;
+				out[BlendBlit::kGIndex] = 255;
+				out[BlendBlit::kRIndex] = 255;
+			}
+		} else if (ina != 0) */ {
+			if (rgbmod) {
+				const uint outb = (out[BlendBlit::kBIndex] * (255 - ina) >> 8);
+				const uint outg = (out[BlendBlit::kGIndex] * (255 - ina) >> 8);
+				const uint outr = (out[BlendBlit::kRIndex] * (255 - ina) >> 8);
+
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = outb + (255 * ina * this->cb >> 16);
+				out[BlendBlit::kGIndex] = outg + (255 * ina * this->cg >> 16);
+				out[BlendBlit::kRIndex] = outr + (255 * ina * this->cr >> 16);
+			} else {
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = (out[BlendBlit::kBIndex] * (255 - ina) + 255 * ina) >> 8;
+				out[BlendBlit::kGIndex] = (out[BlendBlit::kGIndex] * (255 - ina) + 255 * ina) >> 8;
+				out[BlendBlit::kRIndex] = (out[BlendBlit::kRIndex] * (255 - ina) + 255 * ina) >> 8;
+			}
+		}
+
+	}
 };
 
 template<bool rgbmod, bool alphamod>
@@ -120,6 +155,28 @@ public:
 				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * ina) >> 8) >> 8;
 				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * ina) >> 8) >> 8;
 				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * ina) >> 8) >> 8;
+			}
+		}
+	}
+
+	inline void fill(byte *out) const {
+		uint32 ina = this->ca;
+
+		if (ina == 255) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = (out[BlendBlit::kBIndex] * this->cb) >> 8;
+				out[BlendBlit::kGIndex] = (out[BlendBlit::kGIndex] * this->cg) >> 8;
+				out[BlendBlit::kRIndex] = (out[BlendBlit::kRIndex] * this->cr) >> 8;
+			}
+		} else if (ina != 0) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((this->cb * ina) >> 8) >> 8;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((this->cg * ina) >> 8) >> 8;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((this->cr * ina) >> 8) >> 8;
+			} else {
+				out[BlendBlit::kBIndex] = (out[BlendBlit::kBIndex] * ina) >> 8;
+				out[BlendBlit::kGIndex] = (out[BlendBlit::kGIndex] * ina) >> 8;
+				out[BlendBlit::kRIndex] = (out[BlendBlit::kRIndex] * ina) >> 8;
 			}
 		}
 	}
@@ -186,6 +243,32 @@ public:
 			}
 		}
 	}
+
+	inline void fill(byte *out) const {
+		uint32 ina = this->ca;
+
+		if (ina == 255) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + this->cb;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + this->cg;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + this->cr;
+			} else {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + 255;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + 255;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + 255;
+			}
+		} else if (ina != 0) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((this->cb * ina) >> 8);
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((this->cg * ina) >> 8);
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((this->cr * ina) >> 8);
+			} else {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ina;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ina;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ina;
+			}
+		}
+	}
 };
 
 template<bool rgbmod, bool alphamod>
@@ -217,6 +300,20 @@ public:
 				out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * (out[BlendBlit::kGIndex]) * ina) >> 16), 0);
 				out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * (out[BlendBlit::kRIndex]) * ina) >> 16), 0);
 			}
+		}
+	}
+
+	inline void fill(byte *out) const {
+		out[BlendBlit::kAIndex] = 255;
+
+		if (rgbmod) {
+			out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((this->cb * out[BlendBlit::kBIndex]) >> 8), 0);
+			out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((this->cg * out[BlendBlit::kGIndex]) >> 8), 0);
+			out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((this->cr * out[BlendBlit::kRIndex]) >> 8), 0);
+		} else {
+			out[BlendBlit::kBIndex] = 0;
+			out[BlendBlit::kGIndex] = 0;
+			out[BlendBlit::kRIndex] = 0;
 		}
 	}
 };
@@ -339,6 +436,63 @@ void BlendBlit::blitT(Args &args, const TSpriteBlendMode &blendMode, const Alpha
 						T::template blitInnerLoop<T::template AlphaBlend, true, false, false>(args);
 					}
 				}
+			}
+		}
+	}
+}
+
+template<class T>
+void BlendBlit::fillT(Args &args, const TSpriteBlendMode &blendMode) {
+	bool rgbmod   = ((args.color & kRGBModMask) != kRGBModMask);
+	bool alphamod = ((args.color & kAModMask)   != kAModMask);
+
+	if (blendMode == BLEND_ADDITIVE) {
+		if (rgbmod) {
+			if (alphamod) {
+				T::template fillInnerLoop<T::template AdditiveBlend, true, true>(args);
+			} else {
+				T::template fillInnerLoop<T::template AdditiveBlend, true, false>(args);
+			}
+		} else {
+			if (alphamod) {
+				T::template fillInnerLoop<T::template AdditiveBlend, false, true>(args);
+			} else {
+				T::template fillInnerLoop<T::template AdditiveBlend, false, false>(args);
+			}
+		}
+	} else if (blendMode == BLEND_SUBTRACTIVE) {
+		if (rgbmod) {
+			T::template fillInnerLoop<T::template SubtractiveBlend, true, false>(args);
+		} else {
+			T::template fillInnerLoop<T::template SubtractiveBlend, false, false>(args);
+		}
+	} else if (blendMode == BLEND_MULTIPLY) {
+		if (rgbmod) {
+			if (alphamod) {
+				T::template fillInnerLoop<T::template MultiplyBlend, true, true>(args);
+			} else {
+				T::template fillInnerLoop<T::template MultiplyBlend, true, false>(args);
+			}
+		} else {
+			if (alphamod) {
+				T::template fillInnerLoop<T::template MultiplyBlend, false, true>(args);
+			} else {
+				T::template fillInnerLoop<T::template MultiplyBlend, false, false>(args);
+			}
+		}
+	} else {
+		assert(blendMode == BLEND_NORMAL);
+		if (rgbmod) {
+			if (alphamod) {
+				T::template fillInnerLoop<T::template AlphaBlend, true, true>(args);
+			} else {
+				T::template fillInnerLoop<T::template AlphaBlend, true, false>(args);
+			}
+		} else {
+			if (alphamod) {
+				T::template fillInnerLoop<T::template AlphaBlend, false, true>(args);
+			} else {
+				T::template fillInnerLoop<T::template AlphaBlend, false, false>(args);
 			}
 		}
 	}

@@ -68,10 +68,32 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
 	}
 }
 
+template<template <bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool rgbmod, bool alphamod>
+static inline void fillInnerLoop(BlendBlit::Args &args) {
+	byte *out;
+
+	const PixelFunc<rgbmod, alphamod> pixelFunc(args.color);
+
+	for (uint32 i = 0; i < args.height; i++) {
+		out = args.outo;
+
+		for (uint32 j = 0; j < args.width; j++) {
+			pixelFunc.fill(out);
+
+			out += 4;
+		}
+		args.outo += args.dstPitch;
+	}
+}
+
 }; // end of class BlendBlitImpl_Default
 
 void BlendBlit::blitGeneric(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType) {
 	blitT<BlendBlitImpl_Default>(args, blendMode, alphaType);
+}
+
+void BlendBlit::fillGeneric(Args &args, const TSpriteBlendMode &blendMode) {
+	fillT<BlendBlitImpl_Default>(args, blendMode);
 }
 
 } // End of namespace Graphics

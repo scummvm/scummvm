@@ -1100,6 +1100,37 @@ Common::Rect ManagedSurface::blendBlitTo(Surface &target,
 	else return Common::Rect(0, 0, dstArea.width(), dstArea.height());
 }
 
+void ManagedSurface::blendFillRect(Common::Rect r,
+		const uint colorMod, const TSpriteBlendMode blend) {
+	if (!isBlendBlitPixelFormatSupported(format, format)) {
+		warning("ManagedSurface::blendFillRect only accepts RGBA32!");
+		return;
+	}
+
+	// Alpha is zero
+	if ((colorMod & MS_ARGB(255, 0, 0, 0)) == 0) return;
+
+	// Use faster memory fills where possible
+	if (blend == BLEND_NORMAL &&
+	    (colorMod & MS_ARGB(255, 0, 0, 0)) == MS_ARGB(255, 0, 0, 0)) {
+		fillRect(r, colorMod);
+		return;
+	}
+
+	r.clip(w, h);
+
+	if (!r.isValidRect())
+		return;
+
+	BlendBlit::fill(
+		(byte *)getBasePtr(0, 0), pitch,
+		r.width(), r.height(),
+		colorMod, blend);
+
+	// Mark the affected area
+	addDirtyRect(r);
+}
+
 void ManagedSurface::markAllDirty() {
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
 }
