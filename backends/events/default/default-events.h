@@ -24,6 +24,7 @@
 
 #include "common/events.h"
 #include "common/queue.h"
+#include "engines/engine.h"
 
 namespace Common {
 class Keymapper;
@@ -57,6 +58,7 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	bool _shouldQuit;
 	bool _shouldReturnToLauncher;
 	bool _confirmExitDialogActive;
+	PauseToken _pauseToken;
 
 public:
 	DefaultEventManager(Common::EventSource *boss);

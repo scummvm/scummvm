@@ -144,6 +144,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		_buttonState &= ~RBUTTON;
 		break;
 
+	case Common::EVENT_PAUSE_TOGGLE:
+		if (_pauseToken.isActive()) {
+			_pauseToken.clear();
+		} else if (g_engine) {
+			_pauseToken = g_engine->pauseEngine();
+		}
+		break;
+
 	case Common::EVENT_MAINMENU:
 		if (g_engine && !g_engine->isPaused())
 			g_engine->openMainMenuDialog();
@@ -220,6 +228,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_confirmExitDialogActive = false;
 		} else {
 			_shouldQuit = true;
+		}
+		if (_shouldQuit) {
+			_pauseToken.clear();
 		}
 		break;
 
@@ -332,6 +343,11 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	Keymap *globalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName, _("Global"));
 
 	Action *act;
+	act = new Action("PAUSE", _("Toggle pause"));
+	act->addDefaultInputMapping("C+S+p");
+	act->setEvent(EVENT_PAUSE_TOGGLE);
+	globalKeymap->addAction(act);
+
 	act = new Action("MENU", _("Global Main Menu"));
 	act->addDefaultInputMapping("C+F5");
 	act->addDefaultInputMapping("JOY_START");
