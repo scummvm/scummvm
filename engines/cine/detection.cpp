@@ -45,7 +45,7 @@ static const DebugChannelDef debugFlagList[] = {
 class CineMetaEngineDetection : public AdvancedMetaEngineDetection<Cine::CINEGameDescription> {
 public:
 	CineMetaEngineDetection() : AdvancedMetaEngineDetection(Cine::gameDescriptions, cineGames) {
-		_guiOptions = GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES);
+		_guiOptions = GUIO4(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES, GAMEOPTION_TTS);
 	}
 
 	const char *getName() const override {
