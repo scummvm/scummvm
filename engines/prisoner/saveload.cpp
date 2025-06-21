@@ -1060,6 +1060,12 @@ void PrisonerEngine::loadgame(const char *filename) {
 	updateScreen(true, _cameraX + _mouseX, _cameraY + _mouseY);
 	_backgroundFlag = 4;
 	_updateDirtyRectsFlag = true;
+	_mainMenuRequested = false;
+	_inGame = true;
+	_menuMouseCursorActive = false;
+	_menuMouseCursor = -1;
+	_moduleScriptCalled = false;
+
 
 	delete in;
 
