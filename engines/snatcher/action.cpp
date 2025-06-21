@@ -415,6 +415,12 @@ void ActionSequenceHandler::handleWeaponDrawAndTargetSelection() {
 
 void ActionSequenceHandler::handleShot() {
 	if (_useLightGun) {
+		// Weirdly, during the calibration they substract an offset, but not here. When testing with an emulator,
+		// the aiming is not satisfactory either, so I guess this is either an original bug or it really does
+		// behave differently with a real light gun (y-coords aren't that eays to get there, depending on the
+		// TV, the distance from the TV etc.).
+		const int16 yOffs = -24;
+
 		int16 v = animGet(21, F2c);
 		if (v && ++v >= 2) {
 			v = 0;
@@ -423,9 +429,9 @@ void ActionSequenceHandler::handleShot() {
 				_targetField = 2;
 			else if (_vm->input().lightGunPos.x >= 96)
 				_targetField = 1;
-			if (_vm->input().lightGunPos.y >= 88)
+			if (_vm->input().lightGunPos.y + yOffs >= 88)
 				_targetField += 6;
-			else if (_vm->input().lightGunPos.x >= 48)
+			else if (_vm->input().lightGunPos.y + yOffs>= 48)
 				_targetField += 3;
 		}
 		animSet(21, F2c, v);

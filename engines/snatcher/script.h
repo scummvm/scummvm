@@ -26,7 +26,7 @@
 #include "common/func.h"
 #include "common/ptr.h"
 
-#define		SNATCHER_SCRIPT_DEBUG
+//#define		SNATCHER_SCRIPT_DEBUG
 
 namespace Common {
 class SeekableReadStream;
@@ -104,7 +104,7 @@ private:
 	void m_gfxPostLoadProcess(const uint16 *&data);
 	void m_33(const uint16 *&data);
 	void m_palOps(const uint16 *&data);
-	void m_clearJordanInputField(const uint16 *&data);
+	void m_clearTextInputLine(const uint16 *&data);
 
 	typedef Common::Functor1Mem<const uint16*&, void, CmdQueue> CmdQueOpcode;
 	Common::Array<CmdQueOpcode*> _opcodes;
@@ -144,8 +144,8 @@ public:
 	bool postProcess(Script &script);
 	void processInput();
 
-	void loadState(Common::SeekableReadStream *in, Script &script);
-	void saveState(Common::SeekableWriteStream *out, Script &script);
+	void loadState(Common::SeekableReadStream *in, Script &script, bool onlyTempData);
+	void saveState(Common::SeekableWriteStream *out, Script &script, bool onlyTempData);
 
 private:
 	CmdQueue *_que;
@@ -205,13 +205,13 @@ private:
 	void o_setFlags();
 	void o_21();
 	void o_eval_less();
-	void o_eval_lessOrSame();
+	void o_eval_lessOrEqual();
 	void o_do_either_or();
 	void o_do_if();
 	void o_28();
 	void o_executeFunction();
-	void o_40();
-	void o_42();
+	void o_eval_greater();
+	void o_eval_greaterOrEqual();
 	void o_break();
 	void o_eval_true();
 	void o_start();

@@ -131,7 +131,7 @@ void CmdQueue::makeFunctions() {
 		OP(gfxPostLoadProcess),
 		OP(33),
 		OP(palOps),
-		OP(clearJordanInputField)
+		OP(clearTextInputLine)
 	};
 #undef OP
 
@@ -398,7 +398,7 @@ void CmdQueue::m_23(const uint16 *&data) {
 }
 
 void CmdQueue::m_shooterSequenceRun(const uint16 *&data) {
-	if (!_vm->_aseq->run(/*_state->conf.useLightGun*/0))
+	if (!_vm->_aseq->run(_state->conf.useLightGun))
 		_progress = -1;
 }
 
@@ -457,8 +457,8 @@ void CmdQueue::m_palOps(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_clearJordanInputField(const uint16 *&data) {
-	_vm->gfx()->clearJordanInputField();
+void CmdQueue::m_clearTextInputLine(const uint16 *&data) {
+	_vm->gfx()->clearTextInputLine();
 	_progress = -1;
 }
 
@@ -540,43 +540,54 @@ void ScriptEngine::processInput() {
 	ARR_POS(1) = 0;
 }
 
-void ScriptEngine::loadState(Common::SeekableReadStream *in, Script &script) {
+void ScriptEngine::loadState(Common::SeekableReadStream *in, Script &script, bool onlyTempData) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
 
-	uint16 *d = reinterpret_cast<uint16*>(_arrayData);
-	for (int i = 0; i < 128; ++i)
-		d[i] = in->readUint16BE();
-	in->read(_flagsTable, 352);
+	if (!onlyTempData) {
+		uint16 *d = reinterpret_cast<uint16*>(_arrayData);
+		for (int i = 0; i < 128; ++i)
+			d[i] = in->readUint16BE();
+		in->read(_flagsTable, 352);
 
-	script.sentenceDone = in->readByte();
-	script.sentencePos = in->readByte();
+		script.sentenceDone = in->readByte();
+		script.sentencePos = in->readByte();
+	}
+
 	script.curFileNo = in->readByte();
 	script.curGfxScript = in->readSint16BE();
-	script.curPos = in->readUint16BE();
 
-	ARR_POS(0) = 0;
-	ARR_POS(1) = 0;
-	ARR_POS(2) = 0;
-	ARR_POS(3) = 0;
-	ARR_POS(5) = 0;
+	if (!onlyTempData) {
+		script.curPos = in->readUint16BE();
+		ARR_POS(0) = 0;
+		ARR_POS(1) = 0;
+		ARR_POS(2) = 0;
+		ARR_POS(3) = 0;
+		ARR_POS(5) = 0;
+	}
 }
 
-void ScriptEngine::saveState(Common::SeekableWriteStream *out, Script &script) {
+void ScriptEngine::saveState(Common::SeekableWriteStream *out, Script &script, bool onlyTempData) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
 
-	const uint16 *s = reinterpret_cast<const uint16*>(_arrayData);
-	for (int i = 0; i < 128; ++i)
-		out->writeUint16BE(s[i]);
-	out->write(_flagsTable, 352);
+	if (!onlyTempData) {
+		const uint16 *s = reinterpret_cast<const uint16*>(_arrayData);
+		for (int i = 0; i < 128; ++i)
+			out->writeUint16BE(s[i]);
+		out->write(_flagsTable, 352);
 
-	out->writeByte(script.sentenceDone);
-	out->writeByte(script.sentencePos);
+		out->writeByte(script.sentenceDone);
+		out->writeByte(script.sentencePos);
+	}
+
 	out->writeByte(script.curFileNo);
 	out->writeSint16BE(script.curGfxScript);
-	uint16 pos = script.curPos;
-	getArrayEntry(5, 0, pos);
-	out->writeUint16BE(pos);
+
+	if (!onlyTempData) {
+		uint16 pos = script.curPos;
+		getArrayEntry(5, 0, pos);
+		out->writeUint16BE(pos);
+	}
 }
 
 void ScriptEngine::runOpcode() {
@@ -866,7 +877,7 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(setFlags),
 		OP(21),
 		OP(eval_less),
-		OP(eval_lessOrSame),
+		OP(eval_lessOrEqual),
 		OP(do_either_or),
 		OP(do_either_or),
 		OP(do_if),
@@ -883,9 +894,9 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(executeFunction),
 		OP(executeFunction),
 		OP(executeFunction),
-		OP(40),
-		OP(40),
-		OP(42),
+		OP(eval_greater),
+		OP(eval_greater),
+		OP(eval_greaterOrEqual),
 		OP(break),
 		OP(break),
 		OP(nop),
@@ -1104,7 +1115,7 @@ void ScriptEngine::o_eval_less() {
 	_result = (_result < r1) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_eval_lessOrSame() {
+void ScriptEngine::o_eval_lessOrEqual() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 r1 = 0;
@@ -1175,13 +1186,33 @@ void ScriptEngine::o_executeFunction() {
 	}
 }
 
-void ScriptEngine::o_40() {
+void ScriptEngine::o_eval_greater() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 f2 = 0;
 
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, f2);
+	runOpcodeOrReadVar(m1, _result);
+	f2 = _result;
+	_pos1 = _pos2;
+	runOpcodeOrReadVar(m2, _result);
+	_result = (_result > f2) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_42() {
-}
+void ScriptEngine::o_eval_greaterOrEqual() {
+	uint16 m1 = 0;
+	uint16 m2 = 0;
+	uint16 f2 = 0;
 
+	_pos2 = _pos1++;
+	getOpcodeProperties(m1, m2, f2);
+	runOpcodeOrReadVar(m1, _result);
+	f2 = _result;
+	_pos1 = _pos2;
+	runOpcodeOrReadVar(m2, _result);
+	_result = (_result >= f2) ? 0xFFFF : 0;
+}
 void ScriptEngine::o_break() {
 	if (!evalFinished())
 		return;
@@ -1335,8 +1366,7 @@ void ScriptEngine::o_59() {
 				_result = 1;
 		}
 	} else if (val != 0) {
-		uint8 e = -(val - ARR_POS(5));
-		if (!getArrayEntry(5, e, _result))
+		if (!getArrayEntry(5, ARR_POS(5) - val, _result))
 			_result = 0xFFFF;
 	} else {
 		_result = _script->curPos;
@@ -1460,7 +1490,7 @@ void ScriptEngine::o_sysOps() {
 		}
 		break;
 	case 9:
-		_script->chapter = READ_BE_UINT16(_script->data + _pos1 + 4) + 2;
+		_script->phase = READ_BE_UINT16(_script->data + _pos1 + 4) + 2;
 		break;
 	case 10:
 		val = READ_BE_UINT16(_script->data + _pos1 + 4);
@@ -1469,11 +1499,12 @@ void ScriptEngine::o_sysOps() {
 			_transDW1 = _transDW2 = 0;*/
 		break;
 	case 11:
-		/*if (READ_BE_UINT16(_script->data + _pos1 + 4))
-			restoreGfxAndSoundAfterLoad();
-		else
-			animSpecOther();
-			*/
+		if (READ_BE_UINT16(_script->data + _pos1 + 4)) {
+			_mem->restoreTempState();
+			_script->phase = 1;
+		} else {
+			_mem->saveTempState();
+		}
 		break;
 	case 12:
 		_flagsTable[53] &= 0xF8;

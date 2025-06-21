@@ -203,6 +203,7 @@ void TextRenderer_SCD::drawGlyph(uint16 ch) {
 
 		for (int w = 7; w >= 0; --w) {
 			if (in & (1 << w)) {
+				assert(d < renderBuffer + 0x2000);
 				if (dXX & 1)
 					*d = (*d & 0xF0) | c1;
 				else
@@ -212,7 +213,7 @@ void TextRenderer_SCD::drawGlyph(uint16 ch) {
 				++d;
 			if (++dXX == 8)
 				d += 28;
-			assert(d < renderBuffer + 0x2000);
+			
 		}
 
 		dst += 4;
@@ -220,7 +221,6 @@ void TextRenderer_SCD::drawGlyph(uint16 ch) {
 			dY = 0;
 			dst += 992;
 		}
-		assert(dst < renderBuffer + 0x2000);
 	}
 }
 

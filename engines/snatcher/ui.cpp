@@ -30,10 +30,10 @@
 namespace Snatcher {
 
 UI::UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd) : _gfx(gfx), _que(que), _scd(scd), _sceneId(0), _textLineBreak(0), _dialogTextBuffer(nullptr), _textColor(0),
-	_scriptTextResource(nullptr),/*_makestrbt1(0),*/ _textY(0), _textY2(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0), _sceneTextOffset(0), _transDW1(0), _transDW2(0),
+	_scriptTextResource(nullptr),/*_makestrbt1(0),*/ _textY(0), _headLineYOffset(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0), _sceneTextOffset(0), _transDW1(0), _transDW2(0),
 		_sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0), _progress(-1), _progress2(-1), _controllerCfg(0), _verbsTabLayout(0), _verbsInterpreterMode(0),
-			_lastVerbFirstPage(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _lastVerbLastPage(0), _numVerbsMax(0), _una_rr_hi(0), _una_rr_lo(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _scriptVerbsArray(nullptr),
-				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _transit_02(0), _textInputMarginLeft(0), _drawVerbsWd1(0),
+			_lastVerbFirstPage(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _lastVerbLastPage(0), _numVerbsMax(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _scriptVerbsArray(nullptr),
+				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _transit_02(0), _textInputMarginLeft(0), _videoPhoneMode(0),
 					_textInputColumnCur(0), _textInputColumnMax(0), _textInputCursorState(0), _textInputCursorBlinkCnt(0), _underscoreStr(nullptr), _textInputStr(nullptr), _vkeybPosTotal(0),
 						_vkeybColumnWidth(0), _verbsTabLayoutMap(nullptr), _verbsTabOffsX(0), _verbsTabOffsY(0), _hilitePosX(0), _hilitePosY(0), _vkeybVisible(false) {
 
@@ -78,9 +78,9 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 		if (_sceneId == 0) {
 			_gfx->transitionCommand(21);
 			//_c13Valu = 0xFF;
-			_textY = _textY2;
+			_textY = _headLineYOffset;
 		} else if (_sceneId == 0xFF) {
-			_textY = _textY2;
+			_textY = _headLineYOffset;
 		} else {
 			printDialogStringHead();
 		}
@@ -209,12 +209,10 @@ bool UI::drawVerbs() {
 
 	if (_verbsTabLayout < 2) {
 		if (_progress2 == 2) {
-			_una_rr_hi = _una_rr_lo = 0;
-
 			static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFE, 0x04, 0xFB };
 			memcpy(_verbTextBuffer, strHead, sizeof(strHead));
 			_verbTextBuffer[41] = 0xFF;
-
+			_headLineYOffset = 0;
 			_verbsTabCurPage = 0;
 			bool sp7 = (_scriptVerbsArray->pos() == 7 && _gfx->getVerbAreaType() != 0);
 			if (sp7) {
@@ -366,7 +364,7 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 		}
 
 		if (_progress2 == 101) {
-			if (!_gfx->isVerbsTabActive())
+			if (_verbsTabLayout < 2 && !_gfx->isVerbsTabActive())
 				return false;
 			++_progress2;
 		}
@@ -423,7 +421,7 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 			++_progress2;
 		}
 		if (_progress2 == 107)
-			_drawVerbsWd1 = _textInputColumnMax = 0;
+			_videoPhoneMode = _textInputColumnMax = 0;
 
 		if (_progress2 >= 109 && _progress <= 127) {
 			verbTabSwapPage();
@@ -466,7 +464,7 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 				_verbsInterpreterMode = 0;
 				_verbsTabLayout = 0;
 			}
-			_drawVerbsWd1 = 0;
+			_videoPhoneMode = 0;
 			_textInputColumnMax = 0;
 		}
 	}
@@ -503,7 +501,7 @@ void UI::printDialogStringHead() {
 	static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFB, 0x10, 0x00, 0xFE };
 	const uint8 *s = _scd->makePtr(0x13552).getDataFromTable(_sceneId)();
 	memcpy(_dialogTextBuffer, strHead, sizeof(strHead));
-	_dialogTextBuffer[6] = _textY2;
+	_dialogTextBuffer[6] = _headLineYOffset;
 	_dialogTextBuffer[8] = (*s & 0x80) ? 3 : (*s++ & 7);
 	uint8 *d = _dialogTextBuffer + 9;
 
@@ -516,7 +514,7 @@ void UI::printDialogStringHead() {
 	assert(*(d - 1) == 0xFF);
 
 	_gfx->printText(_dialogTextBuffer);
-	_textY = _textY2 + 9;
+	_textY = _headLineYOffset + 9;
 }
 
 void UI::printDialogStringBody() {
@@ -820,7 +818,7 @@ void UI::verbsTabHandleInput(uint16 inputFlags) {
 
 		} else if (in & 0x10) {
 			virtKeybBackspace();
-		} else if ((_drawVerbsWd1 == 0) && (in & 0x80)) {
+		} else if ((_videoPhoneMode == 0) && (in & 0x80)) {
 			virtKeybStart();
 		} else if (in & 0x20) {
 			if (verbSelect2())
@@ -932,8 +930,18 @@ void UI::verbSelect() {
 }
 
 bool UI::verbSelect2() {
-	if (_drawVerbsWd1) {
-		return false;
+	uint8 r = _verbsTabLayoutMap[_vkeybPosTotal];
+
+	if (_videoPhoneMode) {
+		if (!(_progress2 & 0x100)) {
+			if (r == '*')
+				_gfx->setAnimParameter(2, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
+			else if (r == '#')
+				_gfx->setAnimParameter(3, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
+			else
+				_gfx->setAnimParameter(r & 0x1F, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
+			_progress2 = 0x101;
+		}
 
 	} else {
 		if (!(_progress2 & 0x100)) {
@@ -942,9 +950,7 @@ bool UI::verbSelect2() {
 			_que->start();
 			_progress2 = 0x100;
 			return false;
-		}
-
-		uint8 r = _verbsTabLayoutMap[_vkeybPosTotal];
+		}	
 
 		if (_progress2 == 0x100) {
 			if (_verbsTabLayout == 3) {
@@ -960,32 +966,32 @@ bool UI::verbSelect2() {
 				return false;
 			}
 		}
+	}
 
-		bool reslt = true;
-		if (_progress2 == 0x101) {
-			if (r == 8) {
-				_progress2 |= 0xC00;
-				reslt = false;
+	bool reslt = true;
+	if (_progress2 == 0x101) {
+		if (r == 8) {
+			_progress2 |= 0xC00;
+			reslt = false;
 
-			} else if (r == 9) {
-				if (_textInputColumnCur != 0) {
-					if (!_textInputStr[_textInputColumnCur])
-						_textInputColumnCur--;
-					_textInputStr[_textInputColumnCur] = 0;
-				} else {
-					reslt = false;
-				}
-			} else if (_textInputColumnCur < _textInputColumnMax) {
-				_textInputStr[_textInputColumnCur] = r;
-				if (_textInputColumnCur + 1 < _textInputColumnMax)
-					++_textInputColumnCur;
+		} else if (r == 9) {
+			if (_textInputColumnCur != 0) {
+				if (!_textInputStr[_textInputColumnCur])
+					_textInputColumnCur--;
+				_textInputStr[_textInputColumnCur] = 0;
 			} else {
 				reslt = false;
 			}
-			_progress2 = reslt ? 0x200 : (_progress2 & 0xC00) | 103;
+		} else if (_textInputColumnCur < _textInputColumnMax) {
+			_textInputStr[_textInputColumnCur] = r;
+			if (_textInputColumnCur + 1 < _textInputColumnMax)
+				++_textInputColumnCur;
+		} else {
+			reslt = false;
 		}
-		return reslt;
+		_progress2 = reslt ? 0x200 : (_progress2 & 0xC00) | 103;
 	}
+	return reslt;
 }
 
 void UI::virtKeybBackspace() {
@@ -1099,10 +1105,13 @@ void UI::virtKeybPrint() {
 	if (pr == 0x204) {
 		drawUnderscoreCursor();
 		_progress2 = (_progress2 & ~0x2FF) | 103;
-	}
 
-	if (_drawVerbsWd1 == 0)
-		return;
+		if (_videoPhoneMode != 0) {
+			uint8 v = _textInputStr[0];
+			if (_textInputStr[_scd->makePtr(0x11938)[(v == '*' || v == '#') ? 2 : (v & 0x0F)] - 1])
+				verbSelect2setResult();
+		}
+	}
 }
 
 } // End of namespace Snatcher
