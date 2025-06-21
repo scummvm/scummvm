@@ -28,8 +28,13 @@ namespace Graphics {
 namespace {
 
 template<bool bswap, int rotate>
-static void swapBlit(byte *dst, const byte *src, const uint w, const uint h,
-							const uint srcDelta, const uint dstDelta) {
+static void swapBlit(byte *dst, const byte *src,
+                     const uint dstPitch, const uint srcPitch,
+                     const uint w, const uint h) {
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * sizeof(uint32));
+	const uint dstDelta = (dstPitch - w * sizeof(uint32));
+
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
 			uint32 col = *(const uint32 *)src;
@@ -54,7 +59,7 @@ static void swapBlit(byte *dst, const byte *src, const uint w, const uint h,
 // TODO: Add fast 24<->32bpp conversion
 // TODO: Add fast 16<->16bpp conversion
 static const struct {
-	void(*func)(byte *, const byte *, const uint, const uint, const uint, const uint);
+	FastBlitFunc func;
 	Graphics::PixelFormat srcFmt, dstFmt;
 } fastBlitFuncs[] = {
 	// 32-bit byteswap
@@ -80,23 +85,16 @@ static const struct {
 	{ swapBlit<true,  24>, Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0) }  // BGRA8888 -> RGBA8888
 };
 
-bool fastBlit(byte *dst, const byte *src, const uint w, const uint h,
-							const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-							const uint srcPitch, const uint dstPitch) {
+FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFmt) {
 	for (size_t i = 0; i < ARRAYSIZE(fastBlitFuncs); i++) {
 		if (srcFmt != fastBlitFuncs[i].srcFmt)
 			continue;
 		if (dstFmt != fastBlitFuncs[i].dstFmt)
 			continue;
 
-		// Faster, but larger, to provide optimized handling for each case.
-		const uint srcDelta = (srcPitch - w * srcFmt.bytesPerPixel);
-		const uint dstDelta = (dstPitch - w * dstFmt.bytesPerPixel);
-
-		fastBlitFuncs[i].func(dst, src, w, h, srcDelta, dstDelta);
-		return true;
+		return fastBlitFuncs[i].func;
 	}
-	return false;
+	return nullptr;
 }
 
 } // End of namespace Graphics
