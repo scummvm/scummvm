@@ -154,9 +154,9 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
-	// The Last Express (German)
-	//   expressw.exe ???
-	//   express.exe  ???
+	// The Last Express (German) - Broderbund Release
+	//   expressw.exe 1997-04-02 16:31:46, Version number 1.0.0.1
+	//   express.exe  1997-04-02 17:01:02
 	{
 		"lastexpress",
 		"",
