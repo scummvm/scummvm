@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-20 23:17+0000\n"
-"PO-Revision-Date: 2025-06-20 20:25+0000\n"
+"PO-Revision-Date: 2025-06-21 13:26+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -12348,28 +12348,20 @@ msgstr ""
 "via tangentbordet"
 
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
-msgstr "Avsluta skärm för tangentmappningar"
+msgstr "Tangentmappningar för mellansekvens"
 
 #: engines/supernova/metaengine.cpp:220
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Improved mode keymappings"
-msgstr "Tangentmappningar för index"
+msgstr "Tangentmappningar för förbättrat läge"
 
 #: engines/supernova/metaengine.cpp:221
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Text reader keymappings"
-msgstr "Avsluta skärm för tangentmappningar"
+msgstr "Tangentmappningar för textläsare"
 
 #: engines/supernova/metaengine.cpp:222
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Computer keymappings"
-msgstr "Tangentmappningar för spel"
+msgstr "Tangentmappningar för dator"
 
 #: engines/supernova/metaengine.cpp:232
 msgid "Perform Default Action"
