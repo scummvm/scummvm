@@ -41,14 +41,17 @@ static void scaleVertical(byte *dst, const byte *src,
                           const byte flip, const uint bytesPerPixel) {
 	const bool flipy = flip & FLIP_V;
 
+	// 16.16 fixed point
+	const uint32 srcIncY = (srcH << 16) / dstH;
+
 	const int dstIncY = (flipy ? -static_cast<int>(dstPitch) : static_cast<int>(dstPitch));
 
 	if (flipy) {
 		dst += (dstH - 1) * dstPitch;
 	}
 
-	for (uint y = 0; y < dstH; y++) {
-		const byte *srcP = src + ((y * srcH) / dstH) * srcPitch;
+	for (uint32 y = 0, yoff = 0; y < dstH; y++, yoff += srcIncY) {
+		const byte *srcP = src + ((yoff >> 16) * srcPitch);
 		memcpy(dst, srcP, w * bytesPerPixel);
 		dst += dstIncY;
 	}
@@ -63,6 +66,10 @@ static void scaleNN(byte *dst, const byte *src,
 	const bool flipx = flip & FLIP_H;
 	const bool flipy = flip & FLIP_V;
 
+	// 16.16 fixed point
+	const uint32 srcIncX = (srcW << 16) / dstW;
+	const uint32 srcIncY = (srcH << 16) / dstH;
+
 	const int dstIncX = (flipx ? -1 : 1);
 	const int dstIncY = (flipy ? -static_cast<int>(dstPitch) : static_cast<int>(dstPitch));
 
@@ -74,23 +81,16 @@ static void scaleNN(byte *dst, const byte *src,
 		dst += (dstH - 1) * dstPitch;
 	}
 
-	int *scaleCacheX = new int[dstW];
-	for (uint x = 0; x < dstW; x++) {
-		scaleCacheX[x] = (x * srcW) / dstW;
-	}
-
-	for (uint y = 0; y < dstH; y++) {
-		const Size *srcP = (const Size *)(src + ((y * srcH) / dstH) * srcPitch);
+	for (uint32 y = 0, yoff = 0; y < dstH; y++, yoff += srcIncY) {
+		const Size *srcP = (const Size *)(src + ((yoff >> 16) * srcPitch));
 		Size *dst1 = (Size *)dst;
-		for (uint x = 0; x < dstW; x++) {
-			int val = srcP[scaleCacheX[x]];
+		for (uint32 x = 0, xoff = 0; x < dstW; x++, xoff += srcIncX) {
+			Size val = srcP[xoff >> 16];
 			*dst1 = val;
 			dst1 += dstIncX;
 		}
 		dst += dstIncY;
 	}
-
-	delete[] scaleCacheX;
 }
 
 } // End of anonymous namespace
@@ -101,6 +101,10 @@ bool scaleBlit(byte *dst, const byte *src,
 			   const uint srcW, const uint srcH,
 			   const Graphics::PixelFormat &fmt,
 						   const byte flip) {
+	// This should be OK since int16 is used in Graphics::Surface.
+	assert(srcW <= 65535);
+	assert(srcH <= 65535);
+
 	if (dstW == srcW && !(flip & FLIP_H)) {
 		if (dstH == srcH && !(flip & FLIP_V))
 			copyBlit(dst, src, dstPitch, srcPitch, dstW, dstH, fmt.bytesPerPixel);
