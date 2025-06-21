@@ -64,7 +64,7 @@ void CharactersShadowOpenGL::createTextureInternal(InGameScene *scene) {
 
 #ifdef TETRAEDGE_DUMP_SHADOW_RENDER
 	Graphics::Surface tex;
-	tex.create(_texSize, _texSize, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	tex.create(_texSize, _texSize, Graphics::PixelFormat::createFormatRGBA32());
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.getPixels());
 	Common::DumpFile dumpFile;
 	tex.flipVertical(Common::Rect(tex.w, tex.h));

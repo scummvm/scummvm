@@ -104,7 +104,7 @@ private:
 
 	bool _shouldDraw;
 
-	TeImage::Format _imgFormat;
+	Graphics::PixelFormat _imgFormat;
 
 	Common::Path _loadedPath;
 

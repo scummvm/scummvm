@@ -1425,7 +1425,7 @@ void Score::screenShot() {
 #else
 
 	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	const Graphics::PixelFormat requiredFormat_4byte = Graphics::PixelFormat::createFormatRGBA32();
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 
 	Common::String currentPath = _vm->getCurrentPath().c_str();

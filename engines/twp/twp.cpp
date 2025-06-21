@@ -2112,7 +2112,7 @@ void TwpEngine::capture(Graphics::Surface &surface, int width, int height) {
 	rt.capture(data);
 
 	// flip it (due to opengl) and scale it to the desired size
-	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	const Graphics::PixelFormat fmt = Graphics::PixelFormat::createFormatRGBA32();
 	Graphics::Surface s;
 	s.init(SCREEN_WIDTH, SCREEN_HEIGHT, 4 * SCREEN_WIDTH, data.data(), fmt);
 	s.flipVertical(Common::Rect(s.w, s.h));

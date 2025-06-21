@@ -59,8 +59,10 @@ uint TeScummvmCodec::height() {
 	return 0;
 }
 
-TeImage::Format TeScummvmCodec::imageFormat() {
-	return TeImage::RGBA8;
+Graphics::PixelFormat TeScummvmCodec::pixelFormat() {
+	if (_loadedSurface)
+		return _loadedSurface->format;
+	return Graphics::PixelFormat();
 }
 
 bool TeScummvmCodec::update(uint i, TeImage &imgout) {

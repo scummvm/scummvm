@@ -323,7 +323,7 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 		return -1;
 	}
 
-	Graphics::PixelFormat RGBA8888(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	const Graphics::PixelFormat RGBA32 = Graphics::PixelFormat::createFormatRGBA32();
 
 	unsigned int pos = game._renderer->_bitmapList.acquirePosition();
 	if (pos == 0) {
@@ -333,7 +333,7 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	gTexture *Texture = &game._renderer->_bitmapList.bitmaps[pos];
 	*Texture = gTexture();
 	Texture->Flags = CurLoaderFlags;
-	auto surface = ReadTgaImage(TextName, *stream, RGBA8888, Texture->Flags);
+	auto surface = ReadTgaImage(TextName, *stream, RGBA32, Texture->Flags);
 	applyColorKey(*surface, 0, 0, 0, false);
 	auto texData = createTextureFromSurface(*surface, GL_RGBA);
 	Texture->_texture = createGLTexture();

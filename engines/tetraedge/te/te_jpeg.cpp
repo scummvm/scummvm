@@ -46,11 +46,11 @@ bool TeJpeg::load(Common::SeekableReadStream &stream) {
 		delete _loadedSurface;
 	_loadedSurface = nullptr;
 
-	jpg.setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	jpg.setOutputPixelFormat(Graphics::PixelFormat::createFormatRGBA32());
 	if (!jpg.loadStream(stream))
 		return false;
 
-	_loadedSurface = jpg.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_loadedSurface = jpg.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32());
 	return true;
 }
 

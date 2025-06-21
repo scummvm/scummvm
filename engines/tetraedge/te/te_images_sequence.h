@@ -49,7 +49,7 @@ public:
 	virtual uint bottomBorderSize() override { return 0; }
 	virtual void setTopBorderSize(uint val) override  { }
 	virtual uint topBorderSize() override { return 0; }
-	virtual TeImage::Format imageFormat() override;
+	virtual Graphics::PixelFormat pixelFormat() override;
 	virtual float frameRate() override { return _frameRate; }
 	virtual bool update(uint i, TeImage &imgout) override;
 	virtual bool isAtEnd() override;
