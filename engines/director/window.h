@@ -205,6 +205,7 @@ public:
 	MovieReference _nextMovie;
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
+	bool _skipFrameAdvance;
 
 private:
 	uint32 _stageColor;

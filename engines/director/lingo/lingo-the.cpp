@@ -777,9 +777,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			// TODO: How is this handled with multiple casts in D5?
 			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
 			uint16 spriteId = score->getSpriteIDFromPos(pos);
-			d = score->getSpriteById(spriteId)->_castId.member;
-			if (d.u.i == 0)
-				d = -1;
+			if (spriteId) {
+				d = score->getSpriteById(spriteId)->_castId.toMultiplex();
+			} else {
+				d = 0;
+			}
 		}
 		break;
 	case kTheMouseChar:
@@ -1699,9 +1701,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		{
 			CastMemberID castId = d.asMemberID();
 			if (field == kTheMemberNum) {
-				// Setting the cast ID as a number will preserve whatever is in castLib
-				// The member part will be demultiplexed if required, and the castLib portion ignored.
-				castId = CastMemberID(castId.member, sprite->_castId.castLib);
+				// If the number is multiplexed with a castLib 2 or higher, the castLib will be used.
+				// Otherwise the existing castLib will be preserved.
+				if (castId.castLib == 1) {
+					castId = CastMemberID(castId.member, sprite->_castId.castLib);
+				}
 			} else if (field == kTheCastLibNum) {
 				castId = CastMemberID(sprite->_castId.member, d.asInt());
 			}
