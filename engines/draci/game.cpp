@@ -24,6 +24,8 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 
 #include "draci/draci.h"
 #include "draci/animation.h"
@@ -76,6 +78,8 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	_wantQuickHero = false;
 	_enableSpeedText = false;
 	_isPositionLoaded = false;
+	_ttsUseSpeechDuration = false;
+	_voiceoverSampleExists = false;
 
 	_objUnderCursor = nullptr;
 	_animUnderCursor = nullptr;
@@ -206,6 +210,8 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 }
 
 void Game::start() {
+	_vm->sayText("NoSense");
+
 	while (!gameShouldQuit()) {
 		// Reset the flag allowing to run the scripts.
 		_vm->_script->endCurrentProgram(false);
@@ -417,6 +423,7 @@ void Game::handleInventoryLoop() {
 		// If there is an inventory item under the cursor and we aren't
 		// holding any item, run its look GPL program
 		if (_itemUnderCursor && !getCurrentItem()) {
+			_vm->_previousSaid.clear();
 			_vm->_script->runWrapper(_itemUnderCursor->_program, _itemUnderCursor->_look, true, false);
 		// Otherwise, if we are holding an item, try to place it inside the
 		// inventory
@@ -461,15 +468,23 @@ void Game::handleDialogueLoop() {
 		return;
 	}
 
+	bool hoveringOverDialogueLine = false;
+
 	Text *text;
 	for (int i = 0; i < kDialogueLines; ++i) {
 		text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
 
 		if (_animUnderCursor == _dialogueAnims[i]) {
 			text->setColor(kLineActiveColor);
+			_vm->sayText(_dialogueBlocks[_lines[i]]._title);
+			hoveringOverDialogueLine = true;
 		} else {
 			text->setColor(kLineInactiveColor);
 		}
+	}
+
+	if (!hoveringOverDialogueLine) {
+		_vm->_previousSaid.clear();
 	}
 
 	if (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) {
@@ -519,10 +534,19 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	if (_loopSubstatus == kInnerWhileTalk) {
 		// If the current speech text has expired or the user clicked a mouse button,
 		// advance to the next line of text
-		if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) ||
-			(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
-
+		if (getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) {
 			setExitLoop(true);
+			_vm->stopTextToSpeech();
+		} else {
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ttsMan && !_ttsUseSpeechDuration) {
+				// Delay moving to the next line until TTS is done speaking
+				if (!ttsMan->isSpeaking()) {
+					setExitLoop(true);
+				}
+			} else if ((_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
+				setExitLoop(true);
+			}
 		}
 		_vm->_mouse->lButtonSet(false);
 		_vm->_mouse->rButtonSet(false);
@@ -599,6 +623,18 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 	assert(getLoopSubstatus() == kOuterLoop);
 	setLoopSubstatus(substatus);
 	setExitLoop(shouldExit);
+
+	// Some dialog in the game is only symbols, which isn't voiced by the TTS system
+	// This results in the dialog instantly skipping if TTS is enabled
+	// To prevent this, check if the string said by TTS has no alphanumeric characters,
+	// which means the TTS system won't be voicing it
+	if (isVoicedByTTS(_vm->_previousSaid) && ((getMapID() == kCreditsMapID && ConfMan.getBool("tts_enabled_objects")) || 
+											  (ConfMan.getBool("tts_enabled_missing_voice") && !_voiceoverSampleExists) || 
+					 						   ConfMan.getBool("tts_enabled_speech"))) {
+		_ttsUseSpeechDuration = false;
+	} else {
+		_ttsUseSpeechDuration = true;
+	}
 
 	// Always enter the first pass of the loop, even if shouldExitLoop() is
 	// true, exactly to ensure to make at least one pass.
@@ -787,11 +823,23 @@ void Game::updateTitle(int x, int y) {
 	if (_loopStatus == kStatusInventory) {
 		// If there is no item under the cursor, delete the title.
 		// Otherwise, show the item's title.
-		title->setText(_itemUnderCursor ? _itemUnderCursor->_title : "");
+		if (_itemUnderCursor) {
+			title->setText(_itemUnderCursor->_title);
+			_vm->sayText(_itemUnderCursor->_title);
+		} else {
+			title->setText("");
+			_vm->_previousSaid.clear();
+		}
 	} else {
 		// If there is no object under the cursor, delete the title.
 		// Otherwise, show the object's title.
-		title->setText(_objUnderCursor ? _objUnderCursor->_title : "");
+		if (_objUnderCursor) {
+			title->setText(_objUnderCursor->_title);
+			_vm->sayText(_objUnderCursor->_title);
+		} else {
+			title->setText("");
+			_vm->_previousSaid.clear();
+		}
 	}
 
 	// Move the title to the correct place (just above the cursor)
@@ -1644,6 +1692,17 @@ void Game::synchronize(Common::Serializer &s, uint8 saveVersion) {
 		_currentItem = nullptr;
 	}
 }
+
+bool Game::isVoicedByTTS(const Common::String &str) const {
+	for (uint i = 0; i < str.size(); ++i) {
+		if (Common::isAlnum(str[i]) || str[i] == '-' || str[i] == ',') {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 static double real_to_double(byte real[6]) {
 	// Extract sign bit
