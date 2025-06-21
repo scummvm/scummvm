@@ -4248,7 +4248,16 @@ static const WMEGameDescription gameDescriptions[] = {
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (Russian)
 	WME_WINENTRY("ritter", "",
 		WME_ENTRY2s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278,
-				"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_8_6),
+					"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_8_6),
+
+	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (Spanish fanmade)
+	WME_WINENTRY("ritter", "",
+		WME_ENTRY2s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278,
+					"string3.tab", "a20120c9a45f189321924adb54f3515f", 527627), Common::ES_ESP, ADGF_NO_FLAGS, WME_1_8_6),
+
+	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (Czech fanmade)
+	WME_WINENTRY("ritter", "",
+		WME_ENTRY1s("data.dcp", "1138bca234b7e81e11128c4da2c283b0", 364067513), Common::CS_CZE, ADGF_NO_FLAGS, WME_1_8_6),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German demo)
 	WME_WINENTRY("ritter", "Demo",
