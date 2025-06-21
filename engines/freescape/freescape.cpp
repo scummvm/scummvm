@@ -646,7 +646,7 @@ void FreescapeEngine::processInput() {
 				g_system->warpMouse(mousePos.x, mousePos.y);
 
 			if (_shootMode) {
-				_crossairPosition = mousePosToCrossairPos(mousePos);
+				_crossairPosition = _demoMode ? mousePos : mousePosToCrossairPos(mousePos);
 			} else {
 				// Mouse pointer is locked into the the middle of the screen
 				// since we only need the relative movements. This will not affect any touchscreen device

@@ -76,19 +76,21 @@ void FreescapeEngine::generateDemoInput() {
 
 	event.type = Common::EVENT_MOUSEMOVE;
 	event.mouse = Common::Point(mouseX, mouseY);
-	event.customType = 0xde00;
+	//event.mouse.x = float(event.mouse.x) * g_system->getWidth() / _screenW ;
+	//event.mouse.y = float(event.mouse.y) * g_system->getHeight() / _screenH ;
 
 	byte nextKeyCode = _demoData[_demoIndex++];
 
 	if (nextKeyCode == 0x30) {
 		Common::Event spaceEvent;
-		spaceEvent.type = Common::EVENT_KEYDOWN;
-		spaceEvent.kbd.keycode = Common::KEYCODE_SPACE;
-		spaceEvent.customType = 0xde00;
+		spaceEvent.type = Common::EVENT_CUSTOM_ENGINE_ACTION_START;
+		spaceEvent.customType = kActionChangeMode;
 
 		_demoEvents.push_back(spaceEvent);
 		_demoEvents.push_back(event); // Mouse pointer is moved
+
 		event.type = Common::EVENT_LBUTTONDOWN; // Keep same event fields
+		event.customType = 0;
 		_demoEvents.push_back(event); // Mouse is clicked
 		_demoEvents.push_back(spaceEvent);
 		nextKeyCode = _demoData[_demoIndex++];
@@ -96,10 +98,10 @@ void FreescapeEngine::generateDemoInput() {
 
 	while (nextKeyCode != 0) {
 		event = Common::Event();
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = (Common::KeyCode)decodeAmigaAtariKey(nextKeyCode);
+		event.type = Common::EVENT_CUSTOM_ENGINE_ACTION_START;
+		event.customType = decodeAmigaAtariKey(nextKeyCode);
 		debugC(1, kFreescapeDebugMove, "Pushing key: %x", event.kbd.keycode);
-		event.customType = 0xde00;
+
 		_demoEvents.push_back(event);
 		nextKeyCode = _demoData[_demoIndex++];
 	}
@@ -138,37 +140,37 @@ Common::Event FreescapeEngine::decodeDOSMouseEvent(int index, int repetition) {
 int FreescapeEngine::decodeAmigaAtariKey(int index) {
 	switch (index) {
 	case 0x41:
-		return Common::KEYCODE_a;
+		return kActionIncreaseAngle;
 	case 0x44:
-		return Common::KEYCODE_d;
+		return kActionDeployDrillingRig;
 	case 0x46:
-		return Common::KEYCODE_f;
+		return kActionLowerOrFlyDown;
 	case 0x4c:
-		return Common::KEYCODE_l;
+		return kActionRotateDown;
 	case 0x4e:
-		return Common::KEYCODE_n;
+		return kActionRollLeft;
 	case 0x50:
-		return Common::KEYCODE_p;
+		return kActionRotateUp;
 	case 0x52:
-		return Common::KEYCODE_r;
+		return kActionRiseOrFlyUp;
 	case 0x53:
-		return Common::KEYCODE_s;
+		return kActionIncreaseStepSize;
 	case 0x55:
-		return Common::KEYCODE_u;
+		return kActionTurnBack;
 	case 0x58:
-		return Common::KEYCODE_x;
+		return kActionRotateRight;
 	case 0x5a:
-		return Common::KEYCODE_z;
+		return kActionDecreaseAngle;
 	case 0x5f:
-		return Common::KEYCODE_UNDERSCORE;
+		return kActionUnknownKey;
 	case 0x96:
-		return Common::KEYCODE_UP;
+		return kActionMoveUp;
 	case 0x97:
-		return Common::KEYCODE_DOWN;
+		return kActionMoveDown;
 	case 0x98:
-		return Common::KEYCODE_w; // Right
+		return kActionRotateRight; // Right
 	case 0x99:
-		return Common::KEYCODE_q; // Left
+		return kActionRotateLeft; // Left
 	default:
 		error("Invalid key index: %x", index);
 	}

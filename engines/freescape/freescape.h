@@ -105,6 +105,9 @@ enum FreescapeAction {
 	kActionSelectPrince,
 	kActionSelectPrincess,
 	kActionQuit,
+	// Demo actions
+	kActionUnknownKey,
+	kActionWait
 };
 
 typedef Common::HashMap<uint16, Area *> AreaMap;
