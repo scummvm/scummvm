@@ -33,10 +33,6 @@ char boot_params[1024];
 
 int main(int argc, char *argv[]) {
 
-#ifdef __PSP2_DEBUG__
-	psp2shell_init(3333, 10);
-#endif
-
 	scePowerSetArmClockFrequency(444);
 	scePowerSetBusClockFrequency(222);
 	scePowerSetGpuClockFrequency(222);
@@ -98,10 +94,6 @@ int main(int argc, char *argv[]) {
 exit:
 	// Free OSystem
 	g_system->destroy();
-
-#ifdef __PSP2_DEBUG__
-	psp2shell_exit();
-#endif
 
 	return res;
 }
