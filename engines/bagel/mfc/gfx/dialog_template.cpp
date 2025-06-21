@@ -160,11 +160,52 @@ void CDialogTemplate::Item::load(Common::SeekableReadStream &src) {
 		src.read(&_data[0], _data.size());
 }
 
+LOGFONT CDialogTemplate::ParseFontFromTemplate() {
+	LOGFONT lf;
+	memset(&lf, 0, sizeof(LOGFONT));
+
+	Common::strcpy_s(lf.lfFaceName,
+		_header._fontInfo._fontName.c_str());
+	lf.lfHeight = _header._fontInfo._pointSize;
+
+	return lf;
+}
+
+void CDialogTemplate::getBaseUnits(int &x, int &y) {
+	// Step 1: Get the font
+	LOGFONT lf = ParseFontFromTemplate();
+	HFONT hFont = CreateFontIndirect(&lf);
+
+	// Step 2: Create a temporary DC and select the font
+	HDC hdc = CreateCompatibleDC(nullptr);
+	HGDIOBJ hOldFont = SelectObject(hdc, hFont);
+
+	// Step 3: Get metrics
+	TEXTMETRIC tm;
+	GetTextMetrics(hdc, &tm);
+
+	// Calculate DLU conversion
+	x = tm.tmAveCharWidth;
+	y = tm.tmHeight;
+
+	// Clean up
+	SelectObject(hdc, hOldFont);
+	DeleteDC(hdc);
+	DeleteObject(hFont);
+}
+
 void CDialogTemplate::loadTemplate(CDialog *parent) {
+	int base_unit_x, base_unit_y;
+	getBaseUnits(base_unit_x, base_unit_y);
+
 	// Set up the overall window
-	RECT bounds(_header._x, _header._style,
-		_header._x + _header._w,
-		_header._y + _header._h);
+	RECT bounds(
+		SafeMulDiv(_header._x, base_unit_x, 4),
+		SafeMulDiv(_header._y, base_unit_y, 8),
+		SafeMulDiv(_header._x + _header._w, base_unit_x, 4),
+		SafeMulDiv(_header._y + _header._h, base_unit_y, 8)
+	);
+
 	CWnd *wndParent = static_cast<CWnd *>(parent);
 	wndParent->Create(_header._className.c_str(),
 		_header._caption.c_str(),
@@ -173,20 +214,6 @@ void CDialogTemplate::loadTemplate(CDialog *parent) {
 		parent->m_pParentWnd,
 		0
 	);
-
-	HFONT hFont = AfxGetApp()->getFont(
-		_header._fontInfo._fontName.c_str(),
-		_header._fontInfo._pointSize);
-
-	HDC hdc = GetDC(nullptr);
-	SelectObject(hdc, hFont);
-
-	TEXTMETRIC tm;
-	GetTextMetrics(hdc, &tm);
-	ReleaseDC(nullptr, hdc);
-
-	int base_unit_x = tm.tmAveCharWidth;
-	int base_unit_y = tm.tmHeight;
 
 	// Iterate through the controls
 	for (const auto &item : _items) {
@@ -228,6 +255,11 @@ void CDialogTemplate::loadTemplate(CDialog *parent) {
 		if (item._style & BS_DEFPUSHBUTTON)
 			parent->_defaultId = item._id;
 	}
+
+	// Apply the font to the window and all child controls
+	LOGFONT lf = ParseFontFromTemplate();
+	HFONT hFont = CreateFontIndirect(&lf);
+	parent->SendMessage(WM_SETFONT, (WPARAM)hFont, 0);
 }
 
 } // namespace Gfx

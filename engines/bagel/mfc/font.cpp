@@ -40,5 +40,10 @@ BOOL CFont::CreateFont(int nHeight, int nWidth, int nEscapement,
 	return true;
 }
 
+CFont::~CFont() {
+	if (m_hObject != nullptr)
+		MFC::DeleteObject(m_hObject);
+}
+
 } // namespace MFC
 } // namespace Bagel

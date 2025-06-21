@@ -37,7 +37,12 @@ namespace Gfx {
  * original face name and height visible.
  * It also bolds the font, which seems to
  * more closely match plain text in the
- * original Hodj n Podj
+ * original Hodj n Podj.
+ *
+ * Note: We cache the underlying Graphics::Font
+ * for the lifetime of the application, but
+ * Font instances are temporary, and are what
+ * we cast as HFONT. And as such, will be destroyed.
  */
 class Font : public Graphics::Font {
 private:
@@ -86,9 +91,10 @@ class Fonts {
 	struct FontEntry {
 		Common::String _faceName;
 		int _height = 0;
-		HFONT _font = nullptr;
+		Font *_font = nullptr;
 
-		void set(const Common::String &faceName, int height, HFONT font) {
+		void set(const Common::String &faceName,
+			int height, Font *font) {
 			_faceName = faceName;
 			_height = height;
 			_font = font;

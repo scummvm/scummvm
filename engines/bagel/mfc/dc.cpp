@@ -513,8 +513,17 @@ CDC::Impl::Impl(HDC srcDc) {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	_defaultBitmap.create(1, 1, format);
 
-	_font = src->_font;
-	_pen = src->_pen;
+	// Defaults
+	CWinApp *app = AfxGetApp();
+	_font = app->getDefaultFont();
+	_pen = app->getDefaultPen();
+	_brush = app->getDefaultBrush();
+
+	if (src) {
+		_font = src->_font;
+		_pen = src->_pen;
+		_brush = src->_brush;
+	}
 }
 
 HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {

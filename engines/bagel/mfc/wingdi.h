@@ -728,7 +728,6 @@ typedef struct tagLOGBRUSH {
 	ULONG_PTR   lbHatch;
 } LOGBRUSH, *PLOGBRUSH, NEAR *NPLOGBRUSH, FAR *LPLOGBRUSH;
 
-
 extern int GetDeviceCaps(HDC hdc, int index);
 extern HDC CreateCompatibleDC(HDC hdc);
 extern int ReleaseDC(HWND hWnd, HDC hDC);

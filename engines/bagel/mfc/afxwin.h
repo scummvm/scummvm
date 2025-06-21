@@ -562,7 +562,7 @@ public:
 	Impl *&_font = *(Impl **)&m_hObject;
 
 public:
-	~CFont() override {}
+	~CFont() override;
 
 	BOOL CreateFont(int nHeight, int nWidth, int nEscapement,
 	    int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
@@ -1189,6 +1189,7 @@ protected:
 	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex) {
 		return 0;
 	}
+	afx_msg void OnSetFont(HFONT hFont, BOOL bRedraw);
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {}
 
@@ -1197,6 +1198,14 @@ protected:
 	int m_nFlags = 0;
 	int _itemState = 0;
 	int _controlId = 0;
+
+protected:
+	/**
+	 * Returns true if the given message should
+	 * be sent recursively to all child controls
+	 * in addition to the current.
+	 */
+	static bool isRecursiveMessage(UINT message);
 
 public:
 	// For ScummVM the m_hWnd just points to the window itself,
@@ -1215,6 +1224,7 @@ public:
 	Common::Rect _updatingRect;
 	bool _updateErase = false;
 	CDC *_dc = nullptr;
+	HFONT _hFont = nullptr;
 
 public:
 	static CWnd *FromHandle(HWND hWnd) {
@@ -1313,6 +1323,10 @@ public:
 	bool IsWindowDirty() const {
 		return !_updateRect.isEmpty();
 	}
+
+	HFONT GetFont() const {
+		return _hFont;
+	}
 };
 
 class CFrameWnd : public CWnd {
@@ -1356,6 +1370,7 @@ private:
 	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
 	HGLOBAL m_hDialogTemplate = 0;
 	int _defaultId = 0;
+	CFont _dialogFont;
 
 	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
 		void *lpDialogInit, HINSTANCE hInst);

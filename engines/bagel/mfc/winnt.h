@@ -704,6 +704,25 @@ typedef struct tagTEXTMETRICA {
 typedef struct tagGCP_RESULTS {
 } GCP_RESULTS, *LPGCP_RESULTS;
 
+
+struct LOGFONT {
+	long lfHeight;
+	long lfWidth;
+	long lfEscapement;
+	long lfOrientation;
+	long lfWeight;
+	byte lfItalic;
+	byte lfUnderline;
+	byte lfStrikeOut;
+	byte lfCharSet;
+	byte lfOutPrecision;
+	byte lfClipPrecision;
+	byte lfQuality;
+	byte lfPitchAndFamily;
+	char lfFaceName[32];
+};
+typedef LOGFONT *LPLOGFONT;
+
 } // namespace MFC
 } // namespace Bagel
 

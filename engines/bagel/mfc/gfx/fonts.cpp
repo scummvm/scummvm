@@ -66,39 +66,56 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		byte cStrikeOut, byte nCharSet, byte nOutPrecision,
 		byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
 		const char *lpszFacename) {
+	Gfx::Font *font = nullptr;
+
 	// TODO: We don't really handle +/- heights properly
 	nHeight = ABS(nHeight);
 
 	// First scan for an existing cached copy of the font
 	for (auto &it : _fonts) {
 		if (it._faceName == lpszFacename &&
-				it._height == nHeight)
-			return (HFONT)it._font;
-	}
-
-	// Create the font
-	Graphics::WinFont *font = new Graphics::WinFont();
-
-	for (auto &filename : _fontResources) {
-		// FIXME: Windows does some rounding up or down to
-		// the closest size for a given face name if the
-		// requested size isn't available. For now,
-		// for Hodj n Podj, I'll just have a single - 2 fallback
-		for (int h = nHeight; h >= (nHeight - 2); h -= 2) {
-			if (font->loadFromFON(filename, Graphics::WinFontDirEntry(
-				lpszFacename, h))) {
-				Gfx::Font *gfxFont = new Gfx::Font(font, lpszFacename, nHeight);
-				CFont::Impl *f = new CFont::Impl(gfxFont);
-
-				// Add to the font cache
-				_fonts.push_back(FontEntry());
-				_fonts.back().set(lpszFacename, nHeight, f);
-				return f;
-			}
+				it._height == nHeight) {
+			font = it._font;
+			break;
 		}
 	}
 
-	delete font;
+	if (!font) {
+		// Create the font
+		Graphics::WinFont *winFont = new Graphics::WinFont();
+
+		for (auto &filename : _fontResources) {
+			// FIXME: Windows does some rounding up or down to
+			// the closest size for a given face name if the
+			// requested size isn't available. For now,
+			// for Hodj n Podj, I'll just have a single - 2 fallback
+			for (int h = nHeight; h >= (nHeight - 2); h -= 2) {
+				if (winFont->loadFromFON(filename, Graphics::WinFontDirEntry(
+					lpszFacename, h))) {
+					// Loaded successfully
+					font = new Gfx::Font(winFont, lpszFacename, nHeight);
+
+					// Add to the font cache
+					_fonts.push_back(FontEntry());
+					_fonts.back().set(lpszFacename, nHeight, font);
+					break;
+				}
+			}
+
+			if (font)
+				break;
+		}
+
+		if (!font)
+			delete winFont;
+	}
+
+	// If we found a found, return a font Impl,
+	// which can be cast as a HFONT for our MFC classes
+	if (font) {
+		CFont::Impl *f = new CFont::Impl(font);
+		return f;
+	}
 
 	error("Could not locate font %s - size %d",
 		lpszFacename, nHeight);
@@ -125,7 +142,7 @@ HFONT Fonts::getDefaultFont() {
 /*--------------------------------------------*/
 
 Fonts::FontEntry::~FontEntry() {
-	delete (CFont::Impl *)_font;
+	delete _font;
 }
 
 /*--------------------------------------------*/

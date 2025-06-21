@@ -245,5 +245,10 @@ BOOL FreeResource(HGLOBAL hResData) {
 	return AfxGetApp()->freeResource(hResData);
 }
 
+HFONT CreateFontIndirect(const LOGFONT *lf) {
+	return AfxGetApp()->getFont(
+		lf->lfFaceName, lf->lfHeight);
+}
+
 } // namespace MFC
 } // namespace Bagel

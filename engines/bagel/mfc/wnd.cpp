@@ -276,8 +276,7 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 		lResult = DefWindowProc(message, wParam, lParam);
 
 	// Handle messages that get sent to child controls
-	if (message == WM_PAINT || message == WM_SHOWWINDOW ||
-			message == WM_ENABLE) {
+	if (isRecursiveMessage(message)) {
 		for (auto &ctl : _children) {
 			if (message == WM_PAINT) {
 				if (!_updatingRect.intersects(ctl._value->_windowRect))
@@ -290,6 +289,13 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	}
 
 	return lResult;
+}
+
+bool CWnd::isRecursiveMessage(UINT message) {
+	return message == WM_PAINT ||
+		message == WM_SHOWWINDOW ||
+		message == WM_ENABLE ||
+		message == WM_SETFONT;
 }
 
 BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
@@ -668,6 +674,9 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 
 	_updatingRect = _updateRect;
 
+	if (_hFont)
+		SelectObject(lpPaint->hdc, _hFont);
+
 	return lpPaint->hdc;
 }
 
@@ -811,6 +820,13 @@ BOOL CWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
 	// the previous message to child control by default
 
 	return OnCmdMsg(nID, nCode, nullptr, nullptr);
+}
+
+void CWnd::OnSetFont(HFONT hFont, BOOL bRedraw) {
+	_hFont = hFont;
+
+	if (bRedraw)
+		Invalidate();
 }
 
 } // namespace MFC

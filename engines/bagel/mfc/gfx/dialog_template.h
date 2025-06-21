@@ -88,10 +88,18 @@ private:
 	Header _header;
 	Common::Array<Item> _items;
 
-protected:
+private:
 	static BYTE *GetFontSizeField(LPCDLGTEMPLATE pTemplate);
 	static UINT GetTemplateSize(LPCDLGTEMPLATE *pTemplate);
 	bool setTemplate(LPCDLGTEMPLATE pTemplate);
+
+	/**
+	 * Gets the base pixel x/y amounts, used for
+	 * translating DLU units to pixel units
+	 */
+	void getBaseUnits(int &x, int &y);
+
+	LOGFONT ParseFontFromTemplate();
 
 public:
 	HGLOBAL m_hTemplate;

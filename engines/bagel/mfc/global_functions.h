@@ -138,6 +138,7 @@ extern HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo);
 extern LPVOID LockResource(HGLOBAL hResData);
 extern void UnlockResource(HGLOBAL hResData);
 extern BOOL FreeResource(HGLOBAL hResData);
+extern HFONT CreateFontIndirect(const LOGFONT *lf);
 
 inline char *strUpper(char *s) {
 	for (char *curr = s; *curr; ++curr)
