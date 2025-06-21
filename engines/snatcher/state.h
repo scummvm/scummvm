@@ -46,7 +46,7 @@ struct Config {
 };
 
 struct Script {
-	Script(uint32 textResourceOffset, int16 &chaptr) : sentenceDone(0), sentencePos(0), data(nullptr), dataSize(0), curPos(0), newPos(0xFFFF), curFileNo(0), curGfxScript(-1), chapter(chaptr), textResOffset(textResourceOffset) {}
+	Script(uint32 textResourceOffset, int16 &chaptr) : sentenceDone(0), sentencePos(0), data(nullptr), dataSize(0), curPos(0), newPos(0xFFFF), curFileNo(0), curGfxScript(-1), phase(chaptr), textResOffset(textResourceOffset) {}
 	~Script() {
 		delete[] data;
 	}
@@ -61,12 +61,12 @@ struct Script {
 	uint32 dataSize;
 	uint16 curPos;
 	uint16 newPos;
-	int16 &chapter;
+	int16 &phase;
 	const uint32 textResOffset;
 };
 
 struct GameState {
-	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), chapter(0), chapterSub(0), saveSlotUsage(0), saveCount(0), conf(Config()), script(0x3800, chapter), totalPlayTime(0) {}
+	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), phase(0), phaseFlags(0), saveSlotUsage(0), saveCount(0), conf(Config()), script(0x3800, phase), totalPlayTime(0) {}
 	int16 frameNo;
 	int16 frameState;
 	int16 finish;
@@ -76,8 +76,8 @@ struct GameState {
 	int16 modIndex;
 	int16 menuSelect;
 	int16 prologue;
-	int16 chapter;
-	int16 chapterSub;
+	int16 phase;
+	int16 phaseFlags;
 	int16 saveSlotUsage;
 	int16 saveCount;
 	Config conf;

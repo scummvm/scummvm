@@ -152,8 +152,8 @@ void GraphicsEngine::resetTextFields() {
 	_text->reset();
 }
 
-void GraphicsEngine::clearJordanInputField() {
-	_animator->clearJordanInputField();
+void GraphicsEngine::clearTextInputLine() {
+	_animator->clearTextInputLine();
 }
 
 uint8 GraphicsEngine::getVerbAreaType() const {
@@ -321,7 +321,7 @@ void GraphicsEngine::postLoadProcess() {
 	}
 }
 
-void GraphicsEngine::createMouseCursor(bool show) {
+void GraphicsEngine::createMouseCursor() {
 	_animator->createMouseCursor();
 }
 

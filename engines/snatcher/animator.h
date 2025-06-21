@@ -42,7 +42,7 @@ public:
 	virtual void setPlaneMode(uint16 mode) = 0;
 
 	virtual void resetTextFields() = 0;
-	virtual void clearJordanInputField() = 0;
+	virtual void clearTextInputLine() = 0;
 	virtual uint8 *getTextRenderBuffer() const = 0;
 	virtual void renderTextBuffer(uint16 firstLine, uint8 numLines) = 0;
 

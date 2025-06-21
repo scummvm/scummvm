@@ -56,7 +56,7 @@ uint16 MemAccessHandler::readWord(uint16 addr) {
 		result = _aseq->getResult().weaponDrawn;
 		break;
 	case 0x7972:
-		result = /*_state->conf.useLightGun ? 1 :*/ 0;
+		result = _state->conf.useLightGun ? 1 : 0;
 		break;
 	case 0x79E0:
 		// BURAM status
@@ -83,11 +83,19 @@ void MemAccessHandler::writeWord(uint16 addr, uint16 val) {
 	switch (addr) {
 	case 0x79F0:
 		break;
-	case 0x971a:
+	case 0x9718:
+		_ui->setInputStringLength(val);
+		break;
+	case 0x971A:
 		_ui->setInterpreterMode(val);
+	case 0x971C:
+		_ui->setHeadLineYOffset(val);
+		break;
+	case 0x971E:
+		_ui->setVideoPhoneMode(val);
 		break;
 	case 0xFFFF:
-		// This is an exception that is caught even in the original code.
+		// The 0xFFFF "address" is an exception that is also handled separately in the original code.
 		_vm->sound()->reduceVolume2(val);
 		break;
 	default:
@@ -97,6 +105,14 @@ void MemAccessHandler::writeWord(uint16 addr, uint16 val) {
 
 void MemAccessHandler::setGameState(GameState *state) {
 	_state = state;
+}
+
+void MemAccessHandler::saveTempState() {
+	_saveMan->saveTempState(_state->script);
+}
+
+void MemAccessHandler::restoreTempState() {
+	_saveMan->restoreTempState(_state->script);
 }
 
 } // End of namespace Snatcher

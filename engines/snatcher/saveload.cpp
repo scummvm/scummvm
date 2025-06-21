@@ -25,8 +25,10 @@
 #include "snatcher/script.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
+#include "snatcher/ui.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "engines/engine.h"
 #include "graphics/scaler.h"
@@ -74,7 +76,7 @@ void SaveLoadManager::saveSettings(const Config &config) {
 	ConfMan.setInt("lightgun_biasY", config.lightGunBias.y);
 }
 
-void SaveLoadManager::updateSaveSlotsState(GameState &state) {
+void SaveLoadManager::updateSaveSlotsStatus(GameState &state) {
 	state.saveSlotUsage = 0;
 	for (int i = 0; i < 4; ++i) {
 		if (isSaveSlotUsed(i + 1)) // Skip autosave slot 0
@@ -120,6 +122,22 @@ void SaveLoadManager::enableSaving(bool enable) {
 	_enableSaving = enable;
 }
 
+void SaveLoadManager::saveTempState(Script &script) {
+	Common::MemoryWriteStreamDynamic out(DisposeAfterUse::NO);
+	_vm->_scriptEngine->saveState(&out, script, true);
+	_vm->gfx()->saveState(&out);
+	_vm->sound()->saveState(&out);
+	_vm->_ui->saveState(&out);
+	_tempState = Common::SharedPtr<Common::MemoryReadStream>(new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES));
+}
+
+void SaveLoadManager::restoreTempState(Script &script) {
+	_vm->_scriptEngine->loadState(_tempState.get(), script, true);
+	_vm->gfx()->loadState(_tempState.get());
+	_vm->sound()->loadState(_tempState.get());
+	_vm->_ui->loadState(_tempState.get());
+}
+
 Common::String SaveLoadManager::getSavegameFilename(int slot, const Common::String target) {
 	assert(slot >= 0 && slot <= 999);
 	return target + Common::String::format(".%03d", slot);
@@ -162,8 +180,8 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 	_vm->_keyRepeat = in->readByte();
 	_vm->_enableLightGun = in->readByte();
 
-	state.chapter = in->readSint16BE();
-	state.chapterSub = in->readSint16BE();
+	state.phase = in->readSint16BE();
+	state.phaseFlags = in->readSint16BE();
 	state.counter = in->readSint16BE();
 	state.finish = in->readSint16BE();
 	state.frameNo = in->readSint16BE();
@@ -174,10 +192,11 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 	state.modProcessTop = in->readSint16BE();
 	state.prologue = in->readSint16BE();
 
-	_vm->_scriptEngine->loadState(in, state.script);
+	_vm->_scriptEngine->loadState(in, state.script, false);
 	_vm->_cmdQueue->loadState(in);
 	_vm->gfx()->loadState(in);
 	_vm->sound()->loadState(in);
+	_vm->_ui->loadState(in);
 
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
@@ -185,8 +204,8 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 	delete in;
 
 	if (state.prologue == -1) {
-		state.chapter = 0;
-		state.chapterSub = 0;
+		state.phase = 0;
+		state.phaseFlags = 0;
 		state.menuSelect = 1;
 	}
 }
@@ -197,8 +216,8 @@ void SaveLoadManager::saveState(int slot, GameState &state) {
 	out->writeByte(_vm->_keyRepeat);
 	out->writeByte(_vm->_enableLightGun);
 
-	out->writeSint16BE(state.chapter);
-	out->writeSint16BE(state.chapterSub);
+	out->writeSint16BE(state.phase);
+	out->writeSint16BE(state.phaseFlags);
 	out->writeSint16BE(state.counter);
 	out->writeSint16BE(state.finish);
 	out->writeSint16BE(state.frameNo);
@@ -209,17 +228,18 @@ void SaveLoadManager::saveState(int slot, GameState &state) {
 	out->writeSint16BE(state.modProcessTop);
 	out->writeSint16BE(state.prologue);
 
-	_vm->_scriptEngine->saveState(out, state.script);
+	_vm->_scriptEngine->saveState(out, state.script, false);
 	_vm->_cmdQueue->saveState(out);
 	_vm->gfx()->saveState(out);
 	_vm->sound()->saveState(out);
+	_vm->_ui->saveState(out);
 
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
 
 	out->finalize();
 	delete out;
 
-	updateSaveSlotsState(state);
+	updateSaveSlotsStatus(state);
 }
 
 Common::SeekableReadStream *SaveLoadManager::openFileForLoading(int slot, GameState &state, SaveHeader &header) {

@@ -70,7 +70,7 @@ private:
 	void delayUntil(uint32 end);
 	void checkEvents(const GameState &state);
 
-	void updateChapter(GameState &state);
+	void updateMainState(GameState &state);
 	void updateModuleState(GameState &state);
 
 	const uint32 _frameLen;

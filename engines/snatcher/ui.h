@@ -57,6 +57,9 @@ public:
 	void resetVerbSelection() { _prevSelectedVerb = 0; }
 	void setVerbsTabLayout(uint16 layout);
 	void setInterpreterMode(uint16 mode);
+	void setVideoPhoneMode(uint16 enable) { _videoPhoneMode = enable; }
+	void setInputStringLength(uint16 length) { _textInputColumnMax = length; }
+	void setHeadLineYOffset(int16 offs) { _headLineYOffset = offs; };
 
 	void loadState(Common::SeekableReadStream *in);
 	void saveState(Common::SeekableWriteStream *out);
@@ -69,8 +72,7 @@ private:
 
 	uint8 _textColor;
 	uint8 _textY;
-	uint8 _textY2;
-	//uint8 _makestrbt1;
+	int16 _headLineYOffset;
 	uint8 _sceneId;
 	uint8 _textLineBreak;
 	uint8 _textLineEnd;
@@ -111,13 +113,11 @@ private:
 	uint8 _lastVerbLastPage;
 	uint8 _prevSelectedVerb;
 	uint8 _numVerbsMax;
-	uint8 _una_rr_hi;
-	uint8 _una_rr_lo;
 	uint8 _verbsTabCurPage;
 	uint8 _transit_02;
 	int16 _transDW1;
 	int16 _transDW2;
-	int16 _drawVerbsWd1;
+	int16 _videoPhoneMode;
 	uint8 _textInputMarginLeft;
 	int16 _textInputColumnCur;
 	int16 _textInputColumnMax;

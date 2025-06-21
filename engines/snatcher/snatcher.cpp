@@ -35,6 +35,7 @@
 #include "common/events.h"
 #include "common/list.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "graphics/pixelformat.h"
 #include "engines/util.h"
 
@@ -139,6 +140,7 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 		initGraphics(_gfx->realScreenWidth(), _gfx->realScreenHeight(), &pxf);
 		assert(_scd);
 		_gfx->setTextFont(_scd->makePtr(0x14B7C)(), 816, _scd->makePtr(0x14EAC)(), 102);
+		_gfx->createMouseCursor();
 		return true;
 	}
 
@@ -219,7 +221,7 @@ bool SnatcherEngine::start() {
 	Util::rngReset();
 	GameState state;
 	_saveMan->loadSettings(state.conf);
-	_saveMan->updateSaveSlotsState(state);
+	_saveMan->updateSaveSlotsStatus(state);
 	_memHandler->setGameState(&state);
 
 	//playBootLogoAnimation(state);
@@ -236,7 +238,7 @@ bool SnatcherEngine::start() {
 		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
 		frameTimer &= 0x3FFF;
 
-		updateChapter(state);
+		updateMainState(state);
 
 		_gfxInfo.audioSync = _snd->cdaIsPlaying() ? _snd->cdaGetTime() : 0;
 		Util::rngMakeNumber();
@@ -294,7 +296,7 @@ bool SnatcherEngine::start() {
 
 void SnatcherEngine::delayUntil(uint32 end) {
 	uint32 cur = _system->getMillis();
-	_gfxInfo.dropFrames = /*cur > end ? ((cur - end) << 14) / _frameLen :*/ 0;
+	_gfxInfo.dropFrames = cur > end ? ((cur - end) << 14) / _frameLen : 0;
 	if (cur < end)
 		_system->delayMillis(end - cur);
 }
@@ -389,6 +391,7 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 						// the screen center. I solve this by always adding the diff to the y-bias.
 						_input.lightGunPos.x = CLIP<int>(_realLightGunPos.x - state.conf.lightGunBias.x, 0, 255);
 						_input.lightGunPos.y = CLIP<int>(_realLightGunPos.y - state.conf.lightGunBias.y, 0, 255);
+						debug("Lightgun position: (%d, %d)", _input.lightGunPos.x, _input.lightGunPos.y);
 					}
 				}
 
@@ -410,20 +413,20 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 		_gfx->setVar(7, 4);
 }
 
-void SnatcherEngine::updateChapter(GameState &state) {
-	// The chapterSub variable is an invention to emulate the interaction between the main thread and the
+void SnatcherEngine::updateMainState(GameState &state) {
+	// The phaseFlags variable is an invention to emulate the interaction between the main thread and the
 	// vertical interrupt handlers in the original code. It may complicate things a bit (e. g. I have to
 	// provide means to drop out of several involved functions and continue with them later), but I still
-	// like this better than making the code multi-threaded, using a timer proc.
+	// like this better than making the code multi-threaded (using a timer proc as vint handler replacment).
 
-	if (state.chapterSub & 0x80) {
+	if (state.phaseFlags & 0x80) {
 		if (!(_cmdQueue->enabled() || (_snd->pcmGetStatus().statusBits & 7)))
-			state.chapterSub &= ~0x80;
+			state.phaseFlags &= ~0x80;
 		else
 			return;
 	}
 
-	switch (state.chapter) {
+	switch (state.phase) {
 	case 0:
 		// Intro and main menu
 		if (state.prologue != -1)
@@ -444,13 +447,14 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		_cmdQueue->writeUInt32(0xED0E);
 		_cmdQueue->start();
 
-		++state.chapter;
-		state.chapterSub |= 0x80;
+		++state.phase;
+		state.phaseFlags |= 0x80;
 
 		break;
 
 	case 1:
 		// Init first scene or load savegame
+		state.phaseFlags = 0;
 		_cmdQueue->writeUInt16(0x11);
 		_cmdQueue->writeUInt32(0x1A800);
 		if (state.menuSelect == 0) {
@@ -480,34 +484,34 @@ void SnatcherEngine::updateChapter(GameState &state) {
 		_ui->setControllerConfig(state.conf.controllerSetup);
 
 		_cmdQueue->start();
-		++state.chapter;
-		state.chapterSub |= 0x80;
+		++state.phase;
+		state.phaseFlags |= 0x80;
 		break;
 
 	case 2:
 		// Act I
-		if (state.chapterSub & 0x40) {
+		if (state.phaseFlags & 0x40) {
 			if (_scriptEngine->postProcess(state.script)) {
 				for (int i = 5; i < 15; ++i)
 					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
 				_cmdQueue->writeUInt16(0x22);
 				_cmdQueue->writeUInt32(0x139D0);
 				_cmdQueue->start();
-				state.chapterSub |= 0xA0;
+				state.phaseFlags |= 0xA0;
 			}
-			state.chapterSub &= ~0x40;
-		} else if (state.chapterSub & 0x20) {
+			state.phaseFlags &= ~0x40;
+		} else if (state.phaseFlags & 0x20) {
 			_gfx->setVar(11, 0xFF);
 			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input.singleFrameControllerFlagsRemapped)) {
-				state.chapterSub |= 0x80;
+				state.phaseFlags |= 0x80;
 			} else {
 				_scriptEngine->processInput();
-				state.chapterSub &= ~0x20;
+				state.phaseFlags &= ~0x20;
 			}
-		} else if (state.chapterSub == 0) {
+		} else if (state.phaseFlags == 0) {
 			_scriptEngine->run(state.script);
 			_cmdQueue->start();
-			state.chapterSub |= 0xC0;
+			state.phaseFlags |= 0xC0;
 		}
 		break;
 
@@ -652,16 +656,13 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		}
 		break;
 	case 3:
-		//_wordRAM__TABLE48__word_B6400[2] = 1;
 		state.finish = 0;
 		state.modProcessTop = 0;
 		state.modProcessSub = 0;
 		_gfx->reset(GraphicsEngine::kResetScrollState);
 		break;
 	case 5:
-		// bset    #3,(GA_SUB__COMMUNICATION_FLAG+1).
 		if (state.finish) {
-			// bclr    #3,(GA_SUB__COMMUNICATION_FLAG+1).l
 			++state.modProcessTop;
 			state.modProcessSub = 0;
 			state.finish = 0;
@@ -687,8 +688,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			}
 			break;
 		case 2:
-			// startup__runWithFileFunc(2)
-			//_unlCDREadSeekWord = 0;
+			//original: check if file loaded
 			++state.modProcessSub;
 			break;
 		case 3:
@@ -790,7 +790,8 @@ void SnatcherEngine::calibrateLightGun(GameState &state) {
 
 void SnatcherEngine::allowLightGunInput(bool enable) {
 	_enableLightGun = enable;
-	_system->showMouse(enable);
+	_gfx->createMouseCursor();
+	CursorMan.showMouse(enable);
 }
 
 } // End of namespace Snatcher

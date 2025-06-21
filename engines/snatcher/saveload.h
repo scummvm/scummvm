@@ -24,7 +24,7 @@
 #define SNATCHER_SAVELOAD_H
 
 #include "common/ptr.h"
-#include "common/str.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "snatcher/state.h"
 
@@ -47,7 +47,7 @@ public:
 
 	void loadSettings(Config &config);
 	void saveSettings(const Config &config);
-	void updateSaveSlotsState(GameState &state);
+	void updateSaveSlotsStatus(GameState &state);
 
 	void requestLoad(int slot);
 	void requestSave(int slot, const Common::String &desc);
@@ -57,6 +57,9 @@ public:
 	bool isSaveSlotUsed(int16 slot) const;
 	bool isSavingEnabled() const;
 	void enableSaving(bool enable);
+
+	void saveTempState(Script &script);
+	void restoreTempState(Script &script);
 
 public:
 	struct SaveHeader {
@@ -88,6 +91,8 @@ private:
 	int _pendingSaveLoad;
 	bool _tryLoadFromLauncher;
 	bool _enableSaving;
+
+	Common::SharedPtr<Common::MemoryReadStream> _tempState;
 };
 
 } // End of namespace Snatcher
