@@ -58,10 +58,12 @@ static void swapBlit(byte *dst, const byte *src,
 
 // TODO: Add fast 24<->32bpp conversion
 // TODO: Add fast 16<->16bpp conversion
-static const struct {
+struct FastBlitLookup {
 	FastBlitFunc func;
 	Graphics::PixelFormat srcFmt, dstFmt;
-} fastBlitFuncs[] = {
+};
+
+static const FastBlitLookup fastBlitFuncs_4to4[] = {
 	// 32-bit byteswap
 	{ swapBlit<true,   0>, Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0) }, // ABGR8888 -> RGBA8888
 	{ swapBlit<true,   0>, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24) }, // RGBA8888 -> ABGR8888
@@ -86,13 +88,25 @@ static const struct {
 };
 
 FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFmt) {
-	for (size_t i = 0; i < ARRAYSIZE(fastBlitFuncs); i++) {
-		if (srcFmt != fastBlitFuncs[i].srcFmt)
+	const uint dstBpp = dstFmt.bytesPerPixel;
+	const uint srcBpp = srcFmt.bytesPerPixel;
+	const FastBlitLookup *table = nullptr;
+	size_t length = 0;
+
+	if (srcBpp == 4 && dstBpp == 4) {
+		table = fastBlitFuncs_4to4;
+		length = ARRAYSIZE(fastBlitFuncs_4to4);
+	} else {
+		return nullptr;
+	}
+
+	for (size_t i = 0; i < length; i++) {
+		if (srcFmt != table[i].srcFmt)
 			continue;
-		if (dstFmt != fastBlitFuncs[i].dstFmt)
+		if (dstFmt != table[i].dstFmt)
 			continue;
 
-		return fastBlitFuncs[i].func;
+		return table[i].func;
 	}
 	return nullptr;
 }
