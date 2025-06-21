@@ -237,16 +237,16 @@ int TetraedgeEngine::getDefaultScreenHeight() const {
 	return gameIsAmerzone() ? 800 : 600;
 }
 
-bool TetraedgeEngine::onKeyUp(const Common::KeyState &state) {
-	switch (state.keycode) {
-	case Common::KEYCODE_l:
+bool TetraedgeEngine::onActionEnd(const Common::CustomEventType &state) {
+	switch (state) {
+	case kActionLoad:
 		if (loadGameDialog())
 			_game->initLoadedBackupData();
 		break;
-	case Common::KEYCODE_s:
+	case kActionSave:
 		saveGameDialog();
 		break;
-	case Common::KEYCODE_ESCAPE:
+	case kActionSkip:
 		closeGameDialogs();
 		break;
 	default:
@@ -290,7 +290,7 @@ Common::Error TetraedgeEngine::run() {
 	_renderer->init(getDefaultScreenWidth(), getDefaultScreenHeight());
 	_renderer->reset();
 
-	getInputMgr()->_keyUpSignal.add(this, &TetraedgeEngine::onKeyUp);
+	getInputMgr()->_customActionEndSignal.add(this, &TetraedgeEngine::onActionEnd);
 
 	// If a savegame was selected from the launcher, load it.
 	// Should be before application->create() because it only
