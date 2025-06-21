@@ -33,13 +33,24 @@ void SoundManager::soundDriverInit() {
 		&_channelHandle,
 		_stream,
 		-1,
-		Audio::Mixer::kMaxChannelVolume);
+		Audio::Mixer::kMaxChannelVolume
+	);
+
+	// The following is a way to adapt the amount of buffers to the current device capabilities.
+	// Re-adapted from my own code found within the Digital iMUSE subsystem from the SCUMM engine.
+	_maxQueuedStreams = (uint32)ceil((_mixer->getOutputBufSize() / 1470) / ((float)_mixer->getOutputRate() / 44100));
+
+	if (_mixer->getOutputRate() % 44100) {
+		_maxQueuedStreams++;
+	}
+
+	_maxQueuedStreams = MAX<uint32>(4, _maxQueuedStreams);
 }
 
 void SoundManager::soundDriverCopyBuffersToDevice() {
 	_sound30HzCounter++;
 
-	while (_stream->numQueuedStreams() < 4) {
+	while (_stream->numQueuedStreams() < _maxQueuedStreams) {
 		byte *ptr = (byte *)malloc(1470 * sizeof(int16));
 		assert(ptr);
 
