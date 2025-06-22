@@ -124,8 +124,10 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 
 static const NuvieActionDescription CheatKeyDescriptions[] = {
 	{ "ASSET_VIEWER", _s("Open the asset viewer"), nullptr, nullptr },
+	// I18N: Eggs are in-game hatchable objects that are normally invisible
 	{ "SHOW_EGGS", _s("Show eggs"), "e", nullptr },
 	{ "TOGGLE_HACKMOVE", _s("Toggle hack move"), "A+h", nullptr },
+	// I18N: Eggs are in-game hatchable objects that are normally invisible
 	{ "TOGGLE_EGG_SPAWN", _s("Toggle egg spawn"), "A+C+e", nullptr },
 	{ "TOGGLE_NO_DARKNESS", _s("Toggle no darkness"), "A+i", nullptr },
 	{ "TOGGLE_PICKPOCKET_MODE", _s("Toggle pickpocket mode"), "A+C+p", nullptr },
