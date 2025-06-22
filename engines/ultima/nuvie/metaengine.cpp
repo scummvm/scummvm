@@ -75,6 +75,7 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 	{ "MULTI_USE", _s("Multi-use"), "SEMICOLON", nullptr },
 	{ "SELECT_COMMAND_BAR", _s("Select command bar"), nullptr, nullptr },
 	{ "NEW_COMMAND_BAR", _s("Select new command bar"), "COMMA", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP", _s("Doll gump"), "i", nullptr },
 	{ "PREVIOUS_PARTY_MEMBER", _s("Previous party member"), "MINUS", "KP_MINUS" },
 	{ "NEXT_PARTY_MEMBER", _s("Next party member"), "PLUS", "KP_PLUS" },
@@ -105,6 +106,7 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 	{ "SHOW_KEYS", _s("Show keys"), "h", nullptr },
 	{ "DECREASE_DEBUG", _s("Decrease debug"), "C+d", nullptr },
 	{ "INCREASE_DEBUG", _s("Increase debug"), "C+i", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "CLOSE_GUMPS", _s("Close gumps"), "z", nullptr },
 	//{ "USE_ITEM", _s("Use item"), nullptr, nullptr }, // TODO: this takes an item no parameter
 	{ "TOGGLE_ALT_CODE_MODE", _s("Enter ALT code (hold)"), "LALT", nullptr },
@@ -163,14 +165,23 @@ static const NuvieActionDescription PerPartyMemberActionDescriptions[] {
 	{ "INVENTORY_7", _s("Show inventory for party member 7"), "F7", nullptr },
 	{ "INVENTORY_8", _s("Show inventory for party member 8"), "F8", nullptr },
 	{ "INVENTORY_9", _s("Show inventory for party member 9"), "F9", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_1", _s("Show doll gump for Avatar"), "S+F1", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_2", _s("Show doll gump for party member 2"), "S+F2", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_3", _s("Show doll gump for party member 3"), "S+F3", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_4", _s("Show doll gump for party member 4"), "S+F4", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_5", _s("Show doll gump for party member 5"), "S+F5", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_6", _s("Show doll gump for party member 6"), "S+F6", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_7", _s("Show doll gump for party member 7"), "S+F7", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_8", _s("Show doll gump for party member 8"), "S+F8", nullptr },
+	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP_9", _s("Show doll gump for party member 9"), "S+F9", nullptr },
 };
 
