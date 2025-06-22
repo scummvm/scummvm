@@ -137,6 +137,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 	0
 };
 
+static char s_fallbacGameIdBuffer[256];
 static char s_fallbackFileNameBuffer[51];
 static char s_fallbackExtraBuf[256];
 
@@ -289,30 +290,29 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			if (versionInfo) {
 				Common::String internalName = versionInfo->hash["InternalName"].encode();
 				Common::String fileDescription = versionInfo->hash["FileDescription"].encode();
-				if (!_fallback_blacklisted_names.contains(internalName)) {
-					if (extraInfo != nullptr) {
-						*extraInfo = new ADDetectedGameExtraInfo;
-						(*extraInfo)->gameName = internalName;
 
-						sanitizedName = AdvancedMetaEngineDetectionBase::sanitizeName(fileDescription.c_str(), fileDescription.size());
-						desc->desc.gameId = sanitizedName.c_str();
-					}
-				} else if (!_fallback_blacklisted_names.contains(fileDescription)) {
+				warning("Director fallback detection int name: %s", internalName.c_str());
+				warning("Director fallback detection file name: %s", fileDescription.c_str());
+				warning("Director fallback detection version: v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
+
+				if (!_fallback_blacklisted_names.contains(fileDescription)) {
 					if (extraInfo != nullptr) {
 						*extraInfo = new ADDetectedGameExtraInfo;
 						(*extraInfo)->gameName = fileDescription;
 
 						sanitizedName = AdvancedMetaEngineDetectionBase::sanitizeName(fileDescription.c_str(), fileDescription.size());
-						desc->desc.gameId = sanitizedName.c_str();
+						Common::strlcpy(s_fallbacGameIdBuffer, sanitizedName.c_str(), sizeof(s_fallbacGameIdBuffer) - 1);
+						desc->desc.gameId = s_fallbacGameIdBuffer;
+
+						extra = Common::String::format("v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
 					}
 				}
-				extra = Common::String::format("v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
 				delete versionInfo;
 			}
 			delete exe;
 		}
 		if (extra.empty()) {
-			extra = Common::String::format("v%d.%02d", desc->version / 100, desc->version % 100);
+			extra = Common::String::format("D%d.%02d", desc->version / 100, desc->version % 100);
 		}
 		Common::strlcpy(s_fallbackExtraBuf, extra.c_str(), sizeof(s_fallbackExtraBuf) - 1);
 		desc->desc.extra = s_fallbackExtraBuf;
