@@ -28,7 +28,8 @@ namespace MFC {
 namespace Gfx {
 
 template<typename T>
-static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE, bool isDestMonochrome) {
+static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE,
+		bool isDestMonochrome, uint bgColor) {
 	switch (mode) {
 	case SRCCOPY:
 		*destP = *srcP;
@@ -43,6 +44,11 @@ static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE, 
 		*destP |= *srcP;
 		break;
 	case NOTSRCCOPY:
+		if (isDestMonochrome) {
+			*destP = *srcP == bgColor ? 0xff : 0;
+			return;
+		}
+
 		*destP = ~*srcP;
 		break;
 	case DSTINVERT:
@@ -60,17 +66,17 @@ static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE, 
 	}
 
 	if (isDestMonochrome)
-		*destP = *destP ? 255 : 0;
+		*destP = *destP == bgColor ? 0 : 0xff;
 }
 
 template<typename T>
 static void normalBlit(const Graphics::ManagedSurface *srcSurface,
 		Graphics::ManagedSurface *destSurface,
 		const Common::Rect &srcRect, const Common::Point &destPos,
-		int mode) {
+		uint bgColor, int mode) {
 	const bool isDestMonochrome = destSurface->format.bytesPerPixel == 1 &&
 		destSurface->format.aLoss == 255;
-	const T WHITE = isDestMonochrome ? 255 :
+	const T WHITE = destSurface->format.bytesPerPixel == 1 ? 255 :
 		destSurface->format.RGBToColor(255, 255, 255);
 
 	for (int y = 0; y < srcRect.height(); ++y) {
@@ -80,7 +86,7 @@ static void normalBlit(const Graphics::ManagedSurface *srcSurface,
 			destPos.x, destPos.y + y);
 
 		for (int x = 0; x < srcRect.width(); ++x, ++srcP, ++destP) {
-			copyPixel<T>(srcP, destP, mode, WHITE, isDestMonochrome);
+			copyPixel<T>(srcP, destP, mode, WHITE, isDestMonochrome, bgColor);
 		}
 	}
 }
@@ -89,10 +95,10 @@ template<typename T>
 static void stretchBlit(const Graphics::ManagedSurface *srcSurface,
 		Graphics::ManagedSurface *destSurface,
 		const Common::Rect &srcRect, const Common::Rect &dstRect,
-		int mode) {
+		uint bgColor, int mode) {
 	const bool isDestMonochrome = destSurface->format.bytesPerPixel == 1 &&
 		destSurface->format.aLoss == 255;
-	const T WHITE = isDestMonochrome ? 255 :
+	const T WHITE = destSurface->format.bytesPerPixel == 1 ? 255 :
 		destSurface->format.RGBToColor(255, 255, 255);
 
 	const int srcWidth = srcRect.right - srcRect.left;
@@ -124,7 +130,7 @@ static void stretchBlit(const Graphics::ManagedSurface *srcSurface,
 			const T *srcP = (const T *)srcSurface->getBasePtr(srcX, srcY);
 			T *destP = (T *)destSurface->getBasePtr(dstX, dstY);
 
-			copyPixel<T>(srcP, destP, mode, WHITE, isDestMonochrome);
+			copyPixel<T>(srcP, destP, mode, WHITE, isDestMonochrome, bgColor);
 		}
 	}
 }
@@ -132,7 +138,7 @@ static void stretchBlit(const Graphics::ManagedSurface *srcSurface,
 void blit(const Graphics::ManagedSurface *src,
 		Graphics::ManagedSurface *dest,
 		const Common::Rect &srcRect, const Common::Point &destPos,
-		int mode) {
+		uint bgColor, int mode) {
 	// For normal copying modes, the formats must match.
 	// Other modes like DSTINVERT don't need a source,
 	// so in that case the source can remain uninitialized
@@ -141,13 +147,13 @@ void blit(const Graphics::ManagedSurface *src,
 
 	switch (dest->format.bytesPerPixel) {
 	case 1:
-		normalBlit<byte>(src, dest, srcRect, destPos, mode);
+		normalBlit<byte>(src, dest, srcRect, destPos, bgColor, mode);
 		break;
 	case 2:
-		normalBlit<uint16>(src, dest, srcRect, destPos, mode);
+		normalBlit<uint16>(src, dest, srcRect, destPos, bgColor, mode);
 		break;
 	case 4:
-		normalBlit<uint32>(src, dest, srcRect, destPos, mode);
+		normalBlit<uint32>(src, dest, srcRect, destPos, bgColor, mode);
 		break;
 	default:
 		error("Invalid surface bytesPerPixel");
@@ -158,18 +164,18 @@ void blit(const Graphics::ManagedSurface *src,
 void stretchBlit(const Graphics::ManagedSurface *src,
 		Graphics::ManagedSurface *dest,
 		const Common::Rect &srcRect, const Common::Rect &destRect,
-		int mode) {
+		uint bgColor, int mode) {
 	assert(src->format.bytesPerPixel == dest->format.bytesPerPixel);
 
 	switch (src->format.bytesPerPixel) {
 	case 1:
-		stretchBlit<byte>(src, dest, srcRect, destRect, mode);
+		stretchBlit<byte>(src, dest, srcRect, destRect, bgColor, mode);
 		break;
 	case 2:
-		stretchBlit<uint16>(src, dest, srcRect, destRect, mode);
+		stretchBlit<uint16>(src, dest, srcRect, destRect, bgColor, mode);
 		break;
 	case 4:
-		stretchBlit<uint32>(src, dest, srcRect, destRect, mode);
+		stretchBlit<uint32>(src, dest, srcRect, destRect, bgColor, mode);
 		break;
 	default:
 		error("Invalid surface bytesPerPixel");

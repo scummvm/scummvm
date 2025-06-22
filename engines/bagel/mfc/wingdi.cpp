@@ -219,11 +219,12 @@ BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
 	CDC::Impl *destDc = (CDC::Impl *)hdc;
 	const CBitmap::Impl *src = (CBitmap::Impl *)srcDc->_bitmap;
 	CBitmap::Impl *dest = (CBitmap::Impl *)destDc->_bitmap;
+	uint bgColor = destDc->getBkColor();
 
 	Gfx::blit(src, dest,
 		Common::Rect(xSrc, ySrc, xSrc + width, ySrc + height),
 		Common::Point(xDest, yDest),
-		rop);
+		bgColor, rop);
 	return true;
 }
 

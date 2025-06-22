@@ -655,7 +655,7 @@ public:
 	private:
 		CBitmap::Impl _defaultBitmap;
 		Common::Point _linePos;
-		COLORREF _bkColor = 0;
+		COLORREF _bkColor = RGB(255, 255, 255);
 		int _bkMode = TRANSPARENT;
 		COLORREF _textColor = 0;
 		uint _textAlign = TA_LEFT;
@@ -714,6 +714,8 @@ public:
 
 		// Text functions
 		COLORREF setBkColor(COLORREF crColor);
+		COLORREF getBkColor() const;
+		COLORREF getBkPixel() const;
 		int setBkMode(int nBkMode);
 		COLORREF setTextColor(COLORREF crColor);
 		BOOL textOut(int x, int y, LPCSTR lpszString, int nCount);
@@ -852,6 +854,7 @@ public:
 	UINT RealizePalette();
 	void UpdateColors();
 	virtual COLORREF SetBkColor(COLORREF crColor);
+	COLORREF GetBkColor() const;
 	int SetBkMode(int nBkMode);
 
 	// Text Functions

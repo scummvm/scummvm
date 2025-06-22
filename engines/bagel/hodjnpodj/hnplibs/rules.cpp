@@ -417,7 +417,9 @@ void CRules::OnPaint() {
 		ReleaseCompatibleContext(pScrollTopMaskDC, pScrollTopMask, pScrollTopMaskOld, pScrollTopMaskPalOld);
 		ReleaseCompatibleContext(pScrollBotMaskDC, pScrollBotMask, pScrollBotMaskOld, pScrollBotMaskPalOld);
 		if (pNarrative != nullptr)
-			(*pNarrative).play();                   // play the narration
+			// Play the narration
+			(*pNarrative).play();
+
 	} else if (bBruteForce) {                           // need to paint directly to screen
 		pDibDoc = LoadScrollDIB(SCROLL_SPEC, nullptr);
 		if (pDibDoc != nullptr) {

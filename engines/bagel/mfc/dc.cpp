@@ -407,6 +407,10 @@ COLORREF CDC::SetBkColor(COLORREF crColor) {
 	return impl()->setBkColor(crColor);
 }
 
+COLORREF CDC::GetBkColor() const {
+	return impl()->getBkColor();
+}
+
 int CDC::SetBkMode(int nBkMode) {
 	return impl()->setBkMode(nBkMode);
 }
@@ -730,14 +734,16 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	Graphics::ManagedSurface dummySrc;
 	Graphics::ManagedSurface *src = !pSrcDC ? &dummySrc :
 		pSrcDC->impl()->getSurface();
-	Graphics::ManagedSurface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
+
+	Graphics::ManagedSurface *dest = getSurface();
 	const Common::Point destPos(x, y);
+	uint bgColor = getBkPixel();
 
 	if (dwRop == SRCCOPY && src->format == dest->format) {
 		dest->blitFrom(*src, srcRect, destPos);
 	} else {
-		Gfx::blit(src, dest, srcRect, destPos, dwRop);
+		Gfx::blit(src, dest, srcRect, destPos, bgColor, dwRop);
 	}
 }
 
@@ -747,8 +753,9 @@ void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	Graphics::ManagedSurface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);
 	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
+	uint bgColor = getBkPixel();
 
-	Gfx::stretchBlit(src, dest, srcRect, destRect, dwRop);
+	Gfx::stretchBlit(src, dest, srcRect, destRect, bgColor, dwRop);
 }
 
 void CDC::Impl::moveTo(int x, int y) {
@@ -784,6 +791,16 @@ COLORREF CDC::Impl::setBkColor(COLORREF crColor) {
 	_bkColor = crColor;
 	return oldColor;
 }
+
+COLORREF CDC::Impl::getBkColor() const {
+	return _bkColor;
+}
+
+COLORREF CDC::Impl::getBkPixel() const {
+	return _bkColor == RGB(255, 255, 255) ? 255 :
+		GetNearestColor(_bkColor);
+}
+
 
 int CDC::Impl::setBkMode(int nBkMode) {
 	int oldMode = _bkMode;

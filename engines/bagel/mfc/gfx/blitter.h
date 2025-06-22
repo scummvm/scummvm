@@ -31,12 +31,12 @@ namespace Gfx {
 extern void blit(const Graphics::ManagedSurface *src,
 	Graphics::ManagedSurface *dest,
 	const Common::Rect &srcRect, const Common::Point &destPos,
-	int mode);
+	uint bgColor, int mode);
 
 extern void stretchBlit(const Graphics::ManagedSurface *src,
 	Graphics::ManagedSurface *dest,
 	const Common::Rect &srcRect, const Common::Rect &destRect,
-	int mode);
+	uint bgColor, int mode);
 
 } // namespace Gfx
 } // namespace MFC
