@@ -3465,7 +3465,6 @@ EOF
 		fi
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O0
-			append_var DEFINES "-D__PSP2_DEBUG__"
 		fi
 		add_line_to_config_mk 'PSP2 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""

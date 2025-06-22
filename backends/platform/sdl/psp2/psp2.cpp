@@ -73,11 +73,6 @@ int access(const char *pathname, int mode) {
 }
 
 void OSystem_PSP2::init() {
-
-#if __PSP2_DEBUG__
-	gDebugLevel = 3;
-#endif
-
 	// Initialize File System Factory
 	sceIoMkdir("ux0:data", 0755);
 	sceIoMkdir("ux0:data/scummvm", 0755);
@@ -154,9 +149,11 @@ bool OSystem_PSP2::hasFeature(Feature f) {
 }
 
 void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
-#if __PSP2_DEBUG__
 	sceClibPrintf(message);
-#endif
+
+	// Log only error messages to file
+	if (type == LogMessageType::kError && _logger)
+		_logger->print(message);
 }
 
 Common::Path OSystem_PSP2::getDefaultConfigFileName() {
