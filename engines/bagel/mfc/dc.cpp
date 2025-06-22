@@ -580,7 +580,8 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 		return result;
 	}
 
-	error("Unsupported gdi object");
+	if (gdiObj)
+		error("Unsupported gdi object");
 	return nullptr;
 }
 
