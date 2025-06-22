@@ -606,6 +606,9 @@ void CDC::Impl::setScreenRect() {
 
 void CDC::Impl::setScreenRect(const Common::Rect &r) {
 	Graphics::Screen *scr = AfxGetApp()->getScreen();
+	assert(r.left >= 0 && r.top >= 0 &&
+		r.right <= scr->w && r.bottom <= scr->h);
+
 	_defaultBitmap.create(*scr, r);
 	_bitmap = &_defaultBitmap;
 }
