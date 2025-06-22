@@ -668,21 +668,35 @@ inline BOOL CRect::IntersectRect(
 	       (lpRect2->top < lpRect1->bottom);
 }
 
-inline BOOL CRect::UnionRect(
-    LPCRECT lpRect1, LPCRECT lpRect2) {
-	if (lpRect1->right < lpRect2->left ||
-	        lpRect1->left > lpRect2->right ||
-	        lpRect1->bottom < lpRect2->top ||
-	        lpRect2->top > lpRect2->bottom) {
-		left = top = right = bottom = 0;
+inline BOOL CRect::UnionRect(LPCRECT lpRect1, LPCRECT lpRect2) {
+	if (!lpRect1 || !lpRect2) {
+		// Defensive: null input treated as empty
+		SetRect(0, 0, 0, 0);
+		return FALSE;
+	}
+
+	// Check for empty rects
+	bool empty1 = lpRect1->left >= lpRect1->right || lpRect1->top >= lpRect1->bottom;
+	bool empty2 = lpRect2->left >= lpRect2->right || lpRect2->top >= lpRect2->bottom;
+
+	if (empty1 && empty2) {
+		SetRect(0, 0, 0, 0);
 		return false;
-	} else {
-		left = MAX(lpRect1->left, lpRect2->left);
-		top = MAX(lpRect1->top, lpRect2->top);
-		right = MIN(lpRect1->right, lpRect2->right);
-		bottom = MIN(lpRect1->bottom, lpRect2->bottom);
+	} else if (empty1) {
+		*this = *lpRect2;
+		return true;
+	} else if (empty2) {
+		*this = *lpRect1;
 		return true;
 	}
+
+	// Compute union of two valid rects
+	left = MIN(lpRect1->left, lpRect2->left);
+	top = MIN(lpRect1->top, lpRect2->top);
+	right = MAX(lpRect1->right, lpRect2->right);
+	bottom = MAX(lpRect1->bottom, lpRect2->bottom);
+
+	return true;
 }
 
 inline void CRect::operator=(const RECT &srcRect) {
