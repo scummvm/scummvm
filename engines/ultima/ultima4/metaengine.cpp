@@ -132,7 +132,7 @@ static const KeybindingRecord INPUT_KEYS[] = {
 };
 
 static const KeybindingRecord DIRECTION_KEYS[] = {
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), nullptr, "ESCAPE", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Abort action"), nullptr, "ESCAPE", nullptr },
 	{ KEYBIND_UP, "UP", _s("Up"), nullptr, "UP", nullptr },
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), nullptr, "DOWN", nullptr },
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), nullptr, "LEFT", nullptr },
@@ -142,7 +142,7 @@ static const KeybindingRecord DIRECTION_KEYS[] = {
 
 static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_INTERACT, "INTERACT", _s("Interact"), "interact", "RETURN", nullptr },
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), nullptr, "ESCAPE", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Abort action"), nullptr, "ESCAPE", nullptr },
 	{ KEYBIND_UP, "UP", _s("Up"), nullptr, "UP", nullptr },
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), nullptr, "DOWN", nullptr },
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), nullptr, "LEFT", nullptr },
