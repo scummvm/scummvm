@@ -1384,7 +1384,9 @@ private:
 	HGLOBAL m_hDialogTemplate = 0;
 	int _defaultId = 0;
 	CFont _dialogFont;
+	CWnd *m_pExplicitParent = nullptr;
 
+	void SetParent(CWnd *wnd);
 	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
 		void *lpDialogInit, HINSTANCE hInst);
 	BOOL CreateIndirect(HGLOBAL hDialogTemplate, CWnd *pParentWnd,

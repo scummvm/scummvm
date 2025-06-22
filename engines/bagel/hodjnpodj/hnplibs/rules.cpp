@@ -260,7 +260,7 @@ CRules::CRules(CWnd *pParent, const char *pszPathName,
 	: CDialog(CRules::IDD, pParent) {
 	Common::strcpy_s(chPathName, pszPathName);                  // retain path to rules file on disk
 	pScrollPalette = pPalette;                      // retain palette to be used
-	pParentWnd = pParent;                           // retain parent window pointer
+	pParentWnd = nullptr;                           // retain parent window pointer
 	pSoundPath = pszSoundPath;              // retain path to sound file on disk
 
 	//{{AFX_DATA_INIT(CRules)

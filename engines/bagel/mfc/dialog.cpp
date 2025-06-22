@@ -34,7 +34,7 @@ ON_MESSAGE(WM_SETFONT, CDialog::HandleSetFont)
 END_MESSAGE_MAP()
 
 CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
-	m_pParentWnd = pParentWnd;
+	SetParent(pParentWnd);
 	m_lpszTemplateName = lpszTemplateName;
 
 	if (HIWORD(m_lpszTemplateName) == 0)
@@ -42,7 +42,7 @@ CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
 }
 
 CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
-	m_pParentWnd = pParentWnd;
+	SetParent(pParentWnd);
 	m_lpszTemplateName = MAKEINTRESOURCE(nIDTemplate);
 	m_nIDHelp = nIDTemplate;
 }
@@ -50,13 +50,15 @@ CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
 BOOL CDialog::Create(LPCSTR lpszTemplateName,
         CWnd *pParentWnd) {
 	m_lpszTemplateName = lpszTemplateName;  // used for help
+	SetParent(pParentWnd);
+
 	if (HIWORD(m_lpszTemplateName) == 0 && m_nIDHelp == 0)
 		m_nIDHelp = LOWORD(m_lpszTemplateName);
 
 	HINSTANCE hInst = AfxFindResourceHandle(lpszTemplateName, RT_DIALOG);
 	HRSRC hResource = FindResource(hInst, lpszTemplateName, RT_DIALOG);
 	HGLOBAL hTemplate = LoadResource(hInst, hResource);
-	BOOL bResult = CreateIndirect(hTemplate, pParentWnd, hInst);
+	BOOL bResult = CreateIndirect(hTemplate, m_pParentWnd, hInst);
 	FreeResource(hTemplate);
 
 	return bResult;
@@ -153,6 +155,17 @@ BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 	}
 
 	return TRUE;
+}
+
+void CDialog::SetParent(CWnd *wnd) {
+	// TODO: Not sure if this should be here, or more
+	// generalized in CWnd. Apparently, on Windows,
+	// modal dialogs can't be the parent of another dialog.
+	// Instead, it needs to be the parent window above them.
+	m_pExplicitParent = this;
+	for (m_pParentWnd = wnd; dynamic_cast<CDialog *>(m_pParentWnd);
+		m_pParentWnd = m_pParentWnd->m_pParentWnd) {
+	}
 }
 
 DWORD CDialog::GetDefID() const {

@@ -66,7 +66,7 @@ private:
 	static  void Sleep(clock_t wait);
 
 private:
-	BOOL    m_bKeyboardHook;                // whether keyboard hook present
+	bool m_bKeyboardHook = false;	// whether keyboard hook present
 
 // Dialog Data
 	//{{AFX_DATA(CRules)
