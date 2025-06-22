@@ -225,7 +225,7 @@ Common::KeymapArray ToltecsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("SKIPDLG", _("Skip dialogue"));
+	act = new Action("SKIPDLG", _("Skip dialog"));
 	act->setCustomEngineActionEvent(kActionSkipDialog);
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_X");
