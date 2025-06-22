@@ -277,13 +277,13 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		/*if (isC64())
+		if (isC64())
 			_playerSid->startMusic();
-		else {*/
+		else {
 			playSound(_soundIndexStart, true);
 			// Start playing music, if any, in any supported format
 			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
-		//}
+		}
 
 	} else if (areaID == 127) {
 		assert(entranceID == 0);
