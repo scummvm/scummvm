@@ -115,7 +115,18 @@ enum EventType {
 
 	/** ScummVM has gained or lost focus. */
 	EVENT_FOCUS_GAINED = 36,
-	EVENT_FOCUS_LOST = 37
+	EVENT_FOCUS_LOST = 37,
+
+	/**
+	 * We reserve some event ids for custom events.
+	 * 
+	 * This is used for example by Asylum and Bagel engines.
+	 * Your custom event ids must be in this range.
+	 * This also prevents compiler from using a too short datatype
+	 *  for storing this enum on some platforms.
+	 */
+	EVENT_USER_FIRST_AVAILABLE = 1000,
+	EVENT_USER_LAST_AVAILABLE = 9999
 };
 
 const int16 JOYAXIS_MIN = -32768;
