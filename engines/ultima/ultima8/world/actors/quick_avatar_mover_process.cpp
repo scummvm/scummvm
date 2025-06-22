@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -50,6 +51,10 @@ void QuickAvatarMoverProcess::run() {
 		terminate();
 		return;
 	}
+
+	MainActor *avatar = getMainActor();
+	Direction direction = avatar->getDir();
+	DirectionMode mode = GAME_IS_U8 ? dirmode_8dirs : dirmode_16dirs;
 
 	int32 dx = 0;
 	int32 dy = 0;
@@ -83,6 +88,47 @@ void QuickAvatarMoverProcess::run() {
 		dz -= 8;
 	}
 
+	// Limit speed of turning by checking
+	uint32 frameNum = Kernel::get_instance()->getFrameNum();
+	if (frameNum % 4 == 0) {
+		if (hasMovementFlags(MOVE_TURN_LEFT)) {
+			direction = Direction_OneLeft(direction, mode);
+		}
+
+		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
+			direction = Direction_OneRight(direction, mode);
+		}
+	}
+
+	if (hasMovementFlags(MOVE_FORWARD)) {
+		int xoff = 32 * Direction_XFactor(direction);
+		int yoff = 32 * Direction_YFactor(direction);
+		if (dirmode_8dirs) {
+			xoff *= 2;
+			yoff *= 2;
+		}
+
+		dx += xoff;
+		dy += yoff;
+	}
+
+	if (hasMovementFlags(MOVE_BACK)) {
+		int xoff = 32 * Direction_XFactor(direction);
+		int yoff = 32 * Direction_YFactor(direction);
+		if (dirmode_8dirs) {
+			xoff *= 2;
+			yoff *= 2;
+		}
+
+		dx -= xoff;
+		dy -= yoff;
+	}
+
+	if (direction != avatar->getDir()) {
+		avatar->setDir(direction);
+		avatar->setToStartOfAnim(Animation::stand);
+	}
+
 	if (!dx && !dy && !dz) {
 		return;
 	}
@@ -91,9 +137,12 @@ void QuickAvatarMoverProcess::run() {
 		dx /= 4;
 		dy /= 4;
 		dz /= 4;
+	} else if (hasMovementFlags(MOVE_FAST)) {
+		dx *= 4;
+		dy *= 4;
+		dz *= 4;
 	}
 
-	MainActor *avatar = getMainActor();
 	Point3 pt = avatar->getLocation();
 	int32 ixd, iyd, izd;
 	avatar->getFootpadWorld(ixd, iyd, izd);
@@ -201,6 +250,18 @@ bool QuickAvatarMoverProcess::onActionDown(KeybindingAction action) {
 	case ACTION_MOVE_DESCEND:
 		setMovementFlag(MOVE_DESCEND);
 		break;
+	case ACTION_TURN_LEFT:
+		setMovementFlag(MOVE_TURN_LEFT);
+		break;
+	case ACTION_TURN_RIGHT:
+		setMovementFlag(MOVE_TURN_RIGHT);
+		break;
+	case ACTION_MOVE_FORWARD:
+		setMovementFlag(MOVE_FORWARD);
+		break;
+	case ACTION_MOVE_BACK:
+		setMovementFlag(MOVE_BACK);
+		break;
 	case ACTION_MOVE_UP:
 		setMovementFlag(MOVE_UP);
 		break;
@@ -215,6 +276,11 @@ bool QuickAvatarMoverProcess::onActionDown(KeybindingAction action) {
 		break;
 	case ACTION_MOVE_STEP:
 		setMovementFlag(MOVE_SLOW);
+		// Allow others to handle as well
+		handled = false; 
+		break;
+	case ACTION_MOVE_RUN:
+		setMovementFlag(MOVE_FAST);
 		// Allow others to handle as well
 		handled = false; 
 		break;
@@ -237,6 +303,18 @@ bool QuickAvatarMoverProcess::onActionUp(KeybindingAction action) {
 	case ACTION_MOVE_DESCEND:
 		clearMovementFlag(MOVE_DESCEND);
 		break;
+	case ACTION_TURN_LEFT:
+		clearMovementFlag(MOVE_TURN_LEFT);
+		break;
+	case ACTION_TURN_RIGHT:
+		clearMovementFlag(MOVE_TURN_RIGHT);
+		break;
+	case ACTION_MOVE_FORWARD:
+		clearMovementFlag(MOVE_FORWARD);
+		break;
+	case ACTION_MOVE_BACK:
+		clearMovementFlag(MOVE_BACK);
+		break;
 	case ACTION_MOVE_UP:
 		clearMovementFlag(MOVE_UP);
 		break;
@@ -251,6 +329,11 @@ bool QuickAvatarMoverProcess::onActionUp(KeybindingAction action) {
 		break;
 	case ACTION_MOVE_STEP:
 		clearMovementFlag(MOVE_SLOW);
+		// Allow others to handle as well
+		handled = false; 
+		break;
+	case ACTION_MOVE_RUN:
+		clearMovementFlag(MOVE_FAST);
 		// Allow others to handle as well
 		handled = false; 
 		break;

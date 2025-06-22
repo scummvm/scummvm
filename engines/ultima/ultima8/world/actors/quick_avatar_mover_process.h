@@ -77,13 +77,22 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 	enum MovementFlags {
-		MOVE_LEFT = 0x01,
-		MOVE_RIGHT = 0x02,
-		MOVE_UP = 0x04,
-		MOVE_DOWN = 0x08,
-		MOVE_ASCEND = 0x10,
-		MOVE_DESCEND = 0x20,
-		MOVE_SLOW = 0x40,
+		MOVE_ASCEND = 0x0001,
+		MOVE_DESCEND = 0x0002,
+		MOVE_SLOW = 0x0004,
+		MOVE_FAST = 0x0008,
+
+		// Tank controls
+		MOVE_TURN_LEFT  = 0x0010,
+		MOVE_TURN_RIGHT = 0x0020,
+		MOVE_FORWARD    = 0x0040,
+		MOVE_BACK       = 0x0080,
+
+		// Directional controls
+		MOVE_LEFT  = 0x0100,
+		MOVE_RIGHT = 0x0200,
+		MOVE_UP    = 0x0400,
+		MOVE_DOWN  = 0x0800,
 
 		MOVE_ANY_DIRECTION = MOVE_LEFT | MOVE_RIGHT | MOVE_UP | MOVE_DOWN | MOVE_ASCEND | MOVE_DESCEND
 	};
