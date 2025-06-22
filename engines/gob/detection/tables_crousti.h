@@ -58,18 +58,5 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{
-	{	// German Fan Translation by BJNFNE
-		"crousti",
-		"v1.01",
-		AD_ENTRY1s("intro.stk", "df96be976e53cc7de9e2741c45c18a1f", 864746),
-		DE_DEU,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kFeaturesAdLib,
-	0, 0, 0
-},
 
 #endif // GOB_DETECTION_TABLES_CROUSTI_H
