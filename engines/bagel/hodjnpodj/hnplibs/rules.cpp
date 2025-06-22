@@ -980,7 +980,8 @@ try_again:
 
 			if (chInBuf[i + n - 1] == '\r') {
 crop_byte:
-				strncpy(&chInBuf[i + n - 1], &chInBuf[i + n], nCount - i - n);
+				Common::strcpy_s(&chInBuf[i + n - 1], 512 - (i + n - 1),
+					&chInBuf[i + n]);
 				nCount -= 1;
 				nCropped += 1;
 				continue;
