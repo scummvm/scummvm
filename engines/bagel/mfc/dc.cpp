@@ -699,13 +699,15 @@ void CDC::Impl::ellipse(int x1, int y1, int x2, int y2) {
 }
 
 void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-	int xSrc, int ySrc, DWORD dwRop) {
-	Graphics::ManagedSurface *src = pSrcDC->impl()->getSurface();
+		int xSrc, int ySrc, DWORD dwRop) {
+	Graphics::ManagedSurface dummySrc;
+	Graphics::ManagedSurface *src = !pSrcDC ? &dummySrc :
+		pSrcDC->impl()->getSurface();
 	Graphics::ManagedSurface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
 	const Common::Point destPos(x, y);
 
-	if (dwRop == SRCCOPY) {
+	if (dwRop == SRCCOPY && src->format == dest->format) {
 		dest->blitFrom(*src, srcRect, destPos);
 	} else {
 		Gfx::blit(src, dest, srcRect, destPos, dwRop);

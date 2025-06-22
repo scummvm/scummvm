@@ -133,9 +133,13 @@ void blit(const Graphics::ManagedSurface *src,
 		Graphics::ManagedSurface *dest,
 		const Common::Rect &srcRect, const Common::Point &destPos,
 		int mode) {
-	assert(src->format.bytesPerPixel == dest->format.bytesPerPixel);
+	// For normal copying modes, the formats must match.
+	// Other modes like DSTINVERT don't need a source,
+	// so in that case the source can remain uninitialized
+	assert(src->format.bytesPerPixel == dest->format.bytesPerPixel ||
+		src->format.bytesPerPixel == 0);
 
-	switch (src->format.bytesPerPixel) {
+	switch (dest->format.bytesPerPixel) {
 	case 1:
 		normalBlit<byte>(src, dest, srcRect, destPos, mode);
 		break;
