@@ -188,6 +188,18 @@ uint32 Archive::getOffset(uint32 tag, uint16 id) const {
 	return resMap[id].offset;
 }
 
+uint Archive::getResourceSize(uint32 tag, uint16 id) const {
+	if (!_types.contains(tag))
+		error("Archive::getResourceSize(): Archive does not contain '%s' %d", tag2str(tag), id);
+
+	const ResourceMap &resMap = _types[tag];
+
+	if (!resMap.contains(id))
+		error("Archive::getResourceSize(): Archive does not contain '%s' %d", tag2str(tag), id);
+
+	return resMap[id].size;
+}
+
 uint16 Archive::findResourceID(uint32 tag, const Common::String &resName, bool ignoreCase) const {
 	if (!_types.contains(tag) || resName.empty())
 		return 0xFFFF;
@@ -763,7 +775,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		for (auto &it : _keyData[casTag]) {
 			for (auto &jt : it._value) {
 				if (Common::SeekableReadStreamEndian *casStream = getResource(casTag, jt)) {
-					Resource res = getResourceDetail(casTag, jt);
 					readCast(*casStream, it._key);
 					delete casStream;
 				}
@@ -1006,7 +1017,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 }
 
 void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId) {
-	uint castTag = MKTAG('C', 'A', 'S', 't');
+	int castTag = MKTAG('C', 'A', 'S', 't');
 
 	uint casSize = casStream.size() / 4;
 
@@ -1192,6 +1203,21 @@ bool RIFXArchive::writeStream() {
 		writeKeyTable(writeStream, offset);
 	}
 
+	int32 casTag = MKTAG('C', 'A', 'S', '*');
+	if (_keyData.contains(casTag)) {
+		for (auto &it : _keyData[casTag]) {
+			for (auto &jt : it._value) {
+				uint32 offset = getOffset(casTag, jt) + 8;	
+				writeCast(writeStream, offset);
+			}
+		}
+	}
+
+	// All the write functions will be called before flushing the dumpfile
+	// I need to store all these loaded chunks in a single structure so that
+	// Writing them is a as easy as just calling a single write function
+	// Currently I'm only working with the 'XFIR' file that I have, so all the 
+	// data is written low endian, will add a single check to switch to big endian 
 	Common::DumpFile out;
 	char buf[256];
 	Common::sprintf_s(buf, "./writtenMovie.dir");
@@ -1314,4 +1340,19 @@ bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, 
 	
 	return true;
 }
+
+bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 offset) {
+	writeStream->seek(offset);
+
+	uint castTag = MKTAG('C', 'A', 'S', 't'); 
+
+	for (auto &it : _types[castTag]) {
+		if (it._value.libResourceId) { 
+			writeStream->writeUint32LE(it._key);
+		}
+	}
+
+	return true;
+}
+
 } // End of namespace Director

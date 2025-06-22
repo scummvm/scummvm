@@ -86,6 +86,7 @@ public:
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint16 parentId);
 	virtual Resource getResourceDetail(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id) const;
+	uint getResourceSize(uint32 tag, uint16 id) const;
 	uint16 findResourceID(uint32 tag, const Common::String &resName, bool ignoreCase = false) const;
 	Common::String getName(uint32 tag, uint16 id) const;
 	Common::SeekableReadStreamEndian *getMovieResourceIfPresent(uint32 tag);
@@ -148,9 +149,6 @@ public:
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
 	bool writeStream() override;
-	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream);
-	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);
-	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);
 
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
@@ -161,6 +159,12 @@ public:
 	Common::String formatArchiveInfo() override;
 
 private:
+	/* These functions are for writing movies parallel to readMemoryMap, readAfterBurnerMap and readKeyTable */
+	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream);
+	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);
+	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);
+	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset);
+
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
 	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId);
