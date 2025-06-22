@@ -33,6 +33,7 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
       VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+      VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/.github/vcpkg-ports
       GIT_VCPKG_COMMIT: ef7dbf94b9198bc58f45951adcf1f041fcbc5ea0
     permissions:
       contents: write # For dependencygraph
