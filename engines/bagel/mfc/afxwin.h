@@ -466,6 +466,12 @@ struct AFX_NOTIFY {
 class CGdiObject : public CObject {
 	DECLARE_DYNCREATE(CGdiObject)
 
+private:
+	bool _permanent = false;
+
+protected:
+	void AfxHookObject();
+
 public:
 	HGDIOBJ m_hObject = nullptr;
 
@@ -477,7 +483,7 @@ public:
 	static CGdiObject *FromHandle(HGDIOBJ h);
 
 public:
-	~CGdiObject() override {}
+	~CGdiObject() override;
 
 	BOOL Attach(HGDIOBJ hObject);
 	HGDIOBJ Detach();
@@ -562,13 +568,14 @@ public:
 	Impl *&_font = *(Impl **)&m_hObject;
 
 public:
-	~CFont() override;
+	~CFont() override {}
 
 	BOOL CreateFont(int nHeight, int nWidth, int nEscapement,
 	    int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
 	    BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
 	    BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
 	    LPCSTR lpszFacename);
+	BOOL CreateFontIndirect(const LOGFONT *lpLogFont);
 };
 
 class CBitmap : public CGdiObject {
@@ -636,6 +643,12 @@ public:
 
 class CDC : public CObject {
 	DECLARE_DYNCREATE(CDC)
+
+private:
+	bool _permanent = false;
+
+protected:
+	void AfxHookObject();
 
 public:
 	class Impl {
@@ -742,7 +755,7 @@ public:
 	static CDC *FromHandle(HDC hDC);
 
 public:
-	~CDC() override {}
+	~CDC() override;
 
 	operator HDC() const {
 		return m_hDC;

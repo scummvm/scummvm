@@ -150,7 +150,8 @@ STATIC RIDDLE curRiddle;
 STATIC CSprite *aMasterSpriteList[N_SPRITECHARS];
 
 
-CRiddlesWindow::CRiddlesWindow(VOID) {
+CRiddlesWindow::CRiddlesWindow(VOID) :
+		cBrush(PALETTEINDEX(11)) {
 	CString  WndClass;
 	CRect    tmpRect;
 	CPalette *pPalOld;
@@ -1148,8 +1149,6 @@ VOID CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
 VOID CRiddlesWindow::OnMouseMove(UINT, CPoint) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
-
-CBrush cBrush(PALETTEINDEX(11));
 
 HBRUSH CRiddlesWindow::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor) {
 	switch (nCtlColor) {

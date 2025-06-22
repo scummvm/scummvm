@@ -37,12 +37,22 @@ BOOL CFont::CreateFont(int nHeight, int nWidth, int nEscapement,
 		lpszFacename);
 	assert(m_hObject);
 
+	// This is where it becomes permanent
+	AfxHookObject();
 	return true;
 }
 
-CFont::~CFont() {
-	if (m_hObject != nullptr)
-		MFC::DeleteObject(m_hObject);
+BOOL CFont::CreateFontIndirect(const LOGFONT *lpLogFont) {
+	assert(lpLogFont != nullptr);
+
+	m_hObject = MFC::CreateFontIndirect(lpLogFont);
+
+	if (m_hObject == nullptr)
+		return FALSE;
+
+	// This is where it becomes permanent
+	AfxHookObject();
+	return TRUE;
 }
 
 } // namespace MFC

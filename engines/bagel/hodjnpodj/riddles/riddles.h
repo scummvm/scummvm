@@ -121,6 +121,9 @@ protected:
 };
 
 class CRiddlesWindow : public CFrameWnd {
+private:
+	CBrush cBrush;
+
 public:
 	CRiddlesWindow(VOID);
 	VOID        PlayGame(VOID);

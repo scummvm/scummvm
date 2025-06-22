@@ -28,6 +28,11 @@ namespace MFC {
 
 IMPLEMENT_DYNCREATE(CGdiObject, CObject)
 
+CGdiObject::~CGdiObject() {
+	if (m_hObject && _permanent)
+		DeleteObject();
+}
+
 BOOL CGdiObject::Attach(HGDIOBJ hObject) {
 	m_hObject = hObject;
 	return true;
@@ -40,6 +45,14 @@ HGDIOBJ CGdiObject::Detach() {
 }
 
 BOOL CGdiObject::DeleteObject() {
+	if (m_hObject && _permanent) {
+		CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
+		assert(pMap != nullptr);
+
+		pMap->RemoveHandle(m_hObject);
+		_permanent = false;
+	}
+
 	delete m_hObject;
 	m_hObject = nullptr;
 	return true;
@@ -52,6 +65,14 @@ CGdiObject *CGdiObject::FromHandle(HGDIOBJ h) {
 	CGdiObject *pObject = pMap->FromHandle(h);
 	assert(pObject == nullptr || pObject->m_hObject == h);
 	return pObject;
+}
+
+void CGdiObject::AfxHookObject() {
+	CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
+	assert(pMap != nullptr);
+
+	pMap->SetPermanent(m_hObject, this);
+	_permanent = true;
 }
 
 } // namespace MFC

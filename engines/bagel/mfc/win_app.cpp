@@ -47,21 +47,23 @@ CWinApp *CWinApp::_activeApp = nullptr;
 CWinApp::CWinApp(const char *appName) :
 		CWinThread(), EventLoop(),
 		_cursors(_resources),
-		_fonts(_resources),
-		_defaultPen(PS_SOLID, 1, 0),
-		_defaultBrush(RGB(255, 255, 255)) {
+		_fonts(_resources) {
 	assert(!_activeApp);    // Only one app per engine
 	_activeApp = this;
 	Libs::Event::init();
+
+	_defaultPen.CreatePen(PS_SOLID, 1, 0);
+	_defaultBrush.CreateSolidBrush(RGB(255, 255, 255));
 }
 
 CWinApp::~CWinApp() {
-	_activeApp = nullptr;
-
 	_defaultPen.DeleteObject();
+	_defaultBrush.DeleteObject();
 
 	delete m_pmapHDC;
 	delete m_pmapHGDIOBJ;
+
+	_activeApp = nullptr;
 }
 
 BOOL CWinApp::InitApplication() {

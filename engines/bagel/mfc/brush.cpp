@@ -43,6 +43,8 @@ CBrush::CBrush(int nIndex, COLORREF crColor) {
 BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
 	DeleteObject();
 	_brush = new Impl(crColor);
+
+	AfxHookObject();
 	return true;
 }
 
@@ -50,6 +52,8 @@ BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 	DeleteObject();
 	_brush = new Impl(lpLogBrush->lbStyle,
 	    lpLogBrush->lbColor);
+
+	AfxHookObject();
 	return true;
 }
 

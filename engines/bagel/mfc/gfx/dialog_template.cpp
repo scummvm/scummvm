@@ -258,8 +258,9 @@ void CDialogTemplate::loadTemplate(CDialog *parent) {
 
 	// Apply the font to the window and all child controls
 	LOGFONT lf = ParseFontFromTemplate();
-	HFONT hFont = CreateFontIndirect(&lf);
-	parent->SendMessage(WM_SETFONT, (WPARAM)hFont, 0);
+	parent->_dialogFont.CreateFontIndirect(&lf);
+	parent->SendMessage(WM_SETFONT,
+		(WPARAM)parent->_dialogFont.m_hObject, 0);
 }
 
 } // namespace Gfx

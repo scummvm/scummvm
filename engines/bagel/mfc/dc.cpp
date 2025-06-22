@@ -30,6 +30,11 @@ namespace MFC {
 
 IMPLEMENT_DYNCREATE(CDC, CObject)
 
+CDC::~CDC() {
+	if (m_hDC && _permanent)
+		DeleteDC();
+}
+
 CDC *CDC::FromHandle(HDC hDC) {
 	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
 	assert(pMap != nullptr);
@@ -37,6 +42,14 @@ CDC *CDC::FromHandle(HDC hDC) {
 	CDC *pObject = pMap->FromHandle(hDC);
 	assert(pObject == nullptr || pObject->m_hDC == hDC);
 	return pObject;
+}
+
+void CDC::AfxHookObject() {
+	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
+	assert(pMap != nullptr);
+
+	pMap->SetPermanent(m_hDC, this);
+	_permanent = true;
 }
 
 BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
@@ -50,10 +63,20 @@ BOOL CDC::CreateCompatibleDC(CDC *pDC) {
 	dc->setFormat(pDC->impl()->getFormat());
 	m_hDC = dc;
 
+	// This is where it becomes permanent
+	AfxHookObject();
 	return true;
 }
 
 BOOL CDC::DeleteDC() {
+	if (m_hDC && _permanent) {
+		CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
+		assert(pMap != nullptr);
+
+		pMap->RemoveHandle(m_hDC);
+		_permanent = false;
+	}
+
 	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
 	delete dc;
 	m_hDC = nullptr;
