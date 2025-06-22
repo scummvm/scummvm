@@ -67,13 +67,13 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SPEEDUP", _("Speed up dialogue"));
+		act = new Action("SPEEDUP", _("Speed up dialog"));
 		act->setKeyEvent(KeyState(KEYCODE_PLUS, '+'));
 		act->addDefaultInputMapping("PLUS");
 		act->addDefaultInputMapping("JOY_UP");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SPEEDDOWN", _("Slow down dialogue"));
+		act = new Action("SPEEDDOWN", _("Slow down dialog"));
 		act->setKeyEvent(KeyState(KEYCODE_MINUS, '-'));
 		act->addDefaultInputMapping("MINUS");
 		act->addDefaultInputMapping("JOY_DOWN");
@@ -86,7 +86,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Skip dialogue"));
+		act = new Action(kStandardActionRightClick, _("Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -135,7 +135,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Skip dialogue"));
+		act = new Action(kStandardActionRightClick, _("Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -191,7 +191,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SKIPDLG", _("Skip dialogue"));
+		act = new Action("SKIPDLG", _("Skip dialog"));
 		act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
 		act->addDefaultInputMapping("PERIOD");
 		act->addDefaultInputMapping("JOY_X");
@@ -265,7 +265,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SKIPDLG", _("Skip dialogue"));
+		act = new Action("SKIPDLG", _("Skip dialog"));
 		act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
 		act->addDefaultInputMapping("PERIOD");
 		act->addDefaultInputMapping("JOY_X");
@@ -278,7 +278,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Examine / Skip dialogue"));
+		act = new Action(kStandardActionRightClick, _("Examine / Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -290,12 +290,12 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SPEEDUP", _("Speed up dialogue"));
+		act = new Action("SPEEDUP", _("Speed up dialog"));
 		act->setKeyEvent(KeyState(KEYCODE_PLUS, '+'));
 		act->addDefaultInputMapping("PLUS");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SPEEDDOWN", _("Slow down dialogue"));
+		act = new Action("SPEEDDOWN", _("Slow down dialog"));
 		act->setKeyEvent(KeyState(KEYCODE_MINUS, '-'));
 		act->addDefaultInputMapping("MINUS");
 		gameKeyMap->addAction(act);
@@ -389,7 +389,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Skip dialogue"));
+		act = new Action(kStandardActionRightClick, _("Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -420,7 +420,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		gameKeyMap->addAction(act);
 
 	} else if (gameId == "leptonsquest") {
-		act = new Action(kStandardActionLeftClick, _("Move / Interact / Skip dialogue"));
+		act = new Action(kStandardActionLeftClick, _("Move / Interact / Skip dialog"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
@@ -449,7 +449,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SKIPDLG", _("Skip dialogue"));
+		act = new Action("SKIPDLG", _("Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping(".");
@@ -481,7 +481,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Skip dialogue"));
+		act = new Action(kStandardActionRightClick, _("Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -507,13 +507,13 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 
 	
 	} else if (gameId == "nsc") {
-		act = new Action(kStandardActionLeftClick, _("Move / Interact / Skip dialogue"));
+		act = new Action(kStandardActionLeftClick, _("Move / Interact / Skip dialog"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Inventory / Skip dialogue"));
+		act = new Action(kStandardActionRightClick, _("Inventory / Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -532,7 +532,7 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Skip dialogue"));
+		act = new Action(kStandardActionRightClick, _("Skip dialog"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");

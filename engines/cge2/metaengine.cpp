@@ -225,8 +225,8 @@ Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	keymap->addAction(act);
 
-	// I18N: This closes the Dialogue/text box.
-	act = new Common::Action("CLOSEBOX", _("Close the Dialogue box"));
+	// I18N: This closes the Dialog/text box.
+	act = new Common::Action("CLOSEBOX", _("Close the dialog box"));
 	act->setCustomEngineActionEvent(kActionEscape);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_X");

@@ -303,36 +303,36 @@ Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLUPDILOG", _("Scroll up in your dialogues"));
+	act = new Action("SCROLLUPDILOG", _("Scroll up in your dialogs"));
 	act->setCustomEngineActionEvent(kActionDialogueScrollUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLDOWNDILOG", _("Scroll down in your dialogues"));
+	act = new Action("SCROLLDOWNDILOG", _("Scroll down in your dialogs"));
 	act->setCustomEngineActionEvent(kActionDialogueScrollDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLUPINVPREVDILOG", _("Go to next dialogue"));
+	act = new Action("SCROLLUPINVPREVDILOG", _("Go to next dialog"));
 	act->setCustomEngineActionEvent(kActionNextDialogue);
 	act->addDefaultInputMapping("DOWN");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLDOWNINVNEXTDILOG", _("Go to previous dialogues"));
+	act = new Action("SCROLLDOWNINVNEXTDILOG", _("Go to previous dialogs"));
 	act->setCustomEngineActionEvent(kActionPrevDialogue);
 	act->addDefaultInputMapping("UP");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SELECTDILOG", _("Select dialogue"));
+	act = new Action("SELECTDILOG", _("Select dialog"));
 	act->setCustomEngineActionEvent(kActionSelectDialogue);
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("KP_ENTER");
 	act->addDefaultInputMapping("JOY_RIGHT");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SKIP", _("Skip video sequence or dialogue"));
+	act = new Action("SKIP", _("Skip video sequence or dialog"));
 	act->setCustomEngineActionEvent(kActionSkip);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_BACK");

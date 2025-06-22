@@ -1616,22 +1616,22 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("s"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("ANSWR1", _("Dialogue answer 1"));
+		act = new Action("ANSWR1", _("Dialog answer 1"));
 		act->setKeyEvent(KeyState(KEYCODE_1, '1'));
 		act->addDefaultInputMapping("1"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("ANSWR2", _("Dialogue answer 2"));
+		act = new Action("ANSWR2", _("Dialog answer 2"));
 		act->setKeyEvent(KeyState(KEYCODE_2, '2'));
 		act->addDefaultInputMapping("2"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("ANSWR3", _("Dialogue answer 3"));
+		act = new Action("ANSWR3", _("Dialog answer 3"));
 		act->setKeyEvent(KeyState(KEYCODE_3, '3'));
 		act->addDefaultInputMapping("3"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("ANSWR4", _("Dialogue answer 4"));
+		act = new Action("ANSWR4", _("Dialog answer 4"));
 		act->setKeyEvent(KeyState(KEYCODE_4, '4'));
 		act->addDefaultInputMapping("4"); // original keyboard
 		gameKeyMap->addAction(act);

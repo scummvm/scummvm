@@ -341,7 +341,7 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("SPACE");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SHOWDILOG", _("Show dialogue"));
+		act = new Action("SHOWDILOG", _("Show dialog"));
 		act->setCustomEngineActionEvent(kActionShowDialogue);
 		act->addDefaultInputMapping("r");
 		gameKeyMap->addAction(act);

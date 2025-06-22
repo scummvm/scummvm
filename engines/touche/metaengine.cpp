@@ -132,13 +132,13 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	{
-		act = new Action("SKIPORQUIT", _("Skip sequence / open quit dialogue"));
+		act = new Action("SKIPORQUIT", _("Skip sequence / open quit dialog"));
 		act->setCustomEngineActionEvent(kToucheActionSkipOrQuit);
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SKIPDILOG", _("Skip dialogue"));
+		act = new Action("SKIPDILOG", _("Skip dialog"));
 		act->setCustomEngineActionEvent(kToucheActionSkipDialogue);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("JOY_X");

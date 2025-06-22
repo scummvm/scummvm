@@ -235,11 +235,11 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	act->addDefaultInputMapping("JOY_Y");
 	gameplayKeymap->addAction(act);
 
-	// I18N: This keymap allows skipping the current line of dialogue.
+	// I18N: This keymap allows skipping the current line of dialog.
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
-	// SKIP PAST CURRENT LINE OF DIALOGUE
-	act = new Action("SKIPDLG", _("Skip dialogue"));
+	// SKIP PAST CURRENT LINE OF DIALOG
+	act = new Action("SKIPDLG", _("Skip dialog"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionDialogueSkip);
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("KP_ENTER");
@@ -268,7 +268,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	gameplayKeymap->addAction(act);
 
 	// I18N: This keymap works within the KIA Save Game screen
-	// and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
+	// and allows confirming popup dialog prompts (eg. for save game deletion or overwriting)
 	// and also submitting a new save game name, or choosing an existing save game for overwriting.
 	act = new Action("KIACONFIRMDLG", _("Confirm"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpConfirmDlg);
