@@ -58,7 +58,6 @@ public:
 private:
 	bool _editable = false;
 	uint _loadType = 0;
-	double _dissolveFactor = 0.0;
 	bool _isVisible = false;
 	Common::String _text;
 	uint _maxTextLength = 0;

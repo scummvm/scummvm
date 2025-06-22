@@ -70,7 +70,7 @@ ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 
 	case kSetDurationMethod: {
 		assert(args.size() == 1);
-		uint durationInMilliseconds = static_cast<uint>(args[0].asFloat() * 1000);
+		uint durationInMilliseconds = static_cast<uint>(args[0].asTime() * 1000);
 		setDuration(durationInMilliseconds);
 		return returnValue;
 	}

@@ -168,20 +168,19 @@ class SpatialEntity : public Asset {
 public:
 	SpatialEntity(AssetType type) : Asset(type) {};
 
-	virtual void redraw(Common::Rect &rect) { return; }
+	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) { return; }
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 
 	virtual bool isSpatialActor() const override { return true; }
 	virtual bool isVisible() const { return _isVisible; }
-
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
-
-	Common::Rect getBbox() const { return _boundingBox; }
+	virtual Common::Rect getBbox() const { return _boundingBox; }
 	int zIndex() const { return _zIndex; }
 
 protected:
 	uint _stageId = 0;
 	int _zIndex = 0;
+	double _dissolveFactor = 0.0;
 	Common::Rect _boundingBox;
 	bool _isVisible = false;
 	bool _hasTransparency = false;
@@ -192,6 +191,7 @@ protected:
 	void setBounds(const Common::Rect &bounds);
 	void setZIndex(int zIndex);
 
+	virtual void setDissolveFactor(double dissolveFactor);
 	virtual void invalidateLocalBounds();
 	virtual void invalidateLocalZIndex();
 };

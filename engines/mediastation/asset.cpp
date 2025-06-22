@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/util.h"
+
 #include "mediastation/asset.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediascript/scriptconstants.h"
@@ -199,6 +201,13 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 		returnValue.setToFloat(_zIndex);
 		break;
 
+	case kSetDissolveFactorMethod: {
+		assert(args.size() == 1);
+		double dissolveFactor = args[0].asFloat();
+		setDissolveFactor(dissolveFactor);
+		break;
+	}
+
 	case kIsVisibleMethod:
 		assert(args.empty());
 		returnValue.setToBool(isVisible());
@@ -214,6 +223,10 @@ void SpatialEntity::readParameter(Chunk &chunk, AssetHeaderSectionType paramType
 	switch (paramType) {
 	case kAssetHeaderBoundingBox:
 		_boundingBox = chunk.readTypedRect();
+		break;
+
+	case kAssetHeaderDissolveFactor:
+		_dissolveFactor = chunk.readTypedDouble();
 		break;
 
 	case kAssetHeaderZIndex:
@@ -284,8 +297,16 @@ void SpatialEntity::setZIndex(int zIndex) {
 	invalidateLocalZIndex();
 }
 
+void SpatialEntity::setDissolveFactor(double dissolveFactor) {
+	CLIP(dissolveFactor, 0.0, 1.0);
+	if (dissolveFactor != _dissolveFactor) {
+		_dissolveFactor = dissolveFactor;
+		invalidateLocalBounds();
+	}
+}
+
 void SpatialEntity::invalidateLocalBounds() {
-	g_engine->_dirtyRects.push_back(_boundingBox);
+	g_engine->addDirtyRect(getBbox());
 }
 
 void SpatialEntity::invalidateLocalZIndex() {

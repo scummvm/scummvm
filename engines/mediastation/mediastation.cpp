@@ -20,7 +20,6 @@
  */
 
 #include "common/config-manager.h"
-#include "engines/util.h"
 
 #include "mediastation/mediastation.h"
 #include "mediastation/debugchannels.h"
@@ -54,8 +53,8 @@ MediaStationEngine::MediaStationEngine(OSystem *syst, const ADGameDescription *g
 }
 
 MediaStationEngine::~MediaStationEngine() {
-	delete _screen;
-	_screen = nullptr;
+	delete _displayManager;
+	_displayManager = nullptr;
 
 	delete _cursor;
 	_cursor = nullptr;
@@ -136,10 +135,7 @@ bool MediaStationEngine::isFirstGenerationEngine() {
 }
 
 Common::Error MediaStationEngine::run() {
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
-	_screen = new Graphics::Screen();
-	// TODO: Determine if all titles blank the screen to 0xff.
-	_screen->fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0xff);
+	_displayManager = new VideoDisplayManager(this);
 
 	Common::Path bootStmFilepath = Common::Path("BOOT.STM");
 	_boot = new Boot(bootStmFilepath);
@@ -180,25 +176,23 @@ Common::Error MediaStationEngine::run() {
 			_requestedContextReleaseId.clear();
 		}
 
+		if (_requestedScreenBranchId != 0) {
+			doBranchToScreen();
+			_requestedScreenBranchId = 0;
+		}
+
 		debugC(5, kDebugGraphics, "***** START SCREEN UPDATE ***");
 		for (Asset *asset : _assets) {
 			asset->process();
-
-			if (_requestedScreenBranchId != 0) {
-				doBranchToScreen();
-				_requestedScreenBranchId = 0;
-				break;
-			}
 
 			if (_needsHotspotRefresh) {
 				refreshActiveHotspot();
 				_needsHotspotRefresh = false;
 			}
 		}
-		redraw();
+		draw();
 		debugC(5, kDebugGraphics, "***** END SCREEN UPDATE ***");
 
-		_screen->update();
 		g_system->delayMillis(10);
 	}
 
@@ -296,33 +290,21 @@ void MediaStationEngine::refreshActiveHotspot() {
 	}
 }
 
-void MediaStationEngine::redraw() {
-	if (_dirtyRects.empty()) {
-		return;
-	}
-
-	for (Common::Rect dirtyRect : _dirtyRects) {
+void MediaStationEngine::draw() {
+	if (!_dirtyRects.empty()) {
 		for (Asset *asset : _spatialEntities) {
-			if (!asset->isSpatialActor()) {
-				continue;
-			}
-
-			SpatialEntity *entity = static_cast<SpatialEntity *>(asset);
-			if (!entity->isVisible()) {
-				continue;
-			}
-
-			Common::Rect bbox = entity->getBbox();
-			if (!bbox.isEmpty()) {
-				if (dirtyRect.intersects(bbox)) {
-					entity->redraw(dirtyRect);
+			if (asset->isSpatialActor()) {
+				SpatialEntity *entity = static_cast<SpatialEntity *>(asset);
+				if (entity->isVisible()) {
+					entity->draw(_dirtyRects);
 				}
 			}
 		}
-	}
 
-	_screen->update();
-	_dirtyRects.clear();
+		_dirtyRects.clear();
+	}
+	_displayManager->updateScreen();
+	_displayManager->doTransitionOnSync();
 }
 
 Context *MediaStationEngine::loadContext(uint32 contextId) {
@@ -363,26 +345,8 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	}
 	Context *context = new Context(entryCxtFilepath);
 
-	// Some contexts have a built-in palette that becomes active when the
-	// context is loaded, and some rely on scripts to set
-	// the palette later.
-	if (context->_palette != nullptr) {
-		_screen->setPalette(*context->_palette);
-	}
-
 	_loadedContexts.setVal(contextId, context);
 	return context;
-}
-
-void MediaStationEngine::setPalette(Asset *asset) {
-	if (asset == nullptr) {
-		error("Requested palette not found");
-	} else if (asset->type() != kAssetTypePalette) {
-		error("Requested palette %d is not a palette", asset->id());
-	} else {
-		Palette *paletteAsset = static_cast<Palette *>(asset);
-		_screen->setPalette(*paletteAsset->_palette);
-	}
 }
 
 void MediaStationEngine::registerAsset(Asset *assetToAdd) {
@@ -410,13 +374,12 @@ void MediaStationEngine::doBranchToScreen() {
 		releaseContext(_currentContext->_screenAsset->id());
 	}
 
-	Context *context = loadContext(_requestedScreenBranchId);
-	_currentContext = context;
-	_dirtyRects.push_back(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT));
+	_currentContext = loadContext(_requestedScreenBranchId);
 	_currentHotspot = nullptr;
+	_displayManager->setRegisteredPalette(_currentContext->_palette);
 
-	if (context->_screenAsset != nullptr) {
-		context->_screenAsset->runEventHandlerIfExists(kEntryEvent);
+	if (_currentContext->_screenAsset != nullptr) {
+		_currentContext->_screenAsset->runEventHandlerIfExists(kEntryEvent);
 	}
 
 	_requestedScreenBranchId = 0;
@@ -488,11 +451,12 @@ ScriptValue MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Co
 
 	switch (function) {
 	case kEffectTransitionFunction:
-	case kEffectTransitionOnSyncFunction: {
-		// TODO: effectTransitionOnSync should be split out into its own function.
-		effectTransition(args);
+		_displayManager->effectTransition(args);
 		return returnValue;
-	}
+
+	case kEffectTransitionOnSyncFunction:
+		_displayManager->setTransitionOnSync(args);
+		return returnValue;
 
 	case kDrawingFunction: {
 		// Not entirely sure what this function does, but it seems like a way to

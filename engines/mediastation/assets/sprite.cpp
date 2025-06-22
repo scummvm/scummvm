@@ -77,10 +77,6 @@ void Sprite::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		_chunkReference = chunk.readTypedChunkReference();
 		break;
 
-	case kAssetHeaderDissolveFactor:
-		_dissolveFactor = chunk.readTypedDouble();
-		break;
-
 	case kAssetHeaderFrameRate:
 		_frameRate = static_cast<uint32>(chunk.readTypedDouble());
 		break;
@@ -139,13 +135,6 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		setVisibility(false);
-		return returnValue;
-	}
-
-	case kSetDissolveFactorMethod: {
-		warning("STUB: setDissolveFactor");
-		assert(args.size() == 1);
-		_dissolveFactor = args[0].asFloat();
 		return returnValue;
 	}
 
@@ -373,20 +362,12 @@ void Sprite::postMovieEndEventIfNecessary() {
 	runEventHandlerIfExists(kSpriteMovieEndEvent, value);
 }
 
-void Sprite::redraw(Common::Rect &rect) {
+void Sprite::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 	SpriteFrame *activeFrame = _frames[_currentFrameIndex];
-	if (activeFrame == nullptr || !_isVisible) {
-		return;
-	}
-
-	Common::Rect bbox = activeFrame->boundingBox();
-	bbox.translate(_boundingBox.left, _boundingBox.top);
-	Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
-	if (!areaToRedraw.isEmpty()) {
-		Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-		areaToRedraw.translate(-activeFrame->left() - _boundingBox.left, -activeFrame->top() - _boundingBox.top);
-		areaToRedraw.clip(Common::Rect(0, 0, activeFrame->width(), activeFrame->height()));
-		g_engine->_screen->simpleBlitFrom(activeFrame->_surface, areaToRedraw, originOnScreen);
+	if (_isVisible) {
+		Common::Rect frameBbox = activeFrame->boundingBox();
+		frameBbox.translate(_boundingBox.left, _boundingBox.top);
+		g_engine->getDisplayManager()->imageBlit(frameBbox.origin(), activeFrame, _dissolveFactor, dirtyRegion);
 	}
 }
 

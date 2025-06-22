@@ -72,7 +72,7 @@ public:
 	~Sprite();
 
 	virtual void process() override;
-	virtual void redraw(Common::Rect &rect) override;
+	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
 
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
@@ -83,7 +83,6 @@ public:
 
 private:
 	static const uint DEFAULT_CLIP_ID = 1200;
-	double _dissolveFactor = 0.0;
 	uint _loadType = 0;
 	uint _frameRate = 0;
 	uint _frameCount = 0;

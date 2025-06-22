@@ -34,9 +34,6 @@ public:
 
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-
-private:
-	double _dissolveFactor = 0.0;
 };
 
 } // End of namespace MediaStation

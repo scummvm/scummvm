@@ -31,36 +31,39 @@
 namespace MediaStation {
 
 enum BitmapCompressionType {
-	kUncompressedBitmap1 = 0,
-	kRleCompressedBitmap = 1,
-	kUnk1CompressedBitmap = 6,
-	kUncompressedBitmap2 = 7,
+	kUncompressedBitmap = 0,
+	kRle8BitmapCompression = 1,
+	kCccBitmapCompression = 5,
+	kCccTransparentBitmapCompression = 6,
+	kUncompressedTransparentBitmap = 7,
 };
 
 class BitmapHeader {
 public:
 	BitmapHeader(Chunk &chunk);
 
-	bool isCompressed();
-
 	Common::Point _dimensions;
-	BitmapCompressionType _compressionType;
-	uint unk2;
+	BitmapCompressionType _compressionType = kUncompressedBitmap;
+	int16 _stride = 0;
 };
 
 class Bitmap {
 public:
-	BitmapHeader *_bitmapHeader = nullptr;
-
 	Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader);
 	virtual ~Bitmap();
 
-	int16 width();
-	int16 height();
-	Graphics::ManagedSurface _surface;
+	bool isCompressed() const;
+	BitmapCompressionType getCompressionType() const { return _bitmapHeader->_compressionType; }
+	int16 width() const { return _bitmapHeader->_dimensions.x; }
+	int16 height() const { return _bitmapHeader->_dimensions.y; }
+	int16 stride() const { return _bitmapHeader->_stride; }
+
+	Common::SeekableReadStream *_compressedStream = nullptr;
+	Graphics::ManagedSurface _image;
 
 private:
-	void decompress(Chunk &chunk);
+	BitmapHeader *_bitmapHeader = nullptr;
+	uint _unk1 = 0;
 };
 
 } // End of namespace MediaStation

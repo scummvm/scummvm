@@ -33,11 +33,9 @@ Palette::~Palette() {
 void Palette::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	switch (paramType) {
 	case kAssetHeaderPalette: {
-		const uint PALETTE_ENTRIES = 256;
-		const uint PALETTE_BYTES = PALETTE_ENTRIES * 3;
-		byte *buffer = new byte[PALETTE_BYTES];
-		chunk.read(buffer, PALETTE_BYTES);
-		_palette = new Graphics::Palette(buffer, PALETTE_ENTRIES, DisposeAfterUse::YES);
+		byte *buffer = new byte[Graphics::PALETTE_SIZE];
+		chunk.read(buffer, Graphics::PALETTE_SIZE);
+		_palette = new Graphics::Palette(buffer, Graphics::PALETTE_COUNT, DisposeAfterUse::YES);
 		break;
 	}
 

@@ -32,6 +32,13 @@
 
 namespace MediaStation {
 
+enum MovieBlitType {
+	kInvalidMovieBlit = 0,
+	kUncompressedMovieBlit = 1,
+	kUncompressedDeltaMovieBlit = 2,
+	kCompressedDeltaMovieBlit = 3,
+};
+
 class MovieFrameHeader : public BitmapHeader {
 public:
 	MovieFrameHeader(Chunk &chunk);
@@ -66,7 +73,7 @@ struct MovieFrame {
 	uint endInMilliseconds = 0;
 	Common::Point leftTop;
 	Common::Point diffBetweenKeyframeAndFrame;
-	uint blitType = 0;
+	MovieBlitType blitType = kInvalidMovieBlit;
 	int16 zIndex = 0;
 	uint keyframeIndex = 0;
 	bool keepAfterEnd = false;
@@ -87,7 +94,7 @@ public:
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 
-	virtual void redraw(Common::Rect &rect) override;
+	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
 
 	virtual bool isVisible() const override { return _isVisible; }
 
@@ -100,7 +107,6 @@ private:
 	uint _fullTime = 0;
 
 	uint _loadType = 0;
-	double _dissolveFactor = 0.0;
 	bool _isPlaying = false;
 	bool _hasStill = false;
 
@@ -117,6 +123,7 @@ private:
 	void setVisibility(bool visibility);
 	void updateFrameState();
 	void invalidateRect(const Common::Rect &rect);
+	void decompressIntoAuxImage(MovieFrame *frame);
 
 	void readImageData(Chunk &chunk);
 	void readFrameData(Chunk &chunk);

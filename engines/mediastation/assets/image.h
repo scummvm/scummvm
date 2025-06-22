@@ -40,20 +40,19 @@ public:
 	virtual void readChunk(Chunk &chunk) override;
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void redraw(Common::Rect &rect) override;
+	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
+	virtual void invalidateLocalBounds() override;
+	virtual Common::Rect getBbox() const override;
 
 private:
 	Bitmap *_bitmap = nullptr;
 	uint _loadType = 0;
-	double _dissolveFactor = 0.0;
 	int _xOffset = 0;
 	int _yOffset = 0;
 
 	// Script method implementations.
 	void spatialShow();
 	void spatialHide();
-
-	Common::Point getLeftTop();
 };
 
 } // End of namespace MediaStation

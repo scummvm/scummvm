@@ -95,9 +95,6 @@ public:
 	VersionInfo readTypedVersion();
 	uint32 readTypedChunkReference();
 	Polygon readTypedPolygon();
-	// PALETTE:
-	// u.palette = new unsigned char[0x300];
-	// chunk.read(u.palette, 0x300);
 
 private:
 	void readAndVerifyType(DatumType type);

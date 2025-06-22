@@ -34,7 +34,6 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
-#include "graphics/screen.h"
 
 #include "mediastation/detection.h"
 #include "mediastation/datafile.h"
@@ -42,11 +41,13 @@
 #include "mediastation/context.h"
 #include "mediastation/asset.h"
 #include "mediastation/cursors.h"
+#include "mediastation/graphics.h"
 
 namespace MediaStation {
 
 struct MediaStationGameDescription;
 class Hotspot;
+class Bitmap;
 
 // Most Media Station titles follow this file structure from the root directory
 // of the CD-ROM:
@@ -78,9 +79,9 @@ public:
 	bool isFirstGenerationEngine();
 	void processEvents();
 	void refreshActiveHotspot();
-	void redraw();
+	void addDirtyRect(const Common::Rect &rect) { _dirtyRects.push_back(rect); }
+	void draw();
 
-	void setPalette(Asset *palette);
 	void registerAsset(Asset *assetToAdd);
 	void scheduleScreenBranch(uint screenId);
 	void scheduleContextRelease(uint contextId);
@@ -89,20 +90,15 @@ public:
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
+	VideoDisplayManager *getDisplayManager() { return _displayManager; }
 
 	ScriptValue callBuiltInFunction(BuiltInFunction function, Common::Array<ScriptValue> &args);
 	Common::RandomSource _randomSource;
 
-	Graphics::Screen *_screen = nullptr;
 	Context *_currentContext = nullptr;
 
 	Common::Point _mousePos;
-	Common::Array<Common::Rect> _dirtyRects;
 	bool _needsHotspotRefresh = false;
-
-	// All Media Station titles run at 640x480.
-	const uint16 SCREEN_WIDTH = 640;
-	const uint16 SCREEN_HEIGHT = 480;
 
 protected:
 	Common::Error run() override;
@@ -111,27 +107,27 @@ private:
 	Common::Event _event;
 	Common::FSNode _gameDataDir;
 	const ADGameDescription *_gameDescription;
+	Common::Array<Common::Rect> _dirtyRects;
 
 	// In Media Station, only the cursors are stored in the executable; everything
 	// else is in the Context (*.CXT) data files.
 	CursorManager *_cursor;
 	void setCursor(uint id);
 
+	VideoDisplayManager *_displayManager = nullptr;
+
 	Boot *_boot = nullptr;
 	Common::Array<Asset *> _assets;
 	Common::SortedArray<SpatialEntity *, const SpatialEntity *> _spatialEntities;
 	Common::HashMap<uint, Context *> _loadedContexts;
 	Asset *_currentHotspot = nullptr;
-
 	uint _requestedScreenBranchId = 0;
 	Common::Array<uint> _requestedContextReleaseId;
-	void doBranchToScreen();
 
+	void doBranchToScreen();
 	Context *loadContext(uint32 contextId);
 	void releaseContext(uint32 contextId);
 	Asset *findAssetToAcceptMouseEvents();
-
-	void effectTransition(Common::Array<ScriptValue> &args);
 
 	static int compareAssetByZIndex(const SpatialEntity *a, const SpatialEntity *b);
 };

@@ -43,7 +43,7 @@ MovieFrame::MovieFrame(Chunk &chunk) {
 		unk4 = chunk.readTypedUint16();
 		index = chunk.readTypedUint16();
 	} else {
-		blitType = chunk.readTypedUint16();
+		blitType = static_cast<MovieBlitType>(chunk.readTypedUint16());
 		startInMilliseconds = chunk.readTypedUint32();
 		endInMilliseconds = chunk.readTypedUint32();
 		// These are unsigned in the data files but ScummVM expects signed.
@@ -119,10 +119,6 @@ void Movie::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderDissolveFactor:
-		_dissolveFactor = chunk.readTypedDouble();
-		break;
-
 	case kAssetHeaderMovieAudioChunkReference:
 		_audioChunkReference = chunk.readTypedChunkReference();
 		break;
@@ -187,13 +183,6 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 		assert(args.empty());
 		double top = static_cast<double>(_boundingBox.top);
 		returnValue.setToFloat(top);
-		return returnValue;
-	}
-
-	case kSetDissolveFactorMethod: {
-		warning("STUB: setDissolveFactor");
-		assert(args.size() == 1);
-		_dissolveFactor = args[0].asFloat();
 		return returnValue;
 	}
 
@@ -318,15 +307,28 @@ void Movie::updateFrameState() {
 	}
 }
 
-void Movie::redraw(Common::Rect &rect) {
+void Movie::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 	for (MovieFrame *frame : _framesOnScreen) {
 		Common::Rect bbox = getFrameBoundingBox(frame);
-		Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
-		if (!areaToRedraw.isEmpty()) {
-			Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-			areaToRedraw.translate(-frame->leftTop.x - _boundingBox.left, -frame->leftTop.y - _boundingBox.top);
-			areaToRedraw.clip(Common::Rect(0, 0, frame->image->width(), frame->image->height()));
-			g_engine->_screen->simpleBlitFrom(frame->image->_surface, areaToRedraw, originOnScreen);
+
+		switch (frame->blitType) {
+		case kUncompressedMovieBlit:
+			g_engine->getDisplayManager()->imageBlit(bbox.origin(), frame->image, _dissolveFactor, dirtyRegion);
+			break;
+
+		case kUncompressedDeltaMovieBlit:
+			g_engine->getDisplayManager()->imageDeltaBlit(bbox.origin(), frame->diffBetweenKeyframeAndFrame, frame->image, frame->keyframeImage, _dissolveFactor, dirtyRegion);
+			break;
+
+		case kCompressedDeltaMovieBlit:
+			if (frame->keyframeImage->isCompressed()) {
+				decompressIntoAuxImage(frame);
+			}
+			g_engine->getDisplayManager()->imageDeltaBlit(bbox.origin(), frame->diffBetweenKeyframeAndFrame, frame->image, frame->keyframeImage, _dissolveFactor, dirtyRegion);
+			break;
+
+		default:
+			error("Got unknown movie frame blit type: %d", frame->blitType);
 		}
 	}
 }
@@ -437,7 +439,17 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 }
 
 void Movie::invalidateRect(const Common::Rect &rect) {
-	g_engine->_dirtyRects.push_back(rect);
+	g_engine->addDirtyRect(rect);
+}
+
+void Movie::decompressIntoAuxImage(MovieFrame *frame) {
+	const Common::Point origin(0, 0);
+	Common::Rect test = Common::Rect(frame->keyframeImage->width(), frame->keyframeImage->height());
+	Common::Array<Common::Rect> allDirty(1);
+	allDirty.push_back(test);
+	frame->keyframeImage->_image.create(frame->keyframeImage->width(), frame->keyframeImage->height(), Graphics::PixelFormat::createFormatCLUT8());
+	frame->keyframeImage->_image.setTransparentColor(0);
+	g_engine->getDisplayManager()->imageBlit(origin, frame->keyframeImage, 1.0, allDirty, &frame->keyframeImage->_image);
 }
 
 void Movie::readImageData(Chunk &chunk) {

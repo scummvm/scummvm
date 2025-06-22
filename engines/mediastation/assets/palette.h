@@ -22,6 +22,8 @@
 #ifndef MEDIASTATION_PALETTE_H
 #define MEDIASTATION_PALETTE_H
 
+#include "graphics/palette.h"
+
 #include "mediastation/asset.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"

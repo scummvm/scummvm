@@ -28,16 +28,9 @@ ScriptValue Document::callMethod(BuiltInMethod methodId, Common::Array<ScriptVal
 	ScriptValue returnValue;
 
 	switch (methodId) {
-	case kBranchToScreenMethod: {
-		assert(args.size() >= 1);
-		if (args.size() > 1) {
-			// TODO: Figure out what the rest of the args can be.
-			warning("branchToScreen got more than one arg");
-		}
-		uint32 contextId = args[0].asAssetId();
-		g_engine->scheduleScreenBranch(contextId);
+	case kBranchToScreenMethod:
+		processBranch(args);
 		return returnValue;
-	}
 
 	case kReleaseContextMethod: {
 		assert(args.size() == 1);
@@ -49,6 +42,18 @@ ScriptValue Document::callMethod(BuiltInMethod methodId, Common::Array<ScriptVal
 	default:
 		return Asset::callMethod(methodId, args);
 	}
+}
+
+void Document::processBranch(Common::Array<ScriptValue> &args) {
+	assert(args.size() >= 1);
+	uint contextId = args[0].asAssetId();
+	if (args.size() > 1) {
+		bool disableUpdates = static_cast<bool>(args[1].asParamToken());
+		if (disableUpdates)
+			warning("processBranch: disableUpdates parameter not handled yet");
+	}
+
+	g_engine->scheduleScreenBranch(contextId);
 }
 
 } // End of namespace MediaStation

@@ -48,10 +48,6 @@ void Image::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		_loadType = chunk.readTypedByte();
 		break;
 
-	case kAssetHeaderDissolveFactor:
-		_dissolveFactor = chunk.readTypedDouble();
-		break;
-
 	case kAssetHeaderX:
 		_xOffset = chunk.readTypedUint16();
 		break;
@@ -80,48 +76,36 @@ ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 		return returnValue;
 	}
 
-	case kSetDissolveFactorMethod: {
-		warning("STUB: setDissolveFactor");
-		assert(args.size() == 1);
-		_dissolveFactor = args[0].asFloat();
-		return returnValue;
-	}
-
 	default:
 		return SpatialEntity::callMethod(methodId, args);
 	}
 }
 
-void Image::redraw(Common::Rect &rect) {
-	if (!_isVisible) {
-		return;
+void Image::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+	if (_isVisible) {
+		Common::Point origin = getBbox().origin();
+		g_engine->getDisplayManager()->imageBlit(origin, _bitmap, _dissolveFactor, dirtyRegion);
 	}
+}
 
-	Common::Point leftTop = getLeftTop();
-	Common::Rect bbox(leftTop, _bitmap->width(), _bitmap->height());
-	Common::Rect areaToRedraw = bbox.findIntersectingRect(rect);
-	if (!areaToRedraw.isEmpty()) {
-		Common::Point originOnScreen(areaToRedraw.left, areaToRedraw.top);
-		areaToRedraw.translate(-leftTop.x, -leftTop.y);
-		areaToRedraw.clip(Common::Rect(0, 0, _bitmap->width(), _bitmap->height()));
-		g_engine->_screen->simpleBlitFrom(_bitmap->_surface, areaToRedraw, originOnScreen);
-	}
+void Image::invalidateLocalBounds() {
+	g_engine->addDirtyRect(getBbox());
 }
 
 void Image::spatialShow() {
 	_isVisible = true;
-	Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
-	g_engine->_dirtyRects.push_back(bbox);
+	invalidateLocalBounds();
 }
 
 void Image::spatialHide() {
 	_isVisible = false;
-	Common::Rect bbox(getLeftTop(), _bitmap->width(), _bitmap->height());
-	g_engine->_dirtyRects.push_back(bbox);
+	invalidateLocalBounds();
 }
 
-Common::Point Image::getLeftTop() {
-	return Common::Point(_xOffset + _boundingBox.left, _yOffset + _boundingBox.top);
+Common::Rect Image::getBbox() const {
+	Common::Point origin(_xOffset + _boundingBox.left, _yOffset + _boundingBox.top);
+	Common::Rect bbox(origin, _bitmap->width(), _bitmap->height());
+	return bbox;
 }
 
 void Image::readChunk(Chunk &chunk) {

@@ -65,10 +65,6 @@ void Text::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 	}
 
-	case kAssetHeaderDissolveFactor:
-		_dissolveFactor = chunk.readTypedDouble();
-		break;
-
 	default:
 		SpatialEntity::readParameter(chunk, paramType);
 	}

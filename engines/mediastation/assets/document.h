@@ -33,6 +33,9 @@ public:
 	Document() : Asset(kAssetTypeDocument) { _id = 1; };
 
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+private:
+	void processBranch(Common::Array<ScriptValue> &args);
 };
 
 } // End of namespace MediaStation

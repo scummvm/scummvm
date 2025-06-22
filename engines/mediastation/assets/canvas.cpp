@@ -29,10 +29,6 @@ void Canvas::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderDissolveFactor:
-		_dissolveFactor = chunk.readTypedDouble();
-		break;
-
 	default:
 		SpatialEntity::readParameter(chunk, paramType);
 	}
