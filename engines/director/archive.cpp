@@ -782,8 +782,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		}
 	}
 
-	// writeStream();
-	// g_system->quit();
+	writeStream();
+	g_system->quit();
 	return true;
 }
 
@@ -1165,12 +1165,15 @@ Common::String RIFXArchive::formatArchiveInfo() {
 }
 
 bool RIFXArchive::writeStream() {
-	// I'm ignoring the startOffset
+	// The offsets used in this function should be not the same as original
+	// That defeats the whole purpose of writing movies
+
+	// ignoring the startOffset
 	// For RIFX stream, moreoffset = 0
 	byte *dumpData = nullptr;
 
-	// Probably don't need to allocate this much size
-	debug("What is the _size while writing = %d", _size);
+	// Don't need to allocate this much size in case 'JUNK' and 'FREE' resources are ignored
+	// Or might need to allocate even more size if extra chunks are written
 	dumpData = (byte *)malloc(_size);
 
 	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, _size);
@@ -1218,6 +1221,18 @@ bool RIFXArchive::writeStream() {
 	// Writing them is a as easy as just calling a single write function
 	// Currently I'm only working with the 'XFIR' file that I have, so all the 
 	// data is written low endian, will add a single check to switch to big endian 
+
+	for (auto &it : _resources) {
+		if (it->tag != MKTAG('X', 'F', 'I', 'R') ||
+			it->tag != MKTAG('i', 'm', 'a', 'p') ||
+			it->tag != MKTAG('m', 'm', 'a', 'p') ||
+			it->tag != MKTAG('K', 'E', 'Y', '*') 
+		) {
+			writeStream->seek(it->offset + 8);
+			writeStream->writeStream(getResource(it->tag, it->index));
+		}
+	}
+
 	Common::DumpFile out;
 	char buf[256];
 	Common::sprintf_s(buf, "./writtenMovie.dir");
@@ -1250,12 +1265,10 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream)
 
 	uint32 newSize = 0;
 	uint32 newResCount = _resources.size();
-	debug("What is the newRescount = %d", newResCount);
 	for (auto &it : _resources) {
 		newSize += it->size;
 	}
 
-	debug("Position before writing the mmap = %ld", writeStream->pos());
 	writeStream->writeUint32LE(newSize);
 	// I need to see what header size is
 	writeStream->writeUint16LE(0);
@@ -1289,7 +1302,7 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream)
 // This Function is incomplete, needs further changes before can be used
 bool RIFXArchive::writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStream) {
 	warning("RIFXArchive::writeAfterBurnerMap: STUB: Incomplete function, needs further changes, AfterBurnerMap not written");
-	return;
+	return false;
 
 	writeStream->writeUint32LE(MKTAG('F', 'v', 'e', 'r'));
 
