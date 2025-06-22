@@ -1133,7 +1133,7 @@ void CRules::OnSize(UINT nType, int cx, int cy) {
 
 int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	BOOL    bSuccess;
-	int     xDIB, yDIB, dxDIB, dyDIB;
+	int     dxDIB, dyDIB;
 
 	pHelpFile = new CFile();
 	ASSERT(pHelpFile != nullptr);
@@ -1187,10 +1187,8 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		        ScrollBotRect.bottom;
 	}
 
-	xDIB = (GAME_WIDTH - dxDIB) >> 1;
-	yDIB = (GAME_HEIGHT - dyDIB) >> 1;
+	ScrollRect.SetRect(0, 0, dxDIB, dyDIB);
 
-	ScrollRect.SetRect(xDIB, yDIB, dxDIB, dyDIB);
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return (-1);
 
