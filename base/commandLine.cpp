@@ -186,8 +186,6 @@ static const char HELP_STRING4[] =
 																	 ", opl2lpt"
 #endif
 																			  ")\n"
-	"  --pcjr-noise=NUM         Set the PCjr/Tandy noise shift register width\n"
-	"                           (15 or 16; default: 15; 16 makes melodic noise sound in tune)\n"
 	"  --show-fps               Set the turn on display FPS info in 3D games\n"
 	"  --no-show-fps            Set the turn off display FPS info in 3D games\n"
 	"  --random-seed=SEED       Set the random seed used to initialize entropy\n"
@@ -815,9 +813,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #endif
 
 			DO_LONG_OPTION("opl-driver")
-			END_OPTION
-
-			DO_LONG_OPTION("pcjr-noise")
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
@@ -2148,7 +2143,6 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		"native-mt32",
 		"enable-gs",
 		"opl-driver",
-		"pcjr-noise",
 		"talkspeed",
 		"render-mode",
 		"random-seed",
