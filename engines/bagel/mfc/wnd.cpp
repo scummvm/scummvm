@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/queue.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/gfx/dialog_template.h"
@@ -29,8 +30,8 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
-ON_WM_CLOSE()
-ON_WM_DRAWITEM()
+	ON_WM_CLOSE()
+	ON_WM_DRAWITEM()
 END_MESSAGE_MAP()
 
 CWnd::CWnd() : m_hWnd(this) {
@@ -48,8 +49,8 @@ CWnd::~CWnd() {
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-        DWORD dwStyle, const RECT &rect, CWnd *pParentWnd,
-		UINT nID, CCreateContext *pContext) {
+	DWORD dwStyle, const RECT &rect, CWnd *pParentWnd,
+	UINT nID, CCreateContext *pContext) {
 	m_pParentWnd = pParentWnd;
 	m_nStyle = dwStyle;
 	_controlId = nID;
@@ -131,7 +132,7 @@ void CWnd::UpdateWindow() {
 	// If there's a pending paint, do it now
 	MSG msg;
 	if (PeekMessage(&msg, nullptr, WM_PAINT, WM_PAINT, PM_REMOVE) ||
-			IsWindowDirty()) {
+		IsWindowDirty()) {
 		msg.hwnd = m_hWnd;
 		msg.message = WM_PAINT;
 		TranslateMessage(&msg);
@@ -140,7 +141,7 @@ void CWnd::UpdateWindow() {
 }
 
 BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
-		CRgn *prgnUpdate, UINT flags) {
+	CRgn *prgnUpdate, UINT flags) {
 	if (flags & RDW_INVALIDATE) {
 		// Invalidate the region or rectangle
 		if (prgnUpdate != nullptr) {
@@ -292,10 +293,11 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 }
 
 bool CWnd::isRecursiveMessage(UINT message) {
+	// TODO: Need to refactor these to use the
+	// SendMessageToDescendants instead of this
 	return message == WM_PAINT ||
 		message == WM_SHOWWINDOW ||
-		message == WM_ENABLE ||
-		message == WM_SETFONT;
+		message == WM_ENABLE;
 }
 
 BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
@@ -343,12 +345,12 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_bWww:   // really AfxSig_bWiw
 		lResult = (this->*mmf.pfn_bWww)(CWnd::FromHandle((HWND)wParam),
-		                                (short)LOWORD(lParam), HIWORD(lParam));
+			(short)LOWORD(lParam), HIWORD(lParam));
 		break;
 
 	case AfxSig_bWCDS:
 		lResult = (this->*mmf.pfn_bWCDS)(CWnd::FromHandle((HWND)wParam),
-		                                 (COPYDATASTRUCT *)lParam);
+			(COPYDATASTRUCT *)lParam);
 		break;
 
 	case AfxSig_bHELPINFO:
@@ -367,7 +369,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_iwWw:
 		lResult = (this->*mmf.pfn_iwWw)(LOWORD(wParam),
-		                                CWnd::FromHandle((HWND)lParam), HIWORD(wParam));
+			CWnd::FromHandle((HWND)lParam), HIWORD(wParam));
 		break;
 
 	case AfxSig_iww:
@@ -377,7 +379,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 	case AfxSig_iWww:
 		// Really AfxSig_iWiw
 		lResult = (this->*mmf.pfn_iWww)(CWnd::FromHandle((HWND)wParam),
-		                                (short)LOWORD(lParam), HIWORD(lParam));
+			(short)LOWORD(lParam), HIWORD(lParam));
 		break;
 
 	case AfxSig_is:
@@ -390,7 +392,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_lwwM:
 		lResult = (this->*mmf.pfn_lwwM)((UINT)LOWORD(wParam),
-		                                (UINT)HIWORD(wParam), (CMenu *)CMenu::FromHandle((HMENU)lParam));
+			(UINT)HIWORD(wParam), (CMenu *)CMenu::FromHandle((HMENU)lParam));
 		break;
 
 	case AfxSig_vv:
@@ -423,8 +425,8 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_vbWW:
 		(this->*mmf.pfn_vbWW)(m_hWnd == (HWND)lParam,
-		                      CWnd::FromHandle((HWND)lParam),
-		                      CWnd::FromHandle((HWND)wParam));
+			CWnd::FromHandle((HWND)lParam),
+			CWnd::FromHandle((HWND)wParam));
 		break;
 
 	case AfxSig_vD:
@@ -437,7 +439,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_vMwb:
 		(this->*mmf.pfn_vMwb)(CMenu::FromHandle((HMENU)wParam),
-		                      LOWORD(lParam), (BOOL)HIWORD(lParam));
+			LOWORD(lParam), (BOOL)HIWORD(lParam));
 		break;
 
 	case AfxSig_vW:
@@ -450,10 +452,11 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_vWww:
 		(this->*mmf.pfn_vWww)(CWnd::FromHandle((HWND)wParam), LOWORD(lParam),
-		                      HIWORD(lParam));
+			HIWORD(lParam));
 		break;
 
-	case AfxSig_vWp: {
+	case AfxSig_vWp:
+	{
 		CPoint point((DWORD)lParam);
 		(this->*mmf.pfn_vWp)(CWnd::FromHandle((HWND)wParam), point);
 	}
@@ -461,7 +464,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_vWh:
 		(this->*mmf.pfn_vWh)(CWnd::FromHandle((HWND)wParam),
-		                     (HANDLE)lParam);
+			(HANDLE)lParam);
 		break;
 
 	case AfxSig_vwW:
@@ -470,19 +473,20 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_vwWb:
 		(this->*mmf.pfn_vwWb)((UINT)(LOWORD(wParam)),
-		                      CWnd::FromHandle((HWND)lParam), (BOOL)HIWORD(wParam));
+			CWnd::FromHandle((HWND)lParam), (BOOL)HIWORD(wParam));
 		break;
 
 	case AfxSig_vwwW:
-	case AfxSig_vwwx: {
+	case AfxSig_vwwx:
+	{
 		// special case for WM_VSCROLL and WM_HSCROLL
 		ASSERT(message == WM_VSCROLL || message == WM_HSCROLL ||
-		       message == WM_VSCROLL + WM_REFLECT_BASE || message == WM_HSCROLL + WM_REFLECT_BASE);
+			message == WM_VSCROLL + WM_REFLECT_BASE || message == WM_HSCROLL + WM_REFLECT_BASE);
 		int nScrollCode = (short)LOWORD(wParam);
 		int nPos = (short)HIWORD(wParam);
 		if (lpEntry->nSig == AfxSig_vwwW)
 			(this->*mmf.pfn_vwwW)(nScrollCode, nPos,
-			                      CWnd::FromHandle((HWND)lParam));
+				CWnd::FromHandle((HWND)lParam));
 		else
 			(this->*mmf.pfn_vwwx)(nScrollCode, nPos);
 	}
@@ -505,7 +509,8 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		lResult = (this->*mmf.pfn_iis)((int)wParam, (LPTSTR)lParam);
 		break;
 
-	case AfxSig_wp: {
+	case AfxSig_wp:
+	{
 		CPoint point((DWORD)lParam);
 		lResult = (this->*mmf.pfn_wp)(point);
 	}
@@ -527,7 +532,8 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		(this->*mmf.pfn_vwwh)(LOWORD(wParam), HIWORD(wParam), (HANDLE)lParam);
 		break;
 
-	case AfxSig_vwp: {
+	case AfxSig_vwp:
+	{
 		CPoint point((DWORD)lParam);
 		(this->*mmf.pfn_vwp)(wParam, point);
 		break;
@@ -539,7 +545,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_bwsp:
 		lResult = (this->*mmf.pfn_bwsp)(LOWORD(wParam), (short)HIWORD(wParam),
-		                                CPoint(LOWORD(lParam), HIWORD(lParam)));
+			CPoint(LOWORD(lParam), HIWORD(lParam)));
 		if (!lResult)
 			return FALSE;
 
@@ -670,7 +676,7 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 	lpPaint->fRestore = false;
 	lpPaint->fIncUpdate = false;
 	Common::fill(lpPaint->rgbReserved,
-	             lpPaint->rgbReserved + 32, 0);
+		lpPaint->rgbReserved + 32, 0);
 
 	_updatingRect = _updateRect;
 
@@ -750,12 +756,12 @@ void CWnd::CheckDlgButton(int nIDButton, UINT nCheck) {
 }
 
 LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,
-                                 WPARAM wParam, LPARAM lParam) const {
+	WPARAM wParam, LPARAM lParam) const {
 	error("TODO: CWnd::SendDlgItemMessage");
 }
 
 UINT_PTR CWnd::SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-                        void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
 	error("TODO: CWnd::SetTimer");
 }
 
@@ -764,7 +770,7 @@ BOOL CWnd::KillTimer(UINT_PTR nIDEvent) {
 }
 
 BOOL CWnd::GetScrollRange(int nBar,
-                          LPINT lpMinPos, LPINT lpMaxPos) const {
+	LPINT lpMinPos, LPINT lpMaxPos) const {
 	error("TODO: CWnd::GetScrollRange");
 }
 
@@ -827,6 +833,38 @@ void CWnd::OnSetFont(HFONT hFont, BOOL bRedraw) {
 
 	if (bRedraw)
 		Invalidate();
+}
+
+void CWnd::SendMessageToDescendants(UINT message,
+		WPARAM wParam, LPARAM lParam,
+		bool bDeep, bool) {
+	// Note: since in ScummVM the m_hWnd points
+	// to the CWnd itself, all controls are currently
+	// "permanent", hence the original bPermanent
+	// param is meaningless
+	Common::Queue<CWnd *> queue;
+	queue.push(this);
+
+	while (!queue.empty()) {
+		CWnd *wnd = queue.pop();
+
+		// If the control has any children,
+		// add them if deep mode is flagged
+		if (bDeep) {
+			for (auto &node : wnd->_children)
+				queue.push(node._value);
+		}
+
+		// Send the message to the control
+		wnd->SendMessage(message, wParam, lParam);
+	}
+}
+
+void CWnd::SendMessageToDescendants(HWND hWnd, UINT message,
+		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm) {
+	CWnd *wnd = CWnd::FromHandle(hWnd);
+	wnd->SendMessageToDescendants(message,
+		wParam, lParam, bDeep, bOnlyPerm);
 }
 
 } // namespace MFC

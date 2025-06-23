@@ -194,7 +194,7 @@ void CDialogTemplate::getBaseUnits(int &x, int &y) {
 	DeleteObject(hFont);
 }
 
-void CDialogTemplate::loadTemplate(CDialog *parent) {
+void CDialogTemplate::loadTemplate(CDialog *dialog) {
 	int base_unit_x, base_unit_y;
 	getBaseUnits(base_unit_x, base_unit_y);
 
@@ -206,12 +206,12 @@ void CDialogTemplate::loadTemplate(CDialog *parent) {
 		SafeMulDiv(_header._y + _header._h, base_unit_y, 8)
 	);
 
-	CWnd *wndParent = static_cast<CWnd *>(parent);
-	wndParent->Create(_header._className.c_str(),
+	CWnd *wndDialog = static_cast<CWnd *>(dialog);
+	wndDialog->Create(_header._className.c_str(),
 		_header._caption.c_str(),
 		_header._style,
 		bounds,
-		parent->m_pParentWnd,
+		dialog->m_pParentWnd,
 		0
 	);
 
@@ -244,23 +244,23 @@ void CDialogTemplate::loadTemplate(CDialog *parent) {
 			item._title.c_str(),
 			item._style,
 			bounds,
-			parent,
+			dialog,
 			item._id
 		);
 
 		// Register the control as needing to be
 		// freed when the dialog is closed
-		parent->_ownedControls.push_back(ctl);
+		dialog->_ownedControls.push_back(ctl);
 
 		if (item._style & BS_DEFPUSHBUTTON)
-			parent->_defaultId = item._id;
+			dialog->_defaultId = item._id;
 	}
 
 	// Apply the font to the window and all child controls
 	LOGFONT lf = ParseFontFromTemplate();
-	parent->_dialogFont.CreateFontIndirect(&lf);
-	parent->SendMessage(WM_SETFONT,
-		(WPARAM)parent->_dialogFont.m_hObject, 0);
+	dialog->_dialogFont.CreateFontIndirect(&lf);
+	dialog->SendMessageToDescendants(WM_SETFONT,
+		(WPARAM)dialog->_dialogFont.m_hObject, 0);
 }
 
 } // namespace Gfx

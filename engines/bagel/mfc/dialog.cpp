@@ -199,10 +199,14 @@ LRESULT CDialog::HandleInitDialog(WPARAM, LPARAM) {
 	return 0;
 }
 
-LRESULT CDialog::HandleSetFont(WPARAM, LPARAM) {
+LRESULT CDialog::HandleSetFont(WPARAM wParam, LPARAM) {
+	// Allow the CWnd code to set the _hFont field
+	CWnd::OnSetFont((HFONT)wParam, true);
+
+	// Virtual method dialog descendants can override
+	OnSetFont(CFont::FromHandle((HFONT)wParam));
 	return 0;
 }
-
 
 void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
 	error("TODO: CDialog::DDX_Control");

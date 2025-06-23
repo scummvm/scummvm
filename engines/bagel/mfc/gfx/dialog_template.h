@@ -113,7 +113,7 @@ public:
 	/**
 	 * Sets up window with parsed template data
 	 */
-	void loadTemplate(CDialog *parent);
+	void loadTemplate(CDialog *dialog);
 
 	BOOL HasFont() const;
 	BOOL SetFont(LPCSTR lpFaceName, WORD nFontSize);

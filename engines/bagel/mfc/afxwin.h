@@ -540,6 +540,11 @@ public:
 	Impl *&_brush = *(Impl **)&m_hObject;
 
 public:
+	static CBrush *FromHandle(HGDIOBJ h) {
+		return (CBrush *)CGdiObject::FromHandle(h);
+	}
+
+public:
 	CBrush();
 	CBrush(CBitmap *pBitmap);
 	CBrush(COLORREF crColor);
@@ -568,6 +573,11 @@ public:
 	Impl *&_font = *(Impl **)&m_hObject;
 
 public:
+	static CFont *FromHandle(HGDIOBJ h) {
+		return (CFont *)CGdiObject::FromHandle(h);
+	}
+
+public:
 	~CFont() override {}
 
 	BOOL CreateFont(int nHeight, int nWidth, int nEscapement,
@@ -586,6 +596,11 @@ public:
 	};
 
 	Impl *&_bitmap = *(Impl **)&m_hObject;
+
+public:
+	static CBitmap *FromHandle(HGDIOBJ h) {
+		return (CBitmap *)CGdiObject::FromHandle(h);
+	}
 
 public:
 	~CBitmap() override {
@@ -609,6 +624,11 @@ public:
 	};
 
 	Impl *&_palette = *(Impl **)&m_hObject;
+
+public:
+	static CPalette *FromHandle(HGDIOBJ h) {
+		return (CPalette *)CGdiObject::FromHandle(h);
+	}
 
 public:
 	~CPalette() override {
@@ -1040,6 +1060,9 @@ protected:
 	virtual LRESULT DefWindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam) {
 		return 0;
 	}
+	virtual void OnSetFont(CFont *pFont) {
+	}
+
 	BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
 	afx_msg void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {}
@@ -1293,6 +1316,11 @@ public:
 
 	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	LRESULT SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	void SendMessageToDescendants(UINT message,
+		WPARAM wParam, LPARAM lParam,
+		bool bDeep = true, bool bOnlyPerm = false);
+	static void SendMessageToDescendants(HWND hWnd, UINT message,
+		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm);
 
 	BOOL ValidateRect(LPCRECT lpRect = nullptr);
 	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
