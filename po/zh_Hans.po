@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-22 22:06+0000\n"
+"POT-Creation-Date: 2025-06-23 16:05+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -3199,7 +3199,8 @@ msgstr "图形冒险游戏引擎"
 #: engines/sludge/keymapper_tables.h:355 engines/sludge/keymapper_tables.h:416
 #: engines/sludge/keymapper_tables.h:429 engines/sludge/keymapper_tables.h:541
 #: engines/supernova/metaengine.cpp:267 engines/tinsel/metaengine.cpp:335
-#: engines/zvision/metaengine.cpp:292 engines/zvision/metaengine.cpp:310
+#: engines/titanic/metaengine.cpp:302 engines/zvision/metaengine.cpp:292
+#: engines/zvision/metaengine.cpp:310
 msgid "Quit"
 msgstr "退出"
 
@@ -3261,7 +3262,7 @@ msgstr "完成"
 msgid "Mode change"
 msgstr "模式更改"
 
-#: dists/android.strings.xml.cpp:50
+#: dists/android.strings.xml.cpp:50 engines/titanic/metaengine.cpp:211
 msgid "Shift"
 msgstr "Shift"
 
@@ -4598,6 +4599,7 @@ msgstr "Y"
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/got/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:49
 #: engines/mm/mm1/metaengine.cpp:92 engines/supernova/metaengine.cpp:303
+#: engines/titanic/metaengine.cpp:233
 msgid "Select"
 msgstr "Select"
 
@@ -6634,7 +6636,7 @@ msgstr "打开人物物品栏"
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
 #: engines/cine/metaengine.cpp:364 engines/efh/metaengine.cpp:231
 #: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
-#: engines/tinsel/metaengine.cpp:263
+#: engines/tinsel/metaengine.cpp:263 engines/titanic/metaengine.cpp:324
 msgid "Move up"
 msgstr "向上移动"
 
@@ -6642,7 +6644,7 @@ msgstr "向上移动"
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
 #: engines/cine/metaengine.cpp:371 engines/efh/metaengine.cpp:237
 #: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
-#: engines/tinsel/metaengine.cpp:269
+#: engines/tinsel/metaengine.cpp:269 engines/titanic/metaengine.cpp:330
 msgid "Move down"
 msgstr "向下移动"
 
@@ -6652,6 +6654,7 @@ msgstr "向下移动"
 #: engines/cine/metaengine.cpp:378 engines/efh/metaengine.cpp:243
 #: engines/hdb/metaengine.cpp:225 engines/lure/metaengine.cpp:218
 #: engines/nancy/input.cpp:207 engines/tinsel/metaengine.cpp:275
+#: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
 msgid "Move left"
 msgstr "向左移动"
 
@@ -6661,6 +6664,7 @@ msgstr "向左移动"
 #: engines/cine/metaengine.cpp:385 engines/efh/metaengine.cpp:249
 #: engines/hdb/metaengine.cpp:231 engines/lure/metaengine.cpp:226
 #: engines/nancy/input.cpp:213 engines/tinsel/metaengine.cpp:281
+#: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
 msgid "Move right"
 msgstr "向右移动"
 
@@ -6740,10 +6744,10 @@ msgstr "通用密钥"
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/tinsel/metaengine.cpp:240 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "默认按键绑定"
 
@@ -7140,9 +7144,10 @@ msgstr "退出/跳过"
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
 #: engines/saga/metaengine.cpp:442 engines/sludge/keymapper_tables.h:107
 #: engines/sludge/keymapper_tables.h:156 engines/stark/metaengine.cpp:208
-#: engines/toltecs/metaengine.cpp:234 engines/toon/metaengine.cpp:112
-#: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
-#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
+#: engines/titanic/metaengine.cpp:199 engines/toltecs/metaengine.cpp:234
+#: engines/toon/metaengine.cpp:112 engines/trecision/metaengine.cpp:169
+#: engines/tsage/metaengine.cpp:242 engines/vcruise/metaengine.cpp:175
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "保存游戏"
 
@@ -7150,9 +7155,10 @@ msgstr "保存游戏"
 #: engines/efh/metaengine.cpp:225 engines/hopkins/metaengine.cpp:242
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
-#: engines/stark/metaengine.cpp:213 engines/toltecs/metaengine.cpp:240
-#: engines/toon/metaengine.cpp:118 engines/trecision/metaengine.cpp:175
-#: engines/vcruise/metaengine.cpp:180 engines/wintermute/keymapper_tables.h:925
+#: engines/stark/metaengine.cpp:213 engines/titanic/metaengine.cpp:205
+#: engines/toltecs/metaengine.cpp:240 engines/toon/metaengine.cpp:118
+#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:180
+#: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr "载入游戏"
@@ -7335,7 +7341,8 @@ msgstr "拿取"
 #: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
 #: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
 #: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:313 engines/twine/metaengine.cpp:370
+#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
+#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
 #: engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr "物品栏"
@@ -12374,6 +12381,176 @@ msgstr "转到存读档菜单末页"
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr ""
 
+#: engines/titanic/metaengine.cpp:173
+#, fuzzy
+#| msgid "Escape keymappings"
+msgid "PET keymappings"
+msgstr "Esc 按键绑定"
+
+#: engines/titanic/metaengine.cpp:174
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Real Life keymappings"
+msgstr "游戏按键绑定"
+
+#: engines/titanic/metaengine.cpp:175
+#, fuzzy
+#| msgid "KIA only shortcuts"
+msgid "Inventory shortcut"
+msgstr "仅 KIA 快捷方式"
+
+#: engines/titanic/metaengine.cpp:176
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Continue game dialogue keymappings"
+msgstr "游戏按键绑定"
+
+#: engines/titanic/metaengine.cpp:177
+#, fuzzy
+#| msgid "Start menu keymappings"
+msgid "Star Map keymappings"
+msgstr "开始菜单按键绑定"
+
+#: engines/titanic/metaengine.cpp:178
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Movement keymappings"
+msgstr "游戏按键绑定"
+
+#: engines/titanic/metaengine.cpp:182
+#, fuzzy
+#| msgid "Interact Mode"
+msgid "Select / Interact / Move"
+msgstr "互动模式"
+
+#: engines/titanic/metaengine.cpp:188
+#, fuzzy
+#| msgid "Go to next dialogue"
+msgid "Select / Interact / Quick move"
+msgstr "转到下一对话"
+
+#: engines/titanic/metaengine.cpp:194
+#, fuzzy
+#| msgid "Game menu"
+msgid "Cheat menu"
+msgstr "游戏菜单"
+
+#: engines/titanic/metaengine.cpp:218 engines/wintermute/keymapper_tables.h:670
+#: engines/wintermute/keymapper_tables.h:871
+#: engines/wintermute/keymapper_tables.h:892
+#: engines/wintermute/keymapper_tables.h:1326
+#: engines/wintermute/keymapper_tables.h:1352
+#: engines/wintermute/keymapper_tables.h:1428
+#: engines/wintermute/keymapper_tables.h:1484
+#: engines/wintermute/keymapper_tables.h:1505
+#: engines/wintermute/keymapper_tables.h:1695
+#: engines/wintermute/keymapper_tables.h:1969
+#: engines/wintermute/keymapper_tables.h:2171
+msgid "Scroll up"
+msgstr "向上滚动"
+
+#: engines/titanic/metaengine.cpp:225 engines/wintermute/keymapper_tables.h:677
+#: engines/wintermute/keymapper_tables.h:878
+#: engines/wintermute/keymapper_tables.h:899
+#: engines/wintermute/keymapper_tables.h:1333
+#: engines/wintermute/keymapper_tables.h:1359
+#: engines/wintermute/keymapper_tables.h:1435
+#: engines/wintermute/keymapper_tables.h:1491
+#: engines/wintermute/keymapper_tables.h:1512
+#: engines/wintermute/keymapper_tables.h:1702
+#: engines/wintermute/keymapper_tables.h:1976
+#: engines/wintermute/keymapper_tables.h:2176
+msgid "Scroll down"
+msgstr "向下滚动"
+
+#: engines/titanic/metaengine.cpp:239
+#, fuzzy
+#| msgid "Conversation log"
+msgid "Conversation"
+msgstr "对话日志"
+
+#: engines/titanic/metaengine.cpp:249
+#, fuzzy
+#| msgid "Remove"
+msgid "Remote"
+msgstr "删除"
+
+#: engines/titanic/metaengine.cpp:254
+#, fuzzy
+#| msgid "Room:"
+msgid "Rooms"
+msgstr "空间："
+
+#: engines/titanic/metaengine.cpp:259
+msgid "Real life"
+msgstr ""
+
+#: engines/titanic/metaengine.cpp:264
+#, fuzzy
+#| msgid "Scroll up"
+msgid "Scroll up page"
+msgstr "向上滚动"
+
+#: engines/titanic/metaengine.cpp:271
+#, fuzzy
+#| msgid "Scroll down"
+msgid "Scroll down page"
+msgstr "向下滚动"
+
+#: engines/titanic/metaengine.cpp:278
+#, fuzzy
+#| msgid "Scroll list up"
+msgid "Scroll to top"
+msgstr "向上滚动列表"
+
+#: engines/titanic/metaengine.cpp:284
+#, fuzzy
+#| msgid "Move to bottom"
+msgid "Scroll to bottom"
+msgstr "移到底部"
+
+#: engines/titanic/metaengine.cpp:291
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Translation"
+msgstr "转场："
+
+#: engines/titanic/metaengine.cpp:307
+msgid "Toggle between Star Map and photo of your home"
+msgstr ""
+
+#: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
+msgid "Move forward"
+msgstr "向前移动"
+
+#: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
+#, fuzzy
+#| msgid "Move backwards"
+msgid "Move backward"
+msgstr "向后移动"
+
+#: engines/titanic/metaengine.cpp:350
+msgid "Stop moving"
+msgstr ""
+
+#: engines/titanic/metaengine.cpp:356
+msgid "Lock coordinate"
+msgstr ""
+
+#: engines/titanic/metaengine.cpp:362
+msgid "Unlock coordinate"
+msgstr ""
+
+#: engines/titanic/metaengine.cpp:368
+#, fuzzy
+#| msgid "Exit conversation"
+msgid "View constellations"
+msgstr "退出对话"
+
+#: engines/titanic/metaengine.cpp:373
+msgid "View boundaries"
+msgstr ""
+
 #: engines/toltecs/metaengine.cpp:216
 #, fuzzy
 #| msgid "Move left"
@@ -13659,34 +13836,6 @@ msgstr "电话 # 按钮"
 msgid "Show help"
 msgstr "显示帮助"
 
-#: engines/wintermute/keymapper_tables.h:670
-#: engines/wintermute/keymapper_tables.h:871
-#: engines/wintermute/keymapper_tables.h:892
-#: engines/wintermute/keymapper_tables.h:1326
-#: engines/wintermute/keymapper_tables.h:1352
-#: engines/wintermute/keymapper_tables.h:1428
-#: engines/wintermute/keymapper_tables.h:1484
-#: engines/wintermute/keymapper_tables.h:1505
-#: engines/wintermute/keymapper_tables.h:1695
-#: engines/wintermute/keymapper_tables.h:1969
-#: engines/wintermute/keymapper_tables.h:2171
-msgid "Scroll up"
-msgstr "向上滚动"
-
-#: engines/wintermute/keymapper_tables.h:677
-#: engines/wintermute/keymapper_tables.h:878
-#: engines/wintermute/keymapper_tables.h:899
-#: engines/wintermute/keymapper_tables.h:1333
-#: engines/wintermute/keymapper_tables.h:1359
-#: engines/wintermute/keymapper_tables.h:1435
-#: engines/wintermute/keymapper_tables.h:1491
-#: engines/wintermute/keymapper_tables.h:1512
-#: engines/wintermute/keymapper_tables.h:1702
-#: engines/wintermute/keymapper_tables.h:1976
-#: engines/wintermute/keymapper_tables.h:2176
-msgid "Scroll down"
-msgstr "向下滚动"
-
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
 msgstr "更改阴影类型"
@@ -14241,12 +14390,6 @@ msgstr ""
 #~| msgid "Toggle sound effects on/off"
 #~ msgid "Toggle sound effect on/off"
 #~ msgstr "开关音效"
-
-#~ msgid "Move forward"
-#~ msgstr "向前移动"
-
-#~ msgid "Move backwards"
-#~ msgstr "向后移动"
 
 #, fuzzy
 #~| msgid "Middle Click"
