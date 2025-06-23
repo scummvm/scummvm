@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-23 16:05+0000\n"
+"POT-Creation-Date: 2025-06-23 23:07+0000\n"
 "PO-Revision-Date: 2025-06-23 18:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -872,7 +872,7 @@ msgstr "Calcul terminé"
 msgid "Calculated %s %S / %s %S"
 msgstr "Calculé %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:566
+#: gui/integrity-dialog.cpp:599
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -886,14 +886,14 @@ msgstr ""
 "Si vous êtes sûr qu'il s'agit d'une variante inconnue valide, merci "
 "d'envoyer l'e-mail suivant à integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:590
+#: gui/integrity-dialog.cpp:623
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
 "Le jeu ne semble pas contenir de fichiers. Êtes-vous sûr que le chemin "
 "d'accès est correct ?"
 
-#: gui/integrity-dialog.cpp:595
+#: gui/integrity-dialog.cpp:628
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -902,7 +902,7 @@ msgstr ""
 "possible d'établir une correspondance. Merci de saisir les métadonnées "
 "correctes pour le jeu."
 
-#: gui/integrity-dialog.cpp:622
+#: gui/integrity-dialog.cpp:655
 msgid "Files all OK"
 msgstr "Tous les fichiers sont OK"
 

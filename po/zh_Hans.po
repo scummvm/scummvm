@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-23 16:05+0000\n"
+"POT-Creation-Date: 2025-06-23 23:07+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -852,7 +852,7 @@ msgstr "计算完成"
 msgid "Calculated %s %S / %s %S"
 msgstr "已计算 %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:566
+#: gui/integrity-dialog.cpp:599
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -865,18 +865,18 @@ msgstr ""
 "\n"
 "如果你确定这是有效变体，请将以下电子邮件发送到 integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:590
+#: gui/integrity-dialog.cpp:623
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr "此游戏似乎没有文件。确定路径正确吗？"
 
-#: gui/integrity-dialog.cpp:595
+#: gui/integrity-dialog.cpp:628
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr "此游戏似乎没有关联的元数据，因此无法进行匹配。请填入正确的元数据。"
 
-#: gui/integrity-dialog.cpp:622
+#: gui/integrity-dialog.cpp:655
 msgid "Files all OK"
 msgstr "所有文件无误"
 
