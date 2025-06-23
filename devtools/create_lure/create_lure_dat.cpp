@@ -46,6 +46,8 @@ File outputFile, lureExe;
 Common::Language language;
 uint16 dataSegment;
 
+bool generateRussianDat = false;
+
 #define NUM_BYTES_VALIDATE 1024
 #define ENGLISH_FILE_CHECKSUM 0xFD70
 #define ITALIAN_FILE_CHECKSUM 0x109AD
@@ -67,7 +69,7 @@ int actionIndex = 0;
 uint16 talkOffsets[MAX_TALK_LISTS];
 int talkOffsetIndex = 0;
 
-#define NUM_LANGUAGES 5
+#define NUM_LANGUAGES 6
 struct AnimListRecord {
 	uint16 languages[NUM_LANGUAGES];
 };
@@ -134,7 +136,8 @@ void add_anim_record(uint16 offset) {
 		else if (language == FR_FRA) index = 2;
 		else if (language == DE_DEU) index = 3;
 		else if (language == ES_ESP) index = 4;
-		else if (language != EN_ANY && language != EN_USA)
+		// Russian language is a hack on top of English
+		else if (language != EN_ANY && language != EN_USA && language != RU_RUS)
 			errorExit("add_anim_record: Unknown language");
 
 		AnimListRecord *p = &animDataList[0];
@@ -165,7 +168,8 @@ void read_basic_palette(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) segmentStart = 0xC517;
 	else if (language == ES_ESP) segmentStart = 0xC177;
 	else if (language == EN_USA) segmentStart = 0xC387;
-	else if (language != EN_ANY) errorExit("read_basic_palette: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_basic_palette: Unknown language");
 
 	lureExe.seek(segmentStart);
 	data = (byte *) malloc(totalSize);
@@ -194,7 +198,8 @@ void read_dialog_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) segmentStart = 0x1e230;
 	else if (language == ES_ESP) segmentStart = 0x1de60;
 	else if (language == EN_USA) segmentStart = 0x1df90;
-	else if (language != EN_ANY) errorExit("read_dialog_data: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_dialog_data: Unknown language");
 
 	totalSize = DIALOG_SIZE;
 	lureExe.seek(segmentStart);
@@ -209,7 +214,8 @@ void read_talk_dialog_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) segmentStart = 0x1e380;
 	else if (language == ES_ESP) segmentStart = 0x1dfb0;
 	else if (language == EN_USA) segmentStart = 0x1e0e0;
-	else if (language != EN_ANY) errorExit("read_talk_dialog_data: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_talk_dialog_data: Unknown language");
 
 	totalSize = TALK_DIALOG_SIZE;
 	lureExe.seek(segmentStart);
@@ -231,7 +237,8 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 	uint16 dataStart = 0xbf40;
 	uint16 walkAreaOffset = 0x2eb1;
 	switch (language) {
-		case EN_ANY:
+	case EN_ANY:
+	case RU_RUS:
 		break;
 	case IT_ITA:
 		dataStart = 0xc000;
@@ -392,6 +399,13 @@ uint16 spanishTickProcOffsets[] = {
 	0xffff
 };
 
+uint16 russianTickProcOffsets[] = {
+	0x41BD, 0x4f82, 0x5e44, 0x625e, 0x6571, 0x7207, 0x7c14, 0x7c24, 0x7efa, 0x7f02,
+	0x7F37, 0x7f3a, 0x7f54, 0x7f69, 0x7fa1, 0x8009, 0x80c6, 0x813f, 0x8180, 0x81b3,
+	0x81f3, 0x820e, 0x8241, 0x82a0, 0x85ce, 0x862d, 0x865A, 0x86FA, 0x86FF, 0x871E,
+	0x873D, 0x8742, 0x8747, 0x87B3, 0x87EC, 0x882A, 0x8ABD, 0x982D, 0x98B6,
+	0xffff
+};
 
 uint16 englishOffsets[4] = {0x5d98, 0x5eb8, 0x623e, 0x63b1};
 uint16 italianOffsets[4] = {0x5e58, 0x5f78, 0x62fe, 0x6471};
@@ -399,6 +413,7 @@ uint16 frenchOffsets[4]  = {0x5e78, 0x5f98, 0x631e, 0x6491};
 uint16 germanOffsets[4]  = {0x5ea8, 0x5fc8, 0x634e, 0x64c1};
 uint16 spanishOffsets[4] = {0x5e78, 0x5f98, 0x631e, 0x6491};
 uint16 konamiOffsets[4] = {0x5d98, 0x5eb8, 0x623e, 0x63b1};
+uint16 russianOffsets[4] = {0x5d98, 0x5eb8, 0x623e, 0x63b1};
 
 uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
 uint16 konamiLoadOffsets[] =  {0x3de4, 0x44A3, 0x744D, 0x7458, 0x88fd, 0x8B92, 0};
@@ -406,6 +421,7 @@ uint16 italianLoadOffsets[] = {0x3b46, 0x4205, 0x71af, 0x71ba, 0x8675, 0x890a, 0
 uint16 frenchLoadOffsets[]  = {0x3ebc, 0x457B, 0x755b, 0x7566, 0x8a18, 0x8ca8, 0};
 uint16 germanLoadOffsets[]  = {0x3e84, 0x4543, 0x74f1, 0x74fc, 0x8a75, 0x8d05, 0};
 uint16 spanishLoadOffsets[] = {0x3b88, 0x4247, 0x71f1, 0x71fc, 0x86db, 0x8970, 0};
+uint16 russianLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
 
 void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 	uint16 startId[4] = {0x3e8, 0x408, 0x2710, 0x7530};
@@ -427,6 +443,7 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 	uint16 walkToOffset = 0xBC4B;
 	switch (language) {
 	case EN_ANY:
+	case RU_RUS:
 		break;
 	case IT_ITA:
 		offsets = &italianOffsets[0];
@@ -694,7 +711,8 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) dataStart = 0x2f8f;
 	else if (language == ES_ESP) dataStart = 0x2f7b;
 	else if (language == EN_USA) dataStart = 0x2F61;
-	else if (language != EN_ANY) errorExit("read_room_exits: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_room_exits: Unknown language");
 
 	lureExe.seek(dataSegment + dataStart);
 	for (roomCtr = 0; roomCtr < NUM_ROOM_EXITS; ++roomCtr)
@@ -768,7 +786,8 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) dataStart = 0xcf40;
 	else if (language == ES_ESP) dataStart = 0xcf10;
 	else if (language == EN_USA) dataStart = 0xce30;
-	else if (language != EN_ANY) errorExit("read_room_exit_joins: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_room_exit_joins: Unknown language");
 
 	lureExe.seek(dataSegment + dataStart);
 
@@ -923,7 +942,8 @@ void read_script_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) segmentOffset = 0x1e480;
 	else if (language == ES_ESP) segmentOffset = 0x1e0b0;
 	else if (language == EN_USA) segmentOffset = 0x1e1e0;
-	else if (language != EN_ANY) errorExit("read_script_data: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_script_data: Unknown language");
 	lureExe.seek(segmentOffset);
 
 	totalSize = SCRIPT_SEGMENT_SIZE;
@@ -938,7 +958,8 @@ void read_script2_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) segmentOffset = 0x1a1f0;
 	else if (language == ES_ESP) segmentOffset = 0x19e20;
 	else if (language == EN_USA) segmentOffset = 0x19f50;
-	else if (language != EN_ANY) errorExit("read_script2_data: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_script2_data: Unknown language");
 	lureExe.seek(segmentOffset);
 
 	totalSize = SCRIPT2_SEGMENT_SIZE;
@@ -953,7 +974,8 @@ void read_hotspot_script_offsets(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) dataStart = 0x58f0;
 	else if (language == ES_ESP) dataStart = 0x58c0;
 	else if (language == EN_USA) dataStart = 0x57e0;
-	else if (language != EN_ANY) errorExit("read_hotspot_script_offsets: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_hotspot_script_offsets: Unknown language");
 
 	lureExe.seek(dataSegment + dataStart);
 	totalSize = HOTSPOT_SCRIPT_SIZE;
@@ -968,7 +990,8 @@ void read_messages_segment(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) segmentOffset = 0x210E0;
 	else if (language == ES_ESP) segmentOffset = 0x20d10;
 	else if (language == EN_USA) segmentOffset = 0x20e40;
-	else if (language != EN_ANY) errorExit("read_messages_segment: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_messages_segment: Unknown language");
 
 	lureExe.seek(segmentOffset);
 	totalSize = MESSAGES_SEGMENT_SIZE;
@@ -1031,7 +1054,8 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) dataStart = 0x515c;
 	else if (language == ES_ESP) dataStart = 0x512c;
 	else if (language == EN_USA) dataStart = 0x505c;
-	else if (language != EN_ANY) errorExit("read_talk_headers: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_talk_headers: Unknown language");
 
 	lureExe.seek(dataSegment + dataStart);
 	lureExe.read(&entries[0], sizeof(TalkEntry) * TALK_NUM_ENTRIES);
@@ -1114,6 +1138,7 @@ uint16 italianGiveTalkIds[7] = {0xD01E, 0xCFD4, 0xD050, 0xD06A, 0xD090, 0xD0B6, 
 uint16 frenchGiveTalkIds[7]  = {0xD03E, 0xCFF4, 0xD070, 0xD08A, 0xD0B0, 0xD0D6, 0xf0f0};
 uint16 germanGiveTalkIds[7]  = {0xD06E, 0xD024, 0xD0A0, 0xD0BA, 0xD0E0, 0xD106, 0xf120};
 uint16 spanishGiveTalkIds[7] = {0xD03E, 0xCFF4, 0xD070, 0xD08A, 0xD0B0, 0xD0D6, 0xf0f0};
+uint16 russianGiveTalkIds[7] = {0xCF5E, 0xCF14, 0xCF90, 0xCFAA, 0xCFD0, 0xCFF6, 0xf010};
 
 void read_talk_data(byte *&data, uint16 &totalSize) {
 	uint16 responseOffset;
@@ -1126,7 +1151,8 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) giveTalkIds = &germanGiveTalkIds[0];
 	else if (language == ES_ESP) giveTalkIds = &spanishGiveTalkIds[0];
 	else if (language == EN_USA) giveTalkIds = &konamiGiveTalkIds[0];
-	else if (language != EN_ANY) errorExit("read_talk_data: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_talk_data: Unknown language");
 
 	data = (byte *) malloc(MAX_DATA_SIZE);
 	uint16 *v = (uint16 *) data;
@@ -1245,7 +1271,8 @@ void read_room_pathfinding_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) dataStart = 0x995A;
 	else if (language == ES_ESP) dataStart = 0x992A;
 	else if (language == EN_USA) dataStart = 0x984a;
-	else if (language != EN_ANY) errorExit("read_room_pathfinding_data: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_room_pathfinding_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
 
 	totalSize = PATHFIND_SIZE;
@@ -1306,7 +1333,8 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) dataStart = 0x2e85;
 	else if (language == ES_ESP) dataStart = 0x2e71;
 	else if (language == EN_USA) dataStart = 0x2e57;
-	else if (language != EN_ANY) errorExit("read_room_exit_hotspots_data: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("read_room_exit_hotspots_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
 
 	lureExe.read(rec, sizeof(RoomExitIndexedHotspotResource));
@@ -1327,7 +1355,8 @@ void save_fight_segment(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) fightSegment = 0x1c980;
 	else if (language == ES_ESP) fightSegment = 0x1c5b0;
 	else if (language == EN_USA) fightSegment = 0x1c6E0;
-	else if (language != EN_ANY) errorExit("save_fight_segment: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("save_fight_segment: Unknown language");
 	lureExe.seek(fightSegment);
 
 	totalSize = FIGHT_SEGMENT_SIZE;
@@ -1400,6 +1429,24 @@ const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
 	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ", nullptr, nullptr
 };
 
+const char *russianTextStrings[NUM_TEXT_ENTRIES] = {
+//   взять			   нажать	 потянуть	 использовать	 открыть	закрыть	   запереть	   отпереть	   применить 
+	"dpznm", nullptr, "yf;fnm", "gjnzyenm", "bcgjkmpjdfnm", "jnrhsnm", "pfrhsnm", "pfgthtnm", "jngthtnm", "ghbvtybnm",
+//   отдать	   поговорить с	   приказать	купить	  осмотреться	 осмотреть	  заглянуть в	 попросить
+	"jnlfnm", "gjujdjhbnm c", "ghbrfpfnm", "regbnm", "jcvjnhtnmcz", "jcvjnhtnm", "pfukzyenm d", "gjghjcbnm", nullptr,
+//	 выпить	   мои карманы	  идти к	вернуться	 подкупить	  изучить
+	"dsgbnm", "vjb rfhvfys", "blnb r", "dthyenmcz", "gjlregbnm", "bpexbnm",
+//	 Авторы	   Новая Игра    Сохранить	  Восстановить	  Выход	   Текст "-"
+	"Fdnjhs", "Yjdfz buhf", "Cj[hfybnm", "Djccnfyjdbnm", "Ds[jl", "Ntrcn \x7F-\x7F",
+//	 Текст "+"			Звук вкл.	 Звук выкл.	   (ничего нет)     >			>
+	"Ntrcn \x7F+\x7F", "Pder drk/", "Pder dsrk/", "(ybxtuj ytn)", " * ", "_", " * ",
+//	 затем	  все	 Оставишь город скорлам?			  (Д)а, надоели они все.		   (Н)ет, только не сейчас.
+	"pfntv", "dct", "Jcnfdbim ujhjl crjhkfv~              (L)f< yfljtkb jyb dct/           (Y)tn< njkmrj yt ctqxfc/",
+//	 У тебя с собой		ничего нет	  У тебя	 грот	 грота(ов)
+	"E nt?z c cj?jq", " ybxtuj ytn", "E nt?z ", "uhjn", "uhjnf(jd)",
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+};
+
 void save_text_strings(byte *&data, uint16 &totalSize) {
 	int index;
 
@@ -1408,6 +1455,7 @@ void save_text_strings(byte *&data, uint16 &totalSize) {
 	else if (language == FR_FRA) textStrings = &frenchTextStrings[0];
 	else if (language == DE_DEU) textStrings = &germanTextStrings[0];
 	else if (language == ES_ESP) textStrings = &spanishTextStrings[0];
+	else if (language == RU_RUS) textStrings = &russianTextStrings[0];
 	else if (language != EN_ANY && language != EN_USA)
 		errorExit("save_text_strings: Unknown language");
 
@@ -1440,7 +1488,7 @@ void save_sound_desc_data(byte *&data, uint16 &totalSize) {
 	else if (language == FR_FRA) dataStart = 0x5751;
 	else if (language == DE_DEU) dataStart = 0x5781;
 	else if (language == ES_ESP) dataStart = 0x5751;
-	else if (language != EN_ANY && language != EN_USA)
+	else if (language != EN_ANY && language != EN_USA && language != RU_RUS)
 		errorExit("save_sound_desc_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
 
@@ -1695,6 +1743,41 @@ const DecoderEntry spanishDecoders[] = {
 	{nullptr, '\0'}
 };
 
+const DecoderEntry russianDecoders[] = {
+    {"00", ' '}, {"0100", 'e'}, {"01010", 'o'}, {"010110", 0x7e}, {"0101110", 0x7f},
+    {"0101111", 0x80}, {"0110", 't'}, {"01110", 'a'}, {"011110", 'n'}, {"0111110", 'Z'},
+    {"0111111", 0x81}, {"1000", 's'}, {"10010", 'i'}, {"100110", 'X'}, {"1001110", 0x5b},
+    {"1001111", 0x82}, {"10100", 'r'}, {"101010", 0x5d}, {"1010110", 0x83},
+    {"1010111", 0x84}, {"101100", 'h'}, {"1011010", 0x3c}, {"1011011", 0x85},
+    {"101110", 'u'}, {"1011110", 'l'}, {"1011111", 'd'}, {"110000", 'y'},
+    {"1100010", 0x3e}, {"1100011", 0x86}, {"110010", 'g'}, {"110011", 0x00},
+    {"110100", 'w'}, {"1101010", 'c'}, {"11010110", 0x7b}, {"11010111", 0x7d},
+    {"110110", 'f'}, {"1101110", '.'}, {"1101111", 'm'}, {"111000", 'p'}, {"1110010", 'b'},
+    {"1110011", 0x87}, {"1110100", ','}, {"1110101", 'k'}, {"1110110", 0x27},
+    {"11101110", 'I'}, {"11101111", 'v'}, {"1111000", '!'}, {"1111001", 0xb4},
+    {"11110100", 'T'}, {"11110101", 0xb5}, {"11110110", '?'}, {"111101110", 0xb2},
+    {"111101111", 0xb3}, {"11111000", 'W'}, {"111110010", 'H'}, {"111110011", 'A'},
+    {"111110100", 0xb1}, {"111110101", 'S'}, {"111110110", 'Y'}, {"1111101110", 'G'},
+    {"11111011110", 'M'}, {"11111011111", 'N'}, {"111111000", 'O'}, {"1111110010", 'E'},
+    {"1111110011", 'L'}, {"1111110100", 0x2d}, {"1111110101", 'R'},
+    {"1111110110", 'B'}, {"11111101110", 'D'}, {"11111101111", 0xa6},
+    {"1111111000", 'C'}, {"11111110010", 'x'}, {"11111110011", 'j'},
+    {"1111111010", 0xac}, {"11111110110", 0xa3}, {"111111101110", 'P'},
+    {"111111101111", 'U'}, {"11111111000", 'q'}, {"11111111001", 0xad},
+    {"111111110100", 'F'}, {"111111110101", '1'}, {"111111110110", 0xaf},
+    {"1111111101110", 0x3b}, {"1111111101111", 'z'}, {"111111111000", 0xa5},
+    {"1111111110010", '2'}, {"1111111110011", 0xb0}, {"111111111010", 'K'},
+    {"1111111110110", 0x25}, {"11111111101110", 0xa2}, {"11111111101111", '5'},
+    {"1111111111000", ':'}, {"1111111111001", 'J'}, {"1111111111010", 'V'},
+    {"11111111110110", '6'}, {"11111111110111", '3'}, {"1111111111100", 0xab},
+    {"11111111111010", 0xae}, {"111111111110110", '0'}, {"111111111110111", '4'},
+    {"11111111111100", '7'}, {"111111111111010", '9'}, {"111111111111011", 0x22},
+    {"111111111111100", '8'}, {"111111111111101", 0xa7}, {"1111111111111100", 0x2f},
+    {"1111111111111101", 'Q'}, {"11111111111111100", 0xa8}, {"11111111111111101", 0x28},
+    {"111111111111111100", 0x29}, {"111111111111111101", 0x99}, {"11111111111111111", 0xa9},
+    {nullptr, '\0'}
+};
+
 void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 	const DecoderEntry *list = &englishDecoders[0];
 	if (language == IT_ITA) list = &italianDecoders[0];
@@ -1702,6 +1785,7 @@ void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) list = &germanDecoders[0];
 	else if (language == ES_ESP) list = &spanishDecoders[0];
 	else if (language == EN_USA) list = &konamiDecoders[0];
+	else if (language == RU_RUS) list = &russianDecoders[0];
 	else if (language != EN_ANY) errorExit("save_string_decoder_data: Unknown language");
 
 	totalSize = 1;
@@ -1733,7 +1817,8 @@ void save_audio_init_icon(byte *&data, uint16 &totalSize) {
 	else if (language == DE_DEU) dataStart = 0x132F0;
 	else if (language == ES_ESP) dataStart = 0x132C0;
 	else if (language == EN_USA) dataStart = 0x131e0;
-	else if (language != EN_ANY) errorExit("save_audio_init_icon: Unknown language");
+	else if (language != EN_ANY && language != RU_RUS)
+		errorExit("save_audio_init_icon: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
 
 	totalSize = AUDIO_INIT_ICON_SIZE;
@@ -1945,6 +2030,9 @@ void createFile(const char *outFilename) {
 	case EN_USA:
 		outputFile.writeByte(LANG_EN_USA);
 		break;
+	case RU_RUS:
+		outputFile.writeByte(LANG_RU_RUS);
+		break;
 	default:
 		printf("Unknown language encountered\n");
 		exit(1);
@@ -2016,9 +2104,15 @@ bool validate_executable() {
 		sumTotal += buffer[ctr];
 
 	if (sumTotal == ENGLISH_FILE_CHECKSUM) {
-		language = EN_ANY;
-		dataSegment = 0xAC50;
-		printf("Detected English version\n");
+		if (generateRussianDat) {
+			language = RU_RUS;
+			dataSegment = 0xAC50;
+			printf("Detected Russian version\n");
+		} else {
+			language = EN_ANY;
+			dataSegment = 0xAC50;
+			printf("Detected English version\n");
+		}
 	} else if (sumTotal == ITALIAN_FILE_CHECKSUM) {
 		language = IT_ITA;
 		dataSegment = 0xACB0;
@@ -2061,7 +2155,7 @@ int main(int argc, char *argv[]) {
 	const char /**inFilename,*/ *outFilename = nullptr;
 
 	if (argc == 1) {
-		printf("Format: %s output_filename [lureExecutable ..]\n", argv[0]);
+		printf("Format: %s output_filename [lureExecutable [--ru] ..]\n", argv[0]);
 		exit(0);
 	}
 
@@ -2071,6 +2165,13 @@ int main(int argc, char *argv[]) {
 		if (!lureExe.open(argv[argi]))
 			printf("Could not open file: %s\n", argv[argi]);
 		else {
+			generateRussianDat = false;
+
+			if (argi + 1 < argc && strcmp(argv[argi + 1], "--ru") == 0) {
+				generateRussianDat = true;
+				argi++;
+			}
+
 			if (validate_executable())
 				createFile(outFilename);
 			lureExe.close();
