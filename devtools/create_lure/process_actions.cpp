@@ -67,6 +67,7 @@ JumpOffsetsRecord jumpOffsets[] = {
 	{DE_DEU, {0x8c1c, 0x8c75}},
 	{ES_ESP, {0x8882, 0x88e0}},
 	{EN_USA, {0x8aa4, 0x8B02}},
+	{RU_RUS, {0x87be, 0x881c}},
 	{UNK_LANG, {0, 0}}
 };
 
@@ -128,6 +129,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 	switch (language) {
 	case EN_ANY:
 	case EN_USA:
+	case RU_RUS:
 		if (startOffset == 0x7dcb) { startOffset = 0x7d9d; maxOffset = 0x7dcb; }
 		if (startOffset == 0x7248) { startOffset = 0x71ce; maxOffset = 0x7248; }
 		if (startOffset == 0x79a8) { startOffset = 0x785c; maxOffset = 0x79a8; }
@@ -372,7 +374,8 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	else if (language == FR_FRA) raOffset = 0x4df0;
 	else if (language == DE_DEU) raOffset = 0x4de0;
 	else if (language == ES_ESP) raOffset = 0x4dc0;
-	else if (language != EN_ANY && language != EN_USA)
+	// Russian language is a hack on top of English
+	else if (language != EN_ANY && language != EN_USA && language != RU_RUS)
 		errorExit("read_action_sequence: Unknown language");
 
 	lureExe.seek(dataSegment + raOffset, SEEK_SET);
@@ -422,6 +425,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	switch (language) {
 	case EN_ANY:
 	case EN_USA:
+	case RU_RUS:
 		process_entry(0x13c2, data, totalSize);	  // RETURN sequence
 		process_entry(0xbb95, data, totalSize);	  // Exit blocked sequence
 		process_entry(0x706c, data, totalSize);   // Jump proc #2 - go to castle basement
@@ -467,7 +471,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	else if (language == FR_FRA) hsOffset = 0x5e78;
 	else if (language == DE_DEU) hsOffset = 0x5ea8;
 	else if (language == ES_ESP) hsOffset = 0x5e78;
-	else if (language != EN_ANY && language != EN_USA)
+	else if (language != EN_ANY && language != EN_USA && language != RU_RUS)
 		errorExit("read_action_sequence: Unknown language");
 
 	hotspotIndex = 0;
