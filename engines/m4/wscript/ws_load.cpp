@@ -518,7 +518,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	uint32 *celsPtr = (uint32 *)((intptr)*resourceHandle + handleOffset);
 
 	// Check that the index into the series requested is within a valid range
-	uint32 numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	const uint32 numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= (int32)numCels) {
 		ws_LogErrorMsg(FL, "CreateSprite: Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return nullptr;

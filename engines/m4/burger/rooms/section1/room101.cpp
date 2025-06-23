@@ -550,6 +550,7 @@ void Room101::daemon() {
 			break;
 
 		case 11:
+		case 18:
 			door();
 			ws_unhide_walker(_G(my_walker));
 			player_set_commands_allowed(true);
@@ -585,12 +586,6 @@ void Room101::daemon() {
 			}
 
 			series_play("101ha01", 3840, 0, 1, 6, 0, 100, 0, 0, 0, 7);
-			break;
-
-		case 18:
-			door();
-			ws_unhide_walker(_G(my_walker));
-			player_set_commands_allowed(true);
 			break;
 
 		case 19:

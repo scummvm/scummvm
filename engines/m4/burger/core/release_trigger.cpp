@@ -32,18 +32,17 @@ void release_trigger_on_digi_state(int32 trigger, int32 checkChannels, int32 mat
 	_GT(check_channels) = checkChannels;
 	_GT(match_value) = matchValue;
 
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
 	kernel_trigger_dispatch_now(kRELEASE_TRIGGER_DIGI_CHECK);
 	_G(kernel).trigger_mode = oldMode;
 }
 
 void release_trigger_digi_check() {
-	uint32 i;
 	uint32 digi_state = 0;
 
 	// Set channel bits in digi_state that a sound is presently busy in each channel
-	for (i = 0; i < 3; ++i) {
+	for (uint32 i = 0; i < 3; ++i) {
 		if (digi_play_state(i + 1))	 	// Check if a sound is playing
 			digi_state |= (1 << i); 	// Set the bit that corresponds with this channel 
 	}

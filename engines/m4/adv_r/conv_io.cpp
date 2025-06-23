@@ -394,9 +394,7 @@ static void conv_save_state(Conv *c) {
 			// Append
 			offset = 0;
 
-			if (conv_save_buff)
-				mem_free(conv_save_buff);
-
+			mem_free(conv_save_buff);
 			conv_save_buff = (char *)mem_alloc(amt_to_write + NAME_SIZE + sizeof(int32), "conv save buff");
 			if (!conv_save_buff)
 				error_show(FL, 'OOM!');

@@ -22,7 +22,6 @@
 #include "m4/burger/core/play_break.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/burger/vars.h"
-#include "m4/platform/sound/digi.h"
 #include "m4/graphics/gr_series.h"
 
 namespace M4 {
@@ -43,7 +42,7 @@ static void set_next_series_play_break(int32 slot) {
 			// Are the first and last frame numbers backwards?
 			if ((player->current_break.lastFrame != -1) && (player->current_break.firstFrame > player->current_break.lastFrame)) {
 				player->current_break.flags = player->current_break.flags | SERIES_BACKWARD;	// make sure SERIES_BACKWARD is in flags
-				int32 temp = player->current_break.firstFrame;									// switch the first and last frame numbers
+				const int32 temp = player->current_break.firstFrame;							// switch the first and last frame numbers
 				player->current_break.firstFrame = player->current_break.lastFrame;
 				player->current_break.lastFrame = temp;
 			}
@@ -137,7 +136,8 @@ int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name, fr
 
 	// look for a free player slot (MAX_SERIES_PLAYERS)
 	for (slot = 0; slot < MAX_SERIES_PLAYERS; ++slot) {
-		if (!(_G(seriesPlayers)[slot].in_use))	break;
+		if (!(_G(seriesPlayers)[slot].in_use))
+			break;
 	}
 
 	if (slot >= MAX_SERIES_PLAYERS) {

@@ -460,7 +460,7 @@ void Room102::daemon() {
 					break;
 				}
 
-				if (++_val5 > 24 && _val5 != -666 && player_commands_allowed()) {
+				if (++_val5 > 24 && player_commands_allowed()) {
 					_val5 = -666;
 					conv_load_and_prepare("conv05", 20, false);
 					conv_export_pointer_curr(&_G(flags)[V016], 0);
@@ -875,8 +875,10 @@ void Room102::daemon() {
 		break;
 
 	case 19:
+	case 28:
 		player_set_commands_allowed(true);
 		break;
+
 
 	case 21:
 		if (_G(flags)[V013]) {
@@ -931,10 +933,6 @@ void Room102::daemon() {
 			_G(kernel).trigger_mode = oldMode;
 			_trigger = -1;
 		}
-		break;
-
-	case 28:
-		player_set_commands_allowed(true);
 		break;
 
 	case 29:
