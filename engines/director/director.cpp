@@ -383,6 +383,9 @@ Common::Error DirectorEngine::run() {
 	_system->setImGuiCallbacks(ImGuiCallbacks());
 #endif
 
+	if (debugChannelSet(-1, kDebugLoading)) { 
+		writeToFile();
+	}
 	return Common::kNoError;
 }
 

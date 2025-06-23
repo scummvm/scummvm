@@ -61,10 +61,10 @@ public:
 
 	virtual bool openFile(const Common::Path &path);
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
-	virtual bool writeStream() { 
+	virtual bool writeToFile(Common::Path path) { 
 		// Saving Director movies was introduced in Director 4
 		// However, from DirectorEngine::createArchive, it is evident that after Director 4 only RIFX Archives were written
-		error("Archive::writeStream was called on a non-RIFX Archive, which is not allowed");
+		error("Archive::writeToFile was called on a non-RIFX Archive, which is not allowed");
 		return false;
 	} 
 	virtual void close();
@@ -148,7 +148,7 @@ public:
 	~RIFXArchive() override;
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
-	bool writeStream() override;
+	bool writeToFile(Common::Path path = Common::Path("./dumps/writtenMovie.dir")) override;
 
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
@@ -159,11 +159,11 @@ public:
 	Common::String formatArchiveInfo() override;
 
 private:
-	/* These functions are for writing movies parallel to readMemoryMap, readAfterBurnerMap and readKeyTable */
-	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream);
-	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);
-	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);
-	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset);
+	/* These functions are for writing movies */
+	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream); 	// Parallel to readMemoryMap
+	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
+	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);	// Parallel to readKeyTable
+	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset);	// Parallel to readCast
 
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
@@ -174,8 +174,12 @@ private:
 	uint32 _metaTag;
 	uint32 _moreOffset;
 	uint32 _mapversion;
-	uint32 _mmapOffsetPos;
 	uint32 _mmapOffset;
+	uint32 _mmapLength;
+	uint32 _mmapHeaderSize;
+	uint32 _mmapEntrySize;
+	uint32 _totalCount;
+	uint32 _resCount;
 	uint32 _imapLength;
 	uint32 _version;
 	uint32 _size;
@@ -195,12 +199,6 @@ private:
 	uint32 _abmpCompressionType;
 	unsigned long _abmpUncompLength;
 	unsigned long _abmpActualUncompLength;
-
-	/* Config data to save the file */
-	Cast *_cast;
-
-	/* Movie Cast Lib Mapping data to save the file */
-	Movie *_movie;
 
 protected:
 	uint32 _rifxType;
