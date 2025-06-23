@@ -45,7 +45,7 @@ static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE,
 		break;
 	case NOTSRCCOPY:
 		if (isDestMonochrome) {
-			*destP = *srcP == bgColor ? 0xff : 0;
+			*destP = *srcP == bgColor ? 0 : 0xff;
 			return;
 		}
 
@@ -66,7 +66,7 @@ static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE,
 	}
 
 	if (isDestMonochrome)
-		*destP = *destP == bgColor ? 0 : 0xff;
+		*destP = *destP == bgColor ? 0xff : 0;
 }
 
 template<typename T>
