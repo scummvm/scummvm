@@ -116,6 +116,7 @@ private:
 	int _chanAllocated;
 
 	int _dissolveMethod;
+	int32 _periodicNoiseMask;
 
 	uint8 *_v1data;
 	uint32 _v1size;

@@ -102,8 +102,6 @@ const int8 dissolveDataV3[] = {
 	-100
 };
 
-int32 periodicNoiseMask = 0x08000; // default 15-bit periodic noise mask
-
 SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
 	_chanAllocated = 10240; // preallocate something which will most likely fit
 	_chanData = (int16 *)malloc(_chanAllocated << 1);
@@ -122,9 +120,10 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 	else
 		_dissolveMethod = 0;
 
-	Common::String cfgPCjrNoise = ConfMan.get("pcjr_16bitnoise");
-	if (cfgPCjrNoise == "true")
-		periodicNoiseMask = 0x10000;
+	if (ConfMan.getBool("pcjr_16bitnoise"))
+		_periodicNoiseMask = 0x10000; // non-standard, SEGA-like 16-bit periodic noise mask
+	else
+		_periodicNoiseMask = 0x08000; // default 15-bit periodic noise mask
 
 	memset(_channel, 0, sizeof(_channel));
 	memset(_tchannel, 0, sizeof(_tchannel));
