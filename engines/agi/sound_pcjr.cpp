@@ -523,7 +523,7 @@ int SoundGenPCJr::fillNoise(ToneChan *t, int16 *buf, int len) {
 		t->count = t->scale;
 		t->freqCountPrev = t->freqCount;
 
-		t->feedback = (t->genType == kGenWhite) ? FB_WNOISE : periodicNoiseMask;
+		t->feedback = (t->genType == kGenWhite) ? FB_WNOISE : _periodicNoiseMask;
 		// reset noise shifter
 		t->noiseState = NG_PRESET;
 		t->sign = t->noiseState & 1;
