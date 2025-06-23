@@ -201,6 +201,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_PCJR_SN76496_16BIT,
+		{
+			_s("Use PCjr's sound chip in 16-bit shift mode"),
+			_s("In PCjr sound mode, emulate a non-standard SN76496 sound chip, similar to chips found in SEGA Master System consoles. Allows certain music effects, especially in fanmade games, but original Sierra music designed strictly for PCjr may sound wrong."),
+			"pcjr_16bitnoise",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

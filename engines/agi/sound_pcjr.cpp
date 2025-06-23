@@ -122,8 +122,8 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 	else
 		_dissolveMethod = 0;
 
-	Common::String cfgPCjrNoise = ConfMan.get("pcjr_noise");
-	if (cfgPCjrNoise == "16")
+	Common::String cfgPCjrNoise = ConfMan.get("pcjr_16bitnoise");
+	if (cfgPCjrNoise == "true")
 		periodicNoiseMask = 0x10000;
 
 	memset(_channel, 0, sizeof(_channel));
