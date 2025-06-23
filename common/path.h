@@ -470,6 +470,19 @@ public:
 	Path &removeTrailingSeparators();
 
 	/**
+	 * Removes extension from the last component of this path (in-place).
+	 * If the last component has no extension, this does nothing.
+	 *
+	 * Punycode encoded paths are not supported.
+	 *
+	 * If nullptr is passed as @p ext, it will remove the last extension,
+	 * otherwise it will remove the extension only if it matches @p ext.
+	 *
+	 * The extension must have a leading dot, e.g. ".txt".
+	 */
+	Path &removeExtension(const char *ext = nullptr);
+
+	/**
 	 * Returns whether this path ends with a separator
 	 */
 	bool isSeparatorTerminated() const { return _str.lastChar() == SEPARATOR; }

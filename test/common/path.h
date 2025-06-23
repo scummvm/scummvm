@@ -538,4 +538,66 @@ class PathTestSuite : public CxxTest::TestSuite
 	void test_canUnescape() {
 		TS_ASSERT(Common::Path::canUnescape(true, true, ""));
 	}
+
+	void test_removeExtension() {
+		Common::Path p(TEST_PATH);
+		p.removeExtension();
+		TS_ASSERT_EQUALS(p.toString(), "parent/dir/file");
+
+		Common::Path p2("parent/dir/file.txt.gz");
+		p2.removeExtension();
+		TS_ASSERT_EQUALS(p2.toString(), "parent/dir/file.txt");
+
+		Common::Path p3("parent/dir/file.");
+		p3.removeExtension();
+		TS_ASSERT_EQUALS(p3.toString(), "parent/dir/file");
+
+		Common::Path p4("parent/dir/file.txt.txt");
+		p4.removeExtension(".txt");
+		TS_ASSERT_EQUALS(p4.toString(), "parent/dir/file.txt");
+
+		Common::Path p5("parent/dir/file.txt");
+		p5.removeExtension(".txt");
+		TS_ASSERT_EQUALS(p5.toString(), "parent/dir/file");
+
+		Common::Path p6("parent/dir.txt/file.gz");
+		p6.removeExtension(".txt");
+		TS_ASSERT_EQUALS(p6.toString(), "parent/dir.txt/file.gz");
+
+		Common::Path p7("parent/dir/xn--Sound Manager 3.1  SoundLib-lba84k/Sound.txt");
+		p7.removeExtension(".txt");
+		TS_ASSERT_EQUALS(p7.toString(), "parent/dir/xn--Sound Manager 3.1  SoundLib-lba84k/Sound");
+
+		Common::Path p8("parent/dir/Sound/xn--dialred.dir-qa21d");
+		p8.removeExtension(".dir");
+		TS_ASSERT_EQUALS(p8.toString(), "parent/dir/Sound/xn--dialred.dir-qa21d");
+
+		Common::Path p9("parent/dir/.ab");
+		p9.removeExtension();
+		TS_ASSERT_EQUALS(p9.toString(), "parent/dir/");
+
+		Common::Path p10("parent/dir/.ab");
+		p10.removeExtension(".abc");
+		TS_ASSERT_EQUALS(p10.toString(), "parent/dir/.ab");
+
+		Common::Path p11(".ab");
+		p11.removeExtension(".abc");
+		TS_ASSERT_EQUALS(p11.toString(), ".ab");
+
+		Common::Path p12("test.dir");
+		p12.removeExtension(".dir");
+		TS_ASSERT_EQUALS(p12.toString(), "test");
+
+		Common::Path p13("test.dir");
+		p13.removeExtension(".txt");
+		TS_ASSERT_EQUALS(p13.toString(), "test.dir");
+
+		Common::Path p14("test.dir.txt");
+		p14.removeExtension(".dir");
+		TS_ASSERT_EQUALS(p14.toString(), "test.dir.txt");
+
+		Common::Path p15(".dir");
+		p15.removeExtension(".dir");
+		TS_ASSERT_EQUALS(p15.toString(), "");
+	}
 };
