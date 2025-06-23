@@ -575,6 +575,15 @@ Archive *DirectorEngine::loadMac(const Common::Path &movie) {
 	return result;
 }
 
+void DirectorEngine::writeToFile(Common::Path writePath) {
+	if (!_mainArchive) {
+		error("DirectorEngine::writeToFile: Write to file called before setting mainArchive");
+	}
+
+	debugC(3, kDebugLoading, "DirectorEngine::writeToFile: Writing the main archive %s, to %s", _mainArchive->getFileName().c_str(), writePath.toString().c_str());
+	_mainArchive->writeToFile(writePath);
+}
+
 void Window::loadXtrasFromPath() {
 	// For D5 and above, Xtras are considered plug and play.
 	// According to Director Demystified: it considers an
