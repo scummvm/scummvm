@@ -463,7 +463,7 @@ static void yflip(const uint8 *src, int w, int h, uint8 *dst) {
 }
 
 void Video::scaleBitmap(const uint8 *src, int fmt) {
-	_graphics->drawBitmap(_buffers[0], src, BITMAP_W, BITMAP_H, fmt);
+	_graphics->drawBitmap(0, src, BITMAP_W, BITMAP_H, fmt);
 }
 
 void Video::copyBitmapPtr(const uint8 *src, uint32 size) {
