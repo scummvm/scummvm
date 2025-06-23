@@ -351,6 +351,39 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 	if (fileList.empty())
 		return {};
 
+	// First, we go through the list and check any Mac files
+	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> macFiles;
+	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> toRemove;
+	Common::List<Common::Path> filteredFileList;
+	Common::List<Common::Path> tmpFileList;
+
+	for (const auto &entry : fileList) {
+		if (entry.isDirectory())
+			continue;
+
+		Common::Path filename(entry.getPath().relativeTo(gamePath));
+		const Common::Path originalFileName = filename;
+		filename.removeExtension(".bin");
+		filename.removeExtension(".rsrc");
+
+		auto macFile = Common::MacResManager();
+
+		if (macFile.open(filename) && macFile.isMacFile()) {
+			macFiles[filename] = true;
+
+			tmpFileList.push_back(filename);
+		} else {
+			if (!toRemove.contains(originalFileName))
+				tmpFileList.push_back(originalFileName);
+		}
+	}
+
+	for (const auto &entry : tmpFileList) {
+		if (!toRemove.contains(entry)) {
+			filteredFileList.push_back(entry);
+		}
+	}
+
 	// Process the files and subdirectories in the current directory recursively
 	for (const auto &entry : fileList) {
 		if (entry.isDirectory()) {
