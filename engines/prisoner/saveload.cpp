@@ -774,11 +774,21 @@ void PrisonerEngine::savegame(const char *filename, const char *description) {
 	out->writeByte(_screenTextShowing);
 	out->writeByte(_screenTextHasSpeech);
 
-	// TODO: Music
-	out->writeByte(0);
+	// Music
+	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
+		MusicSlot &musicSlot = _musics[musicIndex];
+		out->writeUint16LE(musicSlot.resourceCacheSlot);
+		if (musicSlot.resourceCacheSlot != -1) {
+			writeResourceCacheSlotInfo(musicSlot.resourceCacheSlot, _res, out);
+			out->writeByte(musicSlot.volumeFlag);
+			out->writeUint16LE(musicSlot.volume);
+			out->writeByte(musicSlot.shouldResume);
+			out->writeByte(musicSlot.moduleWide);
+		}
+	}
+
 
 	// Sound
-	out->writeByte(1);
 	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
 		SoundSlot &soundSlot = _sounds[soundIndex];
 		out->writeUint16LE(soundSlot.resourceCacheSlot);
@@ -1029,26 +1039,36 @@ void PrisonerEngine::loadgame(const char *filename) {
 	_screenTextShowing = in->readByte() != 0;
 	_screenTextHasSpeech = in->readByte() != 0;
 
-	// TODO: Music
-	in->readByte();
+	// Music
+	for (int16 musicIndex = 0; musicIndex < kMaxMusics; musicIndex++) {
+		MusicSlot &musicSlot = _musics[musicIndex];
+		musicSlot.resourceCacheSlot = in->readUint16LE();
+		if (musicSlot.resourceCacheSlot != -1) {
+			musicSlot.resourceCacheSlot = loadResourceCacheSlotInfo<MidiResource>(_res, in);
+			musicSlot.volumeFlag = in->readByte() != 0;
+			musicSlot.volume = in->readUint16LE();
+			musicSlot.shouldResume = in->readByte() != 0;
+			musicSlot.moduleWide = in->readByte() != 0;
+			// Restart the music
+			setMusicVolume(musicIndex, musicSlot.volume);
+			playMusic(musicIndex);
+		}
+	}
 
 	// Sound
-	// TODO: REMOVEME (don't read/write the flag byte later)
-	if (in->readByte() == 1) {
-		for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
-			SoundSlot &soundSlot = _sounds[soundIndex];
-			soundSlot.resourceCacheSlot = in->readUint16LE();
-			if (soundSlot.resourceCacheSlot != -1) {
-				soundSlot.resourceCacheSlot = loadResourceCacheSlotInfo<SoundResource>(_res, in);
-				soundSlot.volumeFlag = in->readByte() != 0;
-				soundSlot.volume = in->readUint16LE();
-				soundSlot.shouldResume = in->readByte() != 0;
-				soundSlot.moduleWide = in->readByte() != 0;
-				if (soundSlot.shouldResume) {
-					// Restart the sound
-					setSoundVolume(soundIndex, soundSlot.volume);
-					playLoopingSound(soundIndex, 0);
-				}
+	for (int16 soundIndex = 0; soundIndex < kMaxSounds; soundIndex++) {
+		SoundSlot &soundSlot = _sounds[soundIndex];
+		soundSlot.resourceCacheSlot = in->readUint16LE();
+		if (soundSlot.resourceCacheSlot != -1) {
+			soundSlot.resourceCacheSlot = loadResourceCacheSlotInfo<SoundResource>(_res, in);
+			soundSlot.volumeFlag = in->readByte() != 0;
+			soundSlot.volume = in->readUint16LE();
+			soundSlot.shouldResume = in->readByte() != 0;
+			soundSlot.moduleWide = in->readByte() != 0;
+			if (soundSlot.shouldResume) {
+				// Restart the sound
+				setSoundVolume(soundIndex, soundSlot.volume);
+				playLoopingSound(soundIndex, 0);
 			}
 		}
 	}
