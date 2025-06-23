@@ -26,6 +26,10 @@
 #include "sword25/sword25.h"
 #include "sword25/kernel/persistenceservice.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Sword25 {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -62,6 +66,8 @@ public:
 
 	int getMaximumSaveSlot() const override { return Sword25::PersistenceService::getSlotCount(); }
 	SaveStateList listSaves(const char *target) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -93,6 +99,41 @@ SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 	}
 
 	return saveList;
+}
+
+Common::KeymapArray Sword25MetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Sword25;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "sword25-default", _("Default keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Move / Interact / Skip dialog"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIPDLG", _("Examine / Skip dialog"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionPause, _("Pause"));
+	act->setKeyEvent(KeyState(KEYCODE_p, 'p'));
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("REVEALHOTSPOTS", _("Reveal all interactive hotspots (hold the key)"));
+	act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+	
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
