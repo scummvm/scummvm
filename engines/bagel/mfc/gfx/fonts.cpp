@@ -67,9 +67,8 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
 		const char *lpszFacename) {
 	Gfx::Font *font = nullptr;
-
-	// TODO: We don't really handle +/- heights properly
-	nHeight = ABS(nHeight);
+	int charHeight = (nHeight < 0) ? -nHeight :
+		nHeight * 16 / 24;
 
 	// First scan for an existing cached copy of the font
 	for (auto &it : _fonts) {
@@ -85,13 +84,12 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		Graphics::WinFont *winFont = new Graphics::WinFont();
 
 		for (auto &filename : _fontResources) {
-			// FIXME: Windows does some rounding up or down to
+			// Note: Windows does some rounding up or down to
 			// the closest size for a given face name if the
-			// requested size isn't available. For now,
-			// for Hodj n Podj, I'll just have a single - 2 fallback
-			for (int h = nHeight; h >= (nHeight - 2); h -= 2) {
+			// requested size isn't available
+			for (int h = charHeight; h >= 2; --h) {
 				if (winFont->loadFromFON(filename, Graphics::WinFontDirEntry(
-					lpszFacename, h))) {
+					lpszFacename, (h >= 6) ? h : charHeight + (6 - h)))) {
 					// Loaded successfully
 					font = new Gfx::Font(winFont, lpszFacename, nHeight);
 
