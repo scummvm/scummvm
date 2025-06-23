@@ -26,6 +26,10 @@
 #include "sword25/sword25.h"
 #include "sword25/kernel/persistenceservice.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Sword25 {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -62,6 +66,8 @@ public:
 
 	int getMaximumSaveSlot() const override { return Sword25::PersistenceService::getSlotCount(); }
 	SaveStateList listSaves(const char *target) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -93,6 +99,86 @@ SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 	}
 
 	return saveList;
+}
+
+Common::KeymapArray Sword25MetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Sword25;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "sword25-default", _("Default keymappings"));
+	Keymap *debugKeyMap = new Keymap(Keymap::kKeymapTypeGame, "debug", _("Debug keymappings"));
+
+	Common::Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Move / Interact / Skip dialog"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIPDLG", _("Examine / Skip dialog"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionPause, _("Pause"));
+	act->setKeyEvent(KeyState(KEYCODE_p, 'p'));
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("REVEALHOTSPOTS", _("Reveal all interactive hotspots (hold)"));
+	act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	if (debugChannelSet(-1, kDebugInternalDebugger)) {
+
+		act = new Action("QUIT", _("Quit game"));
+		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+		act->addDefaultInputMapping("ESCAPE");
+		debugKeyMap->addAction(act);
+
+		act = new Action("DEBUGCONSOLE", _("Toggle debug console"));
+		act->setKeyEvent(KeyState(KEYCODE_F1, KEYCODE_F1));
+		act->addDefaultInputMapping("F1");
+		debugKeyMap->addAction(act);
+
+		act = new Action("SHOWINFO", _("Toggle info text (FPS, memory usage, coordinates, etc.)"));
+		act->setKeyEvent(KeyState(KEYCODE_F2, KEYCODE_F2));
+		act->addDefaultInputMapping("F2");
+		debugKeyMap->addAction(act);
+
+		act = new Action("TOGGLE_VSYNC", _("Toggle VSync mode"));
+		act->setKeyEvent(KeyState(KEYCODE_F3, KEYCODE_F3));
+		act->addDefaultInputMapping("F3");
+		debugKeyMap->addAction(act);
+
+		act = new Action("SHOW_WALK_REGIONS", _("Toggle walk regions"));
+		act->setKeyEvent(KeyState(KEYCODE_F4, KEYCODE_F4));
+		act->addDefaultInputMapping("F4");
+		debugKeyMap->addAction(act);
+
+		act = new Action("SHOW_ITEM_REGIONS", _("Toggle item regions"));
+		act->setKeyEvent(KeyState(KEYCODE_F5, KEYCODE_F5));
+		act->addDefaultInputMapping("F5");
+		debugKeyMap->addAction(act);
+
+		act = new Action("TAKE_SCREENSHOT", _("Take and save screenshot"));
+		act->setKeyEvent(KeyState(KEYCODE_F6, KEYCODE_F6));
+		act->addDefaultInputMapping("F6");
+		debugKeyMap->addAction(act);
+
+	}
+	
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = debugKeyMap;
+
+	return keymaps;
+
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
