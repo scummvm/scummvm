@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-23 16:05+0000\n"
-"PO-Revision-Date: 2025-06-21 18:46+0000\n"
+"PO-Revision-Date: 2025-06-23 18:40+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -12616,58 +12616,40 @@ msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr "Discworld Noir kräver ScummVM med TinyGL aktiverat"
 
 #: engines/titanic/metaengine.cpp:173
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "PET keymappings"
-msgstr "Escape-tangentmappningar"
+msgstr "PET-tangentmappningar"
 
 #: engines/titanic/metaengine.cpp:174
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Real Life keymappings"
-msgstr "Tangentmappningar för spel"
+msgstr "Tangentmappningar för verkliga livet"
 
 #: engines/titanic/metaengine.cpp:175
-#, fuzzy
-#| msgid "KIA only shortcuts"
 msgid "Inventory shortcut"
-msgstr "Genvägar endast för KIA"
+msgstr "Genväg för inventarier"
 
 #: engines/titanic/metaengine.cpp:176
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Continue game dialogue keymappings"
-msgstr "Tangentmappningar för minispel"
+msgstr "Tangentmappningar för fortsätt speldialog"
 
 #: engines/titanic/metaengine.cpp:177
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Star Map keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Tangentmappningar för Star Map"
 
 #: engines/titanic/metaengine.cpp:178
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Movement keymappings"
-msgstr "Tangentmappningar för meny"
+msgstr "Tangentmappningar för förflyttning"
 
 #: engines/titanic/metaengine.cpp:182
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact / Move"
-msgstr "Interaktionsläge"
+msgstr "Välj / Interagera / Flytta"
 
 #: engines/titanic/metaengine.cpp:188
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Select / Interact / Quick move"
-msgstr "Flytta / Interagera / Hoppa över dialog"
+msgstr "Välj / Interagera / Snabb förflyttning"
 
 #: engines/titanic/metaengine.cpp:194
-#, fuzzy
-#| msgid "Game menu"
 msgid "Cheat menu"
-msgstr "Spelmeny"
+msgstr "Fuskmeny"
 
 #: engines/titanic/metaengine.cpp:218 engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -12698,92 +12680,72 @@ msgid "Scroll down"
 msgstr "Bläddra nedåt"
 
 #: engines/titanic/metaengine.cpp:239
-#, fuzzy
-#| msgid "Conversation log"
 msgid "Conversation"
-msgstr "Konversationslogg"
+msgstr "Konversation"
 
 #: engines/titanic/metaengine.cpp:249
-#, fuzzy
-#| msgid "Remove"
 msgid "Remote"
-msgstr "Ta bort"
+msgstr "Fjärrkontroll"
 
 #: engines/titanic/metaengine.cpp:254
-#, fuzzy
-#| msgid "Room:"
 msgid "Rooms"
-msgstr "Rum:"
+msgstr "Rum"
 
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
-msgstr ""
+msgstr "Verkliga livet"
 
 #: engines/titanic/metaengine.cpp:264
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll up page"
-msgstr "Bläddra uppåt"
+msgstr "Rulla upp sida"
 
 #: engines/titanic/metaengine.cpp:271
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll down page"
-msgstr "Bläddra nedåt"
+msgstr "Rulla ner sida"
 
 #: engines/titanic/metaengine.cpp:278
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to top"
-msgstr "Bläddra listan uppåt"
+msgstr "Rulla överst"
 
 #: engines/titanic/metaengine.cpp:284
-#, fuzzy
-#| msgid "Move to bottom"
 msgid "Scroll to bottom"
-msgstr "Flytta nederst"
+msgstr "Rulla nederst"
 
 #: engines/titanic/metaengine.cpp:291
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Translation"
-msgstr "Övergångar:"
+msgstr "Översättning"
 
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
-msgstr ""
+msgstr "Växla mellan Star Map och foto på ditt hem"
 
 #: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
-#, fuzzy
 msgid "Move forward"
-msgstr "Steg framåt"
+msgstr "Flytta framåt"
 
 #: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
-#, fuzzy
 msgid "Move backward"
-msgstr "Steg bakåt"
+msgstr "Flytta bakåt"
 
 #: engines/titanic/metaengine.cpp:350
 msgid "Stop moving"
-msgstr ""
+msgstr "Stanna förflyttning"
 
 #: engines/titanic/metaengine.cpp:356
 msgid "Lock coordinate"
-msgstr ""
+msgstr "Lås koordinat"
 
 #: engines/titanic/metaengine.cpp:362
 msgid "Unlock coordinate"
-msgstr ""
+msgstr "Lås upp koordinat"
 
 #: engines/titanic/metaengine.cpp:368
-#, fuzzy
-#| msgid "Exit conversation"
 msgid "View constellations"
-msgstr "Avsluta konversation"
+msgstr "Visa konstellationer"
 
 #: engines/titanic/metaengine.cpp:373
 msgid "View boundaries"
-msgstr ""
+msgstr "Visa gränser"
 
 #: engines/toltecs/metaengine.cpp:216
 msgid "Move / Select"
