@@ -127,6 +127,9 @@ void Engine::setup(Language lang, int graphicsType) {
 		case Common::FR_FRA:
 			_vid._stringsTable = Video::STRINGS_TABLE_FR;
 			break;
+		case Common::IT_ITA:
+			_vid._stringsTable = Video::STRINGS_TABLE_ITA;
+			break;
 		case Common::EN_ANY:
 		default:
 			_vid._stringsTable = Video::STRINGS_TABLE_ENG;
