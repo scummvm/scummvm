@@ -27,12 +27,26 @@ const PlainGameDescriptor aweGames[] = {
 };
 
 const AweGameDescription gameDescriptions[] = {
+
+	// DOS Floppy (1991) French/English
 	{
 		{
 			"anotherworld",
 			nullptr,
 			AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
+	},
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
+			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
 			GUIO1(GAMEOPTION_COPY_PROTECTION)
@@ -61,6 +75,20 @@ const AweGameDescription gameDescriptions[] = {
 			"anotherworld",
 			nullptr,
 			AD_ENTRY1s("memlist.bin", "4605962431175a5b961f6db4041adcff", 2940),
+			Common::EN_USA,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
+	},
+
+	// Out of This World (alternate)
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("memlist.bin", "ee9e67fcaace0300fec4e619299e6e0e", 2940),
 			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
