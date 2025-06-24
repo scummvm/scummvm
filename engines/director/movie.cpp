@@ -284,6 +284,13 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
+void Movie::writeRect(Common::MemoryWriteStream *writeStream, Common::Rect rect) {
+	writeStream->writeSint16LE(rect.top);
+	writeStream->writeSint16LE(rect.left);
+	writeStream->writeSint16LE(rect.bottom);
+	writeStream->writeSint16LE(rect.right);
+}
+
 InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version) {
 	uint32 offset = stream.pos();
 	offset += stream.readUint32();

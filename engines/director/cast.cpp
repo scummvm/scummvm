@@ -318,20 +318,21 @@ bool Cast::loadConfig() {
 	if (stream->size() > 36) {
 		stream->seek(36);					// Seek to version
 		_version = stream->readSint16();	// Read version for post-D3
+		_directorVersion = _version;
 		stream->seek(0);					// Seek to start of stream
 	}
 
-	uint16 len = stream->readUint16();
-	uint16 fileVersion = stream->readUint16(); // TODO: very high fileVersion means protected
+	_len = stream->readUint16();
+	_fileVersion = stream->readUint16(); // TODO: very high fileVersion means protected
 
 	if (stream->size() <= 36)
-		_version = fileVersion;				// Checking if we have already read the version
+		_version = _fileVersion;				// Checking if we have already read the version
 
 	uint humanVer = humanVersion(_version);
 
-	Common::Rect checkRect = Movie::readRect(*stream);
+	_checkRect = Movie::readRect(*stream);
 	if (!g_director->_fixStageSize)
-		_movieRect = checkRect;
+		_movieRect = _checkRect;
 	else
 		_movieRect = g_director->_fixStageRect;
 
@@ -341,11 +342,11 @@ bool Cast::loadConfig() {
 	// D3 and below use this, override for D4 and over
 	// actual framerates are, on average: { 3.75, 4, 4.35, 4.65, 5, 5.5, 6, 6.6, 7.5, 8.5, 10, 12, 20, 30, 60 }
 	Common::Array<int> frameRates = { 3, 4, 4, 4, 5, 5, 6, 6, 7, 8, 10, 12, 15, 20, 30, 60 };
-	byte readRate = stream->readByte();
-	if (readRate <= 0xF) {
-		_frameRate = frameRates[readRate];
+	_readRate = stream->readByte();
+	if (_readRate <= 0xF) {
+		_frameRate = frameRates[_readRate];
 	} else {
-		switch (readRate) {
+		switch (_readRate) {
 			// rate when set via the tempo channel
 			// these rates are the actual framerates
 			case 0x10:
@@ -362,29 +363,30 @@ bool Cast::loadConfig() {
 				_frameRate = 3;
 				break;
 			default:
-				warning("BUILDBOT: Cast::loadConfig: unhandled framerate: %i", readRate);
-				_frameRate = readRate;
+				warning("BUILDBOT: Cast::loadConfig: unhandled framerate: %i", _readRate);
+				_frameRate = _readRate;
 		}
 	}
 
-	byte lightswitch = stream->readByte();
 
-	int16 unk1 = stream->readSint16();
+	_lightswitch = stream->readByte();
+
+	_unk1 = stream->readSint16();
 
 	// Warning for post-D7 movies (unk1 is stageColorG and stageColorB post-D7)
 	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", unk1);
+		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", _unk1);
 
-	uint16 commentFont = stream->readUint16();
-	uint16 commentSize = stream->readUint16();
-	uint16 commentStyle = stream->readUint16();
+	_commentFont = stream->readUint16();
+	_commentSize = stream->readUint16();
+	_commentStyle = stream->readUint16();
 	_stageColor = stream->readUint16();
 
 	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
 	if (humanVer >= 700)
 		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
 
-	uint16 bitdepth = stream->readUint16();
+	_bitdepth = stream->readUint16();
 
 	// byte color = stream.readByte();	// boolean, color = 1, B/W = 0
 	// uint16 stageColorR = stream.readUint16();
@@ -392,73 +394,69 @@ bool Cast::loadConfig() {
 	// uint16 stageColorB = stream.readUint16();
 
 	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, fileVersion: %d, light: %d, unk: %d, font: %d, size: %d"
-			", style: %d", len, fileVersion, lightswitch, unk1, commentFont, commentSize, commentStyle);
+			", style: %d", _len, _fileVersion, _lightswitch, _unk1, _commentFont, _commentSize, _commentStyle);
 	debugC(1, kDebugLoading, "Cast::loadConfig(): stagecolor: %d, depth: %d",
-			_stageColor, bitdepth);
+			_stageColor, _bitdepth);
 	if (debugChannelSet(1, kDebugLoading))
 		_movieRect.debugPrint(1, "Cast::loadConfig(): Movie rect: ");
 
 	// Fields required for checksum calculation
-	uint8 field17 = 0, field18 = 0;
-	int16 field21 = 0;
-	int32 field19 = 0, field22 = 0, field23 = 0;
-
 	// D3 fields - Macromedia did not increment the fileVersion from D2 to D3
 	// so we just have to check if there are more bytes to read.
 	if (stream->pos() < stream->size()) {
 
 		//reading these fields for the sake of checksum calculation
-		field17 = stream->readByte();
-		field18 = stream->readByte();
-		field19 = stream->readSint32();
+		_field17 = stream->readByte();
+		_field18 = stream->readByte();
+		_field19 = stream->readSint32();
 
-		/* _version = */ stream->readUint16();
+		_directorVersion =  stream->readUint16();
 
-		field21 = stream->readSint16();
-		field22 = stream->readSint32();
-		field23 = stream->readSint32();
+		_field21 = stream->readSint16();
+		_field22 = stream->readSint32();
+		_field23 = stream->readSint32();
 	}
 
 	debugC(1, kDebugLoading, "Cast::loadConfig(): directorVersion: %d", humanVer);
 
 	if (_version >= kFileVer400) {
-		int32 field24 = stream->readSint32();
-		int8 field25 = stream->readSByte();
-		/* int8 field26 = */ stream->readSByte();
+		_field24 = stream->readSint32();
+		_field25 = stream->readSByte();
+		_field26 = stream->readSByte();
 
 		_frameRate = stream->readSint16();
-		uint16 platform = stream->readUint16();
-		_platform = platformFromID(platform);
+		_platformID = stream->readUint16();
+		_platform = platformFromID(_platformID);
 
-		int16 protection = stream->readSint16();
-		_isProtected = (protection % 23) == 0;
-		/* int32 field29 = */ stream->readSint32();
-		uint32 checksum = stream->readUint32();
+		_protection = stream->readSint16();
+		_isProtected = (_protection % 23) == 0;
+		_field29 = stream->readSint32();
+		_checksum = stream->readUint32();
 
 		//Calculation and verification of checksum
-		uint32 check = len + 1;
-		check *= fileVersion + 2;
-		check /= checkRect.top + 3;
-		check *= checkRect.left + 4;
-		check /= checkRect.bottom + 5;
-		check *= checkRect.right + 6;
+		uint32 check = _len + 1;
+		check *= _fileVersion + 2;
+		check /= _checkRect.top + 3;
+		check *= _checkRect.left + 4;
+		check /= _checkRect.bottom + 5;
+		check *= _checkRect.right + 6;
 		check -= _castArrayStart + 7;
 		check *= _castArrayEnd + 8;
-		check -= (int8)readRate + 9;
-		check -= lightswitch + 10;
+		check -= (int8)_readRate + 9;
+		check -= _lightswitch + 10;
 
 		if (humanVer < 700)
-			check += unk1 + 11;
+			check += _unk1 + 11;
 		else
 			warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
 
-		check *= commentFont + 12;
-		check += commentSize + 13;
+		check *= _commentFont + 12;
+		check += _commentSize + 13;
 
 		if (humanVer < 800)
-			check *= (uint8)((commentStyle >> 8) & 0xFF) + 14;
+			check *= (uint8)((_commentStyle >> 8) & 0xFF) + 14;
 		else
-			check *= commentStyle + 14;
+			check *= _commentStyle + 14;
 
 		if (humanVer < 700)
 			check += _stageColor + 15;
@@ -466,26 +464,26 @@ bool Cast::loadConfig() {
 			check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
 
 
-		check += bitdepth + 16;
-		check += field17 + 17;
-		check *= field18 + 18;
-		check += field19 + 19;
+		check += _bitdepth + 16;
+		check += _field17 + 17;
+		check *= _field18 + 18;
+		check += _field19 + 19;
 		check *= _version + 20;
-		check += field21 + 21;
-		check += field22 + 22;
-		check += field23 + 23;
-		check += field24 + 24;
-		check *= field25 + 25;
+		check += _field21 + 21;
+		check += _field22 + 22;
+		check += _field23 + 23;
+		check += _field24 + 24;
+		check *= _field25 + 25;
 		check += _frameRate + 26;
-		check *= platform + 27;
-		check *= (protection * 0xE06) + 0xFF450000u;
+		check *= _platform + 27;
+		check *= (_protection * 0xE06) + 0xFF450000u;
 		check ^= MKTAG('r', 'a', 'l', 'f');
 
-		if (check != checksum)
-			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, checksum);
+		if (check != _checksum)
+			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, _checksum);
 
 		if (_version >= kFileVer400 && _version < kFileVer500) {
-			/* int16 field30 = */ stream->readSint16();
+			_field30 = stream->readSint16();
 
 			_defaultPalette.member = stream->readSint16();
 			// In this header value, the first builtin palette starts at 0 and
@@ -496,7 +494,7 @@ bool Cast::loadConfig() {
 				_defaultPalette.member -= 1;
 			else
 				_defaultPalette.castLib = DEFAULT_CAST_LIB;
-			for (int i = 0; i < 0x08; i++) {
+			for (int i = 0; i < 0x08; i++){
 				stream->readByte();
 			}
 		} else if (_version >= kFileVer500 && _version < kFileVer600) {
@@ -522,6 +520,75 @@ bool Cast::loadConfig() {
 
 	delete stream;
 	return true;
+}
+
+void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	if (_version < kFileVer400) {
+		error("Cast::saveConfig called on a pre-D4 Director movie");
+	}
+
+	writeStream->seek(offset);					// This will allow us to write cast config at any offset
+													// These offsets are only for Director Version 4 to Director version 6
+                                                    // offsets
+	writeStream->writeUint16LE(_len);				// 0 
+	writeStream->writeUint16LE(_fileVersion);	    // 2
+
+	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
+
+	writeStream->writeUint16LE(_castArrayStart);    // 12
+	writeStream->writeUint16LE(_castArrayEnd);      // 14
+
+	writeStream->writeByte(_readRate);              // 16
+	writeStream->writeByte(_lightswitch);           // 17
+	writeStream->writeSint16LE(_unk1);              // 18
+
+	writeStream->writeUint16LE(_commentFont);       // 20
+	writeStream->writeUint16LE(_commentSize);       // 22
+	writeStream->writeUint16LE(_commentStyle);      // 24
+	writeStream->writeUint16LE(_stageColor);        // 26
+
+	writeStream->writeUint16LE(_bitdepth);          // 28
+	
+	writeStream->writeByte(_field17);               // 29
+	writeStream->writeByte(_field18);               // 30
+	writeStream->writeSint32LE(_field19);           // 34
+
+	writeStream->writeUint16LE(_directorVersion);   // 36
+
+	writeStream->writeUint16LE(_field21);           // 38
+	writeStream->writeUint32LE(_field22);           // 40
+	writeStream->writeUint32LE(_field23);           // 44
+
+	writeStream->writeSint32LE(_field24);           // 48
+	writeStream->writeSByte(_field25);              // 52
+	writeStream->writeSByte(_field26);              // 53
+
+	writeStream->writeSint16LE(_frameRate);         // 54
+	writeStream->writeUint16LE(_platform);          // 56
+	writeStream->writeSint16LE(_protection);        // 58
+	writeStream->writeSint32LE(_field29);           // 60
+
+	// Currently a stub
+	uint32 checksum = computeChecksum();            
+	writeStream->writeUint32LE(checksum);           // 64
+
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		writeStream->writeSint16LE(_field30);       // 68 
+
+		// This loop isn't writing meaningful data currently
+		// But it is possible that this data might be needed
+		for (int i = 0; i < 0x08; i++) {
+			writeStream->writeByte(0);              // 70, 71, 72, 73, 74, 75, 76, 77
+		}
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+		for (int i = 0; i < 0x08; i++) {
+			writeStream->writeByte(0);              // 68, 69, 70, 71, 72, 73, 74, 75
+		}
+
+		writeStream->writeSint16LE(_defaultPalette.castLib);    // 76
+		writeStream->writeSint16LE(_defaultPalette.member);     // 77
+	}
+
 }
 
 void Cast::loadCast() {
@@ -712,6 +779,15 @@ void Cast::loadCast() {
 		debugC(4, kDebugLoading, "'SCRF' resource skipped");
 	}
 
+}
+
+void Cast::saveCast(Common::MemoryWriteStream *writeStream, uint32 offset) {
+
+}
+
+uint32 Cast::computeChecksum() { 
+	warning("STUB::ConfigChunk::computeChecksum() is not implemented yet");
+	return 0; 
 }
 
 Common::String Cast::getLinkedPath(int castId) {
