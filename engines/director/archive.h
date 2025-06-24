@@ -61,12 +61,12 @@ public:
 
 	virtual bool openFile(const Common::Path &path);
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
-	virtual bool writeToFile(Common::Path path) { 
+	virtual bool writeToFile(Common::Path path) {
 		// Saving Director movies was introduced in Director 4
 		// However, from DirectorEngine::createArchive, it is evident that after Director 4 only RIFX Archives were written
 		error("Archive::writeToFile was called on a non-RIFX Archive, which is not allowed");
 		return false;
-	} 
+	}
 	virtual void close();
 
 	/* Loading Functions for Cast */
@@ -148,7 +148,7 @@ public:
 	~RIFXArchive() override;
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
-	bool writeToFile(Common::Path path = Common::Path("./dumps/writtenMovie.dir")) override;
+	bool writeToFile(Common::Path writePath) override;
 
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
@@ -189,7 +189,7 @@ private:
 	uint16 _keyTableEntrySize2;
 	uint32 _keyTableEntryCount;
 	uint32 _keyTableUsedCount;
-	
+
 	/* AfterBurner data to save the file */
 	uint32 _fverLength;
 	uint32 _afterBurnerVersion;
@@ -197,8 +197,8 @@ private:
 	uint32 _abmpLength;
 	uint32 _abmpEnd;
 	uint32 _abmpCompressionType;
-	unsigned long _abmpUncompLength;
-	unsigned long _abmpActualUncompLength;
+	uint32 _abmpUncompLength;
+	uint32 _abmpActualUncompLength;
 
 protected:
 	uint32 _rifxType;

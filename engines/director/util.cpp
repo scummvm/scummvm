@@ -1252,22 +1252,20 @@ uint32 readVarInt(Common::SeekableReadStream &stream) {
 	return val;
 }
 
-uint32 writeVarInt(Common::SeekableReadStream &stream, uint32 value) {
-	warning("STUB::writeVarInt: Can't write variable intager types yet");
-	return 0;
-}
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, uint32 len, uint32 *outLen, bool bigEndian) {
+	unsigned long outLenUL = static_cast<unsigned long>(*outLen);
 
-Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian) {
 	byte *in = (byte *)malloc(len);
 	byte *out = (byte *)malloc(*outLen);
 	stream.read(in, len);
 
-	if (!Common::inflateZlib(out, outLen, in, len)) {
+	if (!Common::inflateZlib(out, &outLenUL, in, len)) {
 		free(in);
 		free(out);
 		return nullptr;
 	}
 
+	*outLen = static_cast<uint32>(outLenUL);
 	free(in);
 	return new Common::MemoryReadStreamEndian(out, *outLen, bigEndian, DisposeAfterUse::YES);
 }

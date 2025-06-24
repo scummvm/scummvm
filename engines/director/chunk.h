@@ -32,16 +32,6 @@ class SeekableMemoryWriteStream;
 namespace Director {
 
 class Archive;
-class Cast;
-struct CastMemberInfo;
-class CastMember;
-class DirectorEngine;
-class Lingo;
-struct LingoArchive;
-struct LingoEvent;
-class ScriptContext;
-class Window;
-struct Symbol;
 
 enum ArchiveChunkType {
 	kCastChunk,
@@ -67,21 +57,21 @@ struct Chunk {
 	virtual void read(Common::SeekableReadStreamEndian &stream) = 0;
 	virtual uint16 size() { return 0; }
 	virtual void write(Common::SeekableMemoryWriteStream&) {}
-	
+
 };
 
 struct ConfigChunk : Chunk {
 	/*  0 */ uint16 len;
 	/*  2 */ uint16 fileVersion;
-	/*  4, 6, 8, 10 */ Common::Rect checkRect; 
+	/*  4, 6, 8, 10 */ Common::Rect checkRect;
     /* 12 */ uint16 castArrayStart;
 	/* 14 */ uint16 castArrayEnd;
 	/* 16 */ byte readRate;
 	/* 17 */ byte lightswitch;
 
 	// Director 6 and below
-		/* 18 */ int16 unk1;	// Mentioned in ProjectorRays as preD7field11 
-	
+		/* 18 */ int16 unk1;	// Mentioned in ProjectorRays as preD7field11
+
 	// Director 7 and above
 	// Currently not supporting Director 7
 		// /* 18 */ int8 D7stageColorG;
@@ -94,10 +84,11 @@ struct ConfigChunk : Chunk {
 	// Director 6 and below
 		/* 26 */ uint16 stageColor;
 	// Director 7 and above
-		/* 26 */ uint8 D7stageColorIsRGB;
-		/* 27 */ uint8 D7stageColorR;
+	// Currently not supporting Director 7
+		// /* 26 */ uint8 D7stageColorIsRGB;
+		// /* 27 */ uint8 D7stageColorR;
 
-	/* 28 */ uint16 bitDepth;
+	/* 28 */ uint16 bitdepth;
 	/* 30 */ uint8 field17;
 	/* 31 */ uint8 field18;
 	/* 32 */ int32 field19;
@@ -109,7 +100,7 @@ struct ConfigChunk : Chunk {
 	/* 52 */ int8 field25;
 	/* 53 */ uint8 field26;
 	/* 54 */ int16 frameRate;
-	/* 56 */ int16 platformID;
+	/* 56 */ int16 platform;
 	/* 58 */ int16 protection;
 	/* 60 */ int32 field29;
 	/* 64 */ uint32 checksum;
@@ -119,10 +110,10 @@ struct ConfigChunk : Chunk {
 		_writable = true;
 	}
 	~ConfigChunk() = default;
-	void read(Common::SeekableReadStreamEndian &stream) { return; };
+	void read(Common::SeekableReadStreamEndian &stream) {}
 	uint16 size() { return len; }
-	void write(Common::SeekableMemoryWriteStream &stream) { return; };
-	uint32 computeChecksum() { return 0; };
+	void write(Common::SeekableMemoryWriteStream &stream) {}
+	uint32 computeChecksum() { return 0; }
 };
 
 }   // End of namespace Director
