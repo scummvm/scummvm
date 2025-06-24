@@ -67,7 +67,7 @@ void parse_all_flags() {
 	}
 
 	if (ConfMan.hasKey("T")) {
-		int room = ConfMan.getInt("T");
+		const int room = ConfMan.getInt("T");
 
 		if (room) {
 			_G(kernel).teleported_in = true;

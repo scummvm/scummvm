@@ -29,7 +29,7 @@ inline static bool quadchar_equals_string(uint32 code, const Common::String &str
 	return READ_BE_UINT32(str.c_str()) == code;
 }
 
-void error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...) {
+void error_show(const char *filename, uint32 line, quadchar errorCode, const char *fmt, ...) {
 	assert(fmt);
 
 	va_list va;
@@ -40,11 +40,11 @@ void error_show(const char *filename, uint32 line, quadchar errorcode, const cha
 	error("%s", msg.c_str());
 }
 
-void error_show(const char *filename, uint32 line, quadchar errorcode) {
-	error_show(filename, line, errorcode, "No extra description");
+void error_show(const char *filename, uint32 line, quadchar errorCode) {
+	error_show(filename, line, errorCode, "No extra description");
 }
 
-void error_look_up(quadchar errorcode, char *result_string) {
+void error_look_up(quadchar errorCode, char *result_string) {
 	Common::File f;
 	*result_string = '\0';
 
@@ -57,7 +57,7 @@ void error_look_up(quadchar errorcode, char *result_string) {
 		buffer = f.readString();
 		const char *mark = buffer.c_str() + 1;
 
-		if (quadchar_equals_string(errorcode, buffer) || quadchar_equals_string(errorcode, mark)) {
+		if (quadchar_equals_string(errorCode, buffer) || quadchar_equals_string(errorCode, mark)) {
 			const char *src = (const char *)buffer.c_str() + 5;
 			int16 count = 0;
 

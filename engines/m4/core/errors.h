@@ -30,9 +30,9 @@ namespace M4 {
 #define FL __FILE__,__LINE__
 #define ERROR_FILE "error.m4"
 
-void NORETURN_PRE error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...) NORETURN_POST;
-void NORETURN_PRE error_show(const char *filename, uint32 line, quadchar errorcode) NORETURN_POST;
-void error_look_up(quadchar errorcode, char *result_string);
+void NORETURN_PRE error_show(const char *filename, uint32 line, quadchar errorCode, const char *fmt, ...) NORETURN_POST;
+void NORETURN_PRE error_show(const char *filename, uint32 line, quadchar errorCode) NORETURN_POST;
+void error_look_up(quadchar errorCode, char *result_string);
 
 } // namespace M4
 

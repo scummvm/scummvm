@@ -75,7 +75,7 @@ void cstrncpy(char *dest, const char *src, const int16 max_len) {
 
 char *cstrupr(char *src) {
 	if (!src)
-		return 0;
+		return nullptr;
 
 	char *mark = src;
 	do {
@@ -88,7 +88,7 @@ char *cstrupr(char *src) {
 
 char *cstr_lower(char *src) {
 	if (!src)
-		return 0;
+		return nullptr;
 
 	char *mark = src;
 	do {
@@ -104,10 +104,9 @@ int xtoi(char *string) {
 		return 0;
 
 	int value = 0;
-	int item;
 
 	while (*string) {
-		item = *string++;
+		int item = *string++;
 		if (cstr_isdigit(item))
 			value = (value << 4) + item - '0';
 		else
@@ -127,10 +126,7 @@ int strpos(char *key, char *target) {
 	if (!key || !target)
 		return 0;
 
-	char *tmp;
-
-	tmp = strstr(target, key);
-
+	char *tmp = strstr(target, key);
 	if (tmp)
 		return(tmp - target + 1);
 
@@ -170,14 +166,12 @@ void strseg(char *work, char *work2, int indx, int count) {
 */
 void strins(char *work, char *newStr, int indx) {
 	if (!work || !newStr) {
-		newStr = 0;
+		newStr = nullptr;
 		return;
 	}
 
-	int l, l1;
-
-	l1 = (strlen(work) - indx + 2);
-	l = strlen(newStr);
+	const int l1 = (strlen(work) - indx + 2);
+	const int l = strlen(newStr);
 	memmove(work + indx + l - 1, work + indx - 1, l1);
 	memcpy(work + indx - 1, newStr, l);
 }
@@ -187,11 +181,10 @@ void str_purge_trailing_spaces(char *myline) {
 	if (!myline)
 		return;
 
-	char *search;
 	int again = true;
 
 	do {
-		search = &myline[strlen(myline) - 1];
+		char *search = &myline[strlen(myline) - 1];
 		if ((*search == 0x20) || (*search == 0x09))
 			*search = 0;
 		else
@@ -207,14 +200,13 @@ void str_purge_all_spaces(char *text) {
 	if (!text)
 		return;
 
-	char work[256];
-	char *mark;
-
 	str_purge_trailing_spaces(text);
 
-	mark = text;
-	while (*mark && ((*mark == ' ') || (*mark == 0x09))) mark++;
+	char *mark = text;
+	while (*mark && ((*mark == ' ') || (*mark == 0x09)))
+		mark++;
 
+	char work[256];
 	Common::strcpy_s(work, 256, mark);
 	Common::strcpy_s(text, 256, work);
 }
@@ -222,11 +214,9 @@ void str_purge_all_spaces(char *text) {
 
 char *str_strip_final_lf(char *mystring) {
 	if (!mystring)
-		return 0;
+		return nullptr;
 
-	char *temp;
-
-	temp = strrchr(mystring, 0x0a);
+	char *temp = strrchr(mystring, 0x0a);
 	if (temp != nullptr) {
 		*temp = '\0';
 	}
@@ -237,9 +227,7 @@ void str_add_final_lf(char *mystring) {
 	if (!mystring)
 		return;
 
-	char *temp;
-
-	temp = mystring + strlen(mystring);
+	char *temp = mystring + strlen(mystring);
 	*(temp++) = 0x0a;
 	*temp = '\0';
 }
@@ -287,10 +275,8 @@ int dtoi(char *string) {
 		return 0;
 
 	int value = 0;
-	int item;
-
 	while (*string) {
-		item = *string++;
+		const char item = *string++;
 		if (cstr_isdigit(item))
 			value = (value * 10) + item - '0';
 		else

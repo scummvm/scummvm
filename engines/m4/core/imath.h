@@ -49,7 +49,7 @@ int32 imath_max(int32 a, int32 b);
 int32 imath_min(int32 a, int32 b);
 int32 imath_abs(int32 a);
 
-void imath_seed(int32 seednum);
+void imath_seed(int32 seedNum);
 uint32 imath_random();
 int32 imath_ranged_rand(int32 a, int32 b);
 frac16 imath_ranged_rand16(frac16 a, frac16 b);

@@ -22,8 +22,6 @@
 #ifndef M4_INFO_H
 #define M4_INFO_H
 
-#include "common/file.h"
-
 namespace M4 {
 
 /**

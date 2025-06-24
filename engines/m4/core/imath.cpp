@@ -27,8 +27,8 @@ namespace M4 {
 unsigned long sqrtul(unsigned long v) {
 	unsigned long r = 0, s;
 
-#define STEP(k) s = r + (1L << k * 2); r >>= 1; \
-		if (s <= v) { v -= s; r |= (1L << k * 2); }
+#define STEP(k) s = r + (1L << (k * 2)); r >>= 1; \
+		if (s <= v) { v -= s; r |= (1L << (k * 2)); }
 
 	STEP(15);
 	STEP(14);
@@ -65,8 +65,8 @@ int32 imath_abs(int32 a) {
 
 static int32 seed;
 
-void imath_seed(int32 seednum) {
-	seed = seednum;
+void imath_seed(int32 seedNum) {
+	seed = seedNum;
 }
 
 uint32 imath_random() {
@@ -74,14 +74,12 @@ uint32 imath_random() {
 }
 
 int32 imath_ranged_rand(int32 a, int32 b) {
-	int32 result;
-	result = (a + (((1 + imath_abs(b - a)) * imath_random()) >> 16));
+	const int32 result = (a + (((1 + imath_abs(b - a)) * imath_random()) >> 16));
 	return result;
 }
 
 frac16 imath_ranged_rand16(frac16 a, frac16 b) {
-	frac16 result;
-	result = ((a + MulSF16(1 + imath_abs(b - a), imath_random())));
+	const frac16 result = ((a + MulSF16(1 + imath_abs(b - a), imath_random())));
 	return result;
 }
 
@@ -90,17 +88,19 @@ bool imath_rand_bool(int max) {
 }
 
 frac16 dist2d(int32 x1, int32 y1, int32 x2, int32 y2) {
-	if ((x2 -= x1) < 0) x2 = -x2;
-	if ((y2 -= y1) < 0) y2 = -y2;
+	if ((x2 -= x1) < 0)
+		x2 = -x2;
+	if ((y2 -= y1) < 0)
+		y2 = -y2;
 	return (x2 + y2 - (((x2 > y2) ? y2 : x2) >> 1));
 }
 
-#define STEP(k) s = r + (1L << k * 2); r >>= 1; \
-				if (s <= v) { v -= s; r |= (1L << k * 2); }
+#define STEP(k) s = r + (1L << (k * 2)); r >>= 1; \
+				if (s <= v) { v -= s; r |= (1L << (k * 2)); }
 
 frac16 SqrtF16(frac16 n) {
-	ulong r = 0, s, v;
-	v = (ulong)n;
+	ulong r = 0, s;
+	ulong v = (ulong)n;
 
 	STEP(15);
 	STEP(14);
@@ -124,13 +124,10 @@ frac16 SqrtF16(frac16 n) {
 #define DIV_128_PI	0x28be61
 
 frac16 ArcTan(frac16 x, frac16 y) {
-	double	floatX, floatY, result;
-	frac16	fracResult;
-
-	floatX = (float)(x >> 16) + (float)((float)(x & 0xffff) / (float)65536);
-	floatY = (float)(y >> 16) + (float)((float)(y & 0xffff) / (float)65536);
-	result = atan2(floatY, floatX);
-	fracResult = (((int32)(floor(result))) << 16) + (int32)(floor((result - floor(result)) * 65536));
+	const double floatX = (float)(x >> 16) + (float)((float)(x & 0xffff) / (float)65536);
+	const double floatY = (float)(y >> 16) + (float)((float)(y & 0xffff) / (float)65536);
+	const double result = atan2(floatY, floatX);
+	frac16 fracResult = (((int32)(floor(result))) << 16) + (int32)(floor((result - floor(result)) * 65536));
 	fracResult = MulSF16(fracResult, DIV_128_PI);
 	if (fracResult < 0) fracResult += 0x1000000;
 	return fracResult;
@@ -153,21 +150,21 @@ uint16 convert_intel16(uint16 a) {
 }
 
 frac16 FixedMul(frac16 a, frac16 b) {
-	float ta = a;
-	float tb = b;
+	const float ta = a;
+	const float tb = b;
 	return (frac16)((ta * tb) / 65536.0);
 }
 
 frac16 FixedDiv(frac16 a, frac16 b) {
-	float ta = a;
-	float tb = b;
+	const float ta = a;
+	const float tb = b;
 	return (frac16)((ta / tb) * 65536.0);
 }
 
 frac16 FixedMulDiv(frac16 a, frac16 b, frac16 c) {
-	float ta = a;
-	float tb = b;
-	float tc = c;
+	const float ta = a;
+	const float tb = b;
+	const float tc = c;
 	return (frac16)((ta * tb) / tc);
 }
 
