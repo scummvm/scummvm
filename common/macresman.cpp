@@ -419,6 +419,11 @@ SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName, Arc
 		delete stream;
 	}
 
+	// Maybe it is a raw data fork with ".data" extension?
+	stream = archive.createReadStreamForMember(fileName.append(".data"));
+	if (stream)
+		return stream;
+
 	// The file doesn't exist
 	return nullptr;
 }
