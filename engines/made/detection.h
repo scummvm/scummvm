@@ -52,6 +52,7 @@ struct MadeGameDescription {
 };
 
 #define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS                 GUIO_GAMEOPTIONS2
 
 } // End of namespace Made
 

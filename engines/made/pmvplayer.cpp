@@ -36,6 +36,82 @@
 
 namespace Made {
 
+#ifdef USE_TTS
+
+// English seems to be the only language that doesn't have voice clips for these lines
+static const char *introOpeningLines[] = {
+	"You are standing by a white house",
+	"Behind House\nYou are standing behind the white house. In one corner is a small window which is slightly ajar.",
+	"Go southwest then go northwest",
+	"West of House\nYou are standing in a field west of a white house with a boarded front door. There is a small mailbox here.",
+	"Open mailbox"
+};
+
+static const char *openingCreditsEnglish[] = {
+	"Design: Doug Barnett",
+	"Art Direction: Joe Asperin",
+	"Technical Direction: William Volk",
+	"Screenplay: Michele Em",
+	"Music: Nathan Wang and Teri Mason",
+	"Producer: Eddie Dombrower"
+};
+
+static const char *openingCreditsGerman[] = {
+	"Entwurf: Doug Barnett",
+	"K\201nstlerischer Leitung: Joe Asperin",
+	"Technische Leitung: William Volk",
+	"Drehbuch: Michele Em",
+	"Musik: Nathan Wang und Teri Mason",
+	"Produzent: Eddie Dombrower"
+};
+
+static const char *openingCreditsItalian[] = {
+	"Disegno: Doug Barnett",
+	"Direzione Artistica: Joe Asperin",
+	"Direzione Tecnica: William Volk",
+	"Sceneggiatura: Michele Em",
+	"Musica: Nathan Wang e Teri Mason",
+	"Produttore: Eddie Dombrower"
+};
+
+static const char *openingCreditsFrench[] = {
+	"Conception: Doug Barnett",
+	"Direction Artistique: Joe Asperin",
+	"Direction Technique: William Volk",
+	"Sc\202nario: Michele Em",
+	"Musique: Nathan Wang et Teri Mason",
+	"Producteur: Eddie Dombrower"
+};
+
+static const char *openingCreditsJapanese[] = {
+	"\x83\x66\x83\x55\x83\x43\x83\x93\x81\x45\x83\x5f\x83\x4f\x81\x45\x83\x6f\x81\x5b\x83\x6c\x83\x62\x83\x67",	// デザイン・ダグ・バーネット
+	"\x83\x41\x81\x5b\x83\x67\x83\x66\x83\x42\x83\x8c\x83\x4e\x83\x56\x83\x87\x83\x93:"
+	"\x83\x57\x83\x87\x81\x5b\x81\x45\x83\x41\x83\x58\x83\x79\x83\x8a\x83\x93",	// アートディレクション：ジョー・アスペリン
+	"\x83\x65\x83\x4e\x83\x6a\x83\x4a\x83\x8b\x83\x66\x83\x42\x83\x8c\x83\x4e\x83\x56\x83\x87\x83\x93:"
+	"\x83\x45\x83\x42\x83\x8a\x83\x41\x83\x80\x81\x45\x83\x94\x83\x48\x83\x8b\x83\x4e",	// テクニカルディレクション：ウィリアム・ヴォルク
+	"\x8b\x72\x96\x7b:\x83\x7e\x83\x56\x83\x46\x83\x8b\x81\x45\x83\x47\x83\x80",	// 脚本：ミシェル・エム
+	"\x89\xb9\x8a\x79:\x83\x6c\x83\x43\x83\x54\x83\x93\x81\x45\x83\x8f\x83\x93\x83\x67\x83\x65\x83\x8a\x81\x5b"
+	"\x81\x45\x83\x81\x83\x43\x83\x5c\x83\x93",	// 音楽：ネイサン・ワンとテリー・メイソン
+	"\x83\x76\x83\x8d\x83\x66\x83\x85\x81\x5b\x83\x54\x81\x5b:\x83\x47\x83\x66\x83\x42\x81\x45\x83\x68\x83\x93"
+	"\x83\x75\x83\x8d\x83\x8f\x81\x5b"	// プロデューサー: エディ・ドンブロワー
+};
+
+enum IntroTextFrame {
+	kStandingByHouse = 20,
+	kBehindHouse = 53,
+	kGoSouthwest = 170,
+	kWestOfHouse = 312,
+	kOpenMailbox = 430,
+	kDesign = 716,
+	kArtDirection = 773,
+	kTechnicalDirection = 833,
+	kScreenplay = 892,
+	kMusic = 948,
+	kProducer = 1004
+};
+
+#endif
+
 PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(nullptr), _vm(vm), _mixer(mixer) {
 	_audioStream = nullptr;
 	_surface = nullptr;
@@ -118,6 +194,11 @@ bool PmvPlayer::play(const char *filename) {
 	_audioStream = Audio::makeQueuingAudioStream(soundFreq, false);
 
 	SoundDecoderData *soundDecoderData = new SoundDecoderData();
+
+	// First cutscene after the opening credits finish
+	if (strcmp(filename, "FWIZ01X1.PMV") == 0) {
+		_vm->_openingCreditsOpen = false;
+	}
 
 	while (!_vm->shouldQuit() && !_aborted && !_fd->eos() && frameNumber < frameCount) {
 
@@ -210,6 +291,70 @@ bool PmvPlayer::play(const char *filename) {
 		} else
 			skipFrames--;
 
+#ifdef USE_TTS
+		if (strcmp(filename, "fintro00.pmv") == 0 || strcmp(filename, "fintro01.pmv") == 0) {
+			const char **texts;
+
+			switch (_vm->getLanguage()) {
+			case Common::EN_ANY:
+				if (frameNumber < kDesign) {
+					texts = introOpeningLines;
+				} else {
+					texts = openingCreditsEnglish;
+				}
+				break;
+			case Common::DE_DEU:
+				texts = openingCreditsGerman;
+				break;
+			case Common::IT_ITA:
+				texts = openingCreditsItalian;
+				break;
+			case Common::FR_FRA:
+				texts = openingCreditsFrench;
+				break;
+			case Common::JA_JPN:
+				texts = openingCreditsJapanese;
+				break;
+			case Common::KO_KOR:
+				texts = openingCreditsEnglish;
+				break;
+			default:
+				texts = openingCreditsEnglish;
+			}
+
+			int index = -1;
+
+			switch (frameNumber) {
+			case kStandingByHouse:
+			case kDesign:
+				index = 0;
+				break;
+			case kBehindHouse:
+			case kArtDirection:
+				index = 1;
+				break;
+			case kGoSouthwest:
+			case kTechnicalDirection:
+				index = 2;
+				break;
+			case kWestOfHouse:
+			case kScreenplay:
+				index = 3;
+				break;
+			case kOpenMailbox:
+			case kMusic:
+				index = 4;
+				break;
+			case kProducer:
+				index = 5;
+			}
+
+			if (index != -1 && (_vm->getLanguage() == Common::EN_ANY || frameNumber >= kDesign)) {
+				_vm->sayText(texts[index], Common::TextToSpeechManager::QUEUE);
+			}
+		}
+#endif
+
 		frameNumber++;
 
 	}
@@ -248,8 +393,10 @@ void PmvPlayer::handleEvents() {
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				_aborted = true;
+				_vm->stopTextToSpeech();
+			}
 			break;
 		default:
 			break;

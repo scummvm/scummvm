@@ -43,6 +43,21 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read text in the game (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+#endif
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -60,6 +75,10 @@ Common::Platform MadeEngine::getPlatform() const {
 
 uint16 MadeEngine::getVersion() const {
 	return _gameDescription->version;
+}
+
+Common::Language MadeEngine::getLanguage() const {
+	return _gameDescription->desc.language;
 }
 
 } // End of namespace Made
