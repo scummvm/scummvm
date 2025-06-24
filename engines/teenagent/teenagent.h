@@ -77,6 +77,16 @@ enum {
 	kDebugSurface,
 };
 
+enum TEENAGENTActions {
+	kActionNone,
+	kActionSkipIntro,
+	kActionSkipDialog,
+	kActionCloseInventory,
+	kActionToggleInventory,
+	kActionPause,
+	kActionFastMode,
+};
+
 const uint16 kScreenWidth = 320;
 const uint16 kScreenHeight = 200;
 
