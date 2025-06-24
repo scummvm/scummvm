@@ -354,7 +354,6 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 	// First, we go through the list and check any Mac files
 	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> macFiles;
 	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> toRemove;
-	Common::List<Common::Path> filteredFileList;
 	Common::List<Common::Path> tmpFileList;
 
 	for (const auto &entry : fileList) {
@@ -369,7 +368,24 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 		auto macFile = Common::MacResManager();
 
 		if (macFile.open(filename) && macFile.isMacFile()) {
-			macFiles[filename] = true;
+			macFiles[originalFileName] = true;
+
+			switch (macFile.getMode()) {
+			case Common::MacResManager::kResForkRaw:
+				toRemove[filename.append(".rsrc")] = true;
+				toRemove[filename.append(".data")] = true;
+				toRemove[filename.append(".finf")] = true;
+				break;
+			case Common::MacResManager::kResForkMacBinary:
+				toRemove[filename.append(".bin")] = true;
+				break;
+			case Common::MacResManager::kResForkAppleDouble:
+				toRemove[Common::MacResManager::constructAppleDoubleName(filename)] = true;
+				toRemove[filename.getParent().append("__MACOSX")] = true;
+				break;
+			default:
+				error("Unsupported MacResManager mode: %d", macFile.getMode());
+			}
 
 			tmpFileList.push_back(filename);
 		} else {
@@ -378,21 +394,24 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 		}
 	}
 
-	for (const auto &entry : tmpFileList) {
-		if (!toRemove.contains(entry)) {
-			filteredFileList.push_back(entry);
-		}
-	}
-
 	// Process the files and subdirectories in the current directory recursively
 	for (const auto &entry : fileList) {
+		Common::Path filename(entry.getPath().relativeTo(gamePath));
+
+		if (macFiles.contains(filename)) {
+			filename.removeExtension(".bin");
+			filename.removeExtension(".rsrc");
+		}
+
+		if (toRemove.contains(filename))
+			continue;
+
 		if (entry.isDirectory()) {
 			generateChecksums(entry.getPath(), fileChecksums, gamePath);
 
 			continue;
 		}
 
-		const Common::Path filename(entry.getPath().relativeTo(gamePath));
 		auto macFile = Common::MacResManager();
 
 		if (macFile.open(filename) && macFile.isMacFile()) {
