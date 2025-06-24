@@ -520,7 +520,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 				debugC(2, kDebugGlobalDetection, "Falling back to disk-based detection");
 			} else {
-				tmp = Common::MacResManager::openFileOrDataFork(d.node.getPath());
+				tmp = d.node.createReadStream();
 			}
 
 			Common::String md5str;
