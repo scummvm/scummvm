@@ -45,6 +45,7 @@ struct Video {
 	static const StrEntry STRINGS_TABLE_AMIGA_CODES[];
 	static const StrEntry STRINGS_TABLE_FR[];
 	static const StrEntry STRINGS_TABLE_ENG[];
+	static const StrEntry STRINGS_TABLE_ITA[];
 	static const StrEntry STRINGS_TABLE_DEMO[];
 	static const uint16 STRINGS_ID_15TH[];
 	static const char *STRINGS_TABLE_15TH[];
