@@ -102,7 +102,10 @@ int CDialog::DoModal() {
 		this /*m_pParentWnd*/, hInst)) {
 		auto *app = AfxGetApp();
 		app->SetActiveWindow(this);
+
+		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_ACTIVE, false), 0);
 		app->runEventLoop();
+		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, false), 0);
 	}
 
 	// Finish the dialog

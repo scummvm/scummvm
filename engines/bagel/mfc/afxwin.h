@@ -1067,6 +1067,9 @@ protected:
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
 		return false;
 	}
+	virtual void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+	}
+
 	virtual LRESULT DefWindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam) {
 		return 0;
 	}
@@ -1075,7 +1078,6 @@ protected:
 
 	BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
-	afx_msg void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {}
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID) {}
 	afx_msg LRESULT OnActivateTopLevel(WPARAM, LPARAM) {
 		return 0;
@@ -1320,6 +1322,7 @@ public:
 	bool IsWindowEnabled() const {
 		return (_itemState & ODS_DISABLED) == 0;
 	}
+	bool IsActiveWindow() const;
 
 	CDC *GetDC();
 	int ReleaseDC(CDC *pDC);

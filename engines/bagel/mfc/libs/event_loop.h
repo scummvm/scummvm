@@ -87,6 +87,10 @@ public:
 
 	void runEventLoop();
 	void SetActiveWindow(CWnd *wnd);
+	CWnd *GetActiveWindow() const {
+		return _activeWindows.empty() ? nullptr :
+			_activeWindows.top();
+	}
 
 	void doModal(CWnd *wnd) {
 		_activeWindows.push(wnd);

@@ -186,6 +186,10 @@ void CWnd::DestroyWindow() {
 	if (app->GetFocus() == this)
 		app->SetFocus(nullptr);
 
+	if (IsActiveWindow())
+		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, false), 0);
+
+
 	// Flush any other pending events
 	MSG msg;
 	while (app->PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
@@ -312,13 +316,16 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		}
 
 		return FALSE;
+	} else if (message == WM_ACTIVATE) {
+		OnActivate(LOWORD(wParam), nullptr, false);
+		lResult = 1;
+		goto LReturnTrue;
 	}
 
 	// Special cases we don't currently support
 #define UNHANDLED(MSG) if (message == MSG) \
 		error(#MSG " not currently supported")
 	UNHANDLED(WM_NOTIFY);
-	UNHANDLED(WM_ACTIVATE);
 	UNHANDLED(WM_SETTINGCHANGE);
 #undef UNHANDLED
 
@@ -865,6 +872,10 @@ void CWnd::SendMessageToDescendants(HWND hWnd, UINT message,
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	wnd->SendMessageToDescendants(message,
 		wParam, lParam, bDeep, bOnlyPerm);
+}
+
+bool CWnd::IsActiveWindow() const {
+	return AfxGetApp()->GetActiveWindow() == this;
 }
 
 } // namespace MFC
