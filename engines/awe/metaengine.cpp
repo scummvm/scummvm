@@ -32,8 +32,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_COPY_PROTECTION,
 		{
-			_s("Enable copy protection"),
-			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			_s("Enable title screen and copy protection (if present)"),
+			_s("Displays title screen and copy protection that would otherwise be bypassed by default."),
 			"copy_protection",
 			false,
 			0,
