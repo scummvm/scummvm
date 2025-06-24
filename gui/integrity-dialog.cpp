@@ -422,7 +422,8 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 			// Data fork
 			// Various checksizes
 			for (auto size : {0, 5000, 1024 * 1024}) {
-				fileChecksum.push_back(Common::String::format("md5-d-%d", size));
+				Common::String sz = size ? Common::String::format("-%d", size) : "";
+				fileChecksum.push_back(Common::String::format("md5-d%s", sz.c_str()));
 				fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size, progressUpdateCallback, this));
 				dataForkStream->seek(0);
 			}
@@ -435,7 +436,8 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 			if (macFile.hasResFork()) {
 				// Various checksizes
 				for (auto size : {0, 5000, 1024 * 1024}) {
-					fileChecksum.push_back(Common::String::format("md5-r-%d", size));
+					Common::String sz = size ? Common::String::format("-%d", size) : "";
+					fileChecksum.push_back(Common::String::format("md5-r%s", sz.c_str()));
 					fileChecksum.push_back(macFile.computeResForkMD5AsString(size, false, progressUpdateCallback, this));
 				}
 				// Tail checksums with checksize 5000
@@ -470,7 +472,8 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 		Common::Array<Common::String> fileChecksum = {filename.toString()};
 		// Various checksizes
 		for (auto size : {0, 5000, 1024 * 1024}) {
-			fileChecksum.push_back(Common::String::format("md5-%d", size));
+			Common::String sz = size ? Common::String::format("-%d", size) : "";
+			fileChecksum.push_back(Common::String::format("md5%s", sz.c_str()));
 			fileChecksum.push_back(Common::computeStreamMD5AsString(file, size, progressUpdateCallback, this).c_str());
 			file.seek(0);
 		}
