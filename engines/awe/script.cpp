@@ -425,8 +425,8 @@ void Script::restartAt(int part, int pos) {
 		//   00C4: setPalette(num=23)
 		//   00CA: updateResources(res=71)
 
-		// Use "Another World" title screen if language is set to French
-		const bool awTitleScreen = (_vid->_stringsTable == Video::STRINGS_TABLE_FR);
+		// Use "Out of this World" title screen if playing the USA release
+		const bool awTitleScreen = !(_res->_lang == Common::EN_USA);
 		_scriptVars[0x54] = awTitleScreen ? 0x1 : 0x81;
 	}
 	_res->setupPart(part);
