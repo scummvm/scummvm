@@ -783,11 +783,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		}
 	}
 
-	if (debugChannelSet(11, kDebugLoading)) {
-		writeToFile();
-		g_system->quit();
-	}
-
 	return true;
 }
 
@@ -911,7 +906,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	_abmpCompressionType = readVarInt(stream);
 	_abmpUncompLength = readVarInt(stream);
 	_abmpActualUncompLength = _abmpUncompLength;
-	debugC(3, kDebugLoading, "ABMP: length: %d compressionType: %d uncompressedLength: %lu",
+	debugC(3, kDebugLoading, "ABMP: length: %d compressionType: %d uncompressedLength: %d",
 		_abmpLength, _abmpCompressionType, _abmpUncompLength);
 
 	Common::SeekableReadStreamEndian *abmpStream = readZlibData(stream, _abmpEnd - stream.pos(), &_abmpActualUncompLength, _isBigEndian);
@@ -920,7 +915,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 		return false;
 	}
 	if (_abmpUncompLength != _abmpActualUncompLength) {
-		warning("ABMP: Expected uncompressed length %lu but got length %lu", _abmpUncompLength, _abmpActualUncompLength);
+		warning("ABMP: Expected uncompressed length %d but got length %d", _abmpUncompLength, _abmpActualUncompLength);
 	}
 
 	if (ConfMan.getBool("dump_scripts")) {
@@ -994,14 +989,14 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	debugC(3, kDebugLoading, "ILS: length: %d unk1: %d", ilsRes->size, ilsUnk1);
 	_ilsBodyOffset = stream.pos();
 	uint32 ilsLength = ilsRes->size;
-	unsigned long ilsActualUncompLength = ilsRes->uncompSize;
+	uint32 ilsActualUncompLength = ilsRes->uncompSize;
 	Common::SeekableReadStreamEndian *ilsStream = readZlibData(stream, ilsLength, &ilsActualUncompLength, _isBigEndian);
 	if (!ilsStream) {
 		warning("RIFXArchive::readAfterburnerMap(): Could not uncompress FGEI");
 		return false;
 	}
 	if (ilsRes->uncompSize != ilsActualUncompLength) {
-		warning("ILS: Expected uncompressed length %d but got length %lu", ilsRes->uncompSize, ilsActualUncompLength);
+		warning("ILS: Expected uncompressed length %d but got length %d", ilsRes->uncompSize, ilsActualUncompLength);
 	}
 
 	while (ilsStream->pos() < ilsStream->size()) {
@@ -1125,13 +1120,13 @@ Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id
 			return new Common::MemoryReadStreamEndian(_ilsData[id], res.uncompSize, bigEndian, DisposeAfterUse::NO);
 		} else {
 			_stream->seek(_ilsBodyOffset + res.offset);
-			unsigned long actualUncompLength = res.uncompSize;
+			uint32 actualUncompLength = res.uncompSize;
 			Common::SeekableReadStreamEndian *stream = readZlibData(*_stream, res.size, &actualUncompLength, _isBigEndian);
 			if (!stream) {
 				error("RIFXArchive::getResource(): Could not uncompress '%s' %d", tag2str(tag), id);
 			}
 			if (res.uncompSize != actualUncompLength) {
-				warning("RIFXArchive::getResource(): For '%s' %d expected uncompressed length %d but got length %lu",
+				warning("RIFXArchive::getResource(): For '%s' %d expected uncompressed length %d but got length %d",
 					tag2str(tag), id, res.uncompSize, actualUncompLength);
 			}
 			return stream;
@@ -1176,17 +1171,16 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 	// For RIFX stream, moreoffset = 0
 	byte *dumpData = nullptr;
 
-	// Don't need to allocate this much size in case 'JUNK' and 'FREE' resources are ignored
+	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
 	// Or might need to allocate even more size if extra chunks are written
 	dumpData = (byte *)malloc(_size);
 
 	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, _size);
-	
-	writeStream->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR" for this case 
-	
-	// This includes the size of 'RIFX', 'mmap' and 'imap' resources
 
-	// This method of calculating new size is inefficient and prone to error 
+	writeStream->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR" for this case
+
+	// This includes the size of 'RIFX', 'mmap' and 'imap' resources
+	// This method of calculating new size is inefficient and prone to error
 	/* uint32 newSize = 0;
 	 * for (auto &it: _resources) {
 	 * 	newSize += it->size;
@@ -1216,8 +1210,7 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 	int32 keyTag = MKTAG('K', 'E', 'Y', '*');
 	if (hasResource(keyTag, -1)) {
 		uint16 firstID = getResourceIDList(keyTag)[0];
-		uint32 offset = getOffset(keyTag, firstID) + 8;	// I'm not sure why this +8 is there for
-														// But its consistent with RIFXArchive::getResource()
+		uint32 offset = getOffset(keyTag, firstID) + 8;	// The +8 is consistent with RIFXArchive::getResource()
 		writeKeyTable(writeStream, offset);
 	}
 
@@ -1225,24 +1218,18 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 	if (_keyData.contains(casTag)) {
 		for (auto &it : _keyData[casTag]) {
 			for (auto &jt : it._value) {
-				uint32 offset = getOffset(casTag, jt) + 8;	
+				uint32 offset = getOffset(casTag, jt) + 8;
 				writeCast(writeStream, offset);
 			}
 		}
 	}
-
-	// All the write functions will be called before flushing the dumpfile
-	// I need to store all these loaded chunks in a single structure so that
-	// Writing them is a as easy as just calling a single write function
-	// Currently I'm only working with the 'XFIR' file that I have, so all the 
-	// data is written low endian, will add a single check to switch to big endian 
 
 	for (auto &it : _resources) {
 		if (it->tag != _metaTag &&
 			it->tag != SWAP_BYTES_32(_metaTag) &&
 			it->tag != MKTAG('i', 'm', 'a', 'p') &&
 			it->tag != MKTAG('m', 'm', 'a', 'p') &&
-			it->tag != MKTAG('K', 'E', 'Y', '*') 
+			it->tag != MKTAG('K', 'E', 'Y', '*')
 		) {
 			writeStream->seek(it->offset + 8);
 			writeStream->writeStream(getResource(it->tag, it->index));
@@ -1250,7 +1237,7 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 	}
 
 	Common::DumpFile out;
-	
+
 	// Write the movie out, stored in dumpData
 	if (out.open(path, true)) {
 		out.write(dumpData, _size);
@@ -1277,29 +1264,29 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream)
 	writeStream->writeUint32LE(MKTAG('m', 'm', 'a', 'p'));
 
 	uint32 newResCount = _resources.size();
-	
+
 	// Need to recalcualte the following things
 	// Similarl to the RIFX resource, we'll need to update the size of the mmap resource whenever there is some change
 	writeStream->writeUint32LE(getResourceSize(MKTAG('m', 'm', 'a', 'p'), 0));
 	writeStream->writeUint16LE(_mmapHeaderSize);
 	writeStream->writeUint16LE(_mmapEntrySize);
-	
+
 	writeStream->writeUint32LE(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
 	writeStream->writeUint32LE(newResCount);
-	writeStream->seek(8, SEEK_CUR);
+	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff 
 
 	// ID of the first 'free' resource
 	writeStream->writeUint32LE(0);
 
 	for (auto &it : _resources) {
-		debugC(3, kDebugLoading, "Writing RIFX Resource: tag: %s, size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d", 
+		debugC(3, kDebugLoading, "Writing RIFX Resource: tag: %s, size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
 			tag2str(it->tag), it->size, it->offset, it->flags, it->unk1, it->nextFreeResourceID);
-		
+
 		// Write down the tag, the size and offset of the current resource
 		writeStream->writeUint32LE(it->tag);
 		writeStream->writeUint32LE(it->size);
 		writeStream->writeUint32LE(it->offset);
-		
+
 		// Currently ignoring flags, unk1 and nextFreeResourceID
 		writeStream->writeUint16LE(it->flags);
 		writeStream->writeUint16LE(it->unk1);
@@ -1309,17 +1296,15 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream)
 	return true;
 }
 
-// This Function is incomplete, needs further changes before can be used
 bool RIFXArchive::writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStream) {
 	warning("RIFXArchive::writeAfterBurnerMap: STUB: Incomplete function, needs further changes, AfterBurnerMap not written");
 	return false;
 
+#if 0
 	writeStream->writeUint32LE(MKTAG('F', 'v', 'e', 'r'));
 
-	// _fverLength and _afterBurnerVersion are shockwave variable type intagers
-	// So I'm writing them as 32bit intagers
 	writeStream->writeUint32LE(_fverLength);
-	uint32 start = writeStream->pos(); 
+	uint32 start = writeStream->pos();
 
 	writeStream->writeUint32LE(_afterBurnerVersion);
 	uint32 end = writeStream->pos();
@@ -1336,6 +1321,7 @@ bool RIFXArchive::writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeSt
 	writeStream->writeUint32LE(MKTAG('A', 'B', 'M', 'P'));
 
 	return true;
+#endif
 }
 
 bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset) {
@@ -1356,21 +1342,21 @@ bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, 
 				debugC(3, kDebugLoading, "RIFXArchive::writeKeyTable: _keyData contains tag: %s, parentIndex: %d, childIndex: %d", tag2str(childTag._key), parentIndex._key, childIndex);
 				writeStream->writeUint32LE(childIndex);
 				writeStream->writeUint32LE(parentIndex._key);
-				writeStream->writeUint32LE(childTag._key);	
+				writeStream->writeUint32LE(childTag._key);
 			}
 		}
 	}
-	
+
 	return true;
 }
 
 bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	writeStream->seek(offset);
 
-	uint castTag = MKTAG('C', 'A', 'S', 't'); 
+	uint castTag = MKTAG('C', 'A', 'S', 't');
 
 	for (auto &it : _types[castTag]) {
-		if (it._value.libResourceId) { 
+		if (it._value.libResourceId) {
 			writeStream->writeUint32LE(it._key);
 		}
 	}

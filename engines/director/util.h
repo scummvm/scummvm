@@ -93,7 +93,7 @@ private:
 
 uint32 readVarInt(Common::SeekableReadStream &stream);
 
-Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian);
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, uint32 len, uint32 *outLen, bool bigEndian);
 
 uint16 humanVersion(uint16 ver);
 

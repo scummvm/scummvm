@@ -237,7 +237,6 @@ public:
 	Archive *loadEXEv7(Common::SeekableReadStream *stream);
 	Archive *loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	Archive *loadMac(const Common::Path &movie);
-	void writeToFile(Common::Path writePath = Common::Path("./dumps/writtenMovie.dir"));
 
 	bool desktopEnabled();
 
