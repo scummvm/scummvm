@@ -219,6 +219,8 @@ public:
 	 */
 	bool isMacFile() const { return _mode != kResForkNone; }
 
+	int getMode() const { return _mode; }
+
 	/**
 	 * Read resource from the MacBinary file
 	 * @param typeID FourCC of the type
@@ -333,6 +335,15 @@ public:
 	};
 	static MacVers *parseVers(SeekableReadStream *vvers);
 
+	enum {
+		kResForkNone = 0,
+		kResForkRaw,
+		kResForkMacBinary,
+		kResForkAppleDouble
+	} _mode;
+
+	static Path constructAppleDoubleName(const Path &name);
+
 private:
 	SeekableReadStream *_stream;
 	Path _baseFileName;
@@ -354,7 +365,6 @@ private:
 
 	static bool readAndValidateMacBinaryHeader(SeekableReadStream &stream, byte (&outMacBinaryHeader)[MBI_INFOHDR]);
 
-	static Path constructAppleDoubleName(const Path &name);
 	static Path disassembleAppleDoubleName(const Path &name, bool *isAppleDouble);
 
 	static SeekableReadStream *openAppleDoubleWithAppleOrOSXNaming(Archive& archive, const Path &fileName);
@@ -365,13 +375,6 @@ private:
 	 * @param stream Stream object to check. Will not preserve its position.
 	 */
 	static bool isRawFork(SeekableReadStream &stream);
-
-	enum {
-		kResForkNone = 0,
-		kResForkRaw,
-		kResForkMacBinary,
-		kResForkAppleDouble
-	} _mode;
 
 	void readMap();
 
