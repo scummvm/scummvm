@@ -37,15 +37,24 @@ CSize TextRender::renderText(const Common::String &str,
 	Common::StringArray lines;
 	CSize size;
 
+	// FIXME: Currently doing a hack to replace
+	// all tabs with spaces, rather than honoring
+	// the tab stops array
+	Common::String text = str;
+	uint p;
+	while ((p = text.findFirstOf('\t')) != Common::String::npos) {
+		text.deleteChar(p);
+		text.insertString("     ", p);
+	}
+
 	if (nFormat & DT_SINGLELINE) {
-		lines.push_back(str);
+		lines.push_back(text);
 	} else {
 		// Hotkeys aren't supported on multi-line text
 		assert((nFormat & DT_NOPREFIX) || !str.contains('&'));
 
 		// Perform word wrapping of the text as necessary
-		Common::String temp = str;
-		wordWrapText(font, str, tabStops, maxWidth, lines);
+		wordWrapText(font, text, tabStops, maxWidth, lines);
 	}
 
 	// Handle vertical alignment
