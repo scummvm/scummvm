@@ -30,6 +30,8 @@
 
 #include "backends/audiocd/audiocd.h"
 
+#include "common/config-manager.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
@@ -42,6 +44,7 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_pcSpeakerHandle1, _pcSpeaker1);
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_pcSpeakerHandle2, _pcSpeaker2);
 	_soundResource = nullptr;
+	_soundWasPlaying = false;
 }
 
 ScriptFunctions::~ScriptFunctions() {
@@ -195,6 +198,10 @@ int16 ScriptFunctions::sfDrawPicture(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
+	if (_vm->getGameID() == GID_LGOP2) {
+		_vm->stopTextToSpeech();
+	}
+
 	if (_vm->_screen->isScreenLocked())
 		return 0;
 	if (_vm->_autoStopSound) {
@@ -248,6 +255,7 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		soundNum = argv[1];
 		_vm->_autoStopSound = (argv[0] == 1);
 	}
+	_soundWasPlaying = true;
 	if (soundNum > 0) {
 		SoundResource *soundRes = _vm->_res->getSound(soundNum);
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
@@ -390,6 +398,15 @@ int16 ScriptFunctions::sfShowMouseCursor(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetMusicBeat(int16 argc, int16 *argv) {
+	// Delay the opening credits when TTS is enabled until TTS is done speaking,
+	// as they move too fast otherwise
+	if (_vm->getGameID() == GID_RTZ && _vm->_openingCreditsOpen) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+			return 0;
+		}
+	}
+
 	// This is used as timer in some games
 	return (_vm->_system->getMillis() - _vm->_musicBeatStart) / 360;
 }
@@ -507,6 +524,38 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 			break;
 		}
 		_vm->_screen->printText(finalText.c_str());
+
+#ifdef USE_TTS
+		if (_vm->getGameID() == GID_LGOP2) {
+			if (!_vm->tryAddPlayOMaticButtonTextIndex(argv[argc - 1])) {
+				// 13484 is the "over a decade of the best interactive fiction" line in the beginning, which has no voiceover
+				// 14185 is the "choose your character" message, and 13876 is the copyright message in the intro
+				if (_vm->_voiceText || argv[argc - 1] == 13484 || argv[argc - 1] == 14185 || argv[argc - 1] == 13876) {
+					finalText.replace('\x09', '\n');	// Replace tabs with newlines
+					// 25148 and 25152 are observation texts for the postcards, which are displayed in immediate succession
+					if (argv[argc - 1] == 13876 || argv[argc - 1] == 25148 || argv[argc - 1] == 25152) {
+						_vm->sayText(finalText, Common::TextToSpeechManager::QUEUE);
+					} else {
+						_vm->sayText(finalText);
+					}
+				} else {
+					_vm->stopTextToSpeech();
+				}
+			}
+		} else if (_vm->getGameID() == GID_RTZ) {
+			// 1946 and 1947 are strings for the save/load screen, which we don't want to voice here (since they're
+			// in the form of buttons)
+			// 1828, 1831, 1837, and 1843 are strings for the tape recorder, which are voiced elsewhere to be
+			// combined with their corresponding values (i.e. the name or the time)
+			if (argv[argc - 1] != 1946 && argv[argc - 1] != 1947 && argv[argc - 1] != 1828 && argv[argc - 1] != 1831 && 
+					argv[argc - 1] != 1837 && argv[argc - 1] != 1843 && _vm->getGameID() == GID_RTZ) {
+				_vm->sayText(finalText, Common::TextToSpeechManager::QUEUE);
+				_vm->_screen->setQueueNextText(true);
+			}
+		} else {
+			_vm->sayText(finalText);
+		}
+#endif
 	}
 
 	return 0;
@@ -544,6 +593,15 @@ int16 ScriptFunctions::sfSetFontDropShadow(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSetFontColor(int16 argc, int16 *argv) {
+	if (_vm->getGameID() == GID_LGOP2) {
+		// White text usually has a voiceover, so it shouldn't be voiced by TTS, while text of other colors should be
+		if (argv[0] == 255) {
+			_vm->_voiceText = false;
+		} else {
+			_vm->_voiceText = true;
+		}
+	}
+
 	_vm->_screen->setTextColor(argv[0]);
 	return 0;
 }
@@ -598,8 +656,16 @@ int16 ScriptFunctions::sfSetSpriteMask(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
-		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle))
+		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle)) {
+			if (_soundWasPlaying) {
+				_vm->_screen->setVoiceTimeText(true);
+				_soundWasPlaying = false;
+			}
+			
 			return 0;
+		}
+
+		_vm->_screen->setVoiceTimeText(false);
 
 		// For looping sounds the game script regularly checks if the sound has
 		// finished playing, then plays it again. This works in the original
@@ -930,8 +996,30 @@ int16 ScriptFunctions::sfDrawMenu(int16 argc, int16 *argv) {
 	MenuResource *menu = _vm->_res->getMenu(menuIndex);
 	if (menu) {
 		const char *text = menu->getString(textIndex);
-		if (text)
+		if (text) {
 			_vm->_screen->printText(text);
+
+			// menuIndex 22 is the opening credits following the intro cutscene
+			if (menuIndex == 22) {
+				_vm->sayText(text, Common::TextToSpeechManager::QUEUE);
+				_vm->_openingCreditsOpen = true;
+			} else if (menuIndex != 1) {
+				// menuIndex 1 corresponds to the buttons in the save/load screen, which we don't want
+				// to voice right away
+				_vm->sayText(text);
+
+				_vm->_saveScreenOpen = false;
+				_vm->_loadScreenOpen = false;
+			} else {
+				if (textIndex == 26) {	// Save screen
+					_vm->_saveScreenOpen = true;
+					_vm->_loadScreenOpen = false;
+				} else {	// Load screen
+					_vm->_saveScreenOpen = false;
+					_vm->_loadScreenOpen = true;
+				}
+			}
+		}
 
 		_vm->_res->freeResource(menu);
 	}

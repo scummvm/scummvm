@@ -39,6 +39,40 @@
 
 namespace Made {
 
+#ifdef USE_TTS
+
+static const Common::Rect rtzSaveLoadScreenButtons[] = {
+	Common::Rect(184, 174, 241, 189),	// Cancel button
+	Common::Rect(109, 174, 166, 189),	// Save/load button
+	Common::Rect(25, 20, 297, 158)		// Text entry box
+};
+
+static const uint8 kRtzSaveLoadButtonCount = ARRAYSIZE(rtzSaveLoadScreenButtons);
+static const uint8 kRtzSaveBoxHeight = 14;
+
+enum RtzSaveLoadScreenIndex {
+	kCancel = 0,
+	kSaveOrLoad = 1,
+	kTextBox = 2
+};
+
+static const Common::Rect lgop2PlayOMaticButtons[] = {
+	Common::Rect(105, 102, 225, 122),
+	Common::Rect(105, 127, 225, 147),
+	Common::Rect(105, 152, 225, 172),
+	Common::Rect(105, 177, 225, 197)
+};
+
+static const int16 lgop2PlayOMaticTextIndices[] = {
+	14191, 14197, 14203, 14207, 14214, 14221, 14227, 14230, 14236, 14243, 14250, 14256, 14261, 14267, 14270, 14274,
+	14280, 14287, 14292, 14296
+};
+
+static const uint8 kLgop2PlayOMaticButtonCount = ARRAYSIZE(lgop2PlayOMaticButtons);
+static const uint8 kLgop2PlayOMaticTextCount = ARRAYSIZE(lgop2PlayOMaticTextIndices);
+
+#endif
+
 MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 	_eventNum = 0;
@@ -76,6 +110,15 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_music = nullptr;
 
 	_soundRate = 0;
+
+	_saveScreenOpen = false;
+	_loadScreenOpen = false;
+	_openingCreditsOpen = false;
+	_previousRect = -1;
+	_previousTextBox = -1;
+	_voiceText = true;
+
+	_playOMaticButtonIndex = 0;
 
 	// Set default sound frequency
 	switch (getGameID()) {
@@ -120,9 +163,14 @@ int16 MadeEngine::getTicks() {
 }
 
 int16 MadeEngine::getTimer(int16 timerNum) {
-	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1)
+	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan && ttsMan->isSpeaking()) {
+			return 1;
+		}
+
 		return (getTicks() - _timers[timerNum - 1]);
-	else
+	} else
 		return 32000;
 }
 
@@ -156,6 +204,137 @@ void MadeEngine::resetAllTimers() {
 		_timers[i] = -1;
 }
 
+void MadeEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(text, action, _ttsTextEncoding);
+	}
+}
+
+void MadeEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
+#ifdef USE_TTS
+
+void MadeEngine::checkHoveringSaveLoadScreen() {
+	if ((_saveScreenOpen || _loadScreenOpen) && getGameID() == GID_RTZ) {
+		bool hoveringOverButton = false;
+		for (uint8 i = 0; i < kRtzSaveLoadButtonCount; ++i) {
+			if (rtzSaveLoadScreenButtons[i].contains(_eventMouseX, _eventMouseY)) {
+				if (_previousRect != i) {
+					if (i == kTextBox) {
+						int index = MIN((_eventMouseY - 20) / kRtzSaveBoxHeight, 9);
+
+						if (index != _previousTextBox) {
+							// The string of object 1946 is the number of the last save slot
+							const char *lastSaveSlot = _dat->getObjectString(1946);
+							if (lastSaveSlot) {
+								// Sometimes, string 1946 is not yet updated to the number of the last save slot at this time, so
+								// round to the next multiple of 10 to keep the voicing accurate
+								sayText(Common::String::format("%d", ((atoi(lastSaveSlot) + 9) / 10) * 10 - 9 + index));
+							}
+							_previousTextBox = index;
+						}
+					} else {
+						const char *text = nullptr;
+
+						MenuResource *menu = _res->getMenu(1);
+						if (menu) {
+							if (i == kCancel) {
+								text = menu->getString(0);
+							} else {
+								if (_saveScreenOpen) {
+									text = menu->getString(26);
+								} else {
+									text = menu->getString(27);
+								}
+							}	
+						}
+
+						if (text) {
+							sayText(text);
+						}
+
+						_previousRect = i;
+					}
+				}
+
+				hoveringOverButton = true;
+				break;
+			}
+		}
+
+		if (!hoveringOverButton) {
+			_previousRect = -1;
+			_previousTextBox = -1;
+		}
+	}
+}
+
+void MadeEngine::checkHoveringPlayOMatic() {
+	if (_saveScreenOpen && getGameID() == GID_LGOP2) {
+		bool hoveringOverButton = false;
+		for (uint8 i = 0; i < kLgop2PlayOMaticButtonCount; ++i) {
+			if (lgop2PlayOMaticButtons[i].contains(_eventMouseX, _eventMouseY)) {
+				if (_previousRect != i) {
+					const char *text = _dat->getString(_playOMaticButtonTextIndices[i]);
+					if (text) {
+						sayText(text, Common::TextToSpeechManager::INTERRUPT);
+					}
+
+					_previousRect = i;
+				}
+
+				hoveringOverButton = true;
+				break;
+			}
+		}
+
+		if (!hoveringOverButton) {
+			_previousRect = -1;
+		}
+	}
+}
+
+void MadeEngine::voiceHighlightedPlayOMaticButton(int spriteY) const {
+	for (uint8 i = 0; i < kLgop2PlayOMaticButtonCount; ++i) {
+		if (lgop2PlayOMaticButtons[i].top == spriteY) {
+			const char *text = _dat->getString(_playOMaticButtonTextIndices[i]);
+			if (text) {
+				sayText(text, Common::TextToSpeechManager::INTERRUPT);
+			}
+
+			return;
+		}
+	}
+}
+
+bool MadeEngine::tryAddPlayOMaticButtonTextIndex(int16 textIndex) {
+	if (_playOMaticButtonIndex >= kLgop2PlayOMaticButtonCount) {
+		return false;
+	}
+
+	for (uint8 i = 0; i < kLgop2PlayOMaticTextCount; ++i) {
+		if (lgop2PlayOMaticTextIndices[i] == textIndex) {
+			_playOMaticButtonTextIndices[_playOMaticButtonIndex] = textIndex;
+			_playOMaticButtonIndex++;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+#endif
+
 Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
 	return Common::String::format("%s.%03d", getTargetName().c_str(), saveNum);
 }
@@ -173,10 +352,22 @@ void MadeEngine::handleEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_eventMouseX = event.mouse.x;
 			_eventMouseY = event.mouse.y;
+
+#ifdef USE_TTS
+			checkHoveringSaveLoadScreen();
+			checkHoveringPlayOMatic();
+#endif
+
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
 			_eventNum = 2;
+
+			if (_openingCreditsOpen) {
+				_openingCreditsOpen = false;
+				stopTextToSpeech();
+			}
+
 			break;
 
 		case Common::EVENT_LBUTTONUP:
@@ -260,6 +451,23 @@ Common::Error MadeEngine::run() {
 	initGraphics(320, 200);
 
 	resetAllTimers();
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+
+		if (getLanguage() == Common::KO_KOR) {	// Korean version doesn't translate any text
+			ttsMan->setLanguage("en");
+		} else {
+			ttsMan->setLanguage(ConfMan.get("language"));
+		}
+
+		if (getLanguage() == Common::JA_JPN) {
+			_ttsTextEncoding = Common::CodePage::kWindows932;
+		} else {
+			_ttsTextEncoding = Common::CodePage::kDos850;
+		}
+	}
 
 	if (getGameID() == GID_RTZ) {
 		if (getFeatures() & GF_DEMO) {
