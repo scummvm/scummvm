@@ -162,6 +162,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x8E] = "Holzwürfel";
 	ObjectNames[0x8F] = "Brief";
 	ObjectNames[0x99] = "Brecheisen";
+	ObjectNames[0x9B] = "Dynamit";
 	ObjectNames[0x9C] = "Fackel"; // brennend
 	ObjectNames[0x9D] = "Fackel"; // erloschen
 	ObjectNames[0x98] = "Bohlen";

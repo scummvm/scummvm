@@ -1583,6 +1583,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// TODO: For the sake of easier reading the logs, jumping out if we
 		// read a 0 opcode.
 		if (opcode1 == 0x00) {
+			// Account for the missing byte from reading opcode 0
+			expectedEndLocation++;
 			continue;
 		}
 		Common::String opcodeInfo;
@@ -2133,20 +2135,20 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
 			isAwaitingCallback = true;
 		} else if (opcode1 == 0x24) {
-			// TODO: No idea yet what this might do. Happens when the hat is used on the dog
-			// in chapter 2
+			// Adds two values read and saves them to a script variable
 			// ;; fn0037_C7E6: 0037:C7E6
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			uint32 a = Func9F4D_32();
+			uint32 b = Func9F4D_32();
 
-			// Mock function A334 here
-			// TODO: No idea why but it only works out with offsets if is left out
-			// uint8 v = ReadByte();
-			// TODO: We should check the value of v
-			// TODO: This seems to result in an error if it is malformed
-			// TODO: Check where that error reporting value leads to, could be interesting
-			// where the game does its error checking
-			// ReadWord();
+			uint32 result = a + b;
+			// Go back to the first value being pointed to
+			// In this case, 9F4D and A334 can use the same data, since the
+			// index of the script variable will be in the word at offset 1
+			_stream->seek(-6, SEEK_CUR);
+			FuncA334(result);
+			// Skip forward across the second 9F4D read's data
+			_stream->seek(3, SEEK_CUR);
+		
 		} else if (opcode1 == 0x25) {
 			// TODO: No visual difference, so only implementing mocked reads here
 			// TODO: There is the weird "rewind" in the log here, to be investigated separately
