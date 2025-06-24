@@ -277,7 +277,6 @@ bool LoadWSAssets(const char *wsAssetName) {
 }
 
 bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
-	MemHandle workHandle;
 	char *parseAssetPtr;
 	uint32 *tempPtr;
 	IntPointer chunkType, chunkSize, chunkHash;
@@ -291,7 +290,8 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 	}
 
 	// Use the resource io manager to read in the entire block
-	if ((workHandle = rget(wsAssetName, &assetSize)) == nullptr) {
+	const MemHandle workHandle = rget(wsAssetName, &assetSize);
+	if (workHandle == nullptr) {
 		error_show(FL, 'FNF!', "Asset Name: %s", wsAssetName);
 	}
 
@@ -566,7 +566,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 
 int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
 	MemHandle workHandle;
-	int32 celsSize, *celsPtr, *palPtr;
+	int32 *celsPtr, *palPtr;
 	char *parseAssetPtr;
 	int32 assetSize;
 
@@ -584,7 +584,8 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
-	if ((celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette)) < 0) {
+	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
+	if (celsSize < 0) {
 		error_show(FL, 'WSLP', "series: %s", assetName);
 	}
 
@@ -600,7 +601,7 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 
 int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
 	Common::File f;
-	int32 celsSize, *celsPtr, *palPtr;
+	int32 *celsPtr, *palPtr;
 	char *parseAssetPtr;
 
 	// This loads a sprite series into the provided vars, rather than the WS tables.
@@ -611,12 +612,12 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 		return -1;
 
 	// Get the file size
-	uint32 assetSize = f.size();
+	const uint32 assetSize = f.size();
 
 	// Create a handle big enough to hold the contents of the file
-	MemHandle workHandle = NewHandle(assetSize, "ss file");
+	const MemHandle workHandle = NewHandle(assetSize, "ss file");
 
-	// Lock the handle and read the contents of the file intoit
+	// Lock the handle and read the contents of the file into it
 	HLock(workHandle);
 	char *mainAssetPtr = (char *)*workHandle;
 	if (f.read(mainAssetPtr, assetSize) < assetSize) {
@@ -632,7 +633,8 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
-	if ((celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette)) < 0) {
+	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
+	if (celsSize < 0) {
 		error_show(FL, 'WSLP', "series: %s", assetName);
 	}
 
@@ -728,8 +730,8 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 	// If we've searched the entire table and not found the series, but
 	// we found an empty slot to load the SS into
 	if ((i > MAX_ASSET_HASH) && (emptySlot >= 0)) {
-
-		if ((workHandle = rget(wsAssetName, &assetSize)) == nullptr) {
+		workHandle = rget(wsAssetName, &assetSize);
+		if (workHandle == nullptr) {
 			error_show(FL, 'FNF!', wsAssetName);
 		}
 
@@ -1047,8 +1049,7 @@ M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite
 
 
 int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
-	MemHandle workHandle;
-	int32 celsSize, *celsPtr, *palPtr;
+	int32 *celsPtr, *palPtr;
 	char *parseAssetPtr;
 	int32 assetSize;
 
@@ -1056,7 +1057,8 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 	//The WS loader is not involved with this procedure.
 
 	// Load in the sprite series
-	if ((workHandle = rget(assetName, &assetSize)) == nullptr)
+	const MemHandle workHandle = rget(assetName, &assetSize);
+	if (workHandle == nullptr)
 		error_show(FL, 'FNF!', "Sprite series: %s", assetName);
 
 	HLock(workHandle);
@@ -1066,7 +1068,8 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
-	if ((celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette)) < 0) {
+	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
+	if (celsSize < 0) {
 		error_show(FL, 'WSLP', "series: %s", assetName);
 	}
 
@@ -1082,7 +1085,7 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 
 int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
 	Common::File f;
-	int32 celsSize, *celsPtr, *palPtr;
+	int32 *celsPtr, *palPtr;
 	char *parseAssetPtr;
 
 	// This loads a sprite series into the provided vars, rather than the WS tables.
@@ -1115,7 +1118,8 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
-	if ((celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette)) < 0) {
+	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
+	if (celsSize < 0) {
 		error_show(FL, 'WSLP', "series: %s", assetName);
 	}
 
@@ -1164,7 +1168,8 @@ CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 
 	//The source for a CCB is a sprite.  create the sprite from the WS tables hash, index
 	M4sprite *mySprite = myCCB->source;
-	if ((mySprite = GetWSAssetSprite(nullptr, hash, index, mySprite, &streamSeries)) == nullptr) {
+	mySprite = GetWSAssetSprite(nullptr, hash, index, mySprite, &streamSeries);
+	if (mySprite == nullptr) {
 		// Term messages for whatever went wrong are printed from within GetWSAssetSprite()
 		return nullptr;
 	}
@@ -1322,7 +1327,7 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	uint32 *celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
-	int32 numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	const int32 numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= numCels) {
 		ws_LogErrorMsg(FL, "ws_get_sprite_height: Sprite index out of range - max index: %d, requested index: %d, hash: %d",
 			numCels - 1, index, hash);
@@ -1471,7 +1476,7 @@ int32 ws_GetDATACount(uint32 hash) {
 }
 
 static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
-	uint32 celsSize, *myColors;
+	uint32 celsSize;
 	uint32 *tempPtr, i;
 	bool byteSwap;
 
@@ -1481,7 +1486,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read in the series header and the format number
-	uint32 header = sysFile->readUint32LE();
+	const uint32 header = sysFile->readUint32LE();
 	uint32 format = sysFile->readUint32LE();
 
 	// Make sure the header is "M4SS", and that the format is not antique
@@ -1517,7 +1522,8 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 
 		// If there is at least one color specified in this block
 		if (numColors > 0) {
-			if ((myColors = (uint32 *)mem_alloc(celsSize - 12, "ss pal info")) == nullptr) {
+			uint32 *myColors = (uint32 *)mem_alloc(celsSize - 12, "ss pal info");
+			if (myColors == nullptr) {
 				ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", celsSize - 12);
 				return -1;
 			}
@@ -1619,7 +1625,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Find out how far into the stream we are, and return that value
-	int32 dataOffset = (*sysFile).get_pos();
+	const int32 dataOffset = (*sysFile).get_pos();
 	return dataOffset;
 }
 
@@ -1643,7 +1649,7 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 
 	// Automatically set some of the sequence registers
 	uint32 *celsPtr = myCCB->streamSSHeader;
-	int32 numSprites = celsPtr[CELS_COUNT];
+	const int32 numSprites = celsPtr[CELS_COUNT];
 	myRegs[IDX_CELS_INDEX] = -(1 << 16);	// First frame inc will make it 0
 	myRegs[IDX_CELS_COUNT] = numSprites << 16;
 	myRegs[IDX_CELS_FRAME_RATE] = celsPtr[CELS_FRAME_RATE] << 16;
@@ -1688,7 +1694,8 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	term_message("Biggest frame was: %d, size: %d bytes (compressed)", obesest_frame, maxFrameSize);
 
 	// Access the streamer to recognize the new client
-	if ((myCCB->myStream = (void *)f_stream_Open(sysFile, ssDataOffset, maxFrameSize, maxFrameSize << 4, numSprites, (int32 *)offsets, 4, false)) == nullptr) {
+	myCCB->myStream = (void *)f_stream_Open(sysFile, ssDataOffset, maxFrameSize, maxFrameSize << 4, numSprites, (int32 *)offsets, 4, false);
+	if (myCCB->myStream == nullptr) {
 		ws_LogErrorMsg(FL, "Failed to open a stream.");
 		return false;
 	}
@@ -1731,7 +1738,7 @@ bool ws_GetNextSSstreamCel(Anim8 *anim8) {
 	anim8->myRegs[IDX_CELS_INDEX] += 0x10000;
 
 	// Check whether the end of the SS has been streamed
-	uint32 frameNum = anim8->myRegs[IDX_CELS_INDEX] >> 16;
+	const uint32 frameNum = anim8->myRegs[IDX_CELS_INDEX] >> 16;
 	if (frameNum >= celsPtr[CELS_COUNT]) {
 		ws_LogErrorMsg(FL, "No more frames available to stream");
 		return false;
