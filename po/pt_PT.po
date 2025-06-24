@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-23 23:07+0000\n"
+"POT-Creation-Date: 2025-06-24 10:52+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -6019,7 +6019,19 @@ msgstr "Ativar integração Discord"
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
-#: engines/agi/metaengine.cpp:421 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:207
+msgid "Use PCjr's sound chip in 16-bit shift mode"
+msgstr ""
+
+#: engines/agi/metaengine.cpp:208
+msgid ""
+"In PCjr sound mode, emulate a non-standard SN76496 sound chip, similar to "
+"chips found in SEGA Master System consoles. Allows certain music effects, "
+"especially in fanmade games, but original Sierra music designed strictly for "
+"PCjr may sound wrong."
+msgstr ""
+
+#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
@@ -6027,7 +6039,7 @@ msgstr ""
 msgid "This game does not support loading"
 msgstr "Este jogo não é suportado."
 
-#: engines/agi/metaengine.cpp:444 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:456 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 #, fuzzy

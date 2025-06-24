@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-23 23:07+0000\n"
+"POT-Creation-Date: 2025-06-24 10:52+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6375,13 +6375,25 @@ msgstr ""
 "Bármilyen másolásvédelem engedélyezése, ami máskülönben átugrásra került "
 "volna."
 
-#: engines/agi/metaengine.cpp:421 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:207
+msgid "Use PCjr's sound chip in 16-bit shift mode"
+msgstr ""
+
+#: engines/agi/metaengine.cpp:208
+msgid ""
+"In PCjr sound mode, emulate a non-standard SN76496 sound chip, similar to "
+"chips found in SEGA Master System consoles. Allows certain music effects, "
+"especially in fanmade games, but original Sierra music designed strictly for "
+"PCjr may sound wrong."
+msgstr ""
+
+#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 msgid "This game does not support loading"
 msgstr "Ez a játék nem támogatja a betöltést"
 
-#: engines/agi/metaengine.cpp:444 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:456 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-23 23:07+0000\n"
+"POT-Creation-Date: 2025-06-24 10:52+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -5746,7 +5746,19 @@ msgstr "啟用Discord整合"
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
-#: engines/agi/metaengine.cpp:421 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:207
+msgid "Use PCjr's sound chip in 16-bit shift mode"
+msgstr ""
+
+#: engines/agi/metaengine.cpp:208
+msgid ""
+"In PCjr sound mode, emulate a non-standard SN76496 sound chip, similar to "
+"chips found in SEGA Master System consoles. Allows certain music effects, "
+"especially in fanmade games, but original Sierra music designed strictly for "
+"PCjr may sound wrong."
+msgstr ""
+
+#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
@@ -5754,7 +5766,7 @@ msgstr ""
 msgid "This game does not support loading"
 msgstr "这个游戏不支持直接从启动器载入存档。"
 
-#: engines/agi/metaengine.cpp:444 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:456 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"
