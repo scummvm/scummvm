@@ -204,7 +204,7 @@ bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, UINT nID, int nCode,
 		assert(nCode == CN_UPDATE_COMMAND_UI);
 		assert(pExtra != nullptr);
 		CCmdUI *pCmdUI = (CCmdUI *)pExtra;
-		assert(pCmdUI->m_nID == nID);           // sanity assert
+		assert(pCmdUI->m_nID == (int)nID);           // sanity assert
 		assert(!pCmdUI->m_bContinueRouting);    // idle - not set
 		(pTarget->*mmf.pfn_UPDATE_COMMAND_UI_RANGE)(pCmdUI, nID);
 		bResult = !pCmdUI->m_bContinueRouting;

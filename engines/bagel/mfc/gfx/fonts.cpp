@@ -34,7 +34,7 @@ struct AvgWidth {
 	int _charHeight;
 };
 static const AvgWidth AVG_WIDTH[] = {
-	{ "MS Sans Serif", 12, 10, 0 },
+	{ "xMS Sans Serif", 12, 10, 0 },
 	{ nullptr, 0, 0, 0 }
 };
 

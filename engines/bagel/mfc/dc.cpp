@@ -814,7 +814,9 @@ COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
 	return oldColor;
 }
 
-BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount) {
+BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount,
+		int nTabPositions, const LPINT lpnTabStopPositions,
+		int nTabOrigin, CSize *size) {
 	Graphics::ManagedSurface *dest = getSurface();
 	RECT r;
 
@@ -840,11 +842,14 @@ BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount) {
 
 	CString str(lpszString, nCount);
 	drawText(str, &r, DT_SINGLELINE | DT_NOPREFIX |
-		_textAlign);
+		_textAlign, nTabPositions, lpnTabStopPositions,
+		nTabOrigin, size);
 	return true;
 }
 
-BOOL CDC::Impl::textOut(int x, int y, const CString &str) {
+BOOL CDC::Impl::textOut(int x, int y, const CString &str,
+		int nTabPositions, const LPINT lpnTabStopPositions,
+		int nTabOrigin, CSize *size) {
 	Graphics::ManagedSurface *dest = getSurface();
 	RECT r;
 	r.left = x;
@@ -852,7 +857,9 @@ BOOL CDC::Impl::textOut(int x, int y, const CString &str) {
 	r.right = dest->w;
 	r.bottom = dest->h;
 
-	drawText(str, &r, DT_SINGLELINE | DT_NOPREFIX);
+	drawText(str, &r, DT_SINGLELINE | DT_NOPREFIX,
+		nTabPositions, lpnTabStopPositions,
+		nTabOrigin, size);
 	return true;
 }
 
@@ -867,133 +874,52 @@ BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 }
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
-	Graphics::Font *font = *(CFont::Impl *)_font;
+		int nTabPositions, const LPINT lpnTabStopPositions, int nTabOrigin) {
 	Common::String str(lpszString, nCount);
-	assert(!str.contains('\t'));	// TODO: tab support
-	textOut(x, y, str.c_str(), str.size());
-	return x + font->getStringWidth(str);
+
+	CSize size;
+	textOut(x, y, str.c_str(), str.size(),
+		nTabPositions, lpnTabStopPositions, nTabOrigin, &size);
+
+	return size;
 }
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
 		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
-	Graphics::Font *font = *(CFont::Impl *)_font;
-	assert(!str.contains('\t'));	// TODO: tab support
-	textOut(x, y, str);
-	return x + font->getStringWidth(str);
+	CSize size;
+	textOut(x, y, str, nTabPositions, lpnTabStopPositions, nTabOrigin, &size);
+	return size;
 }
 
 int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
-		LPRECT lpRect, UINT nFormat) {
+		LPRECT lpRect, UINT nFormat, int nTabPositions,
+		const LPINT lpnTabStopPositions, int nTabOrigin,
+		CSize *size) {
 	return drawText(CString(lpszString, nCount),
-		lpRect, nFormat);
+		lpRect, nFormat, nTabPositions,
+		lpnTabStopPositions, nTabOrigin, size);
 }
 
-int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat) {
+int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat,
+		int nTabPositions, const LPINT lpnTabStopPositions,
+		int nTabOrigin, CSize *size) {
 	Graphics::Font *font = *(CFont::Impl *)_font;
 	Graphics::ManagedSurface *dest = getSurface();
-	const int maxWidth = lpRect->right - lpRect->left;
-	Common::Rect textRect = *lpRect;
-	Common::StringArray lines;
 	uint textCol = GetNearestColor(_textColor);
+	CSize dummySize;
+	if (!size)
+		size = &dummySize;
 
-	if (nFormat & DT_SINGLELINE) {
-		lines.push_back(str);
-	} else {
-		// We don't currently support prefix & characters
-		// on potentially multi-line text. If this is ever
-		// needed, we'll have to basically re-write the
-		// wordWrapText function to handle them.
-		assert((nFormat & DT_NOPREFIX) || !str.contains('&'));
+	Common::Array<int> tabStops;
+	for (int i = 0; i < nTabPositions; ++i)
+		tabStops.push_back(lpnTabStopPositions[i]);
 
-		// Perform word wrapping of the text as necessary
-		Common::String temp = str;
-		font->wordWrapText(temp, maxWidth, lines);
-	}
+	*size = renderText(str, dest, font, textCol, lpRect,
+		nFormat, tabStops, nTabOrigin,
+		GetNearestColor(_bkColor), _bkMode,
+		GetNearestColor(_textColor), _textAlign);
 
-	// Handle vertical alignment
-	const int linesHeight = lines.size() * font->getFontHeight();
-
-	if (nFormat & DT_BOTTOM) {
-		textRect.moveTo(textRect.left,
-			MAX<int16>(lpRect->top, textRect.bottom - linesHeight));
-	}
-	if (nFormat & DT_VCENTER) {
-		textRect.moveTo(textRect.left, MAX<int16>(lpRect->top,
-			lpRect->top + ((lpRect->bottom - lpRect->top) -
-				linesHeight) / 2));
-	}
-
-	// Iterate through the lines
-	for (const Common::String &line : lines) {
-		// Constrain within passed rect
-		if (textRect.top >= lpRect->bottom)
-			break;
-
-		Common::String tempLine = line;
-		int idx;
-		while ((idx = tempLine.findFirstOf('&')) != Common::String::npos)
-			tempLine.deleteChar(idx);
-
-		const int lineWidth = font->getStringWidth(tempLine);
-
-		// Form sub-rect for the single line
-		Common::Rect lineRect(textRect.left, textRect.top,
-			textRect.right, textRect.top + font->getFontHeight());
-
-		// Handle horizontal alignment
-		if (nFormat & DT_RIGHT) {
-			textRect.moveTo(MAX<int16>(textRect.left,
-				textRect.right - lineWidth),
-				textRect.top);
-		}
-		if (nFormat & DT_CENTER) {
-			textRect.moveTo(MAX<int16>(textRect.left,
-				textRect.left + (textRect.width() - lineWidth) / 2),
-				textRect.top);
-		}
-
-		// If the background is opaque, clear it
-		if (_bkMode == OPAQUE)
-			fillRect(textRect, _bkColor);
-
-		// Write the actual text. This is slightly
-		// complicated to detect '&' characters when
-		// DT_NOPREFIX isn't set
-		Common::String fragment;
-		tempLine = line;
-		while (!tempLine.empty()) {
-			if (!(nFormat & DT_NOPREFIX) && tempLine.firstChar() == '&') {
-				tempLine.deleteChar(0);
-
-				// Draw an underline
-				const int x1 = textRect.left;
-				const int x2 = x1 + font->getCharWidth(tempLine.firstChar()) - 1;
-				const int y = textRect.top + font->getFontAscent() + 1;
-
-				dest->hLine(x1, y, x2, textCol);
-			}
-
-			idx = (nFormat & DT_NOPREFIX) ? Common::String::npos :
-				tempLine.findFirstOf('&');
-			if (idx == Common::String::npos) {
-				fragment = tempLine;
-				tempLine.clear();
-			} else {
-				fragment = Common::String(tempLine.c_str(), tempLine.c_str() + idx);
-				tempLine = Common::String(tempLine.c_str() + fragment.size());
-			}
-
-			font->drawString(dest, fragment, textRect.left, textRect.top,
-				textRect.width(), textCol);
-			textRect.left += font->getStringWidth(fragment);
-		}
-
-		// Move to next line
-		textRect.top += font->getFontHeight();
-	}
-
-	return lines.size() * font->getFontHeight();
+	return size->cy;
 }
 
 CSize CDC::Impl::getTextExtent(LPCSTR lpszString, int nCount) const {
@@ -1053,7 +979,7 @@ BOOL CDC::Impl::grayString(CBrush *pBrush,
 }
 
 UINT CDC::Impl::getTextAlign() const {
-	error("TODO");
+	return _textAlign;
 }
 
 UINT CDC::Impl::setTextAlign(UINT nFlags) {

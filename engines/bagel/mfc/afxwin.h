@@ -36,6 +36,7 @@
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/dialog_template.h"
 #include "bagel/mfc/gfx/fonts.h"
+#include "bagel/mfc/gfx/text_render.h"
 #include "bagel/mfc/libs/array.h"
 #include "bagel/mfc/libs/event_loop.h"
 #include "bagel/mfc/libs/events.h"
@@ -671,7 +672,7 @@ protected:
 	void AfxHookObject();
 
 public:
-	class Impl {
+	class Impl : public Gfx::TextRender {
 	private:
 		CBitmap::Impl _defaultBitmap;
 		Common::Point _linePos;
@@ -738,19 +739,28 @@ public:
 		COLORREF getBkPixel() const;
 		int setBkMode(int nBkMode);
 		COLORREF setTextColor(COLORREF crColor);
-		BOOL textOut(int x, int y, LPCSTR lpszString, int nCount);
-		BOOL textOut(int x, int y, const CString &str);
+		BOOL textOut(int x, int y, LPCSTR lpszString, int nCount,
+			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabOrigin = 0, CSize *size = nullptr);
+		BOOL textOut(int x, int y, const CString &str,
+			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabOrigin = 0, CSize *size = nullptr);
 		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 			LPCSTR lpszString, UINT nCount, LPINT lpDxWidths);
 		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 			const CString &str, LPINT lpDxWidths);
 		CSize tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-			int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+			int nTabPositions, const LPINT lpnTabStopPositions, int nTabOrigin);
 		CSize tabbedTextOut(int x, int y, const CString &str,
-			int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
-		int drawText(LPCSTR lpszString, int nCount,
-			LPRECT lpRect, UINT nFormat);
-		int drawText(const CString &str, LPRECT lpRect, UINT nFormat);
+			int nTabPositions, const LPINT lpnTabStopPositions, int nTabOrigin);
+
+		int drawText(LPCSTR lpszString, int nCount, LPRECT lpRect, UINT nFormat,
+			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabOrigin = 0, CSize *size = nullptr);
+		int drawText(const CString &str, LPRECT lpRect, UINT nFormat,
+			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabOrigin = 0, CSize *size = nullptr);
+
 		CSize getTextExtent(LPCSTR lpszString, int nCount) const;
 		CSize getTextExtent(const CString &str) const;
 		CSize getOutputTextExtent(LPCSTR lpszString, int nCount) const;

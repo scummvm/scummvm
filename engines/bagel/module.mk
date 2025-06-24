@@ -52,6 +52,7 @@ MODULE_OBJS = \
 	mfc/gfx/cursor.o \
 	mfc/gfx/dialog_template.o \
 	mfc/gfx/fonts.o \
+	mfc/gfx/text_render.o \
 	mfc/libs/event_loop.o \
 	mfc/libs/events.o \
 	mfc/libs/resources.o \
