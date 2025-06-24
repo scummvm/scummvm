@@ -481,21 +481,10 @@ void Scene::push(const SceneEvent &event) {
 
 bool Scene::processEvent(const Common::Event &event) {
 	switch (event.type) {
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN:
-		if (!message.empty() && messageFirstFrame == 0) {
-			_vm->stopTextToSpeech();
-			clearMessage();
-			nextEvent();
-			return true;
-		}
-		return false;
-
-	case Common::EVENT_KEYDOWN:
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_ESCAPE:
-		case Common::KEYCODE_SPACE: {
-			if (intro && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		switch (event.customType) {
+		case kActionSkipIntro:
+			if (intro) {
 				intro = false;
 				clearMessage();
 				events.clear();
@@ -510,7 +499,8 @@ bool Scene::processEvent(const Common::Event &event) {
 				_vm->setTTSVoice(kMark);
 				return true;
 			}
-
+			break;
+		case kActionSkipDialog:
 			if (!message.empty() && messageFirstFrame == 0) {
 				_vm->stopTextToSpeech();
 				clearMessage();
@@ -518,7 +508,12 @@ bool Scene::processEvent(const Common::Event &event) {
 				return true;
 			}
 			break;
+		default:
+			break;
 		}
+		break;
+	case Common::EVENT_KEYDOWN:
+		switch (event.kbd.keycode) {
 #if 0
 		case '1':
 		case '2':

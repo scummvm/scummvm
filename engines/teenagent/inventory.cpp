@@ -253,12 +253,12 @@ bool Inventory::processEvent(const Common::Event &event) {
 			debugC(0, kDebugInventory, "selected object %s", _selectedObj->name.c_str());
 		return true;
 
-	case Common::EVENT_KEYDOWN:
-		if (_active && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (_active && event.customType == kActionCloseInventory) {
 			activate(false);
 			return true;
 		}
-		if (event.kbd.keycode == Common::KEYCODE_RETURN) {
+		if (event.customType == kActionToggleInventory) {
 			activate(!_active);
 			return true;
 		}
