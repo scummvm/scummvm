@@ -37,7 +37,7 @@ const AweGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
-			GUIO1(GAMEOPTION_COPY_PROTECTION)
+			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
 	},
@@ -49,7 +49,7 @@ const AweGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
-			GUIO1(GAMEOPTION_COPY_PROTECTION)
+			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
 	},
@@ -64,7 +64,7 @@ const AweGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
-			GUIO1(GAMEOPTION_COPY_PROTECTION)
+			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
 	},
@@ -78,7 +78,7 @@ const AweGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
-			GUIO1(GAMEOPTION_COPY_PROTECTION)
+			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
 	},
@@ -92,7 +92,7 @@ const AweGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
-			GUIO1(GAMEOPTION_COPY_PROTECTION)
+			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
 	},
@@ -105,7 +105,7 @@ const AweGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_TESTING,
-			GUIO1(GAMEOPTION_COPY_PROTECTION)
+			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
 	},

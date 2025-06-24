@@ -21,6 +21,7 @@
 
 #include "audio/mixer.h"
 #include "common/config-manager.h"
+#include "common/rendermode.h"
 #include "common/stream.h"
 #include "awe/awe.h"
 #include "awe/engine.h"
@@ -105,7 +106,12 @@ AweEngine::AweEngine(OSystem *syst, const Awe::AweGameDescription *gameDesc)
 
 	Gfx::_is1991 = false;
 	Gfx::_format = Graphics::PixelFormat::createFormatCLUT8();
-	Video::_useEGA = false;
+
+	if (ConfMan.hasKey("render_mode") && !ConfMan.get("render_mode").empty())
+		Video::_useEGA = (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA) ? true : false;
+	else
+		Video::_useEGA = false;
+
 	Script::_difficulty = DIFFICULTY_NORMAL;
 	Script::_useRemasteredAudio = true;
 }
