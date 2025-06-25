@@ -92,7 +92,7 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_JUMP, "JUMP", _s("Jump / Roll / Crouch"), "LCTRL", nullptr },
 	{ ACTION_SHORT_JUMP, "SHORT_JUMP", _s("Short jump"), "TAB", "j" },
 	{ ACTION_STEP_LEFT, "STEP_LEFT", _s("Sidestep left"), "DELETE", "KP7" },
-	{ ACTION_STEP_RIGHT, "STEP_RIGHT", _s("Sidestep Rright"), "PAGEDOWN", "KP9" },
+	{ ACTION_STEP_RIGHT, "STEP_RIGHT", _s("Sidestep Right"), "PAGEDOWN", "KP9" },
 	{ ACTION_STEP_FORWARD, "STEP_FORWARD", _s("Step forward"), "HOME", "KP_DIVIDE" },
 	{ ACTION_STEP_BACK, "STEP_BACK", _s("Step back"), "END", "KP2" },
 	{ ACTION_ROLL_LEFT, "ROLL_LEFT", _s("Roll left"), "INSERT", "KP1" },
