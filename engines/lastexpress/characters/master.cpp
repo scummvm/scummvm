@@ -403,8 +403,10 @@ void LogicManager::HAND_Master_FirstDream(HAND_PARAMS) {
 		_activeItem = 0;
 		fadeToBlack();
 
-		while (dialogRunning("MUS008"))
+		while (dialogRunning("MUS008")) {
 			_engine->getSoundManager()->soundThread();
+			g_system->delayMillis(4);
+		}
 
 		_globals[kProgressField84] = 1;
 		bumpCath(kCarLocomotive, 75, 255);
@@ -1229,6 +1231,7 @@ void LogicManager::HAND_Master_SecondSleep(HAND_PARAMS) {
 
 		while (dialogRunning("MUS008")) {
 			_engine->getSoundManager()->soundThread();
+			g_system->delayMillis(4);
 		}
 
 		CONS_Master_StartPart2(0, 0, 0, 0);
@@ -2409,8 +2412,10 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 		_activeItem = 0;
 		fadeToBlack();
 
-		while (dialogRunning("MUS008"))
+		while (dialogRunning("MUS008")) {
 			_engine->getSoundManager()->soundThread();
+			g_system->delayMillis(4);
+		}
 
 		if (cathHasItem(kItemBomb)) {
 			forceJump(kCharacterAlexei, &LogicManager::CONS_Alexei_Dead);
