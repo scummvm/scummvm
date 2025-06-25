@@ -9086,10 +9086,8 @@ msgid "Move backwards"
 msgstr "Movimento indietro"
 
 #: engines/kyra/engine/eobcommon.cpp:375
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open / Close inventory"
-msgstr "Apri/Chiudi l'inventario"
+msgstr "Apri / Chiudi inventario"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 #, fuzzy
