@@ -185,8 +185,19 @@ namespace Common {
 
 class String;
 
+/**
+* Check if given option exists in a string
+*/
 bool checkGameGUIOption(const String &option, const String &str);
+
+/**
+* Parse GUIOptions string to GUIO literals defined in this file
+*/
 String parseGameGUIOptions(const String &str);
+
+/**
+* Return string containing gui options description based on GUIO literals
+*/
 const String getGameGUIOptionsDescription(const String &options);
 
 /**

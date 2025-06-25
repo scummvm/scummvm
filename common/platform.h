@@ -103,9 +103,25 @@ extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
+
+/**
+* Return string containing platform description based on platform enum
+*/
 const String getGameGUIOptionsDescriptionPlatform(Platform plat);
+
+/**
+* Check if given platform option is present in a string
+*/
 bool checkGameGUIOptionPlatform(Platform plat, const String &str);
+
+/**
+* Parse gui options string to GUIO platform literals
+*/
 const String parseGameGUIOptionsPlatforms(const String &str);
+
+/**
+* Return string containing platform(s) description based on gui options string
+*/
 const String getGameGUIOptionsDescriptionPlatforms(const String &str);
 
 List<String> getPlatformList();
