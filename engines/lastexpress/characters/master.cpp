@@ -405,7 +405,7 @@ void LogicManager::HAND_Master_FirstDream(HAND_PARAMS) {
 
 		while (dialogRunning("MUS008")) {
 			_engine->getSoundManager()->soundThread();
-			g_system->delayMillis(4);
+			_engine->waitForTimer(4);
 		}
 
 		_globals[kProgressField84] = 1;
@@ -1231,7 +1231,7 @@ void LogicManager::HAND_Master_SecondSleep(HAND_PARAMS) {
 
 		while (dialogRunning("MUS008")) {
 			_engine->getSoundManager()->soundThread();
-			g_system->delayMillis(4);
+			_engine->waitForTimer(4);
 		}
 
 		CONS_Master_StartPart2(0, 0, 0, 0);
@@ -2414,7 +2414,7 @@ void LogicManager::HAND_Master_MovingSecondNight(HAND_PARAMS) {
 
 		while (dialogRunning("MUS008")) {
 			_engine->getSoundManager()->soundThread();
-			g_system->delayMillis(4);
+			_engine->waitForTimer(4);
 		}
 
 		if (cathHasItem(kItemBomb)) {

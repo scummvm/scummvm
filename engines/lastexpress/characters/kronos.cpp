@@ -847,7 +847,7 @@ void LogicManager::HAND_Kronos_Concert(HAND_PARAMS) {
 
 				while (dialogRunning("1919.LNK")) {
 					_engine->getSoundManager()->soundThread();
-					g_system->delayMillis(4);
+					_engine->waitForTimer(4);
 				}
 
 				playNIS(kEventCathWakingUp);

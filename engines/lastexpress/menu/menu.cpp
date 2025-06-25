@@ -303,7 +303,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 			while (_engine->getLogicManager()->dialogRunning("LIB046")) {
 				_engine->getSoundManager()->soundThread();
-				g_system->delayMillis(4);
+				_engine->waitForTimer(4);
 			}
 
 			g_system->delayMillis(334);
