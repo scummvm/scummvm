@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-24 22:21+0000\n"
-"PO-Revision-Date: 2025-06-25 08:42+0000\n"
+"PO-Revision-Date: 2025-06-25 08:43+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -8751,10 +8751,8 @@ msgid "Interact mode"
 msgstr "Modalità interazione"
 
 #: engines/hpl1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Look Mode"
 msgid "Look mode"
-msgstr "Modalità Vista"
+msgstr "Modalità osservazione"
 
 #: engines/hpl1/metaengine.cpp:89
 msgid "Holster"
@@ -8765,10 +8763,8 @@ msgid "Notebook"
 msgstr "Blocco Note"
 
 #: engines/hpl1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Personal Notes"
 msgid "Personal notes"
-msgstr "Appunti Personali"
+msgstr "Appunti personali"
 
 #: engines/hpl1/metaengine.cpp:97
 msgid "Flashlight"
@@ -8911,8 +8907,6 @@ msgstr "REMORA"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Side Step"
 msgid "Side step"
 msgstr "Movimento laterale"
 
@@ -9088,8 +9082,6 @@ msgstr "Movimento in avanti"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backwards"
 msgstr "Movimento indietro"
 
