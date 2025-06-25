@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-25 10:26+0000\n"
-"PO-Revision-Date: 2025-06-23 18:40+0000\n"
+"PO-Revision-Date: 2025-06-25 19:04+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3401,7 +3401,7 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
-msgstr "Act./Désact. Clavier virtuel"
+msgstr "Act. / Désact. clavier virtuel"
 
 #: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -4180,7 +4180,7 @@ msgstr "Afficher le clavier"
 
 #: backends/events/default/default-events.cpp:352
 msgid "Toggle mute"
-msgstr "Act./Désact. Muet"
+msgstr "Act. / Désact. muet"
 
 #: backends/events/default/default-events.cpp:380
 msgid "Open Debugger"
@@ -4224,7 +4224,7 @@ msgstr "Choisir un nouveau dossier"
 #: backends/graphics/atari/atari-graphics.cpp:1065
 #: backends/graphics/sdl/sdl-graphics.cpp:515
 msgid "Toggle aspect ratio correction"
-msgstr "Act./Désact. correction du rapport d'aspect"
+msgstr "Act. / Désact. correction du rapport d'aspect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:315
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
@@ -4324,7 +4324,7 @@ msgstr "Capturer/Libérer la souris"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:504
 msgid "Toggle resizable window"
-msgstr "Act./Désact. Fenêtre redimensionnable"
+msgstr "Act. / Désact. fenêtre redimensionnable"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:509 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -4341,7 +4341,7 @@ msgstr "Sauver capture d'écran"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:522
 msgid "Toggle linear filtered scaling"
-msgstr "Act./Désact. interpolation lors du changement d'échelle"
+msgstr "Act. / Désact. interpolation lors du changement d'échelle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:529
 msgid "Cycle through stretch modes"
@@ -4866,11 +4866,11 @@ msgstr "Toucher"
 
 #: backends/platform/3ds/osystem-events.cpp:309
 msgid "Toggle Drag Mode"
-msgstr "Act./Désact. Mode Déplacement"
+msgstr "Act. / Désact. Mode Déplacement"
 
 #: backends/platform/3ds/osystem-events.cpp:314
 msgid "Toggle Magnify Mode"
-msgstr "Act./Désact. Mode Loupe"
+msgstr "Act. / Désact. Mode Loupe"
 
 #: backends/platform/3ds/osystem-events.cpp:349
 msgid ""
@@ -5548,11 +5548,11 @@ msgstr ""
 "roue d'action dans Tony Tough \n"
 "| `Balayage à deux doigts (de gauche à droite)` | Passe d'un mode tactile à "
 "l'autre \n"
-"| `Balayage à deux doigts (de droite à gauche)` | Act./Désact. le contrôleur "
-"virtuel (>iOS 15) \n"
+"| `Balayage à deux doigts (de droite à gauche)` |Act. / Désact. le "
+"contrôleur virtuel (>iOS 15) \n"
 "| `Balayage à deux doigts (de haut en bas)` | Accès au menu principal global "
 "en cours de jeu \n"
-"| `Pincer (zoom avant/arrière)` | Active/désactive le clavier \n"
+"| `Pincer (zoom avant/arrière)` | Active / Désactive le clavier \n"
 " \n"
 "### Manette de jeu virtuelle \n"
 "\n"
@@ -6469,7 +6469,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:207
 msgid "Use PCjr's sound chip in 16-bit shift mode"
-msgstr ""
+msgstr "Utiliser la puce sonore du PCjr en mode 16-bit shift"
 
 #: engines/agi/metaengine.cpp:208
 msgid ""
@@ -6478,6 +6478,10 @@ msgid ""
 "especially in fanmade games, but original Sierra music designed strictly for "
 "PCjr may sound wrong."
 msgstr ""
+"En mode son PCjr, émule une puce sonore SN76496 non standard, similaire aux "
+"puces trouvées dans les consoles SEGA Master System. Permet certains effets "
+"musicaux, en particulier dans les jeux fan-made, mais la musique originale "
+"de Sierra conçue spécifiquement pour PCjr peut sonner faux."
 
 #: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -6657,22 +6661,16 @@ msgid "Music volume up"
 msgstr "Hausse du volume de la musique"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:201
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle music on / off"
-msgstr "Act./Désact. la musique"
+msgstr "Act. / Désact. la musique"
 
 #: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:206
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effects on / off"
-msgstr "Activer/Désactiver les effets sonores"
+msgstr "Act. / Désact. les effets sonores"
 
 #: engines/agos/metaengine.cpp:278 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle fast mode on/off"
 msgid "Toggle fast mode on / off"
-msgstr "Act./Désact. le mode rapide"
+msgstr "Act. / Désact. le mode rapide"
 
 #: engines/agos/metaengine.cpp:290
 msgid "Walk forward"
@@ -6708,7 +6706,7 @@ msgstr "Tourner vers la Droite"
 
 #: engines/agos/metaengine.cpp:315
 msgid "Toggle fight mode"
-msgstr "Act./Désact. le mode combat"
+msgstr "Act. / Désact. le mode combat"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Fast"
@@ -6727,10 +6725,8 @@ msgid "Show objects to interact"
 msgstr "Afficher les objets en interaction"
 
 #: engines/agos/metaengine.cpp:346
-#, fuzzy
-#| msgid "Toggle background sounds on/off"
 msgid "Toggle background sounds on / off"
-msgstr "Act./Désact. les effets sonores d'ambiance"
+msgstr "Act. / Désact. les effets sonores d'ambiance"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:355
@@ -6738,10 +6734,8 @@ msgid "Switch characters"
 msgstr "Changer de personnage"
 
 #: engines/agos/metaengine.cpp:361
-#, fuzzy
-#| msgid "Toggle hitbox names on/off"
 msgid "Toggle hitbox names on / off"
-msgstr "Act./Désact. les noms des hitbox"
+msgstr "Act. / Désact. les noms des hitbox"
 
 #: engines/agos/metaengine.cpp:368
 msgid "Switches between speech only and combined speech and subtitles"
@@ -7001,10 +6995,8 @@ msgid "Move right"
 msgstr "Se déplacer vers la droite"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on/off"
 msgid "Toggle animation on / off"
-msgstr "Activer/Désactiver l'animation"
+msgstr "Activer/Désactiver les animations"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
@@ -7299,10 +7291,8 @@ msgstr "Marcher / Regarder / Parler /Sélectionner / Tirer"
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:220
 #: engines/ultima/nuvie/metaengine.cpp:73
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle combat"
-msgstr "Act./Désact. Combat"
+msgstr "Act. / Désact. combat"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
@@ -7322,8 +7312,6 @@ msgstr "Passer la cinématique"
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
 #: engines/sludge/keymapper_tables.h:535 engines/toltecs/metaengine.cpp:228
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip dialog"
 msgstr "Passer les dialogues"
 
@@ -7332,10 +7320,8 @@ msgstr "Passer les dialogues"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game options"
-msgstr "Options du Jeu"
+msgstr "Options du jeu"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -7343,16 +7329,12 @@ msgstr "Options du Jeu"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
-#, fuzzy
-#| msgid "Open KIA Database"
 msgid "Open KIA database"
-msgstr "Ouvrir Base de données KIA"
+msgstr "Ouvrir l'assistant KIA"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
-#, fuzzy
-#| msgid "Delete Selected Saved Game"
 msgid "Delete selected saved game"
 msgstr "Effacer la sauvegarde sélectionnée"
 
@@ -7391,10 +7373,8 @@ msgstr "Défiler vers le bas"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle clue privacy"
-msgstr "Act./Désact. Indice Privé"
+msgstr "Act. / Désact. indice privé"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -7445,30 +7425,24 @@ msgstr "Charger"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
-#, fuzzy
-#| msgid "Crime Scene Database"
 msgid "Crime scene database"
-msgstr "Base de données Scènes de crime"
+msgstr "Panneau des lieux"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
-#, fuzzy
-#| msgid "Suspect Database"
 msgid "Suspect database"
-msgstr "Base de données Suspects"
+msgstr "Panneau des suspects"
 
 #. I18N: This keymap opens KIA's CLUE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
-#, fuzzy
-#| msgid "Clue Database"
 msgid "Clue database"
-msgstr "Base de données Indices"
+msgstr "Panneau des indices"
 
 #. I18N: This keymap opens KIA's QUIT GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -7557,23 +7531,17 @@ msgstr "Conf. des touches du jeu"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Exit/Skip"
 msgid "Exit / Skip"
-msgstr "Sortir/Passer"
+msgstr "Sortir / Passer"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game Info"
 msgid "Game info"
 msgstr "Infos du jeu"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
-#, fuzzy
-#| msgid "Quit Prompt"
 msgid "Quit prompt"
 msgstr "Invite pour quitter"
 
@@ -7584,87 +7552,61 @@ msgid "ALTered Item"
 msgstr "Item ALTéré"
 
 #: engines/cge/metaengine.cpp:257
-#, fuzzy
-#| msgid "Inventory Item 1 (Select/Deselect)"
 msgid "Inventory Item 1 (Select / Deselect)"
-msgstr "Item d'inventaire 1 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 1 (Sélect. / Désélect.)"
 
 #: engines/cge/metaengine.cpp:262
-#, fuzzy
-#| msgid "Inventory Item 2 (Select/Deselect)"
 msgid "Inventory Item 2 (Select / Deselect)"
-msgstr "Item d'inventaire 2 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 2 (Sélect. / Désélect.)"
 
 #: engines/cge/metaengine.cpp:267
-#, fuzzy
-#| msgid "Inventory Item 3 (Select/Deselect)"
 msgid "Inventory Item 3 (Select / Deselect)"
-msgstr "Item d'inventaire 3 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 3 (Sélect. / Désélect.)"
 
 #: engines/cge/metaengine.cpp:272
-#, fuzzy
-#| msgid "Inventory Item 4 (Select/Deselect)"
 msgid "Inventory Item 4 (Select / Deselect)"
-msgstr "Item d'inventaire 4 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 4 (Sélect. / Désélect.)"
 
 #: engines/cge/metaengine.cpp:277
-#, fuzzy
-#| msgid "Inventory Item 5 (Select/Deselect)"
 msgid "Inventory Item 5 (Select / Deselect)"
-msgstr "Item d'inventaire 5 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 5 (Sélect. / Désélect.)"
 
 #: engines/cge/metaengine.cpp:282
-#, fuzzy
-#| msgid "Inventory Item 6 (Select/Deselect)"
 msgid "Inventory Item 6 (Select / Deselect)"
-msgstr "Item d'inventaire 6 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 6 (Sélect. / Désélect.)"
 
 #: engines/cge/metaengine.cpp:287
-#, fuzzy
-#| msgid "Inventory Item 7 (Select/Deselect)"
 msgid "Inventory Item 7 (Select / Deselect)"
-msgstr "Item d'inventaire 7 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 7 (Sélect. / Désélect.)"
 
 #: engines/cge/metaengine.cpp:292
-#, fuzzy
-#| msgid "Inventory Item 8 (Select/Deselect)"
 msgid "Inventory Item 8 (Select / Deselect)"
-msgstr "Item d'inventaire 8 (Sélect./Désélect.)"
+msgstr "Item d'inventaire 8 (Sélect. / Désélect.)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
-#, fuzzy
-#| msgid "DEBUG: Access to Location 1"
 msgid "DEBUG: Access to location 1"
 msgstr "DEBUG : Accès au lieu 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-8"
 msgid "DEBUG: Access to locations 1-8"
 msgstr "DEBUG : Accès aux lieux 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:312
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-16"
 msgid "DEBUG: Access to locations 1-16"
 msgstr "DEBUG : Accès aux lieux 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:318
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-23"
 msgid "DEBUG: Access to locations 1-23"
 msgstr "DEBUG : Accès aux lieux 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:324
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-24"
 msgid "DEBUG: Access to locations 1-24"
 msgstr "DEBUG : Accès aux lieux 1-24"
 
@@ -7690,8 +7632,6 @@ msgstr "Utilise la synthèse vocale pour lire les sous-titres (si disponible)"
 
 #. I18N: This closes the Dialog/text box.
 #: engines/cge2/metaengine.cpp:229
-#, fuzzy
-#| msgid "Close the Dialogue box"
 msgid "Close the dialog box"
 msgstr "Fermer la boîte de dialogues"
 
@@ -7841,10 +7781,8 @@ msgstr ""
 "sauvegardes."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Talk/Interact"
 msgid "Talk / Interact"
-msgstr "Parler/Interagir"
+msgstr "Parler / Interagir"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -7975,24 +7913,20 @@ msgid "Action"
 msgstr "Action"
 
 #: engines/darkseed/metaengine.cpp:81 engines/dragons/metaengine.cpp:142
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change command"
 msgstr "Changer de commande"
 
 #: engines/darkseed/metaengine.cpp:87
-#, fuzzy
-#| msgid "Time Advance"
 msgid "Time advance"
 msgstr "Avancer l'horloge"
 
 #: engines/dgds/metaengine.cpp:76
 msgid "Toggle Menu"
-msgstr "Act./Désact. Menu"
+msgstr "Act. / Désact. Menu"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Toggle Clock"
-msgstr "Act./Désact. Horloge"
+msgstr "Act. / Désact. Horloge"
 
 #: engines/dgds/metaengine.cpp:78
 msgid "Next dialog / menu item"
@@ -8046,10 +7980,8 @@ msgstr ""
 "cela"
 
 #: engines/draci/metaengine.cpp:153
-#, fuzzy
-#| msgid "Skip intro/Exit map or inventory"
 msgid "Skip intro / Exit map or inventory"
-msgstr "Passer l'intro/Quitter la carte ou l'inventaire"
+msgstr "Passer l'intro / Quitter la carte ou l'inventaire"
 
 #: engines/draci/metaengine.cpp:159
 msgid "Open map"
@@ -8114,22 +8046,16 @@ msgstr ""
 "Voir %s"
 
 #: engines/dragons/metaengine.cpp:207
-#, fuzzy
-#| msgid "Left Shoulder"
 msgid "Left shoulder"
-msgstr "Tranche Gauche"
+msgstr "Gâchette gauche"
 
 #: engines/dragons/metaengine.cpp:213
-#, fuzzy
-#| msgid "Right Shoulder"
 msgid "Right shoulder"
-msgstr "Tranche Droite"
+msgstr "Gâchette droite"
 
 #: engines/dragons/metaengine.cpp:219
-#, fuzzy
-#| msgid "Debug Graphics"
 msgid "Debug graphics"
-msgstr "Deboguer les Graphismes"
+msgstr "Déboguer les graphismes"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -8297,7 +8223,7 @@ msgstr "Sélectionner la Princesse"
 #: engines/freescape/games/driller/driller.cpp:153
 #: engines/freescape/games/eclipse/eclipse.cpp:249
 msgid "Toggle Sound"
-msgstr "Act./Désact. Son"
+msgstr "Act. / Désact. Son"
 
 #: engines/freescape/games/castle/castle.cpp:269
 #: engines/freescape/games/dark/dark.cpp:212
@@ -8538,8 +8464,6 @@ msgid "Magic"
 msgstr "Sortilège"
 
 #: engines/got/metaengine.cpp:64
-#, fuzzy
-#| msgid "Thor Dies"
 msgid "Thor dies"
 msgstr "Thor meurt"
 
@@ -8552,8 +8476,6 @@ msgid "Menu / Skip"
 msgstr "Menu / Passer"
 
 #: engines/griffon/metaengine.cpp:159
-#, fuzzy
-#| msgid "Speed Up Cutscene"
 msgid "Speed up cutscene"
 msgstr "Accélérer la cinématique"
 
@@ -8570,16 +8492,12 @@ msgstr ""
 "Voulez-vous quand même lancer %s ?"
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:611
-#, fuzzy
-#| msgid "Use/Talk"
 msgid "Use / Talk"
-msgstr "Utiliser/Parler"
+msgstr "Utiliser / Parler"
 
 #: engines/grim/grim.cpp:516 engines/grim/grim.cpp:616
-#, fuzzy
-#| msgid "Pick up/Put away"
 msgid "Pick up / Put away"
-msgstr "Prendre/Déposer"
+msgstr "Prendre / Déposer"
 
 #: engines/grim/grim.cpp:526 engines/grim/grim.cpp:626
 msgid "Skip dialog lines"
@@ -8587,29 +8505,21 @@ msgstr "Passer les dialogues"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:584
-#, fuzzy
-#| msgid "Cycle Objects Up"
 msgid "Cycle objects up"
 msgstr "Objet suivant"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:590
-#, fuzzy
-#| msgid "Cycle Objects Down"
 msgid "Cycle objects down"
 msgstr "Objet précédent"
 
 #: engines/grim/grim.cpp:601
-#, fuzzy
-#| msgid "Quick Room Exit"
 msgid "Quick room exit"
 msgstr "Sortie rapide d'une pièce"
 
 #: engines/grim/grim.cpp:606
-#, fuzzy
-#| msgid "Examine/Look"
 msgid "Examine / Look"
-msgstr "Examiner/Regarder"
+msgstr "Examiner / Regarder"
 
 #: engines/grim/grim.cpp:1394
 msgid "Error: the game could not be saved."
@@ -8839,8 +8749,6 @@ msgstr "Active le Mode Sanglant quand il est disponible"
 
 #: engines/hopkins/metaengine.cpp:248 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Options Menu"
 msgid "Options menu"
 msgstr "Menu Options"
 
@@ -8853,28 +8761,20 @@ msgid "Backward"
 msgstr "Reculer"
 
 #: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Strafe left"
-msgstr "Esquive Gauche"
+msgstr "Esquive gauche"
 
 #: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Strafe right"
-msgstr "Esquive Droite"
+msgstr "Esquive droite"
 
 #: engines/hpl1/metaengine.cpp:80
-#, fuzzy
-#| msgid "Lean Left"
 msgid "Lean left"
-msgstr "Se pencher Gauche"
+msgstr "Se pencher gauche"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Lean Right"
 msgid "Lean right"
-msgstr "Se pencher Droite"
+msgstr "Se pencher droite"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
@@ -8883,14 +8783,10 @@ msgid "Crouch"
 msgstr "S'accroupir"
 
 #: engines/hpl1/metaengine.cpp:87
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Interact mode"
 msgstr "Mode Interagir"
 
 #: engines/hpl1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Look Mode"
 msgid "Look mode"
 msgstr "Mode Regarder"
 
@@ -8903,8 +8799,6 @@ msgid "Notebook"
 msgstr "Carnet de notes"
 
 #: engines/hpl1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Personal Notes"
 msgid "Personal notes"
 msgstr "Notes personnelles"
 
@@ -8922,7 +8816,7 @@ msgstr "Aide utilisateur"
 
 #: engines/hugo/metaengine.cpp:117
 msgid "Toggle sound"
-msgstr "Act./Désact. le son"
+msgstr "Act. / Désact. le son"
 
 #: engines/hugo/metaengine.cpp:122
 msgid "Repeat last line"
@@ -9050,8 +8944,6 @@ msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Side Step"
 msgid "Side step"
 msgstr "Pas de côté"
 
@@ -9228,68 +9120,48 @@ msgstr "Bouger en avant"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move backward"
 msgid "Move backwards"
 msgstr "Bouger en arrière"
 
 #: engines/kyra/engine/eobcommon.cpp:375
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open / Close inventory"
-msgstr "Ouvrir/Fermer l'inventaire"
+msgstr "Ouvrir / Fermer l'inventaire"
 
 #: engines/kyra/engine/eobcommon.cpp:376
-#, fuzzy
-#| msgid "Switch Inventory/Character screen"
 msgid "Switch inventory / Character screen"
-msgstr "Inventaire/Écran de personnage"
+msgstr "Inventaire / Écran de personnage"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
 msgstr "Campement"
 
 #: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast spell"
-msgstr "Lancer un Sort"
+msgstr "Lancer un sort"
 
 #: engines/kyra/engine/eobcommon.cpp:381
-#, fuzzy
-#| msgid "Spell Level 1"
 msgid "Spell level 1"
-msgstr "Sort Niveau 1"
+msgstr "Sort niveau 1"
 
 #: engines/kyra/engine/eobcommon.cpp:382
-#, fuzzy
-#| msgid "Spell Level 2"
 msgid "Spell level 2"
-msgstr "Sort Niveau 2"
+msgstr "Sort niveau 2"
 
 #: engines/kyra/engine/eobcommon.cpp:383
-#, fuzzy
-#| msgid "Spell Level 3"
 msgid "Spell level 3"
-msgstr "Sort Niveau 3"
+msgstr "Sort niveau 3"
 
 #: engines/kyra/engine/eobcommon.cpp:384
-#, fuzzy
-#| msgid "Spell Level 4"
 msgid "Spell level 4"
-msgstr "Sort Niveau 4"
+msgstr "Sort niveau 4"
 
 #: engines/kyra/engine/eobcommon.cpp:385
-#, fuzzy
-#| msgid "Spell Level 5"
 msgid "Spell level 5"
-msgstr "Sort Niveau 5"
+msgstr "Sort niveau 5"
 
 #: engines/kyra/engine/eobcommon.cpp:387
-#, fuzzy
-#| msgid "Spell Level 6"
 msgid "Spell level 6"
-msgstr "Sort Niveau 6"
+msgstr "Sort niveau 6"
 
 #: engines/kyra/engine/lol.cpp:506
 msgid "Attack 1"
@@ -9314,26 +9186,20 @@ msgid "Show map"
 msgstr "Afficher la carte"
 
 #: engines/kyra/engine/lol.cpp:512
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Slide left"
-msgstr "Faire un pas vers la Gauche"
+msgstr "Faire un pas vers la gauche"
 
 #: engines/kyra/engine/lol.cpp:513
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Slide right"
-msgstr "Faire un pas vers la Droite"
+msgstr "Faire un pas vers la droite"
 
 #: engines/kyra/engine/lol.cpp:517
 msgid "Options"
 msgstr "Options"
 
 #: engines/kyra/engine/lol.cpp:518
-#, fuzzy
-#| msgid "Choose Spell"
 msgid "Choose spell"
-msgstr "Choisir un Sort"
+msgstr "Choisir un sort"
 
 #: engines/kyra/gui/saveload_eob.cpp:611
 #, c-format
@@ -9660,40 +9526,28 @@ msgstr ""
 "de sort."
 
 #: engines/mm/mm1/metaengine.cpp:54
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "View party member 1"
-msgstr "Voir Membre 1 du groupe"
+msgstr "Voir membre 1 du groupe"
 
 #: engines/mm/mm1/metaengine.cpp:55
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "View party member 2"
-msgstr "Voir Membre 2 du groupe"
+msgstr "Voir membre 2 du groupe"
 
 #: engines/mm/mm1/metaengine.cpp:56
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "View party member 3"
-msgstr "Voir Membre 3 du groupe"
+msgstr "Voir membre 3 du groupe"
 
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "View party member 4"
-msgstr "Voir Membre 4 du groupe"
+msgstr "Voir membre 4 du groupe"
 
 #: engines/mm/mm1/metaengine.cpp:58
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "View party member 5"
-msgstr "Voir Membre 5 du groupe"
+msgstr "Voir membre 5 du groupe"
 
 #: engines/mm/mm1/metaengine.cpp:59
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "View party member 6"
-msgstr "Voir Membre 6 du groupe"
+msgstr "Voir membre 6 du groupe"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/ultima/ultima4/metaengine.cpp:50
@@ -9713,10 +9567,8 @@ msgstr "Combattre"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Quick Reference"
 msgid "Quick reference"
-msgstr "Référence Rapide"
+msgstr "Référence rapide"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
@@ -9745,16 +9597,12 @@ msgid "Backwards"
 msgstr "Reculer"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Minimap"
 msgid "Toggle minimap"
-msgstr "Act./Désact. Minicarte"
+msgstr "Act. / Désact. minicarte"
 
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Reorder Party"
 msgid "Reorder party"
-msgstr "Réorganiser Groupe"
+msgstr "Réorganiser le groupe"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111 engines/ultima/ultima4/metaengine.cpp:68
@@ -10144,7 +9992,7 @@ msgstr "Démarre avec le panneau de débogage activé."
 
 #: engines/mtropolis/metaengine.cpp:179
 msgid "Toggle debug overlay"
-msgstr "Act./Désact. l'overlay de débogage"
+msgstr "Act. / Désact. l'overlay de débogage"
 
 #: engines/mtropolis/metaengine.cpp:184
 msgid "Force any playing movies to end"
@@ -10260,10 +10108,8 @@ msgid "Nancy Drew - Maze"
 msgstr "Nancy Drew - Labyrinth"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show/hide maze map"
 msgid "Show / hide maze map"
-msgstr "Afficher/Cacher le plan du labyrinthe"
+msgstr "Afficher / Cacher le plan du labyrinthe"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -10426,54 +10272,40 @@ msgstr ""
 "Merci de le signaler à l'équipe ScummVM."
 
 #: engines/pegasus/pegasus.cpp:2724
-#, fuzzy
-#| msgid "Up/Zoom In/Move Forward/Open Doors"
 msgid "Up / Zoom in / Move forward / Open door"
-msgstr "Haut/Zoom/Avancer/Ouvrir Portes"
+msgstr "Haut / Zoom / Avancer / Ouvrir Portes"
 
 #: engines/pegasus/pegasus.cpp:2732
-#, fuzzy
-#| msgid "Down/Zoom Out"
 msgid "Down / Zoom out"
-msgstr "Bas/Dézoom"
+msgstr "Bas / Dézoom"
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
 msgstr "Action/Sélection"
 
 #: engines/pegasus/pegasus.cpp:2774
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory tray"
-msgstr "Basculer entre Inventaire/Points QI"
+msgstr "Act. / Désact. le panneau d'inventaire"
 
 #: engines/pegasus/pegasus.cpp:2781
-#, fuzzy
-#| msgid "Toggle Height"
 msgid "Toggle biochip tray"
-msgstr "Changer la hauteur"
+msgstr "Act. / Désact. le panneau biopuce"
 
 #: engines/pegasus/pegasus.cpp:2789
-#, fuzzy
-#| msgid "Toggle Center Data Display"
 msgid "Toggle center data display"
-msgstr "Basculer l'Affichage Central"
+msgstr "Act. / Désact. l'affichage de données central"
 
 #: engines/pegasus/pegasus.cpp:2796
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle info screen"
-msgstr "Basculer en plein écran"
+msgstr "Act. / Désact. l'écran d'information"
 
 #: engines/pegasus/pegasus.cpp:2803
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle pause menu"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act. / Désact. le menu pause"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
-msgstr "Act./Désact. IA bavarde"
+msgstr "Act. / Désact. IA bavarde"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -10601,10 +10433,8 @@ msgid "Abort speech"
 msgstr "Abandonner le dialogue"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show dialogue"
 msgid "Show dialog"
-msgstr "Afficher le dialogue"
+msgstr "Afficher les dialogues"
 
 #. I18N: Walk to where cursor points
 #: engines/saga/metaengine.cpp:349 engines/scumm/help.cpp:143
@@ -12085,28 +11915,20 @@ msgid "Enable ambience sounds."
 msgstr "Active les sons d'ambiance."
 
 #: engines/scumm/metaengine.cpp:965
-#, fuzzy
-#| msgid "Down Left"
 msgid "Down left"
-msgstr "Bas Gauche"
+msgstr "Bas gauche"
 
 #: engines/scumm/metaengine.cpp:978
-#, fuzzy
-#| msgid "Down Right"
 msgid "Down right"
-msgstr "Bas Droite"
+msgstr "Bas droite"
 
 #: engines/scumm/metaengine.cpp:998
-#, fuzzy
-#| msgid "Upper left item"
 msgid "Up left"
-msgstr "Élément en haut à gauche"
+msgstr "Haut gauche"
 
 #: engines/scumm/metaengine.cpp:1011
-#, fuzzy
-#| msgid "Up Right"
 msgid "Up right"
-msgstr "Haut Droite"
+msgstr "Haut droite"
 
 #: engines/scumm/metaengine.cpp:1023
 msgid "Switch weapon"
@@ -12476,10 +12298,8 @@ msgid "Open control panel"
 msgstr "Ouvrir le panneau de contrôle"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on/off"
 msgid "Toggle really fast mode on / off"
-msgstr "Act./Désact. mode très rapide"
+msgstr "Act. / Désact. mode très rapide"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -12512,14 +12332,10 @@ msgid "Change action"
 msgstr "Changer l'action"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Speed up dialogue"
 msgid "Speed up dialog"
 msgstr "Accélérer les dialogues"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down dialogue"
 msgid "Slow down dialog"
 msgstr "Ralentir les dialogues"
 
@@ -12555,8 +12371,6 @@ msgid "Inventory / Examine"
 msgstr "Inventaire / Examiner"
 
 #: engines/sludge/keymapper_tables.h:281
-#, fuzzy
-#| msgid "Examine / Skip dialogue"
 msgid "Examine / Skip dialog"
 msgstr "Examiner / Passer les dialogues"
 
@@ -12590,14 +12404,10 @@ msgid "Cast water spell"
 msgstr "Lancer Sort d'eau"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Move / Interact / Skip dialog"
 msgstr "Se déplacer / Interagir / Passer les dialogues"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Inventory / Skip dialogue"
 msgid "Inventory / Skip dialog"
 msgstr "Inventaire / Passer les dialogues"
 
@@ -12658,7 +12468,7 @@ msgstr "Réglages du jeu"
 #: engines/stark/metaengine.cpp:245 engines/toon/metaengine.cpp:124
 #: engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
-msgstr "Act./Désact. les sous-titres"
+msgstr "Act. / Désact. les sous-titres"
 
 #: engines/stark/metaengine.cpp:250
 msgid "Quit to menu"
@@ -12686,38 +12496,26 @@ msgid "Scroll down in inventory"
 msgstr "Faire défiler l'inventaire vers le bas"
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll up in your dialogues"
 msgid "Scroll up in your dialogs"
-msgstr "Faire défiler les dialogues vers le haut"
+msgstr "Faire défiler vos répliques vers le haut"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll down in your dialogues"
 msgid "Scroll down in your dialogs"
-msgstr "Faire défiler les dialogues vers le bas"
+msgstr "Faire défiler vos répliques vers le bas"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next dialog"
 msgstr "Réplique suivante"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous dialogues"
 msgid "Go to previous dialogs"
 msgstr "Réplique précédente"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Select dialog"
 msgstr "Sélectionner la réplique"
 
 #: engines/stark/metaengine.cpp:335
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip video sequence or dialog"
 msgstr "Passer la séquence vidéo ou la réplique"
 
@@ -12827,8 +12625,6 @@ msgid "Computer keymappings"
 msgstr "Conf. des touches Ordinateur"
 
 #: engines/supernova/metaengine.cpp:232
-#, fuzzy
-#| msgid "Perform Default Action"
 msgid "Perform default action"
 msgstr "Exécuter l'action par défaut"
 
@@ -12987,10 +12783,8 @@ msgid "Additional options:"
 msgstr "Options supplémentaires :"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Menu"
 msgid "Main menu"
-msgstr "Menu Principal"
+msgstr "Menu principal"
 
 #: engines/sword2/detection_tables.h:419
 msgid "Remastered edition is not supported. Please, use the classic version"
@@ -13060,28 +12854,20 @@ msgid "Save/Load keymappings"
 msgstr "Conf. des touches Sauvegarder/Charger"
 
 #: engines/tinsel/metaengine.cpp:341
-#, fuzzy
-#| msgid "Page Up in save/load menu"
 msgid "Page up in save / load menu"
-msgstr "Page sup. dans le menu sauvegarder/charger"
+msgstr "Page sup. dans le menu sauvegarder / charger"
 
 #: engines/tinsel/metaengine.cpp:347
-#, fuzzy
-#| msgid "Page down in save/load menu"
 msgid "Page down in save / load menu"
-msgstr "Page inf. dans le menu sauvegarder/charger"
+msgstr "Page inf. dans le menu sauvegarder / charger"
 
 #: engines/tinsel/metaengine.cpp:353
-#, fuzzy
-#| msgid "Go to start of save/load menu"
 msgid "Go to start of save / load menu"
-msgstr "Début dans le menu sauvegarder/charger"
+msgstr "Début dans le menu sauvegarder / charger"
 
 #: engines/tinsel/metaengine.cpp:359
-#, fuzzy
-#| msgid "Go to end of save/load menu"
 msgid "Go to end of save / load menu"
-msgstr "Fin dans le menu sauvegarder/charger"
+msgstr "Fin dans le menu sauvegarder / charger"
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
@@ -13192,8 +12978,6 @@ msgid "Move / Select"
 msgstr "Se déplacer / Sélectionner"
 
 #: engines/toltecs/metaengine.cpp:222
-#, fuzzy
-#| msgid "Move / Perform Default Action"
 msgid "Move / Perform default action"
 msgstr "Se déplacer / Exécuter l'action par défaut"
 
@@ -13258,10 +13042,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip sequence/open quit dialogue"
 msgid "Skip sequence / open quit dialog"
-msgstr "Passer la séquence/ouvrir la fenêtre Quitter"
+msgstr "Passer la séquence / ouvrir la fenêtre Quitter"
 
 #: engines/touche/metaengine.cpp:147
 msgid "Open options menu"
@@ -13279,13 +13061,11 @@ msgstr "Désactiver la marche rapide"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act. / Désact. mode rapide"
 
 #: engines/touche/metaengine.cpp:173
-#, fuzzy
-#| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between voice / text / text and voice"
-msgstr "Basculer entre voix/textes/textes et voix"
+msgstr "Basculer entre voix / textes / textes et voix"
 
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
@@ -13298,7 +13078,7 @@ msgstr "Passer les vidéos"
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
 msgid "Toggle fast walk"
-msgstr "Act./Désact. la marche rapide"
+msgstr "Act. / Désact. la marche rapide"
 
 #: engines/trecision/metaengine.cpp:163
 msgid "Open system menu"
@@ -13326,16 +13106,12 @@ msgid "Crawl South"
 msgstr "Ramper vers le Sud"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn Left/Crawl West"
 msgid "Turn left / Crawl West"
-msgstr "Tourner à gauche/Ramper vers l'Ouest"
+msgstr "Tourner à gauche / Ramper vers l'Ouest"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn Right/Crawl East"
 msgid "Turn right / Crawl East"
-msgstr "Tourner à droite/Ramper vers l'Est"
+msgstr "Tourner à droite / Ramper vers l'Est"
 
 #: engines/tsage/metaengine.cpp:292
 msgid "Increase speed"
@@ -13460,74 +13236,50 @@ msgid "Enable a higher resolution for the game"
 msgstr "Active la haute résolution dans le jeu"
 
 #: engines/twine/metaengine.cpp:228
-#, fuzzy
-#| msgid "Debug Grid Camera Up"
 msgid "Debug grid camera up"
-msgstr "Debug Camera de grille Haut"
+msgstr "Debug caméra de grille haut"
 
 #: engines/twine/metaengine.cpp:233
-#, fuzzy
-#| msgid "Debug Grid Camera Down"
 msgid "Debug grid camera down"
-msgstr "Debug Camera de grille Bas"
+msgstr "Debug caméra de grille bas"
 
 #: engines/twine/metaengine.cpp:238
-#, fuzzy
-#| msgid "Debug Grid Camera Left"
 msgid "Debug grid camera left"
-msgstr "Debug Camera de grille Gauche"
+msgstr "Debug caméra de grille gauche"
 
 #: engines/twine/metaengine.cpp:244
-#, fuzzy
-#| msgid "Debug Grid Camera Right"
 msgid "Debug grid camera right"
-msgstr "Debug Camera de grille Droite"
+msgstr "Debug caméra de grille droite"
 
 #: engines/twine/metaengine.cpp:249 engines/twine/metaengine.cpp:269
-#, fuzzy
-#| msgid "Normal Behaviour"
 msgid "Normal behavior"
 msgstr "Comportement normal"
 
 #: engines/twine/metaengine.cpp:254 engines/twine/metaengine.cpp:274
-#, fuzzy
-#| msgid "Athletic Behaviour"
 msgid "Athletic behavior"
 msgstr "Comportement sportif"
 
 #: engines/twine/metaengine.cpp:259 engines/twine/metaengine.cpp:279
-#, fuzzy
-#| msgid "Aggressive Behaviour"
 msgid "Aggressive behavior"
 msgstr "Comportement agressif"
 
 #: engines/twine/metaengine.cpp:264 engines/twine/metaengine.cpp:284
-#, fuzzy
-#| msgid "Discreet Behaviour"
 msgid "Discreet behavior"
 msgstr "Comportement discret"
 
 #: engines/twine/metaengine.cpp:289
-#, fuzzy
-#| msgid "Behaviour Action"
 msgid "Behavior action"
 msgstr "Action de comportement"
 
 #: engines/twine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Change Behaviour"
 msgid "Change behavior"
 msgstr "Changer le comportement"
 
 #: engines/twine/metaengine.cpp:319
-#, fuzzy
-#| msgid "Use Selected Object"
 msgid "Use selected object"
 msgstr "Utiliser l'objet sélectionné"
 
 #: engines/twine/metaengine.cpp:325
-#, fuzzy
-#| msgid "Throw Magic Ball"
 msgid "Throw magic ball"
 msgstr "Lancer la balle magique"
 
@@ -13540,16 +13292,12 @@ msgid "Open Holomap"
 msgstr "Ouvrir l'Holomap"
 
 #: engines/twine/metaengine.cpp:378
-#, fuzzy
-#| msgid "Special Action"
 msgid "Special action"
 msgstr "Action spéciale"
 
 #: engines/twine/metaengine.cpp:384
-#, fuzzy
-#| msgid "Scenery Zoom"
 msgid "Scenery zoom"
-msgstr "Zoom scénariques"
+msgstr "Zoom sur le décor"
 
 #: engines/twine/metaengine.cpp:527
 msgid "Previous location"
@@ -13636,110 +13384,74 @@ msgid "Go to next object"
 msgstr "Objet suivant"
 
 #: engines/twp/metaengine.cpp:158
-#, fuzzy
-#| msgid "Select verb/item Left"
 msgid "Select verb / item left"
-msgstr "Sélectionner Verbe/Elément Gauche"
+msgstr "Sélectionner verbe / élément gauche"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Select verb/item Right"
 msgid "Select verb / item right"
-msgstr "Sélectionner Verbe/Elément Droite"
+msgstr "Sélectionner verbe / élément droite"
 
 #: engines/twp/metaengine.cpp:160
-#, fuzzy
-#| msgid "Select verb/item Up"
 msgid "Select verb / item up"
-msgstr "Sélectionner Verbe/Elément Haut"
+msgstr "Sélectionner verbe / élément haut"
 
 #: engines/twp/metaengine.cpp:161
-#, fuzzy
-#| msgid "Select verb/item Down"
 msgid "Select verb / item down"
-msgstr "Sélectionner Verbe/Elément Bas"
+msgstr "Sélectionner verbe / élément bas"
 
 #: engines/twp/metaengine.cpp:163
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select actor 1"
-msgstr "Sélectionner Acteur 1"
+msgstr "Sélectionner acteur 1"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Select Actor 2"
 msgid "Select actor 2"
-msgstr "Sélectionner Acteur 2"
+msgstr "Sélectionner acteur 2"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Select Actor 3"
 msgid "Select actor 3"
-msgstr "Sélectionner Acteur 3"
+msgstr "Sélectionner acteur 3"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Select Actor 4"
 msgid "Select actor 4"
-msgstr "Sélectionner Acteur 4"
+msgstr "Sélectionner acteur 4"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Select Actor 5"
 msgid "Select actor 5"
-msgstr "Sélectionner Acteur 5"
+msgstr "Sélectionner acteur 5"
 
 #: engines/twp/metaengine.cpp:168
-#, fuzzy
-#| msgid "Select Choice 1"
 msgid "Select choice 1"
-msgstr "Sélectionner Choix 1"
+msgstr "Sélectionner choix 1"
 
 #: engines/twp/metaengine.cpp:169
-#, fuzzy
-#| msgid "Select Choice 2"
 msgid "Select choice 2"
-msgstr "Sélectionner Choix 2"
+msgstr "Sélectionner choix 2"
 
 #: engines/twp/metaengine.cpp:170
-#, fuzzy
-#| msgid "Select Choice 3"
 msgid "Select choice 3"
-msgstr "Sélectionner Choix 3"
+msgstr "Sélectionner choix 3"
 
 #: engines/twp/metaengine.cpp:171
-#, fuzzy
-#| msgid "Select Choice 4"
 msgid "Select choice 4"
-msgstr "Sélectionner Choix 4"
+msgstr "Sélectionner choix 4"
 
 #: engines/twp/metaengine.cpp:172
-#, fuzzy
-#| msgid "Select Choice 5"
 msgid "Select choice 5"
-msgstr "Sélectionner Choix 5"
+msgstr "Sélectionner choix 5"
 
 #: engines/twp/metaengine.cpp:173
-#, fuzzy
-#| msgid "Select Choice 6"
 msgid "Select choice 6"
-msgstr "Sélectionner Choix 6"
+msgstr "Sélectionner choix 6"
 
 #: engines/twp/metaengine.cpp:174
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select next Actor"
-msgstr "Sélectionner Acteur suivant"
+msgstr "Sélectionner acteur suivant"
 
 #: engines/twp/metaengine.cpp:175
-#, fuzzy
-#| msgid "Select Previous Actor"
 msgid "Select previous actor"
-msgstr "Sélectionner Acteur précédent"
+msgstr "Sélectionner acteur précédent"
 
 #: engines/twp/metaengine.cpp:176
-#, fuzzy
-#| msgid "Skip Text"
 msgid "Skip text"
 msgstr "Passer le texte"
 
@@ -13838,20 +13550,16 @@ msgstr "Le fichier de données ultima.dat correct n'a pas été trouvé"
 #: engines/ultima/ultima4/metaengine.cpp:130
 #: engines/ultima/ultima4/metaengine.cpp:135
 #: engines/ultima/ultima4/metaengine.cpp:145
-#, fuzzy
-#| msgid "Next action"
 msgid "Abort action"
-msgstr "Action suivante"
+msgstr "Abandonner l'action"
 
 #: engines/ultima/ultima4/metaengine.cpp:49
-#, fuzzy
-#| msgid "Keyboard"
 msgid "Board"
-msgstr "Clavier"
+msgstr "Monter à bord"
 
 #: engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
-msgstr ""
+msgstr "Grimper"
 
 #: engines/ultima/ultima4/metaengine.cpp:52
 #: engines/ultima/ultima8/metaengine.cpp:108
@@ -13859,265 +13567,204 @@ msgid "Descend"
 msgstr "Descendre"
 
 #: engines/ultima/ultima4/metaengine.cpp:56
-#, fuzzy
-#| msgid "Fight cheat"
 msgid "Get chest"
-msgstr "Passer les combats"
+msgstr "Prendre le coffre"
 
 #: engines/ultima/ultima4/metaengine.cpp:57
 msgid "Hole up & camp"
-msgstr ""
+msgstr "Faire un trou et camper"
 
 #: engines/ultima/ultima4/metaengine.cpp:58
 msgid "Jimmy"
-msgstr ""
+msgstr "Forcer une serrure"
 
 #: engines/ultima/ultima4/metaengine.cpp:59
 msgid "Ignite"
-msgstr ""
+msgstr "Enflammer"
 
 #: engines/ultima/ultima4/metaengine.cpp:60
-#, fuzzy
-#| msgid "Look at"
 msgid "Locate position"
-msgstr "Regarder"
+msgstr "Localiser la position"
 
 #: engines/ultima/ultima4/metaengine.cpp:61
 msgid "Mix reagents"
-msgstr ""
+msgstr "Mélanger des réactifs"
 
 #: engines/ultima/ultima4/metaengine.cpp:62
-#, fuzzy
-#| msgid "New kid"
 msgid "New order"
-msgstr "Changer"
+msgstr "Nouvel ordre"
 
 #: engines/ultima/ultima4/metaengine.cpp:63
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open door"
-msgstr "Ouvrir l'Holomap"
+msgstr "Ouvrir une porte"
 
 #: engines/ultima/ultima4/metaengine.cpp:64
-#, fuzzy
-#| msgid "Password:"
 msgid "Pass"
-msgstr "Mot de passe :"
+msgstr "Passer"
 
 #: engines/ultima/ultima4/metaengine.cpp:65
 msgid "Peer"
-msgstr ""
+msgstr "Regarder attentivement"
 
 #: engines/ultima/ultima4/metaengine.cpp:66
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quit and save"
-msgstr "Sauvegarde rapide"
+msgstr "Quitter et sauvegarder"
 
 #: engines/ultima/ultima4/metaengine.cpp:67
-#, fuzzy
-#| msgid "Fire Weapon"
 msgid "Ready weapon"
-msgstr "Tirer avec l'arme"
+msgstr "Apprêter une arme"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
-#, fuzzy
-#| msgid "Status:"
 msgid "Stats"
-msgstr "État :"
+msgstr "Statistiques"
 
 #: engines/ultima/ultima4/metaengine.cpp:72
 msgid "Wear armor"
-msgstr ""
+msgstr "Revêtir une armure"
 
 #: engines/ultima/ultima4/metaengine.cpp:73
 msgid "Yell"
-msgstr ""
+msgstr "Huer"
 
 #: engines/ultima/ultima4/metaengine.cpp:79
-#, fuzzy
-#| msgid "Speed:"
 msgid "Speed up"
-msgstr "Vitesse :"
+msgstr "Vitesse augmentée"
 
 #: engines/ultima/ultima4/metaengine.cpp:80
-#, fuzzy
-#| msgid "Move down"
 msgid "Speed down"
-msgstr "Se déplacer vers le bas"
+msgstr "Vitesse diminuée"
 
 #: engines/ultima/ultima4/metaengine.cpp:81
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speed normal"
-msgstr "Voix uniquement"
+msgstr "Vitesse normale"
 
 #: engines/ultima/ultima4/metaengine.cpp:82
 msgid "Combat speed up"
-msgstr ""
+msgstr "Combat vitesse augmentée"
 
 #: engines/ultima/ultima4/metaengine.cpp:83
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Combat speed down"
-msgstr "Pivoter bas"
+msgstr "Combat vitesse diminuée"
 
 #: engines/ultima/ultima4/metaengine.cpp:84
 msgid "Combat speed normal"
-msgstr ""
+msgstr "Combat vitesse normale"
 
 #: engines/ultima/ultima4/metaengine.cpp:90
 msgid "Party - None"
-msgstr ""
+msgstr "Groupe - Aucun"
 
 #: engines/ultima/ultima4/metaengine.cpp:91
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #1"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°1"
 
 #: engines/ultima/ultima4/metaengine.cpp:92
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #2"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°2"
 
 #: engines/ultima/ultima4/metaengine.cpp:93
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #3"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°3"
 
 #: engines/ultima/ultima4/metaengine.cpp:94
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #4"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°4"
 
 #: engines/ultima/ultima4/metaengine.cpp:95
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #5"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°5"
 
 #: engines/ultima/ultima4/metaengine.cpp:96
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #6"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°6"
 
 #: engines/ultima/ultima4/metaengine.cpp:97
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #7"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°7"
 
 #: engines/ultima/ultima4/metaengine.cpp:98
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #8"
-msgstr "Transfert de personnage"
+msgstr "Groupe - Personnage n°8"
 
 #: engines/ultima/ultima4/metaengine.cpp:104
 msgid "Destroy all creatures"
-msgstr ""
+msgstr "Détruire toutes les créatures"
 
 #: engines/ultima/ultima4/metaengine.cpp:105
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Wall collision on"
 msgid "Toggle collision handling"
-msgstr "Collisions contre les murs activées"
+msgstr "Act. / Désact. la gestion des collisions"
 
 #: engines/ultima/ultima4/metaengine.cpp:106
-#, fuzzy
-#| msgid "Next object"
 msgid "Destroy object"
-msgstr "Objet suivant"
+msgstr "Détruire un objet"
 
 #: engines/ultima/ultima4/metaengine.cpp:107
 msgid "Full equipment"
-msgstr ""
+msgstr "Equipement complet"
 
 #: engines/ultima/ultima4/metaengine.cpp:108
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Flee combat"
-msgstr "Act./Désact. Combat"
+msgstr "Fuir le combat"
 
 #: engines/ultima/ultima4/metaengine.cpp:110
 msgid "Help - Teleport to Lord British"
-msgstr ""
+msgstr "Aide - Se téléporter chez Lord British"
 
 #: engines/ultima/ultima4/metaengine.cpp:111
-#, fuzzy
-#| msgid "Grab Items"
 msgid "Give items"
-msgstr "Ramasser les items"
+msgstr "Donner des items"
 
 #: engines/ultima/ultima4/metaengine.cpp:112
 msgid "List karma"
-msgstr ""
+msgstr "Lister le karma"
 
 #: engines/ultima/ultima4/metaengine.cpp:113
-#, fuzzy
-#| msgid "Next location"
 msgid "Leave location"
-msgstr "Lieu suivant"
+msgstr "Quitter l'endroit"
 
 #: engines/ultima/ultima4/metaengine.cpp:114
 msgid "Give mixtures"
-msgstr ""
+msgstr "Donner des mélanges"
 
 #: engines/ultima/ultima4/metaengine.cpp:115
 msgid "Combat encounters"
-msgstr ""
+msgstr "Combattre les rencontres"
 
 #: engines/ultima/ultima4/metaengine.cpp:116
-#, fuzzy
-#| msgid "Toggle Drag Mode"
 msgid "Toggle overhead view"
-msgstr "Act./Désact. Mode Déplacement"
+msgstr "Act. / Désact. la vue de dessus"
 
 #: engines/ultima/ultima4/metaengine.cpp:117
 msgid "Full party"
-msgstr ""
+msgstr "Groupe entier"
 
 #: engines/ultima/ultima4/metaengine.cpp:118
 msgid "Give reagents"
-msgstr ""
+msgstr "Donner les réactifs"
 
 #: engines/ultima/ultima4/metaengine.cpp:119
 msgid "Full stats"
-msgstr ""
+msgstr "Statistiques complètes"
 
 #: engines/ultima/ultima4/metaengine.cpp:120
-#, fuzzy
-#| msgid "Create directory"
 msgid "Create transport"
-msgstr "Créer un répertoire"
+msgstr "Créer un moyen de transport"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Up level"
-msgstr "Niveau de Débogage :"
+msgstr "Monter d'un niveau"
 
 #: engines/ultima/ultima4/metaengine.cpp:122
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Down level"
-msgstr "Niveau de Débogage :"
+msgstr "Descendre d'un niveau"
 
 #: engines/ultima/ultima4/metaengine.cpp:123
 msgid "Grant virtue"
-msgstr ""
+msgstr "Octroyer de la vertu"
 
 #: engines/ultima/ultima4/metaengine.cpp:124
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change wind"
-msgstr "Changer les sons"
+msgstr "Changer le vent"
 
 #: engines/ultima/nuvie/nuvie.cpp:403
 #, c-format
@@ -14134,44 +13781,36 @@ msgid "Original Save"
 msgstr "Sauvegarde Originale"
 
 #: engines/ultima/nuvie/metaengine.cpp:59
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk west"
-msgstr "Aller"
+msgstr "Marcher vers l'Ouest"
 
 #: engines/ultima/nuvie/metaengine.cpp:60
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk east"
-msgstr "Aller"
+msgstr "Marcher vers l'Est"
 
 #: engines/ultima/nuvie/metaengine.cpp:61
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk north"
-msgstr "Aller"
+msgstr "Marcher vers le Nord"
 
 #: engines/ultima/nuvie/metaengine.cpp:62
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk south"
-msgstr "Aller"
+msgstr "Marcher vers le Sud"
 
 #: engines/ultima/nuvie/metaengine.cpp:63
 msgid "Walk north-east"
-msgstr ""
+msgstr "Marcher vers le Nord-Est"
 
 #: engines/ultima/nuvie/metaengine.cpp:64
 msgid "Walk south-east"
-msgstr ""
+msgstr "Marcher vers le Sud-Est"
 
 #: engines/ultima/nuvie/metaengine.cpp:65
 msgid "Walk north-west"
-msgstr ""
+msgstr "Marcher vers le Nord-Ouest"
 
 #: engines/ultima/nuvie/metaengine.cpp:66
 msgid "Walk south-west"
-msgstr ""
+msgstr "Marcher vers le Sud-Ouest"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/ultima/nuvie/metaengine.cpp:72
@@ -14181,457 +13820,373 @@ msgstr "Lâcher"
 
 #: engines/ultima/nuvie/metaengine.cpp:75
 msgid "Multi-use"
-msgstr ""
+msgstr "Multi-usage"
 
 #: engines/ultima/nuvie/metaengine.cpp:76
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select command bar"
-msgstr "Sélectionner un shader"
+msgstr "Sélectionner une barre de commande"
 
 #: engines/ultima/nuvie/metaengine.cpp:77
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select new command bar"
-msgstr "Sélectionner Acteur suivant"
+msgstr "Sélectionner une nouvelle barre de commande"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:79
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Doll gump"
-msgstr "Défiler vers le haut"
+msgstr "Pop-up pantin"
 
 #: engines/ultima/nuvie/metaengine.cpp:80
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous party member"
-msgstr "Page précédente"
+msgstr "Membre précédent du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:81
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "Next party member"
-msgstr "Voir Membre 1 du groupe"
+msgstr "Membre suivant du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:82
-#, fuzzy
-#| msgid "Boss key"
 msgid "Home key"
-msgstr "Boss key"
+msgstr "Touche Début"
 
 #: engines/ultima/nuvie/metaengine.cpp:83
 msgid "End key"
-msgstr ""
+msgstr "Touche Fin"
 
 #: engines/ultima/nuvie/metaengine.cpp:84
-#, fuzzy
-#| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between inventory and actor view"
-msgstr "Basculer entre voix/textes/textes et voix"
+msgstr "Basculer entre l'inventaire et la vue de l'acteur"
 
 #: engines/ultima/nuvie/metaengine.cpp:85
-#, fuzzy
-#| msgid "List view"
 msgid "Party view"
-msgstr "Vue en liste"
+msgstr "Vue de groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:86
-#, fuzzy
-#| msgid "Shorty mode"
 msgid "Party mode"
-msgstr "Mode Minus"
+msgstr "Mode groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:87
-#, fuzzy
-#| msgid "Game menu"
 msgid "Save menu"
-msgstr "Menu du jeu"
+msgstr "Menu Sauvegarde"
 
 #: engines/ultima/nuvie/metaengine.cpp:88
-#, fuzzy
-#| msgid "Load auto save"
 msgid "Load latest save"
-msgstr "Charger la sauvegarde auto"
+msgstr "Charger la dernière sauvegarde"
 
 #: engines/ultima/nuvie/metaengine.cpp:93
 msgid "Show game menu; Cancel action if in middle of action"
-msgstr ""
+msgstr "Afficher le menu du jeu ; Annuler une action si au milieu d'une action"
 
 #: engines/ultima/nuvie/metaengine.cpp:95
-#, fuzzy
-#| msgid "Toggle Crouch"
 msgid "Toggle Cursor"
-msgstr "S'accroupir / Se relever"
+msgstr "Act. / Désact. le curseur"
 
 #: engines/ultima/nuvie/metaengine.cpp:96
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle combat strategy"
-msgstr "Act./Désact. Combat"
+msgstr "Act. / Désact. la stratégie de combat"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
-#, fuzzy
-#| msgid "Max frames per second limit"
 msgid "Toggle frames per second display"
-msgstr "Limite haute d'images par seconde"
+msgstr "Act. / Désact. l'affichage des images par seconde"
 
 #: engines/ultima/nuvie/metaengine.cpp:98
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle audio"
-msgstr "Act./Désact. Son"
+msgstr "Act. / Désact. l'audio"
 
 #: engines/ultima/nuvie/metaengine.cpp:99
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle music"
-msgstr "Act./Désact. Muet"
+msgstr "Act. / Désact. la musique"
 
 #: engines/ultima/nuvie/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle sound"
 msgid "Toggle sfx"
-msgstr "Act./Désact. le son"
+msgstr "Act. / Désact. les effets sonores"
 
 #: engines/ultima/nuvie/metaengine.cpp:101
 msgid "Toggle original style command bar"
-msgstr ""
+msgstr "Act. / Désact. la barre de commande dans son aspect original"
 
 #: engines/ultima/nuvie/metaengine.cpp:102
-#, fuzzy
-#| msgid "Droid's action"
 msgid "Do action"
-msgstr "Action du droïde"
+msgstr "Faire l'action"
 
 #: engines/ultima/nuvie/metaengine.cpp:103
-#, fuzzy
-#| msgid "Change action"
 msgid "Cancel action"
-msgstr "Changer l'action"
+msgstr "Annuler l'action"
 
 #: engines/ultima/nuvie/metaengine.cpp:104
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Msg scroll up"
-msgstr "Défiler vers le haut"
+msgstr "Défiler msg vers le haut"
 
 #: engines/ultima/nuvie/metaengine.cpp:105
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Msg scroll down"
-msgstr "Défiler vers le bas"
+msgstr "Défiler msg vers le bas"
 
 #: engines/ultima/nuvie/metaengine.cpp:106
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show keys"
-msgstr "Afficher les citations"
+msgstr "Afficher les touches"
 
 #: engines/ultima/nuvie/metaengine.cpp:107
-#, fuzzy
-#| msgid "Decrease speed"
 msgid "Decrease debug"
-msgstr "Diminuer la vitesse"
+msgstr "Diminuer le debug"
 
 #: engines/ultima/nuvie/metaengine.cpp:108
-#, fuzzy
-#| msgid "Increase speed"
 msgid "Increase debug"
-msgstr "Augmenter la vitesse"
+msgstr "Augmenter le debug"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:110
-#, fuzzy
-#| msgid "Close Gumps"
 msgid "Close gumps"
-msgstr "Fermer la fenêtre active"
+msgstr "Fermer les pop-ups"
 
 #: engines/ultima/nuvie/metaengine.cpp:112
 msgid "Enter ALT code (hold)"
-msgstr ""
+msgstr "Entrer un code ALT (maintenir)"
 
 #: engines/ultima/nuvie/metaengine.cpp:113
 msgid "ALT code 0"
-msgstr ""
+msgstr "Code ALT 0"
 
 #: engines/ultima/nuvie/metaengine.cpp:114
 msgid "ALT code 1"
-msgstr ""
+msgstr "Code ALT 1"
 
 #: engines/ultima/nuvie/metaengine.cpp:115
 msgid "ALT code 2"
-msgstr ""
+msgstr "Code ALT 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:116
 msgid "ALT code 3"
-msgstr ""
+msgstr "Code ALT 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:117
 msgid "ALT code 4"
-msgstr ""
+msgstr "Code ALT 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:118
 msgid "ALT code 5"
-msgstr ""
+msgstr "Code ALT 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:119
 msgid "ALT code 6"
-msgstr ""
+msgstr "Code ALT 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:120
 msgid "ALT code 7"
-msgstr ""
+msgstr "Code ALT 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:121
 msgid "ALT code 8"
-msgstr ""
+msgstr "Code ALT 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:122
 msgid "ALT code 9"
-msgstr ""
+msgstr "Code ALT 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:126
 msgid "Open the asset viewer"
-msgstr ""
+msgstr "Ouvrir la visionneuse d'assets"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
 #: engines/ultima/nuvie/metaengine.cpp:128
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show eggs"
-msgstr "Afficher les citations"
+msgstr "Afficher les œufs"
 
 #: engines/ultima/nuvie/metaengine.cpp:129
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle hack move"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act. / Désact. mouvement trafiqué"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
 #: engines/ultima/nuvie/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle Menu"
 msgid "Toggle egg spawn"
-msgstr "Act./Désact. Menu"
+msgstr "Act. / Désact. l'apparition des œufs"
 
 #: engines/ultima/nuvie/metaengine.cpp:132
-#, fuzzy
-#| msgid "Toggle mouse capture"
 msgid "Toggle no darkness"
-msgstr "Capturer/Libérer la souris"
+msgstr "Act. / Désact. l'obscurité"
 
 #: engines/ultima/nuvie/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fight mode"
 msgid "Toggle pickpocket mode"
-msgstr "Act./Désact. le mode combat"
+msgstr "Act. / Désact. le mode pickpocket"
 
 #: engines/ultima/nuvie/metaengine.cpp:134
-#, fuzzy
-#| msgid "Toggle fight mode"
 msgid "Toggle god mode"
-msgstr "Act./Désact. le mode combat"
+msgstr "Act. / Désact. le god mode"
 
 #: engines/ultima/nuvie/metaengine.cpp:135
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle ethereal mode"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act. / Désact. le mode éthéré"
 
 #: engines/ultima/nuvie/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle X-ray mode"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act. / Désact. le mode rayons X"
 
 #: engines/ultima/nuvie/metaengine.cpp:137
 msgid "Heal party"
-msgstr ""
+msgstr "Soigner le groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:138
-#, fuzzy
-#| msgid "Regular cursor"
 msgid "Teleport to cursor"
-msgstr "Curseur normal"
+msgstr "Se téléporter au curseur"
 
 #: engines/ultima/nuvie/metaengine.cpp:139
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Toggle cheats"
-msgstr "Activer les tricheries"
+msgstr "Act. / Désact. les tricheries"
 
 #: engines/ultima/nuvie/metaengine.cpp:143
 msgid "Solo mode as Avatar"
-msgstr ""
+msgstr "Mode solo en tant qu'Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:144
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "Solo mode as party member 2"
-msgstr "Voir Membre 2 du groupe"
+msgstr "Mode solo en tant que membre 2 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:145
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "Solo mode as party member 3"
-msgstr "Voir Membre 3 du groupe"
+msgstr "Mode solo en tant que membre 3 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:146
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "Solo mode as party member 4"
-msgstr "Voir Membre 4 du groupe"
+msgstr "Mode solo en tant que membre 4 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:147
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "Solo mode as party member 5"
-msgstr "Voir Membre 5 du groupe"
+msgstr "Mode solo en tant que membre 5 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:148
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "Solo mode as party member 6"
-msgstr "Voir Membre 6 du groupe"
+msgstr "Mode solo en tant que membre 6 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:149
 msgid "Solo mode as party member 7"
-msgstr ""
+msgstr "Mode solo en tant que membre 7 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:150
 msgid "Solo mode as party member 8"
-msgstr ""
+msgstr "Mode solo en tant que membre 8 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:151
 msgid "Solo mode as party member 9"
-msgstr ""
+msgstr "Mode solo en tant que membre 9 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Show stats for Avatar"
-msgstr ""
+msgstr "Afficher les statistiques de l'Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Show stats for party member 2"
-msgstr ""
+msgstr "Afficher les statistiques du membre 2 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Show stats for party member 3"
-msgstr ""
+msgstr "Afficher les statistiques du membre 3 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for party member 4"
-msgstr ""
+msgstr "Afficher les statistiques du membre 4 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 5"
-msgstr ""
+msgstr "Afficher les statistiques du membre 5 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 6"
-msgstr ""
+msgstr "Afficher les statistiques du membre 6 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 7"
-msgstr ""
+msgstr "Afficher les statistiques du membre 7 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 8"
-msgstr ""
+msgstr "Afficher les statistiques du membre 8 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 9"
-msgstr ""
+msgstr "Afficher les statistiques du membre 9 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:161
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Show inventory for Avatar"
-msgstr "Afficher l'inventaire"
+msgstr "Afficher l'inventaire de l'Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:162
 msgid "Show inventory for party member 2"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 2 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:163
 msgid "Show inventory for party member 3"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 3 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:164
 msgid "Show inventory for party member 4"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 4 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:165
 msgid "Show inventory for party member 5"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 5 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:166
 msgid "Show inventory for party member 6"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 6 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:167
 msgid "Show inventory for party member 7"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 7 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:168
 msgid "Show inventory for party member 8"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 8 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:169
 msgid "Show inventory for party member 9"
-msgstr ""
+msgstr "Afficher l'inventaire du membre 9 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:171
 msgid "Show doll gump for Avatar"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour l'Avatar"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:173
 msgid "Show doll gump for party member 2"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 2 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:175
 msgid "Show doll gump for party member 3"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 3 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:177
 msgid "Show doll gump for party member 4"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 4 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:179
 msgid "Show doll gump for party member 5"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 5 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:181
 msgid "Show doll gump for party member 6"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 6 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:183
 msgid "Show doll gump for party member 7"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 7 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:185
 msgid "Show doll gump for party member 8"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 8 du groupe"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:187
 msgid "Show doll gump for party member 9"
-msgstr ""
+msgstr "Afficher le pop-up pantin pour le membre 9 du groupe"
 
 #: engines/ultima/nuvie/metaengine.cpp:193
 #: engines/ultima/nuvie/metaengine.cpp:198
-#, fuzzy
-#| msgid "Toggle linear filtered scaling"
 msgid "Toggle unlimited casting"
-msgstr "Act./Désact. interpolation lors du changement d'échelle"
+msgstr "Act. / Désact. les sorts illimités"
 
 #: engines/ultima/nuvie/metaengine.cpp:224
 msgid "Ultima VI"
@@ -14650,63 +14205,43 @@ msgid "Transfer Character"
 msgstr "Transfert de personnage"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
-#, fuzzy
-#| msgid "Draw Weapon / Combat"
 msgid "Draw weapon / Combat"
 msgstr "Dégainer arme / Combattre"
 
 #: engines/ultima/ultima8/metaengine.cpp:52
-#, fuzzy
-#| msgid "Move Back"
 msgid "Move back"
 msgstr "Reculer"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight Items"
 msgid "Highlight items"
 msgstr "Surligner les items"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
-#, fuzzy
-#| msgid "Use Bedroll"
 msgid "Use bedroll"
 msgstr "Utiliser le sac de couchage"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Open Backpack"
 msgid "Open backpack"
 msgstr "Ouvrir la besace"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
-#, fuzzy
-#| msgid "Use Keyring"
 msgid "Use keyring"
 msgstr "Utiliser le trousseau de clés"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
-#, fuzzy
-#| msgid "Open Minimap"
 msgid "Open minimap"
 msgstr "Ouvrir la mini-carte"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
-#, fuzzy
-#| msgid "Use Recall"
 msgid "Use recall"
 msgstr "Utiliser le rappel"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open Inventory & Statistics"
 msgid "Open inventory & statistics"
 msgstr "Ouvrir l'inventaire et les statistiques"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close All Displays"
 msgid "Close all displays"
 msgstr "Fermer toutes les fenêtres"
 
@@ -14715,74 +14250,50 @@ msgid "Jump (fake both-button-click)"
 msgstr "Sauter (simule \"clic gauche+clic droit\")"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Careful Step"
 msgid "Careful step"
 msgstr "Pas prudent"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Cycle through Weapon Inventory"
 msgid "Cycle through weapon inventory"
 msgstr "Faire défiler l'inventaire des armes"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through Item Inventory"
 msgid "Cycle through item inventory"
 msgstr "Faire défiler l'inventaire des items"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
-#, fuzzy
-#| msgid "Use Inventory Item"
 msgid "Use inventory item"
 msgstr "Utiliser l'item d'inventaire"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use Medikit"
 msgid "Use medikit"
 msgstr "Utiliser le médikit"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
-#, fuzzy
-#| msgid "Use Energy Cube"
 msgid "Use energy cube"
 msgstr "Utiliser le cube d'énergie"
 
 #: engines/ultima/ultima8/metaengine.cpp:84
-#, fuzzy
-#| msgid "Detonate Bomb"
 msgid "Detonate bomb"
 msgstr "Faire exploser la bombe"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
-#, fuzzy
-#| msgid "Drop Weapon"
 msgid "Drop weapon"
 msgstr "Déposer l'arme"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Search / Select Item"
 msgid "Search / Select item"
 msgstr "Chercher / Sélectionner l'item"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
-#, fuzzy
-#| msgid "Use Selection"
 msgid "Use selection"
 msgstr "Utiliser la sélection"
 
 #: engines/ultima/ultima8/metaengine.cpp:89
-#, fuzzy
-#| msgid "Grab Items"
 msgid "Grab items"
 msgstr "Ramasser les items"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Fire Weapon"
 msgid "Fire weapon"
 msgstr "Tirer avec l'arme"
 
@@ -14795,96 +14306,66 @@ msgid "Jump / Roll / Crouch"
 msgstr "Sauter / Rouler / S'accroupir"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
-#, fuzzy
-#| msgid "Short Jump"
 msgid "Short jump"
 msgstr "Saut court"
 
 #: engines/ultima/ultima8/metaengine.cpp:94
-#, fuzzy
-#| msgid "Sidestep Left"
 msgid "Sidestep left"
 msgstr "Pas de côté à gauche"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-#, fuzzy
-#| msgid "Sidestep Right"
 msgid "Sidestep Right"
 msgstr "Pas de côté à droite"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
-#, fuzzy
-#| msgid "Step Forward"
 msgid "Step forward"
 msgstr "Pas vers l'avant"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle Crouch"
 msgid "Toggle crouch"
 msgstr "S'accroupir / Se relever"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
-#, fuzzy
-#| msgid "Side Step / Advance / Retreat"
 msgid "Side step / Advance / Retreat"
 msgstr "Pas de côté / Avancer / Reculer"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
-#, fuzzy
-#| msgid "Toggle Clipping"
 msgid "Toggle clipping"
-msgstr "Act./Désact. le clipping"
+msgstr "Act. / Désact. le clipping"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
 msgstr "Monter"
 
 #: engines/ultima/ultima8/metaengine.cpp:115
-#, fuzzy
-#| msgid "Show Touching Items"
 msgid "Show touching items"
 msgstr "Afficher les items manipulables"
 
 #: engines/ultima/ultima8/metaengine.cpp:116
-#, fuzzy
-#| msgid "Show Editor Items"
 msgid "Show editor items"
-msgstr "Afficher les Editor items"
+msgstr "Afficher les editor items"
 
 #: engines/ultima/ultima8/metaengine.cpp:117
-#, fuzzy
-#| msgid "Decrement Map Sort Order"
 msgid "Decrement map sort order"
 msgstr "Ordre de tri de carte décroissant"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
-#, fuzzy
-#| msgid "Increment Map Sort Order"
 msgid "Increment map sort order"
 msgstr "Ordre de tri de carte croissant"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Toggle Frame By Frame"
 msgid "Toggle frame by frame"
-msgstr "Act./Désact. Image par image"
+msgstr "Act. / Désact. image par image"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
-#, fuzzy
-#| msgid "Advance Frame"
 msgid "Advance frame"
 msgstr "Image suivante"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
-#, fuzzy
-#| msgid "Toggle Avatar In Stasis"
 msgid "Toggle Avatar in stasis"
-msgstr "Act./Désact. l'Avatar en stase"
+msgstr "Act. / Désact. l'Avatar en stase"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
-#, fuzzy
-#| msgid "Show Shape Viewer"
 msgid "Show shape viewer"
 msgstr "Afficher la visionneuse de forme"
 
@@ -15544,26 +15025,18 @@ msgid "Settings"
 msgstr "Réglages"
 
 #: engines/wintermute/keymapper_tables.h:1619
-#, fuzzy
-#| msgid "Dialogue answer 1"
 msgid "Dialog answer 1"
 msgstr "Dialogue réponse 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
-#, fuzzy
-#| msgid "Dialogue answer 2"
 msgid "Dialog answer 2"
 msgstr "Dialogue réponse 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
-#, fuzzy
-#| msgid "Dialogue answer 3"
 msgid "Dialog answer 3"
 msgstr "Dialogue réponse 3"
 
 #: engines/wintermute/keymapper_tables.h:1634
-#, fuzzy
-#| msgid "Dialogue answer 4"
 msgid "Dialog answer 4"
 msgstr "Dialogue réponse 4"
 
