@@ -1035,7 +1035,8 @@ void Inter_v7::o7_draw0xA0() {
 
 
 void Inter_v7::o7_getINIValue() {
-	Common::String file = getFile(_vm->_game->_script->evalString());
+	bool isCd = false;
+	Common::String file = getFile(_vm->_game->_script->evalString(), true, &isCd);
 
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String key     = _vm->_game->_script->evalString();
@@ -1046,7 +1047,7 @@ void Inter_v7::o7_getINIValue() {
 	key     = oemToANSI(key);
 
 	Common::String value;
-	_inis.getValue(value, file, section, key, def);
+	_inis.getValue(value, file, isCd, section, key, def);
 
 	value = ansiToOEM(value);
 
@@ -1055,7 +1056,8 @@ void Inter_v7::o7_getINIValue() {
 }
 
 void Inter_v7::o7_setINIValue() {
-	Common::String file = getFile(_vm->_game->_script->evalString());
+	bool isCd = false;
+	Common::String file = getFile(_vm->_game->_script->evalString(), true, &isCd);
 
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String key     = _vm->_game->_script->evalString();
@@ -1066,7 +1068,7 @@ void Inter_v7::o7_setINIValue() {
 	key     = oemToANSI(key);
 	value   = oemToANSI(value);
 
-	bool success = _inis.setValue(file, section, key, value);
+	bool success = _inis.setValue(file, isCd, section, key, value);
 	WRITE_VAR(27, success ? 1 : 0);
 	debugC(5, kDebugGameFlow, "o7_setINIValue: %s: [%s] %s := %s", file.c_str(), section.c_str(), key.c_str(), value.c_str());
 }

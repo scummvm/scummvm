@@ -40,13 +40,13 @@ INIConfig::~INIConfig() {
 		delete c->_value.config;
 }
 
-bool INIConfig::getValue(Common::String &result, const Common::String &file,
+bool INIConfig::getValue(Common::String &result, const Common::String &file, bool isCd,
 		const Common::String &section, const Common::String &key,
 		const Common::String &def) {
 
 	Config config;
 	if (!getConfig(file, config)) {
-		if (!openConfig(file, config)) {
+		if (!openConfig(file, isCd, config)) {
 			result = def;
 			return false;
 		}
@@ -60,12 +60,12 @@ bool INIConfig::getValue(Common::String &result, const Common::String &file,
 	return true;
 }
 
-bool INIConfig::setValue(const Common::String &file, const Common::String &section,
+bool INIConfig::setValue(const Common::String &file, bool isCd, const Common::String &section,
 		const Common::String &key, const Common::String &value) {
 
 	Config config;
 	if (!getConfig(file, config))
-		if (!createConfig(file, config))
+		if (!createConfig(file, isCd, config))
 			return false;
 
 	config.config->setKey(key, section, value);
@@ -89,9 +89,8 @@ bool INIConfig::getConfig(const Common::String &file, Config &config) {
 	return true;
 }
 
-bool INIConfig::readConfigFromDisk(const Common::String &file, Gob::INIConfig::Config &config) {
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
-	if (mode == SaveLoad::kSaveModeSave) {
+bool INIConfig::readConfigFromDisk(const Common::String &file, bool isCd, Gob::INIConfig::Config &config) {
+	if (!isCd && _vm->_saveLoad->getSaveMode(file.c_str()) == SaveLoad::kSaveModeSave) {
 		debugC(3, kDebugFileIO, "Loading INI from save file \"%s\"", file.c_str());
 		// Read from save file
 		int size = _vm->_saveLoad->getSize(file.c_str());
@@ -121,12 +120,12 @@ bool INIConfig::readConfigFromDisk(const Common::String &file, Gob::INIConfig::C
 }
 
 
-bool INIConfig::openConfig(const Common::String &file, Config &config) {
+bool INIConfig::openConfig(const Common::String &file, bool isCd, Config &config) {
 	config.config  = new Common::INIFile();
 	config.config->allowNonEnglishCharacters();
 	config.created = false;
 
-	if (!readConfigFromDisk(file, config)) {
+	if (!readConfigFromDisk(file, isCd, config)) {
 		delete config.config;
 		config.config = nullptr;
 		return false;
@@ -138,12 +137,12 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 	return true;
 }
 
-bool INIConfig::createConfig(const Common::String &file, Config &config) {
+bool INIConfig::createConfig(const Common::String &file, bool isCd, Config &config) {
 	config.config  = new Common::INIFile();
 	config.config->allowNonEnglishCharacters();
 	config.created = true;
 
-	readConfigFromDisk(file, config); // May return false in case we are dealing with a temporary file
+	readConfigFromDisk(file, isCd, config); // May return false in case we are dealing with a temporary file
 
 	_configs.setVal(file, config);
 

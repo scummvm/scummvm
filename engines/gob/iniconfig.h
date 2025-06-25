@@ -41,11 +41,11 @@ public:
 	INIConfig(GobEngine *vm);
 	~INIConfig();
 
-	bool getValue(Common::String &result, const Common::String &file,
+	bool getValue(Common::String &result, const Common::String &file, bool isCd,
 			const Common::String &section, const Common::String &key,
 			const Common::String &def = "");
 
-	bool setValue(const Common::String &file, const Common::String &section,
+	bool setValue(const Common::String &file, bool isCd, const Common::String &section,
 			const Common::String &key, const Common::String &value);
 
 private:
@@ -61,9 +61,9 @@ private:
 
 	bool getConfig(const Common::String &file, Config &config);
 
-	bool readConfigFromDisk(const Common::String &file, Config &config);
-	bool openConfig(const Common::String &file, Config &config);
-	bool createConfig(const Common::String &file, Config &config);
+	bool readConfigFromDisk(const Common::String &file, bool isCd, Config &config);
+	bool openConfig(const Common::String &file, bool isCd, Config &config);
+	bool createConfig(const Common::String &file, bool isCd, Config &config);
 };
 
 } // End of namespace Gob
