@@ -476,16 +476,17 @@ bool LastExpressEngine::handleEvents() {
 		switch (ev.type) {
 
 		case Common::EVENT_KEYDOWN:
-			//// DEBUG: Quit game on escape
-			// if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-			//	quitGame();
+			switch (ev.kbd.keycode) {
+			case Common::KEYCODE_F4:
+				if (_navigationEngineIsRunning && gDebugLevel >= 3)
+					getLogicManager()->doF4();
+
+				break;
+			default:
+				break;
+			}
 
 			break;
-
-		//case Common::EVENT_MAINMENU:
-			// Closing the GMM
-
-
 		case Common::EVENT_LBUTTONDOWN:
 			_systemEventLeftMouseDown = true;
 			curFlags |= kMouseFlagLeftButton;

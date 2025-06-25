@@ -743,6 +743,7 @@ void LogicManager::checkInventory(int32 flags) {
 						_highlightedItem = 0;
 					}
 				}
+
 				return;
 			}
 
@@ -799,7 +800,7 @@ void LogicManager::checkInventory(int32 flags) {
 			}
 
 			if (!_closeUp || (_nodeReturn2 && findLargeItem() == _activeItem)) {
-				_isMagnifierInUse = 1;
+				_isMagnifierInUse = true;
 			}
 
 			if ((flags & kMouseFlagLeftDown) == 0)
