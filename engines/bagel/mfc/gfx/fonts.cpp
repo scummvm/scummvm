@@ -27,14 +27,14 @@ namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
-struct AvgWidth {
+struct FontSizeOverride {
 	const char *_faceName;
 	int _height;
 	int _avgWidth;
 	int _charHeight;
 };
-static const AvgWidth AVG_WIDTH[] = {
-	{ "MS Sans Serif", 12, 10, 0 },
+static const FontSizeOverride FONT_SIZE_OVERRIDES[] = {
+	{ "MS Sans Serif", 12, 10, 20 },
 	{ nullptr, 0, 0, 0 }
 };
 
@@ -163,7 +163,7 @@ Font::Font(Graphics::Font *font, const Common::String &faceName, int height,
 		_font(font), _faceName(faceName), _height(height),
 		_charWidth(0), _charHeight(0),
 		_disposeAfterUse(disposeAfterUse) {
-	for (const AvgWidth *aw = AVG_WIDTH; aw->_faceName; ++aw) {
+	for (const FontSizeOverride *aw = FONT_SIZE_OVERRIDES; aw->_faceName; ++aw) {
 		if (faceName == aw->_faceName && height == aw->_height) {
 			_charWidth = aw->_avgWidth;
 			_charHeight = aw->_charHeight;
