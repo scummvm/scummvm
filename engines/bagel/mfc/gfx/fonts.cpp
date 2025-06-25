@@ -67,8 +67,25 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
 		const char *lpszFacename) {
 	Gfx::Font *font = nullptr;
-	int charHeight = (nHeight < 0) ? -nHeight :
-		nHeight * 16 / 24;
+
+	// for nHeight, -ve means char height (which ScummVM uses),
+	// whilst +ve means cell height
+	int charHeight;
+	if (nHeight < 0) {
+		charHeight = ABS(nHeight);
+	} else {
+		// Standard cell to char height mappings from ChatGPT
+		static const int8 HEIGHTS[6][2] = {
+			{ 8, 7 }, { 10, 8 }, { 12, 10 }, { 14, 11 }, { 16, 13 }, { 18, 15 }
+		};
+		charHeight = nHeight * 16 / 24;	// Rough default
+		for (int i = 0; i < 6; ++i) {
+			if (nHeight == HEIGHTS[i][0]) {
+				charHeight = HEIGHTS[i][1];
+				break;
+			}
+		}
+	}
 
 	// First scan for an existing cached copy of the font
 	for (auto &it : _fonts) {
@@ -131,10 +148,6 @@ int Fonts::resIndexOf(const char *filename) const {
 
 HFONT Fonts::getFont(const char *lpszFacename, int nHeight) {
 	return createFont(nHeight, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, lpszFacename);
-}
-
-HFONT Fonts::getDefaultFont() {
-	return createFont(8, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 }
 
 /*--------------------------------------------*/

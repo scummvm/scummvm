@@ -51,23 +51,30 @@ CWinApp::CWinApp(const char *appName) :
 	assert(!_activeApp);    // Only one app per engine
 	_activeApp = this;
 	Libs::Event::init();
-
-	_defaultPen.CreatePen(PS_SOLID, 1, 0);
-	_defaultBrush.CreateSolidBrush(RGB(255, 255, 255));
 }
 
 CWinApp::~CWinApp() {
+	// Free the defaults
+	_defaultFont.DeleteObject();
 	_defaultPen.DeleteObject();
 	_defaultBrush.DeleteObject();
 
+	// Release the handle maps
 	delete m_pmapHDC;
 	delete m_pmapHGDIOBJ;
+	m_pmapHDC = nullptr;
+	m_pmapHGDIOBJ = nullptr;
 
 	_activeApp = nullptr;
 }
 
 BOOL CWinApp::InitApplication() {
 	_settings.load();
+
+	_defaultFont.CreateFont(8, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
+	_defaultPen.CreatePen(PS_SOLID, 1, 0);
+	_defaultBrush.CreateSolidBrush(RGB(255, 255, 255));
+
 	return true;
 }
 

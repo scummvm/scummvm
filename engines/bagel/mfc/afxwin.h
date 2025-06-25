@@ -1687,6 +1687,7 @@ public:
 	const char *m_lpCmdLine = "";
 	CWnd *m_pMainWnd = nullptr;
 	Graphics::Palette _palette;
+	CFont _defaultFont;
 	CPen _defaultPen;
 	CBrush _defaultBrush;
 	MSG _currentMessage;
@@ -1782,12 +1783,15 @@ public:
 		return _fonts.getFont(lpszFacename, nHeight);
 	}
 	HFONT getDefaultFont() {
-		return _fonts.getDefaultFont();
+		assert(_defaultFont._font);
+		return (HFONT)_defaultFont._font;
 	}
 	HPEN getDefaultPen() const {
+		assert(_defaultPen.m_hObject);
 		return (HPEN)_defaultPen.m_hObject;
 	}
 	HBRUSH getDefaultBrush() {
+		assert(_defaultBrush.m_hObject);
 		return (HBRUSH)_defaultBrush.m_hObject;
 	}
 

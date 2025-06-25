@@ -542,14 +542,15 @@ CDC::Impl::Impl(HDC srcDc) {
 
 	// Defaults
 	CWinApp *app = AfxGetApp();
-	_font = app->getDefaultFont();
-	_pen = app->getDefaultPen();
-	_brush = app->getDefaultBrush();
 
 	if (src) {
 		_font = src->_font;
 		_pen = src->_pen;
 		_brush = src->_brush;
+	} else {
+		_font = app->getDefaultFont();
+		_pen = app->getDefaultPen();
+		_brush = app->getDefaultBrush();
 	}
 }
 

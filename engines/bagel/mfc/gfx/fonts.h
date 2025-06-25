@@ -123,7 +123,6 @@ public:
 		byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
 		const char *lpszFacename);
 	HFONT getFont(const char *lpszFacename, int nHeight);
-	HFONT getDefaultFont();
 };
 
 } // namespace Gfx
