@@ -180,7 +180,7 @@ enum AfxSig {
 	AfxSig_INPUTDEVICECHANGE,       // void (unsigned short, HANDLE)
 	AfxSig_l_D_u,                   // LRESULT (CDC*, UINT)
 	AfxSig_i_v_S,               // int (LPCTSTR)
-	AfxSig_v_F_b,               // void (CFont*, BOOL)
+	AfxSig_vwpb,                // void (HFONT, BOOL)
 	AfxSig_h_v_v,               // HANDLE ()
 	AfxSig_h_b_h,               // HANDLE (BOOL, HANDLE)
 	AfxSig_b_v_ii,              // BOOL (int, int)
@@ -415,6 +415,7 @@ union MessageMapFunctions {
 	void (AFX_MSG_CALL CWnd:: *pfn_vwwh)(UINT, UINT, HANDLE);
 	BOOL(AFX_MSG_CALL CWnd:: *pfn_bwsp)(UINT, short, CPoint);
 	void (AFX_MSG_CALL CWnd:: *pfn_vws)(UINT, LPCTSTR);
+	void (AFX_MSG_CALL CWnd:: *pfn_vFb)(HFONT, BOOL);
 };
 
 /*============================================================================*/

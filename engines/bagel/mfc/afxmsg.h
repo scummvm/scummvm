@@ -420,9 +420,9 @@ namespace MFC {
 		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetTextLength)) },
 
 #define ON_WM_SETFONT() \
-	{ WM_SETFONT, 0, 0, 0, AfxSig_v_F_b, \
+	{ WM_SETFONT, 0, 0, 0, AfxSig_vwpb, \
 		(AFX_PMSG) (AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(CFont*, BOOL) > ( &ThisClass::OnSetFont)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(HFONT, BOOL) > ( &ThisClass::OnSetFont)) },
 
 #define ON_WM_GETFONT() \
 	{ WM_GETFONT, 0, 0, 0, AfxSig_h_v_v, \

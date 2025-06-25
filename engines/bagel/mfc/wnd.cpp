@@ -32,6 +32,7 @@ IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 	ON_WM_CLOSE()
 	ON_WM_DRAWITEM()
+	ON_WM_SETFONT()
 END_MESSAGE_MAP()
 
 CWnd::CWnd() : m_hWnd(this) {
@@ -556,6 +557,10 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		if (!lResult)
 			return FALSE;
 
+	case AfxSig_vwpb:
+		(this->*mmf.pfn_vFb)((HFONT)wParam, (BOOL)lParam);
+		break;
+
 	default:
 		error("Unknown AFX signature");
 		break;
@@ -737,6 +742,7 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	_windowRect = oldControl->_windowRect;
 	_controlId = oldControl->_controlId;
 	m_nClassStyle = oldControl->m_nClassStyle;
+	_hFont = oldControl->_hFont;
 
 	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
 	ClientToScreen(&screenRect);
