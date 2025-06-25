@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-24 22:21+0000\n"
-"PO-Revision-Date: 2025-06-25 08:45+0000\n"
+"PO-Revision-Date: 2025-06-25 08:54+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -9160,8 +9160,6 @@ msgid "Options"
 msgstr "Opzioni"
 
 #: engines/kyra/engine/lol.cpp:518
-#, fuzzy
-#| msgid "Choose Spell"
 msgid "Choose spell"
 msgstr "Scegli incantesimo"
 
@@ -9481,40 +9479,28 @@ msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr "Mostra barre per punti vita e magia, al posto delle gemme colorate."
 
 #: engines/mm/mm1/metaengine.cpp:54
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "View party member 1"
-msgstr "Mostra Personaggio 1 del Gruppo"
+msgstr "Mostra personaggio 1 del gruppo"
 
 #: engines/mm/mm1/metaengine.cpp:55
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "View party member 2"
-msgstr "Mostra Personaggio 2 del Gruppo"
+msgstr "Mostra personaggio 2 del gruppo"
 
 #: engines/mm/mm1/metaengine.cpp:56
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "View party member 3"
-msgstr "Mostra Personaggio 3 del Gruppo"
+msgstr "Mostra personaggio 3 del gruppo"
 
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "View party member 4"
-msgstr "Mostra Personaggio 4 del Gruppo"
+msgstr "Mostra personaggio 4 del gruppo"
 
 #: engines/mm/mm1/metaengine.cpp:58
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "View party member 5"
-msgstr "Mostra Personaggio 5 del Gruppo"
+msgstr "Mostra personaggio 5 del gruppo"
 
 #: engines/mm/mm1/metaengine.cpp:59
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "View party member 6"
-msgstr "Mostra Personaggio 6 del Gruppo"
+msgstr "Mostra personaggio 6 del gruppo"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/ultima/ultima4/metaengine.cpp:50
@@ -9534,10 +9520,8 @@ msgstr "Combatti"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Quick Reference"
 msgid "Quick reference"
-msgstr "Riepilogo Gruppo"
+msgstr "Riepilogo gruppo"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
@@ -9566,16 +9550,12 @@ msgid "Backwards"
 msgstr "Arretra"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Minimap"
 msgid "Toggle minimap"
-msgstr "Mostra / Nascondi Minimappa"
+msgstr "Mostra / Nascondi minimappa"
 
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Reorder Party"
 msgid "Reorder party"
-msgstr "Riordina Gruppo"
+msgstr "Riordina gruppo"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111 engines/ultima/ultima4/metaengine.cpp:68
@@ -10081,10 +10061,8 @@ msgid "Nancy Drew - Maze"
 msgstr "Nancy Drew - Labirinto"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show/hide maze map"
 msgid "Show / hide maze map"
-msgstr "Mostra/nascondi mappa labirinto"
+msgstr "Mostra / nascondi mappa labirinto"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -10249,14 +10227,10 @@ msgstr ""
 "Per favore, contatta il team."
 
 #: engines/pegasus/pegasus.cpp:2724
-#, fuzzy
-#| msgid "Up/Zoom In/Move Forward/Open Doors"
 msgid "Up / Zoom in / Move forward / Open door"
 msgstr "Su / Zoom + / Avanza / Apri porte"
 
 #: engines/pegasus/pegasus.cpp:2732
-#, fuzzy
-#| msgid "Down/Zoom Out"
 msgid "Down / Zoom out"
 msgstr "Giù / Zoom -"
 
@@ -10265,34 +10239,24 @@ msgid "Action/Select"
 msgstr "Azione/Seleziona"
 
 #: engines/pegasus/pegasus.cpp:2774
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory tray"
-msgstr "Alterna tra Inventario e Punti QI"
+msgstr "Mostra / Nascondi cassetto inventario"
 
 #: engines/pegasus/pegasus.cpp:2781
-#, fuzzy
-#| msgid "Toggle Height"
 msgid "Toggle biochip tray"
-msgstr "Alterna altezza"
+msgstr "Mostra / Nascondi cassetto biochip"
 
 #: engines/pegasus/pegasus.cpp:2789
-#, fuzzy
-#| msgid "Toggle Center Data Display"
 msgid "Toggle center data display"
-msgstr "Alterna tra informazioni oggetto/funzionalità biochip"
+msgstr "Mostra / Nascondi schermo informazioni centrale"
 
 #: engines/pegasus/pegasus.cpp:2796
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle info screen"
-msgstr "Attiva/disattiva schermo intero"
+msgstr "Mostra / Nascondi schermo informazioni"
 
 #: engines/pegasus/pegasus.cpp:2803
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle pause menu"
-msgstr "Attiva modalità veloce"
+msgstr "Mostra / Nascondi menù pausa"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
@@ -10423,8 +10387,6 @@ msgid "Abort speech"
 msgstr "Salta battuta dialogo"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show dialogue"
 msgid "Show dialog"
 msgstr "Mostra dialogo"
 
@@ -11897,28 +11859,20 @@ msgid "Enable ambience sounds."
 msgstr "Abilita gli effetti sonori ambientali."
 
 #: engines/scumm/metaengine.cpp:965
-#, fuzzy
-#| msgid "Down Left"
 msgid "Down left"
-msgstr "Giù Sinistra"
+msgstr "Giù sinistra"
 
 #: engines/scumm/metaengine.cpp:978
-#, fuzzy
-#| msgid "Down Right"
 msgid "Down right"
-msgstr "Giù Destra"
+msgstr "Giù destra"
 
 #: engines/scumm/metaengine.cpp:998
-#, fuzzy
-#| msgid "Upper left item"
 msgid "Up left"
-msgstr "Oggetto in alto a sinistra"
+msgstr "Su sinistra"
 
 #: engines/scumm/metaengine.cpp:1011
-#, fuzzy
-#| msgid "Up Right"
 msgid "Up right"
-msgstr "Su Destra"
+msgstr "Su destra"
 
 #: engines/scumm/metaengine.cpp:1023
 msgid "Switch weapon"
@@ -12282,10 +12236,8 @@ msgid "Open control panel"
 msgstr "Apri pannello di controllo"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on/off"
 msgid "Toggle really fast mode on / off"
-msgstr "Attiva/disattiva modalità molto veloce"
+msgstr "Attiva / disattiva modalità molto veloce"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -12317,14 +12269,10 @@ msgid "Change action"
 msgstr "Cambia azione"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Speed up dialogue"
 msgid "Speed up dialog"
 msgstr "Velocizza dialoghi"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down dialogue"
 msgid "Slow down dialog"
 msgstr "Rallenta dialoghi"
 
@@ -12360,8 +12308,6 @@ msgid "Inventory / Examine"
 msgstr "Inventario / Esamina"
 
 #: engines/sludge/keymapper_tables.h:281
-#, fuzzy
-#| msgid "Examine / Skip dialogue"
 msgid "Examine / Skip dialog"
 msgstr "Esamina / Salta dialogo"
 
@@ -12395,14 +12341,10 @@ msgid "Cast water spell"
 msgstr "Lancia incantesimo dell'acqua"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Move / Interact / Skip dialog"
 msgstr "Movimento / Interazione / Salta dialogo"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Inventory / Skip dialogue"
 msgid "Inventory / Skip dialog"
 msgstr "Inventario / Salta dialogo"
 
@@ -12502,26 +12444,18 @@ msgid "Scroll down in your dialogs"
 msgstr "Scorri log dialoghi verso il basso"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next dialog"
 msgstr "Dialogo successivo"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous dialogues"
 msgid "Go to previous dialogs"
 msgstr "Dialogo precedente"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Select dialog"
 msgstr "Seleziona dialogo"
 
 #: engines/stark/metaengine.cpp:335
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip video sequence or dialog"
 msgstr "Salta sequenza d'intermezzo o dialogo"
 
