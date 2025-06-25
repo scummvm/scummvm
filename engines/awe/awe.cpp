@@ -199,6 +199,7 @@ Common::Error AweEngine::run() {
 	delete e;
 	stub->fini();
 	delete stub;
+	delete graphics;
 
 	return Common::kNoError;
 }
