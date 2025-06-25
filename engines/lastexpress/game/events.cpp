@@ -39,7 +39,7 @@ MessageManager::MessageManager(LastExpressEngine *engine) {
 }
 
 MessageManager::~MessageManager() {
-	delete _autoMessages;
+	free(_autoMessages);
 	_autoMessages = nullptr;
 }
 
