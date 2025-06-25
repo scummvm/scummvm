@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-24 22:21+0000\n"
+"POT-Creation-Date: 2025-06-25 10:26+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -15016,7 +15016,7 @@ msgstr "Ολίσθηση Αριστερά"
 #: engines/ultima/ultima8/metaengine.cpp:95
 #, fuzzy
 #| msgid "Slide Right"
-msgid "Sidestep Rright"
+msgid "Sidestep Right"
 msgstr "Ολίσθηση Δεξιά"
 
 #: engines/ultima/ultima8/metaengine.cpp:96

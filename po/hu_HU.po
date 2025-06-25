@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-24 22:21+0000\n"
+"POT-Creation-Date: 2025-06-25 10:26+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -14729,7 +14729,7 @@ msgstr "Csúszás balra"
 #: engines/ultima/ultima8/metaengine.cpp:95
 #, fuzzy
 #| msgid "Slide Right"
-msgid "Sidestep Rright"
+msgid "Sidestep Right"
 msgstr "Csúszás jobbra"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
