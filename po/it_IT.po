@@ -8729,8 +8729,6 @@ msgid "Strafe left"
 msgstr "Scorri a sinistra"
 
 #: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Strafe right"
 msgstr "Scorri a destra"
 
