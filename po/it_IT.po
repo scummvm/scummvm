@@ -9106,32 +9106,22 @@ msgid "Spell level 1"
 msgstr "Incantesimo di livello 1"
 
 #: engines/kyra/engine/eobcommon.cpp:382
-#, fuzzy
-#| msgid "Spell Level 2"
 msgid "Spell level 2"
 msgstr "Incantesimo di livello 2"
 
 #: engines/kyra/engine/eobcommon.cpp:383
-#, fuzzy
-#| msgid "Spell Level 3"
 msgid "Spell level 3"
 msgstr "Incantesimo di livello 3"
 
 #: engines/kyra/engine/eobcommon.cpp:384
-#, fuzzy
-#| msgid "Spell Level 4"
 msgid "Spell level 4"
 msgstr "Incantesimo di livello 4"
 
 #: engines/kyra/engine/eobcommon.cpp:385
-#, fuzzy
-#| msgid "Spell Level 5"
 msgid "Spell level 5"
 msgstr "Incantesimo di livello 5"
 
 #: engines/kyra/engine/eobcommon.cpp:387
-#, fuzzy
-#| msgid "Spell Level 6"
 msgid "Spell level 6"
 msgstr "Incantesimo di livello 6"
 
@@ -9158,8 +9148,6 @@ msgid "Show map"
 msgstr "Mostra mappa"
 
 #: engines/kyra/engine/lol.cpp:512
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Slide left"
 msgstr "Scorri a sinistra"
 
