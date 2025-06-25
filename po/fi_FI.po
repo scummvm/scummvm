@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-25 21:38+0000\n"
+"POT-Creation-Date: 2025-06-25 21:50+0000\n"
 "PO-Revision-Date: 2025-05-22 18:56+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -568,7 +568,7 @@ msgid "GFX"
 msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2078 gui/options.cpp:2259
-#: backends/graphics/atari/atari-graphics.cpp:1061
+#: backends/graphics/atari/atari-graphics.cpp:1055
 #: backends/graphics/sdl/sdl-graphics.cpp:488
 msgid "Graphics"
 msgstr "Grafiikka"
@@ -4149,7 +4149,7 @@ msgstr "Luo kansio"
 msgid "Choose a new folder"
 msgstr "Valitse uusi kansio"
 
-#: backends/graphics/atari/atari-graphics.cpp:1065
+#: backends/graphics/atari/atari-graphics.cpp:1059
 #: backends/graphics/sdl/sdl-graphics.cpp:515
 msgid "Toggle aspect ratio correction"
 msgstr "Kuvasuhdekorjaus päälle / pois"
