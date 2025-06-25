@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-24 22:21+0000\n"
-"PO-Revision-Date: 2025-06-25 08:43+0000\n"
+"PO-Revision-Date: 2025-06-25 08:44+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -9090,24 +9090,18 @@ msgid "Open / Close inventory"
 msgstr "Apri / Chiudi inventario"
 
 #: engines/kyra/engine/eobcommon.cpp:376
-#, fuzzy
-#| msgid "Switch Inventory/Character screen"
 msgid "Switch inventory / Character screen"
-msgstr "Alterna schermata Inventario/Personaggio"
+msgstr "Alterna schermata Inventario / Personaggio"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
 msgstr "Accampamento"
 
 #: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast spell"
 msgstr "Lancia incantesimo"
 
 #: engines/kyra/engine/eobcommon.cpp:381
-#, fuzzy
-#| msgid "Spell Level 1"
 msgid "Spell level 1"
 msgstr "Incantesimo di livello 1"
 
