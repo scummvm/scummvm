@@ -27,7 +27,7 @@ namespace LastExpress {
 GraphicsManager::GraphicsManager(LastExpressEngine *engine) {
 	_engine = engine;
 
-	const Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_screenSurface.create(640, 480, format);
 	_mainSurfaceIsInit = true;
 

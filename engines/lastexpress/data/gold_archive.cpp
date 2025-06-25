@@ -203,7 +203,7 @@ int GoldArchiveManager::loadBG(const char *filename) {
 		_engine->getGraphicsManager()->_renderBox1.width = seqDataStream->readUint32LE();
 		_engine->getGraphicsManager()->_renderBox1.height = seqDataStream->readUint32LE();
 
-		dec->setOutputPixelFormat(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+		dec->setOutputPixelFormat(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 		const Graphics::Surface *decodedSurf = dec->decodeFrame(*seqDataStream);
 
 		memcpy(bgSurface, decodedSurf->getPixels(), _engine->getGraphicsManager()->_renderBox1.width * _engine->getGraphicsManager()->_renderBox1.height * sizeof(PixMap));
