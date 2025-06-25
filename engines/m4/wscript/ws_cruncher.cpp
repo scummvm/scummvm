@@ -190,6 +190,7 @@ Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 	int32 numLocalVars;
 	myAnim8->sequHandle = ws_GetSEQU((uint32)sequHash, &numLocalVars, &myAnim8->pcOffset);
 	if (myAnim8->sequHandle == nullptr) {
+		mem_free(myAnim8);
 		return nullptr;
 	}
 
