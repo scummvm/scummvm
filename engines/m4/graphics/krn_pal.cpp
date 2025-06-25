@@ -161,11 +161,11 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 
 	// Make translation table to translate colors using entries 59-255 into 21-58 range
 
-	for (int32 i = 0; i < NUM_GREYS; i++) {
-		int32 bestMatch = 65;
+	for (int32 i = 0; i < (IS_RIDDLE ? 64 : 32); i++) {
+		int32 bestMatch = IS_RIDDLE ? 63 : 65;
 		int32 minDist = 255;
 
-		for (int32 j = 59; j <= 255; j++) {
+		for (int32 j = FREE_START; j <= 255; j++) {
 			if (imath_abs((_GP(fadeToMe)[j].r >> 2) - i) < minDist) {
 				minDist = imath_abs((_GP(fadeToMe)[j].r >> 2) - i);
 				bestMatch = j;
