@@ -801,7 +801,7 @@ public:
 	BOOL CreateCompatibleDC(CDC *pDC);
 	BOOL DeleteDC();
 	BOOL Attach(HDC hDC);
-	void Detach();
+	HDC Detach();
 	int SetStretchBltMode(int nStretchMode);
 	int GetDeviceCaps(int nIndex) const;
 
@@ -1732,8 +1732,8 @@ public:
 	virtual void OnFileOpen() {}
 	virtual void OnFilePrintSetup() {}
 
-	CHandleMap<CGdiObject> *afxMapHGDIOBJ(BOOL bCreate);
-	CHandleMap<CDC> *afxMapHDC(BOOL bCreate);
+	CHandleMap<CGdiObject> *afxMapHGDIOBJ(BOOL bCreate = false);
+	CHandleMap<CDC> *afxMapHDC(BOOL bCreate = false);
 	void AfxUnlockTempMaps();
 
 	/*== ScummVM added functions ==*/

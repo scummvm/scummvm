@@ -84,13 +84,29 @@ BOOL CDC::DeleteDC() {
 }
 
 BOOL CDC::Attach(HDC hDC) {
-	assert(!m_hDC);
+	assert(m_hDC == nullptr);
+
+	if (hDC == nullptr)
+		return FALSE;
+
+	auto *pMap = AfxGetApp()->afxMapHDC(TRUE);
+	assert(pMap != nullptr);
 	m_hDC = hDC;
-	return true;
+	pMap->SetPermanent(m_hDC, this);
+
+	return TRUE;
 }
 
-void CDC::Detach() {
+HDC CDC::Detach() {
+	HDC hDC = m_hDC;
+	if (hDC != nullptr) {
+		auto *pMap = AfxGetApp()->afxMapHDC();
+		if (pMap != nullptr)
+			pMap->RemoveHandle(m_hDC);
+	}
+
 	m_hDC = nullptr;
+	return hDC;
 }
 
 int CDC::SetStretchBltMode(int nStretchMode) {

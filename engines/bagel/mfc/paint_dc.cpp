@@ -36,6 +36,7 @@ CPaintDC::CPaintDC(CWnd *pWnd) {
 
 CPaintDC::~CPaintDC() {
 	MFC::EndPaint(m_hWnd, &m_ps);
+	Detach();
 }
 
 } // namespace MFC

@@ -83,10 +83,10 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	m_nClassStyle = wc.style;
 
 	// Create the client DC
-	CDC::Impl *dcImpl = new CDC::Impl();
-	dcImpl->setScreenRect(screenRect);
+	CDC::Impl *destDC = new CDC::Impl();
+	destDC->setScreenRect(screenRect);
 	_dc = new CDC();
-	_dc->Attach(dcImpl);
+	_dc->Attach(destDC);
 
 	if (m_pParentWnd)
 		m_pParentWnd->_children[nID] = this;
@@ -742,10 +742,17 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	ClientToScreen(&screenRect);
 
 	// Create the client DC
-	CDC::Impl *dcImpl = new CDC::Impl();
-	dcImpl->setScreenRect(screenRect);
+	assert(oldControl->_dc && oldControl->_dc->m_hDC);
+	const CDC::Impl *srcDC = (const CDC::Impl *)oldControl->_dc->m_hDC;
+	assert(srcDC);
+	CDC::Impl *destDC = new CDC::Impl();
+	destDC->setScreenRect(screenRect);
+	destDC->Attach(srcDC->_font);
+	destDC->Attach(srcDC->_pen);
+	destDC->Attach(srcDC->_brush);
+
 	_dc = new CDC();
-	_dc->Attach(dcImpl);
+	_dc->Attach(destDC);
 
 	return true;
 }
