@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-25 10:26+0000\n"
+"POT-Creation-Date: 2025-06-25 21:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -7571,7 +7571,7 @@ msgid "Failed to load saved game from file."
 msgstr ""
 
 #: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1590
-#: engines/gob/inter_v7.cpp:1928 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_v7.cpp:1930 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr ""
 

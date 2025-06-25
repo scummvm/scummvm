@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-25 10:26+0000\n"
+"POT-Creation-Date: 2025-06-25 21:38+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -8268,7 +8268,7 @@ msgid "Failed to load saved game from file."
 msgstr "Ezin izan da fitxategitik jokoa kargatu."
 
 #: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1590
-#: engines/gob/inter_v7.cpp:1928 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_v7.cpp:1930 engines/tinsel/saveload.cpp:603
 #, fuzzy
 msgid "Failed to save game to file."
 msgstr "Ezin izan da jokoa fitxategira gorde."
