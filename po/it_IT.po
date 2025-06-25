@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-24 22:21+0000\n"
-"PO-Revision-Date: 2025-06-25 08:44+0000\n"
+"PO-Revision-Date: 2025-06-25 08:45+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -9152,8 +9152,6 @@ msgid "Slide left"
 msgstr "Scorri a sinistra"
 
 #: engines/kyra/engine/lol.cpp:513
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Slide right"
 msgstr "Scorri a destra"
 
