@@ -420,7 +420,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
-	Common::updateGameGUIOptions(customizeGuiOptions(res), getGameGUIOptionsDescriptionLanguage(res.language));
+	Common::updateGameGUIOptions(customizeGuiOptions(res), getGameGUIOptionsDescriptionLanguage(res.language), getGameGUIOptionsDescriptionPlatform(res.game.platform));
 
 	// If the game was added really long ago, it may be missing its "extra"
 	// field. When adding game-specific options, it may be our only way of

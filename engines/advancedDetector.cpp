@@ -210,7 +210,7 @@ DetectedGame AdvancedMetaEngineDetectionBase::toDetectedGame(const ADDetectedGam
 
 	game.setGUIOptions(desc->guiOptions + _guiOptions);
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(desc->language));
-	game.appendGUIOptions(getGameGUIOptionsDescriptionPlatform(desc->platform));
+	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionPlatform(desc->platform));
 
 	if (desc->flags & ADGF_ADDENGLISH)
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));

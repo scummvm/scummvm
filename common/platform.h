@@ -88,6 +88,7 @@ enum Platform : int8 {
 };
 
 struct PlatformDescription {
+	const char *GUIOption;
 	const char *code;
 	const char *code2;
 	const char *abbrev;
@@ -102,8 +103,10 @@ extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
-extern const String getGameGUIOptionsDescriptionPlatform(Platform plat);
-extern bool checkGameGUIOptionPlatform(Platform plat, const String &str);
+const String getGameGUIOptionsDescriptionPlatform(Platform plat);
+bool checkGameGUIOptionPlatform(Platform plat, const String &str);
+const String parseGameGUIOptionsPlatforms(const String &str);
+const String getGameGUIOptionsDescriptionPlatforms(const String &str);
 
 List<String> getPlatformList();
 

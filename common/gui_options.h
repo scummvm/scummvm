@@ -81,6 +81,47 @@
 
 #define GUIO_NOLANG          "\x33"
 
+// Defines to be used for additional platforms
+#define GUIO_PLAT_APPLE2GS "\x40"
+#define GUIO_PLAT_APPLE2 "\x41"
+#define GUIO_PLAT_3DO "\x42"
+#define GUIO_PLAT_ACORN "\x43"
+#define GUIO_PLAT_AMIGA "\x44"
+#define GUIO_PLAT_ATARI8BIT "\x45"
+#define GUIO_PLAT_ATARIST "\x46"
+#define GUIO_PLAT_C64 "\x47"
+#define GUIO_PLAT_AMSTRADCPC "\x48"
+#define GUIO_PLAT_DOS "\x49"
+#define GUIO_PLAT_PC98 "\x4A"
+#define GUIO_PLAT_WII "\x4B"
+#define GUIO_PLAT_COCO "\x4C"
+#define GUIO_PLAT_COCO3 "\x4D"
+#define GUIO_PLAT_FMTOWNS "\x4E"
+#define GUIO_PLAT_LINUX "\x4F"
+#define GUIO_PLAT_MACINTOSH "\x50"
+#define GUIO_PLAT_PCENGINE "\x51"
+#define GUIO_PLAT_NES "\x52"
+#define GUIO_PLAT_SEGACD "\x53"
+#define GUIO_PLAT_WINDOWS "\x54"
+#define GUIO_PLAT_PSX "\x55"
+#define GUIO_PLAT_PS2 "\x56"
+#define GUIO_PLAT_PS3 "\x57"
+#define GUIO_PLAT_XBOX "\x58"
+#define GUIO_PLAT_CDI "\x59"
+#define GUIO_PLAT_IOS "\x5A"
+#define GUIO_PLAT_ANDROID "\x5B"
+#define GUIO_PLAT_OS2 "\x5C"
+#define GUIO_PLAT_BEOS "\x5D"
+#define GUIO_PLAT_POCKETPC "\x5E"
+#define GUIO_PLAT_MEGADRIVE "\x5F"
+#define GUIO_PLAT_SATURN "\x60"
+#define GUIO_PLAT_PIPPIN "\x61"
+#define GUIO_PLAT_MACINTOSHII "\x62"
+#define GUIO_PLAT_SHOCKWAVE "\x63"
+#define GUIO_PLAT_ZX "\x64"
+#define GUIO_PLAT_TI994 "\x65"
+#define GUIO_PLAT_NINTENDOSWITCH "\x66"
+
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
 // Putting them to the end of the range so less renumerations required
@@ -153,7 +194,7 @@ const String getGameGUIOptionsDescription(const String &options);
  * domain when they differ to the ones passed as
  * parameter.
  */
-void updateGameGUIOptions(const String &options, const String &langOption);
+void updateGameGUIOptions(const String &options, const String &langOption, const String &platOption);
 
 /** @} */
 
