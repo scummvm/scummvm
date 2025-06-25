@@ -20,6 +20,10 @@
  */
 
 #include "common/events.h"
+#include "common/substream.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/castmember.h"
@@ -301,6 +305,65 @@ void CastMember::unload() {
 		return;
 
 	_loaded = false;
+}
+
+// Default implementation to write the cast members as they are
+void CastMember::writeToFile(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castID) {
+	writeStream->seek(offset);
+	writeStream->writeUint16LE(MKTAG('C', 'A', 'S', 't'));
+	
+	uint32 castDataToWrite = getDataSize();
+	uint32 castInfoToWrite = getInfoSize();
+	uint32 castDataOffset = 0;
+	uint32 castInfoOffset = 0;
+	Common::SeekableReadStreamEndian *stream = _cast->getResource(MKTAG('C', 'A', 'S', 't'), castID);
+
+	if (version >= kFileVer400 && version < kFileVer500) {
+		writeStream->writeUint16LE(castDataToWrite);
+		writeStream->writeUint32LE(castInfoToWrite);
+		castDataOffset += 6;
+
+		writeStream->writeUint32LE(_castType);
+		castDataToWrite -= 1;
+		
+		if (_flags1 != -1) {
+			writeStream->writeByte(_flags1);
+			castDataToWrite -= 1;
+			castDataOffset += 1;
+		}
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		writeStream->writeUint32LE(_castType);
+		writeStream->writeUint32LE(getInfoSize());
+		writeStream->writeUint32LE(getDataSize());
+	}
+
+
+	byte *data = (byte *)calloc(castDataToWrite, 1);
+	byte *info = (byte *)calloc(castInfoToWrite, 1);
+	stream->seek(castDataOffset, SEEK_CUR);
+	stream->read(data, castDataToWrite);
+	stream->read(info, castInfoToWrite);
+
+	Common::MemoryReadStreamEndian *dataStream = new Common::MemoryReadStreamEndian(data, castDataToWrite, stream->isBE());
+	Common::MemoryReadStreamEndian *infoStream = new Common::MemoryReadStreamEndian(info, castInfoToWrite, stream->isBE());
+	
+	if (version >= kFileVer400 && version < kFileVer500) {
+		writeStream->writeStream(dataStream);
+		writeStream->writeStream(infoStream);
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		writeStream->writeStream(infoStream);
+		writeStream->writeStream(dataStream);
+	}
+}
+
+uint32 CastMember::getDataSize() {
+	debug("CastMember::getDataSize(): Defualt implementation of cast member data size, returning original size.");
+	return _castDataSize;
+}
+
+uint32 CastMember::getInfoSize() {
+	debug("CastMember::getInfoSize(): Defualt implementation of cast member info size, returning original size.");
+	return _castInfoSize;
 }
 
 } // End of namespace Director

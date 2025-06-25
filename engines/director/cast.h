@@ -108,6 +108,7 @@ public:
 
 	void saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset);
 	void saveCast(Common::MemoryWriteStream *writeStream, uint32 offset);
+	void saveCastData();
 
 	int getCastSize();
 	int getCastMaxID();

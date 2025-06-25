@@ -779,10 +779,32 @@ void Cast::loadCast() {
 		debugC(4, kDebugLoading, "'SCRF' resource skipped");
 	}
 
+	saveCast(nullptr, 0);
+
 }
 
 void Cast::saveCast(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	// This offset is at which we will start writing our 'CASt' resources
+	// In the original file, all the 'CASt' resources don't necessarily appear side by side
+	// But in our written file they will be
+	writeStream->seek(offset);
 
+	Common::Array<uint16> cast = _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
+
+	for (auto &castID : cast) {
+		Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), castID);
+		uint16 id = res.castId + _castArrayStart;
+
+		// FIXME: This is wrong, we need to write cast members even if they are not handled/loaded
+		// We are currently ignoring cast members that we do not understand (e.g. kCastPicture)
+		// They need to be handled by the default handler, which will write them as they were
+		if (!_loadedCast->contains(castID)) {
+			continue;
+		}
+	
+		CastMember *target = _loadedCast->getVal(id);
+		target->writeToFile(writeStream, offset, _version, castID);
+	} 
 }
 
 uint32 Cast::computeChecksum() { 
@@ -1020,7 +1042,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		stream.hexdump(stream.size());
 
 	uint32 castDataSize, castInfoSize,  castType, castDataSizeToRead, castDataOffset, castInfoOffset;
-	byte flags1 = 0, unk1 = 0, unk2 = 0, unk3 = 0;
+	byte flags1 = -1, unk1 = 0, unk2 = 0, unk3 = 0;
 
 	// D2-3 cast members should be loaded in loadCastDataVWCR
 #if 0
@@ -1060,7 +1082,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		error("Cast::loadCastData: unsupported Director version (%d)", _version);
 	}
 
-	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
+	debug("Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
 		id, castType, castDataSize, castInfoSize, castInfoSize, unk1, unk2, unk3);
 
 	// read the cast member itself
@@ -1135,6 +1157,10 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		break;
 	}
 	if (target) {
+		target->_castDataSize = castDataSize;
+		target->_castInfoSize = castInfoSize;
+		target->_castType = castType;
+		target->_flags1 = flags1;
 		setCastMember(id, target);
 	}
 	if (castStream.eos()) {
