@@ -233,10 +233,9 @@ DetectedGames SciMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 			if (game.gameId.equals(g->gameidStr))
 				break;
 		}
+
 		game.setGUIOptions(customizeGuiOptions(fslist.begin()->getParent().getPath(), parseGameGUIOptions(game.getGUIOptions()), game.platform, g->gameidStr, g->version));
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(game.language));
-		game.appendGUIOptions(getGameGUIOptionsDescriptionPlatform(game.platform));
-
 	}
 
 	return games;

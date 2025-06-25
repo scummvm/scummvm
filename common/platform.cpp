@@ -20,58 +20,58 @@
  */
 
 #include "common/platform.h"
+#include "common/array.h"
+#include "common/gui_options.h"
 #include "common/str.h"
 #include "common/algorithm.h"
 
 namespace Common {
 
 const PlatformDescription g_platforms[] = {
-	{ "2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
-	{ "apple2", "apple2", "apple2", "Apple II", kPlatformApple2 },
-	{ "3do", "3do", "3do", "3DO", kPlatform3DO },
-	{ "acorn", "acorn", "acorn", "Acorn", kPlatformAcorn },
-	{ "amiga", "ami", "amiga", "Amiga", kPlatformAmiga },
-	{ "atari8", "atari8", "atari8", "Atari 8-bit", kPlatformAtari8Bit },
-	{ "atari", "atari-st", "st", "Atari ST", kPlatformAtariST },
-	{ "c64", "c64", "c64", "Commodore 64", kPlatformC64 },
-	{ "cpc", "cpc", "cpc", "Amstrad CPC", kPlatformAmstradCPC },
-	{ "pc", "dos", "ibm", "DOS", kPlatformDOS },
-	{ "pc98", "pc98", "pc98", "PC-98", kPlatformPC98 },
-	{ "wii", "wii", "wii", "Nintendo Wii", kPlatformWii },
-	{ "coco", "coco", "coco", "CoCo", kPlatformCoCo },		// CoCo 1/2
-	{ "coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3 },	// CoCo 3 only
-
+	{ GUIO_PLAT_APPLE2GS, "2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
+	{ GUIO_PLAT_APPLE2, "apple2", "apple2", "apple2", "Apple II", kPlatformApple2 },
+	{ GUIO_PLAT_3DO, "3do", "3do", "3do", "3DO", kPlatform3DO },
+	{ GUIO_PLAT_ACORN, "acorn", "acorn", "acorn", "Acorn", kPlatformAcorn },
+	{ GUIO_PLAT_AMIGA, "amiga", "ami", "amiga", "Amiga", kPlatformAmiga },
+	{ GUIO_PLAT_ATARI8BIT, "atari8", "atari8", "atari8", "Atari 8-bit", kPlatformAtari8Bit },
+	{ GUIO_PLAT_ATARIST, "atari", "atari-st", "st", "Atari ST", kPlatformAtariST },
+	{ GUIO_PLAT_C64, "c64", "c64", "c64", "Commodore 64", kPlatformC64 },
+	{ GUIO_PLAT_AMSTRADCPC, "cpc", "cpc", "cpc", "Amstrad CPC", kPlatformAmstradCPC },
+	{ GUIO_PLAT_DOS, "pc", "dos", "ibm", "DOS", kPlatformDOS },
+	{ GUIO_PLAT_PC98, "pc98", "pc98", "pc98", "PC-98", kPlatformPC98 },
+	{ GUIO_PLAT_WII, "wii", "wii", "wii", "Nintendo Wii", kPlatformWii },
+	{ GUIO_PLAT_COCO, "coco", "coco", "coco", "CoCo", kPlatformCoCo },		// CoCo 1/2
+	{ GUIO_PLAT_COCO3, "coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3 },	// CoCo 3 only
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
 	// "FM TOWNS", "FmTowns", etc.
-	{ "fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns },
+	{ GUIO_PLAT_FMTOWNS, "fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns },
+	{ GUIO_PLAT_LINUX, "linux", "linux", "linux", "Linux", kPlatformLinux },
+	{ GUIO_PLAT_MACINTOSH, "macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh },
+	{ GUIO_PLAT_PCENGINE, "pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
+	{ GUIO_PLAT_NES, "nes", "nes", "nes", "NES", kPlatformNES },
+	{ GUIO_PLAT_SEGACD, "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
+	{ GUIO_PLAT_WINDOWS, "windows", "win", "win", "Windows", kPlatformWindows },
+	{ GUIO_PLAT_PSX, "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
+	{ GUIO_PLAT_PS2, "playstation2", "ps2", "ps2", "Sony PlayStation 2", kPlatformPS2 },
+	{ GUIO_PLAT_PS3, "playstation3", "ps3", "ps3", "Sony PlayStation 3", kPlatformPS3 },
+	{ GUIO_PLAT_XBOX, "xbox", "xbox", "xbox", "Microsoft Xbox", kPlatformXbox },
+	{ GUIO_PLAT_CDI, "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
+	{ GUIO_PLAT_IOS, "ios", "ios", "ios", "Apple iOS", kPlatformIOS },
+	{ GUIO_PLAT_ANDROID, "android", "android", "android", "Android", kPlatformAndroid },
+	{ GUIO_PLAT_OS2, "os2", "os2", "os2", "OS/2", kPlatformOS2 },
+	{ GUIO_PLAT_BEOS, "beos", "beos", "beos", "BeOS", kPlatformBeOS },
+	{ GUIO_PLAT_POCKETPC, "ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC },
+	{ GUIO_PLAT_MEGADRIVE, "megadrive", "genesis", "md", "Mega Drive/Genesis", kPlatformMegaDrive },
+	{ GUIO_PLAT_SATURN, "saturn", "saturn", "saturn", "Sega Saturn", kPlatformSaturn },
+	{ GUIO_PLAT_PIPPIN, "pippin", "pippin", "pippin", "Pippin", kPlatformPippin },
+	{ GUIO_PLAT_MACINTOSHII, "macintosh2", "macintosh2", "mac2", "Macintosh II", kPlatformMacintoshII },
+	{ GUIO_PLAT_SHOCKWAVE, "shockwave", "shockwave", "shock", "Shockwave", kPlatformShockwave },
+	{ GUIO_PLAT_ZX, "zx", "zx", "zx", "ZX Spectrum", kPlatformZX },
+	{ GUIO_PLAT_TI994, "ti994", "ti994", "ti994", "TI-99/4A", kPlatformTI994 },
+	{ GUIO_PLAT_NINTENDOSWITCH, "switch", "switch", "switch", "Nintendo Switch", kPlatformNintendoSwitch },
 
-	{ "linux", "linux", "linux", "Linux", kPlatformLinux },
-	{ "macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh },
-	{ "pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
-	{ "nes", "nes", "nes", "NES", kPlatformNES },
-	{ "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
-	{ "windows", "win", "win", "Windows", kPlatformWindows },
-	{ "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
-	{ "playstation2", "ps2", "ps2", "Sony PlayStation 2", kPlatformPS2 },
-	{ "playstation3", "ps3", "ps3", "Sony PlayStation 3", kPlatformPS3 },
-	{ "xbox", "xbox", "xbox", "Microsoft Xbox", kPlatformXbox },
-	{ "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
-	{ "ios", "ios", "ios", "Apple iOS", kPlatformIOS },
-	{ "android", "android", "android", "Android", kPlatformAndroid },
-	{ "os2", "os2", "os2", "OS/2", kPlatformOS2 },
-	{ "beos", "beos", "beos", "BeOS", kPlatformBeOS },
-	{ "ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC },
-	{ "megadrive", "genesis", "md", "Mega Drive/Genesis", kPlatformMegaDrive },
-	{ "saturn", "saturn", "saturn", "Sega Saturn", kPlatformSaturn },
-	{ "pippin", "pippin", "pippin", "Pippin", kPlatformPippin },
-	{ "macintosh2", "macintosh2", "mac2", "Macintosh II", kPlatformMacintoshII },
-	{ "shockwave", "shockwave", "shock", "Shockwave", kPlatformShockwave },
-	{ "zx", "zx", "zx", "ZX Spectrum", kPlatformZX },
-	{ "ti994", "ti994", "ti994", "TI-99/4A", kPlatformTI994 },
-	{ "switch", "switch", "switch", "Nintendo Switch", kPlatformNintendoSwitch },
-
-	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
+	{ nullptr, nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };
 
 Platform parsePlatform(const String &str) {
@@ -134,11 +134,34 @@ bool checkGameGUIOptionPlatform(Platform plat, const String &str) {
 	return false;
 }
 
+const String parseGameGUIOptionsPlatforms(const String &str) {
+	String res;
+
+	for (int i = 0; g_platforms[i].code; i++)
+		if (str.contains("plat_" + String(g_platforms[i].code)))
+			res += String(g_platforms[i].GUIOption);
+
+	return res;
+}
+
+const String getGameGUIOptionsDescriptionPlatforms(const String &str) {
+	String res;
+
+	for (int i = 0; g_platforms[i].GUIOption; i++)
+		if (str.contains(g_platforms[i].GUIOption))
+			res += "plat_" + String(g_platforms[i].code) + " ";
+
+	res.trim();
+
+	return res;
+}
+
 const String getGameGUIOptionsDescriptionPlatform(Platform plat) {
 	if (plat == kPlatformUnknown)
 		return "";
 
-	return String("plat_") + getPlatformDescription(plat);
+	// Using platform code as description for GUI options to avoid spaces in the name
+	return String("plat_") + getPlatformCode(plat);
 }
 
 List<String> getPlatformList() {
