@@ -130,8 +130,8 @@ public:
 
 protected:
 	LastExpressEngine *_engine = nullptr;
-	PixMap *_backgroundBuffer = nullptr;
-	PixMap *_screenBuffer = nullptr;
+	PixMap *_frontBuffer = nullptr;
+	PixMap *_backBuffer = nullptr;
 	PixMap _mouseBackBuffer[32 * 32];
 
 	byte *_backgroundCompBuffer = nullptr;

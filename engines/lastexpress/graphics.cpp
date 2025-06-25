@@ -146,7 +146,7 @@ void GraphicsManager::goStepBG(int sceneIndex) {
 		_engine->getOtisManager()->updateAll();
 	}
 
-	_engine->getSpriteManager()->drawCycleSimple(_backgroundBuffer);
+	_engine->getSpriteManager()->drawCycleSimple(_frontBuffer);
 	stepDissolve(chosenTbm);
 	_engine->getLogicManager()->doPostFunction();
 }
@@ -158,7 +158,7 @@ void GraphicsManager::stepDissolve(TBM *tbm) {
 		int32 curFrameCount = _engine->getSoundFrameCounter();
 		_engine->getSoundManager()->soundThread();
 
-		dissolve(pos + sizeof(PixMap) * (i & 1), tbm->width, tbm->height, _backgroundBuffer);
+		dissolve(pos + sizeof(PixMap) * (i & 1), tbm->width, tbm->height, _frontBuffer);
 
 		burstBox(tbm->x, tbm->y, tbm->width, tbm->height);
 		int32 frameTimeDiff = _engine->getSoundFrameCounter() - curFrameCount;
@@ -183,7 +183,7 @@ void GraphicsManager::stepDissolve(TBM *tbm) {
 	}
 
 	if (acquireSurface()) {
-		copy(_backgroundBuffer, (PixMap *)_screenSurface.getPixels(), tbm->x, tbm->y, tbm->width, tbm->height);
+		copy(_frontBuffer, (PixMap *)_screenSurface.getPixels(), tbm->x, tbm->y, tbm->width, tbm->height);
 		unlockSurface();
 	}
 
@@ -1703,7 +1703,7 @@ void GraphicsManager::dissolve(int32 location, int32 width, int32 height, PixMap
 void GraphicsManager::doErase(byte *data) {
 	byte *screenSurface = (byte *)_screenSurface.getPixels();
 	byte *endOfSurface = screenSurface + (640 * 480 * sizeof(PixMap));
-	byte *previousScreenBuffer = (byte *)_screenBuffer;
+	byte *previousScreenBuffer = (byte *)_backBuffer;
 
 	uint16 *eraseMask = (uint16 *)data;
 

@@ -91,8 +91,8 @@ void LastExpressEngine::startUp() {
 	getMemoryManager()->initMem();
 
 	getGraphicsManager()->clear(getGraphicsManager()->_screenSurface, 0, 0, 640, 480);
-	getGraphicsManager()->clear(getGraphicsManager()->_screenBuffer, 0, 0, 640, 480);
-	getGraphicsManager()->clear(getGraphicsManager()->_backgroundBuffer, 0, 0, 640, 480);
+	getGraphicsManager()->clear(getGraphicsManager()->_backBuffer, 0, 0, 640, 480);
+	getGraphicsManager()->clear(getGraphicsManager()->_frontBuffer, 0, 0, 640, 480);
 
 	getVCR()->shuffleGames();
 	getArchiveManager()->loadMice();

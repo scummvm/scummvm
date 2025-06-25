@@ -55,7 +55,7 @@ void MemoryManager::initMem() {
 	_engine->_globalMemoryPool = (byte *)malloc(1800 * PAGE_SIZE);
 	memset(_engine->_globalMemoryPool, 0, 1800 * PAGE_SIZE);
 
-	_engine->getGraphicsManager()->_screenBuffer = (PixMap *)malloc(640 * 480 * sizeof(PixMap));
+	_engine->getGraphicsManager()->_backBuffer = (PixMap *)malloc(640 * 480 * sizeof(PixMap));
 	_engine->getLogicManager()->_trainData = (Node *)malloc(2048 * sizeof(Node));
 	_engine->_cursorsMemoryPool = (byte *)malloc(49 * PAGE_SIZE);
 	_engine->_characters = new Characters();
@@ -91,7 +91,7 @@ void MemoryManager::initMem() {
 	_engine->getGraphicsManager()->_cursorsDataHeader = (CursorHeader *)_engine->_cursorsMemoryPool;
 	_engine->getGraphicsManager()->_iconsBitmapData = (PixMap *)(_engine->_cursorsMemoryPool + sizeof(CursorHeader) * kCursorMAX);
 	_engine->_soundMemoryPool = _engine->_globalMemoryPool;
-	_engine->getGraphicsManager()->_backgroundBuffer = (PixMap *)(_engine->_globalMemoryPool + (270 * PAGE_SIZE));
+	_engine->getGraphicsManager()->_frontBuffer = (PixMap *)(_engine->_globalMemoryPool + (270 * PAGE_SIZE));
 
 	_memoryPages[0].memPageSize = 1230 * PAGE_SIZE;
 	_memoryPages[0].memPagePtr = _engine->_globalMemoryPool + (570 * PAGE_SIZE);
@@ -154,7 +154,7 @@ void MemoryManager::freeMem(void *data) {
 
 void MemoryManager::releaseMemory() {
 	SAFE_FREE(_engine->_globalMemoryPool);
-	SAFE_FREE(_engine->getGraphicsManager()->_screenBuffer);
+	SAFE_FREE(_engine->getGraphicsManager()->_backBuffer);
 	SAFE_FREE(_engine->getLogicManager()->_trainData);
 	SAFE_FREE(_engine->_cursorsMemoryPool);
 	SAFE_DELETE(_engine->_characters);

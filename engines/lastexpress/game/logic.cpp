@@ -184,7 +184,7 @@ void LogicManager::killGracePeriod() {
 
 void LogicManager::fadeToBlack() {
 	_engine->getGraphicsManager()->setMouseDrawable(false);
-	_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_backgroundBuffer, 0, 0, 640, 480);
+	_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_frontBuffer, 0, 0, 640, 480);
 	_engine->getGraphicsManager()->_renderBox1.x = 0;
 	_engine->getGraphicsManager()->_renderBox1.y = 0;
 	_engine->getGraphicsManager()->_renderBox1.width = 640;
@@ -201,7 +201,7 @@ void LogicManager::fadeToWhite() {
 	white = 0x7FFF;
 	_engine->getGraphicsManager()->modifyPalette(&white, 1);
 
-	backgroundBuffer = _engine->getGraphicsManager()->_backgroundBuffer;
+	backgroundBuffer = _engine->getGraphicsManager()->_frontBuffer;
 
 	for (int i = 480; i > 0; i--) {
 		for (int j = 640; j > 0; j--) {

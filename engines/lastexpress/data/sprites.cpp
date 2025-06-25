@@ -49,7 +49,7 @@ void SpriteManager::drawCycle() {
 
 				if (_engine->getGraphicsManager()->acquireSurface()) {
 					_engine->getGraphicsManager()->copy(
-						_engine->getGraphicsManager()->_screenBuffer,
+						_engine->getGraphicsManager()->_backBuffer,
 						(PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(),
 						_eraseRect.left,
 						_eraseRect.top,

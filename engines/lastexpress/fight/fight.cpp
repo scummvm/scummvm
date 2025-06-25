@@ -89,7 +89,7 @@ int LastExpressEngine::doFight(int fightId) {
 	getSoundManager()->_scanAnySoundLoopingSection = true;
 
 	if (getGraphicsManager()->acquireSurface()) {
-		getGraphicsManager()->copy(getGraphicsManager()->_backgroundBuffer, (PixMap *)getGraphicsManager()->_screenSurface.getPixels(), tbm->x, tbm->y, tbm->width, tbm->height);
+		getGraphicsManager()->copy(getGraphicsManager()->_frontBuffer, (PixMap *)getGraphicsManager()->_screenSurface.getPixels(), tbm->x, tbm->y, tbm->width, tbm->height);
 		getGraphicsManager()->unlockSurface();
 	}
 

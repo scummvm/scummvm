@@ -1945,7 +1945,7 @@ enum Actions {
 	kActionPlayMusicChapter,
 	kActionPlayMusicChapterSetupTrain,
 	kActionSwitchChapter,
-	kActionEasterEggs
+	kActionEasterEgg
 };
 
 //////////////////////////////////////////////////////////////////////////

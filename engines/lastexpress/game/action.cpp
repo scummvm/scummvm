@@ -1722,7 +1722,7 @@ void LogicManager::doAction(Link *link) {
 		}
 
 		break;
-	case kActionEasterEggs:
+	case kActionEasterEgg:
 		if (_engine->isDemo())
 			break;
 

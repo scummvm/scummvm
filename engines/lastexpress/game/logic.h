@@ -214,6 +214,7 @@ public:
 	void renderCharacterDetails(Character *character, int index);
 	void renderCharacterGrid(bool onlyPinned, int &selectedCharacter);
 	void renderCharacterList(int &selectedCharacter);
+	void renderCurrentSceneDebugger();
 
 	Common::StringArray getCharacterFunctionNames(int character);
 

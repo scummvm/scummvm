@@ -214,10 +214,10 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 	_streamCurrentPosition = 0;
 	_remainingStreamBytes = 0;
 	_streamBufferSize = 1530 * PAGE_SIZE;
-	_originalBackgroundSurface = _engine->getGraphicsManager()->_backgroundBuffer;
+	_originalBackgroundSurface = _engine->getGraphicsManager()->_frontBuffer;
 	_totalBackgroundPages = 1530;
 	_totalStreamPages = 1530;
-	_backgroundSurface = _engine->getGraphicsManager()->_backgroundBuffer;
+	_backgroundSurface = _engine->getGraphicsManager()->_frontBuffer;
 
 	_archive = _engine->getArchiveManager()->openHPF(filename);
 	if (!_archive) {
@@ -366,7 +366,7 @@ void NISManager::drawSprite(NisSprite *sprite) {
 	switch (sprite->compBits) {
 	case 3:
 		if (_decompressToBackBuffer) {
-			_engine->getGraphicsManager()->bitBltSprite8(&tempSprite, _engine->getGraphicsManager()->_screenBuffer);
+			_engine->getGraphicsManager()->bitBltSprite8(&tempSprite, _engine->getGraphicsManager()->_backBuffer);
 		} else if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->bitBltSprite8(&tempSprite, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels());
 			_engine->getGraphicsManager()->unlockSurface();
@@ -375,7 +375,7 @@ void NISManager::drawSprite(NisSprite *sprite) {
 		break;
 	case 4:
 		if (_decompressToBackBuffer) {
-			_engine->getGraphicsManager()->bitBltSprite16(&tempSprite, _engine->getGraphicsManager()->_screenBuffer);
+			_engine->getGraphicsManager()->bitBltSprite16(&tempSprite, _engine->getGraphicsManager()->_backBuffer);
 		} else if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->bitBltSprite16(&tempSprite, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels());
 			_engine->getGraphicsManager()->unlockSurface();
@@ -384,7 +384,7 @@ void NISManager::drawSprite(NisSprite *sprite) {
 		break;
 	case 5:
 		if (_decompressToBackBuffer) {
-			_engine->getGraphicsManager()->bitBltSprite32(&tempSprite, _engine->getGraphicsManager()->_screenBuffer);
+			_engine->getGraphicsManager()->bitBltSprite32(&tempSprite, _engine->getGraphicsManager()->_backBuffer);
 		} else if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->bitBltSprite32(&tempSprite, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels());
 			_engine->getGraphicsManager()->unlockSurface();
@@ -393,7 +393,7 @@ void NISManager::drawSprite(NisSprite *sprite) {
 		break;
 	case 7:
 		if (_decompressToBackBuffer) {
-			_engine->getGraphicsManager()->bitBltSprite128(&tempSprite, _engine->getGraphicsManager()->_screenBuffer);
+			_engine->getGraphicsManager()->bitBltSprite128(&tempSprite, _engine->getGraphicsManager()->_backBuffer);
 		} else if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->bitBltSprite128(&tempSprite, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels());
 			_engine->getGraphicsManager()->unlockSurface();
@@ -402,7 +402,7 @@ void NISManager::drawSprite(NisSprite *sprite) {
 		break;
 	case 255:
 		if (_decompressToBackBuffer) {
-			_engine->getGraphicsManager()->bitBltSprite255(&tempSprite, _engine->getGraphicsManager()->_screenBuffer);
+			_engine->getGraphicsManager()->bitBltSprite255(&tempSprite, _engine->getGraphicsManager()->_backBuffer);
 		} else if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->bitBltSprite255(&tempSprite, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels());
 			_engine->getGraphicsManager()->unlockSurface();
@@ -750,14 +750,14 @@ void NISManager::processNIS(NisEvents *event) {
 		_backgroundFlag = 0;
 
 		if (_decompressToBackBuffer)
-			_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenBuffer, 0, 0, 640, 480);
+			_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_backBuffer, 0, 0, 640, 480);
 
 		if (_selectBackgroundType != _backgroundType) {
 			drawBK(_selectBackgroundType);
 		} else if (_engine->getGraphicsManager()->acquireSurface()) {
 			if (_backgroundType == 1) {
 				_engine->getGraphicsManager()->copy(
-					_engine->getGraphicsManager()->_screenBuffer,
+					_engine->getGraphicsManager()->_backBuffer,
 					(PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(),
 					_background1->rect.left,
 					_background1->rect.top,
@@ -766,7 +766,7 @@ void NISManager::processNIS(NisEvents *event) {
 				);
 			} else if (_backgroundType == 2) {
 				_engine->getGraphicsManager()->copy(
-					_engine->getGraphicsManager()->_screenBuffer,
+					_engine->getGraphicsManager()->_backBuffer,
 					(PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(),
 					_background2->rect.left,
 					_background2->rect.top,
@@ -821,14 +821,14 @@ void NISManager::processNIS(NisEvents *event) {
 		if (_decompressToBackBuffer) {
 			for (int i = 0; i < 3; i++) {
 				_engine->getSoundManager()->soundThread();
-				_engine->getGraphicsManager()->dissolve((2 * x) + (2 * (i & 1)), width, 480, _engine->getGraphicsManager()->_screenBuffer);
+				_engine->getGraphicsManager()->dissolve((2 * x) + (2 * (i & 1)), width, 480, _engine->getGraphicsManager()->_backBuffer);
 				_engine->getGraphicsManager()->burstBox(x, 0, width, 480);
 				_engine->getSoundManager()->soundThread();
 				_engine->handleEvents();
 			}
 
 			if (_engine->getGraphicsManager()->acquireSurface()) {
-				_engine->getGraphicsManager()->copy(_engine->getGraphicsManager()->_screenBuffer, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), x, 0, width, 480);
+				_engine->getGraphicsManager()->copy(_engine->getGraphicsManager()->_backBuffer, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), x, 0, width, 480);
 				_engine->getGraphicsManager()->unlockSurface();
 			}
 
@@ -858,7 +858,7 @@ void NISManager::processNIS(NisEvents *event) {
 			if (_engine->getGraphicsManager()->acquireSurface()) {
 				if (_backgroundType == 1) {
 					_engine->getGraphicsManager()->copy(
-						_engine->getGraphicsManager()->_screenBuffer,
+						_engine->getGraphicsManager()->_backBuffer,
 						(PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(),
 						_background1->rect.left,
 						_background1->rect.top,
@@ -867,7 +867,7 @@ void NISManager::processNIS(NisEvents *event) {
 					);
 				} else if (_backgroundType == 2) {
 					_engine->getGraphicsManager()->copy(
-						_engine->getGraphicsManager()->_screenBuffer,
+						_engine->getGraphicsManager()->_backBuffer,
 						(PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(),
 						_background2->rect.left,
 						_background2->rect.top,
@@ -942,7 +942,7 @@ void NISManager::drawBK(int type) {
 	_firstNISBackgroundDraw = true;
 
 	if (!_decompressToBackBuffer && _engine->getGraphicsManager()->acquireSurface()) {
-		_engine->getGraphicsManager()->copy((PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), _engine->getGraphicsManager()->_screenBuffer, 0, 0, 640, 480);
+		_engine->getGraphicsManager()->copy((PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), _engine->getGraphicsManager()->_backBuffer, 0, 0, 640, 480);
 		_engine->getGraphicsManager()->unlockSurface();
 	}
 

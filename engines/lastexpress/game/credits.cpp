@@ -127,7 +127,7 @@ void LastExpressEngine::doCredits() {
 
 							// Draw the map to the screen
 							if (getGraphicsManager()->acquireSurface()) {
-								PixMap *screenPtr = getGraphicsManager()->_screenBuffer + 20496;
+								PixMap *screenPtr = getGraphicsManager()->_backBuffer + 20496;
 								byte *surfacePtr = (byte *)getGraphicsManager()->_screenSurface.getPixels() + 40992;
 
 								for (int row = 0; row < currentMap->height; row++) {
@@ -194,7 +194,7 @@ void LastExpressEngine::doCredits() {
 						if (getGraphicsManager()->acquireSurface()) {
 							PixMap *surfacePtr = (PixMap *)((byte *)getGraphicsManager()->_screenSurface.getPixels() + 79920);
 							int rowCounter = 355;
-							PixMap *screenPtr = getGraphicsManager()->_screenBuffer + 39960;
+							PixMap *screenPtr = getGraphicsManager()->_backBuffer + 39960;
 
 							while (rowCounter > 0) {
 								memcpy(surfacePtr, screenPtr, 640);

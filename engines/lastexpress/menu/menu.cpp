@@ -992,10 +992,10 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		setSprite(0, 11, false);
 		setSprite(2, 5, false);
 
-		_engine->getSpriteManager()->drawCycleSimple(_engine->getGraphicsManager()->_backgroundBuffer);
+		_engine->getSpriteManager()->drawCycleSimple(_engine->getGraphicsManager()->_frontBuffer);
 
 		if (_engine->getGraphicsManager()->acquireSurface()) {
-			_engine->getGraphicsManager()->copy(_engine->getGraphicsManager()->_backgroundBuffer, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), 0, 0, 640, 480);
+			_engine->getGraphicsManager()->copy(_engine->getGraphicsManager()->_frontBuffer, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), 0, 0, 640, 480);
 			_engine->getGraphicsManager()->unlockSurface();
 		}
 
@@ -1039,9 +1039,9 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 					setSprite(0, 10, false);
 					setSprite(2, 9, false);
 
-					_engine->getSpriteManager()->drawCycleSimple(_engine->getGraphicsManager()->_backgroundBuffer);
+					_engine->getSpriteManager()->drawCycleSimple(_engine->getGraphicsManager()->_frontBuffer);
 					if (_engine->getGraphicsManager()->acquireSurface()) {
-						_engine->getGraphicsManager()->copy(_engine->getGraphicsManager()->_backgroundBuffer, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), 0, 0, 640, 480);
+						_engine->getGraphicsManager()->copy(_engine->getGraphicsManager()->_frontBuffer, (PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels(), 0, 0, 640, 480);
 						_engine->getGraphicsManager()->unlockSurface();
 					}
 
@@ -1088,7 +1088,7 @@ void Menu::setCity(int cityIndex) {
 
 void Menu::switchEggs(int whichEgg) {
 	_engine->getSpriteManager()->destroySprite(&_startMenuFrames[3], false);
-	_engine->getSpriteManager()->drawCycleSimple(_engine->getGraphicsManager()->_backgroundBuffer);
+	_engine->getSpriteManager()->drawCycleSimple(_engine->getGraphicsManager()->_frontBuffer);
 
 	if (_menuSeqs[3]) {
 		_engine->getMemoryManager()->freeMem(_menuSeqs[3]->rawSeqData);
