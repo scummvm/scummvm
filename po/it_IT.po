@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-24 22:21+0000\n"
-"PO-Revision-Date: 2025-06-25 08:37+0000\n"
+"PO-Revision-Date: 2025-06-25 08:38+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -8484,16 +8484,12 @@ msgid "Cycle objects down"
 msgstr "Passa all'oggetto successivo"
 
 #: engines/grim/grim.cpp:601
-#, fuzzy
-#| msgid "Quick Room Exit"
 msgid "Quick room exit"
 msgstr "Uscita rapida stanza"
 
 #: engines/grim/grim.cpp:606
-#, fuzzy
-#| msgid "Examine/Look"
 msgid "Examine / Look"
-msgstr "Esamina/Guarda"
+msgstr "Esamina / Guarda"
 
 #: engines/grim/grim.cpp:1394
 msgid "Error: the game could not be saved."
@@ -8717,10 +8713,8 @@ msgstr "Abilita scene sanguinose (se disponibili)"
 
 #: engines/hopkins/metaengine.cpp:248 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Options Menu"
 msgid "Options menu"
-msgstr "Menù Opzioni"
+msgstr "Menù opzioni"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8731,8 +8725,6 @@ msgid "Backward"
 msgstr "Arretra"
 
 #: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Strafe left"
 msgstr "Scorri a sinistra"
 
