@@ -182,6 +182,7 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0xB1] = "Eisen";
 	ObjectNames[0xB2] = "Schraubenzieher";
 	ObjectNames[0xB3] = "Eisenstange";
+	ObjectNames[0xD4] = "Tomahawk";
 }
 
 // TODO: Add all to namespace?
