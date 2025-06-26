@@ -591,6 +591,15 @@ l0037_A163:
 	mov	[bp-4h],ax
 	mov	[bp-2h],dx
 	jmp	0A32Ch
+*/
+else if (value == 0x24) {
+	// Get the x of the protagonist object
+	out1 = GameObjects::GetProtagonistObject()->Position.x;
+	out2 = 0;
+	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	return;
+}
+/*
 
 l0037_A17B:
 	cmp	ax,25h
@@ -606,6 +615,14 @@ l0037_A180:
 	mov	[bp-2h],dx
 	jmp	0A32Ch
 	*/
+else if (value == 0x25) {
+	// Get the y of the protagonist object
+	out1 = GameObjects::GetProtagonistObject()->Position.y;
+	out2 = 0;
+	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	return;
+}
+
 	// l0037_A199:
 	else if (value == 0x26) {
 		/*
