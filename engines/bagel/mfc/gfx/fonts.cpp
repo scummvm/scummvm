@@ -74,9 +74,10 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 	if (nHeight < 0) {
 		charHeight = ABS(nHeight);
 	} else {
-		// Standard cell to char height mappings from ChatGPT
+		// Cell to char height mappings
 		static const int8 HEIGHTS[6][2] = {
-			{ 8, 7 }, { 10, 8 }, { 12, 10 }, { 14, 11 }, { 16, 13 }, { 18, 15 }
+			{ 8, 6 }, { 10, 7 }, { 12, 8 },
+			{ 14, 9 }, { 16, 10 }, { 18, 12 }
 		};
 		charHeight = nHeight * 16 / 24;	// Rough default
 		for (int i = 0; i < 6; ++i) {
