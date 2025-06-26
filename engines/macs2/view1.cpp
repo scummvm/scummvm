@@ -1077,7 +1077,13 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 			if (itemIndex > inventoryItems.size() - 1) {
 				break;
 			}
-			AnimFrame *icon = GetInventoryIcon(inventoryItems[itemIndex++]);
+			itemIndex++;
+			// TODO: Seems like this can happen if we take all items out
+			// of another inventory
+			if (itemIndex >= inventoryItems.size()) {
+				break;
+			}
+			AnimFrame *icon = GetInventoryIcon(inventoryItems[itemIndex]);
 			// ;; x = slotWidth / 2 + currentX - imageWidth / 2
 			//  ;; y = slotHeight / 2 + currentY - imageHeight / 2
 			DrawSprite(maxWidthInventoryIcon / 2 + itemX - icon->Width / 2,
@@ -1120,7 +1126,7 @@ GameObject *View1::getClickedInventoryItem2(const Common::Point &p) {
 	uint16 itemIndex = inventoryPage * 5;
 	for (int iy = 0; iy < 2; iy++) {
 		for (int ix = 0; ix < 5; ix++) {
-			if (itemIndex > inventoryItems.size() - 1) {
+			if (itemIndex >= inventoryItems.size()) {
 				break;
 			}
 			if (currentInventorySlot.contains(p)) {
