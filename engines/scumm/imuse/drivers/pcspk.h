@@ -47,7 +47,7 @@ protected:
 	void onTimer() override;
 
 private:
-	Audio::PCSpeaker _pcSpk;
+	Audio::PCSpeakerStream _pcSpk;
 	int _effectTimer;
 	uint8 _randBase;
 

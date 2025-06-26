@@ -45,7 +45,7 @@
 namespace Gob {
 
 Sound::Sound(GobEngine *vm) : _vm(vm) {
-	_pcspeaker = new PCSpeaker(*_vm->_mixer);
+	_pcspeaker = new PCSpeaker();
 	_blaster = new SoundBlaster(*_vm->_mixer);
 
 	_adlPlayer = nullptr;

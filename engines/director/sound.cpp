@@ -54,8 +54,7 @@ DirectorSound::DirectorSound(Window *window) : _window(window) {
 	_mixer = g_system->getMixer();
 
 	_speaker = new Audio::PCSpeaker();
-	_mixer->playStream(Audio::Mixer::kSFXSoundType,
-		&_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
+	_speaker->init();
 
 	_enable = true;
 }
@@ -546,7 +545,7 @@ void DirectorSound::stopSound() {
 	}
 
 	_mixer->stopHandle(_scriptSound);
-	_mixer->stopHandle(_pcSpeakerHandle);
+	_speaker->quit();
 }
 
 void DirectorSound::systemBeep() {

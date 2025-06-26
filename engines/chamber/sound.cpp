@@ -70,8 +70,8 @@ static void speakerPlay(pcsample_t *sample) {
 		uint32 delayOff = delay1 * 16; // Around 335 ticks per second
 		uint32 delayOn = delay2 * 16;
 
-		g_vm->_speakerStream->playQueue(Audio::PCSpeaker::kWaveFormSilence, frequency, delayOff);
-		g_vm->_speakerStream->playQueue(Audio::PCSpeaker::kWaveFormSquare, frequency, delayOn);
+		g_vm->_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, frequency, delayOff);
+		g_vm->_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, frequency, delayOn);
 
 		if (sample->delay1sweep & 0xF000)
 			delay1 -= sample->delay1sweep & 0xFFF;
@@ -126,16 +126,12 @@ void ChamberEngine::initSound() {
 	// Setup mixer
 	syncSoundSettings();
 
-	_speakerHandle = new Audio::SoundHandle();
-	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, _speakerHandle,
-		_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 }
 
 void ChamberEngine::deinitSound() {
-	_mixer->stopHandle(*_speakerHandle);
-	delete g_vm->_speakerHandle;
-	delete g_vm->_speakerStream;
+	delete g_vm->_speaker;
 }
 
 } // End of namespace Chamber

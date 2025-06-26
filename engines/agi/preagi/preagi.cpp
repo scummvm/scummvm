@@ -37,8 +37,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	syncSoundSettings();
 
 	memset(&_debug, 0, sizeof(struct AgiDebug));
-
-	_speakerHandle = new Audio::SoundHandle();
 }
 
 void PreAgiEngine::initialize() {
@@ -57,9 +55,8 @@ void PreAgiEngine::initialize() {
 
 	_gfx->initVideo();
 
-	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, _speakerHandle,
-	                   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 
 	debugC(2, kDebugLevelMain, "Detect game");
 
@@ -73,9 +70,7 @@ void PreAgiEngine::initialize() {
 }
 
 PreAgiEngine::~PreAgiEngine() {
-	_mixer->stopHandle(*_speakerHandle);
-	delete _speakerStream;
-	delete _speakerHandle;
+	delete _speaker;
 
 	delete _gfx;
 	delete _font;
@@ -288,7 +283,7 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 bool PreAgiEngine::playSpeakerNote(int16 frequency, int32 length, WaitOptions options) {
 	// play note, unless this is a pause
 	if (frequency != 0) {
-		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
+		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
 	}
 
 	// wait for note length
@@ -297,7 +292,7 @@ bool PreAgiEngine::playSpeakerNote(int16 frequency, int32 length, WaitOptions op
 	// stop note if the wait was interrupted
 	if (!completed) {
 		if (frequency != 0) {
-			_speakerStream->stop();
+			_speaker->stop();
 		}
 	}
 

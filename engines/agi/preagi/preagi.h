@@ -25,7 +25,6 @@
 #include "agi/agi.h"
 
 namespace Audio {
-class SoundHandle;
 class PCSpeaker;
 }
 
@@ -112,8 +111,7 @@ protected:
 private:
 	int _defaultColor;
 
-	Audio::PCSpeaker *_speakerStream;
-	Audio::SoundHandle *_speakerHandle;
+	Audio::PCSpeaker *_speaker;
 };
 
 } // End of namespace Agi

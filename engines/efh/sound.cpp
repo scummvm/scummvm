@@ -36,9 +36,9 @@ void EfhEngine::songDelay(int delay) {
 void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
 	debugC(3, kDebugEngine, "playNote %d %d", frequencyIndex, totalDelay);
 	if (frequencyIndex > 0 && frequencyIndex < 72) {
-		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DD / kSoundFrequency[frequencyIndex], -1);
+		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DD / kSoundFrequency[frequencyIndex], -1);
 		songDelay(totalDelay);
-		_speakerStream->stop();
+		_speaker->stop();
 	} else {
 		warning("playNote - Skip note with frequency index %d", frequencyIndex);
 	}
@@ -47,9 +47,8 @@ void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	debugC(3, kDebugEngine, "playSong");
 
-	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 
 	Common::KeyCode inputChar = Common::KEYCODE_INVALID;
 	int totalDelay = 0;
@@ -92,9 +91,8 @@ Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 		}
 	} while (stopFl != 0 && !shouldQuit());
 
-	_mixer->stopHandle(_speakerHandle);
-	delete _speakerStream;
-	_speakerStream = nullptr;
+	delete _speaker;
+	_speaker = nullptr;
 
 	return inputChar;
 }
@@ -111,28 +109,25 @@ void EfhEngine::generateSound1(int lowFreq, int highFreq, int duration) {
 	uint16 var2 = 0;
 	duration /= 20;
 
-	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 
-	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, highFreq, -1);
+	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, highFreq, -1);
 	songDelay(10);
-	_speakerStream->stop();
+	_speaker->stop();
 
 
 	for (int i = 0; i < duration; ++i) {
 		var2 = ROR(var2 + 0x9248, 3);
 		int val = (var2 * (highFreq - lowFreq)) >> 16;
 
-		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, lowFreq + val, -1);
+		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, lowFreq + val, -1);
 		songDelay(10);
-		_speakerStream->stop();
+		_speaker->stop();
 	}
 
-
-	_mixer->stopHandle(_speakerHandle);
-	delete _speakerStream;
-	_speakerStream = nullptr;
+	delete _speaker;
+	_speaker = nullptr;
 }
 
 void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
@@ -151,42 +146,38 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 	else
 		delta = 50;
 
-	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 
 	int curFreq = startFreq;
 
 	do {
-		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, curFreq, -1);
+		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, curFreq, -1);
 		// The original is just looping, making the sound improperly timed as the length of a loop is directly related to the speed of the CPU
 		// Dividing by 10 is just a guess based on how it sounds. I suspect it may be still too much
 		songDelay(speed);
-		_speakerStream->stop();
+		_speaker->stop();
 		curFreq += delta;
 	} while (curFreq < endFreq && !shouldQuit());
 
 
-	_mixer->stopHandle(_speakerHandle);
-	delete _speakerStream;
-	_speakerStream = nullptr;
+	delete _speaker;
+	_speaker = nullptr;
 
 }
 
 void EfhEngine::generateSound3() {
 	debugC(3, kDebugEngine, "generateSound3");
-	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 
-	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 88, -1);
+	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 88, -1);
 	// The original makes me think the delay is so short it's not possible to hear. So that delay is guessed (and short)
 	songDelay(30);
-	_speakerStream->stop();
+	_speaker->stop();
 
-	_mixer->stopHandle(_speakerHandle);
-	delete _speakerStream;
-	_speakerStream = nullptr;
+	delete _speaker;
+	_speaker = nullptr;
 }
 
 void EfhEngine::generateSound4(int repeat) {
