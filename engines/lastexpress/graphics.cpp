@@ -41,7 +41,9 @@ GraphicsManager::GraphicsManager(LastExpressEngine *engine) {
 	_renderBox2.height = 480;
 }
 
-GraphicsManager::~GraphicsManager() {}
+GraphicsManager::~GraphicsManager() {
+	_screenSurface.free();
+}
 
 bool GraphicsManager::acquireSurface() {
 	// This function is technically useless, but I'm keeping it

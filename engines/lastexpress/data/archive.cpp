@@ -526,6 +526,8 @@ Seq *ArchiveManager::loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRe
 		seqDataStream->readUint32LE(); // Empty "next" sprite pointer
 	}
 
+	delete seqDataStream;
+
 	// Where 68 is the original size of the Sprite struct and 8 is the
 	// offset from the start of the sequence data to the begining of the
 	// sprite data...

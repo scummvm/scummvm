@@ -67,6 +67,8 @@ void Menu::doEgg(bool doSaveGame, int type, int32 time) {
 				while (_engine->getSoundFrameCounter() < delay) {
 					if (_engine->mouseHasRightClicked())
 						break;
+
+					 _engine->waitForTimer(4);
 					_engine->getSoundManager()->soundThread();
 				}
 			}

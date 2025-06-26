@@ -451,6 +451,8 @@ void LogicManager::renderCurrentSceneDebugger() {
 
 	_state->_textureID = g_system->getImGuiTexture(temp);
 
+	temp.free();
+
 	ImVec2 imagePos = ImGui::GetCursorScreenPos();
 	ImVec2 imageSize(640, 480);
 
@@ -497,25 +499,6 @@ void LogicManager::renderCurrentSceneDebugger() {
 
 			ImU32 rectColor = IM_COL32(255, 0, 0, 100);   // Semi-transparent red
 			ImU32 borderColor = IM_COL32(255, 0, 0, 255); // Solid red border
-
-			// Different colors for different cursor types
-			//switch (currentLink->cursor) {
-			//case 0:
-			//	borderColor = IM_COL32(255, 0, 0, 255);
-			//	break; // Red
-			//case 1:
-			//	borderColor = IM_COL32(0, 255, 0, 255);
-			//	break; // Green
-			//case 2:
-			//	borderColor = IM_COL32(0, 0, 255, 255);
-			//	break; // Blue
-			//case 3:
-			//	borderColor = IM_COL32(255, 255, 0, 255);
-			//	break; // Yellow
-			//default:
-			//	borderColor = IM_COL32(255, 0, 255, 255);
-			//	break; // Magenta
-			//}
 
 			// Highlight hovered link...
 			if (isHovered) {
