@@ -779,31 +779,34 @@ void Cast::loadCast() {
 		debugC(4, kDebugLoading, "'SCRF' resource skipped");
 	}
 
-	saveCast(nullptr, 0);
+	// saveCast(nullptr, 0);
 
 }
 
 void Cast::saveCast(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	// This offset is at which we will start writing our 'CASt' resources
 	// In the original file, all the 'CASt' resources don't necessarily appear side by side
-	// But in our written file they will be
 	writeStream->seek(offset);
 
 	Common::Array<uint16> cast = _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
+	uint32 sizeWritten = 0;
 
-	for (auto &castID : cast) {
-		Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), castID);
+	for (auto &it : cast) {
+		writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
+		writeStream->seek(4, SEEK_CUR);
+
+		Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), it);
 		uint16 id = res.castId + _castArrayStart;
 
 		// FIXME: This is wrong, we need to write cast members even if they are not handled/loaded
 		// We are currently ignoring cast members that we do not understand (e.g. kCastPicture)
 		// They need to be handled by the default handler, which will write them as they were
-		if (!_loadedCast->contains(castID)) {
+		if (!_loadedCast->contains(id)) {
 			continue;
 		}
 	
 		CastMember *target = _loadedCast->getVal(id);
-		target->writeToFile(writeStream, offset, _version, castID);
+		sizeWritten += target->writeCAStResource(writeStream, offset + sizeWritten, _version);
 	} 
 }
 
@@ -1042,7 +1045,8 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		stream.hexdump(stream.size());
 
 	uint32 castDataSize, castInfoSize,  castType, castDataSizeToRead, castDataOffset, castInfoOffset;
-	byte flags1 = -1, unk1 = 0, unk2 = 0, unk3 = 0;
+	uint8 flags1 = -1; 
+	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
 	// D2-3 cast members should be loaded in loadCastDataVWCR
 #if 0
@@ -1437,6 +1441,15 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	Common::MemoryReadStreamEndian *entryStream;
 	CastMember *member = _loadedCast->getVal(id);
 
+	// We need this data while saving the cast information back
+	// Is it possible that the count changes?
+	ci->unk1 = castInfo.unk1;
+	ci->unk2 = castInfo.unk2;
+	ci->count = castInfo.strings.size();
+
+	// If possible, we won't store flags
+	ci->flags = castInfo.flags;
+
 	// We have here variable number of strings. Thus, instead of
 	// adding tons of ifs, we use this switch()
 	switch (castInfo.strings.size()) {
@@ -1447,42 +1460,49 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		if (castInfo.strings[14].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 14, id);
 			Common::hexdump(castInfo.strings[14].data, castInfo.strings[14].len);
+			ci->unknownString7 = castInfo.strings[14].readString();
 		}
 		// fallthrough
 	case 14:
 		if (castInfo.strings[13].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 13, id);
 			Common::hexdump(castInfo.strings[13].data, castInfo.strings[13].len);
+			ci->unknownString6 = castInfo.strings[13].readString();
 		}
 		// fallthrough
 	case 13:
 		if (castInfo.strings[12].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 12, id);
 			Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
+			ci->unknownString5 = castInfo.strings[12].readString();
 		}
 		// fallthrough
 	case 12:
 		if (castInfo.strings[11].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 11, id);
 			Common::hexdump(castInfo.strings[11].data, castInfo.strings[11].len);
+			ci->unknownString4 = castInfo.strings[11].readString();
 		}
 		// fallthrough
 	case 11:
 		if (castInfo.strings[10].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 11, id);
 			Common::hexdump(castInfo.strings[10].data, castInfo.strings[10].len);
+			ci->unknownString3 = castInfo.strings[10].readString();
 		}
 		// fallthrough
 	case 10:
 		if (castInfo.strings[9].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 10, id);
 			Common::hexdump(castInfo.strings[9].data, castInfo.strings[9].len);
+			ci->unknownString2 = castInfo.strings[9].readString();
 		}
 		// fallthrough
 	case 9:
 		if (castInfo.strings[8].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 9, id);
 			Common::hexdump(castInfo.strings[8].data, castInfo.strings[8].len);
+			ci->unknownString1 = castInfo.strings[8].readString();
 		}
 		// fallthrough
 	case 8:

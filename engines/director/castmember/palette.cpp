@@ -19,9 +19,14 @@
  *
  */
 
+#include "common/substream.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/palette.h"
+
 
 namespace Director {
 
@@ -131,4 +136,75 @@ void PaletteCastMember::unload() {
 	// No unload necessary.
 }
 
+uint32 PaletteCastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version) {
+	uint64 startingPos = writeStream->pos();
+
+	uint32 castDataToWrite = getDataSize();
+	uint32 castInfoToWrite = getInfoSize();
+	uint32 castDataOffset = 0;
+
+	if (version >= kFileVer400 && version < kFileVer500) {
+		writeStream->writeUint16LE(castDataToWrite);
+		writeStream->writeUint32LE(castInfoToWrite);
+		castDataOffset += 6;
+
+		writeStream->writeUint32LE(_castType);
+		castDataToWrite -= 1;
+		
+		if (_flags1 != -1) {
+			writeStream->writeByte(_flags1);
+			castDataToWrite -= 1;
+			castDataOffset += 1;
+		}
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		writeStream->writeUint32LE(_castType);
+		writeStream->writeUint32LE(getInfoSize());
+		writeStream->writeUint32LE(getDataSize());
+	}
+	
+	CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
+
+	ci->writeCastMemberInfo(writeStream);
+
+	// For cast members with dedicated resrouces for data, the castDataToWrite is zero
+	// So for Palette Cast Member, the castDataToWrite is zero
+	// if (castDataToWrite > 0) {
+	// 	writeDataInfo();
+	// }
+
+	return writeStream->pos() - startingPos;
 }
+
+void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	writeStream->seek(offset);
+	writeStream->writeUint32LE(MKTAG('C', 'L', 'U', 'T'));
+	writeStream->seek(4, SEEK_CUR);
+
+	const byte *pal = _palette->palette;
+
+	for (int i = 0; i < _palette->length; i++) {
+		writeStream->writeByte(pal[3 * i]);
+		writeStream->seek(1, SEEK_CUR);
+
+		writeStream->writeByte(pal[3 * i + 1]);
+		writeStream->seek(1, SEEK_CUR);
+
+		writeStream->writeByte(pal[3 * i + 2]);
+		writeStream->seek(1, SEEK_CUR);
+	}
+}
+
+uint32 PaletteCastMember::getInfoSize() {
+	// Need to find a way to find the info size
+	return 0;
+}
+uint32 PaletteCastMember::getDataSize() {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		return 0;
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// Observed value, need to verify
+		return 4;
+	}
+}
+
+}	// End of namespace Director

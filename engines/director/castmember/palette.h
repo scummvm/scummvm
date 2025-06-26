@@ -43,6 +43,10 @@ public:
 	void load() override;
 	void unload() override;
 
+	uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version) override;
+	void writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 getInfoSize() override;
+	uint32 getDataSize() override;
 	PaletteV4 *_palette;
 };
 

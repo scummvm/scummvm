@@ -26,6 +26,7 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/movie.h"
 #include "director/castmember/castmember.h"
 #include "director/lingo/lingo-the.h"
 
@@ -307,16 +308,25 @@ void CastMember::unload() {
 	_loaded = false;
 }
 
-// Default implementation to write the cast members as they are
-void CastMember::writeToFile(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castID) {
+// Default implementation to write the 'CASt' resources as they are
+// Cast members have two types of "information", one is _data_ and the other is _info_
+// _data_ is the actual "data" (e.g. the pixel image data of a bitmap, sound data of a sound cast member)
+// Whereas _info_ is metadata (size, name, flags, etc.)  
+// Some castmembers have their _data_ as well as _info_ in this very 'CASt' resource, e.g. TextCastMember
+// Whereas some other have their _info_ in a 'CASt' resource and _data_ in a dedicated resource (e.g. PaletteCastMember has 'CLUT' resource) 
+uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version) {
 	writeStream->seek(offset);
+	uint32 startPos = writeStream->pos();
+	
 	writeStream->writeUint16LE(MKTAG('C', 'A', 'S', 't'));
 	
 	uint32 castDataToWrite = getDataSize();
 	uint32 castInfoToWrite = getInfoSize();
 	uint32 castDataOffset = 0;
 	uint32 castInfoOffset = 0;
-	Common::SeekableReadStreamEndian *stream = _cast->getResource(MKTAG('C', 'A', 'S', 't'), castID);
+
+	// We'll need the original resource stream if there is no change in the castmember 
+	Common::SeekableReadStreamEndian *stream = _cast->getResource(MKTAG('C', 'A', 'S', 't'), _castId);
 
 	if (version >= kFileVer400 && version < kFileVer500) {
 		writeStream->writeUint16LE(castDataToWrite);
@@ -337,22 +347,219 @@ void CastMember::writeToFile(Common::MemoryWriteStream *writeStream, uint32 offs
 		writeStream->writeUint32LE(getDataSize());
 	}
 
-
+	// CastDataToWrite could be 0
 	byte *data = (byte *)calloc(castDataToWrite, 1);
 	byte *info = (byte *)calloc(castInfoToWrite, 1);
-	stream->seek(castDataOffset, SEEK_CUR);
+	stream->seek(castDataOffset);
 	stream->read(data, castDataToWrite);
+
+	stream->seek(castInfoOffset);
 	stream->read(info, castInfoToWrite);
 
 	Common::MemoryReadStreamEndian *dataStream = new Common::MemoryReadStreamEndian(data, castDataToWrite, stream->isBE());
 	Common::MemoryReadStreamEndian *infoStream = new Common::MemoryReadStreamEndian(info, castInfoToWrite, stream->isBE());
 	
+	// They just arbitrarily changed the order for D5? Why? Although we don't necessarily have to follow that
 	if (version >= kFileVer400 && version < kFileVer500) {
 		writeStream->writeStream(dataStream);
 		writeStream->writeStream(infoStream);
 	} else if (version >= kFileVer500 && version < kFileVer600) {
 		writeStream->writeStream(infoStream);
 		writeStream->writeStream(dataStream);
+	}
+
+	return writeStream->pos() - startPos;
+}
+
+void CastMemberInfo::writeCastMemberInfo(Common::MemoryWriteStream *writeStream) {
+	writeStream->writeUint32LE(20);				// The offset post-d4 movies is always 20 
+	writeStream->writeUint32LE(unk1);
+	writeStream->writeUint32LE(unk2);
+	writeStream->writeUint32LE(flags);		// Possibly no need to save
+
+	writeStream->writeUint32LE(scriptId);
+	writeStream->writeUint16LE(count);
+	
+	uint32 length = 0;
+	writeStream->writeUint32LE(length);
+
+	// The structure of the CastMemberInfo is as follows:
+	// First some headers: offset, unkonwns and flags, and then a count of strings to be read
+	// (These strings contain properties of the cast member like filename, script attached to it, name, etc.)
+	// After the header, we have the lengths of the strings
+	for (int i = 1; i <= count; i++) {
+		switch (i) { 
+		default:
+			debug("writeCastMemberInfo:: extra strings found, ignoring");
+			break;
+		
+		case 1:
+			length += script.size();
+			writeStream->writeUint32LE(length);
+			break;
+		
+		case 2:
+			length += name.size();
+			writeStream->writeUint32LE(length);
+			break;
+
+		case 3:
+			length += directory.size();
+			writeStream->writeUint32LE(length);
+			break;
+
+		case 4:
+			length += fileName.size();
+			writeStream->writeUint32LE(length);
+			break;
+			
+		case 5:
+			length += type.size();
+			writeStream->writeUint32LE(length);
+			break;
+		
+		case 6:
+			if (scriptEditInfo.version) {
+				length += 18;		// The length of an edit info
+			}
+			writeStream->writeUint32LE(length);
+			break;
+
+		case 7:
+			if (scriptStyle.fontId) {
+				length += 20;		// The length of FontStyle
+				writeStream->writeUint32LE(length);
+			}
+			break;
+
+		case 8:
+			if (textEditInfo.version) {
+				length += 18;		// The length of an edit info
+			}
+			writeStream->writeUint32LE(length);
+			break;
+		
+		case 9:
+			length += unknownString1.size();
+			writeStream->writeUint32LE(length);
+			break;
+		
+		case 10:
+			length += unknownString2.size();
+			writeStream->writeUint32LE(length);
+			break;
+
+		case 11:
+			length += unknownString3.size();
+			writeStream->writeUint32LE(length);
+			break;
+
+		case 12:
+			length += unknownString4.size();
+			writeStream->writeUint32LE(length);
+			break;
+			
+		case 13:
+			length += unknownString5.size();
+			writeStream->writeUint32LE(length);
+			break;
+	
+		case 14:
+			length += unknownString6.size();
+			writeStream->writeUint32LE(length);
+			break;
+
+		case 15:
+			length += unknownString7.size();
+			writeStream->writeUint32LE(length);
+			break;
+		}
+	}
+
+	for (int i = 1; i <= count; i++) {
+		switch (i) { 
+		default:
+			debug("writeCastMemberInfo::extra strings found, ignoring");
+			break;
+		
+		case 1:
+			writeStream->writeString(script);
+			break;
+		
+		case 2:
+			writeStream->writeString(directory);
+			break;
+
+		case 3:
+			writeStream->writeString(directory);
+			break;
+
+		case 4:
+			writeStream->writeString(fileName);
+			break;
+			
+		case 5:
+			writeStream->writeString(type);
+			break;
+		
+		case 6:
+			// Need a better check to see if script edit info is valid
+			if (scriptEditInfo.version) {
+				Movie::writeRect(writeStream, scriptEditInfo.rect);
+				writeStream->writeUint32LE(scriptEditInfo.selStart);
+				writeStream->writeUint32LE(scriptEditInfo.selEnd);
+				writeStream->writeByte(scriptEditInfo.version);
+				writeStream->writeByte(scriptEditInfo.rulerFlag);
+			}
+			break;
+
+		case 7:
+			// Need a better check to see if scriptStyle is valid
+			if (scriptStyle.fontId) {
+				writeStream->writeUint16LE(1);			// FIXME: For CastMembers, the count is 1, observed value, need to validate
+				scriptStyle.write(writeStream);
+			}
+			break;
+
+		case 8:
+			// Need a better check to see if text edit info is valid
+			if (textEditInfo.version) {
+				Movie::writeRect(writeStream, textEditInfo.rect);
+				writeStream->writeUint32LE(textEditInfo.selStart);
+				writeStream->writeUint32LE(textEditInfo.selEnd);
+				writeStream->writeByte(textEditInfo.version);
+				writeStream->writeByte(textEditInfo.rulerFlag);
+			}
+			break;
+		
+		case 9:
+			writeStream->writeString(unknownString1);
+			break;
+		
+		case 10:
+			writeStream->writeString(unknownString2);
+			break;
+
+		case 11:
+			writeStream->writeString(unknownString3);
+			break;
+
+		case 12:
+			writeStream->writeString(unknownString4);
+			break;
+			
+		case 13:
+			writeStream->writeString(unknownString5);
+			break;
+	
+		case 14:
+			writeStream->writeString(unknownString6);
+			break;
+
+		case 15:
+			writeStream->writeString(unknownString7);
+			break;
+		}
 	}
 }
 
