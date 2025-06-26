@@ -233,7 +233,7 @@ void CFight::timer(Event *event, bool isProcessing) {
 	_engine->setEventTickInternal(false);
 
 	if (_engine->_gracePeriodTimer) {
-		if ((_engine->getLogicManager()->_globals[kProgressJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
+		if ((_engine->getLogicManager()->_globals[kGlobalJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
 			_eggIconBrightness = 0;
 			_eggIconBrightnessStep = 1;
 		}

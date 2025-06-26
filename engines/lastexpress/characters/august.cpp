@@ -583,7 +583,7 @@ void LogicManager::HAND_August_DoWalk(HAND_PARAMS) {
 
 		break;
 	case 5:
-		if (_globals[kProgressEventMetAugust]) {
+		if (_globals[kGlobalMetAugust]) {
 			if (rnd(2) == 0) {
 				playDialog(kCharacterCath, "CAT1002A", -1, 0);
 			} else {
@@ -756,7 +756,7 @@ void LogicManager::HAND_August_EnterComp(HAND_PARAMS) {
 		break;
 	case 12:
 		getCharacter(kCharacterAugust).inventoryItem = 0;
-		switch (_globals[kProgressChapter]) {
+		switch (_globals[kGlobalChapter]) {
 		case 1:
 			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterAugust)[2], 12, "626");
 			break;
@@ -845,7 +845,7 @@ void LogicManager::CONS_August_ExitComp(CONS_PARAMS) {
 void LogicManager::HAND_August_ExitComp(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		switch (_globals[kProgressChapter]) {
+		switch (_globals[kGlobalChapter]) {
 		case 1:
 			Common::strcpy_s((char *)&getCharacterCurrentParams(kCharacterAugust)[1], 12, "626");
 			break;
@@ -884,7 +884,7 @@ void LogicManager::HAND_August_ExitComp(HAND_PARAMS) {
 			Common::strcat_s((char *)&getCharacterCurrentParams(kCharacterAugust)[4], 12, "Pc");
 			startCycOtis(kCharacterAugust, (char *)&getCharacterCurrentParams(kCharacterAugust)[4]);
 			softBlockAtDoor(kCharacterAugust, 3);
-			if (_globals[kProgressChapter] == 3 && _gameTime < 1998000) {
+			if (_globals[kGlobalChapter] == 3 && _gameTime < 1998000) {
 				getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 2;
 				AugustCall(&LogicManager::CONS_August_DoDialog, "AUG2094", 0, 0, 0);
 			} else {
@@ -941,14 +941,14 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterAugust)[7] ||
 				(getCharacterCurrentParams(kCharacterAugust)[7] = _realTime + 75, _realTime != -75)) {
 				if (getCharacterCurrentParams(kCharacterAugust)[7] >= _realTime) {
-					if (_globals[kProgressChapter] == 1) {
+					if (_globals[kGlobalChapter] == 1) {
 						if (getCharacterCurrentParams(kCharacterAugust)[5] != 0) {
 							if (getCharacterCurrentParams(kCharacterAugust)[8] ||
 								(getCharacterCurrentParams(kCharacterAugust)[8] = _gameTime + 6300, _gameTime != -6300)) {
 								if (getCharacterCurrentParams(kCharacterAugust)[8] >= _gameTime) {
 
-									if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kProgressEventMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kProgressField14]) {
-										_globals[kProgressField14] = 2;
+									if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kGlobalMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kGlobalCharacterSearchingForCath]) {
+										_globals[kGlobalCharacterSearchingForCath] = kCharacterAugust;
 										getCharacter(kCharacterAugust).characterPosition.location = 0;
 										getCharacter(kCharacterAugust).characterPosition.position = 8200;
 										getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 1;
@@ -965,8 +965,8 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 							getCharacterCurrentParams(kCharacterAugust)[8] = 0;
 						}
 
-						if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kProgressEventMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kProgressField14]) {
-							_globals[kProgressField14] = 2;
+						if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kGlobalMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kGlobalCharacterSearchingForCath]) {
+							_globals[kGlobalCharacterSearchingForCath] = kCharacterAugust;
 							getCharacter(kCharacterAugust).characterPosition.location = 0;
 							getCharacter(kCharacterAugust).characterPosition.position = 8200;
 							getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 1;
@@ -983,7 +983,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterAugust)[1] = 0;
 			getCharacterCurrentParams(kCharacterAugust)[2] = 1;
 
-			if (_globals[kProgressEventMetAugust] || _globals[kProgressJacket] != 2) {
+			if (_globals[kGlobalMetAugust] || _globals[kGlobalJacket] != 2) {
 				setDoor(3, kCharacterAugust, 1, 0, 0);
 			} else {
 				setDoor(3, kCharacterAugust, 1, 0, 9);
@@ -992,14 +992,14 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 
 		getCharacterCurrentParams(kCharacterAugust)[7] = 0;
 
-		if (_globals[kProgressChapter] == 1) {
+		if (_globals[kGlobalChapter] == 1) {
 			if (getCharacterCurrentParams(kCharacterAugust)[5] != 0) {
 				if (getCharacterCurrentParams(kCharacterAugust)[8] ||
 					(getCharacterCurrentParams(kCharacterAugust)[8] = _gameTime + 6300, _gameTime != -6300)) {
 					if (getCharacterCurrentParams(kCharacterAugust)[8] >= _gameTime) {
 
-						if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kProgressEventMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kProgressField14]) {
-							_globals[kProgressField14] = 2;
+						if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kGlobalMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kGlobalCharacterSearchingForCath]) {
+							_globals[kGlobalCharacterSearchingForCath] = kCharacterAugust;
 							getCharacter(kCharacterAugust).characterPosition.location = 0;
 							getCharacter(kCharacterAugust).characterPosition.position = 8200;
 							getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 1;
@@ -1016,8 +1016,8 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterAugust)[8] = 0;
 			}
 
-			if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kProgressEventMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kProgressField14]) {
-				_globals[kProgressField14] = 2;
+			if (!getCharacterCurrentParams(kCharacterAugust)[3] && !_globals[kGlobalMetAugust] && !getCharacterCurrentParams(kCharacterAugust)[5] && getCharacterCurrentParams(kCharacterAugust)[0] - 4500 > _gameTime && !_globals[kGlobalCharacterSearchingForCath]) {
+				_globals[kGlobalCharacterSearchingForCath] = kCharacterAugust;
 				getCharacter(kCharacterAugust).characterPosition.location = 0;
 				getCharacter(kCharacterAugust).characterPosition.position = 8200;
 				getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 1;
@@ -1028,7 +1028,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 		break;
 	case 8:
 	case 9:
-		if (msg->action == 9 && _globals[kProgressChapter] == 1 && !_globals[kProgressEventMetAugust] && _globals[kProgressJacket] == 2) {
+		if (msg->action == 9 && _globals[kGlobalChapter] == 1 && !_globals[kGlobalMetAugust] && _globals[kGlobalJacket] == 2) {
 			setDoor(9, kCharacterCath, 0, 255, 255);
 			getCharacter(kCharacterCath).characterPosition.location = 1;
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 6;
@@ -1093,8 +1093,9 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 			AugustCall(&LogicManager::CONS_August_EnterComp, 0, 0, 0, 0);
 			break;
 		case 5:
-			if (_globals[kProgressField14] == 2)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterAugust)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
+
 			getCharacterCurrentParams(kCharacterAugust)[5] = 1;
 			getCharacterCurrentParams(kCharacterAugust)[1] = 0;
 			getCharacterCurrentParams(kCharacterAugust)[2] = 0;
@@ -1108,7 +1109,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 			else
 				playNIS(kEventMeetAugustHisCompartment);
 
-			_globals[kProgressEventMetAugust] = 1;
+			_globals[kGlobalMetAugust] = 1;
 			setDoor(3, 2, 1, 0, 0);
 			getCharacterCurrentParams(kCharacterAugust)[1] = 0;
 			getCharacterCurrentParams(kCharacterAugust)[2] = 1;
@@ -1129,7 +1130,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 				break;
 			case 2:
 				getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 10;
-				if (!_globals[kProgressEventMetAugust]) {
+				if (!_globals[kGlobalMetAugust]) {
 					AugustCall(&LogicManager::CONS_August_DoDialog, "AUG1128G", 0, 0, 0);
 				} else {
 					AugustCall(&LogicManager::CONS_August_DoDialog, "AUG1128E", 0, 0, 0);
@@ -1138,7 +1139,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 				break;
 			case 3:
 				getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 11;
-				if (!_globals[kProgressEventMetAugust]) {
+				if (!_globals[kGlobalMetAugust]) {
 					AugustCall(&LogicManager::CONS_August_DoDialog, "AUG1128H", 0, 0, 0);
 				} else {
 					AugustCall(&LogicManager::CONS_August_DoDialog, "AUG1128F", 0, 0, 0);
@@ -1146,7 +1147,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 
 				break;
 			default:
-				if (_globals[kProgressEventMetAugust] || _globals[kProgressJacket] != 2) {
+				if (_globals[kGlobalMetAugust] || _globals[kGlobalJacket] != 2) {
 					setDoor(3, kCharacterAugust, 1, 14, 0);
 				} else {
 					setDoor(3, kCharacterAugust, 1, 14, 9);
@@ -1160,7 +1161,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 		case 9:
 		case 10:
 		case 11:
-			if (_globals[kProgressEventMetAugust] || _globals[kProgressJacket] != 2) {
+			if (_globals[kGlobalMetAugust] || _globals[kGlobalJacket] != 2) {
 				setDoor(3, kCharacterAugust, 1, 14, 0);
 			} else {
 				setDoor(3, kCharacterAugust, 1, 14, 9);
@@ -1170,7 +1171,7 @@ void LogicManager::HAND_August_CompLogic(HAND_PARAMS) {
 			break;
 		case 12:
 		case 13:
-			if (_globals[kProgressEventMetAugust] || _globals[kProgressJacket] != 2) {
+			if (_globals[kGlobalMetAugust] || _globals[kGlobalJacket] != 2) {
 				setDoor(3, kCharacterAugust, 1, 0, 0);
 			} else {
 				setDoor(3, kCharacterAugust, 1, 0, 9);
@@ -1254,7 +1255,7 @@ void LogicManager::HAND_August_Birth(HAND_PARAMS) {
 		getCharacter(kCharacterAugust).characterPosition.location = 1;
 		getCharacter(kCharacterAugust).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterAugust).clothes = 0;
-		_globals[kProgressEventMetAugust] = 0;
+		_globals[kGlobalMetAugust] = 0;
 		break;
 	default:
 		break;
@@ -1276,7 +1277,7 @@ void LogicManager::CONS_August_KnockTyler(CONS_PARAMS) {
 void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressField14] == 29 || _globals[kProgressField14] == 3) {
+		if (_globals[kGlobalCharacterSearchingForCath] == kCharacterPolice || _globals[kGlobalCharacterSearchingForCath] == kCharacterCond1) {
 			if (getCharacterCurrentParams(kCharacterAugust)[2]) {
 				getCharacter(kCharacterAugust).characterPosition.location = 0;
 				getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 2;
@@ -1307,7 +1308,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 					getCharacterCurrentParams(kCharacterAugust)[11] = _realTime + 75;
 					if (_realTime == -75) {
 						softReleaseAtDoor(kCharacterAugust, 1);
-						if (_globals[kProgressEventCorpseMovedFromFloor]) {
+						if (_globals[kGlobalCorpseMovedFromFloor]) {
 							getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 9;
 							AugustCall(&LogicManager::CONS_August_DoCorrOtis, "626Da", 1, 0, 0);
 						} else if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
@@ -1327,7 +1328,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 				if (getCharacterCurrentParams(kCharacterAugust)[11] < _realTime) {
 					getCharacterCurrentParams(kCharacterAugust)[11] = 0x7FFFFFFF;
 					softReleaseAtDoor(kCharacterAugust, 1);
-					if (_globals[kProgressEventCorpseMovedFromFloor]) {
+					if (_globals[kGlobalCorpseMovedFromFloor]) {
 						getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 9;
 						AugustCall(&LogicManager::CONS_August_DoCorrOtis, "626Da", 1, 0, 0);
 					} else if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
@@ -1392,7 +1393,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 
 				setDoor(1, kCharacterAugust, checkDoor(1), getCharacterCurrentParams(kCharacterAugust)[3] == 0 ? 14 : 0, 9);
 				getCharacterCurrentParams(kCharacterAugust)[9] = 0;
-			} else if (!_globals[kProgressEventCorpseMovedFromFloor] || _globals[kProgressJacket] == 1) {
+			} else if (!_globals[kGlobalCorpseMovedFromFloor] || _globals[kGlobalJacket] == 1) {
 				setDoor(9, 0, 0, 255, 255);
 				getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 3;
 				AugustCall(&LogicManager::CONS_August_SaveGame, 2, kEventAugustFindCorpse, 0, 0);
@@ -1420,7 +1421,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 
 		break;
 	case 9:
-		if (!_globals[kProgressEventCorpseMovedFromFloor] || _globals[kProgressJacket] == 1) {
+		if (!_globals[kGlobalCorpseMovedFromFloor] || _globals[kGlobalJacket] == 1) {
 			setDoor(9, kCharacterCath, 0, 255, 255);
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 13;
 			AugustCall(&LogicManager::CONS_August_SaveGame, 2, kEventAugustFindCorpse, 0, 0);
@@ -1475,11 +1476,11 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 			playNIS(kEventAugustFindCorpse);
 
 			if (_doneNIS[kEventDinerAugustOriginalJacket]) {
-				endGame(3, 4, _globals[kProgressEventFoundCorpse] == kProgressField0 ? 56 : 50, true);
-			} else if (_globals[kProgressEventCorpseMovedFromFloor]) {
+				endGame(3, 4, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
+			} else if (_globals[kGlobalCorpseMovedFromFloor]) {
 				endGame(0, 1, 55, true);
 			} else {
-				endGame(0, 1, _globals[kProgressEventFoundCorpse] == kProgressField0 ? 56 : 50, true);
+				endGame(0, 1, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
 			}
 
 			break;
@@ -1490,7 +1491,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 			getCharacter(kCharacterAugust).characterPosition.location = 1;
 			playNIS(getCharacterCurrentParams(kCharacterAugust)[6]);
 			playDialog(0, "LIB015", -1, 0);
-			_globals[kProgressEventMetAugust] = 1;
+			_globals[kGlobalMetAugust] = 1;
 			getCharacter(kCharacterAugust).characterPosition.location = 0;
 			bumpCathTylerComp();
 
@@ -1513,7 +1514,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterAugust)[11] = _realTime + 75;
 				if (_realTime == -75) {
 					softReleaseAtDoor(kCharacterAugust, 1);
-					if (_globals[kProgressEventCorpseMovedFromFloor]) {
+					if (_globals[kGlobalCorpseMovedFromFloor]) {
 						getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 9;
 						AugustCall(&LogicManager::CONS_August_DoCorrOtis, "626Da", 1, 0, 0);
 					} else if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
@@ -1533,7 +1534,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterAugust)[11] < _realTime) {
 				getCharacterCurrentParams(kCharacterAugust)[11] = 0x7FFFFFFF;
 				softReleaseAtDoor(kCharacterAugust, 1);
-				if (_globals[kProgressEventCorpseMovedFromFloor]) {
+				if (_globals[kGlobalCorpseMovedFromFloor]) {
 					getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 9;
 					AugustCall(&LogicManager::CONS_August_DoCorrOtis, "626Da", 1, 0, 0);
 				} else if (checkLoc(kCharacterCath, kCarGreenSleeping)) {
@@ -1578,9 +1579,9 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 		case 11:
 			playNIS(kEventAugustFindCorpse);
 			if (_doneNIS[kEventDinerAugustOriginalJacket]) {
-				endGame(3, 4, _globals[kProgressEventFoundCorpse] == kProgressField0 ? 56 : 50, true);
+				endGame(3, 4, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
 			} else {
-				endGame(0, 1, _globals[kProgressEventFoundCorpse] == kProgressField0 ? 56 : 50, true);
+				endGame(0, 1, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
 			}
 
 			break;
@@ -1601,11 +1602,11 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 			playNIS(kEventAugustFindCorpse);
 
 			if (_doneNIS[kEventDinerAugustOriginalJacket]) {
-				endGame(3, 4, _globals[kProgressEventFoundCorpse] == kProgressField0 ? 56 : 50, true);
-			} else if (_globals[kProgressEventCorpseMovedFromFloor]) {
+				endGame(3, 4, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
+			} else if (_globals[kGlobalCorpseMovedFromFloor]) {
 				endGame(0, 1, 55, true);
 			} else {
-				endGame(0, 1, _globals[kProgressEventFoundCorpse] == kProgressField0 ? 56 : 50, true);
+				endGame(0, 1, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
 			}
 
 			break;
@@ -1621,7 +1622,7 @@ void LogicManager::HAND_August_KnockTyler(HAND_PARAMS) {
 			setDoor(1, kCharacterCath, 0, 10, 9);
 			setDoor(9, kCharacterCath, 0, 255, 255);
 			playNIS(getCharacterCurrentParams(kCharacterAugust)[6]);
-			_globals[kProgressEventMetAugust] = 1;
+			_globals[kGlobalMetAugust] = 1;
 			getCharacter(kCharacterAugust).characterPosition.location = 0;
 			bumpCathTylerComp();
 
@@ -1673,7 +1674,7 @@ void LogicManager::HAND_August_DoNIS1006(HAND_PARAMS) {
 			else
 				playNIS(kEventDinerAugust);
 
-			_globals[kProgressEventMetAugust] = 1;
+			_globals[kGlobalMetAugust] = 1;
 			bumpCath(kCarRestaurant, 61, 255);
 
 			getCharacter(kCharacterAugust).currentCall--;
@@ -1700,7 +1701,7 @@ void LogicManager::CONS_August_WaitTyler(CONS_PARAMS) {
 void LogicManager::HAND_August_WaitTyler(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!getCharacterCurrentParams(kCharacterAugust)[0] && _globals[kProgressEventFoundCorpse]) {
+		if (!getCharacterCurrentParams(kCharacterAugust)[0] && _globals[kGlobalFoundCorpse]) {
 			send(kCharacterAugust, kCharacterHeadWait, 239072064, 0);
 			getCharacterCurrentParams(kCharacterAugust)[0] = 1;
 		}
@@ -1725,7 +1726,7 @@ void LogicManager::HAND_August_WaitTyler(HAND_PARAMS) {
 		getCharacterCurrentParams(kCharacterAugust)[1] = 0;
 		getCharacter(kCharacterAugust).inventoryItem = 0;
 		send(kCharacterAugust, kCharacterHeadWait, 191604416, 0);
-		if (_globals[kProgressJacket] == 2) {
+		if (_globals[kGlobalJacket] == 2) {
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 3;
 			AugustCall(&LogicManager::CONS_August_DoNIS1006, 0, 0, 0, 0);
 		} else {
@@ -1738,7 +1739,7 @@ void LogicManager::HAND_August_WaitTyler(HAND_PARAMS) {
 		send(kCharacterAugust, kCharacterTableD, 136455232, 0);
 		startCycOtis(kCharacterAugust, "010B");
 
-		if (!_globals[kProgressEventMetAugust])
+		if (!_globals[kGlobalMetAugust])
 			getCharacterCurrentParams(kCharacterAugust)[1] = 128;
 
 		getCharacter(kCharacterAugust).inventoryItem = getCharacterCurrentParams(kCharacterAugust)[1];
@@ -1781,7 +1782,7 @@ void LogicManager::HAND_August_WaitTyler(HAND_PARAMS) {
 			AugustCall(&LogicManager::CONS_August_FinishSeqOtis, 0, 0, 0, 0);
 			break;
 		case 6:
-			_globals[kProgressField14] = 2;
+			_globals[kGlobalCharacterSearchingForCath] = kCharacterAugust;
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 7;
 			AugustCall(&LogicManager::CONS_August_DoWalk, 3, 8200, 0, 0);
 			break;
@@ -1821,11 +1822,11 @@ void LogicManager::CONS_August_SeekTyler(CONS_PARAMS) {
 void LogicManager::HAND_August_SeekTyler(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_globals[kProgressEventMetAugust] || _globals[kProgressField14]) {
+		if (_globals[kGlobalMetAugust] || _globals[kGlobalCharacterSearchingForCath]) {
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 5;
 			AugustCall(&LogicManager::CONS_August_DoWalk, 3, 6470, 0, 0);
 		} else {
-			_globals[kProgressField14] = 2;
+			_globals[kGlobalCharacterSearchingForCath] = kCharacterAugust;
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 1;
 			AugustCall(&LogicManager::CONS_August_DoWalk, 3, 8200, 0, 0);
 		}
@@ -1846,8 +1847,8 @@ void LogicManager::HAND_August_SeekTyler(HAND_PARAMS) {
 			AugustCall(&LogicManager::CONS_August_EnterComp, 0, 0, 0, 0);
 			break;
 		case 4:
-			if (_globals[kProgressField14] == 2)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterAugust)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 7;
 			AugustCall(&LogicManager::CONS_August_CompLogic, _gameTime + 900, 0, 0, 0);
@@ -1945,7 +1946,7 @@ void LogicManager::HAND_August_OrderDinner(HAND_PARAMS) {
 		AugustCall(&LogicManager::CONS_August_DoNIS1006, 0, 0, 0, 0);
 		break;
 	case 12:
-		if (!_globals[kProgressEventMetAugust] && _globals[kProgressJacket] == 2)
+		if (!_globals[kGlobalMetAugust] && _globals[kGlobalJacket] == 2)
 			getCharacterCurrentParams(kCharacterAugust)[0] = 128;
 
 		startCycOtis(kCharacterAugust, "010B");
@@ -2001,13 +2002,13 @@ void LogicManager::CONS_August_EatingDinner(CONS_PARAMS) {
 void LogicManager::HAND_August_EatingDinner(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressField28] && !getCharacterCurrentParams(kCharacterAugust)[1] && getCharacterCurrentParams(kCharacterAugust)[2] != 0x7FFFFFFF && _gameTime) {
+		if (_globals[kGlobalAnnaIsEating] && !getCharacterCurrentParams(kCharacterAugust)[1] && getCharacterCurrentParams(kCharacterAugust)[2] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime <= 1134000) {
 				if (!inDiningRoom(kCharacterCath) || dialogRunning("MRB1076") || dialogRunning("MRB1078") || dialogRunning("MRB1078A") || !getCharacterCurrentParams(kCharacterAugust)[2]) {
 					getCharacterCurrentParams(kCharacterAugust)[2] = _gameTime + 225;
 					if (_gameTime == -225) {
 						getCharacter(kCharacterAugust).inventoryItem = 0;
-						_globals[kProgressField28] = 0;
+						_globals[kGlobalAnnaIsEating] = 0;
 						CONS_August_GreetAnna(0, 0, 0, 0);
 						break;
 					}
@@ -2019,7 +2020,7 @@ void LogicManager::HAND_August_EatingDinner(HAND_PARAMS) {
 
 			getCharacterCurrentParams(kCharacterAugust)[2] = 0x7FFFFFFF;
 			getCharacter(kCharacterAugust).inventoryItem = 0;
-			_globals[kProgressField28] = 0;
+			_globals[kGlobalAnnaIsEating] = 0;
 			CONS_August_GreetAnna(0, 0, 0, 0);
 		}
 
@@ -2031,7 +2032,7 @@ void LogicManager::HAND_August_EatingDinner(HAND_PARAMS) {
 		AugustCall(&LogicManager::CONS_August_DoNIS1006, 0, 0, 0, 0);
 		break;
 	case 12:
-		if (!_globals[kProgressEventMetAugust] && _globals[kProgressJacket] == 2)
+		if (!_globals[kGlobalMetAugust] && _globals[kGlobalJacket] == 2)
 			getCharacterCurrentParams(kCharacterAugust)[0] = 128;
 
 		getCharacter(kCharacterAugust).inventoryItem = getCharacterCurrentParams(kCharacterAugust)[0];
@@ -2093,7 +2094,7 @@ void LogicManager::HAND_August_GreetAnna(HAND_PARAMS) {
 		} else if (getCharacterCurrentParams(kCharacterAugust)[1]) {
 			getCharacterCurrentParams(kCharacterAugust)[1] = 0;
 
-			if (_globals[kProgressEventMetAugust])
+			if (_globals[kGlobalMetAugust])
 				getCharacter(kCharacterAugust).inventoryItem = 0;
 
 			playDialog(kCharacterAugust, "AUG1003A", -1, 0);
@@ -2129,12 +2130,12 @@ void LogicManager::HAND_August_GreetAnna(HAND_PARAMS) {
 			playDialog(kCharacterAugust, "AUG1003", -1, 0);
 
 			if (inDiningRoom(kCharacterCath))
-				_globals[kProgressField60] = 1;
+				_globals[kGlobalOverheardAugustInterruptingAnnaAtDinner] = 1;
 
 			getCharacterCurrentParams(kCharacterAugust)[1] = 1;
 			break;
 		case 4:
-			if (_globals[kProgressEventMetAugust]) {
+			if (_globals[kGlobalMetAugust]) {
 				playNIS(kEventAugustPresentAnna);
 				send(kCharacterAugust, kCharacterAnna, 201437056, 0);
 				startSeqOtis(kCharacterAugust, "803GS");
@@ -2212,7 +2213,7 @@ void LogicManager::HAND_August_ReturnFromDinner(HAND_PARAMS) {
 			break;
 		case 3:
 		case 4:
-			if (_globals[kProgressField14] == 29) {
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterPolice) {
 				getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 4;
 				AugustCall(&LogicManager::CONS_August_CompLogic, _gameTime + 900, 0, 0, 0);
 			} else {
@@ -2394,7 +2395,7 @@ void LogicManager::CONS_August_BackFromSalon(CONS_PARAMS) {
 void LogicManager::HAND_August_BackFromSalon(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_globals[kProgressEventMetAugust]) {
+		if (_globals[kGlobalMetAugust]) {
 			getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] = 1;
 			AugustCall(&LogicManager::CONS_August_CompLogic, _gameTime + 9000, 0, 0, 0);
 		} else {
@@ -2428,7 +2429,7 @@ void LogicManager::CONS_August_Asleep(CONS_PARAMS) {
 void LogicManager::HAND_August_Asleep(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!whoRunningDialog(kCharacterAugust) && _globals[kProgressField18] != 4) {
+		if (!whoRunningDialog(kCharacterAugust) && _globals[kGlobalPhaseOfTheNight] != 4) {
 			playDialog(kCharacterAugust, "AUG1057", -1, 0);
 		}
 
@@ -2840,7 +2841,7 @@ void LogicManager::HAND_August_DoWalkP3A(HAND_PARAMS) {
 
 		break;
 	case 5:
-		if (_globals[kProgressEventMetAugust]) {
+		if (_globals[kGlobalMetAugust]) {
 			if (rnd(2) == 0) {
 				playDialog(kCharacterCath, "CAT1002A", -1, 0);
 			} else {
@@ -3530,7 +3531,7 @@ void LogicManager::CONS_August_InSalon3(CONS_PARAMS) {
 void LogicManager::HAND_August_InSalon3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (!getCharacterCurrentParams(kCharacterAugust)[3] || getCharacterCurrentParams(kCharacterAugust)[1] || _globals[kProgressField44]) {
+		if (!getCharacterCurrentParams(kCharacterAugust)[3] || getCharacterCurrentParams(kCharacterAugust)[1] || _globals[kGlobalKahinaKillTimeoutActive]) {
 			getCharacter(kCharacterAugust).inventoryItem = 0;
 		} else {
 			getCharacter(kCharacterAugust).inventoryItem = 0x80;
@@ -4368,7 +4369,7 @@ void LogicManager::HAND_August_CutLoose(HAND_PARAMS) {
 		break;
 	case 18:
 		if (getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] == 1) {
-			if (_globals[kProgressFieldC])
+			if (_globals[kGlobalReadLetterInAugustSuitcase])
 				playNIS(kEventAugustUnhookCarsBetrayal);
 			else
 				playNIS(kEventAugustUnhookCars);

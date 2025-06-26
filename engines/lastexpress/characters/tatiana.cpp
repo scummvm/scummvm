@@ -515,7 +515,7 @@ void LogicManager::HAND_Tatiana_EnterComp(HAND_PARAMS) {
 	case 12:
 		send(kCharacterTatiana, kCharacterCond2, 326348944, 0);
 
-		if (_globals[kProgressChapter] != 1) {
+		if (_globals[kGlobalChapter] != 1) {
 			startCycOtis(kCharacterTatiana, "673Fb");
 		} else {
 			startCycOtis(kCharacterTatiana, "603Fb");
@@ -537,7 +537,7 @@ void LogicManager::HAND_Tatiana_EnterComp(HAND_PARAMS) {
 
 		break;
 	case 69239528:
-		if (_globals[kProgressChapter] == 1) {
+		if (_globals[kGlobalChapter] == 1) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoEnterCorrOtis, "603Db", 33, 0, 0);
 		} else {
@@ -564,7 +564,7 @@ void LogicManager::CONS_Tatiana_ExitComp(CONS_PARAMS) {
 void LogicManager::HAND_Tatiana_ExitComp(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_globals[kProgressChapter] == 1) {
+		if (_globals[kGlobalChapter] == 1) {
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 1;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoCorrOtis, "603Bb", 33, 0, 0);
 		} else {
@@ -579,7 +579,7 @@ void LogicManager::HAND_Tatiana_ExitComp(HAND_PARAMS) {
 			getCharacter(kCharacterTatiana).characterPosition.location = 0;
 			send(kCharacterTatiana, kCharacterCond2, 292048641, 0);
 
-			if (_globals[kProgressChapter] != 1) {
+			if (_globals[kGlobalChapter] != 1) {
 				startCycOtis(kCharacterTatiana, "673Fb");
 			} else {
 				startCycOtis(kCharacterTatiana, "603Fb");
@@ -872,7 +872,7 @@ void LogicManager::HAND_Tatiana_AtDinner(HAND_PARAMS) {
 					playDialog(kCharacterTatiana, "TAT1069B", -1, 0);
 				}
 
-				_globals[kProgressField64] = 1;
+				_globals[kGlobalMetTatianaAndVassili] = 1;
 				getCharacterCurrentParams(kCharacterTatiana)[2]++;
 				getCharacterCurrentParams(kCharacterTatiana)[4] = 0;
 			}
@@ -897,7 +897,7 @@ void LogicManager::HAND_Tatiana_AtDinner(HAND_PARAMS) {
 						playDialog(kCharacterTatiana, "TAT1069B", -1, 0);
 					}
 
-					_globals[kProgressField64] = 1;
+					_globals[kGlobalMetTatianaAndVassili] = 1;
 					getCharacterCurrentParams(kCharacterTatiana)[2]++;
 					getCharacterCurrentParams(kCharacterTatiana)[5] = 0;
 				}
@@ -1058,7 +1058,7 @@ void LogicManager::HAND_Tatiana_ReturnToComp(HAND_PARAMS) {
 			break;
 		case 5:
 		case 6:
-			if (_globals[kProgressField14] == 29) {
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterPolice) {
 				getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 6;
 				TatianaCall(&LogicManager::CONS_Tatiana_CompLogic, _gameTime + 900, 0, 0, 0);
 			} else {
@@ -1572,7 +1572,7 @@ void LogicManager::HAND_Tatiana_PlayChess(HAND_PARAMS) {
 				playDialog(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[5], -1, 0);
 
 				if (getCharacterCurrentParams(kCharacterTatiana)[2] == 4 && inSalon(kCharacterCath))
-					_globals[kProgressField90] = 1;
+					_globals[kGlobalOverheardTatianaAndAlexeiPlayingChess] = 1;
 
 				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
 			}
@@ -1865,7 +1865,7 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[3] != 0x7FFFFFFF && getCharacterCurrentParams(kCharacterTatiana)[2] < _gameTime) {
 				if (_gameTime > 2227500) {
 					getCharacterCurrentParams(kCharacterTatiana)[3] = 0x7FFFFFFF;
-					_globals[kProgressField5C] = 1;
+					_globals[kGlobalTatianaFoundOutEggStolen] = 1;
 
 					if (inComp(kCharacterAnna, kCarRedSleeping, 4070)) {
 						CONS_Tatiana_CryAnna(0, 0, 0, 0);
@@ -1878,7 +1878,7 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 						if (_gameTime == -450) {
 							skip = true;
 
-							_globals[kProgressField5C] = 1;
+							_globals[kGlobalTatianaFoundOutEggStolen] = 1;
 							if (inComp(kCharacterAnna, kCarRedSleeping, 4070)) {
 								CONS_Tatiana_CryAnna(0, 0, 0, 0);
 								break;
@@ -1888,7 +1888,7 @@ void LogicManager::HAND_Tatiana_AfterConcert(HAND_PARAMS) {
 
 					if (!skip && getCharacterCurrentParams(kCharacterTatiana)[3] < _gameTime) {
 						getCharacterCurrentParams(kCharacterTatiana)[3] = 0x7FFFFFFF;
-						_globals[kProgressField5C] = 1;
+						_globals[kGlobalTatianaFoundOutEggStolen] = 1;
 						if (inComp(kCharacterAnna, kCarRedSleeping, 4070)) {
 							CONS_Tatiana_CryAnna(0, 0, 0, 0);
 							break;
@@ -2192,7 +2192,7 @@ void LogicManager::HAND_Tatiana_TrapCath(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
-			if (inSuite(kCharacterCath, kCarRedSleeping, 7850) && !_doneNIS[kEventVassiliCompartmentStealEgg] && (_gameTime <= 2133000 || _globals[kProgressField40])) {
+			if (inSuite(kCharacterCath, kCarRedSleeping, 7850) && !_doneNIS[kEventVassiliCompartmentStealEgg] && (_gameTime <= 2133000 || _globals[kGlobalConcertIsHappening])) {
 				if (inComp(kCharacterCath, kCarRedSleeping, 7500)) {
 					send(kCharacterTatiana, kCharacterCond2, 235061888, 0);
 					endGraphics(kCharacterTatiana);
@@ -2426,9 +2426,9 @@ void LogicManager::HAND_Tatiana_WithAlexei(HAND_PARAMS) {
 			if (_timeSpeed > getCharacterCurrentParams(kCharacterTatiana)[0]) {
 				playDialog(kCharacterTatiana, (char *)&getCharacterCurrentParams(kCharacterTatiana)[5], -1, 0);
 				if (getCharacterCurrentParams(kCharacterTatiana)[3] == 4 && nearChar(kCharacterTatiana, kCharacterCath, 2000)) {
-					_globals[kProgressField8C] = 1;
+					_globals[kGlobalOverheardAlexeiTellingTatianaAboutWantingToKillVassili] = 1;
 				} else if (getCharacterCurrentParams(kCharacterTatiana)[3] == 7 && nearChar(kCharacterTatiana, kCharacterCath, 2000)) {
-					_globals[kProgressField88] = 1;
+					_globals[kGlobalOverheardAlexeiTellingTatianaAboutBomb] = 1;
 				}
 
 				getCharacterCurrentParams(kCharacterTatiana)[1] = 1;
@@ -2597,7 +2597,7 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 		if (!getCharacterCurrentParams(kCharacterTatiana)[0]) {
 			if (!_doneNIS[kEventTatianaTylerCompartment] && inComp(kCharacterCath, kCarGreenSleeping, 8200)) {
 				getCharacterCurrentParams(kCharacterTatiana)[0] = 1;
-				_globals[kProgressFieldE4] = 1;
+				_globals[kGlobalTatianaScheduledToVisitCath] = 1;
 				setDoor(1, kCharacterTatiana, checkDoor(1), 0, 9);
 			}
 
@@ -2609,7 +2609,7 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 					// 	setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
 					// }
 
-					_globals[kProgressFieldE4] = 0;
+					_globals[kGlobalTatianaScheduledToVisitCath] = 0;
 					softReleaseAtDoor(kCharacterTatiana, 2);
 					getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 					TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
@@ -2633,7 +2633,7 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 						if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
 							setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
 						}
-						_globals[kProgressFieldE4] = 0;
+						_globals[kGlobalTatianaScheduledToVisitCath] = 0;
 						softReleaseAtDoor(kCharacterTatiana, 2);
 						getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 						TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);
@@ -2653,7 +2653,7 @@ void LogicManager::HAND_Tatiana_SeekCath(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterTatiana)[0]) {
 				setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
 			}
-			_globals[kProgressFieldE4] = 0;
+			_globals[kGlobalTatianaScheduledToVisitCath] = 0;
 			softReleaseAtDoor(kCharacterTatiana, 2);
 			getCharacter(kCharacterTatiana).callbacks[getCharacter(kCharacterTatiana).currentCall + 8] = 3;
 			TatianaCall(&LogicManager::CONS_Tatiana_DoWalk, 4, 7500, 0, 0);

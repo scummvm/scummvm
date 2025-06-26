@@ -662,7 +662,7 @@ void LogicManager::HAND_TrainM_KickCathOut(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterTrainM)[1] = 1;
 			}
 
-			if (isNight() && _globals[kProgressChapter] != 1)
+			if (isNight() && _globals[kGlobalChapter] != 1)
 				getCharacterCurrentParams(kCharacterTrainM)[1] = 1;
 
 			if (getCharacterCurrentParams(kCharacterTrainM)[0]) {
@@ -1223,10 +1223,10 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8]) {
 		case 1:
-			takeItem(kCharacterTrainM);
+			takeItem(kItem9);
 			if (inOuterSanctum(kCharacterCath)) {
-				if (_doneNIS[kProgressFieldCC]) {
-					_globals[kProgressField3C] = 1;
+				if (_doneNIS[kEventKronosConversation]) {
+					_globals[kGlobalPoliceHasBoardedAndGone] = 1;
 					getCharacter(kCharacterTrainM).characterPosition.car = kCarGreenSleeping;
 					getCharacter(kCharacterTrainM).characterPosition.position = 540;
 					getCharacter(kCharacterTrainM).characterPosition.location = 0;
@@ -1276,7 +1276,7 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 			}
 
 			send(kCharacterTrainM, kCharacterPolice, 169499649, 0);
-			_globals[kProgressField3C] = 1;
+			_globals[kGlobalPoliceHasBoardedAndGone] = 1;
 			_timeSpeed = 1;
 			if (getCharacter(kCharacterTrainM).characterPosition.car == kCarRedSleeping) {
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 6;
@@ -1288,8 +1288,8 @@ void LogicManager::HAND_TrainM_BoardPolice(HAND_PARAMS) {
 
 			break;
 		case 2:
-			if (_doneNIS[kProgressFieldCC]) {
-				_globals[kProgressField3C] = 1;
+			if (_doneNIS[kEventKronosConversation]) {
+				_globals[kGlobalPoliceHasBoardedAndGone] = 1;
 				getCharacter(kCharacterTrainM).characterPosition.car = kCarGreenSleeping;
 				getCharacter(kCharacterTrainM).characterPosition.position = 540;
 				getCharacter(kCharacterTrainM).characterPosition.location = 0;
@@ -1974,7 +1974,7 @@ void LogicManager::HAND_TrainM_DoDogProblem(HAND_PARAMS) {
 			TrainMCall(&LogicManager::CONS_TrainM_WalkBackToOffice, 0, 0, 0, 0);
 			break;
 		case 4:
-			_globals[kProgressField48] = 1;
+			_globals[kGlobalMaxHasToStayInBaggage] = 1;
 			getCharacterParams(kCharacterTrainM, 8)[3] = 0;
 
 			getCharacter(kCharacterTrainM).currentCall--;
@@ -2122,7 +2122,7 @@ void LogicManager::HAND_TrainM_OnRearPlatform(HAND_PARAMS) {
 			getCharacter(kCharacterTrainM).characterPosition.location = 1;
 			getCharacter(kCharacterTrainM).characterPosition.position = 5799;
 
-			if (!_globals[kProgressField3C]) {
+			if (!_globals[kGlobalPoliceHasBoardedAndGone]) {
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 5;
 				TrainMCall(&LogicManager::CONS_TrainM_DoDialog, "Abb3035", 0, 0, 0);
 			} else {

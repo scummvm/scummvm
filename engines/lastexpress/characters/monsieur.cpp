@@ -403,7 +403,7 @@ void LogicManager::HAND_Monsieur_GoDining(HAND_PARAMS) {
 		break;
 	case 12:
 		if (getCharacterCurrentParams(kCharacterMonsieur)[0]) {
-			if (_globals[kProgressChapter] == 4) {
+			if (_globals[kGlobalChapter] == 4) {
 				setDoor(34, kCharacterCath, 0, 10, 9);
 				getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall + 8] = 1;
 				MonsieurCall(&LogicManager::CONS_Monsieur_DoCorrOtis, "607Hc", 34, 0, 0);
@@ -445,9 +445,9 @@ void LogicManager::HAND_Monsieur_GoDining(HAND_PARAMS) {
 			MonsieurCall(&LogicManager::CONS_Monsieur_DoSeqOtis, "812US", 0, 0, 0);
 			break;
 		case 6:
-			if (_globals[kProgressChapter] == 1) {
+			if (_globals[kGlobalChapter] == 1) {
 				playDialog(kCharacterMonsieur, "MRB1075", -1, 60);
-			} else if (_globals[kProgressChapter] == 3) {
+			} else if (_globals[kGlobalChapter] == 3) {
 				playDialog(kCharacterMonsieur, "MRB3101", -1, 0);
 			}
 

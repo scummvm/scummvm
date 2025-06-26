@@ -106,7 +106,7 @@ void LogicManager::CONS_Cond1_DoSeqOtis(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DoSeqOtis(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 
@@ -152,7 +152,7 @@ void LogicManager::CONS_Cond1_DoCorrOtis(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DoCorrOtis(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 
@@ -200,7 +200,7 @@ void LogicManager::CONS_Cond1_DoBriefCorrOtis(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DoBriefCorrOtis(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 
@@ -251,7 +251,7 @@ void LogicManager::CONS_Cond1_DoEnterCorrOtis(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DoEnterCorrOtis(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
@@ -311,7 +311,7 @@ void LogicManager::HAND_Cond1_FinishSeqOtis(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (getCharacter(kCharacterCond1).direction == 4) {
-			if (_globals[kProgressJacket] == 1 &&
+			if (_globals[kGlobalJacket] == 1 &&
 				nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 				!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 
@@ -357,7 +357,7 @@ void LogicManager::CONS_Cond1_DoDialog(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DoDialog(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 
@@ -401,7 +401,7 @@ void LogicManager::CONS_Cond1_DoDialogFullVol(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DoDialogFullVol(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 
@@ -500,13 +500,13 @@ void LogicManager::HAND_Cond1_DoWalk(HAND_PARAMS) {
 			break;
 		}
 
-		if (_globals[kProgressJacket] == 1) {
+		if (_globals[kGlobalJacket] == 1) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
 			Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
-		} else if ((getCharacterParams(kCharacterCond1, 8)[5] || getCharacterParams(kCharacterCond1, 8)[6]) && !_doneNIS[kEventKronosConversation] && _globals[kProgressJacket] == 2) {
+		} else if ((getCharacterParams(kCharacterCond1, 8)[5] || getCharacterParams(kCharacterCond1, 8)[6]) && !_doneNIS[kEventKronosConversation] && _globals[kGlobalJacket] == 2) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 2;
 			Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensKronosInvitation, 0, 0);
-		} else if (getCharacterParams(kCharacterCond1, 8)[9] && _globals[kProgressJacket] == 2 && !_globals[kProgressEventMetAugust]) {
+		} else if (getCharacterParams(kCharacterCond1, 8)[9] && _globals[kGlobalJacket] == 2 && !_globals[kGlobalMetAugust]) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 3;
 			Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensAugustWaiting, 0, 0);
 		} else {
@@ -530,8 +530,8 @@ void LogicManager::HAND_Cond1_DoWalk(HAND_PARAMS) {
 		getCharacterCurrentParams(kCharacterCond1)[2] = 0;
 		getCharacter(kCharacterCond1).inventoryItem = kItemNone;
 
-		if (_globals[kProgressEventFoundCorpse] || _doneNIS[kEventMertensAskTylerCompartment] || _doneNIS[kEventMertensAskTylerCompartmentD]) {
-			if (getCharacterParams(kCharacterCond1, 8)[3] && _globals[kProgressJacket] == 2 && !_doneNIS[kEventMertensDontMakeBed] && !_globals[kProgressEventCorpseThrown]) {
+		if (_globals[kGlobalFoundCorpse] || _doneNIS[kEventMertensAskTylerCompartment] || _doneNIS[kEventMertensAskTylerCompartmentD]) {
+			if (getCharacterParams(kCharacterCond1, 8)[3] && _globals[kGlobalJacket] == 2 && !_doneNIS[kEventMertensDontMakeBed] && !_globals[kGlobalCorpseHasBeenThrown]) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 6;
 				Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensDontMakeBed, 0, 0);
 			}
@@ -548,7 +548,7 @@ void LogicManager::HAND_Cond1_DoWalk(HAND_PARAMS) {
 		playChrExcuseMe(kCharacterCond1, kCharacterCath, 0);
 		break;
 	case 12:
-		if ((!_globals[kProgressEventFoundCorpse] && !_doneNIS[kEventMertensAskTylerCompartment] && !_doneNIS[kEventMertensAskTylerCompartmentD]) || (getCharacterParams(kCharacterCond1, 8)[3] && _globals[kProgressJacket] == 2 && !_doneNIS[kEventMertensDontMakeBed] && !_globals[kProgressEventCorpseThrown])) {
+		if ((!_globals[kGlobalFoundCorpse] && !_doneNIS[kEventMertensAskTylerCompartment] && !_doneNIS[kEventMertensAskTylerCompartmentD]) || (getCharacterParams(kCharacterCond1, 8)[3] && _globals[kGlobalJacket] == 2 && !_doneNIS[kEventMertensDontMakeBed] && !_globals[kGlobalCorpseHasBeenThrown])) {
 			getCharacterCurrentParams(kCharacterCond1)[2] = 1;
 		}
 
@@ -572,7 +572,7 @@ void LogicManager::HAND_Cond1_DoWalk(HAND_PARAMS) {
 				playNIS(kEventMertensKronosInvitationClosedWindows);
 			}
 
-			_globals[kProgressEventMertensChronosInvitation] = 1;
+			_globals[kGlobalKnowAboutKronos] = 1;
 			getCharacterParams(kCharacterCond1, 8)[6] = 0;
 			getCharacterParams(kCharacterCond1, 8)[5] = 0;
 
@@ -599,7 +599,7 @@ void LogicManager::HAND_Cond1_DoWalk(HAND_PARAMS) {
 			break;
 		case 3:
 			playNIS(kEventMertensAugustWaiting);
-			_globals[kProgressEventMertensAugustWaiting] = 1;
+			_globals[kGlobalKnowAboutAugust] = 1;
 			getCharacterParams(kCharacterCond1, 8)[9] = 0;
 
 			if (getCharacterCurrentParams(kCharacterCond1)[0] == 3 && getCharacterCurrentParams(kCharacterCond1)[1] == 8200) {
@@ -684,7 +684,7 @@ void LogicManager::CONS_Cond1_DoWait(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DoWait(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 
@@ -735,7 +735,7 @@ void LogicManager::HAND_Cond1_StandAsideDialog(HAND_PARAMS) {
 		if (!whoRunningDialog(kCharacterCond1)) {
 			if (isNight()) {
 				if (!isFemale(getCharacterCurrentParams(kCharacterCond1)[0])) {
-					if (getCharacterCurrentParams(kCharacterCond1)[0] || _globals[kProgressField18] != 2) {
+					if (getCharacterCurrentParams(kCharacterCond1)[0] || _globals[kGlobalPhaseOfTheNight] != 2) {
 						playDialog(kCharacterCond1, "CON1112F", -1, 0);
 					} else {
 						switch (rnd(3)) {
@@ -804,7 +804,7 @@ void LogicManager::CONS_Cond1_Passing(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_Passing(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 4;
@@ -842,7 +842,7 @@ void LogicManager::HAND_Cond1_Passing(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterCond1)[4] >= _realTime) {
-			getCharacter(kCharacterCond1).inventoryItem = _globals[kProgressChapter] == 1 && !getCharacterParams(kCharacterCond1, 8)[16] && !_globals[kProgressEventFoundCorpse] && !_doneNIS[kEventMertensAskTylerCompartment] && !_doneNIS[kEventMertensAskTylerCompartmentD];
+			getCharacter(kCharacterCond1).inventoryItem = _globals[kGlobalChapter] == 1 && !getCharacterParams(kCharacterCond1, 8)[16] && !_globals[kGlobalFoundCorpse] && !_doneNIS[kEventMertensAskTylerCompartment] && !_doneNIS[kEventMertensAskTylerCompartmentD];
 		} else {
 			getCharacterCurrentParams(kCharacterCond1)[4] = 0x7FFFFFFF;
 			getCharacter(kCharacterCond1).inventoryItem = kItemNone;
@@ -871,7 +871,7 @@ void LogicManager::HAND_Cond1_Passing(HAND_PARAMS) {
 			break;
 		}
 
-		if (_globals[kProgressChapter] == 3 && !getCharacterCurrentParams(kCharacterCond1)[0] && _gameTime < 2173500 && (_gameTime > 2106000 || (getCharacterCurrentParams(kCharacterCond1)[1] && _gameTime > 2079000))) {
+		if (_globals[kGlobalChapter] == 3 && !getCharacterCurrentParams(kCharacterCond1)[0] && _gameTime < 2173500 && (_gameTime > 2106000 || (getCharacterCurrentParams(kCharacterCond1)[1] && _gameTime > 2079000))) {
 			if (getCharacterCurrentParams(kCharacterCond1)[1] == 2) {
 				playDialog(kCharacterCond1, "CON3052", -1, 0);
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 3;
@@ -886,7 +886,7 @@ void LogicManager::HAND_Cond1_Passing(HAND_PARAMS) {
 				break;
 			}
 			if (!getCharacterCurrentParams(kCharacterCond1)[1]) {
-				if (_globals[kProgressField40])
+				if (_globals[kGlobalConcertIsHappening])
 					playDialog(kCharacterCond1, "CON3054", -1, 0);
 				else
 					playDialog(kCharacterCond1, "CON3053", -1, 0);
@@ -913,7 +913,7 @@ void LogicManager::HAND_Cond1_Passing(HAND_PARAMS) {
 		}
 		return;
 	case 17:
-		if (checkCathDir(kCarGreenSleeping, 23) && getCharacterParams(kCharacterCond1, 8)[6] && !_doneNIS[kProgressFieldCC]) {
+		if (checkCathDir(kCarGreenSleeping, 23) && getCharacterParams(kCharacterCond1, 8)[6] && !_doneNIS[kEventKronosConversation]) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 8;
 			Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensKronosInvitation, 0, 0);
 		} else {
@@ -994,7 +994,7 @@ void LogicManager::CONS_Cond1_Listen(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_Listen(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressJacket] == 1 &&
+		if (_globals[kGlobalJacket] == 1 &&
 			nearChar(kCharacterCond1, kCharacterCath, 1000) &&
 			!inComp(kCharacterCath) && !whoOutside(kCharacterCath)) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 4;
@@ -1863,10 +1863,10 @@ void LogicManager::HAND_Cond1_MakeBedAlexei(HAND_PARAMS) {
 			getCharacter(kCharacterCond1).characterPosition.location = 1;
 			endGraphics(kCharacterCond1);
 
-			if (_globals[kProgressChapter] == 1 &&
+			if (_globals[kGlobalChapter] == 1 &&
 				getCharacterParams(kCharacterCond1, 8)[3] &&
-				_globals[kProgressField14] != 29) {
-				_globals[kProgressField14] = 3;
+				_globals[kGlobalCharacterSearchingForCath] != kCharacterPolice) {
+				_globals[kGlobalCharacterSearchingForCath] = kCharacterCond1;
 			}
 
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 4;
@@ -1888,10 +1888,10 @@ void LogicManager::HAND_Cond1_MakeBedAlexei(HAND_PARAMS) {
 			getCharacter(kCharacterCond1).characterPosition.location = 1;
 			endGraphics(kCharacterCond1);
 
-			if (_globals[kProgressChapter] == 1 &&
+			if (_globals[kGlobalChapter] == 1 &&
 				getCharacterParams(kCharacterCond1, 8)[3] &&
-				_globals[kProgressField14] != 29) {
-				_globals[kProgressField14] = 3;
+				_globals[kGlobalCharacterSearchingForCath] != kCharacterPolice) {
+				_globals[kGlobalCharacterSearchingForCath] = kCharacterCond1;
 			}
 
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 7;
@@ -1946,9 +1946,9 @@ void LogicManager::CONS_Cond1_SubMakeBed(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_SubMakeBed(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (!_globals[kProgressEventCorpseThrown] &&
+		if (!_globals[kGlobalCorpseHasBeenThrown] &&
 			getCharacterCurrentParams(kCharacterCond1)[0] &&
-			_globals[kProgressChapter] == 1 && _globals[kProgressJacket] == 2) {
+			_globals[kGlobalChapter] == 1 && _globals[kGlobalJacket] == 2) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
 			Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 1, 0, 0, 0);
 		} else {
@@ -1975,10 +1975,10 @@ void LogicManager::HAND_Cond1_SubMakeBed(HAND_PARAMS) {
 			fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 			break;
 		case 3:
-			if (_globals[kProgressJacket] == 1) {
+			if (_globals[kGlobalJacket] == 1) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 4;
 				Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
-			} else if (_globals[kProgressEventCorpseMovedFromFloor]) {
+			} else if (_globals[kGlobalCorpseMovedFromFloor]) {
 				blockAtDoor(kCharacterCond1, 1);
 				startSeqOtis(kCharacterCond1, "601Ra");
 				bumpCath(kCarGreenSleeping, 16, 255);
@@ -1996,7 +1996,7 @@ void LogicManager::HAND_Cond1_SubMakeBed(HAND_PARAMS) {
 			break;
 		case 5:
 			playNIS(kEventMertensCorpseFloor);
-			endGame(0, 1, _globals[kProgressEventFoundCorpse] == kProgressField0 ? 56 : 50, true);
+			endGame(0, 1, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
 			break;
 		case 6:
 			releaseAtDoor(kCharacterCond1, 1);
@@ -2006,7 +2006,7 @@ void LogicManager::HAND_Cond1_SubMakeBed(HAND_PARAMS) {
 			Cond1Call(&LogicManager::CONS_Cond1_MakeBed, 1, 17, 0, 0);
 			break;
 		case 7:
-			if (_globals[kProgressEventCorpseThrown] || _globals[kProgressChapter] != 1) {
+			if (_globals[kGlobalCorpseHasBeenThrown] || _globals[kGlobalChapter] != 1) {
 				if (nearChar(kCharacterCond1, kCharacterCath, 1000) && !whoOutside(kCharacterCath))
 					playDialog(kCharacterCond1, "CON1061", -1, 0);
 
@@ -2060,7 +2060,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 	case 0:
 	case 10:
 		if (msg->action == 0) {
-			if (_globals[kProgressField14] == 29) {
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterPolice) {
 				getCharacter(kCharacterCond1).currentCall--;
 				_engine->getMessageManager()->setMessageHandle(kCharacterCond1, _functionsCond1[getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall]]);
 				fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
@@ -2097,8 +2097,8 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 					Cond1Call(&LogicManager::CONS_Cond1_DoDialogFullVol, "CON1018B", 0, 0, 0);
 				} else {
 					playDialog(0, "LIB014", -1, 0);
-					if (_globals[kProgressEventCorpseMovedFromFloor]) {
-						if (_globals[kProgressJacket] == 1) {
+					if (_globals[kGlobalCorpseMovedFromFloor]) {
+						if (_globals[kGlobalJacket] == 1) {
 							getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 13;
 							Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
 						} else if (getCharacterCurrentParams(kCharacterCond1)[0]) {
@@ -2162,8 +2162,8 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 
 			playDialog(0, "LIB033", -1, 0);
 
-			if (_globals[kProgressEventCorpseMovedFromFloor]) {
-				if (_globals[kProgressJacket] == 1) {
+			if (_globals[kGlobalCorpseMovedFromFloor]) {
+				if (_globals[kGlobalJacket] == 1) {
 					getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 18;
 					Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
 				} else if (getCharacterCurrentParams(kCharacterCond1)[0]) {
@@ -2222,8 +2222,8 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 				Cond1Call(&LogicManager::CONS_Cond1_DoDialogFullVol, "CON1018B", 0, 0, 0);
 			} else {
 				playDialog(0, "LIB014", -1, 0);
-				if (_globals[kProgressEventCorpseMovedFromFloor]) {
-					if (_globals[kProgressJacket] == 1) {
+				if (_globals[kGlobalCorpseMovedFromFloor]) {
+					if (_globals[kGlobalJacket] == 1) {
 						getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 13;
 						Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
 					} else if (getCharacterCurrentParams(kCharacterCond1)[0]) {
@@ -2310,8 +2310,8 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			playDialog(0, "LIB032", -1, 0);
 		}
 
-		if (_globals[kProgressEventCorpseMovedFromFloor]) {
-			if (_globals[kProgressJacket] == 1) {
+		if (_globals[kGlobalCorpseMovedFromFloor]) {
+			if (_globals[kGlobalJacket] == 1) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 27;
 				Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
 			} else if (getCharacterCurrentParams(kCharacterCond1)[0]) {
@@ -2378,7 +2378,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8]) {
 		case 1:
-			if (_globals[kProgressEventCorpseMovedFromFloor]) {
+			if (_globals[kGlobalCorpseMovedFromFloor]) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 4;
 				Cond1Call(&LogicManager::CONS_Cond1_DoCorrOtis, "601Ra", 1, 0, 0);
 			} else if (checkLoc(kCharacterCath, 3)) {
@@ -2400,7 +2400,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 		case 17:
 		case 26:
 			playNIS(kEventMertensCorpseFloor);
-			endGame(0, 1, _globals[kProgressEventFoundCorpse] == 0 ? 56 : 50, true);
+			endGame(0, 1, _globals[kGlobalFoundCorpse] == 0 ? 56 : 50, true);
 			return;
 		case 4:
 			setDoor(1, kCharacterCath, 1, 0, 0);
@@ -2413,7 +2413,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 				break;
 			}
 
-			if (_globals[kProgressEventCorpseThrown] || _globals[kProgressChapter] != 1) {
+			if (_globals[kGlobalCorpseHasBeenThrown] || _globals[kGlobalChapter] != 1) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 6;
 				Cond1Call(&LogicManager::CONS_Cond1_MakeBed, 1, 17, 0, 0);
 			} else {
@@ -2463,8 +2463,8 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 
 			playDialog(0, "LIB033", -1, 0);
 
-			if (_globals[kProgressEventCorpseMovedFromFloor]) {
-				if (_globals[kProgressJacket] == 1) {
+			if (_globals[kGlobalCorpseMovedFromFloor]) {
+				if (_globals[kGlobalJacket] == 1) {
 					getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 18;
 					Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
 				} else if (getCharacterCurrentParams(kCharacterCond1)[0]) {
@@ -2526,7 +2526,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			break;
 		case 15:
 			playNIS(kEventMertensAugustWaitingCompartment);
-			_globals[kProgressEventMertensAugustWaiting] = 1;
+			_globals[kGlobalKnowAboutAugust] = 1;
 			playDialog(0, "LIB015", -1, 0);
 			bumpCathTylerComp();
 
@@ -2536,7 +2536,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			break;
 		case 16:
 			playNIS(kEventMertensKronosInvitationCompartment);
-			_globals[kProgressEventMertensChronosInvitation] = 1;
+			_globals[kGlobalKnowAboutKronos] = 1;
 			playDialog(0, "LIB015", -1, 0);
 			bumpCathTylerComp();
 
@@ -2551,7 +2551,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			break;
 		case 20:
 			playNIS(kEventMertensAugustWaitingCompartment);
-			_globals[kProgressEventMertensAugustWaiting] = 1;
+			_globals[kGlobalKnowAboutAugust] = 1;
 			playDialog(0, "LIB015", -1, 0);
 			bumpCathTylerComp();
 
@@ -2561,7 +2561,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			break;
 		case 21:
 			playNIS(kEventMertensKronosInvitationCompartment);
-			_globals[kProgressEventMertensChronosInvitation] = 1;
+			_globals[kGlobalKnowAboutKronos] = 1;
 			playDialog(0, "LIB015", -1, 0);
 			bumpCathTylerComp();
 
@@ -2570,7 +2570,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 			break;
 		case 23:
-			_globals[kProgressEventMertensAugustWaiting] = 1;
+			_globals[kGlobalKnowAboutAugust] = 1;
 			setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
 
 			getCharacter(kCharacterCond1).currentCall--;
@@ -2578,7 +2578,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 			break;
 		case 24:
-			_globals[kProgressEventMertensChronosInvitation] = 1;
+			_globals[kGlobalKnowAboutKronos] = 1;
 			setDoor(1, kCharacterCath, checkDoor(1), 10, 9);
 
 			getCharacter(kCharacterCond1).currentCall--;
@@ -2594,7 +2594,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			break;
 		case 29:
 			playNIS(kEventMertensAugustWaitingCompartment);
-			_globals[kProgressEventMertensAugustWaiting] = 1;
+			_globals[kGlobalKnowAboutAugust] = 1;
 			playDialog(0, "LIB015", -1, 0);
 			bumpCathTylerComp();
 
@@ -2604,7 +2604,7 @@ void LogicManager::HAND_Cond1_EnterTyler(HAND_PARAMS) {
 			break;
 		case 30:
 			playNIS(kEventMertensKronosInvitationCompartment);
-			_globals[kProgressEventMertensChronosInvitation] = 1;
+			_globals[kGlobalKnowAboutKronos] = 1;
 			playDialog(0, "LIB015", -1, 0);
 			bumpCathTylerComp();
 
@@ -2785,14 +2785,14 @@ void LogicManager::HAND_Cond1_CathBuzzing(HAND_PARAMS) {
 		}
 
 		if (getCharacterCurrentParams(kCharacterCond1)[0] == 1) {
-			if (_globals[kProgressField14]) {
+			if (_globals[kGlobalCharacterSearchingForCath]) {
 				getCharacter(kCharacterCond1).currentCall--;
 				_engine->getMessageManager()->setMessageHandle(kCharacterCond1, _functionsCond1[getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall]]);
 				fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 				break;
 			}
 
-			_globals[kProgressField14] = 3;
+			_globals[kGlobalCharacterSearchingForCath] = kCharacterCond1;
 		}
 
 		getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
@@ -2806,7 +2806,7 @@ void LogicManager::HAND_Cond1_CathBuzzing(HAND_PARAMS) {
 			return;
 		case 2:
 			if (getCharacterCurrentParams(kCharacterCond1)[0] == 1) {
-				if (_globals[kProgressChapter] == 4)
+				if (_globals[kGlobalChapter] == 4)
 					send(kCharacterCond1, kCharacterTatiana, 238790488, 0);
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 3;
 				Cond1Call(&LogicManager::CONS_Cond1_EnterTyler, 3, 0, 0, 0);
@@ -2826,8 +2826,8 @@ void LogicManager::HAND_Cond1_CathBuzzing(HAND_PARAMS) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 6;
 				Cond1Call(&LogicManager::CONS_Cond1_DoCorrOtis, "601Mc", 3, 0, 0);
 			} else {
-				if (_globals[kProgressField14] == 3)
-					_globals[kProgressField14] = 0;
+				if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+					_globals[kGlobalCharacterSearchingForCath] = 0;
 
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 8;
 				Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -2835,8 +2835,8 @@ void LogicManager::HAND_Cond1_CathBuzzing(HAND_PARAMS) {
 
 			break;
 		case 3:
-			if (_globals[kProgressField14] == 3)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 8;
 			Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -2853,8 +2853,8 @@ void LogicManager::HAND_Cond1_CathBuzzing(HAND_PARAMS) {
 			}
 
 			softReleaseAtDoor(kCharacterCond1, 2);
-			if (_globals[kProgressField14] == 3)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 8;
 			Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -2871,8 +2871,8 @@ void LogicManager::HAND_Cond1_CathBuzzing(HAND_PARAMS) {
 			}
 
 			softReleaseAtDoor(kCharacterCond1, 3);
-			if (_globals[kProgressField14] == 3)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 8;
 			Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -3205,12 +3205,12 @@ void LogicManager::CONS_Cond1_DeliverAugustMessage(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DeliverAugustMessage(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_globals[kProgressField14] == 29) {
+		if (_globals[kGlobalCharacterSearchingForCath] == kCharacterPolice) {
 			getCharacter(kCharacterCond1).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterCond1, _functionsCond1[getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall]]);
 			fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 		} else {
-			_globals[kProgressField14] = 3;
+			_globals[kGlobalCharacterSearchingForCath] = kCharacterCond1;
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
 			Cond1Call(&LogicManager::CONS_Cond1_GetUp, 0, 0, 0, 0);
 		}
@@ -3224,11 +3224,11 @@ void LogicManager::HAND_Cond1_DeliverAugustMessage(HAND_PARAMS) {
 			break;
 		case 2:
 			if (!getCharacterParams(kCharacterCond1, 8)[9] ||
-				_globals[kProgressEventMetAugust]) {
+				_globals[kGlobalMetAugust]) {
 				getCharacterParams(kCharacterCond1, 8)[9] = 0;
 
-				if (_globals[kProgressField14] == 3)
-					_globals[kProgressField14] = 0;
+				if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+					_globals[kGlobalCharacterSearchingForCath] = 0;
 
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 3;
 				Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -3249,10 +3249,10 @@ void LogicManager::HAND_Cond1_DeliverAugustMessage(HAND_PARAMS) {
 			fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 			break;
 		case 5:
-			if (_globals[kProgressField14] == 3)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 
-			if (_globals[kProgressEventMertensAugustWaiting])
+			if (_globals[kGlobalKnowAboutAugust])
 				getCharacterParams(kCharacterCond1, 8)[9] = 0;
 
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 6;
@@ -3286,12 +3286,12 @@ void LogicManager::CONS_Cond1_DeliverKronosMessage(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_DeliverKronosMessage(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_globals[kProgressField14] == 29) {
+		if (_globals[kGlobalCharacterSearchingForCath] == kCharacterPolice) {
 			getCharacter(kCharacterCond1).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterCond1, _functionsCond1[getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall]]);
 			fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 		} else {
-			_globals[kProgressField14] = 3;
+			_globals[kGlobalCharacterSearchingForCath] = kCharacterCond1;
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
 			Cond1Call(&LogicManager::CONS_Cond1_GetUp, 0, 0, 0, 0);
 		}
@@ -3308,8 +3308,8 @@ void LogicManager::HAND_Cond1_DeliverKronosMessage(HAND_PARAMS) {
 				getCharacterParams(kCharacterCond1, 8)[5] = 0;
 				getCharacterParams(kCharacterCond1, 8)[6] = 0;
 
-				if (_globals[kProgressField14] == 3)
-					_globals[kProgressField14] = 0;
+				if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+					_globals[kGlobalCharacterSearchingForCath] = 0;
 
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 5;
 				Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -3328,8 +3328,8 @@ void LogicManager::HAND_Cond1_DeliverKronosMessage(HAND_PARAMS) {
 					getCharacterParams(kCharacterCond1, 8)[5] = 0;
 					getCharacterParams(kCharacterCond1, 8)[6] = 0;
 
-					if (_globals[kProgressField14] == 3)
-						_globals[kProgressField14] = 0;
+					if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+						_globals[kGlobalCharacterSearchingForCath] = 0;
 
 					getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 5;
 					Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -3348,8 +3348,8 @@ void LogicManager::HAND_Cond1_DeliverKronosMessage(HAND_PARAMS) {
 			} else {
 				getCharacterParams(kCharacterCond1, 8)[5] = 0;
 				getCharacterParams(kCharacterCond1, 8)[6] = 0;
-				if (_globals[kProgressField14] == 3)
-					_globals[kProgressField14] = 0;
+				if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+					_globals[kGlobalCharacterSearchingForCath] = 0;
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 5;
 				Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
 			}
@@ -3366,10 +3366,10 @@ void LogicManager::HAND_Cond1_DeliverKronosMessage(HAND_PARAMS) {
 			fedEx(kCharacterCond1, kCharacterCond1, 18, 0);
 			break;
 		case 7:
-			if (_globals[kProgressField14] == 3)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 
-			if (!_globals[kProgressEventMertensChronosInvitation])
+			if (!_globals[kGlobalKnowAboutKronos])
 				getCharacterParams(kCharacterCond1, 8)[6] = 1;
 
 			getCharacterParams(kCharacterCond1, 8)[5] = 0;
@@ -3473,7 +3473,7 @@ void LogicManager::CONS_Cond1_MakeBedTyler(CONS_PARAMS) {
 void LogicManager::HAND_Cond1_MakeBedTyler(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (getCharacterParams(kCharacterCond1, 8)[3] && _globals[kProgressField14] != 29) {
+		if (getCharacterParams(kCharacterCond1, 8)[3] && _globals[kGlobalCharacterSearchingForCath] != kCharacterPolice) {
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
 			Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 8200, 0, 0);
 		} else {
@@ -3558,8 +3558,8 @@ void LogicManager::HAND_Cond1_MakeAllBeds(HAND_PARAMS) {
 			Cond1Call(&LogicManager::CONS_Cond1_MakeBedTyler, 0, 0, 0, 0);
 			break;
 		case 8:
-			if (_globals[kProgressField14] == 3)
-				_globals[kProgressField14] = 0;
+			if (_globals[kGlobalCharacterSearchingForCath] == kCharacterCond1)
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 
 			getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 9;
 			Cond1Call(&LogicManager::CONS_Cond1_DoWalk, 3, 2000, 0, 0);
@@ -3700,7 +3700,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 		}
 
 		if (getCharacterParams(kCharacterCond1, 8)[16] ||
-			_globals[kProgressEventFoundCorpse] ||
+			_globals[kGlobalFoundCorpse] ||
 			_doneNIS[kEventMertensAskTylerCompartment] ||
 			_doneNIS[kEventMertensAskTylerCompartmentD]) {
 			getCharacter(kCharacterCond1).inventoryItem = kItemNone;
@@ -3775,7 +3775,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 			break;
 		}
 
-		if (_globals[kProgressField14] != 29) {
+		if (_globals[kGlobalCharacterSearchingForCath] != kCharacterPolice) {
 			if (getCharacterParams(kCharacterCond1, 8)[13]) {
 				getCharacter(kCharacterCond1).inventoryItem = kItemNone;
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 10;
@@ -3844,7 +3844,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 
 		if (getCharacterCurrentParams(kCharacterCond1)[0] || !getCharacterParams(kCharacterCond1, 8)[4]) {
 			if (getCharacterParams(kCharacterCond1, 8)[0] &&
-				!whoRunningDialog(kCharacterCond1) && _globals[kProgressField18] != 4) {
+				!whoRunningDialog(kCharacterCond1) && _globals[kGlobalPhaseOfTheNight] != 4) {
 				playDialog(kCharacterCond1, "CON1505", -1, 0);
 			}
 
@@ -3881,7 +3881,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 			if (checkCathDir(kCarGreenSleeping, 23) && getCharacterParams(kCharacterCond1, 8)[6] && !_doneNIS[kEventKronosConversation]) {
 				getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 1;
 				Cond1Call(&LogicManager::CONS_Cond1_SaveGame, 2, kEventMertensKronosInvitation, 0, 0);
-			} else if (!checkCathDir(kCarGreenSleeping, 23) || _globals[kProgressEventMertensChronosInvitation] || _doneNIS[kEventMertensLastCar] || _doneNIS[kEventMertensLastCarOriginalJacket]) {
+			} else if (!checkCathDir(kCarGreenSleeping, 23) || _globals[kGlobalKnowAboutKronos] || _doneNIS[kEventMertensLastCar] || _doneNIS[kEventMertensLastCarOriginalJacket]) {
 				if ((!checkCathDir(kCarGreenSleeping, 1) && !checkCathDir(kCarGreenSleeping, 23)) || getCharacterParams(kCharacterCond1, 8)[0] || getCharacterParams(kCharacterCond1, 8)[16]) {
 					if (cathInCorridor(kCarGreenSleeping) && getCharacter(kCharacterCond1).characterPosition.position < getCharacter(kCharacterCath).characterPosition.position && (_globals[1] == 1 || getCharacterParams(kCharacterCond1, 8)[6])) {
 						getCharacter(kCharacterCond1).inventoryItem = kItemNone;
@@ -3909,7 +3909,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 		switch (getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8]) {
 		case 1:
 			playNIS(kEventMertensKronosInvitation);
-			_globals[kProgressEventMertensChronosInvitation] = 1;
+			_globals[kGlobalKnowAboutKronos] = 1;
 			getCharacterParams(kCharacterCond1, 8)[5] = 0;
 			getCharacterParams(kCharacterCond1, 8)[6] = 0;
 			startSeqOtis(kCharacterCond1, "601A");
@@ -3941,7 +3941,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 
 			break;
 		case 3:
-			playNIS((kEventMertensLastCarOriginalJacket - (_globals[kProgressJacket] == 2)));
+			playNIS((kEventMertensLastCarOriginalJacket - (_globals[kGlobalJacket] == 2)));
 			startSeqOtis(kCharacterCond1, "601A");
 			bumpCath(kCarGreenSleeping, 6, 255);
 			takeItem(kItem7);
@@ -3991,7 +3991,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 
 		// fall through
 		case 9:
-			if (_globals[kProgressField14] != 29) {
+			if (_globals[kGlobalCharacterSearchingForCath] != kCharacterPolice) {
 				if (getCharacterParams(kCharacterCond1, 8)[13]) {
 					getCharacter(kCharacterCond1).inventoryItem = kItemNone;
 					getCharacter(kCharacterCond1).callbacks[getCharacter(kCharacterCond1).currentCall + 8] = 10;
@@ -4060,7 +4060,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 
 			if (getCharacterCurrentParams(kCharacterCond1)[0] || !getCharacterParams(kCharacterCond1, 8)[4]) {
 				if (getCharacterParams(kCharacterCond1, 8)[0] &&
-					!whoRunningDialog(kCharacterCond1) && _globals[kProgressField18] != 4) {
+					!whoRunningDialog(kCharacterCond1) && _globals[kGlobalPhaseOfTheNight] != 4) {
 					playDialog(kCharacterCond1, "CON1505", -1, 0);
 				}
 
@@ -4149,7 +4149,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 		case 18:
 			if (getCharacterCurrentParams(kCharacterCond1)[0] || !getCharacterParams(kCharacterCond1, 8)[4]) {
 				if (getCharacterParams(kCharacterCond1, 8)[0] &&
-					!whoRunningDialog(kCharacterCond1) && _globals[kProgressField18] != 4) {
+					!whoRunningDialog(kCharacterCond1) && _globals[kGlobalPhaseOfTheNight] != 4) {
 					playDialog(kCharacterCond1, "CON1505", -1, 0);
 				}
 			} else {
@@ -4162,7 +4162,7 @@ void LogicManager::HAND_Cond1_Sitting(HAND_PARAMS) {
 		case 19:
 			getCharacterCurrentParams(kCharacterCond1)[0] = 1;
 			if (getCharacterParams(kCharacterCond1, 8)[0] &&
-				!whoRunningDialog(kCharacterCond1) && _globals[kProgressField18] != 4) {
+				!whoRunningDialog(kCharacterCond1) && _globals[kGlobalPhaseOfTheNight] != 4) {
 				playDialog(kCharacterCond1, "CON1505", -1, 0);
 			}
 

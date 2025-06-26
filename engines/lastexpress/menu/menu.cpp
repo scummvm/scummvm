@@ -340,8 +340,8 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		}
 
 		int whichCD = 1;
-		if (_engine->getLogicManager()->_globals[kProgressChapter] > 1)
-			whichCD = (_engine->getLogicManager()->_globals[kProgressChapter] > 3) + 2;
+		if (_engine->getLogicManager()->_globals[kGlobalChapter] > 1)
+			whichCD = (_engine->getLogicManager()->_globals[kGlobalChapter] > 3) + 2;
 
 		if (_engine->isDemo()) {
 			if (!_gameInNotStartedInFile) {

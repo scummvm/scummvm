@@ -196,7 +196,7 @@ void LogicManager::nodeStepTimer(Event *event) {
 	_actionJustPerformed = false;
 
 	if (_engine->_gracePeriodTimer && !_engine->getGraphicsManager()->_shouldDrawEggOrHourglass) {
-		if ((_globals[kProgressJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
+		if ((_globals[kGlobalJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
 			_navigationItemBrightness = 0;
 			_navigationItemBrighnessStep = 1;
 		}
@@ -344,7 +344,7 @@ void LogicManager::getNewMnum() {
 	bool found = false;
 
 	if (_activeItem != kItemWhistle ||
-		_globals[kProgressIsEggOpen] ||
+		_globals[kGlobalEggIsOpen] ||
 		checkCathDir(kCarGreenSleeping, 59) ||
 		checkCathDir(kCarGreenSleeping, 76) ||
 		_inventoryFlag1 ||
@@ -355,7 +355,7 @@ void LogicManager::getNewMnum() {
 		if (_activeItem != kItemMatch ||
 			(!cathInCorridor(kCarGreenSleeping) &&
 			!cathInCorridor(kCarRedSleeping)) ||
-			_globals[kProgressJacket] != 2 ||
+			_globals[kGlobalJacket] != 2 ||
 			_inventoryFlag1 ||
 			_inventoryFlag2 ||
 			_isEggHighlighted ||
@@ -454,7 +454,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 
 	if (!_engine->getMenu()->isShowingMenu()) {
 		if (_activeItem != kItemWhistle ||
-			_globals[kProgressIsEggOpen] ||
+			_globals[kGlobalEggIsOpen] ||
 			checkCathDir(kCarGreenSleeping, 59) ||
 			checkCathDir(kCarGreenSleeping, 76) ||
 			_inventoryFlag1 ||
@@ -465,7 +465,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 			if (_activeItem != kItemMatch ||
 				(!cathInCorridor(kCarGreenSleeping) &&
 				!cathInCorridor(kCarRedSleeping)) ||
-				_globals[kProgressJacket] != 2 ||
+				_globals[kGlobalJacket] != 2 ||
 				_inventoryFlag1 ||
 				_inventoryFlag2 ||
 				_isEggHighlighted ||
@@ -547,7 +547,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 							}
 
 							if (!_engine->isDemo() && actionLink.action == 43 &&
-								actionLink.param1 == _globals[kProgressChapter] &&
+								actionLink.param1 == _globals[kGlobalChapter] &&
 								(event->flags & kMouseFlagRightButton) != 0) {
 								doF4();
 								return;
@@ -628,10 +628,10 @@ void LogicManager::nodeStepMouse(Event *event) {
 void LogicManager::doF4() {
 	_engine->getSoundManager()->killAllSlots();
 
-	switch (_globals[kProgressChapter]) {
+	switch (_globals[kGlobalChapter]) {
 	case 1:
 		giveCathItem(kItemParchemin);
-		giveCathItem(kProgressJacket);
+		giveCathItem(kItemMatchBox);
 		forceJump(kCharacterMaster, &LogicManager::CONS_Master_StartPart2);
 		break;
 	case 2:
@@ -747,7 +747,7 @@ void LogicManager::checkInventory(int32 flags) {
 				return;
 			}
 
-			_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
+			_engine->getGraphicsManager()->drawItemDim(_globals[kGlobalCathIcon], 0, 0, 1);
 
 			if (_engine->getGraphicsManager()->acquireSurface()) {
 				_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 0, 44, 32, 40 * _inventoryVerticalSlot);
@@ -773,7 +773,7 @@ void LogicManager::checkInventory(int32 flags) {
 				return;
 
 			if (!_nodeReturn2) {
-				if (!_doneNIS[kEventKronosBringFirebird] && !_globals[kProgressIsEggOpen]) {
+				if (!_doneNIS[kEventKronosBringFirebird] && !_globals[kGlobalEggIsOpen]) {
 					_closeUp = 0;
 					if (_blockedViews[100 * _trainData[_nodeReturn].nodePosition.car + _trainData[_nodeReturn].cathDir]) {
 						bumpCathNode(getSmartBumpNode(_nodeReturn));
@@ -786,7 +786,7 @@ void LogicManager::checkInventory(int32 flags) {
 			}
 		} else {
 			if (_inventoryFlag1) {
-				_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
+				_engine->getGraphicsManager()->drawItemDim(_globals[kGlobalCathIcon], 0, 0, 1);
 				_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 				_inventoryFlag1 = false;
 			}
@@ -827,7 +827,7 @@ void LogicManager::checkInventory(int32 flags) {
 		selectedItemIdx = 0;
 		if (!_inventoryFlag2) {
 			if (_inventoryFlag1) {
-				_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
+				_engine->getGraphicsManager()->drawItemDim(_globals[kGlobalCathIcon], 0, 0, 1);
 				_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 				_inventoryFlag1 = false;
 			}
@@ -894,7 +894,7 @@ void LogicManager::checkInventory(int32 flags) {
 			}
 		}
 
-		_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
+		_engine->getGraphicsManager()->drawItemDim(_globals[kGlobalCathIcon], 0, 0, 1);
 		if (_engine->getGraphicsManager()->acquireSurface()) {
 			_engine->getGraphicsManager()->clear(_engine->getGraphicsManager()->_screenSurface, 0, 44, 32, 40 * _inventoryVerticalSlot);
 			_engine->getGraphicsManager()->unlockSurface();
@@ -958,7 +958,7 @@ void LogicManager::checkInventory(int32 flags) {
 			sceneIdx = _nodeReturn2;
 			_nodeReturn2 = 0;
 		} else {
-			if (_doneNIS[kEventKronosBringFirebird] || _globals[kProgressIsEggOpen]) {
+			if (_doneNIS[kEventKronosBringFirebird] || _globals[kGlobalEggIsOpen]) {
 				_inventoryFlag2 = false;
 				return;
 			}
@@ -975,9 +975,9 @@ void LogicManager::checkInventory(int32 flags) {
 		return;
 	}
 
-	if (_globals[kProgressField84] ||
+	if (_globals[kGlobalCathInSpecialState] ||
 		getCharacter(kCharacterCath).characterPosition.location == 2 ||
-		_globals[kProgressField18] == 4 ||
+		_globals[kGlobalPhaseOfTheNight] == 4 ||
 		(_activeItem && !_items[_activeItem].inPocket && !_closeUp)) {
 		return;
 	}
@@ -985,7 +985,7 @@ void LogicManager::checkInventory(int32 flags) {
 	if ((flags & kMouseFlagLeftDown) != 0) {
 		_inventoryFlag1 = false;
 		_inventoryFlag2 = true;
-		_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait] + 1, 0, 0);
+		_engine->getGraphicsManager()->drawItem(_globals[kGlobalCathIcon] + 1, 0, 0);
 		_inventoryVerticalSlot = 0;
 
 		for (int i = 1; i < 32; i++) {
@@ -1000,7 +1000,7 @@ void LogicManager::checkInventory(int32 flags) {
 	}
 
 	if (!_inventoryFlag1 && !_inventoryFlag2) {
-		_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait], 0, 0);
+		_engine->getGraphicsManager()->drawItem(_globals[kGlobalCathIcon], 0, 0);
 		_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 
 		_inventoryFlag1 = true;
@@ -1013,7 +1013,7 @@ void LogicManager::checkInventory(int32 flags) {
 				_engine->getGraphicsManager()->unlockSurface();
 			}
 
-			_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait], 0, 0);
+			_engine->getGraphicsManager()->drawItem(_globals[kGlobalCathIcon], 0, 0);
 			_engine->getGraphicsManager()->burstBox(0, 0, 32, 8 * (5 * _inventoryVerticalSlot + 5));
 			_inventoryVerticalSlot = 0;
 
@@ -1033,7 +1033,7 @@ void LogicManager::checkInventory(int32 flags) {
 					sceneIdx = _nodeReturn2;
 					_nodeReturn2 = 0;
 					bumpCathNode(sceneIdx);
-				} else if (!_doneNIS[kEventKronosBringFirebird] && !_globals[kProgressIsEggOpen]) {
+				} else if (!_doneNIS[kEventKronosBringFirebird] && !_globals[kGlobalEggIsOpen]) {
 					_closeUp = 0;
 					if (_blockedViews[100 * _trainData[_nodeReturn].nodePosition.car + _trainData[_nodeReturn].cathDir]) {
 						sceneIdx = getSmartBumpNode(_nodeReturn);
@@ -1044,7 +1044,7 @@ void LogicManager::checkInventory(int32 flags) {
 				}
 			}
 		} else {
-			_engine->getGraphicsManager()->drawItem(_globals[kProgressPortrait], 0, 0);
+			_engine->getGraphicsManager()->drawItem(_globals[kGlobalCathIcon], 0, 0);
 			_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 		}
 

@@ -353,8 +353,8 @@ void LastExpressEngine::initGameData() {
 	getLogicManager()->_items[kItemArticle].closeUp = 36;
 	getLogicManager()->_items[kItemTelegram].haveIt = 1;
 	getLogicManager()->_items[kItemArticle].haveIt = 1;
-	getLogicManager()->_globals[kProgressPortrait] = isDemo() ? 34: 32;
-	getLogicManager()->_globals[kProgressChapter] = isDemo() ? 3 : 1;
+	getLogicManager()->_globals[kGlobalCathIcon] = isDemo() ? 34: 32;
+	getLogicManager()->_globals[kGlobalChapter] = isDemo() ? 3 : 1;
 	getLogicManager()->_lastSavegameSessionTicks = 0;
 	getLogicManager()->_realTime = 0;
 	getLogicManager()->_closeUp = 0;

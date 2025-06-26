@@ -583,7 +583,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			if (getCharacterCurrentParams(kCharacterFrancois)[2] == 540) {
 				getCharacterCurrentParams(kCharacterFrancois)[1] = 4;
 
-				if (_globals[kProgressChapter] != 1)
+				if (_globals[kGlobalChapter] != 1)
 					getCharacterCurrentParams(kCharacterFrancois)[1] = 3;
 
 				getCharacterCurrentParams(kCharacterFrancois)[2] = 9460;
@@ -598,7 +598,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 		}
 
 		if (!nearX(kCharacterFrancois, 2000, 500) || getCharacter(kCharacterFrancois).direction != 2) {
-			if (_globals[kProgressChapter] == 1) {
+			if (_globals[kGlobalChapter] == 1) {
 				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
 					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
 					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
@@ -637,7 +637,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] = 3;
 			FrancoisCall(&LogicManager::CONS_Francois_DoSeqOtis, "605A", 0, 0, 0);
 		} else {
-			if (_globals[kProgressChapter] == 1) {
+			if (_globals[kGlobalChapter] == 1) {
 				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
 					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
 					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
@@ -675,7 +675,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 		FrancoisCall(&LogicManager::CONS_Francois_SaveGame, 2, kEventFrancoisWhistle, 0, 0);
 		break;
 	case 5:
-		if (_globals[kProgressJacket] == 2 && !_doneNIS[kEventFrancoisWhistle] && !_doneNIS[kEventFrancoisWhistleD] && !_doneNIS[kEventFrancoisWhistleNight] && !_doneNIS[kEventFrancoisWhistleNightD]) {
+		if (_globals[kGlobalJacket] == 2 && !_doneNIS[kEventFrancoisWhistle] && !_doneNIS[kEventFrancoisWhistleD] && !_doneNIS[kEventFrancoisWhistleNight] && !_doneNIS[kEventFrancoisWhistleNightD]) {
 			getCharacter(kCharacterFrancois).inventoryItem = 0x80;
 		}
 
@@ -706,7 +706,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			getCharacter(kCharacterFrancois).characterPosition.position = 2088;
 			walk(kCharacterFrancois, getCharacterCurrentParams(kCharacterFrancois)[1], getCharacterCurrentParams(kCharacterFrancois)[2]);
 
-			if (_globals[kProgressChapter] == 1) {
+			if (_globals[kGlobalChapter] == 1) {
 				if (checkLoc(kCharacterFrancois, kCarRedSleeping) &&
 					(whoOnScreen(kCharacterFrancois) || getCharacterCurrentParams(kCharacterFrancois)[0] < _gameTime || getCharacterCurrentParams(kCharacterFrancois)[3]) &&
 					!getCharacterCurrentParams(kCharacterFrancois)[4] && getCharacter(kCharacterFrancois).characterPosition.position < getCharacter(kCharacterMadame).characterPosition.position) {
@@ -741,7 +741,7 @@ void LogicManager::HAND_Francois_Rampage(HAND_PARAMS) {
 			fedEx(kCharacterFrancois, kCharacterFrancois, 18, 0);
 			break;
 		case 6:
-			if (_globals[kProgressJacket] == 2) {
+			if (_globals[kGlobalJacket] == 2) {
 				if (!isNight()) {
 					if (getCharacter(kCharacterFrancois).characterPosition.position <= getCharacter(kCharacterCath).characterPosition.position) {
 						playNIS(kEventFrancoisWhistleD);
@@ -1586,7 +1586,7 @@ void LogicManager::HAND_Francois_WithMama(HAND_PARAMS) {
 			// fall through
 		case 6:
 			if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 6) {
-				_globals[kProgressField9C] = 1;
+				_globals[kGlobalFrancoisSawABlackBeetle] = 1;
 			}
 
 			if (_gameTime > 1782000 && !getCharacterCurrentParams(kCharacterFrancois)[5]) {
@@ -1983,7 +1983,7 @@ void LogicManager::HAND_Francois_InPart3(HAND_PARAMS) {
 			break;
 		case 12:
 			if (getCharacter(kCharacterFrancois).callbacks[getCharacter(kCharacterFrancois).currentCall + 8] == 12) {
-				_globals[kProgressField9C] = 1;
+				_globals[kGlobalFrancoisSawABlackBeetle] = 1;
 			}
 
 			if (_gameTime > 2040300 && !getCharacterCurrentParams(kCharacterFrancois)[12]) {

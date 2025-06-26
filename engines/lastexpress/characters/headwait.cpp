@@ -300,7 +300,7 @@ void LogicManager::HAND_HeadWait_RebeccaHereWeAre(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterHeadWait).callbacks[getCharacter(kCharacterHeadWait).currentCall + 8]) {
 		case 1:
-			switch (_globals[kProgressChapter]) {
+			switch (_globals[kGlobalChapter]) {
 			case 1:
 				playDialog(kCharacterHeadWait, "REB1198", -1, 30);
 				break;

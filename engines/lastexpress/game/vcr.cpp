@@ -286,10 +286,10 @@ void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
 		} else {
 			chosenTime = 0;
 
-			if (_engine->getLogicManager()->_globals[kProgressChapter] <= 1) {
+			if (_engine->getLogicManager()->_globals[kGlobalChapter] <= 1) {
 				cdNum = 1;
 			} else {
-				cdNum = (_engine->getLogicManager()->_globals[kProgressChapter] > 3) + 2;
+				cdNum = (_engine->getLogicManager()->_globals[kGlobalChapter] > 3) + 2;
 			}
 
 			if (_engine->getArchiveManager()->isCDAvailable(cdNum, path, sizeof(path))) {
@@ -357,11 +357,11 @@ void VCR::init(bool doSaveGameFlag, int saveType, int32 time) {
 	if (!_engine->_gracePeriodTimer)
 		_engine->_gracePeriodIndex = 0;
 
-	if (!_engine->getLogicManager()->_globals[kProgressChapter])
-		_engine->getLogicManager()->_globals[kProgressChapter] = 1;
+	if (!_engine->getLogicManager()->_globals[kGlobalChapter])
+		_engine->getLogicManager()->_globals[kGlobalChapter] = 1;
 
 	_engine->getLogicManager()->_gameTime = _engine->_savePointHeaders[_engine->_currentSavePoint].time;
-	_engine->getLogicManager()->_globals[kProgressChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].partNumber;
+	_engine->getLogicManager()->_globals[kGlobalChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].partNumber;
 
 	if (_engine->_gameTimeOfLastSavePointInFile >= 1061100) {
 		_engine->getClock()->startClock(_engine->getLogicManager()->_gameTime);
@@ -675,8 +675,8 @@ void VCR::updateCurGame(int32 fromTime, int32 toTime, bool searchEntry) {
 	}
 
 	if (_engine->_currentSavePoint == _currentSavePointInVCR &&
-		_engine->_savePointHeaders[newMenuIdx].partNumber != _engine->getLogicManager()->_globals[kProgressChapter]) {
-		_engine->getLogicManager()->_globals[kProgressChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].partNumber;
+		_engine->_savePointHeaders[newMenuIdx].partNumber != _engine->getLogicManager()->_globals[kGlobalChapter]) {
+		_engine->getLogicManager()->_globals[kGlobalChapter] = _engine->_savePointHeaders[_engine->_currentSavePoint].partNumber;
 	}
 }
 

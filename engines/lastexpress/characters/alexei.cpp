@@ -838,7 +838,7 @@ void LogicManager::HAND_Alexei_AtDinner(HAND_PARAMS) {
 			releaseView(kCharacterAlexei, kCarRestaurant, 63);
 			CONS_Alexei_ReturnComp(0, 0, 0, 0);
 		} else if (getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall + 8] == 2) {
-			if (_globals[kProgressJacket] == 2)
+			if (_globals[kGlobalJacket] == 2)
 				playNIS(kEventAlexeiDiner);
 			else
 				playNIS(kEventAlexeiDinerOriginalJacket);
@@ -1468,7 +1468,7 @@ void LogicManager::HAND_Alexei_AtBreakfast(HAND_PARAMS) {
 			startCycOtis(kCharacterAlexei, "018E");
 
 			if (inDiningRoom(kCharacterCath))
-				_globals[kProgressField68] = 1;
+				_globals[kGlobalOverheardTatianaAndAlexeiAtBreakfast] = 1;
 
 			getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall + 8] = 2;
 			AlexeiCall(&LogicManager::CONS_Alexei_DoDialog, "TAT2116", 0, 0, 0);

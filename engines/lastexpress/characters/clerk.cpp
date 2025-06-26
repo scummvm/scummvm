@@ -266,8 +266,8 @@ void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
 				break;
 			}
 
-			_globals[kProgressFieldDC] = 1;
-			_globals[kProgressFieldE0] = 1;
+			_globals[kGlobalMetAlouan] = 1;
+			_globals[kGlobalMetFatima] = 1;
 		} else {
 			if (getCharacterCurrentParams(kCharacterClerk)[5] && getCharacterCurrentParams(kCharacterClerk)[6]) {
 				getCharacterParams(kCharacterClerk, 8)[5]++;
@@ -296,7 +296,7 @@ void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
 						getCharacterCurrentParams(kCharacterClerk)[7] = 1;
 					}
 
-					_globals[kProgressFieldE0] = 1;
+					_globals[kGlobalMetFatima] = 1;
 
 				} else {
 					if (getCharacterCurrentParams(kCharacterClerk)[5]) {
@@ -319,7 +319,7 @@ void LogicManager::HAND_Clerk_DoHaremKnock(HAND_PARAMS) {
 								getCharacterCurrentParams(kCharacterClerk)[7] = 1;
 							}
 
-							_globals[kProgressFieldDC] = 1;
+							_globals[kGlobalMetAlouan] = 1;
 						} else {
 							if (getCharacterCurrentParams(kCharacterClerk)[6]) {
 								getCharacterParams(kCharacterClerk, 8)[3]++;
@@ -374,7 +374,7 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 				if (!getCharacterCurrentParams(kCharacterClerk)[4]) {
 					getCharacterCurrentParams(kCharacterClerk)[3]--;
 
-					if (!getCharacterCurrentParams(kCharacterClerk)[3] && _globals[kProgressJacket] == 2) {
+					if (!getCharacterCurrentParams(kCharacterClerk)[3] && _globals[kGlobalJacket] == 2) {
 						if (isNight()) {
 							playNIS(kEventCathSmokeNight);
 						} else {
@@ -490,7 +490,7 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 		break;
 	case 12:
 		getCharacterCurrentParams(kCharacterClerk)[2] = 1;
-		if (_globals[kProgressChapter] < 5) {
+		if (_globals[kGlobalChapter] < 5) {
 			setDoor(5, kCharacterClerk, 3, 10, 9);
 			setDoor(6, kCharacterClerk, 3, 10, 9);
 			setDoor(7, kCharacterClerk, 3, 10, 9);
@@ -518,7 +518,7 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 			switch (getCharacter(kCharacterCath).characterPosition.car) {
 			case 1:
 			case 6:
-				if (_globals[kProgressIsDayTime]) {
+				if (_globals[kGlobalIsDayTime]) {
 					startCycOtis(kCharacterClerk, "B1WNM");
 				} else if (isNight()) {
 					startCycOtis(kCharacterClerk, "B1WNN");
@@ -529,7 +529,7 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 				break;
 			case 3:
 			case 4:
-				if (_globals[kProgressIsDayTime]) {
+				if (_globals[kGlobalIsDayTime]) {
 					startCycOtis(kCharacterClerk, "S1WNM");
 				} else if (isNight()) {
 					startCycOtis(kCharacterClerk, "S1WNN");
@@ -539,7 +539,7 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 
 				break;
 			case 5:
-				if (_globals[kProgressIsDayTime]) {
+				if (_globals[kGlobalIsDayTime]) {
 					startCycOtis(kCharacterClerk, "RCWNM");
 				} else if (isNight()) {
 					startCycOtis(kCharacterClerk, "RCWNN");
@@ -562,7 +562,7 @@ void LogicManager::HAND_Clerk_Processing(HAND_PARAMS) {
 			getCharacterCurrentParams(kCharacterClerk)[4] = 0;
 		}
 
-		if (_globals[kProgressJacket] != 1) {
+		if (_globals[kGlobalJacket] != 1) {
 			if (getCharacterCurrentParams(kCharacterClerk)[7] && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[9]) && !inComp(kCharacterCath, getCharacterCurrentParams(kCharacterClerk)[8], getCharacterCurrentParams(kCharacterClerk)[10])) {
 				if (dialogRunning((char *)&getCharacterCurrentParams(kCharacterClerk)[11]))
 					fadeDialog((char *)&getCharacterCurrentParams(kCharacterClerk)[11]);

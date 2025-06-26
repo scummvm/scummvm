@@ -217,7 +217,7 @@ void LogicManager::fadeToWhite() {
 }
 
 void LogicManager::restoreIcons() {
-	_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
+	_engine->getGraphicsManager()->drawItemDim(_globals[kGlobalCathIcon], 0, 0, 1);
 	_engine->getGraphicsManager()->drawItemDim(_engine->_currentGameFileColorId + 39, 608, 448, 1);
 
 	if (_activeItem) {
@@ -379,8 +379,8 @@ bool LogicManager::isSingleFemale(int character) {
 }
 
 bool LogicManager::isNight() {
-	int chapter = _globals[kProgressChapter];
-	return chapter == 1 || chapter == 4 || (chapter == 5 && !_globals[kProgressIsDayTime]);
+	int chapter = _globals[kGlobalChapter];
+	return chapter == 1 || chapter == 4 || (chapter == 5 && !_globals[kGlobalIsDayTime]);
 }
 
 bool LogicManager::whoOutside(int character) {
@@ -2078,9 +2078,9 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 			return;
 		}
 
-		if (receivingCharacter == kCharacterCath && _globals[kProgressJacket] == 2 && rnd(2) != 0) {
+		if (receivingCharacter == kCharacterCath && _globals[kGlobalJacket] == 2 && rnd(2) != 0) {
 			if (isNight()) {	
-				if (_globals[kProgressField18] != 2) {
+				if (_globals[kGlobalPhaseOfTheNight] != 2) {
 					playDialog(0, "CON1110E", volume, 0);
 				} else {
 					playDialog(0, "CON1110F", volume, 0);
@@ -2106,7 +2106,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 	case kCharacterCond2:
 		if (isFemale(receivingCharacter)) {
 			playDialog(0, "JAC1111D", volume, 0);
-		} else if (!receivingCharacter && _globals[kProgressJacket] == 2 && rnd(2)) {
+		} else if (!receivingCharacter && _globals[kGlobalJacket] == 2 && rnd(2)) {
 			playDialog(0, "JAC1113B", volume, 0);
 		} else {
 			switch (rnd(4)) {
@@ -2283,7 +2283,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		playDialog(0, "MRB1104", volume, 0);
 
 		if (volume > 2)
-			_globals[kProgressEventMetBoutarel] = 1;
+			_globals[kGlobalMetMonsieur] = 1;
 
 		return;
 	case kCharacterRebecca:
@@ -2335,7 +2335,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		playDialog(0, "HAR1002", volume, 0);
 
 		if (volume > 2)
-			_globals[kProgressEventMetYasmin] = 1;
+			_globals[kGlobalMetYasmin] = 1;
 
 		return;
 	case kCharacterHadija:
@@ -2349,7 +2349,7 @@ void LogicManager::playChrExcuseMe(int character, int receivingCharacter, int vo
 		}
 
 		if (volume > 2)
-			_globals[kProgressEventMetHadija] = 1;
+			_globals[kGlobalMetHadija] = 1;
 
 		return;
 	case kCharacterAlouan:
@@ -2623,7 +2623,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 					playDialog(kCharacterCond2, "Jac1500", 16, 0);
 					break;
 				}
-			} else if (_globals[kProgressField40] || (_gameTime > 2101500 && _gameTime < 2133000)) {
+			} else if (_globals[kGlobalConcertIsHappening] || (_gameTime > 2101500 && _gameTime < 2133000)) {
 				playDialog(kCharacterCond2, "Jac1507A", 16, 0);
 			} else {
 				playDialog(kCharacterCond2, "Jac1507", 16, 0);
@@ -2644,7 +2644,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 					break;
 				}
 			} else {
-				if (_globals[kProgressChapter] < 3) {
+				if (_globals[kGlobalChapter] < 3) {
 					playDialog(kCharacterCond2, "Jac1506", 16, 0);
 					_lastTickCondYellingCompC = _realTime;
 					return;
@@ -2697,7 +2697,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 				}
 			}
 
-			if (_globals[kProgressField40] || (_gameTime > 2115000 && _gameTime < 2133000)) {
+			if (_globals[kGlobalConcertIsHappening] || (_gameTime > 2115000 && _gameTime < 2133000)) {
 				playDialog(kCharacterCond2, "Jac1504B", 16, 0);
 				_lastTickCondYellingCompE = _realTime;
 				return;
@@ -2742,7 +2742,7 @@ void LogicManager::playCondYelling(int character, int situation) {
 					break;
 				}
 			} else {
-				if (_globals[kProgressField40] || (_gameTime > 2083500 && _gameTime < 2133000)) {
+				if (_globals[kGlobalConcertIsHappening] || (_gameTime > 2083500 && _gameTime < 2133000)) {
 					playDialog(kCharacterCond2, "Jac1503B", 16, 0);
 					_lastTickCondYellingCompF = _realTime;
 					return;

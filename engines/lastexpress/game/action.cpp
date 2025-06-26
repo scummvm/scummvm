@@ -71,7 +71,7 @@ int LogicManager::findCursor(Link *link) {
 	case kActionTakeItem:
 		if (link->param1 >= 32) {
 			result = kCursorNormal;
-		} else if ((!_activeItem || _items[_activeItem].inPocket) && (link->param1 != 21 || _globals[kProgressEventCorpseMovedFromFloor] == 1)) {
+		} else if ((!_activeItem || _items[_activeItem].inPocket) && (link->param1 != 21 || _globals[kGlobalCorpseMovedFromFloor] == 1)) {
 			result = kCursorHand;
 		} else {
 			result = kCursorNormal;
@@ -81,7 +81,7 @@ int LogicManager::findCursor(Link *link) {
 	case kActionDropItem:
 		if (link->param1 >= 32) {
 			result = kCursorNormal;
-		} else if (link->param1 != _activeItem || (link->param1 == 20 && !_globals[kProgressIsTrainRunning] && link->param2 == 4) || (link->param1 == 18 && link->param2 == 1 && _globals[kProgressField5C])) {
+		} else if (link->param1 != _activeItem || (link->param1 == 20 && !_globals[kGlobalTrainIsRunning] && link->param2 == 4) || (link->param1 == 18 && link->param2 == 1 && _globals[kGlobalTatianaFoundOutEggStolen])) {
 			result = kCursorNormal;
 		} else {
 			result = _items[_activeItem].mnum;
@@ -117,9 +117,9 @@ int LogicManager::findCursor(Link *link) {
 
 		break;
 	case kActionLeanOutWindow:
-		if (_globals[kProgressJacket] == 2) {
+		if (_globals[kGlobalJacket] == 2) {
 			if ((_doneNIS[kEventCathLookOutsideWindowDay] || _doneNIS[kEventCathLookOutsideWindowNight] || getModel(1) == 1) &&
-				_globals[kProgressIsTrainRunning] &&
+				_globals[kGlobalTrainIsRunning] &&
 				(link->param1 != 45 || (!inComp(kCharacterRebecca, kCarRedSleeping, 4840) && _doors[kObjectOutsideBetweenCompartments].status == 2)) &&
 				_activeItem != kItemBriefcase && _activeItem != kItemFirebird) {
 				result = kCursorForward;
@@ -132,11 +132,11 @@ int LogicManager::findCursor(Link *link) {
 
 		break;
 	case kActionAlmostFall:
-		result = _globals[kProgressFieldC8] == 0 ? kCursorNormal : kCursorLeft;
+		result = _globals[kGlobalAlmostFallActionIsAvailable] == 0 ? kCursorNormal : kCursorLeft;
 		break;
 	case kActionClimbLadder:
-		if (_globals[kProgressIsTrainRunning] && _activeItem != kItemBriefcase && _activeItem != kItemFirebird &&
-			(_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3 || _globals[kProgressChapter] == 5)) {
+		if (_globals[kGlobalTrainIsRunning] && _activeItem != kItemBriefcase && _activeItem != kItemFirebird &&
+			(_globals[kGlobalChapter] == 2 || _globals[kGlobalChapter] == 3 || _globals[kGlobalChapter] == 5)) {
 			result = kCursorUp;
 		} else {
 			result = kCursorNormal;
@@ -189,13 +189,13 @@ int LogicManager::findCursor(Link *link) {
 
 		break;
 	case kActionOpenBed:
-		result = _globals[kProgressChapter] == 1 ? kCursorHand : kCursorNormal;
+		result = _globals[kGlobalChapter] == 1 ? kCursorHand : kCursorNormal;
 		break;
 	case kActionHintDialog:
 		result = getHintDialog(link->param1) == 0 ? kCursorNormal : kCursorHandPointer;
 		break;
 	case kActionBed:
-		if (_globals[kProgressField18] == 2 && !_globals[kProgressFieldE4] && (_gameTime > 1404000 || (_globals[kProgressEventMetAugust] && _globals[kProgressFieldCC] && (!_globals[kProgressField24] || _globals[kProgressField3C])))) {
+		if (_globals[kGlobalPhaseOfTheNight] == 2 && !_globals[kGlobalTatianaScheduledToVisitCath] && (_gameTime > 1404000 || (_globals[kGlobalMetAugust] && _globals[kGlobalMetMilos] && (!_globals[kGlobalFrancoisHasSeenCorpseThrown] || _globals[kGlobalPoliceHasBoardedAndGone])))) {
 			result = kCursorSleep;
 		} else {
 			result = kCursorNormal;
@@ -606,7 +606,7 @@ void LogicManager::doPostFunction() {
 		if (_engine->isDemo())
 			break;
 
-		if (_globals[kProgressField18] == 2)
+		if (_globals[kGlobalPhaseOfTheNight] == 2)
 			send(kCharacterCath, kCharacterMaster, 190346110, 0);
 
 		return;
@@ -618,7 +618,7 @@ void LogicManager::doPostFunction() {
 		return;
 	case kNodePullingStop:
 	{
-		if (_gameTime < 2418300 && _globals[kProgressField18] != 4) {
+		if (_gameTime < 2418300 && _globals[kGlobalPhaseOfTheNight] != 4) {
 			Slot *slot = _engine->getSoundManager()->_soundCache;
 			if (slot) {
 				do {
@@ -634,9 +634,9 @@ void LogicManager::doPostFunction() {
 
 			playDialog(kCharacterClerk, "LIB050", 16, 0);
 
-			if (_globals[kProgressChapter] == 1) {
+			if (_globals[kGlobalChapter] == 1) {
 				endGame(0, 0, 62, true);
-			} else if (_globals[kProgressChapter] == 4) {
+			} else if (_globals[kGlobalChapter] == 4) {
 				endGame(0, 0, 64, true);
 			} else {
 				endGame(0, 0, 63, true);
@@ -813,7 +813,7 @@ void LogicManager::doAction(Link *link) {
 		break;
 	case kActionPlayMusic:
 		Common::sprintf_s(filename, "MUS%03d", link->param1);
-		if (!dialogRunning(filename) && (link->param1 != 50 || _globals[kProgressChapter] == 5))
+		if (!dialogRunning(filename) && (link->param1 != 50 || _globals[kGlobalChapter] == 5))
 			playDialog(kCharacterCath, filename, 16, link->param2);
 
 		break;
@@ -892,7 +892,7 @@ void LogicManager::doAction(Link *link) {
 				_items[link->param1].floating = link->param2;
 
 				if (link->param1 == kItemCorpse) {
-					_globals[kProgressEventCorpseMovedFromFloor] = (_items[kItemCorpse].floating == 3 || _items[kItemCorpse].floating == 4) ? 1 : 0;
+					_globals[kGlobalCorpseMovedFromFloor] = (_items[kItemCorpse].floating == 3 || _items[kItemCorpse].floating == 4) ? 1 : 0;
 				}
 			}
 		}
@@ -974,9 +974,9 @@ void LogicManager::doAction(Link *link) {
 			queueSFX(kCharacterCath, 82, 0);
 
 			if (link->param2 == 2) {
-				if (!_globals[kProgressField58]) {
+				if (!_globals[kGlobalDoneSavePointAfterLeavingSuitcaseInCathComp]) {
 					_engine->getVCR()->writeSavePoint(1, 0, 0);
-					_globals[kProgressField58] = 1;
+					_globals[kGlobalDoneSavePointAfterLeavingSuitcaseInCathComp] = 1;
 				}
 
 				if (_items[kItemParchemin].floating == 2) {
@@ -990,7 +990,7 @@ void LogicManager::doAction(Link *link) {
 
 		_items[link->param1].haveIt = 0;
 		_items[link->param1].floating = link->param2;
-		if (link->param1 == 20)
+		if (link->param1 == kItemCorpse)
 			dropTyler(link->scene == 0);
 
 		_activeItem = 0;
@@ -1007,7 +1007,7 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if ((!_doneNIS[kEventCathLookOutsideWindowDay] && !_doneNIS[kEventCathLookOutsideWindowNight] && getModel(1) != 1) || !_globals[kProgressIsTrainRunning] || (link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _doors[kObjectOutsideBetweenCompartments].status != 2)) || _activeItem == kItemBriefcase || _activeItem == kItemFirebird) {
+		if ((!_doneNIS[kEventCathLookOutsideWindowDay] && !_doneNIS[kEventCathLookOutsideWindowNight] && getModel(1) != 1) || !_globals[kGlobalTrainIsRunning] || (link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _doors[kObjectOutsideBetweenCompartments].status != 2)) || _activeItem == kItemBriefcase || _activeItem == kItemFirebird) {
 			if (link->param1 == 9 || (link->param1 >= 44 && link->param1 <= 45)) {
 				if (isNight()) {
 					playNIS(kEventCathLookOutsideWindowNight);
@@ -1031,7 +1031,7 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathGoOutsideTylerCompartmentDay);
 			}
 
-			_globals[kProgressFieldC8] = 1;
+			_globals[kGlobalAlmostFallActionIsAvailable] = 1;
 			break;
 		case 44:
 			_doneNIS[kEventCathLookOutsideWindowDay] = 1;
@@ -1042,7 +1042,7 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathGoOutsideDay);
 			}
 
-			_globals[kProgressFieldC8] = 1;
+			_globals[kGlobalAlmostFallActionIsAvailable] = 1;
 			break;
 		case 45:
 			_doneNIS[kEventCathLookOutsideWindowDay] = 1;
@@ -1071,7 +1071,7 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathSlipTylerCompartmentDay);
 			}
 
-			_globals[kProgressFieldC8] = 0;
+			_globals[kGlobalAlmostFallActionIsAvailable] = 0;
 
 			if (link->scene)
 				return;
@@ -1085,7 +1085,7 @@ void LogicManager::doAction(Link *link) {
 				playNIS(kEventCathSlipDay);
 			}
 
-			_globals[kProgressFieldC8] = 0;
+			_globals[kGlobalAlmostFallActionIsAvailable] = 0;
 
 			if (link->scene)
 				return;
@@ -1138,10 +1138,10 @@ void LogicManager::doAction(Link *link) {
 			break;
 
 		if (link->param1 == 1) {
-			if (_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3) {
+			if (_globals[kGlobalChapter] == 2 || _globals[kGlobalChapter] == 3) {
 				playNIS(kEventCathTopTrainGreenJacket);
-			} else if (_globals[kProgressChapter] == 5) {
-				playNIS(kEventCathTopTrainNoJacketDay - (_globals[kProgressIsDayTime] == kProgressField0));
+			} else if (_globals[kGlobalChapter] == 5) {
+				playNIS(kEventCathTopTrainNoJacketDay - (_globals[kGlobalIsDayTime] == 0));
 			}
 
 			if (link->scene)
@@ -1150,12 +1150,12 @@ void LogicManager::doAction(Link *link) {
 			if (link->param1 != 2)
 				return;
 
-			if (_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3) {
+			if (_globals[kGlobalChapter] == 2 || _globals[kGlobalChapter] == 3) {
 				playNIS(kEventCathClimbUpTrainGreenJacket);
 				playNIS(kEventCathTopTrainGreenJacket);
-			} else if (_globals[kProgressChapter] == 5) {
-				playNIS(kEventCathClimbUpTrainNoJacketDay - (_globals[kProgressIsDayTime] == 0));
-				playNIS(kEventCathTopTrainNoJacketDay - (_globals[kProgressIsDayTime] == 0));
+			} else if (_globals[kGlobalChapter] == 5) {
+				playNIS(kEventCathClimbUpTrainNoJacketDay - (_globals[kGlobalIsDayTime] == 0));
+				playNIS(kEventCathTopTrainNoJacketDay - (_globals[kGlobalIsDayTime] == 0));
 			}
 
 			if (link->scene)
@@ -1168,10 +1168,10 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if (_globals[kProgressChapter] == 2 || _globals[kProgressChapter] == 3) {
+		if (_globals[kGlobalChapter] == 2 || _globals[kGlobalChapter] == 3) {
 			nisId = kEventCathClimbDownTrainGreenJacket;
-		} else if (_globals[kProgressChapter] == 5) {
-			if (_globals[kProgressIsDayTime] == 0) {
+		} else if (_globals[kGlobalChapter] == 5) {
+			if (_globals[kGlobalIsDayTime] == 0) {
 				nisId = kEventCathClimbDownTrainNoJacketNight;
 			} else {
 				nisId = kEventCathClimbDownTrainNoJacketDay;
@@ -1221,7 +1221,7 @@ void LogicManager::doAction(Link *link) {
 
 			break;
 		case 4:
-			if (_globals[kProgressChapter] == 1)
+			if (_globals[kGlobalChapter] == 1)
 				send(kCharacterCath, kCharacterKronos, 202621266, 0);
 			break;
 		default:
@@ -1250,7 +1250,7 @@ void LogicManager::doAction(Link *link) {
 		case 3:
 			if (_doneNIS[kEventCathBurnRope]) {
 				playNIS(kEventCathRemoveBonds);
-				_globals[kProgressField84] = 0;
+				_globals[kGlobalCathInSpecialState] = 0;
 				bumpCath(kCarBaggageRear, 89, 255);
 				link->scene = kSceneNone;
 			}
@@ -1376,11 +1376,11 @@ void LogicManager::doAction(Link *link) {
 		}
 
 		break;
-	case kActionPlayMusic2:
+	case kActionLetterInAugustSuitcase:
 		if (_engine->isDemo())
 			break;
 
-		_globals[kProgressFieldC] = 1;
+		_globals[kGlobalReadLetterInAugustSuitcase] = 1;
 		queueSFX(kCharacterCath, link->param1, link->param2);
 		Common::sprintf_s(filename, "MUS%03d", link->param3);
 		if (!dialogRunning(filename))
@@ -1408,21 +1408,21 @@ void LogicManager::doAction(Link *link) {
 		if (link->action != kActionCompartment) {
 			if (!_engine->isDemo()) {
 				if (link->action == kActionExitCompartment) {
-					if (!_globals[kProgressField30] && _globals[kProgressJacket]) {
+					if (!_globals[kGlobalDoneSavePointAfterLeftCompWithNewJacket] && _globals[kGlobalJacket] != 0) {
 						_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
-						_globals[kProgressField30] = 1;
+						_globals[kGlobalDoneSavePointAfterLeftCompWithNewJacket] = 1;
 					}
 
 					setModel(1, link->param2);
 				}
 
 				if (_doors[kItemMatchBox].status != 1 && _doors[kItemMatchBox].status != 3 && _activeItem != kItemKey) {
-					if (!_globals[kProgressEventFoundCorpse]) {
+					if (!_globals[kGlobalFoundCorpse]) {
 						_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
 						playDialog(kCharacterCath, "LIB014", -1, 0);
 						playNIS(kEventCathFindCorpse);
 						playDialog(kCharacterCath, "LIB015", -1, 0);
-						_globals[kProgressEventFoundCorpse] = 1;
+						_globals[kGlobalFoundCorpse] = 1;
 						link->scene = kSceneCompartmentCorpse;
 
 						return;
@@ -1503,9 +1503,9 @@ void LogicManager::doAction(Link *link) {
 			queueSFX(kCharacterCath, 14, 0);
 			queueSFX(kCharacterCath, 15, 22);
 
-			if (_globals[kProgressField78] && !dialogRunning("MUS003")) {
+			if (_globals[kGlobalCanPlayKronosSuitcaseLeftInCompMusic] && !dialogRunning("MUS003")) {
 				playDialog(kCharacterCath, "MUS003", 16, 0);
-				_globals[kProgressField78] = 0;
+				_globals[kGlobalCanPlayKronosSuitcaseLeftInCompMusic] = 0;
 			}
 
 			bumpCath(kCarGreenSleeping, 77, 255);
@@ -1527,7 +1527,7 @@ void LogicManager::doAction(Link *link) {
 			send(kCharacterCath, kCharacterVesna, 202884544, 0);
 			break;
 		case 3:
-			if (_globals[kProgressChapter] == 5) {
+			if (_globals[kGlobalChapter] == 5) {
 				send(kCharacterCath, kCharacterAbbot, 168646401, 0);
 				send(kCharacterCath, kCharacterMilos, 168646401, 0);
 			} else {
@@ -1579,7 +1579,7 @@ void LogicManager::doAction(Link *link) {
 					nisId = kEventCathOpenEggNoBackground;
 				}
 
-				_globals[kProgressIsEggOpen] = 1;
+				_globals[kGlobalEggIsOpen] = 1;
 				break;
 			}
 			case 2:
@@ -1589,7 +1589,7 @@ void LogicManager::doAction(Link *link) {
 					nisId = kEventCathCloseEgg;
 				}
 
-				_globals[kProgressIsEggOpen] = 0;
+				_globals[kGlobalEggIsOpen] = 0;
 				break;
 			case 3:
 				if (!inComp(kCharacterCath, kCarGreenSleeping, 8200)) {
@@ -1640,20 +1640,20 @@ void LogicManager::doAction(Link *link) {
 			break;
 
 		queueSFX(kCharacterCath, 43, 0);
-		if (_globals[kProgressField7C] && !dialogRunning("MUS003")) {
+		if (_globals[kGlobalCanPlayEggSuitcaseMusic] && !dialogRunning("MUS003")) {
 			playDialog(kCharacterCath, "MUS003", 16, 0);
-			_globals[kProgressField7C] = 0;
+			_globals[kGlobalCanPlayEggSuitcaseMusic] = 0;
 		}
 
 		break;
-	case kActionPlayMusic3:
+	case kActionFindEggUnderSink:
 		if (_engine->isDemo())
 			break;
 
 		queueSFX(kCharacterCath, 24, 0);
-		if (_globals[kProgressField80] && !dialogRunning("MUS003")) {
+		if (_globals[kGlobalCanPlayEggUnderSinkMusic] && !dialogRunning("MUS003")) {
 			playDialog(kCharacterCath, "MUS003", 16, 0);
-			_globals[kProgressField80] = 0;
+			_globals[kGlobalCanPlayEggUnderSinkMusic] = 0;
 		}
 
 		break;
@@ -1673,7 +1673,7 @@ void LogicManager::doAction(Link *link) {
 
 		return;
 	case kActionPlayMusicChapter:
-		switch (_globals[kProgressChapter]) {
+		switch (_globals[kGlobalChapter]) {
 		case 1:
 			musId = link->param1;
 			break;
@@ -1698,7 +1698,7 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		switch (_globals[kProgressChapter]) {
+		switch (_globals[kGlobalChapter]) {
 		case 1:
 			musId = 1;
 			break;
@@ -1739,22 +1739,22 @@ void LogicManager::doAction(Link *link) {
 }
 
 void LogicManager::takeTyler(bool doCleanNIS, int8 bedPosition) {
-	if (!_globals[kProgressJacket])
-		_globals[kProgressJacket] = 1;
+	if (!_globals[kGlobalJacket])
+		_globals[kGlobalJacket] = 1;
 
 	if (_items[kItemCorpse].floating == 1) {
 		if (bedPosition == 4) {
-			if (_globals[kProgressJacket])
+			if (_globals[kGlobalJacket])
 				playNIS(kEventCorpsePickFloorOpenedBedOriginal);
 
 			_items[kItemCorpse].floating = 5;
-		} else if (_globals[kProgressJacket] == 2) {
+		} else if (_globals[kGlobalJacket] == 2) {
 			playNIS(kEventCorpsePickFloorGreen);
 		} else {
 			playNIS(kEventCorpsePickFloorOriginal);
 		}
 	} else if (_items[kItemCorpse].floating == 2) {
-		if (_globals[kProgressJacket] == 2) {
+		if (_globals[kGlobalJacket] == 2) {
 			playNIS(kEventCorpsePickBedGreen);
 		} else {
 			playNIS(kEventCorpsePickBedOriginal);
@@ -1768,7 +1768,7 @@ void LogicManager::takeTyler(bool doCleanNIS, int8 bedPosition) {
 void LogicManager::dropTyler(bool doCleanNIS) {
 	switch (_items[kItemCorpse].floating) {
 	case 1:
-		if (_globals[kProgressJacket] == 2) {
+		if (_globals[kGlobalJacket] == 2) {
 			playNIS(kEventCorpseDropFloorGreen);
 		} else {
 			playNIS(kEventCorpseDropFloorOriginal);
@@ -1776,7 +1776,7 @@ void LogicManager::dropTyler(bool doCleanNIS) {
 
 		break;
 	case 2:
-		if (_globals[kProgressJacket] == 2) {
+		if (_globals[kGlobalJacket] == 2) {
 			playNIS(kEventCorpseDropBedGreen);
 		} else {
 			playNIS(kEventCorpseDropBedOriginal);
@@ -1785,21 +1785,21 @@ void LogicManager::dropTyler(bool doCleanNIS) {
 		break;
 	case 4:
 		_items[kItemCorpse].floating = 0;
-		_globals[kProgressEventCorpseThrown] = 1;
+		_globals[kGlobalCorpseHasBeenThrown] = 1;
 
 		if (_gameTime <= 1138500) {
-			if (_globals[kProgressJacket] == 2) {
+			if (_globals[kGlobalJacket] == 2) {
 				playNIS(kEventCorpseDropWindowGreen);
 			} else {
 				playNIS(kEventCorpseDropWindowOriginal);
 			}
 
-			_globals[kProgressField24] = 1;
+			_globals[kGlobalFrancoisHasSeenCorpseThrown] = 1;
 		} else {
 			playNIS(kEventCorpseDropBridge);
 		}
 
-		_globals[kProgressEventCorpseMovedFromFloor] = 1;
+		_globals[kGlobalCorpseMovedFromFloor] = 1;
 
 		break;
 	}
@@ -1809,13 +1809,13 @@ void LogicManager::dropTyler(bool doCleanNIS) {
 }
 
 void LogicManager::takeJacket(bool doCleanNIS) {
-	_globals[kProgressJacket] = 2;
+	_globals[kGlobalJacket] = 2;
 	_items[kItemMatchBox].haveIt = 1;
 	_items[kItemMatchBox].floating = 0;
 	setDoor(9, kCharacterCath, 2, 255, 255);
 	playNIS(kEventPickGreenJacket);
-	_globals[kProgressPortrait] = 34;
-	_engine->getGraphicsManager()->drawItemDim(_globals[kProgressPortrait], 0, 0, 1);
+	_globals[kGlobalCathIcon] = 34;
+	_engine->getGraphicsManager()->drawItemDim(_globals[kGlobalCathIcon], 0, 0, 1);
 	_engine->getGraphicsManager()->burstBox(0, 0, 32, 32);
 
 	if (doCleanNIS)
@@ -1823,7 +1823,7 @@ void LogicManager::takeJacket(bool doCleanNIS) {
 }
 
 void LogicManager::takeScarf(bool doCleanNIS) {
-	if (_globals[kProgressJacket] == 2) {
+	if (_globals[kGlobalJacket] == 2) {
 		playNIS(kEventPickScarfGreen);
 	} else {
 		playNIS(kEventPickScarfOriginal);
@@ -1862,7 +1862,7 @@ const char *LogicManager::getHintDialog(int character) {
 		} else if (_doneNIS[kEventAugustPresentAnna] ||
 				   _doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 			return "XANN5";
-		} else if (_globals[kProgressField60]) {
+		} else if (_globals[kGlobalOverheardAugustInterruptingAnnaAtDinner]) {
 			return "XANN4";
 		} else if (_doneNIS[kEventAnnaGiveScarf] ||
 				   _doneNIS[kEventAnnaGiveScarfDiner] ||
@@ -1899,7 +1899,7 @@ const char *LogicManager::getHintDialog(int character) {
 			return "XAUG3";
 		} else if (_doneNIS[kEventAugustPresentAnnaFirstIntroduction]) {
 			return "XAUG2";
-		} else if (_globals[kProgressEventMertensAugustWaiting]) {
+		} else if (_globals[kGlobalKnowAboutAugust]) {
 			return "XAUG1";
 		}
 
@@ -1911,7 +1911,7 @@ const char *LogicManager::getHintDialog(int character) {
 			return "XTAT5";
 		} else if (_doneNIS[kEventTatianaGivePoem]) {
 			return "XTAT3";
-		} else if (_globals[kProgressField64]) {
+		} else if (_globals[kGlobalMetTatianaAndVassili]) {
 			return "XTAT1";
 		}
 
@@ -1925,19 +1925,19 @@ const char *LogicManager::getHintDialog(int character) {
 			return "XVAS2";
 		} else if (_doneNIS[kEventVassiliSeizure]) {
 			return "XVAS1A";
-		} else if (_globals[kProgressField64]) {
+		} else if (_globals[kGlobalMetTatianaAndVassili]) {
 			return "XVAS1";
 		}
 
 		break;
 	case kCharacterAlexei:
-		if (_globals[kProgressField88]) {
+		if (_globals[kGlobalOverheardAlexeiTellingTatianaAboutBomb]) {
 			return "XALX6";
-		} else if (_globals[kProgressField8C]) {
+		} else if (_globals[kGlobalOverheardAlexeiTellingTatianaAboutWantingToKillVassili]) {
 			return "XALX5";
-		} else if (_globals[kProgressField90]) {
+		} else if (_globals[kGlobalOverheardTatianaAndAlexeiPlayingChess]) {
 			return "XALX4A";
-		} else if (_globals[kProgressField68]) {
+		} else if (_globals[kGlobalOverheardTatianaAndAlexeiAtBreakfast]) {
 			return "XALX4";
 		} else if (_doneNIS[kEventAlexeiSalonPoem]) {
 			return "XALX3";
@@ -1967,11 +1967,11 @@ const char *LogicManager::getHintDialog(int character) {
 		if (_doneNIS[kEventLocomotiveMilosDay] || _doneNIS[kEventLocomotiveMilosNight]) {
 			return "XMIL5";
 		} else if (_doneNIS[kEventMilosCompartmentVisitTyler] &&
-				  (_globals[kProgressChapter] == 3 ||
-				   _globals[kProgressChapter] == 4)) {
+				  (_globals[kGlobalChapter] == 3 ||
+				   _globals[kGlobalChapter] == 4)) {
 			return "XMIL4";
 		} else if (_doneNIS[kEventMilosCorridorThanks] ||
-				   _globals[kProgressChapter] == 5) {
+				   _globals[kGlobalChapter] == 5) {
 			return "XMIL3";
 		} else if (_doneNIS[kEventMilosCompartmentVisitAugust]) {
 			return "XMIL2";
@@ -1981,9 +1981,9 @@ const char *LogicManager::getHintDialog(int character) {
 
 		break;
 	case kCharacterVesna:
-		if (_globals[kProgressField94]) {
+		if (_globals[kGlobalOverheardMilosAndVesnaConspiring]) {
 			return "XVES2";
-		} else if (_globals[kProgressField98]) {
+		} else if (_globals[kGlobalOverheardVesnaAndMilosDebatingAboutCath]) {
 			return "XVES1";
 		}
 
@@ -2014,16 +2014,16 @@ const char *LogicManager::getHintDialog(int character) {
 				return "XKRO2";
 			}
 
-			if (_globals[kProgressEventMertensChronosInvitation]) {
+			if (_globals[kGlobalKnowAboutKronos]) {
 				return "XKRO1";
 			}
 		}
 
 		break;
 	case kCharacterFrancois:
-		if (_globals[kProgressField9C]) {
+		if (_globals[kGlobalFrancoisSawABlackBeetle]) {
 			return "XFRA3";
-		} else if (_globals[kProgressFieldA0] ||
+		} else if (_globals[kGlobalOverheardMadameAndFrancoisTalkingAboutWhistle] ||
 				   _doneNIS[kEventFrancoisWhistle] ||
 				   _doneNIS[kEventFrancoisWhistleD] ||
 				   _doneNIS[kEventFrancoisWhistleNight] ||
@@ -2035,69 +2035,69 @@ const char *LogicManager::getHintDialog(int character) {
 
 		break;
 	case kCharacterMadame:
-		if (_globals[kProgressFieldA4]) {
+		if (_globals[kGlobalMadameDemandedMaxInBaggage]) {
 			return "XMME4";
-		} else if (_globals[kProgressFieldA8]) {
+		} else if (_globals[kGlobalMadameComplainedAboutMax]) {
 			return "XMME3";
-		} else if (_globals[kProgressFieldA0]) {
+		} else if (_globals[kGlobalOverheardMadameAndFrancoisTalkingAboutWhistle]) {
 			return "XMME2";
-		} else  if (_globals[kProgressFieldAC]) {
+		} else  if (_globals[kGlobalMetMadame]) {
 			return "XMME1";
 		}
 
 		break;
 	case kCharacterMonsieur:
-		if (_globals[kProgressEventMetBoutarel]) {
+		if (_globals[kGlobalMetMonsieur]) {
 			return "XMRB1";
 		}
 
 		break;
 	case kCharacterRebecca:
-		if (_globals[kProgressFieldB4]) {
+		if (_globals[kGlobalOverheardSophieTalkingAboutCath]) {
 			return "XREB1A";
-		} else if (_globals[kProgressFieldB8]) {
+		} else if (_globals[kGlobalMetSophieAndRebecca]) {
 			return "XREB1";
 		}
 
 		break;
 	case kCharacterSophie:
-		if (_globals[kProgressFieldB0]) {
+		if (_globals[kGlobalKnowAboutRebeccaDiary]) {
 			return "XSOP2";
-		} else if (_globals[kProgressFieldBC]) {
+		} else if (_globals[kGlobalKnowAboutRebeccaAndSophieRelationship]) {
 			return "XSOP1B";
-		} else if (_globals[kProgressFieldB4]) {
+		} else if (_globals[kGlobalOverheardSophieTalkingAboutCath]) {
 			return "XSOP1A";
-		} else if (!_globals[kProgressFieldB8]) {
+		} else if (!_globals[kGlobalMetSophieAndRebecca]) {
 			return "XSOP1";
 		}
 
 		break;
 	case kCharacterMahmud:
-		if (_globals[kProgressFieldC4]) {
+		if (_globals[kGlobalMetMahmud]) {
 			return "XMAH1";
 		}
 
 		break;
 	case kCharacterYasmin:
-		if (_globals[kProgressEventMetYasmin]) {
+		if (_globals[kGlobalMetYasmin]) {
 			return "XHAR2";
 		}
 
 		break;
 	case kCharacterHadija:
-		if (_globals[kProgressEventMetHadija]) {
+		if (_globals[kGlobalMetHadija]) {
 			return "XHAR1";
 		}
 
 		break;
 	case kCharacterAlouan:
-		if (_globals[kProgressFieldDC]) {
+		if (_globals[kGlobalMetAlouan]) {
 			return "XHAR3";
 		}
 
 		break;
 	case kCharacterPolice:
-		if (_globals[kProgressFieldE0]) {
+		if (_globals[kGlobalMetFatima]) {
 			return "XHAR4";
 		}
 

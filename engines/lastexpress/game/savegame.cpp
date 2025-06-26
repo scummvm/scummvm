@@ -49,7 +49,7 @@ void SaveManager::writeSavePoint(CVCRFile *file, int saveType, int character, in
 	savePointHeader.magicNumber = 0xE660E660;
 	savePointHeader.size = 0;
 	savePointHeader.time = _engine->getLogicManager()->_gameTime;
-	savePointHeader.partNumber = _engine->getLogicManager()->_globals[kProgressChapter];
+	savePointHeader.partNumber = _engine->getLogicManager()->_globals[kGlobalChapter];
 	savePointHeader.latestGameEvent = value;
 	savePointHeader.emptyField1 = 0;
 	savePointHeader.emptyField2 = 0;
@@ -374,7 +374,7 @@ void SaveManager::readSavePoint(CVCRFile *file, int *saveType, uint8 *character,
 			_engine->getSoundManager()->loadSoundInfo(file, skipSoundLoading);
 			_engine->getMessageManager()->loadMessages(file);
 
-			_engine->getLogicManager()->_globals[kProgressChapter] = savePointHeader.partNumber;
+			_engine->getLogicManager()->_globals[kGlobalChapter] = savePointHeader.partNumber;
 
 			file->flush();
 
@@ -742,7 +742,7 @@ void SaveManager::startRewoundGame() {
 	delete saveFile;
 
 	_engine->_gracePeriodIndex = _engine->_currentSavePoint;
-	_engine->_gracePeriodTimer = _engine->getLogicManager()->_globals[kProgressJacket] < 2 ? 225 : 450;
+	_engine->_gracePeriodTimer = _engine->getLogicManager()->_globals[kGlobalJacket] < 2 ? 225 : 450;
 
 	if (_engine->_currentSavePoint) {
 		_engine->getOtisManager()->wipeAllGSysInfo();

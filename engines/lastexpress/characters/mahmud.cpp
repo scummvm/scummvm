@@ -456,7 +456,7 @@ void LogicManager::HAND_Mahmud_CathKnockingHarem(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterMahmud)[2] = 0;
 			} else {
 				playDialog(kCharacterClerk, "LIB050", 16, 0);
-				if (_globals[kProgressChapter] == 1)
+				if (_globals[kGlobalChapter] == 1)
 					endGame(0, 0, 57, true);
 				else
 					endGame(0, 0, 63, true);
@@ -489,7 +489,7 @@ void LogicManager::HAND_Mahmud_CathKnockingHarem(HAND_PARAMS) {
 			playDialog(kCharacterMahmud, "MAH1170A", -1, 45);
 		}
 		
-		_globals[kProgressFieldC4] = 1;
+		_globals[kGlobalMetMahmud] = 1;
 		getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
 		MahmudCall(&LogicManager::CONS_Mahmud_DoBumpCorrOtis, "614Dd", 4, 30, *getCharacterCurrentParams(kCharacterMahmud));
 		break;
@@ -800,7 +800,7 @@ void LogicManager::HAND_Mahmud_Vigilant(HAND_PARAMS) {
 			getCharacterParams(kCharacterMahmud, 8)[0] = 0;
 		}
 
-		if (!getCharacterCurrentParams(kCharacterMahmud)[1] && _globals[kProgressChapter] == 1) {
+		if (!getCharacterCurrentParams(kCharacterMahmud)[1] && _globals[kGlobalChapter] == 1) {
 			if (_gameTime > 1098000 && !getCharacterCurrentParams(kCharacterMahmud)[5]) {
 				getCharacterCurrentParams(kCharacterMahmud)[5] = 1;
 				getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 1;
@@ -837,7 +837,7 @@ void LogicManager::HAND_Mahmud_Vigilant(HAND_PARAMS) {
 	case 9:
 		if (getCharacterCurrentParams(kCharacterMahmud)[4]) {
 			setDoor(4, kCharacterMahmud, 3, 0, 0);
-			if (_globals[kProgressJacket] == 1 || _doneNIS[kEventMahmudWrongDoor] || _doneNIS[kEventMahmudWrongDoorOriginalJacket] || _doneNIS[kEventMahmudWrongDoorDay]) {
+			if (_globals[kGlobalJacket] == 1 || _doneNIS[kEventMahmudWrongDoor] || _doneNIS[kEventMahmudWrongDoorOriginalJacket] || _doneNIS[kEventMahmudWrongDoorDay]) {
 				if (cathHasItem(kItemPassengerList)) {
 					getCharacter(kCharacterMahmud).callbacks[getCharacter(kCharacterMahmud).currentCall + 8] = 6;
 
@@ -935,7 +935,7 @@ void LogicManager::HAND_Mahmud_Vigilant(HAND_PARAMS) {
 			MahmudCall(&LogicManager::CONS_Mahmud_DoDialog, "MAH1175", 0, 0, 0);
 			break;
 		case 5:
-			if (_globals[kProgressJacket] == 1 ||
+			if (_globals[kGlobalJacket] == 1 ||
 				_doneNIS[kEventMahmudWrongDoor] ||
 				_doneNIS[kEventMahmudWrongDoorOriginalJacket] ||
 				_doneNIS[kEventMahmudWrongDoorDay]) {
@@ -956,7 +956,7 @@ void LogicManager::HAND_Mahmud_Vigilant(HAND_PARAMS) {
 			MahmudCall(&LogicManager::CONS_Mahmud_SaveGame, 2, kEventMahmudWrongDoor, 0, 0);
 			break;
 		case 10:
-			if (_globals[kProgressJacket] == 2) {
+			if (_globals[kGlobalJacket] == 2) {
 				if (isNight()) {
 					playNIS(kEventMahmudWrongDoor);
 				} else {

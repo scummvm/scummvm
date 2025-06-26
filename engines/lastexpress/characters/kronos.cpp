@@ -903,7 +903,7 @@ void LogicManager::HAND_Kronos_Concert(HAND_PARAMS) {
 			setDoor(75, kCharacterCath, 0, 10, 9);
 
 		setDoor(76, kCharacterKronos, 0, 10, 9);
-		_globals[kProgressField40] = 1;
+		_globals[kGlobalConcertIsHappening] = 1;
 		startCycOtis(kCharacterKronos, "201a");
 		getCharacterCurrentParams(kCharacterKronos)[2] = 2700;
 		getCharacterCurrentParams(kCharacterKronos)[1] = 2700;
@@ -971,7 +971,7 @@ void LogicManager::HAND_Kronos_AfterConcert(HAND_PARAMS) {
 
 		break;
 	case 12:
-		_globals[kProgressField40] = 0;
+		_globals[kGlobalConcertIsHappening] = 0;
 		setDoor(75, kCharacterCath, 3, 0, 0);
 		send(kCharacterKronos, kCharacterRebecca, 191668032, 0);
 
@@ -1015,7 +1015,7 @@ void LogicManager::HAND_Kronos_AwaitingCath3(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 		if (inInnerSanctum(kCharacterCath)) {
-			if (_globals[kProgressField44]) {
+			if (_globals[kGlobalKahinaKillTimeoutActive]) {
 				getCharacter(kCharacterKronos).callbacks[getCharacter(kCharacterKronos).currentCall + 8] = 5;
 				KronosCall(&LogicManager::CONS_Kronos_SaveGame, 2, kEventKahinaPunchBaggageCarEntrance, 0, 0);
 			} else {

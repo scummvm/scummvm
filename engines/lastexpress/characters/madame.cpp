@@ -334,10 +334,10 @@ void LogicManager::HAND_Madame_ComplainCond2(HAND_PARAMS) {
 		startCycOtis(kCharacterMadame, "606L");
 		playDialog(kCharacterMadame, (char *)&getCharacterCurrentParams(kCharacterMadame)[0], -1, 0);
 		if (whoOnScreen(kCharacterMadame) || nearChar(kCharacterMadame, kCharacterCath, 2000)) {
-			if (_globals[kProgressChapter] == 1) {
-				_globals[kProgressFieldA8] = 1;
-			} else if (_globals[kProgressChapter] == 3) {
-				_globals[kProgressFieldA4] = 1;
+			if (_globals[kGlobalChapter] == 1) {
+				_globals[kGlobalMadameComplainedAboutMax] = 1;
+			} else if (_globals[kGlobalChapter] == 3) {
+				_globals[kGlobalMadameDemandedMaxInBaggage] = 1;
 			}
 		}
 
@@ -595,7 +595,7 @@ void LogicManager::HAND_Madame_OpenComp1(HAND_PARAMS) {
 		playDialog(kCharacterMadame, "MME1035A", -1, 0);
 
 		if (whoOnScreen(kCharacterMadame) || nearChar(kCharacterMadame, kCharacterCath, 2000))
-			_globals[kProgressFieldAC] = 1;
+			_globals[kGlobalMetMadame] = 1;
 
 		getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 2;
 		MadameCall(&LogicManager::CONS_Madame_DoCorrOtis, "606Ed", 35, 0, 0);
@@ -624,7 +624,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 				setDoor(51, kCharacterCath, 1, 0, 0);
 
 				if (nearChar(kCharacterMadame, kCharacterCath, 2000))
-					_globals[kProgressFieldA0] = 1;
+					_globals[kGlobalOverheardMadameAndFrancoisTalkingAboutWhistle] = 1;
 
 				getCharacterCurrentParams(kCharacterMadame)[4] = 1;
 				getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 1;
@@ -639,7 +639,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 					setDoor(51, kCharacterCath, 1, 0, 0);
 
 					if (nearChar(kCharacterMadame, kCharacterCath, 2000))
-						_globals[kProgressFieldA0] = 1;
+						_globals[kGlobalOverheardMadameAndFrancoisTalkingAboutWhistle] = 1;
 
 					getCharacterCurrentParams(kCharacterMadame)[4] = 1;
 					getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 1;
@@ -654,7 +654,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 				setDoor(51, kCharacterCath, 1, 0, 0);
 
 				if (nearChar(kCharacterMadame, kCharacterCath, 2000))
-					_globals[kProgressFieldA0] = 1;
+					_globals[kGlobalOverheardMadameAndFrancoisTalkingAboutWhistle] = 1;
 
 				getCharacterCurrentParams(kCharacterMadame)[4] = 1;
 				getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 1;
@@ -663,7 +663,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 			}
 		}
 
-		if (_globals[kProgressField24] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
+		if (_globals[kGlobalFrancoisHasSeenCorpseThrown] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime > 1093500) {
 				getCharacterCurrentParams(kCharacterMadame)[6] = 0x7FFFFFFF;
 				getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 2;
@@ -768,7 +768,7 @@ void LogicManager::HAND_Madame_ClosedComp1(HAND_PARAMS) {
 			setDoor(35, kCharacterMadame, 1, 10, 9);
 			setDoor(51, kCharacterMadame, 1, 10, 9);
 
-			if (_globals[kProgressField24] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
+			if (_globals[kGlobalFrancoisHasSeenCorpseThrown] && getCharacterCurrentParams(kCharacterMadame)[6] != 0x7FFFFFFF && _gameTime) {
 				if (_gameTime > 1093500) {
 					getCharacterCurrentParams(kCharacterMadame)[6] = 0x7FFFFFFF;
 					getCharacter(kCharacterMadame).callbacks[getCharacter(kCharacterMadame).currentCall + 8] = 2;

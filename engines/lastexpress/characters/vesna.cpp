@@ -793,7 +793,7 @@ void LogicManager::CONS_Vesna_InComp(CONS_PARAMS) {
 void LogicManager::HAND_Vesna_InComp(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (_globals[kProgressField54] && getCharacterCurrentParams(kCharacterVesna)[6] != 0x7FFFFFFF && _gameTime) {
+		if (_globals[kGlobalAnnaIsInBaggageCar] && getCharacterCurrentParams(kCharacterVesna)[6] != 0x7FFFFFFF && _gameTime) {
 			if (_gameTime > 2250000) {
 				getCharacterCurrentParams(kCharacterVesna)[6] = 0x7FFFFFFF;
 				CONS_Vesna_KillAnna(0, 0, 0, 0);

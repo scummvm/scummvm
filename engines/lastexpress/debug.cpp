@@ -609,11 +609,11 @@ void LogicManager::renderCurrentSceneDebugger() {
 				"None", "Inventory", "SendCathMessage", "PlaySound", "PlayMusic",
 				"Knock", "Compartment", "PlaySounds", "PlayAnimation", "SetDoor",
 				"SetModel", "SetItem", "KnockInside", "TakeItem", "DropItem",
-				"LinkOnGlobal", "Rattle", "DummyAction2", "LeanOutWindow", "AlmostFall",
+				"LinkOnGlobal", "Rattle", "DummyAction1", "LeanOutWindow", "AlmostFall",
 				"ClimbInWindow", "ClimbLadder", "ClimbDownTrain", "KronosSanctum", "EscapeBaggage",
-				"EnterBaggage", "BombPuzzle", "Conductors", "KronosConcert", "PlayMusic2",
+				"EnterBaggage", "BombPuzzle", "Conductors", "KronosConcert", "LetterInAugustSuitcase",
 				"CatchBeetle", "ExitCompartment", "OutsideTrain", "FirebirdPuzzle", "OpenMatchBox",
-				"OpenBed", "DummyAction3", "HintDialog", "MusicEggBox", "PlayMusic3",
+				"OpenBed", "DummyAction2", "HintDialog", "MusicEggBox", "FindEggUnderSink",
 				"Bed", "PlayMusicChapter", "PlayMusicChapterSetupTrain", "SwitchChapter", "EasterEgg"
 			};
 
@@ -745,7 +745,7 @@ void LogicManager::showTrainMapWindow() {
 	CarInfo *cars = nullptr;
 	int carCount = 0;
 
-	switch (_state->_engine->getLogicManager()->_globals[kProgressChapter]) {
+	switch (_state->_engine->getLogicManager()->_globals[kGlobalChapter]) {
 	case 1:
 		cars = carsChapter1;
 		carCount = ARRAYSIZE(carsChapter1);
@@ -758,7 +758,7 @@ void LogicManager::showTrainMapWindow() {
 		break;
 	case 4:
 	case 5:
-		if (_state->_engine->getLogicManager()->_globals[kProgressChapter] == 5 &&
+		if (_state->_engine->getLogicManager()->_globals[kGlobalChapter] == 5 &&
 			(_state->_engine->getLogicManager()->_doneNIS[kEventAugustUnhookCars] || _state->_engine->getLogicManager()->_doneNIS[kEventAugustUnhookCarsBetrayal])) {
 			cars = carsChapter5;
 			carCount = ARRAYSIZE(carsChapter5);

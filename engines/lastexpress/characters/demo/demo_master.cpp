@@ -121,7 +121,7 @@ void LogicManager::HAND_DemoMaster_Birth(HAND_PARAMS) {
 		bool playSndFx = false;
 		bool doBumpCath = false;
 
-		if (_globals[kProgressIsTrainRunning]) {
+		if (_globals[kGlobalTrainIsRunning]) {
 			if (!getCharacterCurrentParams(kCharacterMaster)[3]) {
 				getCharacterCurrentParams(kCharacterMaster)[3] = _realTime + getCharacterCurrentParams(kCharacterMaster)[0];
 				if (!getCharacterCurrentParams(kCharacterMaster)[3])

@@ -610,7 +610,7 @@ void LogicManager::HAND_Police_TrappedCath(HAND_PARAMS) {
 			if (cathOutHisWindow())
 				bumpCath(kCarGreenSleeping, 49, 255);
 			playDialog(kCharacterPolice, "LIB017", 16, 0);
-			if (_globals[kProgressJacket] == 1) {
+			if (_globals[kGlobalJacket] == 1) {
 				getCharacter(kCharacterPolice).callbacks[getCharacter(kCharacterPolice).currentCall + 8] = 3;
 				PoliceCall(&LogicManager::CONS_Police_SaveGame, 2, kEventMertensBloodJacket, 0, 0);
 			} else {
@@ -715,7 +715,7 @@ void LogicManager::HAND_Police_SearchTrain(HAND_PARAMS) {
 		getCharacter(kCharacterPolice).characterPosition.car = kCarGreenSleeping;
 		getCharacter(kCharacterPolice).characterPosition.location = 0;
 		getCharacter(kCharacterPolice).characterPosition.position = 540;
-		_globals[kProgressField14] = 29;
+		_globals[kGlobalCharacterSearchingForCath] = kCharacterPolice;
 		getCharacter(kCharacterPolice).callbacks[getCharacter(kCharacterPolice).currentCall + 8] = 1;
 		PoliceCall(&LogicManager::CONS_Police_DoWalk, 3, 5540, 0, 0);
 		break;
@@ -755,7 +755,7 @@ void LogicManager::HAND_Police_SearchTrain(HAND_PARAMS) {
 			break;
 		case 9:
 			if (getCharacter(kCharacterCath).characterPosition.car == 3) {
-				_globals[kProgressField14] = 0;
+				_globals[kGlobalCharacterSearchingForCath] = 0;
 				endGraphics(kCharacterPolice);
 				send(kCharacterPolice, kCharacterTrainM, 168710784, 0);
 				CONS_Police_SearchDone(0, 0, 0, 0);
@@ -822,7 +822,7 @@ void LogicManager::HAND_Police_SearchTrain(HAND_PARAMS) {
 			PoliceCall(&LogicManager::CONS_Police_DoWalk, 4, 9460, 0, 0);
 			break;
 		case 24:
-			_globals[kProgressField14] = 0;
+			_globals[kGlobalCharacterSearchingForCath] = 0;
 			endGraphics(kCharacterPolice);
 			send(kCharacterPolice, kCharacterTrainM, 168710784, 0);
 			CONS_Police_SearchDone(0, 0, 0, 0);

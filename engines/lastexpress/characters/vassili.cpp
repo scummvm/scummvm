@@ -447,9 +447,9 @@ void LogicManager::CONS_Vassili_CathArrives(CONS_PARAMS) {
 void LogicManager::HAND_Vassili_CathArrives(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		if (_globals[kProgressEventCorpseMovedFromFloor]) {
-			if (_globals[kProgressEventCorpseThrown]) {
-				if (_globals[kProgressJacket] == 1) {
+		if (_globals[kGlobalCorpseMovedFromFloor]) {
+			if (_globals[kGlobalCorpseHasBeenThrown]) {
+				if (_globals[kGlobalJacket] == 1) {
 					playNIS(kEventMertensBloodJacket);
 					endGame(0, 0, 0, true);
 				} else {
@@ -474,7 +474,7 @@ void LogicManager::HAND_Vassili_CathArrives(HAND_PARAMS) {
 			playNIS(kEventVassiliSeizure);
 			setDoor(32, kCharacterCath, 0, 10, 9);
 			setDoor(1, kCharacterCath, 0, 10, 9);
-			_globals[kProgressField18] = 2;
+			_globals[kGlobalPhaseOfTheNight] = 2;
 			send(kCharacterVassili, kCharacterAnna, 191477936, 0);
 			send(kCharacterVassili, kCharacterTrainM, 191477936, 0);
 			send(kCharacterVassili, kCharacterCond2, 191477936, 0);

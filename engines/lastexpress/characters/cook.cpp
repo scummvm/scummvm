@@ -128,10 +128,10 @@ void LogicManager::HAND_Cook_UptrainVersion(HAND_PARAMS) {
 		startCycOtis(kCharacterCook, "308A");
 		blockView(kCharacterCook, kCarRestaurant, 75);
 		blockView(kCharacterCook, kCarRestaurant, 78);
-		if (_globals[kProgressChapter] == 1) {
+		if (_globals[kGlobalChapter] == 1) {
 			getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 1;
 			CookCall(&LogicManager::CONS_Cook_DoDialog, "KIT1010", 0, 0, 0);
-		} else if (_globals[kProgressChapter] == 3) {
+		} else if (_globals[kGlobalChapter] == 3) {
 			getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 2;
 			CookCall(&LogicManager::CONS_Cook_DoDialog, "KIT1012", 0, 0, 0);
 		} else {
@@ -218,10 +218,10 @@ void LogicManager::HAND_Cook_DowntrainVersion(HAND_PARAMS) {
 		blockView(kCharacterCook, kCarRestaurant, 75);
 		blockView(kCharacterCook, kCarRestaurant, 78);
 
-		if (_globals[kProgressChapter] == 1) {
+		if (_globals[kGlobalChapter] == 1) {
 			getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 1;
 			CookCall(&LogicManager::CONS_Cook_DoDialog, "KIT1010", 0, 0, 0);
-		} else if (_globals[kProgressChapter] == 3) {
+		} else if (_globals[kGlobalChapter] == 3) {
 			getCharacter(kCharacterCook).callbacks[getCharacter(kCharacterCook).currentCall + 8] = 2;
 			CookCall(&LogicManager::CONS_Cook_DoDialog, "KIT1012", 0, 0, 0);
 		} else {
@@ -314,7 +314,7 @@ void LogicManager::HAND_Cook_Birth(HAND_PARAMS) {
 		getCharacter(kCharacterCook).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
 		getCharacter(kCharacterCook).characterPosition.location = 0;
-		_globals[kProgressField4C] = 0;
+		_globals[kGlobalUnknownDebugFlag] = 0;
 		break;
 	default:
 		break;
@@ -378,7 +378,7 @@ void LogicManager::HAND_Cook_InKitchenDinner(HAND_PARAMS) {
 		CONS_Cook_LockUp(0, 0, 0, 0);
 		break;
 	case 224849280:
-		_globals[kProgressField4C] = 1;
+		_globals[kGlobalUnknownDebugFlag] = 1;
 		getCharacterCurrentParams(kCharacterCook)[0] = 1;
 		break;
 	default:
@@ -434,7 +434,7 @@ void LogicManager::HAND_Cook_StartPart2(HAND_PARAMS) {
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
 		getCharacter(kCharacterCook).characterPosition.location = 0;
 		getCharacter(kCharacterCook).inventoryItem = kItemNone;
-		_globals[kProgressField4C] = 1;
+		_globals[kGlobalUnknownDebugFlag] = 1;
 		break;
 	default:
 		break;
@@ -509,7 +509,7 @@ void LogicManager::HAND_Cook_StartPart3(HAND_PARAMS) {
 		endGraphics(kCharacterCook);
 		getCharacter(kCharacterCook).characterPosition.car = kCarRestaurant;
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
-		_globals[kProgressField4C] = 0;
+		_globals[kGlobalUnknownDebugFlag] = 0;
 		break;
 	default:
 		break;
@@ -582,7 +582,7 @@ void LogicManager::HAND_Cook_InKitchenLunch(HAND_PARAMS) {
 
 		break;
 	case 236976550:
-		_globals[kProgressField4C] = 1;
+		_globals[kGlobalUnknownDebugFlag] = 1;
 		break;
 	default:
 		break;
@@ -610,7 +610,7 @@ void LogicManager::HAND_Cook_StartPart4(HAND_PARAMS) {
 		getCharacter(kCharacterCook).characterPosition.position = 5900;
 		getCharacter(kCharacterCook).characterPosition.location = 0;
 		getCharacter(kCharacterCook).inventoryItem = kItemNone;
-		_globals[kProgressField4C] = 1;
+		_globals[kGlobalUnknownDebugFlag] = 1;
 		break;
 	default:
 		break;
