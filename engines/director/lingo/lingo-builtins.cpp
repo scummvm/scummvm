@@ -3674,8 +3674,20 @@ void LB::b_locVToLinePos(int nargs) {
 }
 
 void LB::b_scrollByLine(int nargs) {
-	g_lingo->printSTUBWithArglist("b_scrollByLine", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+	Datum count = g_lingo->pop();
+	Datum member = g_lingo->pop();
+	CastMemberID id = member.asMemberID();
+	Movie *movie = g_director->getCurrentMovie();
+	CastMember *cast = movie->getCastMember(id);
+	if (!cast) {
+		g_lingo->lingoError("b_scrollByLine: Could not resolve cast member %s", id.asString().c_str());
+	} else if (cast->_type != kCastText) {
+		g_lingo->lingoError("b_scrollByLine: Expected cast member %s to be text, got %s", id.asString().c_str(), castType2str(cast->_type));
+	} else {
+		((TextCastMember *)cast)->scrollByLine(count.asInt());
+	}
+
 }
 
 void LB::b_scrollByPage(int nargs) {

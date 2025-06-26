@@ -560,6 +560,11 @@ void TextCastMember::setTextStyle(const Common::String &textStyle) {
 	_modified = true;
 }
 
+void TextCastMember::scrollByLine(int count) {
+	Graphics::MacText *target = getWidget();
+	target->scroll(count);
+}
+
 void TextCastMember::setTextStyle(const Common::String &textStyle, int start, int end) {
 	Graphics::MacText *target = getWidget();
 	int slant = g_director->_wm->_fontMan->parseSlantFromName(textStyle);
