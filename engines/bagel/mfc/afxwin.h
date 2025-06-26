@@ -1224,9 +1224,7 @@ protected:
 	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point) {}
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point) {}
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point) {}
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message) {
-		return false;
-	}
+	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnTimer(UINT_PTR nIDEvent) {}
 
 	// Control message handler member functions

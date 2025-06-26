@@ -80,13 +80,16 @@ bool EventLoop::GetMessage(MSG &msg) {
 			if (hWnd) {
 				// For mouse messages, if the highlighted control
 				// changes, generate a WM_SETCURSOR event
-				if (isMouseMsg(ev) && CWnd::FromHandle(hWnd) != _highlightedWin) {
-					_highlightedWin = CWnd::FromHandle(hWnd);
-					CWnd *activeWin = _activeWindows.top();
-					PostMessage(activeWin,
-						WM_SETCURSOR, (WPARAM)hWnd,
-						MAKELPARAM(HTCLIENT, msg.message)
-					);
+				if (isMouseMsg(ev)) {
+					CWnd *wnd = CWnd::FromHandle(hWnd);
+
+					if (wnd != _highlightedWin) {
+						_highlightedWin = CWnd::FromHandle(hWnd);
+						PostMessage(_highlightedWin,
+							WM_SETCURSOR, (WPARAM)hWnd,
+							MAKELPARAM(HTCLIENT, msg.message)
+						);
+					}
 				}
 
 				if ((msg.message == WM_KEYDOWN || msg.message == WM_KEYUP) &&

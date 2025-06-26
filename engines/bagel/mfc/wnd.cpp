@@ -23,6 +23,7 @@
 #include "common/queue.h"
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/wingdi.h"
 #include "bagel/mfc/gfx/dialog_template.h"
 
 namespace Bagel {
@@ -33,6 +34,7 @@ BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 	ON_WM_CLOSE()
 	ON_WM_DRAWITEM()
 	ON_WM_SETFONT()
+	ON_WM_SETCURSOR()
 END_MESSAGE_MAP()
 
 CWnd::CWnd() : m_hWnd(this) {
@@ -853,6 +855,11 @@ void CWnd::OnSetFont(HFONT hFont, BOOL bRedraw) {
 
 	if (bRedraw)
 		Invalidate();
+}
+
+BOOL CWnd::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message) {
+	MFC::SetCursor(MFC::LoadCursor(nullptr, IDC_ARROW));
+	return true;
 }
 
 void CWnd::SendMessageToDescendants(UINT message,
