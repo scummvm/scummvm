@@ -605,6 +605,19 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
+	if (_hwScreen) {
+		// Get our currently set hardware format
+		Graphics::PixelFormat hwFormat = convertSDLPixelFormat(_hwScreen->format);
+
+		// This is the first supported format to prevent pixel format conversion
+		// on blitting. This gives us a lot more performance on low perf hardware.
+		_supportedFormats.push_back(hwFormat);
+
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+		format = hwFormat;
+#endif
+	}
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	{
 #if SDL_VERSION_ATLEAST(3, 0, 0)
@@ -646,17 +659,6 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 		_supportedFormats.push_back(format);
 	}
 #endif
-
-	if (_hwScreen) {
-		// Get our currently set hardware format
-		Graphics::PixelFormat hwFormat = convertSDLPixelFormat(_hwScreen->format);
-
-		_supportedFormats.push_back(hwFormat);
-
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-		format = hwFormat;
-#endif
-	}
 
 	if (!_isHwPalette) {
 		// Some tables with standard formats that we always list
