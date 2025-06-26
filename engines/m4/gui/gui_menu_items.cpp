@@ -426,7 +426,7 @@ bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32
 	// If we are currently handling the events for an item, continue until that item releases control
 	if (_GM(menuCurrItem)) {
 		handled = (_GM(menuCurrItem)->itemEventHandler)(_GM(menuCurrItem), eventType, parm1, menuX, menuY, (void **)&_GM(menuCurrItem));
-		if (_GM(menuCurrItem)) {
+		if (_GM(menuCurrItem) && currScreen) {
 			*currScreen = true;
 		}
 		if (handled) {
@@ -447,7 +447,7 @@ bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32
 		if (myItem) {
 			if (myItem->itemEventHandler) {
 				(myItem->itemEventHandler)(myItem, eventType, parm1, menuX, menuY, (void **)&_GM(menuCurrItem));
-				if (_GM(menuCurrItem)) {
+				if (_GM(menuCurrItem) && currScreen) {
 					*currScreen = true;
 				}
 				return true;
@@ -473,7 +473,8 @@ bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32
 	case _ME_L_click:
 	case _ME_doubleclick:
 		if (!(myScreen->scrnFlags & SF_IMMOVABLE)) {
-			*currScreen = true;
+			if(currScreen)
+				*currScreen = true;
 			movingScreen = true;
 			movingX = parm2;
 			movingY = parm3;
@@ -491,7 +492,8 @@ bool guiMenu::eventHandler(guiMenu *theMenu, int32 eventType, int32 parm1, int32
 
 	case _ME_L_release:
 	case _ME_doubleclick_release:
-		*currScreen = false;
+		if (currScreen)
+			*currScreen = false;
 		movingScreen = false;
 		break;
 
