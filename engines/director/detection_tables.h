@@ -294,6 +294,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "kidsbiblejlife",		"Interactive Bible for Kids: The Life and Ministry of Jesus" },
 	{ "kidsbiblemoses",		"Interactive Bible for Kids: The Life of Moses" },
 	{ "kidsbiblepaul",		"Interactive Bible for Kids: The Life of Paul" },
+	{ "kidstorypirate",		"The Kidstory Series: The Pirate Who Wouldn't Wash" },
+	{ "kidstorymilly",		"The Kidstory Series: Milly Fitzwilly's Mouse Catcher" },
 	{ "kingandi",			"The King and I: Animated Thinking Adventure" },
 	{ "korkydragons",		"Dragons!" },
 	{ "kothhoot",			"King of the Hill: Hootenany" },
@@ -4874,6 +4876,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1f_l("kidsbox", "Trial Version", "xn--2bka2dk1cd9dd8swlt060aix7dzd6e", "bcd3c718db258701496b3c5bcb827ef2", 484067, Common::JA_JPN, 404, GF_DESKTOP|GF_640x480),
 
 	WINGAME1("kidtools", "", "DEMO.EXE", "da65c64d0821c0d689f8a3ead9301a2a", 15606953, 400),
+
+	WINGAME2("kidstorypirate", "", "PIRATE.EXE", "t:9f557eeb3322d61feb4e11251bbf85c9", 3570593,
+									"C01.DXR", "d:3430a236538e856eca98885407063a22", 810064, 404),
+	WINGAME2("kidstorymilly", "", "MILLY.EXE", "t:9f557eeb3322d61feb4e11251bbf85c9", 3570593,
+			                      "D01.DXR", "d:e3467d46a301f7974c7f128617e1cbe4", 1350746, 404),
 
 	// Original Mac filename is Kinder-Kit™
 	MACGAME1_l("kinderkit", "", "xn--Kinder-Kit-398e", "r:bcd3c718db258701496b3c5bcb827ef2", 483518, Common::PT_BRA, 404),
