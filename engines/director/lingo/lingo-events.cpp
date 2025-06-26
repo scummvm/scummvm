@@ -166,13 +166,16 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				// change the cast member underneath. on mouseUp should always load the cast
 				// script for the original cast member, not the new one.
 				_currentMouseDownCastID = _score->_channels[event.channelId]->_sprite->_castId;
-
+				_currentMouseDownSpriteScriptID = _score->_channels[event.channelId]->_sprite->_scriptId;
+				_currentMouseDownSpriteImmediate = _score->_channels[event.channelId]->_sprite->_immediate;
 			} else {
 				_currentHiliteChannelId = 0;
 				_mouseDownWasInButton = false;
 				_draggingSpriteOffset = Common::Point(0, 0);
 				_currentDraggedChannel = nullptr;
 				_currentMouseDownCastID = CastMemberID();
+				_currentMouseDownSpriteScriptID = CastMemberID();
+				_currentMouseDownSpriteImmediate = false;
 			}
 
 		} else if ((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) {
@@ -228,30 +231,40 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 	 * [D4 docs] */
 	case kSpriteHandler:
 		{
-			if (!event.channelId)
-				return;
-			Frame *currentFrame = _score->_currentFrame;
-			assert(currentFrame != nullptr);
-			Sprite *sprite = _score->getSpriteById(event.channelId);
+			CastMemberID scriptId;
+			bool immediate = false;
+			// mouseUp events seem to check the frame script ID from the original mouseDown event
+			if ((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) {
+				scriptId = _currentMouseDownSpriteScriptID;
+				immediate = _currentMouseDownSpriteImmediate;
+			} else {
+				if (!event.channelId)
+					return;
+				Frame *currentFrame = _score->_currentFrame;
+				assert(currentFrame != nullptr);
+				Sprite *sprite = _score->getSpriteById(event.channelId);
+				if (!sprite || !sprite->_scriptId.member)
+					return;
+				scriptId = sprite->_scriptId;
+				immediate = sprite->_immediate;
+			}
 
 			// Sprite (score) script
-			if (sprite && sprite->_scriptId.member) {
-				ScriptContext *script = getScriptContext(kScoreScript, sprite->_scriptId);
-				if (script) {
-					if (script->_eventHandlers.contains(event.event)) {
-						// D4-style event handler
+			ScriptContext *script = getScriptContext(kScoreScript, scriptId);
+			if (script) {
+				if (script->_eventHandlers.contains(event.event)) {
+					// D4-style event handler
+					event.scriptType = kScoreScript;
+					event.scriptId = scriptId;
+				} else if (script->_eventHandlers.contains(kEventGeneric)) {
+					// D3-style sprite script, not contained in a handler
+					// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
+					if ((event.event == kEventMouseDown && immediate) || (event.event == kEventMouseUp && !immediate)) {
+						event.event = kEventGeneric;
 						event.scriptType = kScoreScript;
-						event.scriptId = sprite->_scriptId;
-					} else if (script->_eventHandlers.contains(kEventGeneric)) {
-						// D3-style sprite script, not contained in a handler
-						// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
-						if ((event.event == kEventMouseDown && sprite->_immediate) || (event.event == kEventMouseUp && !sprite->_immediate)) {
-							event.event = kEventGeneric;
-							event.scriptType = kScoreScript;
-							event.scriptId = sprite->_scriptId;
-						}
-						return; // FIXME: Do not execute the cast script if there is a D3-style sprite script
+						event.scriptId = scriptId;
 					}
+					return; // FIXME: Do not execute the cast script if there is a D3-style sprite script
 				}
 			}
 		}
