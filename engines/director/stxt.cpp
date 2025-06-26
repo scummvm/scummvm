@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/macresman.h"
+#include "common/memstream.h"
 #include "common/substream.h"
 
 #include "director/director.h"
@@ -148,6 +150,21 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 
 	debugC(3, kDebugLoading, "FontStyle::read(): formatStartOffset: %d, height: %d -> %d ascent: %d, fontId: %d -> %d, textSlant: %d, fontSize: %d, r: %x g: %x b: %x",
 			formatStartOffset, originalHeight, height, ascent, originalFontId, fontId, textSlant, fontSize, r, g, b);
+}
+
+void FontStyle::write(Common::MemoryWriteStream *writeStream) {
+	writeStream->writeUint32LE(formatStartOffset);
+	writeStream->writeUint16LE(height);
+	writeStream->writeUint16LE(ascent);
+	writeStream->writeUint16LE(fontId);
+
+	writeStream->writeByte(textSlant);
+	writeStream->seek(1, SEEK_CUR);	// padding
+	writeStream->writeUint16LE(fontSize);
+
+	writeStream->writeUint16LE(r);
+	writeStream->writeUint16LE(g);
+	writeStream->writeUint16LE(b);
 }
 
 } // End of namespace Director

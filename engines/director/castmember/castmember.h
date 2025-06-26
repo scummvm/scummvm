@@ -101,7 +101,7 @@ public:
 
 	virtual CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) { return bbox.contains(pos) ? kCollisionYes : kCollisionNo; }
 
-	virtual void writeToFile(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castID);
+	virtual uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version);
 	virtual uint32 getDataSize();
 	virtual uint32 getInfoSize();
 
@@ -119,7 +119,7 @@ public:
 	uint32 _castDataSize;
 	uint32 _castInfoSize;
 	uint32 _castType; 
-	byte _flags1;
+	uint8 _flags1;
 
 protected:
 	Cast *_cast;
@@ -141,6 +141,10 @@ struct EditInfo {
 };
 
 struct CastMemberInfo {
+	uint32 unk1;
+	uint32 unk2;
+	uint32 flags;
+	uint16 count;
 	bool autoHilite;
 	uint32 scriptId;
 	Common::String script;
@@ -154,7 +158,18 @@ struct CastMemberInfo {
 	Common::String modifiedBy;
 	Common::String comments;
 
+	// There just has to be a better solution
+	// It is not rare to find these strings in the CastMemberInfo
+	Common::String unknownString1;
+	Common::String unknownString2;
+	Common::String unknownString3;
+	Common::String unknownString4;
+	Common::String unknownString5;
+	Common::String unknownString6;
+	Common::String unknownString7;
+
 	CastMemberInfo() : autoHilite(false), scriptId(0) {}
+	void writeCastMemberInfo(Common::MemoryWriteStream *writeStream);
 };
 
 } // End of namespace Director

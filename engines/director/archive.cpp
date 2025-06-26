@@ -1173,7 +1173,7 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 
 	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
 	// Or might need to allocate even more size if extra chunks are written
-	dumpData = (byte *)malloc(_size);
+	dumpData = (byte *)calloc(_size, sizeof(byte));
 
 	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, _size);
 
