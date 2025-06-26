@@ -52,7 +52,7 @@ public:
 private:
 	Common::Mutex _mutex;
 	bool _isPlaying;
-	Audio::PCSpeaker _speaker;
+	Audio::PCSpeakerStream _speaker;
 };
 
 } // End of namespace Agi

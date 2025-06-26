@@ -51,7 +51,7 @@ struct soundSpeakerFx {
 	Common::Array<struct soundSpeakerFx *>additionalSteps;
 };
 
-class SizedPCSpeaker : public Audio::PCSpeaker {
+class SizedPCSpeaker : public Audio::PCSpeakerStream {
 public:
 	bool endOfStream() const override { return !isPlaying(); }
 };

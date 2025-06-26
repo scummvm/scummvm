@@ -28,7 +28,7 @@
 #ifndef GOB_SOUND_PCSPEAKER_H
 #define GOB_SOUND_PCSPEAKER_H
 
-#include "audio/mixer.h"
+#include "common/scummsys.h"
 
 namespace Audio {
 class PCSpeaker;
@@ -38,7 +38,7 @@ namespace Gob {
 
 class PCSpeaker {
 public:
-	PCSpeaker(Audio::Mixer &mixer);
+	PCSpeaker();
 	~PCSpeaker();
 
 	void speakerOn(int16 frequency, int32 length = -1);
@@ -46,10 +46,7 @@ public:
 	void onUpdate(uint32 millis);
 
 private:
-	Audio::Mixer *_mixer;
-
-	Audio::PCSpeaker *_stream;
-	Audio::SoundHandle _handle;
+	Audio::PCSpeaker *_speaker;
 };
 
 } // End of namespace Gob

@@ -39,8 +39,8 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 	// Initialize the two tone generators
 	_pcSpeaker1 = new Audio::PCSpeaker();
 	_pcSpeaker2 = new Audio::PCSpeaker();
-	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_pcSpeakerHandle1, _pcSpeaker1);
-	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_pcSpeakerHandle2, _pcSpeaker2);
+	_pcSpeaker1->init();
+	_pcSpeaker2->init();
 	_soundResource = nullptr;
 }
 

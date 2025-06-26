@@ -22,7 +22,7 @@
 #ifndef GLK_PC_SPEAKER_H
 #define GLK_PC_SPEAKER_H
 
-#include "audio/mixer.h"
+#include "common/scummsys.h"
 
 namespace Audio {
 class PCSpeaker;
@@ -32,11 +32,9 @@ namespace Glk {
 
 class PCSpeaker {
 private:
-	Audio::Mixer *_mixer;
-	Audio::PCSpeaker *_stream;
-	Audio::SoundHandle _handle;
+	Audio::PCSpeaker *_speaker;
 public:
-	PCSpeaker(Audio::Mixer *mixer);
+	PCSpeaker();
 	~PCSpeaker();
 
 	void speakerOn(int16 frequency, int32 length = -1);
