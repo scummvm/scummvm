@@ -109,7 +109,6 @@ struct ConfigChunk : Chunk {
 	ConfigChunk(Archive *m) : Chunk(m, kConfigChunk) {
 		_writable = true;
 	}
-	~ConfigChunk() = default;
 	void read(Common::SeekableReadStreamEndian &stream) {}
 	uint16 size() { return len; }
 	void write(Common::SeekableMemoryWriteStream &stream) {}
