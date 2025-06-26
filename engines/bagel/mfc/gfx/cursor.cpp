@@ -23,7 +23,7 @@
 #include "graphics/wincursor.h"
 #include "image/bmp.h"
 #include "bagel/mfc/gfx/cursor.h"
-#include "bagel/mfc/wingdi.h"
+#include "bagel/mfc/afxwin.h"
 
 namespace Bagel {
 namespace MFC {
@@ -101,7 +101,7 @@ HCURSOR Cursors::loadCursor(LPCSTR cursorId) {
 	if (_cursors.contains(cursorId))
 		return (HCURSOR)_cursors[cursorId];
 
-	Cursor *c = new Cursor(*_resources.getCoreResources(), cursorId);
+	Cursor *c = new Cursor(cursorId);
 	_cursors[cursorId] = c;
 	return (HCURSOR)c;
 }
@@ -115,17 +115,24 @@ Cursor::Cursor(const byte *pixels) : _isBuiltIn(true) {
 	Common::copy(pixels, pixels + CURSOR_W * CURSOR_H, dest);
 }
 
-Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) :
+Cursor::Cursor(LPCSTR cursorId) :
 	_isBuiltIn(false) {
 	Image::BitmapDecoder decoder;
+	const auto &resList = AfxGetApp()->getResources();
 
 	intptr id = (intptr)cursorId;
 	bool success = false;
 
-	Common::SeekableReadStream *bmp = res.getResource(
-	                                      Common::kWinBitmap,
-	                                      (id < 65536) ? Common::WinResourceID(id) :
-	                                      Common::WinResourceID(cursorId));
+	Common::SeekableReadStream *bmp = nullptr;
+	for (const auto &res : resList) {
+		bmp = res._value->getResource(
+			Common::kWinBitmap,
+			(id < 65536) ? Common::WinResourceID(id) :
+			Common::WinResourceID(cursorId));
+		if (bmp)
+			break;
+	}
+
 	if (bmp) {
 		success = decoder.loadStream(*bmp);
 
@@ -136,19 +143,21 @@ Cursor::Cursor(Common::WinResources &res, LPCSTR cursorId) :
 	}
 
 	if (_surface.empty()) {
-		Graphics::WinCursorGroup *group =
-		    Graphics::WinCursorGroup::createCursorGroup(&res, id);
-		if (group) {
-			const auto &cursor = group->cursors[0].cursor;
-			CursorMan.replaceCursor(cursor);
-
-			delete group;
-			success = true;
+		for (const auto &res : resList) {
+			_cursorGroup = Graphics::WinCursorGroup::createCursorGroup(res._value, id);
+			if (_cursorGroup) {
+				success = true;
+				break;
+			}
 		}
 	}
 
 	if (!success)
 		error("Could not load cursor resource");
+}
+
+Cursor::~Cursor() {
+	delete _cursorGroup;
 }
 
 void Cursor::showCursor() {
@@ -158,8 +167,14 @@ void Cursor::showCursor() {
 	if (_isBuiltIn)
 		CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
 
-	CursorMan.replaceCursor(_surface.getPixels(),
-	                        _surface.w, _surface.h, 0, 0, 0, true, &format);
+	if (_cursorGroup) {
+		const auto &cursor = _cursorGroup->cursors[0].cursor;
+		CursorMan.replaceCursor(cursor);
+	} else {
+		CursorMan.replaceCursor(_surface.getPixels(),
+			_surface.w, _surface.h, 0, 0, 0, true, &format);
+	}
+
 	CursorMan.showMouse(true);
 }
 

@@ -1762,6 +1762,10 @@ public:
 	LPVOID lockResource(HGLOBAL hResData);
 	void unlockResource(HGLOBAL hResData);
 	BOOL freeResource(HGLOBAL hResData);
+	const Libs::Resources &getResources() const {
+		return _resources;
+	}
+
 	// Fonts
 	int addFontResource(LPCSTR fontName) {
 		return _fonts.addFontResource(fontName);

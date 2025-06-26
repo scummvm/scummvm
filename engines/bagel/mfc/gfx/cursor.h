@@ -26,6 +26,7 @@
 #include "common/path.h"
 #include "common/formats/winexe_ne.h"
 #include "graphics/managed_surface.h"
+#include "graphics/wincursor.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/libs/resources.h"
 
@@ -54,6 +55,7 @@ struct ResourceString_EqualTo {
 class Cursor {
 private:
 	Graphics::ManagedSurface _surface;
+	Graphics::WinCursorGroup *_cursorGroup = nullptr;
 	bool _isBuiltIn = false;
 
 public:
@@ -68,7 +70,9 @@ public:
 	/**
 	 * Constructor for cursor resources
 	 */
-	Cursor(Common::WinResources &res, LPCSTR cursorId);
+	Cursor(LPCSTR cursorId);
+
+	~Cursor();
 
 	/**
 	 * Set the cursor to be active

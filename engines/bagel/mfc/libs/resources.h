@@ -32,24 +32,24 @@ namespace Bagel {
 namespace MFC {
 namespace Libs {
 
-class Resources {
-	struct Resource {
-		Common::WinResources *_file = nullptr;
-		Common::WinResourceID _type;
-		Common::WinResourceID _id;
-		size_t _size = 0;
+struct Resource {
+	Common::WinResources *_file = nullptr;
+	Common::WinResourceID _type;
+	Common::WinResourceID _id;
+	size_t _size = 0;
 
-		Resource() {}
-		Resource(Common::WinResources *file,
-			const Common::WinResourceID &type,
-			Common::WinResourceID &id, size_t size) :
-			_file(file), _type(type), _id(id),
-			_size(size) {}
-	};
-	typedef Common::List<Resource> ResCache;
+	Resource() {}
+	Resource(Common::WinResources *file,
+		const Common::WinResourceID &type,
+		Common::WinResourceID &id, size_t size) :
+		_file(file), _type(type), _id(id),
+		_size(size) {}
+};
+typedef Common::List<Resource> ResCache;
+typedef Common::HashMap<Common::String, Common::WinResources *> ResourcesHash;
 
+class Resources : public ResourcesHash {
 private:
-	Common::HashMap<Common::String, Common::WinResources *> _resources;
 	ResCache _cache;
 
 public:
@@ -65,10 +65,11 @@ public:
 	 */
 	void removeResources(const Common::Path &file);
 
+#if 0
 	Common::WinResources *getCoreResources() const {
 		return _resources.begin()->_value;
 	}
-
+#endif
 	/**
 	 * Find a resource
 	 */

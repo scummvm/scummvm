@@ -29,7 +29,7 @@ namespace MFC {
 namespace Libs {
 
 Resources::~Resources() {
-	for (auto &it : _resources)
+	for (auto &it : *this)
 		delete it._value;
 }
 
@@ -38,17 +38,17 @@ void Resources::addResources(const Common::Path &file) {
 	if (!res->loadFromEXE(file))
 		error("Could not load %s", file.baseName().c_str());
 
-	_resources[file.baseName()] = res;
+	(*this)[file.baseName()] = res;
 	_cache.clear();
 }
 
 void Resources::removeResources(const Common::Path &file) {
-	_resources.erase(file.baseName());
+	erase(file.baseName());
 	_cache.clear();
 }
 
 HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
-	if (_resources.empty())
+	if (empty())
 		error("Use CWinApp::addResources to register "
 			"an .exe or .dll file containing the resources");
 
@@ -72,7 +72,7 @@ HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
 	}
 
 	// Get the resource
-	for (auto &it : _resources) {
+	for (auto &it : (*this)) {
 		Common::WinResources *res = it._value;
 		Common::SeekableReadStream *rs = res->getResource(type, id);
 
