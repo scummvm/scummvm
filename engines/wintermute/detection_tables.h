@@ -1776,7 +1776,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("lostbride", "",
 		WME_ENTRY1s("data.dcp", "cb45b579c6d5767341a9b07bc807df5f", 106683613), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Tale of The Lost Bride and A Hidden Treasure (Englist)
+	// Tale of The Lost Bride and A Hidden Treasure (English)
 	WME_WINENTRY("lostbride", "",
 		WME_ENTRY1s("data.dcp", "c3c7a646d473914e495c4852f312eb76", 101119036), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
@@ -1811,13 +1811,27 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("miskatonic1", "",
 		WME_ENTRY1s("Miskatonic.exe", "4c52d1cdc6dc708f47049b5c88a5b866", 339002997), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
+	// Miskatonic. Part One (demo)
+	WME_WINENTRY("miskatonic1", "Demo",
+		WME_ENTRY1s("MiskatonicDemo.exe", "4c52d1cdc6dc708f47049b5c88a5b866", 177066565), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+
 	// Monday Starts on Saturday
 	WME_WINENTRY("msos", "",
 		WME_ENTRY1s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Monday Starts on Saturday (Spanish fanmade)
+	WME_WINENTRY("msos", "",
+		WME_ENTRY2s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074,
+					"string.tab", "0f3bd71ea07a32fc74d10bddd0a0c953", 173787), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
+
 	// Mukhtar and his Team
 	WME_WINENTRY("mukhtar", "",
 		WME_ENTRY1s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+
+	// Mukhtar and his Team (Spanish fanmade)
+	WME_WINENTRY("mukhtar", "",
+		WME_ENTRY2s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292,
+					"string.tab", "c2d40757013199ce68831e0b2e903291", 298927), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// Mystic Triddle (Demo)
 	WME_WINENTRY("mystictriddle", "Demo",
@@ -5480,6 +5494,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("sunrise", "",
 		WME_ENTRY1s("data.dcp", "d06744fc60982a30e82d96075698c8bc", 134409552), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
 
+	// Sunrise: The game (Spanish fanmade)
+	WME_WINENTRY("sunrise", "",
+		WME_ENTRY2s("data.dcp", "d06744fc60982a30e82d96075698c8bc", 134409552,
+					"string.tab", "596b3be0d09d41be8d0999ca536d810a", 334279), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
+
 	// Sunrise: The game (Demo) (German)
 	WME_WINENTRY("sunrise", "Demo",
 		WME_ENTRY1s("data.dcp", "3bac4da87472d2e7676e9548970d521a", 52095549), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_7_93),
@@ -5488,17 +5507,39 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("susanrose1", "",
 		WME_ENTRY1s("data.dcp", "bc607fe93d6751de2d0d0b7f4b2c90f8", 798965082), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
 
+	// Susan Rose: Mysterious Child (Spanish fanmade)
+	WME_WINENTRY("susanrose1", "",
+		WME_ENTRY2s("data.dcp", "bc607fe93d6751de2d0d0b7f4b2c90f8", 798965082,
+					"string.tab", "41f5d904edf5f1fd3d80d8f8e6ebd35c", 255118), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
+
 	// Susan Rose: Delicate Murder
 	WME_WINENTRY("susanrose2", "",
 		WME_ENTRY1s("data.dcp", "789660631a79ed76d95446d1f1e6e694", 922032035), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_11),
+
+	// Susan Rose: Delicate Murder (Spanish fanmade)
+	WME_WINENTRY("susanrose2", "",
+		WME_ENTRY2s("data.dcp", "789660631a79ed76d95446d1f1e6e694", 922032035,
+					"string.tab", "8d4a6bed924051c864b78e3401da40fe", 181897), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_8_11),
 
 	// Tanya Grotter and the Magical Double Bass
 	WME_WINENTRY("tanya1", "",
 		WME_ENTRY1s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_0),
 
+	// Tanya Grotter and the Magical Double Bass (Spanish fanmade)
+	// The same translation file is used for both games
+	WME_WINENTRY("tanya1", "",
+		WME_ENTRY2s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786,
+					"string.tab", "877d03e4befb75eb638af8bc1005df8e", 220659), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_0),
+
 	// Tanya Grotter and the Disappearing Floor
 	WME_WINENTRY("tanya2", "",
 		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
+
+	// Tanya Grotter and the Disappearing Floor (Spanish fanmade)
+	// The same translation file is used for both games
+	WME_WINENTRY("tanya2", "",
+		WME_ENTRY2s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767,
+					"string.tab", "877d03e4befb75eb638af8bc1005df8e", 220659), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_3),
 
 	// Murder In Tehran's Alleys 1933 (Retail) (Persian)
 	WME_WINENTRY("tehran1933", "",
@@ -5612,6 +5653,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Fairy Tales About Toshechka and Boshechka
 	WME_WINENTRY("tib", "",
 		WME_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_2),
+
+	// Fairy Tales About Toshechka and Boshechka (Spanish fanmade)
+	WME_WINENTRY("tib", "",
+		WME_ENTRY2s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526,
+					"string.tab", "2b6bad7874220f412d146a3086046490", 59697), Common::ES_ESP, ADGF_UNSTABLE, WME_1_7_2),
 
 	// The Trader of Stories (Demo)
 	WME_WINENTRY("tradestory", "Demo",
