@@ -1761,32 +1761,45 @@ void introduction() {
 	g_engine->_mouseManager->hide();
 	bool pulsada_salida;
 	uint contadorvueltas;
-	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+	bool isSpanish = g_engine->_lang == Common::ES_ESP;
+	const char *const *messages = (isSpanish) ? fullScreenMessages[0] : fullScreenMessages[1];
 	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
 	pulsada_salida = false;
 	totalFadeOut(0);
 
-	if (contadorpc > 6)
-		showError(270);
-	cleardevice();
-	drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, pulsada_salida);
-	if (pulsada_salida)
-		goto Lsalirpres;
-	drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, pulsada_salida);
-	if (pulsada_salida)
-		goto Lsalirpres;
+	// if (contadorpc > 6)
+	// 	showError(270);
+	// cleardevice();
+	// drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, pulsada_salida);
+	// if (pulsada_salida)
+	// 	goto Lsalirpres;
+	// drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, pulsada_salida);
+	// if (pulsada_salida)
+	// 	goto Lsalirpres;
 	totalFadeOut(0);
 	cleardevice();
-
-	outtextxy(25, 20, messages[0], 253);
-	outtextxy(25, 35, messages[1], 253);
-	outtextxy(25, 50, messages[2], 253);
-	outtextxy(25, 65, messages[3], 253);
-	outtextxy(25, 80, messages[4], 253);
-	outtextxy(25, 95, messages[5], 253);
-	outtextxy(25, 120, messages[6], 253);
-	outtextxy(25, 140, messages[7], 253);
-	outtextxy(25, 155, messages[8], 253);
+	if(isSpanish) {
+		outtextxy(25,  20, messages[0], 253);
+		outtextxy(25,  35, messages[1], 253);
+		outtextxy(25,  50, messages[2], 253);
+		outtextxy(25,  65, messages[3], 253);
+		outtextxy(25,  80, messages[4], 253);
+		outtextxy(25,  95, messages[5], 253);
+		outtextxy(25, 120, messages[6], 253);
+		outtextxy(25, 140, messages[7], 253);
+		outtextxy(25, 155, messages[8], 253);
+	}
+	else {
+		outtextxy(25,  35, messages[0], 253);
+		outtextxy(25,  55, messages[1], 253);
+		outtextxy(25,  75, messages[2], 253);
+		outtextxy(25,  95, messages[3], 253);
+		outtextxy(25, 115, messages[4], 253);
+		outtextxy(25, 135, messages[5], 253);
+	}
+	if(g_engine->shouldQuit()){
+		return;
+	}
 	totalFadeIn(0, "DEFAULT");
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
@@ -1820,13 +1833,13 @@ void introduction() {
 	drawFlc(110, 30, offsets[7], 0, 9, 0, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[8], 4, 9, 6, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[8], isSpanish? 4:8, 9, 6, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
 	drawFlc(110, 30, offsets[9], 3, 9, 7, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[8], 3, 9, 8, false, true, false, pulsada_salida);
+	drawFlc(110, 30, offsets[8], isSpanish? 3:8, 9, 8, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
 	drawFlc(110, 30, offsets[9], 2, 9, 9, false, true, false, pulsada_salida);
@@ -1844,10 +1857,10 @@ void introduction() {
 	drawFlc(235, 100, offsets[11], 3, 9, 12, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(150, 40, offsets[12], 0, 9, 13, false, true, false, pulsada_salida);
+	drawFlc(150, 40, offsets[12], isSpanish? 0:2, 9, 13, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
-	drawFlc(235, 100, offsets[11], 3, 9, 14, false, true, false, pulsada_salida);
+	drawFlc(235, 100, offsets[11], isSpanish? 3:8, 9, 14, false, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
 	drawFlc(150, 40, offsets[12], 0, 9, 15, false, true, false, pulsada_salida);
