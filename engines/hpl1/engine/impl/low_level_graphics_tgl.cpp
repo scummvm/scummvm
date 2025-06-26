@@ -45,10 +45,12 @@ TGLenum ColorFormatToTGL(eColorDataFormat format) {
 		return TGL_RGBA;
 	case eColorDataFormat_ALPHA:
 		return TGL_ALPHA;
+#if 0
 	case eColorDataFormat_BGR:
 		return TGL_BGR;
 	case eColorDataFormat_BGRA:
 		return TGL_BGRA;
+#endif
 	default:
 		break;
 	}
