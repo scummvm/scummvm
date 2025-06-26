@@ -31,7 +31,7 @@ namespace Tot {
 extern bool tocapintar, tocapintar2, tocapintareffect;
 
 // Set to 30 for ease of dev
-const int kFrameMs = 30;
+const int kFrameMs = 20;
 // const int kFrameMs = 50;
 const int kDoubleFrameMultiplier = 3;
 const int kFrameEffectMs = 10;

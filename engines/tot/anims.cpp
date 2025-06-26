@@ -92,10 +92,26 @@ void removeText(uint xfrase1, uint yfrase1, uint xfrase2, uint yfrase2, byte col
 	g_engine->_screen->addDirtyRect(Common::Rect(xfrase1, yfrase1, xfrase2, yfrase2));
 }
 
+void drawTvText(Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5) {
+	drawText(80, 0, str1, str2, str3, str4, str5, 253, 0);
+}
+
+void clearTvText() {
+	removeText(80, 0, 319, 53, 0);
+}
+
+void drawCharacterText(Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5) {
+	drawText(2, 100,str1, str2, str3, str4, str5, 255, 0);
+}
+void clearCharacterText() {
+	removeText(2, 100, 134, 199, 0);
+}
+
 void handleFlcEvent(byte numero_del_evento) {
 
 	const char *const *messages = g_engine->_lang == Common::ES_ESP ? animMessages[0] : animMessages[1];
-
+	bool isSpanish = g_engine->_lang == Common::ES_ESP;
+	bool isEnglish = !isSpanish;
 	switch (numero_del_evento) {
 	case 0:
 		if (contadorpc > 103)
@@ -106,232 +122,200 @@ void handleFlcEvent(byte numero_del_evento) {
 
 			switch (numerovuelta) {
 			case 2:
-				drawText(80, 0,
-					messages[0],
-					messages[1],
-					messages[2],
-					messages[3],
-					messages[4],
-					253, 0);
+				drawTvText(messages[0], messages[1], messages[2], messages[3], messages[4]);
 				break;
 			case 13:
-				removeText(80, 0, 319, 53, 0);
+				clearTvText();
 				break;
 			case 14:
-				drawText(80, 0,
-					messages[5],
-					messages[6],
-					messages[7],
-					messages[8],
-					messages[9],
-					253, 0);
+				drawTvText(messages[5], messages[6], messages[7], messages[8], messages[9]);
 				break;
 			case 25:
-				removeText(80, 0, 319, 53, 0);
+				clearTvText();
 				break;
 			case 26:
-				drawText(80, 0,
-					messages[10],
-					messages[11],
-					messages[12],
-					messages[13],
-					messages[14],
-					253, 0);
+				drawTvText(messages[10], messages[11], messages[12], messages[13], messages[14]);
 				break;
 			case 35:
-				removeText(80, 0, 319, 53, 0);
+				clearTvText();
 				break;
 			case 36:
-				drawText(2, 100,
-					messages[15],
-					messages[16],
-					messages[17],
-					messages[18],
-					messages[19],
-					255, 0);
+				drawCharacterText(messages[15], messages[16], messages[17], messages[18], messages[19]);
+				break;
+			// English only
+			case 40:
+				if(isEnglish){
+					clearCharacterText();
+				}
+				break;
+			case 41:
+				if(isEnglish) {
+					drawCharacterText(messages[250], messages[251], messages[252], messages[253], messages[254]);
+				}
 				break;
 			case 47:
-				removeText(2, 100, 134, 199, 0);
+				clearCharacterText();
 				break;
 			case 48:
-				drawText(2, 100,
-					messages[20],
-					messages[21],
-					messages[22],
-					messages[23],
-					messages[24],
-					255, 0);
+				drawCharacterText(messages[20], messages[21], messages[22], messages[23], messages[24]);
 				break;
 			case 59:
-				removeText(2, 100, 134, 199, 0);
+				clearCharacterText();
 				break;
 			case 60:
-				drawText(80, 0,
-					messages[25],
-					messages[26],
-					messages[27],
-					messages[28],
-					messages[29],
-					253, 0);
+				drawTvText(messages[25], messages[26], messages[27], messages[28], messages[29]);
 				break;
 			case 63:
-				drawText(2, 100,
-					messages[30],
-					messages[31],
-					messages[32],
-					messages[33],
-					messages[34],
-					255, 0);
+				drawCharacterText(messages[30], messages[31], messages[32], messages[33], messages[34]);
 				break;
+			case 70:
+				if(isEnglish) {
+					clearTvText();
+				}
+				break;
+			case 71:
+				if(isEnglish) {
+					drawTvText(messages[255], messages[256], messages[257], messages[258], messages[259]);
+				}
+				break;
+			case 73:
+				if(isEnglish) {
+					clearCharacterText();
+				}
+			case 74:
+				if(isEnglish) {
+					drawCharacterText(
+						messages[35],
+						messages[36],
+						messages[37],
+						messages[38],
+						messages[39]
+					);
+				}
 			case 75:
-				removeText(2, 100, 135, 199, 0);
+				if(isSpanish) {
+					clearCharacterText();
+				}
 				break;
 			case 76:
-				removeText(80, 0, 319, 53, 0);
+				if(isSpanish) {
+					clearTvText();
+				}
 				break;
 			case 77:
-				drawText(2, 100,
-					messages[35],
-					messages[36],
-					messages[37],
-					messages[38],
-					messages[39],
-					255, 0);
+				if(isSpanish) {
+					drawCharacterText(messages[35], messages[36], messages[37], messages[38], messages[39]);
+				}
+				break;
+
+			case 80:
+				if(isEnglish) {
+					clearTvText();
+				}
+				break;
+			case 82:
+				if(isEnglish) {
+					clearCharacterText();
+				}
+				break;
+			case 83:
+				if(isEnglish) {
+					drawCharacterText(messages[260], messages[261], messages[262], messages[263], messages[264]);
+				}
 				break;
 			case 89:
-				removeText(2, 100, 135, 199, 0);
+				if(isSpanish) {
+					clearCharacterText();
+				}
 				break;
 			case 90:
-				drawText(2, 100,
-					messages[40],
-					messages[41],
-					messages[42],
-					messages[43],
-					messages[44],
-					 255, 0);
+				if(isSpanish) {
+					drawCharacterText(messages[40], messages[41], messages[42], messages[43], messages[44]);
+				}
+				else {
+					clearCharacterText();
+				}
 				break;
+			case 91:
+				if(isEnglish) {
+					drawCharacterText(messages[40], messages[41], messages[42], messages[43], messages[44]);
+				}
+				break;
+
 			case 102:
-				removeText(2, 100, 135, 199, 0);
+				clearCharacterText();
 				break;
 			case 103:
-				drawText(80, 0,
-					messages[45],
-					messages[46],
-					messages[47],
-					messages[48],
-					messages[49],
-					253, 0);
+				drawTvText(messages[45], messages[46], messages[47], messages[48], messages[49]);
 				break;
 			case 120:
-				removeText(80, 0, 319, 53, 0);
+				clearTvText();
 				break;
 			case 121:
-				drawText(80, 0,
-					messages[50],
-					messages[51],
-					messages[52],
-					messages[53],
-					messages[54],
-					253, 0);
+				drawTvText(messages[50], messages[51], messages[52], messages[53], messages[54]);
 				break;
 			case 125:
-				drawText(2, 100,
-					messages[55],
-					messages[56],
-					messages[57],
-					messages[58],
-					messages[59],
-					255, 0);
+				drawCharacterText(messages[55], messages[56], messages[57], messages[58], messages[59]);
 				break;
 			case 135: {
-				removeText(80, 0, 319, 53, 0);
-				removeText(2, 100, 135, 199, 0);
+				clearTvText();
+				clearCharacterText();
 			} break;
 			}
 		break;
 	case 2:
 		switch (framecontador) {
 		case 1: {
-			removeText(2, 100, 135, 199, 0);
-			removeText(80, 0, 319, 53, 0);
+			clearCharacterText();
+			clearTvText();
 		} break;
 		case 7:
 			playVoc("MANDO", 142001, 11469);
 			break;
 		case 20:
-			drawText(2, 100,
-				messages[60],
-				messages[61],
-				messages[62],
-				messages[63],
-				messages[64],
-				255, 0);
+			drawCharacterText(messages[60], messages[61], messages[62], messages[63], messages[64]);
 			break;
 		case 58: {
-			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100,
-				messages[65],
-				messages[66],
-				messages[67],
-				messages[68],
-				messages[69],
-				255, 0);
+			clearCharacterText();
+			drawCharacterText(messages[65], messages[66], messages[67], messages[68], messages[69]);
 		} break;
 		case 74: {
 			delay(1500);
-			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100,
-				messages[70],
-				messages[71],
-				messages[72],
-				messages[73],
-				messages[74],
-				255, 0);
+			clearCharacterText();
+			drawCharacterText(messages[70], messages[71], messages[72], messages[73], messages[74]);
+
 			delay(4000);
-			removeText(2, 100, 135, 199, 0);
-			drawText(80, 0,
-				messages[75],
-				messages[76],
-				messages[77],
-				messages[78],
-				messages[79],
-				253, 0);
+			clearCharacterText();
+			drawTvText(messages[75], messages[76], messages[77], messages[78], messages[79]);
+
 			delay(7000);
-			removeText(80, 0, 319, 53, 0);
-			drawText(80, 0,
-				messages[80],
-				messages[81],
-				messages[82],
-				messages[83],
-				messages[84],
-				253, 0);
+			clearTvText();
+			drawTvText(messages[80], messages[81], messages[82], messages[83], messages[84]);
+
+			if(isEnglish) {
+				delay(5000);
+				clearTvText();
+				drawTvText(messages[265], messages[266], messages[267], messages[268], messages[269]);
+			}
+
 			delay(7000);
-			removeText(80, 0, 319, 53, 0);
-			drawText(80, 0,
-				messages[85],
-				messages[86],
-				messages[87],
-				messages[88],
-				messages[89],
-				253, 0);
+			clearTvText();
+			drawTvText(messages[85], messages[86], messages[87], messages[88], messages[89]);
+
 			delay(7000);
-			removeText(80, 0, 319, 53, 0);
-			drawText(2, 100,
-				messages[90],
-				messages[91],
-				messages[92],
-				messages[93],
-				messages[94],
-				255, 0);
+			clearTvText();
+			drawCharacterText(messages[90], messages[91], messages[92], messages[93], messages[94]);
+
 			delay(6000);
-			removeText(2, 100, 135, 199, 0);
-			drawText(2, 100,
-				messages[95],
-				messages[96],
-				messages[97],
-				messages[98],
-				messages[99],
-				255, 0);
+			clearCharacterText();
+			drawCharacterText(messages[95], messages[96], messages[97], messages[98], messages[99]);
+
+			if(isEnglish) {
+				delay(6000);
+				clearCharacterText();
+				drawCharacterText(messages[95], messages[96], messages[97], messages[98], messages[99]);
+			}
+
 			delay(6000);
 		} break;
 		}
@@ -389,6 +373,16 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[114],
 				255, 249);
 		}
+		else if ((numerovuelta == 5) && (framecontador == 3)) {
+			putImg(0, 0, punterofondofrase);
+			drawText(5, 1,
+				messages[275],
+				messages[276],
+				messages[277],
+				messages[278],
+				messages[279],
+				255, 249);
+		}
 		break;
 	case 7:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
@@ -411,6 +405,16 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[122],
 				messages[123],
 				messages[124],
+				255, 249);
+		}
+		else if ((numerovuelta == 5) && (framecontador == 3)) {
+			putImg(0, 0, punterofondofrase);
+			drawText(5, 1,
+				messages[280],
+				messages[281],
+				messages[282],
+				messages[283],
+				messages[284],
 				255, 249);
 		}
 		break;
@@ -483,6 +487,16 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[152],
 				messages[153],
 				messages[154],
+				255, 249);
+		}
+		else if ((numerovuelta == 5) && (framecontador == 3)) {
+			putImg(0, 0, punterofondofrase);
+			drawText(5, 1,
+				messages[285],
+				messages[286],
+				messages[287],
+				messages[288],
+				messages[289],
 				255, 249);
 		}
 		break;
