@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-25 21:50+0000\n"
+"POT-Creation-Date: 2025-06-26 03:01+0000\n"
 "PO-Revision-Date: 2025-06-25 19:04+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -14314,7 +14314,9 @@ msgid "Sidestep left"
 msgstr "Pas de côté à gauche"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-msgid "Sidestep Right"
+#, fuzzy
+#| msgid "Sidestep Right"
+msgid "Sidestep right"
 msgstr "Pas de côté à droite"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
