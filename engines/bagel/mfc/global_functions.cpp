@@ -159,16 +159,14 @@ Common::SeekableReadStream *OpenFile(const char *filename) {
 	Common::String fname(filename);
 	if (fname.hasPrefix(".\\"))
 		fname = Common::String(fname.c_str() + 2);
+	fname.replace('\\', '/');
 
-	auto file = AfxGetApp()->getDirectory();
-	int idx;
-	while ((idx = fname.findFirstOf('\\')) != Common::String::npos) {
-		file = file.getChild(Common::String(fname.c_str(), fname.c_str() + idx));
-		fname = Common::String(fname.c_str() + idx + 1);
-	}
-	file = file.getChild(fname);
+	Common::File *f = new Common::File();
+	if (f->open(Common::Path(fname)))
+		return f;
 
-	return file.createReadStream();
+	delete f;
+	return nullptr;
 }
 
 bool FileExists(const char *filename) {

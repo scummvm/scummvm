@@ -196,14 +196,13 @@ BOOL CWinApp::WriteProfileString(LPCSTR lpszSection,
 
 void CWinApp::setDirectory(const char *folder) {
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.remove("CurrentDir");
 
 	_currentDirectory = gameDataDir;
-	if (folder && *folder)
+	if (folder && *folder) {
 		_currentDirectory = gameDataDir.getChild(folder);
-}
-
-Common::FSNode CWinApp::getDirectory() const {
-	return _currentDirectory;
+		SearchMan.addDirectory("CurrentDir", _currentDirectory, 0, 2);
+	}
 }
 
 void CWinApp::setPalette(const Graphics::Palette &pal) {

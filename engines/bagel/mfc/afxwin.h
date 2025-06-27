@@ -1737,7 +1737,6 @@ public:
 
 	/*== ScummVM added functions ==*/
 	void setDirectory(const char *folder);
-	Common::FSNode getDirectory() const;
 	void setPalette(const Graphics::Palette &pal);
 	byte getColor(COLORREF color) const;
 	Graphics::Screen *getScreen() {
