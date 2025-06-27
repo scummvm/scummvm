@@ -260,6 +260,7 @@ class GameObject;
 
 			// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
 			int chosenDialogueOption = 0;
+			uint16 activeDialogueSpeakerObjectID = 0;
 
 			// TODO: Identify number of variables and default values
 			Common::Array<ScriptVariable> _variables;

@@ -24,10 +24,14 @@
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
 
-#include <string>
+#include <cstdlib>
 
 
 namespace Macs2 {
+
+static int parseHexArg(const char *arg) {
+	return strtol(arg, nullptr, 16);
+}
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dumpblobs", WRAP_METHOD(Console, Cmd_dumpBlobs));
@@ -87,7 +91,7 @@ bool Console::Cmd_marker(int argc, const char **argv) {
 bool Console::Cmd_addItem(int argc, const char** argv) {
 	// TODO: Just realizing this - can we have multiple of an item in the inventory?
 	// TODO: Check args count
-	int index = std::stoi(argv[1], nullptr, 16);
+	int index = parseHexArg(argv[1]);
 	for (GameObject* obj : GameObjects::instance().Objects) {
 		if (obj->Index == index) {
 			obj->SceneIndex = 0x1;
@@ -97,7 +101,7 @@ bool Console::Cmd_addItem(int argc, const char** argv) {
 }
 
 bool Console::Cmd_removeItem(int argc, const char **argv) {
-	int index = std::stoi(argv[1], nullptr, 16);
+	int index = parseHexArg(argv[1]);
 	for (GameObject* obj : GameObjects::instance().Objects) {
 		if (obj->Index == index) {
 			obj->SceneIndex = 0x0;
@@ -107,10 +111,10 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 }
 
 bool Console::Cmd_setOrientation(int argc, const char **argv) {
-	int orientation = std::stoi(argv[1], nullptr, 16);
+	int orientation = parseHexArg(argv[1]);
 	int index = 1;
 	if (argc > 2) {
-		index = std::stoi(argv[2], nullptr, 16);
+		index = parseHexArg(argv[2]);
 	}
 	GameObjects::instance().GetObjectByIndex(index)->Orientation = orientation;
 	
@@ -124,12 +128,11 @@ bool Console::Cmd_dumpScript(int argc, const char **argv) {
 }
 
 bool Console::Cmd_set(int argc, const char **argv) {
-	int index = std::stoi(argv[1], nullptr, 16);
-	int v1 = std::stoi(argv[2], nullptr, 16);
-	int v2 = std::stoi(argv[3], nullptr, 16);
+	int index = parseHexArg(argv[1]);
+	int v1 = parseHexArg(argv[2]);
+	int v2 = parseHexArg(argv[3]);
 	g_engine->_scriptExecutor->SetVariableValue(index, v1, v2);
 	return true;
 }
 
 } // End of namespace Macs2
-

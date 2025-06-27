@@ -134,7 +134,7 @@ private:
 	// cf https://stackoverflow.com/a/51497820
 	// TODO: Figure this one out
 	template<typename T, T... ts>
-	constexpr auto is_in_list(T const &t) {
+	constexpr bool is_in_list(T const &t) {
 		using unused = bool[];
 
 		bool ret{false};
@@ -181,6 +181,8 @@ class View1 : public UIElement {
 	bool _isShowingStringBox = false;
 	Common::StringArray _drawnStringBox;
 	bool _continueScriptAfterUI = false;
+	bool _isShowingDialogueChoice = false;
+	uint16 _dialogueChoiceCount = 0;
 
 	bool _isShowingInventory = false;
 
@@ -283,7 +285,7 @@ public:
 
 	void setStringBox(const Common::StringArray& sa);
 	void setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos);
-	void clearStringBox();
+	void clearStringBox(bool continueScript = true);
 
 	void startFading();
 
@@ -317,7 +319,7 @@ public:
 
 	void DrawImageResources(Graphics::ManagedSurface &s);
 
-	void ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
+	void ShowDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
 
 	void TriggerDialogueChoice(uint8 index);
 
