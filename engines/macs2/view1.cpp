@@ -31,6 +31,20 @@
 namespace Macs2 {
 namespace {
 constexpr int kNumLoadedCursors = 5;
+
+void applyPaletteWithFade(const byte *sourcePalette, int fadeValue) {
+	byte colors[256 * 3];
+	memcpy(colors, sourcePalette, sizeof(colors));
+	for (uint i = 0; i < ARRAYSIZE(colors); ++i) {
+		if (colors[i] < fadeValue) {
+			colors[i] = 0;
+		} else {
+			colors[i] -= fadeValue;
+		}
+		colors[i] = (colors[i] * 259 + 33) >> 6;
+	}
+	g_system->getPaletteManager()->setPalette(colors, 0, 256);
+}
 }
 
 void View1::OpenInventory(GameObject *newInventorySource) {
@@ -131,6 +145,8 @@ void View1::UpdateCursor() {
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 		currentSpeechActData.onRightSide = false;
+		g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+		_paletteDirty = false;
 		UpdateCursor();
 		CursorMan.showMouse(true);
 
@@ -352,29 +368,29 @@ View1::View1() : UIElement("View1") {
 		}
 	}
 
-	void View1::handleFading() {
-
-		currentFadeValue -= fadeDelta;
-		if (currentFadeValue < 0) {
+void View1::handleFading() {
+		if (fadeMode == FadeMode::None) {
 			return;
 		}
 
-		byte *colors = new byte[256 * 3];
-		// g_system->getPaletteManager()->grabPalette(colors, 0, 256);
-		// Copy the untouched palette over
-		memcpy(colors, g_engine->_palVanilla, 256 * 3);
-
-		for (int i = 0; i < 256 * 3; i++) {
-			if (colors[i] < currentFadeValue) {
-				colors[i] = 0;
-			} else {
-				colors[i] -= currentFadeValue;
+		if (fadeMode == FadeMode::FromBlack) {
+			currentFadeValue -= fadeDelta;
+			if (currentFadeValue <= 0) {
+				currentFadeValue = -1;
+				fadeMode = FadeMode::None;
+				g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+				_paletteDirty = false;
+				return;
 			}
-			colors[i] = (colors[i] * 259 + 33) >> 6;
+		} else {
+			currentFadeValue += fadeDelta;
+			if (currentFadeValue >= 0x40) {
+				currentFadeValue = 0x40;
+				fadeMode = FadeMode::None;
+			}
 		}
 
-		g_system->getPaletteManager()->setPalette(colors, 0, 256);
-
+		applyPaletteWithFade(g_engine->_palVanilla, currentFadeValue);
 	}
 
 	void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
@@ -539,6 +555,12 @@ View1::View1() : UIElement("View1") {
 
 	void View1::startFading() {
 		currentFadeValue = 0x40;
+		fadeMode = FadeMode::FromBlack;
+	}
+
+	void View1::startFadeToBlack() {
+		currentFadeValue = 0;
+		fadeMode = FadeMode::ToBlack;
 	}
 
 	bool View1::msgFocus(const FocusMessage &msg) {
@@ -812,7 +834,10 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 }
 
 void View1::draw() {
-	g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+	if (_paletteDirty && currentFadeValue < 0) {
+		g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+		_paletteDirty = false;
+	}
 
 	handleFading();
 	
@@ -1416,22 +1441,22 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	const int totalHeight = g_engine->MeasureStringsVertically(strings) + 0x10;
 	int stringBoxX = position.x;
 	int stringBoxY = position.y;
+	Common::Point portraitBoxPosition = position;
 
 	if (currentSpeechActData.speaker != nullptr) {
 		AnimFrame *portrait = currentSpeechActData.speaker->GetCurrentPortrait();
 		if (portrait != nullptr) {
-			const int portraitWidth = portrait->Width + 0xD;
-			const int portraitGap = 6;
+			const int portraitWidth = portrait->Width;
 			if (onRightSide) {
-				stringBoxX = position.x - totalWidth - portraitGap;
+				stringBoxX = position.x - portraitWidth - 0x12 - totalWidth;
+				portraitBoxPosition.x = stringBoxX + totalWidth + 4;
 			} else {
-				stringBoxX = position.x + portraitWidth + portraitGap;
+				stringBoxX = position.x + portraitWidth + 0x12;
 			}
 		}
 	}
 
-	stringBoxX = MAX(0, MIN(320 - totalWidth, stringBoxX));
-	stringBoxY = MAX(0, MIN(200 - totalHeight, stringBoxY));
+	currentSpeechActData.position = portraitBoxPosition;
 	stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
 
 	if (autoclickActive) {
