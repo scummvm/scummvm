@@ -61,14 +61,6 @@ Common::Error HodjNPodjEngine::run() {
 
 	_midi = new MusicPlayer();
 
-	//_metaGame.initBFCInfo();
-	#if 0
-	_settings.load();
-	Settings::Domain &meta = _settings["Meta"];
-	_bAnimationsEnabled = meta.getBool("Animations", true);
-	_bScrollingEnabled = meta.getBool("MapScrolling", false);
-	_gameId = getGameId();
-	#endif
 	// Run the game
 
 	Metagame::Frame::CTheApp app;
@@ -103,59 +95,6 @@ void HodjNPodjEngine::stopBackgroundMidi() {
 		delete _backgroundMidi;
 		_backgroundMidi = nullptr;
 	}
-}
-
-void HodjNPodjEngine::selectMinigame(int newArea) {
-	#ifdef TODO
-	int nWhichMinigame = newArea - MG_GAME_BASE;
-	assert(nWhichMinigame >= 0 && nWhichMinigame < MG_GAME_COUNT);
-
-	getScreen()->clear();
-
-	//bLoadedDLL = FALSE;
-
-	if (newArea == MG_GAME_CHALLENGE) {
-		startBackgroundMidi();
-		#ifdef TODO
-		bSuccess = LoadZoomDLL();
-		bReturnToZoom = FALSE;
-		if (bSuccess == FALSE) {
-			lpMetaGame->m_bRestart = TRUE;
-			bSuccess = LoadMetaDLL();
-		} else
-			startBackgroundMidi();
-		#else
-		error("TODO: MG_GAME_CHALLENGE");
-		#endif
-		return;
-	}
-
-	stopBackgroundMidi();
-	#ifdef TODO
-	if (bReturnToZoom) {
-
-		if (lpGameStruct != nullptr) {
-			delete lpGameStruct;
-			lpGameStruct = nullptr;
-		}
-		lpGameStruct = new GAMESTRUCT;
-		lpGameStruct->lCrowns = 1000;
-		lpGameStruct->lScore = 0;
-		lpGameStruct->nSkillLevel = SKILLLEVEL_MEDIUM;
-		bSoundEffectsEnabled = pMyApp->GetProfileInt("Meta", "SoundEffects", TRUE);
-		bMusicEnabled = pMyApp->GetProfileInt("Meta", "Music", TRUE);
-		lpGameStruct->bSoundEffectsEnabled = bSoundEffectsEnabled;
-		lpGameStruct->bMusicEnabled = bMusicEnabled;
-		lpGameStruct->bPlayingMetagame = FALSE;
-		lpGameStruct->bPlayingHodj = TRUE;
-	}
-	#endif
-
-	// Switch to the minigame
-	addView(CMgStatic::cGameTable[nWhichMinigame]._viewName);
-	#else
-	error("TODO: select minigame");
-	#endif
 }
 
 } // namespace HodjNPodj

@@ -58,8 +58,6 @@ protected:
 public:
 	Common::String _gameId;
 	CBfcMgr _metaGame;
-//	Metagame::SCORESTRUCT _topScores[10];
-//	Metagame::GRANDTRSTRUCT _grandTour;
 	GAMESTRUCT _gameInfo;
 	bool _bDonePodj = false;
 	bool _bReturnToZoom = false;
@@ -121,7 +119,6 @@ public:
 
 	void startBackgroundMidi();
 	void stopBackgroundMidi();
-	void selectMinigame(int newArea);
 };
 
 extern HodjNPodjEngine *g_engine;
