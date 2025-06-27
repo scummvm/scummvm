@@ -908,6 +908,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 		do {
 			_engine->getSoundManager()->soundThread();
+			_engine->waitForTimer(4);
 		} while (delay > _engine->getSoundFrameCounter());
 
 		return true;
@@ -944,6 +945,7 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 
 				do {
 					_engine->getSoundManager()->soundThread();
+					_engine->waitForTimer(4);
 				} while (_engine->getSoundFrameCounter() < delay);
 
 				return true;

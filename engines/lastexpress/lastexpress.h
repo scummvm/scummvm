@@ -222,6 +222,11 @@ typedef struct Seq {
 		memset(gap, 0, sizeof(gap));
 		rawSeqData = nullptr;
 	}
+
+	~Seq() {
+		delete[] sprites;
+		sprites = nullptr;
+	}
 } Seq;
 
 typedef struct CharacterCallParams {
@@ -366,13 +371,11 @@ typedef struct Link {
 
 	~Link() {
 		if (lineList) {
-			debug("DELETE LINK LINE");
 			delete lineList;
 			lineList = nullptr;
 		}
 
 		if (next) {
-			debug("DELETE LINK NEXT");
 			delete next;
 			next = nullptr;
 		}

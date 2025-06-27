@@ -39,6 +39,7 @@ NISManager::~NISManager() {
 	SAFE_DELETE(_background2);
 	SAFE_DELETE(_waneSprite);
 	SAFE_DELETE(_waxSprite);
+	SAFE_DELETE(_events);
 }
 
 void NISManager::clearBounds() {

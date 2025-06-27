@@ -554,6 +554,7 @@ void LogicManager::doPostFunction() {
 					break;
 				_engine->getSoundManager()->soundThread();
 				_engine->getSubtitleManager()->subThread();
+				_engine->waitForTimer(4);
 			} while (delayedTicks > _engine->getSoundFrameCounter());
 		}
 
