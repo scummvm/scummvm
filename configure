@@ -3436,6 +3436,7 @@ EOF
 		_freetypepath="$VITASDK/arm-vita-eabi/bin"
 		_freetype2=yes
 		_libcurlpath="$VITASDK/arm-vita-eabi/bin"
+		_ext_neon=yes
 		append_var CXXFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
 		append_var LDFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
 		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
