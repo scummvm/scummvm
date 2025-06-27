@@ -578,7 +578,7 @@ void Macs2Engine::ReadImageResources(Common::MemoryReadStream *stream) {
 		stream->seek(0x2, SEEK_CUR);
 		frame.ReadFromStream(stream);
 		imageResources.push_back(frame);
-		debug("W: %u, H: %h", frame.Width, frame.Height);
+		debug("W: %u, H: %u", frame.Width, frame.Height);
 	}
 }
 
