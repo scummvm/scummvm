@@ -217,8 +217,11 @@ int DarkMoonEngine::mainMenuLoop() {
 		_gui->simpleMenu_setup(6, 0, _mainMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
 
-		while (sel == -1 && !shouldQuit())
+		while (sel == -1 && !shouldQuit()) {
+			uint32 frameEnd = _system->getMillis() + 8;
 			sel = _gui->simpleMenu_process(6, _mainMenuStrings, 0, -1, 0);
+			delayUntil(frameEnd);
+		}
 	} while ((sel < 0 || sel > 5) && !shouldQuit());
 
 	if (_flags.platform == Common::kPlatformFMTowns && sel == 2) {
@@ -235,8 +238,11 @@ void DarkMoonEngine::townsUtilitiesMenu() {
 	do {
 		_gui->simpleMenu_setup(8, 0, _utilMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
-		while (sel == -1 && !shouldQuit())
+		while (sel == -1 && !shouldQuit()) {
+			uint32 frameEnd = _system->getMillis() + 8;
 			sel = _gui->simpleMenu_process(8, _utilMenuStrings, 0, -1, 0);
+			delayUntil(frameEnd);
+		}
 		if (sel == 0) {
 			_config2431 ^= true;
 			sel = -1;

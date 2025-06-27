@@ -381,6 +381,7 @@ bool CharacterGenerator::createCustomParty(const uint8 ***faceShapes) {
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
 		int inputFlag = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
@@ -433,6 +434,7 @@ bool CharacterGenerator::createCustomParty(const uint8 ***faceShapes) {
 					loop = true;
 			}
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	return true;
@@ -725,6 +727,7 @@ void CharacterGenerator::createPartyMember() {
 	assert(_vm->_gui);
 
 	for (int i = 0; i != 3 && !_vm->shouldQuit(); i++) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		bool bck = false;
 
 		switch (i) {
@@ -747,6 +750,7 @@ void CharacterGenerator::createPartyMember() {
 
 		if (bck)
 			i -= 2;
+		_vm->delayUntil(frameEnd);
 	};
 
 	if (!_vm->shouldQuit()) {
@@ -754,6 +758,7 @@ void CharacterGenerator::createPartyMember() {
 		statsAndFacesMenu();
 
 		for (_characters[_activeBox].name[0] = 0; _characters[_activeBox].name[0] == 0 && !_vm->shouldQuit();) {
+			uint32 frameEnd = _vm->_system->getMillis() + 8;
 			processFaceMenuSelection(_chargenMinStats[6]);
 			printStats(_activeBox, 0);
 			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
@@ -778,6 +783,7 @@ void CharacterGenerator::createPartyMember() {
 					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlue);
 				}
 			}
+			_vm->delayUntil(frameEnd);
 		}
 	}
 }
@@ -803,11 +809,13 @@ int CharacterGenerator::raceSexMenu() {
 	int16 res = -1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		res = _vm->_gui->simpleMenu_process(1, _chargenRaceSexStrings, 0, -1, 0);
 		if (_vm->_flags.platform == Common::kPlatformSegaCD)
 			_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
 		_screen->updateScreen();
 		updateMagicShapes();
+		_vm->delayUntil(frameEnd);
 	}
 
 	return res;
@@ -850,6 +858,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 	bool backBtnHiLite = false;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		updateMagicShapes();
 		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
@@ -878,6 +887,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 			}
 			_screen->updateScreen();
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_vm->removeInputTop();
@@ -924,6 +934,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	bool backBtnHiLite = false;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		updateMagicShapes();
 		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
@@ -952,6 +963,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 			}
 			_screen->updateScreen();
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_vm->removeInputTop();
@@ -1112,6 +1124,7 @@ void CharacterGenerator::statsAndFacesMenu() {
 	int in = 0;
 
 	while (!in && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		updateMagicShapes();
 		in = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
@@ -1141,6 +1154,7 @@ void CharacterGenerator::statsAndFacesMenu() {
 			initButtonsFromList(27, 4);
 			in = 0;
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_vm->_gui->updateBoxFrameHighLight(6 + _activeBox);
@@ -1179,6 +1193,7 @@ void CharacterGenerator::faceSelectMenu() {
 		int in = 0;
 
 		while (!in && !_vm->shouldQuit()) {
+			uint32 frameEnd = _vm->_system->getMillis() + 8;
 			updateMagicShapes();
 			in = getInput(_vm->_activeButtons);
 			_vm->removeInputTop();
@@ -1201,6 +1216,7 @@ void CharacterGenerator::faceSelectMenu() {
 			} else {
 				in = 0;
 			}
+			_vm->delayUntil(frameEnd);
 		}
 
 		_vm->_gui->updateBoxFrameHighLight(-1);
@@ -1430,6 +1446,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	}
 
 	for (bool loop = true; loop && !_vm->shouldQuit();) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		uint8 v1 = *s1;
 		updateMagicShapes();
 		int inputFlag = getInput(_vm->_activeButtons);
@@ -1554,6 +1571,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			}
 			_screen->updateScreen();
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_screen->setFont(of);
@@ -2218,6 +2236,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 	bool update = false;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
 
@@ -2290,6 +2309,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 			_vm->_gui->messageDialog(16, count < 4 ? 69 : 70, _vm->guiSettings()->colors.guiColorLightRed);
 
 		_screen->updateScreen();
+		_vm->delayUntil(frameEnd);
 	}
 
 	_screen->setFont(of);

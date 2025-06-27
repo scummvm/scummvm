@@ -744,6 +744,7 @@ void EoBCoreEngine::runLoop() {
 	_runFlag = true;
 
 	while (!shouldQuit() && _runFlag) {
+		uint32 frameEnd = _system->getMillis() + 8;	
 		checkPartyStatus(true);
 		checkInput(_activeButtons, true, 0);
 		removeInputTop();
@@ -770,6 +771,7 @@ void EoBCoreEngine::runLoop() {
 		snd_updateLevelScore();
 		snd_updateEnvironmentalSfx(0);
 		turnUndeadAuto();
+		delayUntil(frameEnd);
 	}
 }
 
