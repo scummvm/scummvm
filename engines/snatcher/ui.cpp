@@ -23,17 +23,19 @@
 #include "snatcher/graphics.h"
 #include "snatcher/resource.h"
 #include "snatcher/script.h"
+#include "snatcher/snatcher.h"
 #include "snatcher/ui.h"
+#include "snatcher/util.h"
 #include "common/stream.h"
 
 
 namespace Snatcher {
 
 UI::UI(GraphicsEngine *gfx, CmdQueue *que, ResourcePointer *scd) : _gfx(gfx), _que(que), _scd(scd), _sceneId(0), _textLineBreak(0), _dialogTextBuffer(nullptr), _textColor(0),
-	_scriptTextResource(nullptr),/*_makestrbt1(0),*/ _textY(0), _headLineYOffset(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0), _sceneTextOffset(0), _transDW1(0), _transDW2(0),
-		_sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0), _progress(-1), _progress2(-1), _controllerCfg(0), _verbsTabLayout(0), _verbsInterpreterMode(0),
+	_scriptTextResource(nullptr),/*_makestrbt1(0),*/ _textY(0), _headLineYOffset(0), _sceneTextOffsCur(0), _textLineEnd(0), _sceneInfo(0), _sceneTextOffset(0), _flashLight(),
+		_sceneTextOffsStart(0), _waitCursorFrame(0), _waitCursorAnimDelay(0), _progress(-1), _progress2(-1), _controllerCfg(0), _verbInterfaceMode(0), _verbsInterpreterMode(0),
 			_lastVerbFirstPage(0), _numVerbsFirstPage(0), _numVerbsLastPage(0), _lastVerbLastPage(0), _numVerbsMax(0), _verbsTabCurPage(0), _lastVerbDrawn(0), _verbTextBuffer(nullptr), _scriptVerbsArray(nullptr),
-				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _transit_02(0), _textInputMarginLeft(0), _videoPhoneMode(0),
+				_scriptSentenceArray(nullptr), _prevSelectedVerb(0), _selectedVerb(0), _lastHiliteVerb(0), _hiliteVerb(0), _textInputMarginLeft(0), _videoPhoneMode(0),
 					_textInputColumnCur(0), _textInputColumnMax(0), _textInputCursorState(0), _textInputCursorBlinkCnt(0), _underscoreStr(nullptr), _textInputStr(nullptr), _vkeybPosTotal(0),
 						_vkeybColumnWidth(0), _verbsTabLayoutMap(nullptr), _verbsTabOffsX(0), _verbsTabOffsY(0), _hilitePosX(0), _hilitePosY(0), _vkeybVisible(false) {
 
@@ -186,11 +188,11 @@ bool UI::drawVerbs() {
 
 		if (_scriptVerbsArray->pos() >= 9) {
 			if (_scriptTextResource[_scriptVerbsArray->read(0)] < 'A') {
-				_verbsTabLayout = 2;
+				_verbInterfaceMode = 2;
 				_que->writeUInt16(0x22);
 				_que->writeUInt32(0x1138C);
 			} else {
-				_verbsTabLayout = 3;
+				_verbInterfaceMode = 3;
 				_que->writeUInt16(0x22);
 				_que->writeUInt32(0x11382);
 			}
@@ -207,7 +209,7 @@ bool UI::drawVerbs() {
 		return false;
 	}
 
-	if (_verbsTabLayout < 2) {
+	if (_verbInterfaceMode < 2) {
 		if (_progress2 == 2) {
 			static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFE, 0x04, 0xFB };
 			memcpy(_verbTextBuffer, strHead, sizeof(strHead));
@@ -278,7 +280,7 @@ bool UI::drawVerbs() {
 		}
 	} else {
 		if (_progress2 == 2) {
-			if (_verbsTabLayout == 2) {
+			if (_verbInterfaceMode == 2) {
 				_que->writeUInt16(0x05);
 				_que->writeUInt32(0x11454);
 				_que->start();
@@ -287,7 +289,7 @@ bool UI::drawVerbs() {
 			return false;
 		}
 		if (_progress2 == 3) {
-			if (_verbsTabLayout == 2) {
+			if (_verbInterfaceMode == 2) {
 				_gfx->transitionCommand(15);
 			} else {
 				_gfx->transitionCommand(16);
@@ -300,9 +302,9 @@ bool UI::drawVerbs() {
 			_textInputMarginLeft = 64;
 			_textInputColumnCur = 0;
 			if (_textInputColumnMax == 0) {
-				_textInputColumnMax = (_verbsTabLayout == 2) ? 10 : 17;
-				_textInputMarginLeft = (_verbsTabLayout == 2) ? 24 : 48;
-				_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaFrame, _verbsTabLayout == 2 ? 2 : 0);
+				_textInputColumnMax = (_verbInterfaceMode == 2) ? 10 : 17;
+				_textInputMarginLeft = (_verbInterfaceMode == 2) ? 24 : 48;
+				_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaFrame, _verbInterfaceMode == 2 ? 2 : 0);
 			}
 			++_progress2;
 		}
@@ -333,10 +335,10 @@ bool UI::drawVerbs() {
 
 			static const uint8 offs[] = { 0x2D, 0x06, 0x1B, 0x1A, 0xC0, 0x87, 0x10, 0x90 };
 
-			_vkeybPosTotal = offs[((_verbsTabLayout - 2) << 1)];
-			_vkeybColumnWidth = offs[((_verbsTabLayout - 2) << 1) + 1];
-			_verbsTabOffsX = offs[((_verbsTabLayout - 2) << 1) + 4];
-			_verbsTabOffsY = offs[((_verbsTabLayout - 2) << 1) + 5];
+			_vkeybPosTotal = offs[((_verbInterfaceMode - 2) << 1)];
+			_vkeybColumnWidth = offs[((_verbInterfaceMode - 2) << 1) + 1];
+			_verbsTabOffsX = offs[((_verbInterfaceMode - 2) << 1) + 4];
+			_verbsTabOffsY = offs[((_verbInterfaceMode - 2) << 1) + 5];
 			adjustHilitePos();
 
 			_progress2 = 100;
@@ -347,7 +349,7 @@ bool UI::drawVerbs() {
 	return true;
 }
 
-bool UI::verbsTabInputPrompt(uint16 inputFlags) {
+bool UI::verbsTabInputPrompt(const SnatcherEngine::Input &input) {
 	assert (_progress2 >= 100);
 	if (_verbsInterpreterMode == 2) {
 		if (_progress2 & 0x80) {
@@ -358,24 +360,24 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 		}
 	} else {
 		if (_progress2 == 100) {
-			if (_verbsTabLayout < 2)
+			if (_verbInterfaceMode < 2)
 				_gfx->transitionCommand(_gfx->getVerbAreaType() ? 18 : 13);
 			++_progress2;
 		}
 
 		if (_progress2 == 101) {
-			if (_verbsTabLayout < 2 && !_gfx->isVerbsTabActive())
+			if (_verbInterfaceMode < 2 && !_gfx->isVerbsTabActive())
 				return false;
 			++_progress2;
 		}
 
 		if (_progress2 == 102) {
 			_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaEnable, 1);
-			if (_verbsTabLayout >= 2) {
-				_verbsTabLayoutMap = _scd->makePtr(_verbsTabLayout == 3 ? 0x11512 : 0x114DC)();
+			if (_verbInterfaceMode >= 2) {
+				_verbsTabLayoutMap = _scd->makePtr(_verbInterfaceMode == 3 ? 0x11512 : 0x114DC)();
 				_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide | GraphicsEngine::kAnimPause);
 				_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
-				_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaFrame, _verbsTabLayout == 2 ? 2 : 0);
+				_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaFrame, _verbInterfaceMode == 2 ? 2 : 0);
 			} else {
 				_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaControlFlags, 0);
 			}
@@ -384,7 +386,7 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 		}
 
 		if ((_progress2 & 0xFF) == 103) {
-			verbsTabHandleInput(inputFlags);
+			verbsTabHandleInput(input);
 			if (_selectedVerb == 0)
 				return false;
 			++_progress2;
@@ -409,7 +411,7 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 		++_progress2;
 	}
 
-	if (_verbsTabLayout < 2) {
+	if (_verbInterfaceMode < 2) {
 		if (_progress2 == 105) {
 			_gfx->transitionCommand(_gfx->getVerbAreaType() ? 19 : 14);
 			++_progress2;
@@ -436,7 +438,7 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 		if (_progress2 == 105) {
 			_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide | GraphicsEngine::kAnimPause);
 			_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide | GraphicsEngine::kAnimPause);
-			if (_verbsTabLayout == 2)
+			if (_verbInterfaceMode == 2)
 				_gfx->transitionCommand(0xFE);
 			else if (_vkeybVisible) {
 				_vkeybVisible = false;
@@ -462,7 +464,7 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 		if (_progress2 == 108) {
 			if (++_verbsInterpreterMode != 2) {
 				_verbsInterpreterMode = 0;
-				_verbsTabLayout = 0;
+				_verbInterfaceMode = 0;
 			}
 			_videoPhoneMode = 0;
 			_textInputColumnMax = 0;
@@ -473,27 +475,31 @@ bool UI::verbsTabInputPrompt(uint16 inputFlags) {
 	return true;
 }
 
-void UI::setVerbsTabLayout(uint16 layout) {
-	_verbsTabLayout = layout;
-	if (layout == 1)
-		_transDW1 = _transDW2 = 0;
+void UI::moveFlashLight() {
+	if (_verbInterfaceMode != 1)
+		return;
+	_gfx->transitionCommand(1);
+	_gfx->setScrollStep(GraphicsEngine::kSingleStep | GraphicsEngine::kHorzA, (_flashLight.posX >> 16) + ((Util::rngMakeNumber() & 0x8000) ? 1 : 0));
+	_gfx->setScrollStep(GraphicsEngine::kSingleStep | GraphicsEngine::kVertA, (_flashLight.posY >> 16) - 40 + ((Util::rngMakeNumber() & 0x8000) ? 1 : 0));
 }
 
-void UI::setInterpreterMode(uint16 mode) {
-	_verbsInterpreterMode = mode;
+void UI::setVerbInterfaceMode(uint16 mode) {
+	_verbInterfaceMode = mode;
+	if (mode == 1)
+		_flashLight.posX = _flashLight.posY = 0;
 }
 
 void UI::loadState(Common::SeekableReadStream *in) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
-	_verbsTabLayout = in->readUint16BE();
+	_verbInterfaceMode = in->readUint16BE();
 	_verbsInterpreterMode = in->readUint16BE();
 	_progress = _progress2 = -1;
 }
 
 void UI::saveState(Common::SeekableWriteStream *out) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
-	out->writeUint16BE(_verbsTabLayout);
+	out->writeUint16BE(_verbInterfaceMode);
 	out->writeUint16BE(_verbsInterpreterMode);
 }
 
@@ -546,7 +552,7 @@ void UI::printDialogStringBody() {
 		case 0xF6:
 			_textLineBreak = 3;
 			i = 49;
-			break;;
+			break;
 		case 0xF4:
 			_sceneInfo = (_sceneInfo & 0xFF) | 0x200;
 			break;
@@ -712,9 +718,9 @@ void UI::verbSelect2setResult() {
 	_selectedVerb = (i == _scriptVerbsArray->size()) ? 1 : i + 1;
 }
 
-void UI::verbsTabHandleInput(uint16 inputFlags) {
+void UI::verbsTabHandleInput(const SnatcherEngine::Input &input) {
 	if (_progress2 & 0x100) {
-		if (_verbsTabLayout < 2)
+		if (_verbInterfaceMode < 2)
 			drawHiliteVerb(1);
 		else
 			virtKeybBackspace();
@@ -733,8 +739,32 @@ void UI::verbsTabHandleInput(uint16 inputFlags) {
 		return;
 	}
 
-	if (_verbsTabLayout == 0) {
-		uint8 in = verbsTabCheckInputFlags(inputFlags);
+	if (_verbInterfaceMode < 2) {
+		if (_verbInterfaceMode == 1) {
+			if (_scriptSentenceArray->pos() == 0) {
+				if (input.sustainedControllerFlagsRemapped & 0x10) {
+					//_c13Valu = 0xFF;
+					uint8 in = _flashLight.inputFlags = input.sustainedControllerFlagsRemapped;
+					_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide | GraphicsEngine::kAnimPause);
+					if (in & 1)
+						moveFlashLight(0, -0x20000);
+					if (in & 2)
+						moveFlashLight(0, 0x20000);
+					if (in & 8)
+						moveFlashLight(0x20000, 0);
+					if (in & 4)
+						moveFlashLight(-0x20000, 0);
+				} else {
+					//_c13Valu = 0;
+					_flashLight.posData = checkFlashLightPos(((_flashLight.posX >> 16) + 72) >> 2, ((_flashLight.posY >> 16) + 40) >> 2);
+					_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
+				}
+			}
+			if (_scriptSentenceArray->pos() == 0 && (input.sustainedControllerFlagsRemapped & 0x10))
+				return; // No handling of the verbs section when moving around the flashlight
+		}
+
+		uint8 in = input.singleFrameControllerFlagsRemapped;
 		if (_scriptVerbsArray->pos() == 1) {
 			if (in == 0x10) {
 				if (_scriptSentenceArray->pos() != 0)
@@ -792,13 +822,11 @@ void UI::verbsTabHandleInput(uint16 inputFlags) {
 				verbSelect();
 			}
 		}
-	} else if (_verbsTabLayout == 1) {
-
 	} else {
 		if (--_textInputCursorBlinkCnt == 0)
 			drawUnderscoreCursor();
 
-		uint8 in = verbsTabCheckInputFlags(inputFlags);
+		uint8 in = input.singleFrameControllerFlagsRemapped;
 
 		if (in & 1) {
 			for (int cr = _vkeybPosTotal - _vkeybColumnWidth; verbsTabMoveHilite(cr); )
@@ -825,10 +853,6 @@ void UI::verbsTabHandleInput(uint16 inputFlags) {
 				virtKeybPrint();
 		}
 	}
-}
-
-uint8 UI::verbsTabCheckInputFlags(uint16 inputFlags) {
-	return inputFlags;
 }
 
 bool UI::verbsTabMoveHilite(int &pos) {
@@ -870,7 +894,7 @@ bool UI::verbsTabMoveHilite(int &pos) {
 
 void UI::adjustHilitePos() {
 	_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
-	_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaFrame, _verbsTabLayout == 2 ? 2 : 0);
+	_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaFrame, _verbInterfaceMode == 2 ? 2 : 0);
 	_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide | GraphicsEngine::kAnimPause);
 
 	int rows = 1;
@@ -953,7 +977,7 @@ bool UI::verbSelect2() {
 		}	
 
 		if (_progress2 == 0x100) {
-			if (_verbsTabLayout == 3) {
+			if (_verbInterfaceMode == 3) {
 				uint8 frm = _scd->makePtr(0x115CA)[_vkeybPosTotal];
 				_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaFrame, frm);
 				_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
@@ -996,7 +1020,7 @@ bool UI::verbSelect2() {
 
 void UI::virtKeybBackspace() {
 	if (!(_progress2 & 0x100)) {
-		if (_verbsTabLayout == 3) {
+		if (_verbInterfaceMode == 3) {
 			_hilitePosX = _gfx->getAnimParameter(62, GraphicsEngine::kAnimParaPosX);
 			_hilitePosY = _gfx->getAnimParameter(62, GraphicsEngine::kAnimParaPosY);
 			_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaPosX, 88);
@@ -1023,7 +1047,7 @@ void UI::virtKeybBackspace() {
 }
 
 void UI::virtKeybStart() {
-	if (_verbsTabLayout == 3) {
+	if (_verbInterfaceMode == 3) {
 		_hilitePosX = _gfx->getAnimParameter(62, GraphicsEngine::kAnimParaPosX);
 		_hilitePosY = _gfx->getAnimParameter(62, GraphicsEngine::kAnimParaPosY);
 		_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaPosX, 200);
@@ -1112,6 +1136,28 @@ void UI::virtKeybPrint() {
 				verbSelect2setResult();
 		}
 	}
+}
+
+uint8 UI::checkFlashLightPos(int16 x, int16 y) {
+	return _scd->makePtr(0x109E8)[y * 36 + x];
+}
+
+void UI::moveFlashLight(int32 offsX, int32 offsY) {
+	if (offsX == 0) {
+		assert(offsY != 0);
+		int32 nY = _flashLight.posY + offsY;
+		if (nY >= -0x270000 && nY < 0x250000)
+			_flashLight.posY = nY;
+
+	} else if (offsY == 0) {
+		assert(offsX != 0);
+		int32 nX = _flashLight.posX + offsX;
+		if (nX >= -0x470000 && nX < 0x450000)
+			_flashLight.posX = nX;
+	} else {
+		error("%s(): Invalid parameters", __FUNCTION__);
+	}
+	debug ("FLASHLIGHT: X: %d, Y: %d", _flashLight.posX >> 16, _flashLight.posY >> 16);
 }
 
 } // End of namespace Snatcher

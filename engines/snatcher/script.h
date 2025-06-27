@@ -26,7 +26,7 @@
 #include "common/func.h"
 #include "common/ptr.h"
 
-//#define		SNATCHER_SCRIPT_DEBUG
+#define		SNATCHER_SCRIPT_DEBUG
 
 namespace Common {
 class SeekableReadStream;
@@ -96,7 +96,7 @@ private:
 	void m_shooterSequenceRun(const uint16 *&data);
 	void m_fmSfxWait(const uint16 *&data);
 	void m_26(const uint16 *&data);
-	void m_27(const uint16 *&data);
+	void m_cdaSync(const uint16 *&data);
 	void m_fmSoundEffect(const uint16 *&data);
 	void m_pcmBlock(const uint16 *&data);
 	void m_saveGame(const uint16 *&data);
@@ -195,8 +195,8 @@ private:
 	void o_05();
 	void o_eval_and();
 	void o_fmMusicStart();
-	void o_callSubRoutine();
-	void o_12();
+	void o_runSubScript();
+	void o_callSubroutine();
 	void o_cdaPlay();
 	void o_14();
 	void o_fmSoundEffect();
@@ -220,7 +220,7 @@ private:
 	void o_54();
 	void o_verbOps();
 	void o_57();
-	void o_returnFromSubRoutine();
+	void o_returnFromSubScript();
 	void o_59();
 	void o_loadModuleAndStartGfx();
 	void o_62();

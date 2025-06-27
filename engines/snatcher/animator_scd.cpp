@@ -37,11 +37,11 @@
 
 namespace Snatcher {
 
-//#define		ANIM_DEBUG
+#define		ANIM_DEBUG
 
 struct AnimObject {
-	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), f17(0), f18(0), f1c(0),
-		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), f2c(0), f2d(0), spriteTableLocation(0),
+	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), target(0), f18(0), f1c(0),
+		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), actionTimer(0), spriteTableLocation(0),
 			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), freeze(0), blink(0), blinkCounter(0), blinkDuration(0) {}
 
 	void clear() {
@@ -49,14 +49,14 @@ struct AnimObject {
 		posX = posY = 0;
 		relSpeedX = relSpeedY = 0;
 		palette = 0;
-		f17 = f18 = 0;
+		target = f18 = 0;
 		f1c = 0;
 		timeStamp = 0;
 		f24 = 0;
 		controlFlags = allowFrameDrop = frameSeqCounter = 0;
 		frame = 0;
 		frameDelay = 0;
-		f2c = f2d = 0;
+		actionTimer = 0;
 		spriteTableLocation = 0;
 		res = ResourcePointer();
 		scriptData = ResourcePointer();
@@ -75,7 +75,7 @@ struct AnimObject {
 	int32 relSpeedX;
 	int32 relSpeedY;
 	uint8 palette;
-	uint16 f17;
+	uint16 target;
 	uint16 f18;
 	uint8 f1c;
 	uint32 timeStamp;
@@ -85,8 +85,7 @@ struct AnimObject {
 	uint8 frameSeqCounter;
 	uint16 frame;
 	int16 frameDelay;
-	uint8 f2c;
-	uint8 f2d;
+	int16 actionTimer;
 	uint32 spriteTableLocation;
 	ResourcePointer res;
 	ResourcePointer scriptData;
@@ -150,7 +149,7 @@ private:
 	void updateScrollState();
 
 	void generateSpriteData(AnimObject &a, uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos);
-	void updateAnim32Spec(AnimObject &a);
+	void generateSnowSprites(uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos);
 	bool reachedAudioTimeStamp(AnimObject &a) const;
 	void runAnimScript(AnimObject &a);
 
@@ -165,7 +164,7 @@ private:
 	uint16 _clearFlags;
 	uint8 _mode;
 	uint8 _modeChange;
-	uint16 _frameCount3Dwn;
+	uint16 _frameCountDown;
 	Graphics::SegaRenderer *_sr;
 	Palette *_pal;
 	TransitionManager *_trs;
@@ -234,7 +233,7 @@ private:
 	int anim_hide(AnimObject &a, const uint8 *data);
 	int anim_setScriptComFlag(AnimObject &a, const uint8 *data);
 	int anim_audioSync(AnimObject &a, const uint8 *data);
-	int anim_27(AnimObject &a, const uint8 *data);
+	int anim_protect(AnimObject &a, const uint8 *data);
 	int anim_28(AnimObject &a, const uint8 *data);
 	int anim_fmSoundEffect(AnimObject &a, const uint8 *data);
 	int anim_30(AnimObject &a, const uint8 *data);
@@ -268,7 +267,7 @@ private:
 };
 
 Animator_SCD::Animator_SCD(const Graphics::PixelFormat *pxf, GraphicsEngine::GfxState &state, Palette *pal, TransitionManager *scr, SoundEngine *snd, bool enableAspectRatioCorrection) : Animator(state), _pal(pal), _trs(scr), _snd(snd), _mode(1),
-	_modeChange(0), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0), _transferDelay(0), _clearFlags(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _frameCount3Dwn(0),
+	_modeChange(0), _screenWidth(256), _screenHeight(224), _transferData(), _transferMode(0), _transferDelay(0), _clearFlags(0), _tempBuffer(nullptr), _spriteBuffer(nullptr), _sr(nullptr), _frameCountDown(0),
 		_animations(nullptr), _drawCommands(nullptr), _hINTClientProc(Graphics::SegaRenderer::HINTHandler(this, &Graphics::SegaRenderer::HINTClient::hINTCallback)), _realScreenWidth(0), _realScreenHeight(0),
 			_bootsDelay(0), _bootsSprTbl(nullptr), _bootsTotalFrames(0), _bootsHScroll(0), _bootsVScroll(0), _bootsCol(0) {
 
@@ -407,7 +406,7 @@ void Animator_SCD::clearAnimations(int mode) {
 
 void Animator_SCD::setPlaneMode(uint16 mode) {
 	assert(mode >> 8 == 0);
-	_modeChange = mode & 0xFF;;
+	_modeChange = mode & 0xFF;
 }
 
 void Animator_SCD::resetTextFields() {
@@ -514,6 +513,9 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 	assert(animObjId < 64);
 	AnimObject &a = *_animations[animObjId];
 
+	if (animObjId == 36)
+		debug("%s(): animObjId: %d, param: %d, value: %d", __FUNCTION__, animObjId, param, value);
+
 	switch (param) {
 	case GraphicsEngine::kAnimParaEnable:
 		a.enable = value ? 1 : 0;
@@ -539,8 +541,8 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 	case GraphicsEngine::kAnimParaPalette:
 		a.palette = value;
 		break;
-	case GraphicsEngine::kAnimParaF17:
-		a.f17 = value;
+	case GraphicsEngine::kAnimParaTarget:
+		a.target = value;
 		break;
 	case GraphicsEngine::kAnimParaF18:
 		a.f18 = value;
@@ -569,11 +571,8 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 	case GraphicsEngine::kAnimParaFrameDelay:
 		a.frameDelay = value;
 		break;
-	case GraphicsEngine::kAnimParaF2c:
-		a.f2c = value;
-		break;
-	case GraphicsEngine::kAnimParaF2d:
-		a.f2d = value;
+	case GraphicsEngine::kAnimParaActionTimer:
+		a.actionTimer = value;
 		break;
 	case GraphicsEngine::kAnimParaBlink:
 		a.blink = value ? 1 : 0;
@@ -630,8 +629,8 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 		return a.relSpeedY >> 16;
 	case GraphicsEngine::kAnimParaPalette:
 		return a.palette;
-	case GraphicsEngine::kAnimParaF17:
-		return a.f17;
+	case GraphicsEngine::kAnimParaTarget:
+		return a.target;
 	case GraphicsEngine::kAnimParaF18:
 		return a.f18;
 	case GraphicsEngine::kAnimParaF1c:
@@ -650,10 +649,8 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 		return a.frame;
 	case GraphicsEngine::kAnimParaFrameDelay:
 		return a.frameDelay;
-	case GraphicsEngine::kAnimParaF2c:
-		return a.f2c;
-	case GraphicsEngine::kAnimParaF2d:
-		return a.f2d;
+	case GraphicsEngine::kAnimParaActionTimer:
+		return a.actionTimer;
 	case GraphicsEngine::kAnimParaBlink:
 		return a.blink;
 	case GraphicsEngine::kAnimParaBlinkCounter:
@@ -676,6 +673,7 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 
 uint8 Animator_SCD::getAnimScriptByte(uint8 animObjId, uint16 offset) const {
 	assert(animObjId < 64);
+	debug ("%s(): anim %d, scriptdata %p", __FUNCTION__, animObjId, _animations[animObjId]->scriptData());
 	return _animations[animObjId]->scriptData[offset];
 }
 
@@ -875,7 +873,7 @@ void Animator_SCD::drawAnimSprites() {
 		if (a.enable && a.spriteData != nullptr && !(a.controlFlags & GraphicsEngine::kAnimHide) && a.blinkRate != 0xFFFF && !(a.blinkRate & _gfxState.frameCount()))
 			generateSpriteData(a, nxt, d);
 		if (i == 31)
-			updateAnim32Spec(a);
+			generateSnowSprites(nxt, d);
 	}
 
 	if (d - 3 > _spriteBuffer)
@@ -1006,17 +1004,112 @@ void Animator_SCD::generateSpriteData(AnimObject &a, uint16 &spritesCurIndex, ui
 	}
 }
 
-void Animator_SCD::updateAnim32Spec(AnimObject &a) {
-	int _animSpec_activate = 0;
-	switch (_animSpec_activate) {
-	case 0:
+void Animator_SCD::generateSnowSprites(uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos) {
+	uint8 mode = _gfxState.getVar(12);
+	if (mode == 0)
+		return;
 
-		break;
-	case 1:
-	case 2:
-		break;
-	default:
-		break;
+	static const uint8 xcoords[] = {
+		0xb8, 0x18, 0x50, 0xd8, 0x30, 0xa8, 0x80, 0xc4, 0x78, 0x10, 0xc8, 0x68, 0x40, 0xf8, 0x70, 0xa0,
+		0x38, 0xe8, 0x58, 0xb0, 0x08, 0x9c, 0x90, 0x5c, 0x28, 0xa4, 0x70, 0x20, 0x60, 0xd0, 0xe0, 0x7c
+	};
+
+	uint16 h = _gfxState.frameCount() >> 1;
+
+	if (mode < 3) {
+		static const uint16 tiles[] = { 
+			0x0301, 0x0303, 0x0305, 0x0302, 0x0448, 0x0448,	0x0448, 0x0448, 0x044c, 0x044c, 0x044c, 0x044c
+		};
+		static const int8 xoffs[] = {
+			-1, 0, 1, -1, 0, 1, -1, 0, -1, 1, -1, 1, 0, -1, 0, -1
+		};
+		
+		uint16 mi = (mode - 1) << 3;
+
+		for (int i = (mode ^ 3) << 4; i >= 0 && spritesCurIndex < 65; --i) {
+			uint16 tl = FROM_BE_16(spritesBufferCurPos[2]);
+			uint16 x = (FROM_BE_16(spritesBufferCurPos[3]) & 0xFF) - 0x80;
+
+			uint16 ci = spritesCurIndex - 1;
+			uint16 y = ((spritesCurIndex & 3) ? ((ci << 4) + h) >> 1 : ((ci ^ 0xFF) << 3) + h) + 8;
+
+			if (tiles[((((ci + x) >> 2) & 6) + mi) >> 1] == (tl & 0x7FF)) {
+				tl = 0x2000;
+				x = xcoords[ci & 0x1F];
+			}
+
+			x = (xoffs[(ci + h) & 0x0F] + x) & 0xFF;
+			if (x >= (mode == 2 ? 56 : 32)) {
+				if (x >= (mode == 2 ? 176 : 224))
+					y = 0;
+				if (y >= (mode == 2 ? 120 : 136))
+					y = 0;
+			} else {
+				y = 0;
+			}
+
+			tl = (tl & 0xF800) | tiles[((((ci + x) >> 2) & 6) + mi) >> 1];
+
+			*spritesBufferCurPos++ = TO_BE_16(y + 0x80);
+			*spritesBufferCurPos++ = TO_BE_16((mode == 2 ? 0x500 : 0) | (spritesCurIndex++));
+			*spritesBufferCurPos++ = TO_BE_16(tl);
+			*spritesBufferCurPos++ = TO_BE_16(x + 0x80);		
+		}
+
+	} else if (mode < 13) {
+		static const uint16 tiles[] = { 
+			0x03C4, 0x03C8, 0x03CC, 0x03D0, 0x03D4, 0x03D8
+		};
+		static const uint8 xoffsm[] = {
+			0x01, 0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+			0x01, 0x00, 0x01, 0x01, 0x02, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x02, 0x00, 0x01, 0x02, 0x01,
+			0x01, 0x02, 0x01, 0x02, 0x01, 0x02, 0x02, 0x01, 0x01, 0x02, 0x01, 0x01, 0x02, 0x01, 0x02, 0x01,
+			0x01, 0x02, 0x01, 0x03, 0x02, 0x01, 0x02, 0x01, 0x02, 0x01, 0x01, 0x02, 0x01, 0x01, 0x02, 0x03,
+			0x02, 0x03, 0x01, 0x02, 0x03, 0x01, 0x02, 0x01, 0x01, 0x02, 0x02, 0x03, 0x02, 0x02, 0x02, 0x01,
+			0x02, 0x04, 0x03, 0x03, 0x02, 0x01, 0x03, 0x03, 0x04, 0x03, 0x04, 0x02, 0x03, 0x02, 0x02, 0x03,
+			0x04, 0x05, 0x03, 0x02, 0x05, 0x04, 0x04, 0x02, 0x03, 0x04, 0x05, 0x03, 0x04, 0x05, 0x03, 0x04,
+			0x04, 0x05, 0x04, 0x04, 0x04, 0x03, 0x05, 0x04, 0x03, 0x04, 0x03, 0x05, 0x04, 0x04, 0x03, 0x04
+		};
+		static const uint8 xoffsf[] = {
+			0x00, 0x08, 0x10, 0x20, 0x28, 0x16, 0x18, 0x00
+		};
+
+		uint16 mi = (mode - 3) << 4;
+
+		for (int i = 32; i >= 0 && spritesCurIndex < 65; --i) {
+			uint16 tl = FROM_BE_16(spritesBufferCurPos[2]);
+			int16 x = (FROM_BE_16(spritesBufferCurPos[3]) & 0xFF) - 0x80;
+
+			int16 ci = spritesCurIndex - 1;
+			int16 y = ((spritesCurIndex & 3) ? ((ci << 4) + h) >> 1 : ((ci ^ 0xFF) << 3) + h) & 0x7F;
+
+			if (tiles[(((ci + x) >> 2) & 6) >> 1] == (tl & 0x7FF)) {
+				tl = 0x4000;
+				x = xcoords[ci & 0x1F];
+			}
+
+			if (x < 128) {
+				x -= xoffsm[((ci + h) & 0x0F) + mi];
+				//if (x < 16)
+				//	x = 127 - xoffsf[_gfxState.frameCount() & 7];
+			} else {
+				x = (x + xoffsm[((ci + h) & 0x0F) + mi]) & 0xFF;
+				//if (x >= 216)
+				//	x = 128 + xoffsf[_gfxState.frameCount() & 7];
+			}
+
+			if (x < 16)
+				y = 0;
+			else if (y >= 112)
+				y = -4;
+
+			tl = (tl & 0xF800) | tiles[(((ci + x) >> 2) & 6) >> 1];
+
+			*spritesBufferCurPos++ = TO_BE_16(y + 0x80);
+			*spritesBufferCurPos++ = TO_BE_16(0x500 | (spritesCurIndex++));
+			*spritesBufferCurPos++ = TO_BE_16(tl);
+			*spritesBufferCurPos++ = TO_BE_16(x + 0x80);
+		}
 	}
 }
 
@@ -1091,7 +1184,7 @@ void Animator_SCD::makeAnimFunctions() {
 		ANM(setScriptComFlag),
 		ANM(audioSync),
 		ANM(audioSync),
-		ANM(27),
+		ANM(protect),
 		ANM(28),
 		ANM(fmSoundEffect),
 		ANM(30),
@@ -1267,7 +1360,7 @@ int Animator_SCD::anim_audioSync(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_27(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_protect(AnimObject &a, const uint8 *data) {
 	a.scriptComFlags |= 1;
 	_gfxState.setVar(4, *data);
 	return 1;
@@ -1351,7 +1444,7 @@ int Animator_SCD::anim_speechSync(AnimObject &a, const uint8 *data) {
 }
 
 int Animator_SCD::anim_42(AnimObject &a, const uint8 *data) {
-	_frameCount3Dwn = *data ? _gfxState.frameCount2() - _frameCount3Dwn : _gfxState.frameCount2();
+	_frameCountDown = *data ? _gfxState.frameCount2() - _frameCountDown : _gfxState.frameCount2();
 	return 1;
 }
 
@@ -1393,7 +1486,9 @@ int Animator_SCD::anim_updateFrameDelay(AnimObject &a, const uint8 *data) {
 
 void Animator_SCD::anim_setGroupParameter(AnimObject &a, int para, int16 val, bool recursive) {
 	AnimObject *ta = &a;
-	for (int n = ta->children; n || !recursive; n = recursive ? ta->next : 0) {
+	bool root = !recursive;
+	for (int n = ta->children; n || root; n = recursive ? ta->next : 0) {
+		root = false;
 		if (recursive)
 			ta = _animations[n];
 		switch (para) {
@@ -1430,9 +1525,7 @@ void Animator_SCD::anim_setGroupParameter(AnimObject &a, int para, int16 val, bo
 		default:
 			error("%s(): unhandled para %d", __FUNCTION__, para);
 			break;
-
 		}
-		recursive = true;
 		anim_setGroupParameter(*ta, para, val, true);
 	}
 }
