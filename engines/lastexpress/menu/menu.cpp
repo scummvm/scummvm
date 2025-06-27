@@ -30,6 +30,8 @@
 #include "lastexpress/graphics.h"
 #include "lastexpress/lastexpress.h"
 
+#include "common/config-manager.h"
+
 namespace LastExpress {
 
 Menu::Menu(LastExpressEngine *engine) {
@@ -294,8 +296,10 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 		if ((flags & kMouseFlagLeftDown) != 0) {
 			setSprite(2, 11, true);
 
-			_engine->getSoundManager()->killAllSlots();
-			_engine->getSoundManager()->soundThread();
+			if (!ConfMan.getBool("confirm_exit")) {
+				_engine->getSoundManager()->killAllSlots();
+				_engine->getSoundManager()->soundThread();
+			}
 
 			if (_engine->isDemo()) {
 				_engine->getSoundManager()->playSoundFile("LIB046.SND", 16, 0, 0);
@@ -311,10 +315,20 @@ bool Menu::eggCursorAction(int8 action, int8 flags) {
 			g_system->delayMillis(334);
 
 			_engine->getGraphicsManager()->setMouseDrawable(false);
-			endEgg();
 
-			_engine->quitGame();
+			if (!ConfMan.getBool("confirm_exit")) {
+				endEgg();
+			}
+
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			g_system->getEventManager()->pushEvent(event);
+
 			_engine->_exitFromMenuButton = true;
+
+			if (ConfMan.getBool("confirm_exit")) {
+				return true;
+			}
 		} else {
 			setSprite(2, 10, true);
 			return true;
