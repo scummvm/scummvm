@@ -113,15 +113,20 @@ BOOL IsWindow(HWND hWnd) {
 }
 
 BOOL SetWindowText(HWND hWnd, LPCSTR lpszString) {
-	error("TODO: SetWindowText");
+	CWnd *wnd = CWnd::FromHandle(hWnd);
+	wnd->SetWindowText(lpszString);
+	return true;
 }
 
 int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount) {
-	error("TODO: GetWindowText");
+	CWnd *wnd = CWnd::FromHandle(hWnd);
+	return wnd->GetWindowText(lpszStringBuf, nMaxCount);
 }
 
 BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint) {
-	error("TODO: ScreenToClient");
+	CWnd *wnd = CWnd::FromHandle(hWnd);
+	wnd->ScreenToClient(lpPoint);
+	return true;
 }
 
 HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h) {
