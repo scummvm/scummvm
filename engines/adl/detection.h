@@ -84,6 +84,7 @@ struct AdlGameDescription {
 #define GAMEOPTION_NTSC              GUIO_GAMEOPTIONS4
 #define GAMEOPTION_MONO_TEXT         GUIO_GAMEOPTIONS5
 #define GAMEOPTION_APPLE2E_CURSOR    GUIO_GAMEOPTIONS6
+#define GAMEOPTION_TTS               GUIO_GAMEOPTIONS7
 
 } // End of namespace Adl
 
