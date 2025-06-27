@@ -71,17 +71,17 @@ BOOL InArtRegion(CPoint point);
 CBmpButton  *m_pScrollButton;
 CSprite     *_playerSprite = nullptr;
 CPalette    *pGamePalette = nullptr,                   // Palette of current artwork
-             *pOldPal = nullptr;
+	*pOldPal = nullptr;
 CBitmap     *pMazeBitmap = nullptr,
-             *pOldBmp = nullptr,
-              *_wallBitmap = nullptr,
-               *_pathBitmap = nullptr,
-                *_startBitmap = nullptr,
-                 *_topEdgeBmp = nullptr,
-                  *_rightEdgeBmp = nullptr,
-                   *_bottomEdgeBmp = nullptr,
-                    *_leftEdgeBmp = nullptr,
-                     *_trapBitmap[NUM_TRAP_MAPS];
+	*pOldBmp = nullptr,
+	*_wallBitmap = nullptr,
+	*_pathBitmap = nullptr,
+	*_startBitmap = nullptr,
+	*_topEdgeBmp = nullptr,
+	*_rightEdgeBmp = nullptr,
+	*_bottomEdgeBmp = nullptr,
+	*_leftEdgeBmp = nullptr,
+	*_trapBitmap[NUM_TRAP_MAPS];
 CDC         *pMazeDC = nullptr;                    // DC for the MazeBitmap
 CText       *m_pTimeText = nullptr;                // Time to be posted in Locale box of screen
 CBitmap     *_localeBitmap = nullptr,              // Locale of game bitmap for title bar
@@ -126,12 +126,41 @@ extern  LPGAMESTRUCT pGameInfo;
 //
 CMainWindow::CMainWindow() {
 	CString WndClass;
-	CRect   MainRect, tmpRect;
+	CRect MainRect, tmpRect;
 	CBitmap *pPartsBitmap = nullptr;
-	CDC     *pDC = nullptr;
-	int     i;                  // counter for trap assignment
+	CDC *pDC = nullptr;
+	int i;	// Counter for trap assignment
 
 	BeginWaitCursor();
+
+	m_pScrollButton = nullptr;
+	_playerSprite = nullptr;
+	pGamePalette = nullptr,                   // Palette of current artwork
+	pOldPal = nullptr;
+	pMazeBitmap = nullptr;
+	pOldBmp = nullptr;
+	_wallBitmap = nullptr;
+	_pathBitmap = nullptr;
+	_startBitmap = nullptr;
+	_topEdgeBmp = nullptr;
+	_rightEdgeBmp = nullptr;
+	_bottomEdgeBmp = nullptr;
+	_leftEdgeBmp = nullptr;
+	pMazeDC = nullptr;
+	m_pTimeText = nullptr;
+	_localeBitmap = nullptr;
+	_blankBitmap = nullptr;
+	_success = false;
+	m_bIgnoreScrollClick = false;
+	_playing = false;
+	_gameOver = false;
+	_playerPos.x = _playerPos.y = 0;
+	m_nPlayerID = PODJ;
+	_difficulty = 0;
+	_time = _seconds = _minutes = 0;
+	tempDifficulty = 0;
+	tempTime = 0;
+	Common::fill(_trapBitmap, _trapBitmap + NUM_TRAP_MAPS, nullptr);
 
 	if (pGameInfo->bPlayingHodj)
 		m_nPlayerID = HODJ;
@@ -143,9 +172,7 @@ CMainWindow::CMainWindow() {
 	// the five system defined DCs which are not guaranteed to be available;
 	// this adds a bit to our app size but avoids hangs/freezes/lockups.
 	WndClass = AfxRegisterWndClass(CS_BYTEALIGNWINDOW | CS_OWNDC,
-	                               nullptr,
-	                               nullptr,
-	                               nullptr);
+	    nullptr, nullptr, nullptr);
 
 	// Center our window on the screen
 	pDC = GetDC();
@@ -158,7 +185,7 @@ CMainWindow::CMainWindow() {
 	// this is because the game's background art will fill the entire 640x480 area.
 	Create(WndClass, "Boffo Games -- Maze o' Doom", WS_POPUP, MainRect, nullptr, 0);
 
-	CDibDoc     *pSourceDoc;                // Get the game palette
+	CDibDoc *pSourceDoc;                // Get the game palette
 	pSourceDoc = new CDibDoc();
 	ASSERT(pSourceDoc != nullptr);
 	(*pSourceDoc).OpenDocument(MAINSCREEN);
@@ -324,7 +351,7 @@ void CMainWindow::SplashScreen() {
 
 	hDIB = myDoc.GetHDIB();
 
-	if (pDC && hDIB) {
+	if (pMazeDC && hDIB) {
 		GetClientRect(rcDest);
 
 		int cxDIB = (int) DIBWidth(hDIB);
