@@ -331,7 +331,7 @@ public:
 
 	Common::Array<uint32> array520D;
 
-	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex);
+	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool decodeBlob = false);
 
 	// TODO: Arguments
 	void loadSongFromSceneData(uint8 dataIndex);

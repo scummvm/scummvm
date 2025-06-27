@@ -1306,7 +1306,23 @@ uint32 Macs2Engine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
-void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex) {
+void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool decodeBlob) {
+	if (arrayIndex == 0 || arrayIndex > array520D.size()) {
+		warning("Invalid animation array index %u for object %u slot %u", arrayIndex, objectIndex, slotIndex);
+		return;
+	}
+
+	GameObject *go = GameObjects::instance().GetObjectByIndex(objectIndex);
+	if (go == nullptr) {
+		warning("Tried to load animation for invalid object %u", objectIndex);
+		return;
+	}
+
+	if (slotIndex == 0 || slotIndex > 0x15) {
+		warning("Invalid animation slot %u for object %u", slotIndex, objectIndex);
+		return;
+	}
+
 	// We need to account for the game starting indices at 1
 	uint32 address = array520D[arrayIndex - 1];
 	_fileStream->seek(address);
@@ -1315,8 +1331,22 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	Common::Array<uint8> data;
 	data.resize(size);
 	_fileStream->read(data.data(), size);
-	GameObject* go = GameObjects::instance().GetObjectByIndex(objectIndex);
-	go->Blobs[slotIndex - 1] = data;
+	Common::Array<uint8> *targetBlob = nullptr;
+	if (slotIndex == 0x15) {
+		targetBlob = &go->overloadAnimation;
+	} else if (slotIndex - 1 < go->Blobs.size()) {
+		targetBlob = &go->Blobs[slotIndex - 1];
+	}
+
+	if (targetBlob == nullptr) {
+		warning("Object %u has no storage for animation slot %u", objectIndex, slotIndex);
+		return;
+	}
+
+	*targetBlob = data;
+	if (decodeBlob) {
+		BackgroundAnimationBlob::Func1480(*targetBlob, true, 2);
+	}
 }
 
 void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {

@@ -147,7 +147,25 @@ private:
 
 	template<typename T, T... ts>
 	constexpr bool is_in_list(T const &t) {
-		return is_in_list_helper(t, is_in_list_value<T, ts>()...);
+// cf https://stackoverflow.com/a/51497820
+template<typename T, T V>
+struct is_in_list_value {};
+
+template<typename T, T V>
+constexpr bool is_in_list_helper(T const &t, is_in_list_value<T, V>) {
+	return t == V;
+}
+
+template<typename T, T V, T W, T... Rest>
+constexpr bool is_in_list_helper(T const &t, is_in_list_value<T, V>, is_in_list_value<T, W>, is_in_list_value<T, Rest>...) {
+	return (t == V) || is_in_list_helper(t, is_in_list_value<T, W>(), is_in_list_value<T, Rest>()...);
+}
+
+template<typename T, T... ts>
+constexpr bool is_in_list(T const &t) {
+	return is_in_list_helper(t, is_in_list_value<T, ts>()...);
+}
+
 	}
 
 	struct SpeechActData {
@@ -187,6 +205,8 @@ class View1 : public UIElement {
 	bool _isShowingStringBox = false;
 	Common::StringArray _drawnStringBox;
 	bool _continueScriptAfterUI = false;
+	bool _isShowingDialogueChoice = false;
+	uint16 _dialogueChoiceCount = 0;
 
 	bool _isShowingInventory = false;
 
@@ -289,7 +309,7 @@ public:
 
 	void setStringBox(const Common::StringArray& sa);
 	void setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos);
-	void clearStringBox();
+	void clearStringBox(bool continueScript = true);
 
 	void startFading();
 
@@ -323,7 +343,7 @@ public:
 
 	void DrawImageResources(Graphics::ManagedSurface &s);
 
-	void ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
+	void ShowDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
 
 	void TriggerDialogueChoice(uint8 index);
 
