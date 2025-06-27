@@ -613,52 +613,8 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 		// on blitting. This gives us a lot more performance on low perf hardware.
 		_supportedFormats.push_back(hwFormat);
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
 		format = hwFormat;
-#endif
 	}
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	{
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-		const SDL_DisplayMode* pDefaultMode = SDL_GetDesktopDisplayMode(_window->getDisplayIndex());
-		if (!pDefaultMode) {
-			error("Could not get default system display mode");
-		}
-
-		int bpp;
-		Uint32 rMask, gMask, bMask, aMask;
-		if (!SDL_GetMasksForPixelFormat(pDefaultMode->format, &bpp, &rMask, &gMask, &bMask, &aMask)) {
-			error("Could not convert system pixel format %s to masks", SDL_GetPixelFormatName(pDefaultMode->format));
-		}
-
-		const uint8 bytesPerPixel = SDL_BYTESPERPIXEL(pDefaultMode->format);
-#else
-		SDL_DisplayMode defaultMode;
-		if (SDL_GetDesktopDisplayMode(_window->getDisplayIndex(), &defaultMode) != 0) {
-			error("Could not get default system display mode");
-		}
-
-		int bpp;
-		Uint32 rMask, gMask, bMask, aMask;
-		if (SDL_PixelFormatEnumToMasks(defaultMode.format, &bpp, &rMask, &gMask, &bMask, &aMask) != SDL_TRUE) {
-			error("Could not convert system pixel format %s to masks", SDL_GetPixelFormatName(defaultMode.format));
-		}
-
-		const uint8 bytesPerPixel = SDL_BYTESPERPIXEL(defaultMode.format);
-#endif
-
-		uint8 rBits, rShift, gBits, gShift, bBits, bShift, aBits, aShift;
-		maskToBitCount(rMask, rBits, rShift);
-		maskToBitCount(gMask, gBits, gShift);
-		maskToBitCount(bMask, bBits, bShift);
-		maskToBitCount(aMask, aBits, aShift);
-
-		format = Graphics::PixelFormat(bytesPerPixel, rBits, gBits, bBits, aBits, rShift, gShift, bShift, aShift);
-
-		_supportedFormats.push_back(format);
-	}
-#endif
 
 	if (!_isHwPalette) {
 		// Some tables with standard formats that we always list
