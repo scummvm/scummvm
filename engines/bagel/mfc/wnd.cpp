@@ -778,8 +778,10 @@ void CWnd::CheckDlgButton(int nIDButton, UINT nCheck) {
 }
 
 LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,
-	WPARAM wParam, LPARAM lParam) const {
-	error("TODO: CWnd::SendDlgItemMessage");
+		WPARAM wParam, LPARAM lParam) const {
+	CWnd *ctl = GetDlgItem(nID);
+	assert(ctl);
+	return ctl->SendMessage(message, wParam, lParam);
 }
 
 UINT_PTR CWnd::SetTimer(UINT_PTR nIDEvent, UINT nElapse,
