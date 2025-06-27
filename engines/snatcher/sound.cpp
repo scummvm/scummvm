@@ -61,6 +61,8 @@ void SoundEngine::fmSendCommand(int cmd, int restoreVolume, int trackType) {
 		_fmStatus.music = (cmd == 0xFF) ? 0 : cmd;
 	else if (trackType == 2)
 		_fmStatus.sfx = (cmd == 61) ? 0 : cmd;
+	else if (cmd == 0xFF)
+		_fmStatus.music = _fmStatus.sfx = 0;
 }
 
 const SoundEngine::FMStatus &SoundEngine::fmGetStatus() const {
@@ -136,11 +138,6 @@ SoundDevice *SoundDevice::create(FIO *fio, Common::Platform platform, int soundO
 
 	if (musicType == MT_INVALID)
 		return nullptr;
-
-	// TODO: We still need to create the appropriate sound device, since the game
-	// heavily relies on audio sync for its animations. We'll just have to handle
-	// it via volume settings.
-	// if (musicType == MT_NULL)
 
 	switch (platform) {
 	case Common::kPlatformSegaCD:

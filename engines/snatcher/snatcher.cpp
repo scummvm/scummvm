@@ -224,7 +224,7 @@ bool SnatcherEngine::start() {
 	_saveMan->updateSaveSlotsStatus(state);
 	_memHandler->setGameState(&state);
 
-	//playBootLogoAnimation(state);
+	playBootLogoAnimation(state);
 
 	_reset = false;
 	uint32 frameTimer = 0;
@@ -249,6 +249,8 @@ bool SnatcherEngine::start() {
 		int numLoops = (countTo5 == 5) ? 2 : 1;
 
 		for (int i = 0; i < numLoops; ++i) {
+			_ui->moveFlashLight();
+
 			if (!_gfx->busy(0)) {
 				bool blockedMod = _cmdQueue->enabled();
 				if (_cmdQueue->enabled()) {
@@ -391,7 +393,6 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 						// the screen center. I solve this by always adding the diff to the y-bias.
 						_input.lightGunPos.x = CLIP<int>(_realLightGunPos.x - state.conf.lightGunBias.x, 0, 255);
 						_input.lightGunPos.y = CLIP<int>(_realLightGunPos.y - state.conf.lightGunBias.y, 0, 255);
-						debug("Lightgun position: (%d, %d)", _input.lightGunPos.x, _input.lightGunPos.y);
 					}
 				}
 
@@ -454,7 +455,6 @@ void SnatcherEngine::updateMainState(GameState &state) {
 
 	case 1:
 		// Init first scene or load savegame
-		state.phaseFlags = 0;
 		_cmdQueue->writeUInt16(0x11);
 		_cmdQueue->writeUInt32(0x1A800);
 		if (state.menuSelect == 0) {
@@ -489,7 +489,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		break;
 
 	case 2:
-		// Act I
+		// Ingame logic
 		if (state.phaseFlags & 0x40) {
 			if (_scriptEngine->postProcess(state.script)) {
 				for (int i = 5; i < 15; ++i)
@@ -502,7 +502,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 			state.phaseFlags &= ~0x40;
 		} else if (state.phaseFlags & 0x20) {
 			_gfx->setVar(11, 0xFF);
-			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input.singleFrameControllerFlagsRemapped)) {
+			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input)) {
 				state.phaseFlags |= 0x80;
 			} else {
 				_scriptEngine->processInput();
@@ -516,6 +516,9 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		break;
 
 	case 3:
+		// Ending sequence
+		state.phase = 5;
+		state.finish = 1;
 		break;
 
 	case 4:
@@ -523,9 +526,6 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		_cmdQueue->writeUInt16(0x02);
 		_cmdQueue->start();
 		_reset = true;
-		break;
-
-	case 5:
 		break;
 
 	default:

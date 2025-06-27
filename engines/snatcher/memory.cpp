@@ -21,6 +21,7 @@
 
 
 #include "snatcher/action.h"
+#include "snatcher/graphics.h"
 #include "snatcher/memory.h"
 #include "snatcher/saveload.h"
 #include "snatcher/snatcher.h"
@@ -70,6 +71,12 @@ uint16 MemAccessHandler::readWord(uint16 addr) {
 		break;
 	case 0x79F0:
 		break;
+	case 0x96D6:
+		result = _ui->getFlashLightStatus().inputFlags;
+		break;
+	case 0x96DC:
+		result = _ui->getFlashLightStatus().posData;
+		break;
 	case 0x971A:
 		break;
 	default:
@@ -81,6 +88,12 @@ uint16 MemAccessHandler::readWord(uint16 addr) {
 
 void MemAccessHandler::writeWord(uint16 addr, uint16 val) {
 	switch (addr) {
+	case 0x78E2:
+		_aseq->setDifficulty(val);
+		break;
+	case 0x79EE:
+		_vm->gfx()->setVar(12, val);
+		break;
 	case 0x79F0:
 		break;
 	case 0x9718:

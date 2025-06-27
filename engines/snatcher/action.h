@@ -41,6 +41,7 @@ public:
 	bool run(bool useLightGun);
 	bool resetScore();
 	void setup(uint16 stage);
+	void setDifficulty(uint16 setting);
 
 	struct Result {
 		Result() : hitsTaken(0), shotsFired(0), shotsMissed(0), enemiesShot(0), civiliansShot(0), allCiviliansShot(0), weaponDrawn(0)  {}
@@ -69,7 +70,7 @@ private:
 	int16 _progressMSB;
 	int16 _progressLSB;
 	int16 _weaponState;
-	int16 _enemyAttackSpeed;
+	int16 _enemySpeed;
 	int16 _handleShotPhase;
 	int16 _updateEnemiesPhase;
 	int16 _enemyAttackStatus;
@@ -80,7 +81,7 @@ private:
 	int16 _shoot_7912;
 	int16 _civiliansShot;
 	int16 _civilianAppearanceCount;
-	int16 _shoot_78F2;
+	int16 _abortFight;
 	int16 _nextEnemyAppearanceTimer;
 	int16 _animNo;
 	int16 _enemyAttackTimer;
