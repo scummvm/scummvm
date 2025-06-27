@@ -40,14 +40,23 @@ CTheApp::CTheApp() {
 	hMetaInst = nullptr;
 }
 
-BOOL CTheApp::InitInstance() {
-	if (!_startupMinigame.empty()) {
+BOOL CTheApp::InitApplication() {
+	if (_startupMinigame.empty()) {
 		// Main game
-		addFontResource("meta/msserif.fon");
 		addResources("meta/hodjpodj.exe");
 		addResources("meta/hnpmeta.dll");
 		setDirectory("meta");
+	} else if (_startupMinigame == "mazedoom_demo") {
+		addResources("mod.exe");
+	}
 
+	addFontResource("msserif.fon");
+	return CWinApp::InitApplication();
+}
+
+BOOL CTheApp::InitInstance() {
+	if (_startupMinigame.empty()) {
+		// Main game
 		m_pMainWnd = new CHodjPodjWindow();
 		m_pMainWnd->ShowWindow(SW_SHOWNORMAL);
 		m_pMainWnd->UpdateWindow();
@@ -90,7 +99,7 @@ void CTheApp::selectMinigame() {
 		if (game->_path && _startupMinigame == game->_path)
 			break;
 		isMODDemo = _startupMinigame == "mazedoom_demo" &&
-			!strcmp(game->_path, "mazedoom");
+			game->m_iGameCode == MG_GAME_MAZEODOOM;
 		if (isMODDemo)
 			break;
 	}

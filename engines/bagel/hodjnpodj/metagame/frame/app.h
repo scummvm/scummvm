@@ -46,6 +46,11 @@ public:
 	}
 
 	/**
+	 * Called when the application starts
+	 */
+	BOOL InitApplication() override;
+
+	/**
 	 * This routine is automatically called when the application is started.
 	 */
 	BOOL InitInstance() override;
