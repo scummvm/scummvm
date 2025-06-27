@@ -54,6 +54,7 @@ typedef struct ImGuiState {
 	float _rightTopPanelHeight = 0.0f;
 	int _ticksToAdvance = 0;
 	ImTextureID _textureID = nullptr;
+	int _selectedGlobalVarRow = -1;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -177,6 +178,11 @@ void onImGuiRender() {
 					ImGui::EndTabItem();
 				}
 
+				if (ImGui::BeginTabItem("Global Vars")) {
+					_state->_currentTab = 4;
+					ImGui::EndTabItem();
+				}
+
 				ImGui::EndTabBar();
 			}
 
@@ -202,6 +208,9 @@ void onImGuiRender() {
 				break;
 			case 3: // Current Scene
 				_state->_engine->getLogicManager()->renderCurrentSceneDebugger();
+				break;
+			case 4: // Global Vars
+				_state->_engine->getLogicManager()->renderGlobalVars();
 				break;
 			default:
 				break;
@@ -665,6 +674,102 @@ void LogicManager::renderCurrentSceneDebugger() {
 		}
 
 		ImGui::EndTooltip();
+	}
+}
+
+void LogicManager::renderGlobalVars() {
+	_state->_selectedGlobalVarRow = -1;
+
+	if (ImGui::BeginTable("GlobalVars", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable)) {
+		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed, 40.0f);
+		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed, 400.0f);
+		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableHeadersRow();
+
+		const char *globalNames[58] = {
+			"",
+			"Jacket",
+			"CorpseMovedFromFloor",
+			"ReadLetterInAugustSuitcase",
+			"FoundCorpse",
+			"CharacterSearchingForCath",
+			"PhaseOfTheNight",
+			"CathIcon",
+			"CorpseHasBeenThrown",
+			"FrancoisHasSeenCorpseThrown",
+			"AnnaIsEating",
+			"Chapter",
+			"DoneSavePointAfterLeftCompWithNewJacket",
+			"MetAugust",
+			"IsDayTime",
+			"PoliceHasBoardedAndGone",
+			"ConcertIsHappening",
+			"KahinaKillTimeoutActive",
+			"MaxHasToStayInBaggage",
+			"UnknownDebugFlag",
+			"TrainIsRunning",
+			"AnnaIsInBaggageCar",
+			"DoneSavePointAfterLeavingSuitcaseInCathComp",
+			"TatianaFoundOutEggStolen",
+			"OverheardAugustInterruptingAnnaAtDinner",
+			"MetTatianaAndVassili",
+			"OverheardTatianaAndAlexeiAtBreakfast",
+			"KnowAboutAugust",
+			"KnowAboutKronos",
+			"EggIsOpen",
+			"CanPlayKronosSuitcaseLeftInCompMusic",
+			"CanPlayEggSuitcaseMusic",
+			"CanPlayEggUnderSinkMusic",
+			"CathInSpecialState",
+			"OverheardAlexeiTellingTatianaAboutBomb",
+			"OverheardAlexeiTellingTatianaAboutWantingToKillVassili",
+			"OverheardTatianaAndAlexeiPlayingChess",
+			"OverheardMilosAndVesnaConspiring",
+			"OverheardVesnaAndMilosDebatingAboutCath",
+			"FrancoisSawABlackBeetle",
+			"OverheardMadameAndFrancoisTalkingAboutWhistle",
+			"MadameDemandedMaxInBaggage",
+			"MadameComplainedAboutMax",
+			"MetMadame",
+			"KnowAboutRebeccaDiary",
+			"OverheardSophieTalkingAboutCath",
+			"MetSophieAndRebecca",
+			"KnowAboutRebeccaAndSophieRelationship",
+			"RegisteredTimeAtWhichCathGaveFirebirdToKronos",
+			"MetMahmud",
+			"AlmostFallActionIsAvailable",
+			"MetMilos",
+			"MetMonsieur",
+			"MetHadija",
+			"MetYasmin",
+			"MetAlouan",
+			"MetFatima",
+			"TatianaScheduledToVisitCath"
+		};
+
+		for (int i = 1; i < 58; i++) {
+			ImGui::TableNextRow();
+
+			// Make the entire row selectable, so I don't have to buy new glasses to see the name of the variable...
+			ImGui::TableSetColumnIndex(0);
+			bool isSelected = (_state->_selectedGlobalVarRow == i);
+			if (ImGui::Selectable(("##row" + Common::String(i)).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
+				_state->_selectedGlobalVarRow = i;
+			}
+
+			ImGui::SameLine();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("%d", i);
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text("%s", globalNames[i]);	
+
+			ImGui::TableSetColumnIndex(2);
+			ImGui::Text("%d", _globals[i]);
+		}
+
+		ImGui::EndTable();
 	}
 }
 
