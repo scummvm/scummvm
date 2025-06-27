@@ -157,22 +157,22 @@ int global_messageHandler1(ExCommand *cmd) {
 			g_nmi->defHandleKeyDown(cmd->_param);
 
 			switch (cmd->_param) {
-			case '\x1B': // ESC
+			case kActionPause: 
 				if (g_nmi->_currentScene) {
 					getGameLoaderInventory()->unselectItem(0);
 					g_nmi->openMainMenu();
 					cmd->_messageKind = 0;
 				}
 				break;
-			case 't':
+			case kActionStopSounds:
 				g_nmi->stopAllSounds();
 				cmd->_messageKind = 0;
 				break;
-			case 'u':
+			case kActionToggleMute:
 				g_nmi->toggleMute();
 				cmd->_messageKind = 0;
 				break;
-			case ' ':
+			case kActionInventory:
 				if (getGameLoaderInventory()->getIsLocked()) {
 					if (getGameLoaderInventory()->getIsInventoryOut()) {
 						getGameLoaderInventory()->setIsLocked(0);
@@ -182,21 +182,17 @@ int global_messageHandler1(ExCommand *cmd) {
 					getGameLoaderInventory()->setIsLocked(1);
 				}
 				break;
-			case '\t':
-				// Demo has no map
-				if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS)
-					break;
-
+			case kActionMapOpen:
 				if (g_nmi->_flgCanOpenMap)
 					g_nmi->openMap();
 				cmd->_messageKind = 0;
 				break;
-			case Common::KEYCODE_F1:
+			case kActionHelp:
 				if (g_nmi->_flgCanOpenMap)
 					g_nmi->openHelp();
 				cmd->_messageKind = 0;
 				break;
-			case '8':
+			case Common::KEYCODE_8:
 				{
 					int num = 32;
 					for (uint i = 0; i < g_nmi->_gameLoader->_sc2array[num]._picAniInfos.size(); i++) {

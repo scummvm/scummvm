@@ -55,6 +55,20 @@ enum {
 	kDebugXML,
 };
 
+enum NGIActions {
+	kActionNone,
+	kActionPause,
+	kActionStopSounds,
+	kActionToggleMute,
+	kActionMapOpen,
+	kActionMapClose,
+	kActionHelp,
+	kActionInventory,
+	kActionSkipIntro,
+	kActionSkipCredits,
+	kActionCloseDialog,
+};
+
 #define MAXGAMEOBJH 10000
 
 struct NGIGameDescription;

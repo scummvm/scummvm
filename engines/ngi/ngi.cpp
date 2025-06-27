@@ -343,6 +343,12 @@ void NGIEngine::updateEvents() {
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+			ex->_param = event.customType;
+			ex->_excFlags |= 3;
+			ex->handle();
+			break;
 		case Common::EVENT_KEYDOWN:
 			_keyState = event.kbd.keycode;
 
