@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -73,18 +74,53 @@ void Display::moveCursorTo(const Common::Point &pos) {
 		error("Cursor position (%i, %i) out of bounds", pos.x, pos.y);
 }
 
-void Display::printString(const Common::String &str) {
+void Display::printString(const Common::String &str, bool voiceString) {
 	for (const auto &c : str)
 		printChar(c);
+
+	if (voiceString) {
+		sayText(str);
+	}
 
 	renderText();
 }
 
-void Display::printAsciiString(const Common::String &str) {
+void Display::printAsciiString(const Common::String &str, bool voiceString) {
 	for (const auto &c : str)
 		printChar(asciiToNative(c));
 
+	if (voiceString) {
+		sayText(str);
+	}
+
 	renderText();
+}
+
+void Display::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(convertText(text), action);
+	}
+}
+
+Common::U32String Display::convertText(const Common::String &text) const {
+	Common::String result(text);
+
+	bool startsWithDash = result[0] == '\xad';
+
+	for (uint i = 0; i < result.size(); i++) {
+		// Convert carriage returns and dashes to spaces
+		// Only convert dashes if the line starts with a dash (which is usually the case with the "enter command"
+		// prompt), to avoid converting mid-line dashes to spaces and causing odd voicing
+		// (i.e. if the dash in "Hi-Res Adventure" is replaced, English TTS pronounces it as "Hi Residential Adventure")
+		if (result[i] == '\x8d' || (startsWithDash && result[i] == '\xad')) {
+			result[i] = '\xa0';
+		}
+
+		result[i] &= 0x7f;
+	}
+
+	return Common::U32String(result, Common::CodePage::kASCII);
 }
 
 void Display::setCharAtCursor(byte c) {

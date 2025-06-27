@@ -311,6 +311,8 @@ protected:
 	virtual void advanceClock() { }
 	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
 
+	void stopTextToSpeech() const;
+
 	// Opcodes
 	typedef Common::SharedPtr<Common::Functor1<ScriptEnv &, int> > Opcode;
 
