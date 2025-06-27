@@ -784,11 +784,11 @@ LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,
 
 UINT_PTR CWnd::SetTimer(UINT_PTR nIDEvent, UINT nElapse,
 	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
-	error("TODO: CWnd::SetTimer");
+	return MFC::SetTimer(m_hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 
 BOOL CWnd::KillTimer(UINT_PTR nIDEvent) {
-	error("TODO: CWnd::KillTimer");
+	return MFC::KillTimer(m_hWnd, nIDEvent);
 }
 
 BOOL CWnd::GetScrollRange(int nBar,

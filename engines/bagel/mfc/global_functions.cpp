@@ -140,11 +140,11 @@ LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 
 UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
 		void (CALLBACK * lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
-	error("TODO: SetTimer");
+	return AfxGetApp()->SetTimer(hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 
 BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent) {
-	error("TODO: KillTimer");
+	return AfxGetApp()->KillTimer(hWnd, nIDEvent);
 }
 
 void Sleep(UINT milli) {

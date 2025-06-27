@@ -217,6 +217,10 @@ bool EventLoop::pollEvents(Common::Event &event) {
 		// Brief pauses and screen updates
 		g_system->delayMillis(10);
 
+		// Trigger any pending timers
+		triggerTimers();
+
+		// Handle screen updates
 		uint32 time = g_system->getMillis();
 		if (time >= _nextFrameTime) {
 			_nextFrameTime = time + (1000 / FRAME_RATE);
@@ -360,6 +364,56 @@ MMRESULT EventLoop::joyReleaseCapture(UINT uJoyID) {
 	assert(uJoyID == JOYSTICKID1);
 	return JOYERR_NOERROR;
 }
+
+UINT_PTR EventLoop::SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
+		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+	if (!nIDEvent)
+		nIDEvent = ++_timerIdCtr;
+
+	_timers.push_back(TimerEntry(hWnd, nIDEvent, nElapse, lpfnTimer));
+
+	return nIDEvent;
+}
+
+BOOL EventLoop::KillTimer(HWND hWnd, UINT_PTR nIDEvent) {
+	for (auto it = _timers.begin(); it != _timers.end(); ++it) {
+		if (it->_hWnd == hWnd && it->_idEvent == nIDEvent) {
+			_timers.erase(it);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void EventLoop::triggerTimers() {
+	uint32 currTime = g_system->getMillis();
+
+	for (auto it = _timers.begin(); it != _timers.end(); ++it) {
+		if (currTime >= it->_nextTriggerTime) {
+			// First update the timer for the next time
+			it->_nextTriggerTime = currTime + it->_interval;
+
+			// Handle trigger
+			if (it->_callback) {
+				// Call the callback
+				it->_callback(it->_hWnd, WM_TIMER, it->_idEvent, currTime);
+			} else {
+				// Otherwise, send timer event
+				CWnd *wnd = CWnd::FromHandle(it->_hWnd);
+				wnd->SendMessage(WM_TIMER, it->_idEvent, 0);
+			}
+		}
+	}
+}
+
+EventLoop::TimerEntry::TimerEntry(HWND hWnd, UINT_PTR idEvent,
+		DWORD interval, TimerProc callback) :
+		_hWnd(hWnd), _idEvent(idEvent),
+		_interval(interval), _callback(callback) {
+	_nextTriggerTime = g_system->getMillis() + interval;
+}
+
 
 } // namespace Libs
 } // namespace MFC

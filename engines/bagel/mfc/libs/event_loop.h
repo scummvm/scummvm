@@ -23,6 +23,7 @@
 #define BAGEL_MFC_LIBS_EVENT_LOOP_H
 
 #include "common/events.h"
+#include "common/list.h"
 #include "common/stack.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/libs/events.h"
@@ -32,7 +33,27 @@ namespace Bagel {
 namespace MFC {
 namespace Libs {
 
+typedef void(*TimerProc)(
+	HWND hwnd,       // handle of window associated with the timer (can be NULL)
+	UINT uMsg,       // WM_TIMER message (always WM_TIMER)
+	UINT_PTR idEvent,// timer identifier (from SetTimer or returned value)
+	DWORD dwTime     // system time when the callback was called (in milliseconds)
+);
+
 class EventLoop {
+	struct TimerEntry {
+		HWND _hWnd = nullptr;
+		UINT_PTR _idEvent = 0;
+		DWORD _interval = 0;
+		DWORD _nextTriggerTime = 0;
+		TimerProc _callback = nullptr;
+
+		TimerEntry() {}
+		TimerEntry(HWND hWnd, UINT_PTR idEvent,
+			DWORD interval, TimerProc callback);
+	};
+	typedef Common::List<TimerEntry> TimerList;
+
 private:
 	CWnd *_mainWindow = nullptr;
 	Common::Stack<CWnd *> _activeWindows;
@@ -41,6 +62,8 @@ private:
 	CWnd *_focusedWin = nullptr;
 	CWnd *_joystickWin = nullptr;
 	Libs::EventQueue _messages;
+	TimerList _timers;
+	int _timerIdCtr = 0;
 	uint32 _nextFrameTime = 0;
 	bool _quitFlag = false;
 	Common::Point _joystickPos;
@@ -81,6 +104,11 @@ private:
 	 * Converts a position to be relative to a given window
 	 */
 	bool mousePosToClient(CWnd *wnd, POINT &pt);
+
+	/**
+	 * Trigger any pending timers 
+	 */
+	void triggerTimers();
 
 public:
 	EventLoop() {}
@@ -167,6 +195,11 @@ public:
 		assert(_kbdHookProc && hook == (HHOOK)_kbdHookProc);
 		_kbdHookProc = nullptr;
 	}
+
+	UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
+		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD));
+	BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
+
 };
 
 } // namespace Libs
