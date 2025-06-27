@@ -27,16 +27,12 @@
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-#include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/console.h"
-#include "bagel/hodjnpodj/gfx/bold_font.h"
-#include "bagel/music.h"
-#include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/metagame/frame/app.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-
-#define LOGO_MIDI       "sound/maintitl.mid"
 
 HodjNPodjEngine *g_engine;
 GAMESTRUCT *pGameParams;
@@ -64,10 +60,15 @@ Common::Error HodjNPodjEngine::run() {
 	// Run the game
 
 	Metagame::Frame::CTheApp app;
-	app.addFontResource("meta/msserif.fon");
-	app.addResources("meta/hodjpodj.exe");
-	app.addResources("meta/hnpmeta.dll");
-	app.setDirectory("meta");
+
+	if (getGameId() == "mazeodoom") {
+		app.setStartupMinigame("mazedoom_demo");
+	} else {
+		Common::String minigame = ConfMan.get("minigame");
+		if (!minigame.empty())
+			app.setStartupMinigame(minigame);
+	}
+
 	app.Run();
 
 	return Common::kNoError;
@@ -82,19 +83,6 @@ Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
-}
-
-void HodjNPodjEngine::startBackgroundMidi() {
-	_backgroundMidi = new CBofSound(this, LOGO_MIDI, SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */);
-	(*_backgroundMidi).play();
-}
-
-void HodjNPodjEngine::stopBackgroundMidi() {
-	if (_backgroundMidi != nullptr) {
-		(*_backgroundMidi).stop();
-		delete _backgroundMidi;
-		_backgroundMidi = nullptr;
-	}
 }
 
 } // namespace HodjNPodj

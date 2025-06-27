@@ -28,6 +28,7 @@
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
+#include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/dialogs.h"
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
 #include "bagel/hodjnpodj/metagame/frame/restgame.h"
@@ -83,11 +84,6 @@ typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO)(void);
 
 static FPGETFREEMEMINFO lpfnGetFreeMemInfo;
 // Flags when a .dll in the original is loaded
-static bool dllLoaded;
-
-
-HINSTANCE   hExeInst = nullptr;
-HINSTANCE   hMetaInst = nullptr;
 
 BOOL        bMetaLoaded = FALSE;
 
@@ -125,7 +121,6 @@ static  int         nHomeDrive = -1;
 static  int         nMiniDrive = -1;
 static  int         nCDDrive = -1;
 
-static  HWND        hwndGame = nullptr;
 static  BOOL        bActiveWindow = FALSE;
 
 static  BOOL        bReturnToZoom = FALSE;
@@ -2281,93 +2276,6 @@ VOID CHodjPodjWindow::ShowCredits(VOID) {
 	StopBackgroundMidi();
 
 	m_bInCredits = FALSE;
-}
-
-
-/*****************************************************************
- *
- * InitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *  This routine is automatically called when the application is
- *  started.
- *
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT OUTPUT PARAMETERS:
- *
- *      n/a
- *
- * RETURN VALUE:
- *
- *      BOOL        Success (TRUE) / Failure (FALSE) status
- *
- ****************************************************************/
-
-BOOL CTheApp::InitInstance() {
-	dllLoaded = false;
-
-	m_pMainWnd = new CHodjPodjWindow();
-	m_pMainWnd->ShowWindow(SW_SHOWNORMAL);
-	m_pMainWnd->UpdateWindow();
-
-	return TRUE;
-}
-
-
-/*****************************************************************
- *
- * ExitInstance
- *
- * FUNCTIONAL DESCRIPTION:
- *
- *  This routine is automatically called when the application is
- *  being terminated.
- *
- * FORMAL PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT INPUT PARAMETERS:
- *
- *      n/a
- *
- * IMPLICIT OUTPUT PARAMETERS:
- *
- *      n/a
- *
- * RETURN VALUE:
- *
- *      int         Success (0) / Failure status
- *
- ****************************************************************/
-int CTheApp::ExitInstance() {
-	if (dllLoaded) {
-		if (hwndGame != nullptr)
-			SendMessage(hwndGame, WM_CLOSE, 0, 0L);
-
-		dllLoaded = false;
-	}
-
-	if (hMetaInst > HINSTANCE_ERROR) {
-		if (hwndGame != nullptr)
-			SendMessage(hwndGame, WM_CLOSE, 0, 0L);
-
-		FreeLibrary(hMetaInst);
-		hMetaInst = nullptr;
-	}
-
-	if (m_pMainWnd != nullptr)
-		m_pMainWnd->SendMessage(WM_CLOSE);
-
-	return (0);
 }
 
 } // namespace Frame

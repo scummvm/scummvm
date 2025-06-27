@@ -1,0 +1,126 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "bagel/hodjnpodj/metagame/frame/app.h"
+#include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
+#include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
+
+namespace Bagel {
+namespace HodjNPodj {
+namespace Metagame {
+namespace Frame {
+
+bool dllLoaded;
+HWND hwndGame;
+HINSTANCE hExeInst;
+HINSTANCE hMetaInst;
+
+CTheApp::CTheApp() {
+	dllLoaded = false;
+	hwndGame = nullptr;
+	hExeInst = nullptr;
+	hMetaInst = nullptr;
+}
+
+BOOL CTheApp::InitInstance() {
+	if (!_startupMinigame.empty()) {
+		// Main game
+		addFontResource("meta/msserif.fon");
+		addResources("meta/hodjpodj.exe");
+		addResources("meta/hnpmeta.dll");
+		setDirectory("meta");
+
+		m_pMainWnd = new CHodjPodjWindow();
+		m_pMainWnd->ShowWindow(SW_SHOWNORMAL);
+		m_pMainWnd->UpdateWindow();
+
+	} else {
+		// Specific minigame
+		selectMinigame();
+	}
+
+	return TRUE;
+}
+
+int CTheApp::ExitInstance() {
+	if (dllLoaded) {
+		if (hwndGame != nullptr)
+			SendMessage(hwndGame, WM_CLOSE, 0, 0L);
+
+		dllLoaded = false;
+	}
+
+	if (hMetaInst > HINSTANCE_ERROR) {
+		if (hwndGame != nullptr)
+			SendMessage(hwndGame, WM_CLOSE, 0, 0L);
+
+		FreeLibrary(hMetaInst);
+		hMetaInst = nullptr;
+	}
+
+	if (m_pMainWnd != nullptr)
+		m_pMainWnd->SendMessage(WM_CLOSE);
+
+	return 0;
+}
+
+void CTheApp::selectMinigame() {
+	bool isMODDemo = false;
+	const auto *game = Metagame::CMgStatic::cGameTable;
+
+	for (; game->m_iGameCode; ++game) {
+		if (game->_path && _startupMinigame == game->_path)
+			break;
+		isMODDemo = _startupMinigame == "mazedoom_demo" &&
+			!strcmp(game->_path, "mazedoom");
+		if (isMODDemo)
+			break;
+	}
+
+	if (!game->m_iGameCode)
+		error("Unknown minigame - %s", _startupMinigame.c_str());
+
+	GAMESTRUCT *lpGameStruct = new GAMESTRUCT();
+	lpGameStruct->lCrowns = 1000;
+	lpGameStruct->lScore = 0;
+	lpGameStruct->nSkillLevel = SKILLLEVEL_MEDIUM;
+	lpGameStruct->bSoundEffectsEnabled = true;
+	lpGameStruct->bMusicEnabled = true;
+	lpGameStruct->bPlayingMetagame = FALSE;
+	lpGameStruct->bPlayingHodj = TRUE;
+
+	// Don't change folder for Maze O Doom demo
+	if (isMODDemo) {
+		addResources("mod.exe");
+	} else {
+		setDirectory(game->_path);
+		addResources(game->_dllName);
+	}
+
+	// Start the minigame
+	game->_initFn(nullptr, lpGameStruct);
+}
+
+
+} // namespace Frame
+} // namespace Metagame
+} // namespace HodjNPodj
+} // namespace Bagel

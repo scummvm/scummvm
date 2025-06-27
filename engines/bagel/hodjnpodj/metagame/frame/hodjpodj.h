@@ -131,15 +131,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-/**
- * Main app class for the game
- */
-class CTheApp : public CWinApp {
-public:
-	BOOL InitInstance() override;
-	int ExitInstance() override;
-};
-
 } // namespace Frame
 } // namespace Metagame
 } // namespace HodjNPodj

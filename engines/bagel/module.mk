@@ -175,6 +175,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/mgstat.o \
 	hodjnpodj/metagame/bgen/note.o \
 	hodjnpodj/metagame/bgen/notebook.o \
+	hodjnpodj/metagame/frame/app.o \
 	hodjnpodj/metagame/frame/hodjpodj.o \
 	hodjnpodj/metagame/frame/maindlg.o \
 	hodjnpodj/metagame/frame/movytmpl.o \

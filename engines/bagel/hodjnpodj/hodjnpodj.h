@@ -116,9 +116,6 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
-
-	void startBackgroundMidi();
-	void stopBackgroundMidi();
 };
 
 extern HodjNPodjEngine *g_engine;
