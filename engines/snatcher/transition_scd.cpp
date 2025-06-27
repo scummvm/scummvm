@@ -158,9 +158,9 @@ private:
 	void trsUpdt_dummy(int arg);
 	void trsUpdt_engineScroll(int arg);
 	void trsUpdt_skyParallaxScroll(int arg);
-	void trsUpdt_04(int arg);
+	void trsUpdt_floorParallaxScroll(int arg);
 	void trsUpdt_videoPhoneInterference(int arg);
-	void trsUpdt_06(int arg);
+	void trsUpdt_scrollSceneBottomRows(int arg);
 	void trsUpdt_screenShutter(int arg);
 	void trsUpdt_revealShutter(int arg);
 	void trsUpdt_showStdVerbsTab(int arg);
@@ -173,17 +173,18 @@ private:
 	void trsUpdt_showDialogueTab2(int arg);
 	void trsUpdt_showMonitorTextField(int arg);
 	void trsUpdt_showDefaultTextScreen(int arg);
-	void trsUpdt_videoPhoneCallStart(int arg);
-	void trsUpdt_24(int arg);
-	void trsUpdt_videoPhoneCallEnd1(int arg);
-	void trsUpdt_videoPhoneCallEnd2(int arg);
-	void trsUpdt_27(int arg);
-	void trsUpdt_28(int arg);
-	void trsUpdt_29(int arg);
+	void trsUpdt_videoPhoneCallStart1(int arg);
+	void trsUpdt_videoPhoneCallStart2(int arg);
+	void trsUpdt_videoPhoneCallEnd1a(int arg);
+	void trsUpdt_videoPhoneCallEnd1b(int arg);
+	void trsUpdt_videoPhoneCallStart3(int arg);
+	void trsUpdt_videoPhoneCallEnd2a(int arg);
+	void trsUpdt_videoPhoneCallEnd2b(int arg);
 
 	void lineScrollInit();
 	void lineScrollTableFill(uint16 start, uint16 len, uint16 val);
 	void lineScrollTableDecr(uint16 start, uint16 len);
+	void lineScrollTableIncr(uint16 start, uint16 len, int16 offset);
 	void textScreenTrsUpdate(int type, int hIntHandlerNo, int state);
 
 	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, TransitionManager_SCD> HINTFunc;
@@ -193,10 +194,10 @@ private:
 	void setHINTHandler(uint8 num);
 
 	void hIntHandler_dummy(Graphics::SegaRenderer*);
-	void hIntHandler_showVirtKeybTabStep1(Graphics::SegaRenderer *sr);
-	void hIntHandler_showVirtKeybTabStep2(Graphics::SegaRenderer *sr);
-	void hIntHandler_hideVirtKeybTabStep1(Graphics::SegaRenderer *sr);
-	void hIntHandler_hideVirtKeybTabStep2(Graphics::SegaRenderer *sr);
+	void hIntHandler_showInputTextLine(Graphics::SegaRenderer *sr);
+	void hIntHandler_showVirtKeybTab(Graphics::SegaRenderer *sr);
+	void hIntHandler_hideInputTextLine(Graphics::SegaRenderer *sr);
+	void hIntHandler_hideVirtKeybTab(Graphics::SegaRenderer *sr);
 	void hIntHandler_screenShutter(Graphics::SegaRenderer *sr);
 	void hIntHandler_revealShutter(Graphics::SegaRenderer *sr);
 	void hIntHandler_toggleStdVerbsTab(Graphics::SegaRenderer *sr);
@@ -206,7 +207,8 @@ private:
 	void hIntHandler_showMonitorTextField(Graphics::SegaRenderer *sr);
 	void hIntHandler_showDefaultTextScreen(Graphics::SegaRenderer *sr);
 	void hIntHandler_videoPhoneCallStart(Graphics::SegaRenderer *sr);
-	void hIntHandler_videoPhoneCallEnd(Graphics::SegaRenderer *sr);
+	void hIntHandler_videoPhoneShutter(Graphics::SegaRenderer *sr);
+	void hIntHandler_videoPhoneCallEnd2(Graphics::SegaRenderer *sr);
 };
 
 TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _hint_proc(0), _transitionStep(0),
@@ -269,11 +271,12 @@ bool TransitionManager_SCD::nextFrame() {
 		_trsCommandExt = 0;
 	}
 
+	processTransition();
+
 	if (_nextStepExt != _lastStepExt || _lastStepExt == 0) {
 		if (_nextStepExt == 0xFE) {
 			if (_lastStepExt == 23) {
-				_internalState[kVertA].setNextOffset(0);
-				_internalState[kVertB].setNextOffset(0);
+				_result.realOffsets[kVertA] = _result.realOffsets[kVertB] = 0;
 				if (_restoreDlgTab) {
 					resetVars(0x30);
 					_nextStepExt = _lastStepExt = 15;
@@ -291,8 +294,6 @@ bool TransitionManager_SCD::nextFrame() {
 			resetVars(0x40);
 		}
 	}
-
-	processTransition();
 
 	bool changed = false;
 	bool reset = (_nextStep == 0xFF || _nextStep == 0xFC);
@@ -403,6 +404,9 @@ void TransitionManager_SCD::processTransition() {
 		_result.realOffsets[kVertB] = _transitionState;
 		break;
 	case 22: case 23:
+		_result.hInt.counter = 0;
+		_result.realOffsets[kVertA] = 0;
+		_result.realOffsets[kVertB] = _transitionState;
 		break;
 	default:
 		break;
@@ -420,11 +424,10 @@ void TransitionManager_SCD::resetVars(int groupFlags) {
 		_lineScrollOp = 0;
 		_lineScrollOpState = 0;
 		_trs__DB = 0;
-		_nextStepExt = 0;
+		_nextStepExt = _lastStepExt = 0;
 		_transitionType = _transitionState = _tmpScrollOffset = _subPara = 0;
 		_result.verbsTabVisible = false;
 		_restoreDlgTab = 0;
-
 	}
 	if (groupFlags & 0x04) {
 		_nextStep = _lastStep = 0;
@@ -469,9 +472,9 @@ void TransitionManager_SCD::makeFunctions() {
 		TF(engineScroll),
 		TF(engineScroll),
 		TF(skyParallaxScroll),
-		TF(04),
+		TF(floorParallaxScroll),
 		TF(videoPhoneInterference),
-		TF(06),
+		TF(scrollSceneBottomRows),
 		TF(screenShutter),
 		TF(revealShutter),
 		TF(revealShutter),
@@ -488,13 +491,13 @@ void TransitionManager_SCD::makeFunctions() {
 		TF(showDialogueTab2),
 		TF(showMonitorTextField),
 		TF(showDefaultTextScreen),
-		TF(videoPhoneCallStart),
-		TF(24),
-		TF(videoPhoneCallEnd1),
-		TF(videoPhoneCallEnd2),
-		TF(27),
-		TF(28),
-		TF(29)
+		TF(videoPhoneCallStart1),
+		TF(videoPhoneCallStart2),
+		TF(videoPhoneCallEnd1a),
+		TF(videoPhoneCallEnd1b),
+		TF(videoPhoneCallStart3),
+		TF(videoPhoneCallEnd2a),
+		TF(videoPhoneCallEnd2b)
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(funcTbl); ++i) \
@@ -502,10 +505,10 @@ void TransitionManager_SCD::makeFunctions() {
 
 	typedef void (TransitionManager_SCD::*HIFunc)(Graphics::SegaRenderer*);
 	static const HIFunc funcTbl2[] = {
-		HF(showVirtKeybTabStep1),
-		HF(showVirtKeybTabStep2),
-		HF(hideVirtKeybTabStep1),
-		HF(hideVirtKeybTabStep2),
+		HF(showInputTextLine),
+		HF(showVirtKeybTab),
+		HF(hideInputTextLine),
+		HF(hideVirtKeybTab),
 		HF(dummy),
 		HF(dummy),
 		HF(dummy),
@@ -526,7 +529,11 @@ void TransitionManager_SCD::makeFunctions() {
 		HF(showMonitorTextField),
 		HF(showDefaultTextScreen),
 		HF(videoPhoneCallStart),
-		HF(videoPhoneCallEnd)
+		HF(videoPhoneShutter),
+		HF(dummy),
+		HF(dummy),
+		HF(dummy),
+		HF(videoPhoneCallEnd2)
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(funcTbl2); ++i) \
@@ -607,7 +614,43 @@ void TransitionManager_SCD::trsUpdt_skyParallaxScroll(int arg) {
 	}
 }
 
-void TransitionManager_SCD::trsUpdt_04(int arg) {
+void TransitionManager_SCD::trsUpdt_floorParallaxScroll(int arg) {
+	if (!_lineScrollOp) {
+		lineScrollInit();
+		return;
+	}
+
+	++_lineScrollTimer1;
+	++_lineScrollTimer2;
+	++_lineScrollTimer3;
+	++_lineScrollTimer4;
+	++_lineScrollTimer5;
+
+	if (_lineScrollTimer1 == 7) {
+		_lineScrollTimer1 = 0;
+		lineScrollTableIncr(0, 112, 1);
+		_hScrollTableLen = 112;
+	}
+	if (_lineScrollTimer2 == 6) {
+		_lineScrollTimer2 = 0;
+		lineScrollTableIncr(112, 4, 1);
+		_hScrollTableLen = 116;
+	}
+	if (_lineScrollTimer3 == 5) {
+		_lineScrollTimer3 = 0;
+		lineScrollTableIncr(116, 4, 1);
+		_hScrollTableLen = 120;
+	}
+	if (_lineScrollTimer4 == 4) {
+		_lineScrollTimer4 = 0;
+		lineScrollTableIncr(120, 4, 1);
+		_hScrollTableLen = 124;
+	}
+	if (_lineScrollTimer5 == 3) {
+		_lineScrollTimer5 = 0;
+		lineScrollTableIncr(124, 4, 1);
+		_hScrollTableLen = 128;
+	}
 }
 
 void TransitionManager_SCD::trsUpdt_videoPhoneInterference(int arg) {
@@ -647,7 +690,14 @@ void TransitionManager_SCD::trsUpdt_videoPhoneInterference(int arg) {
 	}
 }
 
-void TransitionManager_SCD::trsUpdt_06(int arg) {
+void TransitionManager_SCD::trsUpdt_scrollSceneBottomRows(int arg) {
+	if (_lineScrollOp == 0) {
+		lineScrollInit();
+	} else {
+		_hScrollTableLen = 128;
+		lineScrollTableIncr(112, 9, -2);
+		lineScrollTableIncr(121, 7, 2);
+	}
 }
 
 void TransitionManager_SCD::trsUpdt_screenShutter(int arg) {
@@ -852,7 +902,7 @@ void TransitionManager_SCD::trsUpdt_showDefaultTextScreen(int arg) {
 		textScreenTrsUpdate(16, 22, 232);
 }
 
-void TransitionManager_SCD::trsUpdt_videoPhoneCallStart(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneCallStart1(int arg) {
 	if (_tmpScrollOffset == 0) {
 		_transitionState2 = 48;
 		++_tmpScrollOffset;
@@ -869,10 +919,24 @@ void TransitionManager_SCD::trsUpdt_videoPhoneCallStart(int arg) {
 	}
 }
 
-void TransitionManager_SCD::trsUpdt_24(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneCallStart2(int arg) {
+	if (arg == 0) {
+		_transitionType = 18;
+		setHINTHandler(24);
+		_transitionState = -64;
+		++_subPara;
+	} else if (arg == 1) {
+		_transitionState += 8;
+		if (_transitionState > 0) {
+			_transitionState = 0;
+			++_subPara;
+		}
+	} else {
+		resetVars(0x10);
+	}
 }
 
-void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd1(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd1a(int arg) {
 	if (arg != 0)
 		return;
 	_transitionType = 19;
@@ -881,7 +945,7 @@ void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd1(int arg) {
 	++_subPara;
 }
 
-void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd2(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd1b(int arg) {
 	if (arg == 0) {
 		_transitionType = 20;
 		setHINTHandler(24);
@@ -898,13 +962,39 @@ void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd2(int arg) {
 	}
 }
 
-void TransitionManager_SCD::trsUpdt_27(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneCallStart3(int arg) {
+	if (arg != 0)
+		return;
+	_transitionType = 21;
+	_transitionState = -64;
+	setHINTHandler(24);
+	++_subPara;
 }
 
-void TransitionManager_SCD::trsUpdt_28(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd2a(int arg) {
+	if (arg != 0)
+		return;
+	_transitionType = 22;
+	_transitionState = 96;
+	setHINTHandler(28);
+	++_subPara;
 }
 
-void TransitionManager_SCD::trsUpdt_29(int arg) {
+void TransitionManager_SCD::trsUpdt_videoPhoneCallEnd2b(int arg) {
+	if (arg == 0) {
+		_transitionType = 23;
+		setHINTHandler(28);
+		_transitionState = 96;
+		++_subPara;
+	} else if (arg == 1) {
+		_transitionState -= 8;
+		if (_transitionState < 48) {
+			_transitionState = 48;
+			++_subPara;
+		}
+	} else {
+		resetVars(0x30);
+	}
 }
 
 void TransitionManager_SCD::lineScrollInit() {
@@ -922,8 +1012,12 @@ void TransitionManager_SCD::lineScrollTableFill(uint16 start, uint16 len, uint16
 }
 
 void TransitionManager_SCD::lineScrollTableDecr(uint16 start, uint16 len) {
+	lineScrollTableIncr(start, len, -1);
+}
+
+void TransitionManager_SCD::lineScrollTableIncr(uint16 start, uint16 len, int16 offset) {
 	for (int16 *d = &_hScrollTable[start]; d < &_hScrollTable[start + len]; ++d)
-		*d = (*d - 1) & 0x3FF;
+		*d = (*d + offset) & 0x3FF;
 }
 
 void TransitionManager_SCD::textScreenTrsUpdate(int type, int hIntHandlerNo, int state) {
@@ -938,12 +1032,14 @@ void TransitionManager_SCD::setHINTHandler(uint8 num) {
 		_hINTHandler = _hINTProcs[num];
 	 else
 		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
+	if (num == 28)
+		_gfxState.setVar(11, 1);
 }
 
 void TransitionManager_SCD::hIntHandler_dummy(Graphics::SegaRenderer*) {
 }
 
-void TransitionManager_SCD::hIntHandler_showVirtKeybTabStep1(Graphics::SegaRenderer *sr) {
+void TransitionManager_SCD::hIntHandler_showInputTextLine(Graphics::SegaRenderer *sr) {
 	if (_transitionStep == 99) {
 		sr->writeUint16VSRAM(0, TO_BE_16(0x140));
 		sr->writeUint16VSRAM(2, TO_BE_16(0x140));
@@ -955,7 +1051,7 @@ void TransitionManager_SCD::hIntHandler_showVirtKeybTabStep1(Graphics::SegaRende
 	++_transitionStep;
 }
 
-void TransitionManager_SCD::hIntHandler_showVirtKeybTabStep2(Graphics::SegaRenderer *sr) {
+void TransitionManager_SCD::hIntHandler_showVirtKeybTab(Graphics::SegaRenderer *sr) {
 	if (_transitionStep == 99) {
 		sr->writeUint16VSRAM(0, TO_BE_16(0x140));
 		sr->writeUint16VSRAM(2, TO_BE_16(0x140));
@@ -970,7 +1066,7 @@ void TransitionManager_SCD::hIntHandler_showVirtKeybTabStep2(Graphics::SegaRende
 	++_transitionStep;
 }
 
-void TransitionManager_SCD::hIntHandler_hideVirtKeybTabStep1(Graphics::SegaRenderer *sr) {
+void TransitionManager_SCD::hIntHandler_hideInputTextLine(Graphics::SegaRenderer *sr) {
 	if (_transitionStep == 99) {
 		sr->writeUint16VSRAM(0, TO_BE_16(_tmpScrollOffset));
 		sr->writeUint16VSRAM(2, TO_BE_16(_tmpScrollOffset));
@@ -985,7 +1081,7 @@ void TransitionManager_SCD::hIntHandler_hideVirtKeybTabStep1(Graphics::SegaRende
 	++_transitionStep;
 }
 
-void TransitionManager_SCD::hIntHandler_hideVirtKeybTabStep2(Graphics::SegaRenderer *sr) {
+void TransitionManager_SCD::hIntHandler_hideVirtKeybTab(Graphics::SegaRenderer *sr) {
 	if (_transitionStep == 143) {
 		sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
 		sr->writeUint16VSRAM(2, TO_BE_16(_transitionState));
@@ -1074,9 +1170,6 @@ void TransitionManager_SCD::hIntHandler_toggleSmallVerbsTab(Graphics::SegaRender
 	if (_transitionStep++ != 19)
 		return;
 	sr->writeUint16VSRAM(0, TO_BE_16(_transitionState));
-	sr->writeUint16VSRAM(2, TO_BE_16(_transitionState));
-	sr->writeUint16VRAM(0xF800, 0);
-	sr->writeUint16VRAM(0xF802, 0);
 	_result.hInt.enable = false;
 }
 
@@ -1113,10 +1206,20 @@ void TransitionManager_SCD::hIntHandler_videoPhoneCallStart(Graphics::SegaRender
 	++_transitionStep;
 }
 
-void TransitionManager_SCD::hIntHandler_videoPhoneCallEnd(Graphics::SegaRenderer *sr) {
+void TransitionManager_SCD::hIntHandler_videoPhoneShutter(Graphics::SegaRenderer *sr) {
 	if (_transitionStep == 9) {
 		sr->writeUint16VSRAM(0, 0);
 		sr->writeUint16VSRAM(2, TO_BE_16((-_transitionState) & 0x3FF));
+		_result.hInt.enable = false;
+	}
+	++_transitionStep;
+}
+
+void TransitionManager_SCD::hIntHandler_videoPhoneCallEnd2(Graphics::SegaRenderer *sr) {
+	if (_transitionStep == 72) {
+		sr->writeUint16VSRAM(0, 0);
+		sr->writeUint16VSRAM(2, TO_BE_16((-_transitionState) & 0x3FF));
+	} else if (_transitionStep == 136) {
 		_result.hInt.enable = false;
 	}
 	++_transitionStep;

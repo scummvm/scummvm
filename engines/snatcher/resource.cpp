@@ -65,7 +65,6 @@ uint8 *FIO::fileData(int index, uint32 *fileSize) {
 }
 
 uint8 *FIO::fileData(const Common::Path &file, uint32 *fileSize) {
-	debug("%s(): Loading file %s", __FUNCTION__, file.baseName().c_str());
 	Common::SeekableReadStream *s = readStream(file);
 
 	uint32 size = s ? s->size() : 0;
@@ -89,7 +88,6 @@ Common::SeekableReadStream *FIO::readStream(int index) {
 }
 
 Common::SeekableReadStream *FIO::readStream(const Common::Path &file) {
-	debug("%s(): Loading file %s", __FUNCTION__, file.baseName().c_str());
 	return _files.createReadStreamForMember(file);
 }
 
@@ -302,7 +300,7 @@ SceneModule::SHFactory *const SceneModule::_shList[97] = {
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
-	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
+	INVALD, INVALD, INVALD, INVALD, S(Y16), INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,
 	INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD, INVALD,

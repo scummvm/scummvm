@@ -9,9 +9,10 @@ MODULE_OBJS := \
 	palette_scd.o \
 	resource.o \
 	saveload.o \
-	scene/scene_d0.o \
-	scene/scene_d1.o \
-	scene/scene_d2.o \
+	scene_d0.o \
+	scene_d1.o \
+	scene_d2.o \
+	scene_y16.o \
 	script.o \
 	snatcher.o \
 	sound.o \

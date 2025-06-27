@@ -123,7 +123,7 @@ void CmdQueue::makeFunctions() {
 		OP(shooterSequenceRun),
 		OP(fmSfxWait),
 		OP(26),
-		OP(27),
+		OP(cdaSync),
 		OP(fmSoundEffect),
 		OP(pcmBlock),
 		OP(saveGame),
@@ -414,7 +414,12 @@ void CmdQueue::m_fmSfxWait(const uint16 *&data) {
 void CmdQueue::m_26(const uint16 *&data) {
 }
 
-void CmdQueue::m_27(const uint16 *&data) {
+void CmdQueue::m_cdaSync(const uint16 *&data) {
+	uint32 ts = (data[0] & 0xFF) << 24 | (data[1] & 0xFF) << 16 | (data[2] & 0xFF) << 8;
+	if (ts > _vm->sound()->cdaGetTime())
+		return;
+	data += 3;
+	_progress = -1;
 }
 
 void CmdQueue::m_fmSoundEffect(const uint16 *&data) {
@@ -865,8 +870,8 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(eval_and),
 		OP(eval_and),
 		OP(fmMusicStart),
-		OP(callSubRoutine),
-		OP(12),
+		OP(runSubScript),
+		OP(callSubroutine),
 		OP(cdaPlay),
 		OP(14),
 		OP(fmSoundEffect),
@@ -912,7 +917,7 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(54),
 		OP(verbOps),
 		OP(57),
-		OP(returnFromSubRoutine),
+		OP(returnFromSubScript),
 		OP(59),
 		OP(59),
 		OP(loadModuleAndStartGfx),
@@ -1004,7 +1009,7 @@ void ScriptEngine::o_fmMusicStart() {
 	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
-void ScriptEngine::o_callSubRoutine() {
+void ScriptEngine::o_runSubScript() {
 	if (!evalFinished())
 		return;
 	uint16 m = 0;
@@ -1033,7 +1038,7 @@ void ScriptEngine::o_callSubRoutine() {
 	_script->newPos = READ_BE_UINT16(_script->data + _pos2);
 }
 
-void ScriptEngine::o_12() {
+void ScriptEngine::o_callSubroutine() {
 	uint16 cp = _script->curPos;
 	setArrayLastEntry(5, cp);
 	_pos1 = _script->curPos = READ_BE_UINT16(_script->data + _pos1 + 1);
@@ -1308,9 +1313,7 @@ void ScriptEngine::o_verbOps() {
 	if (ARR_POS(2) == _script->sentencePos) {
 		uint16 val = READ_BE_UINT16(_script->data + _pos2 + 1);
 
-		if (setArrayLastEntry(1, val))
-			debug("ADD verb %d", val);
-		else
+		if (!setArrayLastEntry(1, val))
 			debug("Verb array overflow");
 
 	} else {
@@ -1318,7 +1321,7 @@ void ScriptEngine::o_verbOps() {
 		getArrayEntry(2, _script->sentencePos, val);
 		if (READ_BE_UINT16(_script->data + _pos2 + 1) != val)
 			return;
-		debug("PROCESS verb %d", val);
+
 		++_script->sentencePos;
 		_pos1 += 3;
 
@@ -1340,7 +1343,7 @@ void ScriptEngine::o_57() {
 		--ARR_POS(0);
 }
 
-void ScriptEngine::o_returnFromSubRoutine() {
+void ScriptEngine::o_returnFromSubScript() {
 	uint16 res = 0;
 	popArrayLastEntry(3, res);
 	_script->newPos = res;
@@ -1494,9 +1497,7 @@ void ScriptEngine::o_sysOps() {
 		break;
 	case 10:
 		val = READ_BE_UINT16(_script->data + _pos1 + 4);
-		_ui->setVerbsTabLayout(val);
-		/*if (val == 1)
-			_transDW1 = _transDW2 = 0;*/
+		_ui->setVerbInterfaceMode(val);
 		break;
 	case 11:
 		if (READ_BE_UINT16(_script->data + _pos1 + 4)) {
@@ -1507,10 +1508,13 @@ void ScriptEngine::o_sysOps() {
 		}
 		break;
 	case 12:
+		// This happens when starting a new act. Apparently, only a small portion of the game
+		// variables is needed for the whole game. The rest gets cleared and can be repurposed.
 		_flagsTable[53] &= 0xF8;
 		memset(_flagsTable + 54, 0, 298);
 		break;
 	case 13:
+		// CD-Audio sync
 		_que->writeUInt16(0x1B);
 		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 5));
 		_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 8));

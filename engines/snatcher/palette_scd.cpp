@@ -90,8 +90,8 @@ private:
 
 	void setHINTHandler(uint8 num);
 
+	void hIntHandler_dummy(Graphics::SegaRenderer*) {}
 	void hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer *sr);
-	void hIntHandler_28(Graphics::SegaRenderer *sr);
 	int _transitionStep;
 };
 
@@ -113,7 +113,7 @@ SCDPalette::SCDPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, Gra
 #undef P_OP
 
 	_hINTProcs.push_back(new HINTFunc(this, &SCDPalette::hIntHandler_characterChatPortraitPalette));
-	_hINTProcs.push_back(new HINTFunc(this, &SCDPalette::hIntHandler_28));
+	_hINTProcs.push_back(new HINTFunc(this, &SCDPalette::hIntHandler_dummy));
 
 	_eventQueue = _eventCurPos = new PalEventSCD[12];
 	_colors = new uint16[128]();
@@ -261,7 +261,7 @@ void SCDPalette::update() {
 		_gfxState.setFlag(7, 0);
 		_gfxState.setVar(11, 0);
 	} else if (_gfxState.getVar(11)) {
-		setHINTHandler(0);;
+		setHINTHandler(0);
 	}
 
 	bool palChanged = false;
@@ -507,10 +507,6 @@ void SCDPalette::hIntHandler_characterChatPortraitPalette(Graphics::SegaRenderer
 	Common::copy<const uint16*, uint16*>(&_colors2[80], &_colors2[128], &_colors2[16]);
 	sr->hINT_setCounter(255);
 	sr->hINT_enable(false);
-}
-
-void SCDPalette::hIntHandler_28(Graphics::SegaRenderer *sr) {
-
 }
 
 Palette *Palette::createSegaPalette(const Graphics::PixelFormat *pxf, PaletteManager *pm, GraphicsEngine::GfxState &state) {

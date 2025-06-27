@@ -48,15 +48,28 @@ public:
 	bool displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags);
 
 	bool drawVerbs();
-	bool verbsTabInputPrompt(uint16 inputFlags);
+	bool verbsTabInputPrompt(const SnatcherEngine::Input &input);
+	void moveFlashLight();
 
 	void setScriptVerbsArray(const ScriptArray *verbsArray) { _scriptVerbsArray = verbsArray; }
 	void setScriptSentenceArray(const ScriptArray *sentenceArray) { _scriptSentenceArray = sentenceArray; }
 
 	int8 getSelectedVerb() const { return (int8)_selectedVerb; }
+
 	void resetVerbSelection() { _prevSelectedVerb = 0; }
-	void setVerbsTabLayout(uint16 layout);
-	void setInterpreterMode(uint16 mode);
+
+	struct FlashLightStatus {
+		FlashLightStatus() : inputFlags(0), posData(0), posX(0), posY(0) {}
+		uint16 inputFlags;
+		int32 posX;
+		int32 posY;
+		uint8 posData;
+	};
+
+	const FlashLightStatus &getFlashLightStatus() const { return _flashLight; }
+
+	void setVerbInterfaceMode(uint16 mode);
+	void setInterpreterMode(uint16 mode) { _verbsInterpreterMode = mode; }
 	void setVideoPhoneMode(uint16 enable) { _videoPhoneMode = enable; }
 	void setInputStringLength(uint16 length) { _textInputColumnMax = length; }
 	void setHeadLineYOffset(int16 offs) { _headLineYOffset = offs; };
@@ -94,8 +107,7 @@ private:
 	bool drawUnderscoreString();
 	void drawUnderscoreCursor();
 	void verbSelect2setResult();
-	void verbsTabHandleInput(uint16 inputFlags);
-	uint8 verbsTabCheckInputFlags(uint16 inputFlags);
+	void verbsTabHandleInput(const SnatcherEngine::Input &input);
 	bool verbsTabMoveHilite(int &pos);
 	void adjustHilitePos();
 	void verbTabSwapPage();
@@ -105,6 +117,8 @@ private:
 	void virtKeybStart();
 	bool verbSelect2checkSelection(uint16 val);
 	void virtKeybPrint();
+	uint8 checkFlashLightPos(int16 x, int16 y);
+	void moveFlashLight(int32 offsX, int32 offsY);
 
 	uint16 _verbsInterpreterMode;
 	uint8 _lastVerbFirstPage;
@@ -114,9 +128,6 @@ private:
 	uint8 _prevSelectedVerb;
 	uint8 _numVerbsMax;
 	uint8 _verbsTabCurPage;
-	uint8 _transit_02;
-	int16 _transDW1;
-	int16 _transDW2;
 	int16 _videoPhoneMode;
 	uint8 _textInputMarginLeft;
 	int16 _textInputColumnCur;
@@ -136,13 +147,15 @@ private:
 	uint8 *_underscoreStr;
 	uint8 *_textInputStr;
 	const uint8 *_verbsTabLayoutMap;
-	uint16 _verbsTabLayout;
+	uint16 _verbInterfaceMode;
 	int16 _hilitePosX;
 	int16 _hilitePosY;
 	bool _vkeybVisible;
 	const ScriptArray *_scriptVerbsArray;
 	const ScriptArray *_scriptSentenceArray;
 	int16 _progress2;
+
+	FlashLightStatus _flashLight;
 
 private:
 	GraphicsEngine *_gfx;

@@ -104,7 +104,7 @@ public:
 		kAnimParaRelSpeedX,
 		kAnimParaRelSpeedY,
 		kAnimParaPalette,
-		kAnimParaF17,
+		kAnimParaTarget,
 		kAnimParaF18,
 		kAnimParaF1c,
 		kAnimParaTimeStamp,
@@ -114,8 +114,7 @@ public:
 		kAnimParaFrameSeqCounter,
 		kAnimParaFrame,
 		kAnimParaFrameDelay,
-		kAnimParaF2c,
-		kAnimParaF2d,
+		kAnimParaActionTimer,
 		kAnimParaBlink,
 		kAnimParaBlinkCounter,
 		kAnimParaBlinkDuration,
@@ -210,7 +209,7 @@ public:
 		}
 
 	private:
-		uint8 vars[12];
+		uint8 vars[13];
 		uint16 frameCounter;
 		const VMInfo &vm;
 	};

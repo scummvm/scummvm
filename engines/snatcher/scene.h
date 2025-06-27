@@ -35,6 +35,7 @@ class FIO;
 declSHF(D0);
 declSHF(D1);
 declSHF(D2);
+declSHF(Y16);
 
 #undef declSHF
 
