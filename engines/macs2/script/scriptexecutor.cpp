@@ -463,6 +463,11 @@ else if (value == 0x6) {
 		out2 = 0;
 		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
+	} else if (value == 0xc) {
+		out1 = 1;
+		out2 = 0;
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 	}
 
 /*
@@ -605,8 +610,10 @@ l0037_A163:
 	jmp	0A32Ch
 */
 else if (value == 0x24) {
-	// Get the x of the protagonist object
-	out1 = GameObjects::GetProtagonistObject()->Position.x;
+	const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+	if (!actor)
+		actor = GameObjects::GetProtagonistObject();
+	out1 = actor ? actor->Position.x : 0;
 	out2 = 0;
 	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
@@ -628,8 +635,10 @@ l0037_A180:
 	jmp	0A32Ch
 	*/
 else if (value == 0x25) {
-	// Get the y of the protagonist object
-	out1 = GameObjects::GetProtagonistObject()->Position.y;
+	const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+	if (!actor)
+		actor = GameObjects::GetProtagonistObject();
+	out1 = actor ? actor->Position.y : 0;
 	out2 = 0;
 	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
@@ -851,6 +860,11 @@ l0037_A2A4:
 	else if (value == 0x2D) {
 		out1 = Scenes::instance().CurrentSceneIndex;
 		out2 = 0;
+	} else if (value == 0x2E) {
+		out1 = 2;
+		out2 = 0;
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 	}
 
 	/*
@@ -1164,8 +1178,10 @@ void ScriptExecutor::SetVariableValue(uint16 index, uint32 value) {
 }
 
 Common::Point ScriptExecutor::GetCharPosition() {
-	const Macs2::GameObject* protagonist = GameObjects::GetProtagonistObject();
-	return protagonist->Position;
+	const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+	if (!actor)
+		actor = GameObjects::GetProtagonistObject();
+	return actor ? actor->Position : Common::Point();
 }
 
 void ScriptExecutor::DumpWholeScript() {
@@ -1958,11 +1974,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x0c) {
 			// This is a scene change
 			uint32 newSceneID = Func9F4D_32();
-			// No idea what these here do
-
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			const uint16 transitionMode = Func9F4D_16();
+			const uint16 transitionSpeed = Func9F4D_16();
 			g_engine->changeScene(newSceneID, false);
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0) {
+				currentView->startFading();
+			}
 			// TODO: Confirm that script execution is also stopped always afer this command
 			// in the game code
 			// TODO: Confirm that these variables are also reset by the game when changing a scene
@@ -1975,6 +1993,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
 			EndTimer();
+			EndFrameWait();
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x0d) {
@@ -2002,6 +2021,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
 			EndTimer();
+			EndFrameWait();
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		}
@@ -2373,13 +2393,17 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			ReadWord();
 			ReadWord();
 		} else if (opcode1 == 0x03C) {
-			// TODO: Unknown opcode so far - probably related to the fade
-			// out as the dude is moving the potatoes in chapter 3
-			Func9F4D_Placeholder();
+			const uint16 fadeSpeed = Func9F4D_16();
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView != nullptr && fadeSpeed != 0) {
+				currentView->startFadeToBlack();
+			}
 		} else if (opcode1 == 0x03D) {
-			// TODO: Unknown opcode so far - is happening during the "potato moving"
-			// in chapter 3
-			Func9F4D_Placeholder();
+			const uint16 fadeSpeed = Func9F4D_16();
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView != nullptr && fadeSpeed != 0) {
+				currentView->startFading();
+			}
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
 			// TODO: No idea what the byte does
@@ -2454,7 +2478,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// Scene initialization run
 		// TODO: Need to better encapsulate this down the road
 		// TODO: Not sure which order is really right, need to check in SIS logs
-		const bool resumingAfterCallback = (_state == ExecutorState::WaitingForCallback);
+		const bool resumingAfterCallback = (_state == ExecutorState::WaitingForCallback) && !firstRun;
 		if (!resumingAfterCallback) {
 			// TODO: Not sure if this is the right place and condition to reset this
 			// variable. Context here is that we might have an object that triggers several

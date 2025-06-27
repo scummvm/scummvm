@@ -141,9 +141,8 @@ void Macs2Engine::readResourceFile() {
 	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300 + 0x800);
 	ReadImageResources(_fileStream);
 
-	// We need to skip reading the 776h global which comes first
-	_fileStream->seek(0xC + 0x2, SEEK_SET);
-
+	_fileStream->seek(0xC, SEEK_SET);
+	Scenes::instance().CurrentActorIndex = _fileStream->readUint16LE();
 	uint16 firstSceneIndex = _fileStream->readUint16LE();
 	Scenes::instance().CurrentSceneIndex = firstSceneIndex;
 	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(firstSceneIndex, _fileStream);
@@ -757,6 +756,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// Refresh the surface
 	currentView->_backgroundSurface = _bgImageShip;
+	currentView->_paletteDirty = true;
 	currentView->clearStringBox(false);
 	currentView->_drawnStringBox.clear();
 	currentView->_continueScriptAfterUI = false;
@@ -1420,6 +1420,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// We assume that the objects data array has been loaded completely before we ever load or save
 	// If we make changes to any game object data we have to save it
 
+	s.syncAsSint32LE(Scenes::instance().CurrentActorIndex);
 	s.syncAsSint32LE(Scenes::instance().CurrentSceneIndex);
 	View1 *currentView = (View1 *)findView("View1");
 	if (s.isLoading()) {
