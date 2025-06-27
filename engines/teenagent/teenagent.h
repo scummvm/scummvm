@@ -136,7 +136,7 @@ public:
 
 	void playMusic(byte id); //schedules play
 	void playSound(byte id, byte skipFrames);
-	void playSoundNow(Pack *pack, byte id);
+	void playSoundNow(Pack *pack, uint32 id);
 	void enableObject(byte id, byte sceneId = 0);
 	void disableObject(byte id, byte sceneId = 0);
 	void hideActor();

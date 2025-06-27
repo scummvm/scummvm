@@ -1041,7 +1041,7 @@ void TeenAgentEngine::wait(uint16 frames) {
 	scene->push(event);
 }
 
-void TeenAgentEngine::playSoundNow(Pack *pack, byte id) {
+void TeenAgentEngine::playSoundNow(Pack *pack, uint32 id) {
 	uint size = pack->getSize(id);
 	if (size == 0) {
 		warning("skipping invalid sound %u", id);
