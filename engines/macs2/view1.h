@@ -36,6 +36,12 @@ namespace Macs2 {
 		VM_MAP
 	};
 
+	enum class FadeMode {
+		None,
+		FromBlack,
+		ToBlack
+	};
+
 	class Button {
 
 		public: 
@@ -192,6 +198,7 @@ class View1 : public UIElement {
 	
 	byte _pal[256 * 3] = { 0 };
 	int _offset = 0;
+	bool _paletteDirty = true;
 
 	uint32 _frameDelayFlag = 100;
 	int32 _nextFrameFlag = _frameDelayFlag;
@@ -240,6 +247,7 @@ class View1 : public UIElement {
 
 	int currentFadeValue = -1;
 	int fadeDelta = 4;
+	FadeMode fadeMode = FadeMode::None;
 
 
 public:
@@ -314,6 +322,7 @@ public:
 	void clearStringBox(bool continueScript = true);
 
 	void startFading();
+	void startFadeToBlack();
 
 	void DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
 	void DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);

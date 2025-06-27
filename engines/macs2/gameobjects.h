@@ -36,6 +36,9 @@ namespace Macs2 {
 		// TODO: Check what the initial value of this is
 		int LastSceneIndex;
 
+		// Global [0776h]
+		int CurrentActorIndex;
+
 		// TODO: Handle properly as a field of the scene 
 		class Common::MemoryReadStream* CurrentSceneScript;
 
