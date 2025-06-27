@@ -1637,9 +1637,9 @@ static void calcMD5(Common::FSNode &path, int32 length) {
 		}
 
 		Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-		if (length != 0 && length < stream->size())
-			md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-		printf("%s: %s, %llu bytes\n", path.getName().c_str(), md5.c_str(), (unsigned long long)stream->size());
+		Common::String extra = length ? Common::String::format(" (%s %d bytes)", tail ? "tail" : "first", length) : " (full file)";
+
+		printf("%s: %s, %llu bytes%s\n", path.getName().c_str(), md5.c_str(), (unsigned long long)stream->size(), extra.c_str());
 		delete stream;
 	} else {
 		printf("Usage : --md5 --md5-path=<PATH> [--md5-length=NUM]\n");
@@ -1671,20 +1671,18 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 				tail = true;
 			}
 
+			Common::String extra = length ? Common::String::format(" (%s %d bytes)", tail ? "tail" : "first", length) : " (full fork)";
+
 			// The resource fork is probably the most relevant one.
 			if (macResMan.hasResFork()) {
 				Common::String md5 = macResMan.computeResForkMD5AsString(length, tail);
-				if (length != 0 && length < (int32)macResMan.getResForkDataSize())
-					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-				printf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString(Common::Path::kNativeSeparator).c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
+				printf("%s (resource): %s, %llu bytes%s\n", macResMan.getBaseFileName().toString(Common::Path::kNativeSeparator).c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize(), extra.c_str());
 			}
 			if (dataFork) {
 				if (tail && dataFork->size() > length)
 					dataFork->seek(-length, SEEK_END);
 				Common::String md5 = Common::computeStreamMD5AsString(*dataFork, length);
-				if (length != 0 && length < dataFork->size())
-					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString(Common::Path::kNativeSeparator).c_str(), md5.c_str(), (unsigned long long)dataFork->size());
+				printf("%s (data): %s, %llu bytes%s\n", macResMan.getBaseFileName().toString(Common::Path::kNativeSeparator).c_str(), md5.c_str(), (unsigned long long)dataFork->size(), extra.c_str());
 			}
 		}
 		macResMan.close();
@@ -2054,9 +2052,12 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 #endif
 		Common::Path Filename(filename, sep);
 		int32 md5Length = 0;
+		bool allLengths = true;
 
-		if (settings.contains("md5-length"))
+		if (settings.contains("md5-length")) {
 			md5Length = strtol(settings["md5-length"].c_str(), nullptr, 10);
+			allLengths = false;
+		}
 
 		if (settings.contains("md5-engine")) {
 			Common::String engineID = settings["md5-engine"];
@@ -2072,13 +2073,25 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 				warning("The requested engine (%s) doesn't support MD5-based detection", engineID.c_str());
 				return true;
 			}
+
+			allLengths = false;
 		}
 
-		if (command == "md5") {
-			Common::FSNode path(Filename);
-			calcMD5(path, md5Length);
-		} else
-			calcMD5Mac(Filename, md5Length);
+		int lengths[] = {0, 5000, 1024 * 1024, -5000 };
+		uint steps = ARRAYSIZE(lengths);
+
+		if (!allLengths) {
+			lengths[0] = md5Length;
+			steps = 1;
+		}
+
+		for (uint i = 0; i < steps; i++) {
+			if (command == "md5") {
+				Common::FSNode path(Filename);
+				calcMD5(path, lengths[i]);
+			} else
+				calcMD5Mac(Filename, lengths[i]);
+		}
 
 		return cmdDoExit;
 #ifdef DETECTOR_TESTING_HACK
