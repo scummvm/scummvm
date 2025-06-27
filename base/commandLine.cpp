@@ -977,7 +977,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Common::SearchSet _shaderSet;
 				Common::generateZipSet(_shaderSet, "shaders.dat", "shaders*.dat");
 				Common::FSNode path(Common::Path::fromCommandLine(option));
-				
+
 				if (!_shaderSet.hasFile(Common::Path::fromCommandLine(option))) {
 					if (!path.exists()) {
 						usage("Non-existent shader path '%s' or internal shader", option);
@@ -2058,7 +2058,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		if (settings.contains("md5-length"))
 			md5Length = strtol(settings["md5-length"].c_str(), nullptr, 10);
 
-		if (command == "md5" && settings.contains("md5-engine")) {
+		if (settings.contains("md5-engine")) {
 			Common::String engineID = settings["md5-engine"];
 
 			const Plugin *plugin = EngineMan.findDetectionPlugin(engineID);
