@@ -449,14 +449,18 @@ View1::View1() : UIElement("View1") {
 		setStringBox(sa);
 	}
 
-	void View1::clearStringBox() {
+	void View1::clearStringBox(bool continueScript) {
 		_isShowingStringBox = false;
+		_isShowingDialogueChoice = false;
+		_dialogueChoiceCount = 0;
 		currentSpeechActData.speaker = nullptr;
 		redraw();
-		if (_continueScriptAfterUI) {
+		if (continueScript && _continueScriptAfterUI) {
 			_continueScriptAfterUI = false;
 			// TODO: Check which one it should be
 			g_engine->RunScriptExecutor(false);
+		} else if (!continueScript) {
+			_continueScriptAfterUI = false;
 		}
 		
 	}
@@ -1349,6 +1353,8 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	 
 	
 	setStringBox(strings);
+	_isShowingDialogueChoice = false;
+	_dialogueChoiceCount = 0;
 	_continueScriptAfterUI = true;
 
 	currentSpeechActData.speaker = GetCharacterByIndex(characterIndex);
@@ -1594,7 +1600,7 @@ void View1::DrawImageResources(Graphics::ManagedSurface &s) {
 	}
 }
 
-void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
+void View1::ShowDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
 	Common::StringArray joinedLines;
 	for (auto &currentLines : choices) {
 		for (auto &currentLine : currentLines) {
@@ -1602,10 +1608,17 @@ void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices
 		}
 	}
 
-	ShowSpeechAct(1, joinedLines, position, onRightSide);
+	ShowSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
+	_isShowingDialogueChoice = true;
+	_dialogueChoiceCount = choices.size();
 }
 
 void View1::TriggerDialogueChoice(uint8 index) {
+	if (!_isShowingDialogueChoice || index < 1 || index > _dialogueChoiceCount) {
+		warning("Ignoring dialogue choice %u without an active matching choice UI", index);
+		return;
+	}
+
 	// TODO: Confirm that these two are really set accordingly
 	g_engine->_scriptExecutor->SetVariableValue(0x0d, index, 0);
 	g_engine->_scriptExecutor->chosenDialogueOption = index;
@@ -1614,7 +1627,7 @@ void View1::TriggerDialogueChoice(uint8 index) {
 	// options ourselves
 	// TODO: Check if the run script after UI needs to be overridden here to not
 	// schedule an unnecessary run
-	clearStringBox();
+	clearStringBox(false);
 	// TODO: Not sure about the first run variable here
 	g_engine->RunScriptExecutor();
 }

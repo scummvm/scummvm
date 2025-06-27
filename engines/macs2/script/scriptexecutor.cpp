@@ -26,7 +26,6 @@
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
 #include <macs2/view1.h>
-#include "macs2/SIS_OpcodeID/sis_opcode.h"
 
 namespace Macs2 {
 namespace Script {
@@ -55,6 +54,17 @@ ScriptExecutor::ScriptExecutor() {
 	// _interactedObjectID = 0x409;
 	// _variables[0xa].a = 0x1;
 	// _variables[0x26].a = 0x1;
+}
+
+Common::String ScriptExecutor::IdentifyScriptOpcode(uint8 opcode, uint8 opcode2) {
+	if (opcode == 0x5)
+		return Common::String::format("(%.2x)", opcode);
+
+	return Common::String::format("(%.2x %.2x)", opcode, opcode2);
+}
+
+Common::String ScriptExecutor::IdentifyHelperOpcode(uint8 opcode, uint16 value) {
+	return Common::String::format("(%.2x %.4x)", opcode, value);
 }
 
 inline void ScriptExecutor::FuncA3D2() {
@@ -191,7 +201,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// TODO: Consider writing this one also 
 	uint16 value = ReadWord(); // [bp-7h]
 
-	Common::String opcodeInfo = SIS_OpcodeID::IdentifyHelperOpcode(opcode1, value).c_str();
+	Common::String opcodeInfo = IdentifyHelperOpcode(opcode1, value);
 
 	SIS_Debug("- 9F4D opcode: %.2x %.4x %s", opcode1, value, opcodeInfo.c_str());
 
@@ -1200,7 +1210,7 @@ void ScriptExecutor::DumpWholeScript() {
 		}
 		Common::String opcodeInfo;
 		if (opcode1 != 0x5) {
-			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, 0).c_str();
+			opcodeInfo = IdentifyScriptOpcode(opcode1, 0);
 		}
 		SIS_Debug("[%u] - First block opcode: %.2x %s", skipValue, opcode1, opcodeInfo.c_str());
 		byte length = ReadByte(); // [bp-2h]
@@ -1215,7 +1225,7 @@ void ScriptExecutor::DumpWholeScript() {
 			// l0037_DC66:
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
-			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, opcode2).c_str();
+			opcodeInfo = IdentifyScriptOpcode(opcode1, opcode2);
 			SIS_Debug("[%u] - Second block opcode: %.2x %s", skipValue, opcode2, opcodeInfo.c_str());
 			// [bp-7h]
 			uint16 v1;
@@ -1499,7 +1509,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 			if (opcode2 == 0x01) {
 				// l0037_DC8F:;
-				// TODO Cóntinue here
+				// TODO Cï¿½ntinue here
 				if (v2 == v4 && v1 == v3) {
 					bp12 = true;
 				}
@@ -1606,7 +1616,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		}
 		Common::String opcodeInfo;
 		if (opcode1 != 0x5) {
-			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, 0).c_str();
+			opcodeInfo = IdentifyScriptOpcode(opcode1, 0);
 		}	
 		SIS_Debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
 		byte length = ReadByte();  // [bp-2h]
@@ -1698,7 +1708,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// l0037_DC66:
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
-			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, opcode2).c_str();
+			opcodeInfo = IdentifyScriptOpcode(opcode1, opcode2);
 			SIS_Debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
 			// [bp-7h]
 			uint16 v1;
@@ -1976,6 +1986,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				strings = g_engine->DecodeStrings(s, offset, numLines);
 			}
 			
+			activeDialogueSpeakerObjectID = objectID;
 			currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
 			isAwaitingCallback = true;
 			// TODO: Could be special for me with the short timer times, but it can happen
@@ -2032,7 +2043,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// assert(index - 1 == DialogueChoices.size());
 			uint16 offset = ReadWord();
 			uint16 numLines = ReadWord();
-			Common::StringArray lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+			Common::StringArray lines;
+			if (_executingScriptObjectID == 0) {
+				lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+			} else {
+				Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+				lines = _engine->DecodeStrings(stringsStream, offset, numLines);
+			}
 			DialogueChoices.push_back(lines);
 		} else if (opcode1 == 0x17) {
 			// Finish the dialogue choice
@@ -2041,7 +2058,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint32 x = Func9F4D_32();
 			uint32 y = Func9F4D_32();
 			uint16 side = Func9F4D_16();
-			currentView->ShowDialogueChoice(DialogueChoices, Common::Point(x, y), side);
+			const uint16 speakerObjectID = activeDialogueSpeakerObjectID != 0 ? activeDialogueSpeakerObjectID : _executingScriptObjectID;
+			currentView->ShowDialogueChoice(speakerObjectID, DialogueChoices, Common::Point(x, y), side);
 			requestCallback = false;
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
@@ -2230,25 +2248,12 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			secondaryInventoryLocation = _stream->pos();
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x2A) {
-			// TODO: Not sure what this is about, current hypothesis is that this is loading object
-			// data for an object not yet added to the scene
-			// But it is called several times, for example for the gangster 406 in the scene 6 start
 			uint32 objectID = Func9F4D_32() - 0x400;
 			uint16 slotID = Func9F4D_16();
-			// TODO: Unknown purpose
-			Func9F4D_32();
+			const bool decodeBlob = Func9F4D_16() != 0;
 			uint8 arrayIndex = ReadByte();
 
-			g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex);
-			// TODO: Consider removing below code
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			// TODO: Need to check if this object is really added to the scene like this
-			Character *c = new Character();
-			c->GameObject = GameObjects::instance().Objects[objectID - 1];
-			// TODO: DRY principle
-			// c->Po>GameObject->SceneIndex = sceneID;
-			// currentView->characters.push_back(c);
+			g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, decodeBlob);
 		} else if (opcode1 == 0x2B) {
 			// TODO: Mocking this one for now to see if this unlocks something
 			// It loads an object index, checks if it has a certain pointer in its
