@@ -97,8 +97,13 @@ int CWinApp::Run() {
 
 	SetCursor(LoadCursor(IDC_ARROW));
 
-	assert(m_pMainWnd);
-	SetActiveWindow(m_pMainWnd);
+	if (!m_pMainWnd) {
+		m_pMainWnd = GetActiveWindow();
+		assert(m_pMainWnd);
+	} else {
+		assert(m_pMainWnd);
+		SetActiveWindow(m_pMainWnd);
+	}
 
 	runEventLoop();
 
