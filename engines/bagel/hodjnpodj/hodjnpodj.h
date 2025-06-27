@@ -23,29 +23,10 @@
 #define HODJNPODJ_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
-#include "common/error.h"
-#include "common/fs.h"
-#include "common/hash-str.h"
-#include "common/random.h"
-#include "common/serializer.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "engines/savestate.h"
-#include "graphics/fonts/winfont.h"
-#include "graphics/screen.h"
-#include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-
-struct CBfcMgr {
-	bool m_bRestart = false;
-};
-
-extern GAMESTRUCT *pGameParams;
-extern CBfcMgr *lpMetaGame;
 
 class HodjNPodjEngine : public BagelEngine {
 private:
@@ -57,18 +38,6 @@ protected:
 
 public:
 	Common::String _gameId;
-	CBfcMgr _metaGame;
-	GAMESTRUCT _gameInfo;
-	bool _bDonePodj = false;
-	bool _bReturnToZoom = false;
-	bool _bReturnToMeta = false;
-	bool _bReturnToGrandTour = false;
-	bool _bAnimationsEnabled = true;
-	bool _bScrollingEnabled = false;
-	bool _bSlowCPU = false;
-	bool _bLowMemory = false;
-	size_t _dwFreeSpaceMargin = 850000;
-	size_t _dwFreePhysicalMargin = 850000;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);

@@ -35,14 +35,10 @@ namespace Bagel {
 namespace HodjNPodj {
 
 HodjNPodjEngine *g_engine;
-GAMESTRUCT *pGameParams;
-CBfcMgr *lpMetaGame;
 
 HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	BagelEngine(syst, gameDesc) {
 	g_engine = this;
-	pGameParams = &_gameInfo;
-	lpMetaGame = &_metaGame;
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {
