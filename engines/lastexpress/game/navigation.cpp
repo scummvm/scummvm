@@ -546,7 +546,7 @@ void LogicManager::nodeStepMouse(Event *event) {
 								flag = false;
 							}
 
-							if (!_engine->isDemo() && actionLink.action == 43 &&
+							if (!_engine->isDemo() && actionLink.action == kActionSwitchChapter &&
 								actionLink.param1 == _globals[kGlobalChapter] &&
 								(event->flags & kMouseFlagRightButton) != 0) {
 								doF4();

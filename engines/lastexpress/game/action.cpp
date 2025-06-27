@@ -99,7 +99,7 @@ int LogicManager::findCursor(Link *link) {
 
 		break;
 	case kActionRattle:
-		if ((_activeItem == kItemKey && !_doors[kItemMatchBox].status) || (_doors[kItemMatchBox].status == 1 && cathHasItem(kItemKey) && (_activeItem == kItemBriefcase || _activeItem == kItemFirebird))) {
+		if ((_activeItem == kItemKey && !_doors[1].status) || (_doors[1].status == 1 && cathHasItem(kItemKey) && (_activeItem == kItemBriefcase || _activeItem == kItemFirebird))) {
 			result = _items[kItemKey].mnum;
 		} else {
 			if (link->param1 >= 128) {
@@ -1008,7 +1008,7 @@ void LogicManager::doAction(Link *link) {
 		if (_engine->isDemo())
 			break;
 
-		if ((!_doneNIS[kEventCathLookOutsideWindowDay] && !_doneNIS[kEventCathLookOutsideWindowNight] && getModel(1) != 1) || !_globals[kGlobalTrainIsRunning] || (link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _doors[kObjectOutsideBetweenCompartments].status != 2)) || _activeItem == kItemBriefcase || _activeItem == kItemFirebird) {
+		if ((!_doneNIS[kEventCathLookOutsideWindowDay] && !_doneNIS[kEventCathLookOutsideWindowNight] && getModel(1) != 1) || !_globals[kGlobalTrainIsRunning] || (link->param1 == 45 && (inComp(kCharacterRebecca, kCarRedSleeping, 4840) || _doors[44].status != 2)) || _activeItem == kItemBriefcase || _activeItem == kItemFirebird) {
 			if (link->param1 == 9 || (link->param1 >= 44 && link->param1 <= 45)) {
 				if (isNight()) {
 					playNIS(kEventCathLookOutsideWindowNight);
@@ -1417,7 +1417,7 @@ void LogicManager::doAction(Link *link) {
 					setModel(1, link->param2);
 				}
 
-				if (_doors[kItemMatchBox].status != 1 && _doors[kItemMatchBox].status != 3 && _activeItem != kItemKey) {
+				if (_doors[1].status != 1 && _doors[1].status != 3 && _activeItem != kItemKey) {
 					if (!_globals[kGlobalFoundCorpse]) {
 						_engine->getVCR()->writeSavePoint(1, kCharacterCath, 0);
 						playDialog(kCharacterCath, "LIB014", -1, 0);
@@ -1474,7 +1474,7 @@ void LogicManager::doAction(Link *link) {
 					_engine->getGraphicsManager()->unlockSurface();
 				}
 			} else {
-				if (link->action != 16 || _activeItem != kItemKey) {
+				if (link->action != kActionRattle || _activeItem != kItemKey) {
 					if (link->param1 == 109) {
 						queueSFX(kCharacterCath, 26, 0);
 					} else {
