@@ -917,7 +917,7 @@ void LogicManager::doAction(Link *link) {
 				_items[kItemCorpse].floating = 0;
 				_activeItem = kItemCorpse;
 				_engine->getGraphicsManager()->drawItem(_items[kItemCorpse].mnum, 44, 0);
-				_engine->getGraphicsManager()->burstBox(44u, 0, 32, 32);
+				_engine->getGraphicsManager()->burstBox(44, 0, 32, 32);
 			}
 		} else {
 			_items[link->param1].haveIt = 1;

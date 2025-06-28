@@ -30,8 +30,9 @@
 #define getCharacterCurrentParams(c) (getCharacter(c).callParams[getCharacter(c).currentCall].parameters)
 #define getCharacterParams(c, n) (getCharacter(c).callParams[n].parameters)
 
-// Used to delete character sequences
+// Helpers
 #define SAFE_DELETE(_p) do { if (_p) delete (_p); (_p) = nullptr; } while (false)
+#define SAFE_DELETE_ARR(_p) do { if (_p) delete[] (_p); (_p) = nullptr; } while (false)
 #define SAFE_FREE(_p)   do { if (_p) free   (_p); (_p) = nullptr; } while (false)
 
 #endif // LASTEXPRESS_HELPERS_H

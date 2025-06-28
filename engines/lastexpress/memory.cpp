@@ -306,6 +306,8 @@ Seq *MemoryManager::copySeq(Seq *sequenceToCopy) {
 		newSeqDataStream->readUint32LE(); // Empty "next" sprite pointer
 	}
 
+	delete newSeqDataStream;
+
 	return newSeq;
 }
 

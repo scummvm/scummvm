@@ -189,6 +189,11 @@ void SubtitleManager::initSubtitles() {
 	HPF *archive = _engine->getArchiveManager()->openHPF("FONT.DAT");
 
 	if (archive) {
+		if (_font->fontData) {
+			free(_font->fontData);
+			_font->fontData = nullptr;
+		}
+
 		byte *fontData = (byte *)malloc(PAGE_SIZE * archive->size);
 
 		if (fontData) {
