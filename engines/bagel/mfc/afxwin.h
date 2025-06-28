@@ -1576,12 +1576,14 @@ class CScrollBar : public CWnd {
 private:
 	int _minValue = 0;
 	int _maxValue = 100;
+	int _pageSize = 10;
 	int _value = 0;
 
 	void drawSquare(CPaintDC &dc, const CRect &r);
 	void drawArrow(CPaintDC &dc, const CRect &r, bool leftArrow);
 	CRect getThumbRect() const;
 	int getIndexFromX(int xp) const;
+	void scrollEvent(int action);
 
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -1599,6 +1601,7 @@ public:
 	void GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const;
 	void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw);
 	void ShowScrollBar(BOOL bShow);
+	BOOL SetScrollInfo(LPSCROLLINFO lpScrollInfo, BOOL bRedraw);
 };
 
 class CView : public CWnd {

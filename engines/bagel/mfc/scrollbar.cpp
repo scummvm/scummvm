@@ -63,6 +63,18 @@ void CScrollBar::SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {
 	Invalidate();
 }
 
+BOOL CScrollBar::SetScrollInfo(LPSCROLLINFO lpScrollInfo, BOOL bRedraw) {
+	assert(lpScrollInfo->cbSize == sizeof(SCROLLINFO));
+	_minValue = lpScrollInfo->nMin;
+	_maxValue = lpScrollInfo->nMax;
+	_pageSize = lpScrollInfo->nPage;
+	_value = lpScrollInfo->nPos;
+
+	if (bRedraw)
+		Invalidate();
+	return true;
+}
+
 void CScrollBar::ShowScrollBar(BOOL bShow) {
 	warning("TODO: CScrollBar::ShowScrollBar");
 }
@@ -71,16 +83,17 @@ void CScrollBar::OnPaint() {
 	CPaintDC dc(this);
 	CRect clientRect;
 	GetClientRect(&clientRect);
+	const int thumbSize = clientRect.bottom;
 
 	// Clear background and draw border edge
 	dc.FillSolidRect(&clientRect, RGB(211, 211, 211));
 	CBrush borderBrush(RGB(0, 0, 0));
 	dc.FrameRect(&clientRect, &borderBrush);
 
-	CRect left(0, 0, clientRect.bottom, clientRect.bottom);
+	CRect left(0, 0, thumbSize, clientRect.bottom);
 	drawSquare(dc, left);
 	drawArrow(dc, left, true);
-	CRect right(clientRect.right - clientRect.bottom, 0,
+	CRect right(clientRect.right - thumbSize, 0,
 		clientRect.right, clientRect.bottom);
 	drawSquare(dc, right);
 	drawArrow(dc, right, false);
@@ -171,28 +184,59 @@ void CScrollBar::OnLButtonDown(UINT nFlags, CPoint point) {
 
 	if (point.x < clientRect.bottom) {
 		// Left arrow button
-		if (_value > _minValue)
+		if (_value > _minValue) {
 			SetScrollPos(_value - 1);
+			scrollEvent(SB_LINELEFT);
+		}
 
 	} else if (point.x >= (clientRect.right - clientRect.bottom)) {
 		// Right arrow button
-		if (_value < _maxValue)
+		if (_value < _maxValue) {
 			SetScrollPos(_value + 1);
+			scrollEvent(SB_LINERIGHT);
+		}
 
 	} else {
-		// Presume we're dragging the thumb
-		SetScrollPos(getIndexFromX(point.x));
-		SetCapture();
+		// We're in the slider area
+		CRect thumbRect = getThumbRect();
+
+		if (point.x < thumbRect.left) {
+			// Left of thumb, page left
+			SetScrollPos(_value - _pageSize);
+			scrollEvent(SB_PAGELEFT);
+		} else if (point.x >= thumbRect.right) {
+			// Right of thumb, page right
+			SetScrollPos(_value + _pageSize);
+			scrollEvent(SB_PAGERIGHT);
+		} else {
+			// Directly on thumb, so start dragging it
+			SetScrollPos(getIndexFromX(point.x));
+			SetCapture();
+			scrollEvent(SB_THUMBTRACK);
+		}
 	}
 }
 
 void CScrollBar::OnLButtonUp(UINT nFlags, CPoint point) {
-	ReleaseCapture();
+	if (GetCapture() == m_hWnd) {
+		ReleaseCapture();
+		scrollEvent(SB_THUMBPOSITION);
+	}
+
+	scrollEvent(SB_ENDSCROLL);
 }
 
 void CScrollBar::OnMouseMove(UINT, CPoint point) {
-	if (GetCapture() == m_hWnd)
+	if (GetCapture() == m_hWnd) {
 		SetScrollPos(getIndexFromX(point.x));
+		scrollEvent(SB_THUMBTRACK);
+	}
+}
+
+void CScrollBar::scrollEvent(int action) {
+	m_pParentWnd->SendMessage(WM_HSCROLL,
+		MAKEWPARAM(action, _value),
+		(LPARAM)m_hWnd);
 }
 
 } // namespace MFC
