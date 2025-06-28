@@ -1292,8 +1292,17 @@ public:
 	                    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
 	                    CCreateContext *pContext = nullptr);
 
+	/**
+	 * Gets a list of CWnd pointers for parent controls
+	 * up to the window. It only allows a single dialog
+	 * parent to be present, working around the issue
+	 * when modal dialogs create other modal dialogs.
+	 */
+	Common::Array<const CWnd *> GetSafeParents(bool includeSelf = true) const;
+
 	CWnd *GetParent() const;
 	HWND GetSafeHwnd() const;
+
 	void ShowWindow(int nCmdShow);
 	BOOL EnableWindow(BOOL bEnable = TRUE);
 	void UpdateWindow();
@@ -1427,7 +1436,6 @@ private:
 	HGLOBAL m_hDialogTemplate = 0;
 	int _defaultId = 0;
 	CFont _dialogFont;
-	CWnd *m_pExplicitParent = nullptr;
 
 	void SetParent(CWnd *wnd);
 	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,

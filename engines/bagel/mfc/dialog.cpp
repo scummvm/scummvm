@@ -161,14 +161,7 @@ BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 }
 
 void CDialog::SetParent(CWnd *wnd) {
-	// TODO: Not sure if this should be here, or more
-	// generalized in CWnd. Apparently, on Windows,
-	// modal dialogs can't be the parent of another dialog.
-	// Instead, it needs to be the parent window above them.
-	m_pExplicitParent = this;
-	for (m_pParentWnd = wnd; dynamic_cast<CDialog *>(m_pParentWnd);
-		m_pParentWnd = m_pParentWnd->m_pParentWnd) {
-	}
+	m_pParentWnd = wnd;
 }
 
 DWORD CDialog::GetDefID() const {

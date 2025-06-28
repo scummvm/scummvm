@@ -111,6 +111,25 @@ CWnd *CWnd::GetParent() const {
 	return m_pParentWnd;
 }
 
+Common::Array<const CWnd *> CWnd::GetSafeParents(bool includeSelf) const {
+	Common::Array<const CWnd *> results;
+	bool hasParentDialog = false;
+
+	for (const CWnd *wnd = includeSelf ? this : m_pParentWnd;
+			wnd; wnd = wnd->m_pParentWnd) {
+		if (dynamic_cast<const CDialog *>(wnd)) {
+			if (!hasParentDialog) {
+				hasParentDialog = true;
+				results.push_back(wnd);
+			}
+		} else {
+			results.push_back(wnd);
+		}
+	}
+
+	return results;
+}
+
 HWND CWnd::GetSafeHwnd() const {
 	error("TODO: CWnd::GetSafeHwnd");
 }
@@ -626,14 +645,14 @@ bool CWnd::PointInClientRect(const POINT &pt) const {
 }
 
 void CWnd::ClientToScreen(LPPOINT lpPoint) const {
-	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+	for (const CWnd *wnd : GetSafeParents()) {
 		lpPoint->x += wnd->_windowRect.left;
 		lpPoint->y += wnd->_windowRect.top;
 	}
 }
 
 void CWnd::ClientToScreen(LPRECT lpRect) const {
-	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+	for (const CWnd *wnd : GetSafeParents()) {
 		lpRect->left += wnd->_windowRect.left;
 		lpRect->top += wnd->_windowRect.top;
 		lpRect->right += wnd->_windowRect.left;
@@ -642,14 +661,14 @@ void CWnd::ClientToScreen(LPRECT lpRect) const {
 }
 
 void CWnd::ScreenToClient(LPPOINT lpPoint) const {
-	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+	for (const CWnd *wnd : GetSafeParents()) {
 		lpPoint->x -= wnd->_windowRect.left;
 		lpPoint->y -= wnd->_windowRect.top;
 	}
 }
 
 void CWnd::ScreenToClient(LPRECT lpRect) const {
-	for (const CWnd *wnd = this; wnd; wnd = wnd->m_pParentWnd) {
+	for (const CWnd *wnd : GetSafeParents()) {
 		lpRect->left -= wnd->_windowRect.left;
 		lpRect->top -= wnd->_windowRect.top;
 		lpRect->right -= wnd->_windowRect.left;
