@@ -107,8 +107,9 @@ public:
 	void loadSord(Common::SeekableReadStreamEndian &stream);
 
 	void saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset);
-	void saveCast(Common::MemoryWriteStream *writeStream, uint32 offset);
+	void saveCast();
 	void saveCastData();
+	void writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId);
 
 	int getCastSize();
 	int getCastMaxID();
