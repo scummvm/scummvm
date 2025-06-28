@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-26 03:01+0000\n"
-"PO-Revision-Date: 2025-05-01 16:19+0000\n"
+"PO-Revision-Date: 2025-06-28 10:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5114,11 +5114,11 @@ msgstr "バックアップ先を選択"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "バックアップは正常に完了しました。"
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "バックアップがダウンロードフォルダーに保存されました。"
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
@@ -5137,7 +5137,8 @@ msgstr "セーブデータ出力時にエラーが発生しました"
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
-msgstr ""
+msgstr "バックアップを復元すると、現在の設定は削除され、既存のデータが上書きされます"
+"。続行しますか?"
 
 #: backends/platform/android/options.cpp:294
 #, fuzzy
@@ -5147,7 +5148,7 @@ msgstr "テーマを選ぶ"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "バックアップが正常に復元されました。"
 
 #: backends/platform/android/options.cpp:315
 #, fuzzy
@@ -6184,7 +6185,7 @@ msgstr "デフォルトではバイパスされるコピープロテクトを有
 
 #: engines/agi/metaengine.cpp:207
 msgid "Use PCjr's sound chip in 16-bit shift mode"
-msgstr ""
+msgstr "PCjrの音源チップを16ビットシフトで使用"
 
 #: engines/agi/metaengine.cpp:208
 msgid ""
@@ -6193,6 +6194,9 @@ msgid ""
 "especially in fanmade games, but original Sierra music designed strictly for "
 "PCjr may sound wrong."
 msgstr ""
+"PCjrのサウンドモードでは、SEGA Master Systemと類似したSN76496クローンをエミュ"
+"レートできます。同人ゲームなどで特定の効果を再現しますが、PCjr専用に設計され"
+"たオリジナルのSierra音楽は正しく再生されない場合があります。"
 
 #: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -6625,13 +6629,14 @@ msgstr ""
 
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
-msgstr ""
+msgstr "低品質な単一速度のCD-ROMビデオを使用"
 
 #: engines/alg/metaengine.cpp:35
 msgid ""
 "These videos are of lower quality, the default version uses double speed CD-"
 "ROM videos which are of better quality"
-msgstr ""
+msgstr "これらの動画は低画質です。デフォルトのバージョンでは、より高画質な2倍速CD-"
+"ROM動画が使用されます"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6758,7 +6763,7 @@ msgstr "とにかくロードする"
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
-msgstr ""
+msgstr "選択/キック/走る"
 
 #: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -6766,7 +6771,7 @@ msgstr "ジャンプ"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
-msgstr ""
+msgstr "レベルを入力"
 
 #: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:90
@@ -7664,7 +7669,8 @@ msgstr "DOS版の音楽テンポを使用"
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
-msgstr ""
+msgstr "FD版の音楽を使用します。そのサウンドファイルは、SOUNDディレクトリーに配置する"
+"必要があります。"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
@@ -7733,11 +7739,11 @@ msgstr "縦横比修正適用"
 
 #: engines/director/metaengine.cpp:71
 msgid "Brighten the graphics to simulate a Macintosh monitor"
-msgstr ""
+msgstr "明るさを上げてMacintoshのモニターをシミュレート"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
-msgstr ""
+msgstr "True Colorを強制"
 
 #: engines/director/metaengine.cpp:82
 #, fuzzy
@@ -7771,7 +7777,7 @@ msgstr "メインメニューを開く"
 
 #: engines/draci/metaengine.cpp:190
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "マウスポインターと最後に使用したアイテムを切替"
 
 #: engines/draci/metaengine.cpp:196
 #, fuzzy
@@ -7951,7 +7957,7 @@ msgstr "有効にする"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "開始時に岩の射出を使用して移動"
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"
