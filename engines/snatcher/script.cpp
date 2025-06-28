@@ -98,7 +98,7 @@ void CmdQueue::makeFunctions() {
 	static const SFunc funcTbl[] = {
 		OP(end),
 		OP(initAnimations),
-		OP(02),
+		OP(animPauseAll),
 		OP(drawCommands),
 		OP(fmSfxBlock),
 		OP(printText),
@@ -116,20 +116,20 @@ void CmdQueue::makeFunctions() {
 		OP(loadResource),
 		OP(gfxStart),
 		OP(fmMusicWait),
-		OP(20),
+		OP(nop),
 		OP(invItemCloseUp),
 		OP(resetTextFields),
-		OP(23),
+		OP(unused),
 		OP(shooterSequenceRun),
 		OP(fmSfxWait),
-		OP(26),
+		OP(nop2),
 		OP(cdaSync),
 		OP(fmSoundEffect),
 		OP(pcmBlock),
 		OP(saveGame),
 		OP(shooterSequenceResetScore),
 		OP(gfxPostLoadProcess),
-		OP(33),
+		OP(waitForStartButton),
 		OP(palOps),
 		OP(clearTextInputLine)
 	};
@@ -166,7 +166,7 @@ void CmdQueue::m_initAnimations(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_02(const uint16 *&data) {
+void CmdQueue::m_animPauseAll(const uint16 *&data) {
 	if (_progress == 0) {
 		_vm->gfx()->reset(GraphicsEngine::kResetPalEvents);
 		for (int i = 0; i < 64; ++i)
@@ -266,7 +266,7 @@ void CmdQueue::m_pcmSound(const uint16 *&data) {
 void CmdQueue::m_chatWithPortraitAnim(const uint16 *&data) {
 	if (_progress == 0) {
 		_vm->sound()->pcmInitSound(*data);
-		//_c13Valu = 0xFF;
+		//_unused13 = 0xFF;
 		++_progress;
 	} else if (_progress == 1) {
 		++_progress;
@@ -374,7 +374,8 @@ void CmdQueue::m_fmMusicWait(const uint16 *&data) {
 		_progress = -1;
 }
 
-void CmdQueue::m_20(const uint16 *&data) {
+void CmdQueue::m_nop(const uint16 *&data) {
+	_progress = -1;
 }
 
 void CmdQueue::m_invItemCloseUp(const uint16 *&data) {
@@ -394,7 +395,8 @@ void CmdQueue::m_resetTextFields(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_23(const uint16 *&data) {
+void CmdQueue::m_unused(const uint16 *&data) {
+	//_unused13 = 0xFF;
 }
 
 void CmdQueue::m_shooterSequenceRun(const uint16 *&data) {
@@ -411,7 +413,9 @@ void CmdQueue::m_fmSfxWait(const uint16 *&data) {
 		_progress = -1;
 }
 
-void CmdQueue::m_26(const uint16 *&data) {
+void CmdQueue::m_nop2(const uint16 *&data) {
+	++data;
+	_progress = -1;
 }
 
 void CmdQueue::m_cdaSync(const uint16 *&data) {
@@ -452,7 +456,9 @@ void CmdQueue::m_gfxPostLoadProcess(const uint16 *&data) {
 	_progress = -1;
 }
 
-void CmdQueue::m_33(const uint16 *&data) {
+void CmdQueue::m_waitForStartButton(const uint16 *&data) {
+	if (_vm->input().singleFrameControllerFlags & 0x80)
+		_progress = -1;
 }
 
 void CmdQueue::m_palOps(const uint16 *&data) {
@@ -860,69 +866,69 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 #endif
 	static const SFunc funcTbl[] = {
 		OP(animOps),
-		OP(eval_add),
-		OP(eval_add),
-		OP(eval_add),
+		OP(evalAdd),
+		OP(evalAdd),
+		OP(evalAdd),
 		OP(chatWithPortraitAnim),
-		OP(05),
-		OP(eval_and),
-		OP(eval_and),
-		OP(eval_and),
-		OP(eval_and),
+		OP(pcmSound),
+		OP(evalAnd),
+		OP(evalAnd),
+		OP(evalAnd),
+		OP(evalAnd),
 		OP(fmMusicStart),
 		OP(runSubScript),
 		OP(callSubroutine),
 		OP(cdaPlay),
-		OP(14),
+		OP(incrCounter),
 		OP(fmSoundEffect),
-		OP(eval_equal),
-		OP(eval_equal),
-		OP(eval_equal),
+		OP(evalEquals),
+		OP(evalEquals),
+		OP(evalEquals),
 		OP(clearFlags),
 		OP(setFlags),
-		OP(21),
-		OP(eval_less),
-		OP(eval_lessOrEqual),
-		OP(do_either_or),
-		OP(do_either_or),
-		OP(do_if),
-		OP(do_if),
-		OP(28),
-		OP(28),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(executeFunction),
-		OP(eval_greater),
-		OP(eval_greater),
-		OP(eval_greaterOrEqual),
+		OP(getPrevPosition),
+		OP(evalLess),
+		OP(evalLessOrEqual),
+		OP(doEitherOr),
+		OP(doEitherOr),
+		OP(doIf),
+		OP(doIf),
+		OP(setResult),
+		OP(setResult),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(execFunc),
+		OP(evalGreater),
+		OP(evalGreater),
+		OP(evalGreaterOrEqual),
 		OP(break),
 		OP(break),
 		OP(nop),
-		OP(eval_true),
-		OP(eval_true),
+		OP(evalTrue),
+		OP(evalTrue),
 		OP(start),
-		OP(eval_or),
-		OP(eval_or),
-		OP(eval_or),
-		OP(52),
-		OP(52),
-		OP(54),
-		OP(54),
+		OP(evalOr),
+		OP(evalOr),
+		OP(evalOr),
+		OP(condExec),
+		OP(condExec),
+		OP(sentenceRecurseBegin),
+		OP(sentenceRecurseBegin),
 		OP(verbOps),
-		OP(57),
+		OP(sentenceRecurseEnd),
 		OP(returnFromSubScript),
-		OP(59),
-		OP(59),
+		OP(checkSubRecurseState),
+		OP(checkSubRecurseState),
 		OP(loadModuleAndStartGfx),
-		OP(62),
-		OP(switchToNextOp),
+		OP(randomSwitch),
+		OP(sequentialSwitch),
 		OP(64),
 		OP(sysOps),
 		OP(sysOps),
@@ -960,7 +966,7 @@ void ScriptEngine::o_animOps() {
 	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 2));
 }
 
-void ScriptEngine::o_eval_add() {
+void ScriptEngine::o_evalAdd() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 f2 = 0;
@@ -981,14 +987,14 @@ void ScriptEngine::o_chatWithPortraitAnim() {
 	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
-void ScriptEngine::o_05() {
+void ScriptEngine::o_pcmSound() {
 	if (!evalFinished())
 		return;
 	_que->writeUInt16(0x0C);
 	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
-void ScriptEngine::o_eval_and() {
+void ScriptEngine::o_evalAnd() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 f2 = 0;
@@ -1055,7 +1061,7 @@ void ScriptEngine::o_cdaPlay() {
 
 }
 
-void ScriptEngine::o_14() {
+void ScriptEngine::o_incrCounter() {
 	if (!evalFinished())
 		return;
 
@@ -1075,7 +1081,7 @@ void ScriptEngine::o_fmSoundEffect() {
 	_que->writeUInt16(READ_BE_UINT16(_script->data + _pos1 + 1));
 }
 
-void ScriptEngine::o_eval_equal() {
+void ScriptEngine::o_evalEquals() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 f2 = 0;
@@ -1101,13 +1107,13 @@ void ScriptEngine::o_setFlags() {
 	setFlags(READ_BE_UINT16(_script->data + _pos1 + 1), 0xFFFF);
 }
 
-void ScriptEngine::o_21() {
+void ScriptEngine::o_getPrevPosition() {
 	uint16 n = READ_BE_UINT16(_script->data + _pos1 + 1);
 	if (!getArrayEntry(4, ARR_POS(4) - n, _result))
 		_result = 0xFFFF;
 }
 
-void ScriptEngine::o_eval_less() {
+void ScriptEngine::o_evalLess() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 r1 = 0;
@@ -1120,7 +1126,7 @@ void ScriptEngine::o_eval_less() {
 	_result = (_result < r1) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_eval_lessOrEqual() {
+void ScriptEngine::o_evalLessOrEqual() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 r1 = 0;
@@ -1133,7 +1139,7 @@ void ScriptEngine::o_eval_lessOrEqual() {
 	_result = (_result <= r1) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_do_either_or() {
+void ScriptEngine::o_doEitherOr() {
 	uint16 mode = 0;
 	uint16 f1 = 0;
 	uint16 f2 = 0;
@@ -1146,7 +1152,7 @@ void ScriptEngine::o_do_either_or() {
 	runOpcode();
 }
 
-void ScriptEngine::o_do_if() {
+void ScriptEngine::o_doIf() {
 	uint16 mode = 0;
 	uint16 f1 = 0;
 	uint16 f2 = 0;
@@ -1159,7 +1165,7 @@ void ScriptEngine::o_do_if() {
 	runOpcode();
 }
 
-void ScriptEngine::o_28() {
+void ScriptEngine::o_setResult() {
 	if (!evalFinished())
 		return;
 
@@ -1174,7 +1180,7 @@ void ScriptEngine::o_28() {
 	setFlags(sel, _result);
 }
 
-void ScriptEngine::o_executeFunction() {
+void ScriptEngine::o_execFunc() {
 	_pos2 = _pos1;
 	uint8 num = countFunctionOps();
 	uint8 cnt = 1;
@@ -1191,7 +1197,7 @@ void ScriptEngine::o_executeFunction() {
 	}
 }
 
-void ScriptEngine::o_eval_greater() {
+void ScriptEngine::o_evalGreater() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 f2 = 0;
@@ -1205,7 +1211,7 @@ void ScriptEngine::o_eval_greater() {
 	_result = (_result > f2) ? 0xFFFF : 0;
 }
 
-void ScriptEngine::o_eval_greaterOrEqual() {
+void ScriptEngine::o_evalGreaterOrEqual() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 f2 = 0;
@@ -1242,7 +1248,7 @@ void ScriptEngine::o_break() {
 	_script->newPos = READ_BE_UINT16(_script->data + _pos2);
 }
 
-void ScriptEngine::o_eval_true() {
+void ScriptEngine::o_evalTrue() {
 	uint16 mode = 0;
 	uint16 f1 = 0;
 	uint16 f2 = 0;
@@ -1257,7 +1263,7 @@ void ScriptEngine::o_start() {
 	runOpcode();
 }
 
-void ScriptEngine::o_eval_or() {
+void ScriptEngine::o_evalOr() {
 	uint16 m1 = 0;
 	uint16 m2 = 0;
 	uint16 f2 = 0;
@@ -1271,7 +1277,7 @@ void ScriptEngine::o_eval_or() {
 	_result |= f2;
 }
 
-void ScriptEngine::o_52() {
+void ScriptEngine::o_condExec() {
 	uint16 ln = 0;
 	uint16 f1 = 0;
 	uint16 f2 = 0;
@@ -1282,7 +1288,7 @@ void ScriptEngine::o_52() {
 	runOpcode();
 }
 
-void ScriptEngine::o_54() {
+void ScriptEngine::o_sentenceRecurseBegin() {
 	if (!evalFinished())
 		return;
 
@@ -1335,7 +1341,7 @@ void ScriptEngine::o_verbOps() {
 	}
 }
 
-void ScriptEngine::o_57() {
+void ScriptEngine::o_sentenceRecurseEnd() {
 	if (!evalFinished())
 		return;
 
@@ -1355,7 +1361,7 @@ void ScriptEngine::o_returnFromSubScript() {
 	_que->writeUInt16(res);
 }
 
-void ScriptEngine::o_59() {
+void ScriptEngine::o_checkSubRecurseState() {
 	uint16 m = 0;
 	uint16 f1 = 0;
 	uint16 f2 = 0;
@@ -1398,7 +1404,7 @@ void ScriptEngine::o_loadModuleAndStartGfx() {
 	_script->curGfxScript = num;
 }
 
-void ScriptEngine::o_62() {
+void ScriptEngine::o_randomSwitch() {
 	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
 	_pos2 = _pos1 + 3;
 	uint16 f = Util::rngGetNumberFromRange(1, countFunctionOps()) & 0xFF;
@@ -1409,7 +1415,7 @@ void ScriptEngine::o_62() {
 	setFlags(sel, f);
 }
 
-void ScriptEngine::o_switchToNextOp() {
+void ScriptEngine::o_sequentialSwitch() {
 	_pos2 = _pos1 + 3;
 	uint16 cnt = countFunctionOps();
 	uint16 sel = READ_BE_UINT16(_script->data + _pos1 + 1);
@@ -1509,7 +1515,7 @@ void ScriptEngine::o_sysOps() {
 		break;
 	case 12:
 		// This happens when starting a new act. Apparently, only a small portion of the game
-		// variables is needed for the whole game. The rest gets cleared and can be repurposed.
+		// variables is needed for the whole game. The rest gets cleared and can be reused.
 		_flagsTable[53] &= 0xF8;
 		memset(_flagsTable + 54, 0, 298);
 		break;

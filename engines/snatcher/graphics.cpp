@@ -273,6 +273,8 @@ void GraphicsEngine::loadState(Common::SeekableReadStream *in) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
 	in->read(_animSaveLoadData, 64);
+	//for (int i = 0; i < 13; ++i)
+	//	_state.setVar(i, in->readByte());
 }
 
 void GraphicsEngine::saveState(Common::SeekableWriteStream *out) {
@@ -286,7 +288,7 @@ void GraphicsEngine::saveState(Common::SeekableWriteStream *out) {
 				v |= 0x40;
 			} else {
 				v |= (getAnimParameter(i, kAnimParaControlFlags) & 0x03);
-				v |= (getAnimParameter(i, kAnimParaF24) & 0x0C);
+				v |= (getAnimParameter(i, kAnimParaPhase) & 0x0C);
 				if (cf & 1)
 					v |= 0x10;
 				if (getAnimParameter(i, kAnimParaAllowFrameDrop))
@@ -296,6 +298,8 @@ void GraphicsEngine::saveState(Common::SeekableWriteStream *out) {
 		_animSaveLoadData[i] = v;
 	}
 	out->write(_animSaveLoadData, 64);
+	for (int i = 0; i < 13; ++i)
+		out->writeByte(_state.getVar(i));
 }
 
 void GraphicsEngine::postLoadProcess() {
@@ -311,8 +315,8 @@ void GraphicsEngine::postLoadProcess() {
 			continue;
 		uint8 cf = getAnimParameter(i, kAnimParaControlFlags) & 0xFC;
 		setAnimParameter(i, kAnimParaControlFlags, cf | (v & 0x03));
-		cf = getAnimParameter(i, kAnimParaF24) & 0xF3;
-		setAnimParameter(i, kAnimParaF24, cf | (v & 0x0C));
+		cf = getAnimParameter(i, kAnimParaPhase) & 0xF3;
+		setAnimParameter(i, kAnimParaPhase, cf | (v & 0x0C));
 		if (v & 0x10)
 			setAnimParameter(i, kAnimParaScriptComFlags, getAnimParameter(i, kAnimParaScriptComFlags) | 1);
 		else

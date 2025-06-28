@@ -108,7 +108,7 @@ public:
 		kAnimParaF18,
 		kAnimParaF1c,
 		kAnimParaTimeStamp,
-		kAnimParaF24,
+		kAnimParaPhase,
 		kAnimParaControlFlags,
 		kAnimParaAllowFrameDrop,
 		kAnimParaFrameSeqCounter,

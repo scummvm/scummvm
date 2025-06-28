@@ -88,7 +88,7 @@ private:
 	int16 _shoot_78EE;
 	int16 _counter1;
 	int16 _counter2;
-	int16 _shoot_78EC;
+	int16 _activeEnemies;
 	int16 _attackerId;
 	int16 *_projectileCoords;
 	bool _active;
