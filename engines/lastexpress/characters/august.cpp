@@ -3858,6 +3858,7 @@ void LogicManager::HAND_August_Dinner(HAND_PARAMS) {
 	}
 	case 12:
 	case 122288808:
+		startCycOtis(kCharacterAugust, "010B3");
 		break;
 	case 18:
 		if (getCharacter(kCharacterAugust).callbacks[getCharacter(kCharacterAugust).currentCall + 8] == 1) {
