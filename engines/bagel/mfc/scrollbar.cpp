@@ -166,15 +166,33 @@ int CScrollBar::getIndexFromX(int xp) const {
 }
 
 void CScrollBar::OnLButtonDown(UINT nFlags, CPoint point) {
+	CRect clientRect;
+	GetClientRect(&clientRect);
+
+	if (point.x < clientRect.bottom) {
+		// Left arrow button
+		if (_value > _minValue)
+			SetScrollPos(_value - 1);
+
+	} else if (point.x >= (clientRect.right - clientRect.bottom)) {
+		// Right arrow button
+		if (_value < _maxValue)
+			SetScrollPos(_value + 1);
+
+	} else {
+		// Presume we're dragging the thumb
+		SetScrollPos(getIndexFromX(point.x));
+		SetCapture();
+	}
 }
 
 void CScrollBar::OnLButtonUp(UINT nFlags, CPoint point) {
+	ReleaseCapture();
 }
 
 void CScrollBar::OnMouseMove(UINT, CPoint point) {
-}
-
-void CScrollBar::OnMouseLeave() {
+	if (GetCapture() == m_hWnd)
+		SetScrollPos(getIndexFromX(point.x));
 }
 
 } // namespace MFC

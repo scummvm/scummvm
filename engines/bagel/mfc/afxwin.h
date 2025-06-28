@@ -1576,7 +1576,6 @@ private:
 	int _minValue = 0;
 	int _maxValue = 100;
 	int _value = 0;
-	bool _isDragging = false;
 
 	void drawSquare(CPaintDC &dc, const CRect &r);
 	void drawArrow(CPaintDC &dc, const CRect &r, bool leftArrow);
@@ -1589,7 +1588,6 @@ protected:
 	void OnLButtonDown(UINT nFlags, CPoint point);
 	void OnLButtonUp(UINT nFlags, CPoint point);
 	void OnMouseMove(UINT, CPoint point);
-	void OnMouseLeave();
 
 public:
 	~CScrollBar() override { }
