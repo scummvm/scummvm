@@ -187,6 +187,7 @@ namespace MFC {
 #define WM_PARENTNOTIFY                 0x0210
 #define WM_ENTERMENULOOP                0x0211
 #define WM_EXITMENULOOP                 0x0212
+#define WM_MOUSELEAVE					0x02A3
 #define UNICODE_NOCHAR                  0xFFFF
 
 #define MM_JOY1MOVE						0x3A0

@@ -84,6 +84,11 @@ bool EventLoop::GetMessage(MSG &msg) {
 					CWnd *wnd = CWnd::FromHandle(hWnd);
 
 					if (wnd != _highlightedWin) {
+						// Add mouse leave event
+						if (_highlightedWin)
+							_highlightedWin->PostMessage(WM_MOUSELEAVE);
+
+						// Switch to newly highlighted control
 						_highlightedWin = CWnd::FromHandle(hWnd);
 						PostMessage(_highlightedWin,
 							WM_SETCURSOR, (WPARAM)hWnd,

@@ -734,6 +734,7 @@ public:
 		void moveTo(int x, int y);
 		void lineTo(int x, int y);
 
+
 		// Text functions
 		COLORREF setBkColor(COLORREF crColor);
 		COLORREF getBkColor() const;
@@ -1571,8 +1572,24 @@ public:
 class CScrollBar : public CWnd {
 	DECLARE_DYNAMIC(CScrollBar)
 
+private:
+	int _minValue = 0;
+	int _maxValue = 100;
+	int _value = 0;
+	bool _isDragging = false;
+
+	void drawSquare(CPaintDC &dc, const CRect &r);
+	void drawArrow(CPaintDC &dc, const CRect &r, bool leftArrow);
+	CRect getThumbRect() const;
+	int getIndexFromX(int xp) const;
+
 protected:
 	DECLARE_MESSAGE_MAP()
+	void OnPaint();
+	void OnLButtonDown(UINT nFlags, CPoint point);
+	void OnLButtonUp(UINT nFlags, CPoint point);
+	void OnMouseMove(UINT, CPoint point);
+	void OnMouseLeave();
 
 public:
 	~CScrollBar() override { }
