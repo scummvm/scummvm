@@ -81,11 +81,11 @@ void LogicManager::HAND_Ivo_DebugWalks(HAND_PARAMS) {
 
 		break;
 	case 12:
-		break;
 		getCharacter(kCharacterIvo).characterPosition.position = 0;
 		getCharacter(kCharacterIvo).characterPosition.location = 0;
 		getCharacter(kCharacterIvo).characterPosition.car = kCarGreenSleeping;
 		getCharacterCurrentParams(kCharacterIvo)[0] = 10000;
+		break;
 	default:
 		break;
 	}

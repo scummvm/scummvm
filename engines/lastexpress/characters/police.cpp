@@ -283,6 +283,8 @@ void LogicManager::HAND_Police_DoWait(HAND_PARAMS) {
 			break;
 		}
 
+		// fall through
+	case 17:
 		if (!getCharacterParams(kCharacterPolice, 8)[0] && whoOnScreen(kCharacterPolice)) {
 			playDialog(0, "MUS007", -1, 0);
 			getCharacterParams(kCharacterPolice, 8)[0] = 1;
@@ -293,8 +295,6 @@ void LogicManager::HAND_Police_DoWait(HAND_PARAMS) {
 			PoliceCall(&LogicManager::CONS_Police_SaveGame, 2, kEventGendarmesArrestation, 0, 0);
 		}
 
-		break;
-	case 17:
 		break;
 	case 18:
 		if (getCharacter(kCharacterPolice).callbacks[getCharacter(kCharacterPolice).currentCall + 8] == 1) {
