@@ -84,8 +84,8 @@ Common::Error SnatcherEngine::run() {
 	if (!initScriptEngine())
 		return Common::Error(Common::kUnknownError);
 
-	bool result = false;
-	while (!shouldQuit()) {
+	bool result = true;
+	while (result && !shouldQuit()) {
 		reset();
 		result = start();
 	}
@@ -197,6 +197,9 @@ void SnatcherEngine::reset() {
 }
 
 void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
+	if (ConfMan.hasKey("save_slot"))
+		return; // Skip logo animation when loading a savegame from the launcher
+
 	uint32 frameTimer = 0;
 	int curSeqState = 0;
 	_snd->fmSendCommand(0xF2, -1);
@@ -411,7 +414,7 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 	}
 
 	if (_enableLightGun && _input.singleFrameControllerFlags & 0x100)
-		_gfx->setVar(7, 4);
+		_gfx->setVar(7, _gfx->getVar(7) | 4);
 }
 
 void SnatcherEngine::updateMainState(GameState &state) {
@@ -529,6 +532,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		break;
 
 	default:
+		// Infinite loop (maybe change this to quit the engine instead)
 		break;
 	}
 }

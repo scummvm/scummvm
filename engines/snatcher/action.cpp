@@ -33,7 +33,7 @@ namespace Snatcher {
 
 ActionSequenceHandler::ActionSequenceHandler(SnatcherEngine *vm, ResourcePointer *scd) : _vm(vm), _scd(scd), _stage(0), _counter1(0), _counter2(0), _progressMSB(0), _progressLSB(0),
 	_weaponState(0), _enemySpeed(0), _active(false), _handleShotPhase(0), _updateEnemiesPhase(0), _enemyAttackStatus(0), _targetField(0), _hscrollB(0), _vscrollB(0),
-		_enemyAppearanceCount(0), _civilianAppearanceCount(0), _abortFight(0), _nextEnemyAppearanceTimer(0), _enemyAttackTimer(0), _shoot_78EE(0), _shoot_78EC(0), _result(),
+		_enemyAppearanceCount(0), _civilianAppearanceCount(0), _abortFight(0), _nextEnemyAppearanceTimer(0), _enemyAttackTimer(0), _shoot_78EE(0), _activeEnemies(0), _result(),
 			_attackerId(0), _animNo(0), _shoot_7912(0), _projectileCoords(nullptr) {
 	_projectileCoords = new int16[18]();
 }
@@ -297,7 +297,7 @@ void ActionSequenceHandler::initStage() {
 	for (int i = 0; i < 9; ++i) {
 		animSet(32 + i, Frame, 2);
 		animSet(32 + i, FrameDelay, 0);
-		animSet(32 + i, F24, 0);
+		animSet(32 + i, Phase, 0);
 		animSet(32 + i, Enable, e);
 	}
 	const int16 *in = reinterpret_cast<const int16*>(_scd->makePtr(0x11FEC)());
@@ -487,7 +487,7 @@ void ActionSequenceHandler::handleShot() {
 
 		case 3:
 			tf = animGet(21, Target);
-			vl = animGet(32 + tf, F24) & 0x0F;
+			vl = animGet(32 + tf, Phase) & 0x0F;
 			if (vl < 2 || vl > 4) {
 				if (_stage != 10) {
 					if (_useLightGun || _scd->makePtr(0x11FD0)[_stage] == 0) {
@@ -500,8 +500,8 @@ void ActionSequenceHandler::handleShot() {
 				}
 
 			} else {
-				vl = animGet(32 + tf, F24) & 0xF0;
-				animSet(32 + tf, F24, vl | 6);
+				vl = animGet(32 + tf, Phase) & 0xF0;
+				animSet(32 + tf, Phase, vl | 6);
 				if ((vl >> 4) & 1) {
 					if ((_result.enemiesShot & 7) == 7 && _enemySpeed >= 2)
 						_enemySpeed -= 2;
@@ -571,14 +571,14 @@ void ActionSequenceHandler::handleShot() {
 }
 
 void ActionSequenceHandler::updateEnemies() {
-	_shoot_78EC = 0;
+	_activeEnemies = 0;
 	for (int i = 32; i < 41; ++i) {
-		int16 a = animGet(i, F24);
+		int16 a = animGet(i, Phase);
 		int16 b = 0;
 		if (a != 0xFF)
 			b = a & 0x0F;
 		if (b)
-			++_shoot_78EC;
+			++_activeEnemies;
 		switch (b) {
 		case 0:
 			b = _vm->gfx()->getAnimScriptByte(i, 0);
@@ -587,7 +587,7 @@ void ActionSequenceHandler::updateEnemies() {
 			} else if (b < 128 && a != 0xFF) {
 				animSet(i, Enable, 1);
 			} else {
-				animSet(i, F24, 0xFF);
+				animSet(i, Phase, 0xFF);
 				animSet(i, ControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
 				animSet(i, Enable, 0);
 			}
@@ -610,8 +610,7 @@ void ActionSequenceHandler::updateEnemies() {
 			a = _vm->gfx()->getAnimScriptByte(i, b);
 			if (a == animGet(i, Frame)) {
 				animSet(i, Frame, a + 2);
-				animSet(i, F24, animGet(i, F24) + 1);
-				debug("Enemy %d F24: %d -> %d", i, a-1, a);
+				animSet(i, Phase, animGet(i, Phase) + 1);
 				a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
 				animSet(i, ActionTimer, a + _enemySpeed);
 			}
@@ -619,7 +618,7 @@ void ActionSequenceHandler::updateEnemies() {
 			if (b == 1)
 				break;
 
-			if ((animGet(i, F24) & 0x0F) == b) {
+			if ((animGet(i, Phase) & 0x0F) == b) {
 				if (b < 5)
 					animSet(i, ActionTimer, 0);
 				break;
@@ -627,14 +626,14 @@ void ActionSequenceHandler::updateEnemies() {
 
 			if (b == 5) {
 				animSet(i, Frame, animGet(i, Frame) - 2);
-				if (_scd->makePtr(0x11FD0)[_stage] == 0 && animGet(i, F24) >= 48)
+				if (_scd->makePtr(0x11FD0)[_stage] == 0 && animGet(i, Phase) >= 48)
 					++_result.hitsTaken;
-				animSet(i, F24, 0);
+				animSet(i, Phase, 0);
 				break;
 			}
 
 			if (_scd->makePtr(0x11FD0)[_stage] == 0)
-				break;					
+				break;
 
 			if (b == 2 && (_result.enemiesShot <= _scd->makePtr(_useLightGun ? 0x11F90 : 0x11F80)[_stage]))
 				break;
@@ -643,12 +642,12 @@ void ActionSequenceHandler::updateEnemies() {
 				break;
 
 			if (b == 3) {
-				if ((animGet(i, F24) & 0xF0) != 0x20 && !_enemyAttackStatus && !_enemyAttackTimer && _weaponState < 2) {
+				if ((animGet(i, Phase) & 0xF0) != 0x20 && !_enemyAttackStatus && !_enemyAttackTimer && _weaponState < 2) {
 					_attackerId = i - 32;
 					_enemyAttackStatus = 1;
 				}
 			} else {
-				animSet(i, F24, (animGet(i, F24) & 0xF0) + 7 - b);
+				animSet(i, Phase, (animGet(i, Phase) & 0xF0) + 7 - b);
 				animSet(i, Frame, _vm->gfx()->getAnimScriptByte(i, 6 - b) + 2);
 				a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
 				animSet(i, ActionTimer, a + _enemySpeed);
@@ -656,7 +655,7 @@ void ActionSequenceHandler::updateEnemies() {
 			break;
 
 		case 6:
-			animSet(i, F24, (animGet(i, F24) & 0xF0) + 7);
+			animSet(i, Phase, (animGet(i, Phase) & 0xF0) + 7);
 			animSet(i, Frame, _vm->gfx()->getAnimScriptByte(i, 6));
 			a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
 			animSet(i, ActionTimer, a + _enemySpeed);
@@ -666,16 +665,16 @@ void ActionSequenceHandler::updateEnemies() {
 			a = _vm->gfx()->getAnimScriptByte(i, b);
 			if (a == animGet(i, Frame)) {
 				animSet(i, Frame, a + 2);
-				animSet(i, F24, animGet(i, F24) + 1);
+				animSet(i, Phase, animGet(i, Phase) + 1);
 				a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
 				animSet(i, ActionTimer, a + _enemySpeed);
 			}
 
-			if ((animGet(i, F24) & 0x0F) != 8)
+			if ((animGet(i, Phase) & 0x0F) != 8)
 				break;
 
 			animSet(i, Frame, animGet(i, Frame) - 2);
-			animSet(i, F24, 0);
+			animSet(i, Phase, 0);
 
 			if (_stage != 0 && _stage != 11 && _stage != 7)
 				animSet(i, ControlFlags, GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide);
@@ -699,7 +698,7 @@ void ActionSequenceHandler::updateStage() {
 		if (v && _enemyAppearanceCount == v)
 			return;
 
-		if (_shoot_78EC == _scd->makePtr(_useLightGun ? 0x11FC0 : 0x11FB0)[_stage])
+		if (_activeEnemies == _scd->makePtr(_useLightGun ? 0x11FC0 : 0x11FB0)[_stage])
 			return;
 
 		_nextEnemyAppearanceTimer = 16 + _enemySpeed + (_scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1);
@@ -710,7 +709,7 @@ void ActionSequenceHandler::updateStage() {
 	} else if (_updateEnemiesPhase == 1) {
 		uint8 num = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F];
 		_animNo = num + 32;
-		int16 v = animGet(_animNo, F24);
+		int16 v = animGet(_animNo, Phase);
 		if (v == 0xFF || ((v & 0x0F) != 0))
 			return;
 
@@ -750,7 +749,7 @@ void ActionSequenceHandler::updateStage() {
 		}
 
 		v = v << 4;
-		animSet(_animNo, F24, v);
+		animSet(_animNo, Phase, v);
 
 		if (v == 0x20) {
 			++_civilianAppearanceCount;
@@ -761,13 +760,13 @@ void ActionSequenceHandler::updateStage() {
 		uint8 v = _vm->gfx()->getAnimScriptByte(_animNo, 0);
 		animSet(_animNo, Frame, v != 2 ? v + 2 : 2);
 		animSet(_animNo, Enable, 1);
-		if (animGet(_animNo, F24) != 0x20 && (_stage == 0 || _stage == 11)) {
+		if (animGet(_animNo, Phase) != 0x20 && (_stage == 0 || _stage == 11)) {
 			animSet(58, Enable, 1);
 			animSet(58, ControlFlags, GraphicsEngine::kAnimPause);
 			animSet(58, Frame, animGet(58, Frame) + 1);
 		}
 
-		animSet(_animNo, F24, (animGet(_animNo, F24) & 0xF0) | 1);
+		animSet(_animNo, Phase, (animGet(_animNo, Phase) & 0xF0) | 1);
 		_updateEnemiesPhase = 0;
 
 		if (_stage == 0 || _stage == 11)
@@ -837,7 +836,7 @@ void ActionSequenceHandler::checkFinished() {
 			return;
 
 		for (int i = 32; i < 41; ++i) {
-			int16 a = animGet(i, F24);
+			int16 a = animGet(i, Phase);
 			if (a == 0xFF)
 				continue;
 			if ((a & 0x0F) != 0)

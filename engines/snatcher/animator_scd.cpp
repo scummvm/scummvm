@@ -41,7 +41,7 @@ namespace Snatcher {
 
 struct AnimObject {
 	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), target(0), f18(0), f1c(0),
-		timeStamp(0), f24(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), actionTimer(0), spriteTableLocation(0),
+		timeStamp(0), phase(0), controlFlags(0), allowFrameDrop(0), frameSeqCounter(0), frame(0), frameDelay(0), actionTimer(0), spriteTableLocation(0),
 			res(), scriptData(), spriteData(nullptr), absSpeedX(0), absSpeedY(0), parent(0), children(0), next(0), scriptComFlags(0), freeze(0), blink(0), blinkCounter(0), blinkDuration(0) {}
 
 	void clear() {
@@ -52,7 +52,7 @@ struct AnimObject {
 		target = f18 = 0;
 		f1c = 0;
 		timeStamp = 0;
-		f24 = 0;
+		phase = 0;
 		controlFlags = allowFrameDrop = frameSeqCounter = 0;
 		frame = 0;
 		frameDelay = 0;
@@ -79,7 +79,7 @@ struct AnimObject {
 	uint16 f18;
 	uint8 f1c;
 	uint32 timeStamp;
-	uint8 f24;
+	uint8 phase;
 	uint8 controlFlags;
 	uint8 allowFrameDrop;
 	uint8 frameSeqCounter;
@@ -149,7 +149,7 @@ private:
 	void updateScrollState();
 
 	void generateSpriteData(AnimObject &a, uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos);
-	void generateSnowSprites(uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos);
+	void generateSnowFlakesSpriteData(uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos);
 	bool reachedAudioTimeStamp(AnimObject &a) const;
 	void runAnimScript(AnimObject &a);
 
@@ -513,9 +513,6 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 	assert(animObjId < 64);
 	AnimObject &a = *_animations[animObjId];
 
-	if (animObjId == 36)
-		debug("%s(): animObjId: %d, param: %d, value: %d", __FUNCTION__, animObjId, param, value);
-
 	switch (param) {
 	case GraphicsEngine::kAnimParaEnable:
 		a.enable = value ? 1 : 0;
@@ -553,8 +550,8 @@ void Animator_SCD::setAnimParameter(uint8 animObjId, int param, int32 value) {
 	case GraphicsEngine::kAnimParaTimeStamp:
 		a.timeStamp = (uint32)value;
 		break;
-	case GraphicsEngine::kAnimParaF24:
-		a.f24 = value;
+	case GraphicsEngine::kAnimParaPhase:
+		a.phase = value;
 		break;
 	case GraphicsEngine::kAnimParaControlFlags:
 		a.controlFlags = value;
@@ -637,8 +634,8 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 		return a.f1c;
 	case GraphicsEngine::kAnimParaTimeStamp:
 		return (int32)a.timeStamp;
-	case GraphicsEngine::kAnimParaF24:
-		return a.f24;
+	case GraphicsEngine::kAnimParaPhase:
+		return a.phase;
 	case GraphicsEngine::kAnimParaControlFlags:
 		return a.controlFlags;
 	case GraphicsEngine::kAnimParaAllowFrameDrop:
@@ -673,8 +670,7 @@ int32 Animator_SCD::getAnimParameter(uint8 animObjId, int param) const {
 
 uint8 Animator_SCD::getAnimScriptByte(uint8 animObjId, uint16 offset) const {
 	assert(animObjId < 64);
-	debug ("%s(): anim %d, scriptdata %p", __FUNCTION__, animObjId, _animations[animObjId]->scriptData());
-	return _animations[animObjId]->scriptData[offset];
+	return (_animations[animObjId]->scriptData() != nullptr) ? _animations[animObjId]->scriptData[offset] : 0;
 }
 
 void Animator_SCD::animCopySpec(uint8 srcAnimObjId, uint8 dstAnimObjId) {
@@ -873,7 +869,7 @@ void Animator_SCD::drawAnimSprites() {
 		if (a.enable && a.spriteData != nullptr && !(a.controlFlags & GraphicsEngine::kAnimHide) && a.blinkRate != 0xFFFF && !(a.blinkRate & _gfxState.frameCount()))
 			generateSpriteData(a, nxt, d);
 		if (i == 31)
-			generateSnowSprites(nxt, d);
+			generateSnowFlakesSpriteData(nxt, d);
 	}
 
 	if (d - 3 > _spriteBuffer)
@@ -1004,26 +1000,30 @@ void Animator_SCD::generateSpriteData(AnimObject &a, uint16 &spritesCurIndex, ui
 	}
 }
 
-void Animator_SCD::generateSnowSprites(uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos) {
+void Animator_SCD::generateSnowFlakesSpriteData(uint16 &spritesCurIndex, uint16 *&spritesBufferCurPos) {
 	uint8 mode = _gfxState.getVar(12);
 	if (mode == 0)
 		return;
 
-	static const uint8 xcoords[] = {
+	static const uint8 startX[] = {
 		0xb8, 0x18, 0x50, 0xd8, 0x30, 0xa8, 0x80, 0xc4, 0x78, 0x10, 0xc8, 0x68, 0x40, 0xf8, 0x70, 0xa0,
 		0x38, 0xe8, 0x58, 0xb0, 0x08, 0x9c, 0x90, 0x5c, 0x28, 0xa4, 0x70, 0x20, 0x60, 0xd0, 0xe0, 0x7c
 	};
 
 	uint16 h = _gfxState.frameCount() >> 1;
 
+	// Mode 1 is used outside the church in act 3.
+	// Modes 3 - 12 appear when sitting inside the turbo cycle.
+	// A higher number setting increases the speed of the snowflakes.
+
 	if (mode < 3) {
-		static const uint16 tiles[] = { 
+		static const uint16 tiles[] = {
 			0x0301, 0x0303, 0x0305, 0x0302, 0x0448, 0x0448,	0x0448, 0x0448, 0x044c, 0x044c, 0x044c, 0x044c
 		};
 		static const int8 xoffs[] = {
 			-1, 0, 1, -1, 0, 1, -1, 0, -1, 1, -1, 1, 0, -1, 0, -1
 		};
-		
+
 		uint16 mi = (mode - 1) << 3;
 
 		for (int i = (mode ^ 3) << 4; i >= 0 && spritesCurIndex < 65; --i) {
@@ -1031,14 +1031,13 @@ void Animator_SCD::generateSnowSprites(uint16 &spritesCurIndex, uint16 *&sprites
 			uint16 x = (FROM_BE_16(spritesBufferCurPos[3]) & 0xFF) - 0x80;
 
 			uint16 ci = spritesCurIndex - 1;
-			uint16 y = ((spritesCurIndex & 3) ? ((ci << 4) + h) >> 1 : ((ci ^ 0xFF) << 3) + h) + 8;
-
-			if (tiles[((((ci + x) >> 2) & 6) + mi) >> 1] == (tl & 0x7FF)) {
+			uint16 y = (((spritesCurIndex & 3) ? ((ci << 4) + h) >> 1 : ((ci ^ 0xFF) << 3) + h) & 0x7F) + 8;
+			if (tiles[((((ci + x) >> 2) & 6) + mi) >> 1] != (tl & 0x7FF)) {
 				tl = 0x2000;
-				x = xcoords[ci & 0x1F];
+				x = startX[ci & 0x1F];
 			}
 
-			x = (xoffs[(ci + h) & 0x0F] + x) & 0xFF;
+			x = (x + xoffs[(ci + h) & 0x0F]) & 0xFF;
 			if (x >= (mode == 2 ? 56 : 32)) {
 				if (x >= (mode == 2 ? 176 : 224))
 					y = 0;
@@ -1053,11 +1052,11 @@ void Animator_SCD::generateSnowSprites(uint16 &spritesCurIndex, uint16 *&sprites
 			*spritesBufferCurPos++ = TO_BE_16(y + 0x80);
 			*spritesBufferCurPos++ = TO_BE_16((mode == 2 ? 0x500 : 0) | (spritesCurIndex++));
 			*spritesBufferCurPos++ = TO_BE_16(tl);
-			*spritesBufferCurPos++ = TO_BE_16(x + 0x80);		
+			*spritesBufferCurPos++ = TO_BE_16(x + 0x80);
 		}
 
 	} else if (mode < 13) {
-		static const uint16 tiles[] = { 
+		static const uint16 tiles[] = {
 			0x03C4, 0x03C8, 0x03CC, 0x03D0, 0x03D4, 0x03D8
 		};
 		static const uint8 xoffsm[] = {
@@ -1078,30 +1077,30 @@ void Animator_SCD::generateSnowSprites(uint16 &spritesCurIndex, uint16 *&sprites
 
 		for (int i = 32; i >= 0 && spritesCurIndex < 65; --i) {
 			uint16 tl = FROM_BE_16(spritesBufferCurPos[2]);
-			int16 x = (FROM_BE_16(spritesBufferCurPos[3]) & 0xFF) - 0x80;
+			uint16 x = (FROM_BE_16(spritesBufferCurPos[3]) & 0xFF) - 0x80;
 
-			int16 ci = spritesCurIndex - 1;
-			int16 y = ((spritesCurIndex & 3) ? ((ci << 4) + h) >> 1 : ((ci ^ 0xFF) << 3) + h) & 0x7F;
+			uint16 ci = spritesCurIndex - 1;
+			uint16 y = ((spritesCurIndex & 3) ? ((ci << 4) + h) >> 1 : ((ci ^ 0xFF) << 3) + h) & 0x7F;
 
-			if (tiles[(((ci + x) >> 2) & 6) >> 1] == (tl & 0x7FF)) {
+			if (tiles[(((ci + x) >> 2) & 6) >> 1] != (tl & 0x7FF)) {
 				tl = 0x4000;
-				x = xcoords[ci & 0x1F];
+				x = startX[ci & 0x1F];
 			}
 
 			if (x < 128) {
 				x -= xoffsm[((ci + h) & 0x0F) + mi];
-				//if (x < 16)
-				//	x = 127 - xoffsf[_gfxState.frameCount() & 7];
+				if (x < 16)
+					x = 127 - xoffsf[_gfxState.frameCount() & 7];
 			} else {
 				x = (x + xoffsm[((ci + h) & 0x0F) + mi]) & 0xFF;
-				//if (x >= 216)
-				//	x = 128 + xoffsf[_gfxState.frameCount() & 7];
+				if (x >= 216)
+					x = 128 + xoffsf[_gfxState.frameCount() & 7];
 			}
 
 			if (x < 16)
 				y = 0;
 			else if (y >= 112)
-				y = -4;
+				y = 0xFFFC;
 
 			tl = (tl & 0xF800) | tiles[(((ci + x) >> 2) & 6) >> 1];
 
