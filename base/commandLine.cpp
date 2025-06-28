@@ -2085,6 +2085,20 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			steps = 1;
 		}
 
+		// Prrobe mac file
+		if (command == "md5") {
+			Common::SearchSet dir;
+			Common::FSNode dirNode(Filename.getParent());
+			dir.addDirectory(dirNode);
+			Common::Path fileName = Filename.getLastComponent();
+
+			Common::MacResManager macResMan;
+			if (macResMan.open(fileName, dir)) {
+				warning("Mac resources detected");
+				command = "md5mac";
+			}
+		}
+
 		for (uint i = 0; i < steps; i++) {
 			if (command == "md5") {
 				Common::FSNode path(Filename);
