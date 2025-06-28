@@ -20,6 +20,9 @@
  */
 
 #include "common/events.h"
+#include "common/substream.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
 
 #include "graphics/macgui/macbutton.h"
 #include "graphics/macgui/macwindow.h"
@@ -259,6 +262,8 @@ void TextCastMember::setForeColor(uint32 fgCol, int start, int end) {
 
 void TextCastMember::importStxt(const Stxt *stxt) {
 	_fontId = stxt->_style.fontId;
+	_height = stxt->_style.height;
+	_ascent = stxt->_style.ascent;
 	_textSlant = stxt->_style.textSlant;
 	_fontSize = stxt->_style.fontSize;
 	_fgpalinfo1 = stxt->_style.r;
@@ -939,4 +944,158 @@ bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d
 	return false;
 }
 
+uint32 TextCastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castIndex) {
+	uint32 castResourceSize = getCastResourceSize(version);
+
+	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
+	writeStream->writeUint32LE(castResourceSize);		// this is excluding the 'CASt' header and the size itself (- 8 bytes)
+
+	uint32 castDataToWrite = getDataSize();
+	uint32 castInfoToWrite = getInfoSize();
+
+	if (version >= kFileVer400 && version < kFileVer500) {
+		writeStream->writeUint16BE(castDataToWrite);
+		writeStream->writeUint32BE(castInfoToWrite);
+		writeStream->writeByte(_castType);
+		
+		if (_flags1 != 0xFF) {					// In case of TextCastMember, this should be true
+			writeStream->writeByte(_flags1);
+		}
+
+		// For cast members with dedicated resources for data, the castDataToWrite is zero
+		// So for Palette Cast Member, the castDataToWrite is zero because it has a dedicated 'CLUT' resource for data
+		if (castDataToWrite) {
+		}
+
+		if (castInfoToWrite) {
+			_cast->writeCastInfo(writeStream, _castId);
+		}
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		writeStream->writeUint32BE(_castType);
+		writeStream->writeUint32BE(castInfoToWrite);
+		writeStream->writeUint32BE(castDataToWrite);
+
+		if (castInfoToWrite) {
+			_cast->writeCastInfo(writeStream, _castId);
+		}
+
+		// For cast members with dedicated resrouces for data, the castDataToWrite is zero
+		// So for Text Cast Member, the castDataToWrite is not zero
+		// Its metadata is stored in this 'CASt' resource but it also has an child 'STXT' resource  
+		if (castDataToWrite) {
+			writeCastData(writeStream, writeStream->pos());
+		}
+	}
+	load();
+	writeSTXTResource(nullptr, 0);
+	return castResourceSize + 8;
 }
+
+void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream, uint64 offset) {
+	writeStream->seek(offset);
+
+	writeStream->writeByte(_borderSize);
+	writeStream->writeByte(_gutterSize);
+	writeStream->writeByte(_boxShadow);
+	writeStream->writeByte(_textType);
+	writeStream->writeByte(_textAlign);
+	writeStream->writeSint16LE(_textAlign);
+	writeStream->writeUint16LE(_bgpalinfo1);
+	writeStream->writeUint16LE(_bgpalinfo2);
+	writeStream->writeUint16LE(_bgpalinfo3);
+	writeStream->writeUint16LE(_scroll);
+	
+	Movie::writeRect(writeStream, _initialRect);
+	writeStream->writeUint16LE(_maxHeight);
+	writeStream->writeByte(_textShadow);
+	writeStream->writeByte(_textFlags);
+
+	writeStream->writeUint16LE(_textHeight);
+
+	if (_type == kCastButton) {
+		writeStream->writeUint16LE(_buttonType + 1);
+	}
+}
+
+uint32 TextCastMember::getInfoSize() {
+	return _cast->getCastInfoSize(_castId);
+}
+
+uint32 TextCastMember::getDataSize() {
+	// Need to verify if this changes, current observation: it doesn't
+	return (_type == kCastButton) ? 31 : 29;
+}
+
+uint32 TextCastMember::getCastResourceSize(uint32 version) {
+	uint32 headerSize = 0;
+
+	if (version >= kFileVer400 && version < kFileVer500) {
+		headerSize = 9;
+		if (_flags1 != 0xFF) {
+			headerSize += 1;
+		}
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		headerSize = 12;
+	}
+
+	return headerSize + getInfoSize() + getDataSize();
+}
+
+uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 castSize = getSTXTResourceSize() + 10;
+	byte *dumpData = nullptr;
+	dumpData = (byte *)calloc(castSize, sizeof(byte));
+
+	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+
+	writeStream->seek(offset);
+
+	writeStream->writeUint32BE(MKTAG('S', 'T', 'X', 'T'));
+	writeStream->writeUint32BE(getSTXTResourceSize() + 8);						// Size of the STXT resource without the header and size
+
+	writeStream->writeUint32BE(12);							// This is the offset, if it's not 12, we throw an error and exit ScummVM
+	writeStream->writeUint32BE(_ptext.size());
+	// Encode only in one format, original may be encoded in multiple formats
+	// Size of one Font Style is 20 + The number of encodings takes 2 bytes
+	writeStream->writeUint32BE(20 + 2);
+	writeStream->writeString(_ptext.encode(Common::kMacRoman));		// Currently using MacRoman encoding only, may change later to include others
+
+	writeStream->writeUint16BE(1);			// Only one formatting: MacRoman
+
+	writeStream->writeUint32BE(0);			// FontStyle::formatStartOffset
+	writeStream->writeUint16BE(_height);	// FontStyle::height 	// Apparently height doesn't matter
+	writeStream->writeUint16BE(_ascent);	// FontStyle::ascent	// And neither does ascent	
+	
+	writeStream->writeUint16BE(_fontId);	// FontStyle::fontId
+	writeStream->writeByte(_textSlant);		// FontStyle::textSlant
+	writeStream->writeByte(0);				// padding
+	writeStream->writeUint16BE(_fontSize);		// FontStyle::fontSize
+	
+	writeStream->writeUint16BE(_fgpalinfo1); 	// FontStyle:r
+	writeStream->writeUint16BE(_fgpalinfo2); 	// FontStyle:g
+	writeStream->writeUint16BE(_fgpalinfo3); 	// FontStyle:b
+
+	Common::DumpFile out;
+	char buf[256];
+	Common::sprintf_s(buf, "./dumps/%d-%s-%s", _castId, tag2str(MKTAG('S', 'T', 'X', 'T')), "WrittenSTXTResource");
+
+	// Write the movie out, stored in dumpData
+	if (out.open(buf, true)) {
+		out.write(dumpData, castSize);
+		out.flush();
+		out.close();
+		debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", buf);
+	} else {
+		warning("RIFXArchive::writeStream: Error saving the file %s", buf);
+	}
+	free(dumpData);
+	delete writeStream;
+	return getSTXTResourceSize() + 8;
+}
+
+uint32 TextCastMember::getSTXTResourceSize() {
+	// Header (offset, string length, data length) + text string + data (FontStyle)
+	return 12 + _ptext.size() + 22;
+}
+
+}	// End of namespace Director

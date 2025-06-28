@@ -110,6 +110,7 @@ public:
 	void saveCast();
 	void saveCastData();
 	void writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId);
+	uint32 getCastInfoSize(uint32 castId);
 
 	int getCastSize();
 	int getCastMaxID();
