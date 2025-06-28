@@ -688,7 +688,10 @@ bool InGameScene::load(const TetraedgeFSNode &sceneNode) {
 		return false;
 
 	close();
-	_loadedPath = sceneNode.getPath();
+
+	// Scene node points to the geometry bin file, for other items we need
+	// to use the parent directory.
+	_loadedPath = sceneNode.getPath().getParent();
 	Common::ScopedPtr<Common::SeekableReadStream> scenefile(sceneNode.createReadStream());
 	if (!scenefile)
 		return false;
