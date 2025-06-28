@@ -32,7 +32,6 @@ namespace Director {
 
 PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 	: CastMember(cast, castId, stream) {
-	debug("In Palette Cast Member: stream: size: %d", stream.size());
 	stream.hexdump(stream.size());
 	_type = kCastPalette;
 	_palette = nullptr;
@@ -159,7 +158,7 @@ uint32 PaletteCastMember::writeCAStResource(Common::MemoryWriteStream *writeStre
 		// For cast members with dedicated resrouces for data, the castDataToWrite is zero
 		// So for Palette Cast Member, the castDataToWrite is zero because it has a dedicated 'CLUT' resource for data
 		if (castDataToWrite) {
-			writePaletteData(writeStream, writeStream->pos());
+			// writeCastData(writeStream, writeStream->pos());
 		}
 
 		if (castInfoToWrite) {
@@ -177,7 +176,7 @@ uint32 PaletteCastMember::writeCAStResource(Common::MemoryWriteStream *writeStre
 		// For cast members with dedicated resrouces for data, the castDataToWrite is zero
 		// So for Palette Cast Member, the castDataToWrite is zero because it has a dedicated 'CLUT' resource for data
 		if (castDataToWrite) {
-			writePaletteData(writeStream, writeStream->pos());
+			// writeCastData();
 		}
 	}
 
@@ -212,7 +211,7 @@ void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream,
 
 	Common::DumpFile out;
 	char buf[256];
-	Common::sprintf_s(buf, "./dumps/%d-%s-%s", 0, tag2str(MKTAG('C', 'L', 'U', 'T')), "WrittenPalette");
+	Common::sprintf_s(buf, "./dumps/%d-%s-%s", _castId, tag2str(MKTAG('C', 'L', 'U', 'T')), "WrittenPalette");
 
 	// Write the movie out, stored in dumpData
 	if (out.open(buf, true)) {
@@ -227,83 +226,8 @@ void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream,
 	delete writeStream;
 }
 
-// This function is called three separate times 
-// first when writing this 'CASt' resource in memory map (in getCastResourceSize()) 
-// second when writing the 'CASt' resource itself (in getCastResourceSize()) 
-// and thirdly when we're writing the info size in the 'CASt' resource
-// All three times, it returns the same value, this could be more efficient 
 uint32 PaletteCastMember::getInfoSize() {
-	CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
-	if (!ci) {
-		return 0;
-	}
-
-	uint32 length = 0;
-
-	switch (ci->count) { 
-	default:
-		debug("writeCastMemberInfo:: extra strings found, ignoring");
-		break;
-	case 15:
-		length += ci->unknownString7.size();
-		// fallthrough
-	case 14:
-		length += ci->unknownString6.size();
-		// fallthrough
-	case 13:
-		length += ci->unknownString5.size();
-		// fallthrough
-	case 12:
-		length += ci->unknownString4.size();
-		// fallthrough
-	case 11:
-		length += ci->unknownString3.size();
-		// fallthrough
-	case 10:
-		length += ci->unknownString2.size();
-		// fallthrough
-	case 9:
-		length += ci->unknownString1.size();
-		// fallthrough
-	case 8:
-		if (ci->textEditInfo.version) {
-			length += 18;		// The length of an edit info
-		}
-		// fallthrough
-	case 7:
-		if (ci->scriptStyle.fontId) {
-			length += 20;		// The length of FontStyle
-		}
-		// fallthrough
-	case 6:
-		if (ci->scriptEditInfo.version) {
-			length += 18;		// The length of an edit info
-		}
-		// fallthrough
-	case 5:
-		length += ci->type.size();
-		// fallthrough
-	case 4:
-		length += ci->fileName.size();
-		// fallthrough
-	case 3:
-		length += ci->directory.size();
-		// fallthrough
-	case 2:
-		length += ci->name.size();
-		debug("at 2: length = %d, name: %s", ci->name.size(), ci->name.c_str());
-		// fallthrough
-	case 1:
-		length += ci->script.size();
-		debug("at 1: length = %d", ci->name.size());
-		// fallthrough
-	case 0:
-		break;
-	}
-
-	debug("Header size = 20, length: %d, ci->count: %d, (ci->count + 1) * 4: %d", length, ci->count, (ci->count + 1) *4);
-	// The header + total length of the strings + number of length entries for the strings 
-	return 22 + length + (ci->count + 1) * 4;
+	return _cast->getCastInfoSize(_castId);
 }
 
 uint32 PaletteCastMember::getDataSize() {
@@ -338,6 +262,7 @@ uint32 PaletteCastMember::getPaletteDataSize() {
 	// This is the actual Palette data, in the 'CLUT' resource
 	// PaletteCastMembers data stored in the 'CLUT' resource does not change in size (may change in content) (need to verify)
 	// Hence their original size can be written
+	// This is the length of the 'CLUT' resource without the header and size 
 	return _palette->length * 6;
 }
 
