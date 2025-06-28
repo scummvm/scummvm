@@ -239,17 +239,17 @@ void CWnd::DestroyWindow() {
 
 	assert(AfxGetApp()->validateDestroyedWnd(m_hWnd));
 
-	// Clear the children array
+	// Detach any child controls
 	for (auto &node : _children)
 		node._value->m_pParentWnd = nullptr;
 	_children.clear();
 
 	// Free any owned controls
-	for (CWnd *ctl : _ownedControls) {
-		_children.erase(ctl->_controlId);
+	for (CWnd *ctl : _ownedControls)
 		delete ctl;
-	}
+	_ownedControls.clear();
 
+	// If still attached to parent, remove from it
 	if (m_pParentWnd) {
 		m_pParentWnd->_ownedControls.remove(this);
 		m_pParentWnd->_children.erase(_controlId);
