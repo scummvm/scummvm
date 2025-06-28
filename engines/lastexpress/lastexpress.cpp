@@ -558,6 +558,9 @@ bool LastExpressEngine::handleEvents() {
 		}
 	}
 
+	if (_exitFromMenuButton)
+		_exitFromMenuButton = false;
+
 	return true;
 }
 
