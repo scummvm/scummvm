@@ -208,6 +208,8 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 		return;
 	_pressed = false;
 
+	Invalidate();
+
 	switch (GetButtonStyle()) {
 	case BS_PUSHBUTTON:
 	case BS_DEFPUSHBUTTON:
@@ -227,8 +229,6 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 		error("Unhandled button type");
 		break;
 	}
-
-	Invalidate();
 }
 
 void CButton::OnMouseMove(UINT nFlags, CPoint point) {
