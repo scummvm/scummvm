@@ -2406,6 +2406,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 		}
 
 		while (!_newMenu && _displayMenu) {
+			uint32 frameEnd = _vm->_system->getMillis() + 16;
 			processHighlights(*_currentMenu);
 
 			if (_currentMenu == &_savenameMenu) {
@@ -2445,6 +2446,8 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 			if (!_menuResult)
 				_displayMenu = false;
+
+			_vm->delayUntil(frameEnd);
 		}
 
 		if (_newMenu != _currentMenu || !_displayMenu) {
