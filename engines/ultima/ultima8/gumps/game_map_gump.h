@@ -91,7 +91,7 @@ public:
 	static void setShowFootpads(bool value) {
 		_showFootpads = value;
 	}
-	static bool getGridlines() {
+	static int getGridlines() {
 		return _gridlines;
 	}
 	static void setGridlines(int gridlines) {
