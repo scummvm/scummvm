@@ -147,12 +147,12 @@ class AndroidSaveFileManager : public DefaultSaveFileManager {
 public:
 	AndroidSaveFileManager(const Common::Path &defaultSavepath) : DefaultSaveFileManager(defaultSavepath) {}
 
-	bool removeSavefile(const Common::String &filename) override {
-		Common::String path = getSavePath().join(filename).toString(Common::Path::kNativeSeparator);
+	Common::ErrorCode removeFile(const Common::FSNode &fileNode) override {
+		Common::String path(fileNode.getPath().toString(Common::Path::kNativeSeparator));
 		AbstractFSNode *node = AndroidFilesystemFactory::instance().makeFileNodePath(path);
 
 		if (!node) {
-			return false;
+			return Common::kPathDoesNotExist;
 		}
 
 		AndroidFSNode *anode = dynamic_cast<AndroidFSNode *>(node);
@@ -161,17 +161,14 @@ public:
 			// This should never happen
 			warning("Invalid node received");
 			delete node;
-			return false;
+			return Common::kUnknownError;
 		}
 
 		bool ret = anode->remove();
 
 		delete anode;
 
-		if (!ret) {
-			setError(Common::kUnknownError, Common::String::format("Couldn't delete the save file: %s", path.c_str()));
-		}
-		return ret;
+		return ret ? Common::kNoError : Common::kUnknownError;
 	}
 };
 
