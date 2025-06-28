@@ -31,7 +31,41 @@ Clock::Clock(LastExpressEngine *engine) {
 }
 
 Clock::~Clock() {
+	if (_seqMinutes) {
+		_engine->getMemoryManager()->freeMem(_seqMinutes->rawSeqData);
+		delete _seqMinutes;
+		_seqMinutes = nullptr;
+	}
 
+	if (_seqHour) {
+		_engine->getMemoryManager()->freeMem(_seqHour->rawSeqData);
+		delete _seqHour;
+		_seqHour = nullptr;
+	}
+
+	if (_seqSun) {
+		_engine->getMemoryManager()->freeMem(_seqSun->rawSeqData);
+		delete _seqSun;
+		_seqSun = nullptr;
+	}
+
+	if (_seqDate) {
+		_engine->getMemoryManager()->freeMem(_seqDate->rawSeqData);
+		delete _seqDate;
+		_seqDate = nullptr;
+	}
+
+	if (_seqLine1) {
+		_engine->getMemoryManager()->freeMem(_seqLine1->rawSeqData);
+		delete _seqLine1;
+		_seqLine1 = nullptr;
+	}
+
+	if (_seqLine2) {
+		_engine->getMemoryManager()->freeMem(_seqLine2->rawSeqData);
+		delete _seqLine2;
+		_seqLine2 = nullptr;
+	}
 }
 
 void Clock::startClock(int32 time) {

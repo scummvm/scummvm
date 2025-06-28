@@ -254,6 +254,7 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 
 	getStream(_eventsByteStream, 8 * _eventsCount);
 
+	SAFE_DELETE_ARR(_events);
 	_events = new NisEvents[_eventsCount];
 
 	for (int i = 0; i < _eventsCount; i++) {

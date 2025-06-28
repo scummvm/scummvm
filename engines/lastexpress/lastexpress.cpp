@@ -69,7 +69,6 @@ LastExpressEngine::~LastExpressEngine() {
 	SAFE_DELETE(_otisMan);
 	SAFE_DELETE(_subtitleMan);
 	SAFE_DELETE(_archiveMan);
-	SAFE_DELETE(_memMan);
 	SAFE_DELETE(_msgMan);
 	SAFE_DELETE(_nisMan);
 	SAFE_DELETE(_soundMan);
@@ -80,6 +79,7 @@ LastExpressEngine::~LastExpressEngine() {
 	SAFE_DELETE(_vcr);
 	SAFE_DELETE(_soundMutex);
 	SAFE_DELETE(_savegame);
+	SAFE_DELETE(_memMan);
 
 	//_debugger is deleted by Engine
 
