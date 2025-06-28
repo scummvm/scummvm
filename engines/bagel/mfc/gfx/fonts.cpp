@@ -34,6 +34,7 @@ struct FontSizeOverride {
 	int _charHeight;
 };
 static const FontSizeOverride FONT_SIZE_OVERRIDES[] = {
+	{ "MS Sans Serif", 8, 7, 13 },
 	{ "MS Sans Serif", 12, 10, 20 },
 	{ nullptr, 0, 0, 0 }
 };
@@ -75,9 +76,10 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		charHeight = ABS(nHeight);
 	} else {
 		// Cell to char height mappings
+		// TODO: This needs to be set properly
 		static const int8 HEIGHTS[6][2] = {
-			{ 8, 6 }, { 10, 7 }, { 12, 8 },
-			{ 14, 9 }, { 16, 10 }, { 18, 12 }
+			{ 8, 8 }, { 10, 10 }, { 12, 8 },
+			{ 14, 9 }, { 16, 10 }, { 18, 24 }
 		};
 		charHeight = nHeight * 16 / 24;	// Rough default
 		for (int i = 0; i < 6; ++i) {
