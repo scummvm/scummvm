@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-26 03:01+0000\n"
+"POT-Creation-Date: 2025-06-28 17:26+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4125,13 +4125,13 @@ msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Touchscreen 'Tap Modus' - Zweven (DPad Klik)"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
-#: backends/fs/android/android-saf-fs.cpp:802
-#: backends/fs/android/android-saf-fs.cpp:806
+#: backends/fs/android/android-saf-fs.cpp:803
+#: backends/fs/android/android-saf-fs.cpp:807
 msgid "Add a new folder"
 msgstr "Voeg een nieuwe map toe"
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
-#: backends/fs/android/android-saf-fs.cpp:918
+#: backends/fs/android/android-saf-fs.cpp:919
 msgid "Choose a new folder"
 msgstr "Selecteer een nieuwe map"
 
@@ -4842,12 +4842,12 @@ msgstr "Vergroot Modus Uit. Sleep Modus wordt geheractiveerd..."
 msgid "Magnify Mode Off"
 msgstr "Vergroot Modus Uit"
 
-#: backends/platform/android/android.cpp:1059
+#: backends/platform/android/android.cpp:1056
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Hulp krijgen"
 
-#: backends/platform/android/android.cpp:1062
+#: backends/platform/android/android.cpp:1059
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4869,13 +4869,13 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1071
+#: backends/platform/android/android.cpp:1068
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Aanraak Bediening"
 
-#: backends/platform/android/android.cpp:1074
+#: backends/platform/android/android.cpp:1071
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4944,13 +4944,13 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1130
+#: backends/platform/android/android.cpp:1127
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Spellen Toevoegen"
 
-#: backends/platform/android/android.cpp:1133
+#: backends/platform/android/android.cpp:1130
 msgid ""
 "## Adding Games \n"
 "\n"
