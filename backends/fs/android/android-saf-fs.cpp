@@ -703,6 +703,7 @@ bool AndroidSAFFilesystemNode::remove() {
 		return false;
 
 	AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(_safTree, jparent);
+	env->DeleteLocalRef(jparent);
 
 	size_t pos = _path.findLastOf('/');
 	if (pos == Common::String::npos) {
