@@ -130,6 +130,26 @@ Common::Array<const CWnd *> CWnd::GetSafeParents(bool includeSelf) const {
 	return results;
 }
 
+Common::Array<CWnd *> CWnd::GetSafeParents(bool includeSelf) {
+	Common::Array<CWnd *> results;
+	bool hasParentDialog = !includeSelf &&
+		dynamic_cast<CDialog *>(this) != nullptr;
+
+	for (CWnd *wnd = includeSelf ? this : m_pParentWnd;
+		wnd; wnd = wnd->m_pParentWnd) {
+		if (dynamic_cast<const CDialog *>(wnd)) {
+			if (!hasParentDialog) {
+				hasParentDialog = true;
+				results.push_back(wnd);
+			}
+		} else {
+			results.push_back(wnd);
+		}
+	}
+
+	return results;
+}
+
 HWND CWnd::GetSafeHwnd() const {
 	error("TODO: CWnd::GetSafeHwnd");
 }
@@ -238,13 +258,6 @@ void CWnd::DestroyWindow() {
 	SendMessage(WM_DESTROY);
 }
 
-void CWnd::Invalidate(BOOL bErase) {
-	// Mark the entire window for redrawing
-	_updateRect = Common::Rect(0, 0,
-		_windowRect.width(), _windowRect.height());
-	_updateErase = bErase;
-}
-
 int CWnd::GetWindowText(CString &rString) const {
 	rString = _windowText;
 	return rString.size();
@@ -308,7 +321,6 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 			if (message == WM_PAINT) {
 				if (!_updatingRect.intersects(ctl._value->_windowRect))
 					continue;
-				ctl._value->Invalidate(false);
 			}
 
 			ctl._value->SendMessage(message, wParam, lParam);
@@ -606,12 +618,39 @@ BOOL CWnd::ValidateRect(LPCRECT lpRect) {
 	return true;
 }
 
+void CWnd::Invalidate(BOOL bErase) {
+	CRect clientRect;
+	GetClientRect(&clientRect);
+	InvalidateRect(&clientRect, bErase);
+}
+
 BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
 	if (lpRect)
 		_updateRect.extend(*lpRect);
 	else
 		_updateRect = Common::Rect(0, 0,
 			_windowRect.width(), _windowRect.height());
+	assert(_updateRect.left >= 0 && _updateRect.top >= 0 &&
+		_updateRect.right <= _windowRect.width() &&
+		_updateRect.bottom <= _windowRect.bottom);
+
+	// Handle bubbling up to parent
+	const CWnd *child = this;
+	Common::Rect r = _updateRect;
+	for (CWnd *wnd : GetSafeParents(false)) {
+		r.translate(child->_windowRect.left,
+			child->_windowRect.top);
+		if (wnd->_updateRect.isEmpty())
+			wnd->_updateRect = r;
+		else
+			wnd->_updateRect.extend(r);
+
+		assert(wnd->_updateRect.left >= 0 && wnd->_updateRect.top >= 0 &&
+			wnd->_updateRect.right <= wnd->_windowRect.width() &&
+			wnd->_updateRect.bottom <= wnd->_windowRect.bottom);
+
+		child = wnd;
+	}
 
 	return true;
 }
@@ -678,6 +717,7 @@ void CWnd::ScreenToClient(LPRECT lpRect) const {
 
 void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 	_windowRect = *lpRect;
+	ValidateRect(nullptr);
 
 	// Get the screen area
 	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());

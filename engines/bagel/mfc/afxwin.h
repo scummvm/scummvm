@@ -1300,6 +1300,7 @@ public:
 	 * when modal dialogs create other modal dialogs.
 	 */
 	Common::Array<const CWnd *> GetSafeParents(bool includeSelf = true) const;
+	Common::Array<CWnd *> GetSafeParents(bool includeSelf = true);
 
 	CWnd *GetParent() const;
 	HWND GetSafeHwnd() const;
