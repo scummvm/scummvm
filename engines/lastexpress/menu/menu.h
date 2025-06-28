@@ -37,7 +37,7 @@ struct Link;
 class Menu {
 public:
 	Menu(LastExpressEngine *engine);
-	~Menu() {}
+	~Menu();
 
 	void doEgg(bool doSaveGame, int type, int32 time);
 	void endEgg();

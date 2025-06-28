@@ -41,6 +41,16 @@ Menu::Menu(LastExpressEngine *engine) {
 		_eggTimerDelta = DEMO_TIMEOUT;
 }
 
+Menu::~Menu() {
+	for (int i = 0; i < 8; i++) {
+		if (_menuSeqs[i]) {
+			_engine->getMemoryManager()->freeMem(_menuSeqs[i]->rawSeqData);
+			delete _menuSeqs[i];
+			_menuSeqs[i] = nullptr;
+		}
+	}
+}
+
 void Menu::doEgg(bool doSaveGame, int type, int32 time) {
 	if (!_isShowingMenu) {
 		_isShowingMenu = true;
