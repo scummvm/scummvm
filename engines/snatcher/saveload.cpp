@@ -286,7 +286,7 @@ Common::OutSaveFile *SaveLoadManager::openFileForSaving(int slot, const Common::
 	out->writeSint32BE(td.tm_wday);
 
 	out->writeUint32BE(state.totalPlayTime);
-	out->writeSint16BE(state.saveCount);
+	out->writeSint16BE(++state.saveCount);
 
 	return out;
 }

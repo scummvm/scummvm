@@ -213,7 +213,7 @@ void TextRenderer_SCD::drawGlyph(uint16 ch) {
 				++d;
 			if (++dXX == 8)
 				d += 28;
-			
+
 		}
 
 		dst += 4;

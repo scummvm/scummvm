@@ -79,7 +79,7 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 	case 2:
 		if (_sceneId == 0) {
 			_gfx->transitionCommand(21);
-			//_c13Valu = 0xFF;
+			//_unused13 = 0xFF;
 			_textY = _headLineYOffset;
 		} else if (_sceneId == 0xFF) {
 			_textY = _headLineYOffset;
@@ -119,7 +119,7 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 	case 6:
 		_sceneTextOffset = _sceneInfo = 0;
 		//if (!_sceneId)
-		//	_c13Valu = 0xFF;
+		//	_unused13 = 0xFF;
 		_progress = -1;
 		break;
 
@@ -152,7 +152,7 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 		_textColor = 1;
 
 		_gfx->transitionCommand(_gfx->getVerbAreaType() == 0 ? 15 : (_gfx->getVerbAreaType() == 1 ? 20 : 22));
-		//_c13Valu = 0;
+		//_unused13 = 0;
 		_progress = 2;
 		break;
 
@@ -639,8 +639,6 @@ uint8 UI::drawVerb(uint8 id) {
 		if (*d++ == 0xFF)
 			break;
 	}
-	Common::String dbg((const char*)_verbTextBuffer + 9, (const char*)_verbTextBuffer + 32);
-	debug("VERB %d: %s", id, dbg.substr(0,  dbg.findFirstOf((char)0xFF, 0)).c_str());
 	_verbTextBuffer[47] = 0xFF;
 
 	return cid;
@@ -743,7 +741,7 @@ void UI::verbsTabHandleInput(const SnatcherEngine::Input &input) {
 		if (_verbInterfaceMode == 1) {
 			if (_scriptSentenceArray->pos() == 0) {
 				if (input.sustainedControllerFlagsRemapped & 0x10) {
-					//_c13Valu = 0xFF;
+					//_unused13 = 0xFF;
 					uint8 in = _flashLight.inputFlags = input.sustainedControllerFlagsRemapped;
 					_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide | GraphicsEngine::kAnimPause);
 					if (in & 1)
@@ -755,7 +753,7 @@ void UI::verbsTabHandleInput(const SnatcherEngine::Input &input) {
 					if (in & 4)
 						moveFlashLight(-0x20000, 0);
 				} else {
-					//_c13Valu = 0;
+					//_unused13 = 0;
 					_flashLight.posData = checkFlashLightPos(((_flashLight.posX >> 16) + 72) >> 2, ((_flashLight.posY >> 16) + 40) >> 2);
 					_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
 				}
@@ -974,7 +972,7 @@ bool UI::verbSelect2() {
 			_que->start();
 			_progress2 = 0x100;
 			return false;
-		}	
+		}
 
 		if (_progress2 == 0x100) {
 			if (_verbInterfaceMode == 3) {
