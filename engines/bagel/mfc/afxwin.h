@@ -1053,7 +1053,7 @@ class CWnd : public CCmdTarget {
 protected:
 	static const MSG *GetCurrentMessage();
 
-	virtual void DoDataExchange(CDataExchange *dataExch);
+	virtual void DoDataExchange(CDataExchange *dataExch) {}
 	virtual BOOL PreCreateWindow(CREATESTRUCT &cs) {
 		return true;
 	}

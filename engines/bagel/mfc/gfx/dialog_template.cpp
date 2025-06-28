@@ -261,6 +261,9 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 	dialog->_dialogFont.CreateFontIndirect(&lf);
 	dialog->SendMessageToDescendants(WM_SETFONT,
 		(WPARAM)dialog->_dialogFont.m_hObject, 0);
+
+	// Allow the dialog so set up replacement controls
+	dialog->DoDataExchange(nullptr);
 }
 
 } // namespace Gfx

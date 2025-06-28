@@ -103,10 +103,6 @@ const MSG *CWnd::GetCurrentMessage() {
 	return &AfxGetApp()->_currentMessage;
 }
 
-void CWnd::DoDataExchange(CDataExchange *) {
-	error("TODO: CWnd::DoDataExchange");
-}
-
 CWnd *CWnd::GetParent() const {
 	return m_pParentWnd;
 }

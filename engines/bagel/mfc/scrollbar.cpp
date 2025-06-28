@@ -60,6 +60,8 @@ void CScrollBar::GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const {
 void CScrollBar::SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {
 	_minValue = nMinPos;
 	_maxValue = nMaxPos;
+	_pageSize = MAX<int>((_maxValue - _minValue + 1) / 10, 1);
+
 	Invalidate();
 }
 

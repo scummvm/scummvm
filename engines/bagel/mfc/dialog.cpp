@@ -205,7 +205,7 @@ LRESULT CDialog::HandleSetFont(WPARAM wParam, LPARAM) {
 }
 
 void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
-	error("TODO: CDialog::DDX_Control");
+	rControl.SubclassDlgItem(nIDC, this);
 }
 
 void CDialog::DDX_Radio(CDataExchange *pDX,
