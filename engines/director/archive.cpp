@@ -1231,7 +1231,9 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 			it->tag != MKTAG('m', 'm', 'a', 'p') &&
 			it->tag != MKTAG('K', 'E', 'Y', '*')
 		) {
-			writeStream->seek(it->offset + 8);
+			writeStream->seek(it->offset);
+			writeStream->writeUint32LE(it->tag);
+			writeStream->writeUint32LE(it->size);
 			writeStream->writeStream(getResource(it->tag, it->index));
 		}
 	}
