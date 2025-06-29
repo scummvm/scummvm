@@ -846,7 +846,7 @@ namespace MFC {
 		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, DWORD) > ( &ThisClass::OnTCard)) },
 
 #define ON_WM_TIMER() \
-	{ WM_TIMER, 0, 0, 0, AfxSig_v_up_v, \
+	{ WM_TIMER, 0, 0, 0, AfxSig_vw, \
 		(AFX_PMSG)(AFX_PMSGW) \
 		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT_PTR) > ( &ThisClass::OnTimer)) },
 
