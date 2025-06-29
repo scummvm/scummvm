@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "graphics/macgui/macwidget.h"
 
 #include "director/director.h"
@@ -230,4 +231,45 @@ Common::String RichTextCastMember::formatInfo() {
 		format.c_str()
 	);
 }
+
+uint32 RichTextCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		// 8 bytes (_initialRect)
+		// 8 bytes (_boundingRect)
+		// Ignored 9 bytes
+		// 3 bytes r, g, b (foreground, each a byte)
+		// 6 bytes r, g, b (background, each 2 bytes)
+		return 26;
+	} else {
+		warning("RichTextCastMember()::getCastDataSize():>D5 isn't handled");
+		return 0;
+	}
 }
+
+void RichTextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		Movie::writeRect(writeStream, _initialRect);
+		Movie::writeRect(writeStream, _boundingRect);
+
+		writeStream->write(0, 8);
+		writeStream->writeByte(0);
+
+		uint8 r, g, b;
+		_pf32.colorToRGB(_foreColor, r, g, b);
+		writeStream->writeByte(r);
+		writeStream->writeByte(g);
+		writeStream->writeByte(b);
+
+		_pf32.colorToRGB(_bgColor, r, g, b);
+		writeStream->writeByte(r);
+		writeStream->writeByte(0); 
+		writeStream->writeByte(g);
+		writeStream->writeByte(0); 
+		writeStream->writeByte(b);
+		writeStream->writeByte(0); 
+	} else {
+		warning("RichTextCastMember()::writeCastData(): >D5 isn't handled");
+	}
+}
+
+}	// End of namespace Director

@@ -20,6 +20,7 @@
  */
 
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 
@@ -710,6 +711,40 @@ Common::Point FilmLoopCastMember::getRegistrationOffset() {
 
 Common::Point FilmLoopCastMember::getRegistrationOffset(int16 currentWidth, int16 currentHeight) {
 	return Common::Point(currentWidth / 2, currentHeight / 2);
+}
+
+uint32 FilmLoopCastMember::getCastDataSize() {
+	// We're only reading the _initialRect and _vflags from the Cast Data
+	// _initialRect : 8 bytes + _vflags : 4 bytes + (castType (see Cast::loadCastData() for Director 4 only) 1 byte
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// It has been observed that the DigitalVideoCastMember has 
+		return 8 + 4 + 1;			// No flags (so instead of 2 extra bytes, we have 1) for FilmLoopCastMember 
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		return 8 + 4;
+	}
+
+	warning("FilmLoopCastMember::getCastDataSize(): unhandled or invalid cast version: %d", _cast->_version);
+	return 0;
+}
+
+void FilmLoopCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	Movie::writeRect(writeStream, _initialRect);
+
+	uint32 flags = 0;
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		flags |= (_looping) ? 0 : 64;
+		flags |= (_enableSound) ? 8 : 0;
+		flags |= (_crop) ? 0 : 2;
+		flags |= (_center) ? 1 : 0;
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		flags |= (_looping) ? 0 : 32;
+		flags |= (_enableSound) ? 8 : 0;
+		flags |= (_crop) ? 0 : 2;
+		flags |= (_center) ? 1 : 0;
+	}
+
+	writeStream->writeUint32LE(flags);
+	writeStream->writeUint16LE(0);		// May need to save proper value in the future, currently ignored
 }
 
 } // End of namespace Director
