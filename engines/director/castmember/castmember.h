@@ -161,13 +161,13 @@ struct CastMemberInfo {
 
 	// There just has to be a better solution
 	// It is not rare to find these strings in the CastMemberInfo
-	Common::String unknownString1;
-	Common::String unknownString2;
-	Common::String unknownString3;
-	Common::String unknownString4;
-	Common::String unknownString5;
-	Common::String unknownString6;
-	Common::String unknownString7;
+	Common::Array<byte> unknown1;
+	Common::Array<byte> unknown2;
+	Common::Array<byte> unknown3;
+	Common::Array<byte> unknown4;
+	Common::Array<byte> unknown5;
+	Common::Array<byte> unknown6;
+	Common::Array<byte> unknown7;
 
 	CastMemberInfo() : autoHilite(false), scriptId(0) {}
 };

@@ -32,6 +32,7 @@
 #include "video/qt_decoder.h"
 
 #include "director/director.h"
+#include "director/archive.h"
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/rte.h"
@@ -518,28 +519,17 @@ bool Cast::loadConfig() {
 		_vm->setVersion(humanVer);
 	}
 
-	uint32 castSize = stream->size() + 8;
-	byte *dumpData = nullptr;
-	dumpData = (byte *)calloc(castSize, sizeof(byte));
+    if (debugChannelSet(7, kDebugSaving)) {
+        // Adding +8 because the stream doesn't include the header and the entry for the size itself
+        uint32 configSize = stream->size() + 8;
+        byte *dumpData = (byte *)calloc(configSize, sizeof(byte));
 
-	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+        Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, configSize);
 
-	saveConfig(writeStream, 0);
-	Common::DumpFile out;
-	char buf[256];
-	Common::sprintf_s(buf, "./dumps/%d-%s-%s", 0, tag2str(MKTAG('V', 'W', 'C', 'F')), "WrittenConfig");
-
-	// Write the movie out, stored in dumpData
-	if (out.open(buf, true)) {
-		out.write(dumpData, castSize);
-		out.flush();
-		out.close();
-		debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", buf);
-	} else {
-		warning("RIFXArchive::writeStream: Error saving the file %s", buf);
-	}
-	free(dumpData);
-	delete writeStream;
+        saveConfig(writeStream, 0);
+        dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize);
+        delete writeStream;
+    }
 
 	delete stream;
 	return true;
@@ -801,7 +791,7 @@ void Cast::loadCast() {
 		debugC(4, kDebugLoading, "'SCRF' resource skipped");
 	}
 	
-	if (debugChannelSet(7, kDebugLoading)) {
+	if (debugChannelSet(7, kDebugSaving)) {
 		debug("Cast::saveCast: Saving the Cast resources in ./dumps");
 		saveCast();
 	}
@@ -822,8 +812,9 @@ void Cast::saveCast() {
 	// So, RIFXArchive::getResourceDetail will return the list of IDs present in the keytable
 	// Whereas, in the _loadedCast, the key of these Cast members is given by castId
 	for (auto &it : cast) {
+        // I need to call this just because I need the id
 		Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), it);
-		uint16 id = res.castId + _castArrayStart;
+		uint16 id = res.castId + _castArrayStart;               // Never encountered _castArrayStart != 0 till now
 		uint32 castSize = 0;
 
 		if (_loadedCast->contains(id)) {
@@ -837,16 +828,20 @@ void Cast::saveCast() {
 			castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), it) + 8;
 		}
 
-		byte *dumpData = nullptr;
-		dumpData = (byte *)calloc(castSize, sizeof(byte));
+		byte *dumpData = (byte *)calloc(castSize, sizeof(byte));
 
 		Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+        CastType type = kCastTypeAny;
 
-		if (!_loadedCast->contains(id)) {
+		if (!_loadedCast->contains(id)) { 
+            writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
 			Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), it);
+            uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
+            writeStream->writeUint32LE(size);
 			writeStream->writeStream(stream);
 		} else {
 			CastMember *target = _loadedCast->getVal(id);
+            type = target->_type;
 
 			switch (target->_type) {
 			case (kCastPalette):
@@ -861,223 +856,155 @@ void Cast::saveCast() {
 			}
 		}	
 
-		Common::DumpFile out;
-		char buf[256];
-		Common::sprintf_s(buf, "./dumps/%d-%s-%s", it, tag2str(res.tag), "WrittenCAStResource");
-	
-		// Write the movie out, stored in dumpData
-		if (out.open(buf, true)) {
-			out.write(dumpData, castSize);
-			out.flush();
-			out.close();
-			debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", buf);
-		} else {
-			warning("RIFXArchive::writeStream: Error saving the file %s", buf);
-		}
-		free(dumpData);
+        dumpFile(castType2str(type), res.index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize);
 		delete writeStream;
 	}
 	
 }
 
 void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) {
-	if (!_castsInfo.contains(castId)) {
-		return;
-	}
-	CastMemberInfo *ci = _castsInfo[castId];
-
-	writeStream->writeUint32BE(20);				// The offset post-d4 movies is always 20 
-	writeStream->writeUint32BE(ci->unk1);
-	writeStream->writeUint32BE(ci->unk2);
-	writeStream->writeUint32BE(ci->flags);		// Possibly no need to save
-
-	writeStream->writeUint32BE(ci->scriptId);
-
-	writeStream->writeUint16BE(ci->count);		// count of strings in the info
-	
-	uint32 length = 0;
-	writeStream->writeUint32BE(length);
-
 	// The structure of the CastMemberInfo is as follows:
 	// First some headers: offset, unkonwns and flags, and then a count of strings to be read
 	// (These strings contain properties of the cast member like filename, script attached to it, name, etc.)
 	// After the header, we have the next data is the lengths of the strings,
 	// The first int is 0, the second int is 0 + length of the first string, the third int is 0 + length of first string + length of second string and so on
 	// After the lengths of the strings are the actual strings  
+	
+	if (!_castsInfo.contains(castId)) {
+		return;
+	}
+	CastMemberInfo *ci = _castsInfo[castId];
+
+	InfoEntries castInfo;
+
+	castInfo.unk1 = ci->unk1;
+	castInfo.unk2 = ci->unk2;
+	castInfo.flags = ci->flags;
+	castInfo.scriptId = ci->scriptId;
+	castInfo.strings.resize(ci->count);
+
 	for (int i = 1; i <= ci->count; i++) {
-		switch (i) { 
-		default:
-			debug("writeCastMemberInfo:: extra strings found, ignoring");
-			break;
-		
-		case 1:
-			length += ci->script.size();
-			writeStream->writeUint32BE(length);
-			break;
-		
-		case 2:
-			length += ci->name.size();
-			writeStream->writeUint32BE(length);
-			break;
-
-		case 3:
-			length += ci->directory.size();
-			writeStream->writeUint32BE(length);
-			break;
-
-		case 4:
-			length += ci->fileName.size();
-			writeStream->writeUint32BE(length);
-			break;
-			
-		case 5:
-			length += ci->type.size();
-			writeStream->writeUint32BE(length);
-			break;
-	
-		case 6:
-			if (ci->scriptEditInfo.version) {
-				length += 18;		// The length of an edit info
-			}
-			writeStream->writeUint32BE(length);
-			break;
-
-		case 7:
-			if (ci->scriptStyle.fontId) {
-				length += 20;		// The length of FontStyle
-				writeStream->writeUint32BE(length);
-			}
-			break;
-
-		case 8:
-			if (ci->textEditInfo.version) {
-				length += 18;		// The length of an edit info
-			}
-			writeStream->writeUint32BE(length);
-			break;
-		
-		case 9:
-			length += ci->unknownString1.size();
-			writeStream->writeUint32BE(length);
-			break;
-		
-		case 10:
-			length += ci->unknownString2.size();
-			writeStream->writeUint32BE(length);
-			break;
-
-		case 11:
-			length += ci->unknownString3.size();
-			writeStream->writeUint32BE(length);
-			break;
-
-		case 12:
-			length += ci->unknownString4.size();
-			writeStream->writeUint32BE(length);
-			break;
-			
-		case 13:
-			length += ci->unknownString5.size();
-			writeStream->writeUint32BE(length);
-			break;
-	
-		case 14:
-			length += ci->unknownString6.size();
-			writeStream->writeUint32BE(length);
-			break;
-
-		case 15:
-			length += ci->unknownString7.size();
-			writeStream->writeUint32BE(length);
-			break;
-		}
+		castInfo.strings[i - 1].len += getCastInfoStringLength(i, ci);
 	}
 
 	for (int i = 1; i <= ci->count; i++) {
+		if (!castInfo.strings[i - 1].len) {
+			continue;
+		}
+
 		switch (i) { 
 		default:
-			debug("writeCastMemberInfo::extra strings found, ignoring");
+			debug("Cast::writeCastInfo()::extra strings found, ignoring");
 			break;
 		
 		case 1:
-			writeStream->writeString(ci->script);
+			castInfo.strings[0].data = (byte *)malloc(castInfo.strings[0].len);
+			memcpy(castInfo.strings[0].data, ci->script.c_str(), castInfo.strings[0].len);
 			break;
 		
 		case 2:
-			writeStream->writeString(ci->name);
+			castInfo.strings[1].data = (byte *)malloc(castInfo.strings[1].len);
+			memcpy(castInfo.strings[1].data, ci->name.c_str(), castInfo.strings[1].len);
 			break;
 
 		case 3:
-			writeStream->writeString(ci->directory);
+			castInfo.strings[2].data = (byte *)malloc(castInfo.strings[2].len);
+			memcpy(castInfo.strings[2].data, ci->directory.c_str(), castInfo.strings[2].len);
 			break;
 
 		case 4:
-			writeStream->writeString(ci->fileName);
+			castInfo.strings[3].data = (byte *)malloc(castInfo.strings[3].len);
+			memcpy(castInfo.strings[3].data, ci->fileName.c_str(), castInfo.strings[3].len);
 			break;
 			
 		case 5:
-			writeStream->writeString(ci->type);
+			castInfo.strings[4].data = (byte *)malloc(castInfo.strings[4].len);
+			memcpy(castInfo.strings[4].data, ci->type.c_str(), castInfo.strings[4].len);
 			break;
 		
 		case 6:
 			// Need a better check to see if script edit info is valid
 			if (ci->scriptEditInfo.version) {
-				Movie::writeRect(writeStream, ci->scriptEditInfo.rect);
-				writeStream->writeUint32BE(ci->scriptEditInfo.selStart);
-				writeStream->writeUint32BE(ci->scriptEditInfo.selEnd);
-				writeStream->writeByte(ci->scriptEditInfo.version);
-				writeStream->writeByte(ci->scriptEditInfo.rulerFlag);
+				byte buf[18]; 		// Size of an EditInfo struct
+				Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(buf, 18);
+				Movie::writeRect(stream, ci->scriptEditInfo.rect);
+				stream->writeUint32BE(ci->scriptEditInfo.selStart);
+				stream->writeUint32BE(ci->scriptEditInfo.selEnd);
+				stream->writeByte(ci->scriptEditInfo.version);
+				stream->writeByte(ci->scriptEditInfo.rulerFlag);
+
+				castInfo.strings[5].data = (byte *)malloc(castInfo.strings[5].len);
+				memcpy(castInfo.strings[5].data, buf, 18);
 			}
 			break;
 
 		case 7:
 			// Need a better check to see if scriptStyle is valid
 			if (ci->scriptStyle.fontId) {
-				writeStream->writeUint16LE(1);			// FIXME: For CastMembers, the count is 1, observed value, need to validate
-				ci->scriptStyle.write(writeStream);
+				byte buf[20]; 		// Size of the ScriptStyle FontStyle 
+				Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(buf, 20);
+				stream->writeUint16LE(1);			// FIXME: For CastMembers, the count is 1, observed value, need to validate
+				ci->scriptStyle.write(stream);
+
+				castInfo.strings[6].data = (byte *)malloc(castInfo.strings[6].len);
+				memcpy(castInfo.strings[6].data, buf, 20);
 			}
 			break;
 
 		case 8:
 			// Need a better check to see if text edit info is valid
 			if (ci->textEditInfo.version) {
-				Movie::writeRect(writeStream, ci->textEditInfo.rect);
-				writeStream->writeUint32BE(ci->textEditInfo.selStart);
-				writeStream->writeUint32BE(ci->textEditInfo.selEnd);
-				writeStream->writeByte(ci->textEditInfo.version);
-				writeStream->writeByte(ci->textEditInfo.rulerFlag);
+				byte buf[18];		// Size of an EditInfo struct 
+				Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(buf, 18);
+				Movie::writeRect(stream, ci->textEditInfo.rect);
+				stream->writeUint32BE(ci->textEditInfo.selStart);
+				stream->writeUint32BE(ci->textEditInfo.selEnd);
+				stream->writeByte(ci->textEditInfo.version);
+				stream->writeByte(ci->textEditInfo.rulerFlag);
+				
+				castInfo.strings[7].data = (byte *)malloc(castInfo.strings[7].len);
+				memcpy(castInfo.strings[7].data, buf, 18);
 			}
 			break;
 		
 		case 9:
-			writeStream->writeString(ci->unknownString1);
+			castInfo.strings[8].data = (byte *)malloc(castInfo.strings[8].len);
+			memcpy(castInfo.strings[8].data, ci->unknown1.data(), castInfo.strings[8].len);
 			break;
 		
 		case 10:
-			writeStream->writeString(ci->unknownString2);
+			castInfo.strings[9].data = (byte *)malloc(castInfo.strings[9].len);
+			memcpy(castInfo.strings[9].data, ci->unknown2.data(), castInfo.strings[9].len);
 			break;
 
 		case 11:
-			writeStream->writeString(ci->unknownString3);
+			castInfo.strings[10].data = (byte *)malloc(castInfo.strings[10].len);
+			memcpy(castInfo.strings[10].data, ci->unknown3.data(), castInfo.strings[10].len);
 			break;
 
 		case 12:
-			writeStream->writeString(ci->unknownString4);
+			castInfo.strings[11].data = (byte *)malloc(castInfo.strings[11].len);
+			memcpy(castInfo.strings[11].data, ci->unknown4.data(), castInfo.strings[11].len);
 			break;
 			
 		case 13:
-			writeStream->writeString(ci->unknownString5);
+			castInfo.strings[12].data = (byte *)malloc(castInfo.strings[12].len);
+			memcpy(castInfo.strings[12].data, ci->unknown5.data(), castInfo.strings[12].len);
 			break;
 	
 		case 14:
-			writeStream->writeString(ci->unknownString6);
+			castInfo.strings[13].data = (byte *)malloc(castInfo.strings[13].len);
+			memcpy(castInfo.strings[13].data, ci->unknown6.data(), castInfo.strings[13].len);
 			break;
 
 		case 15:
-			writeStream->writeString(ci->unknownString7);
+			castInfo.strings[14].data = (byte *)malloc(castInfo.strings[14].len);
+			memcpy(castInfo.strings[14].data, ci->unknown7.data(), castInfo.strings[14].len);
 			break;
 		}
 	}
+
+	Movie::saveInfoEntries(writeStream, castInfo);
 }
 
 // This function is called three separate times 
@@ -1092,69 +1019,10 @@ uint32 Cast::getCastInfoSize(uint32 castId) {
 	}
 
 	uint32 length = 0;
-
-	switch (ci->count) { 
-	default:
-		debug("writeCastMemberInfo:: extra strings found, ignoring");
-		break;
-	case 15:
-		length += ci->unknownString7.size();
-		// fallthrough
-	case 14:
-		length += ci->unknownString6.size();
-		// fallthrough
-	case 13:
-		length += ci->unknownString5.size();
-		// fallthrough
-	case 12:
-		length += ci->unknownString4.size();
-		// fallthrough
-	case 11:
-		length += ci->unknownString3.size();
-		// fallthrough
-	case 10:
-		length += ci->unknownString2.size();
-		// fallthrough
-	case 9:
-		length += ci->unknownString1.size();
-		// fallthrough
-	case 8:
-		if (ci->textEditInfo.version) {
-			length += 18;		// The length of an edit info
-		}
-		// fallthrough
-	case 7:
-		if (ci->scriptStyle.fontId) {
-			length += 20;		// The length of FontStyle
-		}
-		// fallthrough
-	case 6:
-		if (ci->scriptEditInfo.version) {
-			length += 18;		// The length of an edit info
-		}
-		// fallthrough
-	case 5:
-		length += ci->type.size();
-		// fallthrough
-	case 4:
-		length += ci->fileName.size();
-		// fallthrough
-	case 3:
-		length += ci->directory.size();
-		// fallthrough
-	case 2:
-		length += ci->name.size();
-		debug("at 2: length = %d, name: %s", ci->name.size(), ci->name.c_str());
-		// fallthrough
-	case 1:
-		length += ci->script.size();
-		debug("at 1: length = %d", ci->name.size());
-		// fallthrough
-	case 0:
-		break;
+	for (int i = 1; i <= ci->count; i++) {
+		length += getCastInfoStringLength(i, ci);
 	}
 
-	debug("Header size = 20, length: %d, ci->count: %d, (ci->count + 1) * 4: %d", length, ci->count, (ci->count + 1) *4);
 	// The header + total length of the strings + number of length entries for the strings 
 	return 22 + length + (ci->count + 1) * 4;
 }
@@ -1162,6 +1030,61 @@ uint32 Cast::getCastInfoSize(uint32 castId) {
 uint32 Cast::computeChecksum() { 
 	warning("STUB::ConfigChunk::computeChecksum() is not implemented yet");
 	return 0; 
+}
+
+// The 'CASt' resource has strings containing information about the respective CastMember
+// This function is for retreiving the size of each while writing them back 
+uint32 Cast::getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci) {
+	switch (stringIndex) { 
+	default:
+		debug("writeCastMemberInfo:: extra string index out of bound");
+		return 0;
+	
+	case 1:
+		return ci->script.size();
+	
+	case 2:
+		return ci->name.size();
+
+	case 3:
+		return ci->directory.size();
+
+	case 4:
+		return ci->fileName.size();
+		
+	case 5:
+		return ci->type.size();
+
+	case 6:
+		return 18;		// The length of an edit info
+
+	case 7:
+		return 20;		// The length of FontStyle
+
+	case 8:
+		return 18;		// The length of an edit info
+	
+	case 9:
+		return ci->unknown1.size();
+	
+	case 10:
+		return ci->unknown2.size();
+
+	case 11:
+		return ci->unknown3.size();
+
+	case 12:
+		return ci->unknown4.size();
+		
+	case 13:
+		return ci->unknown5.size();
+
+	case 14:
+		return ci->unknown6.size();
+
+	case 15:
+		return ci->unknown7.size();
+	}
 }
 
 Common::String Cast::getLinkedPath(int castId) {
@@ -1807,49 +1730,49 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		if (castInfo.strings[14].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 14, id);
 			Common::hexdump(castInfo.strings[14].data, castInfo.strings[14].len);
-			ci->unknownString7 = castInfo.strings[14].readString();
+			ci->unknown7 = Common::Array<byte>(castInfo.strings[14].data, castInfo.strings[14].len);
 		}
 		// fallthrough
 	case 14:
 		if (castInfo.strings[13].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 13, id);
 			Common::hexdump(castInfo.strings[13].data, castInfo.strings[13].len);
-			ci->unknownString6 = castInfo.strings[13].readString();
+			ci->unknown6 = Common::Array<byte>(castInfo.strings[13].data, castInfo.strings[13].len);
 		}
 		// fallthrough
 	case 13:
 		if (castInfo.strings[12].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 12, id);
 			Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
-			ci->unknownString5 = castInfo.strings[12].readString();
+			ci->unknown5 = Common::Array<byte>(castInfo.strings[12].data, castInfo.strings[12].len);
 		}
 		// fallthrough
 	case 12:
 		if (castInfo.strings[11].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 11, id);
 			Common::hexdump(castInfo.strings[11].data, castInfo.strings[11].len);
-			ci->unknownString4 = castInfo.strings[11].readString();
+			ci->unknown4 = Common::Array<byte>(castInfo.strings[11].data, castInfo.strings[11].len);
 		}
 		// fallthrough
 	case 11:
 		if (castInfo.strings[10].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 11, id);
 			Common::hexdump(castInfo.strings[10].data, castInfo.strings[10].len);
-			ci->unknownString3 = castInfo.strings[10].readString();
+			ci->unknown3 =Common::Array<byte>(castInfo.strings[10].data, castInfo.strings[10].len);
 		}
 		// fallthrough
 	case 10:
 		if (castInfo.strings[9].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 10, id);
 			Common::hexdump(castInfo.strings[9].data, castInfo.strings[9].len);
-			ci->unknownString2 = castInfo.strings[9].readString();
+			ci->unknown2 = Common::Array<byte>(castInfo.strings[9].data, castInfo.strings[9].len);
 		}
 		// fallthrough
 	case 9:
 		if (castInfo.strings[8].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: string #%d for castid %d", 9, id);
 			Common::hexdump(castInfo.strings[8].data, castInfo.strings[8].len);
-			ci->unknownString1 = castInfo.strings[8].readString();
+			ci->unknown1 = Common::Array<byte>(castInfo.strings[8].data, castInfo.strings[8].len);
 		}
 		// fallthrough
 	case 8:

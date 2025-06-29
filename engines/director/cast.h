@@ -111,6 +111,7 @@ public:
 	void saveCastData();
 	void writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId);
 	uint32 getCastInfoSize(uint32 castId);
+	uint32 getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci);
 
 	int getCastSize();
 	int getCastMaxID();

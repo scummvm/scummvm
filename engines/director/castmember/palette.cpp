@@ -139,10 +139,12 @@ void PaletteCastMember::unload() {
 
 void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	uint32 castSize = getPaletteDataSize() + 8;
+	
+	/**/
 	byte *dumpData = nullptr;
 	dumpData = (byte *)calloc(castSize, sizeof(byte));
-
 	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+	/**/
 
 	// writeStream->seek(offset);
 	writeStream->writeUint32LE(MKTAG('C', 'L', 'U', 'T'));
@@ -161,20 +163,7 @@ void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream,
 		writeStream->writeByte(pal[3 * i + 2]);
 	}
 
-	Common::DumpFile out;
-	char buf[256];
-	Common::sprintf_s(buf, "./dumps/%d-%s-%s", _castId, tag2str(MKTAG('C', 'L', 'U', 'T')), "WrittenPalette");
-
-	// Write the movie out, stored in dumpData
-	if (out.open(buf, true)) {
-		out.write(dumpData, castSize);
-		out.flush();
-		out.close();
-		debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", buf);
-	} else {
-		warning("RIFXArchive::writeStream: Error saving the file %s", buf);
-	}
-	free(dumpData);
+	dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);
 	delete writeStream;
 }
 
