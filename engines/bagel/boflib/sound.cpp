@@ -113,10 +113,13 @@ void CBofSound::initialize(void *pWnd, const char *pszPathName, WORD wFlags) {
 
 		if ((_szDrivePath[0] != '\0') && (*pszPathName == '.'))
 			pszPathName++;
+		else if (!strncmp(pszPathName, ".\\", 2))
+			pszPathName += 2;
 
 		char szTempPath[MAX_DIRPATH];
 		snprintf(szTempPath, MAX_DIRPATH, "%s%s", _szDrivePath, pszPathName);
 		strreplaceStr(szTempPath, "\\\\", "\\");
+		strreplaceStr(szTempPath, "\\", "/");
 
 		// Continue as long as this file exists
 		if (fileExists(szTempPath)) {
