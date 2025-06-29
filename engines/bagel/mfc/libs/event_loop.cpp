@@ -81,19 +81,19 @@ bool EventLoop::GetMessage(MSG &msg) {
 				// For mouse messages, if the highlighted control
 				// changes, generate a WM_SETCURSOR event
 				if (isMouseMsg(ev)) {
-					CWnd *wnd = CWnd::FromHandle(hWnd);
-
-					if (wnd != _highlightedWin) {
-						// Add mouse leave event
-						if (_highlightedWin)
-							_highlightedWin->PostMessage(WM_MOUSELEAVE);
+					if (hWnd != _highlightedWin) {
+						// Add mouse leave event if win is still alive
+						CWnd *highlightedWin = CWnd::FromHandle(_highlightedWin);
+						if (highlightedWin)
+							highlightedWin->PostMessage(WM_MOUSELEAVE);
 
 						// Switch to newly highlighted control
-						_highlightedWin = CWnd::FromHandle(hWnd);
-						PostMessage(_highlightedWin,
-							WM_SETCURSOR, (WPARAM)hWnd,
-							MAKELPARAM(HTCLIENT, msg.message)
-						);
+						_highlightedWin = hWnd;
+						if (_highlightedWin)
+							PostMessage(_highlightedWin,
+								WM_SETCURSOR, (WPARAM)hWnd,
+								MAKELPARAM(HTCLIENT, msg.message)
+							);
 					}
 				}
 
@@ -124,7 +124,9 @@ void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
 	}
 
 	if (isJoystickMsg(ev)) {
-		if (_joystickWin) {
+		CWnd *joystickWin = CWnd::FromHandle(_joystickWin);
+
+		if (joystickWin) {
 			switch (ev.type) {
 			case Common::EVENT_JOYAXIS_MOTION:
 				if (ev.joystick.axis == 0)
@@ -132,7 +134,7 @@ void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
 				else
 					_joystickPos.y = ev.joystick.position;
 
-				_joystickWin->SendMessage(MM_JOY1MOVE, JOYSTICKID1,
+				joystickWin->SendMessage(MM_JOY1MOVE, JOYSTICKID1,
 					MAKELPARAM(_joystickPos.x, _joystickPos.y));
 				break;
 
@@ -262,7 +264,7 @@ BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
 
 BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam) {
-	assert(hWnd);
+	assert(hWnd && hWnd != (HWND)0xdddddddd);
 	_messages.push(MSG(hWnd, Msg, wParam, lParam));
 	return true;
 }
@@ -273,7 +275,9 @@ void EventLoop::TranslateMessage(LPMSG lpMsg) {
 
 void EventLoop::DispatchMessage(LPMSG lpMsg) {
 	CWnd *wnd = CWnd::FromHandle(lpMsg->hwnd);
-	assert(wnd);
+	if (!wnd)
+		// Recipient has been destroyed
+		return;
 
 	if (!_activeWindows.empty() && wnd == _activeWindows.top() &&
 			lpMsg->message == WM_CLOSE)
@@ -314,20 +318,22 @@ HWND EventLoop::GetCapture() const {
 }
 
 void EventLoop::SetFocus(CWnd *wnd) {
-	if (wnd != _focusedWin) {
-		CWnd *oldFocus = _focusedWin;
+	HWND oldFocus = _focusedWin;
+	HWND newFocus = wnd ? wnd->m_hWnd : nullptr;
 
-		if (_focusedWin) {
-			_focusedWin->_hasFocus = false;
-			_focusedWin->SendMessage(WM_KILLFOCUS,
-				wnd ? (WPARAM)wnd->m_hWnd : (WPARAM)nullptr);
+	if (newFocus != _focusedWin) {
+		CWnd *focusedWin = CWnd::FromHandle(_focusedWin);
+
+		if (focusedWin) {
+			focusedWin->_hasFocus = false;
+			focusedWin->SendMessage(WM_KILLFOCUS,
+				wnd ? (WPARAM)newFocus : (WPARAM)nullptr);
 		}
 
-		_focusedWin = wnd;
-		if (_focusedWin) {
-			_focusedWin->_hasFocus = true;
-			_focusedWin->SendMessage(WM_SETFOCUS,
-				oldFocus ? (WPARAM)oldFocus->m_hWnd : (WPARAM)nullptr);
+		_focusedWin = newFocus;
+		if (wnd) {
+			wnd->_hasFocus = true;
+			wnd->SendMessage(WM_SETFOCUS, (WPARAM)oldFocus);
 		}
 	}
 }
@@ -345,7 +351,7 @@ bool EventLoop::validateDestroyedWnd(HWND hWnd) {
 MMRESULT EventLoop::joySetCapture(HWND hwnd, UINT uJoyID,
 		UINT uPeriod, BOOL fChanged) {
 	assert(uJoyID == JOYSTICKID1);
-	_joystickWin = CWnd::FromHandle(hwnd);
+	_joystickWin = hwnd;
 	return JOYERR_NOERROR;
 }
 
@@ -399,14 +405,14 @@ void EventLoop::triggerTimers() {
 			// First update the timer for the next time
 			it->_nextTriggerTime = currTime + it->_interval;
 
-			// Handle trigger
 			if (it->_callback) {
 				// Call the callback
 				it->_callback(it->_hWnd, WM_TIMER, it->_idEvent, currTime);
 			} else {
 				// Otherwise, send timer event
 				CWnd *wnd = CWnd::FromHandle(it->_hWnd);
-				wnd->SendMessage(WM_TIMER, it->_idEvent, 0);
+				if (wnd)
+					wnd->SendMessage(WM_TIMER, it->_idEvent, 0);
 			}
 		}
 	}

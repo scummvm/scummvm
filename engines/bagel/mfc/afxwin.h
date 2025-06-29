@@ -1278,12 +1278,20 @@ public:
 	HFONT _hFont = nullptr;
 
 public:
-	static CWnd *FromHandle(HWND hWnd) {
-		return static_cast < CWnd * > (hWnd);
-	}
-	static CWnd *FromHandlePermanent(HWND hWnd) {
-		return static_cast < CWnd * > (hWnd);
-	}
+	/**
+	 * Gets the handle for the wnd from the handle map
+	 */
+	static CWnd *FromHandlePermanent(HWND hWnd);
+
+	/**
+	 * Gets the handle for the wnd. For ScummVM,
+	 * all window hWnd point to themselves. We just
+	 * use the handle map as a convenient way to
+	 * prevent messages being sent to destroyed windows.
+	 * As such, internally FromHandle uses the
+	 * FromHandlePermnanent function only
+	 */
+	static CWnd *FromHandle(HWND hWnd);
 
 public:
 	CWnd();
@@ -1700,6 +1708,7 @@ private:
 	Common::FSNode _currentDirectory;
 	CHandleMap<CDC> *m_pmapHDC = nullptr;
 	CHandleMap<CGdiObject> *m_pmapHGDIOBJ = nullptr;
+	CHandleMap<CWnd> *m_pmapWnd = nullptr;
 
 protected:
 	virtual BOOL InitApplication();
@@ -1760,6 +1769,7 @@ public:
 
 	CHandleMap<CGdiObject> *afxMapHGDIOBJ(BOOL bCreate = false);
 	CHandleMap<CDC> *afxMapHDC(BOOL bCreate = false);
+	CHandleMap<CWnd> *afxMapWnd(BOOL bCreate = false);
 	void AfxUnlockTempMaps();
 
 	/*== ScummVM added functions ==*/

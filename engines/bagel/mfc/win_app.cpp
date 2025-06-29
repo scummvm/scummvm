@@ -265,6 +265,13 @@ CHandleMap<CDC> *CWinApp::afxMapHDC(BOOL bCreate) {
 	return m_pmapHDC;
 }
 
+CHandleMap<CWnd> *CWinApp::afxMapWnd(BOOL bCreate) {
+	if (m_pmapWnd == nullptr && bCreate)
+		m_pmapWnd = new CHandleMap<CWnd>();
+
+	return m_pmapWnd;
+}
+
 void CWinApp::AfxUnlockTempMaps() {
 	if (m_pmapHDC)
 		m_pmapHDC->DeleteTemp();

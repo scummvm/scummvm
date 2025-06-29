@@ -57,10 +57,10 @@ class EventLoop {
 private:
 	CWnd *_mainWindow = nullptr;
 	Common::Stack<CWnd *> _activeWindows;
-	CWnd *_highlightedWin = nullptr;
-	CWnd *_captureWin = nullptr;
-	CWnd *_focusedWin = nullptr;
-	CWnd *_joystickWin = nullptr;
+	HWND _highlightedWin = nullptr;
+	HWND _captureWin = nullptr;
+	HWND _focusedWin = nullptr;
+	HWND _joystickWin = nullptr;
 	Libs::EventQueue _messages;
 	TimerList _timers;
 	int _timerIdCtr = 0;

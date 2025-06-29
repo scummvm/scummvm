@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/wingdi.h"
+#include "bagel/mfc/win_hand.h"
 #include "bagel/mfc/gfx/dialog_template.h"
 
 namespace Bagel {
@@ -37,7 +38,21 @@ BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 	ON_WM_SETCURSOR()
 END_MESSAGE_MAP()
 
+CWnd *CWnd::FromHandlePermanent(HWND hWnd) {
+	auto *pMap = AfxGetApp()->afxMapWnd();
+	assert(pMap);
+	return pMap->LookupPermanent(hWnd);
+}
+
+CWnd *CWnd::FromHandle(HWND hWnd) {
+	return FromHandlePermanent(hWnd);
+}
+
 CWnd::CWnd() : m_hWnd(this) {
+	auto *pMap = AfxGetApp()->afxMapWnd(true);
+	assert(pMap != nullptr);
+
+	pMap->SetPermanent(m_hWnd, this);
 }
 
 CWnd::~CWnd() {
@@ -49,6 +64,11 @@ CWnd::~CWnd() {
 	}
 
 	DestroyWindow();
+
+	// Remove wnd from the map
+	auto *pMap = AfxGetApp()->afxMapWnd();
+	assert(pMap != nullptr);
+	pMap->RemoveHandle(m_hWnd);
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
