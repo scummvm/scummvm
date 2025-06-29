@@ -374,7 +374,8 @@ uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uin
 // This is the data that is inside the 'CASt' resource
 // These functions (getCastDataSize() and writeCastData() default implementations, are not supposed to be called
 // If the data is modified in the castmember, we implement a custom getCastDataSize() and writeCastData() for that member
-// If it is not modified, then we write it as it is from the original source 
+// If it is not modified, then we write it as it is from the original source in the overridden 
+// writeCAStResource(Common::MemoryWriteStream, uint32, uint32) function which doesn't call these default functions
 uint32 CastMember::getCastDataSize() {
 	debug("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data size");
 	return _castDataSize;

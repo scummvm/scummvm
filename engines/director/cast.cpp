@@ -543,13 +543,13 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	writeStream->seek(offset);					// This will allow us to write cast config at any offset
 													// These offsets are only for Director Version 4 to Director version 6
                                                     // offsets
-	writeStream->writeUint16LE(_len);				// 0 
+	writeStream->writeUint16LE(_len);				// 0    // This will change 
 	writeStream->writeUint16LE(_fileVersion);	    // 2
 
 	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
 
 	writeStream->writeUint16LE(_castArrayStart);    // 12
-	writeStream->writeUint16LE(_castArrayEnd);      // 14
+	writeStream->writeUint16LE(_castArrayEnd);      // 14   // This will change
 
 	writeStream->writeByte(_readRate);              // 16
 	writeStream->writeByte(_lightswitch);           // 17
@@ -835,19 +835,28 @@ void Cast::saveCast() {
 
 		if (!_loadedCast->contains(id)) { 
             writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
-			Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), it);
+            Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), it);
             uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
             writeStream->writeUint32LE(size);
-			writeStream->writeStream(stream);
+            writeStream->writeStream(stream);
+
+            delete stream;
 		} else {
 			CastMember *target = _loadedCast->getVal(id);
             type = target->_type;
 
 			switch (target->_type) {
-			case (kCastPalette):
-			case (kCastBitmap):
-			case (kCastText):
-			case (kCastButton):
+            case kCastPalette:
+            case kCastBitmap:
+            case kCastText:
+            case kCastButton:
+            case kCastDigitalVideo:
+            case kCastFilmLoop:
+            case kCastMovie:
+            case kCastSound:
+            case kCastRichText:
+            case kCastLingoScript:
+            case kCastShape:
 				target->writeCAStResource(writeStream, 0);
 				break;
 			default:

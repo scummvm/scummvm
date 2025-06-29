@@ -22,7 +22,6 @@
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/substream.h"
-#include "common/macresman.h"
 #include "common/memstream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
@@ -977,15 +976,23 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 }
 
 uint32 BitmapCastMember::getCastDataSize() {
-	uint32 dataSize = 22;
+	// _pitch : 4 bytes
+	// _initialRect : 8 bytes
+	// _boundingRect : 8 bytes
+	// _regY : 2 bytes
+	// _regX : 2 bytes
+	// Total: 22 bytes 
+	// For Director 4 : 2 byte extra for casttype and flags (See Cast::loadCastData())
+	uint32 dataSize = 22 + 2;
 	
 	if (_bitsPerPixel != 0) {
 		dataSize += 6;
-		if (_cast->_version >= kFileVer500) {
-			dataSize += 2;
-		}
+		// if (_cast->_version >= kFileVer500) {
+		// 	dataSize += 2;		// Added two bytes for _clut.member
+		// 	dataSize -= 2;		// Removed two byte for castType (See Cast::loadCastData())
+		// }
 
-		if (_clut.member != 0) {
+		if (_flags2 != 0) {
 			dataSize += 16;
 		}
 	}
@@ -1001,6 +1008,32 @@ void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeUint16LE(_regY);
 	writeStream->writeUint16LE(_regX);
 	
+	if (_bitsPerPixel != 0) { 
+		writeStream->writeByte(0);		// Skip one byte (not stored)
+		writeStream->writeByte(_bitsPerPixel);
+
+		if (_cast->_version >= kFileVer500) {
+			if (_clut.castLib == _cast->_castLibID) {
+				writeStream->writeSint16LE(-1);
+			} else {
+				writeStream->writeSint16LE(_clut.castLib);
+			}
+		}
+
+		if (_clut.member > 0) {
+			writeStream->writeSint16LE(_clut.member);
+		} else {	// builtin palette
+			writeStream->writeSint16LE(_clut.member + 1);
+		}
+
+		if (_flags2 != 0) {
+			// Skipping 14 bytes because they are not stored in ScummVM Director
+			// May need to save in the future, see BitCastMember::BitCastMember constructor  
+			writeStream->write(0, 14);
+			writeStream->writeUint16LE(_flags2);	
+		}
+	}
+	// Ignoring the tail in the loading as well as saving
 }
 
 } // End of namespace Director

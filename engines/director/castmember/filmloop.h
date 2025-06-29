@@ -58,6 +58,9 @@ public:
 	Common::Point getRegistrationOffset() override;
 	Common::Point getRegistrationOffset(int16 currentWidth, int16 currentHeight) override;
 
+	uint32 getCastDataSize() override;
+	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+
 	bool _enableSound;
 	bool _looping;
 	bool _crop;
