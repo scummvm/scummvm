@@ -44,6 +44,13 @@ namespace Tetraedge {
 
 struct TetraedgeGameDescription;
 
+enum TETRAEDGEAction {
+	kActionNone,
+	kActionSkip,
+	kActionLoad,
+	kActionSave,
+};
+
 class Application;
 class Game;
 class TeCore;
@@ -179,7 +186,7 @@ public:
 	bool gameIsAmerzone() const { return _gameType == kAmerzone; }
 
 	void openConfigDialog();
-	bool onKeyUp(const Common::KeyState &state);
+	bool onActionEnd(const Common::CustomEventType &state);
 
 	static Common::StringArray splitString(const Common::String &text, char c);
 

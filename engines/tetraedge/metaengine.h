@@ -25,6 +25,10 @@
 #include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #define GAMEOPTION_CORRECT_MOVIE_ASPECT GUIO_GAMEOPTIONS1
 #define GAMEOPTION_RESTORE_SCENES GUIO_GAMEOPTIONS2
 
@@ -44,6 +48,8 @@ public:
 	 * Used by e.g. the launcher to determine whether to enable the Load button.
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 };
 
