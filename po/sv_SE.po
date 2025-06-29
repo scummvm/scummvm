@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-06-28 17:26+0000\n"
+"POT-Creation-Date: 2025-06-29 09:00+0000\n"
 "PO-Revision-Date: 2025-06-26 12:26+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4140,13 +4140,13 @@ msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Pekskärm'Tap-läge' - Hover (DPad-klick)"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
-#: backends/fs/android/android-saf-fs.cpp:803
-#: backends/fs/android/android-saf-fs.cpp:807
+#: backends/fs/android/android-saf-fs.cpp:804
+#: backends/fs/android/android-saf-fs.cpp:808
 msgid "Add a new folder"
 msgstr "Lägg till en ny mapp"
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
-#: backends/fs/android/android-saf-fs.cpp:919
+#: backends/fs/android/android-saf-fs.cpp:924
 msgid "Choose a new folder"
 msgstr "Välj en ny mapp"
 
@@ -4855,12 +4855,12 @@ msgstr "Förstoringsläge av. Återaktiverar dragläge..."
 msgid "Magnify Mode Off"
 msgstr "Förstoringsläge av"
 
-#: backends/platform/android/android.cpp:1056
+#: backends/platform/android/android.cpp:1065
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Be om hjälp"
 
-#: backends/platform/android/android.cpp:1059
+#: backends/platform/android/android.cpp:1068
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4901,13 +4901,13 @@ msgstr ""
 "svåra. Om du fastnar i ett spel, fundera på att kolla in en spelgenomgång. "
 "Vi önskar dig lycka till!\n"
 
-#: backends/platform/android/android.cpp:1068
+#: backends/platform/android/android.cpp:1077
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Pekkontroller"
 
-#: backends/platform/android/android.cpp:1071
+#: backends/platform/android/android.cpp:1080
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5042,13 +5042,13 @@ msgstr ""
 "  ![Tangentbordsikon](keyboard.png \"Tangentbordsikon\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1127
+#: backends/platform/android/android.cpp:1136
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Lägger till spel"
 
-#: backends/platform/android/android.cpp:1130
+#: backends/platform/android/android.cpp:1139
 msgid ""
 "## Adding Games \n"
 "\n"
