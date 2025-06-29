@@ -231,7 +231,9 @@ bool EventLoop::pollEvents(Common::Event &event) {
 	if (_quitFlag)
 		return false;
 
-	if (!g_system->getEventManager()->pollEvent(event)) {
+	if (!_events.empty()) {
+		event = _events.pop();
+	} else if (!g_system->getEventManager()->pollEvent(event)) {
 		// Brief pauses and screen updates
 		g_system->delayMillis(10);
 
@@ -431,6 +433,13 @@ void EventLoop::pause() {
 	// Pause and update screen
 	g_system->delayMillis(20);
 	AfxGetApp()->getScreen()->update();
+
+	// Do polling, and save the events for
+	// when we can process them. This allows
+	// the backend to keep the mouse cursor updated
+	Common::Event ev;
+	while (g_system->getEventManager()->pollEvent(ev))
+		_events.push(ev);
 }
 
 } // namespace Libs

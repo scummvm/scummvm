@@ -61,6 +61,7 @@ private:
 	HWND _captureWin = nullptr;
 	HWND _focusedWin = nullptr;
 	HWND _joystickWin = nullptr;
+	Common::Queue<Common::Event> _events;
 	Libs::EventQueue _messages;
 	TimerList _timers;
 	int _timerIdCtr = 0;
