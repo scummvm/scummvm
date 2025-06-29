@@ -47,6 +47,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/system_properties.h>
+#include <errno.h> // For remove error codes
 #include <time.h>
 #include <unistd.h>
 #include <dlfcn.h>
@@ -164,11 +165,19 @@ public:
 			return Common::kUnknownError;
 		}
 
-		bool ret = anode->remove();
-
+		int err = anode->remove();
 		delete anode;
 
-		return ret ? Common::kNoError : Common::kUnknownError;
+		switch (err) {
+		case 0:
+			return Common::kNoError;
+		case EACCES:
+			return Common::kWritePermissionDenied;
+		case ENOENT:
+			return Common::kPathDoesNotExist;
+		default:
+			return Common::kUnknownError;
+		}
 	}
 };
 

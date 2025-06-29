@@ -193,7 +193,7 @@ public:
 	Common::SeekableWriteStream *createWriteStream(bool atomic) override;
 	bool createDirectory() override;
 
-	bool remove() override;
+	int remove() override;
 
 	/**
 	 * Removes the SAF tree.
@@ -262,7 +262,7 @@ public:
 	Common::SeekableWriteStream *createWriteStream(bool atomic) override { return nullptr; }
 
 	bool createDirectory() override { return false; }
-	bool remove() override { return false; }
+	int remove() override;
 
 private:
 	void makeProxySAF() const;

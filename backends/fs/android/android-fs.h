@@ -29,7 +29,7 @@
 class AndroidFSNode {
 public:
 	virtual ~AndroidFSNode() {}
-	virtual bool remove() = 0;
+	virtual int remove() = 0;
 };
 
 #endif

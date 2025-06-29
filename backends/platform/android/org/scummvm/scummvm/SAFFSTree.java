@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
+import android.system.OsConstants;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
@@ -566,7 +567,7 @@ public class SAFFSTree {
 		return createWriteStream(node);
 	}
 
-	public boolean removeNode(SAFFSNode node) {
+	public int removeNode(SAFFSNode node) {
 		final ContentResolver resolver = _context.getContentResolver();
 		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 
@@ -577,10 +578,10 @@ public class SAFFSTree {
 
 			try {
 				if (!DocumentsContract.removeDocument(resolver, uri, parentUri)) {
-					return false;
+					return OsConstants.EIO;
 				}
 			} catch(FileNotFoundException e) {
-				return false;
+				return OsConstants.ENOENT;
 			} finally {
 				long endIO = System.currentTimeMillis();
 				reportIO(startIO, endIO);
@@ -590,27 +591,27 @@ public class SAFFSTree {
 
 			try {
 				if (!DocumentsContract.deleteDocument(resolver, uri)) {
-					return false;
+					return OsConstants.EIO;
 				}
 			} catch(FileNotFoundException e) {
-				return false;
+				return OsConstants.ENOENT;
 			} finally {
 				long endIO = System.currentTimeMillis();
 				reportIO(startIO, endIO);
 			}
 		} else {
-			return false;
+			return OsConstants.EPERM;
 		}
 
 		// Cleanup node
 		node._parent._dirty = true;
 		node.reset(null, null, null, 0);
 
-		return true;
+		return 0;
 	}
 
 	// This version is used by the C++ side
-	public boolean removeNode(long nodeId) {
+	public int removeNode(long nodeId) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
 

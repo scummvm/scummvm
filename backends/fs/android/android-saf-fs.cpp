@@ -42,6 +42,7 @@
 
 // Allow calling of close system call
 #include <unistd.h>
+#include <errno.h> // For remove error codes
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
@@ -132,7 +133,7 @@ void AndroidSAFFilesystemNode::initJNI() {
 	FIND_METHOD(, createFile, "(JLjava/lang/String;)" SAFFSNodeSig);
 	FIND_METHOD(, createReadStream, "(J)I");
 	FIND_METHOD(, createWriteStream, "(J)I");
-	FIND_METHOD(, removeNode, "(J)Z");
+	FIND_METHOD(, removeNode, "(J)I");
 	FIND_METHOD(, removeTree, "()V");
 
 	FIND_FIELD(, _treeName, "Ljava/lang/String;");
@@ -660,26 +661,26 @@ bool AndroidSAFFilesystemNode::createDirectory() {
 	return true;
 }
 
-bool AndroidSAFFilesystemNode::remove() {
+int AndroidSAFFilesystemNode::remove() {
 	assert(_safTree != nullptr);
 
 	if (!_safNode) {
-		return false;
+		return ENOENT;
 	}
 
 	if (!_safParent) {
 		// It's the root of the tree: we can't delete it
-		return false;
+		return EPERM;
 	}
 
 	if (isDirectory()) {
 		// Don't delete folders (yet?)
-		return false;
+		return EPERM;
 	}
 
 	JNIEnv *env = JNI::getEnv();
 
-	bool result = env->CallBooleanMethod(_safTree, _MID_removeNode, _safNode.get());
+	jint result = env->CallIntMethod(_safTree, _MID_removeNode, _safNode.get());
 
 	if (env->ExceptionCheck()) {
 		LOGE("SAFFSTree::removeNode failed");
@@ -687,11 +688,11 @@ bool AndroidSAFFilesystemNode::remove() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 
-		return false;
+		return EIO;
 	}
 
-	if (!result) {
-		return false;
+	if (result) {
+		return result;
 	}
 
 	_safNode.reset();
@@ -700,7 +701,7 @@ bool AndroidSAFFilesystemNode::remove() {
 
 	jobject jparent = _safParent.localRef(env);
 	if (!jparent)
-		return false;
+		return EIO;
 
 	AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(_safTree, jparent);
 	env->DeleteLocalRef(jparent);
@@ -715,7 +716,7 @@ bool AndroidSAFFilesystemNode::remove() {
 
 	delete parent;
 
-	return true;
+	return 0;
 }
 
 void AndroidSAFFilesystemNode::removeTree() {
@@ -906,6 +907,10 @@ bool AddSAFFakeNode::isWritable() const {
 	}
 
 	return _proxied->isWritable();
+}
+
+int AddSAFFakeNode::remove() {
+	return EPERM;
 }
 
 void AddSAFFakeNode::makeProxySAF() const {
