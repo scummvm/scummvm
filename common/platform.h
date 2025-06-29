@@ -38,8 +38,15 @@ namespace Common {
 class String;
 
 // Helper macros to get enum value for the platform
+#ifdef _MSC_VER
+// Extra level of indirection required to force macro expansion
+#define GET_ENUM_VAL_IMPL(val, hex) val
+#define GET_ENUM_VAL_EXPAND(x) GET_ENUM_VAL_IMPL x
+#define GET_ENUM_VAL(name) GET_ENUM_VAL_EXPAND((name))
+#else
 #define GET_ENUM_VAL_IMPL(val, hex) val
 #define GET_ENUM_VAL(name) GET_ENUM_VAL_IMPL(name)
+#endif
 
 // List of platforms values as int and string literals, to be used in platform enum and gui options
 #define kPlatformApple2GS_VAL 0x40, "\x40"
@@ -136,6 +143,9 @@ enum Platform : int8 {
 // Do not pollute namespace
 #undef GET_ENUM_VAL_IMPL
 #undef GET_ENUM_VAL
+#ifdef _MSC_VER
+#undef GET_ENUM_VAL_EXPAND
+#endif
 
 struct PlatformDescription {
 	const char *code;

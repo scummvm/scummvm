@@ -84,11 +84,18 @@
 #define GUIO_NOLANG          "\x33"
 
 // Helper macros to get string for the platform
-#define GUIO_GET_PLAT_STR_IMPL(val, hex) hex
-#define GUIO_GET_PLAT_STR(name) GUIO_GET_PLAT_STR_IMPL(name)
+#ifdef _MSC_VER
+// Extra level of indirection required to force macro expansion
+#define GET_PLAT_STR_IMPL(val, hex) hex
+#define GET_PLAT_STR_EXPAND(x) GET_PLAT_STR_IMPL x
+#define GET_PLAT_STR(name) GET_PLAT_STR_EXPAND((name))
+#else
+#define GET_PLAT_STR_IMPL(val, hex) hex
+#define GET_PLAT_STR(name) GET_PLAT_STR_IMPL(name)
+#endif
 
 // Get hex string literal for the given platform
-#define GUIO_PLATFORM(p) GUIO_GET_PLAT_STR(p##_VAL)
+#define GUIO_PLATFORM(p) GET_PLAT_STR(p##_VAL)
 
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
