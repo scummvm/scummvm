@@ -48,9 +48,9 @@ BEGIN_MESSAGE_MAP(CMainMenu, CBmpDialog)
 END_MESSAGE_MAP()
 
 CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette,
-                     UINT nFlags, FPFUNC pOptionsFunc, const char *pRulesFileName,
-                     const char *pWavFileName, LPGAMESTRUCT pGameParams)
-	: CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, ".\\ART\\OSCROLL.BMP") {
+        UINT nFlags, FPFUNC pOptionsFunc, const char *pRulesFileName,
+        const char *pWavFileName, LPGAMESTRUCT pGameParams)
+		: CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, ".\\ART\\OSCROLL.BMP") {
 	// Can't access null pointers
 	assert(pParent != nullptr);
 	assert(pPalette != nullptr);
@@ -185,10 +185,9 @@ BOOL CMainMenu::OnInitDialog() {
 		(*_quitButton).SetPalette(m_pPalette);                      // set the palette to use
 		(*_quitButton).SetControl(IDC_OPTIONS_QUIT, this);              // tie to the dialog control
 	}
-	// Disable the Rules button if told to do so
-	//
-	if (_flags & NO_RULES) {
 
+	// Disable the Rules button if told to do so
+	if (_flags & NO_RULES) {
 		pWndTemp = GetDlgItem(IDC_OPTIONS_RULES);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
@@ -196,9 +195,7 @@ BOOL CMainMenu::OnInitDialog() {
 	}
 
 	// Disable the NewGame button if told to do so
-	//
 	if (_flags & NO_NEWGAME) {
-
 		pWndTemp = GetDlgItem(IDC_OPTIONS_NEWGAME);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
@@ -206,9 +203,7 @@ BOOL CMainMenu::OnInitDialog() {
 	}
 
 	// Disable the Options button if told to do so
-	//
 	if (_flags & NO_OPTIONS) {
-
 		pWndTemp = GetDlgItem(IDC_OPTIONS_OPTIONS);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
@@ -216,9 +211,7 @@ BOOL CMainMenu::OnInitDialog() {
 	}
 
 	// Disable the Audio button if told to do so
-	//
 	if (_flags & NO_AUDIO) {
-
 		pWndTemp = GetDlgItem(IDC_OPTIONS_AUDIO);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
@@ -226,9 +219,7 @@ BOOL CMainMenu::OnInitDialog() {
 	}
 
 	// Disable the Return button if told to do so
-	//
 	if (_flags & NO_RETURN) {
-
 		pWndTemp = GetDlgItem(IDC_OPTIONS_RETURN);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
@@ -236,16 +227,14 @@ BOOL CMainMenu::OnInitDialog() {
 	}
 
 	// Disable the Return button if told to do so
-	//
 	if (_flags & NO_QUIT) {
-
 		pWndTemp = GetDlgItem(IDC_OPTIONS_QUIT);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
 			pWndTemp->EnableWindow(FALSE);
 	}
 
-	return (TRUE);  // return TRUE  unless focused on a control
+	return TRUE;
 }
 
 
@@ -265,7 +254,7 @@ void CMainMenu::OnClickedRules() {
 	// Load the rules
 	CRules  RulesDlg(this, _rulesFilename, m_pPalette, _wavFilename);
 
-	// display the rules
+	// Display the rules
 	RulesDlg.DoModal();
 
 	SetDefID(IDC_OPTIONS_OPTIONS);
@@ -276,12 +265,12 @@ void CMainMenu::OnClickedRules() {
 		SetDefID(IDC_OPTIONS_RETURN);
 		pControl = GetDlgItem(IDC_OPTIONS_RETURN);
 	}
+
 	GotoDlgCtrl(pControl);
 }
 
 void CMainMenu::OnClickedNewgame() {
-	// user has chosen to start a new game
-	//
+	// User has chosen to start a new game
 	ClearDialogImage();
 	EndDialog(IDC_OPTIONS_NEWGAME);
 }
@@ -299,8 +288,7 @@ void CMainMenu::OnClickedOptions() {
 	}
 	GotoDlgCtrl(pControl);
 
-	// call the user defined sub-options (we are the parent)
-	//
+	// Call the user defined sub-options (we are the parent)
 	if (_optionsFunction != nullptr)
 		(_optionsFunction)(this);
 }
@@ -316,6 +304,7 @@ void CMainMenu::OnClickedAudio() {
 		SetDefID(IDC_OPTIONS_RETURN);
 		pControl = GetDlgItem(IDC_OPTIONS_RETURN);
 	}
+
 	GotoDlgCtrl(pControl);
 
 	CAudioCfgDlg dlgAudioCfg(this, m_pPalette, IDD_AUDIOCFG);
@@ -327,14 +316,11 @@ void CMainMenu::OnClickedAudio() {
 }
 
 void CMainMenu::OnOK() {
-	//
 	// Don't do anything
-	//
 }
 
 void CMainMenu::OnCancel() {
-	// user is returning to Mini-game (only if Continue is not disabled)
-	//
+	// User is returning to Mini-game (only if Continue is not disabled)
 	if (!(_flags & NO_RETURN)) {
 		ClearDialogImage();
 		EndDialog(IDC_OPTIONS_RETURN);
@@ -342,15 +328,13 @@ void CMainMenu::OnCancel() {
 }
 
 void CMainMenu::OnClickedReturn() {
-	// user is returning to Mini-game
-	//
+	// User is returning to Mini-game
 	ClearDialogImage();
 	EndDialog(IDC_OPTIONS_RETURN);
 }
 
 void CMainMenu::OnClickedQuit() {
-	// user hit the Quit Button
-	//
+	// User hit the Quit Button
 	ClearDialogImage();
 	EndDialog(IDC_OPTIONS_QUIT);
 }
