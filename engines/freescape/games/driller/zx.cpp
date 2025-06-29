@@ -35,7 +35,7 @@ void DrillerEngine::loadAssetsZXFullGame() {
 	Common::File file;
 	file.open("driller.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find driller.zx.title");
 
@@ -43,7 +43,7 @@ void DrillerEngine::loadAssetsZXFullGame() {
 
 	file.open("driller.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find driller.zx.border");
 	file.close();

@@ -55,14 +55,14 @@ void DarkEngine::loadAssetsZXFullGame() {
 
 	file.open("darkside.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find darkside.zx.title");
 
 	file.close();
 	file.open("darkside.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find driller.zx.border");
 	file.close();
@@ -92,14 +92,14 @@ void DarkEngine::loadAssetsZXDemo() {
 
 	file.open("darkside.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find darkside.zx.title");
 
 	file.close();
 	file.open("darkside.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find driller.zx.border");
 	file.close();
