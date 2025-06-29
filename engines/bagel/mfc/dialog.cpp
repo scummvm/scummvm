@@ -99,12 +99,9 @@ int CDialog::DoModal() {
 		m_pParentWnd = AfxGetApp()->m_pMainWnd;
 
 	if (CreateDlgIndirect(lpDialogTemplate,
-		this /*m_pParentWnd*/, hInst)) {
-		auto *app = AfxGetApp();
-		app->SetActiveWindow(this);
-
+			this /*m_pParentWnd*/, hInst)) {
 		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_ACTIVE, false), 0);
-		app->runEventLoop();
+		AfxGetApp()->doModal(this);
 		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, false), 0);
 	}
 

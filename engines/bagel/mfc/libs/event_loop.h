@@ -123,6 +123,8 @@ public:
 	void doModal(CWnd *wnd) {
 		_activeWindows.push(wnd);
 		runEventLoop();
+		if (GetActiveWindow() == wnd)
+			_activeWindows.pop();
 	}
 
 	/**

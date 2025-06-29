@@ -46,8 +46,6 @@ void EventLoop::runEventLoop() {
 			DispatchMessage(&msg);
 		}
 	}
-
-	_activeWindows.pop();
 }
 
 void EventLoop::SetActiveWindow(CWnd *wnd) {
