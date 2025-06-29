@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-06-29 09:00+0000\n"
-"PO-Revision-Date: 2025-06-19 22:08+0000\n"
+"PO-Revision-Date: 2025-06-29 23:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.12.2\n"
 "X-Language-name: Català\n"
 
 #: audio/mac_plugin.cpp:30
@@ -6162,22 +6162,16 @@ msgid "Music volume up"
 msgstr "Apuja el volum de música"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:201
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle music on / off"
-msgstr "Activa/desactiva la música"
+msgstr "Activa / desactiva la música"
 
 #: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:206
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effects on / off"
-msgstr "Activa/desactiva els efectes de so"
+msgstr "Activa / desactiva els efectes de so"
 
 #: engines/agos/metaengine.cpp:278 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle fast mode on/off"
 msgid "Toggle fast mode on / off"
-msgstr "Activa/desactiva el mode ràpid"
+msgstr "Activa / desactiva el mode ràpid"
 
 #: engines/agos/metaengine.cpp:290
 msgid "Walk forward"
@@ -6232,10 +6226,8 @@ msgid "Show objects to interact"
 msgstr "Mostra els objectes a interactuar"
 
 #: engines/agos/metaengine.cpp:346
-#, fuzzy
-#| msgid "Toggle background sounds on/off"
 msgid "Toggle background sounds on / off"
-msgstr "Activa/desactiva els sons de fons"
+msgstr "Activa / desactiva els sons de fons"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:355
@@ -6243,10 +6235,8 @@ msgid "Switch characters"
 msgstr "Canvia els personatges"
 
 #: engines/agos/metaengine.cpp:361
-#, fuzzy
-#| msgid "Toggle hitbox names on/off"
 msgid "Toggle hitbox names on / off"
-msgstr "Activa/desactiva els noms dels punts d'interès"
+msgstr "Activa / desactiva els noms dels punts d'interès"
 
 #: engines/agos/metaengine.cpp:368
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6503,10 +6493,8 @@ msgid "Move right"
 msgstr "Mou a la dreta"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on/off"
 msgid "Toggle animation on / off"
-msgstr "Activa/desactiva l'animació"
+msgstr "Activa / desactiva l'animació"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
@@ -6799,10 +6787,8 @@ msgstr "Caminar / Veure / Parlar / Seleccionar / Disparar"
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:220
 #: engines/ultima/nuvie/metaengine.cpp:73
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle combat"
-msgstr "Mode de combat"
+msgstr "Activa / desactiva el combat"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
@@ -6822,18 +6808,14 @@ msgstr "Salta la seqüència de video"
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
 #: engines/sludge/keymapper_tables.h:535 engines/toltecs/metaengine.cpp:228
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip dialog"
-msgstr "Omet la línia de diàleg"
+msgstr "Omet el diàleg"
 
 #. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game options"
 msgstr "Opcions del joc"
 
@@ -6843,16 +6825,12 @@ msgstr "Opcions del joc"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
-#, fuzzy
-#| msgid "Open KIA Database"
 msgid "Open KIA database"
 msgstr "Obre la base de dades del KIA"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
-#, fuzzy
-#| msgid "Delete Selected Saved Game"
 msgid "Delete selected saved game"
 msgstr "Suprimeix la partida desada seleccionada"
 
@@ -6891,10 +6869,8 @@ msgstr "Desplaçament avall"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle clue privacy"
-msgstr "Commuta la privadesa de la pista"
+msgstr "Activa / desactiva la privadesa de la pista"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6945,8 +6921,6 @@ msgstr "Carrega la partida"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
-#, fuzzy
-#| msgid "Crime Scene Database"
 msgid "Crime scene database"
 msgstr "Base de dades de l'escena del crim"
 
@@ -6955,8 +6929,6 @@ msgstr "Base de dades de l'escena del crim"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
-#, fuzzy
-#| msgid "Suspect Database"
 msgid "Suspect database"
 msgstr "Base de dades de sospitosos"
 
@@ -6965,8 +6937,6 @@ msgstr "Base de dades de sospitosos"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
-#, fuzzy
-#| msgid "Clue Database"
 msgid "Clue database"
 msgstr "Base de dades de pistes"
 
@@ -7056,23 +7026,17 @@ msgstr "Assignacions de tecles del joc"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Exit/Skip"
 msgid "Exit / Skip"
-msgstr "Sortir/Salta"
+msgstr "Sortir / Salta"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game Info"
 msgid "Game info"
 msgstr "Informació del joc"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
-#, fuzzy
-#| msgid "Quit Prompt"
 msgid "Quit prompt"
 msgstr "Finestra de confirmació per sortir"
 
@@ -7083,87 +7047,61 @@ msgid "ALTered Item"
 msgstr "Element ALTerat"
 
 #: engines/cge/metaengine.cpp:257
-#, fuzzy
-#| msgid "Inventory Item 1 (Select/Deselect)"
 msgid "Inventory Item 1 (Select / Deselect)"
-msgstr "Element 1 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 1 de l'inventari (selecciona / desselecciona)"
 
 #: engines/cge/metaengine.cpp:262
-#, fuzzy
-#| msgid "Inventory Item 2 (Select/Deselect)"
 msgid "Inventory Item 2 (Select / Deselect)"
-msgstr "Element 2 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 2 de l'inventari (selecciona / desselecciona)"
 
 #: engines/cge/metaengine.cpp:267
-#, fuzzy
-#| msgid "Inventory Item 3 (Select/Deselect)"
 msgid "Inventory Item 3 (Select / Deselect)"
-msgstr "Element 3 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 3 de l'inventari (selecciona / desselecciona)"
 
 #: engines/cge/metaengine.cpp:272
-#, fuzzy
-#| msgid "Inventory Item 4 (Select/Deselect)"
 msgid "Inventory Item 4 (Select / Deselect)"
-msgstr "Element 4 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 4 de l'inventari (selecciona / desselecciona)"
 
 #: engines/cge/metaengine.cpp:277
-#, fuzzy
-#| msgid "Inventory Item 5 (Select/Deselect)"
 msgid "Inventory Item 5 (Select / Deselect)"
-msgstr "Element 5 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 5 de l'inventari (selecciona / desselecciona)"
 
 #: engines/cge/metaengine.cpp:282
-#, fuzzy
-#| msgid "Inventory Item 6 (Select/Deselect)"
 msgid "Inventory Item 6 (Select / Deselect)"
-msgstr "Element 6 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 6 de l'inventari (selecciona / desselecciona)"
 
 #: engines/cge/metaengine.cpp:287
-#, fuzzy
-#| msgid "Inventory Item 7 (Select/Deselect)"
 msgid "Inventory Item 7 (Select / Deselect)"
-msgstr "Element 7 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 7 de l'inventari (selecciona / desselecciona)"
 
 #: engines/cge/metaengine.cpp:292
-#, fuzzy
-#| msgid "Inventory Item 8 (Select/Deselect)"
 msgid "Inventory Item 8 (Select / Deselect)"
-msgstr "Element 8 de l'inventari (selecciona/desselecciona)"
+msgstr "Element 8 de l'inventari (selecciona / desselecciona)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
-#, fuzzy
-#| msgid "DEBUG: Access to Location 1"
 msgid "DEBUG: Access to location 1"
 msgstr "DEBUG: Accés a la ubicació 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-8"
 msgid "DEBUG: Access to locations 1-8"
 msgstr "DEBUG: Accés a les ubicacions 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:312
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-16"
 msgid "DEBUG: Access to locations 1-16"
 msgstr "DEBUG: Accés a les ubicacions 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:318
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-23"
 msgid "DEBUG: Access to locations 1-23"
 msgstr "DEBUG: Accés a les ubicacions 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:324
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-24"
 msgid "DEBUG: Access to locations 1-24"
 msgstr "DEBUG: Accés a les ubicacions 1-24"
 
@@ -7192,8 +7130,6 @@ msgstr ""
 
 #. I18N: This closes the Dialog/text box.
 #: engines/cge2/metaengine.cpp:229
-#, fuzzy
-#| msgid "Close the Dialogue box"
 msgid "Close the dialog box"
 msgstr "Tanca el quadre de diàleg"
 
@@ -7342,10 +7278,8 @@ msgstr ""
 "l'Operation Stealth des del començament utilitzant noves partides desades."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Talk/Interact"
 msgid "Talk / Interact"
-msgstr "Parla/Interactua"
+msgstr "Parla / Interactua"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -7475,14 +7409,10 @@ msgid "Action"
 msgstr "Acció"
 
 #: engines/darkseed/metaengine.cpp:81 engines/dragons/metaengine.cpp:142
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change command"
-msgstr "Canvia l'ordre"
+msgstr "Canvia la comanda"
 
 #: engines/darkseed/metaengine.cpp:87
-#, fuzzy
-#| msgid "Time Advance"
 msgid "Time advance"
 msgstr "Avanç del temps"
 
@@ -7545,10 +7475,8 @@ msgstr ""
 "dissenyat per a aquest mode"
 
 #: engines/draci/metaengine.cpp:153
-#, fuzzy
-#| msgid "Skip intro/Exit map or inventory"
 msgid "Skip intro / Exit map or inventory"
-msgstr "Omet el mapa d'entrada/sortida o l'inventari"
+msgstr "Omet el mapa d'entrada / sortida o l'inventari"
 
 #: engines/draci/metaengine.cpp:159
 msgid "Open map"
@@ -7611,20 +7539,14 @@ msgstr ""
 " Vegeu %s"
 
 #: engines/dragons/metaengine.cpp:207
-#, fuzzy
-#| msgid "Left Shoulder"
 msgid "Left shoulder"
 msgstr "Botó superior esquerre"
 
 #: engines/dragons/metaengine.cpp:213
-#, fuzzy
-#| msgid "Right Shoulder"
 msgid "Right shoulder"
 msgstr "Botó superior dret"
 
 #: engines/dragons/metaengine.cpp:219
-#, fuzzy
-#| msgid "Debug Graphics"
 msgid "Debug graphics"
 msgstr "Depura els gràfics"
 
@@ -8032,8 +7954,6 @@ msgid "Magic"
 msgstr "Màgia"
 
 #: engines/got/metaengine.cpp:64
-#, fuzzy
-#| msgid "Thor Dies"
 msgid "Thor dies"
 msgstr "Mort de Thor"
 
@@ -8046,10 +7966,8 @@ msgid "Menu / Skip"
 msgstr "Menú / Omet"
 
 #: engines/griffon/metaengine.cpp:159
-#, fuzzy
-#| msgid "Speed Up Cutscene"
 msgid "Speed up cutscene"
-msgstr "Accelera l'escena"
+msgstr "Acceleració de l'escena"
 
 #: engines/grim/grim.cpp:361
 #, c-format
@@ -8064,16 +7982,12 @@ msgstr ""
 "Encara voleu executar %s?"
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:611
-#, fuzzy
-#| msgid "Use/Talk"
 msgid "Use / Talk"
-msgstr "Utilitza/Parla"
+msgstr "Utilitza / Parla"
 
 #: engines/grim/grim.cpp:516 engines/grim/grim.cpp:616
-#, fuzzy
-#| msgid "Pick up/Put away"
 msgid "Pick up / Put away"
-msgstr "Agafa/Deixa"
+msgstr "Agafa / Deixa"
 
 #: engines/grim/grim.cpp:526 engines/grim/grim.cpp:626
 msgid "Skip dialog lines"
@@ -8081,29 +7995,21 @@ msgstr "Omet les línies de diàleg"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:584
-#, fuzzy
-#| msgid "Cycle Objects Up"
 msgid "Cycle objects up"
 msgstr "Recorre els objectes cap amunt"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:590
-#, fuzzy
-#| msgid "Cycle Objects Down"
 msgid "Cycle objects down"
 msgstr "Recorre els objectes cap avall"
 
 #: engines/grim/grim.cpp:601
-#, fuzzy
-#| msgid "Quick Room Exit"
 msgid "Quick room exit"
 msgstr "Sortida ràpida de la sala"
 
 #: engines/grim/grim.cpp:606
-#, fuzzy
-#| msgid "Examine/Look"
 msgid "Examine / Look"
-msgstr "Examina/Mira"
+msgstr "Examina / Mira"
 
 #: engines/grim/grim.cpp:1394
 msgid "Error: the game could not be saved."
@@ -8322,8 +8228,6 @@ msgstr "Activa el mode “Gore” quan estigui disponible"
 
 #: engines/hopkins/metaengine.cpp:248 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Options Menu"
 msgid "Options menu"
 msgstr "Menú d'opcions"
 
@@ -8336,26 +8240,18 @@ msgid "Backward"
 msgstr "Enrere"
 
 #: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Strafe left"
-msgstr "Mou a l'esquerra"
+msgstr "Desplaça't a l'esquerra"
 
 #: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Strafe right"
-msgstr "Mou a la dreta"
+msgstr "Desplaça't a la dreta"
 
 #: engines/hpl1/metaengine.cpp:80
-#, fuzzy
-#| msgid "Lean Left"
 msgid "Lean left"
 msgstr "Inclineu-vos a l'esquerra"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Lean Right"
 msgid "Lean right"
 msgstr "Inclineu-vos a la dreta"
 
@@ -8366,14 +8262,10 @@ msgid "Crouch"
 msgstr "Ajupir-se"
 
 #: engines/hpl1/metaengine.cpp:87
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Interact mode"
 msgstr "Mode d'interacció"
 
 #: engines/hpl1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Look Mode"
 msgid "Look mode"
 msgstr "Mode de vista"
 
@@ -8386,8 +8278,6 @@ msgid "Notebook"
 msgstr "Bloc de notes"
 
 #: engines/hpl1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Personal Notes"
 msgid "Personal notes"
 msgstr "Notes personals"
 
@@ -8533,8 +8423,6 @@ msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Side Step"
 msgid "Side step"
 msgstr "Pas lateral"
 
@@ -8706,66 +8594,46 @@ msgstr "Mou endavant"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backwards"
 msgstr "Mou enrere"
 
 #: engines/kyra/engine/eobcommon.cpp:375
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open / Close inventory"
-msgstr "Obre/Tanca l'inventari"
+msgstr "Obre / Tanca l'inventari"
 
 #: engines/kyra/engine/eobcommon.cpp:376
-#, fuzzy
-#| msgid "Switch Inventory/Character screen"
 msgid "Switch inventory / Character screen"
-msgstr "Commuta la pantalla d'inventari/personatge"
+msgstr "Commuta la pantalla d'inventari / personatge"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
 msgstr "Campa"
 
 #: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast spell"
 msgstr "Llança l'encanteri"
 
 #: engines/kyra/engine/eobcommon.cpp:381
-#, fuzzy
-#| msgid "Spell Level 1"
 msgid "Spell level 1"
 msgstr "Encanteri nivell 1"
 
 #: engines/kyra/engine/eobcommon.cpp:382
-#, fuzzy
-#| msgid "Spell Level 2"
 msgid "Spell level 2"
 msgstr "Encanteri nivell 2"
 
 #: engines/kyra/engine/eobcommon.cpp:383
-#, fuzzy
-#| msgid "Spell Level 3"
 msgid "Spell level 3"
 msgstr "Encanteri nivell 3"
 
 #: engines/kyra/engine/eobcommon.cpp:384
-#, fuzzy
-#| msgid "Spell Level 4"
 msgid "Spell level 4"
 msgstr "Encanteri nivell 4"
 
 #: engines/kyra/engine/eobcommon.cpp:385
-#, fuzzy
-#| msgid "Spell Level 5"
 msgid "Spell level 5"
 msgstr "Encanteri nivell 5"
 
 #: engines/kyra/engine/eobcommon.cpp:387
-#, fuzzy
-#| msgid "Spell Level 6"
 msgid "Spell level 6"
 msgstr "Encanteri nivell 6"
 
@@ -8792,24 +8660,18 @@ msgid "Show map"
 msgstr "Mostra el mapa"
 
 #: engines/kyra/engine/lol.cpp:512
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Slide left"
-msgstr "Mou a l'esquerra"
+msgstr "Llisca cap a l'esquerra"
 
 #: engines/kyra/engine/lol.cpp:513
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Slide right"
-msgstr "Mou a la dreta"
+msgstr "Llisca cap a la dreta"
 
 #: engines/kyra/engine/lol.cpp:517
 msgid "Options"
 msgstr "Opcions"
 
 #: engines/kyra/engine/lol.cpp:518
-#, fuzzy
-#| msgid "Choose Spell"
 msgid "Choose spell"
 msgstr "Escull l'encanteri"
 
@@ -9163,8 +9025,6 @@ msgstr "Lluita"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Quick Reference"
 msgid "Quick reference"
 msgstr "Referència ràpida"
 
@@ -9195,8 +9055,6 @@ msgid "Backwards"
 msgstr "Enrere"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Minimap"
 msgid "Toggle minimap"
 msgstr "Commuta el mapa en miniatura"
 
@@ -9643,10 +9501,8 @@ msgid "Nancy Drew - Maze"
 msgstr ""
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show/hide maze map"
 msgid "Show / hide maze map"
-msgstr "Mostra/oculta el mapa de laberint"
+msgstr "Mostra / oculta el mapa de laberint"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -9798,26 +9654,20 @@ msgstr ""
 "Informeu-ne a l'equip."
 
 #: engines/pegasus/pegasus.cpp:2724
-#, fuzzy
-#| msgid "Up/Zoom In/Move Forward/Open Doors"
 msgid "Up / Zoom in / Move forward / Open door"
-msgstr "Amunt/Amplia el zoom/Mou endavant/Obre les portes"
+msgstr "Amunt / Amplia el zoom / Mou endavant / Obre la porta"
 
 #: engines/pegasus/pegasus.cpp:2732
-#, fuzzy
-#| msgid "Down/Zoom Out"
 msgid "Down / Zoom out"
-msgstr "Avall/Allunya el zoom"
+msgstr "Avall / Allunya el zoom"
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
 msgstr "Acció/Selecció"
 
 #: engines/pegasus/pegasus.cpp:2774
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory tray"
-msgstr "Commuta la visualització de l'Inventari/Punts IQ"
+msgstr "Commuta la visualització de l'inventari"
 
 #: engines/pegasus/pegasus.cpp:2781
 #, fuzzy
@@ -11953,16 +11803,12 @@ msgid ""
 msgstr ""
 
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
-msgstr "Assignació de tecles de la pantalla de sortida"
+msgstr "Assignació de tecles de les escena cinemàtiques"
 
 #: engines/supernova/metaengine.cpp:220
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Improved mode keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles del mode millorat"
 
 #: engines/supernova/metaengine.cpp:221
 #, fuzzy
@@ -11983,10 +11829,8 @@ msgid "Perform default action"
 msgstr "Mira"
 
 #: engines/supernova/metaengine.cpp:244
-#, fuzzy
-#| msgid "Interpolation:"
 msgid "Instructions"
-msgstr "Interpolació:"
+msgstr "Instruccions"
 
 #: engines/supernova/metaengine.cpp:250
 #, fuzzy
@@ -12303,10 +12147,8 @@ msgid "Remote"
 msgstr "Suprimeix"
 
 #: engines/titanic/metaengine.cpp:254
-#, fuzzy
-#| msgid "Room:"
 msgid "Rooms"
-msgstr "Habitació:"
+msgstr "Habitacions"
 
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
@@ -12337,10 +12179,8 @@ msgid "Scroll to bottom"
 msgstr "Mou a la part inferior"
 
 #: engines/titanic/metaengine.cpp:291
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Translation"
-msgstr "Transicions:"
+msgstr "Traducció"
 
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
@@ -12667,10 +12507,8 @@ msgid "Aggressive behavior"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:264 engines/twine/metaengine.cpp:284
-#, fuzzy
-#| msgid "  or incorrect game behavior."
 msgid "Discreet behavior"
-msgstr "  comportament del joc incorrecte."
+msgstr "Comportament discret"
 
 #: engines/twine/metaengine.cpp:289
 #, fuzzy
@@ -13047,10 +12885,8 @@ msgid "Open door"
 msgstr "Obre l'Holomapa"
 
 #: engines/ultima/ultima4/metaengine.cpp:64
-#, fuzzy
-#| msgid "Password:"
 msgid "Pass"
-msgstr "Contrasenya:"
+msgstr "Passa"
 
 #: engines/ultima/ultima4/metaengine.cpp:65
 msgid "Peer"
@@ -13069,10 +12905,8 @@ msgid "Ready weapon"
 msgstr "Acció següent"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
-#, fuzzy
-#| msgid "Status:"
 msgid "Stats"
-msgstr "Estat:"
+msgstr "Estadístiques"
 
 #: engines/ultima/ultima4/metaengine.cpp:72
 msgid "Wear armor"
@@ -13083,10 +12917,8 @@ msgid "Yell"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:79
-#, fuzzy
-#| msgid "Speed:"
 msgid "Speed up"
-msgstr "Velocitat:"
+msgstr "Accelerar"
 
 #: engines/ultima/ultima4/metaengine.cpp:80
 #, fuzzy
@@ -13243,16 +13075,12 @@ msgid "Create transport"
 msgstr "Crea un directori"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Up level"
-msgstr "Nivell de depuració:"
+msgstr "Nivell d'augment"
 
 #: engines/ultima/ultima4/metaengine.cpp:122
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Down level"
-msgstr "Nivell de depuració:"
+msgstr "Nivell de disminució"
 
 #: engines/ultima/ultima4/metaengine.cpp:123
 msgid "Grant virtue"
