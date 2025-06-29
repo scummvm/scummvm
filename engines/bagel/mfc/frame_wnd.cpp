@@ -27,7 +27,14 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CFrameWnd, CWnd)
 BEGIN_MESSAGE_MAP(CFrameWnd, CWnd)
+ON_WM_CLOSE()
 END_MESSAGE_MAP()
+
+void CFrameWnd::OnClose() {
+	if (this == AfxGetApp()->m_pMainWnd) {
+		AfxGetApp()->PopActiveWindow();
+	}
+}
 
 HMENU CFrameWnd::GetMenu() const {
 	error("TODO: CFrameWnd::GetMenu");

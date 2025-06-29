@@ -115,6 +115,7 @@ public:
 
 	void runEventLoop();
 	void SetActiveWindow(CWnd *wnd);
+	void PopActiveWindow();
 	CWnd *GetActiveWindow() const {
 		return _activeWindows.empty() ? nullptr :
 			_activeWindows.top();

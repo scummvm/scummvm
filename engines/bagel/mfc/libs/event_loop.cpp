@@ -46,12 +46,22 @@ void EventLoop::runEventLoop() {
 			DispatchMessage(&msg);
 		}
 	}
+
+	// If there's a remaining window, post a new
+	//  message to refresh it
+	CWnd *wnd = GetActiveWindow();
+	if (wnd)
+		wnd->Invalidate();
 }
 
 void EventLoop::SetActiveWindow(CWnd *wnd) {
 	if (_activeWindows.empty())
 		_mainWindow = wnd;
 	_activeWindows.push(wnd);
+}
+
+void EventLoop::PopActiveWindow() {
+	_activeWindows.pop();
 }
 
 bool EventLoop::GetMessage(MSG &msg) {
@@ -276,10 +286,6 @@ void EventLoop::DispatchMessage(LPMSG lpMsg) {
 	if (!wnd)
 		// Recipient has been destroyed
 		return;
-
-	if (!_activeWindows.empty() && wnd == _activeWindows.top() &&
-			lpMsg->message == WM_CLOSE)
-		_activeWindows.pop();
 
 	wnd->SendMessage(lpMsg->message,
 		lpMsg->wParam, lpMsg->lParam);

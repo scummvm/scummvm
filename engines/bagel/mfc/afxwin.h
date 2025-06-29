@@ -1425,6 +1425,8 @@ protected:
 	    BOOL bStretch = TRUE
 	);
 
+	void OnClose();
+
 	DECLARE_MESSAGE_MAP()
 
 public:

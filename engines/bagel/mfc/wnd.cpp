@@ -244,13 +244,10 @@ void CWnd::DestroyWindow() {
 	if (app->GetFocus() == this)
 		app->SetFocus(nullptr);
 
-	if (IsActiveWindow())
+	if (IsActiveWindow()) {
 		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, false), 0);
-
-	if (this == AfxGetApp()->m_pMainWnd)
-		// Remove the window from the app,
-		// signifying that it can close
-		app->m_pMainWnd = nullptr;
+		app->PopActiveWindow();
+	}
 
 	// Flush any other pending events
 	MSG msg;

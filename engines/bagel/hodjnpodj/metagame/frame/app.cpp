@@ -85,9 +85,7 @@ int CTheApp::ExitInstance() {
 		hMetaInst = nullptr;
 	}
 
-	if (m_pMainWnd != nullptr)
-		m_pMainWnd->SendMessage(WM_CLOSE);
-
+	delete m_pMainWnd;
 	return 0;
 }
 
