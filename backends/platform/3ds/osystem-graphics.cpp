@@ -746,11 +746,11 @@ void OSystem_3DS::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	}
 }
 
-int16 OSystem_3DS::getOverlayHeight() {
+int16 OSystem_3DS::getOverlayHeight() const {
 	return 240;
 }
 
-int16 OSystem_3DS::getOverlayWidth() {
+int16 OSystem_3DS::getOverlayWidth() const {
 	return _screen == kScreenTop ? 400 : 320;
 }
 

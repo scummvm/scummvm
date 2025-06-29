@@ -81,6 +81,7 @@ int JNI::egl_bits_per_pixel = 0;
 bool JNI::_ready_for_events = 0;
 bool JNI::virt_keyboard_state = false;
 int32 JNI::gestures_insets[4] = { 0, 0, 0, 0 };
+int32 JNI::cutout_insets[4] = { 0, 0, 0, 0 };
 
 jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
@@ -980,8 +981,8 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 void JNI::systemInsetsUpdated(JNIEnv *env, jobject self, jintArray gestureInsets, jintArray systemInsets, jintArray cutoutInsets) {
 	assert(env->GetArrayLength(gestureInsets) == ARRAYSIZE(gestures_insets));
 
-	// TODO: handle systemInsets and cutoutInsets
 	env->GetIntArrayRegion(gestureInsets, 0, ARRAYSIZE(gestures_insets), gestures_insets);
+	env->GetIntArrayRegion(cutoutInsets, 0, ARRAYSIZE(cutout_insets), cutout_insets);
 }
 
 jstring JNI::getNativeVersionInfo(JNIEnv *env, jobject self) {

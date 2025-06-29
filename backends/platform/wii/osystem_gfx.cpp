@@ -651,11 +651,11 @@ void OSystem_Wii::copyRectToOverlay(const void *buf, int pitch, int x,
 	_overlayDirty = true;
 }
 
-int16 OSystem_Wii::getOverlayWidth() {
+int16 OSystem_Wii::getOverlayWidth() const {
 	return _overlayWidth;
 }
 
-int16 OSystem_Wii::getOverlayHeight() {
+int16 OSystem_Wii::getOverlayHeight() const {
 	return _overlayHeight;
 }
 
