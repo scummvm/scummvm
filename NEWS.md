@@ -20,6 +20,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dog-n-cat: In the Footsteps of Unprecedented Beasts.
    - Added support for Dog-n-cat: Island of Dr Ratiarty.
    - Added support for Out of this World (Another World).
+   - Added support for SLUDGE-based games, such as Out of Order,
+     The Secret of Tremendous Corporation, Robin's Rescue and
+     others, 12 titles so far.
 
  Drascula:
    - Fixed displaying accented characters.
