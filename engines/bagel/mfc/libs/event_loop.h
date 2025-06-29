@@ -197,6 +197,7 @@ public:
 		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD));
 	BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
 
+	void pause();
 };
 
 } // namespace Libs

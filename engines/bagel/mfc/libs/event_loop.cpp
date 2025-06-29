@@ -427,6 +427,11 @@ EventLoop::TimerEntry::TimerEntry(HWND hWnd, UINT_PTR idEvent,
 	_nextTriggerTime = g_system->getMillis() + interval;
 }
 
+void EventLoop::pause() {
+	// Pause and update screen
+	g_system->delayMillis(20);
+	AfxGetApp()->getScreen()->update();
+}
 
 } // namespace Libs
 } // namespace MFC

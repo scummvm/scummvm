@@ -912,6 +912,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 	POINT   Delta;
 	POINT   Step;
 	UINT    nBmpID = IDB_HODJ_RIGHT;
+	auto *app = AfxGetApp();
 
 	pDC = GetDC();
 
@@ -952,7 +953,6 @@ void CMainWindow::MovePlayer(CPoint point) {
 			                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2);  //...in new direction
 
 		while (!bCollision) {
-
 			NewPosition.Offset(Step);
 
 			if (_mazeTile[NewPosition.x][NewPosition.y].m_nWall == PATH ||       // Either a pathway
@@ -963,16 +963,19 @@ void CMainWindow::MovePlayer(CPoint point) {
 				x = (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER;                  // Get player's position
 				y = (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2;   //...in screen coords
 				for (i = 0; i < 4; i++) {                                       // Go through three cels
+					app->pause();
 					x += Step.x * i * (SQ_SIZE_X / 4);                          //...per tile moved
 					y += Step.y * i * (SQ_SIZE_Y / 4);
 					if (_playerSprite != nullptr)
 						(*_playerSprite).PaintSprite(pDC, x, y);                // Update PLAYER
 				} // end for
+
 				_playerPos.x = NewPosition.x;
 				_playerPos.y = NewPosition.y;
 				if (_playerSprite != nullptr)                                      // Refresh PLAYER
 					(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
-					                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2);  //...in new direction
+						(_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2);  //...in new direction
+				app->pause();
 			} // end if
 
 			if ((_mazeTile[NewPosition.x][NewPosition.y].m_bHidden) &&
@@ -1058,6 +1061,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 			if ((NewPosition.x == Hit.x) && (NewPosition.y == Hit.y))
 				bCollision = TRUE;
 		} // end while
+
 		GetNewCursor();
 	} // end if
 
