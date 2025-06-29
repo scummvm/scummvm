@@ -57,15 +57,15 @@ CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette,
 	assert(pRulesFileName != nullptr);
 
 	// Inits
-	m_pRulesFileName = pRulesFileName;
-	m_pWavFileName = pWavFileName;
-	m_nFlags = nFlags;
-	m_pGameParams = pGameParams;
+	_rulesFilename = pRulesFileName;
+	_wavFilename = pWavFileName;
+	_flags = nFlags;
+	_gameParams = pGameParams;
 
-	if (!(m_nFlags & NO_OPTIONS)) {
+	if (!(_flags & NO_OPTIONS)) {
 		assert(pOptionsFunc != nullptr);
 	}
-	m_pOptionsFunction = pOptionsFunc;
+	_optionsFunction = pOptionsFunc;
 
 	//{{AFX_DATA_INIT(CMainMenu)
 	// NOTE: the ClassWizard will add member initialization here
@@ -187,7 +187,7 @@ BOOL CMainMenu::OnInitDialog() {
 	}
 	// Disable the Rules button if told to do so
 	//
-	if (m_nFlags & NO_RULES) {
+	if (_flags & NO_RULES) {
 
 		pWndTemp = GetDlgItem(IDC_OPTIONS_RULES);
 		assert(pWndTemp != nullptr);
@@ -197,7 +197,7 @@ BOOL CMainMenu::OnInitDialog() {
 
 	// Disable the NewGame button if told to do so
 	//
-	if (m_nFlags & NO_NEWGAME) {
+	if (_flags & NO_NEWGAME) {
 
 		pWndTemp = GetDlgItem(IDC_OPTIONS_NEWGAME);
 		assert(pWndTemp != nullptr);
@@ -207,7 +207,7 @@ BOOL CMainMenu::OnInitDialog() {
 
 	// Disable the Options button if told to do so
 	//
-	if (m_nFlags & NO_OPTIONS) {
+	if (_flags & NO_OPTIONS) {
 
 		pWndTemp = GetDlgItem(IDC_OPTIONS_OPTIONS);
 		assert(pWndTemp != nullptr);
@@ -217,7 +217,7 @@ BOOL CMainMenu::OnInitDialog() {
 
 	// Disable the Audio button if told to do so
 	//
-	if (m_nFlags & NO_AUDIO) {
+	if (_flags & NO_AUDIO) {
 
 		pWndTemp = GetDlgItem(IDC_OPTIONS_AUDIO);
 		assert(pWndTemp != nullptr);
@@ -227,7 +227,7 @@ BOOL CMainMenu::OnInitDialog() {
 
 	// Disable the Return button if told to do so
 	//
-	if (m_nFlags & NO_RETURN) {
+	if (_flags & NO_RETURN) {
 
 		pWndTemp = GetDlgItem(IDC_OPTIONS_RETURN);
 		assert(pWndTemp != nullptr);
@@ -237,7 +237,7 @@ BOOL CMainMenu::OnInitDialog() {
 
 	// Disable the Return button if told to do so
 	//
-	if (m_nFlags & NO_QUIT) {
+	if (_flags & NO_QUIT) {
 
 		pWndTemp = GetDlgItem(IDC_OPTIONS_QUIT);
 		assert(pWndTemp != nullptr);
@@ -263,13 +263,13 @@ void CMainMenu::OnClickedRules() {
 	CWnd *pControl;
 
 	// Load the rules
-	CRules  RulesDlg(this, m_pRulesFileName, m_pPalette, m_pWavFileName);
+	CRules  RulesDlg(this, _rulesFilename, m_pPalette, _wavFilename);
 
 	// display the rules
 	RulesDlg.DoModal();
 
 	SetDefID(IDC_OPTIONS_OPTIONS);
-	if (m_nFlags & NO_RETURN) {
+	if (_flags & NO_RETURN) {
 		SetDefID(IDC_OPTIONS_NEWGAME);
 		pControl = GetDlgItem(IDC_OPTIONS_NEWGAME);
 	} else {
@@ -290,7 +290,7 @@ void CMainMenu::OnClickedOptions() {
 	CWnd *pControl;
 
 	SetDefID(IDC_OPTIONS_RULES);
-	if (m_nFlags & NO_RETURN) {
+	if (_flags & NO_RETURN) {
 		SetDefID(IDC_OPTIONS_NEWGAME);
 		pControl = GetDlgItem(IDC_OPTIONS_NEWGAME);
 	} else {
@@ -301,15 +301,15 @@ void CMainMenu::OnClickedOptions() {
 
 	// call the user defined sub-options (we are the parent)
 	//
-	if (m_pOptionsFunction != nullptr)
-		(m_pOptionsFunction)(this);
+	if (_optionsFunction != nullptr)
+		(_optionsFunction)(this);
 }
 
 void CMainMenu::OnClickedAudio() {
 	CWnd *pControl;
 
 	SetDefID(IDC_OPTIONS_RULES);
-	if (m_nFlags & NO_RETURN) {
+	if (_flags & NO_RETURN) {
 		SetDefID(IDC_OPTIONS_NEWGAME);
 		pControl = GetDlgItem(IDC_OPTIONS_NEWGAME);
 	} else {
@@ -320,9 +320,9 @@ void CMainMenu::OnClickedAudio() {
 
 	CAudioCfgDlg dlgAudioCfg(this, m_pPalette, IDD_AUDIOCFG);
 
-	if (m_pGameParams != nullptr) {
-		m_pGameParams->bMusicEnabled = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
-		m_pGameParams->bSoundEffectsEnabled = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
+	if (_gameParams != nullptr) {
+		_gameParams->bMusicEnabled = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
+		_gameParams->bSoundEffectsEnabled = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
 	}
 }
 
@@ -335,7 +335,7 @@ void CMainMenu::OnOK() {
 void CMainMenu::OnCancel() {
 	// user is returning to Mini-game (only if Continue is not disabled)
 	//
-	if (!(m_nFlags & NO_RETURN)) {
+	if (!(_flags & NO_RETURN)) {
 		ClearDialogImage();
 		EndDialog(IDC_OPTIONS_RETURN);
 	}

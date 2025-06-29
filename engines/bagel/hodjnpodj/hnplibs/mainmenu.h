@@ -72,11 +72,11 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	FPFUNC          m_pOptionsFunction = nullptr;
-	const char     *m_pRulesFileName = nullptr;
-	const char     *m_pWavFileName = nullptr;
-	int             m_nFlags = 0;
-	LPGAMESTRUCT    m_pGameParams = nullptr;
+	FPFUNC _optionsFunction = nullptr;
+	const char *_rulesFilename = nullptr;
+	const char *_wavFilename = nullptr;
+	uint _flags = 0;
+	LPGAMESTRUCT _gameParams = nullptr;
 
 private:
 	CColorButton *_hypeButton = nullptr;
