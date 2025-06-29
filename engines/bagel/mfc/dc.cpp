@@ -538,8 +538,8 @@ BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 CDC::Impl::Impl() {
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	_defaultBitmap.create(1, 1, format);
+	_defaultBitmap.CreateBitmap(1, 1, 1, 8, nullptr);
+	_bitmap = _defaultBitmap._bitmap;
 
 	// Defaults
 	CWinApp *app = AfxGetApp();
@@ -553,8 +553,8 @@ CDC::Impl::Impl(HDC srcDc) {
 
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	_defaultBitmap.create(1, 1, format);
+	_defaultBitmap.CreateBitmap(1, 1, 1, 8, nullptr);
+	_bitmap = _defaultBitmap._bitmap;
 
 	// Defaults
 	CWinApp *app = AfxGetApp();
@@ -616,14 +616,14 @@ const Graphics::PixelFormat &CDC::Impl::getFormat() const {
 }
 
 void CDC::Impl::setFormat(const Graphics::PixelFormat &format) {
-	_defaultBitmap.create(1, 1, format);
-	_bitmap = &_defaultBitmap;
+	_defaultBitmap._bitmap->create(1, 1, format);
+	_bitmap = _defaultBitmap._bitmap;
 }
 
 void CDC::Impl::setScreenRect() {
 	Graphics::Screen *scr = AfxGetApp()->getScreen();
-	_defaultBitmap.create(*scr, Common::Rect(0, 0, scr->w, scr->h));
-	_bitmap = &_defaultBitmap;
+	_defaultBitmap._bitmap->create(*scr, Common::Rect(0, 0, scr->w, scr->h));
+	_bitmap = _defaultBitmap._bitmap;
 }
 
 void CDC::Impl::setScreenRect(const Common::Rect &r) {
@@ -631,8 +631,8 @@ void CDC::Impl::setScreenRect(const Common::Rect &r) {
 	assert(r.left >= 0 && r.top >= 0 &&
 		r.right <= scr->w && r.bottom <= scr->h);
 
-	_defaultBitmap.create(*scr, r);
-	_bitmap = &_defaultBitmap;
+	_defaultBitmap._bitmap->create(*scr, r);
+	_bitmap = _defaultBitmap._bitmap;
 }
 
 HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {

@@ -675,7 +675,7 @@ protected:
 public:
 	class Impl : public Gfx::TextRender {
 	private:
-		CBitmap::Impl _defaultBitmap;
+		CBitmap _defaultBitmap;
 		Common::Point _linePos;
 		COLORREF _bkColor = RGB(255, 255, 255);
 		int _bkMode = TRANSPARENT;
@@ -686,7 +686,7 @@ public:
 		uint getBrushColor() const;
 
 	public:
-		HBITMAP _bitmap = &_defaultBitmap;
+		HBITMAP _bitmap;
 		HPEN _pen;
 		HFONT _font;
 		HBRUSH _brush;
