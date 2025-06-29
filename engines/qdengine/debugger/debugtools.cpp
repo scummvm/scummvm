@@ -343,7 +343,9 @@ void displayTree(FileTree *tree) {
 		return;
 	}
 
-	if (ImGui::TreeNode((void*)(intptr_t)(tree->id), tree->name.c_str())) {
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DrawLinesFull;
+
+	if (ImGui::TreeNodeEx((void*)(intptr_t)(tree->id), base_flags, tree->name.c_str())) {
 		for (auto &it : tree->children)
 			displayTree(it);
 
