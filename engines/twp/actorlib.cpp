@@ -512,7 +512,7 @@ static SQInteger actorPosY(HSQUIRRELVM v) {
 // Plays the specified animation from the player's costume JSON filename.
 // If YES loop the animation. Default is NO.
 static SQInteger actorPlayAnimation(HSQUIRRELVM v) {
-	Common::SharedPtr<Object> actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	Common::String animation;
