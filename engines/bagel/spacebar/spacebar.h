@@ -54,11 +54,16 @@ public:
 	CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS];
 	const CBofRect viewPortRect = CBofRect(80, 10, 559, 369);
 	CBofRect viewRect;
+	Graphics::Screen *_screen = nullptr;
 
 public:
 	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~SpaceBarEngine() override;
 	void initializePath(const Common::FSNode &gamePath) override;
+
+	Graphics::Screen *getScreen() const override {
+		return _screen;
+	}
 
 	bool shouldQuit() const override {
 		return BagelEngine::shouldQuit();

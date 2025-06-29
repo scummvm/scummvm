@@ -43,18 +43,13 @@ public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~HodjNPodjEngine() override;
 
+	Graphics::Screen *getScreen() const override;
+
 	/**
 	 * Gets a random number
 	 */
 	uint32 getRandomNumber(uint maxNum) {
 		return BagelEngine::getRandomNumber(maxNum);
-	}
-
-	/**
-	 * Returns the underlying screen
-	 */
-	Graphics::Screen *getScreen() const {
-		return _screen;
 	}
 
 	bool hasFeature(EngineFeature f) const override {

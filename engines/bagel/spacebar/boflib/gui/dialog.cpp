@@ -98,7 +98,7 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 	_cRect = stRect;
 
 	delete _surface;
-	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
+	_surface = new Graphics::ManagedSurface(*g_engine->getScreen(), stRect);
 
 	return _errCode;
 }
@@ -271,7 +271,7 @@ int CBofDialog::doModal() {
 		handleEvents();
 
 		limiter.delayBeforeSwap();
-		g_engine->_screen->update();
+		g_engine->getScreen()->update();
 		limiter.startFrame();
 	}
 

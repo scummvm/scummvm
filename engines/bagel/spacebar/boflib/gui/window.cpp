@@ -144,7 +144,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 		                 pParent->getWindowRect().top);
 
 	delete _surface;
-	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
+	_surface = new Graphics::ManagedSurface(*g_engine->getScreen(), stRect);
 
 	if (!errorOccurred()) {
 		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
@@ -254,7 +254,7 @@ void CBofWindow::move(const int x, const int y, bool bRepaint) {
 
 	// Recreate the surface at the new screen position
 	delete _surface;
-	_surface = new Graphics::ManagedSurface(*g_engine->_screen, _cWindowRect);
+	_surface = new Graphics::ManagedSurface(*g_engine->getScreen(), _cWindowRect);
 }
 
 void CBofWindow::reSize(CBofRect *pRect, bool bRepaint) {
@@ -268,7 +268,7 @@ void CBofWindow::reSize(CBofRect *pRect, bool bRepaint) {
 
 	// Recreate the surface at the new screen position
 	delete _surface;
-	_surface = new Graphics::ManagedSurface(*g_engine->_screen, _cWindowRect);
+	_surface = new Graphics::ManagedSurface(*g_engine->getScreen(), _cWindowRect);
 }
 
 void CBofWindow::select() {

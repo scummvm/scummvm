@@ -46,7 +46,6 @@ HodjNPodjEngine::~HodjNPodjEngine() {
 
 Common::Error HodjNPodjEngine::run() {
 	initGraphics(GAME_WIDTH, GAME_HEIGHT);
-	_screen = new Graphics::Screen();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -68,6 +67,10 @@ Common::Error HodjNPodjEngine::run() {
 	app.Run();
 
 	return Common::kNoError;
+}
+
+Graphics::Screen *HodjNPodjEngine::getScreen() const {
+	return AfxGetApp()->getScreen();
 }
 
 Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {

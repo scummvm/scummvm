@@ -126,11 +126,11 @@ ErrorCode CBofApp::runApp() {
 			if (_consoleVideo->needsUpdate()) {
 				const Graphics::Surface *s = _consoleVideo->decodeNextFrame();
 				Graphics::Palette pal(_consoleVideo->getPalette(), 256);
-				g_engine->_screen->blitFrom(*s, Common::Point(0, 0), &pal);
+				g_engine->getScreen()->blitFrom(*s, Common::Point(0, 0), &pal);
 			}
 
 			limiter.delayBeforeSwap();
-			g_engine->_screen->update();
+			g_engine->getScreen()->update();
 			limiter.startFrame();
 			continue;
 
@@ -171,7 +171,7 @@ ErrorCode CBofApp::runApp() {
 		_pMainWnd->handleEvents();
 
 		limiter.delayBeforeSwap();
-		g_engine->_screen->update();
+		g_engine->getScreen()->update();
 		limiter.startFrame();
 	}
 

@@ -38,7 +38,6 @@ private:
 	Common::RandomSource _randomSource;
 
 public:
-	Graphics::Screen *_screen = nullptr;
 	bool _useOriginalSaveLoad = false;
 	SpaceBar::CBagMasterWin *_masterWin = nullptr;
 	CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
@@ -97,6 +96,8 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savesExist() const;
+
+	virtual Graphics::Screen *getScreen() const = 0;
 
 	void errorDialog(const char *msg) const;
 

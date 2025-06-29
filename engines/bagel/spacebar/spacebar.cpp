@@ -140,6 +140,7 @@ SpaceBarEngine::~SpaceBarEngine() {
 	CBagStorageDev::shutdown();
 	CMainWindow::shutdown();
 
+	delete _screen;
 	g_engine = nullptr;
 }
 

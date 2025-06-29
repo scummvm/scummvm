@@ -45,7 +45,7 @@ bool EventLoop::frame() {
 	// Update the screen
 	if (_mode == FORCE_REPAINT && g_engine->isSpaceBar())
 		SpaceBar::CBagMasterWin::forcePaintScreen();
-	g_engine->_screen->update();
+	g_engine->getScreen()->update();
 
 	_limiter.startFrame();
 
