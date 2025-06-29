@@ -949,56 +949,7 @@ bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d
 	return false;
 }
 
-uint32 TextCastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castIndex) {
-	uint32 castResourceSize = getCastResourceSize(version);
-
-	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
-	writeStream->writeUint32LE(castResourceSize);		// this is excluding the 'CASt' header and the size itself (- 8 bytes)
-
-	uint32 castDataToWrite = getDataSize();
-	uint32 castInfoToWrite = getInfoSize();
-
-	if (version >= kFileVer400 && version < kFileVer500) {
-		writeStream->writeUint16BE(castDataToWrite);
-		writeStream->writeUint32BE(castInfoToWrite);
-		writeStream->writeByte(_castType);
-		
-		if (_flags1 != 0xFF) {					// In case of TextCastMember, this should be true
-			writeStream->writeByte(_flags1);
-		}
-
-		// For cast members with dedicated resources for data, the castDataToWrite is zero
-		// So for Palette Cast Member, the castDataToWrite is zero because it has a dedicated 'CLUT' resource for data
-		if (castDataToWrite) {
-		}
-
-		if (castInfoToWrite) {
-			_cast->writeCastInfo(writeStream, _castId);
-		}
-	} else if (version >= kFileVer500 && version < kFileVer600) {
-		writeStream->writeUint32BE(_castType);
-		writeStream->writeUint32BE(castInfoToWrite);
-		writeStream->writeUint32BE(castDataToWrite);
-
-		if (castInfoToWrite) {
-			_cast->writeCastInfo(writeStream, _castId);
-		}
-
-		// For cast members with dedicated resrouces for data, the castDataToWrite is zero
-		// So for Text Cast Member, the castDataToWrite is not zero
-		// Its metadata is stored in this 'CASt' resource but it also has an child 'STXT' resource  
-		if (castDataToWrite) {
-			writeCastData(writeStream, writeStream->pos());
-		}
-	}
-	load();
-	writeSTXTResource(nullptr, 0);
-	return castResourceSize + 8;
-}
-
-void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream, uint64 offset) {
-	writeStream->seek(offset);
-
+void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeByte(_borderSize);
 	writeStream->writeByte(_gutterSize);
 	writeStream->writeByte(_boxShadow);
@@ -1022,28 +973,9 @@ void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream, uint6
 	}
 }
 
-uint32 TextCastMember::getInfoSize() {
-	return _cast->getCastInfoSize(_castId);
-}
-
-uint32 TextCastMember::getDataSize() {
-	// Need to verify if this changes, current observation: it doesn't
+uint32 TextCastMember::getCastDataSize() {
+	// Need to verify if this changes, current observation
 	return (_type == kCastButton) ? 31 : 29;
-}
-
-uint32 TextCastMember::getCastResourceSize(uint32 version) {
-	uint32 headerSize = 0;
-
-	if (version >= kFileVer400 && version < kFileVer500) {
-		headerSize = 9;
-		if (_flags1 != 0xFF) {
-			headerSize += 1;
-		}
-	} else if (version >= kFileVer500 && version < kFileVer600) {
-		headerSize = 12;
-	}
-
-	return headerSize + getInfoSize() + getDataSize();
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
@@ -1063,7 +995,9 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 	// Encode only in one format, original may be encoded in multiple formats
 	// Size of one Font Style is 20 + The number of encodings takes 2 bytes
 	writeStream->writeUint32BE(20 + 2);
-	writeStream->writeString(_ptext.encode(Common::kMacRoman));		// Currently using MacRoman encoding only, may change later to include others
+
+	Common::CodePage encoding = detectFontEncoding(_cast->_platform, _fontId);
+	writeStream->writeString(_ptext.encode(encoding));		// Currently using MacRoman encoding only, may change later to include others
 
 	writeStream->writeUint16BE(1);			// Only one formatting: MacRoman
 

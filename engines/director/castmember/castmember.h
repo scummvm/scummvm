@@ -101,10 +101,12 @@ public:
 
 	virtual CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) { return bbox.contains(pos) ? kCollisionYes : kCollisionNo; }
 
-	virtual uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castId);
-	virtual uint32 getDataSize();
-	virtual uint32 getInfoSize();
-	virtual uint32 getCastResourceSize(uint32 version);
+	uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 castIndex);
+	uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 getCastInfoSize();
+	uint32 getCastResourceSize();
+	virtual void writeCastData(Common::MemoryWriteStream *writeStream);
+	virtual uint32 getCastDataSize();
 
 	CastType _type;
 	Common::Rect _initialRect;
@@ -118,9 +120,6 @@ public:
 	
 	/* Data fields used when saving the Cast Member */
 	uint32 _castDataSize;
-	uint32 _castInfoSize;
-	uint32 _castResourceSize;
-	uint32 _castType; 
 	uint8 _flags1;
 
 protected:

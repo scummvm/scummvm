@@ -314,7 +314,8 @@ void CastMember::unload() {
 // Whereas _info_ is metadata (size, name, flags, etc.)  
 // Some castmembers have their _data_ as well as _info_ in this very 'CASt' resource, e.g. TextCastMember
 // Whereas some other have their _info_ in a 'CASt' resource and _data_ in a dedicated resource (e.g. PaletteCastMember has 'CLUT' resource) 
-uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castIndex) {
+
+uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 castIndex) {
 	// We'll need the original resource stream if there is no change in the castmember 
 	Common::SeekableReadStreamEndian *stream = _cast->getResource(MKTAG('C', 'A', 'S', 't'), castIndex);
 	uint32 size = stream->size();
@@ -326,22 +327,90 @@ uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uin
 	return size + 8;
 }
 
+uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 castResourceSize = getCastResourceSize();
+
+	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
+	writeStream->writeUint32LE(castResourceSize);		// this is excluding the 'CASt' header and the size itself (- 8 bytes)
+
+	uint32 castDataToWrite = getCastDataSize();
+	uint32 castInfoToWrite = getCastInfoSize();
+
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		writeStream->writeUint16BE(castDataToWrite);
+		writeStream->writeUint32BE(castInfoToWrite);
+		writeStream->writeByte((uint8)_type);
+		castDataToWrite -= 1;
+		
+		if (_flags1 != 0xFF) {					// In case of TextCastMember, this should be true
+			writeStream->writeByte(_flags1);
+			castDataToWrite -= 1;
+		}
+
+		// For cast members with dedicated resources for data, the castDataToWrite is zero
+		if (castDataToWrite) {
+			writeCastData(writeStream);
+		}
+
+		if (castInfoToWrite) {
+			_cast->writeCastInfo(writeStream, _castId);
+		}
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		writeStream->writeUint32BE((uint32)_type);
+		writeStream->writeUint32BE(castInfoToWrite);
+		writeStream->writeUint32BE(castDataToWrite);
+
+		if (castInfoToWrite) {
+			_cast->writeCastInfo(writeStream, _castId);
+		}
+
+		// For cast members with dedicated resrouces for data, the castDataToWrite is zero
+		if (castDataToWrite) {
+			writeCastData(writeStream);
+		}
+	}
+	return 0;
+}
+
 // This is the data that is inside the 'CASt' resource
-uint32 CastMember::getDataSize() {
-	debug("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data size, returning original size.");
+uint32 CastMember::getCastDataSize() {
+	debug("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data size, this is not supposed to be called");
 	return _castDataSize;
 }
 
+void CastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	debug("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data, this is not supposed to be called");
+
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		if (_flags1 != 0xFF) {
+			writeStream->write(0, _castDataSize - 2);
+		} else {
+			writeStream->write(0, _castDataSize - 1);
+		}
+	} else {
+		writeStream->write(0, _castDataSize);
+	}
+}
+
 // This is the info that is inside the 'CASt' resource
-uint32 CastMember::getInfoSize() {
-	debug("CastMember::getInfoSize(): Defualt implementation of 'CASt' resource info size, returning original size.");
-	return _castInfoSize;
+uint32 CastMember::getCastInfoSize() {
+	return _cast->getCastInfoSize(_castId);
 }
 
 // getCastResourceSize only returns the size of the resource without the header
-uint32 CastMember::getCastResourceSize(uint32 version) {
-	debug("CastMember::getInfoSize(): Defualt implementation of 'CASt' resource size, returning original size.");
-	return _castResourceSize;
+uint32 CastMember::getCastResourceSize() {
+	uint32 headerSize = 0;
+
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		headerSize = 9;
+		if (_flags1 != 0xFF) {
+			headerSize += 1;
+		}
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		headerSize = 12;
+	}
+
+	return headerSize + getCastInfoSize() + getCastDataSize();
 }
 
 } // End of namespace Director

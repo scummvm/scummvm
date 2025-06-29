@@ -92,14 +92,10 @@ public:
 	void load() override;
 	void unload() override;
 
-	uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 version, uint32 castId) override;	
-	void writeCastData(Common::MemoryWriteStream *writeStream, uint64 offset);
+	void writeCastData(Common::MemoryWriteStream *writeStream) override;
 	uint32 writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset);
 
-	/* All three of following are part of 'CASt' Resource */
-	uint32 getInfoSize() override;			// This is the size of the info in the 'CASt' resource
-	uint32 getDataSize() override;			// This is the size of the data in the 'CASt' resource
-	uint32 getCastResourceSize(uint32 version) override;	// This is the size of the entire 'CASt' resource
+	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
 	uint32 getSTXTResourceSize();
 
 	uint8 _borderSize;

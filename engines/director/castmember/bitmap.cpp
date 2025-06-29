@@ -21,6 +21,9 @@
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
+#include "common/substream.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 #include "image/bmp.h"
@@ -973,4 +976,32 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 	return CastMember::setField(field, d);
 }
 
+uint32 BitmapCastMember::getCastDataSize() {
+	uint32 dataSize = 22;
+	
+	if (_bitsPerPixel != 0) {
+		dataSize += 6;
+		if (_cast->_version >= kFileVer500) {
+			dataSize += 2;
+		}
+
+		if (_clut.member != 0) {
+			dataSize += 16;
+		}
+	}
+	return dataSize;
+}
+
+void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	writeStream->writeUint32LE(_pitch);
+
+	Movie::writeRect(writeStream, _initialRect);
+	Movie::writeRect(writeStream, _boundingRect);
+
+	writeStream->writeUint16LE(_regY);
+	writeStream->writeUint16LE(_regX);
+	
+}
+
 } // End of namespace Director
+ 
