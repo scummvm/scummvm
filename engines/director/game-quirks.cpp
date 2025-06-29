@@ -70,6 +70,10 @@ struct CachedFile {
 		"0testfile",
 			(const byte *)"", 0
 	},
+	{ "nine", Common::kPlatformWindows,
+		"TRIBECA.ini",
+			(const byte *)"[Main]\r\nCDROM=d:", -1
+	},
 	{ "trektech", Common::kPlatformWindows,
 		"NCC1701D.INI",
 			(const byte *)"cdromdrive=D\n", -1
