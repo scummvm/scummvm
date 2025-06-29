@@ -24,6 +24,7 @@
 
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/afxext.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/menures.h"
@@ -40,6 +41,8 @@ typedef void (CALLBACK *FPFUNC)(CWnd *);
 #define NO_RETURN   0x0008
 #define NO_QUIT     0x0010
 #define NO_AUDIO    0x0020
+
+constexpr int IDC_HYPE = 9999;
 
 class CMainMenu : public CBmpDialog {
 public:
@@ -76,7 +79,14 @@ protected:
 	LPGAMESTRUCT    m_pGameParams = nullptr;
 
 private:
-	// Dialog Data
+	CColorButton *_hypeButton = nullptr;
+	CColorButton *_rulesButton = nullptr;
+	CColorButton *_newGameButton = nullptr;
+	CColorButton *_optionsButton = nullptr;
+	CColorButton *_audioButton = nullptr;
+	CColorButton *_returnButton = nullptr;
+	CColorButton *_quitButton = nullptr;
+
 	//{{AFX_DATA(CMainMenu)
 	enum {
 		IDD = IDD_OPTIONS_DIALOG

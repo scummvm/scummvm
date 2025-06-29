@@ -33,13 +33,6 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-static  CColorButton *pRulesButton = nullptr;
-static  CColorButton *pNewGameButton = nullptr;
-static  CColorButton *pOptionsButton = nullptr;
-static  CColorButton *pAudioButton = nullptr;
-static  CColorButton *pReturnButton = nullptr;
-static  CColorButton *pQuitButton = nullptr;
-
 BEGIN_MESSAGE_MAP(CMainMenu, CBmpDialog)
 	//{{AFX_MSG_MAP(CMainMenu)
 	ON_WM_ERASEBKGND()
@@ -89,34 +82,34 @@ void CMainMenu::DoDataExchange(CDataExchange* pDX) {
 
 
 void CMainMenu::ClearDialogImage(void) {
-	if (pRulesButton != nullptr) {                          // release the button
-		delete pRulesButton;
-		pRulesButton = nullptr;
+	if (_rulesButton != nullptr) {                          // release the button
+		delete _rulesButton;
+		_rulesButton = nullptr;
 	}
 
-	if (pNewGameButton != nullptr) {                          // release the button
-		delete pNewGameButton;
-		pNewGameButton = nullptr;
+	if (_newGameButton != nullptr) {                          // release the button
+		delete _newGameButton;
+		_newGameButton = nullptr;
 	}
 
-	if (pOptionsButton != nullptr) {                          // release the button
-		delete pOptionsButton;
-		pOptionsButton = nullptr;
+	if (_optionsButton != nullptr) {                          // release the button
+		delete _optionsButton;
+		_optionsButton = nullptr;
 	}
 
-	if (pAudioButton != nullptr) {                          // release the button
-		delete pAudioButton;
-		pAudioButton = nullptr;
+	if (_audioButton != nullptr) {                          // release the button
+		delete _audioButton;
+		_audioButton = nullptr;
 	}
 
-	if (pReturnButton != nullptr) {                          // release the button
-		delete pReturnButton;
-		pReturnButton = nullptr;
+	if (_returnButton != nullptr) {                          // release the button
+		delete _returnButton;
+		_returnButton = nullptr;
 	}
 
-	if (pQuitButton != nullptr) {                          // release the button
-		delete pQuitButton;
-		pQuitButton = nullptr;
+	if (_quitButton != nullptr) {                          // release the button
+		delete _quitButton;
+		_quitButton = nullptr;
 	}
 
 	if (m_pDlgBackground != nullptr)
@@ -126,34 +119,34 @@ void CMainMenu::ClearDialogImage(void) {
 void CMainMenu::OnDestroy() {
 	CBmpDialog::OnDestroy();
 
-	if (pRulesButton != nullptr) {                          // release the button
-		delete pRulesButton;
-		pRulesButton = nullptr;
+	if (_rulesButton != nullptr) {                          // release the button
+		delete _rulesButton;
+		_rulesButton = nullptr;
 	}
 
-	if (pNewGameButton != nullptr) {                          // release the button
-		delete pNewGameButton;
-		pNewGameButton = nullptr;
+	if (_newGameButton != nullptr) {                          // release the button
+		delete _newGameButton;
+		_newGameButton = nullptr;
 	}
 
-	if (pOptionsButton != nullptr) {                          // release the button
-		delete pOptionsButton;
-		pOptionsButton = nullptr;
+	if (_optionsButton != nullptr) {                          // release the button
+		delete _optionsButton;
+		_optionsButton = nullptr;
 	}
 
-	if (pAudioButton != nullptr) {                          // release the button
-		delete pAudioButton;
-		pAudioButton = nullptr;
+	if (_audioButton != nullptr) {                          // release the button
+		delete _audioButton;
+		_audioButton = nullptr;
 	}
 
-	if (pReturnButton != nullptr) {                          // release the button
-		delete pReturnButton;
-		pReturnButton = nullptr;
+	if (_returnButton != nullptr) {                          // release the button
+		delete _returnButton;
+		_returnButton = nullptr;
 	}
 
-	if (pQuitButton != nullptr) {                          // release the button
-		delete pQuitButton;
-		pQuitButton = nullptr;
+	if (_quitButton != nullptr) {                          // release the button
+		delete _quitButton;
+		_quitButton = nullptr;
 	}
 
 }
@@ -163,34 +156,34 @@ BOOL CMainMenu::OnInitDialog() {
 
 	CBmpDialog::OnInitDialog();            // do basic dialog initialization
 
-	if ((pRulesButton = new CColorButton) != nullptr) {                    // build a color QUIT button to let us exit
-		(*pRulesButton).SetPalette(m_pPalette);                     // set the palette to use
-		(*pRulesButton).SetControl(IDC_OPTIONS_RULES, this);            // tie to the dialog control
+	if ((_rulesButton = new CColorButton) != nullptr) {                    // build a color QUIT button to let us exit
+		(*_rulesButton).SetPalette(m_pPalette);                     // set the palette to use
+		(*_rulesButton).SetControl(IDC_OPTIONS_RULES, this);            // tie to the dialog control
 	}
 
-	if ((pNewGameButton = new CColorButton) != nullptr) {                  // build a color QUIT button to let us exit
-		(*pNewGameButton).SetPalette(m_pPalette);                       // set the palette to use
-		(*pNewGameButton).SetControl(IDC_OPTIONS_NEWGAME, this);            // tie to the dialog control
+	if ((_newGameButton = new CColorButton) != nullptr) {                  // build a color QUIT button to let us exit
+		(*_newGameButton).SetPalette(m_pPalette);                       // set the palette to use
+		(*_newGameButton).SetControl(IDC_OPTIONS_NEWGAME, this);            // tie to the dialog control
 	}
 
-	if ((pOptionsButton = new CColorButton) != nullptr) {                  // build a color QUIT button to let us exit
-		(*pOptionsButton).SetPalette(m_pPalette);                       // set the palette to use
-		(*pOptionsButton).SetControl(IDC_OPTIONS_OPTIONS, this);            // tie to the dialog control
+	if ((_optionsButton = new CColorButton) != nullptr) {                  // build a color QUIT button to let us exit
+		(*_optionsButton).SetPalette(m_pPalette);                       // set the palette to use
+		(*_optionsButton).SetControl(IDC_OPTIONS_OPTIONS, this);            // tie to the dialog control
 	}
 
-	if ((pAudioButton = new CColorButton) != nullptr) {                    // build a color QUIT button to let us exit
-		(*pAudioButton).SetPalette(m_pPalette);                     // set the palette to use
-		(*pAudioButton).SetControl(IDC_OPTIONS_AUDIO, this);            // tie to the dialog control
+	if ((_audioButton = new CColorButton) != nullptr) {                    // build a color QUIT button to let us exit
+		(*_audioButton).SetPalette(m_pPalette);                     // set the palette to use
+		(*_audioButton).SetControl(IDC_OPTIONS_AUDIO, this);            // tie to the dialog control
 	}
 
-	if ((pReturnButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pReturnButton).SetPalette(m_pPalette);                        // set the palette to use
-		(*pReturnButton).SetControl(IDC_OPTIONS_RETURN, this);              // tie to the dialog control
+	if ((_returnButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
+		(*_returnButton).SetPalette(m_pPalette);                        // set the palette to use
+		(*_returnButton).SetControl(IDC_OPTIONS_RETURN, this);              // tie to the dialog control
 	}
 
-	if ((pQuitButton = new CColorButton) != nullptr) {                 // build a color QUIT button to let us exit
-		(*pQuitButton).SetPalette(m_pPalette);                      // set the palette to use
-		(*pQuitButton).SetControl(IDC_OPTIONS_QUIT, this);              // tie to the dialog control
+	if ((_quitButton = new CColorButton) != nullptr) {                 // build a color QUIT button to let us exit
+		(*_quitButton).SetPalette(m_pPalette);                      // set the palette to use
+		(*_quitButton).SetControl(IDC_OPTIONS_QUIT, this);              // tie to the dialog control
 	}
 	// Disable the Rules button if told to do so
 	//
