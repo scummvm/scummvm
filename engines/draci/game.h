@@ -85,6 +85,8 @@ enum InventoryConstants {
   kStatusChangeTimeout = 500
 };
 
+static const int kCreditsMapID = 46;
+
 class GameObject {
 public:
 	int _absNum;
@@ -318,6 +320,7 @@ public:
 	int getDialogueLastBlock() const { return _lastBlock; }
 	int getDialogueLinesNum() const { return _dialogueLinesNum; }
 	int getCurrentDialogueOffset() const { return _dialogueOffsets[_currentDialogue]; }
+	void setVoiceoverSampleExists(bool value) { _voiceoverSampleExists = value; }
 
 	void schedulePalette(int paletteID) { _scheduledPalette = paletteID; }
 	int getScheduledPalette() const { return _scheduledPalette; }
@@ -348,6 +351,8 @@ private:
 	void initWalkingOverlays();
 	void loadRoomObjects();
 	void redrawWalkingPath(Animation *anim, byte color, const WalkingPath &path);
+
+	bool isVoicedByTTS(const Common::String &str) const;
 
 	DraciEngine *_vm;
 
@@ -403,6 +408,8 @@ private:
 
 	uint _speechTick;
 	uint _speechDuration;
+	bool _ttsUseSpeechDuration;
+	bool _voiceoverSampleExists;
 
 	const GameObject *_objUnderCursor;
 	const Animation *_animUnderCursor;

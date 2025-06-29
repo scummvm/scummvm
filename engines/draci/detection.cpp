@@ -25,6 +25,7 @@
 #include "engines/metaengine.h"
 
 #include "draci/draci.h"
+#include "draci/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
 	{Draci::kDraciGeneralDebugLevel, "general", "Draci general debug info"},
@@ -52,7 +53,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO2(GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
 
 	{
@@ -62,7 +63,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::CS_CZE,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO2(GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_MISSING_VOICE)
 	},
 
 	{
@@ -72,7 +73,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO2(GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_MISSING_VOICE)
 	},
 
 	{
@@ -82,7 +83,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO2(GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
 
 	AD_TABLE_END_MARKER
