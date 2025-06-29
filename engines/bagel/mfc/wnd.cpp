@@ -964,5 +964,9 @@ bool CWnd::IsActiveWindow() const {
 	return AfxGetApp()->GetActiveWindow() == this;
 }
 
+void CWnd::SetFont(CFont *pFont, BOOL bRedraw) {
+	SendMessage(WM_SETFONT, (WPARAM)pFont->m_hObject, bRedraw);
+}
+
 } // namespace MFC
 } // namespace Bagel

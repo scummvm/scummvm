@@ -1402,6 +1402,7 @@ public:
 	HFONT GetFont() const {
 		return _hFont;
 	}
+	void SetFont(CFont *pFont, BOOL bRedraw = true);
 };
 
 class CFrameWnd : public CWnd {

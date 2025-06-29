@@ -39,6 +39,7 @@
 #define IDC_OPTIONS_NEWGAME 457
 #define IDC_OPTIONS_OPTIONS 458
 #define IDC_OPTIONS_AUDIO   459
+#define IDC_OPTIONS_HYPE    999
 
 #define IDB_SCROLBTN        460
 #define SCROLLUP            461

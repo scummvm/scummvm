@@ -42,8 +42,6 @@ typedef void (CALLBACK *FPFUNC)(CWnd *);
 #define NO_QUIT     0x0010
 #define NO_AUDIO    0x0020
 
-constexpr int IDC_HYPE = 9999;
-
 class CMainMenu : public CBmpDialog {
 public:
 	CMainMenu(CWnd *, CPalette *, UINT, FPFUNC,
@@ -69,6 +67,7 @@ protected:
 	afx_msg void OnClickedAudio() ;
 	afx_msg void OnClickedReturn();
 	afx_msg void OnClickedQuit();
+	afx_msg void OnClickedHype();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -86,6 +85,7 @@ private:
 	CColorButton *_audioButton = nullptr;
 	CColorButton *_returnButton = nullptr;
 	CColorButton *_quitButton = nullptr;
+	CFont _hypeFont;
 
 	//{{AFX_DATA(CMainMenu)
 	enum {
@@ -93,6 +93,8 @@ private:
 	};
 	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
+
+	void clearButtons();
 };
 
 } // namespace HodjNPodj

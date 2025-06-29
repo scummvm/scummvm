@@ -29,6 +29,7 @@
 #include "bagel/hodjnpodj/hnplibs/cbofdlg.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -44,6 +45,7 @@ BEGIN_MESSAGE_MAP(CMainMenu, CBmpDialog)
 	ON_BN_CLICKED(IDC_OPTIONS_AUDIO, CMainMenu::OnClickedAudio)
 	ON_BN_CLICKED(IDC_OPTIONS_RETURN, CMainMenu::OnClickedReturn)
 	ON_BN_CLICKED(IDC_OPTIONS_QUIT, CMainMenu::OnClickedQuit)
+	ON_BN_CLICKED(IDC_OPTIONS_HYPE, CMainMenu::OnClickedHype)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -81,36 +83,31 @@ void CMainMenu::DoDataExchange(CDataExchange* pDX) {
 }
 
 
-void CMainMenu::ClearDialogImage(void) {
-	if (_rulesButton != nullptr) {                          // release the button
-		delete _rulesButton;
-		_rulesButton = nullptr;
-	}
+void CMainMenu::clearButtons() {
+	delete _rulesButton;
+	_rulesButton = nullptr;
 
-	if (_newGameButton != nullptr) {                          // release the button
-		delete _newGameButton;
-		_newGameButton = nullptr;
-	}
+	delete _newGameButton;
+	_newGameButton = nullptr;
 
-	if (_optionsButton != nullptr) {                          // release the button
-		delete _optionsButton;
-		_optionsButton = nullptr;
-	}
+	delete _optionsButton;
+	_optionsButton = nullptr;
 
-	if (_audioButton != nullptr) {                          // release the button
-		delete _audioButton;
-		_audioButton = nullptr;
-	}
+	delete _audioButton;
+	_audioButton = nullptr;
 
-	if (_returnButton != nullptr) {                          // release the button
-		delete _returnButton;
-		_returnButton = nullptr;
-	}
+	delete _returnButton;
+	_returnButton = nullptr;
 
-	if (_quitButton != nullptr) {                          // release the button
-		delete _quitButton;
-		_quitButton = nullptr;
-	}
+	delete _quitButton;
+	_quitButton = nullptr;
+
+	delete _hypeButton;
+	_hypeButton = nullptr;
+}
+
+void CMainMenu::ClearDialogImage() {
+	clearButtons();
 
 	if (m_pDlgBackground != nullptr)
 		InvalidateRect(nullptr, FALSE);
@@ -119,36 +116,7 @@ void CMainMenu::ClearDialogImage(void) {
 void CMainMenu::OnDestroy() {
 	CBmpDialog::OnDestroy();
 
-	if (_rulesButton != nullptr) {                          // release the button
-		delete _rulesButton;
-		_rulesButton = nullptr;
-	}
-
-	if (_newGameButton != nullptr) {                          // release the button
-		delete _newGameButton;
-		_newGameButton = nullptr;
-	}
-
-	if (_optionsButton != nullptr) {                          // release the button
-		delete _optionsButton;
-		_optionsButton = nullptr;
-	}
-
-	if (_audioButton != nullptr) {                          // release the button
-		delete _audioButton;
-		_audioButton = nullptr;
-	}
-
-	if (_returnButton != nullptr) {                          // release the button
-		delete _returnButton;
-		_returnButton = nullptr;
-	}
-
-	if (_quitButton != nullptr) {                          // release the button
-		delete _quitButton;
-		_quitButton = nullptr;
-	}
-
+	clearButtons();
 }
 
 BOOL CMainMenu::OnInitDialog() {
@@ -156,34 +124,46 @@ BOOL CMainMenu::OnInitDialog() {
 
 	CBmpDialog::OnInitDialog();            // do basic dialog initialization
 
-	if ((_rulesButton = new CColorButton) != nullptr) {                    // build a color QUIT button to let us exit
-		(*_rulesButton).SetPalette(m_pPalette);                     // set the palette to use
-		(*_rulesButton).SetControl(IDC_OPTIONS_RULES, this);            // tie to the dialog control
-	}
+	// Set up replacement color buttons
+	_rulesButton = new CColorButton();
+	_rulesButton->SetPalette(m_pPalette);
+	_rulesButton->SetControl(IDC_OPTIONS_RULES, this);
 
-	if ((_newGameButton = new CColorButton) != nullptr) {                  // build a color QUIT button to let us exit
-		(*_newGameButton).SetPalette(m_pPalette);                       // set the palette to use
-		(*_newGameButton).SetControl(IDC_OPTIONS_NEWGAME, this);            // tie to the dialog control
-	}
+	_newGameButton = new CColorButton();
+	_newGameButton->SetPalette(m_pPalette);
+	_newGameButton->SetControl(IDC_OPTIONS_NEWGAME, this);
 
-	if ((_optionsButton = new CColorButton) != nullptr) {                  // build a color QUIT button to let us exit
-		(*_optionsButton).SetPalette(m_pPalette);                       // set the palette to use
-		(*_optionsButton).SetControl(IDC_OPTIONS_OPTIONS, this);            // tie to the dialog control
-	}
+	_optionsButton = new CColorButton();
+	_optionsButton->SetPalette(m_pPalette);
+	_optionsButton->SetControl(IDC_OPTIONS_OPTIONS, this);
 
-	if ((_audioButton = new CColorButton) != nullptr) {                    // build a color QUIT button to let us exit
-		(*_audioButton).SetPalette(m_pPalette);                     // set the palette to use
-		(*_audioButton).SetControl(IDC_OPTIONS_AUDIO, this);            // tie to the dialog control
-	}
+	_audioButton = new CColorButton();
+	_audioButton->SetPalette(m_pPalette);
+	_audioButton->SetControl(IDC_OPTIONS_AUDIO, this);
 
-	if ((_returnButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*_returnButton).SetPalette(m_pPalette);                        // set the palette to use
-		(*_returnButton).SetControl(IDC_OPTIONS_RETURN, this);              // tie to the dialog control
-	}
+	_returnButton = new CColorButton();
+	_returnButton->SetPalette(m_pPalette);
+	_returnButton->SetControl(IDC_OPTIONS_RETURN, this);
 
-	if ((_quitButton = new CColorButton) != nullptr) {                 // build a color QUIT button to let us exit
-		(*_quitButton).SetPalette(m_pPalette);                      // set the palette to use
-		(*_quitButton).SetControl(IDC_OPTIONS_QUIT, this);              // tie to the dialog control
+	_quitButton = new CColorButton();
+	_quitButton->SetPalette(m_pPalette);
+	_quitButton->SetControl(IDC_OPTIONS_QUIT, this);
+
+	// Add the Hype Button if running the demo
+	if (g_engine->isDemo()) {
+		CRect optionsRect, audioRect;
+		_optionsButton->GetWindowRect(&optionsRect);
+		_audioButton->GetWindowRect(&audioRect);
+		CRect hypeRect(optionsRect.right + 5, optionsRect.top,
+			optionsRect.right + 50, audioRect.bottom);
+
+		_hypeButton = new CColorButton();
+		_hypeButton->Create("?", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE,
+			hypeRect, this, IDC_OPTIONS_HYPE);
+		_hypeButton->SetPalette(m_pPalette);
+
+		_hypeFont.CreateFont(24, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
+		_hypeButton->SetFont(&_hypeFont);
 	}
 
 	// Disable the Rules button if told to do so
@@ -256,6 +236,27 @@ void CMainMenu::OnClickedRules() {
 
 	// Display the rules
 	RulesDlg.DoModal();
+
+	SetDefID(IDC_OPTIONS_OPTIONS);
+	if (_flags & NO_RETURN) {
+		SetDefID(IDC_OPTIONS_NEWGAME);
+		pControl = GetDlgItem(IDC_OPTIONS_NEWGAME);
+	} else {
+		SetDefID(IDC_OPTIONS_RETURN);
+		pControl = GetDlgItem(IDC_OPTIONS_RETURN);
+	}
+
+	GotoDlgCtrl(pControl);
+}
+
+void CMainMenu::OnClickedHype() {
+	CWnd *pControl;
+
+	// Load the hype
+	CRules  hypeDlg(this, "hype.txt", m_pPalette, nullptr);
+
+	// Display the dialog
+	hypeDlg.DoModal();
 
 	SetDefID(IDC_OPTIONS_OPTIONS);
 	if (_flags & NO_RETURN) {
