@@ -58,7 +58,16 @@ BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 }
 
 BOOL CBrush::CreateStockObject(int nIndex) {
-	error("TODO: CreateStockObject");
+	switch (nIndex) {
+	case BLACK_BRUSH:
+		CreateSolidBrush(RGB(0, 0, 0));
+		break;
+	default:
+		error("TODO: CreateStockObject");
+		break;
+	}
+
+	return true;
 }
 
 /*--------------------------------------------*/
