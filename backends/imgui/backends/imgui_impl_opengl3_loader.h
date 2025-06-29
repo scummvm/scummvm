@@ -123,7 +123,7 @@ extern "C" {
 ** included as <GL/glcorearb.h>.
 **
 ** glcorearb.h includes only APIs in the latest OpenGL core profile
-** implementation together with APIs in newer ARB extensions which
+** implementation together with APIs in newer ARB extensions which 
 ** can be supported by the core profile. It does not, and never will
 ** include functionality removed from the core profile, such as
 ** fixed-function vertex and fragment processing.
@@ -172,6 +172,7 @@ typedef khronos_uint8_t GLubyte;
 #define GL_SCISSOR_TEST                   0x0C11
 #define GL_UNPACK_ROW_LENGTH              0x0CF2
 #define GL_PACK_ALIGNMENT                 0x0D05
+#define GL_MAX_TEXTURE_SIZE               0x0D33
 #define GL_TEXTURE_2D                     0x0DE1
 #define GL_UNSIGNED_BYTE                  0x1401
 #define GL_UNSIGNED_SHORT                 0x1403
@@ -186,6 +187,9 @@ typedef khronos_uint8_t GLubyte;
 #define GL_LINEAR                         0x2601
 #define GL_TEXTURE_MAG_FILTER             0x2800
 #define GL_TEXTURE_MIN_FILTER             0x2801
+#define GL_TEXTURE_WRAP_S                 0x2802
+#define GL_TEXTURE_WRAP_T                 0x2803
+#define GL_REPEAT                         0x2901
 typedef void (APIENTRYP PFNGLPOLYGONMODEPROC) (GLenum face, GLenum mode);
 typedef void (APIENTRYP PFNGLSCISSORPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 typedef void (APIENTRYP PFNGLTEXPARAMETERIPROC) (GLenum target, GLenum pname, GLint param);
@@ -226,16 +230,21 @@ typedef khronos_float_t GLclampf;
 typedef double GLclampd;
 #define GL_TEXTURE_BINDING_2D             0x8069
 typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC) (GLenum mode, GLsizei count, GLenum type, const void *indices);
+typedef void (APIENTRYP PFNGLTEXSUBIMAGE2DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
 typedef void (APIENTRYP PFNGLBINDTEXTUREPROC) (GLenum target, GLuint texture);
 typedef void (APIENTRYP PFNGLDELETETEXTURESPROC) (GLsizei n, const GLuint *textures);
 typedef void (APIENTRYP PFNGLGENTEXTURESPROC) (GLsizei n, GLuint *textures);
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glDrawElements (GLenum mode, GLsizei count, GLenum type, const void *indices);
+GLAPI void APIENTRY glTexSubImage2D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
 GLAPI void APIENTRY glBindTexture (GLenum target, GLuint texture);
 GLAPI void APIENTRY glDeleteTextures (GLsizei n, const GLuint *textures);
 GLAPI void APIENTRY glGenTextures (GLsizei n, GLuint *textures);
 #endif
 #endif /* GL_VERSION_1_1 */
+#ifndef GL_VERSION_1_2
+#define GL_CLAMP_TO_EDGE                  0x812F
+#endif /* GL_VERSION_1_2 */
 #ifndef GL_VERSION_1_3
 #define GL_TEXTURE0                       0x84C0
 #define GL_ACTIVE_TEXTURE                 0x84E0
@@ -477,7 +486,7 @@ GL3W_API GL3WglProc imgl3wGetProcAddress(const char *proc);
 
 /* gl3w internal state */
 union ImGL3WProcs {
-    GL3WglProc ptr[59];
+    GL3WglProc ptr[60];
     struct {
         PFNGLACTIVETEXTUREPROC            ActiveTexture;
         PFNGLATTACHSHADERPROC             AttachShader;
@@ -533,6 +542,7 @@ union ImGL3WProcs {
         PFNGLSHADERSOURCEPROC             ShaderSource;
         PFNGLTEXIMAGE2DPROC               TexImage2D;
         PFNGLTEXPARAMETERIPROC            TexParameteri;
+        PFNGLTEXSUBIMAGE2DPROC            TexSubImage2D;
         PFNGLUNIFORM1IPROC                Uniform1i;
         PFNGLUNIFORMMATRIX4FVPROC         UniformMatrix4fv;
         PFNGLUSEPROGRAMPROC               UseProgram;
@@ -598,6 +608,7 @@ GL3W_API extern union ImGL3WProcs imgl3wProcs;
 #define glShaderSource                    imgl3wProcs.gl.ShaderSource
 #define glTexImage2D                      imgl3wProcs.gl.TexImage2D
 #define glTexParameteri                   imgl3wProcs.gl.TexParameteri
+#define glTexSubImage2D                   imgl3wProcs.gl.TexSubImage2D
 #define glUniform1i                       imgl3wProcs.gl.Uniform1i
 #define glUniformMatrix4fv                imgl3wProcs.gl.UniformMatrix4fv
 #define glUseProgram                      imgl3wProcs.gl.UseProgram
@@ -906,6 +917,7 @@ static const char *proc_names[] = {
     "glShaderSource",
     "glTexImage2D",
     "glTexParameteri",
+    "glTexSubImage2D",
     "glUniform1i",
     "glUniformMatrix4fv",
     "glUseProgram",

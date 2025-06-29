@@ -53,7 +53,7 @@ typedef struct ImGuiState {
 	float _bottomPanelHeight = 0.0f;
 	float _rightTopPanelHeight = 0.0f;
 	int _ticksToAdvance = 0;
-	ImTextureID _textureID = nullptr;
+	ImTextureID _textureID = ImTextureID_Invalid;
 	int _selectedGlobalVarRow = -1;
 } ImGuiState;
 
@@ -61,7 +61,7 @@ ImGuiState *_state = nullptr;
 
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; 
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	_state = new ImGuiState();
 	_state->_engine = (LastExpressEngine *)g_engine;
@@ -451,14 +451,14 @@ void LogicManager::renderCharacterList(int &selectedCharacter) {
 
 void LogicManager::renderCurrentSceneDebugger() {
 	if (_state->_textureID)
-		g_system->freeImGuiTexture(_state->_textureID);
+		g_system->freeImGuiTexture((void *)_state->_textureID);
 
 	// Let's blit the current background on the ImGui window...
 	Graphics::Surface temp;
 	temp.create(640, 480, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	_engine->getGraphicsManager()->copy(_engine->getGraphicsManager()->_backBuffer, (PixMap *)temp.getPixels(), 0, 0, 640, 480);
 
-	_state->_textureID = g_system->getImGuiTexture(temp);
+	_state->_textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(temp);
 
 	temp.free();
 
@@ -763,7 +763,7 @@ void LogicManager::renderGlobalVars() {
 			ImGui::Text("%d", i);
 
 			ImGui::TableSetColumnIndex(1);
-			ImGui::Text("%s", globalNames[i]);	
+			ImGui::Text("%s", globalNames[i]);
 
 			ImGui::TableSetColumnIndex(2);
 			ImGui::Text("%d", _globals[i]);

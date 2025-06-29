@@ -133,7 +133,7 @@ ImGuiImage getImageID(CastMember *castMember) {
 	if (!pic)
 		return {};
 
-	ImTextureID textureID = g_system->getImGuiTexture(pic->_surface, pic->_palette, pic->_paletteColors);
+	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(pic->_surface, pic->_palette, pic->_paletteColors);
 	_state->_cast._textures[bmp] = {textureID, pic->_surface.w, pic->_surface.h};
 	return _state->_cast._textures[bmp];
 }

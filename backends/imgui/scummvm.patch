@@ -1,7 +1,7 @@
 diff --color -rbu ./backends/imgui_impl_opengl3.cpp ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3.cpp
---- ./backends/imgui_impl_opengl3.cpp	2025-02-18 20:51:22
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3.cpp	2025-01-25 16:39:54
-@@ -114,7 +114,7 @@
+--- ./backends/imgui_impl_opengl3.cpp	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3.cpp	2025-06-29 23:57:31
+@@ -119,7 +119,7 @@
  #define _CRT_SECURE_NO_WARNINGS
  #endif
  
@@ -10,18 +10,18 @@ diff --color -rbu ./backends/imgui_impl_opengl3.cpp ../scummvm/scummvm/backends/
  #ifndef IMGUI_DISABLE
  #include "imgui_impl_opengl3.h"
  #include <stdio.h>
-@@ -167,6 +167,7 @@
- // - You may need to regenerate imgui_impl_opengl3_loader.h to add new symbols. See https://github.com/dearimgui/gl3w_stripped
+@@ -174,6 +174,7 @@
+ //   Typically you would run: python3 ./gl3w_gen.py --output ../imgui/backends/imgui_impl_opengl3_loader.h --ref ../imgui/backends/imgui_impl_opengl3.cpp ./extra_symbols.txt
  // - You can temporarily use an unstripped version. See https://github.com/dearimgui/gl3w_stripped/releases
  // Changes to this backend using new APIs should be accompanied by a regenerated stripped loader version.
 +#define IMGL3W_SCUMMVM_LOADER
  #define IMGL3W_IMPL
+ #define IMGUI_IMPL_OPENGL_LOADER_IMGL3W
  #include "imgui_impl_opengl3_loader.h"
- #endif
 diff --color -rbu ./backends/imgui_impl_opengl3.h ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3.h
---- ./backends/imgui_impl_opengl3.h	2025-02-18 20:51:22
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3.h	2025-01-25 16:39:54
-@@ -27,7 +27,7 @@
+--- ./backends/imgui_impl_opengl3.h	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3.h	2025-06-29 23:57:31
+@@ -28,7 +28,7 @@
  //  Only override if your GL version doesn't handle this GLSL version. See GLSL version table at the top of imgui_impl_opengl3.cpp.
  
  #pragma once
@@ -30,7 +30,7 @@ diff --color -rbu ./backends/imgui_impl_opengl3.h ../scummvm/scummvm/backends/im
  #ifndef IMGUI_DISABLE
  
  // Follow "Getting Started" link and check examples/ folder to learn about using backends!
-@@ -56,7 +56,7 @@
+@@ -58,7 +58,7 @@
  #endif
  #if (defined(__APPLE__) && (TARGET_OS_IOS || TARGET_OS_TV)) || (defined(__ANDROID__))
  #define IMGUI_IMPL_OPENGL_ES3               // iOS, Android  -> GL ES 3, "#version 300 es"
@@ -40,8 +40,8 @@ diff --color -rbu ./backends/imgui_impl_opengl3.h ../scummvm/scummvm/backends/im
  #else
  // Otherwise imgui_impl_opengl3_loader.h will be used.
 diff --color -rbu ./backends/imgui_impl_opengl3_loader.h ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3_loader.h
---- ./backends/imgui_impl_opengl3_loader.h	2025-02-18 20:51:22
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3_loader.h	2025-01-25 16:39:54
+--- ./backends/imgui_impl_opengl3_loader.h	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_opengl3_loader.h	2025-06-29 23:57:31
 @@ -56,6 +56,11 @@
  #ifndef __gl3w_h_
  #define __gl3w_h_
@@ -54,7 +54,7 @@ diff --color -rbu ./backends/imgui_impl_opengl3_loader.h ../scummvm/scummvm/back
  // Adapted from KHR/khrplatform.h to avoid including entire file.
  #ifndef __khrplatform_h_
  typedef          float         khronos_float_t;
-@@ -614,7 +619,20 @@
+@@ -625,7 +630,20 @@
  
  #define GL3W_ARRAY_SIZE(x)  (sizeof(x) / sizeof((x)[0]))
  
@@ -77,9 +77,9 @@ diff --color -rbu ./backends/imgui_impl_opengl3_loader.h ../scummvm/scummvm/back
  #define WIN32_LEAN_AND_MEAN 1
  #endif
 diff --color -rbu ./backends/imgui_impl_sdl2.cpp ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl2.cpp
---- ./backends/imgui_impl_sdl2.cpp	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl2.cpp	2025-01-25 16:39:54
-@@ -92,9 +92,11 @@
+--- ./backends/imgui_impl_sdl2.cpp	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl2.cpp	2025-06-29 23:57:31
+@@ -106,9 +106,11 @@
  //  2017-08-25: Inputs: MousePos set to -FLT_MAX,-FLT_MAX when mouse is unavailable/missing (instead of -1,-1).
  //  2016-10-15: Misc: Added a void* user_data parameter to Clipboard function handlers.
  
@@ -92,18 +92,7 @@ diff --color -rbu ./backends/imgui_impl_sdl2.cpp ../scummvm/scummvm/backends/img
  
  // Clang warnings with -Weverything
  #if defined(__clang__)
-@@ -128,7 +128,8 @@
- #define SDL_HAS_DISPLAY_EVENT               SDL_VERSION_ATLEAST(2,0,9)
- #define SDL_HAS_SHOW_WINDOW_ACTIVATION_HINT SDL_VERSION_ATLEAST(2,0,18)
- #if SDL_HAS_VULKAN
--extern "C" { extern DECLSPEC void SDLCALL SDL_Vulkan_GetDrawableSize(SDL_Window* window, int* w, int* h); }
-+//extern "C" { extern DECLSPEC void SDLCALL SDL_Vulkan_GetDrawableSize(SDL_Window* window, int* w, int* h); }
-+#include <SDL_vulkan.h>
--#elif
-+#else
- static const Uint32 SDL_WINDOW_VULKAN = 0x10000000;
- #endif
-@@ -346,6 +348,11 @@
+@@ -383,6 +385,11 @@
      return ImGui::FindViewportByPlatformHandle((void*)(intptr_t)window_id);
  }
  
@@ -115,15 +104,15 @@ diff --color -rbu ./backends/imgui_impl_sdl2.cpp ../scummvm/scummvm/backends/img
  // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
  // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
  // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-@@ -1201,4 +1208,5 @@
+@@ -1301,4 +1308,5 @@
  #pragma clang diagnostic pop
  #endif
  
 +#endif
  #endif // #ifndef IMGUI_DISABLE
 diff --color -rbu ./backends/imgui_impl_sdl2.h ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl2.h
---- ./backends/imgui_impl_sdl2.h	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl2.h	2025-01-25 16:39:54
+--- ./backends/imgui_impl_sdl2.h	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl2.h	2025-06-29 23:57:31
 @@ -23,7 +23,7 @@
  // - Introduction, links and more at the top of imgui.cpp
  
@@ -139,12 +128,12 @@ diff --color -rbu ./backends/imgui_impl_sdl2.h ../scummvm/scummvm/backends/imgui
  IMGUI_IMPL_API bool     ImGui_ImplSDL2_ProcessEvent(const SDL_Event* event);
 +IMGUI_IMPL_API bool     ImGui_ImplSDL2_Ready();
  
- // Gamepad selection automatically starts in AutoFirst mode, picking first available SDL_Gamepad. You may override this.
- // When using manual mode, caller is responsible for opening/closing gamepad.
+ // DPI-related helpers (optional)
+ IMGUI_IMPL_API float    ImGui_ImplSDL2_GetContentScaleForWindow(SDL_Window* window);
 diff --color -rbu ./backends/imgui_impl_sdl3.cpp ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.cpp
---- ./backends/imgui_impl_sdl3.cpp	2025-01-31 20:18:22
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.cpp	2025-01-31 20:20:20
-@@ -52,8 +52,9 @@
+--- ./backends/imgui_impl_sdl3.cpp	2025-06-29 15:22:31
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.cpp	2025-06-29 23:57:31
+@@ -67,8 +67,9 @@
  //  2023-02-23: Accept SDL_GetPerformanceCounter() not returning a monotonically increasing value. (#6189, #6114, #3644)
  //  2023-02-07: Forked "imgui_impl_sdl2" into "imgui_impl_sdl3". Removed version checks for old feature. Refer to imgui_impl_sdl2.cpp for older changelog.
  
@@ -156,9 +145,9 @@ diff --color -rbu ./backends/imgui_impl_sdl3.cpp ../scummvm/scummvm/backends/img
  
  // Clang warnings with -Weverything
 diff --color -rbu ./backends/imgui_impl_sdl3.h ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.h
---- ./backends/imgui_impl_sdl3.h	2025-01-31 20:18:22
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.h	2025-01-31 20:20:04
-@@ -24,7 +24,7 @@
+--- ./backends/imgui_impl_sdl3.h	2025-04-11 13:16:16
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdl3.h	2025-06-29 23:57:31
+@@ -22,7 +22,7 @@
  // - Introduction, links and more at the top of imgui.cpp
  
  #pragma once
@@ -168,9 +157,9 @@ diff --color -rbu ./backends/imgui_impl_sdl3.h ../scummvm/scummvm/backends/imgui
  
  struct SDL_Window;
 diff --color -rbu ./backends/imgui_impl_sdlrenderer2.cpp ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.cpp
---- ./backends/imgui_impl_sdlrenderer2.cpp	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.cpp	2025-01-25 16:39:54
-@@ -30,7 +30,7 @@
+--- ./backends/imgui_impl_sdlrenderer2.cpp	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.cpp	2025-06-29 23:57:31
+@@ -37,7 +37,7 @@
  //  2021-10-06: Backup and restore modified ClipRect/Viewport.
  //  2021-09-21: Initial version.
  
@@ -180,9 +169,9 @@ diff --color -rbu ./backends/imgui_impl_sdlrenderer2.cpp ../scummvm/scummvm/back
  #include "imgui_impl_sdlrenderer2.h"
  #include <stdint.h>     // intptr_t
 diff --color -rbu ./backends/imgui_impl_sdlrenderer2.h ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.h
---- ./backends/imgui_impl_sdlrenderer2.h	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.h	2025-01-25 16:39:54
-@@ -22,8 +22,8 @@
+--- ./backends/imgui_impl_sdlrenderer2.h	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.h	2025-06-29 23:57:31
+@@ -26,8 +26,8 @@
  // - Introduction, links and more at the top of imgui.cpp
  
  #pragma once
@@ -193,18 +182,9 @@ diff --color -rbu ./backends/imgui_impl_sdlrenderer2.h ../scummvm/scummvm/backen
  struct SDL_Renderer;
  
 diff --color -rbu ./backends/imgui_impl_sdlrenderer3.cpp ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer3.cpp
---- ./backends/imgui_impl_sdlrenderer3.cpp	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer3.cpp	2025-01-25 16:39:54
-@@ -12,8 +12,6 @@
- // Implemented features:
- //  [X] Renderer: User texture binding. Use 'SDL_Texture*' as ImTextureID. Read the FAQ about ImTextureID!
- //  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
--// Missing features:
--//  [ ] Renderer: Multi-viewport support (multiple windows).
- 
- // You can copy and use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
- // Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
-@@ -29,7 +27,7 @@
+--- ./backends/imgui_impl_sdlrenderer3.cpp	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer3.cpp	2025-06-29 23:57:31
+@@ -34,7 +34,7 @@
  //  2024-02-12: Amend to query SDL_RenderViewportSet() and restore viewport accordingly.
  //  2023-05-30: Initial version.
  
@@ -214,18 +194,9 @@ diff --color -rbu ./backends/imgui_impl_sdlrenderer3.cpp ../scummvm/scummvm/back
  #include "imgui_impl_sdlrenderer3.h"
  #include <stdint.h>     // intptr_t
 diff --color -rbu ./backends/imgui_impl_sdlrenderer3.h ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer3.h
---- ./backends/imgui_impl_sdlrenderer3.h	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer3.h	2025-01-25 16:39:54
-@@ -12,8 +12,6 @@
- // Implemented features:
- //  [X] Renderer: User texture binding. Use 'SDL_Texture*' as ImTextureID. Read the FAQ about ImTextureID!
- //  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
--// Missing features:
--//  [ ] Renderer: Multi-viewport support (multiple windows).
- 
- // You can copy and use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
- // Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
-@@ -24,7 +22,7 @@
+--- ./backends/imgui_impl_sdlrenderer3.h	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer3.h	2025-06-29 23:57:31
+@@ -26,7 +26,7 @@
  // - Introduction, links and more at the top of imgui.cpp
  
  #pragma once
@@ -235,20 +206,9 @@ diff --color -rbu ./backends/imgui_impl_sdlrenderer3.h ../scummvm/scummvm/backen
  
  struct SDL_Renderer;
 diff --color -rbu ./imconfig.h ../scummvm/scummvm/backends/imgui/imconfig.h
---- ./imconfig.h	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/imconfig.h	2025-01-25 16:39:54
-@@ -28,8 +28,8 @@
- //#define IMGUI_API __attribute__((visibility("default")))  // GCC/Clang: override visibility when set is hidden
- 
- //---- Don't define obsolete functions/enums/behaviors. Consider enabling from time to time after updating to clean your code of obsolete function/names.
--//#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
--//#define IMGUI_DISABLE_OBSOLETE_KEYIO                      // 1.87+ disable legacy io.KeyMap[]+io.KeysDown[] in favor io.AddKeyEvent(). This is automatically done by IMGUI_DISABLE_OBSOLETE_FUNCTIONS.
-+#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-+#define IMGUI_DISABLE_OBSOLETE_KEYIO                      // 1.87+ disable legacy io.KeyMap[]+io.KeysDown[] in favor io.AddKeyEvent(). This is automatically done by IMGUI_DISABLE_OBSOLETE_FUNCTIONS.
- 
- //---- Disable all of Dear ImGui or don't implement standard windows/tools.
- // It is very strongly recommended to NOT disable the demo windows and debug tool during development. They are extremely useful in day to day work. Please read comments in imgui_demo.cpp.
-@@ -43,7 +43,7 @@
+--- ./imconfig.h	2025-02-20 22:00:35
++++ ../scummvm/scummvm/backends/imgui/imconfig.h	2025-06-29 23:57:31
+@@ -42,7 +42,7 @@
  //#define IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS         // [Win32] [Default with non-Visual Studio compilers] Don't implement default IME handler (won't require imm32.lib/.a)
  //#define IMGUI_DISABLE_WIN32_FUNCTIONS                     // [Win32] Won't use and link with any Win32 function (clipboard, IME).
  //#define IMGUI_ENABLE_OSX_DEFAULT_CLIPBOARD_FUNCTIONS      // [OSX] Implement default OSX clipboard handler (need to link with '-framework ApplicationServices', this is why this is not the default).
@@ -258,9 +218,9 @@ diff --color -rbu ./imconfig.h ../scummvm/scummvm/backends/imgui/imconfig.h
  //#define IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS              // Don't implement ImFabs/ImSqrt/ImPow/ImFmod/ImCos/ImSin/ImAcos/ImAtan2 so you can implement them yourself.
  //#define IMGUI_DISABLE_FILE_FUNCTIONS                      // Don't implement ImFileOpen/ImFileClose/ImFileRead/ImFileWrite and ImFileHandle at all (replace them with dummies)
 diff --color -rbu ./imgui.cpp ../scummvm/scummvm/backends/imgui/imgui.cpp
---- ./imgui.cpp	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/imgui.cpp	2025-01-25 16:39:54
-@@ -15234,7 +15234,7 @@
+--- ./imgui.cpp	2025-06-29 15:22:31
++++ ../scummvm/scummvm/backends/imgui/imgui.cpp	2025-06-29 23:57:31
+@@ -15881,7 +15881,7 @@
              line_end[-1] = 0;
              const char* name_end = line_end - 1;
              const char* type_start = line + 1;
@@ -269,7 +229,7 @@ diff --color -rbu ./imgui.cpp ../scummvm/scummvm/backends/imgui/imgui.cpp
              const char* name_start = type_end ? ImStrchrRange(type_end + 1, name_end, '[') : NULL;
              if (!type_end || !name_start)
                  continue;
-@@ -21345,7 +21345,7 @@
+@@ -22199,7 +22199,7 @@
  
          if (TreeNode("SettingsIniData", "Settings unpacked data (.ini): %d bytes", g.SettingsIniData.size()))
          {
@@ -279,9 +239,9 @@ diff --color -rbu ./imgui.cpp ../scummvm/scummvm/backends/imgui/imgui.cpp
          }
          TreePop();
 diff --color -rbu ./imgui.h ../scummvm/scummvm/backends/imgui/imgui.h
---- ./imgui.h	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/imgui.h	2025-01-25 16:39:54
-@@ -105,8 +105,10 @@
+--- ./imgui.h	2025-06-29 15:22:31
++++ ../scummvm/scummvm/backends/imgui/imgui.h	2025-06-29 23:57:31
+@@ -108,8 +108,10 @@
  #define IM_FMTARGS(FMT)             __attribute__((format(gnu_printf, FMT, FMT+1)))
  #define IM_FMTLIST(FMT)             __attribute__((format(gnu_printf, FMT, 0)))
  #elif !defined(IMGUI_USE_STB_SPRINTF) && (defined(__clang__) || defined(__GNUC__))
@@ -295,9 +255,9 @@ diff --color -rbu ./imgui.h ../scummvm/scummvm/backends/imgui/imgui.h
  #define IM_FMTARGS(FMT)
  #define IM_FMTLIST(FMT)
 diff --color -rbu ./imgui_demo.cpp ../scummvm/scummvm/backends/imgui/imgui_demo.cpp
---- ./imgui_demo.cpp	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/imgui_demo.cpp	2025-01-25 16:39:54
-@@ -3926,7 +3926,7 @@
+--- ./imgui_demo.cpp	2025-06-29 15:22:31
++++ ../scummvm/scummvm/backends/imgui/imgui_demo.cpp	2025-06-29 23:57:31
+@@ -3423,7 +3423,7 @@
                              ImGui::TableNextColumn();
                              ImGui::SetNextItemWidth(-FLT_MIN);
                              ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
@@ -306,24 +266,12 @@ diff --color -rbu ./imgui_demo.cpp ../scummvm/scummvm/backends/imgui/imgui_demo.
                              ImGui::PopStyleVar();
                          }
  
-diff --color -rbu ./imgui_draw.cpp ../scummvm/scummvm/backends/imgui/imgui_draw.cpp
---- ./imgui_draw.cpp	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/imgui_draw.cpp	2025-01-25 16:39:54
-@@ -3727,7 +3727,7 @@
- 
- void ImFont::SetGlyphVisible(ImWchar c, bool visible)
- {
--    if (ImFontGlyph* glyph = (ImFontGlyph*)(void*)FindGlyph((ImWchar)c))
-+    if (ImFontGlyph* glyph = const_cast<ImFontGlyph *>(FindGlyph((ImWchar)c)))
-         glyph->Visible = visible ? 1 : 0;
- }
- 
 diff --color -rbu ./misc/freetype/imgui_freetype.cpp ../scummvm/scummvm/backends/imgui/misc/freetype/imgui_freetype.cpp
---- ./misc/freetype/imgui_freetype.cpp	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/misc/freetype/imgui_freetype.cpp	2025-01-25 16:39:54
-@@ -34,10 +34,10 @@
+--- ./misc/freetype/imgui_freetype.cpp	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/misc/freetype/imgui_freetype.cpp	2025-06-29 23:57:31
+@@ -37,10 +37,10 @@
  
- // FIXME: cfg.OversampleH, OversampleV are not supported (but perhaps not so necessary with this rasterizer).
+ // FIXME: cfg.OversampleH, OversampleV are not supported, but generally not necessary with this rasterizer because Hinting makes everything look better.
  
 -#include "imgui.h"
 +#include "backends/imgui/imgui.h"
@@ -334,18 +282,9 @@ diff --color -rbu ./misc/freetype/imgui_freetype.cpp ../scummvm/scummvm/backends
  #include <stdint.h>
  #include <ft2build.h>
  #include FT_FREETYPE_H          // <freetype/freetype.h>
-@@ -396,7 +396,7 @@
- #ifdef IMGUI_STB_RECT_PACK_FILENAME
- #include IMGUI_STB_RECT_PACK_FILENAME
- #else
--#include "imstb_rectpack.h"
-+#include "backends/imgui/imstb_rectpack.h"
- #endif
- #endif
- 
 diff --color -rbu ./misc/freetype/imgui_freetype.h ../scummvm/scummvm/backends/imgui/misc/freetype/imgui_freetype.h
---- ./misc/freetype/imgui_freetype.h	2025-02-18 13:09:05
-+++ ../scummvm/scummvm/backends/imgui/misc/freetype/imgui_freetype.h	2025-01-25 16:39:54
+--- ./misc/freetype/imgui_freetype.h	2025-06-29 14:44:11
++++ ../scummvm/scummvm/backends/imgui/misc/freetype/imgui_freetype.h	2025-06-29 23:57:31
 @@ -2,7 +2,7 @@
  // (headers)
  
@@ -354,4 +293,4 @@ diff --color -rbu ./misc/freetype/imgui_freetype.h ../scummvm/scummvm/backends/i
 +#include "backends/imgui/imgui.h"      // IMGUI_API
  #ifndef IMGUI_DISABLE
  
- // Forward declarations
+ // Usage:
