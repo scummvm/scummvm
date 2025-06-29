@@ -32,7 +32,7 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
-	ON_WM_CLOSE()
+	ON_WM_DESTROY()
 	ON_WM_DRAWITEM()
 	ON_WM_SETFONT()
 	ON_WM_SETCURSOR()
@@ -247,13 +247,15 @@ void CWnd::DestroyWindow() {
 	if (IsActiveWindow())
 		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, false), 0);
 
+	if (this == AfxGetApp()->m_pMainWnd)
+		// Remove the window from the app,
+		// signifying that it can close
+		app->m_pMainWnd = nullptr;
 
 	// Flush any other pending events
 	MSG msg;
 	while (app->PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
 	}
-
-	assert(AfxGetApp()->validateDestroyedWnd(m_hWnd));
 
 	// Detach any child controls
 	for (auto &node : _children)
@@ -899,16 +901,6 @@ void CWnd::SetCapture() {
 
 void CWnd::ReleaseCapture() {
 	AfxGetApp()->ReleaseCapture();
-}
-
-void CWnd::OnClose() {
-	if (this == AfxGetApp()->m_pMainWnd) {
-		// Remove the window from the app,
-		// signifying that it can close
-		AfxGetApp()->m_pMainWnd = nullptr;
-	}
-
-	DestroyWindow();
 }
 
 void CWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {

@@ -1086,7 +1086,7 @@ protected:
 	}
 	afx_msg void OnCancelMode() {}
 	afx_msg void OnChildActivate() {}
-	afx_msg void OnClose();
+	afx_msg void OnClose() {}
 	afx_msg void OnContextMenu(CWnd *pWnd, CPoint pos) {}
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		return 0;

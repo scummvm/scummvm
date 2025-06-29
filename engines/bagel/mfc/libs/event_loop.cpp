@@ -341,11 +341,6 @@ void EventLoop::setMousePos(const Common::Point &pt) {
 	g_system->warpMouse(pt.x, pt.y);
 }
 
-bool EventLoop::validateDestroyedWnd(HWND hWnd) {
-	MSG msg;
-	return !_messages.peekMessage(&msg, hWnd, 0, 0, false);
-}
-
 MMRESULT EventLoop::joySetCapture(HWND hwnd, UINT uJoyID,
 		UINT uPeriod, BOOL fChanged) {
 	assert(uJoyID == JOYSTICKID1);

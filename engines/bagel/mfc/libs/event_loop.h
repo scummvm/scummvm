@@ -182,12 +182,6 @@ public:
 	MMRESULT joyGetPos(UINT uJoyID, LPJOYINFO pji);
 	MMRESULT joyReleaseCapture(UINT uJoyID);
 
-	/**
-	 * Checked that the passed HWND doesn't
-	 * have any future messages pending for it
-	 */
-	bool validateDestroyedWnd(HWND hWnd);
-
 	HHOOK HookKeyboard(HOOKPROC proc) {
 		assert(!_kbdHookProc);
 		_kbdHookProc = proc;
