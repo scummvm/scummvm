@@ -37,7 +37,7 @@ class EuphonyPlayer;
 class TownsPC98_AudioDriver;
 
 namespace Audio {
-class PCSpeaker;
+class PCSpeakerStream;
 class MaxTrax;
 } // End of namespace Audio
 
@@ -265,7 +265,7 @@ public:
 	int getRate() const override { return _rate; }
 private:
 	Common::Mutex _mutex;
-	Audio::PCSpeaker *_speaker;
+	Audio::PCSpeakerStream *_speaker;
 	int _rate;
 
 	struct Channel {

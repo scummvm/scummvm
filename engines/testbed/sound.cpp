@@ -55,9 +55,9 @@ SoundSubsystemDialog::SoundSubsystemDialog() : TestbedInteractionDialog(80, 60, 
 	_mixer = g_system->getMixer();
 
 	// the three streams to be mixed
-	Audio::PCSpeaker *s1 = new Audio::PCSpeaker();
-	Audio::PCSpeaker *s2 = new Audio::PCSpeaker();
-	Audio::PCSpeaker *s3 = new Audio::PCSpeaker();
+	Audio::PCSpeakerStream *s1 = new Audio::PCSpeakerStream();
+	Audio::PCSpeakerStream *s2 = new Audio::PCSpeakerStream();
+	Audio::PCSpeakerStream *s3 = new Audio::PCSpeakerStream();
 
 	s1->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
 	s2->play(Audio::PCSpeaker::kWaveFormSine, 1200, -1);
@@ -125,7 +125,7 @@ TestExitStatus SoundSubsystem::playBeeps() {
 		return kTestSkipped;
 	}
 
-	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
+	Audio::PCSpeakerStream *speaker = new Audio::PCSpeakerStream();
 	Audio::Mixer *mixer = g_system->getMixer();
 	Audio::SoundHandle handle;
 	mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, speaker);
@@ -306,11 +306,11 @@ TestExitStatus SoundSubsystem::sampleRates() {
 	TestExitStatus passed = kTestPassed;
 	Audio::Mixer *mixer = g_system->getMixer();
 
-	Audio::PCSpeaker *s1 = new Audio::PCSpeaker();
+	Audio::PCSpeakerStream *s1 = new Audio::PCSpeakerStream();
 	// Stream at half sampling rate
-	Audio::PCSpeaker *s2 = new Audio::PCSpeaker(s1->getRate() - 10000);
+	Audio::PCSpeakerStream *s2 = new Audio::PCSpeakerStream(s1->getRate() - 10000);
 	// Stream at twice sampling rate
-	Audio::PCSpeaker *s3 = new Audio::PCSpeaker(s1->getRate() + 10000);
+	Audio::PCSpeakerStream *s3 = new Audio::PCSpeakerStream(s1->getRate() + 10000);
 
 	s1->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
 	s2->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);

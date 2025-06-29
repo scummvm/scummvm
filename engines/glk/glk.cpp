@@ -82,7 +82,7 @@ void GlkEngine::initialize() {
 	_screen->initialize();
 	_clipboard = new Clipboard();
 	_events = new Events();
-	_pcSpeaker = new PCSpeaker(_mixer);
+	_pcSpeaker = new PCSpeaker();
 	_pictures = new Pictures();
 	_selection = new Selection();
 	_sounds = new Sounds();
