@@ -19,7 +19,7 @@
  *
  */
 
-#if defined(POSIX) || defined(PSP2) || defined(__DS__)
+#if defined(POSIX) || defined(__DS__)
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
@@ -42,12 +42,8 @@ AbstractFSNode *DrivesPOSIXFilesystemFactory::makeRootFileNode() const {
 }
 
 AbstractFSNode *DrivesPOSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
-#if defined(PSP2) // The Vita does not have getcwd
-	return makeRootFileNode();
-#else
 	char buf[MAXPATHLEN];
 	return getcwd(buf, MAXPATHLEN) ? new DrivePOSIXFilesystemNode(buf, _config) : makeRootFileNode();
-#endif
 }
 
 AbstractFSNode *DrivesPOSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {

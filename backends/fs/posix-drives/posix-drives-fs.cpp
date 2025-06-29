@@ -19,7 +19,7 @@
  *
  */
 
-#if defined(POSIX) || defined(PSP2) || defined(__DS__)
+#if defined(POSIX) || defined(__DS__)
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
