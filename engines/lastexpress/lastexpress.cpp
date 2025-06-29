@@ -242,6 +242,8 @@ Common::Error LastExpressEngine::run() {
 		haveEvent = getMessageManager()->process();
 	}
 
+	getSoundManager()->destroyAllSound();
+
 	getTimerManager()->removeTimerProc(soundTimerHandler);
 
 	shutDown();
