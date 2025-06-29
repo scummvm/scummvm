@@ -93,6 +93,7 @@ enum {
 	kDebugImGui,
 	kDebugPaused,
 	kDebugPauseOnLoad,
+	kDebugSaving,
 };
 
 enum {
