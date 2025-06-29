@@ -1210,7 +1210,9 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 	int32 keyTag = MKTAG('K', 'E', 'Y', '*');
 	if (hasResource(keyTag, -1)) {
 		uint16 firstID = getResourceIDList(keyTag)[0];
-		uint32 offset = getOffset(keyTag, firstID) + 8;	// The +8 is consistent with RIFXArchive::getResource()
+		// The +8 is consistent with RIFXArchive::getResource()
+		// The +8 is to ignore the resource tag (e.g. 'KEY*') and the size entry
+		uint32 offset = getOffset(keyTag, firstID) + 8;
 		writeKeyTable(writeStream, offset);
 	}
 

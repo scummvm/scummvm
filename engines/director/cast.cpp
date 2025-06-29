@@ -828,8 +828,12 @@ void Cast::saveCast() {
 
 		if (_loadedCast->contains(id)) {
 			CastMember *target = _loadedCast->getVal(id);
-			castSize = target->getCastResourceSize(_version) + 8;
+			// To make it consistent with how the data is stored originally, getResourceSize returns
+			// the size excluding 'CASt' header and the entry for size itself. Adding 8 to compensate for that 
+			castSize = target->getCastResourceSize() + 8;	
 		} else {
+			// The size stored in the memory map (_resources array), as well as the resource itself is the size 
+			// excluding the 'CASt' header and the entry of size itself. Adding 8 to compensate for that
 			castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), it) + 8;
 		}
 
@@ -843,7 +847,18 @@ void Cast::saveCast() {
 			writeStream->writeStream(stream);
 		} else {
 			CastMember *target = _loadedCast->getVal(id);
-			target->writeCAStResource(writeStream, 0, _version, it);
+
+			switch (target->_type) {
+			case (kCastPalette):
+			case (kCastBitmap):
+			case (kCastText):
+			case (kCastButton):
+				target->writeCAStResource(writeStream, 0);
+				break;
+			default:
+				target->writeCAStResource(writeStream, 0, it);
+				break;
+			}
 		}	
 
 		Common::DumpFile out;
@@ -878,7 +893,7 @@ void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) 
 
 	writeStream->writeUint32BE(ci->scriptId);
 
-	writeStream->writeUint16BE(ci->count);
+	writeStream->writeUint16BE(ci->count);		// count of strings in the info
 	
 	uint32 length = 0;
 	writeStream->writeUint32BE(length);
@@ -1362,8 +1377,6 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 	// IDs are stored as relative to the start of the cast array.
 	id += _castArrayStart;
 
-	uint32 size = stream.size() + 8;
-	
 	// D4+ variant
 	if (stream.size() == 0)
 		return;
@@ -1497,10 +1510,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		break;
 	}
 	if (target) {
-		target->_castResourceSize = size;
 		target->_castDataSize = castDataSize;
-		target->_castInfoSize = castInfoSize;
-		target->_castType = castType;
 		target->_flags1 = flags1;
 		setCastMember(id, target);
 	}
