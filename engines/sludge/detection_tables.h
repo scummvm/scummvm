@@ -43,9 +43,9 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ 0, 0 }
 };
 
-#define GAME1l(t, e, f1, m1, s1, lang, pl, langId) 	{ { t, e, AD_ENTRY1s(f1, m1, s1), lang, pl, ADGF_UNSTABLE, GUIO1(GUIO_NOMIDI) }, langId }
+#define GAME1l(t, e, f1, m1, s1, lang, pl, langId) 	{ { t, e, AD_ENTRY1s(f1, m1, s1), lang, pl, ADGF_TESTING, GUIO1(GUIO_NOMIDI) }, langId }
 #define GAME1(t, e, f1, m1, s1) GAME1l(t, e, f1, m1, s1, Common::EN_ANY, Common::kPlatformUnknown, 0)
-#define GAME2l(t, e, f1, m1, s1, f2, m2, s2, lang, pl, langId) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), lang, pl, ADGF_UNSTABLE, GUIO1(GUIO_NOMIDI) }, langId }
+#define GAME2l(t, e, f1, m1, s1, f2, m2, s2, lang, pl, langId) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), lang, pl, ADGF_TESTING, GUIO1(GUIO_NOMIDI) }, langId }
 #define GAME2(t, e, f1, m1, s1, f2, m2, s2) GAME2l(t, e, f1, m1, s1, f2, m2, s2, Common::EN_ANY, Common::kPlatformUnknown, 0)
 
 
