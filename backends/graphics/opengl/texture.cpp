@@ -210,10 +210,13 @@ FakeTextureSurface::FakeTextureSurface(GLenum glIntFormat, GLenum glFormat, GLen
 	: TextureSurface(glIntFormat, glFormat, glType, format),
 	  _fakeFormat(fakeFormat),
 	  _rgbData(),
+	  _blitFunc(nullptr),
 	  _palette(nullptr),
 	  _mask(nullptr) {
 	if (_fakeFormat.isCLUT8()) {
 		_palette = new uint32[256]();
+	} else {
+		_blitFunc = Graphics::getFastBlitFunc(format, fakeFormat);
 	}
 }
 
@@ -299,6 +302,8 @@ void FakeTextureSurface::updateGLTexture() {
 void FakeTextureSurface::applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const {
 	if (_palette) {
 		Graphics::crossBlitMap(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat.bytesPerPixel, _palette);
+	} else if (_blitFunc) {
+		_blitFunc(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height());
 	} else {
 		Graphics::crossBlit(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat, srcFormat);
 	}
@@ -361,42 +366,6 @@ void TextureSurfaceRGB555::updateGLTexture() {
 
 		src = (const uint16 *)((const byte *)src + srcAdd);
 		dst = (uint16 *)((byte *)dst + dstAdd);
-	}
-
-	// Do generic handling of updating the texture.
-	TextureSurface::updateGLTexture();
-}
-
-TextureSurfaceRGBA8888Swap::TextureSurfaceRGBA8888Swap()
-	: FakeTextureSurface(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, OpenGL::Texture::getRGBAPixelFormat(), Graphics::PixelFormat::createFormatABGR32())
-	  {
-}
-
-void TextureSurfaceRGBA8888Swap::updateGLTexture() {
-	if (!isDirty()) {
-		return;
-	}
-
-	// Convert color space.
-	Graphics::Surface *outSurf = TextureSurface::getSurface();
-
-	const Common::Rect dirtyArea = getDirtyArea();
-
-	uint32 *dst = (uint32 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
-	const uint dstAdd = outSurf->pitch - 4 * dirtyArea.width();
-
-	const uint32 *src = (const uint32 *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
-	const uint srcAdd = _rgbData.pitch - 4 * dirtyArea.width();
-
-	for (int height = dirtyArea.height(); height > 0; --height) {
-		for (int width = dirtyArea.width(); width > 0; --width) {
-			const uint32 color = *src++;
-
-			*dst++ = SWAP_BYTES_32(color);
-		}
-
-		src = (const uint32 *)((const byte *)src + srcAdd);
-		dst = (uint32 *)((byte *)dst + dstAdd);
 	}
 
 	// Do generic handling of updating the texture.
