@@ -590,7 +590,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *
  ****************************************************************/
 void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
-	if (InArtRegion(point) && _playing) {                   // If the cursor is within the border
+	if (InArtRegion(point) && _playing && !_gameOver) {     // If the cursor is within the border
 		GetNewCursor();                                     //...and we're playing, update the cursor
 		if (nFlags & MK_LBUTTON) {                          // If the Left mouse button is down,
 			MovePlayer(point);                              //...have the player follow the mouse
@@ -913,6 +913,10 @@ void CMainWindow::MovePlayer(CPoint point) {
 	POINT   Step;
 	UINT    nBmpID = IDB_HODJ_RIGHT;
 	auto *app = AfxGetApp();
+
+	if (_gameOver)
+		// Don't allow movement after game finishes
+		return;
 
 	pDC = GetDC();
 
