@@ -27,6 +27,8 @@ const PlainGameDescriptor aweGames[] = {
 };
 
 const AweGameDescription gameDescriptions[] = {
+
+	// DOS Floppy (1991) French/English
 	{
 		{
 			"anotherworld",
@@ -39,6 +41,19 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_DOS
 	},
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
+	},
+
 	// DOS Floppy - ANOTHER WORLD PC (19/3/92)
 	// This version is also included on the Delphine Classic Collection CD
 	{
@@ -53,13 +68,28 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_DOS
 	},
+
 	// Out of This World, Valueware and Interplay's 10 Year Anthology
 	{
 		{
 			"anotherworld",
 			nullptr,
 			AD_ENTRY1s("memlist.bin", "4605962431175a5b961f6db4041adcff", 2940),
-			Common::EN_ANY,
+			Common::EN_USA,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_DOS
+	},
+
+	// Out of This World (alternate)
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY1s("memlist.bin", "ee9e67fcaace0300fec4e619299e6e0e", 2940),
+			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
 			GUIO1(GAMEOPTION_COPY_PROTECTION)
@@ -105,7 +135,9 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_20TH_EDITION
 	},
-	// This Amiga version is included as a bonus on both GOG and Steam.
+
+	// European version
+	// Also included as a bonus on both GOG and Steam.
 	{
 		{
 			"anotherworld",
@@ -119,6 +151,33 @@ const AweGameDescription gameDescriptions[] = {
 		},
 		DT_AMIGA
 	},
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244868,
+					   "bank03", "2ef3440fd6205634b257d56b0bc3ea51", 127846),
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_AMIGA
+	},
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244868,
+					   "bank03", "2ef3440fd6205634b257d56b0bc3ea51", 127846),
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_AMIGA
+	},
+
 	// Out of this World (USA)
 	{
 		{
@@ -126,13 +185,14 @@ const AweGameDescription gameDescriptions[] = {
 			nullptr,
 			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244822,
 					   "bank03", "b8cdbcd57e9953423a21dadeeca3cdfa", 128040),
-			Common::EN_ANY,
+			Common::EN_USA,
 			Common::kPlatformAmiga,
 			ADGF_UNSTABLE,
 			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_AMIGA
 	},
+
 	// Delphine Classic Collection (Kixx)
 	{
 		{
@@ -141,6 +201,32 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244674,
 					   "bank03", "c2594927418291119c2996eabcf6d0f1", 128038),
 			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_AMIGA
+	},
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244674,
+					   "bank03", "c2594927418291119c2996eabcf6d0f1", 128038),
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
+		},
+		DT_AMIGA
+	},
+	{
+		{
+			"anotherworld",
+			nullptr,
+			AD_ENTRY2s("bank01", "8cec5badf5bea89bff3a550daff79861", 244674,
+					   "bank03", "c2594927418291119c2996eabcf6d0f1", 128038),
+			Common::IT_ITA,
 			Common::kPlatformAmiga,
 			ADGF_UNSTABLE,
 			GUIO1(GAMEOPTION_COPY_PROTECTION)
