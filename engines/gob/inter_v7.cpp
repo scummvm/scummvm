@@ -532,7 +532,7 @@ void Inter_v7::o7_initScreen() {
 
 		// Comment the next line and uncomment the following ones to use the original pixel format (RGB555) for debugging purposes
 		_vm->setTrueColor(trueColor, false, nullptr);
-		// Graphics::PixelFormat format = Graphics::createPixelFormat<555>();
+		// Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		// _vm->setTrueColor(trueColor, false, &format);
 	}
 

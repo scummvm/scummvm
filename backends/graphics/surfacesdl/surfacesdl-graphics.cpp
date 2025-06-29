@@ -2234,7 +2234,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		const uint numPixels = w * h;
 		const uint inBPP = format->bytesPerPixel;
 
-		Graphics::PixelFormat formatWithAlpha = Graphics::createPixelFormat<8888>();
+		Graphics::PixelFormat formatWithAlpha(4, 8, 8, 8, 8, 16, 8, 0, 24);
 
 		// Use the existing format if it already has alpha
 		if (format->aBits() > 0)

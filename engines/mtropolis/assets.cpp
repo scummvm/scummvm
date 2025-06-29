@@ -1033,11 +1033,12 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 		break;
 	case kColorDepthMode16Bit:
 		bytesPerRow = (width * 2 + 3) / 4 * 4;
-		pixelFmt = Graphics::createPixelFormat<1555>();
+		pixelFmt = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		break;
 	case kColorDepthMode32Bit:
 		bytesPerRow = width * 4;
-		pixelFmt = Graphics::createPixelFormat<8888>();
+		// TODO: Select this based on image format and byte order
+		pixelFmt = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 		break;
 	default:
 		warning("Image asset has an unrecognizable pixel format");
@@ -1089,22 +1090,12 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 				if (isBigEndian) {
 					for (int x = 0; x < width; x++) {
 						uint16 packedPixel = inRowBytes[x * 2 + 1] + (inRowBytes[x * 2 + 0] << 8);
-						int r = ((packedPixel >> 10) & 0x1f);
-						int g = ((packedPixel >> 5) & 0x1f);
-						int b = (packedPixel & 0x1f);
-
-						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
-						static_cast<uint16 *>(outBase)[x] = repacked;
+						static_cast<uint16 *>(outBase)[x] = packedPixel;
 					}
 				} else {
 					for (int x = 0; x < width; x++) {
 						uint16 packedPixel = inRowBytes[x * 2 + 0] + (inRowBytes[x * 2 + 1] << 8);
-						int r = ((packedPixel >> 10) & 0x1f);
-						int g = ((packedPixel >> 5) & 0x1f);
-						int b = (packedPixel & 0x1f);
-
-						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
-						static_cast<uint16 *>(outBase)[x] = repacked;
+						static_cast<uint16 *>(outBase)[x] = packedPixel;
 					}
 				}
 			} break;

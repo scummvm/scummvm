@@ -100,7 +100,7 @@ HeaderState loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, 
 		header.format.aShift = in.readByte();
 	} else {
 		// Version 1 used a hardcoded RGB565.
-		header.format = createPixelFormat<565>();
+		header.format = PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	}
 
 	if (in.err() || in.eos()) {
