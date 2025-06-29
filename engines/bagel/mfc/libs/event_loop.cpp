@@ -86,9 +86,12 @@ bool EventLoop::GetMessage(MSG &msg) {
 			msg.hwnd = hWnd;
 
 			if (hWnd) {
-				// For mouse messages, if the highlighted control
-				// changes, generate a WM_SETCURSOR event
 				if (isMouseMsg(ev)) {
+					// Update saved mouse position
+					_mousePos = ev.mouse;
+
+					// For mouse messages, if the highlighted control
+					// changes, generate a WM_SETCURSOR event
 					if (hWnd != _highlightedWin) {
 						// Add mouse leave event if win is still alive
 						CWnd *highlightedWin = CWnd::FromHandle(_highlightedWin);
