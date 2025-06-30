@@ -860,6 +860,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bobmambo5",			"Bob the Builder: Mambo No. 5" },
 	{ "chaquico1000",		"Craig Chaquico: A Thousand Pictures" },
 	{ "concentration",		"Solitudes: Natural Concentration" },
+	{ "coldcutletusplay",	"Coldcut: Let Us Play!" },
 	{ "custardloverama",	"Custard: Loverama" },
 	{ "doorswindows",		"The Cranberries: Doors and Windows" },
 	{ "freakshowost",		"The Residents: Freak Show: Multimedia Bonus Track" },
@@ -6651,6 +6652,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Developed by Arome Interactive, distributed by Global Star Software
 	// Requires installation, DATA.Z, InstallShield v3
 	WINGAME1t("cocktailhour", "", "COCKT32.EXE", "f594dd4e50ea175e8d3453b3cd16b536", 1411465, 501),
+
+	MACGAME1t("coldcutletusplay", "", "MainMenu", "t:e835056d51945ffc0822f6ae2e6f73a3", 1693312, 500),
+	WINGAME1t("coldcutletusplay", "", "MAINMENU.EXE", "t:6715f522a4c1483570ebfbb5561b674e", 1393839, 500),
 
 	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "r:37faaf693259d7a4fa031f4a2edf3098", 125831, 501),
 
