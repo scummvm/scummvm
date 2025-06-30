@@ -767,6 +767,7 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 		lpPaint->rgbReserved + 32, 0);
 
 	_updatingRect = _updateRect;
+	_dc->setClipRect(_updateRect);
 
 	if (_hFont)
 		SelectObject(lpPaint->hdc, _hFont);

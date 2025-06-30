@@ -145,6 +145,12 @@ int CDC::GetClipBox(LPRECT lpRect) const {
 	error("TODO: CDC::GetClipBox");
 }
 
+void CDC::setClipRect(const Common::Rect &r) {
+	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
+	assert(dc);
+	dc->getSurface()->setUpdateRect(r);
+}
+
 BOOL CDC::PtVisible(int x, int y) const {
 	error("TODO: CDC::PtVisible");
 }
@@ -606,7 +612,7 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 	return nullptr;
 }
 
-Graphics::ManagedSurface *CDC::Impl::getSurface() const {
+Gfx::ClippedSurface *CDC::Impl::getSurface() const {
 	assert(_bitmap);
 	return static_cast<CBitmap::Impl *>(_bitmap);
 }
