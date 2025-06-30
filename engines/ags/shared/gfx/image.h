@@ -35,7 +35,7 @@ extern BITMAP *load_lbm(const char *filename, color *pal);
 extern BITMAP *load_pcx(const char *filename, color *pal);
 extern BITMAP *load_tga(const char *filename, color *pal);
 
-extern int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal);
+extern bool save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal);
 
 } // namespace AGS3
 
