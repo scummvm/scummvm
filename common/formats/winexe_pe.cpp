@@ -274,6 +274,9 @@ WinResources::VersionInfo *PEResources::parseVersionInfo(SeekableReadStream *res
 		uint16 type = res->readUint16LE();
 		uint16 c;
 
+		if (res->eos())
+			break;
+
 		Common::U32String key;
 		while ((c = res->readUint16LE()) != 0 && !res->eos())
 			key += c;
