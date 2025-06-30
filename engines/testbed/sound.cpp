@@ -354,7 +354,7 @@ SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	// Make audio-files discoverable
 	Common::FSNode gameRoot(ConfMan.getPath("path"));
 	if (gameRoot.exists()) {
-		SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
+		SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files", 0, 2, false);
 		if (SearchMan.hasFile("track01.mp3") && SearchMan.hasFile("track02.mp3") && SearchMan.hasFile("track03.mp3") && SearchMan.hasFile("track04.mp3")) {
 			addTest("AudiocdOutput", &SoundSubsystem::audiocdOutput, true);
 		} else {
