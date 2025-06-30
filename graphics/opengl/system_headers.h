@@ -123,9 +123,19 @@
 	#define GL_DRAW_FRAMEBUFFER_BINDING 0x8CA6
 #endif
 
+#if !defined(GL_DEPTH_COMPONENT24)
+	// For GLES2 with GL_OES_depth24
+	#define GL_DEPTH_COMPONENT24 0x81A6
+#endif
+
 #if !defined(GL_DEPTH_STENCIL)
-	// For WebGL: see https://github.com/emscripten-core/emscripten/issues/4832
+	// For GLES2 with GL_OES_packed_depth_stencil
 	#define GL_DEPTH_STENCIL 0x84F9
+#endif
+
+#if !defined(GL_DEPTH24_STENCIL8)
+	// For GLES2 with GL_OES_packed_depth_stencil
+	#define GL_DEPTH24_STENCIL8 0x88F0
 #endif
 
 #if !defined(GL_DEPTH_STENCIL_ATTACHMENT)
