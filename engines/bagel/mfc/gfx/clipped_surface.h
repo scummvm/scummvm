@@ -35,13 +35,37 @@ namespace Gfx {
  * will be actually be copied to the screen.
  */
 class ClippedSurface : public Graphics::ManagedSurface {
+private:
+	Common::Rect _clipRect;
+
 public:
 	~ClippedSurface() override {}
 
-	void addDirtyRect(const Common::Rect &r) override {
+	void create(int16 width, int16 height) override {
+		Graphics::ManagedSurface::create(width, height);
+		resetClip();
 	}
-	void setUpdateRect(const Common::Rect &r) {
-		Graphics::ManagedSurface::addDirtyRect(r);
+	void create(int16 width, int16 height, const Graphics::PixelFormat &pixelFormat) override {
+		Graphics::ManagedSurface::create(width, height, pixelFormat);
+		resetClip();
+	}
+	void create(ManagedSurface &surf, const Common::Rect &bounds) override {
+		Graphics::ManagedSurface::create(surf, bounds);
+		resetClip();
+	}
+
+	void setClipRect(const Common::Rect &r) {
+		_clipRect = r;
+	}
+
+	void resetClip() {
+		_clipRect = Common::Rect(0, 0, this->w, this->h);
+	}
+
+	void addDirtyRect(const Common::Rect &r) override {
+		Common::Rect dirtyRect = r;
+		dirtyRect.clip(_clipRect);
+		Graphics::ManagedSurface::addDirtyRect(dirtyRect);
 	}
 };
 

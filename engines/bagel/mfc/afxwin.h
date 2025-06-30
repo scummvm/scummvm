@@ -820,6 +820,7 @@ public:
 	// Clipping Functions
 	virtual int GetClipBox(LPRECT lpRect) const;
 	void setClipRect(const Common::Rect &r);
+	void resetClipRect();
 	virtual BOOL PtVisible(int x, int y) const;
 	BOOL PtVisible(POINT point) const;
 	virtual BOOL RectVisible(LPCRECT lpRect) const;

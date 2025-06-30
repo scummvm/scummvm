@@ -767,6 +767,8 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 		lpPaint->rgbReserved + 32, 0);
 
 	_updatingRect = _updateRect;
+
+	// Restrict drawing to the update area
 	_dc->setClipRect(_updateRect);
 
 	if (_hFont)
@@ -778,6 +780,9 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 BOOL CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
 	_updateRect = Common::Rect();
 	_updateErase = false;
+
+	// Reset dc clipping back to allow entire surface
+	_dc->resetClipRect();
 
 	return true;
 }

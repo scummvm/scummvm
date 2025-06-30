@@ -148,7 +148,13 @@ int CDC::GetClipBox(LPRECT lpRect) const {
 void CDC::setClipRect(const Common::Rect &r) {
 	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
 	assert(dc);
-	dc->getSurface()->setUpdateRect(r);
+	dc->getSurface()->setClipRect(r);
+}
+
+void CDC::resetClipRect() {
+	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
+	assert(dc);
+	dc->getSurface()->resetClip();
 }
 
 BOOL CDC::PtVisible(int x, int y) const {
