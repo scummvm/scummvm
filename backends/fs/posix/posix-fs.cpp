@@ -19,7 +19,7 @@
  *
  */
 
-#if defined(POSIX) || defined(PLAYSTATION3) || defined(PSP2) || defined(__DS__)
+#if defined(POSIX) || defined(PLAYSTATION3) || defined(__DS__)
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some macOS SDKs.

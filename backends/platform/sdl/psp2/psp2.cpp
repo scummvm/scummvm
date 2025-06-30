@@ -29,7 +29,7 @@
 #include "common/translation.h"
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/saves/default/default-saves.h"
-#include "backends/fs/posix-drives/posix-drives-fs-factory.h"
+#include "backends/fs/psp2/psp2-fs-factory.h"
 #include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "backends/keymapper/hardware-input.h"
 #include <sys/stat.h>
@@ -78,7 +78,7 @@ void OSystem_PSP2::init() {
 	sceIoMkdir("ux0:data/scummvm", 0755);
 	sceIoMkdir("ux0:data/scummvm/saves", 0755);
 
-	DrivesPOSIXFilesystemFactory *fsFactory = new DrivesPOSIXFilesystemFactory();
+	PSP2FilesystemFactory *fsFactory = new PSP2FilesystemFactory();
 	fsFactory->addDrive("ux0:");
 	fsFactory->addDrive("uma0:");
 

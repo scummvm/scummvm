@@ -30,6 +30,7 @@
 class PSP2EventSource : public SdlEventSource {
 public:
 	PSP2EventSource() {}
+	virtual bool pollEvent(Common::Event &event);
 protected:
 	void preprocessEvents(SDL_Event *event) override;
 	bool isTouchPortTouchpadMode(SDL_TouchID port) override;

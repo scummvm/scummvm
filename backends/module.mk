@@ -459,10 +459,9 @@ endif
 
 ifeq ($(BACKEND),psp2)
 MODULE_OBJS += \
-	fs/posix/posix-fs.o \
-	fs/posix/posix-iostream.o \
-	fs/posix-drives/posix-drives-fs.o \
-	fs/posix-drives/posix-drives-fs-factory.o \
+	fs/psp2/psp2-fs.o \
+	fs/psp2/psp2-fs-factory.o \
+	fs/psp2/psp2-stream.o \
 	plugins/psp2/psp2-provider.o \
 	events/psp2sdl/psp2sdl-events.o
 endif

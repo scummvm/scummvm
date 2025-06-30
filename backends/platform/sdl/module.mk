@@ -75,6 +75,8 @@ endif
 ifdef PSP2
 CC=arm-vita-eabi-gcc
 MODULE_OBJS += \
+	psp2/powerman.o \
+	psp2/thread.o \
 	psp2/psp2-main.o \
 	psp2/psp2.o
 endif

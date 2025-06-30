@@ -25,9 +25,10 @@
 
 #include <psp2/kernel/processmgr.h>
 #include <psp2/touch.h>
-#include "backends/platform/sdl/psp2/psp2.h"
-#include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/psp2/psp2.h"
+#include "backends/platform/sdl/psp2/powerman.h"
+#include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "engines/engine.h"
 
 #include "common/util.h"
@@ -43,6 +44,17 @@ void PSP2EventSource::preprocessEvents(SDL_Event *event) {
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_OLED_OFF);
 
 	SdlEventSource::preprocessEvents(event);
+}
+
+bool PSP2EventSource::pollEvent(Common::Event &event) {
+
+	// If we're polling for events, we should check for pausing the engine
+	// Pausing the engine is a necessary fix for games that use the timer for music synchronization
+	// 	recovering many hours later causes the game to crash. We're polling without mutexes since it's not critical to
+	//  get it right now.
+	PowerMan.pollPauseEngine();
+
+	return SdlEventSource::pollEvent(event);
 }
 
 bool PSP2EventSource::isTouchPortTouchpadMode(SDL_TouchID port) {

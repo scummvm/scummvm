@@ -23,6 +23,7 @@
 #define PLATFORM_SDL_PSP2_H
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/fs/psp2/psp2-fs-factory.h"
 
 class OSystem_PSP2 : public OSystem_SDL {
 public:
@@ -31,6 +32,8 @@ public:
 	bool hasFeature(Feature f) override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
+
+	FilesystemFactory *getFilesystemFactory() { return &PSP2FilesystemFactory::instance(); }
 
 protected:
 	Common::Path getDefaultConfigFileName() override;

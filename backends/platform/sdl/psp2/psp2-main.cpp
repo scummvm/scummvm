@@ -22,14 +22,47 @@
 #include <psp2/kernel/processmgr.h>
 #include <psp2/power.h>
 #include <psp2/appmgr.h>
+#include <psp2/kernel/threadmgr/callback.h>
 
 #include "common/scummsys.h"
 #include "backends/platform/sdl/psp2/psp2.h"
+#include "backends/platform/sdl/psp2/powerman.h"
 #include "backends/plugins/psp2/psp2-provider.h"
 #include "base/main.h"
+#include "engines/engine.h"
 
 int _newlib_heap_size_user = 192 * 1024 * 1024;
 char boot_params[1024];
+
+
+int power_callback(int notifyId, int notifyCount, int powerInfo, void *common) {
+	debug(9, "power_callback %x", powerInfo);
+
+	if ((powerInfo & SCE_POWER_CB_APP_RESUME) ||
+		(powerInfo & SCE_POWER_CB_APP_RESUMING)) {
+		debug(2, "App resuming");
+		PowerMan.resume();
+	} else if ((powerInfo & SCE_POWER_CB_BUTTON_PS_PRESS) ||
+		(powerInfo & SCE_POWER_CB_APP_SUSPEND) ||
+		(powerInfo & SCE_POWER_CB_SYSTEM_SUSPEND)) {
+		debug(2, "App on background");
+		PowerMan.suspend();
+	}
+
+	return 0;
+}
+
+int callbacks_thread(unsigned int args, void* arg) {
+	// Add a callback to pause/resume games when the system is going to sleep
+	// or when the user press the PS button. It would crash overwise.
+	int cbid = sceKernelCreateCallback("Power Callback", 0, power_callback, NULL);
+	scePowerRegisterCallback(cbid);
+	for (;;) {
+		sceKernelDelayThreadCB(10000000);
+	}
+
+	return 0;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -44,6 +77,16 @@ int main(int argc, char *argv[]) {
 
 	// Pre initialize the backend
 	g_system->init();
+
+	PowerManager::instance();	// Setup power manager
+
+	// Starting power callbacks handler
+	SceUID thid = sceKernelCreateThread("callbackThread", callbacks_thread, 0x10000100, 0x10000, 0, 0, NULL);
+	if (thid >= 0) {
+		sceKernelStartThread(thid, 0, 0);
+	} else {
+		warning("Cannot create power callback thread ! Suspend may not work !");
+	}
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new PSP2PluginProvider());
@@ -94,6 +137,8 @@ int main(int argc, char *argv[]) {
 exit:
 	// Free OSystem
 	g_system->destroy();
+
+	PowerManager::destroy();	// get rid of PowerManager
 
 	return res;
 }
