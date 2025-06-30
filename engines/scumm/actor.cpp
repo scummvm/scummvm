@@ -633,7 +633,7 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 int Actor::actorWalkStep() {
 	_needRedraw = true;
 
-	if (_vm->_game.heversion >= 70) {
+	if (_vm->_game.heversion >= 62) {
 		_needBgReset = true;
 	}
 
@@ -1743,7 +1743,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	_room = newRoom;
 	_needRedraw = true;
 
-	if (_vm->_game.heversion >= 70)
+	if (_vm->_game.heversion >= 62)
 		_needBgReset = true;
 
 	if (_vm->VAR(_vm->VAR_EGO) == _number) {
@@ -2451,7 +2451,7 @@ void ScummEngine::processActors() {
 						continue;
 				}
 
-				if (_game.heversion >= 71) {
+				if (_game.heversion >= 62) {
 					// Check if this new actor eclipsed another one...
 					for (int i = 0; i < _gdi->_numStrips; i++) {
 						int strip = _screenStartStrip + i;
@@ -2539,8 +2539,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	if (bcr->drawCostume(_vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
 		_needRedraw = (_vm->_game.version <= 6);
 
-		// TODO: Eventually check if true for HE6*
-		if (_vm->_game.heversion >= 70)
+		if (_vm->_game.heversion >= 62)
 			_needBgReset = true;
 	}
 
@@ -2756,7 +2755,7 @@ void Actor::startAnimActor(int f) {
 		_frame = f;
 	}
 
-	if (_vm->_game.heversion >= 70)
+	if (_vm->_game.heversion >= 62)
 		_needBgReset = true;
 }
 
@@ -2887,7 +2886,7 @@ void Actor::animateCostume() {
 		_vm->_costumeLoader->loadCostume(_costume);
 		if (_vm->_costumeLoader->increaseAnims(this)) {
 			_needRedraw = true;
-			if (_vm->_game.heversion >= 70) {
+			if (_vm->_game.heversion >= 62) {
 				_needBgReset = true;
 			}
 		}
@@ -3602,7 +3601,7 @@ void ActorHE::setActorCostume(int c) {
 	if (_vm->_game.heversion >= 61 && (c == -1  || c == -2)) {
 		_heSkipLimbs = (c == -1);
 		_needRedraw = true;
-		if (_vm->_game.heversion >= 70) {
+		if (_vm->_game.heversion >= 62) {
 			_needBgReset = true;
 		}
 
