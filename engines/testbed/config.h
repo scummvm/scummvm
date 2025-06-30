@@ -56,7 +56,6 @@ public:
 	Testsuite *getTestsuiteByName(const Common::String &name);
 	bool stringToBool(const Common::String &str) { return str.equalsIgnoreCase("true") ? true : false; }
 	Common::String boolToString(bool val) { return val ? "true" : "false"; }
-	void initDefaultConfiguration();
 	int getNumSuitesEnabled();
 
 private:
