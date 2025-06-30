@@ -33,8 +33,6 @@ public:
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
 
-	FilesystemFactory *getFilesystemFactory() { return &PSP2FilesystemFactory::instance(); }
-
 protected:
 	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;

@@ -22,7 +22,6 @@
 #ifndef PSP2_FILESYSTEM_FACTORY_H
 #define PSP2_FILESYSTEM_FACTORY_H
 
-#include "common/singleton.h"
 #include "backends/fs/fs-factory.h"
 #include "backends/fs/psp2/psp2-fs.h"
 
@@ -31,7 +30,7 @@
  *
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class PSP2FilesystemFactory final : public FilesystemFactory, public Common::Singleton<PSP2FilesystemFactory> {
+class PSP2FilesystemFactory final : public FilesystemFactory {
 public:
     PSP2FilesystemFactory() : _config(this) { }
 
@@ -59,9 +58,6 @@ protected:
 	};
 
 	StaticDrivesConfig _config;
-
-private:
-	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*PSP2_FILESYSTEM_FACTORY_H*/

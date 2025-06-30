@@ -29,9 +29,6 @@
 
 #include <unistd.h>
 
-namespace Common {
-DECLARE_SINGLETON(PSP2FilesystemFactory);
-}
 
 void PSP2FilesystemFactory::addDrive(const Common::String &name) {
 	_config.drives.push_back(Common::normalizePath(name, '/'));
