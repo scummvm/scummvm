@@ -103,11 +103,14 @@ void Renderer3D::resize(uint w, uint h) {
 	setup();
 
 	// Rebind the framebuffer
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 	if (_frameBuffers[1]) {
 		// We are using multisampling
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffers[1]);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBuffers[0]);
-	} else if (_frameBuffers[0]) {
+	} else if (_frameBuffers[0])
+#endif
+	{
 		// Draw on framebuffer if one was setup
 		glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffers[0]);
 	}
@@ -148,7 +151,11 @@ void Renderer3D::recreate() {
 }
 
 void Renderer3D::setup() {
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 	const bool multiSample = _samples > 1;
+#else
+	const bool multiSample = false;
+#endif
 	const uint w = _texture.getLogicalWidth();
 	const uint h = _texture.getLogicalHeight();
 
@@ -165,12 +172,14 @@ void Renderer3D::setup() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffers[multiSample ? 1 : 0]);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture.getGLTexture(), 0);
 
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 	if (multiSample) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffers[0]);
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[2]);
 		setupRenderbufferStorage(GL_RENDERBUFFER, _samples, GL_RGBA8, w, h);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffers[2]);
 	}
+#endif
 
 #ifdef EMSCRIPTEN
 	// See https://www.khronos.org/registry/webgl/specs/latest/1.0/#FBO_ATTACHMENTS
@@ -212,6 +221,7 @@ void Renderer3D::setup() {
 }
 
 void Renderer3D::leave3D() {
+#if !USE_FORCED_GLES2
 	if (OpenGLContext.type == kContextGL) {
 		// Save current state (only available on OpenGL)
 		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT |
@@ -226,7 +236,9 @@ void Renderer3D::leave3D() {
 		glPushMatrix();
 		glMatrixMode(GL_TEXTURE);
 		glPushMatrix();
-	} else {
+	} else
+#endif
+	{
 		// Save context by ourselves
 #define CTX_STATE(gl_param) _save ## gl_param = glIsEnabled(gl_param)
 #define CTX_BOOLEAN(gl_param) glGetBooleanv(gl_param, &_save ## gl_param)
@@ -256,6 +268,7 @@ void Renderer3D::leave3D() {
 	}
 	_stackLevel++;
 
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 	if (_frameBuffers[1]) {
 		// Frambuffer blit is impacted by scissor test, disable it
 		glDisable(GL_SCISSOR_TEST);
@@ -266,18 +279,23 @@ void Renderer3D::leave3D() {
 		const uint h = _texture.getLogicalHeight();
 		glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	} else if (_frameBuffers[0]) {
+	} else if (_frameBuffers[0])
+#endif
+	{
 		// Don't mess with the framebuffer if one was setup
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }
 
 void Renderer3D::enter3D() {
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 	if (_frameBuffers[1]) {
 		// We are using multisampling
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffers[1]);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBuffers[0]);
-	} else if (_frameBuffers[0]) {
+	} else if (_frameBuffers[0])
+#endif
+	{
 		// Draw on framebuffer if one was setup
 		glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffers[0]);
 	}
@@ -286,6 +304,7 @@ void Renderer3D::enter3D() {
 	Pipeline::disable();
 
 	if (_stackLevel) {
+#if !USE_FORCED_GLES2
 		if (OpenGLContext.type == kContextGL) {
 			glMatrixMode(GL_TEXTURE);
 			glPopMatrix();
@@ -295,7 +314,9 @@ void Renderer3D::enter3D() {
 			glPopMatrix();
 			glPopClientAttrib();
 			glPopAttrib();
-		} else {
+		} else
+#endif
+		{
 #define CTX_STATE(gl_param) _save ## gl_param ? glEnable(gl_param) : glDisable(gl_param)
 
 			CTX_STATE(GL_BLEND);
@@ -352,6 +373,7 @@ void Renderer3D::enter3D() {
 
 		glViewport(0, 0, g_system->getWidth(), g_system->getHeight());
 
+#if !USE_FORCED_GLES2
 		if (OpenGLContext.type == kContextGL) {
 			glDisable(GL_ALPHA_TEST);
 			glAlphaFunc(GL_ALWAYS, 0);
@@ -391,10 +413,12 @@ void Renderer3D::enter3D() {
 			glPointSize(1.f);
 			glShadeModel(GL_SMOOTH);
 		}
+#endif
 	}
 }
 
 void Renderer3D::presentBuffer() {
+#if !USE_FORCED_GLES2 || defined(USE_GLAD)
 	if (!_frameBuffers[1]) {
 		// We are not using multisampling: contents are readily available
 		// The engine just has to read from the FBO or the backbuffer
@@ -418,6 +442,7 @@ void Renderer3D::presentBuffer() {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBuffers[0]);
 
 	saveScissorTest ? glEnable(GL_SCISSOR_TEST) : glDisable(GL_SCISSOR_TEST);
+#endif
 }
 
 void Renderer3D::showOverlay(uint w, uint h) {
