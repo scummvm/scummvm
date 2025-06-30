@@ -36,7 +36,7 @@ class Psp2IoStream final : public Common::SeekableReadStream, public Common::See
 protected:
 	SceUID _handle;		// file handle
 	Common::String _path;
-	int _fileSize;
+	int64 _fileSize;
 	bool _writeMode;	// for resuming in the right mode
 	int _physicalPos;	// physical position in file
 	int _pos;			// position. Sometimes virtual

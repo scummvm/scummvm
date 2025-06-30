@@ -67,8 +67,8 @@ SceUID Psp2IoStream::open() {
 
 	// Get the file size. This way is much faster than going to the end of the file and back
 	SceIoStat stat;
-	sceIoGetstat(_path.c_str(), &stat);
-	_fileSize = stat.st_size;	// 4GB file (32 bits) is big enough for us
+	sceIoGetstatByFd(_handle, &stat);
+	_fileSize = stat.st_size;
 
 	debug(8, "%s filesize[%d]", _path.c_str(), _fileSize);
 
