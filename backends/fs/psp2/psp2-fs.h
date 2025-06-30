@@ -25,7 +25,7 @@
 #include "backends/fs/abstract-fs.h"
 
 /**
- * Implementation of the ScummVM file system API based on PSPSDK API.
+ * Implementation of the ScummVM file system API based on the VitaSDK API.
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
