@@ -27,8 +27,6 @@
 #include <psp2/io/stat.h>
 #include <psp2/io/fcntl.h> 
 
-#define MIN2(a,b) ((a < b) ? a : b)
-#define MIN3(a,b,c) ( (a < b) ? (a < c ? a : c) : (b < c ? b : c) )
 
 
 // Class Psp2IoStream ------------------------------------------------
