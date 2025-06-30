@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/stream.h"
 #include "common/util.h"
 
@@ -38,8 +39,17 @@ namespace Testbed {
  */
 bool FStests::readDataFromFile(Common::FSDirectory *directory, const char *file) {
 
-	Common::SeekableReadStream *readStream = directory->createReadStreamForMember(file);
+	if (!SearchMan.isPathDirectory(directory->getFSNode().getPath())) {
+		SearchMan.addDirectory(directory->getFSNode().getPath(), 0, 1, false);
+	}
 
+	Common::ScopedPtr<Common::File> f(new Common::File());
+	if (!f->open(file)) {
+		Testsuite::logDetailedPrintf("Can't open game file\n");
+		return false;
+	}
+	
+	Common::SeekableReadStream *readStream = f.release();
 	if (!readStream) {
 		Testsuite::logDetailedPrintf("Can't open game file for reading\n");
 		return false;
