@@ -547,12 +547,6 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
             if not dryrun:
                 os.makedirs(joined_path, exist_ok=True)
 
-                arg[path_type] = os.path.join(dirname, dir)
-                rec = iso.get_record(**arg).date
-                stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
-                                 rec.hour - rec.gmtoffset, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
-                os.utime(joined_path, (stamp, stamp))
-
         for file in filelist:
             filename = file.split(";")[0]
             iso_file_path = os.path.join(dirname, file)
@@ -575,6 +569,22 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
                 f.close()
 
                 os.utime(os.path.join(pwd, filename), (stamp, stamp))
+
+    print("Fixing directory timestamps...")
+
+    arg[path_type] = "/"
+    for dirname, dirlist, filelist in iso.walk(**arg):
+        pwd = output_dir + dirname
+        # Set the modified time for directories
+        for dir in dirlist:
+            joined_path = os.path.join(pwd, dir)
+            if not dryrun:
+                print(joined_path)
+                arg[path_type] = os.path.join(dirname, dir)
+                rec = iso.get_record(**arg).date
+                stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
+                                 rec.hour - rec.gmtoffset, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
+                os.utime(joined_path, (stamp, stamp))
 
     if dopunycode:
         punyencode_dir(Path(output_dir))
