@@ -19,33 +19,31 @@
  *
  */
 
-#ifndef PLATFORM_SDL_EMSCRIPTEN_H
-#define PLATFORM_SDL_EMSCRIPTEN_H
+#if !defined(BACKEND_EVENTS_EMSCRIPTEN_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_EMSCRIPTEN_H
 
-#include "backends/platform/sdl/posix/posix.h"
+#include "backends/events/sdl/sdl-events.h"
+#include "backends/platform/sdl/emscripten/emscripten.h"
+#include "common/events.h"
 
-class OSystem_Emscripten : public OSystem_POSIX {
+/**
+ * SDL Events manager for Emscripten
+ */
+class EmscriptenSdlEventSource : public SdlEventSource {
 public:
-	void initBackend() override;
-	bool hasFeature(Feature f) override;
-	void setFeatureState(Feature f, bool enable) override;
-	bool getFeatureState(Feature f) override;
-	bool displayLogFile() override;
-	Common::Path getScreenshotsPath() override;
-	Common::Path getDefaultIconsPath() override;
-#ifdef USE_OPENGL
-	GraphicsManagerType getDefaultGraphicsManager() const override;
-#endif
-	Common::MutexInternal *createMutex() override;
-	void exportFile(const Common::Path &filename);
-	void delayMillis(uint msecs) override;
-
-protected:
-	Common::Path getDefaultConfigFileName() override;
-	Common::Path getDefaultLogFileName() override;
-
-private:
-	void updateTimers();
+	/**
+	 * Gets and processes SDL events.
+	 */
+	bool pollEvent(Common::Event &event) override {
+	
+		bool ret_value = SdlEventSource::pollEvent(event);
+		if (event.type != Common::EVENT_QUIT && event.type != Common::EVENT_RETURN_TO_LAUNCHER) {	
+			// yield to the browser and process timers  
+			// (after polling the events to ensure synchronous event processing)
+			g_system->delayMillis(0);
+		}
+		return ret_value;
+	};
 };
 
-#endif
+#endif /* BACKEND_EVENTS_EMSCRIPTEN_H */
