@@ -227,11 +227,12 @@ fi
 
 if [ "$_libmpeg2" = true ]; then
   if [[ ! -f "$LIBS_FOLDER/build/lib/libmpeg2.a" ]]; then
-    echo "building libmpeg2-0.5.1"
+    echo "building libmpeg2-946bf4b5"
     cd "$LIBS_FOLDER"
-    wget -nc "http://libmpeg2.sourceforge.net/files/libmpeg2-0.5.1.tar.gz"
-    tar -xf libmpeg2-0.5.1.tar.gz
-    cd "$LIBS_FOLDER/libmpeg2-0.5.1/"
+    wget -nc --content-disposition  "https://code.videolan.org/videolan/libmpeg2/-/archive/946bf4b518aacc224f845e73708f99e394744499/libmpeg2-946bf4b518aacc224f845e73708f99e394744499.tar.gz"
+    tar -xf libmpeg2-946bf4b518aacc224f845e73708f99e394744499.tar.gz
+    cd "$LIBS_FOLDER/libmpeg2-946bf4b518aacc224f845e73708f99e394744499/"
+    autoreconf -i
     CFLAGS="-fPIC -Oz" emconfigure ./configure --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --disable-sdl
     emmake make -j 5
     emmake make install
