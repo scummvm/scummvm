@@ -6710,7 +6710,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From MacFormat #42
 	MACGAME1("digihbd", "", "Digital Happy Birthday Card", "61f3e061ae6236d8f72312ae9de83f46", 703153, 500),
 
-	WINGAME1("digitalgriot", "", "GRIOT.EXE", "t:9d96285877f5f6a2c65390b8327c0592", 4398121, 501),
+	WINGAME1("digitalgriot", "", "griot/saar/GRIOT.EXE", "t:9d96285877f5f6a2c65390b8327c0592", 4398121, 501),
 
 	// Windows executables for Win 3.1 and 95; Mac executables for 68k, PPC, and Fat binary
 	MACGAME2("dimensionq", "", "Dimension Q",  "r:c148f66ae3511fb88733102aa27efe7e",  719057,
