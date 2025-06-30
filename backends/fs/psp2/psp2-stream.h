@@ -38,8 +38,7 @@ protected:
 	Common::String _path;
 	int64 _fileSize;
 	bool _writeMode;	// for resuming in the right mode
-	int _physicalPos;	// physical position in file
-	int _pos;			// position. Sometimes virtual
+	int64 _pos;			// position
 	bool _eos;			// EOS flag
 
 	enum {
@@ -54,8 +53,6 @@ protected:
 	int _errorPos;
 	SceUID _errorHandle;
 	int _suspendCount;
-
-	bool physicalSeekFromCur(int32 offset);
 
 public:
 

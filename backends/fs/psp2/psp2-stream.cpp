@@ -33,7 +33,7 @@
 
 Psp2IoStream::Psp2IoStream(const Common::String &path, bool writeMode)
 		: _handle(0), _path(path), _fileSize(0), _writeMode(writeMode),
-		  _physicalPos(0), _pos(0), _eos(false),	_error(false),
+		  _pos(0), _eos(false),	_error(false),
 		  _errorSuspend(0), _errorSource(0), _errorPos(0), _errorHandle(0), _suspendCount(0) {
 
 	//assert(!path.empty());	// do we need this?
@@ -105,21 +105,8 @@ int64 Psp2IoStream::size() const {
 	return _fileSize;
 }
 
-bool Psp2IoStream::physicalSeekFromCur(int32 offset) {
-
-	int ret = sceIoLseek32(_handle, offset, SCE_SEEK_CUR);
-
-	if (ret < 0) {
-		_error = true;
-		debug(8, "failed to seek in file[%s] to [%x]. Error[%x]", _path.c_str(), offset, ret);
-		return false;
-	}
-	_physicalPos += offset;
-	return true;
-}
-
 bool Psp2IoStream::seek(int64 offs, int whence) {
-	debug(8, "offset[0x%llx], whence[%d], _pos[0x%x], _physPos[0x%x]", offs, whence, _pos, _physicalPos);
+	debug(8, "offset[0x%llx], whence[%d], _pos[0x%x]", offs, whence, _pos);
 	_eos = false;
 
 	int32 posToSearchFor = 0;
@@ -149,12 +136,12 @@ bool Psp2IoStream::seek(int64 offs, int whence) {
 }
 
 uint32 Psp2IoStream::read(void *ptr, uint32 len) {
-	debug(8, "filename[%s], len[0x%x], ptr[%p], _pos[%x], _physPos[%x]", _path.c_str(), len, ptr, _pos, _physicalPos);
+	debug(8, "filename[%s], len[0x%x], ptr[%p], _pos[%x]", _path.c_str(), len, ptr, _pos);
 
 	if (_error || _eos || len <= 0)
 		return 0;
 
-	uint32 lenRemainingInFile = _fileSize - _pos;
+	uint64 lenRemainingInFile = _fileSize - _pos;
 
 	// check for getting EOS
 	if (len > lenRemainingInFile) {
@@ -165,23 +152,13 @@ uint32 Psp2IoStream::read(void *ptr, uint32 len) {
 	if (PowerMan.beginCriticalSection())
 	    debug(8, "suspended");
 
-	// check if we need to seek
-	if (_pos != _physicalPos) {
-		debug(8, "seeking from %x to %x", _physicalPos, _pos);
-		if (!physicalSeekFromCur(_pos - _physicalPos)) {
-			_error = true;
-			return 0;
-		}
-	}
-
-	int ret = sceIoRead(_handle, ptr, len);
+	int64 ret = sceIoPread(_handle, ptr, len, _pos);
 
 	PowerMan.endCriticalSection();
 
-	_physicalPos += ret;	// Update position
-	_pos = _physicalPos;
+	_pos += ret;	// Update position
 
-	if (ret != (int)len) {	// error
+	if (ret != (int64)len) {	// error
 		debug(8, "sceIoRead returned [0x%x] instead of len[0x%x]", ret, len);
 		_error = true;
 		_errorSource = 4;
@@ -190,7 +167,7 @@ uint32 Psp2IoStream::read(void *ptr, uint32 len) {
 }
 
 uint32 Psp2IoStream::write(const void *ptr, uint32 len) {
-	debug(8, "filename[%s], len[0x%x], ptr[%p], _pos[%x], _physPos[%x]", _path.c_str(), len, ptr, _pos, _physicalPos);
+	debug(8, "filename[%s], len[0x%x], ptr[%p], _pos[%x]", _path.c_str(), len, ptr, _pos);
 
 	if (!len || _error)		// we actually get some calls with len == 0!
 		return 0;
@@ -200,25 +177,17 @@ uint32 Psp2IoStream::write(const void *ptr, uint32 len) {
 	if (PowerMan.beginCriticalSection())
 	    debug(8, "suspended");
 
-	// check if we need to seek
-	if (_pos != _physicalPos)
-		if (!physicalSeekFromCur(_pos - _physicalPos)) {
-			_error = true;
-			return 0;
-		}
-
-	int ret = sceIoWrite(_handle, ptr, len);
+	int64 ret = sceIoPwrite(_handle, ptr, len, _pos);
 
 	PowerMan.endCriticalSection();
 
-	if (ret != (int)len) {
+	if (ret != (int64)len) {
 		_error = true;
 		_errorSource = 5;
 		debug(8, "sceIoWrite returned[0x%x] instead of len[0x%x]", ret, len);
 	}
 
-	_physicalPos += ret;
-	_pos = _physicalPos;
+	_pos += ret;
 
 	if (_pos > _fileSize)
 		_fileSize = _pos;
@@ -269,7 +238,7 @@ int Psp2IoStream::suspend() {
  *  Function to resume the IO stream (called by Power Manager)
  */
 int Psp2IoStream::resume() {
-	int ret = 0;
+	int64 ret = 0;
 	_suspendCount--;
 
 	// We reopen our file descriptor
@@ -279,18 +248,6 @@ int Psp2IoStream::resume() {
 		_errorPos = _pos;
 	}
 
-	// Resume our previous position if needed
-	if (_handle > 0 && _pos > 0) {
-		ret = sceIoLseek32(_handle, _pos, SCE_SEEK_SET);
-
-		_physicalPos = _pos;
-
-		if (ret < 0) {		// Check for problem
-			_errorSuspend = ResumeError;
-			_errorPos = _pos;
-			_errorHandle = _handle;
-		}
-	}
 	return ret;
 }
 
