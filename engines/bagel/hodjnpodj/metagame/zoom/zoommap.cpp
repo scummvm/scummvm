@@ -587,21 +587,20 @@ void CMainZoomWindow::OnDestroy() {
  ****************************************************************/
 
 void CMainZoomWindow::ReleaseResources(void) {
-
 	delete pText;
+	pText = nullptr;
 
-	if (pSplashScreen != nullptr)
-		delete pSplashScreen;
+	delete pSplashScreen;
+	pSplashScreen = nullptr;
 
 	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();         // release the game color palette
 		delete pGamePalette;
+		pGamePalette = nullptr;
 	}
 
-	if (pReturnButton != nullptr)
-		delete pReturnButton;                                       // release the buttons we used
-
-	return;
+	delete pReturnButton;                                       // release the buttons we used
+	pReturnButton = nullptr;
 }
 
 
