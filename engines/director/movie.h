@@ -151,6 +151,8 @@ public:
 	uint16 _currentActiveSpriteId;
 	uint16 _currentMouseSpriteId;
 	CastMemberID _currentMouseDownCastID;
+	CastMemberID _currentMouseDownSpriteScriptID;
+	bool _currentMouseDownSpriteImmediate;
 	uint16 _currentEditableTextChannel;
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;

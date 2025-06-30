@@ -85,6 +85,8 @@ public:
 	void setTextStyle(const Common::String &textStyle);
 	void setTextStyle(const Common::String &textStyle, int start, int end);
 
+	void scrollByLine(int count);
+
 	Common::String formatInfo() override;
 
 	void load() override;

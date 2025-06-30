@@ -1190,6 +1190,7 @@ bool Debugger::lingoEval(const char *inputOrig) {
 	_lingoEval = true;
 	LC::call(sym, 0, true);
 	g_lingo->execute();
+	_lingoEval = false;
 
 	debugPrintf("\n");
 	return true;
