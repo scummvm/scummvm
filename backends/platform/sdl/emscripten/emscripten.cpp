@@ -28,6 +28,9 @@
 
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #include "common/file.h"
+#ifdef USE_TTS
+#include "backends/text-to-speech/emscripten/emscripten-text-to-speech.h"
+#endif
 
 // Inline JavaScript, see https://emscripten.org/docs/api_reference/emscripten.h.html#inline-assembly-javascript for details
 EM_JS(bool, isFullscreen, (), {
