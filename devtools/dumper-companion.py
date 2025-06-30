@@ -26,6 +26,7 @@ import unicodedata
 import urllib.request
 import zipfile
 from binascii import crc_hqx
+from datetime import datetime, timezone
 from enum import Enum
 from io import BytesIO, IOBase, StringIO
 from pathlib import Path
@@ -546,6 +547,12 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
             if not dryrun:
                 os.makedirs(joined_path, exist_ok=True)
 
+                arg[path_type] = os.path.join(dirname, dir)
+                rec = iso.get_record(**arg).date
+                stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
+                                 rec.hour - rec.gmtoffset, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
+                os.utime(joined_path, (stamp, stamp))
+
         for file in filelist:
             filename = file.split(";")[0]
             iso_file_path = os.path.join(dirname, file)
@@ -560,6 +567,14 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
             with open(os.path.join(pwd, filename), "wb") as f:
                 arg[path_type] = iso_file_path
                 iso.get_file_from_iso_fp(outfp=f, **arg)
+
+                rec = iso.get_record(**arg).date
+                stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
+                                 rec.hour - rec.gmtoffset, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
+
+                f.close()
+
+                os.utime(os.path.join(pwd, filename), (stamp, stamp))
 
     if dopunycode:
         punyencode_dir(Path(output_dir))
