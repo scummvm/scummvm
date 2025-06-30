@@ -205,13 +205,6 @@ void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 
 	GUI::Dialog::handleCommand(sender, cmd, data);
 }
 
-void TestbedConfigManager::initDefaultConfiguration() {
-	// Default Configuration
-	// Add Global configuration Parameters here.
-	ConfParams.setSessionAsInteractive(ConfMan.getBool("interactive-mode"));
-	_configFileInterface.setKey("isSessionInteractive", "Global", ConfParams.isSessionInteractive() ? "true" : "false");
-}
-
 void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i < _testsuiteList.end(); i++) {
 		_configFileInterface.setKey("this", (*i)->getName(), boolToString((*i)->isEnabled()));
@@ -243,9 +236,18 @@ Common::WriteStream *TestbedConfigManager::getConfigWriteStream() const {
 void TestbedConfigManager::parseConfigFile() {
 	Common::SeekableReadStream *rs = getConfigReadStream();
 
+	// get interactive mode from global config
+	ConfParams.setSessionAsInteractive(ConfMan.getBool("interactive-mode"));
+	_configFileInterface.setKey("isSessionInteractive", "Global", ConfParams.isSessionInteractive() ? "true" : "false");
+
 	if (!rs) {
 		Testsuite::logPrintf("Info! No config file found, using default configuration.\n");
-		initDefaultConfiguration();
+		return;
+	}
+
+	if (!ConfParams.isSessionInteractive()) {
+		// Non-interactive sessions don't need to go beyond (they run all tests)
+		Testsuite::logPrintf("Info! Non interactive session, skipping config parsing.\n");
 		return;
 	}
 	_configFileInterface.loadFromStream(*rs);
