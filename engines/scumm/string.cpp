@@ -1566,6 +1566,18 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		}
 	}
 
+	// WORKAROUND bug #2055: German Indy4 has bogus "Across-arms " text at
+	// the end of some strings, when speaking with Sophia after a failed
+	// seance with Trottier in Monte Carlo.  Because of the way these
+	// strings are built and handled by script 28-204, the fix has to be
+	// done here and this way...
+	if (_game.id == GID_INDY4 && _language == Common::DE_DEU && _currentRoom == 28 &&
+		isScriptRunning(204) && enhancementEnabled(kEnhTextLocFixes)) {
+		const size_t bogusTextLen = sizeof("Across-arms ") - 1;
+		if (dstSize - (end - dst) > bogusTextLen && memcmp(dst - bogusTextLen, "Across-arms ", bogusTextLen) == 0)
+			dst -= bogusTextLen;
+	}
+
 	// WORKAROUND: Russian The Dig pads messages with 03. No idea why
 	// it does not work as is with our rendering code, thus fixing it
 	// with a workaround.
